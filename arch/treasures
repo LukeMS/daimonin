@@ -1809,7 +1809,11 @@ treasureone random_style1
  chance 50
 end
 treasureone random_test
-arch axe_battle
+list random_weapons_throw
+magic 2
+ artifact_chance 50
+more
+list random_weapons_amun
 magic 2
  artifact_chance 50
 end

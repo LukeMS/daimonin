@@ -3,6 +3,7 @@ name arrow
 layer 3
 race arrows
 face arrow.101
+wc_range 20
 dam 3
 wc 0
 last_sp 0

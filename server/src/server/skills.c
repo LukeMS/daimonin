@@ -1635,15 +1635,45 @@ void do_throw(object *op, object *toss_item, int dir) {
 	return;
     } /* if object can't be thrown */
 
+
+	/* THIS IS A HOTFIX for some bogus beta 1 artifact throw weapons.
+	 * They got set to a negative damage - we need to take care about
+	 * it here.
+	 */
+	if(throw_ob->stats.dam <0)
+	{
+		LOG(llevInfo,"HOTFIX: fixed bogus art. ARROW >%s< from player >%s<\n", query_name(throw_ob), query_name(op));
+		throw_ob->stats.dam = throw_ob->arch->clone.stats.dam;
+		throw_ob->level = throw_ob->arch->clone.level;
+
+		/* and more: if the thrower is a player, browse his inventory
+		 * and adjust bogus throw weapons too.
+		 */
+		if(op->type == PLAYER)
+		{
+			object *tmp;
+			for(tmp=op->inv;tmp!=NULL;tmp=tmp->below) 
+			{
+				if(tmp->type == ARROW && tmp->stats.dam <0)
+				{
+					LOG(llevInfo,"HOTFIX: fixed bogus art. ARROW >%s< from player >%s<\n", query_name(tmp), query_name(op));
+					tmp->stats.dam = tmp->arch->clone.stats.dam;
+					tmp->level = tmp->arch->clone.level;
+				}
+			}
+		}
+
+	}
+
     /* Make a thrown object -- insert real object in a 'carrier' object.
      * If unsuccessfull at making the "thrown_obj", we just reinsert
      * the original object back into inventory and exit
      */
     if((toss_item = make_throw_ob(throw_ob)))
-	throw_ob = toss_item;
+		throw_ob = toss_item;
     else {
-	insert_ob_in_ob(throw_ob,op);
-	return;
+		insert_ob_in_ob(throw_ob,op);
+		return;
     }
 
     /* At some point in the attack code, the actual real object (op->inv)

@@ -7,6 +7,7 @@ weapon_speed 0.035
 attack_impact 100
 dam 3
 type 13
+wc_range 20
 sub_type 132
 nrof 1
 weight 20000

@@ -1217,6 +1217,14 @@ arch floor_ostone1
 x 11
 y 10
 end
+arch rod_heavy
+sp 6
+level 110
+hp 2000
+maxhp 2000
+x 11
+y 10
+end
 arch floor_ostone1
 x 11
 y 11

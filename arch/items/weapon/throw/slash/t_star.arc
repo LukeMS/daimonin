@@ -7,6 +7,7 @@ attack_slash 100
 dam 3
 nrof 1
 type 13
+wc_range 20
 sub_type 129
 anim
 facings 9

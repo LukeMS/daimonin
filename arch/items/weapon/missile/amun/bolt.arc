@@ -5,6 +5,7 @@ race crossbow bolts
 attack_cleave 100
 dam 3
 wc 0
+wc_range 20
 last_sp 0
 type 13
 sub_type 2

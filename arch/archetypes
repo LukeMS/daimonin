@@ -10053,6 +10053,7 @@ type 13
 editor_folder items/weapon
 layer 3
 race arrows
+wc_range 20
 dam 3
 wc 0
 last_sp 0
@@ -10079,6 +10080,7 @@ race crossbow bolts
 attack_cleave 100
 dam 3
 wc 0
+wc_range 20
 last_sp 0
 sub_type 2
 animation bolt
@@ -10101,6 +10103,7 @@ race sling stones
 layer 3
 dam 3
 wc 0
+wc_range 20
 last_sp 0
 attack_impact 100
 animation sstone
@@ -10278,6 +10281,7 @@ weapon_speed 0.027
 attack_cleave 100
 dam 3
 nrof 1
+wc_range 20
 sub_type 131
 animation t_axe
 is_animated 0
@@ -10298,6 +10302,7 @@ layer 3
 weapon_speed 0.035
 attack_impact 100
 dam 3
+wc_range 20
 nrof 1
 sub_type 128
 animation t_hammer
@@ -10319,6 +10324,7 @@ layer 3
 weapon_speed 0.027
 attack_pierce 100
 dam 3
+wc_range 20
 nrof 1
 sub_type 130
 animation t_dagger
@@ -10341,6 +10347,7 @@ weapon_speed 0.027
 attack_slash 100
 dam 3
 nrof 1
+wc_range 20
 sub_type 129
 animation t_star
 is_animated 0
@@ -10362,6 +10369,7 @@ layer 3
 weapon_speed 0.035
 attack_impact 100
 dam 3
+wc_range 20
 sub_type 132
 nrof 1
 weight 20000
@@ -10383,6 +10391,7 @@ layer 3
 weapon_speed 0.035
 attack_impact 100
 dam 5
+wc_range 20
 sub_type 132
 nrof 1
 weight 120000
@@ -10404,6 +10413,7 @@ weapon_speed 0.035
 attack_impact 100
 dam 1
 sub_type 132
+wc_range 20
 nrof 1
 animation t_rock
 anim_speed 5

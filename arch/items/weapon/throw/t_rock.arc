@@ -8,6 +8,7 @@ attack_impact 100
 dam 1
 type 13
 sub_type 132
+wc_range 20
 nrof 1
 anim
 facings 9
