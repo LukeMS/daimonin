@@ -86,14 +86,13 @@ int attempt_steal(object* op, object* who)
     object *success=NULL, *tmp=NULL, *next;
     int roll=0, chance=0, stats_value = get_weighted_skill_stats(who)*3;
     int victim_lvl=op->level*3, thief_lvl = SK_level(who)*10;
-    rv_vector	rv;
 
     /* if the victim is aware of a thief in the area (FLAG_NO_STEAL set on them)
      * they will try to prevent stealing if they can. Only unseen theives will
      * have much chance of success. 
      */
     if(op->type!=PLAYER && QUERY_FLAG(op,FLAG_NO_STEAL)) {
-	if(can_detect_enemy(op,who,&rv)) {
+		if(1) { /* add here a distance/can see function!! */
 	    npc_call_help(op);
 	    CLEAR_FLAG(op, FLAG_UNAGGRESSIVE);
 	    new_draw_info(NDI_UNIQUE, 0,who,"Your attempt is prevented!");
@@ -422,9 +421,6 @@ int attempt_hide(object *op) {
      && (number < (dexterity + level + terrain - difficulty ))) 
   {
     success = 1;
-    /*op->invisible += 100;*/  /* set the level of 'hiddeness' */
-    if(op->type==PLAYER)
-	op->contr->tmp_invis=1;
     op->hide=1;
   }
   return success;

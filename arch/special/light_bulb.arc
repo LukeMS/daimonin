@@ -38,3 +38,53 @@ no_teleport 1
 glow_radius 4
 sys_object 1
 end
+Object light5
+name light
+face light_bulb_4.111
+no_pick 1
+no_drop 1
+type 78
+no_teleport 1
+glow_radius 5
+sys_object 1
+end
+Object light6
+name light
+face light_bulb_4.111
+no_pick 1
+no_drop 1
+type 78
+no_teleport 1
+glow_radius 6
+sys_object 1
+end
+Object light7
+name light
+face light_bulb_4.111
+no_pick 1
+no_drop 1
+type 78
+no_teleport 1
+glow_radius 7
+sys_object 1
+end
+Object light8
+name light
+face light_bulb_4.111
+no_pick 1
+no_drop 1
+type 78
+no_teleport 1
+glow_radius 8
+sys_object 1
+end
+Object light9
+name light
+face light_bulb_4.111
+no_pick 1
+no_drop 1
+type 78
+no_teleport 1
+glow_radius 9
+sys_object 1
+end

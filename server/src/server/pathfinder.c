@@ -47,6 +47,8 @@
 #include <sproto.h>
 #endif
 
+#define HEURISTIC_ERROR -666.
+
 #ifdef DEBUG_PATHFINDING
 int searched_nodes = 0;
 #endif
@@ -307,9 +309,8 @@ int get_path_next(const char *buf, sint16 *off, const char **mappath, mapstruct 
 {
     const char *coord_start = buf + *off, *coord_end, *map_def = coord_start;
  
-    /* TODO: I want to get rid of this strlen call -> could store buflen in a separate waypoint field... */
-    if(buf == NULL || *map == NULL || *off >= (int)strlen(buf)) {
-        LOG(llevBug,"get_path_next: Illegal parameters: %s %p %d\n", buf, *map, *off);
+    if(buf == NULL || *map == NULL) {
+        LOG(llevBug,"get_path_next(): Illegal parameters\n");
         return FALSE;
     }
     
@@ -398,7 +399,7 @@ path_node *compress_path(path_node *path)
     
     next = path->next;    
     
-    get_rangevector_from_mapcoords(path->map, path->x, path->y, next->map, next->x, next->y, &v, 0); 
+    get_rangevector_from_mapcoords(path->map, path->x, path->y, next->map, next->x, next->y, &v, RV_MANHATTAN_DISTANCE); 
     last_dir = v.direction;
     
     for(tmp = next; tmp && tmp->next; tmp = next) {        
@@ -407,7 +408,7 @@ path_node *compress_path(path_node *path)
 #ifdef DEBUG_PATHFINDING
         total_nodes++;
 #endif
-        get_rangevector_from_mapcoords(tmp->map, tmp->x, tmp->y, next->map, next->x, next->y, &v, 0); 
+        get_rangevector_from_mapcoords(tmp->map, tmp->x, tmp->y, next->map, next->x, next->y, &v, RV_MANHATTAN_DISTANCE); 
         if(last_dir == v.direction) {
             remove_node(tmp, &path);
 #ifdef DEBUG_PATHFINDING
@@ -433,6 +434,11 @@ path_node *compress_path(path_node *path)
  * given too.
  *
  * If this function overestimates, we are not guaranteed an optimal path.
+ *
+ * get_rangevector can fail here if there is no maptile path between start and goal. 
+ * if it does, we have to return an error value (HEURISTIC_ERROR)
+ *
+ * TODO: cache the results from get_rangevector for better efficiency ?
  */
 float distance_heuristic(path_node *start, path_node *current, path_node *goal)
 {
@@ -445,8 +451,12 @@ float distance_heuristic(path_node *start, path_node *current, path_node *goal)
         v1.distance_x = current->x - goal->x;
         v1.distance_y = current->y - goal->y;
         v1.distance = MAX(abs(v1.distance_x),abs(v1.distance_y));
-    } else 
-        get_rangevector_from_mapcoords(goal->map, goal->x, goal->y, current->map, current->x, current->y, &v1, 2|8);
+    } else {
+        if(! get_rangevector_from_mapcoords(goal->map, goal->x, goal->y, 
+                    current->map, current->x, current->y, &v1, RV_RECURSIVE_SEARCH | RV_DIAGONAL_DISTANCE)) 
+            return HEURISTIC_ERROR;
+    }
+            
     h = (float)v1.distance;
     
     /* Add straight-line preference by calculating cross product   */
@@ -455,8 +465,11 @@ float distance_heuristic(path_node *start, path_node *current, path_node *goal)
         /* Avoid a function call in simple case */
         v2.distance_x = start->x - goal->x;
         v2.distance_y = start->y - goal->y;
-    } else 
-        get_rangevector_from_mapcoords(goal->map, goal->x, goal->y, start->map, start->x, start->y, &v2, 2|4|8);
+    } else {
+        if(! get_rangevector_from_mapcoords(goal->map, goal->x, goal->y, start->map, start->x, start->y, &v2, 
+                RV_RECURSIVE_SEARCH | RV_NO_DISTANCE))
+            return HEURISTIC_ERROR;
+    }
     
     h += abs(v1.distance_x*v2.distance_y - v2.distance_x*v1.distance_y) * 0.001f;
     
@@ -508,6 +521,10 @@ int find_neighbours(path_node *node, path_node **open_list, path_node **closed_l
                 path_node *new_node;
                 if((new_node = make_node(map, (sint16)x2, (sint16)y2, (uint16)(node->cost + 1), node))) {
                     new_node->heuristic = distance_heuristic(start, new_node, goal);
+
+                    if(new_node->heuristic == HEURISTIC_ERROR)
+                        return FALSE;
+
                     insert_priority_node(new_node, open_list);
                 } else
                     return FALSE;

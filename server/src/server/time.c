@@ -1035,7 +1035,7 @@ void change_object(object *op) { /* Doesn`t handle linked objs yet */
         if(op->type == TYPE_LIGHT_APPLY)
         {
             CLEAR_FLAG(op,FLAG_CHANGING);
-            op->glow_radius*=-1;
+            op->glow_radius=0;
             
             if ((tmp=is_player_inv(op))!=NULL)
             {

@@ -310,8 +310,8 @@ void set_map_darkness(int x, int y, uint8 darkness)
     register struct MapCell *map;
     int xreal,yreal;
 
-    if (darkness != (255 - the_map.cells[x][y].darkness ))
-        the_map.cells[x][y].darkness = 255 - darkness;
+    if (darkness != the_map.cells[x][y].darkness)
+        the_map.cells[x][y].darkness = darkness;
 
     xreal = MapData.posx+(x-(MAP_MAX_SIZE-1)/2)+MapData.xlen;
     yreal = MapData.posy+(y-(MAP_MAX_SIZE-1)/2)+MapData.ylen;
@@ -319,8 +319,8 @@ void set_map_darkness(int x, int y, uint8 darkness)
         return;
     map = TheMapCache+(yreal*MapData.xlen*3)+xreal;
 
-    if (darkness != (255 - map->darkness ))
-        map->darkness = 255 - darkness;
+    if (darkness != map->darkness)
+        map->darkness = darkness;
 }
 
 
@@ -439,14 +439,23 @@ void map_draw_map(void)
                         }
                         /* blt the face in the darkness level, the tile pos has */
                         temp = map->darkness;
-                        if(temp == 0)
+						
+						if(temp == 210)
                             bltfx.dark_level=0;
-                        else if(temp <= 64)
+                        else if(temp == 180)
                             bltfx.dark_level=1;
-                        else if(temp <= 128)
+                        else if(temp == 150)
                             bltfx.dark_level=2;
-                        else
+                        else if(temp == 120)
                             bltfx.dark_level=3;
+                        else if(temp == 90)
+                            bltfx.dark_level=4;
+                        else if(temp == 60)
+                            bltfx.dark_level=5;
+                        else if(temp == 0)
+                            bltfx.dark_level=7;
+						else
+                            bltfx.dark_level=6;
                     
                         /* all done, just blt the face */
                         bltfx.flags = 0;                        
@@ -464,7 +473,7 @@ void map_draw_map(void)
                             bltfx.flags |= BLTFX_FLAG_FOW;
                         else if(cpl.stats.flags&SF_XRAYS)
                             bltfx.flags |= BLTFX_FLAG_GREY;
-                        else if(cpl.stats.flags&SF_INFRAVISION && index_tmp&0x8000 && map->darkness)
+                        else if(cpl.stats.flags&SF_INFRAVISION && index_tmp&0x8000 && map->darkness<150)
                             bltfx.flags |= BLTFX_FLAG_RED;
                         else
                             bltfx.flags |= BLTFX_FLAG_DARK;

@@ -2382,8 +2382,7 @@ int reduction_dir[SIZEOFFREE][3] = {
  * can see a direct way to get it
  * Modified to be map tile aware -.MSW
  */
- 
-
+/* hm, how fast is this function? MT-2004 */
 int can_see_monsterP(mapstruct *m, int x, int y,int dir) {
     int dx, dy;  /* delta (dx)  */
 

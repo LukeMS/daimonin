@@ -185,7 +185,6 @@ static struct {
     {"will_apply",   FIELDTYPE_UINT8 , offsetof(object, will_apply), 0},
     {"run_away",     FIELDTYPE_UINT8 , offsetof(object, run_away), 0},
     {"pick_up",      FIELDTYPE_UINT8 , offsetof(object, pick_up), 0},
-    {"stealth",      FIELDTYPE_SINT8 , offsetof(object, stealth), 0},
     {"hide",         FIELDTYPE_UINT8 , offsetof(object, hide), 0},
     {"layer",        FIELDTYPE_UINT8 , offsetof(object, layer), 0},
    

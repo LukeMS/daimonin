@@ -812,30 +812,34 @@ int arch_out_of_map(archetype *at,mapstruct *m,int x,int y) {
  * mapflags is the same as we get with load_original_map
  */
 /* i optimized this function now - i remove ALOT senseless stuff, 
- * processing the load & expaning of objects here in one loop.
+ * processing the load & expanding of objects here in one loop.
  * MT - 05.02.2004
+ */
+/* now, this function is the very deep core of the whole server map &
+ * object handling. To understand the tiled map handling, you have to
+ * understand the flow of this function. It can now called recursive
+ * and it will call themself recursive if the insert_object_in_map()
+ * function below has found a multi arch reaching in a different map.
+ * Then the out_of_map() call in insert_object_in_map() will trigger a
+ * new map load and a recursive call of this function. This will work
+ * without any problems. Note the restore_light_source_list() call at
+ * the end of the list. Adding overlapping light sources for tiled map
+ * in this recursive structure was the hard part but it will work now
+ * without problems. MT-25.02.2004
  */
 void load_objects (mapstruct *m, FILE *fp, int mapflags)
 {
-	static int bufstate=LO_NEWFILE;
     int i;
 	archetype *tail;
+	void *mybuffer;
     object *op, *prev=NULL,*last_more=NULL, *tmp;
 
     op=get_object();
     op->map = m; /* To handle buttons correctly */
-		
-	bufstate=LO_NEWFILE;
 
-	/* Since the loading of the map header does not load an object
-	 * anymore, we need to pass LO_NEWFILE for the first object loaded,
-	 * and then switch to LO_REPEAT for faster loading.
-	 * With the multi arch/tiled map fix, we need to use this static -
-	 * because this function can now be called recursive from insert_ob()!
-	 */
-	while((i=load_object(fp,op,bufstate, mapflags)))
+	mybuffer = create_loader_buffer(fp);
+	while((i=load_object(fp,op,mybuffer,LO_REPEAT, mapflags)))
 	{
-		bufstate = LO_REPEAT;
 		/* atm, we don't need and handle multi arches saved with tails! */
 		if(i == LL_MORE)
 		{
@@ -928,8 +932,20 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags)
 	    op->map = m;
     }
 
-	bufstate=LO_NEWFILE; /* don't remove or loader will fail when called recursive*/
+	delete_loader_buffer(mybuffer);
     free_object(op);
+
+	/* this MUST be set here or check_light_source_list()
+	 * will fail. If we set this to early, the recursive called map
+	 * will add a light source to the caller and then the caller itself
+	 * here again...
+	 */
+    m->in_memory=MAP_IN_MEMORY;
+
+	/* this is the only place we can insert this because the
+	 * recursive nature of load_objects().
+	 */
+	check_light_source_list(m);
 }
 
 
@@ -1150,6 +1166,7 @@ mapstruct *get_linked_map() {
 	mp->next=map;
 
 	map->buttons = NULL;
+	map->first_light = NULL;
     map->bitmap = NULL;
     map->in_memory=MAP_SWAPPED;
     /* The maps used to pick up default x and y values from the
@@ -1162,6 +1179,7 @@ mapstruct *get_linked_map() {
 
     MAP_ENTER_X(map)=1;
     MAP_ENTER_Y(map)=1;
+
     return map;
 }
 
@@ -1180,7 +1198,7 @@ void allocate_map(mapstruct *m) {
     if(m->in_memory != MAP_SWAPPED )
 	return;
 #endif
-    m->in_memory = MAP_IN_MEMORY;
+    m->in_memory = MAP_LOADING;
     /* Log this condition and free the storage.  We could I suppose
      * realloc, but if the caller is presuming the data will be intact,
      * that is their poor assumption.
@@ -1286,26 +1304,22 @@ static int load_map_header(FILE *fp, mapstruct *m)
 	    if (msgpos != 0)
 		m->msg = strdup_local(msgbuf);
 	} 
-	/* first strcmp value on these are old names supported
-	 * for compatibility reasons.  The new values (second) are
-	 * what really should be used.
-	 */
-	else if (!strcmp(key,"hp") || !strcmp(key, "enter_x")) {
+	else if (!strcmp(key, "enter_x")) {
 	    m->enter_x = atoi(value);
-	} else if (!strcmp(key,"sp") || !strcmp(key, "enter_y")) {
+	} else if (!strcmp(key, "enter_y")) {
 	    m->enter_y = atoi(value);
-	} else if (!strcmp(key,"x") || !strcmp(key, "width")) {
+	} else if (!strcmp(key, "width")) {
 	    m->width = atoi(value);
-	} else if (!strcmp(key,"y") || !strcmp(key, "height")) {
+	} else if (!strcmp(key, "height")) {
 	    m->height = atoi(value);
-	} else if (!strcmp(key,"weight") || !strcmp(key, "reset_timeout")) {
+	} else if (!strcmp(key, "reset_timeout")) {
 	    m->reset_timeout = atoi(value);
-	} else if (!strcmp(key,"value") || !strcmp(key, "swap_time")) {
+	} else if (!strcmp(key, "swap_time")) {
 	    m->timeout = atoi(value);
-	} else if (!strcmp(key,"level") || !strcmp(key, "difficulty")) {
+	} else if (!strcmp(key, "difficulty")) {
 	    m->difficulty = atoi(value);
-	} else if (!strcmp(key,"invisible") || !strcmp(key, "darkness")) {
-        m->darkness_def = m->darkness = atoi(value);
+	} else if (!strcmp(key, "darkness")) {
+        m->darkness = atoi(value);
 	/* i assume that the default map_flags settings is 0 - so we don't handle <flagset> 0 */
 
 	} else if (!strcmp(key,"no_magic")) {
@@ -1346,18 +1360,6 @@ static int load_map_header(FILE *fp, mapstruct *m)
     } else if (!strcmp(key, "fixed_resettime")) {
 		if(atoi(value))
 			m->map_flags |= MAP_FLAG_FIXED_RTIME;
-	} else if (!strcmp(key, "temp")) {
-	    m->temp = atoi(value);
-	} else if (!strcmp(key, "pressure")) {
-	    m->pressure = atoi(value);
-	} else if (!strcmp(key, "humid")) {
-	    m->humid = atoi(value);
-	} else if (!strcmp(key, "windspeed")) {
-	    m->windspeed = atoi(value);
-	} else if (!strcmp(key, "winddir")) {
-	    m->winddir = atoi(value);
-	} else if (!strcmp(key, "sky")) {
-	    m->sky = atoi(value);
 	}
 	else if (!strncmp(key,"tile_path_", 10)) {
 	    int tile=atoi(key+10);
@@ -1391,16 +1393,22 @@ static int load_map_header(FILE *fp, mapstruct *m)
                     const char *path_sh = add_string(value);
 
                     m->tile_path[tile-1] = path_sh;
-                    LOG(llevDebug,"add t_map %s (%d). ",value, tile-1);
                     
                     /* If the neighbouring map tile has been loaded, set up the map pointers */
                     if((neighbour = has_been_loaded_sh(path_sh))) {
+                    LOG(llevDebug,"add t_map %s (%d). ",value, tile-1);
                         m->tile_map[tile-1] = neighbour;
                         /* Replaced strcmp with ptr check since its a shared string now */
                         if (neighbour->tile_path[dest_tile] == NULL || 
                                 neighbour->tile_path[dest_tile] == m->path) 
                             neighbour->tile_map[dest_tile] = m;
+						else
+		                   LOG(llevDebug,"NO? t_map %s (%d). ",value, tile-1);
                     }
+					else
+					{
+	                   LOG(llevDebug,"skip t_map %s (%d). ",value, tile-1);
+					}
                 } /* If valid neighbour path */
 	    }
 	}
@@ -1413,10 +1421,6 @@ static int load_map_header(FILE *fp, mapstruct *m)
 	LOG(llevBug,"BUG: Got premature eof on map header!\n");
 	return 1;
     }
-
-    /* be sure we use the right value when put the map in memory */
-    if (MAP_OUTDOORS(m))
-        m->darkness +=world_darkness;
     
     return 0;
 }
@@ -1494,7 +1498,6 @@ mapstruct *load_original_map(const char *filename, int flags) {
     LOG(llevDebug, "close. ");
     close_and_delete(fp, comp);
     LOG(llevDebug, "post set. ");
-    m->in_memory=MAP_IN_MEMORY;
     if (!MAP_DIFFICULTY(m)) 
     {
        LOG(llevBug,"BUG: Map %s has difficulty 0. Changing to 1 (non special item area).\n", filename);
@@ -1561,7 +1564,6 @@ static mapstruct *load_temporary_map(mapstruct *m) {
     load_objects (m, fp, 0);
     LOG(llevDebug, "close. ");
     close_and_delete(fp, comp);
-    m->in_memory=MAP_IN_MEMORY;
     LOG(llevDebug, "done!\n");
     return m;
 }
@@ -1623,10 +1625,8 @@ static void load_unique_objects(mapstruct *m) {
     m->in_memory=MAP_LOADING;
     if (m->tmpname == NULL)    /* if we have loaded unique items from */
       delete_unique_items(m); /* original map before, don't duplicate them */
-    load_object(fp, NULL, LO_NOREAD,0);
     load_objects (m, fp, 0);
     close_and_delete(fp, comp);
-    m->in_memory=MAP_IN_MEMORY;
 }
 
 
@@ -1678,6 +1678,7 @@ int new_save_map(mapstruct *m, int flag)
     }
 
     LOG(llevDebug,"Saving map %s to %s\n",m->path, filename);
+
     m->in_memory = MAP_SAVING;
 
     /* Compress if it isn't a temporary save.  Do compress if unique */
@@ -1708,7 +1709,7 @@ int new_save_map(mapstruct *m, int flag)
      * or a difficulty value we generated when the map was first loaded
      */
     if (m->difficulty) fprintf(fp,"difficulty %d\n", m->difficulty);
-    fprintf(fp,"darkness %d\n", m->darkness_def);
+    fprintf(fp,"darkness %d\n", m->darkness);
 	fprintf(fp,"map_tag %d\n", m->map_tag);
     if (m->width) fprintf(fp,"width %d\n", m->width);
     if (m->height) fprintf(fp,"height %d\n", m->height);
@@ -1846,6 +1847,13 @@ void free_map(mapstruct *m,int flag) {
 	LOG(llevBug,"BUG: Trying to free freed map.\n");
 	return;
     }
+
+	/* if we don't do this, we leave the light mask part
+	 * on a possible tiled map and when we reload, the area
+	 * will be set with wrong light values.
+	 */
+	remove_light_source_list(m);
+
     if (flag && m->spaces) 
 		free_all_objects(m);
     FREE_AND_NULL_PTR(m->name);
@@ -1854,6 +1862,7 @@ void free_map(mapstruct *m,int flag) {
     if (m->buttons)
 		free_objectlinkpt(m->buttons);
     m->buttons = NULL;
+	m->first_light = NULL;
     for (i=0; i<TILED_MAPS; i++)
 		FREE_AND_CLEAR_HASH(m->tile_path[i]);
     if(m->bitmap) {
@@ -1883,16 +1892,25 @@ void delete_map(mapstruct *m) {
 	m->in_memory = MAP_SAVING;
 	free_map (m, 1);
     }
+	else
+		remove_light_source_list(m);
+
     /* move this out of free_map, since tmpname can still be needed if
      * the map is swapped out.
      */
     FREE_AND_NULL_PTR(m->tmpname);
     last = NULL;
+
     /* We need to look through all the maps and see if any maps
      * are pointing at this one for tiling information.  Since
      * tiling can be assymetric, we just can not look to see which
      * maps this map tiles with and clears those.
      */
+	/* iam somewhat sure asymetric maps will NOT work with the
+	 * recursive map loading + map light source system/reloading.
+	 * asymetric map gives the power to "stack" maps but we really
+	 * need it? MT-2004 think about don't allow asymetric maps
+	 */
     for (tmp = first_map; tmp != NULL; tmp = tmp->next) {
 	if (tmp->next == m) last = tmp;
 
@@ -1955,9 +1973,9 @@ mapstruct *ready_map_name(const char *name, int flags)
     }
 
     /* Map is good to go, so just return it */
-    if (m && (m->in_memory == MAP_LOADING || m->in_memory == MAP_IN_MEMORY))
-    	return m;
-
+	if (m && (m->in_memory == MAP_LOADING || m->in_memory == MAP_IN_MEMORY))
+    	return m; 
+ 
     /* unique maps always get loaded from their original location, and never
      * a temp location.  Likewise, if map_flush is set, or we have never loaded
      * this map, load it now.  I removed the reset checking from here -
@@ -2019,7 +2037,7 @@ mapstruct *ready_map_name(const char *name, int flags)
     /* In case other objects press some buttons down */
 	LOG(llevDebug,"buttons. ");
     update_buttons(m);
-	LOG(llevDebug,"end ready_map_name()\n");
+	LOG(llevDebug,"end ready_map_name(%s)\n",m->path?m->path:"<nopath>");
     return m;
 }
 
@@ -2043,41 +2061,6 @@ void free_all_maps()
 	real_maps++;
     }
     LOG(llevDebug,"free_all_maps: Freed %d maps\n", real_maps);
-}
-
-/* change_map_light() - used to change map light level (darkness)
- * up or down by *1*. This fctn is not designed to change by
- * more than that!  Returns true if successful. -b.t. 
- * Move this from los.c to map.c since this is more related
- * to maps than los.
- */
- 
-int change_map_light(mapstruct *m, int change) {
-    int new_level = m->darkness + change;
- 
-    if(new_level<=0) {
-        if(m->darkness)
-        {
-            (info_map_func)(NDI_WHITE, m,0,0,MAP_INFO_ALL, "It becomes broad daylight.");
-        }
-        m->darkness = 0;
-        return 0;
-    }
- 
-    if(new_level>MAX_DARKNESS) return 0;
- 
-    if(change) {
-	/* inform all players on the map */
-	if (change>0) 
-	    (info_map_func)(NDI_WHITE, m,0,0,MAP_INFO_ALL,"It becomes darker.");
-	else
-	    (info_map_func)(NDI_WHITE, m,0,0,MAP_INFO_ALL,"It becomes brighter.");
-
-	m->darkness=new_level;
-	/* All clients need to get re-updated for the change */
-	return 1;
-    }
-    return 0;
 }
 
 
@@ -2110,25 +2093,10 @@ void update_position (mapstruct *m, int x, int y)
 	/*LOG(llevDebug,"flags:: %x (%d, %d) %x (NU:%x NE:%x)\n", oldflags, x, y,P_NEED_UPDATE|P_NO_ERROR,P_NEED_UPDATE,P_NO_ERROR);*/
 	light=move_flags=0;
 
-	/* i really want here more control. In fact we ONLY need to move through
-	 * this stack when update is triggered by an object which is inserted/removed
-	 * with a higher or same glow_radius as the map tile OR one of the base 
-	 * map flags of the object is changed... blocksview, alive, no_pass and the
-	 * no magic flags - they are all not common set at runtime - so we will safe
-	 * alot of time when we do a DIRTY_STACK_FLAG in.
-	 * This is a key function and highly often called - every saved tick is good.
+	/* This is a key function and highly often called - every saved tick is good.
 	 */
     for (tmp = get_map_ob (m, x, y); tmp; tmp = tmp->above) 
 	{
-
-		/* This could be made additive I guess (two lights better than
-		 * one).  But if so, it shouldn't be a simple additive - 2
-		* light bulbs do not illuminate twice as far as once since
-		* it is a disapation factor that is squared (or is it cubed?)
-		*/
-		if (tmp->glow_radius > light)
-			light = (uint8) tmp->glow_radius;
-
 		if (QUERY_FLAG(tmp,FLAG_PLAYER_ONLY))
 			flags |= P_PLAYER_ONLY;      
 		if(tmp->type == CHECK_INV)
@@ -2389,6 +2357,165 @@ mapstruct *out_of_map(mapstruct *m, int *x, int *y)
     return NULL; 
 }
 
+/* this is a special version of out_of_map() - this version ONLY
+ * adjust to loaded maps - it will not trigger a re/newload of a 
+ * tiled map not in memory. If out_of_map() fails to adjust the
+ * map positions, it will return NULL when the there is no tiled
+ * map and NULL when the map is not loaded. 
+ * As special marker, x is set 0 when the coordinates are not
+ * in a map (outside also possible tiled maps) and to -1 when
+ * there is a tiled map but its not loaded.
+ */
+mapstruct *out_of_map2(mapstruct *m, int *x, int *y)
+{
+    /* Simple case - coordinates are within this local map.*/
+	if(!m)
+	{
+		*x=0;
+		return NULL;
+	}
+
+    if (((*x)>=0) && ((*x)<MAP_WIDTH(m)) && ((*y)>=0) && ((*y) < MAP_HEIGHT(m)))
+		return m;
+
+    if (*x<0) /* thats w, nw or sw (3,7 or 6) */
+	{
+	    if (*y<0) /*  nw.. */
+		{
+			if (!m->tile_path[7])
+			{
+				*x=0;
+				return NULL;
+			}
+			if (!m->tile_map[7] || m->tile_map[7]->in_memory != MAP_IN_MEMORY)
+			{
+				*x=-1;
+				return NULL;
+			}
+			*y += MAP_HEIGHT(m->tile_map[7]);
+		    *x += MAP_WIDTH(m->tile_map[7]);
+			return (out_of_map2(m->tile_map[7], x, y));
+		}
+
+	    if (*y>=MAP_HEIGHT(m)) /* sw */
+		{
+			if (!m->tile_path[6]) 
+			{
+				*x=0;
+				return NULL;
+			}
+			if (!m->tile_map[6] || m->tile_map[6]->in_memory != MAP_IN_MEMORY)
+			{
+				*x=-1;
+				return NULL;
+			}
+			*y -= MAP_HEIGHT(m);
+		    *x += MAP_WIDTH(m->tile_map[6]);
+			return (out_of_map2(m->tile_map[6], x, y));
+		}
+		
+
+		if (!m->tile_path[3]) /* it MUST be west */
+		{
+			*x=0;
+			return NULL;
+		}
+		if (!m->tile_map[3] || m->tile_map[3]->in_memory != MAP_IN_MEMORY)
+		{
+			*x=-1;
+			return NULL;
+		}
+	    *x += MAP_WIDTH(m->tile_map[3]);
+        return (out_of_map2(m->tile_map[3], x, y));
+    }
+
+    if (*x>=MAP_WIDTH(m))  /* thatd e, ne or se (1 ,4 or 5) */
+	{
+	    if (*y<0) /*  ne.. */
+		{
+			if (!m->tile_path[4]) 
+			{
+				*x=0;
+				return NULL;
+			}
+			if (!m->tile_map[4] || m->tile_map[4]->in_memory != MAP_IN_MEMORY)
+			{
+				*x=-1;
+				return NULL;
+			}
+			*y += MAP_HEIGHT(m->tile_map[4]);
+			*x -= MAP_WIDTH(m);
+			return (out_of_map2(m->tile_map[4], x, y));
+		}
+
+	    if (*y>=MAP_HEIGHT(m)) /* se */
+		{
+			if (!m->tile_path[5]) 
+			{
+				*x=0;
+				return NULL;
+			}
+			if (!m->tile_map[5] || m->tile_map[5]->in_memory != MAP_IN_MEMORY)
+			{
+				*x=-1;
+				return NULL;
+			}
+			*y -= MAP_HEIGHT(m);
+			*x -= MAP_WIDTH(m);
+			return (out_of_map2(m->tile_map[5], x, y));
+		}
+
+		if (!m->tile_path[1]) 
+		{
+			*x=0;
+			return NULL;
+		}
+		if (!m->tile_map[1] || m->tile_map[1]->in_memory != MAP_IN_MEMORY)
+		{
+			*x=-1;
+			return NULL;
+		}
+		*x -= MAP_WIDTH(m);
+	    return (out_of_map2(m->tile_map[1], x, y));
+    }
+
+	/* because we have tested x above, we don't need to check
+	 * for nw,sw,ne and nw here again.
+	 */
+    if (*y<0) 
+	{
+		if (!m->tile_path[0]) 
+		{
+			*x=0;
+			return NULL;
+		}
+		if (!m->tile_map[0] || m->tile_map[0]->in_memory != MAP_IN_MEMORY)
+		{
+			*x=-1;
+			return NULL;
+		}
+		*y += MAP_HEIGHT(m->tile_map[0]);
+		return (out_of_map2(m->tile_map[0], x, y));
+    }
+    if (*y>=MAP_HEIGHT(m))
+	{
+		if (!m->tile_path[2]) 
+		{
+			*x=0;
+			return NULL;
+		}
+		if (!m->tile_map[2] || m->tile_map[2]->in_memory != MAP_IN_MEMORY)
+		{
+			*x=-1;
+			return NULL;
+		}
+		*y -= MAP_HEIGHT(m);
+		return (out_of_map2(m->tile_map[2], x, y));
+    }
+	*x=0;
+    return NULL; 
+}
+
 /* From map.c
  * This is used by get_player to determine where the other
  * creature is.  get_rangevector takes into account map tiling,
@@ -2420,12 +2547,12 @@ int get_rangevector(object *op1, object *op2, rv_vector *retval, int flags)
     if(! get_rangevector_from_mapcoords(
                 op1->map, op1->x, op1->y, 
                 op2->map, op2->x, op2->y, 
-                retval, flags | 0x04 | 0x08))
+                retval, flags | RV_NO_DISTANCE))
         return FALSE;
     
     best = op1;
     /* If this is multipart, find the closest part now */
-    if (!(flags & 0x1) && op1->more) {
+    if (!(flags & RV_IGNORE_MULTIPART) && op1->more) {
 	object *tmp;
 	int best_distance = retval->distance_x * retval->distance_x +
 		    retval->distance_y * retval->distance_y, tmpi;
@@ -2514,12 +2641,12 @@ int get_rangevector_from_mapcoords(mapstruct *map1, int x1, int y1, mapstruct *m
 	retval->distance_x = -(x1 +(MAP_WIDTH(map2)- x2));
 	retval->distance_y = -(y1 +(MAP_HEIGHT(map2)- y2));
     } 
-    else if (flags & 0x02) {
+    else if (flags & RV_RECURSIVE_SEARCH) {
         retval->distance_x = x2;
         retval->distance_y = y2;
-        
+       
         if(! relative_tile_position(map1, map2, &retval->distance_x, &retval->distance_y)) {
-            LOG(llevDebug,"DBUG: get_rangevector: No tileset path between maps '%s' and '%s'\n", 
+            LOG(llevDebug,"DBUG: get_rangevector_from_mapcoords: No tileset path between maps '%s' and '%s'\n", 
                     map1->path, map2->path);
             return FALSE;
         }
@@ -2528,21 +2655,21 @@ int get_rangevector_from_mapcoords(mapstruct *map1, int x1, int y1, mapstruct *m
         retval->distance_y -= y1;
     } 
     else {
-        LOG(llevDebug,"DBUG: get_rangevector: objects not on adjacent maps\n");
+        LOG(llevDebug,"DBUG: get_rangevector_from_mapcoords: objects not on adjacent maps\n");
         return FALSE;
     }
   
-    switch(flags & (0x04 | 0x08)) {
-        case 0x00: /* Manhattan distance */       
+    switch(flags & (0x04|0x08)) {
+        case RV_MANHATTAN_DISTANCE: 
             retval->distance =  abs(retval->distance_x)+abs(retval->distance_y);
             break;
-        case 0x04: /* Euclidian distance */
+        case RV_EUCLIDIAN_DISTANCE: 
             retval->distance = isqrt(retval->distance_x*retval->distance_x + retval->distance_y*retval->distance_y);
             break;
-        case 0x08: /* Diagonal distance */
+        case RV_DIAGONAL_DISTANCE:
             retval->distance =  MAX(abs(retval->distance_x),abs(retval->distance_y));
             break;
-        case (0x04 | 0x08): /* No distance calc */
+        case RV_NO_DISTANCE: /* No distance calc */
             return TRUE;
     }
     retval->direction = find_dir_2(-retval->distance_x, -retval->distance_y);
@@ -2550,16 +2677,15 @@ int get_rangevector_from_mapcoords(mapstruct *map1, int x1, int y1, mapstruct *m
 }
 
 /* Returns true of op1 and op2 are effectively on the same map
- * (as related to map tiling).  Note that this looks for a path from
- * op1 to op2, so if the tiled maps are assymetric and op2 has a path
- * to op1, this will still return false.
- * Note we only look one map out to keep the processing simple
- * and efficient.  This could probably be a macro.
- * MSW 2001-08-05
+ * (as related to map tiling).
+ * this will ONLY work if op1 and op2 are on a DIRECT connected
+ * tiled map. Any recursive idea here will kill in a big tiled
+ * world map the server.
  */
 int on_same_map(object *op1, object *op2)
 {
-	if (op1->map == NULL || op2->map == NULL) return FALSE;
+	if (!op1->map || !op2->map) 
+		return FALSE;
 
     if (op1->map == op2->map || 
 		op1->map->tile_map[0] == op2->map ||

@@ -5,6 +5,7 @@ Creator: Daimonin Map Editor
 Date:    2/6/2004
 endmsg
 width 19
+darkness 300
 height 19
 difficulty 1
 tile_path_1 testmap_tiled1
@@ -1474,4 +1475,12 @@ end
 arch floor_ostone1
 x 18
 y 18
+end
+arch wyvern
+x 18
+y 18
+end
+arch wyvern
+x 12
+y -1
 end

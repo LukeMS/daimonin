@@ -88,6 +88,7 @@
 
 static char *yval();
 
+static void *cur_buffer; /* thats needed to track the used buffers for recursive calling */
 static int object_load_flag;
 static int lex_error, msg_flag;
 static char msgbuf[HUGE_BUF];
@@ -552,10 +553,7 @@ op->oy= op->y;
 ^attack_movement{S} op->move_type = IVAL;
 ^move_state{S}	    op->move_status = IVAL;
 ^confused{S}	    SET_OR_CLEAR_FLAG(op, FLAG_CONFUSED, IVAL);
-^stealth{S}			{ 
-						SET_OR_CLEAR_FLAG(op, FLAG_STEALTH, IVAL);
-						op->stealth = IVAL;
-					}
+^stealth{S}			SET_OR_CLEAR_FLAG(op, FLAG_STEALTH, IVAL);
 ^connected{S}	    add_button_link(op, op->map, IVAL);
 ^cursed{S}	    SET_OR_CLEAR_FLAG(op, FLAG_CURSED, IVAL);
 ^damned{S}	    SET_OR_CLEAR_FLAG(op, FLAG_DAMNED, IVAL);
@@ -664,6 +662,24 @@ static char *yval()
     return cp;
 }
 
+/* buffer functions - needed to make load_object()
+ * recursive save.
+ */
+void delete_loader_buffer(void *buffer)
+{
+	if(buffer)
+		yy_delete_buffer(buffer);
+	else
+		yy_delete_buffer(YY_CURRENT_BUFFER);
+}
+
+void *create_loader_buffer(void *fp)
+{
+	cur_buffer = yy_create_buffer(fp, YY_BUF_SIZE);
+	yy_switch_to_buffer(cur_buffer);
+	return cur_buffer;
+}
+
 
 /*
  * Loads an object from the given file-pointer.
@@ -671,45 +687,48 @@ static char *yval()
  * until the string "end" is reached, or the end of the file.
  *
  * bufstat is used to determine various file attributes:
- *  LO_REPATE (0): We are reading from the same buffer as the last call.
+ *  LO_REPEAT (0): We are reading from the same buffer as the last call.
  *  LO_LINEMODE (1): file that is being read from is multi purpose (ie, other functions
  *	will also be reading from this (treasure file, artifacts.)
- *  LO_NEWFILE (2): This is the first read from a particular file, so the buffers should
- *	be reset.
- *  LO_NOREAD (3): Reset the buffers, but don't read from it. (op can be null)
- *
+ *  LO_NEWFILE (2): disabled
+ *  LO_NOREAD (3): disabled
+ *  LO_MEMORYMODE (4): read from a memory buffer instead of a file.
  */
-
-int load_object(void *fp, object *op, int bufstate, int map_flags) {
+/* load_object() is now recursive save - this kind of call can happens when a multi
+ * arch is expanded after loading in a map and out_of_map() triggers a map loading for
+ * parts in a different map. Because we don't need any order of objects when we load a map,
+ * this will work fine.
+ */
+int load_object(void *fp, object *op, void *mybuffer, int bufstate, int map_flags) {
     int retval;
 	float old_speed, old_sleft;
     char inbuf[MAX_BUF];
 
-    strcpy(msgbuf, "");
-    if (bufstate==LO_NEWFILE || bufstate==LO_NOREAD)
-	{
-		/*	LOG(llevDebug,"Switching lex buffers\n");*/
-		yy_delete_buffer(YY_CURRENT_BUFFER);
-		yy_switch_to_buffer(yy_create_buffer(fp, YY_BUF_SIZE));
-		if (bufstate==LO_NOREAD)
-			return LL_NORMAL;
-    }
-
 	/* note: at this point we have perhaps a "arch" parse or a "object"
 	 * parse - we don't know. "arch" parse means, arches are loaded - we
 	 * hit a arch command and pre-load our object data - then we go on and
-	 * parse the difference in. Ff we hit a "object" command, we had outside
+	 * parse the difference in. If we hit a "object" command, we had outside
 	 * this function pre-loaded the arch. in the first case, the next 2
 	 * values are undefined - in the last case, these values are the arch
 	 * pre sets. We need to track this down to adjust for the "real ingame"
 	 * object the right speed & speed_left.
 	 */
-
 	old_speed=op->speed;
 	old_sleft=op->speed_left;
 	object_load_flag = 0; /* we assume a "arch" load as default */
 
-    if (bufstate==LO_MEMORYMODE)
+	*msgbuf='\0';
+
+    if (bufstate==LO_REPEAT)
+	{
+		if(cur_buffer != mybuffer) /* be sure we work on the right buffer */
+		{
+			cur_buffer = mybuffer;
+			yy_switch_to_buffer(mybuffer);
+		}
+	    retval=lex_load(op, map_flags);
+	}
+    else if (bufstate==LO_MEMORYMODE)
 	{
 		YY_BUFFER_STATE  yybufstate;
 		int lcount=0;
@@ -725,7 +744,7 @@ int load_object(void *fp, object *op, int bufstate, int map_flags) {
 				break;
 		}
     }
-    else if (bufstate==LO_LINEMODE)
+    else /* if (bufstate==LO_LINEMODE) */
 	{
 		YY_BUFFER_STATE  yybufstate;
 		while (fgets(inbuf, MAX_BUF-3, (FILE *)fp))
@@ -738,15 +757,13 @@ int load_object(void *fp, object *op, int bufstate, int map_flags) {
 		LOG(llevDebug,"Got eof while scanning strings (%d)\n",retval);
 		return LL_EOF;
     }
-	else
-	    retval=lex_load(op, map_flags);
 	
 	if(QUERY_FLAG(op,FLAG_IDENTIFIED))
 	{
 		SET_FLAG(op,FLAG_KNOWN_MAGICAL);
 		SET_FLAG(op,FLAG_KNOWN_CURSED);
 	}
-  /* we set here AND in load_object the material real values.
+  /* we set here the material real values.
    * we do: If item_quality == 0 AND material defines a base
    * material, then use material_real to set quality & condition.
    * So, we don't set it for floor or walls or some else objects
@@ -838,7 +855,7 @@ NULL /*is_removed*/,"been_applied", "auto_apply", "treasure", "is_neutral",	/* 2
 "can_use_ring", "has_ready_range", "has_ready_bow",		/* 60 */
 "xrays", NULL, "is_floor", "lifesave", "is_magical", "alive",
 "stand_still", "random_move", "only_attack", "wiz",	/* 70 */
- NULL, NULL, NULL, "cursed", "damned",
+ "stealth", NULL, NULL, "cursed", "damned",
 "see_anywhere", "known_magical", "known_cursed",
 "can_use_skill", "is_thrown",				/* 80 */
 "is_vul_sphere", "is_proof_sphere", "is_male",
@@ -1082,8 +1099,6 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
 
   if(op->layer!=op2->layer)
     save_long(buf, "layer", op->layer);
-  if(op->stealth!=op2->stealth)
-    save_long(buf, "stealth", op->stealth);
   if(op->hide!=op2->hide)
     save_long(buf, "hidden", op->hide);
   if(op->path_attuned!=op2->path_attuned)

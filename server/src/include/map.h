@@ -227,14 +227,21 @@ typedef struct MapSpace {
 	object  *first;							/* start of the objects in this map tile */
 	object	*layer[MAX_ARCH_LAYERS*2];		/* array of visible layer objects + for invisible (*2)*/
 	object  *last;							/* last object in this list */
+	struct MapSpace *prev_light;			/* used to create chained light source list.*/
+	struct MapSpace *next_light;			
+
     uint32  round_tag;						/* tag for last_damage */
 	uint32  update_tile;					/* counter for update tile */
+	sint32	light_source;					/* light source counter - as higher as brighter light source here */
+	sint32  light_value;					/* how much light is in this tile. 0 = total dark
+											 * 255+ = full daylight.
+											 */
     int		flags;							/* flags about this space (see the P_ values above) */
     uint16  last_damage;					/* last_damage tmp backbuffer */
     uint16  move_flags;						/* terrain type flags (water, underwater,...) */
 	sint8	client_mlayer[MAP_LAYERS];		/* index for layer[] - this will send to player */
 	sint8	client_mlayer_inv[MAP_LAYERS];	/* same for invisible objects */
-    sint8	light;							/* How much light this space provides */
+    uint8	light;							/* How much light this space provides */
 } MapSpace;
 
 #ifdef WIN32
@@ -294,6 +301,7 @@ typedef struct mapdef {
     uint32 pathfinding_id;          /* For which traversal is the above valid */
     
     MapSpace *spaces;				/* Array of spaces on this map */
+    MapSpace *first_light;			/* list of tiles spaces with light sources in */
     oblinkpt *buttons;				/* Linked list of linked lists of buttons */
 
     const char *path;   	       	/* Filename of the map (shared string now) */
@@ -302,6 +310,10 @@ typedef struct mapdef {
 	object *player_first;			/* chained list of player on this map */
 
 
+    int		darkness;    			/* indicates the base light value in this map.
+	                                 * this value is only used when the map is not marked
+	                                 * as outdoor.
+									 */
 	uint32 map_flags;				/* mag flags for various map settings */
     uint32 reset_time;				/* when this map should reset */
     uint32 reset_timeout;			/* How many seconds must elapse before this map
@@ -314,33 +326,17 @@ typedef struct mapdef {
 									 * be loaded before used.  The map,omap and map_ob
 									 * arrays will be allocated when the map is loaded */
 
-    sint16 perm_load;				/* This is a counter - used for example from NPC's which have
+    uint32 traversed;               /* Used by relative_tile_position() to mark visited maps */
+    int perm_load;					/* This is a counter - used for example from NPC's which have
 	                                 * a global function. If this counter is != 0, map will not swap
 	                                 * and the npc/object with perm_load flag will stay in game.
 	                                 */
-    uint16 difficulty;				/* What level the player should be to play here */
-	uint16 height;					/* Width and height of map. */
-    uint16 width;
-    uint16 enter_x;					/* enter_x and enter_y are default entrance location */
-    uint16 enter_y;					/* on the map if none are set in the exit */
-
-    sint16	temp;					/* base temperature of this tile (F) */
-    sint16  pressure;				/* barometric pressure (mb) */
-
-    uint8 darkness;    				/* indicates level of darkness of map - run time value */
-    uint8 darkness_def;    			/* indicates level of darkness of map - default value */
-									/* note: when we load a new map, we load darkness in 
-									 * darkness and darkness_def. Then we process darkness
-									 * with daytime, spells, etc. to get the current darkness
-									 * level. When we save, we save darkness_def (tmp maps!).
-									 */
-    uint8 compressed;				/* Compression method used */ 
-    uint32 traversed;               /* Used by relative_tile_position() to mark visited maps */
-
-    sint8 humid;					/* humitidy of this tile */
-    sint8 windspeed;				/* windspeed of this tile */
-    sint8 winddir;					/* direction of wind */
-    sint8 sky;						/* sky conditions */
+    int difficulty;					/* What level the player should be to play here */
+	int height;						/* Width and height of map. */
+    int width;
+    int enter_x;					/* enter_x and enter_y are default entrance location */
+    int enter_y;					/* on the map if none are set in the exit */
+    int compressed;					/* Compression method used */ 
 
 } mapstruct;
 
@@ -360,6 +356,15 @@ typedef struct rv_vector {
     int	    direction;
     object  *part;
 } rv_vector;
+
+/* constants for the flags for get_rangevector() and get_rangevector_from_mapcoords() */
+#define RV_IGNORE_MULTIPART   0x01
+#define RV_RECURSIVE_SEARCH    0x02
+
+#define RV_MANHATTAN_DISTANCE 0x00
+#define RV_EUCLIDIAN_DISTANCE 0x04
+#define RV_DIAGONAL_DISTANCE  0x08
+#define RV_NO_DISTANCE        (0x08|0x04)
 
 extern int map_tiled_reverse[TILED_MAPS];
 

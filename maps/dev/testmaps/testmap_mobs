@@ -7,6 +7,7 @@ endmsg
 width 24
 height 24
 difficulty 1
+darkness 700
 end
 arch floor_ostone1
 end
@@ -178,6 +179,7 @@ end
 arch ring_generic
 name ring fo stealth
 stealth 1
+identified 1
 x 1
 y 3
 end

@@ -42,7 +42,7 @@ RSC=rc.exe
 # PROP Intermediate_Dir "ReleaseLog"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MD /W3 /GX /O2 /I "..\..\include" /I "d:\Python21\include" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "PYTHON_PLUGIN_EXPORTS" /YX /FD /c
-# ADD CPP /nologo /MD /W3 /Gi /GX /O2 /Ob2 /I "..\..\..\..\src\include" /I "c:\Python22\include" /D "_LIB" /D "PYTHON_PLUGIN_EXPORTS" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "DEBUG" /YX"libcross.pch" /FD /c
+# ADD CPP /nologo /MD /W3 /Gi /GX /O2 /Ob2 /I "..\..\..\..\src\include" /I "c:\Python23\include" /D "_LIB" /D "PYTHON_PLUGIN_EXPORTS" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "DEBUG" /YX"libcross.pch" /FD /c
 # ADD BASE RSC /l 0x407 /d "NDEBUG"
 # ADD RSC /l 0x407 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -65,7 +65,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "Debug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MD /W3 /Gi /GX /O2 /Ob2 /I "..\..\..\..\source\include" /I "d:\Python22\include" /D "_LIB" /D "PYTHON_PLUGIN_EXPORTS" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "DEBUG_MOVEATTACK" /YX"libcross.pch" /FD /c
-# ADD CPP /nologo /MDd /W3 /Gm /Gi /GX /Zi /Od /Ob2 /I "..\..\..\..\src\include" /I "c:\Python22\include" /D "_CONSOLE" /D "DEBUG" /D "DEBUG_MOVEATTACK" /D "PYTHON_PLUGIN_EXPORTS" /D "WIN32" /D "NDEBUG" /D "_MBCS" /YX"libcross.pch" /FD /c
+# ADD CPP /nologo /MDd /W3 /Gm /Gi /GX /Zi /Od /Ob2 /I "..\..\..\..\src\include" /I "c:\Python23\include" /D "_CONSOLE" /D "DEBUG" /D "DEBUG_MOVEATTACK" /D "PYTHON_PLUGIN_EXPORTS" /D "WIN32" /D "NDEBUG" /D "_MBCS" /YX"libcross.pch" /FD /c
 # ADD BASE RSC /l 0x407 /d "NDEBUG"
 # ADD RSC /l 0x407 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -88,7 +88,7 @@ LIB32=link.exe -lib
 # PROP Intermediate_Dir "ReleaseDebug"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MD /W3 /Gi /GX /Ob2 /I "..\..\..\..\src\include" /I "d:\Python22\include" /D "_LIB" /D "PYTHON_PLUGIN_EXPORTS" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "DEBUG" /YX"libcross.pch" /FD /c
-# ADD CPP /nologo /MD /W3 /Gm /Gi /GX /Zi /Ob2 /I "..\..\..\..\src\include" /I "c:\Python22\include" /D "_LIB" /D "PYTHON_PLUGIN_EXPORTS" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "DEBUG" /YX"libcross.pch" /FD /c
+# ADD CPP /nologo /MD /W3 /Gm /Gi /GX /Zi /Ob2 /I "..\..\..\..\src\include" /I "c:\Python23\include" /D "_LIB" /D "PYTHON_PLUGIN_EXPORTS" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "DEBUG" /YX"libcross.pch" /FD /c
 # ADD BASE RSC /l 0x407 /d "NDEBUG"
 # ADD RSC /l 0x407 /d "NDEBUG"
 BSC32=bscmake.exe

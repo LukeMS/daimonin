@@ -340,7 +340,7 @@ void init_artifacts()
 			ADD_REF_NOT_NULL_HASH(art->def_at.clone.race);
 			ADD_REF_NOT_NULL_HASH(art->def_at.clone.slaying);
 			ADD_REF_NOT_NULL_HASH(art->def_at.clone.msg);
-
+			art->def_at.clone.arch = &art->def_at;
 			/* we patch this .clone object after Object read with the artifact data.
 			 * in find_artifact, this archetype object will be returned. For the server,
 			 * it will be the same as it comes from the archlist, defined in the arches.
@@ -351,7 +351,7 @@ void init_artifacts()
 		else if (!strncmp(cp, "Object",6)) /* all text after Object is now like a arch file until a end comes */
 		{			
 			old_pos = ftell(fp);
-			if (!load_object(fp, &(art->def_at.clone),LO_LINEMODE,MAP_STYLE))
+			if (!load_object(fp, &(art->def_at.clone),NULL, LO_LINEMODE,MAP_STYLE))
 				LOG(llevError,"ERROR: Init_Artifacts: Could not load object.\n");
 
 			if(!art->name)
@@ -394,7 +394,6 @@ void init_artifacts()
 													   * original arch, not this (hm, this
 													   * can be a glitch in treasures too...)
 													   */
-
 			/* now handle the <Allowed none> in the artifact to create 
 			 * unique items or add them to the given type list.
 			 */
@@ -1563,7 +1562,7 @@ static int legal_artifact_combination(object *op, artifact *art) {
 void give_artifact_abilities(object *op, artifact *art)
  { 
 			
-	if (!load_object(art->parse_text, op, LO_MEMORYMODE, MAP_ARTIFACT))
+	if (!load_object(art->parse_text, op, NULL, LO_MEMORYMODE, MAP_ARTIFACT))
 		LOG(llevError,"ERROR: give_artifact_abilities(): load_object() error (ob: %s art: %s).\n",op->name,art->name);
 
 #if 0 /* Bit verbose, but keep it here until next time I need it... */

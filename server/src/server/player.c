@@ -396,14 +396,7 @@ object *get_nearest_player(object *mon) {
 			if (!ol) return op;
 		}
 
-		/* Remove special check for player from this.  First, it looks to cause
-		 * some crashes (ol->ob->contr not set properly?), but secondly, a more
-		 * complicated method of state checking would be needed in any case -
-		 * as it was, a clever player could type quit, and the function would  
-		 * skip them over while waiting for confirmation.
-		 */
-		if (!can_detect_enemy(mon,ol->ob,&rv) ||
-			(QUERY_FLAG(ol->ob, FLAG_STEALTH)?aggro_stealth:aggro_range) < (int) rv.distance)
+		if (!can_detect_target(mon,ol->ob,aggro_range,aggro_stealth,&rv)) 
 			continue;
 
 		if(lastdist>rv.distance)
@@ -412,21 +405,6 @@ object *get_nearest_player(object *mon) {
 		    lastdist=rv.distance;
 		}
     }
-
-	/* well, we add now player to friendly list (later it will friendly object on map list) 
-    for (pl=first_player; pl != NULL; pl=pl->next) 
-	{
-		if (on_same_map(mon, pl->ob)&& can_detect_enemy(mon, pl->ob,&rv)) 
-		{
-
-			if(lastdist>rv.distance)
-			{
-				op=pl->ob;
-				lastdist=rv.distance;
-			}
-		}
-    }
-	*/
 
 #if 0
 	LOG(llevDebug,"get_nearest_player() mob %s (%x) finds friendly obj: %s (%x) aggro range: %d\n",query_name(mon),mon->count,query_name(op),op?op->count:-1, mon->stats.Wis);
@@ -1704,7 +1682,7 @@ int move_player(object *op,int dir)
 			play_sound_map(op->map, op->x, op->y, SOUND_PUSH_PLAYER, SOUND_NORMAL);
 			if(push_ob(tmp,dir,op))
 				ret = 1;
-			if(op->contr->tmp_invis||op->hide) 
+			if(op->hide) 
 				make_visible(op);
 			return ret;
 		}
@@ -2477,15 +2455,16 @@ void cast_dust (object *op, object *throw_ob, int dir) {
 }
 
 void make_visible (object *op) {
-    op->hide = 0;
+	/*
     if(op->type==PLAYER) 
-      op->contr->tmp_invis = 0;
     if(QUERY_FLAG(op, FLAG_UNDEAD)&&!is_true_undead(op)) 
       CLEAR_FLAG(op, FLAG_UNDEAD);
     update_object(op,UP_OBJ_FACE);
+*/
 }
 
 int is_true_undead(object *op) {
+/*
   object *tmp=NULL;
   
   if(QUERY_FLAG(&op->arch->clone,FLAG_UNDEAD)) return 1;
@@ -2494,6 +2473,7 @@ int is_true_undead(object *op) {
     for(tmp=op->inv;tmp;tmp=tmp->below)
        if(tmp->type==EXPERIENCE && tmp->stats.Wis)
 	  if(QUERY_FLAG(tmp,FLAG_UNDEAD)) return 1;
+*/
   return 0;
 }
 
@@ -2503,17 +2483,11 @@ int is_true_undead(object *op) {
  */
 
 int hideability(object *ob) {
+#if 0
   int i,x,y,level=0;
 
   if(!ob||!ob->map) return 0;
 
-  /* so, on normal lighted maps, its hard to hide */
-  level=ob->map->darkness - 2;
-
-  /* this also picks up whether the object is glowing.
-   * If you carry a light on a non-dark map, its not
-   * as bad as carrying a light on a pitch dark map */
-  if(has_carried_lights(ob)) level =- (10 + (2*ob->map->darkness));
 
   /* scan through all nearby squares for terrain to hide in */
   for(i=0,x=ob->x,y=ob->y;i<9;i++,x=ob->x+freearr_x[i],y=ob->y+freearr_y[i]) 
@@ -2524,10 +2498,10 @@ int hideability(object *ob) {
       level -= 1;
   }
   
-#if 0
   LOG(llevDebug,"hideability of %s is %d\n",ob->name,level);
-#endif
   return level;
+#endif
+  return 0;
 }
 
 /* For Hidden creatures - a chance of becoming 'unhidden'
@@ -2651,20 +2625,19 @@ int player_can_view (object *pl,object *op) {
  * return 0. 
  */
 int action_makes_visible (object *op) {
-
+/*
   if(QUERY_FLAG(op,FLAG_IS_INVISIBLE) && QUERY_FLAG(op,FLAG_ALIVE)) {
     if(!QUERY_FLAG(op,FLAG_SEE_INVISIBLE)) 
       return 0; 
-    else if(op->hide || (op->contr&&op->contr->tmp_invis)) { 
+    else if(op->hide) { 
       new_draw_info_format(NDI_UNIQUE, 0,op,"You become %!",op->hide?"unhidden":"visible");
       return 1; 
     } else if(op->contr && !op->contr->shoottype==range_magic) { 
-	  /* improved invis is lost EXCEPT for case of casting of magic */
           new_draw_info(NDI_UNIQUE, 0,op,"Your invisibility spell is broken!");
           return 1;
     }
   }
-
+*/
   return 0;
 }
 

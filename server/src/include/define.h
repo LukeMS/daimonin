@@ -804,15 +804,6 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define EXIT_X(xyz)		(xyz)->stats.hp
 #define EXIT_Y(xyz)		(xyz)->stats.sp
 
-/* for use by the lighting code */
-#define MAX_LIGHT_RADII		4	/* max radii for 'light' object, really
-					 * large values allow objects that can
-					 * slow down the game */
-#define MAX_DARKNESS		5	/* maximum map darkness, there is no
-					 * practical reason to exceed this */ 
-#define BRIGHTNESS(xyz)		(xyz)->glow_radius>MAX_LIGHT_RADII? \
-				  MAX_LIGHT_RADII:(xyz)->glow_radius;
-
 #define F_BUY 0
 #define F_SELL 1
 #define F_TRUE 2	/* True value of item, unadjusted */

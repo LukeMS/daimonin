@@ -202,6 +202,8 @@ CommArray_s WizCommands [] = {
   {"/d_belowfull", command_dumpbelowfull,0.0},
   {"/d_below", command_dumpbelow,0.0},
   {"/d_friendly", command_dumpfriendlyobjects,0.0},
+  {"/set_map_light", command_setmaplight,0.0},
+
 #ifdef DEBUG
   {"/sstable", command_sstable,	0.0},
 #endif

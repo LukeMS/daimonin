@@ -147,6 +147,7 @@ typedef struct obj
     uint16 animation_id;		/* An index into the animation array */
     uint16 inv_animation_id;	/* An index into the animation array for the client inv */
 
+	sint8 glow_radius;			/* object is a light source */
 	/* some stuff for someone coming softscrolling / smooth animations */
 	/*sint8 tile_xoff;*/			/* x-offset of position of an object inside a tile */
 	/*sint8 tile_yoff;*/			/* same for y-offset */
@@ -169,7 +170,6 @@ typedef struct obj
 	uint8 item_race;			/* item crafted from race x. "orcish xxx", "dwarven xxxx" */
 	uint8 item_level;			/* level needed to use or apply this item */
 	uint8 item_skill;			/* if set and item_level, item_level in this skill is needed */
-	sint8 glow_radius;			/* indicates the glow radius of the object */
 
 	sint8 move_status;			/* What stage in attack mode */
     uint8 move_type;			/* What kind of attack movement */
@@ -187,10 +187,7 @@ typedef struct obj
 	uint8 run_away;				/* Monster runs away if it's hp goes below this percentage. */
 
 	uint8 pick_up;				/* pickup mode - See crossfire.doc */  
-	sint8 stealth;				/* the "stealth" value. from -100 to +100.
-								 * -100 means the object will make ALOT of noice when moving,
-								 * +100 means it will move like a ghost 
-								 */
+
 	uint8 hide;					/* The object is hidden. We don't use a flag here because
 								 * the range from 0-255 tells us the quality of the hide
 								 */

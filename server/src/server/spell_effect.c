@@ -605,8 +605,6 @@ int cast_invisible(object *op, object *caster, int spell_type) {
     /*op->invisible+=spells[spell_type].bdur;*/  /* set the base */
     /*op->invisible+=spells[spell_type].ldam *
                   SP_level_strength_adjust(op,caster,spell_type);*/  /*  set the level bonus */
-    if(op->type==PLAYER)
-      op->contr->tmp_invis=1;
     break;
   case SP_INVIS_UNDEAD:
     SET_FLAG(op, FLAG_UNDEAD);
@@ -615,8 +613,6 @@ int cast_invisible(object *op, object *caster, int spell_type) {
     op->invisible+=spells[spell_type].ldam *
                   SP_level_strength_adjust(op,caster,spell_type);  
 */
-    if(op->type==PLAYER)
-      op->contr->tmp_invis=1;
     break;
   case SP_IMPROVED_INVIS:
 /*    op->invisible+=spells[spell_type].bdur; 
@@ -1178,7 +1174,7 @@ int magic_wall(object *op,object *caster,int dir,int spell_type) {
 /* cast_light() - I wanted this to be able to blind opponents who stand
  * adjacent to the caster, so I couldnt use magic_wall(). -b.t. 
  */
-
+/* badly outdated of course - MT 2004*/
 int cast_light(object *op,object *caster,int dir) {
   object *target=NULL,*tmp=NULL;
   mapstruct *m;
@@ -1217,7 +1213,6 @@ int cast_light(object *op,object *caster,int dir) {
   tmp->speed = 0.000001f * (float)(spells[SP_LIGHT].bdur
               - (10*SP_level_strength_adjust(op,caster,SP_LIGHT)));
   if (tmp->speed < MIN_ACTIVE_SPEED) tmp->speed = MIN_ACTIVE_SPEED;
-  tmp->glow_radius=dam;
   tmp->x=x,tmp->y=y;
   insert_ob_in_map(tmp,m,op,0);
 
@@ -3977,32 +3972,15 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
   return 1;
 }
 
-/* cast_daylight() - changes the map darkness level *lower* */
 
-int cast_daylight ( object *op ) {
-  int success = 0;
-  mapstruct *m=op->map;
-
-  if(!m) return 0;   /* shouldnt happen */ 
-
-  if(!(success=change_map_light(m,-1)))
-        new_draw_info(NDI_UNIQUE,0,op,"It can be no brighter here."); 
-
-  return success;
+int cast_daylight ( object *op ) 
+{
+  return 0;
 }
 
-/* cast_nightfall() - changes the map darkness level *higher* */
 
 int cast_nightfall ( object *op ) {
-  int success=0;
-  mapstruct *m=op->map;
-
-  if(!m) return 0;   /* shouldnt happen */
-
-  if(!(success=change_map_light(m,1)))
-        new_draw_info(NDI_UNIQUE,0,op,"It can be no darker here."); 
-
-  return success;
+  return 0;
 }
 
 /* cast_faery_fire() - this spell primary purpose is to light
@@ -4060,7 +4038,7 @@ int cast_faery_fire(object *op,object *caster) {
  * make this work for non-living objects, we would have to 
  * give them the capability to have an inventory. b.t.
  */
-
+/* outdated too with new lightning system - MT 2004 */
 int make_object_glow(object *op, int radius, int time) {
   object *tmp;
 
@@ -4070,7 +4048,6 @@ int make_object_glow(object *op, int radius, int time) {
   
    tmp=get_archetype("force");
    tmp->speed = 0.000001f * (float) time;
-   tmp->glow_radius=radius;
    tmp->x=op->x,tmp->y=op->y;
    if(tmp->speed<MIN_ACTIVE_SPEED) tmp->speed = MIN_ACTIVE_SPEED; /* safety */
    tmp=insert_ob_in_ob(tmp,op);

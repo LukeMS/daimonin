@@ -719,7 +719,8 @@ void MapRedrawCmd(char *buff, int len, player *pl)
 {
     /* Okay, this is MAJOR UGLY. but the only way I know how to
      * clear the "cache"
-     */
+	*/
+LOG(-1,"XXXXXXXXXXXXXXXXXXXXXXX redraw map from client?XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx\n");
     memset(&pl->socket.lastmap, 0, sizeof(struct Map));
     draw_client_map(pl->ob);
 }
@@ -1061,6 +1062,9 @@ void draw_client_map(object *pl)
  * to send the object ID to the client - and we use then the object ID to attach more data
  * when we update the object.
  */
+
+static int	darkness_table[] = {0,100,200,300,400,500,600,700};
+
 void draw_client_map2(object *pl)
 {
 	static uint32 map2_count=0;
@@ -1071,14 +1075,24 @@ void draw_client_map2(object *pl)
     object *tmp, *tmph, *pname1, *pname2, *pname3, *pname4;
     int x,y,ax, ay, d, nx,ny, probe_tmp;
 	int x_start;
-    int dark, flag_tmp;
+    int dark, flag_tmp, special_vision;
     int quick_pos_1,quick_pos_2,quick_pos_3; 
  	int inv_flag = QUERY_FLAG(pl,FLAG_SEE_INVISIBLE)?0:1;
     uint16 face_num0,face_num1,face_num2,face_num3,face_num1m,face_num2m,face_num3m;
     uint16  mask;
     SockList sl;
 	unsigned char sock_buf[MAXSOCKBUF];
-    
+    int pname_flag,ext_flag, dmg_flag, oldlen;
+    int dmg_layer2,dmg_layer1,dmg_layer0;
+	int wdark;
+	
+#ifdef DEBUG_CORE
+	int tile_count=0;
+#endif
+	
+	wdark = darkness_table[world_darkness];
+	special_vision = (QUERY_FLAG(pl,FLAG_XRAYS)?1:0)|(QUERY_FLAG(pl,FLAG_SEE_IN_DARK)?2:0);
+
     map2_count++;      /* we need this to decide quickly we have updated a object before here */
 
 	sl.buf = sock_buf;
@@ -1116,8 +1130,11 @@ void draw_client_map2(object *pl)
 		{
 			if (pl->contr->socket.lastmap.cells[ax][ay].count != -1) 
 			{
+#ifdef DEBUG_CORE
+	tile_count++;
+#endif
 				SockList_AddShort(&sl, mask); /* a position mask without any flags = clear cell */
-				map_clearcell(&pl->contr->socket.lastmap.cells[ax][ay]);
+				map_clearcell(&pl->contr->socket.lastmap.cells[ax][ay]); /* sets count to -1 too */
 			}
 			continue;
 	    }
@@ -1135,8 +1152,11 @@ void draw_client_map2(object *pl)
 
 			if (pl->contr->socket.lastmap.cells[ax][ay].count != -1) 
 			{
+#ifdef DEBUG_CORE
+	tile_count++;
+#endif
 				SockList_AddShort(&sl, mask);
-				map_clearcell(&pl->contr->socket.lastmap.cells[ax][ay]);
+				map_clearcell(&pl->contr->socket.lastmap.cells[ax][ay]);/* sets count to -1 too */
 			}
 			continue;
 	    }
@@ -1176,50 +1196,60 @@ void draw_client_map2(object *pl)
 			}
 		}
 
-		/* outdated stuff...*/
-		if ( 0 )
-		{
-			/*
-			if (d==4 && pl->contr->socket.darkness)
-			{
-				if (pl->contr->socket.lastmap.cells[ax][ay].count != d) 
-				{
-					map_clearcell(&pl->contr->socket.lastmap.cells[ax][ay]);
-					SockList_AddShort(&sl, mask);
-					mask |= 0x10;  
-					SockList_AddShort(&sl, mask);
-					SockList_AddChar(&sl, 0);
-					pl->contr->socket.lastmap.cells[ax][ay].count = d;
-				}
-			}
-			else if (pl->contr->socket.lastmap.cells[ax][ay].count != -1)
-			{
-				SockList_AddShort(&sl, mask);
-				map_clearcell(&pl->contr->socket.lastmap.cells[ax][ay]);
-			}
-			*/
-	    }
-	    else 
+		if ( 1 )
 		{ /* this space is viewable */
-        int pname_flag=0,ext_flag = 0, dmg_flag=0, oldlen = sl.len;
-        int dmg_layer2=0,dmg_layer1=0,dmg_layer0=0;
-
+        pname_flag=0,ext_flag = 0, dmg_flag=0, oldlen = sl.len;
+        dmg_layer2=0,dmg_layer1=0,dmg_layer0=0;
         dark = NO_FACE_SEND;
 
-		/* Darkness changed */
-		d=0;
-		if (pl->contr->socket.lastmap.cells[ax][ay].count != d && pl->contr->socket.darkness) {
-		    pl->contr->socket.lastmap.cells[ax][ay].count = d;
-		    mask |= 0x10;    /* darkness bit */
-            if (d==0) dark = 255;
-            else if (d==1) dark = 191;
-            else if (d==2) dark = 127;
-            else if (d==3) dark = 63;
-        }
+		/* lets calc the darkness/light value for this tile.*/
+		if(MAP_OUTDOORS(m))
+		{
+			d = msp->light_value + wdark;
+		}
 		else
-		    pl->contr->socket.lastmap.cells[ax][ay].count = d;
+		{
+			d = m->darkness + msp->light_value;
+		}
+
+		if(d <= 0) /* tile is not normal visible */
+		{
+			/* (xray) or (infravision with mobile(aka alive) or player on a tile)? */
+			if(special_vision&1 || (special_vision&2 && msp->flags&(P_IS_PLAYER|P_IS_ALIVE)))
+				d = 100; /* make spot visible again */
+			else
+			{
+				if (pl->contr->socket.lastmap.cells[ax][ay].count != -1) 
+				{
+#ifdef DEBUG_CORE
+	tile_count++;	
+#endif
+				SockList_AddShort(&sl, mask);
+				map_clearcell(&pl->contr->socket.lastmap.cells[ax][ay]);/* sets count to -1 too */
+				}
+				continue;
+			}
+		}
+		/* when we arrived here, this tile IS visible - now lets collect the data of it
+		 * and update the client when something has changed.
+		 */
+		/* we should do this with a table */
+        if (d>600) d = 210;
+        else if (d>500) d = 180;
+        else if (d>400) d = 150;
+        else if (d>300) d = 120;
+        else if (d>200) d = 90;
+        else if (d>100) d = 60;
+		else d = 30;
 
         mp = &(pl->contr->socket.lastmap.cells[ax][ay]);
+
+		if (mp->count != d)
+		{
+		    mask |= 0x10;    /* darkness bit */
+			dark = d;
+			mp->count = d;
+        }
 
 		/* floor layer */
 		face_num0 = 0;
@@ -1669,16 +1699,24 @@ void draw_client_map2(object *pl)
         }
 
        if (!(mask & 0x3f)) /* check all bits except the position */
-        sl.len = oldlen;
+			sl.len = oldlen;
+#ifdef DEBUG_CORE
+	   else
+		   tile_count++;
+#endif
 
 	    }
 	} /* for x loop */
     } /* for y loop */
 		    
     /* Verify that we in fact do need to send this */
-    if (sl.len>1 || pl->contr->socket.sent_scroll) {
-	Send_With_Handling(&pl->contr->socket, &sl);
-	pl->contr->socket.sent_scroll = 0;
+    if (sl.len>3 || pl->contr->socket.sent_scroll) 
+	{
+		Send_With_Handling(&pl->contr->socket, &sl);
+#ifdef DEBUG_CORE
+		LOG(-1,"MAP2: (%d) send tiles (%d): %d \n", sl.len,pl->contr->socket.sent_scroll,tile_count);
+#endif
+		pl->contr->socket.sent_scroll = 0;
     }
 }
 

@@ -48,7 +48,7 @@ burnout.10R
 mina
 is_animated 1
 anim_speed 2
-glow_radius 3
+glow_radius 1
 speed 1
 food 41
 is_used_up 1

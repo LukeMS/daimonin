@@ -229,7 +229,7 @@ EXTERN long nrofallowedstr;		/* Only used in malloc_info() */
 EXTERN short nrofexpcat;	/* Current number of experience categories in the game */
 EXTERN object *exp_cat[MAX_EXP_CAT];	/* Array of experience objects in the game */ 
 
-EXTERN archetype *aggro_wp_archetype;	/* Nice to have fast access to it */
+EXTERN archetype *wp_archetype;	/* Nice to have fast access to it */
 EXTERN archetype *empty_archetype;	/* Nice to have fast access to it */
 EXTERN archetype *base_info_archetype;	/* Nice to have fast access to it */
 EXTERN archetype *map_archeytpe;
@@ -276,9 +276,9 @@ extern MapLook blank_look;
 extern long max_time;	/* loop time */
 extern NewSocket *init_sockets;
 
-extern unsigned long todtick;
-extern int world_darkness;
-extern archetype *level_up_arch;
+extern unsigned long todtick; /* time of the day tick counter */
+extern int world_darkness; /* daylight value. 0= totally dark. 7= daylight */
+extern archetype *level_up_arch; /* a global animation arch we use it in 2 modules, so not static */
 
 #define decrease_ob(xyz) decrease_ob_nr(xyz,1)
 

@@ -29,43 +29,45 @@
 
 const int season_timechange[5][HOURS_PER_DAY] = {
 
-    {   0, 0,  0,  0, 0, 0, -1,-1, -1, -1, 0, 0,
-        0, 0,  0,  0,  0,  1,  1, 1, 1, 0, 0, 0 },
+    {   0, 0,  0,  0, 0, -1, -1,-1, -1, -1, 0, 0,
+        0, 0,  0,  0,  0,  1,  1, 1, 1, 1, 0, 0 },
 
-    {   0, 0,  0,  0, 0, -1, -1,-1, -1, 0, 0, 0,
-    0, 0,  0,  0,  0,  1,  1, 1, 1, 0, 0, 0 },
+    {   0, 0,  0,  0, -1, -1, -1,-1, -1, 0, 0, 0,
+    0, 0,  0,  0,  0,  1,  1, 1, 1, 1, 0, 0 },
     
     
-    {   0, 0,  0,  0, -1, -1, -1,-1, 0, 0, 0, 0,
-        0, 0,  0,  0,  0,  1,  1, 1, 1, 0, 0, 0 },
+    {   0, 0,  0,  -1, -1, -1, -1,-1, 0, 0, 0, 0,
+        0, 0,  0,  0,  0,  1,  1, 1, 1, 1, 0, 0 },
     
-    {   0, 0,  0, -1, -1, -1, -1, 0, 0, 0, 0, 0,
-        0, 0,  0,  0,  0,  0,  1, 1, 1, 1, 0, 0 },
+    {   0, 0,  -1, -1, -1, -1, -1, 0, 0, 0, 0, 0,
+        0, 0,  0,  0,  0,  0,  1, 1, 1, 1, 1, 0 },
     
 
-    {   0, 0,  0, -1, -1, -1, -1, 0, 0, 0, 0, 0,
-        0, 0,  0,  0,  0,  0,  0, 1, 1, 1, 1, 0 }
+    {   0, 0,  -1, -1, -1, -1, -1, 0, 0, 0, 0, 0,
+        0, 0,  0,  0,  0,  0,  0, 1, 1, 1, 1, 1 }
 };
-
+ 
 void init_word_darkness(void)
 {
     int i;
     timeofday_t tod;
     
-    world_darkness=0;
+    world_darkness=7;
     get_tod(&tod);
 
     for (i = HOURS_PER_DAY/2; i < HOURS_PER_DAY; i++)
-        world_darkness +=season_timechange[tod.season][i];
+        world_darkness -=season_timechange[tod.season][i];
     for (i = 0; i <= tod.hour; i++) /* must be <= and not < ... */
-        world_darkness +=season_timechange[tod.season][i];
+        world_darkness -=season_timechange[tod.season][i];
 }
 
 void dawn_to_dusk(timeofday_t *tod)
 {
-    mapstruct *m;
+ /*   mapstruct *m;*/
 
-    world_darkness +=season_timechange[tod->season][tod->hour];
+    world_darkness -=season_timechange[tod->season][tod->hour];
+/*	LOG(-1,"WORLD DARKNESS: %d\n", world_darkness);*/
+/*
     for(m=first_map;m!=NULL;m=m->next) {
 #ifndef MAP_RESET
 	if (m->in_memory == MAP_SWAPPED)
@@ -75,6 +77,7 @@ void dawn_to_dusk(timeofday_t *tod)
 	    continue;
 	change_map_light(m, season_timechange[tod->season][tod->hour]);
     }
+*/
 }
 
 /*

@@ -639,18 +639,24 @@
   <description><![CDATA[
 	A applyable light source for a player or monster. It has a 3 way apply chain:
       First time light the object, second time put it in the hand, 3rd time unapply
-      and unlighten it.]]>
+      and unlighten it. This will allow to drop a light enlighted or not to the 
+      ground.]]>
   </description>
-  <attribute arch="glow_radius" editor="glow radius" type="int">
-    If &lt;glow radius&gt; is set to a value greater zero, the object
-    appears lit up on dark maps. &lt;glow radius&gt; can be a value
-    between 1 and 4, the higher, the more light does the object emmit.
+  <attribute arch="last_sp" editor="glow radius" type="int">
+    If &lt;glow radius&gt; is set to a value not zero, the object
+    appears lit up on dark maps. &lt;glow radius&gt; As higher as 
+    more light does the object emmit. The current senseful max value is 9.
     If the value is 0, the light can't be lighten and can't be applied.
-    If the value is negative, this object is unlighten. If lighten,
-    the value is changed to positive value.
-    Lights are unlighten (negative value) on default - to put a lighten
-    'Applyable Light' on a map or in a object this value must changed
-    to a positive one. Then the light is lighten when map is loaded.
+    If the value is negative, this object will invoke darkness!
+    A value of 0 means, that this light can't be lighten. This will
+    be true for permanent burned out lights like torches.
+  </attribute>
+  <attribute arch="glow_radius" editor="light on" type="int">
+   Applyable light can be turned on or off. The value above will 
+   determinate how and then its copied to this value. If this 
+   value is 0 (default) the light is off - every other value
+   means on! This value is normally autoset when applied but can
+   be set by map makers to simulate light on.
   </attribute>
   <attribute arch="maxhp" editor="max. ticks of light" type="int">
   'Max. Ticks of Light' defines the maximal value of 'Ticks of Light'.
@@ -2122,6 +2128,12 @@
     If no_pass (blocking passage) is set, no one can pass. If this
     flag is set too, ethereal objects with the CAN_PASS_THRU flag can
     pass. This is used for example from ghosts who moves through doors.
+  </attribute>
+  <attribute arch="last_sp" editor="luminousness" type="int">
+  This value sets the basic light/darkness value of tile space. This is
+  how much this space is naturally glowing (luminousness). This is NOT
+  the light source value. This value can be negative (shadow) and is
+  direct added to a tile light value.
   </attribute>
 <section name="terrain">
   <attribute arch="terrain_type" editor="terrain type" type="bitmask_terrain">
@@ -4126,7 +4138,6 @@
     receive some. :-) ]]>
   </use>
   <attribute arch="alive" value="1" type="fixed" />
-  <attribute arch="speed" value="0" type="fixed" />
   <attribute arch="randomitems" editor="treasurelist" type="treasurelist">
     When the monster is killed, items from the treasurelist will
     drop to the ground. This is a common way to reward players
