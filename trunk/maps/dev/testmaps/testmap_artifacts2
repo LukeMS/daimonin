@@ -1603,6 +1603,10 @@ arch floor_ostone1
 x 13
 y 15
 end
+arch ring_ghost
+x 13
+y 15
+end
 arch floor_ostone1
 x 13
 y 16

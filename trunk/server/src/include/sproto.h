@@ -786,7 +786,7 @@ void walk_on_deep_swamp(object *op, object *victim);
 void move_deep_swamp(object *op);
 /* swap.c */
 void read_map_log(void);
-void swap_map(mapstruct *map);
+void swap_map(mapstruct *map, int force_flag);
 void check_active_maps(void);
 mapstruct *map_least_timeout(const char *except_level);
 void swap_below_max(const char *except_level);

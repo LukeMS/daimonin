@@ -793,7 +793,9 @@ int command_abil (object *op, char *params)
 
 int command_reset (object *op, char *params)
 {
+	int count;
     mapstruct *m;
+	player *pl;
     object *dummy = NULL, *tmp = NULL;
     const char *mapfile_sh;
 
@@ -812,51 +814,77 @@ int command_reset (object *op, char *params)
 		return 1;	
 	}
 
-    if (m->in_memory != MAP_SWAPPED) {
-	if(m->in_memory != MAP_IN_MEMORY) {
-	    LOG(llevBug,"BUG: Tried to swap out map which was not in memory.\n");
-	    return 0;
-	}
-	/* Only attempt to remove the player that is doing the reset, and not other
-	 * players or wiz's.
-	 */
-	if (op->map == m ) {
-	    dummy=get_object();
-	    dummy->map = NULL;
-	    EXIT_X(dummy) = op->x;
-	    EXIT_Y(dummy) = op->y;
-	    FREE_AND_ADD_REF_HASH(EXIT_PATH(dummy), op->map->path);
-	    remove_ob(op);
-	    op->map = NULL;
-	    tmp=op;
-	}
-	swap_map(m);
+	dummy=get_object();
+	dummy->map = NULL;
+	FREE_AND_ADD_REF_HASH(EXIT_PATH(dummy), m->path);
+
+    if (m->in_memory != MAP_SWAPPED) 
+	{
+		if(m->in_memory != MAP_IN_MEMORY)
+		{
+			LOG(llevBug,"BUG: Tried to swap out map which was not in memory.\n");
+			return 0;
+		}
+
+		new_draw_info_format(NDI_UNIQUE, 0,op,"Start reseting map %s.", m->path?m->path:">NULL<");
+		/* remove now all players from this map - flag them so we can
+		 * put them back later.
+		 */
+		count=0;
+		for (pl = first_player; pl != NULL; pl = pl->next) 
+		{
+			if (pl->ob->map == m ) 
+			{
+				count++;
+				remove_ob(pl->ob);
+				pl->ob->map = NULL;
+				pl->dm_removed_from_map=1;
+			/*tmp=op;*/
+			}
+			else
+				pl->dm_removed_from_map=0;
+
+		}
+		new_draw_info_format(NDI_UNIQUE, 0,op,"removed %d players from map. Swap map.", count);
+		swap_map(m, 1);
     }
 
 
-    if (m->in_memory == MAP_SWAPPED) {	
-	LOG(llevDebug,"Resetting map %s.\n",m->path);
-	clean_tmp_map(m);
-	if (m->tmpname) free(m->tmpname);
-	m->tmpname = NULL;
-	/* setting this effectively causes an immediate reload */
-	m->reset_time = 1;
-	new_draw_info(NDI_UNIQUE, 0,op,"OK.");
-	if (tmp) {
-	    enter_exit(tmp, dummy);
-	    free_object(dummy);
+    if (m->in_memory == MAP_SWAPPED) 
+	{	
+		LOG(llevDebug,"Resetting map %s.\n",m->path);
+		clean_tmp_map(m);
+		if (m->tmpname) free(m->tmpname);
+		m->tmpname = NULL;
+		/* setting this effectively causes an immediate reload */
+		m->reset_time = 1;
+		new_draw_info(NDI_UNIQUE, 0,op,"Swap successful. Inserting players.");
+
+		for (pl = first_player; pl != NULL; pl = pl->next) 
+		{
+			if(pl->dm_removed_from_map)
+			{
+				EXIT_X(dummy) = pl->ob->x;
+				EXIT_Y(dummy) = pl->ob->y;
+				enter_exit(pl->ob, dummy);
+			}
+		}
+
+		new_draw_info(NDI_UNIQUE, 0,op,"resetmap done.");
+    } 
+	else
+	{
+		/* Need to re-insert player if swap failed for some reason */
+		for (pl = first_player; pl != NULL; pl = pl->next)
+		{
+			if(pl->dm_removed_from_map)
+				insert_ob_in_map(pl->ob, m, NULL,0);
+	    }
+		new_draw_info(NDI_UNIQUE, 0,op,"Reset failed, couldn't swap map!");
 	}
+
+ 	free_object(dummy);
 	return 1;
-    } else {
-	/* Need to re-insert player if swap failed for some reason */
-	if (tmp) {
-	    insert_ob_in_map(op, m, NULL,0);
-	    free_object(dummy);
-	}
-	new_draw_info(NDI_UNIQUE, 0,op,"Reset failed, couldn't swap map.\n");
-	new_draw_info(NDI_UNIQUE, 0,op,"Probably another player is on the map\n");
-	return 1;
-    }
 }
 
 int command_nowiz (object *op, char *params) /* 'noadm' is alias */

@@ -221,6 +221,7 @@ typedef struct pl_player
 	/* some dm flags */
 	uint32 dm_stealth:1;			/* 1= no "XX enter the game" and no entry in /who */
 	uint32 dm_light:1;				/* 1= all maps are shown in daylight for the dm */ 
+	uint32 dm_removed_from_map:1;	/* internal dm flag: player was removed from a map */
 
 /* all values before this line are tested and proofed */
 

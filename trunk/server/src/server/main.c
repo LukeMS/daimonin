@@ -408,7 +408,7 @@ void set_map_timeout(mapstruct *oldmap)
     }
 #else
     /* save out the map */
-    swap_map(oldmap);
+    swap_map(oldmap,0);
 #endif /* MAP_MAXTIMEOUT */
 }
 
@@ -1063,7 +1063,7 @@ void clean_tmp_files() {
  * we certainly don't want the temp maps removed.
  */
 #ifdef RECYCLE_TMP_MAPS
-	swap_map(m);
+	swap_map(m,0);
 #else
 	new_save_map(m, 0); /* note we save here into a overlay map */
     clean_tmp_map(m);

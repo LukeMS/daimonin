@@ -2284,6 +2284,26 @@ Dex 2
 dam 2
 end
 #
+Allowed ring_generic
+chance 30
+difficulty 10
+artifact ring_ghost
+def_arch ring_generic
+Object
+title of the Ghost
+face ring_gold_white.101
+item_quality 90
+item_condition 90
+material 256
+material_real 0
+type 70
+value 9500
+wc 1
+is_magical 1
+Dex 1
+dam 1
+end
+#
 #
 Allowed ring_generic
 chance 15
