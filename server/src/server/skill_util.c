@@ -1157,7 +1157,7 @@ int check_skill_action_time(object *op, object *skill)
         case SK_MISSILE_WEAPON:
           if (CONTR(op)->action_range > ROUND_TAG)
           {
-              new_draw_info_format(NDI_UNIQUE, 0, op, "You can shot in %2.2f seconds again.",
+              new_draw_info_format(NDI_UNIQUE, 0, op, "You can shoot in %2.2f seconds again.",
                                    (float) (CONTR(op)->action_range - ROUND_TAG) / pticks_second);
               return FALSE;
           }
