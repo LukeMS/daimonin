@@ -427,8 +427,7 @@ arch floor_ostone1
 x 3
 y 6
 end
-arch helm_iron
-identified 1
+arch crown_generic
 x 3
 y 6
 end
@@ -436,7 +435,7 @@ arch floor_ostone1
 x 3
 y 7
 end
-arch leather_armour
+arch buckler
 identified 1
 x 3
 y 7
@@ -445,12 +444,17 @@ arch floor_ostone1
 x 3
 y 8
 end
-arch shield
+arch coat
 identified 1
 x 3
 y 8
 end
 arch floor_ostone1
+x 3
+y 9
+end
+arch scale_armour
+identified 1
 x 3
 y 9
 end
@@ -578,6 +582,11 @@ arch floor_ostone1
 x 4
 y 3
 end
+arch cape
+identified 1
+x 4
+y 3
+end
 arch floor_ostone1
 x 4
 y 4
@@ -596,7 +605,6 @@ x 4
 y 6
 end
 arch helm_leather
-identified 1
 x 4
 y 6
 end
@@ -604,7 +612,7 @@ arch floor_ostone1
 x 4
 y 7
 end
-arch chain_mail
+arch small_shield
 identified 1
 x 4
 y 7
@@ -613,12 +621,17 @@ arch floor_ostone1
 x 4
 y 8
 end
-arch small_shield
+arch dress
 identified 1
 x 4
 y 8
 end
 arch floor_ostone1
+x 4
+y 9
+end
+arch chitin_mail
+identified 1
 x 4
 y 9
 end
@@ -735,7 +748,17 @@ arch floor_ostone1
 x 5
 y 3
 end
+arch robe
+identified 1
+x 5
+y 3
+end
 arch floor_ostone1
+x 5
+y 4
+end
+arch gauntlets_plate
+identified 1
 x 5
 y 4
 end
@@ -747,8 +770,7 @@ arch floor_ostone1
 x 5
 y 6
 end
-arch full_helmet
-identified 1
+arch hat_feather
 x 5
 y 6
 end
@@ -756,7 +778,7 @@ arch floor_ostone1
 x 5
 y 7
 end
-arch banded_mail
+arch shield
 identified 1
 x 5
 y 7
@@ -765,7 +787,17 @@ arch floor_ostone1
 x 5
 y 8
 end
+arch padded_armour
+identified 1
+x 5
+y 8
+end
 arch floor_ostone1
+x 5
+y 9
+end
+arch bplate_mail
+identified 1
 x 5
 y 9
 end
@@ -839,6 +871,11 @@ arch floor_ostone1
 x 6
 y 1
 end
+arch fighting_boots
+identified 1
+x 6
+y 1
+end
 arch floor_ostone1
 x 6
 y 2
@@ -848,6 +885,11 @@ x 6
 y 3
 end
 arch floor_ostone1
+x 6
+y 4
+end
+arch gauntlets_leather
+identified 1
 x 6
 y 4
 end
@@ -868,7 +910,7 @@ arch floor_ostone1
 x 6
 y 7
 end
-arch padded_armour
+arch blade_stopper
 identified 1
 x 6
 y 7
@@ -877,7 +919,17 @@ arch floor_ostone1
 x 6
 y 8
 end
+arch leather_armour
+identified 1
+x 6
+y 8
+end
 arch floor_ostone1
+x 6
+y 9
+end
+arch crystal_mail
+identified 1
 x 6
 y 9
 end
@@ -956,6 +1008,11 @@ arch floor_ostone1
 x 7
 y 1
 end
+arch combat_boots
+identified 1
+x 7
+y 1
+end
 arch floor_ostone1
 x 7
 y 2
@@ -976,11 +1033,15 @@ arch floor_ostone1
 x 7
 y 6
 end
+arch hat_blue
+x 7
+y 6
+end
 arch floor_ostone1
 x 7
 y 7
 end
-arch plate_mail
+arch shield_eye
 identified 1
 x 7
 y 7
@@ -989,7 +1050,17 @@ arch floor_ostone1
 x 7
 y 8
 end
+arch leather_spiked
+identified 1
+x 7
+y 8
+end
 arch floor_ostone1
+x 7
+y 9
+end
+arch mithril_ring
+identified 1
 x 7
 y 9
 end
@@ -1077,6 +1148,11 @@ arch floor_ostone1
 x 8
 y 1
 end
+arch fencing_boots
+identified 1
+x 8
+y 1
+end
 arch floor_ostone1
 x 8
 y 2
@@ -1097,7 +1173,16 @@ arch floor_ostone1
 x 8
 y 6
 end
+arch coif_chain
+x 8
+y 6
+end
 arch floor_ostone1
+x 8
+y 7
+end
+arch shield_battle
+identified 1
 x 8
 y 7
 end
@@ -1105,7 +1190,17 @@ arch floor_ostone1
 x 8
 y 8
 end
+arch leather_studded
+identified 1
+x 8
+y 8
+end
 arch floor_ostone1
+x 8
+y 9
+end
+arch mithril_armour
+identified 1
 x 8
 y 9
 end
@@ -1229,6 +1324,11 @@ arch floor_ostone1
 x 9
 y 1
 end
+arch kicking_boots
+identified 1
+x 9
+y 1
+end
 arch floor_ostone1
 x 9
 y 2
@@ -1249,7 +1349,16 @@ arch floor_ostone1
 x 9
 y 6
 end
+arch coif_scale
+x 9
+y 6
+end
 arch floor_ostone1
+x 9
+y 7
+end
+arch shield_defender
+identified 1
 x 9
 y 7
 end
@@ -1257,7 +1366,17 @@ arch floor_ostone1
 x 9
 y 8
 end
+arch ring_mail
+identified 1
+x 9
+y 8
+end
 arch floor_ostone1
+x 9
+y 9
+end
+arch mithril_coat
+identified 1
 x 9
 y 9
 end
@@ -1381,6 +1500,11 @@ arch floor_ostone1
 x 10
 y 1
 end
+arch leggings_chain
+identified 1
+x 10
+y 1
+end
 arch floor_ostone1
 x 10
 y 2
@@ -1401,11 +1525,25 @@ arch floor_ostone1
 x 10
 y 6
 end
+arch full_helmet
+x 10
+y 6
+end
 arch floor_ostone1
 x 10
 y 7
 end
+arch shield_demon
+identified 1
+x 10
+y 7
+end
 arch floor_ostone1
+x 10
+y 8
+end
+arch leather_cuirass
+identified 1
 x 10
 y 8
 end
@@ -1506,6 +1644,11 @@ arch floor_ostone1
 x 11
 y 1
 end
+arch leggings_leather
+identified 1
+x 11
+y 1
+end
 arch floor_ostone1
 x 11
 y 2
@@ -1526,11 +1669,25 @@ arch floor_ostone1
 x 11
 y 6
 end
+arch helm_iron
+x 11
+y 6
+end
 arch floor_ostone1
 x 11
 y 7
 end
+arch shield_heater
+identified 1
+x 11
+y 7
+end
 arch floor_ostone1
+x 11
+y 8
+end
+arch lamellar_mail
+identified 1
 x 11
 y 8
 end
@@ -1613,6 +1770,11 @@ arch floor_ostone1
 x 12
 y 1
 end
+arch leggings_plate
+identified 1
+x 12
+y 1
+end
 arch floor_ostone1
 x 12
 y 2
@@ -1633,11 +1795,25 @@ arch floor_ostone1
 x 12
 y 6
 end
+arch helm_horn
+x 12
+y 6
+end
 arch floor_ostone1
 x 12
 y 7
 end
+arch shield_kite
+identified 1
+x 12
+y 7
+end
 arch floor_ostone1
+x 12
+y 8
+end
+arch chain_mail
+identified 1
 x 12
 y 8
 end
@@ -1740,11 +1916,25 @@ arch floor_ostone1
 x 13
 y 6
 end
+arch helm_field
+x 13
+y 6
+end
 arch floor_ostone1
 x 13
 y 7
 end
+arch shield_high
+identified 1
+x 13
+y 7
+end
 arch floor_ostone1
+x 13
+y 8
+end
+arch brigandine
+identified 1
 x 13
 y 8
 end
@@ -1852,11 +2042,25 @@ arch floor_ostone1
 x 14
 y 6
 end
+arch helm_plate
+x 14
+y 6
+end
 arch floor_ostone1
 x 14
 y 7
 end
+arch shield_protector
+identified 1
+x 14
+y 7
+end
 arch floor_ostone1
+x 14
+y 8
+end
+arch banded_mail
+identified 1
 x 14
 y 8
 end
@@ -1984,11 +2188,25 @@ arch floor_ostone1
 x 15
 y 6
 end
+arch helm_war
+x 15
+y 6
+end
 arch floor_ostone1
 x 15
 y 7
 end
+arch shield_round
+identified 1
+x 15
+y 7
+end
 arch floor_ostone1
+x 15
+y 8
+end
+arch scale_mail
+identified 1
 x 15
 y 8
 end
@@ -2105,7 +2323,17 @@ arch floor_ostone1
 x 16
 y 7
 end
+arch shield_scale
+identified 1
+x 16
+y 7
+end
 arch floor_ostone1
+x 16
+y 8
+end
+arch splint_mail
+identified 1
 x 16
 y 8
 end
@@ -2237,7 +2465,17 @@ arch floor_ostone1
 x 17
 y 7
 end
+arch shield_war
+identified 1
+x 17
+y 7
+end
 arch floor_ostone1
+x 17
+y 8
+end
+arch chain_hauberk
+identified 1
 x 17
 y 8
 end
@@ -2344,7 +2582,17 @@ arch floor_ostone1
 x 18
 y 7
 end
+arch shield_chitin
+identified 1
+x 18
+y 7
+end
 arch floor_ostone1
+x 18
+y 8
+end
+arch plate_mail
+identified 1
 x 18
 y 8
 end
@@ -2468,6 +2716,11 @@ x 19
 y 7
 end
 arch floor_ostone1
+x 19
+y 8
+end
+arch plate_field
+identified 1
 x 19
 y 8
 end
@@ -2609,6 +2862,11 @@ arch floor_ostone1
 x 20
 y 8
 end
+arch breastplate
+identified 1
+x 20
+y 8
+end
 arch floor_ostone1
 x 20
 y 9
@@ -2720,6 +2978,11 @@ x 21
 y 7
 end
 arch floor_ostone1
+x 21
+y 8
+end
+arch plate_full
+identified 1
 x 21
 y 8
 end

@@ -186,7 +186,23 @@ arch floor_ostone1
 x 1
 y 10
 end
+arch sign
+msg
+rings to check spell, hp and grace
+regeneration. They range from
+1,3,5,7 to -1,-3,-5 and -7 for each
+stat.
+endmsg
+x 1
+y 10
+end
 arch floor_ostone1
+x 1
+y 11
+end
+arch ring_generic
+sp 1
+identified 1
 x 1
 y 11
 end
@@ -194,11 +210,29 @@ arch floor_ostone1
 x 1
 y 12
 end
+arch ring_generic
+sp 3
+identified 1
+x 1
+y 12
+end
 arch floor_ostone1
 x 1
 y 13
 end
+arch ring_generic
+sp 5
+identified 1
+x 1
+y 13
+end
 arch floor_ostone1
+x 1
+y 14
+end
+arch ring_generic
+sp 7
+identified 1
 x 1
 y 14
 end
@@ -271,7 +305,19 @@ arch floor_ostone1
 x 2
 y 11
 end
+arch ring_generic
+sp -1
+identified 1
+x 2
+y 11
+end
 arch floor_ostone1
+x 2
+y 12
+end
+arch ring_generic
+sp -3
+identified 1
 x 2
 y 12
 end
@@ -279,7 +325,19 @@ arch floor_ostone1
 x 2
 y 13
 end
+arch ring_generic
+sp -5
+identified 1
+x 2
+y 13
+end
 arch floor_ostone1
+x 2
+y 14
+end
+arch ring_generic
+sp -7
+identified 1
 x 2
 y 14
 end
@@ -379,15 +437,7 @@ arch floor_ostone1
 x 4
 y 1
 end
-arch fog_wall
-x 4
-y 1
-end
 arch floor_ostone1
-x 4
-y 2
-end
-arch fog_wall
 x 4
 y 2
 end
@@ -395,15 +445,7 @@ arch floor_ostone1
 x 4
 y 3
 end
-arch fog_wall
-x 4
-y 3
-end
 arch floor_ostone1
-x 4
-y 4
-end
-arch fog_wall
 x 4
 y 4
 end
@@ -435,7 +477,19 @@ arch floor_ostone1
 x 4
 y 11
 end
+arch ring_generic
+hp 1
+identified 1
+x 4
+y 11
+end
 arch floor_ostone1
+x 4
+y 12
+end
+arch ring_generic
+hp 3
+identified 1
 x 4
 y 12
 end
@@ -443,7 +497,19 @@ arch floor_ostone1
 x 4
 y 13
 end
+arch ring_generic
+hp 5
+identified 1
+x 4
+y 13
+end
 arch floor_ostone1
+x 4
+y 14
+end
+arch ring_generic
+hp 7
+identified 1
 x 4
 y 14
 end
@@ -509,7 +575,19 @@ arch floor_ostone1
 x 5
 y 11
 end
+arch ring_generic
+hp -1
+identified 1
+x 5
+y 11
+end
 arch floor_ostone1
+x 5
+y 12
+end
+arch ring_generic
+hp -3
+identified 1
 x 5
 y 12
 end
@@ -517,7 +595,19 @@ arch floor_ostone1
 x 5
 y 13
 end
+arch ring_generic
+hp -5
+identified 1
+x 5
+y 13
+end
 arch floor_ostone1
+x 5
+y 14
+end
+arch ring_generic
+hp -7
+identified 1
 x 5
 y 14
 end
@@ -682,7 +772,19 @@ arch floor_ostone1
 x 7
 y 11
 end
+arch ring_generic
+grace 1
+identified 1
+x 7
+y 11
+end
 arch floor_ostone1
+x 7
+y 12
+end
+arch ring_generic
+grace 3
+identified 1
 x 7
 y 12
 end
@@ -690,7 +792,19 @@ arch floor_ostone1
 x 7
 y 13
 end
+arch ring_generic
+grace 5
+identified 1
+x 7
+y 13
+end
 arch floor_ostone1
+x 7
+y 14
+end
+arch ring_generic
+grace 7
+identified 1
 x 7
 y 14
 end
@@ -771,7 +885,19 @@ arch floor_ostone1
 x 8
 y 11
 end
+arch ring_generic
+grace -1
+identified 1
+x 8
+y 11
+end
 arch floor_ostone1
+x 8
+y 12
+end
+arch ring_generic
+grace -3
+identified 1
 x 8
 y 12
 end
@@ -779,7 +905,19 @@ arch floor_ostone1
 x 8
 y 13
 end
+arch ring_generic
+grace -5
+identified 1
+x 8
+y 13
+end
 arch floor_ostone1
+x 8
+y 14
+end
+arch ring_generic
+grace -7
+identified 1
 x 8
 y 14
 end
@@ -931,7 +1069,31 @@ arch floor_ostone1
 x 10
 y 11
 end
+arch ring_generic
+identified 1
+Str 3
+Dex 3
+Con 3
+Int 3
+Pow 3
+Wis 3
+Cha 3
+x 10
+y 11
+end
 arch floor_ostone1
+x 10
+y 12
+end
+arch ring_generic
+identified 1
+Str 5
+Dex 5
+Con 5
+Int 5
+Pow 5
+Wis 5
+Cha 5
 x 10
 y 12
 end
@@ -939,7 +1101,31 @@ arch floor_ostone1
 x 10
 y 13
 end
+arch ring_generic
+identified 1
+Str 8
+Dex 8
+Con 8
+Int 8
+Pow 8
+Wis 8
+Cha 8
+x 10
+y 13
+end
 arch floor_ostone1
+x 10
+y 14
+end
+arch ring_generic
+identified 1
+Str 12
+Dex 12
+Con 12
+Int 12
+Pow 12
+Wis 12
+Cha 12
 x 10
 y 14
 end

@@ -1122,8 +1122,9 @@ arch ogre
 type 83
 level 25
 speed_left -0.1
+stand_still 1
 can_cast_spell 1
-sp 30
+sp -1
 maxsp 30
 Pow 2
 Dex 3

@@ -580,6 +580,11 @@ arch floor_ostone1
 x 5
 y 11
 end
+arch ring_generic
+protect_cold 50
+x 5
+y 11
+end
 arch floor_ostone1
 x 5
 y 12
@@ -658,12 +663,14 @@ y 8
 end
 arch ant_soldier
 name Skillgiver
-event_say_plugin Python
-event_say /dev/testmaps/skills.py
 friendly 1
 stand_still 1
 x 6
 y 8
+arch event_obj
+sub_type 6
+race /dev/testmaps/skills.py
+end
 end
 arch floor_ostone1
 x 6
@@ -674,6 +681,11 @@ x 6
 y 10
 end
 arch floor_ostone1
+x 6
+y 11
+end
+arch ring_generic
+protect_cold 75
 x 6
 y 11
 end
@@ -752,12 +764,14 @@ y 7
 end
 arch golem
 name Scripter
-event_say_plugin Python
-event_say /dev/testmaps/ScriptTest.py
 friendly 1
 stand_still 1
 x 7
 y 7
+arch event_obj
+sub_type 6
+race /dev/testmaps/ScriptTest.py
+end
 end
 arch floor_ostone1
 x 7
@@ -773,11 +787,13 @@ y 9
 end
 arch guard
 name TestGuild master
-event_say_plugin Python
-event_say /dev/testmaps/TestGuild.py
 friendly 1
 x 7
 y 9
+arch event_obj
+sub_type 6
+race /dev/testmaps/TestGuild.py
+end
 end
 arch floor_ostone1
 x 7
@@ -862,12 +878,14 @@ y 8
 end
 arch ant_red
 name Spellgiver
-event_say_plugin Python
-event_say /dev/testmaps/spells.py
 stand_still 1
 friendly 1
 x 8
 y 8
+arch event_obj
+sub_type 6
+race /dev/testmaps/spells.py
+end
 end
 arch floor_ostone1
 x 8
@@ -878,6 +896,12 @@ x 8
 y 10
 end
 arch floor_ostone1
+x 8
+y 11
+end
+arch rod_heavy
+sp 0
+level 6
 x 8
 y 11
 end
@@ -1164,6 +1188,19 @@ end
 arch floor_ostone1
 x 11
 y 12
+end
+arch monk
+name PythonTester
+invulnerable 1
+no_attack 1
+unaggressive 0
+friendly 1
+x 11
+y 12
+arch event_obj
+sub_type 6
+race /dev/testmaps/PythonTest.py
+end
 end
 arch floor_ostone1
 x 11

@@ -549,7 +549,6 @@ x 6
 y 2
 arch wyvern
 type 83
-randomitems melee_weapons
 speed 0.0
 dam 1
 stand_still 1
