@@ -23,8 +23,6 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 
-/* First let's include the header file needed                                */
-
 #include <global.h>
 #include <plugin_lua.h>
 
@@ -258,7 +256,7 @@ static int Game_FileUnlink(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : Game_TransferMapItems                                            */
-/* Lua    : game.TranserMapItems(map_old, map_new, x, y)                     */
+/* Lua    : game.TransferMapItems(map_old, map_new, x, y)                     */
 /* Info   : Transfer all items with "no_pick 0" setting from map_old         */
 /*          to position x,y on map new.                                      */
 /* Status : Stable                                                           */
@@ -448,8 +446,10 @@ static int Game_GetSkillNr(lua_State *L)
 /*****************************************************************************/
 /* Name   : Game_IsValid                                                     */
 /* Lua    : game.IsValid(what)                                               */
-/* Info   : Test if a map or object is still valid. (Useful for datastore    */
-/*          and coroutine usage)                                             */
+/* Info   : Test if a Map, Event or GameObject is still valid.               */
+/*          (Useful for datastore and coroutine usage).                      */
+/*          This is the only lua function that doesn't generate an error if  */
+/*          given an invalid object.                                         */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static int Game_IsValid(lua_State *L)
@@ -1173,7 +1173,7 @@ MODULEAPI CFParm * getPluginProperty(CFParm *PParm)
             {
                 GCFP.Value[0] = PParm->Value[1];
                 GCFP.Value[1] = &cmd_aboutLua;
-                GCFP.Value[2] = &dblval;
+                GCFP.Value[2] = &dblval; /* FIXME: type mismatch float/double */
                 return &GCFP;
             }
             else
@@ -1188,7 +1188,7 @@ MODULEAPI CFParm * getPluginProperty(CFParm *PParm)
                             LOG(llevDebug, "LUA - Running command %s\n",CustomCommand[i].name);
                             GCFP.Value[0] = PParm->Value[1];
                             GCFP.Value[1] = cmd_customLua   ;
-                            GCFP.Value[2] = &(CustomCommand[i].speed);
+                            GCFP.Value[2] = &(CustomCommand[i].speed); /* FIXME: tpye mismatch */
                             NextCustomCommand = i;
                             return &GCFP;
                         }

@@ -1335,7 +1335,7 @@ static int GameObject_CreatePlayerForce(lua_State *L)
     myob = (object *) (CFR->Value[0]);
     free(CFR);
 
-    if (!myob)
+    if (!myob || strcmp(STRING_OBJ_NAME(myob), "singularity") == 0)
     {
         LOG(llevDebug, "Lua WARNING:: CreatePlayerForce: Can't find archtype 'player_force'\n");
         luaL_error(L, "Can't find archtype 'player_force'");
@@ -1411,7 +1411,6 @@ static int GameObject_AddQuestObject(lua_State *L)
     char       *name;
     object     *walk, *myob;
     CFParm     *CFR;
-    char        txt2[32];
     lua_object *self;
 
     get_lua_args(L, "Oss", &self, &arch_name, &name);
@@ -1425,14 +1424,12 @@ static int GameObject_AddQuestObject(lua_State *L)
 
     if (!walk) /* no quest container, create it */
     {
-        strcpy(txt2, "quest_container");
-
-        GCFP.Value[0] = (void *) (txt2);
+        GCFP.Value[0] = (void *) "quest container";
         CFR = (PlugHooks[HOOK_GETARCHETYPE]) (&GCFP);
         walk = (object *) (CFR->Value[0]);
         free(CFR);
 
-        if (!walk)
+        if (!walk || strcmp(STRING_OBJ_NAME(walk), "singularity") == 0)
         {
             LOG(llevDebug, "Lua WARNING:: AddQuestObject: Cant't find archtype 'quest_container'\n");
             luaL_error(L, "Can't find archtype 'quest_container'");
@@ -1441,14 +1438,12 @@ static int GameObject_AddQuestObject(lua_State *L)
         hooks->insert_ob_in_ob(walk, WHO);
     }
 
-    strcpy(txt2, "player_info");
-
-    GCFP.Value[0] = (void *) (txt2);
+    GCFP.Value[0] = (void *) "player_info";
     CFR = (PlugHooks[HOOK_GETARCHETYPE]) (&GCFP);
     myob = (object *) (CFR->Value[0]);
     free(CFR);
 
-    if (!myob)
+    if (!myob || strcmp(STRING_OBJ_NAME(myob), "singularity") == 0)
     {
         LOG(llevDebug, "Lua WARNING:: AddQuestObject: Cant't find archtype 'player_info'\n");
         luaL_error(L, "Can't find archtype 'player_info'");
@@ -1487,7 +1482,7 @@ static int GameObject_CreatePlayerInfo(lua_State *L)
     myob = (object *) (CFR->Value[0]);
     free(CFR);
 
-    if (!myob)
+    if (!myob || strcmp(STRING_OBJ_NAME(myob), "singularity") == 0)
     {
         LOG(llevDebug, "Lua WARNING:: CreatePlayerInfo: Cant't find archtype 'player_info'\n");
         luaL_error(L, "Cant't find archtype 'player_info'");
@@ -1580,7 +1575,7 @@ static int GameObject_CreateInvisibleInside(lua_State *L)
     myob = (object *) (CFR->Value[0]);
     free(CFR);
 
-    if (!myob)
+    if (!myob || strcmp(STRING_OBJ_NAME(myob), "singularity") == 0)
     {
         LOG(llevDebug, "Lua WARNING:: CFCreateInvisibleInside: Can't find archtype 'force'\n");
         luaL_error(L, "Cant't find archtype 'force'");
@@ -1634,7 +1629,7 @@ static int GameObject_CreateObjectInside(lua_State *L)
     myob = (object *) (CFR->Value[0]);
     free(CFR);
 
-    if (!myob)
+    if (!myob || strcmp(STRING_OBJ_NAME(myob), "singularity") == 0)
     {
         LOG(llevDebug, "BUG GameObject_CreateObjectInside(): ob:>%s< = NULL!\n", STRING_OBJ_NAME(myob));
         luaL_error(L, "Failed to create the object. Did you use an existing arch?");
