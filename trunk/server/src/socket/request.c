@@ -405,6 +405,11 @@ void PlayerCmd(char *buf, int len, player *pl)
  * 'ncom' method which gives more information back to the client so it
  * can throttle.
  */
+/* this command is somewhat bugged - we get several ncom corruption messages where
+ * the size is < 7 - even this seems impossible in the client. We simple skip it here.
+ * reworking the commands is on the todo so we spare the debug time and implement it new
+ * and better from scratch.
+ */
 void NewPlayerCmd(char *buf, int len, player *pl)
 {
     uint16 packet;
@@ -414,7 +419,7 @@ void NewPlayerCmd(char *buf, int len, player *pl)
 
     if (len < 7)
 	{
-		LOG(llevBug,"BUG: Corrupt ncom command from player %s - not long enough (len: %d)- discarding\n", pl->ob->name,len);
+		/*LOG(llevBug,"BUG: Corrupt ncom command from player %s - not long enough (len: %d)- discarding\n", pl->ob->name,len);*/
 		return;
     }
 

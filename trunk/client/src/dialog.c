@@ -88,7 +88,7 @@ _option opt[] ={
 	{"Graphic Statusbars:", "Show for HP, Mana and others a graphical layout.","Instead of horizontal lines.", "",SEL_CHECKBOX, 0,1,1, 1,&options.gfx_statusbars, VAL_BOOL},
 	{"Show Tooltips:", "Show tooltips when hovering with the mouse over items.","", "",SEL_CHECKBOX, 0,1,1, 1,&options.show_tooltips, VAL_BOOL},
 	{"Key-info in Dialog menus:", "","", "",SEL_CHECKBOX, 0,1,1, 1,&options.show_d_key_infos, VAL_BOOL},
-	{"Collect All Items:", "Don't ask for number of items to get, just get all of them.","", "",SEL_CHECKBOX, 0,1,1, 0,&options.collectAll, VAL_BOOL},   
+	/*{"Collect All Items:", "Don't ask for number of items to get, just get all of them.","", "",SEL_CHECKBOX, 0,1,1, 0,&options.collectAll, VAL_BOOL},   */
 	{"#"}, /* End of Page */
 
 	/* Client */
@@ -1054,7 +1054,8 @@ void show_newplayer_server(void)
 	_server_char *tmpc;
 
 	mb = SDL_GetMouseState(&mx, &my)& SDL_BUTTON(SDL_BUTTON_LEFT);
-	x= SCREEN_XLEN/2-Bitmaps[BITMAP_DIALOG_BG]->bitmap->w/2;
+	x=25;
+	/*x= SCREEN_XLEN/2-Bitmaps[BITMAP_DIALOG_BG]->bitmap->w/2;*/
 	y= SCREEN_YLEN/2-Bitmaps[BITMAP_DIALOG_BG]->bitmap->h/2;
 	sprite_blt(Bitmaps[BITMAP_DIALOG_BG],x, y, NULL, NULL);
 	sprite_blt(Bitmaps[BITMAP_DIALOG_TITLE_CREATION],x+250-Bitmaps[BITMAP_DIALOG_TITLE_CREATION]->bitmap->w/2, y+20, NULL, NULL);
@@ -1317,7 +1318,8 @@ void show_login_server(void)
 
 	mb = SDL_GetMouseState(&mx, &my);
 	/* background */
-	x= SCREEN_XLEN/2-Bitmaps[BITMAP_DIALOG_BG]->bitmap->w/2; 
+	/*x= SCREEN_XLEN/2-Bitmaps[BITMAP_DIALOG_BG]->bitmap->w/2;*/ 
+	x = 25;
 	y= SCREEN_YLEN/2-Bitmaps[BITMAP_DIALOG_BG]->bitmap->h/2;
 	sprite_blt(Bitmaps[BITMAP_DIALOG_BG],x, y, NULL, NULL);
 	sprite_blt(Bitmaps[BITMAP_LOGO270],x+20, y+85, NULL, NULL);
@@ -1428,7 +1430,8 @@ void show_meta_server(_server *node, int metaserver_start, int metaserver_sel)
 
 	mb = SDL_GetMouseState(&mx, &my);
 	/* background */
-	x= SCREEN_XLEN/2-Bitmaps[BITMAP_DIALOG_BG]->bitmap->w/2;
+/*	x= SCREEN_XLEN/2-Bitmaps[BITMAP_DIALOG_BG]->bitmap->w/2;*/
+	x= 25;
 	y= SCREEN_YLEN/2-Bitmaps[BITMAP_DIALOG_BG]->bitmap->h/2;
 	sprite_blt(Bitmaps[BITMAP_DIALOG_BG],x, y, NULL, NULL);
 	sprite_blt(Bitmaps[BITMAP_LOGO270],x+20, y+85, NULL, NULL);

@@ -20,7 +20,7 @@ facings 25
 trans.101
 trans.101
 trans.101
-guard1.131
+guard_pole.131
 guard_pole.132
 guard_pole.133
 guard_pole.131

@@ -40,6 +40,8 @@
  * - other stuff =)
  */
 
+/*#define AI_DEBUG*/
+
 /* Maximum number of ticks a mob remembers an object that it can't see */
 #define MAX_KNOWN_OBJ_AGE 200
 
@@ -636,18 +638,24 @@ struct mob_known_obj *register_npc_known_obj(object *npc, object *other,
     struct mob_known_obj *last = NULL;
 
     if(npc == NULL) {
+#ifdef AI_DEBUG
         LOG(llevDebug,"register_npc_known_obj(): Called with NULL npc obj\n");
+#endif
         return NULL;
     }
     
     if(other == NULL) {
+#ifdef AI_DEBUG
         LOG(llevDebug,"register_npc_known_obj(): Called with NULL other obj\n");
+#endif
         return NULL;
     }
     
     if(npc == other) {
+#ifdef AI_DEBUG
         LOG(llevDebug,"register_npc_known_obj(): Called for itself '%s'\n",
                 STRING_OBJ_NAME(npc));
+#endif
         return NULL;
     }
 
@@ -658,19 +666,25 @@ struct mob_known_obj *register_npc_known_obj(object *npc, object *other,
 	 */
 	if(other->type != PLAYER && !QUERY_FLAG(other,FLAG_ALIVE))
 	{
+#ifdef AI_DEBUG
         LOG(llevDebug,"register_npc_known_obj(): Called for non PLAYER/IS_ALIVE '%s'\n",
 		STRING_OBJ_NAME(npc));
+#endif
 		return NULL;
 	}
     if(npc->type != MONSTER) {
+#ifdef AI_DEBUG
         LOG(llevDebug,"register_npc_known_obj(): Called on non-mob object '%s' type %d\n",
                 STRING_OBJ_NAME(npc), npc->type);
+#endif
         return NULL;
     }    
     
     /* this check will hopefully be unnecessary in the future */
     if(MOB_DATA(npc) == NULL) {
+#ifdef AI_DEBUG
         LOG(llevDebug,"register_npc_known_obj(): No mobdata (yet) for '%s'\n",  STRING_OBJ_NAME(npc));
+#endif
         return NULL;
     }
 

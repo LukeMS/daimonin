@@ -1529,11 +1529,13 @@ Boolean process_macro_keys(int id, int value)
             else
             {
 
+			/* seems be problems with this option 
             if( options.collectAll==1)
               {
                nrof = cpl.nrof;
                goto collectAll;
               }
+			*/
 
 								
                 reset_keys();
@@ -1550,7 +1552,7 @@ Boolean process_macro_keys(int id, int value)
                 return FALSE;
 
             }
-collectAll:
+/*collectAll:*/
 			sound_play_effect(SOUND_GET,0,0,100);
             sprintf(buf,"get %s", it->s_name);
 			draw_info(buf,COLOR_DGOLD);

@@ -1149,7 +1149,13 @@ int main(int argc, char *argv[])
 	atexit(SDL_Quit);
     SYSTEM_Start(); /* start the system AFTER start SDL */
     list_vid_modes();
-
+#if defined( __LINUX)
+	LOG(LOG_MSG,"**** NOTE ****\n");
+	LOG(LOG_MSG,"With sound enabled SDL will throw a parachute\n");
+	LOG(LOG_MSG,"when the soundcard is disabled or not installed.\n");
+	LOG(LOG_MSG,"Try then to start the client with 'SDL_AUDIODRIVER=null ./daimonin'\n");
+	LOG(LOG_MSG,"Read the README_LINUX.txt file for more information.\n");
+#endif
 #ifdef INSTALL_OPENGL        
         if(options.use_gl)
         {
@@ -1432,7 +1438,8 @@ int main(int argc, char *argv[])
 					show_media(798,171);
 				}
 				show_range(3, 403);
-
+				sprite_blt(Bitmaps[BITMAP_PRAY],92, 412, NULL, NULL);
+				
 				if(esc_menu_flag == TRUE ||
 					(options.use_TextwinAlpha &&(txtwin[TW_MSG].size+txtwin[TW_CHAT].size)>9))
 					map_udate_flag=1;
@@ -1562,7 +1569,6 @@ int main(int argc, char *argv[])
 				StringBlt(ScreenSurface, &SystemFont,buf,rec.x, rec.y,COLOR_DEFAULT, NULL, NULL);
 			}
 		}
-        sprite_blt(Bitmaps[BITMAP_PRAY],92, 412, NULL, NULL);
 		flip_screen();
 		if(!options.max_speed)
 		SDL_Delay(options.sleep);		/* force the thread to sleep */

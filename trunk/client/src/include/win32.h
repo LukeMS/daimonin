@@ -62,22 +62,22 @@
 #define HAVE_STRNICMP
 
 /* Define to the address where bug reports for this package should be sent. */
-#define PACKAGE_BUGREPORT "support@daimonin.sourceforge.net"
+#define PACKAGE_BUGREPORT "info@daimonin.net"
 
 /* Define to the full name of this package. */
 #define PACKAGE_NAME "Daimonin SDL Client"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "Daimonin SDL Client BETA3-0.965b"
+#define PACKAGE_STRING "Daimonin SDL Client BETA3-0.966"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "daimonin-sdl-client"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "BETA3-0.965b"
+#define PACKAGE_VERSION "BETA3-0.966"
 
 /* Installation prefix */
-#define PREFIX "../../../client-BETA3-0.965b"
+#define PREFIX "../../../client-BETA3-0.966"
 
 /* Use the SDL_mixer sound system. Remove when you have no sound card or slow
    computer */
