@@ -57,6 +57,18 @@ typedef signed char	sint8;
 typedef unsigned short Fontindex;
 typedef unsigned int tag_t;
 
+typedef struct _money_block {
+	int mode; /* 0, 1, or -1: see get_money_from_string() */
+	long mithril;
+	long gold;
+	long silver;
+	long copper;
+}_money_block;
+
+#define MONEYSTRING_NOTHING 0
+#define MONEYSTRING_AMOUNT 1
+#define MONEYSTRING_ALL -1
+
 
 #define POW2(x) ((x) * (x))
 

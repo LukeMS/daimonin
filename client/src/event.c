@@ -932,6 +932,8 @@ int key_event(SDL_KeyboardEvent *key )
 								{
 									show_help_screen=0;
 									keybind_status = KEYBIND_STATUS_NO;
+									if(cpl.menustatus == MENU_KEYBIND)
+										save_keybind_file(KEYBIND_FILE);
 									cpl.menustatus = MENU_OPTION;
 								}
 								else if(esc_menu_index == ESC_MENU_LOGOUT)
@@ -969,6 +971,8 @@ static Boolean check_menu_macros(char *text)
     if(!strcmp("?M_SPELL_LIST",text) )
     {
         
+        if(cpl.menustatus == MENU_KEYBIND)
+            save_keybind_file(KEYBIND_FILE);
         map_udate_flag=2;
         if(cpl.menustatus != MENU_SPELL)
 		{
@@ -984,7 +988,10 @@ static Boolean check_menu_macros(char *text)
     }
     if(!strcmp("?M_SKILL_LIST",text) )
     {
-        map_udate_flag=2;
+        if(cpl.menustatus == MENU_KEYBIND)
+            save_keybind_file(KEYBIND_FILE);
+		
+			map_udate_flag=2;
         if(cpl.menustatus != MENU_SKILL)
 		{
 			show_help_screen=0;
@@ -1016,6 +1023,9 @@ static Boolean check_menu_macros(char *text)
     }
     if(!strcmp("?M_STATUS",text) )
     {
+        if(cpl.menustatus == MENU_KEYBIND)
+            save_keybind_file(KEYBIND_FILE);
+
         map_udate_flag=2;
         if(cpl.menustatus != MENU_STATUS)
 		{
@@ -1147,6 +1157,9 @@ Boolean process_macro_keys(int id, int value)
         case KEYFUNC_SPELL:
             map_udate_flag=2;
             sound_play_effect(SOUND_SCROLL,0,0,100);
+			if(cpl.menustatus == MENU_KEYBIND)
+				save_keybind_file(KEYBIND_FILE);
+
             if(cpl.menustatus != MENU_SPELL)
                 cpl.menustatus = MENU_SPELL;
             else
@@ -1155,6 +1168,9 @@ Boolean process_macro_keys(int id, int value)
             break;
         case KEYFUNC_SKILL:
             map_udate_flag=2;
+			if(cpl.menustatus == MENU_KEYBIND)
+				save_keybind_file(KEYBIND_FILE);
+
             sound_play_effect(SOUND_SCROLL,0,0,100);
             if(cpl.menustatus != MENU_SKILL)
                 cpl.menustatus = MENU_SKILL;
@@ -1164,6 +1180,9 @@ Boolean process_macro_keys(int id, int value)
             break;
         case KEYFUNC_STATUS:
             map_udate_flag=2;
+			if(cpl.menustatus == MENU_KEYBIND)
+				save_keybind_file(KEYBIND_FILE);
+
             if(cpl.menustatus != MENU_STATUS)
                 cpl.menustatus = MENU_STATUS;
             else
@@ -1399,6 +1418,9 @@ Boolean process_macro_keys(int id, int value)
 			return FALSE;	
 		break;
 		case KEYFUNC_HELP:
+			if(cpl.menustatus == MENU_KEYBIND)
+				save_keybind_file(KEYBIND_FILE);
+
 			cpl.menustatus = MENU_NO;       
 			sound_play_effect(SOUND_SCROLL,0,0,100);
 			if(show_help_screen)
@@ -1834,9 +1856,13 @@ void check_menu_keys(int menu, int key)
 	if (cpl.menustatus == MENU_NO)
  		return;
 	if(key == SDLK_ESCAPE){ /* close menue */
+        if(cpl.menustatus == MENU_KEYBIND)
+            save_keybind_file(KEYBIND_FILE);
+
 		if (cpl.menustatus == MENU_CREATE){
 			SOCKET_CloseSocket(csocket.fd);
-			GameStatus = GAME_STATUS_INIT;		}
+			GameStatus = GAME_STATUS_INIT;		
+		}
 		cpl.menustatus = MENU_NO;
 		map_udate_flag=2;
 		reset_keys();
@@ -1887,7 +1913,9 @@ void check_menu_keys(int menu, int key)
 */
 	        sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);
 	        map_udate_flag=2;
-	        cpl.menustatus = MENU_NO;
+			if(cpl.menustatus == MENU_KEYBIND)
+				save_keybind_file(KEYBIND_FILE);
+			cpl.menustatus = MENU_NO;
 	        reset_keys();
 	        break;
 				}

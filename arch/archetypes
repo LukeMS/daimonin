@@ -21,7 +21,7 @@ Object hole
 face hole1.101
 type 66
 editor_folder connect/exists
-layer 3
+layer 5
 hp -1
 sp -1
 no_teleport 1
@@ -49,7 +49,7 @@ editor_folder connect/exists
 no_teleport 1
 hp -1
 sp -1
-layer 4
+layer 5
 no_pick 1
 end
 Object ladder_up
@@ -160,7 +160,7 @@ name sewer hole
 face sewer_hole1.101
 type 66
 editor_folder connect/exists
-layer 3
+layer 5
 hp -1
 sp -1
 no_teleport 1
@@ -18675,7 +18675,6 @@ name stone wall
 face wall_blue1_w.111
 type 77
 editor_folder walls/blue
-blocksview 1
 layer 5
 no_pick 1
 no_pass 1
@@ -18685,7 +18684,6 @@ name stone wall
 face wall_blue1_w.131
 type 77
 editor_folder walls/blue
-blocksview 1
 layer 5
 no_pick 1
 no_pass 1

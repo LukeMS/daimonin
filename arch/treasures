@@ -219,6 +219,7 @@ treasureone traps
     chance 50
   more
   list traps_magical
+    difficulty 4
     chance 50
   end
 treasureone traps_needle_diseases
@@ -239,6 +240,7 @@ treasureone traps_physical
     chance 70
   more
   arch trap_blades
+    difficulty 4
     chance 33
   more
   arch trap_needle
@@ -246,6 +248,7 @@ treasureone traps_physical
     chance 33
   more
   arch trap_bear_trap
+    difficulty 4
     chance 33
   end
 treasureone traps_magical

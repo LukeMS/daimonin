@@ -275,7 +275,7 @@ static void emote_other(object *op, object *target, char *str, char *buf,char *b
 {
 	const char *name = str;
 
-	if(target)
+	if(target && target->name)
 		name = target->name;
 
 	switch(emotion) 
@@ -593,14 +593,15 @@ static void emote_self(object *op, char *buf,char *buf2, int emotion)
 
 static int basic_emote(object *op, char *params, int emotion)
 {
-    char buf[MAX_BUF], buf2[MAX_BUF], buf3[MAX_BUF];
+    char buf[MAX_BUF]="", buf2[MAX_BUF]="", buf3[MAX_BUF]="";
    player *pl;
 
     if (!params) {
 
 	/* if we are a player with legal target, use it as target for the emote */
-	if(op->type == PLAYER && op->contr->target_object != op && 
-		op->contr->target_object && op->contr->target_object_count == op->contr->target_object->count)
+	if(op->type == PLAYER && op->contr->target_object && op->contr->target_object != op && 
+		!QUERY_FLAG(op->contr->target_object, FLAG_REMOVED) && op->contr->target_object->name &&
+		 op->contr->target_object_count == op->contr->target_object->count)
 	{
 		/* target is in distance */
 		if(distance(op,op->contr->target_object) <= POW2(9))

@@ -157,3 +157,26 @@ racelink * find_racelink( const char *name ) {
   return test;
 }
 
+/* returns a single word from a string, free from left & right whitespaces.
+ * return NULL means that there is word left in str.
+ */
+char *get_word_from_string(char *str, int *pos)
+{
+	static char buf[HUGE_BUF]; /* this is used for controled input which never should bigger as this */
+	int i=0;
+
+	buf[0]='\0';
+
+	while (*(str+(*pos)) !='\0' && (!isalnum(*(str+(*pos))) && !isalpha(*(str+(*pos))))) 
+		(*pos)++;
+	
+	if(*(str+(*pos)) == '\0') /* nothing left! */
+		return NULL;
+
+	/* copy until end of string nor whitespace */
+	while (*(str+(*pos)) !='\0' && (isalnum(*(str+(*pos))) || isalpha(*(str+(*pos))))) 
+		buf[i++]=*(str+(*pos)++);		
+
+	buf[i]='\0';
+	return buf;
+}

@@ -98,7 +98,9 @@ f_plugin HookList[NR_OF_HOOKS] =
 	CFWPlaySoundMap,
     CFWOutOfMap,
     CFWCreateObject,
-    CFWShowCost
+    CFWShowCost,
+    CFWDeposit,
+    CFWWithdraw
 };
 
 #endif /*PLUGPROTO_H_*/

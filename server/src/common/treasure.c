@@ -42,7 +42,7 @@
 #include <loader.h>
 
 char *coins[NUM_COINS+1] = {"mitcoin", "goldcoin", "silvercoin","coppercoin", NULL};
-static archetype *coins_arch[NUM_COINS];
+archetype *coins_arch[NUM_COINS];
 
 /* Give 1 re-roll attempt per artifact */
 #define ARTIFACT_TRIES 2

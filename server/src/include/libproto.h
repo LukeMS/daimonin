@@ -388,3 +388,4 @@ extern int die_roll(int num, int size, object *op, int goodbad);
 extern int rndm(int min, int max);
 extern int look_up_spell_name(const char *spname);
 extern racelink *find_racelink(const char *name);
+extern char *get_word_from_string(char *str, int *pos);

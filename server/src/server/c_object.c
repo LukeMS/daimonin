@@ -675,7 +675,7 @@ void drop_object (object *op, object *tmp, long nrof)
     if( floor && floor->type == SHOP_FLOOR &&
        !QUERY_FLAG(tmp, FLAG_UNPAID) && tmp->type != MONEY)
 	{
-		sell_item(tmp,op);
+		sell_item(tmp,op, -1);
 		/* ok, here we insert then the unique shops too, now we have only clone shops */
 		if(QUERY_FLAG(tmp, FLAG_UNPAID)) /* ok, we have really selled it - not only droped */
 		{

@@ -75,6 +75,8 @@ static PyMethodDef ObjectMethods[] =
     {"GetEventOptions", (PyCFunction)Daimonin_Object_GetEventOptions,METH_VARARGS},
     {"SetEventOptions", (PyCFunction)Daimonin_Object_SetEventOptions,METH_VARARGS},
 #endif    
+    {"Deposit",  (PyCFunction)Daimonin_Object_Deposit, METH_VARARGS},
+    {"Withdraw",  (PyCFunction)Daimonin_Object_Withdraw, METH_VARARGS},
     {"Communicate",  (PyCFunction)Daimonin_Object_Communicate, METH_VARARGS},
     {"Say",  (PyCFunction)Daimonin_Object_Say, METH_VARARGS},
     {"SayTo",  (PyCFunction)Daimonin_Object_SayTo, METH_VARARGS},
@@ -895,6 +897,63 @@ static PyObject* Daimonin_Object_Take(Daimonin_Object *whoptr, PyObject* args)
     free(CFR);
     Py_INCREF(Py_None);
     return Py_None;
+}
+
+
+/*****************************************************************************/
+/* Name   : Daimonin_Object_Deposit                                          */
+/* Python : object.Deposit(deposit_object, string)                           */
+/* Info   : deposit value or string money from object in deposit_object.     */
+/*          Control first object has that amount of money, then remove it    */
+/*          from object and add it in ->value of deposit_object.             */
+/* Status : Tested                                                           */
+/*****************************************************************************/
+static PyObject* Daimonin_Object_Deposit(Daimonin_Object *whoptr, PyObject* args)
+{
+    Daimonin_Object *obptr;
+    char *text;
+    CFParm* CFR;
+    int value;
+	
+    if (!PyArg_ParseTuple(args,"O!s", &Daimonin_ObjectType, &obptr, &text))
+        return NULL;
+	
+    GCFP.Value[0] = (void *)(WHO);
+    GCFP.Value[1] = (void *)(obptr->obj);
+    GCFP.Value[2] = (void *)(text);
+	
+    CFR = (PlugHooks[HOOK_DEPOSIT])(&GCFP);
+	
+    value = *(int *)(CFR->Value[0]);
+    return Py_BuildValue("i",value);
+}
+
+/*****************************************************************************/
+/* Name   : Daimonin_Object_Deposit                                          */
+/* Python : object.Deposit(deposit_object, string)                           */
+/* Info   : deposit value or string money from object in deposit_object.     */
+/*          Control first object has that amount of money, then remove it    */
+/*          from object and add it in ->value of deposit_object.             */
+/* Status : Tested                                                           */
+/*****************************************************************************/
+static PyObject* Daimonin_Object_Withdraw(Daimonin_Object *whoptr, PyObject* args)
+{
+    Daimonin_Object *obptr;
+    char *text;
+    CFParm* CFR;
+    int value;
+	
+    if (!PyArg_ParseTuple(args,"O!s", &Daimonin_ObjectType, &obptr, &text))
+        return NULL;
+	
+    GCFP.Value[0] = (void *)(WHO);
+    GCFP.Value[1] = (void *)(obptr->obj);
+    GCFP.Value[2] = (void *)(text);
+	
+    CFR = (PlugHooks[HOOK_WITHDRAW])(&GCFP);
+	
+    value = *(int *)(CFR->Value[0]);
+    return Py_BuildValue("i",value);
 }
 
 /*****************************************************************************/
@@ -2291,6 +2350,7 @@ static PyObject* Daimonin_Object_GetArchName(Daimonin_Object *whoptr, PyObject* 
 /* Python : buyer.ShowCost(value)                                            */
 /* Info   : Returns a string describing value as x gold, x silver, x copper  */
 /*        : cost string comes from shop.c and is temporary STATIC            */
+/*        : note: whoptr is not used - perhaps we use this in future with it */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static PyObject* Daimonin_Object_ShowCost(Daimonin_Object *whoptr, PyObject* args)

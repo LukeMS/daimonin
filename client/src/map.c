@@ -643,7 +643,7 @@ int get_tile_position( int x, int y, int *tx, int *ty )
 	*tx = x/MAP_TILE_POS_XOFF + y/MAP_TILE_YOFF;
 	*ty = y/MAP_TILE_YOFF - x/MAP_TILE_POS_XOFF;
 
-	if (x<0) x+= MAP_TILE_POS_XOFF<<3;
+    if (x<0) x+= (MAP_TILE_POS_XOFF<<3) - 1;
 	x%= MAP_TILE_POS_XOFF;
 	y%= MAP_TILE_YOFF;
 

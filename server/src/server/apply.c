@@ -2897,8 +2897,8 @@ int manual_apply (object *op, object *tmp, int aflag)
 	get_tod(&tod);
 	sprintf(buf, "It is %d minute%s past %d o'clock %s",
 	  tod.minute+1, ((tod.minute+1 < 2) ? "" : "s"),
-	  ((tod.hour % 14 == 0) ? 14 : ((tod.hour)%14)),
-	  ((tod.hour >= 14) ? "pm" : "am"));
+	  ((tod.hour % (HOURS_PER_DAY/2) == 0) ? (HOURS_PER_DAY/2) : ((tod.hour)%(HOURS_PER_DAY/2))),
+	  ((tod.hour >= (HOURS_PER_DAY/2)) ? "pm" : "am"));
 	new_draw_info(NDI_UNIQUE, 0,op, buf);
 	return 1;
     } else {

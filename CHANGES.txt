@@ -1,8 +1,32 @@
 Daimonin CHANGES
+05.06.04	- bank script & functions
+		- small fix in client (exp bubble draw function)
+		- small fix mouse moving (client)
+		- fix of Time of Day
+
+01.06.04	- fixed wand bug (identify not reduced charges)
+		- fixed keybind file not saved in client when menu
+                  changed
+
+17.05.04	- added automatically /shutdown with counting.
+                - fixed a crash bug in poison_player()
+                - fixed /reply message output
+                - fixed dm_stealth flag usage in /tell & /reply 
+                - removed some debug messages related to waypoints
+                - remove "BUG: player is on saved map" message 
+                - added "xx leaves the game" out put to DMs
+                - removed client color key tags in player chat strings
+                - changed attack/resist/protect number description from
+                  "slash +100" to "slash +100%"
+                - fixed rand_drop object & function. Random drop value
+                  now in weight_limit (container) and accurate calculated.
+                - added 2 maps (old outpost 4+5)
+ 
 14.05.04	- fixed artifact list -> xxx of less fire to lesser fire
                 - fixed potion value in artifact list (alot to high)
                 - fixed shop. Selling of items with value will get 1 copper
                   min and worthless items will get deleted too from shop power.
+
 13.05.04	- fixing clone shop bug (get object direct in open container)
 		- adjusting poison for players - adjust damage
 		- make remove/find traps more useful and transparent
