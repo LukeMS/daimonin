@@ -308,6 +308,9 @@ struct mob_behaviourset * generate_behaviourset(object *op)
                                                                                      behaviourclasses[BEHAVIOURCLASS_MOVES].behaviours[AIBEHAVIOUR_KEEP_DISTANCE_TO_ENEMY].params[AIPARAM_KEEP_DISTANCE_TO_ENEMY_MIN_DIST].defaultvalue;
                 last->parameters[AIPARAM_KEEP_DISTANCE_TO_ENEMY_MAX_DIST].intvalue = (int)
                                                                                      behaviourclasses[BEHAVIOURCLASS_MOVES].behaviours[AIBEHAVIOUR_KEEP_DISTANCE_TO_ENEMY].params[AIPARAM_KEEP_DISTANCE_TO_ENEMY_MAX_DIST].defaultvalue;
+                
+                last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_OPTIMIZE_LINE_OF_FIRE);                
+                
             }
             else
             {
@@ -343,15 +346,6 @@ struct mob_behaviourset * generate_behaviourset(object *op)
         }
         last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_MOVE_TOWARDS_HOME);
     }
-
-    /* Reaction moves */
-    /*
-    if(QUERY_FLAG(op, FLAG_CAST_SPELL) || QUERY_FLAG(op, FLAG_READY_BOW)) 
-    {
-        last = set->behaviours[BEHAVIOURCLASS_REACTION_MOVES] = init_behaviour(
-                BEHAVIOURCLASS_REACTION_MOVES, AIBEHAVIOUR_KEEP_DISTANCE_TO_ENEMY);
-    }
-    */
 
     /* Actions */
     if (!QUERY_FLAG(op, FLAG_NO_ATTACK))
@@ -1295,6 +1289,75 @@ void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_
     }
 }
 
+void ai_optimize_line_of_fire(object *op, struct mob_behaviour_param *params, move_response *response)
+{
+    /* TODO: not correct for multi-tile mobs, the in_line_of_fire() functions simply don't
+     * work for them. Possible solutions: 1) disable for multi-tile mobs (what do big monsters care
+     * about puny missiles, anyway?  2) fix the line-of-fire functions (can be very expensive) */
+	/* Disabled for multi-tile mobs */
+	if(op->more)
+		return;
+	
+    if (OBJECT_VALID(op->enemy, op->enemy_count))
+    {
+		/* Behaviour core */
+		if(mob_can_see_obj(op, op->enemy, MOB_DATA(op)->enemy))
+		{
+            int i;
+            int good_directions = 0, ok_directions = 0;
+
+        	rv_vector  *rv  = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE);
+            
+            /* Too close or too far to care? */
+            if(rv->distance <= 2 || rv->distance > 8)
+                return;
+            
+            /* Already perfect? */
+            if(can_hit_missile(op, op->enemy, rv, 1)) 
+            {
+                good_directions = (1 << 0);
+            } else {
+                response->forbidden |= (1 << 0); /* Don't stay in a bad spot */
+                response->data.directions = 0;
+            }
+            
+            /* Find a nearby good spot */
+            /* TODO: can probably be calculated instead of searched for */
+            /* TODO: with this algorithm there is a certain state where
+             * the mob starts zipping between two "half-good" spots */
+            for(i=-2; i<=2; i++) 
+            {
+    	        mapstruct *m;
+                int dir = absdir(rv->direction+i);
+        	    int x = op->x + freearr_x[dir];
+            	int y = op->y + freearr_y[dir];
+
+	            /* Find a spot in or near line of fire, and forbid movements to other spots */
+    	        if ((m = out_of_map(op->map, &x, &y))) 
+                {
+        	        if(mapcoord_in_line_of_fire(op->enemy, m, x, y, 1)) /* good spot? */
+                        good_directions |= (1 << dir);
+                    else if(mapcoord_in_line_of_fire(op->enemy, m, x, y, 2)) /* ok spot? */
+                        ok_directions |= (1 << dir);
+	            }
+            }
+
+            /* See if we have a movement response... */
+            good_directions &= ~response->forbidden; 
+            if(good_directions) {
+                response->data.directions = good_directions;
+                response->type = MOVE_RESPONSE_DIRS;
+            }
+            else {
+                ok_directions &= ~response->forbidden; 
+                if(ok_directions) {
+                    response->data.directions = ok_directions;
+                    response->type = MOVE_RESPONSE_DIRS;
+                }
+            }
+		}
+    }
+}
 
 
 void ai_move_towards_enemy(object *op, struct mob_behaviour_param *params, move_response *response)
@@ -1342,7 +1405,7 @@ void ai_keep_distance_to_enemy(object *op, struct mob_behaviour_param *params, m
 				ai_move_towards_enemy(op, params, response);
 				return;
 			}
-
+            
             if (rv->distance < (unsigned int) AIPARAM_INT(AIPARAM_KEEP_DISTANCE_TO_ENEMY_MIN_DIST))
             {
                 response->type = MOVE_RESPONSE_DIR;
@@ -1351,8 +1414,11 @@ void ai_keep_distance_to_enemy(object *op, struct mob_behaviour_param *params, m
             }
             else if (rv->distance < (unsigned int) AIPARAM_INT(AIPARAM_KEEP_DISTANCE_TO_ENEMY_MAX_DIST))
             {
-                response->type = MOVE_RESPONSE_DIR;
-                response->data.direction = 0;
+//                response->type = MOVE_RESPONSE_DIR;
+//                response->data.direction = 0;
+                response->forbidden |= (1 << rv->direction);
+                response->forbidden |= (1 << absdir(rv->direction+1));
+                response->forbidden |= (1 << absdir(rv->direction-1));
                 op->anim_enemy_dir = rv->direction;
             }
         }
@@ -2256,6 +2322,25 @@ static inline void cleanup_mob_knowns(struct mob_known_obj **first)
     }
 }
 
+int choose_direction_from_bitmap(object *op, int bitmap)
+{
+    int numdirs=0, dirs[9], i;
+
+    for(i=0; i<9; i++) 
+    {
+        if(bitmap & (1 << i)) 
+        {
+            dirs[numdirs] = i;
+            numdirs++;
+        }
+    }
+    
+    if(numdirs == 0) 
+        return 0;
+
+    return dirs[RANDOM()%(numdirs)];
+}
+
 /* Calculate a movement direction given a movement response */
 static inline int direction_from_response(object *op, move_response *response)
 {
@@ -2263,6 +2348,8 @@ static inline int direction_from_response(object *op, move_response *response)
     {
         case MOVE_RESPONSE_DIR:
           return response->data.direction;
+        case MOVE_RESPONSE_DIRS:
+          return choose_direction_from_bitmap(op, response->data.directions);
         case MOVE_RESPONSE_OBJECT:
           //            LOG(llevDebug,"dir_from_response(): '%s' -> '%s'\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(response.data.target.obj));
           return calc_direction_towards_object(op, response->data.target.obj);

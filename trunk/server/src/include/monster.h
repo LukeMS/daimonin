@@ -141,8 +141,11 @@ struct mobdata
 typedef enum
 {
     MOVE_RESPONSE_NONE,
+    /* No response, let someone else decide */
     MOVE_RESPONSE_DIR,
-    /* simple move in a direction */
+    /* simple move in a direction, dir 0 is stand still */
+    MOVE_RESPONSE_DIRS,
+    /* Move in any of the given directions. one is picked randomly */
     MOVE_RESPONSE_WAYPOINT,
     /* move towards a (permanent) waypoint */
     MOVE_RESPONSE_COORD,
@@ -157,6 +160,7 @@ typedef struct behaviour_move_response
     union
     {
         int direction;
+        int directions; /* bitmap of selected directions */
 
         struct
         {
