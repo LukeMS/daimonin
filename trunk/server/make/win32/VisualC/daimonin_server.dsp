@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /MD /W3 /Gi /GX /Ob2 /I "..\..\..\src\include" /I "..\..\..\src\random_maps" /I "..\..\..\src\plugin_python\include" /I "c:\Python22\include" /D "_CONSOLE" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "DEBUG" /YX"preheader.pch" /FD /c
+# ADD CPP /nologo /MD /W3 /Gi /GX /O2 /Ob2 /I "..\..\..\src\include" /I "..\..\..\src\random_maps" /I "..\..\..\src\plugin_python\include" /I "c:\Python22\include" /D "_CONSOLE" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "DEBUG" /YX"preheader.pch" /FD /c
 # ADD BASE RSC /l 0x407 /d "NDEBUG"
 # ADD RSC /l 0x407 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -877,6 +877,22 @@ SOURCE=..\..\..\src\server\weather.c
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=..\..\..\src\socket\adler32.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\socket\compress.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\socket\deflate.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\socket\deflate.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\src\socket\image.c
 
 !IF  "$(CFG)" == "daimonin_server - Win32 ReleaseLog"
@@ -1055,6 +1071,30 @@ SOURCE=..\..\..\src\socket\sounds.c
 !ENDIF 
 
 # End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\socket\trees.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\socket\trees.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\socket\zconf.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\socket\zlib.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\socket\zutil.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\socket\zutil.h
+# End Source File
 # End Group
 # Begin Group "random_maps"
 
@@ -1141,6 +1181,10 @@ SOURCE=..\..\..\src\random_maps\expand2x.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\src\random_maps\expand2x.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\src\random_maps\floor.c
 
 !IF  "$(CFG)" == "daimonin_server - Win32 ReleaseLog"
@@ -1178,6 +1222,10 @@ SOURCE=..\..\..\src\random_maps\maze_gen.c
 
 !ENDIF 
 
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\random_maps\maze_gen.h
 # End Source File
 # Begin Source File
 
@@ -1221,6 +1269,10 @@ SOURCE=..\..\..\src\random_maps\random_map.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\src\random_maps\random_map.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\src\random_maps\reader.c
 
 !IF  "$(CFG)" == "daimonin_server - Win32 ReleaseLog"
@@ -1247,7 +1299,7 @@ SOURCE=..\..\..\src\random_maps\reader.l
 
 # PROP Ignore_Default_Tool 1
 # Begin Custom Build
-InputDir=\Projects\Daimonin\server\src\random_maps
+InputDir=\Projects\daimonin\server\src\random_maps
 InputPath=..\..\..\src\random_maps\reader.l
 InputName=reader
 
@@ -1260,7 +1312,7 @@ InputName=reader
 
 # PROP Ignore_Default_Tool 1
 # Begin Custom Build
-InputDir=\Projects\Daimonin\server\src\random_maps
+InputDir=\Projects\daimonin\server\src\random_maps
 InputPath=..\..\..\src\random_maps\reader.l
 InputName=reader
 
@@ -1273,7 +1325,7 @@ InputName=reader
 
 # PROP Ignore_Default_Tool 1
 # Begin Custom Build
-InputDir=\Projects\Daimonin\server\src\random_maps
+InputDir=\Projects\daimonin\server\src\random_maps
 InputPath=..\..\..\src\random_maps\reader.l
 InputName=reader
 
@@ -1304,6 +1356,10 @@ SOURCE=..\..\..\src\random_maps\rogue_layout.c
 
 !ENDIF 
 
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\random_maps\room_gen.h
 # End Source File
 # Begin Source File
 
@@ -1344,6 +1400,10 @@ SOURCE=..\..\..\src\random_maps\room_gen_spiral.c
 
 !ENDIF 
 
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\random_maps\rproto.h
 # End Source File
 # Begin Source File
 
@@ -1500,10 +1560,6 @@ SOURCE=..\..\..\src\include\define.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\src\random_maps\expand2x.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\..\src\include\face.h
 # End Source File
 # Begin Source File
@@ -1548,10 +1604,6 @@ SOURCE=..\..\..\src\include\material.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\src\random_maps\maze_gen.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\..\src\include\newclient.h
 # End Source File
 # Begin Source File
@@ -1580,23 +1632,11 @@ SOURCE=..\..\..\src\include\race.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\src\random_maps\random_map.h
-# End Source File
-# Begin Source File
-
 SOURCE="..\..\..\src\include\re-cmp.h"
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\..\src\include\recipe.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\src\random_maps\room_gen.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\src\random_maps\rproto.h
 # End Source File
 # Begin Source File
 

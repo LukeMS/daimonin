@@ -25,7 +25,11 @@
 
 #include <global.h>
 
-#include <errno.h>
+#ifdef NO_ERRNO_H
+    extern int errno;
+#else
+#   include <errno.h>
+#endif
 #ifndef __CEXTRACT__
 #include <sproto.h>
 #endif

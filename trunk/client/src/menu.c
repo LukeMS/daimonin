@@ -877,15 +877,599 @@ void show_skilllist(void)
     }
 }
 
+static int load_anim_tmp(void)
+{
+	int i, anim_len=0,new_anim = TRUE;
+	uint8 faces=0;
+	uint16 count=0, face_id;
+	FILE *stream;
+	char buf[HUGE_BUF];
+	unsigned char anim_cmd[2048];
+
+
+	/* clear both animation tables
+	 * this *must* be reloaded every time we connect 
+	 * - remember that different servers can have different
+	 * animations!
+	 */
+	for(i=0;i<MAXANIM;i++)
+	{
+		if(animations[i].faces)
+			free(animations[i].faces);
+		if(anim_table[i].anim_cmd)
+			free(anim_table[i].anim_cmd);
+	}
+	memset(animations, 0, sizeof(animations));
+
+	/* animation #0 is like face id #0 a bug catch - if ever
+	 * appear in game flow its a sign of a uninit of simply
+	 * buggy operation.
+	 */
+	anim_cmd[0]= (unsigned char) ((count>>8)&0xff);
+	anim_cmd[1] =(unsigned char)( count & 0xff);
+	anim_cmd[2]=0; /* flags ... */
+	anim_cmd[3]=1;
+	anim_cmd[4]=0; /* face id o */
+	anim_cmd[5]=0;
+	anim_table[count].anim_cmd = malloc(6);
+	memcpy(anim_table[count].anim_cmd, anim_cmd, 6);
+	anim_table[count].len = 6;
+	/* end of dummy animation #0 */
+
+	count++;
+    if( (stream = fopen(FILE_ANIMS_TMP, "rt" )) == NULL )
+	{
+		LOG(LOG_ERROR,"load_anim_tmp: Error reading anim.tmp!");
+		SYSTEM_End(); /* fatal */
+		exit(0);
+	}
+
+	while(fgets(buf, HUGE_BUF-1, stream)!=NULL)
+	{
+		if(new_anim == TRUE) /* we are outside a anim body ? */
+		{
+			if(!strncmp(buf, "anim ",5))
+			{
+				new_anim = FALSE;
+				faces = 0;
+				anim_cmd[0]= (unsigned char) ((count>>8)&0xff);
+				anim_cmd[1] =(unsigned char)( count & 0xff);
+				faces = 1;
+				anim_len = 4;
+
+			}
+			else /* we should never hit this point */
+			{
+				LOG(LOG_ERROR,"load_anim_tmp:Error parsing anims.tmp - unknown cmd: >%s<!\n", buf);
+			}
+		}
+		else /* no, we are inside! */
+		{
+			if(!strncmp(buf, "facings ",8))
+			{
+				faces = atoi(buf+8);
+			}
+			else if(!strncmp(buf, "mina",4))
+			{
+				/*LOG(LOG_DEBUG,"LOAD ANIM: #%d - len: %d (%d)\n", count, anim_len, faces);*/
+				anim_cmd[2]=0; /* flags ... */
+				anim_cmd[3]=faces; /* facings */
+				anim_table[count].len = anim_len;
+				anim_table[count].anim_cmd = malloc(anim_len);
+				memcpy(anim_table[count].anim_cmd, anim_cmd, anim_len);
+				count++;
+				new_anim = TRUE;
+			}
+			else
+			{
+				face_id = (uint16) atoi(buf);
+				anim_cmd[anim_len++]= (unsigned char) ((face_id>>8)&0xff);
+				anim_cmd[anim_len++] = (unsigned char) (face_id & 0xff);
+			}
+		}
+	}
+
+
+    fclose( stream );
+	return 1;
+}
+
+
+int read_anim_tmp(void)
+{
+    FILE *stream, *ftmp;
+	int i,new_anim=TRUE,count=1;
+	char buf[HUGE_BUF],cmd[HUGE_BUF];
+    struct stat	stat_bmap, stat_tmp;
+
+	/* if this fails, we have a urgent problem somewhere before */
+    if( (stream = fopen(FILE_BMAPS_TMP, "rb" )) == NULL )
+	{
+		LOG(LOG_ERROR,"read_anim_tmp:Error reading bmap.tmp for anim.tmp!");
+		SYSTEM_End(); /* fatal */
+		exit(0);
+	}
+	fstat(fileno(stream), &stat_bmap);
+        fclose( stream );
+
+    if( (stream = fopen(FILE_ANIMS_TMP, "rb" )) != NULL )
+	{
+		fstat(fileno(stream), &stat_tmp);
+		fclose( stream );
+
+		/* our anim file must be newer as our bmaps.tmp */
+		if(difftime(stat_tmp.st_mtime, stat_bmap.st_mtime) > 0.0f)
+			return load_anim_tmp(); /* all fine - load file */
+	}
+
+	unlink(FILE_ANIMS_TMP); /* for some reason - recreate this file */
+    if( (ftmp = fopen(FILE_ANIMS_TMP, "wt" )) == NULL )
+	{
+		LOG(LOG_ERROR,"read_anim_tmp:Error opening anims.tmp!");
+		SYSTEM_End(); /* fatal */
+		exit(0);
+	}
+
+    if( (stream = fopen(FILE_CLIENT_ANIMS, "rt" )) == NULL )
+	{
+		LOG(LOG_ERROR,"read_anim_tmp:Error reading client_anims for anims.tmp!");
+		SYSTEM_End(); /* fatal */
+		exit(0);
+	}
+	while(fgets(buf, HUGE_BUF-1, stream)!=NULL)
+	{
+		sscanf(buf,"%s",cmd);
+		if(new_anim == TRUE) /* we are outside a anim body ? */
+		{
+			if(!strncmp(buf, "anim ",5))
+			{
+				sprintf(cmd, "anim %d -> %s",count++, buf);
+				fputs(cmd,ftmp); /* safe this key string! */
+				new_anim = FALSE;
+			}
+			else /* we should never hit this point */
+			{
+				LOG(LOG_ERROR,"read_anim_tmp:Error parsing client_anim - unknown cmd: >%s<!\n", cmd);
+			}
+		}
+		else /* no, we are inside! */
+		{
+			if(!strncmp(buf, "facings ",8))
+			{
+				fputs(buf, ftmp); /* safe this key word! */
+			}
+			else if(!strncmp(cmd, "mina",4))
+			{
+				fputs(buf, ftmp); /* safe this key word! */
+				new_anim = TRUE;
+			}
+			else
+			{
+				/* this is really slow when we have more pictures - we
+				 * browsing #anim * #bmaps times the same table -
+				 * pretty bad - when we stay to long here, we must create
+				 * for bmaps.tmp entries a hash table too.
+				 */
+				for(i=0;i<bmaptype_table_size;i++)
+				{
+					if(!strcmp(bmaptype_table[i].name,cmd))
+						break;
+				}
+				if(i>=bmaptype_table_size)
+				{
+					/* if we are here then we have a picture name in the anims file
+					 * which we don't have in our bmaps file! Pretty bad. But because
+					 * face #0 is ALWAYS bug.101 - we simply use it here! */
+					i=0;
+					LOG(LOG_ERROR,"read_anim_tmp: Invalid anim name >%s< - set to #0 (bug.101)!\n", cmd);
+				}
+				sprintf(cmd, "%d\n",i);
+				fputs(cmd, ftmp);
+			}
+		}
+
+	}
+
+    fclose( stream );
+    fclose( ftmp );
+	return load_anim_tmp(); /* all fine - load file */
+}
+
+void read_anims(void)
+{
+    FILE *stream;
+	char *temp_buf;
+	struct stat statbuf;
+	int i;
+
+	LOG(LOG_DEBUG,"Loading %s....",FILE_CLIENT_ANIMS);
+	srv_client_files[SRV_CLIENT_ANIMS].len = 0;
+	srv_client_files[SRV_CLIENT_ANIMS].crc = 0;
+    if( (stream = fopen(FILE_CLIENT_ANIMS, "rb" )) != NULL )
+    {
+		/* temp load the file and get the data we need for compare with server */
+		fstat (fileno (stream), &statbuf);
+		i = (int) statbuf.st_size;
+		srv_client_files[SRV_CLIENT_ANIMS].len = i;
+		temp_buf=malloc(i);
+		fread(temp_buf, sizeof(char), i, stream);
+		srv_client_files[SRV_CLIENT_ANIMS].crc = adler32(i,temp_buf,i);
+		free(temp_buf);
+        fclose( stream );
+		LOG(LOG_DEBUG," found file!(%d/%x)",srv_client_files[SRV_CLIENT_ANIMS].len,srv_client_files[SRV_CLIENT_ANIMS].crc );
+	}
+	LOG(LOG_DEBUG,"done.\n");
+}
+
+/* after we tested and/or created bmaps.p0 - load the data from it */
+static void load_bmaps_p0(void)
+{
+	char buf[HUGE_BUF];
+	char name[HUGE_BUF];
+	int len, pos, num;
+	unsigned int crc;
+	_bmaptype *at;
+	FILE *fbmap;
+
+	/* clear bmap hash table */
+	memset((void *) bmap_table,0,BMAPTABLE*sizeof(_bmaptype *));
+
+	/* try to open bmaps_p0 file */
+    if( (fbmap = fopen(FILE_BMAPS_P0, "rb" )) == NULL )
+	{
+		LOG(LOG_ERROR,"FATAL: Error loading bmaps.p0!");
+		SYSTEM_End(); /* fatal */
+		unlink(FILE_BMAPS_P0);
+		exit(0);
+	}
+	while(fgets(buf, HUGE_BUF-1, fbmap)!=NULL)
+	{
+		sscanf(buf,"%d %d %x %d %s", &num, &pos, &crc, &len, name);
+
+		at = (_bmaptype *) malloc(sizeof(_bmaptype));
+		at->name = (char *) malloc(strlen(name)+1);
+		strcpy(at->name, name);
+		at->crc = crc;
+		at->num = num;
+		at->len = len;
+		at->pos = pos;
+		add_bmap(at);
+		/*LOG(LOG_DEBUG,"%d %d %d %x >%s<\n", num, pos, len, crc, name);*/
+	}
+    fclose(fbmap);
+}
+
+
+/* read and/or create the bmaps.p0 file out of the
+ * daimonin.p0 file
+ */
+void read_bmaps_p0(void)
+{
+	FILE *fbmap, *fpic;
+	char *temp_buf, *cp;
+	int bufsize, len, num,  pos;
+	unsigned int crc;
+	char buf[HUGE_BUF];
+    struct stat	bmap_stat, pic_stat;
+
+	if( (fpic = fopen(FILE_DAIMONIN_P0, "rb" )) == NULL )
+	{
+		LOG(LOG_ERROR,"FATAL: Can't find daimonin.p0 file!");
+		SYSTEM_End(); /* fatal */
+		unlink(FILE_BMAPS_P0);
+		exit(0);
+	}
+	/* get time stamp of the file daimonin.p0 */
+	fstat(fileno(fpic), &pic_stat);
+
+	/* try to open bmaps_p0 file */
+    if( (fbmap = fopen(FILE_BMAPS_P0, "r" )) == NULL )
+		goto create_bmaps;
+
+	/* get time stamp of the file */
+	fstat(fileno(fbmap), &bmap_stat);
+    fclose(fbmap);
+
+	if(difftime(pic_stat.st_mtime, bmap_stat.st_mtime) > 0.0f)
+		goto create_bmaps;
+	
+    fclose(fpic);
+	load_bmaps_p0();
+	return;
+
+	create_bmaps: /* if we are here, then we have to (re)create the bmaps.p0 file */
+    if( (fbmap = fopen(FILE_BMAPS_P0, "w" )) == NULL )
+	{
+		LOG(LOG_ERROR,"FATAL: Can't create bmaps.p0 file!");
+		SYSTEM_End(); /* fatal */
+	    fclose(fbmap);
+		unlink(FILE_BMAPS_P0);
+		exit(0);
+	}
+	temp_buf = malloc((bufsize = 24*1024));
+
+	while(fgets(buf, HUGE_BUF-1, fpic)!=NULL)
+	{
+	    if(strncmp(buf,"IMAGE ",6)!=0) 
+		{
+			LOG(LOG_ERROR,"read_client_images:Bad image line - not IMAGE, instead\n%s",buf);
+			SYSTEM_End(); /* fatal */
+			fclose(fbmap);
+			fclose(fpic);
+			unlink(FILE_BMAPS_P0);
+			exit(0);
+		}
+
+	    num = atoi(buf+6);
+	    /* Skip accross the number data */
+	    for (cp=buf+6; *cp!=' '; cp++) ;
+	    len = atoi(cp);
+		
+		strcpy(buf, cp);
+		pos = (int) ftell( fpic );
+
+		if(len >bufsize) /* dynamic buffer adjustment */
+		{
+			free(temp_buf);
+			/* we assume thats this is nonsense */
+			if(len>128*1024) 
+			{
+				LOG(LOG_ERROR,"read_client_images:Size of picture out of bounds!(len:%d)(pos:%d)",len, pos);
+				SYSTEM_End(); /* fatal */
+			    fclose(fbmap);
+				fclose(fpic);
+				unlink(FILE_BMAPS_P0);
+				exit(0);
+			}
+			bufsize=len;
+			temp_buf = malloc(bufsize);
+		}
+
+		fread(temp_buf, 1, len, fpic);
+		crc = adler32(len,temp_buf,len);
+
+		/* now we got all we needed! */
+		sprintf(temp_buf, "%d %d %x %s",num, pos,crc,buf );
+		fputs(temp_buf,fbmap);
+/*		LOG(LOG_DEBUG,"FOUND: %s", temp_buf);		*/
+	}
+
+
+	free(temp_buf);
+    fclose(fbmap);
+    fclose(fpic);
+	load_bmaps_p0();
+	return;
+}
+
+void delete_bmap_tmp(void)
+{
+	int i;
+
+	bmaptype_table_size = 0;
+	for(i=0;i<MAX_BMAPTYPE_TABLE;i++)
+	{
+		if(bmaptype_table[i].name)
+			free(bmaptype_table[i].name);
+		bmaptype_table[i].name=NULL;
+	}
+}
+
+static int load_bmap_tmp(void)
+{
+	FILE *stream;
+	char buf[HUGE_BUF],name[HUGE_BUF];
+	int i=0,len, pos;
+	unsigned int crc;
+
+	delete_bmap_tmp();
+    if( (stream = fopen(FILE_BMAPS_TMP, "rt" )) == NULL )
+	{
+		LOG(LOG_ERROR,"bmaptype_table(): error open file <bmap.tmp>");
+		SYSTEM_End(); /* fatal */
+		exit(0);
+	}
+	while(fgets(buf, HUGE_BUF-1, stream)!=NULL)
+	{
+		sscanf(buf,"%d %d %x %s\n", &pos, &len, &crc, name);
+		bmaptype_table[i].crc = crc;
+		bmaptype_table[i].len = len;
+		bmaptype_table[i].pos = pos;
+		bmaptype_table[i].name =(char*) malloc(strlen(name)+1);
+		strcpy(bmaptype_table[i].name,name);
+		i++;
+	}
+	bmaptype_table_size=i;
+    fclose( stream );
+	return 0;
+}
+
+
+int read_bmap_tmp(void)
+{
+    FILE *stream, *fbmap0;
+	char buf[HUGE_BUF],name[HUGE_BUF];
+    struct stat	stat_bmap, stat_tmp, stat_bp0;
+	int len;
+	unsigned int crc;
+	_bmaptype *at;
+
+    if( (stream = fopen(FILE_CLIENT_BMAPS, "rb" )) == NULL )
+	{
+		/* we can't make bmaps.tmp without this file */
+		unlink(FILE_BMAPS_TMP);
+		return 1;
+	}
+	fstat(fileno(stream), &stat_bmap);
+    fclose( stream );
+
+    if( (stream = fopen(FILE_BMAPS_P0, "rb" )) == NULL )
+	{
+		/* we can't make bmaps.tmp without this file */
+		unlink(FILE_BMAPS_TMP);
+		return 1;
+	}
+	fstat(fileno(stream), &stat_bp0);
+    fclose( stream );
+
+    if( (stream = fopen(FILE_BMAPS_TMP, "rb" )) == NULL )
+		goto create_bmap_tmp;
+	fstat(fileno(stream), &stat_tmp);
+    fclose( stream );
+
+	/* ok - client_bmap & bmaps.p0 are there - now check
+	 * our bmap_tmp is newer - is not newer as both, we
+	 * create it new - then it is newer.
+	 */
+
+	if(difftime(stat_tmp.st_mtime, stat_bmap.st_mtime) > 0.0f)
+	{
+		if(difftime(stat_tmp.st_mtime, stat_bp0.st_mtime) > 0.0f)
+			return load_bmap_tmp(); /* all fine */
+	}
+
+	create_bmap_tmp:
+	unlink(FILE_BMAPS_TMP);
+
+	/* NOW we are sure... we must create us a new bmaps.tmp */
+    if( (stream = fopen(FILE_CLIENT_BMAPS, "rb" )) != NULL )
+    {
+		/* we can use text mode here, its local */
+	    if( (fbmap0 = fopen(FILE_BMAPS_TMP, "wt" )) != NULL )
+		{
+			/* read in the bmaps from the server, check with the
+			 * loaded bmap table (from bmaps.p0) and create with 
+			 * this information the bmaps.tmp file.
+			 */
+			while(fgets(buf, HUGE_BUF-1, stream)!=NULL)
+			{
+				sscanf(buf,"%x %x %s", &len, &crc, name);
+				at=find_bmap(name);
+
+				/* now we can check, our local file package has
+				 * the right png - if not, we mark this pictures
+				 * as "in cache". We don't check it here now - 
+				 * that will happens at runtime.
+				 * That can change when we include later a forbidden
+				 * flag in the server (no face send) - then we need
+				 * to break and upddate the picture and/or check the cache.
+				 */
+				/* position -1 mark "not i the daimonin.p0 file */
+				if(!at || at->len != len || at->crc != crc) /* is different or not there! */
+					sprintf(buf,"-1 %d %x %s\n", len, crc, name);
+				else /* we have it */
+					sprintf(buf,"%d %d %x %s\n", at->pos, len, crc, name);
+				fputs(buf, fbmap0);
+			}
+		    fclose( fbmap0 );
+		}
+	    fclose( stream );
+	}
+	return load_bmap_tmp(); /* all fine */
+}
+
+
+void read_bmaps(void)
+{
+    FILE *stream;
+	char *temp_buf;
+	struct stat statbuf;
+	int i;
+
+	srv_client_files[SRV_CLIENT_BMAPS].len = 0;
+	srv_client_files[SRV_CLIENT_BMAPS].crc = 0;
+	LOG(LOG_DEBUG,"Loading %s....",FILE_CLIENT_BMAPS);
+    if( (stream = fopen(FILE_CLIENT_BMAPS, "rb" )) != NULL )
+    {
+		/* temp load the file and get the data we need for compare with server */
+		fstat (fileno (stream), &statbuf);
+		i = (int) statbuf.st_size;
+		srv_client_files[SRV_CLIENT_BMAPS].len = i;
+		temp_buf=malloc(i);
+		fread(temp_buf, sizeof(char), i, stream);
+		srv_client_files[SRV_CLIENT_BMAPS].crc = adler32(i,temp_buf,i);
+		free(temp_buf);
+        fclose( stream );
+		LOG(LOG_DEBUG," found file!(%d/%x)",srv_client_files[SRV_CLIENT_BMAPS].len,srv_client_files[SRV_CLIENT_BMAPS].crc );
+
+	}
+	else
+	{
+		unlink(FILE_BMAPS_TMP);
+		LOG(LOG_DEBUG,"done.\n");
+		return;
+	}
+
+	LOG(LOG_DEBUG,"done.\n");
+
+	
+}
+
+
+void read_settings(void)
+{
+    FILE *stream;
+	char *temp_buf;
+	struct stat statbuf;
+	int i;
+
+	srv_client_files[SRV_CLIENT_SETTINGS].len = 0;
+	srv_client_files[SRV_CLIENT_SETTINGS].crc = 0;
+	LOG(LOG_DEBUG,"Loading %s....",FILE_CLIENT_SETTINGS);
+    if( (stream = fopen(FILE_CLIENT_SETTINGS, "rb" )) != NULL )
+    {
+		/* temp load the file and get the data we need for compare with server */
+		fstat (fileno (stream), &statbuf);
+		i = (int) statbuf.st_size;
+		srv_client_files[SRV_CLIENT_SETTINGS].len = i;
+		temp_buf=malloc(i);
+		fread(temp_buf, sizeof(char), i, stream);
+		srv_client_files[SRV_CLIENT_SETTINGS].crc = adler32(i,temp_buf,i);
+		free(temp_buf);
+	    fclose( stream );
+		LOG(LOG_DEBUG," found file!(%d/%x)",srv_client_files[SRV_CLIENT_SETTINGS].len,srv_client_files[SRV_CLIENT_SETTINGS].crc );
+	}
+	LOG(LOG_DEBUG,"done.\n");
+}
+
 void read_spells(void)
 {
-    int i,panel;
+    int i,ii,panel;
     char type, nchar, *tmp, *tmp2;
+	struct stat statbuf;
     FILE *stream;
+	char *temp_buf;
     char line[255], name[255], d1[255], d2[255], d3[255], d4[255], icon[128];
     
-    if( (stream = fopen("./spells.dat", "r" )) != NULL )
+	for(i=0;i<SPELL_LIST_MAX;i++)
     {
+		for(ii=0;ii<SPELL_LIST_ENTRY;ii++)
+        {           
+                spell_list[i].entry[0][ii].flag = LIST_ENTRY_UNUSED;
+                spell_list[i].entry[1][ii].flag = LIST_ENTRY_UNUSED;
+                spell_list[i].entry[0][ii].name[0] = 0;
+                spell_list[i].entry[1][ii].name[0] = 0;
+		}
+	}
+    spell_list_set.class_nr = 0;
+    spell_list_set.entry_nr = 0;
+    spell_list_set.group_nr = 0;
+
+	srv_client_files[SRV_CLIENT_SPELLS].len = 0;
+	srv_client_files[SRV_CLIENT_SPELLS].crc = 0;
+	LOG(LOG_DEBUG,"Loading %s....",FILE_CLIENT_SPELLS);
+    if( (stream = fopen(FILE_CLIENT_SPELLS, "rb" )) != NULL )
+    {
+		/* temp load the file and get the data we need for compare with server */
+		fstat (fileno (stream), &statbuf);
+		i = (int) statbuf.st_size;
+		srv_client_files[SRV_CLIENT_SPELLS].len = i;
+		temp_buf=malloc(i);
+		fread(temp_buf, sizeof(char), i, stream);
+		srv_client_files[SRV_CLIENT_SPELLS].crc = adler32(i,temp_buf,i);
+		free(temp_buf);
+		rewind(stream);
+
         for(i=0;;i++)
         {
             if( fgets( line, 255, stream ) == NULL)
@@ -939,18 +1523,49 @@ void read_spells(void)
             strcpy(spell_list[panel].entry[type=='w'?0:1][nchar-'a'].desc[3], d4);             
         }
         fclose( stream );
+		LOG(LOG_DEBUG," found file!(%d/%x)",srv_client_files[SRV_CLIENT_SPELLS].len,srv_client_files[SRV_CLIENT_SPELLS].crc );
     }
+	LOG(LOG_DEBUG,"done.\n");
 }
 
 void read_skills(void)
 {
-    int i,panel;
+    int i,ii,panel;
+	char *temp_buf;
     char nchar, *tmp, *tmp2;
+	struct stat statbuf;
     FILE *stream;
     char line[255], name[255], d1[255], d2[255], d3[255], d4[255], icon[128];
     
-    if( (stream = fopen("./skills.dat", "r" )) != NULL )
+	for(i=0;i<SKILL_LIST_MAX;i++)
+	{
+		for(ii=0;ii<SKILL_LIST_ENTRY;ii++)
+		{           
+			skill_list[i].entry[ii].flag=LIST_ENTRY_UNUSED;
+            skill_list[i].entry[ii].name[0]=0;
+        }
+	}
+
+	skill_list_set.group_nr = 0;
+	skill_list_set.entry_nr = 0;
+
+	srv_client_files[SRV_CLIENT_SKILLS].len = 0;
+	srv_client_files[SRV_CLIENT_SKILLS].crc = 0;
+	
+	LOG(LOG_DEBUG,"Loading %s....",FILE_CLIENT_SKILLS);
+    if( (stream = fopen(FILE_CLIENT_SKILLS, "rb" )) != NULL )
     {
+
+		/* temp load the file and get the data we need for compare with server */
+		fstat (fileno (stream), &statbuf);
+		i = (int) statbuf.st_size;
+		srv_client_files[SRV_CLIENT_SKILLS].len = i;
+		temp_buf=malloc(i);
+		fread(temp_buf, sizeof(char), i, stream);
+		srv_client_files[SRV_CLIENT_SKILLS].crc = adler32(i,temp_buf,i);
+		free(temp_buf);
+		rewind(stream);
+
         for(i=0;;i++)
         {
             if( fgets( line, 255, stream ) == NULL)
@@ -1007,7 +1622,9 @@ void read_skills(void)
             strcpy(skill_list[panel].entry[nchar-'a'].desc[3], d4);             
         }
         fclose( stream );
+		LOG(LOG_DEBUG," found file!(%d/%x)",srv_client_files[SRV_CLIENT_SKILLS].len,srv_client_files[SRV_CLIENT_SKILLS].crc );
     }
+	LOG(LOG_DEBUG,"done.\n");
 }
 
 

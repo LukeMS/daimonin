@@ -23,11 +23,8 @@
 /* This is a config file for the client.
  */
 
-#define PROG_NAME "Daimonin"
-#define VERSION_INFO "Daimonin SDL Client"
-#define VERSION_NR "0.95b"
-#define VERSION_CS 991013
-#define VERSION_SC 991013
+#define VERSION_CS 991014
+#define VERSION_SC 991014
 
 #define KEYBIND_FILE "./keys.dat"
 #define OPTION_FILE  "./options.dat"
@@ -37,19 +34,6 @@
 
 #define CLIENT_ICON_NAME "icon.png"
  
-/* COMPILER OPTIONS */
-
-/* Note: OS defines like  __WIN_32 or __LINUX are defined in the IDEs or makefiles */
-
-/* Use OpenGL to do the render/blits
- * WARNING: the OpenGL interface is not finished.
- * This is for developing only. Remove this text when interface is usable
- */
-/* #define INSTALL_OPENGL        */
-
-/* Use the SDL_mixer sound system. Remove when you have no sound card or slow computer */
-#define INSTALL_SOUND 
-
 /* socket timeout value */
 #define MAX_TIME 0
 
@@ -84,9 +68,3 @@
 /* The numbers of our dark levels */
 /* for each level-1 we store a own bitmap copy, so be careful */
 #define DARK_LEVELS 4
-
-#define HAVE_STRING_H
-#ifndef __WIN_32
-#define HAVE_UNISTD_H
-#endif
-#define HAVE_FCNTL_H

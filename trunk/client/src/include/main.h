@@ -23,8 +23,79 @@
 #if !defined(__MAIN_H)
 #define __MAIN_H
 
+#define HUGE_BUF 1024
+
 #define SDL_DEFAULT_REPEAT_DELAY        500
 #define SDL_DEFAULT_REPEAT_INTERVAL     30
+
+#define MAXHASHSTRING 20 /* for hash table (bmap, ...) */
+
+#define BMAPTABLE 5003 /* prime nubmer for hash table */
+/* struct for out bmap data */
+typedef struct _bmaptype {
+	char *name;
+	int num;
+	int len;
+	int pos;
+	unsigned int crc;
+}_bmaptype;
+
+extern _bmaptype *bmap_table[BMAPTABLE];
+
+#define MAX_BMAPTYPE_TABLE 5000
+
+typedef struct	_bmaptype_table {
+	char *name;
+	int pos;
+	int len;
+	unsigned int crc;
+}_bmaptype_table;
+
+_bmaptype_table bmaptype_table[MAX_BMAPTYPE_TABLE];
+
+extern int bmaptype_table_size;
+
+#define FILE_DAIMONIN_P0 "./daimonin.p0"
+#define FILE_BMAPS_P0 "./bmaps.p0"
+#define FILE_BMAPS_TMP "./srv_files/bmaps.tmp"
+#define FILE_ANIMS_TMP "./srv_files/anims.tmp"
+
+#define FILE_CLIENT_SPELLS "./srv_files/client_spells"
+#define FILE_CLIENT_SKILLS "./srv_files/client_skills"
+#define FILE_CLIENT_SETTINGS "./srv_files/client_settings"
+#define FILE_CLIENT_BMAPS "./srv_files/client_bmap"
+#define FILE_CLIENT_ANIMS "./srv_files/client_anims"
+
+enum {
+	SRV_CLIENT_SKILLS,
+	SRV_CLIENT_SPELLS,
+	SRV_CLIENT_SETTINGS,
+	SRV_CLIENT_ANIMS,
+	SRV_CLIENT_BMAPS,
+	SRV_CLIENT_FILES /* last index */
+};
+enum {
+	SRV_CLIENT_STATUS_OK,
+	SRV_CLIENT_STATUS_UPDATE,
+};
+
+#define	SRV_CLIENT_FLAG_BMAP 1
+#define SRV_CLIENT_FLAG_ANIM 2
+#define SRV_CLIENT_FLAG_SETTING 4
+#define	SRV_CLIENT_FLAG_SKILL 8
+#define	SRV_CLIENT_FLAG_SPELL 16
+
+typedef struct _srv_client_files {
+	int status;						/* is set from setup exchange */
+	int len;
+	uint32 crc;
+	int server_len;
+	uint32 server_crc;
+
+}_srv_client_files;
+
+extern _srv_client_files srv_client_files[SRV_CLIENT_FILES];
+
 
 #define MAXMETAWINDOW 14		/* count max. shown server in meta window*/
 
@@ -187,6 +258,7 @@ typedef enum _game_status
         GAME_STATUS_WAITVERSION, /* wait for response... add up in version cmd*/
         GAME_STATUS_SETUP, /* we ready to send setup commands*/
         GAME_STATUS_WAITSETUP,/* we wait for server response*/
+        GAME_STATUS_REQUEST_FILES, /* after we get response from setup, we request files if needed */
         GAME_STATUS_ADDME,   /* all setup is done, now try to enter game!*/
         GAME_STATUS_LOGIN,       /* now we wait for LOGIN request of the
 server*/
@@ -225,6 +297,10 @@ extern int metaserver_start, metaserver_sel,metaserver_count;
 
 extern int GameStatusVersionFlag;
 extern int GameStatusVersionOKFlag;
+
+extern int request_file_chain;
+extern int request_file_flags;
+
 
 /* with this, we overrule bitmap loading params*/
 /* for example, we need for fonts a attached palette, and not the native vid mode*/

@@ -163,9 +163,11 @@ void esrv_draw_look(object *pl)
 
     sl.buf=malloc(MAXSOCKBUF);
 
+	SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_ITEMX);
+	/*
     strcpy((char*)sl.buf,"itemx ");
     sl.len=strlen((char*)sl.buf);
-
+	*/
     SockList_AddInt(&sl, 0); /* delinv 0 */
     SockList_AddInt(&sl, 0);
 
@@ -223,9 +225,10 @@ void esrv_draw_look(object *pl)
 		if (QUERY_FLAG(tmp, FLAG_NO_PICK))
 			flags |=  F_NOPICK;
 			
-		/* we send never the inventory animation here */
+		/*
 		if (QUERY_FLAG(tmp,FLAG_ANIMATE) && !pl->contr->socket.anims_sent[tmp->animation_id])
 			esrv_send_animation(&pl->contr->socket, tmp->animation_id);
+		*/
 
 		SockList_AddInt(&sl, tmp->count);
 		SockList_AddInt(&sl, flags);
@@ -297,8 +300,11 @@ void esrv_draw_look(object *pl)
 		if (sl.len > (MAXSOCKBUF-MAXITEMLEN))
 		{
 			Send_With_Handling(&pl->contr->socket, &sl);
+			SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_ITEMX);
+			/*
 			strcpy((char*)sl.buf,"itemx ");
 			sl.len=strlen((char*)sl.buf);
+			*/
 			SockList_AddInt(&sl, -2); /* do no delinv */
 			SockList_AddInt(&sl, 0);
 			got_one=0;
@@ -330,7 +336,7 @@ int esrv_draw_DM_inv(object *pl, SockList *sl, object *op)
 {
 	char *tmp_sp;
 	object *tmp, *head;
-	int got_one,flags,len,anim_speed;
+	int got_one=0,flags,len,anim_speed;
 
 	SockList_AddInt(sl, 0);
 	SockList_AddInt(sl, 0);
@@ -351,8 +357,10 @@ int esrv_draw_DM_inv(object *pl, SockList *sl, object *op)
 			flags |=  F_NOPICK;
 
 		/* we send never the inventory animation here */
+		/*
 		if (QUERY_FLAG(tmp,FLAG_ANIMATE) && !pl->contr->socket.anims_sent[tmp->animation_id])
 			esrv_send_animation(&pl->contr->socket, tmp->animation_id);
+		*/
 
 		SockList_AddInt(sl, tmp->count);
 		SockList_AddInt(sl, flags);
@@ -414,8 +422,11 @@ int esrv_draw_DM_inv(object *pl, SockList *sl, object *op)
 		if (sl->len > (MAXSOCKBUF-MAXITEMLEN))
 		{
 			Send_With_Handling(&pl->contr->socket, sl);
+			SOCKET_SET_BINARY_CMD(sl, BINARY_CMD_ITEMX);
+			/*
 			strcpy((char*)sl->buf,"itemx ");
 			sl->len=strlen((char*)sl->buf);
+			*/
 			SockList_AddInt(sl, -2); /* do no delinv */
 			SockList_AddInt(sl, 0);
 			got_one=0;
@@ -458,9 +469,11 @@ void esrv_send_inventory(object *pl, object *op)
     
     sl.buf=malloc(MAXSOCKBUF);
 
+	SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_ITEMX);
+	/*
      strcpy((char*)sl.buf,"itemx ");
     sl.len=strlen((char*)sl.buf);
-
+	*/
 	/* yep this is strange - i merged delinv & itemx - not perfect but it works */
     SockList_AddInt(&sl, op->count); /* do delinv */
     SockList_AddInt(&sl, op->count);
@@ -479,6 +492,7 @@ void esrv_send_inventory(object *pl, object *op)
 	    if (QUERY_FLAG(tmp, FLAG_NO_PICK))
 		flags |=  F_NOPICK;
 
+		/*
 		if(tmp->inv_animation_id)
 		{
 			if (!pl->contr->socket.anims_sent[tmp->inv_animation_id])
@@ -490,6 +504,7 @@ void esrv_send_inventory(object *pl, object *op)
 				!pl->contr->socket.anims_sent[tmp->animation_id])
 			esrv_send_animation(&pl->contr->socket, tmp->animation_id);
 		}
+		*/
 
 		SockList_AddInt(&sl, tmp->count);
 	    SockList_AddInt(&sl, flags);
@@ -551,8 +566,11 @@ void esrv_send_inventory(object *pl, object *op)
 	     */
 	    if (sl.len > (MAXSOCKBUF-MAXITEMLEN)) {
 		Send_With_Handling(&pl->contr->socket, &sl);
+		SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_ITEMX);
+		/*
 		strcpy((char*)sl.buf,"itemx ");
 		sl.len=strlen((char*)sl.buf);
+		*/
 		SockList_AddInt(&sl,-3); /* no delinv */
 		SockList_AddInt(&sl, op->count);
 		got_one=0;
@@ -593,9 +611,11 @@ void esrv_update_item(int flags, object *pl, object *op)
 
     sl.buf=malloc(MAXSOCKBUF);
 
+	SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_UPITEM);
+	/*
     strcpy((char*)sl.buf,"upditem ");
     sl.len=strlen((char*)sl.buf);
-
+	*/
     SockList_AddShort(&sl, (uint16) flags);
     SockList_AddInt(&sl, op->count);
 
@@ -683,24 +703,15 @@ void esrv_send_item(object *pl, object*op)
 
     sl.buf=malloc(MAXSOCKBUF);
 
+	SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_ITEMX);
+	/*
     strcpy((char*)sl.buf,"itemx ");
     sl.len=strlen((char*)sl.buf);
-
+	*/
     SockList_AddInt(&sl, -4); /* no delinv */
     SockList_AddInt(&sl, (op->env? op->env->count:0));
 
 	/*
-	if(op->env && op->inv_face)
-	{
-	    if (!pl->contr->socket.faces_sent[op->inv_face->number])
-			esrv_send_face(&pl->contr->socket, op->inv_face->number,0);
-	}
-	else
-	{
-	    if (!pl->contr->socket.faces_sent[op->face->number])
-			esrv_send_face(&pl->contr->socket, op->face->number,0);
-	}*/
-
 	if(op->env && op->inv_animation_id)
 	{
 	    if (!pl->contr->socket.anims_sent[op->inv_animation_id])
@@ -712,6 +723,7 @@ void esrv_send_item(object *pl, object*op)
 		   !pl->contr->socket.anims_sent[op->animation_id])
 		esrv_send_animation(&pl->contr->socket, op->animation_id);
 	}
+	*/
 
     SockList_AddInt(&sl, op->count);
     SockList_AddInt(&sl, query_flags(op));
@@ -795,8 +807,11 @@ void esrv_del_item(player *pl, int tag)
 
     sl.buf=malloc(MAXSOCKBUF);
 
+	SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_DELITEM);
+	/*
     strcpy((char*)sl.buf,"delitem ");
     sl.len=strlen((char*)sl.buf);
+	*/
     SockList_AddInt(&sl, tag);
 
     Send_With_Handling(&pl->socket, &sl);

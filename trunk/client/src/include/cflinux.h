@@ -24,9 +24,33 @@
 #define __LINUX_H
 #ifdef __LINUX
 
-#include <sys/time.h>
+#ifdef HAVE_SYS_STAT_H
+#   include <sys/stat.h>
+#endif
+
+#ifdef HAVE_SYS_TIME_H
+#   include <sys/time.h>
+#endif
+
+#include <time.h>
+
+#ifdef HAVE_STRING_H
+#   include <string.h>
+#endif
+
+#ifdef HAVE_UNISTD_H
+#   include <unistd.h>
+#endif
+
+#ifdef HAVE_FCNTL_H
+#  include <fcntl.h>
+#endif
+
+#ifdef HAVE_DMALLOC_H
+#  include <dmalloc.h>
+#endif
+
 #include <sys/types.h>
-#include <unistd.h>
 #include <errno.h>
 #include <ctype.h>
 #include <stdarg.h>
@@ -35,6 +59,13 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+
+#include <SDL.h>
+#include <SDL_main.h>
+#include <SDL_image.h>
+
+#define _malloc(__d,__s) malloc(__d)
+
 #ifndef O_BINARY
 #define O_BINARY 0x0
 #endif

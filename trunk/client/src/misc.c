@@ -22,6 +22,62 @@
 */
 #include <include.h>
 
+unsigned long hashbmap(char *str, int tablesize) 
+{
+    unsigned long hash = 0;
+    int i = 0, rot = 0;
+    char *p;
+
+    for (p = str; i < MAXHASHSTRING && *p; p++, i++) {
+        hash ^= (unsigned long) *p << rot;
+        rot += 2;
+        if (rot >= (sizeof(long) - sizeof(char)) * 8)
+            rot = 0;
+    }
+    return (hash % tablesize);
+}
+
+_bmaptype *find_bmap(char *name) 
+{
+  _bmaptype *at;
+  unsigned long index;
+
+  if (name == NULL)
+    return (_bmaptype *) NULL;
+
+  index=hashbmap(name, BMAPTABLE);
+  for(;;) {
+    at = bmap_table[index];
+    if (at==NULL) /* not in our bmap list */
+		return NULL;
+    if (!strcmp(at->name,name))
+      return at;
+    if(++index>=BMAPTABLE)
+      index=0;
+  }
+}
+
+void add_bmap(_bmaptype *at)
+ {
+  int index=hashbmap(at->name, BMAPTABLE),org_index=index;
+
+  for(;;) {
+
+  if(bmap_table[index] && !strcmp(bmap_table[index]->name,at->name))
+  {
+	  LOG(LOG_ERROR,"ERROR: add_bmap(): double use of bmap name %s\n",at->name); 
+  }
+  if(bmap_table[index]==NULL) {
+      bmap_table[index]=at;
+      return;
+    }
+    if(++index==BMAPTABLE)
+      index=0;
+    if(index==org_index)
+	  LOG(LOG_ERROR,"ERROR: add_bmap(): bmaptable to small\n");
+  }
+}
+
 void FreeMemory(void **p)
 {
         if(p==NULL)

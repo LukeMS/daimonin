@@ -778,10 +778,10 @@ int perceive_self(object *op) {
    archetype *perm_portal;
    char portal_name [1024];
    char portal_message [1024];
-   char *exitpath;
+   char *exitpath=NULL;
    sint16 exitx=15;
    sint16 exity=15;
-   mapstruct *exitmap;
+   mapstruct *exitmap=NULL;
    int op_level;
 
    /* The first thing to do is to check if we have a marked destination
@@ -857,7 +857,8 @@ int perceive_self(object *op) {
      exitx=EXIT_X(old_force);
      exity=EXIT_Y(old_force);
      LOG(llevDebug,"Trying to kill a portal in %s (%d,%d)\n",exitpath,exitx,exity);
-     if (!strncmp(exitpath, settings.localdir, strlen(settings.localdir))) exitmap = ready_map_name(exitpath, MAP_PLAYER_UNIQUE);
+     if (!strncmp(exitpath, settings.localdir, strlen(settings.localdir)))
+		 exitmap = ready_map_name(exitpath, MAP_PLAYER_UNIQUE);
      else exitmap = ready_map_name(exitpath, 0);
      if (exitmap)
        {

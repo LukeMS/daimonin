@@ -24,11 +24,11 @@
 */
 
 #ifdef MAKE
-#define Version "0.95b"
+#define Version "0.96alpha1"
 #else
-#define VERSION "0.95b"
+#define VERSION "0.96alpha1"
 #endif
 
-#define VERSION_CS 991013
-#define VERSION_SC 991013
+#define VERSION_CS 991014
+#define VERSION_SC 991014
 #define VERSION_INFO "Daimonin Server"

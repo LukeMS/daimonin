@@ -267,12 +267,12 @@ int add_player(NewSocket *ns) {
      */
 
     if (checkbanned (defname, ns->host)){
-	LOG(llevInfo, "Banned player tried to add. [%s@%s]\n", defname, ns->host);
-	return 0;
+		char buf[256];
+		strcpy(buf, "X3 Connection refused.\nYou are banned!");
+		Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, buf,strlen(buf));
+		LOG(llevInfo, "Banned player tried to add. [%s@%s]\n", defname, ns->host);
+		return 1;
     }
-
-	/* i am somewhat sure we don't need to call this over & over */
-    /*init_beforeplay();*/ /* Make sure everything is ready */
 
     p = get_player(NULL);
     memcpy(&p->socket, ns, sizeof(NewSocket));

@@ -41,8 +41,12 @@ void play_sound_player_only(player *pl, int soundnum,  int soundtype, int x, int
 		return;
 
     sl.buf=buf;
+		
+	SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_SOUND);
+	/*
     strcpy((char*)sl.buf, "sound ");
     sl.len=strlen((char*)sl.buf);
+	*/
     SockList_AddChar(&sl, (char)x);
     SockList_AddChar(&sl, (char)y);
     SockList_AddShort(&sl, (uint16)soundnum);
@@ -62,7 +66,8 @@ void play_sound_map(mapstruct *map, int x, int y, int sound_num, int sound_type)
      */
 
     for (pl = first_player; pl; pl = pl->next) {
-	if (pl->ob->map == map) {
+
+	if (pl->state==ST_PLAYING && pl->ob->map == map) {
         /* ARGH... doing 2 pows for all players on this map... 
          * there must be a smarter way.  
          * We calc this in the client again, to get the volume/pan */

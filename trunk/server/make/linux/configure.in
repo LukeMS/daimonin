@@ -54,6 +54,13 @@ AC_PATH_PROG(GUNZIP, gunzip)
 AC_PATH_PROG(PERL, perl)
 AC_PATH_PROG(PYTHON, python)
 
+AC_MSG_CHECKING(Python version)
+changequote(<<, >>)dnl
+PYTHON_VER=`$PYTHON -c 'import distutils.sysconfig; print distutils.sysconfig.get_config_vars("VERSION")[0];'`
+changequote([, ])dnl
+AC_MSG_RESULT($PYTHON_VER)
+AC_SUBST(PYTHON_VER)
+
 if test -n "$GZIP" -a -z "$GUNZIP" ; then
     echo "Found gzip, but not gunzip - setting GUNZIP to gzip -c";
     GUNZIP="$GZIP -c"
@@ -240,4 +247,5 @@ AC_OUTPUT(Makefile
 	../../src/server/Makefile ../../src/include/Makefile 
 	../../src/utils/Makefile ../../src/common/Makefile
 	../../src/utils/dmonloop
+	../../src/plugin_python/Makefile
 	)

@@ -43,7 +43,8 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /MD /W3 /Gi /GX /O2 /Ob2 /I "../../../" /I "../../../src/include" /I "../../../sdl" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "__WIN_32" /YX"include.h" /FD /c
+# ADD CPP /nologo /MD /W3 /Gi /GX /Ox /Ob2 /I "../../../" /I "../../../src/include" /I "../../../sdl" /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /D "__WIN_32" /YX"include.h" /FD /c
+# SUBTRACT CPP /Oa /Ow
 # ADD BASE MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD MTL /nologo /D "NDEBUG" /mktyplib203 /win32
 # ADD BASE RSC /l 0x407 /d "NDEBUG"
@@ -103,6 +104,10 @@ PostBuild_Cmds=copy Debug\Daimonin.exe ..\..\..\Daimonin.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=..\..\..\src\adler32.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\src\client.c
 # End Source File
 # Begin Source File
@@ -112,6 +117,18 @@ SOURCE=..\..\..\src\commands.c
 # Begin Source File
 
 SOURCE=..\..\..\src\event.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\inffast.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\inflate.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\inftrees.c
 # End Source File
 # Begin Source File
 
@@ -159,7 +176,15 @@ SOURCE=..\..\..\src\textwin.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\src\uncompr.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\src\wrapper.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\zutil.c
 # End Source File
 # End Group
 # Begin Group "Header-Dateien"
@@ -188,6 +213,18 @@ SOURCE=..\..\..\src\include\event.h
 # Begin Source File
 
 SOURCE=..\..\..\src\include\include.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\include\inffast.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\include\inflate.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\include\inftrees.h
 # End Source File
 # Begin Source File
 
@@ -240,6 +277,18 @@ SOURCE=..\..\..\src\include\win32.h
 # Begin Source File
 
 SOURCE=..\..\..\src\include\wrapper.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\include\zconf.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\include\zlib.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\include\zutil.h
 # End Source File
 # End Group
 # Begin Group "Ressourcendateien"

@@ -31,6 +31,11 @@
 #include <global.h>
 #include <newclient.h>
 #include <sproto.h>
+#ifdef NO_ERRNO_H
+    extern int errno;
+#else
+#   include <errno.h>
+#endif
 
 /***********************************************************************
  *
@@ -107,9 +112,6 @@ short GetShort_String(unsigned char *data) {
 int SockList_ReadPacket(int fd, SockList *sl, int len)
 {
     int stat,toread;
-#ifndef WIN32
-    extern int errno;
-#endif
     /* Sanity check - shouldn't happen */
     if (sl->len < 0)
 		LOG(llevDebug,"FATAL SOCKET ERROR: sl->len <0 (%d)\n",sl->len);
@@ -368,20 +370,6 @@ void Write_To_Socket(NewSocket *ns, unsigned char *buf, int len)
     }
 }
 
-
-/* Takes a string of data, and writes it out to the socket. A very handy
- * shortcut function.
- */
-void cs_write_string(NewSocket *ns, const char *buf, int len)
-{
-    SockList sl;
-
-    sl.len = len;
-    sl.buf = (unsigned char*)buf;
-    Send_With_Handling(ns, &sl);
-}
-
-
 /* Send With Handling - calls Write_To_Socket to send data to the client.
  * The only difference in this function is that we take a SockList
  *, and we prepend the length information.
@@ -408,12 +396,13 @@ void Send_With_Handling(NewSocket *ns,SockList  *msg)
 /* Takes a string of data, and writes it out to the socket. A very handy
  * shortcut function.
  */
-void Write_String_To_Socket(NewSocket *ns, char *buf, int len)
+void Write_String_To_Socket(NewSocket *ns, char cmd, char *buf, int len)
 {
     SockList sl;
 
     sl.len = len;
     sl.buf = (uint8*)buf;
+    *((char*)buf)=cmd;
     Send_With_Handling(ns, &sl);
 }
 

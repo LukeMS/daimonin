@@ -42,7 +42,7 @@ RSC=rc.exe
 # PROP Intermediate_Dir "ReleaseLog"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MD /W3 /GX /O2 /I "..\..\include" /I "d:\Python21\include" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "PYTHON_PLUGIN_EXPORTS" /YX /FD /c
-# ADD CPP /nologo /MD /W3 /Gi /GX /Ob2 /I "..\..\..\..\src\include" /I "c:\Python22\include" /D "_LIB" /D "PYTHON_PLUGIN_EXPORTS" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "DEBUG" /YX"libcross.pch" /FD /c
+# ADD CPP /nologo /MD /W3 /Gi /GX /O2 /Ob2 /I "..\..\..\..\src\include" /I "c:\Python22\include" /D "_LIB" /D "PYTHON_PLUGIN_EXPORTS" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "DEBUG" /YX"libcross.pch" /FD /c
 # ADD BASE RSC /l 0x407 /d "NDEBUG"
 # ADD RSC /l 0x407 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -172,7 +172,7 @@ SOURCE=..\..\..\..\src\common\loader.l
 
 # PROP Ignore_Default_Tool 1
 # Begin Custom Build
-InputDir=\Projects\Daimonin\server\src\common
+InputDir=\Projects\daimonin\server\src\common
 InputPath=..\..\..\..\src\common\loader.l
 InputName=loader
 
@@ -185,7 +185,7 @@ InputName=loader
 
 # PROP Ignore_Default_Tool 1
 # Begin Custom Build
-InputDir=\Projects\Daimonin\server\src\common
+InputDir=\Projects\daimonin\server\src\common
 InputPath=..\..\..\..\src\common\loader.l
 InputName=loader
 
@@ -198,7 +198,7 @@ InputName=loader
 
 # PROP Ignore_Default_Tool 1
 # Begin Custom Build
-InputDir=\Projects\Daimonin\server\src\common
+InputDir=\Projects\daimonin\server\src\common
 InputPath=..\..\..\..\src\common\loader.l
 InputName=loader
 

@@ -253,7 +253,77 @@ typedef struct CS_Stats {
     time_t  time_start;	/* When we started logging this */
 } CS_Stats;
 
+typedef struct _srv_client_files {
+	char *file;		/* file data, compressed or not */
+	int len;		/* if -1, the file is not compressed */
+	int len_ucomp;	/* original uncompressed file length */
+	unsigned int crc;		/* crc adler32 */
+} _srv_client_files;
+
+enum {
+	SRV_CLIENT_SKILLS,
+	SRV_CLIENT_SPELLS,
+	SRV_CLIENT_SETTINGS,
+	SRV_CLIENT_ANIMS,
+	SRV_CLIENT_BMAPS,
+	SRV_CLIENT_FILES /* last index */
+};
+
+extern _srv_client_files SrvClientFiles[SRV_CLIENT_FILES];
 
 extern CS_Stats cst_tot, cst_lst;
+
+#define DATA_PACKED_CMD 0x80
+
+enum {
+	DATA_CMD_NO,
+	DATA_CMD_SKILL_LIST,
+	DATA_CMD_SPELL_LIST,
+	DATA_CMD_SETTINGS_LIST,
+	DATA_CMD_ANIM_LIST,
+	DATA_CMD_BMAP_LIST
+};
+
+#define SOCKET_SET_BINARY_CMD(__s__, __bc__) (__s__)->buf[0]=__bc__;(__s__)->len=1
+
+enum {
+	BINARY_CMD_COMC=1,
+	BINARY_CMD_MAP2,
+	BINARY_CMD_DRAWINFO,
+	BINARY_CMD_MAP_SCROLL,
+	BINARY_CMD_ITEMX,
+	BINARY_CMD_SOUND,
+	BINARY_CMD_TARGET,
+	BINARY_CMD_UPITEM,
+	BINARY_CMD_DELITEM,
+	BINARY_CMD_STATS,
+	BINARY_CMD_IMAGE,
+	BINARY_CMD_FACE1,
+	BINARY_CMD_ANIM,
+	BINARY_CMD_SKILLRDY,
+	BINARY_CMD_PLAYER,
+	BINARY_CMD_MAPSTATS,
+	BINARY_CMD_SPELL_LIST,
+	BINARY_CMD_SKILL_LIST,
+	BINARY_CMD_GOLEMCMD,
+	BINARY_CMD_ADDME_SUC,
+	BINARY_CMD_ADDME_FAIL,
+	BINARY_CMD_VERSION,
+	BINARY_CMD_BYE,
+	BINARY_CMD_SETUP,
+	BINARY_CMD_QUERY,
+	BINARY_CMD_DATA,
+	
+	/* old, unused or outdated crossfire cmds! */
+	BINARY_CMD_DELINV,
+	BINARY_CMD_MAGICMAP,
+	BINARY_CMD_REPLYINFO,
+	BINARY_CMD_IMAGE2,
+	BINARY_CMD_FACE,
+	BINARY_CMD_FACE2,
+	BINARY_CMD_ITEM1,/*not used in server */
+
+	BINAR_CMD /* last entry */
+};
 
 #endif

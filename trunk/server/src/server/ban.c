@@ -40,11 +40,16 @@
 #endif
 
 #ifndef WIN32 /* ---win32 : remove unix headers */
-#include <errno.h>
+#ifdef NO_ERRNO_H
+    extern int errno;
+#else
+#   include <errno.h>
+#endif
 #include <stdio.h>
 #include <sys/file.h>
 #endif /* win32 */
 
+/* reloading every time this list? i don't think so! */
 int checkbanned(char *login, char *host)
 {
   FILE  *bannedfile;
@@ -53,6 +58,9 @@ int checkbanned(char *login, char *host)
   char  *indexpos;
   int           num1;
   int   Hits=0;                 /* Hits==2 means we're banned */
+
+  if(Hits==0)
+	  return 0;
 
   sprintf (buf, "%s/%s", settings.localdir, BANFILE);
   if ((bannedfile = fopen(buf, "r")) == NULL) {

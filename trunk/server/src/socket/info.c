@@ -66,23 +66,28 @@ void new_draw_info(int flags,int pri, object *pl, const char *buf)
 		return;
     }
 
+
 	/* here handle some security stuff... a bit overhead for max secure */
     if (!pl || pl->type!=PLAYER)
 	{
 		LOG(llevBug,"BUG:: new_draw_info: called for object != PLAYER! %s (%x - %d) msg: %s\n", query_name(pl),flags,pri,buf);
 		return;
 	}
+
 	if(pl->contr==NULL)
 	{
 		LOG(llevBug,"BUG:: new_draw_info: called for player with contr==NULL! %s (%x - %d) msg: %s\n", query_name(pl),flags,pri,buf);
 		return;
 	}
 
+	if(pl->contr->state!=ST_PLAYING)
+		return;
+
     if (pri>=pl->contr->listening) /* player don't want this */
 		return;
 
-	sprintf(info_string,"drawinfo %d %s", flags&NDI_COLOR_MASK, buf);
-    Write_String_To_Socket(&pl->contr->socket, info_string, strlen(info_string));
+	sprintf(info_string,"X%d %s", flags&NDI_COLOR_MASK, buf);
+    Write_String_To_Socket(&pl->contr->socket, BINARY_CMD_DRAWINFO,info_string, strlen(info_string));
 }
 
 /* This is a pretty trivial function, but it allows us to use printf style

@@ -363,7 +363,6 @@ void init(int argc, char **argv) {
     setup_library();	/* Set up callback function pointers */
     init_commands();	/* Sort command tables */
     read_map_log();	/* Load up the old temp map files */
-
     parse_args(argc, argv, 3);
 
 #ifndef WIN32 /* ***win32: no BecomeDaemon in windows */

@@ -1460,29 +1460,6 @@ terrain_type 1
 no_pick 1
 is_floor 1
 end
-Object blocked
-face blocked.111
-type 71
-editor_folder floors/floors
-layer 1
-no_teleport 1
-is_floor 1
-blocksview 1
-terrain_type 1
-no_pick 1
-no_pass 1
-end
-Object floor_inv
-name floor
-face trans.101
-type 71
-editor_folder floors/floors
-layer 1
-terrain_type 1
-no_teleport 1
-is_floor 1
-no_pick 1
-end
 Object floor_dark1a
 name floor
 face floor_dark1a.101
@@ -1548,6 +1525,29 @@ layer 1
 terrain_type 1
 no_pick 1
 is_floor 1
+end
+Object blocked
+face blocked.111
+type 71
+editor_folder floors/floors
+layer 1
+no_teleport 1
+is_floor 1
+blocksview 1
+terrain_type 1
+no_pick 1
+no_pass 1
+end
+Object floor_inv
+name floor
+face trans.101
+type 71
+editor_folder floors/floors
+layer 1
+terrain_type 1
+no_teleport 1
+is_floor 1
+no_pick 1
 end
 Object ability_stone_throw
 name rock thrower
@@ -2411,6 +2411,38 @@ editor_folder indoor/masks_wall
 no_pick 1
 layer 7
 end
+Object bed_1a.111
+name bed
+face bed_1a.111
+type 79
+editor_folder indoor/beds
+no_pick 1
+layer 4
+end
+Object bed_1b.111
+name bed
+face bed_1b.111
+type 79
+editor_folder indoor/beds
+no_pick 1
+layer 4
+end
+Object bed_2a.111
+name bed
+face bed_2a.111
+type 79
+editor_folder indoor/beds
+no_pick 1
+layer 4
+end
+Object bed_2b.111
+name bed
+face bed_2b.111
+type 79
+editor_folder indoor/beds
+no_pick 1
+layer 4
+end
 Object straw1.101
 name straw
 face straw1.101
@@ -2643,38 +2675,6 @@ name mirror
 face mirror_big.171
 type 79
 editor_folder indoor/indoor
-no_pick 1
-layer 4
-end
-Object bed_1a.111
-name bed
-face bed_1a.111
-type 79
-editor_folder indoor/beds
-no_pick 1
-layer 4
-end
-Object bed_1b.111
-name bed
-face bed_1b.111
-type 79
-editor_folder indoor/beds
-no_pick 1
-layer 4
-end
-Object bed_2a.111
-name bed
-face bed_2a.111
-type 79
-editor_folder indoor/beds
-no_pick 1
-layer 4
-end
-Object bed_2b.111
-name bed
-face bed_2b.111
-type 79
-editor_folder indoor/beds
 no_pick 1
 layer 4
 end
@@ -5778,6 +5778,34 @@ container 15000
 weight 15000
 Str 15
 end
+Object rack.111
+name weapon rack
+face rack.111
+type 122
+editor_folder items/container
+layer 4
+identified 1
+no_pick 1
+material 18
+value 3500
+container 250000
+weight 15000
+Str 15
+end
+Object rack.171
+name weapon rack
+face rack.171
+type 122
+editor_folder items/container
+layer 4
+identified 1
+no_pick 1
+material 18
+value 3500
+container 250000
+weight 15000
+Str 15
+end
 Object bag
 name bag
 face bag.101
@@ -6033,34 +6061,6 @@ value 50
 weight 50
 container 50000
 Str 5
-end
-Object rack.111
-name weapon rack
-face rack.111
-type 122
-editor_folder items/container
-layer 4
-identified 1
-no_pick 1
-material 18
-value 3500
-container 250000
-weight 15000
-Str 15
-end
-Object rack.171
-name weapon rack
-face rack.171
-type 122
-editor_folder items/container
-layer 4
-identified 1
-no_pick 1
-material 18
-value 3500
-container 250000
-weight 15000
-Str 15
 end
 Object chest_4.111
 name chest
@@ -6570,6 +6570,34 @@ material 1
 value 50
 weight 4000
 end
+Object scroll_generic
+name scroll
+face scroll.101
+type 111
+editor_folder items/spells
+sp -1
+inv_face inv_s_generic.101
+layer 3
+nrof 1
+material 1
+weight 20
+value 3
+end
+Object potion_generic
+name potion
+face potion_gen.101
+type 5
+editor_folder items/spells
+nrof 1
+layer 3
+sp -1
+inv_face potion_gen.101
+sub_type 128
+is_thrown 1
+material 512
+weight 200
+value 28
+end
 Object balm_generic
 name balm
 face balm_gen.101
@@ -6621,34 +6649,6 @@ material 4
 is_dust 1
 weight 15
 value 3
-end
-Object scroll_generic
-name scroll
-face scroll.101
-type 111
-editor_folder items/spells
-sp -1
-inv_face inv_s_generic.101
-layer 3
-nrof 1
-material 1
-weight 20
-value 3
-end
-Object potion_generic
-name potion
-face potion_gen.101
-type 5
-editor_folder items/spells
-nrof 1
-layer 3
-sp -1
-inv_face potion_gen.101
-sub_type 128
-is_thrown 1
-material 512
-weight 200
-value 28
 end
 Object amulet_generic
 name amulet
