@@ -298,7 +298,7 @@ void Write_To_Socket(NewSocket *ns, unsigned char *buf, int len)
     while (len>0) {
 
 #ifdef WIN32 /* ***win32 Write_To_Socket: change write() to send() */
-	    amt=send(ns->fd, pos, len,0);
+	amt=send(ns->fd, pos, len,0);
 #else
 	do {
 	    amt=write(ns->fd, pos, len);

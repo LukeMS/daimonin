@@ -250,9 +250,6 @@ typedef struct pl_player
   living last_stats;       /* Last stats drawn with draw_stats() */
   signed long last_value;  /* Same usage as last_stats */
   long last_weight;
-#ifdef USE_SWAP_STATS
-  int Swap_First;
-#endif
 
   
   char title[BIG_NAME]; /* we use ext. title now - we should remove this now! */

@@ -335,7 +335,7 @@ static void load_srv_files(char *fname, int id, int cmd)
 	file_tmp = malloc(flen);
 	numread = (unsigned long) fread(file_tmp, sizeof( char ), flen, fp );
 	/* get a crc from the unpacked file */
-	SrvClientFiles[id].crc = adler32(numread, file_tmp, numread); 
+	SrvClientFiles[id].crc = crc32(1L, file_tmp, numread); 
 	SrvClientFiles[id].len_ucomp = numread;
 	numread=flen*2;
 	comp_tmp = (char*)malloc(numread);
@@ -365,7 +365,7 @@ static void load_srv_files(char *fname, int id, int cmd)
 	free(file_tmp);
 	free(comp_tmp);
 
-	LOG(llevDebug,"(size: %d (crc: %x)\n", numread, SrvClientFiles[id].crc);
+	LOG(llevDebug,"(size: %d (%d) (crc uncomp.: %x)\n", SrvClientFiles[id].len_ucomp,numread, SrvClientFiles[id].crc);
     fclose(fp);
 }
 

@@ -1008,35 +1008,42 @@ void receive_player_name(object *op,char k) {
   get_password(op);
 }
 
-void receive_player_password(object *op,char k) {
+/* a client send player name + password.
+ * check password. Login char OR very password
+ * for new char creation.
+ * For beta 2 we have moved the char creation to client
+ */
+void receive_player_password(object *op,char k)
+{
+	unsigned int pwd_len=strlen(op->contr->write_buf);
+	if(pwd_len<=1||pwd_len>17)
+	{
+		unlock_player(op->name);
+		get_name(op);
+		return;
+	}
+	new_draw_info(NDI_UNIQUE, 0,op,"          "); /* To hide the password better */
+	if(op->contr->state==ST_CONFIRM_PASSWORD) 
+	{
+		char cmd_buf[]="X";
 
-  unsigned int pwd_len=strlen(op->contr->write_buf);
-  if(pwd_len<=1||pwd_len>17) {
-    unlock_player(op->name);
-    get_name(op);
-    return;
-  }
-  new_draw_info(NDI_UNIQUE, 0,op,"          "); /* To hide the password better */
-  if(op->contr->state==ST_CONFIRM_PASSWORD) {
-    if(!check_password(op->contr->write_buf+1,op->contr->password)) {
-      new_draw_info(NDI_UNIQUE, 0,op,"The passwords did not match.");
-      unlock_player(op->name);
-      get_name(op);
-      return;
-    }
-    new_draw_info(NDI_UNIQUE, 0,op,"Welcome, Brave New Warrior!");
-    new_draw_info(NDI_UNIQUE, 0,op,"Press ^N^ew for new stats,");
-    new_draw_info(NDI_UNIQUE, 0,op,"^1^ - ^7^ for exchange stats");
-    new_draw_info(NDI_UNIQUE, 0,op,"and ^G^et this setting.");
-    new_draw_info(NDI_UNIQUE, 0,op," ");
-    Roll_Again(op);
-    op->contr->state=ST_ROLL_STAT;
-    return;
-  }
-  strcpy(op->contr->password,crypt_string(op->contr->write_buf+1,NULL));
-  op->contr->state=ST_ROLL_STAT;
-  check_login(op);
-  return;
+		if(!check_password(op->contr->write_buf+1,op->contr->password)) 
+		{
+			new_draw_info(NDI_UNIQUE, 0,op,"The passwords did not match.");
+			unlock_player(op->name);
+			get_name(op);
+			return;
+		}
+	    esrv_new_player(op->contr, 0);
+		Write_String_To_Socket(&op->contr->socket, BINARY_CMD_NEW_CHAR, cmd_buf,1);
+		LOG(llevInfo,"NewChar send for %s\n", op->name);
+	    op->contr->state=ST_ROLL_STAT;
+	    return;
+	  }
+	strcpy(op->contr->password,crypt_string(op->contr->write_buf+1,NULL));
+	op->contr->state=ST_ROLL_STAT;
+	check_login(op);
+	return;
 }
 
 

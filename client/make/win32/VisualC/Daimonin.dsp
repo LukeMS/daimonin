@@ -116,6 +116,14 @@ SOURCE=..\..\..\src\commands.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\src\crc32.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\dialog.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\src\event.c
 # End Source File
 # Begin Source File
@@ -205,6 +213,14 @@ SOURCE=..\..\..\src\include\commands.h
 # Begin Source File
 
 SOURCE=..\..\..\src\include\config.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\include\crc32.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\include\dialog.h
 # End Source File
 # Begin Source File
 

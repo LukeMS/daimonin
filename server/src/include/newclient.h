@@ -327,6 +327,7 @@ enum {
 	BINARY_CMD_SETUP,
 	BINARY_CMD_QUERY,
 	BINARY_CMD_DATA,
+	BINARY_CMD_NEW_CHAR,
 	
 	/* old, unused or outdated crossfire cmds! */
 	BINARY_CMD_DELINV,

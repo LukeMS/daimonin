@@ -72,7 +72,7 @@ typedef struct _Sprite {
     SDL_Surface *grey;	                    /* grey (xray) */
     SDL_Surface *fog_of_war;	            /* thats the fog of war palette */
     SDL_Surface *dark_level[DARK_LEVELS];	/* dark levels. 
-                                             * Note: 0= bitmap - its only mapped */
+                                             * Note: 0= default sprite - its only mapped */
 } _Sprite;
 
 typedef struct _Font {
@@ -99,13 +99,18 @@ typedef struct _anim {
     int mapy;                   /* map position Y */
 }_anim;
 
+#define ASCII_UP 28
+#define ASCII_DOWN 29
+#define ASCII_LEFT 30
+#define ASCII_RIGHT 31
+
 extern struct _anim *start_anim; /* anim queue of current active map */
 
 extern struct _anim *add_anim(int type, int x, int y, int mapx, int mapy, int value);
 extern void remove_anim(struct _anim *anim);
 extern void play_anims(int mx, int my);
 extern void delete_anim_que(void);
-
+extern void show_tooltip(int mx, int my, char* text);
 extern Boolean sprite_init_system(void);
 extern Boolean sprite_deinit_system(void);
 
@@ -119,6 +124,5 @@ extern Uint32 GetSurfacePixel(SDL_Surface *Surface, Sint32 X, Sint32 Y);
 extern void CreateNewFont(_Sprite *sprite, _Font *font, int xlen, int ylen, int c32len);
 extern void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y,int col, SDL_Rect *area, _BLTFX *bltfx);
 extern int sprite_collision(int x1,int y1,int x2,int y2,_Sprite *sprite1, _Sprite *sprite2);
-extern void show_tooltip(int mx, int my, char* text);
 
 #endif

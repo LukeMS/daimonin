@@ -5,7 +5,7 @@
 # Parameter are from 0 (mute) to 100 (full)
 #
 SoundVolume 100
-MusicVolume 80
+MusicVolume 0
 
 # Show Player Names on the Map
 # (over the head of the player sprites)
@@ -106,7 +106,7 @@ AutomaticBPP 1
 # Note: flip() should be faster in most cases.
 # WARNING: On some systems (win32,...) DOUBLEBUF and Update_Rect() cause a black screen!
 #
-Fullscreen 1
+Fullscreen 0
 
 Full_HWSURFACE 0
 Full_SWSURFACE 1

@@ -316,30 +316,52 @@ void CreateNewFont(_Sprite *sprite, _Font *font, int xlen, int ylen, int c32len)
 void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y,int col, SDL_Rect *area, _BLTFX *bltfx)
 {
 	register int i,tmp, line_clip=-1,line_count=0;
-    register Boolean gflag;
-    SDL_Rect src, dst;
-    SDL_Color color, color_g;
+  register Boolean gflag;
+	int colorToggle=0;
+  SDL_Rect src, dst;
+  SDL_Color color, color_g;
 
 	if(area)
 		line_clip = area->w;
 
-    dst.x = x; /* .w/h are not used from BlitSurface to draw*/
-    dst.y = y;
+  dst.x = x; /* .w/h are not used from BlitSurface to draw*/
+  dst.y = y;
 
+	
 	color_g.r=96;
-    color_g.g=160;
-    color_g.b=255;
+  color_g.g=160;
+  color_g.b=255;
         
-    color.r = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col].r;
-    color.g = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col].g;
-    color.b = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col].b;
+	color.r = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col].r;
+	color.g = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col].g;
+	color.b = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col].b;
         
 	SDL_SetPalette(font->sprite->bitmap, SDL_LOGPAL|SDL_PHYSPAL, &color, 1, 1);
-    gflag= FALSE;
-    for(i=0;text[i] != '\0';i++)
-    {
+	gflag= FALSE;
+	for(i=0;text[i] != '\0';i++)
+	{
+		if(text[i] == '°' || text[i] == '~') /* change text color */
+		{
+			if (col == COLOR_BLACK) continue; /* no highlighting in blak text */
+			if (colorToggle){
+				color.r = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col].r;
+				color.g = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col].g;
+				color.b = Bitmaps[BITMAP_PALETTE]->bitmap->format->palette->colors[col].b;
+ 				SDL_SetPalette(font->sprite->bitmap, SDL_LOGPAL|SDL_PHYSPAL, &color, 1, 1);
+			}else{
+			  color.g=0xff;
+			  color.b=0x00;
+				if (text[i] == '°')
+					color.r=0xff;
+    		else
+					color.r=0x00;
+				SDL_SetPalette(font->sprite->bitmap, SDL_LOGPAL|SDL_PHYSPAL, &color, 1, 1);
+			}
+			colorToggle=(colorToggle+1) &1;
+			continue;
+		}
 		if(text[i] == '^')
-        {
+		{
 			if(gflag)
 			{
 				SDL_SetPalette(font->sprite->bitmap, SDL_LOGPAL|SDL_PHYSPAL, &color, 1, 1);			
@@ -373,6 +395,22 @@ void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y,int col,
 
 		dst.x+=tmp;
 	}
+}
+
+void show_tooltip(int mx, int my, char* text)
+{
+	SDL_Rect rec;
+	char *tooltip=text;
+
+	if (!options.show_tooltips) return;
+	rec.w = 3;
+	while (*text)
+		rec.w+= SystemFont.c[(int)*text++].w+ SystemFont.char_offset;
+	rec.x = mx+ 9;
+	rec.y = my+17;
+	rec.h = 12;
+	SDL_FillRect(ScreenSurface, &rec, -1);
+	StringBlt(ScreenSurface, &SystemFont, tooltip, mx+11, my+16, COLOR_BLACK, NULL, NULL);
 }
 
 static Boolean GetBitmapBorders(SDL_Surface *Surface, int *up, int *down, int *left, int *right, UINT32 ckey)
@@ -505,7 +543,12 @@ void sprite_blt(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx)
         if(bltfx)
         {
             if(bltfx->flags & BLTFX_FLAG_DARK)
+			{
+				/* last dark level is "no color" ... */
+				if(bltfx->dark_level == DARK_LEVELS)
+					return;
                 blt_sprite = sprite->dark_level[bltfx->dark_level];
+			}
             else if (bltfx->flags & BLTFX_FLAG_FOW)
                 blt_sprite = sprite->fog_of_war;
             else if(bltfx->flags & BLTFX_FLAG_RED)
@@ -655,8 +698,11 @@ void play_anims(int mx, int my)
                     {
                         xpos = MAP_START_XOFF+(anim->mapx-MapData.posx)*MAP_TILE_YOFF-(anim->mapy-MapData.posy-1)*MAP_TILE_YOFF-4;
                         ypos = MAP_START_YOFF+(anim->mapx-MapData.posx)*MAP_TILE_XOFF+(anim->mapy-MapData.posy-1)*MAP_TILE_XOFF-34;
-                        sprintf(buf,"%d",anim->value);
+                       sprintf(buf,"%d",anim->value);
+								if (xpos == 396 && ypos == 289)
                  StringBlt(ScreenSurface, &SystemFontOut,buf,xpos+anim->x, ypos+tmp_y,COLOR_RED, NULL, NULL);
+								else
+                 StringBlt(ScreenSurface, &SystemFontOut,buf,xpos+anim->x, ypos+tmp_y,COLOR_ORANGE, NULL, NULL);
                 }
             break;
             case ANIM_KILL:
@@ -737,20 +783,3 @@ int sprite_collision(int x1,int y1,int x2,int y2,_Sprite *sprite1, _Sprite *spri
     return(1);
     
 };
-
-void show_tooltip(int mx, int my, char* text)
-{
-	SDL_Rect rec;
-	char *tooltip=text;
-
-	rec.w = 3;
-	while (*text) 
-		rec.w+= SystemFont.c[(int)*text++].w+ SystemFont.char_offset;         						
-	rec.x = mx+ 9;
-	rec.y = my+17;
-	rec.h = 12;
-	SDL_FillRect(ScreenSurface, &rec, -1);
-	StringBlt(ScreenSurface, &SystemFont, tooltip, mx+11, my+16, COLOR_BLACK, NULL, NULL);
-}
-
-

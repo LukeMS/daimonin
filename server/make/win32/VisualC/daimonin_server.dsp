@@ -889,6 +889,14 @@ SOURCE=..\..\..\src\socket\compress.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\src\socket\crc32.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\socket\crc32.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\src\socket\deflate.c
 # End Source File
 # Begin Source File

@@ -332,15 +332,48 @@ signed char get_attr_value(living *stats,int attr) {
 /*
  * Ensures that all stats (str/dex/con/wis/cha/int) are within the
  * 1-30 stat limit.
+ * not so "smart" as the solution before but simple, fast and easy.
+ * MT-2004
  */
 
-void check_stat_bounds(living *stats) {
-  int i,v;
-  for(i=0;i<7;i++)
-    if((v=get_attr_value(stats,i))>MAX_STAT)
-      set_attr_value(stats,i,MAX_STAT);
-    else if(v<MIN_STAT)
-      set_attr_value(stats,i,MIN_STAT);
+void check_stat_bounds(living *stats) 
+{
+
+	if(stats->Str > MAX_STAT)
+		stats->Str=MAX_STAT;
+	else if(stats->Str < MIN_STAT)
+		stats->Str=MIN_STAT;
+
+	if(stats->Dex > MAX_STAT)
+		stats->Dex = MAX_STAT;
+	else if(stats->Dex < MIN_STAT)
+		stats->Dex = MIN_STAT;
+
+	if(stats->Con > MAX_STAT)
+		stats->Con = MAX_STAT;
+	else if(stats->Con < MIN_STAT)
+		stats->Con = MIN_STAT;
+
+	if(stats->Int > MAX_STAT)
+		stats->Int=MAX_STAT;
+	else if(stats->Int < MIN_STAT)
+		stats->Int=MIN_STAT;
+
+	if(stats->Wis > MAX_STAT)
+		stats->Wis=MAX_STAT;
+	else if(stats->Wis < MIN_STAT)
+		stats->Wis=MIN_STAT;
+
+	if(stats->Pow > MAX_STAT)
+		stats->Pow=MAX_STAT;
+	else if(stats->Pow < MIN_STAT)
+		stats->Pow=MIN_STAT;
+
+	if(stats->Cha > MAX_STAT)
+		stats->Cha=MAX_STAT;
+	else if(stats->Cha < MIN_STAT)
+		stats->Cha = MIN_STAT;
+	
 }
 
 #define ORIG_S(xyz,abc)	(op->contr->orig_stats.abc)
@@ -718,48 +751,6 @@ void change_luck(object *op, int value) {
 }
 
 /*
- * Subtracts stat-bonuses given by the class which the player has chosen.
- */
-
-void remove_statbonus(object *op) {
-  op->stats.Str -= op->arch->clone.stats.Str;
-  op->stats.Dex -= op->arch->clone.stats.Dex;
-  op->stats.Con -= op->arch->clone.stats.Con;
-  op->stats.Wis -= op->arch->clone.stats.Wis;
-  op->stats.Pow -= op->arch->clone.stats.Pow;
-  op->stats.Cha -= op->arch->clone.stats.Cha;
-  op->stats.Int -= op->arch->clone.stats.Int;
-  op->contr->orig_stats.Str -= op->arch->clone.stats.Str;
-  op->contr->orig_stats.Dex -= op->arch->clone.stats.Dex;
-  op->contr->orig_stats.Con -= op->arch->clone.stats.Con;
-  op->contr->orig_stats.Wis -= op->arch->clone.stats.Wis;
-  op->contr->orig_stats.Pow -= op->arch->clone.stats.Pow;
-  op->contr->orig_stats.Cha -= op->arch->clone.stats.Cha;
-  op->contr->orig_stats.Int -= op->arch->clone.stats.Int;
-}
-
-/*
- * Adds stat-bonuses given by the class which the player has chosen.
- */
-
-void add_statbonus(object *op) {
-  op->stats.Str += op->arch->clone.stats.Str;
-  op->stats.Dex += op->arch->clone.stats.Dex;
-  op->stats.Con += op->arch->clone.stats.Con;
-  op->stats.Wis += op->arch->clone.stats.Wis;
-  op->stats.Pow += op->arch->clone.stats.Pow;
-  op->stats.Cha += op->arch->clone.stats.Cha;
-  op->stats.Int += op->arch->clone.stats.Int;
-  op->contr->orig_stats.Str += op->arch->clone.stats.Str;
-  op->contr->orig_stats.Dex += op->arch->clone.stats.Dex;
-  op->contr->orig_stats.Con += op->arch->clone.stats.Con;
-  op->contr->orig_stats.Wis += op->arch->clone.stats.Wis;
-  op->contr->orig_stats.Pow += op->arch->clone.stats.Pow;
-  op->contr->orig_stats.Cha += op->arch->clone.stats.Cha;
-  op->contr->orig_stats.Int += op->arch->clone.stats.Int;
-}
-
-/*
  * Updates all abilities given by applied objects in the inventory
  * of the given object.  Note: This function works for both monsters
  * and players; the "player" in the name is purely an archaic inheritance.
@@ -814,8 +805,13 @@ void fix_player(object *op)
 	pl=op->contr;
 	inv_flag=inv_see_flag=weapon_weight=best_wc=best_ac=wc=ac=0;
 
-    for(i=0;i<7;i++) 
-      set_attr_value(&(op->stats),i,get_attr_value(&(pl->orig_stats),i));
+	op->stats.Str = pl->orig_stats.Str;
+	op->stats.Dex = pl->orig_stats.Dex;
+	op->stats.Con = pl->orig_stats.Con;
+	op->stats.Int = pl->orig_stats.Int;
+	op->stats.Wis = pl->orig_stats.Wis;
+	op->stats.Pow = pl->orig_stats.Pow;
+	op->stats.Cha = pl->orig_stats.Cha;
 
 	pl->selected_weapon =pl->skill_weapon = NULL;
 	pl->digestion = 3;
@@ -1693,20 +1689,6 @@ void fix_player(object *op)
 	}
 	else if(inv_see_flag) /* and !FLAG_SEE_INVISIBLE */
 		pl->socket.update_tile = 0;
-}
-
-/*
- * Returns true if the given player is a legal class.
- * The function to add and remove class-bonuses to the stats doesn't
- * check if the stat becomes negative, thus this function
- * merely checks that all stats are 1 or more, and returns
- * false otherwise.
- */
-
-int allowed_class(object *op) {
-  return op->stats.Dex>0&&op->stats.Str>0&&op->stats.Con>0&&
-         op->stats.Int>0&&op->stats.Wis>0&&op->stats.Pow>0&&
-	 op->stats.Cha>0;
 }
 
 /*
