@@ -48,6 +48,7 @@ typedef struct archt {
 								 * remove the artifacts changes (cancellation, dispel...)
 								 */
     object		 clone;			/* An object from which to do copy_object() */
+    struct mob_behaviourset *ai; /* arch-default ai definition (optional)*/
 } archetype;
 
 EXTERN archetype *first_archetype;

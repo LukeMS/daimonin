@@ -9,7 +9,9 @@ friendship
 choose_enemy
 
 moves: 
-stand_still
+sleep
+move_towards_enemy
+move_towards_home
 
 reaction_moves:
 

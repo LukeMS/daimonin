@@ -10,7 +10,8 @@ artifact.h     funcpoint.h    map.h          recipe.h       treasure.h \
 global.h       newclient.h    shstr.h        version.h      tod.h\
 autoconf.h.in  god.h          newserver.h    skillist.h     xdir.h \
 book.h         includes.h     object.h       skills.h	    sockproto.h \
-plugin.h       plugproto.h    timers.h       pathfinder.h
+plugin.h       plugproto.h    timers.h       pathfinder.h   behaviourdecl.h \
+monster.h      mempool.h      aiconfig.h
 
 all::
 

@@ -26,6 +26,8 @@
 #include <global.h>
 #include <funcpoint.h>
 
+static char log_buf[MAXSOCKBUF*2];
+
 /*
  * Logs a message to stderr, or to file, and/or even to socket.
  * Or discards the message if it is of no importanse, and none have
@@ -38,35 +40,31 @@
 void LOG(LogLevel logLevel, char *format, ...)
 {
   static int fatal_error = FALSE;
-  char buf[20480];  /* This needs to be really really big - larger
-		     * than any other buffer, since that buffer may
-		     * need to be put in this one.
-		     */
 
   va_list ap;
   va_start(ap, format);
 
-  buf[0] = '\0';
+  log_buf[0] = '\0';
   if (logLevel <= settings.debug)
   {
-    vsprintf(buf, format, ap);
+    vsprintf(log_buf, format, ap);
 #ifdef WIN32 /* ---win32 change log handling for win32 */
 	if(logfile )
-		fputs(buf, logfile);    /* wrote to file or stdout */
+		fputs(log_buf, logfile);    /* wrote to file or stdout */
 	else
-		fputs(buf, stderr); 
+		fputs(log_buf, stderr); 
 
 	#ifdef DEBUG				/* if we have a debug version, we want see ALL output */
 	if(logfile )
 		fflush(logfile);    /* so flush this! */
 	#endif
 	if(logfile && logfile != stderr)   /* if was it a logfile wrote it to screen too */ 
-		fputs(buf, stderr); 
+		fputs(log_buf, stderr); 
 #else
 	if(logfile)
-	    fputs(buf, logfile);
+	    fputs(log_buf, logfile);
 	else
-		fputs(buf, stderr); 
+		fputs(log_buf, stderr); 
 #endif
   }
 

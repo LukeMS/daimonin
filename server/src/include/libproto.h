@@ -222,12 +222,14 @@ extern mapstruct *out_of_map2(mapstruct *m, int *x, int *y);
 extern int get_rangevector(object *op1, object *op2, rv_vector *retval, int flags);
 extern int get_rangevector_from_mapcoords(mapstruct *map1, int x1, int y1, mapstruct *map2, int x2, int y2, rv_vector *retval, int flags);
 extern int on_same_map(object *op1, object *op2);
-/* object.c */
+/* mempool.c */
+extern uint32 nearest_pow_two_exp(uint32 n); 
 extern void init_mempools();
 extern void setup_poolfunctions(mempool_id pool, chunk_constructor constructor, chunk_destructor destructor);
-extern void *get_poolchunk(mempool_id pool);
-extern void return_poolchunk(void *chunk, mempool_id pool);
 extern void free_empty_puddles(mempool_id pool);
+void return_poolchunk_array_real(void *data, uint32 arraysize_exp, mempool_id pool); 
+void *get_poolchunk_array_real(mempool_id pool, uint32 arraysize_exp);
+/* object.c */
 extern void mark_object_removed(object *ob);
 extern int CAN_MERGE(object *ob1, object *ob2);
 extern object *merge_ob(object *op, object *top);

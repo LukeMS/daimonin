@@ -136,7 +136,6 @@ end
 Object wall_ruin_c1a
 name ruin
 face wall_ruin_c1.111
-blocksview 1
 type 77
 layer 5
 no_pick 1
@@ -145,7 +144,6 @@ end
 Object wall_ruin_c1b
 name ruin
 face wall_ruin_c1.131
-blocksview 1
 type 77
 layer 5
 no_pick 1
@@ -154,7 +152,6 @@ end
 Object wall_ruin_c2a
 name ruin
 face wall_ruin_c2.111
-blocksview 1
 type 77
 layer 5
 no_pick 1
@@ -163,7 +160,6 @@ end
 Object wall_ruin_c2b
 name ruin
 face wall_ruin_c2.131
-blocksview 1
 type 77
 layer 5
 no_pick 1
@@ -172,7 +168,6 @@ end
 Object wall_ruin_c3a
 name ruin
 face wall_ruin_c3.111
-blocksview 1
 type 77
 layer 5
 no_pick 1
@@ -181,7 +176,6 @@ end
 Object wall_ruin_c3b
 name ruin
 face wall_ruin_c3.131
-blocksview 1
 type 77
 layer 5
 no_pick 1

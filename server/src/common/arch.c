@@ -533,8 +533,8 @@ void load_archetypes() {
   close_and_delete(fp, comp);
   fp=open_and_uncompress(filename,0,&comp);
 
-  /* I moveed the artifacts loading to this position because it must be done
-   * BEFORE we load the trasure file - remeber we have now fake arches in the
+  /* I moved the artifacts loading to this position because it must be done
+   * BEFORE we load the trasure file - remember we have now fake arches in the
    * artifacts file 
    * second_arch_pass reparse the archetype file again and add other_arch and
    * randomitems (= treasurelists) to the arches.

@@ -26,9 +26,7 @@
 #ifndef __MONSTER_H
 #define __MONSTER_H
 
-#ifdef WIN32
-#pragma pack(push,1)
-#endif
+#include <aiconfig.h>
 
 /** Monster extended data **/
 
@@ -77,43 +75,35 @@ struct mob_known_obj {
      * credz gained (for exp sharing)
      */
 };
-  
-typedef enum {
-    BEHAVIOURCLASS_NONE=-1, 
-    BEHAVIOURCLASS_PROCESSES=0, 
-    BEHAVIOURCLASS_MOVES, 
-    BEHAVIOURCLASS_REACTION_MOVES, 
-    BEHAVIOURCLASS_ACTIONS,
-    NROF_BEHAVIOURCLASSES    
-} behaviourclass_t;
-
-/* Internally used behaviour declaration */
-struct mob_behaviourdecl {
-    const char *name;
-    void *func;
-};
+ 
+/* Flags for parameters */
+#define AI_PARAM_PRESENT   1 /* The parameter is present */
+#define AIPARAM_PRESENT(param) (params[(param)].flags & AI_PARAM_PRESENT)
+#define AIPARAM_INT(param) params[(param)].intvalue
+#define AIPARAM_STRING(param) params[(param)].stringvalue
 
 /* A behaviour parameter */
 struct mob_behaviour_param {
-    struct mob_behaviour_param *next; /* Linked list */
-    const char *name;             /* Parameter name */
+    struct mob_behaviour_param *next; /* Linked list of multiple definitions*/
     const char *stringvalue;      /* Parameter value as string */
     int intvalue;                 /* Integer value */
+    int flags;
 };
 
 /* Call info for a behaviour */
 struct mob_behaviour {
+    struct behaviour_decl *declaration; /* static info about this behaviour */
     struct mob_behaviour *next; /* Linked list */
-    void *func;          /* Badly typed function pointer */
-    struct mob_behaviour_param *parameters; /* Parameters */
+    struct mob_behaviour_param *parameters; /* Parameter array */
 };
 
 struct mob_behaviourset {
-    // struct mob_behaviourset *prev, *next; /* Linked list */
-    // int refcount;                         /* Nr of active mobs using this def */
-    // const char *definition;               /* The string definition */
+    struct mob_behaviourset *prev, *next; /* Linked list */
+    int refcount;                         /* Nr of active mobs using this def */
+    const char *definition;               /* The string definition */
+    uint32 bghash;                        /* Hash for generated behaviours */
         
-    struct mob_behaviour *behaviours[NROF_BEHAVIOURCLASSES];
+    struct mob_behaviour *behaviours[NROF_BEHAVIOURCLASSES]; 
 };
 
 struct mobdata {
@@ -131,11 +121,13 @@ struct mobdata {
 #define MOB_PATHDATA(ob) (&(((struct mobdata *)((ob)->custom_attrset))->pathfinding))
 
 /* A few friendship delta values */
-#define FRIENDSHIP_ATTACK     -100
-#define FRIENDSHIP_TRY_ATTACK  -50
-#define FRIENDSHIP_PUSH        -10
-#define FRIENDSHIP_NEUTRAL       0
-#define FRIENDSHIP_HELP        100
+#define FRIENDSHIP_ENEMY_BONUS  -50 /* Bonus to help focus current enemy */
+#define FRIENDSHIP_ATTACK      -100 /* Added if attacked */
+#define FRIENDSHIP_TRY_ATTACK   -50 /* Added if attacked but failed */
+#define FRIENDSHIP_PUSH         -10 /* Added if pushed */
+#define FRIENDSHIP_NEUTRAL        0
+#define FRIENDSHIP_DIST_MAX      50 /* Max effect of distance */
+#define FRIENDSHIP_HELP         100 /* Added if helped */
 
 typedef enum {
     MOVE_RESPONSE_NONE, 

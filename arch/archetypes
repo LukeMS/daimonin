@@ -36,7 +36,9 @@ friendship
 choose_enemy
 
 moves: 
-stand_still
+sleep
+move_towards_enemy
+move_towards_home
 
 reaction_moves:
 
@@ -46,6 +48,7 @@ bow_attack_enemy
 spell_attack_enemy
 endmsg
 editor_folder ai/arch_defaults
+other_arch guard
 face ai.101
 sys_object 1
 end
@@ -82,6 +85,7 @@ actions:
 melee_attack_enemy
 endmsg
 editor_folder ai/race_defaults
+race slime
 face ai.101
 sys_object 1
 end
@@ -22570,7 +22574,6 @@ face pillar_ruin1a.131
 layer 5
 no_pass 1
 no_pick 1
-blocksview 1
 end
 More
 Object pillar_ruin1a_b
@@ -22591,7 +22594,6 @@ mpart_nr 5
 layer 5
 no_pass 1
 no_pick 1
-blocksview 1
 y 2
 end
 Object pillar_ruin1a_a1
@@ -22604,7 +22606,6 @@ face pillar_ruin1a.111
 layer 5
 no_pass 1
 no_pick 1
-blocksview 1
 end
 More
 Object pillar_ruin1a_b1
@@ -22625,7 +22626,6 @@ mpart_nr 5
 layer 5
 no_pass 1
 no_pick 1
-blocksview 1
 x 2
 end
 Object pillar_ruin1b.101
@@ -26883,7 +26883,6 @@ name ruin
 type 77
 editor_folder walls/ruins
 face wall_ruin_c1.111
-blocksview 1
 layer 5
 no_pick 1
 no_pass 1
@@ -26893,7 +26892,6 @@ name ruin
 type 77
 editor_folder walls/ruins
 face wall_ruin_c1.131
-blocksview 1
 layer 5
 no_pick 1
 no_pass 1
@@ -26903,7 +26901,6 @@ name ruin
 type 77
 editor_folder walls/ruins
 face wall_ruin_c2.111
-blocksview 1
 layer 5
 no_pick 1
 no_pass 1
@@ -26913,7 +26910,6 @@ name ruin
 type 77
 editor_folder walls/ruins
 face wall_ruin_c2.131
-blocksview 1
 layer 5
 no_pick 1
 no_pass 1
@@ -26923,7 +26919,6 @@ name ruin
 type 77
 editor_folder walls/ruins
 face wall_ruin_c3.111
-blocksview 1
 layer 5
 no_pick 1
 no_pass 1
@@ -26933,7 +26928,6 @@ name ruin
 type 77
 editor_folder walls/ruins
 face wall_ruin_c3.131
-blocksview 1
 layer 5
 no_pick 1
 no_pass 1

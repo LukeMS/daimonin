@@ -372,6 +372,7 @@ void init(int argc, char **argv) {
     metaserver_init();
     reset_sleep();
 	init_level_color_table();
+    init_arch_default_behaviours();
     init_done=1;
 }
 
@@ -698,6 +699,23 @@ void setup_library() {
   setup_poolfunctions(POOL_BEHAVIOURSET, NULL, (chunk_destructor)cleanup_behaviourset);
 }
 
+static void add_ai_to_racelist (const char *race_name, archetype *op) {
+  racelink *race;
+ 
+  if(!op||!race_name) return;
+
+  race=find_racelink(race_name);
+ 
+  /* if we don't have this race, just skip the corpse.
+   * perhaps we add later the race or this corpse has
+   * special use (put by hand on map or by script)
+   */
+  if(race) {
+      LOG(llevDebug, " %s->'%s' ", STRING_OBJ_RACE(&op->clone), STRING_OBJ_NAME(&op->clone));
+      race->ai = parse_behaviourconfig(op->clone.msg, &op->clone);
+  }
+ }
+
 static void add_corpse_to_racelist (const char *race_name, archetype *op) {
   racelink *race;
  
@@ -737,6 +755,16 @@ void init_races () {
 	if (at->clone.type == MONSTER || at->clone.type == PLAYER)
 		{
 			add_to_racelist(at->clone.race, &at->clone);
+		}
+	};
+
+	/* now search for ai objects and add them to the race list */
+    LOG(llevDebug, " default AIs: ");
+	for(at = first_archetype;at!=NULL;at=at->next)
+	{
+		if (at->clone.type == TYPE_AI)
+		{
+			add_ai_to_racelist(at->clone.race, at);
 		}
 	};
 
@@ -811,6 +839,7 @@ racelink * get_racelist ( ) {
   list->nrof=0;
   list->member=get_objectlink();
   list->next=NULL;
+  list->ai = NULL;  
 
   return list;
 }

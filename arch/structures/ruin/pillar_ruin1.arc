@@ -7,7 +7,6 @@ mpart_id 4
 type 79
 no_pass 1
 no_pick 1
-blocksview 1
 end
 More
 Object pillar_ruin1a_b
@@ -29,7 +28,6 @@ mpart_id 4
 mpart_nr 5
 no_pass 1
 no_pick 1
-blocksview 1
 end
 Object pillar_ruin1a_a1
 name ruin
@@ -40,7 +38,6 @@ mpart_nr 3
 type 79
 no_pass 1
 no_pick 1
-blocksview 1
 end
 More
 Object pillar_ruin1a_b1
@@ -62,7 +59,6 @@ mpart_id 5
 mpart_nr 5
 no_pass 1
 no_pick 1
-blocksview 1
 end
 Object pillar_ruin1b.101
 name pillar
