@@ -106,6 +106,9 @@ typedef unsigned int    tag_t;
 #define EXIT_ERROR     -1
 #define EXIT_SHUTODWN  -2
 
+#define ROUND_TAG            pticks /* put this here because the DIFF */
+
+
 /* to access strings from objects, maps, arches or other system objects,
  * for printf() or others use only this macros to avoid NULL pointer exceptions.
  * Some standard c libaries don't check for NULL in that functions - most times
@@ -442,8 +445,10 @@ EXTERN long                     init_done;          /* Ignores signals until ini
 EXTERN long                     trying_emergency_save;  /* True when emergency_save() is reached */
 EXTERN long                     nroferrors;     /* If it exceeds MAX_ERRORS, call fatal() */
 
-EXTERN long                     pticks;     /* used by various function to determine */
-/* how often to save the character */
+EXTERN uint32                   pticks;                 /* this is the global round counter. Every main loop pticks=pticks+1 */
+EXTERN long                     pticks_ums;             /* how many micro seconds has one pticks */
+EXTERN float                    pticks_second;          /* how many pticks in one second */
+
 /*
  * Misc global variables:
  */
@@ -459,9 +464,6 @@ EXTERN char                     first_map_path[MAX_BUF];    /* The start-level *
 
 EXTERN char                     errmsg[HUGE_BUF];
 EXTERN long                     ob_count;
-
-EXTERN uint32                   global_round_tag; /* global round ticker ! this is real a global */
-#define ROUND_TAG global_round_tag /* put this here because the DIFF */
 
 EXTERN int                      global_race_counter; /* global race counter */
 
@@ -485,7 +487,6 @@ EXTERN object                  *gbl_active_DM; /* ony for testing, TODO list of 
 EXTERN MapLook                  blank_look;
 EXTERN New_Face                *blank_face, *next_item_face, *prev_item_face;
 
-EXTERN long                     max_time;   /* loop time */
 EXTERN NewSocket               *init_sockets;
 
 EXTERN unsigned long            todtick; /* time of the day tick counter */

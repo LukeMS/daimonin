@@ -322,7 +322,7 @@ typedef struct pl_player
     time_t              last_save_time;
 #endif /* SAVE_INTERVAL */
 #ifdef AUTOSAVE
-    long                last_save_tick;
+    uint32              last_save_tick;
 #endif
 
 #ifdef SEARCH_ITEMS

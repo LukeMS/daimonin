@@ -53,10 +53,38 @@ struct itimerval
 /* Functions to capsule or serve linux style function
  * for Windows Visual C++ 
 */
+int gettimeofday( struct timeval* tv,struct timezone *timezone_Info) 
+{
+    FILETIME    time;
+    double      timed;
+   
+    GetSystemTimeAsFileTime( &time );
+  
+    /* Apparently Win32 has units of 1e-7 sec (tenths of microsecs)
+     * 4294967296 is 2^32, to shift high word over
+     * 11644473600 is the number of seconds between
+     * the Win32 epoch 1601-Jan-01 and the Unix epoch 1970-Jan-01
+     * Tests found floating point to be 10x faster than 64bit int math.
+     */
 
+    timed = ((time.dwHighDateTime * 4294967296e-7) - 11644473600.0) + (time.dwLowDateTime  * 1e-7);
+
+    tv->tv_sec  = (long) timed;
+    tv->tv_usec = (long) ((timed - tv->tv_sec) * 1e6);
+
+    /* Get the timezone, if they want it */
+    if (timezone_Info != NULL)
+    {
+        _tzset();
+        timezone_Info->tz_minuteswest = _timezone;
+        timezone_Info->tz_dsttime = _daylight;
+    }    
+    return 0; 
+}
+
+/*
 int gettimeofday(struct timeval *time_Info, struct timezone *timezone_Info)
 {
-    /* remarks: a DWORD is an unsigned long */
     static DWORD    time_t0, time_delta, mm_t0;
     static int      t_initialized   = 0;
     DWORD           mm_t, delta_t;
@@ -68,15 +96,11 @@ int gettimeofday(struct timeval *time_Info, struct timezone *timezone_Info)
         mm_t0 = timeGetTime();
         t_initialized = 1;
     }
-    /* Get the time, if they want it */
+
     if (time_Info != NULL)
     {
-        /* timeGetTime() returns the system time in milliseconds */
         mm_t = timeGetTime();
 
-        /* handle wrap around of system time (happens every 
-         * 2^32 milliseconds = 49.71 days)
-        */
         if (mm_t < mm_t0)
             delta_t = (0xffffffff - mm_t0) + mm_t + 1;
         else
@@ -93,17 +117,15 @@ int gettimeofday(struct timeval *time_Info, struct timezone *timezone_Info)
         time_Info->tv_usec = time_delta * 1000;
     }
 
-    /* Get the timezone, if they want it */
     if (timezone_Info != NULL)
     {
         _tzset();
         timezone_Info->tz_minuteswest = _timezone;
         timezone_Info->tz_dsttime = _daylight;
     }
-    /* And return */
     return 0;
 }
-
+*/
 
 DIR * opendir(const char *dir)
 {

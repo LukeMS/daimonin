@@ -362,7 +362,7 @@ void AddMeCmd(char *buf, int len, NewSocket *ns)
          */
         Write_String_To_Socket(ns, BINARY_CMD_ADDME_SUC, cmd_buf, 1);
         ns->addme = 1;
-        ns->login_count = global_round_tag; /* reset idle counter */
+        ns->login_count = ROUND_TAG; /* reset idle counter */
         LOG(llevDebug, "addme_cmd(): socket %d\n", ns->fd);
         socket_info.nconns--;
         ns->status = Ns_Avail;
@@ -967,9 +967,9 @@ void esrv_update_stats(player *pl)
     if (sl.len > 1)
         Send_With_Handling(&pl->socket, &sl);
 
-	if(group_update && pl->group_status == GROUP_STATUS_GROUP && pl->update_ticker != global_round_tag)
+	if(group_update && pl->group_status == GROUP_STATUS_GROUP && pl->update_ticker != ROUND_TAG)
 		party_client_group_update(pl->ob, group_update);
-    pl->update_ticker = global_round_tag;
+    pl->update_ticker = ROUND_TAG;
 }
 
 

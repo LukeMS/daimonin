@@ -289,7 +289,7 @@ void HandleClient(NewSocket *ns, player *pl)
         /* reset idle counter */
         if (pl && pl->state == ST_PLAYING)
         {
-            ns->login_count = global_round_tag;
+            ns->login_count = ROUND_TAG;
             ns->idle_flag = 0;
         }
 
@@ -537,7 +537,7 @@ void doeric_server(int update, struct timeval *timeout)
             if (init_sockets[i].status > Ns_Wait) /* exclude socket #0 which listens for new connects */
             {
                 /* kill this after 3 minutes idle... */
-                if (init_sockets[i].login_count+(60 * 3 * (1000000 / MAX_TIME)) <= global_round_tag)
+                if (init_sockets[i].login_count+ ((60.0f * 3.0f) * pticks_second) <= ROUND_TAG)
                 {
                     free_newsocket(&init_sockets[i]);
                     init_sockets[i].status = Ns_Avail;
@@ -567,12 +567,12 @@ void doeric_server(int update, struct timeval *timeout)
         }
         else
         {
-            if (!pl->socket.idle_flag && pl->socket.login_count+(60 * 8 * (1000000 / MAX_TIME))<=global_round_tag && !QUERY_FLAG(pl->ob, FLAG_WIZ))
+            if (!pl->socket.idle_flag && pl->socket.login_count+(60.0f * 8.0f * pticks_second)<=ROUND_TAG && !QUERY_FLAG(pl->ob, FLAG_WIZ))
             {
                 pl->socket.idle_flag = 1;
                 Write_String_To_Socket(&pl->socket, BINARY_CMD_DRAWINFO, _idle_warn_text, strlen(_idle_warn_text));
             }
-            else if (pl->socket.login_count+(60 * 10 * (1000000 / MAX_TIME))<=global_round_tag && !QUERY_FLAG(pl->ob, FLAG_WIZ))
+            else if (pl->socket.login_count+(60.0f * 10.0f * pticks_second)<= ROUND_TAG && !QUERY_FLAG(pl->ob, FLAG_WIZ))
             {
                 player *npl = pl->next;
                 Write_String_To_Socket(&pl->socket, BINARY_CMD_DRAWINFO, _idle_warn_text2, strlen(_idle_warn_text2));
@@ -823,9 +823,11 @@ void doeric_server_write(void)
         
         /* Check that a write won't block */
         FD_ZERO(&writeset);
-        FD_SET(pl->socket.fd, &writeset);
+        FD_SET((uint32)pl->socket.fd, &writeset);
+
+        /* tv_usec=0 should be work too */
         timeout.tv_sec = 0;
-        timeout.tv_usec = 1;
+        timeout.tv_usec = 0;
         select(pl->socket.fd + 1, NULL, &writeset, NULL, &timeout);
                 
         /* and *now* write back to player */

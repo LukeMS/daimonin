@@ -486,11 +486,11 @@ void party_client_group_update(object *member, int flag)
         member->stats.grace, member->stats.maxgrace, member->level); 
 
     strcat(buf,buf2);
-    CONTR(member)->update_ticker = global_round_tag;
+    CONTR(member)->update_ticker = ROUND_TAG;
 
     for(tmp=CONTR(member)->group_leader;tmp;tmp=CONTR(tmp)->group_next)
     {
-        if(CONTR(tmp)->update_ticker != global_round_tag)
+        if(CONTR(tmp)->update_ticker != ROUND_TAG)
         {
             pl = CONTR(tmp);
             
@@ -513,7 +513,7 @@ void party_client_group_update(object *member, int flag)
                     tmp->stats.grace, tmp->stats.maxgrace,tmp->level); 
                 
                 strcat(buf,buf2);
-                pl->update_ticker = global_round_tag;
+                pl->update_ticker = ROUND_TAG;
             }
         }
     }

@@ -32,18 +32,6 @@
 #include <sys/time.h>
 #endif /* win32 */
 
-/*
- * Global variables:
- */
-
-#define PBUFLEN 100
-long        process_utime_save[PBUFLEN];
-long        psaveind;
-long        process_max_utime           = 0;
-long        process_min_utime           = 999999999;
-long        process_tot_mtime;
-long        process_utime_long_count;
-
 const char *season_name[]               =
 {
     "The Season of New Year", "The Season of Growth", "The Season of Harvest", "The Season of Decay",
@@ -69,56 +57,12 @@ const char *month_name[MONTHS_PER_YEAR] =
 
 void reset_sleep()
 {
-    int i;
-    for (i = 0; i < PBUFLEN; i++)
-        process_utime_save[i] = 0;
-    psaveind = 0;
-    process_max_utime = 0;
-    process_min_utime = 999999999;
-    process_tot_mtime = 0;
-    pticks = 0;
-
-    (void) GETTIMEOFDAY(&last_time);
+    GETTIMEOFDAY(&last_time);
 }
 
-void log_time(long process_utime)
-{
-    pticks++;
-    if (++psaveind >= PBUFLEN)
-        psaveind = 0;
-    process_utime_save[psaveind] = process_utime;
-    if (process_utime > process_max_utime)
-        process_max_utime = process_utime;
-    if (process_utime < process_min_utime)
-        process_min_utime = process_utime;
-    process_tot_mtime += process_utime / 1000;
-}
-
-/*
- * enough_elapsed_time will return true if the time passed since
- * last tick is more than max-time.
- */
-
-int enough_elapsed_time()
-{
-    static struct timeval   new_time;
-    long                    elapsed_utime;
-
-    (void) GETTIMEOFDAY(&new_time);
-
-    elapsed_utime = (new_time.tv_sec - last_time.tv_sec) * 1000000 + new_time.tv_usec - last_time.tv_usec;
-    if (elapsed_utime > max_time)
-    {
-        log_time(elapsed_utime);
-        last_time.tv_sec = new_time.tv_sec;
-        last_time.tv_usec = new_time.tv_usec;
-        return 1;
-    }
-    return 0;
-}
 
 /* Generic function for simple timeval arithmetic (addition & subtraction) */
-void add_time(struct timeval *dst, struct timeval *a, struct timeval *b)
+static inline void add_time(struct timeval *dst, struct timeval *a, struct timeval *b)
 {
     dst->tv_sec = a->tv_sec + b->tv_sec;
     dst->tv_usec = a->tv_usec + b->tv_usec;
@@ -152,18 +96,30 @@ int time_until_next_tick(struct timeval *out)
 
     /* next_tick = last_time + tick_time */
     tick_time.tv_sec = 0;
-    tick_time.tv_usec = max_time;
+    tick_time.tv_usec = pticks_ums;
+
     add_time(&next_tick, &last_time, &tick_time);
     
     GETTIMEOFDAY(&now); 
+
     /* Time for the next tick? (timercmp does not work for <= / >=) */
-    if(timercmp(&next_tick, &now, <) || timercmp(&next_tick, &now, ==))
+    /* if(timercmp(&next_tick, &now, <) || timercmp(&next_tick, &now, ==)) */
+
+    /* timercmp() seems be broken under windows. Well, this is even faster */
+    if( next_tick.tv_sec < now.tv_sec || 
+        (next_tick.tv_sec == now.tv_sec && next_tick.tv_usec <= now.tv_usec)) 
     {
-        last_time.tv_sec = next_tick.tv_sec;
-        last_time.tv_usec = next_tick.tv_usec;
+        /* this must be now time and not next_tick.
+         * IF the last tick was really longer as pticks_ums,
+         * we need to come insync now again. 
+         * Or, in bad cases, the more needed usecs will add up.
+         */
+        last_time.tv_sec = now.tv_sec;
+        last_time.tv_usec = now.tv_usec;
 
         out->tv_sec = 0;
         out->tv_usec = 0;
+
         return 0;
     } 
     
@@ -177,30 +133,36 @@ int time_until_next_tick(struct timeval *out)
 
 /*
  * sleep_delta checks how much time has elapsed since last tick.
- * If it is less than max_time, the remaining time is slept with select().
+ * If it is less than pticks_ums, the remaining time is slept with select().
  *
  * Polls the sockets and handles or queues incoming requests
  * returns at the time for the next tick 
  */
 void sleep_delta()
 {
-    struct timeval timeout, now;
-   
-    /* Gecko: I don't know what the following does, but I'll leave it in here for now... */
-    GETTIMEOFDAY(&now);
-    log_time((now.tv_sec - last_time.tv_sec) * 1000000 + now.tv_usec - last_time.tv_usec);
+    struct timeval timeout;
 
+    
     /* TODO: ideally we should use the return value from select to know if it
      * timed out or returned because of some other reason, but this also 
      * works reasonably well...
      */
-    while(time_until_next_tick(&timeout))
+    while(time_until_next_tick(&timeout))  /* fill timeout... */
         doeric_server(SOCKET_UPDATE_CLIENT, &timeout);        
 }
 
-void set_max_time(long t)
+/* set the pticks_xx but NOT pticks itself.
+ * pticks_ums = how "long" in ums is a server "round" (counted with pticks aka ROUND_TAG)
+ * pticks_second = how many "round" are done in a second. 
+ *
+ * The default ums is set in MAX_TIME in config.h and can
+ * be changed with with the dm_time command.
+ */
+/* TODO: send new pticks_xx to all plugins! */
+void set_pticks_time(long t)
 {
-    max_time = t;
+    pticks_ums = t;
+    pticks_second = 1000000.0f/(float) t;
 }
 
 void get_tod(timeofday_t *tod)
@@ -210,7 +172,7 @@ void get_tod(timeofday_t *tod)
     tod->day = (todtick % HOURS_PER_MONTH) / DAYS_PER_MONTH;
     tod->dayofweek = tod->day % DAYS_PER_WEEK;
     tod->hour = todtick % HOURS_PER_DAY;
-    tod->minute = (pticks % PTICKS_PER_CLOCK) / (PTICKS_PER_CLOCK / 58);
+    tod->minute = (ROUND_TAG % PTICKS_PER_CLOCK) / (PTICKS_PER_CLOCK / 58);
     if (tod->minute > 58)
         tod->minute = 58; /* it's imprecise at best anyhow */
     tod->weekofmonth = tod->day / WEEKS_PER_MONTH;
@@ -259,46 +221,6 @@ void print_tod(object *op)
     new_draw_info(NDI_UNIQUE, 0, op, errmsg);
 }
 
-void time_info(object *op)
-{
-    int tot = 0, maxt = 0, mint = 99999999, long_count = 0, i;
-
-    print_tod(op);
-    if (!QUERY_FLAG(op, FLAG_WIZ))
-        return;
-
-    new_draw_info(NDI_UNIQUE, 0, op, "Total time:");
-    sprintf(errmsg, "ticks=%ld  time=%ld.%2ld", pticks, process_tot_mtime / 1000, process_tot_mtime % 1000);
-    new_draw_info(NDI_UNIQUE, 0, op, errmsg);
-    sprintf(errmsg, "avg time=%ldms  max time=%ldms  min time=%ldms", process_tot_mtime / pticks,
-            process_max_utime / 1000, process_min_utime / 1000);
-    new_draw_info(NDI_UNIQUE, 0, op, errmsg);
-    sprintf(errmsg, "ticks longer than max time (%ldms) = %ld (%ld%%)", max_time / 1000, process_utime_long_count,
-            100 * process_utime_long_count / pticks);
-    new_draw_info(NDI_UNIQUE, 0, op, errmsg);
-
-    sprintf(errmsg, "Time last %ld ticks:", pticks > PBUFLEN ? PBUFLEN : pticks);
-    new_draw_info(NDI_UNIQUE, 0, op, errmsg);
-
-    for (i = 0; i <(pticks> PBUFLEN ? PBUFLEN : pticks); i++)
-    {
-        tot += process_utime_save[i];
-        if (process_utime_save[i] > maxt)
-            maxt = process_utime_save[i];
-        if (process_utime_save[i] < mint)
-            mint = process_utime_save[i];
-        if (process_utime_save[i] > max_time)
-            long_count++;
-    }
-
-    sprintf(errmsg, "avg time=%ldms  max time=%dms  min time=%dms", tot / (pticks > PBUFLEN ? PBUFLEN : pticks) / 1000,
-            maxt / 1000,
-          mint / 1000);
-    new_draw_info(NDI_UNIQUE, 0, op, errmsg);
-    sprintf(errmsg, "ticks longer than max time (%ldms) = %d (%ld%%)", max_time / 1000, long_count,
-            100 * long_count / (pticks > PBUFLEN ? PBUFLEN : pticks));
-    new_draw_info(NDI_UNIQUE, 0, op, errmsg);
-}
 
 long seconds()
 {

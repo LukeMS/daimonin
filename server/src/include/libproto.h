@@ -302,13 +302,10 @@ extern char            *ss_dump_statistics(void);
 extern char            *ss_dump_table(int what);
 /* time.c */
 extern void             reset_sleep(void);
-extern void             log_time(long process_utime);
-extern int              enough_elapsed_time(void);
 extern void             sleep_delta(void);
-extern void             set_max_time(long t);
+extern void             set_pticks_time(long t);
 extern void             get_tod(timeofday_t *tod);
 extern void             print_tod(object *op);
-extern void             time_info(object *op);
 extern long             seconds(void);
 /* treasure.c */
 extern void             load_treasures(void);

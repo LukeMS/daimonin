@@ -772,7 +772,7 @@ void resume_detached_contexts()
             {
                 /* Handle scripts that just wants to yield, not end */
                 if(lua_isnumber(L, -1) || lua_isstring(L, -1))  {
-                    context->resume_time = lua_tonumber(L, -1)* (lua_Number)(1000000 / MAX_TIME);
+                    context->resume_time = (int)(lua_tonumber(L, -1)* (lua_Number)(1000000 / MAX_TIME));
                 }
             } else
             {
@@ -1023,7 +1023,7 @@ static int RunLuaScript(struct lua_context *context)
         {
             /* Handle scripts that just wants to yield, not end */
             if(lua_isnumber(L, -1) || lua_isstring(L, -1))
-                detach_lua_context(context, lua_tonumber(L, -1) * (lua_Number)(1000000 / MAX_TIME));
+                detach_lua_context(context, (int)(lua_tonumber(L, -1) * (lua_Number)(1000000 / MAX_TIME)));
 
             return 0;
         }

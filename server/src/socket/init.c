@@ -92,7 +92,7 @@ void InitConnection(NewSocket *ns, uint32 from)
     LOG(llevDebug, "InitConnection: Socket buffer size now %d bytes\n", oldbufsize);
 #endif
 
-    ns->login_count = global_round_tag;
+    ns->login_count = ROUND_TAG;
     ns->idle_flag = 0;
     ns->addme = 0;
     ns->faceset = 0;

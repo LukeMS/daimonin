@@ -858,7 +858,7 @@ void process_players1(mapstruct *map)
         /* check for ST_PLAYING state so that we don't try to save off when
            * the player is logging in.
            */
-        if ((pl->last_save_tick + AUTOSAVE) < pticks && pl->state == ST_PLAYING)
+        if ((pl->last_save_tick + AUTOSAVE) < ROUND_TAG && pl->state == ST_PLAYING)
         {
             /* we must change this unholy ground thing */
             if (blocks_cleric(pl->ob->map, pl->ob->x, pl->ob->y))
@@ -868,7 +868,7 @@ void process_players1(mapstruct *map)
             else
             {
                 save_player(pl->ob, 1);
-                pl->last_save_tick = pticks;
+                pl->last_save_tick = ROUND_TAG;
             }
         }
 #endif
@@ -1163,7 +1163,7 @@ void dequeue_path_requests()
         (void) GETTIMEOFDAY(&new_time);
 
         leftover_sec = last_time.tv_sec - new_time.tv_sec;
-        leftover_usec = max_time - (new_time.tv_usec - last_time.tv_usec);
+        leftover_usec = pticks_ums - (new_time.tv_usec - last_time.tv_usec);
 
         /* This is very ugly, but probably the fastest for our use: */
         while (leftover_usec < 0)
@@ -1209,17 +1209,17 @@ void dequeue_path_requests()
 
 void do_specials()
 {
-    if (!(pticks % 2))
+    if (!(ROUND_TAG % 2))
         dequeue_path_requests();
 
-    /*   if (!(pticks % 20)) */ /*use this for debuging */
-    if (!(pticks % PTICKS_PER_CLOCK))
+    /*   if (!(ROUND_TAG % 20)) */ /*use this for debuging */
+    if (!(ROUND_TAG % PTICKS_PER_CLOCK))
         tick_the_clock();
 
-    if (!(pticks % 509))
+    if (!(ROUND_TAG % 509))
         flush_old_maps();    /* Clears the tmp-files of maps which have reset */
 
-    if (!(pticks % 2521))
+    if (!(ROUND_TAG % 2521))
         metaserver_update();    /* 2500 ticks is about 5 minutes */
 }
 
@@ -1304,6 +1304,8 @@ void shutdown_agent(int timer, char *reason)
 
 int main(int argc, char **argv)
 {
+    struct timeval timeout;
+
 #ifdef PLUGINS
     int     evtid;
     CFParm  CFP;
@@ -1323,19 +1325,32 @@ int main(int argc, char **argv)
     memset(&marker, 0, sizeof(struct obj)); /* used from proccess_events() */
     LOG(llevInfo, "Server ready.\nWaiting for connections...\n");
 
+    reset_sleep(); /* init our last_time = start time - and lets go! */    
     for (; ;)
     {
         nroferrors = 0;                 /* every llevBug will increase this counter - avoid LOG loops */
+        pticks++;                       /* ROUND_TAG ! this is THE global tick counter . Use ROUND_TAG in the code */
+
         shutdown_agent(-1, NULL);       /* check & run a shutdown count (with messages & shutdown ) */
 
-//        doeric_server(SOCKET_UPDATE_CLIENT); /* READ only from socket... collect incoming, process system cmds, write back fast */
 
 #ifdef MEMPOOL_OBJECT_TRACKING
         check_use_object_list();
 #endif
 
-        global_round_tag++;         /* global round ticker ! this is THE global tick counter */
         process_events(NULL);       /* "do" something with objects with speed - process user cmds */
+
+        /* this is the tricky thing...  This full read/write access to the 
+         * socket ensure at last *ONE* read/write access to the socket in one round WITH player update.
+         * It seems odd to do the read after process_events() but sleep_delta() will poll on the socket.
+         * In that way, we will collect & process the commands as fast as possible.
+         * NOTE: sleep_delta() *can* loop some doeric_server() - but don't MUST.
+         * Perhaps we have alot players connected and process_events() and this doeric_server()
+         * has eaten up all tick time!!
+         */
+        timeout.tv_sec=0;timeout.tv_usec=0;
+        doeric_server(SOCKET_UPDATE_PLAYER|SOCKET_UPDATE_CLIENT, &timeout);
+
         cftimer_process_timers();   /* Process the crossfire Timers */
 
 #ifdef PLUGINS
@@ -1347,10 +1362,10 @@ int main(int argc, char **argv)
 
         check_active_maps();        /* Removes unused maps after a certain timeout */
         do_specials();              /* Routines called from time to time. */
-        /* doeric_server(SOCKET_UPDATE_PLAYER|SOCKET_UPDATE_CLIENT); */
-        doeric_server_write();      /* enforce at last one write back - more can be in sleep_delta()  */
+        
+        /*doeric_server_write();*/
         object_gc();                /* Clean up the object pool */
-        sleep_delta();              /* Slepp proper amount of time before next tick */
+        sleep_delta();              /* Slepp proper amount of time before next tick but poll the socket */
     }
     return 0;
 }

@@ -415,9 +415,9 @@ int hit_player(object *op, int dam, object *hitter, int type)
 		if(dmg_obj)
 		{
 //			LOG(-1,"found!: %d --> %d\n", dmg_obj->damage_round_tag, global_round_tag);
-			if(dmg_obj->damage_round_tag+hitter->last_heal >= global_round_tag)
+			if(dmg_obj->damage_round_tag+hitter->last_heal >= ROUND_TAG)
 				return 0;
-			dmg_obj->damage_round_tag = global_round_tag;
+			dmg_obj->damage_round_tag = ROUND_TAG;
 		}
 		else
 			dmg_obj = aggro_insert_damage(op, hitter);
