@@ -1,0 +1,12 @@
+
+&GOLEMS
+Golem is the name for all summoned creatures that
+the player has direct control over.
+
+To control your golem, use the range system and
+press CTRL + <direction> like you fire or throw 
+something. Its listed under "mind control".
+
+Your golem will then start moving in that direction,
+and keep moving in that direction until you change 
+its direction or you hit the <stay> direction.
