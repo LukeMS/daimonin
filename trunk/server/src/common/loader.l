@@ -251,7 +251,7 @@ WS	[ \t]*{NL}
 			 * about not overflowing the buffer.
 			 */
 			if (strlen(op->msg) > (HUGE_BUF/2))
-			    LOG(llevDebug, "\n\tWarning message length > %d (max allowed=%d): %d\n>%.80s<\n",
+			    LOG(llevDebug, "\n\tDebug: Warning message length > %d (max allowed=%d): %d\n>%.80s<\n",
 				HUGE_BUF/2, HUGE_BUF, strlen(op->msg),op->msg);
 		    }
 <MESSAGE>.*	    {if(msg_flag)strcat(msgbuf,"\n");msg_flag=1;strcat(msgbuf, yytext); }

@@ -65,7 +65,7 @@ static int apply_id_altar(object *money, object *altar, object *pl)
         if (operate_altar(altar, &money))
         {
             identify(marked);
-            new_draw_info_format(NDI_UNIQUE, 0, pl, "You have %s.", long_desc(marked));
+            new_draw_info_format(NDI_UNIQUE, 0, pl, "You have %s.", long_desc(marked, pl));
             if (marked->msg)
             {
                 new_draw_info(NDI_UNIQUE, 0, pl, "The item has a story:");
@@ -82,7 +82,7 @@ static int apply_id_altar(object *money, object *altar, object *pl)
             if (operate_altar(altar, &money))
             {
                 identify(id);
-                new_draw_info_format(NDI_UNIQUE, 0, pl, "You have %s.", long_desc(id));
+                new_draw_info_format(NDI_UNIQUE, 0, pl, "You have %s.", long_desc(id, pl));
                 if (id->msg)
                 {
                     new_draw_info(NDI_UNIQUE, 0, pl, "The item has a story:");
@@ -1175,7 +1175,14 @@ int esrv_apply_container(object *op, object *sack)
         else
         {
             /* only give player with right name access */
-            if (sack->sub_type1 == ST1_CONTAINER_CORPSE_player && strcmp(sack->slaying, op->name))
+            if (sack->sub_type1 == ST1_CONTAINER_CORPSE_group && 
+                    (!(CONTR(op)->group_status & GROUP_STATUS_GROUP) ||
+                        CONTR(CONTR(op)->group_leader)->group_id != sack->stats.maxhp))
+            {
+                new_draw_info_format(NDI_UNIQUE, 0, op, "Its not your groups bounty.");
+                return 0;
+            }
+            else if (sack->sub_type1 == ST1_CONTAINER_CORPSE_player && strcmp(sack->slaying, op->name))
             {
                 new_draw_info_format(NDI_UNIQUE, 0, op, "Its not your bounty.");
                 return 0;

@@ -258,7 +258,7 @@ void esrv_draw_look(object *pl)
         else
             head = tmp;
 
-        len = strlen((tmp_sp = query_base_name(head))) + 1; /* +1 = 0 marker for string end */
+        len = strlen((tmp_sp = query_base_name(head, pl))) + 1; /* +1 = 0 marker for string end */
         if (len > 128)
         {
             len = 128; /* 127 chars + 0 marker */
@@ -373,7 +373,7 @@ int esrv_draw_DM_inv(object *pl, SockList *sl, object *op)
         else
             head = tmp;
 
-        len = strlen((tmp_sp = query_base_name(head))) + 1; /* +1 = 0 marker for string end */
+        len = strlen((tmp_sp = query_base_name(head, pl))) + 1; /* +1 = 0 marker for string end */
         if (len > 128)
         {
             len = 128; /* 127 chars + 0 marker */
@@ -500,7 +500,7 @@ static int esrv_send_inventory_DM(object *pl, SockList *sl, object *op)
             SockList_AddChar(sl, (char) 255);
             SockList_AddChar(sl, (char) 255);
         }
-        strncpy(item_n, query_base_name(tmp), 127);
+        strncpy(item_n, query_base_name(tmp, pl), 127);
         item_n[127] = 0;
         len = strlen(item_n) + 1;
         SockList_AddChar(sl, (char) len);
@@ -634,7 +634,7 @@ void esrv_send_inventory(object *pl, object *op)
                 SockList_AddChar(&sl, (char) 255);
                 SockList_AddChar(&sl, (char) 255);
             }
-            strncpy(item_n, query_base_name(tmp), 127);
+            strncpy(item_n, query_base_name(tmp, pl), 127);
             item_n[127] = 0;
             len = strlen(item_n) + 1;
             SockList_AddChar(&sl, (char) len);
@@ -750,10 +750,10 @@ static void esrv_update_item_send(int flags, object *pl, object *op)
             int     len;
             char   *item_p, item_n[MAX_BUF];
 
-            strncpy(item_n, query_base_name(op), 127);
+            strncpy(item_n, query_base_name(op, pl), 127);
             item_n[127] = 0;
             len = strlen(item_n);
-            item_p = query_base_name(op);
+            item_p = query_base_name(op, pl);
             strncpy(item_n + len + 1, item_p, 127);
             item_n[254] = 0;
             len += strlen(item_n + 1 + len) + 1;
@@ -762,7 +762,7 @@ static void esrv_update_item_send(int flags, object *pl, object *op)
             sl.len += len;
         }
         else
-            add_stringlen_to_sockbuf(query_base_name(op), &sl);
+            add_stringlen_to_sockbuf(query_base_name(op, pl), &sl);
     }
     if (flags & UPD_ANIM)
     {
@@ -898,7 +898,7 @@ static void esrv_send_item_send(object *pl, object *op)
     if (CONTR(pl)->socket.sc_version >= 1024)
     {
         int len;
-        strncpy(item_n, query_base_name(op), 127);
+        strncpy(item_n, query_base_name(op, pl), 127);
         item_n[127] = 0;
         len = strlen(item_n) + 1;
         SockList_AddChar(&sl, (char) len);
@@ -906,7 +906,7 @@ static void esrv_send_item_send(object *pl, object *op)
         sl.len += len;
     }
     else
-        add_stringlen_to_sockbuf(query_base_name(op), &sl);
+        add_stringlen_to_sockbuf(query_base_name(op, pl), &sl);
 
     if (op->env && op->inv_animation_id)
     {

@@ -807,10 +807,10 @@ void send_query(NewSocket *ns, uint8 flags, char *text)
     Flag |= Value; \
 }
 
-#define AddIfFloat(Old,New,Type) if (Old != New) {\
-            Old = New; \
-            SockList_AddChar(&sl, (char)Type); \
-            SockList_AddInt(&sl,(long)(New*FLOAT_MULTI));\
+#define AddIfFloat(Old,New,Type) if ((Old) != (New)) {\
+            (Old) = (New); \
+            SockList_AddChar(&sl, (char)(Type)); \
+            SockList_AddInt(&sl,(int)((New)*FLOAT_MULTI));\
             }
 
 #define AddIfString(Old,New,Type) if (Old == NULL || strcmp(Old,New)) {\
@@ -967,7 +967,7 @@ void esrv_update_stats(player *pl)
     if (sl.len > 1)
         Send_With_Handling(&pl->socket, &sl);
 
-	if(group_update && pl->group_status == GROUP_STATUS_GROUP && pl->update_ticker != ROUND_TAG)
+	if(group_update && pl->group_status & GROUP_STATUS_GROUP && pl->update_ticker != ROUND_TAG)
 		party_client_group_update(pl->ob, group_update);
     pl->update_ticker = ROUND_TAG;
 }

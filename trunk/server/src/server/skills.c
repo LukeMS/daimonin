@@ -706,7 +706,7 @@ int do_skill_ident2(object *tmp, object *pl, int obj_class)
             identify(tmp);
             if (pl->type == PLAYER)
             {
-                new_draw_info_format(NDI_UNIQUE, 0, pl, "You identify %s.", long_desc(tmp));
+                new_draw_info_format(NDI_UNIQUE, 0, pl, "You identify %s.", long_desc(tmp, pl));
                 if (tmp->msg)
                 {
                     new_draw_info(NDI_UNIQUE, 0, pl, "The item has a story:");
@@ -1212,11 +1212,11 @@ int write_note(object *pl, object *item, char *msg)
             FREE_AND_COPY_HASH(item->msg, buf); 
             esrv_send_item(pl, item);
         }
-        new_draw_info_format(NDI_UNIQUE, 0, pl, "You write in the %s.", query_short_name(item));
+        new_draw_info_format(NDI_UNIQUE, 0, pl, "You write in the %s.", query_short_name(item, pl));
         return strlen(msg);
     }
     else
-        new_draw_info_format(NDI_UNIQUE, 0, pl, "Your message won't fit in the %s!", query_short_name(item)); 
+        new_draw_info_format(NDI_UNIQUE, 0, pl, "Your message won't fit in the %s!", query_short_name(item, pl)); 
     return 0;
 }
 
@@ -1539,12 +1539,12 @@ object * find_throw_ob(object *op, char *request)
         {
             if (tmp->type != WEAPON)
             {
-                new_draw_info_format(NDI_UNIQUE, 0, op, "You can't throw %s.", query_base_name(tmp));
+                new_draw_info_format(NDI_UNIQUE, 0, op, "You can't throw %s.", query_base_name(tmp, op));
                 tmp = NULL;
             }
             else if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))
             {
-                new_draw_info_format(NDI_UNIQUE, 0, op, "The %s sticks to your hand!", query_base_name(tmp));
+                new_draw_info_format(NDI_UNIQUE, 0, op, "The %s sticks to your hand!", query_base_name(tmp, op));
                 tmp = NULL;
             }
             else
@@ -1603,7 +1603,7 @@ object * find_throw_tag(object *op, tag_t tag)
              * can't be thrown OR when it is startequip which can't be dropped. */
         if (tmp->type != WEAPON || !QUERY_FLAG(tmp, FLAG_IS_THROWN))
         {
-            new_draw_info_format(NDI_UNIQUE, 0, op, "You can't throw %s.", query_base_name(tmp));
+            new_draw_info_format(NDI_UNIQUE, 0, op, "You can't throw %s.", query_base_name(tmp, op));
             tmp = NULL;
         }
         else if (QUERY_FLAG(tmp, FLAG_STARTEQUIP))
@@ -1613,7 +1613,7 @@ object * find_throw_tag(object *op, tag_t tag)
         } /* if cursed or damned, we can't unapply it - no throwing! */ 
         else if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))
         {
-            new_draw_info_format(NDI_UNIQUE, 0, op, "The %s sticks to your hand!", query_base_name(tmp));
+            new_draw_info_format(NDI_UNIQUE, 0, op, "The %s sticks to your hand!", query_base_name(tmp, op));
             tmp = NULL;
         }
         else /* ok, its a throw hybrid weapon - unapply it. then we will fire it after this function returns */
@@ -1631,12 +1631,12 @@ object * find_throw_tag(object *op, tag_t tag)
         /* not weapon nor throwable - no throwing */
         if ((tmp->type != WEAPON && tmp->type != POTION) && !QUERY_FLAG(tmp, FLAG_IS_THROWN))
         {
-            new_draw_info_format(NDI_UNIQUE, 0, op, "You can't throw %s.", query_base_name(tmp));        
+            new_draw_info_format(NDI_UNIQUE, 0, op, "You can't throw %s.", query_base_name(tmp, op));        
             tmp = NULL;
         }
         else if (tmp->type == WEAPON) /* special message for throw hybrid weapons */
         {
-            new_draw_info_format(NDI_UNIQUE, 0, op, "You must apply the %s first.", query_base_name(tmp));        
+            new_draw_info_format(NDI_UNIQUE, 0, op, "You must apply the %s first.", query_base_name(tmp, op));        
             tmp = NULL;
         }
     }
@@ -1735,7 +1735,7 @@ void do_throw(object *op, object *toss_item, int dir)
     if (throw_ob->weight <= 0)
     {
         /* 0 or negative weight?!? Odd object, can't throw it */
-        new_draw_info_format(NDI_UNIQUE, 0, op, "You can't throw %s.\n", query_base_name(throw_ob)); 
+        new_draw_info_format(NDI_UNIQUE, 0, op, "You can't throw %s.\n", query_base_name(throw_ob, op)); 
         return;
     }
 

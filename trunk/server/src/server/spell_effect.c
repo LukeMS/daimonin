@@ -2574,7 +2574,7 @@ int remove_depletion(object *op, object *target)
     {
         if (op->type == PLAYER) /* fake messages for non player... */
         {
-            new_draw_info_format(NDI_UNIQUE, 0, op, "You cast depletion on %s.", query_base_name(target));
+            new_draw_info_format(NDI_UNIQUE, 0, op, "You cast depletion on %s.", query_base_name(target, op));
             new_draw_info(NDI_UNIQUE, 0, op, "There is no depletion.");
         }
         return success;
@@ -2582,9 +2582,9 @@ int remove_depletion(object *op, object *target)
     if (op != target)
     {
         if (op->type == PLAYER)
-            new_draw_info_format(NDI_UNIQUE, 0, op, "You cast depletion on %s.", query_base_name(target));
+            new_draw_info_format(NDI_UNIQUE, 0, op, "You cast depletion on %s.", query_base_name(target, op));
         else if (target->type == PLAYER)
-            new_draw_info_format(NDI_UNIQUE, 0, target, "%s cast remove depletion on you.", query_base_name(op));
+            new_draw_info_format(NDI_UNIQUE, 0, target, "%s cast remove depletion on you.", query_base_name(op, target));
     }
 
 
@@ -2629,9 +2629,9 @@ int remove_curse(object *op, object *target, int type, SpellTypeFrom src)
     {
         if (op->type == PLAYER)
             new_draw_info_format(NDI_UNIQUE, 0, op, "You cast remove %s on %s.",
-                                 type == SP_REMOVE_CURSE ? "curse" : "damnation", query_base_name(target));
+                                 type == SP_REMOVE_CURSE ? "curse" : "damnation", query_base_name(target, op));
         else if (target->type == PLAYER)
-            new_draw_info_format(NDI_UNIQUE, 0, target, "%s cast remove %s on you.", query_base_name(op),
+            new_draw_info_format(NDI_UNIQUE, 0, target, "%s cast remove %s on you.", query_base_name(op, target),
                                  type == SP_REMOVE_CURSE ? "curse" : "damnation");
     }
 
@@ -2656,10 +2656,10 @@ int remove_curse(object *op, object *target, int type, SpellTypeFrom src)
             {
                 if (target->type == PLAYER)
                     new_draw_info_format(NDI_UNIQUE, 0, target, "The %s curse is stronger as the prayer!",
-                                         query_base_name(tmp));
+                                         query_base_name(tmp, target));
                 else if (op != target && op->type == PLAYER)
                     new_draw_info_format(NDI_UNIQUE, 0, op, "The %s curse of %s is stronger as your prayer!",
-                                         query_base_name(tmp), query_base_name(target));
+                                         query_base_name(tmp, op), query_base_name(target, op));
             }
         }
     }
@@ -2669,7 +2669,7 @@ int remove_curse(object *op, object *target, int type, SpellTypeFrom src)
         if (success)
             new_draw_info(NDI_UNIQUE, 0, op, "Your prayer removes some curses.");
         else
-            new_draw_info_format(NDI_UNIQUE, 0, op, "%s items seems uncursed.", query_base_name(target));
+            new_draw_info_format(NDI_UNIQUE, 0, op, "%s items seems uncursed.", query_base_name(target, op));
     }
 
     if (target->type == PLAYER)
@@ -2725,14 +2725,14 @@ int cast_identify(object *op, int level, object *single_ob, int mode)
             {
                 if (op->type == PLAYER)
                     new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is too powerful for this identify!",
-                                         query_base_name(tmp));
+                                         query_base_name(tmp, op));
             }
             else
             {
                 identify(tmp);
                 if (op->type == PLAYER)
                 {
-                    new_draw_info_format(NDI_UNIQUE, 0, op, "You have %s.", long_desc(tmp));
+                    new_draw_info_format(NDI_UNIQUE, 0, op, "You have %s.", long_desc(tmp, op));
                     if (tmp->msg)
                     {
                         new_draw_info(NDI_UNIQUE, 0, op, "The item has a story:");
@@ -2765,7 +2765,7 @@ int cast_identify(object *op, int level, object *single_ob, int mode)
         identify(tmp);
         if (op->type==PLAYER) {
     new_draw_info_format(NDI_UNIQUE, 0,op,
-        "On the ground is %s.", long_desc(tmp));
+        "On the ground is %s.", long_desc(tmp, op));
     if (tmp->msg) {
       new_draw_info(NDI_UNIQUE, 0,op, "The item has a story:");
       new_draw_info(NDI_UNIQUE, 0,op, tmp->msg);

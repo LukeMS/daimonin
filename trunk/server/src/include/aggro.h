@@ -34,6 +34,6 @@ extern struct obj *aggro_get_damage(struct obj *target, struct obj *hitter);
 extern struct obj *aggro_insert_damage(struct obj *target, struct obj *hitter);
 extern struct obj *aggro_update_info(struct obj *target, struct obj *target_owner, 
 									 struct obj *hitter, struct obj *hitter_object, int dmg, int flags);
-extern struct obj *aggro_calculate_exp(struct obj *victim, struct obj *slayer);
+extern struct obj *aggro_calculate_exp(struct obj *victim, struct obj *slayer, char *kill_msg);
 
 #endif

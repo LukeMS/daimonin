@@ -39,6 +39,9 @@
 
 #include <global.h>
 
+/* alot debug out with this option - disable it for normal server */
+#define DEBUG_AGGRO
+
 static uint32 exp_calc_tag=1; /* used to tag the player/group */
 
 /*
@@ -240,10 +243,11 @@ struct obj *aggro_update_info(struct obj *target, struct obj *target_owner,
 	return aggro;
 }
 
+
 /* calc active skill dmg.
  * Analyze the dmg done by skills and return the most used 1-3 skills.
  */
-static void calc_active_skill_dmg(object *op, int *skill1, int *skill2, int *skill3)
+static inline void calc_active_skill_dmg(object *op, int *skill1, int *skill2, int *skill3)
 {
     object *skilldmg;
     player *hitter = CONTR(op->enemy);
@@ -279,7 +283,9 @@ static void calc_active_skill_dmg(object *op, int *skill1, int *skill2, int *ski
             *skill3 = skilldmg->last_heal;
             d3 = skilldmg->stats.hp;           
         }
-        LOG(-1,".. used skill %d --> dmg done: %d\n", skilldmg->last_heal, skilldmg->stats.hp );				
+#ifdef DEBUG_AGGRO
+        LOG(-1,".. used skill %d --> dmg done: %d\n", skilldmg->last_heal, skilldmg->stats.hp );
+#endif
     }
 }
 
@@ -302,7 +308,7 @@ static inline int add_aggro_exp(object *hitter, int exp, int skillnr)
 
 /* calc exp for a single player.
  */
-static void aggro_exp_single(object *victim, object *aggro, int base)
+static inline int aggro_exp_single(object *victim, object *aggro, int base)
 {
     object *hitter = aggro->enemy, *tmp;
     player *pl = CONTR(hitter);
@@ -320,13 +326,14 @@ static void aggro_exp_single(object *victim, object *aggro, int base)
         exp = base;
     else
         calc_skill_exp(hitter, victim, 1.0f, aggro->level, &exp);
-
+#ifdef DEBUG_AGGRO    
     LOG(-1,".. A-Level: %d -> exp %d\n", aggro->level, exp);				
-     
+#endif     
     if(s1 == -1) /* we have not found any skill dmg - assign exp to guild base skills */
     {
+#ifdef DEBUG_AGGRO        
         LOG(-1,".. no skill dmg - use guild base dmg\n");
-        
+#endif
         if((tmp = pl->highest_skill[pl->base_skill_group[0]]))
         {
             e1 = calc_skill_exp(hitter, victim, 0.50f, tmp->level, &exp);
@@ -347,7 +354,9 @@ static void aggro_exp_single(object *victim, object *aggro, int base)
     {
         e1 = calc_skill_exp(hitter, victim, 1.0f, pl->skill_ptr[s1]->level, &exp);
         ret |= add_aggro_exp(hitter, e1, s1);
+#ifdef DEBUG_AGGRO        
         LOG(-1,".. 100%% to skill %s (%d)\n", STRING_SAFE(pl->skill_ptr[s1]->name), e1);
+#endif
     }
     else if(s3 == -1) /* 65% s1, 35% in s2 */
     {
@@ -355,8 +364,10 @@ static void aggro_exp_single(object *victim, object *aggro, int base)
         ret |=add_aggro_exp(hitter, e1, s1);
         e2 = calc_skill_exp(hitter, victim, 0.35f, pl->skill_ptr[s2]->level, &exp);
         ret |=add_aggro_exp(hitter, e2, s2);
+#ifdef DEBUG_AGGRO        
         LOG(-1,".. 65%% to skill %s (%d), 35%% to %s (%d)\n", STRING_SAFE(pl->skill_ptr[s1]->name), e1,
             STRING_SAFE(pl->skill_ptr[s2]->name),e2);
+#endif
     }
     else /* 50% in s1, 30% in s2, 20% in s3 */
     {
@@ -366,24 +377,98 @@ static void aggro_exp_single(object *victim, object *aggro, int base)
         ret |=add_aggro_exp(hitter, e2, s2);
         e3 = calc_skill_exp(hitter, victim, 0.20f, pl->skill_ptr[s3]->level, &exp);
         ret |=add_aggro_exp(hitter, e3, s3);
-
+#ifdef DEBUG_AGGRO
         LOG(-1,".. 65%% to skill %s (%d), 35%% to %s (%d), 20%% to %s (%d)\n",
             STRING_SAFE(pl->skill_ptr[s1]->name),e1,
             STRING_SAFE(pl->skill_ptr[s2]->name),e2,
-            STRING_SAFE(pl->skill_ptr[s3]->name),e3);				
+            STRING_SAFE(pl->skill_ptr[s3]->name),e3);
+#endif
     }
     
     /* if *all* possible skill exp has been zero because mob was to low - drop a message */
     if(ret == FALSE)
         new_draw_info_format( NDI_UNIQUE, 0, hitter, "Your enemy was to low for exp.");
     
-
+    return ret;
 }
+
+
+/* we test a group member in "in range" aka near the kill spot.
+ * If the group member is not near, it gets no exp.
+ * We avoid in this way multi spot farming
+ */
+static inline int in_group_exp_range(object *victim, object *hitter, object *member)
+{
+    int i;
+    mapstruct *tmp_map, *map = member->map;
+
+    /* we do 2 tests: Is member on the map or a DIRECT attached map
+     * from victim or hitter? If not - no exp.
+     */
+
+    /* some sanity checks... */
+    if(QUERY_FLAG(victim,FLAG_REMOVED) )
+    {
+        LOG(llevDebug,"in_group_exp_range(): victim %s is removed!\n", query_name(victim));
+        return FALSE;
+    }
+    if(hitter && QUERY_FLAG(hitter,FLAG_REMOVED) ) /* secure... */
+    {
+        LOG(llevDebug,"in_group_exp_range(): hitter %s is removed!\n", query_name(hitter));
+        return FALSE;
+    }
+    if(QUERY_FLAG(member,FLAG_REMOVED) ) /* secure... */
+    {
+        LOG(llevDebug,"in_group_exp_range(): member %s is removed!\n", query_name(member));
+        return FALSE;
+    }
+
+    /* quick check the easiest cases */
+    if (map == victim->map || (hitter && map == hitter->map))
+    {
+#ifdef DEBUG_AGGRO
+        LOG(-1,"->%s on same map as victim/hitter!\n", query_name(member));
+#endif
+        return TRUE;
+    }
+
+
+    for (tmp_map = victim->map, i = 0; i < TILED_MAPS; i++)
+    {
+        if (tmp_map->tile_map[i] == map)
+        {
+#ifdef DEBUG_AGGRO
+            LOG(-1,"->%s on attached map from victim!\n", query_name(member));
+#endif
+            return TRUE;
+        }
+    }   
+    
+    if(hitter)
+    {
+        for (tmp_map = hitter->map, i = 0; i < TILED_MAPS; i++)
+        {
+            if (tmp_map->tile_map[i] == map)
+            {
+#ifdef DEBUG_AGGRO
+                    LOG(-1,"->%s on attached map from hitter!\n", query_name(member));
+#endif
+                    return TRUE;
+            }
+        }
+    }
+
+#ifdef DEBUG_AGGRO
+    LOG(-1,"->%s is out of range!\n", query_name(member));
+#endif
+    return FALSE;
+}
+
 
 /* calc exp for a group
  * CONTR() will access here always players
  */
-static void aggro_exp_group(object *victim, object *aggro)
+static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
 {
     object *leader = CONTR(aggro->enemy)->group_leader;
     object *high = leader, *tmp, *member;
@@ -397,8 +482,9 @@ static void aggro_exp_group(object *victim, object *aggro)
      * get 160% of the exp as when the highest player kills it
      * with highest skill.
      */
+#ifdef DEBUG_AGGRO
     LOG(-1,".. GROUP:: " );				
-    
+#endif    
     /* first thing: we get the highest member */
     for(tmp=leader;tmp;tmp=CONTR(tmp)->group_next)
     {
@@ -416,11 +502,15 @@ static void aggro_exp_group(object *victim, object *aggro)
     t=exp;
     /* adjust exp for nrof group members */
     exp = (int)((float)exp*(0.9f+(0.1f*(float) CONTR(leader)->group_nrof)));
-
+#ifdef DEBUG_AGGRO    
     LOG(-1," high member: %s (level %d)\n--> exp: %d (%d) --> member exp: %d\n", query_name(high), high->level, exp, t ,exp/CONTR(leader)->group_nrof);				
-    
+#endif
+
     if(!exp) /* exp is 0 - we are to high */
-        return;
+    {
+        new_draw_info_format( NDI_UNIQUE, 0, aggro->enemy, "Your enemy was to low for exp.");
+        return FALSE;
+    }
 
     exp /= CONTR(leader)->group_nrof;
     if(exp<4)
@@ -428,9 +518,23 @@ static void aggro_exp_group(object *victim, object *aggro)
     /* at last ... part the exp to the group members */
     for(tmp=leader;tmp;tmp=CONTR(tmp)->group_next)
     {
-        /* TODO: use victim map/map position to assign only
-         * exp to group members near to the kill spot.
+        /* skip exp when we are not in range to victim/hitter. 
+         * mark group_status as NO_EXP - thats important and used
+         * from the quest item function (= no quest item for leecher)
          */
+        if(!in_group_exp_range(victim, aggro->enemy == tmp?NULL:aggro->enemy, tmp))
+        {
+            CONTR(tmp)->group_status |= GROUP_STATUS_NOEXP; /* mark tmp as loser and skip exp */
+            continue;
+        }
+
+        /* We have have moved the kill message all the because we want it BEFORE
+         * the exp gain messages... ugly, but well, better as double calc the exp gain
+         */
+        if(kill_msg && aggro->enemy != tmp)
+            new_draw_info(NDI_YELLOW, 0, tmp, kill_msg);        
+
+        CONTR(tmp)->group_status &= ~GROUP_STATUS_NOEXP;
         if(CONTR(tmp)->exp_calc_tag == exp_calc_tag)
         {
             aggro_exp_single(victim, CONTR(tmp)->exp_calc_obj, exp);
@@ -438,8 +542,9 @@ static void aggro_exp_group(object *victim, object *aggro)
         else /* this member has not done any dmg to the mob - assign exp to guild exp list */
         {
             int e, ret=0;
+#ifdef DEBUG_AGGRO            
             LOG(-1,".. no skill dmg - use guild base dmg\n");				
-
+#endif
             if((member = CONTR(tmp)->highest_skill[CONTR(tmp)->base_skill_group[0]]))
             {
                 e = calc_skill_exp(tmp, victim, 0.50f, member->level, &exp);
@@ -458,8 +563,10 @@ static void aggro_exp_group(object *victim, object *aggro)
         }
     }
 
+    return TRUE;
+#ifdef DEBUG_AGGRO    
     LOG(-1,"\n" );				
-    
+#endif
 }
 
 
@@ -470,10 +577,10 @@ static void aggro_exp_group(object *victim, object *aggro)
  *  We decide here what we will do in that cases.
  *  Return: The corpse owner (NULL: There is no owner, target was to low, NPC kill...)
  */
-object *aggro_calculate_exp(struct obj *victim, struct obj *slayer)
+object *aggro_calculate_exp(struct obj *victim, struct obj *slayer, char *kill_msg)
 {
 	object *tmp, *tmp2, *tmp3, *history, *highest_hitter;
-	int total_dmg=0,total_dmg_all=0, highest_dmg;
+	int ret, total_dmg=0,total_dmg_all=0, highest_dmg;
 	
 	/* slayer is not a player (if the kill hitter was a pet, slayer was set to owner) */
 //	if(slayer && slayer->type != PLAYER)
@@ -512,17 +619,17 @@ object *aggro_calculate_exp(struct obj *victim, struct obj *slayer)
 		else
 			total_dmg += tmp->stats.hp;
 	}
-
+#ifdef DEBUG_AGGRO    
 	LOG(-1,"%s KILLED (%d). All dmg: %d  - player dmg: %d \n", query_name(victim), history->stats.hp, total_dmg_all, total_dmg);
-
+#endif
     highest_dmg = -1;
     /* now run through the dmg left and give all their share of the exp */
 	while(history->inv)
 	{
         tmp = history->inv;
-            
+#ifdef DEBUG_AGGRO        
         LOG(-1,"--> %s [%s] (%x)--> dmg done: %d\n", query_name(tmp->enemy),tmp->last_sp == PLAYER?"player":"non player",tmp->enemy->count, tmp->stats.hp );
-
+#endif
         if(tmp->enemy && tmp->enemy->type == PLAYER) /* player? */
         {
             if(CONTR(tmp->enemy)->group_id == GROUP_NO) /* single player? */
@@ -576,9 +683,9 @@ object *aggro_calculate_exp(struct obj *victim, struct obj *slayer)
             remove_ob(tmp);                
         }
 	}
-    
+#ifdef DEBUG_AGGRO    
     LOG(-1," -> highest_hitter: %s ", query_name(highest_hitter->enemy));
-
+#endif
     if(!highest_hitter) /* interesting... */
     {
         LOG(llevDebug,"DEBUG: aggro_calculate_exp(): slayer %s but highest_hitter == NULL \n", query_name(highest_hitter));
@@ -588,15 +695,21 @@ object *aggro_calculate_exp(struct obj *victim, struct obj *slayer)
     /* we have a winner... highest_hitter is now a non player, single player or a group */
     if(!highest_hitter->enemy || highest_hitter->enemy->type!=PLAYER) /* NPC kill - no exp, no loot */
     {
+#ifdef DEBUG_AGGRO
         LOG(-1,"--> NPC kill.\nend.\n");
-        return NULL;
+#endif
+        return highest_hitter->enemy;
     }
     
     if(CONTR(highest_hitter->enemy)->group_id != GROUP_NO)
-        aggro_exp_group(victim, highest_hitter);
+        ret = aggro_exp_group(victim, highest_hitter, kill_msg);
     else
-        aggro_exp_single(victim, highest_hitter, -1);
-
+        ret = aggro_exp_single(victim, highest_hitter, -1);
+#ifdef DEBUG_AGGRO    
     LOG(-1,"end.\n");
-    return highest_hitter; /* used to create the corpse bounty */
+#endif
+    if(ret == TRUE)
+        return highest_hitter->enemy; /* used to create the corpse bounty */
+    else
+        return NULL;
 }

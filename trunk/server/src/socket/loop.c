@@ -411,7 +411,7 @@ void remove_ns_dead_player(player *pl)
                              player_active - 1);
 
     /* remove us from party */
-    if(pl->group_status == GROUP_STATUS_GROUP)
+    if(pl->group_status & GROUP_STATUS_GROUP)
         party_remove_member(pl, TRUE);
 
     container_unlink(pl, NULL);
@@ -438,9 +438,9 @@ void remove_ns_dead_player(player *pl)
 static int check_ip_ban(int num, uint32 ip)
 {
     int         count, i;
-//    NewSocket  *ns  = &init_sockets[num];
     player     *pl, *ptmp = NULL;
 
+    /*return FALSE;*/ /* this will disable the IP check */
     /* lets first check sensless connected sockets
      * from same IP.
      * Mark all from same IP as dead.

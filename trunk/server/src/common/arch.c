@@ -184,15 +184,15 @@ int item_matched_string(object *pl, object *op, const char *name)
         }
         if (!strcasecmp(cp, query_name(op)))
             retval = 20;
-        else if (!strcasecmp(cp, query_short_name(op)))
+        else if (!strcasecmp(cp, query_short_name(op, NULL)))
             retval = 18;
-        else if (!strcasecmp(cp, query_base_name(op)))
+        else if (!strcasecmp(cp, query_base_name(op, NULL)))
             retval = 16;
-        else if (!strcasecmp(cp, query_base_name(op)))
+        else if (!strcasecmp(cp, query_base_name(op, NULL)))
             retval = 16;
-        else if (!strncasecmp(cp, query_base_name(op), MIN(strlen(cp), strlen(query_base_name(op)))))
+        else if (!strncasecmp(cp, query_base_name(op, NULL), MIN(strlen(cp), strlen(query_base_name(op, NULL)))))
             retval = 14;
-        else if (!strncasecmp(cp, query_base_name(op), MIN(strlen(cp), strlen(query_base_name(op)))))
+        else if (!strncasecmp(cp, query_base_name(op, NULL), MIN(strlen(cp), strlen(query_base_name(op, NULL)))))
             retval = 14;
         if (retval)
         {

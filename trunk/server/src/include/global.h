@@ -108,6 +108,7 @@ typedef unsigned int    tag_t;
 
 #define ROUND_TAG            pticks /* put this here because the DIFF */
 
+#define query_name(_op_) query_name_full(_op_, NULL)
 
 /* to access strings from objects, maps, arches or other system objects,
  * for printf() or others use only this macros to avoid NULL pointer exceptions.
@@ -197,6 +198,11 @@ typedef unsigned int    tag_t;
 /* group define stuff */
 #define GROUP_NO (-1)
 
+#define PMSG_MODE_NOEXP     1   /* check GROUP_STATUS_NOEXP in party_message broadcast.
+                                 * We simply want avoid kill messages & fighting related 
+                                 * info to group members out of range.
+                                 */
+
 #define GROUP_MAX_MEMBER	6   /* max # of members of a group */
 
 #define GROUP_MODE_JOIN		0	/* allow /invite from all */
@@ -206,6 +212,7 @@ typedef unsigned int    tag_t;
 #define GROUP_STATUS_FREE	0   /* no group, no pending invite */
 #define GROUP_STATUS_INVITE 1	/* pending invite */
 #define GROUP_STATUS_GROUP	2	/* player is in group group_id */
+#define GROUP_STATUS_NOEXP  4   /* member get no exp/no quest items/etc */
 
 #define GROUP_UPDATE_HP         1
 #define GROUP_UPDATE_MAXHP      2

@@ -1167,7 +1167,7 @@ void examine_monster(object *op, object *tmp)
         new_draw_info_format(NDI_UNIQUE, 0, op, "%s looks very ill.", att);
 }
 
-char * long_desc(object *tmp)
+char * long_desc(object *tmp, object *caller)
 {
     static char buf[VERY_BIG_BUF];
     char       *cp;
@@ -1223,7 +1223,7 @@ char * long_desc(object *tmp)
 
     if (buf[0] == '\0')
     {
-        strncat(buf, query_name(tmp), VERY_BIG_BUF - 1);
+        strncat(buf, query_name_full(tmp, caller), VERY_BIG_BUF - 1);
         buf[VERY_BIG_BUF - 1] = 0;
     }
 
@@ -1245,7 +1245,7 @@ void examine(object *op, object *tmp)
         SET_FLAG(tmp, FLAG_SEE_INVISIBLE);
 
     strcpy(buf, "That is ");
-    strncat(buf, long_desc(tmp), VERY_BIG_BUF - strlen(buf) - 1);
+    strncat(buf, long_desc(tmp, op), VERY_BIG_BUF - strlen(buf) - 1);
     buf[VERY_BIG_BUF - 1] = 0;
 
     if (op->type == PLAYER && tmp->type == FLESH)

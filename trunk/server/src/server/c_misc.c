@@ -560,7 +560,7 @@ int command_dumpactivelist(object *op, char *params)
     for (tmp = active_objects; tmp; tmp = tmp->active_next)
     {
         count++;
-        sprintf(buf, "%08d %03d %f %s (%s)", tmp->count, tmp->type, tmp->speed, query_short_name(tmp),
+        sprintf(buf, "%08d %03d %f %s (%s)", tmp->count, tmp->type, tmp->speed, query_short_name(tmp, NULL),
                 tmp->arch->name ? tmp->arch->name : "<NA>");
         /*new_draw_info(NDI_UNIQUE, 0,op, buf); It will overflow the send buffer with many player online */
         LOG(llevSystem, "%s\n", buf);
