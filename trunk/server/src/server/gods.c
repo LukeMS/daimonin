@@ -499,7 +499,10 @@ const char * determine_god(object *op)
         object *tmp;
         for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
         {
-            if (tmp->type == EXPERIENCE && tmp->stats.Wis)
+            /* Gecko: we should actually only need to check either
+             * tmp->stats.Wiz or tmp->sub_type1, but to asvoid future 
+             * mistakes we check both here. */
+            if (tmp->type == EXPERIENCE && tmp->stats.Wis && tmp->sub_type1 == 5)
             {
                 if (tmp->title)
                     return tmp->title;
