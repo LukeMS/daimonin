@@ -138,11 +138,11 @@ static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int 
     struct mapsearch_node *first, *last, *curr, *node;
     int success = FALSE;
     int searched_tiles = 0;
-
+	
     /* Save some time in the simplest cases ( very similar to on_same_map() )*/
     if(map1 == NULL || map2 == NULL)
         return FALSE;
- 
+	
     if(map1 == map2)
         return TRUE;
 
@@ -163,6 +163,7 @@ static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int 
     /* TODO: effectivize somewhat by doing bidirectional search */
     /* TODO: big project: magically make work with pre- or dynamically computed bigmap data */
 
+	LOG(-1,"XL1: %x (%x) %x (%x) %x %x\n",map1,*map1,map2,*map2,x,y);
     /* Avoid overflow of traversal_id */
     if(traversal_id == 4294967295U /* UINT_MAX */) {
         mapstruct *m;
@@ -174,7 +175,7 @@ static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int 
 
         traversal_id = 0;
     }
-        
+
     map1->traversed = ++traversal_id;
 
     /* initial queue and node values */
@@ -182,17 +183,22 @@ static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int 
     curr = get_poolchunk(POOL_MAP_BFS);    
     curr->map = map1;
     curr->dx = curr->dy = 0;
-
+	LOG(-1,"XL2: %x (%x) %x (%x) %x %x\n",map1,*map2,map2,*map2,x,y);
+	
     while(curr) {
         /* Expand one level */
         for(i=0; i<TILED_MAPS; i++) {
             if (curr->map->tile_path[i] && (curr->map->tile_map[i] == NULL ||
                         curr->map->tile_map[i]->traversed != traversal_id)) {
                 if (!curr->map->tile_map[i] || curr->map->tile_map[i]->in_memory != MAP_IN_MEMORY)
+				{
                     load_and_link_tiled_map(curr->map, i);
+					LOG(-1,"XL3: %x (%x) %x (%x) %x %x\n",map1,*map2,map2,*map2,x,y);
+				}
                                
                 /* TODO: avoid this bit of extra work if correct map */
                 node = get_poolchunk(POOL_MAP_BFS);
+				LOG(-1,"XL4: %x (%x) %x (%x) %x %x\n",map1,*map2,map2,*map2,x,y);
                 node->dx = curr->dx;
                 node->dy = curr->dy;
                 node->map = curr->map->tile_map[i];
@@ -208,7 +214,8 @@ static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int 
                     case 6: node->dy += MAP_HEIGHT(curr->map); node->dx -= MAP_WIDTH(curr->map->tile_map[i]); break;  /* Southwest */
                     case 7: node->dy -= MAP_HEIGHT(curr->map->tile_map[i]); node->dx -= MAP_WIDTH(curr->map->tile_map[i]); break;  /* Northwest */
                 }
-             
+				LOG(-1,"XL5: %x (%x) %x (%x) %x %x\n",map1,*map2,map2,*map2,x,y);
+				
                 /* Correct map? */
                 if(node->map == map2) {
                     /* store info in cache */
@@ -222,6 +229,7 @@ static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int 
                     success = TRUE;
                     return_poolchunk(node, POOL_MAP_BFS);
                     return_poolchunk(curr, POOL_MAP_BFS);
+					LOG(-1,"XL6: %x (%x) %x (%x) %x %x\n",map1,*map2,map2,*map2,x,y);
                     goto out;
                 }
      
@@ -236,6 +244,7 @@ static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int 
             }
         }
 
+		LOG(-1,"XL7: %x (%x) %x (%x) %x %x\n",map1,*map2,map2,*map2,x,y);
         return_poolchunk(curr, POOL_MAP_BFS);
 
         /* Depth-limitation */
@@ -246,13 +255,18 @@ static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int 
         
         /* dequeue next tile to check */
         curr = first;
-        first = curr->next;
+		if(curr)
+			first = curr->next;
+		else
+			first = NULL;
     }
 
 out:
+	LOG(-1,"XL8: %x (%x) %x (%x) %x %x\n",map1,*map2,map2,*map2,x,y);
     for(node = first; node; node = node->next)
         return_poolchunk(node, POOL_MAP_BFS);
-
+	LOG(-1,"XL9: %x (%x) %x (%x) %x %x\n",map1,*map2,map2,*map2,x,y);
+	
     return success;
 }
 
@@ -2827,7 +2841,7 @@ int get_rangevector_from_mapcoords(mapstruct *map1, int x1, int y1, mapstruct *m
         retval->distance_x = x2;
         retval->distance_y = y2;
        
-        if(! relative_tile_position(map1, map2, &retval->distance_x, &retval->distance_y)) {
+        if(! relative_tile_position(map1, map2, &(retval->distance_x), &(retval->distance_y))) {
 			/*LOG(llevDebug,"DBUG: get_rangevector_from_mapcoords: No tileset path between maps '%s' and '%s'\n", map1->path, map2->path);*/
             return FALSE;
         }
