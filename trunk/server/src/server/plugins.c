@@ -461,7 +461,7 @@ void removePlugins(void)
 {
     if (PlugNR)
     {
-        int e = PlugNR, i;
+        int i;
         char* ids[32];
 
         LOG(llevInfo, "Unloading plugins:\n");

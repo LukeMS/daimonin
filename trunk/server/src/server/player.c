@@ -262,7 +262,6 @@ void free_player(player *pl)
 int add_player(NewSocket *ns)
 {
     player *p;
-    char   *defname = "nobody";
 
     p = get_player(NULL);
     memcpy(&p->socket, ns, sizeof(NewSocket));

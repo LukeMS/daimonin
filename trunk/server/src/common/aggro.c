@@ -151,6 +151,18 @@ struct obj *aggro_update_info(struct obj *target, struct obj *target_owner,
 		hitter = NULL;
 	if(!hitter && !hitter_owner)
 		return NULL;
+
+	/* This is the interface to the AI system. At least for now =) */
+    if(target->type == MONSTER)
+	{
+    	/* Update hittee's friendship level towards hitter */
+        object                 *root_hitter = hitter_owner ? hitter_owner : hitter;
+        struct mob_known_obj   *enemy       = register_npc_known_obj(target, root_hitter, -dmg);	
+		
+		/* Attacking someone neutral always makes you an enemy (for now) */
+        if (enemy && enemy->friendship > FRIENDSHIP_ATTACK && dmg > 0)
+            enemy->friendship += FRIENDSHIP_ATTACK;
+    }
 	
 	/* we only use aggro history for
 	 * a.) target is a player or IS_LIVE() (target_owner too)
@@ -216,6 +228,10 @@ struct obj *aggro_update_info(struct obj *target, struct obj *target_owner,
 			{				
 				for(tmp=aggro->inv;tmp;tmp=tmp->below)
 				{
+					/* FIXME: Isn't there a quite big chance that the player 
+					 * has switched active skill since the action was taken. 
+					 * at least in cases of missile attacks, pet attacks and 
+					 * other non-direct attacks? Gecko. */
 					if(tmp->type == TYPE_DAMAGE_INFO && tmp->last_heal == hitter->chosen_skill->stats.sp)
 						break;
 				}

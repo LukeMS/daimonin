@@ -3,11 +3,9 @@
  * messages (sometimes "Macro used with too many args") when compiling.
  * Any syntax errors in this file will lead to virtually undecipherable error
  * messages from the compiler or preprocessor, but such is life ;-)
- */
-/*
- * TODO: documentation strings of behaviours and parameters
- *       (in a format easily parsed by the editor, and ignored by the
- *       server)
+ *
+ * TODO: One of the ideas with this file is that it should be parsed
+ * by the editor to generate a nice UI for behaviour configuration.
  */
 /* Oh, and if someone really wants to get advanced:
  * TODO: Make the list syntax more obvious
@@ -90,12 +88,10 @@ BehaviourClass(MOVES,
         Parameter(STEP_BACK_AFTER_SWING, DIST, INTEGER, OPTIONAL, 3)
     )
 
-    /** Needs more work... */
+    /** Try to stay out of the line of fire as much as possible
+	 * if we belive our enemy uses distance attacks */
     Behaviour(AVOID_LINE_OF_FIRE, ai_avoid_line_of_fire, NIL)
 ) 
-
-/** To be removed */
-BehaviourClass(REACTION_MOVES, NIL)
 
 /** Actions are misc actions that takes time, but aren't movement.
  * The handling of this class isn't 100% decided on yet, so be prepared

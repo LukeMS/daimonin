@@ -883,7 +883,7 @@ static void show_commands(object *op, int what)
     int             i, size, namelen, linelen = 0;
     CommArray_s    *ap;
     extern CommArray_s                      Commands[], WizCommands[];
-    extern const intCommandsSize, WizCommandsSize;
+    extern const int CommandsSize, WizCommandsSize;
 
     switch (what)
     {
