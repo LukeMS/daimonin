@@ -96,5 +96,4 @@ weight 85000
 stand_still 1
 unaggressive 1
 Str 25
-can_cast_spell 1
 end
