@@ -1707,6 +1707,29 @@ treasure mob_med
     end
    end
 end
+treasure mob_ice
+ list traps
+   chance 10
+ more
+ list default_wealth
+   chance 75
+ more
+ list default_drop
+   chance 20
+ no
+  list random_equipment
+    material_quality 83
+    material_range 6
+    chance 15
+  no
+     list random_tools
+       material_quality 83
+       material_range 6
+       chance 10
+       difficulty 3
+    end
+   end
+end
 treasure mob_ant
  list traps
    chance 10

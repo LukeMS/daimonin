@@ -1270,8 +1270,8 @@ void do_specials() {
     if (!(pticks % 503))
 	watchdog();
 #endif    
-  /*          if (!(pticks % 10)) */ /*use this for debuging */
-    if (!(pticks % PTICKS_PER_CLOCK))
+         if (!(pticks % 20)) /*use this for debuging */
+ /*   if (!(pticks % PTICKS_PER_CLOCK))*/
 		tick_the_clock();
 
     if (!(pticks % 509))
