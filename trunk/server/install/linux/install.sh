@@ -4,7 +4,7 @@
 # Use it after compiling or when using a binary package
 
 prgname="daimonin_server"
-pythonplug="plugin_python.so.0.1"
+luaplug="plugin_lua.so.0.1"
 
 basedir="./../.."
 datadir="/data"
@@ -16,22 +16,35 @@ fail() {
 	exit 10
 }
 
+# instbin source dest
+instbin() {
+	# Since linux locks binaries that are running, we try to unlink old
+	# version before replacing. This way installation works even on
+	# a running server.
+	[ -f $2 ] && rm -f $2
+	cp $1 $2 || fail	
+}
+
+mmkdir() {
+	[ -d $1 ] || mkdir $1
+}
+
 echo "Copy binaries"
-cp ./../../src/server/$prgname ./../../$prgname || fail 
-cp ./../../src/plugin_python/$pythonplug ./../../plugins/$pythonplug || fail
-cp $basedir/src/utils/dmonloop $basedir 
+instbin ./../../src/server/$prgname ./../../$prgname 
+instbin ./../../src/plugin_lua/$luaplug ./../../plugins/$luaplug 
+instbin $basedir/src/utils/dmonloop $basedir 
 
 echo "Create data folders"
-mkdir $basedir/$datadir
-mkdir $basedir/$datadir/tmp
-mkdir $basedir/$datadir/log
-mkdir $basedir/$datadir/players
-mkdir $basedir/$datadir/unique-items
+mmkdir $basedir/$datadir
+mmkdir $basedir/$datadir/tmp
+mmkdir $basedir/$datadir/log
+mmkdir $basedir/$datadir/players
+mmkdir $basedir/$datadir/unique-items
 
 echo "Copy server data"
 cp $basedir/install/* $basedir/$datadir
 
-mkdir $basedir/lib
+mmkdir $basedir/lib
 echo "Copy arch and lib files"
 cp ./../../../arch/* $basedir/lib
 echo "done."
