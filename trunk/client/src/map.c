@@ -161,6 +161,7 @@ void InitMapData(char *name, int xl, int yl, int px, int py)
 
     char *tmp;
 	int music_fade = 0;
+	void *tmp_free;
     
     if((tmp =strchr(name, '§')))
     {
@@ -199,7 +200,10 @@ void InitMapData(char *name, int xl, int yl, int px, int py)
     {
         clear_map();
         if(TheMapCache)
-			FreeMemory((void*)&TheMapCache);
+		{
+			tmp_free = TheMapCache;
+			FreeMemory(&tmp_free);
+		}
         /* we allocate 9 times the map... in tiled maps, we can have 8 connected
 		 * maps to our map - we want cache a map except its 2 maps aways-
 		 * WARNING: tiled maps must be of same size... don't attach a 32x32

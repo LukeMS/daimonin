@@ -364,6 +364,7 @@ void parse_metaserver_data(char *info)
 {
     char server[1024], version[1024],desc[1025], desc_line[4][47], *tmp;
     int port, player, count,s,ss,sss;
+	void *tmp_free;
     
     tmp = (char*)malloc(MAX_METASTRING_BUFFER);
     for(count=0;;)
@@ -423,6 +424,7 @@ void parse_metaserver_data(char *info)
 		add_metaserver_data(server, port, player, version, &desc_line[0][0],&desc_line[1][0],&desc_line[2][0],&desc_line[3][0]);
         
     }
-    FreeMemory((void *) &tmp);
+	tmp_free = tmp;
+    FreeMemory(&tmp_free);
 }
 

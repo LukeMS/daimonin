@@ -289,6 +289,7 @@ void read_metaserver_data(void)
 {
 	int stat,temp;
 	char *ptr, *buf;
+	void *tmp_free;
 
 	ptr = (char*)malloc(MAX_METASTRING_BUFFER);
 	buf = (char*)malloc(MAX_METASTRING_BUFFER);
@@ -324,12 +325,15 @@ void read_metaserver_data(void)
 	buf[temp]=0;
    LOG(0,"GET: %s\n", buf);
     parse_metaserver_data(buf);
-	FreeMemory(&buf);
-	FreeMemory(&ptr);
+        tmp_free = buf;
+	FreeMemory(&tmp_free);
+	tmp_free = ptr;
+	FreeMemory(&tmp_free);
 }
 
 Boolean SOCKET_CloseSocket(SOCKET socket_temp)
 {
+	void *tmp_free;
 	/* seems differents sockets have different way to shutdown connects??
 	 * win32 needs this
 
@@ -340,7 +344,8 @@ Boolean SOCKET_CloseSocket(SOCKET socket_temp)
 	
 	shutdown(socket_temp, SD_BOTH );
 	closesocket(socket_temp);
-	FreeMemory(&csocket.inbuf.buf);
+	tmp_free = csocket.inbuf.buf;
+	FreeMemory(&tmp_free);
 	csocket.fd=SOCKET_NO;	
 	return(TRUE);
 }
@@ -427,13 +432,14 @@ Boolean SOCKET_DeinitSocket(void)
 
 Boolean SOCKET_CloseSocket(SOCKET socket_temp)
 {
+	void *tmp_free;
+
 	if (socket_temp == SOCKET_NO)
-
 		return(TRUE);
-
 	
     	close(socket_temp);
-	FreeMemory((void*) &csocket.inbuf.buf);
+	tmp_free = csocket.inbuf.buf;
+	FreeMemory(&tmp_free);
 	csocket.fd=SOCKET_NO;	
 	return(TRUE);
 }
@@ -442,6 +448,7 @@ void read_metaserver_data(void)
 {
         int stat,temp;
         char *ptr, *buf;
+		void *tmp_free;
 
         ptr = (char*)_malloc(MAX_METASTRING_BUFFER,"read_metaserver_data(): metastring buffer1");
         buf = (char*)_malloc(MAX_METASTRING_BUFFER,"read_metaserver_data(): metastring buffer2");
@@ -478,8 +485,10 @@ void read_metaserver_data(void)
         }
         buf[temp]=0;
         parse_metaserver_data(buf);
-        FreeMemory((void **)(&buf));
-        FreeMemory((void **)(&ptr));
+		tmp_free=buf;
+        FreeMemory(&tmp_free);
+		tmp_free=ptr;
+        FreeMemory(&tmp_free);
 }
 
 

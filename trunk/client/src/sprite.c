@@ -244,11 +244,13 @@ static void grey_scale(SDL_Color *col_tab, SDL_Color*grey_tab, int numcol, int r
 
 void sprite_free_sprite(_Sprite *sprite)
 {
+    void *tmp_free;
         if(!sprite)
                 return;
         if(sprite->bitmap)
                 SDL_FreeSurface(sprite->bitmap);
-        FreeMemory((void **)(&sprite));
+	tmp_free = sprite;
+        FreeMemory(&tmp_free);
 }
 
 /* init this font structure with gfx data from sprite bitmap */
@@ -530,13 +532,15 @@ struct _anim *add_anim(int type, int x, int y, int mapx, int mapy, int value)
 void remove_anim(struct _anim *anim)
 {
     struct _anim *tmp, *tmp_next;
-    
+    void *tmp_free;
+        
     if(!anim)
         return;
 
     tmp = anim->before;
     tmp_next = anim->next;
-    FreeMemory((void **)(&anim)); /* free node memory */
+    tmp_free=anim;
+    FreeMemory(&tmp_free); /* free node memory */
     
     if(tmp)
         tmp->next = tmp_next;
@@ -549,13 +553,14 @@ void remove_anim(struct _anim *anim)
 
 void delete_anim_que(void)
 {
-    struct _anim *tmp, *tmp_next;
+    struct _anim *tmp_next;
+    void *tmp_free;
 
-    for(tmp=start_anim;tmp;)
+    for(tmp_free=start_anim;tmp_free;)
     {
-        tmp_next = tmp->next;
-        FreeMemory((void **)(&tmp)); /* free node memory */
-        tmp = tmp_next;
+        tmp_next =((struct _anim*)tmp_free)->next;
+        FreeMemory(&tmp_free);
+        tmp_free = tmp_next;
     }
 }
 

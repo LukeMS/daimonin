@@ -70,7 +70,7 @@ NO_X = @no_x@
 
 XX_EXTRA_CFLAGS = $(EXTRA_CFLAGS)
 
-VERSION = daimonin-alpha02
+VERSION = daimonin-beta02
 
 ARCHIVE = /tmp/$(VERSION)
 

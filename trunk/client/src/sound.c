@@ -308,8 +308,9 @@ int sound_play_effect(int soundid,uint32 flag, int pan, int vol)
             Mix_SetPanning(tmp, (Uint8) l, (Uint8) r);
         }
         return tmp;
-#endif
+#else
     return -1;
+#endif
 }
 
 /* Test for playing. 
@@ -322,9 +323,10 @@ int sound_test_playing(int channel)
     if(SoundSystem != SOUND_SYSTEM_ON)
         return 0;
     return Mix_Playing(channel);
-#endif
 
+#else
 return 0;
+#endif
 }
 
 void sound_play_one_repeat(int soundid, int special_id)

@@ -1467,3 +1467,4 @@ void GolemCmd(unsigned char *data, int len)
 	}
     
 }
+
