@@ -82,7 +82,7 @@ void InitConnection(NewSocket *ns, uint32 from)
 #ifdef ESRV_DEBUG
 		LOG(llevDebug, "InitConnection: Default buffer size was %d bytes, will reset it to %d\n", oldbufsize, bufsize);
 #endif
-		if(setsockopt(ns->fd,SOL_SOCKET,SO_SNDBUF, (char*)&bufsize, sizeof(&bufsize))) {
+		if(setsockopt(ns->fd,SOL_SOCKET,SO_SNDBUF, (char*)&bufsize, sizeof(int))) {
 	    LOG(llevDebug,"InitConnection: setsockopt unable to set output buf size to %d\n", bufsize);
 	}
     }

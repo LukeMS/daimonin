@@ -64,6 +64,20 @@ typedef unsigned int tag_t;
 #undef CALLOC
 #endif
 
+/* porting stuff for file handle function names. */
+#ifndef _fstat
+#define _fstat(__x,__y) fstat(__x,__y)
+#endif
+#ifndef _stat
+#define _stat stat
+#endif
+#ifndef _isatty
+#define _isatty(__x) isatty(__x)
+#endif
+#ifndef _fileno
+#define _fileno(__x) fileno(__x)
+#endif
+
 #ifdef USE_CALLOC
 # define CALLOC(x,y)	calloc(x,y)
 # define CFREE(x)	free(x)

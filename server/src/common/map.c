@@ -1670,6 +1670,7 @@ mapstruct *load_original_map(const char *filename, int flags) {
 	{
 		LOG(llevBug,"BUG: Failure loading map header for %s, flags=%d\n", filename, flags);
 		delete_map(m);
+		close_and_delete(fp, comp);
 		return NULL;
     }
 
@@ -1731,6 +1732,7 @@ static mapstruct *load_temporary_map(mapstruct *m) {
     LOG(llevDebug, "header: ");
     if (load_map_header(fp, m)) {
 		LOG(llevBug,"BUG: Error loading map header for %s (%s)! fallback to original!\n", m->path, m->tmpname);
+		close_and_delete(fp, comp);
 		delete_map(m);
         m = load_original_map(m->path, 0);
 		if(m==NULL) 

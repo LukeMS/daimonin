@@ -908,7 +908,7 @@ int command_reset (object *op, char *params)
 	return 1;
 }
 
-int command_nowiz (object *op, char *params) /* 'noadm' is alias */
+int command_nowiz (object *op, char *params) 
 {
      CLEAR_FLAG(op, FLAG_WIZ);
 	 gbl_active_DM = NULL; /* clear this dm from global dm list. TODO : make a list from it */
@@ -920,7 +920,49 @@ int command_nowiz (object *op, char *params) /* 'noadm' is alias */
    	  CONTR(op)->update_los=1;
      new_draw_info(NDI_UNIQUE, 0, op, "DM mode deactivated.");
      return 1;
-  }
+}
+
+/* warning: these function is for heavy debugging.
+ * Its somewhat useless under windows.
+ */
+int command_check_fd(object *op, char *params) 
+{
+	struct _stat buf;
+	int handle_max=socket_info.max_filedescriptor, fh;
+
+	/* remember, max_filedescriptor don't works under windows */
+	if(handle_max <10) /* well, then we have to do some magic */
+	{
+		player *pp;
+		/* collect some senseless handle numbers... */
+		for (pp=first_player;pp;pp=pp->next) 
+		{
+			if(pp->socket.fd > handle_max)
+				handle_max = pp->socket.fd;
+		}
+	}
+	new_draw_info_format(NDI_UNIQUE, 0, op, "check file handles from 0 to %d.", handle_max);
+	LOG(llevSystem,"check file handles from 0 to %d.", handle_max);
+	for(fh=0;fh<=handle_max;fh++)
+	{
+		/* Check if statistics are valid: */
+		if(!_fstat( fh, &buf ))
+		{	
+			/* no ttyname() under windows... well, 
+			 * debugging fh's is always more clever on linux.
+			 */
+#ifdef WIN32
+		LOG(llevSystem,"FH %d ::(%d) size     : %ld\n", fh, _isatty(fh), buf.st_size );
+#else
+		char *name;
+		LOG(llevSystem,"FH %d ::(%s) size     : %ld\n", fh, _isatty(fh)?((name=ttyname(fh))?name:">!<"):"><", buf.st_size );
+#endif
+		}
+	}
+	new_draw_info(NDI_UNIQUE, 0, op, "DM mode deactivated.");
+	return 1;
+}
+
 
 /*
  * object *op is trying to become dm.

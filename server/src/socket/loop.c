@@ -598,15 +598,15 @@ void doeric_server(int update_client)
 			}
 		}
 		init_sockets[newsocknum].fd=accept(init_sockets[0].fd, (struct sockaddr *)&addr, &addrlen);
-		i = ntohl(addr.sin_addr.s_addr);
 		if (init_sockets[newsocknum].fd!=-1)
 		{   
+			i = ntohl(addr.sin_addr.s_addr);
 			LOG(llevDebug," ip %d.%d.%d.%d  (socket %d)(#%d)\n",(i>>24)&255, (i>>16)&255, (i>>8)&255, i&255,
 						init_sockets[newsocknum].fd, newsocknum);
 			InitConnection(&init_sockets[newsocknum],i);
 		}
 		else
-			LOG(llevDebug,"Error on accept! (#%d)(%d)\n",newsocknum,i);
+			LOG(llevDebug,"Error on accept! (#%d)\n",newsocknum);
 
     }
 
