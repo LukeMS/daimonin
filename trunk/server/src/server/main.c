@@ -111,9 +111,13 @@ void version(object *op) {
   new_draw_info(NDI_UNIQUE, 0,op,"Mitsuhiro Itakura   [ita@gold.koma.jaeri.go.jp]");
   new_draw_info(NDI_UNIQUE, 0,op,"Hansjoerg Malthaner [hansjoerg.malthaner@danet.de]");
   new_draw_info(NDI_UNIQUE, 0,op,"Mårten Woxberg      [maxmc@telia.com]");
+  new_draw_info(NDI_UNIQUE, 0,op,"The FRUA art community [http://uamirror.dns2go.com/]");
+  new_draw_info(NDI_UNIQUE, 0,op,"future wave shaper(sounds) [http://www.futurewaveshaper.com/]");
+  new_draw_info(NDI_UNIQUE, 0,op,"Zero Sum Software [http://www.zero-sum.com/]");
+  new_draw_info(NDI_UNIQUE, 0,op,"Reiner Prokein [[reiner.prokein@t-online.de]]");
   new_draw_info(NDI_UNIQUE, 0,op,"The mighty Dink.");
   new_draw_info(NDI_UNIQUE, 0,op,"And many more!");
-}
+ }
 
 void start_info(object *op) {
   char buf[MAX_BUF];
@@ -1270,22 +1274,22 @@ void do_specials() {
     if (!(pticks % 503))
 	watchdog();
 #endif    
-         if (!(pticks % 20)) /*use this for debuging */
- /*   if (!(pticks % PTICKS_PER_CLOCK))*/
+      /*   if (!(pticks % 20)) */ /*use this for debuging */
+	if (!(pticks % PTICKS_PER_CLOCK))
 		tick_the_clock();
 
     if (!(pticks % 509))
-	flush_old_maps();    /* Clears the tmp-files of maps which have reset */
+		flush_old_maps();    /* Clears the tmp-files of maps which have reset */
 
 	/*
     if (!(pticks % 2503))
 	fix_weight();*/
 
     if (!(pticks % 2521))
-	metaserver_update();    /* 2500 ticks is about 5 minutes */
+		metaserver_update();    /* 2500 ticks is about 5 minutes */
 
     if (!(pticks % 5003))
-	write_book_archive();
+		write_book_archive();
         
 }
 
