@@ -91,7 +91,7 @@ void add_friendly_object(object *op) {
     }
 
 	friendly_list_count++;
-	LOG(llevDebug,"add f_obj %s (c:%d).\n",query_name(op), friendly_list_count);
+/*	LOG(llevDebug,"add f_obj %s (c:%d).\n",query_name(op), friendly_list_count);*/
 
 	ol=first_friendly_object;
     first_friendly_object=get_objectlink();
@@ -155,7 +155,7 @@ void remove_friendly_object(object *op) {
     }
 
 	friendly_list_count--;
-	LOG(llevDebug,"remove f_obj %s (c:%d).\n",query_name(op), friendly_list_count);
+/*	LOG(llevDebug,"remove f_obj %s (c:%d).\n",query_name(op), friendly_list_count);*/
 }
 
 /*
@@ -166,7 +166,7 @@ void dump_friendly_objects() {
     objectlink *ol;
 
     for(ol=first_friendly_object;ol!=NULL;ol=ol->next)
-	LOG(llevInfo, "%s (%d)\n",query_name(ol->ob),ol->ob->count);
+	LOG(llevInfo, "%s (count: %d)\n",query_name(ol->ob),ol->ob->count);
 }
 
 /* New function, MSW 2000-1-14

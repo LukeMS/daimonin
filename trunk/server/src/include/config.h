@@ -89,8 +89,6 @@
 #define PLAYERDIR "players"
 #endif
 
-#define OVERLAYDIR		"./overlay_maps" /* overlays will be removed */
-
 #define HELPDIR         "./man"
 
 /* To be removed soon (setable by player) */

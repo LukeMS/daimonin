@@ -704,11 +704,6 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_BERSERK            99	/* monster will attack closest living object */
 #define FLAG_NO_ATTACK          100 /* object will not attack */
 #define FLAG_INVULNERABLE       101 /* monster can't be damaged */
-#define FLAG_OBJ_ORIGINAL		102 /* NEVER SET THIS.  Item was loaded by
-									 * load_original_map() */
-#define FLAG_OBJ_SAVE_ON_OVL	103 /* this object should be saved on
-									 * the overlay, and is not subject to
-									 * decay. */
 
 #define FLAG_VUL_ELEMENTAL		104	/* Thats the item damage flags. Every flag determinate */
 #define FLAG_PROOF_ELEMENTAL	105 /* that a worn or wielded item can be damaged from this */
@@ -758,6 +753,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 									   * is to trigger the right map flags, so a moving objects
 									   * know that spot is blocked by a door and he must open it first->
 									   */
+/* flag 102 and 103 is free */									   
 
 #define NUM_FLAGS		127 /* Should always be equal to the last defined flag */
 #define NUM_FLAGS_32	4	/* the number of uint32 we need to store all flags */

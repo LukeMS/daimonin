@@ -911,7 +911,7 @@ void process_events (mapstruct *map)
 	/*LOG(-1,"POBJ: %s (%s) s:%f sl:%f (%f)\n",query_name(op),op->arch->clone.name, op->speed,op->speed_left,op->arch->clone.speed_left);*/
     if ( ! op->speed)
 	{
-      LOG(llevBug, "BUG: process_events(): Object %s (%s)has no speed, but is on active list\n", op->arch->name,query_name(op));
+      LOG(llevBug, "BUG: process_events(): Object %s (%s, type:%d count:%d) has no speed, but is on active list\n", op->arch->name,query_name(op),op->type, op->count);
       update_ob_speed (op);
       continue;
     }

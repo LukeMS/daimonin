@@ -1881,7 +1881,6 @@ void fix_monster(object *op)
 object *insert_base_info_object(object *op)
 {
 	object *tmp, *head;
-	archetype *at;
 
 	op->head!=NULL?(head=op->head):(head=op);
 
@@ -1894,15 +1893,13 @@ object *insert_base_info_object(object *op)
 	if((tmp=find_base_info_object(head)))
 		return tmp;
 
-	/* prepare base info */
-    tmp = arch_to_object(base_info_archetype);
-	at = tmp->arch; /* if not saved, we will truly change tmp to op archetype object */
+	tmp=get_object();
+	tmp->arch = op->arch;
 	copy_object_data(head, tmp); /* copy without put on active list */
 	tmp->type = TYPE_BASE_INFO;
-	tmp->arch=at;
-	tmp->speed_left = tmp->speed;	/* we copy the real speed to speed_left - so we ensure this can't be hit the active list */ 	
+	tmp->speed_left = tmp->speed;
 	tmp->speed=0.0f; /* ensure this object will not be active in any way */
-	tmp->face = tmp->arch->clone.face;
+	tmp->face = base_info_archetype->clone.face;
 	SET_FLAG(tmp,FLAG_NO_DROP);
 	CLEAR_FLAG(tmp,FLAG_ANIMATE);
 	CLEAR_FLAG(tmp,FLAG_FRIENDLY);
@@ -1963,7 +1960,7 @@ void set_mobile_speed(object *op, int index)
 		}
 		op->speed = speed;
 	}
-	LOG(-1,"SET SPEED: %s ->%f (%f) b:%f s:%f t:%f\n", query_name(op), op->speed, base->speed_left, speed, tmp);
+/*	LOG(-1,"SET SPEED: %s ->%f (%f) b:%f s:%f t:%f\n", query_name(op), op->speed, base->speed_left, speed, tmp);*/
 	/* update speed if needed */
 	if(tmp && !op->speed || !tmp && op->speed)
 		update_ob_speed(op);

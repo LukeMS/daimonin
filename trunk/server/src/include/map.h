@@ -86,7 +86,6 @@
 #define MAP_PLAYER_UNIQUE   0x2
 #define MAP_BLOCK	    0x4
 #define MAP_STYLE	    0x8
-#define MAP_OVERLAY	    0x10
 #define MAP_ARTIFACT	0x20
 
 /* Values for in_memory below.  Should probably be an enumerations */
@@ -228,29 +227,6 @@ typedef struct MapSpace {
 #ifdef WIN32
 #pragma pack(pop)
 #endif
-
-/*
- * this is an overlay structure of the whole world.  It exists as a simple
- * high level map, which doesn't contain the full data of the underlying map.
- * in this map, only things such as weather are recorded.  By doing so, we
- * can keep the entire world parameters in memory, and act as a whole on
- * them at once.  We can then, in a separate loop, update the actual world
- * with the new values we have assigned.
- */
-
-typedef struct wmapdef {
-    char path[HUGE_BUF];	/* Filename of the map */
-    char	*tmpname;	/* Name of temporary file */
-    char 	*name;		/* Name of map as given by its creator */
-    sint16	temp;		/* base temperature of this tile (F) */
-    sint16	pressure;	/* barometric pressure (mb) */
-    sint8	humid;		/* humitidy of this tile */
-    sint8	windspeed;	/* windspeed of this tile */
-    sint8	winddir;	/* direction of wind */
-    sint8	sky;		/* sky conditions */
-    sint32	avgelev;	/* average elevation */
-    uint8 	darkness;	/* indicates level of darkness of map */
-} weathermap_t;
 
 /* map flags for global map settings - used in ->map_flags */
 #define MAP_FLAG_NOTHING			0

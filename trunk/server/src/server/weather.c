@@ -27,8 +27,6 @@
 #include <sproto.h>
 #endif
 
-extern weathermap_t **weathermap;
-
 const int season_timechange[5][HOURS_PER_DAY] = {
 
     {   0, 0,  0,  0, 0, 0, -1,-1, -1, -1, 0, 0,

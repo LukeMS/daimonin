@@ -309,13 +309,10 @@ extern int nroffreeobjects;
  * for both functions.
  */
 #define INS_NO_MERGE		0x0001
-#define INS_ABOVE_FLOOR_ONLY	0x0002
-#define INS_NO_WALK_ON		0x0004
-/* Always put object on top.  Generally only needed when loading files
- * from disk and ordering needs to be preserved.  Note that INS_ABOVE_FLOOR_ONLY
- * and INS_ON_TOP are really mutually exclusive.
- */
-#define INS_ON_TOP		0x0008
+#define INS_NO_WALK_ON		0x0002
+#define INS_TAIL_MARKER		0x0004 /* used intern from insert_xx to track multi
+                                    * arch problems - don't use!
+									*/
 
 
 #endif
