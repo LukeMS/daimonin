@@ -1327,7 +1327,7 @@ int main(int argc, char **argv)
         nroferrors = 0;                 /* every llevBug will increase this counter - avoid LOG loops */
         shutdown_agent(-1, NULL);       /* check & run a shutdown count (with messages & shutdown ) */
 
-        doeric_server(SOCKET_UPDATE_CLIENT); /* READ only from socket... collect incoming, process system cmds, write back fast */
+//        doeric_server(SOCKET_UPDATE_CLIENT); /* READ only from socket... collect incoming, process system cmds, write back fast */
 
 #ifdef MEMPOOL_OBJECT_TRACKING
         check_use_object_list();
