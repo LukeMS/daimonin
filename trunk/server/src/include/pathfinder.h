@@ -47,7 +47,7 @@ struct path_segment {
     const char *map;
 };
 
-extern void return_poolchunk(void *, mempool_id);
+extern void return_poolchunk_array_real(void *, uint32, mempool_id);
 extern void free_string_shared(const char *str);
 static inline void free_path(struct path_segment *p) 
 { 

@@ -242,6 +242,7 @@ typedef struct linked_char {
 #include "attack.h" /* needs to be before material.h */
 #include "material.h"
 #include "living.h"
+#include "mempool.h"
 #include "object.h"
 #include "arch.h"
 #include "map.h"

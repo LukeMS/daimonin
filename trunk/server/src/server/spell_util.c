@@ -1910,8 +1910,8 @@ void explode_object(object *op)
 void check_fired_arch (object *op)
 {
     tag_t op_tag = op->count, tmp_tag;
-    object *tmp, *hitter;
-    int dam, flag;
+    object *tmp, *hitter, *tmp_head;
+    int dam, flag, friendly=FALSE;
 
 	/* we return here if we have NOTHING blocking here */
 	if ( ! blocked(op, op->map, op->x, op->y,op->terrain_flag))
@@ -1934,26 +1934,59 @@ void check_fired_arch (object *op)
 	if(!hitter)
 		hitter = op;
 
+	if(hitter->type == PLAYER || QUERY_FLAG(hitter,FLAG_FRIENDLY) )
+		friendly = TRUE;
+
 	flag = GET_MAP_FLAGS(op->map,op->x,op->y)&P_IS_PVP;
     for (tmp = get_map_ob (op->map,op->x,op->y); tmp != NULL; tmp = tmp->above)
     {
-        if (IS_LIVE (tmp) && ((tmp->type!=PLAYER && hitter->type == PLAYER)||
+		tmp_head = tmp->head;
+		if(!tmp_head)
+			tmp_head = tmp;
+
+		if(friendly) /* attacker is player or friendly */
+		{
+			
+			if(hitter->type == PLAYER)
+			{
+				/* player can attack player on pvp but never npc */
+				if(tmp_head->type == PLAYER && !flag && !(tmp_head->map->map_flags&MAP_FLAG_PVP))
+					continue;
+			}
+
+			/* we need a extra check for pets & golems here later 
+			 * but atm player & npc can't hit other friendly npc
+			 */
+			if(!IS_LIVE (tmp_head) || QUERY_FLAG(tmp_head,FLAG_FRIENDLY)) 
+				continue;
+		}
+		else /* its a mob */
+		{
+			/* don't attach non living objects.
+			 * if they are alive, only attack player or friendly
+			 */
+			if(!IS_LIVE (tmp_head) || (tmp_head->type != PLAYER && !QUERY_FLAG(tmp_head,FLAG_FRIENDLY))) 
+				continue;
+		}
+
+
+/*        if (IS_LIVE (tmp) && ((tmp->type!=PLAYER && hitter->type == PLAYER)||
 			(tmp->type==PLAYER && hitter->type != PLAYER) || 
 			(hitter->type == PLAYER && (flag || tmp->map->map_flags&MAP_FLAG_PVP))))
-		{
-            tmp_tag = tmp->count;
+*/
+            
+		tmp_tag = tmp->count;
+		dam = hit_player (tmp, op->stats.dam, op, op->attacktype);
 
-            dam = hit_player (tmp, op->stats.dam, op, op->attacktype);
-            if (was_destroyed (op, op_tag) || ! was_destroyed (tmp, tmp_tag)
-                || (op->stats.dam -= dam) < 0)
-            {
-	      if(!QUERY_FLAG(op, FLAG_REMOVED)) {
-                remove_ob(op);
+		if (was_destroyed (op, op_tag) || ! was_destroyed (tmp, tmp_tag) || (op->stats.dam -= dam) < 0)
+        {
+			if(!QUERY_FLAG(op, FLAG_REMOVED)) 
+			{
+				remove_ob(op);
 				check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
 				return;
-	      }
-            }
-        }
+			}
+		}
     }
 }
 
@@ -1976,7 +2009,7 @@ void move_fired_arch (object *op)
     new_y = op->y + DIRY(op);
     if (!(m=out_of_map (op->map, &new_x, &new_y))) {
         remove_ob(op);
-		check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
+		check_walk_off (op, NULL,0);
 		return;
     }
 
@@ -1987,13 +2020,13 @@ void move_fired_arch (object *op)
         } else 
 		{
             remove_ob(op);
-			check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
+			check_walk_off (op, NULL,0);
 		}
         return;
     }
 
     remove_ob(op);
-	check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
+	check_walk_off (op, NULL,0);
 	op->x = new_x;
     op->y = new_y;
 	if(insert_ob_in_map (op, m, op,0) == NULL)

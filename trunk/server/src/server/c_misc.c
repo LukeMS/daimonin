@@ -150,18 +150,22 @@ void malloc_info(object *op) {
   LOG(llevSystem,"%s\n",errmsg);
   
   for(j=0; j<NROF_MEMPOOLS; j++) {
-      int ob_used=mempools[j].nrof_allocated - mempools[j].nrof_free,ob_free=mempools[j].nrof_free;
-      sprintf(errmsg,"%4d used %s:    %8d",ob_used,mempools[j].chunk_description, 
-              i=(ob_used*(mempools[j].chunksize + sizeof(struct mempool_chunk))));
-      new_draw_info(NDI_UNIQUE, 0,op,errmsg);
-	  LOG(llevSystem,"%s\n",errmsg);
-      sum_used+=i;  sum_alloc+=i;
-      
-      sprintf(errmsg,"%4d free %s:    %8d",ob_free,mempools[j].chunk_description, 
-              i=(ob_free*(mempools[j].chunksize + sizeof(struct mempool_chunk))));
-      new_draw_info(NDI_UNIQUE, 0,op,errmsg);
-	  LOG(llevSystem,"%s\n",errmsg);
-      sum_alloc+=i;
+      int k;
+      for(k=0; k<MEMPOOL_NROF_FREELISTS; k++) {
+          if(mempools[j].nrof_allocated[k] > 0) {
+              int ob_used=mempools[j].nrof_allocated[k] - mempools[j].nrof_free[k],
+                  ob_free=mempools[j].nrof_free[k];
+              int mem_used = ob_used*((mempools[j].chunksize << k) + sizeof(struct mempool_chunk));
+              int mem_free = ob_free*((mempools[j].chunksize << k) + sizeof(struct mempool_chunk));
+              sprintf(errmsg,"%4d used (%4d free) %s[%3d]: %d (%d)",
+                      ob_used,ob_free,mempools[j].chunk_description, 
+                      1 << k, mem_used, mem_free);
+                      
+              new_draw_info(NDI_UNIQUE, 0,op,errmsg);
+              LOG(llevSystem,"%s\n",errmsg);
+              sum_used+=mem_used;  sum_alloc+=mem_used+mem_free;
+          }
+      }
   }
   
   sprintf(errmsg,"%4d active objects",count_active());

@@ -350,6 +350,8 @@ int hit_player(object *op,int dam, object *hitter, int type)
 	 */
 	if(hit_obj->type == PLAYER && QUERY_FLAG(target_obj,FLAG_FRIENDLY))
 		return 0;
+	if(QUERY_FLAG(hit_obj,FLAG_FRIENDLY) && (target_obj->type == PLAYER || QUERY_FLAG(target_obj,FLAG_FRIENDLY)))
+		return 0;
 
 	if(hit_level > target_obj->level && hit_obj->type == MONSTER) /* i turned it now off for players! */
 	{
@@ -648,9 +650,12 @@ int hit_map(object *op,int dir,int type) {
     if (tmp->map != map || tmp->x != x || tmp->y != y)
       continue;
 
-	/* first, we check player .... */
+	/* we have found a player */
     if (QUERY_FLAG (tmp, FLAG_IS_PLAYER) )
 	{			
+		/* no damage from friendly objects */
+		if(QUERY_FLAG(tmp_obj,FLAG_FRIENDLY))
+			continue;
 		hit_player(tmp,op->stats.dam,op,type);
 		retflag |=1;
 		if (was_destroyed (op, op_tag))
@@ -675,7 +680,6 @@ int hit_map(object *op,int dir,int type) {
 						continue;
 				}
 			}
-			
 		}
 	/*LOG(-1,"HM: %s hit %s (%d)with dam %d\n",op->name,tmp->name,tmp->type,op->stats.dam);*/
 	hit_player(tmp,op->stats.dam,op,type);
@@ -1289,6 +1293,15 @@ int kill_object(object *op,int dam, object *hitter, int type)
 		if(!exp || hitter->type != PLAYER || (get_owner(hitter) && hitter->owner->type != PLAYER))
 			SET_FLAG(op,FLAG_STARTEQUIP); 
 
+		if(hitter->type != PLAYER && op->type != PLAYER)
+		{
+			if((QUERY_FLAG(hitter,FLAG_FRIENDLY) && !QUERY_FLAG(op,FLAG_FRIENDLY)) ||
+						(!QUERY_FLAG(hitter,FLAG_FRIENDLY) && QUERY_FLAG(op,FLAG_FRIENDLY)))
+			{
+				SET_FLAG(op,FLAG_CORPSE_FORCED); 
+				SET_FLAG(op,FLAG_STARTEQUIP); 
+			}
+		}
 		destruct_ob(op);
 	}
 	/* Player has been killed! */
@@ -1465,8 +1478,8 @@ object *hit_with_arrow (object *op, object *victim)
     else
 #endif
 
-    hit_something = attack_ob_simple (victim, hitter, op->stats.dam, op->stats.wc);
 	/*LOG(-1, "hit: %s (%d %d)\n", hitter->name, op->stats.dam, op->stats.wc);*/
+    hit_something = attack_ob_simple (victim, hitter, op->stats.dam, op->stats.wc);
 
     /* Arrow attacks door, rune of summoning is triggered, demon is put on
      * arrow, move_apply() calls this function, arrow sticks in demon,
