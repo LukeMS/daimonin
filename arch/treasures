@@ -282,27 +282,94 @@ end
 treasure default_door_100
   list traps
 end
+treasureone small_things
+  arch coppercoin
+    chance 20
+    nrof 5
+  more
+    list random_food
+    chance 20
+  more
+    list random_weapons_throw
+    chance 20
+  more
+    list random_weapons_amun
+    chance 25
+ more
+    arch axe_small
+    magic 1
+    chance 10
+  more
+  arch pouch
+  magic 1
+  chance 10
+  more
+  arch torch
+  magic 1
+  chance 15
+ more
+  arch club
+  magic 1
+  chance 10
+  more
+  arch dagger_small
+  magic 1
+  chance 10
+  more
+  arch shortsword
+  magic 1
+  chance 10
+  more
+  arch sandals
+  magic 1
+  chance 5
+  more
+  arch robe
+  magic 1
+  chance 5
+  more
+  arch gloves
+  magic 1
+  chance 5
+  more
+  arch girdle
+  magic 1
+  chance 5
+  more
+  arch hat_feather
+  magic 1
+  chance 5
+  more
+  arch dress
+  magic 1
+  chance 5
+  more
+  arch buckler
+  magic 1
+  chance 5
+  more
+  arch coat
+  magic 1
+  chance 5
+  more
+  arch padded_armour
+  magic 1
+  chance 5
+  more
+  arch leather_armour
+  magic 1
+  chance 5
+ more
+  list random_potion
+  chance 4
+  difficulty 15
+end
 treasureone default_drop
   list random_food
    chance 60
   more
   list random_container
    chance 20
-#   list random_food
-#   chance 30
-#   no
-#      list random_scroll
-#      chance 30
-#      no
-#         list random_potion
-#         chance 25
-#         no
-#            arch potion_improve
-#            difficulty 6
-#            chance 9
-#          end
-#      end
-#   end
 end
 ##############################################################
 #
@@ -375,6 +442,28 @@ treasureone random_weapon
     chance 20
   more
   list random_weapons_impact
+    chance 20
+  more
+  list random_weapons_throw
+    chance 5
+  end
+treasureone random_weapon_l9
+  list random_weapons_missile
+    chance 5
+  more
+  list random_weapons_amun
+    chance 10
+  more
+  list random_weapons_slash_1h
+    chance 20
+  more
+  list random_weapons_cleave_1h
+    chance 20
+  more
+  list random_weapons_pierce_1h
+    chance 20
+  more
+  list random_weapons_impact_1h
     chance 20
   more
   list random_weapons_throw
@@ -1065,6 +1154,31 @@ treasureone random_armour
   list random_armour_bracers
     chance 5
   end
+treasureone random_armour_l9
+  list random_armour_boots_l9
+    chance 20
+  more
+  list random_armour_helm
+    chance 20
+  more
+  list random_armour_shield_l9
+    chance 15
+  more
+  list random_armour_mail_l9
+    chance 15
+  more
+  list random_armour_cloak
+    chance 10
+  more
+  list random_armour_gauntlet
+    chance 5
+  more
+  list random_armour_girdle
+    chance 5
+  more
+  list random_armour_bracers
+    chance 5
+  end
 treasureone random_armour_mail
   arch banded_mail
   magic 1
@@ -1188,6 +1302,84 @@ treasureone random_armour_mail
   magic 1
   chance 20
 end
+treasureone random_armour_mail_l9
+  arch banded_mail
+  magic 1
+  difficulty 9
+  chance 20
+ more
+  arch bone_armour
+  magic 1
+  difficulty 6
+  chance 30
+ more
+  arch brigandine
+  magic 1
+  difficulty 6
+  chance 25
+ more
+  arch chain_hauberk
+  magic 1
+  difficulty 9
+  chance 20
+ more
+  arch chain_mail
+  magic 1
+  difficulty 6
+  chance 25
+ more
+  arch chitin_mail
+  magic 1
+  difficulty 9
+  chance 25
+ more
+  arch lamellar_mail
+  magic 1
+  difficulty 6
+  chance 20
+ more
+  arch leather_armour
+  magic 1
+  chance 30
+ more
+  arch leather_cuirass
+  magic 1
+  difficulty 6
+  chance 20
+ more
+  arch padded_armour
+  magic 1
+  chance 25
+ more
+  arch leather_spiked
+  magic 1
+  chance 25
+ more
+  arch leather_studded
+  difficulty 3
+  magic 1
+  chance 20
+ more
+  arch ring_mail
+  difficulty 3
+  magic 1
+  chance 25
+ more
+  arch scale_armour
+  difficulty 6
+  magic 1
+  chance 20
+ more
+  arch scale_mail
+  difficulty 9
+  magic 1
+  chance 25
+ more
+  arch splint_mail
+  difficulty 9
+  magic 1
+  chance 20
+end
 treasureone random_armour_bracers
   arch bracers_ac
   magic 1
@@ -1241,6 +1433,45 @@ treasureone random_armour_boots
  difficulty 19
  magic 1
  chance 8
+end
+treasureone random_armour_boots_l9
+ arch sandals
+ chance 20
+ magic 1
+ more
+ arch low_boots
+ chance 25
+ magic 1
+ more
+ arch high_boots
+ chance 20
+ magic 1
+ difficulty 2
+ more
+ arch fencing_boots
+ chance 15
+ magic 1
+ difficulty 3
+ more
+ arch combat_boots
+ chance 15
+ magic 1
+ difficulty 3
+ more
+ arch kicking_boots
+ chance 15
+ magic 1
+ difficulty 3
+ more
+ arch fighting_boots
+ chance 15
+ magic 1
+ difficulty 3
+ more
+ arch leggings_leather
+ chance 15
+ magic 1
+ difficulty 6
 end
 treasureone random_armour_shield
 arch buckler
@@ -1325,6 +1556,65 @@ arch shield_demon
  magic 1
  difficulty 18
 chance 5
+more
+arch shield_eye
+ magic 1
+ difficulty 8
+chance 5
+end
+treasureone random_armour_shield_l9
+arch buckler
+ magic 1
+chance 20
+more
+arch shield_round
+ difficulty 3
+ magic 1
+chance 15
+more
+arch small_shield
+ magic 1
+chance 20
+more
+arch shield
+ difficulty 3
+ magic 1
+chance 20
+more
+arch shield_heater
+ magic 1
+ difficulty 8
+chance 15
+more
+arch shield_high
+ difficulty 7
+ magic 1
+chance 15
+more
+arch shield_kite
+ magic 1
+ difficulty 3
+chance 15
+more
+arch shield_chitin
+ magic 1
+ difficulty 8
+chance 10
+more
+arch shield_bone
+ difficulty 8
+ magic 1
+chance 10
+more
+arch shield_scale
+ magic 1
+ difficulty 8
+chance 10
+more
+arch ball_and_chain
+ magic 1
+ difficulty 3
+chance 10
 more
 arch shield_eye
  magic 1
@@ -1641,6 +1931,15 @@ treasure mob_ant
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 12
@@ -1683,6 +1982,15 @@ treasure mob_ant_special
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 14
@@ -1725,6 +2033,15 @@ treasure mob_ant_queen
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 12
@@ -1759,6 +2076,15 @@ treasure mob_insect
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 14
@@ -1793,6 +2119,15 @@ treasure mob_slime
  more
  list default_wealth
   chance 70
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 14
@@ -1832,6 +2167,15 @@ treasure mob_wyvern
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 16
@@ -1875,6 +2219,15 @@ treasure mob_ogre
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 16
@@ -1918,6 +2271,15 @@ treasure mob_giant_hill
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 16
@@ -1961,6 +2323,15 @@ treasure mob_giant_stone
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 16
@@ -2004,6 +2375,15 @@ treasure mob_dragon_water
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 16
@@ -2047,6 +2427,15 @@ treasure mob_kobold_big
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 16
@@ -2090,6 +2479,15 @@ treasure mob_kobold
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 16
@@ -2133,6 +2531,15 @@ treasure mob_worm_purple
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 16
@@ -2176,6 +2583,15 @@ treasure mob_ettin
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 16
@@ -2219,6 +2635,15 @@ treasure mob_wraith
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 16
@@ -2262,6 +2687,15 @@ treasure mob_lost_soul
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 16
@@ -2305,6 +2739,15 @@ treasure mob_slugs
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 16
@@ -2348,6 +2791,15 @@ treasure mob_dragon_skeletal
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 16
@@ -2391,6 +2843,15 @@ treasure mob_beholder_dread
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 16
@@ -2434,6 +2895,15 @@ treasure mob_demilich
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 16
@@ -2477,6 +2947,15 @@ treasure mob_troll
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 16
@@ -2520,6 +2999,15 @@ treasure mob_skeleton1
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 2
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 16
@@ -2563,6 +3051,15 @@ treasure mob_skeleton2
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 2
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 16
@@ -2606,6 +3103,15 @@ treasure mob_skeleton_mage
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 16
@@ -2649,6 +3155,15 @@ treasure mob_orc
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 16
@@ -2692,6 +3207,15 @@ treasure mob_orc_mage
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 16
@@ -2735,6 +3259,15 @@ treasure mob_hobgoblin
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 16
@@ -2778,6 +3311,15 @@ treasure mob_goblin
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 16
@@ -2821,6 +3363,15 @@ treasure mob_gnoll
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 16
@@ -2864,6 +3415,15 @@ treasure mob_drow
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 16
@@ -2907,6 +3467,15 @@ treasure mob_drow_mage
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 16
@@ -2950,6 +3519,15 @@ treasure mob_ghoul
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 16
@@ -2993,6 +3571,15 @@ treasure mob_fire
  more
  list default_wealth
   chance 60
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 16
@@ -3040,6 +3627,15 @@ treasure mob_ice
  more
  list default_wealth
   chance 60
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 16
@@ -3087,6 +3683,15 @@ treasure mob_mud_hand
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 16
@@ -3130,6 +3735,15 @@ treasure mob_quickwood
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 16
@@ -3173,6 +3787,15 @@ treasure mob_treant
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 16
@@ -3208,6 +3831,100 @@ treasure mob_treant
      difficulty 6
      chance_fix 199
   end
+  end
+end
+treasure mob_fighter_l9
+ list traps
+   chance 8
+ more
+ list default_wealth
+  chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
+ more
+ list default_drop
+   chance_fix 14
+   material_quality 80
+   material_range 3
+ more
+ list random_armour_l9
+   material_quality 80
+   material_range 3
+   chance_fix 32
+ no
+   list random_weapon_l9
+     material_quality 80
+     material_range 3
+     chance_fix 38
+ no
+   list random_mtools
+     chance_fix 182
+ no
+   list random_talisman
+     chance_fix 366
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 45
+ no
+   list random_potion
+     chance_fix 45
+  end
+end
+treasure mob_mage_l9
+ list traps
+   chance 8
+ more
+ list default_wealth
+  chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
+ more
+ list default_drop
+   chance_fix 14
+   material_quality 80
+   material_range 3
+ more
+ list random_armour_l9
+   material_quality 80
+   material_range 3
+   chance_fix 72
+ no
+   list random_weapon_l9
+     material_quality 80
+     material_range 3
+     chance_fix 78
+ no
+   list random_mtools
+     chance_fix 82
+ no
+   list random_talisman
+     chance_fix 125
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 45
+ no
+   list random_potion
+     chance_fix 45
   end
 end
 ############# TEST ############################
@@ -3248,12 +3965,21 @@ end
 #
 # test for /dev test maps
 #
-treasure random_test
+treasure random_testx
  list traps
   chance 8
  more
  list default_wealth
   chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
  more
  list default_drop
    chance_fix 16
@@ -3288,6 +4014,58 @@ treasure random_test
    arch potion_improve
      difficulty 6
      chance_fix 99
+  end
+  end
+end
+treasure random_test
+ list traps
+   chance 8
+ more
+ list default_wealth
+  chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
+ more
+ list default_drop
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 62
+ no
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 38
+ no
+   list random_mtools
+     chance_fix 182
+ no
+   list random_talisman
+     chance_fix 366
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 55
+ no
+   list random_potion
+     chance_fix 55
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 199
   end
   end
 end
