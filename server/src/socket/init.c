@@ -162,17 +162,10 @@ void InitConnection(NewSocket *ns, uint32 from)
 void init_ericserver()
 {
     struct sockaddr_in	insock;
-    struct protoent  *protox;
     struct linger linger_opt;
 
-#ifdef WIN32 /* ***win32  -  we init a windows socket */
-	WSADATA w;
-
-	socket_info.max_filedescriptor = 1;	/* used in select, ignored in winsockets */
-	WSAStartup (0x0101,&w);				/* this setup all socket stuff */
-	/* ill include no error tests here, winsocket 1.1 should always work */
-	/* except some old win95 versions without tcp/ip stack */
-#else	/* non windows */
+#ifndef WIN32 /* non windows */
+    struct protoent  *protox;
 
 #ifdef HAVE_SYSCONF
   socket_info.max_filedescriptor = sysconf(_SC_OPEN_MAX);
@@ -183,6 +176,15 @@ void init_ericserver()
   "Unable to find usable function to get max filedescriptors";
 #  endif
 #endif
+
+#else /* ***win32  -  we init a windows socket */
+	WSADATA w;
+
+	socket_info.max_filedescriptor = 1;	/* used in select, ignored in winsockets */
+	WSAStartup (0x0101,&w);				/* this setup all socket stuff */
+	/* ill include no error tests here, winsocket 1.1 should always work */
+	/* except some old win95 versions without tcp/ip stack */
+
 #endif /* win32 */
 
     socket_info.timeout.tv_sec = 0;
@@ -201,21 +203,20 @@ void init_ericserver()
     init_sockets = malloc(sizeof(NewSocket));
     socket_info.allocated_sockets=1;
 
+#ifndef WIN32 /* non win32 */
     protox = getprotobyname("tcp");
     if (protox==NULL) 
 	{
 		LOG(llevBug,"BUG: init_ericserver: Error getting protox\n");
 		return;
     }
+    init_sockets[0].fd = socket(PF_INET, SOCK_STREAM, protox->p_proto);
 
-
-#ifdef WIN32 /* ***win32  -  we init a windows socket */
+#else /* win32 */
 	/* there was reported problems under windows using the protox
 	 * struct - IPPROTO_TCP should fix it.
 	 */
     init_sockets[0].fd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-#else
-    init_sockets[0].fd = socket(PF_INET, SOCK_STREAM, protox->p_proto);
 #endif
 
     if (init_sockets[0].fd == -1)
