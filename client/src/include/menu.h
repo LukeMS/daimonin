@@ -1,0 +1,100 @@
+/*
+    Daimonin SDL client, a client program for the Daimonin MMORPG.
+
+
+  Copyright (C) 2003 Michael Toennies
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+    The author can be reached via e-mail to daimonin@nord-com.net
+*/
+#if !defined(__MENU_H)
+#define __MENU_H
+
+#define MENU_NO 1 
+#define MENU_KEYBIND 2 
+#define MENU_STATUS 4
+#define MENU_SLIST 8
+#define MENU_SKILL 16
+
+
+extern _skill_list skill_list[SKILL_LIST_MAX];
+extern _skill_list_set skill_list_set;
+
+struct _spell_list spell_list[SPELL_LIST_MAX]; /* skill list entries */
+extern _spell_list_set spell_list_set;
+
+#define MAX_QUICK_SLOTS 8
+extern int quick_slots[MAX_QUICK_SLOTS];
+
+typedef struct _media_file
+{
+        char name[256];		/* file name */
+        void *data;			/* data buffer */
+        int type;			/* what is this? (what loaded in buffer) */
+        int p1;				/* parameter 1 */
+        int p2;
+}_media_file;
+
+
+typedef enum _media_type
+{
+        MEDIA_TYPE_NO, MEDIA_TYPE_PNG
+}_media_type;
+
+#define MEDIA_MAX 10
+#define MEDIA_SHOW_NO -1
+
+extern _keybind_key keybind_key;
+extern int keybind_entry;
+extern int keybind_status;
+extern Boolean keybind_repeat;
+
+extern _media_file media_file[MEDIA_MAX];
+
+extern int media_count;	/* buffered media files */
+extern int media_show;
+extern int media_show_update ;
+
+extern void do_console(int x, int y);
+extern void do_number(int x, int y);
+extern void show_number(int x, int y);
+extern void show_console(int x, int y);
+extern void show_resist(int x, int y);
+extern void show_keybind(void);
+extern void show_status(void);
+extern void show_spelllist(void);
+extern void show_skilllist(void);
+
+extern void show_menu(void);
+extern void show_media(int x, int y);
+extern void show_range(int x, int y);
+extern int init_media_tag(char *tag);
+extern void blt_inventory_face_from_tag(int tag, int x, int y);
+extern void blt_window_slider(_Sprite *slider, int max_win, int len, int off, int x, int y);
+extern void do_keybind_input(void);
+
+extern void read_spells(void);
+extern void read_skills(void);
+extern Boolean blt_face_centered(int face, int x, int y);
+extern void show_quickslots(int x, int y);
+extern void update_quickslots(int del_item);
+extern void show_group(int x, int y);
+
+extern int client_command_check(char *cmd);
+
+extern void show_target(int x, int y);
+
+#endif
