@@ -831,6 +831,9 @@ void check_login(object *op) {
 	/* our rule is: for the first 3 levels we use maxXXX,
 	 * for the next levels we simply use full random throw.
 	 */
+	/* our second mission here is to change all old players deity from Eldath
+	 * to the Tabernacle.
+	 */
 	if(lev_array_flag == TRUE)
 	{
 		int i;
@@ -849,6 +852,13 @@ void check_login(object *op) {
 			{
 				tmp->level = 1;
 				tmp->stats.exp = 0;
+				/* now check for deity change is this is the Wis exp_obj */
+				if (tmp->stats.Wis)
+				{
+					/* if we have old beta 1 deity Eldath - change to Tabernacle! */
+					if(tmp->title && !strcmp(tmp->title,"Eldath"))
+						FREE_AND_COPY_HASH(tmp->title, "the Tabernacle");
+				}
 			}
 		}
 		/* now we collect all skills and recalculate the level - the exp are untouched here.

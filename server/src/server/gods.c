@@ -470,10 +470,12 @@ char *determine_god(object *op) {
 	object *tmp;
         for (tmp=op->inv; tmp!=NULL; tmp=tmp->below)
         {
-                if (tmp->type == SKILL) /* GROS: This is for the flower's bug */
+                if (tmp->type == EXPERIENCE && tmp->stats.Wis)
                 {
-                        if (tmp->exp_obj && tmp->exp_obj->title)
-                        return tmp->exp_obj->title;
+						if(tmp->title)
+	                        return tmp->title;
+						else
+							return ("none");
                 }
         }
 

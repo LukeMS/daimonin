@@ -39,18 +39,18 @@
 # Gods - treasures of gods are special.
 #
 #########################################################
-# Eldath - Lesser Power, goddess of waterfalls, springs, pools and peace
+# Default "deity" - The Tabernacle
 #
-treasure deity_Eldath
-  arch eldath_avatar_info
+treasure deity_tabernacle
+  arch tabernacle_avatar_info
   more
-  arch eldath_holy_servant_info
+  arch tabernacle_holy_servant_info
   more
   arch god_restore_grace
   more
   arch god_restore_hitpoints
   more
-  arch eldath_general_info
+  arch tabernacle_general_info
     chance 10
   more
   arch god_grace_limit_medium 

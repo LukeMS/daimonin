@@ -1,55 +1,30 @@
-anim Eldath
+anim Tabernacle
 facings 25
 trans.101
 trans.101
-eldath.141
-eldath.142
-eldath.141
-eldath.142
-eldath.141
-eldath.142
-eldath.141
-eldath.142
-eldath.161
-eldath.162
-eldath.161
-eldath.162
-eldath.161
-eldath.162
-eldath.161
-eldath.162
-eldath.141
-eldath.142
-eldath.141
-eldath.142
-eldath.141
-eldath.142
-eldath.141
-eldath.142
-eldath.161
-eldath.162
-eldath.161
-eldath.162
-eldath.161
-eldath.162
-eldath.161
-eldath.162
-eldath.143
-eldath.142
-eldath.143
-eldath.142
-eldath.143
-eldath.142
-eldath.143
-eldath.142
-eldath.163
-eldath.162
-eldath.163
-eldath.162
-eldath.163
-eldath.162
-eldath.163
-eldath.162
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
 mina
 anim altar
 facings 9
@@ -72,17 +47,17 @@ altar.131
 altar.131
 altar.131
 mina
-anim altar_eldath
+anim altar_tabernacle
 facings 9
 dummy.111
-eldath_altar.111
-eldath_altar.111
-eldath_altar.131
-eldath_altar.131
-eldath_altar.111
-eldath_altar.111
-eldath_altar.131
-eldath_altar.131
+altar_default.111
+altar_default.111
+altar_default.131
+altar_default.131
+altar_default.111
+altar_default.111
+altar_default.131
+altar_default.131
 mina
 anim altar_trigger
 facings 9
@@ -643,59 +618,6 @@ door_wood2.131
 door_wood2.132
 door_wood2.131
 door_wood2.132
-mina
-anim eldath_avatar
-facings 25
-trans.101
-trans.101
-eldath.141
-eldath.142
-eldath.141
-eldath.142
-eldath.141
-eldath.142
-eldath.141
-eldath.142
-eldath.161
-eldath.162
-eldath.161
-eldath.162
-eldath.161
-eldath.162
-eldath.161
-eldath.162
-eldath.141
-eldath.142
-eldath.141
-eldath.142
-eldath.141
-eldath.142
-eldath.141
-eldath.142
-eldath.161
-eldath.162
-eldath.161
-eldath.162
-eldath.161
-eldath.162
-eldath.161
-eldath.162
-eldath.143
-eldath.142
-eldath.143
-eldath.142
-eldath.143
-eldath.142
-eldath.143
-eldath.142
-eldath.163
-eldath.162
-eldath.163
-eldath.162
-eldath.163
-eldath.162
-eldath.163
-eldath.162
 mina
 anim exit
 exit.101
@@ -2792,6 +2714,34 @@ t_star.111
 t_star.111
 t_star.111
 t_star.111
+mina
+anim tabernacle_avatar
+facings 25
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
+trans.101
 mina
 anim teleporter
 exit.101
