@@ -28,7 +28,6 @@ LOCAL_LIBRARIES = ../common/libcross.a ../random_maps/random_map.a ../socket/soc
 
 
 SRCS = \
-	aggro.c \
 	aiconfig.c\
 	alchemy.c\
 	apply.c\
