@@ -121,7 +121,7 @@ void swap_map(mapstruct *map, int force_flag)
     CFParm CFP;
 #endif
 */
-   LOG(llevDebug,"Check map for swapping: %s. (players:%d) (%d)\n", map->path,players_on_map(map) , force_flag);
+   /*LOG(llevDebug,"Check map for swapping: %s. (players:%d) (%d)\n", map->path,players_on_map(map) , force_flag);*/
 
 	/* lets check some legal things... */
     if(map->in_memory != MAP_IN_MEMORY) 
@@ -210,9 +210,11 @@ void check_active_maps()
 			continue;
 		if( --(map->timeout) > 0)
 			continue;
-/* If LWM is set, we only swap maps out when we run out of objects */
+
+	/* This is called when MAX_OBJECTS_LWM is *NOT* defined.
+	 * If LWM is set, we only swap maps out when we run out of objects 
+	 */
 #ifndef MAX_OBJECTS_LWM
-		LOG(llevDebug,"MAX_OBJECTS_LWM active!?\n");
 		swap_map(map,0);
 #endif
     }
