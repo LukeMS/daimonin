@@ -2038,7 +2038,7 @@ int change_map_light(mapstruct *m, int change) {
     if(new_level<=0) {
         if(m->darkness)
         {
-            (info_map_func)(NDI_WHITE, m,"It becomes broad daylight.");
+            (info_map_func)(NDI_WHITE, m,0,0,MAP_INFO_ALL, "It becomes broad daylight.");
         }
         m->darkness = 0;
         return 0;
@@ -2049,9 +2049,9 @@ int change_map_light(mapstruct *m, int change) {
     if(change) {
 	/* inform all players on the map */
 	if (change>0) 
-	    (info_map_func)(NDI_WHITE, m,"It becomes darker.");
+	    (info_map_func)(NDI_WHITE, m,0,0,MAP_INFO_ALL,"It becomes darker.");
 	else
-	    (info_map_func)(NDI_WHITE, m,"It becomes brighter.");
+	    (info_map_func)(NDI_WHITE, m,0,0,MAP_INFO_ALL,"It becomes brighter.");
 
 	m->darkness=new_level;
 	/* All clients need to get re-updated for the change */

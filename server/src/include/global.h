@@ -57,6 +57,12 @@ typedef signed char	sint8;
 typedef unsigned short Fontindex;
 typedef unsigned int tag_t;
 
+/* map distance values for draw_info_map functions 
+ * This value is in tiles
+ */
+#define MAP_INFO_NORMAL 12
+#define MAP_INFO_ALL 9999
+
 /* use this macros *only* to access the global hash table!
  * Note: there is a 2nd hash table for the arch list - thats a static
  * list BUT the arch names are inserted in the global hash to - so every

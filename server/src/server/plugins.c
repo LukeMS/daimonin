@@ -452,12 +452,15 @@ CFParm* CFWFixPlayer(CFParm* PParm)
 /*****************************************************************************/
 /* 0 - Color information;                                                    */
 /* 1 - Map where the message should be heard;                                */
-/* 2 - Message.                                                              */
+/* 2 - x position                                                            */
+/* 3 - y position                                                            */
+/* 4 - distance message can be "heared"                                      */
+/* 5 - Message.                                                              */
 /*****************************************************************************/
 CFParm* CFWNewInfoMap(CFParm* PParm)
 {
     new_info_map(*(int *)(PParm->Value[0]), (struct mapdef *)(PParm->Value[1]),
-        (char*)(PParm->Value[2]));
+		*(int *)(PParm->Value[2]),*(int *)(PParm->Value[3]),*(int *)(PParm->Value[4]),(char*)(PParm->Value[5]));
     return NULL;
 }
 
@@ -466,13 +469,18 @@ CFParm* CFWNewInfoMap(CFParm* PParm)
 /*****************************************************************************/
 /* 0 - Color information;                                                    */
 /* 1 - Map where the message should be heard;                                */
-/* 2 - player which should not hear this                                     */
-/* 3 - Message.                                                              */
+/* 2 - x position                                                            */
+/* 3 - y position                                                            */
+/* 4 - distance message can be "heared"                                      */
+/* 5 - object 1 which should not hear this                                   */
+/* 6 - object 2 which should not hear this (van be NULL or same as other)    */
+/* 7 - Message.                                                              */
 /*****************************************************************************/
 CFParm* CFWNewInfoMapExcept(CFParm* PParm)
 {
     new_info_map_except(*(int *)(PParm->Value[0]), (struct mapdef *)(PParm->Value[1]),
-							        (object *)(PParm->Value[2]), (char*)(PParm->Value[3]));
+		*(int *)(PParm->Value[2]),*(int *)(PParm->Value[3]),*(int *)(PParm->Value[4]),
+		(object *)(PParm->Value[5]),(object *)(PParm->Value[6]), (char*)(PParm->Value[7]));
     return NULL;
 }
 
@@ -1394,12 +1402,6 @@ CFParm* CFWCommunicate (CFParm* PParm)
     char* string=(char*)PParm->Value[1];
     if ((!op) || (!string)) return NULL;
 
-	/* moved to communicate()
-    sprintf(buf, "%s says: ",op->name);
-    strncat(buf, string, MAX_BUF - strlen(buf)-1);
-    buf[MAX_BUF-1]=0;
-    new_info_map(NDI_WHITE,op->map, buf);
-	*/
     communicate (op,string);
     return NULL;
 }

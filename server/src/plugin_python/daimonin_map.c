@@ -197,8 +197,9 @@ static PyObject* Daimonin_Map_PlaySound(Daimonin_Map *whereptr, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : Daimonin_Map_Message                                             */
-/* Python : map.Message(message, color)                                      */
+/* Python : map.Message(message, x, y, distance, color)                      */
 /* Info   : Writes a message to all players on a map                         */
+/*          Starting point x,y for all players in distance                   */
 /*          default color is NDI_BLUE|NDI_UNIQUE                             */
 /* Status : Tested                                                           */
 /* TODO   : Add constants for colours                                        */
@@ -206,15 +207,18 @@ static PyObject* Daimonin_Map_PlaySound(Daimonin_Map *whereptr, PyObject* args)
 
 static PyObject* Daimonin_Map_Message(Daimonin_Map *map, PyObject* args)
 {
-    int   color = NDI_BLUE|NDI_UNIQUE;
+    int   color = NDI_BLUE|NDI_UNIQUE, x,y, d;
     char *message;
 
-    if (!PyArg_ParseTuple(args,"s|i", &message,&color))
+    if (!PyArg_ParseTuple(args,"iiis|i",&x,&y, &d, &message, &color))
         return NULL;
 
     GCFP.Value[0] = (void *)(&color);
     GCFP.Value[1] = (void *)(map->map);
-    GCFP.Value[2] = (void *)(message);
+    GCFP.Value[2] = (void *)(&x);
+    GCFP.Value[3] = (void *)(&y);
+    GCFP.Value[4] = (void *)(&d);
+    GCFP.Value[5] = (void *)(message);
 
     (PlugHooks[HOOK_NEWINFOMAP])(&GCFP);
 

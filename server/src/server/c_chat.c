@@ -476,7 +476,7 @@ static int basic_emote(object *op, char *params, int emotion)
 	    sprintf(buf2, "You are a nut.");
 	    break;
 	} /*case*/
-	new_info_map_except(NDI_YELLOW, op->map, op, buf);
+	new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, op, op, buf);
 	new_draw_info(NDI_UNIQUE, 0, op, buf2);
 	return(0);
     } else {
@@ -671,7 +671,7 @@ static int basic_emote(object *op, char *params, int emotion)
 		} /*case*/
 		new_draw_info(NDI_UNIQUE, 0, op, buf);
 		new_draw_info(NDI_UNIQUE|NDI_YELLOW, 0, pl->ob, buf2);
-		new_info_map_except2(NDI_YELLOW, op->map, op, pl->ob, buf3);
+		new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, op, pl->ob, buf3);
 		return(0);
 	    }
 	    if(strncasecmp(pl->ob->name, params, MAX_NAME)==0 &&
@@ -784,7 +784,7 @@ static int basic_emote(object *op, char *params, int emotion)
 		    break;
 		}/*case*/
 		new_draw_info(NDI_UNIQUE, 0, op, buf);
-		new_info_map_except(NDI_YELLOW, op->map, op, buf2);
+		new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, op, op, buf2);
 		return(0);
 	    }/*if self*/
 	}/*for*/

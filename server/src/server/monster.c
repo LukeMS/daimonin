@@ -2473,7 +2473,7 @@ void communicate(object *op, char *txt)
 	sprintf(buf, "%s says: ",query_name(op));
 	strncat(buf, txt, MAX_BUF - strlen(buf)-1);
 	buf[MAX_BUF-1]=0;
-	new_info_map(NDI_WHITE,op->map, buf);
+	new_info_map(NDI_WHITE,op->map, op->x, op->y, MAP_INFO_NORMAL, buf);
 
 	for(i = 0; i <= SIZEOFFREE2; i++)
 	{
@@ -2598,9 +2598,9 @@ int talk_to_npc(object *op, object *npc, char *txt) {
 			else
 			{
 				sprintf(buf,"%s says: %s",query_name(npc),msgs->messages[i]);
-				new_info_map_except(NDI_UNIQUE, op->map, op, buf);
+				new_info_map_except(NDI_UNIQUE, op->map, op->x, op->y, MAP_INFO_NORMAL,op, op, buf);
 				if(op->map != npc->map)
-					new_info_map_except(NDI_UNIQUE, npc->map, op, buf);
+					new_info_map_except(NDI_UNIQUE, npc->map, npc->x, npc->y, MAP_INFO_NORMAL,npc, op, buf);
 			}
 		}
 		else /* if a npc is talking to a player, is shown navy and with a seperate "xx says:" line */
@@ -2609,9 +2609,9 @@ int talk_to_npc(object *op, object *npc, char *txt) {
 			new_draw_info(NDI_NAVY|NDI_UNIQUE,0,op, buf);
 			new_draw_info(NDI_NAVY | NDI_UNIQUE,0,op, msgs->messages[i]);
 			sprintf(buf,"%s talks to %s.", query_name(npc), query_name(op));
-			new_info_map_except(NDI_UNIQUE, op->map, op, buf);
+			new_info_map_except(NDI_UNIQUE, op->map, op->x, op->y, MAP_INFO_NORMAL, op, op, buf);
 			if(op->map != npc->map)
-				new_info_map_except(NDI_UNIQUE, npc->map, op, buf);
+				new_info_map_except(NDI_UNIQUE, npc->map, npc->x, npc->y, MAP_INFO_NORMAL, npc, op, buf);
 		}
         free_messages(msgs);
         return 1;
@@ -2636,7 +2636,7 @@ int talk_to_wall(object *npc, char *txt) {
     for(j=0; msgs->keywords[i][j]; j++)
       if(msgs->keywords[i][j][0] == '*' || re_cmp(txt,msgs->keywords[i][j])) {
         if (msgs->messages[i] && *msgs->messages[i] != 0)
-	  new_info_map(NDI_NAVY | NDI_UNIQUE, npc->map,msgs->messages[i]);
+	  new_info_map(NDI_NAVY | NDI_UNIQUE, npc->map, npc->x, npc->y, MAP_INFO_NORMAL, msgs->messages[i]);
         free_messages(msgs);
 	use_trigger(npc);
         return 1;
