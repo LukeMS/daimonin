@@ -20,49 +20,25 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/copyleft/lesser.txt.
 -----------------------------------------------------------------------------
 */
+#ifndef DEFINE_H
+#define DEFINE_H
 
-#ifndef DIALOG_H
-#define DIALOG_H
+// ========================================================================
+// Pathes.
+// ========================================================================
+const char FILE_CLIENT_SPELLS[]   = "./srv_files/client_spells";
+const char FILE_CLIENT_SKILLS[]   = "./srv_files/client_skills";
+const char FILE_CLIENT_SETTINGS[] = "./srv_files/client_settings";
+const char FILE_CLIENT_BMAPS[]    = "./srv_files/client_bmap";
+const char FILE_CLIENT_ANIMS[]    = "./srv_files/client_anims";
 
-#include <Ogre.h>
+const char FILE_BMAPS_TMP[]       = "./srv_files/bmaps.tmp";
+const char FILE_ANIMS_TMP[]       = "./srv_files/anims.tmp";
+const char FILE_DAIMONIN_P0[]     = "./daimonin.p0";
+const char FILE_BMAPS_P0[]        = "./bmaps.p0";
+const char ARCHDEF_FILE[]         = "./archdef.dat";
 
-using namespace Ogre;
 
-enum _dialog_stage
-{
-	DIALOG_STAGE_LOGIN_GET_NAME,
-	DIALOG_STAGE_LOGIN_GET_PASSWD,
-	DIALOG_STAGE_LOGIN_GET_PASSWD_AGAIN,
-	DIALOG_STAGE_SUM
-};
-
-enum _dialog_warning
-{
-	DIALOG_WARNING_NONE,
-	DIALOG_WARNING_LOGIN_WRONG_NAME,
-	DIALOG_WARNING_SUM
-};
-
-class Dialog
-{
-  public:
-	Dialog();
-    ~Dialog();
-    static Dialog &getSingelton();
-    bool Init();
-	void visible(bool vis);
-	bool isVisible() { return mVisible; }
-	void UpdateLogin(unsigned int stage);
-	void setWarning(int warning);
-
-    Overlay *mLoginOverlay;
-	OverlayElement *mPlayerName, *mPlayerPasswd, *mPlayerRePasswd;
-	OverlayElement *mPanelPlayerName, *mPanelPlayerPasswd, *mPanelPlayerRePasswd;
-
-  private:
-
-    Dialog(const Dialog&); // disable copy-constructor.
-	bool     mVisible;
-};
+enum { M_MOVED, M_PRESSED, M_CLICKED, M_DRAGGED, M_ENTERED, M_EXITED, M_RELEASED };
 
 #endif

@@ -27,119 +27,90 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include <Ogre.h>
 #include <OgreConfigFile.h>
 #include <OgreSceneManager.h>
+#include "sound.h"
+
+#include "logfile.h"
 
 using namespace Ogre;
 
 enum PlayerState
 {
     IDLE,
-    WALK_FORWARD,
-    WALK_BACKWARD
+    WALK
 };
+
+const Real PLAYER_ANIM_SPEED = 0.5f;
+const Real PLAYER_TURN_SPEED = 2.0f;
+const Real PLAYER_WALK_SPEED = 2.0f;
 
 class Player
 {
-    Real                                   _anim_speed;
-    AnimationState*                        _anim_state;
-    std::map<PlayerState, AnimationState*> _anim_states;
-    SceneNode*                             _node;
-    PlayerState                            _state;
-    Real                                   _turn_speed;
-    Real                                   _walk_speed;
+  private:
+	int mWalking;
+	int mTurning;
+    Real     _anim_speed;
 	Radian   mFacing;
+	Real mIdleTime;
+    SceneNode  *mNode;
+    Entity     *mEntity;
+    Vector3 mTranslateVector;    
+	AnimationState* mAnimState;    
+	std::map<PlayerState, AnimationState*> mAnimStates;
 
+    Player(const Player&); // disable copy-constructor.
   public:
 
-	Player(SceneManager* scene_manager):
-        _anim_speed(1), _node(scene_manager->getRootSceneNode()->createChildSceneNode(Vector3(0, 0, 0)))
+	 Player() {;}
+	~Player() {;}
+
+	void Init(Entity* entity, SceneNode *node) 
     {
-		mFacing = Degree(90);
-		Entity* entity = scene_manager->createEntity("player", "robot.mesh");
-        this->_node->attachObject(entity);
-		this->_node->setScale(0.5, 0.5, 0.5);
-        this->_node->yaw(Radian(Degree(mFacing)));
-		this->_anim_states[IDLE] = this->_anim_state = entity->getAnimationState("Idle");
-        this->_anim_states[WALK_FORWARD] = this->_anim_states[WALK_BACKWARD] = entity->getAnimationState("Walk");
-        this->_anim_state->setEnabled(true);
-        this->_state = IDLE;
-        this->_turn_speed = 2;
-        this->_walk_speed = this->_anim_speed * 48;
-    }
+		mIdleTime = 0;
+		mFacing = Degree(90);		
+		mEntity = entity;
+		mNode   = node;
+        mNode->attachObject(mEntity);
+		mNode->setScale(0.5, 0.5, 0.5);
+        mNode->yaw(Radian(Degree(mFacing)));
+		mAnimStates[IDLE]  = entity->getAnimationState("Idle");
+		mAnimStates[WALK]  = entity->getAnimationState("Walk");
+	}
 
-    void changeState(PlayerState state)
+	void walking(int walk)  { mWalking = walk; }
+	void turning(int turn)  { mTurning = turn; }	
+	const Vector3& getPos() { return mTranslateVector; }
+    static Player &getSingelton() { static Player singelton; return singelton; }
+
+	
+    void updateAnim(const FrameEvent& event)
     {
-        if (state != this->_state)
-        {
-            switch(state)
-            {
-                case IDLE:
-                if (this->_anim_speed < 0)
-                {
-                    this->_anim_speed *= -1;
-                    this->_walk_speed *= -1;
-                }
-                this->_anim_speed /= 2;
-                break;
+		if (mTurning)
+		{
+	        mFacing += Degree(mTurning);
+		    mNode->yaw(Radian(Degree(mTurning)));
+		}
 
-                case WALK_FORWARD:
-                if (this->_anim_speed < 0)
-                {
-                    this->_anim_speed *= -1;
-                    this->_walk_speed *= -1;
-                }
-                if (this->_state == IDLE)
-                    this->_anim_speed *= 2;
-                break;
-
-                case WALK_BACKWARD:
-                if (this->_anim_speed > 0)
-                {
-                    this->_anim_speed *= -1;
-                    this->_walk_speed *= -1;
-                }
-                if (this->_state == IDLE)
-                    this->_anim_speed *= 2;
-                break;
-            }
-            this->_anim_state = this->_anim_states[state];
-            this->_anim_state->setEnabled(true);
-            this->_state = state;
-        }
-    }
-
-    PlayerState getState()
-    {
-        return this->_state;
-    }
-
-    Real getTurnSpeed()
-    {
-        return this->_turn_speed;
-    }
-
-    void setFacing(Real deg)
-    {
-        mFacing += Degree(deg);
-        this->_node->yaw(Radian(Degree(deg)));
-    }
-
-    Radian *getFacing()
-    {
-        return &mFacing;
-    }
-
-    Real getWalkSpeed()
-    {
-        return this->_walk_speed;
-    }
-
-    void nextFrame(const FrameEvent& event)
-    {
-        this->_anim_state->addTime(event.timeSinceLastFrame * this->_anim_speed);
-    }
+		if (mWalking)
+		{
+            mTranslateVector.z =  sin(mFacing.valueRadians())* mWalking;
+	        mTranslateVector.x = -cos(mFacing.valueRadians())* mWalking;
+			mAnimState= mAnimStates[WALK];
+			mAnimState->addTime(event.timeSinceLastFrame * mWalking);
+		}
+		else 
+		{
+			mTranslateVector = Vector3::ZERO;
+			mAnimState= mAnimStates[IDLE];
+			mAnimState->addTime(event.timeSinceLastFrame * PLAYER_ANIM_SPEED);
+		}
+        mAnimState->setEnabled(true);
+		mIdleTime += event.timeSinceLastFrame;
+		if (mIdleTime > 10.0)
+		{ 
+			Sound::getSingelton().PlaySample(SAMPLE_PLAYER_IDLE); 
+			mIdleTime = -120;
+		}
+	}
 };
-
-extern Player* player;
-
 
 #endif

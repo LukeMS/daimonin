@@ -31,41 +31,13 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include <OgreException.h>
 
 #include "player.h"
-#include "xyz.h"
 
 using namespace Ogre;
 
 
 class Event: public FrameListener, public KeyListener, public MouseMotionListener, public MouseListener
 {
-  private:
-	int mSceneDetailIndex;
-    Real mMoveSpeed;
-    Degree mRotateSpeed;
-    Overlay *mDebugOverlay;
-	Overlay *mMouseCursor; 
-    EventProcessor* mEventProcessor;
-    InputReader* mInputDevice;
-    Camera* mCamera;
-    MouseMotionListener *mMouseMotionListener;
-	MouseListener *mMouseListener;
-    Vector3 mTranslateVector;
-    RenderWindow* mWindow;
-    int mSreenHeight, mSreenWidth;
-    Real mMouseX, mMouseY;
-	bool mStatsOn;
-    bool mUseBufferedInputKeys, mUseBufferedInputMouse, mInputTypeSwitchingOn;
-	unsigned int mNumScreenShots;
-    float mMoveScale;
-    Degree mRotScale;
-    // just to stop toggles flipping too fast
-    Real mTimeUntilNextToggle ;
-    Radian mRot;
-    TextureFilterOptions mFiltering;
-    int mAniso;
-
   public:
-
     SceneNode *World;
 
 	void setResolution(int SreenWidth, int SreenHeight)
@@ -79,9 +51,27 @@ class Event: public FrameListener, public KeyListener, public MouseMotionListene
 		MouseListener *mMListener, bool useBufferedInputKeys = false, bool useBufferedInputMouse = true);
     ~Event();
 
-    void showDebugOverlay(bool show);
-    bool processUnbufferedKeyInput(const FrameEvent& evt);
-
+  private:
+	int mSceneDetailIndex;
+    Real mMoveSpeed;
+    Real mMoveScale;
+    Degree mRotateSpeed;
+    Degree mRotScale;
+    Overlay *mDebugOverlay;
+	Overlay *mMouseCursor; 
+    EventProcessor* mEventProcessor;
+    InputReader* mInputDevice;
+    MouseMotionListener *mMouseMotionListener;
+	MouseListener *mMouseListener;
+    Vector3 mTranslateVector;
+    RenderWindow* mWindow;
+    Camera* mCamera;
+    int mSreenHeight, mSreenWidth;
+    Real mMouseX, mMouseY;
+    Real mTimeUntilNextToggle; // just to stop toggles flipping too fast
+    TextureFilterOptions mFiltering;
+    int mAniso;
+    bool mQuitGame;    
 
     ///////////////////////////////////////////////////////////////////////// 
     // Frame Events.
@@ -92,10 +82,10 @@ class Event: public FrameListener, public KeyListener, public MouseMotionListene
     ///////////////////////////////////////////////////////////////////////// 
     // Key Events.
 	/////////////////////////////////////////////////////////////////////////
-	void switchKeyMode();
-	void keyClicked(KeyEvent* e);
-	void keyPressed (KeyEvent* e) {}
-	void keyReleased(KeyEvent* e) {}
+	void keyClicked (KeyEvent *e);
+	void keyPressed (KeyEvent *e);
+	void keyReleased(KeyEvent *e);
+	void keyEventDialog(KeyEvent *e);
 
     ///////////////////////////////////////////////////////////////////////// 
     // Mouse Events.

@@ -28,10 +28,14 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "option.h"
 #include "zconf.h"
 #include "zlib.h"
-#include "xyz.h"
+#include "define.h"
+#include "option.h"
+#include "textinput.h"
 #include "serverfile.h"
 
 using namespace std;
+
+const char MAX_LEN_LOGIN_NAME = 15;
 
 // ========================================================================
 // Compare server and client version number.
@@ -245,23 +249,24 @@ void Network::PreParseInfoStat(char *cmd)
             PasswordAlreadyAsked = 0;
         }
 */
+		TextInput::getSingleton().stop();
         Option::getSingelton().GameStatus = GAME_STATUS_NAME;
+		TextInput::getSingleton().start(MAX_LEN_LOGIN_NAME, false, false); // every start() needs a stop()!
     }
     if (strstr(cmd, "What is your password?"))
     {
+		TextInput::getSingleton().stop();
         Option::getSingelton().GameStatus = GAME_STATUS_PSWD;
-        mPasswordAlreadyAsked = 1;
+		TextInput::getSingleton().start(MAX_LEN_LOGIN_NAME); // every start() needs a stop()!
+		mPasswordAlreadyAsked = 1;
     }
     if (strstr(cmd, "Please type your password again."))
     {
+		TextInput::getSingleton().stop();
         Option::getSingelton().GameStatus = GAME_STATUS_VERIFYPSWD;
+		TextInput::getSingleton().start(MAX_LEN_LOGIN_NAME); // every start() needs a stop()!
         mPasswordAlreadyAsked = 2;
     }
-/*
-    if (Option::getSingelton().GameStatus >= GAME_STATUS_NAME 
-	 && Option::getSingelton().GameStatus <= GAME_STATUS_VERIFYPSWD)
-        open_input_mode(12);
-*/
 }
 
 // ========================================================================

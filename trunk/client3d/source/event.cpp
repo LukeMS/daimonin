@@ -26,6 +26,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "option.h"
 #include "logfile.h"
 #include "textwindow.h"
+#include "textinput.h"
 #include "network.h"
 
 using namespace Ogre;
@@ -36,16 +37,16 @@ CTextwindow *ChatWin=0, *TextWin=0;
 // Constructor.
 //=================================================================================================
 Event::Event(RenderWindow* win, Camera* cam, MouseMotionListener *mMMotionListener, 
-		MouseListener *mMListener, bool useBufferedInputKeys, bool useBufferedInputMouse)
+		MouseListener *mMListener, bool useBufferedInputKeys, bool)
 {
     /////////////////////////////////////////////////////////////////////////////////////////
 	// Create all Overlays.
 	/////////////////////////////////////////////////////////////////////////////////////////
     mDebugOverlay = OverlayManager::getSingleton().getByName("Core/DebugOverlay");
-    showDebugOverlay(true);
+    mDebugOverlay->show();
     mMouseCursor  = OverlayManager::getSingleton().getByName("CursorOverlay");    
-    mMouseX = mMouseY =0;
 	mMouseCursor->show();
+    mMouseX = mMouseY =0;
     Dialog::getSingelton().Init();
     TextWin = new CTextwindow("Message Window", -280, 300);
     ChatWin = new CTextwindow("Chat Window"   , -280, 300);
@@ -61,48 +62,39 @@ Event::Event(RenderWindow* win, Camera* cam, MouseMotionListener *mMMotionListen
     ChatWin->Print(" Whats this, a toaster?  ", ColourValue::White);
     ChatWin->Print(" Sorry, you need at least", ColourValue::White);
     ChatWin->Print(" 4.5 more GHz.       ", ColourValue::White);
-	TextWin->Print("Press 'L' for localhost login");
-	TextWin->Print("Page Up/Down for Camera view.");
+	TextWin->Print("Press:");
+	TextWin->Print("  L            -> Localhost login");
+	TextWin->Print("  C            -> Camera detail");
+	TextWin->Print("  F            -> Filtering");
+	TextWin->Print("  Page Up/Down  -> Camera view.");
+	TextWin->Print("  Print          -> Screenshot.");
 	TextWin->Print("");
 	TextWin->Print("Keep coding...", ColourValue::White);
 	TextWin->Print("<polyveg>", ColourValue::White);
 
-
-
 	/////////////////////////////////////////////////////////////////////////////////////////
-	// .
+	// Create unbuffered key & mouse input.
 	/////////////////////////////////////////////////////////////////////////////////////////
-    mUseBufferedInputKeys  = useBufferedInputKeys;
-	mUseBufferedInputMouse = useBufferedInputMouse;
-	mInputTypeSwitchingOn  = mUseBufferedInputKeys || mUseBufferedInputMouse;
-    mRotateSpeed = 36;
-    mMoveSpeed   = 100;
-	if (mInputTypeSwitchingOn)
-	{
-        mEventProcessor = new EventProcessor();
-		mEventProcessor->initialise(win);
-		mEventProcessor->startProcessingEvents();
-		mEventProcessor->addKeyListener(this);
-		mEventProcessor->addMouseMotionListener(this);
-		mEventProcessor->addMouseListener(this);			
-		mInputDevice =   mEventProcessor->getInputReader();
-	}
-    else
-    {
-        mInputDevice = PlatformManager::getSingleton().createInputReader();
-        mInputDevice->initialise(win,true, true);
-
-    }
+    mEventProcessor = new EventProcessor();
+	mEventProcessor->initialise(win);
+	mEventProcessor->startProcessingEvents();
+	mEventProcessor->addKeyListener(this);
+	mEventProcessor->addMouseMotionListener(this);
+	mEventProcessor->addMouseListener(this);			
+	mInputDevice =   mEventProcessor->getInputReader();
     mMouseMotionListener = mMMotionListener;
     mMouseListener = mMListener;
+
+
+	mQuitGame = false;
     mCamera = cam;
     mWindow = win;
-    mStatsOn = true;
-	mNumScreenShots = 0;
 	mTimeUntilNextToggle = 0;
     mSceneDetailIndex = 0;
     mMoveScale = 0.0f;
     mRotScale = 0.0f;
+    mRotateSpeed = 36;
+    mMoveSpeed   = 100;
     mTranslateVector = Vector3::ZERO;
     mAniso = 1;
     mFiltering = TFO_BILINEAR;
@@ -113,178 +105,23 @@ Event::Event(RenderWindow* win, Camera* cam, MouseMotionListener *mMMotionListen
 //=================================================================================================
 Event::~Event()
 {
-	if (mInputTypeSwitchingOn) { delete mEventProcessor; }
-    else               { PlatformManager::getSingleton().destroyInputReader( mInputDevice ); }
-    if (TextWin) delete TextWin;
-    if (ChatWin) delete ChatWin;
+	if (mEventProcessor) { delete mEventProcessor; }
+    if (TextWin)         { delete TextWin;         }
+    if (ChatWin)         { delete ChatWin;         }
 }
 
-
-bool Event::processUnbufferedKeyInput(const FrameEvent& evt)
-{
-    if (player->getState() != IDLE 
-	&& !mInputDevice->isKeyDown(KC_UP) && !mInputDevice->isKeyDown(KC_DOWN))
-        player->changeState(IDLE);
-
-    if (mInputDevice->isKeyDown(KC_UP))
-    {
-        player->changeState(WALK_FORWARD);
-        mTranslateVector.z =  sin(player->getFacing()->valueRadians());
-        mTranslateVector.x = -cos(player->getFacing()->valueRadians());
-    }
-
-
-    if (mInputDevice->isKeyDown(KC_DOWN))
-    {
-        player->changeState(WALK_BACKWARD);
-        mTranslateVector.z = -sin(player->getFacing()->valueRadians());
-        mTranslateVector.x =  cos(player->getFacing()->valueRadians());
-    }
-
-    if (mInputDevice->isKeyDown(KC_RIGHT))
-    {
-        player->setFacing(-player->getTurnSpeed());
-	}
-
-    if (mInputDevice->isKeyDown(KC_LEFT))
-    {
-        player->setFacing(player->getTurnSpeed());
-    }
-
-    if (mInputDevice->isKeyDown(KC_PGUP))
-    {
-        mRot-= Degree(0.13);
-        mCamera->pitch(mRot);
-    }
-
-
-    if (mInputDevice->isKeyDown(KC_PGDOWN))
-    {
-        mRot+= Degree(0.13);
-        mCamera->pitch(mRot);
-	}
-
-    if (mInputDevice->isKeyDown(KC_L) && mTimeUntilNextToggle <= 0)
-    {
-		mTimeUntilNextToggle = 0.5;
-        Option::getSingelton().toggleLogin();
-	    if (Option::getSingelton().getLoginActive())
-		    Dialog::getSingelton().visible(true);
-		else 
-            Dialog::getSingelton().visible(false);
-		}
-
-
-    if( mInputDevice->isKeyDown( KC_ESCAPE) )
-    {        
-        return false;
-    }
-
-    if (mInputTypeSwitchingOn && mInputDevice->isKeyDown(KC_K) && mTimeUntilNextToggle <= 0)
-    {
-			// must be going from immediate keyboard to buffered keyboard
-			switchKeyMode();
-        mTimeUntilNextToggle = 1;
-    }
-    if (mInputDevice->isKeyDown(KC_F) && mTimeUntilNextToggle <= 0)
-    {
-        mStatsOn = !mStatsOn;
-        showDebugOverlay(mStatsOn);
-
-        mTimeUntilNextToggle = 1;
-    }
-    if (mInputDevice->isKeyDown(KC_T) && mTimeUntilNextToggle <= 0)
-    {
-        switch(mFiltering)
-        {
-        case TFO_BILINEAR:
-        mFiltering = TFO_TRILINEAR;
-        mAniso = 1;
-        break;
-        case TFO_TRILINEAR:
-        mFiltering = TFO_ANISOTROPIC;
-        mAniso = 8;
-        break;
-        case TFO_ANISOTROPIC:
-        mFiltering = TFO_BILINEAR;
-        mAniso = 1;
-        break;
-        default:
-        break;
-        }
-        MaterialManager::getSingleton().setDefaultTextureFiltering(mFiltering);
-        MaterialManager::getSingleton().setDefaultAnisotropy(mAniso);
-
-        showDebugOverlay(mStatsOn);
-
-        mTimeUntilNextToggle = 1;
-    }
-
-    if (mInputDevice->isKeyDown(KC_SYSRQ) && mTimeUntilNextToggle <= 0)
-    {
-		char tmp[20];
-		sprintf(tmp, "screenshot_%d.png", ++mNumScreenShots);
-        mWindow->writeContentsToFile(tmp);
-        mTimeUntilNextToggle = 0.5;
-		mWindow->setDebugText(String("Wrote ") + tmp);
-    }
-		
-	if (mInputDevice->isKeyDown(KC_R) && mTimeUntilNextToggle <=0)
-	{
-		mSceneDetailIndex = (mSceneDetailIndex+1)%3 ;
-		switch(mSceneDetailIndex)
-		{
-			case 0 : mCamera->setDetailLevel(SDL_SOLID) ;     break ;
-			case 1 : mCamera->setDetailLevel(SDL_WIREFRAME) ; break ;
-			case 2 : mCamera->setDetailLevel(SDL_POINTS) ;    break ;
-		}
-		mTimeUntilNextToggle = 0.5;
-	}
-
-    static bool displayCameraDetails = false;
-    if (mInputDevice->isKeyDown(KC_P) && mTimeUntilNextToggle <= 0)
-    {
-        displayCameraDetails = !displayCameraDetails;
-        mTimeUntilNextToggle = 0.5;
-        if (!displayCameraDetails)
-        mWindow->setDebugText("");
-    }
-
-    if (displayCameraDetails)
-    {
-        // Print camera details
-        mWindow->setDebugText("P: " + StringConverter::toString(mCamera->getDerivedPosition()) + " " + 
-        "O: " + StringConverter::toString(mCamera->getDerivedOrientation()));
-    }
-
-    // Return true to continue rendering
-    return true;
-}
-
-
-void Event::showDebugOverlay(bool show)
-{
-    if (mDebugOverlay)
-    {
-        if (show) { mDebugOverlay->show(); }
-        else      { mDebugOverlay->hide(); }
-    }
-}
-
-
+//=================================================================================================
+// Frame Start event.
+//=================================================================================================
 bool Event::frameStarted(const FrameEvent& evt)
 {
     if(mWindow->isClosed()) { return false; }
 
-    player->nextFrame(evt);
-    World->translate(mTranslateVector);
-
-    if (!mInputTypeSwitchingOn)
-   	{
-        mInputDevice->capture();
-    }
+    Player::getSingelton().updateAnim(evt);
+    World->translate(Player::getSingelton().getPos());
 
 
+/*
 	if (!mUseBufferedInputKeys)
 	{
 		// one of the input modes is immediate, so setup what is needed for immediate mouse/key movement
@@ -304,29 +141,19 @@ bool Event::frameStarted(const FrameEvent& evt)
 			// Take about 10 seconds for full rotation
 			mRotScale = mRotateSpeed * evt.timeSinceLastFrame;
 		}
-		mRot = 0;
 	    mTranslateVector = Vector3::ZERO;
+        if (processUnbufferedKeyInput(evt) == false) { return false; }
 	}
+*/
+	if (Option::getSingelton().GameStatus > GAME_STATUS_WAITLOOP) { Network::getSingelton().Update(); }
 
-    if (mUseBufferedInputKeys)
-    {
-        // no need to do any processing here, it is handled by event processor and 
-			// you get the results as KeyEvents
-    }
-    else
-    {
-        if (processUnbufferedKeyInput(evt) == false)
-		{
-			return false;
-		}
-    }
-	if (Option::getSingelton().getLoginActive()) { Network::getSingelton().Update(); }
+    if (mQuitGame) { return false; }
 	return true;
 }
 
-/////////////////////////////////////////////////////////////////////////////////////////
-//
-/////////////////////////////////////////////////////////////////////////////////////////
+//=================================================================================================
+// Frame End event.
+//=================================================================================================
 bool Event::frameEnded(const FrameEvent& evt)
 {
     static String currFps  = "Current FPS: ";
@@ -358,6 +185,12 @@ bool Event::frameEnded(const FrameEvent& evt)
         guiDbg->setCaption(mWindow->getDebugText());
 		TextWin->Update();
 		ChatWin->Update();
+
+		///////////////////////////////////////////////////////////////////////// 
+	    // Print camera details
+	    /////////////////////////////////////////////////////////////////////////
+		mWindow->setDebugText("Camera: P: " + StringConverter::toString(mCamera->getDerivedPosition()) 
+			+ " O: " + StringConverter::toString(mCamera->getDerivedOrientation()));
 	}
 	catch(...)
 	{
@@ -366,27 +199,155 @@ bool Event::frameEnded(const FrameEvent& evt)
 	return true;
 }
 
-///////////////////////////////////////////////////////////////////////// 
-// Key Events.
-////////////////////////////////////////////////////////////////////////
-void Event::switchKeyMode() 
+//=================================================================================================
+// Buffered Key Events - Dialog.
+//=================================================================================================
+void Event::keyEventDialog(KeyEvent *e)
 {
-	mUseBufferedInputKeys = !mUseBufferedInputKeys;
-	mInputDevice->setBufferedInput(mUseBufferedInputKeys, mUseBufferedInputMouse);
+	switch (e->getKey())
+	{
+		case KC_RETURN:
+		case KC_TAB:
+			TextInput::getSingleton().finished();
+			break;
+		case KC_DELETE:
+		case KC_BACK:
+			TextInput::getSingleton().delLastChar();
+			break;
+		case KC_ESCAPE:
+			TextInput::getSingleton().canceled();
+			break;
+		default:
+			if (e->getKeyChar()) 
+				TextInput::getSingleton().addChar(e->getKeyChar());
+			break;
+	}
+}
+
+//=================================================================================================
+// Buffered Key Events.
+//=================================================================================================
+void Event::keyPressed(KeyEvent *e) 
+{
+	if (Dialog::getSingelton().isVisible()) 
+	{
+		keyEventDialog(e);
+		e->consume();
+		return;
+	}
+	switch (e->getKey())
+	{
+		///////////////////////////////////////////////////////////////////////// 
+		// Player Movemment.
+		/////////////////////////////////////////////////////////////////////////
+		case KC_UP:
+	        Player::getSingelton().walking( PLAYER_WALK_SPEED);
+			break;
+		case KC_DOWN:
+	        Player::getSingelton().walking(-PLAYER_WALK_SPEED);
+			break;
+		case KC_RIGHT:
+	        Player::getSingelton().turning(-PLAYER_TURN_SPEED);
+			break;
+		case KC_LEFT:
+	        Player::getSingelton().turning( PLAYER_TURN_SPEED);
+			break;
+
+		///////////////////////////////////////////////////////////////////////// 
+		// Engine settings.
+		/////////////////////////////////////////////////////////////////////////
+		case KC_C:
+			mSceneDetailIndex = (mSceneDetailIndex+1)%3 ;
+			switch(mSceneDetailIndex)
+			{
+				case 0 : mCamera->setDetailLevel(SDL_SOLID) ;     break ;
+				case 1 : mCamera->setDetailLevel(SDL_WIREFRAME) ; break ;
+				case 2 : mCamera->setDetailLevel(SDL_POINTS) ;    break ;
+			}
+			break;
+		case KC_F:
+			switch(mFiltering)
+			{
+				case TFO_BILINEAR:
+					mFiltering = TFO_TRILINEAR;
+					mAniso = 1;
+					break;
+		       case TFO_TRILINEAR:
+					mFiltering = TFO_ANISOTROPIC;
+					mAniso = 8;
+					break;
+				case TFO_ANISOTROPIC:
+					mFiltering = TFO_BILINEAR;
+					mAniso = 1;
+					break;
+				default:
+					break;
+			}
+			MaterialManager::getSingleton().setDefaultTextureFiltering(mFiltering);
+			MaterialManager::getSingleton().setDefaultAnisotropy(mAniso);
+			break;
+		case KC_L:
+			Option::getSingelton().GameStatus = GAME_STATUS_STARTCONNECT;
+			break;
+		case KC_PGUP:
+		    mCamera->pitch(Degree(-0.13));
+			break;
+		case KC_PGDOWN:
+		    mCamera->pitch(Degree(+0.13));
+			break;
+
+		///////////////////////////////////////////////////////////////////////// 
+		// Screenshot.
+		/////////////////////////////////////////////////////////////////////////
+		case KC_SYSRQ:
+		    {
+				static int mNumScreenShots=0;
+				char tmp[20];
+				sprintf(tmp, "screenshot_%d.png", ++mNumScreenShots);
+		        mWindow->writeContentsToFile(tmp);
+		        mTimeUntilNextToggle = 0.5;
+				mWindow->setDebugText(String("Wrote ") + tmp);
+			}
+			break;
+
+		///////////////////////////////////////////////////////////////////////// 
+		// Exit game.
+		/////////////////////////////////////////////////////////////////////////
+		case KC_ESCAPE:
+			mQuitGame = true;
+			break;
+		default:
+			break;
+	}
+//	e->consume();
 }
 
 void Event::keyClicked(KeyEvent* e) 
 {
-	if (e->getKeyChar() == 'k')
+}
+
+void Event::keyReleased(KeyEvent* e) 
+{
+	switch (e->getKey())
 	{
-		switchKeyMode();
+		///////////////////////////////////////////////////////////////////////// 
+		// Player Movemment.
+		/////////////////////////////////////////////////////////////////////////
+		case KC_UP:
+	 	case KC_DOWN:
+	        Player::getSingelton().walking(0);
+			break;
+		case KC_RIGHT:
+		case KC_LEFT:
+	        Player::getSingelton().turning(0);
+			break;
 	}
 }
 
 
-///////////////////////////////////////////////////////////////////////// 
-// Mouse Events.
-/////////////////////////////////////////////////////////////////////////
+//=================================================================================================
+// Buffered Mouse Events.
+//=================================================================================================
 void Event::mouseMoved (MouseEvent *e)
 {
 	mMouseX += e->getRelX();
@@ -397,7 +358,6 @@ void Event::mouseMoved (MouseEvent *e)
 	if (mMouseY >0.985) mMouseY =0.985;
 	mMouseCursor->setScroll(mMouseX*2 , -mMouseY*2);
 	e->consume();
-
 }
 
 void Event::mouseDragged(MouseEvent *e)

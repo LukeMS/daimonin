@@ -24,11 +24,9 @@ http://www.gnu.org/copyleft/lesser.txt.
 #ifndef CLIENT_H
 #define CLIENT_H
 
-
 #include <Ogre.h>
 #include <OgreConfigFile.h>
 #include <OgreSceneManager.h>
-
 #include "event.h"
 
 using namespace Ogre;

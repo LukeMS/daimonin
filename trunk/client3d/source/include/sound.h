@@ -20,24 +20,27 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/copyleft/lesser.txt.
 -----------------------------------------------------------------------------
 */
-#ifndef DEFINES_H
-#define DEFINES_H
 
-#include "logfile.h"
+#ifndef SOUND_H
+#define SOUND_H
 
-const char FILE_CLIENT_SPELLS[]   = "./srv_files/client_spells";
-const char FILE_CLIENT_SKILLS[]   = "./srv_files/client_skills";
-const char FILE_CLIENT_SETTINGS[] = "./srv_files/client_settings";
-const char FILE_CLIENT_BMAPS[]    = "./srv_files/client_bmap";
-const char FILE_CLIENT_ANIMS[]    = "./srv_files/client_anims";
+enum SampleName
+{
+	SAMPLE_BUTTON_CLICK,
+	SAMPLE_PLAYER_IDLE,
+	SAMPLE_SUM
+};
 
-const char FILE_BMAPS_TMP[]       = "./srv_files/bmaps.tmp";
-const char FILE_ANIMS_TMP[]       = "./srv_files/anims.tmp";
-const char FILE_DAIMONIN_P0[]     = "./daimonin.p0";
-const char FILE_BMAPS_P0[]        = "./bmaps.p0";
-const char ARCHDEF_FILE[]         = "./archdef.dat";
-
-
-enum { M_MOVED, M_PRESSED, M_CLICKED, M_DRAGGED, M_ENTERED, M_EXITED, M_RELEASED };
+class Sound
+{
+  public:
+     Sound() {;}
+    ~Sound();
+    static Sound &getSingelton()  { static Sound singelton; return singelton; }
+    bool Init();
+	void PlaySample(unsigned int index);
+  private:
+    Sound(const Sound&); // disable copy-constructor.
+};
 
 #endif

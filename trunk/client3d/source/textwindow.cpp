@@ -23,6 +23,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 
 #include "textwindow.h"
 #include "logfile.h"
+#include "sound.h"
 
 //=================================================================================================
 // Init all static Elemnts.
@@ -205,8 +206,18 @@ bool CTextwindow::MouseAction(int action, Real xpos, Real ypos, Real yRelative)
     if (!mContainerFrame-> contains(xpos, ypos) && !mDragging)   { return true;} 
 
     // Check all buttons.
-	if (mElementButUp  ->contains(xpos, ypos)) { OpenTextWin (); return true; }
-    if (mElementButDown->contains(xpos, ypos)) { CloseTextWin(); return true; }
+	if (mElementButUp  ->contains(xpos, ypos))
+	{ 
+		Sound::getSingelton().PlaySample(SAMPLE_BUTTON_CLICK);
+		OpenTextWin(); 
+		return true; 
+	}
+    if (mElementButDown->contains(xpos, ypos))
+	{
+		Sound::getSingelton().PlaySample(SAMPLE_BUTTON_CLICK);
+		CloseTextWin(); 
+		return true;
+	}
 
     // Check for resize.
 	if ((mElementTitle  ->contains(xpos, ypos) && action == M_DRAGGED) || mDragging) 
