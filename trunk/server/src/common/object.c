@@ -2073,6 +2073,9 @@ void remove_ob(object *op) {
      */
     if(op->env!=NULL)
 	{
+		/* iam not sure this works like it should with magic containers!
+		 * we should test here sum_weight(op->env) instead! MT 06.02.04
+		 */
 		if(op->nrof)
 			sub_weight(op->env, op->weight*op->nrof);
 		else
@@ -2110,16 +2113,13 @@ void remove_ob(object *op) {
     }
 
     /* If we get here, we are removing it from a map */
-    if (op->map == NULL)
-		return;
-
     if (!op->map)
-		LOG(llevBug,"BUG: remove_ob called when object was on map but appears to not be within valid coordinates? %s (%d,%d)\n",
-															    op->map->path, op->x, op->y);
+	{
+		LOG(llevBug, "BUG: remove_ob(): object %s (%s) not on map or env.\n", query_short_name(op), op->arch?(op->arch->name?op->arch->name:"<nor arch name!>"):"<no arch!>");
+		return;
+	}
  
-    /* Re did the following section of code - it looks like it had
-     * lots of logic for things we no longer care about
-     */
+	/* lets first unlink this object from map*/
 
 	/* if this is the base layer object, we assign the next object to be it if it is from same layer type */
 	msp=GET_MAP_SPACE_PTR(op->map,op->x,op->y);
@@ -2164,8 +2164,8 @@ void remove_ob(object *op) {
 	if (op->map->in_memory == MAP_SAVING)
 		return;
 
-	/* Now we adjust the ->player map variable and the local
-	 * map player chain.
+	/* some player only stuff.
+	 * we adjust the ->player map variable and the local map player chain.
 	 */
 	if(op->type == PLAYER)
 	{

@@ -5038,6 +5038,23 @@ last_eat 1
 level 1
 exp 0
 end
+Object gravestone
+face gravestone.101
+type 38
+editor_folder intern/intern
+layer 3
+identified 1
+item_quality 100
+item_condition 100
+food 30
+is_used_up 1
+speed 0.01
+no_pick 1
+material 64
+weight 200000
+value 40
+nrof 1
+end
 Object random_chest_wood
 name treasure chest
 face chest_wood_s.111
@@ -11593,23 +11610,6 @@ generator 1
 speed -0.003
 speed_left -1.0
 blocksview 0
-end
-Object gravestone
-face gravestone.101
-type 38
-editor_folder misc/misc
-layer 3
-identified 1
-item_quality 100
-item_condition 100
-food 30
-is_used_up 1
-speed 0.01
-no_pick 1
-material 64
-weight 200000
-value 40
-nrof 1
 end
 Object sign
 name sign ('a'pply to read)

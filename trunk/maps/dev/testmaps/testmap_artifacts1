@@ -180,17 +180,7 @@ arch floor_ostone1
 x 1
 y 4
 end
-arch holding_min
-identified 1
-x 1
-y 4
-end
 arch floor_ostone1
-x 1
-y 5
-end
-arch holding_med
-identified 1
 x 1
 y 5
 end
@@ -198,26 +188,11 @@ arch floor_ostone1
 x 1
 y 6
 end
-arch holding
-identified 1
-x 1
-y 6
-end
 arch floor_ostone1
 x 1
 y 7
 end
-arch holding_great
-identified 1
-x 1
-y 7
-end
 arch floor_ostone1
-x 1
-y 8
-end
-arch holding_weight
-identified 1
 x 1
 y 8
 end
@@ -233,23 +208,11 @@ arch floor_ostone1
 x 1
 y 11
 end
-arch crystal_light4
-x 1
-y 11
-end
 arch floor_ostone1
 x 1
 y 12
 end
-arch nug_bronze_small
-x 1
-y 12
-end
 arch floor_ostone1
-x 1
-y 13
-end
-arch zircon_small
 x 1
 y 13
 end
@@ -402,952 +365,1081 @@ x 3
 end
 arch floor_ostone1
 x 3
-y 1
-end
-arch floor_ostone1
-x 3
-y 2
-end
-arch floor_ostone1
-x 3
-y 3
-end
-arch floor_ostone1
-x 3
-y 4
-end
-arch floor_ostone1
-x 3
-y 5
-end
-arch floor_ostone1
-x 3
-y 6
-end
-arch floor_ostone1
-x 3
-y 7
-end
-arch floor_ostone1
-x 3
-y 8
-end
-arch floor_ostone1
-x 3
-y 9
-end
-arch floor_ostone1
-x 3
-y 10
-end
-arch floor_ostone1
-x 3
-y 11
-end
-arch floor_ostone1
-x 3
-y 12
-end
-arch floor_ostone1
-x 3
-y 13
-end
-arch floor_ostone1
-x 3
-y 14
-end
-arch floor_ostone1
-x 3
-y 15
-end
-arch floor_ostone1
-x 3
-y 16
-end
-arch floor_ostone1
-x 3
-y 17
-end
-arch floor_ostone1
-x 3
-y 18
-end
-arch floor_ostone1
-x 3
-y 19
-end
-arch floor_ostone1
-x 3
-y 20
-end
-arch floor_ostone1
-x 3
-y 21
-end
-arch floor_ostone1
-x 3
-y 22
-end
-arch floor_ostone1
-x 3
-y 23
-end
-arch floor_ostone1
-x 4
-end
-arch wall_stone1_1
-x 4
-end
-arch floor_ostone1
-x 4
 y 1
 end
 arch cloak_woe1
-identified 1
-x 4
+x 3
 y 1
 end
 arch floor_ostone1
-x 4
+x 3
 y 2
 end
 arch floor_ostone1
-x 4
+x 3
 y 3
 end
 arch floor_ostone1
-x 4
-y 4
-end
-arch floor_ostone1
-x 4
-y 5
-end
-arch floor_ostone1
-x 4
-y 6
-end
-arch floor_ostone1
-x 4
-y 7
-end
-arch floor_ostone1
-x 4
-y 8
-end
-arch floor_ostone1
-x 4
-y 9
-end
-arch floor_ostone1
-x 4
-y 10
-end
-arch floor_ostone1
-x 4
-y 11
-end
-arch floor_ostone1
-x 4
-y 12
-end
-arch boots_granite
-identified 1
-x 4
-y 12
-end
-arch floor_ostone1
-x 4
-y 13
-end
-arch floor_ostone1
-x 4
-y 14
-end
-arch floor_ostone1
-x 4
-y 15
-end
-arch floor_ostone1
-x 4
-y 16
-end
-arch floor_ostone1
-x 4
-y 17
-end
-arch floor_ostone1
-x 4
-y 18
-end
-arch floor_ostone1
-x 4
-y 19
-end
-arch floor_ostone1
-x 4
-y 20
-end
-arch range_accuracy
-identified 1
-x 4
-y 20
-end
-arch floor_ostone1
-x 4
-y 21
-end
-arch missile_inaccuracy
-identified 1
-x 4
-y 21
-end
-arch floor_ostone1
-x 4
-y 22
-end
-arch floor_ostone1
-x 4
-y 23
-end
-arch floor_ostone1
-x 5
-end
-arch wall_stone1_1
-x 5
-end
-arch floor_ostone1
-x 5
-y 1
-end
-arch cloak_woe2
-identified 1
-x 5
-y 1
-end
-arch floor_ostone1
-x 5
-y 2
-end
-arch floor_ostone1
-x 5
-y 3
-end
-arch floor_ostone1
-x 5
+x 3
 y 4
 end
 arch shield_mass
-identified 1
-x 5
+x 3
 y 4
 end
 arch floor_ostone1
-x 5
+x 3
 y 5
 end
 arch floor_ostone1
-x 5
+x 3
 y 6
+end
+arch floor_ostone1
+x 3
+y 7
+end
+arch girdle_min_str
+x 3
+y 7
+end
+arch floor_ostone1
+x 3
+y 8
+end
+arch floor_ostone1
+x 3
+y 9
+end
+arch floor_ostone1
+x 3
+y 10
+end
+arch gauntlet_min_str
+x 3
+y 10
+end
+arch floor_ostone1
+x 3
+y 11
+end
+arch floor_ostone1
+x 3
+y 12
+end
+arch floor_ostone1
+x 3
+y 13
+end
+arch helm_infravision
+x 3
+y 13
+end
+arch floor_ostone1
+x 3
+y 14
+end
+arch floor_ostone1
+x 3
+y 15
+end
+arch floor_ostone1
+x 3
+y 16
 end
 arch bracers_dex
-identified 1
-x 5
-y 6
-end
-arch floor_ostone1
-x 5
-y 7
-end
-arch floor_ostone1
-x 5
-y 8
-end
-arch floor_ostone1
-x 5
-y 9
-end
-arch floor_ostone1
-x 5
-y 10
-end
-arch floor_ostone1
-x 5
-y 11
-end
-arch floor_ostone1
-x 5
-y 12
-end
-arch boots_less_fire
-identified 1
-x 5
-y 12
-end
-arch floor_ostone1
-x 5
-y 13
-end
-arch floor_ostone1
-x 5
-y 14
-end
-arch floor_ostone1
-x 5
-y 15
-end
-arch floor_ostone1
-x 5
+x 3
 y 16
 end
 arch floor_ostone1
-x 5
+x 3
 y 17
 end
 arch floor_ostone1
-x 5
+x 3
 y 18
 end
 arch floor_ostone1
-x 5
+x 3
+y 19
+end
+arch boots_granite
+x 3
 y 19
 end
 arch floor_ostone1
-x 5
+x 3
 y 20
 end
 arch floor_ostone1
-x 5
-y 21
-end
-arch missile_accuracy
-identified 1
-x 5
+x 3
 y 21
 end
 arch floor_ostone1
-x 5
+x 3
+y 22
+end
+arch armour_mass
+x 3
 y 22
 end
 arch floor_ostone1
-x 5
+x 3
 y 23
 end
 arch floor_ostone1
-x 6
+x 4
 end
 arch wall_stone1_1
-x 6
+x 4
 end
 arch floor_ostone1
-x 6
+x 4
+y 1
+end
+arch cloak_less_fire
+x 4
 y 1
 end
 arch floor_ostone1
-x 6
+x 4
 y 2
 end
 arch floor_ostone1
-x 6
+x 4
 y 3
 end
 arch floor_ostone1
-x 6
+x 4
+y 4
+end
+arch shield_less_fire
+x 4
 y 4
 end
 arch floor_ostone1
-x 6
+x 4
 y 5
 end
 arch floor_ostone1
-x 6
+x 4
 y 6
+end
+arch floor_ostone1
+x 4
+y 7
+end
+arch girdle_min_dex
+x 4
+y 7
+end
+arch floor_ostone1
+x 4
+y 8
+end
+arch floor_ostone1
+x 4
+y 9
+end
+arch floor_ostone1
+x 4
+y 10
+end
+arch gauntlet_min_dex
+x 4
+y 10
+end
+arch floor_ostone1
+x 4
+y 11
+end
+arch floor_ostone1
+x 4
+y 12
+end
+arch floor_ostone1
+x 4
+y 13
+end
+arch helm_xray
+x 4
+y 13
+end
+arch floor_ostone1
+x 4
+y 14
+end
+arch floor_ostone1
+x 4
+y 15
+end
+arch floor_ostone1
+x 4
+y 16
 end
 arch bracers_str
-identified 1
-x 6
-y 6
-end
-arch floor_ostone1
-x 6
-y 7
-end
-arch floor_ostone1
-x 6
-y 8
-end
-arch floor_ostone1
-x 6
-y 9
-end
-arch floor_ostone1
-x 6
-y 10
-end
-arch floor_ostone1
-x 6
-y 11
-end
-arch floor_ostone1
-x 6
-y 12
-end
-arch boots_less_cold
-identified 1
-x 6
-y 12
-end
-arch floor_ostone1
-x 6
-y 13
-end
-arch floor_ostone1
-x 6
-y 14
-end
-arch floor_ostone1
-x 6
-y 15
-end
-arch floor_ostone1
-x 6
+x 4
 y 16
 end
 arch floor_ostone1
-x 6
+x 4
 y 17
 end
 arch floor_ostone1
-x 6
+x 4
 y 18
 end
 arch floor_ostone1
-x 6
+x 4
+y 19
+end
+arch boots_less_fire
+x 4
 y 19
 end
 arch floor_ostone1
-x 6
+x 4
 y 20
 end
 arch floor_ostone1
-x 6
-y 21
-end
-arch missile_ass_troll
-identified 1
-x 6
+x 4
 y 21
 end
 arch floor_ostone1
-x 6
+x 4
+y 22
+end
+arch armour_less_fire
+x 4
 y 22
 end
 arch floor_ostone1
-x 6
+x 4
 y 23
 end
 arch floor_ostone1
-x 7
+x 5
 end
 arch wall_stone1_1
-x 7
+x 5
 end
 arch floor_ostone1
-x 7
+x 5
+y 1
+end
+arch cloak_less_cold
+x 5
 y 1
 end
 arch floor_ostone1
-x 7
+x 5
 y 2
 end
 arch floor_ostone1
-x 7
+x 5
 y 3
 end
 arch floor_ostone1
-x 7
+x 5
+y 4
+end
+arch shield_less_cold
+x 5
 y 4
 end
 arch floor_ostone1
-x 7
+x 5
 y 5
 end
 arch floor_ostone1
-x 7
+x 5
 y 6
+end
+arch floor_ostone1
+x 5
+y 7
+end
+arch girdle_min_con
+x 5
+y 7
+end
+arch floor_ostone1
+x 5
+y 8
+end
+arch floor_ostone1
+x 5
+y 9
+end
+arch floor_ostone1
+x 5
+y 10
+end
+arch gauntlet_min_con
+x 5
+y 10
+end
+arch floor_ostone1
+x 5
+y 11
+end
+arch floor_ostone1
+x 5
+y 12
+end
+arch floor_ostone1
+x 5
+y 13
+end
+arch helm_min_str
+x 5
+y 13
+end
+arch floor_ostone1
+x 5
+y 14
+end
+arch floor_ostone1
+x 5
+y 15
+end
+arch floor_ostone1
+x 5
+y 16
 end
 arch bracers_con
-identified 1
-x 7
-y 6
-end
-arch floor_ostone1
-x 7
-y 7
-end
-arch floor_ostone1
-x 7
-y 8
-end
-arch floor_ostone1
-x 7
-y 9
-end
-arch floor_ostone1
-x 7
-y 10
-end
-arch floor_ostone1
-x 7
-y 11
-end
-arch floor_ostone1
-x 7
-y 12
-end
-arch boots_less_elec
-identified 1
-x 7
-y 12
-end
-arch floor_ostone1
-x 7
-y 13
-end
-arch floor_ostone1
-x 7
-y 14
-end
-arch floor_ostone1
-x 7
-y 15
-end
-arch floor_ostone1
-x 7
+x 5
 y 16
 end
 arch floor_ostone1
-x 7
+x 5
 y 17
 end
 arch floor_ostone1
-x 7
+x 5
 y 18
 end
 arch floor_ostone1
-x 7
+x 5
+y 19
+end
+arch boots_less_cold
+x 5
 y 19
 end
 arch floor_ostone1
-x 7
+x 5
 y 20
 end
 arch floor_ostone1
-x 7
-y 21
-end
-arch missile_slay_dragon
-identified 1
-x 7
+x 5
 y 21
 end
 arch floor_ostone1
-x 7
+x 5
+y 22
+end
+arch armour_less_cold
+x 5
 y 22
 end
 arch floor_ostone1
-x 7
+x 5
 y 23
 end
 arch floor_ostone1
-x 8
+x 6
 end
 arch wall_stone1_1
-x 8
+x 6
 end
 arch floor_ostone1
-x 8
+x 6
+y 1
+end
+arch cloak_less_elec
+x 6
 y 1
 end
 arch floor_ostone1
-x 8
+x 6
 y 2
 end
 arch floor_ostone1
-x 8
+x 6
 y 3
 end
 arch floor_ostone1
-x 8
+x 6
+y 4
+end
+arch shield_less_elec
+x 6
 y 4
 end
 arch floor_ostone1
-x 8
+x 6
 y 5
 end
 arch floor_ostone1
-x 8
+x 6
 y 6
+end
+arch floor_ostone1
+x 6
+y 7
+end
+arch girdle_min_int
+x 6
+y 7
+end
+arch floor_ostone1
+x 6
+y 8
+end
+arch floor_ostone1
+x 6
+y 9
+end
+arch floor_ostone1
+x 6
+y 10
+end
+arch gauntlet_min_int
+x 6
+y 10
+end
+arch floor_ostone1
+x 6
+y 11
+end
+arch floor_ostone1
+x 6
+y 12
+end
+arch floor_ostone1
+x 6
+y 13
+end
+arch helm_min_dex
+x 6
+y 13
+end
+arch floor_ostone1
+x 6
+y 14
+end
+arch floor_ostone1
+x 6
+y 15
+end
+arch floor_ostone1
+x 6
+y 16
 end
 arch bracers_int
-identified 1
-x 8
-y 6
-end
-arch floor_ostone1
-x 8
-y 7
-end
-arch floor_ostone1
-x 8
-y 8
-end
-arch floor_ostone1
-x 8
-y 9
-end
-arch floor_ostone1
-x 8
-y 10
-end
-arch floor_ostone1
-x 8
-y 11
-end
-arch floor_ostone1
-x 8
-y 12
-end
-arch boots_less_poison
-identified 1
-x 8
-y 12
-end
-arch floor_ostone1
-x 8
-y 13
-end
-arch floor_ostone1
-x 8
-y 14
-end
-arch floor_ostone1
-x 8
-y 15
-end
-arch floor_ostone1
-x 8
+x 6
 y 16
 end
 arch floor_ostone1
-x 8
+x 6
 y 17
 end
 arch floor_ostone1
-x 8
+x 6
 y 18
 end
 arch floor_ostone1
-x 8
+x 6
+y 19
+end
+arch boots_less_elec
+x 6
 y 19
 end
 arch floor_ostone1
-x 8
+x 6
 y 20
 end
 arch floor_ostone1
-x 8
+x 6
 y 21
 end
 arch floor_ostone1
-x 8
+x 6
+y 22
+end
+arch armour_less_elec
+x 6
 y 22
 end
 arch floor_ostone1
-x 8
+x 6
 y 23
 end
 arch floor_ostone1
-x 9
+x 7
 end
 arch wall_stone1_1
-x 9
+x 7
 end
 arch floor_ostone1
-x 9
+x 7
+y 1
+end
+arch cloak_less_poison
+x 7
 y 1
 end
 arch floor_ostone1
-x 9
+x 7
 y 2
 end
 arch floor_ostone1
-x 9
+x 7
 y 3
 end
 arch floor_ostone1
-x 9
+x 7
+y 4
+end
+arch shield_less_poison
+x 7
 y 4
 end
 arch floor_ostone1
-x 9
+x 7
 y 5
 end
 arch floor_ostone1
-x 9
-y 6
-end
-arch bracers_pow
-identified 1
-x 9
+x 7
 y 6
 end
 arch floor_ostone1
-x 9
+x 7
+y 7
+end
+arch girdle_min_pow
+x 7
 y 7
 end
 arch floor_ostone1
-x 9
+x 7
 y 8
 end
 arch floor_ostone1
-x 9
+x 7
 y 9
 end
 arch floor_ostone1
-x 9
+x 7
+y 10
+end
+arch gauntlet_pow
+x 7
 y 10
 end
 arch floor_ostone1
-x 9
+x 7
 y 11
 end
 arch floor_ostone1
-x 9
-y 12
-end
-arch boots_less_acid
-identified 1
-x 9
+x 7
 y 12
 end
 arch floor_ostone1
-x 9
+x 7
+y 13
+end
+arch helm_min_int
+x 7
 y 13
 end
 arch floor_ostone1
-x 9
+x 7
 y 14
 end
 arch floor_ostone1
-x 9
+x 7
 y 15
 end
 arch floor_ostone1
-x 9
+x 7
 y 16
-end
-arch floor_ostone1
-x 9
-y 17
-end
-arch floor_ostone1
-x 9
-y 18
-end
-arch floor_ostone1
-x 9
-y 19
-end
-arch floor_ostone1
-x 9
-y 20
-end
-arch floor_ostone1
-x 9
-y 21
-end
-arch floor_ostone1
-x 9
-y 22
-end
-arch floor_ostone1
-x 9
-y 23
-end
-arch floor_ostone1
-x 10
-end
-arch wall_stone1_1
-x 10
-end
-arch floor_ostone1
-x 10
-y 1
-end
-arch floor_ostone1
-x 10
-y 2
-end
-arch floor_ostone1
-x 10
-y 3
-end
-arch floor_ostone1
-x 10
-y 4
-end
-arch floor_ostone1
-x 10
-y 5
-end
-arch floor_ostone1
-x 10
-y 6
 end
 arch bracers_cha
-identified 1
-x 10
-y 6
-end
-arch floor_ostone1
-x 10
-y 7
-end
-arch floor_ostone1
-x 10
-y 8
-end
-arch floor_ostone1
-x 10
-y 9
-end
-arch floor_ostone1
-x 10
-y 10
-end
-arch floor_ostone1
-x 10
-y 11
-end
-arch floor_ostone1
-x 10
-y 12
-end
-arch leggings_less_fire
-identified 1
-x 10
-y 12
-end
-arch floor_ostone1
-x 10
-y 13
-end
-arch floor_ostone1
-x 10
-y 14
-end
-arch floor_ostone1
-x 10
-y 15
-end
-arch floor_ostone1
-x 10
+x 7
 y 16
 end
 arch floor_ostone1
-x 10
+x 7
 y 17
 end
 arch floor_ostone1
-x 10
+x 7
 y 18
 end
 arch floor_ostone1
-x 10
+x 7
+y 19
+end
+arch boots_less_poison
+x 7
 y 19
 end
 arch floor_ostone1
-x 10
+x 7
 y 20
 end
 arch floor_ostone1
-x 10
+x 7
 y 21
 end
 arch floor_ostone1
-x 10
+x 7
+y 22
+end
+arch armour_less_poison
+x 7
 y 22
 end
 arch floor_ostone1
-x 10
+x 7
 y 23
 end
 arch floor_ostone1
-x 11
+x 8
 end
 arch wall_stone1_1
-x 11
+x 8
 end
 arch floor_ostone1
-x 11
+x 8
+y 1
+end
+arch cloak_less_acid
+x 8
 y 1
 end
 arch floor_ostone1
-x 11
+x 8
 y 2
 end
 arch floor_ostone1
-x 11
+x 8
 y 3
 end
 arch floor_ostone1
-x 11
+x 8
+y 4
+end
+arch shield_less_acid
+x 8
 y 4
 end
 arch floor_ostone1
-x 11
+x 8
 y 5
 end
 arch floor_ostone1
-x 11
+x 8
 y 6
+end
+arch floor_ostone1
+x 8
+y 7
+end
+arch girdle_min_wis
+x 8
+y 7
+end
+arch floor_ostone1
+x 8
+y 8
+end
+arch floor_ostone1
+x 8
+y 9
+end
+arch floor_ostone1
+x 8
+y 10
+end
+arch gauntlet_wis
+x 8
+y 10
+end
+arch floor_ostone1
+x 8
+y 11
+end
+arch floor_ostone1
+x 8
+y 12
+end
+arch floor_ostone1
+x 8
+y 13
+end
+arch helm_min_wis
+x 8
+y 13
+end
+arch floor_ostone1
+x 8
+y 14
+end
+arch floor_ostone1
+x 8
+y 15
+end
+arch floor_ostone1
+x 8
+y 16
+end
+arch bracers_pow
+x 8
+y 16
+end
+arch floor_ostone1
+x 8
+y 17
+end
+arch floor_ostone1
+x 8
+y 18
+end
+arch floor_ostone1
+x 8
+y 19
+end
+arch boots_less_acid
+x 8
+y 19
+end
+arch floor_ostone1
+x 8
+y 20
+end
+arch floor_ostone1
+x 8
+y 21
+end
+arch floor_ostone1
+x 8
+y 22
+end
+arch armour_less_acid
+x 8
+y 22
+end
+arch floor_ostone1
+x 8
+y 23
+end
+arch floor_ostone1
+x 9
+end
+arch wall_stone1_1
+x 9
+end
+arch floor_ostone1
+x 9
+y 1
+end
+arch robe_woe
+x 9
+y 1
+end
+arch floor_ostone1
+x 9
+y 2
+end
+arch floor_ostone1
+x 9
+y 3
+end
+arch floor_ostone1
+x 9
+y 4
+end
+arch floor_ostone1
+x 9
+y 5
+end
+arch floor_ostone1
+x 9
+y 6
+end
+arch floor_ostone1
+x 9
+y 7
+end
+arch girdle_min_cha
+x 9
+y 7
+end
+arch floor_ostone1
+x 9
+y 8
+end
+arch floor_ostone1
+x 9
+y 9
+end
+arch floor_ostone1
+x 9
+y 10
+end
+arch gauntlet_cha
+x 9
+y 10
+end
+arch floor_ostone1
+x 9
+y 11
+end
+arch floor_ostone1
+x 9
+y 12
+end
+arch floor_ostone1
+x 9
+y 13
+end
+arch helm_min_pow
+x 9
+y 13
+end
+arch floor_ostone1
+x 9
+y 14
+end
+arch floor_ostone1
+x 9
+y 15
+end
+arch floor_ostone1
+x 9
+y 16
 end
 arch bracers_wis
-identified 1
-x 11
+x 9
+y 16
+end
+arch floor_ostone1
+x 9
+y 17
+end
+arch floor_ostone1
+x 9
+y 18
+end
+arch floor_ostone1
+x 9
+y 19
+end
+arch leggings_less_fire
+x 9
+y 19
+end
+arch floor_ostone1
+x 9
+y 20
+end
+arch floor_ostone1
+x 9
+y 21
+end
+arch floor_ostone1
+x 9
+y 22
+end
+arch floor_ostone1
+x 9
+y 23
+end
+arch floor_ostone1
+x 10
+end
+arch wall_stone1_1
+x 10
+end
+arch floor_ostone1
+x 10
+y 1
+end
+arch robe_min_str
+x 10
+y 1
+end
+arch floor_ostone1
+x 10
+y 2
+end
+arch floor_ostone1
+x 10
+y 3
+end
+arch floor_ostone1
+x 10
+y 4
+end
+arch floor_ostone1
+x 10
+y 5
+end
+arch floor_ostone1
+x 10
 y 6
 end
 arch floor_ostone1
-x 11
+x 10
 y 7
 end
 arch floor_ostone1
-x 11
+x 10
 y 8
 end
 arch floor_ostone1
-x 11
+x 10
 y 9
 end
 arch floor_ostone1
-x 11
+x 10
+y 10
+end
+arch gauntlet_min_dam
+x 10
 y 10
 end
 arch floor_ostone1
-x 11
+x 10
 y 11
 end
 arch floor_ostone1
-x 11
+x 10
 y 12
+end
+arch floor_ostone1
+x 10
+y 13
+end
+arch helm_min_cha
+x 10
+y 13
+end
+arch floor_ostone1
+x 10
+y 14
+end
+arch floor_ostone1
+x 10
+y 15
+end
+arch floor_ostone1
+x 10
+y 16
+end
+arch floor_ostone1
+x 10
+y 17
+end
+arch floor_ostone1
+x 10
+y 18
+end
+arch floor_ostone1
+x 10
+y 19
 end
 arch leggings_less_cold
-identified 1
+x 10
+y 19
+end
+arch floor_ostone1
+x 10
+y 20
+end
+arch floor_ostone1
+x 10
+y 21
+end
+arch floor_ostone1
+x 10
+y 22
+end
+arch floor_ostone1
+x 10
+y 23
+end
+arch floor_ostone1
+x 11
+end
+arch wall_stone1_1
+x 11
+end
+arch floor_ostone1
+x 11
+y 1
+end
+arch robe_min_dex
+x 11
+y 1
+end
+arch floor_ostone1
+x 11
+y 2
+end
+arch floor_ostone1
+x 11
+y 3
+end
+arch floor_ostone1
+x 11
+y 4
+end
+arch floor_ostone1
+x 11
+y 5
+end
+arch floor_ostone1
+x 11
+y 6
+end
+arch floor_ostone1
+x 11
+y 7
+end
+arch floor_ostone1
+x 11
+y 8
+end
+arch floor_ostone1
+x 11
+y 9
+end
+arch floor_ostone1
+x 11
+y 10
+end
+arch gauntlet_min_prec
+x 11
+y 10
+end
+arch floor_ostone1
+x 11
+y 11
+end
+arch floor_ostone1
 x 11
 y 12
 end
 arch floor_ostone1
+x 11
+y 13
+end
+arch helm_min_con
 x 11
 y 13
 end
@@ -1374,83 +1466,94 @@ end
 arch floor_ostone1
 x 11
 y 19
-end
-arch floor_ostone1
-x 11
-y 20
-end
-arch floor_ostone1
-x 11
-y 21
-end
-arch floor_ostone1
-x 11
-y 22
-end
-arch floor_ostone1
-x 11
-y 23
-end
-arch floor_ostone1
-x 12
-end
-arch wall_stone1_1
-x 12
-end
-arch floor_ostone1
-x 12
-y 1
-end
-arch floor_ostone1
-x 12
-y 2
-end
-arch floor_ostone1
-x 12
-y 3
-end
-arch floor_ostone1
-x 12
-y 4
-end
-arch floor_ostone1
-x 12
-y 5
-end
-arch floor_ostone1
-x 12
-y 6
-end
-arch floor_ostone1
-x 12
-y 7
-end
-arch floor_ostone1
-x 12
-y 8
-end
-arch floor_ostone1
-x 12
-y 9
-end
-arch floor_ostone1
-x 12
-y 10
-end
-arch floor_ostone1
-x 12
-y 11
-end
-arch floor_ostone1
-x 12
-y 12
 end
 arch leggings_less_electricity
-identified 1
+x 11
+y 19
+end
+arch floor_ostone1
+x 11
+y 20
+end
+arch floor_ostone1
+x 11
+y 21
+end
+arch floor_ostone1
+x 11
+y 22
+end
+arch floor_ostone1
+x 11
+y 23
+end
+arch floor_ostone1
+x 12
+end
+arch wall_stone1_1
+x 12
+end
+arch floor_ostone1
+x 12
+y 1
+end
+arch robe_min_con
+x 12
+y 1
+end
+arch floor_ostone1
+x 12
+y 2
+end
+arch floor_ostone1
+x 12
+y 3
+end
+arch floor_ostone1
+x 12
+y 4
+end
+arch floor_ostone1
+x 12
+y 5
+end
+arch floor_ostone1
+x 12
+y 6
+end
+arch floor_ostone1
+x 12
+y 7
+end
+arch floor_ostone1
+x 12
+y 8
+end
+arch floor_ostone1
+x 12
+y 9
+end
+arch floor_ostone1
+x 12
+y 10
+end
+arch gauntlet_precision
+x 12
+y 10
+end
+arch floor_ostone1
+x 12
+y 11
+end
+arch floor_ostone1
 x 12
 y 12
 end
 arch floor_ostone1
+x 12
+y 13
+end
+arch helm_less_fire
 x 12
 y 13
 end
@@ -1477,83 +1580,90 @@ end
 arch floor_ostone1
 x 12
 y 19
-end
-arch floor_ostone1
-x 12
-y 20
-end
-arch floor_ostone1
-x 12
-y 21
-end
-arch floor_ostone1
-x 12
-y 22
-end
-arch floor_ostone1
-x 12
-y 23
-end
-arch floor_ostone1
-x 13
-end
-arch wall_stone1_1
-x 13
-end
-arch floor_ostone1
-x 13
-y 1
-end
-arch floor_ostone1
-x 13
-y 2
-end
-arch floor_ostone1
-x 13
-y 3
-end
-arch floor_ostone1
-x 13
-y 4
-end
-arch floor_ostone1
-x 13
-y 5
-end
-arch floor_ostone1
-x 13
-y 6
-end
-arch floor_ostone1
-x 13
-y 7
-end
-arch floor_ostone1
-x 13
-y 8
-end
-arch floor_ostone1
-x 13
-y 9
-end
-arch floor_ostone1
-x 13
-y 10
-end
-arch floor_ostone1
-x 13
-y 11
-end
-arch floor_ostone1
-x 13
-y 12
 end
 arch leggings_less_poison
-identified 1
+x 12
+y 19
+end
+arch floor_ostone1
+x 12
+y 20
+end
+arch floor_ostone1
+x 12
+y 21
+end
+arch floor_ostone1
+x 12
+y 22
+end
+arch floor_ostone1
+x 12
+y 23
+end
+arch floor_ostone1
+x 13
+end
+arch wall_stone1_1
+x 13
+end
+arch floor_ostone1
+x 13
+y 1
+end
+arch robe_min_int
+x 13
+y 1
+end
+arch floor_ostone1
+x 13
+y 2
+end
+arch floor_ostone1
+x 13
+y 3
+end
+arch floor_ostone1
+x 13
+y 4
+end
+arch floor_ostone1
+x 13
+y 5
+end
+arch floor_ostone1
+x 13
+y 6
+end
+arch floor_ostone1
+x 13
+y 7
+end
+arch floor_ostone1
+x 13
+y 8
+end
+arch floor_ostone1
+x 13
+y 9
+end
+arch floor_ostone1
+x 13
+y 10
+end
+arch floor_ostone1
+x 13
+y 11
+end
+arch floor_ostone1
 x 13
 y 12
 end
 arch floor_ostone1
+x 13
+y 13
+end
+arch helm_less_cold
 x 13
 y 13
 end
@@ -1580,83 +1690,90 @@ end
 arch floor_ostone1
 x 13
 y 19
-end
-arch floor_ostone1
-x 13
-y 20
-end
-arch floor_ostone1
-x 13
-y 21
-end
-arch floor_ostone1
-x 13
-y 22
-end
-arch floor_ostone1
-x 13
-y 23
-end
-arch floor_ostone1
-x 14
-end
-arch wall_stone1_1
-x 14
-end
-arch floor_ostone1
-x 14
-y 1
-end
-arch floor_ostone1
-x 14
-y 2
-end
-arch floor_ostone1
-x 14
-y 3
-end
-arch floor_ostone1
-x 14
-y 4
-end
-arch floor_ostone1
-x 14
-y 5
-end
-arch floor_ostone1
-x 14
-y 6
-end
-arch floor_ostone1
-x 14
-y 7
-end
-arch floor_ostone1
-x 14
-y 8
-end
-arch floor_ostone1
-x 14
-y 9
-end
-arch floor_ostone1
-x 14
-y 10
-end
-arch floor_ostone1
-x 14
-y 11
-end
-arch floor_ostone1
-x 14
-y 12
 end
 arch leggings_less_acid
-identified 1
+x 13
+y 19
+end
+arch floor_ostone1
+x 13
+y 20
+end
+arch floor_ostone1
+x 13
+y 21
+end
+arch floor_ostone1
+x 13
+y 22
+end
+arch floor_ostone1
+x 13
+y 23
+end
+arch floor_ostone1
+x 14
+end
+arch wall_stone1_1
+x 14
+end
+arch floor_ostone1
+x 14
+y 1
+end
+arch robe_min_pow
+x 14
+y 1
+end
+arch floor_ostone1
+x 14
+y 2
+end
+arch floor_ostone1
+x 14
+y 3
+end
+arch floor_ostone1
+x 14
+y 4
+end
+arch floor_ostone1
+x 14
+y 5
+end
+arch floor_ostone1
+x 14
+y 6
+end
+arch floor_ostone1
+x 14
+y 7
+end
+arch floor_ostone1
+x 14
+y 8
+end
+arch floor_ostone1
+x 14
+y 9
+end
+arch floor_ostone1
+x 14
+y 10
+end
+arch floor_ostone1
+x 14
+y 11
+end
+arch floor_ostone1
 x 14
 y 12
 end
 arch floor_ostone1
+x 14
+y 13
+end
+arch helm_less_elec
 x 14
 y 13
 end
@@ -1710,6 +1827,10 @@ arch floor_ostone1
 x 15
 y 1
 end
+arch robe_min_wis
+x 15
+y 1
+end
 arch floor_ostone1
 x 15
 y 2
@@ -1755,6 +1876,10 @@ x 15
 y 12
 end
 arch floor_ostone1
+x 15
+y 13
+end
+arch helm_less_poison
 x 15
 y 13
 end
@@ -1808,6 +1933,10 @@ arch floor_ostone1
 x 16
 y 1
 end
+arch robe_min_cha
+x 16
+y 1
+end
 arch floor_ostone1
 x 16
 y 2
@@ -1853,6 +1982,10 @@ x 16
 y 12
 end
 arch floor_ostone1
+x 16
+y 13
+end
+arch helm_less_acid
 x 16
 y 13
 end
@@ -1903,6 +2036,10 @@ arch wall_stone1_1
 x 17
 end
 arch floor_ostone1
+x 17
+y 1
+end
+arch cape_woe
 x 17
 y 1
 end
@@ -2001,6 +2138,10 @@ arch wall_stone1_1
 x 18
 end
 arch floor_ostone1
+x 18
+y 1
+end
+arch cape_med_fire
 x 18
 y 1
 end
@@ -2099,6 +2240,10 @@ arch wall_stone1_1
 x 19
 end
 arch floor_ostone1
+x 19
+y 1
+end
+arch cape_med_cold
 x 19
 y 1
 end
