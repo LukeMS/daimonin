@@ -189,7 +189,7 @@ int fill_command_buffer(NewSocket *ns, int len)
 					}
 					else 
 						data_len=0;
-					nscommands[i].cmdproc((char*)data,data_len,ns); /* and process cmd */
+					nscommands[i].cmdproc(data,data_len,ns); /* and process cmd */
 						
 					if(ns->addme) /* we have successful added this connect! */
 						ns->addme=0;
@@ -264,7 +264,7 @@ void HandleClient(NewSocket *ns, player *pl)
 		{
 			if (strcmp((char*)ns->inbuf.buf+2,nscommands[i].cmdname)==0)
 			{
-				nscommands[i].cmdproc((char*)data,len,ns);
+				nscommands[i].cmdproc(data,len,ns);
 				ns->inbuf.len=0;
 				if(ns->addme) /* we have successful added this connect! */
 				{
@@ -281,7 +281,7 @@ void HandleClient(NewSocket *ns, player *pl)
 			{
 				if (strcmp((char*)ns->inbuf.buf+2,plcommands[i].cmdname)==0) 
 				{
-					plcommands[i].cmdproc((char*)data,len,pl);
+					plcommands[i].cmdproc(data,len,pl);
 					ns->inbuf.len=0;
 					goto next_command;
 				}
@@ -293,7 +293,7 @@ void HandleClient(NewSocket *ns, player *pl)
 		* user could certainly send a whole bunch of invalid commands.
 		*/
 
-		LOG(llevDebug,"HACKBUG: Bad command from client (%s) (%s)\n",STRING_SAFE(ns->inbuf.buf+2),STRING_SAFE(data));
+		LOG(llevDebug,"HACKBUG: Bad command from client (%s) (%s)\n",STRING_SAFE((char*)ns->inbuf.buf+2),STRING_SAFE((char*)data));
 		ns->status =Ns_Dead;
 		return;
 
@@ -426,7 +426,7 @@ static void remove_ns_dead_player(player *pl)
  * There are 2 lists we need to look through - init_sockets is a list
  * 
  */
-void doeric_server()
+void doeric_server(int update_client)
 {
     int i, pollret, rr;
 	uint32 update_below;
@@ -643,19 +643,21 @@ void doeric_server()
 				* sending them whenever they change, and probably just as useful
 				* (why is update the stats per tick more efficent as we set a update sflag??? MT)
 				*/
-				esrv_update_stats(pl);
-				if(pl->update_skills)
-					esrv_update_skills(pl);
-				pl->update_skills=0;
-				draw_client_map(pl->ob);
-
-				if( pl->ob->map && (update_below=GET_MAP_UPDATE_COUNTER(pl->ob->map,pl->ob->x,pl->ob->y)) >= 
-												pl->socket.update_tile) 
+				if(update_client)
 				{
-					esrv_draw_look(pl->ob);
-					pl->socket.update_tile = update_below+1;
-				}
+					esrv_update_stats(pl);
+					if(pl->update_skills)
+						esrv_update_skills(pl);
+					pl->update_skills=0;
+					draw_client_map(pl->ob);
 
+					if( pl->ob->map && (update_below=GET_MAP_UPDATE_COUNTER(pl->ob->map,pl->ob->x,pl->ob->y)) >= 
+												pl->socket.update_tile) 
+					{
+						esrv_draw_look(pl->ob);
+						pl->socket.update_tile = update_below+1;
+					}
+				}
 				/* and do a quick write ... */
 				if (FD_ISSET(pl->socket.fd,&tmp_write))
 				{

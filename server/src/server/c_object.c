@@ -973,6 +973,7 @@ static object *find_marked_object_rec(object *op, object **marked, uint32 *marke
  */
 int command_mark(object *op, char *params)
 {
+	
     if (!CONTR(op)) return 1;
 	CONTR(op)->praying=0;
     if (!params) {
@@ -989,7 +990,7 @@ int command_mark(object *op, char *params)
 	else {
 	    CONTR(op)->mark=mark1;
 	    CONTR(op)->mark_count=mark1->count;
-	    new_draw_info_format(NDI_UNIQUE,0,op,"Marked item %s", query_name(mark1));
+	    new_draw_info_format(NDI_UNIQUE,0,op,"MarkedY item %s", query_name(mark1));
 	    return 0;
 	}
     }

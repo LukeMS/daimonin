@@ -70,12 +70,12 @@ CommArray_s Commands[] = {
   {"/usekeys",		command_usekeys,		1.0f},
   {"/time",			command_time,			1.0f},
   {"/version",		command_version,		1.0f},
-  {"/mark",			command_mark,			1.0f},
   {"/help",			command_help,			1.0f},
   {"/save",			command_save,			1.0f},
   {"/use_skill",	command_uskill,			0.1f},
   {"/ready_skill",	command_rskill,			0.1f},
-/*  {"/sound",		command_sound,			1.0},*/
+  /*{"/mark",			command_mark,			1.0f},*/
+  /*  {"/sound",		command_sound,			1.0},*/
 /*  {"/delete",		command_quit,			1.0},*/
 /*  {"/pickup",		command_pickup,			1.0}, we don't want and need this anymore */
 /*  {"/dropall",		command_dropall,		1.0}, */

@@ -419,8 +419,8 @@ void NewPlayerCmd(char *buf, int len, player *pl)
 		return;
     }
 
-    packet = GetShort_String(buf);
-    repeat = GetInt_String(buf+2);
+    packet = GetShort_String((uint8*)buf);
+    repeat = GetInt_String((uint8*)buf+2);
     /* -1 is special - no repeat, but don't update */
     if (repeat!=-1) {
 	pl->count=repeat;

@@ -1091,7 +1091,7 @@ void LockItem(char *data, int len,player *pl)
     object *op;
 
     flag = data[0];
-    tag = GetInt_String(data+1);
+    tag = GetInt_String((uint8*)data+1);
     op = esrv_get_ob_from_count(pl->ob, tag);
 
 	/* can happen as result of latency or client/server async. */
@@ -1117,8 +1117,9 @@ void MarkItem(char *data, int len,player *pl)
     int tag;
     object *op;
 
-    tag = GetInt_String(data);
+    tag = GetInt_String((uint8*)data);
     op = esrv_get_ob_from_count(pl->ob, tag);
+	/*LOG(-1,"MARKITEM (%d) (%x)\n", tag, op);*/
     if (!op) {
 	/*new_draw_info(NDI_UNIQUE, 0, pl->ob,"Could not find object to mark");*/
 	return;
