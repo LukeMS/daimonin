@@ -3,10 +3,11 @@ name Unoficiall maps lobby
 msg
 Creator: Bjorn Axelsson <gecko@acc.umu.se>
 Date:    6/4/2003
+
 Contributions are welcome!
 endmsg
-darkness 1280
 width 24
+darkness -1
 height 24
 difficulty 1
 end
@@ -1281,7 +1282,19 @@ arch floor_ostone1
 x 10
 y 21
 end
+arch sign
+name to Gramlath's maps on Trepkar
+x 10
+y 21
+end
 arch floor_ostone1
+x 10
+y 22
+end
+arch ladder_up
+slaying trepkar/lobby
+hp 12
+sp 12
 x 10
 y 22
 end

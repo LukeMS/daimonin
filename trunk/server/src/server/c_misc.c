@@ -241,13 +241,19 @@ int command_who (object *op, char *params)
 	if(first_player)
 		new_draw_info(NDI_UNIQUE, 0,op," ");
 
-    for(pl=first_player;pl!=NULL;pl=pl->next) {
-	if(pl->ob->map == NULL)
+    for(pl=first_player;pl!=NULL;pl=pl->next) 
 	{
-		il++;
-	    continue;
-	}
-	ip++;
+
+		if(pl->dm_stealth)
+		    continue;
+
+		if(pl->ob->map == NULL)
+		{
+			il++;
+		    continue;
+		}
+
+		ip++;
 	if (pl->state==ST_PLAYING || pl->state==ST_GET_PARTY_PASSWORD) 
 	{
          char *sex = "neuter";
@@ -428,6 +434,37 @@ int command_dumpallarchetypes (object *op, char *params)
   return 0;
 }
 
+/* NOTE: dm_stealth works also when a dm logs in WITHOUT dm set or
+ * when the player leave dm mode!
+ */
+int command_dm_stealth (object *op, char *params)
+{
+	if(op->contr)
+	{
+		if(op->contr->dm_stealth)
+			op->contr->dm_stealth = 0;
+		else
+			op->contr->dm_stealth = 1;
+		new_draw_info_format(NDI_UNIQUE, 0,op, "toggle dm_stealth to %d", op->contr->dm_stealth);
+	}
+
+	return 0;
+}
+
+int command_dm_light (object *op, char *params)
+{
+	if(op->contr)
+	{
+		if(op->contr->dm_light)
+			op->contr->dm_light = 0;
+		else
+			op->contr->dm_light = 1;
+		new_draw_info_format(NDI_UNIQUE, 0,op, "toggle dm_light to %d", op->contr->dm_light);
+	}
+
+	return 0;
+}
+
 int command_dumpactivelist (object *op, char *params)
 {
 	char buf[1024];
@@ -462,7 +499,17 @@ int command_setmaplight (object *op, char *params)
   if(params==NULL || !sscanf(params, "%d", &i)) 
 	  return 0;
 
+	if(i<-1)
+		i=-1;
+	if(i>MAX_DARKNESS)
+		i=MAX_DARKNESS;
 	op->map->darkness = i;
+
+	if(i == -1)
+		i = MAX_DARKNESS;
+
+	op->map->light_value = global_darkness_table[i];
+
 	sprintf(buf,"WIZ: set map darkness: %d -> map:%s (%d)", i, op->map->path,MAP_OUTDOORS(op->map));
 	new_draw_info(NDI_UNIQUE, 0,op, buf);
 

@@ -31,6 +31,9 @@
 #ifndef MAP_H
 #define MAP_H
 
+#define MAX_DARKNESS 7 /* number of darkness level. Add +1 for "total dark" */
+extern int	global_darkness_table[MAX_DARKNESS+1];
+
 #define MAP_PLAYER_MAP	1    /* for exit objects: this is a player unique map */
 #define MAX_ARCH_LAYERS 7	/* thats our 7 logical layers.
                              * ! for first and last object, we will use 2 more fake layers!
@@ -73,13 +76,6 @@
 
 #define MAP_ENTER_X(m)		(m)->enter_x
 #define MAP_ENTER_Y(m)		(m)->enter_y
-
-#define MAP_TEMP(m)		(m)->temp
-#define MAP_PRESSURE(m)		(m)->pressure
-#define MAP_HUMID(m)		(m)->humid
-#define MAP_WINDSPEED(m)	(m)->windspeed
-#define MAP_WINDDIRECTION(m)	(m)->winddir
-#define MAP_SKYCOND(m)		(m)->sky
 
 /* options passed to ready_map_name and load_original_map */
 #define MAP_FLUSH	    0x1
@@ -313,6 +309,9 @@ typedef struct mapdef {
     int		darkness;    			/* indicates the base light value in this map.
 	                                 * this value is only used when the map is not marked
 	                                 * as outdoor.
+									 */
+	int light_value;				/* the real light_value, build out from darkness and
+									 * possible other factors.
 									 */
 	uint32 map_flags;				/* mag flags for various map settings */
     uint32 reset_time;				/* when this map should reset */

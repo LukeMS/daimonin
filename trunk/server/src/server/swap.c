@@ -101,6 +101,9 @@ void read_map_log()
 
 	map->in_memory=MAP_SWAPPED;
 	map->darkness=darkness;
+	if(darkness == -1)
+		darkness = MAX_DARKNESS;
+	map->light_value = global_darkness_table[MAX_DARKNESS];
     }
     fclose(fp);
 }

@@ -52,32 +52,13 @@ void init_word_darkness(void)
     int i;
     timeofday_t tod;
     
-    world_darkness=7;
+    world_darkness=MAX_DARKNESS;
     get_tod(&tod);
 
     for (i = HOURS_PER_DAY/2; i < HOURS_PER_DAY; i++)
         world_darkness -=season_timechange[tod.season][i];
     for (i = 0; i <= tod.hour; i++) /* must be <= and not < ... */
         world_darkness -=season_timechange[tod.season][i];
-}
-
-void dawn_to_dusk(timeofday_t *tod)
-{
- /*   mapstruct *m;*/
-
-    world_darkness -=season_timechange[tod->season][tod->hour];
-/*	LOG(-1,"WORLD DARKNESS: %d\n", world_darkness);*/
-/*
-    for(m=first_map;m!=NULL;m=m->next) {
-#ifndef MAP_RESET
-	if (m->in_memory == MAP_SWAPPED)
-	    continue;
-#endif
-	if (!MAP_OUTDOORS(m))
-	    continue;
-	change_map_light(m, season_timechange[tod->season][tod->hour]);
-    }
-*/
 }
 
 /*
@@ -96,5 +77,5 @@ void tick_the_clock()
     if (todtick%20 == 0)
 	write_todclock();
     get_tod(&tod);
-    dawn_to_dusk(&tod);
+    world_darkness -=season_timechange[tod.season][tod.hour];
 }

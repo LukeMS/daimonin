@@ -69,23 +69,18 @@ const char *weekdays[DAYS_PER_WEEK] = {
 };
 
 const char *month_name[MONTHS_PER_YEAR] = {
-   "Month of Winter",           /* 0 */
    "Month of the Ice Dragon",
    "Month of the Frost Giant",
-   "Month of Valriel",
-   "Month of Lythander",
-   "Month of the Harvest",
+   "Month of the Clouds",          
    "Month of Gaea",
+   "Month of the Harvest",
    "Month of Futility",
    "Month of the Dragon",
    "Month of the Sun",
-   "Month of the Great Infernus",
-   "Month of Ruggilli",
+   "Month of the Falling",
    "Month of the Dark Shades",
-   "Month of the Devourers",
-   "Month of Sorig",
+   "Month of the Great Infernus",
    "Month of the Ancient Darkness",
-   "Month of Gorokh"
 };
 
 /*

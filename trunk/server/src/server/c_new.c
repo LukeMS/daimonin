@@ -648,7 +648,8 @@ void command_new_char(char *params, int len,player *pl)
 #endif
 
 	display_motd(op);
-	new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, op,"%s entered the game.",op->name);
+	if(!op->contr->dm_stealth)
+		new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, op,"%s entered the game.",op->name);
 	
 	CLEAR_FLAG(op, FLAG_WIZ);
 	(void) init_player_exp(op);
