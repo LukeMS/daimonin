@@ -19,7 +19,6 @@ CFG=daimonin_server - Win32 ReleaseLog
 !MESSAGE 
 !MESSAGE "daimonin_server - Win32 ReleaseLog" (basierend auf  "Win32 (x86) Console Application")
 !MESSAGE "daimonin_server - Win32 Debug" (basierend auf  "Win32 (x86) Console Application")
-!MESSAGE "daimonin_server - Win32 ReleaseDebug" (basierend auf  "Win32 (x86) Console Application")
 !MESSAGE 
 
 # Begin Project
@@ -43,7 +42,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /MD /W3 /Gi /GX /O2 /Ob2 /I "..\..\..\src\include" /I "..\..\..\src\random_maps" /I "..\..\..\src\plugin_python\include" /I "c:\Python23\include" /D "_CONSOLE" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "DEBUG" /YX"preheader.pch" /FD /c
+# ADD CPP /nologo /MD /W3 /Gi /GX /O2 /Ob2 /I "..\..\..\src\include" /I "..\..\..\src\random_maps" /D "_CONSOLE" /D "DEBUG" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "LUA_PLUGIN_EXPORTS" /YX"preheader.pch" /FD /c
 # ADD BASE RSC /l 0x407 /d "NDEBUG"
 # ADD RSC /l 0x407 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -51,7 +50,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386
-# ADD LINK32 libcross.lib wsock32.lib winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /pdb:none /machine:I386 /libpath:"libcross\ReleaseLog" /libpath:"c:\python23\libs"
+# ADD LINK32 wsock32.lib winmm.lib /nologo /subsystem:console /pdb:none /machine:I386
 # SUBTRACT LINK32 /debug
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
@@ -72,8 +71,8 @@ PostBuild_Cmds=copy ReleaseLog\*.exe ..\..\..\*.exe
 # PROP Intermediate_Dir "Debug"
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
-# ADD BASE CPP /nologo /MD /W3 /Gi /GX /O2 /Ob2 /I "..\..\..\source\include" /I "..\..\..\source\random_maps" /I "..\..\..\source\plugin_python\include" /I "d:\Python22\include" /D "_CONSOLE" /D "DEBUG" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "DEBUG_MOVEATTACK" /YX"preheader.pch" /FD /c
-# ADD CPP /nologo /MDd /W3 /Gm /Gi /GX /Zi /Od /Op /Ob2 /I "..\..\..\src\include" /I "..\..\..\src\random_maps" /I "..\..\..\src\plugin_python\include" /I "c:\Python23\include" /D "_CONSOLE" /D "DEBUG" /D "DEBUG_MOVEATTACK" /D "WIN32" /D "NDEBUG" /D "_MBCS" /FR /YX"preheader.pch" /FD /c
+# ADD BASE CPP /nologo /MD /W3 /Gi /GX /O2 /Ob2 /I "..\..\..\source\include" /I "..\..\..\source\random_maps" /I "..\..\..\source\plugin_lua\include" /I "d:\Python22\include" /D "_CONSOLE" /D "DEBUG" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "DEBUG_MOVEATTACK" /YX"preheader.pch" /FD /c
+# ADD CPP /nologo /MDd /W3 /Gm /Gi /GX /Zi /Od /Op /Ob2 /Gy /I "..\..\..\src\include" /I "..\..\..\src\random_maps" /D "_CONSOLE" /D "DEBUG" /D "DEBUG_MOVEATTACK" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "LUA_PLUGIN_EXPORTS" /FR /YX"preheader.pch" /FD /c
 # ADD BASE RSC /l 0x407 /d "NDEBUG"
 # ADD RSC /l 0x407 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -81,41 +80,11 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 wsock32.lib winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /pdb:none /machine:I386 /libpath:"d:\python22\libs"
-# ADD LINK32 libcross.lib wsock32.lib winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /map /debug /machine:I386 /libpath:"libcross\Debug" /libpath:"c:\python23\libs" /fixed:no
+# ADD LINK32 wsock32.lib winmm.lib /nologo /subsystem:console /map /debug /machine:I386 /fixed:no
 # SUBTRACT LINK32 /pdb:none
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
 PostBuild_Cmds=copy Debug\*.exe ..\..\..\*.exe
-# End Special Build Tool
-
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Use_MFC 0
-# PROP BASE Use_Debug_Libraries 0
-# PROP BASE Output_Dir "daimonin_server___Win32_ReleaseDebug"
-# PROP BASE Intermediate_Dir "daimonin_server___Win32_ReleaseDebug"
-# PROP BASE Ignore_Export_Lib 0
-# PROP BASE Target_Dir ""
-# PROP Use_MFC 0
-# PROP Use_Debug_Libraries 0
-# PROP Output_Dir "ReleaseDebug"
-# PROP Intermediate_Dir "ReleaseDebug"
-# PROP Ignore_Export_Lib 0
-# PROP Target_Dir ""
-# ADD BASE CPP /nologo /MD /W3 /Gi /GX /Ob2 /I "..\..\..\src\include" /I "..\..\..\src\random_maps" /I "..\..\..\src\plugin_python\include" /I "d:\Python22\include" /D "_CONSOLE" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "DEBUG" /YX"preheader.pch" /FD /c
-# ADD CPP /nologo /MD /W3 /Gm /Gi /GX /Zi /Ob2 /I "..\..\..\src\include" /I "..\..\..\src\random_maps" /I "..\..\..\src\plugin_python\include" /I "c:\Python23\include" /D "_CONSOLE" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "DEBUG" /YX"preheader.pch" /FD /c
-# ADD BASE RSC /l 0x407 /d "NDEBUG"
-# ADD RSC /l 0x407 /d "NDEBUG"
-BSC32=bscmake.exe
-# ADD BASE BSC32 /nologo
-# ADD BSC32 /nologo
-LINK32=link.exe
-# ADD BASE LINK32 libcross.lib wsock32.lib winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /pdb:none /machine:I386 /libpath:"d:\python22\libs" /libpath:"libcross\ReleaseLog"
-# SUBTRACT BASE LINK32 /debug
-# ADD LINK32 libcross.lib wsock32.lib winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /pdb:none /debug /machine:I386 /libpath:"libcross\ReleaseDebug" /libpath:"c:\python23\libs"
-# Begin Special Build Tool
-SOURCE="$(InputPath)"
-PostBuild_Cmds=copy ReleaseDebug\*.exe ..\..\..\*.exe
 # End Special Build Tool
 
 !ENDIF 
@@ -124,8 +93,7 @@ PostBuild_Cmds=copy ReleaseDebug\*.exe ..\..\..\*.exe
 
 # Name "daimonin_server - Win32 ReleaseLog"
 # Name "daimonin_server - Win32 Debug"
-# Name "daimonin_server - Win32 ReleaseDebug"
-# Begin Group "Quellcodedateien"
+# Begin Group "Source Files"
 
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Group "server"
@@ -147,11 +115,6 @@ SOURCE=..\..\..\src\server\alchemy.c
 
 # PROP Intermediate_Dir "Debug\server"
 
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
-
 !ENDIF 
 
 # End Source File
@@ -166,11 +129,6 @@ SOURCE=..\..\..\src\server\apply.c
 !ELSEIF  "$(CFG)" == "daimonin_server - Win32 Debug"
 
 # PROP Intermediate_Dir "Debug\server"
-
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
 
 !ENDIF 
 
@@ -187,11 +145,6 @@ SOURCE=..\..\..\src\server\attack.c
 
 # PROP Intermediate_Dir "Debug\server"
 
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
-
 !ENDIF 
 
 # End Source File
@@ -206,11 +159,6 @@ SOURCE=..\..\..\src\server\ban.c
 !ELSEIF  "$(CFG)" == "daimonin_server - Win32 Debug"
 
 # PROP Intermediate_Dir "Debug\server"
-
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
 
 !ENDIF 
 
@@ -227,11 +175,6 @@ SOURCE=..\..\..\src\server\c_chat.c
 
 # PROP Intermediate_Dir "Debug\server"
 
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
-
 !ENDIF 
 
 # End Source File
@@ -246,11 +189,6 @@ SOURCE=..\..\..\src\server\c_misc.c
 !ELSEIF  "$(CFG)" == "daimonin_server - Win32 Debug"
 
 # PROP Intermediate_Dir "Debug\server"
-
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
 
 !ENDIF 
 
@@ -267,11 +205,6 @@ SOURCE=..\..\..\src\server\c_move.c
 
 # PROP Intermediate_Dir "Debug\server"
 
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
-
 !ENDIF 
 
 # End Source File
@@ -286,11 +219,6 @@ SOURCE=..\..\..\src\server\c_new.c
 !ELSEIF  "$(CFG)" == "daimonin_server - Win32 Debug"
 
 # PROP Intermediate_Dir "Debug\server"
-
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
 
 !ENDIF 
 
@@ -307,11 +235,6 @@ SOURCE=..\..\..\src\server\c_object.c
 
 # PROP Intermediate_Dir "Debug\server"
 
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
-
 !ENDIF 
 
 # End Source File
@@ -326,11 +249,6 @@ SOURCE=..\..\..\src\server\c_party.c
 !ELSEIF  "$(CFG)" == "daimonin_server - Win32 Debug"
 
 # PROP Intermediate_Dir "Debug\server"
-
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
 
 !ENDIF 
 
@@ -347,11 +265,6 @@ SOURCE=..\..\..\src\server\c_range.c
 
 # PROP Intermediate_Dir "Debug\server"
 
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
-
 !ENDIF 
 
 # End Source File
@@ -366,11 +279,6 @@ SOURCE=..\..\..\src\server\c_wiz.c
 !ELSEIF  "$(CFG)" == "daimonin_server - Win32 Debug"
 
 # PROP Intermediate_Dir "Debug\server"
-
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
 
 !ENDIF 
 
@@ -387,11 +295,6 @@ SOURCE=..\..\..\src\server\commands.c
 
 # PROP Intermediate_Dir "Debug\server"
 
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
-
 !ENDIF 
 
 # End Source File
@@ -406,11 +309,6 @@ SOURCE=..\..\..\src\server\disease.c
 !ELSEIF  "$(CFG)" == "daimonin_server - Win32 Debug"
 
 # PROP Intermediate_Dir "Debug\server"
-
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
 
 !ENDIF 
 
@@ -427,11 +325,6 @@ SOURCE=..\..\..\src\server\egoitem.c
 
 # PROP Intermediate_Dir "Debug\server"
 
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
-
 !ENDIF 
 
 # End Source File
@@ -446,11 +339,6 @@ SOURCE=..\..\..\src\server\gods.c
 !ELSEIF  "$(CFG)" == "daimonin_server - Win32 Debug"
 
 # PROP Intermediate_Dir "Debug\server"
-
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
 
 !ENDIF 
 
@@ -467,11 +355,6 @@ SOURCE=..\..\..\src\server\hiscore.c
 
 # PROP Intermediate_Dir "Debug\server"
 
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
-
 !ENDIF 
 
 # End Source File
@@ -486,11 +369,6 @@ SOURCE=..\..\..\src\server\init.c
 !ELSEIF  "$(CFG)" == "daimonin_server - Win32 Debug"
 
 # PROP Intermediate_Dir "Debug\server"
-
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
 
 !ENDIF 
 
@@ -507,11 +385,6 @@ SOURCE=..\..\..\src\server\login.c
 
 # PROP Intermediate_Dir "Debug\server"
 
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
-
 !ENDIF 
 
 # End Source File
@@ -526,11 +399,6 @@ SOURCE=..\..\..\src\server\main.c
 !ELSEIF  "$(CFG)" == "daimonin_server - Win32 Debug"
 
 # PROP Intermediate_Dir "Debug\server"
-
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
 
 !ENDIF 
 
@@ -547,11 +415,6 @@ SOURCE=..\..\..\src\server\monster.c
 
 # PROP Intermediate_Dir "Debug\server"
 
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
-
 !ENDIF 
 
 # End Source File
@@ -566,11 +429,6 @@ SOURCE=..\..\..\src\server\move.c
 !ELSEIF  "$(CFG)" == "daimonin_server - Win32 Debug"
 
 # PROP Intermediate_Dir "Debug\server"
-
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
 
 !ENDIF 
 
@@ -591,11 +449,6 @@ SOURCE=..\..\..\src\server\pets.c
 
 # PROP Intermediate_Dir "Debug\server"
 
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
-
 !ENDIF 
 
 # End Source File
@@ -610,11 +463,6 @@ SOURCE=..\..\..\src\server\player.c
 !ELSEIF  "$(CFG)" == "daimonin_server - Win32 Debug"
 
 # PROP Intermediate_Dir "Debug\server"
-
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
 
 !ENDIF 
 
@@ -631,11 +479,6 @@ SOURCE=..\..\..\src\server\plugins.c
 
 # PROP Intermediate_Dir "Debug\server"
 
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
-
 !ENDIF 
 
 # End Source File
@@ -650,11 +493,6 @@ SOURCE=..\..\..\src\server\resurrection.c
 !ELSEIF  "$(CFG)" == "daimonin_server - Win32 Debug"
 
 # PROP Intermediate_Dir "Debug\server"
-
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
 
 !ENDIF 
 
@@ -671,11 +509,6 @@ SOURCE=..\..\..\src\server\rune.c
 
 # PROP Intermediate_Dir "Debug\server"
 
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
-
 !ENDIF 
 
 # End Source File
@@ -690,11 +523,6 @@ SOURCE=..\..\..\src\server\shop.c
 !ELSEIF  "$(CFG)" == "daimonin_server - Win32 Debug"
 
 # PROP Intermediate_Dir "Debug\server"
-
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
 
 !ENDIF 
 
@@ -711,11 +539,6 @@ SOURCE=..\..\..\src\server\skill_util.c
 
 # PROP Intermediate_Dir "Debug\server"
 
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
-
 !ENDIF 
 
 # End Source File
@@ -730,11 +553,6 @@ SOURCE=..\..\..\src\server\skills.c
 !ELSEIF  "$(CFG)" == "daimonin_server - Win32 Debug"
 
 # PROP Intermediate_Dir "Debug\server"
-
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
 
 !ENDIF 
 
@@ -751,11 +569,6 @@ SOURCE=..\..\..\src\server\spell_effect.c
 
 # PROP Intermediate_Dir "Debug\server"
 
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
-
 !ENDIF 
 
 # End Source File
@@ -770,11 +583,6 @@ SOURCE=..\..\..\src\server\spell_util.c
 !ELSEIF  "$(CFG)" == "daimonin_server - Win32 Debug"
 
 # PROP Intermediate_Dir "Debug\server"
-
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
 
 !ENDIF 
 
@@ -791,11 +599,6 @@ SOURCE=..\..\..\src\server\swamp.c
 
 # PROP Intermediate_Dir "Debug\server"
 
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
-
 !ENDIF 
 
 # End Source File
@@ -810,11 +613,6 @@ SOURCE=..\..\..\src\server\swap.c
 !ELSEIF  "$(CFG)" == "daimonin_server - Win32 Debug"
 
 # PROP Intermediate_Dir "Debug\server"
-
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
 
 !ENDIF 
 
@@ -831,11 +629,6 @@ SOURCE=..\..\..\src\server\time.c
 
 # PROP Intermediate_Dir "Debug\server"
 
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
-
 !ENDIF 
 
 # End Source File
@@ -851,11 +644,6 @@ SOURCE=..\..\..\src\server\timers.c
 
 # PROP Intermediate_Dir "Debug\server"
 
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
-
 !ENDIF 
 
 # End Source File
@@ -870,11 +658,6 @@ SOURCE=..\..\..\src\server\weather.c
 !ELSEIF  "$(CFG)" == "daimonin_server - Win32 Debug"
 
 # PROP Intermediate_Dir "Debug\server"
-
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\server"
-# PROP Intermediate_Dir "ReleaseLog\server"
 
 !ENDIF 
 
@@ -919,11 +702,6 @@ SOURCE=..\..\..\src\socket\image.c
 
 # PROP Intermediate_Dir "Debug\socket"
 
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\socket"
-# PROP Intermediate_Dir "ReleaseLog\socket"
-
 !ENDIF 
 
 # End Source File
@@ -938,11 +716,6 @@ SOURCE=..\..\..\src\socket\info.c
 !ELSEIF  "$(CFG)" == "daimonin_server - Win32 Debug"
 
 # PROP Intermediate_Dir "Debug\socket"
-
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\socket"
-# PROP Intermediate_Dir "ReleaseLog\socket"
 
 !ENDIF 
 
@@ -959,11 +732,6 @@ SOURCE=..\..\..\src\socket\init.c
 
 # PROP Intermediate_Dir "Debug\socket"
 
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\socket"
-# PROP Intermediate_Dir "ReleaseLog\socket"
-
 !ENDIF 
 
 # End Source File
@@ -978,11 +746,6 @@ SOURCE=..\..\..\src\socket\item.c
 !ELSEIF  "$(CFG)" == "daimonin_server - Win32 Debug"
 
 # PROP Intermediate_Dir "Debug\socket"
-
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\socket"
-# PROP Intermediate_Dir "ReleaseLog\socket"
 
 !ENDIF 
 
@@ -999,11 +762,6 @@ SOURCE=..\..\..\src\socket\loop.c
 
 # PROP Intermediate_Dir "Debug\socket"
 
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\socket"
-# PROP Intermediate_Dir "ReleaseLog\socket"
-
 !ENDIF 
 
 # End Source File
@@ -1018,11 +776,6 @@ SOURCE=..\..\..\src\socket\lowlevel.c
 !ELSEIF  "$(CFG)" == "daimonin_server - Win32 Debug"
 
 # PROP Intermediate_Dir "Debug\socket"
-
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\socket"
-# PROP Intermediate_Dir "ReleaseLog\socket"
 
 !ENDIF 
 
@@ -1039,11 +792,6 @@ SOURCE=..\..\..\src\socket\metaserver.c
 
 # PROP Intermediate_Dir "Debug\socket"
 
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\socket"
-# PROP Intermediate_Dir "ReleaseLog\socket"
-
 !ENDIF 
 
 # End Source File
@@ -1059,11 +807,6 @@ SOURCE=..\..\..\src\socket\request.c
 
 # PROP Intermediate_Dir "Debug\socket"
 
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\socket"
-# PROP Intermediate_Dir "ReleaseLog\socket"
-
 !ENDIF 
 
 # End Source File
@@ -1078,11 +821,6 @@ SOURCE=..\..\..\src\socket\sounds.c
 !ELSEIF  "$(CFG)" == "daimonin_server - Win32 Debug"
 
 # PROP Intermediate_Dir "Debug\socket"
-
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\socket"
-# PROP Intermediate_Dir "ReleaseLog\socket"
 
 !ENDIF 
 
@@ -1127,11 +865,6 @@ SOURCE=..\..\..\src\random_maps\decor.c
 
 # PROP Intermediate_Dir "Debug\random_maps"
 
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\random_maps"
-# PROP Intermediate_Dir "ReleaseLog\random_maps"
-
 !ENDIF 
 
 # End Source File
@@ -1146,11 +879,6 @@ SOURCE=..\..\..\src\random_maps\door.c
 !ELSEIF  "$(CFG)" == "daimonin_server - Win32 Debug"
 
 # PROP Intermediate_Dir "Debug\random_maps"
-
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\random_maps"
-# PROP Intermediate_Dir "ReleaseLog\random_maps"
 
 !ENDIF 
 
@@ -1167,11 +895,6 @@ SOURCE=..\..\..\src\random_maps\exit.c
 
 # PROP Intermediate_Dir "Debug\random_maps"
 
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\random_maps"
-# PROP Intermediate_Dir "ReleaseLog\random_maps"
-
 !ENDIF 
 
 # End Source File
@@ -1186,11 +909,6 @@ SOURCE=..\..\..\src\random_maps\expand2x.c
 !ELSEIF  "$(CFG)" == "daimonin_server - Win32 Debug"
 
 # PROP Intermediate_Dir "Debug\random_maps"
-
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\random_maps"
-# PROP Intermediate_Dir "ReleaseLog\random_maps"
 
 !ENDIF 
 
@@ -1211,11 +929,6 @@ SOURCE=..\..\..\src\random_maps\floor.c
 
 # PROP Intermediate_Dir "Debug\random_maps"
 
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\random_maps"
-# PROP Intermediate_Dir "ReleaseLog\random_maps"
-
 !ENDIF 
 
 # End Source File
@@ -1230,11 +943,6 @@ SOURCE=..\..\..\src\random_maps\maze_gen.c
 !ELSEIF  "$(CFG)" == "daimonin_server - Win32 Debug"
 
 # PROP Intermediate_Dir "Debug\random_maps"
-
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\random_maps"
-# PROP Intermediate_Dir "ReleaseLog\random_maps"
 
 !ENDIF 
 
@@ -1255,11 +963,6 @@ SOURCE=..\..\..\src\random_maps\monster.c
 
 # PROP Intermediate_Dir "Debug\random_maps"
 
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\random_maps"
-# PROP Intermediate_Dir "ReleaseLog\random_maps"
-
 !ENDIF 
 
 # End Source File
@@ -1274,11 +977,6 @@ SOURCE=..\..\..\src\random_maps\random_map.c
 !ELSEIF  "$(CFG)" == "daimonin_server - Win32 Debug"
 
 # PROP Intermediate_Dir "Debug\random_maps"
-
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\random_maps"
-# PROP Intermediate_Dir "ReleaseLog\random_maps"
 
 !ENDIF 
 
@@ -1298,11 +996,6 @@ SOURCE=..\..\..\src\random_maps\reader.c
 !ELSEIF  "$(CFG)" == "daimonin_server - Win32 Debug"
 
 # PROP Intermediate_Dir "Debug\random_maps"
-
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\random_maps"
-# PROP Intermediate_Dir "ReleaseLog\random_maps"
 
 !ENDIF 
 
@@ -1337,19 +1030,6 @@ InputName=reader
 
 # End Custom Build
 
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP Ignore_Default_Tool 1
-# Begin Custom Build
-InputDir=\Projects\daimonin\server\src\random_maps
-InputPath=..\..\..\src\random_maps\reader.l
-InputName=reader
-
-"$(InputDir)\$(InputName).c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
-	..\..\..\..\dev\win32\flex.exe -i -Prmap -o$(InputDir)\$(InputName).c $(InputPath)
-
-# End Custom Build
-
 !ENDIF 
 
 # End Source File
@@ -1364,11 +1044,6 @@ SOURCE=..\..\..\src\random_maps\rogue_layout.c
 !ELSEIF  "$(CFG)" == "daimonin_server - Win32 Debug"
 
 # PROP Intermediate_Dir "Debug\random_maps"
-
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\random_maps"
-# PROP Intermediate_Dir "ReleaseLog\random_maps"
 
 !ENDIF 
 
@@ -1389,11 +1064,6 @@ SOURCE=..\..\..\src\random_maps\room_gen_onion.c
 
 # PROP Intermediate_Dir "Debug\random_maps"
 
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\random_maps"
-# PROP Intermediate_Dir "ReleaseLog\random_maps"
-
 !ENDIF 
 
 # End Source File
@@ -1408,11 +1078,6 @@ SOURCE=..\..\..\src\random_maps\room_gen_spiral.c
 !ELSEIF  "$(CFG)" == "daimonin_server - Win32 Debug"
 
 # PROP Intermediate_Dir "Debug\random_maps"
-
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\random_maps"
-# PROP Intermediate_Dir "ReleaseLog\random_maps"
 
 !ENDIF 
 
@@ -1433,11 +1098,6 @@ SOURCE=..\..\..\src\random_maps\snake.c
 
 # PROP Intermediate_Dir "Debug\random_maps"
 
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\random_maps"
-# PROP Intermediate_Dir "ReleaseLog\random_maps"
-
 !ENDIF 
 
 # End Source File
@@ -1452,11 +1112,6 @@ SOURCE=..\..\..\src\random_maps\special.c
 !ELSEIF  "$(CFG)" == "daimonin_server - Win32 Debug"
 
 # PROP Intermediate_Dir "Debug\random_maps"
-
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\random_maps"
-# PROP Intermediate_Dir "ReleaseLog\random_maps"
 
 !ENDIF 
 
@@ -1473,11 +1128,6 @@ SOURCE=..\..\..\src\random_maps\square_spiral.c
 
 # PROP Intermediate_Dir "Debug\random_maps"
 
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\random_maps"
-# PROP Intermediate_Dir "ReleaseLog\random_maps"
-
 !ENDIF 
 
 # End Source File
@@ -1492,11 +1142,6 @@ SOURCE=..\..\..\src\random_maps\style.c
 !ELSEIF  "$(CFG)" == "daimonin_server - Win32 Debug"
 
 # PROP Intermediate_Dir "Debug\random_maps"
-
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\random_maps"
-# PROP Intermediate_Dir "ReleaseLog\random_maps"
 
 !ENDIF 
 
@@ -1513,11 +1158,6 @@ SOURCE=..\..\..\src\random_maps\treasure.c
 
 # PROP Intermediate_Dir "Debug\random_maps"
 
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\random_maps"
-# PROP Intermediate_Dir "ReleaseLog\random_maps"
-
 !ENDIF 
 
 # End Source File
@@ -1533,19 +1173,163 @@ SOURCE=..\..\..\src\random_maps\wall.c
 
 # PROP Intermediate_Dir "Debug\random_maps"
 
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 ReleaseDebug"
-
-# PROP BASE Intermediate_Dir "ReleaseLog\random_maps"
-# PROP Intermediate_Dir "ReleaseLog\random_maps"
-
 !ENDIF 
 
 # End Source File
 # End Group
+# Begin Group "common"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\..\..\src\common\aggro.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\common\anim.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\common\arch.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\common\button.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\common\exp.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\common\friend.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\common\holy.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\common\image.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\common\info.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\common\item.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\common\links.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\common\living.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\common\loader.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\common\loader.l
+
+!IF  "$(CFG)" == "daimonin_server - Win32 ReleaseLog"
+
+# PROP Ignore_Default_Tool 1
+# Begin Custom Build
+InputDir=\Projects\daimonin\server\src\common
+InputPath=..\..\..\src\common\loader.l
+InputName=loader
+
+"$(InputDir)\$(InputName).c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	..\..\..\..\dev\win32\flex.exe -i  -o$(InputDir)\$(InputName).c $(InputPath)
+
+# End Custom Build
+
+!ELSEIF  "$(CFG)" == "daimonin_server - Win32 Debug"
+
+# PROP Ignore_Default_Tool 1
+# Begin Custom Build
+InputDir=\Projects\daimonin\server\src\common
+InputPath=..\..\..\src\common\loader.l
+InputName=loader
+
+"$(InputDir)\$(InputName).c" : $(SOURCE) "$(INTDIR)" "$(OUTDIR)"
+	..\..\..\..\dev\win32\flex.exe -i  -o$(InputDir)\$(InputName).c $(InputPath)
+
+# End Custom Build
+
+!ENDIF 
+
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\common\logger.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\common\los.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\common\map.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\common\mempool.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\common\object.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\common\porting.c
+# End Source File
+# Begin Source File
+
+SOURCE="..\..\..\src\common\re-cmp.c"
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\common\readable.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\common\recipe.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\common\shstr.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\common\time.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\common\treasure.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\common\utils.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\common\win32.c
+# End Source File
 # End Group
-# Begin Group "Header-Dateien"
+# End Group
+# Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=..\..\..\src\include\aggro.h
+# End Source File
 # Begin Source File
 
 SOURCE=..\..\..\src\include\aiconfig.h
@@ -1585,10 +1369,6 @@ SOURCE=..\..\..\src\include\define.h
 # Begin Source File
 
 SOURCE=..\..\..\src\include\face.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\src\include\funcpoint.h
 # End Source File
 # Begin Source File
 
