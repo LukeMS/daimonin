@@ -231,8 +231,8 @@ char *query_short_name(object *op)
     char buf2[HUGE_BUF];
     int len=0;
 
-    if(!op->name)
-	return "(null)";
+    if(!op || !op->name)
+	return "";
 	
 	/* To speed things up (or make things slower?) 
     if(!op->nrof && !op->weight && !op->title && !is_magical(op)) 

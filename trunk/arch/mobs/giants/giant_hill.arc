@@ -2,6 +2,7 @@ Object giant_hill
 name hill giant
 race giant
 randomitems mob_giant_hill
+will_apply 8
 is_evil 1
 is_male 1
 weight 13250

@@ -754,7 +754,12 @@ error - Your ANSI C compiler should be defining __STDC__;
 									  */
 #define FLAG_PERM_DAMNED		126	  /* same as perm_cursed but for damned */
 
-#define NUM_FLAGS		126 /* Should always be equal to the last defined flag */
+#define FLAG_DOOR_CLOSED		127	  /* this object works like a closed door. Main function
+									   * is to trigger the right map flags, so a moving objects
+									   * know that spot is blocked by a door and he must open it first->
+									   */
+
+#define NUM_FLAGS		127 /* Should always be equal to the last defined flag */
 #define NUM_FLAGS_32	4	/* the number of uint32 we need to store all flags */
 
 /* macros for invisible test. the first tests only system objects */
@@ -779,20 +784,6 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define LOOK_SIZE		6	/* ditto, but for the look-window */
 #define MAX_INV_SIZE		40	/* For initializing arrays */
 #define MAX_LOOK_SIZE		40	/* ditto for the look-window */
-
-#define E_MONSTER		0x00000001
-#define E_EXIT			0x00000002
-#define E_TREASURE		0x00000004
-#define E_BACKGROUND		0x00000008
-#define E_DOOR			0x00000010
-#define E_SPECIAL		0x00000020
-#define E_SHOP			0x00000040
-#define E_NORMAL		0x00000080
-#define E_FALSE_WALL		0x00000100
-#define E_WALL			0x00000200
-#define E_EQUIPMENT		0x00000400
-#define E_OTHER			0x00000800
-#define E_ARTIFACT		0x00001000
 
 #define EXIT_PATH(xyz)		(xyz)->slaying
 #define EXIT_LEVEL(xyz)		(xyz)->stats.food

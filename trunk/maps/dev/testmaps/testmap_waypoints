@@ -2619,7 +2619,6 @@ arch gravestone
 name Warning!
 msg
 Don't push the wyvern across the map tile boundary!
-
 You have been warned!
 endmsg
 x 21

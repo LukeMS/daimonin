@@ -850,6 +850,9 @@ void process_players1(mapstruct *map)
 					{
 						pl->ob->enemy->enemy=pl->ob;
 						pl->ob->enemy->enemy_count=pl->ob->count;
+						if(pl->ob->enemy->type != PLAYER)
+							set_mobile_speed(pl->ob->enemy, 0);
+
 					}
 					else /* our target has already a enemy - then note we had attacked */
 					{

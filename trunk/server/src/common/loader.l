@@ -81,6 +81,7 @@
 	"cursed_perm" 
 	"damned_perm"
 	"wc_range"
+	"door_closed"
 */
 
 #define YY_DECL int lex_load(object *op, int map_flags)
@@ -336,6 +337,7 @@ op->oy= op->y;
 ^state{S}					op->state = IVAL;
 ^hidden{S}					op->hide = IVAL;
 ^layer{S}					op->layer = IVAL;
+^door_closed{S}				SET_OR_CLEAR_FLAG(op, FLAG_DOOR_CLOSED, IVAL);
 ^cursed_perm{S}				SET_OR_CLEAR_FLAG(op, FLAG_PERM_CURSED, IVAL);
 ^damned_perm{S}				SET_OR_CLEAR_FLAG(op, FLAG_PERM_DAMNED, IVAL);
 ^one_drop{S}				SET_OR_CLEAR_FLAG(op, FLAG_ONE_DROP, IVAL);
@@ -848,7 +850,7 @@ NULL /*is_removed*/,"been_applied", "auto_apply", "treasure", "is_neutral",	/* 2
 "is_vul_magic", "is_proof_magic", "is_vul_physical", "is_proof_physical", "sys_object", /* 110 */
 "use_fix_pos","unpaid","is_aged","make_invisible" , "make_ethereal","is_player",
 "is_named",NULL /* spawn mob flag */, "no_teleport", "corpse", "corpse_forced",
-"player_only", "no_cleric", "one_drop", "cursed_perm", "damned_perm"
+"player_only", "no_cleric", "one_drop", "cursed_perm", "damned_perm", "door_closed"
 };
 
  

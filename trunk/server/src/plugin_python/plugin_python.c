@@ -1149,6 +1149,30 @@ static PyObject* CFWhatIsMessage(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
+/* Name   : CFCommunicate                                                    */
+/* Python : CFPython.Communicate(object,message)                             */
+/* Info   : object says message to everybody on its map                      */
+/*        : but instead of CFSay it is parsed for other npc or magic mouth   */
+/* Status : Stable                                                           */
+/*****************************************************************************/
+static PyObject* CFCommunicate(PyObject* self, PyObject* args)
+{
+    CFPython_Object *whoptr;
+    char *message;
+
+    if (!PyArg_ParseTuple(args,"O!s", &CFPython_ObjectType, &whoptr, &message))
+        return NULL;
+
+    GCFP.Value[0] = (void *)(WHO);
+    GCFP.Value[1] = (void *)(message);
+
+    (PlugHooks[HOOK_COMMUNICATE])(&GCFP);
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+/*****************************************************************************/
 /* Name   : CFSay                                                            */
 /* Python : CFPython.Say(object,message)                                     */
 /* Info   : object says message to everybody on its map                      */

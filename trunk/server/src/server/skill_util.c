@@ -1359,7 +1359,7 @@ int skill_attack (object *tmp, object *pl, int dir, char *string)
 	if(!dir) dir=pl->facing;
  
 /* If we don't yet have an opponent, find if one exists, and attack.
- * Legal opponents are the same as outlined in move_player_attack()
+ * Legal opponents are the same as outlined in move_player()
  */
  
   if(tmp==NULL) 
@@ -1393,7 +1393,7 @@ int skill_attack (object *tmp, object *pl, int dir, char *string)
 }
 
 /* do_skill_attack() - We have got an appropriate opponent from either
- * move_player_attack() or skill_attack(). In this part we get on with
+ * move_player() or skill_attack(). In this part we get on with
  * attacking, take care of messages from the attack and changes in invisible.
  * Returns true if the attack damaged the opponent.
  * -b.t. thomas@astro.psu.edu

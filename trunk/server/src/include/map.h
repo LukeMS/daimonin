@@ -188,6 +188,10 @@
 								  * pets and golems but also spell effects and throwed/fired items.
 								  * it works like a no_pass for players only (pass_thru don't work for it).
 								  */
+#define P_DOOR_CLOSED   0x4000	 /* a closed door is blocking this space - if we want approach, we must first
+								  * check its possible to open it.
+								  */
+
 #define P_NO_TERRAIN    0x10000 /* DON'T USE THIS WITH SET_MAP_FLAGS... this is just to mark for return
 								 * values of blocked...
 								 */

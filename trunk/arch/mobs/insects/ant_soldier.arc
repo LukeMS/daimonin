@@ -75,7 +75,7 @@ can_see_in_dark 1
 exp 125
 ac 10
 wc 1
-dam 4
+dam 5
 hp -1
 maxhp 7
 speed -0.0325

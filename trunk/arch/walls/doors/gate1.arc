@@ -4,7 +4,7 @@ layer 5
 msg
 You need a special key to open this gate.
 endmsg
-no_pass 1
+door_closed 1
 pass_thru 1
 sp 5
 face gate_lock1.111

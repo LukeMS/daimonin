@@ -1736,6 +1736,8 @@ void update_object(object *op, int action) {
             update_now=1;
         else if (QUERY_FLAG(op, FLAG_PLAYER_ONLY) && !(flags & P_PLAYER_ONLY))
             update_now=1;
+        else if (QUERY_FLAG(op, FLAG_DOOR_CLOSED) && !(flags & P_DOOR_CLOSED))
+            update_now=1;
 		else if(op->type == CHECK_INV && !(flags & P_CHECK_INV))
             update_now=1;
 		else if(op->type == MAGIC_EAR && !(flags & P_MAGIC_EAR))
@@ -1757,6 +1759,8 @@ void update_object(object *op, int action) {
         else if (QUERY_FLAG(op, FLAG_NO_CLERIC) && (flags & P_NO_CLERIC))
             update_now=1;
         else if (QUERY_FLAG(op, FLAG_PLAYER_ONLY) && (flags & P_PLAYER_ONLY))
+            update_now=1;
+        else if (QUERY_FLAG(op, FLAG_DOOR_CLOSED) && (flags & P_DOOR_CLOSED))
             update_now=1;
 		else if(op->type == CHECK_INV && (flags & P_CHECK_INV))
             update_now=1;

@@ -915,12 +915,13 @@ int move_monster(object *op) {
     /* check if monster pops out of hidden spot */
     if(op->hide) do_hidden_move(op);
 
+	/*
     if(op->pick_up)
 	monster_check_pickup(op);
 
     if(op->will_apply)
-	monster_apply_below(op); /* Check for items to apply below */
-
+	monster_apply_below(op);
+	*/
 
     /* If we don't have an enemy, do special movement or the like */
     if(!enemy) {
@@ -1913,7 +1914,10 @@ void npc_call_help(object *op) {
         if(QUERY_FLAG(npc, FLAG_ALIVE)&&QUERY_FLAG(npc, FLAG_UNAGGRESSIVE))
         {
 			if(npc->type != PLAYER)
+			{
 				npc->last_eat = 0;
+				set_mobile_speed(npc, 0);
+			}
             npc->enemy = op->enemy;
             npc->enemy_count = op->enemy_count;
         }
@@ -2057,37 +2061,6 @@ void rand_move (object *ob) {
         return;
 }
 
-/* fixed this and the next function for tiled maps. MT-2002 */
-void check_earthwalls(object *op, int x, int y) {
-  object *tmp;
-  mapstruct *mt;
-
-  if (!(mt=out_of_map (op->map, &x, &y)))
-	return;
-  tmp = get_map_ob(mt, x, y);
-  if (tmp!= NULL)
-    while(tmp->above != NULL)
-      tmp=tmp->above;
-  if (tmp!= NULL && tmp->type == EARTHWALL)
-    hit_player(tmp,op->stats.dam,op,AT_PHYSICAL);
-}
-
-void check_doors(object *op, int x, int y) {
-  object *tmp;
-  mapstruct *mt;
-  
-  if (!(mt=out_of_map (op->map, &x, &y)))
-	return;
-
-  tmp = get_map_ob(mt, x, y);
-  if (tmp!= NULL)
-    while(tmp->above != NULL)
-      tmp=tmp->above;
-  if (tmp!= NULL && tmp->type == DOOR)
-    hit_player(tmp,1000,op,AT_PHYSICAL);
-}
-
-
 static void free_messages(msglang *msgs) {
   int messages, keywords;
 
@@ -2109,7 +2082,7 @@ static void free_messages(msglang *msgs) {
 static msglang *parse_message(const char *msg) {
   msglang *msgs;
   int nrofmsgs, msgnr, i;
-  char *cp, *line, *last;
+  char *cp, *line, *last, *tmp;
   char *buf = strdup_local(msg);
 
   /* First find out how many messages there are.  A @ for each. */
@@ -2132,7 +2105,17 @@ static msglang *parse_message(const char *msg) {
       int nrofkeywords, keywordnr;
       *cp = '\0'; cp++;
       if(last != NULL)
+	  {
         msgs->messages[msgnr++] = strdup_local(last);
+		tmp = msgs->messages[msgnr-1];
+	    for(i=(int)strlen(tmp);i;i--)
+		{
+		  if(*(tmp+i) && *(tmp+i) != 0x0a && *(tmp+i) != 0x0d)
+			  break;
+			*(tmp+i)= 0;
+		}
+		
+	  }
       if(strncmp(cp,"match",5)) {
         LOG(llevBug,"BUG: parse_message(): Unsupported command in message.\n");
         free(buf);
@@ -2215,6 +2198,14 @@ static msglang *parse_message(const char *msg) {
     }
   if(last != NULL)
     msgs->messages[msgnr++] = strdup_local(last);
+
+	tmp = msgs->messages[msgnr-1];
+	for(i=(int)strlen(tmp);i;i--)
+	{
+		if(*(tmp+i) && *(tmp+i) != 0x0a && *(tmp+i) != 0x0d)
+			break;
+		*(tmp+i)= 0;
+	}
   free(buf);
   return msgs;
 }
@@ -2257,7 +2248,7 @@ void communicate(object *op, char *txt)
 	 * and there we have then to add the extra interface.
 	 */
 
-	/* thats the whisper code - i will add a /whisper for it */
+	/* thats the whisper code - i will add a /whisper for it and remove it from here */
 	/*
 	if(op->type == PLAYER)
 	{
@@ -2431,14 +2422,22 @@ int talk_to_npc(object *op, object *npc, char *txt) {
     for(j=0; msgs->keywords[i][j]; j++)
       if(msgs->keywords[i][j][0] == '*' || re_cmp(txt,msgs->keywords[i][j])) {
         char buf[MAX_BUF];
-        sprintf(buf,"%s says:",query_name(npc)); /* We want more unique NPCS */
-                                                 /* "The <unique name> says ...." looks bad */
-		new_draw_info(NDI_NAVY|NDI_UNIQUE,0,op, buf);
-		new_draw_info(NDI_NAVY | NDI_UNIQUE,0,op, msgs->messages[i]);
-		sprintf(buf,"%s talks to %s.", query_name(npc), query_name(op));
-		new_info_map_except(NDI_UNIQUE, op->map, op, buf);
-		if(op->map != npc->map)
-			new_info_map_except(NDI_UNIQUE, npc->map, op, buf);
+		if(op->type != PLAYER) /* a npc talks to another one - show both in white */
+		{
+			LOG(-1,"MSG: >%s<\n", msgs->messages[i]);
+	        sprintf(buf,"%s says: %s",query_name(npc),msgs->messages[i]);
+			new_info_map_except(NDI_UNIQUE, op->map, op, buf);
+		}
+		else /* if a npc is talking to a player, is shown navy and with a seperate "xx says:" line */
+		{
+	        sprintf(buf,"%s says:",query_name(npc)); 
+			new_draw_info(NDI_NAVY|NDI_UNIQUE,0,op, buf);
+			new_draw_info(NDI_NAVY | NDI_UNIQUE,0,op, msgs->messages[i]);
+			sprintf(buf,"%s talks to %s.", query_name(npc), query_name(op));
+			new_info_map_except(NDI_UNIQUE, op->map, op, buf);
+			if(op->map != npc->map)
+				new_info_map_except(NDI_UNIQUE, npc->map, op, buf);
+		}
         free_messages(msgs);
         return 1;
       }

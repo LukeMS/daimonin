@@ -1704,250 +1704,9 @@ trick_jump:
   }
 }
 
-
-
-/* find_key
- * We try to find a key for the door as passed.  If we find a key
- * and successfully use it, we return the key, otherwise NULL
- * This function merges both normal and locked door, since the logic
- * for both is the same - just the specific key is different.
- * pl is the player, 
- * inv is the objects inventory to searched 
- * door is the door we are trying to match against.
- * This function can be called recursively to search containers.
- */
-
-object * find_key(object *pl, object *container, object *door)
+int move_player(object *op,int dir) 
 {
-    object *tmp,*key;
-
-    /* Should not happen, but sanity checking is never bad */
-    if (container->inv == NULL) return NULL;
-
-    /* First, lets try to find a key in the top level inventory */
-    for (tmp=container->inv; tmp!=NULL; tmp=tmp->below) {
-	if (door->type==DOOR && tmp->type==KEY) break;
-	/* For sanity, we should really check door type, but other stuff 
-	 * (like containers) can be locked with special keys
-	 */
-	if (tmp->slaying && tmp->type==SPECIAL_KEY &&
-	    tmp->slaying==door->slaying) break;
-    }
-    /* No key found - lets search inventories now */
-    /* If we find and use a key in an inventory, return at that time.
-     * otherwise, if we search all the inventories and still don't find
-     * a key, return
-     */
-    if (!tmp) {
-	for (tmp=container->inv; tmp!=NULL; tmp=tmp->below) {
-	    /* No reason to search empty containers */
-	    if (tmp->type==CONTAINER && tmp->inv) {
-		if ((key=find_key(pl, tmp, door))!=NULL) return key;
-	    }
-	}
-	if (!tmp) return NULL;
-    }
-    /* We get down here if we have found a key.  Now if its in a container,
-     * see if we actually want to use it
-     */
-    if (pl!=container) {
-	/* Only let players use keys in containers */
-	if (!pl->contr) return NULL;
-	/* cases where this fails:
-	 * If we only search the player inventory, return now since we
-	 * are not in the players inventory.
-	 * If the container is not active, return now since only active
-	 * containers can be used.
-	 * If we only search keyrings and the container does not have
-	 * a race/isn't a keyring.
-	 * No checking for all containers - to fall through past here,
-	 * inv must have been an container and must have been active.
-	 *
-	 * Change the color so that the message doesn't disappear with
-	 * all the others.
-	 */
-	if (pl->contr->usekeys == key_inventory ||
-	    !QUERY_FLAG(container, FLAG_APPLIED) ||
-	    (pl->contr->usekeys == keyrings &&
-	     (!container->race || strcmp(container->race, "keys")))
-	      ) {
-	    new_draw_info_format(NDI_UNIQUE|NDI_BROWN, 0, pl, 
-		"The %s in your %s vibrates as you approach the door",
-		query_name(tmp), query_name(container));
-	    return NULL;
-	}
-    }
-    return tmp;
-}
-
-/* moved door processing out of move_player_attack.
- * returns 1 if player has opened the door with a key
- * such that the caller should not do anything more,
- * 0 otherwise
- */
-static int player_attack_door(object *op, object *door)
-{
-
-    /* If its a door, try to find a use a key.  If we do destroy the door,
-     * might as well return immediately as there is nothing more to do -
-     * otherwise, we fall through to the rest of the code.
-     */
-    object *key=find_key(op, op, door);
-
-    /* IF we found a key, do some extra work */
-    if (key) {
-	object *container=key->env;
-
-	if(action_makes_visible(op)) make_visible(op);
-	if(door->inv && door->inv->type ==RUNE) spring_trap(door->inv,op);
-	if (door->type == DOOR) {
-	    hit_player(door,9998,op,AT_PHYSICAL); /* Break through the door */
-	}
-	else if(door->type==LOCKED_DOOR) {
-	    new_draw_info_format(NDI_UNIQUE, NDI_BROWN, op, 
-		     "You open the door with the %s", query_short_name(key));
-	    remove_door2(door, op); /* remove door without violence ;-) */
-	}
-	/* Do this after we print the message */
-	decrease_ob(key); /* Use up one of the keys */
-	/* Need to update the weight the container the key was in */
-	if (container != op) 
-	    esrv_update_item(UPD_WEIGHT, op, container);
-	return 1; /* Nothing more to do below */
-    } else if (door->type==LOCKED_DOOR) 
-	{
-		if(!door->slaying)
-		    remove_door2(door,op); /* remove door without violence ;-) */	
-		else /* Might as well return now - no other way to open this */
-			new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, door->msg);
-		return 1;
-    }
-    return 0;
-}
-
-/* This function is just part of a breakup from move_player.
- * It should keep the code cleaner.
- * When this is called, the players direction has been updated
- * (taking into accoutn confusion.)  The player is also actually
- * going to try and move (not fire weapons).
- */
-int move_player_attack(object *op, int dir)
-{
-    int ret=0;
-    object *tmp;
-    int nx=freearr_x[dir]+op->x,ny=freearr_y[dir]+op->y;
-    mapstruct *m;
-
-    if (!move_ob(op,dir,op)) 
-	{
-		if(!(m=out_of_map(op->map,&nx,&ny)))
-			return ret;
-    
-		if ((tmp=get_map_ob(m,nx,ny))==NULL) 
-		{
-			/*	LOG(llevBug,"BUG: player_move_attack: get_map_ob returns NULL, but player can not more there.\n");*/
-			return ret;
-		}
-
-		/* Go through all the objects, and stop if we find one of interest. */
-		while (tmp->above!=NULL) 
-		{
-			if ((QUERY_FLAG(tmp,FLAG_ALIVE) || QUERY_FLAG(tmp,FLAG_CAN_ROLL)
-										|| tmp->type ==LOCKED_DOOR) && tmp!=op)
-				break;
-			tmp=tmp->above;
-		}
-    
-		if (tmp==NULL)		/* This happens anytime the player tries to move */
-			return ret;		/* into a wall */
-
-		if(tmp->head != NULL)
-			tmp = tmp->head;
-
-		if ((tmp->type==DOOR && tmp->stats.hp>=0) || (tmp->type==LOCKED_DOOR))
-		{
-			if (player_attack_door(op, tmp))
-				return ret;
-		}
-		/* START OLD COMMENTS*/
-		/* The following deals with possibly attacking peaceful
-		* or frienddly creatures.  Basically, all players are considered
-		* unaggressive.  If the moving player has peaceful set, then the
-		* object should be pushed instead of attacked.  It is assumed that
-		* if you are braced, you will not attack friends accidently,
-		* and thus will not push them.
-		*/
-
-		/* If the creature is a pet, push it even if the player is not
-		* peaceful.  Our assumption is the creature is a pet if the
-		* player owns it and it is either friendly or unagressive.
-		*/
-		/* END OLD COMMENTS*/
-
-		/* i don't like this code. It means: push a pet/golem when its yours and
-		 * it is not aggressive to you. This means that a golem or pet can be
-		 * aggressive to his owner. This will break the logic of pets/golems on
-		 * other place. When a golem/pet gets aggressive against his owner, the owner
-		 * should lose control and over it and it should handled as a non pet mob.
-		 * Then the owner can summon a new pet or whatever. MT.
-		 */
-/*		if (op->type==PLAYER && get_owner(tmp)==op && 
-	    (QUERY_FLAG(tmp,FLAG_UNAGGRESSIVE) ||  QUERY_FLAG(tmp, FLAG_FRIENDLY))) */
-	/* merged this with code below 		    
-		if ((tmp->type==PLAYER || tmp->enemy != op) &&
-					(tmp->type==PLAYER || QUERY_FLAG(tmp,FLAG_UNAGGRESSIVE) ||
-					QUERY_FLAG(tmp, FLAG_FRIENDLY)) && (op->contr->peaceful &&
-					!op_on_battleground(op, NULL, NULL))) 
-		{
-			play_sound_map(op->map, op->x, op->y, SOUND_PUSH_PLAYER, SOUND_NORMAL);
-			if(push_ob(tmp,dir,op))
-				ret = 1;
-			if(op->contr->tmp_invis||op->hide) 
-				make_visible(op);
-		}
-		*/
-
-		/* try push mobs, pets and friendly npcs when not on bg */
-		if (get_owner(tmp)==op ||  /* it is our pet */
-			((QUERY_FLAG(tmp,FLAG_UNAGGRESSIVE) || tmp->type==PLAYER || 
-			QUERY_FLAG(tmp, FLAG_FRIENDLY)) && !op_on_battleground(op, NULL, NULL))) /* or a player friendly ojbect  on non bg */
-		{
-			play_sound_map(op->map, op->x, op->y, SOUND_PUSH_PLAYER, SOUND_NORMAL);
-			if(push_ob(tmp,dir,op))
-				ret = 1;
-			if(op->contr->tmp_invis||op->hide) 
-				make_visible(op);
-			return ret;
-		}
-		else if(QUERY_FLAG(tmp,FLAG_CAN_ROLL)) /* or try to roll the object */ 
-		{
-			recursive_roll(tmp,dir,op);
-			if(action_makes_visible(op)) 
-				make_visible(op);
-		}
-
-		/* Any generic living creature.  Including things like doors.
-		* Way it works is like this:  First, it must have some hit points
-		* and be living.  Then, it must be one of the following:
-		* 1) Not a player, 2) A player, but of a different party.  Note
-		* that party_number -1 is no party, so attacks can still happen.
-		*/
-		else if ((tmp->stats.hp>=0) && QUERY_FLAG(tmp, FLAG_ALIVE) &&
-				((tmp->type!=PLAYER || op->contr->party_number==-1 ||
-					op->contr->party_number!=tmp->contr->party_number))) 
-		{
-			op->enemy = tmp; /* instead of attack, we assign it as our enemy */
-			op->enemy_count = tmp->count;
-			ret = 1;
-		}
-    } /* if player should attack something */
-    return ret;
-}
-
-int move_player(object *op,int dir) {
-    int face, pick;
-
-    face = dir ? (dir - 1) / 2 : -1;
+    int face = dir ? (dir - 1) / 2 : -1;
 
 	op->contr->praying=0;
 
@@ -1979,26 +1738,49 @@ int move_player(object *op,int dir) {
 		else
 	        op->anim_enemy_dir = op->facing;
 		op->contr->fire_on=0;
-        
     }
     else
     {
-        if(move_player_attack(op,dir))
+		if (!move_ob(op,dir,op))
             op->anim_enemy_dir = dir;
         else
             op->anim_moving_dir = dir;
     }
 
-    /* Add special check for newcs players and fire on - this way, the
-     * server can handle repeat firing.
-     */
-    pick = check_pick(op);
+	/* the old push & roll code - will be transfered to /push
+		if (get_owner(tmp)==op ||
+			((QUERY_FLAG(tmp,FLAG_UNAGGRESSIVE) || tmp->type==PLAYER || 
+			QUERY_FLAG(tmp, FLAG_FRIENDLY)) && !op_on_battleground(op, NULL, NULL)))
+		{
+			play_sound_map(op->map, op->x, op->y, SOUND_PUSH_PLAYER, SOUND_NORMAL);
+			if(push_ob(tmp,dir,op))
+				ret = 1;
+			if(op->contr->tmp_invis||op->hide) 
+				make_visible(op);
+			return ret;
+		}
+		else if(QUERY_FLAG(tmp,FLAG_CAN_ROLL))
+		{
+			recursive_roll(tmp,dir,op);
+			if(action_makes_visible(op)) 
+				make_visible(op);
+		}
+	*/
+	/* i disabled automatically pickup - This is a needed option
+	 * in a rogue like game but its a exploit in a modern MMORPG.
+	 * we really DON'T want that people run around picking automatically
+	 * all up - because we don't want junk items they will then always pickup
+	 * valuable things.
+	
+    /*pick = check_pick(op);*/
+
+	/* running/firing is now handled different.
     if (op->contr->fire_on || (op->contr->run_on && pick!=0)) {
 	op->direction = dir;
     } else {
 	op->direction=0;
     }
-
+    */
 	if(QUERY_FLAG(op,FLAG_ANIMATE) ) /* hm, should be not needed - players always animated */
 	{
 		if(op->anim_enemy_dir == -1 && op->anim_moving_dir == -1)
