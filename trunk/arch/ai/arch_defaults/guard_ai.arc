@@ -1,5 +1,6 @@
 Object guard_arch_ai
 name Guard arch AI
+other_arch guard
 msg
 # A typical guard never leaves his favourite spot
 processes:
