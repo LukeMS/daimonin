@@ -149,16 +149,21 @@ int is_enemy_of(object *op, object *obj) {
 
 int is_friend_of(object *op, object *obj) {
     /* TODO: add a few other odd types here, such as god & golem */
-    if(!obj->type == PLAYER || !obj->type == MONSTER || op == obj)
+    if(!obj->type == PLAYER || !obj->type == MONSTER ||
+            !op->type == PLAYER || !op->type == MONSTER || 
+            op == obj)
         return FALSE;
 
     /* TODO: this needs to be sorted out better */
-    if(QUERY_FLAG(op, FLAG_FRIENDLY)) {
-        if(!QUERY_FLAG(obj, FLAG_MONSTER) || QUERY_FLAG(obj, FLAG_FRIENDLY))
+    if(QUERY_FLAG(op, FLAG_FRIENDLY) || op->type == PLAYER) {
+        if(!QUERY_FLAG(obj, FLAG_MONSTER) || QUERY_FLAG(obj, FLAG_FRIENDLY)
+                || obj->type == PLAYER) {
             return TRUE;
+        }
     } else {
-        if(!QUERY_FLAG(obj, FLAG_FRIENDLY) && obj->type != PLAYER)
+        if(!QUERY_FLAG(obj, FLAG_FRIENDLY) && obj->type != PLAYER) {
             return TRUE;
+        }
     }
 
     return FALSE;
@@ -982,7 +987,7 @@ int ai_bow_attack_enemy(object *op)
     arrow->stats.hp = arrow->stats.dam; 
     arrow->stats.dam+= bow->stats.dam+bow->magic+arrow->magic; /* NO_STRENGTH */
     arrow->stats.dam=FABS((int)((float)(arrow->stats.dam  *lev_damage[op->level])));
-    arrow->stats.wc= 10 + (bow->magic +bow->stats.wc + arrow->magic + arrow->stats.wc-op->level);
+    arrow->stats.wc= 10 + (bow->magic +bow->stats.wc + arrow->magic + arrow->stats.wc+op->level);
     arrow->stats.wc_range = bow->stats.wc_range;
     arrow->map=op->map;
     arrow->last_sp = 12; /* we use fixed value for mobs */
