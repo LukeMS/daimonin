@@ -282,7 +282,18 @@ struct mob_known_obj *register_npc_known_obj(object *npc, object *other,
                 STRING_OBJ_NAME(npc));
         return NULL;
     }
-    
+
+    /* this is really needed. 
+	 * a hitter object can be a "system object" ...even a object
+	 * in the inventory of npc (like a disease). These objects have
+	 * usually no map.
+	 */
+	if(other->type != PLAYER && !QUERY_FLAG(other,FLAG_ALIVE))
+	{
+        LOG(llevDebug,"register_npc_known_obj(): Called for non PLAYER/IS_ALIVE '%s'\n",
+		STRING_OBJ_NAME(npc));
+		return NULL;
+	}
     if(npc->type != MONSTER) {
         LOG(llevDebug,"register_npc_known_obj(): Called on non-mob object '%s'\n",
                 STRING_OBJ_NAME(npc));
@@ -1260,6 +1271,12 @@ static int calc_direction_towards_object(object *op, object *target) {
              target->y != MOB_PATHDATA(op)->goal_y )) {
         rv_vector rv_goal, rv_target;
         mapstruct *goal_map = ready_map_name(MOB_PATHDATA(op)->goal_map, MAP_NAME_SHARED);
+
+		if(!goal_map)
+		{
+			LOG(llevDebug,"BUGBUG: calc_direction_towards_object(): goal_map == NULL (%s <->%s)\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(target));
+			return 0;
+		}
         
         /* TODO if we can't see the object, goto its last known position
          * (also have to separate between well-known objects that we can find
