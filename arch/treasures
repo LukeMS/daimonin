@@ -264,7 +264,7 @@ end
 # OBJECT SPECIAL LISTS
 #
 treasure empty
-  list NONE
+  list none
     chance 100
 end
 treasure default_door
@@ -4017,10 +4017,7 @@ treasure random_testx
   end
   end
 end
-treasureone random_test
+treasure random_test
 arch ring_generic
- chance 100
-more
-list random_talisman
  chance 100
 end

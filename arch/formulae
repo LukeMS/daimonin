@@ -18,7 +18,7 @@
 #	    artifacts file (ie. <arch> of <title>).
 #	    If you want to just create the arch w/o
 #	    making it an artifact, designate the 
-#	    object field as "NONE".
+#	    object field as "none".
 #
 #  "chance" is how likely a formula is to appear in 
 #	    an alchemical grimore. Chance of 0 indicates
