@@ -340,6 +340,54 @@ bank1.171
 bank1.171
 bank1.111
 mina
+anim bank2a
+facings 9
+dummy.111
+bank2a.111
+bank2a.111
+bank2a.111
+bank2a.171
+bank2a.171
+bank2a.171
+bank2a.171
+bank2a.111
+mina
+anim bank2b
+facings 9
+dummy.111
+bank2b.111
+bank2b.111
+bank2b.111
+bank2b.171
+bank2b.171
+bank2b.171
+bank2b.171
+bank2b.111
+mina
+anim bank2c
+facings 9
+dummy.111
+bank2c.111
+bank2c.111
+bank2c.111
+bank2c.171
+bank2c.171
+bank2c.171
+bank2c.171
+bank2c.111
+mina
+anim bar1
+facings 9
+dummy.111
+bar1.111
+bar1.121
+bar1.131
+bar1.141
+bar1.151
+bar1.161
+bar1.171
+bar1.181
+mina
 anim bear_grey
 facings 25
 trans.101
@@ -1013,41 +1061,161 @@ wounds.101
 wounds.102
 wounds.103
 mina
-anim chains1.131
+anim cave_deco1
 facings 9
 dummy.111
-chains1.u.131
-chains1.u.131
-chains1.u.131
-chains1.u.151
-chains1.u.151
-chains1.u.151
-chains1.u.151
-chains1.u.131
+cave_deco1.111
+cave_deco1.111
+cave_deco1.111
+cave_deco1.111
+cave_deco1.131
+cave_deco1.131
+cave_deco1.131
+cave_deco1.131
 mina
-anim chains2.131
+anim cave_deco2
 facings 9
 dummy.111
-chains2.u.131
-chains2.u.131
-chains2.u.131
-chains2.u.151
-chains2.u.151
-chains2.u.151
-chains2.u.151
-chains2.u.131
+cave_deco2.111
+cave_deco2.111
+cave_deco2.111
+cave_deco2.111
+cave_deco2.131
+cave_deco2.131
+cave_deco2.131
+cave_deco2.131
 mina
-anim chains3.131
+anim cave_deco3
 facings 9
 dummy.111
+cave_deco3.111
+cave_deco2.111
+cave_deco3.111
+cave_deco3.111
+cave_deco3.131
+cave_deco3.131
+cave_deco3.131
+cave_deco3.131
+mina
+anim cave_deco_full
+facings 9
+dummy.111
+cave_deco_full.u.111
+cave_deco_full.u.111
+cave_deco_full.u.111
+cave_deco_full.u.111
+cave_deco_full.u.131
+cave_deco_full.u.131
+cave_deco_full.u.131
+cave_deco_full.u.131
+mina
+anim cave_deco_wall1
+facings 9
+dummy.111
+cave_deco_w1.u.151
+cave_deco_w1.u.151
+cave_deco_w1.u.151
+cave_deco_w1.u.131
+cave_deco_w1.u.131
+cave_deco_w1.u.131
+cave_deco_w1.u.131
+cave_deco_w1.u.151
+mina
+anim cave_deco_wall2
+facings 9
+dummy.111
+cave_deco_w2.u.151
+cave_deco_w2.u.151
+cave_deco_w2.u.151
+cave_deco_w2.u.131
+cave_deco_w2.u.131
+cave_deco_w2.u.131
+cave_deco_w2.u.131
+cave_deco_w2.u.151
+mina
+anim cave_deco_wall3
+facings 9
+dummy.111
+cave_deco_w3.u.151
+cave_deco_w3.u.151
+cave_deco_w3.u.151
+cave_deco_w3.u.131
+cave_deco_w3.u.131
+cave_deco_w3.u.131
+cave_deco_w3.u.131
+cave_deco_w3.u.151
+mina
+anim cave_deco_wall4
+facings 9
+dummy.111
+cave_deco_w4.u.151
+cave_deco_w4.u.151
+cave_deco_w4.u.151
+cave_deco_w4.u.131
+cave_deco_w4.u.131
+cave_deco_w4.u.131
+cave_deco_w4.u.131
+cave_deco_w4.u.151
+mina
+anim cave_deco_wall5
+facings 9
+dummy.111
+cave_deco_w5.u.151
+cave_deco_w5.u.151
+cave_deco_w5.u.151
+cave_deco_w5.u.131
+cave_deco_w5.u.131
+cave_deco_w5.u.131
+cave_deco_w5.u.131
+cave_deco_w5.u.151
+mina
+anim chained_skel.111
+facings 9
+dummy.111
+chained_skel.111
+chained_skel.111
+chained_skel.111
+chained_skel.171
+chained_skel.171
+chained_skel.171
+chained_skel.171
+chained_skel.111
+mina
+anim chains1.151
+facings 9
+dummy.111
+chains1.u.151
+chains1.u.151
+chains1.u.151
+chains1.u.131
+chains1.u.131
+chains1.u.131
+chains1.u.131
+chains1.u.151
+mina
+anim chains2.151
+facings 9
+dummy.111
+chains2.u.151
+chains2.u.151
+chains2.u.151
+chains2.u.131
+chains2.u.131
+chains2.u.131
+chains2.u.131
+chains2.u.151
+mina
+anim chains3.151
+facings 9
+dummy.111
+chains3.u.151
+chains3.u.151
+chains3.u.151
+chains3.u.131
 chains3.u.131
 chains3.u.131
 chains3.u.131
 chains3.u.151
-chains3.u.151
-chains3.u.151
-chains3.u.151
-chains3.u.131
 mina
 anim chair1_111
 facings 9
@@ -1106,31 +1274,7 @@ chest_mm_closed.171
 chest_mm_closed.171
 chest_mm_closed.111
 mina
-anim chest1_171
-facings 9
-dummy.111
-chest_mm_closed.111
-chest_mm_closed.111
-chest_mm_closed.111
-chest_mm_closed.171
-chest_mm_closed.171
-chest_mm_closed.171
-chest_mm_closed.171
-chest_mm_closed.111
-mina
 anim chest7_111
-facings 9
-dummy.111
-chest_mm2_closed.111
-chest_mm2_closed.111
-chest_mm2_closed.111
-chest_mm2_closed.171
-chest_mm2_closed.171
-chest_mm2_closed.171
-chest_mm2_closed.171
-chest_mm2_closed.111
-mina
-anim chest7_171
 facings 9
 dummy.111
 chest_mm2_closed.111
@@ -1154,31 +1298,7 @@ chest_mw_closed.171
 chest_mw_closed.171
 chest_mw_closed.111
 mina
-anim chest_4.171
-facings 9
-dummy.111
-chest_mw_closed.111
-chest_mw_closed.111
-chest_mw_closed.111
-chest_mw_closed.171
-chest_mw_closed.171
-chest_mw_closed.171
-chest_mw_closed.171
-chest_mw_closed.111
-mina
 anim chest_m
-facings 9
-dummy.111
-chest_lm_closed.111
-chest_lm_closed.111
-chest_lm_closed.111
-chest_lm_closed.171
-chest_lm_closed.171
-chest_lm_closed.171
-chest_lm_closed.171
-chest_lm_closed.111
-mina
-anim chest_m1_7
 facings 9
 dummy.111
 chest_lm_closed.111
@@ -1202,18 +1322,6 @@ chest_sm_closed.171
 chest_sm_closed.171
 chest_sm_closed.111
 mina
-anim chest_sm_7
-facings 9
-dummy.111
-chest_sm_closed.111
-chest_sm_closed.111
-chest_sm_closed.111
-chest_sm_closed.171
-chest_sm_closed.171
-chest_sm_closed.171
-chest_sm_closed.171
-chest_sm_closed.111
-mina
 anim chest_sw_1
 facings 9
 dummy.111
@@ -1226,31 +1334,7 @@ chest_sw_closed.171
 chest_sw_closed.171
 chest_sw_closed.111
 mina
-anim chest_sw_7
-facings 9
-dummy.111
-chest_sw_closed.111
-chest_sw_closed.111
-chest_sw_closed.111
-chest_sw_closed.171
-chest_sw_closed.171
-chest_sw_closed.171
-chest_sw_closed.171
-chest_sw_closed.111
-mina
 anim chest_w1
-facings 9
-dummy.111
-chest_lw_closed.111
-chest_lw_closed.111
-chest_lw_closed.111
-chest_lw_closed.171
-chest_lw_closed.171
-chest_lw_closed.171
-chest_lw_closed.171
-chest_lw_closed.111
-mina
-anim chest_w1_7
 facings 9
 dummy.111
 chest_lw_closed.111
@@ -1369,6 +1453,30 @@ coffin_wood.131
 coffin_wood.131
 coffin_wood.131
 coffin_wood.111
+mina
+anim couch1a
+facings 9
+dummy.111
+couch1a.111
+couch1a.111
+couch1a.111
+couch1a.171
+couch1a.171
+couch1a.171
+couch1a.171
+couch1a.111
+mina
+anim couch1b
+facings 9
+dummy.111
+couch1b.111
+couch1b.111
+couch1b.111
+couch1b.171
+couch1b.171
+couch1b.171
+couch1b.171
+couch1b.111
 mina
 anim crystal_light
 lcrystal_lit1.101
@@ -1538,6 +1646,18 @@ desk1.171
 desk1.171
 desk1.111
 mina
+anim desk2
+facings 9
+dummy.111
+desk2.111
+desk2.111
+desk2.111
+desk2.171
+desk2.171
+desk2.171
+desk2.171
+desk2.111
+mina
 anim detector
 facings 9
 dummy.111
@@ -1558,6 +1678,18 @@ pedestal.131
 pedestal.132
 pedestal.131
 pedestal.132
+mina
+anim dir_sign
+facings 9
+dummy.111
+dir_signs.111
+dir_signs.111
+dir_signs.111
+dir_signs.131
+dir_signs.131
+dir_signs.131
+dir_signs.131
+dir_signs.111
 mina
 anim director
 facings 9
@@ -1583,14 +1715,35 @@ door_lock1.131
 door_lock1.132
 door_lock1.131
 door_lock1.132
-door_lock1.111
-door_lock1.112
-door_lock1.111
-door_lock1.112
-door_lock1.131
-door_lock1.132
-door_lock1.131
-door_lock1.132
+door_lock1.151
+door_lock1.152
+door_lock1.151
+door_lock1.152
+door_lock1.171
+door_lock1.172
+door_lock1.171
+door_lock1.172
+mina
+anim door_bar1
+facings 9
+dummy.111
+dummy.111
+door_bar1.111
+door_bar1.112
+door_bar1.111
+door_bar1.112
+door_bar1.131
+door_bar1.132
+door_bar1.131
+door_bar1.132
+door_bar1.151
+door_bar1.152
+door_bar1.151
+door_bar1.152
+door_bar1.171
+door_bar1.172
+door_bar1.171
+door_bar1.172
 mina
 anim door_wood1
 facings 9
@@ -1633,6 +1786,18 @@ door_wood2.131
 door_wood2.132
 door_wood2.131
 door_wood2.132
+mina
+anim doorway_wood1_1
+facings 9
+dummy.111
+doorway_wood1.111
+doorway_wood1.111
+doorway_wood1.111
+doorway_wood1.131
+doorway_wood1.131
+doorway_wood1.131
+doorway_wood1.131
+doorway_wood1.111
 mina
 anim dragon_skeletal
 facings 25
@@ -2226,6 +2391,66 @@ anim firebreath
 fire.101
 fire.102
 fire.103
+mina
+anim flag_01
+facings 9
+dummy.111
+flag_01.u.151
+flag_01.u.151
+flag_01.u.151
+flag_01.u.131
+flag_01.u.131
+flag_01.u.131
+flag_01.u.131
+flag_01.u.151
+mina
+anim flag_02
+facings 9
+dummy.111
+flag_02.u.151
+flag_02.u.151
+flag_02.u.151
+flag_02.u.131
+flag_02.u.131
+flag_02.u.131
+flag_02.u.131
+flag_02.u.151
+mina
+anim flag_03
+facings 9
+dummy.111
+flag_03.u.151
+flag_03.u.151
+flag_03.u.151
+flag_03.u.131
+flag_03.u.131
+flag_03.u.131
+flag_03.u.131
+flag_03.u.151
+mina
+anim flag_04
+facings 9
+dummy.111
+flag_04.u.151
+flag_04.u.151
+flag_04.u.151
+flag_04.u.131
+flag_04.u.131
+flag_04.u.131
+flag_04.u.131
+flag_04.u.151
+mina
+anim flag_05
+facings 9
+dummy.111
+flag_05.u.151
+flag_05.u.151
+flag_05.u.151
+flag_05.u.131
+flag_05.u.131
+flag_05.u.131
+flag_05.u.131
+flag_05.u.151
 mina
 anim fmask_ruin1a.111
 facings 9
@@ -4882,6 +5107,30 @@ anim lamp
 lamp_lit1.101
 lamp_lit1.102
 mina
+anim lamp_wall
+facings 9
+dummy.111
+lamp_wall.111
+lamp_wall.111
+lamp_wall.111
+lamp_wall.171
+lamp_wall.171
+lamp_wall.171
+lamp_wall.171
+lamp_wall.111
+mina
+anim lamp_wall_1_unlit
+facings 9
+dummy.111
+lamp_wall.110
+lamp_wall.110
+lamp_wall.110
+lamp_wall.170
+lamp_wall.170
+lamp_wall.170
+lamp_wall.170
+lamp_wall.110
+mina
 anim lantern2_magic.131
 facings 9
 dummy.111
@@ -5102,6 +5351,30 @@ locker3.171
 locker3.171
 locker3.111
 mina
+anim locker4
+facings 9
+dummy.111
+locker4.111
+locker4.111
+locker4.111
+locker4.171
+locker4.171
+locker4.171
+locker4.171
+locker4.111
+mina
+anim locker5
+facings 9
+dummy.111
+locker5.111
+locker5.111
+locker5.111
+locker5.171
+locker5.171
+locker5.171
+locker5.171
+locker5.111
+mina
 anim lost_soul
 facings 25
 trans.101
@@ -5253,6 +5526,54 @@ magic_wall.171
 dummy.111
 magic_wall.181
 dummy.111
+mina
+anim marker0
+facings 9
+dummy.111
+marker.111
+marker.111
+marker.111
+marker.171
+marker.171
+marker.171
+marker.171
+marker.111
+mina
+anim marker1
+facings 9
+dummy.111
+marker1.111
+marker1.111
+marker1.131
+marker1.131
+marker1.151
+marker1.151
+marker1.171
+marker1.171
+mina
+anim marker2
+facings 9
+dummy.111
+marker2.121
+marker2.121
+marker2.141
+marker2.141
+marker2.161
+marker2.161
+marker2.181
+marker2.181
+mina
+anim marker3
+facings 9
+dummy.111
+marker3.111
+marker3.111
+marker3.131
+marker3.131
+marker3.151
+marker3.151
+marker3.171
+marker3.171
 mina
 anim meffect_blue
 effect1_blue.101
@@ -6166,6 +6487,126 @@ orc_warrior.151
 orc_warrior.251
 orc_warrior.151
 mina
+anim ped_black
+facings 9
+dummy.111
+ped_black.111
+ped_black.111
+ped_black.111
+ped_black.131
+ped_black.131
+ped_black.131
+ped_black.131
+ped_black.111
+mina
+anim ped_black_h1
+facings 9
+dummy.111
+ped_black_h1.111
+ped_black_h1.111
+ped_black_h1.111
+ped_black_h1.131
+ped_black_h1.131
+ped_black_h1.131
+ped_black_h1.131
+ped_black_h1.111
+mina
+anim ped_black_hs1
+facings 9
+dummy.111
+ped_black_hs1.111
+ped_black_hs1.111
+ped_black_hs1.111
+ped_black_hs1.131
+ped_black_hs1.131
+ped_black_hs1.131
+ped_black_hs1.131
+ped_black_hs1.111
+mina
+anim ped_black_hw1
+facings 9
+dummy.111
+ped_black_hw1.111
+ped_black_hw1.111
+ped_black_hw1.111
+ped_black_hw1.131
+ped_black_hw1.131
+ped_black_hw1.131
+ped_black_hw1.131
+ped_black_hw1.111
+mina
+anim ped_black_hws1
+facings 9
+dummy.111
+ped_black_hws1.111
+ped_black_hws1.111
+ped_black_hws1.111
+ped_black_hws1.131
+ped_black_hws1.131
+ped_black_hws1.131
+ped_black_hws1.131
+ped_black_hws1.111
+mina
+anim ped_white
+facings 9
+dummy.111
+ped_white.111
+ped_white.111
+ped_white.111
+ped_white.131
+ped_white.131
+ped_white.131
+ped_white.131
+ped_white.111
+mina
+anim ped_white_h1
+facings 9
+dummy.111
+ped_white_h1.111
+ped_white_h1.111
+ped_white_h1.111
+ped_white_h1.131
+ped_white_h1.131
+ped_white_h1.131
+ped_white_h1.131
+ped_white_h1.111
+mina
+anim ped_white_hs1
+facings 9
+dummy.111
+ped_white_hs1.111
+ped_white_hs1.111
+ped_white_hs1.111
+ped_white_hs1.131
+ped_white_hs1.131
+ped_white_hs1.131
+ped_white_hs1.131
+ped_white_hs1.111
+mina
+anim ped_white_hw1
+facings 9
+dummy.111
+ped_white_hw1.111
+ped_white_hw1.111
+ped_white_hw1.111
+ped_white_hw1.131
+ped_white_hw1.131
+ped_white_hw1.131
+ped_white_hw1.131
+ped_white_hw1.111
+mina
+anim ped_white_hws1
+facings 9
+dummy.111
+ped_white_hws1.111
+ped_white_hws1.111
+ped_white_hws1.111
+ped_white_hws1.131
+ped_white_hws1.131
+ped_white_hws1.131
+ped_white_hws1.131
+ped_white_hws1.111
+mina
 anim pedestal
 facings 9
 dummy.111
@@ -6208,77 +6649,281 @@ pedestal.132
 pedestal.131
 pedestal.132
 mina
-anim picture1.131
+anim picture1.151
 facings 9
 dummy.111
-picture1.u.131
-picture1.u.131
-picture1.u.131
-picture1.u.151
 picture1.u.151
 picture1.u.151
 picture1.u.151
 picture1.u.131
+picture1.u.131
+picture1.u.131
+picture1.u.131
+picture1.u.151
 mina
-anim picture2.131
+anim picture10
 facings 9
 dummy.111
-picture2.u.131
-picture2.u.131
-picture2.u.131
-picture2.u.151
-picture2.u.151
-picture2.u.151
-picture2.u.151
-picture2.u.131
+picture10.u.151
+picture10.u.151
+picture10.u.151
+picture10.u.131
+picture10.u.131
+picture10.u.131
+picture10.u.131
+picture10.u.151
 mina
-anim picture3.131
+anim picture11
 facings 9
 dummy.111
-picture3.u.131
-picture3.u.131
-picture3.u.131
-picture3.u.151
-picture3.u.151
-picture3.u.151
-picture3.u.151
-picture3.u.131
+picture11.u.151
+picture11.u.151
+picture11.u.151
+picture11.u.131
+picture11.u.131
+picture11.u.131
+picture11.u.131
+picture11.u.151
 mina
-anim picture4.131
+anim picture12
 facings 9
 dummy.111
-picture4.u.131
-picture4.u.131
-picture4.u.131
+picture12.u.151
+picture12.u.151
+picture12.u.151
+picture12.u.131
+picture12.u.131
+picture12.u.131
+picture12.u.131
+picture12.u.151
+mina
+anim picture13
+facings 9
+dummy.111
+picture13.u.151
+picture13.u.151
+picture13.u.151
+picture13.u.131
+picture13.u.131
+picture13.u.131
+picture13.u.131
+picture13.u.151
+mina
+anim picture14
+facings 9
+dummy.111
+picture14.u.151
+picture14.u.151
+picture14.u.151
+picture14.u.131
+picture14.u.131
+picture14.u.131
+picture14.u.131
+picture14.u.151
+mina
+anim picture15
+facings 9
+dummy.111
+picture15.u.151
+picture15.u.151
+picture15.u.151
+picture15.u.131
+picture15.u.131
+picture15.u.131
+picture15.u.131
+picture15.u.151
+mina
+anim picture2.151
+facings 9
+dummy.111
+picture2.u.151
+picture2.u.151
+picture2.u.151
+picture2.u.131
+picture2.u.131
+picture2.u.131
+picture2.u.131
+picture2.u.151
+mina
+anim picture3.151
+facings 9
+dummy.111
+picture3.u.151
+picture3.u.151
+picture3.u.151
+picture3.u.131
+picture3.u.131
+picture3.u.131
+picture3.u.131
+picture3.u.151
+mina
+anim picture4.151
+facings 9
+dummy.111
 picture4.u.151
 picture4.u.151
 picture4.u.151
 picture4.u.151
 picture4.u.131
+picture4.u.131
+picture4.u.131
+picture4.u.151
 mina
-anim picture5.131
+anim picture5.151
 facings 9
 dummy.111
-picture5.u.131
-picture5.u.131
-picture5.u.131
-picture5.u.151
 picture5.u.151
 picture5.u.151
 picture5.u.151
 picture5.u.131
+picture5.u.131
+picture5.u.131
+picture5.u.131
+picture5.u.151
 mina
-anim picture6.131
+anim picture6.151
 facings 9
 dummy.111
-picture6.u.131
-picture6.u.131
-picture6.u.131
-picture6.u.151
 picture6.u.151
 picture6.u.151
 picture6.u.151
 picture6.u.131
+picture6.u.131
+picture6.u.131
+picture6.u.131
+picture6.u.151
+mina
+anim picture7
+facings 9
+dummy.111
+picture7.u.151
+picture7.u.151
+picture7.u.151
+picture7.u.131
+picture7.u.131
+picture7.u.131
+picture7.u.131
+picture7.u.151
+mina
+anim picture8
+facings 9
+dummy.111
+picture8.u.151
+picture8.u.151
+picture8.u.151
+picture8.u.131
+picture8.u.131
+picture8.u.131
+picture8.u.131
+picture8.u.151
+mina
+anim picture9
+facings 9
+dummy.111
+picture9.u.151
+picture9.u.151
+picture9.u.151
+picture9.u.131
+picture9.u.131
+picture9.u.131
+picture9.u.131
+picture9.u.151
+mina
+anim pillar_black1c
+facings 9
+dummy.111
+pillar_black1c.111
+pillar_black1c.111
+pillar_black1c.111
+pillar_black1c.131
+pillar_black1c.131
+pillar_black1c.131
+pillar_black1c.131
+pillar_black1c.111
+mina
+anim pillar_black1d
+facings 9
+dummy.111
+pillar_black1d.111
+pillar_black1d.111
+pillar_black1d.111
+pillar_black1d.131
+pillar_black1d.131
+pillar_black1d.131
+pillar_black1d.131
+pillar_black1d.111
+mina
+anim pillar_black2c
+facings 9
+dummy.111
+pillar_black2c.111
+pillar_black2c.111
+pillar_black2c.111
+pillar_black2c.131
+pillar_black2c.131
+pillar_black2c.131
+pillar_black2c.131
+pillar_black2c.111
+mina
+anim pillar_black2d
+facings 9
+dummy.111
+pillar_black2d.111
+pillar_black2d.111
+pillar_black2d.111
+pillar_black1d.131
+pillar_black1d.131
+pillar_black2d.131
+pillar_black2d.131
+pillar_black2d.111
+mina
+anim pillar_white1c
+facings 9
+dummy.111
+pillar_white1c.111
+pillar_white1c.111
+pillar_white1c.111
+pillar_white1c.131
+pillar_white1c.131
+pillar_white1c.131
+pillar_white1c.131
+pillar_white1c.111
+mina
+anim pillar_white1d
+facings 9
+dummy.111
+pillar_white1d.111
+pillar_white1d.111
+pillar_white1d.111
+pillar_white1d.131
+pillar_white1d.131
+pillar_white1d.131
+pillar_white1d.131
+pillar_white1d.111
+mina
+anim pillar_white2c
+facings 9
+dummy.111
+pillar_white2c.111
+pillar_white2c.111
+pillar_white2c.111
+pillar_white2c.131
+pillar_white2c.131
+pillar_white2c.131
+pillar_white2c.131
+pillar_white2c.111
+mina
+anim pillar_white2d
+facings 9
+dummy.111
+pillar_white2d.111
+pillar_white2d.111
+pillar_white2d.111
+pillar_white1d.131
+pillar_white1d.131
+pillar_white2d.131
+pillar_white2d.131
+pillar_white2d.111
 mina
 anim pit_closed
 hole.101
@@ -6300,29 +6945,29 @@ hole.106
 hole.107
 hole.108
 mina
-anim plant1_wall.131
+anim plant1_wall.151
 facings 9
 dummy.111
-plant1_wall.131
-plant1_wall.131
-plant1_wall.131
-plant1_wall.151
 plant1_wall.151
 plant1_wall.151
 plant1_wall.151
 plant1_wall.131
+plant1_wall.131
+plant1_wall.131
+plant1_wall.131
+plant1_wall.151
 mina
-anim plant2_wall.131
+anim plant2_wall.151
 facings 9
 dummy.111
-plant2_wall.131
-plant2_wall.131
-plant2_wall.131
-plant2_wall.151
 plant2_wall.151
 plant2_wall.151
 plant2_wall.151
 plant2_wall.131
+plant2_wall.131
+plant2_wall.131
+plant2_wall.131
+plant2_wall.151
 mina
 anim portal_big
 portal_big.101
@@ -6333,17 +6978,17 @@ portal_big.105
 portal_big.106
 portal_big.107
 mina
-anim pot_wall.151
+anim pot_wall.131
 facings 9
 dummy.111
-pot_wall.u.131
-pot_wall.u.131
-pot_wall.u.131
-pot_wall.u.151
 pot_wall.u.151
 pot_wall.u.151
 pot_wall.u.151
 pot_wall.u.131
+pot_wall.u.131
+pot_wall.u.131
+pot_wall.u.131
+pot_wall.u.151
 mina
 anim power_crystal
 power_crystal.101
@@ -6967,17 +7612,17 @@ ranger.152
 ranger.151
 ranger.152
 mina
-anim ring_wall.131
+anim ring_wall.151
 facings 9
 dummy.111
-ring_wall.131
-ring_wall.131
-ring_wall.131
-ring_wall.151
 ring_wall.151
 ring_wall.151
 ring_wall.151
 ring_wall.131
+ring_wall.131
+ring_wall.131
+ring_wall.131
+ring_wall.151
 mina
 anim rod_heavy
 rod_heavy.101
@@ -7004,6 +7649,18 @@ scarecrow.131
 scarecrow.131
 scarecrow.131
 scarecrow.111
+mina
+anim sewer_wall
+facings 9
+dummy.111
+sewer_wall.151
+sewer_wall.151
+sewer_wall.151
+sewer_wall.131
+sewer_wall.131
+sewer_wall.131
+sewer_wall.131
+sewer_wall.151
 mina
 anim shelf1.111
 facings 9
@@ -7685,6 +8342,18 @@ stairs_down.107
 stairs_down.107
 stairs_down.107
 mina
+anim stair_red_up_1
+facings 9
+stairs_red_up.131
+stairs_red_up.131
+stairs_red_up.131
+stairs_red_up.131
+stairs_red_up.131
+stairs_red_up.151
+stairs_red_up.151
+stairs_red_up.151
+stairs_red_up.151
+mina
 anim stair_up
 facings 9
 dummy.111
@@ -7709,6 +8378,59 @@ stairs_wood.151
 stairs_wood.151
 stairs_wood.151
 mina
+anim statue_fire
+statue_fire.111
+statue_fire.112
+statue_fire.113
+mina
+anim statue_white2
+facings 9
+dummy.111
+statue_white2.131
+statue_white2.131
+statue_white2.131
+statue_white2.151
+statue_white2.151
+statue_white2.151
+statue_white2.151
+statue_white2.131
+mina
+anim statue_white3
+facings 9
+dummy.111
+statue_white3.131
+statue_white3.131
+statue_white3.131
+statue_white3.151
+statue_white3.151
+statue_white3.151
+statue_white3.151
+statue_white3.131
+mina
+anim stone_throne
+facings 9
+dummy.111
+char_throne.111
+char_throne.111
+char_throne.111
+char_throne.131
+char_throne.131
+char_throne.131
+char_throne.131
+char_throne.111
+mina
+anim stonehenge
+facings 9
+dummy.111
+stonehenge.111
+stonehenge.121
+stonehenge.131
+stonehenge.141
+stonehenge.151
+stonehenge.161
+stonehenge.171
+stonehenge.181
+mina
 anim straw2.111
 facings 9
 dummy.111
@@ -7720,6 +8442,27 @@ straw2.111
 straw2.111
 straw2.111
 straw2.131
+mina
+anim switch_wall
+facings 9
+dummy.111
+dummy.111
+switch_wall.111
+switch_wall.112
+switch_wall.111
+switch_wall.112
+switch_wall.111
+switch_wall.112
+switch_wall.171
+switch_wall.172
+switch_wall.171
+switch_wall.172
+switch_wall.171
+switch_wall.172
+switch_wall.171
+switch_wall.172
+switch_wall.111
+switch_wall.112
 mina
 anim t_axe
 facings 9
@@ -7920,6 +8663,18 @@ throne.131
 throne.131
 throne.111
 mina
+anim tipper
+facings 9
+dummy.111
+tipper.111
+tipper.111
+tipper.111
+tipper.131
+tipper.131
+tipper.131
+tipper.131
+tipper.111
+mina
 anim torch
 torch_lit1.101
 torch_lit1.102
@@ -7963,11 +8718,17 @@ torch_wall.112
 torch_wall.113
 torch_wall.114
 mina
-anim torch_wall_7
-torch_wall.171
-torch_wall.172
-torch_wall.173
-torch_wall.174
+anim torch_wall_1_unlit
+facings 9
+dummy.111
+torch_wall.110
+torch_wall.110
+torch_wall.110
+torch_wall.170
+torch_wall.170
+torch_wall.170
+torch_wall.170
+torch_wall.110
 mina
 anim trap_bear_trap
 tspikes.101
@@ -8124,6 +8885,18 @@ troll.152
 troll.151
 troll.152
 mina
+anim wagon_big
+facings 9
+dummy.111
+wagon_big.131
+wagon_big.131
+wagon_big.131
+wagon_big.151
+wagon_big.151
+wagon_big.151
+wagon_big.151
+wagon_big.131
+mina
 anim wagon_small.111
 facings 9
 dummy.111
@@ -8135,6 +8908,114 @@ wagon_small.131
 wagon_small.131
 wagon_small.131
 wagon_small.111
+mina
+anim wall_blood1
+facings 9
+dummy.111
+wall_blood1.u.151
+wall_blood1.u.151
+wall_blood1.u.151
+wall_blood1.u.131
+wall_blood1.u.131
+wall_blood1.u.131
+wall_blood1.u.131
+wall_blood1.u.151
+mina
+anim wall_blood2
+facings 9
+dummy.111
+wall_blood2.u.151
+wall_blood2.u.151
+wall_blood2.u.151
+wall_blood2.u.131
+wall_blood2.u.131
+wall_blood2.u.131
+wall_blood2.u.131
+wall_blood2.u.151
+mina
+anim wall_blood3
+facings 9
+dummy.111
+wall_blood3.u.151
+wall_blood3.u.151
+wall_blood3.u.151
+wall_blood3.u.131
+wall_blood3.u.131
+wall_blood3.u.131
+wall_blood3.u.131
+wall_blood3.u.151
+mina
+anim wall_blood4
+facings 9
+dummy.111
+wall_blood4.u.151
+wall_blood4.u.151
+wall_blood4.u.151
+wall_blood4.u.131
+wall_blood4.u.131
+wall_blood4.u.131
+wall_blood4.u.131
+wall_blood4.u.151
+mina
+anim wall_drain1
+facings 9
+dummy.111
+wall_drain1.151
+wall_drain1.151
+wall_drain1.151
+wall_drain1.131
+wall_drain1.131
+wall_drain1.131
+wall_drain1.131
+wall_drain1.151
+mina
+anim wall_drain2
+facings 9
+dummy.111
+wall_drain2.151
+wall_drain2.151
+wall_drain2.151
+wall_drain2.131
+wall_drain2.131
+wall_drain2.131
+wall_drain2.131
+wall_drain2.151
+mina
+anim wall_drain3
+facings 9
+dummy.111
+wall_drain3.151
+wall_drain3.151
+wall_drain3.151
+wall_drain3.131
+wall_drain3.131
+wall_drain3.131
+wall_drain3.131
+wall_drain3.151
+mina
+anim wall_drain4
+facings 9
+dummy.111
+wall_drain4.151
+wall_drain4.151
+wall_drain4.151
+wall_drain4.131
+wall_drain4.131
+wall_drain4.131
+wall_drain4.131
+wall_drain4.151
+mina
+anim wall_well.131
+facings 9
+dummy.111
+wall_well.131
+wall_well.131
+wall_well.131
+wall_well.151
+wall_well.151
+wall_well.151
+wall_well.151
+wall_well.131
 mina
 anim wand
 wand.101
@@ -8200,53 +9081,53 @@ lake.102
 lake.103
 lake.104
 mina
-anim wmask_bflag_brown_3
+anim wmask_bflag_brown_1
 facings 9
 dummy.111
-wmask_bflag_brown.u.131
-wmask_bflag_brown.u.131
-wmask_bflag_brown.u.131
-wmask_bflag_brown.u.151
 wmask_bflag_brown.u.151
 wmask_bflag_brown.u.151
 wmask_bflag_brown.u.151
 wmask_bflag_brown.u.131
+wmask_bflag_brown.u.131
+wmask_bflag_brown.u.131
+wmask_bflag_brown.u.131
+wmask_bflag_brown.u.151
 mina
-anim wmask_bflag_fire1_3
+anim wmask_bflag_fire1_1
 facings 9
 dummy.111
-wmask_bflag_fire1.u.131
-wmask_bflag_fire1.u.131
-wmask_bflag_fire1.u.131
-wmask_bflag_fire1.u.151
 wmask_bflag_fire1.u.151
 wmask_bflag_fire1.u.151
 wmask_bflag_fire1.u.151
 wmask_bflag_fire1.u.131
+wmask_bflag_fire1.u.131
+wmask_bflag_fire1.u.131
+wmask_bflag_fire1.u.131
+wmask_bflag_fire1.u.151
 mina
-anim wmask_fire_off_3
+anim wmask_fire_off_1
 facings 9
 dummy.111
-wmask_fire_off.131
-wmask_fire_off.131
-wmask_fire_off.131
-wmask_fire_off.151
 wmask_fire_off.151
 wmask_fire_off.151
 wmask_fire_off.151
 wmask_fire_off.131
+wmask_fire_off.131
+wmask_fire_off.131
+wmask_fire_off.131
+wmask_fire_off.151
 mina
-anim wmask_fire_on_3
+anim wmask_fire_on_1
 facings 9
 dummy.111
-wmask_fire_on.131
-wmask_fire_on.131
-wmask_fire_on.131
-wmask_fire_on.151
 wmask_fire_on.151
 wmask_fire_on.151
 wmask_fire_on.151
 wmask_fire_on.131
+wmask_fire_on.131
+wmask_fire_on.131
+wmask_fire_on.131
+wmask_fire_on.151
 mina
 anim wmask_ruin1a.111
 facings 9
@@ -8272,17 +9153,17 @@ wmask_ruin1b.131
 wmask_ruin1b.131
 wmask_ruin1b.111
 mina
-anim wmask_wanted.131
+anim wmask_wanted.151
 facings 9
 dummy.111
-wmask_wanted.u.131
-wmask_wanted.u.131
-wmask_wanted.u.131
-wmask_wanted.u.151
 wmask_wanted.u.151
 wmask_wanted.u.151
 wmask_wanted.u.151
 wmask_wanted.u.131
+wmask_wanted.u.131
+wmask_wanted.u.131
+wmask_wanted.u.131
+wmask_wanted.u.151
 mina
 anim worm_purple
 facings 25

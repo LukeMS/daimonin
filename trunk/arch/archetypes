@@ -208,6 +208,22 @@ sp -1
 no_teleport 1
 no_pick 1
 end
+Object stair_red_up_1
+name stairs going up
+type 66
+editor_folder connect/exists
+face stairs_red_up.131
+no_teleport 1
+layer 5
+hp -1
+sp -1
+no_pick 1
+animation stair_red_up_1
+is_animated 0
+anim_speed 1
+is_turnable 1
+direction 1
+end
 Object stair_down
 name stairs going down
 type 66
@@ -255,6 +271,19 @@ layer 5
 hp -1
 sp -1
 no_pick 1
+end
+Object switch_wall
+name switch
+type 93
+editor_folder connect/exists
+layer 3
+no_pick 1
+face switch_wall.111
+animation switch_wall
+is_animated 0
+anim_speed 1
+is_turnable 1
+direction 1
 end
 Object teleporter
 type 41
@@ -6204,6 +6233,45 @@ direction 1
 no_pick 1
 layer 4
 end
+Object bank2a
+name bank
+type 79
+editor_folder indoor/bank
+face bank2a.111
+animation bank2a
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 4
+end
+Object bank2b
+name bank
+type 79
+editor_folder indoor/bank
+face bank2b.111
+animation bank2b
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 4
+end
+Object bank2c
+name bank
+type 79
+editor_folder indoor/bank
+face bank2c.111
+animation bank2c
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 4
+end
 Object bank1.111
 name bank
 type 79
@@ -6216,6 +6284,40 @@ is_turnable 1
 direction 1
 no_pick 1
 layer 4
+end
+Object bar1
+name bar
+type 77
+editor_folder indoor/bar
+face bar1.111
+layer 5
+no_pick 1
+no_pass 1
+animation bar1
+is_animated 0
+anim_speed 1
+is_turnable 1
+direction 1
+end
+Object door_bar1
+name bar
+type 20
+msg
+You need a special key to open this door.
+endmsg
+editor_folder indoor/bar
+layer 5
+sub_type 1
+door_closed 1
+sp 5
+pass_thru 1
+no_pick 1
+direction 1
+face door_bar1.111
+animation door_bar1
+is_animated 0
+anim_speed 1
+is_turnable 1
 end
 Object basin1.101
 name basin
@@ -6246,6 +6348,32 @@ name basket
 type 79
 editor_folder indoor/indoor
 face basket2.101
+no_pick 1
+layer 4
+end
+Object couch1a
+name bed
+type 79
+editor_folder indoor/bed
+face couch1a.111
+animation couch1a
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 4
+end
+Object couch1b
+name bed
+type 79
+editor_folder indoor/bed
+face couch1b.111
+animation couch1b
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 4
 end
@@ -6298,6 +6426,14 @@ is_animated 0
 anim_speed 0
 is_turnable 1
 direction 1
+no_pick 1
+layer 4
+end
+Object beer_barrel.101
+name beer barrel
+type 79
+editor_folder indoor/indoor
+face beer_barrel.101
 no_pick 1
 layer 4
 end
@@ -6477,6 +6613,18 @@ editor_folder indoor/chairs
 face chair_small.101
 no_pick 1
 layer 4
+end
+Object stone_throne
+name stone throne
+type 79
+editor_folder indoor/chairs
+face char_throne.111
+animation stone_throne
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+layer 3
 end
 Object throne.111
 name throne
@@ -6783,6 +6931,141 @@ no_teleport 1
 layer 2
 no_pick 1
 end
+Object carpet2a
+name carpet
+type 79
+editor_folder indoor/masks_floor
+face carpet2a.101
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object carpet2b
+name carpet
+type 79
+editor_folder indoor/masks_floor
+face carpet2b.101
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object carpet2c
+name carpet
+type 79
+editor_folder indoor/masks_floor
+face carpet2c.101
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object carpet2d
+name carpet
+type 79
+editor_folder indoor/masks_floor
+face carpet2d.101
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object carpet2e
+name carpet
+type 79
+editor_folder indoor/masks_floor
+face carpet2e.101
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object carpet2f
+name carpet
+type 79
+editor_folder indoor/masks_floor
+face carpet2f.101
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object carpet2g
+name carpet
+type 79
+editor_folder indoor/masks_floor
+face carpet2g.101
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object carpet2h
+name carpet
+type 79
+editor_folder indoor/masks_floor
+face carpet2h.101
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object carpet2i
+name carpet
+type 79
+editor_folder indoor/masks_floor
+face carpet2i.101
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object carpet2j
+name carpet
+type 79
+editor_folder indoor/masks_floor
+face carpet2j.101
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object carpet2k
+name carpet
+type 79
+editor_folder indoor/masks_floor
+face carpet2k.101
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object carpet2.111
+name carpet
+type 79
+editor_folder indoor/masks_floor
+face carpet2.111
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object carpet2.131
+name carpet
+type 79
+editor_folder indoor/masks_floor
+face carpet2.131
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object carpet2.151
+name carpet
+type 79
+editor_folder indoor/masks_floor
+face carpet2.151
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object carpet2.171
+name carpet
+type 79
+editor_folder indoor/masks_floor
+face carpet2.171
+no_teleport 1
+layer 2
+no_pick 1
+end
 Object dirt_floor1
 name dirt
 type 79
@@ -6873,12 +7156,12 @@ no_teleport 1
 layer 2
 no_pick 1
 end
-Object wmask_bflag_brown_3
+Object wmask_bflag_brown_1
 name big flag
 type 77
 editor_folder indoor/masks_wall
-face wmask_bflag_brown.u.131
-animation wmask_bflag_brown_3
+face wmask_bflag_brown.u.151
+animation wmask_bflag_brown_1
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -6886,12 +7169,12 @@ direction 1
 no_pick 1
 layer 7
 end
-Object wmask_bflag_fire1_3
+Object wmask_bflag_fire1_1
 name big flag
 type 77
 editor_folder indoor/masks_wall
-face wmask_bflag_fire1.u.131
-animation wmask_bflag_fire1_3
+face wmask_bflag_fire1.u.151
+animation wmask_bflag_fire1_1
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -6899,12 +7182,12 @@ direction 1
 no_pick 1
 layer 7
 end
-Object wmask_fire_on_3
+Object flag_01
 name big flag
 type 77
 editor_folder indoor/masks_wall
-face wmask_fire_on.131
-animation wmask_fire_on_3
+face flag_01.u.151
+animation flag_01
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -6912,12 +7195,12 @@ direction 1
 no_pick 1
 layer 7
 end
-Object wmask_fire_off_3
+Object flag_02
 name big flag
 type 77
 editor_folder indoor/masks_wall
-face wmask_fire_off.131
-animation wmask_fire_off_3
+face flag_02.u.151
+animation flag_02
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -6925,12 +7208,77 @@ direction 1
 no_pick 1
 layer 7
 end
-Object chains1.131
+Object flag_03
+name big flag
+type 77
+editor_folder indoor/masks_wall
+face flag_03.u.151
+animation flag_03
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
+end
+Object flag_04
+name big flag
+type 77
+editor_folder indoor/masks_wall
+face flag_04.u.151
+animation flag_04
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
+end
+Object flag_05
+name big flag
+type 77
+editor_folder indoor/masks_wall
+face flag_05.u.151
+animation flag_05
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
+end
+Object wmask_fire_on_1
+name fire place
+type 77
+editor_folder indoor/masks_wall
+face wmask_fire_on.151
+animation wmask_fire_on_1
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
+end
+Object wmask_fire_off_1
+name fire place
+type 77
+editor_folder indoor/masks_wall
+face wmask_fire_off.151
+animation wmask_fire_off_1
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
+end
+Object chains1.151
 name chains
 type 77
 editor_folder indoor/masks_wall
-face chains1.u.131
-animation chains1.131
+face chains1.u.151
+animation chains1.151
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -6938,12 +7286,12 @@ direction 1
 no_pick 1
 layer 7
 end
-Object chains2.131
+Object chains2.151
 name chains
 type 77
 editor_folder indoor/masks_wall
-face chains2.u.131
-animation chains2.131
+face chains2.u.151
+animation chains2.151
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -6951,12 +7299,12 @@ direction 1
 no_pick 1
 layer 7
 end
-Object chains3.131
+Object chains3.151
 name chains
 type 77
 editor_folder indoor/masks_wall
-face chains3.u.131
-animation chains3.131
+face chains3.u.151
+animation chains3.151
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -6964,12 +7312,12 @@ direction 1
 no_pick 1
 layer 7
 end
-Object wmask_wanted.131
-name big flag
+Object wmask_wanted.151
+name paper
 type 77
 editor_folder indoor/masks_wall
-face wmask_wanted.u.131
-animation wmask_wanted.131
+face wmask_wanted.u.151
+animation wmask_wanted.151
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -6977,12 +7325,12 @@ direction 1
 no_pick 1
 layer 7
 end
-Object pot_wall.151
+Object pot_wall.131
 name chains
 type 77
 editor_folder indoor/masks_wall
-face pot_wall.u.131
-animation pot_wall.151
+face pot_wall.u.151
+animation pot_wall.131
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -6990,12 +7338,12 @@ direction 1
 no_pick 1
 layer 7
 end
-Object picture1.131
+Object picture1.151
 name picture
 type 77
 editor_folder indoor/masks_wall
-face picture1.u.131
-animation picture1.131
+face picture1.u.151
+animation picture1.151
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -7003,12 +7351,12 @@ direction 1
 no_pick 1
 layer 7
 end
-Object picture2.131
+Object picture2.151
 name picture
 type 77
 editor_folder indoor/masks_wall
-face picture2.u.131
-animation picture2.131
+face picture2.u.151
+animation picture2.151
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -7016,12 +7364,12 @@ direction 1
 no_pick 1
 layer 7
 end
-Object picture3.131
+Object picture3.151
 name picture
 type 77
 editor_folder indoor/masks_wall
-face picture3.u.131
-animation picture3.131
+face picture3.u.151
+animation picture3.151
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -7029,12 +7377,12 @@ direction 1
 no_pick 1
 layer 7
 end
-Object picture4.131
+Object picture4.151
 name picture
 type 77
 editor_folder indoor/masks_wall
-face picture4.u.131
-animation picture4.131
+face picture4.u.151
+animation picture4.151
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -7042,12 +7390,12 @@ direction 1
 no_pick 1
 layer 7
 end
-Object picture5.131
+Object picture5.151
 name picture
 type 77
 editor_folder indoor/masks_wall
-face picture5.u.131
-animation picture5.131
+face picture5.u.151
+animation picture5.151
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -7055,12 +7403,12 @@ direction 1
 no_pick 1
 layer 7
 end
-Object picture6.131
+Object picture6.151
 name picture
 type 77
 editor_folder indoor/masks_wall
-face picture6.u.131
-animation picture6.131
+face picture6.u.151
+animation picture6.151
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -7068,12 +7416,129 @@ direction 1
 no_pick 1
 layer 7
 end
-Object plant1_wall.131
+Object picture7
+name picture
+type 77
+editor_folder indoor/masks_wall
+face picture7.u.151
+animation picture7
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
+end
+Object picture8
+name picture
+type 77
+editor_folder indoor/masks_wall
+face picture8.u.151
+animation picture8
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
+end
+Object picture9
+name picture
+type 77
+editor_folder indoor/masks_wall
+face picture9.u.151
+animation picture9
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
+end
+Object picture10
+name picture
+type 77
+editor_folder indoor/masks_wall
+face picture10.u.151
+animation picture10
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
+end
+Object picture11
+name picture
+type 77
+editor_folder indoor/masks_wall
+face picture11.u.151
+animation picture11
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
+end
+Object picture12
+name picture
+type 77
+editor_folder indoor/masks_wall
+face picture12.u.151
+animation picture12
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
+end
+Object picture13
+name picture
+type 77
+editor_folder indoor/masks_wall
+face picture13.u.151
+animation picture13
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
+end
+Object picture14
+name picture
+type 77
+editor_folder indoor/masks_wall
+face picture14.u.151
+animation picture14
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
+end
+Object picture15
+name picture
+type 77
+editor_folder indoor/masks_wall
+face picture15.u.151
+animation picture15
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
+end
+Object plant1_wall.151
 name plants
 type 77
 editor_folder indoor/masks_wall
-face plant1_wall.131
-animation plant1_wall.131
+face plant1_wall.151
+animation plant1_wall.151
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -7081,12 +7546,12 @@ direction 1
 no_pick 1
 layer 7
 end
-Object plant2_wall.131
+Object plant2_wall.151
 name plants
 type 77
 editor_folder indoor/masks_wall
-face plant2_wall.131
-animation plant2_wall.131
+face plant2_wall.151
+animation plant2_wall.151
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -7094,12 +7559,129 @@ direction 1
 no_pick 1
 layer 7
 end
-Object ring_wall.131
+Object ring_wall.151
 name big iron ring
 type 77
 editor_folder indoor/masks_wall
-face ring_wall.131
-animation ring_wall.131
+face ring_wall.151
+animation ring_wall.151
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
+end
+Object sewer_wall
+name sewer hole
+type 77
+editor_folder indoor/masks_wall
+face sewer_wall.151
+animation sewer_wall
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
+end
+Object wall_blood1
+name blood
+type 77
+editor_folder indoor/masks_wall
+face wall_blood1.u.151
+animation wall_blood1
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
+end
+Object wall_blood2
+name blood
+type 77
+editor_folder indoor/masks_wall
+face wall_blood2.u.151
+animation wall_blood2
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
+end
+Object wall_blood3
+name blood
+type 77
+editor_folder indoor/masks_wall
+face wall_blood3.u.151
+animation wall_blood3
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
+end
+Object wall_blood4
+name blood
+type 77
+editor_folder indoor/masks_wall
+face wall_blood4.u.151
+animation wall_blood4
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
+end
+Object wall_drain1
+name drain
+type 77
+editor_folder indoor/masks_wall
+face wall_drain1.151
+animation wall_drain1
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
+end
+Object wall_drain2
+name drain
+type 77
+editor_folder indoor/masks_wall
+face wall_drain2.151
+animation wall_drain2
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
+end
+Object wall_drain3
+name drain
+type 77
+editor_folder indoor/masks_wall
+face wall_drain3.151
+animation wall_drain3
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
+end
+Object wall_drain4
+name drain
+type 77
+editor_folder indoor/masks_wall
+face wall_drain4.151
+animation wall_drain4
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -7117,6 +7699,23 @@ is_animated 0
 anim_speed 0
 is_turnable 1
 direction 1
+no_pick 1
+layer 4
+end
+Object rows
+name rows
+type 79
+editor_folder indoor/indoor
+face rows.101
+no_pick 1
+layer 4
+end
+Object rubbish.101
+name rubbish
+type 79
+editor_folder indoor/indoor
+face rubbish.101
+no_pass 1
 no_pick 1
 layer 4
 end
@@ -7157,6 +7756,15 @@ anim_speed 0
 is_turnable 1
 direction 1
 no_pick 1
+layer 4
+end
+Object straw1.101
+name straw
+type 79
+editor_folder indoor/indoor
+face straw1.101
+no_pick 1
+no_pass 1
 layer 4
 end
 Object straw2.111
@@ -7285,6 +7893,19 @@ editor_folder indoor/indoor
 face bath_tube_big1.101
 no_pick 1
 layer 4
+end
+Object wall_well.131
+name well
+type 77
+editor_folder indoor/indoor
+face wall_well.131
+animation wall_well.131
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
 end
 Object wood_pile.101
 name pile of wood
@@ -7724,872 +8345,19 @@ no_drop 1
 no_pick 1
 identified 1
 end
-Object anvil_131
-name anvil
-type 79
-editor_folder intern/outdated
-face anvil.131
-no_pick 1
-layer 4
-end
-Object bank1.171
-name bank
-type 79
-editor_folder intern/outdated
-face bank1.171
-no_pick 1
-layer 4
-end
-Object bench1a.171
-name bench
-type 79
-editor_folder intern/outdated
-face bench1a.171
-no_pick 1
-no_pass 1
-layer 4
-end
-Object bench1b.171
-name bench
-type 79
-editor_folder intern/outdated
-face bench1b.171
-no_pass 1
-no_pick 1
-layer 4
-end
-Object bench2.171
-name bench
-type 79
-editor_folder intern/outdated
-face bench2.171
-no_pick 1
-no_pass 1
-layer 4
-end
-Object broom.171
-name broom
-type 79
-editor_folder intern/outdated
-face broom.171
-no_pick 1
-layer 4
-end
-Object chains1.151
-name chains
-type 77
-editor_folder intern/outdated
-face chains1.u.151
-no_pick 1
-layer 7
-end
-Object chains2.151
-name chains
-type 77
-editor_folder intern/outdated
-face chains2.u.151
-no_pick 1
-layer 7
-end
-Object chains3.151
-name chains
-type 77
-editor_folder intern/outdated
-face chains3.u.151
-no_pick 1
-layer 7
-end
-Object chair1_131
-name chair
-type 79
-editor_folder intern/outdated
-face chair1.131
-no_pick 1
-layer 4
-end
-Object chair1_151
-name chair
-type 79
-editor_folder intern/outdated
-face chair1.151
-no_pick 1
-layer 4
-end
-Object chair1_171
-name chair
-type 79
-editor_folder intern/outdated
-face chair1.171
-no_pick 1
-layer 4
-end
-Object chair2_131
-name chair
-type 79
-editor_folder intern/outdated
-face chair2.131
-no_pick 1
-layer 4
-end
-Object chair2_151
-name chair
-type 79
-editor_folder intern/outdated
-face chair2.151
-no_pick 1
-layer 4
-end
-Object chair2_171
-name chair
-type 79
-editor_folder intern/outdated
-face chair2.171
-no_pick 1
-layer 4
-end
-Object chest1_171
-name chest
-type 122
-editor_folder intern/outdated
-other_arch close_chest1_111
-face chest_mm_closed.171
-animation chest1_171
-is_animated 0
-anim_speed 0
-is_turnable 1
-direction 5
-layer 4
-no_pick 1
-identified 1
-level 1
-material 18
-material_real 65
-value 350
-container 225000
-weight 15000
-weapon_speed 1.0
-end
-Object chest_m1_7
-name chest
-type 122
-editor_folder intern/outdated
-other_arch close_chest_m1_1
-face chest_lm_closed.171
-animation chest_m1_7
-is_animated 0
-anim_speed 0
-is_turnable 1
-direction 5
-layer 4
-level 1
-identified 1
-no_pick 1
-material 2
-material_real 65
-value 350
-container 350000
-weight 22500
-weapon_speed 1.0
-end
-Object chest_w1_7
-name chest
-type 122
-editor_folder intern/outdated
-other_arch close_chest_w1_1
-face chest_lw_closed.171
-animation chest_w1_7
-is_animated 0
-anim_speed 0
-is_turnable 1
-direction 5
-layer 4
-level 1
-no_pick 1
-identified 1
-material 18
-material_real 258
-value 350
-container 350000
-weight 22000
-weapon_speed 1.0
-end
-Object chest_4.171
-name chest
-type 122
-editor_folder intern/outdated
-other_arch close_chest_4.111
-face chest_mw_closed.171
-animation chest_4.171
-is_animated 0
-anim_speed 0
-is_turnable 1
-direction 5
-layer 4
-level 1
-identified 1
-no_pick 1
-material 18
-material_real 258
-value 350
-container 225000
-weight 15000
-weapon_speed 1.0
-end
-Object chest_sm_7
-name chest
-type 122
-editor_folder intern/outdated
-other_arch close_chest_sm_1
-face chest_sm_closed.171
-animation chest_sm_7
-is_animated 0
-anim_speed 0
-is_turnable 1
-direction 5
-layer 4
-level 1
-no_pick 1
-identified 1
-material 2
-material_real 65
-value 350
-container 125000
-weight 8000
-weapon_speed 1.0
-end
-Object chest_sw_7
-name chest
-type 122
-editor_folder intern/outdated
-other_arch close_chest_sw_1
-face chest_sw_closed.111
-animation chest_sw_7
-is_animated 0
-anim_speed 0
-is_turnable 1
-direction 5
-layer 4
-level 1
-identified 1
-no_pick 1
-material 18
-material_real 258
-value 350
-container 125000
-weight 8000
-weapon_speed 1.0
-end
-Object chest7_171
-name chest
-type 122
-editor_folder intern/outdated
-other_arch close_chest7_111
-face chest_mm2_closed.171
-animation chest7_171
-is_animated 0
-anim_speed 0
-is_turnable 1
-direction 5
-layer 4
-no_pick 1
-identified 1
-level 1
-material 18
-material_real 65
-value 350
-container 225000
-weight 15000
-weapon_speed 1.0
-end
-Object coffin_wood.131
-name wooden coffin
-type 79
-editor_folder intern/outdated
-layer 5
-face coffin_wood.131
-no_pass 1
-no_pick 1
-end
-Object coffin_stone.131
-name stone coffin
-type 79
-editor_folder intern/outdated
-layer 5
-face coffin_stone.131
-no_pass 1
-no_pick 1
-end
-Object desk1.171
-name desk
-type 122
-editor_folder intern/outdated
-face desk1.171
-layer 4
-identified 1
-no_pick 1
-material 18
-value 350
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object drawers1.171
-name drawer
-type 122
-editor_folder intern/outdated
-face drawers1.171
-layer 4
-identified 1
-material 18
-no_pick 1
-value 350
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object fmask_ruin1a.131
-name ruin parts
-type 79
-editor_folder intern/outdated
-layer 2
-face fmask_ruin1a.131
-no_pick 1
-end
-Object forge_171
-name forge
-type 79
-editor_folder intern/outdated
-face forge.171
-no_pick 1
-layer 4
-end
-Object grave1.131
-name grave
-type 79
-editor_folder intern/outdated
-layer 5
-face grave1.131
-no_pass 1
-no_pick 1
-end
-Object grave2.131
-name grave
-type 79
-editor_folder intern/outdated
-layer 5
-face grave2.131
-no_pass 1
-no_pick 1
-end
-Object grave_open.131
-name open grave
-type 79
-editor_folder intern/outdated
-layer 5
-face grave_open.131
-no_pass 1
-no_pick 1
-end
-Object grave_cross1.131
-name grave
-type 79
-editor_folder intern/outdated
-layer 5
-face grave_cross1.131
-no_pass 1
-no_pick 1
-end
-Object grave_cross2.131
-name grave
-type 79
-editor_folder intern/outdated
-layer 5
-face grave_cross2.131
-no_pass 1
-no_pick 1
-end
-Object fire_cauld.151
-name small cauldron
-type 79
-editor_folder intern/outdated
-face fire_cauld.151
-no_pick 1
-layer 4
-end
-Object lantern_magic.151
-name magic lantern
-type 79
-editor_folder intern/outdated
-no_pass 1
-face lantern_magic.151
-layer 5
-no_pick 1
-end
-Object lantern2_magic.151
-name magic lantern
-type 79
-editor_folder intern/outdated
-face lantern2_magic.151
-layer 5
-no_pick 1
-end
-Object locker1.171
-name locker
-type 122
-editor_folder intern/outdated
-face locker1.171
-layer 4
-identified 1
-no_pick 1
-material 18
-value 350
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object locker2.171
-name locker
-type 122
-editor_folder intern/outdated
-face locker2.171
-layer 4
-identified 1
-material 18
-no_pick 1
-value 350
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object locker3.171
-name locker
-type 122
-editor_folder intern/outdated
-face locker3.171
-layer 4
-identified 1
-material 18
-no_pick 1
-value 350
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object mirror_big.171
-name mirror
-type 79
-editor_folder intern/outdated
-face mirror_big.171
-no_pick 1
-layer 4
-end
-Object picture1.151
-name picture
-type 77
-editor_folder intern/outdated
-face picture1.u.151
-no_pick 1
-layer 7
-end
-Object picture2.151
-name picture
-type 77
-editor_folder intern/outdated
-face picture2.u.151
-no_pick 1
-layer 7
-end
-Object picture3.151
-name picture
-type 77
-editor_folder intern/outdated
-face picture3.u.151
-no_pick 1
-layer 7
-end
-Object picture4.151
-name picture
-type 77
-editor_folder intern/outdated
-face picture4.u.151
-no_pick 1
-layer 7
-end
-Object plant1_wall.151
-name plants
-type 77
-editor_folder intern/outdated
-face plant1_wall.151
-no_pick 1
-layer 7
-end
-Object plant2_wall.151
-name plants
-type 77
-editor_folder intern/outdated
-face plant2_wall.151
-no_pick 1
-layer 7
-end
-Object pot_wall.131
-name chains
-type 77
-editor_folder intern/outdated
-face pot_wall.u.151
-no_pick 1
-layer 7
-end
-Object prison_deco1.151
-name bed
-type 79
-editor_folder intern/outdated
-face prison_deco1.151
-no_pick 1
-layer 4
-end
-Object prison_deco2.151
-name bed
-type 79
-editor_folder intern/outdated
-face prison_deco2.151
-no_pick 1
-layer 4
-end
-Object prison_deco3.151
-name bed
-type 79
-editor_folder intern/outdated
-face prison_deco3.151
-no_pick 1
-layer 4
-end
-Object rack.171
-name weapon rack
-type 122
-editor_folder intern/outdated
-face rack.171
-layer 4
-identified 1
-no_pick 1
-material 18
-value 3500
-container 250000
-weight 15000
-weapon_speed 1.0
-end
-Object ring_wall.151
-name big iron ring
-type 77
-editor_folder intern/outdated
-face ring_wall.151
-no_pick 1
-layer 7
-end
-Object scarecrow.131
-name scarecrow
-type 79
-editor_folder intern/outdated
-layer 5
-face scarecrow.131
-no_pass 1
-no_pick 1
-end
-Object shelf2.171
-name shelf
-type 122
-editor_folder intern/outdated
-face shelf2.171
-layer 4
-identified 1
-material 18
-no_pick 1
-value 350
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object shelf3.171
-name shelf
-type 122
-editor_folder intern/outdated
-face shelf3.171
-layer 4
-identified 1
-material 18
-no_pick 1
-value 350
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object shelf3a.171
-name shelf
-type 122
-editor_folder intern/outdated
-face shelf3a.171
-layer 4
-identified 1
-material 18
-no_pick 1
-value 350
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object shelf3b.171
-name shelf
-type 122
-editor_folder intern/outdated
-face shelf3b.171
-layer 4
-identified 1
-material 18
-no_pick 1
-value 350
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object shelf3_dem1.171
-name demolished shelf
-type 122
-editor_folder intern/outdated
-face shelf3_dem1.171
-layer 4
-identified 1
-material 18
-no_pick 1
-value 350
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object shelf3_dem2.171
-name demolished shelf
-type 122
-editor_folder intern/outdated
-face shelf3_dem2.171
-layer 4
-identified 1
-material 18
-no_pick 1
-value 350
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object shelf3_dem3.171
-name demolished shelf
-type 122
-editor_folder intern/outdated
-face shelf3_dem3.171
-layer 4
-identified 1
-material 18
-no_pick 1
-value 350
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object shelf_wall.171
-name shelf
-type 122
-editor_folder intern/outdated
-face shelf_wall.171
-layer 4
-identified 1
-material 18
-no_pick 1
-value 350
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object shelf1_wall.171
-name shelf
-type 122
-editor_folder intern/outdated
-face shelf1_wall.171
-layer 4
-identified 1
-material 18
-no_pick 1
-value 350
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object shelf2_wall.171
-name shelf
-type 122
-editor_folder intern/outdated
-face shelf2_wall.171
-layer 4
-identified 1
-material 18
-no_pick 1
-value 350
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object shelf3_wall.171
-name shelf
-type 122
-editor_folder intern/outdated
-face shelf3_wall.171
-layer 4
-identified 1
-material 18
-no_pick 1
-value 350
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object shelf_wall_dem1.171
-name demolished shelf
-type 122
-editor_folder intern/outdated
-face shelf_wall_dem1.171
-layer 4
-identified 1
-material 18
-no_pick 1
-value 3
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object shelf_wall_dem2.171
-name demolished shelf
-type 122
-editor_folder intern/outdated
-face shelf_wall_dem2.171
-layer 4
-identified 1
-material 18
-no_pick 1
-value 3
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object shelf_wall_dem3.171
-name demolished shelf
-type 122
-editor_folder intern/outdated
-face shelf_wall_dem3.171
-layer 4
-identified 1
-material 18
-no_pick 1
-value 3
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object shrine1.171
-name shrine
-type 79
-editor_folder intern/outdated
-face shrine1.171
-no_pick 1
-layer 4
-end
-Object stair_gs_down_r
-name stairs going down
-type 66
-editor_folder intern/outdated
-hp -1
-sp -1
-face stairs_down.107
-layer 5
-no_pick 1
-end
-Object stair_gs_up_r
-name stairs going up
-type 66
-editor_folder intern/outdated
-hp -1
-sp -1
-face stairs_up.107
-layer 5
-no_pick 1
-end
-Object straw2.131
-name straw
-type 79
-editor_folder intern/outdated
-face straw2.131
-no_pick 1
-no_pass 1
-layer 4
-end
-Object table_lab1.171
-name table
-type 79
-editor_folder intern/outdated
-face table_lab1.171
-no_pick 1
-no_pass 1
-layer 4
-end
-Object table_lab2.171
-name table
-type 79
-editor_folder intern/outdated
-face table_lab2.171
-no_pick 1
-no_pass 1
-layer 4
-end
-Object table_lab3.171
-name table
-type 79
-editor_folder intern/outdated
-face table_lab3.171
-no_pick 1
-no_pass 1
-layer 4
-end
-Object table_wood1.171
-name table
-type 79
-editor_folder intern/outdated
-face table_wood1.171
-no_pass 1
-no_pick 1
-layer 4
-end
-Object target.131
-name target
-type 79
-editor_folder intern/outdated
-layer 5
-face target.131
-no_pass 1
-no_pick 1
-end
-Object throne.131
-name throne
-type 79
-editor_folder intern/outdated
-face throne.131
-no_pick 1
-layer 4
-end
-Object torch_wall_7
-name attached torch
+Object lamp_wall_1_unlit
+name attached lamp
 type 74
-editor_folder intern/outdated
+editor_folder intern/items
 layer 5
-face torch_wall.170
-animation torch_wall_7
+sub_type 1
+face lamp_wall.110
+animation lamp_wall_1_unlit
 speed -0.02
-is_animated 0
+is_animated 1
+is_turnable 1
 anim_speed 4
+direction 1
 no_teleport 1
 no_pick 1
 last_sp 5
@@ -8597,75 +8365,25 @@ weight 1250
 material 144
 food 1
 end
-Object wagon_small.131
-name small wagon
-type 122
-editor_folder intern/outdated
-face wagon_small.131
-layer 4
-identified 1
+Object torch_wall_1_unlit
+name attached torch
+type 74
+editor_folder intern/items
+layer 5
+sub_type 1
+face torch_wall.110
+animation torch_wall_1_unlit
+speed -0.02
+is_animated 1
+is_turnable 1
+anim_speed 4
+direction 1
+no_teleport 1
 no_pick 1
-material 18
-value 350
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object wmask_bflag_brown_1
-name big flag
-type 77
-editor_folder intern/outdated
-face wmask_bflag_brown.u.151
-no_pick 1
-layer 7
-end
-Object wmask_bflag_fire1_1
-name big flag
-type 77
-editor_folder intern/outdated
-face wmask_bflag_fire1.u.151
-no_pick 1
-layer 7
-end
-Object wmask_fire_on_1
-name big flag
-type 77
-editor_folder intern/outdated
-face wmask_fire_on.151
-no_pick 1
-layer 7
-end
-Object wmask_fire_off_1
-name big flag
-type 77
-editor_folder intern/outdated
-face wmask_fire_off.151
-no_pick 1
-layer 7
-end
-Object wmask_ruin1a.131
-name runes
-type 77
-editor_folder intern/outdated
-face wmask_ruin1a.131
-no_pick 1
-layer 7
-end
-Object wmask_ruin1b.131
-name runes
-type 77
-editor_folder intern/outdated
-face wmask_ruin1b.131
-no_pick 1
-layer 7
-end
-Object wmask_wanted.151
-name big flag
-type 77
-editor_folder intern/outdated
-face wmask_wanted.u.151
-no_pick 1
-layer 7
+last_sp 5
+weight 1250
+material 144
+food 1
 end
 Object age_force
 name age force
@@ -11305,6 +11023,17 @@ protect_pierce 6
 weight 940
 value 25
 end
+Object ball
+name ball
+type 79
+editor_folder items/items
+face ball.101
+layer 3
+material_real 193
+material 8
+value 3
+weight 150
+end
 Object bag
 name bag
 type 122
@@ -11352,6 +11081,25 @@ weight 30000
 container 250000
 weapon_speed 1.5
 value 5
+end
+Object chained_skel.111
+name chained skeleton
+type 122
+editor_folder items/container
+face chained_skel.111
+animation chained_skel.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+layer 4
+identified 1
+no_pick 1
+material 18
+value 3500
+container 25000
+weight 15000
+weapon_speed 1.0
 end
 Object chest
 name chest
@@ -11544,6 +11292,25 @@ container 15000
 weight 15000
 weapon_speed 1.0
 end
+Object desk2
+name desk
+type 122
+editor_folder items/container
+face desk2.111
+animation desk2
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+layer 4
+identified 1
+no_pick 1
+material 18
+value 350
+container 15000
+weight 15000
+weapon_speed 1.0
+end
 Object drawers1.111
 name drawer
 type 122
@@ -11634,6 +11401,44 @@ no_pick 1
 value 350
 container 15000
 weight 15000
+weapon_speed 1.0
+end
+Object locker4
+name locker
+type 122
+editor_folder items/container
+face locker4.111
+animation locker4
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+layer 4
+identified 1
+no_pick 1
+material 18
+value 350
+container 12000
+weight 12000
+weapon_speed 1.0
+end
+Object locker5
+name locker
+type 122
+editor_folder items/container
+face locker5.111
+animation locker5
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+layer 4
+identified 1
+no_pick 1
+material 18
+value 350
+container 7500
+weight 7500
 weapon_speed 1.0
 end
 Object luggage
@@ -12367,6 +12172,27 @@ speed 0.15
 last_eat 1
 last_sp 5
 end
+Object lamp_wall
+name attached lamp
+type 74
+editor_folder items/light
+layer 5
+face lamp_wall.111
+other_arch lamp_wall_1_unlit
+glow_radius 5
+is_animated 1
+animation lamp_wall
+speed -0.02
+is_turnable 1
+anim_speed 100
+direction 1
+no_teleport 1
+no_pick 1
+last_sp 5
+weight 1250
+material 144
+food 1
+end
 Object oil_lamp
 name lamp oil
 type 82
@@ -12388,7 +12214,7 @@ other_arch torch_burnt
 face torch_unlit.101
 layer 3
 animation torch
-is_animated 1
+is_animated 0
 anim_speed 4
 material 144
 value 10
@@ -12405,6 +12231,7 @@ type 74
 editor_folder items/light
 layer 3
 face torch_burnt.101
+sub_type 2
 material 144
 value 0
 last_sp 0
@@ -12419,9 +12246,11 @@ type 74
 editor_folder items/light
 layer 5
 face torch_wall.110
+other_arch torch_wall_1_unlit
+glow_radius 5
+is_animated 1
 animation torch_wall_1
 speed -0.02
-is_animated 1
 is_turnable 1
 anim_speed 4
 direction 1
@@ -12863,6 +12692,17 @@ value 500
 weight 20
 material_real 641
 material 1024
+end
+Object teddy
+name teddy
+type 79
+editor_folder items/items
+face teddy.101
+layer 3
+material_real 193
+material 8
+value 3
+weight 150
 end
 Object axe
 name axe
@@ -15073,6 +14913,96 @@ weight 500
 value 1
 material 64
 end
+Object crystal_purple
+name crystal
+type 79
+editor_folder landscape/crystals
+face crystal_purple.101
+material 64
+layer 5
+no_pick 1
+no_pass 1
+end
+Object crystal_purple_s
+name crystal
+type 79
+editor_folder landscape/crystals
+face crystal_purple_s.101
+material 64
+layer 5
+no_pick 1
+no_pass 1
+end
+Object crystal_red
+name crystal
+type 79
+editor_folder landscape/crystals
+face crystal_red.101
+material 64
+layer 5
+no_pick 1
+no_pass 1
+end
+Object crystal_red_s
+name crystal
+type 79
+editor_folder landscape/crystals
+face crystal_red_s.101
+material 64
+layer 5
+no_pick 1
+no_pass 1
+end
+Object crystal10
+name crystal
+type 79
+editor_folder landscape/crystals
+face crystal10.101
+material 64
+layer 5
+no_pick 1
+no_pass 1
+end
+Object crystal11
+name crystal
+type 79
+editor_folder landscape/crystals
+face crystal11.101
+material 64
+layer 5
+no_pick 1
+no_pass 1
+end
+Object crystal12
+name crystal
+type 79
+editor_folder landscape/crystals
+face crystal12.101
+material 64
+layer 5
+no_pick 1
+no_pass 1
+end
+Object crystal13
+name crystal
+type 79
+editor_folder landscape/crystals
+face crystal13.101
+material 64
+layer 5
+no_pick 1
+no_pass 1
+end
+Object crystal14
+name crystal
+type 79
+editor_folder landscape/crystals
+face crystal14.101
+material 64
+layer 5
+no_pick 1
+no_pass 1
+end
 Object cactus
 name cactus
 type 79
@@ -15082,6 +15012,61 @@ face cactus.101
 slow_move 1
 is_wooded 1
 no_pick 1
+end
+Object cactus1
+name cactus
+type 79
+editor_folder landscape/plants
+layer 5
+face cactus1.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object cactus2
+name cactus
+type 79
+editor_folder landscape/plants
+layer 5
+face cactus2.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object cactus3
+name cactus
+type 79
+editor_folder landscape/plants
+layer 5
+face cactus3.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object cactus4
+name cactus
+type 79
+editor_folder landscape/plants
+layer 5
+face cactus4.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object cactus5
+name cactus
+type 79
+editor_folder landscape/plants
+layer 5
+face cactus5.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
 end
 Object plant_flower1
 name flower
@@ -15163,6 +15148,38 @@ layer 4
 face plant_flower10.101
 no_pick 1
 end
+Object plant_flower11
+name flower
+type 79
+editor_folder landscape/plants
+layer 4
+face plant_flower11.101
+no_pick 1
+end
+Object plant_flower12
+name flower
+type 79
+editor_folder landscape/plants
+layer 4
+face plant_flower12.101
+no_pick 1
+end
+Object plant_flower13
+name flower
+type 79
+editor_folder landscape/plants
+layer 4
+face plant_flower13.101
+no_pick 1
+end
+Object plant_flower14
+name flower
+type 79
+editor_folder landscape/plants
+layer 4
+face plant_flower14.101
+no_pick 1
+end
 Object mushroom_giant1
 name giant mushroom
 type 79
@@ -15209,6 +15226,54 @@ type 79
 editor_folder landscape/plants
 layer 4
 face plant_mushroom3.101
+no_pick 1
+end
+Object plant_mushroom4
+name mushroom
+type 79
+editor_folder landscape/plants
+layer 4
+face plant_mushroom4.101
+no_pick 1
+end
+Object plant_mushroom5
+name mushroom
+type 79
+editor_folder landscape/plants
+layer 4
+face plant_mushroom5.101
+no_pick 1
+end
+Object mushroom_spot1
+name mushrooms
+type 79
+editor_folder landscape/plants
+face mushroom_spot1.101
+no_pick 1
+layer 4
+end
+Object mushroom_spot2
+name mushrooms
+type 79
+editor_folder landscape/plants
+face mushroom_spot2.101
+no_pick 1
+layer 4
+end
+Object pumpkin_01
+name pumpkin
+type 79
+editor_folder landscape/plants
+layer 4
+face pumpkin_01.101
+no_pick 1
+end
+Object pumpkin_02
+name pumpkin
+type 79
+editor_folder landscape/plants
+layer 4
+face pumpkin_02.101
 no_pick 1
 end
 Object plant1
@@ -15347,6 +15412,46 @@ layer 4
 face plant17.101
 no_pick 1
 end
+Object plant18
+name plant
+type 79
+editor_folder landscape/plants
+layer 4
+face plant18.101
+no_pick 1
+end
+Object plant19
+name plant
+type 79
+editor_folder landscape/plants
+layer 4
+face plant19.101
+no_pick 1
+end
+Object plant20
+name plant
+type 79
+editor_folder landscape/plants
+layer 4
+face plant20.101
+no_pick 1
+end
+Object plant21
+name plant
+type 79
+editor_folder landscape/plants
+layer 4
+face plant21.101
+no_pick 1
+end
+Object plant22
+name plant
+type 79
+editor_folder landscape/plants
+layer 4
+face plant22.101
+no_pick 1
+end
 Object plant_big1
 name plant
 type 79
@@ -15429,6 +15534,39 @@ speed 0.2
 hp 1
 dam 3
 is_floor 1
+end
+Object au_tree1
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face au_tree1.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object au_tree2
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face au_tree2.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object au_tree3
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face au_tree3.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
 end
 Object woods_2
 name tree
@@ -15524,6 +15662,358 @@ type 79
 editor_folder landscape/plants
 layer 5
 face tree_big5b.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object tree20
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face tree20.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object tree21
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face tree21.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object tree22
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face tree22.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object tree23
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face tree23.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object tree24
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face tree24.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object tree25
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face tree25.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object tree26
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face tree26.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object tree27
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face tree27.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object tree28
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face tree28.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object tree29
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face tree29.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object tree30
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face tree30.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object tree31
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face tree31.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object tree32
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face tree32.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object tree33
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face tree33.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object tree34
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face tree34.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object tree35
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face tree35.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object tree36
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face tree36.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object tree37
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face tree37.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object tree38
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face tree38.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object tree39
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face tree39.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object tree40
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face tree40.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object tree41
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face tree41.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object tree42
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face tree42.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object tree43
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face tree43.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object tree44
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face tree44.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object tree45
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face tree45.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object tree46
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face tree46.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object tree47
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face tree47.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object tree48
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face tree48.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object tree49
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face tree49.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object tree50
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face tree50.101
+no_pick 1
+no_pass 1
+blocksview 1
+is_wooded 1
+end
+Object tree51
+name tree
+type 79
+editor_folder landscape/plants
+layer 5
+face tree51.101
 no_pick 1
 no_pass 1
 blocksview 1
@@ -15645,6 +16135,15 @@ face water_lily2.101
 no_pick 1
 no_teleport 1
 end
+Object water_lily3
+name water lily
+type 79
+editor_folder landscape/plants
+layer 5
+face water_lily3.101
+no_pick 1
+no_teleport 1
+end
 Object water_plant1
 name water plant
 type 79
@@ -15681,6 +16180,24 @@ face water_plant4.101
 no_pick 1
 no_teleport 1
 end
+Object water_plant5
+name water plant
+type 79
+editor_folder landscape/plants
+layer 5
+face water_plant5.101
+no_pick 1
+no_teleport 1
+end
+Object water_plant6
+name water plant
+type 79
+editor_folder landscape/plants
+layer 5
+face water_plant6.101
+no_pick 1
+no_teleport 1
+end
 Object boulder
 type 79
 editor_folder landscape/rocks
@@ -15691,7 +16208,352 @@ no_pass 1
 can_roll 1
 no_pick 1
 end
+Object pillar_blue
+name blue pillar
+type 79
+mpart_id 3
+editor_folder landscape/rocks
+layer 5
+face pillar_blue.101
+no_pass 1
+no_pick 1
+end
+More
+Object pillar_blue_a
+name blue pillar
+type 79
+mpart_id 3
+mpart_nr 1
+layer 5
+no_pass 1
+no_pick 1
+x 1
+end
+More
+Object pillar_blue_b
+name blue pillar
+type 79
+mpart_id 3
+mpart_nr 2
+layer 5
+no_pass 1
+no_pick 1
+y 1
+end
+More
+Object pillar_blue_c
+name blue pillar
+type 79
+mpart_id 3
+mpart_nr 3
+layer 5
+no_pass 1
+no_pick 1
+x 1
+y 1
+end
+Object pillar_blue1
+name blue pillar
+type 79
+mpart_id 3
+editor_folder landscape/rocks
+layer 5
+face pillar_blue1.101
+no_pass 1
+no_pick 1
+end
+More
+Object pillar_blue1_a
+name blue pillar
+type 79
+mpart_id 3
+mpart_nr 1
+layer 5
+no_pass 1
+no_pick 1
+x 1
+end
+More
+Object pillar_blue1_b
+name blue pillar
+type 79
+mpart_id 3
+mpart_nr 2
+layer 5
+no_pass 1
+no_pick 1
+y 1
+end
+More
+Object pillar_blue1_c
+name blue pillar
+type 79
+mpart_id 3
+mpart_nr 3
+layer 5
+no_pass 1
+no_pick 1
+x 1
+y 1
+end
+Object pillar_blue2
+name blue pillar
+type 79
+mpart_id 3
+editor_folder landscape/rocks
+layer 5
+face pillar_blue2.101
+no_pass 1
+no_pick 1
+end
+More
+Object pillar_blue2_a
+name blue pillar
+type 79
+mpart_id 3
+mpart_nr 1
+layer 5
+no_pass 1
+no_pick 1
+x 1
+end
+More
+Object pillar_blue2_b
+name blue pillar
+type 79
+mpart_id 3
+mpart_nr 2
+layer 5
+no_pass 1
+no_pick 1
+y 1
+end
+More
+Object pillar_blue2_c
+name blue pillar
+type 79
+mpart_id 3
+mpart_nr 3
+layer 5
+no_pass 1
+no_pick 1
+x 1
+y 1
+end
+Object pillar_blue3
+name blue pillar
+type 79
+mpart_id 3
+editor_folder landscape/rocks
+layer 5
+face pillar_blue3.101
+no_pass 1
+no_pick 1
+end
+More
+Object pillar_blue3_a
+name blue pillar
+type 79
+mpart_id 3
+mpart_nr 1
+layer 5
+no_pass 1
+no_pick 1
+x 1
+end
+More
+Object pillar_blue3_b
+name blue pillar
+type 79
+mpart_id 3
+mpart_nr 2
+layer 5
+no_pass 1
+no_pick 1
+y 1
+end
+More
+Object pillar_blue3_c
+name blue pillar
+type 79
+mpart_id 3
+mpart_nr 3
+layer 5
+no_pass 1
+no_pick 1
+x 1
+y 1
+end
+Object pillar_blue4
+name blue pillar
+type 79
+mpart_id 3
+editor_folder landscape/rocks
+layer 5
+face pillar_blue4.101
+no_pass 1
+no_pick 1
+end
+More
+Object pillar_blue4_a
+name blue pillar
+type 79
+mpart_id 3
+mpart_nr 1
+layer 5
+no_pass 1
+no_pick 1
+x 1
+end
+More
+Object pillar_blue4_b
+name blue pillar
+type 79
+mpart_id 3
+mpart_nr 2
+layer 5
+no_pass 1
+no_pick 1
+y 1
+end
+More
+Object pillar_blue4_c
+name blue pillar
+type 79
+mpart_id 3
+mpart_nr 3
+layer 5
+no_pass 1
+no_pick 1
+x 1
+y 1
+end
+Object pillar_blue5
+name blue pillar
+type 79
+mpart_id 3
+editor_folder landscape/rocks
+layer 5
+face pillar_blue5.101
+no_pass 1
+no_pick 1
+end
+More
+Object pillar_blue5_a
+name blue pillar
+type 79
+mpart_id 3
+mpart_nr 1
+layer 5
+no_pass 1
+no_pick 1
+x 1
+end
+More
+Object pillar_blue5_b
+name blue pillar
+type 79
+mpart_id 3
+mpart_nr 2
+layer 5
+no_pass 1
+no_pick 1
+y 1
+end
+More
+Object pillar_blue5_c
+name blue pillar
+type 79
+mpart_id 3
+mpart_nr 3
+layer 5
+no_pass 1
+no_pick 1
+x 1
+y 1
+end
+Object pillar_blue6
+name blue pillar
+type 79
+mpart_id 3
+editor_folder landscape/rocks
+layer 5
+face pillar_blue6.101
+no_pass 1
+no_pick 1
+end
+More
+Object pillar_blue6_a
+name blue pillar
+type 79
+mpart_id 3
+mpart_nr 1
+layer 5
+no_pass 1
+no_pick 1
+x 1
+end
+More
+Object pillar_blue6_b
+name blue pillar
+type 79
+mpart_id 3
+mpart_nr 2
+layer 5
+no_pass 1
+no_pick 1
+y 1
+end
+More
+Object pillar_blue6_c
+name blue pillar
+type 79
+mpart_id 3
+mpart_nr 3
+layer 5
+no_pass 1
+no_pick 1
+x 1
+y 1
+end
+Object pillar_blue7
+name blue pillar
+type 79
+editor_folder landscape/rocks
+layer 5
+face pillar_blue7.101
+no_pass 1
+no_pick 1
+end
+Object pillar_blue8
+name blue pillar
+type 79
+editor_folder landscape/rocks
+layer 5
+face pillar_blue8.101
+no_pass 1
+no_pick 1
+end
+Object pillar_blue9
+name blue pillar
+type 79
+editor_folder landscape/rocks
+layer 5
+face pillar_blue9.101
+no_pass 1
+no_pick 1
+end
+Object pillar_blue10
+name blue pillar
+type 79
+editor_folder landscape/rocks
+layer 5
+face pillar_blue10.101
+no_pass 1
+no_pick 1
+end
 Object rock1
+name rocks
 type 79
 editor_folder landscape/rocks
 face rock1.101
@@ -15701,9 +16563,50 @@ no_pick 1
 no_pass 1
 end
 Object rock2
+name rocks
 type 79
 editor_folder landscape/rocks
 face rock2.101
+material 64
+layer 5
+no_pick 1
+no_pass 1
+end
+Object rock3
+name rocks
+type 79
+editor_folder landscape/rocks
+face rock3.101
+material 64
+layer 5
+no_pick 1
+no_pass 1
+end
+Object rock4
+name rocks
+type 79
+editor_folder landscape/rocks
+face rock4.101
+material 64
+layer 5
+no_pick 1
+no_pass 1
+end
+Object rock5
+name rocks
+type 79
+editor_folder landscape/rocks
+face rock5.101
+material 64
+layer 5
+no_pick 1
+no_pass 1
+end
+Object rock6
+name rocks
+type 79
+editor_folder landscape/rocks
+face rock6.101
 material 64
 layer 5
 no_pick 1
@@ -15983,12 +16886,374 @@ weight 1500000
 no_pass 1
 no_pick 1
 end
+Object rock_wall1
+name rocks
+type 79
+editor_folder landscape/rocks
+layer 5
+face rock_wall1.101
+no_pass 1
+no_pick 1
+end
+Object rock_wall2
+name rocks
+type 79
+mpart_id 3
+editor_folder landscape/rocks
+layer 5
+face rock_wall2.101
+no_pass 1
+no_pick 1
+end
+More
+Object rock_wall2_a
+name rocks
+type 79
+mpart_id 3
+mpart_nr 1
+layer 5
+no_pass 1
+no_pick 1
+x 1
+end
+More
+Object rock_wall2_b
+name rocks
+type 79
+mpart_id 3
+mpart_nr 2
+layer 5
+no_pass 1
+no_pick 1
+y 1
+end
+More
+Object rock_wall2_c
+name rocks
+type 79
+mpart_id 3
+mpart_nr 3
+layer 5
+no_pass 1
+no_pick 1
+x 1
+y 1
+end
+Object rock_wall3
+name rocks
+type 79
+mpart_id 3
+editor_folder landscape/rocks
+layer 5
+face rock_wall3.101
+no_pass 1
+no_pick 1
+end
+More
+Object rock_wall3_a
+name rocks
+type 79
+mpart_id 3
+mpart_nr 1
+layer 5
+no_pass 1
+no_pick 1
+x 1
+end
+More
+Object rock_wall3_b
+name rocks
+type 79
+mpart_id 3
+mpart_nr 2
+layer 5
+no_pass 1
+no_pick 1
+y 1
+end
+More
+Object rock_wall3_c
+name rocks
+type 79
+mpart_id 3
+mpart_nr 3
+layer 5
+no_pass 1
+no_pick 1
+x 1
+y 1
+end
+Object rock_wall4
+name rocks
+type 79
+mpart_id 3
+editor_folder landscape/rocks
+layer 5
+face rock_wall4.101
+no_pass 1
+no_pick 1
+end
+More
+Object rock_wall4_a
+name rocks
+type 79
+mpart_id 3
+mpart_nr 1
+layer 5
+no_pass 1
+no_pick 1
+x 1
+end
+More
+Object rock_wall4_b
+name rocks
+type 79
+mpart_id 3
+mpart_nr 2
+layer 5
+no_pass 1
+no_pick 1
+y 1
+end
+More
+Object rock_wall4_c
+name rocks
+type 79
+mpart_id 3
+mpart_nr 3
+layer 5
+no_pass 1
+no_pick 1
+x 1
+y 1
+end
+Object rock_wall5
+name rocks
+type 79
+mpart_id 3
+editor_folder landscape/rocks
+layer 5
+face rock_wall5.101
+no_pass 1
+no_pick 1
+end
+More
+Object rock_wall5_a
+name rocks
+type 79
+mpart_id 3
+mpart_nr 1
+layer 5
+no_pass 1
+no_pick 1
+x 1
+end
+More
+Object rock_wall5_b
+name rocks
+type 79
+mpart_id 3
+mpart_nr 2
+layer 5
+no_pass 1
+no_pick 1
+y 1
+end
+More
+Object rock_wall5_c
+name rocks
+type 79
+mpart_id 3
+mpart_nr 3
+layer 5
+no_pass 1
+no_pick 1
+x 1
+y 1
+end
+Object rock_wall6
+name rocks
+type 79
+mpart_id 3
+editor_folder landscape/rocks
+layer 5
+face rock_wall6.101
+no_pass 1
+no_pick 1
+end
+More
+Object rock_wall6_a
+name rocks
+type 79
+mpart_id 3
+mpart_nr 1
+layer 5
+no_pass 1
+no_pick 1
+x 1
+end
+More
+Object rock_wall6_b
+name rocks
+type 79
+mpart_id 3
+mpart_nr 2
+layer 5
+no_pass 1
+no_pick 1
+y 1
+end
+More
+Object rock_wall6_c
+name rocks
+type 79
+mpart_id 3
+mpart_nr 3
+layer 5
+no_pass 1
+no_pick 1
+x 1
+y 1
+end
+Object rock_wall7
+name rocks
+type 79
+mpart_id 3
+editor_folder landscape/rocks
+layer 5
+face rock_wall7.101
+no_pass 1
+no_pick 1
+end
+More
+Object rock_wall7_a
+name rocks
+type 79
+mpart_id 3
+mpart_nr 1
+layer 5
+no_pass 1
+no_pick 1
+x 1
+end
+More
+Object rock_wall7_b
+name rocks
+type 79
+mpart_id 3
+mpart_nr 2
+layer 5
+no_pass 1
+no_pick 1
+y 1
+end
+More
+Object rock_wall7_c
+name rocks
+type 79
+mpart_id 3
+mpart_nr 3
+layer 5
+no_pass 1
+no_pick 1
+x 1
+y 1
+end
+Object rock_wall8
+name rocks
+type 79
+mpart_id 3
+editor_folder landscape/rocks
+layer 5
+face rock_wall8.101
+no_pass 1
+no_pick 1
+end
+More
+Object rock_wall8_a
+name rocks
+type 79
+mpart_id 3
+mpart_nr 1
+layer 5
+no_pass 1
+no_pick 1
+x 1
+end
+More
+Object rock_wall8_b
+name rocks
+type 79
+mpart_id 3
+mpart_nr 2
+layer 5
+no_pass 1
+no_pick 1
+y 1
+end
+More
+Object rock_wall8_c
+name rocks
+type 79
+mpart_id 3
+mpart_nr 3
+layer 5
+no_pass 1
+no_pick 1
+x 1
+y 1
+end
 Object stone1
 name stone
 type 79
 editor_folder landscape/rocks
 layer 5
 face stone1.101
+material 64
+no_pick 1
+end
+Object stone2
+name stone
+type 79
+editor_folder landscape/rocks
+layer 5
+face stone2.101
+material 64
+no_pick 1
+end
+Object stone3
+name stone
+type 79
+editor_folder landscape/rocks
+layer 5
+face stone3.101
+material 64
+no_pick 1
+end
+Object stone4
+name stone
+type 79
+editor_folder landscape/rocks
+layer 5
+face stone4.101
+material 64
+no_pick 1
+end
+Object stone5
+name stone
+type 79
+editor_folder landscape/rocks
+layer 5
+face stone5.101
+material 64
+no_pick 1
+end
+Object stone6
+name stone
+type 79
+editor_folder landscape/rocks
+layer 5
+face stone6.101
 material 64
 no_pick 1
 end
@@ -16288,6 +17553,15 @@ name bones
 type 79
 editor_folder misc/bones
 face bones4.101
+no_pass 1
+no_pick 1
+layer 4
+end
+Object pile_skulls
+name bones
+type 79
+editor_folder misc/bones
+face pile_skulls.101
 no_pass 1
 no_pick 1
 layer 4
@@ -19788,6 +21062,87 @@ face sewer_plate3.101
 no_pass 1
 no_pick 1
 end
+Object dir_sign
+name big sign ('a'pply to read)
+type 98
+editor_folder outdoor/sign_big
+face dir_signs.111
+animation dir_sign
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+layer 4
+no_pick 1
+end
+Object marker_empty
+name big sign
+type 98
+editor_folder outdoor/sign_big
+face marker_empty.101
+layer 4
+no_pick 1
+end
+Object marker4
+name big sign ('a'pply to read)
+type 98
+editor_folder outdoor/sign_big
+face marker4.101
+layer 4
+no_pick 1
+end
+Object marker0
+name big sign ('a'pply to read)
+type 98
+editor_folder outdoor/sign_big
+face marker.111
+animation marker0
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+layer 4
+no_pick 1
+end
+Object marker1
+name big sign ('a'pply to read)
+type 98
+editor_folder outdoor/sign_big
+face marker1.111
+animation marker1
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+layer 4
+no_pick 1
+end
+Object marker2
+name big sign ('a'pply to read)
+type 98
+editor_folder outdoor/sign_big
+face marker2.121
+animation marker2
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+layer 4
+no_pick 1
+end
+Object marker3
+name big sign ('a'pply to read)
+type 98
+editor_folder outdoor/sign_big
+face marker3.111
+animation marker3
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+layer 4
+no_pick 1
+end
 Object target.111
 name target
 type 79
@@ -19801,6 +21156,68 @@ is_turnable 1
 direction 1
 no_pass 1
 no_pick 1
+end
+Object tipper
+name tipper
+type 79
+editor_folder outdoor/outdoor
+face tipper.111
+animation tipper
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 4
+end
+Object wagon_big
+name big wagon
+type 79
+mpart_id 3
+editor_folder outdoor/wagons
+layer 5
+face wagon_big.131
+animation wagon_big
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pass 1
+no_pick 1
+end
+More
+Object wagon_big_a
+name big wagon
+type 79
+mpart_id 3
+mpart_nr 1
+layer 5
+no_pass 1
+no_pick 1
+x 1
+end
+More
+Object wagon_big_b
+name big wagon
+type 79
+mpart_id 3
+mpart_nr 2
+layer 5
+no_pass 1
+no_pick 1
+y 1
+end
+More
+Object wagon_big_c
+name big wagon
+type 79
+mpart_id 3
+mpart_nr 3
+layer 5
+no_pass 1
+no_pick 1
+x 1
+y 1
 end
 Object bed_save
 name save bed
@@ -20077,6 +21494,200 @@ cursed 0
 face waypoint.101
 sys_object 1
 end
+Object cave_deco
+name cave
+type 79
+editor_folder structures/cave
+face cave_deco.141
+no_teleport 1
+layer 3
+no_pick 1
+end
+Object cave_deco_full
+name cave
+type 79
+editor_folder structures/cave
+face cave_deco_full.u.111
+animation cave_deco_full
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_teleport 1
+layer 3
+no_pick 1
+end
+Object cave_deco1
+name cave
+type 79
+editor_folder structures/cave
+face cave_deco1.111
+animation cave_deco1
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_teleport 1
+layer 3
+no_pick 1
+end
+Object cave_deco2
+name cave
+type 79
+editor_folder structures/cave
+face cave_deco2.111
+animation cave_deco2
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_teleport 1
+layer 3
+no_pick 1
+end
+Object cave_deco3
+name cave
+type 79
+editor_folder structures/cave
+face cave_deco3.111
+animation cave_deco3
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_teleport 1
+layer 3
+no_pick 1
+end
+Object cave_deco_f1.101
+name rocks
+type 77
+editor_folder structures/cave
+face cave_deco_f1.101
+no_pick 1
+layer 5
+end
+Object cave_deco_f2.101
+name rocks
+type 77
+editor_folder structures/cave
+face cave_deco_f2.101
+no_pick 1
+layer 5
+end
+Object cave_deco_f3.101
+name rocks
+type 77
+editor_folder structures/cave
+face cave_deco_f3.101
+no_pick 1
+layer 5
+end
+Object cave_deco_f4.101
+name rocks
+type 77
+editor_folder structures/cave
+face cave_deco_f4.101
+no_pick 1
+layer 5
+end
+Object cave_deco_f5.101
+name rocks
+type 77
+editor_folder structures/cave
+face cave_deco_f5.101
+no_pick 1
+layer 5
+end
+Object cave_deco_f6.101
+name rocks
+type 77
+editor_folder structures/cave
+face cave_deco_f6.101
+no_pick 1
+layer 5
+end
+Object cave_deco_f7.101
+name rocks
+type 77
+editor_folder structures/cave
+face cave_deco_f7.101
+no_pick 1
+layer 5
+end
+Object cave_deco_f8.101
+name rocks
+type 77
+editor_folder structures/cave
+face cave_deco_f8.101
+no_pick 1
+layer 5
+end
+Object cave_deco_wall1
+name cave
+type 77
+editor_folder structures/cave
+face cave_deco_w1.u.151
+animation cave_deco_wall1
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
+end
+Object cave_deco_wall2
+name cave
+type 77
+editor_folder structures/cave
+face cave_deco_w2.u.151
+animation cave_deco_wall2
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
+end
+Object cave_deco_wall3
+name cave
+type 77
+editor_folder structures/cave
+face cave_deco_w3.u.151
+animation cave_deco_wall3
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
+end
+Object cave_deco_wall4
+name cave
+type 77
+editor_folder structures/cave
+face cave_deco_w4.u.151
+animation cave_deco_wall4
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
+end
+Object cave_deco_wall5
+name cave
+type 77
+editor_folder structures/cave
+face cave_deco_w5.u.151
+animation cave_deco_wall5
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 7
+end
 Object cave_pillar1
 name cave pillar
 type 79
@@ -20121,6 +21732,74 @@ layer 5
 face cave_pillar5.101
 no_pass 1
 no_pick 1
+end
+Object dolmen
+name dolmen
+type 79
+mpart_id 5
+editor_folder structures/structures
+face dolmen01.101
+material 64
+layer 5
+no_pass 1
+no_pick 1
+end
+More
+Object dolmen_a
+name dolmen
+type 79
+mpart_id 5
+mpart_nr 1
+layer 5
+no_pass 1
+no_pick 1
+x 1
+end
+More
+Object dolmen_b
+name dolmen
+type 79
+mpart_id 5
+mpart_nr 2
+layer 5
+no_pass 1
+no_pick 1
+x 2
+end
+More
+Object dolmen_c
+name dolmen
+type 79
+mpart_id 5
+mpart_nr 3
+layer 5
+no_pass 1
+no_pick 1
+y 1
+end
+More
+Object dolmen_d
+name dolmen
+type 79
+mpart_id 5
+mpart_nr 4
+layer 5
+no_pass 1
+no_pick 1
+x 1
+y 1
+end
+More
+Object dolmen_e
+name dolmen
+type 79
+mpart_id 5
+mpart_nr 5
+layer 5
+no_pass 1
+no_pick 1
+x 2
+y 1
 end
 Object coffin_wood.111
 name wooden coffin
@@ -20229,6 +21908,15 @@ face obelisk.101
 no_pass 1
 no_pick 1
 end
+Object tomb
+name tomb
+type 79
+editor_folder structures/grave
+face tomb.101
+layer 5
+no_pick 1
+no_pass 1
+end
 Object lantern_magic.131
 name magic lantern
 type 79
@@ -20254,6 +21942,146 @@ anim_speed 0
 is_turnable 1
 direction 1
 layer 5
+no_pick 1
+end
+Object ped_black
+name pedestal
+type 79
+editor_folder structures/pillars
+layer 5
+face ped_black.111
+animation ped_black
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pass 1
+no_pick 1
+end
+Object ped_black_h1
+name pedestal
+type 79
+editor_folder structures/pillars
+layer 5
+face ped_black_h1.111
+animation ped_black_h1
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pass 1
+no_pick 1
+end
+Object ped_black_hs1
+name pedestal
+type 79
+editor_folder structures/pillars
+layer 5
+face ped_black_hs1.111
+animation ped_black_hs1
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pass 1
+no_pick 1
+end
+Object ped_black_hw1
+name pedestal
+type 79
+editor_folder structures/pillars
+layer 5
+face ped_black_hw1.111
+animation ped_black_hw1
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pass 1
+no_pick 1
+end
+Object ped_black_hws1
+name pedestal
+type 79
+editor_folder structures/pillars
+layer 5
+face ped_black_hws1.111
+animation ped_black_hws1
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pass 1
+no_pick 1
+end
+Object ped_white
+name pedestal
+type 79
+editor_folder structures/pillars
+layer 5
+face ped_white.111
+animation ped_white
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pass 1
+no_pick 1
+end
+Object ped_white_h1
+name pedestal
+type 79
+editor_folder structures/pillars
+layer 5
+face ped_white_h1.111
+animation ped_white_h1
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pass 1
+no_pick 1
+end
+Object ped_white_hs1
+name pedestal
+type 79
+editor_folder structures/pillars
+layer 5
+face ped_white_hs1.111
+animation ped_white_hs1
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pass 1
+no_pick 1
+end
+Object ped_white_hw1
+name pedestal
+type 79
+editor_folder structures/pillars
+layer 5
+face ped_white_hw1.111
+animation ped_white_hw1
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pass 1
+no_pick 1
+end
+Object ped_white_hws1
+name pedestal
+type 79
+editor_folder structures/pillars
+layer 5
+face ped_white_hws1.111
+animation ped_white_hws1
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pass 1
 no_pick 1
 end
 Object pillar_black_big1
@@ -20298,6 +22126,298 @@ type 79
 editor_folder structures/pillars
 layer 5
 face pillar_dark2c.d.101
+no_pass 1
+no_pick 1
+end
+Object pillar_black1a
+name dark pillar
+type 79
+editor_folder structures/pillars
+layer 5
+face pillar_black1a.101
+no_pass 1
+no_pick 1
+end
+Object pillar_black1b
+name dark pillar
+type 79
+editor_folder structures/pillars
+layer 5
+face pillar_black1b.101
+no_pass 1
+no_pick 1
+end
+Object pillar_black1c
+name dark pillar
+type 79
+editor_folder structures/pillars
+layer 5
+face pillar_black1c.111
+animation pillar_black1c
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pass 1
+no_pick 1
+end
+Object pillar_black1d
+name dark pillar
+type 79
+editor_folder structures/pillars
+layer 5
+face pillar_black1d.111
+animation pillar_black1d
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pass 1
+no_pick 1
+end
+Object pillar_black2a
+name dark pillar
+type 79
+editor_folder structures/pillars
+layer 5
+face pillar_black2a.101
+no_pass 1
+no_pick 1
+end
+Object pillar_black2b
+name dark pillar
+type 79
+editor_folder structures/pillars
+layer 5
+face pillar_black2b.101
+no_pass 1
+no_pick 1
+end
+Object pillar_black2c
+name dark pillar
+type 79
+editor_folder structures/pillars
+layer 5
+face pillar_black2c.111
+animation pillar_black2c
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pass 1
+no_pick 1
+end
+Object pillar_black2d
+name dark pillar
+type 79
+editor_folder structures/pillars
+layer 5
+face pillar_black2d.111
+animation pillar_black2d
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pass 1
+no_pick 1
+end
+Object pillar_rune1
+name runed pillar
+type 79
+editor_folder structures/pillars
+layer 5
+face pillar_rune1.101
+no_pass 1
+no_pick 1
+end
+Object pillar_rune2
+name runed pillar
+type 79
+editor_folder structures/pillars
+layer 5
+face pillar_rune2.101
+no_pass 1
+no_pick 1
+end
+Object pillar_rune3
+name runed pillar
+type 79
+editor_folder structures/pillars
+layer 5
+face pillar_rune3.101
+no_pass 1
+no_pick 1
+end
+Object pillar_rune4
+name runed pillar
+type 79
+editor_folder structures/pillars
+layer 5
+face pillar_rune4.101
+no_pass 1
+no_pick 1
+end
+Object pillar_rune5
+name runed pillar
+type 79
+editor_folder structures/pillars
+layer 5
+face pillar_rune5.101
+no_pass 1
+no_pick 1
+end
+Object pillar_rune6
+name runed pillar
+type 79
+editor_folder structures/pillars
+layer 5
+face pillar_rune6.101
+no_pass 1
+no_pick 1
+end
+Object pillar_rune7
+name runed pillar
+type 79
+editor_folder structures/pillars
+layer 5
+face pillar_rune7.101
+no_pass 1
+no_pick 1
+end
+Object pillar_rune8
+name runed pillar
+type 79
+editor_folder structures/pillars
+layer 5
+face pillar_rune8.101
+no_pass 1
+no_pick 1
+end
+Object pillar_small_01
+name pillar
+type 79
+editor_folder structures/pillars
+layer 5
+face pillar_small_01.101
+no_pass 1
+no_pick 1
+end
+Object pillar_small_02
+name pillar
+type 79
+editor_folder structures/pillars
+layer 5
+face pillar_small_02.101
+no_pass 1
+no_pick 1
+end
+Object pillar_small_03
+name pillar
+type 79
+editor_folder structures/pillars
+layer 5
+face pillar_small_03.101
+no_pass 1
+no_pick 1
+end
+Object pillar_small_04
+name pillar
+type 79
+editor_folder structures/pillars
+layer 5
+face pillar_small_04.101
+no_pass 1
+no_pick 1
+end
+Object pillar_white1a
+name white pillar
+type 79
+editor_folder structures/pillars
+layer 5
+face pillar_white1a.101
+no_pass 1
+no_pick 1
+end
+Object pillar_white1b
+name white pillar
+type 79
+editor_folder structures/pillars
+layer 5
+face pillar_white1b.101
+no_pass 1
+no_pick 1
+end
+Object pillar_white1c
+name white pillar
+type 79
+editor_folder structures/pillars
+layer 5
+face pillar_white1c.111
+animation pillar_white1c
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pass 1
+no_pick 1
+end
+Object pillar_white1d
+name white pillar
+type 79
+editor_folder structures/pillars
+layer 5
+face pillar_white1d.111
+animation pillar_white1d
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pass 1
+no_pick 1
+end
+Object pillar_white2a
+name white pillar
+type 79
+editor_folder structures/pillars
+layer 5
+face pillar_white2a.101
+no_pass 1
+no_pick 1
+end
+Object pillar_white2b
+name white pillar
+type 79
+editor_folder structures/pillars
+layer 5
+face pillar_white2b.101
+no_pass 1
+no_pick 1
+end
+Object pillar_white2c
+name white pillar
+type 79
+editor_folder structures/pillars
+layer 5
+face pillar_white2c.111
+animation pillar_white2c
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pass 1
+no_pick 1
+end
+Object pillar_white2d
+name white pillar
+type 79
+editor_folder structures/pillars
+layer 5
+face pillar_white2d.111
+animation pillar_white2d
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pass 1
 no_pick 1
 end
@@ -20514,6 +22634,46 @@ layer 5
 face statue_black_small1.101
 no_pick 1
 end
+Object statue_white
+name statue
+type 79
+editor_folder structures/statue
+face statue_white.101
+blocksview 1
+no_pass 1
+layer 5
+no_pick 1
+end
+Object statue_white2
+name statue
+type 79
+editor_folder structures/statue
+face statue_white2.131
+animation statue_white2
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+blocksview 1
+no_pass 1
+layer 5
+no_pick 1
+end
+Object statue_white3
+name statue
+type 79
+editor_folder structures/statue
+face statue_white3.131
+animation statue_white3
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+blocksview 1
+no_pass 1
+layer 5
+no_pick 1
+end
 Object statue_fire_black1
 name statue
 type 79
@@ -20522,6 +22682,20 @@ blocksview 1
 no_pass 1
 layer 5
 face statue_fire_black1.101
+no_pick 1
+end
+Object statue_fire
+name statue
+type 79
+editor_folder structures/statue
+face statue_fire.111
+animation statue_fire
+speed -0.02
+is_animated 1
+anim_speed 4
+blocksview 1
+no_pass 1
+layer 5
 no_pick 1
 end
 Object statue_hero_a
@@ -20553,6 +22727,55 @@ no_pass 1
 layer 5
 face statue_hero_c.101
 no_pick 1
+end
+Object stonehenge
+name stonehenge
+type 79
+mpart_id 3
+editor_folder structures/structures
+layer 5
+face stonehenge.111
+animation stonehenge
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pass 1
+no_pick 1
+end
+More
+Object stonehenge_a
+name stonehenge
+type 79
+mpart_id 3
+mpart_nr 1
+layer 5
+no_pass 1
+no_pick 1
+x 1
+end
+More
+Object stonehenge_b
+name stonehenge
+type 79
+mpart_id 3
+mpart_nr 2
+layer 5
+no_pass 1
+no_pick 1
+y 1
+end
+More
+Object stonehenge_c
+name stonehenge
+type 79
+mpart_id 3
+mpart_nr 3
+layer 5
+no_pass 1
+no_pick 1
+x 1
+y 1
 end
 Object trap_bear_trap
 name bear trap
@@ -20841,6 +23064,24 @@ layer 5
 no_pick 1
 no_pass 1
 end
+Object wall_blue2_w.111
+name stone wall
+type 77
+editor_folder walls/blue
+face wall_blue2_w.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_blue2_w.131
+name stone wall
+type 77
+editor_folder walls/blue
+face wall_blue2_w.131
+layer 5
+no_pick 1
+no_pass 1
+end
 Object wall_cave1.101
 name cave wall
 type 77
@@ -21021,6 +23262,24 @@ layer 5
 no_pick 1
 no_pass 1
 end
+Object wall_dark1_w.1
+name dark wall
+type 77
+editor_folder walls/dark
+face wall_dark1_w.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_dark1_w.3
+name dark wall
+type 77
+editor_folder walls/dark
+face wall_dark1_w.131
+layer 5
+no_pick 1
+no_pass 1
+end
 Object curtain1
 name red curtain
 type 20
@@ -21126,14 +23385,11 @@ name passage
 type 77
 editor_folder walls/doorways
 face doorway_wood1.111
-no_pick 1
-layer 7
-end
-Object doorway_wood1_3
-name passage
-type 77
-editor_folder walls/doorways
-face doorway_wood1.131
+animation doorway_wood1_1
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 7
 end
@@ -21172,6 +23428,76 @@ name dungeon wall
 type 77
 editor_folder walls/dungeon
 face wall_dungeon1.d.181
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_dungeon2.111
+name dungeon wall
+type 77
+editor_folder walls/dungeon
+face wall_dungeon2.d.111
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_dungeon2.131
+name dungeon wall
+type 77
+editor_folder walls/dungeon
+face wall_dungeon2.d.131
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_dungeon2.141
+name dungeon wall
+type 77
+editor_folder walls/dungeon
+face wall_dungeon2.d.141
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_dungeon2.181
+name dungeon wall
+type 77
+editor_folder walls/dungeon
+face wall_dungeon2.d.181
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_dungeon2b.111
+name dungeon wall
+type 77
+editor_folder walls/dungeon
+face wall_dungeon2b.d.111
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_dungeon2b.131
+name dungeon wall
+type 77
+editor_folder walls/dungeon
+face wall_dungeon2b.d.131
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_dungeon2b.141
+name dungeon wall
+type 77
+editor_folder walls/dungeon
+face wall_dungeon2b.d.141
 blocksview 1
 layer 5
 no_pick 1
@@ -21415,6 +23741,24 @@ layer 5
 no_pick 1
 no_pass 1
 end
+Object wall_flagstone1_w2.111
+name stone wall
+type 77
+editor_folder walls/flagstone
+face wall_flagstone1_w2.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_flagstone1_w2.131
+name stone wall
+type 77
+editor_folder walls/flagstone
+face wall_flagstone1_w2.131
+layer 5
+no_pick 1
+no_pass 1
+end
 Object wall_flagstone1b.111
 name stone wall
 type 77
@@ -21485,6 +23829,24 @@ layer 5
 no_pick 1
 no_pass 1
 end
+Object wall_flagstone2_w.111
+name stone wall
+type 77
+editor_folder walls/flagstone
+face wall_flagstone2_w.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_flagstone2_w.131
+name stone wall
+type 77
+editor_folder walls/flagstone
+face wall_flagstone2_w.131
+layer 5
+no_pick 1
+no_pass 1
+end
 Object wall_fstone.100
 name stone wall
 type 77
@@ -21511,6 +23873,24 @@ type 77
 editor_folder walls/flagstone
 face wall_fstone_half.d.101
 blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_flagstone1b_w.111
+name stone wall
+type 77
+editor_folder walls/flagstone
+face wall_flagstone1b_w.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_flagstone1b_w.131
+name stone wall
+type 77
+editor_folder walls/flagstone
+face wall_flagstone1b_w.131
 layer 5
 no_pick 1
 no_pass 1
@@ -22219,11 +24599,711 @@ layer 5
 no_pick 1
 no_pass 1
 end
+Object wall_marble1.111-01
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-01
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-02
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-02
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-03
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-03
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-04
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-04
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-05
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-05
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-06
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-06
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-07
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-07
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-00-01
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-00-01
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-00-02
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-00-02
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-00-03
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-00-03
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-00-04
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-00-04
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-00-05
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-00-05
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-00-06
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-00-06
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-00-07
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-00-07
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-01-00
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-01-00
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-01-02
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-01-02
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-01-03
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-01-03
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-01-04
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-01-04
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-01-05
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-01-05
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-01-06
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-01-06
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-01-07
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-01-07
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-02-01
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-02-01
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-02-00
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-02-00
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-02-03
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-02-03
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-02-04
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-02-04
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-02-05
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-02-05
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-02-06
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-02-06
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-02-07
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-02-07
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-03-01
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-03-01
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-03-02
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-03-02
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-03-00
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-03-00
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-03-04
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-03-04
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-03-05
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-03-05
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-03-06
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-03-06
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-03-07
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-03-07
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-04-01
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-04-01
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-04-02
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-04-02
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-04-03
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-04-03
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-04-00
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-04-00
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-04-05
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-04-05
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-04-06
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-04-06
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-04-07
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-04-07
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-05-01
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-05-01
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-05-02
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-05-02
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-05-03
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-05-03
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-05-04
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-05-04
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-05-00
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-05-00
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-05-06
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-05-06
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-05-07
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-05-07
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-06-01
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-06-01
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-06-02
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-06-02
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-06-03
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-06-03
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-06-04
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-06-04
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-06-05
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-06-05
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-06-00
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-06-00
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-06-07
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-06-07
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-07-01
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-07-01
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-07-02
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-07-02
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-07-03
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-07-03
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-07-04
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-07-04
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-07-05
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-07-05
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-07-06
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-07-06
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111-c-07-00
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.111-c-07-00
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
 Object wall_marble1.111a
 name stone wall
 type 77
 editor_folder walls/marble
 face wall_marble1a.d.111
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111a-01
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1a.d.111-01
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111a-02
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1a.d.111-02
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111a-03
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1a.d.111-03
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111a-04
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1a.d.111-04
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111a-05
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1a.d.111-05
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111a-06
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1a.d.111-06
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.111a-07
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1a.d.111-07
 blocksview 1
 layer 5
 no_pick 1
@@ -22239,11 +25319,711 @@ layer 5
 no_pick 1
 no_pass 1
 end
+Object wall_marble1.131-01
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-01
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-02
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-02
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-03
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-03
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-04
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-04
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-05
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-05
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-06
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-06
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-07
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-07
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-00-01
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-00-01
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-00-02
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-00-02
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-00-03
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-00-03
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-00-04
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-00-04
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-00-05
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-00-05
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-00-06
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-00-06
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-00-07
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-00-07
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-01-00
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-01-00
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-01-02
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-01-02
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-01-03
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-01-03
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-01-04
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-01-04
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-01-05
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-01-05
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-01-06
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-01-06
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-01-07
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-01-07
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-02-01
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-02-01
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-02-00
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-02-00
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-02-03
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-02-03
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-02-04
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-02-04
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-02-05
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-02-05
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-02-06
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-02-06
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-02-07
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-02-07
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-03-01
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-03-01
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-03-02
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-03-02
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-03-00
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-03-00
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-03-04
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-03-04
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-03-05
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-03-05
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-03-06
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-03-06
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-03-07
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-03-07
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-04-01
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-04-01
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-04-02
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-04-02
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-04-03
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-04-03
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-04-00
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-04-00
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-04-05
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-04-05
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-04-06
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-04-06
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-04-07
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-04-07
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-05-01
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-05-01
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-05-02
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-05-02
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-05-03
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-05-03
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-05-04
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-05-04
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-05-00
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-05-00
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-05-06
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-05-06
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-05-07
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-05-07
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-06-01
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-06-01
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-06-02
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-06-02
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-06-03
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-06-03
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-06-04
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-06-04
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-06-05
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-06-05
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-06-00
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-06-00
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-06-07
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-06-07
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-07-01
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-07-01
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-07-02
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-07-02
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-07-03
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-07-03
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-07-04
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-07-04
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-07-05
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-07-05
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-07-06
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-07-06
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131-c-07-00
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.131-c-07-00
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
 Object wall_marble1.131a
 name stone wall
 type 77
 editor_folder walls/marble
 face wall_marble1a.d.131
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131a-01
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1a.d.131-01
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131a-02
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1a.d.131-02
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131a-03
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1a.d.131-03
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131a-04
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1a.d.131-04
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131a-05
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1a.d.131-05
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131a-06
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1a.d.131-06
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.131a-07
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1a.d.131-07
 blocksview 1
 layer 5
 no_pick 1
@@ -22259,11 +26039,151 @@ layer 5
 no_pick 1
 no_pass 1
 end
+Object wall_marble1.141-01
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.141-01
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.141-02
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.141-02
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.141-03
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.141-03
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.141-04
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.141-04
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.141-05
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.141-05
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.141-06
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.141-06
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.141-07
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.141-07
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
 Object wall_marble1.181
 name stone wall
 type 77
 editor_folder walls/marble
 face wall_marble1.d.181
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.181-01
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.181-01
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.181-02
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.181-02
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.181-03
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.181-03
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.181-04
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.181-04
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.181-05
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.181-05
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.181-06
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.181-06
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1.181-07
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1.d.181-07
 blocksview 1
 layer 5
 no_pick 1
@@ -22278,11 +26198,164 @@ layer 5
 no_pick 1
 no_pass 1
 end
+Object wall_marble1w2.111
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1_w2.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1w.111-02
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1_w.111-02
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1w.111-03
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1_w.111-03
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1w.111-04
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1_w.111-04
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1w.111-05
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1_w.111-05
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1w.111-06
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1_w.111-06
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1w.111-07
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1_w.111-07
+layer 5
+no_pick 1
+no_pass 1
+end
 Object wall_marble1w.131
 name stone wall
 type 77
 editor_folder walls/marble
 face wall_marble1_w.131
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1w2.131
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1_w2.131
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1w.131-01
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1_w.131-01
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1w.131-02
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1_w.131-02
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1w.131-03
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1_w.131-03
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1w.131-04
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1_w.131-04
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1w.131-05
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1_w.131-05
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1w.131-06
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1_w.131-06
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1w.131-07
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1_w.131-07
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1wb.111
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1_wb.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_marble1wb.3
+name stone wall
+type 77
+editor_folder walls/marble
+face wall_marble1_wb.131
 layer 5
 no_pick 1
 no_pass 1
@@ -22327,6 +26400,24 @@ layer 5
 no_pick 1
 no_pass 1
 end
+Object wall_pattern1_w.111
+name stone wall
+type 77
+editor_folder walls/pattern
+face wall_pattern1_w.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_pattern1_w.131
+name stone wall
+type 77
+editor_folder walls/pattern
+face wall_pattern1_w.131
+layer 5
+no_pick 1
+no_pass 1
+end
 Object wall_pattern2.111
 name stone wall
 type 77
@@ -22367,6 +26458,24 @@ layer 5
 no_pick 1
 no_pass 1
 end
+Object wall_pattern2_w.111
+name stone wall
+type 77
+editor_folder walls/pattern
+face wall_pattern2_w.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_pattern2_w.131
+name stone wall
+type 77
+editor_folder walls/pattern
+face wall_pattern2_w.131
+layer 5
+no_pick 1
+no_pass 1
+end
 Object wall_pattern3.111
 name stone wall
 type 77
@@ -22403,6 +26512,82 @@ type 77
 editor_folder walls/pattern
 face wall_pattern3.d.181
 blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_pattern3_w.111
+name stone wall
+type 77
+editor_folder walls/pattern
+face wall_pattern3_w.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_pattern3_w.131
+name stone wall
+type 77
+editor_folder walls/pattern
+face wall_pattern3_w.131
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_pattern4.111
+name stone wall
+type 77
+editor_folder walls/pattern
+face wall_pattern4.d.111
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_pattern4.131
+name stone wall
+type 77
+editor_folder walls/pattern
+face wall_pattern4.d.131
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_pattern4.141
+name stone wall
+type 77
+editor_folder walls/pattern
+face wall_pattern4.d.141
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_pattern4.181
+name stone wall
+type 77
+editor_folder walls/pattern
+face wall_pattern4.d.181
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_pattern4_w.111
+name stone wall
+type 77
+editor_folder walls/pattern
+face wall_pattern4_w.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_pattern4_w.131
+name stone wall
+type 77
+editor_folder walls/pattern
+face wall_pattern4_w.131
 layer 5
 no_pick 1
 no_pass 1
@@ -22783,6 +26968,24 @@ layer 5
 no_pick 1
 no_pass 1
 end
+Object wall_stone1_w.111
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone1_w.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone1_w.131
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone1_w.131
+layer 5
+no_pick 1
+no_pass 1
+end
 Object wall_stone2_1
 name stone wall
 type 77
@@ -22859,6 +27062,944 @@ type 77
 editor_folder walls/stone
 face wall_stone3.d.181
 blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone3_w.111
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone3_w.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone3_w.131
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone3_w.131
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone4_1
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone4.d.111
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone4_3
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone4.d.131
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone4_4
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone4.d.141
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone4_8
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone4.d.181
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone4_w.111
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone4_w.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone4_w.131
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone4_w.131
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone5_1
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone5.d.111
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone5_3
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone5.d.131
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone5_4
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone5.d.141
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone5_8
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone5.d.181
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone5_w.111
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone5_w.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone5_w.131
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone5_w.131
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone6_1
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone6.d.111
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone6_3
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone6.d.131
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone6_4
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone6.d.141
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone6_8
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone6.d.181
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone6_w.111
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone6_w.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone6_w.131
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone6_w.131
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone7_1
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone7.d.111
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone7_3
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone7.d.131
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone7_4
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone7.d.141
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone7_8
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone7.d.181
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone7_w.111
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone7_w.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone7_w.131
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone7_w.131
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone8_1
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone8.d.111
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone8_3
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone8.d.131
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone8_4
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone8.d.141
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone8_8
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone8.d.181
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone8_w.111
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone8_w.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone8_w.131
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone8_w.131
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone9_1
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone9.d.111
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone9_3
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone9.d.131
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone9_4
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone9.d.141
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone9_8
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone9.d.181
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone9_w.111
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone9_w.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone9_w.131
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone9_w.131
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone9_w1.111
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone9_w1.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone9_w1.131
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone9_w1.131
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone9_w2.111
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone9_w2.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone9_w2.131
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone9_w2.131
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone10_1
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone10.d.111
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone10_3
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone10.d.131
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone10_4
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone10.d.141
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone10_8
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone10.d.181
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone10_w.111
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone10_w.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone10_w.131
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone10_w.131
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone10_w1.111
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone10_w1.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone10_w1.131
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone10_w1.131
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone10_w2.111
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone10_w2.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone10_w2.131
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone10_w2.131
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone11_1
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone11.d.111
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone11_3
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone11.d.131
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone11_4
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone11.d.141
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone11_8
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone11.d.181
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone11_w.111
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone11_w.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone11_w.131
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone11_w.131
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone12_1
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone12.d.111
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone12_3
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone12.d.131
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone12_4
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone12.d.141
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone12_8
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone12.d.181
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone12_w.111
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone12_w.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone12_w.131
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone12_w.131
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone12_w1.111
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone12_w1.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone12_w1.131
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone12_w1.131
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone12_w2.111
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone12_w2.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone12_w2.131
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone12_w2.131
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone13_1
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone13.d.111
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone13_3
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone13.d.131
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone13_4
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone13.d.141
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone13_8
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone13.d.181
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone13_w.111
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone13_w.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone13_w.131
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone13_w.131
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone14_1
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone14.d.111
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone14_3
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone14.d.131
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone14_4
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone14.d.141
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone14_8
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone14.d.181
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone14_w.111
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone14_w.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone14_w.131
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone14_w.131
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone15_1
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone15.d.111
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone15_3
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone15.d.131
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone15_4
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone15.d.141
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone15_8
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone15.d.181
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone15_w.111
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone15_w.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone15_w.131
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone15_w.131
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone16_1
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone16.d.111
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone16_3
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone16.d.131
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone16_4
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone16.d.141
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone16_8
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone16.d.181
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone16_w.111
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone16_w.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone16_w.131
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone16_w.131
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone17_1
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone17.d.111
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone17_3
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone17.d.131
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone17_4
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone17.d.141
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone17_8
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone17.d.181
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone17_w.111
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone17_w.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_stone17_w.131
+name stone wall
+type 77
+editor_folder walls/stone
+face wall_stone17_w.131
 layer 5
 no_pick 1
 no_pass 1
@@ -23003,6 +28144,24 @@ layer 5
 no_pick 1
 no_pass 1
 end
+Object wall_black1_w.1
+name stone wall
+type 77
+editor_folder walls/stone_black
+face wall_black1_w.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_black1_w.3
+name stone wall
+type 77
+editor_folder walls/stone_black
+face wall_black1_w.131
+layer 5
+no_pick 1
+no_pass 1
+end
 Object wall_white1_1
 name stone wall
 type 77
@@ -23038,6 +28197,182 @@ name stone wall
 type 77
 editor_folder walls/white
 face wall_white1.d.181
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_white1_w.1
+name stone wall
+type 77
+editor_folder walls/white
+face wall_white1_w.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_white1_w.3
+name stone wall
+type 77
+editor_folder walls/white
+face wall_white1_w.131
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_white2_1
+name stone wall
+type 77
+editor_folder walls/white
+face wall_white2.d.111
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_white2_3
+name stone wall
+type 77
+editor_folder walls/white
+face wall_white2.d.131
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_white2_4
+name stone wall
+type 77
+editor_folder walls/white
+face wall_white2.d.141
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_white2_8
+name stone wall
+type 77
+editor_folder walls/white
+face wall_white2.d.181
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_white2_w.1
+name stone wall
+type 77
+editor_folder walls/white
+face wall_white2_w.111
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_white2_w.3
+name stone wall
+type 77
+editor_folder walls/white
+face wall_white2_w.131
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_wood_4
+name wood wall
+type 77
+editor_folder walls/wood
+face wall_wood.d.141
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_wood_8
+name wood wall
+type 77
+editor_folder walls/wood
+face wall_wood.d.181
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_wood1_1
+name wood wall
+type 77
+editor_folder walls/wood
+face wall_wood1.d.111
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_wood1_3
+name wood wall
+type 77
+editor_folder walls/wood
+face wall_wood1.d.131
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_wood2_1
+name wood wall
+type 77
+editor_folder walls/wood
+face wall_wood2.d.111
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_wood2_3
+name wood wall
+type 77
+editor_folder walls/wood
+face wall_wood2.d.131
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_wood3_1
+name wood wall
+type 77
+editor_folder walls/wood
+face wall_wood3.d.111
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_wood3_3
+name wood wall
+type 77
+editor_folder walls/wood
+face wall_wood3.d.131
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_wood_w_1
+name wood wall
+type 77
+editor_folder walls/wood
+face wall_wood_w.111
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_wood_w_3
+name wood wall
+type 77
+editor_folder walls/wood
+face wall_wood_w.131
 blocksview 1
 layer 5
 no_pick 1

@@ -3,6 +3,9 @@ name attached torch
 layer 5
 type 74
 face torch_wall.110
+other_arch torch_wall_1_unlit
+glow_radius 5
+is_animated 1
 anim
 facings 9
 dummy.111
@@ -43,7 +46,6 @@ torch_wall.113
 torch_wall.114
 mina
 speed -0.02
-is_animated 1
 is_turnable 1
 anim_speed 4
 direction 1

@@ -8,7 +8,7 @@ anim
 torch_lit1.101
 torch_lit1.102
 mina
-is_animated 1
+is_animated 0
 anim_speed 4
 material 144
 value 10
@@ -24,6 +24,7 @@ name burnt out torch
 layer 3
 face torch_burnt.101
 type 74
+sub_type 2
 material 144
 value 0
 last_sp 0

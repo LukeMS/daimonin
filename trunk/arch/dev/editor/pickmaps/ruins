@@ -42,10 +42,6 @@ arch fmask_ruin1_s2.101
 x 3
 y 5
 end
-arch fmask_ruin1a.131
-x 4
-y 1
-end
 arch wall_ruin_c3b
 x 4
 y 3

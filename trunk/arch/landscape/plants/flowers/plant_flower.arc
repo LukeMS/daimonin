@@ -68,3 +68,31 @@ face plant_flower10.101
 no_pick 1
 type 79
 end
+Object plant_flower11
+name flower
+layer 4
+face plant_flower11.101
+no_pick 1
+type 79
+end
+Object plant_flower12
+name flower
+layer 4
+face plant_flower12.101
+no_pick 1
+type 79
+end
+Object plant_flower13
+name flower
+layer 4
+face plant_flower13.101
+no_pick 1
+type 79
+end
+Object plant_flower14
+name flower
+layer 4
+face plant_flower14.101
+no_pick 1
+type 79
+end
