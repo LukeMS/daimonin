@@ -1507,6 +1507,8 @@ int process_object(object *op) {
 				esrv_del_item(CONTR(pl), op->count, op->env);
 		}
 
+		remove_ob_inv(op);
+		remove_ob(op);
 		return 1;
 	}
 	
