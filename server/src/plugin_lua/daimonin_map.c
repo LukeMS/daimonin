@@ -24,7 +24,6 @@
 */
 #include <global.h>
 #include <daimonin_map.h>
-#include <inline.h>
 
 /* Global data objects */
 

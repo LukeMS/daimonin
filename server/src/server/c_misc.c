@@ -131,10 +131,8 @@ void malloc_info(object *op)
         ;
     for (al = first_artifactlist, alnr = 0; al != NULL; al = al->next, alnr++)
         ;
-
     for (at = first_archetype,anr = 0,anims = 0; at != NULL; at = at->more == NULL ? at->next : at->more,anr++)
         ;
-
     for (i = 1; i < num_animations; i++)
         anims += animations[i].num_animations;
 
@@ -145,28 +143,23 @@ void malloc_info(object *op)
             nrm++;
         }
     sprintf(errmsg, "Sizeof: object=%ld  player=%ld  socketbuf=%ld  map=%ld", (long)sizeof(object),
-            (long) (sizeof(player) + MAXSOCKBUF_IN * 2 + MAXSOCKBUF), MAXSOCKBUF, (long)sizeof(mapstruct));
+            (long) (sizeof(player) + MAXSOCKBUF_IN * 2 + MAXSOCKBUF), (long)MAXSOCKBUF, (long)sizeof(mapstruct));
     new_draw_info(NDI_UNIQUE, 0, op, errmsg);
     LOG(llevSystem, "%s\n", errmsg);
 
-    for (j = 0; j < NROF_MEMPOOLS; j++)
+    for (j = 0; j < nrof_mempools; j++)
     {
         int k;
         for (k = 0; k < MEMPOOL_NROF_FREELISTS; k++)
         {
-            if (mempools[j].nrof_allocated[k] > 0)
+            if (mempools[j]->nrof_allocated[k] > 0)
             {
-                int ob_used = mempools[j].nrof_allocated[k] - mempools[j].  nrof_free[k],
-                                                                            ob_free = mempools[j].nrof_free[k];
-                int                                                         mem_used    = ob_used*((mempools[j].chunksize
-                                                                                                 << k)
-                                                                                                 + sizeof(struct mempool_chunk));
-                int                                                         mem_free    = ob_free*((mempools[j].chunksize
-                                                                                                 << k)
-                                                                                                 + sizeof(struct mempool_chunk));
-                sprintf(errmsg, "%4d used (%4d free) %s[%3d]: %d (%d)", ob_used, ob_free, mempools[j].chunk_description,
+                int ob_used = mempools[j]->nrof_allocated[k] - mempools[j]->  nrof_free[k],
+                    ob_free = mempools[j]->nrof_free[k];
+                int mem_used = ob_used*((mempools[j]->chunksize << k) + sizeof(struct mempool_chunk));
+                int mem_free = ob_free*((mempools[j]->chunksize << k) + sizeof(struct mempool_chunk));
+                sprintf(errmsg, "%4d used (%4d free) %s[%3d]: %d (%d)", ob_used, ob_free, mempools[j]->chunk_description,
                         1 << k, mem_used, mem_free);
-
                 new_draw_info(NDI_UNIQUE, 0, op, errmsg);
                 LOG(llevSystem, "%s\n", errmsg);
                 sum_used += mem_used;  sum_alloc += mem_used + mem_free;
@@ -351,9 +344,9 @@ int command_malloc(object *op, char *params)
         if (strcmp(params, "force") == 0)
             force_flag = 1;
 
-        for (i = 0; i < NROF_MEMPOOLS; i++)
-            if (force_flag == 1 || mempools[i].flags & MEMPOOL_ALLOW_FREEING)
-                free_empty_puddles(i);
+        for (i = 0; i < nrof_mempools; i++)
+            if (force_flag == 1 || mempools[i]->flags & MEMPOOL_ALLOW_FREEING)
+                free_empty_puddles(mempools[i]);
     }
 #endif    
 

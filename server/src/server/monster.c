@@ -83,13 +83,13 @@ static inline void cleanup_behaviour_parameters(struct mob_behaviour *behaviour)
             for (param = behaviour->parameters[i].next; param; param = param->next)
             {
                 FREE_ONLY_HASH(param->stringvalue);
-                return_poolchunk(param, POOL_BEHAVIOUR_PARAM);
+                return_poolchunk(param, pool_mob_behaviourparam);
             }
 
             FREE_ONLY_HASH(behaviour->parameters[i].stringvalue);
         }
         /* Return the base parameter array */
-        return_poolarray(behaviour->parameters, behaviour->declaration->nrof_params, POOL_BEHAVIOUR_PARAM);
+        return_poolarray(behaviour->parameters, behaviour->declaration->nrof_params, pool_mob_behaviourparam);
     }
 }
 
@@ -102,7 +102,7 @@ void cleanup_behaviourset(struct mob_behaviourset *data)
         for (tmp = data->behaviours[i]; tmp; tmp = tmp->next)
         {
             cleanup_behaviour_parameters(tmp);
-            return_poolchunk(tmp, POOL_BEHAVIOUR);
+            return_poolchunk(tmp, pool_mob_behaviour);
         }
     }
 }
@@ -118,9 +118,9 @@ void cleanup_mob_data(struct mobdata *data)
     FREE_ONLY_HASH(data->pathfinding.target_map);   
 
     for (tmp = data->known_mobs; tmp; tmp = tmp->next)
-        return_poolchunk(tmp, POOL_MOB_KNOWN_OBJ);
+        return_poolchunk(tmp, pool_mob_knownobj);
     for (tmp = data->known_objs; tmp; tmp = tmp->next)
-        return_poolchunk(tmp, POOL_MOB_KNOWN_OBJ);
+        return_poolchunk(tmp, pool_mob_knownobj);
 
     set = data->behaviours;
     set->refcount--;
@@ -146,7 +146,7 @@ void cleanup_mob_data(struct mobdata *data)
                 generated_behavioursets = set->next;
         }
         FREE_ONLY_HASH(set->definition);
-        return_poolchunk(set, POOL_BEHAVIOURSET);
+        return_poolchunk(set, pool_mob_behaviourset);
     }
 }
 
@@ -221,13 +221,13 @@ struct mob_behaviour * init_behaviour(behaviourclass_t classid, int behaviourid)
 {
     struct mob_behaviour   *behaviour;
 
-    behaviour = get_poolchunk(POOL_BEHAVIOUR);
+    behaviour = get_poolchunk(pool_mob_behaviour);
     behaviour->declaration = &behaviourclasses[classid].behaviours[behaviourid];
     behaviour->next = NULL;
     if (behaviour->declaration->nrof_params > 0)
     {
         int i;
-        behaviour->parameters = get_poolarray(POOL_BEHAVIOUR_PARAM, behaviour->declaration->nrof_params);
+        behaviour->parameters = get_poolarray(pool_mob_behaviourparam, behaviour->declaration->nrof_params);
         for (i = 0; i < behaviour->declaration->nrof_params; i++)
         {
             behaviour->parameters[i].next = NULL;
@@ -265,7 +265,7 @@ struct mob_behaviourset * generate_behaviourset(object *op)
 
     /* Otherwise generate a new behaviourset */
     //    LOG(llevDebug,"Generating behaviourset for %s\n", STRING_OBJ_NAME(op));
-    set = get_poolchunk(POOL_BEHAVIOURSET);
+    set = get_poolchunk(pool_mob_behaviourset);
     for (i = 0; i < NROF_BEHAVIOURCLASSES; i++)
         set->behaviours[i] = NULL;
     set->refcount = 1;
@@ -318,7 +318,7 @@ struct mob_behaviourset * generate_behaviourset(object *op)
                 last->parameters[AIPARAM_STEP_BACK_AFTER_SWING_DIST].intvalue = (int)behaviourclasses[BEHAVIOURCLASS_MOVES].behaviours[AIBEHAVIOUR_STEP_BACK_AFTER_SWING].params[AIPARAM_STEP_BACK_AFTER_SWING_DIST].defaultvalue;
                 */
 
-                // last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_AVOID_LINE_OF_FIRE);
+                last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_AVOID_LINE_OF_FIRE);
             }
 
             last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_MOVE_TOWARDS_ENEMY);
@@ -379,7 +379,7 @@ int parse_behaviour_parameters(const char *start, const char *end, struct mob_be
     while (start < end)
     {
         while (isspace(*start))
-            *start++;
+            start++;
         if (start >= end)
             break;
 
@@ -427,7 +427,7 @@ int parse_behaviour_parameters(const char *start, const char *end, struct mob_be
         {
             if (paramdecl->attribs & AI_MULTI_PARAM)
             {
-                param->next = get_poolchunk(POOL_BEHAVIOUR_PARAM);
+                param->next = get_poolchunk(pool_mob_behaviourparam);
                 param = param->next;
                 param->next = NULL;
                 param->stringvalue = NULL;
@@ -522,7 +522,7 @@ struct mob_behaviourset * parse_behaviourconfig(const char *conf_text, object *o
     }
 
     /* init */
-    behaviourset = get_poolchunk(POOL_BEHAVIOURSET);
+    behaviourset = get_poolchunk(pool_mob_behaviourset);
     for (i = 0; i < NROF_BEHAVIOURCLASSES; i++)
     {
         behaviourset->behaviours[i] = NULL;
@@ -553,7 +553,7 @@ struct mob_behaviourset * parse_behaviourconfig(const char *conf_text, object *o
         if (*conf_text == '#')
         {
             while (*conf_text && *conf_text != '\r' && *conf_text != '\n')
-                *conf_text++;
+                conf_text++;
             continue;
         }
 
@@ -593,7 +593,7 @@ struct mob_behaviourset * parse_behaviourconfig(const char *conf_text, object *o
 
             /* find EOL */
             while (*conf_text && *conf_text != '\r' && *conf_text != '\n')
-                *conf_text++;
+                conf_text++;
         }
         else
         {
@@ -609,7 +609,7 @@ struct mob_behaviourset * parse_behaviourconfig(const char *conf_text, object *o
 
             /* behaviour line, find EOL */
             while (*conf_text && *conf_text != '\r' && *conf_text != '\n')
-                *conf_text++;
+                conf_text++;
 
             /* Make sure current class is valid */
             if (class == BEHAVIOURCLASS_NONE)
@@ -645,7 +645,7 @@ struct mob_behaviourset * parse_behaviourconfig(const char *conf_text, object *o
                 if (parse_behaviour_parameters(tok_end, conf_text, new_behaviour) == -1)
                 {
                     LOG(llevBug, "BUG: bad parameterlist for %s of %s\n", buf, STRING_OBJ_NAME(op));
-                    return_poolchunk(new_behaviour, POOL_BEHAVIOUR);
+                    return_poolchunk(new_behaviour, pool_mob_behaviour);
                     continue;
                 }
             }
@@ -974,7 +974,7 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
      * important if new ones are added beyond a reasonable max number */
 
     /* No, it is new */
-    tmp = get_poolchunk(POOL_MOB_KNOWN_OBJ);
+    tmp = get_poolchunk(pool_mob_knownobj);
     tmp->next = NULL;
     tmp->prev = last;
     tmp->obj = other;
@@ -1084,6 +1084,14 @@ int can_hit_missile(object *ob1, object *ob2, rv_vector *rv, int mode)
           /* free 360 deg line of fire */
           return TRUE;
     }
+}
+
+/* Ugly hack for now... */
+int mapcoord_in_line_of_fire(object *op1, mapstruct *map, int x, int y, int mode)
+{
+    rv_vector rv;
+    get_rangevector_from_mapcoords(op1->map, op1->x, op1->y, map, x, y, &rv, RV_DIAGONAL_DISTANCE);
+    return can_hit_missile(op1, NULL, &rv, mode);
 }
 
 /* Normalize a given map path and make sure it is valid and 
@@ -1219,31 +1227,34 @@ void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_
 {
     if (OBJECT_VALID(op->enemy, op->enemy_count) && mob_can_see_obj(op, op->enemy, MOB_DATA(op)->enemy))
     {
+        /* Works almost fine, but:
+         * TODO: not correct for multi-tile mobs, the in_line_of_fire() functions simply don't
+         * work for them. Possible solutions: 1) disable for multi-tile mobs (what do big monsters care
+         * about puny missiles, anyway?  2) fix the line-of-fire functions (can be very expensive)
+         * TODO: mobs will not approach enemy through narrow corridors, as they can't 
+         * avoid missiles there. It also means they can get stuck in the middle of a corridor as
+         * a sitting duck for any distance attacks. Possible fixes: 1) only activate if the enemy if 
+         * known to use missiles (maybe easy with upcoming mob damage memory) 2) temporarily disable 
+         * if we get stuck somewhere. 3) detect getting stuck and either flee or attack.
+         */
+        
         rv_vector  *rv  = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE);
-        if (can_hit_missile(op->enemy, op, rv, 1))
+        if (rv->distance > 2 && rv->distance < 8)
+        
         {
-            int d, r;
-            d = RANDOM() % 4;
-            if (d < 2)
-                d -= 2;
-            else
-                d -= 1;
-
-            r = rv->direction + d;
-            if (!blocked_link(op, freearr_x[r], freearr_y[r]))
-            {
-                response->type = MOVE_RESPONSE_DIR;
-                response->data.direction = r;
-                return;
+            mapstruct *m;
+            int x = op->x + freearr_x[rv->direction];
+            int y = op->y + freearr_y[rv->direction];
+            
+            /* Avoid moving into line of fire */
+            if ((m = out_of_map(op->map, &x, &y))) {
+                if(mapcoord_in_line_of_fire(op->enemy, m, x, y, 1))
+                    response->forbidden |= (1 << rv->direction);
             }
 
-            r = rv->direction - d;
-            if (!blocked_link(op, freearr_x[r], freearr_y[r]))
-            {
-                response->type = MOVE_RESPONSE_DIR;
-                response->data.direction = r;
-                return;
-            }
+            /* Avoid staying in line of fire */
+            if(can_hit_missile(op->enemy, op, rv, 1))
+                response->forbidden |= (1 << 0);
         }
     }
 }
@@ -2038,7 +2049,7 @@ static int calc_direction_towards(object *op, object *target, mapstruct *map, in
     /* throw away segment if we are finished with it */
     if (segment_rv.distance <= 1 && pf->path != NULL)
     {
-        return_poolchunk(pf->path, POOL_PATHSEGMENT);
+        return_poolchunk(pf->path, pool_path_segment);
         pf->path = pf->path->next; /* assuming poolchunk is still valid */
         pf->tried_steps = 0;
         pf->best_distance = -1;
@@ -2142,25 +2153,25 @@ static int calc_direction_towards_waypoint(object *op, object *wp)
 
 /* Actually move the monster in the specified direction. If there is something blocking,
  * try to go on either side of it */
-static int do_move_monster(object *op, int dir)
+static int do_move_monster(object *op, int dir, uint16 forbidden)
 {
     int m;
 
     /* Confused monsters need a small adjustment */
-    if (QUERY_FLAG(op, FLAG_CONFUSED))
+    if (QUERY_FLAG(op, FLAG_CONFUSED)) {
         dir = absdir(dir + RANDOM() % 3 + RANDOM() % 3 - 2);
+        forbidden = 0;
+    }
 
-    if (move_object(op, dir)) /* Can the monster move directly toward waypoint? */
+    if (!(forbidden & (1 << dir)) && move_object(op, dir)) /* Can the monster move directly toward waypoint? */
         return TRUE;
 
     m = 1 - (RANDOM() & 2);          /* Try left or right first? */
     /* try different detours */
-    if (move_object(op, absdir(dir + m))
-     || move_object(op, absdir(dir - m))
-     || move_object(op, absdir(dir + m * 2))
-     || move_object(op,
-                    absdir(dir
-                         - m * 2)))
+    if ((!(forbidden & (1 << absdir(dir + m))) && move_object(op, absdir(dir + m)))
+     || (!(forbidden & (1 << absdir(dir - m))) && move_object(op, absdir(dir - m)))
+     || (!(forbidden & (1 << absdir(dir + m * 2))) && move_object(op, absdir(dir + m * 2)))
+     || (!(forbidden & (1 << absdir(dir - m * 2))) && move_object(op, absdir(dir - m * 2))))
         return TRUE;
 
     /* Couldn't move at all... */
@@ -2183,7 +2194,7 @@ static inline void cleanup_mob_knowns(struct mob_known_obj **first)
             else
                 *first = tmp->next;
 
-            return_poolchunk(tmp, POOL_MOB_KNOWN_OBJ);
+            return_poolchunk(tmp, pool_mob_knownobj);
         }
     }
 }
@@ -2230,8 +2241,8 @@ int move_monster(object *op)
     }
 
     /*
-        * First, some general monster-managing
-        */      
+     * First, some general monster-managing
+     */      
 
     tmp_dir = op->anim_enemy_dir;
     op->anim_enemy_dir = -1;      /* control the facings 25 animations */
@@ -2240,7 +2251,7 @@ int move_monster(object *op)
     /* Set up mob data if missing */
     if (MOB_DATA(op) == NULL)
     {
-        op->custom_attrset = get_poolchunk(POOL_MOBDATA);
+        op->custom_attrset = get_poolchunk(pool_mob_data);
         MOB_DATA(op)->behaviours = setup_behaviours(op);
     }
 
@@ -2252,9 +2263,8 @@ int move_monster(object *op)
 
     /*
      * Internal thought and sensing behaviours
-     * All are always executed     
+     * All of those are always executed     
      */
-
     for (behaviour = MOB_DATA(op)->behaviours->behaviours[BEHAVIOURCLASS_PROCESSES];
          behaviour != NULL;
          behaviour = behaviour->next)
@@ -2267,6 +2277,7 @@ int move_monster(object *op)
      * a movement disables the rest
      */
     response.type = MOVE_RESPONSE_NONE; /* Clear the movement response */
+    response.forbidden = 0;
 
     for (behaviour = MOB_DATA(op)->behaviours->behaviours[BEHAVIOURCLASS_MOVES];
          behaviour != NULL;
@@ -2282,27 +2293,17 @@ int move_monster(object *op)
 
     /* TODO make it possible to move _away_ from waypoint or object */
 
-    /*
-     * High-priority movement behaviours. These can inspect movements
-     * from earlier behaviours and override if nessecary 
-     */
-
-    for (behaviour = MOB_DATA(op)->behaviours->behaviours[BEHAVIOURCLASS_REACTION_MOVES];
-         behaviour != NULL;
-         behaviour = behaviour->next)
-    {
-        if (((int(*) (object *, struct mob_behaviour_param *, move_response *)) behaviour->declaration->func)
-            (op, behaviour->parameters, & response))
-            break;
-    }
-    /* TODO high-priority movements (e.g. dodge missile) */
-
     /* Calculate direction from response needed and execute movement */
     dir = direction_from_response(op, &response);
     if (dir > 0)
     {
-        success = do_move_monster(op, dir);
+        success = do_move_monster(op, dir, response.forbidden);
         /* TODO: handle success=0 and precomputed paths/giving up */
+    }
+    
+    /* Try to avoid standing still if we aren't allowed to */
+    if((dir == 0 || success == 0) && (response.forbidden & (1 << 0))) {
+        success = do_move_monster(op, (RANDOM()%8)+1, response.forbidden);
     }
 
     /* 
@@ -2776,18 +2777,19 @@ int talk_to_npc(object *op, object *npc, char *txt)
 
         if (findPlugin(event_obj->name) >= 0)
         {
-// #define TIME_SCRIPTS        
+//#define TIME_SCRIPTS        
 #ifdef TIME_SCRIPTS        
             int             count   = 0;
             struct timeval  start, stop;
+            long long   start_u, stop_u;
             gettimeofday(&start, NULL);
 
             for (count = 0; count < 10000; count++)
                 ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
 
             gettimeofday(&stop, NULL);
-            long long   start_u = start.tv_sec * 1000000 + start.tv_usec;
-            long long   stop_u  = stop.tv_sec * 1000000 + stop.tv_usec;   
+            start_u = start.tv_sec * 1000000 + start.tv_usec;
+            stop_u  = stop.tv_sec * 1000000 + stop.tv_usec;   
 
             LOG(llevDebug, "running time: %2.4f s\n", (stop_u - start_u) / 1000000.0);
 #else    

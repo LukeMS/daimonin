@@ -75,7 +75,7 @@ typedef struct oblnk
 #define OBJLNK_FLAG_STATIC  0x1000
 #define OBJLNK_FLAG_REF     0x2000
 
-#define free_objectlink_simple(_chunk_) return_poolchunk((_chunk_), POOL_OBJECT_LINK);
-#define free_objectlinkpt_simple(_chunk_) return_poolchunk((_chunk_), POOL_OBJECT_LINK);
+#define free_objectlink_simple(_chunk_) return_poolchunk((_chunk_), pool_objectlink);
+#define free_objectlinkpt_simple(_chunk_) return_poolchunk((_chunk_), pool_objectlink);
 #define oblinkpt objectlink
 

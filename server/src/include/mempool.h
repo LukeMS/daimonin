@@ -52,7 +52,7 @@ struct mempool_chunk
     struct mempool_chunk   *obj_prev; /* for debug only */
     struct mempool_chunk   *obj_next; /* for debug only */
     uint32                  flags;  
-    uint32                  pool_id; /* to what mpool is this memory part related? */
+    struct mempool         *pool; /* to what mpool is this memory part related? */
     uint32                  id;   /* the REAL unique ID number */
 #endif
 };
@@ -68,7 +68,7 @@ typedef void (* chunk_destructor) (void *ptr);      /* Optional destructor to be
 struct mempool
 {
     /* Fields that need need declaration */
-    char                   *chunk_description;            /* Description of chunks. Mostly for debugging */
+    const char             *chunk_description;            /* Description of chunks. Mostly for debugging */
     uint32                  expand_size;                 /* How many chunks to allocate at each expansion */
     uint32                  chunksize;                   /* size of chunks, excluding sizeof(mempool_chunk) and padding */
     uint32                  flags;                       /* Special handling flags. See definitions below */
@@ -93,25 +93,12 @@ struct puddle_info
     struct mempool_chunk   *first_free, *last_free;
     uint32                  nrof_free;
 };
+
+extern struct mempool *pool_puddle;
 #endif
 
-typedef enum
-{
-#ifdef MEMPOOL_TRACKING
-    POOL_PUDDLE,
-#endif    
-    POOL_OBJECT,
-    POOL_PLAYER,
-    POOL_MAP_BFS,
-    POOL_PATHSEGMENT,
-    POOL_MOBDATA,
-    POOL_MOB_KNOWN_OBJ,
-    POOL_BEHAVIOURSET,
-    POOL_BEHAVIOUR,
-    POOL_BEHAVIOUR_PARAM,
-    POOL_OBJECT_LINK,
-    NROF_MEMPOOLS
-}                            mempool_id;
+/* Maximum number of mempools we will use */
+#define MAX_NROF_MEMPOOLS 32
 
 /* Get the memory management struct for a chunk of memory */
 #define MEM_POOLDATA(ptr) (((struct mempool_chunk *)(ptr)) - 1)
@@ -123,8 +110,15 @@ typedef enum
 #define MEMPOOL_ALLOW_FREEING 1 /* Allow puddles from this pool to be freed */
 #define MEMPOOL_BYPASS_POOLS  2 /* Don't use pooling, but only malloc/free instead */
 
-extern struct mempool       mempools[];
+extern struct mempool      *mempools[];
 extern struct mempool_chunk end_marker; /* only used as an end marker for the lists */
+
+extern struct mempool *pool_object, *pool_player, *pool_map_bfs,
+    *pool_path_segment, *pool_mob_data, *pool_mob_knownobj,
+    *pool_mob_behaviourset, *pool_mob_behaviour, *pool_mob_behaviourparam,
+    *pool_objectlink;
+
+extern int nrof_mempools;
 
 #define get_poolchunk(_pool_) get_poolchunk_array_real((_pool_), 0)
 #define get_poolarray(_pool_, _arraysize_) get_poolchunk_array_real((_pool_), nearest_pow_two_exp(_arraysize_))

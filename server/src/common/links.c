@@ -41,7 +41,7 @@
 
 objectlink * get_objectlink(int id)
 {
-    objectlink *ol  = (objectlink *) get_poolchunk(POOL_OBJECT_LINK);
+    objectlink *ol  = (objectlink *) get_poolchunk(pool_objectlink);
     memset(ol, 0, sizeof(objectlink));
     ol->flags |= id;
     return ol;
@@ -54,7 +54,7 @@ objectlink * get_objectlink(int id)
 
 oblinkpt * get_objectlinkpt()
 {
-    oblinkpt   *obp = (oblinkpt *) get_poolchunk(POOL_OBJECT_LINK);
+    oblinkpt   *obp = (oblinkpt *) get_poolchunk(pool_objectlink);
     memset(obp, 0, sizeof(oblinkpt));
     obp->flags |= OBJLNK_FLAG_LINK;
     return obp;

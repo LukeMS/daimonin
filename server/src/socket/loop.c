@@ -441,7 +441,6 @@ static int check_ip_ban(int num, uint32 ip)
     NewSocket  *ns  = &init_sockets[num];
     player     *pl, *ptmp = NULL;
 
-    return FALSE;
     /* lets first check sensless connected sockets
      * from same IP.
      * Mark all from same IP as dead.

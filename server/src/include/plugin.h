@@ -277,6 +277,29 @@ struct plugin_hooklist
     void (*new_draw_info_format)(int flags, int pri, object *pl, char *format, ...);
     void (*new_info_map)(int color, mapstruct *map, int x, int y, int dist, const char *str);
     void (*new_info_map_except)(int color, mapstruct *map, int x, int y, int dist, object *op1, object *op, const char *str);
+
+    
+    void (*free_string_shared)(const char *str);
+    const char*(*add_string)(const char *str);
+    const char*(*add_refcount)(const char *str);
+
+    void (*fix_player)(object *op);
+    void (*esrv_send_item)(object *pl, object *op);
+    void (*esrv_send_inventory)(object *pl, object *op);
+    
+    int (*lookup_skill_by_name)(char *string);
+    int (*look_up_spell_name)(const char *spname);
+
+    object*(*insert_ob_in_ob)(object *op, object *where);
+    object*(*insert_ob_in_map)(object *op, mapstruct *m, object *originator, int flag);
+
+    void (*free_mempool)(struct mempool *pool); 
+    struct mempool*(*create_mempool)(const char *description, uint32 expand, uint32 size, 
+                                       uint32 flags, chunk_constructor constructor, 
+                                       chunk_destructor destructor);
+    uint32 (*nearest_pow_two_exp)(uint32 n); 
+    void (*return_poolchunk_array_real)(void *data, uint32 arraysize_exp, struct mempool *pool); 
+    void*(*get_poolchunk_array_real)(struct mempool *pool, uint32 arraysize_exp);
 };
 
 /*****************************************************************************/

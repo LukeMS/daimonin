@@ -26,7 +26,6 @@
 /* First let's include the header file needed                                */
 #include <global.h>
 #include <daimonin_object.h>
-#include <inline.h>
 
 /* Global data */
 
@@ -42,7 +41,7 @@ static struct method_decl   GameObject_methods[]            =
     {"Drop",  (lua_CFunction) GameObject_Drop}, {"Take",  (lua_CFunction) GameObject_Take},
     {"Fix", (lua_CFunction) GameObject_Fix}, {"Kill", (lua_CFunction) GameObject_Kill},
     {"CastSpell", (lua_CFunction) GameObject_CastSpell}, {"DoKnowSpell", (lua_CFunction) GameObject_DoKnowSpell},
-    {"AcquireSpell", (lua_CFunction) GameObject_AcquireSpell},
+    {"AcquireSpell", (lua_CFunction) GameObject_AcquireSpell}, 
     {"FindSkill", (lua_CFunction) GameObject_FindSkill},
     {"AcquireSkill", (lua_CFunction) GameObject_AcquireSkill},
     {"FindMarkedObject", (lua_CFunction) GameObject_FindMarkedObject},
@@ -406,7 +405,7 @@ static int GameObject_GetGod(lua_State *L)
 static int GameObject_SetGod(lua_State *L)
 {
     char       *txt;
-    const char *prayname;
+    const char *prayname = NULL;
     object     *tmp;
     CFParm     *CFR0;
     CFParm     *CFR;
@@ -415,7 +414,7 @@ static int GameObject_SetGod(lua_State *L)
 
     get_lua_args(L, "Os", &self, &txt);
 
-    prayname = add_string_hook("praying");
+    FREE_AND_COPY_HASH(prayname, "praying");
 
     GCFP1.Value[0] = (void *) (WHO);
     GCFP1.Value[1] = (void *) (prayname);
@@ -432,7 +431,8 @@ static int GameObject_SetGod(lua_State *L)
     if (value)
         (PlugHooks[HOOK_BECOMEFOLLOWER]) (&GCFP2);
     free(CFR);
-    FREE_STRING_HOOK(prayname);
+
+    FREE_ONLY_HASH(prayname);
 
     return 0;
 }
@@ -490,32 +490,18 @@ static int GameObject_InsertInside(lua_State *L)
         (PlugHooks[HOOK_REMOVEOBJECT]) (&GCFP);
     }
 
-    myob = insert_ob_in_ob_hook(myob, WHERE);
+    myob = hooks->insert_ob_in_ob(myob, WHERE);
 
     /* Make sure the inventory image/text is updated */
     /* FIXME: what if object was not carried by player ? */
     for (tmp = WHERE; tmp != NULL; tmp = tmp->env)
-    {
         if (tmp->type == PLAYER)
-        {
-            GCFP.Value[0] = (void *) (tmp);
-            GCFP.Value[1] = (void *) (myob);
-            (PlugHooks[HOOK_ESRVSENDITEM]) (&GCFP);
-            break;
-        }
-    }
+            hooks->esrv_send_item(tmp, myob);
 
     /* If we're taking from player. */
     for (tmp = obenv; tmp != NULL; tmp = tmp->env)
-    {
         if (tmp->type == PLAYER)
-        {
-            GCFP.Value[0] = (void *) (tmp);
-            GCFP.Value[1] = (void *) (tmp);
-            (PlugHooks[HOOK_ESRVSENDINVENTORY]) (&GCFP);
-            break;
-        }
-    }
+            hooks->esrv_send_inventory(tmp, tmp);
 
     return 0;
 }
@@ -861,12 +847,14 @@ static int GameObject_SetRank(lua_State *L)
     {
         if (walk->name && !strcmp(walk->name, "RANK_FORCE") && !strcmp(walk->arch->name, "rank_force"))
         {
-            /* we find the rank of the player, now change it to new one */
-            if (walk->title)
-                FREE_STRING_HOOK(walk->title);
-
-            if (strcmp(rank, "Mr")) /* Mr = keyword to clear title and not add it as rank */
-                walk->title = add_string_hook(rank);
+            if (strcmp(rank, "Mr") == 0) /* Mr = keyword to clear title and not add it as rank */
+            {
+                FREE_AND_CLEAR_HASH(walk->title);
+            } 
+            else
+            {
+                FREE_AND_COPY_HASH(walk->title, rank);
+            }
 
             CONTR(WHO)->socket.ext_title_flag = 1; /* demand update to client */
             return push_object(L, &GameObject, walk);
@@ -898,10 +886,7 @@ static int GameObject_SetAlignment(lua_State *L)
         if (walk->name && !strcmp(walk->name, "ALIGNMENT_FORCE") && !strcmp(walk->arch->name, "alignment_force"))
         {
             /* we find the alignment of the player, now change it to new one */
-            if (walk->title)
-                ;
-            FREE_STRING_HOOK(walk->title);
-            walk->title = add_string_hook(align);
+            FREE_AND_COPY_HASH(walk->title, align);
 
             CONTR(WHO)->socket.ext_title_flag = 1; /* demand update to client */
             return push_object(L, &GameObject, walk);
@@ -965,11 +950,10 @@ static int GameObject_SetGuildForce(lua_State *L)
         if (walk->name && !strcmp(walk->name, "GUILD_FORCE") && !strcmp(walk->arch->name, "guild_force"))
         {
             /* we find the rank of the player, now change it to new one */
-            if (walk->title)
-                FREE_STRING_HOOK(walk->title);
-
-            if (guild && strcmp(guild, ""))
-                walk->title = add_string_hook(guild);
+            if (guild && strcmp(guild, "")) {
+                FREE_AND_COPY_HASH(walk->title, guild);
+            } else
+                FREE_ONLY_HASH(walk->title);
 
             CONTR(WHO)->socket.ext_title_flag = 1; /* demand update to client */
             return push_object(L, &GameObject, walk);
@@ -1017,7 +1001,7 @@ static int GameObject_Fix(lua_State *L)
     lua_object *self;
     get_lua_args(L, "O", &self);
 
-    fix_player_hook(WHO);
+    hooks->fix_player(WHO);
 
     return 0;
 }
@@ -1250,6 +1234,8 @@ static int GameObject_FindSkill(lua_State *L)
 
     myob = (object *) (CFR->Value[0]);
     return push_object(L, &GameObject, myob);
+
+
 }
 
 /*****************************************************************************/
@@ -1364,16 +1350,10 @@ static int GameObject_CreatePlayerForce(lua_State *L)
     }
 
     /* setup the force and put it in activator */
-    if (myob->name)
-        ;
-    FREE_STRING_HOOK(myob->name);
-    myob->name = add_string_hook(txt);
-    myob = insert_ob_in_ob_hook(myob, WHERE);
+    FREE_AND_COPY_HASH(myob->name, txt);
+    myob = hooks->insert_ob_in_ob(myob, WHERE);
 
-    /*esrv_send_item((object *)(gh_scm2long(where)), myob); */
-    GCFP.Value[0] = (void *) (WHERE);
-    GCFP.Value[1] = (void *) (myob);
-    (PlugHooks[HOOK_ESRVSENDITEM]) (&GCFP);
+    hooks->esrv_send_item(WHERE, myob);
 
     return push_object(L, &GameObject, myob);
 }
@@ -1456,7 +1436,7 @@ static int GameObject_AddQuestObject(lua_State *L)
             luaL_error(L, "Can't find archtype 'quest_container'");
         }
 
-        insert_ob_in_ob_hook(walk, WHO);
+        hooks->insert_ob_in_ob(walk, WHO);
     }
 
     strcpy(txt2, "player_info");
@@ -1473,17 +1453,10 @@ static int GameObject_AddQuestObject(lua_State *L)
     }
 
     /* store name & arch name of the quest obj. so we can id it later */
-    if (myob->name)
-        ;
-    FREE_STRING_HOOK(myob->name);
-    myob->name = add_string_hook(name);
+    FREE_AND_COPY_HASH(myob->name, name);
+    FREE_AND_COPY_HASH(myob->race, arch_name);
 
-    if (myob->race)
-        ;
-    FREE_STRING_HOOK(myob->race);
-    myob->race = add_string_hook(arch_name);
-
-    myob = insert_ob_in_ob_hook(myob, walk);
+    myob = hooks->insert_ob_in_ob(myob, walk);
 
     return push_object(L, &GameObject, myob);
 }
@@ -1519,16 +1492,10 @@ static int GameObject_CreatePlayerInfo(lua_State *L)
     }
 
     /* setup the info and put it in activator */
-    if (myob->name)
-        ;
-    FREE_STRING_HOOK(myob->name);
-    myob->name = add_string_hook(txt);
-    myob = insert_ob_in_ob_hook(myob, WHERE);
+    FREE_AND_COPY_HASH(myob->name, txt);
+    myob = hooks->insert_ob_in_ob(myob, WHERE);
 
-    /*esrv_send_item((object *)(gh_scm2long(where)), myob); */
-    GCFP.Value[0] = (void *) (WHERE);
-    GCFP.Value[1] = (void *) (myob);
-    (PlugHooks[HOOK_ESRVSENDITEM]) (&GCFP);
+    hooks->esrv_send_item(WHERE, myob);
 
     return push_object(L, &GameObject, myob);
 }
@@ -1621,16 +1588,11 @@ static int GameObject_CreateInvisibleInside(lua_State *L)
     (PlugHooks[HOOK_UPDATESPEED]) (&GCFP);
 
     /*update_ob_speed(myob); */
-    if (myob->slaying)
-        ;
-    FREE_STRING_HOOK(myob->slaying);
-    myob->slaying = add_string_hook(txt);
-    myob = insert_ob_in_ob_hook(myob, WHERE);
+    FREE_AND_COPY_HASH(myob->slaying, txt);
+    myob = hooks->insert_ob_in_ob(myob, WHERE);
 
-    GCFP.Value[0] = (void *) (WHERE);
-    GCFP.Value[1] = (void *) (myob);
-    /*esrv_send_item((object *)(gh_scm2long(where)), myob); */
-    (PlugHooks[HOOK_ESRVSENDITEM]) (&GCFP);
+    hooks->esrv_send_item(WHERE, myob);
+
     return push_object(L, &GameObject, myob);
 }
 
@@ -1687,17 +1649,13 @@ static int GameObject_CreateObjectInside(lua_State *L)
     if (nrof > 1)
         myob->nrof = nrof;
 
-    myob = insert_ob_in_ob_hook(myob, WHERE);
+    myob = hooks->insert_ob_in_ob(myob, WHERE);
 
     /* Make sure inventory image/text is updated */
     for (tmp = WHERE; tmp != NULL; tmp = tmp->env)
     {
         if (tmp->type == PLAYER)
-        {
-            GCFP.Value[0] = (void *) (tmp);
-            GCFP.Value[1] = (void *) (myob);
-            (PlugHooks[HOOK_ESRVSENDITEM]) (&GCFP);
-        }
+            hooks->esrv_send_item(tmp, myob);
     }
 
     return push_object(L, &GameObject, myob);
@@ -1807,7 +1765,7 @@ static int GameObject_Remove(lua_State *L)
 {
     lua_object *self;
     object     *myob;
-    object     *obenv;
+    object     *obenv, *tmp;
 
     get_lua_args(L, "O", &self);
 
@@ -1826,20 +1784,11 @@ static int GameObject_Remove(lua_State *L)
     GCFP.Value[0] = (void *) (myob);
     (PlugHooks[HOOK_REMOVEOBJECT]) (&GCFP);
 
-    /* Gecko: player inventory can be removed even if the activator is not a player */
-    if (obenv != NULL && obenv->type == PLAYER)
-    {
-        GCFP.Value[0] = (void *) (obenv);
-        GCFP.Value[1] = (void *) (obenv);
-        (PlugHooks[HOOK_ESRVSENDINVENTORY]) (&GCFP);
-    }
-    /*    if (StackActivator[StackPosition]->type == PLAYER)
-    {
-        GCFP.Value[0] = (void *)(StackActivator[StackPosition]);
-        GCFP.Value[1] = (void *)(StackActivator[StackPosition]);
-        (PlugHooks[HOOK_ESRVSENDINVENTORY])(&GCFP);
-    }*/
-
+    /* Update player's inventory if object was removed from player
+     * TODO: see how well this works with things in containers */
+    for (tmp = obenv; tmp != NULL; tmp = tmp->env)
+        if (tmp->type == PLAYER)
+            hooks->esrv_send_inventory(tmp, tmp);
 
     /* TODO: maybe this is no longer necessary? */
     /* Gecko: Handle removing any of the active objects (e.g. the activator) */
@@ -1865,7 +1814,7 @@ static int GameObject_Destruct(lua_State *L)
 {
     lua_object *self;
     object     *myob;
-    object     *obenv;
+    object     *obenv, *tmp;
 
     get_lua_args(L, "O", &self);
 
@@ -1884,20 +1833,11 @@ static int GameObject_Destruct(lua_State *L)
     GCFP.Value[0] = (void *) (myob);
     (PlugHooks[HOOK_DESTRUCTOBJECT]) (&GCFP);
 
-    /* Gecko: player inventory can be removed even if the activator is not a player */
-    if (obenv != NULL && obenv->type == PLAYER)
-    {
-        GCFP.Value[0] = (void *) (obenv);
-        GCFP.Value[1] = (void *) (obenv);
-        (PlugHooks[HOOK_ESRVSENDINVENTORY]) (&GCFP);
-    }
-    /*    if (StackActivator[StackPosition]->type == PLAYER)
-    {
-        GCFP.Value[0] = (void *)(StackActivator[StackPosition]);
-        GCFP.Value[1] = (void *)(StackActivator[StackPosition]);
-        (PlugHooks[HOOK_ESRVSENDINVENTORY])(&GCFP);
-    }*/
-
+    /* Update player's inventory if object was removed from player
+     * TODO: see how well this works with things in containers */
+    for (tmp = obenv; tmp != NULL; tmp = tmp->env)
+        if (tmp->type == PLAYER)
+            hooks->esrv_send_inventory(tmp, tmp);
 
     /* TODO: maybe this is no longer necessary? */
     /* Gecko: Handle removing any of the active objects (e.g. the activator) */
@@ -2315,14 +2255,8 @@ static int GameObject_setAttribute(lua_State *L, lua_object *obj, struct attribu
     /* Make sure player's inventory image/text is updated */
     /* FIXME: what if object was not carried by player ? */
     for (tmp = who->env; tmp != NULL; tmp = tmp->env)
-    {
         if (tmp->type == PLAYER)
-        {
-            GCFP.Value[0] = (void *) (tmp);
-            GCFP.Value[1] = (void *) (who);
-            (PlugHooks[HOOK_ESRVSENDITEM]) (&GCFP);
-        }
-    }
+            hooks->esrv_send_item(tmp, who);
 
     /* Special handling for some player stuff */
     if (who->type == PLAYER)
@@ -2343,7 +2277,7 @@ static int GameObject_setAttribute(lua_State *L, lua_object *obj, struct attribu
             CONTR(who)->orig_stats.Pow = (sint8) lua_tonumber(L, -1);
 
         if (attrib->flags & FIELDFLAG_PLAYER_FIX)
-            fix_player_hook(who);
+            hooks->fix_player(who);
     }
 
     return 0;
@@ -2368,14 +2302,8 @@ static int GameObject_setFlag(lua_State *L, lua_object *obj, uint32 flagno)
     /* Make sure the inventory image/text is updated */
     /* FIXME: what if object was not carried by player ? */
     for (tmp = obj->data.object->env; tmp != NULL; tmp = tmp->env)
-    {
         if (tmp->type == PLAYER)
-        {
-            GCFP.Value[0] = (void *) (tmp);
-            GCFP.Value[1] = (void *) (obj->data.object);
-            (PlugHooks[HOOK_ESRVSENDITEM]) (&GCFP);
-        }
-    }
+            hooks->esrv_send_item(tmp, obj->data.object);
 
     /* TODO: if gender changed:
     if()
