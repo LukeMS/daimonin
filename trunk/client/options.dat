@@ -80,7 +80,7 @@ UseUpdateRect 0
 # The client get from the metaserver a list of all this public servers
 # to skip metaserver search, put a '#' in fron of meta_server line.
 #
-#meta_server damn.informatik.uni-bremen.de
+meta_server damn.informatik.uni-bremen.de
 meta_server_port 13326
 
 
