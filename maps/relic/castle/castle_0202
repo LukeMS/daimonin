@@ -100,10 +100,13 @@ end
 arch floor_wood2_l2
 y 22
 end
+arch carpet1.151
+y 22
+end
 arch floor_wood2_l2
 y 23
 end
-arch light6
+arch carpet1
 y 23
 end
 arch grassd_6
@@ -209,7 +212,15 @@ arch floor_wood2_l2
 x 1
 y 22
 end
+arch carpet1.151
+x 1
+y 22
+end
 arch floor_wood2_l2
+x 1
+y 23
+end
+arch carpet1
 x 1
 y 23
 end
@@ -307,11 +318,19 @@ arch floor_wood2_l2
 x 2
 y 21
 end
+arch table_wood1.111
+x 2
+y 21
+end
 arch floor_wood2_l2
 x 2
 y 22
 end
 arch floor_wood2_l2
+x 2
+y 23
+end
+arch carpet1.171
 x 2
 y 23
 end
@@ -523,7 +542,7 @@ y 15
 end
 arch stair_down
 direction 5
-slaying granery_quest/granery_0003
+slaying /castle/granery_quest/granery_0003
 hp 1
 sp 22
 x 4
@@ -1057,6 +1076,14 @@ x 9
 y 5
 end
 arch floor_farm1a
+x 9
+y 6
+end
+arch ant_red
+level 4
+friendly 1
+item_race 8
+item_level 5
 x 9
 y 6
 end
@@ -1717,6 +1744,21 @@ end
 arch light6
 x 14
 y 16
+end
+arch archer
+level 7
+friendly 1
+random_move 1
+item_race 3
+item_level 3
+stand_still 0
+x 14
+y 16
+arch event_obj
+name lua
+race /relic/castle/scripts/Farmer.lua
+sub_type 6
+end
 end
 arch floor_wood1b
 x 14

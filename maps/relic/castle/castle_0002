@@ -1306,6 +1306,21 @@ arch floor_marble4f
 x 9
 y 13
 end
+arch ranger
+level 15
+friendly 1
+random_move 1
+item_race 4
+item_level 4
+stand_still 0
+x 9
+y 13
+arch event_obj
+name lua
+race /relic/castle/scripts/Commoner.lua
+sub_type 6
+end
+end
 arch floor_marble4f
 x 9
 y 14
@@ -1620,7 +1635,11 @@ arch door1_locked
 x 11
 y 22
 end
-arch grassd_3
+arch floor_grit1
+x 11
+y 23
+end
+arch grassd_m1
 x 11
 y 23
 end
@@ -1643,12 +1662,13 @@ x 12
 y 2
 end
 arch priest_church
+level 50
 friendly 1
 x 12
 y 2
 arch event_obj
-name Python
-race /castle/scripts/Castlechurchscript.py
+name lua
+race /relic/castle/scripts/Castlechurchscript.lua
 sub_type 6
 end
 end
@@ -1879,7 +1899,11 @@ arch door1_locked
 x 13
 y 22
 end
-arch grassd_4
+arch floor_grit1
+x 13
+y 23
+end
+arch grassd_m2
 x 13
 y 23
 end
@@ -1933,6 +1957,21 @@ end
 arch floor_marble4f
 x 14
 y 9
+end
+arch priest_green
+level 20
+friendly 1
+random_move 1
+item_race 4
+item_level 4
+stand_still 0
+x 14
+y 9
+arch event_obj
+name lua
+race /relic/castle/scripts/Commoner.lua
+sub_type 6
+end
 end
 arch floor_marble4f
 x 14
@@ -2223,6 +2262,21 @@ end
 arch floor_marble4f
 x 16
 y 15
+end
+arch mage_old
+level 20
+friendly 1
+random_move 1
+item_race 4
+item_level 4
+stand_still 0
+x 16
+y 15
+arch event_obj
+name lua
+race /relic/castle/scripts/Commoner.lua
+sub_type 6
+end
 end
 arch floor_marble4f
 x 16

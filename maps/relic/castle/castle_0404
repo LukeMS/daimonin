@@ -623,26 +623,6 @@ arch grassd_7
 x 4
 y 7
 end
-arch spawn_point
-x 4
-y 7
-arch skel_fighter3
-name elder skeleton fighter
-type 83
-level 75
-last_eat -5
-Wis 3
-direction 1
-end
-arch bear_grey
-name giant female black bear
-type 83
-level 80
-last_eat 5
-Wis 4
-direction 0
-end
-end
 arch grassd_4
 x 4
 y 8

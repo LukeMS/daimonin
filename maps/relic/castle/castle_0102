@@ -238,6 +238,18 @@ arch grassd_8
 x 2
 y 10
 end
+arch guard_pole
+level 50
+unaggressive 0
+friendly 1
+random_move 1
+item_race 80
+item_level 20
+stand_still 0
+will_apply 0
+x 2
+y 10
+end
 arch grassd_2
 x 2
 y 11
@@ -944,6 +956,7 @@ x 9
 y 3
 end
 arch lantern_magic.131
+direction 7
 x 9
 y 3
 end
@@ -1000,6 +1013,7 @@ x 9
 y 15
 end
 arch lantern_magic.131
+direction 7
 x 9
 y 15
 end
@@ -1778,7 +1792,15 @@ direction 5
 x 14
 y 22
 end
+arch carpet1.131
+x 14
+y 22
+end
 arch floor_wood2_l2
+x 14
+y 23
+end
+arch carpet1.131
 x 14
 y 23
 end
@@ -1893,11 +1915,23 @@ damned 1
 x 15
 y 21
 end
+arch carpet1.151
+x 15
+y 21
+end
 arch floor_wood2_l2
 x 15
 y 22
 end
+arch carpet1
+x 15
+y 22
+end
 arch floor_wood2_l2
+x 15
+y 23
+end
+arch carpet1
 x 15
 y 23
 end
@@ -1996,7 +2030,19 @@ arch floor_wood2_l2
 x 16
 y 21
 end
+arch table_small1
+x 16
+y 21
+end
+arch carpet1.151
+x 16
+y 21
+end
 arch floor_wood2_l2
+x 16
+y 22
+end
+arch carpet1
 x 16
 y 22
 end
@@ -2004,7 +2050,7 @@ arch floor_wood2_l2
 x 16
 y 23
 end
-arch light7
+arch carpet1
 x 16
 y 23
 end
@@ -2099,11 +2145,23 @@ arch floor_wood2_l2
 x 17
 y 21
 end
+arch table_wood1.111
+x 17
+y 21
+end
 arch floor_wood2_l2
 x 17
 y 22
 end
+arch carpet1.171
+x 17
+y 22
+end
 arch floor_wood2_l2
+x 17
+y 23
+end
+arch carpet1.171
 x 17
 y 23
 end
@@ -2334,7 +2392,20 @@ direction 5
 x 19
 y 22
 end
+arch carpet1.131
+x 19
+y 22
+end
 arch floor_wood2_l2
+x 19
+y 23
+end
+arch table_wood1.111
+direction 7
+x 19
+y 23
+end
+arch carpet1.131
 x 19
 y 23
 end
@@ -2437,7 +2508,15 @@ damned 1
 x 20
 y 21
 end
+arch carpet1.151
+x 20
+y 21
+end
 arch floor_wood2_l2
+x 20
+y 22
+end
+arch carpet1
 x 20
 y 22
 end
@@ -2445,7 +2524,7 @@ arch floor_wood2_l2
 x 20
 y 23
 end
-arch light6
+arch carpet1
 x 20
 y 23
 end
@@ -2552,11 +2631,23 @@ arch floor_wood2_l2
 x 21
 y 21
 end
+arch table_small1
+x 21
+y 21
+end
 arch floor_wood2_l2
 x 21
 y 22
 end
+arch carpet1.171
+x 21
+y 22
+end
 arch floor_wood2_l2
+x 21
+y 23
+end
+arch carpet1.171
 x 21
 y 23
 end
@@ -2792,6 +2883,14 @@ x 23
 y 22
 end
 arch floor_wood2_l2
+x 23
+y 23
+end
+arch table_small1
+x 23
+y 23
+end
+arch carpet1.131
 x 23
 y 23
 end

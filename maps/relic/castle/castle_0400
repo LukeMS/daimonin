@@ -1494,10 +1494,6 @@ arch water_still
 x 10
 y 18
 end
-arch grassd_3
-x 10
-y 19
-end
 arch water_still
 x 10
 y 19
@@ -1506,10 +1502,6 @@ arch water_plant4
 x 10
 y 19
 end
-arch grassd_7
-x 10
-y 20
-end
 arch water_still
 x 10
 y 20
@@ -1517,10 +1509,6 @@ end
 arch water_plant4
 x 10
 y 20
-end
-arch grassd_1
-x 10
-y 21
 end
 arch water_still
 x 10
@@ -1649,17 +1637,9 @@ arch water_still
 x 11
 y 18
 end
-arch grassd_8
-x 11
-y 19
-end
 arch water_still
 x 11
 y 19
-end
-arch grassd_1
-x 11
-y 20
 end
 arch water_still
 x 11
@@ -1783,10 +1763,6 @@ end
 arch water_still
 x 12
 y 18
-end
-arch grassd_5
-x 12
-y 19
 end
 arch water_still
 x 12

@@ -1089,8 +1089,8 @@ friendly 1
 x 7
 y 18
 arch event_obj
-name Python
-race /castle/scripts/Castleprivatechurchscript.py
+name lua
+race /relic/castle/scripts/Castleprivatechurchscript.lua
 sub_type 6
 end
 end
@@ -1805,8 +1805,8 @@ direction 3
 x 12
 y 16
 arch event_obj
-name Python
-race /castle/scripts/HorrorCavesMageScript.py
+name lua
+race /relic/castle/scripts/HorrorCavesMageScript.lua
 sub_type 6
 end
 end

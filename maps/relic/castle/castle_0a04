@@ -2829,7 +2829,7 @@ x 18
 y 7
 end
 arch stair_down
-slaying /castle/house_dungeon/house_basement
+slaying house_dungeon/house_basement
 hp 18
 sp 7
 x 18

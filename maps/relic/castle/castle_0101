@@ -1539,8 +1539,8 @@ friendly 1
 x 6
 y 6
 arch event_obj
-name Python
-race /stoneglow/smith.py
+name lua
+race /stoneglow/smith.lua
 sub_type 6
 end
 end
@@ -2752,6 +2752,11 @@ arch wall_stone_3
 x 13
 y 14
 end
+arch wmask_fire_on_1
+direction 7
+x 13
+y 14
+end
 arch grassd_3
 x 13
 y 15
@@ -2832,6 +2837,12 @@ end
 arch floor_wood2_l2
 x 14
 end
+arch candlelight4.101
+x 14
+end
+arch light7
+x 14
+end
 arch floor_wood2_l2
 x 14
 y 1
@@ -2857,6 +2868,14 @@ arch floor_wood2_l2
 x 14
 y 4
 end
+arch glower.101
+x 14
+y 4
+end
+arch light9
+x 14
+y 4
+end
 arch floor_wood2_l2
 x 14
 y 5
@@ -2877,12 +2896,28 @@ arch floor_wood2_l2
 x 14
 y 7
 end
+arch carpet1.131
+x 14
+y 7
+end
+arch candlelight4.101
+x 14
+y 7
+end
+arch light7
+x 14
+y 7
+end
 arch floor_wood2_l2
 x 14
 y 8
 end
 arch drawers1.111
 direction 5
+x 14
+y 8
+end
+arch carpet1.131
 x 14
 y 8
 end
@@ -2902,6 +2937,10 @@ arch floor_wood2_l2
 x 14
 y 10
 end
+arch table_small1
+x 14
+y 10
+end
 arch floor_wood2_l2
 x 14
 y 11
@@ -2911,6 +2950,10 @@ x 14
 y 11
 end
 arch floor_wood2_l2
+x 14
+y 12
+end
+arch box1.101
 x 14
 y 12
 end
@@ -2928,6 +2971,10 @@ x 14
 y 15
 end
 arch floor_wood2_l2
+x 14
+y 16
+end
+arch chair1_drop_111
 x 14
 y 16
 end
@@ -2974,6 +3021,9 @@ end
 arch floor_wood2_l2
 x 15
 end
+arch carpet1.111
+x 15
+end
 arch floor_wood2_l2
 x 15
 y 1
@@ -2994,10 +3044,6 @@ arch floor_wood2_l2
 x 15
 y 4
 end
-arch light2
-x 15
-y 4
-end
 arch floor_wood2_l2
 x 15
 y 5
@@ -3014,11 +3060,39 @@ arch floor_wood2_l2
 x 15
 y 6
 end
+arch carpet1.151
+x 15
+y 6
+end
 arch floor_wood2_l2
 x 15
 y 7
 end
+arch carpet1
+x 15
+y 7
+end
+arch priest_green
+level 17
+friendly 1
+random_move 1
+item_race 3
+item_level 3
+stand_still 0
+will_apply 0
+x 15
+y 7
+arch event_obj
+name lua
+race /relic/castle/scripts/Commoner.lua
+sub_type 6
+end
+end
 arch floor_wood2_l2
+x 15
+y 8
+end
+arch carpet1
 x 15
 y 8
 end
@@ -3031,6 +3105,10 @@ name Save Bed
 type 106
 no_magic 1
 damned 1
+x 15
+y 9
+end
+arch carpet1.111
 x 15
 y 9
 end
@@ -3068,6 +3146,10 @@ arch floor_wood2_l2
 x 15
 y 15
 end
+arch chair1_111
+x 15
+y 15
+end
 arch floor_wood2_l2
 x 15
 y 16
@@ -3077,6 +3159,11 @@ x 15
 y 16
 end
 arch floor_wood2_l2
+x 15
+y 17
+end
+arch chair1_111
+direction 5
 x 15
 y 17
 end
@@ -3119,7 +3206,7 @@ end
 arch floor_wood2_l2
 x 16
 end
-arch light7
+arch carpet1.111
 x 16
 end
 arch floor_wood2_l2
@@ -3154,7 +3241,15 @@ arch floor_wood2_l2
 x 16
 y 6
 end
+arch carpet1.151
+x 16
+y 6
+end
 arch floor_wood2_l2
+x 16
+y 7
+end
+arch carpet1
 x 16
 y 7
 end
@@ -3162,11 +3257,15 @@ arch floor_wood2_l2
 x 16
 y 8
 end
-arch light7
+arch carpet1
 x 16
 y 8
 end
 arch floor_wood2_l2
+x 16
+y 9
+end
+arch carpet1.111
 x 16
 y 9
 end
@@ -3200,8 +3299,8 @@ stand_still 0
 x 16
 y 12
 arch event_obj
-name Python
-race /castle/scripts/InnKeeper.py
+name lua
+race /relic/castle/scripts/InnKeeper.lua
 sub_type 6
 end
 end
@@ -3223,6 +3322,15 @@ x 16
 y 15
 end
 arch floor_wood2_l2
+x 16
+y 16
+end
+arch chair1_111
+direction 3
+x 16
+y 16
+end
+arch pile_floor2
 x 16
 y 16
 end
@@ -3293,10 +3401,6 @@ arch floor_wood2_l2
 x 17
 y 4
 end
-arch light2
-x 17
-y 4
-end
 arch floor_wood2_l2
 x 17
 y 5
@@ -3317,7 +3421,20 @@ arch floor_wood2_l2
 x 17
 y 7
 end
+arch carpet1.171
+x 17
+y 7
+end
 arch floor_wood2_l2
+x 17
+y 8
+end
+arch carpet1.171
+x 17
+y 8
+end
+arch table_wood1.111
+direction 7
 x 17
 y 8
 end
@@ -3334,6 +3451,10 @@ x 17
 y 11
 end
 arch wall_stone1_1
+x 17
+y 11
+end
+arch wmask_wanted.151
 x 17
 y 11
 end
@@ -3356,6 +3477,11 @@ x 17
 y 14
 end
 arch floor_wood2_l2
+x 17
+y 15
+end
+arch chair1_111
+direction 7
 x 17
 y 15
 end
@@ -3502,6 +3628,10 @@ arch wall_stone1_4
 x 18
 y 11
 end
+arch pot_wall.131
+x 18
+y 11
+end
 arch floor_wood2_l2
 x 18
 y 12
@@ -3515,6 +3645,25 @@ arch floor_wood2_l2
 x 18
 y 14
 end
+arch chair1_111
+x 18
+y 14
+end
+arch ranger
+level 15
+friendly 1
+random_move 1
+item_race 7
+item_level 7
+stand_still 0
+x 18
+y 14
+arch event_obj
+name lua
+race /relic/castle/scripts/Commoner.lua
+sub_type 6
+end
+end
 arch floor_wood2_l2
 x 18
 y 15
@@ -3524,6 +3673,11 @@ x 18
 y 15
 end
 arch floor_wood2_l2
+x 18
+y 16
+end
+arch chair1_111
+direction 5
 x 18
 y 16
 end
@@ -3568,6 +3722,12 @@ x 18
 y 23
 end
 arch floor_wood2_l2
+x 19
+end
+arch candlelight4.101
+x 19
+end
+arch light6
 x 19
 end
 arch floor_wood2_l2
@@ -3623,7 +3783,24 @@ arch floor_wood2_l2
 x 19
 y 7
 end
+arch carpet1.131
+x 19
+y 7
+end
+arch table_wood1.111
+direction 7
+x 19
+y 7
+end
 arch floor_wood2_l2
+x 19
+y 8
+end
+arch carpet1.131
+x 19
+y 8
+end
+arch table_small1
 x 19
 y 8
 end
@@ -3656,6 +3833,10 @@ arch wall_stone1_1
 x 19
 y 11
 end
+arch pot_wall.131
+x 19
+y 11
+end
 arch floor_wood2_l2
 x 19
 y 12
@@ -3674,6 +3855,10 @@ x 19
 y 14
 end
 arch floor_wood2_l2
+x 19
+y 15
+end
+arch chair1_drop_171
 x 19
 y 15
 end
@@ -3732,8 +3917,23 @@ end
 arch floor_wood2_l2
 x 20
 end
-arch light6
+arch carpet1.111
 x 20
+end
+arch monk
+level 15
+friendly 1
+random_move 1
+item_race 2
+item_level 2
+stand_still 0
+will_apply 0
+x 20
+arch event_obj
+name lua
+race /relic/castle/scripts/Commoner.lua
+sub_type 6
+end
 end
 arch floor_wood2_l2
 x 20
@@ -3767,7 +3967,15 @@ arch floor_wood2_l2
 x 20
 y 6
 end
+arch carpet1.151
+x 20
+y 6
+end
 arch floor_wood2_l2
+x 20
+y 7
+end
+arch carpet1
 x 20
 y 7
 end
@@ -3775,7 +3983,7 @@ arch floor_wood2_l2
 x 20
 y 8
 end
-arch light6
+arch carpet1
 x 20
 y 8
 end
@@ -3791,6 +3999,10 @@ damned 1
 x 20
 y 9
 end
+arch carpet1.111
+x 20
+y 9
+end
 arch floor_wood2_l2
 x 20
 y 10
@@ -3800,6 +4012,10 @@ x 20
 y 11
 end
 arch wall_stone1_1
+x 20
+y 11
+end
+arch wmask_wanted.151
 x 20
 y 11
 end
@@ -3825,6 +4041,11 @@ x 20
 y 15
 end
 arch floor_wood2_l2
+x 20
+y 16
+end
+arch chair1_111
+direction 7
 x 20
 y 16
 end
@@ -3923,7 +4144,15 @@ arch floor_wood2_l2
 x 21
 y 7
 end
+arch carpet1.171
+x 21
+y 7
+end
 arch floor_wood2_l2
+x 21
+y 8
+end
+arch carpet1.171
 x 21
 y 8
 end
@@ -3932,6 +4161,14 @@ x 21
 y 9
 end
 arch floor_wood2_l2
+x 21
+y 10
+end
+arch candlelight4.101
+x 21
+y 10
+end
+arch light6
 x 21
 y 10
 end
@@ -3960,7 +4197,15 @@ arch floor_wood2_l2
 x 21
 y 14
 end
+arch pile_floor2
+x 21
+y 14
+end
 arch floor_wood2_l2
+x 21
+y 15
+end
+arch chair1_111
 x 21
 y 15
 end
@@ -3973,6 +4218,11 @@ x 21
 y 16
 end
 arch floor_wood2_l2
+x 21
+y 17
+end
+arch chair1_111
+direction 5
 x 21
 y 17
 end
@@ -4102,6 +4352,10 @@ arch floor_wood2_l2
 x 22
 y 12
 end
+arch beer_barrel.101
+x 22
+y 12
+end
 arch floor_wood2_l2
 no_pass 1
 x 22
@@ -4115,11 +4369,25 @@ arch floor_wood2_l2
 x 22
 y 15
 end
+arch chair1_111
+direction 7
+x 22
+y 15
+end
 arch floor_wood2_l2
 x 22
 y 16
 end
+arch chair1_111
+direction 3
+x 22
+y 16
+end
 arch floor_wood2_l2
+x 22
+y 17
+end
+arch water_floor
 x 22
 y 17
 end
@@ -4164,6 +4432,9 @@ x 22
 y 23
 end
 arch floor_wood2_l2
+x 23
+end
+arch carpet1.131
 x 23
 end
 arch floor_wood2_l2
@@ -4227,7 +4498,7 @@ arch floor_wood2_l2
 x 23
 y 12
 end
-arch box_big.101
+arch barrel.101
 x 23
 y 12
 end
@@ -4248,6 +4519,10 @@ arch light9
 x 23
 y 14
 end
+arch chair1_111
+x 23
+y 14
+end
 arch floor_wood2_l2
 x 23
 y 15
@@ -4257,6 +4532,11 @@ x 23
 y 15
 end
 arch floor_wood2_l2
+x 23
+y 16
+end
+arch chair1_111
+direction 5
 x 23
 y 16
 end

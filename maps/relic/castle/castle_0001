@@ -370,7 +370,7 @@ end
 arch floor_grit2
 x 3
 end
-arch grassd_m8
+arch grassd_m11
 x 3
 end
 arch floor_grit2
@@ -517,7 +517,10 @@ arch floor_fstone2a
 x 3
 y 23
 end
-arch grassd_1
+arch floor_grit1
+x 4
+end
+arch grassd_m1
 x 4
 end
 arch grassd_3
@@ -664,7 +667,10 @@ arch floor_fstone2a
 x 4
 y 23
 end
-arch grassd_2
+arch floor_grit1
+x 5
+end
+arch grassd_m2
 x 5
 end
 arch grassd_5
@@ -803,7 +809,10 @@ arch fwall_fstone2b
 x 5
 y 23
 end
-arch grassd_7
+arch floor_grit1
+x 6
+end
+arch grassd_m1
 x 6
 end
 arch grassd_1
@@ -944,7 +953,10 @@ arch wall_fstone_round.102
 x 6
 y 23
 end
-arch grassd_2
+arch floor_grit1
+x 7
+end
+arch grassd_m2
 x 7
 end
 arch grassd_8
@@ -1081,10 +1093,10 @@ arch grassd_8
 x 7
 y 23
 end
-arch grassd_7
+arch floor_grit1
 x 8
 end
-arch plant17
+arch grassd_m1
 x 8
 end
 arch grassd_8
@@ -1240,7 +1252,10 @@ arch grassd_4
 x 8
 y 23
 end
-arch grassd_1
+arch floor_grit1
+x 9
+end
+arch grassd_m2
 x 9
 end
 arch grassd_6
@@ -1387,7 +1402,10 @@ arch grassd_2
 x 9
 y 23
 end
-arch grassd_7
+arch floor_grit1
+x 10
+end
+arch grassd_m1
 x 10
 end
 arch grassd_3
@@ -1525,7 +1543,10 @@ arch grassd_8
 x 10
 y 23
 end
-arch grassd_6
+arch floor_grit1
+x 11
+end
+arch grassd_m2
 x 11
 end
 arch grassd_8
@@ -1658,7 +1679,10 @@ arch grassd_3
 x 11
 y 23
 end
-arch grassd_8
+arch floor_grit1
+x 12
+end
+arch grassd_m2
 x 12
 end
 arch grassd_1
@@ -1796,10 +1820,10 @@ arch grassd_8
 x 12
 y 23
 end
-arch grassd_6
+arch floor_grit1
 x 13
 end
-arch plant_flower5
+arch grassd_m5
 x 13
 end
 arch grassd_7

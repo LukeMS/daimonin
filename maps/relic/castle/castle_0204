@@ -521,8 +521,8 @@ friendly 1
 x 4
 y 10
 arch event_obj
-name Python
-race /castle/scripts/Armoryguardscript.py
+name lua
+race /relic/castle/scripts/Armoryguardscript.lua
 sub_type 6
 end
 end

@@ -295,6 +295,10 @@ y 20
 end
 arch rock_big3
 x 3
+y 21
+end
+arch rock_big3
+x 3
 y 22
 end
 arch grass_thickm5

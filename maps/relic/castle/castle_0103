@@ -642,8 +642,8 @@ friendly 1
 x 4
 y 18
 arch event_obj
-name Python
-race /castle/scripts/GraneryQuestscript.py
+name lua
+race /relic/castle/scripts/GraneryQuestscript.lua
 sub_type 6
 end
 end
