@@ -310,6 +310,8 @@ error - Your ANSI C compiler should be defining __STDC__;
 
 #define DISEASE                 158
 #define SYMPTOM                 159
+
+#define TYPE_VOID_CONTAINER		255 /* pure internal system object */
 /* END TYPE DEFINE */
 
 /* START SUB TYPE 1 DEFINE */

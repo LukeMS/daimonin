@@ -524,7 +524,7 @@ void give_initial_items(object *pl,treasurelist *items) {
 	       op->type == SHIELD || op->type == GLOVES ||
 	       op->type == BRACERS || op->type == GIRDLE)) ||
 	      (!QUERY_FLAG(pl, FLAG_USE_WEAPON) && op->type == WEAPON)) {
-	    remove_ob (op);
+	    remove_ob(op);
 	    continue;
 	  }
 	}
@@ -1903,7 +1903,7 @@ void kill_player(object *op)
     if(CONTR(op)->golem!=NULL) {
 		send_golem_control(CONTR(op)->golem, GOLEM_CTR_RELEASE);
       remove_friendly_object(CONTR(op)->golem);
-      remove_ob(CONTR(op)->golem);
+      destruct_ob(CONTR(op)->golem);
       CONTR(op)->golem=NULL;
     }
     loot_object(op); /* Remove some of the items for good */
@@ -2035,7 +2035,7 @@ void cast_dust (object *op, object *throw_ob, int dir) {
  
   if (op->type==PLAYER&&arch)
     new_draw_info_format(NDI_UNIQUE, 0,op,"You cast %s.",query_name(throw_ob));
-  if(!QUERY_FLAG(throw_ob, FLAG_REMOVED)) remove_ob(throw_ob);
+  if(!QUERY_FLAG(throw_ob, FLAG_REMOVED)) destruct_ob(throw_ob);
 }
 
 void make_visible (object *op) {

@@ -513,7 +513,7 @@ int hit_player(object *op,int dam, object *hitter, int type)
     if(QUERY_FLAG(hitter, FLAG_ONE_HIT)) {
 	if(QUERY_FLAG(hitter,FLAG_FRIENDLY))
 	    remove_friendly_object(hitter);
-	remove_ob(hitter);
+	remove_ob(hitter); /* Remove, but don't drop inventory */
     } 
     /* Lets handle creatures that are splitting now */
     else if(type&AT_PHYSICAL&&!OBJECT_FREE(op)&&QUERY_FLAG(op,FLAG_SPLITTING)) {
@@ -526,7 +526,7 @@ int hit_player(object *op,int dam, object *hitter, int type)
 	    LOG(llevBug,"BUG: SPLITTING without other_arch error.\n");
 	    return maxdam;
 	}
-	remove_ob(op);
+	remove_ob(op); 
 	for(i=0;i<NROFNEWOBJS(op);i++) { /* This doesn't handle op->more yet */
 	    object *tmp=arch_to_object(op->other_arch);
 	    int j;
@@ -1116,7 +1116,6 @@ int kill_object(object *op,int dam, object *hitter, int type)
     }
 
 	if(op->map)
-
 	    play_sound_map(op->map, op->x, op->y, SOUND_PLAYER_KILLS, SOUND_NORMAL);
 
 	if(QUERY_FLAG (op, FLAG_FRIENDLY) && op->type != PLAYER) {
@@ -1127,10 +1126,10 @@ int kill_object(object *op,int dam, object *hitter, int type)
             CONTR(op->owner)->golem=NULL;
 		}
 	    else
-            LOG(llevBug, "BUG: hit_player(): Encountered golem (%s - %s) without owner.\n",query_name(op), op->arch->name);
+            LOG(llevBug, "BUG: kill_object(): Encountered golem (%s - %s) without owner.\n",query_name(op), op->arch->name);
 		op->speed = 0;
 		update_ob_speed (op);
-		remove_ob(op);
+        destruct_ob(op);
 	    return maxdam;
 	}
 
@@ -1276,7 +1275,7 @@ int kill_object(object *op,int dam, object *hitter, int type)
 	    }
 		op->speed = 0;
 		update_ob_speed (op); /* remove from active list (if on) */
-		remove_ob(op);
+	    destruct_ob(op);
 
 
 		/* rules: 
@@ -1369,7 +1368,7 @@ static int stick_arrow (object *op, object *tmp)
     if (op->weight <= 5000 && tmp->stats.hp >= 0) {
 	if(tmp->head != NULL)
 	    tmp = tmp->head;
-        remove_ob (op);
+        remove_ob(op);
 	op = insert_ob_in_ob(op,tmp);
 	if (tmp->type== PLAYER)
 	    esrv_send_item (tmp, op);
@@ -1423,7 +1422,7 @@ object *hit_with_arrow (object *op, object *victim)
     if (op->inv) {
         container = op;
         hitter = op->inv;
-        remove_ob (hitter);
+        remove_ob(hitter);
         insert_ob_in_map(hitter, container->map,hitter,INS_NO_MERGE | INS_NO_WALK_ON);
         /* Note that we now have an empty THROWN_OBJ on the map.  Code that
          * might be called until this THROWN_OBJ is either reassembled or
@@ -1480,7 +1479,7 @@ object *hit_with_arrow (object *op, object *victim)
      * other places as well!) */
     if (was_destroyed (hitter, hitter_tag) || hitter->env != NULL) {
         if (container) 
-            remove_ob (container);
+            remove_ob(container);
         return NULL;
     }
 
@@ -1493,7 +1492,7 @@ object *hit_with_arrow (object *op, object *victim)
             if (hitter == NULL)
                 return NULL;
         } else 
-            remove_ob (container);
+            remove_ob(container);
 
         /* Try to stick arrow into victim */
 		/* disabled - this will not work very well now with
@@ -1510,7 +1509,7 @@ object *hit_with_arrow (object *op, object *victim)
         if ((victim_x != hitter->x || victim_y != hitter->y)
             && ! wall (hitter->map, victim_x, victim_y))
         {
-            remove_ob (hitter);
+            remove_ob(hitter);
             hitter->x = victim_x;
             hitter->y = victim_y;
             insert_ob_in_map (hitter, victim->map, hitter,0);
@@ -1549,7 +1548,7 @@ object *hit_with_arrow (object *op, object *victim)
 
     /* Missile missed victim - reassemble missile */
     if (container) {
-        remove_ob (hitter);
+        remove_ob(hitter);
         insert_ob_in_ob (hitter, container);
     }
     return op;
@@ -1566,7 +1565,7 @@ void tear_down_wall(object *op)
     } else if(!GET_ANIM_ID(op)) {
 	/* Object has been called - no animations, so remove it */
 	if(op->stats.hp<0) 
-	    remove_ob(op); /* Should update LOS */
+	    destruct_ob(op); /* Should update LOS */
 	return;	/* no animations, so nothing more to do */
     }
     perc = NUM_ANIMATIONS(op)
@@ -1580,7 +1579,7 @@ void tear_down_wall(object *op)
     if(perc==NUM_ANIMATIONS(op)-1) { /* Reached the last animation */
 	if(op->face==blank_face) 
 	    /* If the last face is blank, remove the ob */
-	    remove_ob(op); /* Should update LOS */
+	    destruct_ob(op); /* Should update LOS */
 	else { /* The last face was not blank, leave an image */
 	    CLEAR_FLAG(op, FLAG_BLOCKSVIEW);
 	    CLEAR_FLAG(op, FLAG_NO_PASS);
@@ -2163,7 +2162,7 @@ void save_throw_object (object *op, int type, object *originator)
 		}
 	    }
 	    if (!QUERY_FLAG(op, FLAG_REMOVED))
-                remove_ob(op);
+                destruct_ob(op);
 	}
 	if(type&(AT_FIRE|AT_ELECTRICITY)) {
 	      if(env) {

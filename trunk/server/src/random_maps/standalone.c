@@ -112,7 +112,6 @@ int auto_apply (object *op) {
       create_treasure(op->randomitems, op, GT_ENVIRONMENT,
 	op->map == NULL ?  op->stats.exp: op->map->difficulty,T_STYLE_UNSET, ART_CHANCE_UNSET, 0,NULL);
     remove_ob(op);
-    free_object(op);
     break;
   }
 

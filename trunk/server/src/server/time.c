@@ -719,8 +719,8 @@ object *stop_item (object *op)
             object *payload = op->inv;
             if (payload == NULL)
                 return NULL;
-            remove_ob (payload);
-            remove_ob (op);
+            remove_ob(payload);
+            remove_ob(op);
             return payload;
         }
 
@@ -823,7 +823,7 @@ void stop_arrow (object *op)
 	{
 		object *payload = op->inv;
 
-		remove_ob (payload);
+		remove_ob(payload);
         
 #ifdef PLUGINS
 		/* GROS: Handle for plugin stop event */
@@ -868,7 +868,7 @@ void stop_arrow (object *op)
             if(!payload->env && !OBJECT_FREE(payload)) 
                 insert_ob_in_map (payload, op->map, payload,0);
 		}
-        remove_ob (op);
+        remove_ob(op);
     } 
 	else 
 	{
@@ -1043,7 +1043,7 @@ void move_arrow(object *op) {
     } /* object ran into a wall */
 
     /* Move the arrow. */
-    remove_ob (op);
+    remove_ob(op);
     op->x = new_x;
     op->y = new_y;
     insert_ob_in_map (op, m, op,0);
@@ -1341,7 +1341,7 @@ void move_player_mover(object *op) {
 	if(IS_LIVE(victim)&& (!(QUERY_FLAG(victim,FLAG_FLYING))||op->stats.maxhp)) {
 
 	    if(QUERY_FLAG(op,FLAG_LIFESAVE)&&op->stats.hp--<0) {
-		remove_ob(op);
+		destruct_ob(op);
 		return;
 	    }
 
@@ -1456,7 +1456,7 @@ void move_marker(object *op) {
 		    op->stats.hp--;
 		    if(op->stats.hp==0) {
 		      /* marker expires--granted mark number limit */
-		      remove_ob(op);
+		      destruct_ob(op);
 		      return;
 		    }
 		  }
@@ -1512,6 +1512,7 @@ int process_object(object *op) {
 			return 1;
 		}
 
+                /* Special handling for corpses to not have them drop inv */
 		if (op->env && op->env->type == CONTAINER)
 			esrv_del_item(NULL, op->count, op->env);
 		else
@@ -1521,7 +1522,6 @@ int process_object(object *op) {
 				esrv_del_item(CONTR(pl), op->count, op->env);
 		}
 
-		remove_ob_inv(op);
 		remove_ob(op);
 		return 1;
 	}
@@ -1535,8 +1535,7 @@ int process_object(object *op) {
 		if (pl)
 		    esrv_del_item(CONTR(pl), op->count, op->env);
 	}
-
-      remove_ob(op);
+        destruct_ob(op);
     }
     return 1;
   }

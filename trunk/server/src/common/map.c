@@ -965,7 +965,7 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags)
  */
 void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
     int t, i, j = 0;
-    object *head, *op,  *otmp, *tmp, *next;
+    object *head, *op,  *otmp, *tmp, *next, *last_valid;
 
     for(i = 0; i < MAP_WIDTH(m); i++)
 	{
@@ -974,7 +974,9 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 			for(op = get_map_ob (m, i, j); op; op = otmp)
 			{
 				otmp = op->above;
-
+				last_valid = op->below; /* thats NULL OR a valid ptr - it CAN'T be a non valid
+										 * or we had remove it before AND reseted the ptr then right.
+										 */
 				/* here we handle the mobs of a spawn point - called spawn mobs.
 				 * We don't save spawn mobs - not even if they are on the same map.
 				 * This give us the power to do some "auto reset" of mobs and spawn.
@@ -1005,8 +1007,6 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 								LOG(llevBug, "BUG: Spawn mob (%s (%s)) has SPAWN INFO without owner set!\n", op->arch->name, query_name(head));
 								SET_MULTI_FLAG(head, FLAG_NO_APPLY);
 								remove_ob(head);
-								SET_FLAG(head,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
-								break;
 							}
 
 							/* op->map not head->map! head can be somewhere else... */
@@ -1037,7 +1037,6 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 									tmp->owner->enemy = NULL;
 									SET_MULTI_FLAG(head, FLAG_NO_APPLY);
 									remove_ob(head);
-									SET_FLAG(head,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
 									break; 
 								}
 
@@ -1058,18 +1057,56 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 							tmp->owner->enemy = NULL;
 							SET_MULTI_FLAG(head, FLAG_NO_APPLY);
 							remove_ob(head);
-							SET_FLAG(head,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
 							break;
 						}
 					}
+					/* at this point, it can happen we have
+					 * removed our next link object otmp.
+					 * If otmp is invalid, try to restore it from our op ptr.
+					 * remove_ob() should had reset that ptr with valid data.
+					 * BUT perhaps op was removed to! Fallback to last_valid->above then.
+					 * If last_valid is NULL (there was no valid save_object() before), 
+					 * get otmp with get_map_ob (m, i, j) new,
+					 * that MUST then a valid ptr or NULL!
+					 * is otmp == NULL, we go on because we don't insert here anything.
+					 * This is a really scary side effect i needed ages to find out...
+					 * MT-2004
+					 */
+					if(otmp && (QUERY_FLAG(otmp, FLAG_REMOVED) || OBJECT_FREE(otmp))) /* invalid next ptr! */
+					{
+						/* remember: if we have remove for example 2 or more objects above, the
+						 * op->above WILL be still valid - remove_ob() will handle it right.
+						 * IF we get here a valid ptr, ->above WILL be valid too. Always.
+						 */
+						if(!QUERY_FLAG(op, FLAG_REMOVED) && !OBJECT_FREE(op)) 
+							otmp=op->above;
+						else if(last_valid)
+							otmp=last_valid->above;
+						else
+							otmp = get_map_ob (m, i, j); /* should be really rare */
+					}
+
 					continue;
 
 					LOG(llevBug, "BUG: Spawn mob (%s %s) without SPAWN INFO.\n", op->arch->name, query_name(head));
 					SET_MULTI_FLAG(head, FLAG_NO_APPLY);
 					remove_ob(head);
-					SET_FLAG(head,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
 					if(tmp->owner)
 						tmp->owner->enemy = NULL;
+
+					if(otmp && (QUERY_FLAG(otmp, FLAG_REMOVED) || OBJECT_FREE(otmp))) /* invalid next ptr! */
+					{
+						/* remember: if we have remove for example 2 or more objects above, the
+						 * op->above WILL be still valid - remove_ob() will handle it right.
+						 * IF we get here a valid ptr, ->above WILL be valid too. Always.
+						 */
+						if(!QUERY_FLAG(op, FLAG_REMOVED) && !OBJECT_FREE(op)) 
+							otmp=op->above;
+						else if(last_valid)
+							otmp=last_valid->above;
+						else
+							otmp = get_map_ob (m, i, j); /* should be really rare */
+					}
 					continue;
 				}
 				else if(op->type == SPAWN_POINT)
@@ -1087,7 +1124,20 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 							op->speed_left += 1.0f;
 							SET_MULTI_FLAG(op->enemy, FLAG_NO_APPLY);
 							remove_ob(op->enemy);
-							SET_FLAG(op->enemy,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
+
+							if(otmp && (QUERY_FLAG(otmp, FLAG_REMOVED) || OBJECT_FREE(otmp))) /* invalid next ptr! */
+							{
+								/* remember: if we have remove for example 2 or more objects above, the
+								 * op->above WILL be still valid - remove_ob() will handle it right.
+								 *IF we get here a valid ptr, ->above WILL be valid too. Always.
+								 */
+								if(!QUERY_FLAG(op, FLAG_REMOVED) && !OBJECT_FREE(op)) 
+									otmp=op->above;
+								else if(last_valid)
+									otmp=last_valid->above;
+								else
+									otmp = get_map_ob (m, i, j); /* should be really rare */
+							}
 						}
 					}
 				}
@@ -1106,7 +1156,7 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 				 */
 				if (op->owner)
 				{
-					LOG(llevDebug, "WARNING: save_obj(): obj w. owner. map:%s obj:%s (%s) (%d,%d)\n",m->path, query_name(op),op->arch->name?op->arch->name:"<no arch name>",op->x, op->y);
+					LOG(llevDebug, "WARNING (ignore for spells): save_obj(): obj w. owner. map:%s obj:%s (%s) (%d,%d)\n",m->path, query_name(op),op->arch->name?op->arch->name:"<no arch name>",op->x, op->y);
 				    continue;
 				}
 
@@ -1141,7 +1191,20 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 					tmp->y = yt;
 					SET_MULTI_FLAG(tmp, FLAG_NO_APPLY);
 					remove_ob(tmp);
-					SET_FLAG(tmp,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
+
+					if(otmp && (QUERY_FLAG(otmp, FLAG_REMOVED) || OBJECT_FREE(otmp))) /* invalid next ptr! */
+					{
+						/* remember: if we have remove for example 2 or more objects above, the
+						 * op->above WILL be still valid - remove_ob() will handle it right.
+						 * IF we get here a valid ptr, ->above WILL be valid too. Always.
+						 */
+						if(!QUERY_FLAG(op, FLAG_REMOVED) && !OBJECT_FREE(op)) 
+							otmp=op->above;
+						else if(last_valid)
+							otmp=last_valid->above;
+						else
+							otmp = get_map_ob (m, i, j); /* should be really rare */
+					}
 					continue;
 				}
 
@@ -1154,7 +1217,21 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 				{
 					SET_MULTI_FLAG(op, FLAG_NO_APPLY);
 					remove_ob(op);
-					SET_FLAG(op,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
+
+					if(otmp && (QUERY_FLAG(otmp, FLAG_REMOVED) || OBJECT_FREE(otmp))) /* invalid next ptr! */
+					{
+						/* remember: if we have remove for example 2 or more objects above, the
+						 * op->above WILL be still valid - remove_ob() will handle it right.
+						 * IF we get here a valid ptr, ->above WILL be valid too. Always.
+						 */
+						if(!QUERY_FLAG(op, FLAG_REMOVED) && !OBJECT_FREE(op)) 
+							otmp=op->above;
+						else if(last_valid)
+							otmp=last_valid->above;
+						else
+							otmp = get_map_ob (m, i, j); /* should be really rare */
+					}
+
 				}
 
 		    } /* for this space */
@@ -1623,7 +1700,6 @@ static void delete_unique_items(mapstruct *m)
 		    if (QUERY_FLAG(op, FLAG_IS_LINKED))
 			remove_button_link(op);
 		    remove_ob(op);
-            op->map = NULL; /* Avoid dropping of inv */
 		}
 	    }
 	}
@@ -1847,7 +1923,6 @@ void free_all_objects(mapstruct *m) {
 		    op = op->head;
 
 		remove_ob(op);
-        op->map = NULL; /* This will make sure the map objects doesn't drop their inventory */
 	    }
 	}
 	/*LOG(llevDebug,"FAO-end: map:%s ->%d\n", m->name?m->name:(m->tmpname?m->tmpname:""),m->in_memory);*/

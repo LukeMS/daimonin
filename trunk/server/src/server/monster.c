@@ -1196,7 +1196,7 @@ int move_monster(object *op) {
     	return 1;
     if(QUERY_FLAG(op, FLAG_ONLY_ATTACK))
     {
-	    remove_ob(op);
+	    destruct_ob(op);
 	    return 1;
     }
     return 0;
@@ -2811,7 +2811,6 @@ void spawn_point(object *op)
 				/* darkness has changed - now remove the spawned monster */
 				SET_MULTI_FLAG(op->enemy, FLAG_NO_APPLY);
 				remove_ob(op->enemy);
-				SET_FLAG(op->enemy,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
 			}
 			else
 				return;

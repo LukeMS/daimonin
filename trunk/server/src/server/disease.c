@@ -162,7 +162,7 @@ If outside, we decrement 'hp' until we're gone. */
   if(disease->env==NULL) { /* we're outside of someone */
     disease->value--;
     if(disease->value==0) {
-      remove_ob(disease);
+      destruct_ob(disease); /* drop inv since disease may carry secondary infections */
       return 1;
     }
   } else {
@@ -173,7 +173,7 @@ If outside, we decrement 'hp' until we're gone. */
       if(disease->stats.food==0) {
 	remove_symptoms(disease);  /* remove the symptoms of this disease */
 	grant_immunity(disease);
-	remove_ob(disease);
+	destruct_ob(disease); /* drop inv since disease may carry secondary infections */
 	return 1;
       }
     }
@@ -196,7 +196,7 @@ int remove_symptoms(object *disease) {
   symptom = find_symptom(disease);
   if(symptom!=NULL) {
 	 object *victim=symptom->env;
-	 remove_ob(symptom);
+	 destruct_ob(symptom);
 	 if(victim) fix_player(victim);
   }
   return 0;

@@ -1431,7 +1431,7 @@ void explosion(object *op) {
   int i;
 
   if(--(op->stats.hp)<0) {
-    remove_ob(op);
+    destruct_ob(op);
     return;
   }
   if(op->above!=NULL&&op->above->type!=PLAYER) {
@@ -1546,7 +1546,7 @@ void move_bolt(object *op) {
   object *tmp;
   int w,r;
   if(--(op->stats.hp)<0) {
-    remove_ob(op);
+    destruct_ob(op);
     return;
   }
   hit_map(op,0,op->attacktype);
@@ -1625,7 +1625,7 @@ void move_golem(object *op) {
 
     if(get_owner(op)==NULL) {
 	LOG(llevDebug,"Golem without owner destructed.\n");
-	remove_ob(op);
+	destruct_ob(op);
 	return;
     }
     /* It would be nice to have a cleaner way of what message to print
@@ -1648,7 +1648,7 @@ void move_golem(object *op) {
 	remove_friendly_object(op);
 	CONTR(op->owner)->golem=NULL;
 
-	remove_ob(op);
+	destruct_ob(op);
 	return;
     }
 
@@ -1736,7 +1736,7 @@ void move_missile(object *op) {
 
   if (!(mt=out_of_map (op->map, &new_x,&new_y))) 
   {
-      remove_ob (op);
+      remove_ob(op);
 	  return;
   }
 
@@ -1744,7 +1744,7 @@ void move_missile(object *op) {
     tag_t tag = op->count;
     hit_map (op, op->direction, AT_MAGIC);
     if ( ! was_destroyed (op, tag)) 
-      remove_ob (op);
+      remove_ob(op);
     return;
   }
 
@@ -1780,7 +1780,7 @@ void explode_object(object *op)
 	if (op->other_arch == NULL) 
 	{
 		LOG(llevBug, "BUG: explode_object(): op %s without other_arch\n", query_name(op));
-		remove_ob (op);
+		remove_ob(op);
 		return;
 	}
 
@@ -1793,10 +1793,10 @@ void explode_object(object *op)
 		if (!(m=out_of_map (env->map, &xt,&yt))) 
 		{
 			LOG(llevBug, "BUG: explode_object(): env out of map (%s)\n",query_name(op));
-			remove_ob (op);
+			remove_ob(op);
 			return;
 		}
-		remove_ob (op);
+		remove_ob(op);
 		op->x = xt;
 		op->y = yt;
 		insert_ob_in_map(op, m, op, INS_NO_MERGE | INS_NO_WALK_ON);
@@ -1840,7 +1840,7 @@ void explode_object(object *op)
     /* needed for AT_HOLYWORD stuff -b.t. */
     if(tmp->attacktype&AT_HOLYWORD||tmp->attacktype&AT_GODPOWER) 
       if ( ! tailor_god_spell (tmp, op)) {
-	remove_ob (op);
+	remove_ob(op);
 	return;
       }
 
@@ -1864,7 +1864,7 @@ void explode_object(object *op)
 
   /* remove the firebullet */
   if ( ! was_destroyed (op, op_tag)) 
-    remove_ob (op);
+    remove_ob(op);
 }
 
 /* if we are here, the arch (spell) we check was able to move
@@ -1889,7 +1889,7 @@ void check_fired_arch (object *op)
 	if(op->stats.sp == SP_PROBE && op->type == BULLET)
 	{
 		probe(op);
-		remove_ob (op);
+		remove_ob(op);
 		return;
 	}
 
@@ -1911,7 +1911,7 @@ void check_fired_arch (object *op)
                 || (op->stats.dam -= dam) < 0)
             {
 	      if(!QUERY_FLAG(op, FLAG_REMOVED)) {
-                remove_ob (op);
+                remove_ob(op);
                 return;
 	      }
             }
@@ -1937,7 +1937,7 @@ void move_fired_arch (object *op)
     new_x = op->x + DIRX(op);
     new_y = op->y + DIRY(op);
     if (!(m=out_of_map (op->map, &new_x, &new_y))) {
-        remove_ob (op);
+        remove_ob(op);
         return;
     }
 
@@ -1946,11 +1946,11 @@ void move_fired_arch (object *op)
         if (op->other_arch) {
             explode_object (op);
         } else 
-            remove_ob (op);
+            remove_ob(op);
         return;
     }
 
-    remove_ob (op);
+    remove_ob(op);
     op->x = new_x;
     op->y = new_y;
     if ((op = insert_ob_in_map (op, m, op,0)) == NULL)
@@ -1962,7 +1962,7 @@ void move_fired_arch (object *op)
 			if (GET_MAP_FLAGS(op->map, op->x, op->y)&(P_IS_ALIVE|P_IS_PLAYER)) 
 			{
 				probe(op);
-		        remove_ob (op);
+		        remove_ob(op);
 				return;
 			}
 		}

@@ -283,6 +283,13 @@ extern object *active_objects;
 
 #define MEMPOOL_TRACKING /* Enable tracking/freeing of mempools ? */
 
+/*#define MEMPOOL_OBJECT_TRACKING*/ /* enable a global list of *all* objects
+                                 * we have allocated. We can browse them to
+								 * control & debug them. WARNING: Enabling this
+								 * feature will slow down the server alot and should
+								 * only be done in real debug runs
+								 */
+
 /* Minimalistic memory management data for a single chunk of memory 
  * It is (currently) up to the application to keep track of which pool 
  * it belongs to.
@@ -293,6 +300,13 @@ struct mempool_chunk {
      * if adding more data. */
     struct mempool_chunk *next; /* Used for the free list and the limbo list. NULL if this
                                    memory chunk has been allocated and is in use */
+#ifdef MEMPOOL_OBJECT_TRACKING
+	struct mempool_chunk *obj_prev; /* for debug only */
+	struct mempool_chunk *obj_next; /* for debug only */
+	uint32 flags; 	
+	uint32 pool_id; /* to what mpool is this memory part related? */
+	uint32 id;	  /* the REAL unique ID number */
+#endif
 };
 
 typedef void (* chunk_constructor) (void *ptr);     /* Optional constructor to be called when expanding */
