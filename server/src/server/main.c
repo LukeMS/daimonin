@@ -942,7 +942,7 @@ void process_events (mapstruct *map)
      * this might happen. It normally means that the object was killed, but you never know...
      */
     if (QUERY_FLAG(op, FLAG_REMOVED)) {
-      LOG(llevDebug, "SEMIBUG: process_events(): Removed object on active list  %s (%s, type:%d count:%d)\n",
+      LOG(llevDebug, "PROBLEM: process_events(): Removed object on active list  %s (%s, type:%d count:%d)\n",
               op->arch->name,query_name(op),op->type, op->count);
       op->speed = 0;
       update_ob_speed (op);
