@@ -25,6 +25,8 @@ http://www.gnu.org/copyleft/lesser.txt.
 #define OPTION_H
 
 #include <string>
+#include <iostream>
+#include <fstream>
 
 using namespace std;
 
@@ -112,13 +114,16 @@ class Option
 	unsigned int  mMetaServerPort;
 	unsigned int  mSelectedMetaServer;
     bool mStartNetwork;
-
+	bool openDescFile(const char *filename);
+    void closeDescFile();
+	void getDescStr(const char *descrEntry, string &strBuffer);
 
     bool Init(char *);
   private:
     Option(const Option&); // disable copy-constructor.
     bool mLogin;
-
+	ifstream mDescFile;
+	string mDescBuffer;
 }; 
 
 #endif

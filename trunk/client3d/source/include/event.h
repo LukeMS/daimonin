@@ -55,6 +55,7 @@ class Event: public FrameListener, public KeyListener, public MouseMotionListene
 	int mSceneDetailIndex;
     Real mMoveSpeed;
     Real mMoveScale;
+	Real mIdleTime;
     Degree mRotateSpeed;
     Degree mRotScale;
     Overlay *mDebugOverlay;

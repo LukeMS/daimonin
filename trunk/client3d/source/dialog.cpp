@@ -52,13 +52,13 @@ bool Dialog::Init()
 	}
 	// Info textareas.
 	name= "Dialog/Info/";
-	for (unsigned int i=0; i < DIALOG_INFO_LINES; i++)
+	for (unsigned int j=0; j < DIALOG_INFO_LINES; j++)
 	{
-		mElementInfo[i]= OverlayManager::getSingleton().
-			cloneOverlayElementFromTemplate("Dialog/TextRow",name+"Line_"+ StringConverter::toString(i));
-		mElementInfo[i]->setTop(i*12+1);
-		mElementInfo[i]->setCaption(name+"Line_"+ StringConverter::toString(i));
-		mDialogInfoPanel->addChild(mElementInfo[i]);
+		mElementInfo[j]= OverlayManager::getSingleton().
+			cloneOverlayElementFromTemplate("Dialog/TextRow",name+"Line_"+ StringConverter::toString(j));
+		mElementInfo[j]->setTop(j*12+1);
+		mElementInfo[j]->setCaption(name+"Line_"+ StringConverter::toString(j));
+		mDialogInfoPanel->addChild(mElementInfo[j]);
 	}
 
 	mVisible = false;

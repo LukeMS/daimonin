@@ -52,13 +52,20 @@ Event::Event(RenderWindow* win, Camera* cam, MouseMotionListener *mMMotionListen
     ChatWin = new CTextwindow("Chat Window"   , -280, 300);
     TextWin->setChild(ChatWin);
 	ChatWin->Print("Welcome to Daimonin 3D.  ", ColourValue::Black); 
-	ChatWin->Print("-----------------------  ", ColourValue::Black);
+	ChatWin->Print("-----------------------------------------  ", ColourValue::Black);
 	ChatWin->Print("  L            -> Lauch network");
 	ChatWin->Print("  C            -> Camera detail");
 	ChatWin->Print("  F            -> Filtering");
 	ChatWin->Print("  Page Up/Down  -> Camera view.");
 	ChatWin->Print("  Print          -> Screenshot.");
-	ChatWin->Print("");
+	ChatWin->Print("Player commands (depends on model):", ColourValue::White);
+	ChatWin->Print("  A    -> Attack");
+	ChatWin->Print("  B    -> Block");
+	ChatWin->Print("  S    -> Slump");
+	ChatWin->Print("  D    -> Death.");
+	ChatWin->Print("  H    -> Hit.");
+	ChatWin->Print("  F1   -> Toggle Anim Group.");
+
 
 	/////////////////////////////////////////////////////////////////////////////////////////
 	// Create unbuffered key & mouse input.
@@ -86,6 +93,7 @@ Event::Event(RenderWindow* win, Camera* cam, MouseMotionListener *mMMotionListen
     mTranslateVector = Vector3::ZERO;
     mAniso = 1;
     mFiltering = TFO_BILINEAR;
+	mIdleTime =0;
 }
 
 //=================================================================================================
@@ -107,6 +115,14 @@ bool Event::frameStarted(const FrameEvent& evt)
 
     Player::getSingelton().updateAnim(evt);
     World->translate(Player::getSingelton().getPos());
+
+	mIdleTime += evt.timeSinceLastFrame;
+	if (mIdleTime > 10.0)
+	{ 
+		Sound::getSingelton().PlaySample(SAMPLE_PLAYER_IDLE); 
+		mIdleTime = -120;
+	}
+
 
 
 /*
@@ -220,6 +236,7 @@ void Event::keyEventDialog(KeyEvent *e)
 //=================================================================================================
 void Event::keyPressed(KeyEvent *e) 
 {
+	mIdleTime =0;
 	if (Dialog::getSingelton().isVisible()) 
 	{
 		keyEventDialog(e);
@@ -242,6 +259,26 @@ void Event::keyPressed(KeyEvent *e)
 			break;
 		case KC_LEFT:
 	        Player::getSingelton().turning( PLAYER_TURN_SPEED);
+			break;
+
+
+		case KC_F1:
+	        Player::getSingelton().toggleAnimaGroup();
+			break;
+		case KC_A:
+	        Player::getSingelton().playAnimation(STATE_ATTACK1);
+			break;
+		case KC_B:
+	        Player::getSingelton().playAnimation(STATE_BLOCK1);
+			break;
+		case KC_S:
+	        Player::getSingelton().playAnimation(STATE_SLUMP1);
+			break;
+		case KC_D:
+	        Player::getSingelton().playAnimation(STATE_DEATH1);
+			break;
+		case KC_H:
+	        Player::getSingelton().playAnimation(STATE_HIT1);
 			break;
 
 		///////////////////////////////////////////////////////////////////////// 

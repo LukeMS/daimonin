@@ -152,11 +152,7 @@ void DaimoninClient::createScene(void)
     mSceneMgr->setAmbientLight(ColourValue(0.5, 0.5, 0.5));
 
 	mEvent->World = mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(0, 0, 0));
-    Player::getSingelton().Init(
-		mSceneMgr->createEntity("player", "robot.mesh"),
-		mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(0, 0, 0))
-		);
-
+    Player::getSingelton().Init(mSceneMgr);
 
     Light* l;
     l = mSceneMgr->createLight("BlueLight");
@@ -173,57 +169,39 @@ void DaimoninClient::createScene(void)
     Entity* ent;
     SceneNode* floor_node;
 
-		// create floor-tile.
-        ent = mSceneMgr->createEntity("dfgd", SceneManager::PT_PLANE);
-        ent->setMaterialName("grass1");
-        floor_node = mEvent->World->createChildSceneNode(Vector3(0, 0, 0));
-        floor_node->attachObject(ent);
-        floor_node->pitch(Radian(Degree(-90)));
-        floor_node->setScale(0.25, 0.25, 0.25);
+    // create floor-tile.
+	string name = "row 1 tile ";
+	for (int x1 =0; x1 < 5; ++x1)
+	{
+		ent = mSceneMgr->createEntity(name+StringConverter::toString(x1), SceneManager::PT_PLANE);
+		ent->setMaterialName("grass1");
+		floor_node = mEvent->World->createChildSceneNode(Vector3(x1*50, 0, 0));
+		floor_node->attachObject(ent);
+		floor_node->pitch(Radian(Degree(-90)));
+		floor_node->setScale(0.25, 0.25, 0.25);
+	}
 
-        ent = mSceneMgr->createEntity("234", SceneManager::PT_PLANE);
-        ent->setMaterialName("grass2");
-        floor_node = mEvent->World->createChildSceneNode(Vector3(50, 0, 0));
-        floor_node->attachObject(ent);
-        floor_node->pitch(Radian(Degree(-90)));
-        floor_node->setScale(0.25, 0.25, 0.25);
-
-        ent = mSceneMgr->createEntity("s3", SceneManager::PT_PLANE);
-        ent->setMaterialName("grass3");
-        floor_node = mEvent->World->createChildSceneNode(Vector3(25, 1, 25));
-        floor_node->attachObject(ent);
-        floor_node->pitch(Radian(Degree(-90)));
-        floor_node->setScale(0.25, 0.25, 0.25);
-
+	name = "row 2 tile ";
+	for (int x2 =0; x2 < 5; ++x2)
+	{
+		ent = mSceneMgr->createEntity(name+StringConverter::toString(x2), SceneManager::PT_PLANE);
+		ent->setMaterialName("grass2");
+		floor_node = mEvent->World->createChildSceneNode(Vector3(25+x2*50, 1, 25));
+		floor_node->attachObject(ent);
+		floor_node->pitch(Radian(Degree(-90)));
+		floor_node->setScale(0.25, 0.25, 0.25);
+	}
     
-		
-    ent = mSceneMgr->createEntity("hier", SceneManager::PT_PLANE);
-    ent->setMaterialName("stone1");
-    floor_node = mEvent->World->createChildSceneNode(Vector3(60, 0, 60));
-    floor_node->attachObject(ent);
-    floor_node->pitch(Radian(Degree(-90)));
-    floor_node->setScale(0.2, 0.2, 0.2);
-    floor_node->roll(Radian(Degree(-45))); // rotate around z-axis.
-	
-
-    Entity* ent1 = ent->clone("test");
-    ent1->setMaterialName("stone1");
-    SceneNode* floor_node1;
-    floor_node1 = mEvent->World->createChildSceneNode(Vector3(88, 0, 88));
-    floor_node1->attachObject(ent1);
-    floor_node1->pitch(Radian(Degree(-90)));
-    floor_node1->setScale(0.2, 0.2, 0.2);
-    floor_node1->roll(Radian(Degree(-45))); // rotate around z-axis.
-
-
-    Entity* ent2 = ent->clone("test2");
-    ent2->setMaterialName("stone1");
-    SceneNode* floor_node2;
-    floor_node2 = mEvent->World->createChildSceneNode(Vector3(130, 0, 130));
-    floor_node2->attachObject(ent2);
-    floor_node2->pitch(Radian(Degree(-90)));
-    floor_node2->setScale(0.2, 0.2, 0.2);
-    floor_node2->roll(Radian(Degree(-45))); // rotate around z-axis.
+	name = "row 3 tile ";
+	for (int x3 =0; x3 < 5; ++x3)
+	{
+		ent = mSceneMgr->createEntity(name+StringConverter::toString(x3), SceneManager::PT_PLANE);
+		ent->setMaterialName("grass3");
+		floor_node = mEvent->World->createChildSceneNode(Vector3(x3*50, 2, 50));
+		floor_node->attachObject(ent);
+		floor_node->pitch(Radian(Degree(-90)));
+		floor_node->setScale(0.25, 0.25, 0.25);
+	}
 
 }
 
