@@ -31,12 +31,9 @@
 int command_say (object *op, char *params)
 {
     if (!params) 
-		return 0;
+	return 0;
 
-//		if(op->type != PLAYER)
-			assert(0);
-
-	LOG(llevInfo,"CHAT SAY:%s >%s<\n", query_name(op), params);
+LOG(llevInfo,"CHAT SAY:%s >%s<\n", query_name(op), params);
     communicate(op, params);
   
     return 0;
