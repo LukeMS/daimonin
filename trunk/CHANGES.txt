@@ -1,5 +1,10 @@
 Daimonin CHANGES
+13.05.04	- removed getprotobyname("tcp") calls
+                  from windows build. Reported problems
+                  under XP home edition.
+13.05.04	- fixed some female player pictures
 
+-------------------------------------
 BETA 1 		- removed old changes
 
 For help ask the dev team:

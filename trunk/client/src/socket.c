@@ -182,7 +182,6 @@ Boolean SOCKET_DeinitSocket(void)
 
 Boolean SOCKET_OpenSocket(SOCKET *socket_temp, struct ClientSocket *csock, char *host, int port)
 {
-        struct protoent *protox;
         int error;
         long temp;
         struct hostent *hostbn;
@@ -190,14 +189,16 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, struct ClientSocket *csock, char 
         int newbufsize=65535, buflen=sizeof(int);
         uint32 start_timer;
 
-        protox = getprotobyname("tcp");
+		/*
+        struct protoent *protox;
+
+		protox = getprotobyname("tcp");
         if (protox == (struct protoent  *) NULL)
         {
                 LOG(LOG_ERROR,"Error:  Can't get protobyname\n");
                 return(FALSE);
         }
-
-        /* *socket_temp = socket(PF_INET, SOCK_STREAM, protox->p_proto);*/
+        *socket_temp = socket(PF_INET, SOCK_STREAM, protox->p_proto);*/
 
 		/* The way to make the sockets work on XP Home - The 'unix' style socket
 		* seems to fail inder xp home.
@@ -365,7 +366,6 @@ port)
         int oldbufsize, newbufsize=65535, buflen=sizeof(int), temp;
         struct sockaddr_in insock;
 
-        /*LOG(LOG_DEBUG, "Now trying to open connection to %s %i\n", host, port);*/
         printf("Opening to %s %i\n", host, port);
         protox = getprotobyname("tcp");
 
