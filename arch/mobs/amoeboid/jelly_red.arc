@@ -5,7 +5,7 @@ randomitems mob_slime
 wc_range 20
 is_neutral 1
 weight 13250
-exp 81
+exp 101
 speed -0.03
 item_race 255
 item_level 255

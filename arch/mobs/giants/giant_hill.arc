@@ -9,7 +9,7 @@ is_male 1
 weight 473250
 item_race 255
 item_level 255
-exp 82
+exp 102
 speed -0.035
 weapon_speed 0.042
 attack_impact 90

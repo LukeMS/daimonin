@@ -7,6 +7,7 @@ corpse 1
 layer 6
 Dex 13
 can_cast_spell 1
+will_apply 8
 sp -1
 maxsp 6
 Pow 2
@@ -81,7 +82,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 85
+exp 105
 ac 9
 wc 0
 dam 50

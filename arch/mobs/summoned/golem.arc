@@ -72,7 +72,7 @@ monster 1
 alive 1
 attack_impact 100
 can_see_in_dark 1
-exp 75
+exp 95
 ac 9
 wc 6
 dam 48

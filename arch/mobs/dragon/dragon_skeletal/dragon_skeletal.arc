@@ -8,6 +8,7 @@ direction 5
 speed -0.06
 corpse 1
 wc_range 20
+will_apply 8
 item_race 255
 item_level 255
 type 80
@@ -76,7 +77,7 @@ monster 1
 level 1
 Con 2
 Pow 2
-exp 112
+exp 132
 ac 11
 wc 7
 dam 72

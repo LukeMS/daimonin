@@ -5,6 +5,7 @@ face dragon_water.131
 layer 6
 race dragon
 corpse 1
+will_apply 8
 item_race 255
 wc_range 20
 item_level 255
@@ -50,7 +51,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 95
+exp 115
 ac 13
 wc 4
 dam 60

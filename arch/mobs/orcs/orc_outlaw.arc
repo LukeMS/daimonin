@@ -5,6 +5,7 @@ race orc
 is_male 1
 wc_range 20
 corpse 1
+will_apply 8
 layer 6
 direction 5
 is_evil 1
@@ -100,7 +101,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 75
+exp 95
 ac 10
 wc 4
 dam 61

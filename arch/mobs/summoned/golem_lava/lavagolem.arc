@@ -178,7 +178,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 82
+exp 101
 ac 9
 wc 6
 dam 55

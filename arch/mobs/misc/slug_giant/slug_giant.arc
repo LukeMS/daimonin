@@ -5,7 +5,7 @@ randomitems mob_slugs
 wc_range 20
 is_neutral 1
 weight 23250
-exp 78
+exp 98
 speed -0.03
 item_race 255
 item_level 255

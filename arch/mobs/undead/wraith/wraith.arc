@@ -3,6 +3,7 @@ name wraith
 face wraith.131
 race undead
 is_male 1
+can_pass_thru 1
 wc_range 20
 corpse 1
 layer 6
@@ -101,7 +102,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 83
+exp 110
 ac 7
 wc 3
 dam 53

@@ -5,6 +5,7 @@ race undead
 is_male 1
 can_cast_spell 1
 maxsp 6
+will_apply 8
 Pow 2
 Dex 13
 magic 5
@@ -80,7 +81,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 85
+exp 111
 ac 9
 wc 6
 dam 53

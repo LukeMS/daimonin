@@ -137,6 +137,13 @@ void swap_map(mapstruct *map, int force_flag)
 
 		for(i=0; i<TILED_MAPS; i++) 
 		{
+			/* swap bug hack: until i got it, i will remove swaping for tiled map.
+			 * this is a minor bug but it forces a security shutdown of the server.
+			 * public server has dropped core, so lets play them.
+			 */
+			if (map->tile_map[i]) 
+				return;
+
 			/* if there is a map, is load AND in memory and players on OR perm_load flag set, then... */
 			if (map->tile_map[i] && map->tile_map[i]->in_memory==MAP_IN_MEMORY && 
 									(map->tile_map[i]->player_first || map->tile_map[i]->perm_load))

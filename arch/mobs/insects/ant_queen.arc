@@ -75,7 +75,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 96
+exp 116
 ac 12
 wc 4
 wc_range 20

@@ -944,6 +944,7 @@ void move_arrow(object *op) {
         {
             int number = op->face->number;
 	    
+			op->owner = tmp; /* bad thing: now the reflector is owner of this and can kill us! */
             op->direction = absdir (op->direction + 4);
             op->state = 0;
             if (GET_ANIM_ID (op)) 

@@ -6,6 +6,7 @@ is_male 1
 wc_range 20
 corpse 1
 layer 6
+will_apply 8
 direction 5
 is_evil 1
 item_race 255
@@ -75,7 +76,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 75
+exp 95
 ac 9
 wc 0
 dam 51

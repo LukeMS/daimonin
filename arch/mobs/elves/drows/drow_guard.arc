@@ -4,6 +4,7 @@ face drow_guard.131
 race drows
 is_male 1
 wc_range 20
+will_apply 8
 corpse 1
 layer 6
 direction 5
@@ -100,7 +101,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 84
+exp 104
 ac 11
 wc 6
 dam 51

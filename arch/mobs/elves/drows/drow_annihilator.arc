@@ -4,6 +4,7 @@ face drow_annihilator.131
 race drows
 is_male 1
 wc_range 20
+will_apply 8
 corpse 1
 layer 6
 direction 5
@@ -15,7 +16,7 @@ weapon_speed 0.035
 attack_pierce 75
 type 80
 Wis 6
-randomitems mob_drow
+randomitems mob_drow_mage
 anim
 facings 25
 trans.101
@@ -101,7 +102,7 @@ no_pick 1
 alive 1
 can_see_in_dark 1
 can_cast_spell 1
-exp 95
+exp 115
 ac 10
 wc 3
 dam 61
