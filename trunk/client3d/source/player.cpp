@@ -130,15 +130,15 @@ void Player::updateAnim(const FrameEvent& event)
 	{
 		if (mTurning)
 		{
-          	mAnimState->setLoop(true);
 			mAnimState= mAnimStates[STATE_IDLE1];
+          	mAnimState->setLoop(true);
   		    mFacing += Degree(mTurning);
 			mNode->yaw(Radian(Degree(mTurning)));
 		}
 		if (mWalking)
 		{
-            mAnimState->setLoop(true);
 			mAnimState= mAnimStates[STATE_WALK1];
+            mAnimState->setLoop(true);
 	        mTranslateVector.z =  sin(mFacing.valueRadians()+mFacingOffset)* mWalking;
 		    mTranslateVector.x = -cos(mFacing.valueRadians()+mFacingOffset)* mWalking;
 			mAnimState->addTime(event.timeSinceLastFrame * mWalking);
