@@ -1498,6 +1498,20 @@ int process_object(object *op) {
 			goto process_object_dirty_jump; /* go on */
 		}
 
+		/* now we do something funny: WHEN the corpse is a (personal) bounty,
+		 * we delete the bounty marker (->slaying) and reseting the counter.
+		 * Now other people can access the corpse for stuff which are leaved
+		 * here perhaps.
+		 */
+		if(op->slaying)
+		{
+			FREE_AND_CLEAR_HASH2(op->slaying);
+			op->stats.food = op->arch->clone.stats.food;
+			remove_ob(op);						 /* another lame way to update view of players... */
+			insert_ob_in_map(op,op->map,NULL,0);
+			return 1;
+		}
+
 		if (op->env && op->env->type == CONTAINER)
 			esrv_del_item(NULL, op->count, op->env);
 		else

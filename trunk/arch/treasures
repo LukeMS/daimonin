@@ -4018,6 +4018,6 @@ treasure random_testx
   end
 end
 treasureone random_test
-list random_mtools
+arch ring_generic
  chance 100
 end

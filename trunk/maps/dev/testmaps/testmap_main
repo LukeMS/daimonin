@@ -603,8 +603,11 @@ arch floor_ostone1
 x 5
 y 11
 end
-arch ring_generic
-protect_cold 50
+arch dress
+protect_impact 120
+protect_slash 120
+protect_cleave 120
+protect_pierce 120
 x 5
 y 11
 end
@@ -712,12 +715,6 @@ x 6
 y 10
 end
 arch floor_ostone1
-x 6
-y 11
-end
-arch ring_generic
-protect_fire 126
-protect_cold 126
 x 6
 y 11
 end
@@ -841,6 +838,12 @@ arch floor_ostone1
 x 7
 y 12
 end
+arch dagger
+dam 400
+wc 40
+x 7
+y 12
+end
 arch floor_ostone1
 x 7
 y 13
@@ -934,13 +937,13 @@ arch floor_ostone1
 x 8
 y 11
 end
-arch rod_heavy
-sp 0
-level 6
-x 8
-y 11
-end
 arch floor_ostone1
+x 8
+y 12
+end
+arch shortsword
+dam 400
+wc 40
 x 8
 y 12
 end
@@ -1041,6 +1044,12 @@ arch floor_ostone1
 x 9
 y 12
 end
+arch axe_small
+dam 400
+wc 40
+x 9
+y 12
+end
 arch floor_ostone1
 x 9
 y 13
@@ -1127,14 +1136,9 @@ arch floor_ostone1
 x 10
 y 12
 end
-arch ring_adamant
-make_invisible 1
-see_invisible 1
-can_see_in_dark 1
-identified 1
-stealth 1
-reflect_spell 1
-reflect_missile 1
+arch hammer_small
+dam 400
+wc 40
 x 10
 y 12
 end
@@ -1215,11 +1219,6 @@ arch floor_ostone1
 x 11
 y 7
 end
-arch high_boots
-maxhp 20
-x 11
-y 7
-end
 arch floor_ostone1
 x 11
 y 8
@@ -1229,14 +1228,6 @@ x 11
 y 9
 end
 arch floor_ostone1
-x 11
-y 10
-end
-arch rod_heavy
-sp 6
-level 110
-hp 2000
-maxhp 2000
 x 11
 y 10
 end
@@ -1328,13 +1319,6 @@ arch floor_ostone1
 x 12
 y 10
 end
-arch amulet_generic
-reflect_spell 1
-reflect_missile 1
-identified 1
-x 12
-y 10
-end
 arch floor_ostone1
 x 12
 y 11
@@ -1416,11 +1400,6 @@ x 13
 y 7
 end
 arch floor_ostone1
-x 13
-y 8
-end
-arch girdle
-maxsp 15
 x 13
 y 8
 end
