@@ -1165,7 +1165,7 @@ void receive_player_password(object *op, char k, char *write_buf)
         CONTR(op)->state = ST_CREATE_CHAR;
         return;
     }
-    strcpy(CONTR(op)->password, crypt_string(write_buf + 1, NULL));
+    strcpy(CONTR(op)->password, write_buf + 1);
     CONTR(op)->state = ST_CREATE_CHAR;
     check_login(op);
     return;
