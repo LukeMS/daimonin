@@ -7,6 +7,10 @@ Daimonin CHANGES
                 - some small stability changeds
                 - move material_real table to object.c - it was part of server
                 - source and not of common! (plugin crash!).
+		- fixed some attack.c issues
+                - added spell effects
+                - fixed identify marked object bug
+                - fixed facing change from player when dir==0 (self,stay)
 
 03.11.2003      - added new mobs
                 - added new bracer
