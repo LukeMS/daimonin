@@ -70,7 +70,7 @@ int main(int argc, char **argv)
 #else
         std::cerr << "FMOD: Wrong version. You need " << FMOD_VERSION << std::endl;
 #endif
-        exit(1);
+        return 1;
     }
     
     /*
@@ -84,7 +84,7 @@ int main(int argc, char **argv)
 #else
         std::cerr << "FMOD: INIT ERROR " << buf;
 #endif
-        exit(1);
+        return 1;
     }
 	/*
 	LOAD SONG
@@ -99,7 +99,7 @@ int main(int argc, char **argv)
 #else
         std::cerr << "FMOD: Can't find sound file: " << buf;
 #endif
-		exit(1);
+        return 1;
     }
     FMUSIC_PlaySong(mod);   
 	

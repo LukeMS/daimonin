@@ -50,7 +50,6 @@ Event::Event(RenderWindow* win, Camera* cam, MouseMotionListener *mMMotionListen
     TextWin = new CTextwindow("Message Window", -280, 300);
     ChatWin = new CTextwindow("Chat Window"   , -280, 300);
     TextWin->setChild(ChatWin);
-	LogFile::getSingelton().Error("HIER-- 03\n");
 	ChatWin->Print("Welcome to Daimonin 3D.  ", ColourValue::Black); 
 	ChatWin->Print("-----------------------  ", ColourValue::Black);
     ChatWin->Print("Checking your sytem...   ", ColourValue::White);
@@ -443,7 +442,6 @@ void Event::mousePressed (MouseEvent *e)
 
 void Event::mouseReleased(MouseEvent *e)
 {
-	LogFile::getSingelton().Info("Pressed\n");
 	TextWin->MouseAction(M_RELEASED, mMouseX, mMouseY);
 	ChatWin->MouseAction(M_RELEASED, mMouseX, mMouseY);
 	mouseMoved(e);
