@@ -1014,9 +1014,9 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 				last_valid = op->below; /* thats NULL OR a valid ptr - it CAN'T be a non valid
 										 * or we had remove it before AND reseted the ptr then right.
 										 */
-				if(head->type == PLAYER) /* ok, we will *never* save maps with player on */ 
+				if(op->type == PLAYER) /* ok, we will *never* save maps with player on */ 
 				{
-					LOG(llevDebug, "SemiBUG: Tried to save map with player on!(%s (%s))\n", query_name(head), m->path);
+					LOG(llevDebug, "SemiBUG: Tried to save map with player on!(%s (%s))\n", query_name(op), m->path);
 					continue;
 				}
 
