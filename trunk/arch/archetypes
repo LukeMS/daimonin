@@ -7706,7 +7706,7 @@ no_pick 1
 invulnerable 1
 end
 Object human_female
-face human_m.isw.111
+face human_f.isw.111
 type 1
 editor_folder intern/player
 race human
@@ -7776,7 +7776,7 @@ weight 70000
 food 750
 end
 Object half_elf_female
-face human_m.isw.111
+face human_f.isw.111
 type 1
 editor_folder intern/player
 race half-elf
