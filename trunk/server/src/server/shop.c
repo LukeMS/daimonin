@@ -226,7 +226,7 @@ int query_money(object *op)
 	{
 		if (tmp->type==MONEY)
 		    total += tmp->nrof * tmp->value;
-		else if (tmp->type==CONTAINER && (strstr(tmp->race,"gold") || QUERY_FLAG(tmp,FLAG_APPLIED))) 
+		else if (tmp->type==CONTAINER && ((!tmp->race || strstr(tmp->race,"gold")) || QUERY_FLAG(tmp,FLAG_APPLIED))) 
 		    total += query_money(tmp);
     }
     return total;
@@ -245,7 +245,7 @@ int pay_for_amount(int to_pay,object *pl) {
 
     for (pouch=pl->inv; (pouch!=NULL) && (to_pay>0); pouch=pouch->below) 
 	{
-		if (pouch->type == CONTAINER && (strstr(pouch->race, "gold") || QUERY_FLAG(pouch, FLAG_APPLIED)))
+		if (pouch->type == CONTAINER && ((!pouch->race || strstr(pouch->race, "gold")) || QUERY_FLAG(pouch, FLAG_APPLIED)))
 			to_pay = pay_from_container(NULL, pouch, to_pay);
     }
 
@@ -272,7 +272,7 @@ int pay_for_item(object *op,object *pl) {
 
     for (pouch=pl->inv; (pouch!=NULL) && (to_pay>0); pouch=pouch->below) 
 	{
-		if (pouch->type == CONTAINER && (QUERY_FLAG(pouch, FLAG_APPLIED) || strstr(pouch->race, "gold")))
+		if (pouch->type == CONTAINER && (QUERY_FLAG(pouch, FLAG_APPLIED) || (!pouch->race || strstr(pouch->race, "gold"))))
 		    to_pay = pay_from_container(op, pouch, to_pay);
     }
 

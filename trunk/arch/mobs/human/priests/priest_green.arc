@@ -5,7 +5,7 @@ type 80
 layer 6
 direction 5
 will_apply 8
-is_male 1
+is_female 1
 is_good 1
 terrain_flag 1
 weapon_speed 0.040

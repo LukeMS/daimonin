@@ -4,7 +4,7 @@ name lucern hammer
 face lucern_hammer.101
 weapon_speed 0.0175
 attack_impact 100
-dam 9
+dam 8
 item_level 11
 item_skill 4
 wc 5

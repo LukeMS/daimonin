@@ -10,7 +10,7 @@ item_skill 4
 face glaive.101
 material 18
 material_real 65
-dam 9
+dam 8
 wc 5
 ac 2
 weight 4500

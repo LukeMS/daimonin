@@ -331,6 +331,8 @@ static void add_item (item *env, item *op)
 {
     item *tmp;
     
+	if (!op)
+		return;
     for (tmp = env->inv; tmp && tmp->next; tmp=tmp->next)
 	;
 
@@ -537,7 +539,7 @@ void toggle_locked (item *op)
     SockList sl;
     char    buf[MAX_BUF];
 
-    if (op->env->tag == 0)
+    if (!op || !op->env || op->env->tag == 0)
 	return;	/* if item is on the ground, don't lock it */
 
     sl.buf = (unsigned char*)buf;
@@ -553,7 +555,7 @@ void send_mark_obj (item *op) {
     SockList sl;
     char    buf[MAX_BUF];
 
-    if (op->env->tag == 0)
+    if (!op || !op->env || op->env->tag == 0)
 	return;	/* if item is on the ground, don't mark it */
 
     sl.buf = (unsigned char*)buf;

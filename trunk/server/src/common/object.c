@@ -968,6 +968,10 @@ int CAN_MERGE(object *ob1, object *ob2)
 	if(ob1->type == MONEY && ob1->type == ob2->type && ob1->arch == ob2->arch)
 		return 1;
 
+    /* Gecko: Moved out special handling of event obejct nrof */
+    if((!ob1->nrof || !ob2->nrof) && ob1->type != TYPE_EVENT_OBJECT)
+        return 0;
+
 	/* just a brain dead long check for things NEVER NEVER should be different 
 	 * this is true under all circumstances for all objects.
 	 */
@@ -979,9 +983,6 @@ int CAN_MERGE(object *ob1, object *ob2)
             ob1->value !=ob2->value || ob1->weight != ob2->weight) 
         return 0;
 
-    /* Gecko: Moved out special handling of event obejct nrof */
-    if((!ob1->nrof || !ob2->nrof) && ob1->type != TYPE_EVENT_OBJECT)
-        return 0;
     
     /* Gecko: added bad special check for event objects 
      * Idea is: if inv is identical events only then go ahead and merge)

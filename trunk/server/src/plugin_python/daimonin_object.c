@@ -1831,7 +1831,7 @@ static PyObject* Daimonin_Object_GetNextPlayerInfo(Daimonin_Object *whoptr, PyOb
         return NULL;
 
     /* thats our check paramters: arch "force_info", name of this arch */
-    strncpy(name, myob->obj->name, 127); /* 127 chars should be enough for all */
+    strncpy(name, STRING_OBJ_NAME(myob->obj), 127); /* 127 chars should be enough for all */
     name[63] = '\0';
 
     /* get the next linked player_info arch in this inventory */
@@ -1937,7 +1937,11 @@ static PyObject* Daimonin_Object_CreateObjectInside(Daimonin_Object *whereptr, P
 	if(value != -1) /* -1 means, we use original value */
 		myob->value = (sint32) value;
 	if(id)
+	{
 		SET_FLAG(myob,FLAG_IDENTIFIED);
+		SET_FLAG(myob,FLAG_KNOWN_MAGICAL);
+		SET_FLAG(myob,FLAG_KNOWN_CURSED);
+	}
 	if(nrof>1)
 		myob->nrof = nrof;
 
@@ -1972,7 +1976,7 @@ static object* object_check_inventory_rec(object *tmp, int mode, char* arch_name
 					(type == -1 || tmp->type == type))
             return tmp;
 
-		if(mode == 2 || mode && tmp->type == CONTAINER) 
+		if(mode == 2 || (mode && tmp->type == CONTAINER)) 
 		{
 			if((tmp2 = object_check_inventory_rec(tmp->inv,mode, arch_name,name,title,type)))
 	            return tmp2;
@@ -2013,7 +2017,7 @@ static PyObject* Daimonin_Object_CheckInventory(Daimonin_Object *whoptr, PyObjec
 					(type == -1 || tmp->type == type))
             return wrap_object(tmp);
 
-		if(mode == 2 || mode && tmp->type == CONTAINER) 
+		if(mode == 2 || (mode && tmp->type == CONTAINER)) 
 		{
 			if((tmp2 = object_check_inventory_rec(tmp->inv,mode, arch_name,name,title,type)))
 	            return wrap_object(tmp2);
@@ -2054,13 +2058,14 @@ static PyObject* Daimonin_Object_SetSaveBed(Daimonin_Object *whoptr, PyObject* a
 /*****************************************************************************/
 /* Name   : Daimonin_Object_Remove                                           */
 /* Python : object.Remove()                                                  */
-/* Info   : Permanently removes object from the game.                        */
+/* Info   : Takes the object out of whatever map or inventory it is in. The  */
+/*          object can then be inserted or teleported somewhere else, or just*/
+/*          left alone for the garbage collection to take care of.           */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 /* Gecko  : This function is DANGEROUS. Added limitations on what can be     */
 /*          removed to avoid some of the problems                            */
 /*****************************************************************************/
-/* hm, this should be named delete or free object... */
 static PyObject* Daimonin_Object_Remove(Daimonin_Object *whoptr, PyObject* args)
 {
     object* myob;
@@ -2072,6 +2077,7 @@ static PyObject* Daimonin_Object_Remove(Daimonin_Object *whoptr, PyObject* args)
     myob = WHO;
     obenv = myob->env;
     
+    /* TODO: maybe this is no longer necessary? */
     /* Gecko: Don't allow removing any of the involved objects. Messes things up... */
     if (StackActivator[StackPosition] == myob ||
             StackWho[StackPosition] == myob ||
@@ -2079,7 +2085,7 @@ static PyObject* Daimonin_Object_Remove(Daimonin_Object *whoptr, PyObject* args)
     {
         RAISE("You are not allowed to remove one of the active objects. Workaround using CFTeleport or some other solution.");
     }
-    
+
     GCFP.Value[0] = (void *)(myob);
     (PlugHooks[HOOK_REMOVEOBJECT])(&GCFP);
 
@@ -2096,9 +2102,16 @@ static PyObject* Daimonin_Object_Remove(Daimonin_Object *whoptr, PyObject* args)
         GCFP.Value[1] = (void *)(StackActivator[StackPosition]);
         (PlugHooks[HOOK_ESRVSENDINVENTORY])(&GCFP);
     }*/
+
+    /* Gecko: we'll try to use the garbage collector instead. This way we can reuse the removed
+     * object, our just drop it into oblivion by ignoring it */
+
+    /*
     GCFP.Value[0] = (void *)(myob);
     (PlugHooks[HOOK_FREEOBJECT])(&GCFP);
+    */
     
+    /* TODO: maybe this is no longer necessary? */
     /* Gecko: Handle removing any of the active objects (e.g. the activator) */
     if (StackActivator[StackPosition] == myob)
         StackActivator[StackPosition] = NULL;
@@ -2403,8 +2416,8 @@ static PyObject* Daimonin_Object_SendCustomCommand(Daimonin_Object *whoptr, PyOb
 /* Python : object.Clone(mode)                                               */
 /* Info   : mode = Daimonin.CLONE_WITH_INVENTORY (default) or                */
 /*          Daimonin.CLONE_WITHOUT_INVENTORY                                 */
-/*          You _MUST_ do something with the clone (TeleportTo() or          */
-/*          InsertInside() are useful functions for this)                    */
+/*          You should do something with the clone. TeleportTo() or          */
+/*          InsertInside() are useful functions for this.                    */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static PyObject* Daimonin_Object_Clone(Daimonin_Object *whoptr, PyObject* args)
@@ -2745,6 +2758,27 @@ Daimonin_Object_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 static void
 Daimonin_Object_dealloc(Daimonin_Object* self)
 {
+    /* Clean up "dangling" objects 
+     * i.e. objects with no environment (from obj.Clone()) or removed objects
+     */
+    if(self->obj && !QUERY_FLAG(self->obj, FLAG_FREED)) {
+        if(QUERY_FLAG(self->obj, FLAG_REMOVED)) {
+            LOG(llevDebug, "PYTHON - Freeing removed object %s \"%s\"\n", 
+                    STRING_OBJ_ARCH_NAME(self->obj), STRING_OBJ_NAME(self->obj));
+            GCFP.Value[0] = (void *)(self->obj);
+            (PlugHooks[HOOK_FREEOBJECT])(&GCFP);
+        } else if(self->obj->env == NULL && self->obj->map == NULL) {
+            /* This shouldn't really happen, but I added it just for safety */
+            LOG(llevDebug, "PYTHON - Freeing object in limbo %s \"%s\"\n", 
+                    STRING_OBJ_ARCH_NAME(self->obj), STRING_OBJ_NAME(self->obj));
+            GCFP.Value[0] = (void *)(self->obj);
+            (PlugHooks[HOOK_REMOVEOBJECT])(&GCFP);
+            GCFP.Value[0] = (void *)(self->obj);
+            (PlugHooks[HOOK_FREEOBJECT])(&GCFP);
+        }
+    }
+
+    
     self->obj = NULL;
     self->ob_type->tp_free((PyObject*)self);
 }
@@ -2753,7 +2787,7 @@ Daimonin_Object_dealloc(Daimonin_Object* self)
 static PyObject *
 Daimonin_Object_str(Daimonin_Object *self)
 {
-    return PyString_FromFormat("[%s \"%s\"]", self->obj->arch->name, self->obj->name);
+    return PyString_FromFormat("[%s \"%s\"]", STRING_OBJ_ARCH_NAME(self->obj), STRING_OBJ_NAME(self->obj));
 }
 
 /* Utility method to wrap an object. */
