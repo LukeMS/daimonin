@@ -12,7 +12,7 @@ attack_poison 30
 resist_poison 100
 ac 16
 wc 15
-dam 4
+dam 6
 hp -1
 maxhp 5
 terrain_flag 1

@@ -230,26 +230,26 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
 	{
 		op->contr->praying=0;
 		/* cancel player spells which are denied - only real spells (not potion, wands, ...) */
-		if (item==spellNormal && (caster->path_denied&s->path))
+		if (item==spellNormal)
 		{
-			new_draw_info(NDI_UNIQUE, 0,op, "It is denied for you to cast that spell.");
-			return 0;
-		}
-
-		/* check now we have enough mana or grace to cast */
-		if(!(QUERY_FLAG(op, FLAG_WIZ)) && op->contr->shoottype==range_magic &&
-						      item!=spellPotion && (!(IS_SUMMON_SPELL(type)&&op->contr->golem!=NULL)))
-		{
-			if(!(spells[type].flags&SPELL_DESC_WIS)&& op->stats.sp<(points_used=SP_level_spellpoint_cost(op,caster,type)))
+			if(caster->path_denied&s->path)
 			{
-				new_draw_info(NDI_UNIQUE, 0,op,"You don't have enough mana.");
+				new_draw_info(NDI_UNIQUE, 0,op, "It is denied for you to cast that spell.");
 				return 0;
 			}
-
-			if((spells[type].flags&SPELL_DESC_WIS) && op->stats.grace<(points_used=SP_level_gracepoint_cost(op,caster,type)))
+			if(!(QUERY_FLAG(op, FLAG_WIZ)))
 			{
-				new_draw_info(NDI_UNIQUE, 0,op,"You don't have enough grace.");
-				return 0;
+				if(!(spells[type].flags&SPELL_DESC_WIS)&& op->stats.sp<(points_used=SP_level_spellpoint_cost(op,caster,type)))
+				{
+					new_draw_info(NDI_UNIQUE, 0,op,"You don't have enough mana.");
+					return 0;
+				}
+
+				if((spells[type].flags&SPELL_DESC_WIS) && op->stats.grace<(points_used=SP_level_gracepoint_cost(op,caster,type)))
+				{
+					new_draw_info(NDI_UNIQUE, 0,op,"You don't have enough grace.");
+					return 0;
+				}
 			}
 		}
 
