@@ -11,13 +11,11 @@ and basic models.
 INSTALL WINDOWS
 ---------------
 1.) Unzip client3d/make/win32/dll_debug.zip to client3d/.
-2.) Copy the whole srv_files directory from the 2d client to client3d/.
-3.) Copy the daimonin.p0 from the 2d client to client3d/.
-4.) Install the STLport 4.6.2 from 
+2.) Install the STLport 4.6.2 from 
     http://www.ogre3d.org/index.php?option=com_remository&Itemid=74&func=selectcat&cat=1
-5.) start daimonin3d_d.exe
-6.) if some dlls are missing look here: http://support.microsoft.com/kb/259403/EN-US/
-7.) In the Ogre Engine Rendering setup choose:
+3.) start daimonin3d_d.exe
+4.) if some dlls are missing look here: http://support.microsoft.com/kb/259403/EN-US/
+5.) In the Ogre Engine Rendering setup choose:
     - a Rendering system.
     - a 1024x768 Video Mode.
 
