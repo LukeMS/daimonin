@@ -138,7 +138,8 @@ void init_globals() {
     nroftreasures = 0;
     nrofartifacts = 0;
     nrofallowedstr=0;
-    undead_name = add_string("undead");
+	undead_name = NULL;
+	FREE_AND_COPY_HASH(undead_name,"undead");
     trying_emergency_save = 0;
     num_animations=0;
     animations=NULL;

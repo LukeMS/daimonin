@@ -89,10 +89,11 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam, int base_
 
 #ifdef PLUGINS
     /* GROS: Handle for plugin attack event */
-    if(op->event_hook[EVENT_ATTACK] != NULL)
+    if(op->event_flags &EVENT_FLAG_ATTACK)
     {
         CFParm CFP;
         int k, l, m;
+		object *event_obj = get_event_object(op, EVENT_ATTACK);
         k = EVENT_ATTACK;
         l = SCRIPT_FIX_ALL;
         m = 0;
@@ -105,39 +106,11 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam, int base_
         CFP.Value[6] = &base_dam;
         CFP.Value[7] = &base_wc;
         CFP.Value[8] = &l;
-        CFP.Value[9] = op->event_hook[k];
-        CFP.Value[10]= op->event_options[k];
-        if (findPlugin(op->event_plugin[k])>=0)
-            ((PlugList[findPlugin(op->event_plugin[k])].eventfunc) (&CFP));
+        CFP.Value[9] = event_obj->race;
+        CFP.Value[10]= event_obj->slaying;
+        if (findPlugin(event_obj->name)>=0)
+            ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
     }
-    /* GROS: This is used to handle script_weapons with weapons. Only used for players */
-    if (hitter->type==PLAYER)
-    {
-        if (hitter->current_weapon != NULL)
-        {
-            /* GROS: Handle for plugin attack event */
-            if(hitter->current_weapon->event_hook[EVENT_ATTACK] != NULL)
-            {
-                CFParm CFP;
-                int k, l, n;
-                n = 0;
-                k = EVENT_ATTACK;
-                l = SCRIPT_FIX_ALL;
-                CFP.Value[0] = &k;
-                CFP.Value[1] = hitter;
-                CFP.Value[2] = hitter->current_weapon;
-                CFP.Value[3] = op;
-                CFP.Value[4] = NULL;
-                CFP.Value[5] = &n;
-                CFP.Value[6] = &base_dam;
-                CFP.Value[7] = &base_wc;
-                CFP.Value[8] = &l;
-                CFP.Value[9] = hitter->current_weapon->event_hook[k];
-                CFP.Value[10]= hitter->current_weapon->event_options[k];
-                (PlugList[findPlugin(hitter->current_weapon->event_plugin[k])].eventfunc) (&CFP);
-            }
-        };
-    };
 #endif
 
     op_tag = op->count;
@@ -177,7 +150,7 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam, int base_
 #endif
 
     /* See if we hit the creature */
-    if(roll>=20 || op->stats.ac>=base_wc-roll)
+    if(roll>=20 || op->stats.ac<=base_wc+roll)
 	{
 		int hitdam = base_dam;
     
@@ -443,7 +416,7 @@ int hit_player(object *op,int dam, object *hitter, int type)
 		/* seems to happen with throwing items alot... i let it still in to see
 		 * what else possible invoke this glitch. we catch it here and ok.
 		 */
-        LOG(llevDebug, "FIXME: victim (arch %s, name %s) already dead in hit_player()\n", op->arch->name, query_name(op));
+        LOG(llevDebug, "FIXME: victim (arch %s, name %s (%x - %d)) already dead in hit_player()\n", op->arch->name, query_name(op), op, op->count);
     	return 0;
     }
 
@@ -464,7 +437,12 @@ int hit_player(object *op,int dam, object *hitter, int type)
 			maxdam +=tmp;
 		}
 #else
-	    maxdam +=hit_player_attacktype(op,hitter,dam,attacknum,0);
+		{
+			LOG(-1, "hitter: %s (dam:%d/%d) (wc:%d/%d) (ac:%d/%d) ap:%d\n", 
+				hitter->name,hitter->stats.dam,op->stats.dam, hitter->stats.wc,op->stats.wc,
+				hitter->stats.ac,op->stats.ac,hitter->attack[attacknum]);
+			maxdam +=hit_player_attacktype(op,hitter,dam,attacknum,0);
+		}
 #endif
     }
 
@@ -515,11 +493,8 @@ int hit_player(object *op,int dam, object *hitter, int type)
     }
  /* Start of creature kill processing */
 
-        rtn_kill = kill_object(op, dam, hitter, type);
-        if (rtn_kill != -1)
-        {
-                return rtn_kill;
-        };
+	if((rtn_kill = kill_object(op, dam, hitter, type)))
+		return (maxdam+rtn_kill+1); /* rtn_kill is here negative! */
 
 /* End of creature kill processing */
 
@@ -1042,13 +1017,14 @@ int kill_object(object *op,int dam, object *hitter, int type)
     CFParm CFP;
 #endif
     /* Object has been killed.  Lets clean it up */
-    if (op->stats.hp<0) {
+    if (op->stats.hp<=0) {
 #ifdef PLUGINS
     /* GROS: Handle for plugin death event */
-    if(op->event_hook[EVENT_DEATH] != NULL)
+    if(op->event_flags&EVENT_FLAG_DEATH)
     {
         CFParm* CFR;
         int k, l, m;
+		object *event_obj = get_event_object(op, EVENT_DEATH);
         k = EVENT_DEATH;
         l = SCRIPT_FIX_ALL;
         m = 0;
@@ -1061,11 +1037,11 @@ int kill_object(object *op,int dam, object *hitter, int type)
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
-        CFP.Value[9] = op->event_hook[k];
-        CFP.Value[10]= op->event_options[k];
-        if (findPlugin(op->event_plugin[k])>=0)
+        CFP.Value[9] = event_obj->race;
+        CFP.Value[10]= event_obj->slaying;
+        if (findPlugin(event_obj->name)>=0)
         {
-            CFR =(PlugList[findPlugin(op->event_plugin[k])].eventfunc) (&CFP);
+            CFR =(PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
             killed_script_rtn = *(int *)(CFR->Value[0]);
             if (killed_script_rtn)
                 return 0;
@@ -1078,7 +1054,8 @@ int kill_object(object *op,int dam, object *hitter, int type)
     CFP.Value[2] = (void *)(op);
     GlobalEvent(&CFP);
 #endif
-	maxdam+=op->stats.hp+1;
+
+	maxdam=op->stats.hp-1;
 
 	if(QUERY_FLAG(op,FLAG_BLOCKSVIEW))
 	    update_all_los(op->map,op->x, op->y); /* makes sure los will be recalculated */
@@ -1406,11 +1383,12 @@ object *hit_with_arrow (object *op, object *victim)
     hitter_tag = hitter->count;
 #ifdef PLUGINS
     /* GROS: Handling plugin attack event for thrown items */
-    if(op->event_hook[EVENT_ATTACK] != NULL)
+    if(op->event_flags&EVENT_FLAG_ATTACK)
     {
         CFParm CFP;
         CFParm* CFR;
         int k, l, m;
+		object *event_obj = get_event_object(op, EVENT_ATTACK);
         k = EVENT_ATTACK;
         l = SCRIPT_FIX_ALL;
         m = 0;
@@ -1423,11 +1401,11 @@ object *hit_with_arrow (object *op, object *victim)
         CFP.Value[6] = &(op->stats.dam);
         CFP.Value[7] = &(op->stats.wc);
         CFP.Value[8] = &l;
-        CFP.Value[9] = op->event_hook[k];
-        CFP.Value[10]= op->event_options[k];
-        if (findPlugin(op->event_plugin[k])>=0)
+        CFP.Value[9] = event_obj->race;
+        CFP.Value[10]= event_obj->slaying;
+        if (findPlugin(event_obj->name)>=0)
         {
-            CFR = (PlugList[findPlugin(op->event_plugin[k])].eventfunc) (&CFP);
+            CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
             sretval = *(int *)(CFR->Value[0]);
         }
     }

@@ -117,7 +117,7 @@ int write_rune(object *op,int dir,int inspell,int level,char *runename) {
 	tmp->stats.sp=inspell; /* the spell it contains */
 
 	sprintf(buf,"You set off a rune of %s",spells[inspell].name);
-	tmp->msg=add_string(buf); 
+	FREE_AND_COPY_HASH(tmp->msg, buf); 
 	at=NULL;
 
 
@@ -150,7 +150,7 @@ int write_rune(object *op,int dir,int inspell,int level,char *runename) {
 	    /* Not totally efficient, but keeps code simpler */
 	    strcpy(rune, "There is no message\n");
 	}
-	tmp->msg = add_string(rune);
+	FREE_AND_COPY_HASH(tmp->msg, rune);
     }
     if(at) tmp=get_archetype(runename);
     tmp->stats.Cha = op->level/2;  /* the invisibility parameter */
@@ -225,11 +225,7 @@ void spring_trap(object *trap,object *victim)
   trap->type=MISC_OBJECT;  /* make the trap impotent */
 	CLEAR_FLAG(trap,FLAG_FLY_ON);
 	CLEAR_FLAG(trap,FLAG_WALK_ON);
-	if (trap->msg)
-	{
-	    free_string(trap->msg);
-	    trap->msg=NULL;
-	}
+	FREE_AND_CLEAR_HASH2(trap->msg);
   trap->stats.food=20;  /* make it stick around until its spells are gone */
   SET_FLAG(trap,FLAG_IS_USED_UP);	/* ok, let the trap wear off */
 
@@ -254,11 +250,7 @@ void spring_trap(object *trap,object *victim)
     trap->type=MISC_OBJECT;  /* make the trap impotent */
 	CLEAR_FLAG(trap,FLAG_FLY_ON);
 	CLEAR_FLAG(trap,FLAG_WALK_ON);
-	if (trap->msg)
-	{
-	    free_string(trap->msg);
-	    trap->msg=NULL;
-	}
+	FREE_AND_CLEAR_HASH2(trap->msg);
     trap->stats.food=20;  /* make it stick around until its spells are gone */
     SET_FLAG(trap,FLAG_IS_USED_UP);
   }

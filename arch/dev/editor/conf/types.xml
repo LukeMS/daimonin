@@ -195,6 +195,22 @@
   <entry value="8" name="northwest" />
 </list>
 
+<list name="event">
+  <entry value="0" name="no event" />
+  <entry value="1" name="apply" />
+  <entry value="2" name="attack" />
+  <entry value="3" name="death" />
+  <entry value="4" name="drop" />
+  <entry value="5" name="pickup" />
+  <entry value="6" name="say" />
+  <entry value="7" name="stop" />
+  <entry value="8" name="time" />
+  <entry value="9" name="throw" />
+  <entry value="10" name="trigger" />
+  <entry value="11" name="close" />
+  <entry value="12" name="timer" />
+</list>
+
 <list name="mood">
   <entry value="0" name="furious" />
   <entry value="1" name="angry" />
@@ -1027,8 +1043,8 @@
     Lower quality than 100% means effects like protection/damage etc.
     are reduced.
   </attribute>
-  <attribute arch="is_vul_acid" editor="susceptible to acid" type="bool">
-    Acid is able to reduce the quality of the item and
+  <attribute arch="is_vul_physical" editor="susceptible to physical" type="bool">
+    Physical attacks is able to reduce the quality of the item and
     eventually destroy it.
   </attribute>
   <attribute arch="is_vul_elemental" editor="susceptible to elements" type="bool">
@@ -1043,11 +1059,9 @@
     All forms of spherical attacks are able to reduce the quality
     of the item and eventually destroy it.
   </attribute>
-  <attribute arch="is_indestructible" editor="physically immune" type="bool">
-    An item which can be wielded or worn takes ALWAYS damage from
-    physical attacks (when fighting or falling down,...). Only items
-    which have &lt;physically immune&gt; set can't be damaged physically. 
-    forces.
+  <attribute arch="is_indestructible" editor="indestructible" type="bool">
+    This item can't be damaged in any way (this includes special magic
+    and also attacks.
   </attribute>
 </section>
 
@@ -1059,6 +1073,11 @@
     barely visible in-game. Luck bonus on one piece of equipment
     should never exceed 3, and such bonus should not be too
     frequently available.
+  </attribute>
+  <attribute arch="exp" editor="speed bonus" type="int">
+    Divide by ten to get the player's speed bonus from wearing
+	this item. (The real formula to calcuate speed bonus is
+	more advanced, but this description will do for now. /Gecko)
   </attribute>
   <attribute arch="hp" editor="health regen." type="int">
     Positive &lt;health regen.&gt; bonus speeds up the
@@ -3458,15 +3477,26 @@
     for generated objects of same type thats they act totally synchron.
   </attribute>
   <attribute arch="other_arch" editor="breed monster" type="string">
-    This only takes effect if &lt;multiply&gt; is enabled. The monster will
-    create a &lt;breed monster&gt; every once in a while. &lt;breed monster&gt;
-    can be set to any valid arch-name of a monster. Multipart monster
-    should not be used.
+    This only takes effect if &lt;multiply&gt; or &lt;splits&gt; is enabled. 
+	The monster will create a &lt;breed monster&gt; every once in a while. 
+	&lt;breed monster&gt; can be set to any valid arch-name of a monster. 
+	Multipart monster should not be used.
   </attribute>
   <attribute arch="generator" editor="multiply" type="bool">
-    Monsters with &lt;generator&gt; enabled will create a &lt;breed monster&gt;
+    Monsters with &lt;multiply&gt; enabled will create a &lt;breed monster&gt;
     every once in a while. Mice are a good example for this effect.
     If enabled, you must also set &lt;breed monster&gt;.
+  </attribute>
+  <attribute arch="food" editor="split number" type="int">
+    This is the number of new monsters generated when this monster
+	is split. This only takes effect if &lt;split&gt; and &lt;breed monster&gt;
+	is set.
+  </attribute>
+  <attribute arch="splitting" editor="split" type="bool">
+    Monsters with &lt;split&gt; enabled will split into one or more 
+	&lt;breed monster&gt; whenever they're hit. The number of new monsters
+	is controlled by &lt;split number&gt;. 
+	If enabled, you must also set &lt;breed monster&gt; and &lt;split number&gt;.
   </attribute>
   <attribute arch="invulnerable" editor="invulnerable" type="bool">
     This mob will NEVER take any damage - so it can't die by damage.
@@ -3482,10 +3512,21 @@
     Several spells only affect undead monsters:
     turn undead, banish undead, holy word, etc.
   </attribute>
+  <attribute arch="corpse" editor="corpse" type="bool">
+    This monster will leave a corpse behind when it dies.
+  </attribute>
   <attribute arch="carrying" editor="carries weight" type="int">
     If a monster has something in the inventory, this
     value can be set to reflect the slowdown due to
     the carried weight.
+  </attribute>
+  <attribute arch="is_male" editor="male" type="bool">
+    This monster is male. You can create male, female and neuter monsters.
+	But for some reason, two-sexed monsters doesn't seem to work really well.
+  </attribute>
+  <attribute arch="is_female" editor="female" type="bool">
+    This monster is female. You can create male, female and neuter monsters.
+	But for some reason, two-sexed monsters doesn't seem to work really well.
   </attribute>
 
 <section name="melee">
@@ -4994,6 +5035,14 @@
   <attribute arch="sp" editor="spell" type="spell">
     When a player drinks this potion, the selected spell
     will be casted (once). This should work for any given spell.
+    last_eat must be 0 to invoke the spell effect!
+  </attribute>
+  <attribute arch="last_eat" editor="special potion" type="int">
+  If this value is 0, the potion will invoke a spell effect
+  when use. If set to -1, the potion will create a force when used
+  and grant the user with the effects set (stats boni/mali, resists,..).
+  Values >0 are used intern for special potions - don't play around with
+  it here!
   </attribute>
   <attribute arch="startequip" editor="godgiven item" type="bool">
     A godgiven item vanishes as soon as the player
@@ -5041,6 +5090,85 @@
     (of course there is an upper limit). Generally there shouldn't be stat
     potions granting more than one stat. Cursed potions will subtract the
     stats if positive.
+  </attribute>
+</section>
+<section name="attack">
+  <attribute arch="attack_impact" editor="impact attack %" length="15" type="int">
+    "Impact" is damage from clubs, maces or a simple fist.
+    It belongs to the group of physical attacks.
+  </attribute>
+  <attribute arch="attack_slash" editor="slash attack %" length="15" type="int">
+    "Slash" is sword type damage. Creatures with large
+    claws can also do slash damage.
+    It belongs to the group of physical attacks.
+  </attribute>
+  <attribute arch="attack_cleave" editor="cleave attack %" length="15" type="int">
+    "Cleave" is axe and halbard damage.
+    It belongs to the group of physical attacks.
+  </attribute>
+  <attribute arch="attack_pierce" editor="pierce attack %" length="15" type="int">
+    "Pierce" attacks come from arrows or rapier weapons.
+    For example: arrows, bolts, daggers, spears.
+    It belongs to the group of physical attacks.
+  </attribute>
+  <attribute arch="attack_weaponmagic" editor="w.magic attack %" length="15" type="int">
+    Weapon magic is a very special, hard to resist and powerful attack type.
+    It derives from the magical power of great artifact weapons like
+    the Excalibur. This damage type is mostly bound to a physical source,
+    so it is counted to the physical damage types.
+  </attribute>
+  <attribute arch="attack_fire" editor="fire attack %" length="15" type="int">
+    Fire belongs to the group of elemental attacks.
+  </attribute>
+  <attribute arch="attack_electricity" editor="electricity attack %" length="15" type="int">
+    Electricity belongs to the group of elemental attacks.
+  </attribute>
+  <attribute arch="attack_cold" editor="cold attack %" length="15" type="int">
+    Cold belongs to the group of elemental attacks.
+  </attribute>
+  <attribute arch="attack_acid" editor="acid attack %" length="15" type="int">
+    Acid belongs to the group of elemental attacks.
+  </attribute>
+  <attribute arch="attack_poison" editor="poison attack %" length="15" type="int">
+    Poison belongs to the group of elemental attacks.
+  </attribute>
+  <attribute arch="attack_magic" editor="magic attack %" length="15" type="int">
+  </attribute>
+  <attribute arch="attack_confusion" editor="confusion attack %" length="15" type="int">
+  </attribute>
+  <attribute arch="attack_drain" editor="drain attack %" length="15" type="int">
+  </attribute>
+  <attribute arch="attack_ghosthit" editor="ghosthit attack %" length="15" type="int">
+  </attribute>
+  <attribute arch="attack_slow" editor="slow attack %" length="15" type="int">
+  </attribute>
+  <attribute arch="attack_paralyze" editor="paralyze attack %" length="15" type="int">
+  </attribute>
+  <attribute arch="attack_time" editor="time attack %" length="15" type="int">
+  </attribute>
+  <attribute arch="attack_fear" editor="fear attack %" length="15" type="int">
+  </attribute>
+  <attribute arch="attack_depletion" editor="deplete attack %" length="15" type="int">
+  </attribute>
+  <attribute arch="attack_death" editor="death attack %" length="15" type="int">
+  </attribute>
+  <attribute arch="attack_chaos" editor="chaos attack %" length="15" type="int">
+  </attribute>
+  <attribute arch="attack_godpower" editor="godpower attack %" length="15" type="int">
+  </attribute>
+  <attribute arch="attack_purity" editor="purity attack %" length="15" type="int">
+  </attribute>
+  <attribute arch="attack_blind" editor="blinding attack %" length="15" type="int">
+  </attribute>
+  <attribute arch="attack_life_steal" editor="leech life attack %" length="15" type="int">
+  </attribute>
+  <attribute arch="attack_nether" editor="nether attack %" length="15" type="int">
+  </attribute>
+  <attribute arch="attack_sonic" editor="sonic attack %" length="15" type="int">
+  </attribute>
+  <attribute arch="attack_demonic" editor="demonic attack %" length="15" type="int">
+  </attribute>
+  <attribute arch="attack_psionic" editor="psionic attack %" length="15" type="int">
   </attribute>
 </section>
 <section name="resistance">
@@ -6575,6 +6703,33 @@
   </attribute>
   <attribute arch_begin="msg" arch_end="endmsg" editor="description" type="text">
     This text may contain a description of the wand.
+  </attribute>
+</type>
+<!--####################################################################-->
+<type number="118" name="Event Object">
+  <ignore>
+    <attribute arch="sub_type" />
+    <attribute arch="damned" />
+    <ignore_list name="non_pickable" />
+  </ignore>
+  <description><![CDATA[
+    The event object can hold script or other events triggered
+    in the game. The event object is inserted in the target object
+    and when a action or situation match the event object settings,
+    the event is triggered.]]>
+  </description>
+  <attribute arch="sub_type" editor="event ID" type="list_event">
+    Set the event where this event object should trigger.
+  </attribute>
+  <attribute arch="name" editor="plugin name" type="string">
+    Name of the plugin which should be triggered by this event object.
+  </attribute>
+  <attribute arch="race" editor="script name" type="string">
+    Name of the script of data file we want submit to the
+    plugin when the event is triggered.
+  </attribute>
+  <attribute arch="slaying" editor="event option" type="string">
+    This string is given the event as option string.
   </attribute>
 </type>
 

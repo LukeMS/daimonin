@@ -1,15 +1,15 @@
 Object pudding_red
 name red pudding
 race slime
-randomitems slime
+randomitems mob_slime
 is_neutral 1
 weight 16250
 exp 150
 speed -0.1
 weapon_speed 0.044
 attack_fire 100
-ac 16
-wc 15
+ac 6
+wc 2
 dam 5
 hp -1
 maxhp 5

@@ -1,10 +1,28 @@
 Daimonin CHANGES
+23.11.2003	- preparing BETA 2.
+22.11.2003	- Added several hundred new objects to the 
+...             - changed script system
+                - changed player stat system
+                - changed player reg system
+                - fixed tons of bugs & glitches
+                - added player patches
+                - reworked fix_player()
+12.11.2003
+
+11.11.2003	- fixed a wild spell cast when player dies
+                - fixed cone spells - now only one spell object
+                  for every tile for one spell
+                - several small bug fixes and LOG() changes
+                - removed some warnings
+
 10.11.2003      - testing & submit of new python plugin.
                   This should fix some of the last crashes.
+                - fixed hopefully the freeze bug
+                - remove redundant functions
 
 09.11.2003      - reworked whole potion object and system
                 - core debugging
-                - find and fixed script plugin bugs
+                - find and fixed script plugin bugs                
 
 08.11.2003	- reworked stat boni system for players.
                 - added quest item flag FLAG_NO_DROP. If a player

@@ -45,7 +45,7 @@
 #define ARTIFACT_TRIES 2
 #define T_STYLE_UNSET (-2)
 
-static archetype *ring_arch=NULL,*ring_arch_normal=NULL, *amulet_arch=NULL,*crown_arch=NULL;
+static archetype *ring_arch=NULL,*ring_arch_normal=NULL, *amulet_arch=NULL;
 
 
 /* static functions */
@@ -82,7 +82,7 @@ void load_treasures() {
       continue;
     if(sscanf(buf,"treasureone %s\n",name) || sscanf(buf,"treasure %s\n",name)) {
       treasurelist *tl=get_empty_treasurelist();
-      tl->name=add_string(name);
+      FREE_AND_COPY_HASH(tl->name, name);
       if(previous==NULL)
         first_treasurelist=tl;
       else
@@ -169,14 +169,20 @@ static treasure *load_treasure(FILE *fp, int *t_style)
 	else if (sscanf(cp, "list %s", variable))
 	{
 		start_marker = 1;
-        t->name = add_string(variable);
+        FREE_AND_COPY_HASH(t->name, variable);
 	}
     else if (sscanf(cp, "name %s", variable))
-      t->change_arch.name = add_string(cp+5);
+	{
+      FREE_AND_COPY_HASH(t->change_arch.name, cp+5);
+	}
     else if (sscanf(cp, "title %s", variable)) 
-        t->change_arch.title = add_string(cp+6);
+	{
+        FREE_AND_COPY_HASH(t->change_arch.title, cp+6);
+	}
     else if (sscanf(cp, "slaying %s", variable))
-        t->change_arch.slaying = add_string(cp+8);
+	{
+        FREE_AND_COPY_HASH(t->change_arch.slaying, cp+8);
+	}
     else if(sscanf(cp,"item_race %d",&value))
         t->change_arch.item_race = value;
     else if(sscanf(cp,"chance %d",&value))
@@ -288,7 +294,8 @@ void init_artifacts()
 				if ((next=strchr(cp, ','))!=NULL)
 					*(next++) = '\0';
 				tmp = (linked_char*) malloc(sizeof(linked_char));
-				tmp->name = add_string(cp);
+				tmp->name=NULL;
+				FREE_AND_COPY_HASH(tmp->name, cp);
 				tmp->next = art->allowed;
 				art->allowed = tmp;
 			} while ((cp=next)!=NULL);
@@ -300,25 +307,22 @@ void init_artifacts()
 		else if (sscanf(cp, "difficulty %d", &value))
 			art->difficulty = (uint8) value;
 		else if (!strncmp(cp, "artifact",8))
-			art->name = add_string(cp+9);
+		{
+			FREE_AND_COPY_HASH(art->name, cp+9);
+		}
 		else if (!strncmp(cp, "def_arch",8)) /* chain a default arch to this treasure */
 		{
 		    if((atemp=find_archetype(cp+9))==NULL)
 				LOG(llevError,"ERROR: Init_Artifacts: Can't find def_arch %s.\n", cp+9);
 			/* ok, we have a name and a archtype */
-			art->def_at_name = add_string(cp+9); /* store the non fake archetype name */
+			FREE_AND_COPY_HASH(art->def_at_name, cp+9); /* store the non fake archetype name */
 			memcpy(&art->def_at,atemp,sizeof(archetype) ); /* copy the default arch */
 			art->def_at.base_clone=&atemp->clone;
-			if(art->def_at.clone.name != NULL)
-				add_refcount(art->def_at.clone.name);
-			if(art->def_at.clone.title != NULL)
-				add_refcount(art->def_at.clone.title);
-			if(art->def_at.clone.race!=NULL)
-				add_refcount(art->def_at.clone.race);
-			if(art->def_at.clone.slaying!=NULL)
-				add_refcount(art->def_at.clone.slaying);
-			if(art->def_at.clone.msg!=NULL)
-				add_refcount(art->def_at.clone.msg);
+			ADD_REF_NOT_NULL_HASH(art->def_at.clone.name);
+			ADD_REF_NOT_NULL_HASH(art->def_at.clone.title);
+			ADD_REF_NOT_NULL_HASH(art->def_at.clone.race);
+			ADD_REF_NOT_NULL_HASH(art->def_at.clone.slaying);
+			ADD_REF_NOT_NULL_HASH(art->def_at.clone.msg);
 
 			/* we patch this .clone object after Object read with the artifact data.
 			 * in find_artifact, this archetype object will be returned. For the server,
@@ -367,7 +371,7 @@ void init_artifacts()
 				LOG(llevError,"ERROR: Init_Artifacts: out of memory in ->parse_text (size %d)\n",lcount);
 			memcpy(art->parse_text,buf_text,lcount);
 
-			art->def_at.name = add_string(art->name); /* finally, change the archetype name of 
+			FREE_AND_COPY_HASH(art->def_at.name, art->name); /* finally, change the archetype name of 
 													   * our fake arch to the fake arch name.
 													   * without it, treasures will get the
 													   * original arch, not this (hm, this
@@ -398,6 +402,9 @@ void init_artifacts()
 	{
 		for (art=al->items; art!=NULL; art=art->next)
 		{
+			/*add_arch();
+			LOG(llevDebug,"art: %s (%s %s)\n", art->name, art->def_at.name, query_name(&art->def_at.clone));*/
+
 			if(al->type == -1) /* we don't use our unique artifacts as pick table */
 				continue;
 			if (!art->chance)
@@ -428,10 +435,6 @@ void init_archetype_pointers()
 		amulet_arch = find_archetype("amulet_generic");
 	if (!amulet_arch)
 		LOG(llevBug,"BUG: Cant'find 'amulet_generic' arch\n");
-	if (crown_arch == NULL)
-		crown_arch = find_archetype("crown_generic");
-	if (!crown_arch)
-		LOG(llevBug,"BUG: Cant'find 'crown_generic' arch\n");
 }
 
 
@@ -675,26 +678,13 @@ static void change_treasure(treasure *t, object *op)
 		set_material_real(op, t->change_arch.material_start, t->change_arch.material_end);    
 
     if(t->change_arch.name)
-    {
-        if(op->name)
-            free_string(op->name);
-        op->name = add_string(t->change_arch.name);
-    }
+        FREE_AND_COPY_HASH(op->name, t->change_arch.name);
     
     if(t->change_arch.title)
-    {
-        if(op->title)
-            free_string(op->title);
-        op->title = add_string(t->change_arch.title);
-    }
+        FREE_AND_COPY_HASH(op->title,t->change_arch.title);
 
     if(t->change_arch.slaying)
-    {
-        if(op->slaying)
-            free_string(op->slaying);
-        op->slaying = add_string(t->change_arch.slaying);
-    }
-    
+        FREE_AND_COPY_HASH(op->slaying, t->change_arch.slaying);   
 }
 
 /*
@@ -1026,6 +1016,7 @@ static int get_random_spell(int level, int flags)
 int fix_generated_item (object *op, object *creator, int difficulty, int a_chance, int t_style, int max_magic, int fix_magic, int chance_magic, int flags)
 {
 	int temp, retval=0, was_magic = op->magic;
+	int too_many_tries=0,is_special=0;
 
 	if(!creator||creator->type==op->type)
 		creator=op; /*safety & to prevent polymorphed objects giving attributes */ 
@@ -1034,13 +1025,7 @@ int fix_generated_item (object *op, object *creator, int difficulty, int a_chanc
 	if (difficulty<1)
 		difficulty=1;
 
-	/* i have not looked in all the crown stuff atm - MT -10.2003 */
-	if (op->arch == crown_arch)
-	{
-		set_magic(difficulty>25?30:difficulty+5, op, max_magic, fix_magic, chance_magic, flags);
-		retval = generate_artifact(op,difficulty, t_style, a_chance);
-	} 
-	else if(op->type != POTION)
+	if(op->type != POTION && op->type != SCROLL)
 	{
 		if((!op->magic && max_magic) || fix_magic)
 			set_magic(difficulty,op,max_magic, fix_magic, chance_magic, flags);
@@ -1055,34 +1040,44 @@ int fix_generated_item (object *op, object *creator, int difficulty, int a_chanc
 		}
 	}
 
-	if (!op->title) /* Only modify object if not special */
+	if (!op->title && op->type != RUNE) /* Only modify object if not special */
 	{
 		switch(op->type) 
 		{
-			case WEAPON:
-			case ARMOUR:
-			case SHIELD:
-			case HELMET:
-			case BOOTS:
-			case CLOAK:
-        
-			if (QUERY_FLAG(op, FLAG_CURSED) && !(RANDOM()%4))
-				set_ring_bonus(op, -DICE2, difficulty);
-			break;
-
-			case BRACERS:
-				if(!(RANDOM()%(QUERY_FLAG(op, FLAG_CURSED)?5:20)))
+			/* we create scrolls now in artifacts file too */
+			case SCROLL:
+				while(op->stats.sp==SP_NO_SPELL)
 				{
-					set_ring_bonus(op,QUERY_FLAG(op, FLAG_CURSED)?-DICE2:DICE2, difficulty);
-					if (!QUERY_FLAG(op, FLAG_CURSED))
-						op->value*=3;
+					generate_artifact(op,difficulty, t_style, 100);
+					if(too_many_tries++ > 3)
+						break;
 				}
+
+				/*
+				if((op->stats.sp = get_random_spell(difficulty,SPELL_USE_SCROLL)) == SP_NO_SPELL)
+					break;
+				*/
+
+				/* ok, forget it... */
+				if(op->stats.sp == SP_NO_SPELL)
+					break;
+
+				SET_FLAG(op,FLAG_IS_MAGICAL); /* marks at magical */
+				op->stats.food=RANDOM()%spells[op->stats.sp].charges+1; /* charges */
+				temp = (((difficulty*100)-(difficulty*20))+(difficulty*(RANDOM()%35)))/100;
+				if(temp <1)
+					temp = 1;
+				else if (temp >110)
+					temp = 110;
+				op->level = temp;
+				if(temp < spells[op->stats.sp].level)
+					temp = spells[op->stats.sp].level;
+				/* op->value = (int) (85.0f * spells[op->stats.sp].value_mul);*/
+			    op->nrof=RANDOM()%spells[op->stats.sp].scrolls+1;
 			break;
 
 			case POTION:
-			{				
-				int too_many_tries=0,is_special=0;
-
+			{
 				if(!op->sub_type1) /* balm */
 				{
 					if((op->stats.sp = get_random_spell(difficulty,SPELL_USE_BALM)) == SP_NO_SPELL)
@@ -1102,7 +1097,7 @@ int fix_generated_item (object *op, object *creator, int difficulty, int a_chanc
 					while(!(is_special=special_potion(op)) && op->stats.sp==SP_NO_SPELL)
 					{
 						generate_artifact(op,difficulty, t_style, 100);
-						if(too_many_tries++ > 10)
+						if(too_many_tries++ > 3)
 							goto jump_break1;
 					}
 				}
@@ -1112,10 +1107,25 @@ int fix_generated_item (object *op, object *creator, int difficulty, int a_chanc
 					temp = 1;
 				else if (temp >110)
 					temp = 110;
-				if(temp < spells[op->stats.sp].level)
+				if(!is_special && temp < spells[op->stats.sp].level)
 					temp = spells[op->stats.sp].level;
+
 				op->level = temp;
-				op->nrof = 1;
+
+				/* chance to make special potions damned or cursed.
+				 * The chance is somewhat high to make the game more
+				 * difficult. Applying this potions without identify
+				 * is a great risk!
+				 */
+				if (is_special && ! (flags & GT_ONLY_GOOD))
+				{
+					if(RANDOM() % 2)
+						SET_FLAG(op, FLAG_CURSED);
+					else if(RANDOM() % 2)
+						SET_FLAG(op, FLAG_DAMNED);
+
+				}
+
 				jump_break1:
 				break; 
 			}
@@ -1173,207 +1183,118 @@ int fix_generated_item (object *op, object *creator, int difficulty, int a_chanc
 			break;
 
 			case BOOK:
-      /* Is it an empty book?, if yes lets make a special 
-       * msg for it, and tailor its properties based on the 
-       * creator and/or map level we found it on.
-       */
-      if(!op->msg&&RANDOM()%10) { 
-	/* set the book level properly */
-	if(creator->level==0 || QUERY_FLAG(creator,FLAG_ALIVE)) {
-            if(op->map&&op->map->difficulty) 
-	      op->level=RANDOM()%(op->map->difficulty)+RANDOM()%10+1;
-            else
-	      op->level=RANDOM()%20+1;
-	} else 
-	    op->level=RANDOM()%creator->level;
+				/* Is it an empty book?, if yes lets make a special 
+				* msg for it, and tailor its properties based on the 
+				* creator and/or map level we found it on.
+				*/
+				if(!op->msg&&RANDOM()%10)
+				{ 
+				/* set the book level properly */
+				if(creator->level==0 || QUERY_FLAG(creator,FLAG_ALIVE))
+				{
+					if(op->map&&op->map->difficulty) 
+						op->level=RANDOM()%(op->map->difficulty)+RANDOM()%10+1;
+					else
+						op->level=RANDOM()%20+1;
+				}
+				else 
+					op->level=RANDOM()%creator->level;
 
-	tailor_readable_ob(op,(creator&&creator->stats.sp)?creator->stats.sp:-1);
-        /* books w/ info are worth more! */
-      	op->value*=((op->level>10?op->level:(op->level+1)/2)*((strlen(op->msg)/250)+1));
-	/* creator related stuff */
-	if(QUERY_FLAG(creator,FLAG_NO_PICK)) /* for library, chained books! */
-	    SET_FLAG(op,FLAG_NO_PICK);
-	if(creator->slaying&&!op->slaying) /* for check_inv floors */
-	    op->slaying = add_string(creator->slaying);
+				tailor_readable_ob(op,(creator&&creator->stats.sp)?creator->stats.sp:-1);
+				/* books w/ info are worth more! */
+      			op->value*=((op->level>10?op->level:(op->level+1)/2)*((strlen(op->msg)/250)+1));
+				/* creator related stuff */
+				if(QUERY_FLAG(creator,FLAG_NO_PICK)) /* for library, chained books! */
+					SET_FLAG(op,FLAG_NO_PICK);
+				if(creator->slaying&&!op->slaying) /* for check_inv floors */
+					FREE_AND_COPY_HASH(op->slaying, creator->slaying);
 
-	/* add exp so reading it gives xp (once)*/
-        op->stats.exp = op->value>10000?op->value/5:op->value/10;
-      }
-      break;
-
-	/* this will changed to generate SPELL_TYPE_BOOK spellbooks */
-    case SPELLBOOK:
-	/*
-      if (op->slaying && (op->stats.sp = look_up_spell_name (op->slaying)) >= 0)
-      {
-         free_string (op->slaying);
-         op->slaying = NULL;
-      }
-      else if(op->sub_type1 == ST1_SPELLBOOK_CLERIC) 
-	 do { 
-	     do
-		 {
-         op->stats.sp=RANDOM()%NROFREALSPELLS;
-			   // skip all non active spells 
-			   while(!spells[op->stats.sp].active)
-			   {
-				   op->stats.sp++;
-				   if(op->stats.sp>=NROFREALSPELLS)
-						op->stats.sp=0;
-			   }
-		 }
-	     while(RANDOM()%10>=spells[op->stats.sp].books); 
-	 } while (!spells[op->stats.sp].cleric);
-      else
-	 do {
-             do   
-			 {
-               op->stats.sp=RANDOM()%NROFREALSPELLS;
-			   // skip all non active spells 
-			   while(!spells[op->stats.sp].active)
-			   {
-				   op->stats.sp++;
-				   if(op->stats.sp>=NROFREALSPELLS)
-						op->stats.sp=0;
-			   }
-			 }
-             while(RANDOM()%10>=spells[op->stats.sp].books);
-         } while (spells[op->stats.sp].cleric);
-
-      op->value=(op->value*spells[op->stats.sp].level)/
-                 (spells[op->stats.sp].level+4);
-      change_book(op,-1);
-
-      // add exp so learning gives xp 
-      op->level = spells[op->stats.sp].level;
-      op->stats.exp = op->value;
-
-      break;
-	*/
-    case WAND:
-		if((op->stats.sp = get_random_spell(difficulty,SPELL_USE_WAND)) == SP_NO_SPELL)
+				/* add exp so reading it gives xp (once)*/
+			    op->stats.exp = op->value>10000?op->value/5:op->value/10;
+			}
 			break;
-		SET_FLAG(op,FLAG_IS_MAGICAL); /* marks at magical */
-		op->stats.food=RANDOM()%spells[op->stats.sp].charges+1; /* charges */
-		
-		temp = (((difficulty*100)-(difficulty*20))+(difficulty*(RANDOM()%35)))/100;
-		if(temp <1)
-			temp = 1;
-		else if (temp >110)
-			temp = 110;
-		if(temp < spells[op->stats.sp].level)
-			temp = spells[op->stats.sp].level;
-		op->level = temp;
-		op->value = (int) (120.0f * spells[op->stats.sp].value_mul);
 
-      break;
-
-	case HORN:
-		if((op->stats.sp = get_random_spell(difficulty,SPELL_USE_HORN)) == SP_NO_SPELL)
+			case SPELLBOOK:
+				LOG(llevDebug,"DEBUG: fix_generated_system() called for disabled object SPELLBOOK (%s)\n", query_name(op)); 
 			break;
-		SET_FLAG(op,FLAG_IS_MAGICAL); /* marks at magical */
-	     
-		if (op->stats.maxhp)
-			op->stats.maxhp += RANDOM()%op->stats.maxhp;
-		op->stats.hp = op->stats.maxhp;
+
+			case WAND:
+				if((op->stats.sp = get_random_spell(difficulty,SPELL_USE_WAND)) == SP_NO_SPELL)
+					break;
+
+				SET_FLAG(op,FLAG_IS_MAGICAL); /* marks at magical */
+				op->stats.food=RANDOM()%spells[op->stats.sp].charges+1; /* charges */
 		
-		temp = (((difficulty*100)-(difficulty*20))+(difficulty*(RANDOM()%35)))/100;
-		if(temp <1)
-			temp = 1;
-		else if (temp >110)
-			temp = 110;
-		op->level = temp;
-		if(temp < spells[op->stats.sp].level)
-			temp = spells[op->stats.sp].level;
-		op->value = (int) (8500.0f * spells[op->stats.sp].value_mul);
-
-	break;
-    case ROD:
-
-		if((op->stats.sp = get_random_spell(difficulty,SPELL_USE_ROD)) == SP_NO_SPELL)
+				temp = (((difficulty*100)-(difficulty*20))+(difficulty*(RANDOM()%35)))/100;
+				if(temp <1)
+					temp = 1;
+				else if (temp >110)
+					temp = 110;
+				if(temp < spells[op->stats.sp].level)
+					temp = spells[op->stats.sp].level;
+				op->level = temp;
+				op->value = (int) (120.0f * spells[op->stats.sp].value_mul);
 			break;
-		SET_FLAG(op,FLAG_IS_MAGICAL); /* marks at magical */
-	   
-		if (op->stats.maxhp)
-			op->stats.maxhp += RANDOM()%op->stats.maxhp;
-		op->stats.hp = op->stats.maxhp;
+
+			case HORN:
+				if((op->stats.sp = get_random_spell(difficulty,SPELL_USE_HORN)) == SP_NO_SPELL)
+					break;
+				SET_FLAG(op,FLAG_IS_MAGICAL); /* marks at magical */  
+				if (op->stats.maxhp)
+					op->stats.maxhp += RANDOM()%op->stats.maxhp;
+				op->stats.hp = op->stats.maxhp;
 		
-		temp = (((difficulty*100)-(difficulty*20))+(difficulty*(RANDOM()%35)))/100;
-		if(temp <1)
-			temp = 1;
-		else if (temp >110)
-			temp = 110;
-		op->level = temp;
-		if(temp < spells[op->stats.sp].level)
-			temp = spells[op->stats.sp].level;
-		op->value = (int) (8500.0f * spells[op->stats.sp].value_mul);
-
-      break;
-
-	case SCROLL:
-		if((op->stats.sp = get_random_spell(difficulty,SPELL_USE_SCROLL)) == SP_NO_SPELL)
+				temp = (((difficulty*100)-(difficulty*20))+(difficulty*(RANDOM()%35)))/100;
+				if(temp <1)
+					temp = 1;
+				else if (temp >110)
+					temp = 110;
+				op->level = temp;
+				if(temp < spells[op->stats.sp].level)
+					temp = spells[op->stats.sp].level;
+				op->value = (int) (8500.0f * spells[op->stats.sp].value_mul);
 			break;
-		SET_FLAG(op,FLAG_IS_MAGICAL); /* marks at magical */
-		op->stats.food=RANDOM()%spells[op->stats.sp].charges+1; /* charges */
-		
-		temp = (((difficulty*100)-(difficulty*20))+(difficulty*(RANDOM()%35)))/100;
-		if(temp <1)
-			temp = 1;
-		else if (temp >110)
-			temp = 110;
-		op->level = temp;
-		if(temp < spells[op->stats.sp].level)
-			temp = spells[op->stats.sp].level;
-		op->value = (int) (85.0f * spells[op->stats.sp].value_mul);
-	    op->nrof=RANDOM()%spells[op->stats.sp].scrolls+1;
-/*
-      do
-	  {
-		      op->stats.sp=RANDOM()%NROFREALSPELLS;
-			   while(!spells[op->stats.sp].is_active)
-			   {
-				   op->stats.sp++;
-				   if(op->stats.sp>=NROFREALSPELLS)
-						op->stats.sp=0;
-			   }
-	  }
-      while (!spells[op->stats.sp].scrolls||
-             spells[op->stats.sp].level<=RANDOM()%10);
-      op->level = spells[op->stats.sp].level/2+ RANDOM()%difficulty +
-	 RANDOM()%difficulty;
-      if (op->level<1) op->level=1;
-      op->value=(op->value*spells[op->stats.sp].level)/
-                 (spells[op->stats.sp].level+4);
-      op->stats.exp = op->value/5;
-*/
-      break;
 
-    case RUNE:
-      (*trap_adjust_func)(op,difficulty);
-      break;
-    } /* end switch */
+			case ROD:
+				if((op->stats.sp = get_random_spell(difficulty,SPELL_USE_ROD)) == SP_NO_SPELL)
+					break;
+				SET_FLAG(op,FLAG_IS_MAGICAL); /* marks at magical */
+				if (op->stats.maxhp)
+					op->stats.maxhp += RANDOM()%op->stats.maxhp;
+				op->stats.hp = op->stats.maxhp;
+				temp = (((difficulty*100)-(difficulty*20))+(difficulty*(RANDOM()%35)))/100;
+				if(temp <1)
+					temp = 1;
+				else if (temp >110)
+					temp = 110;
+				op->level = temp;
+				if(temp < spells[op->stats.sp].level)
+					temp = spells[op->stats.sp].level;
+				op->value = (int) (8500.0f * spells[op->stats.sp].value_mul);
+			break;
+
+			case RUNE:
+				(*trap_adjust_func)(op,difficulty);
+				if(op->level == 0)
+					LOG(llevDebug,"fix_generated_items(): Trap (%s) level == 0! (creator: %s lvl: %d)\n", 
+					query_name(op), query_name(creator), creator?creator->level:-1); 
+			break;
+		} /* end switch */
 	}
-  if (op->type == POTION && special_potion(op)) {
-    free_string(op->name);
-    op->name = add_string("potion");
-    op->level = spells[op->stats.sp].level/2+ RANDOM()%difficulty + RANDOM()%difficulty;
-    if ( ! (flags & GT_ONLY_GOOD) && RANDOM() % 2)
-      SET_FLAG(op, FLAG_CURSED);
-  }
 
-  if (flags & GT_NO_VALUE && op->type != MONEY)
-	  op->value = 0;
+	if (flags & GT_NO_VALUE && op->type != MONEY)
+		op->value = 0;
 
-  if (flags & GT_STARTEQUIP) {
-      if (op->nrof < 2 && op->type != CONTAINER
-          && op->type != MONEY && ! QUERY_FLAG (op, FLAG_IS_THROWN))
-          SET_FLAG (op, FLAG_STARTEQUIP);
-      else if (op->type != MONEY)
-          op->value = 0;
-  }
+	if (flags & GT_STARTEQUIP)
+	{
+		if (op->nrof < 2 && op->type != CONTAINER && op->type != MONEY && ! QUERY_FLAG (op, FLAG_IS_THROWN))
+			SET_FLAG (op, FLAG_STARTEQUIP);
+		else if (op->type != MONEY)
+			op->value = 0;
+	}
 
-  if ( ! (flags & GT_ENVIRONMENT))
-    fix_flesh_item (op, creator);
+	if ( ! (flags & GT_ENVIRONMENT))
+		fix_flesh_item (op, creator);
 
    return retval;
 }
@@ -1434,7 +1355,7 @@ artifactlist *find_artifactlist(int type) {
   return NULL;
 }
 
-/* find a artifact by intern artifactlist name */
+/* not used ATM - MT 2003 */
 artifact *find_artifact(char *name)
 {
 	artifactlist *al;
@@ -1595,24 +1516,6 @@ void give_artifact_abilities(object *op, artifact *art)
 	if (!load_object(art->parse_text, op, LO_MEMORYMODE, MAP_ARTIFACT))
 		LOG(llevError,"ERROR: give_artifact_abilities(): load_object() error (ob: %s art: %s).\n",op->name,art->name);
 
-/* that here comes from old add_abilities - perhaps i must sort this in here too 
-for(j=0;j<NR_LOCAL_EVENTS;j++)
-  {
-    if(change->event_hook[j])
-    {
-        if (op->event_hook[j])
-        {
-            free_string(op->event_hook[j]);
-            free_string(op->event_plugin[j]);
-            free_string(op->event_options[j]);
-        };
-        op->event_hook[j]    = add_refcount(change->event_hook[j]);
-        op->event_plugin[j]  = add_refcount(change->event_plugin[j]);
-        if (change->event_options[j])
-            op->event_options[j] = add_refcount(change->event_options[j]);
-    }
-  };
-*/
 #if 0 /* Bit verbose, but keep it here until next time I need it... */
   {
     char identified = QUERY_FLAG(op, FLAG_IDENTIFIED);
@@ -1729,8 +1632,7 @@ void fix_flesh_item(object *item, object *donor) {
     if(item->type==FLESH && donor) {
 	/* change the name */
 	sprintf(tmpbuf,"%s's %s",donor->name,item->name);
-	free_string(item->name);
-	item->name=add_string(tmpbuf);
+	FREE_AND_COPY_HASH(item->name, tmpbuf);
 	/* weight is FLESH weight/100 * donor */
 	if((item->weight = (signed long) (((double)item->weight/(double)100.0) * (double)donor->weight))==0)
 		item->weight=1;
@@ -1759,28 +1661,15 @@ void fix_flesh_item(object *item, object *donor) {
     }
 }
 
-/* special_potion() - so that old potion code is still done right. */
-
-int special_potion (object *op) {
-
-    int i;
-
-    if(op->attacktype) return 1;
-
-    if(op->stats.Str || op->stats.Dex || op->stats.Con || op->stats.Pow
- 	|| op->stats.Wis || op->stats.Int || op->stats.Cha ) return 1;
-
-    for (i=0; i<NROFATTACKS; i++)
-	if (op->resist[i]) return 1;
-
-    return 0;
-}
-
 void free_treasurestruct(treasure *t)
 {
 	if (t->next) free_treasurestruct(t->next);
 	if (t->next_yes) free_treasurestruct(t->next_yes);
 	if (t->next_no) free_treasurestruct(t->next_no);
+	FREE_AND_CLEAR_HASH2(t->name);
+	FREE_AND_CLEAR_HASH2(t->change_arch.name);
+	FREE_AND_CLEAR_HASH2(t->change_arch.slaying);
+	FREE_AND_CLEAR_HASH2(t->change_arch.title);
 	free(t);
 }
 
@@ -1792,15 +1681,15 @@ void free_charlinks(linked_char *lc)
 
 void free_artifact(artifact *at)
 {
-    if (at->name ) free_string(at->name);
+    FREE_AND_CLEAR_HASH2(at->name);
     if (at->next) free_artifact(at->next);
     if (at->allowed) free_charlinks(at->allowed);
 	if(at->parse_text) free(at->parse_text);
-	if (at->def_at.clone.name) free_string(at->def_at.clone.name);
-	if (at->def_at.clone.race) free_string(at->def_at.clone.race);
-	if (at->def_at.clone.slaying) free_string(at->def_at.clone.slaying);
-	if (at->def_at.clone.msg) free_string(at->def_at.clone.msg);
-	if (at->def_at.clone.title) free_string(at->def_at.clone.title);
+	FREE_AND_CLEAR_HASH2(at->def_at.clone.name);
+	FREE_AND_CLEAR_HASH2(at->def_at.clone.race);
+	FREE_AND_CLEAR_HASH2(at->def_at.clone.slaying);
+	FREE_AND_CLEAR_HASH2(at->def_at.clone.msg);
+	FREE_AND_CLEAR_HASH2(at->def_at.clone.title);
     free(at);
 }
 
@@ -1822,7 +1711,7 @@ treasurelist *tl, *next;
 
     for (tl=first_treasurelist; tl!=NULL; tl=next) {
 	next=tl->next;
-	if (tl->name) free_string(tl->name);
+	FREE_AND_CLEAR_HASH2(tl->name);
 	if (tl->items) free_treasurestruct(tl->items);
 	free(tl);
     }

@@ -231,9 +231,19 @@ void esrv_draw_look(object *pl)
 		SockList_AddInt(&sl, flags);
 		SockList_AddInt(&sl, QUERY_FLAG(tmp, FLAG_NO_PICK) ? -1 : WEIGHT(tmp));
 		if(tmp->head)
-			SockList_AddInt(&sl, tmp->head->face->number);
+		{
+			if(tmp->head->inv_face && QUERY_FLAG(tmp, FLAG_IDENTIFIED))
+			    SockList_AddInt(&sl, tmp->head->inv_face->number);
+			else
+			    SockList_AddInt(&sl, tmp->head->face->number);
+		}
 		else
-			SockList_AddInt(&sl, tmp->face->number);
+		{
+			if(tmp->inv_face && QUERY_FLAG(tmp, FLAG_IDENTIFIED))
+			    SockList_AddInt(&sl, tmp->inv_face->number);
+			else
+			    SockList_AddInt(&sl, tmp->face->number);
+		}
 		SockList_AddChar(&sl, tmp->facing);
 
 		if(tmp->head)
@@ -485,7 +495,7 @@ void esrv_send_inventory(object *pl, object *op)
 	    SockList_AddInt(&sl, flags);
 	    SockList_AddInt(&sl, QUERY_FLAG(tmp, FLAG_NO_PICK) ? -1 : WEIGHT(tmp));
 
-		if(tmp->inv_face)
+		if(tmp->inv_face && QUERY_FLAG(tmp, FLAG_IDENTIFIED))
 		    SockList_AddInt(&sl, tmp->inv_face->number);
 		else
 		    SockList_AddInt(&sl, tmp->face->number);
@@ -599,22 +609,10 @@ void esrv_update_item(int flags, object *pl, object *op)
 	SockList_AddInt(&sl, WEIGHT(op));
 
     if (flags & UPD_FACE) {
-		if(op->inv_face)
-		{
-			/*
-			if (!pl->contr->socket.faces_sent[op->inv_face->number])
-				esrv_send_face(&pl->contr->socket, op->inv_face->number,0);
-			*/
+		if(op->inv_face && QUERY_FLAG(op, FLAG_IDENTIFIED))
 			SockList_AddInt(&sl, op->inv_face->number);
-		}
 		else
-		{
-			/*
-			if (!pl->contr->socket.faces_sent[op->face->number])
-				esrv_send_face(&pl->contr->socket, op->face->number,0);
-			*/
 			SockList_AddInt(&sl, op->face->number);
-		}
     }
     if (flags & UPD_DIRECTION)
 		SockList_AddChar(&sl, (char)op->facing);
@@ -718,10 +716,22 @@ void esrv_send_item(object *pl, object*op)
     SockList_AddInt(&sl, op->count);
     SockList_AddInt(&sl, query_flags(op));
     SockList_AddInt(&sl, WEIGHT(op));
-	if(op->env && op->inv_face)
-	    SockList_AddInt(&sl, op->inv_face->number);
+
+	if(op->head)
+	{
+		if(op->head->inv_face && QUERY_FLAG(op, FLAG_IDENTIFIED))
+		    SockList_AddInt(&sl, op->head->inv_face->number);
+		else
+		    SockList_AddInt(&sl, op->head->face->number);
+	}
 	else
-		SockList_AddInt(&sl, op->face->number);
+	{
+		if(op->inv_face && QUERY_FLAG(op, FLAG_IDENTIFIED))
+		    SockList_AddInt(&sl, op->inv_face->number);
+		else
+		    SockList_AddInt(&sl, op->face->number);
+	}
+
     SockList_AddChar(&sl, op->facing);
     if(op->env) /* if not below */
     {

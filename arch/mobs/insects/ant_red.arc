@@ -14,7 +14,7 @@ unaggressive 1
 random_move 1
 type 80
 Wis 6
-randomitems ant
+randomitems mob_ant
 anim
 facings 25
 trans.101
@@ -75,8 +75,8 @@ no_pick 1
 alive 1
 can_see_in_dark 1
 exp 125
-ac 17
-wc 17
+ac 5
+wc 1
 dam 4
 hp -1
 maxhp 7

@@ -1,7 +1,7 @@
 Object human_male
 race human
 face human_m.isw.111
-randomitems human_male
+randomitems player_human_male
 layer 6
 is_male 1
 direction 4
@@ -10,7 +10,6 @@ alive 1
 is_neutral 1
 weapon_speed 0.0125
 speed 0.85
-attack_impact 100
 terrain_flag 1
 msg
 Humans are the generalists of the races.
@@ -126,8 +125,8 @@ is_animated 1
 anim_speed 3
 type 1
 level 1
-ac 15
-wc 22
+ac 0
+wc 0
 hp -1
 maxhp 8
 sp -1

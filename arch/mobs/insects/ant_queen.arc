@@ -12,7 +12,7 @@ weapon_speed 0.044
 attack_cleave 100
 type 80
 Wis 6
-randomitems ant_queen
+randomitems mob_ant_queen
 anim
 facings 25
 trans.101
@@ -73,8 +73,8 @@ no_pick 1
 alive 1
 can_see_in_dark 1
 exp 125
-ac 14
-wc 14
+ac 6
+wc 4
 dam 4
 hp -1
 maxhp 7

@@ -145,10 +145,10 @@ void init_formulae() {
  
     if (!strncmp(cp, "Object", 6)) {
       formula=get_empty_formula();
-      formula->title = add_string(strchr(cp,' ') + 1);
+      FREE_AND_COPY_HASH(formula->title, strchr(cp,' ') + 1);
     }
     else if (!strncmp(cp, "keycode", 7)) {
-      formula->keycode = add_string(strchr(cp,' ') + 1);
+      FREE_AND_COPY_HASH(formula->keycode, strchr(cp,' ') + 1);
     }
     else if (sscanf(cp, "trans %d", &value)) {
         formula->transmute = (uint16) value;
@@ -166,7 +166,8 @@ void init_formulae() {
         if ((next=strchr(cp,','))!=NULL)
           {*(next++) = '\0'; numb_ingred++;}
         tmp = (linked_char*) malloc(sizeof(linked_char));
-        tmp->name = add_string(cp);
+		tmp->name = NULL;
+		FREE_AND_COPY_HASH(tmp->name, cp);
         tmp->next = formula->ingred;
         formula->ingred = tmp;
 	/* each ingredient's ASCII value is coadded. Later on this 
@@ -188,7 +189,7 @@ void init_formulae() {
       formula->next = fl->items; 
       fl->items = formula;
     } else if (!strncmp(cp, "arch",4)) { 
-        formula->arch_name = add_string(strchr(cp,' ')+1);
+        FREE_AND_COPY_HASH(formula->arch_name, strchr(cp,' ')+1);
         (void) check_recipe(formula);
     } else
         LOG(llevBug,"BUG: Unknown input in file %s: %s\n", filename, buf);
@@ -612,12 +613,13 @@ void free_all_recipes()
 	for (formula=fl->items; formula!=NULL; formula=next) {
 	    next=formula->next;
       
-	    if (formula->arch_name) free_string(formula->arch_name);
-	    if (formula->title) free_string(formula->title);
-	    for (lchar=formula->ingred; lchar; lchar=charnext) {
-		charnext=lchar->next;
-		free_string(lchar->name);
-		free(lchar);
+	    FREE_AND_CLEAR_HASH2(formula->arch_name);
+	    FREE_AND_CLEAR_HASH2(formula->title);
+	    for (lchar=formula->ingred; lchar; lchar=charnext) 
+		{
+			charnext=lchar->next;
+			FREE_AND_CLEAR_HASH2(lchar->name);
+			free(lchar);
 	    }
 	    free(formula);
 	}

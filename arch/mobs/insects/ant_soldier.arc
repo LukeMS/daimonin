@@ -11,7 +11,7 @@ is_male 1
 is_neutral 1
 direction 5
 terrain_flag 1
-randomitems ant
+randomitems mob_ant
 Wis 6
 anim
 facings 25
@@ -73,8 +73,8 @@ no_pick 1
 alive 1
 can_see_in_dark 1
 exp 160
-ac 15
-wc 15
+ac 5
+wc 2
 dam 5
 hp -1
 maxhp 7

@@ -1301,6 +1301,11 @@ int main(int argc, char *argv[])
                     timeout.tv_sec = MAX_TIME / 100000;
                     timeout.tv_usec = MAX_TIME % 100000;
                 }
+				else
+				{
+                    timeout.tv_sec = 0;
+                    timeout.tv_usec =0;
+				}
 
                 /* main poll point for the socket */
                 if((pollret=select(maxfd, &tmp_read, &tmp_write,&tmp_exceptions, &timeout))==-1)

@@ -698,7 +698,7 @@ object *fix_stopped_arrow (object *op)
 	else
 		op->speed = 0;
     update_ob_speed(op);
-    op->stats.wc = (sint8) op->last_heal;
+    op->stats.wc = op->last_heal;
     op->stats.dam= op->stats.hp;
     /* Reset these to zero, so that CAN_MERGE will work properly */
     op->last_heal = 0;
@@ -721,10 +721,11 @@ void stop_arrow (object *op)
 {
 #ifdef PLUGINS
     /* GROS: Handle for plugin stop event */
-    if(op->event_hook[EVENT_STOP] != NULL)
+    if(op->event_flags&EVENT_FLAG_STOP)
     {
         CFParm CFP;
         int k, l, m;
+		object *event_obj = get_event_object(op, EVENT_STOP);
         k = EVENT_STOP;
         l = SCRIPT_FIX_NOTHING;
         m = 0;
@@ -737,10 +738,10 @@ void stop_arrow (object *op)
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
-        CFP.Value[9] = op->event_hook[k];
-        CFP.Value[10]= op->event_options[k];
-        if (findPlugin(op->event_plugin[k])>=0)
-            ((PlugList[findPlugin(op->event_plugin[k])].eventfunc) (&CFP));
+        CFP.Value[9] = event_obj->race;
+        CFP.Value[10]= event_obj->slaying;
+        if (findPlugin(event_obj->name)>=0)
+            ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
     }
 #endif
 	play_sound_map(op->map, op->x, op->y, SOUND_DROP_THROW, SOUND_NORMAL);
@@ -1020,12 +1021,13 @@ void move_teleporter(object *op) {
 		{ 
 #ifdef PLUGINS
 			/* GROS: Handle for plugin TRIGGER event */
-			if(op->event_hook[EVENT_TRIGGER] != NULL)
+			if(op->event_flags&EVENT_FLAG_TRIGGER)
 			{
 				CFParm CFP;
 				CFParm* CFR;
 				int k, l, m;
 				int rtn_script = 0;
+				object *event_obj = get_event_object(op, EVENT_TRIGGER);
 				m = 0;
 				k = EVENT_TRIGGER;
 				l = SCRIPT_FIX_NOTHING;
@@ -1038,11 +1040,11 @@ void move_teleporter(object *op) {
 				CFP.Value[6] = &m;
 				CFP.Value[7] = &m;
 				CFP.Value[8] = &l;
-				CFP.Value[9] = op->event_hook[k];
-				CFP.Value[10]= op->event_options[k];
-				if (findPlugin(op->event_plugin[k])>=0)
+				CFP.Value[9] = event_obj->race;
+				CFP.Value[10]= event_obj->slaying;
+				if (findPlugin(event_obj->name)>=0)
 				{
-					CFR = (PlugList[findPlugin(op->event_plugin[k])].eventfunc) (&CFP);
+					CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
 					rtn_script = *(int *)(CFR->Value[0]);
 				}
 				if (rtn_script!=0) return;
@@ -1063,12 +1065,13 @@ void move_teleporter(object *op) {
 			}
 #ifdef PLUGINS
 			/* GROS: Handle for plugin TRIGGER event */
-			if(op->event_hook[EVENT_TRIGGER] != NULL)
+			if(op->event_flags&EVENT_FLAG_TRIGGER)
 			{
 				CFParm CFP;
 				CFParm* CFR;
 				int k, l,m;
 				int rtn_script = 0;
+				object *event_obj = get_event_object(op, EVENT_TRIGGER);
 				m = 0;
 				k = EVENT_TRIGGER;
 				l = SCRIPT_FIX_NOTHING;
@@ -1081,11 +1084,11 @@ void move_teleporter(object *op) {
 				CFP.Value[6] = &m;
 				CFP.Value[7] = &m;
 				CFP.Value[8] = &l;
-				CFP.Value[9] = op->event_hook[k];
-				CFP.Value[10]= op->event_options[k];
-				if (findPlugin(op->event_plugin[k])>=0)
+				CFP.Value[9] = event_obj->race;
+				CFP.Value[10]= event_obj->slaying;
+				if (findPlugin(event_obj->name)>=0)
 				{
-					CFR = (PlugList[findPlugin(op->event_plugin[k])].eventfunc) (&CFP);
+					CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
 					rtn_script = *(int *)(CFR->Value[0]);
 				}
 				if (rtn_script!=0) return;
@@ -1098,12 +1101,13 @@ void move_teleporter(object *op) {
 			/* Random teleporter */
 #ifdef PLUGINS
 			/* GROS: Handle for plugin TRIGGER event */
-			if(op->event_hook[EVENT_TRIGGER] != NULL)
+			if(op->event_flags&EVENT_FLAG_TRIGGER)
 			{
 				CFParm CFP;
 				CFParm* CFR;
 				int k, l, m;
 				int rtn_script = 0;
+				object *event_obj = get_event_object(op, EVENT_TRIGGER);
 				m = 0;
 				k = EVENT_TRIGGER;
 				l = SCRIPT_FIX_NOTHING;
@@ -1116,11 +1120,11 @@ void move_teleporter(object *op) {
 				CFP.Value[6] = &m;
 				CFP.Value[7] = &m;
 				CFP.Value[8] = &l;
-				CFP.Value[9] = op->event_hook[k];
-				CFP.Value[10]= op->event_options[k];
-				if (findPlugin(op->event_plugin[k])>=0)
+				CFP.Value[9] = event_obj->race;
+				CFP.Value[10]= event_obj->slaying;
+				if (findPlugin(event_obj->name)>=0)
 				{
-					CFR = (PlugList[findPlugin(op->event_plugin[k])].eventfunc) (&CFP);
+					CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
 					rtn_script = *(int *)(CFR->Value[0]);
 				}
 				if (rtn_script!=0) return;
@@ -1147,12 +1151,13 @@ void move_player_changer(object *op) {
       if(op->above->type==PLAYER) {
 #ifdef PLUGINS
       /* GROS: Handle for plugin TRIGGER event */
-      if(op->event_hook[EVENT_TRIGGER] != NULL)
+      if(op->event_flags&EVENT_FLAG_TRIGGER)
       {
         CFParm CFP;
         CFParm* CFR;
         int k, l, m;
         int rtn_script = 0;
+		object *event_obj = get_event_object(op, EVENT_TRIGGER);
         m = 0;
         k = EVENT_TRIGGER;
         l = SCRIPT_FIX_NOTHING;
@@ -1165,11 +1170,11 @@ void move_player_changer(object *op) {
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
-        CFP.Value[9] = op->event_hook[k];
-        CFP.Value[10]= op->event_options[k];
-        if (findPlugin(op->event_plugin[k])>=0)
+        CFP.Value[9] = event_obj->race;
+        CFP.Value[10]= event_obj->slaying;
+        if (findPlugin(event_obj->name)>=0)
         {
-          CFR = (PlugList[findPlugin(op->event_plugin[k])].eventfunc) (&CFP);
+          CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
           rtn_script = *(int *)(CFR->Value[0]);
         }
         if (rtn_script!=0) return;
@@ -1307,10 +1312,8 @@ void move_creator(object *op) {
 	{ op->stats.hp=-1;return;}
   tmp=arch_to_object(op->other_arch);
   if(op->slaying) {
-	 if (tmp->name) free_string (tmp->name);
-	 if (tmp->title) free_string (tmp->title);
-	 tmp->name = add_string(op->slaying);
-	 tmp->title = add_string(op->slaying);
+	 FREE_AND_COPY_HASH(tmp->name, op->slaying);
+	 FREE_AND_COPY_HASH(tmp->title, op->slaying);
   }
   tmp->x=op->x;tmp->y=op->y;tmp->map=op->map;tmp->level=op->level;
   insert_ob_in_map(tmp,op->map,op,0);
@@ -1358,7 +1361,7 @@ void move_marker(object *op) {
 		  }
 		  update_ob_speed (force);
 		  /* put in the lock code */
-		  force->slaying = add_string(op->slaying);
+		  FREE_AND_COPY_HASH(force->slaying,op->slaying);
 		  insert_ob_in_ob(force,tmp);
 		  if(op->msg)
 		    new_draw_info(NDI_UNIQUE|NDI_NAVY,0,tmp,op->msg);
@@ -1404,12 +1407,17 @@ int process_object(object *op) {
     }
     return 1;
   }
+
+/* i don't like this script object here .. 
+ * this is *the* core loop.
+ */
 #ifdef PLUGINS
   /* GROS: Handle for plugin time event */
-  if(op->event_hook[EVENT_TIME] != NULL)
+  if(op->event_flags&EVENT_FLAG_TIME)
   {
     CFParm CFP;
     int k, l, m;
+    object *event_obj = get_event_object(op, EVENT_TIME);
     k = EVENT_TIME;
     l = SCRIPT_FIX_NOTHING;
     m = 0;
@@ -1422,10 +1430,10 @@ int process_object(object *op) {
     CFP.Value[6] = &m;
     CFP.Value[7] = &m;
     CFP.Value[8] = &l;
-    CFP.Value[9] = op->event_hook[k];
-    CFP.Value[10]= op->event_options[k];
-    if (findPlugin(op->event_plugin[k])>=0)
-        ((PlugList[findPlugin(op->event_plugin[k])].eventfunc) (&CFP));
+    CFP.Value[9] = event_obj->race;
+    CFP.Value[10]= event_obj->slaying;
+    if (findPlugin(event_obj->name)>=0)
+        ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
   }
 #endif
   switch(op->type) {
@@ -1435,7 +1443,8 @@ int process_object(object *op) {
     return 1;
   case FORCE:
   case POTION_EFFECT:
-    remove_force(op);
+	  if(!QUERY_FLAG(op, FLAG_IS_USED_UP))
+		remove_force(op);
     return 1;
   case SPAWN_POINT:
     spawn_point(op);

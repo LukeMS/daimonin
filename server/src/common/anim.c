@@ -31,7 +31,7 @@ void free_all_anim() {
     int i;
 
     for (i=0; i<=num_animations; i++) {
-	free_string(animations[i].name);
+	FREE_AND_CLEAR_HASH(animations[i].name);
 	free(animations[i].faces);
     }
     free(animations);
@@ -55,7 +55,8 @@ void init_anim() {
      * Put # at start so it will be first in alphabetical
      * order.
      */
-    animations[0].name=add_string("###none");
+	animations[0].name=NULL;
+	FREE_AND_COPY_HASH(animations[0].name,"###none" );
     animations[0].num_animations=1;
     animations[0].faces = malloc(sizeof(Fontindex));
     animations[0].faces[0]=0;
@@ -79,7 +80,8 @@ void init_anim() {
 		animations=realloc(animations, sizeof(Animations)*(animations_allocated+10));
 		animations_allocated+=10;
 		}
-	    animations[num_animations].name = add_string(buf+5);
+		animations[num_animations].name=NULL;
+		FREE_AND_COPY_HASH(animations[num_animations].name,buf+5);
 	    animations[num_animations].num = num_animations;	/* for bsearch */
 	    animations[num_animations].facings = 1;
 	}

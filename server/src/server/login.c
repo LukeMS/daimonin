@@ -365,12 +365,29 @@ int save_player(object *op, int flag) {
   fprintf(fp,"Wis %d\n",pl->orig_stats.Wis);
   fprintf(fp,"Cha %d\n",pl->orig_stats.Cha);
 
+  /* old lev_array code 
   fprintf(fp,"lev_array %d\n",op->level>10?10:op->level);
   for(i=1;i<=pl->last_level&&i<=10;i++) {
     fprintf(fp,"%d\n",pl->levhp[i]);
     fprintf(fp,"%d\n",pl->levsp[i]);
 	 fprintf(fp,"%d\n",pl->levgrace[i]);
   }
+  */
+  /* save hp table */
+  fprintf(fp,"lev_hp %d\n",op->level);
+  for(i=1;i<=op->level;i++)
+    fprintf(fp,"%d\n",pl->levhp[i]);
+
+  /* save sp table */
+  fprintf(fp,"lev_sp %d\n",op->contr->sp_exp_ptr->level);
+  for(i=1;i<=op->contr->sp_exp_ptr->level;i++)
+    fprintf(fp,"%d\n",pl->levsp[i]);
+
+  fprintf(fp,"lev_grace %d\n",op->contr->grace_exp_ptr->level);
+  for(i=1;i<=op->contr->grace_exp_ptr->level;i++)
+    fprintf(fp,"%d\n",pl->levgrace[i]);
+
+
   for(i=0;i<pl->nrofknownspells;i++)
     fprintf(fp,"known_spell %s\n",spells[pl->known_spells[i]].name);
   fprintf(fp,"endplst\n");
@@ -499,11 +516,15 @@ static int spell_sort(const char *a1,const char *a2)
 #endif
 
 
+/* this whole player loading routine is REALLY not optimized - 
+ * just look for all these scanf()
+ */
 void check_login(object *op) {
     FILE *fp;
     char filename[MAX_BUF];
     char buf[MAX_BUF],bufall[MAX_BUF];
     int i,value,comp;
+	int lev_array_flag;
     long checksum = 0;
     player *pl = op->contr;
     int correct = 0;
@@ -522,12 +543,13 @@ void check_login(object *op) {
 	if(pl->state == ST_PLAYING)
 	{
 		LOG(llevSystem,"HACK-BUG: >%s< from ip %s - double login!\n", op->name, pl->socket.host);
-	    	new_draw_info_format(NDI_UNIQUE, 0,op,"You manipulated the login procedure.\nYour IP is ... >%s< - hack flag set!\nserver break",pl->socket.host);
+	    new_draw_info_format(NDI_UNIQUE, 0,op,"You manipulated the login procedure.\nYour IP is ... >%s< - hack flag set!\nserver break",pl->socket.host);
 		pl->socket.status = Ns_Dead;
 		return;
 	}
 
-	LOG(llevInfo,"LOGIN: >%s< from ip %s\n", op->name, pl->socket.host);
+
+	LOG(llevInfo,"LOGIN: >%s< from ip %s\n", op->name, op->contr->socket.host);
 
     /* First, lets check for newest form of save */
     sprintf(filename,"%s/%s/%s/%s.pl",settings.localdir,settings.playerdir,op->name,op->name);
@@ -580,9 +602,7 @@ void check_login(object *op) {
 	new_draw_info(NDI_UNIQUE, 0,op,"Wrong Password!");
 	new_draw_info(NDI_UNIQUE, 0,op," ");
 	unlock_player(pl->ob->name);
-	if(op->name!=NULL)
-	    free_string(op->name);
-	op->name=add_string("noname");
+	FREE_AND_COPY_HASH(op->name, "noname");
 	pl->last_value= -1;
 	get_name(op);
 	return;	    /* Once again, rest of code just loads the char */
@@ -609,6 +629,7 @@ void check_login(object *op) {
     pl->bed_x=0, pl->bed_y=0;
     
     /* Loop through the file, loading the rest of the values */
+	lev_array_flag = FALSE;
     while (fgets(bufall,MAX_BUF,fp)!=NULL) {
 	sscanf(bufall,"%s %d\n",buf,&value);
         if (!strcmp(buf,"endplst"))
@@ -673,7 +694,49 @@ void check_login(object *op) {
 		pl->usekeys=containers;
 	    else LOG(llevDebug,"load_player: got unknown usekeys type: %s\n", bufall+8);
 	}
-        else if (!strcmp(buf,"lev_array")){
+    else if (!strcmp(buf,"lev_hp"))
+	{
+		int j;
+		for(i=1;i<=value;i++) 
+		{
+			fscanf(fp,"%d\n",&j);
+			pl->levhp[i]=j;
+		}
+	}
+    else if (!strcmp(buf,"lev_sp"))
+	{
+		int j;
+		for(i=1;i<=value;i++) 
+		{
+			fscanf(fp,"%d\n",&j);
+			pl->levsp[i]=j;
+		}
+	}
+    else if (!strcmp(buf,"lev_grace"))
+	{
+		int j;
+		for(i=1;i<=value;i++) 
+		{
+			fscanf(fp,"%d\n",&j);
+			pl->levgrace[i]=j;
+		}
+	}
+
+		/* if we meet this identifier, then we have a BETA 1 data file.
+		 * Now lets change it to BETA 2 version (note that old CVS version
+		 * can say 0.95 version instead of 0.96)
+		 */
+        else if (!strcmp(buf,"lev_array"))
+		{
+			int j;
+		    for(i=1;i<=value;i++) 
+			{
+				fscanf(fp,"%d\n",&j); /* read in and skip */
+				fscanf(fp,"%d\n",&j);
+				fscanf(fp,"%d\n",&j);
+			}
+			lev_array_flag = TRUE;
+		/*
 	    for(i=1;i<=value;i++) {
 		int j;
 		fscanf(fp,"%d\n",&j);
@@ -682,7 +745,8 @@ void check_login(object *op) {
 		pl->levsp[i]=j;
 		fscanf(fp,"%d\n",&j);
 		pl->levgrace[i]=j;
-	    }
+	    }*/
+
 	/* spell_array code removed - don't know when that was last used.
 	 * Even the load code below will someday be replaced by spells being
 	 * objects.
@@ -704,7 +768,7 @@ void check_login(object *op) {
     } /* End of loop loading the character file */
     /*leave_map(op);*/
 	LOG(llevDebug,"load obj for player: %s\n", op->name);
-    reset_object(op);
+    clear_object(op);
     op->contr = pl;
     pl->ob = op;
     /* this loads the standard objects values. */
@@ -755,8 +819,45 @@ void check_login(object *op) {
     (void) init_player_exp(op);
     (void) link_player_skills(op);
 
-    if ( ! legal_range (op, op->contr->shoottype))
-        op->contr->shoottype = range_none;
+
+	/* old 0.95b char - create a modern 0.96 one! */
+	/* our rule is: for the first 3 levels we use maxXXX,
+	 * for the next levels we simply use full random throw.
+	 */
+	if(lev_array_flag == TRUE)
+	{
+		int i;
+
+		/* first we generate the hp table */
+		for(i=1;i<=op->level;i++)
+		{
+			if(i<=2)
+				pl->levhp[i]=(char) op->arch->clone.stats.maxhp;
+			else
+				pl->levhp[i]=(char)((RANDOM()%op->arch->clone.stats.maxhp)+1);
+		}
+
+		/* now the sp chain */
+		for(i=1;i<=pl->sp_exp_ptr->level;i++)
+		{
+			if(i<=2)
+				pl->levsp[i]=(char)op->arch->clone.stats.maxsp;
+			else
+				pl->levsp[i]=(char)((RANDOM()%op->arch->clone.stats.maxsp)+1);
+		}
+
+		/* and the grace chain */
+		for(i=1;i<=pl->grace_exp_ptr->level;i++)
+		{
+			if(i<=2)
+				pl->levgrace[i]=(char)op->arch->clone.stats.maxgrace;
+			else
+				pl->levgrace[i]=(char)((RANDOM()%op->arch->clone.stats.maxgrace)+1);
+		}
+	}
+
+	if ( ! legal_range (op, op->contr->shoottype))
+    op->contr->shoottype = range_none;
     
     fix_player (op);
     

@@ -665,11 +665,11 @@ char *describe_item(object *op)
       strcat(retbuf,buf);
     }
     if(op->contr->gen_grace) {
-      sprintf(buf,"(grace%+d)",op->contr->gen_grace);
+      sprintf(buf,"(grace reg.%+d)",op->contr->gen_grace);
       strcat(retbuf,buf);
     }
     if(op->contr->gen_sp) {
-      sprintf(buf,"(magic%+d)",op->contr->gen_sp);
+      sprintf(buf,"(mana reg.%+d)",op->contr->gen_sp);
       strcat(retbuf,buf);
     }
     if(op->contr->gen_hp) {
@@ -805,7 +805,7 @@ char *describe_item(object *op)
 			         */
 					if(ARMOUR_SPELLS(op))
 					{
-						sprintf(buf,"(spell reg %d)", -1*ARMOUR_SPELLS(op));
+						sprintf(buf,"(mana reg %d)", -1*ARMOUR_SPELLS(op));
 						strcat(retbuf, buf);
 					}
 				}
@@ -916,12 +916,12 @@ char *describe_item(object *op)
 	{
 	    if(op->stats.sp)
 		{
-			sprintf(buf,"(magic%+d)",op->stats.sp);
+			sprintf(buf,"(mana reg.%+d)",op->stats.sp);
 			strcat(retbuf,buf);
 	    }
 	    if(op->stats.grace)
 		{
-			sprintf(buf,"(grace%+d)",op->stats.grace);
+			sprintf(buf,"(grace reg.%+d)",op->stats.grace);
 			strcat(retbuf,buf);
 	    }
 	    if(op->stats.hp)
@@ -1074,20 +1074,16 @@ void identify(object *op) {
 
   if (op->type == POTION && op->arch != (archetype *) NULL) {
     /*op->face = op->arch->clone.face; */
-      free_string(op->name);
-      op->name = add_refcount(op->arch->clone.name);
+      FREE_AND_ADD_REF_HASH(op->name, op->arch->clone.name);
   } else if( op->type == SPELLBOOK && op->slaying != NULL){
        if((op->stats.sp = look_up_spell_name( op->slaying )) <0 ){
 	  char buf[256];
           op->stats.sp = -1;  
           sprintf(buf, "Spell formula for %s", op->slaying);
-	  if(op->name != NULL) 
-		free_string(op->name);
-	  op->name = add_string(buf);
+	  FREE_AND_COPY_HASH(op->name, buf);
        } else {
          /* clear op->slaying since we no longer need it */
-         free_string(op->slaying);
-         op->slaying=NULL;
+         FREE_AND_CLEAR_HASH(op->slaying);
        }
   }
 

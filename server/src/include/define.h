@@ -273,6 +273,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define POTION_EFFECT           115    /* a force, holding the effect of a potion */
 #define TYPE_JEWEL				116	   /* to make it different from GEM - thats needed to have a better */
 #define TYPE_NUGGET				117    /* use from the artifacts file */
+#define TYPE_EVENT_OBJECT		118	   /* event/script object */
 #define CLOSE_CON	            121    /* Eneq(@csd.uu.se): Id for close_container archetype. */
 #define CONTAINER	            122
 #define ARMOUR_IMPROVER         123
@@ -709,8 +710,8 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_PROOF_ELEMENTAL	105 /* that a worn or wielded item can be damaged from this */
 #define FLAG_VUL_MAGIC			106 /* effect. If the effect for a item is set, then he can */
 #define FLAG_PROOF_MAGIC		107 /* be "proofed" against it. It the proof flag is set, the */
-#define FLAG_VUL_ACID			108 /* item don't get damage from this effect anymore */
-#define FLAG_PROOF_ACID			109
+#define FLAG_VUL_PHYSICAL		108 /* item don't get damage from this effect anymore */
+#define FLAG_PROOF_PHYSICAL		109
 #define FLAG_SYS_OBJECT			110 /* thats old invisible - now sys_object (which are invisible) */
 #define FLAG_USE_FIX_POS		111 /* when putting a object on map - do it exactly on position */
 
@@ -740,7 +741,16 @@ error - Your ANSI C compiler should be defining __STDC__;
 									 * from anything ecept a player
 									 */
 #define FLAG_NO_CLERIC			123
-#define NUM_FLAGS		123 /* Should always be equal to the last defined flag */
+#define FLAG_ONE_DROP			124 /* if this flag is set, the item marked with it will flaged
+									 * start equipment when a player gets it (item is inserted
+									 * in player inventory and/or touched by a player)
+									 */
+#define FLAG_PERM_CURSED		125  /* object will set to cursed when monster or player applies it.
+									  * remove curse will remove cursed 1 but not this flag.
+									  */
+#define FLAG_PERM_DAMNED		126	  /* same as perm_cursed but for damned */
+
+#define NUM_FLAGS		126 /* Should always be equal to the last defined flag */
 #define NUM_FLAGS_32	4	/* the number of uint32 we need to store all flags */
 
 /* macros for invisible test. the first tests only system objects */

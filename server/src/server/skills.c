@@ -1120,10 +1120,11 @@ int write_note(object *pl, object *item, char *msg) {
   } 
 #ifdef PLUGINS
   /* GROS: Handle for plugin book writing (trigger) event */
-  if(item->event_hook[EVENT_TRIGGER] != NULL)
+  if(item->event_flags&EVENT_FLAG_TRIGGER)
   {
     CFParm CFP;
     int k, l, m;
+ 	object *event_obj = get_event_object(item, EVENT_TRIGGER);
     k = EVENT_TRIGGER;
     l = SCRIPT_FIX_NOTHING;
     m = 0;
@@ -1136,11 +1137,11 @@ int write_note(object *pl, object *item, char *msg) {
     CFP.Value[6] = &m;
     CFP.Value[7] = &m;
     CFP.Value[8] = &l;
-    CFP.Value[9] = item->event_hook[k];
-    CFP.Value[10]= item->event_options[k];
-    if (findPlugin(item->event_plugin[k])>=0)
+    CFP.Value[9] = event_obj->race;
+    CFP.Value[10]= event_obj->slaying;
+    if (findPlugin(event_obj->name)>=0)
     {
-        ((PlugList[findPlugin(item->event_plugin[k])].eventfunc) (&CFP));
+        ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
         return strlen(msg);
     }
    }
@@ -1148,7 +1149,7 @@ int write_note(object *pl, object *item, char *msg) {
   if(!book_overflow(item->msg,msg,BOOK_BUF)) { /* add msg string to book */
     if(item->msg) {
       strcpy(buf,item->msg);
-      free_string(item->msg);
+      FREE_AND_CLEAR_HASH2(item->msg);
     }
     strcat(buf,msg);
     strcat(buf,"\n"); /* new msg needs a LF */
@@ -1158,11 +1159,11 @@ int write_note(object *pl, object *item, char *msg) {
       decrease_ob(item);
       esrv_send_item(pl, item);
       newBook->nrof = 1;
-      newBook->msg = add_string(buf);
+      FREE_AND_COPY_HASH(newBook->msg, buf);
       newBook = insert_ob_in_ob(newBook, pl);
       esrv_send_item(pl, newBook);
     } else {
-      item->msg=add_string(buf); 
+      FREE_AND_COPY_HASH(item->msg, buf); 
       esrv_send_item(pl, item);
     }
     new_draw_info_format(NDI_UNIQUE,0,pl, "You write in the %s.",query_short_name(item));
@@ -1618,7 +1619,7 @@ void do_throw(object *op, object *toss_item, int dir) {
 
 	/* bounces off 'wall', and drops to feet */
 	if(!QUERY_FLAG(throw_ob,FLAG_REMOVED))
-             remove_ob(throw_ob);
+		 remove_ob(throw_ob);
 	 throw_ob->x = op->x; throw_ob->y = op->y;
 	 insert_ob_in_map(throw_ob,op->map,op,0);
 	if(op->type==PLAYER) {
@@ -1686,9 +1687,9 @@ void do_throw(object *op, object *toss_item, int dir) {
 
 	/* now we get the wc from the used skill! this will allow customized skill */
 	if((tmp_op=SK_skill(op)))
-		throw_ob->stats.wc = (sint8) tmp_op->last_heal;
+		throw_ob->stats.wc = tmp_op->last_heal;
 	else
-		throw_ob->stats.wc = 23; /* <- mobs */
+		throw_ob->stats.wc = 10; /* <- mobs */
 
     /* the properties of objects which are meant to be thrown (ie dart,
      * throwing knife, etc) will differ from ordinary items. Lets tailor
@@ -1704,7 +1705,7 @@ void do_throw(object *op, object *toss_item, int dir) {
     if(QUERY_FLAG(throw_ob->inv,FLAG_IS_THROWN)) {
 		throw_ob->last_sp += eff_str/3; /* fly a little further */
 		throw_ob->stats.dam = throw_ob->inv->stats.dam + throw_ob->magic;
-		throw_ob->stats.wc -= throw_ob->magic + throw_ob->inv->stats.wc;
+		throw_ob->stats.wc += throw_ob->magic + throw_ob->inv->stats.wc;
 
 		/* adjust for players */
 		if(op->type == PLAYER)
@@ -1712,17 +1713,20 @@ void do_throw(object *op, object *toss_item, int dir) {
 			/* i don't want overpower the throwing - so dam_bonus/2 */
 			throw_ob->stats.dam=FABS((int)((float)(throw_ob->stats.dam+dam_bonus[op->stats.Str]/2)*lev_damage[SK_level(op)]));
 			/* hm, i want not give to much boni for str */
-			throw_ob->stats.wc -=thaco_bonus[op->stats.Str]/2+dex_bonus[op->stats.Dex]+SK_level(op);
+			throw_ob->stats.wc +=thaco_bonus[op->stats.Dex]+SK_level(op);
 		}
 		else /* we use level to add boni here-  as higher in level as more dangerous */
 		{
 			throw_ob->stats.dam=FABS((int)((float)(throw_ob->stats.dam)*lev_damage[op->level]));
-			throw_ob->stats.wc -=-5-op->level;
+			throw_ob->stats.wc +=10+op->level;
 		}
 
 		/* only throw objects get directional faces */
 		if(GET_ANIM_ID(throw_ob) && NUM_ANIMATIONS(throw_ob))
 			SET_ANIMATION(throw_ob, (NUM_ANIMATIONS(throw_ob)/NUM_FACINGS(throw_ob))*dir);
+
+		/* adjust damage with item condition */
+		throw_ob->stats.dam = (sint16)(((float)throw_ob->stats.dam/100.0f)*(float)throw_ob->item_condition);
     } else {
 	/* some materials will adjust properties.. */
 	if(throw_ob->material&M_LEATHER) {
@@ -1783,10 +1787,11 @@ void do_throw(object *op, object *toss_item, int dir) {
 
 #ifdef PLUGINS
 /* GROS - Now we can call the associated script_throw event (if any) */
-    if(throw_ob->event_hook[EVENT_THROW] != NULL)
+    if(throw_ob->event_flags&EVENT_FLAG_THROW)
     {
         CFParm CFP;
         int k, l, m;
+		object *event_obj = get_event_object(throw_ob, EVENT_THROW);
         k = EVENT_THROW;
         l = SCRIPT_FIX_ACTIVATOR;
         m = 0;
@@ -1799,10 +1804,10 @@ void do_throw(object *op, object *toss_item, int dir) {
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
-        CFP.Value[9] = throw_ob->event_hook[k];
-        CFP.Value[10]= throw_ob->event_options[k];
-        if (findPlugin(throw_ob->event_plugin[k])>=0)
-            ((PlugList[findPlugin(throw_ob->event_plugin[k])].eventfunc) (&CFP));
+        CFP.Value[9] = event_obj->race;
+        CFP.Value[10]= event_obj->slaying;
+        if (findPlugin(event_obj->name)>=0)
+            ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
     }
 #endif
 #ifdef DEBUG_THROW

@@ -45,7 +45,6 @@ extern char *attacks[NROFATTACKS];
 extern char *spellpathnames[NRSPELLPATHS];
 
 extern float cha_bonus[MAX_STAT + 1];
-extern int dex_bonus[MAX_STAT + 1];
 extern int thaco_bonus[MAX_STAT + 1];
 extern int turn_bonus[MAX_STAT + 1];
 extern int dam_bonus[MAX_STAT + 1];
@@ -58,7 +57,7 @@ extern char *statname[NUM_STATS];
 extern char *short_stat_name[NUM_STATS];
 extern char *lose_msg[NUM_STATS];
 extern float speed_bonus[MAX_STAT + 1];
-extern sint32 weight_limit[MAX_STAT + 1];
+extern uint32 weight_limit[MAX_STAT + 1];
 
 #ifdef WIN32
 #pragma pack(push,1)
@@ -74,9 +73,9 @@ typedef struct liv {	/* Mostly used by "alive" objects */
   sint16	maxgrace;	/* Grace.  Used to invoke clerical prayers. */
   sint16	food;		/* How much food in stomach.  0 = starved. */
   sint16	dam;		/* How much damage this object does when hitting */
+  sint16		wc,ac;		/* Weapon Class and Armour Class */
 
   sint8		Str,Dex,Con,Wis,Cha,Int,Pow; /* the stats */
-  sint8		wc,ac;		/* Weapon Class and Armour Class */
   sint8		luck;		/* Affects thaco and ac from time to time */
 } living;
 

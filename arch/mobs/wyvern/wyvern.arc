@@ -2,7 +2,7 @@ Object wyvern
 name wyvern
 race dragon
 layer 6
-randomitems wyvern
+randomitems mob_wyvern
 face wyvern.141
 direction 5
 speed -0.26
@@ -99,8 +99,8 @@ Con 2
 Pow 2
 can_cast_spell 1
 exp 240
-ac 14
-wc 14
+ac 9
+wc 6
 dam 8
 hp -1
 maxhp 10

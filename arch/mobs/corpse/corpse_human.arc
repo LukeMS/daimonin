@@ -8,7 +8,7 @@ type 122
 sub_type 1
 material 32
 weight 60000
-food 20
+food 25
 speed 0.01
 is_used_up 1
 no_pick 1

@@ -60,22 +60,40 @@ _races item_race_table[RACE_NAME_INIT] = {
 /* when we carry more as this of our weight_limit, we get encumbered. */
 #define ENCUMBRANCE_LIMIT 65.0f
 
-static int con_bonus[MAX_STAT + 1]={
-  -6,-5,-4,-3,-2,-1,-1,0,0,0,0,1,2,3,4,5,6,7,8,9,10,12,14,16,18,20,
-  22,25,30,40,50
-};
-/* changed the name of this to "sp_bonus" from "int_bonus" 
- * because Pow can now be the stat that controls spellpoint
- * advancement. -b.t.
- */
-static int sp_bonus[MAX_STAT + 1]={
-  -10,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10,12,15,20,25,
-  30,40,50,70,100
+
+/* STR - damage boni for melee weapons */
+int dam_bonus[MAX_STAT + 1]={
+  -5,-4,-4,-3,-3,-3,-2,-2,-2,-1,-1,/* 0-10: dmg malus */
+	0,0,0,0,0, /* 11-15 = nothing */
+	1,1,2,2,3,3,3,4,4,5,6,7,8,10,12 /* 16-30 = boni */
 };
 
-static int grace_bonus[MAX_STAT +1] = {
-    -10,-10,-9,-8,-7,-6,-5,-4,-3,-2,-1,0,1,2,3,4,5,6,7,8,9,10,12,15,20,25,
-  30,40,50,70,100
+/* DEX  - wc boni */
+int thaco_bonus[MAX_STAT + 1]={
+  -5,-4,-4,-3,-3,-3,-2,-2,-2,-1,-1,/* 0-10: dmg malus */
+	0,0,0,0,0, /* 11-15 = nothing */
+	1,1,2,2,3,3,3,4,4,5,5,5,6,7,8 /* 16-30 = boni */
+};
+
+/* this is only used here for players */
+
+/* CON - % of "real max hp" boni */
+static float con_bonus[MAX_STAT + 1]={
+	-0.8f, -0.6f, -0.5f, -0.4f, -0.35f,-0.3f,-0.25f,-0.2f, -0.15f, -0.1f, -0.5f, /* 0-10: mali */
+	0.0f,0.0f,0.0f,0.0f,0.0f,
+	0.1f, 0.15f, 0.2f, 0.25f, 0.3f, 0.35f, 0.4f, 0.45f, 0.5f, 0.55f, 0.6f, 0.7f, 0.8f, 0.9f, 1.0f
+};
+
+static float pow_bonus[MAX_STAT + 1]={
+	-0.8f, -0.6f, -0.5f, -0.4f, -0.35f,-0.3f,-0.25f,-0.2f, -0.15f, -0.1f, -0.5f, /* 0-10: mali */
+	0.0f,0.0f,0.0f,0.0f,0.0f,
+	0.1f, 0.2f, 0.3f, 0.24f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1.0f, 1.1f, 1.4f, 1.6f, 1.8f, 2.0f
+};
+
+static float wis_bonus[MAX_STAT + 1]={
+	-0.8f, -0.6f, -0.5f, -0.4f, -0.35f,-0.3f,-0.25f,-0.2f, -0.15f, -0.1f, -0.5f, /* 0-10: mali */
+	0.0f,0.0f,0.0f,0.0f,0.0f,
+	0.1f, 0.2f, 0.3f, 0.24f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1.0f, 1.1f, 1.4f, 1.6f, 1.8f, 2.0f
 };
 
 /* new charisma system. As base value, you got in a shop 20% of the real
@@ -96,30 +114,14 @@ float cha_bonus[MAX_STAT + 1]={
 };
 
 
-int dex_bonus[MAX_STAT + 1]={
-  -4,-3,-2,-2,-1,-1,-1,0,0,0,0,0,0,0,1,1,1,2,2,2,3,3,3,4,4,4,5,5,6,6,7
-};
-
 /* speed_bonus uses dex as its stat */
 float speed_bonus[MAX_STAT + 1]={
   -0.4f, -0.4f, -0.3f, -0.3f, -0.2f, 
   -0.2f, -0.2f, -0.1f, -0.1f, -0.1f,
-  -0.05f, 0.0, 0.0f, 0.0f, 0.05f, 0.1f,
-  0.1f, 0.2f, 0.3f, 0.4f, 0.5f, 0.6f,
-  0.7f, 0.8f, 0.9f, 1.0f,
-  1.1f, 1.2f, 1.3f, 1.4f, 1.5f
-};
-
-/* dam_bonus, thaco_bonus, weight limit all are based on
- * strength.
- */
-int dam_bonus[MAX_STAT + 1]={
-  -2,-2,-2,-1,-1,-1,0,0,0,0,0,0,1,1,1,2,2,2,3,3,3,4,4,5,5,6,7,8,9,10,12
-};
-
-/* for throwing/range items, dex is used to add this to wc */
-int thaco_bonus[MAX_STAT + 1]={
-  -2,-2,-1,-1,0,0,0,0,0,0,0,0,0,0,1,1,1,2,2,2,3,3,3,4,4,5,5,6,7,8,10
+  -0.05f, 0.0, 0.0f, 0.0f, 0.025f, 0.05f,
+  0.075f, 0.1f, 0.125f, 0.15f, 0.175f, 0.2f,
+  0.225f, 0.25f, 0.275f, 0.3f,
+  0.325f, 0.35f, 0.4f, 0.45f, 0.5f
 };
 
 /* weight_limit - the absolute most a character can carry - a character can't
@@ -129,7 +131,7 @@ int thaco_bonus[MAX_STAT + 1]={
  * before, you need to start someplace.
  */
 
-sint32 weight_limit[MAX_STAT+ 1] = {
+uint32 weight_limit[MAX_STAT+ 1] = {
     20000,  /* 0 */
     25000,30000,35000,40000,50000,	    /* 5*/
     60000,70000,80000,90000,100000,    /* 10 */
@@ -315,8 +317,7 @@ change_attr_value(living *stats,int attr,signed char value) {
  * returns the specified stat.  See also set_attr_value().
  */
 
-signed char
-get_attr_value(living *stats,int attr) {
+signed char get_attr_value(living *stats,int attr) {
   switch(attr) {
   case STR:
     return(stats->Str);
@@ -474,13 +475,12 @@ int change_abil(object *op, object *tmp) {
     if ( QUERY_FLAG(op,FLAG_UNDEAD) != QUERY_FLAG(&refop,FLAG_UNDEAD)) {
       success=1;
       if(flag>0) {
-        if(op->race) free_string(op->race); 
-	op->race=add_string("undead");
+        FREE_AND_COPY_HASH(op->race, "undead");
         (*draw_info_func)(NDI_UNIQUE|NDI_GREY, 0, op,"Your lifeforce drains away!");
       } else {
-        if(op->race) free_string(op->race); 
+		  FREE_AND_CLEAR_HASH(op->race); 
         if(op->arch->clone.race) 
-	   op->race=add_string(op->arch->clone.race);  
+   	      FREE_AND_COPY_HASH(op->race, op->arch->clone.race);  
         (*draw_info_func)(NDI_UNIQUE|NDI_WHITE, 0, op,"Your lifeforce returns!");
       }
     }
@@ -589,7 +589,7 @@ int change_abil(object *op, object *tmp) {
     else 
       (*draw_info_func)(NDI_UNIQUE|NDI_GREY, 0, op,"You suddenly feel less holy.");
   } 
-  if(tmp->stats.food && op->type==PLAYER && tmp->type != POISONING) {
+  if(tmp->stats.food && op->type==PLAYER && tmp->type != POISONING && tmp->type != POTION_EFFECT) {
     success=1;
     if(tmp->stats.food*flag>0)
       (*draw_info_func)(NDI_UNIQUE|NDI_WHITE, 0, op,"You feel your digestion slowing down.");
@@ -786,17 +786,22 @@ void add_statbonus(object *op) {
  */
 void fix_player(object *op) 
 {
+	int ring_count=0,skill_level_max=1;
+	int tmp_item;
+	float tmp_con;
 	int i,j, inv_flag,inv_see_flag, light,weapon_weight, best_wc, best_ac, wc, ac;
-	int resists[NROFATTACKS], vuln[NROFATTACKS], potion_resist[NROFATTACKS];
-	int protect_boni[NROFPROTECTIONS];
+	int resists_boni[NROFATTACKS], resists_mali[NROFATTACKS];
+	int protect_boni[NROFPROTECTIONS],protect_mali[NROFPROTECTIONS];
+	int potion_resist_boni[NROFATTACKS],potion_resist_mali[NROFATTACKS],potion_attack[NROFATTACKS];
 	object *grace_obj=NULL,*mana_obj=NULL,*hp_obj=NULL,*wc_obj=NULL,*tmp,
 		*skill_weapon=NULL;
 	float f,max=9,added_speed=0,bonus_speed=0,speed_reduce_from_disease=1;
+	player *pl;
 
 	
 	if(QUERY_FLAG(op,FLAG_NO_FIX_PLAYER))
 	{
-		LOG(llevDebug,"fix_player(): called for object %s with FLAG_NO_FIX_PLAYER set\n", op->name);
+		LOG(llevDebug,"fix_player(): called for object %s with FLAG_NO_FIX_PLAYER set\n", query_name(op));
 		return;
 	}
 	/* ok, in crossfire, fix_player is called for objects not for players
@@ -804,6 +809,7 @@ void fix_player(object *op)
 	 */
 	if(QUERY_FLAG(op,FLAG_MONSTER) && op->type != PLAYER)
 	{
+		LOG(llevDebug,"fix_player(): called for object %s (non player)\n", query_name(op));
 		fix_monster(op);
 		return;
 	}
@@ -811,26 +817,27 @@ void fix_player(object *op)
 	/* for secure */
 	if(op->type != PLAYER)
 	{
-		LOG(llevDebug,"fix_player(): called from non Player/Mob object: %s (type %d)\n", op->name, op->type);
+		LOG(llevDebug,"fix_player(): called from non Player/Mob object: %s (type %d)\n", query_name(op), op->type);
 		return;
 	}
 
+	pl=op->contr;
 	inv_flag=inv_see_flag=light=weapon_weight=best_wc=best_ac=wc=ac=0;
 
     for(i=0;i<7;i++) 
-      set_attr_value(&(op->stats),i,get_attr_value(&(op->contr->orig_stats),i));
+      set_attr_value(&(op->stats),i,get_attr_value(&(pl->orig_stats),i));
 
 
-	op->contr->selected_weapon =op->contr->skill_weapon = NULL;
-	op->contr->digestion = 0;
-	op->contr->gen_hp = 0;
-	op->contr->gen_sp = 0;
-	op->contr->gen_grace = 0;
-	op->contr->gen_sp_armour = 10;
-    op->contr->set_skill_weapon = NO_SKILL_READY;	/* the used skills for fast access */
-    op->contr->set_skill_archery = NO_SKILL_READY; 
+	pl->selected_weapon =pl->skill_weapon = NULL;
+	pl->digestion = 0;
+	pl->gen_hp = 0;
+	pl->gen_sp = 0;
+	pl->gen_grace = 0;
+	pl->gen_sp_armour = 10;
+    pl->set_skill_weapon = NO_SKILL_READY;	/* the used skills for fast access */
+    pl->set_skill_archery = NO_SKILL_READY; 
 
-    op->contr->encumbrance=0;
+    pl->encumbrance=0;
 
 	/* for players, we adjust with the values */	
 	ac=op->arch->clone.stats.ac;
@@ -842,6 +849,10 @@ void fix_player(object *op)
 	op->stats.maxhp=op->arch->clone.stats.maxhp;
 	op->stats.maxsp=op->arch->clone.stats.maxsp;
 	op->stats.maxgrace=op->arch->clone.stats.maxgrace;
+
+	pl->levhp[1]=(char)op->stats.maxhp;
+	pl->levsp[1]=(char)op->stats.maxsp;
+	pl->levgrace[1]=(char)op->stats.maxgrace;
 	
 	op->stats.luck=op->arch->clone.stats.luck;
 	op->speed = op->arch->clone.speed;
@@ -855,11 +866,8 @@ void fix_player(object *op)
     if(op->chosen_skill&&!op->chosen_skill->last_eat&&op->chosen_skill->exp_obj)
        op->chosen_skill->level=op->chosen_skill->exp_obj->level;
 
-	if(op->slaying!=NULL) 
-	{
-		free_string(op->slaying);
-		op->slaying=NULL;
-	}
+	FREE_AND_CLEAR_HASH(op->slaying); 
+
 	if (QUERY_FLAG (op, FLAG_IS_INVISIBLE))
 		inv_flag = 1;
 	if (QUERY_FLAG (op, FLAG_SEE_INVISIBLE))
@@ -891,48 +899,46 @@ void fix_player(object *op)
 	if ( ! QUERY_FLAG (&op->arch->clone, FLAG_SEE_IN_DARK))
 		CLEAR_FLAG(op,FLAG_SEE_IN_DARK);
 
-	/* initializing resistances from the values in player archetype clone:  */
+	memset(&protect_boni,0, sizeof(protect_boni));  
+	memset(&protect_mali,0, sizeof(protect_mali));  
+	memset(&potion_resist_boni,0, sizeof(potion_resist_boni));  
+	memset(&potion_resist_mali,0, sizeof(potion_resist_mali));  
+	memset(&potion_attack,0, sizeof(potion_attack));  
+
+	/* initializing player arrays from the values in player archetype clone:  */
+	memset(&pl->equipment,0, sizeof(pl->equipment));  
+	memcpy(&op->protection, &op->arch->clone.protection, sizeof(op->protection));
+	memcpy(&op->attack, &op->arch->clone.attack, sizeof(op->attack));
 	memcpy(&op->resist, &op->arch->clone.resist, sizeof(op->resist));
 	for (i=0;i<NROFATTACKS;i++) 
 	{
 		if (op->resist[i] > 0)
 		{
-			resists[i]= op->resist[i];
-			vuln[i]=0;
+			resists_boni[i]= op->resist[i];
+			resists_mali[i]=0;
 		}
 		else
 		{
-			vuln[i]= -(op->resist[i]);
-			resists[i]=0;
+			resists_mali[i]= -(op->resist[i]);
+			resists_boni[i]=0;
 		}
-		op->attack[i] = 0;
-		potion_resist[i]=0;
 	}
 
-    /* for players which cannot use armour, they gain AC -1 per 3 levels,
-     * plus a small amount of physical resist, those poor suckers. ;) */
-	/* I think we should REALLY overwork this ... with the new protection/resist
-	 * system this kind of player chars will be doomed. MT.
-	 */
-	if(!QUERY_FLAG(op,FLAG_USE_ARMOUR)) 
-	{
-		ac=MAX(-10,ac - op->level/3);
-		resists[ATNR_PHYSICAL] += ((100-resists[AT_PHYSICAL])*(80*op->level/MAXLEVEL))/100;
-		resists[ATNR_SLASH] += ((100-resists[AT_SLASH])*(80*op->level/MAXLEVEL))/100;
-		resists[ATNR_PIERCE] += ((100-resists[AT_PIERCE])*(80*op->level/MAXLEVEL))/100;
-		resists[ATNR_CLEAVE] += ((100-resists[AT_CLEAVE])*(80*op->level/MAXLEVEL))/100;
-	}
-
-	/* iam not sure about "natural" protection of players - i disabled it for now */
-	memset(&op->protection,0, sizeof(op->protection));  
-	memset(&protect_boni,0, sizeof(protect_boni));  
-  
 	/* ok, now we browse the inventory... there is not only our equipment - there
 	 * are all our skills, forces and hidden system objects.
 	 */
 	for(tmp=op->inv;tmp!=NULL;tmp=tmp->below) 
 	{
-		/* this is needed, because our applied light can overruled by a light giving
+		/* 
+		 * add here more types we can and must skip.
+		 */
+		if(    tmp->type == POTION			|| tmp->type==CONTAINER || tmp->type==CLOSE_CON
+			|| tmp->type ==TYPE_LIGHT_APPLY || tmp->type ==WAND		|| tmp->type == ROD
+			|| tmp->type == HORN
+		  )
+			continue;
+
+		/* this is needed, because our applied light can be overruled by a light giving
 		 * object like holy glowing aura force or something 
 	     */
 		if (tmp->glow_radius > light)
@@ -945,115 +951,297 @@ void fix_player(object *op)
 		/* all skills, not only the applied ones */
 		if(tmp->type == SKILL)
 		{
+			if(tmp->level > skill_level_max)
+				skill_level_max=tmp->level;
 			/* lets remember the best bare hand skill */
 			if(tmp->stats.dam>0)
 			{
 				if(!skill_weapon || skill_weapon->stats.dam < tmp->stats.dam)
 					skill_weapon = tmp;
 			}
-			op->contr->skill_ptr[tmp->stats.sp] = tmp; /* safe in table for quick access */
-		}
-		else if(tmp->type == TYPE_AGE_FORCE)
-		{
-			op->contr->age_force = tmp; /* store our age force */
-			op->contr->age = tmp->stats.hp;
-			op->contr->age_max = tmp->stats.maxhp;
-			op->contr->age_add = tmp->stats.sp;
-			op->contr->age_changes = tmp->stats.grace;
-			if(op->contr->age >= (sint16)(((float)op->contr->age_max/100.0f)*60.0f) )
-				SET_FLAG(op, FLAG_IS_AGED);
-			else
-				CLEAR_FLAG(op, FLAG_IS_AGED);
+			pl->skill_ptr[tmp->stats.sp] = tmp; /* safe in table for quick access */
 		}
 
-		/* this checks all applied, not container like items in the inventory */
-		if(QUERY_FLAG(tmp,FLAG_APPLIED) && tmp->type!=CONTAINER && tmp->type!=CLOSE_CON)
+		/* this checks all applied items in the inventory */
+		if(QUERY_FLAG(tmp,FLAG_APPLIED))
 		{
-			/* The meaning of stats in skill or experience objects is different -
-			 * we use them solely to link skills to experience, thus it is 
-			 * inappropriate to allow these applied objects to change stats.
-             * An exception is exp_wis, containing info about god-properties!
-			 */
-			if(tmp->type!=EXPERIENCE || (tmp->type==EXPERIENCE && tmp->stats.Wis))
+			switch(tmp->type) /* still applied stuff */
 			{
-				if (tmp->type != POTION)
-				{
+
+		        /* the new weapon skill system is more complex
+				 * when new applied, set_skill_weapon is set. 
+				 * But we took care to safely set it here.
+				 */ 
+				case WEAPON:
+					pl->equipment[PLAYER_EQUIP_WEAPON1] = tmp;
+					pl->selected_weapon = tmp; /* thats our weapon */
+		            i = tmp->sub_type1%4;
+					if(i == WEAP_1H_IMPACT)
+						pl->set_skill_weapon = SK_MELEE_WEAPON;
+					else if(i == WEAP_1H_SLASH)
+						pl->set_skill_weapon = SK_SLASH_WEAP;
+					else if(i == WEAP_1H_CLEAVE)
+						pl->set_skill_weapon = SK_CLEAVE_WEAP;
+					else
+						pl->set_skill_weapon = SK_PIERCE_WEAP;
+
+					/* the new weapon_speed system has nothing to do with the old one,
+					 * so take care weapon speed is always our wielded weapon -
+					 * after we have all added ,we adjust it later for dex bonus, etc (todo)
+                     */
+					op->weapon_speed = tmp->weapon_speed;
+					if(!op->weapon_speed)
+						LOG(llevBug,"BUG: monster/player %s applied weapon %s without weapon speed!\n", op->name, tmp->name);
+					wc+=(tmp->stats.wc+tmp->magic);
+					if(tmp->stats.ac&&tmp->stats.ac+tmp->magic>0)
+						ac+=tmp->stats.ac+tmp->magic;
+					op->stats.dam+=(tmp->stats.dam+tmp->magic);
+					weapon_weight=tmp->weight;
+					if(tmp->slaying!=NULL) 
+						FREE_AND_COPY_HASH(op->slaying,tmp->slaying);
+
+					pl->encumbrance+=(int)3*tmp->weight/1000;
+					pl->digestion     += tmp->stats.food;
+					pl->gen_sp        += tmp->stats.sp;
+					pl->gen_grace     += tmp->stats.grace;
+					pl->gen_hp        += tmp->stats.hp;
+					pl->gen_sp_armour += tmp->last_heal;
+
 					for(i=0;i<7;i++)
 						change_attr_value(&(op->stats),i,get_attr_value(&(tmp->stats),i));
-				}
+				break;
 
-				/* these are the items that currently can change digestion, regeneration,
-				 * spell point recovery and mana point recovery.  Seems sort of an arbitary
-				 * list, but other items store other info into stats array. */
-				if ( (tmp->type == EXPERIENCE)  || (tmp->type == WEAPON)
-							|| (tmp->type == ARMOUR)   || (tmp->type == HELMET)
-							|| (tmp->type == SHIELD)   || (tmp->type == RING)
-							|| (tmp->type == BOOTS)    || (tmp->type == GLOVES)
-							|| (tmp->type == AMULET )  || (tmp->type == GIRDLE)
-							|| (tmp->type == BRACERS ) || (tmp->type == CLOAK) 
-							|| (tmp->type == DISEASE)  || (tmp->type == FORCE))
-				{
-					op->contr->digestion     += tmp->stats.food;
-					op->contr->gen_hp        += tmp->stats.hp;
-					op->contr->gen_sp        += tmp->stats.sp;
-					op->contr->gen_grace     += tmp->stats.grace;
+				/* all armours + rings and amulets */
+				case RING:	
+					pl->equipment[PLAYER_EQUIP_RRING+ring_count] = tmp;
+					ring_count++;
+					goto fix_player_no_armour;
+				case AMULET:
+					pl->equipment[PLAYER_EQUIP_AMULET] = tmp;
+					goto fix_player_no_armour;
 
-					/* Experience objects use last_heal for permanent exp, so don't add those in.*/
-					if (tmp->type != EXPERIENCE)
-						op->contr->gen_sp_armour += tmp->last_heal;
-				}
-			}
+				case BRACERS:
+					pl->equipment[PLAYER_EQUIP_BRACER] = tmp;
+					goto fix_player_jump1;
+				case ARMOUR:
+					pl->equipment[PLAYER_EQUIP_MAIL] = tmp;
+					pl->encumbrance+=(int)tmp->weight/1000;
+					goto fix_player_jump1;
+				case SHIELD:
+					pl->equipment[PLAYER_EQUIP_SHIELD] = tmp;
+					pl->encumbrance+=(int)tmp->weight/2000;
+					goto fix_player_jump1;
+				case GIRDLE:
+					pl->equipment[PLAYER_EQUIP_GIRDLE] = tmp;
+					goto fix_player_jump1;
+				case HELMET:
+					pl->equipment[PLAYER_EQUIP_HELM] = tmp;
+					goto fix_player_jump1;
+				case BOOTS:
+					pl->equipment[PLAYER_EQUIP_BOOTS] = tmp;
+					goto fix_player_jump1;
+				case GLOVES:
+					pl->equipment[PLAYER_EQUIP_GAUNTLET] = tmp;
+					goto fix_player_jump1;
+				case CLOAK:
+					pl->equipment[PLAYER_EQUIP_CLOAK] = tmp;
 
-			if(tmp->type==SYMPTOM)
-			{
-				speed_reduce_from_disease = (float) tmp->last_sp / 100.0f;
-				if(speed_reduce_from_disease ==0.0f)
-						speed_reduce_from_disease = 1.0f;
-			}
+					fix_player_jump1:
+					/* thats now used for ALL armours except rings and amulets */
+					if(ARMOUR_SPEED(tmp)&&(float)ARMOUR_SPEED(tmp)/10.0f<max)
+						max=ARMOUR_SPEED(tmp)/10.0f;
 
-			/* Pos. and neg. protections are counted seperate (-> pro/vuln).
-			 * (Negative protections are calculated extactly like positive.)
-			 * Resistance from potions are treated special as well. If there's
-			 * more than one potion-effect, the bigger prot.-value is taken.
-			 */
-			if (tmp->type != POTION)
-			{
-				for (i=0; i<NROFPROTECTIONS; i++) 
-				{
-					if (tmp->protection[i] > 0) 
-						protect_boni[i] += ((100-protect_boni[i])*tmp->protection[i])/100;
-				}
-              
-				for (i=0; i<NROFATTACKS; i++)
-				{
-					/* hm, stat potions which gives resist? perm? */
-					if (tmp->arch->clone.type == FORCE &&
-									tmp->resist[i] && tmp->type==POTION_EFFECT)
+					fix_player_no_armour: /* jump in for non armour like rings, ... */										
+					/* i must control this - at last food has for used_up forces
+					 * a differnet meaning
+					 * add some of this below when used from other applied objects too!
+					 */
+					pl->digestion     += tmp->stats.food;
+					pl->gen_sp        += tmp->stats.sp;
+					pl->gen_grace     += tmp->stats.grace;
+					pl->gen_hp        += tmp->stats.hp;
+					pl->gen_sp_armour += tmp->last_heal;
+
+					for(i=0;i<7;i++)
+						change_attr_value(&(op->stats),i,get_attr_value(&(tmp->stats),i));
+
+			        if(tmp->stats.wc)
+						wc+=(tmp->stats.wc+tmp->magic);
+					if(tmp->stats.dam)
+						op->stats.dam+=(tmp->stats.dam+tmp->magic);
+					if(tmp->stats.ac)
+						ac+=(tmp->stats.ac+tmp->magic);
+				break;
+
+				case BOW:
+					pl->equipment[PLAYER_EQUIP_BOW] = tmp;
+					/* as a special bonus range weapons can be permanent applied and
+					 * will add stat boni!
+					 */
+					for(i=0;i<7;i++)
+						change_attr_value(&(op->stats),i,get_attr_value(&(tmp->stats),i));
+
+					if(tmp->sub_type1 == RANGE_WEAP_BOW)
+						pl->set_skill_archery = SK_MISSILE_WEAPON;
+					else if(tmp->sub_type1 == RANGE_WEAP_XBOWS)
+						pl->set_skill_archery = SK_XBOW_WEAP;
+					else
+						pl->set_skill_archery = SK_SLING_WEAP;          
+				break; 
+
+				/* more exotic stuff! */
+
+				case POTION_EFFECT: /* no protection from potion effect -resist only! */
+					for(i=0;i<7;i++)
+							change_attr_value(&(op->stats),i,get_attr_value(&(tmp->stats),i));
+					/* collect highest boni & malus - only highest one count,
+					 * no adding potion effects of same resist!
+					 */
+					for (i=0; i<NROFATTACKS; i++)
 					{
-						if (potion_resist[i])
-							potion_resist[i] = MAX(potion_resist[i], tmp->resist[i]);
-						else
-							potion_resist[i] = tmp->resist[i];
+						/* collect highest/lowest resistance */
+						if(tmp->resist[i] > potion_resist_boni[i])
+							potion_resist_boni[i] = tmp->resist[i];
+						else  if(tmp->resist[i] < potion_resist_mali[i])
+							potion_resist_mali[i] = tmp->resist[i];
+
+						/* collect highest attack! 
+						 * Remember: no attack mali - this is a unsigned value
+						 */
+						if(tmp->attack[i] > potion_attack[i])
+							potion_attack[i] = tmp->attack[i];
 					}
-					else 
-					{
-						if (tmp->resist[i] > 0) 
-							resists[i] += ((100-resists[i])*tmp->resist[i])/100;
-						else if (tmp->resist[i] < 0)
-							vuln[i] += ((100-vuln[i])*(-tmp->resist[i]))/100;
+				break;
 
-						if (tmp->type!=BOW && tmp->type != SYMPTOM && tmp->type != POISONING) 
+
+				/* EXPERIENCE objects. What we are doing here is looking for "relevant" 
+				 * experience objects. Some of these will be used to calculate 
+				 * level-based changes in player status. For expample, the 
+				 * experience object which has exp_obj->stats.Str set controls the 
+				 * wc bonus of the player. -b.t.
+				 */
+				case EXPERIENCE: 
+					if (tmp->stats.Str && !wc_obj) 
+						wc_obj = tmp;
+					if (tmp->stats.Con && !hp_obj) 
+						hp_obj = tmp;
+					if (tmp->stats.Pow && !mana_obj)  /* for spellpoint determ */ 
+						mana_obj = tmp;
+					if (tmp->stats.Wis && !grace_obj)
+						grace_obj = tmp; 
+				break;
+
+				case SKILL: 		/* skills modifying the character -b.t. */
+					if(tmp->stats.dam>0)  	/* skill is a 'weapon' */
+					{
+						wc+=(tmp->stats.wc+tmp->magic);
+						ac+=(tmp->stats.ac+tmp->magic);
+						op->weapon_speed = tmp->weapon_speed ;
+    					weapon_weight=tmp->weight;
+	    				op->stats.dam+=(tmp->stats.dam+tmp->magic);
+					}
+					else /* be careful with ->magic in applyable skills */
+					{
+						/* i added magic to wc/ac even when they are not set */
+	    				op->stats.dam+=tmp->magic;
+						wc+=(tmp->stats.wc+tmp->magic);
+						ac+=(tmp->stats.ac+tmp->magic);
+					}
+					if(tmp->slaying!=NULL)
+						FREE_AND_COPY_HASH(op->slaying,tmp->slaying);
+
+						pl->encumbrance+=(int)3*tmp->weight/1000;
+
+				break;
+
+				/* now calc resistance and stuff for all the rest applyable objects! */
+				/* i am not 100% sure this is safe for *all* objects - i have used for that
+				 * reason not default here.
+				 */
+				case TYPE_AGE_FORCE:
+					pl->age_force = tmp; /* store our age force */
+					pl->age = tmp->stats.hp;
+					pl->age_max = tmp->stats.maxhp;
+					pl->age_add = tmp->stats.sp;
+					pl->age_changes = tmp->stats.grace;
+					if(pl->age >= (sint16)(((float)pl->age_max/100.0f)*60.0f) )
+						SET_FLAG(op, FLAG_IS_AGED);
+					else
+						CLEAR_FLAG(op, FLAG_IS_AGED);
+	
+				case FORCE:
+					if(ARMOUR_SPEED(tmp)&&(float)ARMOUR_SPEED(tmp)/10.0f<max)
+						max=ARMOUR_SPEED(tmp)/10.0f;
+
+					for(i=0;i<7;i++)
+						change_attr_value(&(op->stats),i,get_attr_value(&(tmp->stats),i));
+			        if(tmp->stats.wc)
+						wc+=(tmp->stats.wc+tmp->magic);
+					if(tmp->stats.dam)
+						op->stats.dam+=(tmp->stats.dam+tmp->magic);
+					if(tmp->stats.ac)
+						ac+=(tmp->stats.ac+tmp->magic);
+
+				goto fix_player_jump_resi;
+
+				case DISEASE:
+				case SYMPTOM:
+					speed_reduce_from_disease = (float) tmp->last_sp / 100.0f;
+					if(speed_reduce_from_disease ==0.0f)
+							speed_reduce_from_disease = 1.0f;
+
+				case POISONING:
+					for(i=0;i<7;i++)
+						change_attr_value(&(op->stats),i,get_attr_value(&(tmp->stats),i));
+
+				case CLASS: /* not used atm */
+				case BLINDNESS:
+				case CONFUSION:
+					fix_player_jump_resi:
+
+					for (i=0; i<NROFPROTECTIONS; i++) 
+					{
+						if (tmp->protection[i] > 0) 
+							protect_boni[i] += ((100-protect_boni[i])*tmp->protection[i])/100;
+						else if (tmp->protection[i] < 0) 
+							protect_mali[i] += ((100-protect_mali[i])*(-tmp->protection[i]))/100;
+					}
+					/* calculate resistance and attacks */
+
+					for (i=0; i<NROFATTACKS; i++)
+					{
+						/* we add resists boni/mali */
+						if (tmp->resist[i] > 0) 
+							resists_boni[i] += ((100-resists_boni[i])*tmp->resist[i])/100;
+						else if (tmp->resist[i] < 0)
+							resists_mali[i] += ((100-resists_mali[i])*(-tmp->resist[i]))/100;
+
+						/* and we use adding attack boni - i set this for 120% max...
+						 * exclude all what is damaging itself with attack[]
+						*/
+						if (tmp->type!=DISEASE && tmp->type != SYMPTOM && tmp->type != POISONING) 
 						{
-							if (tmp->attack[i] > 0)
+							if (tmp->attack[i] > 0) 
 							{
-								op->attack[i] += tmp->attack[i];
-								if(op->attack[i]>100)
-									op->attack[i]=100;
+								if((op->attack[i] + tmp->attack[i]) <= 120)
+									op->attack[i] += tmp->attack[i]; 
+								else
+									op->attack[i]=120;
 							}
 						}
 					}
-				}
-			}
+				break;
+
+				/* catch item which are "applied" but should not -
+				 * or we forgot to catch them here!
+				 */
+				default:
+					LOG(llevDebug, "DEBUG: fix_player(): unexpected applied object %s (%d)(clear flag now!)\n", query_name(tmp), tmp->type);
+					CLEAR_FLAG(tmp,FLAG_APPLIED);
+					continue;
+				break;
+
+			}/*switch*/
 
 			op->terrain_flag |= tmp->terrain_type;    /* we just add a given terrain */
 			op->path_attuned|=tmp->path_attuned;
@@ -1095,7 +1283,7 @@ void fix_player(object *op)
 					max=1;
 			}
 
-			/* slow penalty when i remember it right... */
+			/* slow penalty .. careful with this! might be changing */
 			if(tmp->stats.exp && tmp->type!=EXPERIENCE && tmp->type != SKILL)
 			{
 				if(tmp->stats.exp > 0) 
@@ -1106,158 +1294,66 @@ void fix_player(object *op)
 				else
 					added_speed+=(float)tmp->stats.exp;
 			}
-
-			switch(tmp->type) 
-			{
-
-				/* EXPERIENCE objects. What we are doing here is looking for "relevant" 
-				 * experience objects. Some of these will be used to calculate 
-				 * level-based changes in player status. For expample, the 
-				 * experience object which has exp_obj->stats.Str set controls the 
-				 * wc bonus of the player. -b.t.
-				 */
-				case EXPERIENCE: 
-					if (tmp->stats.Str && !wc_obj) 
-						wc_obj = tmp;
-					if (tmp->stats.Con && !hp_obj) 
-						hp_obj = tmp;
-					if (tmp->stats.Pow && !mana_obj)  /* for spellpoint determ */ 
-						mana_obj = tmp;
-					if (tmp->stats.Wis && !grace_obj)
-						grace_obj = tmp; 
-				break;
-
-				case SKILL: 		/* skills modifying the character -b.t. */
-					if(tmp->stats.dam>0)  	/* skill is a 'weapon' */
-					{
-						wc-=(tmp->stats.wc+tmp->magic);
-						ac-=(tmp->stats.ac+tmp->magic);
-						op->weapon_speed = tmp->weapon_speed ;
-    					weapon_weight=tmp->weight;
-	    				op->stats.dam+=(tmp->stats.dam+tmp->magic);
-					}
-					else /* be careful with ->magic in applyable skills */
-					{
-						/* i added magic to wc/ac even when they are not set */
-	    				op->stats.dam+=tmp->magic;
-						wc-=(tmp->stats.wc+tmp->magic);
-						ac-=(tmp->stats.ac+tmp->magic);
-					}
-					if(tmp->slaying!=NULL)
-						FREE_AND_COPY(op->slaying,tmp->slaying);
-
-						op->contr->encumbrance+=(int)3*tmp->weight/1000;
-
-				break;
-
-				case SHIELD:
-				op->contr->encumbrance+=(int)tmp->weight/2000;
-				case RING:
-				case AMULET:
-				case GIRDLE:
-				case HELMET:
-				case BOOTS:
-				case GLOVES:
-				case CLOAK:
-			        if(tmp->stats.wc)
-						wc-=(tmp->stats.wc+tmp->magic);
-					if(tmp->stats.dam)
-						op->stats.dam+=(tmp->stats.dam+tmp->magic);
-					if(tmp->stats.ac)
-						ac-=(tmp->stats.ac+tmp->magic);
-				break;
-
-				case BOW:
-					i = tmp->sub_type1;
-					if(i == RANGE_WEAP_BOW)
-						op->contr->set_skill_archery = SK_MISSILE_WEAPON;
-					else if(i == RANGE_WEAP_XBOWS)
-						op->contr->set_skill_archery = SK_XBOW_WEAP;
-					else
-						op->contr->set_skill_archery = SK_SLING_WEAP;          
-				break; 
-
-		        /* the new weapon skill system is more complex
-				 * when new applied, set_skill_weapon is set. 
-				 * But we took care to safely set it here.
-				 */ 
-				case WEAPON:
-					op->contr->selected_weapon = tmp; /* thats our weapon */
-		            i = tmp->sub_type1%4;
-					if(i == WEAP_1H_IMPACT)
-						op->contr->set_skill_weapon = SK_MELEE_WEAPON;
-					else if(i == WEAP_1H_SLASH)
-						op->contr->set_skill_weapon = SK_SLASH_WEAP;
-					else if(i == WEAP_1H_CLEAVE)
-						op->contr->set_skill_weapon = SK_CLEAVE_WEAP;
-					else
-						op->contr->set_skill_weapon = SK_PIERCE_WEAP;
-
-					/* the new weapon_speed system has nothing to do with the old one,
-					 * so take care weapon speed is always our wielded weapon -
-					 * after we have all added ,we adjust it later for dex bonus, etc (todo)
-                     */
-					op->weapon_speed = tmp->weapon_speed;
-					if(!op->weapon_speed)
-						LOG(llevBug,"BUG: monster/player %s applied weapon %s without weapon speed!\n", op->name, tmp->name);
-					wc-=(tmp->stats.wc+tmp->magic);
-					if(tmp->stats.ac&&tmp->stats.ac+tmp->magic>0)
-						ac-=tmp->stats.ac+tmp->magic;
-					op->stats.dam+=(tmp->stats.dam+tmp->magic);
-					weapon_weight=tmp->weight;
-					if(tmp->slaying!=NULL) 
-						FREE_AND_COPY(op->slaying,tmp->slaying);
-#ifdef PLUGINS
-					if (tmp->event_hook[EVENT_ATTACK] != NULL)
-					{
-						if (op->current_weapon_script)
-							free_string(op->current_weapon_script);
-						op->current_weapon_script=add_string(query_name(tmp));
-					}
-#endif
-					op->current_weapon = tmp;
-
-					op->contr->encumbrance+=(int)3*tmp->weight/1000;
-				break;
-
-				case ARMOUR: /* Only the best of these three are used: */
-					op->contr->encumbrance+=(int)tmp->weight/1000;
-				/* thats the ugly old d&d bracer ac/wc boni way to work.
-				 * i think i will kill this next, i remember i never used
-				 * it in the old days i played pencil&paper d&d.
-				 */
-				case BRACERS:
-				case FORCE:
-					if(tmp->stats.wc) 
-					{ 
-						if(best_wc<tmp->stats.wc+tmp->magic)
-						{
-							wc+=best_wc;
-							best_wc=tmp->stats.wc+tmp->magic;
-						} 
-						else
-							wc+=tmp->stats.wc+tmp->magic;
-					}
-					if(tmp->stats.ac) 
-					{
-						if(best_ac<tmp->stats.ac+tmp->magic)
-						{
-							ac+=best_ac; /* Remove last bonus */
-							best_ac=tmp->stats.ac+tmp->magic;
-						}
-						else /* To nullify the below effect */
-							ac+=tmp->stats.ac+tmp->magic;
-					}
-					if(tmp->stats.wc)
-						wc-=(tmp->stats.wc+tmp->magic);
-					if(tmp->stats.ac)
-						ac-=(tmp->stats.ac+tmp->magic);
-					if(ARMOUR_SPEED(tmp)&&(float)ARMOUR_SPEED(tmp)/10.0f<max)
-						max=ARMOUR_SPEED(tmp)/10.0f;
-				break;
-			}
-		}
+		} /* if applied */
 	} /* Item is equipped - end of for loop going through items. */
+
+	/* now collect all our real armour stuff - this will now add *after* all force
+	 * or non potion effects effecting resist,attack or protection - also this wii
+	 * give us a sorted adding.
+	 * But the most important point is that we calc *here* and only here the equipment
+	 * quality modifier for players.
+	 * Note, that for bows/arrows the calculation is done "one the fly" when the
+	 * throw/fire object is created!
+	 */
+	for(j=0;j<PLAYER_EQUIP_MAX;j++)
+	{
+
+		if(pl->equipment[j])
+		{
+			tmp = pl->equipment[j];
+			tmp_con = (float)tmp->item_condition/100.0f;
+
+			/* only quality adjustment for *positive* values! */
+			for (i=0; i<NROFPROTECTIONS; i++) 
+			{
+			if (tmp->protection[i] > 0) 
+			{
+				tmp_item = (int)((float)tmp->protection[i]*tmp_con);
+				protect_boni[i] += ((100-protect_boni[i])*tmp_item)/100;
+			}
+	 			else if (tmp->protection[i] < 0) 
+					protect_mali[i] += ((100-protect_mali[i])*(-tmp->protection[i]))/100;
+			}
+			/* calculate resistance and attacks */
+					
+			for (i=0; i<NROFATTACKS; i++)
+			{
+				/* we add resists boni/mali */
+				if (tmp->resist[i] > 0) 
+				{
+					tmp_item = (int)((float)tmp->resist[i]*tmp_con);
+					resists_boni[i] += ((100-resists_boni[i])*tmp_item)/100;
+				}
+				else if (tmp->resist[i] < 0)
+					resists_mali[i] += ((100-resists_mali[i])*(-tmp->resist[i]))/100;
+
+				/* and we use adding attack boni - i set this for 120% max...
+				 * exclude all what is damaging itself with attack[]
+				*/
+				if (tmp->type!=BOW) 
+				{
+					if (tmp->attack[i] > 0) 
+					{
+						tmp_item = (int)((float)tmp->attack[i]*tmp_con);
+						if((op->attack[i] + tmp_item) <= 120)
+							op->attack[i] += tmp_item; 
+						else
+							op->attack[i]=120;
+					}
+				}
+			}
+		 }
+	 }
 
 	/* 'total resistance = total protections - total vulnerabilities'.
 	 * If there is an uncursed potion in effect, granting more protection
@@ -1266,19 +1362,50 @@ void fix_player(object *op)
 	 * 'total resistance = vulnerability from cursed potion'. 
 	 */
 
+	 /* now we add in all our values... we add in our potions effects as well as
+	  * our attack boni and/or protections.
+	  */
 	op->attacktype = 0;
 	for (j=1,i=0; i<NROFATTACKS; i++,j<<=1)
 	{
+		if(potion_attack[i])
+		{
+			if((op->attack[i] + potion_attack[i]) >120)
+				op->attack[i]=120;
+			else
+				op->attack[i] += potion_attack[i];
+		}
 		if(op->attack[i])
-			op->attacktype |= j;
-      
-		op->resist[i] = resists[i] - vuln[i];
-		if (potion_resist[i] && (potion_resist[i] > op->resist[i] || potion_resist[i] < 0))
-			op->resist[i] = potion_resist[i];
+			op->attacktype |= j; /* i find this somewhat senseful but we have
+								  * remove attacktype and use a other value -
+								  * attacktype context is to much distorted now
+								  */
+
+		/* add in the potion resists boni/mali */
+		if (potion_resist_boni[i] > 0) 
+			resists_boni[i] += ((100-resists_boni[i])*potion_resist_boni[i])/100;
+
+		if (potion_resist_mali[i] < 0)
+			resists_mali[i] += ((100-resists_mali[i])*(-potion_resist_mali[i]))/100;
+
+		/* and generate the REAL resists of the player! */
+		op->resist[i] = resists_boni[i] - resists_mali[i];
 	}
 
-	for (i=0; i<NROFPROTECTIONS; i++) 
-		op->protection[i] = protect_boni[i];
+	/* add protection boni/mali. 
+	 * ensure that protection is between 0 - 100.
+	 */
+	for (i=0; i<NROFPROTECTIONS; i++)
+	{
+		int ptemp=protect_boni[i]-protect_mali[i];
+
+		if(ptemp <0)
+			op->protection[i] = 0;
+		else if (ptemp>100)
+			op->protection[i] = 100;
+		else
+			op->protection[i] = ptemp;
+	}
 
 	check_stat_bounds(&(op->stats));
 
@@ -1286,7 +1413,7 @@ void fix_player(object *op)
 	/* now the speed thing... */
 	op->speed+=speed_bonus[op->stats.Dex];
 #ifdef SEARCH_ITEMS
-	if (op->contr->search_str[0])
+	if (pl->search_str[0])
 		op->speed -= 1.0f;
 #endif
 	if(added_speed>=0)
@@ -1320,7 +1447,7 @@ void fix_player(object *op)
 		f = ((float)weight_limit[op->stats.Str]/100.0f)*ENCUMBRANCE_LIMIT; /* = max kg we can carry */
 		if(((sint32)f)<=op->carrying)
 		{
-			if(op->carrying>=weight_limit[op->stats.Str])
+			if(op->carrying>=(sint32)weight_limit[op->stats.Str])
 				op->speed=0.01f; /* ouch */
 			else
 			{
@@ -1344,30 +1471,37 @@ void fix_player(object *op)
 	update_ob_speed(op);
 
 	op->weapon_speed_add = op->weapon_speed;
-	op->contr->weapon_sp = op->weapon_speed;  
-
-	/* Prevent overflows of wc - best you can get is ABS(120) - this
-     * should be more than enough - remember, AC is also in 8 bits,
-	 * so its value is the same.
-	 */
-	if (wc>120)
-		wc=120;
-	else if (wc<-120) 
-		wc=-120;
-
-	if (ac>120) 
-		ac=120;
-	else if (ac<-120)
-		ac=-120;
+	pl->weapon_sp = op->weapon_speed;  
 
 	op->glow_radius = light;
 
 	/* for player, max hp depend on general level, sp on magic exp, grace on wisdom exp level
 	 * NOTE: all values are adjusted from clone at function start.
 	 */
-	op->stats.maxhp = op->stats.maxhp * (op->level+3) - op->contr->maxhp_malus;
-	op->stats.maxsp = op->stats.maxsp * ((mana_obj!=NULL?mana_obj->level:op->level)+1) - op->contr->maxsp_malus;
-	op->stats.maxgrace = op->stats.maxgrace * ((grace_obj!=NULL?grace_obj->level:op->level)+1) - op->contr->maxgrace_malus;
+
+	op->stats.maxhp += op->arch->clone.stats.maxhp+op->arch->clone.stats.maxhp; /* *3 is base */
+	for(i=1;i<=op->level;i++)
+		op->stats.maxhp +=pl->levhp[i];
+
+	if(mana_obj)
+	{
+		for(i=1;i<=mana_obj->level;i++)
+			op->stats.maxsp +=pl->levsp[i];
+	}
+	if(grace_obj)
+	{
+		for(i=1;i<=grace_obj->level;i++)
+			op->stats.maxgrace +=pl->levgrace[i];
+	}
+	/*
+	op->stats.maxhp += op->arch->clone.stats.maxhp*(op->level)+op->arch->clone.stats.maxhp*2;
+	op->stats.maxsp += (op->arch->clone.stats.maxsp * (mana_obj!=NULL?mana_obj->level:op->level));
+	op->stats.maxgrace += (op->arch->clone.stats.maxgrace * (grace_obj!=NULL?grace_obj->level:op->level));
+	*/
+	/* now adjust with the % of the stats mali/boni */
+	op->stats.maxhp += (int)((float)op->stats.maxhp*con_bonus[op->stats.Con]);
+	op->stats.maxsp += (int)((float)op->stats.maxsp*con_bonus[op->stats.Pow]);
+	op->stats.maxgrace += (int)((float)op->stats.maxgrace*con_bonus[op->stats.Wis]);
 
 	/* when this is set, this object comes fresh in game.
 	 * we must adjust now hp,sp and grace with the max values.
@@ -1392,23 +1526,30 @@ void fix_player(object *op)
 	if(op->stats.grace>op->stats.maxgrace)
 		op->stats.grace = op->stats.maxgrace;
 
-	/* hm, perhaps we are changing this to physical level? ... i will have it in mind
-	 * to install here something complexer */
 
-	op->stats.ac = ac - op->level; /* here our true level come in play - valuable ac */
-
+	/* highest skill will be the "real" power level for ac! */
+	op->stats.ac = ac + skill_level_max;
 
 	 /* Now we have all collected - the best bare hand skill and/or the applied weapon.
 	  * If we have no weapon selected, use the bare hand skill for attacking and wc/dam .
 	  * if we have a weapon, use the weapon and forget the bare hand skill.
 	  */
 
-	 if(op->contr->set_skill_weapon==NO_SKILL_READY) /* ok, no weapon in our hand - we must use our hands */
+	 if(pl->set_skill_weapon==NO_SKILL_READY) /* ok, no weapon in our hand - we must use our hands */
 	 {
 		 if(skill_weapon) 
 		 {
-			op->contr->skill_weapon = skill_weapon;
-			op->stats.wc = wc - skill_weapon->level;
+		/* now we must add this special skill attack */
+			for (i=0; i<NROFATTACKS; i++)
+			{
+				if(op->attack[i] +skill_weapon->attack[i]>120)
+					op->attack[i]=120;
+				else
+					op->attack[i] += skill_weapon->attack[i];
+			}
+
+			pl->skill_weapon = skill_weapon;
+			op->stats.wc = wc + skill_weapon->level;
 			op->stats.dam = (sint16)((float)op->stats.dam * lev_damage[skill_weapon->level]);
 		 }
 		 else
@@ -1417,14 +1558,22 @@ void fix_player(object *op)
 	 else /* weapon in hand */
 	 {
 		 /* ouch - weapon without the skill applied... */
-		 if(!op->contr->skill_ptr[op->contr->set_skill_weapon])
-			LOG(llevBug,"BUG: fix_player(): player %s has weapon selected but not the skill #%d!!!\n",op->name, op->contr->set_skill_weapon);
+		 if(!pl->skill_ptr[pl->set_skill_weapon])
+			LOG(llevBug,"BUG: fix_player(): player %s has weapon selected but not the skill #%d!!!\n",op->name, pl->set_skill_weapon);
 		 else
 		 {
-			op->stats.wc = wc - op->contr->skill_ptr[op->contr->set_skill_weapon]->level;
-			op->stats.dam = (sint16)((float)op->stats.dam * lev_damage[op->contr->skill_ptr[op->contr->set_skill_weapon]->level]);
+			op->stats.wc = wc + pl->skill_ptr[pl->set_skill_weapon]->level;
+			op->stats.dam = (sint16)((float)op->stats.dam * lev_damage[pl->skill_ptr[pl->set_skill_weapon]->level]);
 		 }
 	 }
+
+
+	 /* now the last adds - stat boni to dam and wc! */
+	 op->stats.dam +=dam_bonus[op->stats.Str];
+	 if(op->stats.dam<0)
+		op->stats.dam=0;
+
+	 op->stats.wc +=thaco_bonus[op->stats.Dex];
 
 	
 	/*LOG(-1,"PLAYER ADJUST: %s -> hp(%d %d %d %d) sp(%d %d %d %d) gr(%d %d %d %d)\n",op->name,
@@ -1443,10 +1592,10 @@ void fix_player(object *op)
 	if(QUERY_FLAG(op,FLAG_SEE_INVISIBLE) )
 	{
 		if(!inv_see_flag)
-			op->contr->socket.update_look=1;
+			pl->socket.update_look=1;
 	}
 	else if(inv_see_flag) /* and !FLAG_SEE_INVISIBLE */
-		op->contr->socket.update_look=1;
+		pl->socket.update_look=1;
 }
 
 /*
@@ -1517,7 +1666,7 @@ sint32 add_exp(object *op, int exp, int skill_nr) {
     if(skill_nr == CHOSEN_SKILL_NO)
     {
         /* TODO: select skill */
-        LOG(llevDebug,"TODO: add_exp(): called for %s with exp %d. CHOSEN_SKILL_NO set. TODO: select skill.\n",op->name,exp);
+        LOG(llevDebug,"TODO: add_exp(): called for %s with exp %d. CHOSEN_SKILL_NO set. TODO: select skill.\n",query_name(op),exp);
         return 0;
     }
             
@@ -1530,7 +1679,7 @@ sint32 add_exp(object *op, int exp, int skill_nr) {
          * This can happens when group exp is devided.
          * We must get a useful sub or we skip the exp.
          */
-         LOG(llevDebug,"TODO: add_exp(): called for %s with skill nr %d / %d exp - object has not this skill.\n",op->name,skill_nr, exp);
+         LOG(llevDebug,"TODO: add_exp(): called for %s with skill nr %d / %d exp - object has not this skill.\n",query_name(op),skill_nr, exp);
          return 0; /* TODO: groups comes later  - now we skip all times */
     }
 
@@ -1543,7 +1692,7 @@ sint32 add_exp(object *op, int exp, int skill_nr) {
 
     if(!exp_ob)
     {
-	LOG(llevBug,"BUG: add_exp() skill:%s - no exp_op found!!\n",exp_skill->name);
+	LOG(llevBug,"BUG: add_exp() skill:%s - no exp_op found!!\n",query_name(exp_skill));
 	return 0;
     }
     
@@ -1604,6 +1753,7 @@ void set_dragon_name(object *pl, object *abil, object *skin) {
   level = (int)(level/5.);
   
   /* now set the new title */
+  /*
   if (pl->contr != NULL) {
     if(level == 0)
       sprintf(pl->contr->title, "%s hatchling", attacks[atnr]);
@@ -1614,7 +1764,6 @@ void set_dragon_name(object *pl, object *abil, object *skin) {
     else if (level == 3)
       sprintf(pl->contr->title, "%s dragon", attacks[atnr]);
     else {
-      /* special titles for extra high resistance! */
       if (skin->resist[atnr] > 80)
 	sprintf(pl->contr->title, "legendary %s dragon", attacks[atnr]);
       else if (skin->resist[atnr] > 50)
@@ -1623,6 +1772,7 @@ void set_dragon_name(object *pl, object *abil, object *skin) {
 	sprintf(pl->contr->title, "big %s dragon", attacks[atnr]);
     }
   }
+  */
 }
 
 /*
@@ -1703,19 +1853,37 @@ void player_lvl_adj(object *who, object *op) {
 		if (op == who && op->stats.exp > 1 && is_dragon_pl(who))
 			dragon_level_gain(who);
 	
-		if(who && (who->level < 11) && op->type!=EXPERIENCE && op->type!=SKILL) 
+		
+		if(who && who->type == PLAYER && op->type!=EXPERIENCE && op->type!=SKILL && who->level >1)
 		{ 
-			who->contr->levhp[who->level] = die_roll(2, 4, who, PREFER_HIGH)+1;
-			who->contr->levsp[who->level] = die_roll(2, 3, who, PREFER_HIGH);
-			who->contr->levgrace[who->level]=die_roll(2, 2, who, PREFER_HIGH)-1;
-		}
 
-		if(who) 
-			fix_player(who);
+			if(who->level > 2)
+				who->contr->levhp[who->level]=(char)((RANDOM()%who->arch->clone.stats.maxhp)+1);
+			else
+				who->contr->levhp[who->level]=(char)who->arch->clone.stats.maxhp;
+		}
 		if(op->level>1 && op->type==EXPERIENCE) 
 		{
+			if(who && who->type == PLAYER)
+			{
+				if(op->stats.Pow) /* mana */
+				{
+					if(op->level > 2)
+						who->contr->levsp[op->level]=(char)((RANDOM()%who->arch->clone.stats.maxsp)+1);
+					else
+						who->contr->levsp[op->level]=(char)who->arch->clone.stats.maxsp;
+				}
+				else if(op->stats.Wis) /* grace */
+				{
+					if(op->level > 2)
+						who->contr->levgrace[op->level]=(char)((RANDOM()%who->arch->clone.stats.maxgrace)+1);
+					else
+						who->contr->levgrace[op->level]=(char)who->arch->clone.stats.maxgrace;
+				}
+			}
 			sprintf(buf,"You are now level %d in %s based skills.",op->level,op->name);
-			if(who) (*draw_info_func)(NDI_UNIQUE|NDI_RED, 0, who,buf);
+			if(who) 
+				(*draw_info_func)(NDI_UNIQUE|NDI_RED, 0, who,buf);
 		}
 		else if(op->level>1 && op->type==SKILL) 
 		{
@@ -1728,7 +1896,10 @@ void player_lvl_adj(object *who, object *op) {
 			sprintf(buf,"You are now level %d.",op->level);
 			if(who) 
 				(*draw_info_func)(NDI_UNIQUE|NDI_RED, 0, who,buf);
-		}
+		}	
+
+		if(who) 
+			fix_player(who);
 		player_lvl_adj(who,op); /* To increase more levels */
     } 
 	else if(op->level>1&&op->stats.exp<(sint32)level_exp(op->level,1.0)) 
@@ -1859,18 +2030,6 @@ int adjust_exp(object *pl, object *op, int exp) {
     return exp;	/* return the actual amount changed stats.exp we REALLY have added to our skill */ 
 }
 
-/* check_dm_add_exp() - called from c_wiz.c. Needed by ALLOW_SKILLS
- * code. -b.t.
- */
-
-int check_dm_add_exp_to_obj(object *exp_ob, int i) {
-
-    if((exp_ob->stats.exp + i) < 0) 
-	i= -1*(exp_ob->stats.exp);
-    else if((exp_ob->stats.exp +i)> (sint32)MAX_EXP_IN_OBJ)
-	i= MAX_EXP_IN_OBJ - exp_ob->stats.exp;
-    return i;
-}
 
 /* OLD: Applies a death penalty experience.  20% or 3 levels, whichever is
    less experience lost. */
@@ -1969,9 +2128,11 @@ void fix_monster(object *op)
 	if(op->stats.grace>op->stats.maxgrace)
 		op->stats.grace = op->stats.maxgrace;
 
-	op->stats.ac = base->stats.ac - op->level;
-	op->stats.wc = base->stats.wc - op->level;
-
+	op->stats.ac = base->stats.ac + op->level;
+	/* + level/5 to catch up the equipment improvements of
+	 * the players in armour items.
+	 */
+	op->stats.wc = base->stats.wc + op->level +(op->level/5);  
 	op->stats.dam =  base->stats.dam;
 
 	/* post adjust */

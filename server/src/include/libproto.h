@@ -30,7 +30,6 @@ extern void animate_object(object *op, int count);
 /* arch.c */
 extern archetype *find_archetype_by_object_name(char *name);
 extern object *get_archetype_by_object_name(char *name);
-extern object *find_best_weapon_used_match(object *pl, char *params);
 extern archetype *get_skill_archetype(int skillnr);
 extern int item_matched_string(object *pl, object *op, char *name);
 extern void init_archetypes(void);
@@ -265,7 +264,6 @@ extern object *get_owner(object *op);
 extern void clear_owner(object *op);
 extern void set_owner(object *op, object *owner);
 extern void copy_owner(object *op, object *clone);
-extern void reset_object(object *op);
 extern void clear_object(object *op);
 extern void copy_object(object *op2, object *op);
 extern void copy_object_data(object *op2, object *op);
@@ -365,6 +363,7 @@ extern char *find_string(const char *str);
 extern void free_string_shared(char *str);
 extern void ss_dump_statistics(void);
 extern char *ss_dump_table(int what);
+extern void ss_test_table(void);
 extern int buf_overflow(char *buf1, char *buf2, int bufsize);
 /* time.c */
 extern void reset_sleep(void);

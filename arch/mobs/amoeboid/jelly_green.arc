@@ -1,7 +1,7 @@
 Object jelly_green
 name green jelly
 race slime
-randomitems slime
+randomitems mob_slime
 is_neutral 1
 weight 13250
 exp 150
@@ -11,8 +11,8 @@ attack_poison 90
 attack_acid 10
 resist_poison 100
 resist_paralyze 100
-ac 16
-wc 15
+ac 6
+wc 2
 dam 6
 hp -1
 maxhp 5

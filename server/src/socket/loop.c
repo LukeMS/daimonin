@@ -411,6 +411,10 @@ void doeric_server()
     socket_info.timeout.tv_sec = 0;
     socket_info.timeout.tv_usec = 0;
 
+	/* our one and only select() - after this call, every player socket has signaled us
+	 * in the tmp_xxxx objects the signal status: FD_ISSET will check socket for socket
+	 * for thats signal and trigger read, write or exception (error on socket).
+	 */
     pollret= select(socket_info.max_filedescriptor, &tmp_read, &tmp_write, 
 		    &tmp_exceptions, &socket_info.timeout);
 
@@ -487,43 +491,17 @@ void doeric_server()
 		if (pl->socket.status==Ns_Dead)
 			continue;
 
-		if (FD_ISSET(pl->socket.fd,&tmp_write))
-		{
-			/* i see no really sense here... can_write is REALLY
-			 * only set if socket() marks the write channel as free.
-			 * and can_write in loop flow only set here.
-			 * i would prefer a to exclude writing only here - and then
-			 * another tries in the "sleep" phase.
-			 * i think this was added as a "there is something in a buffer"
-			 * and then changed in context.
-			 */
-			if (!pl->socket.can_write)
-			{
-				pl->socket.can_write=1;
-				write_socket_buffer(&pl->socket);
-			}
-			/* if we get an error on the write_socket buffer, no reason to
-			* continue on this socket.
-			*/
-			if (pl->socket.status==Ns_Dead)
-				continue;
-		}
-		else 
-			pl->socket.can_write=0;
-
+		/* kill players if we have problems */
 		if (FD_ISSET(pl->socket.fd,&tmp_exceptions))
 			remove_ns_dead_player(pl);
 		else 
 		{
+			/* all ok - read from socket? */
 			if (FD_ISSET(pl->socket.fd, &tmp_read))
 				HandleClient(&pl->socket, pl);
-			/* If the player has left the game, then the socket status
-			* will be set to this be the leave function.  We don't
-			* need to call leave again, as it has already been called
-			* once.
-			*/
-		    if (pl->socket.status==Ns_Dead)
-				remove_ns_dead_player(pl);
+
+		    if (pl->socket.status==Ns_Dead) /* perhaps something was bad in HandleClient() */
+				remove_ns_dead_player(pl);	/* or player has left game */
 			else
 			{
 
@@ -538,8 +516,26 @@ void doeric_server()
 				draw_client_map(pl->ob);
 				if (pl->socket.update_look) 
 					esrv_draw_look(pl->ob);
+
+				/* and *now* write back to player */
+				if (FD_ISSET(pl->socket.fd,&tmp_write))
+				{
+					/* i see no really sense here... can_write is REALLY
+					* only set if socket() marks the write channel as free.
+					* and can_write is in loop flow only set here.
+					* i think this was added as a "there is something in a buffer"
+					* and then changed in context.
+					*/
+					if (!pl->socket.can_write)
+					{
+						pl->socket.can_write=1;
+						write_socket_buffer(&pl->socket);
+					}
+				}
+				else 
+					pl->socket.can_write=0;
 			}
 		}
-    }
+    } /* for() end */
 }
 

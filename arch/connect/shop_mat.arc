@@ -7,6 +7,7 @@ anim
 exit.101
 exit.102
 mina
+player_only 1
 is_animated 1
 anim_speed 4
 type 69

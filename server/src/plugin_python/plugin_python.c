@@ -21,20 +21,21 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
     The author can be reached via e-mail to daimonin@nord-com.net
-*/
+
+/* This module was original written for crossfire from gros.
+ */
+
 /*****************************************************************************/
-/* CFPython - A Python module for Crossfire RPG.                             */
+/* CFPython - A Python module for Daimonin RPG.                             */
 /*****************************************************************************/
 /* The goal of this module is to provide support for Python scripts into     */
-/* Crossfire. Guile support existed before, but it was put directly in the   */
-/* code, a thing that prevented easy building of Crossfire on platforms that */
-/* didn't have a Guile port. And Guile was seen as difficult to learn and was*/
-/* also less popular than Python in the Crossfire Community.                 */
-/* So, I finally decided to replace Guile with Python and made it a separate */
-/* module since it is not a "critical part" of the code. Of course, it also  */
-/* means that it will never be as fast as it could be, but it allows more    */
-/* flexibility (and although it is not as fast as compiled-in code, it should*/
-/* be fast enough for nearly everything on most today computers).            */
+/* Daimonin. Python is here used in a extended way as a generic plugin.      */
+/* Thats not a fast way to use this - but extrem flexible (we can load/      */
+/* change and test script over and over in a running server) and easy to     */
+/* extend - we simply don't add somewhere code in the server except some     */
+/* jump points for the plugin model - if we want change someone the script   */
+/* language or add another - it will not change anything in the plugin       */
+/* interface.                                                                *7
 /*****************************************************************************/
 /* Please note that it is still very beta - some of the functions may not    */
 /* work as expected and could even cause the server to crash.                */
@@ -45,7 +46,6 @@
 /* 0.6 "Kharkov"     - Message and Write correctly redefined.                */
 /*****************************************************************************/
 /* Version: 0.6 Beta (also known as "Kharkov")                               */
-/* Contact: yann.chachkoff@mailandnews.com                                   */
 /*****************************************************************************/
 /* That code is placed under the GNU General Public Licence (GPL)            */
 /* (C)2001 by Chachkoff Yann (Feel free to deliver your complaints)          */
@@ -87,6 +87,10 @@
 /* with that system since they don't need debugging because they're simple.  */
 /*****************************************************************************/
 
+/* Gecko: a comment like "GeckoStatus: untested" means that that function
+ * is not tested with the new CFPython_Object implementation. Most functions
+ * should have survived the transition, but some may have been missed.
+ */
 
 /* START several inline HOOK functions */
 
@@ -131,6 +135,8 @@ static inline object *insert_ob_in_ob_hook(object *ob1, object *ob2)
 
 /* END inline HOOK functions */
 
+/* FUNCTIONSTART -- Here all the Python plugin functions come */
+
 /*****************************************************************************/
 /* Name   : CFGetMapWidth                                                    */
 /* Python : CFPython.GetMapWidth(map)                                        */
@@ -139,10 +145,10 @@ static inline object *insert_ob_in_ob_hook(object *ob1, object *ob2)
 static PyObject* CFGetMapWidth(PyObject* self, PyObject* args)
 {
     int val;
-    long map;
-    if (!PyArg_ParseTuple(args,"l",&map))
+    CFPython_Map *map;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_MapType, &map))
         return NULL;
-    val = ((mapstruct *)(map))->width;
+    val = map->map->width;
     return Py_BuildValue("i",val);
 }
 
@@ -154,35 +160,41 @@ static PyObject* CFGetMapWidth(PyObject* self, PyObject* args)
 static PyObject* CFGetMapHeight(PyObject* self, PyObject* args)
 {
     int val;
-    long map;
-    if (!PyArg_ParseTuple(args,"l",&map))
+    CFPython_Map *map;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_MapType, &map))
         return NULL;
-    val = ((mapstruct *)(map))->height;
+    val = map->map->height;
     return Py_BuildValue("i",val);
 }
 
 /*****************************************************************************/
 /* Name   : CFGetObjectAt                                                    */
 /* Python : CFPython.GetObjectAt(map,x,y)                                    */
-/* Status : Stable                                                           */
+/* Info   : FIXME seems to get the _last_ object on the square...            */
+/*          FIXME What is the difference between this and                    */
+/*           CFGETFirstObjectOnSquare ?                                      */
+/* Status : Unfinished                                                       */
 /*****************************************************************************/
 static PyObject* CFGetObjectAt(PyObject* self, PyObject* args)
 {
     int x, y;
-    long map;
+    CFPython_Map *map;
+
 	/*
-    long whoptr=0;
 	mapstruct *mt;
-*/
-    if (!PyArg_ParseTuple(args,"lii",&map,&x,&y))
+    object *myob = NULL;
+    */
+
+    if (!PyArg_ParseTuple(args,"O!ii", &CFPython_MapType, &map,&x,&y))
         return NULL;
 
 	/* fixed for tiled maps. MT-2002 */
 	/* we must use a hook here for out of map!
-	if((mt=out_of_map((mapstruct *)(map),&x,&y)))
-	    whoptr = (long)(get_map_ob(mt,x,y));
-    return Py_BuildValue("l",whoptr);
-	*/
+	if((mt=out_of_map(map->map,&x,&y)))
+	    myob = get_map_ob(mt,x,y);
+
+    return wrap_object(myob);
+    */
 	Py_INCREF(Py_None);
     return Py_None;
 }
@@ -192,13 +204,14 @@ static PyObject* CFGetObjectAt(PyObject* self, PyObject* args)
 /* Python : CFPython.SetValue(object,value)                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFSetValue(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     int newvalue;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&newvalue))
+    if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&newvalue))
         return NULL;
 
     WHO->value = newvalue;
@@ -211,12 +224,13 @@ static PyObject* CFSetValue(PyObject* self, PyObject* args)
 /* Python : CFPython.GetValue(object)                                        */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFGetValue(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
 
     return Py_BuildValue("i",WHO->value);
@@ -227,19 +241,20 @@ static PyObject* CFGetValue(PyObject* self, PyObject* args)
 /* Python : CFPython.SetSkillExperience(object,skillid,value)                */
 /* Status : Unfinished                                                       */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 /* DO NOT USE - MUST BE REWRITTEN! */
 static PyObject* CFSetSkillExperience(PyObject* self, PyObject* args)
 {
     object *tmp;
     object *oldchosen;
 
-    long whoptr;
+    CFPython_Object *whoptr;
 
     int skill;
     long value;
     int currentxp;
 
-    if (!PyArg_ParseTuple(args,"lil",&whoptr,&skill,&value))
+    if (!PyArg_ParseTuple(args,"O!il", &CFPython_ObjectType, &whoptr,&skill,&value))
         return NULL;
 
     /* Browse the inventory of object to find a matching skill. */
@@ -274,14 +289,15 @@ static PyObject* CFSetSkillExperience(PyObject* self, PyObject* args)
 /* Python : CFPython.GetSkillExperience(object, skill)                       */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFGetSkillExperience(PyObject* self, PyObject* args)
 {
     object *tmp;
     int skill;
-    long whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&skill))
+    if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&skill))
         return NULL;
 
     /* Browse the inventory of object to find a matching skill. */
@@ -294,7 +310,7 @@ static PyObject* CFGetSkillExperience(PyObject* self, PyObject* args)
             return Py_BuildValue("l",(long)(tmp->exp_obj->stats.exp));
         }
     }
-    return NULL;
+    RAISE("Couldn't find requested skill");
 }
 
 /*****************************************************************************/
@@ -302,6 +318,7 @@ static PyObject* CFGetSkillExperience(PyObject* self, PyObject* args)
 /* Python : CFPython.MatchString(firststr,secondstr)                         */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFMatchString(PyObject* self, PyObject* args)
 {
@@ -324,13 +341,14 @@ static PyObject* CFMatchString(PyObject* self, PyObject* args)
 /* Python : CFPython.SetCursed(object,value)                                 */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFSetCursed(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     int value;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
+    if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
   if (value!=0)
@@ -347,13 +365,14 @@ static PyObject* CFSetCursed(PyObject* self, PyObject* args)
 /* Python : CFPython.ActivateRune(object,objectwhat)                         */
 /* Status : Untested                                                         */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFActivateRune(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    long whatptr;
+    CFPython_Object *whoptr;
+    CFPython_Object *whatptr;
 
-    if (!PyArg_ParseTuple(args,"ll",&whoptr,&whatptr))
+    if (!PyArg_ParseTuple(args,"O!O!", &CFPython_ObjectType, &whoptr, &CFPython_ObjectType, &whatptr))
         return NULL;
 
     GCFP.Value[0] = (void *)(WHAT);
@@ -369,13 +388,14 @@ static PyObject* CFActivateRune(PyObject* self, PyObject* args)
 /* Python : CFPython.CheckTrigger(object,objectwhat)                         */
 /* Status : Unfinished                                                       */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 /* MUST DO THE HOOK HERE ! */
 static PyObject* CFCheckTrigger(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    long whatptr;
+    CFPython_Object *whoptr;
+    CFPython_Object *whatptr;
 
-    if (!PyArg_ParseTuple(args,"ll",&whoptr,&whatptr))
+    if (!PyArg_ParseTuple(args,"O!O!", &CFPython_ObjectType, &whoptr, &CFPython_ObjectType, &whatptr))
         return NULL;
 
    /* check_trigger(WHAT,WHO); should be hook too! */
@@ -389,13 +409,14 @@ static PyObject* CFCheckTrigger(PyObject* self, PyObject* args)
 /* Python : CFPython.SetUnaggressive(who,value)                              */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFSetUnaggressive(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     int value;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
+    if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
     if (value!=0)
@@ -408,14 +429,17 @@ static PyObject* CFSetUnaggressive(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFCastAbility                                                    */
-/* Python : CFPython.CastAbility(object,target,spell,mode,direction,option)  */
+/* Python : CFPython.CastAbility(object,target,spellno,mode,direction,option)*/
+/* Info   : object Casts spellno on target.                                  */
+/*          mode: 0 = normal, 1 = potion                                     */
+/*          direction is only relevant for directional spells                */
+/*          op = ? (Gecko: TODO op + target for directional? )               */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFCastAbility(PyObject* self, PyObject* args)
 {
-    long whoptr;
-	long target;
+    CFPython_Object *whoptr;
+	CFPython_Object *target;
     int spell;
     int dir;
 	int mode;
@@ -425,7 +449,8 @@ static PyObject* CFCastAbility(PyObject* self, PyObject* args)
     int parm2;
     int typeoffire = FIRE_DIRECTIONAL;
 
-	if (!PyArg_ParseTuple(args,"lliiis",&whoptr, &target, &spell, &mode, &dir, &op))
+	if (!PyArg_ParseTuple(args,"O!O!iiis", &CFPython_ObjectType, &whoptr, &CFPython_ObjectType, &target, 
+                &spell, &mode, &dir, &op))
         return NULL;
 
 	if(WHO && WHO->type != PLAYER)
@@ -438,7 +463,7 @@ static PyObject* CFCastAbility(PyObject* self, PyObject* args)
 			parm2 = spellPotion;
 	}
 
-    GCFP.Value[0] = (void *)(object *)(target);
+    GCFP.Value[0] = (void *)(target->obj);
     GCFP.Value[1] = (void *)(WHO);
     GCFP.Value[2] = (void *)(&dir);
     GCFP.Value[3] = (void *)(&spell);
@@ -454,25 +479,24 @@ static PyObject* CFCastAbility(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFGetMapPath                                                     */
-/* Python : CFPython.GetMapPath(objectmap)                                   */
+/* Python : CFPython.GetMapPath(map)                                         */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFGetMapPath(PyObject* self, PyObject* args)
 {
-    long where;
-    if (!PyArg_ParseTuple(args,"l",&where))
+    CFPython_Map *mapptr;
+    if (!PyArg_ParseTuple(args,"O!",&CFPython_MapType, &mapptr))
         return NULL;
 
-    return Py_BuildValue("s",((mapstruct *)(where))->path);
-}
-
+    return Py_BuildValue("s",mapptr->map->path);
+};
 
 /*****************************************************************************/
 /* Name   : CFGetMessage                                                     */
 /* Python : CFPython.GetMessage(object)                                      */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFGetMessage(PyObject* self, PyObject* args)
 {
@@ -480,9 +504,9 @@ static PyObject* CFGetMessage(PyObject* self, PyObject* args)
     /* (implementing this as a malloc'ed string problematic under some env.) */
     /* Now declared static to help preventing memory leaks */
     static char buf[4096];
-    long whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     if (WHO->msg != NULL)
     {
@@ -508,11 +532,12 @@ static PyObject* CFGetMessage(PyObject* self, PyObject* args)
 /* Python : CFPython.SetMessage(object,message)                              */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 static PyObject* CFSetMessage(PyObject* self, PyObject* args)
 {
     char *txt;
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"ls",&whoptr, &txt))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!s", &CFPython_ObjectType, &whoptr, &txt))
         return NULL;
 
     if (WHO->msg != NULL)
@@ -527,13 +552,14 @@ static PyObject* CFSetMessage(PyObject* self, PyObject* args)
 /* Python : CFPython.GetGod(object)                                          */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFGetGod(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     CFParm* CFR;
     static char* value;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
 
     GCFP.Value[0] = (void *)(WHO);
@@ -548,10 +574,10 @@ static PyObject* CFGetGod(PyObject* self, PyObject* args)
 /* Python : CFPython.SetGod(object,godstr)                                   */
 /* Status : Unfinished!                                                      */
 /*****************************************************************************/
-/* god stuff has changed! */
+/* GeckoStatus: untested */
 static PyObject* CFSetGod(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     char* txt;
     char* prayname;
     object* tmp;
@@ -559,7 +585,7 @@ static PyObject* CFSetGod(PyObject* self, PyObject* args)
     CFParm* CFR;
     int value;
 
-    if (!PyArg_ParseTuple(args,"ls",&whoptr,&txt))
+    if (!PyArg_ParseTuple(args,"O!s", &CFPython_ObjectType, &whoptr,&txt))
         return NULL;
 
     prayname = add_string_hook("praying");
@@ -589,13 +615,14 @@ static PyObject* CFSetGod(PyObject* self, PyObject* args)
 /* Python : CFPython.SetWeight(object,value)                                 */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFSetWeight(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     long value;
 
-    if (!PyArg_ParseTuple(args,"ll",&whoptr,&value))
+    if (!PyArg_ParseTuple(args,"O!l", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
     if (value < 0)
@@ -614,6 +641,7 @@ static PyObject* CFSetWeight(PyObject* self, PyObject* args)
 /* Python : CFPython.ReadyMap(name)                                          */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFReadyMap(PyObject* self, PyObject* args)
 {
@@ -637,22 +665,23 @@ static PyObject* CFReadyMap(PyObject* self, PyObject* args)
     mymap = (mapstruct *)(CFR->Value[0]);
     LOG(llevDebug, "Map file is %s\n",mymap->path);
     free(CFR);
-    return Py_BuildValue("l",(long)(mymap));
+    return wrap_map(mymap);
 }
 
 /*****************************************************************************/
 /* Name   : CFTeleport                                                       */
-/* Python : CFPython.Teleport(object,mapptr,x,y)                             */
-/* Status : Untested                                                         */
+/* Python : CFPython.Teleport(object,mapname,x,y, unique)                    */
+/* Info   : Teleports object to the given position of the named map. If      */
+/*          unique is set to 1, the map will be a unique map.                */
+/* Status : Tested (for non-unique)                                          */
 /*****************************************************************************/
-
 static PyObject* CFTeleport(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     char *map, *msg=NULL;
     int x, y, u;
 
-    if (!PyArg_ParseTuple(args,"lsiii",&whoptr,&map,&x,&y, &u))
+    if (!PyArg_ParseTuple(args,"O!siii", &CFPython_ObjectType, &whoptr,&map,&x,&y, &u))
         return NULL;
 
     GCFP.Value[0] = (void *)(WHO);
@@ -668,17 +697,18 @@ static PyObject* CFTeleport(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   : CFOutOfMap                                                       */
+/* Name   : CFIsOutOfMap                                                     */
 /* Python : CFPython.IsOutOfMap(object,x,y)                                  */
 /* Status : UNFINISHED!                                                      */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 /* must use hook for out_of_map! */
 static PyObject* CFIsOutOfMap(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     int x, y;
 
-    if (!PyArg_ParseTuple(args,"lii",&whoptr,&x,&y))
+    if (!PyArg_ParseTuple(args,"O!ii", &CFPython_ObjectType, &whoptr,&x,&y))
         return NULL;
 
     return Py_BuildValue("i", OUT_OF_REAL_MAP(WHO->map,x,y));
@@ -686,16 +716,17 @@ static PyObject* CFIsOutOfMap(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFPickUp                                                         */
-/* Python : CFPython.Pickup(object,whatob)                                   */
+/* Python : CFPython.PickUp(object,whatob)                                   */
 /* Status : Untested                                                         */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFPickUp(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    long whatptr;
+    CFPython_Object *whoptr;
+    CFPython_Object *whatptr;
 
-    if (!PyArg_ParseTuple(args,"ll",&whoptr,&whatptr))
+    if (!PyArg_ParseTuple(args,"O!O!", &CFPython_ObjectType, &whoptr, &CFPython_ObjectType, &whatptr))
         return NULL;
 
     GCFP.Value[0] = (void *)(WHO);
@@ -711,12 +742,13 @@ static PyObject* CFPickUp(PyObject* self, PyObject* args)
 /* Python : CFPython.GetWeight(object)                                       */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFGetWeight(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("l",WHO->weight);
 }
@@ -727,15 +759,15 @@ static PyObject* CFGetWeight(PyObject* self, PyObject* args)
 /* Python : CFPython.CanBePicked(object)                                     */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFIsCanBePicked(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
 
-    return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_NO_PICK));
+    /* 0: can't be picked up - 1: can be picked up */
+    return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_NO_PICK)?0:1);
 }
 
 /*****************************************************************************/
@@ -743,15 +775,14 @@ static PyObject* CFIsCanBePicked(PyObject* self, PyObject* args)
 /* Python : CFPython.GetMap(object)                                          */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFGetMap(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
 
-    return Py_BuildValue("l",(long)(WHO->map));
+    return wrap_map(WHO->map);
 }
 
 /*****************************************************************************/
@@ -759,15 +790,13 @@ static PyObject* CFGetMap(PyObject* self, PyObject* args)
 /* Python : CFPython.SetNextObject(object,object)                            */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
+/* GeckoStatus: untested */
 static PyObject* CFSetNextObject(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    long whatptr;
-    if (!PyArg_ParseTuple(args,"ll",&whoptr,&whatptr))
+    CFPython_Object *whoptr;
+    CFPython_Object *whatptr;
+    if (!PyArg_ParseTuple(args,"O!O!", &CFPython_ObjectType, &whoptr, &CFPython_ObjectType, &whatptr))
         return NULL;
-
-    if (WHO==NULL) return NULL;
 
     WHO->below = WHAT;
     Py_INCREF(Py_None);
@@ -779,12 +808,13 @@ static PyObject* CFSetNextObject(PyObject* self, PyObject* args)
 /* Python : CFPython.SetPreviousObject(object,object)                        */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFSetPreviousObject(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    long whatptr;
-    if (!PyArg_ParseTuple(args,"ll",&whoptr,&whatptr))
+    CFPython_Object *whoptr;
+    CFPython_Object *whatptr;
+    if (!PyArg_ParseTuple(args,"O!O!", &CFPython_ObjectType, &whoptr, &CFPython_ObjectType, &whatptr))
         return NULL;
 
     if (WHO==NULL) return NULL;
@@ -799,17 +829,14 @@ static PyObject* CFSetPreviousObject(PyObject* self, PyObject* args)
 /* Python : CFPython.GetNextObject(object)                                   */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFGetNextObject(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
 
-    if (WHO==NULL) return NULL;
-
-    return Py_BuildValue("l",(long)(WHO->below));
+    return wrap_object(WHO->below);
 }
 
 /*****************************************************************************/
@@ -817,43 +844,39 @@ static PyObject* CFGetNextObject(PyObject* self, PyObject* args)
 /* Python : CFPython.GetPreviousObject(object)                               */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFGetPreviousObject(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
 
-    if (WHO==NULL) return NULL;
-
-    return Py_BuildValue("l",(long)(WHO->above));
+    return wrap_object(WHO->above);
 }
 
 /*****************************************************************************/
 /* Name   : CFGetFirstObjectOnSquare                                         */
 /* Python : CFPython.GetFirstObjectOnSquare(map,x,y)                         */
+/* Info   : FIXME seems to get the _last_ object on the square...            */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFGetFirstObjectOnSquare(PyObject* self, PyObject* args)
 {
-    long map;
+    CFPython_Map *map;
     int x, y;
     object* val;
     CFParm* CFR;
 
-    if (!PyArg_ParseTuple(args,"lii",&map,&x,&y))
+    if (!PyArg_ParseTuple(args,"O!ii",&CFPython_MapType, &map,&x,&y))
         return NULL;
 
-    GCFP.Value[0] = (mapstruct *)(map);
+    GCFP.Value[0] = map->map;
     GCFP.Value[1] = (void *)(&x);
     GCFP.Value[2] = (void *)(&y);
     CFR = (PlugHooks[HOOK_GETMAPOBJECT])(&GCFP);
     val = (object *)(CFR->Value[0]);
     free(CFR);
-
-    return Py_BuildValue("l",(long)(val));
+    return wrap_object(val);
 }
 
 /*****************************************************************************/
@@ -861,13 +884,14 @@ static PyObject* CFGetFirstObjectOnSquare(PyObject* self, PyObject* args)
 /* Python : CFPython.SetQuantity(object,nrof)                                */
 /* Status : Untested                                                         */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFSetQuantity(PyObject* self, PyObject* args)
 {
-    long whatptr;
+    CFPython_Object *whatptr;
     int value;
 
-    if (!PyArg_ParseTuple(args,"li",&whatptr,&value))
+    if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whatptr,&value))
         return NULL;
 
     /* I used an arbitrary bound of 100k here */
@@ -891,12 +915,13 @@ static PyObject* CFSetQuantity(PyObject* self, PyObject* args)
 /* Python : CFPython.GetQuantity(object)                                     */
 /* Status : Untested                                                         */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFGetQuantity(PyObject* self, PyObject* args)
 {
-    long whatptr;
+    CFPython_Object *whatptr;
 
-    if (!PyArg_ParseTuple(args,"l",&whatptr))
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whatptr))
         return NULL;
 
     return Py_BuildValue("l",WHAT->nrof);
@@ -904,25 +929,29 @@ static PyObject* CFGetQuantity(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFInsertObjectInside                                             */
-/* Python : CFPython.InsertObjectInside(object whereobj)                     */
+/* Python : CFPython.InsertObjectInside(object, where)                       */
+/* Info   : Inserts object into where.                                       */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFInsertObjectInside(PyObject* self, PyObject* args)
 {
-    long whatptr;
-    long whereptr;
+    CFPython_Object *whatptr;
+    CFPython_Object *whereptr;
     object *myob;
-
-    if (!PyArg_ParseTuple(args,"ll",&whatptr,&whereptr))
+    object *obenv;
+    
+    if (!PyArg_ParseTuple(args,"O!O!", &CFPython_ObjectType, &whatptr, &CFPython_ObjectType, &whereptr))
         return NULL;
 
     myob = WHAT;
+    obenv = myob->env;
+    
     if (!QUERY_FLAG(myob,FLAG_REMOVED))
     {
         GCFP.Value[0] = (void *)(myob);
         (PlugHooks[HOOK_REMOVEOBJECT])(&GCFP);
     }
+    
     myob = insert_ob_in_ob_hook(myob, WHERE);
 
     if (WHERE->type == PLAYER)
@@ -930,22 +959,29 @@ static PyObject* CFInsertObjectInside(PyObject* self, PyObject* args)
         GCFP.Value[0] = (void *)(WHERE);
         GCFP.Value[1] = (void *)(myob);
         (PlugHooks[HOOK_ESRVSENDITEM])(&GCFP);
+    } 
+    /* Gecko: myob was carried by player */
+    else if (obenv != NULL && obenv->type == PLAYER)
+    {
+        GCFP.Value[0] = (void *)(obenv);
+        GCFP.Value[1] = (void *)(obenv);
+        (PlugHooks[HOOK_ESRVSENDINVENTORY])(&GCFP);
     }
     Py_INCREF(Py_None);
     return Py_None;
-
 }
 
 /*****************************************************************************/
 /* Name   : CFFindPlayer                                                     */
-/* Python : CFPlayer.FindPlayer(name)                                        */
+/* Python : CFPython.FindPlayer(name)                                        */
 /* Status : Untested                                                         */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFFindPlayer(PyObject* self, PyObject* args)
 {
     player *foundpl;
-    object *foundob;
+    object *foundob = NULL;
     CFParm *CFR;
     char* txt;
 
@@ -959,26 +995,27 @@ static PyObject* CFFindPlayer(PyObject* self, PyObject* args)
 
     if (foundpl!=NULL)
         foundob = foundpl->ob;
-    else
-        foundob = NULL;
-    return Py_BuildValue("l",(long)(foundob));
+
+    return wrap_object(foundob);
 }
 
 /*****************************************************************************/
 /* Name   : CFApply                                                          */
 /* Python : CFPython.Apply(object, whatobj, flags)                           */
-/* Status : Untested                                                         */
+/* Info   : forces object to apply whatobj.                                  */
+/*          flags: ? (Gecko: TODO)                                           */
+/*          returns ? (probably 1 for success and 0 for failure)             */
+/* Status : Tested                                                           */
 /*****************************************************************************/
-
 static PyObject* CFApply(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    long whatptr;
+    CFPython_Object *whoptr;
+    CFPython_Object *whatptr;
     int flags;
     CFParm* CFR;
     int retval;
 
-    if (!PyArg_ParseTuple(args,"lli",&whoptr,&whatptr,&flags))
+    if (!PyArg_ParseTuple(args,"O!O!i", &CFPython_ObjectType, &whoptr, &CFPython_ObjectType, &whatptr,&flags))
         return NULL;
 
     GCFP.Value[0] = (void *)(WHO);
@@ -995,14 +1032,15 @@ static PyObject* CFApply(PyObject* self, PyObject* args)
 /* Python : CFPython.Drop(object, name)                                      */
 /* Status : Untested                                                         */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFDrop(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     char* name;
     CFParm* CFR;
 
-    if (!PyArg_ParseTuple(args,"ls",&whoptr,&name))
+    if (!PyArg_ParseTuple(args,"O!s", &CFPython_ObjectType, &whoptr,&name))
         return NULL;
 
     GCFP.Value[0] = (void *)(WHO);
@@ -1019,14 +1057,15 @@ static PyObject* CFDrop(PyObject* self, PyObject* args)
 /* Python : CFPython.Take(object,name)                                       */
 /* Status : Untested                                                         */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFTake(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     char* name;
     CFParm* CFR;
 
-    if (!PyArg_ParseTuple(args,"ls",&whoptr,&name))
+    if (!PyArg_ParseTuple(args,"O!s", &CFPython_ObjectType, &whoptr,&name))
         return NULL;
 
     GCFP.Value[0] = (void *)(WHO);
@@ -1041,14 +1080,14 @@ static PyObject* CFTake(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFIsInvisible                                                    */
 /* Python : CFPython.IsInvisible(object)                                     */
-/* Status : Untested                                                         */
+/* Info   : Returns 1 if object is invisible, 0 if not.                      */
+/* Status : Tested                                                           */
 /*****************************************************************************/
-
 static PyObject* CFIsInvisible(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_IS_INVISIBLE));
 }
@@ -1056,35 +1095,36 @@ static PyObject* CFIsInvisible(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFWhoAmI                                                         */
 /* Python : CFPython.WhoAmI()                                                */
+/* Info   : Get the owner of the active script (the object that has the      */
+/*          event handler)                                                   */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFWhoAmI(PyObject* self, PyObject* args)
 {
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
-    return Py_BuildValue("l",(long)(StackWho[StackPosition]));
+    return wrap_object(StackWho[StackPosition]);
 }
 
 /*****************************************************************************/
 /* Name   : CFWhoIsActivator                                                 */
 /* Python : CFPython.WhoIsActivator()                                        */
+/* Info   : Gets the object that activated the current event                 */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFWhoIsActivator(PyObject* self, PyObject* args)
 {
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
-    return Py_BuildValue("l",(long)(StackActivator[StackPosition]));
+    return wrap_object(StackActivator[StackPosition]);
 }
 
 /*****************************************************************************/
 /* Name   : CFWhatIsMessage                                                  */
 /* Python : CFPython.WhatIsMessage()                                         */
+/* Info   : Gets the actual message in SAY events.                           */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFWhatIsMessage(PyObject* self, PyObject* args)
 {
     if (!PyArg_ParseTuple(args,"",NULL))
@@ -1095,29 +1135,27 @@ static PyObject* CFWhatIsMessage(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSay                                                            */
 /* Python : CFPython.Say(object,message)                                     */
+/* Info   : object says message to everybody on its map                      */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFSay(PyObject* self, PyObject* args)
 {
-    object *who;
-    long obptr;
+    CFPython_Object *whoptr;
     char *message;
     static char buf[MAX_BUF*2];
     int val;
 
-    if (!PyArg_ParseTuple(args,"ls",&obptr,&message))
+    if (!PyArg_ParseTuple(args,"O!s", &CFPython_ObjectType, &whoptr, &message))
         return NULL;
-
-    who = (object *)(obptr);
 
 	/* old dynamic buffer */
     /*buf = (char *)(malloc(sizeof(char)*(strlen(message)+strlen(query_name(who))+20)));*/
-    sprintf(buf, "%s says: %s", query_name(who),message);
+    sprintf(buf, "%s says: %s", query_name(WHO),message);
+
     val = NDI_NAVY|NDI_UNIQUE;
 
     GCFP.Value[0] = (void *)(&val);
-    GCFP.Value[1] = (void *)(who->map);
+    GCFP.Value[1] = (void *)(WHO->map);
     GCFP.Value[2] = (void *)(buf);
 
     (PlugHooks[HOOK_NEWINFOMAP])(&GCFP);
@@ -1129,25 +1167,24 @@ static PyObject* CFSay(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFSayTo                                                          */
-/* Python : CFPython.SayTo(object,message)                                   */
+/* Python : CFPython.SayTo(source, target, message)                          */
 /* Status : Stable                                                           */
-/*        : NPC talks only to player but map get a "xx talks to" msg too.    */
+/* Info   : NPC talks only to player but map get a "xx talks to" msg too.    */
 /*****************************************************************************/
-
 static PyObject* CFSayTo(PyObject* self, PyObject* args)
-{
+{    
     object *who,*target;
-    long obptr, obptr2;
+    CFPython_Object *obptr, *obptr2;
 	int zero = 0;
     char *message;
     static char buf[MAX_BUF*2];
     int val;
 
-    if (!PyArg_ParseTuple(args,"lls",&obptr,&obptr2, &message))
+    if (!PyArg_ParseTuple(args,"O!O!s", &CFPython_ObjectType, &obptr, &CFPython_ObjectType, &obptr2, &message))
         return NULL;
 
-    who = (object *)(obptr);
-    target = (object *)(obptr2);
+    who = obptr->obj;
+    target = obptr2->obj;
 
     /*buf = (char *)(malloc(sizeof(char)*(strlen(message)+strlen(query_name(who))+20)));*/
     
@@ -1178,20 +1215,18 @@ static PyObject* CFSayTo(PyObject* self, PyObject* args)
 /* Python : CFPython.SetGender(object,gender_string)                         */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 static PyObject* CFSetGender(PyObject* self, PyObject* args)
 {
-    object *who;
-    long obptr;
+    CFPython_Object *whoptr;
     char *gender;
     
-    if (!PyArg_ParseTuple(args,"ls",&obptr,&gender))
+    if (!PyArg_ParseTuple(args,"O!s",&CFPython_ObjectType, &whoptr,&gender))
         return NULL;
 
-    who = (object *)(obptr);
-
 	/* set object to neuter */
-	CLEAR_FLAG(who,FLAG_IS_MALE);
-	CLEAR_FLAG(who,FLAG_IS_FEMALE);
+	CLEAR_FLAG(WHO,FLAG_IS_MALE);
+	CLEAR_FLAG(WHO,FLAG_IS_FEMALE);
 
 	if(!gender)
 	{
@@ -1201,13 +1236,13 @@ static PyObject* CFSetGender(PyObject* self, PyObject* args)
 
 	/* reset to male or female */
 	if(strcmp(gender,"male"))
-		SET_FLAG(who,FLAG_IS_MALE);
+		SET_FLAG(WHO,FLAG_IS_MALE);
 	else if(strcmp(gender,"female"))
-		SET_FLAG(who,FLAG_IS_FEMALE);
+		SET_FLAG(WHO,FLAG_IS_FEMALE);
 
 	/* update the players client of object was a player */
-	if(who->type == PLAYER)
-		who->contr->socket.ext_title_flag = 1; /* demand update to client */
+	if(WHO->type == PLAYER)
+		WHO->contr->socket.ext_title_flag = 1; /* demand update to client */
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -1216,26 +1251,26 @@ static PyObject* CFSetGender(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetRank                                                        */
 /* Python : CFPython.SetRank(object,rank_string)                             */
+/* Info   : Set the rank of an object to rank_string                         */
+/*        : Rank string 'Mr' is special for no rank                          */
 /* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFSetRank(PyObject* self, PyObject* args)
 {
-    object *who, *walk;
-    long obptr;
+    object *walk;
+    CFPython_Object *whoptr;
     char *rank;
     
-    if (!PyArg_ParseTuple(args,"ls",&obptr,&rank))
+    if (!PyArg_ParseTuple(args,"O!s", &CFPython_ObjectType, &whoptr, &rank))
         return NULL;
 
-    who = (object *)(obptr);
-    
-	if(who->type != PLAYER || !rank)
+	if(WHO->type != PLAYER || !rank)
 	{
 	    Py_INCREF(Py_None);
 	    return Py_None;
 	}
 	
-    for(walk=who->inv;walk!=NULL;walk=walk->below)
+    for(walk=WHO->inv;walk!=NULL;walk=walk->below)
     {
         if (walk->name && !strcmp(walk->name,"RANK_FORCE") && !strcmp(walk->arch->name,"rank_force"))
         {
@@ -1246,11 +1281,11 @@ static PyObject* CFSetRank(PyObject* self, PyObject* args)
             if (strcmp(rank,"Mr")) /* Mr = keyword to clear title and not add it as rank */
                 walk->title = add_string_hook(rank);
             
-            who->contr->socket.ext_title_flag = 1; /* demand update to client */
-            return Py_BuildValue("l",(long) (walk));
+            WHO->contr->socket.ext_title_flag = 1; /* demand update to client */
+            return wrap_object(walk);
         }            
     }
-    LOG(llevDebug,"Python Warning -> SetRank: Object %s has no rank_force!\n", query_name(who));
+    LOG(llevDebug,"Python Warning -> SetRank: Object %s has no rank_force!\n", query_name(WHO));
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -1261,23 +1296,23 @@ static PyObject* CFSetRank(PyObject* self, PyObject* args)
 /* Python : CFPython.SetAlignment(object,alignment_string)                   */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 static PyObject* CFSetAlignment(PyObject* self, PyObject* args)
 {
-    object *who, *walk;
-    long obptr;
+    object *walk;
+    CFPython_Object *whoptr;
     char *align;
     
-    if (!PyArg_ParseTuple(args,"ls",&obptr,&align))
+    if (!PyArg_ParseTuple(args,"O!s", &CFPython_ObjectType, &whoptr,&align))
         return NULL;
 
-    who = (object *)(obptr);
-	if(who->type != PLAYER)
+	if(WHO->type != PLAYER)
 	{
 	    Py_INCREF(Py_None);
 	    return Py_None;
 	}
     
-    for(walk=who->inv;walk!=NULL;walk=walk->below)
+    for(walk=WHO->inv;walk!=NULL;walk=walk->below)
     {
         if (walk->name && !strcmp(walk->name,"ALIGNMENT_FORCE")  && !strcmp(walk->arch->name,"alignment_force"))
         {
@@ -1286,27 +1321,28 @@ static PyObject* CFSetAlignment(PyObject* self, PyObject* args)
 				FREE_STRING_HOOK(walk->title);
 			walk->title = add_string_hook(align);
 
-            who->contr->socket.ext_title_flag = 1; /* demand update to client */
-            return Py_BuildValue("l",(long) (walk));
+            WHO->contr->socket.ext_title_flag = 1; /* demand update to client */
+            return wrap_object(walk);
         }            
     }
-    LOG(llevDebug,"Python Warning -> SetAlignment: Object %s has no alignment_force!\n", query_name(who));
+    LOG(llevDebug,"Python Warning -> SetAlignment: Object %s has no alignment_force!\n", query_name(WHO));
     Py_INCREF(Py_None);
     return Py_None;
 }
 
 /*****************************************************************************/
 /* Name   : CFGetAlignmentForce                                              */
-/* Python : CFPython.GetAlignmentForce(object,guild_string)                  */
+/* Python : CFPython.GetAlignmentForce(object)                               */
 /* Status : Stable                                                           */
 /* Info   : This gets the aligment_force from a inventory (should be player?)*/
 /*****************************************************************************/
+/* GeckoStatus: untested */
 static PyObject* CFGetAlignmentForce(PyObject* self, PyObject* args)
 {
     object *walk;
-    long whoptr;
+    CFPython_Object *whoptr;
     
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     
 	if(WHO->type != PLAYER)
@@ -1318,7 +1354,7 @@ static PyObject* CFGetAlignmentForce(PyObject* self, PyObject* args)
     for(walk=WHO->inv;walk!=NULL;walk=walk->below)
     {
         if (walk->name && !strcmp(walk->name,"ALIGNMENT_FORCE")  && !strcmp(walk->arch->name,"alignment_force"))
-            return Py_BuildValue("l",(long) (walk));
+            return wrap_object(walk);
     }
     LOG(llevDebug,"Python Warning -> GetAlignmentForce: Object %s has no aligment_force!\n", query_name(WHO));
     Py_INCREF(Py_None);
@@ -1327,30 +1363,31 @@ static PyObject* CFGetAlignmentForce(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFSetGuildForce                                                  */
-/* Python : CFPython.SetGuildForce(object,guild_string)                      */
+/* Python : CFPython.SetGuildForce(object, rank_string)                      */
+/* Info   : Sets the current rank of object to rank_string. Returns          */
+/*          the guild_force object that was modified.                        */
 /* Status : Stable                                                           */
-/* Info   : Warning: This set only the title. The guild tag is in <slaying>  */
+/* Warning: This set only the title. The guild tag is in <slaying>           */
 /*        : For test of a special guild, you must use GetGuild()             */
 /*        : For settings inside a guild script, you can use this function    */
 /*        : Because it returns the guild_force obj after setting the title   */
 /*****************************************************************************/
 static PyObject* CFSetGuildForce(PyObject* self, PyObject* args)
 {
-    object *who, *walk;
-    long obptr;
+    object *walk;
     char *guild;
+    CFPython_Object *whoptr;
     
-    if (!PyArg_ParseTuple(args,"ls",&obptr,&guild))
+    if (!PyArg_ParseTuple(args,"O!s", &CFPython_ObjectType, &whoptr, &guild))
         return NULL;
-    who = (object *)(obptr);
     	
-	if(who->type != PLAYER)
+	if(WHO->type != PLAYER)
 	{
 	    Py_INCREF(Py_None);
 	    return Py_None;
 	}
 
-    for(walk=who->inv;walk!=NULL;walk=walk->below)
+    for(walk=WHO->inv;walk!=NULL;walk=walk->below)
     {
         if (walk->name && !strcmp(walk->name,"GUILD_FORCE") && !strcmp(walk->arch->name,"guild_force"))
         {
@@ -1361,27 +1398,27 @@ static PyObject* CFSetGuildForce(PyObject* self, PyObject* args)
             if (guild && strcmp(guild, ""))
                 walk->title = add_string_hook(guild);
             
-            who->contr->socket.ext_title_flag = 1; /* demand update to client */
-            return Py_BuildValue("l",(long) (walk));
+            WHO->contr->socket.ext_title_flag = 1; /* demand update to client */
+            return wrap_object(walk);
         }            
     }
-    LOG(llevDebug,"Python Warning -> SetGuild: Object %s has no guild_force!\n", query_name(who));
+    LOG(llevDebug,"Python Warning -> SetGuild: Object %s has no guild_force!\n", query_name(WHO));
     Py_INCREF(Py_None);
     return Py_None;
 }
 
 /*****************************************************************************/
 /* Name   : CFGetGuildForce                                                  */
-/* Python : CFPython.GetGuildForce(object,guild_string)                      */
-/* Status : Stable                                                           */
+/* Python : object CFPython.GetGuildForce(who)                               */
 /* Info   : This gets the guild_force from a inventory (should be player?)   */
+/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFGetGuildForce(PyObject* self, PyObject* args)
 {
     object *walk;
-    long whoptr;
+    CFPython_Object *whoptr;
     
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     
 	if(WHO->type != PLAYER)
@@ -1393,8 +1430,9 @@ static PyObject* CFGetGuildForce(PyObject* self, PyObject* args)
     for(walk=WHO->inv;walk!=NULL;walk=walk->below)
     {
         if (walk->name && !strcmp(walk->name,"GUILD_FORCE") && !strcmp(walk->arch->name,"guild_force"))
-            return Py_BuildValue("l",(long) (walk));
+            return wrap_object(walk);
     }
+    
     LOG(llevDebug,"Python Warning -> GetGuild: Object %s has no guild_force!\n", query_name(WHO));
     Py_INCREF(Py_None);
     return Py_None;
@@ -1406,13 +1444,12 @@ static PyObject* CFGetGuildForce(PyObject* self, PyObject* args)
 /* Python : CFPython.SetInvisible(object,value)                              */
 /* Status : Untested                                                         */
 /*****************************************************************************/
-
 static PyObject* CFSetInvisible(PyObject* self, PyObject* args)
 {
     int value;
-    long whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
+    if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
 	if(value)
@@ -1429,12 +1466,13 @@ static PyObject* CFSetInvisible(PyObject* self, PyObject* args)
 /* Python : CFPython.GetExperience(object)                                   */
 /* Status : Untested                                                         */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFGetExperience(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("l",WHO->stats.exp);
 }
@@ -1444,12 +1482,11 @@ static PyObject* CFGetExperience(PyObject* self, PyObject* args)
 /* Python : CFPython.GetLevel(object)                                        */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFGetLevel(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("l", WHO->level );
 }
@@ -1459,12 +1496,11 @@ static PyObject* CFGetLevel(PyObject* self, PyObject* args)
 /* Python : CFPython.GetSpeed(object)                                        */
 /* Status : Untested                                                         */
 /*****************************************************************************/
-
 static PyObject* CFGetSpeed(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
 
     return Py_BuildValue("d",WHO->speed);
@@ -1473,18 +1509,17 @@ static PyObject* CFGetSpeed(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetSpeed                                                       */
 /* Python : CFPython.SetSpeed(object,value)                                  */
-/* Status : Untested                                                         */
+/* Status : Tested                                                           */
 /*****************************************************************************/
-
 static PyObject* CFSetSpeed(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     double value;
 
-    if (!PyArg_ParseTuple(args,"ld",&whoptr,&value))
+    if (!PyArg_ParseTuple(args,"O!d", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
-    if (value< -9.99) return NULL;
-    if (value> 9.99) return NULL;
+    if (value< -9.99 || value > 9.99)
+        RAISE("Illegal speed. Must be between -10.0 and 10.0");
 
     WHO->speed = (float) value;
     Py_INCREF(Py_None);
@@ -1493,15 +1528,14 @@ static PyObject* CFSetSpeed(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFGetFood                                                        */
-/* Python : CFPython.GetFood(object)                                         */
-/* Status : Untested                                                         */
+/* Python : Int CFPython.GetFood(object)                                     */
+/* Status : Untested (Gecko: Tested on player)                               */
 /*****************************************************************************/
-
 static PyObject* CFGetFood(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
 
     return Py_BuildValue("i",WHO->stats.food);
@@ -1509,20 +1543,19 @@ static PyObject* CFGetFood(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFSetFood                                                        */
-/* Python : CFPython.SetFood(object, value)                                  */
-/* Status : Untested                                                         */
+/* Python : None CFPython.SetFood(object, value)                             */
+/* Status : Untested (Gecko: tested on player)                               */
 /*****************************************************************************/
-
 static PyObject* CFSetFood(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     int value;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
+    if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
-
-    if (value<0) return NULL;
-    if (value>999) return NULL;
+    
+    if (value<0 || value > 999)
+        RAISE("Amount of food must be between 0 and 999");
 
     WHO->stats.food = value;
 
@@ -1535,12 +1568,11 @@ static PyObject* CFSetFood(PyObject* self, PyObject* args)
 /* Python : CFPython.GetGrace(object)                                        */
 /* Status : Untested                                                         */
 /*****************************************************************************/
-
 static PyObject* CFGetGrace(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
 
     return Py_BuildValue("i",WHO->stats.grace);
@@ -1551,17 +1583,16 @@ static PyObject* CFGetGrace(PyObject* self, PyObject* args)
 /* Python : CFPython.SetGrace(object, value)                                 */
 /* Status : Untested                                                         */
 /*****************************************************************************/
-
 static PyObject* CFSetGrace(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     int value;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
+    if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
-    if (value<-16000) return NULL;
-    if (value>16000) return NULL;
+    if (value<-16000 || value > 16000)
+        RAISE("Grace must be between -16000 and 16000");
 
     WHO->stats.grace = value;
 
@@ -1574,7 +1605,6 @@ static PyObject* CFSetGrace(PyObject* self, PyObject* args)
 /* Python : CFPython.GetReturnValue()                                        */
 /* Status : Untested                                                         */
 /*****************************************************************************/
-
 static PyObject* CFGetReturnValue(PyObject* self, PyObject* args)
 {
     if (!PyArg_ParseTuple(args,"",NULL))
@@ -1588,7 +1618,6 @@ static PyObject* CFGetReturnValue(PyObject* self, PyObject* args)
 /* Python : CFPython.SetReturnValue(value)                                   */
 /* Status : Untested                                                         */
 /*****************************************************************************/
-
 static PyObject* CFSetReturnValue(PyObject* self, PyObject* args)
 {
     int value;
@@ -1605,12 +1634,11 @@ static PyObject* CFSetReturnValue(PyObject* self, PyObject* args)
 /* Python : CFPython.GetDirection(object)                                    */
 /* Status : Untested                                                         */
 /*****************************************************************************/
-
 static PyObject* CFGetDirection(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
 
     return Py_BuildValue("i",WHO->direction);
@@ -1621,13 +1649,15 @@ static PyObject* CFGetDirection(PyObject* self, PyObject* args)
 /* Python : CFPython.SetDirection(object, value)                             */
 /* Status : Untested                                                         */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 /* this function will fail imho - for animation[] we need to call a hook! */
+
 static PyObject* CFSetDirection(PyObject* self, PyObject* args)
 {
     int value;
-    long whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
+    if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
     WHO->direction = value;
@@ -1641,12 +1671,13 @@ static PyObject* CFSetDirection(PyObject* self, PyObject* args)
 /* Python : CFPython.GetLastSP(object)                                       */
 /* Status : Untested                                                         */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFGetLastSP(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
 
     return Py_BuildValue("i",WHO->last_sp);
@@ -1657,13 +1688,14 @@ static PyObject* CFGetLastSP(PyObject* self, PyObject* args)
 /* Python : CFPython.SetLastSP(object, value)                                */
 /* Status : Untested                                                         */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFSetLastSP(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     int value;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
+    if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
     if (value<0) return NULL;
@@ -1680,12 +1712,11 @@ static PyObject* CFSetLastSP(PyObject* self, PyObject* args)
 /* Python : CFPython.GetLastGrace(object)                                    */
 /* Status : Untested                                                         */
 /*****************************************************************************/
-
 static PyObject* CFGetLastGrace(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
 
     return Py_BuildValue("i",WHO->last_grace);
@@ -1696,13 +1727,14 @@ static PyObject* CFGetLastGrace(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFSetLastGrace(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     int value;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
+    if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
     if (value<0) return NULL;
@@ -1719,12 +1751,11 @@ static PyObject* CFSetLastGrace(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
-
 static PyObject* CFFixObject(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
 
     fix_player_hook(WHO);
@@ -1737,15 +1768,16 @@ static PyObject* CFFixObject(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFSetFace(PyObject* self, PyObject* args)
 {
     char* txt;
-    long whoptr;
+    CFPython_Object *whoptr;
     CFParm* CFR;
     int val = UP_OBJ_FACE;
 
-    if (!PyArg_ParseTuple(args,"ls",&whoptr,&txt))
+    if (!PyArg_ParseTuple(args,"O!s", &CFPython_ObjectType, &whoptr,&txt))
         return NULL;
 
     /*WHO->animation_id = find_animation(txt); */
@@ -1768,12 +1800,11 @@ static PyObject* CFSetFace(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
-
 static PyObject* CFGetAttackType(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
 
     return Py_BuildValue("i",WHO->attacktype);
@@ -1784,13 +1815,14 @@ static PyObject* CFGetAttackType(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFSetAttackType(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     int value;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
+    if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
     WHO->attacktype = value;
@@ -1804,13 +1836,14 @@ static PyObject* CFSetAttackType(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFSetDamage(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     int value;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
+    if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
     if (value<0) return NULL;
@@ -1827,12 +1860,11 @@ static PyObject* CFSetDamage(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
-
 static PyObject* CFGetDamage(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
 
     return Py_BuildValue("i",WHO->stats.dam);
@@ -1843,13 +1875,14 @@ static PyObject* CFGetDamage(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFSetBeenApplied(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     int value;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
+    if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
     if (value!=0)
@@ -1866,13 +1899,14 @@ static PyObject* CFSetBeenApplied(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFSetIdentified(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     int value;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
+    if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
     if (value!=0)
@@ -1889,16 +1923,18 @@ static PyObject* CFSetIdentified(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 /* add hooks before use! */
+
 static PyObject* CFKillObject(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    long whatptr;
+    CFPython_Object *whoptr;
+    CFPython_Object *whatptr;
     int ktype;
     int k = 1;
     CFParm* CFR;
 
-    if (!PyArg_ParseTuple(args,"lli",&whoptr,&whatptr,&ktype))
+    if (!PyArg_ParseTuple(args,"O!O!i", &CFPython_ObjectType, &whoptr, &CFPython_ObjectType, &whatptr,&ktype))
         return NULL;
 
     WHAT->speed = 0;
@@ -1922,13 +1958,6 @@ static PyObject* CFKillObject(PyObject* self, PyObject* args)
         free(CFR);
         /*kill_object(killed,1,killer, type); */
     }
-
-    /* WHAT->script_str_death = NULL; */
-    /* WHAT->script_death = NULL; */
-    WHAT->event_hook[EVENT_DEATH] = NULL;
-    WHAT->event_plugin[EVENT_DEATH] = NULL;
-    WHAT->event_options[EVENT_DEATH] = NULL;
-
    /* This is to avoid the attack routine to continue after we called
     * killObject, since the attacked object no longer exists.
     * By fixing guile_current_other to NULL, guile_use_weapon_script will
@@ -1947,12 +1976,11 @@ static PyObject* CFKillObject(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                         */
 /*****************************************************************************/
-
 static PyObject* CFWhoIsOther(PyObject* self, PyObject* args)
 {
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
-    return Py_BuildValue("l",(long)(StackOther[StackPosition]));
+    return wrap_object(StackOther[StackPosition]);
 }
 
 /*****************************************************************************/
@@ -2068,15 +2096,16 @@ static PyObject* CFDirectionNW(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   : CFCastAbility                                                    */
-/* Python : CFPython.CastSpell(object,target,spell,mode,direction,option)    s*/
+/* Name   : CFCastSpell                                                      */
+/* Python : CFPython.CastSpell(object,target,spell,mode,direction,option)    */
 /* Status : Untested                                                         */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFCastSpell(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    long target;
+    CFPython_Object *whoptr;
+    CFPython_Object *target;
     int spell;
     int dir;
 	int mode;
@@ -2086,7 +2115,8 @@ static PyObject* CFCastSpell(PyObject* self, PyObject* args)
     int parm2;
     int typeoffire = FIRE_DIRECTIONAL;
 
-    if (!PyArg_ParseTuple(args,"lliiis",&whoptr, &target, &spell, &mode, &dir, &op))
+    if (!PyArg_ParseTuple(args,"O!O!iiis", &CFPython_ObjectType, &whoptr, &CFPython_ObjectType, &target, 
+                &spell, &mode, &dir, &op))
         return NULL;
 
 	if(!mode)
@@ -2110,8 +2140,9 @@ static PyObject* CFCastSpell(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
-/* Python :                                                                  */
+/* Name   : CFGetSpellNr                                                     */
+/* Python : int CFGetSpellNr(name)                                           */
+/* Info   : get the number of the named spell. -1 if no such spell exists    */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static PyObject* CFGetSpellNr(PyObject* self, PyObject* args)
@@ -2130,19 +2161,19 @@ static PyObject* CFGetSpellNr(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
-/* Python :                                                                  */
+/* Name   : CFDoKnowSpell                                                    */
+/* Python : int CFDoKnowSpell(object, spell)                                 */
+/* Info   : 1 if the spell is known by object, 0 if it isn't                 */
 /* Status : Tested                                                           */
 /*****************************************************************************/
-
 static PyObject* CFDoKnowSpell(PyObject* self, PyObject* args)
 {
     int spell;
-    long whoptr;
+    CFPython_Object *whoptr;
     CFParm* CFR;
     int value;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&spell))
+    if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&spell))
         return NULL;
 
     GCFP.Value[0] = (void *)(WHO);
@@ -2154,18 +2185,18 @@ static PyObject* CFDoKnowSpell(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
-/* Python : learn or unlearn spell. mode: 0=learn, 1=unlearn (remove)        */
+/* Name   : CFAquireSpell(object, spell, mode)                               */
+/* Python : object will learn or unlearn spell. mode: 0=learn, 1=unlearn     */
+/*          (remove)                                                         */
 /* Status : Tested                                                           */
 /*****************************************************************************/
-
 static PyObject* CFAcquireSpell(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     int spell;
     int mode;
 
-    if (!PyArg_ParseTuple(args,"lii",&whoptr,&spell, &mode))
+    if (!PyArg_ParseTuple(args,"O!ii", &CFPython_ObjectType, &whoptr,&spell, &mode))
         return NULL;
 
     GCFP.Value[0] = (void *)(WHO);
@@ -2180,8 +2211,8 @@ static PyObject* CFAcquireSpell(PyObject* self, PyObject* args)
 
 
 /*****************************************************************************/
-/* Name   :                                                                  */
-/* Python :                                                                  */
+/* Python : int CFGetSkillNr(name)                                           */
+/* Info   : get the number of the named skill. -1 if no such skill exists    */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static PyObject* CFGetSkillNr(PyObject* self, PyObject* args)
@@ -2200,19 +2231,19 @@ static PyObject* CFGetSkillNr(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
-/* Python :                                                                  */
+/* Name   : CFDoKnowSkill                                                    */
+/* Python : int CFDoKnowSkill(object, spell)                                 */
+/* Info   : 1 if the skill is known by object, 0 if it isn't                 */
 /* Status : Tested                                                           */
 /*****************************************************************************/
-
 static PyObject* CFDoKnowSkill(PyObject* self, PyObject* args)
 {
     int skill;
-    long whoptr;
+    CFPython_Object *whoptr;
     CFParm* CFR;
     int value;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&skill))
+    if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&skill))
         return NULL;
 
     GCFP.Value[0] = (void *)(WHO);
@@ -2225,16 +2256,17 @@ static PyObject* CFDoKnowSkill(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFAcquireSkill                                                   */
-/* Python : learn or unlearn skill. mode: 0=learn, 1=unlearn (remove)        */
-/*        : changed skill from string to int. Get int with CFGetSkillNr()    */
+/* Python : CFAcquireSkill(object, skillno, mode)                            */
+/* Info   : object will learn or unlearn skill. mode: 0=learn, 1=unlearn     */
+/*        : Get skill number with CFGetSkillNr()                             */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static PyObject* CFAcquireSkill(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     int skill, mode;
     
-    if (!PyArg_ParseTuple(args,"lii",&whoptr, &skill, &mode))
+    if (!PyArg_ParseTuple(args,"O!ii", &CFPython_ObjectType, &whoptr, &skill, &mode))
         return NULL;
             
     GCFP.Value[0] = (void *)(WHO);
@@ -2247,17 +2279,19 @@ static PyObject* CFAcquireSkill(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
-/* Python :                                                                  */
+/* Name   : CFFindMarkedObject                                               */
+/* Python : CFPython.FindMarkedObject(who)                                   */
+/* Info   : Returns the marked object in who's inventory, or None if no      */
+/*          object is marked.                                                */
 /* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFFindMarkedObject(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     object * value;
     CFParm* CFR;
     
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
             
     GCFP.Value[0] = (void *)(WHO);
@@ -2265,7 +2299,7 @@ static PyObject* CFFindMarkedObject(PyObject* self, PyObject* args)
     
     value = (object *)(CFR->Value[0]);
     /*free(CFR); findmarkedobject use static parameters */
-    return Py_BuildValue("l",value);
+    return wrap_object(value);
 }
 
 /*****************************************************************************/
@@ -2273,14 +2307,15 @@ static PyObject* CFFindMarkedObject(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFCheckInvisibleInside(PyObject* self, PyObject* args)
 {
-    int whoptr;
+    CFPython_Object *whoptr;
     char *id;
     object* tmp2;
 
-    if (!PyArg_ParseTuple(args,"ls",&whoptr,&id))
+    if (!PyArg_ParseTuple(args,"O!s", &CFPython_ObjectType, &whoptr,&id))
         return NULL;
 
     for(tmp2=WHO->inv;tmp2 !=NULL; tmp2=tmp2->below)
@@ -2289,7 +2324,7 @@ static PyObject* CFCheckInvisibleInside(PyObject* self, PyObject* args)
             break;
     }
 
-    return Py_BuildValue("l",(long)(tmp2));
+    return wrap_object(tmp2);
 }
 
 /*****************************************************************************/
@@ -2298,19 +2333,17 @@ static PyObject* CFCheckInvisibleInside(PyObject* self, PyObject* args)
 /* Status : Stable.                                                          */
 /* Info   : The Values of a player force will effect the player.             */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 static PyObject* CFCreatePlayerForce(PyObject* self, PyObject* args)
 {
-    long whereptr;
     char* txt;
     char txt2[16];
     object *myob;
-    object *where;
+    CFPython_Object *whereptr;
     CFParm* CFR;
     
-    if (!PyArg_ParseTuple(args,"ls",&whereptr,&txt))
+    if (!PyArg_ParseTuple(args,"O!s",&CFPython_ObjectType, &whereptr,&txt))
         return NULL;
-    
-    where = (object *)(whereptr);
     
     strcpy(txt2,"player_force");
     
@@ -2331,35 +2364,34 @@ static PyObject* CFCreatePlayerForce(PyObject* self, PyObject* args)
  	if(myob->name);
 		FREE_STRING_HOOK(myob->name);
 	myob->name = add_string_hook(txt);
-    myob = insert_ob_in_ob_hook(myob, where);
+    myob = insert_ob_in_ob_hook(myob, WHERE);
 
     /*esrv_send_item((object *)(gh_scm2long(where)), myob); */
-    GCFP.Value[0] = (void *)(where);
+    GCFP.Value[0] = (void *)(WHERE);
     GCFP.Value[1] = (void *)(myob);
     (PlugHooks[HOOK_ESRVSENDITEM])(&GCFP);
 
-    return Py_BuildValue("l",(long)(myob));
+    return wrap_object(myob);
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
-/* Python :                                                                  */
+/* Name   : CFCreatePlayerInfo                                               */
+/* Python : object CFCreatePlayerInfo(who, name)                             */
 /* Status : Stable                                                           */
-/* Info   : The Values of a player_info object will NOT effect the player.   */
+/* Info   : Creates a player_info object of specified name in who's inventory*/
+/*          The Values of a player_info object will NOT effect the player.   */
+/*          Returns the created object                                       */
 /*****************************************************************************/
 static PyObject* CFCreatePlayerInfo(PyObject* self, PyObject* args)
 {
-    long whereptr;
     char* txt;
     char txt2[16];
     object *myob;
-    object *where;
+    CFPython_Object *whereptr;
     CFParm* CFR;
     
-    if (!PyArg_ParseTuple(args,"ls",&whereptr,&txt))
+    if (!PyArg_ParseTuple(args, "O!s", &CFPython_ObjectType, &whereptr,&txt))
         return NULL;
-    
-    where = (object *)(whereptr);
     
     strcpy(txt2,"player_info");
     
@@ -2380,39 +2412,36 @@ static PyObject* CFCreatePlayerInfo(PyObject* self, PyObject* args)
    	if(myob->name);
 		FREE_STRING_HOOK(myob->name);
 	myob->name = add_string_hook(txt);
-    myob = insert_ob_in_ob_hook(myob, where);
+    myob = insert_ob_in_ob_hook(myob, WHERE);
     
     /*esrv_send_item((object *)(gh_scm2long(where)), myob); */
-    GCFP.Value[0] = (void *)(where);
+    GCFP.Value[0] = (void *)(WHERE);
     GCFP.Value[1] = (void *)(myob);
     (PlugHooks[HOOK_ESRVSENDITEM])(&GCFP);
     
-    return Py_BuildValue("l",(long)(myob));
+    return wrap_object(myob);
 }
 
 /*****************************************************************************/
 /* Name   : CFGetPlayerInfo                                                  */
-/* Python : CFPython.GetPlayerInfo(who, <name_text>)                         */
+/* Python : CFPython.GetPlayerInfo(who, name)                                */
 /* Status : Stable                                                           */
-/*        : player_info: get first player_info in inventory with name_text   */
-/*        :                                                                  */
+/* Info   : get first player_info with the specified name in who's inventory */
 /*****************************************************************************/
 static PyObject* CFGetPlayerInfo(PyObject* self, PyObject* args)
 {
-    long whereptr;
+    CFPython_Object *whoptr;
     char *name;
-    object *walk, *who;
+    object *walk;
     
-    if (!PyArg_ParseTuple(args,"ls",&whereptr,&name))
+    if (!PyArg_ParseTuple(args,"O!s", &CFPython_ObjectType, &whoptr,&name))
         return NULL;
 
-    who = (object *)(whereptr);
-
     /* get the first linked player_info arch in this inventory */
-    for(walk=who->inv;walk!=NULL;walk=walk->below)
+    for(walk=WHO->inv;walk!=NULL;walk=walk->below)
     {
         if (walk->name && !strcmp(walk->arch->name,"player_info") &&  !strcmp(walk->name,name))
-            return Py_BuildValue("l",(long)(walk));
+            return wrap_object(walk);
     }
 
     Py_INCREF(Py_None);
@@ -2424,31 +2453,27 @@ static PyObject* CFGetPlayerInfo(PyObject* self, PyObject* args)
 /* Name   : CFGetNextPlayerInfo                                              */
 /* Python : CFPython.GetNextPlayerInfo(who, player_info)                     */
 /* Status : Stable                                                           */
-/*        : player_info: get next player_info in inventory with same name    */
-/*        :                                                                  */
+/* Info   : get next player_info in who's inventory with same name as        */
+/*          player_info                                                      */
 /*****************************************************************************/
 static PyObject* CFGetNextPlayerInfo(PyObject* self, PyObject* args)
 {
-    long whereptr;
+    CFPython_Object *whoptr, *myob;
     char name[128];
-    object *myob, *walk;
+    object *walk;
     
-    if (!PyArg_ParseTuple(args,"ll",&whereptr,&myob))
+    if (!PyArg_ParseTuple(args,"O!O!", &CFPython_ObjectType, &whoptr, &CFPython_ObjectType, &myob))
         return NULL;
-    if(!myob)
-	{
-	    Py_INCREF(Py_None);
-        return Py_None; /* there was non left - this should avoided in scrip */
-	}
+
     /* thats our check paramters: arch "force_info", name of this arch */
-    strncpy(name, myob->name, 127); /* 127 chars should be enough for all */
+    strncpy(name, myob->obj->name, 127); /* 127 chars should be enough for all */
     name[63] = '\0';
 
     /* get the next linked player_info arch in this inventory */
-    for(walk=myob->below;walk!=NULL;walk=walk->below)
+    for(walk=myob->obj->below;walk!=NULL;walk=walk->below)
     {
         if (walk->name && !strcmp(walk->arch->name,"player_info") &&  !strcmp(walk->name,name))
-            return Py_BuildValue("l",(long)(walk));
+            return wrap_object(walk);
     }
 
     Py_INCREF(Py_None);
@@ -2461,19 +2486,17 @@ static PyObject* CFGetNextPlayerInfo(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 static PyObject* CFCreateInvisibleInside(PyObject* self, PyObject* args)
 {
-    long whereptr;
+    CFPython_Object *whereptr;
     char* txt;
     char txt2[6];
     object *myob;
-    object *where;
     CFParm* CFR;
 
-    if (!PyArg_ParseTuple(args,"ls",&whereptr,&txt))
+    if (!PyArg_ParseTuple(args,"O!s",&CFPython_ObjectType, &whereptr,&txt))
         return NULL;
-
-    where = (object *)(whereptr);
 
     strcpy(txt2,"force");
 
@@ -2497,13 +2520,13 @@ static PyObject* CFCreateInvisibleInside(PyObject* self, PyObject* args)
    	if(myob->slaying);
 		FREE_STRING_HOOK(myob->slaying);
 	myob->slaying = add_string_hook(txt);
-    myob = insert_ob_in_ob_hook(myob, where);
+    myob = insert_ob_in_ob_hook(myob, WHERE);
 
-    GCFP.Value[0] = (void *)(where);
+    GCFP.Value[0] = (void *)(whereptr->obj);
     GCFP.Value[1] = (void *)(myob);
   /*esrv_send_item((object *)(gh_scm2long(where)), myob); */
     (PlugHooks[HOOK_ESRVSENDITEM])(&GCFP);
-    return Py_BuildValue("l",(long)(myob));
+    return wrap_object(myob);
 }
 
 /*****************************************************************************/
@@ -2511,14 +2534,14 @@ static PyObject* CFCreateInvisibleInside(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 /* i must change this a bit - only REAL arch names - not object names */
 static PyObject* CFCreateObjectInside(PyObject* self, PyObject* args)
 {
     object *myob;
-    object *where;
+    CFPython_Object *whereptr;
 	long value, id;
-    long whereptr;
     char *txt;
 /*    char *tmpname;
     object *test;
@@ -2531,10 +2554,8 @@ static PyObject* CFCreateObjectInside(PyObject* self, PyObject* args)
 	   3: if not -1, use it for myob->value
 	   */
 
-    if (!PyArg_ParseTuple(args,"slll",&txt, &whereptr, &id, &value))
+    if (!PyArg_ParseTuple(args,"sO!ll",&txt, &CFPython_ObjectType, &whereptr, &id, &value))
         return NULL;
-
-    where = (object *)(whereptr);
 
     GCFP.Value[0] = (void *)(txt);
     CFR = (PlugHooks[HOOK_GETARCHETYPE])(&GCFP);
@@ -2564,15 +2585,16 @@ static PyObject* CFCreateObjectInside(PyObject* self, PyObject* args)
 		myob->value = (sint32) value;
 	if(id)
 		SET_FLAG(myob,FLAG_IDENTIFIED);
-    myob = insert_ob_in_ob_hook(myob, where);
-    if (where->type == PLAYER)
+
+    myob = insert_ob_in_ob_hook(myob, WHERE);
+    if (WHERE->type == PLAYER)
     {
-        GCFP.Value[0] = (void *)(where);
+        GCFP.Value[0] = (void *)(WHERE);
         GCFP.Value[1] = (void *)(myob);
         (PlugHooks[HOOK_ESRVSENDITEM])(&GCFP);
 /*        esrv_send_item((object *)(gh_scm2long(where)), myob); */
     }
-    return Py_BuildValue("l",(long)(myob));
+    return wrap_object(myob);
 }
 
 /*****************************************************************************/
@@ -2580,6 +2602,7 @@ static PyObject* CFCreateObjectInside(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFCheckMap(PyObject* self, PyObject* args)
 {
@@ -2590,34 +2613,35 @@ static PyObject* CFCheckMap(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"ss(ii)",&what,&mapstr,&x,&y))
         return NULL;
+    
     foundob = present_arch(
         find_archetype(what),
         has_been_loaded(mapstr),
         x,y
     );
-    return Py_BuildValue("l",(long)(foundob));
+    return wrap_object(foundob);
 }
 
 /*****************************************************************************/
 /* Name   : CFCheckArchInventory                                             */
-/* Python : CFPython.CheckArchInventory(who, 'arch_name')                    */
+/* Python : CFPython.CheckArchInventory(who, arch_name)                      */
 /* Status : Stable                                                           */
-/* Info   : This routine search explizit for a arch_name.                    */
+/* Info   : Search for an arch_name in who's inventory                       */
 /*****************************************************************************/
 static PyObject* CFCheckArchInventory(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     char* whatstr;
     object* tmp;
     
-    if (!PyArg_ParseTuple(args,"ls",&whoptr,&whatstr))
+    if (!PyArg_ParseTuple(args,"O!s", &CFPython_ObjectType, &whoptr,&whatstr))
         return NULL;
     tmp = WHO->inv;
 
     while (tmp)
     {
         if (!strcmp(tmp->arch->name,whatstr))
-            return Py_BuildValue("l",(long)(tmp));
+            return wrap_object(tmp);
         tmp = tmp->below;
     }
 
@@ -2626,28 +2650,31 @@ static PyObject* CFCheckArchInventory(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
-/* Python :                                                                  */
-/* Status : Untested                                                         */
+/* Name   : CFCheckInventory                                                 */
+/* Python : CFPython.CheckInventory(who, name)                               */
+/* Info   : returns the first found object with the specified name if found  */
+/*          in who's inventory, or None if it wasn't found.                  */
+/* Status : Tested                                                           */
 /*****************************************************************************/
 static PyObject* CFCheckInventory(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
 	int i;
     char* whatstr;
     object* tmp;
- 
-    if (!PyArg_ParseTuple(args,"ls",&whoptr,&whatstr))
-        return NULL;
-    tmp = WHO->inv;
 
+    if (!PyArg_ParseTuple(args,"O!s", &CFPython_ObjectType, &whoptr,&whatstr))
+        return NULL;
+
+    tmp = WHO->inv;
+    
 	i = (int)strlen(whatstr);
 	while (tmp)
 	{
 		if (!strncmp(query_name(tmp),whatstr,i))
-			return Py_BuildValue("l",(long)(tmp));
+            return wrap_object(tmp);
 		if (tmp->name && !strncmp(tmp->name,whatstr,i))
-			return Py_BuildValue("l",(long)(tmp));
+            return wrap_object(tmp);
 		tmp = tmp->below;
 	}
 
@@ -2657,14 +2684,14 @@ static PyObject* CFCheckInventory(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFGetName                                                        */
-/* Python : CFPython.GetName(object, name)                                   */
+/* Python : string CFPython.GetName(object)                                  */
+/* Info   : Get the name of object                                           */
 /* Status : stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFGetName(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("s",WHO->name);
 }
@@ -2674,12 +2701,13 @@ static PyObject* CFGetName(PyObject* self, PyObject* args)
 /* Python : CFPython.SetName(object, name)                                   */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 static PyObject* CFSetName(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     char *txt;
     
-    if (!PyArg_ParseTuple(args,"ls",&whoptr,&txt))
+    if (!PyArg_ParseTuple(args,"O!s", &CFPython_ObjectType, &whoptr,&txt))
         return NULL;
     if (WHO->name != NULL)
         FREE_STRING_HOOK(WHO->name);
@@ -2694,11 +2722,12 @@ static PyObject* CFSetName(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFGetTitle(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("s",WHO->title);
 }
@@ -2707,14 +2736,15 @@ static PyObject* CFGetTitle(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetTitle                                                       */
 /* Python : CFPython.SetTitle(object, name)                                  */
+/* Info   : Sets the title of object to name.                                */
 /* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFSetTitle(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     char *txt;
     
-    if (!PyArg_ParseTuple(args,"ls",&whoptr,&txt))
+    if (!PyArg_ParseTuple(args,"O!s", &CFPython_ObjectType, &whoptr,&txt))
         return NULL;
     if (WHO->title != NULL)
         FREE_STRING_HOOK(WHO->title);
@@ -2725,14 +2755,15 @@ static PyObject* CFSetTitle(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
-/* Python :                                                                  */
+/* Name   : CFGetSlaying                                                     */
+/* Python : string CFPython.GetSlaying(object)                               */
+/* Info   : gets the slaying string of object                                */
 /* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFGetSlaying(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("s",WHO->slaying);
 }
@@ -2740,15 +2771,17 @@ static PyObject* CFGetSlaying(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetSlaying                                                     */
 /* Python : CFPython.SetSlaying(object, name)                                */
+/* Info   : sets the slaying string of object to name                        */
 /* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFSetSlaying(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     char *txt;
 
-    if (!PyArg_ParseTuple(args,"ls",&whoptr,&txt))
+    if (!PyArg_ParseTuple(args,"O!s", &CFPython_ObjectType, &whoptr,&txt))
         return NULL;
+
     if (WHO->slaying != NULL)
         FREE_STRING_HOOK(WHO->slaying);
     if(txt && strcmp(txt,""))
@@ -2759,17 +2792,20 @@ static PyObject* CFSetSlaying(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFSetSaveBed                                                     */
-/* Python : CFPython.SetSaveBed(object, name, x, y)                          */
+/* Python : CFPython.SetSaveBed(object, mapname, x, y)                       */
+/* Info   : Sets the current savebed position for object to the specified    */
+/*          coordinates on the map mapname                                   */
 /* Status : Stable                                                           */
+/* Comment: Gecko: seems it might crash if a non-player object is given. TODO*/
 /*****************************************************************************/
 static PyObject* CFSetSaveBed(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
 	object *myob;
     char *txt;
     int x,y;
     
-    if (!PyArg_ParseTuple(args,"lsii",&whoptr,&txt,&x, &y))
+    if (!PyArg_ParseTuple(args,"O!sii", &CFPython_ObjectType, &whoptr,&txt,&x, &y))
         return NULL;
 	myob=WHO;
 	if(WHO->type == PLAYER)
@@ -2788,14 +2824,15 @@ static PyObject* CFSetSaveBed(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Unfinished                                                       */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFCreateObject(PyObject* self, PyObject* args)
 {
     char *txt;
     int x,y;
-    long map = (long)((StackWho[StackPosition])->map);
-
-    if (!PyArg_ParseTuple(args,"s(ii)|l",&txt, &x,&y,&map))
+    CFPython_Map *map = (CFPython_Map *)wrap_map(StackWho[StackPosition]->map);
+    
+    if (!PyArg_ParseTuple(args,"s(ii)|O!",&txt, &x,&y, &CFPython_MapType, &map))
         return NULL;
 
     Py_INCREF(Py_None);
@@ -2803,31 +2840,63 @@ static PyObject* CFCreateObject(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
-/* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Name   : CFRemoveObject                                                   */
+/* Python : CFPython.RemoveObject(object)                                    */
+/* Info   : Permanently removes object from the game.                        */
+/* Status : Tested                                                           */
+/*****************************************************************************/
+/* Gecko  : This function is DANGEROUS. Added limitations on what can be     */
+/*          removed to avoid some of the problems                            */
 /*****************************************************************************/
 /* hm, this should be named delete or free object... */
 static PyObject* CFRemoveObject(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     object* myob;
+    object* obenv;
 
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
 
-    myob = (object *)(whoptr);
+    myob = WHO;
+    obenv = myob->env;
+    
+    /* Gecko: Don't allow removing any of the involved objects. Messes things up... */
+    if (StackActivator[StackPosition] == myob ||
+            StackWho[StackPosition] == myob ||
+            StackOther[StackPosition] == myob)
+    {
+        RAISE("You are not allowed to remove one of the active objects. Workaround using CFTeleport or some other solution.");
+        return NULL;
+    }
+    
     GCFP.Value[0] = (void *)(myob);
     (PlugHooks[HOOK_REMOVEOBJECT])(&GCFP);
 
-    if (StackActivator[StackPosition]->type == PLAYER)
+    /* Gecko: player inventory can be removed even if the activator is not a player */
+    if(obenv != NULL && obenv->type == PLAYER)
+    {
+        GCFP.Value[0] = (void *)(obenv);
+        GCFP.Value[1] = (void *)(obenv);
+        (PlugHooks[HOOK_ESRVSENDINVENTORY])(&GCFP);
+    }
+    /*    if (StackActivator[StackPosition]->type == PLAYER)
     {
         GCFP.Value[0] = (void *)(StackActivator[StackPosition]);
         GCFP.Value[1] = (void *)(StackActivator[StackPosition]);
         (PlugHooks[HOOK_ESRVSENDINVENTORY])(&GCFP);
-    }
+    }*/
     GCFP.Value[0] = (void *)(myob);
     (PlugHooks[HOOK_FREEOBJECT])(&GCFP);
+    
+    /* Gecko: Handle removing any of the active objects (i.e. the activator) */
+    if (StackActivator[StackPosition] == myob)
+        StackActivator[StackPosition] = NULL;
+    if (StackWho[StackPosition] == myob)
+        StackWho[StackPosition] = NULL;
+    if (StackOther[StackPosition] == myob)
+        StackOther[StackPosition] = NULL;
+    
     Py_INCREF(Py_None);
     return Py_None;
 }
@@ -2837,11 +2906,12 @@ static PyObject* CFRemoveObject(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFIsAlive(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_ALIVE));
 }
@@ -2851,11 +2921,12 @@ static PyObject* CFIsAlive(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFIsWiz(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_WIZ));
 }
@@ -2865,11 +2936,12 @@ static PyObject* CFIsWiz(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFWasWiz(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_WAS_WIZ));
 }
@@ -2879,11 +2951,12 @@ static PyObject* CFWasWiz(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFIsApplied(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_APPLIED));
 }
@@ -2893,11 +2966,12 @@ static PyObject* CFIsApplied(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFIsUnpaid(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_UNPAID));
 }
@@ -2907,11 +2981,12 @@ static PyObject* CFIsUnpaid(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFIsFlying(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_FLYING));
 }
@@ -2921,11 +2996,12 @@ static PyObject* CFIsFlying(PyObject* self, PyObject* args)
 /* Python : We check for monster flag, not the type..                        */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFIsMonster(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_MONSTER));
 }
@@ -2935,11 +3011,12 @@ static PyObject* CFIsMonster(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFIsFriendly(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_FRIENDLY));
 }
@@ -2949,11 +3026,12 @@ static PyObject* CFIsFriendly(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFIsGenerator(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_GENERATOR));
 }
@@ -2963,11 +3041,12 @@ static PyObject* CFIsGenerator(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFIsThrown(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_IS_THROWN));
 }
@@ -2977,11 +3056,12 @@ static PyObject* CFIsThrown(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFCanSeeInvisible(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_SEE_INVISIBLE));
 }
@@ -2991,11 +3071,12 @@ static PyObject* CFCanSeeInvisible(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFCanRoll(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_CAN_ROLL));
 }
@@ -3005,11 +3086,12 @@ static PyObject* CFCanRoll(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFIsTurnable(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_IS_TURNABLE));
 }
@@ -3019,11 +3101,12 @@ static PyObject* CFIsTurnable(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFIsUsedUp(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_IS_USED_UP));
 }
@@ -3033,12 +3116,13 @@ static PyObject* CFIsUsedUp(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFIsIdentified(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     int retval;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     retval = QUERY_FLAG(WHO,FLAG_IDENTIFIED);
     return Py_BuildValue("i",retval);
@@ -3049,11 +3133,12 @@ static PyObject* CFIsIdentified(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFIsSplitting(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_SPLITTING));
 }
@@ -3063,11 +3148,10 @@ static PyObject* CFIsSplitting(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFHitBack(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_HITBACK));
 }
@@ -3077,11 +3161,10 @@ static PyObject* CFHitBack(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFBlocksView(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_BLOCKSVIEW));
 }
@@ -3091,11 +3174,10 @@ static PyObject* CFBlocksView(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFIsUndead(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_UNDEAD));
 }
@@ -3105,11 +3187,10 @@ static PyObject* CFIsUndead(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFIsScared(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_SCARED));
 }
@@ -3119,11 +3200,10 @@ static PyObject* CFIsScared(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFIsUnaggressive(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_UNAGGRESSIVE));
 }
@@ -3133,11 +3213,10 @@ static PyObject* CFIsUnaggressive(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFReflectMissiles(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_REFL_MISSILE));
 }
@@ -3147,11 +3226,10 @@ static PyObject* CFReflectMissiles(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFReflectSpells(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_REFL_SPELL));
 }
@@ -3161,11 +3239,10 @@ static PyObject* CFReflectSpells(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFIsRunningAway(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_RUN_AWAY));
 }
@@ -3175,11 +3252,10 @@ static PyObject* CFIsRunningAway(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFCanPassThru(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_CAN_PASS_THRU));
 }
@@ -3189,11 +3265,10 @@ static PyObject* CFCanPassThru(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFCanPickUp(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_PICK_UP));
 }
@@ -3203,11 +3278,10 @@ static PyObject* CFCanPickUp(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFIsUnique(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_UNIQUE));
 }
@@ -3217,11 +3291,10 @@ static PyObject* CFIsUnique(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFCanCastSpell(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_CAST_SPELL));
 }
@@ -3231,11 +3304,10 @@ static PyObject* CFCanCastSpell(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFCanUseScroll(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_USE_SCROLL));
 }
@@ -3245,11 +3317,10 @@ static PyObject* CFCanUseScroll(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFCanUseWand(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_USE_RANGE));
 }
@@ -3259,11 +3330,10 @@ static PyObject* CFCanUseWand(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFCanUseBow(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_USE_BOW));
 }
@@ -3273,11 +3343,10 @@ static PyObject* CFCanUseBow(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFCanUseArmour(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_USE_ARMOUR));
 }
@@ -3287,11 +3356,10 @@ static PyObject* CFCanUseArmour(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFCanUseWeapon(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_USE_WEAPON));
 }
@@ -3301,11 +3369,10 @@ static PyObject* CFCanUseWeapon(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFCanUseRing(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_USE_RING));
 }
@@ -3315,11 +3382,10 @@ static PyObject* CFCanUseRing(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFHasXRays(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_XRAYS));
 }
@@ -3329,11 +3395,10 @@ static PyObject* CFHasXRays(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFIsFloor(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_IS_FLOOR));
 }
@@ -3343,11 +3408,10 @@ static PyObject* CFIsFloor(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFIsLifeSaver(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_LIFESAVE));
 }
@@ -3357,11 +3421,10 @@ static PyObject* CFIsLifeSaver(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFIsSleeping(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_SLEEP));
 }
@@ -3371,11 +3434,10 @@ static PyObject* CFIsSleeping(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFStandStill(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_STAND_STILL));
 }
@@ -3385,11 +3447,10 @@ static PyObject* CFStandStill(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFOnlyAttack(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_ONLY_ATTACK));
 }
@@ -3399,11 +3460,10 @@ static PyObject* CFOnlyAttack(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFIsConfused(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_CONFUSED));
 }
@@ -3413,11 +3473,10 @@ static PyObject* CFIsConfused(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFHasStealth(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_STEALTH));
 }
@@ -3427,11 +3486,10 @@ static PyObject* CFHasStealth(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFIsCursed(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_CURSED));
 }
@@ -3441,11 +3499,10 @@ static PyObject* CFIsCursed(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFIsDamned(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_DAMNED));
 }
@@ -3455,11 +3512,10 @@ static PyObject* CFIsDamned(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFIsKnownMagical(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_KNOWN_MAGICAL));
 }
@@ -3469,11 +3525,10 @@ static PyObject* CFIsKnownMagical(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFIsKnownCursed(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_KNOWN_CURSED));
 }
@@ -3483,11 +3538,10 @@ static PyObject* CFIsKnownCursed(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFCanUseSkill(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_CAN_USE_SKILL));
 }
@@ -3497,11 +3551,10 @@ static PyObject* CFCanUseSkill(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFHasBeenApplied(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_BEEN_APPLIED));
 }
@@ -3511,11 +3564,10 @@ static PyObject* CFHasBeenApplied(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFCanUseRod(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_USE_RANGE));
 }
@@ -3525,11 +3577,10 @@ static PyObject* CFCanUseRod(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFCanUseHorn(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_USE_RANGE));
 }
@@ -3539,11 +3590,10 @@ static PyObject* CFCanUseHorn(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFMakeInvisible(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_SEE_INVISIBLE));
 }
@@ -3553,11 +3603,10 @@ static PyObject* CFMakeInvisible(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFIsBlind(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_BLIND));
 }
@@ -3567,11 +3616,10 @@ static PyObject* CFIsBlind(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFCanSeeInDark(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_SEE_IN_DARK));
 }
@@ -3581,11 +3629,10 @@ static PyObject* CFCanSeeInDark(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
-
 static PyObject* CFGetAC(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",WHO->stats.ac);
 }
@@ -3595,11 +3642,10 @@ static PyObject* CFGetAC(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
-
 static PyObject* CFGetCha(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",WHO->stats.Cha);
 }
@@ -3609,11 +3655,10 @@ static PyObject* CFGetCha(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
-
 static PyObject* CFGetCon(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",WHO->stats.Con);
 }
@@ -3623,25 +3668,24 @@ static PyObject* CFGetCon(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
-
 static PyObject* CFGetDex(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",WHO->stats.Dex);
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
-/* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Name   : CFGetHP                                                          */
+/* Python : CFPython.GetHP(object)                                           */
+/* Info   : Gets the HPs of object. TODO; max or current?                    */
+/* Status : Untested                                                         */
 /*****************************************************************************/
-
 static PyObject* CFGetHP(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",WHO->stats.hp);
 
@@ -3652,11 +3696,10 @@ static PyObject* CFGetHP(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
-
 static PyObject* CFGetInt(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",WHO->stats.Int);
 }
@@ -3666,11 +3709,10 @@ static PyObject* CFGetInt(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
-
 static PyObject* CFGetPow(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",WHO->stats.Pow);
 }
@@ -3680,11 +3722,10 @@ static PyObject* CFGetPow(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
-
 static PyObject* CFGetSP(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",WHO->stats.sp);
 }
@@ -3694,11 +3735,10 @@ static PyObject* CFGetSP(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
-
 static PyObject* CFGetStr(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",WHO->stats.Str);
 }
@@ -3708,11 +3748,10 @@ static PyObject* CFGetStr(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
-
 static PyObject* CFGetWis(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",WHO->stats.Wis);
 }
@@ -3722,11 +3761,10 @@ static PyObject* CFGetWis(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
-
 static PyObject* CFGetMaxHP(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",WHO->stats.maxhp);
 }
@@ -3736,11 +3774,10 @@ static PyObject* CFGetMaxHP(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
-
 static PyObject* CFGetMaxSP(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",WHO->stats.maxsp);
 }
@@ -3748,27 +3785,27 @@ static PyObject* CFGetMaxSP(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetXPos                                                        */
 /* Python : CFPython.GetXPosition(object)                                    */
+/* Info   : Gets the X position of object on its map.                        */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFGetXPos(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",WHO->x);
 }
 
 /*****************************************************************************/
 /* Name   : CFGetYPos                                                        */
-/* Python : CFPython.GetYPosition                                            */
+/* Python : CFPython.GetYPosition(object)                                    */
+/* Info   : Gets the Y position of object on its map.                        */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFGetYPos(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",WHO->y);
 }
@@ -3776,17 +3813,18 @@ static PyObject* CFGetYPos(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   :                                                                  */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFSetPosition(PyObject* self, PyObject* args)
 {
     int x, y, k;
-    long whoptr;
+    CFPython_Object *whoptr;
     CFParm* CFR;
     k = 0;
 
-    if (!PyArg_ParseTuple(args,"l(ii)",&whoptr,&x,&y))
+    if (!PyArg_ParseTuple(args,"O!(ii)", &CFPython_ObjectType, &whoptr,&x,&y))
         return NULL;
 
     GCFP.Value[0] = (void *)(WHO);
@@ -3805,19 +3843,19 @@ static PyObject* CFSetPosition(PyObject* self, PyObject* args)
     return Py_None;
 }
 
-
 /*****************************************************************************/
 /* Name   :                                                                  */
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFSetAC(PyObject* self, PyObject* args)
 {
     int value;
-    long whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
+    if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
     if (value>120) return NULL;
@@ -3833,13 +3871,14 @@ static PyObject* CFSetAC(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFSetCha(PyObject* self, PyObject* args)
 {
     int value;
-    long whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
+    if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
     if (value>30) return NULL;
@@ -3860,13 +3899,14 @@ static PyObject* CFSetCha(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFSetCon(PyObject* self, PyObject* args)
 {
     int value;
-    long whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
+    if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
     if (value>30) return NULL;
@@ -3887,13 +3927,14 @@ static PyObject* CFSetCon(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFSetDex(PyObject* self, PyObject* args)
 {
     int value;
-    long whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
+    if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
     if (value>30) return NULL;
@@ -3910,17 +3951,17 @@ static PyObject* CFSetDex(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
-/* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Name   : CFSetHP                                                          */
+/* Python : CFPython.SetHP(object, hp)                                       */
+/* Info   : Sets the current hitpoints of object to hp                       */
+/* Status : Tested                                                           */
 /*****************************************************************************/
-
 static PyObject* CFSetHP(PyObject* self, PyObject* args)
 {
     int value;
-    long whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
+    if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
     if (value<0) return NULL;
@@ -3935,13 +3976,14 @@ static PyObject* CFSetHP(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFSetInt(PyObject* self, PyObject* args)
 {
     int value;
-    long whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
+    if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
     if (value>30) return NULL;
@@ -3962,13 +4004,14 @@ static PyObject* CFSetInt(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFSetMaxHP(PyObject* self, PyObject* args)
 {
     int value;
-    long whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
+    if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
     if (value>16000) return NULL;
@@ -3984,13 +4027,14 @@ static PyObject* CFSetMaxHP(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFSetMaxSP(PyObject* self, PyObject* args)
 {
     int value;
-    long whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
+    if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
     if (value>16000) return NULL;
@@ -4006,13 +4050,14 @@ static PyObject* CFSetMaxSP(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFSetPow(PyObject* self, PyObject* args)
 {
     int value;
-    long whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
+    if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
     if (value>30) return NULL;
@@ -4029,17 +4074,17 @@ static PyObject* CFSetPow(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
-/* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Name   : CFSetSP                                                          */
+/* Python : CFPython.SetHP(object, sp)                                       */
+/* Info   : Sets the current spellpoints of object to sp                     */
+/* Status : Tested                                                           */
 /*****************************************************************************/
-
 static PyObject* CFSetSP(PyObject* self, PyObject* args)
 {
     int value;
-    long whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
+    if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
     if (value>16000) return NULL;
@@ -4055,13 +4100,14 @@ static PyObject* CFSetSP(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFSetStr(PyObject* self, PyObject* args)
 {
     int value;
-    long whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
+    if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
     if (value>30) return NULL;
@@ -4082,12 +4128,13 @@ static PyObject* CFSetStr(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                         */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 static PyObject* CFSetWis(PyObject* self, PyObject* args)
 {
     int value;
-    long whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
+    if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
     if (value>30) return NULL;
@@ -4104,21 +4151,39 @@ static PyObject* CFSetWis(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   : IdentifyObject(caster, target, object, mode)                     */
-/* Python : identify object                                                  */
-/* Status : tested. mode=0=IDENTIFY_MODE_NORMAL; 1=IDENTIFY_MODE_ALL         */
-/*        : 2=IDENTIFY_MODE_MARKED                                           */
+/* Name   : CFIdentifyObject                                                 */
+/* Python : CFPython.IdentifyObject(caster, target, object, mode)            */
+/* Info   : caster identifies object in target's inventory.                  */
+/*        : mode: 0 = normal, 1 = all, 2 = marked                            */
+/* Status : Tested                                                           */
 /*****************************************************************************/
 static PyObject* CFIdentifyObject(PyObject* self, PyObject* args)
 {
-    long whoptr, ob, mode, target;
+    CFPython_Object *whoptr, *target;
+    PyObject *ob;
+    object *marked = NULL;
+    long mode;
 
-    if (!PyArg_ParseTuple(args,"llll",&whoptr, &target, &ob, &mode))
+    /* Gecko: object can be None if mode == 0 or mode == 1*/
+    if (!PyArg_ParseTuple(args,"O!O!Ol",
+                &CFPython_ObjectType, &whoptr, 
+                &CFPython_ObjectType, &target, 
+                &ob, &mode)) 
         return NULL;
+    
+    if(mode == 2) {
+        if(! PyObject_TypeCheck(ob, &CFPython_ObjectType)) 
+            RAISE("Parameter 3 must be a CFPython.Object for mode 2");
+        marked = ((CFPython_Object *)ob)->obj;
+    } else if (mode == 0 || mode == 1) {
+        if(ob != Py_None) 
+            RAISE("Parameter 3 must be None for modes 0 and 1");
+    } else
+        RAISE("Mode must be 0, 1 or 2");
 
-    GCFP.Value[0] = (void *)(WHO);
-    GCFP.Value[1] = (void *)target;
-    GCFP.Value[2] = (void *)ob; /* is used when we use mode == 2 */
+    GCFP.Value[0] = (void *)WHO;
+    GCFP.Value[1] = (void *)target->obj;
+    GCFP.Value[2] = (void *)marked; /* is used when we use mode == 2 */
     GCFP.Value[3] = (void *)&mode;
     (PlugHooks[HOOK_IDENTIFYOBJECT])(&GCFP);   
 
@@ -4132,14 +4197,15 @@ static PyObject* CFIdentifyObject(PyObject* self, PyObject* args)
 /* Python : Swaped who/message pos. MT-26-10-2002                            */
 /* Status : Untested                                                         */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFMessage(PyObject* self, PyObject* args)
 {
     int   color = NDI_BLUE|NDI_UNIQUE;
     char *message;
-    long  whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args,"ls|i",&whoptr,&message,&color))
+    if (!PyArg_ParseTuple(args,"O!s|i", &CFPython_ObjectType, &whoptr,&message,&color))
         return NULL;
 
     GCFP.Value[0] = (void *)(&color);
@@ -4153,20 +4219,19 @@ static PyObject* CFMessage(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :	Write(who, message,[color])                                      */
-/* Python : Writes a message to a specific player.                           */
-/* Python : Swaped who/message pos. MT-26-10-2002                            */
-/* Status : Untested                                                         */
+/* Name   :	CFWrite()                                                        */
+/* Python : CFPython.Write(who, message [, color])                           */
+/* info   : Writes a message to a specific player. Color is optional.        */
+/* Status : Tested                                                           */
 /*****************************************************************************/
-
 static PyObject* CFWrite(PyObject* self, PyObject* args)
 {
     int   zero   = 0;
     char* message;
-    long  whoptr = 0;
+    CFPython_Object *whoptr = NULL;
     int   color  = NDI_UNIQUE | NDI_ORANGE;
 
-    if (!PyArg_ParseTuple(args,"ls|i",&whoptr,&message,&color))
+    if (!PyArg_ParseTuple(args,"O!s|i", &CFPython_ObjectType, &whoptr,&message,&color))
         return NULL;
 
     GCFP.Value[0] = (void *)(&color);
@@ -4181,18 +4246,19 @@ static PyObject* CFWrite(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
-/* Python :                                                                  */
-/* Status : Untested                                                         */
+/* Name   : CFIsOfType                                                       */
+/* Python : CFPython.IsOfType(object, type)                                  */
+/* Info   : returns 1 if object is of the specified type, or 0 otherwise.    */
+/*          (i.e. type = 80 for monster/NPC, or 1 for players)               */
+/* Status : Tested                                                           */
 /*****************************************************************************/
-
 static PyObject* CFIsOfType(PyObject* self, PyObject* args)
 {
     int type;
-    long whoptr;
+    CFPython_Object *whoptr;
     int value;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&type))
+    if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&type))
         return NULL;
     if (WHO->type==type)
         value = 1;
@@ -4204,13 +4270,12 @@ static PyObject* CFIsOfType(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   :                                                                  */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
-
 static PyObject* CFGetType(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("i",WHO->type);
 }
@@ -4221,15 +4286,14 @@ static PyObject* CFGetType(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
-
 static PyObject* CFGetEventHandler(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     int eventnr;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&eventnr))
+    if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&eventnr))
         return NULL;
-    return Py_BuildValue("s",WHO->event_hook[eventnr]);
+    return Py_BuildValue("s","" /*WHO->event_hook[eventnr]*/);
 }
 
 /*****************************************************************************/
@@ -4237,17 +4301,18 @@ static PyObject* CFGetEventHandler(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFSetEventHandler(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     int eventnr;
     char* scriptname;
 
-    if (!PyArg_ParseTuple(args,"lis",&whoptr, &eventnr, &scriptname))
+    if (!PyArg_ParseTuple(args,"O!is", &CFPython_ObjectType, &whoptr, &eventnr, &scriptname))
         return NULL;
 
-    WHO->event_hook[eventnr] = add_string_hook(scriptname);
+    /*WHO->event_hook[eventnr] = add_string_hook(scriptname);*/
     Py_INCREF(Py_None);
     return Py_None;
 }
@@ -4257,15 +4322,16 @@ static PyObject* CFSetEventHandler(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFGetEventPlugin(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     int eventnr;
 
-    if (!PyArg_ParseTuple(args,"li",&whoptr, &eventnr))
+    if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr, &eventnr))
         return NULL;
-    return Py_BuildValue("s", WHO->event_plugin[eventnr]);
+    return Py_BuildValue("s", ""/*WHO->event_plugin[eventnr]*/);
 }
 
 /*****************************************************************************/
@@ -4273,17 +4339,18 @@ static PyObject* CFGetEventPlugin(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFSetEventPlugin(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     int eventnr;
     char* scriptname;
 
-    if (!PyArg_ParseTuple(args,"lis",&whoptr,&eventnr,&scriptname))
+    if (!PyArg_ParseTuple(args,"O!is", &CFPython_ObjectType, &whoptr,&eventnr,&scriptname))
         return NULL;
 
-    WHO->event_plugin[eventnr] = add_string_hook(scriptname);
+    /*WHO->event_plugin[eventnr] = add_string_hook(scriptname);*/
     Py_INCREF(Py_None);
     return Py_None;
 }
@@ -4293,20 +4360,23 @@ static PyObject* CFSetEventPlugin(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFGetEventOptions(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     int eventnr;
     static char estr[4];
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&eventnr))
+    if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&eventnr))
         return NULL;
+	/*
     if (WHO->event_options[eventnr] == NULL)
     {
         strcpy(estr,"");
         return Py_BuildValue("s", estr);
     }
-    return Py_BuildValue("s", WHO->event_options[eventnr]);
+	*/
+    return Py_BuildValue("s",""/* WHO->event_options[eventnr]*/);
 }
 
 /*****************************************************************************/
@@ -4314,17 +4384,18 @@ static PyObject* CFGetEventOptions(PyObject* self, PyObject* args)
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFSetEventOptions(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     int eventnr;
     char* scriptname;
 
-    if (!PyArg_ParseTuple(args,"lis",&whoptr,&eventnr,&scriptname))
+    if (!PyArg_ParseTuple(args,"O!is", &CFPython_ObjectType, &whoptr,&eventnr,&scriptname))
         return NULL;
 
-    WHO->event_options[eventnr] = add_string_hook(scriptname);
+    /*    WHO->event_options[eventnr] = add_string_hook(scriptname);*/
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -4335,6 +4406,7 @@ static PyObject* CFSetEventOptions(PyObject* self, PyObject* args)
 /* Python : LoadObject(string)                                               */
 /* Status : Untested                                                         */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 static PyObject* CFLoadObject(PyObject* self, PyObject* args)
 {
     object *whoptr;
@@ -4350,7 +4422,7 @@ static PyObject* CFLoadObject(PyObject* self, PyObject* args)
     whoptr = (object *)(CFR->Value[0]);
     free(CFR);
 
-    return Py_BuildValue("l",(long)(whoptr));
+    return wrap_object(whoptr);
 }
 
 /*****************************************************************************/
@@ -4358,13 +4430,14 @@ static PyObject* CFLoadObject(PyObject* self, PyObject* args)
 /* Python : SaveObject(what)                                                 */
 /* Status : Untested                                                         */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 static PyObject* CFSaveObject(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     static char *result;
     CFParm* CFR;
 
-    if (!PyArg_ParseTuple(args, "l",&whoptr))
+    if (!PyArg_ParseTuple(args, "O!", &CFPython_ObjectType, &whoptr))
         return NULL;
 
     GCFP.Value[0] = (void *)(WHO);
@@ -4380,12 +4453,13 @@ static PyObject* CFSaveObject(PyObject* self, PyObject* args)
 /* Python : GetIP(object)                                                    */
 /* Status : Untested                                                         */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 static PyObject* CFGetIP(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     static char *result;
 
-    if (!PyArg_ParseTuple(args, "l",&whoptr))
+    if (!PyArg_ParseTuple(args, "O!", &CFPython_ObjectType, &whoptr))
         return NULL;
 
 	if(WHO->type != PLAYER)
@@ -4408,17 +4482,18 @@ static PyObject* CFGetIP(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFGetInventory                                                   */
-/* Python : GetInventory(object)                                             */
+/* Python : GetInventory(who)                                                */ 
+/* Info   : get the first object in object's inventory                       */
 /* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetInventory(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
 
-    if (!PyArg_ParseTuple(args, "l",&whoptr))
+    if (!PyArg_ParseTuple(args, "O!", &CFPython_ObjectType, &whoptr))
         return NULL;
 
-    return Py_BuildValue("l", (long)(WHO->inv));
+    return wrap_object(WHO->inv);
 }
 
 /*****************************************************************************/
@@ -4426,22 +4501,19 @@ static PyObject* CFGetInventory(PyObject* self, PyObject* args)
 /* Python : GetInternalName                                                  */
 /* Status : Untested                                                         */
 /*****************************************************************************/
-
 static PyObject* CFGetArchName(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    CFPython_Object *whoptr;
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     return Py_BuildValue("s",WHO->name);
 }
-
 
 /*****************************************************************************/
 /* Name   : CFCostFlagFTrue                                                  */
 /* Python : CostFlagFTrue ()                                                 */
 /* Status : Untested                                                         */
 /*****************************************************************************/
-
 static PyObject* CFCostFlagFTrue(PyObject* self, PyObject* args)
 {
     int flag=F_TRUE;
@@ -4455,7 +4527,6 @@ static PyObject* CFCostFlagFTrue(PyObject* self, PyObject* args)
 /* Python : CostFlagFBuy ()                                                  */
 /* Status : Untested                                                         */
 /*****************************************************************************/
-
 static PyObject* CFCostFlagFBuy(PyObject* self, PyObject* args)
 {
     int flag=F_BUY;
@@ -4469,7 +4540,6 @@ static PyObject* CFCostFlagFBuy(PyObject* self, PyObject* args)
 /* Python : CostFlagFSell ()                                                 */
 /* Status : Untested                                                         */
 /*****************************************************************************/
-
 static PyObject* CFCostFlagFSell(PyObject* self, PyObject* args)
 {
     int flag=F_SELL;
@@ -4483,15 +4553,17 @@ static PyObject* CFCostFlagFSell(PyObject* self, PyObject* args)
 /* Python : GetObjectCost (buyer,object,type)                                */
 /* Status : Stable                                                           */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFGetObjectCost(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    long whatptr;
+    CFPython_Object *whoptr;
+    CFPython_Object *whatptr;
     int flag;
     int cost;
     CFParm* CFR;
-    if (!PyArg_ParseTuple(args,"lli",&whoptr,&whatptr,&flag))
+    if (!PyArg_ParseTuple(args,"O!O!i", &CFPython_ObjectType, &whoptr,
+                &CFPython_ObjectType, &whatptr,&flag))
         return NULL;
     if ((!WHAT) || (!WHO)) return Py_BuildValue("i",0);
     GCFP.Value[0] = (void *)(WHAT);
@@ -4508,13 +4580,14 @@ static PyObject* CFGetObjectCost(PyObject* self, PyObject* args)
 /* Python : GetObjectMoney (buyer)                                           */
 /* Status : Untested                                                         */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFGetObjectMoney(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     int amount;
     CFParm* CFR;
-    if (!PyArg_ParseTuple(args,"l",&whoptr))
+    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
     if (!WHO) return Py_BuildValue("i",0);
     GCFP.Value[0] = (void *)(WHO);
@@ -4529,14 +4602,16 @@ static PyObject* CFGetObjectMoney(PyObject* self, PyObject* args)
 /* Python : PayForItem (buyer,object)                                        */
 /* Status : Untested                                                         */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 
 static PyObject* CFPayForItem(PyObject* self, PyObject* args)
 {
-    long whoptr;
-    long whatptr;
+    CFPython_Object *whoptr;
+    CFPython_Object *whatptr;
     int val;
     CFParm* CFR;
-    if (!PyArg_ParseTuple(args,"ll",&whoptr,&whatptr))
+    if (!PyArg_ParseTuple(args,"O!O!", &CFPython_ObjectType, &whoptr,
+                &CFPython_ObjectType, &whatptr))
         return NULL;
     if ((!WHAT) || (!WHO)) return Py_BuildValue("i",0);
     GCFP.Value[0] = (void *)(WHAT);
@@ -4549,17 +4624,18 @@ static PyObject* CFPayForItem(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFPayAmount                                                      */
-/* Python : PayAmount (buyer,value)                                          */
+/* Python : success = CFPython.PayAmount (buyer,value)                       */
+/* Info   : If buyer has enough money, value copper will be deducted from    */
+/*          buyer, and 1 will be returned. Otherwise returns 0               */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-
 static PyObject* CFPayAmount(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     int to_pay;
     int val;
     CFParm* CFR;
-    if (!PyArg_ParseTuple(args,"li",&whoptr,&to_pay))
+    if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&to_pay))
         return NULL;
     if (!WHO) return Py_BuildValue("i",0);
     GCFP.Value[0] = (void *)(&to_pay);
@@ -4614,17 +4690,19 @@ static PyObject* CFRegisterCommand(PyObject* self, PyObject* args)
     return Py_None;
 }
 
+
 /*****************************************************************************/
 /* Name   : CFSendCustomCommand                                              */
 /* Python : SendCustomCommand(who, 'customcommand')                          */
 /* Status : Untested                                                         */
 /*****************************************************************************/
+/* GeckoStatus: untested */
 static PyObject* CFSendCustomCommand(PyObject* self, PyObject* args)
 {
-    long whoptr;
+    CFPython_Object *whoptr;
     char *customcmd;
 
-    if (!PyArg_ParseTuple(args,"ls",&whoptr,&customcmd))
+    if (!PyArg_ParseTuple(args,"O!s", &CFPython_ObjectType, &whoptr,&customcmd))
         return NULL;
     GCFP.Value[0] = (void *)(WHO);
     GCFP.Value[1] = (void *)(customcmd);
@@ -4632,6 +4710,8 @@ static PyObject* CFSendCustomCommand(PyObject* self, PyObject* args)
     Py_INCREF(Py_None);
     return Py_None;
 }
+
+/* FUNCTIONEND -- End of the Python plugin functions. */
 
 /*****************************************************************************/
 /* The Plugin Management Part.                                               */
@@ -4934,9 +5014,7 @@ MODULEAPI CFParm* initPlugin(CFParm* PParm)
     Py_Initialize();
     initCFPython();
     LOG(llevDebug, "[Done]\n");
-/*    GCFP.Value[0] = (void *) add_string_hook(PLUGIN_NAME);
-    GCFP.Value[1] = (void *) add_string_hook(PLUGIN_VERSION);
-	*/
+
     GCFP.Value[0] = (void *) PLUGIN_NAME;
     GCFP.Value[1] = (void *) PLUGIN_VERSION;
     return &GCFP;
@@ -5107,7 +5185,6 @@ MODULEAPI CFParm* postinitPlugin(CFParm* PParm)
 /*****************************************************************************/
 /* Initializes the Python Interpreter.                                       */
 /*****************************************************************************/
-static PyObject* CFPythonError;
 MODULEAPI void initCFPython()
 {
         PyObject *m, *d;
@@ -5125,5 +5202,122 @@ MODULEAPI void initCFPython()
             CustomCommand[i].script = NULL;
             CustomCommand[i].speed  = 0.0;
         }
+
+        /* Initialize our CF object wrapper */
+        /* Gecko: TODO: error handling here */
+        CFPython_ObjectType.tp_new = PyType_GenericNew;
+        if (PyType_Ready(&CFPython_ObjectType) < 0)            
+            return;
+
+        Py_INCREF(&CFPython_ObjectType);
+        
+        /* Initialize our CF mapstruct wrapper */
+        /* Gecko: TODO: error handling here */
+        CFPython_MapType.tp_new = PyType_GenericNew;
+        if (PyType_Ready(&CFPython_MapType) < 0)            
+            return;
+
+        Py_INCREF(&CFPython_MapType);
 }
 
+/****************************************************************************/
+/* Code related to the new CFPython_Object class                            */
+/****************************************************************************/
+
+/* Create a new Object wrapper (uninitialized) */
+static PyObject *
+CFPython_Object_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
+{
+    CFPython_Object *self;
+
+    self = (CFPython_Object *)type->tp_alloc(type, 0);
+    if(self)
+        self->obj = NULL;
+
+    return (PyObject *)self;
+}
+
+/* Free an Object wrapper */
+static void
+CFPython_Object_dealloc(CFPython_Object* self)
+{
+    self->obj = NULL;
+    self->ob_type->tp_free((PyObject*)self);
+}
+
+/* Return a string representation of this object (useful for debugging) */
+static PyObject *
+CFPython_Object_str(CFPython_Object *self)
+{
+    return PyString_FromFormat("[%s \"%s\"]", self->obj->arch->name, self->obj->name);
+}
+
+/* Utility method to wrap an object. */
+static PyObject *
+wrap_object(object *what)
+{
+    CFPython_Object *wrapper;
+    
+    /* return None if no object was to be wrapped */
+    if(what == NULL) {
+        Py_INCREF(Py_None);
+        return Py_None;
+    }
+    
+    wrapper = PyObject_NEW(CFPython_Object, &CFPython_ObjectType);
+    if(wrapper != NULL)
+        wrapper->obj = what;
+
+    return (PyObject *)wrapper;
+}
+
+/****************************************************************************/
+/* Code related to the new CFPython_Map class                               */
+/****************************************************************************/
+
+/* Create a new (uninitialized) Map wrapper */
+static PyObject *
+CFPython_Map_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
+{
+    CFPython_Map *self;
+
+    self = (CFPython_Map *)type->tp_alloc(type, 0);
+    if(self)
+        self->map = NULL;
+
+    return (PyObject *)self;
+}
+
+/* Free an Object wrapper */
+static void
+CFPython_Map_dealloc(CFPython_Map* self)
+{
+    self->map = NULL;
+    self->ob_type->tp_free((PyObject*)self);
+}
+
+/* Return a string representation of this object (useful for debugging) */
+static PyObject *
+CFPython_Map_str(CFPython_Map *self)
+{
+    return PyString_FromFormat("[%s \"%s\"]", self->map->path, self->map->name);
+}
+
+/* Utility method to wrap an object. */
+static PyObject *
+wrap_map(mapstruct *what)
+{
+    CFPython_Map *wrapper;
+    
+    /* return None if no map was to be wrapped */
+    if(what == NULL) {
+        Py_INCREF(Py_None);
+        return Py_None;
+    }
+    
+    wrapper = PyObject_NEW(CFPython_Map, &CFPython_MapType);
+    if(wrapper != NULL)
+        wrapper->map = what;
+
+    return (PyObject *)wrapper;
+}

@@ -10,7 +10,7 @@ material 32
 weight 60000
 no_pick 1
 invulnerable 1
-food 20
+food 25
 speed 0.01
 is_used_up 1
 end

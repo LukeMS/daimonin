@@ -1,7 +1,7 @@
 Object blob_quivering
 name quivering blob
 race slime
-randomitems slime
+randomitems mob_slime
 is_neutral 1
 weight 13250
 exp 150
@@ -12,8 +12,8 @@ attack_acid 50
 resist_paralyze 100
 resist_poison 100
 resist_acid 100
-ac 16
-wc 15
+ac 5
+wc 2
 dam 4
 hp -1
 maxhp 5

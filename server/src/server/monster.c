@@ -842,13 +842,13 @@ int move_monster(object *op) {
         if(QUERY_FLAG(op,FLAG_RUN_AWAY))
         {
 	       
-			part->stats.wc+=10;
+			part->stats.wc-=10;
             if(op->weapon_speed_left<=0) /* as long we are >0, we are not ready to swing */                
             {
     	        (void)skill_attack(enemy,part,0,NULL);
                 op->weapon_speed_left+=FABS((int)op->weapon_speed_left)+1;
             }
-			part->stats.wc-=10;
+			part->stats.wc+=10;
 	    }
         else
         {
@@ -1277,7 +1277,7 @@ int monster_use_bow(object *head, object *part, object *pl, int dir) {
   arrow->stats.hp = arrow->stats.dam; 
   arrow->stats.dam+= bow->stats.dam+bow->magic+arrow->magic; /* NO_STRENGTH */
   arrow->stats.dam=FABS((int)((float)(arrow->stats.dam  *lev_damage[head->level])));
-  arrow->stats.wc= 20 - (bow->magic +bow->stats.wc + arrow->magic + arrow->stats.wc-head->level);
+  arrow->stats.wc= 10 + (bow->magic +bow->stats.wc + arrow->magic + arrow->stats.wc-head->level);
   arrow->map=head->map;
   arrow->last_sp = 12; /* we use fixed value for mobs */
   SET_FLAG(arrow, FLAG_FLYING);
@@ -1325,7 +1325,7 @@ int check_good_armour(object *who, object *item) {
     LOG(llevMonster, "Can't take off %s(%d).\n",item->name,item->count);
     return 0;
   }
-  if(who->stats.ac < prev_ac && !QUERY_FLAG(other_armour,FLAG_FREED)) {
+  if(who->stats.ac > prev_ac && !QUERY_FLAG(other_armour,FLAG_FREED)) {
     /* New armour was worse. *Note ^: Could have been freed by merging) */
     if (monster_apply_special(who, other_armour,0))
       LOG(llevMonster,"Can't rewear %s(%d).\n", item->name, item->count);
@@ -2011,10 +2011,11 @@ int talk_to_npc(object *op, object *npc, char *txt) {
   object *cobj;
 #ifdef PLUGINS
   /* GROS: Handle for plugin say event */
-  if(npc->event_hook[EVENT_SAY] != NULL)
+  if(npc->event_flags&EVENT_FLAG_SAY)
   {
     CFParm CFP;
     int k, l, m;
+	object *event_obj = get_event_object(npc, EVENT_SAY);
     k = EVENT_SAY;
     l = SCRIPT_FIX_ACTIVATOR;
     m = 0;
@@ -2027,11 +2028,11 @@ int talk_to_npc(object *op, object *npc, char *txt) {
     CFP.Value[6] = &m;
     CFP.Value[7] = &m;
     CFP.Value[8] = &l;
-    CFP.Value[9] = npc->event_hook[k];
-    CFP.Value[10]= npc->event_options[k];
-    if (findPlugin(npc->event_plugin[k])>=0)
+    CFP.Value[9] = event_obj->race;
+    CFP.Value[10]= event_obj->slaying;
+    if (findPlugin(event_obj->name)>=0)
     {
-        ((PlugList[findPlugin(npc->event_plugin[k])].eventfunc) (&CFP));
+        ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
         return 0;
     }
   }
@@ -2039,10 +2040,11 @@ int talk_to_npc(object *op, object *npc, char *txt) {
   /* This allows the existence of "intelligent" weapons you can discuss with */
   for(cobj=npc->inv;cobj!=NULL;)
   {
-    if(cobj->event_hook[EVENT_SAY] != NULL)
+    if(cobj->event_flags&EVENT_FLAG_SAY)
     {
       CFParm CFP;
       int k, l, m;
+ 	  object *event_obj = get_event_object(cobj, EVENT_SAY);
       k = EVENT_SAY;
       l = SCRIPT_FIX_ALL;
       m = 0;
@@ -2055,11 +2057,11 @@ int talk_to_npc(object *op, object *npc, char *txt) {
       CFP.Value[6] = &m;
       CFP.Value[7] = &m;
       CFP.Value[8] = &l;
-      CFP.Value[9] = cobj->event_hook[k];
-      CFP.Value[10]= cobj->event_options[k];
-      if (findPlugin(cobj->event_plugin[k])>=0)
+      CFP.Value[9] = event_obj->race;
+      CFP.Value[10]= event_obj->slaying;
+      if (findPlugin(event_obj->name)>=0)
       {
-          ((PlugList[findPlugin(cobj->event_plugin[k])].eventfunc) (&CFP));
+          ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
           return 0;
       }
     }
@@ -2286,7 +2288,6 @@ void spawn_point(object *op)
 			insert_ob_in_ob(item,mob);      /* and put it in the mob */
 		}
 	}
-	fix_monster(mob); /* i moved this from spawn_monster because now we can add the given items from above */
 
 	op->last_sp = rmt; /* this is the last rand() for what we have spawned! */
 
@@ -2300,6 +2301,8 @@ void spawn_point(object *op)
     insert_ob_in_ob(tmp,mob);      /* and put it in the mob */
 
 	SET_FLAG(mob, FLAG_SPAWN_MOB); /* FINISH: now mark our mob as a spawn */
+	fix_monster(mob); /* fix all the values and add in possible abilities or forces ... */
+    insert_ob_in_map(mob,mob->map,op,0); /* *now* all is done - *now* put it on map */
 }
 
 /* drop a monster on the map, by copying a monster object or
@@ -2338,7 +2341,6 @@ static object *spawn_monster(object *gen, object *orig, int range)
 	op->map = orig->map;
     if(head!=NULL)
       op->head=head,prev->more=op;
-    insert_ob_in_map(op,op->map,orig,0);
     if (QUERY_FLAG(op, FLAG_FREED)) return NULL;
     if(op->randomitems!=NULL)
       create_treasure(op->randomitems,op,0,orig->map->difficulty,0);

@@ -1,6 +1,6 @@
 Object human_female
 race human
-randomitems human_female
+randomitems player_human_female
 layer 6
 is_female 1
 is_neutral 1
@@ -9,7 +9,6 @@ direction 4
 alive 1
 terrain_flag 1
 weapon_speed 0.0125
-attack_impact 100
 speed 0.85
 face human_m.isw.111
 msg
@@ -133,8 +132,8 @@ sp -1
 maxsp 3
 grace -1
 maxgrace 3
-ac 15
-wc 25
+ac 0
+wc 0
 can_use_armour 1
 can_use_weapon 1
 is_player 1

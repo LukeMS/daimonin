@@ -1,7 +1,7 @@
 Object jelly_ochre
 name ochre jelly
 race slime
-randomitems slime
+randomitems mob_slime
 is_neutral 1
 weight 13250
 exp 150
@@ -10,8 +10,8 @@ weapon_speed 0.044
 attack_acid 75
 attack_poison 30
 resist_poison 100
-ac 16
-wc 15
+ac 5
+wc 2
 dam 6
 hp -1
 maxhp 5

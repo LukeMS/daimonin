@@ -87,26 +87,6 @@ object *get_archetype_by_object_name(char *name) {
     return create_singularity(name);
 }
 
- /* GROS - find_best_weapon_used_match and item_matched_string moved there */
- object *find_best_weapon_used_match(object *pl, char *params)
- {
-   object *tmp, *best=NULL;
-   int match_val=0,tmpmatch;
-
-   for (tmp=pl->inv; tmp; tmp=tmp->below) {
-	   if (IS_SYS_INVISIBLE(tmp)) continue;
-     if ((tmpmatch=item_matched_string(pl, tmp, params))>match_val)
-     {
-       if ((QUERY_FLAG(tmp, FLAG_APPLIED))&&(tmp->type==WEAPON))
-       {
-         match_val=tmpmatch;
-         best=tmp;
-       };
-     }
-   }
-   return best;
- }
-
 /* get the skill object of skill nr. x.
  * i don't have included artifacts file search here -
  * if ever skills are defined in artifacts file, add it here.
@@ -304,12 +284,12 @@ void free_all_archs()
     for (at=first_archetype; at!=NULL; at=next) {
 	if (at->more) next=at->more;
 	else next=at->next;
-	if (at->name) free_string(at->name);
-	if (at->clone.name) free_string(at->clone.name);
-	if (at->clone.title) free_string(at->clone.title);
-	if (at->clone.race) free_string(at->clone.race);
-	if (at->clone.slaying) free_string(at->clone.slaying);
-	if (at->clone.msg) free_string(at->clone.msg);
+	FREE_AND_CLEAR_HASH(at->name);
+	FREE_AND_CLEAR_HASH(at->clone.name);
+	FREE_AND_CLEAR_HASH(at->clone.title);
+	FREE_AND_CLEAR_HASH(at->clone.race);
+	FREE_AND_CLEAR_HASH(at->clone.slaying);
+	FREE_AND_CLEAR_HASH(at->clone.msg);
 	free(at);
 	i++;
     }
@@ -620,9 +600,9 @@ object *arch_to_object(archetype *at) {
 object *create_singularity(char *name) {
   object *op;
   char buf[MAX_BUF];
-  sprintf(buf,"singluarity (REPORT THIS BUG!) (%s)",name);
+  sprintf(buf,"singularity (REPORT THIS BUG!) (%s)",name);
   op = get_object();
-  op->name = add_string(buf);
+  FREE_AND_COPY_HASH(op->name, buf);
   SET_FLAG(op,FLAG_NO_PICK);
   return op;
 }

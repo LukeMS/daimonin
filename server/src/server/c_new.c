@@ -126,8 +126,6 @@ int execute_newserver_command(object *pl, char *command)
     CommArray_s *csp;
     char *cp;
 
-    pl->contr->has_hit=0;
-
 	/* remove the command from the parameters */
     cp=strchr(command, ' ');
     if (cp) 
@@ -473,6 +471,11 @@ void command_fire(char *params, int len,player *pl)
         tmp = strchr(params,' ');
         tmp = strchr(tmp+1,' ');
         tmp = strchr(tmp+1,' ');
+		if(strlen(tmp+1)>60)
+		{
+			LOG(llevDebug,"DEBUG: Player %s has send to long fire command: %s\n", query_name(pl->ob), tmp+1);
+			return;
+		}
         strncpy(op->contr->firemode_name,tmp+1,60);
 		if(!fire_cast_spell (op, op->contr->firemode_name))
 		{
@@ -489,6 +492,11 @@ void command_fire(char *params, int len,player *pl)
         tmp = strchr(params,' ');
         tmp = strchr(tmp+1,' ');
         tmp = strchr(tmp+1,' ');
+		if(strlen(tmp+1)>60)
+		{
+			LOG(llevDebug,"DEBUG: Player %s has send to long fire command: %s\n", query_name(pl->ob), tmp+1);
+			return;
+		}
         strncpy(op->contr->firemode_name,tmp+1,60);
     }
         

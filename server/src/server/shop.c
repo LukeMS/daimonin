@@ -490,8 +490,8 @@ void sell_item(object *op, object *pl) {
 		  int n = i/at->clone.value;
 
 		  if (w==0) w=1;    /* Prevent divide by zero */
-		  if ( n>0 && (!pouch->weight_limit || pouch->carrying+w<=pouch->weight_limit)) {
-		      if (pouch->weight_limit && (pouch->weight_limit-pouch->carrying)/w<n) {
+		  if ( n>0 && (!pouch->weight_limit || pouch->carrying+w<=(sint32)pouch->weight_limit)) {
+		      if (pouch->weight_limit && ((sint32)pouch->weight_limit-pouch->carrying)/w<n) {
 			  n = (pouch->weight_limit-pouch->carrying)/w;
 		      }
 		      tmp = get_object();

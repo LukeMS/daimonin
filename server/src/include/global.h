@@ -57,9 +57,20 @@ typedef signed char	sint8;
 typedef unsigned short Fontindex;
 typedef unsigned int tag_t;
 
-#define DELETE_STRING(__str_)  free_string(__str_);__str_=NULL;
+/* use this macros *only* to access the global hash table!
+ * Note: there is a 2nd hash table for the arch list - thats a static
+ * list BUT the arch names are inserted in the global hash to - so every
+ * archlist name has 2 entries!
+ */
+#define FREE_AND_COPY_HASH(_sv_,_nv_) { if (_sv_) free_string_shared(_sv_); _sv_=add_string(_nv_); }
+#define FREE_AND_ADD_REF_HASH(_sv_,_nv_) { if (_sv_) free_string_shared(_sv_); _sv_=add_refcount(_nv_); }
+#define FREE_AND_CLEAR_HASH(_nv_) {if(_nv_){free_string_shared(_nv_);_nv_ =NULL;}}
+#define FREE_ONLY_HASH(_nv_) if(_nv_)free_string_shared(_nv_);
 
-#define FREE_AND_COPY(sv,nv) { if (sv) free_string(sv); sv=add_string(nv); }
+#define ADD_REF_NOT_NULL_HASH(_nv_) if(_nv_!=NULL)add_refcount(_nv_);
+
+/* special macro with no {} ! if() FREE_AND_CLEAR_HASH2 will FAIL! */
+#define FREE_AND_CLEAR_HASH2(_nv_) if(_nv_){free_string_shared(_nv_);_nv_ =NULL;}
 
 #define SPAWN_RANDOM_RANGE 10000
 #define RANDOM_DROP_RAND_RANGE 1000000
@@ -92,11 +103,6 @@ extern uint32 new_levels[MAXLEVEL+2];
 extern float lev_exp[MAXLEVEL+1];
 
 extern uint32 global_map_tag; /* our global map_tag value for the server (map.c)*/
-
-/* python events - this must defined here because its needed in object.h.
- */ 
-#define NR_EVENTS 26
-#define NR_LOCAL_EVENTS 13
 
 /* This blob, in this order, is needed to actually define maps */
 #include "face.h"
@@ -154,6 +160,11 @@ typedef struct linked_char {
 /*****************************************************************************
  * GLOBAL VARIABLES:							     *
  *****************************************************************************/
+/* Special potions are now identifed by the last_eat value.
+ * last_eat == 0 is no special potion - means they are used
+ * as spell effect carrier. 
+ */
+#define special_potion(__op_sp) __op_sp->last_eat
 
 /* arch.c - sysinfo for lowlevel */
 extern int arch_cmp;		/* How many strcmp's */
@@ -267,13 +278,7 @@ EXTERN char *font_graphic;
 
 #define decrease_ob(xyz) decrease_ob_nr(xyz,1)
 
-/* FREE_AND_CLEAR frees the pointer and then sets it to NULL.
- * This is generally done as a safety, and having this macro
- * makes the code a bit cleaner when doing so.
- */
-
-#define FREE_AND_CLEAR(xyz) {free(xyz); xyz=NULL; }
-#define free_string(xyz_) {free_string_shared(xyz_); xyz_=NULL;}
+#define FREE_AND_NULL_PTR(_xyz_) {if(_xyz_){free(_xyz_); _xyz_=NULL; }}
 
 #ifdef CALLOC
 #undef CALLOC

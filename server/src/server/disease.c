@@ -383,7 +383,7 @@ int do_symptoms(object *disease) {
       new_symptom->stats.maxsp = disease->stats.maxsp; 
       new_symptom->stats.food = new_symptom->stats.maxgrace;
 
-      new_symptom->name = add_string(disease->name);
+      FREE_AND_COPY_HASH(new_symptom->name, disease->name);
       new_symptom->level = disease->level;
       new_symptom->speed = disease->speed;
       new_symptom->value = 0;
@@ -400,7 +400,7 @@ int do_symptoms(object *disease) {
       new_symptom->last_sp = disease->last_sp;
       new_symptom->stats.exp = 0;
       new_symptom->stats.hp = disease->stats.hp;
-      new_symptom->msg = add_string(disease->msg);
+      FREE_AND_COPY_HASH(new_symptom->msg, disease->msg);
       new_symptom->attacktype = disease->attacktype;
       new_symptom->other_arch = disease->other_arch;
 
@@ -437,7 +437,7 @@ int do_symptoms(object *disease) {
     symptom->last_sp = (int)  (scale*disease->last_sp);
     symptom->stats.exp = 0;
     symptom->stats.hp = (int) (scale*disease->stats.hp);
-    symptom->msg = add_string(disease->msg);
+	FREE_AND_COPY_HASH(symptom->msg, disease->msg);
     symptom->attacktype = disease->attacktype;
     symptom->other_arch = disease->other_arch;
   }
@@ -461,7 +461,7 @@ int grant_immunity(object *disease) {
 	 }
   }
   immunity = get_archetype("immunity");
-  immunity->name = add_string(disease->name);
+  FREE_AND_COPY_HASH(immunity->name, disease->name);
   immunity->level = disease->level;
   CLEAR_FLAG(immunity,FLAG_NO_PASS);
   insert_ob_in_ob(immunity,disease->env);

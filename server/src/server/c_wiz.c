@@ -154,8 +154,8 @@ int command_goto (object *op, char *params)
     name = params;
     dummy=get_object();
     dummy->map = op->map;
-    EXIT_PATH(dummy) = add_string (name);
-    dummy->name = add_string(name);
+    FREE_AND_COPY_HASH(EXIT_PATH(dummy),name);
+    FREE_AND_COPY_HASH(dummy->name,name);
 
     enter_exit(op,dummy);
     free_object(dummy);
@@ -220,7 +220,7 @@ int command_summon (object *op, char *params)
 	return 1;
       }
       dummy=get_object();
-      EXIT_PATH(dummy)=add_string(op->map->path);
+      FREE_AND_COPY_HASH(EXIT_PATH(dummy), op->map->path);
       EXIT_X(dummy)=op->x+freearr_x[i];
       EXIT_Y(dummy)=op->y+freearr_y[i];
       enter_exit(pl->ob,dummy);
@@ -266,7 +266,7 @@ int command_teleport (object *op, char *params) {
       return 1;
    }
    dummy = get_object();
-   EXIT_PATH(dummy) = add_string(pl->ob->map->path);
+   FREE_AND_COPY_HASH(EXIT_PATH(dummy), pl->ob->map->path);
    EXIT_X(dummy) = pl->ob->x + freearr_x[i];
    EXIT_Y(dummy) = pl->ob->y + freearr_y[i];
    enter_exit(op, dummy);
@@ -628,42 +628,62 @@ int command_free (object *op, char *params)
 
 int command_addexp (object *op, char *params)
 {
-    char buf[MAX_BUF];
-    int i;
-    object *exp_ob,*skill;
+	char buf[MAX_BUF];
+    int exp, snr;
+	object *exp_skill,*exp_ob;
     player *pl;
 
-  if(params==NULL || sscanf(params, "%s %d", buf, &i)!=2) {
-       new_draw_info(NDI_UNIQUE, 0,op,"Usage: addexp [who] [how much].");
+	if(params==NULL || sscanf(params, "%s %d %d", buf ,&snr, &exp)!=3) 
+	{
+       new_draw_info(NDI_UNIQUE, 0,op,"Usage: addexp [who] [skill nr] [how much].");
        return 1;
-    }
-    for(pl=first_player;pl!=NULL;pl=pl->next) 
-      if(!strncmp(pl->ob->name,buf,MAX_NAME)) 
-        break;
-    if(pl==NULL) {
-      new_draw_info(NDI_UNIQUE, 0,op,"No such player.");
-      return 1;
+	}
+
+	for(pl=first_player;pl!=NULL;pl=pl->next) 
+	{
+		if(!strncmp(pl->ob->name,buf,MAX_NAME)) 
+			break;
+	}
+
+	if(pl==NULL)
+	{
+		new_draw_info(NDI_UNIQUE, 0,op,"No such player.");
+		return 1;
+	}
+	
+    exp_skill = pl->skill_ptr[snr];
+                    
+    if(!exp_skill) /* safety check */
+    {
+        /* our player don't have this skill?
+         * This can happens when group exp is devided.
+         * We must get a useful sub or we skip the exp.
+         */
+         LOG(llevDebug,"TODO: add_exp(): called for %s with skill nr %d / %d exp - object has not this skill.\n",query_name(pl->ob),snr, exp);
+         return 0; /* TODO: groups comes later  - now we skip all times */
     }
 
-/* In new system: for dm adding experience to a player, only can 
- * add exp if we satisfy the following: 
- * 1) there is an associated skill readied by the player 
- * 2) added exp doesnt result in exp_ob->stats.exp>MAX_EXP_IN_OBJ 
- */
+    /* if we are full in this skill, then nothing is to do */
+    if(exp_skill->level >= MAXLEVEL)
+        return 0;    
+            
+    pl->update_skills=1; /* we will sure change skill exp, mark for update */
+    exp_ob = exp_skill->exp_obj;            
 
-    if((skill = pl->ob->chosen_skill) && ((exp_ob = pl->ob->chosen_skill->exp_obj)
-       || link_player_skill(pl->ob, skill))) { 
-      i = check_dm_add_exp_to_obj(exp_ob,i);
-      exp_ob->stats.exp += i;
-    } else {
-      new_draw_info(NDI_UNIQUE, 0,op,"Can't find needed experience object.");
-      new_draw_info(NDI_UNIQUE, 0,op,"Player has no associated skill readied.");
-      return 1;
+    if(!exp_ob)
+    {
+		LOG(llevBug,"BUG: add_exp() skill:%s - no exp_op found!!\n",query_name(exp_skill));
+		return 0;
     }
-    add_exp(pl->ob,i,pl->ob->chosen_skill->stats.sp);
-#ifndef REAL_WIZ
-    SET_FLAG(pl->ob, FLAG_WAS_WIZ);
-#endif
+    
+    exp = adjust_exp(pl->ob, exp_skill,exp);   /* first we see what we can add to our skill */ 
+            
+    /* adjust_exp has adjust the skill and all exp_obj and player exp */
+    /* now lets check for level up in all categories */
+    player_lvl_adj(pl->ob,exp_skill);   
+    player_lvl_adj(pl->ob,exp_ob);   
+    player_lvl_adj(pl->ob,NULL);   
+ 
     return 1;
   }
 
@@ -808,7 +828,7 @@ int command_reset (object *op, char *params)
 	    dummy->map = NULL;
 	    EXIT_X(dummy) = op->x;
 	    EXIT_Y(dummy) = op->y;
-	    EXIT_PATH(dummy) = add_string(op->map->path);
+	    FREE_AND_COPY_HASH(EXIT_PATH(dummy), op->map->path);
 	    remove_ob(op);
 	    op->map = NULL;
 	    tmp=op;

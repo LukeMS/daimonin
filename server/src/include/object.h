@@ -86,20 +86,25 @@ typedef struct obj
 	struct archt *arch;						/* Pointer to archetype */
 	struct treasureliststruct *randomitems; /* Items to be generated */
 
-	/* now "real" object releated data */
-	struct archt *other_arch;	/* Pointer used for various things */
-	New_Face *face;				/* struct ptr to the 'face' - the picture(s) */
-	New_Face *inv_face;			/* struct ptr to the inventory 'face' - the picture(s) */
-
 	/* we can remove chosen_skill & exp_obj by drop here a uint8 with a list of skill
 	 * numbers. Mobs has no skill and player can grap it from player struct. For exp,
 	 * i will use skill numbers in golems/ammo and spell objects. So, this can be removed.
 	 */
 	struct obj *chosen_skill;	/* the skill chosen to use */
 	struct obj *exp_obj;		/* the exp. obj (category) assoc. w/ this object */
+	uint32		event_flags;    /* flags matching events of event objects inside object ->inv */
+	/*struct obj *event_ptr;*/ /* needed when we want chain script direct without browsing
+						    * the objects inventory (this is needed when we want mutiple
+							* scripts of same kind in one object).
+							*/
+
+	/* now "real" object releated data */
+	struct archt *other_arch;	/* Pointer used for various things */
+	New_Face *face;				/* struct ptr to the 'face' - the picture(s) */
+	New_Face *inv_face;			/* struct ptr to the inventory 'face' - the picture(s) */
 
 	sint32 weight;				/* Attributes of the object - the weight */
-	sint32 weight_limit;		/* Weight-limit of object */
+	uint32 weight_limit;		/* Weight-limit of object */
 	sint32 carrying;			/* How much weight this object contains (of objects in inv) */
 	uint32 path_attuned;		/* Paths the object is attuned to */
 	uint32 path_repelled;		/* Paths the object is repelled from */
@@ -220,26 +225,6 @@ typedef struct obj
 
 	uint32	attacktype;			/* REMOVE IS IN PROCESS */
 
-/* this script event arrays are of course a nightmare. They eat 360 bytes per object, 
- * virtually double the memory usage from every object we ever allocate. This MUST
- * be changed, even when we shrink the script power. But a generic system + some 
- * flags will do the same. I can't see a object where 90 scripts and events are
- * attached 
- */
-
-	/* GROS: Upgraded obj structure to allow script events */
-	char *event_hook[NR_LOCAL_EVENTS];
-	char *event_plugin[NR_LOCAL_EVENTS];
-	char *event_options[NR_LOCAL_EVENTS];
-	/* GROS: Added for script_attack with weapons support */
-
-	/* also this values can put in the inventory. For players, we can add this to
-	 * the player struct, for mobs we can use a info_object and search the inventory.
-	 */
-	struct obj *current_weapon;	/* Pointer to the weapon currently used */
-	char *current_weapon_script;/* The script of the currently used weapon. 
-								 * Executed each time the object attacks something 
-								 */
 
 #ifdef CASTING_TIME
 	sint16 casting;				/* time left before spell goes off */

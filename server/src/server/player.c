@@ -145,43 +145,42 @@ static player* get_player(player *p) {
     object *op=arch_to_object(get_player_archetype(NULL));
     int i;
 
-    if (!p) {
-	player *tmp;
+    if (!p)
+	{
+		player *tmp;
 
-	p = (player *) malloc(sizeof(player));
-	memset(p,0, sizeof(player));
-	if(p==NULL)
-		LOG(llevError,"ERROR: get_player(): out of memory\n");
+		p = (player *) malloc(sizeof(player));
+		memset(p,0, sizeof(player));
+		if(p==NULL)
+			LOG(llevError,"ERROR: get_player(): out of memory\n");
 
-	/* This adds the player in the linked list.  There is extra
-	 * complexity here because we want to add the new player at the
-	 * end of the list - there is in fact no compelling reason that
-	 * that needs to be done except for things like output of
-	 * 'who'.
-	 */
-	tmp=first_player;
-	while(tmp!=NULL&&tmp->next!=NULL)
-	    tmp=tmp->next;
-	if(tmp!=NULL)
-	    tmp->next=p;
-	else
-	    first_player=p;
+		/* This adds the player in the linked list.  There is extra
+		 * complexity here because we want to add the new player at the
+		*end of the list - there is in fact no compelling reason that
+		* that needs to be done except for things like output of
+		* 'who'.
+		*/
+		tmp=first_player;
+		while(tmp!=NULL&&tmp->next!=NULL)
+		    tmp=tmp->next;
+		if(tmp!=NULL)
+		    tmp->next=p;
+		else
+		    first_player=p;
 
-	p->next = NULL; 
+		p->next = NULL; 
     }
 
     /* Clears basically the entire player structure except
      * for next and socket.
      */
     memset((void*)((char*)p + offsetof(player, maplevel)), 0, 
-	    sizeof(player) - offsetof(player, maplevel));
+					    sizeof(player) - offsetof(player, maplevel));
 
     /* There are some elements we want initialized to non zero value -
      * we deal with that below this point.
      */
     p->party_number=-1;
-/*    p->outputs_sync=16;*/		/* Every 2 seconds */
- /*   p->outputs_count=1;	*/	/* Keeps present behaviour */
 #ifdef USE_SWAP_STATS
     p->Swap_First = -1;
 #endif
@@ -198,7 +197,6 @@ static player* get_player(player *p) {
     op->speed_left=0.5;
     op->speed=1.0;
     op->direction=5;     /* So player faces south */
-    op->stats.wc=2;
 	/* i let it in but there is no use atm for run_away and player */
     op->run_away = 0; /* Then we panick... */
 
@@ -217,7 +215,7 @@ static player* get_player(player *p) {
 #endif
 
     strncpy(p->title,op->arch->clone.name,MAX_NAME);
-    op->race = add_string (op->arch->clone.race);
+	FREE_AND_COPY_HASH(op->race,op->arch->clone.race);
 
     /* Would be better of '0' was not a defined spell */
     for(i=0;i<NROFREALSPELLS;i++)
@@ -688,16 +686,15 @@ int receive_play_again(object *op, char key)
     }
     else if(key=='a'||key=='A') {
 	player *pl = op->contr;
-	char *name = op->name;
-
-	add_refcount(name);
+	char *name = NULL;
+	
+	FREE_AND_ADD_REF_HASH(name, op->name);
 	remove_friendly_object(op);
 	free_object(op);
 	pl=get_player(pl);
 	op = pl->ob;
 	op->contr->password[0]='~';
-	if(op->name!=NULL)
-	    free_string(op->name);
+	FREE_AND_CLEAR_HASH2(op->name);
 	/* Lets put a space in here */
 	new_draw_info(NDI_UNIQUE, 0, op, "\n");
 	get_name(op);
@@ -961,7 +958,6 @@ int key_change_class(object *op, char key)
 	SET_FLAG(op, FLAG_NO_FIX_PLAYER);
 	/* this must before then initial items are given */
 	esrv_new_player(op->contr, op->weight+op->carrying);
-	create_treasure(find_treasurelist("starting_wealth"),op, 0, 0, 0);
 #ifdef PLUGINS
     /* GROS : Here we handle the BORN global event */
     evtid = EVENT_BORN;
@@ -978,10 +974,7 @@ int key_change_class(object *op, char key)
 #endif
 	op->contr->state=ST_PLAYING;
 
-	if (op->msg) {
-	    free_string(op->msg);
-	    op->msg=NULL;
-	}
+	FREE_AND_CLEAR_HASH2(op->msg);
 
 	/* We create this now because some of the unique maps will need it
 	 * to save here.
@@ -1024,13 +1017,15 @@ int key_change_class(object *op, char key)
 
     tmp_loop = 0;
     while(!tmp_loop) {
-      char *name = add_string (op->name);
+      char *name = NULL;
       int x = op->x, y = op->y;
+
+	  FREE_AND_ADD_REF_HASH(name,op->name);
       remove_statbonus(op);
       op->arch = get_player_archetype(op->arch);
       copy_object (&op->arch->clone, op);
       op->stats = op->contr->orig_stats;
-      free_string (op->name);
+      FREE_AND_CLEAR_HASH2(op->name);
       op->name = name;
       op->x = x;
       op->y = y;
@@ -1458,9 +1453,9 @@ static void fire_bow(object *op, int dir)
 
   /* now we do this: arrow wc = wc base from skill + (wc arrow + magic) + (wc range weapon boni + magic) */
 	if((tmp_op=SK_skill(op)))
-		arrow->stats.wc = (sint8) tmp_op->last_heal; /* wc is in last heal */
+		arrow->stats.wc = tmp_op->last_heal; /* wc is in last heal */
 	else
-		arrow->stats.wc = 23;
+		arrow->stats.wc = 10;
 
 	/* now we determinate how many tiles the arrow will fly.
 	 * again we use the skill base and add arrow + weapon values - but no magic add here.
@@ -1468,13 +1463,19 @@ static void fire_bow(object *op, int dir)
 	arrow->last_sp = tmp_op->last_sp + bow->last_sp + arrow->last_sp;
 
 	/* add in all our wc boni */
-	arrow->stats.wc -= (bow->magic + arrow->magic + SK_level(op) +
-			    dex_bonus[op->stats.Dex] + thaco_bonus[op->stats.Str]/2 + bow->stats.wc);
+	arrow->stats.wc += (bow->magic + arrow->magic+SK_level(op)+thaco_bonus[op->stats.Dex] + bow->stats.wc);
 
 	/* monster.c 970 holds the arrow code for monsters */
 	arrow->stats.dam += dam_bonus[op->stats.Str]/2 + bow->stats.dam + bow->magic + arrow->magic; 
 	arrow->stats.dam=FABS((int)((float)(arrow->stats.dam  *lev_damage[SK_level(op)])));
   
+	/* adjust with the lower of condition */
+	if(bow->item_condition > arrow->item_condition)
+		arrow->stats.dam = (sint16)(((float)arrow->stats.dam/100.0f)*(float)arrow->item_condition);
+	else
+		arrow->stats.dam = (sint16)(((float)arrow->stats.dam/100.0f)*(float)bow->item_condition);
+
+
 	arrow->level = SK_level (op); /* this is used temporary when fired, arrow has
 								 * no level use elsewhere.
 								 */
@@ -1914,25 +1915,6 @@ int move_player_attack(object *op, int dir)
 			op->enemy = tmp; /* instead of attack, we assign it as our enemy */
 			op->enemy_count = tmp->count;
 			ret = 1;
-        
-			/* this is old player hit code ... we must modify it.
-			 * player can ONLY hit other players when the map has a PvP flag or is battleground
-			 *
-			if (tmp->type == PLAYER && tmp->stats.hp >= 0 && !tmp->contr->has_hit) 
-			{
-				sint8 luck = tmp->stats.luck;
-				tmp->contr->has_hit = 1;
-				op->enemy = tmp;
-				op->enemy_count = tmp->count;
-				skill_attack(op, tmp, 0, NULL);
-				tmp->stats.luck = luck;
-			}
-			*/
-			/* this should not done here - it should done when we swing, not when we aim
-			 *
-			if(action_makes_visible(op)) 
-				make_visible(op);
-			*/
 		}
     } /* if player should attack something */
     return ret;
@@ -2096,76 +2078,109 @@ void remove_unpaid_objects(object *op, object *env)
 
 void do_some_living(object *op) {
   int last_food=op->stats.food;
-  int gen_hp, gen_sp, gen_grace;
-  int over_hp, over_sp;
-  int rate_hp = 1200;
-  int rate_sp = 1250;
-  const int max_hp = 1;
-  const int max_sp = 1;
   int wis_boni = op->stats.Wis-10;
+  /* default regeneration time in ticks for 1 point */ 
+  int base_hp_reg = 40; 
+  int base_sp_reg = 35;
+  int base_grace_reg = 35;
 
-  if(op->contr->state==ST_PLAYING) {
+  if(op->contr->state==ST_PLAYING) 
+  {
 
-    /* these next three if clauses make it possible to SLOW DOWN
-       hp/grace/spellpoint regeneration. */
-    if(op->contr->gen_hp >= 0 ) 
-      gen_hp=(op->contr->gen_hp+1)*op->stats.maxhp;
-    else {
-      gen_hp = op->stats.maxhp;
-      rate_hp -= rate_hp/2 * op->contr->gen_hp;
-    }  
-    if(op->contr->gen_sp >= 0 )
-      gen_sp=(op->contr->gen_sp+1)*op->stats.maxsp;
-    else {
-      gen_sp = op->stats.maxsp;
-      rate_sp -= rate_sp/2 * op->contr->gen_sp;
-    }
-    if(op->contr->gen_grace >= 0)
-      gen_grace=(op->contr->gen_grace+1)*op->stats.maxgrace;
-    else {
-      gen_grace = op->stats.maxgrace;
-    }
+	/* HP reg */
+	if(op->contr->gen_hp>0)
+	{
+		int tmp = op->contr->gen_hp;
+		if(op->contr->combat_mode)   /* combat halfes the hp reg! */
+			tmp /=2;
+		if(!tmp && op->contr->gen_hp)
+			tmp =1;
 
-    /* Regenerate Spell Points */
-    if(op->contr->golem==NULL&&--op->last_sp<0) {
-      gen_sp = gen_sp * 10 / (op->contr->gen_sp_armour < 10? 10 : op->contr->gen_sp_armour);
-      if(op->stats.sp<op->stats.maxsp) {
-	op->stats.sp++;
-	op->stats.food--;
-	if(op->contr->digestion<0)
-	  op->stats.food+=op->contr->digestion;
-	else if(op->contr->digestion>0 &&
-		random_roll(0, op->contr->digestion, op, PREFER_HIGH))
-	  op->stats.food=last_food;
-      }
-      if (max_sp>1) {
-	over_sp = (gen_sp+10)/rate_sp;
-	if (over_sp > 0) {
-	  if(op->stats.sp<op->stats.maxsp) {
-	    op->stats.sp += over_sp>max_sp ? max_sp : over_sp;
-	    if(random_roll(0, rate_sp-1, op, PREFER_LOW) > ((gen_sp+10)%rate_sp))
-	      op->stats.sp--;
-	    if(op->stats.sp>op->stats.maxsp)
-	      op->stats.sp=op->stats.maxsp;
-	  }
-	  op->last_sp=0;
-	} else {
-	  op->last_sp=rate_sp/(gen_sp<20 ? 30 : gen_sp+10);
+		base_hp_reg =(base_hp_reg-tmp)/tmp;
 	}
-      } else {
-	op->last_sp=rate_sp/(gen_sp<20 ? 30 : gen_sp+10);
-      }
-    }
+	else
+	{
+		base_hp_reg +=(op->contr->gen_hp*op->contr->gen_hp)+5;
+	}
+
+	if(base_hp_reg<0)
+		base_hp_reg=0;
+	if(op->last_heal >base_hp_reg) /* that can happens when we have changed equipment! */
+		op->last_heal=base_hp_reg;
+
+    if(--op->last_heal<0) 
+	{
+		op->last_heal=base_hp_reg;
+
+		if(op->stats.hp<op->stats.maxhp)
+		{
+			op->stats.hp++;
+			op->stats.food--;
+			if(op->contr->digestion<0)
+				op->stats.food+=op->contr->digestion;
+			else if(op->contr->digestion>0 &&
+				random_roll(0, op->contr->digestion, op, PREFER_HIGH))
+			op->stats.food=last_food;
+		}
+	}
+
+	/* sp reg */
+	if(op->contr->gen_sp>0)
+	{
+		int tmp = op->contr->gen_sp;
+
+		base_sp_reg =(base_sp_reg-tmp)/tmp;
+	}
+	else
+	{
+		base_sp_reg +=(op->contr->gen_sp*op->contr->gen_sp)+5;
+	}
+
+	if(base_sp_reg<0)
+		base_sp_reg=0;
+	if(op->last_sp >base_sp_reg) /* that can happens when we have changed equipment! */
+		op->last_sp =base_sp_reg;
+
+    if(--op->last_sp<0) 
+	{
+		op->last_sp=base_sp_reg;
+
+		if(op->stats.sp<op->stats.maxsp)
+			op->stats.sp++;
+	}
 
     /* Regenerate Grace */
+	if(op->contr->gen_grace>0)
+	{
+		int tmp = op->contr->gen_grace;
+		base_grace_reg =(base_grace_reg-tmp)/tmp;
+	}
+	else
+	{
+		base_grace_reg +=(op->contr->gen_grace*op->contr->gen_grace)+5;
+	}
+
+	if(base_grace_reg<0)
+		base_grace_reg=0;
+	if(op->last_grace >base_grace_reg) /* that can happens when we have changed equipment! */
+		op->last_grace=base_grace_reg;
+
 	/* i added the "stay and pray" mechanism */
 	if(op->contr->praying && !op->contr->was_praying)
 	{
 	    object *god = find_god(determine_god(op));
 		if(god)
 		{
-			new_draw_info_format(NDI_UNIQUE, 0,op,"You start praying to %s...",god->name);
-			op->contr->was_praying=1;
+			if(op->contr->combat_mode)
+			{
+				new_draw_info(NDI_UNIQUE, 0,op, "You can't pray when in combat mode!");
+				op->contr->praying=0;
+			}
+			else
+			{
+				new_draw_info_format(NDI_UNIQUE, 0,op,"You start praying to %s...",god->name);
+				op->contr->was_praying=1;
+			}
 		}
 		else
 		{
@@ -2196,31 +2211,6 @@ void do_some_living(object *op) {
 	    op->stats.grace++;
     }
 	*/
-
-    /* Regenerate Hit Points */
-    if(--op->last_heal<0) {
-      if(op->stats.hp<op->stats.maxhp) {
-	op->stats.hp++;
-	op->stats.food--;
-	if(op->contr->digestion<0)
-	  op->stats.food+=op->contr->digestion;
-	else if(op->contr->digestion>0 &&
-		random_roll(0, op->contr->digestion, op, PREFER_HIGH))
-	  op->stats.food=last_food;
-      }
-      if(max_hp>1) {
-	over_hp = (gen_hp<20 ? 30 : gen_hp+10)/rate_hp;
-	if (over_hp > 0) {
-	  op->stats.sp += over_hp 
-	    + (RANDOM()%rate_hp > ((gen_hp<20 ? 30 : gen_hp+10)%rate_hp))? -1 : 0;
-	  op->last_heal=0;
-	} else {
-	  op->last_heal=rate_hp/(gen_hp<20 ? 30 : gen_hp+10);
-	}
-      } else {
-	op->last_heal=rate_hp/(gen_hp<20 ? 30 : gen_hp+10);
-      }
-    }
 
     /* Digestion */
     if(--op->last_eat<0) {
@@ -2311,8 +2301,8 @@ void kill_player(object *op)
         new_draw_info(NDI_UNIQUE | NDI_NAVY, 0,op, "Local medics have saved your life...");
       
         /* restore player */
-        cast_heal(op, op, SP_CURE_POISON);
-        /* cast_heal(op, op, SP_CURE_CONFUSION);*/
+        cast_heal(op, 110, op, SP_CURE_POISON);
+        /*cast_heal(op, op, SP_CURE_CONFUSION);*/
         cure_disease(op,op);  /* remove any disease */
         op->stats.hp=op->stats.maxhp;
         if (op->stats.food<=0) op->stats.food=999;
@@ -2322,12 +2312,12 @@ void kill_player(object *op)
         if (tmp != NULL) 
         {
 	        sprintf(buf,"%s's finger",op->name);
-	        tmp->name = add_string(buf);
+	        FREE_AND_COPY_HASH(tmp->name, buf);
 	        sprintf(buf,"  This finger has been cut off %s\n"
                         "  the %s, when he was defeated at\n  level %d by %s.\n",
 	                        op->name, op->contr->title, (int)(op->level),
 	                        op->contr->killer);
-	        tmp->msg=add_string(buf);
+	        FREE_AND_COPY_HASH(tmp->msg, buf);
 	        tmp->value=0, tmp->material=0, tmp->type=0;
 	        tmp->x = op->x, tmp->y = op->y;
 	        insert_ob_in_map(tmp,op->map,op,0);
@@ -2340,10 +2330,11 @@ void kill_player(object *op)
 
 #ifdef PLUGINS
 /* GROS: Handle for plugin death event */
-  if(op->event_hook[EVENT_DEATH] != NULL)
+  if(op->event_flags&EVENT_FLAG_DEATH)
   {
     CFParm* CFR;
     int k, l, m;
+ 	object *event_obj = get_event_object(op, EVENT_DEATH);
     k = EVENT_DEATH;
     l = SCRIPT_FIX_ALL;
     m = 0;
@@ -2356,11 +2347,11 @@ void kill_player(object *op)
     CFP.Value[6] = &m;
     CFP.Value[7] = &m;
     CFP.Value[8] = &l;
-    CFP.Value[9] = op->event_hook[k];
-    CFP.Value[10]= op->event_options[k];
-    if (findPlugin(op->event_plugin[k])>=0)
+    CFP.Value[9] = event_obj->race;
+    CFP.Value[10]= event_obj->slaying;
+    if (findPlugin(event_obj->name)>=0)
     {
-        CFR = (PlugList[findPlugin(op->event_plugin[k])].eventfunc) (&CFP);
+        CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
         killed_script_rtn = *(int *)(CFR->Value[0]);
         free(CFR);
         if (killed_script_rtn)
@@ -2536,13 +2527,13 @@ void kill_player(object *op)
      */
     tmp=arch_to_object(find_archetype("gravestone"));
     sprintf(buf,"%s's gravestone",op->name);
-    tmp->name=add_string(buf);
+    FREE_AND_COPY_HASH(tmp->name, buf);
     sprintf(buf,"RIP\nHere rests the hero %s the %s,\n"
 	        "who was killed\n"
 	        "by %s.\n",
 	        op->name, op->contr->title,
 	        op->contr->killer);
-    tmp->msg = add_string(buf);
+    FREE_AND_COPY_HASH(tmp->msg, buf);
     tmp->x=op->x,tmp->y=op->y;
     insert_ob_in_map (tmp, op->map, NULL,0);
 
@@ -2555,7 +2546,7 @@ void kill_player(object *op)
  /**************************************/
 
     /* remove any poisoning and confusion the character may be suffering. */
-    cast_heal(op, op, SP_CURE_POISON);
+    cast_heal(op, 110, op, SP_CURE_POISON);
     /*cast_heal(op, op, SP_CURE_CONFUSION);*/
     cure_disease(op,op);  /* remove any disease */
 	
@@ -2646,14 +2637,10 @@ void kill_player(object *op)
 #ifdef NOT_PERMADEATH
     tmp=arch_to_object(find_archetype("gravestone"));
     sprintf(buf,"%s's gravestone",op->name);
-    if (tmp->name)
-        free_string (tmp->name);
-    tmp->name=add_string(buf);
+    FREE_AND_COPY_HASH(tmp->name,buf);
     sprintf(buf,"RIP\nHere rests the hero %s the %s,\nwho was killed by %s.\n",
 	    op->name, op->contr->title, op->contr->killer);
-    if (tmp->msg)
-        free_string (tmp->msg);
-    tmp->msg = add_string(buf);
+    FREE_AND_COPY_HASH(tmp->msg, buf);
     tmp->x=x,tmp->y=y;
     insert_ob_in_map (tmp, map, NULL,0);
 #else
@@ -2661,14 +2648,10 @@ void kill_player(object *op)
 	/*
     tmp=arch_to_object(find_archetype("corpse_pl"));
     sprintf(buf,"%s", op->name);
-    if (tmp->name)
-	free_string (tmp->name);
-    tmp->name=add_string(buf);
+    FREE_AND_COPY_HASH(tmp->name,buf);
     tmp->level=op->level;
     tmp->x=x;tmp->y=y;
-    if (tmp->msg)
-	free_string(tmp->msg);
-    tmp->msg = add_string (gravestone_text(op));
+    FREE_AND_COPY_HASH(tmp->msg, gravestone_text(op));
     SET_FLAG (tmp, FLAG_UNIQUE);
     insert_ob_in_map (tmp, map, NULL,0);
 	*/
