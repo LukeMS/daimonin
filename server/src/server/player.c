@@ -165,7 +165,7 @@ static player* get_player(player *p) {
 	/* i let it in but there is no use atm for run_away and player */
     op->run_away = 0; /* Then we panick... */
 
-    p->state=ST_ROLL_STAT;
+    p->state=ST_CREATE_CHAR;
 
 	p->target_hp = -1;
 	p->target_hp_p = -1;
@@ -207,7 +207,7 @@ static player* get_player(player *p) {
 void free_player(player *pl) 
 {
 	/* first, we removing the player from map or whatever */
-    if(pl->ob != NULL) 
+    if(pl->ob) 
 	{
 		SET_FLAG(pl->ob, FLAG_NO_FIX_PLAYER);
         if (!QUERY_FLAG(pl->ob, FLAG_REMOVED)) 
@@ -230,7 +230,9 @@ void free_player(player *pl)
 	player_active--;
 	
     free_newsocket(&pl->socket);
-}
+    if(pl->ob) 
+		destroy_object(pl->ob);
+	}
 
 /* Tries to add player on the connection passwd in ns.
  * All we can really get in this is some settings like host and display

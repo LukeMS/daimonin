@@ -204,6 +204,7 @@ typedef struct pl_player
 	uint16 last_gen_sp;
 	uint16 last_gen_grace;
 
+	char player_name[MAX_PLAYER_NAME+1];
 	char last_weapon_sp;
 
 	char last_skill_level[MAX_EXP_CAT]; /* shadow register client exp group for level */

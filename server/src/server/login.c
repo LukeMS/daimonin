@@ -55,49 +55,13 @@ void delete_character(const char *name, int new) {
     }
 }
 
-
-/* This verify that a character of name exits, and that it matches
- * password.  It return 0 if there is match, 1 if no such player,
- * 2 if incorrect password.
- */
-
-int verify_player(char *name, char *password)
-{
-    char buf[MAX_BUF];
-    int comp;
-    FILE *fp;
-
-    sprintf(buf,"%s/%s/%s/%s.pl",settings.localdir,settings.playerdir,name,name);
-    if ((fp=open_and_uncompress(buf,0,&comp))==NULL) return 1;
-
-    /* Read in the file until we find the password line.  Our logic could
-     * be a bit better on cleaning up the password from the file, but since
-     * it is written by the program, I think it is fair to assume that the
-     * syntax should be pretty standard.
-     */
-    while (fgets(buf, MAX_BUF-1, fp) != NULL) {
-	if (!strncmp(buf,"password ",9)) {
-	    buf[strlen(buf)-1]=0;	/* remove newline */
-	    if (check_password(password, buf+9)) {
-		close_and_delete(fp, comp);
-		return 0;
-	    }
-	    else {
-		close_and_delete(fp, comp);
-		return 2;
-	    }
-	}
-    }
-    LOG(llevDebug,"Could not find a password line in player %s\n", name);
-    close_and_delete(fp, comp);
-    return 1;
-}
-
-/* Checks to see if anyone else by 'name' is currently playing.  We
- * do this by a lockfile (playername.lock) in the save directory.  If
- * we find that file or another character of some name is already in the
- * game, we don't let this person join.  We return 0 if the name is
- * in use, 1 otherwise.
+/* lets check the player name is used.
+ * We only deny here when
+ * a.) the name is illegal
+ * b.) some other user use this name atm to create a new char (bad timing)
+ * If the player is playing or just had submited the name,
+ * we don't deny it here.
+ * we wait for the password first!
  */
 int check_name(player *me,char *name) 
 {
@@ -115,14 +79,20 @@ int check_name(player *me,char *name)
 	
     for(pl=first_player;pl!=NULL;pl=pl->next)
 	{
-		if(pl!=me && pl->ob->name==name_hash) 
+		if(pl!=me && (pl->state==ST_CONFIRM_PASSWORD || pl->state==ST_CREATE_CHAR) && pl->ob->name==name_hash) 
 		{
-			new_draw_info(NDI_UNIQUE, 0,me->ob,"That name is already in use.");
+			new_draw_info(NDI_UNIQUE, 0,me->ob,"Someone else creates a char with that name just now!");
 			return 0;
 		}
 	}
 
     return 1;
+}
+
+
+int check_password(char *typed,char *crypted) 
+{
+	return !strcmp(crypt_string(typed,crypted),crypted);
 }
 
 int create_savedir_if_needed(char *savedir)
@@ -409,7 +379,10 @@ static void reorder_inventory(object *op)
  * just look for all these scanf()
  */
 void check_login(object *op) {
-    FILE *fp;
+
+	static int kick_loop;
+    
+	FILE *fp;
 	void *mybuffer;
     char filename[MAX_BUF];
     char buf[MAX_BUF],bufall[MAX_BUF];
@@ -421,12 +394,14 @@ void check_login(object *op) {
     time_t    elapsed_save_time=0;
     struct stat	statbuf;
 	object *tmp, *tmp2;
+
 #ifdef PLUGINS
     CFParm CFP;
     int evtid;
 #endif
     strcpy (pl->maplevel,first_map_path);
 
+	kick_loop = 0;
 	/* a good point to add this i to a 10 minute temp ban,,, 
 	 * if needed, i add it... its not much work but i better
 	 * want a real login server in the future 
@@ -439,9 +414,9 @@ void check_login(object *op) {
 		return;
 	}
 
+	LOG(llevInfo,"LOGIN: >%s< from ip %s (%d) - ", STRING_SAFE(op->name), STRING_SAFE(pl->socket.host), pl->socket.fd);
 
-	LOG(llevInfo,"LOGIN: >%s< from ip %s\n", op->name, pl->socket.host);
-
+kick_loop_jump:
     /* First, lets check for newest form of save */
     sprintf(filename,"%s/%s/%s/%s.pl",settings.localdir,settings.playerdir,op->name,op->name);
     if (access(filename, F_OK)==-1) {
@@ -459,45 +434,101 @@ void check_login(object *op) {
      * the password.  Return control to the higher level dispatch,
      * since the rest of this just deals with loading of the file.
      */
-    if ((fp=open_and_uncompress(filename,1,&comp)) == NULL) {
-	confirm_password(op);
-	return;
+    if ((fp=open_and_uncompress(filename,1,&comp)) == NULL)
+	{
+		player *ptmp;
+		/* this is a virgin player name.
+		 * BUT perhaps someone else had the same name idea?
+		 * Perhaps he is just do the confirm stuff or has entered the game - 
+		 * So, lets check for the name here too
+		 * and check for confirm_password state
+		 */		
+		for(ptmp=first_player;ptmp!=NULL;ptmp=ptmp->next)
+		{
+			if(ptmp!=pl && ptmp->state>=ST_CONFIRM_PASSWORD && ptmp->ob->name==op->name) 
+			{
+				LOG(llevInfo,"create char double login!\n");
+				new_draw_info(NDI_UNIQUE, 0,pl->ob,"Someone else creates a char with that name just now!");
+				FREE_AND_COPY_HASH(op->name, "noname");
+				pl->last_value= -1;
+				get_name(op);
+				return;
+			}
+		}
+		
+		LOG(llevInfo,"new player - confirm pswd\n");
+		confirm_password(op);
+		return;
     }
-    if (fstat(fileno(fp), &statbuf)) {
-	LOG(llevBug,"BUG: Unable to stat %s?\n", filename);
-	elapsed_save_time=0;
-    } else {
-	elapsed_save_time = time(NULL) - statbuf.st_mtime;
-	if (elapsed_save_time<0) {
-	    LOG(llevBug,"BUG: Player file %s was saved in the future? (%d time)\n", filename, elapsed_save_time);
-	    elapsed_save_time=0;
-	}
+    if (fstat(fileno(fp), &statbuf))
+	{
+		LOG(llevBug,"\nBUG: Unable to stat %s?\n", filename);
+		elapsed_save_time=0;
+    } 
+	else
+	{
+		elapsed_save_time = time(NULL) - statbuf.st_mtime;
+		if (elapsed_save_time<0)
+		{
+			LOG(llevBug,"\nBUG: Player file %s was saved in the future? (%d time)\n", filename, elapsed_save_time);
+			elapsed_save_time=0;
+		}
     }
 
-    if(fgets(bufall,MAX_BUF,fp) != NULL) {
-	if(!strncmp(bufall,"checksum ",9)) {
-	    checksum = strtol_local(bufall+9,(char **) NULL, 16);
-	    (void) fgets(bufall,MAX_BUF,fp);
-	}
-	if(sscanf(bufall,"password %s\n",buf)) {
-	    /* New password scheme: */
-	    correct=check_password(pl->write_buf+1,buf);
-	}
-	/* Old password mode removed - I have no idea what it 
-	 * was, and the current password mechanism has been used
-	 * for at least several years.
-	 */
-    }
-    if (!correct) {
-	new_draw_info(NDI_UNIQUE, 0,op," ");
-	new_draw_info(NDI_UNIQUE, 0,op,"Wrong Password!");
-	new_draw_info(NDI_UNIQUE, 0,op," ");
-	FREE_AND_COPY_HASH(op->name, "noname");
-	pl->last_value= -1;
-	get_name(op);
-	return;	    /* Once again, rest of code just loads the char */
+    if(fgets(bufall,MAX_BUF,fp) != NULL)
+	{
+		if(!strncmp(bufall,"checksum ",9))
+		{
+			checksum = strtol_local(bufall+9,(char **) NULL, 16);
+			fgets(bufall,MAX_BUF,fp);
+		}
+
+		if(sscanf(bufall,"password %s\n",buf))
+		{
+		    correct=check_password(pl->write_buf+1,buf);
+
+			/* password is good and player exists.
+			 * We have 2 choices left: 
+			 * a.) this name is not loged in bfore
+			 * b.) or it is.
+			 * If it is, we kick the previous loged
+			 * in player now.
+			 * That will allow us to kill link dead players!
+			 */
+			if(correct)
+			{
+				player *ptmp;
+				for(ptmp=first_player;ptmp!=NULL;ptmp=ptmp->next)
+				{
+					if(ptmp!=pl && ptmp->state == ST_PLAYING && ptmp->ob->name==op->name) 
+					{
+						int  state_tmp = pl->state;						
+						LOG(llevInfo,"Double login! Kicking older instance! (%d) ", kick_loop);
+						pl->state = ST_PLAYING;
+						new_draw_info(NDI_UNIQUE, 0,pl->ob,"Double login! Kicking older instance!");
+						pl->state = state_tmp;
+						close_and_delete(fp, comp);
+						remove_ns_dead_player(ptmp);/* super hard kick! */						
+						kick_loop++;							
+						goto kick_loop_jump;
+					}
+				}
+			}
+		}
     }
 
+    if (!correct) 
+	{
+		LOG(llevInfo,"wrong pswd!\n");
+		new_draw_info(NDI_RED, 0,op," ** wrong password ***");
+		close_and_delete(fp, comp);
+		FREE_AND_COPY_HASH(op->name, "noname");
+		pl->last_value= -1;
+		get_name(op);
+		return;	    /* Once again, rest of code just loads the char */
+    }
+	LOG(llevInfo,"loading player file!\n");
+	
 #ifdef SAVE_INTERVAL
     pl->last_save_time=time(NULL);
 #endif /* SAVE_INTERVAL */
@@ -659,8 +690,9 @@ void check_login(object *op) {
     op->custom_attrset = NULL; /* We transfer it to a new object */
     
     LOG(llevDebug,"load obj for player: %s\n", op->name);
-    
-    op = get_object(); /* Create a new object for the real player data */
+    destroy_object(op);
+	
+	op = get_object(); /* Create a new object for the real player data */
     
     /* this loads the standard objects values. */
 	mybuffer = create_loader_buffer(fp);

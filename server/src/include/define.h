@@ -915,12 +915,11 @@ error - Your ANSI C compiler should be defining __STDC__;
  * Use of the state-variable in player objects:
  */
 
-#define ST_PLAYING				0
-#define ST_ROLL_STAT			1
-#define ST_CHANGE_CLASS			2
-#define ST_GET_NAME				3
-#define ST_GET_PASSWORD			4
-#define ST_CONFIRM_PASSWORD     5
+#define ST_GET_NAME				0
+#define ST_GET_PASSWORD			1
+#define ST_CONFIRM_PASSWORD     2
+#define ST_CREATE_CHAR			3
+#define ST_PLAYING				5
 
 #define BLANK_FACE_NAME "blank.111"
 #define NEXT_ITEM_FACE_NAME "next_item.101"

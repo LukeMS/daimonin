@@ -427,7 +427,7 @@ static void block_until_new_connection()
 }
 #endif
 
-static void remove_ns_dead_player(player *pl)
+void remove_ns_dead_player(player *pl)
 {	
 	/* remove DM entry */
 	if(QUERY_FLAG(pl->ob,FLAG_WIZ))
@@ -450,6 +450,75 @@ static void remove_ns_dead_player(player *pl)
 	leave(pl,1);
 
 	free_player(pl); /* we *,must* do this here and not in the memory pool - it needs to be a syncron action */
+}
+
+/* lets check 2 things:
+ * a.) mass connection from one IP
+ * b.) or is the ip (range) banned
+ * return TRUE means banned, FALSE is ok.
+ */
+static int check_ip_ban(int num, uint32 ip)
+{
+	int count,i;
+	NewSocket *ns = &init_sockets[num];
+	player *pl, *ptmp=NULL;
+
+	/* lets first check sensless connected sockets
+	 * from same IP.
+	 * Mark all from same IP as dead.
+	 * Note: We accept *one* other login
+	 * - perhaps someone use here a shared IP.
+	 * We search from last socket to first.
+	 * So we skip the oldest login automatically.
+	 */
+	count=0;
+	for(i=socket_info.allocated_sockets-1;i>0;i--) 
+	{
+		if(num != i &&  init_sockets[i].ip == ip)
+		{
+			if(++count >1)
+			{
+				LOG(llevDebug,"check_ip_ban(): socket flood. mark Ns_Dead: %d (%d.%d.%d.%d)\n", 
+					num, (ip>>24)&255, (ip>>16)&255, (ip>>8)&255, ip&255);
+				init_sockets[i].status = Ns_Dead;
+			}
+		}
+	}
+
+	/* now check the players we have */
+	count=0;
+	for (pl=first_player; pl; pl=pl->next)
+	{
+		if(pl->socket.ip == ip)
+		{
+			count++;
+			if(!ptmp)
+				ptmp = pl;
+			else
+			{
+				/* lets compare the idle time.
+				 * if needed we will kick the login with the highest idle time
+				 */
+				if(ptmp->socket.login_count < pl->socket.login_count)
+					ptmp=pl;
+
+				/* now the tricky part: if we have to many
+				 * connects from that IP, we KICK the login
+				 * with the highest idle time.
+				 */
+				if(count>1) 
+				{
+					if(pl->socket.status != Ns_Dead)
+					{
+						LOG(llevDebug,"check_ip_ban(): connection flood: mark player %s Ns_Dead: %d (%d.%d.%d.%d)\n",
+							query_name(pl->ob),num, (ip>>24)&255, (ip>>16)&255, (ip>>8)&255, ip&255);
+						ptmp->socket.status = Ns_Dead;
+					}
+				}
+			}
+		}
+	}
+	return FALSE;
 }
 
 /* This checks the sockets for input and exceptions, does the right thing.  A 
@@ -603,7 +672,10 @@ void doeric_server(int update_client)
 			i = ntohl(addr.sin_addr.s_addr);
 			LOG(llevDebug," ip %d.%d.%d.%d  (socket %d)(#%d)\n",(i>>24)&255, (i>>16)&255, (i>>8)&255, i&255,
 						init_sockets[newsocknum].fd, newsocknum);
-			InitConnection(&init_sockets[newsocknum],i);
+			if(check_ip_ban(newsocknum,i))
+				close_newsocket(&init_sockets[newsocknum]);
+			else
+				InitConnection(&init_sockets[newsocknum],i);
 		}
 		else
 			LOG(llevDebug,"Error on accept! (#%d)\n",newsocknum);
