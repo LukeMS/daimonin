@@ -10,7 +10,7 @@ weapon_speed 0.044
 attack_fire 100
 ac 16
 wc 15
-dam 4
+dam 5
 hp -1
 maxhp 5
 terrain_flag 1

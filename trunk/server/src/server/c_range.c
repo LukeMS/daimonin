@@ -197,7 +197,7 @@ int command_cast_spell (object *op, char *params)
 
 	value = cast_spell(op,op,op->facing,spnum,0,spellNormal,cp);
 
-	if(spells[spnum].type&SPELL_DESC_WIS) 
+	if(spells[spnum].flags&SPELL_DESC_WIS) 
 		op->stats.grace -= value;
 	else 
 		op->stats.sp -= value;
