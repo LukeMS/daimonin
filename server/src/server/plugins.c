@@ -132,15 +132,13 @@ void initPlugins(void)
     {
         if (strcmp(currentfile->d_name,".."))
         {
-            if (strcmp(currentfile->d_name,"."))
+			/* don't load "." marker, CVS directory or all which has a .txt inside */
+            if (strcmp(currentfile->d_name,".") && !strstr(currentfile->d_name,".txt") && strcmp(currentfile->d_name,"CVS"))
             {
-                if (!strstr(currentfile->d_name,".txt"))
-                {
-                    strcpy(buf2,buf);
-                    strcat(buf2,currentfile->d_name);
-                    LOG(llevInfo,"Registering plugin %s\n",currentfile->d_name);
-                    initOnePlugin(buf2);
-                }
+				strcpy(buf2,buf);
+                strcat(buf2,currentfile->d_name);
+                LOG(llevInfo,"Registering plugin %s\n",currentfile->d_name);
+                initOnePlugin(buf2);
             }
         }
     }
@@ -284,13 +282,14 @@ void initPlugins(void)
             {
                 if (strcmp(namelist[n]->d_name,".."))
                 {
-                    if (strcmp(namelist[n]->d_name,"."))
+					/* don't load "." marker, CVS directory or all which has a .txt inside */
+		            if (strcmp(namelist[n]->d_name,".") && !strstr(namelist[n]->d_name,".txt") && strcmp(namelist[n]->d_name,"CVS"))
                     {
                         strcpy(buf2,buf);
                         strcat(buf2,namelist[n]->d_name);
                         LOG(llevInfo," -> Loading plugin : %s\n",namelist[n]->d_name);
                         initOnePlugin(buf2);
-                    };
+                    }
                 }
             };
         if (namelist != NULL) free(namelist);

@@ -2489,20 +2489,20 @@ static PyObject* CFCreateInvisibleInside(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   :                                                                  */
 /* Python :                                                                  */
-/* Status : Untested                                                         */
+/* Status : Stable                                                           */
 /*****************************************************************************/
 
 /* i must change this a bit - only REAL arch names - not object names */
 static PyObject* CFCreateObjectInside(PyObject* self, PyObject* args)
 {
     object *myob;
-    object *test;
     object *where;
-    int i;
 	long value, id;
     long whereptr;
-    char *tmpname;
     char *txt;
+/*    char *tmpname;
+    object *test;
+    int i;*/
     CFParm* CFR;
 
 	/* 0: name
@@ -2517,22 +2517,35 @@ static PyObject* CFCreateObjectInside(PyObject* self, PyObject* args)
     where = (object *)(whereptr);
 
     GCFP.Value[0] = (void *)(txt);
-    CFR = (PlugHooks[HOOK_GETARCHBYOBJNAME])(&GCFP);
+    CFR = (PlugHooks[HOOK_GETARCHETYPE])(&GCFP);
     myob = (object *)(CFR->Value[0]);
-    free(CFR);
+	free(CFR);
 
-    if (!strncmp(query_name(myob), "singluarity",11))
+	if(!myob)
+	{
+		printf("BUG python_CFCreateObjectInside(): ob:>%s< = NULL!\n", query_name(myob));
+	    GCFP.Value[0] = "singluarity";
+		CFR = (PlugHooks[HOOK_GETARCHETYPE])(&GCFP);
+		myob = (object *)(CFR->Value[0]);
+		free(CFR);
+	}
+	
+    if (myob->name && !strncmp(myob->name, "singluarity",11))
     {
+		printf("BUG python_CFCreateObjectInside(): FAILED TO CREATE: >%s< = singluarity!\n", query_name(myob));
+		/*
 		GCFP.Value[0] = (void *)(myob);
 		(PlugHooks[HOOK_FREEOBJECT])(&GCFP);
 
-        /*free_object(myob);*/
         CFR = (PlugHooks[HOOK_GETARCHETYPE])(&GCFP);
         myob = (object *)(CFR->Value[0]);
         free(CFR);
+		*/
     }
+	/*
     else
     {
+		
         if (strcmp(query_name(myob),txt))
         {
             for(i=strlen(query_name(myob)); i>0;i--)
@@ -2546,7 +2559,7 @@ static PyObject* CFCreateObjectInside(PyObject* self, PyObject* args)
                     tmpname = txt + i;
                     GCFP.Value[0] = (void *)(myob);
                     GCFP.Value[1] = (void *)(tmpname);
-                    /*test = create_artifact(myob,tmpname); */
+                   
                     CFR = (PlugHooks[HOOK_CREATEARTIFACT])(&GCFP);
                     test = (object *)(CFR->Value[0]);
                     free(CFR);
@@ -2554,11 +2567,12 @@ static PyObject* CFCreateObjectInside(PyObject* self, PyObject* args)
                 else
                 {
                     free_string(tmpname);
-                };
-            };
-        };
-    };
-
+                }
+            }
+        }
+    }
+*/
+		
 	if(value != -1) /* -1 means, we use original value */
 		myob->value = (sint32) value;
 	if(id)

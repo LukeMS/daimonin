@@ -620,7 +620,7 @@ object *arch_to_object(archetype *at) {
 object *create_singularity(char *name) {
   object *op;
   char buf[MAX_BUF];
-  sprintf(buf,"singluarity (%s)",name);
+  sprintf(buf,"singluarity (REPORT THIS BUG!) (%s)",name);
   op = get_object();
   op->name = add_string(buf);
   SET_FLAG(op,FLAG_NO_PICK);
