@@ -409,8 +409,12 @@ void show_tooltip(int mx, int my, char* text)
 	rec.x = mx+ 9;
 	rec.y = my+17;
 	rec.h = 12;
+	
+	if(rec.x+rec.w>=SCREEN_XLEN)
+		rec.x -= (rec.x+rec.w+1)-SCREEN_XLEN;
+
 	SDL_FillRect(ScreenSurface, &rec, -1);
-	StringBlt(ScreenSurface, &SystemFont, tooltip, mx+11, my+16, COLOR_BLACK, NULL, NULL);
+	StringBlt(ScreenSurface, &SystemFont, tooltip, rec.x+2, rec.y-1, COLOR_BLACK, NULL, NULL);
 }
 
 static Boolean GetBitmapBorders(SDL_Surface *Surface, int *up, int *down, int *left, int *right, UINT32 ckey)

@@ -68,16 +68,16 @@
 #define PACKAGE_NAME "Daimonin SDL Client"
 
 /* Define to the full name and version of this package. */
-#define PACKAGE_STRING "Daimonin SDL Client BETA2-0.96a"
+#define PACKAGE_STRING "Daimonin SDL Client BETA3-0.965a"
 
 /* Define to the one symbol short name of this package. */
 #define PACKAGE_TARNAME "daimonin-sdl-client"
 
 /* Define to the version of this package. */
-#define PACKAGE_VERSION "BETA2-0.96a"
+#define PACKAGE_VERSION "BETA3-0.965a"
 
 /* Installation prefix */
-#define PREFIX "../../../client-BETA2-0.96a"
+#define PREFIX "../../../client-BETA3-0.965a"
 
 /* Use the SDL_mixer sound system. Remove when you have no sound card or slow
    computer */
