@@ -7,23 +7,28 @@ local words = string.split(msg);
 local marked = activator:FindMarkedObject();
 
 -- Tests for the lua backend and the object model
-if (msg == 'exception') then
-    me:SayTo(activator, "I will now raise an exception...");
-    error('hello world');
-elseif (msg == 'tostring') then
-    me:SayTo(activator, "You are:  " .. tostring(activator) .. ".\nI am " .. tostring(me));
-elseif (msg == 'typesafe1') then
-    me:SayTo(activator, "Testing type safety (wrapping strange objects)");
-    other = me.map;
-    me:SayTo(other, "This will not be written nor crash the server");
-elseif (msg == 'typesafe2') then
-    me:SayTo(activator, "Testing type safety (wrapping strange objects)");
-    other = event.other; -- # This is NULL for 'Say' scripts
-    me:SayTo(other, "This will not be written nor crash the server");
-elseif (msg == 'globals') then
+if msg == 'exception' then
+    me:SayTo(activator, "I will now raise an exception...")
+    error('hello world')
+elseif msg == 'tostring' then
+    me:SayTo(activator, "You are:  " .. tostring(activator) .. ".\nI am " .. tostring(me))
+elseif msg == 'typesafe1' then
+    me:SayTo(activator, "Testing type safety (wrapping strange objects)")
+    other = me.map
+    me:SayTo(other, "This will not be written nor crash the server")
+elseif msg == 'typesafe2' then
+    me:SayTo(activator, "Testing type safety (wrapping strange objects)")
+    other = event.other -- # This is NULL for 'Say' scripts
+    me:SayTo(other, "This will not be written nor crash the server")
+elseif msg == 'globals' then
 	me:SayTo(activator, "Value of a_global was " .. tostring(a_global))
 	me:SayTo(activator, "Setting it to 42, please rerun this test")
 	a_global=42
+-- Test for bug #0000014 (Division by zero)
+elseif msg == 'division' then
+	me:SayTo(activator, "Trying to calculate x = 42 / 0. (Should give inf)")
+	me:SayTo(activator, "x = " .. tostring(42 / 0))
+	me:SayTo(activator, "Done calculating.")
 
 -- Test coroutines
 elseif (msg == 'yield') then
@@ -452,7 +457,7 @@ elseif msg == 'recursive' or msg == 'recursive2' then
 else
     me:SayTo(activator,
         "Available tests:\n" ..
-        "^exception^ ^tostring^ ^typesafe1^ ^globals^\n" ..
+        "^exception^ ^tostring^ ^typesafe1^ ^globals^ ^division^\n" ..
         "^food^ ^food2^\n" ..
 		"^invisible^ ^messaging^ ^getip^\n" ..
 		"^rank1^ ^rank2^ ^clone^ ^enemy^\n" ..
