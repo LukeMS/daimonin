@@ -1,6 +1,6 @@
-Object club
-name small club
-face club.101
+Object club_rough
+name rough club
+face club_rough.101
 layer 3
 weapon_speed 0.0225
 attack_impact 100

@@ -1,7 +1,7 @@
-Object war_staff
+Object quaterstaff
 layer 3
-name war staff
-face war_staff.101
+name quaterstaff
+face quaterstaff.101
 weapon_speed 0.02
 attack_impact 100
 dam 8

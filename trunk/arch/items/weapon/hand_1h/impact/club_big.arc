@@ -1,5 +1,5 @@
 Object club_big
-name big club
+name club
 face club_big.101
 layer 3
 weapon_speed 0.0225
