@@ -337,17 +337,6 @@ struct mob_behaviourset *generate_behaviourset(object *op)
     return set;
 }
 
-/* stricmp isn't standard so I define it here for now. */
-static inline int stricmp(const char *s1, const char *s2)
-{
-    while(*s1 && tolower(*s1) == tolower(*s2)) {
-        s1++;
-        s2++;
-    }
-
-    return tolower(*s1) - tolower(*s2);
-}
-
 /* Parse a single parameter=value pair into a 
  * mob_behaviour_param struct */
 int parse_behaviour_parameters(const char *start, const char *end, 
@@ -389,7 +378,7 @@ int parse_behaviour_parameters(const char *start, const char *end,
         paramdecl = NULL;
         for(i=0; i<behaviour->declaration->nrof_params; i++) 
         {
-            if(stricmp(namebuf, behaviour->declaration->params[i].name) == 0) 
+            if(strcasecmp(namebuf, behaviour->declaration->params[i].name) == 0) 
             {
                 paramdecl = &behaviour->declaration->params[i];
                 param = &behaviour->parameters[i];
@@ -552,7 +541,7 @@ struct mob_behaviourset *parse_behaviourconfig(const char *conf_text, object *op
             /* look up class header */            
             for(i=0; i<NROF_BEHAVIOURCLASSES; i++) 
             {
-                if(stricmp(buf, behaviourclasses[i].name) == 0) 
+                if(strcasecmp(buf, behaviourclasses[i].name) == 0) 
                 {
                     class=i;
                     break;
@@ -594,7 +583,7 @@ struct mob_behaviourset *parse_behaviourconfig(const char *conf_text, object *op
             new_behaviour = NULL;
             for(i=0; behaviourclasses[class].behaviours[i].func; i++) 
             {
-                if(stricmp(buf, behaviourclasses[class].behaviours[i].name) == 0)
+                if(strcasecmp(buf, behaviourclasses[class].behaviours[i].name) == 0)
                 {
                     new_behaviour = init_behaviour(class, i);
 //                    LOG(llevDebug,"    behaviour %s\n", buf);

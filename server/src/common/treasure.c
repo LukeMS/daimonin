@@ -373,7 +373,7 @@ void init_artifacts()
 			cp = strchr(cp,' ') + 1;
 			if (!strcmp(cp,"all"))
 				continue;
-			if (!stricmp(cp,"none"))
+			if (!strcasecmp(cp,"none"))
 			{
 				none_flag= TRUE;
 				continue;
