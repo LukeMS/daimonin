@@ -624,8 +624,8 @@ object *get_archetype(char *name) {
  * Hash-function used by the arch-hashtable.
  */
 
-unsigned long
-hasharch(char *str, int tablesize) {
+unsigned long hasharch(char *str, int tablesize) 
+{
     unsigned long hash = 0;
     int i = 0, rot = 0;
     char *p;

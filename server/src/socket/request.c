@@ -92,11 +92,22 @@ CS_STAT_PROT_HOLY,
 CS_STAT_PROT_CORRUPT
 };
 
+/* thats *not* thread safe - but thats the whole server, isn't it? */   
+static char setup_data[SOCKETBUFSIZE];
+
 /* This is the Setup cmd - easy first implementation */
 void SetUp(char *buf, int len, NewSocket *ns)
 {
     int s;
-    char *cmd, *param, cmdback[HUGE_BUF];
+    char *cmd, *param, tmpbuf[MAX_BUF],cmdback[HUGE_BUF];
+
+	if(ns->setup)
+	{
+		LOG(llevInfo,"double call of setup cmd from socket %s\n", ns->host); 
+		ns->status = Ns_Dead;
+		return;
+	}
+	ns->setup=1;
 
     /* run through the cmds of setup
      * syntax is setup <cmdname1> <parameter> <cmdname2> <parameter> ...
@@ -106,7 +117,9 @@ void SetUp(char *buf, int len, NewSocket *ns)
      */
 
     LOG(llevInfo,"Get SetupCmd:: %s\n", buf);
-    strcpy(cmdback,"setup");
+	cmdback[0]=BINARY_CMD_SETUP;
+	cmdback[1]=0;
+    /*strcpy(cmdback,"setup");*/
     for(s=0;s<len; ) {
 
 	cmd = &buf[s];
@@ -148,7 +161,6 @@ void SetUp(char *buf, int len, NewSocket *ns)
 	    ns->facecache = atoi(param);
             strcat(cmdback, param);
 	} else if (!strcmp(cmd,"faceset")) {
-	    char tmpbuf[20];
 	    int q = atoi(param);
 
 	    if (is_valid_faceset(q))
@@ -159,7 +171,7 @@ void SetUp(char *buf, int len, NewSocket *ns)
 	    ns->image2=1;
         } else if (!strcmp(cmd,"mapsize")) {
 	    int x, y=0;
-	    char tmpbuf[MAX_BUF], *cp;
+	    char *cp;
 
 	    x = atoi(param);
 	    for (cp = param; *cp!=0; cp++)
@@ -179,6 +191,128 @@ void SetUp(char *buf, int len, NewSocket *ns)
 		sprintf(tmpbuf,"%dx%d", x,y);
 		strcat(cmdback, tmpbuf);
 	    }
+    } else if (!strcmp(cmd,"skf")) {
+		char *cp;
+	    int x=0;
+		uint32 y=0;
+
+		/* is x our files len and y the crc */
+	    for (cp = param; *cp!=0; cp++)
+		if (*cp == '|') {
+			*cp=0;
+		    x = atoi(param);
+		    y = strtoul(cp+1, NULL, 16);
+		    break;
+		}
+		/* we check now the loaded file data - if different
+		 * we tell it the client - if not, we skip here
+		 */
+		if(SrvClientFiles[SRV_CLIENT_SKILLS].len_ucomp != x ||
+							SrvClientFiles[SRV_CLIENT_SKILLS].crc != y)
+		{
+			sprintf(tmpbuf,"%d|%x", SrvClientFiles[SRV_CLIENT_SKILLS].len_ucomp,SrvClientFiles[SRV_CLIENT_SKILLS].crc);
+			strcat(cmdback, tmpbuf);
+		}
+		else
+			strcat(cmdback, "OK");
+
+    } else if (!strcmp(cmd,"spf")) {
+		char *cp;
+	    int x=0;
+		uint32 y=0;
+
+		/* is x our files len and y the crc */
+	    for (cp = param; *cp!=0; cp++)
+		if (*cp == '|') {
+			*cp=0;
+		    x = atoi(param);
+		    y = strtoul(cp+1, NULL, 16);
+		    break;
+		}
+		/* we check now the loaded file data - if different
+		 * we tell it the client - if not, we skip here
+		 */
+		if(SrvClientFiles[SRV_CLIENT_SPELLS].len_ucomp != x ||
+							SrvClientFiles[SRV_CLIENT_SPELLS].crc != y)
+		{
+			sprintf(tmpbuf,"%d|%x", SrvClientFiles[SRV_CLIENT_SPELLS].len_ucomp,SrvClientFiles[SRV_CLIENT_SPELLS].crc);
+			strcat(cmdback, tmpbuf);
+		}
+		else
+			strcat(cmdback, "OK");
+    } else if (!strcmp(cmd,"stf")) {
+		char *cp;
+	    int x=0;
+		uint32 y=0;
+
+		/* is x our files len and y the crc */
+	    for (cp = param; *cp!=0; cp++)
+		if (*cp == '|') {
+			*cp=0;
+		    x = atoi(param);
+		    y = strtoul(cp+1, NULL, 16);
+		    break;
+		}
+		/* we check now the loaded file data - if different
+		 * we tell it the client - if not, we skip here
+		 */
+		if(SrvClientFiles[SRV_CLIENT_SETTINGS].len_ucomp != x ||
+							SrvClientFiles[SRV_CLIENT_SETTINGS].crc != y)
+		{
+			sprintf(tmpbuf,"%d|%x", SrvClientFiles[SRV_CLIENT_SETTINGS].len_ucomp,SrvClientFiles[SRV_CLIENT_SETTINGS].crc);
+			strcat(cmdback, tmpbuf);
+		}
+		else
+			strcat(cmdback, "OK");
+
+    } else if (!strcmp(cmd,"bpf")) {
+		char *cp;
+	    int x=0;
+		uint32 y=0;
+
+		/* is x our files len and y the crc */
+	    for (cp = param; *cp!=0; cp++)
+		if (*cp == '|') {
+			*cp=0;
+		    x = atoi(param);
+		    y = strtoul(cp+1, NULL, 16);
+		    break;
+		}
+		/* we check now the loaded file data - if different
+		 * we tell it the client - if not, we skip here
+		 */
+		if(SrvClientFiles[SRV_CLIENT_BMAPS].len_ucomp != x ||
+							SrvClientFiles[SRV_CLIENT_BMAPS].crc != y)
+		{
+			sprintf(tmpbuf,"%d|%x", SrvClientFiles[SRV_CLIENT_BMAPS].len_ucomp,SrvClientFiles[SRV_CLIENT_BMAPS].crc);
+			strcat(cmdback, tmpbuf);
+		}
+		else
+			strcat(cmdback, "OK");
+    } else if (!strcmp(cmd,"amf")) {
+		char *cp;
+	    int x=0;
+		uint32 y=0;
+
+		/* is x our files len and y the crc */
+	    for (cp = param; *cp!=0; cp++)
+		if (*cp == '|') {
+			*cp=0;
+		    x = atoi(param);
+		    y = strtoul(cp+1, NULL, 16);
+		    break;
+		}
+		/* we check now the loaded file data - if different
+		 * we tell it the client - if not, we skip here
+		 */
+		if(SrvClientFiles[SRV_CLIENT_ANIMS].len_ucomp != x ||
+							SrvClientFiles[SRV_CLIENT_ANIMS].crc != y)
+		{
+			sprintf(tmpbuf,"%d|%x", SrvClientFiles[SRV_CLIENT_ANIMS].len_ucomp,SrvClientFiles[SRV_CLIENT_ANIMS].crc);
+			strcat(cmdback, tmpbuf);
+		}
+		else
+			strcat(cmdback, "OK");
 	} else {
 	    /* Didn't get a setup command we understood -
 	     * report a failure to the client.
@@ -186,8 +320,11 @@ void SetUp(char *buf, int len, NewSocket *ns)
 	    strcat(cmdback, "FALSE");
 	}
     } /* for processing all the setup commands */
-    /*LOG(llevInfo,"SendBack SetupCmd:: %s\n", cmdback);*/
-    Write_String_To_Socket(ns, cmdback, strlen(cmdback));
+
+	/*LOG(llevInfo,"SendBack SetupCmd:: %s\n", cmdback);*/
+    Write_String_To_Socket(ns, BINARY_CMD_SETUP,cmdback, strlen(cmdback));
+
+
 }
 
 /* The client has requested to be added to the game.  This is what
@@ -198,16 +335,19 @@ void SetUp(char *buf, int len, NewSocket *ns)
 void AddMeCmd(char *buf, int len, NewSocket *ns)
 {
     Settings oldsettings;
+	char cmd_buf[2]="X";
     oldsettings=settings;
-    if (ns->status != Ns_Add || add_player(ns)) {		
-	Write_String_To_Socket(ns, "addme_failed",12);
+
+    if (ns->status != Ns_Add || add_player(ns)) {
+		Write_String_To_Socket(ns, BINARY_CMD_ADDME_FAIL, cmd_buf,1);
+		ns->status = Ns_Dead;
     } else {
 	/* Basically, the add_player copies the socket structure into
 	 * the player structure, so this one (which is from init_sockets)
 	 * is not needed anymore.  The write below should still work, as the
 	 * stuff in ns is still relevant.
 	 */
-	Write_String_To_Socket(ns, "addme_success",13);
+	Write_String_To_Socket(ns,BINARY_CMD_ADDME_SUC, cmd_buf,1);
 	socket_info.nconns--;
 	ns->status = Ns_Avail;
     }
@@ -308,8 +448,11 @@ void NewPlayerCmd(uint8 *buf, int len, player *pl)
 
     /* Send confirmation of command execution now */
     sl.buf = (uint8*)command;
+	SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_COMC);
+	/*
     strcpy((char*)sl.buf,"comc ");
     sl.len=5;
+	*/
     SockList_AddShort(&sl,packet);
     if (FABS(pl->ob->speed) < 0.001) time=MAX_TIME * 100;
     else
@@ -384,18 +527,133 @@ void ReplyCmd(char *buf, int len, player *pl)
 
 static void version_mismatch_msg(NewSocket *ns)
 {
-    char *text1 = "drawinfo 3 This is a Daimonin Server.";
-    char *text2 = "drawinfo 3 Your client version is wrong!";
-    char *text3 = "drawinfo 3 Go to http://daimonin.sourceforge.net";
-    char *text4 = "drawinfo 3 and download the latest Daimonin client!";
-    char *text5 = "drawinfo 3 Goodbye. (break connection)";
-    
-    Write_String_To_Socket(ns, text1, strlen(text1));
-    Write_String_To_Socket(ns, text2, strlen(text2));
-    Write_String_To_Socket(ns, text3, strlen(text3));
-    Write_String_To_Socket(ns, text4, strlen(text4));
-    Write_String_To_Socket(ns, text5, strlen(text5));
+	char buf[256];
+    char *text1 = "3 This is Daimonin Server.";
+    char *text2 = "3 Your client version is outdated!";
+    char *text3 = "3 Go to http://daimonin.sourceforge.net";
+    char *text4 = "3 and download the latest Daimonin client!";
+    char *text5 = "3 Goodbye. (connection closed)";
+
+	if(ns->cs_version==991013)
+	{
+		SockList sl;
+
+		sprintf(buf,"drawinfo %s %s", text1,VERSION);
+		sl.len = strlen(buf);
+		sl.buf = (uint8*)buf;
+		Send_With_Handling(ns, &sl);
+		sprintf(buf,"drawinfo %s", text2);
+		sl.len = strlen(buf);
+		sl.buf = (uint8*)buf;
+		Send_With_Handling(ns, &sl);
+		sprintf(buf,"drawinfo %s", text3);
+		sl.len = strlen(buf);
+		sl.buf = (uint8*)buf;
+		Send_With_Handling(ns, &sl);
+		sprintf(buf,"drawinfo %s", text4);
+		sl.len = strlen(buf);
+		sl.buf = (uint8*)buf;
+		Send_With_Handling(ns, &sl);
+		sprintf(buf,"drawinfo %s", text5);
+		sl.len = strlen(buf);
+		sl.buf = (uint8*)buf;
+		Send_With_Handling(ns, &sl);
+	}
+	else
+	{
+		sprintf(buf,"X%s %s", text1,VERSION);
+	    Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, buf, strlen(text1));
+		sprintf(buf,"X%s", text2);
+	    Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, buf, strlen(text1));
+		sprintf(buf,"X%s", text3);
+	    Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, buf, strlen(text1));
+		sprintf(buf,"X%s", text4);
+	    Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, buf, strlen(text1));
+		sprintf(buf,"X%s", text5);
+	    Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, buf, strlen(text1));
+	}
 }
+
+/* request a srv_file! */
+void RequestFileCmd(char *buf, int len,NewSocket *ns)
+{
+	int id;
+
+    if (!buf)
+    {
+        LOG(llevInfo, "RF: received bad rf command\n");
+        ns->status=Ns_Dead;
+        return;
+    }
+
+    id = atoi(buf);
+	if(id <0 ||id >=SRV_CLIENT_FILES)
+    {
+        LOG(llevInfo, "RF: received bad rf command\n");
+        ns->status=Ns_Dead;
+        return;
+    }
+
+	if(id == SRV_CLIENT_SKILLS)
+	{
+		if(ns->rf_skills)
+		{
+	        LOG(llevInfo, "RF: received bad rf command - double call skills \n");
+			ns->status=Ns_Dead;
+			return;
+		}
+		else
+			ns->rf_skills=1;
+	}
+	else if(id == SRV_CLIENT_SPELLS)
+	{
+		if(ns->rf_spells)
+		{
+	        LOG(llevInfo, "RF: received bad rf command - double call spells \n");
+			ns->status=Ns_Dead;
+			return;
+		}
+		else
+			ns->rf_spells=1;
+	}
+	else if(id == SRV_CLIENT_SETTINGS)
+	{
+		if(ns->rf_settings)
+		{
+	        LOG(llevInfo, "RF: received bad rf command - double call settings \n");
+			ns->status=Ns_Dead;
+			return;
+		}
+		else
+			ns->rf_settings=1;
+	}
+	else if(id == SRV_CLIENT_BMAPS)
+	{
+		if(ns->rf_bmaps)
+		{
+	        LOG(llevInfo, "RF: received bad rf command - double call bmaps \n");
+			ns->status=Ns_Dead;
+			return;
+		}
+		else
+			ns->rf_bmaps=1;
+	}
+	else if(id == SRV_CLIENT_ANIMS)
+	{
+		if(ns->rf_anims)
+		{
+	        LOG(llevInfo, "RF: received bad rf command - double call anims \n");
+			ns->status=Ns_Dead;
+			return;
+		}
+		else
+			ns->rf_anims=1;
+	}
+
+	LOG(llevDebug,"Client %s rf #%d\n",ns->host,id); 
+	send_srv_file(ns, id);	
+}
+
 
 /* Client tells its its version.  If there is a mismatch, we close the
  * socket.  In real life, all we should care about is the client having
@@ -407,7 +665,8 @@ void VersionCmd(char *buf, int len,NewSocket *ns)
 {
     char *cp;
     
-    if (!buf)
+
+    if (!buf || ns->version)
     {
         version_mismatch_msg(ns);
         LOG(llevInfo, "CS: received corrupted version command\n");
@@ -415,6 +674,7 @@ void VersionCmd(char *buf, int len,NewSocket *ns)
         return;
     }
 
+	ns->version = 1; 
     ns->cs_version = atoi(buf);
     ns->sc_version =  ns->cs_version;
     if (VERSION_CS !=  ns->cs_version)
@@ -522,8 +782,8 @@ void send_query(NewSocket *ns, uint8 flags, char *text)
 {
     char buf[MAX_BUF];
 
-    sprintf(buf,"query %d %s", flags, text?text:"");
-    Write_String_To_Socket(ns, buf, strlen(buf));
+    sprintf(buf,"X%d %s", flags, text?text:"");
+    Write_String_To_Socket(ns, BINARY_CMD_QUERY, buf, strlen(buf));
 }
 
 
@@ -564,8 +824,7 @@ void esrv_update_skills(player *pl)
     char buf[256];
     char tmp[2048]; /* we should careful set a big enough buffer here */
     
-    sprintf(tmp,"sklist %d ", SPLIST_MODE_UPDATE);
-
+    sprintf(tmp,"X%d ", SPLIST_MODE_UPDATE);
 
     for(i=0;i<NROFSKILLS;i++)
     {
@@ -585,7 +844,7 @@ void esrv_update_skills(player *pl)
         }
     }
 
-    Write_String_To_Socket(&pl->socket, tmp, strlen(tmp));        
+    Write_String_To_Socket(&pl->socket, BINARY_CMD_SKILL_LIST ,tmp, strlen(tmp));        
     
 }
 
@@ -603,8 +862,11 @@ void esrv_update_stats(player *pl)
     uint16 flags;
 
     sl.buf=sock_buf;
+	SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_STATS);
+	/*
     strcpy((char*)sl.buf,"stats ");
     sl.len=strlen((char*)sl.buf);
+	*/
 
     if(pl->ob != NULL)
     {
@@ -701,8 +963,11 @@ void esrv_new_player(player *pl, uint32 weight)
 
     sl.buf=malloc(MAXSOCKBUF);
 
+	SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_PLAYER);
+	/*
     strcpy((char*)sl.buf,"player ");
     sl.len=strlen((char*)sl.buf);
+	*/
     SockList_AddInt(&sl, pl->ob->count);
     SockList_AddInt(&sl, weight);
     SockList_AddInt(&sl, pl->ob->face->number);
@@ -723,39 +988,33 @@ void esrv_new_player(player *pl, uint32 weight)
  * how much we are sending - on the other hand, this should only happen
  * when the player logs in and picks stuff up.
  */
+/* This function is not used - it was disabled with the client 
+ * bmpa & anim cache patch (beta 2). This code is still here -
+ * perhaps we use it later again - MT
+ */
 void esrv_send_animation(NewSocket *ns, short anim_num)
 {
+	/*
     SockList sl;
     int i;
 
-    /* Do some checking on the anim_num we got.  Note that the animations
-     * are added in contigous order, so if the number is in the valid
-     * range, it must be a valid animation.
-     */
-    if (anim_num < 0 || anim_num > num_animations) {
+	if (anim_num < 0 || anim_num > num_animations) {
 	LOG(llevBug,"BUG: esrv_send_anim (%d) out of bounds?? (send:%d max:%d)\n",anim_num, anim_num, num_animations);
 	return;
     }
 
     sl.buf = malloc(MAXSOCKBUF);
-    strcpy((char*)sl.buf, "anim ");
-    sl.len=5;
+	SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_ANIM);
     SockList_AddShort(&sl, anim_num);
-    SockList_AddChar(&sl, 0);  /* flags - not used right now */
-    SockList_AddChar(&sl, animations[anim_num].facings);  /* how much facings*/
+    SockList_AddChar(&sl, 0);  
+    SockList_AddChar(&sl, animations[anim_num].facings);  
 
-	/* send the whole animation - the client will handle what to show from it */
     for (i=0; i<animations[anim_num].num_animations; i++)
-	{
-		/*
-		if (ns->faces_sent[animations[anim_num].faces[i]] == 0)
-			esrv_send_face(ns,animations[anim_num].faces[i],0);
-		*/
 		SockList_AddShort(&sl, animations[anim_num].faces[i]);
-    }
     Send_With_Handling(ns, &sl);
     free(sl.buf);
     ns->anims_sent[anim_num] = 1;
+	*/
 }
 
 
@@ -844,8 +1103,11 @@ void draw_client_map2(object *pl)
     
     map2_count++;      /* we need this to decide quickly we have updated a object before here */
     sl.buf=malloc(MAXSOCKBUF);
-    strcpy((char*)sl.buf,"map2 ");
+	SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_MAP2);
+	/*
+	strcpy((char*)sl.buf,"map2 ");
     sl.len=strlen((char*)sl.buf);
+	*/
     /* control player map - if not as last_update, we have changed map.
      * Because this value will be set from normal map changing, but not from
      * border crossing from tiled maps - so we have done a step from a linked
@@ -963,12 +1225,6 @@ void draw_client_map2(object *pl)
 			}
 
 		    mp->faces[3] = face_num0;       /* this is our backbuffer which we control */
-			/*
-			if(face_num0)
-			{
-		        if (pl->contr->socket.faces_sent[face_num0] == 0)
-				esrv_send_face(&pl->contr->socket,face_num0,0);
-			}*/
 			
 		}
 
@@ -1065,10 +1321,6 @@ void draw_client_map2(object *pl)
             mp->quick_pos[0] = quick_pos_1; /* what we have send to client before */
             if(quick_pos_1) /* if a multi arch */
                 ext_flag |= 0x4; /* mark multi arch - we need this info when sending this layer to client*/
-			/*
-            if (pl->contr->socket.faces_sent[face_num1] == 0) 
-			esrv_send_face(&pl->contr->socket,face_num1,0);
-			*/
 		}
         /* thats our extension flags! like blind, confusion, etc */
         /* extensions are compared to all sended map update data very rare */
@@ -1171,10 +1423,6 @@ void draw_client_map2(object *pl)
             mp->quick_pos[1] = quick_pos_2;
             if(quick_pos_2) /* if a multi arch */
                 ext_flag |= 0x2;
-			/*
-		    if (pl->contr->socket.faces_sent[face_num2] == 0)
-			esrv_send_face(&pl->contr->socket,face_num2,0);
-			*/
 		}
         /* check, set and buffer ext flag */
         if(flag_tmp != mp->fflag[1] || probe_tmp != mp->ff_probe[1]) 
@@ -1267,10 +1515,6 @@ void draw_client_map2(object *pl)
                 ext_flag |= 0x1;
             mp->faces[2] = face_num3;
             mp->quick_pos[2] = quick_pos_3;
-			/*
-            if (pl->contr->socket.faces_sent[face_num3] == 0)
-			esrv_send_face(&pl->contr->socket,face_num3,0);
-			*/
 		}
         /* check, set and buffer ext flag */
         if(flag_tmp != mp->fflag[2] || probe_tmp != mp->ff_probe[2]) 
@@ -1392,7 +1636,7 @@ void draw_client_map2(object *pl)
     } /* for y loop */
 		    
     /* Verify that we in fact do need to send this */
-    if (sl.len>(int)strlen("map2 ") || pl->contr->socket.sent_scroll) {
+    if (sl.len>1 || pl->contr->socket.sent_scroll) {
 	Send_With_Handling(&pl->contr->socket, &sl);
 	pl->contr->socket.sent_scroll = 0;
     }
@@ -1453,8 +1697,8 @@ void esrv_map_scroll(NewSocket *ns,int dx,int dy)
     int x,y;
     char buf[MAXSOCKBUF];
 
-    sprintf(buf,"map_scroll %d %d", dx, dy);
-    Write_String_To_Socket(ns, buf, strlen(buf));
+    sprintf(buf,"X%d %d", dx, dy);
+    Write_String_To_Socket(ns, BINARY_CMD_MAP_SCROLL, buf, strlen(buf));
     /* the x and y here are coordinates for the new map, i.e. if we moved
      (dx,dy), newmap[x][y] = oldmap[x-dx][y-dy] */
     for(x=0;x<ns->mapx;x++) {
@@ -1478,6 +1722,7 @@ void esrv_map_scroll(NewSocket *ns,int dx,int dy)
 /*****************************************************************************/
 void send_plugin_custom_message(object *pl, char *buf)
 {
-    cs_write_string(&pl->contr->socket,buf,strlen(buf));
+	/* we must add here binary_cmd! */
+    /*Write_String_To_Socket(&pl->contr->socket,buf,strlen(buf));*/
 }
 

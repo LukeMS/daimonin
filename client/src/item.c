@@ -637,6 +637,9 @@ void animate_objects()
 	    /* For now, only the players inventory needs to be animated */
 		for (ip=player->inv; ip; ip=ip->next)
 		{
+			if(ip->animation_id>0)
+				check_animation_status(ip->animation_id);
+
 			if (ip->animation_id>0 && ip->anim_speed)
 			{
 				ip->last_anim++;
@@ -659,6 +662,9 @@ void animate_objects()
 	{
 		for (ip=cpl.below->inv; ip; ip=ip->next)
 		{
+			if(ip->animation_id>0)
+				check_animation_status(ip->animation_id);
+
 			if (ip->animation_id>0 && ip->anim_speed)
 			{
 				ip->last_anim++;
@@ -681,6 +687,8 @@ void animate_objects()
 	{
 		for (ip=cpl.container->inv; ip; ip=ip->next)
 		{
+			if(ip->animation_id>0)
+				check_animation_status(ip->animation_id);
 			if (ip->animation_id>0 && ip->anim_speed)
 			{
 				ip->last_anim++;

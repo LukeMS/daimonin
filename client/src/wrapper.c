@@ -66,7 +66,7 @@ Boolean SYSTEM_Start(void)
     if((icon = IMG_Load(buf)) != NULL)
         SDL_WM_SetIcon(icon, 0);   
     
-    SDL_WM_SetCaption(PROG_NAME, PROG_NAME);
+    SDL_WM_SetCaption(PACKAGE_NAME, PACKAGE_NAME);
     
 #if defined( __WIN_32)  || defined(__LINUX)
 	logstream  = fopen( LOG_FILE, "w" );

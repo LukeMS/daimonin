@@ -39,6 +39,8 @@
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <sys/stat.h>
+#include <stdio.h>
 #endif /* win32 */
 
 #ifdef HAVE_UNISTD_H
@@ -49,9 +51,13 @@
 #include <arpa/inet.h>
 #endif
 #include <newserver.h>
+#include "zlib.h"
+
+_srv_client_files SrvClientFiles[SRV_CLIENT_FILES];
 
 Socket_Info socket_info;
 NewSocket *init_sockets;
+
 
 /* Initializes a connection - really, it just sets up the data structure,
  * socket setup is handled elsewhere.  We do send a version to the
@@ -100,6 +106,13 @@ void InitConnection(NewSocket *ns, uint32 from)
     ns->status = Ns_Add;
     ns->mapx = 11;
     ns->mapy = 11;
+	ns->version = 0;
+	ns->setup = 0;
+	ns->rf_settings = 0;
+	ns->rf_skills = 0;
+	ns->rf_spells = 0;
+	ns->rf_anims = 0;
+	ns->rf_bmaps = 0;
 
     /* we should really do some checking here - if total clients overflows
      * we need to do something more intelligent, because client id's will start
@@ -114,8 +127,6 @@ void InitConnection(NewSocket *ns, uint32 from)
      */
     ns->inbuf.buf[0] = 0;
     memset(&ns->lastmap,0,sizeof(struct Map));
-    /*memset(&ns->faces_sent,0,sizeof(ns->faces_sent));*/
-    memset(&ns->anims_sent,0,sizeof(ns->anims_sent));
     memset(&ns->stats,0,sizeof(struct statsinfo));
     /* Do this so we don't send a face command for the client for
      * this face.  Face 0 is sent to the client to say clear
@@ -131,7 +142,8 @@ void InitConnection(NewSocket *ns, uint32 from)
     sprintf((char*)buf,"%d.%d.%d.%d",
           (from>>24)&255, (from>>16)&255, (from>>8)&255, from&255);
     ns->host=strdup_local((char*)buf);
-    sprintf((char*)buf, "version %d %d %s\n", VERSION_CS,VERSION_SC, VERSION_INFO);
+    sprintf((char*)buf, "X%d %d %s\n", VERSION_CS,VERSION_SC, VERSION_INFO);
+	buf[0]=BINARY_CMD_VERSION;
     sl.buf=buf;
     sl.len=strlen((char*)buf);
     Send_With_Handling(ns, &sl);
@@ -246,6 +258,8 @@ void init_ericserver()
     }
     init_sockets[0].status=Ns_Add;
     read_client_images();
+	init_srv_files(); /* load all srv_xxx files or generate them */
+
 }
 
 
@@ -282,19 +296,119 @@ void free_newsocket(NewSocket *ns)
 #endif
     }
     if (ns->stats.range)
-	free(ns->stats.range);
+		free(ns->stats.range);
     if (ns->stats.ext_title)
         free(ns->stats.ext_title);
     if (ns->stats.title)
         free(ns->stats.title);
-    free(ns->host);
-    free(ns->inbuf.buf);
+	if(ns->host)
+	    free(ns->host);
+    if(ns->inbuf.buf);
+	    free(ns->inbuf.buf);
+		memset(ns,0,sizeof(ns));
 }
 
 void final_free_player(player *pl)
 {
-    cs_write_string(&pl->socket, "goodbye", 8);
+	char buf[2]="X";
+    /*Write_String_To_Socket(&pl->socket, BINARY_CMD_BYE, buf, 1);*/
     free_newsocket(&pl->socket);
     free_player(pl);
 }
 
+/* as long the server don't have a autoupdate/login server
+ * as frontend we must serve our depending client files self.
+ */
+static load_srv_files(char *fname, int id, int cmd)
+{
+    FILE *fp;
+	char *file_tmp, *comp_tmp;
+	int flen, numread;
+	struct stat statbuf;
+
+    LOG(llevDebug,"Loading %s...", fname);
+    if ((fp=fopen(fname,"rb")) ==NULL)
+		LOG(llevError,"\nERROR: Can not open file %s\n", fname);
+	fstat (fileno (fp), &statbuf);
+	flen = (int) statbuf.st_size;
+	file_tmp = malloc(flen);
+	numread = fread(file_tmp, sizeof( char ), flen, fp );
+	/* get a crc from the unpacked file */
+	SrvClientFiles[id].crc = adler32(numread, file_tmp, numread); 
+	SrvClientFiles[id].len_ucomp = numread;
+	numread=flen*2;
+	comp_tmp = malloc(numread);
+	compress2 (comp_tmp, (unsigned long *)&numread, file_tmp, flen, Z_BEST_COMPRESSION);
+	/* we prepare the files with the right commands - so we can flush
+	 * then direct from this buffer to the client.
+	 */
+	if(numread < flen)
+	{
+		/* copy the compressed file in the right buffer */
+		SrvClientFiles[id].file = malloc(numread+2);
+		memcpy(SrvClientFiles[id].file+2, comp_tmp,numread);
+		SrvClientFiles[id].file[1] = (char)DATA_PACKED_CMD;
+		SrvClientFiles[id].len = numread;
+	}
+	else
+	{
+		/* compress has no positive effect here */
+		SrvClientFiles[id].file = malloc(flen+2);
+		memcpy(SrvClientFiles[id].file+2, file_tmp,flen);
+		SrvClientFiles[id].file[1] = 0;
+		SrvClientFiles[id].len = -1;
+		numread = flen;
+	}
+	SrvClientFiles[id].file[0] = BINARY_CMD_DATA;
+	SrvClientFiles[id].file[1] |= cmd;
+	free(file_tmp);
+	free(comp_tmp);
+
+	LOG(llevDebug,"(size: %d (crc: %x)\n", numread, SrvClientFiles[id].crc);
+    fclose(fp);
+}
+
+/* load all src_files we can send to client... client_bmaps is generated from 
+ * the server at startup out of the daimonin png file.
+ */
+void init_srv_files(void)
+{
+    char buf[MAX_BUF];
+
+	memset(&SrvClientFiles,0, sizeof(SrvClientFiles));  
+
+    sprintf(buf,"%s/animations", settings.datadir);
+	load_srv_files(buf, SRV_CLIENT_ANIMS,DATA_CMD_ANIM_LIST);
+
+    sprintf(buf,"%s/client_bmaps", settings.datadir);
+	load_srv_files(buf, SRV_CLIENT_BMAPS,DATA_CMD_BMAP_LIST);
+
+    sprintf(buf,"%s/client_skills", settings.datadir);
+	load_srv_files(buf, SRV_CLIENT_SKILLS,DATA_CMD_SKILL_LIST);
+
+    sprintf(buf,"%s/client_spells", settings.datadir);
+	load_srv_files(buf, SRV_CLIENT_SPELLS,DATA_CMD_SPELL_LIST);
+
+    sprintf(buf,"%s/client_settings", settings.datadir);
+	load_srv_files(buf, SRV_CLIENT_SETTINGS,DATA_CMD_SETTINGS_LIST);
+}
+
+/* a connecting client has requested a srv_ file.
+ * not that we don't know anything about the player
+ * at this point - we got a open socket, a IP a matching
+ * version and a usable setup string from the client.
+ */
+void send_srv_file(NewSocket *ns, int id)
+{
+	SockList sl;
+
+	sl.buf = SrvClientFiles[id].file;
+
+	if(SrvClientFiles[id].len != -1)
+	    sl.len = SrvClientFiles[id].len+2;
+	else
+	    sl.len = SrvClientFiles[id].len_ucomp+2;
+
+    Send_With_Handling(ns, &sl);
+
+}

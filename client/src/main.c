@@ -36,6 +36,8 @@ int music_global_fade = FALSE;
 int show_help_screen;
 
 int debug_layer[MAXFACES];
+int bmaptype_table_size;
+_srv_client_files srv_client_files[SRV_CLIENT_FILES];
 
 struct _options options;
 Uint32 videoflags_full,videoflags_win;
@@ -59,10 +61,12 @@ uint32 GameTicksSec;		/* ticks since this second frame in ms */
 uint32 tmpGameTick;			/* used from several functions, just to store real ticks */
 
 
+_bmaptype *bmap_table[BMAPTABLE];
 
 int map_udate_flag, map_transfer_flag;			/* update map area */
 int GameStatusVersionFlag;
 int GameStatusVersionOKFlag;
+int request_file_chain, request_file_flags;
 
 int ToggleScreenFlag;
 char InputString[MAX_INPUT_STRING];
@@ -74,6 +78,7 @@ Boolean InputStringEscFlag;
 
 _game_status GameStatus;	/* the global status identifier */
 
+_anim_table anim_table[MAXANIM]; /* the stored "anim commands" we created out of anims.tmp */
 Animations animations[MAXANIM]; /* get this from commands.c to this place*/
 
 _face_struct FaceList[MAX_FACE_TILES];	/* face data*/
@@ -230,6 +235,7 @@ _Sprite *Bitmaps[BITMAP_MAX];
 static void count_meta_server(void);
 static void show_meta_server(void);
 static void show_login_server(void);
+static void show_request_server(void);
 static void flip_screen(void);
 static void show_intro(char *text);
 static void delete_player_lists(void);
@@ -274,8 +280,11 @@ static void delete_player_lists(void)
 /* pre init, overrule in hardware module if needed */
 void init_game_data(void)
 {
-    int i, ii;
+    int i;
     
+		memset(anim_table, 0 , sizeof(anim_table));
+		memset(animations, 0 , sizeof(animations));
+		memset(bmaptype_table, 0 , sizeof(bmaptype_table));
         ToggleScreenFlag=FALSE;
         KeyScanFlag = FALSE;   
         memset(&fire_mode_tab,0,sizeof(fire_mode_tab));
@@ -324,32 +333,6 @@ void init_game_data(void)
         memset(media_file,0,sizeof(_media_file )*MEDIA_MAX);
         media_count=0;	/* buffered media files*/
         media_show=MEDIA_SHOW_NO; /* show this media file*/
-        
-        for(i=0;i<SKILL_LIST_MAX;i++)
-        {
-            for(ii=0;ii<SKILL_LIST_ENTRY;ii++)
-            {           
-                skill_list[i].entry[ii].flag=LIST_ENTRY_UNUSED;
-                skill_list[i].entry[ii].name[0]=0;
-            }
-        }
-        
-        skill_list_set.group_nr = 0;
-        skill_list_set.entry_nr = 0;
-        
-        for(i=0;i<SPELL_LIST_MAX;i++)
-        {
-            for(ii=0;ii<SPELL_LIST_ENTRY;ii++)
-            {           
-                spell_list[i].entry[0][ii].flag = LIST_ENTRY_UNUSED;
-                spell_list[i].entry[1][ii].flag = LIST_ENTRY_UNUSED;
-                spell_list[i].entry[0][ii].name[0] = 0;
-                spell_list[i].entry[1][ii].name[0] = 0;
-            }
-        }
-        spell_list_set.class_nr = 0;
-        spell_list_set.entry_nr = 0;
-        spell_list_set.group_nr = 0;
 
 		delete_player_lists();
         load_options_dat(); /* now load options, allowing the user to override the presetings */     
@@ -440,10 +423,10 @@ void load_options_dat(void)
             else
                 LOG(LOG_MSG, "WARNING: Unknown setting in %s: %s\n", OPTION_FILE,line);                
         }
+	fclose(stream);
     }
     else
         LOG(LOG_ERROR, "ERROR: Can't find file %s\n",OPTION_FILE);
-    fclose(stream);
 }
 
 
@@ -456,8 +439,10 @@ Boolean game_status_chain(void)
         {
 	        map_udate_flag=2;
 			delete_player_lists();
+#ifdef INSTALL_SOUND
 			if(!music.flag || strcmp(music.name,"orchestral.ogg"))
-	            sound_play_music("orchestral.ogg",100,0,-1,0,MUSIC_MODE_DIRECT);
+	            sound_play_music("orchestral.ogg",options.music_volume,0,-1,0,MUSIC_MODE_DIRECT);
+#endif
                 clear_map();
                 clear_metaserver_data();
                 GameStatus = GAME_STATUS_META;
@@ -509,7 +494,7 @@ Boolean game_status_chain(void)
         {
 				char sbuf[256];
 	            sprintf(sbuf,"%s%s", GetBitmapDirectory(),bitmap_name[BITMAP_LOADING].name);
-			    FaceList[MAX_FACE_TILES-1].sprite=sprite_tryload_file(sbuf,0);
+			    FaceList[MAX_FACE_TILES-1].sprite=sprite_tryload_file(sbuf,0,NULL);
 
 	            map_udate_flag=2;
                 sprintf(buf,"Try server %s:%d", ServerName,
@@ -566,12 +551,99 @@ Boolean game_status_chain(void)
         else if(GameStatus == GAME_STATUS_SETUP)
         {
 			map_transfer_flag=0;
-                sprintf(buf,
-                    "setup sound %d map2cmd 1 mapsize %dx%d darkness 1 facecache 1",
-                    SoundStatus,MapStatusX, MapStatusY);
+			srv_client_files[SRV_CLIENT_SETTINGS].status = SRV_CLIENT_STATUS_OK;
+			srv_client_files[SRV_CLIENT_BMAPS].status = SRV_CLIENT_STATUS_OK;
+			srv_client_files[SRV_CLIENT_ANIMS].status = SRV_CLIENT_STATUS_OK;
+			srv_client_files[SRV_CLIENT_SKILLS].status = SRV_CLIENT_STATUS_OK;
+			srv_client_files[SRV_CLIENT_SPELLS].status = SRV_CLIENT_STATUS_OK;
+
+            sprintf(buf,
+                    "setup sound %d map2cmd 1 mapsize %dx%d darkness 1 facecache 1 skf %d|%x spf %d|%x bpf %d|%x stf %d|%x amf %d|%x",
+                    SoundStatus,MapStatusX, MapStatusY,
+					srv_client_files[SRV_CLIENT_SKILLS].len,srv_client_files[SRV_CLIENT_SKILLS].crc,
+					srv_client_files[SRV_CLIENT_SPELLS].len,srv_client_files[SRV_CLIENT_SPELLS].crc,
+					srv_client_files[SRV_CLIENT_BMAPS].len,srv_client_files[SRV_CLIENT_BMAPS].crc,
+					srv_client_files[SRV_CLIENT_SETTINGS].len,srv_client_files[SRV_CLIENT_SETTINGS].crc,
+					srv_client_files[SRV_CLIENT_ANIMS].len,srv_client_files[SRV_CLIENT_ANIMS].crc
+					);
                 cs_write_string(csocket.fd, buf, strlen(buf));
+				request_file_chain=0;
+				request_file_flags=0;
+
                 GameStatus = GAME_STATUS_WAITSETUP;
         }
+        else if(GameStatus == GAME_STATUS_REQUEST_FILES)
+        {
+			if(request_file_chain == 0) /* check setting list */
+			{
+				if(srv_client_files[SRV_CLIENT_SETTINGS].status == SRV_CLIENT_STATUS_UPDATE)
+				{
+					request_file_chain = 1;
+					RequestFile(csocket, SRV_CLIENT_SETTINGS);
+				}
+				else
+					request_file_chain = 2;
+
+			}
+			else if(request_file_chain == 2) /* check spell list */ 
+			{
+				if(srv_client_files[SRV_CLIENT_SPELLS].status == SRV_CLIENT_STATUS_UPDATE)
+				{
+					request_file_chain = 3;
+					RequestFile(csocket, SRV_CLIENT_SPELLS);
+				}
+				else
+					request_file_chain = 4;
+			}
+			else if(request_file_chain == 4) /* check skill list */ 
+			{
+				if(srv_client_files[SRV_CLIENT_SKILLS].status == SRV_CLIENT_STATUS_UPDATE)
+				{
+					request_file_chain = 5;
+					RequestFile(csocket, SRV_CLIENT_SKILLS);
+				}
+				else
+					request_file_chain = 6;
+			}
+			
+			else if(request_file_chain == 6) 
+			{
+				if(srv_client_files[SRV_CLIENT_BMAPS].status == SRV_CLIENT_STATUS_UPDATE)
+				{
+					request_file_chain = 7;
+					RequestFile(csocket, SRV_CLIENT_BMAPS);
+				}
+				else
+					request_file_chain = 8;
+			}
+			else if(request_file_chain == 8) 
+			{
+				if(srv_client_files[SRV_CLIENT_ANIMS].status == SRV_CLIENT_STATUS_UPDATE)
+				{
+				request_file_chain = 9;
+				RequestFile(csocket, SRV_CLIENT_ANIMS);
+				}
+				else
+					request_file_chain = 10;
+			}
+			else if(request_file_chain == 10) /* we have all files - start check */
+			{
+				request_file_chain++; /* this ensure one loop tick and updating the messages */
+			}
+			else if(request_file_chain == 11) 
+			{
+				/* ok... now we check for bmap & anims processing... */
+				read_bmap_tmp();
+				read_anim_tmp();
+				request_file_chain++; 
+			}
+			else if(request_file_chain == 12) 
+			{
+				request_file_chain++; /* this ensure one loop tick and updating the messages */
+			}
+			else if(request_file_chain == 13) 
+                GameStatus = GAME_STATUS_ADDME;
+		}
         else if(GameStatus == GAME_STATUS_ADDME)
         {
 				map_transfer_flag=0;
@@ -969,6 +1041,36 @@ void show_newplayer_server(void)
         
     }
 }
+void show_request_server(void)
+{
+	int x,y;
+	
+	x= SCREEN_XLEN/2-Bitmaps[BITMAP_META]->bitmap->w/2+7;
+	y=108;
+    sprite_blt(Bitmaps[BITMAP_LOGIN],x, y, NULL, NULL);
+
+	StringBlt(ScreenSurface, &SystemFont,"UPDATING FILES" , x+20, y+120, COLOR_WHITE, NULL, NULL);
+    if(request_file_chain >=0)
+		StringBlt(ScreenSurface, &SystemFont,"Updating settings file from server...." , x+20, y+140, COLOR_WHITE, NULL, NULL);
+	if(request_file_chain >1)
+		StringBlt(ScreenSurface, &SystemFont,"Updating skills file from server...." , x+20, y+152, COLOR_WHITE, NULL, NULL);
+	if(request_file_chain >3)
+		StringBlt(ScreenSurface, &SystemFont,"Updating spells file from server...." , x+20, y+164, COLOR_WHITE, NULL, NULL);
+	if(request_file_chain >5)
+		StringBlt(ScreenSurface, &SystemFont,"Updating bmaps file from server...." , x+20, y+176, COLOR_WHITE, NULL, NULL);
+	if(request_file_chain >7)
+		StringBlt(ScreenSurface, &SystemFont,"Updating anims file from server...." , x+20, y+188, COLOR_WHITE, NULL, NULL);
+	if(request_file_chain >9)
+		StringBlt(ScreenSurface, &SystemFont,"Sync files..." , x+20, y+200, COLOR_WHITE, NULL, NULL);
+
+	/* if set, we have requested something and the stuff in the socket buffer is our file! */
+	if(request_file_chain == 1 || request_file_chain == 3 || request_file_chain ==  5 || request_file_chain == 7)
+	{
+		char buf[256];
+		sprintf(buf,"loading %d bytes", csocket.inbuf.len);
+		StringBlt(ScreenSurface, &SystemFont,buf , x+20, y+300, COLOR_WHITE, NULL, NULL);
+	}
+}
 
 void show_login_server(void)
 {
@@ -1196,12 +1298,20 @@ int main(int argc, char *argv[])
     read_keybind_file(KEYBIND_FILE);
 	show_intro("load mapdefs");
     load_mapdef_dat();
+	show_intro("load picture data");
+	read_bmaps_p0();
+	show_intro("load settings");
+    read_settings();
 	show_intro("load spells");
     read_spells();
 	show_intro("load skills");
     read_skills();
+	show_intro("load anims");
+    read_anims();
+	show_intro("load bmaps");
+    read_bmaps();
 	show_intro(NULL);
-    sound_play_music("orchestral.ogg", 100,0,-1,0,MUSIC_MODE_DIRECT);
+    sound_play_music("orchestral.ogg", options.music_volume,0,-1,0,MUSIC_MODE_DIRECT);
 
 	while(1)
 	{
@@ -1226,7 +1336,7 @@ int main(int argc, char *argv[])
 		SDL_Delay(25);		/* force the thread to sleep */
 	}; /* wait for keypress */
 
-	sprintf(buf, "Welcome to %s (%d)", VERSION_INFO,VERSION_CS); 
+	sprintf(buf, "Welcome to %s (%d)", PACKAGE_NAME,VERSION_CS); 
     draw_info(buf, COLOR_HGOLD);
     draw_info("Start socket.", COLOR_GREEN);
     if(!SOCKET_InitSocket()) /* log in function*/
@@ -1295,7 +1405,8 @@ int main(int argc, char *argv[])
                 FD_SET((unsigned int )csocket.fd, &tmp_read);
                 FD_SET((unsigned int )csocket.fd, &tmp_write);
 
-			
+
+/*			
                 if (MAX_TIME!=0)
                 {
                     timeout.tv_sec = MAX_TIME / 100000;
@@ -1306,7 +1417,9 @@ int main(int argc, char *argv[])
                     timeout.tv_sec = 0;
                     timeout.tv_usec =0;
 				}
-
+*/
+                    timeout.tv_sec = 0;
+                    timeout.tv_usec =0;
                 /* main poll point for the socket */
                 if((pollret=select(maxfd, &tmp_read, &tmp_write,&tmp_exceptions, &timeout))==-1)
                     LOG(LOG_MSG,"Got errno %d on selectcall.\n", SOCKET_GetError());
@@ -1438,8 +1551,11 @@ int main(int argc, char *argv[])
             }
         }
 
-         if(GameStatus <GAME_STATUS_LOGIN)
-            show_meta_server();
+
+		if(GameStatus == GAME_STATUS_REQUEST_FILES)
+			show_request_server();
+		else if(GameStatus <GAME_STATUS_LOGIN)
+			show_meta_server();
          else if(GameStatus <GAME_STATUS_SETSTATS)
             show_login_server();
          else if(GameStatus <=GAME_STATUS_SETRACE)
@@ -1511,7 +1627,7 @@ static void show_intro(char *text)
 	else
 		StringBlt(ScreenSurface, &SystemFont,"** Press Key **",375, 585,COLOR_DEFAULT, NULL, NULL);
 	
-	sprintf(buf,"v. %s",VERSION_NR);
+	sprintf(buf,"v. %s",PACKAGE_VERSION);
 	StringBlt(ScreenSurface, &SystemFont,buf,10, 585,COLOR_DEFAULT, NULL, NULL);
 	flip_screen();
 }

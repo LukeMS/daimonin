@@ -11,7 +11,7 @@ LIBS           = -lnsl -ldl -lpthread -lutil
 
 # Supply the Python version used. In most cases, this will be either 2.0 or 2.1
 
-PYTHONVER      = 2.2
+PYTHONVER      = @PYTHON_VER@
 
 # Supply your library root directory. In case you have more than one (for
 # example, /usr/lib and /usr/local/lib), choose the one containing Python.
@@ -28,10 +28,12 @@ INCLUDEROOT    = /usr/include
 # unless things really go wrong with the default setup.
 # *****************************************************************************
 
+RM        = @RM@
+CC        = @CC@
+
 OBJECTS   = plugin_python.o
 INCLUDE   = -I./include -I../include -I$(INCLUDEROOT) -I$(INCLUDEROOT)/python$(PYTHONVER)
 
-CC        = gcc
 CFLAGS    = $(INCLUDE) -Wall -g -fPIC
 
 LIBPYTHON = $(LIBROOT)/python$(PYTHONVER)/config/libpython$(PYTHONVER).a
@@ -43,10 +45,10 @@ ALLLIBS=	$(LIBPYTHON) $(LIBS) $(SYSLIBS)
 all : plugin_python
 
 clean :
-	rm -rf *.o core plugin_python.so.0.1
+	$(RM) -f *.o core plugin_python.so.0.1
 
 distclean : clean
-	rm -rf *.o core plugin_python.so.0.1
+	$(RM) -f *.o core plugin_python.so.0.1 Makefile
 
 install :
 	cp plugin_python.so.0.1 $(CROSSFIRE_PATH)/plugins

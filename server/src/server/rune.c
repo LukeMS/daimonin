@@ -28,7 +28,12 @@
 #include <sproto.h>
 #endif
 
-#include <errno.h>
+#ifdef NO_ERRNO_H
+    extern int errno;
+#else
+#   include <errno.h>
+#endif
+
 #ifdef sequent
 /* stoopid sequent includes don't do this like they should */
 extern char * sys_errlist[];

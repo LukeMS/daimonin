@@ -96,18 +96,6 @@ typedef struct NewSocket {
     uint8   mapx, mapy;	    /* How large a map the client wants */
     enum Sock_Status status;
     struct Map lastmap;
-	/* thats useless stuff because we ALWAYS assume a caching client.
-	 * simply fire the face or anim nummer - then let the CLIENT ask:
-	 * a.) send me png name and crc for this number, i have non here stored.
-	 * with this info, the client will search his cache, normally the client will find it
-	 * when not
-	 * b.) the client will say, send me the png (like he does before too)
-	 * This will save us from handling here this ugly static 10k storage.
-	 * iam sure we will be >5000 faces in daimonin in some time.
-	 */
-    /*uint8 faces_sent[MAXFACENUM];*/
-	
-    uint8 anims_sent[MAXANIMNUM];
     struct statsinfo stats;
     /* If we get an incomplete packet, this is used to hold the data. */
     SockList	inbuf;
@@ -121,6 +109,17 @@ typedef struct NewSocket {
     uint32  image2:1;	    /* Client wants image2/face2 commands */
     uint32  update_look:1;  /* If true, we need to send the look window */
     uint32  can_write:1;    /* Can we write to this socket? */
+	/* these blocks are simple flags to ensure
+	 * that the client don't hammer startup commands
+	 * again & again to abuse the server.
+	 */
+	uint32 version:1;		
+	uint32 setup:1;		
+	uint32 rf_settings:1;
+	uint32 rf_skills:1;
+	uint32 rf_spells:1;
+	uint32 rf_anims:1;
+	uint32 rf_bmaps:1;
 
     /* Below here is information only relevant for old sockets */
     /*char    *comment;*/	    /* name or listen comment */

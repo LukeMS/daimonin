@@ -29,7 +29,13 @@
 
 #include <global.h>
 #include <random_map.h>
+
 #ifndef WIN32 /* ---win32 exclude headers */
+#ifdef NO_ERRNO_H
+    extern int errno;
+#else
+#   include <errno.h>
+#endif
 #include <dirent.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -63,10 +69,6 @@ int alphasort( struct dirent **a, struct dirent **b)
 {
   return strcmp ((*a)->d_name, (*b)->d_name);
 }
-
-#ifndef WIN32
-extern int errno;
-#endif 
 
 int
 scandir (dir, namelist, select, cmp)

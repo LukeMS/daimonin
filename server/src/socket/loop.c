@@ -118,6 +118,7 @@ static struct NsCmdMapping nscommands[] = {
     { "setsound",	SetSound},
     { "setup",		SetUp},
     { "version",	VersionCmd },
+    { "rf",	RequestFileCmd },
     { NULL, NULL}	/* terminator */
 };
 
@@ -135,8 +136,10 @@ void RequestInfo(char *buf, int len, NewSocket *ns)
     /* Set up replyinfo before we modify any of the buffers - this is used
      * if we don't find a match.
      */
-    strcpy(bigbuf,"replyinfo ");
-    slen = strlen(bigbuf);
+    /*strcpy(bigbuf,"replyinfo ");*/
+    slen = 1;
+	bigbuf[0] =BINARY_CMD_REPLYINFO;
+	bigbuf[1]=0;
     safe_strcat(bigbuf, buf, &slen, MAX_BUF);
 
     /* find the first space, make it null, and update the
@@ -150,7 +153,7 @@ void RequestInfo(char *buf, int len, NewSocket *ns)
 	}
     if (!strcmp(buf, "image_info")) send_image_info(ns, params);
     else if (!strcmp(buf,"image_sums")) send_image_sums(ns, params);
-    else Write_String_To_Socket(ns, bigbuf, len);
+    else Write_String_To_Socket(ns, BINARY_CMD_REPLYINFO, bigbuf, len);
 }
 
 
@@ -236,6 +239,7 @@ void HandleClient(NewSocket *ns, player *pl)
 		*/
 
 		LOG(llevDebug,"Bad command from client (%s)\n",ns->inbuf.buf+2);
+		ns->status =Ns_Dead;
 		return;
 
 		next_command:

@@ -23,43 +23,12 @@
 #if !defined(__INCLUDE_H)
 #define __INCLUDE_H
 
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-
-#include <config.h>
-
-#ifdef HAVE_SYS_TIME_H
-#   include <sys/time.h>
+#ifdef __LINUX
+#include "define.h"
 #endif
 
-#include <time.h>
+#include "config.h"
 
-#ifdef HAVE_STRING_H
-#   include <string.h>
-#endif
-
-#ifdef HAVE_UNISTD_H
-#   include <unistd.h>
-#endif
-
-#ifdef HAVE_FCNTL_H
-#  include <fcntl.h>
-#endif
-
-#ifdef HAVE_DMALLOC_H
-#  include <dmalloc.h>
-#endif
-
-#include <SDL/SDL.h>
-#include <SDL/SDL_main.h>
-#include <SDL/SDL_image.h>
-
-#ifdef INSTALL_SOUND
-#include <SDL/SDL_mixer.h>
-#endif
 /* Just some handy ones I like to use */
 #ifndef FALSE
 #define FALSE 0
@@ -79,6 +48,12 @@ typedef signed char     sint8;
 /* later this should be insert a makefile */
 
 #include <wrapper.h>
+#ifdef INSTALL_SOUND
+#include <SDL_mixer.h>
+#endif
+
+
+#include <zlib.h>
 #include <item.h>
 
 #include <client.h>

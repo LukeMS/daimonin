@@ -193,10 +193,8 @@ void send_target_command(player *pl)
 	if(!pl->ob->map)
 		return;
 
-	tmp[0]='t';
-	tmp[1]='o';
-	tmp[2]=' ';
-	tmp[3]=pl->combat_mode;
+	tmp[0]=BINARY_CMD_TARGET;
+	tmp[1]=pl->combat_mode;
 
 	pl->ob->enemy=NULL;
 	pl->ob->enemy_count=0;
@@ -218,17 +216,17 @@ void send_target_command(player *pl)
 		else
 		{
 			if(pl->target_object->type == PLAYER || QUERY_FLAG(pl->target_object,FLAG_FRIENDLY) )
-				tmp[4]=2; /* friend */
+				tmp[2]=2; /* friend */
 			else
 			{
-				tmp[4]=1; /* enemy */
+				tmp[2]=1; /* enemy */
 				pl->ob->enemy=pl->target_object;
 				pl->ob->enemy_count=pl->target_object_count;
 			}
 			if(pl->target_object->name)
-				strcpy(tmp+5,pl->target_object->name);
+				strcpy(tmp+3,pl->target_object->name);
 			else
-				strcpy(tmp+5,"(null)");
+				strcpy(tmp+3,"(null)");
 		}
 	}
 	else
@@ -237,14 +235,14 @@ void send_target_command(player *pl)
 	/* ok... at last, target self */
 	if(aim_self_flag)
 	{
-		tmp[4]=0; /* self */
-		strcpy(tmp+5,pl->ob->name);
+		tmp[2]=0; /* self */
+		strcpy(tmp+3,pl->ob->name);
 		pl->target_object = pl->ob;
 		pl->target_object_count = 0;
 		pl->target_map_pos =0;
 	}
 
-    Write_String_To_Socket(&pl->socket, tmp, strlen(tmp+5)+5);
+    Write_String_To_Socket(&pl->socket, BINARY_CMD_TARGET, tmp, strlen(tmp+3)+3);
 }
 
 int command_combat(object *op, char *params)
@@ -518,8 +516,8 @@ void send_mapstats_cmd(object *op, struct mapdef *map)
     char tmp[2024];
 
     op->contr->last_update = map; /* player: remember this is the map the client knows */    
-    sprintf(tmp,"mapstats %d %d %d %d %s", map->width, map->height, op->x, op->y, map->name);
-    Write_String_To_Socket(&op->contr->socket, tmp, strlen(tmp));
+    sprintf(tmp,"X%d %d %d %d %s", map->width, map->height, op->x, op->y, map->name);
+    Write_String_To_Socket(&op->contr->socket, BINARY_CMD_MAPSTATS, tmp, strlen(tmp));
 }
 
 
@@ -527,7 +525,7 @@ void send_spelllist_cmd(object *op, char *spellname, int mode)
 {
     char tmp[1024*10]; /* we should careful set a big enough buffer here */
  
-    sprintf(tmp,"splist %d ", mode);
+    sprintf(tmp,"X%d ", mode);
     if(spellname) /* send single name */
     {
         strcat(tmp, "/");
@@ -548,7 +546,7 @@ void send_spelllist_cmd(object *op, char *spellname, int mode)
             strcat(tmp, spells[spnum].name);            
         }
     }
-    Write_String_To_Socket(&op->contr->socket, tmp, strlen(tmp));    
+    Write_String_To_Socket(&op->contr->socket, BINARY_CMD_SPELL_LIST, tmp, strlen(tmp));    
 }
 
 void send_skilllist_cmd(object *op, object *skillp, int mode)
@@ -560,13 +558,13 @@ void send_skilllist_cmd(object *op, object *skillp, int mode)
     if(skillp)
     {
         if(skillp->last_eat)
-            sprintf(tmp,"sklist %d /%s|%d|%d", mode, skillp->name, skillp->level, skillp->stats.exp );
+            sprintf(tmp,"X%d /%s|%d|%d", mode, skillp->name, skillp->level, skillp->stats.exp );
         else
-            sprintf(tmp,"sklist %d /%s|%d|-1", mode, skillp->name, skillp->level);       
+            sprintf(tmp,"X%d /%s|%d|-1", mode, skillp->name, skillp->level);       
     }
     else
     {
-        sprintf(tmp,"sklist %d ", mode);
+        sprintf(tmp,"X%d ", mode);
         for (tmp2=op->inv;tmp2;tmp2=tmp2->below) 
         {
             if(tmp2->type==SKILL&&IS_SYS_INVISIBLE(tmp2))
@@ -580,7 +578,7 @@ void send_skilllist_cmd(object *op, object *skillp, int mode)
             }
         }
     }
-    Write_String_To_Socket(&op->contr->socket, tmp, strlen(tmp));        
+    Write_String_To_Socket(&op->contr->socket, BINARY_CMD_SKILL_LIST, tmp, strlen(tmp));        
 }
 
 /* all this functions are not really bulletproof. filling tmp[] can be easily produce
@@ -591,8 +589,8 @@ void send_ready_skill(object *op, char *skillname)
 {
     char tmp[256]; /* we should careful set a big enough buffer here */
     
-    sprintf(tmp,"skill_rdy %s", skillname);
-    Write_String_To_Socket(&op->contr->socket, tmp, strlen(tmp));        
+    sprintf(tmp,"X%s", skillname);
+    Write_String_To_Socket(&op->contr->socket, BINARY_CMD_SKILLRDY, tmp, strlen(tmp));        
     
 }
 
@@ -604,10 +602,10 @@ void send_golem_control(object *golem, int mode)
     char tmp[256]; /* we should careful set a big enough buffer here */
     
 	if(mode == GOLEM_CTR_RELEASE)
-	   sprintf(tmp,"gc %d %d %s", mode, 0, golem->name);
+	   sprintf(tmp,"X%d %d %s", mode, 0, golem->name);
 	else
-		sprintf(tmp,"gc %d %d %s", mode, golem->face->number, golem->name);
-    Write_String_To_Socket(&golem->owner->contr->socket, tmp, strlen(tmp));        
+		sprintf(tmp,"X%d %d %s", mode, golem->face->number, golem->name);
+    Write_String_To_Socket(&golem->owner->contr->socket, BINARY_CMD_GOLEMCMD, tmp, strlen(tmp));        
     
 }
 

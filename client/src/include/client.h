@@ -56,15 +56,22 @@
 #define SC_ALWAYS 2
 
 typedef struct Animations {
-    uint8  flags;
+	int loaded;			/* 0= all fields are invalid, 1= anim is loaded */
 	int frame;			/* length of one a animation frame (num_anim/facings) */
+    uint16  *faces;
 	uint8  facings;		/* number of frames */
     uint8   num_animations; /* number of animations.  Value of 2 means
 			     * only faces[0],[1] have meaningfull values.
 			     */
-    uint16  *faces;
+    uint8  flags;
 } Animations;
 
+typedef struct _anim_table {
+	int len;			/* len of anim_cmd data */
+	char *anim_cmd;		/* faked animation command */
+}_anim_table;
+
+extern _anim_table anim_table[MAXANIM]; /* the stored "anim commands" we created out of anims.tmp */
 extern Animations animations[MAXANIM];
 
 /* Contains the base information we use to make up a packet we want to send. */
@@ -448,3 +455,4 @@ extern int send_socklist ( int fd, SockList msg );
 extern int cs_write_string ( int fd, char *buf, int len );
 extern void finish_face_cmd(int pnum, uint32 checksum, char *face);
 extern int request_face(int num, int mode);
+extern void check_animation_status(int anum);

@@ -3282,6 +3282,13 @@ echo "${ECHO_T}no" >&6
 fi
 
 
+echo "$as_me:$LINENO: checking Python version" >&5
+echo $ECHO_N "checking Python version... $ECHO_C" >&6
+PYTHON_VER=`$PYTHON -c 'import distutils.sysconfig; print distutils.sysconfig.get_config_vars("VERSION")[0];'`
+echo "$as_me:$LINENO: result: $PYTHON_VER" >&5
+echo "${ECHO_T}$PYTHON_VER" >&6
+
+
 if test -n "$GZIP" -a -z "$GUNZIP" ; then
     echo "Found gzip, but not gunzip - setting GUNZIP to gzip -c";
     GUNZIP="$GZIP -c"
@@ -7574,7 +7581,7 @@ _ACEOF
 datadir=${ndatadir}
 localstatedir=${nlocaldir}
 
-ac_config_files="$ac_config_files Makefile ../../src/random_maps/Makefile ../../src/socket/Makefile ../../src/server/Makefile ../../src/include/Makefile ../../src/utils/Makefile ../../src/common/Makefile ../../src/utils/dmonloop"
+ac_config_files="$ac_config_files Makefile ../../src/random_maps/Makefile ../../src/socket/Makefile ../../src/server/Makefile ../../src/include/Makefile ../../src/utils/Makefile ../../src/common/Makefile ../../src/utils/dmonloop ../../src/plugin_python/Makefile"
 cat >confcache <<\_ACEOF
 # This file is a shell script that caches the results of configure
 # tests run on this system so they can be shared between configure
@@ -8054,6 +8061,7 @@ do
   "../../src/utils/Makefile" ) CONFIG_FILES="$CONFIG_FILES ../../src/utils/Makefile" ;;
   "../../src/common/Makefile" ) CONFIG_FILES="$CONFIG_FILES ../../src/common/Makefile" ;;
   "../../src/utils/dmonloop" ) CONFIG_FILES="$CONFIG_FILES ../../src/utils/dmonloop" ;;
+  "../../src/plugin_python/Makefile" ) CONFIG_FILES="$CONFIG_FILES ../../src/plugin_python/Makefile" ;;
   "../../src/include/autoconf.h" ) CONFIG_HEADERS="$CONFIG_HEADERS ../../src/include/autoconf.h" ;;
   *) { { echo "$as_me:$LINENO: error: invalid argument: $ac_config_target" >&5
 echo "$as_me: error: invalid argument: $ac_config_target" >&2;}
@@ -8180,6 +8188,7 @@ s,@GZIP@,$GZIP,;t t
 s,@GUNZIP@,$GUNZIP,;t t
 s,@PERL@,$PERL,;t t
 s,@PYTHON@,$PYTHON,;t t
+s,@PYTHON_VER@,$PYTHON_VER,;t t
 s,@COMPRESS@,$COMPRESS,;t t
 s,@UNCOMPRESS@,$UNCOMPRESS,;t t
 s,@BZIP@,$BZIP,;t t

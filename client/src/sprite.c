@@ -51,7 +51,7 @@ _Sprite *sprite_load_file(char *fname, uint32 flags)
 {
         _Sprite *sprite;
 
-        sprite = sprite_tryload_file(fname,flags);
+        sprite = sprite_tryload_file(fname,flags,NULL);
 
         if ( sprite == NULL )
         {
@@ -61,7 +61,7 @@ _Sprite *sprite_load_file(char *fname, uint32 flags)
         return(sprite);
 }
 
-_Sprite *sprite_tryload_file(char *fname, uint32 flag)
+_Sprite *sprite_tryload_file(char *fname, uint32 flag,SDL_RWops *rwop)
 {
         _Sprite *sprite;
         SDL_Surface *bitmap;
@@ -71,8 +71,15 @@ _Sprite *sprite_tryload_file(char *fname, uint32 flag)
         SDL_Color colors[256], dark[256], ckey;
         
 
-        if((bitmap = IMG_Load(fname)) == NULL)
-                return(NULL);
+		if(fname)
+		{
+			if((bitmap = IMG_Load(fname)) == NULL)
+			        return(NULL);
+		}
+		else
+		{
+			bitmap =IMG_LoadPNG_RW(rwop);
+		}
         if((sprite = malloc(sizeof(_Sprite))) == NULL)
             return(NULL);
         memset(sprite,0,sizeof(_Sprite));

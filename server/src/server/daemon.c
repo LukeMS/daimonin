@@ -61,7 +61,11 @@
 #include <sys/ptyio.h>
 #endif
 
-#include <errno.h>
+#ifdef NO_ERRNO_H
+    extern int errno;
+#else
+#   include <errno.h>
+#endif
 #include <stdio.h>
 #include <sys/file.h>
 

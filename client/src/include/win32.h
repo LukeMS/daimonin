@@ -39,9 +39,44 @@
 #include <winsock2.h>
 #include <io.h>
 #include <fcntl.h>
+#include <sys/stat.h>
+#include <time.h>
+#include <string.h>
+#include <malloc.h>
+#include <sys/types.h>
+#include <errno.h>
+#include <ctype.h>
+#include <stdarg.h>
+#include <stddef.h>
+#include <stdlib.h>
 
-/*#define _malloc(__d, __s) my_malloc(__d, __s)  */
+#include <SDL/SDL.h>
+#include <SDL/SDL_main.h>
+#include <SDL/SDL_image.h>
+
 #define _malloc(__d,__s) malloc(__d)
+
+/* Define to the address where bug reports for this package should be sent. */
+#define PACKAGE_BUGREPORT "support@daimonin.sourceforge.net"
+
+/* Define to the full name of this package. */
+#define PACKAGE_NAME "Daimonin SDL Client"
+
+/* Define to the full name and version of this package. */
+#define PACKAGE_STRING "Daimonin SDL Client 0.96alpha1"
+
+/* Define to the one symbol short name of this package. */
+#define PACKAGE_TARNAME "daimonin-sdl-client"
+
+/* Define to the version of this package. */
+#define PACKAGE_VERSION "0.96alpha1"
+
+/* Installation prefix */
+#define PREFIX "../../../client-0.96alpha1"
+
+/* Use the SDL_mixer sound system. Remove when you have no sound card or slow
+   computer */
+#define INSTALL_SOUND 
 
 #ifndef Boolean
 #define Boolean int

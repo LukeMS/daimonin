@@ -33,7 +33,12 @@ SRCS = \
 	lowlevel.c\
 	metaserver.c\
 	request.c\
-	sounds.c
+	sounds.c\
+	adler32.c\
+	compress.c\
+	deflate.c\
+	trees.c\
+	zutil.c
 
 ALLFILES=$(SRCS) README Makefile.in
 
@@ -50,7 +55,7 @@ DEPEND = @DEPEND@
 
 CFLAGS = @CFLAGS@ $(EXTRA_CFLAGS)
 
-INCLUDES= $(EXTRA_INCLUDES) -I../include -I$(srcdir)/../include
+INCLUDES= $(EXTRA_INCLUDES) -I. -I../include -I$(srcdir)/../include
 
 SED= @SED@
 

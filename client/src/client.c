@@ -40,7 +40,7 @@
 
 
 #include <include.h>
-
+#include <stdio.h>
 
 #define ROTATE_RIGHT(c) if ((c) & 01) (c) = ((c) >>1) + 0x80000000; else (c) >>= 1;
 
@@ -55,6 +55,36 @@ struct CmdMapping
         void (*cmdproc)(unsigned char *, int );
 };
 
+enum {
+	BINARY_CMD_COMC=1,
+	BINARY_CMD_MAP2,
+	BINARY_CMD_DRAWINFO,
+	BINARY_CMD_MAP_SCROLL,
+	BINARY_CMD_ITEMX,
+	BINARY_CMD_SOUND,
+	BINARY_CMD_TARGET,
+	BINARY_CMD_UPITEM,
+	BINARY_CMD_DELITEM,
+	BINARY_CMD_STATS,
+	BINARY_CMD_IMAGE,
+	BINARY_CMD_FACE1,
+	BINARY_CMD_ANIM,
+	BINARY_CMD_SKILLRDY,
+	BINARY_CMD_PLAYER,
+	BINARY_CMD_MAPSTATS,
+	BINARY_CMD_SPELL_LIST,
+	BINARY_CMD_SKILL_LIST,
+	BINARY_CMD_GOLEMCMD,
+	BINARY_CMD_ADDME_SUC,
+	BINARY_CMD_ADDME_FAIL,
+	BINARY_CMD_VERSION,
+	BINARY_CMD_BYE,
+	BINARY_CMD_SETUP,
+	BINARY_CMD_QUERY,
+	BINARY_CMD_DATA,
+
+	BINAR_CMD /* last entry */
+};
 
 struct CmdMapping commands[] =
 {
@@ -68,33 +98,30 @@ struct CmdMapping commands[] =
         { "itemx", ItemXCmd },
         { "sound", SoundCmd},
         { "to", TargetObject },
-        
         { "upditem", UpdateItemCmd },
         { "delitem", DeleteItem },
-
         { "stats", StatsCmd },
-        
         { "image", ImageCmd },
         { "face1", Face1Cmd},
         { "anim", AnimCmd},
-
         { "skill_rdy", (CmdProc) SkillRdyCmd },
         { "player", PlayerCmd },
         { "mapstats", MapstatsCmd },
         { "splist", SpelllistCmd },
         { "sklist", SkilllistCmd },
         { "gc", GolemCmd },
-        { "item1", Item1Cmd },
-        
-        { "addme_failed", (CmdProc)AddMeFail },
         { "addme_success", (CmdProc)AddMeSuccess },
+        { "addme_failed", (CmdProc)AddMeFail },
         { "version", (CmdProc)VersionCmd },
         { "goodbye", (CmdProc)GoodbyeCmd },
         { "setup", (CmdProc)SetupCmd},
-
         { "query", (CmdProc)handle_query},
+        { "data", (CmdProc)DataCmd},
+
+		/* unused! */
         { "magicmap", MagicMapCmd},
         { "delinv", DeleteInventory },
+        { "item1", Item1Cmd },
 };
 
 #define NCOMMANDS (sizeof(commands)/sizeof(struct CmdMapping))
@@ -104,6 +131,7 @@ static void face_flag_extension(int pnum, char *buf);
 void DoClient(ClientSocket *csocket)
 {
         int i,len;
+		uint8 cmd_id;
         unsigned char *data;
 
         while (1)
@@ -118,28 +146,20 @@ void DoClient(ClientSocket *csocket)
                 }
                 if (i==0) return;   /* Don't have a full packet */
                 csocket->inbuf.buf[csocket->inbuf.len]='\0';
-                data = (unsigned char *)strchr((char*)csocket->inbuf.buf +2, ' ');
-                if (data)
-                {
-                        *data='\0';
-                        data++;
-                }
-                len = csocket->inbuf.len - (data - csocket->inbuf.buf);
-                /* Terminate the buffer */
-                /*LOG(LOG_MSG,"Command (%d):%s (%d) %s\n",LastTick,csocket->inbuf.buf+2, len,data);*/
-                for(i=0;i < NCOMMANDS;i++)
-                {
-                        if (strcmp((char*)csocket->inbuf.buf+2,commands[i].cmdname)==0)
-                        {
-                                commands[i].cmdproc(data,len);
-                                break;
-                        }
-                }
-                csocket->inbuf.len=0;
-                if (i == NCOMMANDS)
-                {
-                        LOG(LOG_ERROR,"Bad command from server (%s)\n",csocket->inbuf.buf+2);
-                }
+
+				cmd_id = (uint8) csocket->inbuf.buf[2];
+				data = csocket->inbuf.buf+3;
+				len = csocket->inbuf.len-3; /* 2 byte package len + 1 byte binary cmd */
+
+	            /*LOG(LOG_MSG,"Command #%d (LT:%d)(len:%d) ",cmd_id, LastTick, len);*/
+				if(!cmd_id || cmd_id >= BINAR_CMD)
+					LOG(LOG_ERROR,"Bad command from server (%d)\n",cmd_id);
+				else
+				{
+	                /*LOG(LOG_MSG,"(%s) >%s<\n",commands[cmd_id-1].cmdname,data);*/
+					commands[cmd_id-1].cmdproc(data,len);
+				}
+               csocket->inbuf.len=0;
         }
 }
 
@@ -212,7 +232,8 @@ int cs_write_string(int fd, char *buf, int len)
 void finish_face_cmd(int pnum, uint32 checksum, char *face)
 {
         char buf[2048];
-        int fd,len, i;
+	FILE *stream;
+        int len;
         static uint32 newsum=0;
         unsigned char data[65536];
 		void *tmp_free;
@@ -248,42 +269,30 @@ void finish_face_cmd(int pnum, uint32 checksum, char *face)
 
         /* Check private cache first */
         sprintf(buf,"%s%s", GetCacheDirectory(), FaceList[pnum].name);
-        if ((fd=open(buf, O_RDONLY|O_BINARY))!=-1)
+        if ((stream=fopen(buf,"rb" ))!=NULL)
         {
-            len=read(fd, data, 65535);
-            close(fd);
-                if(len <=0) /* something is wrong, request it better again*/
-                {
-                        LOG(LOG_ERROR, "WARNING: Cached file %s broken.\n");
-                }
-                else
-                {
-                        /* lets go for the checksum check*/
-                    newsum =0;
-                        for (i=0; i<len; i++)
-                        {
-                            /*  LOG(LOG_ERROR, "CS: #%d -> %d -->%u \n",i,data[i],newsum); */
-                            ROTATE_RIGHT(newsum);
-                                newsum += data[i];
-                                newsum &= 0xffffffff;
-                        }
-                        if (newsum == checksum)
-                        {
-                                /* LOG(LOG_MSG,"FACE: found %s\n", face); */
-
-                                /* URGH. do it quick yet
-                                * and let SDL reload... but we should use
-                                * the loaded face data...
-                                */
-                                FaceList[pnum].sprite=sprite_tryload_file(buf,0);
-                                /*perhaps we fail ,try insanity new load*/
-                                if(FaceList[pnum].sprite)
-								{
-									face_flag_extension(pnum, buf);
-									return; /* found and loaded!*/
-								}
-                        }
-                }
+            len=fread(data, 1,65535,stream);
+            fclose(stream);
+			newsum = 0;
+			if(len <= 0) /* something is wrong... now unlink the file and
+						  * let it reload then possible and needed
+						  */
+			{
+				unlink(buf);
+				checksum = 1; /* now we are 100% different to newsum */
+			}
+			else /* lets go for the checksum check*/
+				newsum =adler32(len, data,len);
+            if (newsum == checksum)
+            {
+				FaceList[pnum].sprite=sprite_tryload_file(buf,0,NULL);
+                /*perhaps we fail ,try insanity new load*/
+                if(FaceList[pnum].sprite)
+				{
+					face_flag_extension(pnum, buf);
+					return; /* found and loaded!*/
+				}
+			}
         }
         /* LOG(LOG_MSG,"FACE: call server for %s\n", face); */
 		face_flag_extension(pnum, buf);
@@ -325,6 +334,32 @@ static void face_flag_extension(int pnum, char *buf)
 }
 
 
+/* we have stored this picture in daimonin.p0 - load it from it! */
+static int load_picture_from_pack(int num)
+{
+	FILE *stream;
+	char *pbuf;
+	SDL_RWops *rwop;
+
+	if ((stream=fopen(FILE_DAIMONIN_P0, "rb"))==NULL)
+		return 1;
+		
+	lseek(fileno(stream), bmaptype_table[num].pos, SEEK_SET);
+
+	pbuf = malloc(bmaptype_table[num].len);
+	fread(pbuf, bmaptype_table[num].len,1,stream);
+	fclose(stream);
+
+	rwop=SDL_RWFromMem(pbuf, bmaptype_table[num].len);
+	
+	FaceList[num].sprite=sprite_tryload_file(NULL,0,rwop);
+	if(FaceList[num].sprite)
+		face_flag_extension(num, FaceList[num].name);
+
+	free(pbuf);
+	return 0;
+ 
+}
 /* we got a face - test we have it loaded.
  * if not, say server "send us face cmd "
  * Return: 0 - face not there, requested.
@@ -337,6 +372,7 @@ static void face_flag_extension(int pnum, char *buf)
 
 int request_face(int pnum, int mode)
 {
+	char buf[256*2];
 	static int count=0;
 	static char fr_buf[REQUEST_FACE_MAX*sizeof(uint16)+4];
 	uint16 num =(uint16)(pnum&~0x8000);
@@ -357,13 +393,31 @@ int request_face(int pnum, int mode)
 	if(FaceList[num].name || FaceList[num].flags&FACE_REQUESTED) /* loaded OR requested.. */
 		return 1;
 
-	FaceList[num].flags|=FACE_REQUESTED;
+	/* ok - at this point we hook in our client stored png lib.
+	*/
+	if(num >= bmaptype_table_size)
+	{
+		LOG(LOG_ERROR, "REQUEST_FILE(): server sent picture id to big (%d %d)\n", num, bmaptype_table_size);
+		return 0;
+	}
 
+	if(bmaptype_table[num].pos != -1) /* best case - we have it in daimonin.p0! */
+	{
+        sprintf(buf,"%s.png", bmaptype_table[num].name);
+        FaceList[num].name = (char *) _malloc(strlen(buf)+1, "request_face(): FaceList name");
+        strcpy(FaceList[num].name, buf);
+        FaceList[num].checksum = bmaptype_table[num].crc;
+		load_picture_from_pack(num);
+	}
+	else /* 2nd best case  - lets check the cache for it...  or request it */
+	{
+		FaceList[num].flags|=FACE_REQUESTED;
+        finish_face_cmd(num, bmaptype_table[num].crc , bmaptype_table[num].name);
+	} 
+	
+	/*
 	*((uint16 *)(fr_buf+4+count*sizeof(uint16)))=num;
 	*((uint8 *)(fr_buf+3))=(uint8)++count;
-
-
-	/* buffer full, flush command */
 	if(count == REQUEST_FACE_MAX)
 	{
 		fr_buf[0]='f';
@@ -372,6 +426,32 @@ int request_face(int pnum, int mode)
 		cs_write_string(csocket.fd, fr_buf, 4+count*sizeof(uint16));
 		count = 0;
 	}
-	return 0;
+	*/
+	return 1;
 }
 
+
+/* we don't give a error message here in return - no need!
+ * IF the server has messed up the anims file he send us - then
+ * we simply core here. There is nothing we can do - in the badest
+ * case the bad server harm us even more.
+ */
+void check_animation_status(int anum)
+{
+	/* i really do it simple here - because we had stored our default
+	 * anim list in the same way a server used in the past the anim
+	 * command, we simple call the command. This seems a bit odd, but
+	 * perhaps we play around in the future with at runtime created
+	 * anims (server side) - then we need this interface again and we
+	 * can simply call it from both sides.
+	 */
+	if(animations[anum].loaded)
+		return;
+
+	/* why we don't preload all anims?
+	 * because the anim also flushes loading of all face
+	 * part of this anim!
+	 */
+	animations[anum].loaded = 1; /* mark this anim as "we have loaded it" */
+	AnimCmd(anim_table[anum].anim_cmd, anim_table[anum].len); /* same as server sends it! */
+}

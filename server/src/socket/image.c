@@ -35,8 +35,9 @@
 #include <newclient.h>
 #include <newserver.h>
 #include <loader.h>
+#include "zlib.h"
 
-#define MAX_FACE_SETS	20
+#define MAX_FACE_SETS	1
 
 typedef struct FaceInfo {
   uint8 *data;		    /* image data */
@@ -143,6 +144,12 @@ static void check_faceset_fallback(int faceset, int togo)
  * to do such.
  */
 
+/* i added the generation of client_bmaps here... i generate only *one*
+ * file - i don't use different sets (daimonin.1, daimonin.2,...) but i mix
+ * the code up - if ever one is interested to add here and in the client full
+ * different set power, he can complete this stuff... note now: have more as
+ * one set will break the server atm
+ */
 
 #define MAX_IMAGE_SIZE 20000
 void read_client_images()
@@ -150,7 +157,7 @@ void read_client_images()
     char filename[400];
     char buf[HUGE_BUF];
     char *cp, *cps[7];
-    FILE *infile;
+    FILE *infile, *fbmap;
     int num,len,compressed, fileno,i, badline;
 
     memset(facesets, 0, sizeof(facesets));
@@ -195,8 +202,15 @@ void read_client_images()
 	sprintf(filename,"%s/daimonin.%d",settings.datadir, fileno);
 	LOG(llevDebug,"Loading image file %s\n", filename);
 
+	/* we don't use more as one face set here!! */
+	LOG(llevInfo,"Creating client_bmap....\n");
+    sprintf(buf,"%s/client_bmaps", settings.datadir);
+	if ((fbmap=fopen(buf,"wb")) ==NULL)
+		LOG(llevError,"Unable to open %s\n", buf);
+
 	if ((infile = open_and_uncompress(filename,0,&compressed))==NULL)
 	    LOG(llevError,"Unable to open %s\n", filename);
+
 	while(fgets(buf, HUGE_BUF-1, infile)!=NULL) {
 	    if(strncmp(buf,"IMAGE ",6)!=0) 
 			LOG(llevError,"read_client_images:Bad image line - not IMAGE, instead\n%s",buf);
@@ -215,14 +229,13 @@ void read_client_images()
 	    facesets[fileno].faces[num].data = malloc(len);
 	    if ((i=fread(facesets[fileno].faces[num].data, len, 1, infile))!=1)
 			LOG(llevError,"read_client_images: Did not read desired amount of data, wanted %d, got %d\n%s",len, i, buf);
-	    facesets[fileno].faces[num].checksum=0;
-	    for (i=0; i<len; i++) {
-		ROTATE_RIGHT(facesets[fileno].faces[num].checksum);
-		facesets[fileno].faces[num].checksum += facesets[fileno].faces[num].data[i];
-		facesets[fileno].faces[num].checksum &= 0xffffffff;
-	    }
+
+		facesets[fileno].faces[num].checksum=(uint32)adler32(len, facesets[fileno].faces[num].data,len);
+		sprintf(buf,"%x %x %s\n",len,facesets[fileno].faces[num].checksum,new_faces[num].name);
+		fputs(buf, fbmap);
 	}
 	close_and_delete(infile,compressed);
+	fclose(fbmap);
     } /* For fileno < MAX_FACE_SETS */
 }
 
@@ -241,8 +254,8 @@ void SetFaceMode(char *buf, int len, NewSocket *ns)
     if (mode==CF_FACE_NONE) {
 	ns->facecache=1;
     } else if (mode!=CF_FACE_PNG) {
-	sprintf(tmp,"drawinfo %d %s", NDI_RED,"Warning - send unsupported face mode.  Will use Png");
-	Write_String_To_Socket(ns, tmp, strlen(tmp));
+	sprintf(tmp,"X%d %s", NDI_RED,"Warning - send unsupported face mode.  Will use Png");
+	Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO,tmp, strlen(tmp));
 #ifdef ESRV_DEBUG
 	LOG(llevDebug,"SetFaceMode: Invalid mode from client: %d\n", mode);
 #endif
@@ -302,13 +315,22 @@ int esrv_send_face(NewSocket *ns,short face_num, int nocache)
 
     if (ns->facecache && !nocache) {
 	if (ns->image2)
-	    strcpy((char*)sl.buf, "face2 ");
+	{
+	SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_FACE2);
+	}
+/*	    strcpy((char*)sl.buf, "face2 ");*/
 	else if (ns->sc_version >= 1026)
-	    strcpy((char*)sl.buf, "face1 ");
+	{
+	SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_FACE1);
+	}
+/*	    strcpy((char*)sl.buf, "face1 ");*/
 	else
-	    strcpy((char*)sl.buf, "face ");
+	{
+	SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_FACE);
+	}
+/*	    strcpy((char*)sl.buf, "face ");*/
 
-	sl.len=strlen(sl.buf);
+/*	sl.len=strlen(sl.buf);*/
 	SockList_AddShort(&sl, face_num);
 	if (ns->image2)
 	    SockList_AddChar(&sl, (char) fallback);
@@ -320,10 +342,17 @@ int esrv_send_face(NewSocket *ns,short face_num, int nocache)
     }
     else {
 	if (ns->image2)
-	    strcpy((char*)sl.buf, "image2 ");
+	{
+		SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_IMAGE2);
+	}
+
+/*	    strcpy((char*)sl.buf, "image2 ");*/
 	else
-	    strcpy((char*)sl.buf, "image ");
-	sl.len=strlen((char*)sl.buf);
+	{
+		SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_IMAGE);
+	}
+/*	    strcpy((char*)sl.buf, "image ");*/
+/*	sl.len=strlen((char*)sl.buf);*/
 	SockList_AddInt(&sl, face_num);
 	if (ns->image2)
 	    SockList_AddChar(&sl, (char) fallback);
@@ -378,11 +407,12 @@ void send_image_sums(NewSocket *ns, char *params)
 
     stop = atoi(cp);
     if (stop < start || *cp == '\0' || (stop-start)>1000 || stop >= nrofpixmaps) {
-	sprintf(buf,"replyinfo image_sums %d %d", start, stop);
-	cs_write_string(ns, buf, strlen(buf));
+	sprintf(buf,"Ximage_sums %d %d", start, stop);
+	Write_String_To_Socket(ns, BINARY_CMD_REPLYINFO,buf, strlen(buf));
 	return;
     }
-    sprintf(sl.buf,"replyinfo image_sums %d %d ", start, stop);
+    sprintf(sl.buf,"Ximage_sums %d %d ", start, stop);
+	*sl.buf=BINARY_CMD_REPLYINFO;
 
     sl.len = strlen(sl.buf);
 

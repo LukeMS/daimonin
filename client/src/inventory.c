@@ -343,6 +343,7 @@ Boolean blt_inv_item_centered(item *tmp, int x, int y)
    
    if (tmp->animation_id>0)
 	{
+		check_animation_status(tmp->animation_id);
 		if(animations[tmp->animation_id].num_animations && animations[tmp->animation_id].facings<=1)
 				anim1 = animations[tmp->animation_id].faces[0]; /* first bitmap of this ani */
 	}

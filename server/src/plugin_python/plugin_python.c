@@ -21,7 +21,7 @@
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
     The author can be reached via e-mail to daimonin@nord-com.net
-
+*/
 /* This module was original written for crossfire from gros.
  */
 
@@ -35,7 +35,7 @@
 /* extend - we simply don't add somewhere code in the server except some     */
 /* jump points for the plugin model - if we want change someone the script   */
 /* language or add another - it will not change anything in the plugin       */
-/* interface.                                                                *7
+/* interface.                                                                */
 /*****************************************************************************/
 /* Please note that it is still very beta - some of the functions may not    */
 /* work as expected and could even cause the server to crash.                */
@@ -4366,7 +4366,7 @@ static PyObject* CFGetEventOptions(PyObject* self, PyObject* args)
 {
     CFPython_Object *whoptr;
     int eventnr;
-    static char estr[4];
+    /*static char estr[4];*/
     if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&eventnr))
         return NULL;
 	/*

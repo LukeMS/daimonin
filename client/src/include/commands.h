@@ -24,6 +24,16 @@
 #if !defined(__COMMANDS_H)
 #define __COMMANDS_H
 
+#define DATA_PACKED_CMD 0x80
+enum {
+	DATA_CMD_NO,
+	DATA_CMD_SKILL_LIST,
+	DATA_CMD_SPELL_LIST,
+	DATA_CMD_SETTINGS_LIST,
+	DATA_CMD_ANIM_LIST,
+	DATA_CMD_BMAP_LIST
+};
+
 /* spell list commands for client spell list */
 #define SPLIST_MODE_ADD    0
 #define SPLIST_MODE_REMOVE 1
@@ -56,6 +66,7 @@ extern void VersionCmd ( char *data, int len );
 
 extern void SendVersion ( ClientSocket csock );
 extern void SendAddMe ( ClientSocket csock );
+extern void RequestFile(ClientSocket csock, int index);
 extern void SendSetFaceMode ( ClientSocket csock, int mode );
 extern void MapstatsCmd(unsigned char *data, int len);
 extern void SpelllistCmd(unsigned char *data, int len);
@@ -65,4 +76,5 @@ extern void SkillRdyCmd(char *data, int len);
 extern void GolemCmd(unsigned char *data, int len);
 extern void ItemXCmd(unsigned char *data, int len);
 extern void TargetObject(unsigned char *data, int len);
+extern void DataCmd(char *data, int len);
 #endif

@@ -14,28 +14,25 @@ After you have installed all SDL libs, you can compile the source.
 
 Follow this steps:
 
-1.) make clean
-	Type 'make clean' to be sure you have a clean source.
+1.) make distclean
+	Type 'make distclean' to be sure you have a clean source.
+	This will uninstall old installations too!
 
-2.) change Makefile
-	Open the Makefile file and read the comments inside. Change all pathes
-	if needed. On a clean install of the SDL libs it should run without
-	changes.
+2.) configure
+	Type './configure' to generate your makefiles. This will
+	set the installation folder to 'client_VERSION'. To force
+	a different folder type './configure --prefix="<path>/<folder>".
 
 3.) make all
 	Type 'make all'. The source will be compiled and linked.
 
 4.) make install
-	Type 'make install'. This will copy 'daimonin' executable in the 
-	Daimonin/client folder. 
-
+	Type 'make install'. This will install 
+	
 Thats all.
 
 You can compile the client without SDL_mixer (wave and ogg support). Follow the 
 comments in the Makefile to remove the libs from linking.
-
-Then you must open the file config.h in Daimonin/src/include and uncomment the line
-#define INSTALL_SOUND! 
 
 Note, that even with linked SDL_mixer the client will run fine on systems without sound
 card. The client will disable the sound automatically. Compiling it native without

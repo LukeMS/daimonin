@@ -104,9 +104,10 @@ void SetupCmd(char *buf, int len)
         char *cmd, *param;
 
         scrolldy=scrolldx=0;
-       /* LOG(LOG_MSG,"Get SetupCmd:: %s\n", buf); */
+        LOG(LOG_MSG,"Get SetupCmd:: %s\n", buf);
         for(s=0;;)
         {
+                while (buf[s] == ' ') s++;
                 if(s>=len)
                         break;
                 cmd = &buf[s];
@@ -126,6 +127,129 @@ void SetupCmd(char *buf, int len)
                         {
                         }
                 }
+                else if (!strcmp(cmd,"skf"))
+                {
+                        if (!strcmp(param,"FALSE"))
+                        {
+							LOG(LOG_MSG,"Get skf:: %s\n", param);
+                        }
+						else if (strcmp(param,"OK"))
+                        {
+							char *cp;
+
+							srv_client_files[SRV_CLIENT_SKILLS].status = SRV_CLIENT_STATUS_UPDATE;
+						    for (cp = param; *cp!=0; cp++)
+							{
+								if (*cp == '|')
+								{
+									*cp=0;	
+								    srv_client_files[SRV_CLIENT_SKILLS].server_len = atoi(param);
+									srv_client_files[SRV_CLIENT_SKILLS].server_crc = strtoul(cp+1, NULL, 16);
+								    break;
+								}
+							}
+                        }
+
+                }
+                else if (!strcmp(cmd,"spf"))
+                {
+                        if (!strcmp(param,"FALSE"))
+                        {
+							LOG(LOG_MSG,"Get spf:: %s\n", param);
+                        }
+						else if (strcmp(param,"OK"))
+                        {
+							char *cp;
+
+							srv_client_files[SRV_CLIENT_SPELLS].status = SRV_CLIENT_STATUS_UPDATE;
+						    for (cp = param; *cp!=0; cp++)
+							{
+								if (*cp == '|')
+								{
+									*cp=0;	
+								    srv_client_files[SRV_CLIENT_SPELLS].server_len = atoi(param);
+									srv_client_files[SRV_CLIENT_SPELLS].server_crc = strtoul(cp+1, NULL, 16);
+								    break;
+								}
+							}
+                        }
+
+                }
+                else if (!strcmp(cmd,"stf"))
+                {
+                        if (!strcmp(param,"FALSE"))
+                        {
+							LOG(LOG_MSG,"Get stf:: %s\n", param);
+                        }
+						else if (strcmp(param,"OK"))
+                        {
+							char *cp;
+
+							srv_client_files[SRV_CLIENT_SETTINGS].status = SRV_CLIENT_STATUS_UPDATE;
+						    for (cp = param; *cp!=0; cp++)
+							{
+								if (*cp == '|')
+								{
+									*cp=0;	
+								    srv_client_files[SRV_CLIENT_SETTINGS].server_len = atoi(param);
+									srv_client_files[SRV_CLIENT_SETTINGS].server_crc = strtoul(cp+1, NULL, 16);
+								    break;
+								}
+							}
+
+                        }
+
+                }
+                else if (!strcmp(cmd,"bpf"))
+                {
+                        if (!strcmp(param,"FALSE"))
+                        {
+							LOG(LOG_MSG,"Get bpf:: %s\n", param);
+                        }
+						else if (strcmp(param,"OK"))
+                        {
+							char *cp;
+
+							srv_client_files[SRV_CLIENT_BMAPS].status = SRV_CLIENT_STATUS_UPDATE;
+						    for (cp = param; *cp!=0; cp++)
+							{
+								if (*cp == '|')
+								{
+									*cp=0;	
+								    srv_client_files[SRV_CLIENT_BMAPS].server_len = atoi(param);
+									srv_client_files[SRV_CLIENT_BMAPS].server_crc = strtoul(cp+1, NULL, 16);
+								    break;
+								}
+							}
+
+                        }
+
+                }
+                else if (!strcmp(cmd,"amf"))
+                {
+                        if (!strcmp(param,"FALSE"))
+                        {
+							LOG(LOG_MSG,"Get amf:: %s\n", param);
+                        }
+						else if (strcmp(param,"OK"))
+                        {
+							char *cp;
+
+							srv_client_files[SRV_CLIENT_ANIMS].status = SRV_CLIENT_STATUS_UPDATE;
+						    for (cp = param; *cp!=0; cp++)
+							{
+								if (*cp == '|')
+								{
+									*cp=0;	
+								    srv_client_files[SRV_CLIENT_ANIMS].server_len = atoi(param);
+									srv_client_files[SRV_CLIENT_ANIMS].server_crc = strtoul(cp+1, NULL, 16);
+								    break;
+								}
+							}
+
+                        }
+
+                }
                 else if (!strcmp(cmd,"mapsize"))
                 {
                 }
@@ -140,12 +264,14 @@ void SetupCmd(char *buf, int len)
                 }
                 else
                 {
+				
                         LOG(LOG_ERROR,
                         "Got setup for a command we don't understand: %s %s\n",
                         cmd, param);
+					
                 }
         }
-        GameStatus = GAME_STATUS_ADDME;
+        GameStatus = GAME_STATUS_REQUEST_FILES;
 }
 
 /* We only get here if the server believes we are caching images. */
@@ -211,14 +337,14 @@ void AnimCmd(unsigned char *data, int len)
                 fprintf(stderr,"AnimCmd: animation number invalid: %d\n", anum);
                 return;
         }
+
 		animations[anum].flags = *(data+2);
 		animations[anum].facings = *(data+3);
         animations[anum].num_animations = (len-4)/2;
         if (animations[anum].num_animations<1)
         {
-                LOG(LOG_DEBUG,"AnimCmd: num animations invalid: %d\n",
-                        animations[anum].num_animations);
-                return;
+			LOG(LOG_DEBUG,"AnimCmd: num animations invalid: %d\n",animations[anum].num_animations);
+            return;
         }
 		if(animations[anum].facings>1)
 			animations[anum].frame = animations[anum].num_animations/animations[anum].facings;
@@ -232,9 +358,8 @@ void AnimCmd(unsigned char *data, int len)
 				request_face(animations[anum].faces[j],0);
 		}
         if (j!=animations[anum].num_animations)
-                LOG(LOG_DEBUG,"Calculated animations does not equal stored animations?(%d!=%d)\n",
-                j, animations[anum].num_animations);
-       LOG(LOG_MSG,"Received animation %d, %d facings and %d faces\n", anum,animations[anum].facings,animations[anum].num_animations);
+                LOG(LOG_DEBUG,"Calculated animations does not equal stored animations?(%d!=%d)\n",j, animations[anum].num_animations);
+       /*LOG(LOG_MSG,"Received animation %d, %d facings and %d faces\n", anum,animations[anum].facings,animations[anum].num_animations);*/
 }
 
 void ImageCmd(unsigned char *data,  int len)
@@ -255,22 +380,15 @@ void ImageCmd(unsigned char *data,  int len)
 
         /* save picture to cache*/
         /* and load it to FaceList*/
-        sprintf(buf,"%s%s", GetCacheDirectory(), FaceList[pnum].name);
 
-        
+        sprintf(buf,"%s%s", GetCacheDirectory(), FaceList[pnum].name);     
+		LOG(LOG_DEBUG,"ImageFromServer: %s\n", FaceList[pnum].name);
         if( (stream = fopen(buf, "wb+" )) != NULL )
         {
             fwrite((char*)data+8, 1, plen, stream);
             fclose( stream );        
         }
-        /*            
-        if((fd=open(buf, O_WRONLY|O_BINARY|O_TRUNC|O_CREAT|S_IREAD|S_IWRITE|S_IFREG|S_IEXEC))!=-1)
-            {
-                l=write(fd, (char*)data+8, plen);
-                close(fd);
-        }
-        */
-        FaceList[pnum].sprite=sprite_tryload_file(buf,0);
+        FaceList[pnum].sprite=sprite_tryload_file(buf,0,NULL);
         map_udate_flag=2;
 }
 
@@ -1270,7 +1388,15 @@ void SendVersion(ClientSocket csock)
 {
         char buf[MAX_BUF];
 
-        sprintf(buf,"version %d %d %s", VERSION_CS, VERSION_SC, VERSION_INFO);
+        sprintf(buf,"version %d %d %s", VERSION_CS, VERSION_SC, PACKAGE_NAME);
+        cs_write_string(csock.fd, buf, strlen(buf));
+}
+
+void RequestFile(ClientSocket csock, int index)
+{
+        char buf[MAX_BUF];
+
+        sprintf(buf,"rf %d", index);
         cs_write_string(csock.fd, buf, strlen(buf));
 }
 
@@ -1466,5 +1592,110 @@ void GolemCmd(unsigned char *data, int len)
         RangeFireMode = FIRE_MODE_SUMMON;
 	}
     
+}
+
+
+static void save_data_cmd_file(char *path, char*data, int len)
+{
+	FILE *stream;
+   
+    if( (stream = fopen( path, "wb" )) != NULL )
+    {
+		if(fwrite(data,sizeof(char), len, stream)!=(size_t) len)
+			LOG(LOG_ERROR,"save data cmd file : write() of %s failed. (len:%d)\n", path);
+		fclose( stream );
+	}
+	else
+		LOG(LOG_ERROR,"save data cmd file : Can't open %s for write. (len:%d)\n", path,len);
+}
+
+/* server has send us a block of data...
+ * lets check what we got
+ */
+void DataCmd(char *data, int len)
+{
+	uint8 data_type = (uint8) (*data);
+	uint8 data_comp ;
+	uint32 dest_len=64*1024;
+	char *dest;
+
+	dest = malloc(dest_len);
+	data_comp = (data_type & DATA_PACKED_CMD);
+
+	len--;
+	data++;
+
+	switch(data_type&~DATA_PACKED_CMD)
+	{
+		case DATA_CMD_SKILL_LIST:
+			/* this is a server send skill list */
+			/* uncompress when needed and save it */
+			if(data_comp)
+			{
+				LOG(LOG_DEBUG,"data cmd: compressed skill list(len:%d)\n", len);
+				uncompress(dest,(void *)&dest_len,data,len);
+				data = dest;
+				len = dest_len;
+			}
+			request_file_chain++;
+			save_data_cmd_file(FILE_CLIENT_SKILLS, data, len);
+			read_skills();
+		break;
+		case DATA_CMD_SPELL_LIST:
+			if(data_comp)
+			{
+				LOG(LOG_DEBUG,"data cmd: compressed spell list(len:%d)\n", len);
+				uncompress(dest,(void*)&dest_len,data,len);
+				data = dest;
+				len = dest_len;
+			}
+			request_file_chain++;
+			save_data_cmd_file(FILE_CLIENT_SPELLS, data, len);
+			read_spells();
+		break;
+		case DATA_CMD_SETTINGS_LIST:
+			if(data_comp)
+			{
+				LOG(LOG_DEBUG,"data cmd: compressed settings file(len:%d)\n", len);
+				uncompress(dest,(void*)&dest_len,data,len);
+				data = dest;
+				len = dest_len;
+			}
+			request_file_chain++;
+			save_data_cmd_file(FILE_CLIENT_SETTINGS, data, len);
+			/*read_settings();*/
+		break;
+
+		case DATA_CMD_BMAP_LIST:
+			if(data_comp)
+			{
+				LOG(LOG_DEBUG,"data cmd: compressed bmaps file(len:%d)\n", len);
+				uncompress(dest,(void*)&dest_len,data,len);
+				data = dest;
+				len = dest_len;
+			}
+			request_file_chain++;
+			save_data_cmd_file(FILE_CLIENT_BMAPS, data, len);
+			request_file_flags|=SRV_CLIENT_FLAG_BMAP;
+		break;
+
+		case DATA_CMD_ANIM_LIST:
+			if(data_comp)
+			{
+				LOG(LOG_DEBUG,"data cmd: compressed anims file(len:%d)\n", len);
+				uncompress(dest,(void*)&dest_len,data,len);
+				data = dest;
+				len = dest_len;
+			}
+			request_file_chain++;
+			save_data_cmd_file(FILE_CLIENT_ANIMS, data, len);
+			request_file_flags|=SRV_CLIENT_FLAG_ANIM;
+		break;
+
+		default:
+			LOG(LOG_ERROR,"data cmd: unknown type %d (len:%d)\n", data_type, len);
+		break;
+	}
+	free(dest);
 }
 
