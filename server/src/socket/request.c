@@ -348,6 +348,7 @@ void AddMeCmd(char *buf, int len, NewSocket *ns)
 	 */
 	Write_String_To_Socket(ns,BINARY_CMD_ADDME_SUC, cmd_buf,1);
 	ns->addme = 1;
+	ns->login_count=0; /* reset idle counter */
 	socket_info.nconns--;
 	ns->status = Ns_Avail;
     }
@@ -553,9 +554,10 @@ void RequestFileCmd(char *buf, int len,NewSocket *ns)
 {
 	int id;
 
-    if (!buf)
+	/* *only* allow this command between the first login and the "addme" command! */
+    if (ns->status != Ns_Add || !buf)
     {
-        LOG(llevInfo, "RF: received bad rf command\n");
+        LOG(llevInfo, "RF: received bad rf command for IP:%s\n",ns->host?ns->host:"NULL");
         ns->status=Ns_Dead;
         return;
     }
@@ -563,7 +565,7 @@ void RequestFileCmd(char *buf, int len,NewSocket *ns)
     id = atoi(buf);
 	if(id <0 ||id >=SRV_CLIENT_FILES)
     {
-        LOG(llevInfo, "RF: received bad rf command\n");
+        LOG(llevInfo, "RF: received bad rf command for IP:%s\n",ns->host?ns->host:"NULL");
         ns->status=Ns_Dead;
         return;
     }

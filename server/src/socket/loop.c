@@ -53,6 +53,8 @@
 #include <newserver.h>
 
 
+static char *_idle_warn_text = "X4 3 minutes idle warning!";					
+static char *_idle_warn_text2 = "X3 You was to long idle! Server closed connection.";					
 static fd_set tmp_read, tmp_exceptions, tmp_write;
 
 /*****************************************************************************
@@ -172,7 +174,7 @@ void HandleClient(NewSocket *ns, player *pl)
 {
 	int len=0,i, cmd_count=0;
     unsigned char *data;
-
+	
     /* Loop through this - maybe we have several complete packets here. */
     while (1)
 	{
@@ -186,9 +188,7 @@ void HandleClient(NewSocket *ns, player *pl)
 
 		if (i<0) 
 		{
-#ifdef ESRV_DEBUG
-			LOG(llevDebug,"HandleClient: Read error on connection player %s\n", (pl?pl->ob->name:"None"));
-#endif
+			LOG(llevDebug,"Drop Connection: %s (%s)\n", (pl?pl->ob->name:"NONE"),ns->host?ns->host:"NONE");
 			/* Caller will take care of cleaning this up */
 			ns->status =Ns_Dead;
 			return;
@@ -197,6 +197,10 @@ void HandleClient(NewSocket *ns, player *pl)
 		/* Still dont have a full packet */
 		if (i==0) 
 			return;
+
+		/* reset idle counter */
+		if(pl && pl->state==ST_PLAYING)
+			ns->login_count=0;
 
 		/* First, break out beginning word.  There are at least
 		* a few commands that do not have any paremeters.  If
@@ -257,7 +261,7 @@ void HandleClient(NewSocket *ns, player *pl)
 			/* LOG(llevDebug,"MultiCmd: #%d /%s)\n", cmd_count, (char*)ns->inbuf.buf+2); */
 			continue;
 		}
-		break;
+		return;
     }
 }
 
@@ -398,6 +402,17 @@ void doeric_server()
 		} 
 		else if (init_sockets[i].status != Ns_Avail) /* ns_add... */
 		{
+			if(init_sockets[i].status > Ns_Wait) /* exclude socket #0 which listens for new connects */
+			{
+				/* kill this after 3 minutes idle... */
+				if(init_sockets[i].login_count++ == 60*3*(1000000/MAX_TIME))
+				{
+					free_newsocket(&init_sockets[i]);
+					init_sockets[i].status = Ns_Avail;
+					socket_info.nconns--;
+					continue;
+				}
+			}
 			FD_SET((uint32)init_sockets[i].fd, &tmp_read);
 			FD_SET((uint32)init_sockets[i].fd, &tmp_write);
 			FD_SET((uint32)init_sockets[i].fd, &tmp_exceptions);
@@ -418,6 +433,20 @@ void doeric_server()
 		}
 		else 
 		{
+			if(pl->socket.login_count++ == 60*3*(1000000/MAX_TIME))
+				Write_String_To_Socket(&pl->socket, BINARY_CMD_DRAWINFO, _idle_warn_text, strlen(_idle_warn_text));
+			else if(pl->socket.login_count >= 60*4*(1000000/MAX_TIME))
+			{
+				player *npl=pl->next;
+				Write_String_To_Socket(&pl->socket, BINARY_CMD_DRAWINFO, _idle_warn_text2, strlen(_idle_warn_text2));
+				pl->socket.can_write=1;
+				write_socket_buffer(&pl->socket);
+				pl->socket.status = Ns_Dead;
+				remove_ns_dead_player(pl);
+				pl=npl;
+				continue;
+			}
+
 			FD_SET((uint32)pl->socket.fd, &tmp_read);
 			FD_SET((uint32)pl->socket.fd, &tmp_write);
 			FD_SET((uint32)pl->socket.fd, &tmp_exceptions);
@@ -518,15 +547,16 @@ void doeric_server()
     for (pl=first_player; pl!=NULL; pl=next) 
 	{
 		next=pl->next;
-		if (pl->socket.status==Ns_Dead)
-			continue;
 
 		/* kill players if we have problems */
-		if (FD_ISSET(pl->socket.fd,&tmp_exceptions))
+		if (pl->socket.status==Ns_Dead || FD_ISSET(pl->socket.fd,&tmp_exceptions))
 			remove_ns_dead_player(pl);
 		else 
 		{
-			/* all ok - read from socket? */
+			/* this will be triggered when its POSSIBLE to read
+			 * from the socket - this tells us not there is really
+			 * something!
+			 */
 			if (FD_ISSET(pl->socket.fd, &tmp_read))
 				HandleClient(&pl->socket, pl);
 
@@ -579,7 +609,10 @@ void doeric_server_write(void)
 
 		/* we don't care about problems here... let remove player at start of next loop! */
 		if (pl->socket.status==Ns_Dead || FD_ISSET(pl->socket.fd,&tmp_exceptions))
+		{
+			remove_ns_dead_player(pl);
 			continue;
+		}
 
 		/* and *now* write back to player */
 		if (FD_ISSET(pl->socket.fd,&tmp_write))

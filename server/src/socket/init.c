@@ -96,6 +96,7 @@ void InitConnection(NewSocket *ns, uint32 from)
     LOG(llevDebug, "InitConnection: Socket buffer size now %d bytes\n", oldbufsize);
 #endif
 
+	ns->login_count=0;
 	ns->addme = 0;
     ns->faceset = 0;
     ns->facecache = 0;
@@ -267,7 +268,7 @@ void init_ericserver()
 #endif /* win32 */
 	LOG(llevError,"error on listen\n");
     }
-    init_sockets[0].status=Ns_Add;
+    init_sockets[0].status=Ns_Wait;
     read_client_images();
 	init_srv_files(); /* load all srv_xxx files or generate them */
 

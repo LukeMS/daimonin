@@ -69,7 +69,7 @@ struct statsinfo {
  * are using.
  */
 
-enum Sock_Status {Ns_Avail, Ns_Add, Ns_Dead};
+enum Sock_Status {Ns_Avail, Ns_Wait,Ns_Add,Ns_Login, Ns_Dead};
 
 
 /* The following is the setup for a ring buffer for storing outbut
@@ -89,6 +89,7 @@ typedef struct Buffer_struct {
 
 typedef struct NewSocket_struct {
     int fd;
+	int login_count;		/* if someone is too long idle in the login, we kick him here! */
     int   mapx, mapy;	    /* How large a map the client wants */
     int   mapx_2, mapy_2;	/* same like above but /2 */
     char    *host;	    /* Which host it is connected from (ip address)*/
