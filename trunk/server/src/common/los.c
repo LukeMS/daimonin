@@ -337,7 +337,7 @@ void expand_lighted_sight(object *op)
      */
     if (darklevel > MAX_DARKNESS) {
 	LOG(llevBug,"BUG: Map darkness for %s on %s is too high (%d)\n",
-										op->name, op->map->path, darklevel);
+										query_name(op), op->map->path, darklevel);
 	darklevel = MAX_DARKNESS;
     }
 

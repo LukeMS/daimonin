@@ -325,8 +325,9 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam, int base_
    */
 int hit_player(object *op,int dam, object *hitter, int type) 
 {
+	object *hit_obj, *target_obj;
 	int maxdam=0, attacktype=1;
-    int attacknum;
+    int attacknum, hit_level;
     int simple_attack;
     tag_t op_tag, hitter_tag;
     int rtn_kill = 0;
@@ -335,7 +336,37 @@ int hit_player(object *op,int dam, object *hitter, int type)
     if (QUERY_FLAG (op, FLAG_WIZ) || QUERY_FLAG (op, FLAG_INVULNERABLE))
         return 0;
 
+	/* now we are nasty: we add some "level boni" - in small words: If a high level
+	 * object hits a lower level object it becomes a level boni depending on the 
+	 * level difference!
+	 * This will make out of level range fight ALOT harder.
+	 */
+	
+	/* TODO:i must fix here a bit for scrolls, rods, wands and other fix level stuff! */
+	/* the trick: we get for the TARGET the real level - even for player.
+	 * but for hitter, we always use the SKILL LEVEL if player!
+	 */
+	if(!(hit_obj = get_owner(hitter)))
+		hit_obj = hitter;
+	if(!(target_obj = get_owner(op)))
+		target_obj = op;
 
+	if(hit_obj->type == PLAYER)
+		hit_level = SK_level(hitter); /* get from hitter object the right skill level! */
+	else
+		hit_level = hitter->level;
+
+	if(hit_level == 0 || target_obj->level == 0)
+		LOG(llevDebug,"DEBUG: hit_player(): hit or target object level == 0(h:%s (o:%s) l->%d t:%s (o:%s) l->%d\n",
+										query_name(hitter), query_name(get_owner(hitter)), hit_level,
+										query_name(op), query_name(get_owner(op)), target_obj->level);
+
+	if(hit_level > target_obj->level)
+	{
+		dam += (int)((float)(dam/2)*((float)(hitter->level-target_obj->level)/
+									(target_obj->level>25?25.0f:(float)target_obj->level)));
+		/*LOG(llevDebug,"DMG-ADD: hl:%d tl_%d -> d:%d + %d\n", hit_level,target_obj->level, dam,tmp_d);*/
+	}
 	/* something hit player (can be disease or poison too - break praying! */
 	if(op->type == PLAYER && op->contr->was_praying)
 	{
@@ -1966,7 +1997,7 @@ void save_throw_object (object *op, int type, object *originator)
 	 */ 
 	if(type&(AT_FIRE|AT_ELECTRICITY)
            &&op->other_arch&&op->glow_radius) { 
-		char *arch=op->other_arch->name;
+		char *arch=op->other_arch->name; /* this should be refcount! */
 
 		op = decrease_ob_nr (op, 1);
                 if (op)

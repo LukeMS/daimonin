@@ -811,7 +811,7 @@ int players_on_map(mapstruct *m);
 void flush_old_maps(void);
 /* time.c */
 void remove_door(object *op);
-void remove_door2(object *op);
+void remove_door2(object *op, object *opener);
 void remove_door3(object *op);
 void generate_monster(object *gen);
 void regenerate_rod(object *rod);

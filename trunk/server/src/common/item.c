@@ -231,7 +231,7 @@ char *query_short_name(object *op)
     char buf2[HUGE_BUF];
     int len=0;
 
-    if(op->name == NULL)
+    if(!op->name)
 	return "(null)";
 	
 	/* To speed things up (or make things slower?) 

@@ -1,6 +1,7 @@
 Object exit
 name exit
 face exit.101
+player_only 1
 speed 0.1
 hp -1
 sp -1

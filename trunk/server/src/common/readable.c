@@ -920,7 +920,8 @@ new_text_name (object *book, int msgtype)
 	    }
 	  break;
       }
-    free_string (book->name);
+	if(book->name)
+	    free_string (book->name);
     book->name = add_string (name);
 }
 
@@ -1073,6 +1074,7 @@ change_book (object *book, int msgtype)
 		      }
 
 		    book->title = add_string (t->authour);
+			if(book->name)
 		    free_string (book->name);
 		    book->name = add_string (t->name);
 		    book->level = t->level;

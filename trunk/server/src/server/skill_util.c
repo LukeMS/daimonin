@@ -1590,7 +1590,16 @@ float get_skill_time(object *op, int skillnr) {
     int sum = get_weighted_skill_stat_sum (op,skillnr);
     int level = SK_level(op)/10; 
 
-	time *= 1/(1+(sum/15)+level);
+	/*time *= 1/(1+(sum/15)+level);*/
+
+	/* now this should be MUCH harder */
+	if(time>1.0f)
+	{
+		time -= (level/3)*0.1f;
+		if(time<1.0f)
+			time = 1.0f;
+	}
+	
   }
   
   return FABS(time);

@@ -184,7 +184,10 @@
 								  * pointer where we attach as chained list this stuff - no search
 								  * or flags then needed.
 								  */
-
+#define P_PLAYER_ONLY	0x2000   /* Only players are allowed to enter this space. This excludes mobs,
+								  * pets and golems but also spell effects and throwed/fired items.
+								  * it works like a no_pass for players only (pass_thru don't work for it).
+								  */
 #define P_NO_TERRAIN    0x10000 /* DON'T USE THIS WITH SET_MAP_FLAGS... this is just to mark for return
 								 * values of blocked...
 								 */

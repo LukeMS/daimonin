@@ -75,6 +75,8 @@
 	"object_int2" <-- thats attacked_by_count
 	"object_int3" <-- thats ownercount
 	"no_teleport", "corpse", "corpse_forced"
+    "player_only" <-- only player can enter flag
+	"no_cleric" 
 	
   "event_apply",    "event_apply_plugin",   "event_apply_options",
   "event_attack",   "event_attack_plugin",  "event_attack_options",
@@ -344,6 +346,7 @@ op->oy= op->y;
 ^state{S}					op->state = IVAL;
 ^hidden{S}					op->hide = IVAL;
 ^layer{S}					op->layer = IVAL;
+^player_only{S}				SET_OR_CLEAR_FLAG(op, FLAG_PLAYER_ONLY, IVAL);
 ^is_named{S}				SET_OR_CLEAR_FLAG(op, FLAG_IS_NAMED, IVAL);
 ^is_player{S}				SET_OR_CLEAR_FLAG(op, FLAG_IS_PLAYER, IVAL);
 ^is_aged{S}					SET_OR_CLEAR_FLAG(op, FLAG_IS_AGED, IVAL);
@@ -407,6 +410,7 @@ op->oy= op->y;
 ^reflect_missile{S} SET_OR_CLEAR_FLAG(op, FLAG_REFL_MISSILE, IVAL);
 ^reflect_spell{S}   SET_OR_CLEAR_FLAG(op, FLAG_REFL_SPELL, IVAL);
 ^no_magic{S} 	    SET_OR_CLEAR_FLAG(op, FLAG_NO_MAGIC, IVAL);
+^no_cleric{S} 	    SET_OR_CLEAR_FLAG(op, FLAG_NO_CLERIC, IVAL);
 ^wiz{S}  	    {	if (IVAL) {
 			    SET_FLAG(op, FLAG_WIZ);
 			    SET_FLAG(op, FLAG_WAS_WIZ);
@@ -1293,7 +1297,8 @@ NULL /*is_removed*/,"been_applied", "auto_apply", "treasure", "is_neutral",	/* 2
 "invulnerable", NULL, NULL, "is_vul_elemental",  "is_proof_elemental", /* 105 */
 "is_vul_magic", "is_proof_magic", "is_vul_acid", "is_proof_acid", "sys_object", /* 110 */
 "use_fix_pos","unpaid","is_aged","make_invisible" , "make_ethereal","is_player",
-"is_named",NULL /* spawn mob flag */, "no_teleport", "corpse", "corpse_forced"
+"is_named",NULL /* spawn mob flag */, "no_teleport", "corpse", "corpse_forced",
+"player_only", "no_cleric"
 };
 
  

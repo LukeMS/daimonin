@@ -282,12 +282,14 @@ void dump_all_maps() {
  * Returns true if a wall is present in a given location.
  * Calling object should do a <return>&P_PASS_THRU if it
  * has CAN_PASS_THRU to see it can cross here.
+ * The PLAYER_ONLY flag here is analyzed without checking the
+ * caller type. Thats possible because player movement releated
+ * functions should always use blocked().
  */
-
 int wall(mapstruct *m, int x,int y) {
     if (!(m=out_of_map(m,&x,&y)))
 		return 1;
-    return (GET_MAP_FLAGS(m,x,y) & (P_NO_PASS|P_PASS_THRU));
+    return (GET_MAP_FLAGS(m,x,y) & (P_PLAYER_ONLY|P_NO_PASS|P_PASS_THRU));
 }
 
 /*
@@ -392,7 +394,7 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
 		 * a.) op == NULL (because we can't check for op==PLAYER then)
 		 * b.) P_IS_PVP or MAP_FLAG_PVP
 		 */
-		if(!op || GET_MAP_FLAGS(m,x,y)&P_IS_PVP || m->map_flags&MAP_FLAG_PVP)
+		if(!op || flags & P_IS_PVP || m->map_flags&MAP_FLAG_PVP)
 			return (flags & (P_IS_PLAYER|P_CHECK_INV));
 		
 		/* when we are here: no player pvp stuff was triggered. But:
@@ -411,20 +413,26 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
 			return (flags & (P_IS_PLAYER|P_CHECK_INV));
 	}
 
-	/* and here is our CHECK_INV ... 
-	 * blocked_tile() is now only and exclusive called from here.
-	 * lets skip it, when op is NULL - so we can turn the check from outside
-	 * on/off (for example if we only want test size stuff)
-	 */
-	if(flags&P_CHECK_INV && op)
+    if(op) /* we have a object ptr - do some last checks */
 	{
-		/* we fake a NO_PASS when the checker kick us out - in fact thats 
-		 * how it should be.
-		 */
-		if(blocked_tile(op,m,x,y))
-			return (P_NO_PASS|P_CHECK_INV); /* tell them: no pass and checker here */
-	}
 
+		if(flags&P_PLAYER_ONLY && op->type != PLAYER) /* player only space and not a player... */
+			return (P_NO_PASS|P_CHECK_INV); /* tell them: no pass and possible checker here */
+
+		/* and here is our CHECK_INV ... 
+		 * blocked_tile() is now only and exclusive called from here.
+		 * lets skip it, when op is NULL - so we can turn the check from outside
+		* on/off (for example if we only want test size stuff)
+		*/
+		if(flags&P_CHECK_INV)
+		{
+			/* we fake a NO_PASS when the checker kick us out - in fact thats 
+			 * how it should be.
+			 */
+			if(blocked_tile(op,m,x,y))
+				return (P_NO_PASS|P_CHECK_INV); /* tell them: no pass and checker here */
+		}
+	}
 	return 0; /* ah... 0 is what we want.... 0 == we can pass */
 }
 
@@ -670,7 +678,7 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags) {
 	 */
 	if (op->arch==NULL) {
 	    if (op->name!=NULL)
-		LOG(llevDebug,"Discarded object %s - invalid archetype.\n",op->name);
+		LOG(llevDebug,"Discarded object %s - invalid archetype.\n",query_name(op));
 	    continue;
 	}
 
@@ -762,7 +770,7 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 						/* perhaps we must warp this back where it comes from? */
 						if(!tmp->owner )
 						{
-							LOG(llevBug, "BUG: Spawn mob (%s (%s)) has SPAWN INFO without owner set!\n", op->arch->name, head->name);
+							LOG(llevBug, "BUG: Spawn mob (%s (%s)) has SPAWN INFO without owner set!\n", op->arch->name, query_name(head));
 							remove_ob(head);
 							SET_FLAG(head,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
 						    free_object(head);
@@ -806,7 +814,7 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 				}
 				continue;
 
-				LOG(llevBug, "BUG: Spawn mob (%s %s) without SPAWN INFO.\n", op->arch->name, head->name);
+				LOG(llevBug, "BUG: Spawn mob (%s %s) without SPAWN INFO.\n", op->arch->name, query_name(head));
 				remove_ob(head);
 				SET_FLAG(head,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
 			    free_object(head);
@@ -1578,6 +1586,7 @@ void free_all_objects(mapstruct *m) {
     int i,j;
     object *op;
 
+	LOG(llevDebug,"FAO-start: map:%s ->%d\n", m->name?m->name:(m->tmpname?m->tmpname:""),m->in_memory);
     for(i=0;i<MAP_WIDTH(m);i++)
 	for(j=0;j<MAP_HEIGHT(m);j++) {
 	    object *previous_obj=NULL;
@@ -1599,6 +1608,7 @@ void free_all_objects(mapstruct *m) {
 		free_object(op);
 	    }
 	}
+	LOG(llevDebug,"FAO-end: map:%s ->%d\n", m->name?m->name:(m->tmpname?m->tmpname:""),m->in_memory);
 }
 
 /*
@@ -1651,10 +1661,7 @@ void delete_map(mapstruct *m) {
     /* move this out of free_map, since tmpname can still be needed if
      * the map is swapped out.
      */
-    if (m->tmpname) {
-	free(m->tmpname);
-	m->tmpname=NULL;
-    }
+    if (m->tmpname) FREE_AND_CLEAR(m->tmpname);
     last = NULL;
     /* We need to look through all the maps and see if any maps
      * are pointing at this one for tiling information.  Since
@@ -1769,8 +1776,7 @@ mapstruct *ready_map_name(char *name, int flags) {
 	 * temporary map, and so has reloaded a new map.  If that
 	 * is the case, tmpname is now null
 	 */
-	if (m->tmpname) free(m->tmpname);
-	m->tmpname = NULL;
+    if (m->tmpname) FREE_AND_CLEAR(m->tmpname);
 	/* It's going to be saved anew anyway */
     } 
 
@@ -1886,6 +1892,9 @@ void update_position (mapstruct *m, int x, int y) {
 
 		if (QUERY_FLAG(tmp,FLAG_IS_FLOOR))
 		     move_flags|=tmp->terrain_type;         
+
+		if (QUERY_FLAG(tmp,FLAG_PLAYER_ONLY))
+			flags |= P_PLAYER_ONLY;
       
 		if(tmp->type == CHECK_INV)
 			flags |= P_CHECK_INV;
@@ -1918,7 +1927,7 @@ void update_position (mapstruct *m, int x, int y) {
 		}
 		if (QUERY_FLAG(tmp,FLAG_NO_MAGIC))
 			flags |= P_NO_MAGIC;
-		if (QUERY_FLAG(tmp,FLAG_DAMNED))
+		if (QUERY_FLAG(tmp,FLAG_NO_CLERIC))
 			flags |= P_NO_CLERIC;
 		if (QUERY_FLAG(tmp,FLAG_BLOCKSVIEW))
 			flags |= P_BLOCKSVIEW;

@@ -77,8 +77,8 @@ void remove_door(object *op) {
   free_object(op);
 }
 
-void remove_door2(object *op) {
-  object *tmp;
+void remove_door2(object *op, object *opener) {
+  object *tmp, *tmp2;
 
   /* - NO cascading for locked doors! 
   int i;
@@ -116,6 +116,13 @@ void remove_door2(object *op) {
 	  remove_ob(op); /* to trigger all the updates/changes on map and for player, we
 					  * remove and reinsert it. a bit overhead but its secure and simple
 					  */
+		for(tmp2= op->inv;tmp2;tmp2=tmp2->below)
+		{
+			if (tmp2 && tmp2->type == RUNE && tmp2->level)
+				spring_trap (tmp2, opener);
+		}
+
+
 	  op->last_eat = 1; /* mark this door as "its open" */
       op->speed = 0.1f;		/* put it on active list, so it will close automatically */
       update_ob_speed(op);

@@ -147,8 +147,7 @@ void remove_friendly_object(object *op) {
 	     * call to remove it is still valid.
 	     */
 	    if ((tag_t) this->id != op->count) {
-		LOG(llevBug,"BUG: remove_friendly_object, tags do no match, %s, %d != %d\n",
-		    op->name?op->name:"none", op->count, this->id);
+		LOG(llevBug,"BUG: remove_friendly_object, tags do no match, %s, %d != %d\n",query_name(op), op->count, this->id);
 	    }
 	    prev->next = this->next;
 	    free(this);
@@ -167,7 +166,7 @@ void dump_friendly_objects() {
     objectlink *ol;
 
     for(ol=first_friendly_object;ol!=NULL;ol=ol->next)
-	LOG(llevInfo, "%s (%d)\n",ol->ob->name,ol->ob->count);
+	LOG(llevInfo, "%s (%d)\n",query_name(ol->ob),ol->ob->count);
 }
 
 /* New function, MSW 2000-1-14

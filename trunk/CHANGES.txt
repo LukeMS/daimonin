@@ -1,4 +1,26 @@
 Daimonin CHANGES
+04.11.2003      - fixed several small bugs
+                - fixed teleporter bug with non player objects
+                - added FLAG_NO_CLERIC and changed context from damned to it
+                - added FLAG_PLAYER_ONLY - only players are allowed in that tile
+                - throwing item and other don't enter exit/teleporter spaces anymore
+                - some small stability changeds
+                - move material_real table to object.c - it was part of server
+                - source and not of common! (plugin crash!).
+
+03.11.2003      - added new mobs
+                - added new bracer
+                - added shout/say/tell log
+                - added traps in locked_door type objects (when opened)
+                - reworking treasure list
+                - added traps to corpses
+
+02.11.2003	- fixed and added some stability issues. Trying to catch the
+                  "free all objects" bug in the map.c. Added additional logging there.
+
+31.10.2003      - throwing/firing nerfed - is now no uber skill anymore
+                - added level depending damage bonus (if the attacker has
+                  ( a higher level as the target, there will be a special dmg bonus)
 
 30.10.2003      - finished player houses - added all scripts
                 - added new doors

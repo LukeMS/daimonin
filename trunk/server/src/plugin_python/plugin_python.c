@@ -1281,6 +1281,11 @@ static PyObject* CFSetAlignment(PyObject* self, PyObject* args)
         return NULL;
 
     who = (object *)(obptr);
+	if(who->type != PLAYER)
+	{
+	    Py_INCREF(Py_None);
+	    return Py_None;
+	}
     
     for(walk=who->inv;walk!=NULL;walk=walk->below)
     {
@@ -1312,6 +1317,12 @@ static PyObject* CFGetAlignmentForce(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     
+	if(WHO->type != PLAYER)
+	{
+	    Py_INCREF(Py_None);
+	    return Py_None;
+	}
+
     for(walk=WHO->inv;walk!=NULL;walk=walk->below)
     {
         if (!strcmp(walk->name,"ALIGNMENT_FORCE")  && !strcmp(walk->arch->name,"alignment_force"))
@@ -1340,7 +1351,13 @@ static PyObject* CFSetGuildForce(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"ls",&obptr,&guild))
         return NULL;
     who = (object *)(obptr);
-    
+    	
+	if(who->type != PLAYER)
+	{
+	    Py_INCREF(Py_None);
+	    return Py_None;
+	}
+
     for(walk=who->inv;walk!=NULL;walk=walk->below)
     {
         if (!strcmp(walk->name,"GUILD_FORCE") && !strcmp(walk->arch->name,"guild_force"))
@@ -1375,6 +1392,12 @@ static PyObject* CFGetGuildForce(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     
+	if(WHO->type != PLAYER)
+	{
+	    Py_INCREF(Py_None);
+	    return Py_None;
+	}
+
     for(walk=WHO->inv;walk!=NULL;walk=walk->below)
     {
         if (!strcmp(walk->name,"GUILD_FORCE") && !strcmp(walk->arch->name,"guild_force"))
@@ -2789,10 +2812,12 @@ static PyObject* CFSetSaveBed(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"lsii",&whoptr,&txt,&x, &y))
         return NULL;
 	myob=WHO;
-    strcpy(myob->contr->savebed_map, txt);
-    myob->contr->bed_x = x;
-    myob->contr->bed_y = y;
-    
+	if(WHO->type == PLAYER)
+	{	
+		strcpy(myob->contr->savebed_map, txt);
+		myob->contr->bed_x = x;
+		myob->contr->bed_y = y;
+    }
     Py_INCREF(Py_None);
     return Py_None;
 };
@@ -3970,8 +3995,8 @@ static PyObject* CFSetCha(PyObject* self, PyObject* args)
     if (WHO->type == PLAYER)
     {
         WHO->contr->orig_stats.Cha = value;
-    };
-    fix_player(WHO);
+		fix_player(WHO);
+    }
     Py_INCREF(Py_None);
     return Py_None;
 };
@@ -3997,8 +4022,8 @@ static PyObject* CFSetCon(PyObject* self, PyObject* args)
     if (WHO->type == PLAYER)
     {
         WHO->contr->orig_stats.Con = value;
-    };
-    fix_player(WHO);
+	    fix_player(WHO);
+    }
     Py_INCREF(Py_None);
     return Py_None;
 };
@@ -4024,8 +4049,8 @@ static PyObject* CFSetDex(PyObject* self, PyObject* args)
     if (WHO->type == PLAYER)
     {
         WHO->contr->orig_stats.Dex = value;
-    };
-    fix_player(WHO);
+	    fix_player(WHO);
+    }
     Py_INCREF(Py_None);
     return Py_None;
 };
@@ -4073,8 +4098,8 @@ static PyObject* CFSetInt(PyObject* self, PyObject* args)
     if (WHO->type == PLAYER)
     {
         WHO->contr->orig_stats.Int = value;
-    };
-    fix_player(WHO);
+		fix_player(WHO);
+    }
     Py_INCREF(Py_None);
     return Py_None;
 };
@@ -4144,8 +4169,8 @@ static PyObject* CFSetPow(PyObject* self, PyObject* args)
     if (WHO->type == PLAYER)
     {
         WHO->contr->orig_stats.Pow = value;
-    };
-    fix_player(WHO);
+	    fix_player(WHO);
+    }
     Py_INCREF(Py_None);
     return Py_None;
 };
@@ -4193,8 +4218,8 @@ static PyObject* CFSetStr(PyObject* self, PyObject* args)
     if (WHO->type == PLAYER)
     {
         WHO->contr->orig_stats.Str = value;
-    };
-    fix_player(WHO);
+	    fix_player(WHO);
+    }
     Py_INCREF(Py_None);
     return Py_None;
 };
@@ -4219,8 +4244,8 @@ static PyObject* CFSetWis(PyObject* self, PyObject* args)
     if (WHO->type == PLAYER)
     {
         WHO->contr->orig_stats.Wis = value;
-    };
-    fix_player(WHO);
+	    fix_player(WHO);
+    }
     Py_INCREF(Py_None);
     return Py_None;
 };
@@ -4509,6 +4534,12 @@ static PyObject* CFGetIP(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args, "l",&whoptr))
         return NULL;
+
+	if(WHO->type != PLAYER)
+	{
+	    Py_INCREF(Py_None);
+	    return Py_None;
+	}
 
     if (WHO->contr!=NULL)
     {

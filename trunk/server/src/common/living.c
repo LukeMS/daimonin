@@ -1812,8 +1812,7 @@ int adjust_exp(object *pl, object *op, int exp) {
     /* be sure this is a skill object from a active player */
     if(op->type != SKILL || !pl || pl->type != PLAYER) 
     {
-        LOG(llevBug,"BUG: adjust_exp() - called for non player or non skill: skill: %s -> player: %s\n",
-            op->name, pl==NULL?"<NO CONTR>":pl->name);
+        LOG(llevBug,"BUG: adjust_exp() - called for non player or non skill: skill: %s -> player: %s\n",query_name(op), query_name(pl));
         return 0;
     }
 

@@ -51,6 +51,886 @@ object *objects;           /* Pointer to the list of used objects */
 object *free_objects;      /* Pointer to the list of unused objects */
 object *active_objects;	/* List of active objects that need to be processed */
 
+/* This Table is sorted in 64er blocks of the same base material, defined in
+   materialtype. Entrys, used for random selections should start from down of 
+   a table section. Unique materials should start from above the 64 block down.
+   The M_RANDOM_xx value will always counted from down. */
+    
+struct _material_real_struct material_real[] = {
+    /* undefined Material - for stuff we don't need material information about */
+    {"", 100,100,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+
+        /* PAPERS */
+    {"paper ",       90,    80,       0,0,0,      M_PAPER,         RACE_TYPE_NONE},
+    {"parchment ",   100,   90,       0,0,0,      M_PAPER,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    /* IRON (= Metal) */
+    {"iron ",                100,    80,   0,0,0,          M_IRON,         RACE_TYPE_NONE},
+    {"hardened iron ",       95,     81,   0,0,0,          M_IRON,         RACE_TYPE_NONE},
+    {"steel ",               90,     85,   0,0,0,          M_IRON,         RACE_TYPE_NONE},
+    {"forged steel ",        85,     86,   0,0,0,          M_IRON,         RACE_TYPE_NONE},
+    {"darksteel ",           70,     90,   0,0,0,          M_IRON,         RACE_TYPE_NONE},
+    {"forged darksteel ",    60,     91,   0,0,0,          M_IRON,         RACE_TYPE_NONE},
+    {"silksteel ",           50,     94,   0,0,0,          M_IRON,         RACE_TYPE_NONE},
+    {"forged silksteel ",    40,     95,   0,0,0,          M_IRON,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    /* Crystals/breakable/glass */
+    {"glass ",       100,80,       0,0,0,	M_GLASS, RACE_TYPE_NONE}, /* 129 */
+    {"zircon ",		100,80,       0,0,0,	M_GLASS, RACE_TYPE_NONE}, /* 130 */
+    {"pearl ",       75,83,       0,0,0,    M_GLASS, RACE_TYPE_NONE}, /* 131 */
+    {"emerald ",     75,85,       0,0,0,    M_GLASS, RACE_TYPE_NONE}, /* 132 */
+    {"sapphire ",    50,92,       0,0,0,    M_GLASS, RACE_TYPE_NONE}, /* 133 */
+    {"ruby ",        30,93,       0,0,0,    M_GLASS, RACE_TYPE_NONE}, /* 134 */
+    {"diamond ",     10,95,       0,0,0,    M_GLASS, RACE_TYPE_NONE}, /* 135 */
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    /* LEATHER */
+    {"soft leather ", 100,80,     0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"hardened leather ",           70, 80,       0,0,0,      M_LEATHER,         RACE_TYPE_NONE},
+    {"ogre leather ",       50,83,        0,0,0,      M_LEATHER,         RACE_TYPE_NONE},
+    {"giant leather ",      40, 87,       0,0,0,      M_LEATHER,         RACE_TYPE_NONE},
+    {"dark leather ",       35, 91,       0,0,0,      M_LEATHER,         RACE_TYPE_NONE},
+    {"drow leather ",       30,92,        0,0,0,      M_LEATHER,         RACE_TYPE_NONE},
+    {"demon leather ",      25,95,        0,0,0,      M_LEATHER,         RACE_TYPE_NONE},
+    {"dragon leather ",     20,96,        0,0,0,      M_LEATHER,         RACE_TYPE_NONE},
+    {"", 0,0,     0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    /* WOOD */
+    {"polished ",        100,80,       0,0,0,         M_WOOD,         RACE_TYPE_NONE},
+    {"oak ",             80,90,       0,0,0,          M_WOOD,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    /* ORGANIC */
+    {"animal ",       100,80,       0,0,0,      M_ORGANIC,       RACE_TYPE_NONE}, /* used for misc organics */
+    {"dragon ",      50,96,       0,0,0,      M_ORGANIC,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    /* STONE */
+    {"flint ",       100,80,       0,0,0,      M_STONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    /* CLOTH */
+    {"wool ",       100,80,       0,0,0,      M_CLOTH,         RACE_TYPE_NONE},
+    {"linen ",      90,80,        0,0,0,      M_CLOTH,         RACE_TYPE_NONE},
+    {"silk ",       25,95,        0,0,0,      M_CLOTH,         RACE_TYPE_NONE},
+    {"elven hair ",  25,95,        0,0,0,      M_CLOTH,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    /* ADAMANT (= magic metals) */
+    {"magic silk ",  1,99,       0,0,0,      M_ADAMANT,         RACE_TYPE_NONE},
+    {"mithril ",     1,99,       0,0,0,      M_ADAMANT,         RACE_TYPE_NONE},
+    {"adamant ",     10,99,      0,0,0,      M_ADAMANT,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    /* Liquid */
+	/* some like ice... the kind of liquid/potions in game don't depend
+	 * or even handle the liquid base type*/
+    {"",       100,80,       0,0,0,      M_LIQUID,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    /* Soft Metal */ 
+    {"tin ",         100,80,       0,0,0,	M_SOFT_METAL,	RACE_TYPE_NONE}, /* 641 */
+    {"brass ",		 100,80,       0,0,0,	M_SOFT_METAL,   RACE_TYPE_NONE}, /* 642 */
+    {"copper ",      100,80,       0,0,0,   M_SOFT_METAL,   RACE_TYPE_NONE}, /* 643 */
+    {"bronze ",      100,80,       0,0,0,   M_SOFT_METAL,   RACE_TYPE_NONE}, /* 644 */
+    {"silver ",      50, 90,       0,0,0,   M_SOFT_METAL,   RACE_TYPE_NONE}, /* 645 */
+    {"gold ",        20, 95,       0,0,0,   M_SOFT_METAL,   RACE_TYPE_NONE}, /* 646 */
+    {"platinum ",    10, 99,       0,0,0,   M_SOFT_METAL,   RACE_TYPE_NONE}, /* 647 */
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    /* Bone */
+    {"animal ",        100,80,       0,0,0,      M_BONE,         RACE_TYPE_NONE}, /* for misc bones*/
+    {"human ",			100,80,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"elven ",			100,80,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"dwarven ",		100,80,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    /* Ice */
+	/* not sure about the sense to put here different elements in...*/
+    {"",         100,80,       0,0,0,      M_ICE,         RACE_TYPE_NONE}, /* water */
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+};
+
+materialtype material[NROFMATERIALS] = {
+  /*  		  P  M  F  E  C  C  A  D  W  G  P S P T F  C D D C C G H B  I *
+   *		  H  A  I  L  O  O  C  R  E  H  O L A U E  A E E H O O O L  N *
+   *		  Y  G  R  E  L  N  I  A  A  O  I O R R A  N P A A U D L I  T *
+   *		  S  I  E  C  D  F  D  I  P  S  S W A N R  C L T O N   Y N  R *
+   *		  I  C     T     U     N  O  T  O   L      E E H S T P   D  N */
+  {"paper", 	{15,10,17, 9, 5, 7,13, 0,20,15, 0,0,0,0,0,10,0,0,0,0,0,0,0,0}},
+  {"metal", 	{ 2,12, 3,12, 2,10, 7, 0,20,15, 0,0,0,0,0,10,0,0,0,0,0,0,0,0}},
+  {"crystal",   {14,11, 8, 3,10, 5, 1, 0,20,15, 0,0,0,0,0, 0,0,0,0,0,0,0,0,0}},
+  {"leather", 	{ 5,10,10, 3, 3,10,10, 0,20,15, 0,0,0,0,0,12,0,0,0,0,0,0,0,0}},
+  {"wood", 	    {10,11,13, 2, 2,10, 9, 0,20,15, 0,0,0,0,0,12,0,0,0,0,0,0,0,0}},
+  {"organics", 	{ 3,12, 9,11, 3,10, 9, 0,20,15, 0,0,0,0,0, 0,0,0,0,0,0,0,0,0}},
+  {"stone", 	{ 2, 5, 2, 2, 2, 2, 1, 0,20,15, 0,0,0,0,0, 5,0,0,0,0,0,0,0,0}},
+  {"cloth", 	{14,11,13, 4, 4, 5,10, 0,20,15, 0,0,0,0,0, 5,0,0,0,0,0,0,0,0}},
+  {"magic material", 	{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,0,0,0,0, 0,0,0,0,0,0,0,0,0}},
+  {"liquid", 	{ 0, 8, 9, 6,17, 0,15, 0,20,15,12,0,0,0,0,11,0,0,0,0,0,0,0,0}},
+  {"soft metal",{ 6,12, 6,14, 2,10, 1, 0,20,15, 0,0,0,0,0,10,0,0,0,0,0,0,0,0}},
+  {"bone", 	    {10, 9, 4, 5, 3,10,10, 0,20,15, 0,0,0,0,0, 2,0,0,0,0,0,0,0,0}},
+  {"ice", 	    {14,11,16, 5, 0, 5, 6, 0,20,15, 0,0,0,0,0, 7,0,0,0,0,0,0,0,0}}
+};
 
 int freearr_x[SIZEOFFREE]=
   {0,0,1,1,1,0,-1,-1,-1,0,1,2,2,2,2,2,1,0,-1,-2,-2,-2,-2,-2,-1,
@@ -495,11 +1375,8 @@ void copy_owner (object *op, object *clone)
 
 void reset_object(object *op) {
   int i;
-  op->name = NULL;
-  op->title = NULL;
-  op->race = NULL;
-  op->slaying = NULL;
-  op->msg = NULL;
+
+  clear_object(op);
   for(i=0;i<NR_LOCAL_EVENTS;i++)
   {
     op->event_hook[i] = NULL;
@@ -507,7 +1384,6 @@ void reset_object(object *op) {
     op->event_options[i] = NULL;
   }  
   op->current_weapon_script = NULL;
-  clear_object(op);
 }
 /*
  * clear_object() frees everything allocated by an object, and also
@@ -878,7 +1754,9 @@ void update_object(object *op, int action) {
             update_now=1;
         else if (QUERY_FLAG(op, FLAG_NO_MAGIC) && !(flags & P_NO_MAGIC))
             update_now=1;
-        else if (QUERY_FLAG(op, FLAG_DAMNED) && !(flags & P_NO_CLERIC))
+        else if (QUERY_FLAG(op, FLAG_NO_CLERIC) && !(flags & P_NO_CLERIC))
+            update_now=1;
+        else if (QUERY_FLAG(op, FLAG_PLAYER_ONLY) && !(flags & P_PLAYER_ONLY))
             update_now=1;
 		else if(op->type == CHECK_INV && !(flags & P_CHECK_INV))
             update_now=1;
@@ -898,7 +1776,9 @@ void update_object(object *op, int action) {
             update_now=1;
         else if (QUERY_FLAG(op, FLAG_NO_MAGIC) && (flags & P_NO_MAGIC))
             update_now=1;
-        else if (QUERY_FLAG(op, FLAG_DAMNED) && (flags & P_NO_CLERIC))
+        else if (QUERY_FLAG(op, FLAG_NO_CLERIC) && (flags & P_NO_CLERIC))
+            update_now=1;
+        else if (QUERY_FLAG(op, FLAG_PLAYER_ONLY) && (flags & P_PLAYER_ONLY))
             update_now=1;
 		else if(op->type == CHECK_INV && (flags & P_CHECK_INV))
             update_now=1;
@@ -940,7 +1820,7 @@ void update_object(object *op, int action) {
  */
 
 void free_object(object *ob) {
-  object *tmp,*op;
+  object *tmp,*tmp_op;
 
     if (!QUERY_FLAG(ob,FLAG_REMOVED)) {
 	dump_object(ob);
@@ -966,12 +1846,12 @@ void free_object(object *ob) {
   if (ob->inv) {
     if (ob->map==NULL || ob->map->in_memory!=MAP_IN_MEMORY || wall(ob->map,ob->x,ob->y))
     {
-      op=ob->inv;
-      while(op!=NULL) {
-        tmp=op->below;
-        remove_ob(op);
-        free_object(op);
-        op=tmp;
+      tmp_op=ob->inv;
+      while(tmp_op!=NULL) {
+        tmp=tmp_op->below;
+        remove_ob(tmp_op);
+        free_object(tmp_op);
+        tmp_op=tmp;
       }
     }
     else {
@@ -993,11 +1873,11 @@ void free_object(object *ob) {
 				}
 			}
 
-			op=ob->inv;
-			while(op!=NULL)
+			tmp_op=ob->inv;
+			while(tmp_op!=NULL)
 			{
-				tmp=op->below;
-				remove_ob(op);
+				tmp=tmp_op->below;
+				remove_ob(tmp_op);
 					/* if we move spawn mobs, we don't want drop their items as free.
 					* So, marking the mob itself with "FLAG_STARTEQUIP" will kill
 					* all inventory and not dropping it on the map.
@@ -1006,20 +1886,20 @@ void free_object(object *ob) {
 					* any use... when we do it, a disease needle for example
 					* is dropping his disease force and so on.
 					*/
-					if(QUERY_FLAG(op,FLAG_SYS_OBJECT)|| QUERY_FLAG(ob,FLAG_STARTEQUIP) ||QUERY_FLAG(op,FLAG_STARTEQUIP)
-							||QUERY_FLAG(op,FLAG_NO_DROP) || op->type==RUNE)
-						free_object(op);
+					if(tmp_op->type != RUNE && (QUERY_FLAG(tmp_op,FLAG_SYS_OBJECT)|| QUERY_FLAG(ob,FLAG_STARTEQUIP) 
+						||QUERY_FLAG(tmp_op,FLAG_STARTEQUIP) ||QUERY_FLAG(tmp_op,FLAG_NO_DROP)))
+						free_object(tmp_op);
 					else 
 					{
-						op->x=ob->x,op->y=ob->y;
+						tmp_op->x=ob->x,tmp_op->y=ob->y;
 
 						/* if we have a corpse put the item in it */
 						if(corpse)
-							insert_ob_in_ob(op, corpse);
+							insert_ob_in_ob(tmp_op, corpse);
 						else
-							insert_ob_in_map(op,ob->map,NULL,0); /* Insert in same map as the envir */
+							insert_ob_in_map(tmp_op,ob->map,NULL,0); /* Insert in same map as the envir */
 					}
-				op=tmp;
+				tmp_op=tmp;
 			}
 
 			if(corpse)
@@ -1074,6 +1954,7 @@ void free_object(object *ob) {
       ob->next->prev=ob->prev;
   }
   
+  /*LOG(llevDebug,"FO: a:%s %x >%s< (#%d)\n", ob->arch?(ob->arch->name?ob->arch->name:""):"", ob->name, ob->name?ob->name:"",ob->name?query_refcount(ob->name):0);*/
   if(ob->name!=NULL) {
     free_string(ob->name);
     ob->name=NULL;
@@ -1726,7 +2607,7 @@ object *get_split_ob(object *orig_ob,int nr) {
 
     if((int) orig_ob->nrof<nr) {
 	sprintf(errmsg,"There are only %d %ss.",
-            orig_ob->nrof?orig_ob->nrof:1, orig_ob->name);
+            orig_ob->nrof?orig_ob->nrof:1, query_name(orig_ob));
 	return NULL;
     }
     newob=get_object();
@@ -1883,7 +2764,7 @@ object *insert_ob_in_ob(object *op,object *where) {
     where = where->head;
   }
   if (op->more) {
-    LOG(llevError, "ERROR: Tried to insert multipart object %s (%d)\n", op->name, op->count);
+    LOG(llevError, "ERROR: Tried to insert multipart object %s (%d)\n", query_name(op), op->count);
     return op;
   }
   CLEAR_FLAG(op, FLAG_OBJ_ORIGINAL);
@@ -1934,8 +2815,7 @@ object *insert_ob_in_ob(object *op,object *where) {
   if(op->glow_radius>0&&where->map)
   {
 #ifdef DEBUG_LIGHTS
-      LOG(llevDebug, " insert_ob_in_ob(): got %s to insert in map/op\n",
-	op->name);
+      LOG(llevDebug, " insert_ob_in_ob(): got %s to insert in map/op\n",query_name(op));
 #endif /* DEBUG_LIGHTS */ 
       if (MAP_DARKNESS(where->map)) update_all_los(where->map, where->x, where->y);
   }
@@ -2352,7 +3232,7 @@ object* load_object_str(char *obstr)
         return NULL;
     };
     load_object(tempfile,op,LO_NEWFILE,0);
-    LOG(llevDebug," load str completed, object=%s\n",op->name);
+    LOG(llevDebug," load str completed, object=%s\n",query_name(op));
     CLEAR_FLAG(op,FLAG_REMOVED);
     fclose(tempfile);
     return op;

@@ -427,6 +427,9 @@
   <attribute arch="no_pick" editor="non-pickable" type="bool">
     If set, the object cannot be picked up (Neither by players nor monsters).
   </attribute>
+  <attribute arch="player_only" editor="player only" type="bool">
+    If set, only players can enter the tile the object with this flag is in too.
+  </attribute>
   <attribute arch="is_invisible" editor="invisible" type="bool">
     Generally makes the object invisible. Invisible objects will be shown
     if the player has "see invisible" (from spell or item). To hide objects
@@ -463,10 +466,15 @@
   <attribute arch="damned" editor="damned" type="bool">
     Stronger form of curse. Item can't be removed when
     wielded or worn.
-    A damned item/floor on the ground makes it impossible for players
-    to use prayers on that spot. It also prevents players from saving.
   </attribute>
-
+  <attribute arch="no_magic" editor="no spells" type="bool">
+    If enabled, it is impossible for players to use (wizard-)
+    spells on that spot.
+  </attribute>
+  <attribute arch="no_cleric" editor="no prayers" type="bool">
+    If enabled, it is impossible for players to use (cleric-)
+    prayers on that spot.
+  </attribute>
   <attribute arch="unpaid" editor="unpaid" type="bool">
     An &lt;unpaid&gt; item cannot be used unless a player carried it over
     a shop mat, paying the demanded price. Setting this flag makes sense
@@ -2062,14 +2070,6 @@
     Players with activated mountaineer skill can move faster here.
   </attribute>
 </section>
-  <attribute arch="no_magic" editor="no spells" type="bool">
-    If enabled, it is impossible for players to use (wizard-)
-    spells on that spot.
-  </attribute>
-  <attribute arch="damned" editor="no prayers" type="bool">
-    If enabled, it is impossible for players to use prayers
-    on that spot. It also prevents players from saving.
-  </attribute>
   <attribute arch="unique" editor="unique map" type="bool">
     Unique floor means that any items dropped on that spot
     will be saved byond map reset. For permanent apartments,
@@ -2083,6 +2083,7 @@
 <!--####################################################################-->
 <type number="77" name="Wall">
   <ignore>
+    <attribute arch="no_magic" />
     <attribute arch="damned" />
     <ignore_list name="non_pickable" />
   </ignore>
@@ -2391,6 +2392,7 @@
 <!--####################################################################-->
 <type number="91" name="Gate">
   <ignore>
+    <attribute arch="no_magic" />
     <attribute arch="damned" />
     <ignore_list name="non_pickable" />
   </ignore>
@@ -2435,6 +2437,7 @@
 <!--####################################################################-->
 <type number="26" name="Timed Gate">
   <ignore>
+    <attribute arch="no_magic" />
     <attribute arch="damned" />
     <ignore_list name="non_pickable" />
   </ignore>
@@ -2709,14 +2712,6 @@
     Players with activated mountaineer skill can move faster here.
   </attribute>
 </section>
-  <attribute arch="no_magic" editor="no spells" type="bool">
-    If enabled, it is impossible for players to use (wizard-)
-    spells on that spot.
-  </attribute>
-  <attribute arch="damned" editor="no prayers" type="bool">
-    If enabled, it is impossible for players to use prayers
-    on that spot. It also prevents players from saving.
-  </attribute>
   <attribute arch="unique" editor="unique map" type="bool">
     Unique floor means that any items dropped on that spot
     will be saved byond map reset. For permanent apartments,
@@ -3036,6 +3031,7 @@
 <!--####################################################################-->
 <type number="20" name="Locked Door">
   <ignore>
+    <attribute arch="no_magic" />
     <attribute arch="damned" />
     <ignore_list name="non_pickable" />
   </ignore>
@@ -4583,14 +4579,6 @@
     But a powerful pet could as well be the reward for solving a
     quest. Or even better: It could be *part* of a quest!
   </attribute>
-  <attribute arch="no_magic" editor="no spells" type="bool">
-    If enabled, it is impossible for players to use (wizard-)
-    spells on that spot.
-  </attribute>
-  <attribute arch="damned" editor="no prayers" type="bool">
-    If enabled, it is impossible for players to use prayers
-    on that spot. It also prevents players from saving.
-  </attribute>
 </type>
 
 <!--####################################################################-->
@@ -6025,10 +6013,6 @@
     &lt;slow movement&gt; 2  - very rough terrain
     ...
     &lt;slow movement&gt; 5  - default for deep swamp
-  </attribute>
-  <attribute arch="no_magic" editor="no spells" type="bool">
-    If enabled, it is impossible for players to use (wizard-)
-    spells on that spot.
   </attribute>
 </type>
 

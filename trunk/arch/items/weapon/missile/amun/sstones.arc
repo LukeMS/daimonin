@@ -27,6 +27,7 @@ sub_type 3
 nrof 1
 weight 85
 value 15
-material 16
+material 64
+material_real 385
 food 20
 end

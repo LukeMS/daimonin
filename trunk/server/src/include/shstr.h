@@ -40,7 +40,7 @@
  * (The top bit of "refcount" is used to signify that "u.array" points
  * at the array entry.)
  */
-#define REFCOUNT_TYPE int
+#define REFCOUNT_TYPE unsigned int
 
 /* The offsetof macro is part of ANSI C, but many compilers lack it, for
  * example "gcc -ansi"
@@ -85,7 +85,7 @@ typedef struct _shared_string {
     /* The top bit of "refcount" is used to signify that "u.array" points
      * at the array entry.
      */
-    unsigned REFCOUNT_TYPE refcount;
+    REFCOUNT_TYPE refcount;
     /* Padding will be unused memory, since we can't know how large 
      * the padding when allocating memory. We assume here that
      * sizeof(long) is a good boundary.

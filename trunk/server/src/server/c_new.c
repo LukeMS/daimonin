@@ -251,7 +251,7 @@ void send_target_command(player *pl)
 
 int command_combat(object *op, char *params)
 {
-	if(!op->map)
+	if(!op || !op->map || !op->contr)
 		return 1;
 
 	if(op->contr->combat_mode)
@@ -275,7 +275,7 @@ int command_target(object *op, char *params)
 	object *tmp, *head;
 	int n,nt,xt,yt, block, pvp_flag = FALSE;
 
-	if(!op->map)
+	if(!op || !op->map || !op->contr || !params || params[0]==0)
 		return 1;
 
 	/* 0: we target enemy */
@@ -432,7 +432,11 @@ int command_target(object *op, char *params)
 
 void command_face_request(char *params, int len,player *pl)
 {
-	int i,count = *(uint8*)params;
+	int i, count;
+	
+	if(!params)
+		return;
+		count = *(uint8*)params;
 
 	for(i=0;i<count;i++)
 	{
@@ -451,7 +455,10 @@ void command_fire(char *params, int len,player *pl)
 {
     int dir=0, type, tag1, tag2; 
 	object *op=pl->ob;
-        
+    
+    if(!params)
+		return;
+
     op->contr->fire_on=1;
 
     /* i submit all this as string for testing. if stable, we change this to a short
@@ -501,6 +508,7 @@ void command_fire(char *params, int len,player *pl)
 void send_mapstats_cmd(object *op, struct mapdef *map)
 {
     char tmp[2024];
+
     op->contr->last_update = map; /* player: remember this is the map the client knows */    
     sprintf(tmp,"mapstats %d %d %d %d %s", map->width, map->height, op->x, op->y, map->name);
     Write_String_To_Socket(&op->contr->socket, tmp, strlen(tmp));
