@@ -270,9 +270,15 @@ void Network::Update()
 		if ((TextInput::getSingleton().startCursorSelection(0, mServerList.size())))
 		{
 			list<mStructServer*>::const_iterator iter = mServerList.begin();
-			for (int i=0 ; iter != mServerList.end(); ++iter)
+			for (unsigned int i=0 ; iter != mServerList.end(); ++iter)
 			{
 				Dialog::getSingelton().setSelText(i++, (*iter)->nameip.c_str());
+				// Fill the dialog-Info field.
+				if (i == TextInput::getSingleton().getSelCursorPos())
+				{
+					Dialog::getSingelton().setInfoText(0, (*iter)->desc1.c_str());
+					Dialog::getSingelton().setInfoText(1, (*iter)->desc2.c_str());
+				}
 			}
 			Dialog::getSingelton().UpdateLogin(DIALOG_STAGE_GET_META_SERVER);
 		}
@@ -288,9 +294,17 @@ void Network::Update()
 			TextInput::getSingleton().stop();
 			Option::getSingelton().mSelectedMetaServer = TextInput::getSingleton().getSelCursorPos();
 			Option::getSingelton().GameStatus = GAME_STATUS_STARTCONNECT;
-        }
+		}
 		if (TextInput::getSingleton().getChange())
+		{
+			list<mStructServer*>::const_iterator iter = mServerList.begin();
+			for (unsigned int i=0 ; i < TextInput::getSingleton().getSelCursorPos(); ++i) { ++iter; }
+			Dialog::getSingelton().setInfoText(0, (*iter)->version.c_str(), ColourValue::Black);
+			Dialog::getSingelton().setInfoText(1, (*iter)->desc1.c_str());
+			Dialog::getSingelton().setInfoText(2, "");
+			Dialog::getSingelton().setInfoText(3, "");
 			Dialog::getSingelton().UpdateLogin(DIALOG_STAGE_GET_META_SERVER);
+		}
 	}
 
 	///////////////////////////////////////////////////////////////////////
@@ -306,6 +320,7 @@ void Network::Update()
 		// This Server was selected in the dialog-window.
 		///////////////////////////////////////////////////////////////////////// 
 		mGameStatusVersionFlag = false;
+		Dialog::getSingelton().clearInfoText();
 		list<mStructServer*>::const_iterator iter = mServerList.begin();
 		for (unsigned int i=0 ; i < Option::getSingelton().mSelectedMetaServer; ++i) { ++iter; }
 		if (!OpenSocket((char*)(*iter)->nameip.c_str(), (*iter)->port))

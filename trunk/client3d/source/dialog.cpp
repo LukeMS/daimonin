@@ -26,64 +26,43 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "textinput.h"
 #include "logfile.h"
 
-static std::string mStrPlayerName;
-
-const int SELECTION_POS_Y = 101;
-const unsigned int MAX_DIALOG_TXT_LINES = 12;
-static OverlayElement *mElementLine[MAX_DIALOG_TXT_LINES], *mElementSelectionBar;
-static OverlayContainer *mDialogSelPanel;
-static std::string mStrPassword;
-static std::string mStrRePasswd;
-
-//=================================================================================================
-// Constructor.
-//=================================================================================================
-Dialog::Dialog()
-{
-}
-
-//=================================================================================================
-// Destructor.
-//=================================================================================================
-Dialog::~Dialog()
-{
-}
-
-//=================================================================================================
-// Return the instance.
-//=================================================================================================
-Dialog &Dialog::getSingelton()
-{
-   static Dialog singelton;
-   return singelton;
-}
-
 //=================================================================================================
 // Init all elements.
 //=================================================================================================
 bool Dialog::Init()
 {
-    mLoginOverlay = OverlayManager::getSingleton().getByName("DialogOverlay");
-	mPlayerName     = OverlayManager::getSingleton().getOverlayElement("Dialog/Login/Playername/Text");
-	mPlayerPasswd   = OverlayManager::getSingleton().getOverlayElement("Dialog/Login/Password/Text");
-	mPlayerRePasswd = OverlayManager::getSingleton().getOverlayElement("Dialog/Login/RePassword/Text");
-	mPanelPlayerName     = OverlayManager::getSingleton().getOverlayElement("Dialog/Login/Playername");
-	mPanelPlayerPasswd   = OverlayManager::getSingleton().getOverlayElement("Dialog/Login/Password");
-	mPanelPlayerRePasswd = OverlayManager::getSingleton().getOverlayElement("Dialog/Login/RePassword");
-	mElementSelectionBar = OverlayManager::getSingleton().getOverlayElement("Dialog/MetaSelect/select");
-	
+	mLoginOverlay					= OverlayManager::getSingleton().getByName			("DialogOverlay");
+	mPanelPlayerName			= OverlayManager::getSingleton().getOverlayElement	("Dialog/Login/Playername");
+	mPlayerName					= OverlayManager::getSingleton().getOverlayElement	("Dialog/Login/Playername/Text");
+	mPanelPlayerPasswd		= OverlayManager::getSingleton().getOverlayElement	("Dialog/Login/Password");
+	mPlayerPasswd				= OverlayManager::getSingleton().getOverlayElement	("Dialog/Login/Password/Text");
+	mPlayerRePasswd			= OverlayManager::getSingleton().getOverlayElement	("Dialog/Login/RePassword/Text");
+	mPanelPlayerRePasswd	= OverlayManager::getSingleton().getOverlayElement	("Dialog/Login/RePassword");
+	mElementSelectionBar		= OverlayManager::getSingleton().getOverlayElement	("Dialog/MetaSelect/select");
 	mDialogSelPanel= static_cast<OverlayContainer*>(OverlayManager::getSingleton().getOverlayElement("Dialog/MetaSelect/Back"));
+	mDialogInfoPanel=static_cast<OverlayContainer*>(OverlayManager::getSingleton().getOverlayElement("Dialog/Info/Panel"));
+	// Selection textareas.
 	std::string name= "Dialog/Text/";
-    for (unsigned int i=0; i < MAX_DIALOG_TXT_LINES; i++)
+	for (unsigned int i=0; i < DIALOG_TXT_LINES; i++)
 	{
-         mElementLine[i]= OverlayManager::getSingleton().
+		mElementLine[i]= OverlayManager::getSingleton().
 			cloneOverlayElementFromTemplate("Dialog/TextRow",name+"Line_"+ StringConverter::toString(i));
-		 mElementLine[i]->setTop(i*12+1);
-         mDialogSelPanel->addChild(mElementLine[i]);
+		mElementLine[i]->setTop(i*12+1);
+		mDialogSelPanel->addChild(mElementLine[i]);
+	}
+	// Info textareas.
+	name= "Dialog/Info/";
+	for (unsigned int i=0; i < DIALOG_INFO_LINES; i++)
+	{
+		mElementInfo[i]= OverlayManager::getSingleton().
+			cloneOverlayElementFromTemplate("Dialog/TextRow",name+"Line_"+ StringConverter::toString(i));
+		mElementInfo[i]->setTop(i*12+1);
+		mElementInfo[i]->setCaption(name+"Line_"+ StringConverter::toString(i));
+		mDialogInfoPanel->addChild(mElementInfo[i]);
 	}
 
 	mVisible = false;
-    return true;
+	return true;
 }
 
 //=================================================================================================
@@ -123,12 +102,37 @@ void Dialog::setWarning(int warning)
 }
 
 //=================================================================================================
-// 
+// Fill a textarea of selectable text.
 //=================================================================================================
-void Dialog::setSelText(unsigned int pos, const char *text)
+void Dialog::setSelText(unsigned int pos, const char *text, ColourValue color)
 {
-	if (pos > MAX_DIALOG_TXT_LINES) { pos = MAX_DIALOG_TXT_LINES; }
+	if (pos > DIALOG_TXT_LINES) { pos = DIALOG_TXT_LINES; }
 	mElementLine[pos]->setCaption(text);
+	mElementLine[pos]->setColour(color);
+}
+
+//=================================================================================================
+// Clear all selectable text.
+//=================================================================================================
+
+
+
+//=================================================================================================
+// Fill the textarea of Info text.
+//=================================================================================================
+void Dialog::setInfoText(unsigned int pos, const char *text, ColourValue color)
+{
+	if (pos > DIALOG_INFO_LINES) { pos = DIALOG_INFO_LINES; }
+	mElementInfo[pos]->setCaption(text);
+	mElementInfo[pos]->setColour(color);
+}
+
+//=================================================================================================
+// Clear all Info text.
+//=================================================================================================
+void Dialog::clearInfoText()
+{
+	for (unsigned int i=0; i < DIALOG_INFO_LINES; ++i) { mElementInfo[i]->setCaption(""); }
 }
 
 //=================================================================================================
@@ -136,7 +140,6 @@ void Dialog::setSelText(unsigned int pos, const char *text)
 //=================================================================================================
 void Dialog::UpdateLogin(unsigned int stage)
 {
-
 	switch(stage)
 	{
 		case DIALOG_STAGE_LOGIN_GET_NAME:
@@ -166,7 +169,6 @@ void Dialog::UpdateLogin(unsigned int stage)
 		case DIALOG_STAGE_GET_META_SERVER:
 			mDialogSelPanel->show();
 			mElementSelectionBar->setTop(12*TextInput::getSingleton().getSelCursorPos()+1);
-
 		default:
 			return;
 	}

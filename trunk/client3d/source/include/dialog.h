@@ -28,6 +28,9 @@ http://www.gnu.org/copyleft/lesser.txt.
 
 using namespace Ogre;
 
+const unsigned int DIALOG_TXT_LINES = 12;
+const unsigned int DIALOG_INFO_LINES = 4;
+
 enum _dialog_stage
 {
 	DIALOG_STAGE_LOGIN_GET_NAME,
@@ -46,25 +49,30 @@ enum _dialog_warning
 
 class Dialog
 {
-  public:
-	Dialog();
-    ~Dialog();
-    static Dialog &getSingelton();
-    bool Init();
+public:
+	Dialog(){;}
+	~Dialog(){;}
+	static Dialog &getSingelton() { static Dialog singelton; return singelton; }
+
+	bool Init();
 	void visible(bool vis);
 	bool isVisible() { return mVisible; }
 	void UpdateLogin(unsigned int stage);
 	void setWarning(int warning);
-	void setSelText(unsigned int pos, const char *text);
+	void setSelText (unsigned int pos, const char *text, ColourValue = ColourValue::White);
+	void setInfoText(unsigned int pos, const char *text, ColourValue = ColourValue::White);
+	void clearInfoText();
 
-    Overlay *mLoginOverlay;
+private:
+	Dialog(const Dialog&); // disable copy-constructor.
+	bool mVisible;
+	std::string mStrPlayerName, mStrPassword, mStrRePasswd;
+	Overlay *mLoginOverlay;
+	OverlayContainer *mDialogSelPanel, *mDialogInfoPanel;
 	OverlayElement *mPlayerName, *mPlayerPasswd, *mPlayerRePasswd;
 	OverlayElement *mPanelPlayerName, *mPanelPlayerPasswd, *mPanelPlayerRePasswd;
-
-  private:
-
-    Dialog(const Dialog&); // disable copy-constructor.
-	bool     mVisible;
+	OverlayElement *mElementLine[DIALOG_TXT_LINES], *mElementSelectionBar;
+	OverlayElement *mElementInfo[DIALOG_INFO_LINES];
 };
 
 #endif
