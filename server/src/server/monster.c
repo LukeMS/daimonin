@@ -42,6 +42,11 @@ static int tdir11;
 static int tdir12;
 static int tdir13;
 static int tdir14;
+static int tdir15;
+static int tdir16;
+static int tdir17;
+static int tdir18;
+static int tdir19;
 
 /* Maximum number of ticks a mob remembers an object that it can't see */
 #define MAX_KNOWN_OBJ_AGE 200
@@ -1367,20 +1372,20 @@ static inline int direction_from_response(object *op, move_response *response)
     switch(response->type) 
     {
         case MOVE_RESPONSE_DIR:
-            return response->data.direction;
+            return tdir15=response->data.direction;
         case MOVE_RESPONSE_OBJECT:
 //            LOG(llevDebug,"move_monster(): '%s' -> '%s'\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(response.data.target.obj));
-            return calc_direction_towards_object(op, response->data.target.obj);
+            return tdir16=calc_direction_towards_object(op, response->data.target.obj);
         case MOVE_RESPONSE_WAYPOINT:
 //            LOG(llevDebug,"move_monster(): '%s' -> '%s'\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(response.data.target.obj));
-            return calc_direction_towards_waypoint(op, response->data.target.obj);
+            return tdir17=calc_direction_towards_waypoint(op, response->data.target.obj);
         case MOVE_RESPONSE_COORD:
 //            LOG(llevDebug,"move_monster(): '%s' -> '%s'\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(response.data.target.obj));
-            return calc_direction_towards_coord(op, response->data.coord.map, 
+            return tdir18=calc_direction_towards_coord(op, response->data.coord.map, 
                     response->data.coord.x, response->data.coord.y);
 
         default:
-            return 0;
+            return tdir19=0;
     }
 }
 
