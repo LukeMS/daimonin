@@ -3019,14 +3019,18 @@ void remove_ob(object *op) {
 		{
 	    
 			move_apply_func (tmp, op, NULL);
+			/* WARNING: was_destroyed() works not anymore here because it checks
+			 * REMOVE_OBJ() - but we ARE here removed here!
+			 * I really must rework the walk_on/off stuff..
+			 */
 			if (was_destroyed (op, tag))
 			{
-				/* hmm... why is this a bug??.. this is like a trap
+					/* hmm... why is this a bug??.. this is like a trap
 				 * which instant kills you when you move away... not fair
 				 * but really not a bug. Of course not smart to handle this
 				 * AFTER the remove.
 				 */
-				LOG(llevBug, "SEMIBUG: (walk off stuff - is on TODO)remove_ob(): name %s, archname %s destroyed leaving object\n", tmp->name, tmp->arch->name);
+				/*LOG(llevBug, "SEMIBUG: (walk off stuff - is on TODO)remove_ob(): name %s, archname %s destroyed leaving object\n", tmp->name, tmp->arch->name);*/
 			}
 		}
 
@@ -3585,7 +3589,7 @@ object *insert_ob_in_ob(object *op,object *where) {
 	add_weight (where, op->weight*op->nrof);
 
         /* Make sure we get rid of the old object */
-        mark_object_removed(op); 
+		SET_FLAG(op, FLAG_REMOVED);
         
         op = tmp;
         remove_ob(op); /* and fix old object's links (we will insert it further down)*/
@@ -4009,7 +4013,7 @@ int was_destroyed (object *op, tag_t old_tag)
      * robust */
     /* Gecko: redefined "destroyed" a little broader: included removed objects.
      * -> need to make sure this is never a problem with temporarily removed objects */
-    return QUERY_FLAG(op, FLAG_REMOVED) && (op->count != old_tag) && OBJECT_FREE(op);
+    return (QUERY_FLAG(op, FLAG_REMOVED) || (op->count != old_tag) || OBJECT_FREE(op));
 }
 
 /* GROS - Creates an object using a string representing its content.         */
