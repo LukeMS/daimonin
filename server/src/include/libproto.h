@@ -225,6 +225,7 @@ extern int blocks_magic(mapstruct *m, int x, int y);
 extern int blocks_cleric(mapstruct *m, int x, int y);
 extern int blocked(object *ob, mapstruct *m, int x, int y, int terrain);
 extern int blocked_link(object *ob, int x, int y);
+extern int blocked_link_2(object *op, mapstruct *map, int x, int y);
 extern int blocked_tile(object *op, mapstruct *m, int x, int y);
 extern int arch_blocked(archetype *at, object *op, mapstruct *m, int x, int y);
 extern int arch_out_of_map(archetype *at, mapstruct *m, int x, int y);
@@ -249,8 +250,8 @@ extern mapstruct *out_of_map(mapstruct *m, int *x, int *y);
 extern int get_rangevector(object *op1, object *op2, rv_vector *retval, int flags);
 extern int get_rangevector_from_mapcoords(mapstruct *map1, int x1, int y1, mapstruct *map2, int x2, int y2, rv_vector *retval, int flags);
 extern int on_same_map(object *op1, object *op2);
-char *normalize_path (char *src, char *dst, char *path);
-int relative_tile_positon(mapstruct *map1, mapstruct *map2, int *x, int *y);
+extern char *normalize_path (char *src, char *dst, char *path);
+extern int relative_tile_positon(mapstruct *map1, mapstruct *map2, int *x, int *y);
 /* object.c */
 extern signed long sum_weight(object *op);
 extern object *is_player_inv(object *op);

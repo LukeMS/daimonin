@@ -104,15 +104,15 @@ static mapstruct *load_and_link_tiled_map(mapstruct *orig_map, int tile_num)
 }
 
 /* 
- * The recursive part of the function above.
+ * The recursive part of the function below.
  */
-static int relative_tile_position_rec(mapstruct *map1, mapstruct *map2, int *x, int *y) {    
+static int relative_tile_position_rec(mapstruct *map1, mapstruct *map2, int *x, int *y, uint32 id) {    
     int i;
     
     if(map1 == map2)
         return TRUE;
     
-    map1->traversed = 1;
+    map1->traversed = id;
     
     /* TODO: A bidirectional breadth-first search would be more efficient */
     /* Depth-first search for the destination map */
@@ -121,7 +121,8 @@ static int relative_tile_position_rec(mapstruct *map1, mapstruct *map2, int *x, 
             if (!map1->tile_map[i] || map1->tile_map[i]->in_memory != MAP_IN_MEMORY)
                 load_and_link_tiled_map(map1, i);
           
-            if (!map1->tile_map[i]->traversed && relative_tile_position_rec(map1->tile_map[i], map2, x, y)) {
+            if (map1->tile_map[i]->traversed != id && ((map1->tile_map[i] == map2) ||
+                        relative_tile_position_rec(map1->tile_map[i], map2, x, y, id))) {
                 switch(i) {
                     case 0: *y -= MAP_HEIGHT(map1->tile_map[i]); return TRUE;  /* North */
                     case 1: *x += MAP_WIDTH(map1);    return TRUE;  /* East */
@@ -149,7 +150,7 @@ static int relative_tile_position_rec(mapstruct *map1, mapstruct *map2, int *x, 
 static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int *y)
 {    
     int i;
-    mapstruct *m;
+    static uint32 traversal_id = 0;
 
     /* Save some time in the simplest cases ( very similar to on_same_map() )*/
     if(map1 == NULL || map2 == NULL)
@@ -174,12 +175,20 @@ static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int 
         }
     }
     
-    /* Clear the traversed flag from all maps in memory */
-    for(m = first_map; m != NULL; m=m->next) 
-        m->traversed = 0;
+    /* Avoid overflow of traversal_id */
+    if(traversal_id == 4294967295U /* UINT_MAX */) {
+        mapstruct *m;
+
+        LOG(llevDebug,"relative_tile_position(): resetting traversal id\n");
+
+        for(m = first_map; m != NULL; m=m->next) 
+            m->traversed = 0;
+
+        traversal_id = 0;
+    }
 
     /* recursive search */
-    return relative_tile_position_rec(map1, map2, x, y);
+    return relative_tile_position_rec(map1, map2, x, y, ++traversal_id);
 }
 
 
@@ -638,6 +647,41 @@ int blocked_link(object *op, int xoff, int yoff)
 	return 0; /* when we are here - then we can move */
 }
 
+/* As above, but using an absolute coordinate (map,x,y)-triplet
+ * TODO: this function should really be combined with the above
+ * to reduce code duplication...
+ */
+int blocked_link_2(object *op, mapstruct *map, int x, int y)
+{
+	object *tmp, *tmp2;
+	int xtemp, ytemp;
+    mapstruct *m;
+
+	for(tmp = op; tmp; tmp = tmp->more)
+	{
+		/* we search for this new position */
+		xtemp = x + tmp->arch->clone.x;
+		ytemp = y + tmp->arch->clone.y;
+		/* lets check it match a different part of us */
+		for(tmp2 = op; tmp2; tmp2 = tmp2->more)
+		{
+			/* if this is true, we can be sure this position is valid */
+			if(xtemp==tmp2->x && ytemp==tmp2->y)
+				break;
+		}
+		if(!tmp2) /* if this is NULL, tmp will move in a new node */
+		{
+			/* if this new node is illegal - we can skip all */
+			if (!(m=out_of_map(map,&xtemp,&ytemp))) 
+				return -1;
+			/* tricky: we use always head for tests - no need to copy any flags to the tail */
+			if( (xtemp = blocked(op,m,xtemp,ytemp,op->terrain_flag)) )
+				return xtemp;
+		}
+	}
+	return 0; /* when we are here - then we can move */
+}
+
 
 /* blocked_tile()
  * return: 0= not blocked 1: blocked
@@ -1035,6 +1079,7 @@ mapstruct *get_linked_map() {
 	mp->next=map;
 
 	map->buttons = NULL;
+    map->bitmap = NULL;
     map->in_memory=MAP_SWAPPED;
     /* The maps used to pick up default x and y values from the
      * map archetype.  Mimic that behaviour.
@@ -1069,17 +1114,22 @@ void allocate_map(mapstruct *m) {
      * realloc, but if the caller is presuming the data will be intact,
      * that is their poor assumption.
      */
-    if (m->spaces) {
+    if (m->spaces || m->bitmap) {
 	LOG(llevError,"ERROR: allocate_map callled with already allocated map (%s)\n", m->path);
-	free(m->spaces);
+	if(m->spaces) 
+        free(m->spaces);
+	if(m->bitmap) 
+        free(m->bitmap);
     }
     if (m->buttons) {
 		LOG(llevBug,"Bug: allocate_map callled with allready set buttons (%s)\n", m->path);
     }
 
     m->spaces = calloc(1, MAP_WIDTH(m) * MAP_HEIGHT(m) * sizeof(MapSpace));
-
-    if(m->spaces==NULL)
+    
+    m->bitmap = malloc(((MAP_WIDTH(m)+31)/32) * MAP_HEIGHT(m) * sizeof(uint32));
+    
+    if(m->spaces == NULL || m->bitmap == NULL)
 		LOG(llevError,"ERROR: allocate_map(): OOM.\n");
 }
 
@@ -1110,7 +1160,7 @@ mapstruct *get_empty_map(int sizex, int sizey) {
 
 static int load_map_header(FILE *fp, mapstruct *m)
 {
-    char buf[HUGE_BUF], msgbuf[HUGE_BUF], *key, *value, *end;
+    char buf[HUGE_BUF], msgbuf[HUGE_BUF], *key=buf, *value, *end;
     int msgpos=0;
 
     while (fgets(buf, HUGE_BUF-1, fp)!=NULL) {
@@ -1809,6 +1859,10 @@ void free_map(mapstruct *m,int flag) {
     m->buttons = NULL;
     for (i=0; i<TILED_MAPS; i++)
 		FREE_AND_NULL_PTR(m->tile_path[i]);
+    if(m->bitmap) {
+        free(m->bitmap);
+        m->bitmap = NULL;
+    }
     m->in_memory = MAP_SWAPPED;
 }
 
@@ -2387,16 +2441,16 @@ int get_rangevector_from_mapcoords(mapstruct *map1, int x1, int y1, mapstruct *m
     }
   
     switch(flags & (0x04 | 0x08)) {
-        case 0x00:            
+        case 0x00: /* Manhattan distance */       
             retval->distance =  abs(retval->distance_x)+abs(retval->distance_y);
             break;
-        case 0x04:
+        case 0x04: /* Euclidian distance */
             retval->distance = isqrt(retval->distance_x*retval->distance_x + retval->distance_y*retval->distance_y);
             break;
-        case 0x08:
+        case 0x08: /* Diagonal distance */
             retval->distance =  MAX(abs(retval->distance_x),abs(retval->distance_y));
             break;
-        case (0x04 | 0x08):
+        case (0x04 | 0x08): /* No distance calc */
             return TRUE;
     }
     retval->direction = find_dir_2(-retval->distance_x, -retval->distance_y);
@@ -2429,5 +2483,3 @@ int on_same_map(object *op1, object *op2)
 	 */
     return FALSE;
 }
-
-

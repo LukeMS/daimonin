@@ -17,6 +17,8 @@ PYTHONVER      	= @PYTHON_VER@
 LIBROOT 	= @PYTHON_LIB@
 INCLUDEROOT 	= @PYTHON_INC@
 
+EXTRA_CFLAGS    = @EXTRA_CFLAGS@
+
 # When configure fails set these to the required pathes
 #LIBROOT        = /usr/lib
 #INCLUDEROOT    = /usr/include
@@ -32,17 +34,16 @@ CC        = @CC@
 OBJECTS   = plugin_python.o
 INCLUDE   = -I./include -I../include -I$(INCLUDEROOT)/python$(PYTHONVER)
 
-CFLAGS    = -g -O2 -fPIC
-
+CFLAGS    = -g -O2 -fPIC $(EXTRA_CFLAGS)
 DEPEND = @DEPEND@
 
 LIBPYTHON = $(LIBROOT)/python$(PYTHONVER)/config/libpython$(PYTHONVER).a
 
-LDFLAGS=	-export-dynamic -rdynamic -Xlinker -Bsymbolic
+LDFLAGS=	-export-dynamic -rdynamic -Xlinker -Bsymbolic 
 SYSLIBS=	-lm
 ALLLIBS=	$(LIBPYTHON) $(LIBS) $(SYSLIBS)
 
-all : plugin_python
+all : plugin_python.so.0.1
 
 clean :
 	$(RM) -f *.o core plugin_python.so.0.1
@@ -50,10 +51,10 @@ clean :
 distclean : clean
 	$(RM) -f *.o core plugin_python.so.0.1 Makefile
 
-install :
+install : plugin_python.so.0.1
 	cp plugin_python.so.0.1 $(CROSSFIRE_PATH)/plugins
 
-plugin_python : $(OBJECTS)
+plugin_python.so.0.1 : $(OBJECTS)
 	$(CC) $(CFLAGS) $(LDFLAGS) -shared -Wl,-soname,plugin_python.so.0 $(LDFLAGS) $(OBJECTS) ../common/libcross.a $(ALLLIBS) -o plugin_python.so.0.1
 
 plugin_python.o : plugin_python.c

@@ -274,6 +274,13 @@ typedef struct wmapdef {
 #define MAP_FLAG_ULTIMATEDEATH		2048	/* this map is a ultimate death map */
 #define MAP_FLAG_PVP				4096	/* PvP is possible on this map */
 
+#define SET_MAP_TILE_VISITED(m, x, y, id) { \
+    if((m)->pathfinding_id != (id)) { \
+        (m)->pathfinding_id = (id); \
+        memset((m)->bitmap, 0, ((MAP_WIDTH(m)+31)/32) * MAP_HEIGHT(m) * sizeof(uint32)); } \
+    (m)->bitmap[(x)/32 + ((MAP_WIDTH(m)+31)/32)*(y)] |= (1U << ((x) % 32)); }
+#define QUERY_MAP_TILE_VISITED(m, x, y, id) \
+    ((m)->pathfinding_id == (id) && ((m)->bitmap[(x)/32 + ((MAP_WIDTH(m)+31)/32)*(y)] & (1U << ((x) % 32))))
 
 /* In general, code should always use the macros 
  * above (or functions in map.c) to access many of the 
@@ -289,6 +296,10 @@ typedef struct mapdef {
     char *tmpname;					/* Name of temporary file */
     char *msg;						/* Message map creator may have left */
 
+    /* The following two are used by the pathfinder algorithm in pathfinder.c */
+    uint32 *bitmap;                 /* Bitmap used for marking visited tiles in pathfinding */
+    uint32 pathfinding_id;          /* For which traversal is the above valid */
+    
     MapSpace *spaces;				/* Array of spaces on this map */
     oblinkpt *buttons;				/* Linked list of linked lists of buttons */
 
@@ -326,7 +337,7 @@ typedef struct mapdef {
 									 * level. When we save, we save darkness_def (tmp maps!).
 									 */
     uint8 compressed;				/* Compression method used */ 
-    uint8 traversed;                            /* Used to mark visited maps when searching through tiled maps */
+    uint32 traversed;               /* Used by relative_tile_position() to mark visited maps */
 
     sint8 humid;					/* humitidy of this tile */
     sint8 windspeed;				/* windspeed of this tile */

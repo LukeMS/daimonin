@@ -136,7 +136,7 @@ uint32 level_exp(int level,double expmul)
 sint32 add_exp(object *op, int exp, int skill_nr) {
     object *exp_ob=NULL;    /* the exp. object into which experience will go */ 
     object *exp_skill=NULL; /* the real skill object */ 
-    int del_exp=0;
+/*    int del_exp=0; */
     int limit=0;
     
     /*LOG(llevBug,"ADD: add_exp() called for $d!\n", exp); */
