@@ -6,10 +6,6 @@ local msg = string.lower(event.message);
 local words = string.split(msg);
 local marked = activator:FindMarkedObject();
 
--- TODO: we really need some tests for the case of
--- recursive scripts (a script triggering an event that
--- starts another script)
-
 -- Tests for the lua backend and the object model
 if (msg == 'exception') then
     me:SayTo(activator, "I will now raise an exception...");
@@ -65,9 +61,9 @@ elseif (msg == 'messaging') then
     me:Communicate('/kiss');
     me:Communicate('/hug ' .. activator.name);
 elseif (msg == 'matchstring') then
-    me:SayTo(activator, "match(foo, bar) = " .. tostring(game.MatchString("foo", "bar")))
-    me:SayTo(activator, "match(foo, foo) = " .. tostring(game.MatchString("foo", "foo")))
-    me:SayTo(activator, "match(foo, FOO) = " .. tostring(game.MatchString("foo", "FOO")))
+    me:SayTo(activator, "match(foo, bar) = " .. tostring(game:MatchString("foo", "bar")))
+    me:SayTo(activator, "match(foo, foo) = " .. tostring(game:MatchString("foo", "foo")))
+    me:SayTo(activator, "match(foo, FOO) = " .. tostring(game:MatchString("foo", "FOO")))
 elseif (msg == 'getip') then
     me:SayTo(activator, "Your IP is " .. activator:GetIP())
 
@@ -75,7 +71,7 @@ elseif (words[1] == 'skill') then
     if (words[2] == nil) then
         me:SayTo(activator, "Say ^skill <skill>^, e.g. ^skill punching^");
     else
-        local skillnr = game.GetSkillNr(words[2]);
+        local skillnr = game:GetSkillNr(words[2]);
         me:SayTo(activator, "Checking on skill "..words[2].." (nr "..skillnr..")");
         if activator:FindSkill(skillnr) == nil then
             me:SayTo(activator, "You do not know that skill!");
@@ -100,9 +96,9 @@ elseif (words[1] == 'findplayer') then
 	local player;
     if (words[2] == nil) then
         me:SayTo(activator, "Trying to find you. You can find another player by saying) then  ^findplayer NAME^");
-        player = game.FindPlayer(activator.name);
+        player = game:FindPlayer(activator.name);
     else
-        player = game.FindPlayer(words[2]);
+        player = game:FindPlayer(words[2]);
 	end
     if (player == nil) then
         me:SayTo(activator, "Sorry, couldn't find " .. words[2]);
@@ -439,17 +435,17 @@ elseif (msg == 'createobject') then
 -- Help the Drow to test recursion
 elseif msg == 'recursive_part_2' then
 	tl = TopicList()
-	tl:setDefault( function() event.me:Say("lvl2 tl: something wierd happened to the topiclist class") end)
-	tl:addTopics("recursive_part_2", function() event.me:Say("lvl2 tl ( CORRECT )") end)
-	tl:checkMessage()
+	tl:SetDefault( function() event.me:Say("lvl2 tl: something wierd happened to the topiclist class") end)
+	tl:AddTopics("recursive_part_2", function() event.me:Say("lvl2 tl ( CORRECT )") end)
+	tl:CheckMessage(event)
 
 	me:Say("Hey, the drow wants me to recurse a little...")
 	me:Communicate("recursive3")
 
 	tl2 = TopicList()
-	tl2:setDefault( function() event.me:Say("lvl2 tl: something wierd happened to the topiclist class") end)
-	tl2:addTopics("recursive_part_2", function() event.me:Say("lvl2 tl ( CORRECT )") end)
-	tl2:checkMessage()
+	tl2:SetDefault( function() event.me:Say("lvl2 tl: something wierd happened to the topiclist class") end)
+	tl2:AddTopics("recursive_part_2", function() event.me:Say("lvl2 tl ( CORRECT )") end)
+	tl2:CheckMessage(event)
 
 elseif msg == 'recursive' or msg == 'recursive2' then
 	-- me:Say("I'm keeping quiet")

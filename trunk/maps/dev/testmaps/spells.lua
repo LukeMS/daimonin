@@ -5,9 +5,10 @@ whoami = event.me
 
 tl = TopicList()
 
-tl:addTopics("learn (.*)", 
+-- Shows how to use captures in topics
+tl:AddTopics("learn (.*)", 
 	function(spellname)
-		spell = game.GetSpellNr(spellname)
+		spell = game:GetSpellNr(spellname)
 		if spell == -1 then
 			whoami:SayTo(activator,"Unknown spell \""..spellname.."\"" )
 		else
@@ -20,9 +21,9 @@ tl:addTopics("learn (.*)",
 	end
 )
 
-tl:addTopics("unlearn (.*)", 
+tl:AddTopics("unlearn (.*)", 
 	function(spellname)
-		spell = game.GetSpellNr(spellname)
+		spell = game:GetSpellNr(spellname)
 		if spell == -1 then
 			whoami:SayTo(activator,"Unknown spell \""..spellname.."\"" )
 		else
@@ -35,7 +36,7 @@ tl:addTopics("unlearn (.*)",
 	end
 )
 
-tl:setDefault(
+tl:SetDefault(
 	"\nI am the Spellgiver.\nSay ^learn <spellname>^ or ^unlearn <spellname>^");
 
-tl:checkMessage()
+tl:CheckMessage(event)

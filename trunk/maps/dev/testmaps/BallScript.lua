@@ -1,11 +1,15 @@
+-- Example script to demonstrate coroutines
 --
--- Proof of concept script of coroutines
--- A kickball that can be kicked around until it stops.
+-- A ball that can be kicked around until it stops.
 -- Then apply the ball to get it running again
 --
-local me = event.me
+-- Shows a few issues ideas of coroutines:
+--  1. Need to store the state to avoid "double" execution
+--  2. Need to validate object and map pointers after every yield
 
-local max_speed = 9    -- squares / s
+local me = event.me -- Use a local for shorter and quicker access
+
+local max_speed = 9    -- squares / s (TODO: should actually be 8. Need to fix?)
 local deceleration = 2 -- squares / s / s
 
 local dx = { 
@@ -35,16 +39,16 @@ function absDirection(dir)
 	return dir
 end
 
-function getBounceItem(map,x,y)
-	local obj = map:GetFirstObjectOnSquare(x, y)
-	while obj ~= nil do
-		if obj ~= me then
-			return obj.direction
-		end		
-		obj = obj.above
-	end
-	return 0
-end
+--function getBounceItem(map,x,y)
+--	local obj = map:GetFirstObjectOnSquare(x, y)
+--	while obj ~= nil do
+--		if obj ~= me then
+--			return obj.direction
+--		end		
+--		obj = obj.above
+--	end
+--	return 0
+--end
 
 function run()
 	local direction = 0
@@ -60,7 +64,8 @@ function run()
 		return absDirection(dir + 4 + math.random(-1,1) * math.random(0, 1))
 	end
 
-	while game.IsValid(me) and speed > 0 do
+	while game:IsValid(me) and speed > 0 do
+		-- Look for player pushing us
 		pushdir = getPushDirection()
 		if pushdir ~= 0 then 
 			direction = pushdir 
@@ -70,6 +75,7 @@ function run()
 			direction = bounce(direction) 
 		end
 		
+		-- Move, or bounce if that fails
 		if me:Move(direction) == 0 then direction = bounce(direction) end
 
 		if(speed > 0) then
@@ -77,10 +83,12 @@ function run()
 			speed = speed - (1 / speed) * deceleration		
 		end
 	end
-	if game.IsValid(me) then me.grace = 0 end
+	-- If we still have an object, mark it as stopped.
+	if game:IsValid(me) then me.grace = 0 end
 end
 
--- State is stored in me.grace
+-- State is stored in me.grace (because that field isn't used for 
+-- anything else _in this case_ )
 -- 0 - means stopped
 -- 1 - means rolling
 

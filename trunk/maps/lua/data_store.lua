@@ -179,26 +179,26 @@ end
 
 DataStore = {}
 
-function DataStore:get(key)
+function DataStore:Get(key)
 	local value = rawget(self, key)
 	local t = type(value)
-	if t == "userdata" and not game.IsValid(value) then
+	if t == "userdata" and not game:IsValid(value) then
 		value = nil
 	elseif t == "table" and value.type == game.TYPE_PLAYER and value.type_id then
 		local object = value.object
-		if game.IsValid(object) then
+		if game:IsValid(object) then
 			value = object
 		else
-			value = game.FindPlayer(value.type_id)
+			value = game:FindPlayer(value.type_id)
 			if value then
-				self:set(key, value)
+				self:Set(key, value)
 			end
 		end
 	end
 	return value
 end
 
-function DataStore:set(key, value)
+function DataStore:Set(key, value)
 	if key == "_changed" then
 		error("You can't change '_changed'")
 	end
@@ -215,13 +215,13 @@ function DataStore:set(key, value)
 	rawset(self, "_changed", os.time())
 end
 
-function DataStore:wasChanged()
+function DataStore:WasChanged()
 	rawset(self, "_changed", os.time())
 end
 
-_DataStore_mt = {__index = DataStore, __newindex = function() error("Use set() to add/change values") end}
+_DataStore_mt = {__index = DataStore, __newindex = function() error("Use Set() to add/change values") end}
 
-function DataStore:new(id, player)
+function DataStore:New(id, player)
 	local t
 	if player == nil then
 		t = _data_store
@@ -251,4 +251,4 @@ function DataStore:new(id, player)
 	return obj
 end
 
-setmetatable(DataStore, {__call = DataStore.new})
+setmetatable(DataStore, {__call = DataStore.New})
