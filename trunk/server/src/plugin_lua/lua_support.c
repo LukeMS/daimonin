@@ -124,6 +124,7 @@ static int getObjectMember(lua_State *L)
                             luaL_error(L, "Invalid object");
                         break;
                     case LUATYPE_MAP:
+                        /* TODO: also check tag! */
                         if(obj->data.map->in_memory != MAP_IN_MEMORY )
                             luaL_error(L, "Invalid map");
                         break;
@@ -497,6 +498,16 @@ void get_lua_args(lua_State *L, const char *fmt, ...)
             case 'M':
               /* Map */
               *va_arg(ap, lua_object * *) = get_object_arg(L, pos, &Map);
+              break;
+
+            case 'G':
+              /* Game */
+              *va_arg(ap, lua_object * *) = get_object_arg(L, pos, &Game);
+              break;
+            
+            case 'E':
+              /* Event */
+              *va_arg(ap, lua_object * *) = get_object_arg(L, pos, &Event);
               break;
 
             case 'i':

@@ -103,22 +103,18 @@ static int  Game_IsValid(lua_State *L);
 
 static struct method_decl       Game_methods[]      =
 {
-    {"FileUnlink", Game_FileUnlink}, {"TransferMapItems", Game_TransferMapItems}, {"LoadObject", Game_LoadObject},
-    {"ReadyMap", Game_ReadyMap}, {"CheckMap", Game_CheckMap}, {"MatchString", Game_MatchString},
-    {"FindPlayer", Game_FindPlayer}, {"GetSpellNr", Game_GetSpellNr},
-    {"GetSkillNr", Game_GetSkillNr}, {"IsValid", Game_IsValid},
+    {"FileUnlink", Game_FileUnlink}, 
+    {"TransferMapItems", Game_TransferMapItems}, 
+    {"LoadObject", Game_LoadObject},
+    {"ReadyMap", Game_ReadyMap}, 
+    {"CheckMap", Game_CheckMap}, 
+    {"MatchString", Game_MatchString},
+    {"FindPlayer", Game_FindPlayer}, 
+    {"GetSpellNr", Game_GetSpellNr},
+    {"GetSkillNr", Game_GetSkillNr}, 
+    {"IsValid", Game_IsValid},
     //    {"RegisterCommand", Game_RegisterCommand},
     {NULL, NULL}
-};
-
-static struct attribute_decl    Event_attributes[]  =
-{
-    {"me", FIELDTYPE_OBJECTREF, offsetof(struct lua_context, self), FIELDFLAG_READONLY, offsetof(struct lua_context, self_tag)},
-    {"activator", FIELDTYPE_OBJECTREF, offsetof(struct lua_context, activator), FIELDFLAG_READONLY, offsetof(struct lua_context, activator_tag)},
-    {"other", FIELDTYPE_OBJECTREF, offsetof(struct lua_context, other), FIELDFLAG_READONLY, offsetof(struct lua_context, other_tag)},
-    {"message", FIELDTYPE_SHSTR, offsetof(struct lua_context, text), FIELDFLAG_READONLY},
-    {"options", FIELDTYPE_SHSTR, offsetof(struct lua_context, options), FIELDFLAG_READONLY},
-    {"returnvalue", FIELDTYPE_SINT32, offsetof(struct lua_context, returnvalue)}, {NULL}
 };
 
 /* Useful constants */
@@ -209,6 +205,16 @@ static struct constant_decl     Game_constants[]    =
     {NULL, 0}
 };
 
+static struct attribute_decl    Event_attributes[]  =
+{
+    {"me", FIELDTYPE_OBJECTREF, offsetof(struct lua_context, self), FIELDFLAG_READONLY, offsetof(struct lua_context, self_tag)},
+    {"activator", FIELDTYPE_OBJECTREF, offsetof(struct lua_context, activator), FIELDFLAG_READONLY, offsetof(struct lua_context, activator_tag)},
+    {"other", FIELDTYPE_OBJECTREF, offsetof(struct lua_context, other), FIELDFLAG_READONLY, offsetof(struct lua_context, other_tag)},
+    {"message", FIELDTYPE_SHSTR, offsetof(struct lua_context, text), FIELDFLAG_READONLY},
+    {"options", FIELDTYPE_SHSTR, offsetof(struct lua_context, options), FIELDFLAG_READONLY},
+    {"returnvalue", FIELDTYPE_SINT32, offsetof(struct lua_context, returnvalue)}, {NULL}
+};
+
 /* Basic script classes */
 lua_class                       Event               =
 {
@@ -239,15 +245,16 @@ int NextCustomCommand;
 
 /*****************************************************************************/
 /* Name   : Game_FileUnlink(path)                                            */
-/* Lua    : game.FileUnlink(path)                                            */
+/* Lua    : game:FileUnlink(path)                                            */
 /* Info   : Unlink the file (delete is physically).                          */
 /* Status : Stable                                                           */
 /*****************************************************************************/
 static int Game_FileUnlink(lua_State *L)
 {
     char   *fname;
+    lua_object *self;
 
-    get_lua_args(L, "s", &fname);
+    get_lua_args(L, "Gs", &self, &fname);
 
     unlink(fname);
 
@@ -256,17 +263,17 @@ static int Game_FileUnlink(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : Game_TransferMapItems                                            */
-/* Lua    : game.TransferMapItems(map_old, map_new, x, y)                     */
+/* Lua    : game:TransferMapItems(map_old, map_new, x, y)                     */
 /* Info   : Transfer all items with "no_pick 0" setting from map_old         */
 /*          to position x,y on map new.                                      */
 /* Status : Stable                                                           */
 /*****************************************************************************/
 static int Game_TransferMapItems(lua_State *L)
 {
-    lua_object *map_new, *map_old;
+    lua_object *map_new, *map_old, *self;
     int         x, y;
 
-    get_lua_args(L, "MMii", &map_old, &map_new, &x, &y);
+    get_lua_args(L, "GMMii", &self, &map_old, &map_new, &x, &y);
 
     GCFP.Value[0] = (void *) (map_old->data.map);
     GCFP.Value[1] = (void *) (map_new->data.map);
@@ -281,7 +288,7 @@ static int Game_TransferMapItems(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : Game_LoadObject                                                  */
-/* Lua    : game.LoadObject(string)                                          */
+/* Lua    : game:LoadObject(string)                                          */
 /* Status : Untested                                                         */
 /*****************************************************************************/
 static int Game_LoadObject(lua_State *L)
@@ -289,8 +296,9 @@ static int Game_LoadObject(lua_State *L)
     object *whoptr;
     char   *dumpob;
     CFParm *CFR;
+    lua_object *self;
 
-    get_lua_args(L, "s", &dumpob);
+    get_lua_args(L, "Gs", &self, &dumpob);
 
     /* First step: We create the object */
     GCFP.Value[0] = (void *) (dumpob);
@@ -303,7 +311,7 @@ static int Game_LoadObject(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : Game_MatchString                                                 */
-/* Lua    : game.MatchString(firststr, secondstr)                            */
+/* Lua    : game:MatchString(firststr, secondstr)                            */
 /* Info   : Case insensitive string comparision. Returns 1 if the two        */
 /*          strings are the same, or 0 if they differ.                       */
 /*          secondstring can contain regular expressions.                    */
@@ -313,8 +321,9 @@ static int Game_MatchString(lua_State *L)
 {
     char   *premiere;
     char   *seconde;
+    lua_object *self;
 
-    get_lua_args(L, "ss", &premiere, &seconde);
+    get_lua_args(L, "Gss", &self, &premiere, &seconde);
 
     lua_pushboolean(L, (hooks->re_cmp(premiere, seconde) != NULL));
     return 1;
@@ -322,7 +331,7 @@ static int Game_MatchString(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : Game_ReadyMap                                                    */
-/* Lua    : game.ReadyMap(name, unique)                                      */
+/* Lua    : game:ReadyMap(name, unique)                                      */
 /* Info   : Make sure the named map is loaded into memory. unique _must_ be  */
 /*          1 if the map is unique (f_unique = 1).                           */
 /*          IF flags | 1, the map path is already the right unique one.      */
@@ -340,7 +349,9 @@ static int Game_ReadyMap(lua_State *L)
     lua_object *obptr   = NULL;
     int         flags   = 0;
     CFParm     *CFR;
-    get_lua_args(L, "si|O", &mapname, &flags, &obptr);
+    lua_object *self;
+
+    get_lua_args(L, "Gsi|O", &self, &mapname, &flags, &obptr);
 
     GCFP.Value[0] = (void *) (mapname);
     GCFP.Value[1] = (void *) (&flags);
@@ -357,7 +368,7 @@ static int Game_ReadyMap(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : Game_CheckMap                                                    */
-/* Lua    : game.CheckMap(arch, map_path, x, y)                              */
+/* Lua    : game:CheckMap(arch, map_path, x, y)                              */
 /* Info   :                                                                  */
 /* Status : Unfinished. DO NOT USE!                                          */
 /*****************************************************************************/
@@ -367,10 +378,11 @@ static int Game_CheckMap(lua_State *L)
     char   *what;
     char   *mapstr;
     int     x, y;
+    lua_object *self;
     /*    object* foundob; */
 
     /* Gecko: replaced coordinate tuple with separate x and y coordinates */
-    get_lua_args(L, "ssii", &what, &mapstr, &x, &y);
+    get_lua_args(L, "Gssii", &self, &what, &mapstr, &x, &y);
 
     luaL_error(L, "CheckMap() is not finished!");
 
@@ -387,7 +399,7 @@ static int Game_CheckMap(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : Game_FindPlayer                                                  */
-/* Lua    : game.FindPlayer(name)                                            */
+/* Lua    : game:FindPlayer(name)                                            */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 
@@ -397,8 +409,9 @@ static int Game_FindPlayer(lua_State *L)
     object *foundob = NULL;
     CFParm *CFR;
     char   *txt;
+    lua_object *self;
 
-    get_lua_args(L, "s", &txt);
+    get_lua_args(L, "Gs", &self, &txt);
 
     GCFP.Value[0] = (void *) (txt);
     CFR = (PlugHooks[HOOK_FINDPLAYER]) (&GCFP);
@@ -413,15 +426,16 @@ static int Game_FindPlayer(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : Game_GetSpellNr                                                  */
-/* Lua    : game.GetSpellNr(name)                                            */
+/* Lua    : game:GetSpellNr(name)                                            */
 /* Info   : Gets the number of the named spell. -1 if no such spell exists   */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static int Game_GetSpellNr(lua_State *L)
 {
     char   *spell;
+    lua_object *self;
 
-    get_lua_args(L, "s", &spell);
+    get_lua_args(L, "Gs", &self, &spell);
 
     lua_pushnumber(L, hooks->look_up_spell_name(spell));
     return 1;
@@ -429,15 +443,16 @@ static int Game_GetSpellNr(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : Game_GetSkillNr                                                  */
-/* Lua    : game.GetSkillNr(name)                                            */
+/* Lua    : game:GetSkillNr(name)                                            */
 /* Info   : Gets the number of the named skill. -1 if no such skill exists   */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static int Game_GetSkillNr(lua_State *L)
 {
     char   *skill;
+    lua_object *self;
 
-    get_lua_args(L, "s", &skill);
+    get_lua_args(L, "Gs", &self, &skill);
 
     lua_pushnumber(L, hooks->lookup_skill_by_name(skill));
     return 1;
@@ -445,7 +460,7 @@ static int Game_GetSkillNr(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : Game_IsValid                                                     */
-/* Lua    : game.IsValid(what)                                               */
+/* Lua    : game:IsValid(what)                                               */
 /* Info   : Test if a Map, Event or GameObject is still valid.               */
 /*          (Useful for datastore and coroutine usage).                      */
 /*          This is the only lua function that doesn't generate an error if  */
@@ -455,18 +470,19 @@ static int Game_GetSkillNr(lua_State *L)
 static int Game_IsValid(lua_State *L)
 {
     lua_object *obj;
+    lua_object *self;
 
-    if(lua_gettop(L) != 1)
-        luaL_error(L, "wrong number of arguments to game.IsValid() (1 expected, got %d)", lua_gettop(L));
+    if(lua_gettop(L) != 2)
+        luaL_error(L, "wrong number of arguments to game.IsValid() (2 expected, got %d)", lua_gettop(L));
 
-    /* Nil is never valid, so we can just return it */
     if(lua_isnil(L, -1))
     {
+        /* Nil is never valid */
         lua_pushboolean(L, 0);
     }
     else if(! (obj = lua_touserdata(L, -1)))
     {
-        luaL_error(L, "parameter is not nil, a GameObject or a Map");
+        luaL_error(L, "parameter is not nil or an object");
     }
     else
     {
@@ -475,10 +491,18 @@ static int Game_IsValid(lua_State *L)
             lua_pushboolean(L, obj->data.object->count == obj->tag);
         } else if(obj->class == &Map)
         {
-            luaL_error(L, "validation of Maps not yet supported");
+            lua_pushboolean(L, obj->data.map->in_memory == MAP_IN_MEMORY );
+            /* TODO: also check tag */
+        } else if(obj->class == &Game)
+        {
+            /* The game object is always valid */
+            lua_pushboolean(L, 1);
+        } else if(obj->class == &Event)
+        {
+            lua_pushboolean(L, obj->data.context->tag == obj->tag );
         } else
         {
-            luaL_error(L, "parameter is not nil, a GameObject or a Map");
+            luaL_error(L, "parameter is not nil or an object");
         }
     }
 

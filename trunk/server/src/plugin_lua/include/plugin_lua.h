@@ -283,6 +283,8 @@ int                     load_file_cache(struct lua_State *L, const char *file);
 
 extern lua_class        GameObject;
 extern lua_class        Map;
+extern lua_class        Event;
+extern lua_class        Game;
 extern int              GameObject_init(lua_State *s);
 extern int              Map_init(lua_State *s);
 
