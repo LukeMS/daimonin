@@ -856,7 +856,9 @@ treasure wyvern
   nrof 1
   more
   arch banded_mail
-  chance 2
+  chance 3
+  magic_chance 450
+  magic 1
   difficulty 5
   nrof 1
   more
@@ -870,8 +872,11 @@ treasure wyvern
    chance 2
   more
   arch coppercoin
-  chance 100
-  nrof 6
+   chance 75
+   nrof 30
+  arch silvercoin
+  chance 25
+  nrof 3
 end
 treasure ogre
   arch club
