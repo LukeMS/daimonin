@@ -667,7 +667,7 @@ void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int
 					tmp->nrof = RANDOM()%((int) t->nrof) + 1;
 				/* ret 1 = artifact is generated - don't overwrite anything here */
 				set_material_real(tmp, change_arch?change_arch:&t->change_arch);    
-				if(!fix_generated_item (tmp, op, difficulty,a_chance, t_style, t->magic, t->magic_fix, t->magic_chance, flag))
+				if(!fix_generated_item (&tmp, op, difficulty,a_chance, t_style, t->magic, t->magic_fix, t->magic_chance, flag))
 					change_treasure(change_arch?change_arch:&t->change_arch, tmp);        
 				put_treasure (tmp, op, flag);
 				/* if treasure is "identified", created items are too */
@@ -797,7 +797,7 @@ void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty,
 			if(t->nrof&&tmp->nrof<=1)
 				tmp->nrof = RANDOM()%((int) t->nrof) + 1;
 			set_material_real(tmp, change_arch?change_arch:&t->change_arch);    
-			if(!fix_generated_item (tmp, op, difficulty,a_chance, (t->t_style==T_STYLE_UNSET)?t_style:t->t_style, t->magic, t->magic_fix, t->magic_chance, flag))
+			if(!fix_generated_item (&tmp, op, difficulty,a_chance, (t->t_style==T_STYLE_UNSET)?t_style:t->t_style, t->magic, t->magic_fix, t->magic_chance, flag))
 				change_treasure(change_arch?change_arch:&t->change_arch, tmp);        
 			put_treasure (tmp, op, flag);
 			/* if trasure is "identified", created items are too */
@@ -1377,8 +1377,9 @@ static int get_random_spell(int level, int flags)
  *     Sets FLAG_STARTEQIUP on item if appropriate, or clears the item's
  *     value.
  */
-int fix_generated_item (object *op, object *creator, int difficulty, int a_chance, int t_style, int max_magic, int fix_magic, int chance_magic, int flags)
+int fix_generated_item (object **op_ptr, object *creator, int difficulty, int a_chance, int t_style, int max_magic, int fix_magic, int chance_magic, int flags)
 {
+	object *op=*op_ptr; /* just to make things easy */
 	int temp, retval=0, was_magic = op->magic;
 	int too_many_tries=0,is_special=0;
 
@@ -1502,7 +1503,7 @@ int fix_generated_item (object *op, object *creator, int difficulty, int a_chanc
 			if(op->arch==NULL)
 			{
 				remove_ob(op);
-				op=NULL;
+				*op_ptr=op=NULL;
 				break;
 			}
 
@@ -1517,7 +1518,7 @@ int fix_generated_item (object *op, object *creator, int difficulty, int a_chanc
 			{
 				if(!QUERY_FLAG(op,FLAG_REMOVED))
 					remove_ob(op);
-			    op=arch_to_object(ring_arch_normal);
+			    *op_ptr=op=arch_to_object(ring_arch_normal);
 				generate_artifact(op,difficulty, t_style,99);
 			}
 

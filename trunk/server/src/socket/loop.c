@@ -251,7 +251,7 @@ void HandleClient(NewSocket *ns, player *pl)
 		* user could certainly send a whole bunch of invalid commands.
 		*/
 
-		LOG(llevDebug,"Bad command from client (%s)\n",ns->inbuf.buf+2);
+		LOG(llevDebug,"HACKBUG: Bad command from client (%s) (%s)\n",ns->inbuf.buf+2,data?data:"null");
 		ns->status =Ns_Dead;
 		return;
 

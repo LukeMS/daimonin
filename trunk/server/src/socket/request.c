@@ -474,8 +474,13 @@ void ReplyCmd(char *buf, int len, player *pl)
      * think it was the carriage return that was entered, and the
      * function then does not try to do additional input.
      */
-    sprintf(pl->write_buf,":%s",buf);
 
+	if(pl->socket.status == Ns_Dead) /* why ever... */
+		return;
+
+	strcpy(pl->write_buf,":");
+	strncat(pl->write_buf,buf,250);
+	pl->write_buf[250]=0;
     pl->socket.ext_title_flag = 1;
     
     switch (pl->state) {
@@ -490,8 +495,8 @@ void ReplyCmd(char *buf, int len, player *pl)
 
 	case ST_GET_PASSWORD:
 	case ST_CONFIRM_PASSWORD:
-	    receive_player_password(pl->ob,13);
-	    break;
+		receive_player_password(pl->ob,13);
+		break;
 
 	default:
 		pl->socket.status = Ns_Dead;
