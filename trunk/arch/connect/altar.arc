@@ -28,7 +28,7 @@ altar.131
 mina
 level 1
 is_animated 0
-anim_speed 1
+anim_speed 0
 is_turnable 1
 direction 1
 no_pick 1

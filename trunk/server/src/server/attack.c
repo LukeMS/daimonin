@@ -456,23 +456,14 @@ int hit_player(object *op,int dam, object *hitter, int type)
 #endif
     }
 
-    /* if one get attacked, the attacker will become the enemy */
-    if(!OBJECT_VALID(op->enemy, op->enemy_count)) {
-        if(get_owner(hitter)) /* assign the owner as bad boy */
-            set_npc_enemy(op, hitter->owner, NULL);
-        else if (QUERY_FLAG(hitter,FLAG_MONSTER)) /* or normal mob */
-            set_npc_enemy(op, hitter, NULL);
-    } 
-    /* TODO: also handle op->attacked_by here */
-
-    /* Gecko: moved this to set_npc_enemy to cover more cases 
-    if(QUERY_FLAG(op,FLAG_UNAGGRESSIVE) && op->type != PLAYER) {
-	* The unaggressives look after themselves 8) *
-    LOG(llevDebug, "DEBUG: cleared unaggressive flag for %s\n", STRING_OBJ_NAME(op));
-	CLEAR_FLAG(op, FLAG_UNAGGRESSIVE);
-	npc_call_help(op);
+    /* Update hittee's friendship level towards hitter */
+    {
+        object *root_hitter = get_owner(hitter) ? hitter->owner : hitter;
+        struct mob_known_obj *enemy = register_npc_known_obj(op, root_hitter, -dam);
+        if(enemy && enemy->friendship > FRIENDSHIP_ATTACK)
+            enemy->friendship += FRIENDSHIP_ATTACK;
+//            modify_known_obj_friendship(enemy, FRIENDSHIP_ATTACK);
     }
-    */
 
     /* this is needed to send the hit number animations to the clients */
     if(op->damage_round_tag != ROUND_TAG)
@@ -488,6 +479,7 @@ int hit_player(object *op,int dam, object *hitter, int type)
     op->stats.hp-=maxdam; /* thats the damage the target got */
 
     /* Eneq(@csd.uu.se): Check to see if monster runs away. */
+    /* TODO: gecko: this should go into a behaviour... */
     if ((op->stats.hp>=0) && QUERY_FLAG(op, FLAG_MONSTER) &&
 	op->stats.hp<(signed short)(((float)op->run_away/100.0f)*
 	(float)op->stats.maxhp)) {
@@ -1289,7 +1281,7 @@ int kill_object(object *op,int dam, object *hitter, int type)
 		 */
 		if(owner->type != PLAYER || !op->enemy || op->enemy->type != PLAYER)
 		{
-			op->enemy = owner;			   /* no set_npc_enemy since we are killing it... */
+			op->enemy = owner;			   /* no register_npc_enemy since we are killing it... */
 			op->enemy_count = owner->count;
 		}
 

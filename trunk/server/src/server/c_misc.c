@@ -150,7 +150,7 @@ void malloc_info(object *op) {
   LOG(llevSystem,"%s\n",errmsg);
   
   for(j=0; j<NROF_MEMPOOLS; j++) {
-      int ob_used=mempools[j].nrof_used,ob_free=mempools[j].nrof_free;
+      int ob_used=mempools[j].nrof_allocated - mempools[j].nrof_free,ob_free=mempools[j].nrof_free;
       sprintf(errmsg,"%4d used %s:    %8d",ob_used,mempools[j].chunk_description, 
               i=(ob_used*(mempools[j].chunksize + sizeof(struct mempool_chunk))));
       new_draw_info(NDI_UNIQUE, 0,op,errmsg);

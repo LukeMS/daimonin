@@ -8,7 +8,7 @@ anim
 torch_lit1.101
 torch_lit1.102
 mina
-is_animated 0
+is_animated 1
 anim_speed 4
 material 144
 value 10

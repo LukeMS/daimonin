@@ -85,7 +85,7 @@ mina
 direction 1
 is_turnable 1
 pass_thru 1
-anim_speed 1
+anim_speed 0
 is_animated 0
 wc 0
 dam 5
@@ -175,7 +175,7 @@ grate_door1.132
 grate_door1.131
 grate_door1.131
 mina
-anim_speed 1
+anim_speed 0
 direction 1
 state 7
 is_turnable 1

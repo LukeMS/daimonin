@@ -1,14 +1,23 @@
 Object fmask_ruin1a.111
+name ruin parts
 layer 2
 face fmask_ruin1a.111
-name ruin parts
-no_pick 1
-type 79
-end
-Object fmask_ruin1a.131
-layer 2
-face fmask_ruin1a.131
-name ruin parts
+anim
+facings 9
+dummy.111
+fmask_ruin1a.111
+fmask_ruin1a.111
+fmask_ruin1a.111
+fmask_ruin1a.131
+fmask_ruin1a.131
+fmask_ruin1a.131
+fmask_ruin1a.131
+fmask_ruin1a.111
+mina
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 type 79
 end

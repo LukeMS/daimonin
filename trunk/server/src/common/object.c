@@ -963,7 +963,6 @@ int freedir[SIZEOFFREE]= {
 /** Basic pooling memory management system **/
 
 /* TODO: move out into mempool.c & mempool.h files.
- * TODO: increase efficiency by replacing nrof_used with nrof_allocated
  * TODO: poolify objlinks
  */
 
@@ -977,12 +976,21 @@ struct mempool mempools[NROF_MEMPOOLS] = {
     { NULL, 10, sizeof(struct puddle_info), 0, 0, NULL, NULL, "puddles", MEMPOOL_ALLOW_FREEING },
     #endif
     
-    { NULL, OBJECT_EXPAND, sizeof(object), 0, 0, 
+    { NULL, OBJECT_EXPAND, sizeof(object), 0, 0,
         (chunk_constructor)initialize_object, (chunk_destructor)destroy_object, "objects" },
-        
+    
     { NULL, 5, sizeof(player), 0, 0, NULL, NULL, "players", MEMPOOL_BYPASS_POOLS },
     { NULL, 16, sizeof(struct mapsearch_node), 0, 0, NULL, NULL, "map BFS nodes", 0 },
     /* Actually, we will later set up the destructor to point towards free_player() */
+
+    { NULL, 500, sizeof(struct path_segment), 0, 0,
+        NULL, NULL, "path segments" },
+    
+    { NULL, 100, sizeof(struct mobdata), 0, 0,
+        /*(chunk_constructor)initialize_aidata*/NULL, NULL, "mob brains" },
+    
+    { NULL, 100, sizeof(struct mob_known_obj), 0, 0,
+        NULL, NULL, "mob known objects" },    
 };
 
 /* The mempool system never frees memory back to the system, but is extremely efficient
@@ -1001,8 +1009,8 @@ void init_mempools() {
     /* Initialize end-of-list pointers and a few other values*/
     for(i=0; i<NROF_MEMPOOLS; i++) {
         mempools[i].first_free = &end_marker;
-        mempools[i].nrof_used = 0;
         mempools[i].nrof_free = 0;
+        mempools[i].nrof_allocated = 0;
 #ifdef MEMPOOL_TRACKING
         mempools[i].first_puddle_info = NULL;
 #endif        
@@ -1050,6 +1058,7 @@ static void expand_mempool(mempool_id pool) {
         LOG(llevError,"ERROR: expand_mempool(): Out Of Memory.\n");
 
     mempools[pool].first_free = first;
+    mempools[pool].nrof_allocated += mempools[pool].expand_size;
     mempools[pool].nrof_free += mempools[pool].expand_size;
 
     /* Set up the linked list */
@@ -1087,6 +1096,7 @@ void *get_poolchunk(mempool_id pool)
 
     if(mempools[pool].flags & MEMPOOL_BYPASS_POOLS) {
         new_obj = calloc(1, sizeof(struct mempool_chunk) + mempools[pool].chunksize);        
+        mempools[pool].nrof_allocated++;
     } else {
         if(mempools[pool].nrof_free == 0) 
             expand_mempool(pool);
@@ -1095,14 +1105,12 @@ void *get_poolchunk(mempool_id pool)
         mempools[pool].nrof_free--;
     }
 
-    mempools[pool].nrof_used++;
     new_obj->next = NULL;
 	
     if(mempools[pool].constructor)
         mempools[pool].constructor(MEM_USERDATA(new_obj));
 
 #ifdef MEMPOOL_OBJECT_TRACKING
-	
 	/* that should never happens! */
 	if(new_obj->obj_prev || new_obj->obj_next)
 	{
@@ -1128,7 +1136,8 @@ void return_poolchunk(void *data, mempool_id pool)
     struct mempool_chunk *old = MEM_POOLDATA(data);
     
     if(CHUNK_FREE(data))
-        LOG(llevBug, "BUG: return_poolchunk on already free chunk\n"); 
+        LOG(llevBug, "BUG: return_poolchunk on already free chunk (pool %d \"%s\")\n", 
+                pool, mempools[pool].chunk_description); 
     
     if(pool >= NROF_MEMPOOLS)
         LOG(llevBug, "BUG: return_poolchunk for illegal memory pool %d\n", pool); 
@@ -1151,12 +1160,12 @@ void return_poolchunk(void *data, mempool_id pool)
 
     if(mempools[pool].flags & MEMPOOL_BYPASS_POOLS) {
         free(old);        
+        mempools[pool].nrof_allocated--;
     } else {
         old->next = mempools[pool].first_free;
         mempools[pool].first_free = old;
         mempools[pool].nrof_free++;
     }
-    mempools[pool].nrof_used--;
 }
 
 #ifdef MEMPOOL_OBJECT_TRACKING
@@ -1941,7 +1950,7 @@ object *find_object_name(char *str) {
 
 void free_all_object_data() {
     LOG(llevDebug,"%d allocated objects, %d free objects\n", 
-	mempools[POOL_OBJECT].nrof_used, mempools[POOL_OBJECT].nrof_free);
+	mempools[POOL_OBJECT].nrof_allocated, mempools[POOL_OBJECT].nrof_free);
 }
 
 /*
@@ -2136,6 +2145,10 @@ void copy_object(object *op2, object *op)
 		SET_FLAG(op,FLAG_KNOWN_CURSED);
 	}
 
+    /* We set the custom_attrset pointer to NULL to avoid
+     * really bad problems. TODO. this needs to be handled better */
+    op->custom_attrset = NULL;
+    
  /* Only alter speed_left when we sure we have not done it before */
   if(op->speed<0 && op->speed_left == op->arch->clone.speed_left) 
 	  op->speed_left+=(RANDOM()%90)/100.0f;
@@ -2172,6 +2185,10 @@ void copy_object_data(object *op2, object *op)
 		SET_FLAG(op,FLAG_KNOWN_MAGICAL);
 		SET_FLAG(op,FLAG_KNOWN_CURSED);
 	}
+    
+    /* We set the custom_attrset pointer to NULL to avoid
+     * really bad problems. TODO. this needs to be handled better */
+    op->custom_attrset = NULL;
 }
 
 /*
@@ -2786,8 +2803,12 @@ void destroy_object(object *ob) {
 
       switch(ob->type) {
           case PLAYER:
-          case DEAD_OBJECT: /* PLayers are changed into DEAD_OBJECTs when they logout */              
+          case DEAD_OBJECT: /* Players are changed into DEAD_OBJECTs when they logout */              
               return_poolchunk(ob->custom_attrset, POOL_PLAYER);
+              break;
+
+          case MONSTER:
+              return_poolchunk(ob->custom_attrset, POOL_MOBDATA);              
               break;
               
           default:
@@ -3621,7 +3642,8 @@ object *insert_ob_in_ob(object *op,object *where) {
   op->env=where;
   op->above=NULL;
   op->below=NULL;
-  op->x=0,op->y=0;
+//  op->x=0,op->y=0; XXX clearing these values makes them impossible
+//  to use for home_x and home_y in base_info objects
 #ifdef POSITION_DEBUG
   op->ox=0,op->oy=0;
 #endif
@@ -4214,27 +4236,3 @@ int auto_apply (object *op) {
 
   return tmp ? 1 : 0;
 }
-
-
-/*** end of object.c ***/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

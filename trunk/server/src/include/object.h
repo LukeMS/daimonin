@@ -133,6 +133,7 @@ typedef struct obj
 
 	tag_t enemy_count;			/* What count the enemy has */
 	struct obj *enemy;			/* Monster/player to follow even if not closest */
+    /* TODO: get rid of (only used by containers now =) */
 	tag_t attacked_by_count;	/* the tag of attacker, so we can be sure */
 	struct obj *attacked_by;	/* This object start to attack us! only player & monster */
 	tag_t ownercount;			/* What count the owner had (in case owner has been freed) */
@@ -144,7 +145,6 @@ typedef struct obj
 	sint16 x;					/* X-Position in the map for this object */
 	sint16 y;					/* Y-Position in the map for this object */
 
-	sint16 attacked_by_distance;/* needed to target the nearest enemy */
 	uint16 last_damage;			/* thats the damage send with map2 */
 
 	uint16 terrain_type;		/* type flags for different enviroment (tile is under water, firewalk,...) 
@@ -189,8 +189,10 @@ typedef struct obj
 	uint8 item_level;			/* level needed to use or apply this item */
 	uint8 item_skill;			/* if set and item_level, item_level in this skill is needed */
 
+    /* TODO: get rid of */
 	sint8 move_status;			/* What stage in attack mode */
     uint8 move_type;			/* What kind of attack movement */
+
 	sint8 anim_enemy_dir;       /* special shadow variable: show dir to targeted enemy */
 	sint8 anim_moving_dir;      /* sic: shows moving dir or -1 when object do something else */
 
@@ -338,7 +340,7 @@ struct mempool {
     struct mempool_chunk *first_free;   /* First free chunk */    
     uint32 expand_size;                 /* How many chunks to allocate at each expansion */
     uint32 chunksize;                   /* size of chunks, excluding sizeof(mempool_chunk) and padding */
-    uint32 nrof_used, nrof_free;        /* List size counters */
+    uint32 nrof_free, nrof_allocated;   /* List size counters */
     chunk_constructor constructor;      /* Optional constructor to be called when getting chunks */
     chunk_destructor destructor;        /* Optional destructor to be called when returning chunks */
     char *chunk_description;            /* Description of chunks. Mostly for debugging */
@@ -366,6 +368,9 @@ typedef enum {
     POOL_OBJECT, 
     POOL_PLAYER, 
     POOL_MAP_BFS, 
+    POOL_PATHSEGMENT,
+    POOL_MOBDATA,
+    POOL_MOB_KNOWN_OBJ,
     NROF_MEMPOOLS 
 } mempool_id;
 
@@ -380,5 +385,21 @@ typedef enum {
 #define MEMPOOL_BYPASS_POOLS  2 /* Don't use pooling, but only malloc/free instead */
 
 extern struct mempool mempools[];
+
+/* Waypoint macros */
+#define WP_FLAG_ACTIVE FLAG_CURSED
+#define WP_FLAG_BESTEFFORT FLAG_NO_ATTACK
+
+#define WP_MAP(wp) (wp)->slaying
+#define WP_X(wp) (wp)->stats.hp
+#define WP_Y(wp) (wp)->stats.sp
+#define WP_ACCEPTDIST(wp) (wp)->stats.grace
+#define WP_DELAYTIME(wp) (wp)->stats.wc
+#define WP_NEXTWP(wp) (wp)->title
+
+#define STRING_WP_MAP(wp) STRING_OBJ_SLAYING(wp)
+#define STRING_WP_NEXTWP(wp) STRING_OBJ_RACE(wp)
+
+#define WP_MOVE_TRIES 4 /* number of retries to get closer to (local) target before giving up */
 
 #endif

@@ -40,11 +40,15 @@ PlaySound
 
 Message
 ------------------------------------------------------------
-  map.Message(message, color)
+  map.Message(message, x, y, distance, color)
     Writes a message to all players on a map
+    Starting point x,y for all players in distance
     default color is NDI_BLUE|NDI_UNIQUE
   Parameter types:
-    string message
+    integer message
+    integer x
+    integer y
+    string distance
     (optional) integer color
   Possible return types:
     None

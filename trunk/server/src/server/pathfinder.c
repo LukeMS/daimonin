@@ -58,8 +58,8 @@ int searched_nodes = 0;
 static int pathfinder_queue_first = 0;
 static int pathfinder_queue_last = 0;  /* the one after the last actually */
 static struct {
-    object *waypoint;
-    tag_t wp_count;
+    object *op; /* who asked */
+    tag_t op_count;
 } pathfinder_queue[PATHFINDER_QUEUE_SIZE];
 
 /* This is used as static memory for search tree nodes (avoids lots of mallocs) */
@@ -80,14 +80,14 @@ static path_node pathfinder_nodebuf[PATHFINDER_NODEBUF];
  */
 
 /* enqueue a waypoint for path computation */
-int pathfinder_queue_enqueue(object *waypoint) {    
+int pathfinder_queue_enqueue(object *op) {    
     /* Queue full? */
     if(pathfinder_queue_last == pathfinder_queue_first-1 || 
             (pathfinder_queue_first == 0 && pathfinder_queue_last == PATHFINDER_QUEUE_SIZE - 1))
         return FALSE;
         
-    pathfinder_queue[pathfinder_queue_last].waypoint = waypoint;
-    pathfinder_queue[pathfinder_queue_last].wp_count = waypoint->count;
+    pathfinder_queue[pathfinder_queue_last].op = op;
+    pathfinder_queue[pathfinder_queue_last].op_count = op->count;
 
     if(++ pathfinder_queue_last >= PATHFINDER_QUEUE_SIZE)
         pathfinder_queue_last = 0;
@@ -97,62 +97,55 @@ int pathfinder_queue_enqueue(object *waypoint) {
 
 /* Get the first waypoint from the queue (or NULL if empty) */
 object *pathfinder_queue_dequeue(int *count) {    
-    object *waypoint;
+    object *op;
     
     /* Queue empty? */
     if(pathfinder_queue_last == pathfinder_queue_first)
         return NULL;
     
-    waypoint = pathfinder_queue[pathfinder_queue_first].waypoint;
-    *count =  pathfinder_queue[pathfinder_queue_first].wp_count;
+    op = pathfinder_queue[pathfinder_queue_first].op;
+    *count =  pathfinder_queue[pathfinder_queue_first].op_count;
     
     if(++ pathfinder_queue_first >= PATHFINDER_QUEUE_SIZE)
         pathfinder_queue_first = 0;
     
-    return waypoint;
+    return op;
 }
 
 /* Request a new path */
-void request_new_path(object *waypoint)
+void request_new_path(object *op)
 {
-    if(waypoint == NULL || QUERY_FLAG(waypoint, FLAG_WP_PATH_REQUESTED))
+    if(op == NULL || op->type != MONSTER || MOB_DATA(op) == NULL || MOB_PATHDATA(op)->path_requested)
         return;
     
 #ifdef DEBUG_PATHFINDING    
-    LOG(llevDebug,"request_new_path(): enqueing path request for >%s< -> >%s<\n", waypoint->env->name, waypoint->name);
+    LOG(llevDebug,"request_new_path(): enqueing path request for >%s< -> >%s<\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(MOB_PATHDATA(op)->target_obj));
 #endif    
 
-    if(pathfinder_queue_enqueue(waypoint)) {
-        SET_FLAG(waypoint, FLAG_WP_PATH_REQUESTED);
-        waypoint->owner = waypoint->env;
-        waypoint->ownercount = waypoint->env->count;
-    }
+    if(pathfinder_queue_enqueue(op)) 
+        MOB_PATHDATA(op)->path_requested = TRUE;
 }
 
-/* Get the next (valid) waypoint for which a path is requested */
+/* Get the next (valid) mob that have requested a path is requested */
 object *get_next_requested_path()
 {
-    object *waypoint;
+    object *op;
     tag_t count;
     
+    /* Find next still valid request */
     do {
-        waypoint = pathfinder_queue_dequeue(&count);
-        if(waypoint == NULL)
+        op = pathfinder_queue_dequeue(&count);
+        if(op == NULL)
             return NULL;
-        
-        /* verify the waypoint and its monster */
-        if(!OBJECT_VALID(waypoint, count) || !OBJECT_VALID(waypoint->owner, waypoint->ownercount) ||
-                !(QUERY_FLAG(waypoint, FLAG_CURSED) || QUERY_FLAG(waypoint, FLAG_DAMNED)) ||
-                (QUERY_FLAG(waypoint, FLAG_DAMNED) && !OBJECT_VALID(waypoint->enemy, waypoint->enemy_count)))
-            waypoint = NULL;
-    } while(waypoint == NULL);
+    } while(!OBJECT_VALID(op, count) || !MOB_DATA(op));
     
 #ifdef DEBUG_PATHFINDING    
-    LOG(llevDebug, "get_next_requested_path(): dequeued '%s' -> '%s'\n", waypoint->owner->name, waypoint->name);
+    LOG(llevDebug, "get_next_requested_path(): dequeued '%s' -> '%s'\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(MOB_PATHDATA(op)->target_obj));
 #endif
+    
+    MOB_PATHDATA(op)->path_requested = FALSE;
 
-    CLEAR_FLAG(waypoint, FLAG_WP_PATH_REQUESTED);
-    return waypoint;    
+    return op;    
 }   
 
 /*
@@ -254,124 +247,31 @@ static void insert_priority_node(path_node *node, path_node **list)
  * Path-management functions
  */
 
-/* Generate a string representation of a path (returns a shared string!) 
- * 
- * Ideas on how to store paths:
- *   a) store path as real waypoint objects (might be a lot of objects...)
- *   b) store path as field in waypoints 
- *      b1) linked list in i.e. ob->enemy (needs special free() call when removing object)
- *      b2) in ascii in waypoint->msg (will even be saved out =)
- *        b2.1) direction list (e.g. 1234155532, compact but fragile)
- *        b2.2) map / coordinate list: (/dev/testmaps:13,12 14,12 ...)
- *              (human-readable (and editable), complex parsing)
- *              Approx: 600 steps in one 4096 bytes msg field
- *        b2.2.1) hex (/dev/testmaps/xxx D,C E,C ...)
- *              (harder to read and write, more compact)
- *              Approx: 1000 steps in one 4096 bytes msg field
- */
-const char *encode_path(path_node *path)
+struct path_segment *encode_path(path_node *path, 
+        struct path_segment **last_segment)
 {
-    char buf[HUGE_BUF];
-    char *bufptr = buf;
-    mapstruct *last_map = NULL;
+    struct path_segment *first = NULL, *last = NULL, *curr;
     path_node *tmp;
 
-    /* TODO: buffer overflow checking */
     for(tmp = path; tmp ; tmp = tmp->next) {
-        if(tmp->map != last_map) {
-            bufptr += sprintf(bufptr, "%s%s", last_map ? "\n" : "", tmp->map->path);
-            last_map = tmp->map;
+        curr = get_poolchunk(POOL_PATHSEGMENT);
+        curr->next = NULL;
+        curr->x = tmp->x;
+        curr->y = tmp->y;
+        curr->map = add_refcount(tmp->map->path);
+
+        if(first == NULL) 
+            first = last = curr;
+        else {
+            last->next = curr;
+            last = curr;
         }
-        bufptr += sprintf(bufptr, " %d,%d", tmp->x, tmp->y);
     }
 
-    return add_string(buf);
-}
-
-/* Get the next location from a textual path description (generated by encode_path) starting
- * from the character index indicated by off.
- *
- * map should be initialized with whatever map the object we are working on currently lives on
- * (to handle paths without map strings)
- *
- * If a location is found, the function will return TRUE and update map, x, y and off. 
- * (off will be set to the index to use for the next call to this function)
- * Otherwise FALSE will be returned and the values of map, x and y will be undefined and off 
- * will not be touched.
- *
- * Example text path description:
- * /dev/testmaps/testmap_waypoints 17,7 17,10 18,11 19,10 20,10
- * /dev/testmaps/testmap_waypoints2 8,22
- * /dev/testmaps/testmap_waypoints3 0,22 1,23
- * /dev/testmaps/testmap_waypoints4 1,1 2,2
- */
-int get_path_next(const char *buf, sint16 *off, const char **mappath, mapstruct **map, int *x, int *y)
-{
-    const char *coord_start = buf + *off, *coord_end, *map_def = coord_start;
- 
-    if(buf == NULL || *map == NULL) {
-        LOG(llevBug,"get_path_next(): Illegal parameters\n");
-        return FALSE;
-    }
+    if(last_segment)
+        *last_segment = last;
     
-    /* TODO: hmm... I don't think this is necessary anymore, since we have the store path name */
-    if(*mappath == NULL || **mappath == '\0') {
-        /* Scan backwards from requested offset to previous linebreak or start of string */
-        for(map_def = coord_start; map_def > buf && *(map_def -1) != '\n'; map_def--) 
-            ;
-    }
-    
-    /* Extract map path if any at the current position (this part is only used when we go between
-     * map tiles, or when we extract the first step) */
-    if(! isdigit(*map_def)) {
-        char map_name[HUGE_BUF];                   /* Temporary buffer for map path extraction */
-        const char *mapend = strchr(map_def, ' '); /* Find the end of the map path */
-
-        if(mapend == NULL) {
-            LOG(llevBug,"get_path_next: No delimeter after map name in path description '%s' off %d\n", buf, *off);
-            return FALSE;
-        }            
-
-        strncpy(map_name, map_def, mapend - map_def);
-        map_name[mapend - map_def] = '\0';
-
-        FREE_AND_COPY_HASH(*mappath, map_name); /* store the new map path in the given shared string */
-        /* Adjust coordinate pointer to point after map path */
-        if(! isdigit(*coord_start))
-            coord_start = mapend + 1;
-    }
-        
-    /* Select the map we are aiming at */
-    /* TODO: handle unique maps? */
-    if(*mappath)
-	{
-		if(!*map || (*map)->path != *mappath)
-	        *map = ready_map_name(*mappath, MAP_NAME_SHARED); /* We assume map name is already normalized */
-	}
-
-    if(*map == NULL) {
-        LOG(llevBug,"get_path_next: Couldn't load map from description '%s' off %d\n", buf, *off);
-        return FALSE;
-    }            
-
-    /* Get the requested coordinate pair */
-    coord_end = coord_start + strcspn(coord_start, " \n");    
-    if(coord_end == coord_start || sscanf(coord_start, "%d,%d", x, y) != 2) {
-        LOG(llevBug,"get_path_next: Illegal coordinate pair in '%s' off %d\n", buf, *off);
-        return FALSE;
-    }
-
-    /* Adjust coordinates to be on the safe side */
-    *map = out_of_map(*map, x, y);
-    if(*map == NULL) {
-        LOG(llevBug,"get_path_next: Location (%d, %d) is out of map\n", *x, *y);
-        return FALSE;
-    }            
-    
-    /* Adjust the offset */
-    *off = coord_end - buf + (*coord_end ? 1 : 0);
-    
-    return TRUE;
+    return first;
 }
 
 /* Compress a path by removing redundant segments.
@@ -397,7 +297,7 @@ path_node *compress_path(path_node *path)
      */
 
     /* Guarantee at least length 3 */
-    if(path == NULL || path->next == NULL)
+    if(path == NULL || path->next == NULL) 
         return path;
     
     next = path->next;    
@@ -441,7 +341,6 @@ path_node *compress_path(path_node *path)
  * get_rangevector can fail here if there is no maptile path between start and goal. 
  * if it does, we have to return an error value (HEURISTIC_ERROR)
  *
- * TODO: cache the results from get_rangevector for better efficiency ?
  */
 float distance_heuristic(path_node *start, path_node *current, path_node *goal)
 {
@@ -576,6 +475,13 @@ path_node * find_path(object *op,
     open_list->heuristic = distance_heuristic(&start, open_list, &goal);
     closed_list = NULL;
     SET_MAP_TILE_VISITED(map1, x1, y1, traversal_id);
+   
+    if(open_list->heuristic == HEURISTIC_ERROR) {
+#ifdef DEBUG_PATHFINDING
+        LOG(llevDebug,"find_path(): Failed to find path between targets. Aborting!\n");
+#endif        
+        return NULL;        
+    }
     
     while(open_list != NULL /* && searched_nodes < 100 */)  {
         /* pick best node from open_list */

@@ -246,7 +246,7 @@ mapstruct *map_least_timeout(const char *except_level)
 void swap_below_max(const char *except_level) {
     mapstruct *map;
     int nroffreeobjects = mempools[POOL_OBJECT].nrof_free;
-    int nrofallocobjects = mempools[POOL_OBJECT].nrof_used + nroffreeobjects;
+    int nrofallocobjects = mempools[POOL_OBJECT].nrof_allocated;
 
     if(nrofallocobjects - nroffreeobjects < MAX_OBJECTS)
 	return;

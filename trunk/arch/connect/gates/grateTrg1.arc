@@ -4,8 +4,6 @@ type 26
 layer 5
 level 1
 attack_impact 100
-#activate_on_push 1
-#activate_on_release 1
 no_teleport 1
 pass_thru 1
 no_pick 1
@@ -88,7 +86,7 @@ mina
 is_turnable 1
 direction 1
 state 7
-anim_speed 1
+anim_speed 0
 is_animated 0
 last_heal 1
 wc 7
@@ -188,7 +186,7 @@ mina
 is_turnable 1
 direction 1
 state 7
-anim_speed 1
+anim_speed 0
 is_animated 0
 no_pass 1
 pass_thru 1

@@ -5,6 +5,8 @@ rem given out, your windows system already
 rem can handle long file names on default (XP, ...)
 LFNFOR ON
 copy ..\..\arch\*.* ..\..\server\lib\*.*
-cd ..\..\server
+cd ..\..\server\data\tmp
+del ?*.*
+cd ..\..
 daimonin_server.exe -log logfile.log
 cd ..\bin\win32

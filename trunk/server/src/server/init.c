@@ -557,8 +557,8 @@ void compile_info() {
 #else
   LOG(llevInfo,"Map reset:\t<false>\n");
 #endif
-  LOG(llevInfo,"Max objects:\t%d (used:%d free:%d)\n",MAX_OBJECTS,
-          mempools[POOL_OBJECT].nrof_used, 
+  LOG(llevInfo,"Max objects:\t%d (allocated:%d free:%d)\n",MAX_OBJECTS,
+          mempools[POOL_OBJECT].nrof_allocated, 
           mempools[POOL_OBJECT].nrof_free);
           
 
@@ -678,7 +678,7 @@ void setup_library() {
   set_draw_info(new_draw_info);
   set_container_unlink(container_unlink);
   set_move_apply(move_apply);
-  set_monster_check_apply(monster_check_apply);
+  set_monster_check_apply(monster_check_apply); 
   set_move_teleporter(move_teleporter);
   set_move_firewall(move_firewall);
   set_move_creator(move_creator);
@@ -691,6 +691,10 @@ void setup_library() {
 
 /*  setup_poolfunctions(POOL_PLAYER, NULL, (chunk_destructor)free_player); */
   setup_poolfunctions(POOL_PLAYER, NULL, NULL);
+  setup_poolfunctions(POOL_MOBDATA, 
+          (chunk_constructor)initialize_mob_data, 
+          (chunk_destructor)cleanup_mob_data);
+  setup_poolfunctions(POOL_MOB_KNOWN_OBJ, NULL, (chunk_destructor)cleanup_mob_known_obj);
 }
 
 static void add_corpse_to_racelist (const char *race_name, archetype *op) {

@@ -346,10 +346,12 @@ void first_arch_pass(FILE *fp) {
         prev->next=at;
       prev=last_more=at;
 
+	  /* silly debug
 	  if(op->animation_id && !op->anim_speed)
 		LOG(llevDebug," WARNING: Archetype %s has animation but no anim_speed!\n", STRING_OBJ_ARCH_NAME(op));
 	  if(op->animation_id && !QUERY_FLAG(op,FLAG_CLIENT_SENT))
 		LOG(llevDebug," WARNING: Archetype %s has animation but no explicit set is_animated!\n", STRING_OBJ_ARCH_NAME(op));
+	*/
       if(!op->type)
           LOG(llevDebug," WARNING: Archetype %s has no type info!\n", STRING_OBJ_ARCH_NAME(op));      
       break;

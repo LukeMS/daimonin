@@ -94,7 +94,8 @@ int attempt_steal(object* op, object* who)
     if(op->type!=PLAYER && QUERY_FLAG(op,FLAG_NO_STEAL)) {
         if(1) { /* add here a distance/can see function!! */
             /* TODO: should probaly call set_npc_enemy() here instead */
-	    npc_call_help(op);
+            /* TODO: disabled while cleaning up monster.c 
+	    npc_call_help(op); */
 	    CLEAR_FLAG(op, FLAG_UNAGGRESSIVE);
 	    new_draw_info(NDI_UNIQUE, 0,who,"Your attempt is prevented!");
 	    return 0;
@@ -159,7 +160,8 @@ int attempt_steal(object* op, object* who)
 	    /* The unaggressives look after themselves 8) */
 	    if(who->type==PLAYER) {
                 /* TODO: should probaly call set_npc_enemy() here instead */
-		npc_call_help(op);
+            /* TODO: disabled while cleaning up monster.c */
+		/* npc_call_help(op); */
 		new_draw_info_format(NDI_UNIQUE, 0,who,
 		  "%s notices your attempted pilfering!",query_name(op));
 	    }
@@ -1384,7 +1386,8 @@ int skill_throw (object *op, int dir, char *params) {
   int success = 0;
  
   if(op->type==PLAYER) do_throw(op,find_throw_ob(op,params),dir);
-  else do_throw(op,find_mon_throw_ob(op->head?op->head:op),dir);
+  /* TODO: disabled while cleaning up monster.c */
+  /* else do_throw(op,find_mon_throw_ob(op->head?op->head:op),dir); */
  
   return success;
 }
