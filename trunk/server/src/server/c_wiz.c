@@ -86,29 +86,33 @@ int command_setgod(object *op, char *params)
 
 int command_kick (object *op, char *params)
 {
-  struct pl_player *pl;
+	struct pl_player *pl;
 
-  for(pl=first_player;pl!=NULL;pl=pl->next) 
-    if((params==NULL || !strcmp(pl->ob->name,params)) && pl->ob!=op)
-      {
-	object *op;
+	if(params == NULL || !QUERY_FLAG(op,FLAG_WIZ))
+	{
+		new_draw_info_format(NDI_UNIQUE, 0, op,"Use: /kick <name>");
+		return 1;
+	}
 
-	op=pl->ob;
-	remove_ob(op);
-	op->direction=0;
-	new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, op,
-			     "%s is kicked out of the game.",op->name);
-	strcpy(op->contr->killer,"left");
-	check_score(op); /* Always check score */
-
-	container_unlink(op->contr,NULL);
-
-	(void)save_player(op,0);
-	op->contr->socket.status=Ns_Dead;
-#if MAP_MAXTIMEOUT
-	op->map->timeout = MAP_TIMEOUT(op->map);
-#endif
+	for(pl=first_player;pl!=NULL;pl=pl->next)
+	{
+      if (pl->ob!=op && pl->ob->name && !strncasecmp(pl->ob->name, params, MAX_NAME)) 
+		{
+			object *op;
+			op=pl->ob;
+			remove_ob(op);
+			op->direction=0;
+			new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, op,"%s is kicked out of the game.",op->name);
+			strcpy(op->contr->killer,"left");
+			check_score(op); /* Always check score */
+			container_unlink(op->contr,NULL);
+			(void)save_player(op,0);
+			op->contr->socket.status=Ns_Dead;
+		#if MAP_MAXTIMEOUT
+			op->map->timeout = MAP_TIMEOUT(op->map);
+		#endif
       }
+  }
   return 1;
 }
 
@@ -241,7 +245,7 @@ int command_teleport (object *op, char *params) {
    }
 
    for (pl = first_player; pl != NULL; pl = pl->next) 
-      if (!strncasecmp(pl->ob->name, params, MAX_NAME)) 
+      if (pl->ob->name && !strncasecmp(pl->ob->name, params, MAX_NAME)) 
          break;
    if (pl == NULL) {
       new_draw_info(NDI_UNIQUE, 0, op, "No such player.");

@@ -336,10 +336,16 @@ static void remove_ns_dead_player(player *pl)
 		gbl_active_DM = NULL;
 
 	if(gbl_active_DM)
-		new_draw_info_format(NDI_UNIQUE, 0,gbl_active_DM,"%s leaves the game.", query_name(pl->ob));
+	{
+		player *pl_tmp;
+		int players;
+
+		for(pl_tmp=first_player,players=0;pl_tmp!=NULL;pl_tmp=pl_tmp->next,players++);
+		new_draw_info_format(NDI_UNIQUE, 0,gbl_active_DM,"%s leaves the game (%d still playing).", query_name(pl->ob), players-1);
+	}
 
 	container_unlink(pl,NULL);
-	save_player(pl->ob, 0);
+	save_player(pl->ob, 1);
 			
 	if(!QUERY_FLAG(pl->ob,FLAG_REMOVED))
 	{

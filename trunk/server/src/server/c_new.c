@@ -649,8 +649,17 @@ void command_new_char(char *params, int len,player *pl)
 
 	display_motd(op);
 	if(!op->contr->dm_stealth)
+	{
 		new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, op,"%s entered the game.",op->name);
-	
+		if(gbl_active_DM)
+		{
+			player *pl_tmp;
+			int players;
+
+			for(pl_tmp=first_player,players=0;pl_tmp!=NULL;pl_tmp=pl_tmp->next,players++);
+			new_draw_info_format(NDI_UNIQUE, 0,gbl_active_DM,"DM: %d players now playing.", players);
+		}
+	}
 	CLEAR_FLAG(op, FLAG_WIZ);
 	(void) init_player_exp(op);
 	give_initial_items(op,op->randomitems);
