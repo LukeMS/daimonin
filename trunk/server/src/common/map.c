@@ -1840,7 +1840,7 @@ mapstruct * load_original_map(const char *filename, int flags)
     LOG(llevDebug, "post set. ");
     if (!MAP_DIFFICULTY(m))
     {
-        LOG(llevBug, "BUG: Map %s has difficulty 0. Changing to 1 (non special item area).\n", filename);
+        /*LOG(llevBug, "BUG: Map %s has difficulty 0. Changing to 1 (non special item area).\n", filename);*/
         MAP_DIFFICULTY(m) = 1;
     }
     /* MAP_DIFFICULTY(m)=calculate_difficulty(m); */

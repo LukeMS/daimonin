@@ -132,7 +132,7 @@ int findPlugin(const char *id)
 {
     int i;
     for (i = 0; i < PlugNR; i++)
-        if (!strcmp(id, PlugList[i].id))
+        if (!strcasecmp(id, PlugList[i].id))
             return i;
     return -1;
 }
