@@ -1716,10 +1716,10 @@ void kill_player(object *op)
 
 	/* the rule is: 
 	 * only decrease stats when you are level 3 or higher! 
-	 * Lose permanent stats when you are higher as level 74 */
+	 */
     for (z=0; z<num_stats_lose; z++) 
     {
-        if ((settings.stat_loss_on_death && op->level > 3) || op->level >= 75) 
+        if (settings.stat_loss_on_death && op->level > 3) 
         {
 	        /* Pick a random stat and take a point off it.  Tell the player
 	        * what he lost.
