@@ -71,6 +71,10 @@ Event::Event(RenderWindow* win, Camera* cam, MouseMotionListener *mMMotionListen
 	ChatWin->Print("Enemy commands:", TXT_WHITE);
 	ChatWin->Print("  J    -> Turn left");
 	ChatWin->Print("  K    -> Turn right");
+	TextWin->Print("OOPS...", TXT_YELLOW);
+	TextWin->Print("---------------------", TXT_YELLOW);
+	TextWin->Print("Its getting late!");
+	TextWin->Print("Press 'W' for details...");
 
 	/////////////////////////////////////////////////////////////////////////////////////////
 	// Create unbuffered key & mouse input.
@@ -85,7 +89,6 @@ Event::Event(RenderWindow* win, Camera* cam, MouseMotionListener *mMMotionListen
     mMouseMotionListener = mMMotionListener;
     mMouseListener = mMListener;
 
-
 	mQuitGame = false;
     mCamera = cam;
     mWindow = win;
@@ -99,6 +102,7 @@ Event::Event(RenderWindow* win, Camera* cam, MouseMotionListener *mMMotionListen
     mAniso = 1;
     mFiltering = TFO_BILINEAR;
 	mIdleTime =0;
+	mDayTime = 15;
 }
 
 //=================================================================================================
@@ -333,6 +337,21 @@ void Event::keyPressed(KeyEvent *e)
 		case KC_L:
 			Option::getSingleton().mStartNetwork = true;
 			break;
+		case KC_W:
+			if (mDayTime)
+			{
+				mDayTime =0;
+				mLight[LIGHT_VOL ]->setVisible(false);
+				mLight[LIGHT_SPOT]->setVisible(true);
+			}
+			else
+			{
+				mDayTime =15;
+				mLight[LIGHT_VOL ]->setVisible(true);
+				mLight[LIGHT_SPOT]->setVisible(false);
+			}
+			break;
+
 		case KC_PGUP:
 		    mCamera->pitch(Radian(-0.1));
 			break;

@@ -90,10 +90,10 @@ bool DaimoninClient::setup(void)
 	/////////////////////////////////////////////////////////////////////////
     mCamera = mSceneMgr->createCamera("Camera");
     mCamera->setProjectionType(PT_ORTHOGRAPHIC);
-	mCamera->setPosition(Vector3(0,400, 400));
+	mCamera->setPosition(Vector3(0,350, 350));
 	mCamera->lookAt(Vector3(0,0,0));
-    mCamera->setNearClipDistance(400);
-    mCamera->setFarClipDistance(800);
+    mCamera->setNearClipDistance(350);
+//    mCamera->setFarClipDistance(600);
 
 	/////////////////////////////////////////////////////////////////////////
     // Create one viewport, entire window
@@ -116,7 +116,7 @@ bool DaimoninClient::setup(void)
     ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
     mEvent= new Event(mWindow, mCamera, mMouseMotionListener, mMouseListener);
     mRoot->addFrameListener(mEvent);
-    mEvent->setResolution(mVP->getActualWidth(), mVP->getActualHeight());
+    mEvent->setResolutionMember(mVP->getActualWidth(), mVP->getActualHeight());
     createScene();            // Create the scene
 	return true;
 }
@@ -149,49 +149,39 @@ void DaimoninClient::setupResources(void)
 }
 
 // ========================================================================
-// 
+//
 // ========================================================================
 void DaimoninClient::createScene(void)
 {
+	// Create the world.
+	mEvent->World = mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(0, 0, 0), Quaternion(1.0,0.0,0.0,0.0));
+    mSceneMgr->setAmbientLight(ColourValue(0.1, 0.1, 0.1));
+
+    Light *light;
+    light = mSceneMgr->createLight("Light_Vol");
+    light->setType(Light::LT_POINT );
+    light->setPosition(-100, 100, 100);
+    light->setDiffuseColour(1.0, 1.0, 1.0);
+ //   light->setSpecularColour(1.0, 1.0, 1.0);
+    mEvent->World->attachObject(light);
+	mEvent->setLightMember(light, 0);
+
+    light = mSceneMgr->createLight("Light_Spot");
+    light->setType(Light::LT_SPOTLIGHT);
+	light->setDirection(   0,-80, 0);
+    light->setPosition (-125, 80, 50);
+    light->setDiffuseColour(1.0, 1.0, 1.0);
+	light->setSpotlightRange(Radian(0.8) , Radian(1.2), 5.5);
+
+	light->setVisible(false);
+	mEvent->World->attachObject(light);
+	mEvent->setLightMember(light, 1);
+
     // Setup animation default
     Animation::setDefaultInterpolationMode(Animation::IM_LINEAR);
     Animation::setDefaultRotationInterpolationMode(Animation::RIM_LINEAR);
-
-    mSceneMgr->setAmbientLight(ColourValue(0.5, 0.5, 0.5));
-
-	mEvent->World = mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(0, 0, 0), Quaternion(1.0,0.0,0.0,0.0));
     Player::getSingleton().Init(mSceneMgr);
 	NPC_Enemy1->Init(mSceneMgr, mEvent->World);
-/*
-	Entity     *mEntity = mSceneMgr->createEntity("enemy", "scorpion.mesh");
-	SceneNode  *mNode;
-	mNode   = mEvent->World->createChildSceneNode(Vector3(0, 10, 0), Quaternion(1.0,0.0,0.0,0.0));
-//	mFacing = Degree(0);
-
-//	Real faceing = atof(strTemp.c_str());
-//	mFacingOffset = faceing * RAD;
-    mNode->attachObject(mEntity);
-
-//	Option::getSingleton().getDescStr("MeshSize", strTemp);
-//	Real size = atof(strTemp.c_str());
-	Real size = 0.25f;
-	mNode->setScale(size, size, size);
-//    mNode->yaw(mFacing);
-*/
-
-
-
-    Light* l;
-    l = mSceneMgr->createLight("BlueLight");
-    l->setPosition(-200,-80,-100);
-    l->setDiffuseColour(0.5, 0.5, 1.0);
-	mEvent->World->attachObject(l);
-
-    l = mSceneMgr->createLight("GreenLight");
-    l->setPosition(0,0,-100);
-    l->setDiffuseColour(0.5, 1.0, 0.5);
-    mEvent->World->attachObject(l);
-
 
     Entity* ent;
     SceneNode* floor_node;
@@ -215,11 +205,20 @@ void DaimoninClient::createScene(void)
 
 	int gfxNr =251;
 	TileGfx::getSingleton().load_picture_from_pack(gfxNr);
-	MaterialPtr mMaterial = MaterialManager::getSingleton().getByName("dynamic");
+	MaterialPtr mMaterial = MaterialManager::getSingleton().getByName("dyn_layer_01");
 	string texName = "testMat"+ StringConverter::toString(gfxNr);
-	TexturePtr mTexture = TextureManager::getSingleton().loadImage(texName, "Tiles", TileGfx::getSingleton().getSprite(gfxNr), TEX_TYPE_2D, 3,1.0f);
+	TexturePtr mTexture = TextureManager::getSingleton().loadImage(texName, "General", TileGfx::getSingleton().getSprite(gfxNr), TEX_TYPE_2D, 3,1.0f);
 	mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(texName);
 	mMaterial->load();
+
+
+	gfxNr =2854;
+	TileGfx::getSingleton().load_picture_from_pack(gfxNr);
+	MaterialPtr mMaterial2 = MaterialManager::getSingleton().getByName("dyn_layer_02");
+	texName = "testMat"+ StringConverter::toString(gfxNr);
+	TexturePtr mTexture2 = TextureManager::getSingleton().loadImage(texName, "General", TileGfx::getSingleton().getSprite(gfxNr), TEX_TYPE_2D, 3,1.0f);
+	mMaterial2->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(texName);
+	mMaterial2->load();
 
 
 	// create floor-tile.
@@ -255,6 +254,14 @@ void DaimoninClient::createScene(void)
 		floor_node->attachObject(ent);
 		floor_node->setScale(0.25, 0.25, 0.25);
 	}
+
+
+	ent = mSceneMgr->createEntity(name+StringConverter::toString("fhgdo"), SceneManager::PT_PLANE);
+	ent->setMaterialName(mMaterial2->getName());
+	floor_node = mEvent->World->createChildSceneNode(Vector3(startX+70, -20, startZ+55), Quaternion(1.0,0.0,0.0,0.0));
+	floor_node->attachObject(ent);
+	floor_node->setScale(0.10, 0.30, 0.30);
+
 
 }
 

@@ -1,7 +1,7 @@
 [Project]
 FileName=daimonin3d.dev
 Name=Client3d
-UnitCount=46
+UnitCount=48
 Type=0
 Ver=1
 ObjFiles=
@@ -18,9 +18,9 @@ Icon=
 ExeOutput=..\..\..\..\client3d
 ObjectOutput=..\DevCpp
 OverrideOutput=1
-OverrideOutputName=daimonin3d.exe
+OverrideOutputName=daimonin3d_m.exe
 HostApplication=
-Folders=Include,Source
+Folders="_Read Me fisrt","3rd Party",Include,Source
 CommandLine=
 UseCustomMakefile=0
 CustomMakefile=
@@ -212,7 +212,7 @@ BuildCmd=
 [Unit27]
 FileName=..\..\..\source\include\zlib.h
 CompileCpp=1
-Folder=Include
+Folder=3rd Party
 Compile=1
 Link=1
 Priority=1000
@@ -222,7 +222,7 @@ BuildCmd=
 [Unit28]
 FileName=..\..\..\source\include\zutil.h
 CompileCpp=1
-Folder=Include
+Folder=3rd Party
 Compile=1
 Link=1
 Priority=1000
@@ -232,7 +232,7 @@ BuildCmd=
 [Unit29]
 FileName=..\..\..\source\include\crc32.h
 CompileCpp=1
-Folder=Include
+Folder=3rd Party
 Compile=1
 Link=1
 Priority=1000
@@ -242,7 +242,7 @@ BuildCmd=
 [Unit31]
 FileName=..\..\..\source\include\inflate.h
 CompileCpp=1
-Folder=Include
+Folder=3rd Party
 Compile=1
 Link=1
 Priority=1000
@@ -252,7 +252,7 @@ BuildCmd=
 [Unit32]
 FileName=..\..\..\source\include\inftrees.h
 CompileCpp=1
-Folder=Include
+Folder=3rd Party
 Compile=1
 Link=1
 Priority=1000
@@ -262,7 +262,7 @@ BuildCmd=
 [Unit33]
 FileName=..\..\..\source\include\zconf.h
 CompileCpp=1
-Folder=Include
+Folder=3rd Party
 Compile=1
 Link=1
 Priority=1000
@@ -272,7 +272,7 @@ BuildCmd=
 [Unit36]
 FileName=..\..\..\source\crc32.c
 CompileCpp=1
-Folder=Source
+Folder=3rd Party
 Compile=1
 Link=1
 Priority=1000
@@ -282,7 +282,7 @@ BuildCmd=
 [Unit37]
 FileName=..\..\..\source\inffast.c
 CompileCpp=1
-Folder=Source
+Folder=3rd Party
 Compile=1
 Link=1
 Priority=1000
@@ -292,7 +292,7 @@ BuildCmd=
 [Unit39]
 FileName=..\..\..\source\inftrees.c
 CompileCpp=1
-Folder=Source
+Folder=3rd Party
 Compile=1
 Link=1
 Priority=1000
@@ -390,7 +390,7 @@ BuildCmd=
 [Unit26]
 FileName=..\..\..\source\uncompr.c
 CompileCpp=1
-Folder=Source
+Folder=3rd Party
 Compile=1
 Link=1
 Priority=1000
@@ -400,7 +400,7 @@ BuildCmd=
 [Unit35]
 FileName=..\..\..\source\adler32.c
 CompileCpp=1
-Folder=Source
+Folder=3rd Party
 Compile=1
 Link=1
 Priority=1000
@@ -410,7 +410,7 @@ BuildCmd=
 [Unit38]
 FileName=..\..\..\source\inflate.c
 CompileCpp=1
-Folder=Source
+Folder=3rd Party
 Compile=1
 Link=1
 Priority=1000
@@ -440,7 +440,7 @@ BuildCmd=
 [Unit30]
 FileName=..\..\..\source\include\inffast.h
 CompileCpp=1
-Folder=Include
+Folder=3rd Party
 Compile=1
 Link=1
 Priority=1000
@@ -450,7 +450,7 @@ BuildCmd=
 [Unit34]
 FileName=..\..\..\source\zutil.c
 CompileCpp=1
-Folder=Source
+Folder=3rd Party
 Compile=1
 Link=1
 Priority=1000
@@ -503,6 +503,24 @@ CompileCpp=1
 Folder=Include
 Compile=1
 Link=1
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit47]
+FileName=..\..\..\README.install
+Folder=_Read Me fisrt
+Compile=0
+Link=0
+Priority=1000
+OverrideBuildCmd=0
+BuildCmd=
+
+[Unit48]
+FileName=..\README.txt
+Folder=_Read Me fisrt
+Compile=0
+Link=0
 Priority=1000
 OverrideBuildCmd=0
 BuildCmd=

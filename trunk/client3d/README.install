@@ -1,31 +1,38 @@
 HOW TO INSTALL & RUN
 ---------------------
 
-This test application is for teating a setup of dlls
-and basic models.
-
-** You can't play this, you can't use it - its for
-** technical demonstration and to find problems under
-** specific systems.
+*** This application is for testing a setup of dlls and basic models.
+*** You can't play this, you can't use it.
+*** its for technical demonstration and to find problems under
+*** specific systems.
 
 INSTALL WINDOWS
 ---------------
+You have to choose one version:
+
+*** DevCpp version:
+1.) Unzip client3d/make/win32/dll_devcpp.zip to client3d/.
+2.) start daimonin3d_m.exe
+
+*** VC6 release version:
+1.) Unzip client3d/make/win32/dll_release.zip to client3d/.
+2.) start daimonin3d.exe
+3.) if some dlls are missing look here: http://support.microsoft.com/kb/259403/EN-US/
+
+*** VC6 debug version:
 1.) Unzip client3d/make/win32/dll_debug.zip to client3d/.
 2.) Install the STLport 4.6.2 from 
     http://www.ogre3d.org/index.php?option=com_remository&Itemid=74&func=selectcat&cat=1
 3.) start daimonin3d_d.exe
 4.) if some dlls are missing look here: http://support.microsoft.com/kb/259403/EN-US/
-5.) In the Ogre Engine Rendering setup choose:
-    - a Rendering system.
-    - a 1024x768 Video Mode.
 
 INSTALL GNU/LINUX
 -----------------
 
-Using Anjuta:
+*** Using Anjuta:
 There is an Anjuta Project file with howto in client3d/make/linux/anjuta.
 
-Using the automake makefiles:
+*** Using the automake makefiles:
 1.) Create configure script and makefiles:
 	> cd client3d
 	> bootstrap.sh
@@ -52,22 +59,23 @@ in /usr. If configure complains about not finding OGRE, try the following:
 on your system).
 
 
-HOW TO EXCHANGE THE MODEL
--------------------------
 
-Look in media/models/player.mesh for infos.
-There is also a robot and a ninja demo-file.
+FAQ
+---
+Q: How can I exange a model?
+A: Look in media/models/player.mesh for infos.
+   There are also some example-files.
 
-
-Q: Why there are a 2 kind of exe and dll?
-A: There is a debug and a release version.
+Q: Why there are a 3 kind of exe and dll?
+A: There is a debug and a release version compiled with VC6.
    The debug version is very slow, but give the coder much more fun :)
-   This version is always uptodate.
    The debug exe is called daimonin3d_d.
+   The release exe is called daimon3d.
+
+   Then there is a version compiled with DevCpp.
+   This one is called daimonin3d_m.
 
 Q: I have done all the thinks you said, but client3d failed to start...
 A: Then perhaps this file is not actual anymore.
-   Don't hestitate to ask in the irc or on the devel-list.
+   Don't hesitate to ask in the irc or on the devel-list.
    http://daimonin.sourceforge.net
-
-last edited on 30.03.05 by polyveg

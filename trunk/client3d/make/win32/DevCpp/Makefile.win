@@ -10,20 +10,20 @@ LINKOBJ  = ../DevCpp/client.o ../DevCpp/dialog.o ../DevCpp/event.o ../DevCpp/log
 LIBS =  -L"C:/Dev-Cpp/lib" -L"C:/Dev-Cpp/lib/OGRE" -L"../fmod_lib" -L"C:/Dev-Cpp/lib/OGRE" -mwindows -lOgreMain -lfmodvc -lws2_32 -Wl,--allow-multiple-definition -Wl,--enable-runtime-pseudo-reloc  
 INCS =  -I"C:/Dev-Cpp/include"  -I"../fmod_inc"  -I"../ogre_inc"  -I"../../../source/include" 
 CXXINCS =  -I"C:/Dev-Cpp/include/c++/3.3.1"  -I"C:/Dev-Cpp/include/c++/3.3.1/mingw32"  -I"C:/Dev-Cpp/include/c++/3.3.1/backward"  -I"C:/Dev-Cpp/lib/gcc-lib/mingw32/3.3.1/include"  -I"C:/Dev-Cpp/include"  -I"C:/Dev-Cpp/include/OGRE"  -I"../../../source/include"  -I"../fmod_inc"  -I"../ogre_inc"  -I"../../../source/include" 
-BIN  = ../../../daimonin3d.exe
+BIN  = ../../../daimonin3d_m.exe
 CXXFLAGS = $(CXXINCS) -DWIN32 -DMINGW -DNDEBUG -Wall  
 CFLAGS = $(INCS)  
 
 .PHONY: all all-before all-after clean clean-custom
 
-all: all-before ../../../daimonin3d.exe all-after
+all: all-before ../../../daimonin3d_m.exe all-after
 
 
 clean: clean-custom
 	rm -f $(OBJ) $(BIN)
 
 $(BIN): $(OBJ)
-	$(CPP) $(LINKOBJ) -o "..\..\..\daimonin3d.exe" $(LIBS)
+	$(CPP) $(LINKOBJ) -o "..\..\..\daimonin3d_m.exe" $(LIBS)
 
 ../DevCpp/client.o: ../../../source/client.cpp
 	$(CPP) -c ../../../source/client.cpp -o ../DevCpp/client.o $(CXXFLAGS)
