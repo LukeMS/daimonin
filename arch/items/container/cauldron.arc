@@ -3,6 +3,7 @@ name cauldron
 other_arch cauldron_open
 face cauldron.101
 layer 4
+no_pick 1
 type 122
 material 2
 material_real 65
@@ -18,6 +19,7 @@ other_arch cauldron_open
 face cauldron.101
 type 122
 layer 4
+no_pick 1
 material 2
 material_real 65
 weight 30000

@@ -1479,6 +1479,72 @@ no_teleport 1
 is_floor 1
 no_pick 1
 end
+Object floor_dark1a
+name floor
+face floor_dark1a.101
+type 71
+editor_folder floors/dark
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_dark1b
+name floor
+face floor_dark1b.101
+type 71
+editor_folder floors/dark
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_grey1a1
+name floor
+face floor_grey1a1.101
+type 71
+editor_folder floors/grey
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_grey1a2
+name floor
+face floor_grey1a2.101
+type 71
+editor_folder floors/grey
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_grey1b1
+name floor
+face floor_grey1b1.101
+type 71
+editor_folder floors/grey
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_grey1b2
+name floor
+face floor_grey1b2.101
+type 71
+editor_folder floors/grey
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
 Object ability_stone_throw
 name rock thrower
 face force.101
@@ -4604,6 +4670,7 @@ type 122
 editor_folder items/container
 other_arch cauldron_open
 layer 4
+no_pick 1
 material 2
 material_real 65
 weight 30000
@@ -4619,6 +4686,7 @@ type 122
 editor_folder items/container
 other_arch cauldron_open
 layer 4
+no_pick 1
 material 2
 material_real 65
 weight 30000
@@ -4633,6 +4701,7 @@ type 122
 editor_folder items/container
 other_arch close_chest
 layer 4
+no_pick 1
 level 1
 material 18
 material_real 65
@@ -4649,6 +4718,7 @@ editor_folder items/container
 other_arch close_chest_m1
 layer 4
 level 1
+no_pick 1
 material 2
 material_real 65
 value 350
@@ -4679,6 +4749,7 @@ editor_folder items/container
 other_arch close_chest_w1
 layer 4
 level 1
+no_pick 1
 material 18
 material_real 258
 value 350
@@ -4708,6 +4779,7 @@ type 122
 editor_folder items/container
 other_arch close_dbox
 race gold and jewels
+no_pick 1
 level 1
 layer 4
 material 66
@@ -4740,6 +4812,7 @@ type 122
 editor_folder items/container
 other_arch close_luggage
 layer 4
+no_pick 1
 level 1
 material 2
 material_real 65
@@ -4755,6 +4828,7 @@ type 122
 editor_folder items/container
 other_arch close_mail
 layer 4
+no_pick 1
 level 1
 material 18
 value 250
@@ -4815,6 +4889,7 @@ editor_folder items/container
 other_arch close_chest_4.111
 layer 4
 level 1
+no_pick 1
 material 18
 material_real 258
 value 350
@@ -4830,6 +4905,7 @@ editor_folder items/container
 other_arch close_chest_4.171
 layer 4
 level 1
+no_pick 1
 material 18
 material_real 258
 value 350
@@ -8381,6 +8457,42 @@ no_pass 1
 layer 5
 no_pick 1
 end
+Object pillar_dark_s
+name dark pillar
+face pillar_dark_s.d.101
+type 79
+editor_folder structures/pillars
+layer 5
+no_pass 1
+no_pick 1
+end
+Object pillar_dark2a
+name dark pillar
+face pillar_dark2a.d.101
+type 79
+editor_folder structures/pillars
+layer 5
+no_pass 1
+no_pick 1
+end
+Object pillar_dark2b
+name dark pillar
+face pillar_dark2b.d.101
+type 79
+editor_folder structures/pillars
+layer 5
+no_pass 1
+no_pick 1
+end
+Object pillar_dark2c
+name dark pillar
+face pillar_dark2c.d.101
+type 79
+editor_folder structures/pillars
+layer 5
+no_pass 1
+no_pick 1
+end
 Object rune_fire
 name Rune of Fire
 face rune_fire.101
@@ -8866,7 +8978,7 @@ layer 7
 end
 Object wall_dungeon1.111
 name dungeon wall
-face wall_dungeon1.111
+face wall_dungeon1.d.111
 type 77
 editor_folder walls/dungeon
 blocksview 1
@@ -8876,7 +8988,7 @@ no_pass 1
 end
 Object wall_dungeon1.131
 name dungeon wall
-face wall_dungeon1.131
+face wall_dungeon1.d.131
 type 77
 editor_folder walls/dungeon
 blocksview 1
@@ -8886,7 +8998,7 @@ no_pass 1
 end
 Object wall_dungeon1.141
 name dungeon wall
-face wall_dungeon1.141
+face wall_dungeon1.d.141
 type 77
 editor_folder walls/dungeon
 blocksview 1
@@ -8896,7 +9008,7 @@ no_pass 1
 end
 Object wall_dungeon1.181
 name dungeon wall
-face wall_dungeon1.181
+face wall_dungeon1.d.181
 type 77
 editor_folder walls/dungeon
 blocksview 1
@@ -9925,6 +10037,66 @@ name stone wall
 face wall_white1.d.181
 type 77
 editor_folder walls/white
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_dark1a.131
+name dark wall
+face wall_dark1a.d.131
+type 77
+editor_folder walls/dark
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_dark1b.131
+name dark wall
+face wall_dark1b.d.131
+type 77
+editor_folder walls/dark
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_dark1a.111
+name dark wall
+face wall_dark1a.d.111
+type 77
+editor_folder walls/dark
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_dark1b.111
+name dark wall
+face wall_dark1b.d.111
+type 77
+editor_folder walls/dark
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_dark1.141
+name dark wall
+face wall_dark1.d.141
+type 77
+editor_folder walls/dark
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_dark1.181
+name dark wall
+face wall_dark1.d.181
+type 77
+editor_folder walls/dark
 blocksview 1
 layer 5
 no_pick 1

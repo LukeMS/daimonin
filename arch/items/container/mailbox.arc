@@ -4,6 +4,7 @@ other_arch close_mail
 face mailbox.101
 type 122
 layer 4
+no_pick 1
 level 1
 material 18
 value 250

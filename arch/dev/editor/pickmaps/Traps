@@ -36,6 +36,7 @@ identified 1
 x 2
 end
 arch floor_ostone14
+unique 1
 x 2
 y 1
 end
@@ -112,7 +113,8 @@ arch floor_ostone14
 x 5
 y 4
 end
-arch floor_ostone3
+arch floor_ostone2
+unique 1
 x 5
 y 5
 end
