@@ -1270,9 +1270,9 @@ void do_specials() {
     if (!(pticks % 503))
 	watchdog();
 #endif    
-            if (!(pticks % 10))  /*use this for debuging */
-/*    if (!(pticks % PTICKS_PER_CLOCK))*/
-            tick_the_clock();
+  /*          if (!(pticks % 10)) */ /*use this for debuging */
+    if (!(pticks % PTICKS_PER_CLOCK))
+		tick_the_clock();
 
     if (!(pticks % 509))
 	flush_old_maps();    /* Clears the tmp-files of maps which have reset */
