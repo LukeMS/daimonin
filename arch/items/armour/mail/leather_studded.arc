@@ -3,8 +3,8 @@ name studded armour
 type 16
 layer 3
 face leather_studded.101
-last_heal 6
-last_sp 18
+last_heal 12
+last_sp 9
 ac 5
 item_level 3
 item_skill 4

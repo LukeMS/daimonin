@@ -994,7 +994,7 @@ void fix_player(object *op)
 					if(tmp->slaying!=NULL) 
 						FREE_AND_COPY_HASH(op->slaying,tmp->slaying);
 
-					pl->encumbrance+=(int)3*tmp->weight/1000;
+					pl->encumbrance+=(sint16)(3*tmp->weight/1000);
 					pl->digestion     += tmp->stats.food;
 					pl->gen_sp        += tmp->stats.sp;
 					pl->gen_grace     += tmp->stats.grace;

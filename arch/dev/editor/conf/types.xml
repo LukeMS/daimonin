@@ -340,6 +340,54 @@
   <entry value="769" name="ice: (default ice)" />
 </list>
 
+<list name="attack_type">
+
+  <entry value="0" name="&lt;standard&gt;" />
+
+  <entry value="1" name="Distance attack" />
+
+  <entry value="2" name="Run away" />
+
+  <entry value="3" name="Hit and run" />
+
+  <entry value="4" name="Wait and hit" />
+
+  <entry value="5" name="Always run" />
+
+  <entry value="6" name="Wait and hit from distance" />
+
+  <entry value="7" name="Keep distance" />
+
+</list>
+
+
+
+<list name="move_type">
+
+  <entry value="0" name="&lt;standard&gt;" />
+
+  <entry value="16" name="Pet movement" />
+
+  <entry value="32" name="Small circle" />
+
+  <entry value="48" name="Large circle" />
+
+  <entry value="64" name="Short horiz pace" />
+
+  <entry value="80" name="Long horiz pace" />
+
+  <entry value="96" name="Random direction" />
+
+  <entry value="112" name="Random walk" />
+
+  <entry value="128" name="Short vert pace" />
+
+  <entry value="144" name="Long vert pace" />
+
+  <entry value="176" name="Use waypoints" />
+
+</list> 
+
 <!--###################### default attributes ######################-->
 
 <!--
@@ -3831,7 +3879,8 @@
     11x11 square of the monster will wake the monster up. If the player
     has stealth, the size of this square is reduced in half plus 1.
   </attribute>
-  <attribute arch="attack_movement" editor="attack movement" type="int">
+  <attribute arch="attack_movement" editor="attack movement" type="doublelist:attack_type,move_type"> 
+	FIXME: copy documentation from define.h 
   </attribute>
   <attribute arch="run_away" editor="run at % health" type="int">
     This is a percentage based value in the range 0-100.
@@ -4436,7 +4485,8 @@
     11x11 square of the monster will wake the monster up. If the player
     has stealth, the size of this square is reduced in half plus 1.
   </attribute>
-  <attribute arch="attack_movement" editor="attack movement" type="int">
+  <attribute arch="attack_movement" editor="attack movement" type="doublelist:attack_type,move_type"> 
+	FIXME: copy documentation from define.h 
   </attribute>
   <attribute arch="run_away" editor="run at % health" type="int">
     This is a percentage based value in the range 0-100.
@@ -6730,6 +6780,57 @@
   </attribute>
   <attribute arch="slaying" editor="event option" type="string">
     This string is given the event as option string.
+  </attribute>
+</type>
+<!--####################################################################-->
+<type number="119" name="Waypoint Object">
+  <ignore>
+    <attribute arch="ac" />
+    <attribute arch="sub_type" />
+    <attribute arch="damned" />
+    <ignore_list name="non_pickable" />
+  </ignore>
+  <description><![CDATA[
+    The waypoint object can hold a position that a mob is to reach.
+	
+	Mobs will only use waypoints if their attack_movement attribute is between 176 and
+	191.
+	
+	When the mob reaches the destination, it will either continue to
+	the next waypoint, or stop. Waypoints can be used to set up patrol 
+	routes or make more dynamic script behaviours.  
+	When a waypoint is reached, a TRIGGER event will be executed.
+	]]>
+  </description>
+  <attribute arch="title" editor="next waypoint" type="string">
+  	Name of the next waypoint to go to when this is reached. Use this to
+	chain together several waypoints.
+  </attribute>
+  <attribute arch="slaying" editor="destination map" type="string">
+    Path to destination map. Leave blank to use current map.
+    You can enter an absolute path, beginning with '/' (for example
+    "/peterm/FireTemple/fire1"). It can also be a relative path, not beginning
+    with '/' (On the map "/peterm/FireTemple/Fire2" for example I could use the
+    relative path "Fire1"). Use relative paths whenever possible! Note that
+    upper/lower case must always be set correctly. However, please use lower
+    case only. 
+  </attribute>
+  <attribute arch="hp" editor="destination X" type="int">
+    The destinations define the (x, y)-coordinates where the mob should go.
+  </attribute>
+  <attribute arch="sp" editor="destination Y" type="int">
+    The destinations define the (x, y)-coordinates where the mob should go.
+  </attribute>
+  <attribute arch="wc" editor="pause" type="int">
+    Amount of time the mob should wait at this waypoint before proceeding to the next.
+  </attribute>
+  <attribute arch="grace" editor="trigger distance" type="int">
+    How far away from the exact position will the waypoint be considered to be reached.
+	Set to 0 to require the mob to be standing on top of the specified destination.
+  </attribute>
+  <attribute arch="cursed" editor="active" type="bool">
+  	The active waypoint is the one the mob is currently using. A mob should
+	not have more than one active waypoint.
   </attribute>
 </type>
 

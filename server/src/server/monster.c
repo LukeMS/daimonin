@@ -526,7 +526,144 @@ int can_see_enemy (object *op, object *enemy) {
   return 1;
 }
 
+/* Find a monster's currently active waypoint, if any */
+object *get_active_waypoint(object *op) {
+  object *wp = NULL;
+  
+  for(wp=op->inv;wp!=NULL;wp=wp->below)
+    if(wp->type == TYPE_WAYPOINT_OBJECT && QUERY_FLAG(wp, FLAG_CURSED)) 
+      break;
+  
+  return wp;
+}
 
+/* Find a monster's waypoint by name (used for getting the next waypoint) */
+object *find_waypoint(object *op, char *name) {
+  object *wp = NULL;
+
+  if(name == NULL)
+      return NULL;
+  
+  for(wp=op->inv;wp!=NULL;wp=wp->below)
+    if(wp->type == TYPE_WAYPOINT_OBJECT && strcmp(wp->name, name) == 0) 
+      break;
+  
+  return wp;
+}
+
+
+void waypoint_move(object *op) {
+    object *destination, *part, *waypoint;
+    rv_vector	rv;
+    int dir;
+    
+    /* Find the active waypoint (if any) */
+    waypoint = get_active_waypoint(op);
+    
+    if(waypoint == NULL)
+        return;
+    
+    /* Find a destination object so that we can use get_rangevector() */
+    /* TODO: map string from slaying field */
+    destination = get_map_ob(op->map, waypoint->stats.hp, waypoint->stats.sp);
+
+    if(destination == NULL)
+    {
+        LOG(llevBug,"BUG: move_waypoint(): no object at destination\n");
+        return;
+    }
+    
+    get_rangevector(op, destination, &rv, 0);
+    part = rv.part;
+    dir = rv.direction;
+
+    /* Reached the waypoint? */
+    if((int)rv.distance <= waypoint->stats.grace) {
+        object *nextwp = NULL;            
+
+        /* Just arrived? */
+        if(waypoint->stats.ac == 0) {
+            LOG(llevDebug,"move_waypoint(): reached destination\n");
+            
+#ifdef PLUGINS
+  /* GROS: Handle for plugin trigger event */
+  if(waypoint->event_flags&EVENT_FLAG_TRIGGER)
+  {
+    CFParm CFP;
+    CFParm* CFR;
+    int k, l, m;
+    int rtn_script = 0;
+	object *event_obj = get_event_object(waypoint, EVENT_TRIGGER);
+    m = 0;
+	
+    k = EVENT_TRIGGER;
+    l = SCRIPT_FIX_NOTHING;
+    CFP.Value[0] = &k;
+    CFP.Value[1] = op;
+    CFP.Value[2] = waypoint;
+    CFP.Value[3] = NULL;
+    CFP.Value[4] = NULL;
+    CFP.Value[5] = &m;
+    CFP.Value[6] = &m;
+    CFP.Value[7] = &m;
+    CFP.Value[8] = &l;
+    CFP.Value[9] = event_obj->race;
+    CFP.Value[10]= event_obj->slaying;
+    if (findPlugin(event_obj->name)>=0)
+    {
+      CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
+      rtn_script = *(int *)(CFR->Value[0]);
+      if (rtn_script!=0) return;
+    }
+  }
+#endif
+        } /* Just arrived */
+        
+        /* Waiting at this WP? */
+        if(waypoint->stats.ac < waypoint->stats.wc) {
+            waypoint->stats.ac++;
+            return;
+        }
+        waypoint->stats.ac = 0; /* clear timer */
+        
+        CLEAR_FLAG(waypoint, FLAG_CURSED);
+
+        nextwp = find_waypoint(op, waypoint->title);
+        if(nextwp) {
+            LOG(llevDebug,"move_waypoint(): Next WP: %s\n", waypoint->title);
+            SET_FLAG(nextwp, FLAG_CURSED);
+        } else {
+            LOG(llevDebug,"move_waypoint(): No next WP\n");
+        }
+
+        return;
+    }
+    
+    if(QUERY_FLAG(op,FLAG_CONFUSED))
+        dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
+
+    if (!dir)
+    	return;
+
+    if (!QUERY_FLAG(op,FLAG_STAND_STILL)) {
+	
+    if(move_object(op,dir)) /* Can the monster move directly toward waypoint? */
+	    return;
+
+    /* Try move around corners if !close */
+    {
+        int diff;
+	    for(diff = 1; diff <= 2; diff++) {
+		/* try different detours */
+            int m = 1-(RANDOM()&2);          /* Try left or right first? */
+            if(move_object(op,absdir(dir + diff*m)) ||
+                    move_object(op,absdir(dir - diff*m)))
+                return;
+        }
+    }
+    } /* if monster is not standing still */
+}
+    
 /*
  * Move-monster returns 1 if the object has been freed, otherwise 0.
  */
@@ -645,6 +782,7 @@ int move_monster(object *op) {
 	    }
         if(!QUERY_FLAG(op, FLAG_STAND_STILL)) 
         {
+            
             if (op->move_type & HI4)
             {
                 switch (op->move_type & HI4)
@@ -676,6 +814,9 @@ int move_monster(object *op) {
 		            case (RANDO2):
 		                move_randomly (op);
 		            break;
+                    case (WPOINT):
+                        waypoint_move(op);
+                    break; 
 	            }
         
 	            /*if(QUERY_FLAG(op, FLAG_FREED)) return 1; */ /* hm, when freed dont lets move him anymore */
@@ -1367,6 +1508,40 @@ void monster_check_pickup(object *monster) {
     if (monster_can_pick(monster,tmp)) {
       remove_ob(tmp);
       tmp = insert_ob_in_ob(tmp,monster);
+
+#ifdef PLUGINS
+      /* Gecko: Copied from drop_object */
+      /* GROS: Handle for plugin drop event */
+      if(tmp->event_flags & EVENT_FLAG_PICKUP)
+      {
+        CFParm CFP;
+        CFParm *CFR;
+        int k, l, m, rtn_script;
+		object *event_obj = get_event_object(tmp, EVENT_PICKUP);
+        m = 0;
+        k = EVENT_PICKUP;
+        l = SCRIPT_FIX_ALL;
+        CFP.Value[0] = &k;
+        CFP.Value[1] = monster; 
+        CFP.Value[2] = tmp; 
+        CFP.Value[3] = monster; // No container...
+        CFP.Value[4] = NULL;
+        CFP.Value[5] = &tmp->nrof; // nr of objects
+        CFP.Value[6] = &m;
+        CFP.Value[7] = &m;
+        CFP.Value[8] = &l;
+        CFP.Value[9] = event_obj->race;
+        CFP.Value[10]= event_obj->slaying;
+        if (findPlugin(event_obj->name)>=0)
+        {
+          CFR = ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
+          rtn_script = *(int *)(CFR->Value[0]);
+          /* Gecko: don't know why this is here, but it looks like it can mess things up... */
+          if (rtn_script!=0) return;
+        }
+      }
+#endif      
+      
       (void) monster_check_apply(monster,tmp);
     }
     /* We could try to re-establish the cycling, of the space, but probably

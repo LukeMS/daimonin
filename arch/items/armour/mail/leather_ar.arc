@@ -4,7 +4,6 @@ type 16
 layer 3
 face leather_ar.101
 last_heal 6
-last_sp 18
 ac 3
 protect_impact 10
 protect_cleave 15

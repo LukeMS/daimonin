@@ -134,6 +134,7 @@
   <type number="116" name="TYPE_JEWEL" />
   <type number="117" name="TYPE_NUGGET" />
   <type number="118" name="TYPE_EVENT_OBJECT" />
+  <type number="119" name="TYPE_WAYPOINT_OBJECT" />
  
  <type number="121" name="CLOSE_CON" />
   <type number="122" name="CONTAINER" />

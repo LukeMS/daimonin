@@ -3,7 +3,8 @@ name shield
 type 33
 layer 3
 face shield.101
-ac 1
+ac 2
+last_heal 5
 protect_impact 10
 protect_cleave 5
 protect_pierce 5

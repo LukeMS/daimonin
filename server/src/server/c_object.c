@@ -73,7 +73,8 @@ int command_uskill ( object *pl, char *params) {
         new_draw_info(NDI_UNIQUE, 0,pl, "Usage: use_skill <skill name>");
         return 0;
    }
-	pl->contr->praying=0;
+   if(pl->type == PLAYER)
+        pl->contr->praying=0;
    return use_skill(pl,params);
 }
 
@@ -84,7 +85,8 @@ int command_rskill ( object *pl, char *params) {
         new_draw_info(NDI_UNIQUE, 0,pl, "Usage: ready_skill <skill name>");
         return 0;
    }
-	pl->contr->praying=0;
+   if(pl->type == PLAYER)
+       pl->contr->praying=0;
    skillno=lookup_skill_by_name(params);
    if (skillno==-1) {
 	new_draw_info_format(NDI_UNIQUE,0,pl,"Couldn't find the skill %s", params);
@@ -95,7 +97,8 @@ int command_rskill ( object *pl, char *params) {
 
 int command_apply (object *op, char *params)
 {
-	op->contr->praying=0;
+    if(op->type == PLAYER)
+    	op->contr->praying=0;
   if (!params) {
     player_apply_below(op);
     return 0;
@@ -177,7 +180,9 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
     uint32 weight, effective_weight_limit;
     int tmp_nrof = tmp->nrof ? tmp->nrof : 1;
 
-	pl->contr->praying=0;
+    if(pl->type == PLAYER)
+    	pl->contr->praying=0;
+
     /* IF the player is flying & trying to take the item out of a container 
      * that is in his inventory, let him.  tmp->env points to the container 
      * (sack, luggage, etc), tmp->env->env then points to the player (nested 
@@ -265,6 +270,39 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
     new_draw_info(NDI_UNIQUE, 0,pl,buf);
     tmp = insert_ob_in_ob(tmp, op);
 
+#ifdef PLUGINS
+      /* Gecko: Copied from drop_object */
+      /* GROS: Handle for plugin drop event */
+      if(tmp->event_flags & EVENT_FLAG_PICKUP)
+      {
+        CFParm CFP;
+        CFParm *CFR;
+        int k, l, m, rtn_script;
+		object *event_obj = get_event_object(tmp, EVENT_PICKUP);
+        m = 0;
+        k = EVENT_PICKUP;
+        l = SCRIPT_FIX_ALL;
+        CFP.Value[0] = &k;
+        CFP.Value[1] = pl; // Gecko: We want the player/monster not the container (?)
+        CFP.Value[2] = tmp; 
+        CFP.Value[3] = op; // Gecko: Container id goes here
+        CFP.Value[4] = NULL;
+        CFP.Value[5] = &tmp_nrof; // nr of objects
+        CFP.Value[6] = &m;
+        CFP.Value[7] = &m;
+        CFP.Value[8] = &l;
+        CFP.Value[9] = event_obj->race;
+        CFP.Value[10]= event_obj->slaying;
+        if (findPlugin(event_obj->name)>=0)
+        {
+          CFR = ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
+          rtn_script = *(int *)(CFR->Value[0]);
+          /* Gecko: don't know why this is here, but it looks like it can mess things up... */
+          if (rtn_script!=0) return;
+        }
+      }
+#endif      
+      
     /* All the stuff below deals with client/server code, and is only
      * usable by players
      */
@@ -354,7 +392,10 @@ void pick_up(object *op,object *alt)
 	alt = op;
     }
 #ifdef PICKUP_DEBUG
-    printf ("Pick_up(): %s picks %s (%d) and inserts it %s.\n",op->name, tmp->name,  op->contr->count, alt->name);
+   if(op->type == PLAYER)
+      printf ("Pick_up(): %s picks %s (%d) and inserts it %s.\n",op->name, tmp->name,  op->contr->count, alt->name);
+   else
+      printf ("Pick_up(): %s picks %s and inserts it %s.\n",op->name, tmp->name, alt->name);
 #endif
 
     /* startequip items are not allowed to be put into containers: */
@@ -391,6 +432,11 @@ void put_object_in_sack (object *op, object *sack, object *tmp, long nrof)
     object *tmp2;
 	/*object *sack2;*/
     char buf[MAX_BUF];
+  
+    if(op->type != PLAYER) {
+        LOG(llevDebug ,"puty_object_in_sack: op not a player\n");
+        return;
+    }
 
     if (sack==tmp) return;	/* Can't put an object in itself */
     if (sack->type != CONTAINER) {
@@ -499,7 +545,9 @@ void drop_object (object *op, object *tmp, long nrof)
       return;
     }
 
-	op->contr->praying=0;
+    if (op->type == PLAYER)
+        op->contr->praying=0;
+
     if(QUERY_FLAG(tmp, FLAG_APPLIED)) {
       if (apply_special (op, tmp, AP_UNAPPLY | AP_NO_MERGE))
           return;		/* can't unapply it */
@@ -542,9 +590,9 @@ void drop_object (object *op, object *tmp, long nrof)
         CFP.Value[0] = &k;
         CFP.Value[1] = op;
         CFP.Value[2] = tmp;
-        CFP.Value[3] = &nrof;
+        CFP.Value[3] = NULL;
         CFP.Value[4] = NULL;
-        CFP.Value[5] = &m;
+        CFP.Value[5] = &nrof; // Gecko: Moved nrof to numeric arg to avoid problems
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
@@ -824,7 +872,8 @@ int command_dropall (object *op, char *params) {
       curinv = nextinv;
     }
   }
-  op->contr->socket.update_look=1;
+  if(op->type == PLAYER)
+      op->contr->socket.update_look=1;
 /*  draw_look(op);*/
   return 0;
 }
@@ -863,7 +912,8 @@ int command_drop (object *op, char *params)
 
 int command_examine (object *op, char *params)
 {
-	op->contr->praying=0;
+  if(op->type == PLAYER)
+      op->contr->praying=0;
   if (!params) {
     object *tmp=op->below;
     while (tmp && !LOOK_OBJ(tmp)) tmp=tmp->below;
@@ -888,6 +938,9 @@ int command_examine (object *op, char *params)
 object *find_marked_object(object *op)
 {
 	object *tmp;
+  
+    if(op->type != PLAYER)
+        return NULL;
 
     if (!op || !op->contr) return NULL;
     if (!op->contr->mark)
@@ -1487,7 +1540,11 @@ int command_pickup (object *op, char *params)
   uint32 i;
   char putstring[128];
 
-	op->contr->praying=0;
+  if(op->type != PLAYER) {
+    LOG(llevDebug ,"command_pickup: op not a player\n");
+    return 1;
+  }
+      
   if(!params) {
     /* if the new mode is used, just print the settings */
     /* yes, a GOTO is ugly, but its simpple and should stay until this
@@ -1586,6 +1643,11 @@ NEWPICKUP:
 }
 
 void set_pickup_mode(object *op,int i) {
+  if(op->type != PLAYER) {
+    LOG(llevDebug ,"set_pickup_mode: op not a player\n");
+    return;
+  }
+  
   switch(op->contr->mode=i) {
     case 0:
       new_draw_info(NDI_UNIQUE, 0,op,"Mode: Don't pick up.");
@@ -1617,7 +1679,13 @@ void set_pickup_mode(object *op,int i) {
 #ifdef SEARCH_ITEMS
 int command_search_items (object *op, char *params)
 {
-      char buf[MAX_BUF];
+  char buf[MAX_BUF];
+
+  if(op->type != PLAYER) {
+    LOG(llevDebug ,"command_search_items: op not a player\n");
+    return 0;
+  }
+  
   if(params == NULL) {
 	if(op->contr->search_str[0]=='\0') {
 	  new_draw_info(NDI_UNIQUE, 0,op,"Example: &/search &magic+1");
@@ -1637,7 +1705,7 @@ int command_search_items (object *op, char *params)
   strcpy(op->contr->search_str, params);
       sprintf(buf,"Searching for '%s'.",op->contr->search_str);
       new_draw_info(NDI_UNIQUE, 0,op,buf);
-  fix_player(op);
+	fix_player(op);
       return 1;
-    }
+}
 #endif /* SEARCH_ITEMS */

@@ -3,8 +3,8 @@ name lamellar mail
 face lamellar_mail.101
 type 16
 layer 3
-last_heal 26
-last_sp 7
+last_heal 20
+last_sp 8
 material 2
 material_real 65
 ac 6

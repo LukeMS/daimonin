@@ -3,8 +3,8 @@ name ring mail
 type 16
 layer 3
 face ring_mail.101
-last_heal 18
-last_sp 8
+last_heal 15
+last_sp 9
 material 2
 material_real 65
 ac 5

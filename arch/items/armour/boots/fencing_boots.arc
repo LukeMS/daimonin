@@ -14,7 +14,7 @@ is_vul_physical 1
 is_vul_elemental 1
 is_vul_magic 1
 is_vul_sphere 1
-last_heal 1
+last_heal 4
 material_real 193
 material 8
 type 99

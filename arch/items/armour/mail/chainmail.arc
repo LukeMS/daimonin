@@ -3,8 +3,8 @@ name chain mail
 type 16
 layer 3
 face chainmail.101
-last_heal 18
-last_sp 9
+last_heal 20
+last_sp 8
 material 2
 material_real 65
 ac 6

@@ -293,8 +293,10 @@ int command_combat(object *op, char *params)
 
 	if(op->contr->combat_mode)
 		op->contr->combat_mode=0;
-	else
+	else {
 		op->contr->combat_mode=1;
+        op->contr->praying = 0;
+    }
 
 	send_target_command(op->contr);
 	return 1;

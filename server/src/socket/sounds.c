@@ -26,11 +26,16 @@
 #include <global.h>
 #include <sproto.h>
 #include <sounds.h>
+// #include <define.h>
+#include <sockproto.h>
+
+#define POW2(x) ((x) * (x))
 
 /* This is only used for new client/server sound.  If the sound source
  * on the map is farther away than this, we don't sent it to the client.
  */
 #define MAX_SOUND_DISTANCE 12
+#define MAX_SOUND_DISTANCE_SQUARED POW2(MAX_SOUND_DISTANCE)
 
 void play_sound_player_only(player *pl, int soundnum,  int soundtype, int x, int y)
 {
@@ -54,8 +59,6 @@ void play_sound_player_only(player *pl, int soundnum,  int soundtype, int x, int
     Send_With_Handling(&pl->socket, &sl);
 }
 
-#define POW2(x) ((x) * (x))
-
 /* Plays some sound on map at x,y.  */
 void play_sound_map(mapstruct *map, int x, int y, int sound_num, int sound_type)
 {
@@ -71,9 +74,10 @@ void play_sound_map(mapstruct *map, int x, int y, int sound_num, int sound_type)
         /* ARGH... doing 2 pows for all players on this map... 
          * there must be a smarter way.  
          * We calc this in the client again, to get the volume/pan */
-	    int distance=isqrt(POW2(pl->ob->x - x) + POW2(pl->ob->y - y));
+        /* Gecko: removed the isqrt call. Happier now? =) */
+	    int distance_squared=POW2(pl->ob->x - x) + POW2(pl->ob->y - y);
 
-	    if (distance<=MAX_SOUND_DISTANCE) {
+	    if (distance_squared<=MAX_SOUND_DISTANCE_SQUARED) {
 			play_sound_player_only(pl, sound_num, sound_type, x-pl->ob->x, y-pl->ob->y);
 	    }
 	}

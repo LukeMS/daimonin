@@ -155,7 +155,7 @@ int transfer_ob (object *op, int x, int y, int randomly, object *originator, obj
 
 	/* this is not 100% tested for mobs - enter_exit will still fail to return for mobs */
 	/* but some testing should make it for mobs too */
-    if (EXIT_PATH (trap))
+    if (trap != NULL && EXIT_PATH (trap))
 	{
 		if (op->type == PLAYER && trap->msg && strncmp(EXIT_PATH(trap),"/!",2) && strncmp(EXIT_PATH(trap), "/random/", 8))
 		    new_draw_info (NDI_NAVY, 0, op, trap->msg);

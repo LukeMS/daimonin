@@ -596,6 +596,7 @@ CFParm *CFWTeleportObject(CFParm *PParm);
 CFParm *RegisterGlobalEvent(CFParm *PParm);
 CFParm *UnregisterGlobalEvent(CFParm *PParm);
 CFParm* CFWInsertObjectInObject(CFParm* PParm);
+CFParm* CFWPlaySoundMap(CFParm* PParm);
 void GlobalEvent(CFParm *PParm);
 /* resurrection.c */
 void dead_player(object *op);

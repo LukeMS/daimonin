@@ -274,6 +274,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define TYPE_JEWEL				116	   /* to make it different from GEM - thats needed to have a better */
 #define TYPE_NUGGET				117    /* use from the artifacts file */
 #define TYPE_EVENT_OBJECT		118	   /* event/script object */
+#define TYPE_WAYPOINT_OBJECT	119	   /* waypoint object */
 #define CLOSE_CON	            121    /* Eneq(@csd.uu.se): Id for close_container archetype. */
 #define CONTAINER	            122
 #define ARMOUR_IMPROVER         123
@@ -883,6 +884,7 @@ error - Your ANSI C compiler should be defining __STDC__;
                    /* pace area is longer and the monster stops before      */
                    /* changing directions                                   */
                    /* this is VERTICAL movement                             */
+#define WPOINT 176 /* The monster uses waypoints (if it has any)            */
 #define LO4     15 /* bitmasks for upper and lower 4 bits from 8 bit fields */
 #define HI4    240
 

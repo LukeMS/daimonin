@@ -331,6 +331,7 @@ static PyObject* CFGetObjectMoney(PyObject* self, PyObject* args);
 static PyObject* CFPayForItem(PyObject* self, PyObject* args);
 static PyObject* CFPayAmount(PyObject* self, PyObject* args);
 static PyObject* CFSendCustomCommand(PyObject* self, PyObject* args);
+static PyObject* CFPlayMapSound(PyObject* self, PyObject* args);
 
 /* Those are used to handle the events. The first one is used when a player  */
 /* attacks with a "scripted" weapon. HandleEvent is used for all other events*/
@@ -580,6 +581,7 @@ static PyMethodDef CFPythonMethods[] =
         {"PayForItem",CFPayForItem,METH_VARARGS},
         {"PayAmount",CFPayAmount,METH_VARARGS},
         {"SendCustomCommand",CFSendCustomCommand,METH_VARARGS},
+        {"PlayMapSound",CFPlayMapSound,METH_VARARGS},
         {NULL, NULL}
 };
 

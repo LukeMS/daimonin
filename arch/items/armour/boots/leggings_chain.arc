@@ -1,9 +1,9 @@
 Object leggings_chain
 name chain leggings
 face leggings_chain.101
-last_heal 4
 layer 3
 ac 2
+last_heal 10
 item_level 10
 weight 1300
 value 250
