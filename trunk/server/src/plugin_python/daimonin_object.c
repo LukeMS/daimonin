@@ -1805,8 +1805,7 @@ static PyObject* Daimonin_Object_AddQuestObject(Daimonin_Object *whoptr, PyObjec
 
 	myob = insert_ob_in_ob_hook(myob, walk);
 
-    Py_INCREF(Py_None);
-    return Py_None; /* there was non */
+    return wrap_object(myob);
 }
 
 
