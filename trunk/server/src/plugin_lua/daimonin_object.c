@@ -266,7 +266,7 @@ static int GameObject_GetSkill(lua_State *L)
     /* Browse the inventory of object to find a matching skill or exp_obj. */
     for (tmp = WHO->inv; tmp; tmp = tmp->below)
     {
-        if (tmp->type == SKILL && tmp->stats.sp == id)
+        if (tmp->type == SKILL && tmp->stats.sp == type)
             return push_object(L, &GameObject, tmp);
 
         if (tmp->type == EXPERIENCE && tmp->sub_type1 == id)
@@ -1233,11 +1233,11 @@ static int GameObject_FindSkill(lua_State *L)
     GCFP.Value[0] = (void *) (WHO);
     GCFP.Value[1] = (void *) (&skill);
     CFR = (PlugHooks[HOOK_FINDSKILL]) (&GCFP);
-   
+
     myob = (object *) (CFR->Value[0]);
     if (!myob)
         return 0;
-    
+
     return push_object(L, &GameObject, myob);
 }
 
