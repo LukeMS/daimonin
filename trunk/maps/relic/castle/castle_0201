@@ -18,7 +18,12 @@ tile_path_8 castle_0102
 end
 arch floor_wood2_l2
 end
+arch carpet1
+end
 arch floor_wood2_l2
+y 1
+end
+arch carpet1.111
 y 1
 end
 arch floor_wood2_l2
@@ -75,6 +80,10 @@ end
 arch floor_wood2_l2
 y 15
 end
+arch chair1_111
+direction 3
+y 15
+end
 arch floor_wood2_l2
 y 16
 end
@@ -114,7 +123,14 @@ end
 arch floor_wood2_l2
 x 1
 end
+arch carpet1
+x 1
+end
 arch floor_wood2_l2
+x 1
+y 1
+end
+arch carpet1.111
 x 1
 y 1
 end
@@ -155,8 +171,8 @@ friendly 1
 x 1
 y 7
 arch event_obj
-name Python
-race /castle/scripts/StonehavenHouseSeller.py
+name lua
+race /relic/castle/scripts/StonehavenHouseSeller.lua
 sub_type 6
 end
 end
@@ -243,6 +259,15 @@ end
 arch floor_wood2_l2
 x 2
 end
+arch carpet1.171
+x 2
+end
+arch candlelight4.101
+x 2
+end
+arch light7
+x 2
+end
 arch floor_wood2_l2
 x 2
 y 1
@@ -279,8 +304,8 @@ arch exit
 x 2
 y 7
 arch event_obj
-name Python
-race /castle/scripts/app_teleport.py
+name lua
+race /relic/castle/scripts/app_teleport.lua
 sub_type 10
 end
 end

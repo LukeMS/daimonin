@@ -269,33 +269,17 @@ arch water_still
 x 2
 y 12
 end
-arch grassd_7
-x 2
-y 13
-end
 arch water_still
 x 2
 y 13
 end
-arch grassd_1
+arch water_still
 x 2
 y 14
 end
 arch water_still
 x 2
-y 14
-end
-arch grassd_3
-x 2
 y 15
-end
-arch water_still
-x 2
-y 15
-end
-arch grassd_8
-x 2
-y 16
 end
 arch water_still
 x 2
@@ -304,10 +288,6 @@ end
 arch water_plant4
 x 2
 y 16
-end
-arch grassd_6
-x 2
-y 17
 end
 arch water_still
 x 2
@@ -317,10 +297,6 @@ arch water_plant2
 x 2
 y 17
 end
-arch grassd_4
-x 2
-y 18
-end
 arch water_still
 x 2
 y 18
@@ -329,25 +305,13 @@ arch water_plant4
 x 2
 y 18
 end
-arch grassd_2
+arch water_still
 x 2
 y 19
 end
 arch water_still
 x 2
-y 19
-end
-arch grassd_8
-x 2
 y 20
-end
-arch water_still
-x 2
-y 20
-end
-arch grassd_5
-x 2
-y 21
 end
 arch water_still
 x 2
@@ -512,17 +476,9 @@ arch grassd_m12
 x 3
 y 19
 end
-arch grassd_6
-x 3
-y 20
-end
 arch water_still
 x 3
 y 20
-end
-arch grassd_4
-x 3
-y 21
 end
 arch water_still
 x 3
@@ -682,10 +638,6 @@ end
 arch grassd_m12
 x 4
 y 20
-end
-arch grassd_5
-x 4
-y 21
 end
 arch water_still
 x 4
@@ -1470,10 +1422,6 @@ end
 arch water_plant4
 x 9
 y 20
-end
-arch grassd_4
-x 9
-y 21
 end
 arch water_still
 x 9

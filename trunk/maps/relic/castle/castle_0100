@@ -1164,6 +1164,7 @@ x 9
 y 3
 end
 arch lantern_magic.131
+direction 7
 x 9
 y 3
 end
@@ -1182,8 +1183,8 @@ invulnerable 1
 x 9
 y 4
 arch event_obj
-name Python
-race /castle/scripts/captain_guard.py
+name lua
+race /relic/castle/scripts/captain_guard.lua
 sub_type 6
 end
 end
@@ -1641,11 +1642,6 @@ arch floor_grit2
 x 12
 y 9
 end
-arch door1_locked
-direction 5
-x 12
-y 9
-end
 arch floor_grit2
 x 12
 y 10
@@ -1779,7 +1775,7 @@ arch floor_fstone2a
 x 13
 y 8
 end
-arch fwall_fstone2d
+arch fwall_fstone2
 x 13
 y 8
 end
@@ -1787,11 +1783,16 @@ arch floor_fstone2a
 x 13
 y 9
 end
+arch door1_locked
+direction 3
+x 13
+y 9
+end
 arch floor_fstone2a
 x 13
 y 10
 end
-arch fwall_fstone2a
+arch fwall_fstone2
 x 13
 y 10
 end
@@ -1969,11 +1970,19 @@ arch floor_fstone2a
 x 14
 y 8
 end
+arch fwall_fstone2d
+x 14
+y 8
+end
 arch floor_fstone2a
 x 14
 y 9
 end
 arch floor_fstone2a
+x 14
+y 10
+end
+arch fwall_fstone2a
 x 14
 y 10
 end

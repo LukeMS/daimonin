@@ -1187,8 +1187,8 @@ direction 1
 x 8
 y 6
 arch event_obj
-name Python
-race /python/bank.py
+name lua
+race /lua/bank.lua
 sub_type 6
 end
 end
@@ -1270,8 +1270,8 @@ direction 1
 x 8
 y 17
 arch event_obj
-name Python
-race /python/bank.py
+name lua
+race /lua/bank.lua
 sub_type 6
 end
 end

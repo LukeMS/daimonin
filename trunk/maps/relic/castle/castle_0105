@@ -988,8 +988,8 @@ friendly 1
 x 7
 y 16
 arch event_obj
-name Python
-race /castle/scripts/Kingsadvisorsscript.py
+name lua
+race /relic/castle/scripts/Kingsadvisorsscript.lua
 sub_type 6
 end
 end
@@ -2086,8 +2086,8 @@ friendly 1
 x 15
 y 16
 arch event_obj
-name Python
-race /castle/scripts/Kingsadvisorsscript.py
+name lua
+race /relic/castle/scripts/Kingsadvisorsscript.lua
 sub_type 6
 end
 end

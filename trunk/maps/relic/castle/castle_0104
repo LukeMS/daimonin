@@ -3412,8 +3412,8 @@ friendly 1
 x 22
 y 16
 arch event_obj
-name Python
-race /castle/scripts/Castleblacksmith1script.py
+name lua
+race /relic/castle/scripts/Castleblacksmith1script.lua
 sub_type 6
 end
 end
@@ -3514,8 +3514,8 @@ friendly 1
 x 23
 y 8
 arch event_obj
-name Python
-race /castle/scripts/Castleblacksmith2script.py
+name lua
+race /relic/castle/scripts/Castleblacksmith2script.lua
 sub_type 6
 end
 end

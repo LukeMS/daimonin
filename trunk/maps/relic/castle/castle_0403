@@ -1138,10 +1138,6 @@ arch grassd_m13
 x 8
 y 7
 end
-arch grassd_4
-x 8
-y 8
-end
 arch water_still
 x 8
 y 8
@@ -1150,17 +1146,9 @@ arch water_lily2
 x 8
 y 8
 end
-arch grassd_3
-x 8
-y 9
-end
 arch water_still
 x 8
 y 9
-end
-arch grassd_5
-x 8
-y 10
 end
 arch water_still
 x 8
