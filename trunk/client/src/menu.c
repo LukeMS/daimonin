@@ -2093,19 +2093,7 @@ void load_quickslots_entrys()
                     {
                         if (j == quick_slots[i].item.nr)
                         {
-                            if (strcmp(ob->s_name, quick_slots[i].name.name))
-                            {
-                                for (ob = cpl.ob->inv; ob; ob = ob->next)
-                                {
-                                    if (!strcmp(ob->s_name, quick_slots[i].name.name))
-                                    {
-                                        quick_slots[i].item.tag = ob->tag;
-                                        match = TRUE;
-                                        break;
-                                    }
-                                }
-                            }
-                            else
+                            if (!strcmp(ob->s_name, quick_slots[i].name.name))
                             {
                                 quick_slots[i].item.tag = ob->tag;
                                 match = TRUE;
@@ -2113,12 +2101,24 @@ void load_quickslots_entrys()
                             break;
                         }
                     }
-                    free(quick_slots[i].name.name);
                     if (match == FALSE)
                     {
-                        cont = TRUE;
-                        quick_slots[i].item.tag = -1;
+                        for (ob = cpl.ob->inv; ob; ob = ob->next)
+                        {
+                            if (!strcmp(ob->s_name, quick_slots[i].name.name))
+                            {
+                                quick_slots[i].item.tag = ob->tag;
+                                match = TRUE;
+                                break;
+                            }
+                        }
+                        if (match == FALSE)
+                        {
+                            cont = TRUE;
+                            quick_slots[i].item.tag = -1;
+                        }
                     }
+                    free(quick_slots[i].name.name);
                 }
                 else
                 {
