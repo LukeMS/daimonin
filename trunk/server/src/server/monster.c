@@ -2716,7 +2716,7 @@ static object *spawn_monster(object *gen, object *orig, int range)
   object *op,*head=NULL,*prev=NULL, *ret=NULL;
   archetype *at=gen->arch;
 
-  i=find_free_spot(at,orig->map,orig->x,orig->y,0,range);
+  i=find_first_free_spot2(at,orig->map,orig->x,orig->y,0,range);
   if (i==-1)
 	  return NULL; 
   while(at!=NULL) {

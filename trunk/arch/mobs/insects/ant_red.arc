@@ -6,6 +6,7 @@ is_female 1
 corpse 1
 layer 6
 direction 5
+wc_range 20
 is_neutral 1
 item_race 255
 item_level 255

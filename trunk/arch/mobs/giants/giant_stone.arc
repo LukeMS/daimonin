@@ -5,6 +5,7 @@ randomitems mob_giant_stone
 will_apply 8
 is_evil 1
 is_male 1
+wc_range 20
 weight 13250
 exp 165
 item_race 255

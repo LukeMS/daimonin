@@ -4,6 +4,7 @@ race human
 type 80
 layer 6
 will_apply 8
+wc_range 20
 direction 5
 is_male 1
 item_race 255

@@ -4,6 +4,7 @@ race troll
 layer 6
 randomitems mob_troll
 face troll.131
+wc_range 20
 direction 5
 speed -0.06
 corpse 1

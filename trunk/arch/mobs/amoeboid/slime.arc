@@ -3,6 +3,7 @@ name slime
 race slime
 randomitems mob_slime
 is_neutral 1
+wc_range 20
 weight 12250
 exp 135
 speed -0.024

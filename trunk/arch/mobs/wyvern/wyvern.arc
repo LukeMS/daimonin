@@ -7,6 +7,7 @@ face wyvern.141
 direction 5
 speed -0.06
 corpse 1
+wc_range 20
 item_race 255
 item_level 255
 type 80

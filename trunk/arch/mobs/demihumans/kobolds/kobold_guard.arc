@@ -3,6 +3,7 @@ name kobold guard
 face kobold_guard.131
 race kobold
 is_male 1
+wc_range 20
 corpse 1
 layer 6
 direction 5

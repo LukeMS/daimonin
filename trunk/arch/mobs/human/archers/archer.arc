@@ -5,6 +5,7 @@ type 80
 layer 6
 will_apply 8
 item_race 255
+wc_range 20
 item_level 255
 direction 5
 is_male 1

@@ -5,6 +5,7 @@ race insect
 is_female 1
 corpse 1
 layer 6
+wc_range 20
 direction 5
 is_neutral 1
 item_race 255

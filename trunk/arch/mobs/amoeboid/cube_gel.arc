@@ -7,6 +7,7 @@ weight 8250
 exp 115
 item_race 255
 item_level 255
+wc_range 20
 speed -0.025
 weapon_speed 0.040
 attack_pierce 75

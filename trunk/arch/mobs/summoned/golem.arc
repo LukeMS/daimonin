@@ -7,6 +7,7 @@ is_neutral 1
 corpse 1
 will_apply 8
 item_race 255
+wc_range 20
 item_level 255
 terrain_flag 1
 weapon_speed 0.039

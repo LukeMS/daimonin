@@ -3,6 +3,7 @@ name big kobold
 face kobold_big.131
 race kobold
 is_male 1
+wc_range 20
 corpse 1
 layer 6
 direction 5
