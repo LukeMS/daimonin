@@ -4,12 +4,12 @@ msg
 Creator: Daimonin Map Editor
 Date:    4/13/2003
 endmsg
-darkness 700
 width 17
 height 17
 enter_x 1
 enter_y 1
 difficulty 1
+darkness 700
 end
 arch floor_ostone1
 end
@@ -191,7 +191,36 @@ arch floor_ostone1
 x 1
 y 12
 end
+arch detector
+name convert gold to mithril
+msg
+Convert mithril to gold
+endmsg
+type 103
+slaying goldcoin
+food 1000
+other_arch mitcoin
+walk_on 1
+fly_on 1
+x 1
+y 12
+end
 arch floor_ostone1
+x 1
+y 13
+end
+arch detector
+name convert mithril to gold
+msg
+Convert mithril to gold
+endmsg
+type 103
+slaying mitcoin
+food 1
+other_arch goldcoin
+sp 1000
+walk_on 1
+fly_on 1
 x 1
 y 13
 end

@@ -4168,7 +4168,7 @@
     what reasonable means. Keep in mind that spellcasting monsters
     are a lot harder to kill than non-spellcasters!
   </attribute>
-  <attribute arch="speed_left" editor="speed" type="float">
+  <attribute arch="speed" editor="speed" type="float">
     The &lt;speed&gt; determines how fast a monster will both move
     and fight. High &lt;speed&gt; makes a monster considerably stronger.
     If the start value is negative but the speed counter becomes a 

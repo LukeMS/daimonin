@@ -479,8 +479,9 @@ sp 15
 wc 3
 end
 arch event_obj
-sub_type 6
+name Python
 race /dev/testmaps/waypoint_activate.py
+sub_type 6
 end
 end
 arch floor_ostone1
@@ -562,8 +563,9 @@ title waypoint2
 sp 3
 hp 3
 arch event_obj
-sub_type 10
+name Python
 race /dev/testmaps/waypoint.py
+sub_type 10
 end
 end
 arch waypoint
@@ -573,8 +575,9 @@ hp 7
 sp 3
 end
 arch event_obj
-sub_type 6
+name Python
 race /dev/testmaps/waypoint_activate.py
+sub_type 6
 end
 end
 arch floor_ostone1
@@ -1011,8 +1014,19 @@ y 22
 end
 arch slime
 unaggressive 1
+attack_movement 176
 x 7
 y 22
+arch waypoint
+name waypoint1
+slaying testmap_main
+hp 1
+sp 1
+end
+arch event_obj
+sub_type 6
+race /dev/testmaps/waypoint_activate.py
+end
 end
 arch floor_ostone1
 x 7
@@ -1530,8 +1544,9 @@ sp 16
 wc 3
 end
 arch event_obj
-sub_type 6
+name Python
 race /dev/testmaps/waypoint_activate.py
+sub_type 6
 end
 end
 arch floor_ostone1
@@ -1708,8 +1723,9 @@ sp 3
 wc 10
 end
 arch event_obj
-sub_type 6
+name Python
 race /dev/testmaps/waypoint_activate.py
+sub_type 6
 end
 arch waypoint
 name waypoint2
@@ -2635,17 +2651,6 @@ arch floor_ostone1
 x 21
 y 9
 end
-arch gravestone
-name Warning!
-msg
-Don't push the wyvern across the map tile boundary!
-You have been warned!
-endmsg
-type 98
-walk_on 1
-x 21
-y 9
-end
 arch floor_ostone1
 x 21
 y 10
@@ -2949,7 +2954,7 @@ end
 arch wyvern
 unaggressive 1
 attack_movement 176
-x 23
+x 22
 y 5
 arch waypoint
 name waypoint1
@@ -2966,7 +2971,8 @@ hp 20
 sp 5
 end
 arch event_obj
-sub_type 6
+name Python
 race /dev/testmaps/waypoint_activate.py
+sub_type 6
 end
 end

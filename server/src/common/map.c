@@ -527,14 +527,15 @@ int blocks_cleric(mapstruct *m, int x, int y) {
  */
 int blocked(object *op, mapstruct *m, int x, int y, int terrain) 
 {
-	register int flags;
+	int flags;
+	MapSpace *msp;
 
-	flags = GET_MAP_FLAGS(m,x,y);
+	flags = (msp=GET_MAP_SPACE_PTR(m,x,y))->flags;
 
 	/* lets start... first, look at the terrain. If we don't have
 	 * a valid terrain flag, this is forbidden to enter.
 	 */
-    if(GET_MAP_MOVE_FLAGS(m,x,y) & ~terrain)
+    if(msp->move_flags & ~terrain)
         return ((flags & (P_NO_PASS | P_IS_ALIVE|P_IS_PLAYER|P_CHECK_INV|P_PASS_THRU)) | P_NO_TERRAIN);
 
 	/* the terrain is ok... whats first?

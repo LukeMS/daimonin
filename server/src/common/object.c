@@ -1843,8 +1843,11 @@ void update_object(object *op, int action)
 		/* this is handled a bit more complex, we must always loop the flags! */
         if (QUERY_FLAG(op, FLAG_NO_PASS) || QUERY_FLAG(op, FLAG_PASS_THRU))
 			newflags|=P_FLAGS_UPDATE;
-		else if(QUERY_FLAG(op,FLAG_IS_FLOOR))
+		else if(QUERY_FLAG(op,FLAG_IS_FLOOR)) /* floors define our node - force a update */
+		{
+			newflags|=P_FLAGS_UPDATE;
 			msp->light_value += op->last_sp;
+		}
 		else /* ok, we don't must use flag loop - we can set it by hand! */
 		{
 			if(op->type == CHECK_INV)

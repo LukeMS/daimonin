@@ -705,6 +705,7 @@ void adjust_light_source(mapstruct *map, int x, int y, int light)
 	int nlm, olm;
 	MapSpace *msp1 = GET_MAP_SPACE_PTR(map,x,y);
 
+
 	/* this happens, we don't change the intense of the old light mask */
 	olm = get_real_light_source_value(msp1->light_source); /* old mask */
 	msp1->light_source+=light;	
@@ -1080,7 +1081,6 @@ void remove_light_source_list(mapstruct *map)
 	MapSpace *tmp;
 
 	/*LOG(-1,"REMOVE LSL-LIST of map:>%s<\n",map->path);*/
-
 	for(tmp=map->first_light;tmp;tmp=tmp->next_light)
 	{
 		/* again - there MUST be at last ONE object in this map space */

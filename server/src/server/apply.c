@@ -806,10 +806,10 @@ int improve_armour(object *op, object *improver, object *armour)
 /*
  * convert_item() returns 1 if anything was converted, otherwise 0
  */
-#define CONV_FROM(xyz)	xyz->slaying
-#define CONV_TO(xyz)	xyz->other_arch
-#define CONV_NR(xyz)	(unsigned char) xyz->stats.sp
-#define CONV_NEED(xyz)	(unsigned long) xyz->stats.food
+#define CONV_FROM(xyz)	(xyz->slaying)
+#define CONV_TO(xyz)	(xyz->other_arch)
+#define CONV_NR(xyz)	((unsigned long) xyz->stats.sp)      /* receive number */
+#define CONV_NEED(xyz)	((unsigned long) xyz->stats.food)    /* cost number */
 
 int convert_item(object *item, object *converter) {
   int nr=0;
@@ -1167,8 +1167,31 @@ int esrv_apply_container (object *op, object *sack)
     return 1;
 }
 
+
+/* Frees a monster trapped in container when opened by a player */
+void free_container_monster(object *monster, object *op)
+{
+    int i;
+    object *container = monster->env;
+
+    if(container == NULL)
+        return;
+
+    remove_ob(monster);
+    monster->x=container->x;
+    monster->y=container->y;
+    i=find_free_spot(monster->arch, op->map, monster->x, monster->y,0, 9); 
+    if(i != -1) {
+        monster->x += freearr_x[i];
+        monster->y += freearr_y[i];
+    }
+    fix_monster(monster);
+    insert_ob_in_map (monster, op->map, monster, 0);
+    new_draw_info_format(NDI_UNIQUE, 0, op, "A %s jumps out of the %s.", query_name(monster), query_name(container));
+}
+
 /* examine the items in a container which gets readied or opened by player .
- * Explode or trigger every trap & rune in there.
+ * Explode or trigger every trap & rune in there and free trapped monsters.
  */
 int container_trap(object *op, object *container)
 {
@@ -1181,10 +1204,15 @@ int container_trap(object *op, object *container)
 		{
 			ret++;
 			spring_trap (tmp, op);
-		}
+		} 
+        else if(tmp->type == MONSTER) /* search for monsters living in containers */
+		{
+			ret++;
+            free_container_monster(tmp, op);
+		} 
 	}
 
-	return ret;/* ret=0 -> no trap found/exploded */
+	return ret;/* ret=0 -> no trap or monster found/exploded/freed */
 }
 
 /*
@@ -1607,9 +1635,8 @@ void move_apply (object *trap, object *victim, object *originator)
     goto leave;
 
   case SIGN:
-    if (victim->type != PLAYER && trap->stats.food > 0)
-      goto leave; /* monsters musn't apply magic_mouths with counters */
-    apply_sign (victim, trap);
+    if (victim->type == PLAYER) /* only player should be able read signs */
+	    apply_sign (victim, trap);
     goto leave;
 
   case CONTAINER:
@@ -1621,6 +1648,7 @@ void move_apply (object *trap, object *victim, object *originator)
     if (trap->level && QUERY_FLAG (victim, FLAG_ALIVE))
         spring_trap(trap, victim);
     goto leave;
+    
   default:
     LOG(llevDebug, "name %s, arch %s, type %d with fly/walk on/off not "
          "handled in move_apply()\n", trap->name, trap->arch->name,
@@ -2041,6 +2069,14 @@ static void apply_treasure (object *op, object *tmp)
       remove_ob(treas);
       draw_find(op,treas);
       treas->x=op->x,treas->y=op->y;
+      if(treas->type == MONSTER) { /* Monsters can be trapped in treasure chests */
+          int i=find_free_spot(treas->arch, op->map, treas->x, treas->y,0, 9); 
+          if(i != -1) {
+              treas->x += freearr_x[i];
+              treas->y += freearr_y[i];
+          }
+          fix_monster(treas);
+      }
       treas = insert_ob_in_map (treas, op->map, op,0);
       if (treas && treas->type == RUNE && treas->level && QUERY_FLAG (op, FLAG_ALIVE))
         spring_trap (treas, op);
@@ -3560,7 +3596,7 @@ void apply_player_light(object *who, object *op)
 
 
         /* if glow_radius == 0, we have a unlight light source.
-		/* before we can put it in the hand to use it, we have to turn
+		 * before we can put it in the hand to use it, we have to turn
 		 * the light on.
 		 */
         if(!op->glow_radius)

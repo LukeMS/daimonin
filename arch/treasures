@@ -1809,6 +1809,5 @@ treasureone random_style1
  chance 50
 end
 treasureone random_test
-list random_weapons_slash
- artifact_chance 100
+list mob_wyvern
 end

@@ -480,6 +480,7 @@ object *find_waypoint(object *op, const char *name) {
 /* Perform a path computation for the waypoint object 
  * This function is called whenever our path request is dequeued 
  */
+/* TODO: this function is getting very messy. Clean it up some rainy day. */
 void waypoint_compute_path(object *waypoint) {
     object *op = waypoint->env;
     mapstruct *destmap = op->map;
@@ -838,6 +839,7 @@ int move_monster(object *op) {
     object  *owner, *enemy, *part, *tmp;
     rv_vector	rv;
  
+    
 	if(op->head)
 	{
 		LOG(llevBug,"BUG: move_monster(): called from tail part. (%s -- %s)\n", query_name(op), op->arch->name);
