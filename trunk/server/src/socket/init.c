@@ -304,21 +304,19 @@ void close_newsocket(NewSocket *ns)
 #ifdef WIN32
     shutdown(ns->fd, SD_BOTH);
     if (closesocket(ns->fd))
-    {
 #else
-        if (close(ns->fd))
-        {
+    if (close(ns->fd))
 #endif
-
-#ifdef ESRV_DEBUG
-            LOG(llevDebug, "Error closing socket %d\n", ns->fd);
-#endif
-        }
-    }
-
-    void    free_newsocket  (NewSocket *ns)
     {
-        LOG(llevDebug, "Closing socket %d\n", ns->fd);
+#ifdef ESRV_DEBUG
+        LOG(llevDebug, "Error closing socket %d\n", ns->fd);
+#endif
+    }
+}
+
+void    free_newsocket  (NewSocket *ns)
+{
+    LOG(llevDebug, "Closing socket %d\n", ns->fd);
 
     close_newsocket(ns);
 
