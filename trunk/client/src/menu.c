@@ -1,3 +1,25 @@
+/*
+    Daimonin SDL client, a client program for the Daimonin MMORPG.
+
+
+  Copyright (C) 2003 Michael Toennies
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+    The author can be reached via e-mail to info@daimonin.net
+*/
 #include <include.h>
 
 _media_file             media_file[MEDIA_MAX];
@@ -76,29 +98,6 @@ void do_console(int x, int y)
  * Return: TRUE=don't send command to server
  * FALSE: send command to server
  */
-/*
-    Daimonin SDL client, a client program for the Daimonin MMORPG.
-
-
-  Copyright (C) 2003 Michael Toennies
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
-    The author can be reached via e-mail to daimonin@nord-com.net
-*/
-
 int client_command_check(char *cmd)
 {
     char    tmp[256];
@@ -342,6 +341,31 @@ void do_keybind_input(void)
             keybind_status = KEYBIND_STATUS_NO;
         }
         reset_keys();
+        cpl.input_mode = INPUT_MODE_NO;
+        map_udate_flag = 2;
+    }
+}
+
+void do_npcdialog_input(void)
+{
+    show_help_screen = 0;
+    if (InputStringEscFlag == TRUE)
+    {
+        reset_keys();
+        sound_play_effect(SOUND_CLICKFAIL, 0, 0, 100);
+        cpl.input_mode = INPUT_MODE_NO;
+        map_udate_flag = 2;
+		gui_interface_npc->input_flag = FALSE;
+    }
+    /* if set, we got a finished input!*/
+    if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
+    {
+        if (InputString[0])
+        {
+			gui_interface_send_command(0,InputString);
+        }
+        reset_keys();
+		gui_interface_npc->input_flag = FALSE;
         cpl.input_mode = INPUT_MODE_NO;
         map_udate_flag = 2;
     }
@@ -720,6 +744,8 @@ void show_menu(void)
         return;
     if (cpl.menustatus == MENU_KEYBIND)
         show_keybind();
+    else if (cpl.menustatus == MENU_NPC)
+		show_interface_npc(esc_menu_index);
     else if (cpl.menustatus == MENU_STATUS)
         show_status();
     else if (cpl.menustatus == MENU_SPELL)
@@ -938,7 +964,7 @@ static int load_anim_tmp(void)
     /* end of dummy animation #0 */
 
     count++;
-    if ((stream = fopen(FILE_ANIMS_TMP, "rt")) == NULL)
+    if ((stream = fopen_wrapper(FILE_ANIMS_TMP, "rt")) == NULL)
     {
         LOG(LOG_ERROR, "load_anim_tmp: Error reading anim.tmp!");
         SYSTEM_End(); /* fatal */
@@ -1003,7 +1029,7 @@ int read_anim_tmp(void)
     struct stat stat_bmap, stat_anim, stat_tmp;
 
     /* if this fails, we have a urgent problem somewhere before */
-    if ((stream = fopen(FILE_BMAPS_TMP, "rb")) == NULL)
+    if ((stream = fopen_wrapper(FILE_BMAPS_TMP, "rb")) == NULL)
     {
         LOG(LOG_ERROR, "read_anim_tmp:Error reading bmap.tmp for anim.tmp!");
         SYSTEM_End(); /* fatal */
@@ -1012,7 +1038,7 @@ int read_anim_tmp(void)
     fstat(fileno(stream), &stat_bmap);
     fclose(stream);
 
-    if ((stream = fopen(FILE_CLIENT_ANIMS, "rb")) == NULL)
+    if ((stream = fopen_wrapper(FILE_CLIENT_ANIMS, "rb")) == NULL)
     {
         LOG(LOG_ERROR, "read_anim_tmp:Error reading bmap.tmp for anim.tmp!");
         SYSTEM_End(); /* fatal */
@@ -1021,7 +1047,7 @@ int read_anim_tmp(void)
     fstat(fileno(stream), &stat_anim);
     fclose(stream);
 
-    if ((stream = fopen(FILE_ANIMS_TMP, "rb")) != NULL)
+    if ((stream = fopen_wrapper(FILE_ANIMS_TMP, "rb")) != NULL)
     {
         fstat(fileno(stream), &stat_tmp);
         fclose(stream);
@@ -1036,14 +1062,14 @@ int read_anim_tmp(void)
     }
 
     unlink(FILE_ANIMS_TMP); /* for some reason - recreate this file */
-    if ((ftmp = fopen(FILE_ANIMS_TMP, "wt")) == NULL)
+    if ((ftmp = fopen_wrapper(FILE_ANIMS_TMP, "wt")) == NULL)
     {
         LOG(LOG_ERROR, "read_anim_tmp:Error opening anims.tmp!");
         SYSTEM_End(); /* fatal */
         exit(0);
     }
 
-    if ((stream = fopen(FILE_CLIENT_ANIMS, "rt")) == NULL)
+    if ((stream = fopen_wrapper(FILE_CLIENT_ANIMS, "rt")) == NULL)
     {
         LOG(LOG_ERROR, "read_anim_tmp:Error reading client_anims for anims.tmp!");
         SYSTEM_End(); /* fatal */
@@ -1117,7 +1143,7 @@ void read_anims(void)
     LOG(LOG_DEBUG, "Loading %s....", FILE_CLIENT_ANIMS);
     srv_client_files[SRV_CLIENT_ANIMS].len = 0;
     srv_client_files[SRV_CLIENT_ANIMS].crc = 0;
-    if ((stream = fopen(FILE_CLIENT_ANIMS, "rb")) != NULL)
+    if ((stream = fopen_wrapper(FILE_CLIENT_ANIMS, "rb")) != NULL)
     {
         /* temp load the file and get the data we need for compare with server */
         fstat(fileno(stream), &statbuf);
@@ -1148,7 +1174,7 @@ static void load_bmaps_p0(void)
     memset((void *) bmap_table, 0, BMAPTABLE * sizeof(_bmaptype *));
 
     /* try to open bmaps_p0 file */
-    if ((fbmap = fopen(FILE_BMAPS_P0, "rb")) == NULL)
+    if ((fbmap = fopen_wrapper(FILE_BMAPS_P0, "rb")) == NULL)
     {
         LOG(LOG_ERROR, "FATAL: Error loading bmaps.p0!");
         SYSTEM_End(); /* fatal */
@@ -1185,7 +1211,7 @@ void read_bmaps_p0(void)
     char        buf[HUGE_BUF];
     struct stat bmap_stat, pic_stat;
 
-    if ((fpic = fopen(FILE_DAIMONIN_P0, "rb")) == NULL)
+    if ((fpic = fopen_wrapper(FILE_DAIMONIN_P0, "rb")) == NULL)
     {
         LOG(LOG_ERROR, "FATAL: Can't find daimonin.p0 file!");
         SYSTEM_End(); /* fatal */
@@ -1196,7 +1222,7 @@ void read_bmaps_p0(void)
     fstat(fileno(fpic), &pic_stat);
 
     /* try to open bmaps_p0 file */
-    if ((fbmap = fopen(FILE_BMAPS_P0, "r")) == NULL)
+    if ((fbmap = fopen_wrapper(FILE_BMAPS_P0, "r")) == NULL)
         goto create_bmaps;
 
     /* get time stamp of the file */
@@ -1211,7 +1237,7 @@ void read_bmaps_p0(void)
     return;
 
     create_bmaps: /* if we are here, then we have to (re)create the bmaps.p0 file */
-    if ((fbmap = fopen(FILE_BMAPS_P0, "w")) == NULL)
+    if ((fbmap = fopen_wrapper(FILE_BMAPS_P0, "w")) == NULL)
     {
         LOG(LOG_ERROR, "FATAL: Can't create bmaps.p0 file!");
         SYSTEM_End(); /* fatal */
@@ -1297,7 +1323,7 @@ static int load_bmap_tmp(void)
     unsigned int crc;
 
     delete_bmap_tmp();
-    if ((stream = fopen(FILE_BMAPS_TMP, "rt")) == NULL)
+    if ((stream = fopen_wrapper(FILE_BMAPS_TMP, "rt")) == NULL)
     {
         LOG(LOG_ERROR, "bmaptype_table(): error open file <bmap.tmp>");
         SYSTEM_End(); /* fatal */
@@ -1328,7 +1354,7 @@ int read_bmap_tmp(void)
     unsigned int crc;
     _bmaptype  *at;
 
-    if ((stream = fopen(FILE_CLIENT_BMAPS, "rb")) == NULL)
+    if ((stream = fopen_wrapper(FILE_CLIENT_BMAPS, "rb")) == NULL)
     {
         /* we can't make bmaps.tmp without this file */
         unlink(FILE_BMAPS_TMP);
@@ -1337,7 +1363,7 @@ int read_bmap_tmp(void)
     fstat(fileno(stream), &stat_bmap);
     fclose(stream);
 
-    if ((stream = fopen(FILE_BMAPS_P0, "rb")) == NULL)
+    if ((stream = fopen_wrapper(FILE_BMAPS_P0, "rb")) == NULL)
     {
         /* we can't make bmaps.tmp without this file */
         unlink(FILE_BMAPS_TMP);
@@ -1346,7 +1372,7 @@ int read_bmap_tmp(void)
     fstat(fileno(stream), &stat_bp0);
     fclose(stream);
 
-    if ((stream = fopen(FILE_BMAPS_TMP, "rb")) == NULL)
+    if ((stream = fopen_wrapper(FILE_BMAPS_TMP, "rb")) == NULL)
         goto create_bmap_tmp;
     fstat(fileno(stream), &stat_tmp);
     fclose(stream);
@@ -1366,10 +1392,10 @@ int read_bmap_tmp(void)
     unlink(FILE_BMAPS_TMP);
 
     /* NOW we are sure... we must create us a new bmaps.tmp */
-    if ((stream = fopen(FILE_CLIENT_BMAPS, "rb")) != NULL)
+    if ((stream = fopen_wrapper(FILE_CLIENT_BMAPS, "rb")) != NULL)
     {
         /* we can use text mode here, its local */
-        if ((fbmap0 = fopen(FILE_BMAPS_TMP, "wt")) != NULL)
+        if ((fbmap0 = fopen_wrapper(FILE_BMAPS_TMP, "wt")) != NULL)
         {
             /* read in the bmaps from the server, check with the
                      * loaded bmap table (from bmaps.p0) and create with
@@ -1413,7 +1439,7 @@ void read_bmaps(void)
     srv_client_files[SRV_CLIENT_BMAPS].len = 0;
     srv_client_files[SRV_CLIENT_BMAPS].crc = 0;
     LOG(LOG_DEBUG, "Reading %s....", FILE_CLIENT_BMAPS);
-    if ((stream = fopen(FILE_CLIENT_BMAPS, "rb")) != NULL)
+    if ((stream = fopen_wrapper(FILE_CLIENT_BMAPS, "rb")) != NULL)
     {
         /* temp load the file and get the data we need for compare with server */
         fstat(fileno(stream), &statbuf);
@@ -1466,13 +1492,13 @@ void delete_server_chars(void)
  * request the face (find it, load it or request it)
  * and return the ID
  */
-static int get_bmap_id(char *name)
+int get_bmap_id(char *name)
 {
     int i;
 
     for (i = 0; i < bmaptype_table_size; i++)
     {
-        if (!strcmp(bmaptype_table[i].name, name))
+        if (bmaptype_table[i].name[0] && !strcmp(bmaptype_table[i].name, name))
         {
             request_face(i, 0);
             return i;
@@ -1493,7 +1519,7 @@ void load_settings(void)
 
     delete_server_chars();
     LOG(LOG_DEBUG, "Loading %s....\n", FILE_CLIENT_SETTINGS);
-    if ((stream = fopen(FILE_CLIENT_SETTINGS, "rb")) != NULL)
+    if ((stream = fopen_wrapper(FILE_CLIENT_SETTINGS, "rb")) != NULL)
     {
         while (fgets(buf, HUGE_BUF - 1, stream) != NULL)
         {
@@ -1648,7 +1674,7 @@ void read_settings(void)
     srv_client_files[SRV_CLIENT_SETTINGS].len = 0;
     srv_client_files[SRV_CLIENT_SETTINGS].crc = 0;
     LOG(LOG_DEBUG, "Reading %s....", FILE_CLIENT_SETTINGS);
-    if ((stream = fopen(FILE_CLIENT_SETTINGS, "rb")) != NULL)
+    if ((stream = fopen_wrapper(FILE_CLIENT_SETTINGS, "rb")) != NULL)
     {
         /* temp load the file and get the data we need for compare with server */
         fstat(fileno(stream), &statbuf);
@@ -1691,7 +1717,7 @@ void read_spells(void)
     srv_client_files[SRV_CLIENT_SPELLS].len = 0;
     srv_client_files[SRV_CLIENT_SPELLS].crc = 0;
     LOG(LOG_DEBUG, "Reading %s....", FILE_CLIENT_SPELLS);
-    if ((stream = fopen(FILE_CLIENT_SPELLS, "rb")) != NULL)
+    if ((stream = fopen_wrapper(FILE_CLIENT_SPELLS, "rb")) != NULL)
     {
         /* temp load the file and get the data we need for compare with server */
         fstat(fileno(stream), &statbuf);
@@ -1787,7 +1813,7 @@ void read_skills(void)
     srv_client_files[SRV_CLIENT_SKILLS].crc = 0;
 
     LOG(LOG_DEBUG, "Reading %s....", FILE_CLIENT_SKILLS);
-    if ((stream = fopen(FILE_CLIENT_SKILLS, "rb")) != NULL)
+    if ((stream = fopen_wrapper(FILE_CLIENT_SKILLS, "rb")) != NULL)
     {
         /* temp load the file and get the data we need for compare with server */
         fstat(fileno(stream), &statbuf);
@@ -2053,7 +2079,7 @@ void load_quickslots_entrys()
     _quickslot  quickslots[MAX_QUICK_SLOTS];
     FILE       *stream;
 
-    if (!(stream = fopen(QUICKSLOT_FILE, "rb")))
+    if (!(stream = fopen_wrapper(QUICKSLOT_FILE, "rb")))
         return;
     fread(&header, sizeof(long), 1, stream);
     if (header != QUICKSLOT_FILE_HEADER)
@@ -2149,9 +2175,9 @@ void save_quickslots_entrys()
     _quickslot  quickslots[MAX_QUICK_SLOTS];
     FILE       *stream;
 
-    if (!(stream = fopen(QUICKSLOT_FILE, "rb+")))
+    if (!(stream = fopen_wrapper(QUICKSLOT_FILE, "rb+")))
     {
-        if (!(stream = fopen(QUICKSLOT_FILE, "wb+")))
+        if (!(stream = fopen_wrapper(QUICKSLOT_FILE, "wb+")))
             return;
     }
     header = QUICKSLOT_FILE_HEADER;
@@ -2315,3 +2341,6 @@ void show_target(int x, int y)
         }
     }
 }
+
+
+

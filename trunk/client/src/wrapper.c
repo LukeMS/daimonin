@@ -18,7 +18,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to daimonin@nord-com.net
+    The author can be reached via e-mail to info@daimonin.net
 */
 #include <include.h>
 
@@ -69,7 +69,7 @@ Boolean SYSTEM_Start(void)
     SDL_WM_SetCaption(PACKAGE_NAME, PACKAGE_NAME);
 
 #if defined( __WIN_32)  || defined(__LINUX)
-    logstream = fopen(LOG_FILE, "w");
+    logstream = fopen_wrapper(LOG_FILE, "w");
     return(TRUE);
 #endif
 }
@@ -84,35 +84,35 @@ Boolean SYSTEM_End(void)
 char * GetBitmapDirectory(void)
 {
 #if defined( __WIN_32)  || defined(__LINUX)
-    return("./bitmaps/");
+    return("bitmaps/");
 #endif
 }
 
 char * GetIconDirectory(void)
 {
 #if defined( __WIN_32)  || defined(__LINUX)
-    return("./icons/");
+    return("icons/");
 #endif
 }
 
 char * GetSfxDirectory(void)
 {
 #if defined( __WIN_32)  || defined(__LINUX)
-    return("./sfx/");
+    return("sfx/");
 #endif
 }
 
 char * GetCacheDirectory(void)
 {
 #if defined( __WIN_32)  || defined(__LINUX)
-    return("./cache/");
+    return("cache/");
 #endif
 }
 
 char * GetGfxUserDirectory(void)
 {
 #if defined( __WIN_32)  || defined(__LINUX)
-    return("./gfx_user/");
+    return("gfx_user/");
 #endif
 }
 
@@ -120,7 +120,7 @@ char * GetGfxUserDirectory(void)
 char * GetMediaDirectory(void)
 {
 #if defined( __WIN_32)  || defined(__LINUX) 
-    return("./media/");
+    return("media/");
 #endif
 }
 

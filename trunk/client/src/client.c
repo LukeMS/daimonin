@@ -18,7 +18,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to daimonin@nord-com.net
+    The author can be reached via e-mail to info@daimonin.net
 */
 
 /* Client interface main routine.
@@ -89,6 +89,7 @@ enum
     BINARY_CMD_GROUP,
     BINARY_CMD_INVITE,
     BINARY_CMD_GROUP_UPDATE,
+	BINARY_CMD_INTERFACE,
     BINAR_CMD /* last entry */
 };
 
@@ -106,7 +107,9 @@ struct CmdMapping   commands[]  =
     { "addme_success", (CmdProc) AddMeSuccess }, { "addme_failed", (CmdProc) AddMeFail },
     { "version", (CmdProc) VersionCmd }, { "goodbye", (CmdProc) GoodbyeCmd }, { "setup", (CmdProc) SetupCmd},
     { "query", (CmdProc) handle_query}, { "data", (CmdProc) DataCmd}, { "new_char", (CmdProc) NewCharCmd},
-    { "itemy", ItemYCmd }, { "group", GroupCmd },{ "group_invite", GroupInviteCmd }, { "group_update", GroupUpdateCmd },
+    { "itemy", ItemYCmd }, { "group", GroupCmd },{ "group_invite", GroupInviteCmd }, 
+	{ "group_update", GroupUpdateCmd },
+	{ "interface", InterfaceCmd },
 
     /* unused! */
     { "magicmap", MagicMapCmd}, { "delinv", DeleteInventory }, 
@@ -258,7 +261,7 @@ void finish_face_cmd(int pnum, uint32 checksum, char *face)
 
     /* Check private cache first */
     sprintf(buf, "%s%s", GetCacheDirectory(), FaceList[pnum].name);
-    if ((stream = fopen(buf, "rb")) != NULL)
+    if ((stream = fopen_wrapper(buf, "rb")) != NULL)
     {
         fstat(fileno(stream), &statbuf);
         len = (int) statbuf.st_size;
@@ -334,7 +337,7 @@ static int load_picture_from_pack(int num)
     char       *pbuf;
     SDL_RWops  *rwop;
 
-    if ((stream = fopen(FILE_DAIMONIN_P0, "rb")) == NULL)
+    if ((stream = fopen_wrapper(FILE_DAIMONIN_P0, "rb")) == NULL)
         return 1;
 
     lseek(fileno(stream), bmaptype_table[num].pos, SEEK_SET);
@@ -373,7 +376,7 @@ int request_face(int pnum, int mode)
     static char fr_buf[REQUEST_FACE_MAX*sizeof(uint16) + 4];
     uint16      num     = (uint16) (pnum&~0x8000);
 
-    if (mode) /* forced flush buffer & command */
+    if (mode == 1) /* forced flush buffer & command */
     {
         if (count)
         {
@@ -399,7 +402,7 @@ int request_face(int pnum, int mode)
      * Perhaps we have a customized picture here.
      */
     sprintf(buf, "%s%s.png", GetGfxUserDirectory(), bmaptype_table[num].name);
-    if ((stream = fopen(buf, "rb")) != NULL)
+    if ((stream = fopen_wrapper(buf, "rb")) != NULL)
     {
         /* yes we have a picture with this name in /gfx_user! 
              * lets try to load.

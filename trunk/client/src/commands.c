@@ -18,7 +18,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to daimonin@nord-com.net
+    The author can be reached via e-mail to info@daimonin.net
 */
 
 
@@ -381,7 +381,7 @@ void ImageCmd(unsigned char *data, int len)
 
     sprintf(buf, "%s%s", GetCacheDirectory(), FaceList[pnum].name);     
     LOG(LOG_DEBUG, "ImageFromServer: %s\n", FaceList[pnum].name);
-    if ((stream = fopen(buf, "wb+")) != NULL)
+    if ((stream = fopen_wrapper(buf, "wb+")) != NULL)
     {
         fwrite((char *) data + 8, 1, plen, stream);
         fclose(stream);
@@ -1071,7 +1071,8 @@ void GroupInviteCmd(unsigned char *data, int len)
         strncpy(group_invite, data, 30);
     }
 }
-    
+
+
 void GroupUpdateCmd(unsigned char *data, int len)
 {
     char        *tmp;
@@ -1092,6 +1093,39 @@ void GroupUpdateCmd(unsigned char *data, int len)
     }
 }
 
+void InterfaceCmd(unsigned char *data, int len)
+{
+
+	map_udate_flag = 2;
+	if((gui_interface_npc && gui_interface_npc->status != GUI_INTERFACE_STATUS_WAIT) &&
+		 (cpl.menustatus == MENU_NPC && !len) || (len && cpl.menustatus != MENU_NPC))
+	{
+		sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+	}
+	reset_gui_interface();
+	if(len)
+	{
+		int mode, pos = 0;
+		
+		/*interface_mode = INTERFACE_MODE_NPC;*/
+	    mode = *data;
+		pos ++;
+
+	gui_interface_npc = load_gui_interface(mode, data, len, pos);
+	if(!gui_interface_npc)
+		draw_info("INVALID GUI CMD", COLOR_RED);
+	else
+	{
+		gui_interface_npc->win_length = precalc_interface_npc();
+		interface_mode = mode;
+		cpl.menustatus = MENU_NPC;
+		gui_interface_npc->startx = 400-(Bitmaps[BITMAP_NPC_INTERFACE]->bitmap->w / 2);
+		gui_interface_npc->starty = 50;
+		active_button = -1;
+	}
+	}
+}
+	
 /* UpdateItemCmd updates some attributes of an item */
 void UpdateItemCmd(unsigned char *data, int len)
 {
@@ -1724,7 +1758,7 @@ static void save_data_cmd_file(char *path, char *data, int len)
 {
     FILE   *stream;
 
-    if ((stream = fopen(path, "wb")) != NULL)
+    if ((stream = fopen_wrapper(path, "wb")) != NULL)
     {
         if (fwrite(data, sizeof(char), len, stream) != (size_t) len)
             LOG(LOG_ERROR, "save data cmd file : write() of %s failed. (len:%d)\n", path);
@@ -1834,4 +1868,3 @@ void DataCmd(char *data, int len)
     }
     free(dest);
 }
-

@@ -18,7 +18,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to daimonin@nord-com.net
+    The author can be reached via e-mail to info@daimonin.net
 */
 
 #include "include.h"
@@ -86,7 +86,7 @@ void load_mapdef_dat(void)
     int     i, ii, x, y, d[32];
     char    line[256];
 
-    if (!(stream = fopen(ARCHDEF_FILE, "r")))
+    if (!(stream = fopen_wrapper(ARCHDEF_FILE, "r")))
     {
         LOG(LOG_ERROR, "ERROR: Can't find file %s\n", ARCHDEF_FILE);
         return;

@@ -18,7 +18,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to daimonin@nord-com.net
+    The author can be reached via e-mail to info@daimonin.net
 */
 #if !defined(__INCLUDE_H)
 #define __INCLUDE_H
@@ -73,9 +73,11 @@ typedef signed char     sint8;
 #include <sound.h>
 #include <map.h>
 #include <sprite.h>
+#include <interface.h>
 #include <textwin.h>
 #include <inventory.h>
 #include <menu.h>
 #include <dialog.h>
 #include <group.h>
+#include <filewrap.h>
 #endif

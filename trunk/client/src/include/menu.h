@@ -18,7 +18,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to daimonin@nord-com.net
+    The author can be reached via e-mail to info@daimonin.net
 */
 #if !defined(__MENU_H)
 #define __MENU_H
@@ -30,8 +30,13 @@
 #define MENU_SKILL   16
 #define MENU_OPTION  32
 #define MENU_CREATE  64
+/* in future, we need a different system - with up to 2 open
+ * interfaces... menus like keybind & stuff should be a layer above that. MT-2005
+ */
+#define MENU_NPC	 128
+#define MENU_QUEST   256
 
-#define MENU_ALL (MENU_NO & MENU_KEYBIND & MENU_SPELL & MENU_STATUS & MENU_OPTION)
+#define MENU_ALL (MENU_NO & MENU_KEYBIND & MENU_SPELL & MENU_STATUS & MENU_OPTION & MENU_NPC & MENU_QUEST)
 
 #define MENU_SOUND_VOL 40
 struct _skill_list      skill_list[SKILL_LIST_MAX];
@@ -122,6 +127,7 @@ extern int      init_media_tag(char *tag);
 extern void     blt_inventory_face_from_tag(int tag, int x, int y);
 extern int      blt_window_slider(_Sprite *slider, int max_win, int winlen, int off, int len, int x, int y);
 extern void     do_keybind_input(void);
+extern void		do_npcdialog_input(void);
 
 extern int      read_anim_tmp(void);
 extern int      read_bmap_tmp(void);
@@ -144,5 +150,7 @@ extern void     save_quickslots_entrys();
 extern int      client_command_check(char *cmd);
 
 extern void     show_target(int x, int y);
+
+extern int get_bmap_id(char *name);
 
 #endif

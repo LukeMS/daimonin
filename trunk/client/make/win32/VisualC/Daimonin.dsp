@@ -128,6 +128,10 @@ SOURCE=..\..\..\src\event.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\src\filewrap.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\src\group.c
 # End Source File
 # Begin Source File
@@ -141,6 +145,10 @@ SOURCE=..\..\..\src\inflate.c
 # Begin Source File
 
 SOURCE=..\..\..\src\inftrees.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\interface.c
 # End Source File
 # Begin Source File
 
@@ -232,6 +240,10 @@ SOURCE=..\..\..\src\include\event.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\src\include\filewrap.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\src\include\group.h
 # End Source File
 # Begin Source File
@@ -249,6 +261,10 @@ SOURCE=..\..\..\src\include\inflate.h
 # Begin Source File
 
 SOURCE=..\..\..\src\include\inftrees.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\include\interface.h
 # End Source File
 # Begin Source File
 
