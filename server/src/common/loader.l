@@ -1267,9 +1267,10 @@ int set_variable(object *op,char *buf) {
 static char *flag_names[NUM_FLAGS+1] = {
 "sleep", "confused", NULL, "scared", "is_blind","is_invisible" , "is_ethereal" ,
 "is_good", "no_pick", "walk_on", "no_pass",		/* 10 */
-"is_animated", NULL, "flying", "monster", "friendly", "generator",
-"is_thrown", "auto_apply", "treasure", "is_neutral",	/* 20 */
-"see_invisible", "can_roll", NULL, "is_turnable", "walk_off",
+"is_animated", NULL, "flying", "monster", "friendly", 
+
+NULL /*is_removed*/,"been_applied", "auto_apply", "treasure", "is_neutral",	/* 20 */
+"see_invisible", "can_roll", "generator", "is_turnable", "walk_off",
 "fly_on", "fly_off", "is_used_up", "identified", "reflecting",	/* 30 */
 "changing", "splitting", "hitback", "startequip",
 "blocksview", "undead", NULL, "unaggressive",
@@ -1283,7 +1284,7 @@ static char *flag_names[NUM_FLAGS+1] = {
 "stand_still", "random_move", "only_attack", "wiz",	/* 70 */
  NULL, NULL, NULL, "cursed", "damned",
 "see_anywhere", "known_magical", "known_cursed",
-"can_use_skill", "been_applied",				/* 80 */
+"can_use_skill", "is_thrown",				/* 80 */
 "is_vul_sphere", "is_proof_sphere", "is_male",
 "is_female", "applied",  "inv_locked", "is_wooded",
 "is_hilly", "has_ready_skill", "has_ready_weapon",		/* 90 */

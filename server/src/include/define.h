@@ -407,6 +407,10 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define ST1_EXIT_SOUND_NO					0
 #define ST1_EXIT_SOUND						1
 
+/* sub types for doors */
+#define ST1_DOOR_NORMAL 0
+#define ST1_DOOR_CURTAIN 1 /* make different sound */
+
 /* END SUB TYPE 1 DEFINE */
 
 /* definitions for detailed pickup descriptions.
@@ -557,7 +561,7 @@ error - Your ANSI C compiler should be defining __STDC__;
  * you change something here! Search for NUM_FLAGS in loader.l for more.
  */
 /* WARNING: The first 8 bit are used from the map2 cmd as direct mapped data.
- * The order must stay as it is here.
+ * The order must stay as it is here!
  */
 #define FLAG_SLEEP			0 /* NPC is sleeping */
 #define FLAG_CONFUSED		1 /* confused... random dir when moving and problems to do actions */
@@ -580,15 +584,18 @@ error - Your ANSI C compiler should be defining __STDC__;
 								* checking all possible different type defines.
 								*/
 #define FLAG_FRIENDLY		15 /* Will help players */
-
-#define FLAG_GENERATOR		16 /* Will generate type ob->stats.food */
-#define FLAG_IS_THROWN		17 /* Object is designed to be thrown. */
+							   /*
+                                *  REMOVED and BEEN_APPLIED are direct used from CAN_MERGE - change it too when
+								* you move this flag! 
+								*/
+#define FLAG_REMOVED	 	16 /* Object is not in any map or invenory */
+#define FLAG_BEEN_APPLIED	17 /* The object has been applied */
 #define FLAG_AUTO_APPLY		18 /* Will be applied when created */
 #define FLAG_TREASURE		19 /* Will generate treasure when applied */
 #define FLAG_IS_NEUTRAL		20 /* alignment of this object: we need the explicit neutral setting for items */
 #define FLAG_SEE_INVISIBLE 	21 /* Will see invisible player */
 #define FLAG_CAN_ROLL		22 /* Object can be rolled */
-#define FLAG_REMOVED	 	23 /* Object is not in any map or invenory */
+#define FLAG_GENERATOR		23 /* Will generate type ob->stats.food */
 
 #define FLAG_IS_TURNABLE 	24 /* Object can change face with direction */
 #define FLAG_WALK_OFF		25 /* Object is applied when left */
@@ -661,7 +668,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_KNOWN_CURSED	78 /* The object is known to be cursed */
 #define FLAG_CAN_USE_SKILL	79 /* The monster can use skills */
 
-#define FLAG_BEEN_APPLIED	80 /* The object has been applied */
+#define FLAG_IS_THROWN		80 /* Object is designed to be thrown. */
 #define FLAG_VUL_SPHERE		81
 #define FLAG_PROOF_SPHERE	82
 #define FLAG_IS_MALE		83 /* gender flags. it effects only player & mobs */
@@ -711,7 +718,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_IS_AGED			113 /* if set, object falls under heavy ageing effects */
 #define FLAG_MAKE_INVISIBLE		114	/* if a applyable item has this set, he makes the wearer invisible */
 #define FLAG_MAKE_ETHEREAL		115 /* same as make_invisibile but for ethereal */
-#define FLAG_IS_PLAYER			116 /* object "is player". NOTE: that summoned creatures count to as "is players" */
+#define FLAG_IS_PLAYER			116 /* object "is player". */
 #define FLAG_IS_NAMED			117	/* object name is "unique"- for artifacts like Stormbringer.
 									 * Unique object normally don't have a race or material
 									 * (no "elven iron Stormbringer")

@@ -579,15 +579,15 @@ static void enter_unique_map(object *op, object *exit_ob)
 		newmap->map_flags |=MAP_FLAG_UNIQUE;
 	enter_map(op, newmap, EXIT_X(exit_ob), EXIT_Y(exit_ob),QUERY_FLAG(exit_ob,FLAG_USE_FIX_POS));
     } else {
-	new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is closed.", exit_ob->name);
+	new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is closed.", query_name(exit_ob));
 	/* Perhaps not critical, but I would think that the unique maps
 	 * should be new enough this does not happen.  This also creates
 	 * a strange situation where some players could perhaps have visited
 	 * such a map before it was removed, so they have the private
 	 * map, but other players can't get it anymore.
 	 */
-	LOG(llevDebug,"enter_unique_map: Exit %s (%d,%d) on map %s is leads no where.\n",
-		    exit_ob->name, exit_ob->x, exit_ob->y, exit_ob->map->path);
+	LOG(llevDebug,"Debug: enter_unique_map: Exit %s (%d,%d) on map %s is leads no where.\n",
+		query_name(exit_ob), exit_ob->x, exit_ob->y, exit_ob->map?exit_ob->map->path?exit_ob->map->path:"NO_PATH (script?)":"NO_MAP (script?)");
     }
 	
 }

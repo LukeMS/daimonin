@@ -1,5 +1,25 @@
 Daimonin CHANGES
 
+30.10.2003      - finished player houses - added all scripts
+                - added new doors
+                - added new graphics
+                - added a subtype curtain to doors (no close sound)
+                - added new mob monk
+
+29.10.20003	- improved targeting: only objects your player really see.
+                - removed refcount from object structure (unusued).
+                - fixed a memset bug in player struct!
+		- fixed and extended merging (stacking of items)
+
+28.10.2003 	- added 2 new types to make jewels and nuggets different from 
+  		  gems. That will allow native and improved use from artifct
+  		  file for each type - also very useful for later trade skill use.
+		- added t_style and artifact_chance to treasure file & artifact file.
+		- added sys_object arrows for mobs. If a arrow is sys_objectz marked 
+                  which a mobs is firing, the arrow is duped and food is set to x.
+                  if a arrow is "stopped" and food there, the arrow is marked no_pick 1
+                  and is_used_up is set. This allow infinitive, self destructing arrows.
+
 25.10.2003	Added some gfx - new chest, bed..
 25.10.2003	Added several locations to stoneglow
 25.10.2003	Added permanent player appartments.

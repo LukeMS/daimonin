@@ -2649,6 +2649,22 @@ editor_folder indoor/beds
 no_pick 1
 layer 4
 end
+Object bed_2a.111
+name bed
+face bed_2a.111
+type 79
+editor_folder indoor/beds
+no_pick 1
+layer 4
+end
+Object bed_2b.111
+name bed
+face bed_2b.111
+type 79
+editor_folder indoor/beds
+no_pick 1
+layer 4
+end
 Object eldath_avatar_info
 name avatar
 face power.101
@@ -7743,6 +7759,51 @@ unaggressive 1
 Str 25
 can_cast_spell 1
 end
+Object monk
+name monk
+face monk.131
+type 80
+editor_folder mobs/human
+race human
+layer 6
+direction 5
+is_male 1
+is_good 1
+terrain_flag 1
+weapon_speed 0.055
+corpse 1
+attack_weaponmagic 100
+animation monk
+is_animated 1
+anim_speed 4
+speed -0.25
+alive 1
+monster 1
+Wis 7
+see_invisible 1
+resist_impact 75
+resist_cleave 75
+resist_pierce 75
+resist_slash 75
+resist_magic 100
+no_pick 1
+reflect_missile 1
+reflect_spell 1
+Con 15
+exp 200
+hp -1
+maxhp 25
+Pow 3
+ac 6
+wc 6
+dam 15
+level 1
+weight 85000
+stand_still 1
+unaggressive 1
+Str 25
+can_cast_spell 1
+end
 Object ant_queen
 name ant queen
 face ant_queen.131
@@ -8890,7 +8951,7 @@ no_pick 1
 no_pass 1
 end
 Object door1_locked
-name locked door
+name metal door
 face door_lock1.111
 type 20
 msg
@@ -8909,22 +8970,8 @@ is_animated 0
 anim_speed 1
 is_turnable 1
 end
-Object door1_open
-name open door
-face door_lock1.112
-type 20
-editor_folder walls/doors
-other_arch door1_locked
-layer 5
-animation door1_open
-is_animated 0
-anim_speed 1
-is_turnable 1
-direction 1
-no_pick 1
-end
 Object gate1_locked
-name locked gate
+name metal gate
 face gate_lock1.111
 type 20
 msg
@@ -8942,23 +8989,66 @@ is_turnable 1
 direction 1
 no_pick 1
 end
-Object gate1_open
-name open gate
-face gate_lock1.112
+Object door_wood1
+name wooden door
+face door_wood1.111
 type 20
 msg
-The gate is open but stucks.
+You need the special key to open this door.
 endmsg
 editor_folder walls/doors
-other_arch gate1_locked
 layer 5
-animation gate1_open
+blocksview 1
+no_pass 1
+sp 5
+pass_thru 1
+no_pick 1
+direction 1
+animation door_wood1
 is_animated 0
 anim_speed 1
 is_turnable 1
-direction 1
+end
+Object door_wood2
+name wooden door
+face door_wood2.111
+type 20
+msg
+You need the special key to open this door.
+endmsg
+editor_folder walls/doors
+layer 5
+blocksview 1
+no_pass 1
+sp 5
+pass_thru 1
 no_pick 1
-no_magic 1
+direction 1
+animation door_wood2
+is_animated 0
+anim_speed 1
+is_turnable 1
+end
+Object curtain1
+name red curtain
+face curtain1.111
+type 20
+msg
+You need the special key to open this door.
+endmsg
+editor_folder walls/doors
+layer 5
+sub_type 1
+blocksview 1
+no_pass 1
+sp 5
+pass_thru 1
+no_pick 1
+direction 1
+animation curtain1
+is_animated 0
+anim_speed 1
+is_turnable 1
 end
 Object doorway_wood1_1
 name passage

@@ -1151,12 +1151,12 @@ int kill_object(object *op,int dam, object *hitter, int type)
             old_hitter = hitter;
 
             /* Really don't give much experience for killing other players */
-	    if (op->type==PLAYER) {
+	    if (op->type==PLAYER && owner->type == PLAYER) {
 	        LOG(llevDebug,"Owner %s gets %d exp in %s from %s\n", owner->name, exp, 
 				        old_hitter->chosen_skill!=NULL?old_hitter->chosen_skill->name:"<>",op->name);
 			if (battleg) {
-			    new_draw_info(NDI_UNIQUE, 0,hitter, "Your foe has fallen!");
-			    new_draw_info(NDI_UNIQUE, 0,hitter, "VICTORY!!!");
+			    new_draw_info(NDI_UNIQUE, 0,owner, "Your foe has fallen!");
+			    new_draw_info(NDI_UNIQUE, 0,owner, "VICTORY!!!");
 			}
 		else
 		    exp = 0; /* never xp for pvp */
