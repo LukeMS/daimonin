@@ -3,7 +3,7 @@ name troll
 race troll
 layer 6
 randomitems mob_troll
-face troll.141
+face troll.131
 direction 5
 speed -0.06
 corpse 1
@@ -17,54 +17,54 @@ anim
 facings 25
 trans.101
 trans.101
-troll.141
-troll.141
-troll.141
-troll.141
-troll.141
-troll.141
-troll.141
-troll.141
-troll.161
-troll.161
-troll.161
-troll.161
-troll.161
-troll.161
-troll.161
-troll.161
-troll.141
-troll.141
-troll.141
-troll.141
-troll.141
-troll.141
-troll.141
-troll.141
-troll.161
-troll.161
-troll.161
-troll.161
-troll.161
-troll.161
-troll.161
-troll.161
-troll.141
-troll.142
-troll.141
-troll.142
-troll.141
-troll.142
-troll.141
-troll.142
-troll.161
-troll.162
-troll.161
-troll.162
-troll.161
-troll.162
-troll.161
-troll.162
+troll.131
+troll.131
+troll.131
+troll.131
+troll.131
+troll.131
+troll.131
+troll.131
+troll.151
+troll.151
+troll.151
+troll.151
+troll.151
+troll.151
+troll.151
+troll.151
+troll.131
+troll.131
+troll.131
+troll.131
+troll.131
+troll.131
+troll.131
+troll.131
+troll.151
+troll.151
+troll.151
+troll.151
+troll.151
+troll.151
+troll.151
+troll.151
+troll.131
+troll.132
+troll.131
+troll.132
+troll.131
+troll.132
+troll.131
+troll.132
+troll.151
+troll.152
+troll.151
+troll.152
+troll.151
+troll.152
+troll.151
+troll.152
 mina
 is_animated 1
 anim_speed 5
