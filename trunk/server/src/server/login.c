@@ -180,7 +180,16 @@ int save_player(object *op, int flag)
 
     fprintf(fp, "password %s\n", pl->password);
 
-    fprintf(fp, "dm_stealth %d\n", pl->dm_stealth);
+	if(pl->gmaster_mode != GMASTER_MODE_NO)
+	{
+		if(pl->gmaster_mode == GMASTER_MODE_VOL)
+			fprintf(fp, "dm_VOL\n");
+		else if(pl->gmaster_mode == GMASTER_MODE_GM)
+			fprintf(fp, "dm_GM\n");
+		else
+			fprintf(fp, "dm_DM\n");
+	}	
+	fprintf(fp, "dm_stealth %d\n", pl->dm_stealth);
     fprintf(fp, "gen_hp %d\n", pl->gen_hp);
     fprintf(fp, "gen_sp %d\n", pl->gen_sp);
     fprintf(fp, "gen_grace %d\n", pl->gen_grace);
@@ -505,7 +514,7 @@ void check_login(object *op)
 
         if (sscanf(bufall, "password %s\n", buf))
         {
-            correct = check_password(pl->write_buf + 1, buf);
+            correct = check_password(pl->password, buf);
 
             /* password is good and player exists.
                      * We have 2 choices left: 
@@ -549,14 +558,10 @@ void check_login(object *op)
     }
     LOG(llevInfo, "loading player file!\n");
 
-#ifdef SAVE_INTERVAL
-    pl->last_save_time = time(NULL);
-#endif /* SAVE_INTERVAL */
     pl->group_id = GROUP_NO;
-
-#ifdef SEARCH_ITEMS
-    pl->search_str[0] = '\0';
-#endif /* SEARCH_ITEMS */
+	pl->gmaster_mode = GMASTER_MODE_NO;
+	pl->gmaster_node = NULL;
+	
     pl->name_changed = 1;
     pl->orig_stats.Str = 0;
     pl->orig_stats.Dex = 0;
@@ -572,7 +577,6 @@ void check_login(object *op)
     lev_array_flag = FALSE;
     while (fgets(bufall, MAX_BUF, fp) != NULL)
     {
-
         if (!strcmp(bufall, "skill_group "))
         {
             sscanf(bufall, "%s %d %d %d\n", buf, &pl->base_skill_group[0], &pl->base_skill_group[1], &pl->base_skill_group[2]);
@@ -581,6 +585,12 @@ void check_login(object *op)
         sscanf(bufall, "%s %d\n", buf, &value);
         if (!strcmp(buf, "endplst"))
             break;
+        else if (!strcmp(buf, "dm_VOL"))
+			pl->gmaster_mode = GMASTER_MODE_VOL;
+        else if (!strcmp(buf, "dm_GM"))
+			pl->gmaster_mode = GMASTER_MODE_GM;
+        else if (!strcmp(buf, "dm_DM"))
+			pl->gmaster_mode = GMASTER_MODE_DM;
         else if (!strcmp(buf, "dm_stealth"))
             pl->dm_stealth = value;
         else if (!strcmp(buf, "gen_hp"))
@@ -924,8 +934,19 @@ void check_login(object *op)
     if (!pl->dm_stealth)
     {
         new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, NULL, "%s has entered the game.", query_name(pl->ob));
-        if (gbl_active_DM)
-            new_draw_info_format(NDI_UNIQUE, 0, gbl_active_DM, "DM: %d players now playing.", player_active);
+		if(gmaster_list_DM || gmaster_list_GM)
+		{
+			objectlink *ol;
+			char buf_dm[64];
+
+			sprintf(buf_dm, "DM: %d players now playing.", player_active);
+			
+			for(ol = gmaster_list_DM;ol;ol=ol->next)
+				new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
+			
+			for(ol = gmaster_list_GM;ol;ol=ol->next)
+				new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
+		}
     }
 #ifdef PLUGINS
     /* GROS : Here we handle the LOGIN global event */
@@ -995,5 +1016,19 @@ void check_login(object *op)
     esrv_new_player(pl, op->weight + op->carrying);
     send_spelllist_cmd(op, NULL, SPLIST_MODE_ADD); /* send the known spells as list to client */
     send_skilllist_cmd(op, NULL, SPLIST_MODE_ADD);
+
+	/* lets check we had saved last time in a gmaster mode.
+	 * if so, check the setting is still allowed and if so,
+	 * set the player to it.
+	 */
+	if(pl->gmaster_mode != GMASTER_MODE_NO)
+	{
+		int mode = pl->gmaster_mode;
+
+		pl->gmaster_mode = GMASTER_MODE_NO;			
+		if(check_gmaster_list(pl, mode))
+			set_gmaster_mode(pl, mode);
+	}
+
     return;
 }

@@ -679,25 +679,6 @@ void drop_object(object *op, object *tmp, long nrof)
         return;
     }
 
-    /*  If SAVE_INTERVAL is commented out, we never want to save
-     *  the player here.
-     */
-#ifdef SAVE_INTERVAL
-    /* I'm not sure why there is a value check - since the save
-     * is done every SAVE_INTERVAL seconds, why care the value
-     * of what he is dropping?
-     */
-    if (op->type == PLAYER
-     && !QUERY_FLAG(tmp, FLAG_UNPAID)
-     && (tmp->nrof ? tmp->value * tmp->nrof : tmp->value > 2000)
-     && (CONTR(op)->last_save_time + SAVE_INTERVAL) <= time(NULL))
-    {
-        save_player(op, 1);
-        CONTR(op)->last_save_time = time(NULL);
-    }
-#endif /* SAVE_INTERVAL */
-
-
     floor = GET_MAP_OB_LAYER(op->map, op->x, op->y, 0);
     if (floor && floor->type == SHOP_FLOOR && !QUERY_FLAG(tmp, FLAG_UNPAID) && tmp->type != MONEY)
     {
@@ -1814,41 +1795,3 @@ void set_pickup_mode(object *op, int i)
           break;
     }
 }
-
-#ifdef SEARCH_ITEMS
-int command_search_items(object *op, char *params)
-{
-    char    buf[MAX_BUF];
-
-    if (op->type != PLAYER)
-    {
-        LOG(llevDebug, "command_search_items: op not a player\n");
-        return 0;
-    }
-
-    if (params == NULL)
-    {
-        if (CONTR(op)->search_str[0] == '\0')
-        {
-            new_draw_info(NDI_UNIQUE, 0, op, "Example: &/search &magic+1");
-            new_draw_info(NDI_UNIQUE, 0, op, "Would automatically pick up all");
-            new_draw_info(NDI_UNIQUE, 0, op, "items containing the word 'magic+1'.");
-            return 1;
-        }
-        CONTR(op)->search_str[0] = '\0';
-        new_draw_info(NDI_UNIQUE, 0, op, "Search mode turned off.");
-        fix_player(op);
-        return 1;
-    }
-    if ((int) strlen(params) >= MAX_BUF)
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "Search string too long.");
-        return 1;
-    }
-    strcpy(CONTR(op)->search_str, params);
-    sprintf(buf, "Searching for '%s'.", CONTR(op)->search_str);
-    new_draw_info(NDI_UNIQUE, 0, op, buf);
-    fix_player(op);
-    return 1;
-}
-#endif /* SEARCH_ITEMS */

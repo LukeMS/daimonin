@@ -46,6 +46,7 @@ SRCS = \
 	disease.c\
 	egoitem.c \
 	hiscore.c\
+	gmaster.c\
 	gods.c\
 	init.c\
 	login.c\

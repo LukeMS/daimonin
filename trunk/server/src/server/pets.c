@@ -85,8 +85,7 @@ object * get_pet_enemy(object *pet, rv_vector *rv)
                 object *tmp2    = tmp->head == NULL ? tmp : tmp->head;
                 if (QUERY_FLAG(tmp2, FLAG_ALIVE)
                  && !QUERY_FLAG(tmp2, FLAG_FRIENDLY)
-                 && !QUERY_FLAG(tmp2,
-                                                                                                    FLAG_UNAGGRESSIVE)
+                 && !QUERY_FLAG(tmp2, FLAG_UNAGGRESSIVE)
                  && tmp2 != owner
                  && tmp2->type != PLAYER)
                     return tmp2;
@@ -248,10 +247,8 @@ void pet_move(object *ob)
                     break;
                 if (QUERY_FLAG(new_ob, FLAG_ALIVE)
                  && !QUERY_FLAG(ob, FLAG_UNAGGRESSIVE)
-                 && !QUERY_FLAG(new_ob,
-                                FLAG_UNAGGRESSIVE)
-                 && !QUERY_FLAG(new_ob,
-                                FLAG_FRIENDLY))
+                 && !QUERY_FLAG(new_ob, FLAG_UNAGGRESSIVE)
+                 && !QUERY_FLAG(new_ob, FLAG_FRIENDLY))
                 {
                     register_npc_known_obj(ob, new_ob, FRIENDSHIP_PUSH);
                     register_npc_known_obj(new_ob, ob, FRIENDSHIP_PUSH);

@@ -314,11 +314,10 @@ int command_who(object *op, char *params)
                 if ((tmp = strlen(pl->ob->map->path)) > (22 - ((tmp1 = strlen(pl->ob->name)))))
                     off = tmp - (22 - tmp1);
 
-                sprintf(buf, "%s (%d) [@%s] [%s]", pl->ob->name, pl->ob->count, pl->socket.host, pl->ob->map->path + off);
+                sprintf(buf, "%s (%d) [@%s] [%s]", pl->quick_name, pl->ob->count, pl->socket.host, pl->ob->map->path + off);
             }
             else
-                sprintf(buf, "%s the %s %s (lvl %d) %s", pl->ob->name, sex, pl->ob->race, pl->ob->level,
-                        QUERY_FLAG(pl->ob, FLAG_WIZ) ? " [DM]" : "");
+                sprintf(buf, "%s the %s %s (lvl %d)", pl->quick_name, sex, pl->ob->race, pl->ob->level);
             new_draw_info(NDI_UNIQUE, 0, op, buf);
         }
     }
@@ -330,6 +329,10 @@ int command_who(object *op, char *params)
 
 int command_malloc(object *op, char *params)
 {
+
+	if(CONTR(op)->gmaster_mode < GMASTER_MODE_VOL)
+		return 0;
+
 #ifdef MEMPOOL_TRACKING
     if (params)
     {
@@ -1099,10 +1102,10 @@ int command_sound(object *op, char *params)
  * already a bit big.
  */
 
-void receive_player_name(object *op, char k)
+void receive_player_name(object *op, char k, char *write_buf)
 {
     /* be sure the player name is like "Xxxxx" */
-    unsigned int name_len = transform_name_string(CONTR(op)->write_buf + 1);
+    unsigned int name_len = transform_name_string(write_buf + 1);
 
     if (name_len <= 1 || name_len > MAX_PLAYER_NAME)
     {
@@ -1110,13 +1113,22 @@ void receive_player_name(object *op, char k)
         return;
     }
 
-    if (!check_name(CONTR(op), CONTR(op)->write_buf + 1))
+    if (!check_name(CONTR(op), write_buf + 1))
     {
         get_name(op);
         return;
     }
 
-    FREE_AND_COPY_HASH(op->name, CONTR(op)->write_buf + 1);
+	/* we got a legal name... NOW check this named is banned */
+    if (check_banned(write_buf+1, -1))
+    {
+        LOG(llevInfo, "Banned player %s tried to add. [%s]\n", write_buf+1, CONTR(op)->socket.host);
+		CONTR(op)->socket.status = Ns_Dead;
+        return;
+    }
+
+
+    FREE_AND_COPY_HASH(op->name, write_buf + 1);
     CONTR(op)->name_changed = 1;
     get_password(op);
 }
@@ -1127,9 +1139,9 @@ void receive_player_name(object *op, char k)
  * for new char creation.
  * For beta 2 we have moved the char creation to client
  */
-void receive_player_password(object *op, char k)
+void receive_player_password(object *op, char k, char *write_buf)
 {
-    unsigned int pwd_len = strlen(CONTR(op)->write_buf);
+    unsigned int pwd_len = strlen(write_buf);
     if (pwd_len <= 1 || pwd_len > 17)
     {
         get_name(op);
@@ -1141,7 +1153,7 @@ void receive_player_password(object *op, char k)
     {
         char    cmd_buf[]   = "X";
 
-        if (!check_password(CONTR(op)->write_buf + 1, CONTR(op)->password))
+        if (!check_password(write_buf + 1, CONTR(op)->password))
         {
             new_draw_info(NDI_UNIQUE, 0, op, "The passwords did not match.");
             get_name(op);
@@ -1153,7 +1165,7 @@ void receive_player_password(object *op, char k)
         CONTR(op)->state = ST_CREATE_CHAR;
         return;
     }
-    strcpy(CONTR(op)->password, crypt_string(CONTR(op)->write_buf + 1, NULL));
+    strcpy(CONTR(op)->password, crypt_string(write_buf + 1, NULL));
     CONTR(op)->state = ST_CREATE_CHAR;
     check_login(op);
     return;

@@ -94,6 +94,10 @@ extern objectlink      *get_objectlink(int id);
 extern oblinkpt        *get_objectlinkpt(void);
 extern void             free_objectlink_recursive(objectlink *ol);
 extern void             free_objectlinkpt(oblinkpt *obp);
+objectlink			   *objectlink_link(objectlink **startptr, objectlink **endptr, 
+										objectlink *afterptr, objectlink *beforeptr, objectlink *objptr);
+
+objectlink			   *objectlink_unlink(objectlink **startptr, objectlink **endptr, objectlink *objptr);
 /* living.c */
 extern void             set_attr_value(living *stats, int attr, signed char value);
 extern void             change_attr_value(living *stats, int attr, signed char value);

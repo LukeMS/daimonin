@@ -168,6 +168,8 @@ static player * get_player(player *p)
 
     strcpy(p->savebed_map, first_map_path);  /* Init. respawn position */
 
+	p->gmaster_mode = GMASTER_MODE_NO;
+	p->gmaster_node = NULL;
     p->firemode_type = p->firemode_tag1 = p->firemode_tag2 = -1;
     op->custom_attrset = p; /* this is where we set up initial CONTR(op) */
     p->ob = op;
@@ -261,21 +263,6 @@ int add_player(NewSocket *ns)
 {
     player *p;
     char   *defname = "nobody";
-
-
-    /* Check for banned players and sites.  usename is no longer accurate,
-     * (can't get it over sockets), so all we really have to go on is
-     * the host.
-     */
-
-    if (checkbanned(defname, ns->host))
-    {
-        char    buf[256];
-        strcpy(buf, "X3 Connection refused.\nYou are banned!");
-        Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, buf, strlen(buf));
-        LOG(llevInfo, "Banned player tried to add. [%s@%s]\n", defname, ns->host);
-        return 1;
-    }
 
     p = get_player(NULL);
     memcpy(&p->socket, ns, sizeof(NewSocket));
@@ -621,21 +608,18 @@ void give_initial_items(object *pl, struct oblnk *items)
 
 void get_name(object *op)
 {
-    CONTR(op)->write_buf[0] = '\0';
     CONTR(op)->state = ST_GET_NAME;
     send_query(&CONTR(op)->socket, 0, "What is your name?\n:");
 }
 
 void get_password(object *op)
 {
-    CONTR(op)->write_buf[0] = '\0';
     CONTR(op)->state = ST_GET_PASSWORD;
     send_query(&CONTR(op)->socket, CS_QUERY_HIDEINPUT, "What is your password?\n:");
 }
 
 void confirm_password(object *op)
 {
-    CONTR(op)->write_buf[0] = '\0';
     CONTR(op)->state = ST_CONFIRM_PASSWORD;
     send_query(&CONTR(op)->socket, CS_QUERY_HIDEINPUT, "Please type your password again.\n:");
 }
@@ -717,15 +701,6 @@ int check_pick(object *op)
 
         if (!can_pick(op, tmp))
             continue;
-
-#ifdef SEARCH_ITEMS
-        if (CONTR(op)->search_str[0] != '\0')
-        {
-            if (item_matched_string(op, tmp, CONTR(op)->search_str))
-                pick_up(op, tmp);
-            continue;
-        }
-#endif /* SEARCH_ITEMS */
 
         /* high bit set?  We're using the new autopickup model */
         if (!(CONTR(op)->mode & PU_NEWMODE))

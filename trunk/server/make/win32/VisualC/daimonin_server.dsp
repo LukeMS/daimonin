@@ -42,7 +42,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /MD /W3 /Gi /GX /O2 /Ob2 /I "..\..\..\src\include" /I "..\..\..\src\random_maps" /D "_CONSOLE" /D "DEBUG" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "LUA_PLUGIN_EXPORTS" /YX"preheader.pch" /FD /c
+# ADD CPP /nologo /MD /W3 /Gi /GX /Od /Ob2 /I "..\..\..\src\include" /I "..\..\..\src\random_maps" /D "_CONSOLE" /D "DEBUG" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "LUA_PLUGIN_EXPORTS" /YX"preheader.pch" /FD /c
 # ADD BASE RSC /l 0x407 /d "NDEBUG"
 # ADD RSC /l 0x407 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -327,6 +327,10 @@ SOURCE=..\..\..\src\server\egoitem.c
 
 !ENDIF 
 
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\server\gmaster.c
 # End Source File
 # Begin Source File
 
@@ -1373,6 +1377,10 @@ SOURCE=..\..\..\src\include\face.h
 # Begin Source File
 
 SOURCE=..\..\..\src\include\global.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\include\gmaster.h
 # End Source File
 # Begin Source File
 

@@ -102,3 +102,71 @@ void free_objectlinkpt(oblinkpt *obp)
         free_objectlink_recursive(obp->objlink.link);
     free_objectlinkpt_simple(obp);
 }
+
+
+/* generic link function for objectlinks
+ * update a start & end ptr is there is one.
+ */
+objectlink *objectlink_link(objectlink **startptr, objectlink **endptr, 
+							objectlink *afterptr, objectlink *beforeptr, objectlink *objptr )
+{
+	if(!beforeptr) /* link it behind afterptr */
+	{
+		if(afterptr) /* if not, we just have to update startptr & endptr */
+		{
+			if(afterptr->next) /* link between something? */
+			{
+				objptr->next = afterptr->next;
+				afterptr->next->prev = objptr;
+			}
+			afterptr->next = objptr;
+			objptr->prev = afterptr;
+		}
+
+		if(startptr && !*startptr)
+			*startptr = objptr;
+		if(endptr && (!*endptr || *endptr == afterptr))
+			*endptr = objptr;
+	}
+	else if(!afterptr) /* link it before beforeptr */
+	{
+		if(beforeptr->prev)
+		{
+			objptr->prev = beforeptr->prev;
+			beforeptr->prev->next = objptr;
+		}
+		beforeptr->prev = objptr;
+		objptr->next = beforeptr;
+
+		/* we can't be endptr but perhaps start */
+		if(startptr && (!*startptr || *startptr == beforeptr))
+			*startptr = objptr;		
+	}
+	else /* special: link together 2 lists/objects */
+	{
+		beforeptr->prev = objptr;
+		afterptr->next = objptr;
+		objptr->next = beforeptr;
+		objptr->prev = afterptr;
+	}
+
+	return objptr;
+}
+
+/* generic unlink a objectlink from a list
+ * update a end & start ptr if there is one.
+ */
+objectlink *objectlink_unlink(objectlink **startptr, objectlink **endptr, objectlink *objptr)
+{
+	if(startptr && *startptr == objptr)
+		*startptr = objptr->next;
+	if(endptr && *endptr == objptr)
+		*endptr = objptr->prev;
+
+	if(objptr->prev)
+		objptr->prev->next = objptr->next;
+	if(objptr->next)
+		objptr->next->prev = objptr->prev;
+
+	return objptr;
+}

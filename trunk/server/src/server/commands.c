@@ -66,7 +66,6 @@ CommArray_s Commands[]                  =
     {"/who",          command_who,            5.0f},
     {"/mapinfo",      command_mapinfo,        5.0f},
     {"/motd",         command_motd,           5.0f},
-    {"/dm",           command_dm,             1.0f},
     {"/reply",        command_reply,          1.0f},
     {"/usekeys",      command_usekeys,        1.0f},
     {"/time",         command_time,           1.0f},
@@ -76,20 +75,36 @@ CommArray_s Commands[]                  =
     {"/use_skill",    command_uskill,         0.1f},
     {"/ready_skill",  command_rskill,         0.1f},
 
+	/* group commands */
     {"/invite",		command_party_invite,	4.0f},
     {"/join",			command_party_join,		0.1f},
     {"/deny",			command_party_deny,		0.1f},
     {"/leave",		command_party_leave,	4.0f},
     {"/remove",		command_party_remove,	4.0f},
+
+    {"/dm",           command_dm,             1.0f},
+    {"/gm",           command_gm,             1.0f},
+    {"/vol",          command_vol,            1.0f},
+	/* VOL/GM/DM */
+    {"/dm_list",		command_dm_list,1.0f},
+	{"/malloc",			command_malloc,   0.0},		/* check the server stats */
+	{"/kick",			command_kickcmd, 0.0},			/* kick with a 1m temp login ban */
+	
+	{"/mute",			command_mute,1.0f},			/* max 5 min for VOL */ 
+	
+	/* GM/DM */
+	{"/summon",			command_summon,1.0}, 
+    {"/teleport",		command_teleport,1.0f}, 
+	{"/ban",			command_ban,0.0}, 
+	
+	{"/silence",		command_silence,0.0}, 
+    
     
     /*{"/mark",           command_mark,           1.0f},*/
     /*  {"/sound",        command_sound,          1.0},*/
     /*  {"/delete",     command_quit,           1.0},*/
     /*  {"/pickup",     command_pickup,         1.0}, we don't want and need this anymore */
     /*  {"/dropall",        command_dropall,        1.0}, */
-#ifdef SEARCH_ITEMS
-    /* {"/search",     command_search_items,   1.0},*/
-#endif
 
     /* temporary disabled commands
     {"listen", command_listen,    0.0}, our channel system should work different
@@ -134,29 +149,36 @@ const int   CommunicationCommandSize    = sizeof(CommunicationCommands) / sizeof
  */
 CommArray_s WizCommands[]           =
 {
-    /* OVERSEER [OV] commands */
-    /* OV's should be able to help player, kick player and (temp) ban players.
-    *, Examine some game part (like the inventory of other players),
-    * but they should NOT control the game flow. No map reset, no teleport to other
-    * player, no goto to maps. 
-    * This will allow to give honest players some power but they will still
-    * not be able to cheat. Means, they will self be able to play on.
-    */
-    {"/summon", command_summon,0.0}, {"/kick", command_kick, 0.0}, {"/inventory", command_inventory,0.0},
-    {"/plugin",command_loadplugin,0.0}, {"/pluglist",command_listplugins,0.0},
+	{"/dm_set",		  command_dm_set,         0.0f},
+    {"/plugin",command_loadplugin,0.0}, 
+	{"/pluglist",command_listplugins,0.0},
 
+	{"/inventory",		command_inventory,1.0f},	/* inv check of player x for exampel to check quest items */
     /* DM/WIZ commands */
-    {"/teleport", command_teleport,0.0}, {"/goto", command_goto,0.0}, {"/shutdown", command_start_shutdown,0.0},
-    {"/shutdown_now", command_shutdown, 0.0}, {"/resetmap", command_reset,0.0}, {"/plugout",command_unloadplugin,0.0},
-    {"/create", command_create,0.0}, {"/addexp", command_addexp,0.0}, {"/malloc", command_malloc,   0.0},
-    {"/maps", command_maps,   0.0}, {"/dump", command_dump,0.0}, /* dump info of object nr. x */
+	{"/goto", command_goto,0.0}, 
+	{"/shutdown", command_start_shutdown,0.0},
+    {"/shutdown_now", command_shutdown, 0.0}, 
+	{"/resetmap", command_reset,0.0}, 
+	{"/plugout",command_unloadplugin,0.0},
+    {"/create", command_create,0.0}, 
+	{"/addexp", command_addexp,0.0}, 
+    {"/maps", command_maps,   0.0}, 
+	{"/dump", command_dump,0.0}, /* dump info of object nr. x */
 
-    {"/dm_stealth", command_dm_stealth,0.0}, {"/dm_light", command_dm_light,0.0},
-    {"/d_active", command_dumpactivelist,0.0}, {"/d_arches", command_dumpallarchetypes,0.0},
-    {"/d_maps", command_dumpallmaps,0.0}, {"/d_map", command_dumpmap,0.0}, {"/d_objects", command_dumpallobjects,0.0},
-    {"/d_belowfull", command_dumpbelowfull,0.0}, {"/d_below", command_dumpbelow,0.0},
-    {"/d_friendly", command_dumpfriendlyobjects,0.0}, {"/d_hash", command_sstable,  0.0},
-    {"/set_map_light", command_setmaplight,0.0}, {"/stats", command_stats,0.0}, {"/check_fd", command_check_fd,0.0},
+    {"/dm_stealth", command_dm_stealth,0.0}, 
+	{"/dm_light", command_dm_light,0.0},
+    {"/d_active", command_dumpactivelist,0.0},
+	{"/d_arches", command_dumpallarchetypes,0.0},
+    {"/d_maps", command_dumpallmaps,0.0}, 
+	{"/d_map", command_dumpmap,0.0},
+	{"/d_objects", command_dumpallobjects,0.0},
+    {"/d_belowfull", command_dumpbelowfull,0.0}, 
+	{"/d_below", command_dumpbelow,0.0},
+    {"/d_friendly", command_dumpfriendlyobjects,0.0},
+	{"/d_hash", command_sstable,  0.0},
+    {"/set_map_light", command_setmaplight,0.0}, 
+	{"/stats", command_stats,0.0}, 
+	{"/check_fd", command_check_fd,0.0},
     {"/dm_speed", command_speed,0.0},
     
 
