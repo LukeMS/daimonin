@@ -197,7 +197,7 @@ void generate_monster(object *gen) {
   if(GENERATE_SPEED(gen)&&rndm(0, GENERATE_SPEED(gen)-1))
     return;
   if(gen->other_arch==NULL) {
-    LOG(llevBug,"BUG: Generator without other_arch: %s\n",gen->name);
+    LOG(llevBug,"BUG: Generator without other_arch: %s\n",query_name(gen));
     return;
   }
   i=find_free_spot(at,gen->map,gen->x,gen->y,1,9);
@@ -208,7 +208,7 @@ void generate_monster(object *gen) {
     op->y=gen->y+freearr_y[i]+at->clone.y;
     if(head!=NULL)
       op->head=head,prev->more=op;
-    if (rndm(0, 9)) generate_artifact(op, gen->map->difficulty);
+    if (rndm(0, 9)) generate_artifact(op, gen->map->difficulty,0,99);
     insert_ob_in_map(op,gen->map,gen,0);
     if (QUERY_FLAG(op, FLAG_FREED)) return;
     if(op->randomitems!=NULL)
@@ -674,7 +674,18 @@ object *fix_stopped_arrow (object *op)
     CLEAR_FLAG(op, FLAG_WALK_ON);
     CLEAR_FLAG(op, FLAG_FLY_ON);
     CLEAR_FLAG(op, FLAG_FLYING);
-    op->speed = 0;
+
+	/* food is a self destruct marker - that long the item will need to be destruct! */
+	if(op->stats.food && op->type == ARROW)
+	{
+		SET_FLAG(op,FLAG_IS_USED_UP);
+		SET_FLAG(op,FLAG_NO_PICK);
+		op->type = MISC_OBJECT; /* important to neutralize the arrow! */
+		op->speed = 0.1f;
+		op->speed_left = 0.0f;
+	}
+	else
+		op->speed = 0;
     update_ob_speed(op);
     op->stats.wc = (sint8) op->last_heal;
     op->stats.dam= op->stats.hp;
@@ -761,7 +772,7 @@ void move_arrow(object *op) {
     mapstruct *m=op->map;
 
     if(op->map==NULL) {
-	LOG (llevBug, "BUG: Arrow had no map.\n");
+	LOG(llevBug, "BUG: Arrow %s had no map.\n", query_name(op));
 	remove_ob(op);
 	free_object(op);
 	return;

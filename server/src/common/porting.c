@@ -503,7 +503,7 @@ FILE *open_and_uncompress(char *name,int flag, int *compressed) {
     } else if((fp=fopen(name,"r"))!=NULL) {
       struct stat statbuf;
       if (fstat (fileno (fp), &statbuf) || ! S_ISREG (statbuf.st_mode)) {
-        LOG (llevDebug, "Can't open %s - not a regular file\n", name);
+        LOG(llevDebug, "Can't open %s - not a regular file\n", name);
         (void) fclose (fp);
         errno = EISDIR;
         return NULL;

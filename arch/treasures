@@ -938,6 +938,25 @@ treasureone random_test1
  arch balm_generic
  chance 35
 end
+# t_style 1 = fire
 treasureone random_test
- arch ring_generic
+ t_style 1
+ arch jewel_generic
+ t_style 2
+ artifact_chance 100
+ chance 50
+ more
+ arch nugget_generic
+ t_style 0
+ artifact_chance 100
+ chance 50
+ more
+ arch gem_generic
+ t_style 0
+ artifact_chance 100
+ chance 50
+ more
+ arch sandals
+ artifact_chance 100
+ chance 50
 end

@@ -2,7 +2,7 @@ Object jewel_generic
 name jewel
 race gold and jewels
 layer 3
-type 60
+type 116
 face jewel_clear.101
 item_quality 100
 item_condition 100

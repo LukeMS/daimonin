@@ -646,12 +646,19 @@
 <!--####################################################################-->
 <type number="110" name="Ability">
   <ignore>
+    <attribute arch="speed_left" />
+    <attribute arch="cursed" />
+    <attribute arch="damned" />
+    <attribute arch="direction" />
+    <attribute arch="is_magical" />
     <ignore_list name="system_object" />
   </ignore>
   <description><![CDATA[
     Abilities are to be put in a monster's inventory. They grant monsters the
     knowledge to cast spells. Spells from abilities are usually magical in
-    nature, thus adding magic attacktype to the spell-damage they produce.
+    nature, thus adding magic to the spell-damage they produce. If not marked
+    as magical, the ability as natural effect can't be disenchanted or 
+    blocked by dispel magic.
     <br><br>
     A particularly nice feature of abilities is that they can hold two
     spells: One for short range- and one for long range use.
@@ -671,7 +678,6 @@
     be neccessary unless you work on very high level maps.
     And what fun is a magic resistance cloak when it has no effect? ]]>
   </use>
-  <attribute arch="is_invisible" value="1" type="fixed" />
   <attribute arch="no_drop" value="1" type="fixed" />
   <attribute arch="sp" editor="short range spell" type="spell">
     The monster will use the specified &lt;short range spell&gt;
@@ -696,7 +702,7 @@
     "paralyze" of &lt;importance&gt; 1 will averagely cast three out of four
     times the "small fireball".
   </attribute>
-  <attribute arch="attacktype" editor="is magical" true="2" false="0" type="bool_special">
+  <attribute arch="is_magical" editor="is magical" type="bool">
     This flag specifies wether the ability &lt;is magical&gt; in nature.
     If enabled, all spells produced by this ability will have magic
     attacktype added to the usual attacktypes.
@@ -1627,7 +1633,6 @@
     (recharging mana for example).
     Infection with a "positive disease" could even be a quest reward. ]]>
   </use>
-  <attribute arch="is_invisible" value="1" type="fixed" />
   <attribute arch="level" editor="plaque level" type="int">
     The &lt;plaque level&gt; is proportional to the disease's deadliness.
     This mainly reflects in the &lt;damage&gt;. It has no effect on
@@ -2992,9 +2997,33 @@
 </type>
 
 <!--####################################################################-->
-<type number="60" name="Jewel">
+<type number="60" name="Gems">
   <description><![CDATA[
-    Items of the type Gold &amp; Jewels are handled like a currency.
+    Items of the type Gems are handled like a currency.
+    Unlike for any other type of item, in shops, the buy- and selling
+    prices differ only marginally. ]]>
+  </description>
+  <attribute arch="race" value="gold and jewels" type="fixed" />
+  <attribute arch_begin="msg" arch_end="endmsg" editor="description" type="text">
+    This text may describe the object.
+  </attribute>
+</type>
+<!--####################################################################-->
+<type number="116" name="Jewels">
+  <description><![CDATA[
+    Items of the type Jewels are handled like a currency.
+    Unlike for any other type of item, in shops, the buy- and selling
+    prices differ only marginally. ]]>
+  </description>
+  <attribute arch="race" value="gold and jewels" type="fixed" />
+  <attribute arch_begin="msg" arch_end="endmsg" editor="description" type="text">
+    This text may describe the object.
+  </attribute>
+</type>
+<!--####################################################################-->
+<type number="117" name="Nuggets">
+  <description><![CDATA[
+    Items of the type Nuggets are handled like a currency.
     Unlike for any other type of item, in shops, the buy- and selling
     prices differ only marginally. ]]>
   </description>
@@ -3668,8 +3697,13 @@
     creature can move. If nothing is set, the creature
     can walk on land surface.
   </attribute>
+  <attribute arch="Dex" editor="use ability 1/" type="int">
+    The &lt;use ability&gt; value is a 1/x chance that the monster
+    *try* to use per active tick a special ability like spellcasting,
+    throwing, etc.
+  </attribute>
   <attribute arch="Int" editor="detect hidden" type="int">
-    The &lt;detect hidden&gt; value gives monsters the ablitity to find
+    The &lt;detect hidden&gt; value gives monsters the abiltity to find
     hidden/invisible creatures. Higher values make for better
     detection-skills. Enabling &lt;see invisible&gt; makes this value
     obsolete.
@@ -4268,6 +4302,11 @@
     creature can move. If nothing is set, the creature
     can walk on land surface.
   </attribute>
+  <attribute arch="Dex" editor="use ability 1/" type="int">
+    The &lt;use ability&gt; value is a 1/x chance that the monster
+    *try* to use per active tick a special ability like spellcasting,
+    throwing, etc.
+  </attribute>
   <attribute arch="Int" editor="detect hidden" type="int">
     The &lt;detect hidden&gt; value gives monsters the ablitity to find
     hidden/invisible creatures. Higher values make for better
@@ -4573,7 +4612,7 @@
   </description>
   <use><![CDATA[
     NEVER EVER consider a mover being unpassable in the backwards
-    direction. Setting "attacktype 1" makes it seemingly impossible
+    direction. Setting force movement makes it seemingly impossible
     but there is still a trick: One player can push a second player
     past the mover, in opposite to the mover's direction! The more
     movers, the more players needed. Hence, don't make a treasure
@@ -4588,7 +4627,7 @@
     while movers only do living creatures (depending on how it
     is set: monsters and players). ]]>
   </use>
-  <attribute arch="attacktype" editor="forced movement" type="bool">
+  <attribute arch="attacktype" editor="TODO - DON'T USE" type="bool">
     If forced movement is enabled, the mover "freezes" anyone it
     moves (so they are forced to move along a chain).
     For players there is no way to escape this forced movement,
@@ -4967,14 +5006,6 @@
   <attribute arch="sp" editor="spell" type="spell">
     When a player drinks this potion, the selected spell
     will be casted (once). This should work for any given spell.
-    E.g. heal is "sp 35", magic power is "sp 67".
-  </attribute>
-  <attribute arch="attacktype" editor="special effect" type="list_potion_effect">
-    There are two types of special effects for potions:
-    'life restoration' - restore the player's stats lost by death or draining
-                    (this has nothing in common with the restoration spell!)
-    'improvement' - increase the player's maximum health/mana/grace 
-                    by a very small amount.
   </attribute>
   <attribute arch="startequip" editor="godgiven item" type="bool">
     A godgiven item vanishes as soon as the player
@@ -5340,7 +5371,7 @@
     a physical attack.
     <br><br>
     Runes hit any monster or person who steps on them for 'dam' damage in
-    'attacktype' attacktype. Alternatively, the rune could contain any spell,
+    'attacktype' attack. Alternatively, the rune could contain any spell,
     and will cast this spell when it detonates. Yet another kind is the
     "summoning rune", summoning predefined monsters of any kind, at detonation.
     <br><br>
@@ -5818,7 +5849,7 @@
   </attribute>
   <attribute arch="walk_on" editor="activate by walking" type="bool">
     If set, the player gets the message when walking ontop of the object.
-    "is_invisible 1" should be set in this case. This is the typical configuration
+    This is the typical configuration
     for a "magic_mouth": The player walks through a dungeon and suddenly he
     gets a message. Use this to create some roleplay atmosphere, and to inform
     the player about possible dangers or secrets.
@@ -6017,9 +6048,8 @@
   </description>
   <use><![CDATA[
     When creating maps, I guess sooner or later you'll want to have
-    an invisible teleporter. If using "is_invisible 1", the teleporter
-    can still be discovered with the show_invisible spell. And in
-    some cases you can't place it under the floor to prevent this.
+    an invisible teleporter. And in some cases you can't place it 
+    under the floor to prevent this.
     <br><br>
     Fortunately, there is a cool trick to make a perfectly invisible
     teleporter: You simply add teleporter functionality to the floor
@@ -6495,6 +6525,29 @@
   </attribute>
 </type>
 
+<!--####################################################################-->
+<type number="102" name="Random Drop Container">
+  <ignore>
+    <attribute arch="damned" />
+    <ignore_list name="non_pickable" />
+  </ignore>
+  <description><![CDATA[
+    Random drop container are used from spawn points.
+    Put in the inventory of a spawn mobs (the "copy" inside
+    the spawn point) there will be a random check against
+    this object. This check will be from 0-999999. If the check
+    is higher the the value of "drop chance" of this object,
+    the items INSIDE this object (set in the map editor) are
+    given the mob. This is checked every time a mob is spawned.
+    Different mobs inside a spawn point can hold different and
+    more as one random drop container. Only stacking of random
+    drop containers is not allowed. ]]>
+  </description>
+  <attribute arch="carrying" editor="drop chance" type="int">
+    Set to a range from 0 to 999999. 0 means droped always.
+    999999 means a chance from 1/1000000 to drop.
+  </attribute>
+</type>
 <!--####################################################################-->
 <type number="109" name="Wand &amp; Staff">
   <description><![CDATA[

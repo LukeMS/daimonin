@@ -52,8 +52,7 @@ void move_deep_swamp (object *op)
 	above->stats.hp >= 0) {
 
       if (op->stats.food < 1) {
-        LOG (llevDebug, "move_deep_swamp(): player is here, but state is "
-             "%d\n", op->stats.food);
+        LOG(llevDebug, "move_deep_swamp(): player is here, but state is %d\n", op->stats.food);
         op->stats.food = 1;
       }
       switch(op->stats.food) {

@@ -214,8 +214,7 @@ static void check_special_prayers (object *op, object *god)
         spell = tmp->stats.sp;
 
         if (god->randomitems == NULL) {
-            LOG (llevBug, "BUG: check_special_prayers(): %s without "
-                 "randomitems\n", god->name);
+            LOG(llevBug, "BUG: check_special_prayers(): %s without randomitems\n", query_name(god));
             do_forget_spell (op, spell);
             continue;
 	}
@@ -488,8 +487,7 @@ archetype *determine_holy_arch (object *god, const char *type)
     treasure *tr;
 
     if ( ! god || ! god->randomitems) {
-        LOG (llevBug, "BUG: determine_holy_arch(): no god or god without "
-             "randomitems\n");
+        LOG(llevBug, "BUG: determine_holy_arch(): no god or god without randomitems\n");
         return NULL;
     }
 
@@ -535,8 +533,7 @@ static int god_removes_curse (object *op, int remove_damnation)
 static int follower_level_to_enchantments (int level, int difficulty)
 {
     if (difficulty < 1) {
-        LOG (llevBug, "BUG: follower_level_to_enchantments(): "
-             "difficulty %d is invalid\n", difficulty);
+        LOG(llevBug, "BUG: follower_level_to_enchantments(): difficulty %d is invalid\n", difficulty);
         return 0;
     }
 
@@ -704,8 +701,7 @@ void god_intervention (object *op, object *god)
     treasure *tr;
 
     if ( ! god || ! god->randomitems) {
-        LOG (llevBug, "BUG: god_intervention(): no god or god without "
-             "randomitems\n");
+        LOG(llevBug, "BUG: god_intervention(): (p:%s) no god %s or god without randomitems\n",query_name(op),query_name(god));
         return;
     }
 
@@ -736,8 +732,7 @@ void god_intervention (object *op, object *god)
         }
 
         if ( ! tr->item) {
-            LOG (llevBug, "BUG: empty entry in %s's treasure list\n",
-                 god->name);
+            LOG(llevBug, "BUG: empty entry in %s's treasure list\n",query_name(god));
             continue;
         }
         item = &tr->item->clone;
@@ -834,7 +829,7 @@ void god_intervention (object *op, object *god)
             int i;
 
             if ((at = find_archetype("depletion")) == NULL) {
-                LOG (llevBug, "BUG: Could not find archetype depletion.\n");
+                LOG(llevBug, "BUG: Could not find archetype depletion.\n");
                 continue;
             }
             depl = present_arch_in_ob (at, op);
@@ -885,13 +880,11 @@ void god_intervention (object *op, object *god)
                 return;
             }
             if ( ! QUERY_FLAG (item, FLAG_STARTEQUIP)) {
-                LOG (llevBug, "BUG: visible spellbook in %s's treasure list "
-                     "lacks FLAG_STARTEQUIP\n", god->name);
+                LOG(llevBug, "BUG: visible spellbook in %s's treasure list lacks FLAG_STARTEQUIP\n", query_name(god));
                 continue;
             }
             if ( ! item->stats.Wis) {
-                LOG (llevBug, "BUG: visible spellbook in %s's treasure list "
-                     "doesn't contain a special prayer\n", god->name);
+                LOG(llevBug, "BUG: visible spellbook in %s's treasure list doesn't contain a special prayer\n", query_name(god));
                 continue;
             }
             if (god_gives_present (op, god, tr))
@@ -1001,7 +994,7 @@ int tailor_god_spell(object *spellop, object *caster) {
             new_draw_info(NDI_UNIQUE, 0, caster,
               "This prayer is useless unless you worship an appropriate god");
         else
-            LOG (llevBug, "BUG: tailor_god_spell(): no god\n");
+            LOG(llevBug, "BUG: tailor_god_spell(): no god\n");
         free_object(spellop);
         return 0;
     }

@@ -336,7 +336,7 @@ void ReplyCmd(char *buf, int len, player *pl)
     
     switch (pl->state) {
 	case ST_PLAYING:
-	    LOG(llevBug,"BUG: Got reply message with ST_PLAYING input state\n", pl->ob->name);
+	    LOG(llevBug,"BUG: Got reply message with ST_PLAYING input state (player %s)\n", query_name(pl->ob));
 	    break;
 
 	case ST_PLAY_AGAIN:
@@ -503,7 +503,6 @@ void MoveCmd(char *buf, int len,player *pl)
     }
     vals[2]=atoi(buf);
 
-/*   LOG(llevDebug,"Move item %d (nrof=%d) to %d.\n", vals[1], vals[2], vals[0]);*/
     esrv_move_object(pl->ob,vals[0], vals[1], vals[2]);
 }
 

@@ -31,6 +31,7 @@
 #ifndef MAP_H
 #define MAP_H
 
+#define MAP_PLAYER_MAP	1    /* for exit objects: this is a player unique map */
 #define MAX_ARCH_LAYERS 7	/* thats our 7 logical layers.
                              * ! for first and last object, we will use 2 more fake layers!
                              */

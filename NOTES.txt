@@ -1,11 +1,5 @@
 Daimonin TODO
 
-20.10.2003 - monster.c/can_detect_enemy() - rework this function
-
-KNOWN BUGS:
-24.09.2003 - there seems a little bug in the target system, sometimes a possible target
-             is not selected. 
-TODO:
 21.09.2003 - rework move_gate() and move_timed_gate() - see notes in move_gate().
              add gate_close/gate_open sound. (sound added to client).
 23.09.2003 - EDITOR TODO: Inserting a mob in the inventory of a spawn point should autochange
@@ -15,7 +9,18 @@ TODO:
 25.09.2003 - encumberace is still bound to the REAL speed of the object - and the real speed
              of the player object effects the poll of the socket - thats NOT good and a 
              design flaw. In old cf days, this was senseful - today is not.
-Done:
+
+20.10.2003 - monster.c/can_detect_enemy() - rework this function
+
+25.10.2003 - unique maps: must rework ready_map... to handle unique, random and
+             group maps more senseful. 
+
+25.10.2003 - appartment are identified by use settings.localdir... very bad - change
+             this to a mapflag.
+
+KNOWN BUGS:
+24.09.2003 - there seems a little bug in the target system, sometimes a possible target
+             is not selected. 
 
 For help ask the dev team:
 

@@ -97,10 +97,15 @@ typedef struct treasurestruct {
 				    /* this link instead of ->next */
   struct treasurestruct *next_no;   /* If this item was not generated, */
 				    /* then continue here */
+  int t_style;		/* local t_style (will overrule global one) - used from artifacts */
   int magic_chance;	/* value from 0-1000. chance of item is magic. */
   int magic_fix;	/* if this value is != 0, use this as fixed magic value.
 					 * if it 0, look at magic to generate perhaps a random magic value
 					 */
+  int artifact_chance;	/* default = -1 = ignore this value. 0=NEVER make a artifact for this treasure.
+						 * 1-100 = % chance of make a artifact from this treasure.
+						 */
+
   int magic;	    /* Max magic bonus to item */
   int difficulty; /* If the entry is a list transition,
 				     * it contains the difficulty
@@ -114,6 +119,7 @@ typedef struct treasurestruct {
 
 typedef struct treasureliststruct {
   char *name;				/* Usually monster-name/combination */
+  int t_style;				/* global style (used from artifacts file) */
   sint16 total_chance;			/* If non-zero, only 1 item on this
 					 * list should be generated.  The
 					 * total_chance contains the sum of

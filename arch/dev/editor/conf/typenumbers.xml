@@ -116,7 +116,8 @@
   <type number="98" name="SIGN" />
   <type number="99" name="BOOTS" />
   <type number="100" name="GLOVES" />
-
+  <type number="101" name="BASE_INFO (internal)" />
+  <type number="102" name="RANDOM_DROP" />
   <type number="103" name="CONVERTER" />
   <type number="104" name="BRACERS" />
   <type number="105" name="POISONING" />
@@ -130,7 +131,10 @@
   <type number="113" name="GIRDLE" />
   <type number="114" name="FORCE" />
   <type number="115" name="POTION_EFFECT" />
-  <type number="121" name="CLOSE_CON" />
+  <type number="116" name="TYPE_JEWEL" />
+  <type number="117" name="TYPE_NUGGET" />
+ 
+ <type number="121" name="CLOSE_CON" />
   <type number="122" name="CONTAINER" />
   <type number="123" name="ARMOUR_IMPROVER" />
   <type number="124" name="WEAPON_IMPROVER" />

@@ -545,7 +545,7 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
 	 * formulalist) */
       if(!rp) rp=get_random_recipe((recipelist *) NULL);
       if(rp && (tmp=get_archetype(rp->arch_name))) { 
-         generate_artifact(tmp,random_roll(1, op->level/2+1, op, PREFER_HIGH)+1);
+         generate_artifact(tmp,random_roll(1, op->level/2+1, op, PREFER_HIGH)+1, 0,99);
 	 if((tmp=insert_ob_in_ob(tmp,cauldron))) { 
 	    remove_contents(cauldron->inv,tmp);
   	    new_draw_info_format(NDI_UNIQUE, 0,op,

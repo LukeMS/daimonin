@@ -89,12 +89,23 @@ extern int nrofallocobjects,nroffreeobjects;
 
 mapstruct *has_been_loaded (char *name) {
     mapstruct *map;
+	int moff=0;
 
     if (!name || !*name) 
 	return 0;
+
+	/* this IS a bug starting without '/' - this can lead in double loaded maps! */
+	if(*name != '/' && *name != '.')
+	{
+		moff = 1;
+		LOG(llevDebug,"DEBUG: has_been_loaded: found map name without starting '/': fixed! %s\n", name);
+
+	}
     for (map = first_map; map; map = map->next)
-	if (!strcmp (name, map->path))
-	    break;
+	{
+		if (!strcmp (name+moff, map->path))
+			break;
+	}
     return (map);
 }
 
@@ -1143,7 +1154,20 @@ mapstruct *load_original_map(char *filename, int flags) {
     mapstruct *m;
     int comp;
     char pathname[MAX_BUF];
-    
+    char tmp_fname[MAX_BUF];
+
+	/* this IS a bug - because the missing '/' strcpy will fail when it 
+	 * search the loaded maps - this can lead in a double load and break
+	 * the server!
+	 * '.' sign unique maps in fixed folders.
+	 */
+    if(*filename != '/' &&  *filename != '.')
+	{
+		LOG(llevDebug,"DEBUG: load_original_map: filename without start '/' - overruled. %s\n", filename);
+		tmp_fname[0]='/';
+		strcpy(tmp_fname+1,filename);
+		filename = tmp_fname;
+	}
 	global_map_tag++; /* be sure we have always a unique map_tag */
     if (flags & MAP_PLAYER_UNIQUE)
     {
@@ -1164,7 +1188,8 @@ mapstruct *load_original_map(char *filename, int flags) {
     if((fp=open_and_uncompress(pathname, 0, &comp))==NULL) {
     if (!(flags & MAP_OVERLAY))
     {            
-	    LOG(llevBug,"BUG: Can't open map file %s\n", pathname);
+	    if (!(flags & MAP_PLAYER_UNIQUE))
+		    LOG(llevBug,"BUG: Can't open map file %s\n", pathname);
     }
 	return (NULL);
     }
@@ -1371,50 +1396,64 @@ static void load_unique_objects(mapstruct *m) {
  * (this should have been updated when first loaded)
  */
 
-int new_save_map(mapstruct *m, int flag) {
-    FILE *fp, *fp2;
+int new_save_map(mapstruct *m, int flag) 
+{
+	FILE *fp, *fp2;
     char filename[MAX_BUF],buf[MAX_BUF];
     int i;
     
-    if (flag && !*m->path) {
-	LOG(llevBug,"BUG: Tried to save map without path.\n");
-	return -1;
+    if (flag && !*m->path) 
+	{
+		LOG(llevBug,"BUG: Tried to save map without path.\n");
+		return -1;
     }
     
-    if (flag || MAP_UNIQUE(m)) {
-	if (!MAP_UNIQUE(m)) { /* flag is set */
-	    if (flag == 2)
-		strcpy(filename, create_overlay_pathname(m->path));
-	    else
-		strcpy (filename, create_pathname (m->path));
-	} else 
-	    strcpy (filename, m->path);
+    if (flag || MAP_UNIQUE(m)) 
+	{
+		if (!MAP_UNIQUE(m))  /* flag is set */
+		{
+			/*
+		    if (flag == 2)
+				strcpy(filename, create_overlay_pathname(m->path));
+			else
+			*/
+			strcpy (filename, create_pathname (m->path));
+		} 
+		else 
+			strcpy (filename, m->path);
 
-	/* If the compression suffix already exists on the filename, don't
-	 * put it on again.  This nasty looking strcmp checks to see if the
-	 * compression suffix is at the end of the filename already.
-	 */
-        if (m->compressed &&
-	  strcmp((filename + strlen(filename)-strlen(uncomp[m->compressed][0])),
-	     uncomp[m->compressed][0]))
+		/* If the compression suffix already exists on the filename, don't
+		* put it on again.  This nasty looking strcmp checks to see if the
+		* compression suffix is at the end of the filename already.
+		* i don't checked them - perhaps weneed compression in the future
+		* even i can't see it - the if is harmless because self terminating
+		* after the m->compressed fails.
+		*/
+        if (m->compressed && strcmp((filename + strlen(filename)-strlen(uncomp[m->compressed][0])),uncomp[m->compressed][0]))
 	          strcat(filename, uncomp[m->compressed][0]);
-	make_path_to_file(filename);
-    } else {
-	if (!m->tmpname)
-	    m->tmpname = tempnam_local(settings.tmpdir,NULL);
-	strcpy(filename, m->tmpname);
+	
+		make_path_to_file(filename);
+    } 
+	else 
+	{
+		if (!m->tmpname)
+			m->tmpname = tempnam_local(settings.tmpdir,NULL);
+		strcpy(filename, m->tmpname);
     }
+
     LOG(llevDebug,"Saving map %s to %s\n",m->path, filename);
     m->in_memory = MAP_SAVING;
 
     /* Compress if it isn't a temporary save.  Do compress if unique */
-    if (m->compressed && (MAP_UNIQUE(m) || flag)) {
+    if (m->compressed && (MAP_UNIQUE(m) || flag))
+	{
 	    char buf[MAX_BUF];
 	    strcpy(buf, uncomp[m->compressed][2]);
 	    strcat(buf, " > ");
 	    strcat(buf, filename);
 	    fp = popen(buf, "w");
-    } else
+    } 
+	else
 	    fp = fopen(filename, "w");
 
     if(fp == NULL) 
@@ -1455,9 +1494,10 @@ int new_save_map(mapstruct *m, int flag) {
 
     /* Save any tiling information */
     for (i=0; i<4; i++)
-	if (m->tile_path[i])
-	    fprintf(fp,"tile_path_%d %s\n", i+1, m->tile_path[i]);
-
+	{
+		if (m->tile_path[i])
+			fprintf(fp,"tile_path_%d %s\n", i+1, m->tile_path[i]);
+	}
     fprintf(fp,"end\n");
 
     /* In the game save unique items in the different file, but
@@ -1466,33 +1506,44 @@ int new_save_map(mapstruct *m, int flag) {
      * player)
      */
     fp2 = fp; /* save unique items into fp2 */
-    if ((flag == 0 || flag == 2) && !MAP_UNIQUE(m)) {
-	sprintf (buf,"%s.v00",create_items_path (m->path));
-    if ((fp2 = fopen (buf, "w")) == NULL) {
-	    LOG(llevBug, "BUG: Can't open unique items file %s\n", buf);
-	}
-	if (flag == 2)
-	    save_objects(m, fp, fp2, 2);
-	else
-	    save_objects (m, fp, fp2, 0);
-	if (fp2 != NULL) {
-	    if (ftell (fp2) == 0) {
-            fclose (fp2);
-		    unlink (buf);
-	    } else {
-        LOG(llevDebug,"Saving unique items map to %s\n",buf);    
-		fclose (fp2);
-		chmod (buf, SAVE_MODE);
-	    }
-	}
-    } else { /* save same file when not playing, like in editor */
-	save_objects(m, fp, fp, 0);
+    if ((flag == 0 || flag == 2) && !MAP_UNIQUE(m))
+	{
+		sprintf (buf,"%s.v00",create_items_path (m->path));
+		if ((fp2 = fopen (buf, "w")) == NULL)
+		{
+			LOG(llevBug, "BUG: Can't open unique items file %s\n", buf);
+		}
+		/*
+		if (flag == 2)
+		    save_objects(m, fp, fp2, 2);
+		else
+		*/
+		save_objects (m, fp, fp2, 0);
+		if (fp2 != NULL) 
+		{
+			if (ftell (fp2) == 0) 
+			{
+				fclose (fp2);
+				unlink (buf);
+			} 
+			else 
+			{
+
+				LOG(llevDebug,"Saving unique items map to %s\n",buf);    
+				fclose (fp2);
+				chmod (buf, SAVE_MODE);
+			}
+		}
+    } 
+	else /* save same file when not playing, like in editor */
+	{ 
+		save_objects(m, fp, fp, 0);
     }
 
     if (m->compressed && !flag)
-	pclose(fp);
+		pclose(fp);
     else
-	fclose(fp);
+		fclose(fp);
 
     chmod (filename, SAVE_MODE);
     return 0;
@@ -1562,12 +1613,13 @@ void free_map(mapstruct *m,int flag) {
 	LOG(llevBug,"BUG: Trying to free freed map.\n");
 	return;
     }
-    if (flag && m->spaces) free_all_objects(m);
+    if (flag && m->spaces) 
+		free_all_objects(m);
     if (m->name) FREE_AND_CLEAR(m->name);
     if (m->spaces) FREE_AND_CLEAR(m->spaces);
     if (m->msg) FREE_AND_CLEAR(m->msg);
     if (m->buttons)
-	free_objectlinkpt(m->buttons);
+		free_objectlinkpt(m->buttons);
     m->buttons = NULL;
     for (i=0; i<TILED_MAPS; i++) {
 	if (m->tile_path[i]) FREE_AND_CLEAR(m->tile_path[i]);
@@ -1983,7 +2035,8 @@ static mapstruct *load_and_link_tiled_map(mapstruct *orig_map, int tile_num)
 {
     int dest_tile = (tile_num +2) % TILED_MAPS;
 
-    orig_map->tile_map[tile_num] = ready_map_name(orig_map->tile_path[tile_num], 0);
+	
+    orig_map->tile_map[tile_num] = ready_map_name(orig_map->tile_path[tile_num], MAP_UNIQUE(orig_map)?1:0);
 
     /* need to do a strcmp here as the orig_map->path is not a shared string */
     if (!strcmp(orig_map->tile_map[tile_num]->tile_path[dest_tile], orig_map->path))

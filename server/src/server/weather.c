@@ -96,7 +96,7 @@ void tick_the_clock()
 	write_todclock();
     get_tod(&tod);
     dawn_to_dusk(&tod);
-    /* perform_weather(); no weather! i can't see the sense atm */
+    /* perform_weather(); no weather! i can't see the sense - is awful map parsing stuff */
 }
 
 int wmperformstartx;

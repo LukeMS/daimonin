@@ -29,6 +29,7 @@ typedef struct artifactstruct {
 	struct artifactstruct	*next;
 	linked_char				*allowed;
 	archetype				def_at; /* thats the base archtype object - this is chained to arch list */
+	int						t_style;
 	uint16					chance;
 	uint8					difficulty;
 } artifact;

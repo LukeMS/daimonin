@@ -55,7 +55,7 @@ void new_draw_info(int flags,int pri, object *pl, const char *buf)
 	if(!buf) /* should not happen - generate save string and LOG it */
 	{
 		buf = "[NULL]";
-		LOG(llevBug,"BUG:: new_draw_info: NULL string send! %s (%x - %d)\n", pl?pl->name:"[*pl=NULL]",flags,pri);
+		LOG(llevBug,"BUG:: new_draw_info: NULL string send! %s (%x - %d)\n", query_name(pl),flags,pri);
 	}
 
 	/* here we handle global messages - still not sure i want this here */
@@ -69,12 +69,12 @@ void new_draw_info(int flags,int pri, object *pl, const char *buf)
 	/* here handle some security stuff... a bit overhead for max secure */
     if (!pl || pl->type!=PLAYER)
 	{
-		LOG(llevBug,"BUG:: new_draw_info: called for object != PLAYER! %s (%x - %d) msg: %s\n", pl?pl->name:"[*pl=NULL]",flags,pri,buf);
+		LOG(llevBug,"BUG:: new_draw_info: called for object != PLAYER! %s (%x - %d) msg: %s\n", query_name(pl),flags,pri,buf);
 		return;
 	}
 	if(pl->contr==NULL)
 	{
-		LOG(llevBug,"BUG:: new_draw_info: called for player with contr==NULL! %s (%x - %d) msg: %s\n", pl->name,flags,pri,buf);
+		LOG(llevBug,"BUG:: new_draw_info: called for player with contr==NULL! %s (%x - %d) msg: %s\n", query_name(pl),flags,pri,buf);
 		return;
 	}
 

@@ -56,6 +56,43 @@
 # SKILLS: If skills ever defined here, get_skill_archetype() in arch.c 
 # must be extended to search this arches too.
 #
+# The t_style setting
+# --------------------
+#
+# A t_style is a kind of sub class identifier for the artifacts. 
+# It is used to part the single artifact masks (is has no real use for
+# unique artifacts) of a Allowed xxx group in sub groups.
+#
+# There is a t_style variable also in the treasure file for each treasure or
+# treasure list which calls this artifacts file after generation a base item.
+# Both t_style are compared:
+# (note: a unset t_style for a artifact or treasure is on default 0)
+# 
+# (t_style from treasure)    
+#  t_style == 0	"all - ignore t_style settings of the artifacts"
+#  t_style == -1	"get only artifacts with t_style == 0"
+#  t_style >= 1	" get only artifacts with same number"
+#
+# Use: 
+# A fire giant should be drop fire releated items and artifacts. For example
+# only red gems, fire releated potions and magic items or fire based weapons
+# or armour. So, all fire releated artifacts are signed as t_style = 1 
+# (thats the artifacts file default setting for fire releated items).
+# Now the treasures of the fire giant are signed to "t_style 1" too.
+# If he drops a artifact then it will be a fire releated.
+# Note that a normal or even mixed call is possible. with t_style = 0 all
+# artifacts are selected as usual. To let a fire giant drop a cold based
+# item just sign one treasure of his treasure list as t_style = 2 (= cold based).
+#
+# t_style defaults (use this default settings for your treasures and artifacts)
+#
+# t_style = 1	-> fire
+# t_style = 2   -> cold
+# t_style = 3   -> electricity
+# t_style = 4   -> poison
+#
+# end t_style
+#
 # Special uses:
 #
 # Lights
@@ -74,9 +111,25 @@ speed 0.15
 glow_radius -4
 end
 #
+#Artifact nuggets!
+#
+Allowed all
+chance 40
+difficulty 1
+artifact nug_bronze_small
+def_arch nugget_generic
+Object
+title of small size
+item_quality 100
+item_condition 100
+value 75
+type 117
+material_real 643
+end
+#
 #Artifact gems!
 #
-Allowed gem_generic
+Allowed all
 chance 40
 difficulty 1
 artifact zircon_small
@@ -86,12 +139,16 @@ title of small size
 item_quality 100
 item_condition 100
 value 110
+type 60
 material_real 130
 end
 #
-Allowed jewel_generic
+#Artifact juwels!
+#
+Allowed all
 chance 40
 difficulty 5
+t_style 2
 artifact diamond_little
 def_arch jewel_generic
 Object
@@ -101,12 +158,13 @@ item_quality 100
 item_condition 100
 material_real 135
 value 8000
-type 60
+type 116
 end
 #
-Allowed jewel_generic
+Allowed all
 chance 30
 difficulty 20
+t_style 2
 artifact diamond_great
 def_arch jewel_generic
 Object
@@ -116,12 +174,13 @@ material_real 135
 item_quality 100
 item_condition 100
 value 150000
-type 60
+type 116
 end
 #
-Allowed jewel_generic
+Allowed all
 chance 20
 difficulty 30
+t_style 2
 artifact diamond_except
 def_arch jewel_generic
 Object
@@ -131,12 +190,13 @@ item_quality 100
 item_condition 100
 material_real 135
 value 250000
-type 60
+type 116
 end
 #
-Allowed jewel_generic
+Allowed all
 chance 5
 difficulty 50
+t_style 2
 artifact diamond_flawless
 def_arch jewel_generic
 Object
@@ -146,12 +206,29 @@ material_real 135
 item_quality 100
 item_condition 100
 value 400000
-type 60
+type 116
 end
 #
-Allowed jewel_generic
+Allowed all
+chance 100
+difficulty 1
+t_style 1
+artifact ruby_little
+def_arch jewel_generic
+Object
+title of very poor quality
+item_quality 100
+item_condition 100
+face jewel_red.101
+material_real 134
+value 600
+type 116
+end
+#
+Allowed all
 chance 40
 difficulty 3
+t_style 1
 artifact ruby_little
 def_arch jewel_generic
 Object
@@ -161,12 +238,13 @@ item_condition 100
 face jewel_red.101
 material_real 134
 value 6000
-type 60
+type 116
 end
 #
-Allowed jewel_generic
+Allowed all
 chance 30
 difficulty 20
+t_style 1
 artifact ruby_great
 def_arch jewel_generic
 Object
@@ -176,12 +254,13 @@ item_quality 100
 item_condition 100
 material_real 134
 value 120000
-type 60
+type 116
 end
 #
-Allowed jewel_generic
+Allowed all
 chance 20
 difficulty 30
+t_style 1
 artifact ruby_except
 def_arch jewel_generic
 Object
@@ -191,12 +270,13 @@ item_condition 100
 face jewel_red.101
 material_real 134
 value 220000
-type 60
+type 116
 end
 #
-Allowed jewel_generic
+Allowed all
 chance 5
 difficulty 50
+t_style 1
 artifact ruby_flawless
 def_arch jewel_generic
 Object
@@ -206,10 +286,10 @@ item_condition 100
 face jewel_red.101
 material_real 134
 value 380000
-type 60
+type 116
 end
 #
-Allowed jewel_generic
+Allowed all
 chance 40
 difficulty 3
 artifact sapphire_great
@@ -221,10 +301,10 @@ item_quality 100
 item_condition 100
 material_real 133
 value 5000
-type 60
+type 116
 end
 # 
-Allowed jewel_generic
+Allowed all
 chance 30
 difficulty 20
 artifact sapphire_great
@@ -236,10 +316,10 @@ item_quality 100
 item_condition 100
 material_real 133
 value 90000
-type 60
+type 116
 end
-# 
-Allowed jewel_generic
+#
+Allowed all
 chance 20
 difficulty 30
 artifact sapphire_except
@@ -251,10 +331,10 @@ item_condition 100
 face jewel_blue.101
 value 190000
 material_real 133
-type 60
+type 116
 end
 #
-Allowed jewel_generic
+Allowed all
 chance 5
 difficulty 50
 artifact sapphire_flawless
@@ -266,10 +346,10 @@ item_quality 100
 item_condition 100
 material_real 133
 value 350000
-type 60
+type 116
 end
 #
-Allowed jewel_generic
+Allowed all
 chance 40
 difficulty 3
 artifact emerald_great
@@ -281,10 +361,10 @@ item_condition 100
 face jewel_green.101
 material_real 132
 value 3000
-type 60
+type 116
 end
 # 
-Allowed jewel_generic
+Allowed all
 chance 30
 difficulty 20
 artifact emerald_great
@@ -296,10 +376,10 @@ title of great value
 face jewel_green.101
 material_real 132
 value 75000
-type 60
+type 116
 end
 # 
-Allowed jewel_generic
+Allowed all
 chance 20
 difficulty 30
 artifact emerald_except
@@ -311,10 +391,10 @@ item_quality 100
 item_condition 100
 material_real 132
 value 150000
-type 60
+type 116
 end
 #
-Allowed jewel_generic
+Allowed all
 chance 5
 difficulty 50
 artifact emerald_flawless
@@ -326,7 +406,7 @@ title of flawless beauty
 face jewel_green.101
 material_real 132
 value 310000
-type 60
+type 116
 end
 #
 # Containers
@@ -486,6 +566,24 @@ msg
   going to take them off.
 endmsg
 cursed 1
+end
+#
+#
+#
+Allowed sandals
+artifact boots_less_fire
+chance 80
+difficulty 4
+t_style 1
+def_arch sandals
+Object
+title of less fire protection
+type 99
+face high_boots.101
+is_magical 1
+protect_fire 10
+value 3000
+ac 1
 end
 #
 # Rings

@@ -508,7 +508,7 @@ void second_arch_pass(FILE *fp_start) {
 		{
 			treasurelist *tl=find_treasurelist(argument);
 			if(tl==NULL)
-				LOG(llevBug,"BUG: second artifacts pass: Failed to link treasure to arch. (arch: %s ->%s\n",at->clone.name, argument);
+				LOG(llevBug,"BUG: second artifacts pass: Failed to link treasure to arch. (arch: %s ->%s)\n",at->clone.name, argument);
 			else if(at!=NULL)
 				at->clone.randomitems=tl;
 		}

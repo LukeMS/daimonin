@@ -37,7 +37,7 @@
 typedef struct obj 
 {
 	/* These variables are not changed by copy_object(): */
-	struct pl *contr;			/* Pointer to the player which control this object */
+	struct pl_player *contr;			/* Pointer to the player which control this object */
 	struct obj *next;			/* Pointer to the next object in the free/used list */
 	struct obj *prev;			/* Pointer to the previous object in the free/used list*/
 	struct obj *active_next;	/* Next & previous object in the 'active' */
@@ -217,7 +217,6 @@ typedef struct obj
 
 	living stats;				/* object stats like hp, sp, grace ... */
 
-	struct obj *spellitem;		/* URGH: monster spell marker? that should be more clever handled */
 	uint32	attacktype;			/* REMOVE IS IN PROCESS */
 
 /* this script event arrays are of course a nightmare. They eat 360 bytes per object, 

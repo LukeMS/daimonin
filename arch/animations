@@ -2385,6 +2385,18 @@ t_axe.111
 t_axe.111
 t_axe.111
 mina
+anim t_boulder
+facings 9
+t_boulder.101
+t_boulder.101
+t_boulder.101
+t_boulder.101
+t_boulder.101
+t_boulder.101
+t_boulder.101
+t_boulder.101
+t_boulder.101
+mina
 anim t_dagger
 facings 9
 t_dagger.101
@@ -2408,6 +2420,30 @@ hammer_2.151
 hammer_2.161
 hammer_2.171
 hammer_2.181
+mina
+anim t_lboulder
+facings 9
+t_lboulder.101
+t_lboulder.101
+t_lboulder.101
+t_lboulder.101
+t_lboulder.101
+t_lboulder.101
+t_lboulder.101
+t_lboulder.101
+t_lboulder.101
+mina
+anim t_rock
+facings 9
+t_rock.101
+t_rock.101
+t_rock.101
+t_rock.101
+t_rock.101
+t_rock.101
+t_rock.101
+t_rock.101
+t_rock.101
 mina
 anim t_star
 facings 9

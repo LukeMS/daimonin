@@ -141,17 +141,18 @@ int sack_can_hold (object *pl, object *sack, object *op, int nrof) {
     if (! QUERY_FLAG (sack, FLAG_APPLIED))
 	sprintf (buf, "The %s is not active.", query_name(sack));
     if (sack == op)
-	sprintf (buf, "You can't put the %s into itself.", query_name(sack));
+		sprintf (buf, "You can't put the %s into itself.", query_name(sack));
     if (sack->race && (sack->race != op->race || op->type == CONTAINER
 		       || (sack->stats.food && sack->stats.food != op->type)))
 	sprintf (buf, "You can put only %s into the %s.", sack->race,
 		 query_name(sack));
     if (op->type == SPECIAL_KEY && sack->slaying && op->slaying)
-	sprintf (buf, "You don't want put the key into %s.", query_name(sack));
-    if (sack->weight_limit && sack->carrying + (nrof ? nrof : 1) * 
-	(op->weight + (op->type==CONTAINER?(op->carrying*op->stats.Str):0))
-	* (100 - sack->stats.Str) / 100  > sack->weight_limit)
-	sprintf (buf, "That won't fit in the %s!", query_name(sack));
+		sprintf (buf, "You don't want put the key into %s.", query_name(sack));
+	/*LOG(-1,"SACK: wl:%d carry:%d op->weight:%d Str:%d nrof:%d\n",sack->weight_limit,sack->carrying,op->weight,sack->stats.Str,nrof);*/
+    if (sack->weight_limit && sack->carrying+
+			((((nrof?nrof:1)*op->weight)+(op->type==CONTAINER?op->carrying:0))
+			*(100 - sack->stats.Str) / 100) > sack->weight_limit)
+		sprintf (buf, "That won't fit in the %s!", query_name(sack));
     if (buf[0]) {
 	if (pl)
 	    new_draw_info(NDI_UNIQUE, 0,pl, buf);
@@ -387,7 +388,8 @@ void pick_up(object *op,object *alt)
 void put_object_in_sack (object *op, object *sack, object *tmp, long nrof) 
 {
     tag_t tmp_tag, tmp2_tag;
-    object *tmp2, *sack2;
+    object *tmp2;
+	/*object *sack2;*/
     char buf[MAX_BUF];
 
     if (sack==tmp) return;	/* Can't put an object in itself */
@@ -403,12 +405,17 @@ void put_object_in_sack (object *op, object *sack, object *tmp, long nrof)
       return;
     }
 	*/
-    if (tmp->type == CONTAINER && tmp->inv) {
 
       /* Eneq(@csd.uu.se): If the object to be dropped is a container
        * we instead move the contents of that container into the active
        * container, this is only done if the object has something in it.
        */
+	/* we really don't need this anymore - after i had fixed the "can fit in" 
+	 * now we put containers with something in REALLY in other containers.
+	*/
+	/*
+    if (tmp->type == CONTAINER && tmp->inv) {
+
       sack2 = tmp;
       new_draw_info_format(NDI_UNIQUE, 0,op, "You move the items from %s into %s.",
 		    query_name(tmp), query_name(op->container));
@@ -425,7 +432,7 @@ void put_object_in_sack (object *op, object *sack, object *tmp, long nrof)
       esrv_update_item (UPD_WEIGHT, op, sack2);
       return;
     }
-
+	*/
     if (! sack_can_hold (op, sack, tmp,(nrof?nrof:tmp->nrof)))
       return;
 
@@ -559,7 +566,7 @@ void drop_object (object *op, object *tmp, long nrof)
 		if (QUERY_FLAG (tmp, FLAG_UNPAID))
 			new_draw_info(NDI_UNIQUE, 0,op,"The shop magic put it back to the storage.");
 		else
-			new_draw_info(NDI_UNIQUE, 0,op,"The gods who lent it to you retrieves it.");
+			new_draw_info(NDI_UNIQUE, 0,op,"The one-drop item vanish to nowhere as you drop it!");
 		esrv_del_item (op->contr, tmp->count);
 	  }
       free_object(tmp);
@@ -740,10 +747,9 @@ int command_dropall (object *op, char *params) {
       while (nextinv && nextinv->type==MONEY)
 	nextinv = nextinv->below;
       if(! QUERY_FLAG(curinv,FLAG_INV_LOCKED) && curinv->type != MONEY &&
-	 curinv->type != FOOD && curinv->type != KEY && 
-	 curinv->type != SPECIAL_KEY && curinv->type != GEM &&
-	 !IS_SYS_INVISIBLE(curinv) &&
-	 (curinv->type!=CONTAINER || op->container!=curinv))
+				curinv->type != FOOD && curinv->type != KEY && curinv->type != SPECIAL_KEY && 
+				(curinv->type != GEM && curinv->type != TYPE_JEWEL && curinv->type != TYPE_NUGGET) &&
+				!IS_SYS_INVISIBLE(curinv) && (curinv->type!=CONTAINER || op->container!=curinv))
 	{
 		if (QUERY_FLAG(op, FLAG_STARTEQUIP))
 			drop(op,curinv);
@@ -1290,7 +1296,7 @@ void examine(object *op, object *tmp) {
 		    sprintf (buf,"It can hold only %s and its weight limit is %.1f kg.", 
 			 tmp->race, tmp->weight_limit/(10.0 * (100 - tmp->stats.Str)));
 		else
-		    sprintf (buf,"It can hold only %s.", tmp->race);
+		    sprintf (buf,"It can hold only %s and its weight limit is %.1f kg.", tmp->race,tmp->weight_limit);
 	    } else
 		if(tmp->weight_limit && tmp->stats.Str<100)
 		    sprintf (buf,"Its weight limit is %.1f kg.", 
@@ -1602,7 +1608,7 @@ void set_pickup_mode(object *op,int i) {
       new_draw_info(NDI_UNIQUE, 0,op,"Mode: Pick up all magic items.");
       break;
     case 7:
-      new_draw_info(NDI_UNIQUE, 0,op,"Mode: Pick up all coins and gems");
+      new_draw_info(NDI_UNIQUE, 0,op,"Mode: Pick up all coins and jewels");
       break;
     }
 }
