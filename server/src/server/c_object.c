@@ -396,11 +396,13 @@ void put_object_in_sack (object *op, object *sack, object *tmp, long nrof)
 	"The %s is not a container.", query_name(sack));
       return;
     }
+	/*
     if (QUERY_FLAG(tmp,FLAG_STARTEQUIP)) {
       new_draw_info_format(NDI_UNIQUE, 0,op,
 	"You cannot put the %s in the container.", query_name(tmp));
       return;
     }
+	*/
     if (tmp->type == CONTAINER && tmp->inv) {
 
       /* Eneq(@csd.uu.se): If the object to be dropped is a container
@@ -669,20 +671,24 @@ void drop(object *op, object *tmp)
       return;
     }
 
+
     if (op->type == PLAYER)
     {
-    if (op->contr->last_used==tmp && (tag_t) op->contr->last_used_id == tmp->count) {
-      object *n=NULL;
-      if(tmp->below != NULL)
-	  n = tmp->below;
-      else if(tmp->above != NULL)
-	  n = tmp->above;
-      op->contr->last_used = n;
-      if (n != NULL)
-	  op->contr->last_used_id = n->count;
-      else
-	  op->contr->last_used_id = 0;
-    }
+		/* see last_used in player
+	    if (op->contr->last_used==tmp && (tag_t) op->contr->last_used_id == tmp->count) 
+		{
+			object *n=NULL;
+			if(tmp->below != NULL)
+				n = tmp->below;
+			else if(tmp->above != NULL)
+				n = tmp->above;
+			op->contr->last_used = n;
+			if (n != NULL)
+				op->contr->last_used_id = n->count;
+			else
+				op->contr->last_used_id = 0;
+		}
+		*/
     };
 
     if (op->container) {
@@ -739,7 +745,8 @@ int command_dropall (object *op, char *params) {
 	 !IS_SYS_INVISIBLE(curinv) &&
 	 (curinv->type!=CONTAINER || op->container!=curinv))
 	{
-	 drop(op,curinv);
+		if (QUERY_FLAG(op, FLAG_STARTEQUIP))
+			drop(op,curinv);
        }
       curinv = nextinv;
     }
@@ -753,7 +760,8 @@ int command_dropall (object *op, char *params) {
       if(! QUERY_FLAG(curinv,FLAG_INV_LOCKED) && ((curinv->type == WEAPON) ||
 	 (curinv->type == BOW) || (curinv->type == ARROW)))
 	{
-	  drop(op,curinv);
+		if (QUERY_FLAG(op, FLAG_STARTEQUIP))
+			drop(op,curinv);
 	}
       curinv = nextinv;
     }
@@ -767,7 +775,8 @@ int command_dropall (object *op, char *params) {
       if(! QUERY_FLAG(curinv,FLAG_INV_LOCKED) && ((curinv->type == ARMOUR) ||
 	 curinv->type == SHIELD || curinv->type==HELMET))
 	{
-	  drop(op,curinv);
+		if (QUERY_FLAG(op, FLAG_STARTEQUIP))
+		  drop(op,curinv);
 	}
       curinv = nextinv;
     }
@@ -796,7 +805,8 @@ int command_dropall (object *op, char *params) {
 	case WAND:
 	case ROD:
 	case POTION:
-	  drop(op,curinv);
+		if (QUERY_FLAG(op, FLAG_STARTEQUIP))
+		  drop(op,curinv);
 	  curinv = nextinv;
 	  break;
 	default:

@@ -204,10 +204,14 @@ typedef struct pl
 #ifdef USE_SWAP_STATS
   int Swap_First;
 #endif
-  
 
-  object *last_used;     /* Pointer to object last picked or applied */
-  long last_used_id;     /* Safety measures to be sure it's the same */
+  
+  /* i disabled this now - search for last_used in the code.
+   * perhaps we need this in the future.
+   */
+  
+  /*object *last_used;*/     /* Pointer to object last picked or applied */
+  /*long last_used_id;*/     /* Safety measures to be sure it's the same */
 
 
   /* for smaller map sizes, only the the first elements are used (ie, upper left) */

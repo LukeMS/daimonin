@@ -578,7 +578,7 @@ void give_initial_items(object *pl,treasurelist *items) {
 
 
     if(pl->randomitems!=NULL)
-	create_treasure(items,pl,GT_ONLY_GOOD|GT_NO_VALUE,1,0);
+	create_treasure(items,pl,GT_STARTEQUIP|GT_ONLY_GOOD|GT_NO_VALUE,1,0);
 
     for (op=pl->inv; op; op=next) {
 	next = op->below;
@@ -2626,6 +2626,8 @@ void kill_player(object *op)
 	    op->map = NULL;
 	op->x = EMERGENCY_X;
 	op->y = EMERGENCY_Y;
+	if(op->container)
+		esrv_apply_container (op, op->container);
 	save_player(op,0);
 	op->map = map;
 	/* please see resurrection.c: peterm */

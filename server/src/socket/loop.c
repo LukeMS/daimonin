@@ -362,6 +362,8 @@ void doeric_server()
 	if (pl->socket.status == Ns_Dead) {
 	    player *npl=pl->next;
 
+		if(pl->ob && pl->ob->container)
+			esrv_apply_container (pl->ob, pl->ob->container);
 	    save_player(pl->ob, 0);
 	    if(!QUERY_FLAG(pl->ob,FLAG_REMOVED)) {
 		terminate_all_pets(pl->ob);
@@ -479,6 +481,8 @@ void doeric_server()
 	else 	    pl->socket.can_write=0;
 
 	if (FD_ISSET(pl->socket.fd,&tmp_exceptions)) {
+		if(pl->ob && pl->ob->container)
+			esrv_apply_container (pl->ob, pl->ob->container);
 	    save_player(pl->ob, 0);
 	    if(!QUERY_FLAG(pl->ob,FLAG_REMOVED)) {
 		terminate_all_pets(pl->ob);
@@ -495,7 +499,10 @@ void doeric_server()
 	     * once.
 	     */
 	    if (pl->socket.status==Ns_Dead) {
-		save_player(pl->ob, 0);
+			if(pl->ob && pl->ob->container)
+				esrv_apply_container (pl->ob, pl->ob->container);
+			save_player(pl->ob, 0);
+
 		if(!QUERY_FLAG(pl->ob,FLAG_REMOVED)) {
 		    terminate_all_pets(pl->ob);
 		    remove_ob(pl->ob);

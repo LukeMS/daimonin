@@ -2209,6 +2209,8 @@ static void apply_savebed (object *pl)
     
     strcpy(pl->contr->killer,"left");
     check_score(pl); /* Always check score */
+	if(pl->container)
+		esrv_apply_container (pl, pl->container);
     (void)save_player(pl,0);
     play_again(pl);
     pl->map->players--;
@@ -2618,8 +2620,10 @@ int player_apply (object *pl, object *op, int aflag, int quiet)
         return 1;
     }
 
+	/* see last_used in player 
     pl->contr->last_used = op;
     pl->contr->last_used_id = op->count;
+	*/
 
     tmp = manual_apply (pl, op, aflag);
     if ( ! quiet) {

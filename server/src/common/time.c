@@ -159,6 +159,8 @@ enough_elapsed_time()
 void sleep_delta()
 {
 	static struct timeval new_time;
+	static struct timeval def_time = {0,100000};
+	static struct timeval sleep_time;
 	long sleep_sec, sleep_usec;
 
 	(void) GETTIMEOFDAY(&new_time);
@@ -182,7 +184,6 @@ void sleep_delta()
 
 	if (sleep_sec >= 0 && sleep_usec > 0)
 	{
-		static struct timeval sleep_time;
 		sleep_time.tv_sec = sleep_sec;
 		sleep_time.tv_usec = sleep_usec;
 
@@ -190,11 +191,16 @@ void sleep_delta()
 		/* we ignore seconds to sleep - there is NO reason to put the server
 		* for even a single second to sleep when there is someone connected.
 		*/
-		if(sleep_time.tv_sec)
+		if(sleep_time.tv_sec || sleep_time.tv_usec>500000)
+		{
 			LOG(llevBug,"BUG: sleep_delta(): sleep delta out of range! (%ds %dus)\n",
 												sleep_time.tv_sec,sleep_time.tv_usec);
+		}
 #ifndef WIN32 /* 'select' doesn't work on Windows, 'Sleep' is used instead */
-		select(0, NULL, NULL, NULL, &sleep_time);
+		if(sleep_time.tv_sec || sleep_time.tv_usec>500000)
+			select(0, NULL, NULL, NULL, &def_time);
+		else
+			select(0, NULL, NULL, NULL, &sleep_time);
 #else
 	
 		if(sleep_time.tv_usec>=1000)
