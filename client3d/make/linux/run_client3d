@@ -1,0 +1,5 @@
+#!/bin/sh
+
+# Setup up search path to find fmod library
+export LD_LIBRARY_PATH=make/linux:.:./lib
+source/daimonin3d

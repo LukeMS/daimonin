@@ -24,7 +24,34 @@ INSTALL WINDOWS
 INSTALL GNU/LINUX
 -----------------
 
+Using Anjuta:
 There is an Anjuta Project file with howto in client3d/make/linux/anjuta.
+
+Using the automake makefiles:
+1.) Create configure script and makefiles:
+	> cd client3d
+	> bootstrap.sh
+2.) Compile:
+    > make
+3.) Create links to data files from already installed 2d client:
+	> ln -s ../client-BETA3-0.966/daimonin.p0
+    > cd srv_files
+	> ln -s ../../client-BETA3-0.966/srv_files/* .
+4.) Modify plugins.cfg for your system
+    a) remove or comment the following two lines:
+		Plugin=RenderSystem_Direct3D7
+		Plugin=RenderSystem_Direct3D9
+	b) Change the PluginFolder value to the correct value for your system.
+	   On my system OGRE is installed in /usr/local, so I enter:
+	    PluginFolder=/usr/local/lib/OGRE
+5.) Start:
+	> make/linux/run_client3d
+
+Note: on some systems configure won't find OGRE unless it is installed
+in /usr. If configure complains about not finding OGRE, try the following:
+> PKG_CONFIG_PATH=/usr/local/lib/pkgconfig ./configure.sh
+(That is for OGRE installed in /usr/local, exchange for whatever is correct 
+on your system).
 
 
 HOW TO EXCHANGE THE MODEL
