@@ -679,7 +679,7 @@ kick_loop_jump:
 		    break;
 		}
 	    if(i==NROFREALSPELLS)
-		LOG(llevDebug, "Error: unknown spell (%s)\n",cp);
+		LOG(llevDebug, "Error: unknown spell (%s) for player %s\n",cp, query_name(op));
 	}
 	/* Remove confkeys, pushkey support - very old */
     } /* End of loop loading the character file */
