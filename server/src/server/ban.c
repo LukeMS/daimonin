@@ -209,7 +209,7 @@ int check_banned(char *name, uint32 ip)
 			/*LOG(-1,"CHECK-IP: %s with %s (pticks: %d to %d)\n", name, ol->objlink.ban->tag,pticks, ol->objlink.ban->ticks);*/
 			if(ol->objlink.ban->ticks_init != -1 &&  pticks >= ol->objlink.ban->ticks)
 				remove_ban_entry(ol); /* is not valid anymore, gc it on the fly */
-			else if(!stricmp(ol->objlink.ban->tag,name))
+			else if(!strcasecmp(ol->objlink.ban->tag,name))
 				return TRUE; /* ip matches... kick our friend */
 		}
 	}
