@@ -360,7 +360,7 @@ void polymorph_item(object *who, object *op) {
 	    }
 	}
 	copy_object(&(at->clone),new_ob);
-	fix_generated_item(new_ob,op,difficulty,-1,0,FABS(op->magic),0,0,GT_ENVIRONMENT);
+	fix_generated_item(&new_ob,op,difficulty,-1,0,FABS(op->magic),0,0,GT_ENVIRONMENT);
 	++tries;
     } while (new_ob->value > max_value && tries<10);
     if (IS_SYS_INVISIBLE(new_ob)) {

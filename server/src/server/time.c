@@ -1497,8 +1497,19 @@ int process_object(object *op) {
 			op->stats.food+=3; /* give him a bit time back */
 			goto process_object_dirty_jump; /* go on */
 		}
-	}
 
+		if (op->env && op->env->type == CONTAINER)
+			esrv_del_item(NULL, op->count, op->env);
+		else
+		{
+			object *pl=is_player_inv(op);
+			if (pl)
+				esrv_del_item(CONTR(pl), op->count, op->env);
+		}
+
+		return 1;
+	}
+	
 	/* IF necessary, delete the item from the players inventory */
 	if (op->env && op->env->type == CONTAINER)
 		esrv_del_item(NULL, op->count, op->env);
