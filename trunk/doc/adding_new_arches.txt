@@ -1,0 +1,189 @@
+ADDING NEW ARCHES
+-----------------
+
+To add new objects to the map editor which are then
+shown from your server - you have to do some things.
+
+Introduction:
+
+Daimonin use a base objects for everything you see on
+a map or in a game - this object is called "arch".
+
+The arches are in the folder /daimonin/arch .
+Lets look in the folder /daimonin/arch/floors/grass.
+
+In this folders are the "floor" objects which are used to
+show "grass". In the folder are several files with 2 kinds
+of extensions: ".png" and ".arc".
+
+The ".png" files are the pictures files - the ".arc" files are
+the grass arches!
+
+When the editor starts up, it loads every picture inside 
+/daimonin/arch - but this pictures are only stored but
+not shown! Then the editor loads every arch files - this
+arch objects are shown. You see instead of the object
+a picture - thats because the arch object normally has
+a default picture or a whole animation of several pictures.
+
+If we open grass.arc you will see the arch object script
+lines. Every arch object start with "Object <name>" and
+ends with "end". The lines between this 2 commands are
+the arch settings. A ".arc" files can have more as one
+arch object inside... like this:
+
+Object grass1       <- arch object "grass1"
+name grass
+face grass.101
+no_teleport 1
+layer 1
+terrain_type 1
+type 71
+no_pick 1
+is_floor 1
+end                  <- end of arch "grass1"
+Object grass2    <- arch object "grass2"
+name grass
+face grass.102
+no_teleport 1
+layer 1
+terrain_type 1
+type 71
+no_pick 1
+is_floor 1
+end                 <- end of arch "grass2"
+Object grass3   <- arch object "grass3"
+name grass
+face grass.103
+no_teleport 1
+layer 1
+terrain_type 1
+type 71
+no_pick 1
+is_floor 1
+end                <- end of arch "grass3"
+
+Inside the arch objects are many different lines which setup
+the objects data. The important one for artists is the 
+"face <name>" command.
+
+Thats the picture name of the arch. Is the arch "grass1"
+is loaded in the editor and the picture "grass.101.png"
+is shown. 
+
+IMPORTANT: The ".png" extension is skipped in the arch
+object settings. Always write "grass.101" instead of
+"grass.101.png".
+
+To add a new grass arch, you can simply add a new .arc
+file. Now put this text in:
+
+Object grass_test
+name grass
+face grass_test.101
+no_teleport 1
+layer 1
+terrain_type 1
+type 71
+no_pick 1
+is_floor 1
+end
+
+You should create in daimonin/arch a folder named /mytest.
+Copy this file in. You can name it like you want - it must
+be not "grass_test.arc". You also can name your new floor
+tile arch different - even "Object XXV2323" is allowed - it
+must be just a unique name - no other arch object should
+have the same name or the server will not start.
+
+Now, copy your new floor picture in the same folder. It must
+not be in the same folder but for avoid confusing you should
+do it. Remember, the name must fit. Means we have
+named our face (=picture) "grass_test.101" we must name
+our png picture "gras_test.101.png" - btw, it MUST be a png
+picture - we don't can handle other picture formats atm.
+
+Now you should have both saved - the new arch object in
+the .arc file and the picture.
+
+Now start the editor.
+
+1. The Editor
+When the editor starts up, it will load the arch files (all arch
+files!). This can happen in 2 ways: For normal map makers,
+the editor loads the arch files from a pre-collected and packed
+file. For people like us, we need to load the arch files from
+the daimonin/arch files itself. We need to tell it the editor
+first.
+
+After the editor is running, go in the menu "FILE" and select
+there "options". A small menu will open. Search there for a
+line called "Load Arches from Collection". This option must
+be disabled! Remove the marker in front of it and click
+then on OK. Don't change something else there.
+
+Close and restart the editor. 
+
+Now Go in the menu Resources. There are at the top 2 
+lines: "Collect arches" and "Collect spells". Click on 
+"collect arches". If this works and a small progress counter
+opens and the editor do something - all is fine. When the
+line is disabled and you can't click on it - you still have the
+"Load Arches from Collection" not disabled. Disabled it,
+restart the editor and try again then.
+
+Ok, now its time to check your new arch object. In the panel
+to on the left side of the editor there should be now appeared
+"MYTEST". To see it, you must change the panel from
+"PICKMAPS" to "ARCH LIST".
+
+Click on MYTEST and you should see your new object/picture.
+If there is no MYTEST or no item - you have done something
+wrong above - cotrol your steps.
+
+Perhaps you see a object named "grass_test" but instead of
+your picture you see a red picture with some question marks
+inside. Then the object is loaded but the editor has not find
+the right picture. Control the picture and the picture name
+with the "face <name>" in you object. it must match 100%
+or it will not loaded.
+
+Now, you can draw with the new object.
+
+Make a map with the new objects or change a old one.
+Read the map maker docu (and the online help of the editor)
+to see how it works. If you are starting to add new arches
+you should know how it works.
+
+2. the server 
+To see the new arches when you are running your own
+local server, you have to do 2 things - collecting arches
+and copying then inside the server/lib folder.
+
+For that reason there is the "Collect Arches" option in the
+editor under "Resource". After all is ok and you have drawn
+and saved the maps using your new tiles, you must click
+on "collect arches". This must be done every time you change
+something inside the daimonin/arch folder.
+
+The editor will now create all needed files for the server and
+storing them inside daimonin/arch. Thats because these files
+are releated to the files inside /arch.
+
+After the editor has ended up collection, close the editor and
+go change to the root folder of /daimonin/arch. You will see
+that the "daimonin.0" file and "bmaps" are new now. now,
+copy ALL files from the root folder of /daimonin/arch to the
+folder /daimonin/server/lib. You can also go inside
+/daimonin/server/install and run the install script there - 
+that will copy the stuff too.
+
+After you have copied all, restart the server and connect to
+it. Now you should see your new arches.
+
+Thats alot work - note, that the arch objects the lowest
+level objects in daimonin - all depends on it. Doing something
+wrong here will mess up the server AND in the bades case
+your saved player files too.  This is the very core of the whole
+sytem and its not that easy to understand - so no fear when
+it not works with the first try.
