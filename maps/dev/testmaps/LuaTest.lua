@@ -38,6 +38,13 @@ elseif (msg == 'yield') then
 	me:SayTo(activator, '... tack ...')
 	coroutine.yield(5)
 	me:SayTo(activator, '... terminate!')
+elseif (msg == 'yield2') then
+	me:SayTo(activator, 'Taking a break...')
+	coroutine.yield()
+	me:SayTo(activator, '... terminate!')
+elseif (msg == 'yield3') then
+	me:SayTo(activator, 'Taking a break...')
+	return 5
 
 -- Test food-related things
 elseif (msg == 'food') then 
