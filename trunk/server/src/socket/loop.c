@@ -252,7 +252,7 @@ void HandleClient(NewSocket *ns, player *pl)
 		return;
 
 		next_command:
-		if(cmd_count++<20)
+		if(cmd_count++<20 && ns->status!=Ns_Dead)
 		{
 			/* LOG(llevDebug,"MultiCmd: #%d /%s)\n", cmd_count, (char*)ns->inbuf.buf+2); */
 			continue;
