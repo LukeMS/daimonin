@@ -1328,7 +1328,7 @@ int main(int argc, char **argv)
 
 	shutdown_agent(-1, NULL);			/* check & run a shutdown count (with messages & shutdown ) */
 
-    doeric_server();		
+    doeric_server(FALSE);		
     object_gc();                /* Clean up the object pool */
 #ifdef MEMPOOL_OBJECT_TRACKING
 	check_use_object_list();
@@ -1347,7 +1347,7 @@ int main(int argc, char **argv)
 
     check_active_maps();		/* Removes unused maps after a certain timeout */
     do_specials();				/* Routines called from time to time. */
-    doeric_server();		
+    doeric_server(TRUE);		
 	/*doeric_server_write();*/
     sleep_delta();				/* Slepp proper amount of time before next tick */
   }

@@ -1784,6 +1784,7 @@ void dump_object2(object *op) {
       strcat(errmsg,"arch ");
       strcat(errmsg,op->arch->name?op->arch->name:"(null)");
       strcat(errmsg,"\n");
+	  sprintf(errmsg, "count %d\n", op->count);
       if((cp=get_ob_diff(op,&empty_archetype->clone))!=NULL)
 	strcat(errmsg,cp);
 #if 0
