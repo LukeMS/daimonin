@@ -122,8 +122,8 @@ LF	\x0A
 CR	\x0D
 NL	({LF}|{CR}{LF}?)
 
-S	[ \t]+.+{NL}
-WS	[ \t]*{NL}
+S	[ \t]+.+{NL}?
+WS	[ \t]*{NL}?
 
 %x MESSAGE
 
@@ -783,8 +783,8 @@ int load_object(void *fp, object *op, void *mybuffer, int bufstate, int map_flag
 		object_load_flag = 1; /* we are object load but object is not called */
 		while (1) /* we can be sure this will work - InitArtifact has tested this before */
 		{
-			(char*)fp +=lcount;
-			lcount =strlen((char *)fp)+1; /*we can even put this value at string start to save the strlen */
+			fp +=lcount;
+			lcount = strlen((char *)fp)+1; /*we can even put this value at string start to save the strlen */
 			yybufstate=yy_scan_string((char *)fp);
 			retval=lex_load(op, map_flags); /* hopefully we have here a "end" - or we stay in this while a bit */
 			yy_delete_buffer(yybufstate);
@@ -877,12 +877,13 @@ int load_object(void *fp, object *op, void *mybuffer, int bufstate, int map_flag
 int set_variable(object *op,char *buf) {
     YY_BUFFER_STATE  yybufstate,yycurbuf=YY_CURRENT_BUFFER;
     int retval;
-
+	
     strcpy(msgbuf, "");
     yy_push_state(INITIAL);
     yybufstate=yy_scan_string(buf);
     retval=lex_load(op,0);
-    yy_switch_to_buffer(yycurbuf);
+	if(yycurbuf)
+    	yy_switch_to_buffer(yycurbuf);
     yy_delete_buffer(yybufstate);
     yy_pop_state();
     return retval;
@@ -1272,14 +1273,15 @@ void save_object(FILE *fp,object *op, int flag) {
     /*if(op->owner!=NULL || fp == NULL) this will wreck item we throw - they get player as owner*/
 
     /* If it is unpaid and we don't want to save those, just return. */
-    if(!fp || !(flag&1)&&(QUERY_FLAG(op, FLAG_UNPAID)))
+    if(!fp || (!(flag&1) && (QUERY_FLAG(op, FLAG_UNPAID))))
 		return;
 
-    if((at=op->arch)==NULL) at=empty_archetype;
-		fprintf(fp,"arch %s\n",at->name);
+    if((at=op->arch)==NULL) 
+		at=empty_archetype;
+	fprintf(fp,"arch %s\n",at->name);
 
     if((cp=get_ob_diff(op,&at->clone)))
-	fputs(cp,fp);	/* We really should do some status checking on this */
+		fputs(cp,fp);	/* We really should do some status checking on this */
 
     old=NULL;
 
