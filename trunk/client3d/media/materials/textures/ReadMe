@@ -1,0 +1,47 @@
+-----------------------------------------------------------------------------
+The following graphics are part of Daimonin (http://daimonin.sourceforge.net)
+
+Copyright (c) 2003 - 2005 The Daimonin Team
+Also see acknowledgements in Readme.html
+
+These graphics are free software; you can redistribute it and/or modify it under
+the terms of the GNU Lesser General Public License as published by the Free Software
+Foundation; either version 2 of the License, or (at your option) any later
+version.
+
+This graphics are distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License along with
+this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+http://www.gnu.org/copyleft/lesser.txt.
+-----------------------------------------------------------------------------
+
+
+files by polyveg:
+----------------------------
+dialog_bg.png                
+dialog_button_black_down.png
+dialog_button_black_up.png
+dialog_button_down.png
+dialog_button_up.png
+dialog_checker.png
+dialog_question.png
+dialog_range_off.png
+dialog_range_l.png
+dialog_range_r.png
+dialog_range_l.png
+dialog_range_r.png
+dialog_tab.png
+dialog_tab_sel.png
+dialog_tab_start.png
+dialog_tab_stop.png
+dialog_title_creation.png
+dialog_title_keybind.png
+dialog_title_login.png
+dialog_title_options.png
+dialog_title_skill.png
+dialog_title_spell.png
+tewtwin_head.png

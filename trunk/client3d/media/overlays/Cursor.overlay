@@ -1,0 +1,13 @@
+CursorOverlay
+{
+  zorder 600
+  container Panel(ound)
+  {	
+     metrics_mode pixels
+     left   0
+     top    0
+     width  15
+     height 25
+     material Cursor/Normal
+  }
+}

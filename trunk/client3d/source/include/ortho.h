@@ -248,6 +248,7 @@ protected:
             p->getVertexProgram()->isSkeletalAnimationIncluded())
         {
             mWindow->setDebugText("Hardware skinning is enabled");
+            mWindow->setDebugText("2. Zeile");
         }
         else
         {
