@@ -63,10 +63,23 @@ object *check_enemy(object *npc, rv_vector *rv) {
     {
         if (npc->owner != NULL)
         {
-            npc->enemy = npc->owner->enemy;
-            npc->enemy_count = npc->owner->enemy_count;
+			/* if owner enemy != pet enemy, change it! */
+			if(npc->owner->enemy && (npc->enemy != npc->owner->enemy ||
+									npc->enemy_count != npc->enemy->count))
+			{
+				set_mobile_speed(npc, 0);
+				npc->enemy = npc->owner->enemy;
+				npc->enemy_count = npc->owner->enemy_count;
+			}
         }
-	    else npc->enemy = NULL;
+	    else
+		{
+			if(npc->enemy)
+			{
+				npc->enemy = NULL;
+				set_mobile_speed(npc, 0);
+			}
+		}
     }
 	
 	/* first check the easy stuff... enemy ptr, count, remove and "still somewhere we can reach".
@@ -143,7 +156,6 @@ object *find_enemy(object *npc, rv_vector *rv)
 			return tmp;
     }
     /* we check our old enemy. */
-
 
 	tmp=check_enemy(npc, rv); /* if tmp != 0, we have succesful callled get_rangevector() too */
   
@@ -798,7 +810,7 @@ void waypoint_move(object *op) {
 
 int move_monster(object *op) {
     int dir, diff;
-    object  *owner, *enemy, *part;
+    object  *owner, *enemy, *part, *tmp;
     rv_vector	rv;
  
 	if(op->head)
@@ -823,12 +835,13 @@ int move_monster(object *op) {
 
 	/* Here is the heart of the mob attack & target area.
 	 * find_enemy() checks the old enemy or get us a new one.
-	 */
-	
+	 */	
+	tmp = op->enemy;
     if (QUERY_FLAG(op, FLAG_NO_ATTACK))  /* we never ever attack */
         enemy = op->enemy = NULL;
     else if((enemy= find_enemy(op, &rv)))
     {
+
         op->anim_enemy_dir = rv.direction;
         if(!enemy->attacked_by ||(enemy->attacked_by && enemy->attacked_by_distance >(int)rv.distance )) 
         {
@@ -838,6 +851,15 @@ int move_monster(object *op) {
             enemy->attacked_by_distance = (sint16) rv.distance;  /* NOW the attacked foe knows how near we are */
         }
     }
+
+	/* we don't need to ask for the count here - enemy is enemy */
+	if(tmp != enemy)
+		set_mobile_speed(op, 0);
+
+	/* monster has changed status from normal to attack - lets hear it! */
+	if((!tmp && enemy) && !QUERY_FLAG(op,FLAG_FRIENDLY))
+		play_sound_map(op->map, op->x, op->y, SOUND_GROWL, SOUND_NORMAL);
+
 
     /*  generate hp, if applicable */
     if(op->stats.Con&&op->stats.hp<op->stats.maxhp) {
@@ -1035,14 +1057,10 @@ int move_monster(object *op) {
 					/* allow skill use AND melee attack! */
 					monster_use_skill(op,part,enemy,dir);
 				}
-				if(QUERY_FLAG(op,FLAG_READY_BOW)&&!(RANDOM()%2))
+				if(QUERY_FLAG(op,FLAG_READY_BOW)&&!(RANDOM()%4))
 				{
-					/*
-				    if(monster_use_bow(op,part,enemy,dir))
+				    if(monster_use_bow(op,part,enemy,dir) &&!(RANDOM()%2))
 				        return 0;
-					*/
-					/* allow firing/throwing AND melee attack */
-				    monster_use_bow(op,part,enemy,dir);
 				}
 			}
 	    } /* for processing of all parts */        
@@ -2650,15 +2668,19 @@ static object *spawn_monster(object *gen, object *orig, int range)
 	op = get_object();
     if(head==NULL) /* copy single/head from spawn inventory */
 	{
+		gen->type = MONSTER;
 		copy_object(gen,op);
-		/* copy_object normally does this, but we have set speed == 0
+		gen->type = SPAWN_POINT_MOB;
+		/* copy_object normally does this, but we special case object SPAWN_MOB
 		 * for the spawn point inv mobs - so we must reset this by hand.
+		 * also, we want 
 		 */
+		/*
 		 op->type = MONSTER;
-		 op->speed = gen->speed_left; /* reinit the speed to put it on active list */
 		 if(op->speed<0)
 			op->speed_left=-((float)(RANDOM()%200)/100.0f);
 		update_ob_speed(op);
+		*/
 		ret = op;
 	}
 	else /* but the tails for multi arch from the clones */

@@ -549,27 +549,21 @@ x 6
 y 2
 arch wyvern
 type 83
-speed 0.0
 dam 1
 stand_still 0
 unaggressive 0
 hp 0
 maxhp 2
-speed_left -0.1
 object_int1 8000
 end
 arch ant_soldier
 type 83
-speed 0.0
 dam 1
 object_int1 6000
 maxhp 1
-speed_left -0.1
 end
 arch ant_red
 type 83
-speed 0.0
-speed_left -0.1
 object_int1 5000
 dam 1
 maxhp 1

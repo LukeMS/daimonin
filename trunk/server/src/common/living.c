@@ -1872,6 +1872,7 @@ void fix_monster(object *op)
 		tmp_add =0;
 	op->stats.dam = (sint16) ((float)op->stats.dam * ((lev_damage[op->level]+tmp_add)*0.925f));
 
+	set_mobile_speed(op, 0);
 }
 
 /* insert and initialize base info object in object op 
@@ -1897,10 +1898,10 @@ object *insert_base_info_object(object *op)
     tmp = arch_to_object(base_info_archetype);
 	at = tmp->arch; /* if not saved, we will truly change tmp to op archetype object */
 	copy_object_data(head, tmp); /* copy without put on active list */
+	tmp->type = TYPE_BASE_INFO;
 	tmp->arch=at;
 	tmp->speed_left = tmp->speed;	/* we copy the real speed to speed_left - so we ensure this can't be hit the active list */ 	
 	tmp->speed=0.0f; /* ensure this object will not be active in any way */
-	tmp->type = TYPE_BASE_INFO;
 	tmp->face = tmp->arch->clone.face;
 	SET_FLAG(tmp,FLAG_NO_DROP);
 	CLEAR_FLAG(tmp,FLAG_ANIMATE);
@@ -1926,4 +1927,44 @@ object *find_base_info_object(object *op)
 	}
 
 	return NULL; /* no base_info in this object found */
+}
+
+/* we set the moving speed of a mobile.
+ * We go for this: base speed of a mob is 1/5 of the max.
+ * 1/5 = mob is slowed (by magic)
+ * 2/5 = normal mob speed - moving normal
+ * 3/5 = mob is moving fast
+ * 4/5 = mov is running/attack speed
+ * 5/5 = mob is hasted and moving full speed
+ */
+/* we need to include better logic when we add hast/slow spells
+ * and effects!
+ */
+void set_mobile_speed(object *op, int index)
+{
+	object *base;
+	float speed, tmp;
+
+	base = insert_base_info_object(op); /* will insert or/and return base info */
+
+	speed = base->speed_left;
+	
+	tmp = op->speed;
+
+	if(index) /* if index != 0, we force a setting of this speed */
+		op->speed = speed * index;
+	else /* we will generate the speed by setting of the mobile */
+	{
+		if(!QUERY_FLAG(op,FLAG_SLOW_MOVE) ) /* if not slowed... */
+			speed += base->speed_left;
+		if(op->enemy && op->enemy_count && op->enemy_count == op->enemy->count) /* valid enemy - mob is fighting! */
+		{
+			speed += base->speed_left*2;
+		}
+		op->speed = speed;
+	}
+	LOG(-1,"SET SPEED: %s ->%f (%f) b:%f s:%f t:%f\n", query_name(op), op->speed, base->speed_left, speed, tmp);
+	/* update speed if needed */
+	if(tmp && !op->speed || !tmp && op->speed)
+		update_ob_speed(op);
 }

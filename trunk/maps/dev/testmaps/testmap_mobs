@@ -243,8 +243,6 @@ x 1
 y 10
 arch cube_gel
 type 83
-speed 0
-speed_left 0.2
 stand_still 1
 attack_pierce 1
 randomitems none
@@ -265,10 +263,8 @@ x 1
 y 12
 arch cube_gel
 type 83
-speed 0
 stand_still 1
 wc -100
-speed_left 0.1
 dam 5
 attack_pierce 0
 attack_poison 100
@@ -1121,14 +1117,12 @@ y 12
 arch ogre
 type 83
 level 25
-speed_left -0.1
 stand_still 1
 can_cast_spell 1
 sp -1
 maxsp 30
 Pow 2
 Dex 3
-speed 0
 arch ability_firestorm
 end
 end
@@ -1551,11 +1545,9 @@ x 13
 y 12
 arch giant_hill
 type 83
-speed_left -0.1
 Dex 1
 can_use_bow 1
 attack_movement 3
-speed 0
 arch ability_stone_throw
 end
 arch t_lboulder

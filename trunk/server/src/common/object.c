@@ -962,7 +962,7 @@ int freedir[SIZEOFFREE]= {
  * check weight
  */
 
-inline int CAN_MERGE(object *ob1, object *ob2) 
+int CAN_MERGE(object *ob1, object *ob2) 
 {
 	/* just some quick hack */
 	if(ob1->type == MONEY && ob1->type == ob2->type && ob1->arch == ob2->arch)
@@ -1609,6 +1609,7 @@ void update_ob_speed(object *op) {
      * since they never really need to be updated.
      */
 
+
     if (QUERY_FLAG(op, FLAG_FREED) && op->speed) 
 	{
 		dump_object(op);
@@ -1618,6 +1619,12 @@ void update_ob_speed(object *op) {
     if (arch_init) {
 	return;
     }
+	/* these are special case objects - they have speed set, but should not put
+	 * on the active list.
+	 */
+	if(op->type == SPAWN_POINT_MOB)
+		return;
+
     if (FABS(op->speed)>MIN_ACTIVE_SPEED) {
 	/* If already on active list, don't do anything */
 	if (op->active_next || op->active_prev || op==active_objects)

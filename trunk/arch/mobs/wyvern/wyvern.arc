@@ -5,7 +5,7 @@ layer 6
 randomitems mob_wyvern
 face wyvern.141
 direction 5
-speed -0.26
+speed -0.06
 corpse 1
 type 80
 is_male 1

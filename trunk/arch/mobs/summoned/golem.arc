@@ -75,7 +75,7 @@ dam 4
 hp -1
 maxhp 7
 level 1
-speed -0.1
+speed -0.03
 no_pick 1
 weight 120000
 end

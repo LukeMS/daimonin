@@ -443,7 +443,7 @@ int hit_player(object *op,int dam, object *hitter, int type)
 		}
 #else
 		{
-			LOG(-1, "hitter: %s (dam:%d/%d) (wc:%d/%d)(wcr:%d/%d)(ac:%d/%d) ap:%d\n", 
+			LOG(-1, "hitter: %f - %s (dam:%d/%d) (wc:%d/%d)(wcr:%d/%d)(ac:%d/%d) ap:%d\n",hitter->speed, 
 				hitter->name,hitter->stats.dam,op->stats.dam, hitter->stats.wc,op->stats.wc,hitter->stats.wc_range,op->stats.wc_range,
 				hitter->stats.ac,op->stats.ac,hitter->attack[attacknum]);
 			maxdam +=hit_player_attacktype(op,hitter,dam,attacknum,0);

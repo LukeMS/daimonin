@@ -78,7 +78,7 @@ wc 1
 dam 4
 hp -1
 maxhp 7
-speed -0.18
+speed -0.0325
 level 1
 weight 25500
 end
