@@ -471,7 +471,6 @@ static int Game_GetSkillNr(lua_State *L)
 static int Game_IsValid(lua_State *L)
 {
     lua_object *obj;
-    lua_object *self;
 
     if(lua_gettop(L) != 2)
         luaL_error(L, "wrong number of arguments to game.IsValid() (2 expected, got %d)", lua_gettop(L));

@@ -186,6 +186,19 @@ static void         show_intro(char *text);
 static void         delete_player_lists(void);
 void                reset_input_mode(void);
 
+/* Ensures that the username doesn't contain any invalid character */
+static int is_username_valid(const char *name)
+{
+    int i;
+
+    for(i=0; i< (int)strlen(name); i++)
+    {
+        if (!(((name[i] <= 90) && (name[i]>=65))||((name[i] >= 97) && (name[i]<=122))))
+            return 0;
+    }
+    return 1;
+}
+
 static void delete_player_lists(void)
 {
     int i, ii;
@@ -765,18 +778,6 @@ Boolean load_bitmap(int index)
         return(FALSE);
     }
     return(TRUE);
-}
-
-/* Ensures that the username doesn't contain any invalid character */
-int is_username_valid(const char *name)
-{
-    int i;
-    for(i=0; i<strlen(name); i++)
-    {
-        if (!(((name[i] <= 90) && (name[i]>=65))||((name[i] >= 97) && (name[i]<=122))))
-            return 0;
-    }
-    return 1;
 }
 
 /* free the skin & standard gfx */

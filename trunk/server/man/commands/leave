@@ -1,0 +1,8 @@
+
+ ***** leave command (group) *****
+
+syntax: /leave
+
+you will leave the group you are part of.
+If you are the leader, the next group member
+will become the leader. See also 'remove'.

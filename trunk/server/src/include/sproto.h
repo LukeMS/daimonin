@@ -68,6 +68,7 @@ void                        save_throw_object(object *op, int type, object *orig
 int                         checkbanned(char *login, char *host);
 /* c_chat.c */
 int                         command_say(object *op, char *params);
+int                         command_gsay(object *op, char *params);
 int                         command_shout(object *op, char *params);
 int                         command_tell(object *op, char *params);
 int                         command_t_tell(object *op, char *params);

@@ -1,0 +1,8 @@
+
+ ***** deny command (group) *****
+
+syntax: /deny
+
+will let deny you a invite after someone invited you
+to his group. See also 'join'. '/invite off' will let
+you turn of all invites. See 'invite'.

@@ -59,6 +59,7 @@ CommArray_s Commands[]                  =
     {"/cast",         command_cast_spell,     0.0f},
     /* use time comes from spells! */ 
     {"/say",          command_say,            1.0f},
+    {"/gsay",         command_gsay,           1.0f},
     {"/shout",        command_shout,          1.0f},
     {"/tell",         command_tell,           1.0f},
     {"/t_tell",       command_t_tell,         1.0f},

@@ -1,0 +1,8 @@
+
+ ***** remove command (group) *****
+ * group leaders only
+
+syntax: /remove <name>
+
+where name is the player you want
+to remove (kick) from the group. 

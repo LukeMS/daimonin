@@ -5,6 +5,7 @@ rem given out, your windows system already
 rem can handle long file names on default (XP, ...)
 LFNFOR ON
 copy ..\..\arch\*.* ..\..\server\lib\*.*
+mkdir ..\..\server\data\tmp
 cd ..\..\server\data\tmp
 del ?*.*
 cd ..\..

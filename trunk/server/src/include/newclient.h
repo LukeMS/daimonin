@@ -55,14 +55,8 @@
 */
 #define MAXSOCKBUF (64*1024)
 
-
-#define CS_QUERY_YESNO  0x1 /* Yes/no question */
-#define CS_QUERY_SINGLECHAR 0x2 /* Single character response expected */
 #define CS_QUERY_HIDEINPUT 0x4  /* Hide input being entered */
 
-#define CS_SAY_NORMAL   0x1 /* Normal say command */
-#define CS_SAY_SHOUT    0x2 /* Text is shouted. */
-#define CS_SAY_GSAY 0x4 /* Text is group say command */
 
 /* These are multiplication values that should be used when changing 
  * floats to ints, and vice version.  MULTI is integer representatin

@@ -73,6 +73,37 @@ int command_say(object *op, char *params)
     return 0;
 }
 
+
+int command_gsay(object *op, char *params)
+{
+    char    buf[MAX_BUF];
+
+    if (!params)
+        return 0;
+
+	/* message: client sided */
+	if(!(CONTR(op)->group_status & GROUP_STATUS_GROUP))
+		return 0;
+
+    params = cleanup_chat_string(params);
+    /* this happens when whitespace only string was submited */
+    if (!params || *params == '\0')
+        return 0;
+    
+    /* moved down, cause if whitespace is shouted, then no need to log it */
+    LOG(llevInfo,"CLOG GSAY:%s >%s<\n", query_name(op), params);
+    
+    strcpy(buf, op->name);
+    strcat(buf, " (group): ");
+    strncat(buf, params, MAX_BUF - 30);
+    buf[MAX_BUF - 30] = '\0';
+
+    party_message(0,NDI_PLAYER | NDI_UNIQUE | NDI_YELLOW, 0, CONTR(op)->group_leader, NULL, buf);
+
+    return 1;
+}
+
+
 int command_shout(object *op, char *params)
 {
     char    buf[MAX_BUF];
