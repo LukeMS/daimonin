@@ -138,14 +138,14 @@ struct plugin_hooklist *hooks;
 #undef LOG
 #define LOG hooks->LOG
 
-extern uint32 lua_context_tag_counter;
+extern tag_t lua_context_tag_counter;
 
 struct lua_context
 {
     /* Data related to detached lua threads */
     struct lua_context *next, *prev;
     int resume_time;
-    uint32 tag;
+    tag_t tag;
     
     /* Runtime statistics */
     struct timeval start_time, running_time;
@@ -156,6 +156,7 @@ struct lua_context
 
     /* Script event data, accessible in lua through the event variable */
     object             *self, *activator, *other; /* Involved objects */
+    tag_t               self_tag, activator_tag, other_tag;
     const char         *text;             /* Text for SAY events */
 
     const char         *options;          /* Options from event object */
