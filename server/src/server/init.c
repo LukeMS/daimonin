@@ -178,7 +178,7 @@ static void init_dynamic()
 static void load_settings()
 {
     char    buf[MAX_BUF], *cp;
-    int     has_val, comp;
+    int     has_val, comp, i;
     FILE   *fp;
 
     sprintf(buf, "%s/%s", settings.localdir, SETTINGS);
@@ -196,8 +196,10 @@ static void load_settings()
         if (buf[0] == '#')
             continue;
         /* eliminate newline */
-        if ((cp = strrchr(buf, '\n')) != NULL)
-            *cp = '\0';
+        i = strlen(buf) - 1;
+        while(isspace(buf[i]))
+            --i;
+        buf[i + 1] = '\0';
 
         /* Skip over empty lines */
         if (buf[0] == 0)

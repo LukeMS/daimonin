@@ -116,12 +116,12 @@ static mapstruct * load_and_link_tiled_map(mapstruct *orig_map, int tile_num)
 /* Find the distance between two map tiles on a tiled map.
  * Returns true if the two tiles are part of the same map.
  * the distance from the topleft (0,0) corner of map1 to the topleft corner of map2
- * will be added to x and y. 
+ * will be added to x and y.
  *
  * This function does not work well with assymetrically tiled maps.
  * It will also (naturally) perform bad on very large tilesets such as the world map
  * as it may need to load all tiles into memory before finding a path between two tiles.
- * 
+ *
  * One solution is to handle the world map as a special case, requiring that all tiles are
  * of equal size, and that we might be able to parse their coordinates from their names...
  *
@@ -147,7 +147,7 @@ static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int 
 
     /* The caching really helps when pathifinding across map tiles,
      * but not in many other cases. */
-    /* Check for cached pathfinding */    
+    /* Check for cached pathfinding */
     if (map1->cached_dist_map == map2->path)
     {
         *x += map1->cached_dist_x;
@@ -181,7 +181,7 @@ static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int 
 
     /* initial queue and node values */
     first = last = NULL;
-    curr = get_poolchunk(pool_map_bfs);    
+    curr = get_poolchunk(pool_map_bfs);
     curr->map = map1;
     curr->dx = curr->dy = 0;
 
@@ -262,7 +262,7 @@ static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int 
             break;
         }
 
-        /* dequeue next tile to check */        
+        /* dequeue next tile to check */
         curr = first;
         if (curr)
             first = curr->next;
@@ -341,7 +341,7 @@ char * create_pathname(const char *name)
 /*
  * This makes absolute path to the itemfile where unique objects
  * will be saved. Converts '/' to '@'. I think it's essier maintain
- * files than full directory structure, but if this is problem it can 
+ * files than full directory structure, but if this is problem it can
  * be changed.
  */
 static char * create_items_path(const char *s)
@@ -508,9 +508,9 @@ void dump_map(mapstruct *m)
     if (m->tmpname != NULL)
         LOG(llevSystem, "Tmpname: %s\n", m->tmpname);
 
-    LOG(llevSystem, "Difficulty: %d\n", m->difficulty); 
-    LOG(llevSystem, "Darkness: %d\n", m->darkness); 
-    LOG(llevSystem, "Light: %d\n", m->light_value); 
+    LOG(llevSystem, "Difficulty: %d\n", m->difficulty);
+    LOG(llevSystem, "Darkness: %d\n", m->darkness);
+    LOG(llevSystem, "Light: %d\n", m->light_value);
     LOG(llevSystem, "Outdoor: %d\n", MAP_OUTDOORS(m));
 }
 
@@ -585,14 +585,14 @@ int blocks_cleric(mapstruct *m, int x, int y)
  * this part down for heavy traffic.
  * Changes: check ALL P_xxx flags (and really all) of a tile node here. If its impossible
  * to enter the tile - blocked() will tell it us.
- * This included to capsule and integrate blocked_tile() in blocked(). 
+ * This included to capsule and integrate blocked_tile() in blocked().
  * blocked_tile() is the function where the single objects of a node gets
  * tested - for example for CHECK_INV. But i added a P_CHECK_INV flag - so its
  * now only called when really needed - before it was called for EVERY moving
  * object for every successful step.
  * PASS_THRU check is moved in blocked() too.. This should generate for example for
  * pathfinding better results. Note, that PASS_THRU only has a meaning when NO_PASS
- * is set. If a object has both flags, NO_PASS can be passed when object has 
+ * is set. If a object has both flags, NO_PASS can be passed when object has
  * CAN_PASS_THRU. If object has PASS_THRU without NO_PASS, PASS_THRU is ignored.
  * blocked() checks player vs player stuff too. No block in non pvp areas.
  * Note, that blocked() is only on the first glance bigger as before - i moved stuff
@@ -604,11 +604,11 @@ int blocks_cleric(mapstruct *m, int x, int y)
  * MT-2003
  */
 /* i added the door flag now. The trick is, that we want mark the door as possible
- * to open here and sometimes not. If the object spot is in forbidden terrain, we 
+ * to open here and sometimes not. If the object spot is in forbidden terrain, we
  * don't want its possible to open it, even we stand near to it. But for example if
  * it blocked by alive object, we want open it. If the spot marked as pass_thru and
  * we can pass_thru, then we want skip the door (means not open it).
- * MT-29.01.2004 
+ * MT-29.01.2004
  */
 int blocked(object *op, mapstruct *m, int x, int y, int terrain)
 {
@@ -636,7 +636,7 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
     if (flags & P_NO_PASS) /* i seperated it from below - perhaps we add here more tests */
     {
         /* logic is: no_pass when..
-             * - no PASS_THRU... or 
+             * - no PASS_THRU... or
              * - PASS_THRU set but op==NULL (no PASS_THRU check possible)
              * - PASS_THRU set and object has no CAN_PASS_THRU
              */
@@ -680,14 +680,14 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
         if (flags & P_PLAYER_ONLY && op->type != PLAYER) /* player only space and not a player... */
             return (flags & (P_DOOR_CLOSED | P_NO_PASS | P_CHECK_INV)); /* tell them: no pass and possible checker here */
 
-        /* and here is our CHECK_INV ... 
+        /* and here is our CHECK_INV ...
              * blocked_tile() is now only and exclusive called from here.
              * lets skip it, when op is NULL - so we can turn the check from outside
             * on/off (for example if we only want test size stuff)
             */
         if (flags & P_CHECK_INV)
         {
-            /* we fake a NO_PASS when the checker kick us out - in fact thats 
+            /* we fake a NO_PASS when the checker kick us out - in fact thats
                      * how it should be.
                      */
             if (blocked_tile(op, m, x, y))
@@ -700,7 +700,7 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
 
 /*
  * Returns true if the given coordinate is blocked by the
- * object passed is not blocking.  This is used with 
+ * object passed is not blocking.  This is used with
  * multipart monsters - if we want to see if a 2x2 monster
  * can move 1 space to the left, we don't want its own area
  * to block it from moving there.
@@ -715,7 +715,7 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
  * d.) no checks of objects in every tile node of the multi arch
  * e.) no recursive call needed anymore
  * f.) the multi arch are handled in maps like the single arch
- * g.) no scaling by heavy map action when we move (more objects 
+ * g.) no scaling by heavy map action when we move (more objects
  *     on the map don't interest us anymore here)
  */
 int blocked_link(object *op, int xoff, int yoff)
@@ -900,7 +900,7 @@ int arch_out_of_map(archetype *at, mapstruct *m, int x, int y)
  * file pointer.
  * mapflags is the same as we get with load_original_map
  */
-/* i optimized this function now - i remove ALOT senseless stuff, 
+/* i optimized this function now - i remove ALOT senseless stuff,
  * processing the load & expanding of objects here in one loop.
  * MT - 05.02.2004
  */
@@ -962,7 +962,7 @@ void load_objects(mapstruct *m, FILE *fp, int mapflags)
         if (QUERY_FLAG(op, FLAG_IS_TURNABLE) || QUERY_FLAG(op, FLAG_ANIMATE))
             SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction + op->state);
 
-        /* expand a multi arch - we have only the head saved in a map! 
+        /* expand a multi arch - we have only the head saved in a map!
              * the *real* fancy point is, that our head/tail don't must fit
              * in this map! insert_ob will take about it and load the needed
              * map - then this function and the map loader is called recursive!
@@ -979,7 +979,7 @@ void load_objects(mapstruct *m, FILE *fp, int mapflags)
                      * we never hit this breakpoint here.
                      */
             tail = op->arch->more;
-            prev = op,last_more = op;   
+            prev = op,last_more = op;
 
             /* then clone the tail using the default arch */
             do
@@ -998,9 +998,9 @@ void load_objects(mapstruct *m, FILE *fp, int mapflags)
                 /* link the tail object... */
                 tmp->head = prev,last_more->more = tmp,last_more = tmp;
             }
-            while ((tail = tail->more)); 
+            while ((tail = tail->more));
 
-            /* now some tricky stuff again: 
+            /* now some tricky stuff again:
                      * to speed up some core functions like moving or remove_ob()/insert_ob
                      * and because there are some "arch depending and not object depending"
                      * flags, we init the tails with some of the head settings.
@@ -1046,7 +1046,7 @@ void load_objects(mapstruct *m, FILE *fp, int mapflags)
 
         /* iam not sure this is senseful.
              * it was part of fix_auto_apply() but it should
-             * redundant 
+             * redundant
             else if(op->type==TIMED_GATE)
             {
                 op->speed = 0;
@@ -1096,7 +1096,7 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
      *
      * We will give the move_apply() code (which handles object changes when
      * something is removed) the MOVE_APPLY_VANISHED flag - we MUST
-     * take care in all called function about it. 
+     * take care in all called function about it.
      *
      * a example: A button which is pressed will call a spawn point "remove object x"
      * and unpressed "spawn onject x".
@@ -1105,10 +1105,10 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
      * now, that action will be called when the map is reloaded. All ok.
      * NOT ok is, that the button then (or any other from move apply called object)
      * does a action IMMIDIALTY except it is a static effect (like we put a wall
-     * in somewhere). 
+     * in somewhere).
      * Absolut forbidden are dynamic effect like instant spawns of mobs on other maps
      * point - then our map will get messed up again. Teleporters are a bit critical here
-     * and i fear the code and callings in move_apply() will need some more carefully 
+     * and i fear the code and callings in move_apply() will need some more carefully
      * examination.
      */
     for (i = 0; i < MAP_WIDTH(m); i++)
@@ -1165,7 +1165,7 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
                         {
                             if (tmp->owner && tmp->owner->type == SPAWN_POINT) /* thats the spawn point... */
                             {
-                                /* tell the source spawn point to respawn this deleted object. 
+                                /* tell the source spawn point to respawn this deleted object.
                                                      * It can be here OR on a different map.
                                                      */
                                 tmp->owner->stats.sp = tmp->owner->last_sp; /* force a pre spawn setting */
@@ -1284,7 +1284,7 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
     }
 
 
-    /* The map is now cleared from non static objects on this or other maps 
+    /* The map is now cleared from non static objects on this or other maps
      * (when the source was from this map). Now all can be saved as a legal
      * snapshot of the map state mashine.
      * That means all button/mashine relations are correct.
@@ -1310,7 +1310,7 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
                 {
                     int xt, yt;
 
-                    /* the magic is, that we have a tail here, but we 
+                    /* the magic is, that we have a tail here, but we
                                  * save the head now and give it the x/y
                                  * position basing on this tail position and its
                                  * x/y clone arch default multi tile offsets!
@@ -1322,8 +1322,8 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
                                  * we must save x/y or remove_ob() will fail.
                                  */
                     tmp = op->head;
-                    xt = tmp->x; 
-                    yt = tmp->y; 
+                    xt = tmp->x;
+                    yt = tmp->y;
                     tmp->x = op->x - op->arch->clone.x;
                     tmp->y = op->y - op->arch->clone.y;
 
@@ -1503,8 +1503,10 @@ static int load_map_header(FILE *fp, mapstruct *m)
         value = strchr(key, ' ');
         if (!value)
         {
-            end = strchr(key, '\n');
-            *end = 0;
+            end = key + (strlen(key) - 1);
+            while (isspace(*end))
+                --end;
+            *++end = 0;
         }
         else
         {
@@ -1512,14 +1514,21 @@ static int load_map_header(FILE *fp, mapstruct *m)
             value++;
             while (isspace(*value))
                 value++;
-            end = strchr(value, '\n');
+            end = value + (strlen(value) - 1);
+            while (isspace(*end))
+                --end;
+            if (*++end != '\0')
+            {
+                *end = '\n';
+                end[1] = '\0';
+            }
         }
 
         /* key is the field name, value is what it should be set
          * to.  We've already done the work to null terminate key,
          * and strip off any leading spaces for both of these.
          * We have not touched the newline at the end of the line -
-         * these are needed for some values.  the end pointer 
+         * these are needed for some values.  the end pointer
          * points to the first of the newlines.
          * value could be NULL!  It would be easy enough to just point
          * this to "" to prevent cores, but that would let more errors slide
@@ -1712,7 +1721,7 @@ static int load_map_header(FILE *fp, mapstruct *m)
                 if (value)
                 {
                     mapstruct  *neighbour;
-                    int         dest_tile   = map_tiled_reverse[tile - 1];                            
+                    int         dest_tile   = map_tiled_reverse[tile - 1];
                     const char *path_sh     = add_string(value);
 
                     m->tile_path[tile - 1] = path_sh;
@@ -1773,7 +1782,7 @@ mapstruct * load_original_map(const char *filename, int flags)
     char        pathname[MAX_BUF];
     char        tmp_fname[MAX_BUF];
 
-    /* this IS a bug - because the missing '/' strcpy will fail when it 
+    /* this IS a bug - because the missing '/' strcpy will fail when it
      * search the loaded maps - this can lead in a double load and break
      * the server!
      * '.' sign unique maps in fixed folders.
@@ -2134,7 +2143,7 @@ int new_save_map(mapstruct *m, int flag)
             }
             else
             {
-                LOG(llevDebug, "Saving unique items map to %s\n", buf);    
+                LOG(llevDebug, "Saving unique items map to %s\n", buf);
                 fclose(fp2);
                 chmod(buf, SAVE_MODE);
             }
@@ -2207,7 +2216,7 @@ void free_map(mapstruct *m, int flag)
      */
     remove_light_source_list(m);
 
-    /* I put this before free_all_objects() - 
+    /* I put this before free_all_objects() -
      * because the link flag is now tested in destroy_object()
      * to have a clean handling of temporary/dynamic buttons on
      * a map. Because we delete now the FLAG_LINKED from the object
@@ -2341,7 +2350,7 @@ mapstruct * ready_map_name(const char *name, int flags)
 
     /* Map is good to go, so just return it */
     if (m && (m->in_memory == MAP_LOADING || m->in_memory == MAP_IN_MEMORY))
-        return m; 
+        return m;
 
     /* unique maps always get loaded from their original location, and never
      * a temp location.  Likewise, if map_flush is set, or we have never loaded
@@ -2392,7 +2401,7 @@ mapstruct * ready_map_name(const char *name, int flags)
             */
         FREE_AND_NULL_PTR(m->tmpname);
         /* It's going to be saved anew anyway */
-    } 
+    }
 
     /* Below here is stuff common to both first time loaded maps and
      * temp maps.
@@ -2424,7 +2433,7 @@ void free_all_maps()
 
     while (first_map)
     {
-        /* I think some of the callers above before it gets here set this to be 
+        /* I think some of the callers above before it gets here set this to be
          * saving, but we still want to free this data
          */
         if (first_map->in_memory == MAP_SAVING)
@@ -2436,7 +2445,7 @@ void free_all_maps()
 }
 
 
-/* 
+/*
  * This function updates various attributes about a specific space
  * on the map (what it looks like, whether it blocks magic,
  * has a living creatures, prevents people from passing
@@ -2471,7 +2480,7 @@ void update_position(mapstruct *m, int x, int y)
         for (tmp = get_map_ob(m, x, y); tmp; tmp = tmp->above)
         {
             if (QUERY_FLAG(tmp, FLAG_PLAYER_ONLY))
-                flags |= P_PLAYER_ONLY;      
+                flags |= P_PLAYER_ONLY;
             if (tmp->type == CHECK_INV)
                 flags |= P_CHECK_INV;
             if (tmp->type == MAGIC_EAR)
@@ -2538,7 +2547,7 @@ void update_position(mapstruct *m, int x, int y)
 #endif
 
         SET_MAP_FLAGS(m, x, y, flags);
-        SET_MAP_MOVE_FLAGS(m, x, y, move_flags);    
+        SET_MAP_MOVE_FLAGS(m, x, y, move_flags);
         /*    SET_MAP_LIGHT(m,x,y,light);*/
     } /* end flag update */
 
@@ -2564,8 +2573,8 @@ void update_position(mapstruct *m, int x, int y)
     mp->client_mlayer[2] = mp->client_mlayer[3] = -1;
     mp->client_mlayer_inv[2] = mp->client_mlayer_inv[3] = -1;
 
-    /* THE INV FLAG CHECK IS FIRST IMPLEMENTATION AND REALLY NOT THE FASTEST WAY - 
-     * WE CAN AVOID IT COMPLETE BY USING A 2nd INV QUEUE 
+    /* THE INV FLAG CHECK IS FIRST IMPLEMENTATION AND REALLY NOT THE FASTEST WAY -
+     * WE CAN AVOID IT COMPLETE BY USING A 2nd INV QUEUE
      */
 
     /* now we first look for a object for cl3 */
@@ -2607,7 +2616,7 @@ void update_position(mapstruct *m, int x, int y)
     {
         if (mp->layer[ii])
         {
-            mp->client_mlayer_inv[2] = ii; 
+            mp->client_mlayer_inv[2] = ii;
             break;
         }
     }
@@ -2733,10 +2742,10 @@ mapstruct * out_of_map(mapstruct *m, int *x, int *y)
 }
 
 /* this is a special version of out_of_map() - this version ONLY
- * adjust to loaded maps - it will not trigger a re/newload of a 
+ * adjust to loaded maps - it will not trigger a re/newload of a
  * tiled map not in memory. If out_of_map() fails to adjust the
  * map positions, it will return NULL when the there is no tiled
- * map and NULL when the map is not loaded. 
+ * map and NULL when the map is not loaded.
  * As special marker, x is set 0 when the coordinates are not
  * in a map (outside also possible tiled maps) and to -1 when
  * there is a tiled map but its not loaded.
@@ -2899,7 +2908,7 @@ mapstruct * out_of_map2(mapstruct *m, int *x, int *y)
  * can be negativbe.  direction is the crossfire direction scheme
  * that the creature should head.  part is the part of the
  * monster that is closest.
- * 
+ *
  * get_rangevector looks at op1 and op2, and fills in the
  * structure for op1 to get to op2.
  * We already trust that the caller has verified that the
@@ -2962,16 +2971,16 @@ int get_rangevector(object *op1, object *op2, rv_vector *retval, int flags)
 
 /*
  * this is the base for get_rangevector above, but can more generally compute the
- * rangvector between any two points on any maps. 
- * 
+ * rangvector between any two points on any maps.
+ *
  * The part field of the rangevector is always set to NULL by this function.
  * (Since we don't actually know about any objects)
  *
  * If the function fails (because of the maps being separate), it will return FALSE and
  * the vector is not otherwise touched. Otherwise it will return TRUE.
- * 
+ *
  * Calculates manhattan distance (dx+dy) per default. (fast)
- * - Flags: 
+ * - Flags:
  *   0x4 - calculate euclidian (straight line) distance (slow)
  *   0x8 - calculate diagonal  (max(dx + dy)) distance   (fast)
  *   0x8|0x04 - don't calculate distance (or direction) (fastest)

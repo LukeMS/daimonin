@@ -25,10 +25,10 @@
 
 /*
  * Ban.c
- * Code was grabbed from the netrek source and modified to work with 
+ * Code was grabbed from the netrek source and modified to work with
  * crossfire. This function checks a file in the lib directory for any
  * banned players. If it finds one it returns a 1. Wildcards can be used.
- */ 
+ */
 
 #include <global.h>
 #ifndef WIN32 /* ---win32 : remove unix headers */
@@ -70,7 +70,7 @@ int checkbanned(char *login, char *host)
     while (fgets(line_buf, 160, bannedfile) != NULL)
     {
         /* Split line up */
-        if ((*line_buf == '#') || (*line_buf == '\n'))
+        if ((*line_buf == '#') || (line_buf == '\n' || line_buf == '\r'))
             continue;
         if ((indexpos = (char *) strrchr(line_buf, '@')) == 0)
         {

@@ -173,8 +173,13 @@ void read_client_images()
     {
         badline = 0;
 
-        if (buf[0] == '#')
+        if (buf[0] == '#' || buf[0] == '\n' || buf[0] == '\r')
             continue;
+        cp = buf + (strlen(buf) - 1);
+        while(isspace(*cp))
+            --cp;
+        cp[1] = '\0';
+
         if (!(cps[0] = strtok(buf, ":")))
             badline = 1;
         for (i = 1; i < 7; i++)
@@ -303,7 +308,7 @@ void SendFaceCmd(char *buff, int len, NewSocket *ns)
 
 /*
  * esrv_send_face sends a face to a client if they are in pixmap mode
- * nothing gets sent in bitmap mode. 
+ * nothing gets sent in bitmap mode.
  * If nocache is true (nonzero), ignore the cache setting from the client -
  * this is needed for the askface, in which we really do want to send the
  * face (and askface is the only place that should be setting it).  Otherwise,
