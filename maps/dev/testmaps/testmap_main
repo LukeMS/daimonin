@@ -1539,9 +1539,20 @@ arch floor_ostone1
 x 14
 y 13
 end
-arch floor_ostone1
+arch lost_soul
+invulnerable 1
+no_attack 1
+unaggressive 1
+friendly 1
+stand_still 1
+direction 7
 x 14
 y 13
+arch event_obj
+name Lua
+sub_type 6
+race /dev/testmaps/lost_soul.lua
+end
 end
 arch floor_ostone1
 x 14
