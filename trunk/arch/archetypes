@@ -6233,10 +6233,23 @@ direction 1
 no_pick 1
 layer 4
 end
+Object bank1.111
+name bank
+type 79
+editor_folder indoor/banks
+face bank1.111
+animation bank1.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 4
+end
 Object bank2a
 name bank
 type 79
-editor_folder indoor/bank
+editor_folder indoor/banks
 face bank2a.111
 animation bank2a
 is_animated 0
@@ -6249,7 +6262,7 @@ end
 Object bank2b
 name bank
 type 79
-editor_folder indoor/bank
+editor_folder indoor/banks
 face bank2b.111
 animation bank2b
 is_animated 0
@@ -6262,22 +6275,9 @@ end
 Object bank2c
 name bank
 type 79
-editor_folder indoor/bank
+editor_folder indoor/banks
 face bank2c.111
 animation bank2c
-is_animated 0
-anim_speed 0
-is_turnable 1
-direction 1
-no_pick 1
-layer 4
-end
-Object bank1.111
-name bank
-type 79
-editor_folder indoor/banks
-face bank1.111
-animation bank1.111
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -6351,32 +6351,6 @@ face basket2.101
 no_pick 1
 layer 4
 end
-Object couch1a
-name bed
-type 79
-editor_folder indoor/bed
-face couch1a.111
-animation couch1a
-is_animated 0
-anim_speed 0
-is_turnable 1
-direction 1
-no_pick 1
-layer 4
-end
-Object couch1b
-name bed
-type 79
-editor_folder indoor/bed
-face couch1b.111
-animation couch1b
-is_animated 0
-anim_speed 0
-is_turnable 1
-direction 1
-no_pick 1
-layer 4
-end
 Object bed_1a.111
 name bed
 type 79
@@ -6422,6 +6396,32 @@ type 79
 editor_folder indoor/beds
 face bed_2b.111
 animation bed_2b.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 4
+end
+Object couch1a
+name bed
+type 79
+editor_folder indoor/beds
+face couch1a.111
+animation couch1a
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_pick 1
+layer 4
+end
+Object couch1b
+name bed
+type 79
+editor_folder indoor/beds
+face couch1b.111
+animation couch1b
 is_animated 0
 anim_speed 0
 is_turnable 1
@@ -20559,7 +20559,6 @@ monster 1
 level 1
 Con 2
 Pow 2
-can_cast_spell 1
 exp 122
 ac 11
 wc 9
