@@ -23,9 +23,26 @@ function string.split(s, sep)
 	return t
 end
 
+function stacktrace()
+	local i = 1
+	local info = debug.getinfo(i)
+	print("++++ stack trace (first is bottom of call stack)")
+	while info ~= nil do
+    	if info.what == 'Lua' or info.what == 'main' then
+      		print("+ "..i.."  "..info.source.." : "..info.currentline)
+    	else
+      		print("+ "..i.."  "..info.what.." call  ".." :  ?")
+    	end
+    	i = i + 1
+    	info = debug.getinfo(i)
+  	end
+  	print("++++++++++++++++")
+end
+
 -- Magic errorhandler, sends script errors to involved DM:s
 -- TODO: possibility to turn on/off either via a script or custom commands
 -- TODO: possibility to register DM's that should get messages even if not involved
+-- TODO: possibility to turn on/off stack trace
 function _error(msg)
     local function msg_wiz_obj(obj)
         if obj and obj.f_wiz then
@@ -40,6 +57,8 @@ function _error(msg)
         msg_wiz_obj(event.me)
         msg_wiz_obj(event.other)
     end
+	
+	stacktrace()
 
     return msg
 end
