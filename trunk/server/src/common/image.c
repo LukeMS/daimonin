@@ -100,6 +100,11 @@ int ReadBmapNames()
     {
         if (*buf == '#')
             continue;
+        
+        /* Kill the newline */
+        i = strlen(buf) - 1;
+        while(isspace(buf[i]) && i >= 0)
+            buf[i--] = '\0';
 
         p = (*buf == '\\') ? (buf + 1) : buf;
         if (!(p = strtok(p, " \t")) || !(q = strtok(NULL, " \t\n")))
@@ -185,8 +190,6 @@ int FindFace(char *name, int error)
 {
     int                 i;
     struct bmappair    *bp, tmp;
-    char               *p;
-
 
     /* Using actual numbers for faces is a very bad idea.  This is because
      * each time the archetype file is rebuilt, all the face numbers
@@ -198,8 +201,10 @@ int FindFace(char *name, int error)
         return i;
     }
 
-    if ((p = strchr(name, '\n')))
-        *p = '\0';
+    /* Kill the newline */
+    i = strlen(name) - 1;
+    while(isspace(name[i]) && i >= 0)
+        name[i--] = '\0';
 
     tmp.name = name;
     bp = (struct bmappair *) bsearch(&tmp, xbm, nroffiles, sizeof(struct bmappair), (void *) (int (*) ()) compar);
