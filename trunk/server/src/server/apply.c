@@ -2850,6 +2850,7 @@ int manual_apply(object *op, object *tmp, int aflag)
         if (findPlugin(event_obj->name) >= 0)
         {
             CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
+            /* Non-zero return value means successful apply */
             rtn_script = *(int *) (CFR->Value[0]);
             if (rtn_script != 0)
                 return 1;

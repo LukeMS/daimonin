@@ -36,11 +36,11 @@ struct plugin_hooklist  hooklist    =
 {
     LOG, create_pathname, re_cmp,
     new_draw_info, new_draw_info_format,
-    new_info_map, new_info_map_except,
+    new_info_map, new_info_map_except, wall,
     free_string_shared, add_string, add_refcount,
     fix_player, esrv_send_item, esrv_send_inventory,
     lookup_skill_by_name, look_up_spell_name,
-    insert_ob_in_ob, insert_ob_in_map,
+    insert_ob_in_ob, insert_ob_in_map, move_ob,
     free_mempool, create_mempool, nearest_pow_two_exp,
     return_poolchunk_array_real, get_poolchunk_array_real
 };

@@ -29,7 +29,9 @@
 
 static struct method_decl       Map_methods[]       =
 {
-    {"Save", Map_Save}, {"Delete", Map_Delete}, {"GetFirstObjectOnSquare", Map_GetFirstObjectOnSquare},
+    {"Save", Map_Save}, {"Delete", Map_Delete}, 
+    {"GetFirstObjectOnSquare", Map_GetFirstObjectOnSquare},
+    {"IsWallOnSquare", Map_IsWallOnSquare},
     {"PlaySound", Map_PlaySound}, {"Message", Map_Message}, {"MapTileAt",  Map_MapTileAt},
     {"CreateObject", Map_CreateObject}, {NULL, NULL}
 };
@@ -80,6 +82,23 @@ static int Map_GetFirstObjectOnSquare(lua_State *L)
     val = (object *) (CFR->Value[0]);
 
     return push_object(L, &GameObject, val);
+}
+
+/*****************************************************************************/
+/* Name   : Map_IsWallOnSquare                                               */
+/* Lua    : map.IsWallOnSquare(x, y)                                         */
+/* Info   : returns true if the square at x,y is a wall                      */
+/* Status : Stable                                                           */
+/*****************************************************************************/
+static int Map_IsWallOnSquare(lua_State *L)
+{
+    int         x, y;
+    lua_object *map;
+
+    get_lua_args(L, "Mii", &map, &x, &y);
+
+    lua_pushboolean(L, hooks->wall(map->data.map, x, y));
+    return 1;
 }
 
 /*****************************************************************************/
@@ -171,7 +190,7 @@ static int Map_PlaySound(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : Map_Message                                                      */
-/* Lua    : map.Message(message, x, y, distance, color)                      */
+/* Lua    : map.Message(x, y, distance, messagem,color)                      */
 /* Info   : Writes a message to all players on a map                         */
 /*          Starting point x,y for all players in distance                   */
 /*          default color is game.COLOR_BLUE | game.COLOR_UNIQUE             */

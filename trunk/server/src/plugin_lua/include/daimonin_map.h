@@ -31,6 +31,7 @@
 /* Map object methods */
 static int  Map_Save(lua_State *L);
 static int  Map_Delete(lua_State *L);
+static int  Map_IsWallOnSquare(lua_State *L);
 static int  Map_GetFirstObjectOnSquare(lua_State *L);
 static int  Map_PlaySound(lua_State *L);
 static int  Map_Message(lua_State *L);
