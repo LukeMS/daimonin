@@ -41,7 +41,8 @@ end
 arch blocked
 y 5
 end
-arch blocked
+arch floor_dark1a
+no_pass 1
 y 6
 end
 arch blocked
@@ -130,7 +131,8 @@ arch blocked
 x 1
 y 4
 end
-arch blocked
+arch floor_dark1a
+no_pass 1
 x 1
 y 5
 end
@@ -257,7 +259,8 @@ arch blocked
 x 2
 y 3
 end
-arch blocked
+arch floor_dark1a
+no_pass 1
 x 2
 y 4
 end
@@ -388,7 +391,8 @@ arch blocked
 x 3
 y 2
 end
-arch blocked
+arch floor_dark1a
+no_pass 1
 x 3
 y 3
 end
@@ -522,7 +526,8 @@ arch blocked
 x 4
 y 1
 end
-arch blocked
+arch floor_dark1a
+no_pass 1
 x 4
 y 2
 end
@@ -657,7 +662,8 @@ end
 arch blocked
 x 5
 end
-arch blocked
+arch floor_dark1a
+no_pass 1
 x 5
 y 1
 end
@@ -785,7 +791,8 @@ arch grassd_6
 x 5
 y 23
 end
-arch blocked
+arch floor_dark1a
+no_pass 1
 x 6
 end
 arch blocked

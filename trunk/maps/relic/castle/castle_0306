@@ -293,7 +293,8 @@ arch rock_big3
 x 3
 y 20
 end
-arch rock_big3
+arch floor_dark1a
+no_pass 1
 x 3
 y 21
 end
@@ -1579,6 +1580,11 @@ arch rock_big3
 x 14
 y 21
 end
+arch floor_dark1a
+no_pass 1
+x 14
+y 22
+end
 arch rock_big3
 x 14
 y 23
@@ -1696,6 +1702,11 @@ end
 arch rock_big3
 x 15
 y 22
+end
+arch floor_dark1a
+no_pass 1
+x 15
+y 23
 end
 arch grassd_8
 x 16

@@ -7,6 +7,7 @@ endmsg
 width 24
 height 24
 outdoor 1
+tile_path_1 castle_0107
 tile_path_2 castle_0206
 tile_path_3 castle_0105
 tile_path_4 castle_0006
@@ -1349,6 +1350,12 @@ arch floor_fstone2a
 x 9
 y 13
 end
+arch torch_wall_1
+glow_radius 5
+is_animated 1
+x 9
+y 13
+end
 arch floor_fstone2a
 x 9
 y 14
@@ -1419,43 +1426,51 @@ arch plant_flower8
 x 10
 y 2
 end
-arch grass_thick2
+arch floor_grit3a
 x 10
 y 3
 end
-arch grass_thick2
+arch fence_01.181
+x 10
+y 3
+end
+arch floor_grit3b
 x 10
 y 4
 end
-arch plant8
+arch fence_01.171
 x 10
 y 4
 end
-arch grass_thick2
+arch bench2.111
+layer 6
+direction 7
+x 10
+y 4
+end
+arch floor_grit3b
 x 10
 y 5
 end
-arch plant4
+arch fence_01.171
 x 10
 y 5
 end
+arch bench2.111
+layer 6
+direction 7
+x 10
+y 5
+end
+arch floor_grit3c
+x 10
+y 6
+end
+arch fence_01.161
+x 10
+y 6
+end
 arch grass_thick2
-x 10
-y 6
-end
-arch plant2
-x 10
-y 6
-end
-arch plant_flower3
-x 10
-y 6
-end
-arch grass_thick2
-x 10
-y 7
-end
-arch plant14
 x 10
 y 7
 end
@@ -1495,11 +1510,24 @@ arch floor_fstone2a
 x 10
 y 13
 end
+arch fwall_fstone2b
+x 10
+y 13
+end
 arch floor_fstone2a
 x 10
 y 14
 end
+arch door1_locked
+direction 3
+x 10
+y 14
+end
 arch floor_fstone2a
+x 10
+y 15
+end
+arch fwall_fstone2c
 x 10
 y 15
 end
@@ -1543,78 +1571,89 @@ arch grassd_8
 x 10
 y 23
 end
-arch grass_thick2
+arch floor_grit3a
 x 11
 end
-arch grass_thick2
+arch fence_01.171
+x 11
+end
+arch floor_grit3c
 x 11
 y 1
 end
-arch plant_flower3
+arch fence_01.171
 x 11
 y 1
 end
-arch grass_thick2
+arch floor_grit3a
 x 11
 y 2
 end
-arch plant2
+arch fence_01.171
 x 11
 y 2
 end
-arch plant11
-x 11
-y 2
-end
-arch grass_thick2
+arch floor_grit3c
 x 11
 y 3
 end
-arch plant8
+arch fence_01.182
 x 11
 y 3
 end
-arch grass_thick2
+arch floor_grit3a
 x 11
 y 4
 end
-arch plant2
-x 11
-y 4
-end
-arch grass_thick2
+arch floor_grit3c
 x 11
 y 5
 end
-arch grass_thick2
+arch floor_grit3a
 x 11
 y 6
 end
-arch plant2
+arch fence_01.162
 x 11
 y 6
 end
-arch grass_thick2
+arch floor_grit3b
 x 11
 y 7
 end
-arch grass_thick2
+arch fence_01.171
+x 11
+y 7
+end
+arch floor_grit3a
 x 11
 y 8
 end
-arch grass_thick2
+arch fence_01.171
+x 11
+y 8
+end
+arch floor_grit3c
 x 11
 y 9
 end
-arch grass_thick2
+arch fence_01.171
+x 11
+y 9
+end
+arch floor_grit3b
 x 11
 y 10
 end
-arch plant2
+arch fence_01.171
 x 11
 y 10
 end
-arch grass_thick2
+arch floor_grit3a
+x 11
+y 11
+end
+arch fence_01.172
 x 11
 y 11
 end
@@ -1626,21 +1665,27 @@ arch fwall_fstone2
 x 11
 y 12
 end
-arch floor_fstone2a
+arch floor_grit3b
 x 11
 y 13
 end
-arch torch_wall_1
-glow_radius 5
-is_animated 1
+arch fwall_fstone2d
 x 11
 y 13
 end
-arch floor_fstone2a
+arch floor_grit3b
 x 11
 y 14
 end
-arch floor_fstone2a
+arch light2
+x 11
+y 14
+end
+arch floor_grit3a
+x 11
+y 15
+end
+arch fwall_fstone2a
 x 11
 y 15
 end
@@ -1684,113 +1729,94 @@ arch grassd_3
 x 11
 y 23
 end
-arch grass_thick2
+arch floor_grit3a
 x 12
 end
-arch plant2
-x 12
-end
-arch grass_thick2
+arch floor_grit3b
 x 12
 y 1
 end
-arch plant2
+arch light2
 x 12
 y 1
 end
-arch grass_thick2
+arch floor_grit3b
 x 12
 y 2
 end
-arch grass_thick2
+arch floor_grit3b
 x 12
 y 3
 end
-arch plant8
-x 12
-y 3
-end
-arch grass_thick2
+arch floor_grit3b
 x 12
 y 4
 end
-arch plant14
+arch light3
 x 12
 y 4
 end
-arch grass_thick2
+arch floor_grit3b
 x 12
 y 5
 end
-arch plant2
+arch light3
 x 12
 y 5
 end
-arch grass_thick2
+arch floor_grit3b
 x 12
 y 6
 end
-arch plant_flower8
-x 12
-y 6
-end
-arch grass_thick2
+arch floor_grit3b
 x 12
 y 7
 end
-arch plant2
-x 12
-y 7
-end
-arch grass_thick2
+arch floor_grit3a
 x 12
 y 8
 end
-arch grass_thick2
+arch floor_grit3b
 x 12
 y 9
 end
-arch tree_burned2
+arch light2
 x 12
 y 9
 end
-arch grass_thick2
+arch floor_grit3a
 x 12
 y 10
 end
-arch plant11
-x 12
-y 10
-end
-arch grass_thick2
+arch floor_grit3a
 x 12
 y 11
 end
-arch grass_thick2
+arch floor_grit3b
 x 12
 y 12
 end
-arch fwall_fstone2
-x 12
-y 12
-end
-arch floor_fstone2a
+arch floor_grit3c
 x 12
 y 13
 end
-arch floor_fstone2a
+arch floor_grit3a
 x 12
 y 14
 end
-arch floor_fstone2a
+arch floor_grit3a
 x 12
 y 15
 end
-arch grassd_2
+arch floor_grit3c
 x 12
 y 16
 end
-arch fwall_fstone2
+arch light2
+x 12
+y 16
+end
+arch grassd_m7
 x 12
 y 16
 end
@@ -1826,102 +1852,94 @@ arch grassd_8
 x 12
 y 23
 end
-arch grass_thick2
+arch floor_grit3a
 x 13
 end
-arch grass_thick2
+arch floor_grit3c
 x 13
 y 1
 end
-arch grass_thick2
+arch light2
+x 13
+y 1
+end
+arch floor_grit3a
 x 13
 y 2
 end
-arch plant2
-x 13
-y 2
-end
-arch grass_thick2
+arch floor_grit3b
 x 13
 y 3
 end
-arch plant2
-x 13
-y 3
-end
-arch grass_thick2
+arch floor_grit3a
 x 13
 y 4
 end
-arch plant2
+arch light3
 x 13
 y 4
 end
-arch grass_thick2
+arch floor_grit3c
 x 13
 y 5
 end
-arch grass_thick2
+arch light3
+x 13
+y 5
+end
+arch floor_grit3a
 x 13
 y 6
 end
-arch plant2
-x 13
-y 6
-end
-arch grass_thick2
+arch floor_grit3c
 x 13
 y 7
 end
-arch grass_thick2
+arch floor_grit3b
 x 13
 y 8
 end
-arch plant8
-x 13
-y 8
-end
-arch grass_thick2
+arch floor_grit3c
 x 13
 y 9
 end
-arch grass_thick2
+arch light2
+x 13
+y 9
+end
+arch floor_grit3a
 x 13
 y 10
 end
-arch grass_thick2
+arch floor_grit3c
 x 13
 y 11
 end
-arch plant2
-x 13
-y 11
-end
-arch grass_thick2
+arch floor_grit3a
 x 13
 y 12
 end
-arch fwall_fstone2
-x 13
-y 12
-end
-arch floor_fstone2a
+arch floor_grit3a
 x 13
 y 13
 end
-arch floor_fstone2a
+arch floor_grit3c
 x 13
 y 14
 end
-arch floor_fstone2a
+arch floor_grit3b
 x 13
 y 15
 end
-arch grassd_2
+arch floor_grit3c
 x 13
 y 16
 end
-arch fwall_fstone2
+arch light2
+x 13
+y 16
+end
+arch grassd_m7
 x 13
 y 16
 end
@@ -1953,97 +1971,89 @@ arch grassd_4
 x 13
 y 23
 end
-arch grass_thick2
+arch floor_grit3c
 x 14
 end
-arch plant2
+arch fence_01.131
 x 14
 end
-arch grass_thick2
+arch floor_grit3a
 x 14
 y 1
 end
-arch grass_thick2
+arch fence_01.131
+x 14
+y 1
+end
+arch floor_grit3c
 x 14
 y 2
 end
-arch tree_burned1
+arch fence_01.131
 x 14
 y 2
 end
-arch grass_thick2
+arch floor_grit3b
 x 14
 y 3
 end
-arch plant_flower4
+arch fence_01.122
 x 14
 y 3
 end
-arch grass_thick2
+arch floor_grit3c
 x 14
 y 4
 end
-arch plant2
-x 14
-y 4
-end
-arch plant_flower3
-x 14
-y 4
-end
-arch grass_thick2
+arch floor_grit3b
 x 14
 y 5
 end
-arch plant4
-x 14
-y 5
-end
-arch plant2
-x 14
-y 5
-end
-arch grass_thick2
+arch floor_grit3b
 x 14
 y 6
 end
-arch plant8
+arch fence_01.142
 x 14
 y 6
 end
-arch grass_thick2
+arch floor_grit3a
 x 14
 y 7
 end
-arch plant2
+arch fence_01.131
 x 14
 y 7
 end
-arch grass_thick2
+arch floor_grit3b
 x 14
 y 8
 end
-arch plant2
+arch fence_01.131
 x 14
 y 8
 end
-arch grass_thick2
+arch floor_grit3a
 x 14
 y 9
 end
-arch plant_flower4
+arch fence_01.131
 x 14
 y 9
 end
-arch grass_thick2
+arch floor_grit3c
 x 14
 y 10
 end
-arch plant4
+arch fence_01.131
 x 14
 y 10
 end
-arch grass_thick2
+arch floor_grit3b
+x 14
+y 11
+end
+arch fence_01.132
 x 14
 y 11
 end
@@ -2055,15 +2065,32 @@ arch fwall_fstone2
 x 14
 y 12
 end
-arch floor_fstone2a
+arch floor_grit3c
 x 14
 y 13
 end
-arch floor_fstone2a
+arch fwall_fstone2b
+x 14
+y 13
+end
+arch floor_grit3a
 x 14
 y 14
 end
-arch floor_fstone2a
+arch light2
+x 14
+y 14
+end
+arch door1_locked
+direction 5
+x 14
+y 14
+end
+arch floor_grit3a
+x 14
+y 15
+end
+arch fwall_fstone2c
 x 14
 y 15
 end
@@ -2113,14 +2140,7 @@ end
 arch plant2
 x 15
 end
-arch plant8
-x 15
-end
 arch grass_thick2
-x 15
-y 1
-end
-arch plant_flower8
 x 15
 y 1
 end
@@ -2128,35 +2148,39 @@ arch grass_thick2
 x 15
 y 2
 end
-arch plant8
+arch tree_burned1
 x 15
 y 2
 end
-arch grass_thick2
+arch floor_grit3a
 x 15
 y 3
 end
-arch plant14
+arch fence_01.121
 x 15
 y 3
 end
-arch grass_thick2
+arch floor_grit3a
 x 15
 y 4
 end
-arch plant8
+arch fence_01.131
 x 15
 y 4
 end
-arch grass_thick2
+arch floor_grit3b
 x 15
 y 5
 end
-arch plant2
+arch fence_01.131
 x 15
 y 5
 end
-arch grass_thick2
+arch floor_grit3a
+x 15
+y 6
+end
+arch fence_01.141
 x 15
 y 6
 end
@@ -2164,7 +2188,15 @@ arch grass_thick2
 x 15
 y 7
 end
+arch plant2
+x 15
+y 7
+end
 arch grass_thick2
+x 15
+y 8
+end
+arch plant2
 x 15
 y 8
 end
@@ -2172,7 +2204,7 @@ arch grass_thick2
 x 15
 y 9
 end
-arch plant2
+arch plant_flower4
 x 15
 y 9
 end
@@ -2180,11 +2212,11 @@ arch grass_thick2
 x 15
 y 10
 end
-arch grass_thick2
+arch plant4
 x 15
-y 11
+y 10
 end
-arch plant8
+arch grass_thick2
 x 15
 y 11
 end
@@ -2200,11 +2232,19 @@ arch floor_fstone2a
 x 15
 y 13
 end
+arch fwall_fstone2d
+x 15
+y 13
+end
 arch floor_fstone2a
 x 15
 y 14
 end
 arch floor_fstone2a
+x 15
+y 15
+end
+arch fwall_fstone2a
 x 15
 y 15
 end

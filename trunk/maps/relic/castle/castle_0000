@@ -18,13 +18,10 @@ tile_path_8 castle_0a01
 end
 arch grass_thick2
 end
-arch floor_dark1a
+arch water_still
 y 1
 end
 arch grass_thickm3
-y 1
-end
-arch rock_big4
 y 1
 end
 arch water_still
@@ -148,15 +145,11 @@ arch grass_thick2
 x 1
 y 1
 end
-arch floor_dark1a
+arch water_still
 x 1
 y 2
 end
 arch grass_thickm3
-x 1
-y 2
-end
-arch rock_big4
 x 1
 y 2
 end
@@ -290,15 +283,11 @@ arch grass_thick2
 x 2
 y 2
 end
-arch floor_dark1a
+arch water_still
 x 2
 y 3
 end
 arch grass_thickm3
-x 2
-y 3
-end
-arch rock_big4
 x 2
 y 3
 end
@@ -457,15 +446,11 @@ arch grass_thick2
 x 3
 y 3
 end
-arch floor_dark1a
+arch water_still
 x 3
 y 4
 end
 arch grass_thickm3
-x 3
-y 4
-end
-arch rock_big4
 x 3
 y 4
 end
@@ -596,15 +581,11 @@ arch grass_thick2
 x 4
 y 4
 end
-arch floor_dark1a
+arch water_still
 x 4
 y 5
 end
 arch grass_thickm3
-x 4
-y 5
-end
-arch rock_big4
 x 4
 y 5
 end
@@ -735,15 +716,11 @@ arch grass_thick2
 x 5
 y 5
 end
-arch floor_dark1a
+arch water_still
 x 5
 y 6
 end
 arch grass_thickm3
-x 5
-y 6
-end
-arch rock_big4
 x 5
 y 6
 end
@@ -918,6 +895,7 @@ x 6
 y 9
 end
 arch rock_big4
+layer 3
 x 6
 y 9
 end
@@ -958,10 +936,12 @@ x 6
 y 12
 end
 arch floor_dark1a
+no_pass 1
 x 6
 y 13
 end
 arch floor_dark1a
+no_pass 1
 x 6
 y 14
 end
@@ -1108,6 +1088,7 @@ x 7
 y 12
 end
 arch floor_dark1a
+no_pass 1
 x 7
 y 13
 end
@@ -1283,6 +1264,7 @@ x 8
 y 14
 end
 arch floor_dark1a
+no_pass 1
 x 8
 y 15
 end
@@ -1440,6 +1422,7 @@ x 9
 y 15
 end
 arch floor_dark1a
+no_pass 1
 x 9
 y 16
 end
@@ -1594,6 +1577,7 @@ x 10
 y 16
 end
 arch floor_dark1a
+no_pass 1
 x 10
 y 17
 end
@@ -1758,6 +1742,7 @@ x 11
 y 17
 end
 arch floor_dark1a
+no_pass 1
 x 11
 y 18
 end
@@ -1897,6 +1882,7 @@ x 12
 y 18
 end
 arch floor_dark1a
+no_pass 1
 x 12
 y 19
 end
@@ -2677,6 +2663,7 @@ x 18
 y 18
 end
 arch floor_dark1a
+no_pass 1
 x 18
 y 19
 end
@@ -2796,6 +2783,7 @@ x 19
 y 17
 end
 arch floor_dark1a
+no_pass 1
 x 19
 y 18
 end
@@ -2919,6 +2907,7 @@ x 20
 y 16
 end
 arch floor_dark1a
+no_pass 1
 x 20
 y 17
 end
@@ -3038,6 +3027,7 @@ x 21
 y 15
 end
 arch floor_dark1a
+no_pass 1
 x 21
 y 16
 end

@@ -804,6 +804,21 @@ arch grassd_8
 x 7
 y 20
 end
+arch ranger
+level 15
+friendly 1
+random_move 1
+item_race 4
+item_level 4
+stand_still 0
+x 7
+y 20
+arch event_obj
+name lua
+race /relic/castle/scripts/Commoner.lua
+sub_type 6
+end
+end
 arch grassd_3
 x 7
 y 21
@@ -956,7 +971,7 @@ x 9
 y 3
 end
 arch lantern_magic.131
-direction 7
+direction 5
 x 9
 y 3
 end
@@ -1013,7 +1028,7 @@ x 9
 y 15
 end
 arch lantern_magic.131
-direction 7
+direction 5
 x 9
 y 15
 end

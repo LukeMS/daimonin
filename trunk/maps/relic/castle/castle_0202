@@ -541,10 +541,10 @@ x 4
 y 15
 end
 arch stair_down
-direction 5
-slaying /castle/granery_quest/granery_0003
+slaying /relic/castle/granery_quest/granery_0003
 hp 1
 sp 22
+direction 5
 x 4
 y 15
 end

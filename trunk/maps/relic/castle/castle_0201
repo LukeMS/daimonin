@@ -663,6 +663,7 @@ x 4
 y 19
 end
 arch lantern_magic.131
+direction 5
 x 4
 y 19
 end
@@ -1028,7 +1029,7 @@ x 7
 y 22
 end
 arch lantern_magic.131
-direction 5
+direction 7
 x 7
 y 22
 end
@@ -1491,6 +1492,15 @@ arch grassd_2
 x 12
 y 3
 end
+arch archer
+x 12
+y 3
+arch event_obj
+name Lua
+race /relic/castle/scripts/commoner.lua
+sub_type 6
+end
+end
 arch grassd_7
 x 12
 y 4
@@ -1627,6 +1637,7 @@ x 13
 y 10
 end
 arch lantern_magic.131
+direction 5
 x 13
 y 10
 end
@@ -1992,7 +2003,7 @@ x 16
 y 13
 end
 arch lantern_magic.131
-direction 5
+direction 7
 x 16
 y 13
 end
@@ -2297,6 +2308,7 @@ x 19
 y 4
 end
 arch lantern_magic.131
+direction 5
 x 19
 y 4
 end
@@ -2704,7 +2716,7 @@ x 22
 y 7
 end
 arch lantern_magic.131
-direction 5
+direction 7
 x 22
 y 7
 end

@@ -2048,6 +2048,15 @@ arch floor_wood2_d2
 x 14
 y 4
 end
+arch archer
+x 14
+y 4
+arch event_obj
+name Lua
+race /relic/castle/scripts/commoner.lua
+sub_type 6
+end
+end
 arch floor_wood2_d2
 x 14
 y 5

@@ -2363,6 +2363,7 @@ x 16
 y 8
 end
 arch floor_dark1a
+no_pass 1
 x 16
 y 9
 end
@@ -2447,7 +2448,8 @@ arch floor_dark1b
 x 16
 y 20
 end
-arch floor_dark1b
+arch floor_dark1a
+no_pass 1
 x 16
 y 21
 end
@@ -2511,6 +2513,7 @@ x 17
 y 9
 end
 arch floor_dark1a
+no_pass 1
 x 17
 y 10
 end
@@ -2558,7 +2561,8 @@ arch floor_dark1b
 x 17
 y 19
 end
-arch floor_dark1b
+arch floor_dark1a
+no_pass 1
 x 17
 y 20
 end
@@ -2657,6 +2661,7 @@ x 18
 y 10
 end
 arch floor_dark1a
+no_pass 1
 x 18
 y 11
 end
@@ -2712,7 +2717,8 @@ arch floor_dark1b
 x 18
 y 18
 end
-arch floor_dark1b
+arch floor_dark1a
+no_pass 1
 x 18
 y 19
 end
@@ -2799,7 +2805,8 @@ arch rock_big3
 x 19
 y 11
 end
-arch floor_dark1b
+arch floor_dark1a
+no_pass 1
 x 19
 y 12
 end
@@ -2823,7 +2830,8 @@ arch floor_dark1b
 x 19
 y 17
 end
-arch floor_dark1b
+arch floor_dark1a
+no_pass 1
 x 19
 y 18
 end
