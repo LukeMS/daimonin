@@ -22,17 +22,17 @@ http://www.gnu.org/copyleft/lesser.txt.
 */
 
 #ifdef WIN32
-  #define STRICT
-  #include <winsock2.h>
+	#define STRICT
+	#include <winsock2.h>
 #else
-  #include <sys/types.h>
-  #include <netinet/in.h>
-  #include <sys/socket.h>
-  #include <arpa/inet.h>
-  #include <netdb.h>
-  #include <errno.h>
-  #include <fcntl.h>
-  const int SOCKET_ERROR =-1;
+	#include <sys/socket.h>
+	#include <sys/types.h>
+	#include <netinet/in.h>
+	#include <arpa/inet.h>
+	#include <netdb.h>
+	#include <errno.h>
+	#include <fcntl.h>
+	const int SOCKET_ERROR =-1;
 #endif
 
 #include <list>
@@ -64,25 +64,11 @@ typedef struct mStructServer
 }mStructServer;
 
 list<mStructServer*> mServerList;
-const char mMetaServer[] ="damn.informatik.uni-bremen.de";
-int mMetaServerPort = 13326;
-
-
-// this comes from the selection on dialog panel...
-//char *ServerName ="damn.informatik.uni-bremen.de";
-//int ServerPort = 13326;
-char *ServerName ="127.0.0.1";
-int ServerPort = 13327;
-
-
-
 
 int SoundStatus=1;
 int MAP_MAX_SIZE  =  17;
 int MapStatusX =MAP_MAX_SIZE;
 int MapStatusY =MAP_MAX_SIZE;
-int metaserver_count; // please replace me with mServerList.size();
-
 
 // ========================================================================
 // Clear the MeatServer list.
@@ -95,13 +81,13 @@ void clear_metaserver_data(void)
 		if (node) { delete node; }
 		mServerList.pop_front();
 	}
-	metaserver_count=0;
 }
 
 // ========================================================================
 // Add a MetaServer to the list.
 // ========================================================================
-void add_metaserver_data(char *server, int port, int player, char *ver, char *desc1, char *desc2, char *desc3, char *desc4)
+void add_metaserver_data(const char *server, int port, int player, const char *ver, 
+	const char *desc1, const char *desc2, const char *desc3, const char *desc4)
 {
 	mStructServer *node = new mStructServer;
 	mServerList.push_back (node);
@@ -109,18 +95,10 @@ void add_metaserver_data(char *server, int port, int player, char *ver, char *de
 	node->port		= port;
 	node->nameip	= server;
 	node->version	= ver;
-	node->desc1	= desc1;
-	node->desc2	= desc2;
-	node->desc3	= desc3;
-	node->desc4	= desc4;
-}
-
-// ========================================================================
-// REPLACE ME
-// ========================================================================
-static void count_meta_server(void)
-{
-	metaserver_count = mServerList.size();
+	node->desc1		= desc1;
+	node->desc2		= desc2;
+	node->desc3		= desc3;
+	node->desc4		= desc4;
 }
 
 // ========================================================================
@@ -143,8 +121,8 @@ void get_meta_server_data(int num, char *server, int *port)
 // ========================================================================
 Network &Network::getSingelton()
 {
-   static Network singelton;
-   return singelton;
+	static Network singelton;
+	return singelton;
 }
 
 // ========================================================================
@@ -152,12 +130,12 @@ Network &Network::getSingelton()
 // ========================================================================
 Network::Network()
 {
-    mSocket = SOCKET_NO;
-    mInbuf.buf = new unsigned char[MAXSOCKBUF+1];
-    mInbuf.buf[0] =0;
-    mInbuf.buf[1] =0;
-    mGameStatusVersionFlag  = false; 
-    mGameStatusVersionOKFlag= true;
+	mSocket = SOCKET_NO;
+	mInbuf.buf = new unsigned char[MAXSOCKBUF+1];
+	mInbuf.buf[0] =0;
+	mInbuf.buf[1] =0;
+	mGameStatusVersionFlag  = false; 
+	mGameStatusVersionOKFlag= true;
 }
 
 // ========================================================================
@@ -187,156 +165,211 @@ void Network::send_reply(char *text)
 void Network::Update()
 {
 	static char buf[1024];
-    ///////////////////////////////////////////////////////////////////////// 
-    // Connected:
+	///////////////////////////////////////////////////////////////////////// 
+	// Connected:
 	/////////////////////////////////////////////////////////////////////////
-    if (Option::getSingelton().GameStatus > GAME_STATUS_CONNECT)
-    {
-        if (mSocket == SOCKET_NO)
+	if (Option::getSingelton().GameStatus > GAME_STATUS_CONNECT)
+	{
+		if (mSocket == SOCKET_NO)
 		{
-            // connection closed, so we go back to INIT here
-            if (Option::getSingelton().GameStatus == GAME_STATUS_PLAY)
-            {
-                Option::getSingelton().GameStatus = GAME_STATUS_INIT;
-                mPasswordAlreadyAsked = 0;
-            }
-            else
+			// connection closed, so we go back to GAME_STATUS_INIT here.
+			if (Option::getSingelton().GameStatus == GAME_STATUS_PLAY)
 			{
-                 Option::getSingelton().GameStatus = GAME_STATUS_START;
+				Option::getSingelton().GameStatus = GAME_STATUS_INIT;
+				Option::getSingelton().mStartNetwork = false;
+				mPasswordAlreadyAsked = 0;
 			}
-        }
-        else
-        {
+			else
+			{
+				Option::getSingelton().GameStatus = GAME_STATUS_START;
+			}
+		}
+		else
+		{
 			DoClient();
-            //request_face(0, 1); // flush face request buffer
-        }
-    }
+			//request_face(0, 1); // flush face request buffer
+		}
+	}
 
 	///////////////////////////////////////////////////////////////////////// 
 	// Not connected: walk through connection chain and/or wait for action
 	/////////////////////////////////////////////////////////////////////////
 	if (Option::getSingelton().GameStatus != GAME_STATUS_PLAY)
 	{
+		///////////////////////////////////////////////////////////////////////// 
 		// autoinit or reset prg data
+		///////////////////////////////////////////////////////////////////////// 
 		if (Option::getSingelton().GameStatus == GAME_STATUS_INIT)
 		{
 			clear_metaserver_data();
+			LogFile::getSingelton().Info("GAME_STATUS_INIT\n");
 			Option::getSingelton().GameStatus = GAME_STATUS_META;
 		}
+
+/*
+    if (Option::getSingelton().GameStatus < GAME_STATUS_REQUEST_FILES)
+         show_meta_server(start_server, metaserver_start, metaserver_sel);
+    else if (Option::getSingelton().GameStatus >= GAME_STATUS_REQUEST_FILES && Option::getSingelton().GameStatus < GAME_STATUS_NEW_CHAR)
+        show_login_server();
+    else if (Option::getSingelton().GameStatus == GAME_STATUS_NEW_CHAR)
+         cpl.menustatus = MENU_CREATE;
+*/
+
+
+		///////////////////////////////////////////////////////////////////////// 
 		// connect to meta and get server data
+		///////////////////////////////////////////////////////////////////////// 
 		else if (Option::getSingelton().GameStatus == GAME_STATUS_META)
 		{
 			LogFile::getSingelton().Info("GAME_STATUS_META\n");
 /*
-             if (argServerName[0] != 0)
-            add_metaserver_data(argServerName, argServerPort, -1, "user server",
-                                "Server from -server '...' command line.", "", "", "");
-*/
-/*
+			if (argServerName[0] != 0)
+				add_metaserver_data(argServerName, argServerPort, -1, "user server", "Server from -server '...' command line.", "", "", "");
 			// skip of -nometa in command line or no metaserver set in options 
 			if (options.no_meta || !options.metaserver[0])
-        {
-            draw_info("Option '-nometa'.metaserver ignored.", ColourValue::Green);
-        }
+			{
+				TextWin->Print("Option '-nometa'.metaserver ignored.", ColourValue::Green);
+			}
         else
 */
-        {
-			LogFile::getSingelton().Info("Query MetaServer %s on port %d\n", mMetaServer, mMetaServerPort);
-            TextWin->Print("query metaserver...", ColourValue::Green);
-            sprintf(buf, "trying %s:%d", mMetaServer, mMetaServerPort);
-            TextWin->Print(buf, ColourValue::Green);
-            if (OpenSocket(mMetaServer,mMetaServerPort))
-            {
-                read_metaserver_data();
-                CloseSocket();
-                TextWin->Print("done.", ColourValue::Green);
-            }
-            else
-                TextWin->Print("metaserver failed! using default list.", ColourValue::Green);
-        }
-
-        add_metaserver_data("127.0.0.1", 13327, -1, "local", "localhost. Start server before you try to connect.", "", "", "");
-        count_meta_server();
-        TextWin->Print("select a server.", ColourValue::Green);
-        Option::getSingelton().GameStatus = GAME_STATUS_START;
-    }
-    else if (Option::getSingelton().GameStatus == GAME_STATUS_START)
-    {
-        if (mSocket != SOCKET_NO) { CloseSocket(); }
-        Option::getSingelton().GameStatus = GAME_STATUS_WAITLOOP;
-    }
-    else if (Option::getSingelton().GameStatus == GAME_STATUS_STARTCONNECT)
-    {
-		Dialog::getSingelton().visible(true);
-        Option::getSingelton().GameStatus = GAME_STATUS_CONNECT;
-    }
-    else if (Option::getSingelton().GameStatus == GAME_STATUS_CONNECT)
-    {
-		mGameStatusVersionFlag = false; 
-        if (!OpenSocket(ServerName, ServerPort))
-        {
-            TextWin->Print("connection failed!", ColourValue::Red);
-            Option::getSingelton().GameStatus = GAME_STATUS_START;
-        }
-        Option::getSingelton().GameStatus = GAME_STATUS_VERSION;
-        TextWin->Print("Connected. exchange version.", ColourValue::Green);
+		{
+			LogFile::getSingelton().Info("Query MetaServer %s on port %d\n", 
+				Option::getSingelton().mMetaServer.c_str(), Option::getSingelton().mMetaServerPort);
+			TextWin->Print("query metaserver...", ColourValue::Green);
+			sprintf(buf, "trying %s:%d", Option::getSingelton().mMetaServer.c_str(), Option::getSingelton().mMetaServerPort);
+			TextWin->Print(buf, ColourValue::Green);
+			if (OpenSocket(Option::getSingelton().mMetaServer.c_str(),Option::getSingelton().mMetaServerPort))
+			{
+				read_metaserver_data();
+				CloseSocket();
+				TextWin->Print("done.", ColourValue::Green);
+			}
+			else
+			TextWin->Print("metaserver failed! using default list.", ColourValue::Red);
+		}
+		add_metaserver_data("127.0.0.1", 13327, -1, "local", "localhost. Start server before you try to connect.", "", "", "");
+		TextWin->Print("select a server.", ColourValue::Green);
+		Option::getSingelton().GameStatus = GAME_STATUS_START;
 	}
-    else if (Option::getSingelton().GameStatus == GAME_STATUS_VERSION)
-    {   // Send client version.
-        LogFile::getSingelton().Info("Send Version\n");
-        sprintf(buf, "version %d %d %s", VERSION_CS, VERSION_SC, VERSION_NAME);
-        cs_write_string(buf, strlen(buf)); 
-        Option::getSingelton().GameStatus = GAME_STATUS_WAITVERSION;
-    }
-    else if (Option::getSingelton().GameStatus == GAME_STATUS_WAITVERSION)
-    {
-  LogFile::getSingelton().Info("GAME_STATUS_WAITVERSION\n");
-        // perhaps here should be a timer ???
-        // remember, the version exchange server<->client is asynchron
-        // so perhaps the server send his version faster
-        // as the client send it to server
-        if (mGameStatusVersionFlag) // wait for version answer when needed
-        {
-            // false version!
-            if (!mGameStatusVersionOKFlag)
-            {
-                Option::getSingelton().GameStatus = GAME_STATUS_START;
-    LogFile::getSingelton().Info("GAME_STATUS_START\n");
-            }
-            else
-            {
-               // sprintf(buf, "version confirmed.\nstarting login procedure...");
-               // draw_info(buf, ColourValue::Green);
-                Option::getSingelton().GameStatus = GAME_STATUS_SETUP;
-    LogFile::getSingelton().Info("GAME_STATUS_SETUP\n");
-            }
+
+	///////////////////////////////////////////////////////////////////////// 
+	// Go into standby.
+	///////////////////////////////////////////////////////////////////////// 
+	else if (Option::getSingelton().GameStatus == GAME_STATUS_START)
+	{
+		if (mSocket != SOCKET_NO) { CloseSocket(); }
+		Option::getSingelton().GameStatus = GAME_STATUS_WAITLOOP;
+	}
+
+	///////////////////////////////////////////////////////////////////////// 
+	// Wait for user to select a server.
+	///////////////////////////////////////////////////////////////////////// 
+	else if (Option::getSingelton().GameStatus == GAME_STATUS_WAITLOOP)
+	{
+		Dialog::getSingelton().visible(true);
+		if ((TextInput::getSingleton().startCursorSelection(0, mServerList.size())))
+		{
+			list<mStructServer*>::const_iterator iter = mServerList.begin();
+			for (int i=0 ; iter != mServerList.end(); ++iter)
+			{
+				Dialog::getSingelton().setSelText(i++, (*iter)->nameip.c_str());
+			}
+		}
+		if (TextInput::getSingleton().isCanceled())
+		{
+			TextInput::getSingleton().stop();
+			Dialog::getSingelton().visible(false);
+			Option::getSingelton().mStartNetwork = false;
+			Option::getSingelton().GameStatus = GAME_STATUS_INIT;
+		}
+		else if (TextInput::getSingleton().isFinished())
+		{
+			TextInput::getSingleton().stop();
+			Option::getSingelton().mSelectedMetaServer = TextInput::getSingleton().getSelCursorPos();
+			Option::getSingelton().GameStatus = GAME_STATUS_STARTCONNECT;
         }
- }
-    else if (Option::getSingelton().GameStatus == GAME_STATUS_SETUP)
-    {
-        ServerFile::getSingelton().checkFiles();  
-        sprintf(buf, "setup sound %d map2cmd 1 mapsize %dx%d darkness 1 facecache 1"
-      " skf %d|%x spf %d|%x bpf %d|%x stf %d|%x amf %d|%x", 
-            SoundStatus, MapStatusX, MapStatusY, 
-   ServerFile::getSingelton().getLength(SERVER_FILE_SKILLS),
-   ServerFile::getSingelton().getCRC   (SERVER_FILE_SKILLS),
-   ServerFile::getSingelton().getLength(SERVER_FILE_SPELLS),
-   ServerFile::getSingelton().getCRC   (SERVER_FILE_SPELLS),
-   ServerFile::getSingelton().getLength(SERVER_FILE_BMAPS),
-   ServerFile::getSingelton().getCRC   (SERVER_FILE_BMAPS),
-   ServerFile::getSingelton().getLength(SERVER_FILE_SETTINGS),
-   ServerFile::getSingelton().getCRC   (SERVER_FILE_SETTINGS),
-   ServerFile::getSingelton().getLength(SERVER_FILE_ANIMS),
-   ServerFile::getSingelton().getCRC   (SERVER_FILE_ANIMS));
-        cs_write_string(buf, strlen(buf));
-  buf[strlen(buf)] =0;
+		if (TextInput::getSingleton().getChange())
+			Dialog::getSingelton().UpdateLogin(DIALOG_STAGE_GET_META_SERVER);
+	}
+
+	///////////////////////////////////////////////////////////////////////
+	// Try the selected server.
+	///////////////////////////////////////////////////////////////////////
+	else if (Option::getSingelton().GameStatus == GAME_STATUS_STARTCONNECT)
+	{
+		Option::getSingelton().GameStatus = GAME_STATUS_CONNECT;
+	}
+	else if (Option::getSingelton().GameStatus == GAME_STATUS_CONNECT)
+	{
+		///////////////////////////////////////////////////////////////////////// 
+		// This Server was selected in the dialog-window.
+		///////////////////////////////////////////////////////////////////////// 
+		mGameStatusVersionFlag = false;
+		list<mStructServer*>::const_iterator iter = mServerList.begin();
+		for (unsigned int i=0 ; i < Option::getSingelton().mSelectedMetaServer; ) { ++iter; }
+		if (!OpenSocket((char*)(*iter)->nameip.c_str(), (*iter)->port))
+		{
+			TextWin->Print("connection failed!", ColourValue::Red);
+			Option::getSingelton().GameStatus = GAME_STATUS_START;
+		}
+		Option::getSingelton().GameStatus = GAME_STATUS_VERSION;
+		TextWin->Print("Connected. exchange version.", ColourValue::Green);
+	}
+	else if (Option::getSingelton().GameStatus == GAME_STATUS_VERSION)
+	{   // Send client version.
+		LogFile::getSingelton().Info("Send Version\n");
+		sprintf(buf, "version %d %d %s", VERSION_CS, VERSION_SC, VERSION_NAME);
+		cs_write_string(buf, strlen(buf)); 
+		Option::getSingelton().GameStatus = GAME_STATUS_WAITVERSION;
+	}
+	else if (Option::getSingelton().GameStatus == GAME_STATUS_WAITVERSION)
+	{
+		LogFile::getSingelton().Info("GAME_STATUS_WAITVERSION\n");
+		// perhaps here should be a timer ???
+		// remember, the version exchange server<->client is asynchron so perhaps
+		// the server send his version faster as the client send it to server.
+		if (mGameStatusVersionFlag) // wait for version answer when needed
+		{
+			// false version!
+			if (!mGameStatusVersionOKFlag)
+			{
+				Option::getSingelton().GameStatus = GAME_STATUS_START;
+				LogFile::getSingelton().Info("GAME_STATUS_START\n");
+			}
+			else
+			{
+				TextWin->Print("version confirmed.", ColourValue::Green);
+				TextWin->Print("starting login procedure...", ColourValue::Green);
+				Option::getSingelton().GameStatus = GAME_STATUS_SETUP;
+				LogFile::getSingelton().Info("GAME_STATUS_SETUP\n");
+			}
+		}
+	}
+	else if (Option::getSingelton().GameStatus == GAME_STATUS_SETUP)
+	{
+		ServerFile::getSingelton().checkFiles();  
+		sprintf(buf, "setup sound %d map2cmd 1 mapsize %dx%d darkness 1 facecache 1"
+			" skf %d|%x spf %d|%x bpf %d|%x stf %d|%x amf %d|%x", 
+			SoundStatus, MapStatusX, MapStatusY, 
+			ServerFile::getSingelton().getLength(SERVER_FILE_SKILLS),
+			ServerFile::getSingelton().getCRC   (SERVER_FILE_SKILLS),
+			ServerFile::getSingelton().getLength(SERVER_FILE_SPELLS),
+			ServerFile::getSingelton().getCRC   (SERVER_FILE_SPELLS),
+			ServerFile::getSingelton().getLength(SERVER_FILE_BMAPS),
+			ServerFile::getSingelton().getCRC   (SERVER_FILE_BMAPS),
+			ServerFile::getSingelton().getLength(SERVER_FILE_SETTINGS),
+			ServerFile::getSingelton().getCRC   (SERVER_FILE_SETTINGS),
+			ServerFile::getSingelton().getLength(SERVER_FILE_ANIMS),
+			ServerFile::getSingelton().getCRC   (SERVER_FILE_ANIMS));
+		cs_write_string(buf, strlen(buf));
+		buf[strlen(buf)] =0;
 		LogFile::getSingelton().Info("Send: setup %s\n", buf);
-        mRequest_file_chain = 0;
-        mRequest_file_flags = 0;
-        Option::getSingelton().GameStatus = GAME_STATUS_WAITSETUP;
-    }
-    else if (Option::getSingelton().GameStatus == GAME_STATUS_REQUEST_FILES)
-    {
+		mRequest_file_chain = 0;
+		mRequest_file_flags = 0;
+		Option::getSingelton().GameStatus = GAME_STATUS_WAITSETUP;
+	}
+	else if (Option::getSingelton().GameStatus == GAME_STATUS_REQUEST_FILES)
+	{
 		LogFile::getSingelton().Info("GAME_STATUS_REQUEST FILES (%d)\n", mRequest_file_chain);
         if (mRequest_file_chain == 0) // check setting list
         {
@@ -423,7 +456,7 @@ void Network::Update()
     else if (Option::getSingelton().GameStatus == GAME_STATUS_LOGIN)
     {
         // map_transfer_flag = 0;
-		TextInput::getSingleton().start(1); // every start() needs a stop()!
+		TextInput::getSingleton().startTextInput(1); // every start() needs a stop()!
         if (TextInput::getSingleton().isCanceled())
         {
             TextWin->Print("Break Login.", ColourValue::Red);
@@ -440,11 +473,9 @@ void Network::Update()
 		{
 			Option::getSingelton().GameStatus = GAME_STATUS_LOGIN;
 		}
-        else if (TextInput::getSingleton().isFinished())
-        {
+		else if (TextInput::getSingleton().isFinished())
+		{
             //strcpy(cpl.name, InputString);
-			TextWin->Print("Login: send name:");
-			TextWin->Print(TextInput::getSingleton().getString());
             send_reply((char*)TextInput::getSingleton().getString());
             Dialog::getSingelton().setWarning(DIALOG_WARNING_NONE);
 			Option::getSingelton().GameStatus = GAME_STATUS_LOGIN;
@@ -462,8 +493,6 @@ void Network::Update()
         else if (TextInput::getSingleton().isFinished())
         {
             // strncpy(cpl.password, InputString, 39);
-			TextWin->Print("Login: send password:");
-			TextWin->Print("<*****>");
             send_reply((char*)TextInput::getSingleton().getString());
             Dialog::getSingelton().setWarning(DIALOG_WARNING_NONE);
             Option::getSingelton().GameStatus = GAME_STATUS_LOGIN;
@@ -492,26 +521,17 @@ void Network::Update()
         map_udate_flag = 2;
         map_transfer_flag = 1;
 		*/
-    }
-    else if (Option::getSingelton().GameStatus == GAME_STATUS_NEW_CHAR)
-    {
-        // map_transfer_flag = 0;
-    }
-    else if (Option::getSingelton().GameStatus == GAME_STATUS_QUIT)
-    {
-        // map_transfer_flag = 0;
-    }
-    return;
-
-    }
-/*
-    if (Option::getSingelton().GameStatus < GAME_STATUS_REQUEST_FILES)
-         show_meta_server(start_server, metaserver_start, metaserver_sel);
-    else if (Option::getSingelton().GameStatus >= GAME_STATUS_REQUEST_FILES && Option::getSingelton().GameStatus < GAME_STATUS_NEW_CHAR)
-        show_login_server();
-    else if (Option::getSingelton().GameStatus == GAME_STATUS_NEW_CHAR)
-         cpl.menustatus = MENU_CREATE;
-*/
+		}
+		else if (Option::getSingelton().GameStatus == GAME_STATUS_NEW_CHAR)
+		{
+			// map_transfer_flag = 0;
+		}
+		else if (Option::getSingelton().GameStatus == GAME_STATUS_QUIT)
+		{
+			// map_transfer_flag = 0;
+		}
+		return;
+	}
 }
 
 
@@ -521,33 +541,23 @@ void Network::Update()
 // ========================================================================
 bool Network::Init()
 {
-    LogFile::getSingelton().Headline("Init Network");
-
-    LogFile::getSingelton().Info("init socket...");
-    if (!InitSocket())
-	{ 
+	LogFile::getSingelton().Headline("Init Network");
+	LogFile::getSingelton().Info("init socket...");
+	if (!InitSocket())
+	{
 		LogFile::getSingelton().Success(false);
 		return false;
 	}
-    LogFile::getSingelton().Success(true);
-/*
-    LogFile::getSingelton().Info("Try to read data from server...\n");
-    if (!GetServerData())
-	{ 
-		LogFile::getSingelton().Success(false);
-		return false;
-	}
-*/
-    return true;
+	LogFile::getSingelton().Success(true);
+	return true;
 }
 
-
 // =====================================================================
-// 
+// Check for Winsock.
 // =====================================================================
 inline bool Network::InitSocket()
 {
-#ifdef WIN32
+	#ifdef WIN32
     int error;
     mSocket = SOCKET_NO;
     mCs_version = 0;
@@ -556,7 +566,7 @@ inline bool Network::InitSocket()
     error = WSAStartup(0x0101, &w);
     if (error)
     {
-        LogFile::getSingelton().Error("Init Winsockfaild: %d\n", error);
+        LogFile::getSingelton().Error("Init Winsock failed: %d\n", error);
         return false;
     }
     if (w.wVersion != 0x0101)
@@ -567,65 +577,6 @@ inline bool Network::InitSocket()
 	#endif
 	return true;
 }
-
-
-// ========================================================================
-// connect to meta and get server data.
-// ========================================================================
-inline bool Network::GetServerData()
-{
-/*
-    if (argServerName[0] != 0)
-	{
-        add_metaserver_data(argServerName, argServerPort, -1, "user server",
-                                "Server from -server '...' command line.", "", "", "");
-    }
-    // skip of -nometa in command line or no metaserver set in options.
-    if (options.no_meta || !options.metaserver[0])
-	{
-        draw_info("Option '-nometa'.metaserver ignored.", ColourValue::Green);
-	}
-    else
-	{
-        draw_info("query metaserver...", ColourValue::Green);
-        sprintf(buf, "trying %s:%d", options.metaserver, options.metaserver_port);
-        draw_info(buf, ColourValue::Green);
-        if (SOCKET_OpenSocket(&csocket.fd, &csocket, options.metaserver, options.metaserver_port))
-		{
-            read_metaserver_data();
-            SOCKET_CloseSocket(csocket.fd);
-            draw_info("done.", ColourValue::Green);
-		}
-        else { draw_info("metaserver failed! using default list.", ColourValue::Green); }
-	}
-    add_metaserver_data("127.0.0.1", 13327, -1, "local", 
-		"localhost. Start server before you try to connect.", "", "", "");
-    count_meta_server();
-    draw_info("select a server.", ColourValue::Green);
-*/
-   
-  if (OpenSocket(ServerName, ServerPort))  // only testing..
-//if (OpenSocket(Option::getSingelton().mMetaServer, Option::getSingelton().mMetaServerPort))
-   {
-       read_metaserver_data();
-       CloseSocket();
-   }
-
-    if (OpenSocket(ServerName, ServerPort))
-    {
-      //  sprintf(buf, "connection failed!");
-      ///  draw_info(buf, COLOR_RED);
-      //  Option::getSingelton().GameStatus = GAME_STATUS_START;
-     }
-     //   Option::getSingelton().GameStatus = GAME_STATUS_VERSION;
-     //   sprintf(buf, "connected. exchange version.");
-     //   draw_info(buf, ColourValue::Green);
-    
-    
-   return true;
-}
-
-
 
 // ========================================================================
 // Open a scoket to "host" on "port"
@@ -651,9 +602,9 @@ inline bool Network::OpenSocket(const char *host, int port)
         }
         memcpy(&mInsock.sin_addr, mHostbn->h_addr, mHostbn->h_length);
     }
+    mCommand_time = 0;
     mCommand_sent = 0;
     mCommand_received = 0;
-    mCommand_time = 0;
 
 	#ifdef WIN32
 	// The way to make the sockets work on XP Home - The 'unix' style socket seems to fail inder xp home.
@@ -713,9 +664,9 @@ inline bool Network::OpenSocket(const char *host, int port)
 	}
 	#endif
 
-	/////////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////
 	// we got a connect here!
-	/////////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////
 	int oldbufsize;
 	int newbufsize = 65535, buflen = sizeof(int); 
 	#ifdef WIN32
@@ -744,17 +695,17 @@ inline bool Network::OpenSocket(const char *host, int port)
 // ========================================================================
 bool Network::CloseSocket()
 {
-    if (mSocket == SOCKET_NO) { return true; }
-    #ifdef WIN32
-    // seems differents sockets have different way to shutdown connects??
-    // win32 needs this hard way, normally you should wait for a read() == 0...
-    shutdown(mSocket, SD_BOTH);
-    closesocket(mSocket); 
-    #else
-    close(mSocket);
-    #endif
-    mSocket = SOCKET_NO; 
-    return true;
+	if (mSocket == SOCKET_NO) { return true; }
+	#ifdef WIN32
+	// seems differents sockets have different way to shutdown connects??
+	// win32 needs this hard way, normally you should wait for a read() == 0...
+	shutdown(mSocket, SD_BOTH);
+	closesocket(mSocket); 
+	#else
+	close(mSocket);
+	#endif
+	mSocket = SOCKET_NO; 
+	return true;
 }
 
 // ========================================================================
@@ -762,43 +713,71 @@ bool Network::CloseSocket()
 // ========================================================================
 void Network::read_metaserver_data()
 {
-    int stat, temp =0;
-    char *ptr = new char[MAX_METASTRING_BUFFER];
-    char *buf = new char[MAX_METASTRING_BUFFER];
+	int stat;
+	char buffer[MAX_METASTRING_BUFFER];
+	string strMetaData ="";
+	while(1)
+	{
+		#ifdef WIN32
+		stat = recv (mSocket, buffer, MAX_METASTRING_BUFFER, 0);
+		if ((stat==-1) && WSAGetLastError() !=WSAEWOULDBLOCK)
+		{
+			LogFile::getSingelton().Error("Error reading metaserver data!: %d\n", WSAGetLastError());
+			break;
+		}
+		#else
+		do {stat = recv (mSocket, buffer, MAX_METASTRING_BUFFER, 0); }
+		while (stat == -1);
+		#endif
+		if(stat == 0)	{ break; } // connect closed by meta
+		if(stat > 0)		{ strMetaData += buffer; }
+	}
 
-    while (1)
-    {
-  stat = recv(mSocket, ptr, MAX_METASTRING_BUFFER, 0);
-     if (stat <= 0) 
-        {
-   #ifdef WIN32
-   if (WSAGetLastError() != WSAEWOULDBLOCK)
-    LogFile::getSingelton().Error("Error reading metaserver data!: %d\n", WSAGetLastError());
-   #else
-   LogFile::getSingelton().Error("Error reading metaserver data!:\n");
-   #endif
-            break;
-        }
-        else if (stat > 0)
-        {
-            if (temp + stat >= MAX_METASTRING_BUFFER)
-            {
-                memcpy(buf + temp, ptr, temp + stat - MAX_METASTRING_BUFFER - 1);
-                temp += stat;
-                break;
-            }
-            memcpy(buf + temp, ptr, stat);
-            temp += stat;
-        }
-    }
-    buf[temp] = 0;
- LogFile::getSingelton().Info("Get: %d bytes:\n", temp);
-    //parse_metaserver_data(buf);
+	/////////////////////////////////////////////////////////////////////////////////////////
+	// Parse the metadata.
+	/////////////////////////////////////////////////////////////////////////////////////////
+	LogFile::getSingelton().Info("GET: %s\n", strMetaData.c_str());
+	unsigned int startPos=0, endPos;
+	string strIP, str1, strName, strPlayer, strVersion, strDesc1, strDesc2, strDesc3, strDesc4;
+	// Server IP.
+	endPos = strMetaData.find( '|',  startPos);
+	strIP = strMetaData.substr(startPos, endPos-startPos);
+	startPos = endPos+1;
+	// unknown 1.
+	endPos = strMetaData.find( '|',  startPos);
+	str1 = strMetaData.substr(startPos, endPos-startPos);
+	startPos = endPos+1;
+	// Server name.
+	endPos = strMetaData.find( '|',  startPos);
+	strName = strMetaData.substr(startPos, endPos-startPos);
+	startPos = endPos+1;
+	// Number of players online.
+	endPos = strMetaData.find( '|',  startPos);
+	strPlayer = strMetaData.substr(startPos, endPos-startPos);
+	startPos = endPos+1;
+	// Server version.
+	endPos = strMetaData.find( '|',  startPos);
+	strVersion = strMetaData.substr(startPos, endPos-startPos);
+	startPos = endPos+1;
+	// Description1
+	endPos = strMetaData.find( '|',  startPos);
+	strDesc1 = strMetaData.substr(startPos, endPos-startPos);
+	startPos = endPos+1;
+	// Description2.
+	endPos = strMetaData.find( '|',  startPos);
+	strDesc2 = strMetaData.substr(startPos, endPos-startPos);
+	startPos = endPos+1;
+	// Description3.
+	endPos = strMetaData.find( '|',  startPos);
+	strDesc3 = strMetaData.substr(startPos, endPos-startPos);
+	startPos = endPos+1;
+	// Description4.
+	strDesc4 = strMetaData.substr(startPos, strMetaData.size()-startPos);
 
-    delete[] ptr;
- delete[] buf;
+	const int port = 13327;
+	add_metaserver_data(strIP.c_str(), port, atoi(strPlayer.c_str()), strVersion.c_str(),
+		strDesc1.c_str(),  strDesc2.c_str(),  strDesc3.c_str(),  strDesc4.c_str());
 }
-
 
 // ========================================================================
 // Takes a string of data, and writes it out to the socket. A very handy
@@ -810,8 +789,11 @@ int Network::cs_write_string(char *buf, int len)
 	sl.len = len;
 	sl.buf = (unsigned char *) buf;
 	return send_socklist(sl);
-} 
+}
 
+// ========================================================================
+//
+// ========================================================================
 int Network::send_socklist(SockList &msg)
 {
 	unsigned char sbuf[2];
@@ -821,7 +803,6 @@ int Network::send_socklist(SockList &msg)
 	return write_socket(msg.buf, msg.len);
 }
 
-
 // ========================================================================
 // Write socket.
 // ========================================================================
@@ -830,8 +811,7 @@ int Network::write_socket(unsigned char *buf, int len)
 	int amt = 0;
 	unsigned char *pos = buf;
 
-	LogFile::getSingelton().Error("write socket befehl: %s %d\n",  buf, len);
-	
+	//LogFile::getSingelton().Error("write socket befehl: %s %d\n",  buf, len);
 	// If we manage to write more than we wanted, take it as a bonus
 	while (len > 0)
 	{
@@ -870,55 +850,52 @@ int Network::write_socket(unsigned char *buf, int len)
 // ========================================================================
 void Network::DoClient()
 {
-    const int OFFSET = 3;  // 2 byte package len + 1 byte binary cmd.
-    int             pollret;
-    struct timeval  timeout;
-    fd_set          tmp_read, tmp_write, tmp_exceptions;
+	const int OFFSET = 3;  // 2 byte package len + 1 byte binary cmd.
+	int             pollret;
+	struct timeval  timeout;
+	fd_set tmp_read, tmp_write, tmp_exceptions;
 
+	FD_ZERO(&tmp_read);
+	FD_ZERO(&tmp_write);
+	FD_ZERO(&tmp_exceptions);
+	FD_SET((unsigned int) mSocket, &tmp_exceptions);
+	FD_SET((unsigned int) mSocket, &tmp_read);
+	FD_SET((unsigned int) mSocket, &tmp_write);
+	timeout.tv_sec = 0;
+	timeout.tv_usec = 0;
 
-    FD_ZERO(&tmp_read);
-    FD_ZERO(&tmp_write);
-    FD_ZERO(&tmp_exceptions);
-
-    FD_SET((unsigned int) mSocket, &tmp_exceptions);
-    FD_SET((unsigned int) mSocket, &tmp_read);
-    FD_SET((unsigned int) mSocket, &tmp_write);
-
-    timeout.tv_sec = 0;
-    timeout.tv_usec = 0;
-
-    if ((pollret = select(mSocket+ 1, &tmp_read, &tmp_write, &tmp_exceptions, &timeout)) == -1)
+	if ((pollret = select(mSocket+ 1, &tmp_read, &tmp_write, &tmp_exceptions, &timeout)) == -1)
 	{
-        LogFile::getSingelton().Error("Got on selectcall.\n");
-        return;
-    }
-    if (!FD_ISSET(mSocket, &tmp_read))
+		LogFile::getSingelton().Error("Got on selectcall.\n");
+		return;
+	}
+	if (!FD_ISSET(mSocket, &tmp_read))
 	{
 		return;
 	}
 	int i = read_socket();
-    if (i <= 0)
+	if (i <= 0)
 	{   // Need to add some better logic here
-        if (i < 0)
+		if (i < 0)
 		{
-            LogFile::getSingelton().Error("Got error on read socket.");
-            CloseSocket();
+			LogFile::getSingelton().Error("Got error on read socket.");
+			CloseSocket();
 		}
 		return; // Still don't have a full packet
 	}
-    switch (mInbuf.buf[2])
+	switch (mInbuf.buf[2])
 	{
-    	case  1: // BINARY_CMD_COMC
-            #ifdef DEBUG_ON
+		case  1: // BINARY_CMD_COMC
+			#ifdef DEBUG_ON
 			LogFile::getSingelton().Info("command: BINARY_CMD_COMC (%d)\n", mInbuf.buf[2]); 
-            #endif
-         //   CompleteCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+			#endif
+			// CompleteCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case  2: // BINARY_CMD_MAP2
-            #ifdef DEBUG_ON
+			#ifdef DEBUG_ON
 			LogFile::getSingelton().Info("command: BINARY_CMD_MAP2 (%d)\n", mInbuf.buf[2]); 
-            #endif
-         //             Map2Cmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+			#endif
+			// Map2Cmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case  3: // BINARY_CMD_DRAWINFO
             #ifdef DEBUG_ON
