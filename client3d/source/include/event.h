@@ -34,13 +34,15 @@ http://www.gnu.org/copyleft/lesser.txt.
 
 using namespace Ogre;
 
+enum { LIGHT_VOL, LIGHT_SPOT };
 
 class Event: public FrameListener, public KeyListener, public MouseMotionListener, public MouseListener
 {
   public:
     SceneNode *World;
 
-	void setResolution(int SreenWidth, int SreenHeight)
+	void setLightMember(Light *light, int nr) { mLight[nr] = light;}
+	void setResolutionMember(int SreenWidth, int SreenHeight)
 	{ 
 	    mSreenHeight = SreenHeight;
 		mSreenWidth  = SreenWidth;
@@ -67,14 +69,17 @@ class Event: public FrameListener, public KeyListener, public MouseMotionListene
     Vector3 mTranslateVector;
     RenderWindow* mWindow;
     Camera* mCamera;
+    Light *mSpotLight, *mVolLight;
     int mSreenHeight, mSreenWidth;
     Real mMouseX, mMouseY;
     Real mTimeUntilNextToggle; // just to stop toggles flipping too fast
     TextureFilterOptions mFiltering;
     int mAniso;
-    bool mQuitGame;    
+    bool mQuitGame;
+    Light *mLight[2];
+    int mDayTime;
 
-    ///////////////////////////////////////////////////////////////////////// 
+	/////////////////////////////////////////////////////////////////////////
     // Frame Events.
 	/////////////////////////////////////////////////////////////////////////
     bool frameStarted(const FrameEvent& evt);
