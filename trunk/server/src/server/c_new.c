@@ -627,7 +627,7 @@ void command_new_char(char *params, int len,player *pl)
 	char name[HUGE_BUF]="";
 	char buf[HUGE_BUF]="";
 
-	if(CONTR(op)->state!=ST_ROLL_STAT)
+	if(CONTR(op)->state!=ST_CREATE_CHAR)
 	{
 		LOG(llevDebug,"SHACK:: %s: command_new_char send at from time\n", query_name(pl->ob));
 		pl->socket.status = Ns_Dead; /* killl socket */

@@ -960,7 +960,6 @@ int command_check_fd(object *op, char *params)
 #endif
 		}
 	}
-	new_draw_info(NDI_UNIQUE, 0, op, "DM mode deactivated.");
 	return 1;
 }
 

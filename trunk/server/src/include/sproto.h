@@ -361,8 +361,8 @@ void init_level_color_table(void);
 /* login.c */
 void emergency_save(int flag);
 void delete_character(const char *name, int new);
-int verify_player(char *name, char *password);
 int check_name(player *me, char *name);
+int check_password(char *typed, char *crypted);
 int create_savedir_if_needed(char *savedir);
 int save_player(object *op, int flag);
 long calculate_checksum(char *filename, int checkdouble);
@@ -372,7 +372,6 @@ void check_login(object *op);
 void version(object *op);
 void start_info(object *op);
 char *crypt_string(char *str, char *salt);
-int check_password(char *typed, char *crypted);
 void enter_player_savebed(object *op);
 void leave_map(object *op);
 void set_map_timeout(mapstruct *oldmap);

@@ -155,10 +155,6 @@ char *crypt_string(char *str, char *salt) {
   return(str);
 }
 
-int check_password(char *typed,char *crypted) {
-  return !strcmp(crypt_string(typed,crypted),crypted);
-}
-
 /* This is a basic little function to put the player back to his
  * savebed.  We do some error checking - its possible that the
  * savebed map may no longer exist, so we make sure the player

@@ -132,6 +132,7 @@ void InitConnection(NewSocket *ns, uint32 from)
 	ns->cmdbuf.len=0;
     ns->cmdbuf.buf=malloc(MAXSOCKBUF);
     ns->cmdbuf.buf[0] = 0;
+	ns->ip = from;
 	
 	memset(&ns->lastmap,0,sizeof(struct Map));
     /*memset(&ns->stats,0,sizeof(struct statsinfo));*/
@@ -297,21 +298,29 @@ void free_all_newserver()
  * update the list
  */
 
-void free_newsocket(NewSocket *ns)
+void close_newsocket(NewSocket *ns)
 {
-	LOG(llevDebug,"Closing socket %d\n", ns->fd);
 #ifdef WIN32
 	shutdown(ns->fd,SD_BOTH);
-    if (closesocket(ns->fd)) {
+    if (closesocket(ns->fd)) 
+	{
 #else
-	if (close(ns->fd)) {
+	if (close(ns->fd))
+	{
 #endif
-
+			
 #ifdef ESRV_DEBUG
 		LOG(llevDebug,"Error closing socket %d\n", ns->fd);
 #endif
-    }
+	}
+}
 
+void free_newsocket(NewSocket *ns)
+{
+	LOG(llevDebug,"Closing socket %d\n", ns->fd);
+
+	close_newsocket(ns);
+		
 	if(ns->host)
 	    free(ns->host);
     if(ns->inbuf.buf);

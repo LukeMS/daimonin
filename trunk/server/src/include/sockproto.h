@@ -16,6 +16,7 @@ void new_info_map_except(int color, mapstruct *map, int x, int y, int dist, obje
 void InitConnection(NewSocket *ns, uint32 from);
 void init_ericserver(void);
 void free_all_newserver(void);
+void close_newsocket(NewSocket *ns);
 void free_newsocket(NewSocket *ns);
 void final_free_player(player *pl);
 void init_srv_files(void);
@@ -38,6 +39,7 @@ void look_at(object *op, int dx, int dy);
 void LookAt(char *buf, int len, player *pl);
 void esrv_move_object(object *pl, tag_t to, tag_t tag, long nrof);
 /* loop.c */
+void remove_ns_dead_player(player *pl);
 void RequestInfo(char *buf, int len, NewSocket *ns);
 void HandleClient(NewSocket *ns, player *pl);
 void doeric_server(int update_client);
