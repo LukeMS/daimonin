@@ -100,7 +100,10 @@ f_plugin HookList[NR_OF_HOOKS] =
     CFWCreateObject,
     CFWShowCost,
     CFWDeposit,
-    CFWWithdraw
+    CFWWithdraw,
+	CFTransferMapItems,
+	CFMapSave,
+	CFMapDelete
 };
 
 #endif /*PLUGPROTO_H_*/

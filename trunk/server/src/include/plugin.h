@@ -215,8 +215,11 @@
 #define HOOK_SHOWCOST            71
 #define HOOK_DEPOSIT             72
 #define HOOK_WITHDRAW            73
+#define HOOK_MAPTRANSERITEMS     74
+#define HOOK_MAPSAVE			 75
+#define HOOK_MAPDELETE			 76
 
-#define NR_OF_HOOKS              74
+#define NR_OF_HOOKS              77
 
 /*****************************************************************************/
 /* CFParm is the data type used to pass informations between the server and  */

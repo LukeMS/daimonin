@@ -573,6 +573,10 @@ CFParm *UnregisterGlobalEvent(CFParm *PParm);
 void GlobalEvent(CFParm *PParm);
 CFParm *CFWPlaySoundMap(CFParm *PParm);
 CFParm *CFWCreateObject(CFParm *PParm);
+CFParm* CFTransferMapItems(CFParm* PParm);
+CFParm* CFMapSave(CFParm* PParm);
+CFParm* CFMapDelete(CFParm* PParm);
+
 /* resurrection.c */
 void dead_player(object *op);
 int cast_raise_dead_spell(object *op, int dir, int spell_type, object *corpseobj);

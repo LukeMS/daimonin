@@ -89,6 +89,8 @@ CFParm GCFP1;
 CFParm GCFP2;
 
 /* Daimonin methods */
+static PyObject* Daimonin_FileUnlink(PyObject *self, PyObject* args);
+static PyObject* Daimonin_TransferMapItems(PyObject* self, PyObject* args);
 static PyObject* Daimonin_MatchString(PyObject* self, PyObject* args);
 static PyObject* Daimonin_ReadyMap(PyObject* self, PyObject* args);
 static PyObject* Daimonin_FindPlayer(PyObject* self, PyObject* args);
@@ -127,6 +129,8 @@ char* StackOptions[MAX_RECURSIVE_CALL];
 /* an interface with the C code                                              */
 static PyMethodDef DaimoninMethods[] =
 {
+    {"FileUnlink", Daimonin_FileUnlink,METH_VARARGS},
+    {"TransferMapItems", Daimonin_TransferMapItems,METH_VARARGS},
     {"LoadObject", Daimonin_LoadObject,METH_VARARGS},
     {"ReadyMap", Daimonin_ReadyMap, METH_VARARGS},
     {"CheckMap",Daimonin_CheckMap,METH_VARARGS},
@@ -184,6 +188,53 @@ static int RunPythonScript(const char *path);
 /* FUNCTIONSTART -- Here all the Python plugin functions come */
 
 /*****************************************************************************/
+/* Name   : Daimonin_FileUnlink(path)                                        */
+/* Python : FileUnlink(path)                                                 */
+/* Info   : Unlink the file (delete is physically).                          */
+/* Status : Stable                                                           */
+/*****************************************************************************/
+static PyObject* Daimonin_FileUnlink(PyObject *self, PyObject* args)
+{
+	char *fname;
+
+    if (!PyArg_ParseTuple(args,"s", &fname))
+        return NULL;
+
+	unlink(fname);
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+	
+/*****************************************************************************/
+/* Name   : Daimonin_TransferMapItems                                        */
+/* Python : TranserMapItems(map_old, map_new, x, y)                          */
+/* Info   : Transfer all items with "no_pick 0" setting from map_old         */
+/*          to position x,y on map new.                                      */
+/* Status : Stable                                                           */
+/*****************************************************************************/
+static PyObject* Daimonin_TransferMapItems(PyObject *self, PyObject* args)
+{
+    Daimonin_Map *map_new, *map_old;
+    int x,y;
+    
+    if (!PyArg_ParseTuple(args,"O!O!ll", &Daimonin_MapType, &map_old, &Daimonin_MapType, &map_new, &x, &y))
+        return NULL;
+	
+    
+	GCFP.Value[0] = (void *)(map_old->map);
+	GCFP.Value[1] = (void *)(map_new->map);
+    GCFP.Value[2] = (void *)(&x);
+    GCFP.Value[3] = (void *)(&y);
+
+    (PlugHooks[HOOK_MAPTRANSERITEMS])(&GCFP);
+	
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+
+/*****************************************************************************/
 /* Name   : Daimonin_LoadObject                                              */
 /* Python : Daimonin.LoadObject(string)                                      */
 /* Status : Untested                                                         */
@@ -231,34 +282,41 @@ static PyObject* Daimonin_MatchString(PyObject* self, PyObject* args)
 /* Python : Daimonin.ReadyMap(name, unique)                                  */
 /* Info   : Make sure the named map is loaded into memory. unique _must_ be  */
 /*          1 if the map is unique (f_unique = 1).                           */
+/*          IF flags | 1, the map path is already the right unique one.      */
+/*          If flags | 2, the map path is original and must be changed .     */
+/*          If flags | 4  *unique maps only* unique map gets DELETED  and    */
+/*                        fresh reloaded!                                    */
 /*          Default value for unique is 0                                    */
 /* Status : Stable                                                           */
-/* TODO   : Don't crash if unique is wrong                                   */
 /*****************************************************************************/
 
 static PyObject* Daimonin_ReadyMap(PyObject* self, PyObject* args)
 {
     char *mapname;
     mapstruct *mymap;
-    int flags = 0, unique = 0;
+	Daimonin_Object *obptr=NULL;
+    int flags = 0;
     CFParm* CFR;
-    if (!PyArg_ParseTuple(args,"s|i",&mapname, &unique))
+    if (!PyArg_ParseTuple(args,"si|O!",&mapname, &flags,&Daimonin_ObjectType, &obptr))
         return NULL;
 
-    if(unique)
-        flags = MAP_PLAYER_UNIQUE;
     GCFP.Value[0] = (void *)(mapname);
     GCFP.Value[1] = (void *)(&flags);
+	GCFP.Value[2] = NULL;
+	if(obptr)
+	    GCFP.Value[2] = (void *)(obptr->obj);
 
-    LOG(llevDebug, "Ready to call readymapname with %s %i\n",
+	/*
+    LOG(llevDebug, "Ready to call readymapname with %s %i (%x) (%s)\n",
         (char *)(GCFP.Value[0]),
-        *(int *)(GCFP.Value[1])
+        *(int *)(GCFP.Value[1]),
+        (object *)(GCFP.Value[2]), query_name(obptr->obj)
     );
-    /* mymap = ready_map_name(mapname,0); */
+	*/
     CFR = (PlugHooks[HOOK_READYMAPNAME])(&GCFP);
     mymap = (mapstruct *)(CFR->Value[0]);
-    if(mymap != NULL)
-        LOG(llevDebug, "Map file is %s\n",mymap->path);
+        
+	/*LOG(llevDebug, "Map file is %s\n",mymap?mymap->path*"NULL");*/
     free(CFR);
     return wrap_map(mymap);
 }
