@@ -116,7 +116,7 @@ int attempt_steal(object* op, object* who)
 	 * already  -b.t. 
 	 */
 
-	if (QUERY_FLAG(tmp,FLAG_WAS_WIZ) || QUERY_FLAG(tmp, FLAG_APPLIED) 
+	if (QUERY_FLAG(tmp,FLAG_WIZ) || QUERY_FLAG(tmp, FLAG_APPLIED) 
 	    || !(tmp->type)
 	    || tmp->type == EXPERIENCE || tmp->type == ABILITY
 	    || QUERY_FLAG(tmp,FLAG_STARTEQUIP)

@@ -32,9 +32,6 @@
 
 #define ARCHTABLE 10007	/* Used when hashing archetypes */
 static archetype *arch_table[ARCHTABLE];
-int arch_cmp=0;		/* How many strcmp's */
-int arch_search=0;	/* How many searches */
-int arch_init;		/* True if doing arch initialization */
 
 /**
  * GROS -  This function retrieves an archetype given the name that appears

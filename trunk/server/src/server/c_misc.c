@@ -122,10 +122,9 @@ static int count_active() {
 
 
 void malloc_info(object *op) {
-  int players,nrofmaps;
+  int nrofmaps, fd;
   int nrm=0,mapmem=0,anr,anims,sum_alloc=0,sum_used=0,i,j,tlnr, alnr;
   treasurelist *tl;
-  player *pl;
   mapstruct *m;
   archetype *at;
   artifactlist *al;
@@ -139,72 +138,119 @@ void malloc_info(object *op) {
   for (i=1; i<num_animations; i++)
     anims += animations[i].num_animations;
 
-  for(pl=first_player,players=0;pl!=NULL;pl=pl->next,players++);
   for(m=first_map,nrofmaps=0;m!=NULL;m=m->next,nrofmaps++)
 	if(m->in_memory == MAP_IN_MEMORY) {
 	    mapmem+=MAP_WIDTH(m)*MAP_HEIGHT(m)*(sizeof(object *)+sizeof(MapSpace));
 	    nrm++;
 	}
-  sprintf(errmsg,"Sizeof: object=%ld  player=%ld  map=%ld",
-          (long)sizeof(object),(long)sizeof(player),(long)sizeof(mapstruct));
+  sprintf(errmsg,"Sizeof: object=%ld  player=%ld  socketbuf=%ld  map=%ld",
+          (long)sizeof(object),(long)(sizeof(player)+MAXSOCKBUF_IN*2+MAXSOCKBUF),
+		  MAXSOCKBUF,(long)sizeof(mapstruct));
   new_draw_info(NDI_UNIQUE, 0,op,errmsg);
-
+  LOG(llevSystem,"%s\n",errmsg);
+  
   for(j=0; j<NROF_MEMPOOLS; j++) {
       int ob_used=mempools[j].nrof_used,ob_free=mempools[j].nrof_free;
       sprintf(errmsg,"%4d used %s:    %8d",ob_used,mempools[j].chunk_description, 
               i=(ob_used*(mempools[j].chunksize + sizeof(struct mempool_chunk))));
       new_draw_info(NDI_UNIQUE, 0,op,errmsg);
+	  LOG(llevSystem,"%s\n",errmsg);
       sum_used+=i;  sum_alloc+=i;
       
       sprintf(errmsg,"%4d free %s:    %8d",ob_free,mempools[j].chunk_description, 
               i=(ob_free*(mempools[j].chunksize + sizeof(struct mempool_chunk))));
       new_draw_info(NDI_UNIQUE, 0,op,errmsg);
+	  LOG(llevSystem,"%s\n",errmsg);
       sum_alloc+=i;
   }
   
   sprintf(errmsg,"%4d active objects",count_active());
   new_draw_info(NDI_UNIQUE, 0,op,errmsg);
-
-  sprintf(errmsg,"%4d maps allocated:  %8d",nrofmaps,
+  LOG(llevSystem,"%s\n",errmsg);
+  
+  sprintf(errmsg,"%4d player(s) using buffers: %d",player_active, 
+	  i=(player_active *(MAXSOCKBUF_IN*2+MAXSOCKBUF*2)));
+  new_draw_info(NDI_UNIQUE, 0,op,errmsg);
+  sum_alloc+=i;
+  LOG(llevSystem,"%s\n",errmsg);
+  
+  sprintf(errmsg,"%d socket(s) allocated: %d", socket_info.allocated_sockets, 
+	  i=(socket_info.allocated_sockets *(sizeof(NewSocket)+MAXSOCKBUF)));
+  sum_alloc+=i;
+  new_draw_info(NDI_UNIQUE, 0,op,errmsg);
+  LOG(llevSystem,"%s\n",errmsg);
+  
+#ifndef WIN32 /* non windows */
+  #ifdef HAVE_SYSCONF
+  fd = sysconf(_SC_OPEN_MAX);
+#else
+#  ifdef HAVE_GETDTABLESIZE
+  fd = getdtablesize();
+#  else
+  "Unable to find usable function to get max filedescriptors";
+#  endif
+#endif
+#else
+  fd = -3;
+#endif
+  
+  sprintf(errmsg,"socket max fd: %d  (%d %s) ncom: %d ", socket_info.max_filedescriptor, fd,fd!=-3?"avaible":"win32/ignore",
+	  socket_info.nconns);
+  new_draw_info(NDI_UNIQUE, 0,op,errmsg);
+  LOG(llevSystem,"%s\n",errmsg);
+  
+  sprintf(errmsg,"%4d maps allocated:  %d",nrofmaps,
           i=(nrofmaps*sizeof(mapstruct)));
+  LOG(llevSystem,"%s\n",errmsg);
   new_draw_info(NDI_UNIQUE, 0,op,errmsg);
   sum_alloc+=i;  sum_used+=nrm*sizeof(mapstruct);
   sprintf(errmsg,"%4d maps in memory:  %8d",nrm,mapmem);
   new_draw_info(NDI_UNIQUE, 0,op,errmsg);
+  LOG(llevSystem,"%s\n",errmsg);
   sum_alloc+=mapmem; sum_used+=mapmem;
   sprintf(errmsg,"%4d archetypes:      %8d",anr,i=(anr*sizeof(archetype)));
   new_draw_info(NDI_UNIQUE, 0,op,errmsg);
+  LOG(llevSystem,"%s\n",errmsg);
   sum_alloc+=i; sum_used+=i;
   sprintf(errmsg,"%4d animations:      %8d",anims,i=(anims*sizeof(Fontindex)));
   new_draw_info(NDI_UNIQUE, 0,op,errmsg);
+  LOG(llevSystem,"%s\n",errmsg);
   sum_alloc+=i; sum_used+=i;
   sprintf(errmsg,"%4d spells:          %8d",NROFREALSPELLS,
           i=(NROFREALSPELLS*sizeof(spell)));
   new_draw_info(NDI_UNIQUE, 0,op,errmsg);
+  LOG(llevSystem,"%s\n",errmsg);
   sum_alloc+=i; sum_used+=i;
   sprintf(errmsg,"%4d treasurelists    %8d",tlnr,i=(tlnr*sizeof(treasurelist)));
   new_draw_info(NDI_UNIQUE, 0,op,errmsg);
+  LOG(llevSystem,"%s\n",errmsg);
   sum_alloc+=i; sum_used+=i;
   sprintf(errmsg,"%4ld treasures        %8d",nroftreasures,
           i=(nroftreasures*sizeof(treasure)));
   new_draw_info(NDI_UNIQUE, 0,op,errmsg);
+  LOG(llevSystem,"%s\n",errmsg);
   sum_alloc+=i; sum_used+=i;
   sprintf(errmsg,"%4ld artifacts        %8d", nrofartifacts,
           i=(nrofartifacts*sizeof(artifact)));
   new_draw_info(NDI_UNIQUE, 0,op, errmsg);
+  LOG(llevSystem,"%s\n",errmsg);
   sum_alloc+=i; sum_used +=i;
   sprintf(errmsg,"%4ld artifacts strngs %8d", nrofallowedstr,
           i=(nrofallowedstr*sizeof(linked_char)));
   new_draw_info(NDI_UNIQUE, 0,op, errmsg);
+  LOG(llevSystem,"%s\n",errmsg);
   sum_alloc += i;sum_used+=i;
   sprintf(errmsg,"%4d artifactlists    %8d",alnr,i=(alnr*sizeof(artifactlist)));
+  LOG(llevSystem,"%s\n",errmsg);
   new_draw_info(NDI_UNIQUE, 0,op,errmsg);
   sum_alloc += i; sum_used += i;
 
   sprintf(errmsg,"Total space allocated:%8d",sum_alloc);
   new_draw_info(NDI_UNIQUE, 0,op,errmsg);
+  LOG(llevSystem,"%s\n",errmsg);
   sprintf(errmsg,"Total space used:     %8d",sum_used);
   new_draw_info(NDI_UNIQUE, 0,op,errmsg);
+  LOG(llevSystem,"%s\n",errmsg);
 }
 
 void current_map_info(object *op) {
@@ -234,33 +280,22 @@ void current_map_info(object *op) {
 	new_draw_info(NDI_UNIQUE, NDI_NAVY, op, m->msg);
 }
 
-#ifdef DEBUG_MALLOC_LEVEL
-int command_malloc_verify(object *op, char *parms)
-{
-	extern int malloc_verify(void);
-
-	if (!malloc_verify()) 
-		new_draw_info(NDI_UNIQUE, 0,op,"Heap is corrupted.");
-	else
-		new_draw_info(NDI_UNIQUE, 0,op,"Heap checks out OK.");
-	return 1;
-}
-#endif
-
 int command_who (object *op, char *params)
 {
     player *pl;
-	int ip=0, il=0;
+	int ip=0, il=0, wiz;
     char buf[MAX_BUF];
+	const char *sex;
+	
+	if(!op)
+		return 1;
 
-
-	if(first_player)
-		new_draw_info(NDI_UNIQUE, 0,op," ");
+	wiz = QUERY_FLAG(op, FLAG_WIZ);
 
     for(pl=first_player;pl!=NULL;pl=pl->next) 
 	{
 
-		if(pl->dm_stealth && !QUERY_FLAG(op,FLAG_WIZ) )
+		if(pl->dm_stealth && !wiz )
 		    continue;
 
 		if(pl->ob->map == NULL)
@@ -270,25 +305,29 @@ int command_who (object *op, char *params)
 		}
 
 		ip++;
-	if (pl->state==ST_PLAYING) 
-	{
-         char *sex = "neuter";
-         if(QUERY_FLAG(pl->ob, FLAG_IS_MALE)) 
-             sex = QUERY_FLAG(pl->ob, FLAG_IS_FEMALE) ? "hermaphrodite" : "male";
-         else if(QUERY_FLAG(pl->ob, FLAG_IS_FEMALE)) 
-             sex = "female";
+		if (pl->state==ST_PLAYING) 
+		{
+			if(QUERY_FLAG(pl->ob, FLAG_IS_MALE)) 
+				sex = QUERY_FLAG(pl->ob, FLAG_IS_FEMALE) ? "hermaphrodite" : "male";
+			else if(QUERY_FLAG(pl->ob, FLAG_IS_FEMALE)) 
+				sex = "female";
+			else
+				sex = "neuter";
+			
+		    if(wiz)
+			{
+				int off=0, tmp, tmp1;
+				if((tmp=strlen(pl->ob->map->path))>(22-((tmp1=strlen(pl->ob->name)))))
+					off = tmp-(22-tmp1);
 
-	    if(op == NULL || QUERY_FLAG(op, FLAG_WIZ))
-		(void) sprintf(buf,"%s the %s (@%s) [%s]%s%s%s (%d)",pl->ob->name, pl->title,
-						pl->socket.host, pl->ob->map->path,
-						QUERY_FLAG(pl->ob,FLAG_WIZ)?" [WIZ]":"",
-						pl->idle?" I":"", "<remove>",pl->ob->count);
-	    else
-			sprintf(buf,"%s the %s %s (lvl %d) %s",pl->ob->name, sex,
-			pl->ob->race,pl->ob->level,
-						QUERY_FLAG(pl->ob,FLAG_WIZ)?" [WIZ]":"");
-	    new_draw_info(NDI_UNIQUE, 0,op,buf);
-	}
+				sprintf(buf,"%s (%d) [@%s] [%s]",pl->ob->name, pl->ob->count,
+									pl->socket.host, pl->ob->map->path+off);
+			}
+		    else
+				sprintf(buf,"%s the %s %s (lvl %d) %s",pl->ob->name, sex,
+							pl->ob->race,pl->ob->level, QUERY_FLAG(pl->ob,FLAG_WIZ)?" [DM]":"");
+		    new_draw_info(NDI_UNIQUE, 0,op,buf);
+		}
 	}
 	sprintf(buf,"There %s %d player%s online  (%d in login)", 
 								ip+il>1?"are":"is",ip+il,ip+il>1?"s":"",il);
@@ -332,21 +371,27 @@ int command_maps (object *op, char *params)
     return 1;
   }
 
-int command_strings (object *op, char *params)
-{
-    ss_dump_statistics();
-    new_draw_info(NDI_UNIQUE, 0,op,errmsg);
-    new_draw_info(NDI_UNIQUE, 0,op,ss_dump_table(2));
-    return 1;
-  }
-
-#ifdef DEBUG
 int command_sstable (object *op, char *params)
 {
-    ss_dump_table(1);
+	int flags=0;
+	char *tmp;
+
+	/* any paramter: dump whole table to the logfile */
+	if(params && *params != 0)
+		flags=SS_DUMP_TOTALS;
+
+	LOG(llevSystem,"HASH TABLE DUMP\n");
+    ss_dump_statistics();
+	if(errmsg[0]!='\0')
+	{
+	    new_draw_info(NDI_UNIQUE, 0,op,errmsg);
+		LOG(llevSystem,"%s\n",errmsg);
+	}
+	tmp = ss_dump_table(flags);
+	LOG(llevSystem,"%s\n", tmp);
+    new_draw_info(NDI_UNIQUE, 0,op, tmp);
     return 1;
   }
-#endif
 
 int command_time (object *op, char *params)
 {
@@ -521,12 +566,6 @@ int command_dumpactivelist (object *op, char *params)
 		LOG(llevSystem,"%s\n", buf);
 
 	return 0;
-}
-
-int command_ssdumptable (object *op, char *params)
-{
-      (void) ss_dump_table(1);
-  return 0;
 }
 
 int command_start_shutdown (object *op, char *params)
@@ -1051,30 +1090,6 @@ int command_quit (object *op, char *params)
     return 1;
   }
 
-#ifdef EXPLORE_MODE
-/*
- * don't allow people to exit explore mode.  It otherwise becomes
- * really easy to abuse this.
- */
-int command_explore (object *op, char *params)
-{
-  /*
-   * I guess this is the best way to see if we are solo or not.  Actually,
-   * are there any cases when first_player->next==NULL and we are not solo?
-   */
-      if ((first_player!=CONTR(op)) || (first_player->next!=NULL)) {
-	  new_draw_info(NDI_UNIQUE, 0,op,"You can not enter explore mode if you are in a party");
-      }
-      else if (CONTR(op)->explore)
-              new_draw_info(NDI_UNIQUE, 0,op, "There is no return from explore mode");
-      else {
-		CONTR(op)->explore=1;
-		new_draw_info(NDI_UNIQUE, 0,op, "You are now in explore mode");
-      }
-      return 1;
-    }
-#endif
-
 int command_sound (object *op, char *params)
 {
     if (CONTR(op)->socket.sound) {
@@ -1092,33 +1107,28 @@ int command_sound (object *op, char *params)
  * already a bit big.
  */
 
-void receive_player_name(object *op,char k) {
-  unsigned int name_len=strlen(CONTR(op)->write_buf+1);
+void receive_player_name(object *op,char k) 
+{
+	/* be sure the player name is like "Xxxxx" */
+	unsigned int name_len = transform_name_string(CONTR(op)->write_buf+1);
 
-  /* force a "Xxxxxxx" name */
-  if(name_len>1)
-  {
-    int i;
-    for(i=1;*(CONTR(op)->write_buf+i)!=0;i++)
-	*(CONTR(op)->write_buf+i)=tolower(*(CONTR(op)->write_buf+i));	 
-    *(CONTR(op)->write_buf+1) = toupper(*(CONTR(op)->write_buf+1));
-  }
-
-  if(name_len<=1||name_len>12) {
-    get_name(op);
-    return;
-  }
+	if(name_len<=1||name_len>MAX_PLAYER_NAME) 
+	{
+		get_name(op);
+		return;
+	}
   
-  if(!check_name(CONTR(op),CONTR(op)->write_buf+1)) {
-      get_name(op);
-      return;
-  }
-  FREE_AND_COPY_HASH(op->name, CONTR(op)->write_buf+1);
-/*  new_draw_info(NDI_UNIQUE, 0,op,CONTR(op)->write_buf);*/
-  /*CONTR(op)->last_value= -1;*/ /* Flag: redraw all stats */
-  CONTR(op)->name_changed=1;
-  get_password(op);
+	if(!check_name(CONTR(op),CONTR(op)->write_buf+1)) 
+	{
+		get_name(op);
+		return;
+	}
+
+	FREE_AND_COPY_HASH(op->name, CONTR(op)->write_buf+1);
+	CONTR(op)->name_changed=1;
+	get_password(op);
 }
+
 
 /* a client send player name + password.
  * check password. Login char OR very password
@@ -1155,17 +1165,6 @@ void receive_player_password(object *op,char k)
 	CONTR(op)->state=ST_ROLL_STAT;
 	check_login(op);
 	return;
-}
-
-
-int explore_mode() {
-#ifdef EXPLORE_MODE
-  player *pl;
-  for (pl = first_player; pl != (player *) NULL; pl = pl->next)
-    if (pl->explore)
-      return 1;
-#endif
-  return 0;
 }
 
 

@@ -196,17 +196,6 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
     }
     if (QUERY_FLAG (tmp, FLAG_NO_DROP))
 	return;
-    if(QUERY_FLAG(tmp,FLAG_WAS_WIZ) && !QUERY_FLAG(pl, FLAG_WAS_WIZ)) {
-	new_draw_info(NDI_UNIQUE, 0,pl, "The object disappears in a puff of smoke!");
-	new_draw_info(NDI_UNIQUE, 0,pl, "It must have been an illusion.");
-	if (pl->type==PLAYER) esrv_del_item (CONTR(pl), tmp->count, tmp->env);
-	if ( ! QUERY_FLAG (tmp, FLAG_REMOVED))
-	{
-		remove_ob(tmp);
-		check_walk_off (tmp, NULL,MOVE_APPLY_VANISHED);
-	}
-	return;
-    }
     
     if (nrof > tmp_nrof || nrof == 0)
 	nrof = tmp_nrof;
@@ -225,11 +214,6 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 
 	if(tmp->type == CONTAINER)
 		container_unlink(NULL,tmp);
-
-#ifndef REAL_WIZ
-    if(QUERY_FLAG(pl, FLAG_WAS_WIZ))
-	SET_FLAG(tmp, FLAG_WAS_WIZ);
-#endif
     
     if(QUERY_FLAG(tmp, FLAG_UNPAID))
     {

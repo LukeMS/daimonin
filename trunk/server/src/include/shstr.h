@@ -11,6 +11,12 @@
 #define MAXSTRING 20
 #endif
 
+/* enable module statistic.
+ * This will add some inc/dec counter to the hash table.
+ * small & very small cpu use
+ */
+#define SS_STATISTICS
+
 /* In the unlikely occurence that 16383 references to a string are too
  * few, you can modify the below type to something bigger.
  * (The top bit of "refcount" is used to signify that "u.array" points
@@ -30,10 +36,9 @@
  */
 #define SS(x) ((shared_string *) ((x) - offsetof(shared_string, string)))
 
-#define SS_STATISTICS
-
-#define SS_DUMP_TABLE	1
-#define SS_DUMP_TOTALS	2
+#ifndef SS_DUMP_TOTALS
+#define SS_DUMP_TOTALS	1
+#endif
 
 #define TOPBIT	(1 << (sizeof(REFCOUNT_TYPE) * CHAR_BIT - 1))
 

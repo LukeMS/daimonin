@@ -55,11 +55,6 @@ RESET_LOCATION_TIME,
 0,0,0,0,0,0,0  /* worldmap settings*/
 };
 
-/* daytime counter (day & night / lightning system) */
-int world_darkness;
-unsigned long todtick;
-archetype *level_up_arch=NULL;
-
 
 /*
  * It is vital that init_library() is called by any functions
@@ -137,17 +132,26 @@ void init_globals() {
 	LOG(llevInfo, "Unable to open %s as the logfile - will use stderr instead\n",settings.logfilename);
     }
 
+	level_up_arch=NULL;
+	arch_cmp=0;		/* How many strcmp's */
+	arch_search=0;	/* How many searches */
+	arch_init=0;		/* True if doing arch initialization */
+	
 	global_round_tag=1; /* global round ticker ! this is real a global */
 	global_race_counter=0; /* global race counter */
+	max_time = MAX_TIME;
 	
     exiting = 0;
+	player_active = 0;
+    first_god=NULL;
+    first_race=NULL;
     first_player=NULL;
+	last_player=NULL;
     first_friendly_object=NULL;
     first_map=NULL;
     first_treasurelist=NULL;
     first_artifactlist=NULL;
     first_archetype=NULL;
-    first_map=NULL;
     nroftreasures = 0;
     nrofartifacts = 0;
     nrofallowedstr=0;

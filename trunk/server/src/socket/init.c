@@ -53,12 +53,6 @@
 #include <newserver.h>
 #include "zlib.h"
 
-_srv_client_files SrvClientFiles[SRV_CLIENT_FILES];
-
-Socket_Info socket_info;
-NewSocket *init_sockets;
-
-
 /* Initializes a connection - really, it just sets up the data structure,
  * socket setup is handled elsewhere.  We do send a version to the
  * client.
@@ -85,8 +79,10 @@ void InitConnection(NewSocket *ns, uint32 from)
     if (getsockopt(ns->fd,SOL_SOCKET,SO_SNDBUF, (char*)&oldbufsize, &buflen)==-1)
 	oldbufsize=0;
     if (oldbufsize<bufsize) {
-	/*LOG(llevDebug, "InitConnection: Default buffer size was %d bytes, will reset it to %d\n", oldbufsize, bufsize);*/
-	if(setsockopt(ns->fd,SOL_SOCKET,SO_SNDBUF, (char*)&bufsize, sizeof(&bufsize))) {
+#ifdef ESRV_DEBUG
+		LOG(llevDebug, "InitConnection: Default buffer size was %d bytes, will reset it to %d\n", oldbufsize, bufsize);
+#endif
+		if(setsockopt(ns->fd,SOL_SOCKET,SO_SNDBUF, (char*)&bufsize, sizeof(&bufsize))) {
 	    LOG(llevDebug,"InitConnection: setsockopt unable to set output buf size to %d\n", bufsize);
 	}
     }
@@ -163,6 +159,8 @@ void InitConnection(NewSocket *ns, uint32 from)
     if (socket_info.nconns>cst_lst.max_conn)
 	cst_lst.max_conn = socket_info.nconns;
 #endif
+
+	socket_info.nconns++;
 }
 
 
@@ -207,7 +205,6 @@ void init_ericserver()
 #endif
 
     LOG(llevDebug,"Initialize new client/server data\n");
-    socket_info.nconns = 1;
     init_sockets = malloc(sizeof(NewSocket));
     socket_info.allocated_sockets=1;
 
@@ -302,22 +299,29 @@ void free_all_newserver()
 
 void free_newsocket(NewSocket *ns)
 {
-#ifdef WIN32 /* ***win32: closesocket in windows style */
+	LOG(llevDebug,"Closing socket %d\n", ns->fd);
+#ifdef WIN32
 	shutdown(ns->fd,SD_BOTH);
     if (closesocket(ns->fd)) {
 #else
-    if (close(ns->fd)) {
-#endif /* win32 */
+	if (close(ns->fd)) {
+#endif
 
 #ifdef ESRV_DEBUG
-	LOG(llevDebug,"Error closing socket %d\n", ns->fd);
+		LOG(llevDebug,"Error closing socket %d\n", ns->fd);
 #endif
     }
+
 	if(ns->host)
 	    free(ns->host);
     if(ns->inbuf.buf);
 	    free(ns->inbuf.buf);
-		memset(ns,0,sizeof(ns));
+	if(ns->readbuf.buf);
+		free(ns->readbuf.buf);
+	if(ns->cmdbuf.buf);
+		free(ns->cmdbuf.buf);
+		
+	memset(ns,0,sizeof(ns));
 }
 
 /* as long the server don't have a autoupdate/login server

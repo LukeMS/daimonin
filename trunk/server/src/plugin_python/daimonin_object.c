@@ -266,7 +266,7 @@ static char *flag_names[NUM_FLAGS+1] = {
 	"f_is_vul_sphere", "f_is_proof_sphere", "f_is_male",
 	"f_is_female", "f_applied",  "f_inv_locked", "f_is_wooded",
 	"f_is_hilly", "f_has_ready_skill", "f_has_ready_weapon",		/* 90 */
-	"f_no_skill_ident","f_was_wiz", "f_can_see_in_dark", "f_is_cauldron", 
+	"f_no_skill_ident",NULL /* flag 92 */, "f_can_see_in_dark", "f_is_cauldron", 
 	"f_is_dust", "f_no_steal", "f_one_hit", NULL, "f_berserk", "f_no_attack",	/* 100 */
 	"f_invulnerable", "f_quest_item", "f_is_traped", "f_is_vul_elemental",  "f_is_proof_elemental", /* 105 */
 	"f_is_vul_magic", "f_is_proof_magic", "f_is_vul_physical", "f_is_proof_physical", "f_sys_object", /* 110 */

@@ -96,7 +96,10 @@ enum {
 typedef struct pl_player
 {
 	/* this is not cleared with memset - seek for offsetof((....,maplevel) */
+	struct pl_player *prev;				/* Pointer to the prev player. if NULL, this is the first one */
 	struct pl_player *next;				/* Pointer to next player, NULL if this is last */
+										/* first and last player in player list can direct
+										 * accessed by first_player/last_player global ptr */
 	NewSocket socket;				/* Socket information for this player */
 
 	/* all this is set to 0 with memset */
@@ -238,9 +241,6 @@ typedef struct pl_player
   uint32 known_spell:1;     /* True if you know the spell of the wand */
   uint32 last_known_spell:1;/* What was last updated with draw_stats() */
   uint32 update_skills:1;   /* update skill list when set */
-#ifdef EXPLORE_MODE
-  uint32 explore:1;         /* if True, player is in explore mode */
-#endif
 
   rangetype shoottype;	      /* Which range-attack is being used by player */
   rangetype last_shoot;	      /* What was last updated with draw_stats() */
@@ -257,7 +257,6 @@ typedef struct pl_player
 
   unsigned char fire_on;
   unsigned char run_on;
-  unsigned char idle;      /* How long this player has been idle */
   uint32  last_weight_limit;	/* Last weight limit transmitted to client */
   living orig_stats;       /* Can be less in case of poisoning */
   living last_stats;       /* Last stats drawn with draw_stats() */

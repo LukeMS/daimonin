@@ -103,8 +103,6 @@ typedef struct spell_struct {
   int is_active;			 /* if 0 then spell is disabled and can't be cast or used */
 } spell;
 
-extern spell spells[NROFREALSPELLS];
-
 /* When adding new spells, don't insert into the middle of the list - 
  * add to the end of the list.  Some archetypes and treasures require
  * the spell numbers to be as they are.

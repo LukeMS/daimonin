@@ -282,10 +282,6 @@ enum {
 	SRV_CLIENT_FILES /* last index */
 };
 
-extern _srv_client_files SrvClientFiles[SRV_CLIENT_FILES];
-
-extern CS_Stats cst_tot, cst_lst;
-
 #define DATA_PACKED_CMD 0x80
 
 enum {

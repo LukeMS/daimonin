@@ -55,8 +55,6 @@ extern void check_use_object_list(void);
 void free_all_srv_files();
 void free_racelist();
  
-object *gbl_active_DM=NULL; /* ony for testing, TODO list of DMs */
-
 static object marker; /* object for proccess_obejct(); */
 
 
@@ -1081,7 +1079,9 @@ void cleanup()
     LOG(llevDebug,"Cleanup called.  freeing data.\n");
     clean_tmp_files();
     write_book_archive();
-#ifdef MEMORY_DEBUG
+
+	/* that must be redone: clear cleanup so we know 100% all memory is freed */
+/*
     free_all_maps();
     free_style_maps();
     free_all_object_data();
@@ -1094,9 +1094,7 @@ void cleanup()
     free_all_god();
     free_all_anim();
     free_all_srv_files();
-    /* See what the string data that is out there that hasn't been freed. */
-    /*LOG(llevDebug, ss_dump_table(0xff));*/
-#endif
+*/
     exit(0);
 }
 
@@ -1308,10 +1306,6 @@ int main(int argc, char **argv)
 	_fmode = _O_BINARY ;
 #endif
 
-#ifdef DEBUG_MALLOC_LEVEL
-  malloc_debug(DEBUG_MALLOC_LEVEL);
-#endif
-
   settings.argc=argc;
   settings.argv=argv;
   init(argc, argv);
@@ -1329,7 +1323,6 @@ int main(int argc, char **argv)
 	shutdown_agent(-1, NULL);			/* check & run a shutdown count (with messages & shutdown ) */
 
     doeric_server(FALSE);		
-    object_gc();                /* Clean up the object pool */
 #ifdef MEMPOOL_OBJECT_TRACKING
 	check_use_object_list();
 #endif
@@ -1347,8 +1340,9 @@ int main(int argc, char **argv)
 
     check_active_maps();		/* Removes unused maps after a certain timeout */
     do_specials();				/* Routines called from time to time. */
-    doeric_server(TRUE);		
-	/*doeric_server_write();*/
+    /*doeric_server(TRUE);*/		
+	doeric_server_write();
+    object_gc();                /* Clean up the object pool */
     sleep_delta();				/* Slepp proper amount of time before next tick */
   }
   return 0;

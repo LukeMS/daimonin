@@ -348,6 +348,7 @@ void AddMeCmd(char *buf, int len, NewSocket *ns)
 	Write_String_To_Socket(ns,BINARY_CMD_ADDME_SUC, cmd_buf,1);
 	ns->addme = 1;
 	ns->login_count=0; /* reset idle counter */
+	LOG(llevDebug,"addme_cmd(): socket %d\n",ns->fd);
 	socket_info.nconns--;
 	ns->status = Ns_Avail;
     }
@@ -385,7 +386,6 @@ void PlayerCmd(char *buf, int len, player *pl)
 	}
 	buf++;
     }
-    pl->idle=0;
 
     /* In c_new.c */
     execute_newserver_command(pl->ob, (char*)buf);
@@ -439,9 +439,7 @@ void NewPlayerCmd(char *buf, int len, player *pl)
 	    "You can not issue commands - state is not ST_PLAYING (%s)", buf);
 	return;
     }
-
-    pl->idle=0;
-
+	
     /* In c_new.c */
     execute_newserver_command(pl->ob, command);
     pl->count=0;

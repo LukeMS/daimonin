@@ -263,8 +263,6 @@ typedef struct oblinkpt { /* Used to link together several object links */
   struct oblinkpt *next;
 } oblinkpt;
 
-extern object *active_objects;
-
 #define CONTR(ob) ((player *)((ob)->custom_attrset))
 
 /* This returns TRUE if the object is somethign that

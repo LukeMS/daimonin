@@ -38,16 +38,47 @@
    when the server sided range mode is removed at last from source */ 
 static object *find_arrow_ext(object *op, const char *type,int tag);
 
+/* find a player name for a NORMAL string.
+ * we use the hash table system.
+ */
 player *find_player(char *plname)
 {
-  player *pl;
-  for(pl=first_player;pl!=NULL;pl=pl->next)
-  {
-    if(pl->ob != NULL && !QUERY_FLAG(pl->ob, FLAG_REMOVED) && !strcmp(query_name(pl->ob),plname))
-        return pl;
-  };
-  return NULL;
+	player *pl;
+	char name[MAX_PLAYER_NAME];
+	const char *name_hash;
+
+	int name_len = strlen(plname); /* we assume a legal string */
+	if(name_len<=1 || name_len>MAX_PLAYER_NAME) 
+		return NULL;
+
+	strcpy(name, plname); /* we need to copy it because we access the string */
+	transform_name_string(name);
+	if(!(name_hash = find_string(name)))
+		return NULL;
+		
+	for(pl=first_player;pl!=NULL;pl=pl->next)
+	{
+		if(pl->ob && !QUERY_FLAG(pl->ob, FLAG_REMOVED) && pl->ob->name == name_hash)
+			return pl;
+	}
+
+	return NULL;
 }
+
+/* nearly the same as above except we
+ * have the hash string when we call
+ */
+player *find_player_hash(const char *plname)
+{
+	player *pl;
+	for(pl=first_player;pl!=NULL;pl=pl->next)
+	{
+		if(pl->ob && !QUERY_FLAG(pl->ob, FLAG_REMOVED) && pl->ob->name==plname)
+			return pl;
+	}
+	return NULL;
+}
+
 
 void display_motd(object *op) {
 #ifdef MOTD
@@ -92,28 +123,20 @@ static player* get_player(player *p) {
 
     if (!p)
 	{
-		player *tmp;
-
         p = (player *) get_poolchunk(POOL_PLAYER);
 		memset(p,0, sizeof(player));
 		if(p==NULL)
 			LOG(llevError,"ERROR: get_player(): out of memory\n");
-
-		/* This adds the player in the linked list.  There is extra
-		 * complexity here because we want to add the new player at the
-		*end of the list - there is in fact no compelling reason that
-		* that needs to be done except for things like output of
-		* 'who'.
-		*/
-		tmp=first_player;
-		while(tmp!=NULL&&tmp->next!=NULL)
-		    tmp=tmp->next;
-		if(tmp!=NULL)
-		    tmp->next=p;
+		
+		player_active++; /* increase player count */
+		if(!last_player)
+			first_player=last_player=p;
 		else
-		    first_player=p;
-
-		p->next = NULL; 
+		{
+			last_player->next = p;
+			p->prev = last_player;
+			last_player = p;
+		}
     } else {
         /* Clears basically the entire player structure except
          * for next and socket.
@@ -152,9 +175,6 @@ static player* get_player(player *p) {
     p->listening=9;
     p->last_weapon_sp= -1;
     p->update_los=1;
-#ifdef EXPLORE_MODE
-    p->explore=0;
-#endif
 
     strncpy(p->title,op->arch->clone.name,MAX_NAME);
 	FREE_AND_COPY_HASH(op->race,op->arch->clone.race);
@@ -198,18 +218,17 @@ void free_player(player *pl)
     }
 
     /* Now remove from list of players */
-    if (first_player!=pl) 
-	{
-		player *prev=first_player;
-		while(prev!=NULL&&prev->next!=NULL&&prev->next!=pl)
-		    prev=prev->next;
-		if(prev->next!=pl) 
-		 LOG(llevError,"ERROR: free_player(): Can't find previous player.\n");
-		prev->next=pl->next;
-    } 
+	if(pl->prev)
+		pl->prev->next=pl->next;
 	else
-		first_player=pl->next;
+		first_player = pl->next;
 
+	if(pl->next)
+		pl->next->prev=pl->prev;
+	else
+		last_player = pl->prev;
+	player_active--;
+	
     free_newsocket(&pl->socket);
 }
 
@@ -242,10 +261,10 @@ int add_player(NewSocket *ns) {
      * Note that this can result in a client reset if there is partial data
      * on the uncoming socket.
      */
+	p->socket.pl = (struct player *) p;
 	p->socket.status = Ns_Login; /* now, we start the login procedure! */
     p->socket.update_tile=0;
     p->socket.look_position=0;
-    p->socket.inbuf.len = 0;
 
 	start_info(p->ob);
     get_name(p->ob);
@@ -596,11 +615,6 @@ int key_confirm_quit(object *op, char key)
     strcpy(CONTR(op)->killer,"quit");
     check_score(op);
     CONTR(op)->party_number=(-1);
-    if(!QUERY_FLAG(op,FLAG_WAS_WIZ)) {
-      sprintf(buf,"%s/%s/%s/%s.pl",settings.localdir,settings.playerdir,op->name,op->name);
-      if(unlink(buf)== -1 && settings.debug >= llevDebug)
-		LOG(llevBug,"BUG: crossfire (delete character): %s\n", buf);
-    }
 	CONTR(op)->socket.status=Ns_Dead;
     return 1;
 }
@@ -1671,33 +1685,11 @@ void kill_player(object *op)
     if(op->stats.food<0) 
     {
 
-#ifdef EXPLORE_MODE
-	    if (CONTR(op)->explore)
-        {
-	        new_draw_info(NDI_UNIQUE, 0,op,"You would have starved, but you are");
-	        new_draw_info(NDI_UNIQUE, 0,op,"in explore mode, so...");
-	        op->stats.food=999;
-	        return;
-	    }
-#endif /* EXPLORE_MODE */
-
 	    sprintf(buf,"%s starved to death.",op->name);
 	    strcpy(CONTR(op)->killer,"starvation");
     }
     else 
-    {
-#ifdef EXPLORE_MODE
-	    if (CONTR(op)->explore) 
-        {
-	        new_draw_info(NDI_UNIQUE, 0,op,"You would have died, but you are");
-	        new_draw_info(NDI_UNIQUE, 0,op,"in explore mode, so...");
-	        op->stats.hp=op->stats.maxhp_adj;
-	        return;
-	    }
-#endif /* EXPLORE_MODE */
-
 	    sprintf(buf,"%s died.",op->name);
-    }
 
     play_sound_player_only(CONTR(op), SOUND_PLAYER_DIES,SOUND_NORMAL,0,0);
 
@@ -1906,7 +1898,8 @@ void kill_player(object *op)
     remove_ob(op);
 	check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
 	op->direction=0;
-    if(!QUERY_FLAG(op,FLAG_WAS_WIZ)&&op->stats.exp) {
+    if(!QUERY_FLAG(op,FLAG_WIZ)&&op->stats.exp) {
+
       delete_character(op->name,0);
 #ifndef NOT_PERMADEATH
 #ifdef RESURRECTION

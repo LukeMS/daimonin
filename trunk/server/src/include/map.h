@@ -31,9 +31,6 @@
 #ifndef MAP_H
 #define MAP_H
 
-#define MAX_DARKNESS 7 /* number of darkness level. Add +1 for "total dark" */
-extern int	global_darkness_table[MAX_DARKNESS+1];
-
 #define MAP_PLAYER_MAP	1    /* for exit objects: this is a player unique map */
 #define MAX_ARCH_LAYERS 7	/* thats our 7 logical layers.
                              * ! for first and last object, we will use 2 more fake layers!

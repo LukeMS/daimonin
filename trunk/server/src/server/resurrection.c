@@ -40,10 +40,6 @@
 extern char * sys_errlist[];
 extern int sys_nerr;
 #endif
-extern char **classname;
-extern object *objects;
-
-
 
 void dead_player(object *op)
 {

@@ -27,8 +27,6 @@
 #include <global.h>
 #include <stdio.h>
 
-New_Face *new_faces;
-
 /* hm, we really not need bmappair, or? we just sort out New_Face and adjust then
  * the face numbers. When using the same archefile & bmaps file, sorting will always
  * end in the same result. And the client has no knowledge about it. The server
@@ -55,18 +53,6 @@ struct bmappair {
 };
 
 static struct bmappair *xbm=NULL;
-
-/* only used in loader.c, to go from the numeric image id (which is
- * used throughout the program) backto the standard name.
- */
-
-MapLook blank_look;
-
-/* Following can just as easily be pointers, but 
- * it is easier to keep them like this.
- */
-New_Face *blank_face, *next_item_face, *prev_item_face;
-
 
 /* nroffiles is the actual number of bitmaps defined.
  * nrofpixmaps is the higest numbers bitmap that is loaded.  With
