@@ -9,7 +9,8 @@ material_real 258
 face crossbow.101
 weight 2500
 sp 40
-wc 0
+wc 1
+wc_range 20
 last_sp 0
 value 450
 end

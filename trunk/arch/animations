@@ -2037,6 +2037,13 @@ anim lamp
 lamp_lit1.101
 lamp_lit1.102
 mina
+anim level_up
+sparkle_lup.101
+sparkle_lup.102
+sparkle_lup.103
+sparkle_lup.104
+sparkle_lup.105
+mina
 anim mage_old
 facings 25
 trans.101

@@ -8,7 +8,7 @@ layer 6
 direction 5
 is_neutral 1
 terrain_flag 1
-weapon_speed 0.044
+weapon_speed 0.035
 attack_cleave 100
 unaggressive 1
 random_move 1
@@ -74,12 +74,12 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 125
+exp 100
 ac 5
-wc 1
+wc 0
 dam 4
 hp -1
-maxhp 7
+maxhp 6
 level 1
 speed -0.1
 weight 22500

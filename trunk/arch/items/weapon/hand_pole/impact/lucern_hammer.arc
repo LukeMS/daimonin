@@ -4,7 +4,9 @@ name lucern hammer
 face lucern_hammer.101
 weapon_speed 0.0175
 attack_impact 100
-dam 10
+dam 9
+wc 2
+ac 1
 type 15
 sub_type 8
 material 2
