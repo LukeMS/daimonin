@@ -1332,36 +1332,42 @@ int move_player(object *op,int dir)
     return 0;
 }
 
+
+/* main player command loop - read command from buffer
+ * and execute it.
+ * Return: 
+ *		   0: turn speed used up or no commands left
+ *        -1: player is invalid now
+ */
 int handle_newcs_player(player *pl)
 {
-	object *op;
-	/* ouch. here is the invisible counter... MT-11-2002
-    if(op->invisible&&!(QUERY_FLAG(op,FLAG_SEE_INVISIBLE))) {
-	op->invisible--;
-	if(!op->invisible) make_visible(op);
-    }
-	*/
-    /* call this here - we also will call this in do_ericserver, but
-     * the players time has been increased when doericserver has been
-     * called, so we recheck it here.
-     */
-    HandleClient(&pl->socket, pl);
-	op = pl->ob; 
-    if (op->speed_left<0.0f) return 0;
+	object *op = pl->ob; 
 
-    CLEAR_FLAG(op,FLAG_PARALYZED); /* if we are here, we never paralyzed anymore */
-    
-    if(op->direction && (CONTR(op)->run_on || CONTR(op)->fire_on)) {
-		/* All move commands take 1 tick, at least for now */
-		op->speed_left--;
-		/* Instead of all the stuff below, let move_player take care
-	 * of it.  Also, some of the skill stuff is only put in
-	 * there, as well as the confusion stuff.
+	if(!op || !OBJECT_ACTIVE(op)) 
+		return -1;
+
+	HandleClient(&pl->socket, pl);
+	
+	if(!op || !OBJECT_ACTIVE(op) || pl->socket.status==Ns_Dead) 
+		return -1;
+		
+	/* player is fine, check for speed */
+	if (op->speed_left<0.0f) 
+		return 0;
+
+	CLEAR_FLAG(op,FLAG_PARALYZED); /* if we are here, we never paralyzed anymore */
+
+	/* this movement action will dramatically change in the future.
+	 * basically we will go for a "steps per ticks"
 	 */
-	move_player(op, op->direction);
-	if (op->speed_left>0) return 1;
-	else return 0;
-    }
+		
+	if(op->direction && (CONTR(op)->run_on || CONTR(op)->fire_on)) 	/* automove or fire */
+	{
+		/* All move commands take 1 tick, at least for now */
+		move_player(op, op->direction);
+		op->speed_left--;
+	}
+
     return 0;
 }
 

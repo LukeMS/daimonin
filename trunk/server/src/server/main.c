@@ -777,54 +777,20 @@ void enter_exit(object *op, object *exit_ob)
 
 void process_players1(mapstruct *map)
 {
-    int flag;
     player *pl,*plnext;
 
-/*	static DWORD pCount_old, pCount;  swing time debug */
-
     /* Basically, we keep looping until all the players have done their actions. */
-    for(flag=1;flag!=0;) {
-	flag=0;
-	for(pl=first_player;pl!=NULL;pl=plnext) {
+	for(pl=first_player;pl!=NULL;pl=plnext) 
+	{
+		plnext=pl->next;
 
+		/* map is atm always NULL - we loop global */
+		/* if (map!=NULL && (pl->ob == NULL || pl->ob->map!=map)) continue;*/
+		
+		if (handle_newcs_player(pl) == -1) /* -1: player is invalid now */
+			continue;
 
-	    plnext=pl->next;
-/*	    if (map!=NULL && (pl->ob == NULL || pl->ob->map!=map)) continue;*/
-
-#ifdef AUTOSAVE
-	    /* check for ST_PLAYING state so that we don't try to save off when
-	     * the player is logging in.
-	     */
-	    if ((pl->last_save_tick+AUTOSAVE)<pticks && pl->state==ST_PLAYING) {
-		/* Don't save the player on unholy ground.  Instead, increase the
-		 * tick time so it will be about 10 seconds before we try and save
-		 * again.
-		 */
-		if (blocks_cleric(pl->ob->map, pl->ob->x, pl->ob->y)) {
-		    pl->last_save_tick += 100;
-		} else {
-		    save_player(pl->ob,1);
-		    pl->last_save_tick = pticks;
-		}
-	    }
-#endif
-            if(pl->ob == NULL) {
-                /* I take it this should never happen,
-                   but it seems to anyway :( */
-                flag = 1;
-            } else if(pl->ob->speed_left>0) {
-		if (handle_newcs_player(pl))
-		    flag=1;
-/*        if(pl->ob->enemy) */
         pl->ob->weapon_speed_left-=pl->ob->weapon_speed_add;
-            } /* end if player has speed left */
-	} /* end of for loop for all the players */
-    } /* for flag */
-    for(pl=first_player;pl!=NULL;pl=pl->next) {
-	if (map!=NULL && (pl->ob == NULL || pl->ob->map!=map)) continue;
-    
-    do_some_living(pl->ob);
-
 		/* now use the new target system to hit our target... Don't hit non
 		 * friendly objects, ourself or when we are not in combat mode.
 		 */
@@ -833,12 +799,6 @@ void process_players1(mapstruct *map)
         {
             if(pl->ob->weapon_speed_left<=0)
             {
-				/* swing time debug
-				pCount = timeGetTime();
-				LOG(llevDebug,"Swingtime: %f (%d %d)\n",(float)(pCount-pCount_old)/1000.0f, (float)pCount, (float)pCount_old);
-				pCount_old=pCount;
-				*/
-
 				/* now we force target as enemy */
 				pl->ob->enemy = pl->target_object;
 				pl->ob->enemy_count = pl->target_object_count;
@@ -868,6 +828,27 @@ void process_players1(mapstruct *map)
             if(pl->ob->weapon_speed_left<=0)
 				pl->ob->weapon_speed_left=0;
 		}
+
+		do_some_living(pl->ob);
+
+#ifdef AUTOSAVE
+	    /* check for ST_PLAYING state so that we don't try to save off when
+	     * the player is logging in.
+	     */
+	    if ((pl->last_save_tick+AUTOSAVE)<pticks && pl->state==ST_PLAYING) 
+		{
+			/* we must change this unholy ground thing */
+			if (blocks_cleric(pl->ob->map, pl->ob->x, pl->ob->y))
+			{
+				pl->last_save_tick += 100;
+			} 
+			else 
+			{
+				save_player(pl->ob,1);
+				pl->last_save_tick = pticks;
+			}
+	    }
+#endif
     }
 }
 
