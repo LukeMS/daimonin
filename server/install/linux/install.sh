@@ -40,7 +40,7 @@ mmkdir $basedir/$datadir/tmp
 mmkdir $basedir/$datadir/log
 mmkdir $basedir/$datadir/players
 mmkdir $basedir/$datadir/unique-items
-mmkdir $basedir/$datadir/globals
+mmkdir $basedir/$datadir/global
 
 echo "Copy server data"
 cp -u $basedir/install/* $basedir/$datadir

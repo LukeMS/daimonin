@@ -3,8 +3,6 @@ local b_msg = false
 ds = DataStore("data_store_test")
 msg = ds:get("message")
 
-print(msg)
-
 if msg then
 	ac = ds:get("activator")
 	b_msg = true
