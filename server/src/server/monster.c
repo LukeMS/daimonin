@@ -55,7 +55,6 @@ extern spell spells[NROFREALSPELLS];
 void set_npc_enemy(object *npc, object *enemy, rv_vector *rv) 
 {
     object *aggro_wp;
-    rv_vector rv2;
    
     /* Do nothing if new enemy == old enemy */
     if(enemy == npc->enemy && (enemy == NULL || enemy->count == npc->enemy_count))
@@ -70,9 +69,8 @@ void set_npc_enemy(object *npc, object *enemy, rv_vector *rv)
     
     /* Non-aggro-waypoint related stuff */
     if(enemy) {
-        if(rv == NULL)
-            rv = &rv2;
-        get_rangevector(npc, enemy, rv, RV_DIAGONAL_DISTANCE); 
+        if(rv)
+        	get_rangevector(npc, enemy, rv, RV_DIAGONAL_DISTANCE); 
         npc->enemy_count = enemy->count;
         
         npc->last_eat = 0;	/* important: thats our "we lose aggro count" - reset to zero here */
