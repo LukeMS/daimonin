@@ -1,0 +1,19 @@
+Object bracers_ac
+name bracers
+layer 3
+type 104
+face bracers_ac.101
+ac 1
+protect_impact 3
+protect_slash 3
+protect_pierce 3
+protect_cleave 3
+is_vul_acid 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+value 75
+material_real 65
+material 2
+weight 250
+end

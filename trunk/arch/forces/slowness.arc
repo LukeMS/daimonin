@@ -1,0 +1,10 @@
+Object slowness
+sys_object 1
+face force.101
+exp -1
+type 79
+speed 0.05
+no_drop 1
+food 5
+is_used_up 1
+end

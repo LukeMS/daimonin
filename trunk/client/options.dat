@@ -1,0 +1,102 @@
+# This is the Daimonin SDL client option file
+# 
+
+# Sound & Music Volume
+# Parameter are from 0 (mute) to 100 (full)
+#
+SoundVolume 100
+MusicVolume 80
+
+#
+# MaxSpeed
+# With MaxSpeed 0 the client tries to give back unused cpu time to OS
+# Sleep is the time in ms the thread will be send to sleep
+# With MaxSpeed 1 the client repeat main loop with maximal speed
+# Results depends on OS
+# 
+MaxSpeed 0
+Sleep 1
+
+# Bit per Pixel setting
+# Note: 16 bpp are much faster as 32 bpp on most systems.
+# Note: ** Don't use 8 bpp or your fps will go down under 10 frames **
+# Note: Change your real window bpp from 32 to 16 bit to run the client faster
+# AutomaticBPP 1 will set BitPerPixel to current system bpp when windowed
+# For fullscreen mode will BitPerPixel override AutomaticBPP all times
+# With AutomaticBPP 0 bpp will always the BitPerPixel value
+# Note: On win32 systems will be the windowed mode bpp always same as the screen bpp
+# Note: SDL_SetVideoMode() changes this automatically and overide the bpp pre settings
+#
+BitPerPixel 16
+AutomaticBPP 1
+
+# SDL Fullscreen & Windowed Mode Settings 
+#
+# IMPORTANT NOTE: Using SWSURFACE 1 in fullscreen mode will drop the frame rate
+# but it will allow you to use alpha blits (transparency). You should enable HWSURFACE
+# + DOUBLEBUF only when you REALLY need the speed because Daimonin use alot 
+# transparency effects.
+#
+# Note: You can set buffers & options for both modes
+# Note: Use ForceRedraw 1 to control the speed effects of the settings.
+# Note: Don't forget to change ForceRedraw to 0 after testing!
+# Fullscreen 0 is windowed mode. 
+# All options starting with Full_xx are used for fullscreen mode
+# All options starting with Win_xx are used for windowed mode 
+#
+# RLEACCEL will speed blits in most modes alot.
+# This can change in a few situations if the drivers use real hw to hw blits.
+# UseUpdateRect force SDL_UpdateRect() instead of flip().
+# Note: flip() should be faster in most cases.
+# WARNING: On some systems (win32,...) DOUBLEBUF and Update_Rect() cause a black screen!
+#
+Fullscreen 1
+
+Full_HWSURFACE 0
+Full_SWSURFACE 1
+Full_HWACCEL 1
+Full_DOUBLEBUF 0
+Full_ANYFORMAT 0
+Full_ASYNCBLIT 0
+Full_HWPALETTE 1
+Full_RESIZABLE 0
+Full_NOFRAME 0
+Full_RLEACCEL 1
+
+Win_HWSURFACE 0
+Win_SWSURFACE 1
+Win_HWACCEL 0
+Win_DOUBLEBUF 0
+Win_ANYFORMAT 1
+Win_ASYNCBLIT 0
+Win_HWPALETTE 1
+Win_RESIZABLE 0
+Win_NOFRAME 0
+Win_RLEACCEL 1
+
+UseUpdateRect 0
+
+# All public server will give a note to the metaserver where and what they are
+# The client get from the metaserver a list of all this public servers
+# to skip metaserver search, put a '#' in fron of meta_server line.
+#
+#meta_server damn.informatik.uni-bremen.de
+meta_server_port 13326
+
+
+# Debug Options #################################################################
+#
+# OpenGL use is not implemented so far - don't use this setting for playing
+#
+UseOpenGL 0
+
+# This shows the frame rate under the map name
+# This setting shows you also some more status flags about the current system
+# This depends on the used source
+#
+ShowFrameRate 0
+
+# Forces the system to redraw the screen EVERY frame. For testing hardware settings
+# *** Will slow down the system HEAVY ****
+#
+ForceRedraw 0

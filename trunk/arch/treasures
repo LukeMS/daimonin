@@ -1,0 +1,865 @@
+# This file contains various treasures, with generation rules.
+#
+# $Id$
+#
+# I added alot of new key commands to the treasure list.
+# I changed double use of magic command and changed the way
+# magic items are generated.
+#
+# In CF, the trasure list is more basic and more random.
+# In daimonin there are more commands and a stronger control,
+# allowing to create more detailed treasures.
+#
+# There are 3 commands now define possible magic items:
+# magic, magic_fix and magic_chance
+#
+# magic_fix:
+# If we want give a item in a treasure list always a fixed 
+# bonus magic_fix should be used. This include also negative
+# value (item will then be set to cursed automatically).
+#
+# magic_chance:
+# This value can be between 0 to 1000. If there is no magic_chance
+# value, chance for magic item is 0. 1000 means a 100% chance to 
+# generate a magic item. the map difficulty will add to the base
+# chance if the value is >0 with difficulty*8.
+#
+# magic:
+# If magic_fix is 0 and magic_chance gives a magic item, magic
+# value is used to generate a magic item. Formula is (RANDOM()%abs(magic))+1.
+# A magic value of 1 will generate always +1 items, a magic value of 2
+# items with +1 or +2 and so on. Negative values are possible too.
+#
+# Other commands:
+#
+# difficulty:
+# For spliting treasure lists, difficulty sets a difficulty level. A map
+# or a object generating this list must be same or higher level. If not,
+# list is ignored.
+# 
+# Gods - treasures of gods are special.
+#
+#########################################################
+# Eldath - Lesser Power, goddess of waterfalls, springs, pools and peace
+#
+treasure Eldath
+  arch eldath_avatar_info
+  more
+  arch eldath_holy_servant_info
+  more
+  arch god_restore_grace
+  more
+  arch god_restore_hitpoints
+  more
+  arch eldath_general_info
+    chance 10
+  more
+  arch god_grace_limit_medium 
+end
+##############################################################
+#
+# PLAYER
+#
+treasure human_male
+  arch padded_armour
+  more
+  arch sandals
+  more
+  arch food_generic
+  nrof 4
+  more
+  arch torch
+  nrof 2
+  more
+  list starting_wealth
+  more
+  arch skill_praying
+  more
+  arch skill_use_magic_item
+  more
+  arch skill_literacy
+  more
+  arch skill_throwing
+  more
+  arch skill_punching
+  more
+  arch rank_force
+  more
+  arch alignment_force
+  title true neutral
+  more
+  arch age_force_human
+  more
+  arch guild_force
+end
+treasure human_female
+  arch padded_armour
+  more
+  arch sandals
+  more
+  arch food_generic
+  nrof 4
+  more
+  arch torch
+  nrof 2
+  more
+  list starting_wealth
+  more
+  arch skill_praying
+  more
+  arch skill_use_magic_item
+  more
+  arch skill_punching
+  more
+  arch skill_literacy
+  more
+  arch skill_throwing
+  more
+  arch rank_force
+  more
+  arch alignment_force
+  title true neutral
+  more
+  arch age_force_human
+  more
+  arch guild_force
+end
+treasureone starting_wealth
+  arch coppercoin
+    nrof 80
+    chance 100
+end
+##############################################################
+#
+# BODY PARTS - 
+#
+# human/man-sized body parts
+treasureone human_parts
+  arch tooth
+    chance 15
+  end
+##############################################################
+#
+# TRAPS
+#
+treasureone needle_diseases
+  arch warts
+    chance 20
+  more
+  arch atheletes_foot
+    chance 5
+  more
+  arch tapeworms
+    chance 20
+  more
+  arch diarrhea
+    chance 20
+  end
+treasureone traps
+  list physical_traps
+#    chance 50
+  more
+  list magical_traps
+    chance 50
+  end
+treasureone physical_traps
+  arch trap_diseased_needle
+#    chance 70
+  more
+  arch trap_blades
+    chance 33
+  more
+  arch trap_needle
+    chance 33
+  more
+  arch trap_bear_trap
+    chance 33
+  end
+treasureone magical_traps
+  arch rune_fire
+  chance 8
+  end
+treasureone nastier_magical_traps
+  arch rune_fire
+    chance 10  
+end
+##############################################################
+#
+# OBJECT SPECIAL LISTS
+#
+treasure empty
+  list NONE
+    chance 100
+end
+treasure door
+  list traps
+  chance 30
+end
+treasure grave
+  arch gravedirt
+  end
+##############################################################
+#
+# TREASURE CHESTS
+#
+treasure chest
+  list chest_items
+    chance 80
+   no
+     list traps
+     more
+     list chest_items
+     more
+     list chest_items
+     more
+     list chest_items
+     chance 50
+  end
+end
+treasureone chest_items
+  arch goldcoin
+    chance 5
+    nrof 15
+  more
+  arch silvercoin
+    chance 5
+    nrof 90
+  more
+  list random_weapon
+    chance 30
+  more
+  list random_armour
+     chance 30
+  more
+  list random_food
+    chance 10
+  more
+  list random_wealth
+    chance 5
+    difficulty 5
+  more
+  list random_wealth
+     chance 5
+     difficulty 10
+  more
+  list containers
+    chance 3
+  more
+  list random_scroll
+    chance 5
+  end
+##############################################################
+#
+# RANDOM ITEM LISTS
+#
+treasureone random_artifact
+  arch chain_mail
+    magic_chance 45
+    magic 1
+    chance 5
+end
+treasureone random_weapon
+  list missile_weapons
+    chance 5
+  more
+  list melee_weapons
+    chance 10
+  end
+treasureone random_armour
+  arch leather_armour
+    magic_chance 45
+    magic 1
+    chance 5
+  more
+  arch chain_mail
+    magic_chance 45
+    magic 1
+    chance 5
+  more
+  arch full_helmet
+    magic_chance 45
+    magic 1
+    chance 5
+  more
+  arch helm_leather
+    magic_chance 45
+    magic 1
+    chance 5
+  more
+  arch shield
+    magic_chance 45
+    magic 1
+    chance 5
+  more
+  arch small_shield
+    magic_chance 45
+    magic 1
+    chance 5
+  more
+  arch low_boots
+    magic_chance 45
+    magic 1
+    chance 5
+  more
+  arch gauntlets
+    magic_chance 45
+    magic 1
+    chance 1
+  more
+  arch high_boots
+    magic_chance 45
+    magic 1
+    chance 3
+  more
+  arch gloves
+    magic_chance 45
+    magic 1
+    chance 2
+  more
+  arch cloak
+    chance 10
+  end
+treasureone random_food
+  arch food_generic
+    chance 35
+  more
+  arch poison_food
+    chance 13
+  end
+treasureone random_coin
+  arch goldcoin
+    chance 5
+    nrof 50
+  more
+  arch goldcoin
+    chance 5
+    nrof 100
+  more
+  arch goldcoin
+    chance 5
+    nrof 150
+  more
+  arch goldcoin
+    chance 5
+    nrof 200
+  more
+  arch goldcoin
+    chance 5
+    nrof 250
+  more
+  arch silvercoin
+    chance 5
+    nrof 250
+  more
+  arch silvercoin
+    chance 5
+    nrof 500
+  more
+  arch silvercoin
+    chance 5
+    nrof 750
+  more
+  arch silvercoin
+    chance 5
+    nrof 1000
+  more
+  arch silvercoin
+    chance 5
+    nrof 1500
+  more
+  arch mitcoin
+    chance 5
+    nrof 2
+  more
+  arch mitcoin
+    chance 5
+    nrof 4
+end
+treasureone random_wealth
+  arch goldcoin
+    chance 5
+    nrof 50
+  more
+  arch goldcoin
+    chance 5
+    nrof 100
+  more
+  arch goldcoin
+    chance 5
+    nrof 150
+  more
+  arch goldcoin
+    chance 5
+    nrof 200
+  more
+  arch goldcoin
+    chance 5
+    nrof 250
+  more
+  arch silvercoin
+    chance 5
+    nrof 250
+  more
+  arch silvercoin
+    chance 5
+    nrof 500
+  more
+  arch silvercoin
+    chance 5
+    nrof 750
+  more
+  arch silvercoin
+    chance 5
+    nrof 1000
+  more
+  arch silvercoin
+    chance 5
+    nrof 1500
+  more
+  arch mitcoin
+    chance 5
+    nrof 2
+  more
+  arch mitcoin
+    chance 5
+    nrof 4
+  end
+treasureone random_alchemy
+  arch gravedirt
+    chance 1
+  end
+treasureone random_potion
+  arch potion_generic
+    magic 8
+    chance 5
+  more
+  arch potion_generic
+    magic 10
+    chance 10
+  more
+  arch potion_generic
+    magic 12
+    chance 5
+  more
+  arch potion_generic
+    magic 14
+    nrof 1
+    chance 5
+  end
+treasureone containers
+  arch sack
+    chance 25
+  more
+  arch r_sack
+    chance 25
+  more
+  arch bag
+    chance 25
+  more
+  arch pouch
+    chance 20
+  more
+  arch key_ring
+    chance 20
+  more
+  arch quiver
+    chance 10
+  more
+  arch quiver_b
+    chance 10
+  more
+  arch quiver_s
+    chance 10
+  end
+treasureone missile_weapons
+  arch bow
+    magic_chance 45
+    magic 1
+    chance 10
+  more
+  arch arrow
+    magic_chance 45
+    magic 2
+    chance 35
+    nrof 30
+  more
+  arch crossbow
+    chance 10
+    magic_chance 45
+    magic 1
+  more
+  arch bolt
+    chance 35
+    magic_chance 45
+    magic 2
+    nrof 25
+  more
+  arch quiver
+    chance 10
+  end
+treasureone throw_weapons
+  arch t_dagger
+    magic_chance 45
+    magic 2
+    nrof 8
+    chance 30
+  more
+  arch t_hammer
+    magic_chance 45
+    magic 2
+    nrof 4
+    chance 15
+  end
+treasureone melee_weapons
+  arch dagger
+    magic_chance 45
+    magic 1
+    chance 5
+  more
+  arch sword
+    magic_chance 45
+    magic 1
+    chance 5
+  more
+  arch club
+    magic_chance 45
+    magic 1
+    chance 5
+  more
+  arch axe
+    magic_chance 45
+    magic 1
+    chance 5
+  more
+  list uncommon_weapons
+    chance 10
+  end
+treasureone uncommon_weapons
+  arch trident
+    magic_chance 45
+    magic 1
+    chance 5
+  end
+treasureone list14
+  arch amulet_generic
+    chance 10
+  more
+  arch ring_generic
+    chance 10
+  more
+  arch book
+    chance 10
+  more
+  arch wand
+    chance 10
+  more
+  arch rod_light
+    chance 5
+  more
+  arch scroll_generic
+    nrof 9
+    chance 30
+  end
+treasureone random_scroll
+  arch scroll_generic
+    chance 10
+    nrof 5
+  more
+  arch scroll_generic
+    chance 20
+    nrof 4
+  more
+  arch scroll_generic
+    chance 30
+    nrof 3
+  more
+  arch scroll_generic
+    chance 40
+    nrof 2
+  more
+  arch scroll_generic
+    chance 60
+  more
+  list random_read
+    chance 5
+  end
+treasure random_amulet
+  arch amulet_generic
+    chance 98
+    no
+      arch amulet_generic
+    end
+  end
+treasureone random_wands
+  arch wand
+    chance 95
+  more
+  arch rod_light
+    chance 5
+  more
+  arch rod_heavy
+    chance 1
+  end
+treasure shop_rings
+  arch ring_generic
+  end
+treasure random_books
+  arch book
+    chance 55
+    no
+      list random_read
+      end
+    end
+treasureone random_read
+  arch tome
+    chance 45
+  more
+  arch book
+    chance 65
+  more
+  arch note
+    chance 65
+  end
+treasure random_gem
+  arch emerald_great
+  chance 100
+end
+treasureone random_inorganic
+  arch rock2
+    chance 25
+  end
+treasureone random_spells
+  arch scroll_generic
+    chance 15
+    nrof 3
+  more
+  arch wand
+    chance 10
+  end
+treasureone random_talisman
+  arch ring_generic
+    chance 40
+  more
+  arch amulet_generic
+    chance 30
+  more
+  arch ring_generic
+    chance 5
+end
+treasureone uncommon_items
+  arch horn
+    chance 5
+  more
+  arch crown_generic
+    magic_chance 45
+    magic 1
+    chance 15
+  more
+  arch rod_light
+    chance 35
+  more
+  arch rod_heavy
+    chance 10
+  more
+  list NONE
+    chance 25
+  end
+treasure wand
+  arch wand
+  chance 4
+  end
+treasure rod
+  arch rod_light
+  chance 2
+  no
+    arch rod_heavy
+    chance 1
+    end
+  end
+treasure ring
+  arch ring_generic
+  chance 2
+  end
+treasureone normal_boots
+  arch sandals
+    magic_chance 45
+    magic 1
+    chance 5
+  more
+  arch high_boots
+    magic_chance 45
+    magic 1
+    chance 5
+  more
+  arch low_boots
+    magic_chance 45
+    magic 1
+    chance 5
+end
+treasureone def_metal_armour
+  arch banded_mail
+    magic_chance 45
+    magic 1
+    chance 5
+  more
+  arch chain_mail
+    magic_chance 45
+    magic 1
+    chance 5
+  end
+treasureone def_ammun
+  arch arrow
+    magic_chance 45
+    magic 2
+    chance 5
+  more
+  arch bolt
+    magic_chance 45
+    magic 2
+    chance 5
+  more
+  arch sstone
+    magic_chance 45
+    magic 2
+    chance 5
+  end
+treasureone def_leather_armour
+  arch padded_armour
+    magic 1
+    magic_chance 50
+    chance 5
+  more
+  arch leather_armour
+    magic_chance 50
+    magic 1
+    chance 5
+  end
+treasureone random_boots
+ arch sandals
+ magic_chance 45
+ magic 1
+ chance 35
+ more
+ arch high_boots
+ magic_chance 45
+ magic 1
+ chance 35
+ more
+ arch low_boots
+ magic_chance 45
+ magic 1
+ chance 35
+end
+##############################################################
+#
+# MOB TREASURES
+#
+treasure ant
+  arch dagger
+    magic_chance 45
+    magic 1
+    chance 2
+    item_race 7
+    material_end 1
+  more
+   arch t_dagger
+   nrof 5
+   chance 2
+  more
+  arch food_generic
+  chance 5
+  nrof 1
+  more
+  arch small_shield
+  magic_fix 1
+  chance 4
+  name small ant shield
+end
+treasure ant_queen
+  arch dagger
+    magic_chance 45
+    magic 1
+    chance 2
+    item_race 7
+    material_end 1
+  more
+   arch t_dagger
+   nrof 5
+   chance 2
+  more
+  arch food_generic
+  chance 5
+  nrof 1
+  more
+  arch small_shield
+  magic_fix 1
+  chance 4
+  name small ant shield
+end
+treasure slime
+  arch food_generic
+  chance 25
+  nrof 1
+  more
+  arch leather_armour
+  chance 8
+  nrof 1
+  more
+   arch t_star
+   nrof 5
+   chance 2
+  more
+  arch coppercoin
+  chance 100
+  nrof 6
+end
+treasure ogre
+  arch club
+   chance 25
+  more
+  arch coppercoin
+   chance 100
+   nrof 6
+end
+treasure giant_hill
+  arch club
+   chance 25
+  more
+  arch coppercoin
+   chance 100
+   nrof 6
+end
+############# TEST ############################
+treasureone random_test1
+ arch horn
+ chance 35
+ more
+ arch wand
+ chance 35
+ more
+ arch rod_heavy
+ chance 35
+ more
+ arch rod_light
+ chance 35
+ more
+ arch high_boots
+ magic_chance 5
+ magic 1
+ chance 35
+ more
+ arch potion_generic
+ chance 35
+ more
+ arch scroll_generic
+ chance 35
+ more
+ arch dust_generic
+ chance 35
+ more
+ arch balm_generic
+ chance 35
+end
+treasureone random_test
+ arch ring_generic
+end
