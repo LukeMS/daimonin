@@ -114,6 +114,7 @@ typedef unsigned int tag_t;
 
 #define STRING_OBJ_NAME(__ob__) PTR_STRING_SAFE((__ob__), name)
 #define STRING_OBJ_ARCH_NAME(__ob__) ((__ob__)?PTR_STRING_SAFE((__ob__)->arch, name):">NULL OBJ<")
+#define STRING_OBJ_MAP_PATH(__ob__) ((__ob__)?STRING_MAP_NAME((__ob__)->map):">NULL OBJ<")
 #define STRING_OBJ_TITLE(__ob__) PTR_STRING_SAFE((__ob__), title)
 #define STRING_OBJ_RACE(__ob__) PTR_STRING_SAFE((__ob__), race)
 #define STRING_OBJ_SLAYING(__ob__) PTR_STRING_SAFE((__ob__), slaying)
