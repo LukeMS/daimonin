@@ -1094,9 +1094,6 @@ CFParm* CFWReadyMapName(CFParm* PParm)
 		/* if we are here, we have not a unique map OR we must load
 		 * and generate a unique map.
 		 */
-		if(!(flag&3))
-			unique = MAP_NAME_SHARED;
-		
 		map = ready_map_name((flag&2)?create_pathname(string):string, unique);
 
 		if(map && (flag&3)) /* unique map loaded - be sure unique is set right */
