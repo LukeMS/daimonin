@@ -67,7 +67,7 @@ void InitConnection(NewSocket *ns, uint32 from)
 {
     SockList sl;
     unsigned char buf[256];
-    int	bufsize=SOCKETBUFSIZE;
+    int	bufsize=MAXSOCKBUF;
     int oldbufsize;
     int buflen=sizeof(int);
 
@@ -117,6 +117,8 @@ void InitConnection(NewSocket *ns, uint32 from)
 	ns->rf_spells = 0;
 	ns->rf_anims = 0;
 	ns->rf_bmaps = 0;
+	ns->can_write=0;
+	ns->write_overflow=0;
 
     /* we should really do some checking here - if total clients overflows
      * we need to do something more intelligent, because client id's will start
@@ -132,7 +134,7 @@ void InitConnection(NewSocket *ns, uint32 from)
     ns->readbuf.buf[0] = 0;
 	
 	ns->cmdbuf.len=0;
-    ns->cmdbuf.buf=malloc(MAXSOCKBUF_IN*6);
+    ns->cmdbuf.buf=malloc(MAXSOCKBUF);
     ns->cmdbuf.buf[0] = 0;
 	
 	memset(&ns->lastmap,0,sizeof(struct Map));
@@ -145,7 +147,6 @@ void InitConnection(NewSocket *ns, uint32 from)
 
     ns->outputbuffer.start=0;
     ns->outputbuffer.len=0;
-    ns->can_write=1;
 
     ns->sent_scroll=0;
     sprintf((char*)buf,"%d.%d.%d.%d",

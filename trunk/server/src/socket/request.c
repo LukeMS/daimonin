@@ -336,7 +336,6 @@ void AddMeCmd(char *buf, int len, NewSocket *ns)
     Settings oldsettings;
 	char cmd_buf[2]="X";
     oldsettings=settings;
-
     if (ns->status != Ns_Add || add_player(ns)) {
 		Write_String_To_Socket(ns, BINARY_CMD_ADDME_FAIL, cmd_buf,1);
 		ns->status = Ns_Dead;

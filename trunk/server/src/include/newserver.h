@@ -55,7 +55,7 @@ enum Sock_Status {Ns_Avail, Ns_Wait,Ns_Add,Ns_Login, Ns_Dead};
 typedef struct Buffer_struct {
 	int	    start;
     int	    len;
-    char    data[SOCKETBUFSIZE];
+    char    data[MAXSOCKBUF];
 } Buffer;
 
 /* Contains the base information we use to make up a packet we want to send. */
@@ -90,6 +90,7 @@ typedef struct NewSocket_struct {
     uint32  image2:1;			/* Client wants image2/face2 commands */
     uint32  can_write:1;		/* Can we write to this socket? */
 	uint32	version:1;		
+    uint32  write_overflow:1;		
 	uint32	setup:1;		
 	uint32	rf_settings:1;
 	uint32	rf_skills:1;
