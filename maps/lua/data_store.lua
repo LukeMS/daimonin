@@ -1,4 +1,4 @@
-data_store = {n = 0}
+data_store = {n = 0, _players = {}}
 
 --[[
 function data_store.save()
@@ -57,13 +57,28 @@ end
 
 DataTable_mt = {__index = DataTable, __newindex = function() error("Use set() to add/change values") end}
 
-function DataTable:new(id)
-	local obj = data_store[id]
+function DataTable:new(id, player)
+	local t
+	if player == nil then
+		t = data_store
+	else
+		if type(player) == "userdata" then
+			player = player.name
+		end
+		player = string.lower(player)
+		local players = data_store._players
+		t = players[player]
+		if t == nil then
+			players[player] = {n = 0}
+			t = players[player]
+		end
+	end
+	local obj = t[id]
 	if obj == nil then
 		obj = {_changed = 0}
 		setmetatable(obj, DataTable_mt)
-		data_store[id] = obj
-		data_store.n = table.getn(data_store) + 1
+		t[id] = obj
+		t.n = table.getn(data_store) + 1
 	end
 	return obj
 end
