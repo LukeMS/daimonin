@@ -349,7 +349,7 @@ int trap_show(object *trap, object *where)
 	 */
 	remove_ob(trap); /* we must remove and reinsert it.. */
 	CLEAR_FLAG(trap, FLAG_SYS_OBJECT);
-	CLEAR_FLAG(trap, FLAG_IS_INVISIBLE);
+	CLEAR_MULTI_FLAG(trap, FLAG_IS_INVISIBLE);
 	trap->layer = 4;
 	trap->speed = 1.0;
 	trap->speed_left = 1.0; /* we want show this some time */

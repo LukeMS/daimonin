@@ -98,12 +98,12 @@ static mapstruct *load_and_link_tiled_map(mapstruct *orig_map, int tile_num)
 {
     int dest_tile = map_tiled_reverse[tile_num];
 	
-    orig_map->tile_map[tile_num] = ready_map_name(orig_map->tile_path[tile_num], MAP_UNIQUE(orig_map)?1:0);
+    orig_map->tile_map[tile_num] = ready_map_name(orig_map->tile_path[tile_num], MAP_NAME_SHARED | (MAP_UNIQUE(orig_map)?1:0));
 
-    /* need to do a strcmp here as the orig_map->path is not a shared string */
 	if(orig_map->tile_map[tile_num]->tile_path[dest_tile])
 	{
-	    if (!strcmp(orig_map->tile_map[tile_num]->tile_path[dest_tile], orig_map->path))
+        /* no need for strcmp as we now use shared strings */
+	    if (orig_map->tile_map[tile_num]->tile_path[dest_tile] == orig_map->path)
 			orig_map->tile_map[tile_num]->tile_map[dest_tile] = orig_map;
 	}
 	else
@@ -210,31 +210,39 @@ static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int 
     return relative_tile_position_rec(map1, map2, x, y, ++traversal_id);
 }
 
-
 /*
  * Returns the mapstruct which has a name matching the given argument.
- * return NULL if no match is found.
+ * return NULL if no match is found. This version _requires_ a shared string as input.
  */
-
-mapstruct *has_been_loaded (const char *name) {
+mapstruct *has_been_loaded_sh (const char *name) {
     mapstruct *map;
-	int moff=0;
-
+    int namebug = 0;
     if (!name || !*name) 
 	return 0;
 
-	/* this IS a bug starting without '/' - this can lead in double loaded maps! */
-	if(*name != '/' && *name != '.')
-	{
-		moff = 1;
-		LOG(llevDebug,"DEBUG: has_been_loaded: found map name without starting '/': fixed! %s\n", name);
+    /* this IS a bug starting without '/' - this can lead in double loaded maps! */
+    if(*name != '/' && *name != '.')
+    {        
+        /* Can't handle offset using shared strings... */
+        char namebuf[HUGE_BUF];
 
-	}
+        namebug = 1;
+
+        namebuf[0] = '/';
+        namebuf[1] = '\0';
+        strcat(namebuf, name);
+        name = add_string(namebuf);
+        
+        LOG(llevDebug,"DEBUG: has_been_loaded_sh: found map name without starting '/': fixed! %s\n", name);
+    }
+    
     for (map = first_map; map; map = map->next)
-	{
-		if (!strcmp (name+moff, map->path))
-			break;
-	}
+        if (name == map->path)
+            break;
+
+    if(namebug)
+        free_string_shared(name);
+    
     return (map);
 }
 
@@ -364,7 +372,6 @@ char *normalize_path (const char *src, const char *dst, char *path) {
 
     if (*dst == '/') {
 	strcpy (buf, dst);
-
     } else {
 	strcpy (buf, src);
 	if ((p = strrchr (buf, '/')))
@@ -906,6 +913,7 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags)
 				*/
 				QUERY_FLAG(op,FLAG_NO_APPLY)		? SET_FLAG(tmp,FLAG_NO_APPLY) : CLEAR_FLAG(tmp,FLAG_NO_APPLY);
 				QUERY_FLAG(op,FLAG_IS_INVISIBLE)	? SET_FLAG(tmp,FLAG_IS_INVISIBLE) : CLEAR_FLAG(tmp,FLAG_IS_INVISIBLE);
+				QUERY_FLAG(op,FLAG_IS_ETHEREAL)		? SET_FLAG(tmp,FLAG_IS_ETHEREAL) : CLEAR_FLAG(tmp,FLAG_IS_ETHEREAL);
 				QUERY_FLAG(op,FLAG_CAN_PASS_THRU)	? SET_FLAG(tmp,FLAG_CAN_PASS_THRU) : CLEAR_FLAG(tmp,FLAG_CAN_PASS_THRU);
 				QUERY_FLAG(op,FLAG_FLYING)			? SET_FLAG(tmp,FLAG_FLYING) : CLEAR_FLAG(tmp,FLAG_FLYING);
 				QUERY_FLAG(op,FLAG_BLOCKSVIEW)		? SET_FLAG(tmp,FLAG_BLOCKSVIEW) : CLEAR_FLAG(tmp,FLAG_BLOCKSVIEW);
@@ -1380,16 +1388,17 @@ static int load_map_header(FILE *fp, mapstruct *m)
                 if (value) {
                     mapstruct *neighbour;
                     int dest_tile = map_tiled_reverse[tile-1];                            
+                    const char *path_sh = add_string(value);
 
-                    m->tile_path[tile-1] = add_string(value);
+                    m->tile_path[tile-1] = path_sh;
                     LOG(llevDebug,"add t_map %s (%d). ",value, tile-1);
                     
                     /* If the neighbouring map tile has been loaded, set up the map pointers */
-                    if((neighbour = has_been_loaded(value))) {
+                    if((neighbour = has_been_loaded_sh(path_sh))) {
                         m->tile_map[tile-1] = neighbour;
-                        /* the server bugged here one time because neighbour->tile_path[dest_tile] == NULL... MT */
+                        /* Replaced strcmp with ptr check since its a shared string now */
                         if (neighbour->tile_path[dest_tile] == NULL || 
-                                !strcmp(neighbour->tile_path[dest_tile], m->path)) 
+                                neighbour->tile_path[dest_tile] == m->path) 
                             neighbour->tile_map[dest_tile] = m;
                     }
                 } /* If valid neighbour path */
@@ -1466,8 +1475,8 @@ mapstruct *load_original_map(const char *filename, int flags) {
     m = get_linked_map();
 
     LOG(llevDebug, "header: ");
-    strcpy (m->path, filename);
-	m->map_tag = global_map_tag;	/* pre init the map tag */
+    FREE_AND_COPY_HASH(m->path, filename);
+    m->map_tag = global_map_tag;	/* pre init the map tag */
     if (load_map_header(fp, m))
 	{
 		LOG(llevBug,"BUG: Failure loading map header for %s, flags=%d\n", filename, flags);
@@ -1898,7 +1907,7 @@ void delete_map(mapstruct *m) {
 	if (m == first_map)
 	    first_map = m->next;
 	else
-	    /* m->path is a static char, so should hopefully still have
+	    /* m->path is freed below, so should hopefully still have
 	     * some useful data in it.
 	     */
 	    LOG(llevBug,"BUG: delete_map: Unable to find map %s in list\n",
@@ -1906,6 +1915,9 @@ void delete_map(mapstruct *m) {
     }
     else
 	last->next = m->next;
+    
+    /* Free our pathname (we'd like to use it above)*/
+    FREE_AND_CLEAR_HASH(m->path);
 
     free (m);
 }
@@ -1926,13 +1938,21 @@ void delete_map(mapstruct *m) {
 
 mapstruct *ready_map_name(const char *name, int flags) 
 {
-	mapstruct *m;
+    mapstruct *m;
+    const char *name_sh;
 
-	if (!name)
+    if (!name)
        return (NULL);
 
     /* Have we been at this level before? */
-    m = has_been_loaded (name);
+    if(flags & MAP_NAME_SHARED) 
+        m = has_been_loaded_sh (name);
+    else {
+        /* Create a temporary shared string for the name if not explicitly given */
+        name_sh = add_string(name);
+        m = has_been_loaded_sh (name_sh);
+        free_string_shared(name_sh);
+    }
 
     /* Map is good to go, so just return it */
     if (m && (m->in_memory == MAP_LOADING || m->in_memory == MAP_IN_MEMORY))

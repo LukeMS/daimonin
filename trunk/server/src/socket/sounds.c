@@ -28,8 +28,6 @@
 #include <sounds.h>
 #include <sockproto.h>
 
-#define POW2(x) ((x) * (x))
-
 /* This is only used for new client/server sound.  If the sound source
  * on the map is farther away than this, we don't sent it to the client.
  */

@@ -44,6 +44,7 @@
 /* 0.1 "Ophiuchus"   - Initial Alpha release                                 */
 /* 0.5 "Stalingrad"  - Message length overflow corrected.                    */
 /* 0.6 "Kharkov"     - Message and Write correctly redefined.                */
+/* 0.x "xxx"         - Work in progress                                      */
 /*****************************************************************************/
 /* Version: 0.6 Beta (also known as "Kharkov")                               */
 /*****************************************************************************/
@@ -55,6 +56,13 @@
 
 #include <plugin_python.h>
 #include <inline.h>
+
+#include <compile.h>
+#include <eval.h>
+#ifdef STR 
+#undef STR /* STR is redefined in node.h. Since this file doesn't use STR, we remove it */
+#endif
+#include <node.h>
 
 /* Global data objects */
 
@@ -88,6 +96,7 @@ static PyObject* Daimonin_WhoAmI(PyObject* self, PyObject* args);
 static PyObject* Daimonin_WhoIsActivator(PyObject* self, PyObject* args);
 static PyObject* Daimonin_WhatIsMessage(PyObject* self, PyObject* args);
 static PyObject* Daimonin_WhoIsOther(PyObject* self, PyObject* args);
+static PyObject* Daimonin_GetOptions(PyObject *self, PyObject* args);
 static PyObject* Daimonin_GetSpellNr(PyObject* self, PyObject* args);
 static PyObject* Daimonin_GetSkillNr(PyObject* self, PyObject* args);
 static PyObject* Daimonin_CheckMap(PyObject* self, PyObject* args);
@@ -112,6 +121,7 @@ int StackParm2[MAX_RECURSIVE_CALL];
 int StackParm3[MAX_RECURSIVE_CALL];
 int StackParm4[MAX_RECURSIVE_CALL];
 int StackReturn[MAX_RECURSIVE_CALL];
+char* StackOptions[MAX_RECURSIVE_CALL];
 
 /* Here are the Python Declaration Table, used by the interpreter to make    */
 /* an interface with the C code                                              */
@@ -122,6 +132,7 @@ static PyMethodDef DaimoninMethods[] =
     {"CheckMap",Daimonin_CheckMap,METH_VARARGS},
     {"MatchString", Daimonin_MatchString, METH_VARARGS},
     {"FindPlayer", Daimonin_FindPlayer, METH_VARARGS},
+    {"GetOptions", Daimonin_GetOptions, METH_VARARGS},
     {"GetReturnValue",Daimonin_GetReturnValue,METH_VARARGS},
     {"SetReturnValue",Daimonin_SetReturnValue,METH_VARARGS},
     {"GetSpellNr",Daimonin_GetSpellNr,METH_VARARGS},
@@ -150,6 +161,18 @@ static Daimonin_Constant module_constants[] = {
 /* Commands management part */
 PythonCmd CustomCommand[NR_CUSTOM_CMD];
 int NextCustomCommand;
+
+/* Stuff for python bytecode cache */
+#define PYTHON_CACHE_SIZE 10
+
+typedef struct {
+    const char *file;
+    PyCodeObject *code;
+    time_t cached_time, used_time;
+} cacheentry;
+
+static cacheentry python_cache[PYTHON_CACHE_SIZE];
+static int RunPythonScript(const char *path);
 
 
 /****************************************************************************/
@@ -244,7 +267,7 @@ static PyObject* Daimonin_ReadyMap(PyObject* self, PyObject* args)
 /* Name   : Daimonin_CheckMap                                                */
 /* Python : Daimonin.CheckMap(arch, map_path, x, y)                          */
 /* Info   :                                                                  */
-/* Status : Untested                                                         */
+/* Status : Unfinished. DO NOT USE!                                          */
 /*****************************************************************************/
 
 static PyObject* Daimonin_CheckMap(PyObject* self, PyObject* args)
@@ -252,18 +275,20 @@ static PyObject* Daimonin_CheckMap(PyObject* self, PyObject* args)
     char *what;
     char *mapstr;
     int x, y;
-    object* foundob;
+/*    object* foundob; */
 
     /* Gecko: replaced coordinate tuple with separate x and y coordinates */
     if (!PyArg_ParseTuple(args,"ssii",&what,&mapstr,&x,&y))
         return NULL;
     
-    foundob = present_arch(
+    RAISE("CheckMap() is not finished!");
+    
+/*    foundob = present_arch(
         find_archetype(what),
         has_been_loaded(mapstr),
         x,y
     );
-    return wrap_object(foundob);
+    return wrap_object(foundob);*/
 }
 
 
@@ -344,6 +369,19 @@ static PyObject* Daimonin_WhatIsMessage(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("s",StackText[StackPosition]);
+}
+
+/*****************************************************************************/
+/* Name   : Daimonin_GetOptions                                              */
+/* Python : Daimonin.GetOptions()                                            */
+/* Info   : Gets the script options (as passed in the event's slaying field) */
+/* Status : Stable                                                           */
+/*****************************************************************************/
+static PyObject* Daimonin_GetOptions(PyObject* self, PyObject* args)
+{
+    if (!PyArg_ParseTuple(args,"",NULL))
+        return NULL;
+    return Py_BuildValue("s",StackOptions[StackPosition]);
 }
 
 /*****************************************************************************/
@@ -556,8 +594,6 @@ MODULEAPI CFParm* triggerEvent(CFParm* PParm)
 /*****************************************************************************/
 MODULEAPI int HandleGlobalEvent(CFParm* PParm)
 {
-    FILE* Scriptfile;
-
     if (StackPosition == MAX_RECURSIVE_CALL)
     {
         LOG(llevDebug, "Can't execute script - No space left of stack\n");
@@ -574,12 +610,7 @@ MODULEAPI int HandleGlobalEvent(CFParm* PParm)
         case EVENT_BORN:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
             /*LOG(llevDebug, "Event BORN generated by %s\n",query_name(StackActivator[StackPosition])); */
-            Scriptfile = fopen(create_pathname("python/python_born.py"),"r");
-            if (Scriptfile != NULL)
-            {
-                PyRun_SimpleFile(Scriptfile,create_pathname("python/python_born.py"));
-                fclose(Scriptfile);
-            }
+            RunPythonScript("python/python_born.py");
             break;
         case EVENT_LOGIN:
             StackActivator[StackPosition] = ((player *)(PParm->Value[1]))->ob;
@@ -587,36 +618,20 @@ MODULEAPI int HandleGlobalEvent(CFParm* PParm)
             StackText[StackPosition] = (char *)(PParm->Value[2]);
             /*LOG(llevDebug, "Event LOGIN generated by %s\n",query_name(StackActivator[StackPosition])); */
             /*LOG(llevDebug, "IP is %s\n", (char *)(PParm->Value[2])); */
-            Scriptfile = fopen(create_pathname("python/python_login.py"),"r");
-            if (Scriptfile != NULL)
-            {
-                PyRun_SimpleFile(
-                    Scriptfile,create_pathname("python/python_login.py"));
-                fclose(Scriptfile);
-            }
+            RunPythonScript("python/python_login.py");
             break;
         case EVENT_LOGOUT:
             StackActivator[StackPosition] = ((player *)(PParm->Value[1]))->ob;
             StackWho[StackPosition] = ((player *)(PParm->Value[1]))->ob;
             StackText[StackPosition] = (char *)(PParm->Value[2]);
             /*LOG(llevDebug, "Event LOGOUT generated by %s\n",query_name(StackActivator[StackPosition])); */
-            Scriptfile = fopen(create_pathname("python/python_logout.py"),"r");
-            if (Scriptfile != NULL)
-            {
-                PyRun_SimpleFile(Scriptfile,create_pathname("python/python_logout.py"));
-                fclose(Scriptfile);
-            }
+            RunPythonScript("python/python_logout.py");
             break;
         case EVENT_REMOVE:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
             /*LOG(llevDebug, "Event REMOVE generated by %s\n",query_name(StackActivator[StackPosition])); */
 
-            Scriptfile = fopen(create_pathname("python/python_remove.py"),"r");
-            if (Scriptfile != NULL)
-            {
-                PyRun_SimpleFile(Scriptfile,create_pathname("python/python_remove.py"));
-                fclose(Scriptfile);
-            }
+            RunPythonScript("python/python_remove.py");
             break;
         case EVENT_SHOUT:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
@@ -624,67 +639,176 @@ MODULEAPI int HandleGlobalEvent(CFParm* PParm)
             /*LOG(llevDebug, "Event SHOUT generated by %s\n",query_name(StackActivator[StackPosition])); */
 
             /*LOG(llevDebug, "Message shout is %s\n",StackText[StackPosition]); */
-            Scriptfile = fopen(create_pathname("python/python_shout.py"),"r");
-            if (Scriptfile != NULL)
-            {
-                PyRun_SimpleFile(Scriptfile, create_pathname("python/python_shout.py"));
-                fclose(Scriptfile);
-            }
+            RunPythonScript("python/python_shout.py");
             break;
         case EVENT_MAPENTER:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
             /*LOG(llevDebug, "Event MAPENTER generated by %s\n",query_name(StackActivator[StackPosition])); */
 
-            Scriptfile = fopen(create_pathname("python/python_mapenter.py"),"r");
-            if (Scriptfile != NULL)
-            {
-                PyRun_SimpleFile(Scriptfile, create_pathname("python/python_mapenter.py"));
-                fclose(Scriptfile);
-            }
+            RunPythonScript("python/python_mapenter.py");
             break;
         case EVENT_MAPLEAVE:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
             /*LOG(llevDebug, "Event MAPLEAVE generated by %s\n",query_name(StackActivator[StackPosition])); */
 
-            Scriptfile = fopen(create_pathname("python/python_mapleave.py"),"r");
-            if (Scriptfile != NULL)
-            {
-                PyRun_SimpleFile(Scriptfile, create_pathname("python/python_mapleave.py"));
-                fclose(Scriptfile);
-            }
+            RunPythonScript("python/python_mapleave.py");
             break;
         case EVENT_CLOCK:
             /* LOG(llevDebug, "Event CLOCK generated\n"); */
-            Scriptfile = fopen(create_pathname("/python/python_clock.py"),"r");
-            if (Scriptfile != NULL)
-            {
-                PyRun_SimpleFile(Scriptfile, create_pathname("python/python_clock.py"));
-                fclose(Scriptfile);
-            }
+            RunPythonScript("python/python_clock.py");
             break;
         case EVENT_MAPRESET:
             StackText[StackPosition] = (char *)(PParm->Value[1]);/* Map name/path */
             LOG(llevDebug, "Event MAPRESET generated by %s\n", StackText[StackPosition]);
 
-            Scriptfile = fopen(create_pathname("python/python_mapreset.py"),"r");
-            if (Scriptfile != NULL)
-            {
-                PyRun_SimpleFile(Scriptfile, create_pathname("python/python_mapreset.py"));
-                fclose(Scriptfile);
-            }
+            RunPythonScript("python/python_mapreset.py");
             break;
     }
     StackPosition--;
     return 0;
 }
+    
+/********************************************************************/
+/* Execute a script, handling loading, parsing and caching          */
+/********************************************************************/
+static int RunPythonScript(const char *path) {
+    FILE* scriptfile = NULL;
+    char *fullpath = create_pathname(path);
+    const char *sh_path;
+    struct stat stat_buf;
+    int i, result = -1;
+    cacheentry *replace = NULL, *run = NULL;
+    struct _node *n;
+    PyObject *globdict;
+    
+    /* TODO: figure out how to get from server */
+    int maintenance_mode = 1; /* 1 for timestamp checking and error messages */
+    
+    if(maintenance_mode) {
+        if (!(scriptfile = fopen(fullpath, "r"))) {
+            LOG(llevDebug, "PYTHON - The Script file %s can't be opened\n", path);
+            return -1;
+        }
+    
+        if(fstat(fileno(scriptfile), &stat_buf)) {
+            LOG(llevDebug, "PYTHON - The Script file %s can't be stat:ed\n", path);
+            if(scriptfile)
+                fclose(scriptfile);
+            return -1;
+        } 
+    }
+
+    sh_path = add_string_hook(fullpath); /* Create a shared string */
+
+    /* Search through cache. Three cases:
+     * 1) script in cache, but older than file  -> replace cached (only in maintenance mode)
+     * 2) script in cache and up to date        -> use cached
+     * 3) script not in cache, cache not full   -> add to end of cache
+     * 4) script not in cache, cache full       -> replace least recently used
+     */
+    for(i=0; i < PYTHON_CACHE_SIZE; i++) {
+        if(python_cache[i].file == NULL) {
+#ifdef PYTHON_DEBUG
+            LOG(llevDebug, "PYTHON:: Adding file to cache\n");
+#endif
+            replace = &python_cache[i];      /* case 3 */
+            break;
+        } else if(python_cache[i].file == sh_path) {
+            /* Found it. Compare timestamps. */
+            if(python_cache[i].code == NULL || (maintenance_mode && python_cache[i].cached_time<stat_buf.st_mtime)) {
+#ifdef PYTHON_DEBUG
+                LOG(llevDebug, "PYTHON:: File newer than cached bytecode -> reloading\n");
+#endif
+                replace = &python_cache[i];  /* case 1 */
+            } else {
+#ifdef PYTHON_DEBUG
+                LOG(llevDebug, "PYTHON:: Using cached version\n");
+#endif
+                replace = NULL; /* case 2 */
+                run = &python_cache[i];
+            }
+            break;
+        } else if(replace == NULL || python_cache[i].used_time < replace->used_time) 
+            replace = &python_cache[i];      /* prepare for case 4 */
+    }
+
+    /* replace a specific cache index with the file */
+    if(replace) {
+        Py_XDECREF(replace->code); /* safe to call on NULL */
+        replace->code = NULL;
+
+        /* Need to replace path string? */
+        if (replace->file != sh_path) {
+            if(replace->file) {
+#ifdef PYTHON_DEBUG
+                LOG(llevDebug, "PYTHON:: Purging %s (cache index %d): \n", replace->file, replace - python_cache);
+#endif
+                free_string_hook(replace->file);
+            }
+            replace->file = add_string_hook(sh_path); 
+            /* TODO: would get minor speedup with add_ref_hook() */
+        }
+
+        /* Load, parse and compile */
+#ifdef PYTHON_DEBUG
+        LOG(llevDebug, "PYTHON:: Parse and compile (cache index %d): \n", replace - python_cache);
+#endif
+        if (!scriptfile && !(scriptfile = fopen(fullpath, "r"))) {
+            LOG(llevDebug, "PYTHON - The Script file %s can't be opened\n", path);
+            replace->code = NULL;
+        } else {  
+            if((n = PyParser_SimpleParseFile (scriptfile, fullpath, Py_file_input))) {
+                replace->code = PyNode_Compile (n, fullpath);
+                PyNode_Free (n);
+            } 
+
+            if(maintenance_mode) {
+                if(PyErr_Occurred()) 
+                    PyErr_Print();
+                else
+                    replace->cached_time = stat_buf.st_mtime;
+            }
+            run = replace;
+        }
+    }
+
+    /* run an old or new code object */
+    if(run && run->code) {
+        /* Create a new environment with each execution. Don't want any old variables hanging around */
+        globdict = PyDict_New (); 
+        PyDict_SetItemString (globdict, "__builtins__", PyEval_GetBuiltins ());
+
+#ifdef PYTHON_DEBUG
+        LOG(llevDebug, "PYTHON:: PyEval_EvalCode (cache index %d): \n", run - python_cache);
+#endif
+        PyEval_EvalCode(run->code, globdict, NULL);
+        if (PyErr_Occurred ()) {
+            if(maintenance_mode)
+                PyErr_Print();                
+        } else {
+            result = 0; /* only return 0 if we actually succeeded */
+            run->used_time = time(NULL);
+        }
+#ifdef PYTHON_DEBUG
+        LOG(llevDebug, "closing (%d). ",StackPosition);
+#endif
+        Py_DECREF(globdict);
+    }
+
+    free_string_hook(sh_path);
+
+    if(scriptfile)
+        fclose(scriptfile);
+
+    return result;
+}
+
 
 /*****************************************************************************/
 /* Handles standard local events.                                            */
 /*****************************************************************************/
 MODULEAPI int HandleEvent(CFParm* PParm)
 {
-    FILE* Scriptfile;
-
 #ifdef PYTHON_DEBUG
     LOG(llevDebug, "PYTHON - HandleEvent:: start script file >%s<\n",(char *)(PParm->Value[9]));
     LOG(llevDebug, "PYTHON - call data:: o1:>%s< o2:>%s< o3:>%s< text:>%s< i1:%d i2:%d i3:%d i4:%d SP:%d\n",
@@ -695,6 +819,7 @@ MODULEAPI int HandleEvent(CFParm* PParm)
 		*(int *)(PParm->Value[5]),*(int *)(PParm->Value[6]),*(int *)(PParm->Value[7]),*(int *)(PParm->Value[8]),
 		StackPosition);
 #endif
+    
     if (StackPosition == MAX_RECURSIVE_CALL)
     {
         LOG(llevDebug, "PYTHON - Can't execute script - No space left of stack\n");
@@ -709,22 +834,13 @@ MODULEAPI int HandleEvent(CFParm* PParm)
     StackParm2[StackPosition]       = *(int *)(PParm->Value[6]);
     StackParm3[StackPosition]       = *(int *)(PParm->Value[7]);
     StackParm4[StackPosition]       = *(int *)(PParm->Value[8]);
+    StackOptions[StackPosition]     = (char *)(PParm->Value[10]);
     StackReturn[StackPosition]      = 0;
-    /* RunPythonScript(scriptname); */
-    Scriptfile = fopen(create_pathname((char *)(PParm->Value[9])),"r");
-    if (Scriptfile == NULL)
-    {
-        LOG(llevDebug, "PYTHON - The Script file %s can't be opened\n",(char *)(PParm->Value[9]));
+
+    if(RunPythonScript((char *)(PParm->Value[9]))) {
+        StackPosition--;
         return 0;
     }
-#ifdef PYTHON_DEBUG
-    LOG(llevDebug, "PYTHON:: PyRun_SimpleFile! (%d)",StackPosition);
-#endif
-    PyRun_SimpleFile(Scriptfile, create_pathname((char *)(PParm->Value[9])));
-#ifdef PYTHON_DEBUG
-    LOG(llevDebug, "closing (%d). ",StackPosition);
-#endif
-    fclose(Scriptfile);
 
 #ifdef PYTHON_DEBUG
     LOG(llevDebug, "fixing. ");
@@ -743,9 +859,11 @@ MODULEAPI int HandleEvent(CFParm* PParm)
     {
         fix_player_hook(StackActivator[StackPosition]);
     }
+
 #ifdef PYTHON_DEBUG
-    LOG(llevDebug, "done (%d)!\n",StackReturn[StackPosition]);
+    LOG(llevDebug, "done (returned: %d)!\n",StackReturn[StackPosition]);
 #endif
+    
     return StackReturn[StackPosition--];
 }
 
@@ -826,7 +944,6 @@ MODULEAPI CFParm* getPluginProperty(CFParm* PParm)
 
 MODULEAPI int cmd_customPython(object *op, char *params)
 {
-    FILE* Scriptfile;
 #ifdef PYTHON_DEBUG
     LOG(llevDebug, "PYTHON - cmd_customPython called:: script file: %s\n",CustomCommand[NextCustomCommand].script);
 #endif
@@ -841,20 +958,15 @@ MODULEAPI int cmd_customPython(object *op, char *params)
     StackOther[StackPosition]       = op;
     StackText[StackPosition]        = params;
     StackReturn[StackPosition]      = 0;
-    Scriptfile = fopen(create_pathname(CustomCommand[NextCustomCommand].script),"r");
-    if (Scriptfile == NULL)
-    {
-        LOG(llevDebug, "PYTHON - The Script file %s can't be opened\n",CustomCommand[NextCustomCommand].script);
-        return 0;
-    }
-    PyRun_SimpleFile(Scriptfile, create_pathname(CustomCommand[NextCustomCommand].script));
-    fclose(Scriptfile);
+    
+    RunPythonScript(CustomCommand[NextCustomCommand].script);
+    
     return StackReturn[StackPosition--];
 }
 
 MODULEAPI int cmd_aboutPython(object *op, char *params)
 {
-	/* ehm... a map info version msg??? MT? should be drawinfo, or missed i something? */
+	/* ehm... a map info version msg??? should be drawinfo, or missed i something? MT-18.02.04*/
 	/*
     int color = NDI_BLUE|NDI_UNIQUE;
     char message[1024];

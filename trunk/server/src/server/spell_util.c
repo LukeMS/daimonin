@@ -1479,7 +1479,7 @@ void fire_a_ball (object *op, int dir, int strength)
   tmp->stats.hp=strength;
   tmp->level = op->level;
   SET_ANIMATION(tmp, (NUM_ANIMATIONS(tmp)/NUM_FACINGS(tmp))*dir);
-  SET_FLAG(tmp, FLAG_FLYING);
+  SET_MULTI_FLAG(tmp, FLAG_FLYING);
   if ((tmp = insert_ob_in_map (tmp, op->map, op,0)) != NULL)
     move_fired_arch (tmp);
 }

@@ -403,9 +403,10 @@ char *clean_path(const char *file)
  * are getting passed a string that points to a unique map
  * path.
  */
-char *unclean_path(char *src)
+char *unclean_path(const char *src)
 {
-    static char newpath[MAX_BUF],*cp;
+    static char newpath[MAX_BUF], *cp2;
+    const char *cp;
 
     cp=strrchr(src, '/');
     if (cp)
@@ -414,8 +415,8 @@ char *unclean_path(char *src)
 	strncpy(newpath, src, MAX_BUF-1);
     newpath[MAX_BUF-1]='\0';
 
-    for (cp=newpath; *cp!='\0'; cp++) {
-	if (*cp=='_') *cp='/';
+    for (cp2=newpath; *cp2!='\0'; cp2++) {
+	if (*cp2=='_') *cp2='/';
     }
     return newpath;
 }
@@ -460,7 +461,7 @@ static void enter_random_map(object *pl, object *exit_ob)
 	x=EXIT_X(exit_ob) = MAP_ENTER_X(new_map);
 	y=EXIT_Y(exit_ob) = MAP_ENTER_Y(new_map);
 	FREE_AND_COPY_HASH(EXIT_PATH(exit_ob), newmap_name);
-	strcpy(new_map->path, newmap_name);
+	FREE_AND_COPY_HASH(new_map->path, newmap_name);
 	enter_map(pl, new_map, 	x, y,QUERY_FLAG(exit_ob,FLAG_USE_FIX_POS));
     }
 }
@@ -519,7 +520,7 @@ static void enter_unique_map(object *op, object *exit_ob)
     }
 
     if (newmap) {
-	strcpy(newmap->path, apartment);
+        FREE_AND_COPY_HASH(newmap->path, apartment);
 		newmap->map_flags |=MAP_FLAG_UNIQUE;
 	enter_map(op, newmap, EXIT_X(exit_ob), EXIT_Y(exit_ob),QUERY_FLAG(exit_ob,FLAG_USE_FIX_POS));
     } else {
@@ -620,9 +621,9 @@ void enter_exit(object *op, object *exit_ob)
 				* But we do need to see if it is unique or not 
 				*/
 				if (!strncmp(EXIT_PATH(exit_ob), settings.localdir, strlen(settings.localdir)))
-					newmap = ready_map_name(EXIT_PATH(exit_ob), MAP_PLAYER_UNIQUE);
+					newmap = ready_map_name(EXIT_PATH(exit_ob), MAP_NAME_SHARED|MAP_PLAYER_UNIQUE);
 				else
-					newmap = ready_map_name(EXIT_PATH(exit_ob), 0);
+					newmap = ready_map_name(EXIT_PATH(exit_ob), MAP_NAME_SHARED);
 			}
 
 			if (!newmap)
@@ -1129,15 +1130,15 @@ int forbid_play()
 #endif
 }
 
-void dequeue_path_requests()
-{
-#ifdef LEFTOVER_CPU_FOR_PATHFINDING
+#if 0
     static struct timeval new_time;
     long leftover_sec, leftover_usec;
     object *wp;
 
-    /* TODO: check if any path is requested before entering loop */
-    do {
+    wp = get_next_requested_path();
+    while (wp) {
+        waypoint_compute_path(wp);
+        
         (void) GETTIMEOFDAY(&new_time);
 
         leftover_sec = last_time.tv_sec - new_time.tv_sec;
@@ -1155,15 +1156,44 @@ void dequeue_path_requests()
             leftover_sec +=1;
         }
 
-        /* TODO: use an average pathfinding time for timeleft threshold */
-        if (leftover_sec > 0 || (leftover_sec == 0 && leftover_usec > 10000))
-        {            
-            wp = get_next_requested_path();
-            if(wp) 
-                waypoint_compute_path(wp);
-        } else
-            wp = NULL;
-    } while (wp);
+        if (leftover_sec < 1 && leftover_usec < 10000)
+            break;
+    }
+#endif 
+
+void dequeue_path_requests()
+{
+#ifdef LEFTOVER_CPU_FOR_PATHFINDING
+    static struct timeval new_time;
+    long leftover_sec, leftover_usec;
+    object *wp;
+
+    while ((wp = get_next_requested_path())) {
+        waypoint_compute_path(wp);
+        
+        /* TODO: only compute time if there is something more in the queue, something
+         * like if(path_request_queue_empty()) break; */
+        (void) GETTIMEOFDAY(&new_time);
+
+        leftover_sec = last_time.tv_sec - new_time.tv_sec;
+        leftover_usec = max_time - (new_time.tv_usec - last_time.tv_usec);
+
+        /* This is very ugly, but probably the fastest for our use: */
+        while (leftover_usec < 0)
+        {
+            leftover_usec += 1000000;
+            leftover_sec -= 1;
+        }
+        while (leftover_usec > 1000000)
+        {
+            leftover_usec -= 1000000;
+            leftover_sec +=1;
+        }
+
+        /* Try to save about 10 ms */
+        if (leftover_sec < 1 && leftover_usec < 10000)
+            break;
+    }
 #else
     object *wp = get_next_requested_path();
     if(wp) 

@@ -85,7 +85,7 @@ void read_map_log()
 	 */
 	cp=strchr(buf,':');
 	*cp++='\0';
-	strcpy(map->path, buf);
+	FREE_AND_COPY_HASH(map->path, buf);
 	cp1=strchr(cp,':');
 	*cp1++='\0';
 	map->tmpname=strdup_local(cp);
@@ -202,7 +202,7 @@ void check_active_maps() {
  * map_least_timeout() returns the map with the lowest timeout variable (not 0)
  */
 
-mapstruct *map_least_timeout(char *except_level) {
+mapstruct *map_least_timeout(const char *except_level) {
   mapstruct *map, *chosen=NULL;
   int timeout = MAP_MAXTIMEOUT + 1;
   for(map = first_map;map != NULL; map = map->next)
@@ -218,7 +218,7 @@ mapstruct *map_least_timeout(char *except_level) {
  * no more maps to swap.
  */
 
-void swap_below_max(char *except_level) {
+void swap_below_max(const char *except_level) {
     mapstruct *map;
 
     if(nrofallocobjects - nroffreeobjects < MAX_OBJECTS)

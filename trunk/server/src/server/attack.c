@@ -1339,6 +1339,33 @@ static int stick_arrow (object *op, object *tmp)
 	op = insert_ob_in_ob(op,tmp);
 	if (tmp->type== PLAYER)
 	    esrv_send_item (tmp, op);
+
+#ifdef PLUGINS
+    /* GROS: Handle for plugin stop event */
+    if(op->event_flags&EVENT_FLAG_STOP)
+    {
+        CFParm CFP;
+        int k, l, m;
+        object *event_obj = get_event_object(op, EVENT_STOP);
+        k = EVENT_STOP;
+        l = SCRIPT_FIX_NOTHING;
+        m = 0;
+        CFP.Value[0] = &k;
+        CFP.Value[1] = tmp; /* Activator = whatever we hit */
+        CFP.Value[2] = op;
+        CFP.Value[3] = NULL;
+        CFP.Value[4] = NULL;
+        CFP.Value[5] = &m;
+        CFP.Value[6] = &m;
+        CFP.Value[7] = &m;
+        CFP.Value[8] = &l;
+        CFP.Value[9] = (char *)event_obj->race;
+        CFP.Value[10]= (char *)event_obj->slaying;
+        if (findPlugin(event_obj->name)>=0)
+            ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
+    }
+#endif
+    
         return 1;
     } else
 	return 0;
@@ -1380,19 +1407,19 @@ object *hit_with_arrow (object *op, object *victim)
     hitter_tag = hitter->count;
 #ifdef PLUGINS
     /* GROS: Handling plugin attack event for thrown items */
-    if(op->event_flags&EVENT_FLAG_ATTACK)
+    if(hitter->event_flags&EVENT_FLAG_ATTACK)
     {
         CFParm CFP;
         CFParm* CFR;
         int k, l, m;
-		object *event_obj = get_event_object(op, EVENT_ATTACK);
+        object *event_obj = get_event_object(hitter, EVENT_ATTACK);
         k = EVENT_ATTACK;
         l = SCRIPT_FIX_ALL;
         m = 0;
         CFP.Value[0] = &k;
         CFP.Value[1] = hitter;
-        CFP.Value[2] = op;
-        CFP.Value[3] = victim;
+        CFP.Value[2] = hitter;
+        CFP.Value[3] = victim;   
         CFP.Value[4] = NULL;
         CFP.Value[5] = &m;
         CFP.Value[6] = &(op->stats.dam);
@@ -1453,8 +1480,34 @@ object *hit_with_arrow (object *op, object *victim)
             insert_ob_in_map (hitter, hitter->map, hitter,0);
         } else {
             /* Else leave arrow where it is */
-            merge_ob (hitter, NULL);
+            hitter = merge_ob (hitter, NULL);
         }
+        
+#ifdef PLUGINS
+    /* GROS: Handle for plugin stop event */
+    if(op->event_flags&EVENT_FLAG_STOP)
+    {
+        CFParm CFP;
+        int k, l, m;
+        object *event_obj = get_event_object(hitter, EVENT_STOP);
+        k = EVENT_STOP;
+        l = SCRIPT_FIX_NOTHING;
+        m = 0;
+        CFP.Value[0] = &k;
+        CFP.Value[1] = victim; /* Activator = whatever we hit */
+        CFP.Value[2] = hitter;
+        CFP.Value[3] = NULL;
+        CFP.Value[4] = NULL;
+        CFP.Value[5] = &m;
+        CFP.Value[6] = &m;
+        CFP.Value[7] = &m;
+        CFP.Value[8] = &l;
+        CFP.Value[9] = (char *)event_obj->race;
+        CFP.Value[10]= (char *)event_obj->slaying;
+        if (findPlugin(event_obj->name)>=0)
+            ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
+    }
+#endif
         return NULL;
     }
 

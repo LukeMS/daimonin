@@ -147,11 +147,11 @@ int do_skill (object *op, int dir, char *string) {
 	switch(skill) {
 	 case SK_LEVITATION:
 		if(QUERY_FLAG(op,FLAG_FLYING)) { 
-		  CLEAR_FLAG(op,FLAG_FLYING);
+		  CLEAR_MULTI_FLAG(op,FLAG_FLYING);
 		  new_draw_info(NDI_UNIQUE,0,op,"You come to earth.");
 		}
 		else {
-		  SET_FLAG(op,FLAG_FLYING);
+		  SET_MULTI_FLAG(op,FLAG_FLYING);
 		  new_draw_info(NDI_UNIQUE,0,op,"You rise into the air!.");
 		}
 		  			 

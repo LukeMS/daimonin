@@ -64,7 +64,7 @@ plugin_python.so.0.1 : $(OBJECTS)
 .c.o:
 	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
 
-doc: 
+doc:	
 #doc/Map_Methods.txt doc/Object_Methods.txt doc/DaimoninFunctions.txt
 #doc/Map_Methods.txt: DaimoninMap.c
 #	$(MAKEDOC) $< > $@

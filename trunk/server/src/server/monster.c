@@ -613,6 +613,7 @@ int can_see_enemy (object *op, object *enemy) {
  * slaying - destination map (for aggro waypoints: path destination map)
  * title   - name of next wp in chain
  * msg     - precomputed path
+ * race    - destination map (for the last used step in the precomputed path)
  * owner   - object that carries wp
  * ownercount - count of owner
  * x,y     - end location for path stored in msg
@@ -683,13 +684,20 @@ void waypoint_compute_path(object *waypoint) {
 			FREE_AND_COPY_HASH(waypoint->slaying, waypoint->enemy->map->path);
 			waypoint->x = waypoint->stats.hp = waypoint->enemy->x;
 			waypoint->y = waypoint->stats.sp = waypoint->enemy->y;
-		}
+		} else
+            LOG(llevBug,"BUG: waypoint_compute_path(): dynamic waypoint without valid target:'%s'\n", waypoint->name);
     }
     
     if(waypoint->slaying != NULL && *waypoint->slaying != '\0') {
-        char temp_path[HUGE_BUF];
+        /* If path not normalized: normalize it */
+        if(*waypoint->slaying != '/') { 
+            char temp_path[HUGE_BUF];
+            normalize_path(op->map->path, waypoint->slaying, temp_path);
+            FREE_AND_COPY_HASH(waypoint->slaying, temp_path);
+        }
+        
         /* TODO: handle unique maps? */
-        destmap = ready_map_name(normalize_path(op->map->path, waypoint->slaying, temp_path), 0);
+        destmap = ready_map_name(waypoint->slaying, MAP_NAME_SHARED);
     }
 
     if(destmap == NULL) {
@@ -716,8 +724,8 @@ void waypoint_compute_path(object *waypoint) {
         }
 #endif        
 
-        if(waypoint->msg)
-            FREE_AND_CLEAR_HASH(waypoint->msg);
+        FREE_AND_CLEAR_HASH(waypoint->msg);   /* textually encoded path */
+        FREE_AND_CLEAR_HASH(waypoint->race);  /* map file for last local path step */
 
         waypoint->msg = encode_path(path);
         waypoint->stats.food = 0; /* path offset */
@@ -759,9 +767,15 @@ void waypoint_move(object *op, object *waypoint) {
     } else {
         /* Find the destination map if specified in waypoint (otherwise use current map) */
         if(waypoint->slaying != NULL && *waypoint->slaying != '\0') {
-            char temp_path[HUGE_BUF];
+            /* If path not normalized: normalize it */
+            if(*waypoint->slaying != '/') { 
+                char temp_path[HUGE_BUF];
+                normalize_path(op->map->path, waypoint->slaying, temp_path);
+                FREE_AND_COPY_HASH(waypoint->slaying, temp_path);
+            }
+            
             /* TODO: handle unique maps? */
-            destmap = ready_map_name(normalize_path(op->map->path, waypoint->slaying, temp_path), 0);
+            destmap = ready_map_name(waypoint->slaying, MAP_NAME_SHARED);
         }
     }
 
@@ -829,6 +843,7 @@ void waypoint_move(object *op, object *waypoint) {
         waypoint->stats.ac = 0;               /* clear timer */
         CLEAR_FLAG(waypoint, FLAG_CURSED);    /* set inactive */
         FREE_AND_CLEAR_HASH(waypoint->msg);   /* remove precomputed path */
+        FREE_AND_CLEAR_HASH(waypoint->race);  /* remove precomputed path data */
 
         /* Start over with the new waypoint, if any*/
         if(!QUERY_FLAG(waypoint, FLAG_DAMNED)) {
@@ -864,7 +879,7 @@ void waypoint_move(object *op, object *waypoint) {
             (waypoint->stats.hp != waypoint->x || waypoint->stats.sp != waypoint->y)) {
         rv_vector rv;
         /* TODO: unique maps */
-        mapstruct *path_destmap = ready_map_name(waypoint->slaying, 0);        
+        mapstruct *path_destmap = ready_map_name(waypoint->slaying, MAP_NAME_SHARED);
         get_rangevector_from_mapcoords(destmap, waypoint->stats.hp, waypoint->stats.sp, path_destmap, waypoint->x, waypoint->y, &rv, 8);
 
         if(rv.distance > 1 && rv.distance > global_rv.distance) {
@@ -885,7 +900,7 @@ void waypoint_move(object *op, object *waypoint) {
             int destx = waypoint->stats.hp, desty = waypoint->stats.sp;        
             new_offset = waypoint->stats.food;
            
-            if(get_path_next(waypoint->msg, &new_offset, &destmap, &destx, &desty)) {
+            if(get_path_next(waypoint->msg, &new_offset, &waypoint->race, &destmap, &destx, &desty)) {
                 get_rangevector_from_mapcoords(op->map, op->x, op->y, destmap, destx, desty, &local_rv, 2 | 8);
                 dest_rv = &local_rv;
             } else {
@@ -2396,7 +2411,7 @@ void communicate(object *op, char *txt)
 	mapstruct *m;
 	int i,xt,yt;
 
-    char buf[MAX_BUF];
+    char buf[HUGE_BUF];
 
     if (!txt)
 		return;
@@ -2470,6 +2485,37 @@ void communicate(object *op, char *txt)
 	}
 	*/
 
+	/* npc chars can hook in here with
+	 * monster.Communicate("/kiss Fritz")
+	 * we need to catch the emote here.
+	 */
+	if(*txt == '/' && op->type != PLAYER)
+	{
+		CommArray_s *csp;
+		char *cp=NULL;
+
+		/* remove the command from the parameters */
+		strncpy(buf,txt,HUGE_BUF-1);
+		buf[HUGE_BUF-1] ='\0';
+
+		cp=strchr(buf, ' ');
+
+		if (cp) 
+		{
+			*(cp++) ='\0';
+			while (*cp==' ') 
+				cp++;
+		}
+
+		csp = find_command_element(buf, CommunicationCommands, CommunicationCommandSize);
+		if(csp)
+		{
+			csp->func(op, cp);
+			return;
+		}
+		return;
+	}
+
 	sprintf(buf, "%s says: ",query_name(op));
 	strncat(buf, txt, MAX_BUF - strlen(buf)-1);
 	buf[MAX_BUF-1]=0;
@@ -2486,11 +2532,15 @@ void communicate(object *op, char *txt)
 				/* ok, browse now only on demand */
 				for(npc = get_map_ob(m,xt,yt);npc != NULL; npc = npc->above) 
 				{
-					/* the ear ... don't break because it can be mutiple on a node or more in the area */
-					if (npc->type == MAGIC_EAR)
-						(void) talk_to_wall(npc, txt); /* Maybe exit after 1. success? */
-					else if (QUERY_FLAG(npc,FLAG_ALIVE))
-						talk_to_npc(op, npc,txt);
+					/* avoid talking to self */
+					if(op != npc)
+					{
+						/* the ear ... don't break because it can be mutiple on a node or more in the area */
+						if (npc->type == MAGIC_EAR)
+							(void) talk_to_wall(npc, txt); /* Maybe exit after 1. success? */
+						else if (QUERY_FLAG(npc,FLAG_ALIVE))
+							talk_to_npc(op, npc,txt);
+					}
 				}
 			}
 		}
@@ -2588,8 +2638,24 @@ int talk_to_npc(object *op, object *npc, char *txt) {
 			{
 				CommArray_s *csp;
 				char *cp=NULL;
+				char buf[MAX_BUF]; 
+
+				strncpy(buf, msgs->messages[i], MAX_BUF-1);
+				buf[MAX_BUF-1]='\0';
+
+				cp=strchr(buf, ' ');
+				if (cp) 
+				{
+					*(cp++) ='\0';
+					while (*cp==' ') 
+					cp++;
+
+					if(*cp == '%')
+						cp = (char *)op->name;
+
+				}
 				
-				csp = find_command_element(msgs->messages[i], CommunicationCommands, CommunicationCommandSize);
+				csp = find_command_element(buf, CommunicationCommands, CommunicationCommandSize);
 				if(csp)
 					csp->func(npc, cp);
 
@@ -2599,19 +2665,46 @@ int talk_to_npc(object *op, object *npc, char *txt) {
 			{
 				sprintf(buf,"%s says: %s",query_name(npc),msgs->messages[i]);
 				new_info_map_except(NDI_UNIQUE, op->map, op->x, op->y, MAP_INFO_NORMAL,op, op, buf);
-				if(op->map != npc->map)
-					new_info_map_except(NDI_UNIQUE, npc->map, npc->x, npc->y, MAP_INFO_NORMAL,npc, op, buf);
 			}
 		}
 		else /* if a npc is talking to a player, is shown navy and with a seperate "xx says:" line */
 		{
-	        sprintf(buf,"%s says:",query_name(npc)); 
-			new_draw_info(NDI_NAVY|NDI_UNIQUE,0,op, buf);
-			new_draw_info(NDI_NAVY | NDI_UNIQUE,0,op, msgs->messages[i]);
-			sprintf(buf,"%s talks to %s.", query_name(npc), query_name(op));
-			new_info_map_except(NDI_UNIQUE, op->map, op->x, op->y, MAP_INFO_NORMAL, op, op, buf);
-			if(op->map != npc->map)
-				new_info_map_except(NDI_UNIQUE, npc->map, npc->x, npc->y, MAP_INFO_NORMAL, npc, op, buf);
+			/* if a message starts with '/', we assume a emote */
+			/* we simply hook here in the emote msg list */
+			if(*msgs->messages[i] == '/')
+			{
+				CommArray_s *csp;
+				char *cp=NULL;
+				char buf[MAX_BUF]; 
+
+				strncpy(buf, msgs->messages[i], MAX_BUF-1);
+				buf[MAX_BUF-1]='\0';
+
+				cp=strchr(buf, ' ');
+				if (cp) 
+				{
+					*(cp++) ='\0';
+					while (*cp==' ') 
+					cp++;
+
+					if(*cp == '%')
+						cp = (char*)op->name;
+				}
+				
+				csp = find_command_element(buf, CommunicationCommands, CommunicationCommandSize);
+				if(csp)
+					csp->func(npc, cp);
+
+
+			}
+			else
+			{
+				sprintf(buf,"%s says:",query_name(npc)); 
+				new_draw_info(NDI_NAVY|NDI_UNIQUE,0,op, buf);
+				new_draw_info(NDI_NAVY | NDI_UNIQUE,0,op, msgs->messages[i]);
+				sprintf(buf,"%s talks to %s.", query_name(npc), query_name(op));
+				new_info_map_except(NDI_UNIQUE, op->map, op->x, op->y, MAP_INFO_NORMAL, op, op, buf);
+			}
 		}
         free_messages(msgs);
         return 1;

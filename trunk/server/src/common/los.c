@@ -44,6 +44,8 @@ typedef struct blstr {
 
 static blocks block[MAP_CLIENT_X][MAP_CLIENT_Y];
 
+void inline clear_los(object *op);
+
 /*
  * initialises the array used by the LOS routines.
  * This is NOT called for every LOS - only at server start to
@@ -460,7 +462,7 @@ void expand_lighted_sight(object *op)
 	    /* This space is providing light, so we need to brighten up the
 	     * spaces around here.
 	     */
-	    if(light=(GET_MAP_LIGHT(m, xt, yt))) 
+	    if((light=(GET_MAP_LIGHT(m, xt, yt)))) 
 		{
 
 			for (ax=basex - light; ax<basex+light; ax++) {

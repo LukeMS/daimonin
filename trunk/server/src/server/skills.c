@@ -438,7 +438,7 @@ int attempt_hide(object *op) {
 static int stop_jump(object *pl, int dist, int spaces) {
     /* int load=dist/(pl->speed*spaces); */ 
 
-    CLEAR_FLAG(pl,FLAG_FLYING);
+    CLEAR_MULTI_FLAG(pl,FLAG_FLYING);
     insert_ob_in_map(pl,pl->map,pl,0);
 
     /*if (pl->type==PLAYER) draw_client_map(pl); */ 
@@ -461,7 +461,7 @@ static int attempt_jump (object *pl, int dir, int spaces) {
      */ 
 
     remove_ob(pl);
-    SET_FLAG(pl,FLAG_FLYING);
+    SET_MULTI_FLAG(pl,FLAG_FLYING);
     for(i=0;i<=spaces;i++) { 
 		xt = pl->x+dx;
 		yt = pl->y+dy;
@@ -1781,26 +1781,30 @@ void do_throw(object *op, object *toss_item, int dir) {
     throw_ob->speed_left = 0;
     throw_ob->map = op->map;
 
-    SET_FLAG(throw_ob, FLAG_FLYING);
+    SET_MULTI_FLAG(throw_ob, FLAG_FLYING);
     SET_FLAG(throw_ob, FLAG_FLY_ON);
     SET_FLAG(throw_ob, FLAG_WALK_ON);
 
     play_sound_map(op->map, op->x, op->y,SOUND_THROW, SOUND_NORMAL);
 
 #ifdef PLUGINS
+    /* Gecko: Had to make sure the thrown object inherited event objects + 
+     * that the event gets called on the correct item (the thrown item).
+     * I added the wrapper object as a the Other() value.
+     */
 /* GROS - Now we can call the associated script_throw event (if any) */
     if(throw_ob->event_flags&EVENT_FLAG_THROW)
     {
         CFParm CFP;
         int k, l, m;
-		object *event_obj = get_event_object(throw_ob, EVENT_THROW);
+        object *event_obj = get_event_object(throw_ob->inv, EVENT_THROW);
         k = EVENT_THROW;
         l = SCRIPT_FIX_ACTIVATOR;
         m = 0;
         CFP.Value[0] = &k;
         CFP.Value[1] = op;
-        CFP.Value[2] = throw_ob;
-        CFP.Value[3] = NULL;
+        CFP.Value[2] = throw_ob->inv; /* The actual weapon */
+        CFP.Value[3] = throw_ob;      /* The "carrier" wrapper */
         CFP.Value[4] = NULL;
         CFP.Value[5] = &m;
         CFP.Value[6] = &m;

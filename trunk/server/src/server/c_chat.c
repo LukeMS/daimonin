@@ -255,6 +255,315 @@ int command_reply (object *op, char *params) {
     return 1;
 }
 
+
+static void emote_other(object *op, object *target, char *str, char *buf,char *buf2,char *buf3, int emotion)
+{
+	const char *name = str;
+
+	if(target)
+		name = target->name;
+
+	switch(emotion) 
+	{
+		case EMOTE_NOD:
+		    sprintf(buf, "You nod solemnly to %s.", name);
+		    sprintf(buf2, "%s nods solemnly to you.", op->name);
+		    sprintf(buf3, "%s nods solemnly to %s.", op->name,
+			    name);
+		    break;
+		case EMOTE_DANCE:
+		    sprintf(buf, "You grab %s and begin doing the Cha-Cha!",
+			    name);
+		    sprintf(buf2, "%s grabs you, and begins dancing!",
+			    op->name);
+		    sprintf(buf3, "Yipe! %s and %s are doing some really dirty dancing!",
+			    op->name, name);
+		    break;
+		case EMOTE_KISS:
+		    sprintf(buf, "You kiss %s.", name);
+		    sprintf(buf2, "%s kisses you.", op->name);
+		    sprintf(buf3, "%s kisses %s.", op->name, name);
+		    break;
+		case EMOTE_BOUNCE:
+		    sprintf(buf, "You bounce around the room with %s.",
+			    name);
+		    sprintf(buf2, "%s bounces around the room with you.",
+			    op->name);
+		    sprintf(buf3, "%s bounces around the room with %s.",
+			    op->name, name);
+		    break;
+		case EMOTE_SMILE:
+		    sprintf(buf, "You smile at %s.", name);
+		    sprintf(buf2, "%s smiles at you.", op->name);
+		    sprintf(buf3, "%s beams a smile at %s.", op->name,
+			    name);
+		    break;
+		case EMOTE_LAUGH:
+		    sprintf(buf, "You take one look at %s and fall down "
+			    "laughing.", name);
+		    sprintf(buf2, "%s looks at you and falls down on the "
+			    "ground laughing.", op->name);
+		    sprintf(buf3, "%s looks at %s and falls down on the "
+			    "ground laughing.", op->name, name);
+		    break;
+		case EMOTE_SHAKE:
+		    sprintf(buf, "You shake %s's hand.", name);
+		    sprintf(buf2, "%s shakes your hand.", op->name);
+		    sprintf(buf3, "%s shakes %s's hand.", op->name,
+			    name);
+		    break;
+		case EMOTE_PUKE:
+		    sprintf(buf, "You puke on %s.", name);
+		    sprintf(buf2, "%s pukes on your clothes!", op->name);
+		    sprintf(buf3, "%s pukes on %s.", op->name, name);
+		    break;
+		case EMOTE_HUG:
+		    sprintf(buf, "You hug %s.", name);
+		    sprintf(buf2, "%s hugs you.", op->name);
+		    sprintf(buf3, "%s hugs %s.", op->name, name);
+		    break;
+		case EMOTE_CRY:
+		    sprintf(buf, "You cry on %s's shoulder.", name);
+		    sprintf(buf2, "%s cries on your shoulder.", op->name);
+		    sprintf(buf3, "%s cries on %s's shoulder.", op->name,
+			    name);
+		    break;
+		case EMOTE_POKE:
+		    sprintf(buf, "You poke %s in the ribs.", name);
+		    sprintf(buf2, "%s pokes you in the ribs.", op->name);
+		    sprintf(buf3, "%s pokes %s in the ribs.", op->name,
+			    name);
+		    break;
+		case EMOTE_ACCUSE:
+		    sprintf(buf, "You look accusingly at %s.", name);
+		    sprintf(buf2, "%s looks accusingly at you.", op->name);
+		    sprintf(buf3, "%s looks accusingly at %s.", op->name,
+			    name);
+		    break;
+		case EMOTE_GRIN:
+		    sprintf(buf, "You grin at %s.", name);
+		    sprintf(buf2, "%s grins evilly at you.", op->name);
+		    sprintf(buf3, "%s grins evilly at %s.", op->name,
+			    name);
+		    break;
+		case EMOTE_BOW:
+		    sprintf(buf, "You bow before %s.", name);
+		    sprintf(buf2, "%s bows before you.", op->name);
+		    sprintf(buf3, "%s bows before %s.", op->name,
+			    name);
+		    break;
+		case EMOTE_FROWN:
+		    sprintf(buf, "You frown darkly at %s.", name);
+		    sprintf(buf2, "%s frowns darkly at you.", op->name);
+		    sprintf(buf3, "%s frowns darkly at %s.", op->name,
+			    name);
+		    break;
+		case EMOTE_GLARE:
+		    sprintf(buf, "You glare icily at %s.", name);
+		    sprintf(buf2, "%s glares icily at you, you feel cold to"
+			    " your bones.", op->name);
+		    sprintf(buf3, "%s glares at %s.", op->name, name);
+		    break;
+		case EMOTE_LICK:
+		    sprintf(buf, "You lick %s.", name);
+		    sprintf(buf2, "%s licks you.", op->name);
+		    sprintf(buf3, "%s licks %s.", op->name, name);
+		    break;
+		case EMOTE_SHRUG:
+		    sprintf(buf, "You shrug at %s.", name);
+		    sprintf(buf2, "%s shrugs at you.", op->name);
+		    sprintf(buf3, "%s shrugs at %s.", op->name, name);
+		    break;
+		case EMOTE_SLAP:
+		    sprintf(buf, "You slap %s.", name);
+		    sprintf(buf2, "You are slapped by %s.", op->name);
+		    sprintf(buf3, "%s slaps %s.", op->name, name);
+		    break;
+		case EMOTE_SNEEZE:
+		    sprintf(buf, "You sneeze at %s and a film of snot shoots"
+			    " onto him.", name);
+		    sprintf(buf2, "%s sneezes on you, you feel the snot cover"
+			    " you. EEEEEEW.", op->name);
+		    sprintf(buf3, "%s sneezes on %s and a film of snot covers"
+			    " him.", op->name, name);
+		    break;
+		case EMOTE_SNIFF:
+		    sprintf(buf, "You sniff %s.", name);
+		    sprintf(buf2, "%s sniffs you.", op->name);
+		    sprintf(buf3, "%s sniffs %s", op->name, name);
+		    break;
+		case EMOTE_SPIT:
+		    sprintf(buf, "You spit on %s.", name);
+		    sprintf(buf2, "%s spits in your face!", op->name);
+		    sprintf(buf3, "%s spits in %s's face.", op->name,
+			    name);
+		    break;
+		case EMOTE_THANK:
+		    sprintf(buf, "You thank %s heartily.", name);
+		    sprintf(buf2, "%s thanks you heartily.", op->name);
+		    sprintf(buf3, "%s thanks %s heartily.", op->name,
+			    name);
+		    break;
+		case EMOTE_WAVE:
+		    sprintf(buf, "You wave goodbye to %s.", name);
+		    sprintf(buf2, "%s waves goodbye to you. Have a good"
+			    " journey.", op->name);
+		    sprintf(buf3, "%s waves goodbye to %s.", op->name,
+			    name);
+		    break;
+		case EMOTE_WHISTLE:
+		    sprintf(buf, "You whistle at %s.", name);
+		    sprintf(buf2, "%s whistles at you.", op->name);
+		    sprintf(buf3, "%s whistles at %s.", op->name, name);
+		    break;
+		case EMOTE_WINK:
+		    sprintf(buf, "You wink suggestively at %s.", name);
+		    sprintf(buf2, "%s winks suggestively at you.", op->name);
+		    sprintf(buf3, "%s winks at %s.", op->name, name);
+		    break;
+		case EMOTE_BEG:
+		    sprintf(buf, "You beg %s for mercy.", name);
+		    sprintf(buf2, "%s begs you for mercy! Show no quarter!",
+			    op->name);
+		    sprintf(buf3, "%s begs %s for mercy!", op->name,
+			    name);
+		    break;
+		case EMOTE_BLEED:
+		    sprintf(buf, "You slash your wrist and bleed all over %s",
+			    name);
+		    sprintf(buf2, "%s slashes his wrist and bleeds all over"
+			    " you.", op->name);
+		    sprintf(buf3, "%s slashes his wrist and bleeds all "
+			    "over %s.", op->name, name);
+		    break;
+		case EMOTE_CRINGE:
+		    sprintf(buf, "You cringe away from %s.", name);
+		    sprintf(buf2, "%s cringes away from you.", op->name);
+		    sprintf(buf3, "%s cringes away from %s in mortal terror.",
+			    op->name, name);
+		    break;
+		default:
+		  sprintf(buf, "You are still nuts.");
+		  sprintf(buf2, "You get the distinct feeling that %s is nuts.",
+			  op->name);
+		  sprintf(buf3, "%s is eyeing %s quizzically.", name,
+			  op->name);
+		  break;
+	}
+}
+
+static void emote_self(object *op, char *buf,char *buf2, int emotion)
+{
+	switch(emotion) 
+	{
+		case EMOTE_DANCE:
+		    sprintf(buf, "You skip and dance around by yourself.");
+		    sprintf(buf2, "%s embraces himself and begins to dance!",
+			    op->name);
+		    break;
+		case EMOTE_LAUGH:
+		    sprintf(buf, "Laugh at yourself all you want, the others "
+			    "won't understand.");
+		    sprintf(buf2, "%s is laughing at something.", op->name);
+		    break;
+		case EMOTE_SHAKE:
+		    sprintf(buf, "You are shaken by yourself.");
+		    sprintf(buf2, "%s shakes and quivers like a bowlful of "
+			    "jelly.", op->name);
+		    break;
+		case EMOTE_PUKE:
+		    sprintf(buf, "You puke on yourself.");
+		    sprintf(buf2, "%s pukes on his clothes.", op->name);
+		    break;
+		case EMOTE_HUG:
+		    sprintf(buf, "You hug yourself.");
+		    sprintf(buf2, "%s hugs himself.", op->name);
+		    break;
+		case EMOTE_CRY:
+		    sprintf(buf, "You cry to yourself.");
+		    sprintf(buf2, "%s sobs quietly to himself.", op->name);
+		    break;
+		case EMOTE_POKE:
+		    sprintf(buf, "You poke yourself in the ribs, feeling very"
+			    " silly.");
+		    sprintf(buf2, "%s pokes himself in the ribs, looking very"
+			    " sheepish.", op->name);
+		    break;
+		case EMOTE_ACCUSE:
+		    sprintf(buf, "You accuse yourself.");
+		    sprintf(buf2, "%s seems to have a bad conscience.",
+			    op->name);
+		    break;
+		case EMOTE_BOW:
+		    sprintf(buf, "You kiss your toes.");
+		    sprintf(buf2, "%s folds up like a jackknife and kisses his"
+			    " own toes.", op->name);
+		    break;
+		case EMOTE_FROWN:
+		    sprintf(buf, "You frown at yourself.");
+		    sprintf(buf2, "%s frowns at himself.", op->name);
+		    break;
+		case EMOTE_GLARE:
+		    sprintf(buf, "You glare icily at your feet, they are "
+			    "suddenly very cold.");
+		    sprintf(buf2, "%s glares at his feet, what is bothering "
+			    "him?", op->name);
+		    break;
+		case EMOTE_LICK:
+		    sprintf(buf, "You lick yourself.");
+		    sprintf(buf2, "%s licks himself - YUCK.", op->name);
+		    break;
+		case EMOTE_SLAP:
+		    sprintf(buf, "You slap yourself, silly you.");
+		    sprintf(buf2, "%s slaps himself, really strange...",
+			    op->name);
+		    break;
+		case EMOTE_SNEEZE:
+		    sprintf(buf, "You sneeze on yourself, what a mess!");
+		    sprintf(buf2, "%s sneezes, and covers himself in a slimy"
+			    " substance.", op->name);
+		    break;
+		case EMOTE_SNIFF:
+		    sprintf(buf, "You sniff yourself.");
+		    sprintf(buf2, "%s sniffs himself.", op->name);
+		    break;
+		case EMOTE_SPIT:
+		    sprintf(buf, "You drool all over yourself.");
+		    sprintf(buf2, "%s drools all over himself.", op->name);
+		    break;
+		case EMOTE_THANK:
+		    sprintf(buf, "You thank yourself since nobody else "
+			    "wants to!");
+		    sprintf(buf2, "%s thanks himself since you won't.",
+			    op->name);
+		    break;
+		case EMOTE_WAVE:
+		    sprintf(buf, "Are you going on adventures as well??");
+		    sprintf(buf2, "%s waves goodbye to himself.", op->name);
+		    break;
+		case EMOTE_WHISTLE:
+		    sprintf(buf, "You whistle while you work.");
+		    sprintf(buf2, "%s whistles to himself in boredom.",
+			    op->name);
+		    break;
+		case EMOTE_WINK:
+		    sprintf(buf, "You wink at yourself?? What are you up to?");
+		    sprintf(buf2, "%s winks at himself - something strange "
+			    "is going on...", op->name);
+		    break;
+		case EMOTE_BLEED:
+		    sprintf(buf, "Very impressive! You wipe your blood all "
+			    "over yourself.");
+		    sprintf(buf2, "%s performs some satanic ritual while "
+			    "wiping his blood on himself.", op->name);
+		    break;
+		default:
+		    sprintf(buf, "My god! is that LEGAL?");
+		    sprintf(buf2, "You look away from %s.", op->name);
+			break;
+	}/*case*/
+}
+
 /*
  * This function covers basic emotions a player can have.  An emotion can be
  * one of three things currently.  Directed at oneself, directed at someone,
@@ -270,9 +579,29 @@ int command_reply (object *op, char *params) {
 static int basic_emote(object *op, char *params, int emotion)
 {
     char buf[MAX_BUF], buf2[MAX_BUF], buf3[MAX_BUF];
-    player *pl;
+   player *pl;
 
     if (!params) {
+
+	/* if we are a player with legal target, use it as target for the emote */
+	if(op->type == PLAYER && op->contr->target_object != op && 
+		op->contr->target_object && op->contr->target_object_count == op->contr->target_object->count)
+	{
+		/* target is in distance */
+		if(distance(op,op->contr->target_object) <= POW2(9))
+		{
+			emote_other(op, op->contr->target_object, NULL, buf, buf2, buf3,emotion);				
+			new_draw_info(NDI_UNIQUE, 0, op, buf);
+			if(op->contr->target_object->type == PLAYER)
+				new_draw_info(NDI_UNIQUE|NDI_YELLOW, 0, op->contr->target_object, buf2);
+			new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, op, op->contr->target_object, buf3);
+			return 0;
+		}
+		new_draw_info(NDI_UNIQUE, 0, op, "The target is not in range for this emote action.");
+		return 0;
+
+	}
+
 	switch(emotion) {
 	case EMOTE_NOD:
 	    sprintf(buf, "%s nods solemnly.", op->name);
@@ -476,324 +805,46 @@ static int basic_emote(object *op, char *params, int emotion)
 	    sprintf(buf2, "You are a nut.");
 	    break;
 	} /*case*/
-	new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, op, op, buf);
-	new_draw_info(NDI_UNIQUE, 0, op, buf2);
-	return(0);
-    } else {
-        for(pl=first_player;pl!=NULL;pl=pl->next) {
-	    if(strncasecmp(pl->ob->name, params, MAX_NAME)==0 &&
-	       pl->ob->map == op->map && pl->ob != op) {
-		switch(emotion) {
-		case EMOTE_NOD:
-		    sprintf(buf, "You nod solemnly to %s.", pl->ob->name);
-		    sprintf(buf2, "%s nods solemnly to you.", op->name);
-		    sprintf(buf3, "%s nods solemnly to %s.", op->name,
-			    pl->ob->name);
-		    break;
-		case EMOTE_DANCE:
-		    sprintf(buf, "You grab %s and begin doing the Cha-Cha!",
-			    pl->ob->name);
-		    sprintf(buf2, "%s grabs you, and begins dancing!",
-			    op->name);
-		    sprintf(buf3, "Yipe! %s and %s are doing some really dirty dancing!",
-			    op->name, pl->ob->name);
-		    break;
-		case EMOTE_KISS:
-		    sprintf(buf, "You kiss %s.", pl->ob->name);
-		    sprintf(buf2, "%s kisses you.", op->name);
-		    sprintf(buf3, "%s kisses %s.", op->name, pl->ob->name);
-		    break;
-		case EMOTE_BOUNCE:
-		    sprintf(buf, "You bounce around the room with %s.",
-			    pl->ob->name);
-		    sprintf(buf2, "%s bounces around the room with you.",
-			    op->name);
-		    sprintf(buf3, "%s bounces around the room with %s.",
-			    op->name, pl->ob->name);
-		    break;
-		case EMOTE_SMILE:
-		    sprintf(buf, "You smile at %s.", pl->ob->name);
-		    sprintf(buf2, "%s smiles at you.", op->name);
-		    sprintf(buf3, "%s beams a smile at %s.", op->name,
-			    pl->ob->name);
-		    break;
-		case EMOTE_LAUGH:
-		    sprintf(buf, "You take one look at %s and fall down "
-			    "laughing.", pl->ob->name);
-		    sprintf(buf2, "%s looks at you and falls down on the "
-			    "ground laughing.", op->name);
-		    sprintf(buf3, "%s looks at %s and falls down on the "
-			    "ground laughing.", op->name, pl->ob->name);
-		    break;
-		case EMOTE_SHAKE:
-		    sprintf(buf, "You shake %s's hand.", pl->ob->name);
-		    sprintf(buf2, "%s shakes your hand.", op->name);
-		    sprintf(buf3, "%s shakes %s's hand.", op->name,
-			    pl->ob->name);
-		    break;
-		case EMOTE_PUKE:
-		    sprintf(buf, "You puke on %s.", pl->ob->name);
-		    sprintf(buf2, "%s pukes on your clothes!", op->name);
-		    sprintf(buf3, "%s pukes on %s.", op->name, pl->ob->name);
-		    break;
-		case EMOTE_HUG:
-		    sprintf(buf, "You hug %s.", pl->ob->name);
-		    sprintf(buf2, "%s hugs you.", op->name);
-		    sprintf(buf3, "%s hugs %s.", op->name, pl->ob->name);
-		    break;
-		case EMOTE_CRY:
-		    sprintf(buf, "You cry on %s's shoulder.", pl->ob->name);
-		    sprintf(buf2, "%s cries on your shoulder.", op->name);
-		    sprintf(buf3, "%s cries on %s's shoulder.", op->name,
-			    pl->ob->name);
-		    break;
-		case EMOTE_POKE:
-		    sprintf(buf, "You poke %s in the ribs.", pl->ob->name);
-		    sprintf(buf2, "%s pokes you in the ribs.", op->name);
-		    sprintf(buf3, "%s pokes %s in the ribs.", op->name,
-			    pl->ob->name);
-		    break;
-		case EMOTE_ACCUSE:
-		    sprintf(buf, "You look accusingly at %s.", pl->ob->name);
-		    sprintf(buf2, "%s looks accusingly at you.", op->name);
-		    sprintf(buf3, "%s looks accusingly at %s.", op->name,
-			    pl->ob->name);
-		    break;
-		case EMOTE_GRIN:
-		    sprintf(buf, "You grin at %s.", pl->ob->name);
-		    sprintf(buf2, "%s grins evilly at you.", op->name);
-		    sprintf(buf3, "%s grins evilly at %s.", op->name,
-			    pl->ob->name);
-		    break;
-		case EMOTE_BOW:
-		    sprintf(buf, "You bow before %s.", pl->ob->name);
-		    sprintf(buf2, "%s bows before you.", op->name);
-		    sprintf(buf3, "%s bows before %s.", op->name,
-			    pl->ob->name);
-		    break;
-		case EMOTE_FROWN:
-		    sprintf(buf, "You frown darkly at %s.", pl->ob->name);
-		    sprintf(buf2, "%s frowns darkly at you.", op->name);
-		    sprintf(buf3, "%s frowns darkly at %s.", op->name,
-			    pl->ob->name);
-		    break;
-		case EMOTE_GLARE:
-		    sprintf(buf, "You glare icily at %s.", pl->ob->name);
-		    sprintf(buf2, "%s glares icily at you, you feel cold to"
-			    " your bones.", op->name);
-		    sprintf(buf3, "%s glares at %s.", op->name, pl->ob->name);
-		    break;
-		case EMOTE_LICK:
-		    sprintf(buf, "You lick %s.", pl->ob->name);
-		    sprintf(buf2, "%s licks you.", op->name);
-		    sprintf(buf3, "%s licks %s.", op->name, pl->ob->name);
-		    break;
-		case EMOTE_SHRUG:
-		    sprintf(buf, "You shrug at %s.", pl->ob->name);
-		    sprintf(buf2, "%s shrugs at you.", op->name);
-		    sprintf(buf3, "%s shrugs at %s.", op->name, pl->ob->name);
-		    break;
-		case EMOTE_SLAP:
-		    sprintf(buf, "You slap %s.", pl->ob->name);
-		    sprintf(buf2, "You are slapped by %s.", op->name);
-		    sprintf(buf3, "%s slaps %s.", op->name, pl->ob->name);
-		    break;
-		case EMOTE_SNEEZE:
-		    sprintf(buf, "You sneeze at %s and a film of snot shoots"
-			    " onto him.", pl->ob->name);
-		    sprintf(buf2, "%s sneezes on you, you feel the snot cover"
-			    " you. EEEEEEW.", op->name);
-		    sprintf(buf3, "%s sneezes on %s and a film of snot covers"
-			    " him.", op->name, pl->ob->name);
-		    break;
-		case EMOTE_SNIFF:
-		    sprintf(buf, "You sniff %s.", pl->ob->name);
-		    sprintf(buf2, "%s sniffs you.", op->name);
-		    sprintf(buf3, "%s sniffs %s", op->name, pl->ob->name);
-		    break;
-		case EMOTE_SPIT:
-		    sprintf(buf, "You spit on %s.", pl->ob->name);
-		    sprintf(buf2, "%s spits in your face!", op->name);
-		    sprintf(buf3, "%s spits in %s's face.", op->name,
-			    pl->ob->name);
-		    break;
-		case EMOTE_THANK:
-		    sprintf(buf, "You thank %s heartily.", pl->ob->name);
-		    sprintf(buf2, "%s thanks you heartily.", op->name);
-		    sprintf(buf3, "%s thanks %s heartily.", op->name,
-			    pl->ob->name);
-		    break;
-		case EMOTE_WAVE:
-		    sprintf(buf, "You wave goodbye to %s.", pl->ob->name);
-		    sprintf(buf2, "%s waves goodbye to you. Have a good"
-			    " journey.", op->name);
-		    sprintf(buf3, "%s waves goodbye to %s.", op->name,
-			    pl->ob->name);
-		    break;
-		case EMOTE_WHISTLE:
-		    sprintf(buf, "You whistle at %s.", pl->ob->name);
-		    sprintf(buf2, "%s whistles at you.", op->name);
-		    sprintf(buf3, "%s whistles at %s.", op->name, pl->ob->name);
-		    break;
-		case EMOTE_WINK:
-		    sprintf(buf, "You wink suggestively at %s.", pl->ob->name);
-		    sprintf(buf2, "%s winks suggestively at you.", op->name);
-		    sprintf(buf3, "%s winks at %s.", op->name, pl->ob->name);
-		    break;
-		case EMOTE_BEG:
-		    sprintf(buf, "You beg %s for mercy.", pl->ob->name);
-		    sprintf(buf2, "%s begs you for mercy! Show no quarter!",
-			    op->name);
-		    sprintf(buf3, "%s begs %s for mercy!", op->name,
-			    pl->ob->name);
-		    break;
-		case EMOTE_BLEED:
-		    sprintf(buf, "You slash your wrist and bleed all over %s",
-			    pl->ob->name);
-		    sprintf(buf2, "%s slashes his wrist and bleeds all over"
-			    " you.", op->name);
-		    sprintf(buf3, "%s slashes his wrist and bleeds all "
-			    "over %s.", op->name, pl->ob->name);
-		    break;
-		case EMOTE_CRINGE:
-		    sprintf(buf, "You cringe away from %s.", pl->ob->name);
-		    sprintf(buf2, "%s cringes away from you.", op->name);
-		    sprintf(buf3, "%s cringes away from %s in mortal terror.",
-			    op->name, pl->ob->name);
-		    break;
-		default:
-		  sprintf(buf, "You are still nuts.");
-		  sprintf(buf2, "You get the distinct feeling that %s is nuts.",
-			  op->name);
-		  sprintf(buf3, "%s is eyeing %s quizzically.", pl->ob->name,
-			  op->name);
-		  break;
-		} /*case*/
-		new_draw_info(NDI_UNIQUE, 0, op, buf);
-		new_draw_info(NDI_UNIQUE|NDI_YELLOW, 0, pl->ob, buf2);
-		new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, op, pl->ob, buf3);
+		new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, op, op, buf);
+		if(op->type == PLAYER)
+			new_draw_info(NDI_UNIQUE, 0, op, buf2);
 		return(0);
-	    }
-	    if(strncasecmp(pl->ob->name, params, MAX_NAME)==0 &&
-	       pl->ob->map == op->map && pl->ob == op) {
-	        switch(emotion) {
-		case EMOTE_DANCE:
-		    sprintf(buf, "You skip and dance around by yourself.");
-		    sprintf(buf2, "%s embraces himself and begins to dance!",
-			    op->name);
-		    break;
-		case EMOTE_LAUGH:
-		    sprintf(buf, "Laugh at yourself all you want, the others "
-			    "won't understand.");
-		    sprintf(buf2, "%s is laughing at something.", op->name);
-		    break;
-		case EMOTE_SHAKE:
-		    sprintf(buf, "You are shaken by yourself.");
-		    sprintf(buf2, "%s shakes and quivers like a bowlful of "
-			    "jelly.", op->name);
-		    break;
-		case EMOTE_PUKE:
-		    sprintf(buf, "You puke on yourself.");
-		    sprintf(buf2, "%s pukes on his clothes.", op->name);
-		    break;
-		case EMOTE_HUG:
-		    sprintf(buf, "You hug yourself.");
-		    sprintf(buf2, "%s hugs himself.", op->name);
-		    break;
-		case EMOTE_CRY:
-		    sprintf(buf, "You cry to yourself.");
-		    sprintf(buf2, "%s sobs quietly to himself.", op->name);
-		    break;
-		case EMOTE_POKE:
-		    sprintf(buf, "You poke yourself in the ribs, feeling very"
-			    " silly.");
-		    sprintf(buf2, "%s pokes himself in the ribs, looking very"
-			    " sheepish.", op->name);
-		    break;
-		case EMOTE_ACCUSE:
-		    sprintf(buf, "You accuse yourself.");
-		    sprintf(buf2, "%s seems to have a bad conscience.",
-			    op->name);
-		    break;
-		case EMOTE_BOW:
-		    sprintf(buf, "You kiss your toes.");
-		    sprintf(buf2, "%s folds up like a jackknife and kisses his"
-			    " own toes.", op->name);
-		    break;
-		case EMOTE_FROWN:
-		    sprintf(buf, "You frown at yourself.");
-		    sprintf(buf2, "%s frowns at himself.", op->name);
-		    break;
-		case EMOTE_GLARE:
-		    sprintf(buf, "You glare icily at your feet, they are "
-			    "suddenly very cold.");
-		    sprintf(buf2, "%s glares at his feet, what is bothering "
-			    "him?", op->name);
-		    break;
-		case EMOTE_LICK:
-		    sprintf(buf, "You lick yourself.");
-		    sprintf(buf2, "%s licks himself - YUCK.", op->name);
-		    break;
-		case EMOTE_SLAP:
-		    sprintf(buf, "You slap yourself, silly you.");
-		    sprintf(buf2, "%s slaps himself, really strange...",
-			    op->name);
-		    break;
-		case EMOTE_SNEEZE:
-		    sprintf(buf, "You sneeze on yourself, what a mess!");
-		    sprintf(buf2, "%s sneezes, and covers himself in a slimy"
-			    " substance.", op->name);
-		    break;
-		case EMOTE_SNIFF:
-		    sprintf(buf, "You sniff yourself.");
-		    sprintf(buf2, "%s sniffs himself.", op->name);
-		    break;
-		case EMOTE_SPIT:
-		    sprintf(buf, "You drool all over yourself.");
-		    sprintf(buf2, "%s drools all over himself.", op->name);
-		    break;
-		case EMOTE_THANK:
-		    sprintf(buf, "You thank yourself since nobody else "
-			    "wants to!");
-		    sprintf(buf2, "%s thanks himself since you won't.",
-			    op->name);
-		    break;
-		case EMOTE_WAVE:
-		    sprintf(buf, "Are you going on adventures as well??");
-		    sprintf(buf2, "%s waves goodbye to himself.", op->name);
-		    break;
-		case EMOTE_WHISTLE:
-		    sprintf(buf, "You whistle while you work.");
-		    sprintf(buf2, "%s whistles to himself in boredom.",
-			    op->name);
-		    break;
-		case EMOTE_WINK:
-		    sprintf(buf, "You wink at yourself?? What are you up to?");
-		    sprintf(buf2, "%s winks at himself - something strange "
-			    "is going on...", op->name);
-		    break;
-		case EMOTE_BLEED:
-		    sprintf(buf, "Very impressive! You wipe your blood all "
-			    "over yourself.");
-		    sprintf(buf2, "%s performs some satanic ritual while "
-			    "wiping his blood on himself.", op->name);
-		    break;
-		default:
-		    sprintf(buf, "My god! is that LEGAL?");
-		    sprintf(buf2, "You look away from %s.", op->name);
-		    break;
-		}/*case*/
-		new_draw_info(NDI_UNIQUE, 0, op, buf);
-		new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, op, op, buf2);
-		return(0);
-	    }/*if self*/
-	}/*for*/
-	sprintf(buf, "%s is not around.", params);
-	new_draw_info(NDI_UNIQUE, 0, op, buf);
-	return(1);
-    } /*else*/
+ 
+	} 
+	else /* we have params */
+	{
+		if(op->type == PLAYER) /* atm, we only allow "yourself" as parameter for players */
+		{
+			if(!strcmp(params,"yourself"))
+				emote_self(op, buf, buf2, emotion);
+			else
+				emote_self(op, buf, buf2, -1); /* force neutral default emote */
 
-    return(0);
+			new_draw_info(NDI_UNIQUE, 0, op, buf);
+			new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, op, op, buf2);
+
+		}
+		else /* here we handle npc emotes with parameter */
+		{
+
+			emote_other(op, NULL, params, buf, buf2, buf3,emotion);				
+
+			/* this is somewhat costly - check every playername! */
+	        for(pl=first_player;pl!=NULL;pl=pl->next)
+			{
+				if(!strncasecmp(pl->ob->name, params, MAX_NAME))
+				{
+					new_draw_info(NDI_UNIQUE|NDI_YELLOW, 0, pl->ob, buf2);
+					new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, pl->ob, buf3);
+					return 0;
+				}
+			}
+
+			new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, NULL, buf3);
+		}
+    }
+
+    return 0;
 }
 
 /*

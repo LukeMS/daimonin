@@ -2593,8 +2593,8 @@ static void apply_armour_improver (object *op, object *tmp)
      * all the exits in destination and try to find one with same path as
      * the current exit's position */
    if (!strncmp(EXIT_PATH (exit), settings.localdir, strlen(settings.localdir)))
-      exitmap = ready_map_name(EXIT_PATH (exit), MAP_PLAYER_UNIQUE);
-   else exitmap = ready_map_name(EXIT_PATH (exit), 0);
+      exitmap = ready_map_name(EXIT_PATH (exit), MAP_NAME_SHARED|MAP_PLAYER_UNIQUE);
+   else exitmap = ready_map_name(EXIT_PATH (exit), MAP_NAME_SHARED);
    if (exitmap)
      {
      tmp=get_map_ob (exitmap,EXIT_X(exit),EXIT_Y(exit));
@@ -2604,7 +2604,7 @@ static void apply_armour_improver (object *op, object *tmp)
        if (tmp->type!=EXIT) continue;  /*Not an exit*/
        if (!EXIT_PATH (tmp)) continue; /*Not a valid exit*/
        if ( (EXIT_X(tmp)!=exit->x) || (EXIT_Y(tmp)!=exit->y)) continue; /*Not in the same place*/
-       if (strcmp(exit->map->path,EXIT_PATH(tmp))!=0) continue; /*Not in the same map*/
+       if (exit->map->path == EXIT_PATH(tmp)) continue; /*Not in the same map*/
 
        /* From here we have found the exit is valid. However we do
         * here the check of the exit owner. It is important for the

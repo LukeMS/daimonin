@@ -272,7 +272,7 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
 	    return;
 
         FREE_AND_COPY_HASH(the_exit_down->slaying, RP->final_map);
-        strcpy(new_map->path,RP->final_map);
+        FREE_AND_COPY_HASH(new_map->path,RP->final_map);
 
 	for (tmp=GET_MAP_OB(new_map,  MAP_ENTER_X(new_map), MAP_ENTER_Y(new_map)); tmp; tmp=tmp->above)
 	    /* Remove exit back to previous random map.  There should only be one
@@ -287,7 +287,7 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
 	    }
 
         /* setup the exit back */
-        FREE_AND_COPY_HASH(the_exit_back->slaying, map->path);
+        FREE_AND_ADD_REF_HASH(the_exit_back->slaying, map->path);
         the_exit_back->stats.hp = the_exit_down->x;
         the_exit_back->stats.sp = the_exit_down->y;
         the_exit_back->x = MAP_ENTER_X(new_map);
