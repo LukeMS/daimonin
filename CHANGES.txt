@@ -1,6 +1,10 @@
 Daimonin CHANGES
+
 06.06.04	- socket patch to avoid server crashes
                 - finished login control
+		- fixed crash problem in emotes
+		- fixed problems with outdated distance() function
+		- added more secure testing for command parameters
 
 05.06.04	- bank script & functions
 		- small fix in client (exp bubble draw function)

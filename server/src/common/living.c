@@ -1829,7 +1829,7 @@ void fix_monster(object *op)
 	}
 
 	/* pre adjust */
-	op->stats.maxhp = base->stats.maxhp * (op->level+3)+(op->level/2)*base->stats.maxhp;
+	op->stats.maxhp = (base->stats.maxhp * (op->level+3)+(op->level/2)*base->stats.maxhp)/10;
 	op->stats.maxsp = base->stats.maxsp * (op->level+1);
 	op->stats.maxgrace = base->stats.maxgrace * (op->level+1);
 	
@@ -1854,11 +1854,11 @@ void fix_monster(object *op)
 	if(op->stats.grace>op->stats.maxgrace)
 		op->stats.grace = op->stats.maxgrace;
 
-	op->stats.ac = base->stats.ac + op->level;
+	op->stats.ac = base->stats.ac + op->level+(op->level/6);
 	/* + level/5 to catch up the equipment improvements of
 	 * the players in armour items.
 	 */
-	op->stats.wc = base->stats.wc + op->level +(op->level/5);  
+	op->stats.wc = base->stats.wc + op->level +(op->level/4);  
 	op->stats.dam =  base->stats.dam;
 
 	if(base->stats.wc_range)
@@ -1869,7 +1869,7 @@ void fix_monster(object *op)
 	/* post adjust */
 	if((tmp_add = lev_damage[op->level/3]-0.75f) <0)
 		tmp_add =0;
-	op->stats.dam = (sint16) ((float)op->stats.dam * ((lev_damage[(op->level < 0) ? 0 : op->level]+tmp_add)*0.925f));
+	op->stats.dam = (sint16) (((float)op->stats.dam * ((lev_damage[(op->level < 0) ? 0 : op->level]+tmp_add)*(0.925f+0.05*(op->level/10))))/10.0f);
 
 	set_mobile_speed(op, 0);
 }

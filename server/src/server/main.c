@@ -47,6 +47,10 @@
 #include <../random_maps/random_map.h>
 #include <../random_maps/rproto.h>
 
+/* Prototypes of functions used only here. */
+void free_all_srv_files();
+void free_racelist();
+ 
 uint32 global_round_tag=1; /* global round ticker ! this is real a global */
 
 object *gbl_active_DM=NULL; /* ony for testing, TODO list of DMs */
@@ -1090,6 +1094,7 @@ void cleanup()
     free_all_readable();
     free_all_god();
     free_all_anim();
+    free_all_srv_files();
     /* See what the string data that is out there that hasn't been freed. */
     /*LOG(llevDebug, ss_dump_table(0xff));*/
 #endif

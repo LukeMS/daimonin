@@ -1,13 +1,13 @@
 Object giant_stone
 name stone giant
-race stone giant
+race giants
 randomitems mob_giant_stone
 will_apply 8
 is_evil 1
 is_male 1
 wc_range 20
-weight 13250
-exp 165
+weight 732500
+exp 85
 item_race 255
 item_level 255
 speed -0.045
@@ -16,9 +16,9 @@ attack_impact 90
 protect_acid 25
 ac 10
 wc 6
-dam 6
+dam 64
 hp -1
-maxhp 7
+maxhp 74
 terrain_flag 1
 Wis 6
 face giant_stone.131

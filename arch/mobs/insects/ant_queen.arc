@@ -1,7 +1,7 @@
 Object ant_queen
 name ant queen
 face ant_queen.131
-race insect
+race ants
 is_female 1
 corpse 1
 will_apply 8
@@ -75,14 +75,14 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 125
+exp 96
 ac 12
 wc 4
 wc_range 20
-dam 5
+dam 50
 hp -1
-maxhp 7
+maxhp 70
 level 1
 speed -0.03
-weight 22500
+weight 72500
 end

@@ -109,17 +109,16 @@ no_pick 1
 reflect_missile 1
 reflect_spell 1
 Con 15
-exp 200
+exp 100
 hp -1
-maxhp 25
+maxhp 100
 Pow 3
 ac 12
 wc 6
-dam 15
+dam 100
 level 1
 weight 85000
 stand_still 1
 unaggressive 1
 Str 25
-can_cast_spell 1
 end

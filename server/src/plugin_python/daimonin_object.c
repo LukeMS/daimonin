@@ -584,7 +584,7 @@ static PyObject* Daimonin_Object_SetSkill(Daimonin_Object *whoptr, PyObject* arg
 			 * exp ... if we have level == 0, we only set exp - the
 			 * addexp 
 			 */
-			LOG(-1,"LEVEL1 %d (->%d) :: %s (exp %d)\n",tmp->level,level,query_name(tmp), tmp->stats.exp);
+			/*LOG(-1,"LEVEL1 %d (->%d) :: %s (exp %d)\n",tmp->level,level,query_name(tmp), tmp->stats.exp);*/
 			if(level>0)
 			{
 				tmp->level = level;
@@ -601,7 +601,7 @@ static PyObject* Daimonin_Object_SetSkill(Daimonin_Object *whoptr, PyObject* arg
 				(PlugHooks[HOOK_ADDEXP])(&GCFP);
 
 	        }
-			LOG(-1,"LEVEL2 %d (->%d) :: %s (exp %d)\n",tmp->level,level,query_name(tmp), tmp->stats.exp);
+			/*LOG(-1,"LEVEL2 %d (->%d) :: %s (exp %d)\n",tmp->level,level,query_name(tmp), tmp->stats.exp);*/
 			if(WHO->type == PLAYER && WHO->contr)
 				    WHO->contr->update_skills=1; /* we will sure change skill exp, mark for update */
 

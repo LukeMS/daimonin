@@ -1395,9 +1395,17 @@ static int load_map_header(FILE *fp, mapstruct *m)
 	    } else {
 		*end = 0;
 		if (m->tile_path[tile-1]) {
-		    LOG(llevError,"ERROR: load_map_header: tile location %d duplicated (%s <-> %s)\n",
-			tile, m->path, m->tile_path[tile-1]);
-		    FREE_AND_CLEAR_HASH(m->tile_path[tile-1]);
+			/* For some odd reason, this error message triggered on a test run as i
+			 * added some maps. The important point is, that the logs showed that the
+			 * map was saved AND IN THE NEXT LINE the temp map was reloaded. That triggered
+			 * this error message. It never happend before and the save/load stuff seems 
+			 * ok - tile_path SHOULD be NULL after a map swap... Because this is not a serious
+			 * bug i changed it from ERROR to BUG - i need more info about it.
+			 * Report, when you encountered this too. MT-2004
+			 */
+			/*LOG(llevError,"ERROR: load_map_header: tile location %d duplicated (%s <-> %s)\n",tile, m->path, m->tile_path[tile-1]);*/				
+			LOG(llevBug,"BUG: REPORT this! -> load_map_header: tile location %d duplicated (%s <-> %s)\n",tile, m->path, m->tile_path[tile-1]);
+			FREE_AND_CLEAR_HASH(m->tile_path[tile-1]);
 		}
                 
                 /* If path not absoulute, try to normalize it */
@@ -1421,18 +1429,20 @@ static int load_map_header(FILE *fp, mapstruct *m)
                     
                     /* If the neighbouring map tile has been loaded, set up the map pointers */
                     if((neighbour = has_been_loaded_sh(path_sh))) {
-                    LOG(llevDebug,"add t_map %s (%d). ",value, tile-1);
+                    /*LOG(llevDebug,"add t_map %s (%d). ",value, tile-1);*/
                         m->tile_map[tile-1] = neighbour;
                         /* Replaced strcmp with ptr check since its a shared string now */
                         if (neighbour->tile_path[dest_tile] == NULL || 
                                 neighbour->tile_path[dest_tile] == m->path) 
                             neighbour->tile_map[dest_tile] = m;
+						/*
 						else
 		                   LOG(llevDebug,"NO? t_map %s (%d). ",value, tile-1);
+						*/
                     }
 					else
 					{
-	                   LOG(llevDebug,"skip t_map %s (%d). ",value, tile-1);
+	                   /*LOG(llevDebug,"skip t_map %s (%d). ",value, tile-1);*/
 					}
                 } /* If valid neighbour path */
 	    }
@@ -1518,7 +1528,7 @@ mapstruct *load_original_map(const char *filename, int flags) {
     m->compressed = comp;
 
     m->in_memory=MAP_LOADING;
-    LOG(llevDebug, "load objs:\n");
+    LOG(llevDebug, "load objs:");
     load_objects (m, fp, flags & (MAP_BLOCK|MAP_STYLE));
     LOG(llevDebug, "close. ");
     close_and_delete(fp, comp);
@@ -1585,7 +1595,7 @@ static mapstruct *load_temporary_map(mapstruct *m) {
     allocate_map(m);
 
     m->in_memory=MAP_LOADING;
-    LOG(llevDebug, "load objs:\n");
+    LOG(llevDebug, "load objs:");
     load_objects (m, fp, 0);
     LOG(llevDebug, "close. ");
     close_and_delete(fp, comp);

@@ -269,9 +269,9 @@ int do_skill (object *op, int dir, char *string) {
 
 int calc_skill_exp(object *who, object *op) 
 {
-	int who_lvl, tmp;
+	int who_lvl;
     int op_exp=0,op_lvl= 0;
-    float exp_mul;
+    float exp_mul, max_mul, tmp;
 
 	if(!who || who->type != PLAYER) /* no exp for non players... its senseless to do */
 	{
@@ -301,28 +301,37 @@ int calc_skill_exp(object *who, object *op)
     if(op_lvl<1 || op_exp<1)
 		return 0; /* no exp for no level and no exp ;) */
 
-	/* now calculate exp - if op_level > hitter level then cap it.
-	 * we don't want more as 10% of hitter base level (he need to come from level x to y).
-	 * Capping exp down will use the exp_level as base. The op_exp will be multiplied
-	 * with op_level / (op_level + level_diff). Level diff is (hitter_level-op_level)*3.
-	 * Zhats for a level 50 mob and a level 60 player 50/(10*3) = 0.625 = 62.5% of the exp 
-	 * a level 50 player will get for this mob. If the level_diff > op_level*2 then we give
-	 * 0 exp! This will drive away high level players from low level spots.
-	 * i also think about to skip treasure drop when exp is 0 - so no item scum on low level spots!
-	 */
-	
-	if(who_lvl <= op_lvl) /* player has killed same level or lower! */
+	if(who_lvl<3)
+		max_mul=0.5f;
+	else if(who_lvl<5)
+		max_mul=0.4f;
+	else if(who_lvl<6)
+		max_mul=0.3f;
+	else
+		max_mul=0.25f;
+	/* we get first a global level difference mulitplicator */
+	exp_mul = calc_level_difference(who_lvl, op_lvl);
+	op_exp = (int)((float) op_exp * lev_exp[op_lvl]*exp_mul);
+	tmp=((float)(new_levels[who_lvl+1]-new_levels[who_lvl])*0.1f)*max_mul;
+	if((float) op_exp > tmp)
+	{
+		LOG(llevDebug,"exp to high(%d)! adjusted to: %d",op_exp, (int)tmp);
+		op_exp = (int)tmp;
+	}
+
+/*
+	if(who_lvl <= op_lvl) 
 	{
 		LOG(llevDebug,"EXP (lower hitter %d):: target %s (base:%d lvl:%d mul: %f) ",who_lvl, query_name(op),op_exp,op_lvl,lev_exp[op_lvl]);
 		op_exp = (int)((float) op_exp * lev_exp[op_lvl]);
-		tmp=(int)((float)(new_levels[who_lvl+1]-new_levels[who_lvl])*0.07f);
-		if(op_exp > tmp)
+		tmp=(float)(new_levels[who_lvl+1]-new_levels[who_lvl])*0.07f;
+		if((float) op_exp > tmp)
 		{
 			LOG(llevDebug,"exp to high(%d)! adjusted to: %d",op_exp, tmp);
 			op_exp = tmp;
 		}
 	}
-	else /* mob is lower in level as player ! */
+	else 
 	{
 		tmp = (who_lvl - op_lvl)*3;
 		LOG(llevDebug,"EXP (higher hitter %d):: target %s (base:%d lvl:%d mul: %f) tmp:%d ",who_lvl, query_name(op),op_exp,op_lvl,lev_exp[op_lvl],tmp);
@@ -338,9 +347,9 @@ int calc_skill_exp(object *who, object *op)
 		else
 			op_exp = 0;
 	}
-
-	LOG(llevDebug,"\nEXP:: %s (lvl %d(%d)) gets %d exp in %s from %s (lvl %d)(%x - %d)\n", query_name(who), who_lvl, who->level, op_exp,
-		who->chosen_skill?query_name(who->chosen_skill):"<BUG: NO SKILL!>",query_name(op), op_lvl, op, op->count);
+*/
+	LOG(llevDebug,"\nEXP:: %s (lvl %d(%d)) gets %d exp in %s from %s (lvl %d)(%x - %d) (max:%f)\n", query_name(who), who_lvl, who->level, op_exp,
+		who->chosen_skill?query_name(who->chosen_skill):"<BUG: NO SKILL!>",query_name(op), op_lvl, op, op->count,tmp);
 	/* old code. I skipped skill[].lexp and bexp - perhaps later back in
 	if(who->chosen_skill==NULL)
 	{

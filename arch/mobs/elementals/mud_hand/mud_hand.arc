@@ -13,7 +13,7 @@ attack_cleave 80
 is_neutral 1
 direction 5
 terrain_flag 1
-randomitems mob_med
+randomitems mob_mud_hand
 Wis 6
 anim
 facings 25
@@ -124,13 +124,13 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 125
+exp 75
 ac 10
 wc 1
-dam 5
+dam 52
 hp -1
-maxhp 7
+maxhp 66
 speed -0.0325
 level 1
-weight 25500
+weight 35500
 end

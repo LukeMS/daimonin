@@ -54,7 +54,7 @@ extern void player_lvl_adj(object *who, object *op);
 extern void calc_perm_exp(object *op);
 extern int adjust_exp(object *pl, object *op, int exp);
 extern void apply_death_exp_penalty(object *op);
-extern int calc_level_difference(int who_lvl, int op_lvl);
+extern float calc_level_difference(int who_lvl, int op_lvl);
 /* friend.c */
 extern void add_friendly_object(object *op);
 extern void remove_friendly_object(object *op);

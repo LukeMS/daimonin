@@ -75,15 +75,12 @@ monster 1
 level 1
 Con 2
 Pow 2
-can_cast_spell 1
-exp 165
+exp 91
 ac 11
 wc 7
-dam 5
+dam 56
 hp -1
-maxhp 6
-sp -1
-maxsp 10
+maxhp 66
 weapon_speed 0.040
 resist_fire 100
 resist_pierce 25
@@ -95,7 +92,7 @@ resist_cold -30
 attack_pierce 90
 alive 1
 no_pick 1
-weight 950000
+weight 350000
 run_away 6
 end
 More

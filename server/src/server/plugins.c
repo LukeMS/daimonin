@@ -147,7 +147,8 @@ void initPlugins(void)
     strcpy(buf,PLUGINDIR"/");
     LOG(llevInfo,"Plugins directory is %s\n",buf);
 
-    plugdir = opendir(buf);
+    if(!(plugdir = opendir(buf)))
+        return;
 
     n = 0;
 
@@ -165,6 +166,7 @@ void initPlugins(void)
             }
         }
     }
+    closedir(plugdir);
 }
 
 /*****************************************************************************/

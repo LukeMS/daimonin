@@ -72,12 +72,12 @@ monster 1
 alive 1
 attack_impact 100
 can_see_in_dark 1
-exp 120
+exp 75
 ac 9
 wc 6
-dam 4
+dam 48
 hp -1
-maxhp 7
+maxhp 66
 level 1
 speed -0.035
 no_pick 1

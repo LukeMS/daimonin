@@ -106,6 +106,7 @@ typedef struct treasurestruct {
 				     * required to go to the new list
  				     */
   uint16 nrof;			    /* random 1 to nrof items are generated */
+  sint16 chance_fix;     /* will overrule chance: if set (!=-1) it will create 1/chance_single */
   uint8 chance;			    /* Percent chance for this item */
   struct _change_arch change_arch;  /* override default arch values if set in treasure list */
 } treasure;
@@ -115,6 +116,7 @@ typedef struct treasureliststruct {
   const char *name;				/* Usually monster-name/combination */
   int t_style;				/* global style (used from artifacts file) */
   int artifact_chance;	
+  sint16 chance_fix;	/* if set it will overrule total_chance: */
   sint16 total_chance;			/* If non-zero, only 1 item on this
 					 * list should be generated.  The
 					 * total_chance contains the sum of
