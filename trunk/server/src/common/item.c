@@ -285,6 +285,14 @@ char *query_short_name(object *op)
 	switch(op->type) 
 	{
 		case CONTAINER:
+			if (QUERY_FLAG(op,FLAG_IDENTIFIED))
+			{
+				if(op->title) 
+				{
+					safe_strcat(buf, " ", &len, MAX_BUF);
+					safe_strcat(buf, op->title, &len, MAX_BUF);
+				}
+			}
 			if(op->sub_type1>=ST1_CONTAINER_NORMAL_player)
 			{
 				if(op->sub_type1 == ST1_CONTAINER_CORPSE_player && op->slaying)
@@ -499,6 +507,15 @@ char *query_base_name(object *op) {
 	{
 
 		case CONTAINER:
+			if (QUERY_FLAG(op,FLAG_IDENTIFIED))
+			{
+				if(op->title) 
+				{
+					safe_strcat(buf, " ", &len, MAX_BUF);
+					safe_strcat(buf, op->title, &len, MAX_BUF);
+				}
+			}
+
 			if(op->sub_type1>=ST1_CONTAINER_NORMAL_player)
 			{
 				if(op->sub_type1 == ST1_CONTAINER_CORPSE_player && op->slaying)

@@ -385,7 +385,7 @@ object *get_nearest_player(object *mon) {
 		 * as it was, a clever player could type quit, and the function would  
 		 * skip them over while waiting for confirmation.
 		 */
-		if (!on_same_map(mon,ol->ob) || !can_detect_enemy(mon,ol->ob,&rv) ||
+		if (!can_detect_enemy(mon,ol->ob,&rv) ||
 			(QUERY_FLAG(ol->ob, FLAG_STEALTH)?aggro_stealth:aggro_range) < (int) rv.distance)
 			continue;
 
@@ -578,7 +578,7 @@ void give_initial_items(object *pl,treasurelist *items) {
 
 
     if(pl->randomitems!=NULL)
-	create_treasure(items,pl,GT_STARTEQUIP | GT_ONLY_GOOD,1,0);
+	create_treasure(items,pl,GT_ONLY_GOOD|GT_NO_VALUE,1,0);
 
     for (op=pl->inv; op; op=next) {
 	next = op->below;
@@ -910,8 +910,10 @@ int key_roll_stat(object *op, char key)
 
 	    send_query(&op->contr->socket,CS_QUERY_SINGLECHAR,"Now choose a character.\nPress any key to change outlook.\nPress `d' when you're pleased.\n");
 	    op->contr->state = ST_CHANGE_CLASS;
+		new_draw_info(NDI_WHITE, 0, op, "Press &N 'ext for a different race or gender.");
+		new_draw_info(NDI_WHITE, 0, op, "Press &G 'et for start playing with this char.");
 	    if (op->msg)
-		new_draw_info(NDI_BLUE, 0, op, op->msg);
+			new_draw_info(NDI_BLUE, 0, op, op->msg);
 	    return 0;
 	}
      case 'y':

@@ -1314,7 +1314,7 @@ void examine(object *op, object *tmp) {
 			}
 		}
 	}
-	else if(tmp->value)
+	else if(tmp->value && tmp->type != PLAYER && !QUERY_FLAG(tmp,FLAG_ALIVE))
 	{
 		if(QUERY_FLAG(tmp, FLAG_IDENTIFIED)) 
 		{
@@ -1350,7 +1350,7 @@ void examine(object *op, object *tmp) {
 				}
 		}
 	}
-	else
+	else if (tmp->type != PLAYER && !QUERY_FLAG(tmp,FLAG_ALIVE) )
 	{
 		if(QUERY_FLAG(tmp, FLAG_IDENTIFIED)) 
 		{

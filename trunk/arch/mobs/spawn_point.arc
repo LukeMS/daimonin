@@ -2,7 +2,7 @@ Object spawn_point
 other_arch spawn_info
 face spawn_point.101
 type 81
-speed 0.003
+speed -0.0011
 no_teleport 1
 last_sp -1
 sp -1

@@ -272,6 +272,7 @@ int check_wakeup(object *op, object *enemy, rv_vector *rv) {
  * be within the valid range. MSW 2001-08-05
  */
 /* have not checked this function MT -2003 */
+/* better to check this function asap :) looks weird in many parts... MT-2003 - moved to todo list */
 int can_detect_enemy (object *op, object *enemy, rv_vector *rv) {
 
     /* null detection for any of these condtions always */
@@ -289,11 +290,16 @@ int can_detect_enemy (object *op, object *enemy, rv_vector *rv) {
     if(path_to_player(op->head?op->head:op,enemy,0)==0) return 0;
 #endif
 
+	/* we check for sys_invisible and normal */
+	/* this tmp_invis MUST BE CHECKED - i don't use it in new invis code - add or remove */
+	if(IS_INVISIBLE(enemy,op) && (!enemy->contr || !enemy->contr->tmp_invis))
+	    return 0;
+
     get_rangevector(op, enemy, rv, 0);
 
-    /* opponent is unseen? We still have a chance to find them if
-     * they are 1) standing in dark square, 2) hidden or 3) low-quality
-     * invisible (the basic invisibility spell).
+
+		/* opponent is unseen? We still have a chance to find them if
+     * they are 1) standing in dark square.
      */
     if(!can_see_enemy(op,enemy)) {
 	int radius = MIN_MON_RADIUS;
@@ -305,12 +311,6 @@ int can_detect_enemy (object *op, object *enemy, rv_vector *rv) {
 	 * finding enemies!
 	 */
 	if(op->type==PLAYER) return 0;
-
-	/* Quality invisible? Bah, we wont see them w/o SEE_INVISIBLE
-	 * flag (which was already checked). Lets get out of here 
-	 */
-	if(IS_INVISIBLE(enemy,op) && (!enemy->contr || !enemy->contr->tmp_invis))
-	    return 0;
 
 	/* Determine Detection radii */
 	if(!enemy->hide)  /* to detect non-hidden (eg dark/invis enemy) */
@@ -2178,8 +2178,6 @@ void spawn_point(object *op)
 	int rmt;
     object *tmp, *mob, *next, *item;
 
-/*	LOG(llevInfo,"Spawn me, baby\n");*/
-
 	if(op->enemy)
 	{
 		if(op->enemy_count == op->enemy->count && !QUERY_FLAG(op,FLAG_REMOVED)) /* all ok, our spawn have fun */
@@ -2187,11 +2185,12 @@ void spawn_point(object *op)
 		op->enemy = NULL;
 	}
 
+
 	/* now we get a random value from 0 to 9999. */
 	if(op->stats.sp == -1)
 		op->stats.sp = (RANDOM() % 10000);
 
-	/* now we move through the spawn point inventory and
+		/* now we move through the spawn point inventory and
 	 * get the mob with a number under this value AND nearest.
 	 */
     for(rmt=0,mob=NULL,tmp = op->inv; tmp; tmp = next)
