@@ -75,7 +75,10 @@ void init_anim()
         if (*buf == '#')
             continue;
         /* Kill the newline */
-        buf[strlen(buf) - 1] = '\0';
+        i = strlen(buf) - 1;
+        while(isspace(buf[i]))
+            --i;
+        buf[i + 1] = '\0';
         if (!strncmp(buf, "anim ", 5))
         {
             if (num_frames)
@@ -138,7 +141,7 @@ static int anim_compare(Animations *a, Animations *b)
     return strcmp(a->name, b->name);
 }
 
-/* Tries to find the animation id that matches name.  Returns an integer match 
+/* Tries to find the animation id that matches name.  Returns an integer match
  * 0 if no match found (animation 0 is initialized as the 'bug' face
  */
 int find_animation(char *name)
@@ -177,7 +180,7 @@ void animate_object(object *op, int count)
     {
 #if 0 /* ONLY activate for active debugging */
         if(op->animation_id)
-            LOG(llevBug,"BUG: Object %s (arch %s) lacks animation. (is tail: %s)\n", 
+            LOG(llevBug,"BUG: Object %s (arch %s) lacks animation. (is tail: %s)\n",
                         STRING_OBJ_NAME(op), STRING_OBJ_ARCH_NAME(op), op->head?"yes":"no");
 #endif
         return;
@@ -185,7 +188,7 @@ void animate_object(object *op, int count)
 
     /*  a animation is not only changed by anim_speed.
      *  If we turn the object by a teleporter for example, the direction & facing can
-     *  change - outside the normal animation loop. 
+     *  change - outside the normal animation loop.
      *  We have then to change the frame and not increase the state */
 
     if ((!QUERY_FLAG(op, FLAG_SLEEP) && !QUERY_FLAG(op, FLAG_PARALYZED)))
@@ -222,7 +225,7 @@ void animate_object(object *op, int count)
      */
     if (numfacing == 9)
     {
-        base_state = dir * (numanim / 9); 
+        base_state = dir * (numanim / 9);
         /* If beyond drawable states, reset */
         if (op->state >= max_state)
             op->state = 0;
@@ -242,7 +245,7 @@ void animate_object(object *op, int count)
                         op->anim_enemy_dir,op->anim_moving_dir,op->anim_last_facing,
                         CONTR(op)->anim_flags & PLAYER_AFLAG_ENEMY,
                         CONTR(op)->anim_flags & PLAYER_AFLAG_ADDFRAME,
-                        CONTR(op)->anim_flags & PLAYER_AFLAG_FIGHT, op->state); 
+                        CONTR(op)->anim_flags & PLAYER_AFLAG_FIGHT, op->state);
                     */
 
             /* lets check flags - perhaps we have hit something in close fight */
@@ -312,7 +315,7 @@ void animate_object(object *op, int count)
                 if (!dir || dir == -1)   /* special case, same spot will be mapped to south dir */
                     op->anim_last_facing = dir = 4;
             }
-            base_state = dir * (numanim / numfacing); 
+            base_state = dir * (numanim / numfacing);
             /* If beyond drawable states, reset */
             if (op->state >= max_state)
             {
@@ -353,7 +356,7 @@ void animate_object(object *op, int count)
                 if (!dir || dir == -1)   /* special case, same spot will be mapped to south dir */
                     op->anim_last_facing = dir = 4;
             }
-            base_state = dir * (numanim / numfacing); 
+            base_state = dir * (numanim / numfacing);
             /* If beyond drawable states, reset */
             if (op->state >= max_state)
                 op->state = 0;

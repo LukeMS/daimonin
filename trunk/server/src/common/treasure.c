@@ -85,9 +85,9 @@ void load_treasures()
 
     while (fgets(buf, MAX_BUF, fp) != NULL)
     {
-        if (*buf == '#')
+        if (*buf == '#' || *buf == '\n' || *buf == '\r')
             continue;
-        if (sscanf(buf, "treasureone %s\n", name) || sscanf(buf, "treasure %s\n", name))
+        if (sscanf(buf, "treasureone %s%[\n\r]", name, NULL) || sscanf(buf, "treasure %s%[\n\r]", name, NULL))
         {
             treasurelist   *tl  = get_empty_treasurelist();
             FREE_AND_COPY_HASH(tl->listname, name);
@@ -373,8 +373,10 @@ void init_artifacts()
     {
         if (*buf == '#')
             continue;
-        if ((cp = strchr(buf, '\n')) != NULL)
-            *cp = '\0';
+        cp = buf + (strlen(buf) - 1);
+        while(isspace(*cp))
+            --cp;
+        cp[1] = '\0';
         cp = buf;
         while (*cp == ' ') /* Skip blanks */
             cp++;
@@ -476,13 +478,13 @@ void init_artifacts()
                 LOG(llevError, "ERROR: Init_Artifacts: out of memory in ->parse_text (size %d)\n", lcount);
                  memcpy(art->parse_text, buf_text, lcount);
 
-                 FREE_AND_COPY_HASH(art->def_at.name, art->name); /* finally, change the archetype name of 
+                 FREE_AND_COPY_HASH(art->def_at.name, art->name); /* finally, change the archetype name of
                                                                     * our fake arch to the fake arch name.
                                                                     * without it, treasures will get the
                                                                     * original arch, not this (hm, this
                                                                     * can be a glitch in treasures too...)
                                                                     */
-                 /* now handle the <Allowed none> in the artifact to create 
+                 /* now handle the <Allowed none> in the artifact to create
                           * unique items or add them to the given type list.
                           */
                  al = find_artifactlist(none_flag == FALSE ? art->def_at.clone.type : -1);
@@ -641,8 +643,8 @@ static inline treasurelist * find_treasurelist_intern(const char *name)
 }
 
 /* link_treasurelists will generate a linked lists of treasure list
- * using a string in format "listname1;listname2;listname3;..." as 
- * argument. 
+ * using a string in format "listname1;listname2;listname3;..." as
+ * argument.
  * Return: objectlink * to list of treasurelist
  */
 objectlink * link_treasurelists(char *liststring, uint32 flags)
@@ -737,13 +739,13 @@ void unlink_treasurelists(objectlink *list, int flag)
     while (list);
 }
 
-/* The point of generate_treasure is that is generates exactly *one* 
+/* The point of generate_treasure is that is generates exactly *one*
  * item. I tweaked it a bit so it will work now with a linked list.
- * generate_treasure can give back NULL (nothing generated). 
- * We will browse the linked list until we get a valid target. 
+ * generate_treasure can give back NULL (nothing generated).
+ * We will browse the linked list until we get a valid target.
  * We break if we have a item or we are at the end of the list.
  * MT-2005
- */ 
+ */
 object * generate_treasure(struct oblnk *t, int difficulty)
 {
     object*ob =     get_object(), *tmp = NULL;
@@ -779,7 +781,7 @@ object * generate_treasure(struct oblnk *t, int difficulty)
  * created on weak maps, because it will exceed the number of allowed tries
  * to do that.
  */
-/* called from various sources, arch_change will be normally NULL the first time a 
+/* called from various sources, arch_change will be normally NULL the first time a
  * treasure list is generated. This is then the "base" list. We will use the real
  * first arch_change as base to other recursive calls.
  */
@@ -861,10 +863,10 @@ void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int
                     if (t->nrof && tmp->nrof <= 1)
                         tmp->nrof = RANDOM() % ((int) t->nrof) + 1;
                     /* ret 1 = artifact is generated - don't overwrite anything here */
-                    set_material_real(tmp, change_arch ? change_arch : &t->change_arch);    
+                    set_material_real(tmp, change_arch ? change_arch : &t->change_arch);
                     if (!fix_generated_item(&tmp, op, difficulty, a_chance, t_style, t->magic, t->magic_fix,
                                             t->magic_chance, flag))
-                        change_treasure(change_arch ? change_arch : &t->change_arch, tmp);        
+                        change_treasure(change_arch ? change_arch : &t->change_arch, tmp);
                     put_treasure(tmp, op, flag);
                     /* if treasure is "identified", created items are too */
                     if (op->type == TREASURE && QUERY_FLAG(op, FLAG_IDENTIFIED))
@@ -999,11 +1001,11 @@ void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty,
             tmp = arch_to_object(t->item);
             if (t->nrof && tmp->nrof <= 1)
                 tmp->nrof = RANDOM() % ((int) t->nrof) + 1;
-            set_material_real(tmp, change_arch ? change_arch : &t->change_arch);    
+            set_material_real(tmp, change_arch ? change_arch : &t->change_arch);
             if (!fix_generated_item(&tmp, op, difficulty, a_chance,
                                     (t->t_style == T_STYLE_UNSET) ? t_style : t->t_style, t->magic, t->magic_fix,
                                     t->magic_chance, flag))
-                change_treasure(change_arch ? change_arch : &t->change_arch, tmp);        
+                change_treasure(change_arch ? change_arch : &t->change_arch, tmp);
             put_treasure(tmp, op, flag);
             /* if trasure is "identified", created items are too */
             if (op->type == TREASURE && QUERY_FLAG(op, FLAG_IDENTIFIED))
@@ -1046,7 +1048,7 @@ static void put_treasure(object *op, object *creator, int flags)
         op->x = creator->x;
         op->y = creator->y;
         /* this must be handled carefully... we don't want drop items on a button
-             * which is then not triggered. MT-2004 
+             * which is then not triggered. MT-2004
              */
         insert_ob_in_map(op, creator->map, op, INS_NO_MERGE | INS_NO_WALK_ON);
     }
@@ -1082,7 +1084,7 @@ static void change_treasure(struct _change_arch *ca, object *op)
  * i changed this in 2 ways: difficulty now effects only artifacts
  * but now artifacts generation don't based on +x value anymore.
  * so, a sword+1 can be Sunword +3 if difficulty is right.
- * The reason why we don't want +3 or +4 "base" items is that 
+ * The reason why we don't want +3 or +4 "base" items is that
  * we want include crafting later - there we can build from 2 +1 items
  * of same kind one +2.
  */
@@ -1218,43 +1220,43 @@ int set_ring_bonus(object *op, int bonus, int level)
           }
           else if (level < 10)
           {
-              tmp += 10 + RANDOM() % 10;            
+              tmp += 10 + RANDOM() % 10;
               if (bonus > 0)
                   op->value = (int) ((float) op->value * 1.32f);
           }
           else if (level < 15)
           {
-              tmp += 15 + RANDOM() % 20;            
+              tmp += 15 + RANDOM() % 20;
               if (bonus > 0)
                   op->value = (int) ((float) op->value * 1.34f);
           }
           else if (level < 20)
           {
-              tmp += 20 + RANDOM() % 21;            
+              tmp += 20 + RANDOM() % 21;
               if (bonus > 0)
                   op->value = (int) ((float) op->value * 1.38f);
           }
           else if (level < 25)
           {
-              tmp += 25 + RANDOM() % 23;            
+              tmp += 25 + RANDOM() % 23;
               if (bonus > 0)
                   op->value = (int) ((float) op->value * 1.4f);
           }
           else if (level < 30)
           {
-              tmp += 30 + RANDOM() % 25;            
+              tmp += 30 + RANDOM() % 25;
               if (bonus > 0)
                   op->value = (int) ((float) op->value * 1.42f);
           }
           else if (level < 40)
           {
-              tmp += 40 + RANDOM() % 30;            
+              tmp += 40 + RANDOM() % 30;
               if (bonus > 0)
                   op->value = (int) ((float) op->value * 1.44f);
           }
           else
           {
-              tmp += (int) ((double) level * 0.65) + 50 + RANDOM() % 40;            
+              tmp += (int) ((double) level * 0.65) + 50 + RANDOM() % 40;
               if (bonus > 0)
                   op->value = (int) ((float) op->value * 1.5f);
           }
@@ -1326,43 +1328,43 @@ int set_ring_bonus(object *op, int bonus, int level)
           }
           else if (level < 10)
           {
-              tmp += 3 + RANDOM() % 4;          
+              tmp += 3 + RANDOM() % 4;
               if (bonus > 0)
                   op->value = (int) ((float) op->value * 1.32f);
           }
           else if (level < 15)
           {
-              tmp += 4 + RANDOM() % 6;          
+              tmp += 4 + RANDOM() % 6;
               if (bonus > 0)
                   op->value = (int) ((float) op->value * 1.34f);
           }
           else if (level < 20)
           {
-              tmp += 6 + RANDOM() % 8;          
+              tmp += 6 + RANDOM() % 8;
               if (bonus > 0)
                   op->value = (int) ((float) op->value * 1.38f);
           }
           else if (level < 25)
           {
-              tmp += 8 + RANDOM() % 10;         
+              tmp += 8 + RANDOM() % 10;
               if (bonus > 0)
                   op->value = (int) ((float) op->value * 1.4f);
           }
           else if (level < 33)
           {
-              tmp += 10 + RANDOM() % 12;            
+              tmp += 10 + RANDOM() % 12;
               if (bonus > 0)
                   op->value = (int) ((float) op->value * 1.42f);
           }
           else if (level < 44)
           {
-              tmp += 15 + RANDOM() % 15;            
+              tmp += 15 + RANDOM() % 15;
               if (bonus > 0)
                   op->value = (int) ((float) op->value * 1.44f);
           }
           else
           {
-              tmp += (int) ((double) level * 0.53) + 20 + RANDOM() % 20;            
+              tmp += (int) ((double) level * 0.53) + 20 + RANDOM() % 20;
               if (bonus > 0)
                   op->value = (int) ((float) op->value * 1.5f);
           }
@@ -1390,43 +1392,43 @@ int set_ring_bonus(object *op, int bonus, int level)
           }
           else if (level < 10)
           {
-              tmp += 3 + RANDOM() % 4;          
+              tmp += 3 + RANDOM() % 4;
               if (bonus > 0)
                   op->value = (int) ((float) op->value * 1.32f);
           }
           else if (level < 15)
           {
-              tmp += 4 + RANDOM() % 6;          
+              tmp += 4 + RANDOM() % 6;
               if (bonus > 0)
                   op->value = (int) ((float) op->value * 1.34f);
           }
           else if (level < 20)
           {
-              tmp += 6 + RANDOM() % 8;          
+              tmp += 6 + RANDOM() % 8;
               if (bonus > 0)
                   op->value = (int) ((float) op->value * 1.38f);
           }
           else if (level < 25)
           {
-              tmp += 8 + RANDOM() % 10;         
+              tmp += 8 + RANDOM() % 10;
               if (bonus > 0)
                   op->value = (int) ((float) op->value * 1.4f);
           }
           else if (level < 33)
           {
-              tmp += 10 + RANDOM() % 12;            
+              tmp += 10 + RANDOM() % 12;
               if (bonus > 0)
                   op->value = (int) ((float) op->value * 1.42f);
           }
           else if (level < 44)
           {
-              tmp += 15 + RANDOM() % 15;            
+              tmp += 15 + RANDOM() % 15;
               if (bonus > 0)
                   op->value = (int) ((float) op->value * 1.44f);
           }
           else
           {
-              tmp += (int) ((double) level * 0.53) + 20 + RANDOM() % 20;            
+              tmp += (int) ((double) level * 0.53) + 20 + RANDOM() % 20;
               if (bonus > 0)
                   op->value = (int) ((float) op->value * 1.5f);
           }
@@ -1603,8 +1605,8 @@ static int get_random_spell(int level, int flags)
  * into scrolls/books/wands, makes it unidentified, hides the value, etc.
  */
 /* 4/28/96 added creator object from which op may now inherit properties based on
- * op->type. Right now, which stuff the creator passes on is object type 
- * dependant. I know this is a spagetti manuever, but is there a cleaner 
+ * op->type. Right now, which stuff the creator passes on is object type
+ * dependant. I know this is a spagetti manuever, but is there a cleaner
  * way to do this? b.t. */
 /*
  * ! (flags & GT_ENVIRONMENT):
@@ -1622,7 +1624,7 @@ int fix_generated_item(object **op_ptr, object *creator, int difficulty, int a_c
     int     too_many_tries = 0, is_special = 0;
 
     if (!creator || creator->type == op->type)
-        creator = op; /*safety & to prevent polymorphed objects giving attributes */ 
+        creator = op; /*safety & to prevent polymorphed objects giving attributes */
 
 
     if (difficulty < 1)
@@ -1784,8 +1786,8 @@ int fix_generated_item(object **op_ptr, object *creator, int difficulty, int a_c
               break;
 
             case BOOK:
-              /* Is it an empty book?, if yes lets make a special 
-                    * msg for it, and tailor its properties based on the 
+              /* Is it an empty book?, if yes lets make a special
+                    * msg for it, and tailor its properties based on the
                     * creator and/or map level we found it on.
                     */
               if (!op->msg && RANDOM() % 10)
@@ -1816,7 +1818,7 @@ int fix_generated_item(object **op_ptr, object *creator, int difficulty, int a_c
               break;
 
             case SPELLBOOK:
-              LOG(llevDebug, "DEBUG: fix_generated_system() called for disabled object SPELLBOOK (%s)\n", query_name(op)); 
+              LOG(llevDebug, "DEBUG: fix_generated_system() called for disabled object SPELLBOOK (%s)\n", query_name(op));
               break;
 
             case WAND:
@@ -1840,7 +1842,7 @@ int fix_generated_item(object **op_ptr, object *creator, int difficulty, int a_c
             case HORN:
               if ((op->stats.sp = get_random_spell(difficulty, SPELL_USE_HORN)) == SP_NO_SPELL)
                   break;
-              SET_FLAG(op, FLAG_IS_MAGICAL); /* marks at magical */  
+              SET_FLAG(op, FLAG_IS_MAGICAL); /* marks at magical */
               if (op->stats.maxhp)
                   op->stats.maxhp += RANDOM() % op->stats.maxhp;
               op->stats.hp = op->stats.maxhp;
@@ -1892,7 +1894,7 @@ int fix_generated_item(object **op_ptr, object *creator, int difficulty, int a_c
 
                   /* get the right race */
                   for (list = first_race; list && tmp; list = list->next, tmp--)
-                      ;                     
+                      ;
                   FREE_AND_COPY_HASH(op->slaying, list->name);
               }
               break;
@@ -1985,7 +1987,7 @@ artifact *find_artifact(const char *name)
   for (al=first_artifactlist; al!=NULL; al=al->next)
   {
         art = al->items;
-        do 
+        do
         {
             if (art->name && !strcmp(art->name, name))
                 return art;
@@ -2227,7 +2229,7 @@ int generate_artifact(object *op, int difficulty, int t_style, int a_chance)
     }
 
     /* if we are here then we failed to generate a artifact by chance.
-     * the reasons can be many - most times we just skipped over the 
+     * the reasons can be many - most times we just skipped over the
      * useful one.
      * If (and only if) a a_chance  - then now we force our way:
      * - lets get (if there are one) a legal artifact with the highest chance.
@@ -2392,7 +2394,7 @@ static inline void set_material_real(object *op, struct _change_arch *change_arc
     if (change_arch->material != -1)
     {
         op->material_real = change_arch->material;
-        /* this is tricky: material_range will be used 
+        /* this is tricky: material_range will be used
              * for change_arch->material if change_arch->material
              * is set - if not, it is used for material_quality
              * if that is set.
@@ -2405,7 +2407,7 @@ static inline void set_material_real(object *op, struct _change_arch *change_arc
     else if (!op->material_real && op->material != M_ADAMANT) /* if == 0, grap a valid material class.
                                 * we should assign to all objects a valid
                                 * material_real value to avoid problems here.
-                                * So, this is a hack 
+                                * So, this is a hack
                                 */
     {
         if (op->material & M_IRON)
@@ -2441,7 +2443,7 @@ static inline void set_material_real(object *op, struct _change_arch *change_arc
     /* ok - now we do some work: we define a (material) quality and try to find
      * a best matching pre-set material_real for that item.
      * this is a bit more complex but we are with that free to define
-     * different materials without having a strong fixed material 
+     * different materials without having a strong fixed material
      * table.
      */
     if (change_arch->material_quality != -1)
@@ -2503,7 +2505,7 @@ static inline void set_material_real(object *op, struct _change_arch *change_arc
         else /* we have material_real == 0 but we modify at last the quality! */
         {
             op->item_quality = m_range;
-            op->item_condition = op->item_quality;             
+            op->item_condition = op->item_quality;
             return;
         }
     }
@@ -2560,7 +2562,7 @@ void dump_monster_treasure(const char *name)
         LOG(llevInfo, "No objects have the name %s!\n\n", name);
 }
 
-/* these function fetch the "enviroment level" for 
+/* these function fetch the "enviroment level" for
  * treasure generation for the given object.
  * It checks first the object itself has a level.
  * If not, it checks the object is in a map.

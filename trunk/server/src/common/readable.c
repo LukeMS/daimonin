@@ -32,32 +32,32 @@
 #include <global.h>
 #include "book.h"
 
-/* Define this if you want to archive book titles by contents.  
- * This option should enforce UNIQUE combinations of titles,authors and 
- * msg contents during and *between* game sessions. 
- * Note: a slight degeneracy exists since books are archived based on an integer 
- * index value calculated from the message text (similar to alchemy formulae). 
- * Sometimes two widely different messages have the same index value (rare). In 
- * this case,  it is possible to occasionally generate 2 books with same title and 
- * different message content. Not really a bug, but rather a feature. This action 
- * should  keeps player on their toes ;). 
- * Also, note that there is *finite* space available for archiving message and titles. 
- * Once this space is used, books will stop being archived. Not a serious problem 
- * under the current regime, since there are generally fewer possible (random) 
+/* Define this if you want to archive book titles by contents.
+ * This option should enforce UNIQUE combinations of titles,authors and
+ * msg contents during and *between* game sessions.
+ * Note: a slight degeneracy exists since books are archived based on an integer
+ * index value calculated from the message text (similar to alchemy formulae).
+ * Sometimes two widely different messages have the same index value (rare). In
+ * this case,  it is possible to occasionally generate 2 books with same title and
+ * different message content. Not really a bug, but rather a feature. This action
+ * should  keeps player on their toes ;).
+ * Also, note that there is *finite* space available for archiving message and titles.
+ * Once this space is used, books will stop being archived. Not a serious problem
+ * under the current regime, since there are generally fewer possible (random)
  * messages than space available on the titlelists.
  * One exception (for sure) are the monster messages. But no worries, you should
  * see all of the monster info in some order (but not all possble combinations)
  * before the monster titlelist space is run out. You can increase titlelist
- * space by increasing the array sizes for the monster book_authours and book_names 
- * (see  max_titles[] array and include/read.h). Since the unique_book algorthm is 
- * kinda stupid, this program *may* slow down program execution if defined (but I don't 
+ * space by increasing the array sizes for the monster book_authours and book_names
+ * (see  max_titles[] array and include/read.h). Since the unique_book algorthm is
+ * kinda stupid, this program *may* slow down program execution if defined (but I don't
  * think its a significant problem, at least, I have no problems running this option
- * on a Sparc 10! Also, once archive title lists are filled and/or all possible msg 
- * combinations have been generated, unique_book isnt called anymore. It takes 5-10 
- * sessions for this to happen). 
+ * on a Sparc 10! Also, once archive title lists are filled and/or all possible msg
+ * combinations have been generated, unique_book isnt called anymore. It takes 5-10
+ * sessions for this to happen).
  * Final note: the game remembers book/title/msg combinations from reading the
  * file lib/bookarch. If you REMOVE this file, you will lose your archive. So
- * be sure to copy it over to the new lib directory when you change versions. 
+ * be sure to copy it over to the new lib directory when you change versions.
  * -b.t.
  */
 
@@ -77,8 +77,8 @@ typedef struct titlestruct
     const char         *name;     /* the name of the book */
     const char         *authour;  /* the name of the book authour */
     const char         *archname;  /* the archetype name of the book */
-    int                 level;       /* level of difficulty of this message */ 
-    int                 size;       /* size of the book message */ 
+    int                 level;       /* level of difficulty of this message */
+    int                 size;       /* size of the book message */
     int                 msg_index;  /* an index value derived from book message */
     struct titlestruct *next;
 } title;
@@ -337,7 +337,7 @@ static titlelist * get_titlelist(int i)
     return tl;
 }
 
-/* HANDMADE STRING FUNCTIONS.., perhaps these belong in another file 
+/* HANDMADE STRING FUNCTIONS.., perhaps these belong in another file
  * (shstr.c ?), but the quantity BOOK_BUF will need to be defined. */
 
 /* nstrtok() - simple routine to return the number of list
@@ -409,7 +409,7 @@ int book_overflow(const char *buf1, const char *buf2, int booksize)
  *
  ****************************************************************************/
 
-/* init_msgfile() - if not called before, initialize the info list 
+/* init_msgfile() - if not called before, initialize the info list
  * reads the messages file into the list pointed to by first_msg
 */
 
@@ -434,8 +434,10 @@ static void init_msgfile(void)
         {
             if (*buf == '#')
                 continue;
-            if ((cp = strchr(buf, '\n')) != NULL)
-                *cp = '\0';
+            cp = buf + (strlen(buf) - 1);
+            while(isspace(*cp))
+                --cp;
+            cp[1] = '\0';
             cp = buf;
             while (*cp == ' ')  /* Skip blanks */
                 cp++;
@@ -570,7 +572,7 @@ static void init_book_archive(void)
     LOG(llevDebug, " done.\n");
 }
 
-/* init_mon_info() - creates the linked list of pointers to 
+/* init_mon_info() - creates the linked list of pointers to
  * monster archetype objects if not called previously
  */
 
@@ -601,8 +603,8 @@ static void init_mon_info(void)
 }
 
 
-/* init_readable() - initialize linked lists utilized by 
- * message functions in tailor_readable_ob() 
+/* init_readable() - initialize linked lists utilized by
+ * message functions in tailor_readable_ob()
  *
  * This is the function called by the main routine to initialize
  * all the readable information.
@@ -662,7 +664,7 @@ static title * find_title(object *book, int msgtype)
 }
 
 /* new_text_name() - Only for objects of type BOOK. SPELLBOOK stuff is
- * handled directly in change_book_name(). Names are based on text 
+ * handled directly in change_book_name(). Names are based on text
  * msgtype
  * this sets book book->name based on msgtype given.  What name
  * is given is based on various criteria
@@ -726,7 +728,7 @@ static void new_text_name(object *book, int msgtype)
     FREE_AND_COPY_HASH(book->name, name);
 }
 
-/* add_book_author() 
+/* add_book_author()
  * A lot like new_text_name above, but instead chooses an author
  * and sets op->title to that value
  */
@@ -776,7 +778,7 @@ static void add_author(object *op, int msgtype)
     FREE_AND_COPY_HASH(op->title, title);
 }
 
-/* unique_book() - check to see if the book title/msg is unique. We 
+/* unique_book() - check to see if the book title/msg is unique. We
  * go through the entire list of possibilities each time. If we find
  * a match, then unique_book returns true (because inst unique).
  */
@@ -833,12 +835,12 @@ static void add_book_to_list(object *book, int msgtype)
 }
 
 
-/* change_book() - give a new, fancier name to generated 
+/* change_book() - give a new, fancier name to generated
  * objects of type BOOK and SPELLBOOK.
- * Aug 96 I changed this so we will attempt to create consistent 
+ * Aug 96 I changed this so we will attempt to create consistent
  * authour/title and message content for BOOKs. Also, we will
- * alter books  that match archive entries to the archival 
- * levels and architypes. -b.t. 
+ * alter books  that match archive entries to the archival
+ * levels and architypes. -b.t.
  */
 
 #define MAX_TITLE_CHECK 20
@@ -857,8 +859,8 @@ void change_book(object *book, int msgtype)
               int           tries   = 0;
               /* look to see if our msg already been archived. If so, alter
                  * the book to match the archival text. If we fail to match,
-                 * then we archive the new title/name/msg combo if there is 
-                 * room on the titlelist. 
+                 * then we archive the new title/name/msg combo if there is
+                 * room on the titlelist.
                  */
 
               if ((strlen(book->msg) > 5) && (t = find_title(book, msgtype)))
@@ -920,7 +922,7 @@ void change_book(object *book, int msgtype)
                            * 1)If no space for a new title exists lets just restore
                            * the old book properties. Remember, if the book had
                            * matchd an older entry on the titlelist, we shouldnt
-                           * have called this routine in the first place!  
+                           * have called this routine in the first place!
                            * 2) If we got a unique title, we need to add it to
                            * the list.
                            */
@@ -987,7 +989,7 @@ void change_book(object *book, int msgtype)
  * Monster msg generation code.
  ****************************************************************************/
 
-/* get_random_mon() - returns a random monster slected from linked 
+/* get_random_mon() - returns a random monster slected from linked
  * list of all monsters in the current game. If level is non-zero,
  * then only monsters greater than that level will be returned.
  * Changed 971225 to be greater than equal to level passed.  Also
@@ -1029,7 +1031,7 @@ object * get_random_mon(int level)
     /* Case where we are searching by level.  Redone 971225 to be clearer
      * and more random.  Before, it looks like it took a random monster from
      * the list, and then returned the first monster after that which was
-     * appropriate level.  This wasn't very random because if you had a 
+     * appropriate level.  This wasn't very random because if you had a
      * bunch of low level monsters and then a high level one, if the random
      * determine took one of the low level ones, it would just forward to the
      * high level one and return that.  Thus, monsters that immediatly followed
@@ -1102,7 +1104,7 @@ object * get_next_mon(object *tmp)
 
 
 
-/* mon_info_msg() - generate a message detailing the properties 
+/* mon_info_msg() - generate a message detailing the properties
  * of a randomly selected monster.
  */
 
@@ -1115,12 +1117,12 @@ char * mon_info_msg(int level, int booksize)
     /*preamble */
     strcpy(retbuf, "This beastiary contains:");
 
-    /* lets print info on as many monsters as will fit in our 
-     * document. 
+    /* lets print info on as many monsters as will fit in our
+     * document.
      * 8-96 Had to change this a bit, otherwise there would
      * have been an impossibly large number of combinations
      * of text! (and flood out the available number of titles
-     * in the archive in a snap!) -b.t. 
+     * in the archive in a snap!) -b.t.
      */
     tmp = get_random_mon(level * 3);
     do
@@ -1205,7 +1207,7 @@ char * artifact_msg(int level, int booksize)
          book_entries > 1 ? "some artifacts" : "an artifact");
 
     /* artifact msg attributes loop. Lets keep adding entries to the 'book'
-     * as long as we have space up to the allowed max # (book_entires) 
+     * as long as we have space up to the allowed max # (book_entires)
      */
     while (book_entries > 0)
     {
@@ -1281,8 +1283,8 @@ char * artifact_msg(int level, int booksize)
  *****************************************************************************/
 
 /* spellpath_msg() - generate a message detailing the member
- * incantations/prayers (and some of their properties) belonging to 
- * a given spellpath. 
+ * incantations/prayers (and some of their properties) belonging to
+ * a given spellpath.
  */
 
 char * spellpath_msg(int level, int booksize)
@@ -1301,13 +1303,13 @@ char * spellpath_msg(int level, int booksize)
         sprintf(retbuf, "%sbelonging to the path of %s:\n", retbuf, spellpathnames[path]);
 
     /* Now go through the entire list of spells. Add appropriate spells
-     * in our message buffer 
+     * in our message buffer
      */
     do
     {
         if (spells[i].type == prayers && (pnum & spells[i].path))
         {
-            /* book level determines max spell level to show 
+            /* book level determines max spell level to show
                  * thus higher level books are more comprehensive */
             if (spells[i].level > (level * 8))
             {
@@ -1365,7 +1367,7 @@ void make_formula_book(object *book, int level)
     int         chance;
 
     /* the higher the book level, the more complex (ie number of
-     * ingredients) the formula can be. 
+     * ingredients) the formula can be.
      */
     fl = get_formulalist(((RANDOM() % level) / 3) + 1);
 
@@ -1479,9 +1481,9 @@ void make_formula_book(object *book, int level)
 #endif
 
 
-/* msgfile_msg() - generate a message drawn randomly from a 
+/* msgfile_msg() - generate a message drawn randomly from a
  * file in lib/. Level currently has no effect on the message
- * which is returned. 
+ * which is returned.
  */
 
 char * msgfile_msg(int level, int booksize)
@@ -1712,15 +1714,15 @@ char * god_info_msg(int level, int booksize)
     return retbuf;
 }
 
-/* tailor_readable_ob()- The main routine. This chooses a random 
- * message to put in given readable object (type==BOOK) which will 
- * be referred hereafter as a 'book'. We use the book level to de- 
- * termine the value of the information we will insert. Higher 
- * values mean the book will (generally) have better/more info. 
+/* tailor_readable_ob()- The main routine. This chooses a random
+ * message to put in given readable object (type==BOOK) which will
+ * be referred hereafter as a 'book'. We use the book level to de-
+ * termine the value of the information we will insert. Higher
+ * values mean the book will (generally) have better/more info.
  * See individual cases as to how this will be utilized.
- * "Book" name/content length are based on the weight of the 
+ * "Book" name/content length are based on the weight of the
  * document. If the value of msg_type is negative, we will randomly
- * choose the kind of message to generate. 
+ * choose the kind of message to generate.
  * -b.t. thomas@astro.psu.edu
  *
  * book is the object we are creating into.

@@ -24,15 +24,15 @@
 */
 /* Basic stuff for use with the alchemy code. Clearly some of this stuff
  * could go into server/alchemy, but I left it here just in case it proves
- * more generally useful. 
+ * more generally useful.
  *
- * Nov 1995 - file created by b.t. thomas@astro.psu.edu 
+ * Nov 1995 - file created by b.t. thomas@astro.psu.edu
  */
 
 
 /* Our definition of 'formula' is any product of an alchemical process.
- * Ingredients are just comma delimited list of archetype (or object) 
- * names. 
+ * Ingredients are just comma delimited list of archetype (or object)
+ * names.
  */
 
 /* Example 'formula' entry in libdir/formulae:
@@ -40,7 +40,7 @@
  *  chance 10
  *  ingred dust of beholdereye,gem
  *  arch potion_generic
- * 
+ *
  */
 
 #include <global.h>
@@ -89,11 +89,11 @@ recipelist * get_formulalist(int i)
         if (!(fl = fl->next))
             break;
         number--;
-    }   
+    }
     return fl;
 }
 
-/* check_recipe() - makes sure we actually have the requested artifact 
+/* check_recipe() - makes sure we actually have the requested artifact
  * and archetype. */
 
 static int check_recipe(recipe *rp)
@@ -103,13 +103,13 @@ static int check_recipe(recipe *rp)
         artifact   *art = locate_recipe_artifact(rp);
         if (!art && strcmp(rp->title, "NONE"))
         {
-            LOG(llevBug, "\n BUG: Formula %s of %s has no artifact.\n", rp->arch_name, rp->title); 
+            LOG(llevBug, "\n BUG: Formula %s of %s has no artifact.\n", rp->arch_name, rp->title);
             return 0;
         }
     }
     else
     {
-        LOG(llevBug, "\n BUG: Can't find archetype:%s for formula:%s\n", rp->arch_name, rp->title); 
+        LOG(llevBug, "\n BUG: Can't find archetype:%s for formula:%s\n", rp->arch_name, rp->title);
         return 0;
     }
 
@@ -118,8 +118,8 @@ static int check_recipe(recipe *rp)
 
 
 /*
- * init_formulae() - Builds up the lists of formula from the file in 
- * the libdir. -b.t. 
+ * init_formulae() - Builds up the lists of formula from the file in
+ * the libdir. -b.t.
  */
 
 void init_formulae()
@@ -152,8 +152,10 @@ void init_formulae()
     {
         if (*buf == '#')
             continue;
-        if ((cp = strchr(buf, '\n')) != NULL)
-            *cp = '\0';
+        cp = buf + (strlen(buf) - 1);
+        while(isspace(*cp))
+            --cp;
+        cp[1] = '\0';
         cp = buf;
         while (*cp == ' ') /* Skip blanks */
             cp++;
@@ -194,10 +196,10 @@ void init_formulae()
                 FREE_AND_COPY_HASH(tmp->name, cp);
                 tmp->next = formula->ingred;
                 formula->ingred = tmp;
-                /* each ingredient's ASCII value is coadded. Later on this 
-                     * value will be used allow us to search the formula lists 
-                 * quickly for the right recipe. 
-                 */ 
+                /* each ingredient's ASCII value is coadded. Later on this
+                     * value will be used allow us to search the formula lists
+                 * quickly for the right recipe.
+                 */
                 formula->index += strtoint(cp);
             }
             while ((cp = next) != NULL);
@@ -212,7 +214,7 @@ void init_formulae()
             }
             fl->total_chance += formula->chance;
             fl->number++;
-            formula->next = fl->items; 
+            formula->next = fl->items;
             fl->items = formula;
         }
         else if (!strncmp(cp, "arch", 4))
@@ -304,7 +306,7 @@ void dump_alchemy(void)
                             for (next = formula->ingred; next != NULL; next = next->next)
                             {
                                 if (nval != 0)
-                                    LOG(llevInfo, ","); 
+                                    LOG(llevInfo, ",");
                                 LOG(llevInfo, "%s(%d)", next->name, (nval = strtoint(next->name)));
                                 tval += nval;
                             }
@@ -315,10 +317,10 @@ void dump_alchemy(void)
                     }
                 }
                 else
-                    LOG(llevBug, "BUG: Can't find archetype:%s for formula %s\n", string, formula->title); 
+                    LOG(llevBug, "BUG: Can't find archetype:%s for formula %s\n", string, formula->title);
                 string = strtok(NULL, ",");
             }
-        }  
+        }
         LOG(llevInfo, "\n");
         fl = fl->next;
         num_ingred++;
@@ -541,7 +543,7 @@ void dump_alchemy_costs(void)
                     }
                 }
                 else
-                    LOG(llevBug, "BUG: Can't find archetype:%s for formula %s\n", string, formula->title); 
+                    LOG(llevBug, "BUG: Can't find archetype:%s for formula %s\n", string, formula->title);
                 string = strtok(NULL, ",");
             }
         }
@@ -572,7 +574,7 @@ const char * ingred_name(const char *name)
 }
 
 /* strtoint() - we use this to convert buf into an integer
- * equal to the coadded sum of the (lowercase) character 
+ * equal to the coadded sum of the (lowercase) character
  * ASCII values in buf (times prepended integers).
  */
 
@@ -596,7 +598,7 @@ artifact * locate_recipe_artifact(recipe *rp)
     artifact       *art     = NULL;
 
     if (!item)
-        return (artifact *) NULL; 
+        return (artifact *) NULL;
 
     if ((at = find_artifactlist(item->type)))
         for (art = at->items; art; art = art->next)
@@ -637,7 +639,7 @@ recipelist * get_random_recipelist(void)
         else
             break;
         roll--;
-    }   
+    }
     if (!fl) /* failed! */
         LOG(llevBug, "BUG: get_random_recipelist(): no recipelists found!\n");
     else if (fl->total_chance == 0)
@@ -652,7 +654,7 @@ recipe * get_random_recipe(recipelist *rpl)
     recipe     *rp  = NULL;
     int         r   = 0;
 
-    /* looks like we have to choose a random one */ 
+    /* looks like we have to choose a random one */
     if (fl == NULL)
         if ((fl = get_random_recipelist()) == NULL)
             return rp;

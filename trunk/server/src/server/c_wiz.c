@@ -723,10 +723,10 @@ int command_addexp(object *op, char *params)
 
     /* if we are full in this skill, then nothing is to do */
     if (exp_skill->level >= MAXLEVEL)
-        return 0;    
+        return 0;
 
     pl->update_skills = 1; /* we will sure change skill exp, mark for update */
-    exp_ob = exp_skill->exp_obj;            
+    exp_ob = exp_skill->exp_obj;
 
     if (!exp_ob)
     {
@@ -734,13 +734,13 @@ int command_addexp(object *op, char *params)
         return 0;
     }
 
-    exp = adjust_exp(pl->ob, exp_skill, exp);   /* first we see what we can add to our skill */ 
+    exp = adjust_exp(pl->ob, exp_skill, exp);   /* first we see what we can add to our skill */
 
     /* adjust_exp has adjust the skill and all exp_obj and player exp */
     /* now lets check for level up in all categories */
-    player_lvl_adj(pl->ob, exp_skill);   
-    player_lvl_adj(pl->ob, exp_ob);   
-    player_lvl_adj(pl->ob, NULL);   
+    player_lvl_adj(pl->ob, exp_skill);
+    player_lvl_adj(pl->ob, exp_ob);
+    player_lvl_adj(pl->ob, NULL);
 
     return 1;
 }
@@ -756,7 +756,7 @@ int command_speed(object *op, char *params)
     set_pticks_time(i);
     reset_sleep();
     new_draw_info_format(NDI_UNIQUE, 0, op, "Set speed to %ld ums (%f ticks/second)", pticks_ums, pticks_second);
-    
+
     return 1;
 }
 
@@ -984,7 +984,7 @@ int command_check_fd(object *op, char *params)
         /* Check if statistics are valid: */
         if (!_fstat(fh, &buf))
         {
-            /* no ttyname() under windows... well, 
+            /* no ttyname() under windows... well,
                      * debugging fh's is always more clever on linux.
                      */
 #ifdef WIN32
@@ -1038,7 +1038,7 @@ static int checkdm(object *op, const char *pl_name, char *pl_passwd, char *pl_ho
     {
         if (line_buf[0] == '#')
             continue;
-        if (sscanf(line_buf, "%[^:]:%[^:]:%s\n", name, passwd, host) != 3)
+        if (sscanf(line_buf, "%[^:]:%[^:]:%s%[\n\r]", name, passwd, host, NULL) < 3)
         {
             LOG(llevBug, "BUG: malformed dm file entry: %s", line_buf);
         }
@@ -1088,7 +1088,7 @@ int command_dm(object *op, char *params)
         }
         else
         {
-            /* don't give our player even something to think about it when 
+            /* don't give our player even something to think about it when
                  * they are not allowed to be DM
                  */
             /*new_draw_info(NDI_UNIQUE, 0,op, "Sorry Pal, I don't think so.");*/

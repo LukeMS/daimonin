@@ -92,8 +92,8 @@ void link_player_skills(object *op)
             pl->exp_obj_ptr[i] = insert_ob_in_ob(arch_to_object(find_archetype(exp_group_arch_name[i])), op);
         }
         CLEAR_FLAG(pl->exp_obj_ptr[i], FLAG_APPLIED);
-        
-        /* we should not need that exp adjustment 
+
+        /* we should not need that exp adjustment
         */
         /*
         if (pl->stats.exp < pl->exp_obj_ptr[i]->stats.exp)
@@ -112,17 +112,17 @@ void link_player_skills(object *op)
         {
             pl->skill_ptr[i]->exp_obj = pl->exp_obj_ptr[pl->skill_ptr[i]->magic];
 
-            if( !pl->highest_skill[pl->skill_ptr[i]->magic] || 
+            if( !pl->highest_skill[pl->skill_ptr[i]->magic] ||
                  pl->skill_ptr[i]->stats.exp > pl->highest_skill[pl->skill_ptr[i]->magic]->stats.exp)
                 pl->highest_skill[pl->skill_ptr[i]->magic] = pl->skill_ptr[i];
         }
 
 
     }
-}   
+}
 
 /* find_skill()
- * looks for the skill and returns a pointer to it if found 
+ * looks for the skill and returns a pointer to it if found
  */
 object * find_skill(object *op, int skillnr)
 {
@@ -132,14 +132,14 @@ object * find_skill(object *op, int skillnr)
         LOG(llevDebug, "BUG: find_skill() called for non player/no CONTR() object %s (%d)\n", query_name(op), skillnr);
         return NULL;
     }
-    
+
     return CONTR(op)->skill_ptr[skillnr];
 }
 
-/* do_skill() - Main skills use function-similar in scope to cast_spell(). 
- * We handle all requests for skill use outside of some combat here. 
- * We require a separate routine outside of fire() so as to allow monsters 
- * to utilize skills. Success should be the amount of experience gained 
+/* do_skill() - Main skills use function-similar in scope to cast_spell().
+ * We handle all requests for skill use outside of some combat here.
+ * We require a separate routine outside of fire() so as to allow monsters
+ * to utilize skills. Success should be the amount of experience gained
  * from the activity. Also, any skills that monster will use, will need
  * to return a positive value of success if performed correctly. Usually
  * this is handled in calc_skill_exp(). Thus failed skill use re-
@@ -261,8 +261,8 @@ int do_skill(object *op, int dir, char *string)
           break;
     }
 
-    /* For players we now update the speed_left from using the skill. 
-     * Monsters have no skill use time because of the random nature in 
+    /* For players we now update the speed_left from using the skill.
+     * Monsters have no skill use time because of the random nature in
      * which use_monster_skill is called already simulates this. -b.t.
      */
 
@@ -284,11 +284,11 @@ int do_skill(object *op, int dir, char *string)
 }
 
 
-/* find relevant stats or a skill then return their weighted sum. 
+/* find relevant stats or a skill then return their weighted sum.
  * I admit the calculation is done in a retarded way.
  * If stat1==NO_STAT_VAL this isnt an associated stat. Returns
- * zero then. -b.t. 
- */  
+ * zero then. -b.t.
+ */
 
 int get_weighted_skill_stat_sum(object *who, int sk)
 {
@@ -351,13 +351,13 @@ void dump_skills()
 }
 
 /* read_skill_params() - based on init_spell_params(). This
- * function should read a file 'skill_params' in the /lib 
+ * function should read a file 'skill_params' in the /lib
  * directory.  -b.t.
  *
  *  format of the file 'skill_params' is:
  *  name
  *      EXP_CAT, bexp, lexp, stat1, stat2, stat3
- * 
+ *
  *  see the values in lib/skill_params for more inspiration/direction
  */
 
@@ -382,7 +382,7 @@ void read_skill_params()
     {
         /* Large buf, so that long comments don't kill it. */
         fgets(skill_name, 255, skill_params);
-        if (*skill_name == '#')
+        if (*skill_name == '#' || *skill_name == '\n' || *skill_name == '\r')
             continue;
         skillindex = lookup_skill_by_name(skill_name);
         if (skillindex == -1)
@@ -406,7 +406,7 @@ void read_skill_params()
         */
         if (!(skills[i].at = get_skill_archetype(i)))
             LOG(llevError, "ERROR: Aborting! Skill #%d (%s) not found in archlist!\n", i, skills[i].name);
-    }        
+    }
 
     LOG(llevDebug, "done.\n");
 }
@@ -501,9 +501,9 @@ int check_skill_to_fire(object *who)
  * -bt. thomas@astro.psu.edu
  */
 
-/* This function was strange used. 
+/* This function was strange used.
  * I changed it, so it is used ONLY when a player try to apply something.
- * This function now sets no apply flag or needed one - but it checks and sets 
+ * This function now sets no apply flag or needed one - but it checks and sets
  * the right skill.
  * TODO: monster skills and flags (can_use_xxx) including here.
  * For unapply, only call change_skill(object, NO_SKILL_READY) and fix_player() after it.
@@ -517,7 +517,7 @@ int check_skill_to_apply(object *who, object *item)
     if (who->type != PLAYER)
         return 1; /* this fctn only for players */
 
-    /* first figure out the required skills from the item */ 
+    /* first figure out the required skills from the item */
     switch (item->type)
     {
         case WEAPON:
@@ -604,7 +604,7 @@ int check_skill_to_apply(object *who, object *item)
 
 
 /* unlink_skill() - removes skill from a player skill list and
- * unlinks the pointer to the exp object */ 
+ * unlinks the pointer to the exp object */
 
 void unlink_skill(object *skillop)
 {
@@ -623,7 +623,7 @@ void unlink_skill(object *skillop)
 /* link_player_skill() - links a  skill to exp object when applied or learned by
  * a player. Returns true if can link. Returns false if got misc
  * skill - bt.
- */ 
+ */
 
 int link_player_skill(object *pl, object *skillop)
 {
@@ -666,7 +666,7 @@ int learn_skill(object *pl, object *scroll, char *name, int skillnr, int scroll_
     if (!skill)
         return 2;
 
-    skillnr = skill->clone.stats.sp;    
+    skillnr = skill->clone.stats.sp;
     if(find_skill(pl,skillnr))
     {
         new_draw_info_format(NDI_UNIQUE, 0, pl, "You already know the skill '%s'!", query_name(&skill->clone));
@@ -676,7 +676,7 @@ int learn_skill(object *pl, object *scroll, char *name, int skillnr, int scroll_
     tmp = arch_to_object(skill);
     if (!tmp)
         return 2;
-    
+
     /* Special check - if the player has meditation (monk), they can not
      * learn melee weapons.  Prevents monk from getting this
      * skill.
@@ -697,7 +697,7 @@ int learn_skill(object *pl, object *scroll, char *name, int skillnr, int scroll_
     /* Everything is cool. Give'em the skill */
     insert_ob_in_ob(tmp, pl);
     CONTR(pl)->skill_ptr[tmp->stats.sp] = tmp;
-    link_player_skill(pl, tmp);  
+    link_player_skill(pl, tmp);
     play_sound_player_only(CONTR(pl), SOUND_LEARN_SPELL, SOUND_NORMAL, 0, 0);
     new_draw_info_format(NDI_UNIQUE, 0, pl, "You have learned the skill %s!", tmp->name);
 
@@ -726,9 +726,9 @@ static int clipped_percent(int a, int b)
     return rv;
 }
 
-/* use_skill() - similar to invoke command, it executes the skill in the 
- * direction that the user is facing. Returns false if we are unable to 
- * change to the requested skill, or were unable to use the skill properly. 
+/* use_skill() - similar to invoke command, it executes the skill in the
+ * direction that the user is facing. Returns false if we are unable to
+ * change to the requested skill, or were unable to use the skill properly.
  * -b.t.
  */
 
@@ -738,7 +738,7 @@ int use_skill(object *op, char *string)
 
     /* the skill name appears at the begining of the string,
      * need to reset the string to next word, if it exists. */
-    /* first eat name of skill and then eat any leading spaces */  
+    /* first eat name of skill and then eat any leading spaces */
 
     if (string && (sknum = lookup_skill_by_name(string)) >= 0)
     {
@@ -798,7 +798,7 @@ int use_skill(object *op, char *string)
  * applied.
  */
 /* please note that change skill change set_skill_weapon && set_skill_bow are ONLY
- * set in fix_players() */ 
+ * set in fix_players() */
 int change_skill(object *who, int sk_index)
 {
     object *tmp;
@@ -910,7 +910,7 @@ int attack_hth(object *pl, int dir, char *string)
                 esrv_update_item(UPD_FLAGS, pl, weapon);
             }
             break;
-        }   
+        }
 
     return skill_attack(enemy, pl, dir, string);
 }
@@ -981,7 +981,7 @@ int skill_attack(object *tmp, object *pl, int dir, char *string)
 
 int do_skill_attack(object *tmp, object *op, char *string)
 {
-    int     success; 
+    int     success;
     char    buf[MAX_BUF], *name = query_name(tmp);
 
     if (op->type == PLAYER)
@@ -1027,10 +1027,10 @@ int do_skill_attack(object *tmp, object *op, char *string)
     }
 
     return success;
-}                         
+}
 
 
-/* This is in the same spirit as the similar routine for spells 
+/* This is in the same spirit as the similar routine for spells
  * it should be used anytime a function needs to check the user's
  * level.
  */
@@ -1069,11 +1069,11 @@ object * SK_skill(object *op)
     return NULL;
 }
 
-/* returns the amount of time it takes to use a skill. 
- * We allow for stats, and level to modify the amount 
+/* returns the amount of time it takes to use a skill.
+ * We allow for stats, and level to modify the amount
  * of time. Monsters have no skill use time because of
  * the random nature in which use_monster_skill is called
- * already simulates this. -b.t. 
+ * already simulates this. -b.t.
  */
 /* I reworked this function. The original idea was
  * very basic just adding a value to the global
@@ -1097,7 +1097,7 @@ float get_skill_time(object *op, int skillnr)
         CONTR(op)->action_casting = ROUND_TAG + 8;
         return 0;
     }
-    /* these are skills using the "fire/range" menu - throwing, archery 
+    /* these are skills using the "fire/range" menu - throwing, archery
      * and use of rods/wands...
      */
     else if (skillnr == SK_USE_MAGIC_ITEM
@@ -1115,7 +1115,7 @@ float get_skill_time(object *op, int skillnr)
     else
     {
         /*int sum = get_weighted_skill_stat_sum (op,skillnr);*/
-        int level   = SK_level(op) / 10; 
+        int level   = SK_level(op) / 10;
 
         /*time *= 1/(1+(sum/15)+level);*/
 
@@ -1213,19 +1213,19 @@ int get_skill_stat2(object *op)
     return stat_value;
 }
 
-/* get_skill_stat3() - returns the value of the tertiary skill 
- * stat. Used in various skills code. -b.t. 
- */ 
+/* get_skill_stat3() - returns the value of the tertiary skill
+ * stat. Used in various skills code. -b.t.
+ */
 
 int get_skill_stat3(object *op)
 {
-    int stat_value = 0, stat = NO_STAT_VAL; 
+    int stat_value = 0, stat = NO_STAT_VAL;
 
     if ((op->chosen_skill) && ((stat = skills[op->chosen_skill->stats.sp].stat3) != NO_STAT_VAL))
-        stat_value = get_attr_value(&(op->stats), stat);  
+        stat_value = get_attr_value(&(op->stats), stat);
 
     return stat_value;
-} 
+}
 
 /*get_weighted_skill_stats() - */
 
