@@ -49,7 +49,17 @@ extern _dialog_list_set create_list_set;
 extern int keybind_status;
 
 #define MAX_QUICK_SLOTS 8
-extern int quick_slots[MAX_QUICK_SLOTS];
+typedef struct _quickslot
+{
+   Boolean spell; /* do we have an item or a spell in quickslot */
+   int invSlot;
+   int nr;
+   int tag;     /* what item/spellNr in quickslot */
+   int spellNr;     /* */
+   int groupNr; /* spellgroup */
+   int classNr; /* spellclass */
+}_quickslot;
+extern _quickslot quick_slots[MAX_QUICK_SLOTS];
 
 typedef struct _media_file
 {
@@ -108,6 +118,8 @@ extern Boolean blt_face_centered(int face, int x, int y);
 extern int get_quickslot(int x, int y);
 extern void show_quickslots(int x, int y);
 extern void update_quickslots(int del_item);
+extern void load_quickslots_entrys();
+extern void save_quickslots_entrys();
 extern void show_group(int x, int y);
 
 extern int client_command_check(char *cmd);

@@ -78,6 +78,9 @@ int request_file_chain, request_file_flags;
 
 int ToggleScreenFlag;
 char InputString[MAX_INPUT_STRING];
+char InputHistory[MAX_HISTORY_LINES][MAX_INPUT_STRING];
+int HistoryPos;
+int CurrentCursorPos;
 
 int InputCount, InputMax;
 Boolean InputStringFlag;	/* if true keyboard and game is in input str mode*/
@@ -125,14 +128,21 @@ static _bitmap_name  bitmap_name[BITMAP_INIT] =
         {"textwin.png", PIC_TYPE_DEFAULT},
         {"login_inp.png", PIC_TYPE_DEFAULT},
         {"invslot.png", PIC_TYPE_TRANS},
-        {"hp.png", PIC_TYPE_DEFAULT},
+
+        {"testtubes.png", PIC_TYPE_TRANS},
+        {"hp.png", PIC_TYPE_TRANS},
+        {"sp.png", PIC_TYPE_TRANS},
+        {"grace.png", PIC_TYPE_TRANS},
+        {"food.png", PIC_TYPE_TRANS},
         {"hp_back.png", PIC_TYPE_DEFAULT},
-        {"sp.png", PIC_TYPE_DEFAULT},
         {"sp_back.png", PIC_TYPE_DEFAULT},
-        {"grace.png", PIC_TYPE_DEFAULT},
         {"grace_back.png", PIC_TYPE_DEFAULT},
-        {"food.png", PIC_TYPE_DEFAULT},
         {"food_back.png", PIC_TYPE_DEFAULT},
+        {"hp_back2.png", PIC_TYPE_TRANS},
+        {"sp_back2.png", PIC_TYPE_TRANS},
+        {"grace_back2.png", PIC_TYPE_TRANS},
+        {"food_back2.png", PIC_TYPE_TRANS},
+
         {"apply.png", PIC_TYPE_DEFAULT},
         {"unpaid.png", PIC_TYPE_DEFAULT},
         {"cursed.png", PIC_TYPE_DEFAULT},
@@ -244,6 +254,8 @@ static _bitmap_name  bitmap_name[BITMAP_INIT] =
         {"quad_button_down.png", PIC_TYPE_DEFAULT},
         {"nchar_marker.png", PIC_TYPE_TRANS},
         {"traped.png", PIC_TYPE_TRANS},
+        {"pray.png", PIC_TYPE_TRANS},        
+        {"wand.png", PIC_TYPE_TRANS},                
 };
 
 #define BITMAP_MAX (sizeof(bitmap_name)/sizeof(struct _bitmap_name))
@@ -312,8 +324,6 @@ void init_game_data(void)
 			debug_layer[i]=TRUE;
         
         memset(&options,0,sizeof(struct _options));
-        options.music_volume = 80;
-        options.sound_volume = 100;
         InitMapData("", 0, 0, 0, 0);
         
         for(i=0;i<BITMAP_MAX;i++)
@@ -353,171 +363,138 @@ void init_game_data(void)
         media_count=0;	/* buffered media files*/
         media_show=MEDIA_SHOW_NO; /* show this media file*/
 
+	textwin_clearhistory();
 	delete_player_lists();
 	load_options_dat(); /* now load options, allowing the user to override the presetings */
 }
 
+/******************************************************************
+ Save the option file.
+******************************************************************/
+void save_options_dat(void)
+{
+   char txtBuffer[20];
+   int i=-1, j=-1;
+   FILE *stream;
+   
+   if(!(stream = fopen( OPTION_FILE, "w" )))
+      return;
+   fputs("###############################################\n",stream);      
+   fputs("# This is the Daimonin SDL client option file #\n",stream);
+   fputs("###############################################\n",stream);         
+   while (opt_tab[++i])
+   {
+      fputs("\n# ",stream);
+      fputs(opt_tab[i],stream);
+      fputs("\n",stream);
+      while (opt[++j].name && opt[j].name[0] != '#')
+      {
+         fputs(opt[j].name,stream);
+         switch (opt[j].value_type)
+         {
+            case VAL_BOOL:
+		    case VAL_INT:
+			  sprintf(txtBuffer, " %d",  *((int*)opt[j].value));
+			  break;
+            case VAL_U32:
+			  sprintf(txtBuffer, " %d",  *((uint32*)opt[j].value));
+			  break;
+            case VAL_CHAR:
+              sprintf(txtBuffer, " %d",  *((uint8*)opt[j].value));
+              break;
+         }
+         fputs(txtBuffer,stream);      
+         fputs("\n",stream);
+      }
+   }
+   fclose(stream);    
+} 
+
+/******************************************************************
+ Load the option file.
+******************************************************************/
 void load_options_dat(void)
 {
-    FILE *stream;
-    char line[256], keyword[256], parameter[256];
+   int i=-1, pos;
+   FILE *stream;
+   char line[256], keyword[256], parameter[256];
 
+   /* Fill all options with default values */
+   while (opt[++i].name)
+   {
+      if (opt[i].name[0] == '#') continue;
+      switch (opt[i].value_type)
+      {
+         case VAL_BOOL:
+         case VAL_INT:
+            *((int*)opt[i].value) = opt[i].default_val;
+            break;
+         case VAL_U32:
+            *((uint32*)opt[i].value) = opt[i].default_val;
+            break;
+         case VAL_CHAR:
+            *((uint8*)opt[i].value)= (uint8) opt[i].default_val;
+            break;
+         /* case VAL_STR 
+         ...  = opt[j].info2;
+         */
+      }
+   }
 
-	options.show_d_key_infos= TRUE; /* show key-infos in dialog-win */
-	options.show_tooltips =TRUE;
+   /* Read the options from file */
+   if (!(stream = fopen( OPTION_FILE, "r" ))){
+      LOG(LOG_MSG, "Can't find file %s. Using defaults.\n",OPTION_FILE);
+      return;
+   }
+   while (fgets( line, 255, stream ))
+   {
+      if(line[0]=='#' || line[0]=='\n')
+         continue;
+      i=0;
+      while (line[i] && line[i]!= ':') i++;
+      line[++i]=0;
+      strcpy(keyword, line);
+      strcpy(parameter, line + i +1);
+      i = atoi(parameter);
 
-    
-    if( (stream = fopen( OPTION_FILE, "r" )) != NULL )
-    {
-        while(1)
-        {
-            if( fgets( line, 255, stream ) == NULL)
-                break;
-            if(line[0]=='#')
-                continue;
-            sscanf(line, "%s %s", keyword, parameter);
+      pos=-1;
+      while (opt[++pos].name)
+      {
+         if(!strcmp(keyword, opt[pos].name))
+         {
+            switch (opt[pos].value_type)
+            {
+               case VAL_BOOL:
+               case VAL_INT:
+                 *((int*)opt[pos].value) = i;
+                 break;
+               case VAL_U32:
+                 *((uint32*)opt[pos].value) = i;
+                 break;
+               case VAL_CHAR:
+                 *((uint8*)opt[pos].value)= (uint8) i;
+                 break;
+            }
+         }
+      }
+   }
+   fclose(stream);
+   /*
+    TODO implement server options. 
+   */
+   strcpy(options.metaserver, "damn.informatik.uni-bremen.de");
+   options.metaserver_port = 13326; 
 
-            if(!strcmp(keyword,"UseOpenGL"))
-                options.use_gl = atoi(parameter);
-            else if(!strcmp(keyword,"ShowFrameRate"))
-                options.show_frame = atoi(parameter);
-            else if(!strcmp(keyword,"Fullscreen"))
-                options.fullscreen = atoi(parameter);
-            else if(!strcmp(keyword,"Full_HWSURFACE"))
-                options.Full_HWSURFACE = atoi(parameter);
-            else if(!strcmp(keyword,"Full_SWSURFACE"))
-                options.Full_SWSURFACE = atoi(parameter);
-            else if(!strcmp(keyword,"Full_HWACCEL"))
-                options.Full_HWACCEL = 0; /* not a valid flag for video mode */
-            else if(!strcmp(keyword,"Full_DOUBLEBUF"))
-                options.Full_DOUBLEBUF = atoi(parameter);
-            else if(!strcmp(keyword,"Full_ANYFORMAT"))
-                options.Full_ANYFORMAT = atoi(parameter);
-            else if(!strcmp(keyword,"Full_HWPALETTE"))
-                options.Full_HWPALETTE = atoi(parameter);
-            else if(!strcmp(keyword,"Full_ASYNCBLIT"))
-                options.Full_ASYNCBLIT = atoi(parameter);
-            else if(!strcmp(keyword,"Full_RESIZABLE"))
-                options.Full_RESIZABLE = atoi(parameter);
-            else if(!strcmp(keyword,"Full_NOFRAME"))
-                options.Full_NOFRAME = atoi(parameter);
-            else if(!strcmp(keyword,"Win_HWSURFACE"))
-                options.Win_HWSURFACE = atoi(parameter);
-            else if(!strcmp(keyword,"Win_SWSURFACE"))
-                options.Win_SWSURFACE = atoi(parameter);
-            else if(!strcmp(keyword,"Win_HWACCEL"))
-                options.Win_HWACCEL = atoi(parameter);
-            else if(!strcmp(keyword,"Win_DOUBLEBUF"))
-                options.Win_DOUBLEBUF = atoi(parameter);
-            else if(!strcmp(keyword,"Win_ANYFORMAT"))
-                options.Win_ANYFORMAT = atoi(parameter);
-            else if(!strcmp(keyword,"Win_HWPALETTE"))
-                options.Win_HWPALETTE = atoi(parameter);
-            else if(!strcmp(keyword,"Win_ASYNCBLIT"))
-                options.Win_ASYNCBLIT = atoi(parameter);
-            else if(!strcmp(keyword,"Win_RESIZABLE"))
-                options.Win_RESIZABLE = atoi(parameter);
-            else if(!strcmp(keyword,"Win_NOFRAME"))
-                options.Win_NOFRAME = atoi(parameter);
-            else if(!strcmp(keyword,"Win_RLEACCEL"))
-                options.Win_RLEACCEL = atoi(parameter);
-            else if(!strcmp(keyword,"Full_RLEACCEL"))
-                options.Full_RLEACCEL = atoi(parameter);
-            else if(!strcmp(keyword,"ForceRedraw"))
-                options.force_redraw = atoi(parameter);
-            else if(!strcmp(keyword,"Sleep"))
-                options.sleep = atoi(parameter);
-            else if(!strcmp(keyword,"meta_server"))
-                strcpy(options.metaserver, parameter);
-            else if(!strcmp(keyword,"meta_server_port"))
-                options.metaserver_port = atoi(parameter);
-            else if(!strcmp(keyword,"BitPerPixel"))
-                options.video_bpp = (Uint8) atoi(parameter);
-            else if(!strcmp(keyword,"AutomaticBPP"))
-                options.auto_bpp_flag = atoi(parameter);
-            else if(!strcmp(keyword,"MusicVolume"))
-                options.music_volume = atoi(parameter);
-            else if(!strcmp(keyword,"SoundVolume"))
-                options.sound_volume = atoi(parameter);
-            else if(!strcmp(keyword,"UseUpdateRect"))
-                options.use_rect = atoi(parameter);
-            else if(!strcmp(keyword,"MaxSpeed"))
-                options.max_speed = atoi(parameter);
-            else if(!strcmp(keyword,"PlayerNamesOnMap"))
-                options.player_names = atoi(parameter);
-            else if(!strcmp(keyword,"ShowTargetSelf"))
-                options.show_target_self = atoi(parameter);
-            else if(!strcmp(keyword,"ShowTooltips"))
-                options.show_tooltips = atoi(parameter);
-
-
-			/* text windows settings */
-			else if(!strcmp(keyword,"TextWinSplit"))
-				options.use_TextwinSplit=atoi(parameter);
-			else if(!strcmp(keyword,"TextWinAlphaFlag"))
-       options.use_TextwinAlpha = atoi(parameter);
-			else if(!strcmp(keyword,"TextWinAlpha"))
-				options.textwin_alpha = atoi(parameter);
-			else if(!strcmp(keyword,"TextWinSizeDefault"))
-			{
-                txtwin[TW_MIX].size = atoi(parameter)-1;
-				if(txtwin[TW_MIX].size<9)
-					txtwin[TW_MIX].size = 9;
-				else if(txtwin[TW_MIX].size>37)
-					txtwin[TW_MIX].size = 37;
-			}
-			else if(!strcmp(keyword,"TextWinSizeBody"))
-			{
-                txtwin[TW_MSG].size = atoi(parameter)-1;
-				if(txtwin[TW_MSG].size <1)
-					txtwin[TW_MSG].size=1;
-				else if(txtwin[TW_MSG].size >37)
-					txtwin[TW_MSG].size = 37;
-			}
-			else if(!strcmp(keyword,"TextWinSizeTop"))
-			{
-                txtwin[TW_CHAT].size = atoi(parameter)-1;
-				if(txtwin[TW_CHAT].size <1)
-					txtwin[TW_CHAT].size=1;
-				else if(txtwin[TW_CHAT].size >37)
-					txtwin[TW_CHAT].size  = 37;
-			}
-      else if(!strcmp(keyword,"WarningFood"))
-			{
-				options.warning_food = atoi(parameter);
-
-				if(options.warning_food <0)
-					options.warning_food = 0;
-				else if(options.warning_food>100)
-					options.warning_food = 100;
-
-			}
-      else if(!strcmp(keyword,"WarningHP"))
-			{
-				options.warning_hp = atoi(parameter);
-
-				if(options.warning_hp <0)
-					options.warning_hp = 0;
-				else if(options.warning_hp>100)
-					options.warning_hp = 100;
-			}
-      else
-        LOG(LOG_MSG, "WARNING: Unknown setting in %s: %s\n", OPTION_FILE,line);
-     }
-		fclose(stream);
-		if((txtwin[TW_MSG].size+txtwin[TW_CHAT].size)>36)
-		{
-			txtwin[TW_MSG].size=16;
-			txtwin[TW_CHAT].size=16;
-		}
-		else if((txtwin[TW_MSG].size+txtwin[TW_CHAT].size)<8)
-		{
-			txtwin[TW_MSG].size=5;
-			txtwin[TW_CHAT].size=3;
-		}
-    }
-    else
-        LOG(LOG_ERROR, "ERROR: Can't find file %s\n",OPTION_FILE);
+   if((txtwin[TW_MSG].size+txtwin[TW_CHAT].size)>36)
+   {
+      txtwin[TW_MSG].size=16;
+      txtwin[TW_CHAT].size=16;
+   }
+   else if((txtwin[TW_MSG].size+txtwin[TW_CHAT].size)<8)
+   {
+      txtwin[TW_MSG].size=5;
+      txtwin[TW_CHAT].size=3;
+   }
 }
 
 
@@ -610,12 +587,12 @@ Boolean game_status_chain(void)
                         GameStatus = GAME_STATUS_START;
                 }
                 GameStatus = GAME_STATUS_VERSION;
-
+                sprintf(buf,"connected. exchange version.");
+                draw_info(buf, COLOR_GREEN);
+				
         }
         else if(GameStatus == GAME_STATUS_VERSION)
         {
-                sprintf(buf,"connected. exchange version.");
-                draw_info(buf, COLOR_GREEN);
                 SendVersion(csocket);
                 GameStatus = GAME_STATUS_WAITVERSION;
         }
@@ -633,8 +610,6 @@ Boolean game_status_chain(void)
                     /* false version! */
                     if(!GameStatusVersionOKFlag)
                     {
-                        sprintf(buf,"wrong version! Server is outdated!\nselect a different server.");
-                        draw_info(buf, COLOR_GREEN);
                         GameStatus = GAME_STATUS_START;
                     }
                     else
@@ -781,6 +756,7 @@ Boolean game_status_chain(void)
         {
 				map_transfer_flag=0;
 		       /* we have a fininshed console input*/
+			   textwin_clearhistory();
                 if(InputStringEscFlag)
                         GameStatus = GAME_STATUS_LOGIN;
                 else if(InputStringFlag==FALSE && InputStringEndFlag==TRUE)
@@ -987,6 +963,9 @@ void reset_input_mode(void)
 {
 	InputString[0]=0;
 	InputCount =0;
+	HistoryPos=0;
+	InputHistory[0][0]=0;
+	CurrentCursorPos=0;
 	InputStringFlag=FALSE;
 	InputStringEndFlag=FALSE;
 	InputStringEscFlag=FALSE;
@@ -1123,6 +1102,7 @@ int main(int argc, char *argv[])
 {
 	char buf[256];
 	int x,y;
+	int drag;
 	uint32 anim_tick;
     Uint32 videoflags;
     int i,done=0,FrameCount=0;
@@ -1193,7 +1173,7 @@ int main(int argc, char *argv[])
 #endif
         
 	videoflags=get_video_flags();
-    options.used_video_bpp = options.video_bpp;
+    options.used_video_bpp = 16;//2^(options.video_bpp+3);
     if(!options.fullscreen_flag)
     {
 		if(options.auto_bpp_flag)
@@ -1285,10 +1265,9 @@ int main(int argc, char *argv[])
 	maxfd = csocket.fd + 1;
 	LastTick =tmpGameTick =anim_tick = SDL_GetTicks();
 	GameTicksSec=0;		/* ticks since this second frame in ms */
-
-            
-	/* the one and only main loop */
-  /* TODO: frame update can be optimized. It uses some cpu time because it
+   
+   /* the one and only main loop */
+   /* TODO: frame update can be optimized. It uses some cpu time because it
    * draws every loop some parts.
    */
 	while(!done)
@@ -1511,22 +1490,23 @@ int main(int argc, char *argv[])
 			StringBlt(ScreenSurface, &SystemFont,"Transfer Character to Map...",300, 300,COLOR_DEFAULT, NULL, NULL);
 
 		/* show the current dragged item */
-		if ((y=draggingInvItem(DRAG_GET_STATUS)))
+		if ((drag = draggingInvItem(DRAG_GET_STATUS)))
 		{
 			item *Item;
-			if (y ==DRAG_IWIN_INV)
+			if (drag ==DRAG_IWIN_INV)
 				Item = locate_item(cpl.win_inv_tag);
-			else if (y ==DRAG_IWIN_BELOW)
+			else if (drag ==DRAG_IWIN_BELOW)
 				Item = locate_item(cpl.win_below_tag);
-			else if (y ==DRAG_QUICKSLOT)
+			else if (drag ==DRAG_QUICKSLOT)
 				Item = locate_item(cpl.win_quick_tag);
-			else if (y ==DRAG_PDOLL)
+			else if (drag ==DRAG_PDOLL)
 				Item = locate_item(cpl.win_pdoll_tag);
-			else
-				Item = locate_item(cpl.win_quick_tag);
+         /*	else Item = locate_item(cpl.win_quick_tag); */
 			SDL_GetMouseState(&x, &y);
-			/* if (Item->weight >=0) */
-				blt_inv_item_centered(Item, x, y);
+			if (drag==DRAG_QUICKSLOT_SPELL)
+				sprite_blt(	spell_list[quick_slots[cpl.win_quick_tag].groupNr].entry[quick_slots[cpl.win_quick_tag].classNr][quick_slots[cpl.win_quick_tag].spellNr].icon,x,y, NULL, NULL);  
+			else
+     		  blt_inv_item_centered(Item, x, y);
 		}
 
 		/* we have a non-standard mouse-pointer (win-size changer, etc.) */
@@ -1584,12 +1564,11 @@ int main(int argc, char *argv[])
 				StringBlt(ScreenSurface, &SystemFont,buf,rec.x, rec.y,COLOR_DEFAULT, NULL, NULL);
 			}
 		}
-
+        sprite_blt(Bitmaps[BITMAP_PRAY],92, 412, NULL, NULL);
 		flip_screen();
 		if(!options.max_speed)
 		SDL_Delay(options.sleep);		/* force the thread to sleep */
 	}
-
 	/* we have leaved main loop and shut down the client */
 	SOCKET_DeinitSocket();
 	sound_freeall();

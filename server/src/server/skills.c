@@ -1770,9 +1770,9 @@ void do_throw(object *op, object *toss_item, int dir) {
         throw_ob->stats.maxsp = stepy;
         throw_ob->stats.grace = 666; /* target-throw marker =) TODO: probably better to use ob->enemy instead */
         if(dx > dy) { /* fraction */
-            throw_ob->stats.exp = (dy << 1) - dx;  // same as 2*dy - dx
+            throw_ob->stats.exp = (dy << 1) - dx;  /* same as 2*dy - dx */
         } else {
-            throw_ob->stats.exp = (dx << 1) - dy;  // same as 2*dx - dy
+            throw_ob->stats.exp = (dx << 1) - dy;  /* same as 2*dx - dy */
         }
     }
 #endif    

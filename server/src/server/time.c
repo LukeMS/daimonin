@@ -935,11 +935,11 @@ void move_arrow(object *op) {
         if (dx > dy) {
             if (op->stats.exp >= 0) {
                 new_y = op->y + op->stats.maxsp;
-                op->stats.exp -= dx;                           // same as fraction -= 2*dx
+                op->stats.exp -= dx;                           /* same as fraction -= 2*dx */
             } else
                 new_y = op->y;
             new_x = op->x + op->stats.maxhp;
-            op->stats.exp += dy;                           // same as fraction -= 2*dy
+            op->stats.exp += dy;                           /* same as fraction -= 2*dy */
         } else {
             if (op->stats.exp >= 0) {
                 new_x = op->x + op->stats.maxhp;

@@ -23,8 +23,8 @@
 /* This is a config file for the client.
  */
 
-#define VERSION_CS 991016
-#define VERSION_SC 991016
+#define VERSION_CS 991017
+#define VERSION_SC 991017
 
 #define KEYBIND_FILE "./keys.dat"
 #define OPTION_FILE  "./options.dat"
@@ -56,6 +56,7 @@
 
 /* Careful when changing this, should be no need */
 #define MAX_INPUT_STRING 256				/* max. string len in input string*/
+#define MAX_HISTORY_LINES 20                           /* max input history lines */
 
 
 /* Maximum size of any packet we expect.  Using this makes it so we don't need to

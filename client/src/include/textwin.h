@@ -60,6 +60,8 @@ extern void textwin_event(int e, SDL_Event *event);
 extern void textwin_show(int x, int y);
 extern void textwin_init();
 extern void draw_info( char *str, int color );
-
+extern void textwin_addhistory(char* text);
+extern void textwin_clearhistory();
+extern void textwin_putstring(char* text);
 #endif
 

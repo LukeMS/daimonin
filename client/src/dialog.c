@@ -35,23 +35,12 @@ int dialog_new_char_warn = FALSE;
 int add_rangebox(int x, int y, int id, int text_x, int text_, char *text, int text_color);
 
 enum {SEL_BUTTON, SEL_CHECKBOX, SEL_RANGE, SEL_TEXT}; /* selection types */
-enum {VAL_BOOL,  VAL_TEXT, VAL_CHAR, VAL_INT, VAL_U32} value_type;
+
 enum {OPTION, SPELL, SKILL};
 
 static int active_button=-1;
 
 
-typedef struct _option
-{
-	char *name;
-	char *info1;	/* info text row 1 */
-	char *info2;	/* info text row 2 */
-	char *val_text; /* text-replacement for number values */
-	int  sel_type;
-	int  minRange, maxRange, deltaRange;
-	void *value;
-	int value_type;
-}_option ;
 
 #define MIN_ATTR_DELTA -2 /* attr. can be sub by MIN_ATTR_DELTA points. */
 #define MAX_ATTR_DELTA  1 /* attr. can be add by MIN_ATTR_DELTA points. */
@@ -86,47 +75,92 @@ int gen=0;
 /******************************************************************
  Option Menue
 ******************************************************************/
-static char *opt_tab[OPTION_LIST_MAX]={
-	"Sound", "Server", "Visual", "Look & Feel", "Debug"
+char *opt_tab[]={
+	"General", "Client", "Sound", "Fullscreen flags", "Windowed flags","Debug", 0
 };
-#define OPTION_TAB_SIZE (sizeof(opt_tab)/sizeof(char*))
 
-static _option opt[] ={
-	{"Sound", "set sound volume","", "",SEL_RANGE, 0,100,5, &options.sound_volume, VAL_INT},
-	{"Music", "set music volume","Sub info","", SEL_RANGE, 0,100,5, &options.music_volume, VAL_INT},
+_option opt[] ={
+	/* General */
+	{"Player Names:", "Show names of players above their heads.",	"",	"show no names#show all names#show only other#show only your", SEL_RANGE, 0,3,1, 2,&options.player_names, VAL_INT},
+	{"Show yourself targeted:", "Show your name in the target area instead of blank.","", "",SEL_CHECKBOX, 0,1,1, 0,&options.show_target_self, VAL_BOOL},
+	{"Low health warning:", "Shows a low health warning above your head","Activatetd if health is less than the given percent value.","", SEL_RANGE, 0,100,5, 0,&options.warning_hp, VAL_INT},
+	{"Low food warning:", "Shows a low food warning above your head.","Activatetd if food is less than the given percent value.","", SEL_RANGE, 0,100,5, 5,&options.warning_food, VAL_INT},
+	{"Graphic Statusbars:", "Show for HP, Mana and others a graphical layout.","Instead of horizontal lines.", "",SEL_CHECKBOX, 0,1,1, 1,&options.gfx_statusbars, VAL_BOOL},
+	{"Show Tooltips:", "Show tooltips when hovering with the mouse over items.","", "",SEL_CHECKBOX, 0,1,1, 1,&options.show_tooltips, VAL_BOOL},
+	{"Key-info in Dialog menus:", "","", "",SEL_CHECKBOX, 0,1,1, 1,&options.show_d_key_infos, VAL_BOOL},
+	{"Collect All Items:", "Don't ask for number of items to get, just get all of them.","", "",SEL_CHECKBOX, 0,1,1, 0,&options.collectAll, VAL_BOOL},   
 	{"#"}, /* End of Page */
-	{"dummy", "--","", "",SEL_RANGE, 0,100,5, &options.sound_volume, VAL_INT},
+
+	/* Client */
+	{"Fullscreen:", "Toogle fullscreen to windowed mode.","NOTE: You need to restart the server.","", SEL_CHECKBOX, 0,1,1, 1,&options.fullscreen, VAL_BOOL},
+	{"Automatic bpp:", "Use always the same bits per pixel like your default windows.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,1, &options.auto_bpp_flag, VAL_BOOL},
+	{"Colordeep:", "Use this bpp for fullscreen mode. Overruled by automatic bpp.","NOTE: You need to restart the server.","8 bpp#16 bpp#32 bpp", SEL_RANGE, 0,2,1, 1, &options.video_bpp, VAL_INT},
+	{"Textwindow splitted:", "Split your text windows in chat & action messages.","","", SEL_CHECKBOX, 0,1,1, 1,&options.use_TextwinSplit, VAL_BOOL},
+	{"Textwindows use alpha:", "Make the text window transparent.","WARNING: Don't use this if you have a very slow computer","", SEL_CHECKBOX, 0,1,1, 1, &options.use_TextwinAlpha, VAL_INT},
+	{"Textwindows alpha value:", "Transparent value. higher = darker","","", SEL_RANGE, 0,255,5, 110, &options.textwin_alpha, VAL_INT},
+	{"Textwindow Default Size:", "Size of text window.","","", SEL_RANGE, 10,38,1, 10,&txtwin[TW_MIX].size, VAL_INT},
+	{"Textwindow Body Size:", "Size of body part of text window.","","",    SEL_RANGE,  2,38,1, 10,&txtwin[TW_MSG].size, VAL_INT},
+	{"Textwindow Top Size:", "Size of upper part of text window.","","",     SEL_RANGE,  2,38,1, 10,&txtwin[TW_CHAT].size, VAL_INT},
+	{"Save CPU time with sleep():", "Client eats less cput time when set.","", "",SEL_CHECKBOX, 0,1,1, 0,&options.max_speed, VAL_BOOL},
+	{"Sleep time in ms:", "time the client will sleep. Used with Save CPU time.","", "",SEL_RANGE, 0,1000,25, 10,&options.sleep, VAL_INT},
 	{"#"}, /* End of Page */
-	{"Textwindow splitted ", "","","", SEL_CHECKBOX, 0,0,0, &options.use_TextwinSplit, VAL_BOOL},
-	{"Textwindows use alpha", "Don't use this if you have a very slow computer","","", SEL_CHECKBOX, 0,0,0, &options.use_TextwinAlpha, VAL_INT},
-	{"Textwindows alpha value", "higher = darker","","", SEL_RANGE, 0,255,5, &options.textwin_alpha, VAL_INT},
+	
+	/* Sound */
+   {"Sound volume:", "set sound volume for effects.","", "",SEL_RANGE, 0,100,5,100, &options.sound_volume, VAL_INT},
+   {"Music volume:", "set music volume for background.","Sub info","", SEL_RANGE, 0,100,5,80, &options.music_volume, VAL_INT},
+   {"#"}, /* End of Page */
+
+   /* Fullscreen Flags */
+   {"Hardware Surface:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1, 0,&options.Full_HWSURFACE, VAL_BOOL},
+   {"Software Surface:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,1, &options.Full_SWSURFACE, VAL_BOOL},
+   {"Hardware Accel:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,1, &options.Full_HWACCEL, VAL_BOOL},
+   {"Doublebuffer:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,0, &options.Full_DOUBLEBUF, VAL_BOOL},
+   {"Any format:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,0, &options.Full_ANYFORMAT, VAL_BOOL},
+   {"Async blit:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,0, &options.Full_ASYNCBLIT, VAL_BOOL},
+   {"Hardware Palette:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,1, &options.Full_HWPALETTE, VAL_BOOL},
+   {"Resizeable:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,0, &options.Full_RESIZABLE, VAL_BOOL},
+   {"No frame:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,0, &options.Full_NOFRAME, VAL_BOOL},
+   {"RLE accel:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,1, &options.Full_RLEACCEL, VAL_BOOL},
+   {"#"}, /* End of Page */
+   
+   /* Windowed flags*/
+   {"Win Hardware Surface:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,0, &options.Win_HWSURFACE, VAL_BOOL},
+   {"Win Software Surface:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,1, &options.Win_SWSURFACE, VAL_BOOL},
+   {"Win Hardware Accel:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,0, &options.Win_HWACCEL, VAL_BOOL},
+   {"Win Doublebuffer:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,0, &options.Win_DOUBLEBUF, VAL_BOOL},
+   {"Win Any format:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,1, &options.Win_ANYFORMAT, VAL_BOOL},
+   {"Win Async blit:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,0, &options.Win_ASYNCBLIT, VAL_BOOL},
+   {"Win Hardware Palette:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,1, &options.Win_HWPALETTE, VAL_BOOL},
+   {"Win Resizeable:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,0, &options.Win_RESIZABLE, VAL_BOOL},
+   {"Win No frame:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,0, &options.Win_NOFRAME, VAL_BOOL},
+   {"Win RLE accel:", "Don't change until you know what you do.","NOTE: You need to restart the server.", "",SEL_CHECKBOX, 0,1,1,1, &options.Win_RLEACCEL, VAL_BOOL},
+   {"#"}, /* End of Page */
+
+   /* Debug */
+	{"Show Framerate:", "","", "",SEL_CHECKBOX, 0,1,1, 0,&options.show_frame, VAL_BOOL},
+	{"Force Redraw:", "Forces the system to redraw EVERY frame.","", "",SEL_CHECKBOX, 0,1,1,0, &options.force_redraw, VAL_BOOL},
+	{"Use Update Rect:", "","", "",SEL_CHECKBOX, 0,1,1,0, &options.use_rect, VAL_BOOL},
 	{"#"}, /* End of Page */
-	{"Player Names", "Show Names of Players above their Heads",	"",	"show no names#show all names#show only other#show only your", SEL_RANGE, 0,3,1, &options.player_names, VAL_INT},
-	{"Low health warning:", "Shows a low health warning above your head","Activatetd if health is less than the given percent value.","", SEL_RANGE, 0,100,5, &options.warning_hp, VAL_INT},
-	{"Low food warning:", "Shows a low food warning above your head.","Activatetd if food is less than the given percent value.","", SEL_RANGE, 0,100,5, &options.warning_food, VAL_INT},
-	{"Show Tooltips", "","", "",SEL_CHECKBOX, 0,0,0, &options.show_tooltips, VAL_BOOL},
-	{"Key-info in Dialog menus", "","", "",SEL_CHECKBOX, 0,0,0, &options.show_d_key_infos, VAL_BOOL},
-	{"#"}, /* End of Page */
-	{"Show Framerate", "","", "",SEL_CHECKBOX, 0,0,0, &options.show_frame, VAL_BOOL},
-	{"#"}, /* End of Page */
-};
+
+	{0} /* End of Options */
+}; 
 
 /******************************************************************
  Skill Menue
 ******************************************************************/
-static char *skill_tab[SKILL_LIST_MAX]={
-	"Agility", "Mental", "Magic", "Person","Physique", "Wisdom", "Misc"
+static char *skill_tab[]={
+	"Agility", "Mental", "Magic", "Person","Physique", "Wisdom", "Misc" ,0
 };
 #define SKILL_TAB_SIZE (sizeof(skill_tab)/sizeof(char*))
 
 /******************************************************************
  Spell Menue
 ******************************************************************/
-static char *spell_tab[SPELL_LIST_MAX]={ /* form server->include/spellist.h->spellpathnames */
+static char *spell_tab[]={ /* form server->include/spellist.h->spellpathnames */
 	"Protection", "Fire", "Frost", "Electricity", "Missiles", "Self",
  "Summoning", "Abjuration", "Restoration", "Detonation",
  "Mind","Creation", "Teleportation", "Information", "Transmutation",
- "Transferrence", "Turning", "Wounding", "Death", "Light"
+ "Transferrence", "Turning", "Wounding", "Death", "Light",0
 
 };
 #define SPELL_TAB_SIZE (sizeof(spell_tab)/sizeof(char*))
@@ -379,16 +413,16 @@ void add_value(void* value, int type, int offset, int min, int max){
 ******************************************************************/
 inline void optwin_draw_options(int x, int y){
 	#define LEN_NAME  111
-	int i= -1, pos =0, max =-1;
+	int i= -1, pos =0, max =0;
 	int y2 = y+347; /* for info text */
 	int mxy_opt = -1;
 	int page = option_list_set.group_nr;
 	int id =0;
-	int mx, my, mb;
+	int mx, my, mb, tmp;
 
 	mb = SDL_GetMouseState(&mx, &my)& SDL_BUTTON(SDL_BUTTON_LEFT);
 	/* find actual page */
-	while (page && ++i < sizeof(opt)/sizeof(_option))
+	while (page && opt[++i].name)
 		if (opt[i].name[0] == '#')
   		--page;
 
@@ -400,13 +434,22 @@ inline void optwin_draw_options(int x, int y){
 		switch (opt[i].sel_type){
 
 			case SEL_CHECKBOX:
-				if (mx > x && mx < x+280 && my > y && my < y+20 ){
-				StringBlt(ScreenSurface, &SystemFont, opt[i].name, x, y+2, COLOR_HGOLD, NULL, NULL);
+
+				tmp = COLOR_WHITE;
+				if (option_list_set.entry_nr == max-1)
+				{
+					tmp = COLOR_HGOLD;
+					if(mxy_opt==-1)
+						mxy_opt = i; /* remember this tab for later use */
+				}
+				if (mx > x && mx < x+280 && my > y && my < y+20 )
+				{
+					tmp = COLOR_GREEN;
 					mxy_opt = i; /* remember this tab for later use */
 				}
-				else
-					StringBlt(ScreenSurface, &SystemFont, opt[i].name, x, y+2, COLOR_WHITE, NULL, NULL);
 
+				StringBlt(ScreenSurface, &SystemFont, opt[i].name, x, y+2, tmp, NULL, NULL);
+				
 				sprite_blt(Bitmaps[BITMAP_DIALOG_CHECKER],x+LEN_NAME, y, NULL, NULL);
 				if (*((Boolean*)opt[i].value)==TRUE){
 					StringBlt(ScreenSurface, &SystemFont, "X", x+LEN_NAME+8, y+2, COLOR_BLACK, NULL, NULL);
@@ -430,12 +473,28 @@ inline void optwin_draw_options(int x, int y){
 					box.x = x+LEN_NAME, box.y=y+1;
 					box.h =16, box.w=LEN_VALUE;
 
-					if (mx > x && mx < x+280 && my > y && my < y+20){
-						StringBlt(ScreenSurface, &SystemFont, opt[i].name, x, y+2, COLOR_HGOLD, NULL, NULL);
+					tmp = COLOR_WHITE;
+					if (option_list_set.entry_nr == max-1)
+					{
+						tmp = COLOR_HGOLD;
+						if(mxy_opt==-1)
+							mxy_opt = i; /* remember this tab for later use */
+					}
+					if (mx > x && mx < x+280 && my > y && my < y+20)
+					{
+						tmp = COLOR_GREEN;
 						mxy_opt = i; /* remember this tab for later use */
+					}
+					
+					StringBlt(ScreenSurface, &SystemFont, opt[i].name, x, y+2, tmp, NULL, NULL);
+					/*
+					if (option_list_set.entry_nr == max-1 || (mx > x && mx < x+280 && my > y && my < y+20) ){
+						StringBlt(ScreenSurface, &SystemFont, opt[i].name, x, y+2, COLOR_HGOLD, NULL, NULL);
+						mxy_opt = i;
 					}
 					else
 						StringBlt(ScreenSurface, &SystemFont, opt[i].name, x, y+2, COLOR_WHITE, NULL, NULL);
+					*/
 
 					SDL_FillRect(ScreenSurface, &box, 0);
 					if (*opt[i].val_text==0){
@@ -498,17 +557,17 @@ inline void optwin_draw_options(int x, int y){
 		pos++;
 		id+=2;
 	}
-	if (option_list_set.entry_nr> max) option_list_set.entry_nr =max;
+	if (option_list_set.entry_nr> max-1) option_list_set.entry_nr =max-1;
 
 	/* print the info text */
 	x+=20;
 	if (mxy_opt >=0){
 		if (*opt[mxy_opt].info2==0)
 			y2+=5;
-		StringBlt(ScreenSurface, &SystemFont, opt[mxy_opt].info1, x+1, y2+1, COLOR_BLACK, NULL, NULL);
-		StringBlt(ScreenSurface, &SystemFont, opt[mxy_opt].info1, x,   y2,   COLOR_WHITE, NULL, NULL);
-		StringBlt(ScreenSurface, &SystemFont, opt[mxy_opt].info2, x+1, y2+13,COLOR_BLACK, NULL, NULL);
-		StringBlt(ScreenSurface, &SystemFont, opt[mxy_opt].info2, x,   y2+12,COLOR_WHITE, NULL, NULL);
+		StringBlt(ScreenSurface, &SystemFont, opt[mxy_opt].info1, x+11, y2+1, COLOR_BLACK, NULL, NULL);
+		StringBlt(ScreenSurface, &SystemFont, opt[mxy_opt].info1, x+10,   y2,   COLOR_WHITE, NULL, NULL);
+		StringBlt(ScreenSurface, &SystemFont, opt[mxy_opt].info2, x+11, y2+13,COLOR_BLACK, NULL, NULL);
+		StringBlt(ScreenSurface, &SystemFont, opt[mxy_opt].info2, x+10,   y2+12,COLOR_WHITE, NULL, NULL);
 	}
 	#undef LEN_NAME
 }
@@ -516,7 +575,7 @@ inline void optwin_draw_options(int x, int y){
 /******************************************************************
  draws all tabs on the left side of window.
 ******************************************************************/
-static void draw_tabs(char *tabs[], int sum, int *act_tab, char *head_text, int x, int y){
+static void draw_tabs(char *tabs[], int *act_tab, char *head_text, int x, int y){
 	int i=-1;
 	int mx, my, mb;
 	static int active =0;
@@ -529,7 +588,7 @@ static void draw_tabs(char *tabs[], int sum, int *act_tab, char *head_text, int 
 	y+=17;
 	sprite_blt(Bitmaps[BITMAP_DIALOG_TAB    ],x, y, NULL, NULL);
 	y+=17;
-	while (++i < sum){
+	while (tabs[++i]){
 		sprite_blt(Bitmaps[BITMAP_DIALOG_TAB    ],x, y, NULL, NULL);
 		if (i== *act_tab)
 			sprite_blt(Bitmaps[BITMAP_DIALOG_TAB_SEL],x, y, NULL, NULL);
@@ -570,7 +629,7 @@ void show_skilllist(void)
 	add_close_button(x, y, MENU_SKILL);
 
 	/* tabs */
-	draw_tabs(skill_tab, SKILL_TAB_SIZE, &skill_list_set.group_nr, "Skill Group", x+8, y+ 70);
+	draw_tabs(skill_tab, &skill_list_set.group_nr, "Skill Group", x+8, y+ 70);
 
 	sprintf(buf,"~SHIFT~ + ~%c%c~ to select group                  ~%c%c~ to select skill                    ~RETURN~ for use",ASCII_UP, ASCII_DOWN,ASCII_UP, ASCII_DOWN);
 	StringBlt(ScreenSurface,&SystemFont, buf, x+135, y+410, COLOR_WHITE,NULL, NULL);
@@ -702,7 +761,7 @@ void show_spelllist(void)
 	add_close_button(x, y, MENU_SPELL);
 
 	/* tabs */
-	draw_tabs(spell_tab, SPELL_TAB_SIZE, &spell_list_set.group_nr, "Spell Path" ,x+8, y+ 70);
+	draw_tabs(spell_tab, &spell_list_set.group_nr, "Spell Path" ,x+8, y+ 70);
 
 	sprintf(buf,"~SHIFT~ + ~%c%c~ to select path                   ~%c%c~ to select spell                    ~RETURN~ for use",ASCII_UP, ASCII_DOWN,ASCII_UP, ASCII_DOWN);
 	StringBlt(ScreenSurface,&SystemFont, buf, x+135, y+410, COLOR_WHITE,NULL, NULL);
@@ -713,6 +772,8 @@ void show_spelllist(void)
 				spell_list_set.class_nr= i;
 	}
 
+	sprintf(buf,"use ~F1-F8~ for spell to quickbar",ASCII_RIGHT, ASCII_LEFT);
+	StringBlt(ScreenSurface,&SystemFont, buf, x+340, y+69, COLOR_WHITE,NULL, NULL);
 	sprintf(buf,"use ~%c%c~ to select spell group",ASCII_RIGHT, ASCII_LEFT);
 	StringBlt(ScreenSurface,&SystemFont, buf, x+340, y+80, COLOR_WHITE,NULL, NULL);
 
@@ -818,7 +879,7 @@ void show_optwin()
 	sprite_blt(Bitmaps[BITMAP_DIALOG_TITLE_OPTIONS],x+250-Bitmaps[BITMAP_DIALOG_TITLE_OPTIONS]->bitmap->w/2, y+20, NULL, NULL);
 	add_close_button(x, y, MENU_OPTION);
 
-	draw_tabs(opt_tab, OPTION_TAB_SIZE, &option_list_set.group_nr,  "Option Group", x+  8, y+ 70);
+	draw_tabs(opt_tab, &option_list_set.group_nr,  "Option Group", x+  8, y+ 70);
 	optwin_draw_options(x+130, y+ 90);
 
 	sprintf(buf,"~SHIFT~ + ~%c%c~ to select group            ~%c%c~ to select option          ~%c%c~ to change option",ASCII_UP, ASCII_DOWN,ASCII_UP, ASCII_DOWN, ASCII_RIGHT, ASCII_LEFT);
@@ -1327,7 +1388,9 @@ void show_login_server(void)
 	sprite_blt(Bitmaps[BITMAP_LOGIN_INP],x-2, y+55, NULL, NULL);
 	if(GameStatus == GAME_STATUS_PSWD){
 		strcpy(buf,show_input_string(InputString,&SystemFont,Bitmaps[BITMAP_LOGIN_INP]->bitmap->w-16));
-		for(i=0;i<(int)strlen(InputString);i++)buf[i]='*';
+		for(i=0;i<CurrentCursorPos;i++)buf[i]='*';
+		for(i=CurrentCursorPos+1;i<(int)strlen(InputString)+1;i++)buf[i]='*';
+		buf[i]=0;
 		StringBlt(ScreenSurface, &SystemFont,buf , x+2, y+57, COLOR_WHITE, NULL, NULL);
 	}else{
 		for(i=0;i<(int)strlen(cpl.password);i++)buf[i]='*';buf[i]=0;

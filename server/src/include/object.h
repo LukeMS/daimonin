@@ -56,7 +56,6 @@
 typedef struct obj 
 {
 	/* These variables are not changed by copy_object(): */
-//	struct pl_player *contr;			/* Pointer to the player which control this object */
 	struct obj *active_next;	/* Next & previous object in the 'active' */
 	struct obj *active_prev;	/* List.  This is used in process_events 
 								 * so that the entire object list does not

@@ -31,7 +31,7 @@ static int group_pos[MAX_GROUP_MEMBER][2] ={
 	{143,55}
 };
 
-int quick_slots[MAX_QUICK_SLOTS];
+_quickslot quick_slots[MAX_QUICK_SLOTS];
 int quickslots_pos[MAX_QUICK_SLOTS][2] = {
 	{17,1},
 	{50,1},
@@ -125,7 +125,56 @@ int client_command_check(char *cmd)
 	char cpar1[256];
 	int par1, par2;
 
-	if(!strnicmp(cmd,"/pray",strlen("/pray")) )
+	if(!strnicmp(cmd,"/ready_spell",strlen("/ready_spell")) )
+	{
+        cmd = strchr(cmd, ' ');
+		if(!cmd || *++cmd == 0)
+		{
+			draw_info("usage: /ready_spell <spell name>" ,COLOR_GREEN);
+		}
+		else
+		{
+			int i,ii;
+
+			for(i=0;i<SPELL_LIST_MAX;i++)
+			{
+				for(ii=0;ii<DIALOG_LIST_ENTRY;ii++)
+				{           
+					if(spell_list[i].entry[0][ii].flag >= LIST_ENTRY_USED)
+					{
+						if(!strcmp(spell_list[i].entry[0][ii].name, cmd))
+						{
+							if(spell_list[i].entry[0][ii].flag==LIST_ENTRY_KNOWN)
+							{
+								fire_mode_tab[FIRE_MODE_SPELL].spell = &spell_list[i].entry[0][ii];
+								RangeFireMode = FIRE_MODE_SPELL;
+								sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);
+								draw_info("spell ready." ,COLOR_GREEN);
+								return TRUE;
+							}
+						}
+					}
+					if(spell_list[i].entry[1][ii].flag >= LIST_ENTRY_USED)
+					{
+						if(!strcmp(spell_list[i].entry[1][ii].name, cmd))
+						{
+							if(spell_list[i].entry[1][ii].flag==LIST_ENTRY_KNOWN)
+							{
+								fire_mode_tab[FIRE_MODE_SPELL].spell = &spell_list[i].entry[1][ii];
+								RangeFireMode = FIRE_MODE_SPELL;
+								sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);
+								draw_info("spell ready." ,COLOR_GREEN);
+								return TRUE;
+							}
+						}
+					}
+				}
+			}
+		}		
+		draw_info("unknown spell." ,COLOR_GREEN);
+		return TRUE;
+	}
+	else if(!strnicmp(cmd,"/pray",strlen("/pray")) )
 	{
 		/* give out "you are at full grace." when needed -
 		 * server will not send us anything when this happens
@@ -666,6 +715,8 @@ void blt_inventory_face_from_tag(int tag, int x, int y)
 
 void show_menu(void)
 {
+	SDL_Rect box;
+		
 	if(!cpl.menustatus)
 		return;
 	if(cpl.menustatus == MENU_KEYBIND)
@@ -673,7 +724,15 @@ void show_menu(void)
 	else if(cpl.menustatus == MENU_STATUS)
 		show_status();
 	else if(cpl.menustatus == MENU_SPELL)
+	{
 		show_spelllist();
+		box.x = SCREEN_XLEN/2-Bitmaps[BITMAP_DIALOG_BG]->bitmap->w/2;
+		box.y = SCREEN_YLEN/2-Bitmaps[BITMAP_DIALOG_BG]->bitmap->h/2-42;
+		box.h = 42;  
+		box.w = Bitmaps[BITMAP_DIALOG_BG]->bitmap->w;
+		SDL_FillRect(ScreenSurface, &box, 0);		
+		show_quickslots(box.x+100,box.y+3);
+	}
 	else if(cpl.menustatus == MENU_SKILL)
 		show_skilllist();
 	else if(cpl.menustatus == MENU_OPTION)
@@ -1468,7 +1527,6 @@ void load_settings(void)
 						&serv_char->bar_add[0], &serv_char->bar_add[1],&serv_char->bar_add[2]);
 
 					serv_char->pic_id = get_bmap_id(buf1);
-					LOG(-1,"PIC: >%s< %d\n", buf1, serv_char->pic_id);
 
 					while(fgets(buf, HUGE_BUF-1, stream)!=NULL && (buf[0] == '#'|| buf[0] == '\0'))
 						;
@@ -1833,53 +1891,103 @@ int get_quickslot(int x, int y)
 
 void show_quickslots(int x, int y)
 {
-	int i, mx, my;
-	char buf[16];
+   int i, mx, my;
+   char buf[16];
 
-  SDL_GetMouseState(&mx, &my);
-	update_quickslots(-1);
-    sprite_blt(Bitmaps[BITMAP_QUICKSLOTS],x, y, NULL, NULL);
-
-	for(i=MAX_QUICK_SLOTS-1;i>=0;i--)
-	{
-		if(quick_slots[i] != -1)
-		{
-			item *tmp;
-			tmp = locate_item_from_item(cpl.ob , quick_slots[i]);
-			if(tmp)
-			{
-				blt_inv_item(tmp , x+quickslots_pos[i][0],y+quickslots_pos[i][1]);
-				/* show tooltip */
-				if (mx >= x+quickslots_pos[i][0] && mx < x+quickslots_pos[i][0]+33
-							&& my >= y+quickslots_pos[i][1] && my < y+quickslots_pos[i][1]+33)
-					show_tooltip(mx, my, tmp->s_name);
-			}
-		}
-		sprintf(buf,"F%d", i+1);
-		StringBlt(ScreenSurface, &Font6x3Out,buf,x+quickslots_pos[i][0]+12, y+quickslots_pos[i][1]-6,COLOR_DEFAULT, NULL, NULL);
-		
-	}
+   SDL_GetMouseState(&mx, &my);
+   update_quickslots(-1);
+   sprite_blt(Bitmaps[BITMAP_QUICKSLOTS],x, y, NULL, NULL);
+   
+   for(i=MAX_QUICK_SLOTS-1;i>=0;i--)
+   {
+      if(quick_slots[i].tag != -1)
+      {
+         /* spell in quickslot */      
+         if (quick_slots[i].spell == TRUE)
+         { 
+			 sprite_blt(spell_list[quick_slots[i].groupNr].entry[quick_slots[i].classNr][quick_slots[i].tag].icon ,x+quickslots_pos[i][0],y+quickslots_pos[i][1], NULL, NULL);            
+            if (mx >= x+quickslots_pos[i][0] && mx < x+quickslots_pos[i][0]+33
+               && my >= y+quickslots_pos[i][1] && my < y+quickslots_pos[i][1]+33)
+            show_tooltip(mx, my, spell_list[quick_slots[i].groupNr].entry[quick_slots[i].classNr][quick_slots[i].tag].name);
+         }
+         /* item in quickslot */
+         else
+         { 
+            item *tmp;
+            tmp = locate_item_from_item(cpl.ob , quick_slots[i].tag);
+            if(tmp)
+            {
+               blt_inv_item(tmp , x+quickslots_pos[i][0],y+quickslots_pos[i][1]);
+               /* show tooltip */
+               if (mx >= x+quickslots_pos[i][0] && mx < x+quickslots_pos[i][0]+33
+                  && my >= y+quickslots_pos[i][1] && my < y+quickslots_pos[i][1]+33)
+               show_tooltip(mx, my, tmp->s_name);
+            }
+         }
+       }
+       sprintf(buf,"F%d", i+1);
+       StringBlt(ScreenSurface, &Font6x3Out,buf,x+quickslots_pos[i][0]+12, y+quickslots_pos[i][1]-6,COLOR_DEFAULT, NULL, NULL);
+   }
 }
 
 void update_quickslots(int del_item)
 {
-	int i, tmp_slots[BITMAP_QUICKSLOTS];
+   int i;
 
-	memset(tmp_slots,-1,sizeof(tmp_slots));
-
-	for(i=0;i<MAX_QUICK_SLOTS;i++)
-	{
-		if(quick_slots[i] == del_item)
-			quick_slots[i]=-1;
-		if(quick_slots[i] == -1)
-			continue;
-		/* only items in the *main* inventory can used with quickslot! */
-		if(!locate_item_from_inv(cpl.ob->inv , quick_slots[i])) 
-			quick_slots[i]=-1;
-	}
-
-
+   for(i=0;i<MAX_QUICK_SLOTS;i++)
+   {
+       if(quick_slots[i].tag == del_item)
+          quick_slots[i].tag =-1;
+       if(quick_slots[i].tag == -1)
+          continue;
+       /* only items in the *main* inventory can used with quickslot! */
+       if(quick_slots[i].spell == FALSE && !locate_item_from_inv(cpl.ob->inv , quick_slots[i].tag)) 
+       quick_slots[i].tag=-1;
+       if(quick_slots[i].tag != -1)
+		   quick_slots[i].nr = locate_item_nr_from_tag (cpl.ob->inv, quick_slots[i].tag);			   
+   }
 }
+
+
+/******************************************************************
+ Restore quickslots from last game.
+******************************************************************/
+#define QUICKSLOT_FILE "quick.dat"
+void load_quickslots_entrys()
+{
+   int i;
+   FILE *stream;
+   
+   if(!(stream = fopen( QUICKSLOT_FILE, "rb" )))
+      return;
+   for(i=0;i<MAX_QUICK_SLOTS;i++)
+   {
+      fread(&quick_slots[i],1,sizeof(_quickslot),stream);
+      
+	  if (quick_slots[i].tag == -1)
+         continue;
+      cpl.win_inv_slot =quick_slots[i].invSlot;
+      if (quick_slots[i].spell == FALSE)
+		  quick_slots[i].tag = locate_item_tag_from_nr (cpl.ob->inv, quick_slots[i].nr);
+   }   
+   fclose (stream);
+   update_quickslots(-1);
+}
+
+/******************************************************************
+ Save the current quickslots.
+******************************************************************/
+void save_quickslots_entrys()
+{
+   FILE *stream;
+   
+   if(!(stream = fopen( QUICKSLOT_FILE, "wb" )))
+      return;
+      
+   fwrite(&quick_slots,sizeof(_quickslot),MAX_QUICK_SLOTS,stream);
+   fclose (stream);
+}
+
 
 void show_group(int x, int y)
 {

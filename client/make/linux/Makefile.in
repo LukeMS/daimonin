@@ -67,7 +67,7 @@ NO_X = @no_x@
 
 XX_EXTRA_CFLAGS = $(EXTRA_CFLAGS) -D__LINUX
 
-VERSION = daimonin-beta03-0.965
+VERSION = daimonin-beta03-0.965b
 
 ARCHIVE = /tmp/$(VERSION)
 

@@ -157,7 +157,7 @@ void esrv_draw_look(object *pl)
 
     sl.buf=malloc(MAXSOCKBUF);
 
-	SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_ITEMX);
+	SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_ITEMY);
 
 		SockList_AddInt(&sl, 0);
 	    SockList_AddInt(&sl, 0);
@@ -299,7 +299,7 @@ void esrv_draw_look(object *pl)
 		if (sl.len > (MAXSOCKBUF-MAXITEMLEN))
 		{
 			Send_With_Handling(&CONTR(pl)->socket, &sl);
-			SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_ITEMX);
+			SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_ITEMY);
 			SockList_AddInt(&sl, -2); /* do no delinv */
 			SockList_AddInt(&sl, 0);
 			got_one=0;
@@ -416,7 +416,7 @@ int esrv_draw_DM_inv(object *pl, SockList *sl, object *op)
 		if (sl->len > (MAXSOCKBUF-MAXITEMLEN))
 		{
 			Send_With_Handling(&CONTR(pl)->socket, sl);
-			SOCKET_SET_BINARY_CMD(sl, BINARY_CMD_ITEMX);
+			SOCKET_SET_BINARY_CMD(sl, BINARY_CMD_ITEMY);
 			SockList_AddInt(sl, -2); /* do no delinv */
 			SockList_AddInt(sl, 0);
 			got_one=0;
@@ -536,7 +536,7 @@ static int esrv_send_inventory_DM(object *pl, SockList *sl, object *op)
 	     */
 	    if (sl->len > (MAXSOCKBUF-MAXITEMLEN)) {
 		Send_With_Handling(&CONTR(pl)->socket, sl);
-		SOCKET_SET_BINARY_CMD(sl, BINARY_CMD_ITEMX);
+		SOCKET_SET_BINARY_CMD(sl, BINARY_CMD_ITEMY);
 		SockList_AddInt(sl,-3); /* no delinv */
 		SockList_AddInt(sl, op->count);
 		got_one=0;
@@ -565,7 +565,7 @@ void esrv_send_inventory(object *pl, object *op)
     sl.buf=malloc(MAXSOCKBUF);
 
 	/*LOG(llevDebug,"send inventory of: %s\n", query_name(op));*/
-	SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_ITEMX);
+	SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_ITEMY);
 
 	if(pl != op) /* in this case we send a container inventory! */
 	{
@@ -661,7 +661,7 @@ void esrv_send_inventory(object *pl, object *op)
 	     */
 	    if (sl.len > (MAXSOCKBUF-MAXITEMLEN)) {
 		Send_With_Handling(&CONTR(pl)->socket, &sl);
-		SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_ITEMX);
+		SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_ITEMY);
 		SockList_AddInt(&sl,-3); /* no delinv */
 		SockList_AddInt(&sl, op->count);
 		got_one=0;
