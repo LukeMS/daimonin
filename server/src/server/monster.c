@@ -665,7 +665,9 @@ void waypoint_move(object *op) {
 
         /* Just arrived? */
         if(waypoint->stats.ac == 0) {
+#ifdef DEBUG_PATHFINDING
             LOG(llevDebug,"move_waypoint(): '%s' reached destination '%s'\n", op->name, waypoint->name);
+#endif
             
 #ifdef PLUGINS
             /* GROS: Handle for plugin trigger event */
@@ -715,11 +717,15 @@ void waypoint_move(object *op) {
         /* Start over with the new waypoint, if any*/
         nextwp = find_waypoint(op, waypoint->title);
         if(nextwp) {
+#ifdef DEBUG_PATHFINDING
             LOG(llevDebug,"move_waypoint(): '%s' next WP: '%s'\n", op->name, waypoint->title);
+#endif
             SET_FLAG(nextwp, FLAG_CURSED);
             waypoint_move(op);
+#ifdef DEBUG_PATHFINDING
         } else {
             LOG(llevDebug,"move_waypoint(): '%s' no next WP\n", op->name);
+#endif
         }
 
         return;
@@ -2424,9 +2430,26 @@ int talk_to_npc(object *op, object *npc, char *txt) {
         char buf[MAX_BUF];
 		if(op->type != PLAYER) /* a npc talks to another one - show both in white */
 		{
-			LOG(-1,"MSG: >%s<\n", msgs->messages[i]);
-	        sprintf(buf,"%s says: %s",query_name(npc),msgs->messages[i]);
-			new_info_map_except(NDI_UNIQUE, op->map, op, buf);
+			/* if a message starts with '/', we assume a emote */
+			/* we simply hook here in the emote msg list */
+			if(*msgs->messages[i] == '/')
+			{
+				CommArray_s *csp;
+				char *cp=NULL;
+				
+				csp = find_command_element(msgs->messages[i], CommunicationCommands, CommunicationCommandSize);
+				if(csp)
+					csp->func(npc, cp);
+
+
+			}
+			else
+			{
+				sprintf(buf,"%s says: %s",query_name(npc),msgs->messages[i]);
+				new_info_map_except(NDI_UNIQUE, op->map, op, buf);
+				if(op->map != npc->map)
+					new_info_map_except(NDI_UNIQUE, npc->map, op, buf);
+			}
 		}
 		else /* if a npc is talking to a player, is shown navy and with a seperate "xx says:" line */
 		{

@@ -104,8 +104,10 @@ void InitConnection(NewSocket *ns, uint32 from)
     ns->map2cmd = 0;
     ns->darkness = 1;
     ns->status = Ns_Add;
-    ns->mapx = 11;
-    ns->mapy = 11;
+    ns->mapx = 17;
+    ns->mapy = 17;
+    ns->mapx_2 = 8;
+    ns->mapy_2 = 8;
 	ns->version = 0;
 	ns->setup = 0;
 	ns->rf_settings = 0;

@@ -2136,6 +2136,31 @@ void remove_ob(object *op) {
 	if (op->map->in_memory == MAP_SAVING)
 		return;
 
+	/* Now we adjust the ->player map variable and the local
+	 * map player chain.
+	 */
+	if(op->type == PLAYER)
+	{
+		struct pl_player *pltemp=op->contr;
+		
+		/* now we remove us from the local map player chain */
+		if(pltemp->map_below)
+			pltemp->map_below->contr->map_above = pltemp->map_above;
+		else
+			op->map->player_first = pltemp->map_above;
+
+		if(pltemp->map_above)
+			pltemp->map_above->contr->map_below = pltemp->map_below;
+
+		pltemp->map_below = pltemp->map_above = NULL;
+
+	}
+
+	/* it should not be hard to remove this object loop too -
+	 * we do 2 things here:
+	 * closing a container when the player moves away
+	 * and checking FLY_OFF, WALK_OFF. 
+	 */
     tag = op->count;
     check_walk_off = ! QUERY_FLAG (op, FLAG_NO_APPLY);
     for(tmp=GET_MAP_OB(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above)
@@ -2480,9 +2505,23 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
 	}
 
 
-	/* lets set some specials for our players */
-    if(op->type==PLAYER)
+	/* lets set some specials for our players
+	 * we adjust the ->player map variable and the local
+	 * map player chain.
+	 */
+	if(op->type == PLAYER)
+	{
 		op->contr->do_los=1;
+
+		if(op->map->player_first) 
+		{
+			op->map->player_first->contr->map_below = op;
+			op->contr->map_above = op->map->player_first;
+
+		}
+		op->map->player_first= op;
+
+	}
 
     /* If we have a floor, we know the player, if any, will be above
      * it, so save a few ticks and start from there.

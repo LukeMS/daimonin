@@ -57,18 +57,18 @@ void map_info(object *op) {
     if (strlen(m->path)<=18) strcpy(map_path, m->path);
     else strcpy(map_path, m->path + strlen(m->path) - 18);
 #ifndef MAP_RESET
-      sprintf(buf,"%-18.18s %2ld %2d   %1ld %4ld %2ld",
-              map_path, m->players,players_on_map(m),m->in_memory,m->timeout,
-              m->difficulty);
+      sprintf(buf,"%-18.18s %c %2d   %c %4ld %2ld",map_path, 
+		  m->in_memory?(m->in_memory== MAP_IN_MEMORY?'m':'s'):'X',
+		  players_on_map(m),m->in_memory,m->timeout, m->difficulty);
 #else
-      LOG(llevSystem,"%s pom:%d (%d) status:%d timeout:%d diff:%d  reset:%02d:%02d:%02d\n",
-              m->path, m->players,players_on_map(m),
-              m->in_memory,m->timeout,m->difficulty,
+      LOG(llevSystem,"%s pom:%d status:%c timeout:%d diff:%d  reset:%02d:%02d:%02d\n",
+              m->path,players_on_map(m),
+              m->in_memory?(m->in_memory== MAP_IN_MEMORY?'m':'s'):'X',m->timeout,m->difficulty,
 	      (MAP_WHEN_RESET(m)%86400)/3600,(MAP_WHEN_RESET(m)%3600)/60,
               MAP_WHEN_RESET(m)%60);
-      sprintf(buf,"%-18.18s %2d %2d   %1d %4d %2d  %02d:%02d:%02d",
-              map_path, m->players,players_on_map(m),
-              m->in_memory,m->timeout,m->difficulty,
+      sprintf(buf,"%-18.18s %2d   %c %4d %2d  %02d:%02d:%02d",
+              map_path, players_on_map(m),
+             m->in_memory?(m->in_memory== MAP_IN_MEMORY?'m':'s'):'X',m->timeout,m->difficulty,
 	      (MAP_WHEN_RESET(m)%86400)/3600,(MAP_WHEN_RESET(m)%3600)/60,
               MAP_WHEN_RESET(m)%60);
 #endif
@@ -208,7 +208,7 @@ void current_map_info(object *op) {
     if (QUERY_FLAG(op,FLAG_WIZ)) {
 	new_draw_info_format(NDI_UNIQUE, 0, op,
 		"players:%d difficulty:%d size:%dx%d start:%dx%d timeout %ld", 
-		 m->players, m->difficulty, 
+		 players_on_map(m), m->difficulty, 
 		 MAP_WIDTH(m), MAP_HEIGHT(m), 
 		 MAP_ENTER_X(m), MAP_ENTER_Y(m),
 		 MAP_TIMEOUT(m));

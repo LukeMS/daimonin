@@ -121,6 +121,9 @@ typedef struct pl_player
 	object *mark;		/* marked object */
 	object *age_force;	/* quick jump to our age force */
 
+	object *map_below;	/* ptr used from local map player chain */
+	object *map_above;
+
 	uint32 anim_enemy_count;		/* hm, this can be kicked now - i do it for a quick hack to
 									 * implement the animations. use is_melee_range() instead.
 									 */

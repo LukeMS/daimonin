@@ -101,8 +101,7 @@ static int compare_A(const void *a, const void *b)
   return strcmp(((CommArray_s *)a)->name, ((CommArray_s *)b)->name);
 }
 
-static CommArray_s *find_command_element(char *cmd, CommArray_s *commarray,
-    int commsize)
+CommArray_s *find_command_element(char *cmd, CommArray_s *commarray, int commsize)
 {
   CommArray_s *asp, dummy;
   char *cp;
@@ -341,11 +340,11 @@ int command_target(object *op, char *params)
 			xt=op->x+(xx=freearr_x[n]+xstart);
 			yt=op->y+(yy=freearr_y[n]+ystart);
 
-			if(xx <-(int)(op->contr->socket.mapx/2) || xx > (int)(op->contr->socket.mapx/2) ||
-				yy < -(int)(op->contr->socket.mapy/2) || yy>(int)(op->contr->socket.mapy/2))
+			if(xx <-(int)(op->contr->socket.mapx_2) || xx > (int)(op->contr->socket.mapx_2) ||
+				yy < -(int)(op->contr->socket.mapy_2) || yy>(int)(op->contr->socket.mapy_2))
 				continue; 
 
-			block = op->contr->blocked_los[xx+op->contr->socket.mapx/2][yy+op->contr->socket.mapy/2];
+			block = op->contr->blocked_los[xx+op->contr->socket.mapx_2][yy+op->contr->socket.mapy_2];
 			if(block>3 || block<0 ||!(m=out_of_map(op->map,&xt,&yt)))
 				continue;
 
@@ -400,7 +399,7 @@ int command_target(object *op, char *params)
 				nt=n;
 			xt=op->x+(xx=map_pos_array[n][MAP_POS_X]);
 			yt=op->y+(yy=map_pos_array[n][MAP_POS_Y]);
-			block = op->contr->blocked_los[xx+op->contr->socket.mapx/2][yy+op->contr->socket.mapy/2];
+			block = op->contr->blocked_los[xx+op->contr->socket.mapx_2][yy+op->contr->socket.mapy_2];
 			if(block>3 || block<0 ||!(m=out_of_map(op->map,&xt,&yt)))
 			{
 				if((n+1)==NROF_MAP_NODE)
@@ -471,7 +470,7 @@ int command_target(object *op, char *params)
 					nt=n;
 				xt=op->x+(xx=map_pos_array[n][MAP_POS_X]);
 				yt=op->y+(yy=map_pos_array[n][MAP_POS_Y]);
-				block = op->contr->blocked_los[xx+op->contr->socket.mapx/2][yy+op->contr->socket.mapy/2];
+				block = op->contr->blocked_los[xx+op->contr->socket.mapx_2][yy+op->contr->socket.mapy_2];
 				if(block>3 || block<0|| !(m=out_of_map(op->map,&xt,&yt)))
 				{
 					if((n+1)==NROF_MAP_NODE)

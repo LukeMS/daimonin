@@ -272,11 +272,11 @@ void expand_sight(object *op)
 	for(y=1;y<op->contr->socket.mapy-1;y++) {
 #if 0
 	    LOG(llevInfo ,"expand_sight x,y = %d, %d  blocksview = %d, %d\n",
-		    x, y, op->x-op->contr->socket.mapx/2+x, op->y-op->contr->socket.mapy/2+y);
+		    x, y, op->x-op->contr->socket.mapx_2+x, op->y-op->contr->socket.mapy_2+y);
 #endif
 	    if(!op->contr->blocked_los[x][y] &&
-	        !blocks_view(op->map,op->x-op->contr->socket.mapx/2+x,
-		op->y-op->contr->socket.mapy/2+y)) {
+	        !blocks_view(op->map,op->x-op->contr->socket.mapx_2+x,
+		op->y-op->contr->socket.mapy_2+y)) {
 
 		for(i=1;i<=8;i+=1) {	/* mark all directions */
 		    dx = x + freearr_x[i];
@@ -353,12 +353,12 @@ void expand_lighted_sight(object *op)
      * array.  Its easier to just increment them here (and start with the right
      * value) than to recalculate them down below.
      */
-    for (x=(op->x - op->contr->socket.mapx/2 - MAX_LIGHT_RADII), basex=-MAX_LIGHT_RADII;
-      x < (op->x + op->contr->socket.mapx/2 + MAX_LIGHT_RADII); x++, basex++) {
+    for (x=(op->x - op->contr->socket.mapx_2 - MAX_LIGHT_RADII), basex=-MAX_LIGHT_RADII;
+      x < (op->x + op->contr->socket.mapx_2 + MAX_LIGHT_RADII); x++, basex++) {
 	if (x < 0 || x>=MAP_WIDTH(op->map)) continue;
 
-	for (y=(op->y - op->contr->socket.mapy/2 - MAX_LIGHT_RADII), basey=-MAX_LIGHT_RADII;
-	  y < (op->y + op->contr->socket.mapy/2 + MAX_LIGHT_RADII); y++, basey++) {
+	for (y=(op->y - op->contr->socket.mapy_2 - MAX_LIGHT_RADII), basey=-MAX_LIGHT_RADII;
+	  y < (op->y + op->contr->socket.mapy_2 + MAX_LIGHT_RADII); y++, basey++) {
 	    if (y < 0 || y>=MAP_HEIGHT(op->map)) continue;
 
 	    /* This space is providing light, so we need to brighten up the
@@ -396,8 +396,8 @@ void expand_lighted_sight(object *op)
     /*  grant some vision to the player, based on the darklevel */
     for(x=darklevel-MAX_DARKNESS; x<MAX_DARKNESS + 1 -darklevel; x++)
 	for(y=darklevel-MAX_DARKNESS; y<MAX_DARKNESS + 1 -darklevel; y++)
-	    if(!(op->contr->blocked_los[x+op->contr->socket.mapx/2][y+op->contr->socket.mapy/2]==100))
-		op->contr->blocked_los[x+op->contr->socket.mapx/2][y+op->contr->socket.mapy/2]-= 
+	    if(!(op->contr->blocked_los[x+op->contr->socket.mapx_2][y+op->contr->socket.mapy_2]==100))
+		op->contr->blocked_los[x+op->contr->socket.mapx_2][y+op->contr->socket.mapy_2]-= 
 		    MAX(0,6 -darklevel - MAX(abs(x),abs(y))); 
 }
 
@@ -414,7 +414,7 @@ void blinded_sight (object *op) {
 	for (y = 0; y <  op->contr->socket.mapy; y++)
 	    op->contr->blocked_los[x][y] = 100;
 
-    op->contr->blocked_los[ op->contr->socket.mapx/2][ op->contr->socket.mapy/2] = 0;
+    op->contr->blocked_los[ op->contr->socket.mapx_2][ op->contr->socket.mapy_2] = 0;
 }
 
 /*
@@ -423,7 +423,7 @@ void blinded_sight (object *op) {
  */
 
 void update_los(object *op) {
-    int dx = op->contr->socket.mapx/2, dy = op->contr->socket.mapy/2, x, y;
+    int dx = op->contr->socket.mapx_2, dy = op->contr->socket.mapy_2, x, y;
   
     if(QUERY_FLAG(op,FLAG_REMOVED))
 	return;
@@ -509,8 +509,8 @@ void update_all_los(mapstruct *map, int x, int y) {
 	 * some.
 	 */
 	if(pl->ob->map==map) {
-	    if ((abs(pl->ob->x - x) <= pl->socket.mapx/2) &&
-	       (abs(pl->ob->y - y) <= pl->socket.mapy/2))
+	    if ((abs(pl->ob->x - x) <= pl->socket.mapx_2) &&
+	       (abs(pl->ob->y - y) <= pl->socket.mapy_2))
 		pl->do_los=1;
 
 	}
@@ -531,26 +531,46 @@ void update_all_los(mapstruct *map, int x, int y) {
 	 * a distance.
 	 */
 	else if (pl->ob->map == map->tile_map[0]) {
-	    if ((abs(pl->ob->x - x) <= pl->socket.mapx/2) &&
-	       (abs(y + MAP_HEIGHT(map->tile_map[0]) - pl->ob->y)  <= pl->socket.mapy/2))
+	    if ((abs(pl->ob->x - x) <= pl->socket.mapx_2) &&
+	       (abs(y + MAP_HEIGHT(map->tile_map[0]) - pl->ob->y)  <= pl->socket.mapy_2))
 		pl->do_los=1;
 	}
 	else if (pl->ob->map == map->tile_map[2]) {
-	    if ((abs(pl->ob->x - x) <= pl->socket.mapx/2) &&
-	       (abs(pl->ob->y + MAP_HEIGHT(map) - y)  <= pl->socket.mapy/2))
+	    if ((abs(pl->ob->x - x) <= pl->socket.mapx_2) &&
+	       (abs(pl->ob->y + MAP_HEIGHT(map) - y)  <= pl->socket.mapy_2))
 		pl->do_los=1;
 	}
 	else if (pl->ob->map == map->tile_map[1]) {
-	    if ((abs(pl->ob->x + MAP_WIDTH(map) - x) <= pl->socket.mapx/2) &&
-	       (abs(pl->ob->y - y)  <= pl->socket.mapy/2))
+	    if ((abs(pl->ob->x + MAP_WIDTH(map) - x) <= pl->socket.mapx_2) &&
+	       (abs(pl->ob->y - y)  <= pl->socket.mapy_2))
 		pl->do_los=1;
 	}
 	else if (pl->ob->map == map->tile_map[3]) {
-	    if ((abs(x + MAP_WIDTH(map->tile_map[3]) - pl->ob->x) <= pl->socket.mapx/2) &&
-	       (abs(pl->ob->y - y)  <= pl->socket.mapy/2))
+	    if ((abs(x + MAP_WIDTH(map->tile_map[3]) - pl->ob->x) <= pl->socket.mapx_2) &&
+	       (abs(pl->ob->y - y)  <= pl->socket.mapy_2))
 		pl->do_los=1;
 	}
-    }
+	else if (pl->ob->map == map->tile_map[4]) {
+	    if ((abs(pl->ob->x + MAP_WIDTH(map) - x) <= pl->socket.mapx_2) &&
+	       (abs(y + MAP_HEIGHT(map->tile_map[4]) - pl->ob->y)  <= pl->socket.mapy_2))
+		pl->do_los=1;
+	}
+	else if (pl->ob->map == map->tile_map[5]) {
+	    if ((abs(pl->ob->x + MAP_WIDTH(map) - x) <= pl->socket.mapx_2) &&
+	       (abs(pl->ob->y + MAP_HEIGHT(map) - y)  <= pl->socket.mapy_2))
+		pl->do_los=1;
+	}
+	else if (pl->ob->map == map->tile_map[6]) {
+	    if ((abs(x + MAP_WIDTH(map->tile_map[6]) - pl->ob->x) <= pl->socket.mapx_2) &&
+	       (abs(pl->ob->y + MAP_HEIGHT(map) - y)  <= pl->socket.mapy_2))
+		pl->do_los=1;
+	}
+	else if (pl->ob->map == map->tile_map[7]) {
+	    if ((abs(x + MAP_WIDTH(map->tile_map[7]) - pl->ob->x) <= pl->socket.mapx_2) &&
+	       (abs(y + MAP_HEIGHT(map->tile_map[7]) - pl->ob->y)  <= pl->socket.mapy_2))
+		pl->do_los=1;
+	}
+   }
 }
 
 /*
@@ -589,18 +609,6 @@ void print_los(object *op) {
  * MT-11-2002.
  */
 void make_sure_seen(object *op) {
-/*
-    player *pl;
-
-    for (pl = first_player; pl; pl = pl->next)
-	if (pl->ob->map == op->map &&
-	    pl->ob->y - pl->socket.mapy/2 <= op->y && 
-	    pl->ob->y + pl->socket.mapy/2 >= op->y &&
-	    pl->ob->x - pl->socket.mapx/2 <= op->x && 
-	    pl->ob->x + pl->socket.mapx/2 >= op->x)
-		pl->blocked_los[pl->socket.mapx/2 + op->x - pl->ob->x]
-		    [pl->socket.mapy/2 + op->y - pl->ob->y] = 0;
-*/
 }
 
 /*
@@ -610,14 +618,4 @@ void make_sure_seen(object *op) {
  */
 
 void make_sure_not_seen(object *op) { 
-/*
-    player *pl;
-    for (pl = first_player; pl; pl = pl->next)
-	if (pl->ob->map == op->map &&
-	    pl->ob->y - pl->socket.mapy/2 <= op->y && 
-	    pl->ob->y + pl->socket.mapy/2 >= op->y &&
-	    pl->ob->x - pl->socket.mapx/2 <= op->x && 
-	    pl->ob->x + pl->socket.mapx/2 >= op->x)
-		pl->do_los = 1;
-*/
 }

@@ -103,8 +103,7 @@ int command_kick (object *op, char *params)
 	if(op->container)
 		esrv_apply_container (op, op->container);
 	(void)save_player(op,0);
-	play_again(op);
-	op->map->players--;
+	op->contr->socket.status=Ns_Dead;
 #if MAP_MAXTIMEOUT
 	op->map->timeout = MAP_TIMEOUT(op->map);
 #endif
