@@ -640,7 +640,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_STARTEQUIP		34 /* Object was given to player at start */
 #define FLAG_BLOCKSVIEW		35 /* Object blocks view */
 #define FLAG_UNDEAD			36 /* Monster is undead */
-#define FLAG_FREED	 		37 /* Object is in the list of free objects */
+#define UNUSED_FLAG2	 	37 /* used to be FREED */
 #define FLAG_UNAGGRESSIVE	38 /* Monster doesn't attack players */
 #define FLAG_REFL_MISSILE	39 /* object will give missile reflection */
 

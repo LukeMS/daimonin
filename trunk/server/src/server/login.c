@@ -189,14 +189,14 @@ int create_savedir_if_needed(char *savedir)
 int save_player(object *op, int flag) {
   FILE *fp;
   char filename[MAX_BUF], *tmpfilename,backupfile[MAX_BUF];
-  player *pl = op->contr;
+  player *pl = CONTR(op);
   int i,wiz=QUERY_FLAG(op,FLAG_WIZ);
   long checksum;
 #ifdef BACKUP_SAVE_AT_HOME
   sint16 backup_x, backup_y;
 #endif
 
-  if (!op->stats.exp && (!op->contr || !op->contr->player_loaded)) return 0;	/* no experience, no save */
+  if (!op->stats.exp && (!CONTR(op) || !CONTR(op)->player_loaded)) return 0;	/* no experience, no save */
 
   flag&=1;
 
@@ -276,12 +276,12 @@ int save_player(object *op, int flag) {
     fprintf(fp,"%d\n",pl->levhp[i]);
 
   /* save sp table */
-  fprintf(fp,"lev_sp %d\n",op->contr->sp_exp_ptr->level);
-  for(i=1;i<=op->contr->sp_exp_ptr->level;i++)
+  fprintf(fp,"lev_sp %d\n",pl->sp_exp_ptr->level);
+  for(i=1;i<=pl->sp_exp_ptr->level;i++)
     fprintf(fp,"%d\n",pl->levsp[i]);
 
-  fprintf(fp,"lev_grace %d\n",op->contr->grace_exp_ptr->level);
-  for(i=1;i<=op->contr->grace_exp_ptr->level;i++)
+  fprintf(fp,"lev_grace %d\n",pl->grace_exp_ptr->level);
+  for(i=1;i<=pl->grace_exp_ptr->level;i++)
     fprintf(fp,"%d\n",pl->levgrace[i]);
 
 
@@ -345,7 +345,7 @@ int save_player(object *op, int flag) {
   /* Eneq(@csd.uu.se): Reveal the container if we have one. */
   /*
   if (flag&&container!=NULL) 
-    op->contr->container = container;
+    pl->container = container;
 */
   if (wiz) SET_FLAG(op,FLAG_WIZ);
 
@@ -419,7 +419,7 @@ void check_login(object *op) {
     int i,value,comp;
 	int lev_array_flag;
     long checksum = 0;
-    player *pl = op->contr;
+    player *pl = CONTR(op);
     int correct = 0;
     time_t    elapsed_save_time=0;
     struct stat	statbuf;
@@ -443,7 +443,7 @@ void check_login(object *op) {
 	}
 
 
-	LOG(llevInfo,"LOGIN: >%s< from ip %s\n", op->name, op->contr->socket.host);
+	LOG(llevInfo,"LOGIN: >%s< from ip %s\n", op->name, pl->socket.host);
 
     /* First, lets check for newest form of save */
     sprintf(filename,"%s/%s/%s/%s.pl",settings.localdir,settings.playerdir,op->name,op->name);
@@ -660,16 +660,23 @@ void check_login(object *op) {
 	/* Remove confkeys, pushkey support - very old */
     } /* End of loop loading the character file */
     /*leave_map(op);*/
-	LOG(llevDebug,"load obj for player: %s\n", op->name);
-    clear_object(op);
-    op->contr = pl;
-    pl->ob = op;
+    
+    if(!QUERY_FLAG(op, FLAG_REMOVED)) /* Take the player ob out from the void */
+        remove_ob(op);
+    op->custom_attrset = NULL; /* We transfer it to a new object */
+    
+    LOG(llevDebug,"load obj for player: %s\n", op->name);
+    
+    op = get_object(); /* Create a new object for the real player data */
+    
     /* this loads the standard objects values. */
 	mybuffer = create_loader_buffer(fp);
     load_object(fp, op, mybuffer, LO_REPEAT,0);
 	delete_loader_buffer(mybuffer);
     close_and_delete(fp, comp);
 
+    op->custom_attrset = pl;
+    pl->ob = op;
     CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
 
     strncpy(pl->title, op->arch->clone.name,MAX_NAME);
@@ -817,8 +824,8 @@ void check_login(object *op) {
 		}
 	}
 
-	if ( ! legal_range (op, op->contr->shoottype))
-    op->contr->shoottype = range_none;
+	if ( ! legal_range (op, pl->shoottype))
+    pl->shoottype = range_none;
     
     fix_player (op);
     
@@ -882,7 +889,7 @@ void check_login(object *op) {
     /* Do this after checking for death - no reason sucking up bandwidth if
      * the data isn't needed.
      */
-    esrv_new_player(op->contr,op->weight+op->carrying);
+    esrv_new_player(pl,op->weight+op->carrying);
     esrv_send_inventory(op, op);
 
     pl->last_value= -1;
@@ -914,7 +921,7 @@ void check_login(object *op) {
     pl->socket.ext_title_flag = 1;
 	
 	pl->ob->direction = 4;
-    esrv_new_player(op->contr,op->weight+op->carrying);
+    esrv_new_player(pl,op->weight+op->carrying);
 	send_spelllist_cmd(op, NULL, SPLIST_MODE_ADD); /* send the known spells as list to client */
     send_skilllist_cmd(op, NULL, SPLIST_MODE_ADD);
     return;

@@ -86,7 +86,6 @@ void print_monsters() {
 				LOG(llevInfo,"%4d", op->resist[i]);
 	    LOG(llevInfo," |%8d|\n",op->stats.exp);
     }
-    free_object(op);
   }
 }
 

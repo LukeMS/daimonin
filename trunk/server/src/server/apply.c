@@ -111,11 +111,11 @@ int apply_potion(object *op, object *tmp)
 	int i;
 
 	/* some sanity checks */
-	if(!op || !tmp || (op->type == PLAYER && (!op->contr || !op->contr->sp_exp_ptr ||!op->contr->grace_exp_ptr) ) )
+	if(!op || !tmp || (op->type == PLAYER && (!CONTR(op) || !CONTR(op)->sp_exp_ptr ||!CONTR(op)->grace_exp_ptr) ) )
 	{
 		LOG(llevBug,"apply_potion() called with invalid objects! obj: %s (%s - %s) tmp:%s\n", query_name(op),
-			op->contr?query_name(op->contr->sp_exp_ptr):"<no contr>",
-			op->contr?query_name(op->contr->grace_exp_ptr):"<no contr>",query_name(tmp));
+			CONTR(op)?query_name(CONTR(op)->sp_exp_ptr):"<no contr>",
+			CONTR(op)?query_name(CONTR(op)->grace_exp_ptr):"<no contr>",query_name(tmp));
 		return 0;
 	}
 
@@ -257,7 +257,6 @@ int apply_potion(object *op, object *tmp)
 						new_draw_info(NDI_UNIQUE,0,op, restore_msg[i]);
 				}
 				remove_ob(depl);
-				free_object(depl);
 				fix_player(op);
 			}
 			else
@@ -288,9 +287,9 @@ int apply_potion(object *op, object *tmp)
 					for(i=2;i<=op->level;i++)
 					{
 						/* move one value to max */
-						if (op->contr->levhp[i]!=1)
+						if (CONTR(op)->levhp[i]!=1)
 						{
-							op->contr->levhp[i]=1;
+							CONTR(op)->levhp[i]=1;
 							success_flag=2;
 							goto improve_done;
 						}
@@ -298,12 +297,12 @@ int apply_potion(object *op, object *tmp)
 					}
 					sp_jump:
 					sp_flag = 1; /* mark we have checked sp chain */
-					for(i=2;i<=op->contr->sp_exp_ptr->level;i++)
+					for(i=2;i<=CONTR(op)->sp_exp_ptr->level;i++)
 					{
 						/* move one value to max */
-						if (op->contr->levsp[i]!=1)
+						if (CONTR(op)->levsp[i]!=1)
 						{
-							op->contr->levsp[i]=1;
+							CONTR(op)->levsp[i]=1;
 							success_flag=2;
 							goto improve_done;
 						}
@@ -311,12 +310,12 @@ int apply_potion(object *op, object *tmp)
 					}
 					grace_jump:
 					grace_flag = 1; /* mark we have checked grace chain */
-					for(i=2;i<=op->contr->grace_exp_ptr->level;i++)
+					for(i=2;i<=CONTR(op)->grace_exp_ptr->level;i++)
 					{
 						/* move one value to max */
-						if (op->contr->levgrace[i]!=1)
+						if (CONTR(op)->levgrace[i]!=1)
 						{
-							op->contr->levgrace[i]=1;
+							CONTR(op)->levgrace[i]=1;
 							success_flag=2;
 							goto improve_done;
 						}
@@ -342,9 +341,9 @@ int apply_potion(object *op, object *tmp)
 					for(i=1;i<=op->level;i++)
 					{
 						/* move one value to max */
-						if (op->contr->levhp[i]!=(char)op->arch->clone.stats.maxhp)
+						if (CONTR(op)->levhp[i]!=(char)op->arch->clone.stats.maxhp)
 						{
-							op->contr->levhp[i]=(char)op->arch->clone.stats.maxhp;
+							CONTR(op)->levhp[i]=(char)op->arch->clone.stats.maxhp;
 							success_flag=1;
 							goto improve_done;
 						}
@@ -352,12 +351,12 @@ int apply_potion(object *op, object *tmp)
 					}
 					sp_jump2:
 					sp_flag = 1; /* mark we have checked sp chain */
-					for(i=1;i<=op->contr->sp_exp_ptr->level;i++)
+					for(i=1;i<=CONTR(op)->sp_exp_ptr->level;i++)
 					{
 						/* move one value to max */
-						if (op->contr->levsp[i]!=(char)op->arch->clone.stats.maxsp)
+						if (CONTR(op)->levsp[i]!=(char)op->arch->clone.stats.maxsp)
 						{
-							op->contr->levsp[i]=(char)op->arch->clone.stats.maxsp;
+							CONTR(op)->levsp[i]=(char)op->arch->clone.stats.maxsp;
 							success_flag=1;
 							goto improve_done;
 						}
@@ -365,12 +364,12 @@ int apply_potion(object *op, object *tmp)
 					}
 					grace_jump2:
 					grace_flag = 1; /* mark we have checked grace chain */
-					for(i=1;i<=op->contr->grace_exp_ptr->level;i++)
+					for(i=1;i<=CONTR(op)->grace_exp_ptr->level;i++)
 					{
 						/* move one value to max */
-						if (op->contr->levgrace[i]!=(char)op->arch->clone.stats.maxgrace)
+						if (CONTR(op)->levgrace[i]!=(char)op->arch->clone.stats.maxgrace)
 						{
-							op->contr->levgrace[i]=(char)op->arch->clone.stats.maxgrace;
+							CONTR(op)->levgrace[i]=(char)op->arch->clone.stats.maxgrace;
 							success_flag=1;
 							goto improve_done;
 						}
@@ -837,7 +836,6 @@ int convert_item(object *item, object *converter) {
       decrease_ob_nr(item,nr*CONV_NEED(converter));
     } else {
       remove_ob(item);
-      free_object(item);
     }
   }
   item=arch_to_object(converter->other_arch);
@@ -870,7 +868,7 @@ int container_link(player *pl, object *sack)
 	/* for safety reasons, lets check this is valid */
 	if(sack->attacked_by)
 	{
-		if (sack->attacked_by->type != PLAYER || !sack->attacked_by->contr || sack->attacked_by->contr->container != sack)
+		if (sack->attacked_by->type != PLAYER || !CONTR(sack->attacked_by) || CONTR(sack->attacked_by)->container != sack)
 		{
 			LOG(llevBug,"BUG: container_link() - invalid player linked: <%s>\n", query_name(sack->attacked_by));
 			sack->attacked_by = NULL;
@@ -895,7 +893,7 @@ int container_link(player *pl, object *sack)
 	pl->container_above = sack->attacked_by; 
 
 	if(sack->attacked_by)
-		sack->attacked_by->contr->container_below = pl->ob;
+		CONTR(sack->attacked_by)->container_below = pl->ob;
 	else /* we are the first one opening this container */
 	{
 		SET_FLAG (sack, FLAG_APPLIED);
@@ -973,7 +971,7 @@ int container_unlink(player *pl, object *sack)
 			/* mark above as first player applying this container */
 			sack->attacked_by = pl->container_above;
 			sack->attacked_by_count = pl->container_above->count;
-			pl->container_above->contr->container_below = NULL;
+			CONTR(pl->container_above)->container_below = NULL;
 
 			pl->container_above=NULL;
 			pl->container = NULL;
@@ -982,9 +980,9 @@ int container_unlink(player *pl, object *sack)
 		}
 
 		/* we are somehwere in the middle or last one - it don't matter */
-		pl->container_below->contr->container_above=pl->container_above;
+		CONTR(pl->container_below)->container_above=pl->container_above;
 		if(pl->container_above)
-			pl->container_above->contr->container_below = pl->container_below;
+			CONTR(pl->container_above)->container_below = pl->container_below;
 
 		pl->container_below=NULL;
 		pl->container_above=NULL;
@@ -1002,17 +1000,17 @@ int container_unlink(player *pl, object *sack)
 	/* if we are here, we are called with (NULL,sack) */
 	while(tmp)
 	{
-		if(!tmp->contr || tmp->contr->container != sack) /* valid player in list? */
+		if(!CONTR(tmp) || CONTR(tmp)->container != sack) /* valid player in list? */
 		{
 			LOG(llevBug,"BUG: container_unlink() - container link list mismatch!: player?:<%s> sack:<%s> (%s)\n", query_name(tmp),query_name(sack),query_name(sack->attacked_by));
 			return 1;
 		}
 
-		tmp2 = tmp->contr->container_above;
-		tmp->contr->container = NULL;
-		tmp->contr->container_count = 0;
-		tmp->contr->container_below = NULL;
-		tmp->contr->container_above = NULL;
+		tmp2 = CONTR(tmp)->container_above;
+		CONTR(tmp)->container = NULL;
+		CONTR(tmp)->container_count = 0;
+		CONTR(tmp)->container_below = NULL;
+		CONTR(tmp)->container_above = NULL;
 		esrv_update_item (UPD_FLAGS|UPD_FACE, tmp, sack);
 		esrv_close_container(tmp);
 		tmp = tmp2;
@@ -1041,7 +1039,7 @@ int esrv_apply_container (object *op, object *sack)
 		return 0;
 	}
 
-	cont =op->contr->container; /* cont is NULL or the container player already has opened */
+	cont =CONTR(op)->container; /* cont is NULL or the container player already has opened */
 
     if (sack==NULL || sack->type != CONTAINER || (cont && cont->type != CONTAINER)) 
 	{
@@ -1084,7 +1082,7 @@ int esrv_apply_container (object *op, object *sack)
 			}
 		}
 #endif
-		if(container_unlink(op->contr, cont))
+		if(container_unlink(CONTR(op), cont))
 			new_draw_info_format(NDI_UNIQUE, 0, op, "You close %s.", query_name(cont));
 		else
 			new_draw_info_format(NDI_UNIQUE, 0, op, "You leave %s.", query_name(cont));
@@ -1144,7 +1142,7 @@ int esrv_apply_container (object *op, object *sack)
 		}
 
 		new_draw_info_format(NDI_UNIQUE, 0, op, "You open %s.", query_name(sack));
-		container_link(op->contr, sack);
+		container_link(CONTR(op), sack);
 
     } 
 	else/* sack is in players inventory */
@@ -1152,7 +1150,7 @@ int esrv_apply_container (object *op, object *sack)
 		if (QUERY_FLAG (sack, FLAG_APPLIED)) /* readied sack becoming open */
 		{
 			new_draw_info_format(NDI_UNIQUE, 0, op, "You open %s.", query_name(sack));
-			container_link(op->contr, sack);
+			container_link(CONTR(op), sack);
 		}
 		else 
 		{
@@ -1226,7 +1224,7 @@ char *gravestone_text (object *op)
 
     strcpy (buf2, "                 R.I.P.\n\n");
     if (op->type == PLAYER)
-        sprintf (buf, "%s the %s\n", op->name, op->contr->title);
+        sprintf (buf, "%s the %s\n", op->name, CONTR(op)->title);
     else
         sprintf (buf, "%s\n", op->name);
     strncat (buf2, "                    ",  20 - strlen (buf) / 2);
@@ -1238,7 +1236,7 @@ char *gravestone_text (object *op)
     strncat (buf2, "                    ",  20 - strlen (buf) / 2);
     strcat (buf2, buf);
     if (op->type == PLAYER) {
-        sprintf (buf, "by %s.\n\n", op->contr->killer);
+        sprintf (buf, "by %s.\n\n", CONTR(op)->killer);
         strncat (buf2, "                    ",  21 - strlen (buf) / 2);
         strcat (buf2, buf);
     }
@@ -1353,9 +1351,9 @@ static int apply_shop_mat (object *shop_mat, object *op)
 			rv = (insert_ob_in_map (op, op->map, shop_mat,0) == NULL);
 			if (op->type==PLAYER) 
 			{
-				esrv_map_scroll(&op->contr->socket, freearr_x[i],freearr_y[i]); /* shop */
-				op->contr->socket.update_tile=0;
-				op->contr->socket.look_position=0;
+				esrv_map_scroll(&CONTR(op)->socket, freearr_x[i],freearr_y[i]); /* shop */
+				CONTR(op)->socket.update_tile=0;
+				CONTR(op)->socket.look_position=0;
 			}
 		}
     }
@@ -1513,10 +1511,8 @@ void move_apply (object *trap, object *victim, object *originator)
     if (IS_LIVE (victim)) {
       tag_t trap_tag = trap->count;
       hit_player (victim, trap->stats.dam, trap, AT_MAGIC);
-      if ( ! was_destroyed (trap, trap_tag)) {
+      if ( ! was_destroyed (trap, trap_tag)) 
           remove_ob (trap);
-          free_object (trap);
-      }
     }
     goto leave;
 
@@ -1744,7 +1740,7 @@ static void apply_book (object *op, object *tmp)
         SET_FLAG(tmp,FLAG_IDENTIFIED);
         /* If in a container, update how it looks */
         if(tmp->env) esrv_update_item(UPD_FLAGS|UPD_NAME, op,tmp);
-        else op->contr->socket.update_tile=0;
+        else CONTR(op)->socket.update_tile=0;
       }
       /*add_exp(op,exp_gain,op->chosen_skill->stats.sp);*/
       SET_FLAG(tmp,FLAG_NO_SKILL_IDENT); /* so no more xp gained from this book */
@@ -1827,7 +1823,6 @@ extern void do_learn_spell (object *op, int spell, int special_prayer)
             return;
         }
         remove_ob (tmp);
-        free_object (tmp);
         return;
     }
 
@@ -1835,12 +1830,11 @@ extern void do_learn_spell (object *op, int spell, int special_prayer)
     if (tmp) {
         LOG(llevBug, "BUG: do_learn_spell(): spell unknown, but special prayer mark present\n");
         remove_ob (tmp);
-        free_object (tmp);
     }
-    play_sound_player_only (op->contr, SOUND_LEARN_SPELL, SOUND_NORMAL, 0, 0);
-    op->contr->known_spells[op->contr->nrofknownspells++] = spell;
-    if (op->contr->nrofknownspells == 1)
-        op->contr->chosen_spell = spell;
+    play_sound_player_only (CONTR(op), SOUND_LEARN_SPELL, SOUND_NORMAL, 0, 0);
+    CONTR(op)->known_spells[CONTR(op)->nrofknownspells++] = spell;
+    if (CONTR(op)->nrofknownspells == 1)
+        CONTR(op)->chosen_spell = spell;
     
     /* For godgiven spells the player gets a reminder-mark inserted,
        that this spell must be removed on changing cults! */
@@ -1866,22 +1860,20 @@ extern void do_forget_spell (object *op, int spell)
         return;
     }
     
-	play_sound_player_only(op->contr, SOUND_LOSE_SOME,SOUND_NORMAL,0,0);
+	play_sound_player_only(CONTR(op), SOUND_LOSE_SOME,SOUND_NORMAL,0,0);
     new_draw_info_format (NDI_UNIQUE, 0, op,
 			  "You lose knowledge of %s.", spells[spell].name);
 
     send_spelllist_cmd(op, spells[spell].name, SPLIST_MODE_REMOVE);
     tmp = find_special_prayer_mark (op, spell);
-    if (tmp) {
+    if (tmp) 
         remove_ob (tmp);
-        free_object (tmp);
-    }
 
-    for (i = 0; i < op->contr->nrofknownspells; i++)
+    for (i = 0; i < CONTR(op)->nrofknownspells; i++)
     {
-        if (op->contr->known_spells[i] == spell) {
-            op->contr->known_spells[i] =
-                    op->contr->known_spells[--op->contr->nrofknownspells];
+        if (CONTR(op)->known_spells[i] == spell) {
+            CONTR(op)->known_spells[i] =
+                    CONTR(op)->known_spells[--CONTR(op)->nrofknownspells];
             return;
         }
     }
@@ -1932,7 +1924,7 @@ static void apply_spellbook (object *op, object *tmp)
 	if (tmp->env)
 	    esrv_update_item(UPD_FLAGS|UPD_NAME,op,tmp);
 	else
-	    op->contr->socket.update_tile=0;
+	    CONTR(op)->socket.update_tile=0;
     }
 
     if (check_spell_known (op, tmp->stats.sp) && (tmp->stats.Wis ||
@@ -1967,7 +1959,7 @@ static void apply_spellbook (object *op, object *tmp)
       if ( ! QUERY_FLAG (tmp, FLAG_STARTEQUIP))
         add_exp(op,calc_skill_exp(op,tmp),op->chosen_skill->stats.sp);
     } else {
-      play_sound_player_only(op->contr, SOUND_FUMBLE_SPELL,SOUND_NORMAL,0,0);
+      play_sound_player_only(CONTR(op), SOUND_FUMBLE_SPELL,SOUND_NORMAL,0,0);
       new_draw_info(NDI_UNIQUE, 0,op,"You fail to learn the spell.\n");
     }
     decrease_ob(tmp);
@@ -2021,10 +2013,10 @@ static void apply_scroll (object *op, object *tmp)
 	 * isnt necesarily connected to the exp obj to which the xp 
 	 * will go (for kills made by the magic of the scroll) 
 	 */ 
-        old_shoot= op->contr->shoottype;
-        old_spell = op->contr->chosen_spell;
-        op->contr->shoottype=range_scroll;
-       op->contr->chosen_spell = scroll_spell;
+        old_shoot= CONTR(op)->shoottype;
+        old_spell = CONTR(op)->chosen_spell;
+        CONTR(op)->shoottype=range_scroll;
+       CONTR(op)->chosen_spell = scroll_spell;
     }
 
     new_draw_info_format(NDI_WHITE, 0, op,
@@ -2040,15 +2032,15 @@ static void apply_scroll (object *op, object *tmp)
     cast_spell(op,tmp,op->facing?op->facing:4,scroll_spell,0,spellScroll,NULL);
     decrease_ob(tmp);
     if(op->type==PLAYER) {
-      if(op->contr->golem==NULL) {
-        op->contr->shoottype=old_shoot;
-		op->contr->chosen_spell = old_spell;
+      if(CONTR(op)->golem==NULL) {
+        CONTR(op)->shoottype=old_shoot;
+		CONTR(op)->chosen_spell = old_spell;
       }
 	  /*op->chosen_skill=old_skill;*/
     }
 }
 
-
+/* op opens treasure chest tmp */
 static void apply_treasure (object *op, object *tmp)
 {
     object *treas;
@@ -2087,18 +2079,19 @@ static void apply_treasure (object *op, object *tmp)
       treas = insert_ob_in_map (treas, op->map, op,0);
       if (treas && treas->type == RUNE && treas->level && IS_LIVE(op))
         spring_trap (treas, op);
-      if (was_destroyed (op, op_tag) || was_destroyed (tmp, tmp_tag))
+
+      if (was_destroyed(op, op_tag) || was_destroyed(tmp, tmp_tag))
         break;
     } while ((treas=tmp->inv)!=NULL);
 
-    if ( ! was_destroyed (tmp, tmp_tag) && tmp->inv == NULL)
+    if ( ! was_destroyed(tmp, tmp_tag) && tmp->inv == NULL)
       decrease_ob (tmp);
 
 #if 0
     /* Can't rely on insert_ob_in_map to do any restacking,
      * so lets disable this.
      */
-    if ( ! was_destroyed (op, op_tag)) {
+    if ( ! QUERY_FLAG(op, FLAG_REMOVED)) {
       /* Done to re-stack map with player on top? */
       SET_FLAG (op, FLAG_NO_APPLY);
       remove_ob (op);
@@ -2112,9 +2105,9 @@ static void apply_treasure (object *op, object *tmp)
 void apply_poison (object *op, object *tmp)
 {
     if (op->type == PLAYER) {
-      play_sound_player_only(op->contr, SOUND_DRINK_POISON,SOUND_NORMAL,0,0);
+      play_sound_player_only(CONTR(op), SOUND_DRINK_POISON,SOUND_NORMAL,0,0);
       new_draw_info(NDI_UNIQUE, 0,op,"Yech!  That tasted poisonous!");
-      strcpy(op->contr->killer,"poisonous food");
+      strcpy(CONTR(op)->killer,"poisonous food");
     }
 	 if(tmp->stats.dam)
 	 {
@@ -2341,7 +2334,7 @@ void eat_special_food(object *who, object *food)
 
 			if(tmp>0)
 				tmp=-tmp;
-			strcpy(who->contr->killer,food->name);
+			strcpy(CONTR(who)->killer,food->name);
 			if(QUERY_FLAG(food, FLAG_CURSED))
 	  			who->stats.hp += tmp*2;
 			else
@@ -2534,7 +2527,7 @@ static void apply_savebed (object *pl)
 {
 	mapstruct *oldmap = pl->map;
 
-    if(!pl->contr->name_changed||!pl->stats.exp) {
+    if(!CONTR(pl)->name_changed||!pl->stats.exp) {
       new_draw_info(NDI_UNIQUE, 0,pl,"You don't deserve to save your character yet.");
       return;
     }
@@ -2554,11 +2547,11 @@ static void apply_savebed (object *pl)
 	"%s leaves the game.",pl->name);
     */
     /* update respawn position */
-    strcpy(pl->contr->savebed_map, pl->map->path);
-    pl->contr->bed_x = pl->x;
-    pl->contr->bed_y = pl->y;
+    strcpy(CONTR(pl)->savebed_map, pl->map->path);
+    CONTR(pl)->bed_x = pl->x;
+    CONTR(pl)->bed_y = pl->y;
     
-    strcpy(pl->contr->killer,"left");
+    strcpy(CONTR(pl)->killer,"left");
     check_score(pl); /* Always check score */
 	/* if we are in our appartment - save this too! */			
 	/* i really hate this localdir hack... must remove it and use senseful map flags for it! MT 2003 */
@@ -2570,7 +2563,7 @@ static void apply_savebed (object *pl)
 		
 	}
     new_draw_info(NDI_UNIQUE, 0,pl,"You save and quit the game. Bye!\nleaving...");
-	pl->contr->socket.status=Ns_Dead;
+	CONTR(pl)->socket.status=Ns_Dead;
 }
 
 
@@ -2654,11 +2647,11 @@ static void apply_armour_improver (object *op, object *tmp)
          break;
          }
        if (!exit_owner) return 0;    /* No more owner*/
-       if (exit_owner->contr==op->contr) return 1;  /*It is your exit*/
+       if (CONTR(exit_owner)==CONTR(op)) return 1;  /*It is your exit*/
        if  ( exit_owner &&                          /*There is a owner*/
-            (op->contr) &&                          /*A player tries to pass */
-            ( (exit_owner->contr->party_number<=0) || /*No pass if controller has no party*/
-              (exit_owner->contr->party_number!=op->contr->party_number)) ) /* Or not the same as op*/
+            (CONTR(op)) &&                          /*A player tries to pass */
+            ( (CONTR(exit_owner)->party_number<=0) || /*No pass if controller has no party*/
+              (CONTR(exit_owner)->party_number!=CONTR(op)->party_number)) ) /* Or not the same as op*/
            return 0;
        return 1;
        }
@@ -2969,13 +2962,12 @@ int player_apply (object *pl, object *op, int aflag, int quiet)
                        "of smoke!");
         new_draw_info (NDI_UNIQUE, 0, pl, "It must have been an illusion.");
         remove_ob (op);
-        free_object (op);
         return 1;
     }
 
 	/* see last_used in player 
-    pl->contr->last_used = op;
-    pl->contr->last_used_id = op->count;
+    CONTR(pl)->last_used = op;
+    CONTR(pl)->last_used_id = op->count;
 	*/
 
     tmp = manual_apply (pl, op, aflag);
@@ -3098,8 +3090,8 @@ int apply_special (object *who, object *op, int aflags)
           LOG(llevBug, "BUG: apply_special(): applied skill is not chosen skill\n");
       }
       if (who->type==PLAYER) {
-          who->contr->shoottype = range_none;
-          who->contr->last_value = -1;
+          CONTR(who)->shoottype = range_none;
+          CONTR(who)->last_value = -1;
           if ( !IS_INVISIBLE(op,who)) {
               /* its a tool, need to unlink it */
               unlink_skill (op);
@@ -3135,8 +3127,8 @@ int apply_special (object *who, object *op, int aflags)
     case HORN:
       sprintf(buf,"You unready %s.",query_name(op));
       if(who->type==PLAYER) {
-        who->contr->shoottype = range_none;
-        who->contr->last_value = -1;
+        CONTR(who)->shoottype = range_none;
+        CONTR(who)->last_value = -1;
       } else {
         switch (op->type) {
           case ROD:
@@ -3160,7 +3152,7 @@ int apply_special (object *who, object *op, int aflags)
         tmp = merge_ob (op, NULL);
         if (who->type == PLAYER) {
             if (tmp) {  /* it was merged */
-                esrv_del_item (who->contr, del_tag, cont);
+                esrv_del_item (CONTR(who), del_tag, cont);
                 op = tmp;
             }
             esrv_send_item (who, op);
@@ -3223,7 +3215,7 @@ int apply_special (object *who, object *op, int aflags)
 
 	/* if we have applied a shield, don't allow apply of polearm or 2hand weapon */
 	if((op->sub_type1>=WEAP_POLE_IMPACT || op->sub_type1>=WEAP_2H_IMPACT) &&
-		who->type == PLAYER && who->contr && who->contr->equipment[PLAYER_EQUIP_SHIELD])
+		who->type == PLAYER && CONTR(who) && CONTR(who)->equipment[PLAYER_EQUIP_SHIELD])
 	{
 		new_draw_info(NDI_UNIQUE, 0, who,	"You can't wield this weapon and a shield.");
         if(tmp!=NULL)
@@ -3246,9 +3238,9 @@ int apply_special (object *who, object *op, int aflags)
   }
   case SHIELD:
 	  	/* don't allow of polearm or 2hand weapon with a shield */
-	if((who->type == PLAYER && who->contr && who->contr->equipment[PLAYER_EQUIP_WEAPON1])
-		&& (who->contr->equipment[PLAYER_EQUIP_WEAPON1]->sub_type1>=WEAP_POLE_IMPACT ||
-		who->contr->equipment[PLAYER_EQUIP_WEAPON1]->sub_type1>=WEAP_2H_IMPACT))
+	if((who->type == PLAYER && CONTR(who) && CONTR(who)->equipment[PLAYER_EQUIP_WEAPON1])
+		&& (CONTR(who)->equipment[PLAYER_EQUIP_WEAPON1]->sub_type1>=WEAP_POLE_IMPACT ||
+		CONTR(who)->equipment[PLAYER_EQUIP_WEAPON1]->sub_type1>=WEAP_2H_IMPACT))
 	{
 		new_draw_info(NDI_UNIQUE, 0, who,	"You can't wield this weapon and a shield.");
         if(tmp!=NULL)
@@ -3284,7 +3276,7 @@ int apply_special (object *who, object *op, int aflags)
         return 1;
     }
     if (who->type == PLAYER) {
-        who->contr->shoottype = range_skill;
+        CONTR(who)->shoottype = range_skill;
         if ( ! IS_INVISIBLE(op,who)) {
             /* for tools */
             if (op->exp_obj)
@@ -3320,8 +3312,8 @@ int apply_special (object *who, object *op, int aflags)
                               "You will now fire %s with %s.",
 	                      op->race ? op->race : "nothing", query_name(op));
       } else {
-        who->contr->chosen_item_spell = op->stats.sp;
-        who->contr->known_spell = (QUERY_FLAG (op, FLAG_BEEN_APPLIED)
+        CONTR(who)->chosen_item_spell = op->stats.sp;
+        CONTR(who)->known_spell = (QUERY_FLAG (op, FLAG_BEEN_APPLIED)
                                    || QUERY_FLAG (op, FLAG_IDENTIFIED));
       }
     } else {
@@ -3391,7 +3383,6 @@ int auto_apply (object *op) {
       
       if(QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))
       {
-        free_object(tmp);
         tmp = NULL;
       }
       
@@ -3419,10 +3410,8 @@ int auto_apply (object *op) {
 	tmp=op->inv;
 	remove_ob(tmp);
 	if (op->env) insert_ob_in_ob(tmp, op->env);
-	else free_object(tmp);
     }
     remove_ob(op);
-    free_object(op);
     break;
   }
 

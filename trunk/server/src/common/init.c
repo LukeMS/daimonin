@@ -75,7 +75,7 @@ void init_library() {
     init_globals();
     init_function_pointers();
     init_hash_table();
-    init_objects();
+    init_mempools(); /* Inits the pooling memory manager and the new object system */
     init_vars();
     init_block();
     LOG(llevInfo,"Daimonin Server, v%s\n",VERSION);
@@ -158,39 +158,6 @@ void init_globals() {
     animations=NULL;
     animations_allocated=0;
     init_defaults();
-}
-
-/*
- * Sets up and initialises the linked list of free and used objects.
- * Allocates a certain chunk of objects and puts them on the free list.
- * Called by init_library();
- */
-
-void init_objects() {
-  int i;
-/* Initialize all objects: */
-  objects=NULL;
-  active_objects = NULL;
-
-#ifdef MEMORY_DEBUG
-  free_objects=NULL;
-#else
-  free_objects=objarray;
-  objarray[0].prev=NULL,
-  objarray[0].next= &objarray[1],
-  SET_FLAG(&objarray[0], FLAG_REMOVED);
-  SET_FLAG(&objarray[0], FLAG_FREED);
-  for(i=1;i<STARTMAX-1;i++) {
-    objarray[i].next= &objarray[i+1];
-    objarray[i].prev= &objarray[i-1];
-    SET_FLAG(&objarray[i], FLAG_REMOVED);
-    SET_FLAG(&objarray[i], FLAG_FREED);
-  }
-  objarray[STARTMAX-1].next=NULL;
-  objarray[STARTMAX-1].prev= &objarray[STARTMAX-2];
-  SET_FLAG(&objarray[STARTMAX-1], FLAG_REMOVED);
-  SET_FLAG(&objarray[STARTMAX-1], FLAG_FREED);
-#endif
 }
 
 /*

@@ -255,7 +255,7 @@ void become_follower (object *op, object *new_god) {
 /*    object *item ;*/
     int i;
     
-	op->contr->socket.ext_title_flag=1;
+	CONTR(op)->socket.ext_title_flag=1;
     /* get old god */
     if (exp_obj->title)
         old_god = find_god(exp_obj->title);
@@ -274,7 +274,6 @@ void become_follower (object *op, object *new_god) {
 	    if(item->type==SKILL || item->type==EXPERIENCE ||
 	       item->type==FORCE) continue;
 	    remove_ob(item);
-	    free_object(item);
 	    item=op->inv;
 	}
     }*/
@@ -646,7 +645,7 @@ static void follower_remove_similar_item (object *op, object *item)
 {
     object *tmp, *next;
     
-    if (op && op->type == PLAYER && op->contr) {
+    if (op && op->type == PLAYER && CONTR(op)) {
         /* search the inventory */
         for (tmp = op->inv; tmp != NULL; tmp = next) {
 	    next = tmp->below;   /* backup in case we remove tmp */
@@ -666,8 +665,7 @@ static void follower_remove_similar_item (object *op, object *item)
 		      "The %s crumbles to dust!", query_short_name(tmp));
 	        
 	        remove_ob(tmp);    /* remove obj from players inv. */
-		esrv_del_item(op->contr, tmp->count, tmp->env); /* notify client */
-		free_object(tmp);  /* free object */
+		esrv_del_item(CONTR(op), tmp->count, tmp->env); /* notify client */
 	    }
 	    if (tmp->inv)
 	      follower_remove_similar_item(tmp, item);
@@ -844,7 +842,6 @@ void god_intervention (object *op, object *god)
                 if (get_attr_value (&depl->stats, i))
                     new_draw_info (NDI_UNIQUE, 0, op, restore_msg[i]);
             remove_ob (depl);
-            free_object (depl);
             fix_player (op);
             return;
         }
@@ -998,7 +995,6 @@ int tailor_god_spell(object *spellop, object *caster) {
               "This prayer is useless unless you worship an appropriate god");
         else
             LOG(llevBug, "BUG: tailor_god_spell(): no god\n");
-        free_object(spellop);
         return 0;
     }
 

@@ -145,7 +145,7 @@ int item_matched_string(object *pl, object *op, const char *name)
      {
        if (pl->type==PLAYER)
        {
-         count=pl->contr->count;
+         count=CONTR(pl)->count;
        }
        else
        {
@@ -159,13 +159,13 @@ int item_matched_string(object *pl, object *op, const char *name)
      char newname[MAX_BUF];
      strcpy(newname, op->name);
      if (!strcasecmp(newname,cp)) {
-       pl->contr->count=count;	/* May not do anything */
+       CONTR(pl)->count=count;	/* May not do anything */
        return 6;
      }
    }
    else if (count==1) {
      if (!strcasecmp(op->name,cp)) {
-       pl->contr->count=count;	/* May not do anything */
+       CONTR(pl)->count=count;	/* May not do anything */
        return 6;
      }
    }
@@ -180,7 +180,7 @@ int item_matched_string(object *pl, object *op, const char *name)
    if (retval) {
      if (pl->type == PLAYER)
      {
-       pl->contr->count=count;
+       CONTR(pl)->count=count;
      };
      return retval;
    }
@@ -306,20 +306,23 @@ archetype *get_archetype_struct() {
   new=(archetype *)CALLOC(1,sizeof(archetype));
   if(new==NULL)
     LOG(llevError,"get_archetype_struct() - out of memory\n");
-  new->next=NULL;
+  
+  /* These values are actually cleared with calloc (one would hope) */
+  /*new->next=NULL;
   new->name=NULL;
+  new->head=NULL;
+  new->more=NULL;
+  new->base_clone=NULL;
+  
   new->clone.other_arch=NULL;
   new->clone.name=NULL;
   new->clone.title=NULL;
   new->clone.race=NULL;
   new->clone.slaying=NULL;
-  new->clone.msg=NULL;
-  clear_object(&new->clone);  /* to initial state other also */
-  CLEAR_FLAG((&new->clone),FLAG_FREED); /* This shouldn't matter, since copy_object() */
-  SET_FLAG((&new->clone), FLAG_REMOVED); /* doesn't copy these flags... */
-  new->head=NULL;
-  new->more=NULL;
-  new->base_clone=NULL;
+  new->clone.msg=NULL; */
+  
+  initialize_object(&new->clone);  /* to initial state other also */
+  
   return new;
 }
 
@@ -383,11 +386,11 @@ void first_arch_pass(FILE *fp) {
     }
 	CLEAR_FLAG((&at->clone),FLAG_CLIENT_SENT); /* we using this flag for debugging - ignore */
     at=get_archetype_struct();
-    clear_object(op);
+    initialize_object(op);
     op->arch=at;
   }
 	delete_loader_buffer(mybuffer);
-	free_object(op);
+    mark_object_removed(op); /* make sure our temp object is gc:ed */
 	free(at);
 }
 
@@ -717,7 +720,6 @@ object *clone_arch(int type) {
 
   if((at=type_to_archetype(type))==NULL) {
     LOG(llevBug,"BUG: Can't clone archetype %d\n",type);
-    free_object(op);
     return NULL;
   }
   copy_object(&at->clone,op);

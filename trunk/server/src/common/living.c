@@ -376,7 +376,7 @@ void check_stat_bounds(living *stats)
 	
 }
 
-#define ORIG_S(xyz,abc)	(op->contr->orig_stats.abc)
+#define ORIG_S(xyz,abc)	(CONTR(op)->orig_stats.abc)
 
 /* return 1 if we sucessfully changed a stat, 0 if nothing was changed. */
 /* flag is set to 1 if we are applying the object, -1 if we are removing
@@ -398,7 +398,7 @@ int change_abil(object *op, object *tmp) {
   if(op->type==PLAYER) {
     if (tmp->type==POTION) {
       for(j=0;j<7;j++) {
-        i = get_attr_value(&(op->contr->orig_stats),j);
+        i = get_attr_value(&(CONTR(op)->orig_stats),j);
 
 	/* Check to see if stats are within limits such that this can be
 	 * applied.
@@ -407,7 +407,7 @@ int change_abil(object *op, object *tmp) {
 	    (20+tmp->stats.sp + get_attr_value(&(op->arch->clone.stats),j)))
 	    && i>0)
 	{
-            change_attr_value(&(op->contr->orig_stats),j,
+            change_attr_value(&(CONTR(op)->orig_stats),j,
                       (signed char)(flag*get_attr_value(&(tmp->stats),j)));
 	    tmp->stats.sp=0;/* Fix it up for super potions */
 	}
@@ -545,7 +545,7 @@ int change_abil(object *op, object *tmp) {
         (*draw_info_func)(NDI_UNIQUE|NDI_GREY, 0, op,"You are blinded.");
         SET_FLAG(op,FLAG_BLIND);
         if(op->type==PLAYER)
-          op->contr->update_los=1;
+          CONTR(op)->update_los=1;
       }  
     } else {
       if(QUERY_FLAG(op,FLAG_WIZ))
@@ -554,7 +554,7 @@ int change_abil(object *op, object *tmp) {
         (*draw_info_func)(NDI_UNIQUE|NDI_WHITE, 0, op,"Your vision returns.");
         CLEAR_FLAG(op,FLAG_BLIND);
         if(op->type==PLAYER)
-          op->contr->update_los=1;
+          CONTR(op)->update_los=1;
       }  
     }  
   }
@@ -576,7 +576,7 @@ int change_abil(object *op, object *tmp) {
       else {
         (*draw_info_func)(NDI_UNIQUE|NDI_GREY, 0, op,"Everything becomes transparent.");
         if(op->type==PLAYER)
-          op->contr->update_los=1;
+          CONTR(op)->update_los=1;
       }
     } else {
       if(QUERY_FLAG(op,FLAG_WIZ))
@@ -584,7 +584,7 @@ int change_abil(object *op, object *tmp) {
       else {
         (*draw_info_func)(NDI_UNIQUE|NDI_GREY, 0, op,"Everything suddenly looks very solid.");
         if(op->type==PLAYER)
-          op->contr->update_los=1;
+          CONTR(op)->update_los=1;
       }
     }
   }
@@ -802,7 +802,7 @@ void fix_player(object *op)
 		return;
 	}
 
-	pl=op->contr;
+	pl=CONTR(op);
 	inv_flag=inv_see_flag=weapon_weight=best_wc=best_ac=wc=ac=0;
 
 	op->stats.Str = pl->orig_stats.Str;
@@ -1596,7 +1596,7 @@ void fix_player(object *op)
 	 if(op->stats.dam<0)
 		op->stats.dam=0;
 
-	 op->contr->client_dam = (sint16)((float)op->stats.dam*f);
+	 CONTR(op)->client_dam = (sint16)((float)op->stats.dam*f);
 	 op->stats.wc +=thaco_bonus[op->stats.Dex];
 
 	 /* thats for the client ... */
@@ -1604,68 +1604,68 @@ void fix_player(object *op)
 	
     /* Regenerate HP */
 	base_reg = 38; /* default value */
-	if(op->contr->gen_hp>0)
+	if(CONTR(op)->gen_hp>0)
 	{
-		op->contr->reg_hp_num =(op->contr->gen_hp/2)+1; /* how much we gain if we gain */
-		base_reg =(base_reg-op->contr->gen_hp)/op->contr->gen_hp;
+		CONTR(op)->reg_hp_num =(CONTR(op)->gen_hp/2)+1; /* how much we gain if we gain */
+		base_reg =(base_reg-CONTR(op)->gen_hp)/CONTR(op)->gen_hp;
 	}
 	else
 	{
-		op->contr->reg_hp_num =1;
-		base_reg +=(op->contr->gen_hp*op->contr->gen_hp)+5;
+		CONTR(op)->reg_hp_num =1;
+		base_reg +=(CONTR(op)->gen_hp*CONTR(op)->gen_hp)+5;
 	}
 	if(base_reg<0)
 		base_reg=0;
 	if(op->last_heal >base_reg) /* that can happens when we have changed equipment! */
 		op->last_heal=base_reg;
 
-	op->contr->base_hp_reg = base_reg; /* thats the real hp reg count in ticks */
+	CONTR(op)->base_hp_reg = base_reg; /* thats the real hp reg count in ticks */
 
-	reg_sec = ((float)(1000000/MAX_TIME)/(float)base_reg)*(float)op->contr->reg_hp_num;
+	reg_sec = ((float)(1000000/MAX_TIME)/(float)base_reg)*(float)CONTR(op)->reg_hp_num;
 	if(reg_sec>100)
 		reg_sec = 99.9f;
 	else if (reg_sec && reg_sec <0.1)
 		reg_sec = 0.1f;
-	op->contr->gen_client_hp = (uint16) (reg_sec*10.0f); /* the value for the client */
-	/*LOG(-1,"%3.3f (%d - %d)\n", reg_sec, base_hp_reg,op->contr->reg_hp_num);*/
+	CONTR(op)->gen_client_hp = (uint16) (reg_sec*10.0f); /* the value for the client */
+	/*LOG(-1,"%3.3f (%d - %d)\n", reg_sec, base_hp_reg,CONTR(op)->reg_hp_num);*/
 		
     /* Regenerate Mana */
 	base_reg = 35; /* default value */
-	if(op->contr->gen_sp>0)
+	if(CONTR(op)->gen_sp>0)
 	{
-		op->contr->reg_sp_num =(op->contr->gen_sp/3)+1;
-		base_reg =((base_reg+op->contr->gen_sp_armour)-op->contr->gen_sp)/op->contr->gen_sp;
+		CONTR(op)->reg_sp_num =(CONTR(op)->gen_sp/3)+1;
+		base_reg =((base_reg+CONTR(op)->gen_sp_armour)-CONTR(op)->gen_sp)/CONTR(op)->gen_sp;
 	}
 	else
 	{
-		op->contr->reg_sp_num =1;
-		base_reg +=(op->contr->gen_sp*op->contr->gen_sp)+5+op->contr->gen_sp_armour;
+		CONTR(op)->reg_sp_num =1;
+		base_reg +=(CONTR(op)->gen_sp*CONTR(op)->gen_sp)+5+CONTR(op)->gen_sp_armour;
 	}
 	if(base_reg<0)
 		base_reg=0;
 	if(op->last_sp >base_reg) /* that can happens when we have changed equipment! */
 		op->last_sp =base_reg;
 
-	op->contr->base_sp_reg = base_reg; /* thats the real sp reg count in ticks */
+	CONTR(op)->base_sp_reg = base_reg; /* thats the real sp reg count in ticks */
 
-	reg_sec = ((float)(1000000/MAX_TIME)/(float)base_reg)*(float)op->contr->reg_sp_num;	
+	reg_sec = ((float)(1000000/MAX_TIME)/(float)base_reg)*(float)CONTR(op)->reg_sp_num;	
 	if(reg_sec>100)
 		reg_sec = 99.9f;
 	else if (reg_sec && reg_sec <0.1)
 		reg_sec = 0.1f;
-	op->contr->gen_client_sp = (uint16) (reg_sec*10.0f);
+	CONTR(op)->gen_client_sp = (uint16) (reg_sec*10.0f);
 
     /* Regenerate Grace */
 	base_reg = 25; /* default value */
-	if(op->contr->gen_grace>0)
+	if(CONTR(op)->gen_grace>0)
 	{
-		op->contr->reg_grace_num =(op->contr->gen_grace/3)+1;
-		base_reg =(base_reg-op->contr->gen_grace)/op->contr->gen_grace;
+		CONTR(op)->reg_grace_num =(CONTR(op)->gen_grace/3)+1;
+		base_reg =(base_reg-CONTR(op)->gen_grace)/CONTR(op)->gen_grace;
 	}
 	else
 	{
-		op->contr->reg_grace_num =1;
-		base_reg +=(op->contr->gen_grace*op->contr->gen_grace)+5;
+		CONTR(op)->reg_grace_num =1;
+		base_reg +=(CONTR(op)->gen_grace*CONTR(op)->gen_grace)+5;
 	}
 
 	if(base_reg<0)
@@ -1673,14 +1673,14 @@ void fix_player(object *op)
 	if(op->last_grace >base_reg) /* that can happens when we have changed equipment! */
 		op->last_grace=base_reg;
 
-	op->contr->base_grace_reg = base_reg; /* thats the real sp reg count in ticks */
+	CONTR(op)->base_grace_reg = base_reg; /* thats the real sp reg count in ticks */
 
-	reg_sec = ((float)(1000000/MAX_TIME)/(float)base_reg)*(float)op->contr->reg_grace_num;
+	reg_sec = ((float)(1000000/MAX_TIME)/(float)base_reg)*(float)CONTR(op)->reg_grace_num;
 	if(reg_sec>100)
 		reg_sec = 99.9f;
 	else if (reg_sec && reg_sec <0.1)
 		reg_sec = 0.1f;
-	op->contr->gen_client_grace = (uint16) (reg_sec*10.0f);
+	CONTR(op)->gen_client_grace = (uint16) (reg_sec*10.0f);
 		
 	/*LOG(-1,"PLAYER ADJUST: %s -> hp(%d %d %d %d) sp(%d %d %d %d) gr(%d %d %d %d)\n",op->name,
 		op->stats.hp,op->stats.maxhp,op->arch->clone.stats.maxhp,op->stats.maxhp_adj, 
@@ -1738,22 +1738,22 @@ void set_dragon_name(object *pl, object *abil, object *skin) {
   
   /* now set the new title */
   /*
-  if (pl->contr != NULL) {
+  if (CONTR(pl) != NULL) {
     if(level == 0)
-      sprintf(pl->contr->title, "%s hatchling", attacks[atnr]);
+      sprintf(CONTR(pl)->title, "%s hatchling", attacks[atnr]);
     else if (level == 1)
-      sprintf(pl->contr->title, "%s wyrm", attacks[atnr]);
+      sprintf(CONTR(pl)->title, "%s wyrm", attacks[atnr]);
      else if (level == 2)
-      sprintf(pl->contr->title, "%s wyvern", attacks[atnr]);
+      sprintf(CONTR(pl)->title, "%s wyvern", attacks[atnr]);
     else if (level == 3)
-      sprintf(pl->contr->title, "%s dragon", attacks[atnr]);
+      sprintf(CONTR(pl)->title, "%s dragon", attacks[atnr]);
     else {
       if (skin->resist[atnr] > 80)
-	sprintf(pl->contr->title, "legendary %s dragon", attacks[atnr]);
+	sprintf(CONTR(pl)->title, "legendary %s dragon", attacks[atnr]);
       else if (skin->resist[atnr] > 50)
-	sprintf(pl->contr->title, "ancient %s dragon", attacks[atnr]);
+	sprintf(CONTR(pl)->title, "ancient %s dragon", attacks[atnr]);
       else
-	sprintf(pl->contr->title, "big %s dragon", attacks[atnr]);
+	sprintf(CONTR(pl)->title, "big %s dragon", attacks[atnr]);
     }
   }
   */

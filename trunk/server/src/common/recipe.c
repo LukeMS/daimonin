@@ -553,8 +553,6 @@ artifact * locate_recipe_artifact(recipe *rp) {
       for(art=at->items;art;art=art->next)
           if(!strcmp(art->def_at.clone.name,rp->title)) break;
  
-   free_object(item);
-
    return art;
 }
 

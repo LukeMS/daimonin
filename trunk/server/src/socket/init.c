@@ -320,15 +320,6 @@ void free_newsocket(NewSocket *ns)
 		memset(ns,0,sizeof(ns));
 }
 
-void final_free_player(player *pl)
-{
-	/*
-	char buf[2]="X";
-    Write_String_To_Socket(&pl->socket, BINARY_CMD_BYE, buf, 1);*/
-    free_newsocket(&pl->socket);
-    free_player(pl);
-}
-
 /* as long the server don't have a autoupdate/login server
  * as frontend we must serve our depending client files self.
  */

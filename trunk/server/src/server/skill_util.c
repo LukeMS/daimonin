@@ -94,9 +94,9 @@ void find_skill_exp_name(object *pl, object *exp, int index)
 	{
 		if(!strcmp(skill_name_table[s].name, exp->name) )
         {
-			pl->contr->last_skill_ob[index] = exp;
-			pl->contr->last_skill_id[index] = skill_name_table[s].id;
-			pl->contr->last_skill_index++;
+			CONTR(pl)->last_skill_ob[index] = exp;
+			CONTR(pl)->last_skill_id[index] = skill_name_table[s].id;
+			CONTR(pl)->last_skill_index++;
 			return;
         }
 		
@@ -110,10 +110,10 @@ int find_skill_exp_level(object *pl, int item_skill)
 {
     register int s;
 
-    for(s=0;s<pl->contr->last_skill_index;s++)
+    for(s=0;s<CONTR(pl)->last_skill_index;s++)
     {
-        if(pl->contr->last_skill_id[s] == item_skill_cs_stat[item_skill])
-            return pl->contr->last_skill_ob[s]->level;
+        if(CONTR(pl)->last_skill_id[s] == item_skill_cs_stat[item_skill])
+            return CONTR(pl)->last_skill_ob[s]->level;
     }
     return 0; /* this should not happens... */
 }
@@ -440,7 +440,7 @@ void dump_skills()
     char buf[MAX_BUF];
     int i;
 
-	dump_all_objects();
+/* 	dump_all_objects(); */
     LOG(llevInfo,"exper_catgry \t str \t dex \t con \t wis \t cha \t int \t pow \n");
     for (i = 0; i < nrofexpcat; i++)
       LOG(llevInfo,"%d-%s \t %d \t %d \t %d \t %d \t %d \t %d \t %d \n",
@@ -484,6 +484,7 @@ void init_exp_obj() {
 	     exp_cat[nrofexpcat]->level = 1;
 	     exp_cat[nrofexpcat]->stats.exp = 0;
              copy_object(&at->clone, exp_cat[nrofexpcat]);
+             insert_ob_in_ob(exp_cat[nrofexpcat], &void_container); /* avoid gc on these objects */
              nrofexpcat++;
              if(nrofexpcat == MAX_EXP_CAT) {
                  LOG(llevSystem,"ERROR: Aborting! Reached limit of available experience\n");
@@ -671,9 +672,9 @@ int check_skill_to_fire(object *who) {
 
   if(who->type!=PLAYER) return 1;
 
-  switch((shoottype = who->contr->shoottype)) {
+  switch((shoottype = CONTR(who)->shoottype)) {
     case range_bow:
-		if(!(tmp = who->contr->equipment[PLAYER_EQUIP_BOW]))
+		if(!(tmp = CONTR(who)->equipment[PLAYER_EQUIP_BOW]))
 			return 0;
 		if(tmp->sub_type1 == 2)
 	       skillnr = SK_SLING_WEAP;
@@ -687,7 +688,7 @@ int check_skill_to_fire(object *who) {
        return 1;
        break;
     case range_magic:
-        if(spells[who->contr->chosen_spell].flags&SPELL_DESC_WIS)
+        if(spells[CONTR(who)->chosen_spell].flags&SPELL_DESC_WIS)
             skillnr = SK_PRAYING;
         else
             skillnr = SK_SPELL_CASTING;
@@ -707,7 +708,7 @@ int check_skill_to_fire(object *who) {
       LOG(llevDebug,"check_skill_to_fire(): got skill:%s for %s\n"
         ,skills[skillnr].name,who->name);
 #endif
-    who->contr->shoottype=shoottype;
+    CONTR(who)->shoottype=shoottype;
     return 1;
   } else 
     return 0;
@@ -837,17 +838,17 @@ int init_player_exp(object *pl) {
 	return 0;
    }
 
-   pl->contr->last_skill_index = 0;
+   CONTR(pl)->last_skill_index = 0;
 
    /* first-pass find all current exp objects */
    for(tmp=pl->inv;tmp;tmp=tmp->below)
       if(tmp->type==EXPERIENCE) {
 	    exp_ob[exp_index] = tmp;
 		if (tmp->stats.Pow)
-			pl->contr->sp_exp_ptr = tmp;
+			CONTR(pl)->sp_exp_ptr = tmp;
 		if (tmp->stats.Wis)
-			pl->contr->grace_exp_ptr = tmp;
-	    find_skill_exp_name(pl, tmp, pl->contr->last_skill_index);
+			CONTR(pl)->grace_exp_ptr = tmp;
+	    find_skill_exp_name(pl, tmp, CONTR(pl)->last_skill_index);
 	    exp_index++;
       } else if (exp_index == MAX_EXP_CAT)
     	   return 0;	 
@@ -866,9 +867,9 @@ int init_player_exp(object *pl) {
 	   tmp->stats.exp = pl->stats.exp/nrofexpcat;
            exp_ob[j] = tmp;
 			if (tmp->stats.Pow)
-				pl->contr->sp_exp_ptr = tmp;
+				CONTR(pl)->sp_exp_ptr = tmp;
 			if (tmp->stats.Wis)
-				pl->contr->grace_exp_ptr = tmp;
+				CONTR(pl)->grace_exp_ptr = tmp;
            esrv_send_item(pl, tmp);
            exp_index++;
         }
@@ -887,9 +888,9 @@ int init_player_exp(object *pl) {
               insert_ob_in_ob(tmp,pl);
 	      exp_ob[i] = tmp; 
 			if (tmp->stats.Pow)
-				pl->contr->sp_exp_ptr = tmp;
+				CONTR(pl)->sp_exp_ptr = tmp;
 			if (tmp->stats.Wis)
-				pl->contr->grace_exp_ptr = tmp;
+				CONTR(pl)->grace_exp_ptr = tmp;
               esrv_send_item(pl, tmp);
               exp_index++;
            }
@@ -959,13 +960,13 @@ int link_player_skills(object *pl) {
    /* We're going to unapply all skills */
    pl->chosen_skill = NULL;
    CLEAR_FLAG (pl, FLAG_READY_SKILL);
-   pl->contr->last_skill_index = 0;
+   CONTR(pl)->last_skill_index = 0;
 
    /* first find all exp and skill objects */
    for(tmp=pl->inv;tmp&&sk_index<100;tmp=tmp->below)
       if(tmp->type==EXPERIENCE) {
            exp_ob[exp_index] = tmp;
-	   find_skill_exp_name(pl, tmp, pl->contr->last_skill_index);
+	   find_skill_exp_name(pl, tmp, CONTR(pl)->last_skill_index);
 	       /* hm, this mutiple instances ... no idea what it is... MT-2004 */
            tmp->nrof=1; /* to handle multiple instances */
            exp_index++;
@@ -1079,7 +1080,7 @@ int learn_skill (object *pl, object *scroll, char *name, int skillnr, int scroll
     /* Everything is cool. Give'em the skill */
     (void) insert_ob_in_ob(tmp,pl);
     (void) link_player_skill(pl,tmp);  
-    play_sound_player_only (pl->contr , SOUND_LEARN_SPELL,SOUND_NORMAL, 0, 0);
+    play_sound_player_only (CONTR(pl) , SOUND_LEARN_SPELL,SOUND_NORMAL, 0, 0);
     new_draw_info_format (NDI_UNIQUE, 0, pl , 
         "You have learned the skill %s!", tmp->name);
     
@@ -1267,7 +1268,7 @@ int change_skill (object *who, int sk_index)
     {
         /* optimization for changing skill to current skill */
         if (who->type == PLAYER)
-            who->contr->shoottype = range_skill;
+            CONTR(who)->shoottype = range_skill;
         return 1;
     }
 
@@ -1303,7 +1304,7 @@ int change_skill_to_skill (object *who, object *skl)
     {
         /* optimization for changing skill to current skill */
         if (who->type == PLAYER)
-            who->contr->shoottype = range_skill;
+            CONTR(who)->shoottype = range_skill;
         return 0;
     }
 
@@ -1465,11 +1466,11 @@ int do_skill_attack(object *tmp, object *op, char *string) {
 	 */
     if(op->type==PLAYER)
 	{
-		if(!op->contr->selected_weapon) /* ok... lets change to our hth skill */
+		if(!CONTR(op)->selected_weapon) /* ok... lets change to our hth skill */
 		{
-			if(op->contr->skill_weapon)
+			if(CONTR(op)->skill_weapon)
 			{
-				if(change_skill_to_skill(op,op->contr->skill_weapon))
+				if(change_skill_to_skill(op,CONTR(op)->skill_weapon))
 				{ 
 			       	LOG(llevBug,"BUG: do_skill_attack() could'nt give new hth skill to %s\n",query_name(op));
 					return 0;
@@ -1536,19 +1537,19 @@ int do_skill_attack(object *tmp, object *op, char *string) {
     * the players--no need to do this for monsters.
     */
           if(op->type==PLAYER && QUERY_FLAG(op,FLAG_READY_WEAPON)
-             && (!op->chosen_skill || op->chosen_skill->stats.sp!=op->contr->set_skill_weapon)) 
+             && (!op->chosen_skill || op->chosen_skill->stats.sp!=CONTR(op)->set_skill_weapon)) 
 		  {
 #ifdef NO_AUTO_SKILL_SWITCH
-		rangetype oldrange=op->contr->shoottype;
+		rangetype oldrange=CONTR(op)->shoottype;
 #endif
-                 (void) change_skill(op,op->contr->set_skill_weapon);
+                 (void) change_skill(op,CONTR(op)->set_skill_weapon);
 
 /* This is just a simple hack - would probably be cleaner to have change_skill
  * do the right thing, but this isn't that bad.
  */
 #ifdef NO_AUTO_SKILL_SWITCH
-		if (op->contr->shoottype!=oldrange) {
-		    op->contr->shoottype=oldrange;
+		if (CONTR(op)->shoottype!=oldrange) {
+		    CONTR(op)->shoottype=oldrange;
 		}
 #endif
 	  }
@@ -1634,7 +1635,7 @@ float get_skill_time(object *op, int skillnr)
 	 */
 	if(skillnr == SK_SPELL_CASTING || skillnr == SK_PRAYING)
 	{
-		op->contr->action_casting = global_round_tag+8;
+		CONTR(op)->action_casting = global_round_tag+8;
 		return 0;		
 	}
 	/* these are skills using the "fire/range" menu - throwing, archery 
@@ -1643,7 +1644,7 @@ float get_skill_time(object *op, int skillnr)
 	else  if(skillnr == SK_USE_MAGIC_ITEM || skillnr == SK_MISSILE_WEAPON ||
 			skillnr == SK_THROWING || skillnr == SK_XBOW_WEAP ||skillnr == SK_SLING_WEAP)
 	{
-		op->contr->action_range = global_round_tag+op->chosen_skill->stats.maxsp;
+		CONTR(op)->action_range = global_round_tag+op->chosen_skill->stats.maxsp;
 		return 0;		
 	}
 	
@@ -1680,10 +1681,10 @@ int check_skill_action_time(object *op, object *skill)
 		/* spells */
 		case SK_PRAYING:
 		case SK_SPELL_CASTING:
-			if(op->contr->action_casting > global_round_tag)
+			if(CONTR(op)->action_casting > global_round_tag)
 			{
 				new_draw_info_format(NDI_UNIQUE, 0,op, "You can cast in %2.2f seconds again.", 
-					(float)(op->contr->action_casting-global_round_tag)/(1000000/MAX_TIME));
+					(float)(CONTR(op)->action_casting-global_round_tag)/(1000000/MAX_TIME));
 				return FALSE;
 			}
 		break;
@@ -1692,27 +1693,27 @@ int check_skill_action_time(object *op, object *skill)
 		case SK_SLING_WEAP:
 		case SK_XBOW_WEAP:
 		case SK_MISSILE_WEAPON:
-			if(op->contr->action_range > global_round_tag)
+			if(CONTR(op)->action_range > global_round_tag)
 			{
 				new_draw_info_format(NDI_UNIQUE, 0,op, "You can shot in %2.2f seconds again.", 
-					(float)(op->contr->action_range-global_round_tag)/(1000000/MAX_TIME));
+					(float)(CONTR(op)->action_range-global_round_tag)/(1000000/MAX_TIME));
 				return FALSE;
 			}
 		break;
 		
 		case SK_USE_MAGIC_ITEM:
-			if(op->contr->action_range > global_round_tag)
+			if(CONTR(op)->action_range > global_round_tag)
 			{
 				new_draw_info_format(NDI_UNIQUE, 0,op, "You can use a device in %2.2f seconds again.", 
-					(float)(op->contr->action_range-global_round_tag)/(1000000/MAX_TIME));
+					(float)(CONTR(op)->action_range-global_round_tag)/(1000000/MAX_TIME));
 				return FALSE;
 			}
 
 		case SK_THROWING:
-			if(op->contr->action_range > global_round_tag)
+			if(CONTR(op)->action_range > global_round_tag)
 			{
 				new_draw_info_format(NDI_UNIQUE, 0,op, "You can throw in %2.2f seconds again.", 
-					(float)(op->contr->action_range-global_round_tag)/(1000000/MAX_TIME));
+					(float)(CONTR(op)->action_range-global_round_tag)/(1000000/MAX_TIME));
 				return FALSE;
 			}
 		default:

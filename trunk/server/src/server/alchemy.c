@@ -580,7 +580,6 @@ void remove_contents (object *first_ob, object *save_item) {
 	}
  	if(tmp->inv) remove_contents(tmp->inv,NULL);
         remove_ob(tmp);
-        free_object(tmp);
         tmp=next;
     }
 }

@@ -74,87 +74,87 @@ void play_sound_map(mapstruct *map, int x, int y, int sound_num, int sound_type)
 
 	if(map->player_first) /* any player on this map? */
 	{
-		for(tmp=map->player_first;tmp;tmp=tmp->contr->map_above)
+		for(tmp=map->player_first;tmp;tmp=CONTR(tmp)->map_above)
 		{
 			if( (POW2(tmp->x - x) + POW2(tmp->y - y)) <=MAX_SOUND_DISTANCE_SQUARED)
-				play_sound_player_only(tmp->contr, sound_num, sound_type, x-tmp->x, y-tmp->y);
+				play_sound_player_only(CONTR(tmp), sound_num, sound_type, x-tmp->x, y-tmp->y);
 		}
 	}
 
 	if (map->tile_map[0] && map->tile_map[0]->in_memory==MAP_IN_MEMORY && map->tile_map[0]->player_first)
 	{
 		yt = y+MAP_HEIGHT(map->tile_map[0]);
-		for(tmp=map->tile_map[0]->player_first;tmp;tmp=tmp->contr->map_above)
+		for(tmp=map->tile_map[0]->player_first;tmp;tmp=CONTR(tmp)->map_above)
 		{
 			if( (POW2(tmp->x - x) + POW2(tmp->y - yt)) <=MAX_SOUND_DISTANCE_SQUARED)
-				play_sound_player_only(tmp->contr, sound_num, sound_type, x-tmp->x, yt-tmp->y);
+				play_sound_player_only(CONTR(tmp), sound_num, sound_type, x-tmp->x, yt-tmp->y);
 		}
 	}
 	if (map->tile_map[1] && map->tile_map[1]->in_memory==MAP_IN_MEMORY && map->tile_map[1]->player_first)
 	{
 		xt = x-MAP_WIDTH(map);
-		for(tmp=map->tile_map[1]->player_first;tmp;tmp=tmp->contr->map_above)
+		for(tmp=map->tile_map[1]->player_first;tmp;tmp=CONTR(tmp)->map_above)
 		{
 			if( (POW2(tmp->x - xt) + POW2(tmp->y - y)) <=MAX_SOUND_DISTANCE_SQUARED)
-				play_sound_player_only(tmp->contr, sound_num, sound_type, xt-tmp->x, y-tmp->y);
+				play_sound_player_only(CONTR(tmp), sound_num, sound_type, xt-tmp->x, y-tmp->y);
 		}
 	}
 	if (map->tile_map[2] && map->tile_map[2]->in_memory==MAP_IN_MEMORY && map->tile_map[2]->player_first)
 	{
 		yt = y-MAP_HEIGHT(map);
-		for(tmp=map->tile_map[2]->player_first;tmp;tmp=tmp->contr->map_above)
+		for(tmp=map->tile_map[2]->player_first;tmp;tmp=CONTR(tmp)->map_above)
 		{
 			if( (POW2(tmp->x - x) + POW2(tmp->y - yt)) <=MAX_SOUND_DISTANCE_SQUARED)
-				play_sound_player_only(tmp->contr, sound_num, sound_type, x-tmp->x, yt-tmp->y);
+				play_sound_player_only(CONTR(tmp), sound_num, sound_type, x-tmp->x, yt-tmp->y);
 		}
 	}
 	if (map->tile_map[3] && map->tile_map[3]->in_memory==MAP_IN_MEMORY && map->tile_map[3]->player_first)
 	{
 		xt =x+MAP_WIDTH(map->tile_map[3]);
-		for(tmp=map->tile_map[3]->player_first;tmp;tmp=tmp->contr->map_above)
+		for(tmp=map->tile_map[3]->player_first;tmp;tmp=CONTR(tmp)->map_above)
 		{
 			if( (POW2(tmp->x - xt) + POW2(tmp->y - y)) <=MAX_SOUND_DISTANCE_SQUARED)
-				play_sound_player_only(tmp->contr, sound_num, sound_type, xt-tmp->x, y-tmp->y);
+				play_sound_player_only(CONTR(tmp), sound_num, sound_type, xt-tmp->x, y-tmp->y);
 		}
 	}
 	if (map->tile_map[4] && map->tile_map[4]->in_memory==MAP_IN_MEMORY && map->tile_map[4]->player_first)
 	{
 		yt = y+MAP_HEIGHT(map->tile_map[4]);
 		xt = x-MAP_WIDTH(map);
-		for(tmp=map->tile_map[4]->player_first;tmp;tmp=tmp->contr->map_above)
+		for(tmp=map->tile_map[4]->player_first;tmp;tmp=CONTR(tmp)->map_above)
 		{
 			if( (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <=MAX_SOUND_DISTANCE_SQUARED)
-				play_sound_player_only(tmp->contr, sound_num, sound_type, xt-tmp->x, yt-tmp->y);
+				play_sound_player_only(CONTR(tmp), sound_num, sound_type, xt-tmp->x, yt-tmp->y);
 		}
 	}
 	if (map->tile_map[5] && map->tile_map[5]->in_memory==MAP_IN_MEMORY && map->tile_map[5]->player_first)
 	{
 		xt = x-MAP_WIDTH(map);
 		yt = y-MAP_HEIGHT(map);
-		for(tmp=map->tile_map[5]->player_first;tmp;tmp=tmp->contr->map_above)
+		for(tmp=map->tile_map[5]->player_first;tmp;tmp=CONTR(tmp)->map_above)
 		{
 			if( (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <=MAX_SOUND_DISTANCE_SQUARED)
-				play_sound_player_only(tmp->contr, sound_num, sound_type, xt-tmp->x, yt-tmp->y);
+				play_sound_player_only(CONTR(tmp), sound_num, sound_type, xt-tmp->x, yt-tmp->y);
 		}
 	}
 	if (map->tile_map[6] && map->tile_map[6]->in_memory==MAP_IN_MEMORY && map->tile_map[6]->player_first)
 	{
 		xt =x+MAP_WIDTH(map->tile_map[6]);
 		yt = y-MAP_HEIGHT(map);
-		for(tmp=map->tile_map[6]->player_first;tmp;tmp=tmp->contr->map_above)
+		for(tmp=map->tile_map[6]->player_first;tmp;tmp=CONTR(tmp)->map_above)
 		{
 			if( (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <=MAX_SOUND_DISTANCE_SQUARED)
-				play_sound_player_only(tmp->contr, sound_num, sound_type, xt-tmp->x, yt-tmp->y);
+				play_sound_player_only(CONTR(tmp), sound_num, sound_type, xt-tmp->x, yt-tmp->y);
 		}
 	}
 	if (map->tile_map[7] && map->tile_map[7]->in_memory==MAP_IN_MEMORY && map->tile_map[7]->player_first)
 	{
 		xt =x+MAP_WIDTH(map->tile_map[7]);
 		yt = y+MAP_HEIGHT(map->tile_map[7]);
-		for(tmp=map->tile_map[7]->player_first;tmp;tmp=tmp->contr->map_above)
+		for(tmp=map->tile_map[7]->player_first;tmp;tmp=CONTR(tmp)->map_above)
 		{
 			if( (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <=MAX_SOUND_DISTANCE_SQUARED)
-				play_sound_player_only(tmp->contr, sound_num, sound_type, xt-tmp->x, yt-tmp->y);
+				play_sound_player_only(CONTR(tmp), sound_num, sound_type, xt-tmp->x, yt-tmp->y);
 		}
 	}
 }

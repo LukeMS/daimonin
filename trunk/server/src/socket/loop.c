@@ -355,16 +355,17 @@ static void remove_ns_dead_player(player *pl)
 
 	container_unlink(pl,NULL);
 	save_player(pl->ob, 0);
-			
+
 	if(!QUERY_FLAG(pl->ob,FLAG_REMOVED))
 	{
 		terminate_all_pets(pl->ob);
 		leave_map(pl->ob);
 	}
 			
+    
+    LOG(llevDebug,"remove_ns_dead_player(): %s leaving\n", STRING_OBJ_NAME(pl->ob));
 	leave(pl,1);
-	final_free_player(pl);
-
+//	final_free_player(pl);
 }
 
 /* This checks the sockets for input and exceptions, does the right thing.  A 

@@ -207,7 +207,6 @@ void rune_attack(object *op,object *victim)
 			object *disease=op->inv;
 			infect_object(victim, disease, 1);
 			remove_ob(disease);
-			free_object(disease);
 		}
     }
     else  
@@ -424,7 +423,6 @@ int trap_disarm(object *disarmer, object *trap, int risk) {
         {
             new_draw_info_format(NDI_UNIQUE, 0,disarmer,"You successfuly remove the %s (lvl %d)!", trap->name, trap->level);
             remove_ob(trap);
-            free_object(trap);
 			set_traped_flag(env);
 	    /* If it is your own trap, (or any players trap), don't you don't
 	     * get exp for it.

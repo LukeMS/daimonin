@@ -282,7 +282,6 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
 	     */
 	    if (tmp->type == EXIT && !strncmp(EXIT_PATH(tmp),"/random/", 8)) {
 		remove_ob(tmp);
-		free_object(tmp);
 		break;
 	    }
 

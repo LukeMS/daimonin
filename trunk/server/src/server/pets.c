@@ -99,7 +99,6 @@ void terminate_all_pets(object *owner) {
       if(!QUERY_FLAG(ob, FLAG_REMOVED))
         remove_ob(ob);
       remove_friendly_object(ob);
-      free_object(ob);
     }
   }
 }
@@ -128,7 +127,6 @@ void remove_all_pets(mapstruct *map) {
 	    object *ob = obl->ob;
 	    LOG(llevMonster,"(pet failed to follow)");
 	    remove_friendly_object(ob);
-	    free_object(ob);
 	}
     }
   }
@@ -174,7 +172,6 @@ void pet_move(object * ob)
     if ((owner = get_owner(ob)) == NULL) {
 	remove_ob(ob); /* Will be freed when returning */
 	remove_friendly_object(ob);
-	free_object(ob);
 	LOG(llevMonster, "Pet: no owner, leaving.\n");
 	return;
     }

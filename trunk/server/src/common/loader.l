@@ -1250,10 +1250,8 @@ void save_object(FILE *fp,object *op, int flag) {
 	old=tmp;
     }
    
-    if (!(flag&2)) {
+    if (!(flag&2)) 
 	remove_ob(op);
-	free_object (op);
-    }
 
     fprintf(fp,"end\n");
 }

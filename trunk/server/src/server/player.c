@@ -43,7 +43,7 @@ player *find_player(char *plname)
   player *pl;
   for(pl=first_player;pl!=NULL;pl=pl->next)
   {
-    if(pl->ob != NULL && !QUERY_FLAG(pl->ob,FLAG_REMOVED) && !strcmp(query_name(pl->ob),plname))
+    if(pl->ob != NULL && !QUERY_FLAG(pl->ob, FLAG_REMOVED) && !strcmp(query_name(pl->ob),plname))
         return pl;
   };
   return NULL;
@@ -94,7 +94,7 @@ static player* get_player(player *p) {
 	{
 		player *tmp;
 
-		p = (player *) malloc(sizeof(player));
+        p = (player *) get_poolchunk(POOL_PLAYER);
 		memset(p,0, sizeof(player));
 		if(p==NULL)
 			LOG(llevError,"ERROR: get_player(): out of memory\n");
@@ -114,13 +114,13 @@ static player* get_player(player *p) {
 		    first_player=p;
 
 		p->next = NULL; 
+    } else {
+        /* Clears basically the entire player structure except
+         * for next and socket.
+         */
+        memset((void*)((char*)p + offsetof(player, maplevel)), 0, 
+                sizeof(player) - offsetof(player, maplevel));
     }
-
-    /* Clears basically the entire player structure except
-     * for next and socket.
-     */
-    memset((void*)((char*)p + offsetof(player, maplevel)), 0, 
-					    sizeof(player) - offsetof(player, maplevel));
 
     /* There are some elements we want initialized to non zero value -
      * we deal with that below this point.
@@ -134,7 +134,7 @@ static player* get_player(player *p) {
     strcpy(p->savebed_map, first_map_path);  /* Init. respawn position */
 
     p->firemode_type=p->firemode_tag1=p->firemode_tag2=-1;
-    op->contr=p; /* this aren't yet in archetype */
+    op->custom_attrset = p; /* this is where we set up initial CONTR(op) */
     p->ob = op;
     op->speed_left=0.5;
     op->speed=1.0;
@@ -184,6 +184,32 @@ static player* get_player(player *p) {
     return p;
 }
 
+void free_player(player *pl) 
+{
+    /* Remove from list of players */
+    if (first_player!=pl) 
+	{
+		player *prev=first_player;
+		while(prev!=NULL&&prev->next!=NULL&&prev->next!=pl)
+		    prev=prev->next;
+		if(prev->next!=pl) 
+		 LOG(llevError,"ERROR: free_player(): Can't find previous player.\n");
+		prev->next=pl->next;
+    } 
+	else
+		first_player=pl->next;
+
+	/* the inventory delete was before in save_player()... bad bad bad */
+    if(pl->ob != NULL) 
+	{
+		SET_FLAG(pl->ob, FLAG_NO_FIX_PLAYER);
+        if (!QUERY_FLAG(pl->ob, FLAG_REMOVED)) 
+			remove_ob(pl->ob);
+    }
+
+    free_newsocket(&pl->socket);
+}
+
 /* Tries to add player on the connection passwd in ns.
  * All we can really get in this is some settings like host and display
  * mode.
@@ -220,6 +246,9 @@ int add_player(NewSocket *ns) {
 
 	start_info(p->ob);
     get_name(p->ob);
+
+    insert_ob_in_ob(p->ob, &void_container); /* Avoid gc of the player */
+    
     return 0;
 }
 
@@ -297,7 +326,7 @@ object *get_nearest_player(object *mon) {
 		* While unlikely, it is possible the next object on the friendly
 		* list is also free, so encapsulate this in a while loop.
 		*/
-		while ((tag_t) ol->id != ol->ob->count || QUERY_FLAG(ol->ob, FLAG_REMOVED) || QUERY_FLAG(ol->ob, FLAG_FREED) || (!QUERY_FLAG(ol->ob, FLAG_FRIENDLY)&& ol->ob->type != PLAYER)) 
+		while (!OBJECT_VALID(ol->ob, ol->id) || (!QUERY_FLAG(ol->ob, FLAG_FRIENDLY)&& ol->ob->type != PLAYER)) 
 		{
 			object *tmp=ol->ob;
 
@@ -496,7 +525,6 @@ void give_initial_items(object *pl,treasurelist *items) {
 	       op->type == BRACERS || op->type == GIRDLE)) ||
 	      (!QUERY_FLAG(pl, FLAG_USE_WEAPON) && op->type == WEAPON)) {
 	    remove_ob (op);
-	    free_object (op);
 	    continue;
 	  }
 	}
@@ -511,31 +539,30 @@ void give_initial_items(object *pl,treasurelist *items) {
 	    CLEAR_FLAG(op, FLAG_DAMNED);
 	}
 	if(op->type==ABILITY)  {
-	    pl->contr->known_spells[pl->contr->nrofknownspells++]=op->stats.sp;
+	    CONTR(pl)->known_spells[CONTR(pl)->nrofknownspells++]=op->stats.sp;
 	    remove_ob(op);
-	    free_object(op);
             continue;
 	}
     } /* for loop of objects in player inv */
 }
 
 void get_name(object *op) {
-    op->contr->write_buf[0]='\0';
-    op->contr->state=ST_GET_NAME;
-    send_query(&op->contr->socket,0,"What is your name?\n:");
+    CONTR(op)->write_buf[0]='\0';
+    CONTR(op)->state=ST_GET_NAME;
+    send_query(&CONTR(op)->socket,0,"What is your name?\n:");
 }
 
 void get_password(object *op) {
-    op->contr->write_buf[0]='\0';
-    op->contr->state=ST_GET_PASSWORD;
-    send_query(&op->contr->socket,CS_QUERY_HIDEINPUT, "What is your password?\n:");
+    CONTR(op)->write_buf[0]='\0';
+    CONTR(op)->state=ST_GET_PASSWORD;
+    send_query(&CONTR(op)->socket,CS_QUERY_HIDEINPUT, "What is your password?\n:");
 }
 
 void confirm_password(object *op) {
 
-    op->contr->write_buf[0]='\0';
-    op->contr->state=ST_CONFIRM_PASSWORD;
-    send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, "Please type your password again.\n:");
+    CONTR(op)->write_buf[0]='\0';
+    CONTR(op)->state=ST_CONFIRM_PASSWORD;
+    send_query(&CONTR(op)->socket, CS_QUERY_HIDEINPUT, "Please type your password again.\n:");
 }
 
 /*
@@ -547,7 +574,7 @@ int key_confirm_quit(object *op, char key)
     int evtid;
 #endif
     if(key!='y'&&key!='Y'&&key!='q'&&key!='Q') {
-      op->contr->state=ST_PLAYING;
+      CONTR(op)->state=ST_PLAYING;
       new_draw_info(NDI_UNIQUE, 0,op,"OK, continuing to play.");
       return 1;
     }
@@ -563,15 +590,15 @@ int key_confirm_quit(object *op, char key)
     new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, NULL,
 	"%s quits the game.",op->name);
 
-    strcpy(op->contr->killer,"quit");
+    strcpy(CONTR(op)->killer,"quit");
     check_score(op);
-    op->contr->party_number=(-1);
+    CONTR(op)->party_number=(-1);
     if(!QUERY_FLAG(op,FLAG_WAS_WIZ)) {
       sprintf(buf,"%s/%s/%s/%s.pl",settings.localdir,settings.playerdir,op->name,op->name);
       if(unlink(buf)== -1 && settings.debug >= llevDebug)
 		LOG(llevBug,"BUG: crossfire (delete character): %s\n", buf);
     }
-	op->contr->socket.status=Ns_Dead;
+	CONTR(op)->socket.status=Ns_Dead;
     return 1;
 }
 */
@@ -623,7 +650,7 @@ int check_pick(object *op) {
   char putstring[128], tmpstr[16];
 
 
-  /* if you're flying, you cna't pick up anything */
+  /* if you're flying, you can't pick up anything */
   if (QUERY_FLAG (op, FLAG_FLYING))
     return 1;
 
@@ -649,18 +676,18 @@ int check_pick(object *op) {
       continue;
 
 #ifdef SEARCH_ITEMS
-    if (op->contr->search_str[0]!='\0')
+    if (CONTR(op)->search_str[0]!='\0')
     {
-      if (item_matched_string (op, tmp, op->contr->search_str))
+      if (item_matched_string (op, tmp, CONTR(op)->search_str))
         pick_up (op, tmp);
       continue;
     }
 #endif /* SEARCH_ITEMS */
 
     /* high bit set?  We're using the new autopickup model */
-    if(!(op->contr->mode & PU_NEWMODE))
+    if(!(CONTR(op)->mode & PU_NEWMODE))
     { 
-    switch (op->contr->mode) {
+    switch (CONTR(op)->mode) {
 	case 0:	return 1;	/* don't pick up */
 	case 1: pick_up (op, tmp);
 		return 1;
@@ -688,14 +715,14 @@ int check_pick(object *op) {
 		if ( ! QUERY_FLAG (tmp, FLAG_UNPAID)
 		    && (query_cost (tmp, op, F_TRUE) * 100.0
 		        / ((double)tmp->weight * (double)(MAX (tmp->nrof, 1))))
-                       >= (double)op->contr->mode)
+                       >= (double)CONTR(op)->mode)
 		  pick_up(op,tmp);
     }
     } /* old model */
     else
     {
       /* NEW pickup handling */
-      if(op->contr->mode & PU_DEBUG)
+      if(CONTR(op)->mode & PU_DEBUG)
       {
 	/* some debugging code to figure out item information */
 	if(tmp->name!=NULL)
@@ -752,77 +779,77 @@ int check_pick(object *op) {
        * meaning if any test passes, the item gets picked up. */
 
       /* if mode is set to pick nothing up, return */
-      if(op->contr->mode & PU_NOTHING) return 1;
+      if(CONTR(op)->mode & PU_NOTHING) return 1;
       /* if mode is set to stop when encountering objects, return */
       /* take STOP before INHIBIT since it doesn't actually pick
        * anything up */
-      if(op->contr->mode & PU_STOP) return 0;
+      if(CONTR(op)->mode & PU_STOP) return 0;
       /* useful for going into stores and not losing your settings... */
       /* and for battles wher you don't want to get loaded down while
        * fighting */
-      if(op->contr->mode & PU_INHIBIT) return 1;
+      if(CONTR(op)->mode & PU_INHIBIT) return 1;
 
       /* prevent us from turning into auto-thieves :) */
       if (QUERY_FLAG (tmp, FLAG_UNPAID)) continue;
 
       /* all food and drink if desired */
       /* question: don't pick up known-poisonous stuff? */
-      if(op->contr->mode & PU_FOOD)
+      if(CONTR(op)->mode & PU_FOOD)
 	if (tmp->type == FOOD)
 	{ pick_up(op, tmp); /*LOG(llevInfo ,"FOOD\n");*/ continue; }
-      if(op->contr->mode & PU_DRINK)
+      if(CONTR(op)->mode & PU_DRINK)
 	if (tmp->type == DRINK)
 	{ pick_up(op, tmp); /*LOG(llevInfo ,"DRINK\n");*/ continue; }
-      if(op->contr->mode & PU_POTION)
+      if(CONTR(op)->mode & PU_POTION)
 	if (tmp->type == POTION)
 	{ pick_up(op, tmp); /*LOG(llevInfo ,"POTION\n");*/ continue; }
 
       /* pick up all magical items */
-      if(op->contr->mode & PU_MAGICAL)
+      if(CONTR(op)->mode & PU_MAGICAL)
 	if (QUERY_FLAG (tmp, FLAG_KNOWN_MAGICAL) && ! QUERY_FLAG(tmp, FLAG_KNOWN_CURSED))
 	{ pick_up(op, tmp); /*LOG(llevInfo ,"MAGICAL\n");*/ continue; }
 
-      if(op->contr->mode & PU_VALUABLES)
+      if(CONTR(op)->mode & PU_VALUABLES)
       {
 	if (tmp->type == MONEY || tmp->type == GEM|| tmp->type == TYPE_JEWEL|| tmp->type == TYPE_NUGGET) 
 	{ pick_up(op, tmp); /*LOG(llevInfo ,"MONEY/GEM\n");*/ continue; }
       }
 
       /* bows and arrows. Bows are good for selling! */
-      if(op->contr->mode & PU_BOW)
+      if(CONTR(op)->mode & PU_BOW)
 	if (tmp->type == BOW) 
 	{ pick_up(op, tmp); /*LOG(llevInfo ,"BOW\n");*/ continue; }
-      if(op->contr->mode & PU_ARROW)
+      if(CONTR(op)->mode & PU_ARROW)
 	if (tmp->type == ARROW)
 	{ pick_up(op, tmp); /*LOG(llevInfo ,"ARROW\n");*/ continue; }
 
       /* all kinds of armor etc. */
-      if(op->contr->mode & PU_ARMOUR)
+      if(CONTR(op)->mode & PU_ARMOUR)
 	if (tmp->type == ARMOUR) 
 	{ pick_up(op, tmp); /*LOG(llevInfo ,"ARMOUR\n");*/ continue; }
-      if(op->contr->mode & PU_HELMET)
+      if(CONTR(op)->mode & PU_HELMET)
 	if (tmp->type == HELMET) 
 	{ pick_up(op, tmp); /*LOG(llevInfo ,"HELMET\n");*/ continue; }
-      if(op->contr->mode & PU_SHIELD)
+      if(CONTR(op)->mode & PU_SHIELD)
 	if (tmp->type == SHIELD) 
 	{ pick_up(op, tmp); /*LOG(llevInfo ,"SHIELD\n");*/ continue; }
-      if(op->contr->mode & PU_BOOTS)
+      if(CONTR(op)->mode & PU_BOOTS)
 	if (tmp->type == BOOTS) 
 	{ pick_up(op, tmp); /*LOG(llevInfo ,"BOOTS\n");*/ continue; }
-      if(op->contr->mode & PU_GLOVES)
+      if(CONTR(op)->mode & PU_GLOVES)
 	if (tmp->type == GLOVES) 
 	{ pick_up(op, tmp); /*LOG(llevInfo ,"GLOVES\n");*/ continue; }
-      if(op->contr->mode & PU_CLOAK)
+      if(CONTR(op)->mode & PU_CLOAK)
 	if (tmp->type == CLOAK) 
 	{ pick_up(op, tmp); /*LOG(llevInfo ,"CLOAK\n");*/ continue; }
 
       /* hoping to catch throwing daggers here */
-      if(op->contr->mode & PU_MISSILEWEAPON)
+      if(CONTR(op)->mode & PU_MISSILEWEAPON)
 	if(tmp->type == WEAPON && QUERY_FLAG(tmp, FLAG_IS_THROWN)) 
 	{ pick_up(op, tmp); /*LOG(llevInfo ,"MISSILEWEAPON\n");*/ continue; }
 
       /* careful: chairs and tables are weapons! */
-      if(op->contr->mode & PU_ALLWEAPON)
+      if(CONTR(op)->mode & PU_ALLWEAPON)
       {
 	if(tmp->type == WEAPON && tmp->name!=NULL) 
 	{
@@ -839,19 +866,19 @@ int check_pick(object *op) {
       }
 
       /* misc stuff that's useful */
-      if(op->contr->mode & PU_KEY)
+      if(CONTR(op)->mode & PU_KEY)
 	if (tmp->type == KEY || tmp->type == SPECIAL_KEY) 
 	{ pick_up(op, tmp); /*LOG(llevInfo ,"KEY\n");*/ continue; }
 
       /* any of the last 4 bits set means we use the ratio for value
        * pickups */
-      if(op->contr->mode & PU_RATIO)
+      if(CONTR(op)->mode & PU_RATIO)
       {
 	/* use value density to decide what else to grab */
-	/* >=7 was >= op->contr->mode */
+	/* >=7 was >= CONTR(op)->mode */
 	/* >=7 is the old standard setting.  Now we take the last 4 bits
 	 * and multiply them by 5, giving 0..15*5== 5..75 */
-	wvratio=(op->contr->mode & PU_RATIO) * 5;
+	wvratio=(CONTR(op)->mode & PU_RATIO) * 5;
 	if ((query_cost(tmp, op, F_TRUE)*100 / (tmp->weight * MAX((signed long)tmp->nrof, 1))) >= wvratio)
 	{
 	  pick_up(op, tmp);
@@ -905,7 +932,7 @@ static void fire_bow(object *op, int dir)
     return;
   }
 
-  bow = op->contr->equipment[PLAYER_EQUIP_BOW];
+  bow = CONTR(op)->equipment[PLAYER_EQUIP_BOW];
   if (!bow)
     LOG(llevBug, "BUG: Range: bow without activated bow (%s - %d).\n", op->name, dir);
   
@@ -914,8 +941,7 @@ static void fire_bow(object *op, int dir)
     new_draw_info_format(NDI_UNIQUE, 0,op, "Your %s is broken.", bow->name);
     return;
   }
-
-  if ((arrow=find_arrow_ext(op, bow->race, op->contr->firemode_tag2)) == NULL) {
+  if ((arrow=find_arrow_ext(op, bow->race, CONTR(op)->firemode_tag2)) == NULL) {
     new_draw_info_format(NDI_UNIQUE, 0,op,"You have no %s left.", bow->race);
     return;
   }
@@ -927,7 +953,6 @@ static void fire_bow(object *op, int dir)
   if (arrow->nrof==0) {
 	LOG(llevDebug,"BUG?: arrow->nrof == 0 in fire_bow() (%s)\n", query_name(arrow));
 	remove_ob(arrow);
-	free_object(arrow);
 	return;
   }
   left = arrow; /* these are arrows left to the player */
@@ -993,7 +1018,7 @@ static void fire_bow(object *op, int dir)
   insert_ob_in_map(arrow,op->map,op,0);
   move_arrow(arrow);
   if (was_destroyed (left, left_tag))
-      esrv_del_item(op->contr, left_tag, left_cont);
+      esrv_del_item(CONTR(op), left_tag, left_cont);
   else
       esrv_send_item(op, left);
 }
@@ -1018,12 +1043,12 @@ void fire(object *op,int dir)
     /* forcing the shoottype var from player object to our needed range mode */
     if(op->type==PLAYER) 
     {
-        if(op->contr->firemode_type == FIRE_MODE_NONE)
+        if(CONTR(op)->firemode_type == FIRE_MODE_NONE)
             return;
             
-        if(op->contr->firemode_type == FIRE_MODE_BOW)
-            op->contr->shoottype=range_bow;
-        else if(op->contr->firemode_type == FIRE_MODE_THROW)
+        if(CONTR(op)->firemode_type == FIRE_MODE_BOW)
+            CONTR(op)->shoottype=range_bow;
+        else if(CONTR(op)->firemode_type == FIRE_MODE_THROW)
         {
             object *tmp;
 
@@ -1031,7 +1056,7 @@ void fire(object *op,int dir)
             if(!change_skill(op,SK_THROWING))
                 return;
             /* special case - we must redirect the fire cmd to throwing something */
-            tmp = find_throw_tag(op, (tag_t) op->contr->firemode_tag1);            
+            tmp = find_throw_tag(op, (tag_t) CONTR(op)->firemode_tag1);            
             if(tmp)
 			{
 				if(!check_skill_action_time(op, op->chosen_skill))
@@ -1041,35 +1066,35 @@ void fire(object *op,int dir)
 			}
             return;
         }
-        else if(op->contr->firemode_type == FIRE_MODE_SPELL)
-            op->contr->shoottype=range_magic;
-        else if(op->contr->firemode_type == FIRE_MODE_WAND)
+        else if(CONTR(op)->firemode_type == FIRE_MODE_SPELL)
+            CONTR(op)->shoottype=range_magic;
+        else if(CONTR(op)->firemode_type == FIRE_MODE_WAND)
         {
             
 
-            op->contr->shoottype=range_wand; /* we do a jump in fire wand if we haven one */
+            CONTR(op)->shoottype=range_wand; /* we do a jump in fire wand if we haven one */
         }
-        else if(op->contr->firemode_type == FIRE_MODE_SKILL)
+        else if(CONTR(op)->firemode_type == FIRE_MODE_SKILL)
         {
 
-            command_rskill (op, op->contr->firemode_name);
-            op->contr->shoottype=range_skill;
+            command_rskill (op, CONTR(op)->firemode_name);
+            CONTR(op)->shoottype=range_skill;
         }
-        else if(op->contr->firemode_type == FIRE_MODE_SUMMON)
-            op->contr->shoottype=range_scroll;
+        else if(CONTR(op)->firemode_type == FIRE_MODE_SUMMON)
+            CONTR(op)->shoottype=range_scroll;
         else
-            op->contr->shoottype=range_none;
+            CONTR(op)->shoottype=range_none;
 
         if(!check_skill_to_fire(op))
             return;
     }
     
-  switch(op->contr->shoottype) {
+  switch(CONTR(op)->shoottype) {
   case range_none:
     return;
 
   case range_bow:
-    if(op->contr->firemode_tag2!= -1)
+    if(CONTR(op)->firemode_tag2!= -1)
 	{
 		/* we still recover from range action? */
 		if(!check_skill_action_time(op, op->chosen_skill))
@@ -1083,11 +1108,11 @@ void fire(object *op,int dir)
 
   case range_magic: /* Casting spells */
 
-	  if(!check_skill_action_time(op, op->chosen_skill))
-		  return;
-	  spellcost=cast_spell(op,op,dir,op->contr->chosen_spell,0,spellNormal,NULL);
+    if(!check_skill_action_time(op, op->chosen_skill))
+        return;
+    spellcost=cast_spell(op,op,dir,CONTR(op)->chosen_spell,0,spellNormal,NULL);
 
-    if(spells[op->contr->chosen_spell].flags&SPELL_DESC_WIS)
+    if(spells[CONTR(op)->chosen_spell].flags&SPELL_DESC_WIS)
         op->stats.grace-=spellcost;
     else
 		op->stats.sp-=spellcost;
@@ -1100,14 +1125,14 @@ void fire(object *op,int dir)
           if(weap->type==WAND&&QUERY_FLAG(weap, FLAG_APPLIED))
               break;
           if(weap==NULL) {
-              op->contr->shoottype=range_rod;
+              CONTR(op)->shoottype=range_rod;
               goto trick_jump;
           }
 
 	if(!check_skill_action_time(op, op->chosen_skill))
 		return;
     if(weap->stats.food<=0) {
-      play_sound_player_only(op->contr, SOUND_WAND_POOF,SOUND_NORMAL,0,0);
+      play_sound_player_only(CONTR(op), SOUND_WAND_POOF,SOUND_NORMAL,0,0);
       new_draw_info(NDI_UNIQUE, 0,op,"The wand says poof.");
 	  /*op->speed_left -= get_skill_time(op,op->chosen_skill->stats.sp);*/
       return;
@@ -1137,12 +1162,12 @@ void fire(object *op,int dir)
 trick_jump:
       for(weap=op->inv;weap!=NULL;weap=weap->below)
           if(QUERY_FLAG(weap, FLAG_APPLIED)&&
-              weap->type==(op->contr->shoottype==range_rod?ROD:HORN))
+              weap->type==(CONTR(op)->shoottype==range_rod?ROD:HORN))
               break;
           if(weap==NULL) {
-              if(op->contr->shoottype==range_rod)
+              if(CONTR(op)->shoottype==range_rod)
               {
-                  op->contr->shoottype=range_horn;
+                  CONTR(op)->shoottype=range_horn;
                   goto trick_jump;
               }
               else
@@ -1156,8 +1181,8 @@ trick_jump:
 	if(!check_skill_action_time(op, op->chosen_skill))
 			  return;
     if(weap->stats.hp<spells[weap->stats.sp].sp) {
-      play_sound_player_only(op->contr, SOUND_WAND_POOF,SOUND_NORMAL,0,0);
-      if (op->contr->shoottype == range_rod)
+      play_sound_player_only(CONTR(op), SOUND_WAND_POOF,SOUND_NORMAL,0,0);
+      if (CONTR(op)->shoottype == range_rod)
 	new_draw_info(NDI_UNIQUE, 0,op,"The rod whines for a while, but nothing happens.");
       else
 	new_draw_info(NDI_UNIQUE, 0,op,
@@ -1165,7 +1190,7 @@ trick_jump:
       return;
     }
     /*new_draw_info_format(NDI_ALL|NDI_UNIQUE,5,NULL,"Use %s - cast spell %d\n",weap->name,weap->stats.sp);*/
-    if(cast_spell(op,weap,dir,weap->stats.sp,0, op->contr->shoottype == range_rod ? spellRod : spellHorn,NULL))
+    if(cast_spell(op,weap,dir,weap->stats.sp,0, CONTR(op)->shoottype == range_rod ? spellRod : spellHorn,NULL))
     {
       SET_FLAG(op, FLAG_BEEN_APPLIED); /* You now know something about it */
       drain_rod_charge(weap);
@@ -1173,12 +1198,12 @@ trick_jump:
 	get_skill_time(op,op->chosen_skill->stats.sp);
 	return;
   case range_scroll: /* Control summoned monsters from scrolls */
-    if(op->contr->golem==NULL) {
-      op->contr->shoottype=range_none;
-      op->contr->chosen_spell= -1;
+    if(CONTR(op)->golem==NULL) {
+      CONTR(op)->shoottype=range_none;
+      CONTR(op)->chosen_spell= -1;
     }
     else 
-	control_golem(op->contr->golem, dir);
+	control_golem(CONTR(op)->golem, dir);
     return;
 
   case range_skill:
@@ -1200,9 +1225,9 @@ trick_jump:
 
 int move_player(object *op,int dir) 
 {
-    int face = dir ? (dir - 1) / 2 : -1;
+/*    int face = dir ? (dir - 1) / 2 : -1; */
 
-	op->contr->praying=0;
+	CONTR(op)->praying=0;
 
     if(op->map == NULL || op->map->in_memory != MAP_IN_MEMORY)
 		return 0;
@@ -1224,14 +1249,14 @@ int move_player(object *op,int dir)
     }
     
 	/* firemode is set from client command fire xx xx xx */
-    if(op->contr->firemode_type!=-1)
+    if(CONTR(op)->firemode_type!=-1)
     {
     	fire(op,dir);
 		if(dir)
 	        op->anim_enemy_dir = dir;
 		else
 	        op->anim_enemy_dir = op->facing;
-		op->contr->fire_on=0;
+		CONTR(op)->fire_on=0;
     }
     else
     {
@@ -1271,7 +1296,7 @@ int move_player(object *op,int dir)
     /*pick = check_pick(op);*/
 
 	/* running/firing is now handled different.
-    if (op->contr->fire_on || (op->contr->run_on && pick!=0)) {
+    if (CONTR(op)->fire_on || (CONTR(op)->run_on && pick!=0)) {
 	op->direction = dir;
     } else {
 	op->direction=0;
@@ -1305,12 +1330,12 @@ int handle_newcs_player(object *op)
      * the players time has been increased when doericserver has been
      * called, so we recheck it here.
      */
-    HandleClient(&op->contr->socket, op->contr);
+    HandleClient(&CONTR(op)->socket, CONTR(op));
     if (op->speed_left<0) return 0;
 
     CLEAR_FLAG(op,FLAG_PARALYZED); /* if we are here, we never paralyzed anymore */
     
-    if(op->direction && (op->contr->run_on || op->contr->fire_on)) {
+    if(op->direction && (CONTR(op)->run_on || CONTR(op)->fire_on)) {
 	/* All move commands take 1 tick, at least for now */
 	op->speed_left--;
 	/* Instead of all the stuff below, let move_player take care
@@ -1335,10 +1360,9 @@ int save_life(object *op) {
       sprintf(buf,"Your %s vibrates violently, then evaporates.",
 	      query_name(tmp));
       new_draw_info(NDI_UNIQUE, 0,op,buf);
-      if (op->contr)
-	esrv_del_item(op->contr, tmp->count,tmp->env);
+      if (CONTR(op))
+	esrv_del_item(CONTR(op), tmp->count,tmp->env);
       remove_ob(tmp);
-      free_object(tmp);
       CLEAR_FLAG(op, FLAG_LIFESAVE);
       if(op->stats.hp<0)
 	op->stats.hp = op->stats.maxhp;
@@ -1381,45 +1405,45 @@ void remove_unpaid_objects(object *op, object *env)
 void do_some_living(object *op) 
 {
 
-	if(op->contr->state==ST_PLAYING) 
+	if(CONTR(op)->state==ST_PLAYING) 
 	{
 		/* hp reg */
-		if(op->contr->gen_hp)
+		if(CONTR(op)->gen_hp)
 		{
 		    if(--op->last_heal<0)	
 			{
-				op->last_heal=op->contr->base_hp_reg;
-				if(op->contr->combat_mode)  
+				op->last_heal=CONTR(op)->base_hp_reg;
+				if(CONTR(op)->combat_mode)  
 					op->last_heal += op->last_heal; /* halfed reg speed */
 
 				if(op->stats.hp<op->stats.maxhp)
 				{
 					int last_food=op->stats.food;
 
-					op->stats.hp+=op->contr->reg_hp_num;
+					op->stats.hp+=CONTR(op)->reg_hp_num;
 					if(op->stats.hp>op->stats.maxhp)
 						op->stats.hp= op->stats.maxhp;
 
 					/* faster hp reg - faster digestion... evil */
 					op->stats.food--;
-					if(op->contr->digestion<0)
-						op->stats.food+=op->contr->digestion;
-					else if(op->contr->digestion>0 &&
-						random_roll(0, op->contr->digestion, op, PREFER_HIGH))
+					if(CONTR(op)->digestion<0)
+						op->stats.food+=CONTR(op)->digestion;
+					else if(CONTR(op)->digestion>0 &&
+						random_roll(0, CONTR(op)->digestion, op, PREFER_HIGH))
 					op->stats.food=last_food;
 				}
 			}
 		}
 
 		/* sp reg */
-		if(op->contr->gen_sp)
+		if(CONTR(op)->gen_sp)
 		{
 		    if(--op->last_sp<0) 
 			{
-				op->last_sp=op->contr->base_sp_reg;
+				op->last_sp=CONTR(op)->base_sp_reg;
 				if(op->stats.sp<op->stats.maxsp)
 				{
-					op->stats.sp+=op->contr->reg_sp_num;
+					op->stats.sp+=CONTR(op)->reg_sp_num;
 					if(op->stats.sp>op->stats.maxsp)
 						op->stats.sp= op->stats.maxsp;
 				}
@@ -1427,67 +1451,67 @@ void do_some_living(object *op)
 		}
 
 		/* "stay and pray" mechanism */
-		if(op->contr->praying && !op->contr->was_praying)
+		if(CONTR(op)->praying && !CONTR(op)->was_praying)
 		{
 			if(op->stats.grace<op->stats.maxgrace)
 			{
 			    object *god = find_god(determine_god(op));
 				if(god)
 				{
-					if(op->contr->combat_mode)
+					if(CONTR(op)->combat_mode)
 					{
 						new_draw_info_format(NDI_UNIQUE, 0,op,"You stop combat and start praying to %s...",god->name);
-						op->contr->combat_mode=0;
-						send_target_command(op->contr);
+						CONTR(op)->combat_mode=0;
+						send_target_command(CONTR(op));
 					}
 					else
 						new_draw_info_format(NDI_UNIQUE, 0,op,"You start praying to %s...",god->name);
-					op->contr->was_praying=1;
+					CONTR(op)->was_praying=1;
 				}
 				else
 				{
 					new_draw_info(NDI_UNIQUE, 0,op, "You worship no deity to pray to!");
-					op->contr->praying=0;
+					CONTR(op)->praying=0;
 				}
-				op->last_grace=op->contr->base_grace_reg;
+				op->last_grace=CONTR(op)->base_grace_reg;
 			}
 			else
 			{
-				op->contr->praying=0;
-				op->contr->was_praying=0;
+				CONTR(op)->praying=0;
+				CONTR(op)->was_praying=0;
 			}
 		}
-		else if(!op->contr->praying && op->contr->was_praying)
+		else if(!CONTR(op)->praying && CONTR(op)->was_praying)
 		{
 			new_draw_info(NDI_UNIQUE, 0,op,"You stop praying.");
-			op->contr->was_praying=0;
-			op->last_grace=op->contr->base_grace_reg;
+			CONTR(op)->was_praying=0;
+			op->last_grace=CONTR(op)->base_grace_reg;
 		}
 
 		/* grace reg */
-		if(op->contr->praying && op->contr->gen_grace)
+		if(CONTR(op)->praying && CONTR(op)->gen_grace)
 		{
 		    if(--op->last_grace<0) 
 			{
 				if(op->stats.grace<op->stats.maxgrace)
-				op->stats.grace+=op->contr->reg_grace_num;
+				op->stats.grace+=CONTR(op)->reg_grace_num;
 				if(op->stats.grace>=op->stats.maxgrace)
 				{
 					op->stats.grace= op->stats.maxgrace;
 					new_draw_info(NDI_UNIQUE, 0,op,"Your are full of grace and stop praying.");
-					op->contr->was_praying=0;
+					CONTR(op)->was_praying=0;
 				}
-				op->last_grace=op->contr->base_grace_reg;
+				op->last_grace=CONTR(op)->base_grace_reg;
 			}
 		}
 
 		/* Digestion */
 		if(--op->last_eat<0)
 		{
-			int bonus=op->contr->digestion>0?op->contr->digestion:0,
-			penalty=op->contr->digestion<0?-op->contr->digestion:0;
-			if(op->contr->gen_hp > 0)
-				op->last_eat=25*(1+bonus)/(op->contr->gen_hp+penalty+1);
+			int bonus=CONTR(op)->digestion>0?CONTR(op)->digestion:0,
+			penalty=CONTR(op)->digestion<0?-CONTR(op)->digestion:0;
+			if(CONTR(op)->gen_hp > 0)
+				op->last_eat=25*(1+bonus)/(CONTR(op)->gen_hp+penalty+1);
 			else
 				op->last_eat=25*(1+bonus)/(penalty +1);
 			op->stats.food--;
@@ -1593,8 +1617,8 @@ void kill_player(object *op)
 	        FREE_AND_COPY_HASH(tmp->name, buf);
 	        sprintf(buf,"  This finger has been cut off %s\n"
                         "  the %s, when he was defeated at\n  level %d by %s.\n",
-	                        op->name, op->contr->title, (int)(op->level),
-	                        op->contr->killer);
+	                        op->name, CONTR(op)->title, (int)(op->level),
+	                        CONTR(op)->killer);
 	        FREE_AND_COPY_HASH(tmp->msg, buf);
 	        tmp->value=0, tmp->material=0, tmp->type=0;
 	        tmp->x = op->x, tmp->y = op->y;
@@ -1650,7 +1674,7 @@ void kill_player(object *op)
     {
 
 #ifdef EXPLORE_MODE
-	    if (op->contr->explore)
+	    if (CONTR(op)->explore)
         {
 	        new_draw_info(NDI_UNIQUE, 0,op,"You would have starved, but you are");
 	        new_draw_info(NDI_UNIQUE, 0,op,"in explore mode, so...");
@@ -1660,12 +1684,12 @@ void kill_player(object *op)
 #endif /* EXPLORE_MODE */
 
 	    sprintf(buf,"%s starved to death.",op->name);
-	    strcpy(op->contr->killer,"starvation");
+	    strcpy(CONTR(op)->killer,"starvation");
     }
     else 
     {
 #ifdef EXPLORE_MODE
-	    if (op->contr->explore) 
+	    if (CONTR(op)->explore) 
         {
 	        new_draw_info(NDI_UNIQUE, 0,op,"You would have died, but you are");
 	        new_draw_info(NDI_UNIQUE, 0,op,"in explore mode, so...");
@@ -1677,7 +1701,7 @@ void kill_player(object *op)
 	    sprintf(buf,"%s died.",op->name);
     }
 
-    play_sound_player_only(op->contr, SOUND_PLAYER_DIES,SOUND_NORMAL,0,0);
+    play_sound_player_only(CONTR(op), SOUND_PLAYER_DIES,SOUND_NORMAL,0,0);
 
     /*  save the map location for corpse, gravestone*/
     x=op->x;y=op->y;map=op->map;
@@ -1727,8 +1751,8 @@ void kill_player(object *op)
             i = RANDOM() % 7; 
             change_attr_value(&(op->stats), i,-1);
             check_stat_bounds(&(op->stats));
-            change_attr_value(&(op->contr->orig_stats), i,-1);
-            check_stat_bounds(&(op->contr->orig_stats));
+            change_attr_value(&(CONTR(op)->orig_stats), i,-1);
+            check_stat_bounds(&(CONTR(op)->orig_stats));
             new_draw_info(NDI_UNIQUE, 0,op, lose_msg[i]);
             lost_a_stat = 1;
         } 
@@ -1809,8 +1833,8 @@ void kill_player(object *op)
     sprintf(buf,"RIP\nHere rests the hero %s the %s,\n"
 	        "who was killed\n"
 	        "by %s.\n",
-	        op->name, op->contr->title,
-	        op->contr->killer);
+	        op->name, CONTR(op)->title,
+	        CONTR(op)->killer);
     FREE_AND_COPY_HASH(tmp->msg, buf);
     tmp->x=op->x,tmp->y=op->y;
     insert_ob_in_map (tmp, op->map, NULL,0);
@@ -1871,15 +1895,14 @@ void kill_player(object *op)
  * should probably be embedded in an else statement.
  */
 
-    op->contr->party_number=(-1);
+    CONTR(op)->party_number=(-1);
     new_draw_info(NDI_UNIQUE|NDI_ALL, 0,NULL, buf);
     check_score(op);
-    if(op->contr->golem!=NULL) {
-		send_golem_control(op->contr->golem, GOLEM_CTR_RELEASE);
-      remove_friendly_object(op->contr->golem);
-      remove_ob(op->contr->golem);
-      free_object(op->contr->golem);
-      op->contr->golem=NULL;
+    if(CONTR(op)->golem!=NULL) {
+		send_golem_control(CONTR(op)->golem, GOLEM_CTR_RELEASE);
+      remove_friendly_object(CONTR(op)->golem);
+      remove_ob(CONTR(op)->golem);
+      CONTR(op)->golem=NULL;
     }
     loot_object(op); /* Remove some of the items for good */
     remove_ob(op);
@@ -1897,12 +1920,12 @@ void kill_player(object *op)
 
 	/*  set the location of where the person will reappear when  */
 	/* maybe resurrection code should fix map also */
-	strcpy(op->contr->maplevel, EMERGENCY_MAPPATH);
+	strcpy(CONTR(op)->maplevel, EMERGENCY_MAPPATH);
 	if(op->map!=NULL)
 	    op->map = NULL;
 	op->x = EMERGENCY_X;
 	op->y = EMERGENCY_Y;
-	container_unlink(op->contr,NULL);
+	container_unlink(CONTR(op),NULL);
 	save_player(op,1);
 	op->map = map;
 	/* please see resurrection.c: peterm */
@@ -1911,13 +1934,13 @@ void kill_player(object *op)
 #endif
     }
     /*play_again(op);*/
-	op->contr->socket.status=Ns_Dead;
+	CONTR(op)->socket.status=Ns_Dead;
 #ifdef NOT_PERMADEATH
     tmp=arch_to_object(find_archetype("gravestone"));
     sprintf(buf,"%s's gravestone",op->name);
     FREE_AND_COPY_HASH(tmp->name,buf);
     sprintf(buf,"RIP\nHere rests the hero %s the %s,\nwho was killed by %s.\n",
-	    op->name, op->contr->title, op->contr->killer);
+	    op->name, CONTR(op)->title, CONTR(op)->killer);
     FREE_AND_COPY_HASH(tmp->msg, buf);
     tmp->x=x,tmp->y=y;
     insert_ob_in_map (tmp, map, NULL,0);
@@ -1940,8 +1963,8 @@ void kill_player(object *op)
 void loot_object(object *op) { /* Grab and destroy some treasure */
   object *tmp,*tmp2,*next;
 
-  if (op->type == PLAYER && op->contr->container) { /* close open sack first */
-      esrv_apply_container (op, op->contr->container);
+  if (op->type == PLAYER && CONTR(op)->container) { /* close open sack first */
+      esrv_apply_container (op, CONTR(op)->container);
   }
 
   for(tmp=op->inv;tmp!=NULL;tmp=next) {
@@ -1956,10 +1979,8 @@ void loot_object(object *op) { /* Grab and destroy some treasure */
        || QUERY_FLAG(tmp,FLAG_NO_DROP) || !(RANDOM()%3))) {
       if(tmp->nrof>1) {
 	tmp2=get_split_ob(tmp,1+RANDOM()%(tmp->nrof-1));
-	free_object(tmp2);
 	insert_ob_in_map(tmp,op->map,NULL,0);
-      } else
-	free_object(tmp);
+      }
     } else
       insert_ob_in_map(tmp,op->map,NULL,0);
   }
@@ -2012,8 +2033,7 @@ void cast_dust (object *op, object *throw_ob, int dir) {
  
   if (op->type==PLAYER&&arch)
     new_draw_info_format(NDI_UNIQUE, 0,op,"You cast %s.",query_name(throw_ob));
-  if(!QUERY_FLAG(throw_ob,FLAG_REMOVED)) remove_ob(throw_ob);
-  free_object(throw_ob);
+  if(!QUERY_FLAG(throw_ob, FLAG_REMOVED)) remove_ob(throw_ob);
 }
 
 void make_visible (object *op) {
@@ -2078,7 +2098,7 @@ void do_hidden_move (object *op) {
     if(!op || !op->map) return;
 
     /* its *extremely* hard to run and sneak/hide at the same time! */
-    if(op->type==PLAYER && op->contr->run_on) {
+    if(op->type==PLAYER && CONTR(op)->run_on) {
       if(num >= SK_level(op)) {
         new_draw_info(NDI_UNIQUE,0,op,"You ran too much! You are no longer hidden!");
         make_visible(op);
@@ -2171,9 +2191,9 @@ int player_can_view (object *pl,object *op) {
 	 * code, so we need to restrict ourselves to that range of values
 	 * for any meaningful values.
 	 */
-	if (FABS(dx) <= (pl->contr->socket.mapx_2) &&
-	    FABS(dy) <= (pl->contr->socket.mapy_2) &&
-	    pl->contr->blocked_los[dx + (pl->contr->socket.mapx_2)][dy+(pl->contr->socket.mapy_2)]<=BLOCKED_LOS_BLOCKSVIEW ) 
+	if (FABS(dx) <= (CONTR(pl)->socket.mapx_2) &&
+	    FABS(dy) <= (CONTR(pl)->socket.mapy_2) &&
+	    CONTR(pl)->blocked_los[dx + (CONTR(pl)->socket.mapx_2)][dy+(CONTR(pl)->socket.mapy_2)]<=BLOCKED_LOS_BLOCKSVIEW ) 
 	    return 1;
 	op = op->more;
     }
@@ -2194,7 +2214,7 @@ int action_makes_visible (object *op) {
     else if(op->hide) { 
       new_draw_info_format(NDI_UNIQUE, 0,op,"You become %!",op->hide?"unhidden":"visible");
       return 1; 
-    } else if(op->contr && !op->contr->shoottype==range_magic) { 
+    } else if(CONTR(op) && !CONTR(op)->shoottype==range_magic) { 
           new_draw_info(NDI_UNIQUE, 0,op,"Your invisibility spell is broken!");
           return 1;
     }

@@ -162,9 +162,9 @@ void esrv_draw_look(object *pl)
 		SockList_AddInt(&sl, 0);
 	    SockList_AddInt(&sl, 0);
 	
-    if (pl->contr->socket.look_position)
+    if (CONTR(pl)->socket.look_position)
 	{
-		SockList_AddInt(&sl, 0x80000000 | (pl->contr->socket.look_position- NUM_LOOK_OBJECTS));
+		SockList_AddInt(&sl, 0x80000000 | (CONTR(pl)->socket.look_position- NUM_LOOK_OBJECTS));
 		SockList_AddInt(&sl, 0);
 		SockList_AddInt(&sl, -1);
 		SockList_AddInt(&sl, prev_item_face->number);
@@ -191,12 +191,12 @@ void esrv_draw_look(object *pl)
 		}
 
 		/* skip all items we had send before of the 'max shown items of a tile space' */
-		if (++start_look < pl->contr->socket.look_position)
+		if (++start_look < CONTR(pl)->socket.look_position)
 			continue;
 		/* if we have to much items to send, send a 'next group' object and leave here */
 		if (++end_look > NUM_LOOK_OBJECTS)
 		{
-			SockList_AddInt(&sl, 0x80000000 | (pl->contr->socket.look_position+ NUM_LOOK_OBJECTS));
+			SockList_AddInt(&sl, 0x80000000 | (CONTR(pl)->socket.look_position+ NUM_LOOK_OBJECTS));
 			SockList_AddInt(&sl, 0);
 			SockList_AddInt(&sl, -1);
 			SockList_AddInt(&sl, next_item_face->number);
@@ -217,8 +217,8 @@ void esrv_draw_look(object *pl)
 			flags |=  F_NOPICK;
 			
 		/*
-		if (QUERY_FLAG(tmp,FLAG_ANIMATE) && !pl->contr->socket.anims_sent[tmp->animation_id])
-			esrv_send_animation(&pl->contr->socket, tmp->animation_id);
+		if (QUERY_FLAG(tmp,FLAG_ANIMATE) && !CONTR(pl)->socket.anims_sent[tmp->animation_id])
+			esrv_send_animation(&CONTR(pl)->socket, tmp->animation_id);
 		*/
 
 		SockList_AddInt(&sl, tmp->count);
@@ -298,7 +298,7 @@ void esrv_draw_look(object *pl)
 
 		if (sl.len > (MAXSOCKBUF-MAXITEMLEN))
 		{
-			Send_With_Handling(&pl->contr->socket, &sl);
+			Send_With_Handling(&CONTR(pl)->socket, &sl);
 			SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_ITEMX);
 			SockList_AddInt(&sl, -2); /* do no delinv */
 			SockList_AddInt(&sl, 0);
@@ -318,7 +318,7 @@ void esrv_draw_look(object *pl)
 	} /* for loop */
 
     if (got_one)
-		Send_With_Handling(&pl->contr->socket, &sl);
+		Send_With_Handling(&CONTR(pl)->socket, &sl);
 
     free(sl.buf);
 }
@@ -415,7 +415,7 @@ int esrv_draw_DM_inv(object *pl, SockList *sl, object *op)
 
 		if (sl->len > (MAXSOCKBUF-MAXITEMLEN))
 		{
-			Send_With_Handling(&pl->contr->socket, sl);
+			Send_With_Handling(&CONTR(pl)->socket, sl);
 			SOCKET_SET_BINARY_CMD(sl, BINARY_CMD_ITEMX);
 			SockList_AddInt(sl, -2); /* do no delinv */
 			SockList_AddInt(sl, 0);
@@ -450,7 +450,7 @@ void esrv_close_container(object *op)
 	SockList_AddInt(&sl, -1); /* container mode flag */
 	SockList_AddInt(&sl, -1);
 
-	Send_With_Handling(&op->contr->socket, &sl);
+	Send_With_Handling(&CONTR(op)->socket, &sl);
     free(sl.buf);
 
 }
@@ -535,7 +535,7 @@ static int esrv_send_inventory_DM(object *pl, SockList *sl, object *op)
 	     * overflow the buffer.  IF so, send multiple item1 commands.
 	     */
 	    if (sl->len > (MAXSOCKBUF-MAXITEMLEN)) {
-		Send_With_Handling(&pl->contr->socket, sl);
+		Send_With_Handling(&CONTR(pl)->socket, sl);
 		SOCKET_SET_BINARY_CMD(sl, BINARY_CMD_ITEMX);
 		SockList_AddInt(sl,-3); /* no delinv */
 		SockList_AddInt(sl, op->count);
@@ -660,7 +660,7 @@ void esrv_send_inventory(object *pl, object *op)
 	     * overflow the buffer.  IF so, send multiple item1 commands.
 	     */
 	    if (sl.len > (MAXSOCKBUF-MAXITEMLEN)) {
-		Send_With_Handling(&pl->contr->socket, &sl);
+		Send_With_Handling(&CONTR(pl)->socket, &sl);
 		SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_ITEMX);
 		SockList_AddInt(&sl,-3); /* no delinv */
 		SockList_AddInt(&sl, op->count);
@@ -675,7 +675,7 @@ void esrv_send_inventory(object *pl, object *op)
 	}
     }
     if (got_one || pl != op) /* container can be empty... */
-	Send_With_Handling(&pl->contr->socket, &sl);
+	Send_With_Handling(&CONTR(pl)->socket, &sl);
     free(sl.buf);
 }
 
@@ -725,7 +725,7 @@ static void esrv_update_item_send(int flags, object *pl, object *op)
 		SockList_AddChar(&sl, (char)op->facing);
 	}
     if (flags & UPD_NAME) {
-	if (pl->contr->socket.sc_version>=1024) {
+	if (CONTR(pl)->socket.sc_version>=1024) {
 	    int len;
 	    char *item_p, item_n[MAX_BUF];
 
@@ -770,7 +770,7 @@ static void esrv_update_item_send(int flags, object *pl, object *op)
 	{
 	    SockList_AddInt(&sl, op->nrof);
 	}
-    Send_With_Handling(&pl->contr->socket, &sl);
+    Send_With_Handling(&CONTR(pl)->socket, &sl);
     free(sl.buf);
 }
 
@@ -788,7 +788,7 @@ void esrv_update_item(int flags, object *pl, object *op)
 	 */
 	if(op->env && op->env->type == CONTAINER)
 	{
-		for(tmp=op->env->attacked_by;tmp;tmp=tmp->contr->container_above)
+		for(tmp=op->env->attacked_by;tmp;tmp=CONTR(tmp)->container_above)
 			esrv_update_item_send(flags, tmp, op);
 		return;
 	}
@@ -864,7 +864,7 @@ static void esrv_send_item_send(object *pl, object*op)
         }
     }
     
-    if (pl->contr->socket.sc_version>=1024) {
+    if (CONTR(pl)->socket.sc_version>=1024) {
 	int len;
     strncpy(item_n,query_base_name(op),127);
 	item_n[127]=0;
@@ -895,7 +895,7 @@ static void esrv_send_item_send(object *pl, object*op)
     }
     SockList_AddChar(&sl, (char)anim_speed);
     SockList_AddInt(&sl, op->nrof);
-    Send_With_Handling(&pl->contr->socket, &sl);
+    Send_With_Handling(&CONTR(pl)->socket, &sl);
     SET_FLAG(op, FLAG_CLIENT_SENT);
     free(sl.buf);
 }
@@ -910,7 +910,7 @@ void esrv_send_item(object *pl, object*op)
 	 */
 	if(op->env && op->env->type == CONTAINER)
 	{
-		for(tmp=op->env->attacked_by;tmp;tmp=tmp->contr->container_above)
+		for(tmp=op->env->attacked_by;tmp;tmp=CONTR(tmp)->container_above)
 			esrv_send_item_send(tmp,op);
 		return;
 	}
@@ -950,8 +950,8 @@ void esrv_del_item(player *pl, int tag, object *cont)
 
 	if(cont && cont->type == CONTAINER)
 	{
-		for(tmp=cont->attacked_by;tmp;tmp=tmp->contr->container_above)
-			esrv_del_item_send(tmp->contr,tag);
+		for(tmp=cont->attacked_by;tmp;tmp=CONTR(tmp)->container_above)
+			esrv_del_item_send(CONTR(tmp),tag);
 		return;
 	}
 
@@ -1011,7 +1011,7 @@ object *esrv_get_ob_from_count(object *pl, tag_t count)
     for(op = pl->inv; op; op = op->below)
 	if (op->count == count)
 	    return op;
-	else if (op->type == CONTAINER && pl->contr->container == op)
+	else if (op->type == CONTAINER && CONTR(pl)->container == op)
 	    for(tmp = op->inv; tmp; tmp = tmp->below)
 		if (tmp->count == count)
 		    return tmp;
@@ -1019,7 +1019,7 @@ object *esrv_get_ob_from_count(object *pl, tag_t count)
     for(op = get_map_ob (pl->map, pl->x, pl->y); op; op = op->above)
 	if (op->count == count)
 	    return op;
-	else if (op->type == CONTAINER && pl->contr->container == op)
+	else if (op->type == CONTAINER && CONTR(pl)->container == op)
 	    for(tmp = op->inv; tmp; tmp = tmp->below)
 		if (tmp->count == count)
 		    return tmp;
@@ -1239,7 +1239,7 @@ void esrv_move_object (object *pl, tag_t to, tag_t tag, long nrof)
 		if (op->env == pl) 
 			return;
 
-		pl->contr->count = nrof;
+		CONTR(pl)->count = nrof;
 		/*LOG(-1,"pick up...\n");*/
 		pick_up(pl, op); /* it goes in player inv or readied container */
 		return ;

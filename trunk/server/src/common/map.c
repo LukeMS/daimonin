@@ -940,7 +940,6 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags)
     }
 
 	delete_loader_buffer(mybuffer);
-    free_object(op);
 
 	/* this MUST be set here or check_light_source_list()
 	 * will fail. If we set this to early, the recursive called map
@@ -1007,7 +1006,6 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 								SET_MULTI_FLAG(head, FLAG_NO_APPLY);
 								remove_ob(head);
 								SET_FLAG(head,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
-							    free_object(head);
 								break;
 							}
 
@@ -1040,7 +1038,6 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 									SET_MULTI_FLAG(head, FLAG_NO_APPLY);
 									remove_ob(head);
 									SET_FLAG(head,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
-								    free_object(head);
 									break; 
 								}
 
@@ -1062,7 +1059,6 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 							SET_MULTI_FLAG(head, FLAG_NO_APPLY);
 							remove_ob(head);
 							SET_FLAG(head,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
-							free_object(head);
 							break;
 						}
 					}
@@ -1072,7 +1068,6 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 					SET_MULTI_FLAG(head, FLAG_NO_APPLY);
 					remove_ob(head);
 					SET_FLAG(head,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
-				    free_object(head);
 					if(tmp->owner)
 						tmp->owner->enemy = NULL;
 					continue;
@@ -1093,7 +1088,6 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 							SET_MULTI_FLAG(op->enemy, FLAG_NO_APPLY);
 							remove_ob(op->enemy);
 							SET_FLAG(op->enemy,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
-							free_object(op->enemy);
 						}
 					}
 				}
@@ -1148,7 +1142,6 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 					SET_MULTI_FLAG(tmp, FLAG_NO_APPLY);
 					remove_ob(tmp);
 					SET_FLAG(tmp,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
-					free_object(tmp);
 					continue;
 				}
 
@@ -1162,7 +1155,6 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 					SET_MULTI_FLAG(op, FLAG_NO_APPLY);
 					remove_ob(op);
 					SET_FLAG(op,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
-					free_object(op);
 				}
 
 		    } /* for this space */
@@ -1628,11 +1620,10 @@ static void delete_unique_items(mapstruct *m)
 		if (QUERY_FLAG(op, FLAG_IS_FLOOR) && QUERY_FLAG(op, FLAG_UNIQUE))
 		    unique=1;
 		if(op->head == NULL && (QUERY_FLAG(op, FLAG_UNIQUE) || unique)) {
-		    clean_object(op);
 		    if (QUERY_FLAG(op, FLAG_IS_LINKED))
 			remove_button_link(op);
 		    remove_ob(op);
-		    free_object(op);
+            op->map = NULL; /* Avoid dropping of inv */
 		}
 	    }
 	}
@@ -1835,26 +1826,6 @@ int new_save_map(mapstruct *m, int flag)
 
 
 /*
- * Remove and free all objects in the inventory of the given object.
- * object.c ?
- */
-
-void clean_object(object *op)
-{
-    object *tmp, *next;
-
-    for(tmp = op->inv; tmp; tmp = next)
-    {
-	next = tmp->below;
-	clean_object(tmp);
-	if (QUERY_FLAG(tmp, FLAG_IS_LINKED))
-	    remove_button_link(tmp);
-	remove_ob(tmp);
-	free_object(tmp);
-    }
-}
-
-/*
  * Remove and free all objects in the given map.
  */
 
@@ -1875,13 +1846,8 @@ void free_all_objects(mapstruct *m) {
 		if(op->head!=NULL)
 		    op = op->head;
 
-		/* If the map isn't in memory, free_object will remove and
-		 * free objects in op's inventory.  So let it do the job.
-		 */
-		if (m->in_memory==MAP_IN_MEMORY)
-		    clean_object(op);
 		remove_ob(op);
-		free_object(op);
+        op->map = NULL; /* This will make sure the map objects doesn't drop their inventory */
 	    }
 	}
 	/*LOG(llevDebug,"FAO-end: map:%s ->%d\n", m->name?m->name:(m->tmpname?m->tmpname:""),m->in_memory);*/

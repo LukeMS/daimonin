@@ -55,7 +55,7 @@ void push_button(object *op) {
      * re-loaded.  As such, just exit this function if that is the case.
      */
     
-    if (QUERY_FLAG(ol->ob, FLAG_FREED)) return;
+    if (OBJECT_FREE(ol->ob)) return;
     tmp = ol->ob;
     switch(tmp->type) {
     case GATE:
@@ -582,10 +582,10 @@ void do_mood_floor(object *op, object *op2) {
 			 * dereference a null value
 			 */
 			if (tmp->type == GOLEM && tmp->owner && tmp->owner->type==PLAYER &&
-			    tmp->owner->contr->golem==tmp)
+			    CONTR(tmp->owner)->golem==tmp)
 			{
 				(*send_golem_control_func)(tmp, GOLEM_CTR_RELEASE);
-				tmp->owner->contr->golem=NULL;
+				CONTR(tmp->owner)->golem=NULL;
 			}
 			tmp->owner = NULL;
 		}

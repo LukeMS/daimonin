@@ -943,7 +943,6 @@ int move_monster(object *op) {
         if(QUERY_FLAG(op, FLAG_ONLY_ATTACK)) 
         {
             remove_ob(op);
-	        free_object(op);
             return 1;
 	    }
         if(!QUERY_FLAG(op, FLAG_STAND_STILL)) 
@@ -985,7 +984,7 @@ int move_monster(object *op) {
                             break; 
 	            }
         
-	            /*if(QUERY_FLAG(op, FLAG_FREED)) return 1; */ /* hm, when freed dont lets move him anymore */
+	            /*if(OBJECT_FREE(op)) return 1; */ /* hm, when freed dont lets move him anymore */
 	            return 0;
 	        }
     	    else if (QUERY_FLAG(op,FLAG_RANDOM_MOVE))
@@ -1000,10 +999,10 @@ int move_monster(object *op) {
     if((op->type&HI4) == PETMOVE && (owner = get_owner(op)) != NULL && !on_same_map(op,owner))
     {
 	    follow_owner(op, owner);
+        /* Gecko: The following block seems buggy, but I'm not sure... */
 	    if(QUERY_FLAG(op, FLAG_REMOVED) && FABS(op->speed) > MIN_ACTIVE_SPEED)
         {
 	        remove_friendly_object(op);
-	        free_object(op);
 	        return 1;
 	    }
         return 0;
@@ -1193,12 +1192,11 @@ int move_monster(object *op) {
         }
     } /* if monster is in attack range */
 
-    if(QUERY_FLAG(part,FLAG_FREED))    /* Might be freed by ghost-attack or hit-back */
+    if(OBJECT_FREE(part))    /* Might be freed by ghost-attack or hit-back */
     	return 1;
     if(QUERY_FLAG(op, FLAG_ONLY_ATTACK))
     {
 	    remove_ob(op);
-	    free_object(op);
 	    return 1;
     }
     return 0;
@@ -1665,7 +1663,7 @@ int check_good_weapon(object *who, object *item) {
     LOG(llevMonster,"Can't wield %s(%d).\n",item->name,item->count);
     return 0;
   }
-  if(who->stats.dam < prev_dam && !QUERY_FLAG(other_weap,FLAG_FREED)) {
+  if(who->stats.dam < prev_dam && !OBJECT_FREE(other_weap)) {
     /* New weapon was worse.  (Note ^: Could have been freed by merging) */
     if (monster_apply_special(who,other_weap,0))
       LOG(llevMonster,"Can't rewield %s(%d).\n",item->name,item->count);
@@ -1687,7 +1685,7 @@ int check_good_armour(object *who, object *item) {
     LOG(llevMonster, "Can't take off %s(%d).\n",item->name,item->count);
     return 0;
   }
-  if(who->stats.ac > prev_ac && !QUERY_FLAG(other_armour,FLAG_FREED)) {
+  if(who->stats.ac > prev_ac && !OBJECT_FREE(other_armour)) {
     /* New armour was worse. *Note ^: Could have been freed by merging) */
     if (monster_apply_special(who, other_armour,0))
       LOG(llevMonster,"Can't rewear %s(%d).\n", item->name, item->count);
@@ -2746,7 +2744,7 @@ static object *spawn_monster(object *gen, object *orig, int range)
 	op->map = orig->map;
     if(head!=NULL)
       op->head=head,prev->more=op;
-    if (QUERY_FLAG(op, FLAG_FREED)) return NULL;
+    if (OBJECT_FREE(op)) return NULL;
     if(op->randomitems!=NULL)
 		create_treasure(op->randomitems,op,0,op->level?op->level:orig->map->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
     if(head==NULL)
@@ -2814,8 +2812,6 @@ void spawn_point(object *op)
 				SET_MULTI_FLAG(op->enemy, FLAG_NO_APPLY);
 				remove_ob(op->enemy);
 				SET_FLAG(op->enemy,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
-				free_object(op->enemy);
-
 			}
 			else
 				return;
@@ -2852,7 +2848,6 @@ void spawn_point(object *op)
 		LOG(llevBug,"BUG: Spawn point without inventory!! --> map %s (%d,%d)\n",op->map?(op->map->path?op->map->path:">no path<"):">no map<", op->x, op->y);
 		/* kill this spawn point - its useless and need to fixed from the map maker/generator */
 		remove_ob(op);
-		free_object(op);
 		return;
 	}
 	/* now we move through the spawn point inventory and

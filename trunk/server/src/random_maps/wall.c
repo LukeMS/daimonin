@@ -330,10 +330,8 @@ object * retrofit_joined_wall(mapstruct *the_map,int i,int j,int insert_flag,RMP
     new_wall=arch_to_object(wall_arch);
     new_wall->x = i;
     new_wall->y = j;
-    if(the_wall && the_wall->map) {
+    if(the_wall && the_wall->map) 
       remove_ob(the_wall);
-      free_object(the_wall);
-    }
     SET_FLAG(new_wall,FLAG_NO_PASS); /* make SURE it's a wall */
     insert_ob_in_map(new_wall,the_map,new_wall,INS_NO_MERGE | INS_NO_WALK_ON);
   }

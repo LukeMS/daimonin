@@ -108,9 +108,22 @@ int command_bug(object *op, char *params)
 }
 
 
+/*
+ * count_active() returns the number of objects on the list of active objects.
+ */
+
+static int count_active() {
+  int i=0;
+  object *tmp=active_objects;
+  while(tmp!=NULL)
+    tmp=tmp->active_next, i++;
+  return i;
+}
+
+
 void malloc_info(object *op) {
-  int ob_used=count_used(),ob_free=count_free(),players,nrofmaps;
-  int nrm=0,mapmem=0,anr,anims,sum_alloc=0,sum_used=0,i,tlnr, alnr;
+  int players,nrofmaps;
+  int nrm=0,mapmem=0,anr,anims,sum_alloc=0,sum_used=0,i,j,tlnr, alnr;
   treasurelist *tl;
   player *pl;
   mapstruct *m;
@@ -135,18 +148,22 @@ void malloc_info(object *op) {
   sprintf(errmsg,"Sizeof: object=%ld  player=%ld  map=%ld",
           (long)sizeof(object),(long)sizeof(player),(long)sizeof(mapstruct));
   new_draw_info(NDI_UNIQUE, 0,op,errmsg);
-  sprintf(errmsg,"%4d used objects:    %8d",ob_used,i=(ob_used*sizeof(object)));
-  new_draw_info(NDI_UNIQUE, 0,op,errmsg);
-  sum_used+=i;  sum_alloc+=i;
-  sprintf(errmsg,"%4d free objects:    %8d",ob_free,i=(ob_free*sizeof(object)));
-  new_draw_info(NDI_UNIQUE, 0,op,errmsg);
-  sprintf(errmsg,"%4d active objects:  %8d",count_active(), 0);
-  new_draw_info(NDI_UNIQUE, 0,op,errmsg);
-  sum_alloc+=i;
-  sprintf(errmsg,"%4d players:         %8d",players,i=(players*sizeof(player)));
-  new_draw_info(NDI_UNIQUE, 0,op,errmsg);
-  sum_alloc+=i; sum_used+=i;
 
+  for(j=0; j<NROF_MEMPOOLS; j++) {
+      int ob_used=mempools[j].nrof_used,ob_free=mempools[j].nrof_free;
+      sprintf(errmsg,"%4d used %s:    %8d",ob_used,mempools[j].chunk_description, 
+              i=(ob_used*(mempools[j].chunksize + sizeof(struct mempool_chunk))));
+      new_draw_info(NDI_UNIQUE, 0,op,errmsg);
+      sum_used+=i;  sum_alloc+=i;
+      
+      sprintf(errmsg,"%4d free %s:    %8d",ob_free,mempools[j].chunk_description, 
+              i=(ob_free*(mempools[j].chunksize + sizeof(struct mempool_chunk))));
+      new_draw_info(NDI_UNIQUE, 0,op,errmsg);
+      sum_alloc+=i;
+  }
+  
+  sprintf(errmsg,"%4d active objects",count_active());
+  new_draw_info(NDI_UNIQUE, 0,op,errmsg);
 
   sprintf(errmsg,"%4d maps allocated:  %8d",nrofmaps,
           i=(nrofmaps*sizeof(mapstruct)));
@@ -189,7 +206,6 @@ void malloc_info(object *op) {
   sprintf(errmsg,"Total space used:     %8d",sum_used);
   new_draw_info(NDI_UNIQUE, 0,op,errmsg);
 }
-
 
 void current_map_info(object *op) {
     mapstruct *m = op->map;
@@ -282,9 +298,27 @@ int command_who (object *op, char *params)
 
 int command_malloc (object *op, char *params)
 {
+#ifdef MEMPOOL_TRACKING
+    if(params) {
+        int force_flag = 0, i;
+        
+        if(strcmp(params, "free") && strcmp(params, "force")) {
+            new_draw_info(NDI_UNIQUE, 0,op, "Usage: /malloc [free | force]");
+            return 1;
+        } 
+     
+        if(strcmp(params, "force")==0)
+            force_flag = 1;
+
+        for(i=0; i<NROF_MEMPOOLS; i++) 
+            if(force_flag == 1 || mempools[i].flags & MEMPOOL_ALLOW_FREEING)
+                free_empty_puddles(i);
+    }
+#endif    
+    
     malloc_info(op);
     return 1;
-  }
+}
 
 int command_mapinfo (object *op, char *params)
 {
@@ -418,7 +452,8 @@ int command_wizpass (object *op, char *params)
 
 int command_dumpallobjects (object *op, char *params)
 {
-        dump_all_objects();
+    /* Gecko: this is no longer possible */
+ /*       dump_all_objects(); */
   return 0;
 }
 
@@ -439,16 +474,16 @@ int command_dumpallarchetypes (object *op, char *params)
  */
 int command_dm_stealth (object *op, char *params)
 {
-	if(op->contr)
+	if(op->type == PLAYER && CONTR(op))
 	{
-		if(op->contr->dm_stealth)
+		if(CONTR(op)->dm_stealth)
 		{
 			new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, NULL,"%s has entered the game.",query_name(op));
-			op->contr->dm_stealth = 0;
+			CONTR(op)->dm_stealth = 0;
 		}
 		else
-			op->contr->dm_stealth = 1;
-		new_draw_info_format(NDI_UNIQUE, 0,op, "toggled dm_stealth to %d", op->contr->dm_stealth);
+			CONTR(op)->dm_stealth = 1;
+		new_draw_info_format(NDI_UNIQUE, 0,op, "toggled dm_stealth to %d", CONTR(op)->dm_stealth);
 	}
 
 	return 0;
@@ -456,13 +491,13 @@ int command_dm_stealth (object *op, char *params)
 
 int command_dm_light (object *op, char *params)
 {
-	if(op->contr)
+	if(op->type == PLAYER && CONTR(op))
 	{
-		if(op->contr->dm_light)
-			op->contr->dm_light = 0;
+		if(CONTR(op)->dm_light)
+			CONTR(op)->dm_light = 0;
 		else
-			op->contr->dm_light = 1;
-		new_draw_info_format(NDI_UNIQUE, 0,op, "toggle dm_light to %d", op->contr->dm_light);
+			CONTR(op)->dm_light = 1;
+		new_draw_info_format(NDI_UNIQUE, 0,op, "toggle dm_light to %d", CONTR(op)->dm_light);
 	}
 
 	return 0;
@@ -597,14 +632,14 @@ int command_output_sync(object *op, char *params)
 
     if (!params) {
 	new_draw_info_format(NDI_UNIQUE, 0, op,
-		"Output sync time is presently %d", op->contr->outputs_sync);
+		"Output sync time is presently %d", CONTR(op)->outputs_sync);
 	return 1;
     }
     val=atoi(params);
     if (val>0) {
-	op->contr->outputs_sync = val;
+	CONTR(op)->outputs_sync = val;
 	new_draw_info_format(NDI_UNIQUE, 0, op,
-		"Output sync time now set to %d", op->contr->outputs_sync);
+		"Output sync time now set to %d", CONTR(op)->outputs_sync);
     }
     else
 	new_draw_info(NDI_UNIQUE, 0, op,"Invalid value for output_sync.");
@@ -619,14 +654,14 @@ int command_output_count(object *op, char *params)
 
     if (!params) {
 	new_draw_info_format(NDI_UNIQUE, 0, op,
-		"Output count is presently %d", op->contr->outputs_count);
+		"Output count is presently %d", CONTR(op)->outputs_count);
 	return 1;
     }
     val=atoi(params);
     if (val>0) {
-	op->contr->outputs_count = val;
+	CONTR(op)->outputs_count = val;
 	new_draw_info_format(NDI_UNIQUE, 0, op,
-		"Output count now set to %d", op->contr->outputs_count);
+		"Output count now set to %d", CONTR(op)->outputs_count);
     }
     else
 	new_draw_info(NDI_UNIQUE, 0, op,"Invalid value for output_count.");
@@ -640,10 +675,10 @@ int command_listen (object *op, char *params)
 
   if(params==NULL || !sscanf(params, "%d", &i)) {
     new_draw_info_format(NDI_UNIQUE, 0, op,
-	"Set listen to what (presently %d)?", op->contr->listening);
+	"Set listen to what (presently %d)?", CONTR(op)->listening);
       return 1;
     }
-    op->contr->listening=(char) i;
+    CONTR(op)->listening=(char) i;
     new_draw_info_format(NDI_UNIQUE, 0, op,
 	"Your verbose level is now %d.",i);
     return 1;
@@ -656,25 +691,25 @@ int command_listen (object *op, char *params)
  */
 int command_statistics(object *pl, char *params)
 {
-    if (!pl->contr) return 1;
+    if (pl->type != PLAYER || !CONTR(pl)) return 1;
     new_draw_info_format(NDI_UNIQUE, 0, pl,"  Experience: %d",pl->stats.exp);
     new_draw_info_format(NDI_UNIQUE, 0, pl,"  Next Level: %d",level_exp(pl->level+1, 1.0));
     new_draw_info(NDI_UNIQUE, 0, pl,       "\nStat       Nat/Real/Max");
 
     new_draw_info_format(NDI_UNIQUE, 0, pl, "Str         %2d/ %3d/%3d",
-	pl->contr->orig_stats.Str, pl->stats.Str, 20+pl->arch->clone.stats.Str);
+	CONTR(pl)->orig_stats.Str, pl->stats.Str, 20+pl->arch->clone.stats.Str);
     new_draw_info_format(NDI_UNIQUE, 0, pl, "Dex         %2d/ %3d/%3d",
-	pl->contr->orig_stats.Dex, pl->stats.Dex, 20+pl->arch->clone.stats.Dex);
+	CONTR(pl)->orig_stats.Dex, pl->stats.Dex, 20+pl->arch->clone.stats.Dex);
     new_draw_info_format(NDI_UNIQUE, 0, pl, "Con         %2d/ %3d/%3d",
-	pl->contr->orig_stats.Con, pl->stats.Con, 20+pl->arch->clone.stats.Con);
+	CONTR(pl)->orig_stats.Con, pl->stats.Con, 20+pl->arch->clone.stats.Con);
     new_draw_info_format(NDI_UNIQUE, 0, pl, "Int         %2d/ %3d/%3d",
-	pl->contr->orig_stats.Int, pl->stats.Int, 20+pl->arch->clone.stats.Int);
+	CONTR(pl)->orig_stats.Int, pl->stats.Int, 20+pl->arch->clone.stats.Int);
     new_draw_info_format(NDI_UNIQUE, 0, pl, "Wis         %2d/ %3d/%3d",
-	pl->contr->orig_stats.Wis, pl->stats.Wis, 20+pl->arch->clone.stats.Wis);
+	CONTR(pl)->orig_stats.Wis, pl->stats.Wis, 20+pl->arch->clone.stats.Wis);
     new_draw_info_format(NDI_UNIQUE, 0, pl, "Pow         %2d/ %3d/%3d",
-	pl->contr->orig_stats.Pow, pl->stats.Pow, 20+pl->arch->clone.stats.Pow);
+	CONTR(pl)->orig_stats.Pow, pl->stats.Pow, 20+pl->arch->clone.stats.Pow);
     new_draw_info_format(NDI_UNIQUE, 0, pl, "Cha         %2d/ %3d/%3d",
-	pl->contr->orig_stats.Cha, pl->stats.Cha, 20+pl->arch->clone.stats.Cha);
+	CONTR(pl)->orig_stats.Cha, pl->stats.Cha, 20+pl->arch->clone.stats.Cha);
 
    /* Can't think of anything else to print right now */
    return 0;
@@ -743,21 +778,21 @@ int command_logs (object *op, char *params)
 
 int command_usekeys(object *op, char *params)
 {
-    usekeytype oldtype=op->contr->usekeys;
+    usekeytype oldtype=CONTR(op)->usekeys;
     static char *types[]={"inventory", "keyrings", "containers"};
 
     if (!params) {
 	new_draw_info_format(NDI_UNIQUE, 0, op, "usekeys is set to %s",
-	types[op->contr->usekeys]);
+	types[CONTR(op)->usekeys]);
 	return 1;
     }
 
     if (!strcmp(params,"inventory")) 
-	op->contr->usekeys=key_inventory;
+	CONTR(op)->usekeys=key_inventory;
     else if (!strcmp(params,"keyrings")) 
-	op->contr->usekeys=keyrings;
+	CONTR(op)->usekeys=keyrings;
     else if (!strcmp(params,"containers")) 
-	op->contr->usekeys=containers;
+	CONTR(op)->usekeys=containers;
     else {
 	new_draw_info_format(NDI_UNIQUE, 0, op,
 	    "usekeys: Unknown options %s, valid options are inventory, keyrings, containers",
@@ -765,8 +800,8 @@ int command_usekeys(object *op, char *params)
 	return 0;
     }
     new_draw_info_format(NDI_UNIQUE, 0, op, "usekeys %s set to %s",
-	(oldtype==op->contr->usekeys?"":"now"),
-	types[op->contr->usekeys]);
+	(oldtype==CONTR(op)->usekeys?"":"now"),
+	types[CONTR(op)->usekeys]);
     return 1;
 }
 
@@ -878,7 +913,7 @@ static void show_commands(object *op, int what)
 
 int command_praying (object *op, char *params)
 {
-	op->contr->praying=1;
+	CONTR(op)->praying=1;
 	return 0;
 }
 
@@ -1027,13 +1062,13 @@ int command_explore (object *op, char *params)
    * I guess this is the best way to see if we are solo or not.  Actually,
    * are there any cases when first_player->next==NULL and we are not solo?
    */
-      if ((first_player!=op->contr) || (first_player->next!=NULL)) {
+      if ((first_player!=CONTR(op)) || (first_player->next!=NULL)) {
 	  new_draw_info(NDI_UNIQUE, 0,op,"You can not enter explore mode if you are in a party");
       }
-      else if (op->contr->explore)
+      else if (CONTR(op)->explore)
               new_draw_info(NDI_UNIQUE, 0,op, "There is no return from explore mode");
       else {
-		op->contr->explore=1;
+		CONTR(op)->explore=1;
 		new_draw_info(NDI_UNIQUE, 0,op, "You are now in explore mode");
       }
       return 1;
@@ -1042,12 +1077,12 @@ int command_explore (object *op, char *params)
 
 int command_sound (object *op, char *params)
 {
-    if (op->contr->socket.sound) {
-        op->contr->socket.sound=0;
+    if (CONTR(op)->socket.sound) {
+        CONTR(op)->socket.sound=0;
         new_draw_info(NDI_UNIQUE, 0,op, "The sounds are disabled.");
     }
     else {
-        op->contr->socket.sound=1;
+        CONTR(op)->socket.sound=1;
         new_draw_info(NDI_UNIQUE, 0,op, "The sounds are enabled.");
     }
     return 1;
@@ -1058,15 +1093,15 @@ int command_sound (object *op, char *params)
  */
 
 void receive_player_name(object *op,char k) {
-  unsigned int name_len=strlen(op->contr->write_buf+1);
+  unsigned int name_len=strlen(CONTR(op)->write_buf+1);
 
   /* force a "Xxxxxxx" name */
   if(name_len>1)
   {
     int i;
-    for(i=1;*(op->contr->write_buf+i)!=0;i++)
-	*(op->contr->write_buf+i)=tolower(*(op->contr->write_buf+i));	 
-    *(op->contr->write_buf+1) = toupper(*(op->contr->write_buf+1));
+    for(i=1;*(CONTR(op)->write_buf+i)!=0;i++)
+	*(CONTR(op)->write_buf+i)=tolower(*(CONTR(op)->write_buf+i));	 
+    *(CONTR(op)->write_buf+1) = toupper(*(CONTR(op)->write_buf+1));
   }
 
   if(name_len<=1||name_len>12) {
@@ -1074,14 +1109,14 @@ void receive_player_name(object *op,char k) {
     return;
   }
   
-  if(!check_name(op->contr,op->contr->write_buf+1)) {
+  if(!check_name(CONTR(op),CONTR(op)->write_buf+1)) {
       get_name(op);
       return;
   }
-  FREE_AND_COPY_HASH(op->name, op->contr->write_buf+1);
-/*  new_draw_info(NDI_UNIQUE, 0,op,op->contr->write_buf);*/
-  /*op->contr->last_value= -1;*/ /* Flag: redraw all stats */
-  op->contr->name_changed=1;
+  FREE_AND_COPY_HASH(op->name, CONTR(op)->write_buf+1);
+/*  new_draw_info(NDI_UNIQUE, 0,op,CONTR(op)->write_buf);*/
+  /*CONTR(op)->last_value= -1;*/ /* Flag: redraw all stats */
+  CONTR(op)->name_changed=1;
   get_password(op);
 }
 
@@ -1092,7 +1127,7 @@ void receive_player_name(object *op,char k) {
  */
 void receive_player_password(object *op,char k)
 {
-	unsigned int pwd_len=strlen(op->contr->write_buf);
+	unsigned int pwd_len=strlen(CONTR(op)->write_buf);
 	if(pwd_len<=1||pwd_len>17)
 	{
 		get_name(op);
@@ -1100,24 +1135,24 @@ void receive_player_password(object *op,char k)
 	}
 	new_draw_info(NDI_UNIQUE, 0,op,"          "); /* To hide the password better */
 
-	if(op->contr->state==ST_CONFIRM_PASSWORD) 
+	if(CONTR(op)->state==ST_CONFIRM_PASSWORD) 
 	{
 		char cmd_buf[]="X";
 
-		if(!check_password(op->contr->write_buf+1,op->contr->password)) 
+		if(!check_password(CONTR(op)->write_buf+1,CONTR(op)->password)) 
 		{
 			new_draw_info(NDI_UNIQUE, 0,op,"The passwords did not match.");
 			get_name(op);
 			return;
 		}
-	    esrv_new_player(op->contr, 0);
-		Write_String_To_Socket(&op->contr->socket, BINARY_CMD_NEW_CHAR, cmd_buf,1);
+	    esrv_new_player(CONTR(op), 0);
+		Write_String_To_Socket(&CONTR(op)->socket, BINARY_CMD_NEW_CHAR, cmd_buf,1);
 		LOG(llevInfo,"NewChar send for %s\n", op->name);
-	    op->contr->state=ST_ROLL_STAT;
+	    CONTR(op)->state=ST_ROLL_STAT;
 	    return;
 	  }
-	strcpy(op->contr->password,crypt_string(op->contr->write_buf+1,NULL));
-	op->contr->state=ST_ROLL_STAT;
+	strcpy(CONTR(op)->password,crypt_string(CONTR(op)->write_buf+1,NULL));
+	CONTR(op)->state=ST_ROLL_STAT;
 	check_login(op);
 	return;
 }

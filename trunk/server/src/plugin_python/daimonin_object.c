@@ -603,8 +603,8 @@ static PyObject* Daimonin_Object_SetSkill(Daimonin_Object *whoptr, PyObject* arg
 
 	        }
 			/*LOG(-1,"LEVEL2 %d (->%d) :: %s (exp %d)\n",tmp->level,level,query_name(tmp), tmp->stats.exp);*/
-			if(WHO->type == PLAYER && WHO->contr)
-				    WHO->contr->update_skills=1; /* we will sure change skill exp, mark for update */
+			if(WHO->type == PLAYER && CONTR(WHO))
+				    CONTR(WHO)->update_skills=1; /* we will sure change skill exp, mark for update */
 
 			Py_INCREF(Py_None);
 			return Py_None;
@@ -1136,7 +1136,7 @@ static PyObject* Daimonin_Object_SetGender(Daimonin_Object *whoptr, PyObject* ar
 
 	/* update the players client of object was a player */
 	if(WHO->type == PLAYER)
-		WHO->contr->socket.ext_title_flag = 1; /* demand update to client */
+		CONTR(WHO)->socket.ext_title_flag = 1; /* demand update to client */
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -1174,7 +1174,7 @@ static PyObject* Daimonin_Object_SetRank(Daimonin_Object *whoptr, PyObject* args
             if (strcmp(rank,"Mr")) /* Mr = keyword to clear title and not add it as rank */
                 walk->title = add_string_hook(rank);
             
-            WHO->contr->socket.ext_title_flag = 1; /* demand update to client */
+            CONTR(WHO)->socket.ext_title_flag = 1; /* demand update to client */
             return wrap_object(walk);
         }            
     }
@@ -1212,7 +1212,7 @@ static PyObject* Daimonin_Object_SetAlignment(Daimonin_Object *whoptr, PyObject*
 				FREE_STRING_HOOK(walk->title);
 			walk->title = add_string_hook(align);
 
-            WHO->contr->socket.ext_title_flag = 1; /* demand update to client */
+            CONTR(WHO)->socket.ext_title_flag = 1; /* demand update to client */
             return wrap_object(walk);
         }            
     }
@@ -1286,7 +1286,7 @@ static PyObject* Daimonin_Object_SetGuildForce(Daimonin_Object *whoptr, PyObject
             if (guild && strcmp(guild, ""))
                 walk->title = add_string_hook(guild);
             
-            WHO->contr->socket.ext_title_flag = 1; /* demand update to client */
+            CONTR(WHO)->socket.ext_title_flag = 1; /* demand update to client */
             return wrap_object(walk);
         }            
     }
@@ -2112,9 +2112,9 @@ static PyObject* Daimonin_Object_SetSaveBed(Daimonin_Object *whoptr, PyObject* a
 	
     if(WHO->type == PLAYER)
 	{	
-		strcpy(WHO->contr->savebed_map, map->map->path);
-		WHO->contr->bed_x = x;
-		WHO->contr->bed_y = y;
+		strcpy(CONTR(WHO)->savebed_map, map->map->path);
+		CONTR(WHO)->bed_x = x;
+		CONTR(WHO)->bed_y = y;
     }
     Py_INCREF(Py_None);
     return Py_None;
@@ -2323,9 +2323,9 @@ static PyObject* Daimonin_Object_GetIP(Daimonin_Object *whoptr, PyObject* args)
 	    return Py_None;
 	}
 
-    if (WHO->contr)
+    if (CONTR(WHO))
     {
-        result = WHO->contr->socket.host;
+        result = CONTR(WHO)->socket.host;
         return Py_BuildValue("s",result);
     }
     else
@@ -2533,13 +2533,13 @@ static PyObject* Daimonin_Object_GetUnmodifiedAttribute(Daimonin_Object* whoptr,
     RAISE("Not implemented");
 #if 0    
     switch(fieldno) {
-        case OBJFIELD_STAT_INT: return Py_BuildValue("i", WHO->contr->orig_stats.Int);
-        case OBJFIELD_STAT_STR: return Py_BuildValue("i", WHO->contr->orig_stats.Str);
-        case OBJFIELD_STAT_CHA: return Py_BuildValue("i", WHO->contr->orig_stats.Cha);
-        case OBJFIELD_STAT_WIS: return Py_BuildValue("i", WHO->contr->orig_stats.Wis);
-        case OBJFIELD_STAT_DEX: return Py_BuildValue("i", WHO->contr->orig_stats.Dex);
-        case OBJFIELD_STAT_CON: return Py_BuildValue("i", WHO->contr->orig_stats.Con);
-        case OBJFIELD_STAT_POW: return Py_BuildValue("i", WHO->contr->orig_stats.Pow);
+        case OBJFIELD_STAT_INT: return Py_BuildValue("i", CONTR(WHO)->orig_stats.Int);
+        case OBJFIELD_STAT_STR: return Py_BuildValue("i", CONTR(WHO)->orig_stats.Str);
+        case OBJFIELD_STAT_CHA: return Py_BuildValue("i", CONTR(WHO)->orig_stats.Cha);
+        case OBJFIELD_STAT_WIS: return Py_BuildValue("i", CONTR(WHO)->orig_stats.Wis);
+        case OBJFIELD_STAT_DEX: return Py_BuildValue("i", CONTR(WHO)->orig_stats.Dex);
+        case OBJFIELD_STAT_CON: return Py_BuildValue("i", CONTR(WHO)->orig_stats.Con);
+        case OBJFIELD_STAT_POW: return Py_BuildValue("i", CONTR(WHO)->orig_stats.Pow);
                                 
         default:
             RAISE("No unmodified version of attribute available");
@@ -2690,24 +2690,24 @@ static int Object_SetAttribute(Daimonin_Object* whoptr, PyObject *value, int fie
 		 * VC gives a error for the offsetof() because case: 
 		 * must be followed by a constant value.
         switch(offset) {
-            case offsetof(object, stats.Int): WHO->contr->orig_stats.Int = PyInt_AsLong(value); break;
-            case offsetof(object, stats.Str): WHO->contr->orig_stats.Str = PyInt_AsLong(value); break;
-            case offsetof(object, stats.Cha): WHO->contr->orig_stats.Cha = PyInt_AsLong(value); break;
-            case offsetof(object, stats.Wis): WHO->contr->orig_stats.Wis = PyInt_AsLong(value); break;
-            case offsetof(object, stats.Dex): WHO->contr->orig_stats.Dex = PyInt_AsLong(value); break;
-            case offsetof(object, stats.Con): WHO->contr->orig_stats.Con = PyInt_AsLong(value); break;
-            case offsetof(object, stats.Pow): WHO->contr->orig_stats.Pow = PyInt_AsLong(value); break;
+            case offsetof(object, stats.Int): CONTR(WHO)->orig_stats.Int = PyInt_AsLong(value); break;
+            case offsetof(object, stats.Str): CONTR(WHO)->orig_stats.Str = PyInt_AsLong(value); break;
+            case offsetof(object, stats.Cha): CONTR(WHO)->orig_stats.Cha = PyInt_AsLong(value); break;
+            case offsetof(object, stats.Wis): CONTR(WHO)->orig_stats.Wis = PyInt_AsLong(value); break;
+            case offsetof(object, stats.Dex): CONTR(WHO)->orig_stats.Dex = PyInt_AsLong(value); break;
+            case offsetof(object, stats.Con): CONTR(WHO)->orig_stats.Con = PyInt_AsLong(value); break;
+            case offsetof(object, stats.Pow): CONTR(WHO)->orig_stats.Pow = PyInt_AsLong(value); break;
             default:                                    
         }
 		*/
 		/* replacing the switch struct above */
-            if(offset == offsetof(object, stats.Int)) WHO->contr->orig_stats.Int = (sint8)PyInt_AsLong(value);
-            else if(offset ==offsetof(object, stats.Str)) WHO->contr->orig_stats.Str = (sint8)PyInt_AsLong(value);
-            else if(offset ==offsetof(object, stats.Cha)) WHO->contr->orig_stats.Cha = (sint8)PyInt_AsLong(value);
-            else if(offset ==offsetof(object, stats.Wis)) WHO->contr->orig_stats.Wis = (sint8)PyInt_AsLong(value);
-            else if(offset ==offsetof(object, stats.Dex)) WHO->contr->orig_stats.Dex = (sint8)PyInt_AsLong(value);
-            else if(offset ==offsetof(object, stats.Con)) WHO->contr->orig_stats.Con = (sint8)PyInt_AsLong(value);
-            else if(offset ==offsetof(object, stats.Pow)) WHO->contr->orig_stats.Pow = (sint8)PyInt_AsLong(value);
+            if(offset == offsetof(object, stats.Int)) CONTR(WHO)->orig_stats.Int = (sint8)PyInt_AsLong(value);
+            else if(offset ==offsetof(object, stats.Str)) CONTR(WHO)->orig_stats.Str = (sint8)PyInt_AsLong(value);
+            else if(offset ==offsetof(object, stats.Cha)) CONTR(WHO)->orig_stats.Cha = (sint8)PyInt_AsLong(value);
+            else if(offset ==offsetof(object, stats.Wis)) CONTR(WHO)->orig_stats.Wis = (sint8)PyInt_AsLong(value);
+            else if(offset ==offsetof(object, stats.Dex)) CONTR(WHO)->orig_stats.Dex = (sint8)PyInt_AsLong(value);
+            else if(offset ==offsetof(object, stats.Con)) CONTR(WHO)->orig_stats.Con = (sint8)PyInt_AsLong(value);
+            else if(offset ==offsetof(object, stats.Pow)) CONTR(WHO)->orig_stats.Pow = (sint8)PyInt_AsLong(value);
 
         if(flags&FIELDFLAG_PLAYER_FIX)
             fix_player_hook(WHO);
@@ -2758,7 +2758,7 @@ int Object_SetFlag(Daimonin_Object* whoptr,  PyObject* val, int flagno)
        
     /* TODO: if gender changed: 
     if()
-       WHO->contr->socket.ext_title_flag = 1; * demand update to client */
+       CONTR(WHO)->socket.ext_title_flag = 1; * demand update to client */
             
     return 0;
 }

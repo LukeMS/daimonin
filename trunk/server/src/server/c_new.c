@@ -174,13 +174,13 @@ int execute_newserver_command(object *pl, char *command)
 
 int command_run(object *op, char *params)
 {
-    op->contr->run_on=1;
+    CONTR(op)->run_on=1;
     return (move_player(op, params?atoi(params):0));
 }
 
 int command_run_stop(object *op, char *params)
 {
-    op->contr->run_on=0;
+    CONTR(op)->run_on=0;
     return 1;
 }
 
@@ -286,17 +286,17 @@ void send_target_command(player *pl)
 
 int command_combat(object *op, char *params)
 {
-	if(!op || !op->map || !op->contr)
+	if(!op || !op->map || op->type != PLAYER || !CONTR(op))
 		return 1;
 
-	if(op->contr->combat_mode)
-		op->contr->combat_mode=0;
+	if(CONTR(op)->combat_mode)
+		CONTR(op)->combat_mode=0;
 	else {
-		op->contr->combat_mode=1;
-        op->contr->praying = 0;
+		CONTR(op)->combat_mode=1;
+        CONTR(op)->praying = 0;
     }
 
-	send_target_command(op->contr);
+	send_target_command(CONTR(op));
 	return 1;
 }
 
@@ -314,7 +314,7 @@ int command_target(object *op, char *params)
 	int jump_in,jump_in_n,get_ob_flag;
 	int n,nt,xt,yt, block, pvp_flag = FALSE;
 
-	if(!op || !op->map || !op->contr || !params || params[0]==0)
+	if(!op || !op->map || op->type != PLAYER || !CONTR(op) || !params || params[0]==0)
 		return 1;
 
 	/* !x y = mouse map target */
@@ -335,17 +335,17 @@ int command_target(object *op, char *params)
 
 			/* thats the trick: we get  op map pos, but we have 2 offsets:
 			 * the offset from the client mouse click - can be 
-			 * +- op->contr->socket.mapx/2 - and the freearr_x/y offset for 
+			 * +- CONTR(op)->socket.mapx/2 - and the freearr_x/y offset for 
 			 * the search.
 			 */
 			xt=op->x+(xx=freearr_x[n]+xstart);
 			yt=op->y+(yy=freearr_y[n]+ystart);
 
-			if(xx <-(int)(op->contr->socket.mapx_2) || xx > (int)(op->contr->socket.mapx_2) ||
-				yy < -(int)(op->contr->socket.mapy_2) || yy>(int)(op->contr->socket.mapy_2))
+			if(xx <-(int)(CONTR(op)->socket.mapx_2) || xx > (int)(CONTR(op)->socket.mapx_2) ||
+				yy < -(int)(CONTR(op)->socket.mapy_2) || yy>(int)(CONTR(op)->socket.mapy_2))
 				continue; 
 
-			block = op->contr->blocked_los[xx+op->contr->socket.mapx_2][yy+op->contr->socket.mapy_2];
+			block = CONTR(op)->blocked_los[xx+CONTR(op)->socket.mapx_2][yy+CONTR(op)->socket.mapy_2];
 			if(block>BLOCKED_LOS_BLOCKSVIEW ||!(m=out_of_map(op->map,&xt,&yt)))
 				continue;
 
@@ -363,9 +363,9 @@ int command_target(object *op, char *params)
 					if(QUERY_FLAG(head,FLAG_SYS_OBJECT) || 
 								(QUERY_FLAG(head,FLAG_IS_INVISIBLE) && !QUERY_FLAG(op,FLAG_SEE_INVISIBLE)) )
 						continue;
-					op->contr->target_object=head;
-					op->contr->target_object_count=head->count;
-					op->contr->target_map_pos =n;
+					CONTR(op)->target_object=head;
+					CONTR(op)->target_object_count=head->count;
+					CONTR(op)->target_map_pos =n;
 					goto found_target;
 				}
 			}
@@ -381,11 +381,11 @@ int command_target(object *op, char *params)
 		nt=-1;
 		
 		/* lets search for enemy object! */
-		if(op->contr->target_object && op->contr->target_object_count==op->contr->target_object->count 
-												&& !QUERY_FLAG(op->contr->target_object,FLAG_FRIENDLY ))
-			n=op->contr->target_map_pos;
+		if(CONTR(op)->target_object && CONTR(op)->target_object_count==CONTR(op)->target_object->count 
+												&& !QUERY_FLAG(CONTR(op)->target_object,FLAG_FRIENDLY ))
+			n=CONTR(op)->target_map_pos;
 		else
-			op->contr->target_object=NULL;
+			CONTR(op)->target_object=NULL;
 		
 		/* now check where we are. IF we are on a PvP map or in a PvP area - then we can
 		* target players on a PvP area too... TODO: group check for group PvP
@@ -400,7 +400,7 @@ int command_target(object *op, char *params)
 				nt=n;
 			xt=op->x+(xx=map_pos_array[n][MAP_POS_X]);
 			yt=op->y+(yy=map_pos_array[n][MAP_POS_Y]);
-			block = op->contr->blocked_los[xx+op->contr->socket.mapx_2][yy+op->contr->socket.mapy_2];
+			block = CONTR(op)->blocked_los[xx+CONTR(op)->socket.mapx_2][yy+CONTR(op)->socket.mapy_2];
 			if(block>BLOCKED_LOS_BLOCKSVIEW ||!(m=out_of_map(op->map,&xt,&yt)))
 			{
 				if((n+1)==NROF_MAP_NODE)
@@ -419,12 +419,12 @@ int command_target(object *op, char *params)
 				  (pvp_flag && (head->type==PLAYER && ((GET_MAP_FLAGS(m,xt,yt)&P_IS_PVP)||(m->map_flags&MAP_FLAG_PVP)))))
 				{
 					/* this can happen when our old target has moved to next position */
-					if(head == op->contr->target_object || head == op || QUERY_FLAG(head,FLAG_SYS_OBJECT) || 
+					if(head == CONTR(op)->target_object || head == op || QUERY_FLAG(head,FLAG_SYS_OBJECT) || 
 								(QUERY_FLAG(head,FLAG_IS_INVISIBLE) && !QUERY_FLAG(op,FLAG_SEE_INVISIBLE)) )
 						continue;
-					op->contr->target_object=head;
-					op->contr->target_object_count=head->count;
-					op->contr->target_map_pos =n;
+					CONTR(op)->target_object=head;
+					CONTR(op)->target_object_count=head->count;
+					CONTR(op)->target_map_pos =n;
 					goto found_target;
 				}
 			}
@@ -436,12 +436,12 @@ int command_target(object *op, char *params)
 	else if(params[0]=='1') /* friend */
 	{
 		/* if /target friend but old target was enemy - target self first */
-		if(op->contr->target_object && op->contr->target_object_count==op->contr->target_object->count 
-						&& !QUERY_FLAG(op->contr->target_object,FLAG_FRIENDLY ))
+		if(CONTR(op)->target_object && CONTR(op)->target_object_count==CONTR(op)->target_object->count 
+						&& !QUERY_FLAG(CONTR(op)->target_object,FLAG_FRIENDLY ))
 		{
-			op->contr->target_object=op;
-			op->contr->target_object_count=op->count;
-			op->contr->target_map_pos =0;
+			CONTR(op)->target_object=op;
+			CONTR(op)->target_object_count=op->count;
+			CONTR(op)->target_map_pos =0;
 		}
 		else /* ok - search for a friendly object now! */
 		{
@@ -451,26 +451,26 @@ int command_target(object *op, char *params)
 			n=0;
 			nt=-1;
 			/* lets search for last friendly object position! */
-			if(op->contr->target_object == op)
+			if(CONTR(op)->target_object == op)
 			{
 				get_ob_flag=0;
 				jump_in=1;
 				jump_in_n=n;		
 				tmp = op->above;
 			}
-			else if(op->contr->target_object && op->contr->target_object_count==op->contr->target_object->count 
-				&& (QUERY_FLAG(op->contr->target_object,FLAG_FRIENDLY )||op->contr->target_object->type == PLAYER))
+			else if(OBJECT_VALID(CONTR(op)->target_object, CONTR(op)->target_object_count) 
+				&& (QUERY_FLAG(CONTR(op)->target_object,FLAG_FRIENDLY )||CONTR(op)->target_object->type == PLAYER))
 			{
 				get_ob_flag=0;
 				jump_in=1;
-				n=op->contr->target_map_pos;
+				n=CONTR(op)->target_map_pos;
 				jump_in_n=n;		
-				tmp = op->contr->target_object->above;				
+				tmp = CONTR(op)->target_object->above;				
 			}
 			else
 			{
 				n=1;
-				op->contr->target_object=NULL;
+				CONTR(op)->target_object=NULL;
 				jump_in=0;
 				get_ob_flag=1;
 			}
@@ -490,7 +490,7 @@ int command_target(object *op, char *params)
 dirty_jump_in1:
 				xt=op->x+(xx=map_pos_array[n][MAP_POS_X]);
 				yt=op->y+(yy=map_pos_array[n][MAP_POS_Y]);
-				block = op->contr->blocked_los[xx+op->contr->socket.mapx_2][yy+op->contr->socket.mapy_2];
+				block = CONTR(op)->blocked_los[xx+CONTR(op)->socket.mapx_2][yy+CONTR(op)->socket.mapy_2];
 				if(block>BLOCKED_LOS_BLOCKSVIEW || !(m=out_of_map(op->map,&xt,&yt)))
 				{
 					if((n+1)==NROF_MAP_NODE)
@@ -515,12 +515,12 @@ dirty_jump_in1:
 							/* this can happen when our old target has moved to next position
 						     * i have no tmp == op here to allow self targeting in the friendly chain 
 						     */
-							if(head == op->contr->target_object || QUERY_FLAG(head,FLAG_SYS_OBJECT) || 
+							if(head == CONTR(op)->target_object || QUERY_FLAG(head,FLAG_SYS_OBJECT) || 
 								(QUERY_FLAG(head,FLAG_IS_INVISIBLE) && !QUERY_FLAG(op,FLAG_SEE_INVISIBLE)) )
 								continue;
-						op->contr->target_object=head;
-						op->contr->target_object_count=head->count;
-						op->contr->target_map_pos =n;
+						CONTR(op)->target_object=head;
+						CONTR(op)->target_object_count=head->count;
+						CONTR(op)->target_map_pos =n;
 						goto found_target;
 					}
 				}
@@ -542,18 +542,18 @@ dirty_jump_in1:
 	}
 	else if(params[0]=='2') /* self */
 	{
-		op->contr->target_object=op;
-		op->contr->target_object_count=op->count;
-		op->contr->target_map_pos =0;
+		CONTR(op)->target_object=op;
+		CONTR(op)->target_object_count=op->count;
+		CONTR(op)->target_map_pos =0;
 	}
 	else /* TODO: ok... try to use params as a name */
 	{
 		/* still not sure we need this.. perhaps for groups? */
-		op->contr->target_object=NULL; /* dummy */
+		CONTR(op)->target_object=NULL; /* dummy */
 	}
 
 	found_target:
-	send_target_command(op->contr);
+	send_target_command(CONTR(op));
 	return 1;
 }
 
@@ -563,7 +563,7 @@ static void set_first_map(object *op)
 
     object* current;
 
-    strcpy(op->contr->maplevel, first_map_path);
+    strcpy(CONTR(op)->maplevel, first_map_path);
     op->x = -1;
     op->y = -1;
 
@@ -640,7 +640,7 @@ void command_new_char(char *params, int len,player *pl)
 	char name[HUGE_BUF]="";
 	char buf[HUGE_BUF]="";
 
-	if(op->contr->state!=ST_ROLL_STAT)
+	if(CONTR(op)->state!=ST_ROLL_STAT)
 	{
 		LOG(llevDebug,"SHACK:: %s: command_new_char send at from time\n", query_name(pl->ob));
 		pl->socket.status = Ns_Dead; /* killl socket */
@@ -707,7 +707,9 @@ void command_new_char(char *params, int len,player *pl)
 
 	FREE_AND_ADD_REF_HASH(name_tmp,op->name); /* need to copy the name to new arch */
     copy_object (&p_arch->clone, op);
-    op->contr->last_value= -1;
+    op->custom_attrset = pl;
+    pl->ob = op;
+    CONTR(op)->last_value= -1;
     FREE_AND_CLEAR_HASH2(op->name);
     op->name = name_tmp;
     op->x = x;
@@ -724,7 +726,7 @@ void command_new_char(char *params, int len,player *pl)
 
 	SET_FLAG(op, FLAG_NO_FIX_PLAYER);
 	/* this must before then initial items are given */
-	esrv_new_player(op->contr, op->weight+op->carrying);
+	esrv_new_player(CONTR(op), op->weight+op->carrying);
 #ifdef PLUGINS
     /* GROS : Here we handle the BORN global event */
     evtid = EVENT_BORN;
@@ -735,12 +737,12 @@ void command_new_char(char *params, int len,player *pl)
     /* GROS : We then generate a LOGIN event */
     evtid = EVENT_LOGIN;
     CFP.Value[0] = (void *)(&evtid);
-    CFP.Value[1] = (void *)(op->contr);
-    CFP.Value[2] = (void *)(op->contr->socket.host);
+    CFP.Value[1] = (void *)(CONTR(op));
+    CFP.Value[2] = (void *)(CONTR(op)->socket.host);
     GlobalEvent(&CFP);
 #endif
 
-	op->contr->state=ST_PLAYING;
+	CONTR(op)->state=ST_PLAYING;
 	FREE_AND_CLEAR_HASH2(op->msg);
 
 	/* We create this now because some of the unique maps will need it
@@ -750,11 +752,11 @@ void command_new_char(char *params, int len,player *pl)
 	make_path_to_file(buf);
 
 #ifdef AUTOSAVE
-	op->contr->last_save_tick = pticks;
+	CONTR(op)->last_save_tick = pticks;
 #endif
 
 	display_motd(op);
-	if(!op->contr->dm_stealth)
+	if(!CONTR(op)->dm_stealth)
 	{
 		new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, op,"%s entered the game.",op->name);
 		if(gbl_active_DM)
@@ -771,8 +773,8 @@ void command_new_char(char *params, int len,player *pl)
 	give_initial_items(op,op->randomitems);
 	(void) link_player_skills(op);
 	CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
-	op->contr->last_stats.exp=1;			/* force send of skill exp data to client */	
-	strcpy(op->contr->title,op->race);		/* no title - just what we born */
+	CONTR(op)->last_stats.exp=1;			/* force send of skill exp data to client */	
+	strcpy(CONTR(op)->title,op->race);		/* no title - just what we born */
 	fix_player(op);							/* THATS our first fix_player() when we create a new char
 											 * add this time, hp and sp will be set 
 											 */
@@ -784,10 +786,10 @@ void command_new_char(char *params, int len,player *pl)
 	SET_FLAG(op, FLAG_FRIENDLY);
 	add_friendly_object(op);
 		
-	op->contr->socket.update_tile=0;	
-	op->contr->socket.look_position=0;
-	op->contr->socket.ext_title_flag = 1;	
-	esrv_new_player(op->contr,op->weight+op->carrying);
+	CONTR(op)->socket.update_tile=0;	
+	CONTR(op)->socket.look_position=0;
+	CONTR(op)->socket.ext_title_flag = 1;	
+	esrv_new_player(CONTR(op),op->weight+op->carrying);
 	send_skilllist_cmd(op, NULL, SPLIST_MODE_ADD);
 	send_spelllist_cmd(op, NULL, SPLIST_MODE_ADD);
 }
@@ -821,7 +823,7 @@ void command_fire(char *params, int len,player *pl)
     if(!params)
 		return;
 
-    op->contr->fire_on=1;
+    CONTR(op)->fire_on=1;
 
     /* i submit all this as string for testing. if stable, we change this to a short
 	 * and fancy binary format. MT-11-2002
@@ -840,11 +842,11 @@ void command_fire(char *params, int len,player *pl)
 			LOG(llevDebug,"DEBUG: Player %s has send to long fire command: %s\n", query_name(pl->ob), tmp+1);
 			return;
 		}
-        strncpy(op->contr->firemode_name,tmp+1,60);
-		if(!fire_cast_spell (op, op->contr->firemode_name))
+        strncpy(CONTR(op)->firemode_name,tmp+1,60);
+		if(!fire_cast_spell (op, CONTR(op)->firemode_name))
 		{
-		    op->contr->fire_on=0;
-		    op->contr->firemode_type = -1; /* marks no client fire action */
+		    CONTR(op)->fire_on=0;
+		    CONTR(op)->firemode_type = -1; /* marks no client fire action */
 			return;
 		}
             
@@ -861,16 +863,16 @@ void command_fire(char *params, int len,player *pl)
 			LOG(llevDebug,"DEBUG: Player %s has send to long fire command: %s\n", query_name(pl->ob), tmp+1);
 			return;
 		}
-        strncpy(op->contr->firemode_name,tmp+1,60);
+        strncpy(CONTR(op)->firemode_name,tmp+1,60);
     }
         
-    op->contr->firemode_type = type; /* only here will this value be set */
-    op->contr->firemode_tag1 = tag1;
-    op->contr->firemode_tag2 = tag2;
+    CONTR(op)->firemode_type = type; /* only here will this value be set */
+    CONTR(op)->firemode_tag1 = tag1;
+    CONTR(op)->firemode_tag2 = tag2;
 
     move_player(op, dir);
-    op->contr->fire_on=0;
-    op->contr->firemode_type = -1; /* marks no client fire action */
+    CONTR(op)->fire_on=0;
+    CONTR(op)->firemode_type = -1; /* marks no client fire action */
 }
 
 /* STILL IN TEST */
@@ -881,9 +883,9 @@ void send_mapstats_cmd(object *op, struct mapdef *map)
 {
     char tmp[2024];
 
-    op->contr->last_update = map; /* player: remember this is the map the client knows */    
+    CONTR(op)->last_update = map; /* player: remember this is the map the client knows */    
     sprintf(tmp,"X%d %d %d %d %s", map->width, map->height, op->x, op->y, map->name);
-    Write_String_To_Socket(&op->contr->socket, BINARY_CMD_MAPSTATS, tmp, strlen(tmp));
+    Write_String_To_Socket(&CONTR(op)->socket, BINARY_CMD_MAPSTATS, tmp, strlen(tmp));
 }
 
 
@@ -901,18 +903,18 @@ void send_spelllist_cmd(object *op, char *spellname, int mode)
     {
         int i,spnum;
         
-        for (i=0; i<(QUERY_FLAG(op, FLAG_WIZ)?NROFREALSPELLS:op->contr->nrofknownspells); i++) 
+        for (i=0; i<(QUERY_FLAG(op, FLAG_WIZ)?NROFREALSPELLS:CONTR(op)->nrofknownspells); i++) 
         {	
             if (QUERY_FLAG(op,FLAG_WIZ)) 
                 spnum=i;
             else 
-                spnum = op->contr->known_spells[i];
+                spnum = CONTR(op)->known_spells[i];
             
             strcat(tmp, "/");
             strcat(tmp, spells[spnum].name);            
         }
     }
-    Write_String_To_Socket(&op->contr->socket, BINARY_CMD_SPELL_LIST, tmp, strlen(tmp));    
+    Write_String_To_Socket(&CONTR(op)->socket, BINARY_CMD_SPELL_LIST, tmp, strlen(tmp));    
 }
 
 void send_skilllist_cmd(object *op, object *skillp, int mode)
@@ -948,7 +950,7 @@ void send_skilllist_cmd(object *op, object *skillp, int mode)
             }
         }
     }
-    Write_String_To_Socket(&op->contr->socket, BINARY_CMD_SKILL_LIST, tmp, strlen(tmp));        
+    Write_String_To_Socket(&CONTR(op)->socket, BINARY_CMD_SKILL_LIST, tmp, strlen(tmp));        
 }
 
 /* all this functions are not really bulletproof. filling tmp[] can be easily produce
@@ -960,7 +962,7 @@ void send_ready_skill(object *op, char *skillname)
     char tmp[256]; /* we should careful set a big enough buffer here */
     
     sprintf(tmp,"X%s", skillname);
-    Write_String_To_Socket(&op->contr->socket, BINARY_CMD_SKILLRDY, tmp, strlen(tmp));        
+    Write_String_To_Socket(&CONTR(op)->socket, BINARY_CMD_SKILLRDY, tmp, strlen(tmp));        
     
 }
 
@@ -975,7 +977,7 @@ void send_golem_control(object *golem, int mode)
 	   sprintf(tmp,"X%d %d %s", mode, 0, golem->name);
 	else
 		sprintf(tmp,"X%d %d %s", mode, golem->face->number, golem->name);
-    Write_String_To_Socket(&golem->owner->contr->socket, BINARY_CMD_GOLEMCMD, tmp, strlen(tmp));        
+    Write_String_To_Socket(&CONTR(golem->owner)->socket, BINARY_CMD_GOLEMCMD, tmp, strlen(tmp));        
     
 }
 

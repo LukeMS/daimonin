@@ -35,6 +35,10 @@
 #include <sproto.h>
 #endif
 
+/* Gecko: since we no longer maintain a complete list of all objects,
+ * all functions using find_object are a lot less useful...
+ */
+
 /* This finds and returns the object which matches the name or
  * object nubmer (specified via num #whatever).
  */
@@ -115,11 +119,11 @@ int command_kick (object *ob, char *params)
 			if(params)
 				new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, ob,"%s is kicked out of the game.",op->name);
 			LOG(llevInfo,"%s is kicked out of the game.\n",op->name);
-			strcpy(op->contr->killer,"left");
+			strcpy(CONTR(op)->killer,"left");
 			check_score(op); /* Always check score */
-			container_unlink(op->contr,NULL);
+			container_unlink(CONTR(op),NULL);
 			(void)save_player(op,1);
-			op->contr->socket.status=Ns_Dead;
+			CONTR(op)->socket.status=Ns_Dead;
 		#if MAP_MAXTIMEOUT
 			op->map->timeout = MAP_TIMEOUT(op->map);
 		#endif
@@ -165,7 +169,6 @@ int command_goto (object *op, char *params)
     FREE_AND_COPY_HASH(dummy->name,name);
 
     enter_exit(op,dummy);
-    free_object(dummy);
 	new_draw_info_format(NDI_UNIQUE, 0, op,"Difficulty: %d.",op->map->difficulty);
     return 1;
 }
@@ -231,7 +234,6 @@ int command_summon (object *op, char *params)
       EXIT_X(dummy)=op->x+freearr_x[i];
       EXIT_Y(dummy)=op->y+freearr_y[i];
       enter_exit(pl->ob,dummy);
-      free_object(dummy);
       new_draw_info(NDI_UNIQUE, 0,pl->ob,"You are summoned.");
       new_draw_info(NDI_UNIQUE, 0,op,"OK.");
       return 1;
@@ -277,7 +279,6 @@ int command_teleport (object *op, char *params) {
    EXIT_X(dummy) = pl->ob->x + freearr_x[i];
    EXIT_Y(dummy) = pl->ob->y + freearr_y[i];
    enter_exit(op, dummy);
-   free_object(dummy);
    /*new_draw_info(NDI_UNIQUE, 0, pl->ob, "You see a portal open.");*/
    new_draw_info(NDI_UNIQUE, 0, op, "OK.");
    return 1;
@@ -627,7 +628,8 @@ int command_free (object *op, char *params)
       new_draw_info(NDI_UNIQUE, 0,op,"Free what object (nr)?");
       return 1;
     }
-    free_object(tmp);
+    /* free_object(tmp); TODO: remove me*/
+     
     return 1;
   }
 
@@ -849,7 +851,6 @@ int command_reset (object *op, char *params)
 			{
 				count++;
 				remove_ob(pl->ob);
-				pl->ob->map = NULL;
 				pl->dm_removed_from_map=1;
 			/*tmp=op;*/
 			}
@@ -860,7 +861,6 @@ int command_reset (object *op, char *params)
 		new_draw_info_format(NDI_UNIQUE, 0,op,"removed %d players from map. Swap map.", count);
 		swap_map(m, 1);
     }
-
 
     if (m->in_memory == MAP_SWAPPED) 
 	{	
@@ -879,6 +879,12 @@ int command_reset (object *op, char *params)
 				EXIT_X(dummy) = pl->ob->x;
 				EXIT_Y(dummy) = pl->ob->y;
 				enter_exit(pl->ob, dummy);
+                if(pl->ob != op) {
+                    if(QUERY_FLAG(pl->ob,FLAG_WIZ)) 
+                        new_draw_info_format(NDI_UNIQUE, 0,pl->ob,"Map reset by %s.", op->name);
+                    else /* Write a nice little confusing message to the players */
+                        new_draw_info(NDI_UNIQUE, 0,pl->ob,"Your surroundings seem different but still familiar. Haven't you been here before?");
+                }
 			}
 		}
 
@@ -895,7 +901,6 @@ int command_reset (object *op, char *params)
 		new_draw_info(NDI_UNIQUE, 0,op,"Reset failed, couldn't swap map!");
 	}
 
- 	free_object(dummy);
 	return 1;
 }
 
@@ -909,9 +914,9 @@ int command_nowiz (object *op, char *params) /* 'noadm' is alias */
      CLEAR_FLAG(op, FLAG_WAS_WIZ);
 #endif
 	  fix_player(op);
-	  op->contr->socket.update_tile=0;
+	  CONTR(op)->socket.update_tile=0;
       esrv_send_inventory(op, op);
-   	  op->contr->update_los=1;
+   	  CONTR(op)->update_los=1;
      new_draw_info(NDI_UNIQUE, 0, op, "DM mode deactivated.");
      return 1;
   }
@@ -968,10 +973,10 @@ int command_dm (object *op, char *params)
 		return 1;
 	}
 
-  if (!op->contr) return 0;
+  if (op->type != PLAYER || !CONTR(op)) return 0;
   else {
     if (checkdm(op, op->name,
-		(params?params:"*"), op->contr->socket.host)) {
+		(params?params:"*"), CONTR(op)->socket.host)) {
 	  gbl_active_DM = op; /* ad this dm to global dm list. TODO : make a list from it */
       SET_FLAG(op, FLAG_WIZ);
       SET_FLAG(op, FLAG_WAS_WIZ);
@@ -981,16 +986,16 @@ int command_dm (object *op, char *params)
       SET_MULTI_FLAG(op, FLAG_FLYING);
       esrv_send_inventory(op, op);
 	  clear_los(op);
-   	  op->contr->socket.update_tile=0; /* force a draw_look() */
-   	  op->contr->update_los=1;
-      op->contr->write_buf[0] ='\0';
+   	  CONTR(op)->socket.update_tile=0; /* force a draw_look() */
+   	  CONTR(op)->update_los=1;
+      CONTR(op)->write_buf[0] ='\0';
       return 1;
     } else {
 		/* don't give our player even something to think about it when 
 		 * they are not allowed to be DM
 		 */
       /*new_draw_info(NDI_UNIQUE, 0,op, "Sorry Pal, I don't think so.");*/
-      op->contr->write_buf[0] ='\0';
+      CONTR(op)->write_buf[0] ='\0';
       return 1;
     }
   }
@@ -1022,7 +1027,7 @@ static int command_learn_spell_or_prayer (object *op, char *params,
 {
     int spell;
 
-    if (op->contr == NULL || params == NULL)
+    if (op->type != PLAYER || CONTR(op) == NULL || params == NULL)
         return 0;
 
     if ((spell = look_up_spell_name (params)) <= 0) {
@@ -1048,7 +1053,7 @@ int command_forget_spell (object *op, char *params)
 {
     int spell;
 
-    if (op->contr == NULL || params == NULL)
+    if (op->type != PLAYER || CONTR(op) == NULL || params == NULL)
         return 0;
 
     if ((spell = look_up_spell_name (params)) <= 0) {

@@ -26,39 +26,6 @@
 #include <global.h>
 #include <funcpoint.h>
 
-
-void free_player(player *pl) 
-{
-	object *tmp;
-
-    if (first_player!=pl) 
-	{
-		player *prev=first_player;
-		while(prev!=NULL&&prev->next!=NULL&&prev->next!=pl)
-		    prev=prev->next;
-		if(prev->next!=pl) 
-		 LOG(llevError,"ERROR: free_player(): Can't find previous player.\n");
-		prev->next=pl->next;
-    } 
-	else
-		first_player=pl->next;
-
-	/* the inventory delete was before in save_player()... bad bad bad */
-    if(pl->ob != NULL) 
-	{
-		SET_FLAG(pl->ob, FLAG_NO_FIX_PLAYER);
-		if (!QUERY_FLAG(pl->ob, FLAG_REMOVED)) 
-			remove_ob(pl->ob);
-
-		while ((tmp = pl->ob->inv))
-			destroy_object (tmp); 
-
-		free_object(pl->ob);
-    }
-
-    CFREE(pl);
-}
-
 /* find_skill() - looks for the skill and returns a pointer to it if found */
 
 object *find_skill(object *op, int skillnr) {

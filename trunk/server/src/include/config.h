@@ -756,8 +756,7 @@
 #define SETTINGS    "settings"
 
 #define MAX_ERRORS	25	/* Bail out if more are received during tick */
-#define STARTMAX        500     /* How big array of objects to start with */
-#define OBJ_EXPAND      100     /* How big steps to use when expanding array */
+#define OBJECT_EXPAND      100     /* How big steps to use when expanding array */
 
 #define HIGHSCORE_LENGTH 10	/* How many entries there are room for */
 

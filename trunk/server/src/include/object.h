@@ -37,9 +37,7 @@
 typedef struct obj 
 {
 	/* These variables are not changed by copy_object(): */
-	struct pl_player *contr;			/* Pointer to the player which control this object */
-	struct obj *next;			/* Pointer to the next object in the free/used list */
-	struct obj *prev;			/* Pointer to the previous object in the free/used list*/
+//	struct pl_player *contr;			/* Pointer to the player which control this object */
 	struct obj *active_next;	/* Next & previous object in the 'active' */
 	struct obj *active_prev;	/* List.  This is used in process_events 
 								 * so that the entire object list does not
@@ -225,6 +223,8 @@ typedef struct obj
 	sint16 ox,oy;				/* For debugging: Where it was last inserted */
 #endif
 
+    void *custom_attrset;       /* Type-dependant extra data. */
+
 } object;
 
 #ifdef WIN32
@@ -243,14 +243,9 @@ typedef struct oblinkpt { /* Used to link together several object links */
   struct oblinkpt *next;
 } oblinkpt;
 
-
-extern object *objects;
 extern object *active_objects;
-extern object *free_objects;
-extern object objarray[STARTMAX];
 
-extern int nrofallocobjects;
-extern int nroffreeobjects;
+#define CONTR(ob) ((player *)((ob)->custom_attrset))
 
 /* This returns TRUE if the object is somethign that
  * should be displayed in the look window
@@ -269,7 +264,10 @@ extern int nroffreeobjects;
 #define UP_OBJ_LAYER	7   /* object layer was changed, rebuild layer systen - used from invisible for example */
 
 /* Macro for the often used object validity test (verify an pointer/count pair) */
-#define OBJECT_VALID(_ob_, _count_) ((_ob_) && (_ob_)->count == (_count_) && !QUERY_FLAG((_ob_), FLAG_REMOVED))
+#define OBJECT_VALID(_ob_, _count_) ((_ob_) && (_ob_)->count == ((tag_t)_count_) && !QUERY_FLAG((_ob_), FLAG_REMOVED) && !OBJECT_FREE(_ob_))
+
+/* Test if an object is in the free-list */
+#define OBJECT_FREE(ob) ((ob)->count==0 && CHUNK_FREE(ob))
 
 /* These are flags passed to insert_ob_in_map and 
  * insert_ob_in_ob.  Note that all flags may not be meaningful
@@ -281,5 +279,70 @@ extern int nroffreeobjects;
                                     * arch problems - don't use!
 									*/
 
+/* Pooling memory management stuff */
+
+#define MEMPOOL_TRACKING /* Enable tracking/freeing of mempools ? */
+
+/* Minimalistic memory management data for a single chunk of memory 
+ * It is (currently) up to the application to keep track of which pool 
+ * it belongs to.
+ */
+struct mempool_chunk {
+    /* This struct must always be padded for longword alignment of the data coming behind it.
+     * Not a problem as long as we only keep a single pointer here, but be careful
+     * if adding more data. */
+    struct mempool_chunk *next; /* Used for the free list and the limbo list. NULL if this
+                                   memory chunk has been allocated and is in use */
+};
+
+typedef void (* chunk_constructor) (void *ptr);     /* Optional constructor to be called when expanding */
+typedef void (* chunk_destructor) (void *ptr);      /* Optional destructor to be called when freeing */
+
+/* Data for a single memory pool */
+struct mempool {    
+    struct mempool_chunk *first_free;   /* First free chunk */    
+    uint32 expand_size;                 /* How many chunks to allocate at each expansion */
+    uint32 chunksize;                   /* size of chunks, excluding sizeof(mempool_chunk) and padding */
+    uint32 nrof_used, nrof_free;        /* List size counters */
+    chunk_constructor constructor;      /* Optional constructor to be called when getting chunks */
+    chunk_destructor destructor;        /* Optional destructor to be called when returning chunks */
+    char *chunk_description;            /* Description of chunks. Mostly for debugging */
+    uint32 flags;                       /* Spacial handling flags. See definitions below */
+#ifdef MEMPOOL_TRACKING
+    struct puddle_info *first_puddle_info;
+#endif
+};
+
+#ifdef MEMPOOL_TRACKING
+struct puddle_info {
+    struct puddle_info *next;
+    struct mempool_chunk *first_chunk;
+    
+    /* Local freelist only for this puddle. Temporary used when freeing memory*/
+    struct mempool_chunk *first_free, *last_free;
+    uint32 nrof_free;
+};
+#endif
+
+typedef enum {
+#ifdef MEMPOOL_TRACKING
+    POOL_PUDDLE,
+#endif    
+    POOL_OBJECT, 
+    POOL_PLAYER, 
+    NROF_MEMPOOLS 
+} mempool_id;
+
+/* Get the memory management struct for a chunk of memory */
+#define MEM_POOLDATA(ptr) (((struct mempool_chunk *)(ptr)) - 1)
+/* Get the actual user data area from a mempool reference */
+#define MEM_USERDATA(ptr) ((void *)(((struct mempool_chunk *)(ptr)) + 1))
+/* Check that a chunk of memory is in the free (or removed for objects) list */
+#define CHUNK_FREE(ptr) (MEM_POOLDATA(ptr)->next != NULL)
+
+#define MEMPOOL_ALLOW_FREEING 1 /* Allow puddles from this pool to be freed */
+#define MEMPOOL_BYPASS_POOLS  2 /* Don't use pooling, but only malloc/free instead */
+
+extern struct mempool mempools[];
 
 #endif

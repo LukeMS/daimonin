@@ -104,9 +104,8 @@ int insert_spell_effect(char *archname, mapstruct *m, int x, int y)
 		LOG(llevBug, "BUG: insert_spell_effect: effect arch (%s) out of map (%s) (%d,%d) or failed insertion.\n", 
 														archname, effect_ob->map->name, x, y);
 		/* something is wrong - kill object */
-		if(!QUERY_FLAG(effect_ob,FLAG_REMOVED))
+		if(!QUERY_FLAG(effect_ob, FLAG_REMOVED))
 			remove_ob(effect_ob);
-		free_object(effect_ob);
 		return 1;
     }
 
@@ -155,8 +154,8 @@ int casting_level (object *caster, int spell_type)
 int check_spell_known (object *op, int spell_type)
 {
   int i;
-  for(i=0; i < (int)op->contr->nrofknownspells; i++)
-    if(op->contr->known_spells[i]==spell_type)
+  for(i=0; i < (int)CONTR(op)->nrofknownspells; i++)
+    if(CONTR(op)->known_spells[i]==spell_type)
       return 1;
   return 0;
 }
@@ -252,7 +251,7 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
 	/* ok... its item == spellNPC then op is the target of this spell  */
 	if (op->type==PLAYER )
 	{
-		op->contr->praying=0;
+		CONTR(op)->praying=0;
 		/* cancel player spells which are denied - only real spells (not potion, wands, ...) */
 		if (item==spellNormal)
 		{
@@ -328,7 +327,7 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
 		}
 	}
 	/* tell player his spell is redirect to himself */
-	if(op->type == PLAYER && target == op && op->contr->target_object != op)
+	if(op->type == PLAYER && target == op && CONTR(op)->target_object != op)
 		new_draw_info(NDI_UNIQUE, 0,op, "You auto-target yourself with this spell!");
 
 	/*  ban removed on clerical spells in no-magic areas */
@@ -342,7 +341,7 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
 			new_draw_info_format(NDI_UNIQUE, 0,op,"This ground is unholy!  %s ignores you.",godname);
 		else
 		{
-			switch(op->contr->shoottype)
+			switch(CONTR(op)->shoottype)
 			{
 				case range_magic:
 					new_draw_info(NDI_UNIQUE, 0,op,"Something blocks your spellcasting.");
@@ -378,7 +377,7 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
 				s->level/(float)MAX(1,op->chosen_skill->level)*
 				cleric_chance[op->stats.Wis])
 	{
-	    play_sound_player_only(op->contr, SOUND_FUMBLE_SPELL,SOUND_NORMAL,0,0);
+	    play_sound_player_only(CONTR(op), SOUND_FUMBLE_SPELL,SOUND_NORMAL,0,0);
 		new_draw_info(NDI_UNIQUE, 0,op,"You fumble the prayer because your wisdom is low.");
     
 		if(s->sp==0) /* Shouldn't happen... */
@@ -389,7 +388,7 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
 	if(item == spellNormal && op->type==PLAYER && (!s->flags&SPELL_DESC_WIS) )
 	{
 		int failure = random_roll(0, 199, op, PREFER_LOW) -
-				op->contr->encumbrance +op->chosen_skill->level -s->level +35;
+				CONTR(op)->encumbrance +op->chosen_skill->level -s->level +35;
 
 		if( failure < 0)
 		{
@@ -401,7 +400,7 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
 	/* now lets talk about action/shooting speed */
 	if(op->type == PLAYER)
 	{
-		switch(op->contr->shoottype)
+		switch(CONTR(op)->shoottype)
 		{
 			case range_wand:
 			case range_rod:
@@ -792,7 +791,6 @@ dirty_jump:
       dummy = get_object();
       FREE_AND_COPY_HASH(dummy->name, stringarg);
       success = cast_raise_dead_spell(op,dir,type, dummy);
-      free_object(dummy);
     }
     break;
   case SP_RUNE_MAGIC:
@@ -925,8 +923,8 @@ int summon_monster(object *op,object *caster,int dir,archetype *at,int spellnum)
 	int xt,yt;
  
   if(op->type==PLAYER)
-    if(op->contr->golem!=NULL&&!QUERY_FLAG(op->contr->golem,FLAG_FREED)) {
-      control_golem(op->contr->golem,dir);
+    if(CONTR(op)->golem!=NULL&&!OBJECT_FREE(CONTR(op)->golem)) {
+      control_golem(CONTR(op)->golem,dir);
       return 0;
     }
 
@@ -954,7 +952,7 @@ int summon_monster(object *op,object *caster,int dir,archetype *at,int spellnum)
     tmp->type=GOLEM;
 /* Don't see any point in setting this when monsters summon monsters: */
     set_owner(tmp,op);
-    op->contr->golem=tmp;
+    CONTR(op)->golem=tmp;
     /* give the player control of the golem */
 	send_golem_control(tmp, GOLEM_CTR_ADD);
   } else {
@@ -1082,10 +1080,8 @@ int fire_bolt(object *op,object *caster,int dir,int type,int magic) {
   tmp->level = SK_level (caster);
   tmp->x+=DIRX(tmp),tmp->y+=DIRY(tmp);
   if(wall(op->map,tmp->x,tmp->y)) {
-     if(!QUERY_FLAG(tmp, FLAG_REFLECTING)) {
-      free_object(tmp);
+     if(!QUERY_FLAG(tmp, FLAG_REFLECTING)) 
       return 0;
-    }
     tmp->x=op->x,tmp->y=op->y;
     tmp->direction=absdir(tmp->direction+4);
   }
@@ -1229,11 +1225,8 @@ int cast_cone(object *op, object *caster,int dir, int strength, int spell_type,a
   }
 
   if(tmp) /* can happens when we can't drop anything */
-  {
-	  if(QUERY_FLAG(tmp,FLAG_REMOVED))
+	  if(!QUERY_FLAG(tmp, FLAG_REMOVED))
 		  remove_ob(tmp);
-	  free_object(tmp);
-  }
 
   return success;
 }
@@ -1328,7 +1321,6 @@ void move_cone(object *op) {
 	{
 		LOG(llevBug,"BUG: Tried to move_cone object %s without a map.\n", query_name(op));
 		remove_ob(op);
-		free_object(op);
 		return;
     }
 
@@ -1341,7 +1333,6 @@ void move_cone(object *op) {
     /* If no owner left, the spell dies out. */
     if(get_owner(op)==NULL) {
 	remove_ob(op);
-	free_object(op);
 	return;
     }
 
@@ -1363,10 +1354,8 @@ void move_cone(object *op) {
 	    update_ob_speed(op);
 	    op->stats.exp=0;
 	    op->stats.sp=0; /* so they will join */
-	} else {
+	} else 
 	    remove_ob(op);
-	    free_object(op);
-	}
 	return;
     }
 
@@ -1443,7 +1432,6 @@ void explosion(object *op) {
 
   if(--(op->stats.hp)<0) {
     remove_ob(op);
-    free_object(op);
     return;
   }
   if(op->above!=NULL&&op->above->type!=PLAYER) {
@@ -1559,7 +1547,6 @@ void move_bolt(object *op) {
   int w,r;
   if(--(op->stats.hp)<0) {
     remove_ob(op);
-    free_object(op);
     return;
   }
   hit_map(op,0,op->attacktype);
@@ -1639,7 +1626,6 @@ void move_golem(object *op) {
     if(get_owner(op)==NULL) {
 	LOG(llevDebug,"Golem without owner destructed.\n");
 	remove_ob(op);
-	free_object(op);
 	return;
     }
     /* It would be nice to have a cleaner way of what message to print
@@ -1660,10 +1646,9 @@ void move_golem(object *op) {
 	new_draw_info(NDI_UNIQUE, 0,op->owner,buf);
 	send_golem_control(op, GOLEM_CTR_RELEASE);
 	remove_friendly_object(op);
-	op->owner->contr->golem=NULL;
+	CONTR(op->owner)->golem=NULL;
 
 	remove_ob(op);
-	free_object(op);
 	return;
     }
 
@@ -1743,7 +1728,6 @@ void move_missile(object *op) {
   if (owner == NULL) 
   {
     remove_ob(op);
-    free_object(op);
     return;
   }
 
@@ -1753,27 +1737,22 @@ void move_missile(object *op) {
   if (!(mt=out_of_map (op->map, &new_x,&new_y))) 
   {
       remove_ob (op);
-      free_object(op);
 	  return;
   }
 
   if( blocked(op, mt, new_x, new_y,op->terrain_flag) ) {
     tag_t tag = op->count;
     hit_map (op, op->direction, AT_MAGIC);
-    if ( ! was_destroyed (op, tag)) {
+    if ( ! was_destroyed (op, tag)) 
       remove_ob (op);
-      free_object(op);
-    }
     return;
   }
 
   remove_ob(op);
   if ( ! op->direction || wall (mt, new_x, new_y)
       || blocks_view (mt, new_x, new_y))
-  {
-    free_object(op);
     return;
-  }
+  
   op->x = new_x;
   op->y = new_y;
   op->map = mt;
@@ -1802,7 +1781,6 @@ void explode_object(object *op)
 	{
 		LOG(llevBug, "BUG: explode_object(): op %s without other_arch\n", query_name(op));
 		remove_ob (op);
-		free_object (op);
 		return;
 	}
 
@@ -1816,7 +1794,6 @@ void explode_object(object *op)
 		{
 			LOG(llevBug, "BUG: explode_object(): env out of map (%s)\n",query_name(op));
 			remove_ob (op);
-			free_object (op);
 			return;
 		}
 		remove_ob (op);
@@ -1864,7 +1841,6 @@ void explode_object(object *op)
     if(tmp->attacktype&AT_HOLYWORD||tmp->attacktype&AT_GODPOWER) 
       if ( ! tailor_god_spell (tmp, op)) {
 	remove_ob (op);
-	free_object (op);
 	return;
       }
 
@@ -1882,18 +1858,13 @@ void explode_object(object *op)
       if(!type) type = op->stats.sp;
       copy_owner(tmp,op);
       cast_cone(op,op,0,spells[type].bdur,type,op->other_arch,op->attacktype&AT_MAGIC);
-      /* don't need this anymore. */
-      free_object(tmp);
       break;
     }
   }
 
   /* remove the firebullet */
-  if ( ! was_destroyed (op, op_tag)) {
+  if ( ! was_destroyed (op, op_tag)) 
     remove_ob (op);
-    free_object (op);
-  }
-    
 }
 
 /* if we are here, the arch (spell) we check was able to move
@@ -1919,7 +1890,6 @@ void check_fired_arch (object *op)
 	{
 		probe(op);
 		remove_ob (op);
-		free_object (op);
 		return;
 	}
 
@@ -1940,9 +1910,8 @@ void check_fired_arch (object *op)
             if (was_destroyed (op, op_tag) || ! was_destroyed (tmp, tmp_tag)
                 || (op->stats.dam -= dam) < 0)
             {
-	      if(!QUERY_FLAG(op,FLAG_REMOVED)) { 
+	      if(!QUERY_FLAG(op, FLAG_REMOVED)) {
                 remove_ob (op);
-                free_object(op);
                 return;
 	      }
             }
@@ -1969,7 +1938,6 @@ void move_fired_arch (object *op)
     new_y = op->y + DIRY(op);
     if (!(m=out_of_map (op->map, &new_x, &new_y))) {
         remove_ob (op);
-        free_object (op);
         return;
     }
 
@@ -1977,10 +1945,8 @@ void move_fired_arch (object *op)
     if (!op->last_sp-- || (! op->direction || wall (m, new_x, new_y))) {
         if (op->other_arch) {
             explode_object (op);
-        } else {
+        } else 
             remove_ob (op);
-            free_object (op);
-        }
         return;
     }
 
@@ -1997,7 +1963,6 @@ void move_fired_arch (object *op)
 			{
 				probe(op);
 		        remove_ob (op);
-				free_object (op);
 				return;
 			}
 		}
@@ -2056,10 +2021,10 @@ int find_target_for_spell(object *op,object *item, object **target, int dir, uin
 			return TRUE;
 		}
 
-		tmp = op->contr->target_object;
+		tmp = CONTR(op)->target_object;
 
 		/* lets check our target - we have one? friend or enemy? */
-		if(!tmp || tmp==op->contr->ob || op->contr->target_object_count!=tmp->count) 
+		if(!tmp || tmp==CONTR(op)->ob || CONTR(op)->target_object_count!=tmp->count) 
 		{
 			/* no valid target, or we target self! */
 
@@ -2208,7 +2173,6 @@ void move_ball_lightning(object *op)
   /* Only those attuned to PATH_ELEC may use ball lightning with AT_GODPOWER */
   if(owner && (!(owner->path_attuned & PATH_ELEC))&& (op->attacktype & AT_GODPOWER)) {
     remove_ob(op);
-    free_object(op);
     new_draw_info_format(NDI_UNIQUE,0,owner,"The ball lightning dispells immediately.  Perhaps you need attunement to the spell path?");
     return;
   }
@@ -2540,7 +2504,6 @@ void move_swarm_spell(object *op)
 
     if(op->stats.hp == 0 || get_owner (op) == NULL) {
 	remove_ob(op);
-	free_object(op);
 	return;
     }
     op->stats.hp--;
@@ -2662,13 +2625,13 @@ int look_up_spell_by_name(object *op,const char *spname) {
     if(op==NULL) numknown=NROFREALSPELLS;
 	else
 	if(QUERY_FLAG(op, FLAG_WIZ)) numknown=NROFREALSPELLS;
-	    else numknown = op->contr->nrofknownspells;
+	    else numknown = CONTR(op)->nrofknownspells;
     plen=strlen(spname);
     for(i=0;i<numknown;i++) {
 	if(op==NULL) spnum=i;
 	else
 	    if(QUERY_FLAG(op,FLAG_WIZ)) spnum=i;
-		else  spnum = op->contr->known_spells[i];
+		else  spnum = CONTR(op)->known_spells[i];
 
 	spellen=strlen(spells[spnum].name);
 

@@ -1604,14 +1604,14 @@ CFParm* CFWApplyBelow (CFParm* PParm)
     return NULL;
 }
 /*****************************************************************************/
-/* free_object wrapper.                                                      */
+/* free_object wrapper. TODO: get rid of                                     */
 /*****************************************************************************/
 /* 0 - object                                                                */
 /*****************************************************************************/
 CFParm* CFWFreeObject (CFParm* PParm)
 {
     object* op=(object*)PParm->Value[0];
-    if (op) free_object(op);
+   /* if (op) free_object(op); */
     return NULL;
 }
 
@@ -1708,7 +1708,6 @@ CFParm* CFWTeleportObject (CFParm* PParm)
     enter_exit ((object*) PParm->Value[0],current);
 	if(((object*) PParm->Value[0])->map)
 		play_sound_map(((object*) PParm->Value[0])->map, ((object*) PParm->Value[0])->x, ((object*) PParm->Value[0])->y, SOUND_TELEPORT, SOUND_NORMAL);
-    free_object (current);
     return NULL;
 }
 
