@@ -95,11 +95,6 @@ depend::
 	done;
 
 clean::
-	$(RM) -f Makefile
-	$(RM) -f config.cache config.log config.status
-	$(RM) -f  ../../dmonloop
-	$(RM) -f  ../../daimonin_server
-	$(RM) -f  ../../lib/*
 	@for dir in $(SUBDIRS); \
 	do \
 	    echo "making clean in $$dir..."; \
@@ -112,6 +107,11 @@ distclean:: clean
 	    echo "making distclean in $$dir..."; \
 	    (cd $$dir; $(MAKE) $(MFLAGS) 'MFLAGS=$(MFLAGS)' 'EXTRA_CFLAGS=$(XX_EXTRA_CFLAGS)' 'EXTRA_INCLUDES=$(EXTRA_INCLUDES)' 'EXTRA_LIBS=$(EXTRA_LIBS)' distclean;) \
 	done;
+	$(RM) -f Makefile
+	$(RM) -f config.cache config.log config.status
+	$(RM) -f  ../../dmonloop
+	$(RM) -f  ../../daimonin_server
+	$(RM) -f  ../../lib/*
 
 install::
 	sh ../../install/linux/install.sh

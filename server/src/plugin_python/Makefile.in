@@ -7,21 +7,19 @@ CROSSFIRE_PATH = /home/Daimonin/server/plugin_python
 
 # Default libraries required. Edit those to match $(blddir)/Modules/Makefile
 # if needed.
-LIBS           = -lnsl -ldl -lpthread -lutil
+LIBS		= -lnsl -ldl -lpthread -lutil
 
-# Supply the Python version used. In most cases, this will be either 2.0 or 2.1
+# Supply the Python version used. In most cases, this will be something like 2.x
+# If python is installed in very unusal positions, this must be changed by hand
+PYTHONVER      	= @PYTHON_VER@
 
-PYTHONVER      = @PYTHON_VER@
+# Supply the python /include and /lib positions
+LIBROOT 	= @PYTHON_LIB@
+INCLUDEROOT 	= @PYTHON_INC@
 
-# Supply your library root directory. In case you have more than one (for
-# example, /usr/lib and /usr/local/lib), choose the one containing Python.
-
-LIBROOT        = /usr/lib
-
-# Supply your include directory. In case you have more than one (for example,
-# /usr/include and /usr/local/include), choose the one containing Python.
-
-INCLUDEROOT    = /usr/include
+# When configure fails set these to the required pathes
+#LIBROOT        = /usr/lib
+#INCLUDEROOT    = /usr/include
 
 # *****************************************************************************
 # End of user configuration part. Don't change anything after this line,
@@ -32,13 +30,13 @@ RM        = @RM@
 CC        = @CC@
 
 OBJECTS   = plugin_python.o
-INCLUDE   = -I./include -I../include -I$(INCLUDEROOT) -I$(INCLUDEROOT)/python$(PYTHONVER)
+INCLUDE   = -I./include -I../include -I$(INCLUDEROOT)/python$(PYTHONVER)
 
-CFLAGS    = $(INCLUDE) -Wall -g -fPIC
+CFLAGS    = -g -O2 -fPIC
 
 LIBPYTHON = $(LIBROOT)/python$(PYTHONVER)/config/libpython$(PYTHONVER).a
 
-LDFLAGS=	-Xlinker -export-dynamic -rdynamic -Xlinker -Bsymbolic
+LDFLAGS=	-export-dynamic -rdynamic -Xlinker -Bsymbolic
 SYSLIBS=	-lm
 ALLLIBS=	$(LIBPYTHON) $(LIBS) $(SYSLIBS)
 
@@ -57,4 +55,4 @@ plugin_python : $(OBJECTS)
 	$(CC) $(CFLAGS) $(LDFLAGS) -shared -Wl,-soname,plugin_python.so.0 $(LDFLAGS) $(OBJECTS) ../common/libcross.a $(ALLLIBS) -o plugin_python.so.0.1
 
 plugin_python.o : plugin_python.c
-	$(CC) $(CFLAGS) -c plugin_python.c
+	$(CC) $(CFLAGS) $(INCLUDE) -c plugin_python.c

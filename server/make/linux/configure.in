@@ -61,6 +61,34 @@ changequote([, ])dnl
 AC_MSG_RESULT($PYTHON_VER)
 AC_SUBST(PYTHON_VER)
 
+dnl ----------------------------------------------
+dnl Find Python include directory
+dnl ---------------------------------------------
+AC_MSG_CHECKING([for Python.h])
+PYTHON_INC="NONE"
+if test -f "${TRY_R}/include/python${PYTHON_VER}/Python.h"
+then
+	PYTHON_INC="${TRY_R}/include/python${PYTHON_VER}"
+else
+	for D in /usr/local /usr
+	do
+		if test -f "${D}/include/python${PYTHON_VER}/Python.h"
+		then
+			PYTHON_INC="${D}/include"
+			PYTHON_LIB="${D}/lib"
+			break
+		fi
+	done
+fi
+if test $PYTHON_INC = "NONE"
+then
+	echo " failed: No Python.h for version /python${PYTHON_VER} in /usr/local or /usr"
+else
+	echo " Python /include in ${PYTHON_INC} (/lib set to ${PYTHON_LIB})"
+	AC_SUBST(PYTHON_INC)
+	AC_SUBST(PYTHON_LIB)
+fi
+
 if test -n "$GZIP" -a -z "$GUNZIP" ; then
     echo "Found gzip, but not gunzip - setting GUNZIP to gzip -c";
     GUNZIP="$GZIP -c"
