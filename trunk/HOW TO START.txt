@@ -1,4 +1,4 @@
-Welcome to Daimonin
+Welcome to Daimonin BETA 2
 
 Read first FOLDER.txt - it will give you a overview about this package.
 
