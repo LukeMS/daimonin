@@ -69,7 +69,7 @@ void do_console(int x, int y)
         show_console(x, y);
 }
 
-/* client_command_check() 
+/* client_command_check()
  * Analyze /<cmd> type commands the player has typed in the console
  * or bound to a key. Sort out the "client intern" commands and
  * expand or pre process them for the server.
@@ -150,7 +150,7 @@ int client_command_check(char *cmd)
                     }
                 }
             }
-        }       
+        }
         draw_info("unknown spell.", COLOR_GREEN);
         return TRUE;
     }
@@ -295,7 +295,7 @@ void do_number(int x, int y)
             tmp = atoi(InputString);
             if (tmp > 0 && tmp <= cpl.nrof)
             {
-                client_send_move(cpl.loc, cpl.tag, tmp);            
+                client_send_move(cpl.loc, cpl.tag, tmp);
                 sprintf(buf, "%s %d from %d %s", cpl.nummode == NUM_MODE_GET ? "get" : "drop", tmp, cpl.nrof,
                         cpl.num_text);
                 if (cpl.nummode == NUM_MODE_GET)
@@ -494,7 +494,7 @@ Boolean blt_face_centered(int face, int x, int y)
     }
 
     box.y = -FaceList[face].sprite->border_up;
-    box.h = FaceList[face].sprite->bitmap->h;        
+    box.h = FaceList[face].sprite->bitmap->h;
     temp = box.h - FaceList[face].sprite->border_up - FaceList[face].sprite->border_down;
     if (temp > 32)
     {
@@ -558,7 +558,7 @@ void show_range(int x, int y)
           }
           else
           {
-              sprintf(buf, "no range weapon applied");   
+              sprintf(buf, "no range weapon applied");
               StringBlt(ScreenSurface, &SystemFont, buf, x + 3, y + 38, COLOR_WHITE, &rec_range, NULL);
           }
 
@@ -579,11 +579,11 @@ void show_range(int x, int y)
           else
           {
               sprite_blt(Bitmaps[BITMAP_RANGE_TOOL_NO], x + 3, y + 2, NULL, NULL);
-              sprintf(buf, "nothing applied");   
+              sprintf(buf, "nothing applied");
               StringBlt(ScreenSurface, &SystemFont, buf, x + 3, y + 49, COLOR_WHITE, &rec_item, NULL);
           }
 
-          sprintf(buf, "use range tool");   
+          sprintf(buf, "use range tool");
           StringBlt(ScreenSurface, &SystemFont, buf, x + 3, y + 38, COLOR_WHITE, &rec_range, NULL);
           break;
 
@@ -593,7 +593,7 @@ void show_range(int x, int y)
           {
               sprite_blt(Bitmaps[BITMAP_RANGE_CTRL], x + 3, y + 2, NULL, NULL);
               StringBlt(ScreenSurface, &SystemFont, fire_mode_tab[FIRE_MODE_SUMMON].name, x + 3, y + 49, COLOR_WHITE,
-                        NULL, NULL);                
+                        NULL, NULL);
               blt_face_centered(fire_mode_tab[FIRE_MODE_SUMMON].item, x + 43, y + 2);
           }
           else
@@ -603,7 +603,7 @@ void show_range(int x, int y)
               StringBlt(ScreenSurface, &SystemFont, buf, x + 3, y + 49, COLOR_WHITE, &rec_item, NULL);
           }
           sprintf(buf, "mind control");
-          StringBlt(ScreenSurface, &SystemFont, buf, x + 3, y + 38, COLOR_WHITE, &rec_item, NULL);                
+          StringBlt(ScreenSurface, &SystemFont, buf, x + 3, y + 38, COLOR_WHITE, &rec_item, NULL);
           break;
 
           /* these are client only, no server signal needed */
@@ -627,7 +627,7 @@ void show_range(int x, int y)
               StringBlt(ScreenSurface, &SystemFont, buf, x + 3, y + 49, COLOR_WHITE, &rec_item, NULL);
           }
           sprintf(buf, "use skill");
-          StringBlt(ScreenSurface, &SystemFont, buf, x + 3, y + 38, COLOR_WHITE, &rec_range, NULL);                
+          StringBlt(ScreenSurface, &SystemFont, buf, x + 3, y + 38, COLOR_WHITE, &rec_range, NULL);
 
           break;
         case FIRE_MODE_SPELL:
@@ -651,7 +651,7 @@ void show_range(int x, int y)
               StringBlt(ScreenSurface, &SystemFont, buf, x + 3, y + 49, COLOR_WHITE, &rec_item, NULL);
           }
           sprintf(buf, "cast spell");
-          StringBlt(ScreenSurface, &SystemFont, buf, x + 3, y + 38, COLOR_WHITE, &rec_range, NULL);                
+          StringBlt(ScreenSurface, &SystemFont, buf, x + 3, y + 38, COLOR_WHITE, &rec_range, NULL);
 
           break;
         case FIRE_MODE_THROW:
@@ -682,7 +682,7 @@ void show_range(int x, int y)
               StringBlt(ScreenSurface, &SystemFont, buf, x + 3, y + 49, COLOR_WHITE, &rec_item, NULL);
           }
           sprintf(buf, "throw item");
-          StringBlt(ScreenSurface, &SystemFont, buf, x + 3, y + 38, COLOR_WHITE, &rec_range, NULL);                
+          StringBlt(ScreenSurface, &SystemFont, buf, x + 3, y + 38, COLOR_WHITE, &rec_range, NULL);
 
           break;
     };
@@ -697,7 +697,7 @@ static char * get_range_item_name(int tag)
         tmp = locate_item(tag);
         if (tmp)
             return tmp->s_name;
-    }  
+    }
     return("Nothing");
 }
 
@@ -705,7 +705,7 @@ void blt_inventory_face_from_tag(int tag, int x, int y)
 {
     item   *tmp;
 
-    /* check item is in inventory and faces are loaded, etc */ 
+    /* check item is in inventory and faces are loaded, etc */
     tmp = locate_item(tag);
     if (!tmp)
         return;
@@ -727,9 +727,9 @@ void show_menu(void)
         show_spelllist();
         box.x = SCREEN_XLEN / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->w / 2;
         box.y = SCREEN_YLEN / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->h / 2 - 42;
-        box.h = 42;  
+        box.h = 42;
         box.w = Bitmaps[BITMAP_DIALOG_BG]->bitmap->w;
-        SDL_FillRect(ScreenSurface, &box, 0);       
+        SDL_FillRect(ScreenSurface, &box, 0);
         show_quickslots(box.x + 100, box.y + 3);
     }
     else if (cpl.menustatus == MENU_SKILL)
@@ -852,8 +852,8 @@ int blt_window_slider(_Sprite *slider, int maxlen, int winlen, int startoff, int
     box.y=0;
     box.w=slider->bitmap->w;
 
-    box.h = (len_h*winlen)/maxlen; 
-    startpos = (startoff *len_h)/maxlen; 
+    box.h = (len_h*winlen)/maxlen;
+    startpos = (startoff *len_h)/maxlen;
     if(box.h < 1)
         box.h=1;
 
@@ -886,7 +886,7 @@ int blt_window_slider(_Sprite *slider, int maxlen, int winlen, int startoff, int
     /* now we have 100% = 1.0 to 0% = 0.0 of the length */
     temp = (double) winlen / (double) maxlen; /* between 0.0 <-> 1.0 */
     startpos = (int) ((double) startoff * ((double) len_h / (double) maxlen)); /* startpixel */
-    temp = (double) len_h * temp; 
+    temp = (double) len_h * temp;
     box.h = (Uint16) temp;
     if (!box.h)
         box.h = 1;
@@ -909,7 +909,7 @@ static int load_anim_tmp(void)
 
 
     /* clear both animation tables
-     * this *must* be reloaded every time we connect 
+     * this *must* be reloaded every time we connect
      * - remember that different servers can have different
      * animations!
      */
@@ -1372,7 +1372,7 @@ int read_bmap_tmp(void)
         if ((fbmap0 = fopen(FILE_BMAPS_TMP, "wt")) != NULL)
         {
             /* read in the bmaps from the server, check with the
-                     * loaded bmap table (from bmaps.p0) and create with 
+                     * loaded bmap table (from bmaps.p0) and create with
                      * this information the bmaps.tmp file.
                      */
             while (fgets(buf, HUGE_BUF - 1, stream) != NULL)
@@ -1382,7 +1382,7 @@ int read_bmap_tmp(void)
 
                 /* now we can check, our local file package has
                          * the right png - if not, we mark this pictures
-                         * as "in cache". We don't check it here now - 
+                         * as "in cache". We don't check it here now -
                          * that will happens at runtime.
                          * That can change when we include later a forbidden
                          * flag in the server (no face send) - then we need
@@ -1599,8 +1599,8 @@ void load_settings(void)
                         LOG(LOG_ERROR, "client_settings_: level cmd out of bounds! >%s<\n", buf);
                         return;
                     }
-                    server_level.level = tmp_level; 
-                    last_cmd = 1; /* cmd 'level' */ 
+                    server_level.level = tmp_level;
+                    last_cmd = 1; /* cmd 'level' */
                     para_count = 0;
                 }
                 else /* we close here... better we include later a fallback to login */
@@ -1708,7 +1708,7 @@ void read_spells(void)
             if (fgets(line, 255, stream) == NULL)
                 break;
             line[250] = 0;
-            tmp = strchr(line, '"');            
+            tmp = strchr(line, '"');
             tmp2 = strchr(tmp + 1, '"');
             *tmp2 = 0;
             strcpy(name, tmp + 1);
@@ -1718,41 +1718,41 @@ void read_spells(void)
             if (fgets(line, 255, stream) == NULL)
                 break;
             line[250] = 0;
-            tmp = strchr(line, '"');            
+            tmp = strchr(line, '"');
             tmp2 = strchr(tmp + 1, '"');
             *tmp2 = 0;
             strcpy(d1, tmp + 1);
             if (fgets(line, 255, stream) == NULL)
                 break;
             line[250] = 0;
-            tmp = strchr(line, '"');            
+            tmp = strchr(line, '"');
             tmp2 = strchr(tmp + 1, '"');
             *tmp2 = 0;
             strcpy(d2, tmp + 1);
             if (fgets(line, 255, stream) == NULL)
                 break;
             line[250] = 0;
-            tmp = strchr(line, '"');            
+            tmp = strchr(line, '"');
             tmp2 = strchr(tmp + 1, '"');
             *tmp2 = 0;
             strcpy(d3, tmp + 1);
             if (fgets(line, 255, stream) == NULL)
                 break;
             line[250] = 0;
-            tmp = strchr(line, '"');            
+            tmp = strchr(line, '"');
             tmp2 = strchr(tmp + 1, '"');
             *tmp2 = 0;
             strcpy(d4, tmp + 1);
             panel--;
-            spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].flag = LIST_ENTRY_USED;   
+            spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].flag = LIST_ENTRY_USED;
             strcpy(spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].icon_name, icon);
             sprintf(line, "%s%s", GetIconDirectory(), icon);
             spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].icon = sprite_load_file(line, 0);
 
-            strcpy(spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].name, name);             
-            strcpy(spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].desc[0], d1);             
-            strcpy(spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].desc[1], d2);             
-            strcpy(spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].desc[2], d3);             
+            strcpy(spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].name, name);
+            strcpy(spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].desc[0], d1);
+            strcpy(spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].desc[1], d2);
+            strcpy(spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].desc[2], d3);
             strcpy(spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].desc[3], d4);
         }
         fclose(stream);
@@ -1804,7 +1804,7 @@ void read_skills(void)
             if (fgets(line, 255, stream) == NULL)
                 break;
             line[250] = 0;
-            tmp = strchr(line, '"');            
+            tmp = strchr(line, '"');
             tmp2 = strchr(tmp + 1, '"');
             *tmp2 = 0;
             strcpy(name, tmp + 1);
@@ -1814,44 +1814,44 @@ void read_skills(void)
             if (fgets(line, 255, stream) == NULL)
                 break;
             line[250] = 0;
-            tmp = strchr(line, '"');            
+            tmp = strchr(line, '"');
             tmp2 = strchr(tmp + 1, '"');
             *tmp2 = 0;
             strcpy(d1, tmp + 1);
             if (fgets(line, 255, stream) == NULL)
                 break;
             line[250] = 0;
-            tmp = strchr(line, '"');            
+            tmp = strchr(line, '"');
             tmp2 = strchr(tmp + 1, '"');
             *tmp2 = 0;
             strcpy(d2, tmp + 1);
             if (fgets(line, 255, stream) == NULL)
                 break;
             line[250] = 0;
-            tmp = strchr(line, '"');            
+            tmp = strchr(line, '"');
             tmp2 = strchr(tmp + 1, '"');
             *tmp2 = 0;
             strcpy(d3, tmp + 1);
             if (fgets(line, 255, stream) == NULL)
                 break;
             line[250] = 0;
-            tmp = strchr(line, '"');            
+            tmp = strchr(line, '"');
             tmp2 = strchr(tmp + 1, '"');
             *tmp2 = 0;
             strcpy(d4, tmp + 1);
 
-            skill_list[panel].entry[nchar - 'a'].flag = LIST_ENTRY_USED;   
-            skill_list[panel].entry[nchar - 'a'].exp = 0;   
-            skill_list[panel].entry[nchar - 'a'].exp_level = 0;   
+            skill_list[panel].entry[nchar - 'a'].flag = LIST_ENTRY_USED;
+            skill_list[panel].entry[nchar - 'a'].exp = 0;
+            skill_list[panel].entry[nchar - 'a'].exp_level = 0;
 
             strcpy(skill_list[panel].entry[nchar - 'a'].icon_name, icon);
             sprintf(line, "%s%s", GetIconDirectory(), icon);
             skill_list[panel].entry[nchar - 'a'].icon = sprite_load_file(line, 0);
 
-            strcpy(skill_list[panel].entry[nchar - 'a'].name, name);             
-            strcpy(skill_list[panel].entry[nchar - 'a'].desc[0], d1);             
-            strcpy(skill_list[panel].entry[nchar - 'a'].desc[1], d2);             
-            strcpy(skill_list[panel].entry[nchar - 'a'].desc[2], d3);             
+            strcpy(skill_list[panel].entry[nchar - 'a'].name, name);
+            strcpy(skill_list[panel].entry[nchar - 'a'].desc[0], d1);
+            strcpy(skill_list[panel].entry[nchar - 'a'].desc[1], d2);
+            strcpy(skill_list[panel].entry[nchar - 'a'].desc[2], d3);
             strcpy(skill_list[panel].entry[nchar - 'a'].desc[3], d4);
         }
         fclose(stream);
@@ -1890,11 +1890,11 @@ void show_quickslots(int x, int y)
     {
         if (quick_slots[i].tag != -1)
         {
-            /* spell in quickslot */      
+            /* spell in quickslot */
             if (quick_slots[i].spell == TRUE)
             {
                 sprite_blt(spell_list[quick_slots[i].groupNr].entry[quick_slots[i].classNr][quick_slots[i].tag].icon,
-                           x + quickslots_pos[i][0], y + quickslots_pos[i][1], NULL, NULL);            
+                           x + quickslots_pos[i][0], y + quickslots_pos[i][1], NULL, NULL);
                 if (mx >= x + quickslots_pos[i][0]
                  && mx < x + quickslots_pos[i][0] + 33
                  && my >= y + quickslots_pos[i][1]
@@ -1943,6 +1943,38 @@ void update_quickslots(int del_item)
     }
 }
 
+static int readNextQuickSlots(FILE *fp, char *server, char *name, _quickslot *quickslots)
+{
+    int     ch = 1, i = 0;
+
+    while (ch)
+    {
+        if (i == 2048)
+            return 0;
+        ch = fgetc(fp);
+        if (ch == EOF)
+            return 0;
+        server[i++] = ch;
+    }
+    ch = 1;
+    i = 0;
+    while (ch)
+    {
+        if (i == 40)
+            return 0;
+        ch = fgetc(fp);
+        if (ch == EOF)
+            return 0;
+        name[i++] = ch;
+    }
+    for (i = 0; i != MAX_QUICK_SLOTS; ++i)
+    {
+        fread(&quickslots[i], 1, sizeof(_quickslot), fp);
+        if (feof(fp))
+            return 0;
+    }
+    return 1;
+}
 
 /******************************************************************
  Restore quickslots from last game.
@@ -1950,21 +1982,29 @@ void update_quickslots(int del_item)
 #define QUICKSLOT_FILE "quick.dat"
 void load_quickslots_entrys()
 {
-    int     i;
-    FILE   *stream;
+    int         i;
+    char        name[40], server[2048];
+    _quickslot  quickslots[MAX_QUICK_SLOTS];
+    FILE       *stream;
 
     if (!(stream = fopen(QUICKSLOT_FILE, "rb")))
         return;
-    for (i = 0; i < MAX_QUICK_SLOTS; i++)
+    while (readNextQuickSlots(stream, server, name, quickslots))
     {
-        fread(&quick_slots[i], 1, sizeof(_quickslot), stream);
-
-        if (quick_slots[i].tag == -1)
-            continue;
-        cpl.win_inv_slot = quick_slots[i].invSlot;
-        if (quick_slots[i].spell == FALSE)
-            quick_slots[i].tag = locate_item_tag_from_nr(cpl.ob->inv, quick_slots[i].nr);
-    }   
+        if (!strcmp(ServerName, server) && !strcmp(cpl.name, name))
+        {
+            memcpy(quick_slots, quickslots, sizeof(_quickslot) * MAX_QUICK_SLOTS);
+            for (i = 0; i != MAX_QUICK_SLOTS; ++i)
+            {
+                if (quick_slots[i].tag == -1)
+                    continue;
+                cpl.win_inv_slot = quick_slots[i].invSlot;
+                if (quick_slots[i].spell == FALSE)
+                    quick_slots[i].tag = locate_item_tag_from_nr(cpl.ob->inv, quick_slots[i].nr);
+            }
+            break;
+        }
+    }
     fclose(stream);
     update_quickslots(-1);
 }
@@ -1974,11 +2014,27 @@ void load_quickslots_entrys()
 ******************************************************************/
 void save_quickslots_entrys()
 {
-    FILE   *stream;
+    char        name[40], server[2048];
+    _quickslot  quickslots[MAX_QUICK_SLOTS];
+    FILE       *stream;
 
-    if (!(stream = fopen(QUICKSLOT_FILE, "wb")))
-        return;
-
+    if (!(stream = fopen(QUICKSLOT_FILE, "rb+")))
+    {
+        if (!(stream = fopen(QUICKSLOT_FILE, "wb+")))
+            return;
+    }
+    while (readNextQuickSlots(stream, server, name, quickslots))
+    {
+        if (!strcmp(ServerName, server) && !strcmp(cpl.name, name))
+        {
+            fseek(stream, -(sizeof(_quickslot) * MAX_QUICK_SLOTS), SEEK_CUR);
+            fwrite(&quick_slots, sizeof(_quickslot), MAX_QUICK_SLOTS, stream);
+            fclose(stream);
+            return;
+        }
+    }
+    fwrite(&ServerName, sizeof(char), strlen(ServerName) + 1, stream);
+    fwrite(&cpl.name, sizeof(char), strlen(cpl.name) + 1, stream);
     fwrite(&quick_slots, sizeof(_quickslot), MAX_QUICK_SLOTS, stream);
     fclose(stream);
 }
@@ -1998,7 +2054,7 @@ void show_target(int x, int y)
     /* redirect target_hp to our hp - server don't send it
      * because we should now our hp exactly
      */
-    hp_tmp = (int) cpl.target_hp ; 
+    hp_tmp = (int) cpl.target_hp ;
     if (cpl.target_code == 0)
         hp_tmp = (int) (((float) cpl.stats.hp / (float) cpl.stats.maxhp) * 100.0f);
 
@@ -2024,7 +2080,7 @@ void show_target(int x, int y)
             ptr = "target friend";
     }
     if (cpl.target_code)
-        sprite_blt(Bitmaps[BITMAP_TARGET_TALK], x + 270, y + 27, NULL, NULL);   
+        sprite_blt(Bitmaps[BITMAP_TARGET_TALK], x + 270, y + 27, NULL, NULL);
 
     if (options.show_target_self || cpl.target_code != 0)
     {
