@@ -325,10 +325,10 @@ void read_metaserver_data(void)
 	buf[temp]=0;
    LOG(0,"GET: %s\n", buf);
     parse_metaserver_data(buf);
-        tmp_free = buf;
-	FreeMemory(&tmp_free);
-	tmp_free = ptr;
-	FreeMemory(&tmp_free);
+        tmp_free = &buf;
+	FreeMemory(tmp_free);
+	tmp_free = &ptr;
+	FreeMemory(tmp_free);
 }
 
 Boolean SOCKET_CloseSocket(SOCKET socket_temp)
@@ -344,8 +344,8 @@ Boolean SOCKET_CloseSocket(SOCKET socket_temp)
 	
 	shutdown(socket_temp, SD_BOTH );
 	closesocket(socket_temp);
-	tmp_free = csocket.inbuf.buf;
-	FreeMemory(&tmp_free);
+	tmp_free = &csocket.inbuf.buf;
+	FreeMemory(tmp_free);
 	csocket.fd=SOCKET_NO;	
 	return(TRUE);
 }
@@ -438,8 +438,8 @@ Boolean SOCKET_CloseSocket(SOCKET socket_temp)
 		return(TRUE);
 	
     	close(socket_temp);
-	tmp_free = csocket.inbuf.buf;
-	FreeMemory(&tmp_free);
+	tmp_free = &csocket.inbuf.buf;
+	FreeMemory(tmp_free);
 	csocket.fd=SOCKET_NO;	
 	return(TRUE);
 }
@@ -485,10 +485,10 @@ void read_metaserver_data(void)
         }
         buf[temp]=0;
         parse_metaserver_data(buf);
-		tmp_free=buf;
-        FreeMemory(&tmp_free);
-		tmp_free=ptr;
-        FreeMemory(&tmp_free);
+		tmp_free=&buf;
+        FreeMemory(tmp_free);
+		tmp_free=&ptr;
+        FreeMemory(tmp_free);
 }
 
 

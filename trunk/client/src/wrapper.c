@@ -424,7 +424,7 @@ void parse_metaserver_data(char *info)
 		add_metaserver_data(server, port, player, version, &desc_line[0][0],&desc_line[1][0],&desc_line[2][0],&desc_line[3][0]);
         
     }
-	tmp_free = tmp;
-    FreeMemory(&tmp_free);
+	tmp_free = &tmp;
+    FreeMemory(tmp_free);
 }
 

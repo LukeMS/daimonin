@@ -1078,7 +1078,7 @@ int key_confirm_quit(object *op, char key)
     if(!QUERY_FLAG(op,FLAG_WAS_WIZ)) {
       sprintf(buf,"%s/%s/%s/%s.pl",settings.localdir,settings.playerdir,op->name,op->name);
       if(unlink(buf)== -1 && settings.debug >= llevDebug)
-        perror("crossfire (delete character)");
+		LOG(llevBug,"BUG: crossfire (delete character): %s\n", buf);
     }
     play_again(op);
     return 1;
@@ -2441,9 +2441,12 @@ void kill_player(object *op)
     }
     lost_a_stat = 0;
 
+	/* the rule is: 
+	 * only decrease stats when you are level 3 or higher! 
+	 * Lose permanent stats when you are higher as level 74 */
     for (z=0; z<num_stats_lose; z++) 
     {
-        if (settings.stat_loss_on_death) 
+        if ((settings.stat_loss_on_death && op->level > 3) || op->level >= 75) 
         {
 	        /* Pick a random stat and take a point off it.  Tell the player
 	        * what he lost.
@@ -2456,7 +2459,7 @@ void kill_player(object *op)
             new_draw_info(NDI_UNIQUE, 0,op, lose_msg[i]);
             lost_a_stat = 1;
         } 
-        else 
+        else if (op->level > 3)
         {
             /* deplete a stat */
             archetype *deparch=find_archetype("depletion");
@@ -2519,9 +2522,9 @@ void kill_player(object *op)
            Should I be using something else? GD */
         char *god = determine_god(op);
         if (god && (strcmp(god, "none")))
-            new_draw_info_format(NDI_UNIQUE, 0, op, "For a brief moment you feel the holy presence of %s protecting you.", god);
+            new_draw_info_format(NDI_UNIQUE, 0, op, "For a brief moment you feel the holy presence of\n%s protecting you.", god);
         else
-            new_draw_info(NDI_UNIQUE, 0, op, "For a brief moment you feel a holy presence protecting you.");
+            new_draw_info(NDI_UNIQUE, 0, op, "For a brief moment you feel a holy presence\nprotecting you.");
     }
 
     /* Put a gravestone up where the character 'almost' died.  List the

@@ -1658,7 +1658,8 @@ face force.101
 type 105
 editor_folder forces/forces
 food 6
-speed 0.015
+speed -0.015
+speed_left -1.0
 dam 1
 level 1
 attack_internal 100

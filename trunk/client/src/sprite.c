@@ -539,8 +539,8 @@ void remove_anim(struct _anim *anim)
 
     tmp = anim->before;
     tmp_next = anim->next;
-    tmp_free=anim;
-    FreeMemory(&tmp_free); /* free node memory */
+    tmp_free=&anim;
+    FreeMemory(tmp_free); /* free node memory */
     
     if(tmp)
         tmp->next = tmp_next;
@@ -553,16 +553,18 @@ void remove_anim(struct _anim *anim)
 
 void delete_anim_que(void)
 {
-    struct _anim *tmp_next;
+    struct _anim *tmp, *tmp_next;
     void *tmp_free;
 
-    for(tmp_free=start_anim;tmp_free;)
+    for(tmp=start_anim;tmp;)
     {
-        tmp_next =((struct _anim*)tmp_free)->next;
-        FreeMemory(&tmp_free);
-        tmp_free = tmp_next;
+        tmp_next = tmp->next;
+		tmp_free = &tmp;
+        FreeMemory(tmp_free); /* free node memory */
+        tmp = tmp_next;
     }
-}
+	start_anim = NULL;
+} 
 
 /* walk through the map anim list */
 void play_anims(int mx, int my)

@@ -71,6 +71,7 @@ typedef unsigned int tag_t;
 #define SEND_FACE_OUT_OF_BOUNDS 1
 #define SEND_FACE_NO_DATA 2
 
+#define TILED_MAPS 4 /* should be 8 to get the corners too */
 
 /* global stuff used by new skill/experience system -b.t.
  * Needed before player.h

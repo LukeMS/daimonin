@@ -105,26 +105,66 @@ void read_map_log()
     fclose(fp);
 }
 
+/* These is next on todo: map->players is broken. Add it to remove_ob() and
+ * insert_ob_in_map(). ONLY there should map->players be touched.
+ * then we can skip there this player check after some testing
+ */
 void swap_map(mapstruct *map) {
     player *pl;
+	int i;
 #ifdef PLUGINS
     int evtid;
     CFParm CFP;
 #endif
 
-    LOG(llevInfo,"Start swapping map: %s.\n", map->path );
+    LOG(llevDebug,"Check map for swapping: %s. (players:%d)\n", map->path,map->players );
     if(map->in_memory != MAP_IN_MEMORY) {
 	LOG(llevBug,"BUG: Tried to swap out map which was not in memory (%s).\n",map->path);
 	return;
     }
+
     for(pl=first_player;pl!=NULL;pl=pl->next)
 	if(pl->ob == NULL || (!(QUERY_FLAG(pl->ob,FLAG_REMOVED)) && pl->ob->map == map))
 	    break;
 
-    if(pl != NULL) {
-	LOG(llevDebug,"Wanted to swap out map with player.\n");
-	return;
+    if(pl != NULL) 
+	{
+		LOG(llevDebug,"Wanted to swap out map with player.skiped.\n");
+		return;
     }
+
+    /* thats bad code here - remember we want remove this loop! */
+	/* This need a fix too! Problem is: we only check this
+	 * 0X0           
+	 * XmX 
+	 * 0X0
+	 * instead of
+	 * XXX
+	 * XmX
+	 * XXX
+	 */
+	for(i=0;i<TILED_MAPS;i++)
+	{
+		if(map->tile_map[i])
+		{
+			/* we have a tiled map which is swaped out - no problem - skip it */
+			if(map->tile_map[i]->in_memory != MAP_IN_MEMORY) 
+				continue;
+
+			for(pl=first_player;pl!=NULL;pl=pl->next)
+			{
+				if(pl->ob == NULL || (!(QUERY_FLAG(pl->ob,FLAG_REMOVED)) && pl->ob->map == map->tile_map[i]))
+					break;
+			}
+
+		    if(pl != NULL) 
+			{
+				LOG(llevDebug,"Wanted to swap out map with player on attached tiled map.skiped.\n");
+				return;
+			}
+		}
+	}
+
     remove_all_pets(map); /* Give them a chance to follow */
 
     /* Update the reset time.  Only do this is STAND_STILL is not set */

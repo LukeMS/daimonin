@@ -496,7 +496,7 @@ void MoveCmd(char *buf, int len,player *pl)
     for (i=0; i<2; i++) {
 	vals[i]=atoi(buf);
 	if (!(buf = strchr(buf, ' '))) {
-	    LOG(llevInfo,"CLIENT: Incomplete move command: %s\n", buf);
+	    LOG(llevInfo,"CLIENT(BUG): Incomplete move command: %s from player %s\n", buf,query_name(pl->ob));
 	    return;
 	}
 	buf++;

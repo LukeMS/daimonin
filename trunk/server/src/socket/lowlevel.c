@@ -449,12 +449,12 @@ void write_cs_stats()
     if (cst_lst.ibytes==0 && cst_lst.obytes==0) return;
 
     /* CSSTAT is put in so scripts can easily find the line */
-    LOG(llevInfo, "CSSTAT: %.16s tot %d %d %d %d inc %d %d %d %d\n",
+    LOG(llevInfo, "CSSTAT: %.16s tot in:%d out:%d maxc:%d time:%d last block-> in:%d out:%d maxc:%d time:%d\n",
 	ctime(&now), cst_tot.ibytes, cst_tot.obytes, cst_tot.max_conn,
 	now - cst_tot.time_start, cst_lst.ibytes, cst_lst.obytes,
 	cst_lst.max_conn, now - cst_lst.time_start);
 
-	LOG(llevInfo, "SYSINFO: objects:%d (%d free) archsearch:%d (%d cmp)\n", 
+	LOG(llevInfo, "SYSINFO: objs:%d (%d free) arch-srh:%d (%d cmp)\n", 
 						nrofallocobjects,nroffreeobjects,arch_search,arch_cmp );
 
     cst_lst.ibytes=0;

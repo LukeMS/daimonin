@@ -288,8 +288,8 @@ typedef struct mapdef {
     MapSpace *spaces;				/* Array of spaces on this map */
     oblinkpt *buttons;				/* Linked list of linked lists of buttons */
 
-    char *tile_path[4];				/* path to adjoining maps */
-    struct mapdef *tile_map[4];		/* Next map, linked list */
+    char *tile_path[TILED_MAPS];				/* path to adjoining maps */
+    struct mapdef *tile_map[TILED_MAPS];		/* Next map, linked list */
 
 
 	uint32 map_flags;				/* mag flags for various map settings */
