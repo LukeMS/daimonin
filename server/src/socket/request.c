@@ -414,7 +414,7 @@ void NewPlayerCmd(char *buf, int len, player *pl)
 
     if (len < 7)
 	{
-		LOG(llevBug,"BUG: Corrupt ncom command from player %s - not long enough - discarding\n", pl->ob->name);
+		LOG(llevBug,"BUG: Corrupt ncom command from player %s - not long enough (len: %d)- discarding\n", pl->ob->name,len);
 		return;
     }
 
