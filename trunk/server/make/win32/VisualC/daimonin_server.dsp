@@ -133,6 +133,10 @@ PostBuild_Cmds=copy ReleaseDebug\*.exe ..\..\..\*.exe
 # PROP Default_Filter ""
 # Begin Source File
 
+SOURCE=..\..\..\src\server\aiconfig.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\src\server\alchemy.c
 
 !IF  "$(CFG)" == "daimonin_server - Win32 ReleaseLog"
@@ -1544,6 +1548,10 @@ SOURCE=..\..\..\src\random_maps\wall.c
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=..\..\..\src\include\aiconfig.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\src\include\arch.h
 # End Source File
 # Begin Source File
@@ -1553,6 +1561,10 @@ SOURCE=..\..\..\src\include\artifact.h
 # Begin Source File
 
 SOURCE=..\..\..\src\include\attack.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\include\behaviourdecl.h
 # End Source File
 # Begin Source File
 
@@ -1613,6 +1625,10 @@ SOURCE=..\..\..\src\include\map.h
 # Begin Source File
 
 SOURCE=..\..\..\src\include\material.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\include\mempool.h
 # End Source File
 # Begin Source File
 
