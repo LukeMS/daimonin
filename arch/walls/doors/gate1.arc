@@ -1,5 +1,5 @@
 Object gate1_locked
-name locked gate
+name metal gate
 layer 5
 msg
 You need a special key to open this gate.
