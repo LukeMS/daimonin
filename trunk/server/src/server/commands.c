@@ -211,6 +211,7 @@ CommArray_s WizCommands [] = {
   {"/set_map_light", command_setmaplight,0.0},
 
   {"/stats", command_stats,0.0},
+  {"/check_fd", command_check_fd,0.0},
   
 
   /*
