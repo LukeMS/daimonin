@@ -483,6 +483,27 @@ gel_cube.112
 gel_cube.111
 gel_cube.112
 mina
+anim curtain1
+facings 9
+dummy.111
+dummy.111
+curtain1.111
+curtain1.112
+curtain1.111
+curtain1.112
+curtain1.131
+curtain1.132
+curtain1.131
+curtain1.132
+curtain1.111
+curtain1.112
+curtain1.111
+curtain1.112
+curtain1.131
+curtain1.132
+curtain1.131
+curtain1.132
+mina
 anim detect_magic
 det_magic.111
 det_magic.112
@@ -533,17 +554,47 @@ door_lock1.132
 door_lock1.131
 door_lock1.132
 mina
-anim door1_open
+anim door_wood1
 facings 9
 dummy.111
-door_lock1.112
-door_lock1.112
-door_lock1.132
-door_lock1.132
-door_lock1.112
-door_lock1.112
-door_lock1.132
-door_lock1.132
+dummy.111
+door_wood1.111
+door_wood1.112
+door_wood1.111
+door_wood1.112
+door_wood1.131
+door_wood1.132
+door_wood1.131
+door_wood1.132
+door_wood1.111
+door_wood1.112
+door_wood1.111
+door_wood1.112
+door_wood1.131
+door_wood1.132
+door_wood1.131
+door_wood1.132
+mina
+anim door_wood2
+facings 9
+dummy.111
+dummy.111
+door_wood2.111
+door_wood2.112
+door_wood2.111
+door_wood2.112
+door_wood2.131
+door_wood2.132
+door_wood2.131
+door_wood2.132
+door_wood2.111
+door_wood2.112
+door_wood2.111
+door_wood2.112
+door_wood2.131
+door_wood2.132
+door_wood2.131
+door_wood2.132
 mina
 anim eldath_avatar
 facings 25
@@ -670,18 +721,6 @@ gate_lock1.112
 gate_lock1.131
 gate_lock1.132
 gate_lock1.131
-gate_lock1.132
-mina
-anim gate1_open
-facings 9
-dummy.111
-gate_lock1.112
-gate_lock1.112
-gate_lock1.132
-gate_lock1.132
-gate_lock1.112
-gate_lock1.112
-gate_lock1.132
 gate_lock1.132
 mina
 anim gateTrg1
@@ -1864,6 +1903,59 @@ magic_wall.171
 dummy.111
 magic_wall.181
 dummy.111
+mina
+anim monk
+facings 25
+trans.101
+trans.101
+monk.131
+monk.132
+monk.131
+monk.132
+monk.131
+monk.132
+monk.131
+monk.132
+monk.151
+monk.152
+monk.151
+monk.152
+monk.151
+monk.152
+monk.151
+monk.152
+monk.131
+monk.132
+monk.131
+monk.132
+monk.131
+monk.132
+monk.131
+monk.132
+monk.151
+monk.152
+monk.151
+monk.152
+monk.151
+monk.152
+monk.151
+monk.152
+monk.131
+monk.132
+monk.131
+monk.132
+monk.131
+monk.132
+monk.131
+monk.132
+monk.151
+monk.152
+monk.151
+monk.152
+monk.151
+monk.152
+monk.151
+monk.152
 mina
 anim mover
 facings 9

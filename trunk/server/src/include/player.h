@@ -92,7 +92,12 @@ enum {
 /* slowly reworking this struct - some old values in - MT2003 */
 typedef struct pl_player
 {
+	/* this is not cleared with memset - seek for offsetof((....,maplevel) */
 	struct pl_player *next;				/* Pointer to next player, NULL if this is last */
+	NewSocket socket;				/* Socket information for this player */
+	char maplevel[MAX_BUF];			/* Name of the map the player is on */
+
+	/* all this is set to 0 with memset */
 	object *ob;						/* The object representing the player */
 	int bed_x;						/* x,y - coordinates of respawn (savebed) */
 	int bed_y;
@@ -122,11 +127,8 @@ typedef struct pl_player
 									 * This will break client cache and script events.
 									 * This value will used as control value.*/
 
-	NewSocket socket;				/* Socket information for this player */
-
 	uint16 anim_flags;				/* some anim flags for special player animation handling */
 
-	char maplevel[MAX_BUF];			/* Name of the map the player is on */
 	char quick_name[BIG_NAME*3];	/* thats rank + name +" the xxxx" */
 
 /* all values before this line are tested and proofed */

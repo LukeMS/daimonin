@@ -83,90 +83,86 @@ int freedir[SIZEOFFREE]= {
  * check weight
  */
 
-inline int CAN_MERGE(object *ob1, object *ob2) {
+inline int CAN_MERGE(object *ob1, object *ob2) 
+{
+	/* just a brain dead long check for things NEVER NEVER should be different 
+	 * this is true under all circumstances for all objects.
+	 */
+    if (!ob1->nrof || !ob2->nrof || ob1->type != ob2->type || ob1 == ob2 || ob1->arch != ob2->arch || 
+	        ob1->sub_type1 != ob2->sub_type1 || ob1->material!=ob2->material || 
+			ob1->material_real != ob2->material_real || ob1->magic != ob2->magic ||
+		    ob1->item_quality!=ob2->item_quality ||ob1->item_condition!=ob2->item_condition ||
+			ob1->item_race!=ob2->item_race || ob1->speed != ob2->speed || ob1->inv || ob2->inv ||
+			ob1->value !=ob2->value || ob1->weight != ob2->weight) 
 
-    /* A couple quicksanity checks */
-    if ((ob1 == ob2) || (ob1->type != ob2->type) ||
-        (ob1->material!=ob2->material) || (ob1->material_real!=ob2->material_real) ||
-        (ob1->item_quality!=ob2->item_quality) ||(ob1->item_condition!=ob2->item_condition) ||
-        (ob1->item_race!=ob2->item_race) ||(ob1->speed != ob2->speed)) 
-        return 0;
-
-    /* Note sure why the following is the case - either the object has to
-     * be animated or have a very low speed.  Is this an attempted monster
-     * check?
-     */
-    if (!QUERY_FLAG(ob1,FLAG_ANIMATE) && FABS((ob1)->speed) > MIN_ACTIVE_SPEED)
-	return 0;
-
-
-    /* If the objects have been identified, set the BEEN_APPLIED flag.
-     * This is to the comparison of the flags below will be OK.  We
-     * just can't ignore the been applied or identified flags, as they
-     * are not equal - just if it has been identified, the been_applied
-     * flags lose any meaning.
-     */
-    if (QUERY_FLAG(ob1, FLAG_IDENTIFIED))
-	SET_FLAG(ob1, FLAG_BEEN_APPLIED);
-
-    if (QUERY_FLAG(ob2, FLAG_IDENTIFIED))
-	SET_FLAG(ob2, FLAG_BEEN_APPLIED);
-
-
-    /* the 0x400000 on flags2 is FLAG_INV_LOCK.  I don't think something
-     * being locked in inventory should prevent merging.
-     * 0x4 in flags3 is CLIENT_SENT
-     */
-    if ((ob1->arch != ob2->arch) || 
-	(ob1->stats.sp != ob2->stats.sp) ||
-	(ob1->flags[0] != ob2->flags[0]) || 
-	(ob1->flags[1] != ob2->flags[1]) ||
-	((ob1->flags[2] & ~0x400000) != (ob2->flags[2] & ~ 0x400000)) ||
-	((ob1->flags[3] & ~0x4) != (ob2->flags[3] & ~0x4)) || 
-	(ob1->name != ob2->name) || 
-	(ob1->title != ob2->title) ||
-	(ob1->msg != ob2->msg) || 
-	(ob1->weight != ob2->weight) ||
-	(ob1->stats.food != ob2->stats.food) ||
-	(memcmp(&ob1->resist, &ob2->resist, sizeof(ob1->resist))!=0) ||
-	(ob1->attacktype != ob2->attacktype) ||
-	(ob1->magic != ob2->magic) ||
-	(ob1->slaying != ob2->slaying) ||
-	(ob1->value != ob2->value) ||
-	(ob1->animation_id != ob2->animation_id)
-	) 
-	    return 0;
-
-    switch (ob1->type) {
-	case SCROLL:
-	    if (ob1->level != ob2->level) return 0;
-	    break;
-
-	case RING:
-	    /* Don't merge applied rings - easier to keep them seperate, and
-	     * it makes more sense (can easily unapply one ring).  Rings are
-	     * the only objects that need this special code, as they are the
-	     * only objects of the same type in which more than 1 can be
-	     * applied at a time.
-	     *
-	     * Note - there is no break so we fall into the POTION/AMULET
-	     * check below.
-	     */
-	    if (QUERY_FLAG(ob1, FLAG_APPLIED) || QUERY_FLAG(ob2, FLAG_APPLIED))
 		return 0;
 
-	case POTION:
-	case AMULET:
-	    /* This should compare the value of the stats, and not the pointer
-	     * itself.  There can be cases were potions seem to loose their
-	     * plus
-	     */
-	    if (memcmp(&ob1->stats,&ob2->stats, sizeof(living))) return 0;
-	    break;
-    }
-    /* Everything passes, must be OK. */
-    return 1;
+	/* check the refcount pointer */
+	if	(	ob1->name != ob2->name ||
+			ob1->title != ob2->title ||
+			ob1->race != ob2->race ||
+			ob1->slaying != ob2->slaying ||
+			ob1->msg != ob2->msg
+		)
+		return 0;
+
+	/* compare the static arrays/structs */
+	if	( 
+			(memcmp(&ob1->stats, &ob2->stats, sizeof(living))!=0) ||
+			(memcmp(&ob1->resist, &ob2->resist, sizeof(ob1->resist))!=0) ||
+			(memcmp(&ob1->attack, &ob2->attack, sizeof(ob1->attack))!=0) ||
+			(memcmp(&ob1->protection, &ob2->protection, sizeof(ob1->protection))!=0)
+		)
+		return 0;
+
+
+	if	(	ob1->randomitems != ob2->randomitems ||
+			ob1->other_arch != ob2->other_arch ||
+			(ob1->flags[0]|0x300) != (ob2->flags[0]|0x300) ||  /* we ignore REMOVED and BEEN_APPLIED */
+			ob1->flags[1] != ob2->flags[1] ||
+			ob1->flags[2] != ob2->flags[2] ||
+			ob1->flags[3] != ob2->flags[3] ||
+			ob1->path_attuned != ob2->path_attuned ||
+			ob1->path_repelled != ob2->path_repelled ||
+			ob1->path_denied != ob2->path_denied ||
+			ob1->terrain_type != ob2->terrain_type ||
+			ob1->terrain_flag != ob2->terrain_flag ||
+			ob1->weapon_speed != ob2->weapon_speed ||
+			ob1->magic != ob2->magic ||
+			ob1->item_level != ob2->item_level ||
+			ob1->item_skill != ob2->item_skill ||
+			ob1->glow_radius != ob2->glow_radius  ||
+			ob1->level != ob2->level
+		)
+		return 0;
+
+	/* face can be difficult - but inv_face should never different or obj is different! */
+	if	(	ob1->face != ob2->face ||
+			ob1->inv_face != ob2->inv_face ||
+			ob1->animation_id != ob2->animation_id ||
+			ob1->inv_animation_id != ob2->inv_animation_id
+			)
+		return 0;
+
+	/* some stuff we should not need to test:
+	 * carrying: because container merge isa big nono - and we tested ->inv before. better no double use here.
+     * weight_limit: same reason like carrying - add when we double use for stacking items
+	 * last_heal;
+	 * last_sp;
+	 * last_grace;
+	 * sint16 last_eat;
+	 * will_apply;
+	 * run_away;
+	 * stealth;		
+	 * hide;
+     * move_type;
+	 * layer;				this *can* be different for real same item - watch it
+     * anim_speed;			this can be interesting...
+	 */
+
+	return 1; /* can merge! */
 }
+
 
 /*
  * sum_weight() is a recursive function which calculates the weight
@@ -388,8 +384,10 @@ void clear_owner(object *op)
 {
     if (!op) return;
 
+	/*
     if (op->owner && op->ownercount == op->owner->count)
 	op->owner->refcount--;
+    */
 
     op->owner = NULL;
     op->ownercount = 0;
@@ -423,7 +421,7 @@ static void set_owner_simple (object *op, object *owner)
     op->owner=owner;
 
     op->ownercount=owner->count;
-    owner->refcount++;
+    /*owner->refcount++;*/
 }
 
 static void set_skill_pointers (object *op, object *chosen_skill,
@@ -531,8 +529,8 @@ void clear_object(object *op) {
     /* Using this memset is a lot easier (and probably faster)
      * than explicitly clearing the fields.
      */
-    memset((void*)((char*)op + offsetof(object, magic)),
-		   0, sizeof(object)-offsetof(object, magic));
+    memset((void*)((char*)op + offsetof(object, name)),
+		   0, sizeof(object)-offsetof(object, name));
      /* Below here, we clear things that are not done by the memset,
      * or set default values that are not zero.
      */
@@ -549,7 +547,6 @@ void clear_object(object *op) {
     op->more=NULL;
     op->head=NULL;
     op->map=NULL;
-    op->refcount=0;
     /* What is not cleared is next, prev, active_next, active_prev, and count */
 
 	op->anim_enemy_dir = -1;      /* control the facings 25 animations */
@@ -586,9 +583,9 @@ void copy_object(object *op2, object *op)
     free_string(op->slaying);
   if(op->msg!=NULL)
     free_string(op->msg);
-  (void) memcpy((void *)((char *) op +offsetof(object,magic)),
-                (void *)((char *) op2+offsetof(object,magic)),
-                sizeof(object)-offsetof(object, magic));
+  (void) memcpy((void *)((char *) op +offsetof(object,name)),
+                (void *)((char *) op2+offsetof(object,name)),
+                sizeof(object)-offsetof(object, name));
   if(is_freed)
     SET_FLAG(op,FLAG_FREED);
   if(is_removed)
@@ -629,9 +626,9 @@ void copy_object_data(object *op2, object *op)
     free_string(op->slaying);
   if(op->msg!=NULL)
     free_string(op->msg);
-  (void) memcpy((void *)((char *) op +offsetof(object,magic)),
-                (void *)((char *) op2+offsetof(object,magic)),
-                sizeof(object)-offsetof(object, magic));
+  (void) memcpy((void *)((char *) op +offsetof(object,name)),
+                (void *)((char *) op2+offsetof(object,name)),
+                sizeof(object)-offsetof(object, name));
   if(is_freed)
     SET_FLAG(op,FLAG_FREED);
   if(is_removed)

@@ -323,12 +323,14 @@ int calc_skill_exp(object *who, object *op)
 		tmp = (who_lvl - op_lvl)*3;
 
 		if(tmp > op_lvl*2 && (who_lvl - op_lvl)>2)
-			op_exp = 0;
-		else
+		tmp = calc_level_difference(who_lvl, op_lvl);
+		if(tmp)
 		{
-			exp_mul = (float)op_lvl / (float)(op_lvl+tmp);
+			exp_mul = (float)op_lvl / ((float)op_lvl+(float)tmp*1.5f);
 			op_exp = (int)(((float)op_exp * lev_exp[op_lvl]) * exp_mul);
 		}
+		else
+			op_exp = 0;
 	}
 
 	LOG(llevDebug,"EXP:: %s (lvl %d(%d)) gets %d exp in %s from %s (lvl %d)\n", query_name(who), who_lvl, who->level, op_exp,
@@ -357,6 +359,23 @@ int calc_skill_exp(object *who, object *op)
     return op_exp; 
 }
 
+/* find exp level difference multiplier.
+ * If the return value is 0, the level gap is to high
+ * for lot drop, exp and/or attacking.
+ * who_ is the "activ" object (attacker, activator)
+ * op_ is the target 
+ */
+int calc_level_difference(int who_lvl, int op_lvl)
+{
+	float tmp;
+
+	tmp = (float)(who_lvl - op_lvl)*2.75f;
+
+	if(tmp > (float)op_lvl*1.5f && (who_lvl - op_lvl)>3)
+		return 0;
+
+	return tmp<1.0f?1:(int)tmp;
+}
 
 /* find relevant stats or a skill then return their weighted sum. 
  * I admit the calculation is done in a retarded way.

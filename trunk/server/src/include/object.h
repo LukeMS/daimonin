@@ -65,7 +65,6 @@ typedef struct obj
 								 * set every time a freed object is used again
 								 * this count refers the logical object. MT.
 								 */
-	uint16 refcount;			/* How many objects points to this object */
 
     /* These get an extra add_refcount(), after having been copied by memcpy().
      * All fields beow this point are automatically copied by memcpy.  If
@@ -73,10 +72,6 @@ typedef struct obj
      * copy_object to do so.  Everything below here also gets cleared
      * by clear_object() 
 	 */
-
-	sint8 magic;				/* Any magical bonuses to this item */
-	uint8 state;				/* How the object was last drawn (animation) */
-
 	char *name;					/* The name of the object, obviously... */
 	char *title;				/* Of foo, etc */
 	char *race;					/* human, goblin, dragon, etc */
@@ -128,13 +123,14 @@ typedef struct obj
 	sint16 x;					/* X-Position in the map for this object */
 	sint16 y;					/* Y-Position in the map for this object */
 
+	sint16 attacked_by_distance;/* needed to target the nearest enemy */
+	uint16 last_damage;			/* thats the damage send with map2 */
+
 	uint16 terrain_type;		/* type flags for different enviroment (tile is under water, firewalk,...) 
 	                             * A object which can be applied GIVES this terrain flags to his owner
 	                             */
 	uint16 terrain_flag;		/* The object can move over/is unaffected from this terrain type */
 
-	sint16 attacked_by_distance;/* needed to target the nearest enemy */
-	uint16 last_damage;			/* thats the damage send with map2 */
 
 	uint16 material;      		/* What materials this object consist of */
 	sint16 material_real;		/* This hold the real material value like what kind of steel */
@@ -148,8 +144,12 @@ typedef struct obj
     uint16 animation_id;		/* An index into the animation array */
     uint16 inv_animation_id;	/* An index into the animation array for the client inv */
 
-	sint8 tile_xoff;			/* x-offset of position of an object inside a tile */
-	sint8 tile_yoff;			/* same for y-offset */
+	/* some stuff for someone coming softscrolling / smooth animations */
+	/*sint8 tile_xoff;*/			/* x-offset of position of an object inside a tile */
+	/*sint8 tile_yoff;*/			/* same for y-offset */
+	sint8 magic;				/* Any magical bonuses to this item */
+	uint8 state;				/* How the object was last drawn (animation) */
+
 	sint8 level;				/* the level of this object (most used for mobs & player) */
 	sint8 direction;			/* Means the object is moving that way. */
 	sint8 facing;				/* Object is oriented/facing that way. */
@@ -192,6 +192,7 @@ typedef struct obj
 								 * the range from 0-255 tells us the quality of the hide
 								 */
 	uint8 layer;				/* the layer in a map, this object will be sorted in */
+
 	sint8 resist[NROFATTACKS];	/* Intrinsic resist against damage - range from -125 to +125 */
 
 	uint8 attack[NROFATTACKS];	/* our attack values - range from 0%-125%. (negative values makes no sense).

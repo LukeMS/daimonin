@@ -71,7 +71,8 @@ void remove_door(object *op) {
 		SET_ANIMATION(tmp, (NUM_ANIMATIONS(tmp)/NUM_FACINGS(tmp))*tmp->direction+tmp->state);
       insert_ob_in_map(tmp,op->map,op,0);
   }
-  play_sound_map(op->map, op->x, op->y, SOUND_OPEN_DOOR, SOUND_NORMAL);
+  if(op->sub_type1 == ST1_DOOR_NORMAL)
+	  play_sound_map(op->map, op->x, op->y, SOUND_OPEN_DOOR, SOUND_NORMAL);
   remove_ob(op);
   free_object(op);
 }
@@ -96,18 +97,19 @@ void remove_door2(object *op) {
    * b.) if not set, we toggle from close to open when needed.
    */
 
-  if(op->other_arch) /* if set, just exchange and delete old door */
-  {
-      tmp=arch_to_object(op->other_arch);
-	  tmp->state=0;	/* 0= closed, 1= opened */
-      tmp->x=op->x;tmp->y=op->y;tmp->map=op->map;tmp->level=op->level;
-	  tmp->direction = op->direction;
-	  if(QUERY_FLAG(tmp, FLAG_IS_TURNABLE) || QUERY_FLAG(tmp, FLAG_ANIMATE))
-		SET_ANIMATION(tmp, (NUM_ANIMATIONS(tmp)/NUM_FACINGS(tmp))*tmp->direction+tmp->state);
-      insert_ob_in_map(tmp,op->map,op,0);
-	  play_sound_map(op->map, op->x, op->y, SOUND_OPEN_DOOR, SOUND_NORMAL);
-	remove_ob(op);
-	free_object(op);
+	if(op->other_arch) /* if set, just exchange and delete old door */
+	{
+		tmp=arch_to_object(op->other_arch);
+		tmp->state=0;	/* 0= closed, 1= opened */
+		tmp->x=op->x;tmp->y=op->y;tmp->map=op->map;tmp->level=op->level;
+		tmp->direction = op->direction;
+		if(QUERY_FLAG(tmp, FLAG_IS_TURNABLE) || QUERY_FLAG(tmp, FLAG_ANIMATE))
+			SET_ANIMATION(tmp, (NUM_ANIMATIONS(tmp)/NUM_FACINGS(tmp))*tmp->direction+tmp->state);
+		insert_ob_in_map(tmp,op->map,op,0);
+		if(op->sub_type1 == ST1_DOOR_NORMAL)
+		  play_sound_map(op->map, op->x, op->y, SOUND_OPEN_DOOR, SOUND_NORMAL);
+		remove_ob(op);
+		free_object(op);
   }
   else if(!op->last_eat) /* if set, we are have opened a closed door - now handle autoclose */
   {
@@ -127,7 +129,8 @@ void remove_door2(object *op) {
 	  CLEAR_FLAG(op,FLAG_NO_PASS);
 	  if(QUERY_FLAG(op, FLAG_IS_TURNABLE) || QUERY_FLAG(op, FLAG_ANIMATE))
 		SET_ANIMATION(op, (NUM_ANIMATIONS(op)/NUM_FACINGS(op))*op->direction+op->state);
-	  play_sound_map(op->map, op->x, op->y, SOUND_OPEN_DOOR, SOUND_NORMAL);
+	  if(op->sub_type1 == ST1_DOOR_NORMAL)
+		  play_sound_map(op->map, op->x, op->y, SOUND_OPEN_DOOR, SOUND_NORMAL);
       insert_ob_in_map(op,op->map,op,0);
   }
 }
@@ -182,7 +185,8 @@ void remove_door3(object *op)
 	  op->stats.grace =0;op->last_grace=0;
 	  if(QUERY_FLAG(op, FLAG_IS_TURNABLE) || QUERY_FLAG(op, FLAG_ANIMATE))
 		SET_ANIMATION(op, (NUM_ANIMATIONS(op)/NUM_FACINGS(op))*op->direction+op->state);
-	  play_sound_map(op->map, op->x, op->y, SOUND_DOOR_CLOSE, SOUND_NORMAL);
+	  if(op->sub_type1 == ST1_DOOR_NORMAL)
+		  play_sound_map(op->map, op->x, op->y, SOUND_DOOR_CLOSE, SOUND_NORMAL);
       insert_ob_in_map(op,op->map,op,0);
 	  if(QUERY_FLAG(op,FLAG_BLOCKSVIEW))
 		  update_all_los(op->map, op->x, op->y);

@@ -273,7 +273,7 @@ int command_target(object *op, char *params)
 {
 	mapstruct *m;
 	object *tmp, *head;
-	int n,nt,xt,yt, pvp_flag = FALSE;
+	int n,nt,xt,yt, block, pvp_flag = FALSE;
 
 	if(!op->map)
 		return 1;
@@ -302,11 +302,13 @@ int command_target(object *op, char *params)
 
 		for(;n<NROF_MAP_NODE && n!=nt;n++)
 		{
+			int xx,yy;
 			if(nt==-1)
 				nt=n;
-			xt=op->x+map_pos_array[n][MAP_POS_X];
-			yt=op->y+map_pos_array[n][MAP_POS_Y];
-			if(!(m=out_of_map(op->map,&xt,&yt)))
+			xt=op->x+(xx=map_pos_array[n][MAP_POS_X]);
+			yt=op->y+(yy=map_pos_array[n][MAP_POS_Y]);
+			block = op->contr->blocked_los[xx+op->contr->socket.mapx/2][yy+op->contr->socket.mapy/2];
+			if(block>3 || block<0 ||!(m=out_of_map(op->map,&xt,&yt)))
 			{
 				if((n+1)==NROF_MAP_NODE)
 					n=-1;
@@ -371,11 +373,13 @@ int command_target(object *op, char *params)
 
 			for(;n<NROF_MAP_NODE && n!=nt;n++)
 			{
+				int xx,yy;
 				if(nt==-1)
 					nt=n;
-				xt=op->x+map_pos_array[n][MAP_POS_X];
-				yt=op->y+map_pos_array[n][MAP_POS_Y];
-				if(!(m=out_of_map(op->map,&xt,&yt)))
+				xt=op->x+(xx=map_pos_array[n][MAP_POS_X]);
+				yt=op->y+(yy=map_pos_array[n][MAP_POS_Y]);
+				block = op->contr->blocked_los[xx+op->contr->socket.mapx/2][yy+op->contr->socket.mapy/2];
+				if(block>3 || block<0|| !(m=out_of_map(op->map,&xt,&yt)))
 				{
 					if((n+1)==NROF_MAP_NODE)
 						n=-1;

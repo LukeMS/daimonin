@@ -875,35 +875,44 @@ void draw_client_map2(object *pl)
 	    nx=x;
 	    ny=y;
 		m = out_of_map(pl->map, &nx, &ny);
-	    if (!m) {
-		/* space is out of map.  Update space and clear values
-		 * if this hasn't already been done.
-		 */
-		if (pl->contr->socket.lastmap.cells[ax][ay].count != -1) {
-		    SockList_AddShort(&sl, mask);
-		    map_clearcell(&pl->contr->socket.lastmap.cells[ax][ay]);
-		}
-	    } else if ( d > 3 ) {
-		/* space is 'blocked' by darkness */
-		if (d==4 && pl->contr->socket.darkness) {
-		    /* this is the first spot where darkness becomes too dark to see.
-		     * only need to update this if it is different from what we 
-		     * last sent
-		     */
-		    if (pl->contr->socket.lastmap.cells[ax][ay].count != d) {
-			map_clearcell(&pl->contr->socket.lastmap.cells[ax][ay]);
-			SockList_AddShort(&sl, mask);
-			mask |= 0x10;  /* add darkness */
-			SockList_AddShort(&sl, mask);
-			SockList_AddChar(&sl, 0);
-			pl->contr->socket.lastmap.cells[ax][ay].count = d;
-		    }
-		} else if (pl->contr->socket.lastmap.cells[ax][ay].count != -1) {
-		    SockList_AddShort(&sl, mask);
-		    map_clearcell(&pl->contr->socket.lastmap.cells[ax][ay]);
-		}
+	    if (!m) 
+		{
+			/* space is out of map.  Update space and clear values
+			 * if this hasn't already been done.
+			 */
+			if (pl->contr->socket.lastmap.cells[ax][ay].count != -1) 
+			{
+				SockList_AddShort(&sl, mask);
+				map_clearcell(&pl->contr->socket.lastmap.cells[ax][ay]);
+			}
 	    }
-	    else { /* this space is viewable */
+		else if ( d > 3 )
+		{
+			/* space is 'blocked' by darkness */
+			if (d==4 && pl->contr->socket.darkness)
+			{
+				/* this is the first spot where darkness becomes too dark to see.
+				 * only need to update this if it is different from what we 
+				 * last sent
+				 */
+				if (pl->contr->socket.lastmap.cells[ax][ay].count != d) 
+				{
+					map_clearcell(&pl->contr->socket.lastmap.cells[ax][ay]);
+					SockList_AddShort(&sl, mask);
+					mask |= 0x10;  /* add darkness */
+					SockList_AddShort(&sl, mask);
+					SockList_AddChar(&sl, 0);
+					pl->contr->socket.lastmap.cells[ax][ay].count = d;
+				}
+			}
+			else if (pl->contr->socket.lastmap.cells[ax][ay].count != -1)
+			{
+				SockList_AddShort(&sl, mask);
+				map_clearcell(&pl->contr->socket.lastmap.cells[ax][ay]);
+			}
+	    }
+	    else 
+		{ /* this space is viewable */
 		MapSpace *msp;
         int pname_flag=0,ext_flag = 0, dmg_flag=0, oldlen = sl.len;
         int dmg_layer2=0,dmg_layer1=0,dmg_layer0=0;
