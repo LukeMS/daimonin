@@ -62,7 +62,7 @@
  * allocated and deallocated teh same buffer over and over again and the price
  * of using a bit of extra memory.  IT also makes the code simpler.
  */
-#define MAXSOCKBUF 20480
+#define MAXSOCKBUF (48*1024)
 
 /* The numbers of our dark levels */
 /* for each level-1 we store a own bitmap copy, so be careful */
