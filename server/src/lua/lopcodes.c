@@ -1,5 +1,4 @@
 /*
-** $Id$
 ** extracted automatically from lopcodes.h by mkprint.lua
 ** DO NOT EDIT
 ** See Copyright Notice in lua.h

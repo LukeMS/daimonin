@@ -1,5 +1,4 @@
 /*
-** $Id$
 ** Internal Module for Debugging of the Lua Implementation
 ** See Copyright Notice in lua.h
 */

@@ -1,8 +1,10 @@
 /*
-    CrossFire, A Multiplayer game for X-windows
+    Daimonin, the Massive Multiuser Online Role Playing Game
+    Server Applicatiom
 
-    Copyright (C) 2001 Mark Wedel & Crossfire Development Team
-    Copyright (C) 1992 Frank Tore Johansen
+    Copyright (C) 2001-2005 Michael Toennies
+
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -18,12 +20,10 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The authors can be reached via e-mail at crossfire-devel@real-time.com
+    The author can be reached via e-mail to info@daimonin.net
 */
 
 /*  placing treasure in maps, where appropriate.  */
-
-
 
 #include <global.h>
 #include <random_map.h>
