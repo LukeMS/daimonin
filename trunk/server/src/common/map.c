@@ -884,6 +884,7 @@ mapstruct *get_linked_map() {
     else
 	mp->next=map;
 
+	map->buttons = NULL;
     map->in_memory=MAP_SWAPPED;
     /* The maps used to pick up default x and y values from the
      * map archetype.  Mimic that behaviour.
@@ -921,6 +922,9 @@ void allocate_map(mapstruct *m) {
     if (m->spaces) {
 	LOG(llevError,"ERROR: allocate_map callled with already allocated map (%s)\n", m->path);
 	free(m->spaces);
+    }
+    if (m->buttons) {
+		LOG(llevBug,"Bug: allocate_map callled with allready set buttons (%s)\n", m->path);
     }
 
     m->spaces = calloc(1, MAP_WIDTH(m) * MAP_HEIGHT(m) * sizeof(MapSpace));
@@ -1586,7 +1590,7 @@ void free_all_objects(mapstruct *m) {
     int i,j;
     object *op;
 
-	LOG(llevDebug,"FAO-start: map:%s ->%d\n", m->name?m->name:(m->tmpname?m->tmpname:""),m->in_memory);
+	/*LOG(llevDebug,"FAO-start: map:%s ->%d\n", m->name?m->name:(m->tmpname?m->tmpname:""),m->in_memory);*/
     for(i=0;i<MAP_WIDTH(m);i++)
 	for(j=0;j<MAP_HEIGHT(m);j++) {
 	    object *previous_obj=NULL;
@@ -1608,7 +1612,7 @@ void free_all_objects(mapstruct *m) {
 		free_object(op);
 	    }
 	}
-	LOG(llevDebug,"FAO-end: map:%s ->%d\n", m->name?m->name:(m->tmpname?m->tmpname:""),m->in_memory);
+	/*LOG(llevDebug,"FAO-end: map:%s ->%d\n", m->name?m->name:(m->tmpname?m->tmpname:""),m->in_memory);*/
 }
 
 /*
@@ -1707,10 +1711,11 @@ void delete_map(mapstruct *m) {
  * Returns a pointer to the given map.
  */
 
-mapstruct *ready_map_name(char *name, int flags) {
-    mapstruct *m;
+mapstruct *ready_map_name(char *name, int flags) 
+{
+	mapstruct *m;
 
-    if (!name)
+	if (!name)
        return (NULL);
 
     /* Have we been at this level before? */
@@ -1728,65 +1733,61 @@ mapstruct *ready_map_name(char *name, int flags) {
      * a bit cleaner (and players probably shouldn't rely on exact timing for
      * resets in any case - if they really care, they should use the 'maps command.
      */
-    if ((flags & (MAP_FLUSH|MAP_PLAYER_UNIQUE)) || !m) {
+    if ((flags & (MAP_FLUSH|MAP_PLAYER_UNIQUE)) || !m) 
+	{
 
-	/* first visit or time to reset */
-	if (m) {
-	    clean_tmp_map(m);	/* Doesn't make much difference */
-	    delete_map(m);
-	}
+		/* first visit or time to reset */
+		if (m) 
+		{
+			clean_tmp_map(m);	/* Doesn't make much difference */
+			delete_map(m);
+		}
 
-	/* create and load a map */
-	/*
-	if (flags & MAP_PLAYER_UNIQUE)
-	    LOG(llevDebug, "Trying to load unique map %s.\n", name);
-	else
-	    LOG(llevDebug, "Trying to load map %s.\n", create_pathname(name));
-	*/
+		/* create and load a map */
+		if (!(m = load_original_map(name, (flags & MAP_PLAYER_UNIQUE))))
+			return NULL;
 
-	if (!(m = load_original_map(name, (flags & MAP_PLAYER_UNIQUE))))
-	    return (NULL);
+		(*fix_auto_apply_func)(m); /* Chests which open as default */
 
-	(*fix_auto_apply_func)(m); /* Chests which open as default */
+		/* If a player unique map, no extra unique object file to load.
+		* if from the editor, likewise.
+		*/
+		if (! (flags & (MAP_FLUSH|MAP_PLAYER_UNIQUE))) 
+			load_unique_objects(m);
+	} 
+	else 
+	{
+		/* If in this loop, we found a temporary map, so load it up. */
+		m=load_temporary_map (m);
+        if(m==NULL) 
+			return NULL;
+	
+		LOG(llevDebug,"RMN: unique. ");
+		load_unique_objects(m);
 
-	/* If a player unique map, no extra unique object file to load.
-	 * if from the editor, likewise.
-	 */
-	if (! (flags & (MAP_FLUSH|MAP_PLAYER_UNIQUE))) 
-	    load_unique_objects(m);
-/*
-	if (! (flags & (MAP_FLUSH|MAP_PLAYER_UNIQUE|MAP_OVERLAY))) {
-	    m=load_overlay_map(name, m);
-	    if (m==NULL)
-		return NULL;
-	}
-*/
-    } else {
-	/* If in this loop, we found a temporary map, so load it up. */
-
-	m=load_temporary_map (m);
-        if(m==NULL) return NULL;
-	load_unique_objects(m);
-
-	clean_tmp_map(m);
-	m->in_memory = MAP_IN_MEMORY;
-	/* tempnam() on sun systems (probably others) uses malloc
-	 * to allocated space for the string.  Free it here.
-	 * In some cases, load_temporary_map above won't find the
-	 * temporary map, and so has reloaded a new map.  If that
-	 * is the case, tmpname is now null
-	 */
-    if (m->tmpname) FREE_AND_CLEAR(m->tmpname);
-	/* It's going to be saved anew anyway */
-    } 
+		LOG(llevDebug,"clean. ");
+		clean_tmp_map(m);
+		m->in_memory = MAP_IN_MEMORY;
+	
+		/* tempnam() on sun systems (probably others) uses malloc
+		* to allocated space for the string.  Free it here.
+		* In some cases, load_temporary_map above won't find the
+		* temporary map, and so has reloaded a new map.  If that
+		* is the case, tmpname is now null
+		*/
+		if (m->tmpname) 
+			FREE_AND_CLEAR(m->tmpname);
+		/* It's going to be saved anew anyway */
+	} 
 
     /* Below here is stuff common to both first time loaded maps and
      * temp maps.
      */
 
-    decay_objects(m); /* start the decay */
     /* In case other objects press some buttons down */
+	LOG(llevDebug,"buttons. ");
     update_buttons(m);
+	LOG(llevDebug,"end ready_map_name()\n");
     return m;
 }
 
