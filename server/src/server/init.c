@@ -706,7 +706,7 @@ static racelink * get_racelist()
     list->nrof = 0;
     list->member = get_objectlink(OBJLNK_FLAG_OB);
     list->next = NULL;
-    list->ai = NULL;  
+    list->ai = NULL;
 
     return list;
 }
@@ -726,11 +726,11 @@ static void free_racelist()
 static void add_to_racelist(const char *race_name, object *op)
 {
     racelink   *race;
-    
+
     if (!op || !race_name)
         return;
     race = find_racelink(race_name);
-    
+
     if (!race)
     {
         /* add in a new race list */
@@ -740,7 +740,7 @@ static void add_to_racelist(const char *race_name, object *op)
         first_race = race;
         FREE_AND_COPY_HASH(race->name, race_name);
     }
-    
+
     if (race->member->objlink.ob)
     {
         objectlink *tmp = get_objectlink(OBJLNK_FLAG_OB);
@@ -758,7 +758,7 @@ static void dump_races()
     objectlink *tmp;
     for (list = first_race; list; list = list->next)
     {
-        LOG(llevInfo, "\nRACE %s (%s - %d member): ", list->name, list->corpse->name, list->nrof); 
+        LOG(llevInfo, "\nRACE %s (%s - %d member): ", list->name, list->corpse->name, list->nrof);
         for (tmp = list->member; tmp; tmp = tmp->next)
             LOG(llevInfo, "%s(%d), ", tmp->objlink.ob->arch->name, tmp->objlink.ob->sub_type1);
     }
@@ -766,7 +766,7 @@ static void dump_races()
 
 /* init_races() - reworked this function - 2003/MT
  * Because we have now a type MONSTER, we can collect the monster arches
- * from the arch list. We use sub_type1 as selector - every monster of 
+ * from the arch list. We use sub_type1 as selector - every monster of
  * race X will be added to race list. Instead of level will be the sub_type1
  * insert in list - the sub_type is used from the functions who need the
  * race list (like summon spells).
@@ -840,7 +840,7 @@ void init_races()
 void compile_info()
 {
     int i   = 0;
-    LOG(llevInfo, "Setup info:\n"); 
+    LOG(llevInfo, "Setup info:\n");
     LOG(llevInfo, "Non-standard include files:\n");
 #if !defined (__STRICT_ANSI__) || defined (__sun__)
 #if !defined (Mips)
@@ -892,7 +892,7 @@ void compile_info()
 #endif
     LOG(llevInfo, "Max objects:\t%d (allocated:%d free:%d)\n", MAX_OBJECTS, pool_object->nrof_allocated,
         pool_object->nrof_free);
- 
+
 
 #ifdef USE_CALLOC
     LOG(llevInfo, "Use_calloc:\t<true>\n");
@@ -925,6 +925,9 @@ void fatal_signal(int make_core, int close_sockets)
 {
     if (init_done)
     {
+#ifdef PLUGINS
+        removePlugins();
+#endif
         emergency_save(0);
         clean_tmp_files();
         write_book_archive();
@@ -958,13 +961,13 @@ struct Command_Line_Options options[]   =
 #endif
     {"-log", 1, 1, set_logfile},
 
-    /* Pass 2 functions.  Most of these could probably be in pass 1, 
+    /* Pass 2 functions.  Most of these could probably be in pass 1,
     * as they don't require much of anything to bet set up.
     */
     {"-csport", 1, 2, set_csport}, {"-detach", 0, 2, set_daemon},
 
     /* Start of pass 3 information. In theory, by pass 3, all data paths
-    * and defaults should have been set up. 
+    * and defaults should have been set up.
     */
     {"-o", 0, 3, compile_info},
 #ifdef DUMP_SWITCHES
@@ -1038,19 +1041,19 @@ static void init_beforeplay()
     pool_mob_data->constructor = (chunk_constructor) initialize_mob_data;
     pool_mob_data->destructor = (chunk_destructor) cleanup_mob_data;
     pool_mob_knownobj->destructor = (chunk_destructor) cleanup_mob_known_obj;
-    pool_mob_behaviourset->destructor = (chunk_destructor) cleanup_behaviourset; 
+    pool_mob_behaviourset->destructor = (chunk_destructor) cleanup_behaviourset;
 
     init_archetypes(); /* If not called before, reads all archetypes from file */
     init_spells();     /* If not called before, links archtypes used by spells */
-    init_races();      /* overwrite race designations using entries in lib/races file */ 
-    init_gods();        /* init linked list of gods from archs*/ 
+    init_races();      /* overwrite race designations using entries in lib/races file */
+    init_gods();        /* init linked list of gods from archs*/
     init_readable();    /* inits useful arrays for readable texts */
     init_archetype_pointers(); /* Setup global pointers to archetypes */
 #ifdef ALCHEMY
     init_formulae();    /* If not called before, reads formulae from file */
 #endif
     init_new_exp_system();    /* If not called before, inits experience system */
-    
+
 #ifdef DUMP_SWITCHES
     if (settings.dumpvalues)
     {
@@ -1130,7 +1133,7 @@ void init_library()
     init_environ();
     init_globals();
     init_hash_table();
-    global_string_none = add_string("none"); 
+    global_string_none = add_string("none");
     init_mempools(); /* Inits the pooling memory manager and the new object system */
     init_vars();
     init_block();
@@ -1148,10 +1151,10 @@ void init_library()
     if (!level_up_arch)
         LOG(llevBug, "BUG: Cant'find 'level_up' arch\n");
 
-    if (!(global_aggro_history_arch = find_archetype("aggro_history"))) 
+    if (!(global_aggro_history_arch = find_archetype("aggro_history")))
         LOG(llevError, "FATAL: no aggro_history arch. Check the arch set!\n");
-    
-    if (!(global_dmg_info_arch = find_archetype("dmg_info"))) 
+
+    if (!(global_dmg_info_arch = find_archetype("dmg_info")))
         LOG(llevError, "FATAL: no dmg_info arch. Check the arch set!\n");
 
         /* several SockList stuff is not dynamic nor must it threadsafe.

@@ -1,10 +1,12 @@
 local b_msg = false
 
-dt = DataTable("data_store_test")
-msg = dt:get("message")
+ds = DataStore("data_store_test")
+msg = ds:get("message")
+
+print(msg)
 
 if msg then
-	ac = dt:get("activator")
+	ac = ds:get("activator")
 	b_msg = true
 	if ac ~= nil then
 		event.me:SayTo(event.activator, "\nA global message from " .. ac.name .. ":\n" .. msg)
@@ -13,11 +15,11 @@ if msg then
 	end
 end
 
-dt = DataTable("data_store_test", event.activator)
-msg = dt:get("message")
+ds = DataStore("data_store_test", event.activator)
+msg = ds:get("message")
 
 if msg then
-	ac = dt:get("activator")
+	ac = ds:get("activator")
 	b_msg = true
 	if ac ~= nil then
 		event.me:SayTo(event.activator, "\nA local message from " .. ac.name .. " for you:\n" .. msg)

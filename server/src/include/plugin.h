@@ -252,7 +252,7 @@ typedef struct _CFPlugin
     f_plugin    eventfunc;          /* Event Handler function            */
     f_plugin    initfunc;           /* Plugin Initialization function.   */
     f_plugin    pinitfunc;          /* Plugin Post-Init. function.       */
-    f_plugin    endfunc;            /* Plugin Closing function.          */
+    f_plugin    removefunc;         /* Plugin Closing function.          */
     f_plugin    hookfunc;           /* Plugin CF-funct. hooker function  */
     f_plugin    propfunc;           /* Plugin getProperty function       */
     LIBPTRTYPE  libptr;             /* Pointer to the plugin library     */
@@ -273,7 +273,7 @@ struct plugin_hooklist
     void (*LOG)(LogLevel, char *, ...);
     char*(*create_pathname)(const char *);
     char*(*re_cmp)(char *, char *);
-    
+
     void (*new_draw_info)(int flags, int pri, object *pl, const char *buf);
     void (*new_draw_info_format)(int flags, int pri, object *pl, char *format, ...);
     void (*new_info_map)(int color, mapstruct *map, int x, int y, int dist, const char *str);
@@ -287,7 +287,7 @@ struct plugin_hooklist
     void (*fix_player)(object *op);
     void (*esrv_send_item)(object *pl, object *op);
     void (*esrv_send_inventory)(object *pl, object *op);
-    
+
     int (*lookup_skill_by_name)(char *string);
     int (*look_up_spell_name)(const char *spname);
 
@@ -295,25 +295,25 @@ struct plugin_hooklist
     object*(*insert_ob_in_map)(object *op, mapstruct *m, object *originator, int flag);
     int (*move_ob)(object *op, int dir, object *originator);
 
-    void (*free_mempool)(struct mempool *pool); 
-    struct mempool*(*create_mempool)(const char *description, uint32 expand, uint32 size, 
-                                       uint32 flags, chunk_constructor constructor, 
+    void (*free_mempool)(struct mempool *pool);
+    struct mempool*(*create_mempool)(const char *description, uint32 expand, uint32 size,
+                                       uint32 flags, chunk_constructor constructor,
                                        chunk_destructor destructor);
-    uint32 (*nearest_pow_two_exp)(uint32 n); 
-    void (*return_poolchunk_array_real)(void *data, uint32 arraysize_exp, struct mempool *pool); 
+    uint32 (*nearest_pow_two_exp)(uint32 n);
+    void (*return_poolchunk_array_real)(void *data, uint32 arraysize_exp, struct mempool *pool);
     void*(*get_poolchunk_array_real)(struct mempool *pool, uint32 arraysize_exp);
 };
 
 /*****************************************************************************/
 /* Exportable functions. Any plugin should define all those.                 */
 /* initPlugin        is called when the plugin initialization process starts.*/
-/* endPlugin         is called before the plugin gets unloaded from memory.  */
+/* removePlugin      is called before the plugin gets unloaded from memory.  */
 /* getPluginProperty is currently unused.                                    */
 /* registerHook      is used to transmit hook pointers from server to plugin.*/
 /* triggerEvent      is called whenever an event occurs.                     */
 /*****************************************************************************/
 extern MODULEAPI CFParm    *initPlugin(CFParm *PParm);
-extern MODULEAPI CFParm    *endPlugin(CFParm *PParm);
+extern MODULEAPI CFParm    *removePlugin(CFParm *PParm);
 extern MODULEAPI CFParm    *getPluginProperty(CFParm *PParm);
 extern MODULEAPI CFParm    *registerHook(CFParm *PParm);
 extern MODULEAPI CFParm    *triggerEvent(CFParm *PParm);

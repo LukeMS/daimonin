@@ -187,7 +187,7 @@ void enter_player_savebed(object *op)
         if ((tmp_str = strstr(CONTR(op)->savebed_map, "_stoneglow_appartment")))
         {
             LOG(llevDebug, "HOTFIX (%s): found old save bed string -  trying '$' version.\n", query_name(op));
-            tmp_str[0] = '$';   
+            tmp_str[0] = '$';
             tmp_str[10] = '$';
 
             FREE_AND_COPY_HASH(EXIT_PATH(tmp), CONTR(op)->savebed_map);
@@ -267,7 +267,7 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y, int pos_flag)
     }
 
     /* try to find a spot for our object - (single arch or multi head)
-    * but only when we don't put it on fix position 
+    * but only when we don't put it on fix position
     */
     if (!pos_flag && arch_blocked(op->arch, op, newmap, x, y))
     {
@@ -304,7 +304,7 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y, int pos_flag)
 
     /* i don't like this system... First, i want attach leave/enter
      * scripts perhaps to a map more often, as to a single object.
-     * Second, attaching this to single objects can cause some 
+     * Second, attaching this to single objects can cause some
      * usage when we think about tiled maps.
      */
 #ifdef PLUGINS
@@ -324,7 +324,7 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y, int pos_flag)
     {
         tmp->x = tmp->arch->clone.x + x + freearr_x[i];
         tmp->y = tmp->arch->clone.y + y + freearr_y[i];
-        /*  Gecko: this is done also by insert_ob_in_map 
+        /*  Gecko: this is done also by insert_ob_in_map
         tmp->map = newmap;*/
     }
     if (!insert_ob_in_map(op, newmap, NULL, 0))
@@ -549,7 +549,7 @@ static void enter_unique_map(object *op, object *exit_ob)
 
             /* Need to copy this over, as clean_path only has one static return buffer */
             strcpy(tmpc, clean_path(reldir));
-            /* Remove final component, if any */ 
+            /* Remove final component, if any */
             if ((cp = strrchr(tmpc, '$')) != NULL)
                 *cp = 0;
 
@@ -675,7 +675,7 @@ void enter_exit(object *op, object *exit_ob)
                 /* For word of recall and other force objects
                         * They contain the full pathname of the map to go back to,
                         * so we don't need to normalize it.
-                        * But we do need to see if it is unique or not 
+                        * But we do need to see if it is unique or not
                         */
                 if (!strncmp(EXIT_PATH(exit_ob), settings.localdir, strlen(settings.localdir)))
                     newmap = ready_map_name(EXIT_PATH(exit_ob), MAP_NAME_SHARED | MAP_PLAYER_UNIQUE);
@@ -690,7 +690,7 @@ void enter_exit(object *op, object *exit_ob)
                 return;
             }
 
-            /* -1,-1 marks to use the default ENTER_xx position of the map */ 
+            /* -1,-1 marks to use the default ENTER_xx position of the map */
             if (x == -1 && y == -1)
             {
                 x = MAP_ENTER_X(newmap);
@@ -714,7 +714,7 @@ void enter_exit(object *op, object *exit_ob)
                 CONTR(op)->bed_x = EXIT_X(exit_ob), CONTR(op)->bed_y = EXIT_Y(exit_ob);
                 save_player(op, 1);
                 /* LOG(llevDebug,"enter_exit: Taking damned exit %s to (%d,%d) on map %s\n",
-                            * exit_ob->name?exit_ob->name:"(none)", exit_ob->x, exit_ob->y,  
+                            * exit_ob->name?exit_ob->name:"(none)", exit_ob->x, exit_ob->y,
                             * normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob))); */
             }
             if (exit_ob->sub_type1 == ST1_EXIT_SOUND && exit_ob->map)
@@ -724,7 +724,7 @@ void enter_exit(object *op, object *exit_ob)
         /* For exits that cause damages (like pits) */
         if (exit_ob->stats.dam && op->type == PLAYER)
             hit_player(op, exit_ob->stats.dam, exit_ob, exit_ob->attacktype);
-    } /* exit_ob */ 
+    } /* exit_ob */
     else if (op->type == PLAYER) /* thats only for players */
     {
         int         flags   = 0;
@@ -752,7 +752,7 @@ void enter_exit(object *op, object *exit_ob)
             if ((tmp_str = strstr(CONTR(op)->maplevel, "_stoneglow_appartment")))
             {
                 LOG(llevDebug, "HOTFIX (%s): found old save bed string -  trying '$' version.\n", query_name(op));
-                tmp_str[0] = '$';   
+                tmp_str[0] = '$';
                 tmp_str[10] = '$';
 
                 newmap = ready_map_name(CONTR(op)->maplevel, flags);
@@ -776,7 +776,7 @@ void enter_exit(object *op, object *exit_ob)
                 LOG(llevError, "ERROR: enter_exit(): could not load emergency map? Fatal error! (player: %s)\n",
                     op->name);
         }
-        /* -1,-1 marks to use the default ENTER_xx position of the map */ 
+        /* -1,-1 marks to use the default ENTER_xx position of the map */
         if (op->x == -1 && op->y == -1)
         {
             op->x = MAP_ENTER_X(newmap);
@@ -881,12 +881,12 @@ void process_players2(mapstruct *map)
 
     for (pl = first_player; pl != NULL; pl = pl->next)
     {
-        /* thats for debug spells - if enabled, mana/grace is always this value 
+        /* thats for debug spells - if enabled, mana/grace is always this value
             pl->ob->stats.grace = 900;
             pl->ob->stats.sp = 900;
             */
 
-        /* look our target is still valid - if not, update client 
+        /* look our target is still valid - if not, update client
              * we handle op->enemy for the player here too!
              */
         if (pl->ob->map
@@ -895,7 +895,7 @@ void process_players2(mapstruct *map)
           || QUERY_FLAG(pl->target_object,
                         FLAG_SYS_OBJECT)
           || (QUERY_FLAG(pl->target_object, FLAG_IS_INVISIBLE) && !QUERY_FLAG(pl->ob, FLAG_SEE_INVISIBLE))))
-            send_target_command(pl);    
+            send_target_command(pl);
 
         if (pl->ob->speed_left > pl->ob->speed)
             pl->ob->speed_left = pl->ob->speed;
@@ -943,7 +943,7 @@ void process_events(mapstruct *map)
         }
 
         /* Gecko: This is not really a bug, but it has to be thought trough...
-         * If an active object is remove_ob():ed and not reinserted during process_events(), 
+         * If an active object is remove_ob():ed and not reinserted during process_events(),
          * this might happen. It normally means that the object was killed, but you never know...
          */
         if (QUERY_FLAG(op, FLAG_REMOVED))
@@ -1028,7 +1028,7 @@ void process_events(mapstruct *map)
             else
             {
                 if (NUM_FACINGS(op) >= 25) /* check for direction changing */
-                    animate_object(op, 0);     
+                    animate_object(op, 0);
                 op->last_anim++;
             }
         }
@@ -1082,10 +1082,10 @@ void cleanup(int ret)
     clean_tmp_files();
     write_book_archive();
     write_todclock();   /* lets just write the clock here */
-    
+
     FREE_AND_CLEAR_HASH2(global_string_none);
     free(global_sl.buf);
-    
+
     /* that must be redone: clear cleanup so we know 100% all memory is freed */
     /*
         free_all_maps();
@@ -1203,7 +1203,7 @@ void dequeue_path_requests()
  * doing the various things.
  */
 
-/* Hm, i really must check this in the feature... here are some ugly 
+/* Hm, i really must check this in the feature... here are some ugly
  * hacks and workarounds hidden - MT2003
  */
 
@@ -1224,16 +1224,16 @@ void do_specials()
 }
 
 
-/* the shutdown agent is a automatic timer 
+/* the shutdown agent is a automatic timer
  * which shutdown the server after the given time.
- * It gives out messages to all player to announce 
+ * It gives out messages to all player to announce
  * the shutdown and the status of the shutdown.
  */
 void shutdown_agent(int timer, char *reason)
 {
     static int              sd_timer = -1, m_count, real_count = -1;
     static struct timeval   tv1, tv2;
-    
+
     if (timer == -1 && sd_timer == -1)
     {
         if (real_count > 0)
@@ -1247,17 +1247,17 @@ void shutdown_agent(int timer, char *reason)
         }
         return; /* nothing to do */
     }
-    
+
     if (timer != -1) /* reset shutdown count */
     {
         int t_min   = timer / 60;
         int t_sec   = timer - (int) (timer / 60) * 60;
         sd_timer = timer;
-        
+
         new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "[Server]: ** SERVER SHUTDOWN STARTED **");
         if (reason)
             new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "[Server]: %s", reason);
-        
+
         if (t_sec)
             new_draw_info_format(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL,
             "[Server]: SERVER REBOOT in %d minutes and %d seconds", t_min, t_sec);
@@ -1273,7 +1273,7 @@ void shutdown_agent(int timer, char *reason)
         int t_min;
         int t_sec   = 0;
         GETTIMEOFDAY(&tv2);
-        
+
         if ((int) (tv2.tv_sec - tv1.tv_sec) >= sd_timer) /* end countdown */
         {
             new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL,
@@ -1283,11 +1283,11 @@ void shutdown_agent(int timer, char *reason)
             sd_timer = -1;
             real_count = 30;
         }
-        
+
         t_min = (sd_timer - (int) (tv2.tv_sec - tv1.tv_sec)) / 60;
         t_sec = (sd_timer - (int) (tv2.tv_sec - tv1.tv_sec))
             - (int) ((sd_timer - (int) (tv2.tv_sec - tv1.tv_sec)) / 60) * 60;
-        
+
         /*LOG(-1,"SEC: %d (%d - %d)\n", tv2.tv_sec-tv1.tv_sec,t_min,t_sec);*/
         if ((t_min == m_count && !t_sec))
         {
@@ -1317,8 +1317,9 @@ int main(int argc, char **argv)
     init(argc, argv);
 #ifdef PLUGINS
     initPlugins();        /* GROS - Init the Plugins */
+    atexit(removePlugins);
 #endif
-    compile_info();       /* its not a bad idea to show at start whats up */    
+    compile_info();       /* its not a bad idea to show at start whats up */
     memset(&marker, 0, sizeof(struct obj)); /* used from proccess_events() */
     LOG(llevInfo, "Server ready.\nWaiting for connections...\n");
 
@@ -1335,7 +1336,7 @@ int main(int argc, char **argv)
 
         global_round_tag++;         /* global round ticker ! this is THE global tick counter */
         process_events(NULL);       /* "do" something with objects with speed - process user cmds */
-        cftimer_process_timers();   /* Process the crossfire Timers */    
+        cftimer_process_timers();   /* Process the crossfire Timers */
 
 #ifdef PLUGINS
         /* GROS : Here we handle the CLOCK global event */
