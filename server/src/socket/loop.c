@@ -174,20 +174,22 @@ int fill_command_buffer(NewSocket *ns, int len)
 		 * In badest case, we get a overflow - then we kick the
 		 * user. So, we try here to "freeze" the socket until we 
 		 * the output buffers are balanced again.
+		 * Freezing works only for "active" action - we can't and don't
+		 * want stop sending needed syncronization stuff.
 		 */
 		if (ns->outputbuffer.len >= (int)(MAXSOCKBUF*0.75))
 		{
 			if(!ns->write_overflow)
 			{
 				ns->write_overflow=1;
-				LOG(llevDebug,"DEBUG: socket write overflow protection on! host (%s) (%d)\n", STRING_SAFE(ns->host), ns->outputbuffer.len);
+				LOG(llevDebug,"OVERFLOW: socket write overflow protection on! host (%s) (%d)\n", STRING_SAFE(ns->host), ns->outputbuffer.len);
 			}
 			return 1; /* all is ok - we just do nothing */
 		}
-		else if(ns->write_overflow)
+		else if(ns->write_overflow && (ns->outputbuffer.len <= (int)(MAXSOCKBUF*0.33)))
 		{
 			ns->write_overflow=0;
-			LOG(llevDebug,"DEBUG: socket write overflow protection off! host (%s) (%d)\n", STRING_SAFE(ns->host), ns->outputbuffer.len);
+			LOG(llevDebug,"OVERFLOW: socket write overflow protection off! host (%s) (%d)\n", STRING_SAFE(ns->host), ns->outputbuffer.len);
 		}
 
 		if((rr=socket_read_pp(&ns->inbuf,&ns->readbuf,len)))
@@ -264,14 +266,14 @@ void HandleClient(NewSocket *ns, player *pl)
 			if(!ns->write_overflow)
 			{
 				ns->write_overflow=1;
-				LOG(llevDebug,"DEBUG: socket write overflow protection on!  (%s) (%d)\n", STRING_SAFE(ns->host), ns->outputbuffer.len);
+				LOG(llevDebug,"OVERFLOW: socket write overflow protection on!  (%s) (%d)\n", STRING_SAFE(ns->host), ns->outputbuffer.len);
 			}
 			return;
 		}
-		else if(ns->write_overflow)
+		else if(ns->write_overflow && (ns->outputbuffer.len <= (int)(MAXSOCKBUF*0.35)))
 		{
 			ns->write_overflow=0;
-			LOG(llevDebug,"DEBUG: socket write overflow protection off! host (%s) (%d)\n", STRING_SAFE(ns->host), ns->outputbuffer.len);
+			LOG(llevDebug,"OVERFLOW: socket write overflow protection off! host (%s) (%d)\n", STRING_SAFE(ns->host), ns->outputbuffer.len);
 		}
 		
 
