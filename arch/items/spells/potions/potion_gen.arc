@@ -4,6 +4,7 @@ layer 3
 sp -1
 name potion
 face potion_gen.101
+inv_face potion_gen.101
 type 5
 sub_type 128
 is_thrown 1
