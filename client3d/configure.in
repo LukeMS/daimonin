@@ -25,6 +25,8 @@ if test x$GCC = xyes; then
 fi
 
 dnl find the ogre package
+export PKG_CONFIG_PATH=/usr/lib/pkgconfig:/usr/local/lib/pkgconfig
+
 PKG_CHECK_MODULES(OGRE, OGRE)
 AC_SUBST(OGRE_CFLAGS)
 AC_SUBST(OGRE_LIBS)
