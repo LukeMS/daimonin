@@ -515,7 +515,19 @@ void check_login(object *op) {
 #endif
     strcpy (pl->maplevel,first_map_path);
 
-	LOG(llevInfo,"LOGIN: >%s< from ip %s\n", op->name, op->contr->socket.host);
+	/* a good point to add this i to a 10 minute temp ban,,, 
+	 * if needed, i add it... its not much work but i better
+	 * want a real login server in the future 
+	 */
+	if(pl->state == ST_PLAYING)
+	{
+		LOG(llevSystem,"HACK-BUG: >%s< from ip %s - double login!\n", op->name, pl->socket.host);
+	    	new_draw_info_format(NDI_UNIQUE, 0,op,"You manipulated the login procedure.\nYour IP is ... >%s< - hack flag set!\nserver break",pl->socket.host);
+		pl->socket.status = Ns_Dead;
+		return;
+	}
+
+	LOG(llevInfo,"LOGIN: >%s< from ip %s\n", op->name, pl->socket.host);
 
     /* First, lets check for newest form of save */
     sprintf(filename,"%s/%s/%s/%s.pl",settings.localdir,settings.playerdir,op->name,op->name);
