@@ -29,6 +29,16 @@ elseif (msg == 'globals') then
 	me:SayTo(activator, "Setting it to 42, please rerun this test")
 	a_global=42
 
+-- Test coroutines
+elseif (msg == 'yield') then
+	me:SayTo(activator, 'Taking a break...')
+	coroutine.yield(5)
+	me:SayTo(activator, '... tick ...')
+	coroutine.yield(5)
+	me:SayTo(activator, '... tack ...')
+	coroutine.yield(5)
+	me:SayTo(activator, '... terminate!')
+
 -- Test food-related things
 elseif (msg == 'food') then 
 	me:SayTo(activator,"Your food was " .. activator.food);
