@@ -34,7 +34,7 @@
 #endif /* win32 */
 
 /*
- * Gloabal variables:
+ * Global variables:
  */
 long max_time = MAX_TIME;
 struct timeval last_time;

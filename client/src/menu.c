@@ -1842,12 +1842,13 @@ int get_quickslot(int x, int y)
 
 void show_quickslots(int x, int y)
 {
-	int i;
+	int i, mx, my;
 
-	update_quickslots(-1);
+  SDL_GetMouseState(&mx, &my);
+  update_quickslots(-1);
     sprite_blt(Bitmaps[BITMAP_QUICKSLOTS],x, y, NULL, NULL);
 
-	for(i=0;i<MAX_QUICK_SLOTS;i++)
+	for(i=MAX_QUICK_SLOTS;i>=0;i--)
 	{
 		if(quick_slots[i] != -1)
 		{
@@ -1856,6 +1857,10 @@ void show_quickslots(int x, int y)
 			if(tmp)
 			{
 				blt_inv_item(tmp , x+quickslots_pos[i][0],y+quickslots_pos[i][1]);
+        /* show tooltip */
+        if (mx >= x+quickslots_pos[i][0] && mx < x+quickslots_pos[i][0]+33 
+         && my >= y+quickslots_pos[i][1] && my < y+quickslots_pos[i][1]+33)
+          show_tooltip(mx, my, tmp->s_name);
 			}
 		}
 		
@@ -1965,3 +1970,4 @@ void show_target(int x, int y)
 		}
 	}
 }
+

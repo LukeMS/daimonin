@@ -119,5 +119,6 @@ extern Uint32 GetSurfacePixel(SDL_Surface *Surface, Sint32 X, Sint32 Y);
 extern void CreateNewFont(_Sprite *sprite, _Font *font, int xlen, int ylen, int c32len);
 extern void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y,int col, SDL_Rect *area, _BLTFX *bltfx);
 extern int sprite_collision(int x1,int y1,int x2,int y2,_Sprite *sprite1, _Sprite *sprite2);
+extern void show_tooltip(int mx, int my, char* text);
 
 #endif

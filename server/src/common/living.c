@@ -1178,6 +1178,12 @@ void fix_player(object *op)
 						op->stats.dam+=(tmp->stats.dam+tmp->magic);
 					if(tmp->stats.ac)
 						ac+=(tmp->stats.ac+tmp->magic);
+					if(tmp->stats.maxhp && tmp->type != TYPE_AGE_FORCE)
+						op->stats.maxhp+=tmp->stats.maxhp;
+					if(tmp->stats.maxsp && tmp->type != TYPE_AGE_FORCE)
+						op->stats.maxsp+=tmp->stats.maxsp;
+					if(tmp->stats.maxgrace && tmp->type != TYPE_AGE_FORCE)
+						op->stats.maxgrace+=tmp->stats.maxgrace;
 
 				goto fix_player_jump_resi;
 
@@ -1954,7 +1960,7 @@ void set_mobile_speed(object *op, int index)
 	{
 		if(!QUERY_FLAG(op,FLAG_SLOW_MOVE) ) /* if not slowed... */
 			speed += base->speed_left;
-		if(op->enemy && op->enemy_count && op->enemy_count == op->enemy->count) /* valid enemy - mob is fighting! */
+		if(OBJECT_VALID(op->enemy, op->enemy_count)) /* valid enemy - mob is fighting! */
 		{
 			speed += base->speed_left*2;
 		}

@@ -121,10 +121,8 @@ static PyObject* CFSetSaveBed(PyObject* self, PyObject* args);
 static PyObject* CFSetSkillExperience(PyObject* self, PyObject* args);
 static PyObject* CFGetSkillExperience(PyObject* self, PyObject* args);
 static PyObject* CFMatchString(PyObject* self, PyObject* args);
-static PyObject* CFSetCursed(PyObject* self, PyObject* args);
 static PyObject* CFActivateRune(PyObject* self, PyObject* args);
 static PyObject* CFCheckTrigger(PyObject* self, PyObject* args);
-static PyObject* CFSetUnaggressive(PyObject* self, PyObject* args);
 static PyObject* CFCastAbility(PyObject* self, PyObject* args);
 static PyObject* CFGetMapPath(PyObject* self, PyObject* args);
 static PyObject* CFGetMessage(PyObject* self, PyObject* args);
@@ -161,7 +159,6 @@ static PyObject* CFSetAlignment(PyObject* self, PyObject* args);
 static PyObject* CFGetAlignmentForce(PyObject* self, PyObject* args);
 static PyObject* CFSetGuildForce(PyObject* self, PyObject* args);
 static PyObject* CFGetGuildForce(PyObject* self, PyObject* args);
-static PyObject* CFSetInvisible(PyObject* self, PyObject* args);
 static PyObject* CFGetExperience(PyObject* self, PyObject* args);
 static PyObject* CFGetLevel(PyObject* self, PyObject* args);
 static PyObject* CFGetSpeed(PyObject* self, PyObject* args);
@@ -184,8 +181,6 @@ static PyObject* CFGetAttackType(PyObject* self, PyObject* args);
 static PyObject* CFSetAttackType(PyObject* self, PyObject* args);
 static PyObject* CFSetDamage(PyObject* self, PyObject* args);
 static PyObject* CFGetDamage(PyObject* self, PyObject* args);
-static PyObject* CFSetBeenApplied(PyObject* self, PyObject* args);
-static PyObject* CFSetIdentified(PyObject* self, PyObject* args);
 static PyObject* CFKillObject(PyObject* self, PyObject* args);
 static PyObject* CFWhoIsOther(PyObject* self, PyObject* args);
 static PyObject* CFDirectionN(PyObject* self, PyObject* args);
@@ -272,6 +267,8 @@ static PyObject* CFMakeInvisible(PyObject* self, PyObject* args);
 static PyObject* CFIsBlind(PyObject* self, PyObject* args);
 static PyObject* CFCanSeeInDark(PyObject* self, PyObject* args);
 static PyObject* CFGetAC(PyObject* self, PyObject* args);
+static PyObject* CFGetWC(PyObject* self, PyObject* args);
+static PyObject* CFGetLuck(PyObject* self, PyObject* args);
 static PyObject* CFGetCha(PyObject* self, PyObject* args);
 static PyObject* CFGetCon(PyObject* self, PyObject* args);
 static PyObject* CFGetDex(PyObject* self, PyObject* args);
@@ -282,11 +279,14 @@ static PyObject* CFGetSP(PyObject* self, PyObject* args);
 static PyObject* CFGetStr(PyObject* self, PyObject* args);
 static PyObject* CFGetWis(PyObject* self, PyObject* args);
 static PyObject* CFGetMaxHP(PyObject* self, PyObject* args);
+static PyObject* CFGetMaxGrace(PyObject* self, PyObject* args);
 static PyObject* CFGetMaxSP(PyObject* self, PyObject* args);
 static PyObject* CFGetXPos(PyObject* self, PyObject* args);
 static PyObject* CFGetYPos(PyObject* self, PyObject* args);
 static PyObject* CFSetPosition(PyObject* self, PyObject* args);
 static PyObject* CFSetAC(PyObject* self, PyObject* args);
+static PyObject* CFSetWC(PyObject* self, PyObject* args);
+static PyObject* CFSetLuck(PyObject* self, PyObject* args);
 static PyObject* CFSetCha(PyObject* self, PyObject* args);
 static PyObject* CFSetCon(PyObject* self, PyObject* args);
 static PyObject* CFSetDex(PyObject* self, PyObject* args);
@@ -294,6 +294,7 @@ static PyObject* CFSetHP(PyObject* self, PyObject* args);
 static PyObject* CFSetInt(PyObject* self, PyObject* args);
 static PyObject* CFSetMaxHP(PyObject* self, PyObject* args);
 static PyObject* CFSetMaxSP(PyObject* self, PyObject* args);
+static PyObject* CFSetMaxGrace(PyObject* self, PyObject* args);
 static PyObject* CFSetPow(PyObject* self, PyObject* args);
 static PyObject* CFSetSP(PyObject* self, PyObject* args);
 static PyObject* CFSetStr(PyObject* self, PyObject* args);
@@ -312,7 +313,6 @@ static PyObject* CFSetEventOptions(PyObject* self, PyObject* args);
 static PyObject* CFGetIP(PyObject* self, PyObject* args);
 static PyObject* CFGetInventory(PyObject* self, PyObject* args);
 static PyObject* CFGetArchName(PyObject* self, PyObject* args);
-
 
 static PyObject* CFLoadObject(PyObject* self, PyObject* args);
 static PyObject* CFSaveObject(PyObject* self, PyObject* args);
@@ -333,6 +333,8 @@ static PyObject* CFPayForItem(PyObject* self, PyObject* args);
 static PyObject* CFPayAmount(PyObject* self, PyObject* args);
 static PyObject* CFSendCustomCommand(PyObject* self, PyObject* args);
 static PyObject* CFPlayMapSound(PyObject* self, PyObject* args);
+static PyObject* CFSetFlag(PyObject* self, PyObject* args);
+static PyObject* CFGetFlag(PyObject* self, PyObject* args);
 
 /* Those are used to handle the events. The first one is used when a player  */
 /* attacks with a "scripted" weapon. HandleEvent is used for all other events*/
@@ -374,10 +376,8 @@ static PyMethodDef CFPythonMethods[] =
         {"SetSkillExperience", CFSetSkillExperience, METH_VARARGS},
         {"GetSkillExperience", CFGetSkillExperience, METH_VARARGS},
         {"MatchString", CFMatchString, METH_VARARGS},
-        {"SetCursed", CFSetCursed, METH_VARARGS},
         {"ActivateRune", CFActivateRune, METH_VARARGS},
         {"CheckTrigger", CFCheckTrigger, METH_VARARGS},
-        {"SetUnaggressive", CFSetUnaggressive, METH_VARARGS},
         {"CastAbility", CFCastAbility, METH_VARARGS},
         {"GetMapPath", CFGetMapPath, METH_VARARGS},
         {"GetMessage", CFGetMessage, METH_VARARGS},
@@ -402,7 +402,6 @@ static PyMethodDef CFPythonMethods[] =
         {"Drop", CFDrop, METH_VARARGS},
         {"Take", CFTake, METH_VARARGS},
         {"IsInvisible", CFIsInvisible, METH_VARARGS},
-        {"SetInvisible",CFSetInvisible,METH_VARARGS},
         {"GetExperience",CFGetExperience,METH_VARARGS},
         {"GetLevel",CFGetLevel,METH_VARARGS},
         {"GetSpeed",CFGetSpeed,METH_VARARGS},
@@ -425,8 +424,6 @@ static PyMethodDef CFPythonMethods[] =
         {"SetAttackType",CFSetAttackType,METH_VARARGS},
         {"SetDamage",CFSetDamage,METH_VARARGS},
         {"GetDamage",CFGetDamage,METH_VARARGS},
-        {"SetBeenApplied",CFSetBeenApplied,METH_VARARGS},
-        {"SetIdentified",CFSetIdentified,METH_VARARGS},
         {"KillObject",CFKillObject,METH_VARARGS},
         {"WhoIsOther",CFWhoIsOther,METH_VARARGS},
         {"DirectionN",CFDirectionN,METH_VARARGS},
@@ -513,6 +510,8 @@ static PyMethodDef CFPythonMethods[] =
         {"IsBlind",CFIsBlind,METH_VARARGS},
         {"CanSeeInDark",CFCanSeeInDark,METH_VARARGS},
         {"GetAC",CFGetAC,METH_VARARGS},
+        {"GetWC",CFGetWC,METH_VARARGS},
+        {"GetLuck",CFGetLuck,METH_VARARGS},
         {"GetCharisma",CFGetCha,METH_VARARGS},
         {"GetConstitution",CFGetCon,METH_VARARGS},
         {"GetDexterity",CFGetDex,METH_VARARGS},
@@ -524,10 +523,13 @@ static PyMethodDef CFPythonMethods[] =
         {"GetWisdom",CFGetWis,METH_VARARGS},
         {"GetMaxHP",CFGetMaxHP,METH_VARARGS},
         {"GetMaxSP",CFGetMaxSP,METH_VARARGS},
+        {"GetMaxGrace",CFGetMaxGrace,METH_VARARGS},
         {"GetXPosition",CFGetXPos,METH_VARARGS},
         {"GetYPosition",CFGetYPos,METH_VARARGS},
         {"SetPosition",CFSetPosition,METH_VARARGS},
         {"SetAC",CFSetAC,METH_VARARGS},
+        {"SetWC",CFSetWC,METH_VARARGS},
+        {"SetLuck",CFSetLuck,METH_VARARGS},
         {"SetCharisma",CFSetCha,METH_VARARGS},
         {"SetConstitution",CFSetCon,METH_VARARGS},
         {"SetDexterity",CFSetDex,METH_VARARGS},
@@ -535,6 +537,7 @@ static PyMethodDef CFPythonMethods[] =
         {"SetIntelligence",CFSetInt,METH_VARARGS},
         {"SetMaxHP",CFSetMaxHP,METH_VARARGS},
         {"SetMaxSP",CFSetMaxSP,METH_VARARGS},
+        {"SetMaxGrace",CFSetMaxGrace,METH_VARARGS},
         {"SetPower",CFSetPow,METH_VARARGS},
         {"SetSP",CFSetSP,METH_VARARGS},
         {"SetStrength",CFSetStr,METH_VARARGS},
@@ -584,6 +587,8 @@ static PyMethodDef CFPythonMethods[] =
         {"PayAmount",CFPayAmount,METH_VARARGS},
         {"SendCustomCommand",CFSendCustomCommand,METH_VARARGS},
         {"PlayMapSound",CFPlayMapSound,METH_VARARGS},
+        {"GetFlag",CFGetFlag,METH_VARARGS},
+        {"SetFlag",CFSetFlag,METH_VARARGS},
         {NULL, NULL}
 };
 
