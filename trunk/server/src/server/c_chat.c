@@ -495,7 +495,7 @@ static int basic_emote(object *op, char *params, int emotion)
 			    pl->ob->name);
 		    sprintf(buf2, "%s grabs you, and begins dancing!",
 			    op->name);
-		    sprintf(buf3, "Yipe! %s and %s are doing the Macarena!",
+		    sprintf(buf3, "Yipe! %s and %s are doing some really dirty dancing!",
 			    op->name, pl->ob->name);
 		    break;
 		case EMOTE_KISS:
@@ -633,18 +633,18 @@ static int basic_emote(object *op, char *params, int emotion)
 		case EMOTE_WHISTLE:
 		    sprintf(buf, "You whistle at %s.", pl->ob->name);
 		    sprintf(buf2, "%s whistles at you.", op->name);
-		    sprintf(buf2, "%s whistles at %s.", op->name, pl->ob->name);
+		    sprintf(buf3, "%s whistles at %s.", op->name, pl->ob->name);
 		    break;
 		case EMOTE_WINK:
 		    sprintf(buf, "You wink suggestively at %s.", pl->ob->name);
 		    sprintf(buf2, "%s winks suggestively at you.", op->name);
-		    sprintf(buf2, "%s winks at %s.", op->name, pl->ob->name);
+		    sprintf(buf3, "%s winks at %s.", op->name, pl->ob->name);
 		    break;
 		case EMOTE_BEG:
 		    sprintf(buf, "You beg %s for mercy.", pl->ob->name);
 		    sprintf(buf2, "%s begs you for mercy! Show no quarter!",
 			    op->name);
-		    sprintf(buf2, "%s begs %s for mercy!", op->name,
+		    sprintf(buf3, "%s begs %s for mercy!", op->name,
 			    pl->ob->name);
 		    break;
 		case EMOTE_BLEED:
@@ -652,13 +652,13 @@ static int basic_emote(object *op, char *params, int emotion)
 			    pl->ob->name);
 		    sprintf(buf2, "%s slashes his wrist and bleeds all over"
 			    " you.", op->name);
-		    sprintf(buf2, "%s slashes his wrist and bleeds all "
+		    sprintf(buf3, "%s slashes his wrist and bleeds all "
 			    "over %s.", op->name, pl->ob->name);
 		    break;
 		case EMOTE_CRINGE:
 		    sprintf(buf, "You cringe away from %s.", pl->ob->name);
 		    sprintf(buf2, "%s cringes away from you.", op->name);
-		    sprintf(buf2, "%s cringes away from %s in mortal terror.",
+		    sprintf(buf3, "%s cringes away from %s in mortal terror.",
 			    op->name, pl->ob->name);
 		    break;
 		default:
@@ -670,8 +670,8 @@ static int basic_emote(object *op, char *params, int emotion)
 		  break;
 		} /*case*/
 		new_draw_info(NDI_UNIQUE, 0, op, buf);
-		new_draw_info(NDI_UNIQUE|NDI_WHITE, 0, pl->ob, buf2);
-		new_info_map_except2(NDI_WHITE, op->map, op, pl->ob, buf3);
+		new_draw_info(NDI_UNIQUE|NDI_YELLOW, 0, pl->ob, buf2);
+		new_info_map_except2(NDI_YELLOW, op->map, op, pl->ob, buf3);
 		return(0);
 	    }
 	    if(strncasecmp(pl->ob->name, params, MAX_NAME)==0 &&
@@ -784,7 +784,7 @@ static int basic_emote(object *op, char *params, int emotion)
 		    break;
 		}/*case*/
 		new_draw_info(NDI_UNIQUE, 0, op, buf);
-		new_info_map_except(NDI_WHITE, op->map, op, buf2);
+		new_info_map_except(NDI_YELLOW, op->map, op, buf2);
 		return(0);
 	    }/*if self*/
 	}/*for*/

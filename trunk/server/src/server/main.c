@@ -190,12 +190,8 @@ void leave_map(object *op)
 
     remove_ob(op);
 
-    if (oldmap) {
-	oldmap->players--;
-	if (oldmap->players <= 0) { /* can be less than zero due to errors in tracking this */
+	if (oldmap && !oldmap->player_first && !oldmap->perm_load)
 	    set_map_timeout(oldmap);
-	}
-    }
 }
 
 /*
@@ -310,7 +306,6 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y, int pos_flag)
 	/* do some action special for players after we have inserted them */
 	if(op->type == PLAYER)
 	{
-		newmap->players++;
 		if (op->contr) 
 		{
 			strcpy(op->contr->maplevel, newmap->path);
@@ -354,15 +349,9 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y, int pos_flag)
 		* Do this after the player is on the new map - otherwise the force swap of the
 		* old map does not work.
 		*/
-		if (oldmap != newmap)
-		{
-			if (oldmap) /* adjust old map */
-			{
-				oldmap->players--;
-	            if (oldmap->players <= 0) /* can be less than zero due to errors in tracking this */
-			        set_map_timeout(oldmap);
-			}
-		}
+		if (oldmap != newmap && oldmap && !oldmap->player_first && !oldmap->perm_load)
+			set_map_timeout(oldmap);
+
 		swap_below_max (newmap->path);
         MapNewmapCmd( op->contr);
 	}
@@ -723,27 +712,6 @@ void enter_exit(object *op, object *exit_ob)
 		enter_map(op, newmap, op->x, op->y,1);
 	}
 }
-
-/*
- * process_active_maps(): Works like process_events(), but it only
- * processes maps which a player is on.
- * It will check that it isn't called too often, and abort
- * if time since last call is less than MAX_TIME.
- *
- */
-/*
-void process_active_maps() {
-  mapstruct *map;
-  if(enough_elapsed_time()) {
-	for(map=first_map;map!=NULL;map=map->next) {
-	    if(map->in_memory == MAP_IN_MEMORY) {
-		if(players_on_map(map))
-		    process_events(map);
-	    }
-	}
-    }
-}
-*/
 
 /* process_players1 and process_players2 do all the player related stuff.
  * I moved it out of process events and process_map.  This was to some
@@ -1117,7 +1085,6 @@ void leave(player *pl, int draw_exit) {
 	if (pl->ob->map) {
 	    if (pl->ob->map->in_memory==MAP_IN_MEMORY)
 		pl->ob->map->timeout = MAP_TIMEOUT(pl->ob->map);
-	    pl->ob->map->players--;
 	    pl->ob->map=NULL;
 	}
 	pl->ob->type = DEAD_OBJECT; /* To avoid problems with inventory window */

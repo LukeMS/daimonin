@@ -59,27 +59,105 @@ void play_sound_player_only(player *pl, int soundnum,  int soundtype, int x, int
     Send_With_Handling(&pl->socket, &sl);
 }
 
-/* Plays some sound on map at x,y.  */
+/* Plays some sound on map at x,y.  
+ * This is now nicely optimized - we use the player map list
+ * and testing only the main map and the possible 8 attached maps.
+ * Now, we don't must fear about increasing performance lose with.
+ * high player numbers. mt - 04.02.04
+ * the function looks a bit bloated, but for speed reasons, we just 
+ * cloned all the 8 loops with native settings for each direction.
+ */
 void play_sound_map(mapstruct *map, int x, int y, int sound_num, int sound_type)
 {
-    player *pl;
+	int xt, yt;
+	object *tmp;
 
-    /* TODO: a linked list of all players of one map which we can grap fast
-     * from this map for uses like this 
-     */
+	if(!map || map->in_memory!=MAP_IN_MEMORY)
+		return;
 
-    for (pl = first_player; pl; pl = pl->next) {
-
-	if (pl->state==ST_PLAYING && pl->ob->map == map) {
-        /* ARGH... doing 2 pows for all players on this map... 
-         * there must be a smarter way.  
-         * We calc this in the client again, to get the volume/pan */
-        /* Gecko: removed the isqrt call. Happier now? =) */
-	    int distance_squared=POW2(pl->ob->x - x) + POW2(pl->ob->y - y);
-
-	    if (distance_squared<=MAX_SOUND_DISTANCE_SQUARED) {
-			play_sound_player_only(pl, sound_num, sound_type, x-pl->ob->x, y-pl->ob->y);
-	    }
+	if(map->player_first) /* any player on this map? */
+	{
+		for(tmp=map->player_first;tmp;tmp=tmp->contr->map_above)
+		{
+			if( (POW2(tmp->x - x) + POW2(tmp->y - y)) <=MAX_SOUND_DISTANCE_SQUARED)
+				play_sound_player_only(tmp->contr, sound_num, sound_type, x-tmp->x, y-tmp->y);
+		}
 	}
-    }
+
+	if (map->tile_map[0] && map->tile_map[0]->in_memory==MAP_IN_MEMORY && map->tile_map[0]->player_first)
+	{
+		yt = y+MAP_HEIGHT(map->tile_map[0]);
+		for(tmp=map->tile_map[0]->player_first;tmp;tmp=tmp->contr->map_above)
+		{
+			if( (POW2(tmp->x - x) + POW2(tmp->y - yt)) <=MAX_SOUND_DISTANCE_SQUARED)
+				play_sound_player_only(tmp->contr, sound_num, sound_type, x-tmp->x, yt-tmp->y);
+		}
+	}
+	if (map->tile_map[1] && map->tile_map[1]->in_memory==MAP_IN_MEMORY && map->tile_map[1]->player_first)
+	{
+		xt = x-MAP_WIDTH(map);
+		for(tmp=map->tile_map[1]->player_first;tmp;tmp=tmp->contr->map_above)
+		{
+			if( (POW2(tmp->x - xt) + POW2(tmp->y - y)) <=MAX_SOUND_DISTANCE_SQUARED)
+				play_sound_player_only(tmp->contr, sound_num, sound_type, xt-tmp->x, y-tmp->y);
+		}
+	}
+	if (map->tile_map[2] && map->tile_map[2]->in_memory==MAP_IN_MEMORY && map->tile_map[2]->player_first)
+	{
+		yt = y-MAP_HEIGHT(map);
+		for(tmp=map->tile_map[2]->player_first;tmp;tmp=tmp->contr->map_above)
+		{
+			if( (POW2(tmp->x - x) + POW2(tmp->y - yt)) <=MAX_SOUND_DISTANCE_SQUARED)
+				play_sound_player_only(tmp->contr, sound_num, sound_type, x-tmp->x, yt-tmp->y);
+		}
+	}
+	if (map->tile_map[3] && map->tile_map[3]->in_memory==MAP_IN_MEMORY && map->tile_map[3]->player_first)
+	{
+		xt =x+MAP_WIDTH(map->tile_map[3]);
+		for(tmp=map->tile_map[3]->player_first;tmp;tmp=tmp->contr->map_above)
+		{
+			if( (POW2(tmp->x - xt) + POW2(tmp->y - y)) <=MAX_SOUND_DISTANCE_SQUARED)
+				play_sound_player_only(tmp->contr, sound_num, sound_type, xt-tmp->x, y-tmp->y);
+		}
+	}
+	if (map->tile_map[4] && map->tile_map[4]->in_memory==MAP_IN_MEMORY && map->tile_map[4]->player_first)
+	{
+		yt = y+MAP_HEIGHT(map->tile_map[4]);
+		xt = x-MAP_WIDTH(map);
+		for(tmp=map->tile_map[4]->player_first;tmp;tmp=tmp->contr->map_above)
+		{
+			if( (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <=MAX_SOUND_DISTANCE_SQUARED)
+				play_sound_player_only(tmp->contr, sound_num, sound_type, xt-tmp->x, yt-tmp->y);
+		}
+	}
+	if (map->tile_map[5] && map->tile_map[5]->in_memory==MAP_IN_MEMORY && map->tile_map[5]->player_first)
+	{
+		xt = x-MAP_WIDTH(map);
+		yt = y-MAP_HEIGHT(map);
+		for(tmp=map->tile_map[5]->player_first;tmp;tmp=tmp->contr->map_above)
+		{
+			if( (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <=MAX_SOUND_DISTANCE_SQUARED)
+				play_sound_player_only(tmp->contr, sound_num, sound_type, xt-tmp->x, yt-tmp->y);
+		}
+	}
+	if (map->tile_map[6] && map->tile_map[6]->in_memory==MAP_IN_MEMORY && map->tile_map[6]->player_first)
+	{
+		xt =x+MAP_WIDTH(map->tile_map[6]);
+		yt = y-MAP_HEIGHT(map);
+		for(tmp=map->tile_map[6]->player_first;tmp;tmp=tmp->contr->map_above)
+		{
+			if( (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <=MAX_SOUND_DISTANCE_SQUARED)
+				play_sound_player_only(tmp->contr, sound_num, sound_type, xt-tmp->x, yt-tmp->y);
+		}
+	}
+	if (map->tile_map[7] && map->tile_map[7]->in_memory==MAP_IN_MEMORY && map->tile_map[7]->player_first)
+	{
+		xt =x+MAP_WIDTH(map->tile_map[7]);
+		yt = y+MAP_HEIGHT(map->tile_map[7]);
+		for(tmp=map->tile_map[7]->player_first;tmp;tmp=tmp->contr->map_above)
+		{
+			if( (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <=MAX_SOUND_DISTANCE_SQUARED)
+				play_sound_player_only(tmp->contr, sound_num, sound_type, xt-tmp->x, yt-tmp->y);
+		}
+	}
 }

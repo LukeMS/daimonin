@@ -182,6 +182,8 @@ void SetUp(char *buf, int len, NewSocket *ns)
 	    } else {
 		ns->mapx = x;
 		ns->mapy = y;
+		ns->mapx_2 = x/2;
+		ns->mapy_2 = y/2;
 		/* better to send back what we are really using and not the
 		 * param as given to us in case it gets parsed differently.
 		 */
@@ -477,13 +479,6 @@ void ReplyCmd(char *buf, int len, player *pl)
     switch (pl->state) {
 	case ST_PLAYING:
 	    LOG(llevBug,"BUG: Got reply message with ST_PLAYING input state (player %s)\n", query_name(pl->ob));
-	    break;
-
-	case ST_PLAY_AGAIN:
-	    /* We can check this for return value (2==quit).  Maybe we
-	     * should, and do something appropriate?
-	     */
-	    receive_play_again(pl->ob, buf[0]);
 	    break;
 
 	case ST_ROLL_STAT:
@@ -1122,9 +1117,9 @@ void draw_client_map2(object *pl)
      * locations.
      */    
     ay=pl->contr->socket.mapy-1;
-    for(y=(pl->y+(pl->contr->socket.mapy+1)/2)-1; y>=pl->y-pl->contr->socket.mapy/2;y--,ay--) {
+    for(y=(pl->y+(pl->contr->socket.mapy+1)/2)-1; y>=pl->y-pl->contr->socket.mapy_2;y--,ay--) {
 	ax=pl->contr->socket.mapx-1;
-	for(x=(pl->x+(pl->contr->socket.mapx+1)/2)-1;x>=pl->x-pl->contr->socket.mapx/2;x--,ax--) {
+	for(x=(pl->x+(pl->contr->socket.mapx+1)/2)-1;x>=pl->x-pl->contr->socket.mapx_2;x--,ax--) {
 	    d =  pl->contr->blocked_los[ax][ay];
 	    mask = (ax & 0x1f) << 11 | (ay & 0x1f) << 6;
 
@@ -1689,9 +1684,9 @@ void draw_client_map(object *pl)
 
     memset(&newmap, 0, sizeof(struct Map));
 
-    for(j=(pl->y-pl->contr->socket.mapy/2); j<(pl->y+(pl->contr->socket.mapy+1)/2); j++)
+    for(j=(pl->y-pl->contr->socket.mapy_2); j<(pl->y+(pl->contr->socket.mapy+1)/2); j++)
 	{
-        for(i=(pl->x-pl->contr->socket.mapx/2) ; i<(pl->x+(pl->contr->socket.mapx+1)/2); i++)
+        for(i=(pl->x-pl->contr->socket.mapx_2) ; i<(pl->x+(pl->contr->socket.mapx+1)/2); i++)
 		{
 			ax=i;
 			ay=j;

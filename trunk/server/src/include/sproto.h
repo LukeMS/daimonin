@@ -208,6 +208,7 @@ int command_southwest(object *op, char *params);
 int command_west(object *op, char *params);
 int command_stay(object *op, char *params);
 /* c_new.c */
+CommArray_s *find_command_element(char *cmd, CommArray_s *commarray, int commsize);
 int execute_newserver_command(object *pl, char *command);
 int command_run(object *op, char *params);
 int command_run_stop(object *op, char *params);
@@ -490,8 +491,6 @@ int path_to_player(object *mon, object *pl, int mindiff);
 void give_initial_items(object *pl, treasurelist *items);
 void get_name(object *op);
 void get_password(object *op);
-void play_again(object *op);
-int receive_play_again(object *op, char key);
 void confirm_password(object *op);
 void get_party_password(object *op, int partyid);
 int roll_stat(void);

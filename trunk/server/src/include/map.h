@@ -309,6 +309,7 @@ typedef struct mapdef {
 
     const char *tile_path[TILED_MAPS];			/* path to adjoining maps */
     struct mapdef *tile_map[TILED_MAPS];		/* Next map, linked list */
+	object *player_first;			/* chained list of player on this map */
 
 
 	uint32 map_flags;				/* mag flags for various map settings */
@@ -323,7 +324,10 @@ typedef struct mapdef {
 									 * be loaded before used.  The map,omap and map_ob
 									 * arrays will be allocated when the map is loaded */
 
-    sint16 players;					/* How many players are on this level right now */
+    sint16 perm_load;				/* This is a counter - used for example from NPC's which have
+	                                 * a global function. If this counter is != 0, map will not swap
+	                                 * and the npc/object with perm_load flag will stay in game.
+	                                 */
     uint16 difficulty;				/* What level the player should be to play here */
 	uint16 height;					/* Width and height of map. */
     uint16 width;
@@ -367,5 +371,8 @@ typedef struct rv_vector {
     int	    direction;
     object  *part;
 } rv_vector;
+
+extern int map_tiled_reverse[TILED_MAPS];
+
 
 #endif

@@ -679,55 +679,6 @@ void get_password(object *op) {
     send_query(&op->contr->socket,CS_QUERY_HIDEINPUT, "What is your password?\n:");
 }
 
-void play_again(object *op)
-{
-    op->contr->state=ST_PLAY_AGAIN;
-    op->chosen_skill = NULL;
-    unlock_player(op->name);
-    send_query(&op->contr->socket, CS_QUERY_SINGLECHAR, "Do you want to play again (a/q)?");
-    /* a bit of a hack, but there are various places early in th
-     * player creation process that a user can quit (eg, roll
-     * stats) that isn't removing the player.  Taking a quick
-     * look, there are many places that call play_again without
-     * removing the player - it probably makes more sense
-     * to leave it to play_again to remove the object in all
-     * cases.
-     */
-    if (!QUERY_FLAG(op, FLAG_REMOVED)) 
-	remove_ob(op);
-}
-
-
-int receive_play_again(object *op, char key)
-{
-    if(key=='q'||key=='Q') {
-	remove_friendly_object(op);
-	leave(op->contr,0); /* ericserver will draw the message */
-	return 2;
-    }
-    else if(key=='a'||key=='A') {
-	player *pl = op->contr;
-	const char *name = NULL;
-	
-	FREE_AND_ADD_REF_HASH(name, op->name);
-	remove_friendly_object(op);
-	free_object(op);
-	pl=get_player(pl);
-	op = pl->ob;
-	op->contr->password[0]='~';
-	FREE_AND_CLEAR_HASH2(op->name);
-	/* Lets put a space in here */
-	new_draw_info(NDI_UNIQUE, 0, op, "\n");
-	get_name(op);
-	op->name = name;
-	set_first_map(op);
-    } else {
-	/* user pressed something else so just ask again... */
-	play_again(op);
-    }
-    return 0;
-}
-
 void confirm_password(object *op) {
 
     op->contr->write_buf[0]='\0';
@@ -940,11 +891,6 @@ int key_roll_stat(object *op, char key)
 	send_query(&op->contr->socket,CS_QUERY_SINGLECHAR,"");
 	return 1;
 
-     case 'q':
-     case 'Q':
-      play_again(op);
-      return 1;
-
      default:
 #ifndef USE_SWAP_STATS
 	  send_query(&op->contr->socket,CS_QUERY_SINGLECHAR,"Yes, No or Quit. Roll again?");
@@ -970,7 +916,8 @@ int key_change_class(object *op, char key)
 
     if(key=='q'||key=='Q') {
       remove_ob(op);
-      play_again(op);
+	  op->contr->socket.status=Ns_Dead;
+      /*play_again(op)*/
       return 0;
     }
     if(key=='d'||key=='D') {
@@ -1096,7 +1043,7 @@ int key_confirm_quit(object *op, char key)
       if(unlink(buf)== -1 && settings.debug >= llevDebug)
 		LOG(llevBug,"BUG: crossfire (delete character): %s\n", buf);
     }
-    play_again(op);
+	op->contr->socket.status=Ns_Dead;
     return 1;
 }
 
@@ -2415,7 +2362,8 @@ void kill_player(object *op)
 #endif
 #endif
     }
-    play_again(op);
+    /*play_again(op);*/
+	op->contr->socket.status=Ns_Dead;
 #ifdef NOT_PERMADEATH
     tmp=arch_to_object(find_archetype("gravestone"));
     sprintf(buf,"%s's gravestone",op->name);
@@ -2687,9 +2635,9 @@ int player_can_view (object *pl,object *op) {
 	 * code, so we need to restrict ourselves to that range of values
 	 * for any meaningful values.
 	 */
-	if (FABS(dx) <= (pl->contr->socket.mapx/2) &&
-	    FABS(dy) <= (pl->contr->socket.mapy/2) &&
-	    !pl->contr->blocked_los[dx + (pl->contr->socket.mapx/2)][dy+(pl->contr->socket.mapy/2)] ) 
+	if (FABS(dx) <= (pl->contr->socket.mapx_2) &&
+	    FABS(dy) <= (pl->contr->socket.mapy_2) &&
+	    !pl->contr->blocked_los[dx + (pl->contr->socket.mapx_2)][dy+(pl->contr->socket.mapy_2)] ) 
 	    return 1;
 	op = op->more;
     }

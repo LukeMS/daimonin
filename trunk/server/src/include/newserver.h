@@ -89,11 +89,12 @@ typedef struct Buffer {
 
 typedef struct NewSocket {
     int fd;
+    int   mapx, mapy;	    /* How large a map the client wants */
+    int   mapx_2, mapy_2;	/* same like above but /2 */
     char    *host;	    /* Which host it is connected from (ip address)*/
     uint32  cs_version, sc_version; /* versions of the client */
     uint16  look_position;  /* start of drawing of look window */
     uint8   faceset;	    /* Set the client is using, default 0 */
-    uint8   mapx, mapy;	    /* How large a map the client wants */
     enum Sock_Status status;
     struct Map lastmap;
     struct statsinfo stats;

@@ -33,6 +33,11 @@
 
 uint32 global_map_tag; /* our global map_tag value for the server */
 
+/* to get the reverse direction for all 8 tiled map index */
+int map_tiled_reverse[TILED_MAPS] = {
+	2,3,0,1,6,7,4,5
+};
+
 extern int nrofallocobjects,nroffreeobjects;
 
 #define DEBUG_OLDFLAGS 1
@@ -91,8 +96,7 @@ extern int nrofallocobjects,nroffreeobjects;
 
 static mapstruct *load_and_link_tiled_map(mapstruct *orig_map, int tile_num)
 {
-    int dest_tile = (tile_num +2) % TILED_MAPS;
-
+    int dest_tile = map_tiled_reverse[tile_num];
 	
     orig_map->tile_map[tile_num] = ready_map_name(orig_map->tile_path[tile_num], MAP_UNIQUE(orig_map)?1:0);
 
@@ -116,7 +120,7 @@ static int relative_tile_position_rec(mapstruct *map1, mapstruct *map2, int *x, 
     
     /* TODO: A bidirectional breadth-first search would be more efficient */
     /* Depth-first search for the destination map */
-    for(i=0; i<4; i++) {
+    for(i=0; i<TILED_MAPS; i++) {
         if (map1->tile_path[i]) {
             if (!map1->tile_map[i] || map1->tile_map[i]->in_memory != MAP_IN_MEMORY)
                 load_and_link_tiled_map(map1, i);
@@ -128,6 +132,11 @@ static int relative_tile_position_rec(mapstruct *map1, mapstruct *map2, int *x, 
                     case 1: *x += MAP_WIDTH(map1);    return TRUE;  /* East */
                     case 2: *y += MAP_HEIGHT(map1);   return TRUE;  /* South */
                     case 3: *x -= MAP_WIDTH(map1->tile_map[i]);  return TRUE;  /* West */
+
+                    case 4: *y -= MAP_HEIGHT(map1->tile_map[i]); *x += MAP_WIDTH(map1); return TRUE;  /* Northest */
+                    case 5: *y += MAP_HEIGHT(map1); *x += MAP_WIDTH(map1); return TRUE;  /* Southest */
+                    case 6: *y += MAP_HEIGHT(map1); *x -= MAP_WIDTH(map1->tile_map[i]); return TRUE;  /* Southwest */
+                    case 7: *y -= MAP_HEIGHT(map1->tile_map[i]); *x -= MAP_WIDTH(map1->tile_map[i]); return TRUE;  /* Northwest */
                 }
             }
         }
@@ -159,7 +168,7 @@ static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int 
     if(map1 == map2)
         return TRUE;
 
-    for(i=0; i<4; i++) {
+    for(i=0; i<TILED_MAPS; i++) {
         if (map1->tile_path[i]) {
             if (!map1->tile_map[i] || map1->tile_map[i]->in_memory != MAP_IN_MEMORY)
                 load_and_link_tiled_map(map1, i);
@@ -170,6 +179,11 @@ static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int 
                     case 1: *x += MAP_WIDTH(map1);    return TRUE;  /* East */
                     case 2: *y += MAP_HEIGHT(map1);   return TRUE;  /* South */
                     case 3: *x -= MAP_WIDTH(map1->tile_map[i]);  return TRUE;  /* West */
+
+                    case 4: *y -= MAP_HEIGHT(map1->tile_map[i]); *x += MAP_WIDTH(map1); return TRUE;  /* Northest */
+                    case 5: *y += MAP_HEIGHT(map1); *x += MAP_WIDTH(map1); return TRUE;  /* Southest */
+                    case 6: *y += MAP_HEIGHT(map1); *x -= MAP_WIDTH(map1->tile_map[i]); return TRUE;  /* Southwest */
+                    case 7: *y -= MAP_HEIGHT(map1->tile_map[i]); *x -= MAP_WIDTH(map1->tile_map[i]); return TRUE;  /* Northwest */
                 }
             }
         }
@@ -1301,7 +1315,7 @@ static int load_map_header(FILE *fp, mapstruct *m)
 	else if (!strncmp(key,"tile_path_", 10)) {
 	    int tile=atoi(key+10);
 
-	    if (tile<1 || tile>4) {
+	    if (tile<1 || tile>TILED_MAPS) {
 		LOG(llevError,"ERROR: load_map_header: tile location %d out of bounds (%s)\n",
 		    tile, m->path);
 	    } else {
@@ -1326,7 +1340,7 @@ static int load_map_header(FILE *fp, mapstruct *m)
                 /* We have a correct path to a neighbour tile */
                 if (value) {
                     mapstruct *neighbour;
-                    int dest_tile = (tile + 1) % TILED_MAPS;                            
+                    int dest_tile = map_tiled_reverse[tile-1];                            
 
                     m->tile_path[tile-1] = add_string(value);
                     LOG(llevDebug,"add t_map %s (%d). ",value, tile-1);
@@ -1715,7 +1729,7 @@ int new_save_map(mapstruct *m, int flag)
     if (MAP_PVP(m)) fprintf(fp,"pvp %d\n", MAP_PVP(m)?1:0);
 
     /* Save any tiling information */
-    for (i=0; i<4; i++)
+    for (i=0; i<TILED_MAPS; i++)
 	{
 		if (m->tile_path[i])
 			fprintf(fp,"tile_path_%d %s\n", i+1, m->tile_path[i]);
@@ -2248,59 +2262,106 @@ void set_map_reset_time(mapstruct *map) {
 }
 
 
-/* This is basically the same as out_of_map above, but
- * instead we return NULL if no map is valid (coordinates
- * out of bounds and no tiled map), otherwise it returns
- * the map as that the coordinates are really on, and 
- * updates x and y to be the localized coordinates.
- * Using this is more efficient of calling out_of_map
- * and then figuring out what the real map is
+/* out of map now checks all 8 possible neighbours of
+ * a tiled map and loads them in when needed.
  */
 mapstruct *out_of_map(mapstruct *m, int *x, int *y)
 {
 
-    /* Simple case - coordinates are within this local
-     * map.
-     */
+    /* Simple case - coordinates are within this local map.*/
 	if(!m)
 		return NULL;
+
     if (((*x)>=0) && ((*x)<MAP_WIDTH(m)) && ((*y)>=0) && ((*y) < MAP_HEIGHT(m)))
-	return m;
+		return m;
 
-    if (*x<0) {
-	if (!m->tile_path[3]) goto y_test2;
-	if (!m->tile_map[3] || m->tile_map[3]->in_memory != MAP_IN_MEMORY)
-	    load_and_link_tiled_map(m, 3);
+    if (*x<0) /* thats w, nw or sw (3,7 or 6) */
+	{
+	    if (*y<0) /*  nw.. */
+		{
+			if (!m->tile_path[7]) 
+				return NULL;
+			if (!m->tile_map[7] || m->tile_map[7]->in_memory != MAP_IN_MEMORY)
+				load_and_link_tiled_map(m, 7);
+			*y += MAP_HEIGHT(m->tile_map[7]);
+		    *x += MAP_WIDTH(m->tile_map[7]);
+			return (out_of_map(m->tile_map[7], x, y));
+		}
 
+	    if (*y>=MAP_HEIGHT(m)) /* sw */
+		{
+			if (!m->tile_path[6]) 
+				return NULL;
+			if (!m->tile_map[6] || m->tile_map[6]->in_memory != MAP_IN_MEMORY)
+				load_and_link_tiled_map(m, 6);
+			*y -= MAP_HEIGHT(m);
+		    *x += MAP_WIDTH(m->tile_map[6]);
+			return (out_of_map(m->tile_map[6], x, y));
+		}
+		
+
+		if (!m->tile_path[3]) /* it MUST be west */
+			return NULL;
+		if (!m->tile_map[3] || m->tile_map[3]->in_memory != MAP_IN_MEMORY)
+			load_and_link_tiled_map(m, 3);
 	    *x += MAP_WIDTH(m->tile_map[3]);
         return (out_of_map(m->tile_map[3], x, y));
     }
-    if (*x>=MAP_WIDTH(m)) {
-	if (!m->tile_path[1]) goto y_test2;
-	if (!m->tile_map[1] || m->tile_map[1]->in_memory != MAP_IN_MEMORY)
-	    load_and_link_tiled_map(m, 1);
 
-	*x -= MAP_WIDTH(m);
-    return (out_of_map(m->tile_map[1], x, y));
-    }
-y_test2:
-    if (*y<0) {
-	if (!m->tile_path[0]) return NULL;
-	if (!m->tile_map[0] || m->tile_map[0]->in_memory != MAP_IN_MEMORY)
-	    load_and_link_tiled_map(m, 0);
+    if (*x>=MAP_WIDTH(m))  /* thatd e, ne or se (1 ,4 or 5) */
+	{
+	    if (*y<0) /*  ne.. */
+		{
+			if (!m->tile_path[4]) 
+				return NULL;
+			if (!m->tile_map[4] || m->tile_map[4]->in_memory != MAP_IN_MEMORY)
+				load_and_link_tiled_map(m, 4);
+			*y += MAP_HEIGHT(m->tile_map[4]);
+			*x -= MAP_WIDTH(m);
+			return (out_of_map(m->tile_map[4], x, y));
+		}
 
-	*y += MAP_HEIGHT(m->tile_map[0]);
-    return (out_of_map(m->tile_map[0], x, y));
-    }
-    if (*y>=MAP_HEIGHT(m)) {
-	if (!m->tile_path[2]) return NULL;
-	if (!m->tile_map[2] || m->tile_map[2]->in_memory != MAP_IN_MEMORY)
-	    load_and_link_tiled_map(m, 2);
+	    if (*y>=MAP_HEIGHT(m)) /* se */
+		{
+			if (!m->tile_path[5]) 
+				return NULL;
+			if (!m->tile_map[5] || m->tile_map[5]->in_memory != MAP_IN_MEMORY)
+				load_and_link_tiled_map(m, 5);
+			*y -= MAP_HEIGHT(m);
+			*x -= MAP_WIDTH(m);
+			return (out_of_map(m->tile_map[5], x, y));
+		}
 
-	*y -= MAP_HEIGHT(m);
-    return (out_of_map(m->tile_map[2], x, y));
+		if (!m->tile_path[1]) 
+			return NULL;
+		if (!m->tile_map[1] || m->tile_map[1]->in_memory != MAP_IN_MEMORY)
+			load_and_link_tiled_map(m, 1);
+		*x -= MAP_WIDTH(m);
+	    return (out_of_map(m->tile_map[1], x, y));
     }
-    return NULL;    /* Shouldn't get here */
+
+	/* because we have tested x above, we don't need to check
+	 * for nw,sw,ne and nw here again.
+	 */
+    if (*y<0) 
+	{
+		if (!m->tile_path[0]) 
+			return NULL;
+		if (!m->tile_map[0] || m->tile_map[0]->in_memory != MAP_IN_MEMORY)
+			load_and_link_tiled_map(m, 0);
+		*y += MAP_HEIGHT(m->tile_map[0]);
+		return (out_of_map(m->tile_map[0], x, y));
+    }
+    if (*y>=MAP_HEIGHT(m))
+	{
+		if (!m->tile_path[2]) 
+			return NULL;
+		if (!m->tile_map[2] || m->tile_map[2]->in_memory != MAP_IN_MEMORY)
+			load_and_link_tiled_map(m, 2);
+		*y -= MAP_HEIGHT(m);
+		return (out_of_map(m->tile_map[2], x, y));
+    }
+    return NULL; 
 }
 
 /* From map.c
@@ -2412,6 +2473,22 @@ int get_rangevector_from_mapcoords(mapstruct *map1, int x1, int y1, mapstruct *m
 	retval->distance_y = y2 - y1;
 	retval->distance_x = -(x1 +(MAP_WIDTH(map2)- x2));
     } 
+    else if (map1->tile_map[4] == map2) {
+	retval->distance_y = -(y1 +(MAP_HEIGHT(map2)- y2));
+	retval->distance_x = (MAP_WIDTH(map1) - x1) + x2;
+    } 
+    else if (map1->tile_map[5] == map2) {
+	retval->distance_x = (MAP_WIDTH(map1) - x1) + x2;
+	retval->distance_y = (MAP_HEIGHT(map1) - y1) + y2;
+    } 
+    else if (map1->tile_map[6] == map2) {
+	retval->distance_y = (MAP_HEIGHT(map1) - y1) + y2;
+	retval->distance_x = -(x1 +(MAP_WIDTH(map2)- x2));
+    } 
+    else if (map1->tile_map[7] == map2) {
+	retval->distance_x = -(x1 +(MAP_WIDTH(map2)- x2));
+	retval->distance_y = -(y1 +(MAP_HEIGHT(map2)- y2));
+    } 
     else if (flags & 0x02) {
         retval->distance_x = x2;
         retval->distance_y = y2;
@@ -2462,14 +2539,11 @@ int on_same_map(object *op1, object *op2)
     if (op1->map == op2->map || op1->map->tile_map[0] == op2->map ||
 	op1->map->tile_map[1] == op2->map ||
 	op1->map->tile_map[2] == op2->map ||
-	op1->map->tile_map[3] == op2->map) return TRUE;
+	op1->map->tile_map[3] == op2->map ||
+	op1->map->tile_map[4] == op2->map ||
+	op1->map->tile_map[5] == op2->map ||
+	op1->map->tile_map[6] == op2->map ||
+	op1->map->tile_map[7] == op2->map) return TRUE;
 
-	/* ok, here we must insert one more check: if we stand on a map position 0,0 and
-	 * want check position -1,-1 the map of this position is not direct attached to our
-	 * object map - its attached to the tile_map[] of ONE of the tile_map maps of our
-	 * base maps - so we need to do here SOME more checks
-	 * ATM, a mob stand on -1,-1 will not attack us - until we move in a direct attached
-	 * tiled map.
-	 */
     return FALSE;
 }

@@ -105,249 +105,39 @@ void read_map_log()
     fclose(fp);
 }
 
-/* These is next on todo: map->players is broken. Add it to remove_ob() and
- * insert_ob_in_map(). ONLY there should map->players be touched.
- * then we can skip there this player check after some testing
+/* if on the map and the direct attached maps no player and no perm_load
+ * flag set, we can safely swap them out!
+ * thats rewritten for beta 2.
  */
-void swap_map(mapstruct *map) {
-	mapstruct *tmp_map;
-    player *pl;
-	/*int i;*/
+void swap_map(mapstruct *map) 
+{
+	int i;
 #ifdef PLUGINS
     int evtid;
     CFParm CFP;
 #endif
 
-    LOG(llevDebug,"Check map for swapping: %s. (players:%d)\n", map->path,map->players );
-    if(map->in_memory != MAP_IN_MEMORY) {
-	LOG(llevBug,"BUG: Tried to swap out map which was not in memory (%s).\n",map->path);
-	return;
-    }
+    LOG(llevDebug,"Check map for swapping: %s. (players:%d)\n", map->path,players_on_map(map) );
 
-    for(pl=first_player;pl!=NULL;pl=pl->next)
-	if(pl->ob == NULL || (!(QUERY_FLAG(pl->ob,FLAG_REMOVED)) && pl->ob->map == map))
-	    break;
-
-    if(pl != NULL) 
+	/* lets check some legal things... */
+    if(map->in_memory != MAP_IN_MEMORY) 
 	{
-		LOG(llevDebug,"Wanted to swap out map with player.skiped.\n");
+		LOG(llevBug,"BUG: Tried to swap out map which was not in memory (%s).\n",map->path);
 		return;
     }
 
-    /* thats bad code here - remember we want remove this loop! */
-	/* This need a fix too! Problem is: we only check this
-	 * 0X0           
-	 * XmX 
-	 * 0X0
-	 * instead of
-	 * XXX
-	 * XmX
-	 * XXX
-	 */
+	if(map->player_first || map->perm_load) /* player nor perm_loaded marked */
+		return;
 
-		/* now we check the "edges" */
-		/* special checks - again - UGLY code - i just copy & paste - here
-		 * we will use m->players in the future!
-		 */
-		 
-	if(map->tile_map[0] && map->tile_map[0]->in_memory == MAP_IN_MEMORY)
+    for(i=0; i<TILED_MAPS; i++) 
 	{
-		for(pl=first_player;pl!=NULL;pl=pl->next)
-		{
-			if(pl->ob == NULL || (!(QUERY_FLAG(pl->ob,FLAG_REMOVED)) && pl->ob->map == map->tile_map[0]))
-				break;
-		}
-		if(pl != NULL) 
-		{
-			LOG(llevDebug,"skip: player on t_map [0] (%s).\n",map->tile_map[0]->name);
-			return;
-		}
-
-		if(map->tile_map[0]->tile_map[3] && map->tile_map[0]->tile_map[3]->in_memory == MAP_IN_MEMORY)
-		{
-			
-			tmp_map = map->tile_map[0]->tile_map[3];
-
-			for(pl=first_player;pl!=NULL;pl=pl->next)
-			{
-				if(pl->ob == NULL || (!(QUERY_FLAG(pl->ob,FLAG_REMOVED)) && pl->ob->map == tmp_map))
-					break;
-			}
-
-		    if(pl != NULL) 
-			{
-				LOG(llevDebug,"skip: player on t_map [0][3] (%s).\n",tmp_map->name);
-				return;
-			}
-		}
-		
-		if(map->tile_map[0]->tile_map[1] && map->tile_map[0]->tile_map[1]->in_memory == MAP_IN_MEMORY)
-		{
-			
-			tmp_map = map->tile_map[0]->tile_map[1];
-
-			for(pl=first_player;pl!=NULL;pl=pl->next)
-			{
-				if(pl->ob == NULL || (!(QUERY_FLAG(pl->ob,FLAG_REMOVED)) && pl->ob->map == tmp_map))
-					break;
-			}
-
-		    if(pl != NULL) 
-			{
-				LOG(llevDebug,"skip: player on t_map [0][1] (%s).\n",tmp_map->name);
-				return;
-			}
-		}
+		/* if there is a map, is load AND in memory and players on OR perm_load, then... */
+        if (map->tile_map[i] && map->tile_map[i]->in_memory==MAP_IN_MEMORY && 
+							(map->tile_map[i]->player_first || map->tile_map[i]->perm_load))
+			return; /* no swap */
 	}
 
-	if(map->tile_map[2] && map->tile_map[2]->in_memory == MAP_IN_MEMORY)
-	{
-		for(pl=first_player;pl!=NULL;pl=pl->next)
-		{
-			if(pl->ob == NULL || (!(QUERY_FLAG(pl->ob,FLAG_REMOVED)) && pl->ob->map == map->tile_map[2]))
-				break;
-		}
-		if(pl != NULL) 
-		{
-			LOG(llevDebug,"skip: player on t_map [2] (%s).\n",map->tile_map[2]->name);
-			return;
-		}
-
-		if(map->tile_map[2]->tile_map[3] && map->tile_map[2]->tile_map[3]->in_memory == MAP_IN_MEMORY)
-		{
-			
-			tmp_map = map->tile_map[2]->tile_map[3];
-
-			for(pl=first_player;pl!=NULL;pl=pl->next)
-			{
-				if(pl->ob == NULL || (!(QUERY_FLAG(pl->ob,FLAG_REMOVED)) && pl->ob->map == tmp_map))
-					break;
-			}
-
-		    if(pl != NULL) 
-			{
-				LOG(llevDebug,"skip: player on t_map [2][3] (%s).\n",tmp_map->name);
-				return;
-			}
-		}
-		if(map->tile_map[2]->tile_map[1] && map->tile_map[2]->tile_map[1]->in_memory == MAP_IN_MEMORY)
-		{
-			
-			tmp_map = map->tile_map[2]->tile_map[1];
-
-			for(pl=first_player;pl!=NULL;pl=pl->next)
-			{
-				if(pl->ob == NULL || (!(QUERY_FLAG(pl->ob,FLAG_REMOVED)) && pl->ob->map == tmp_map))
-					break;
-			}
-
-		    if(pl != NULL) 
-			{
-				LOG(llevDebug,"skip: player on t_map [2][1] (%s).\n",tmp_map->name);
-				return;
-			}
-		}
-	}
-
-	if(map->tile_map[1] && map->tile_map[1]->in_memory == MAP_IN_MEMORY)
-	{
-		for(pl=first_player;pl!=NULL;pl=pl->next)
-		{
-			if(pl->ob == NULL || (!(QUERY_FLAG(pl->ob,FLAG_REMOVED)) && pl->ob->map == map->tile_map[1]))
-				break;
-		}
-		if(pl != NULL) 
-		{
-			LOG(llevDebug,"skip: player on t_map [1] (%s).\n",map->tile_map[1]->name);
-			return;
-		}
-
-		if(map->tile_map[1]->tile_map[0] && map->tile_map[1]->tile_map[0]->in_memory == MAP_IN_MEMORY)
-		{
-			
-			tmp_map = map->tile_map[1]->tile_map[0];
-
-			for(pl=first_player;pl!=NULL;pl=pl->next)
-			{
-				if(pl->ob == NULL || (!(QUERY_FLAG(pl->ob,FLAG_REMOVED)) && pl->ob->map == tmp_map))
-					break;
-			}
-
-		    if(pl != NULL) 
-			{
-				LOG(llevDebug,"skip: player on t_map [1][0] (%s).\n",tmp_map->name);
-				return;
-			}
-		}
-		if(map->tile_map[1]->tile_map[2] && map->tile_map[1]->tile_map[2]->in_memory == MAP_IN_MEMORY)
-		{
-			
-			tmp_map = map->tile_map[1]->tile_map[2];
-
-			for(pl=first_player;pl!=NULL;pl=pl->next)
-			{
-				if(pl->ob == NULL || (!(QUERY_FLAG(pl->ob,FLAG_REMOVED)) && pl->ob->map == tmp_map))
-					break;
-			}
-
-		    if(pl != NULL) 
-			{
-				LOG(llevDebug,"skip: player on t_map [1][2] (%s).\n",tmp_map->name);
-				return;
-			}
-		}
-	}
-
-	if(map->tile_map[3] && map->tile_map[3]->in_memory == MAP_IN_MEMORY)
-	{	
-		for(pl=first_player;pl!=NULL;pl=pl->next)
-		{
-			if(pl->ob == NULL || (!(QUERY_FLAG(pl->ob,FLAG_REMOVED)) && pl->ob->map == map->tile_map[3]))
-				break;
-		}
-		if(pl != NULL) 
-		{
-			LOG(llevDebug,"skip: player on t_map [3] (%s).\n",map->tile_map[3]->name);
-			return;
-		}
-
-		if(map->tile_map[3]->tile_map[0] && map->tile_map[3]->tile_map[0]->in_memory == MAP_IN_MEMORY)
-		{
-			
-			tmp_map = map->tile_map[3]->tile_map[0];
-
-			for(pl=first_player;pl!=NULL;pl=pl->next)
-			{
-				if(pl->ob == NULL || (!(QUERY_FLAG(pl->ob,FLAG_REMOVED)) && pl->ob->map == tmp_map))
-					break;
-			}
-
-		    if(pl != NULL) 
-			{
-				LOG(llevDebug,"skip: player on t_map [3][0] (%s).\n",tmp_map->name);
-				return;
-			}
-		}
-		if(map->tile_map[3]->tile_map[2] && map->tile_map[3]->tile_map[2]->in_memory == MAP_IN_MEMORY)
-		{
-			
-			tmp_map = map->tile_map[3]->tile_map[2];
-
-			for(pl=first_player;pl!=NULL;pl=pl->next)
-			{
-				if(pl->ob == NULL || (!(QUERY_FLAG(pl->ob,FLAG_REMOVED)) && pl->ob->map == tmp_map))
-					break;
-			}
-
-		    if(pl != NULL) 
-			{
-				LOG(llevDebug,"skip: player on t_map [3][2] (%s).\n",tmp_map->name);
-				return;
-			}
-		}
-	}
-
-
+	/* when we are here, map is save to swap! */
     remove_all_pets(map); /* Give them a chance to follow */
 
     /* Update the reset time.  Only do this is STAND_STILL is not set */
@@ -449,18 +239,17 @@ void swap_below_max(char *except_level) {
     }
 }
 
-/*
- * players_on_map(): will be replaced by map->players when I'm satisfied
- * that the variable is always correct.
+/* count the player on a map, using the local map player list 
  */
+int players_on_map(mapstruct *m) 
+{
+	object *tmp;
+	int count;
 
-int players_on_map(mapstruct *m) {
-  player *pl;
-  int nr=0;
-  for(pl=first_player;pl!=NULL;pl=pl->next)
-    if(pl->ob != NULL && !QUERY_FLAG(pl->ob,FLAG_REMOVED) && pl->ob->map==m)
-      nr++;
-  return nr;
+	for(count=0,tmp=m->player_first;tmp;tmp=tmp->contr->map_above)
+		count++;
+
+	return count;
 }
 
 /*
@@ -484,10 +273,8 @@ void flush_old_maps() {
 	/* There can be cases (ie death) where a player leaves a map and the timeout
 	 * is not set so it isn't swapped out.
 	 */
-	if ((m->in_memory == MAP_IN_MEMORY) && (m->timeout==0) &&
-	    !players_on_map(m)) {
+	if ((m->in_memory == MAP_IN_MEMORY) && (m->timeout==0) && !m->player_first)
 	    set_map_timeout(m);
-	}
 
 	/* per player unique maps are never really reset.  However, we do want
 	 * to perdiocially remove the entries in the list of active maps - this
