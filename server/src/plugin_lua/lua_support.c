@@ -102,11 +102,11 @@ static int getObjectMember(lua_State *L)
 
     if (nargs == 2)
     {
-        lua_object *object              = lua_touserdata(L, 1); 
+        lua_object *obj              = lua_touserdata(L, 1); 
         const char *key                 = lua_tostring(L, 2);                       
-        lua_class *class    = object->class;
+        lua_class *class    = obj->class;
 
-        if (object && key)
+        if (obj && key)
         {
             lua_object *member;
 
@@ -117,10 +117,24 @@ static int getObjectMember(lua_State *L)
 
             if ((member = lua_touserdata(L, -1)))
             {
+                switch(obj->class->type)
+                {
+                    case LUATYPE_OBJECT:
+                        if(obj->data.object->count != obj->tag )
+                            luaL_error(L, "Invalid object");
+                        break;
+                    case LUATYPE_EVENT:
+                        if(obj->data.context->tag != obj->tag )
+                            luaL_error(L, "Invalid event context");
+                        break;
+                    default:
+                        break;
+                } 
+
                 switch (member->class->type)
                 {
                     case LUATYPE_ATTRIBUTE:
-                      return get_attribute(L, object, member->data.attribute);
+                      return get_attribute(L, obj, member->data.attribute);
 
                     case LUATYPE_METHOD:
                       lua_pushcclosure(L, member->data.method->func, 0);
@@ -132,7 +146,7 @@ static int getObjectMember(lua_State *L)
 
                     case LUATYPE_FLAG:
                       if (class->getFlag)
-                          return class->                                getFlag(L, object, member->data.flagno);
+                          return class->                                getFlag(L, obj, member->data.flagno);
                       luaL_error(L, "Can't set flags of %s", class->name);
 
                     default:
@@ -141,7 +155,7 @@ static int getObjectMember(lua_State *L)
                 }
             } 
 
-            luaL_error(L, "No such class member: %s.%s", object->class->name, key);
+            luaL_error(L, "No such class member: %s.%s", obj->class->name, key);
         }
         else
             luaL_error(L, "BUG: Wrong parameter types");
@@ -159,46 +173,60 @@ static int setObjectMember(lua_State *L)
 
     if (nargs == 3)
     {
-        lua_object *object  = lua_touserdata(L, 1);
+        lua_object *obj  = lua_touserdata(L, 1);
         const char *key     = lua_tostring(L, 2);
         /* stack: object, key, value */
 
-        if (object && key)
+        if (obj && key)
         {
             lua_object *member;
 
-            lua_rawgeti(L, LUA_REGISTRYINDEX, object->class->meta); /* Fetch the class */
+            lua_rawgeti(L, LUA_REGISTRYINDEX, obj->class->meta); /* Fetch the class */
             lua_pushstring(L, key);
             lua_rawget(L, -2); /* Get the member */
             /* stack: object, key, value, class table, class member */
 
             if ((member = lua_touserdata(L, -1)))
             {
+                switch(obj->class->type)
+                {
+                    case LUATYPE_OBJECT:
+                        if(obj->data.object->count != obj->tag )
+                            luaL_error(L, "Invalid object");
+                        break;
+                    case LUATYPE_EVENT:
+                        if(obj->data.context->tag != obj->tag )
+                            luaL_error(L, "Invalid event context");
+                        break;
+                    default:
+                        break;
+                } 
+                
                 switch (member->class->type)
                 {
                     case LUATYPE_ATTRIBUTE:
                       if (!(member->data.attribute->flags & FIELDFLAG_READONLY))
                       {
                           lua_pop(L, 2); /* get rid of class table and member*/
-                          set_attribute(L, object, member->data.attribute);
+                          set_attribute(L, obj, member->data.attribute);
                           return 0;
                       } /* else: fall trough... */
                     case LUATYPE_METHOD:
                     case LUATYPE_CONSTANT:
-                      luaL_error(L, "Readonly member %s.%s", object->class->name, key);
+                      luaL_error(L, "Readonly member %s.%s", obj->class->name, key);
 
                     case LUATYPE_FLAG:
                       lua_pop(L, 2); /* get rid of class table and member*/
-                      if (object->class->setFlag)
-                          return object->class->                                setFlag(L, object, member->data.flagno);
-                      luaL_error(L, "Readonly flag %s.%s", object->class->name, key);
+                      if (obj->class->setFlag)
+                          return obj->class->setFlag(L, obj, member->data.flagno);
+                      luaL_error(L, "Readonly flag %s.%s", obj->class->name, key);
 
                     default:
                       /* Do nothing */
                       break;
                 }
             } 
-            luaL_error(L, "No such class member: %s.%s", object->class->name, key);
+            luaL_error(L, "No such class member: %s.%s", obj->class->name, key);
         }
         else
             luaL_error(L, "BUG: wrong parameter types");
@@ -255,8 +283,6 @@ static int get_attribute(lua_State *L, lua_object *obj, struct attribute_decl *a
            * to handle validation in long-running scripts */
           return push_object(L, &Map, *(mapstruct * *) field_ptr);
         case FIELDTYPE_OBJECT:
-          /* TODO: objects should also include the tag, to handle
-           * validation in long-running scripts */
           return push_object(L, &GameObject, *(object * *) field_ptr);
         case FIELDTYPE_OBJECTREF:
           /* returns nil if objectref is invalid */
@@ -363,10 +389,26 @@ static inline void param_type_err(lua_State *L, int pos, const char *expected)
 /* Validate and get an object argument of the specified class */
 static inline lua_object * get_object_arg(lua_State *L, int pos, lua_class *class)
 {
-    lua_object *object;
+    lua_object *obj;
 
-    if ((object = lua_touserdata(L, pos)) && object->class->type == class->type)
-        return object;
+    if ((obj = lua_touserdata(L, pos))) 
+    {
+        switch(obj->class->type)
+        {
+            case LUATYPE_OBJECT:
+                if(obj->data.object->count != obj->tag )
+                    param_type_err(L, pos, "an invalid object");
+                break;
+            case LUATYPE_EVENT:
+                if(obj->data.context->tag != obj->tag )
+                    param_type_err(L, pos, "an invalid event");
+                break;
+            default:
+                break;
+        }
+        
+        return obj;
+    }
 
     param_type_err(L, pos, class->name);
     return NULL;
@@ -501,14 +543,25 @@ int push_object(lua_State *L, lua_class *class, void *data)
     }
 
     obj = lua_newuserdata(L, sizeof(lua_object));
-    obj->       class   = class;
+    obj->class = class;
     obj->data.anything = data;
 
+    switch(class->type) {
+        case LUATYPE_OBJECT:
+            obj->tag = obj->data.object->count;
+            break;
+        case LUATYPE_EVENT:
+            obj->tag = obj->data.context->tag;
+            break;
+        default:
+            break;
+    }
+    
     /* Fetch and attach metatable */
     lua_rawgeti(L, LUA_REGISTRYINDEX, class->meta);
     lua_setmetatable(L, -2); 
 
-    class-> obcount++;
+    class->obcount++;
     //    LOG(llevDebug, "pushed a %s (count=%d)\n", obj->class->name, obj->class->obcount);
 
     return 1;
@@ -552,8 +605,6 @@ int init_class(struct lua_State *L, lua_class *class)
      * - add optional set/get function pointers to the attribute definitions
      * - allow lua scripts to replace/add methods and add attributes
      *   (requires change in the object model)
-     * - long-lived scripts (attached to active objects or with own timers)
-     * - validation of objects & maps (only needed for long-lived scripts)
      */
 
     /* Set up class metatable */
