@@ -313,17 +313,23 @@ int calc_skill_exp(object *who, object *op)
 	
 	if(who_lvl <= op_lvl) /* player has killed same level or lower! */
 	{
+		LOG(llevDebug,"EXP (lower hitter %d):: target %s (base:%d lvl:%d mul: %f) ",who_lvl, query_name(op),op_exp,op_lvl,lev_exp[op_lvl]);
 		op_exp = (int)((float) op_exp * lev_exp[op_lvl]);
-		tmp=(int)((float)(new_levels[who_lvl+1]-new_levels[who_lvl])*0.10f);
+		tmp=(int)((float)(new_levels[who_lvl+1]-new_levels[who_lvl])*0.08f);
 		if(op_exp > tmp)
+		{
+			LOG(llevDebug,"exp to high(%d)! adjusted to: %d",op_exp, tmp);
 			op_exp = tmp;
+		}
 	}
 	else /* mob is lower in level as player ! */
 	{
 		tmp = (who_lvl - op_lvl)*3;
+		LOG(llevDebug,"EXP (higher hitter %d):: target %s (base:%d lvl:%d mul: %f) tmp:%d ",who_lvl, query_name(op),op_exp,op_lvl,lev_exp[op_lvl],tmp);
 
 		if(tmp > op_lvl*2 && (who_lvl - op_lvl)>2)
 		tmp = calc_level_difference(who_lvl, op_lvl);
+		LOG(llevDebug,"level diff factor: %d ",tmp);
 		if(tmp)
 		{
 			exp_mul = (float)op_lvl / ((float)op_lvl+(float)tmp*1.5f);
@@ -333,7 +339,7 @@ int calc_skill_exp(object *who, object *op)
 			op_exp = 0;
 	}
 
-	LOG(llevDebug,"EXP:: %s (lvl %d(%d)) gets %d exp in %s from %s (lvl %d)\n", query_name(who), who_lvl, who->level, op_exp,
+	LOG(llevDebug,"\nEXP:: %s (lvl %d(%d)) gets %d exp in %s from %s (lvl %d)\n", query_name(who), who_lvl, who->level, op_exp,
 		who->chosen_skill?query_name(who->chosen_skill):"<BUG: NO SKILL!>",query_name(op), op_lvl);
 	/* old code. I skipped skill[].lexp and bexp - perhaps later back in
 	if(who->chosen_skill==NULL)
@@ -376,6 +382,7 @@ int calc_level_difference(int who_lvl, int op_lvl)
 
 	return tmp<1.0f?1:(int)tmp;
 }
+
 
 /* find relevant stats or a skill then return their weighted sum. 
  * I admit the calculation is done in a retarded way.
