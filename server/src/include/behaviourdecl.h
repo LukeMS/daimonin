@@ -8,8 +8,32 @@
  * by the editor to generate a nice UI for behaviour configuration.
  */
 /* Oh, and if someone really wants to get advanced:
- * TODO: Make the list syntax more obvious
+ * TODO: Make the list syntax more obvious (add comma separation and 
+ *       consistent list termination)
  * TODO: get rid of the need to name the behaviour for each parameter
+ */
+
+/*
+ * Declaration syntax (in sortof EBNF form):
+ * 
+ * <classlist> := <behaviourclass> | <behaviourclass> <classlist>
+ * <behaviourclass> := 
+ *      "BehaviourClass(" classname "," <behaviourlist> ")"
+ *      
+ * <behaviourlist> := "NIL" | <behaviour>+
+ * <behaviour> := 
+ *      "Behaviour(" behaviourname "," behaviourfunc "," <opt_parameterlist> ")" 
+ *      
+ * <parameterlist> := "NIL" | <parameter>+
+ * <parameter> := 
+ *      "Parameter(" behaviourname "," parametername "," type "," flags "," defaultvalue ")"
+ *
+ * - As you can see, NIL is used for empty lists and not for terminating lists. 
+ *   Lists are (currently) not comma-separated. 
+ * - Behaviour.behaviourfunc and Parameter.behaviourname are not important
+ *   for mapmakers and are only relevant for the internal handling of processes.
+ * - There's currenty no way of defining default string values for stringint
+ *   parameters, this might be fixed in the future.
  */
 
 /**
@@ -18,6 +42,18 @@
  * are always executed 
  */
 BehaviourClass(PROCESSES, 
+    /** Determines the personal attitude of the mob, not a real behaviour.
+     * (The values here determine initial friendship value at first sight)
+     */
+    Behaviour(ATTITUDE, ai_fake_process, 
+        /** Attitude against a race */
+        Parameter(ATTITUDE, RACE, STRINGINT, MULTI | OPTIONAL, "X:0")
+        /** Attitude against an archetype */
+        Parameter(ATTITUDE, ARCH, STRINGINT, MULTI | OPTIONAL, "X:0")
+        /** Attitude against a named object/mob/player */
+        Parameter(ATTITUDE, NAME, STRINGINT, MULTI | OPTIONAL, "X:0")
+    )
+        
     /** Simply look around for other mobs nearby */
     Behaviour(LOOK_FOR_OTHER_MOBS, ai_look_for_other_mobs, NIL)
 

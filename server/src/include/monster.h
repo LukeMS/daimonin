@@ -51,8 +51,8 @@ struct mobdata_pathfinding
 };
 
 #define AI_OBJFLAG_USES_DISTANCE_ATTACK 0 /* The object is known 
-											 to make use of distance
-											 attacks */
+                                             to make use of distance
+                                             attacks */
 #define NROF_AI_KNOWN_OBJ_FLAGS 1
 
 /* Keeps track of other objects known to a mob 
@@ -83,6 +83,7 @@ struct mob_known_obj
 
 /* Flags for parameters */
 #define AI_PARAM_PRESENT   1 /* The parameter is present */
+
 #define AIPARAM_PRESENT(param) (params[(param)].flags & AI_PARAM_PRESENT)
 #define AIPARAM_INT(param) params[(param)].intvalue
 #define AIPARAM_STRING(param) params[(param)].stringvalue
@@ -124,6 +125,8 @@ struct mobdata
     struct mob_known_obj       *leader, *enemy;
 
     struct mob_behaviourset    *behaviours;
+
+    struct mob_behaviour_param *attitudes;  /* Quicklink to behaviours["ATTITUDE"]->parameters */
 };
 
 #define MOB_DATA(ob) ((struct mobdata *)((ob)->custom_attrset))
