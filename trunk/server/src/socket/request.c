@@ -1054,7 +1054,7 @@ void draw_client_map(object *pl)
  * when we update the object.
  */
 
-static int	darkness_table[] = {0,100,200,300,400,500,600,700};
+static int	darkness_table[] = {0,10,30,60,120,260,480,960};
 
 void draw_client_map2(object *pl)
 {
@@ -1225,12 +1225,12 @@ void draw_client_map2(object *pl)
 		 * and update the client when something has changed.
 		 */
 		/* we should do this with a table */
-        if (d>600) d = 210;
-        else if (d>500) d = 180;
-        else if (d>400) d = 150;
-        else if (d>300) d = 120;
-        else if (d>200) d = 90;
-        else if (d>100) d = 60;
+        if (d>640) d = 210;
+        else if (d>320) d = 180;
+        else if (d>160) d = 150;
+        else if (d>80) d = 120;
+        else if (d>40) d = 90;
+        else if (d>20) d = 60;
 		else d = 30;
 
         mp = &(pl->contr->socket.lastmap.cells[ax][ay]);

@@ -6,7 +6,7 @@ Date:    6/4/2003
 endmsg
 width 10
 height 10
-darkness 700
+darkness 1280
 difficulty 1
 tile_path_1 testmap_waypoints3
 tile_path_8 testmap_waypoints2

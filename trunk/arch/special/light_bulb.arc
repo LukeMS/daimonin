@@ -40,7 +40,7 @@ sys_object 1
 end
 Object light5
 name light
-face light_bulb_4.111
+face light_bulb_5.111
 no_pick 1
 no_drop 1
 type 78
@@ -50,7 +50,7 @@ sys_object 1
 end
 Object light6
 name light
-face light_bulb_4.111
+face light_bulb_6.111
 no_pick 1
 no_drop 1
 type 78
@@ -60,7 +60,7 @@ sys_object 1
 end
 Object light7
 name light
-face light_bulb_4.111
+face light_bulb_7.111
 no_pick 1
 no_drop 1
 type 78
@@ -70,7 +70,7 @@ sys_object 1
 end
 Object light8
 name light
-face light_bulb_4.111
+face light_bulb_8.111
 no_pick 1
 no_drop 1
 type 78
@@ -80,7 +80,7 @@ sys_object 1
 end
 Object light9
 name light
-face light_bulb_4.111
+face light_bulb_9.111
 no_pick 1
 no_drop 1
 type 78

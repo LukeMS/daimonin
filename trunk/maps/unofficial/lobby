@@ -3,10 +3,9 @@ name Unoficiall maps lobby
 msg
 Creator: Bjorn Axelsson <gecko@acc.umu.se>
 Date:    6/4/2003
-
 Contributions are welcome!
 endmsg
-darkness 700
+darkness 1280
 width 24
 height 24
 difficulty 1

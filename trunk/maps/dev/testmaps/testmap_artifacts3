@@ -7,7 +7,7 @@ endmsg
 width 24
 height 24
 difficulty 1
-darkness 700
+darkness 1280
 tile_path_1 testmap_artifacts2
 end
 arch floor_ostone1
