@@ -1,0 +1,11 @@
+
+ ***** invite command (group) *****
+ * group leaders only
+
+syntax: /invite <name> | allow <name> | on | off
+
+where name is the name of the player you want
+to invite to your group.
+Use '/invite off' to disallow anyone to invite you.
+'/invite on' will allow anyone to invite you and
+'/invite allow <name>' only player <name>.

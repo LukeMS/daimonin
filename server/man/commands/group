@@ -1,0 +1,8 @@
+
+ ***** group commands *****
+
+commands:
+ /invite, /join ,/deny,
+ /leave, /remove, /gsay
+
+Use /help <command> (without '/') for more info.

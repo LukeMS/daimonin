@@ -317,7 +317,10 @@ void party_add_member(player *leader, player *member)
 		CONTR(tmp)->group_nr=i;
 
 	party_message(0,NDI_YELLOW, 0,leader->ob, member->ob, "%s joined the group.", query_name(member->ob));
+	if( leader->group_nrof == 2)
+		new_draw_info(NDI_YELLOW, 0, leader->ob, "Use /gsay for group speak or /help group for help.");
     new_draw_info(NDI_YELLOW, 0, member->ob, "You joined the group.");
+    new_draw_info(NDI_YELLOW, 0, member->ob, "Use /gsay for group speak or /help group for help.");
     party_client_group_status(member->ob);		
 
 }

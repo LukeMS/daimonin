@@ -1074,8 +1074,8 @@ int kill_object(object *op, int dam, object *hitter, int type)
     int         battleg             = 0;    /* true if op standing on battleground */
     int         killed_script_rtn   = 0;
     mapstruct  *map;
-    char *buf_ptr;
-
+	char		*buf_ptr, buf2[MAX_BUF];
+	
 #ifdef PLUGINS
     CFParm      CFP;
 #endif
@@ -1181,7 +1181,6 @@ int kill_object(object *op, int dam, object *hitter, int type)
         if (owner->type == PLAYER)
         {
             char        buf[MAX_BUF];
-            char        buf2[MAX_BUF];
 
             /* old pet code */
             /* if (owner != NULL)
@@ -1192,14 +1191,13 @@ int kill_object(object *op, int dam, object *hitter, int type)
                 owner->exp_obj = hitter->exp_obj;
                 hitter = hitter->owner;
             }*/
-
-            buf_ptr = &buf2[0]; /* well, we need to trick in the kill msg before exp */
+			buf_ptr = buf2;
             if (owner != hitter)
             {
                 sprintf(buf, "You killed %s with %s.", query_name(op), query_name(hitter));
                 sprintf(buf2, "%s killed %s with %s.", query_name(owner), query_name(op), query_name(hitter));
                 //if(CONTR(owner)->group_id != GROUP_NO) /* broadcast to group members */
-                //    party_message(PMSG_MODE_NOEXP, NDI_YELLOW, 0, CONTR(owner)->group_leader, owner, "%s %s", query_name(owner),buf2);
+                //    party_message(PMSG_MODE_NOE XP, NDI_YELLOW, 0, CONTR(owner)->group_leader, owner, "%s %s", query_name(owner),buf2);
                 old_hitter = hitter;
                 owner->exp_obj = hitter->exp_obj;
             }
