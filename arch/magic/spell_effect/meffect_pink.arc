@@ -3,6 +3,7 @@ name magic glow
 face effect1_pink.101
 layer 7
 type 79
+no_save 1
 anim
 effect1_pink.101
 effect1_pink.102

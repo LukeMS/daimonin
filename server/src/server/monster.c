@@ -943,6 +943,7 @@ int move_monster(object *op) {
         if(QUERY_FLAG(op, FLAG_ONLY_ATTACK)) 
         {
             remove_ob(op);
+			check_walk_off (op, NULL,MOVE_APPLY_DEFAULT);	
             return 1;
 	    }
         if(!QUERY_FLAG(op, FLAG_STAND_STILL)) 
@@ -1644,8 +1645,9 @@ int monster_use_bow(object *head, object *part, object *pl, int dir) {
   tag = arrow->count;
   arrow->stats.grace = arrow->last_sp;
   arrow->stats.maxgrace = 60+(RANDOM()%12);
-  insert_ob_in_map(arrow,head->map,head,0);
   play_sound_map(arrow->map, arrow->x, arrow->y,SOUND_THROW, SOUND_NORMAL);
+  if(!insert_ob_in_map(arrow,head->map,head,0))
+	  return 1;
   if (!was_destroyed(arrow, tag))
     move_arrow(arrow);
   return 1;
@@ -1719,6 +1721,8 @@ void monster_check_pickup(object *monster) {
     if (next) next_tag = next->count;
     if (monster_can_pick(monster,tmp)) {
       remove_ob(tmp);
+	  if(check_walk_off (tmp, NULL,MOVE_APPLY_DEFAULT) != CHECK_WALK_OK)
+		  return;					
       tmp = insert_ob_in_ob(tmp,monster);
 
 #ifdef PLUGINS
@@ -2809,8 +2813,8 @@ void spawn_point(object *op)
 					return;
 									
 				/* darkness has changed - now remove the spawned monster */
-				SET_MULTI_FLAG(op->enemy, FLAG_NO_APPLY);
 				remove_ob(op->enemy);
+				check_walk_off (op->enemy, NULL,MOVE_APPLY_VANISHED);
 			}
 			else
 				return;
@@ -2847,6 +2851,7 @@ void spawn_point(object *op)
 		LOG(llevBug,"BUG: Spawn point without inventory!! --> map %s (%d,%d)\n",op->map?(op->map->path?op->map->path:">no path<"):">no map<", op->x, op->y);
 		/* kill this spawn point - its useless and need to fixed from the map maker/generator */
 		remove_ob(op);
+		check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
 		return;
 	}
 	/* now we move through the spawn point inventory and
@@ -2939,9 +2944,10 @@ void spawn_point(object *op)
 	tmp->owner = op; /* chain spawn point to our mob */
     insert_ob_in_ob(tmp,mob);      /* and put it in the mob */
 
-	SET_FLAG(mob, FLAG_SPAWN_MOB); /* FINISH: now mark our mob as a spawn */
+	SET_MULTI_FLAG(mob, FLAG_SPAWN_MOB); /* FINISH: now mark our mob as a spawn */
 	fix_monster(mob); /* fix all the values and add in possible abilities or forces ... */
-    insert_ob_in_map(mob,mob->map,op,0); /* *now* all is done - *now* put it on map */
+    if(!insert_ob_in_map(mob,mob->map,op,0)) /* *now* all is done - *now* put it on map */
+		return;
 	if(QUERY_FLAG(mob,FLAG_FRIENDLY))
         add_friendly_object(mob);
 	

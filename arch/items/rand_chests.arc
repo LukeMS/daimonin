@@ -5,7 +5,6 @@ nrof 0
 layer 4
 type 4
 level 1
-hp 1
 msg
 Touching the treasure chest it crumbles to dust.
 endmsg
@@ -23,7 +22,6 @@ type 4
 level 1
 no_pick 1
 layer 4
-hp 1
 msg
 Touching the treasure chest it crumbles to dust.
 endmsg
@@ -43,7 +41,6 @@ Touching the treasure chest it crumbles to dust.
 endmsg
 no_pick 1
 layer 4
-hp 1
 material 18
 value 50
 weight 50000

@@ -489,7 +489,7 @@ int change_abil(object *op, object *tmp) {
         (*draw_info_func)(NDI_UNIQUE|NDI_WHITE, 0, op,"You float a little lower in the air.");
       else {
         (*draw_info_func)(NDI_UNIQUE|NDI_GREY, 0, op,"You float down to the ground.");
-	check_walk_on (op, op);
+	check_walk_on (op, op,0);
       }
     }
   }
@@ -1627,7 +1627,6 @@ void fix_player(object *op)
 	else if (reg_sec && reg_sec <0.1)
 		reg_sec = 0.1f;
 	CONTR(op)->gen_client_hp = (uint16) (reg_sec*10.0f); /* the value for the client */
-	/*LOG(-1,"%3.3f (%d - %d)\n", reg_sec, base_hp_reg,CONTR(op)->reg_hp_num);*/
 		
     /* Regenerate Mana */
 	base_reg = 35; /* default value */

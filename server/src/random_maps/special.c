@@ -240,7 +240,7 @@ void place_special_exit(mapstruct * map, int hole_type,RMParms *RP) {
 
 		
   }
-  insert_ob_in_map(the_exit,map,NULL,0);
+  insert_ob_in_map(the_exit,map,NULL,INS_NO_MERGE | INS_NO_WALK_ON);
 }
   
 		  

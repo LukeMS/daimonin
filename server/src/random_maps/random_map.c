@@ -83,6 +83,13 @@ mapstruct *generate_random_map(char *OutFileName, RMParms *RP) {
   /* set the name of the map. */
   FREE_AND_COPY_HASH(theMap->path,OutFileName);
 
+  /* treasures needs to have a proper difficulty set for
+     the map. */
+  /* TODO: give difficulty from random_map caller! */
+  /* CF has missused this as setting and value at once */
+    theMap->difficulty= 2; /* WORK HACK */
+  /* theMap->difficulty=calculate_difficulty(theMap); */
+
   make_map_walls(theMap,layout,RP->wallstyle,RP);
 
   put_doors(theMap,layout,RP->doorstyle,RP);
@@ -93,20 +100,9 @@ mapstruct *generate_random_map(char *OutFileName, RMParms *RP) {
 
   place_monsters(theMap,RP->monsterstyle,RP->difficulty,RP);
 
-  /* treasures needs to have a proper difficulty set for
-     the map. */
-  /* TODO: give difficulty from random_map caller! */
-  /* CF has missused this as setting and value at once */
-    theMap->difficulty= 2; /* WORK HACK */
-  /* theMap->difficulty=calculate_difficulty(theMap); */
-
   place_treasure(theMap,layout,RP->treasurestyle,RP->treasureoptions,RP);
 
   put_decor(theMap,layout,RP->decorstyle,RP->decoroptions,RP);
-
-  /* generate treasures, etc. */
-  if(RP->generate_treasure_now)
-    fix_auto_apply(theMap);
 
   unblock_exits(theMap,layout,RP);
   /*  fclose(OutFile); */

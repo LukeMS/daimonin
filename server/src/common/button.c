@@ -43,7 +43,7 @@ void push_button(object *op) {
 
   /*LOG(llevDebug, "push_button: %s (%d)\n", op->name, op->count);*/
   for (ol = get_button_links(op); ol; ol = ol->next) {
-    if (!ol->ob || ol->ob->count != (tag_t) ol->id) {
+    if (!ol->ob || ol->ob->count != ol->id) {
       LOG(llevBug, "BUG: Internal error in push_button (%s).\n", op->name);
       continue;
     }
@@ -54,8 +54,11 @@ void push_button(object *op) {
      * probably isn't important - it will get sorted out when the map is
      * re-loaded.  As such, just exit this function if that is the case.
      */
-    
-    if (OBJECT_FREE(ol->ob)) return;
+    if (!OBJECT_ACTIVE(ol->ob)) 
+	{
+		LOG(llevDebug, "DEBUG: push_button: button link with invalid object! (%x - %x)",QUERY_FLAG(ol->ob,FLAG_REMOVED), ol->ob->count);
+		return;
+	}
     tmp = ol->ob;
     switch(tmp->type) {
     case GATE:
@@ -137,30 +140,35 @@ void push_button(object *op) {
 
 void update_button(object *op) {
     object *ab,*tmp,*head;
-    int tot,any_down=0, old_value=op->value;
+    int move, fly, tot,any_down=0, old_value=op->value;
     objectlink *ol;
 
     /* LOG(llevDebug, "update_button: %s (%d)\n", op->name, op->count); */
     for (ol = get_button_links(op); ol; ol = ol->next) {
-	if (!ol->ob || ol->ob->count != (tag_t) ol->id) {
+	if (!ol->ob || ol->ob->count != ol->id) {
 	    LOG(llevDebug, "Internal error in update_button (%s).\n", op->name);
 	    continue;
 	}
 	tmp = ol->ob;
 	if (tmp->type==BUTTON) {
-	    for(ab=tmp->above,tot=0;ab!=NULL;ab=ab->above)
-		if(!QUERY_FLAG(ab,FLAG_FLYING)) /* Why was nrof removed? */
-		    tot+=ab->weight*(ab->nrof?ab->nrof:1)+ab->carrying;
+		fly = QUERY_FLAG(tmp,FLAG_FLY_ON);
+		move = QUERY_FLAG(tmp,FLAG_WALK_ON);
+	    for(ab=GET_MAP_OB_LAYER(tmp->map, tmp->x, tmp->y,2),tot=0;ab!=NULL;ab=ab->above)
+		{
+			if(ab != tmp && (fly?QUERY_FLAG(ab,FLAG_FLYING):move))
+				tot+=ab->weight*(ab->nrof?ab->nrof:1)+ab->carrying;
+		}
 	    tmp->value=(tot>=tmp->weight)?1:0;
 	    if(tmp->value)
 		any_down=1;
 	} else if (tmp->type == PEDESTAL) {
 	    tmp->value = 0;
-	    for(ab=tmp->above; ab!=NULL; ab=ab->above) {
+		fly = QUERY_FLAG(tmp,FLAG_FLY_ON);
+		move = QUERY_FLAG(tmp,FLAG_WALK_ON);
+		for(ab=GET_MAP_OB_LAYER(tmp->map, tmp->x, tmp->y,2); ab!=NULL; ab=ab->above) {
 		head = ab->head ? ab->head : ab;
-		if ( (!QUERY_FLAG(head,FLAG_FLYING) || QUERY_FLAG(tmp,FLAG_FLY_ON)) &&
-		     (head->race==tmp->slaying ||
-		      (!strcmp (tmp->slaying, "player") && head->type == PLAYER)))
+		if ( ab != tmp && (fly?QUERY_FLAG(ab,FLAG_FLYING):move) &&
+		     (head->race==tmp->slaying || (!strcmp (tmp->slaying, "player") && head->type == PLAYER)))
 			    tmp->value = 1;
 	    }
 	    if(tmp->value)
@@ -185,10 +193,16 @@ void update_button(object *op) {
 void update_buttons(mapstruct *m) {
   objectlink *ol;
   oblinkpt *obp;
+  object *ab, *tmp;
+  int fly, move;
+
   for (obp = m->buttons; obp; obp = obp->next)
-    for (ol = obp->link; ol; ol = ol->next) {
-      if (!ol->ob || ol->ob->count != (tag_t) ol->id) {
-        LOG(llevBug, "BUG: Internal error in update_button (%s (%dx%d):%d, connected %d ).\n",
+  {
+	for (ol = obp->link; ol; ol = ol->next)
+	{
+	  if (!ol->ob || ol->ob->count != ol->id) 
+	  {
+		  LOG(llevBug, "BUG: Internal error in update_button (%s (%dx%d):%d, connected %d ).\n",
 	    ol->ob?ol->ob->name:"null",
 	    ol->ob?ol->ob->x:-1,
 	    ol->ob?ol->ob->y:-1,
@@ -197,11 +211,30 @@ void update_buttons(mapstruct *m) {
         continue;
       }
       if (ol->ob->type==BUTTON || ol->ob->type==PEDESTAL)
-      {
-        update_button(ol->ob);
-        break;
-      }
+		  update_button(ol->ob);
+	  else if (ol->ob->type == CHECK_INV )
+	  {
+		  tmp = ol->ob;
+		  fly = QUERY_FLAG(tmp,FLAG_FLY_ON);
+		  move = QUERY_FLAG(tmp,FLAG_WALK_ON);
+
+		  for(ab=GET_MAP_OB_LAYER(tmp->map, tmp->x, tmp->y,2); ab!=NULL; ab=ab->above)
+		  {
+			if(ab != tmp && (fly?QUERY_FLAG(ab,FLAG_FLYING):move))
+			  check_inv (ab, tmp);
+		  }
+	  }
+	  else if (ol->ob->type == TRIGGER_BUTTON ||
+		  ol->ob->type == TRIGGER_PEDESTAL ||
+		  ol->ob->type == TRIGGER_ALTAR)
+	  {
+		 /* check_trigger will itself sort out the numbers of
+		  * items above the trigger
+		  */
+		check_trigger (ol->ob, ol->ob);
+	  }
     }
+  }
 }
 
 void use_trigger(object *op) 
@@ -526,7 +559,7 @@ objectlink *get_button_links(object *button) {
     return NULL;
   for (obp = button->map->buttons; obp; obp = obp->next)
     for (ol = obp->link; ol; ol = ol->next)
-      if (ol->ob == button && (tag_t) ol->id == button->count)
+      if (ol->ob == button && ol->id == button->count)
         return obp->link;
   return NULL;
 }
@@ -543,7 +576,7 @@ int get_button_value(object *button) {
     return 0;
   for (obp = button->map->buttons; obp; obp = obp->next)
     for (ol = obp->link; ol; ol = ol->next)
-      if (ol->ob == button && (tag_t) ol->id == button->count)
+      if (ol->ob == button && ol->id == button->count)
         return obp->value;
   return 0;
 }
@@ -689,7 +722,7 @@ void verify_button_links(mapstruct *map) {
 
     for (obp = map->buttons; obp; obp = obp->next) {
 	for (ol=obp->link; ol; ol=ol->next) {
-	    if ((tag_t) ol->id!=ol->ob->count)
+	    if (ol->id!=ol->ob->count)
 	        LOG(llevError,"verify_button_links: object %s on list is corrupt (%d!=%d)\n",ol->ob->name, ol->id, ol->ob->count);
 	}
     }

@@ -475,6 +475,7 @@ int move_symptom(object *symptom) {
   int sp_reduce;
   if(victim == NULL || victim->map==NULL) {  /* outside a monster/player, die immediately */
 	 remove_ob(symptom);
+	 check_walk_off (symptom, NULL,MOVE_APPLY_VANISHED);
 	 return 0;
   }
   if(symptom->stats.dam > 0)  hit_player(victim,symptom->stats.dam,symptom,symptom->attacktype);
@@ -496,7 +497,7 @@ int move_symptom(object *symptom) {
       new_ob->x = tmp->x;
       new_ob->y = tmp->y;
       new_ob->map = victim->map;
-      insert_ob_in_map(new_ob,victim->map,victim,0);
+      insert_ob_in_map(new_ob,victim->map,victim,INS_NO_MERGE | INS_NO_WALK_ON);
     }
   }
   if(victim->type == PLAYER)

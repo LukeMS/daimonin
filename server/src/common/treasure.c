@@ -586,7 +586,7 @@ object *generate_treasure(treasurelist *t, int difficulty)
 
 	/* Don't want to free the object we are about to return */
 	tmp = ob->inv;
-	if (tmp!=NULL) remove_ob(tmp);
+	if (tmp!=NULL) remove_ob(tmp); /* remove from inv - no move off */
 	if (ob->inv) {
 	    LOG(llevError,"ERROR: In generate treasure, created multiple objects.\n");
 	}
@@ -839,6 +839,9 @@ static void put_treasure (object *op, object *creator, int flags)
     if (flags & GT_ENVIRONMENT) {
         op->x = creator->x;
         op->y = creator->y;
+		/* this must be handled carefully... we don't want drop items on a button
+		 * which is then not triggered. MT-2004 
+		 */
         insert_ob_in_map (op, creator->map,op,INS_NO_MERGE | INS_NO_WALK_ON);
     } else {
         op = insert_ob_in_ob (op, creator);
@@ -1517,7 +1520,7 @@ int fix_generated_item (object **op_ptr, object *creator, int difficulty, int a_
 			if(op->arch==ring_arch)
 			{
 				if(!QUERY_FLAG(op,FLAG_REMOVED))
-					remove_ob(op);
+					remove_ob(op); /* this is called before we inserted it in the map or elsewhere */
 			    *op_ptr=op=arch_to_object(ring_arch_normal);
 				generate_artifact(op,difficulty, t_style,99);
 			}
@@ -2292,6 +2295,58 @@ void dump_monster_treasure (const char *name)
   if (found == 0)
     LOG(llevInfo, "No objects have the name %s!\n\n", name);
 }
+
+/* these function fetch the "enviroment level" for 
+ * treasure generation for the given object.
+ * It checks first the object itself has a level.
+ * If not, it checks the object is in a map.
+ * If so, it use the map level.
+ * If not, it recursive checks then ->env for level.
+ * If there is none, it checks the last env maps.
+ * If there is none, it use level 1 as default.
+ * That gives us always a valid level.
+ * This function never returns a value <1 !
+ */
+int get_enviroment_level(object *op)
+{
+	object *env;
+
+	if (!op)
+	{
+		LOG(llevBug, "get_enviroment_level() called for NULL object!\n");
+		return 1;
+	}
+
+
+	/* return object level or map level... */
+	if(op->level)
+		return op->level;
+	if(op->map)
+		return op->map->difficulty?op->map->difficulty:1;
+
+	/* ok, its not so easy... lets check for env */
+
+	env = op->env;
+	while(env)
+	{
+		if(env->level)
+			return env->level;
+		if(env->map)
+			return env->map->difficulty?env->map->difficulty:1;
+		env = env->env;
+	}
+
+	/* if we are here there is nothing which gives
+	 * us a valid level or map difficulty...
+	 * we give up and return a simple level 1.
+	 * note: this don't *must* be a bug or error.
+	 * There are possible setups where this value 1
+	 * its the right value.
+	 */
+
+	return 1;
+}
+
 
 #ifdef TREASURE_DEBUG
 /* recursived checks the linked list.  Treasurelist is passed only

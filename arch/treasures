@@ -4020,4 +4020,7 @@ end
 treasureone random_test
 arch ring_generic
  chance 100
+more
+list random_potion
+ chance 100
 end

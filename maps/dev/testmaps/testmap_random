@@ -171,19 +171,22 @@ arch floor_ostone1
 x 1
 y 2
 end
-arch random_treasure
-randomitems random_test
-identified 1
+arch shield_war
 x 1
 y 2
+arch dagger
+randomitems random_potion
+end
+arch random_treasure
+randomitems random_test
+end
 end
 arch floor_ostone1
 x 1
 y 3
 end
-arch random_treasure
-randomitems random_test
-identified 1
+arch random_chest_black
+randomitems random_potion
 x 1
 y 3
 end
@@ -191,11 +194,17 @@ arch floor_ostone1
 x 1
 y 4
 end
-arch random_treasure
-randomitems random_test
-identified 1
+arch chest_sw_1
 x 1
 y 4
+arch random_treasure
+randomitems random_potion
+end
+arch chest
+arch random_treasure
+randomitems random_potion
+end
+end
 end
 arch floor_ostone1
 x 1

@@ -34,7 +34,6 @@
 
 type_func_int	emergency_save_func;
 type_func_void	clean_tmp_files_func;
-type_func_map	fix_auto_apply_func;
 type_func_ob	remove_friendly_object_func;
 type_func_map	update_buttons_func;
 type_func_int_int_ob_cchar	draw_info_func;
@@ -66,7 +65,6 @@ type_func_ob_int send_golem_control_func;
 void init_function_pointers() {
   emergency_save_func = dummy_function_int;
   clean_tmp_files_func = dummy_function;
-  fix_auto_apply_func = dummy_function_map;
   remove_friendly_object_func = dummy_function_ob;
   update_buttons_func = dummy_function_map;
   draw_info_func = dummy_draw_info;
@@ -102,14 +100,6 @@ void set_clean_tmp_files(type_func_void addr) {
   clean_tmp_files_func = addr;
 }
 
-/*
- * Specifies which function to call to fix auto-apply (objects which
- * applies themselves when their map is loaded).
- */
-
-void set_fix_auto_apply(type_func_map addr) {
-  fix_auto_apply_func = addr;
-}
 
 /*
  * Specifies which function to call to remove an object in the
@@ -286,7 +276,7 @@ int dummy_container_unlink_func (player *ob, object *ob2) {
 	return 0;
 }
 
-void dummy_move_apply_func (object *ob, object *ob2, object *ob3) {
+void dummy_move_apply_func (object *ob, object *ob2, object *ob3, int flags) {
 }
 
 void dummy_function_dragongain (object *ob, int a1, int a2) {

@@ -343,7 +343,7 @@ int keyplace(mapstruct *map,int x,int y,char *keycode,int door_flag,int n_keys,R
   if(the_keymaster==NULL) {
     the_key->x = kx;
     the_key->y = ky; 
-    insert_ob_in_map(the_key,map,NULL,0);
+    insert_ob_in_map(the_key,map,NULL,INS_NO_MERGE | INS_NO_WALK_ON);
     return 1;
   }
   
@@ -594,7 +594,7 @@ object ** surround_by_doors(mapstruct *map,char **layout,int x,int y,int opts) {
       new_door->x = x + freearr_x[i];
       new_door->y = y + freearr_y[i];
       remove_monsters(new_door->x,new_door->y,map);
-      insert_ob_in_map(new_door,map,NULL,0);
+      insert_ob_in_map(new_door,map,NULL,INS_NO_MERGE | INS_NO_WALK_ON);
       doorlist[ndoors_made]=new_door;
       ndoors_made++;
     }
@@ -696,7 +696,7 @@ void lock_and_hide_doors(object **doorlist,mapstruct *map,int opts,RMParms *RP) 
       new_door->y = door->y;
       remove_ob(door);
       doorlist[i]=new_door;
-      insert_ob_in_map(new_door,map,NULL,0);
+      insert_ob_in_map(new_door,map,NULL,INS_NO_MERGE | INS_NO_WALK_ON);
       sprintf(keybuf,"%d",(int)RANDOM());
       FREE_AND_COPY_HASH(new_door->slaying, keybuf);
       keyplace(map,new_door->x,new_door->y,keybuf,NO_PASS_DOORS,2,RP);

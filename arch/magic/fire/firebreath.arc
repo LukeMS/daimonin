@@ -1,7 +1,9 @@
 Object firebreath
 name fire
 type 88
+no_save 1
 layer 7
+no_save 1
 walk_on 1
 fly_on 1
 glow_radius 1

@@ -1,6 +1,7 @@
 Object cause_wounds
 name cause light wounds
 type 2
+no_save 1
 layer 7
 face wounds.101
 anim

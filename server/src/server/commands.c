@@ -55,7 +55,7 @@ CommArray_s Commands[] = {
   {"/combat",		command_combat,			0.1f}, /* toggle attack mode of player */
   {"/pray",			command_praying,		0.2f},
 
-  {"/run",			command_run,			0.05f},
+  {"/run",			command_run,			1.0f},
   {"/run_stop",		command_run_stop,		0.01f},
   {"/cast",			command_cast_spell,		0.0f},	/* use time comes from spells! */ 
   {"/say",			command_say,			1.0f},

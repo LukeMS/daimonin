@@ -96,9 +96,12 @@ void terminate_all_pets(object *owner) {
     object *ob = obl->ob;
     next = obl->next;
     if(get_owner(ob) == owner) {
-      if(!QUERY_FLAG(ob, FLAG_REMOVED))
-        remove_ob(ob);
-      remove_friendly_object(ob);
+		remove_friendly_object(ob);
+	   if(!QUERY_FLAG(ob, FLAG_REMOVED))
+	  {
+		  remove_ob(ob);
+		  check_walk_off (ob, NULL,MOVE_APPLY_VANISHED);
+	  }
     }
   }
 }
@@ -123,6 +126,7 @@ void remove_all_pets(mapstruct *map) {
     {
 	/* follow owner checks map status for us */
 	follow_owner(obl->ob,owner);
+	/* bug: follow can kill the pet here ... */
 	if(QUERY_FLAG(obl->ob, FLAG_REMOVED) && FABS(obl->ob->speed) > MIN_ACTIVE_SPEED) {
 	    object *ob = obl->ob;
 	    LOG(llevMonster,"(pet failed to follow)");
@@ -137,7 +141,11 @@ void follow_owner(object *ob, object *owner) {
   int dir;
 
   if (!QUERY_FLAG(ob,FLAG_REMOVED))
+  {
     remove_ob(ob);
+	if(check_walk_off (ob, NULL,MOVE_APPLY_VANISHED) != CHECK_WALK_OK)
+		return;
+  }
   if(owner->map == NULL) {
     LOG(llevBug,"BUG: Can't follow owner: no map.\n");
     return;
@@ -156,9 +164,13 @@ void follow_owner(object *ob, object *owner) {
     tmp->x = owner->x + freearr_x[dir]+(tmp->arch==NULL?0:tmp->arch->clone.x);
     tmp->y = owner->y + freearr_y[dir]+(tmp->arch==NULL?0:tmp->arch->clone.y);
   }
-  insert_ob_in_map(ob, owner->map, NULL,0);
-  if (owner->type == PLAYER) /* Uh, I hope this is always true... */
-    new_draw_info(NDI_UNIQUE, 0,owner, "Your pet magically appears next to you");
+  if(!insert_ob_in_map(ob, owner->map, NULL,0))
+  {
+	 if (owner->type == PLAYER) /* Uh, I hope this is always true... */
+		 new_draw_info(NDI_UNIQUE, 0,owner, "Your pet has disappeared.");
+  }
+  else if (owner->type == PLAYER) /* Uh, I hope this is always true... */
+	  new_draw_info(NDI_UNIQUE, 0,owner, "Your pet magically appears next to you");
   return;
 }
 
@@ -172,6 +184,7 @@ void pet_move(object * ob)
     if ((owner = get_owner(ob)) == NULL) {
 	remove_ob(ob); /* Will be freed when returning */
 	remove_friendly_object(ob);
+	check_walk_off (ob, NULL,MOVE_APPLY_VANISHED);
 	LOG(llevMonster, "Pet: no owner, leaving.\n");
 	return;
     }

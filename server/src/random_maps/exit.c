@@ -206,12 +206,12 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
         random_sign->y = the_exit_up->y+freearr_y[j];
 
         FREE_AND_COPY_HASH(random_sign->msg, "This is a random map.\n");
-        insert_ob_in_map(random_sign,map,NULL,0);
+        insert_ob_in_map(random_sign,map,NULL,INS_NO_MERGE | INS_NO_WALK_ON);
       }
     }
     /* Block the exit so things don't get dumped on top of it. */
     SET_FLAG(the_exit_up,FLAG_NO_PASS);
-    insert_ob_in_map(the_exit_up,map,NULL,0);
+    insert_ob_in_map(the_exit_up,map,NULL,INS_NO_MERGE | INS_NO_WALK_ON);
     maze[the_exit_up->x][the_exit_up->y]='<';
 
     /* set the starting x,y for this map */
@@ -292,14 +292,14 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
         the_exit_back->x = MAP_ENTER_X(new_map);
         the_exit_back->y = MAP_ENTER_Y(new_map);
 
-        insert_ob_in_map(the_exit_back,new_map,NULL,0);
+        insert_ob_in_map(the_exit_back,new_map,NULL,INS_NO_MERGE | INS_NO_WALK_ON);
 		set_map_timeout(new_map);   /* So it gets swapped out */
       }
       else 
         FREE_AND_COPY_HASH(the_exit_down->slaying, "/!");
       /* Block the exit so things don't get dumped on top of it. */
       SET_FLAG(the_exit_down,FLAG_NO_PASS);
-      insert_ob_in_map(the_exit_down,map,NULL,0);
+      insert_ob_in_map(the_exit_down,map,NULL,INS_NO_MERGE | INS_NO_WALK_ON);
       maze[the_exit_down->x][the_exit_down->y]='>';
     }
   }

@@ -100,7 +100,6 @@ int command_apply (object *op, char *params)
     if(op->type == PLAYER)
     	CONTR(op)->praying=0;
   if (!params) {
-	  LOG(-1,"her");
     player_apply_below(op);
     return 0;
   }
@@ -202,7 +201,10 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 	new_draw_info(NDI_UNIQUE, 0,pl, "It must have been an illusion.");
 	if (pl->type==PLAYER) esrv_del_item (CONTR(pl), tmp->count, tmp->env);
 	if ( ! QUERY_FLAG (tmp, FLAG_REMOVED))
-            remove_ob(tmp);
+	{
+		remove_ob(tmp);
+		check_walk_off (tmp, NULL,MOVE_APPLY_VANISHED);
+	}
 	return;
     }
     
@@ -270,7 +272,7 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
         if ( ! QUERY_FLAG (tmp, FLAG_REMOVED)) {
 	    if (tmp->env && pl->type==PLAYER) 
 	        esrv_del_item (CONTR(pl), tmp->count,tmp->env);
-	    remove_ob(tmp); /* Unlink it */
+	    remove_ob(tmp); /* Unlink it - no move off check */
 	}
     }
 
@@ -517,7 +519,11 @@ void put_object_in_sack (object *op, object *sack, object *tmp, long nrof)
 	      esrv_send_item (op, tmp2);
     } 
 	else if(!QUERY_FLAG(tmp, FLAG_UNPAID) || !QUERY_FLAG(tmp, FLAG_NO_PICK))
+	{
 		remove_ob(tmp);
+		if(check_walk_off (tmp, NULL,MOVE_APPLY_VANISHED) != CHECK_WALK_OK)
+			return;
+	}
 	else /* don't delete clone shop objects - clone them!*/
 		tmp = ObjectCreateClone(tmp);
 
@@ -607,9 +613,13 @@ void drop_object (object *op, object *tmp, long nrof)
                         esrv_del_item (CONTR(op), tmp2_tag, tmp2_cont);
                 else
                         esrv_send_item (op, tmp2);
-	};
+	}
     } else
+	{
       remove_ob(tmp);
+	  if(check_walk_off (tmp, NULL,MOVE_APPLY_DEFAULT) != CHECK_WALK_OK)
+		return;
+	}
 #ifdef PLUGINS
       /* GROS: Handle for plugin drop event */
       if(tmp->event_flags&EVENT_FLAG_DROP)

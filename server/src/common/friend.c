@@ -146,7 +146,7 @@ void remove_friendly_object(object *op) {
 	    /* This should not happen.  But if it does, presumably the
 	     * call to remove it is still valid.
 	     */
-	    if ((tag_t) this->id != op->count) {
+	    if (this->id != op->count) {
 		LOG(llevBug,"BUG: remove_friendly_object, tags do no match, %s, %d != %d\n",query_name(op), op->count, this->id);
 	    }
 	    prev->next = this->next;

@@ -153,7 +153,7 @@ int execute_newserver_command(object *pl, char *command)
     }
 
     pl->speed_left -= csp->time;
-
+	
     /* A character time can never exceed his speed (which in many cases,
      * if wearing armor, is less than one.)  Thus, in most cases, if
      * the command takes 1.0, the player's speed will be less than zero.

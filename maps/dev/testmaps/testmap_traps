@@ -9,6 +9,7 @@ height 17
 enter_x 1
 enter_y 1
 difficulty 3
+tile_path_2 testmap_traps2
 end
 arch floor_ostone1
 end
@@ -645,6 +646,19 @@ arch floor_ostone1
 x 6
 y 5
 end
+arch sign
+msg
+Chest & decay test.
+In this chest are 3 decaying items:
+A sword, a chest & a corpse.
+In every item is a coin & a trap.
+The coins should be put in the chest AND
+the player view should get updated. The
+traps should get deleted.
+endmsg
+x 6
+y 5
+end
 arch floor_ostone1
 x 6
 y 6
@@ -729,6 +743,49 @@ end
 arch floor_ostone1
 x 7
 y 5
+end
+arch chest_w1
+x 7
+y 5
+arch chest_sm_1
+food 3
+is_used_up 1
+speed 0.01
+arch coppercoin
+end
+arch trap_blades
+end
+arch pouch
+food 5
+is_used_up 1
+speed 0.01
+arch silvercoin
+end
+arch jewel_generic
+end
+arch trap_bear_trap
+end
+end
+end
+arch sword
+food 4
+is_used_up 1
+speed 0.01
+arch goldcoin
+end
+arch trap_rocks
+end
+end
+arch corpse_default
+food 2
+arch mitcoin
+end
+arch rune_fire
+end
+end
+arch torch
+food 4
+end
 end
 arch floor_ostone1
 x 7
@@ -1443,15 +1500,7 @@ arch floor_ostone1
 x 16
 y 1
 end
-arch fwall_brown1
-x 16
-y 1
-end
 arch floor_ostone1
-x 16
-y 2
-end
-arch fwall_brown1
 x 16
 y 2
 end
@@ -1459,15 +1508,7 @@ arch floor_ostone1
 x 16
 y 3
 end
-arch fwall_brown1
-x 16
-y 3
-end
 arch floor_ostone1
-x 16
-y 4
-end
-arch fwall_brown1
 x 16
 y 4
 end
@@ -1475,15 +1516,7 @@ arch floor_ostone1
 x 16
 y 5
 end
-arch fwall_brown1
-x 16
-y 5
-end
 arch floor_ostone1
-x 16
-y 6
-end
-arch fwall_brown1
 x 16
 y 6
 end
@@ -1491,15 +1524,7 @@ arch floor_ostone1
 x 16
 y 7
 end
-arch fwall_brown1
-x 16
-y 7
-end
 arch floor_ostone1
-x 16
-y 8
-end
-arch fwall_brown1
 x 16
 y 8
 end
@@ -1507,15 +1532,7 @@ arch floor_ostone1
 x 16
 y 9
 end
-arch fwall_brown1
-x 16
-y 9
-end
 arch floor_ostone1
-x 16
-y 10
-end
-arch fwall_brown1
 x 16
 y 10
 end
@@ -1523,15 +1540,7 @@ arch floor_ostone1
 x 16
 y 11
 end
-arch fwall_brown1
-x 16
-y 11
-end
 arch floor_ostone1
-x 16
-y 12
-end
-arch fwall_brown1
 x 16
 y 12
 end
@@ -1539,23 +1548,11 @@ arch floor_ostone1
 x 16
 y 13
 end
-arch fwall_brown1
-x 16
-y 13
-end
 arch floor_ostone1
 x 16
 y 14
 end
-arch fwall_brown1
-x 16
-y 14
-end
 arch floor_ostone1
-x 16
-y 15
-end
-arch fwall_brown1
 x 16
 y 15
 end

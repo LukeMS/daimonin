@@ -2,6 +2,7 @@ Object probebullet
 type 2
 face probe.101
 layer 7
+no_save 1
 anim
 probe.101
 probe.102

@@ -678,7 +678,6 @@ void init_signals() {
 void setup_library() {
   set_emergency_save(emergency_save);
   set_clean_tmp_files(clean_tmp_files);
-  set_fix_auto_apply(fix_auto_apply);
   set_remove_friendly_object(remove_friendly_object);
   set_update_buttons(update_buttons);
   set_draw_info(new_draw_info);

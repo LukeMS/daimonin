@@ -52,18 +52,26 @@ oblinkpt *get_objectlinkpt() {
 }
 
 /*
- * Recursively frees all objectlinks
- */
+ * Recursively frees all objectlinks.
+ * WARNING: only call for with FLAG_IS_LINKED used
+ * lists - friendly list or others handle their
+ * objectlink malloc/free native.
+*/
 
 void free_objectlink(objectlink *ol) {
   if (ol->next)
     free_objectlink(ol->next);
+  if(OBJECT_VALID(ol->ob,ol->id))
+	  CLEAR_FLAG(ol->ob,FLAG_IS_LINKED);
   free(ol);
 }
 
 /*
  * Recursively frees all linked list of objectlink pointers
- */
+ * WARNING: only call for with FLAG_IS_LINKED used
+ * lists - friendly list or others handle their
+ * objectlink malloc/free native.
+*/
 
 void free_objectlinkpt(oblinkpt *obp) {
   if (obp->next)

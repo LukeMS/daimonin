@@ -105,7 +105,10 @@ int insert_spell_effect(char *archname, mapstruct *m, int x, int y)
 														archname, effect_ob->map->name, x, y);
 		/* something is wrong - kill object */
 		if(!QUERY_FLAG(effect_ob, FLAG_REMOVED))
+		{
 			remove_ob(effect_ob);
+			check_walk_off (effect_ob, NULL,MOVE_APPLY_VANISHED);
+		}
 		return 1;
     }
 
@@ -1218,16 +1221,18 @@ int cast_cone(object *op, object *caster,int dir, int strength, int spell_type,a
     if (( ! QUERY_FLAG (tmp, FLAG_WALK_ON) || ! QUERY_FLAG (tmp, FLAG_FLY_ON)) && tmp->stats.dam)
       LOG(llevDebug, "cast_cone(): arch %s doesn't have walk_on 1 and fly_on 1\n", spell_arch->name);
 
-    insert_ob_in_map(tmp,op->map,op,0);
+    if(!insert_ob_in_map(tmp,op->map,op,0))
+		return 0;
     if(tmp->other_arch) 
 		cone_drop(tmp);
 	tmp = NULL;
   }
 
   if(tmp) /* can happens when we can't drop anything */
+  {
 	  if(!QUERY_FLAG(tmp, FLAG_REMOVED))
-		  remove_ob(tmp);
-
+		  remove_ob(tmp); /* was not inserted */
+  }
   return success;
 }
 
@@ -1321,6 +1326,7 @@ void move_cone(object *op) {
 	{
 		LOG(llevBug,"BUG: Tried to move_cone object %s without a map.\n", query_name(op));
 		remove_ob(op);
+		check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
 		return;
     }
 
@@ -1333,6 +1339,7 @@ void move_cone(object *op) {
     /* If no owner left, the spell dies out. */
     if(get_owner(op)==NULL) {
 	remove_ob(op);
+	check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
 	return;
     }
 
@@ -1355,7 +1362,10 @@ void move_cone(object *op) {
 	    op->stats.exp=0;
 	    op->stats.sp=0; /* so they will join */
 	} else 
+	{
 	    remove_ob(op);
+		check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
+	}
 	return;
     }
 
@@ -1392,7 +1402,8 @@ void move_cone(object *op) {
 			tmp->stats.maxhp=op->stats.maxhp;
 			tmp->stats.dam = op->stats.dam;
 			tmp->attacktype=op->attacktype;
-			insert_ob_in_map(tmp,op->map,op,0);
+			if(!insert_ob_in_map(tmp,op->map,op,0))
+				return;
 			if(tmp->other_arch)
 				cone_drop(tmp);
 		}
@@ -1437,7 +1448,10 @@ void explosion(object *op) {
   if(op->above!=NULL&&op->above->type!=PLAYER) {
     SET_FLAG (op, FLAG_NO_APPLY);
     remove_ob(op);
-    insert_ob_in_map(op,op->map,op,0);
+	if(check_walk_off (op, NULL,MOVE_APPLY_VANISHED) != CHECK_WALK_OK)
+		return;
+	if(!insert_ob_in_map(op,op->map,op,0))
+		return;
     CLEAR_FLAG (op, FLAG_NO_APPLY);
   }
   hit_map(op,0,op->attacktype);
@@ -1506,7 +1520,8 @@ void forklightning(object *op, object *tmp) {
 	 new_bolt->stats.dam++;
 	 tmp->stats.dam /= 2;  /* reduce father bolt damage */
 	 tmp->stats.dam++;
-	 new_bolt = insert_ob_in_map(new_bolt,m,op,0);
+	 if(!insert_ob_in_map(new_bolt,m,op,0))
+		 return;
 	 update_turn_face(new_bolt);
   }
 }
@@ -1589,8 +1604,9 @@ void move_bolt(object *op) {
       tmp->value=0;
       tmp->stats.hp++;
       tmp->x+=DIRX(tmp),tmp->y+=DIRY(tmp);
-      tmp = insert_ob_in_map(tmp,op->map,op,0);
-
+      if(!insert_ob_in_map(tmp,op->map,op,0))
+		  return;
+	  
 	/* New forking code.  Possibly create forks of this object
 			going off in other directions. */
 
@@ -1728,7 +1744,8 @@ void move_missile(object *op) {
   if (owner == NULL) 
   {
     remove_ob(op);
-    return;
+	check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
+	return;
   }
 
   new_x = op->x + DIRX(op);
@@ -1737,6 +1754,7 @@ void move_missile(object *op) {
   if (!(mt=out_of_map (op->map, &new_x,&new_y))) 
   {
       remove_ob(op);
+	  check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
 	  return;
   }
 
@@ -1744,11 +1762,15 @@ void move_missile(object *op) {
     tag_t tag = op->count;
     hit_map (op, op->direction, AT_MAGIC);
     if ( ! was_destroyed (op, tag)) 
+	{
       remove_ob(op);
+	  check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
+	}
     return;
   }
 
   remove_ob(op);
+  check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
   if ( ! op->direction || wall (mt, new_x, new_y)
       || blocks_view (mt, new_x, new_y))
     return;
@@ -1781,6 +1803,7 @@ void explode_object(object *op)
 	{
 		LOG(llevBug, "BUG: explode_object(): op %s without other_arch\n", query_name(op));
 		remove_ob(op);
+		check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
 		return;
 	}
 
@@ -1794,19 +1817,22 @@ void explode_object(object *op)
 		{
 			LOG(llevBug, "BUG: explode_object(): env out of map (%s)\n",query_name(op));
 			remove_ob(op);
+			check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
 			return;
 		}
 		remove_ob(op);
+		check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
 		op->x = xt;
 		op->y = yt;
-		insert_ob_in_map(op, m, op, INS_NO_MERGE | INS_NO_WALK_ON);
+		if(!insert_ob_in_map(op, m, op, 0))
+			return;
 	} 
 
 	if (op->attacktype) 
 	{
 		hit_map (op, 0, op->attacktype);
 		if (was_destroyed (op, op_tag))
-		return;
+			return;
 	}
 
   /*  peterm:  hack added to make fireballs and other explosions level
@@ -1841,6 +1867,7 @@ void explode_object(object *op)
     if(tmp->attacktype&AT_HOLYWORD||tmp->attacktype&AT_GODPOWER) 
       if ( ! tailor_god_spell (tmp, op)) {
 	remove_ob(op);
+	check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
 	return;
       }
 
@@ -1864,7 +1891,10 @@ void explode_object(object *op)
 
   /* remove the firebullet */
   if ( ! was_destroyed (op, op_tag)) 
+  {
     remove_ob(op);
+	check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
+  }
 }
 
 /* if we are here, the arch (spell) we check was able to move
@@ -1890,6 +1920,7 @@ void check_fired_arch (object *op)
 	{
 		probe(op);
 		remove_ob(op);
+		check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
 		return;
 	}
 
@@ -1912,7 +1943,8 @@ void check_fired_arch (object *op)
             {
 	      if(!QUERY_FLAG(op, FLAG_REMOVED)) {
                 remove_ob(op);
-                return;
+				check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
+				return;
 	      }
             }
         }
@@ -1938,7 +1970,8 @@ void move_fired_arch (object *op)
     new_y = op->y + DIRY(op);
     if (!(m=out_of_map (op->map, &new_x, &new_y))) {
         remove_ob(op);
-        return;
+		check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
+		return;
     }
 
 	/* the spell has reached a wall and/or the end of its moving points */
@@ -1946,16 +1979,20 @@ void move_fired_arch (object *op)
         if (op->other_arch) {
             explode_object (op);
         } else 
+		{
             remove_ob(op);
+			check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
+		}
         return;
     }
 
     remove_ob(op);
-    op->x = new_x;
+	check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
+	op->x = new_x;
     op->y = new_y;
-    if ((op = insert_ob_in_map (op, m, op,0)) == NULL)
-        return;
-
+	if(insert_ob_in_map (op, m, op,0) == NULL)
+		return;
+	
     if (reflwall (op->map, op->x, op->y, op)) {
 		if(op->type == BULLET && op->stats.sp == SP_PROBE)
 		{
@@ -1963,6 +2000,7 @@ void move_fired_arch (object *op)
 			{
 				probe(op);
 		        remove_ob(op);
+				check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
 				return;
 			}
 		}
@@ -2173,7 +2211,8 @@ void move_ball_lightning(object *op)
   /* Only those attuned to PATH_ELEC may use ball lightning with AT_GODPOWER */
   if(owner && (!(owner->path_attuned & PATH_ELEC))&& (op->attacktype & AT_GODPOWER)) {
     remove_ob(op);
-    new_draw_info_format(NDI_UNIQUE,0,owner,"The ball lightning dispells immediately.  Perhaps you need attunement to the spell path?");
+	check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
+	new_draw_info_format(NDI_UNIQUE,0,owner,"The ball lightning dispells immediately.  Perhaps you need attunement to the spell path?");
     return;
   }
 
@@ -2206,10 +2245,14 @@ void move_ball_lightning(object *op)
   }
 
   remove_ob(op);
+  check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
   op->y=ny;
   op->x=nx;
-  insert_ob_in_map(op,op->map,op,0);
-	 
+  if(!insert_ob_in_map(op,op->map,op,0))
+	  return;
+  ny=op->y;
+  nx=op->x;
+  
   dam_save = op->stats.dam;  /* save the original dam: we do halfdam on 
                                 surrounding squares */
 
@@ -2504,6 +2547,7 @@ void move_swarm_spell(object *op)
 
     if(op->stats.hp == 0 || get_owner (op) == NULL) {
 	remove_ob(op);
+	check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
 	return;
     }
     op->stats.hp--;

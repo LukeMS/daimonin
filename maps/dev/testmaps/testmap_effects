@@ -7,7 +7,6 @@ endmsg
 width 24
 height 24
 difficulty 1
-darkness 2
 end
 arch floor_ostone1
 end
@@ -174,8 +173,14 @@ y 2
 end
 arch sign
 msg
-light objects...
-glow radius from 1 to 4.
+these maps now is testing walk_on/off objects.
+These are options which are triggered when a
+object is moving on it or leaving the spot.
+These are very important objects. The problem
+is, that they need loaded, saved and restored
+in the right way from the server to work like
+they should. Also every move/insert action of
+the server must cover this objects.
 endmsg
 x 1
 y 2
@@ -188,25 +193,7 @@ arch floor_ostone1
 x 1
 y 4
 end
-arch torch
-x 1
-y 4
-end
-arch torch
-identified 1
-x 1
-y 4
-end
 arch floor_ostone1
-x 1
-y 5
-end
-arch lamp
-x 1
-y 5
-end
-arch lamp
-identified 1
 x 1
 y 5
 end
@@ -214,25 +201,7 @@ arch floor_ostone1
 x 1
 y 6
 end
-arch crystal_light
-identified 1
-x 1
-y 6
-end
-arch crystal_light
-x 1
-y 6
-end
 arch floor_ostone1
-x 1
-y 7
-end
-arch crystal_light4
-x 1
-y 7
-end
-arch crystal_light4
-identified 1
 x 1
 y 7
 end
@@ -244,121 +213,90 @@ arch floor_ostone1
 x 1
 y 9
 end
-arch light4
-x 1
-y 9
-end
 arch floor_ostone1
 x 1
 y 10
 end
-arch light4
+arch floor_ostone1
 x 1
-y 10
+y 11
+end
+arch floor_ostone1
+x 1
+y 12
+end
+arch floor_ostone1
+x 1
+y 13
+end
+arch floor_ostone1
+x 1
+y 14
+end
+arch floor_ostone1
+x 1
+y 15
+end
+arch floor_ostone1
+x 1
+y 16
+end
+arch floor_ostone1
+x 1
+y 17
+end
+arch floor_ostone1
+x 1
+y 18
+end
+arch floor_ostone1
+x 1
+y 19
+end
+arch floor_ostone1
+x 1
+y 20
+end
+arch floor_ostone1
+x 1
+y 21
+end
+arch floor_ostone1
+x 1
+y 22
+end
+arch floor_ostone1
+x 1
+y 23
+end
+arch wall_stone1_1
+x 1
+y 23
+end
+arch floor_ostone1
+x 2
+end
+arch wall_stone1_1
+x 2
+end
+arch floor_ostone1
+x 2
+y 1
+end
+arch floor_ostone1
+x 2
+y 2
+end
+arch floor_ostone1
+x 2
+y 3
+end
+arch floor_ostone1
+x 2
+y 4
 end
 arch sign
-msg
-some special effects - wearing the
-ring will give the wearer the special
-ability the ring is named.
-Note: Stealth is tested in the aggro
-test map.
-endmsg
-x 1
-y 10
-end
-arch floor_ostone1
-x 1
-y 11
-end
-arch light4
-x 1
-y 11
-end
-arch floor_ostone1
-x 1
-y 12
-end
-arch floor_ostone1
-x 1
-y 13
-end
-arch floor_ostone1
-x 1
-y 14
-end
-arch floor_ostone1
-x 1
-y 15
-end
-arch floor_ostone1
-x 1
-y 16
-end
-arch floor_ostone1
-x 1
-y 17
-end
-arch floor_ostone1
-x 1
-y 18
-end
-arch light2
-x 1
-y 18
-end
-arch floor_ostone1
-x 1
-y 19
-end
-arch floor_ostone1
-x 1
-y 20
-end
-arch floor_ostone1
-x 1
-y 21
-end
-arch floor_ostone1
-x 1
-y 22
-end
-arch floor_ostone1
-x 1
-y 23
-end
-arch wall_stone1_1
-x 1
-y 23
-end
-arch floor_ostone1
-x 2
-end
-arch wall_stone1_1
-x 2
-end
-arch floor_ostone1
-x 2
-y 1
-end
-arch floor_ostone1
-x 2
-y 2
-end
-arch floor_ostone1
-x 2
-y 3
-end
-arch floor_ostone1
-x 2
-y 4
-end
-arch torch_burnt
-x 2
-y 4
-end
-arch torch_burnt
-identified 1
+name walk_on triggers
 x 2
 y 4
 end
@@ -366,16 +304,15 @@ arch floor_ostone1
 x 2
 y 5
 end
-arch oil_lamp
-x 2
-y 5
-end
-arch oil_lamp
-identified 1
-x 2
-y 5
-end
 arch floor_ostone1
+x 2
+y 6
+end
+arch exit
+slaying testmap_effects
+hp 10
+sp 10
+player_only 0
 x 2
 y 6
 end
@@ -387,25 +324,7 @@ arch floor_ostone1
 x 2
 y 8
 end
-arch ring_generic
-name ring of infravision
-identified 1
-can_see_in_dark 1
-x 2
-y 8
-end
 arch floor_ostone1
-x 2
-y 9
-end
-arch light4
-x 2
-y 9
-end
-arch ring_generic
-name ring of xrays
-xrays 1
-identified 1
 x 2
 y 9
 end
@@ -413,40 +332,11 @@ arch floor_ostone1
 x 2
 y 10
 end
-arch light4
-x 2
-y 10
-end
-arch ring_generic
-identified 1
-make_ethereal 1
-title ethereality
-x 2
-y 10
-end
 arch floor_ostone1
 x 2
 y 11
 end
-arch light4
-x 2
-y 11
-end
-arch ring_generic
-identified 1
-make_invisible 1
-title make invisibility
-x 2
-y 11
-end
 arch floor_ostone1
-x 2
-y 12
-end
-arch ring_generic
-flying 1
-identified 1
-title levitation
 x 2
 y 12
 end
@@ -469,72 +359,77 @@ end
 arch floor_ostone1
 x 2
 y 17
+end
+arch floor_ostone1
+x 2
+y 18
+end
+arch floor_ostone1
+x 2
+y 19
+end
+arch floor_ostone1
+x 2
+y 20
+end
+arch floor_ostone1
+x 2
+y 21
+end
+arch floor_ostone1
+x 2
+y 22
+end
+arch floor_ostone1
+x 2
+y 23
+end
+arch wall_stone1_1
+x 2
+y 23
+end
+arch floor_ostone1
+x 3
+end
+arch wall_stone1_1
+x 3
+end
+arch wall_stone1_1
+x 3
+end
+arch floor_ostone1
+x 3
+y 1
+end
+arch floor_ostone1
+x 3
+y 2
 end
 arch sign
+name walk_off triggers
 msg
-Use infravision to see this
-mobs better.
+There is a important point people must
+have in mind: Items can "turn to nothing" -
+means they simple vanish and don't "leave" a tile.
+The object is gone, not moved - in the moment
+the object is deleted it is not existend anymore.
+But we MUST call walk_off for example to calculate
+the weight pressing on a button new.
+A teleporter will fail then - the server will cover
+this and no action will happens. The point is
+that the map maker must have this in mind.
+A script, connected to a button with walk_off
+can run in trouble in that case.
+Also:
+Walk off is somewhat safe when only states
+are changed -its problematic when a action is
+generated instant. Thats normally forbidden
+except EXTREM controlled situations.
 endmsg
-x 2
-y 17
-end
-arch floor_ostone1
-x 2
-y 18
-end
-arch floor_ostone1
-x 2
-y 19
-end
-arch ant_soldier
-unaggressive 1
-friendly 1
-stand_still 1
-x 2
-y 19
-end
-arch floor_ostone1
-x 2
-y 20
-end
-arch floor_ostone1
-x 2
-y 21
-end
-arch floor_ostone1
-x 2
-y 22
-end
-arch floor_ostone1
-x 2
-y 23
-end
-arch wall_stone1_1
-x 2
-y 23
-end
-arch floor_ostone1
-x 3
-end
-arch wall_stone1_1
-x 3
-end
-arch wall_stone1_1
-x 3
-end
-arch floor_ostone1
-x 3
-y 1
-end
-arch floor_ostone1
 x 3
 y 2
 end
 arch floor_ostone1
-x 3
-y 3
-end
-arch light1
 x 3
 y 3
 end
@@ -562,30 +457,11 @@ arch floor_ostone1
 x 3
 y 9
 end
-arch light4
-x 3
-y 9
-end
 arch floor_ostone1
 x 3
 y 10
 end
-arch light4
-x 3
-y 10
-end
 arch floor_ostone1
-x 3
-y 11
-end
-arch light4
-x 3
-y 11
-end
-arch ring_generic
-title see invisibility
-identified 1
-see_invisible 1
 x 3
 y 11
 end
@@ -757,6 +633,18 @@ arch floor_ostone1
 x 5
 y 2
 end
+arch exit
+slaying testmap_effects
+hp 10
+sp 10
+walk_on 0
+walk_off 1
+fly_on 0
+fly_off 1
+player_only 0
+x 5
+y 2
+end
 arch floor_ostone1
 x 5
 y 3
@@ -822,13 +710,6 @@ x 5
 y 18
 end
 arch floor_ostone1
-x 5
-y 19
-end
-arch ant_soldier
-unaggressive 1
-friendly 1
-stand_still 1
 x 5
 y 19
 end
@@ -972,10 +853,6 @@ arch floor_ostone1
 x 7
 y 3
 end
-arch light2
-x 7
-y 3
-end
 arch floor_ostone1
 x 7
 y 4
@@ -1005,14 +882,6 @@ x 7
 y 10
 end
 arch floor_ostone1
-x 7
-y 11
-end
-arch sign
-msg
-In front of this sign are some invisible
-objects. Wear the ring to see it.
-endmsg
 x 7
 y 11
 end
@@ -1220,15 +1089,7 @@ arch floor_ostone1
 x 9
 y 11
 end
-arch light4
-x 9
-y 11
-end
 arch floor_ostone1
-x 9
-y 12
-end
-arch light4
 x 9
 y 12
 end
@@ -1322,7 +1183,7 @@ arch floor_ostone1
 x 10
 y 9
 end
-arch floor_ostone1
+arch floor_blue2
 x 10
 y 10
 end
@@ -1330,28 +1191,7 @@ arch floor_ostone1
 x 10
 y 11
 end
-arch light4
-x 10
-y 11
-end
-arch cave_pillar1
-is_invisible 1
-x 10
-y 11
-end
 arch floor_ostone1
-x 10
-y 12
-end
-arch light4
-x 10
-y 12
-end
-arch ant_soldier
-unaggressive 1
-is_invisible 1
-friendly 1
-stand_still 1
 x 10
 y 12
 end
@@ -1520,10 +1360,6 @@ x 12
 y 2
 end
 arch floor_ostone1
-x 12
-y 3
-end
-arch light3
 x 12
 y 3
 end
@@ -1893,27 +1729,11 @@ arch floor_ostone1
 x 15
 y 18
 end
-arch sign
-msg
-The iron gates can be passed when
-the ethereality is used.
-endmsg
-x 15
-y 18
-end
 arch floor_ostone1
 x 15
 y 19
 end
 arch floor_ostone1
-x 15
-y 20
-end
-arch sign
-msg
-The pits can be passed with
-levitation.
-endmsg
 x 15
 y 20
 end
@@ -2109,34 +1929,11 @@ arch floor_ostone1
 x 17
 y 17
 end
-arch grate1_8
-pass_thru 1
-x 17
-y 17
-end
 arch floor_ostone1
 x 17
 y 18
 end
-arch light4
-x 17
-y 18
-end
-arch grate1_3
-pass_thru 1
-x 17
-y 18
-end
 arch floor_ostone1
-x 17
-y 19
-end
-arch light4
-x 17
-y 19
-end
-arch grate1_3
-pass_thru 1
 x 17
 y 19
 end
@@ -2144,15 +1941,7 @@ arch floor_ostone1
 x 17
 y 20
 end
-arch pit_open
-x 17
-y 20
-end
 arch floor_ostone1
-x 17
-y 21
-end
-arch pit_open
 x 17
 y 21
 end
@@ -2242,29 +2031,11 @@ arch floor_ostone1
 x 18
 y 17
 end
-arch grate1_1
-pass_thru 1
-x 18
-y 17
-end
 arch floor_ostone1
 x 18
 y 18
 end
-arch light4
-x 18
-y 18
-end
 arch floor_ostone1
-x 18
-y 19
-end
-arch light4
-x 18
-y 19
-end
-arch grate1_1
-pass_thru 1
 x 18
 y 19
 end
@@ -2272,15 +2043,7 @@ arch floor_ostone1
 x 18
 y 20
 end
-arch pit_open
-x 18
-y 20
-end
 arch floor_ostone1
-x 18
-y 21
-end
-arch pit_open
 x 18
 y 21
 end
@@ -2311,10 +2074,6 @@ x 19
 y 2
 end
 arch floor_ostone1
-x 19
-y 3
-end
-arch light4
 x 19
 y 3
 end
@@ -2374,34 +2133,11 @@ arch floor_ostone1
 x 19
 y 17
 end
-arch grate1_1
-pass_thru 1
-x 19
-y 17
-end
 arch floor_ostone1
 x 19
 y 18
 end
-arch light4
-x 19
-y 18
-end
-arch grate1_3
-pass_thru 1
-x 19
-y 18
-end
 arch floor_ostone1
-x 19
-y 19
-end
-arch light4
-x 19
-y 19
-end
-arch grate1_4
-pass_thru 1
 x 19
 y 19
 end
@@ -2409,15 +2145,7 @@ arch floor_ostone1
 x 19
 y 20
 end
-arch pit_open
-x 19
-y 20
-end
 arch floor_ostone1
-x 19
-y 21
-end
-arch pit_open
 x 19
 y 21
 end
@@ -2555,7 +2283,19 @@ y 3
 end
 arch floor_ostone1
 x 21
+y 3
+end
+arch floor_ostone1
+x 21
 y 4
+end
+arch floor_ostone1
+x 21
+y 4
+end
+arch floor_ostone1
+x 21
+y 5
 end
 arch floor_ostone1
 x 21
@@ -2567,7 +2307,19 @@ y 6
 end
 arch floor_ostone1
 x 21
+y 6
+end
+arch floor_ostone1
+x 21
 y 7
+end
+arch floor_ostone1
+x 21
+y 7
+end
+arch floor_ostone1
+x 21
+y 8
 end
 arch floor_ostone1
 x 21
@@ -2579,7 +2331,19 @@ y 9
 end
 arch floor_ostone1
 x 21
+y 9
+end
+arch floor_ostone1
+x 21
 y 10
+end
+arch floor_ostone1
+x 21
+y 10
+end
+arch floor_ostone1
+x 21
+y 11
 end
 arch floor_ostone1
 x 21
@@ -2591,7 +2355,19 @@ y 12
 end
 arch floor_ostone1
 x 21
+y 12
+end
+arch floor_ostone1
+x 21
 y 13
+end
+arch floor_ostone1
+x 21
+y 13
+end
+arch floor_ostone1
+x 21
+y 14
 end
 arch floor_ostone1
 x 21
@@ -2603,7 +2379,19 @@ y 15
 end
 arch floor_ostone1
 x 21
+y 15
+end
+arch floor_ostone1
+x 21
 y 16
+end
+arch floor_ostone1
+x 21
+y 16
+end
+arch floor_ostone1
+x 21
+y 17
 end
 arch floor_ostone1
 x 21
@@ -2615,11 +2403,27 @@ y 18
 end
 arch floor_ostone1
 x 21
+y 18
+end
+arch floor_ostone1
+x 21
+y 19
+end
+arch floor_ostone1
+x 21
 y 19
 end
 arch floor_ostone1
 x 21
 y 20
+end
+arch floor_ostone1
+x 21
+y 20
+end
+arch floor_ostone1
+x 21
+y 21
 end
 arch floor_ostone1
 x 21

@@ -3,6 +3,7 @@ name ice
 layer 7
 type 88
 level 1
+no_save 1
 glow_radius 1
 face icestorm.101
 anim

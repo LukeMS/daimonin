@@ -30,6 +30,25 @@
 #pragma pack(push,1)
 #endif
 
+/* move_apply() function call flags */
+#define MOVE_APPLY_DEFAULT	0
+#define MOVE_APPLY_WALK_ON	1
+#define MOVE_APPLY_FLY_ON	2
+#define MOVE_APPLY_WALK_OFF 4
+#define MOVE_APPLY_FLY_OFF	8
+#define MOVE_APPLY_MOVE		16 /* means: our object makes a step in/out of this tile */
+#define MOVE_APPLY_VANISHED	32 /* when a player logs out, the player char not "move" out of a tile
+                                * but it "turns to nothing on the spot". This sounds senseless but for
+								* example a move out can trigger a teleporter action. This flag prevents
+								* a loging out/exploding object is teleported after removing it from the spot.
+								*/
+#define MOVE_APPLY_SAVING	64 /* move_apply() called from saving function */
+
+/* WALK ON/OFF function return flags */
+#define CHECK_WALK_OK		 0
+#define CHECK_WALK_DESTROYED 1
+#define CHECK_WALK_MOVED	 2
+
 /* i sorted the members of this struct in 4 byte (32 bit) groups. This will help compiler
  * and cpu to make aligned access of the members, and can (and will) make things smaller 
  * and faster - but this depends on compiler & system too.
@@ -234,7 +253,7 @@ typedef struct obj
 typedef struct oblnk { /* Used to link together several objects */
   object *ob;
   struct oblnk *next;
-  int id;
+  tag_t id;
 } objectlink;
 
 typedef struct oblinkpt { /* Used to link together several object links */
@@ -266,8 +285,11 @@ extern object *active_objects;
 /* Macro for the often used object validity test (verify an pointer/count pair) */
 #define OBJECT_VALID(_ob_, _count_) ((_ob_) && (_ob_)->count == ((tag_t)_count_) && !QUERY_FLAG((_ob_), FLAG_REMOVED) && !OBJECT_FREE(_ob_))
 
+/* Test the object is not removed nor freed - but no count test */
+#define OBJECT_ACTIVE(_ob_) (!QUERY_FLAG((_ob_),FLAG_REMOVED) && !OBJECT_FREE(_ob_))
+
 /* Test if an object is in the free-list */
-#define OBJECT_FREE(ob) ((ob)->count==0 && CHUNK_FREE(ob))
+#define OBJECT_FREE(_ob_) ((_ob_)->count==0 && CHUNK_FREE(_ob_))
 
 /* These are flags passed to insert_ob_in_map and 
  * insert_ob_in_ob.  Note that all flags may not be meaningful
@@ -286,7 +308,7 @@ extern object *active_objects;
 /*#define MEMPOOL_OBJECT_TRACKING*/ /* enable a global list of *all* objects
                                  * we have allocated. We can browse them to
 								 * control & debug them. WARNING: Enabling this
-								 * feature will slow down the server alot and should
+								 * feature will slow down the server *EXTREMLY* and should
 								 * only be done in real debug runs
 								 */
 
