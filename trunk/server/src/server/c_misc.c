@@ -254,7 +254,7 @@ int command_who (object *op, char *params)
 		}
 
 		ip++;
-	if (pl->state==ST_PLAYING || pl->state==ST_GET_PARTY_PASSWORD) 
+	if (pl->state==ST_PLAYING) 
 	{
          char *sex = "neuter";
          if(QUERY_FLAG(pl->ob, FLAG_IS_MALE)) 
@@ -1013,10 +1013,6 @@ int onoff_value(char *line)
 
 int command_quit (object *op, char *params)
 {
-    send_query(&op->contr->socket,CS_QUERY_SINGLECHAR,
-	       "Quitting will delete your character.\nAre you sure you want to quit (y/n):");
-
-    op->contr->state = ST_CONFIRM_QUIT;
     return 1;
   }
 
@@ -1103,6 +1099,7 @@ void receive_player_password(object *op,char k)
 		return;
 	}
 	new_draw_info(NDI_UNIQUE, 0,op,"          "); /* To hide the password better */
+
 	if(op->contr->state==ST_CONFIRM_PASSWORD) 
 	{
 		char cmd_buf[]="X";

@@ -110,40 +110,6 @@ void add_kill_to_party(int numb,char *killer,char *dead,long exp)
 }
 #endif
 
-int confirm_party_password(object *op) {
-  partylist * tmppartylist;
-
-  tmppartylist = firstparty;
-  while(tmppartylist != NULL) {
-    if(op->contr->party_number_to_join == tmppartylist->partyid) {
-        if(strcmp(op->contr->write_buf+1,tmppartylist->passwd) == 0)
-          return 0;
-        else
-          return 1;
-    }
-    tmppartylist = tmppartylist->next;
-  }
-  return 1;
-}
-
-void receive_party_password(object *op, char k) {
- 
-  if(confirm_party_password(op) == 0) {
-    op->contr->party_number = op->contr->party_number_to_join;
-    op->contr->party_number_to_join = (-1);
-    new_draw_info_format(NDI_UNIQUE, 0,op,
-	"You have joined party: %s\n",find_party(op->contr->party_number
-	,firstparty));
-    op->contr->state = ST_PLAYING;
-    return;
-  }
-  else {
-    new_draw_info(NDI_UNIQUE, 0,op,"You entered the wrong password");
-    op->contr->party_number_to_join = (-1);
-    op->contr->state = ST_PLAYING;
-    return;
-  }
-}
 
 void send_party_message(object *op,char *msg)
 {
@@ -411,7 +377,7 @@ int command_party (object *op, char *params)
           return 0;
         }
         else {
-          get_party_password(op,firstparty->partyid);
+          /*get_party_password(op,firstparty->partyid);*/
           return 0;
         }
       }
@@ -434,7 +400,7 @@ int command_party (object *op, char *params)
             return 0;
           }
           else {
-            get_party_password(op, tmpparty->partyid);
+            /*get_party_password(op, tmpparty->partyid);*/
             return 0;
           }
         }

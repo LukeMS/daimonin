@@ -537,14 +537,7 @@ void confirm_password(object *op) {
     send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, "Please type your password again.\n:");
 }
 
-void get_party_password(object *op, int partyid) {
-  op->contr->write_buf[0]='\0';
-  op->contr->state=ST_GET_PARTY_PASSWORD;
-  op->contr->party_number_to_join = partyid;
-  send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, "What is the password?\n:");
-}
-
-
+/*
 int key_confirm_quit(object *op, char key)
 {
     char buf[MAX_BUF];
@@ -558,7 +551,6 @@ int key_confirm_quit(object *op, char key)
       return 1;
     }
 #ifdef PLUGINS
-    /* GROS : Here we handle the REMOVE global event */
     evtid = EVENT_REMOVE;
     CFP.Value[0] = (void *)(&evtid);
     CFP.Value[1] = (void *)(op);
@@ -581,7 +573,7 @@ int key_confirm_quit(object *op, char key)
 	op->contr->socket.status=Ns_Dead;
     return 1;
 }
-
+*/
 
 void flee_player(object *op) {
   int dir,diff;

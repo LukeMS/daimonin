@@ -220,6 +220,11 @@ void HandleClient(NewSocket *ns, player *pl)
 			{
 				nscommands[i].cmdproc((char*)data,len,ns);
 				ns->inbuf.len=0;
+				if(ns->addme) /* we have successful added this connect! */
+				{
+					ns->addme=0;
+					return;
+				}
 				goto next_command;
 			}
 		}
@@ -498,6 +503,13 @@ void doeric_server()
 		if (FD_ISSET(init_sockets[i].fd, &tmp_read))
 		    HandleClient(&init_sockets[i], NULL);
 
+		if (init_sockets[i].status == Ns_Dead)
+		{
+			free_newsocket(&init_sockets[i]);
+			init_sockets[i].status = Ns_Avail;
+			socket_info.nconns--;
+		} 
+		
 		if (FD_ISSET(init_sockets[i].fd, &tmp_write))
 		    init_sockets[i].can_write=1;
     }
@@ -588,3 +600,4 @@ void doeric_server_write(void)
 		}
     } /* for() end */
 }
+

@@ -96,6 +96,7 @@ void InitConnection(NewSocket *ns, uint32 from)
     LOG(llevDebug, "InitConnection: Socket buffer size now %d bytes\n", oldbufsize);
 #endif
 
+	ns->addme = 0;
     ns->faceset = 0;
     ns->facecache = 0;
     ns->image2 = 0;

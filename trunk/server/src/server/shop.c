@@ -641,7 +641,7 @@ int get_money_from_string(char *text, struct _money_block *money)
 		text++;
 	
 	/* easy, special case: all money */
-	if(!strnicmp(text, "all", 3))
+	if(!strncasecmp(text, "all", 3))
 	{
 		money->mode = MONEYSTRING_ALL;
 		return money->mode;
@@ -679,22 +679,22 @@ int get_money_from_string(char *text, struct _money_block *money)
 					 * the name - they get the "silver", "gold" part from
 					 * material...
 					 */
-					if(!strnicmp("mithril",word, len))
+					if(!strncasecmp("mithril",word, len))
 					{
 						money->mode = MONEYSTRING_AMOUNT;
 						money->mithril+=value;
 					}
-					else if(!strnicmp("gold",word, len))
+					else if(!strncasecmp("gold",word, len))
 					{
 						money->mode = MONEYSTRING_AMOUNT;
 						money->gold+=value;
 					}
-					else if(!strnicmp("silver",word, len))
+					else if(!strncasecmp("silver",word, len))
 					{
 						money->mode = MONEYSTRING_AMOUNT;
 						money->silver+=value;
 					}
-					else if(!strnicmp("copper",word, len))
+					else if(!strncasecmp("copper",word, len))
 					{
 						money->mode = MONEYSTRING_AMOUNT;
 						money->copper+=value;						

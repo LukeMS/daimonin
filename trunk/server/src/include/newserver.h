@@ -102,6 +102,7 @@ typedef struct NewSocket_struct {
     /* If we get an incomplete packet, this is used to hold the data. */
     SockList	inbuf;
     Buffer  outputbuffer;   /* For undeliverable data */
+	uint32  addme:1;		/* important: when set, a "connect" was initizialised as "player" */
     uint32  facecache:1;    /* If true, client is caching images */
     uint32  sent_scroll:1;
     uint32  sound:1;	    /* does the client want sound */

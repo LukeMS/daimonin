@@ -549,6 +549,40 @@ static void set_first_map(object *op)
 
 }
 
+
+/* we *SHOULD* grap this info from server/client setting file
+ * but i have no time and code it hard here!
+ */
+/* min_ is also the "start" value */
+ typedef struct _new_char_template {
+	char *name;
+	int max_p;
+	int min_Str;
+	int max_Str;
+	int min_Dex;
+	int max_Dex;
+	int min_Con;
+	int max_Con;
+	int min_Int;
+	int max_Int;
+	int min_Wis;
+	int max_Wis;
+	int min_Pow;
+	int max_Pow;
+	int min_Cha;
+	int max_Cha;
+}_new_char_template;
+
+static _new_char_template new_char_template[] = {
+	{"human_male", 5, 12, 14, 12, 14, 12 ,14, 12, 14 ,12, 14 , 12, 14 ,12 ,14},
+	{"human_female", 5, 12, 14, 12, 14, 12 ,14, 12, 14 ,12, 14 , 12, 14 ,12 ,14},
+
+	{"half_elf_male", 5, 12, 14, 13, 15, 11 ,13, 12, 14 ,11, 13 , 13, 15 ,12 ,14},
+	{"half_elf_female", 5, 12, 14, 13, 15, 11 ,13, 12, 14 ,11, 13 , 13, 15 ,12 ,14},	
+	{NULL, 5, 12, 14, 12, 14, 12 ,14, 12, 14 ,12, 14 , 12, 14 ,12 ,14}
+		
+};
+
 /* client send us a new char creation.
  * at this point we know for *pl the name and
  * the password but nothing about his (player char)
@@ -564,13 +598,20 @@ void command_new_char(char *params, int len,player *pl)
 	const char *name_tmp = NULL;
 	object *op=pl->ob;
     int x = pl->ob->x, y = pl->ob->y;
-	int stats[7];
+	int stats[7], i, v;
 #ifdef PLUGINS
     int evtid;
     CFParm CFP;
 #endif
-	char name[HUGE_BUF];
-	char buf[HUGE_BUF];
+	char name[HUGE_BUF]="";
+	char buf[HUGE_BUF]="";
+
+	if(op->contr->state!=ST_ROLL_STAT)
+	{
+		LOG(llevDebug,"SHACK:: %s: command_new_char send at from time\n", query_name(pl->ob));
+		pl->socket.status = Ns_Dead; /* killl socket */
+		return;
+	}
 
 	if(!params || len > MAX_BUF)
 	{
@@ -582,19 +623,50 @@ void command_new_char(char *params, int len,player *pl)
 		&stats[0],&stats[1],&stats[2],&stats[3],&stats[4],&stats[5],&stats[6]);
 
 	/* now: we have to verify every *bit* of what the client has send us */
-
-	p_arch = find_archetype(name);
-
 	/* invalid player arch? */
-	if(!p_arch || p_arch->clone.type != PLAYER)
+	if(!(p_arch = find_archetype(name)) || p_arch->clone.type != PLAYER)
 	{
 		pl->socket.status = Ns_Dead; /* killl socket */
+		LOG(llevSystem,"SHACK: %s: invalid player arch!\n", query_name(pl->ob));
 		return;
 	}
 
 
-	LOG(llevDebug,"ARCH: %s (%d %d %d %d %d %d %d)\n", name,
-		stats[0],stats[1],stats[2],stats[3],stats[4],stats[5],stats[6]);
+	LOG(llevDebug,"NewChar: %s:: ARCH: %s (%d %d %d %d %d %d %d)\n", query_name(pl->ob),
+		name, stats[0],stats[1],stats[2],stats[3],stats[4],stats[5],stats[6]);
+
+
+	for(i=0;new_char_template[i].name!=NULL;i++)
+	{
+		if(!strcmp(name, new_char_template[i].name))
+			break;
+	}
+
+	if(!new_char_template[i].name)
+	{
+		LOG(llevDebug,"BUG:: %s: NewChar %s not in def table!\n", query_name(pl->ob), name);
+		pl->socket.status = Ns_Dead; /* killl socket */
+		return;
+	}
+	
+	v = new_char_template[i].min_Str+new_char_template[i].min_Dex+new_char_template[i].min_Con+
+		new_char_template[i].min_Int+new_char_template[i].min_Wis+new_char_template[i].min_Pow+
+		new_char_template[i].min_Cha+new_char_template[i].max_p;
+
+	if(v!=(stats[0]+stats[1]+stats[2]+stats[3]+stats[4]+stats[5]+stats[6]) /* all boni put on the player? */
+		|| stats[0]<new_char_template[i].min_Str || stats[0]>new_char_template[i].max_Str
+		|| stats[1]<new_char_template[i].min_Dex || stats[1]>new_char_template[i].max_Dex
+		|| stats[2]<new_char_template[i].min_Con || stats[2]>new_char_template[i].max_Con
+		|| stats[3]<new_char_template[i].min_Int || stats[3]>new_char_template[i].max_Int
+		|| stats[4]<new_char_template[i].min_Wis || stats[4]>new_char_template[i].max_Wis
+		|| stats[5]<new_char_template[i].min_Pow || stats[5]>new_char_template[i].max_Pow
+		|| stats[6]<new_char_template[i].min_Cha || stats[6]>new_char_template[i].max_Cha)
+	{
+			LOG(llevDebug,"SHACK:: %s: tried to hack NewChar! (%d - %d)\n", query_name(pl->ob),i,
+			stats[0]+stats[1]+stats[2]+stats[3]+stats[4]+stats[5]+stats[6]);
+		pl->socket.status = Ns_Dead; /* killl socket */
+		return;
+	}
 
 	/* all is ok - now lets create this sucker */
 	/* the stats of a player a saved in pl struct and copied to the object */
