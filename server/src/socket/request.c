@@ -537,15 +537,15 @@ static void version_mismatch_msg(NewSocket *ns)
 	else
 	{
 		sprintf(buf,"X%s %s", text1,VERSION);
-	    Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, buf, strlen(text1));
+	    Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, buf, strlen(buf));
 		sprintf(buf,"X%s", text2);
-	    Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, buf, strlen(text1));
+	    Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, buf, strlen(buf));
 		sprintf(buf,"X%s", text3);
-	    Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, buf, strlen(text1));
+	    Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, buf, strlen(buf));
 		sprintf(buf,"X%s", text4);
-	    Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, buf, strlen(text1));
+	    Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, buf, strlen(buf));
 		sprintf(buf,"X%s", text5);
-	    Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, buf, strlen(text1));
+	    Write_String_To_Socket(ns, BINARY_CMD_DRAWINFO, buf, strlen(buf));
 	}
 }
 
