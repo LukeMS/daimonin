@@ -199,6 +199,18 @@
   <entry value="12" name="timer" />
 </list>
 
+<list name="direction">
+  <entry value="0" name="&lt;none&gt;" />
+  <entry value="1" name="north" />
+  <entry value="2" name="northeast" />
+  <entry value="3" name="east" />
+  <entry value="4" name="southeast" />
+  <entry value="5" name="south" />
+  <entry value="6" name="southwest" />
+  <entry value="7" name="west" />
+  <entry value="8" name="northwest" />
+</list>
+
 <list name="mood">
   <entry value="0" name="furious" />
   <entry value="1" name="angry" />
