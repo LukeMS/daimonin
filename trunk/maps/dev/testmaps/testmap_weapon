@@ -1288,6 +1288,7 @@ arch axe
 name axe 0.03
 identified 1
 wc 25
+weapon_speed 0.03
 x 10
 y 5
 end

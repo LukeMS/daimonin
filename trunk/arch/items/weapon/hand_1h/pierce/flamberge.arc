@@ -2,7 +2,7 @@ Object flamberge
 name flamberge
 layer 3
 face flamberge.101
-weapon_speed 0.0225
+weapon_speed 0.02
 attack_pierce 100
 dam 6
 wc 1

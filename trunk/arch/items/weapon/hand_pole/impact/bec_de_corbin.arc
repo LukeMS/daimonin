@@ -9,7 +9,7 @@ wc 2
 ac 1
 type 15
 sub_type 8
-material 2
+material 18
 material_real 65
 weight 4500
 value 875

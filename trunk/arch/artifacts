@@ -1773,6 +1773,204 @@ protect_acid 15
 value 3000
 end
 #
+# Weapons
+#
+#
+Allowed all
+chance 20
+artifact weapon_fools
+def_arch sword
+Object
+title of fools
+ac -1
+dam 3
+wc -1
+wc_range 15
+type 15
+is_magical 1
+cursed 1
+value 500
+end
+#
+Allowed all
+chance 15
+difficulty 3
+artifact weapon_defense
+def_arch sword
+Object
+title of defense
+ac_add 1
+type 15
+is_magical 1
+value 4500
+end
+#
+Allowed all
+chance 15
+difficulty 6
+artifact weapon_accuracy
+def_arch sword
+Object
+title of defense
+wc_add 1
+type 15
+is_magical 1
+value 5500
+end
+#
+Allowed all
+chance 15
+difficulty 14
+artifact weapon_precision
+def_arch sword
+Object
+title of defense
+wc_range_add 5
+wc_add 1
+type 15
+is_magical 1
+value 5500
+end
+#
+Allowed all
+chance 10
+difficulty 10
+artifact weapon_damage
+def_arch sword
+Object
+title of damage
+dam_add 1
+type 15
+is_magical 1
+value 7500
+end
+#
+Allowed all
+chance 20
+artifact weapon_strength
+def_arch sword
+Object
+title of strength
+Str 1
+type 15
+is_magical 1
+value 4500
+end
+#
+Allowed all
+chance 20
+artifact weapon_dexterity
+def_arch sword
+Object
+title of dexterity
+Dex 1
+type 15
+is_magical 1
+value 4500
+end
+#
+Allowed all
+chance 20
+artifact weapon_const
+def_arch sword
+Object
+title of constitution
+Con 1
+type 15
+is_magical 1
+value 4500
+end
+#
+Allowed all
+chance 20
+artifact weapon_wisdom
+def_arch sword
+Object
+title of wisdom
+Wis 1
+type 15
+is_magical 1
+value 4500
+end
+#
+Allowed all
+chance 20
+artifact weapon_int
+def_arch sword
+Object
+title of intelligence
+Int 1
+type 15
+is_magical 1
+value 4500
+end
+#
+Allowed all
+chance 20
+artifact weapon_power
+def_arch sword
+Object
+title of power
+Pow 1
+type 15
+is_magical 1
+value 4500
+end
+#
+Allowed all
+chance 20
+artifact weapon_charisma
+def_arch sword
+Object
+title of charisma
+Cha 1
+type 15
+is_magical 1
+value 4500
+end
+#
+Allowed all
+chance 20
+t_style 1
+difficulty 7
+artifact weapon_less_fire
+def_arch sword
+Object
+title of less fire
+attack_fire 10
+type 15
+is_magical 1
+value 5000
+end
+#
+Allowed all
+chance 20
+t_style 2
+difficulty 7
+artifact weapon_less_cold
+def_arch sword
+Object
+title of less cold
+attack_cold 10
+type 15
+is_magical 1
+value 5000
+end
+#
+Allowed all
+chance 20
+t_style 3
+difficulty 7
+artifact weapon_less_elec
+def_arch sword
+Object
+title of less electricity
+attack_electricity 10
+type 15
+is_magical 1
+value 5000
+end
+#
 # Rings
 #
 # Rings are handled special. 

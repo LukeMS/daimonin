@@ -284,7 +284,6 @@ WS	[ \t]*
 							op->arch?(op->arch->name?op->arch->name:"<no arch name>"):"<no ->arch>",yval());
 				}
 
-^wc_range{S}	op->stats.wc_range = IVAL;
 ^str{S}			op->stats.Str = IVAL;
 ^dex{S}			op->stats.Dex = IVAL;
 ^con{S}			op->stats.Con = IVAL;
@@ -301,8 +300,13 @@ WS	[ \t]*
 ^exp{S}			op->stats.exp = atol(yval());
 ^food{S}		op->stats.food = IVAL;
 ^dam{S}			op->stats.dam = IVAL;
+^dam_add{S}		op->stats.dam += IVAL;
 ^wc{S}			op->stats.wc = IVAL;
+^wc_add{S}		op->stats.wc += IVAL;
+^wc_range{S}		op->stats.wc_range = IVAL;
+^wc_range_add{S}	op->stats.wc_range += IVAL;
 ^ac{S}			op->stats.ac = IVAL;
+^ac_add{S}		op->stats.ac += IVAL;
 ^x{S}		{op->x = IVAL; 
 #ifdef POSITION_DEBUG 
 op->ox= op->x;

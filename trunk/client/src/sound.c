@@ -190,9 +190,8 @@ void sound_init(void)
             LOG(LOG_MSG,"Warning: Couldn't set sound device. Reason: %s\n", SDL_GetError());
 			return;
 	}
-
-#endif
 	SoundSystem = SOUND_SYSTEM_ON;
+#endif
 }
 
 void sound_deinit(void)

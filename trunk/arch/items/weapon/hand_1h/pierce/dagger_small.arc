@@ -2,7 +2,7 @@ Object dagger_small
 name small dagger
 layer 3
 face dagger_small.101
-weapon_speed 0.025
+weapon_speed 0.02
 attack_pierce 100
 dam 4
 wc 1

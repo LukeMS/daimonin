@@ -4,7 +4,7 @@ layer 3
 face tanto.101
 weapon_speed 0.0225
 attack_pierce 100
-dam 6
+dam 5
 wc 1
 type 15
 sub_type 2

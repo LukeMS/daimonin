@@ -441,11 +441,14 @@ static PyObject* CFSetUnaggressive(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFCastAbility                                                    */
-/* Python : CFPython.CastAbility(object,target,spellno,mode,direction,option)*/
-/* Info   : object Casts spellno on target.                                  */
+/* Python : CFPython.CastAbility(caster,target,spellno,mode,direction,option)*/
+/* Info   : caster casts the ability numbered spellno on target.             */
 /*          mode: 0 = normal, 1 = potion                                     */
-/*          direction is only relevant for directional spells                */
-/*          op = ? (Gecko: TODO op + target for directional? )               */
+/*          direction is the direction to cast the ability in                */
+/*          option is additional string option(s)                            */
+/*          FIXME: only allows for directional abilities?                    */
+/*          Abilities are can be cast in magic-blocking areas, and do not    */
+/*          use magicattack.                                                 */
 /* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFCastAbility(PyObject* self, PyObject* args)
@@ -465,7 +468,7 @@ static PyObject* CFCastAbility(PyObject* self, PyObject* args)
                 &spell, &mode, &dir, &op))
         return NULL;
 
-	if(WHO && WHO->type != PLAYER)
+	if(WHO->type != PLAYER)
 		parm2 = spellNPC;
 	else
 	{
@@ -484,6 +487,7 @@ static PyObject* CFCastAbility(PyObject* self, PyObject* args)
     GCFP.Value[6] = (void *)(op);
     GCFP.Value[7] = (void *)(&typeoffire);
     CFR = (PlugHooks[HOOK_CASTSPELL])(&GCFP);
+    
     free(CFR);
     Py_INCREF(Py_None);
     return Py_None;
@@ -826,10 +830,6 @@ static PyObject* CFSetPreviousObject(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"O!O!", &CFPython_ObjectType, &whoptr, &CFPython_ObjectType, &whatptr))
         return NULL;
 
-    /* Gecko: this test is unecessary with object wrappers
-     * if (WHO==NULL) return NULL;
-     */
-
     WHO->above = WHAT;
     Py_INCREF(Py_None);
     return Py_None;
@@ -1011,8 +1011,14 @@ static PyObject* CFFindPlayer(PyObject* self, PyObject* args)
 /* Name   : CFApply                                                          */
 /* Python : CFPython.Apply(object, whatobj, flags)                           */
 /* Info   : forces object to apply whatobj.                                  */
-/*          flags: ? (FIXME: document this function better)                  */
-/*          returns ? (probably 1 for success and 0 for failure)             */
+/*          flags:   0 - normal apply (toggle)                               */
+/*                   1 - always apply (AP_APPLY)                             */
+/*                   2 - always unapply (AP_UNAPPLY)                         */
+/*                  16 - don't merge unapplied items (AP_NO_MERGE)           */
+/*                  32 - unapply cursed items (AP_IGNORE_CURSE)              */
+/*          returns: 0 - object cannot apply objects of that type.           */
+/*                   1 - object was applied, or not...                       */
+/*                   2 - object must be in inventory to be applied           */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static PyObject* CFApply(PyObject* self, PyObject* args)
@@ -2099,7 +2105,14 @@ static PyObject* CFDirectionNW(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFCastSpell                                                      */
-/* Python : CFPython.CastSpell(object,target,spell,mode,direction,option)    */
+/* Python : CFPython.CastSpell(caster,target,spell,mode,direction,option)    */
+/* Info   : caster casts the spell numbered spellno on target.               */
+/*          mode: 0 = normal, 1 = potion                                     */
+/*          direction is the direction to cast the spell in                  */
+/*          option is additional string option(s)                            */
+/*          NPCs can cast spells even in no-spell areas.                     */
+/*          FIXME: only allows for directional spells                        */
+/*          FIXME: is direction/position relative to target? (0 = self)      */
 /* Status : Untested                                                         */
 /*****************************************************************************/
 /* GeckoStatus: untested */
@@ -2121,12 +2134,17 @@ static PyObject* CFCastSpell(PyObject* self, PyObject* args)
                 &spell, &mode, &dir, &op))
         return NULL;
 
-	if(!mode)
-		parm2 = spellNormal;
+	if(WHO->type != PLAYER)
+		parm2 = spellNPC;
 	else
-		parm2 = spellPotion;
+	{
+        if(!mode)
+            parm2 = spellNormal;
+        else
+            parm2 = spellPotion;
+    }
 
-    GCFP.Value[0] = (void *)(object *)(target);
+    GCFP.Value[0] = (void *)(target->obj);
     GCFP.Value[1] = (void *)(WHO);
     GCFP.Value[2] = (void *)(&dir);
     GCFP.Value[3] = (void *)(&spell);
@@ -2144,7 +2162,7 @@ static PyObject* CFCastSpell(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetSpellNr                                                     */
 /* Python : CFGetSpellNr(name)                                               */
-/* Info   : get the number of the named spell. -1 if no such spell exists    */
+/* Info   : Gets the number of the named spell. -1 if no such spell exists   */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static PyObject* CFGetSpellNr(PyObject* self, PyObject* args)
@@ -2216,7 +2234,7 @@ static PyObject* CFAcquireSpell(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetSkillNr                                                     */
 /* Python : CFPython.GetSkillNr(name)                                        */
-/* Info   : get the number of the named skill. -1 if no such skill exists    */
+/* Info   : Gets the number of the named skill. -1 if no such skill exists   */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static PyObject* CFGetSkillNr(PyObject* self, PyObject* args)

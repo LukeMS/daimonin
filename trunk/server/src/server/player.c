@@ -461,6 +461,7 @@ object *get_nearest_player(object *mon) {
  * since only simple checks to blocked are being called, which could mean the monster
  * is blocking itself.
  */
+/* TODO: this sould really use pathfinding instead. /Gecko */
 int path_to_player(object *mon, object *pl,int mindiff) {
     rv_vector	rv;
     int	x,y,lastx,lasty,dir,i,diff, firstdir=0,lastdir, max=MAX_SPACES;
@@ -491,7 +492,7 @@ int path_to_player(object *mon, object *pl,int mindiff) {
 	    /* recalculate direction from last good location.  Possible
 	     * we were not traversing ideal location before.
 	     */
-	    get_rangevector_from_mapcoord(lastmap, lastx, lasty, pl, &rv, 0);
+	    get_rangevector_from_mapcoords(lastmap, lastx, lasty, pl->map, pl->x, pl->y, &rv, 0);
 	    if (rv.direction != dir) {
 		/* OK - says direction should be different - lets reset the
 		 * the values so it will try again.
@@ -552,7 +553,7 @@ int path_to_player(object *mon, object *pl,int mindiff) {
 	    /* Recalculate diff (distance) because we may not have actually
 	     * headed toward player for entire distance.
 	     */
-	    get_rangevector_from_mapcoord(m, x, y, pl, &rv, 0);
+	    get_rangevector_from_mapcoords(m, x, y, pl->map, pl->x, pl->y, &rv, 0);
 	    diff = FABS(rv.distance_x)>FABS(rv.distance_y)?FABS(rv.distance_x):FABS(rv.distance_y);
 	}
 	if (diff>max) return 0;

@@ -9,7 +9,7 @@ direction 5
 is_neutral 1
 terrain_flag 1
 weapon_speed 0.035
-attack_cleave 100
+attack_cleave 80
 unaggressive 1
 random_move 1
 type 80

@@ -117,6 +117,7 @@ extern uint32 global_map_tag; /* our global map_tag value for the server (map.c)
 #include "object.h"
 #include "map.h"
 #include "tod.h"
+#include "pathfinder.h"
 
 /* Pull in the socket structure - used in the player structure */
 #include "newserver.h"

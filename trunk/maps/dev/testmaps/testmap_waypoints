@@ -7,6 +7,7 @@ endmsg
 width 24
 height 24
 difficulty 1
+tile_path_2 testmap_waypoints2
 end
 arch floor_ostone1
 end
@@ -445,6 +446,35 @@ arch floor_ostone1
 x 3
 y 15
 end
+arch sign
+x 3
+y 15
+end
+arch slime
+speed -0.2
+unaggressive 1
+attack_movement 176
+x 3
+y 15
+arch waypoint
+name waypoint2
+title waypoint1
+hp 3
+sp 15
+wc 3
+end
+arch waypoint
+name waypoint1
+title waypoint2
+hp 10
+sp 15
+wc 3
+end
+arch event_obj
+sub_type 6
+race /dev/testmaps/waypoint_activate.py
+end
+end
 arch floor_ostone1
 x 3
 y 16
@@ -506,7 +536,6 @@ x 4
 y 3
 arch waypoint
 name waypoint3
-cursed 1
 title waypoint4
 hp 7
 sp 9
@@ -535,6 +564,10 @@ title waypoint3
 hp 7
 sp 3
 end
+arch event_obj
+sub_type 6
+race /dev/testmaps/waypoint_activate.py
+end
 end
 arch floor_ostone1
 x 4
@@ -776,7 +809,17 @@ arch floor_ostone1
 x 6
 y 12
 end
+arch handle_lever
+connected 1
+x 6
+y 12
+end
 arch floor_ostone1
+x 6
+y 13
+end
+arch grate_open
+connected 1
 x 6
 y 13
 end
@@ -784,7 +827,17 @@ arch floor_ostone1
 x 6
 y 14
 end
+arch grate_open
+connected 1
+x 6
+y 14
+end
 arch floor_ostone1
+x 6
+y 15
+end
+arch grate_open
+connected 1
 x 6
 y 15
 end
@@ -792,7 +845,17 @@ arch floor_ostone1
 x 6
 y 16
 end
+arch grate_open
+connected 1
+x 6
+y 16
+end
 arch floor_ostone1
+x 6
+y 17
+end
+arch grate_open
+connected 1
 x 6
 y 17
 end
@@ -1211,6 +1274,10 @@ arch floor_ostone1
 x 10
 y 15
 end
+arch sign
+x 10
+y 15
+end
 arch floor_ostone1
 x 10
 y 16
@@ -1419,6 +1486,35 @@ arch floor_ostone1
 x 12
 y 16
 end
+arch sign
+x 12
+y 16
+end
+arch slime
+speed -0.5
+unaggressive 1
+attack_movement 176
+x 12
+y 16
+arch waypoint
+name waypoint2
+slaying testmap_waypoints
+hp 12
+sp 16
+end
+arch waypoint
+name waypoint1
+title waypoint2
+slaying testmap_waypoints
+hp 19
+sp 16
+wc 3
+end
+arch event_obj
+sub_type 6
+race /dev/testmaps/waypoint_activate.py
+end
+end
 arch floor_ostone1
 x 12
 y 17
@@ -1571,6 +1667,38 @@ arch floor_ostone1
 x 14
 y 3
 end
+arch sign
+msg
+Starting point for tiled map crosser
+endmsg
+x 14
+y 3
+end
+arch pudding_red
+speed 0.5
+unaggressive 1
+attack_movement 176
+x 14
+y 3
+arch waypoint
+name waypoint1
+title waypoint2
+slaying testmap_waypoints4
+hp 3
+sp 3
+wc 10
+end
+arch event_obj
+sub_type 6
+race /dev/testmaps/waypoint_activate.py
+end
+arch waypoint
+name waypoint2
+slaying testmap_waypoints
+hp 14
+sp 3
+end
+end
 arch floor_ostone1
 x 14
 y 4
@@ -1713,7 +1841,15 @@ arch floor_ostone1
 x 15
 y 13
 end
+arch grate1_8
+x 15
+y 13
+end
 arch floor_ostone1
+x 15
+y 14
+end
+arch grate1_3
 x 15
 y 14
 end
@@ -1721,7 +1857,15 @@ arch floor_ostone1
 x 15
 y 15
 end
+arch grate1_3
+x 15
+y 15
+end
 arch floor_ostone1
+x 15
+y 16
+end
+arch grate1_3
 x 15
 y 16
 end
@@ -1729,11 +1873,23 @@ arch floor_ostone1
 x 15
 y 17
 end
+arch grate1_3
+x 15
+y 17
+end
 arch floor_ostone1
 x 15
 y 18
 end
+arch grate1_3
+x 15
+y 18
+end
 arch floor_ostone1
+x 15
+y 19
+end
+arch grate1_3e
 x 15
 y 19
 end
@@ -1815,6 +1971,10 @@ arch floor_ostone1
 x 16
 y 13
 end
+arch grate1_1e
+x 16
+y 13
+end
 arch floor_ostone1
 x 16
 y 14
@@ -1836,6 +1996,10 @@ x 16
 y 18
 end
 arch floor_ostone1
+x 16
+y 19
+end
+arch grate1_1
 x 16
 y 19
 end
@@ -1917,6 +2081,11 @@ arch floor_ostone1
 x 17
 y 13
 end
+arch handle_lever
+connected 10
+x 17
+y 13
+end
 arch floor_ostone1
 x 17
 y 14
@@ -1925,11 +2094,23 @@ arch floor_ostone1
 x 17
 y 15
 end
+arch grate1_8
+x 17
+y 15
+end
 arch floor_ostone1
 x 17
 y 16
 end
+arch grate1_3
+x 17
+y 16
+end
 arch floor_ostone1
+x 17
+y 17
+end
+arch grate1_4
 x 17
 y 17
 end
@@ -1941,11 +2122,23 @@ arch floor_ostone1
 x 17
 y 19
 end
+arch grate1_1e
+x 17
+y 19
+end
 arch floor_ostone1
 x 17
 y 20
 end
+arch grate1_3
+x 17
+y 20
+end
 arch floor_ostone1
+x 17
+y 21
+end
+arch grate1_3e
 x 17
 y 21
 end
@@ -2019,6 +2212,10 @@ arch floor_ostone1
 x 18
 y 13
 end
+arch grate1_8
+x 18
+y 13
+end
 arch floor_ostone1
 x 18
 y 14
@@ -2027,11 +2224,19 @@ arch floor_ostone1
 x 18
 y 15
 end
+arch grate1_1
+x 18
+y 15
+end
 arch floor_ostone1
 x 18
 y 16
 end
 arch floor_ostone1
+x 18
+y 17
+end
+arch grate1_1
 x 18
 y 17
 end
@@ -2048,6 +2253,10 @@ x 18
 y 20
 end
 arch floor_ostone1
+x 18
+y 21
+end
+arch grate1_1
 x 18
 y 21
 end
@@ -2121,6 +2330,10 @@ arch floor_ostone1
 x 19
 y 13
 end
+arch grate1_1
+x 19
+y 13
+end
 arch floor_ostone1
 x 19
 y 14
@@ -2129,7 +2342,15 @@ arch floor_ostone1
 x 19
 y 15
 end
+arch grate1_1
+x 19
+y 15
+end
 arch floor_ostone1
+x 19
+y 16
+end
+arch sign
 x 19
 y 16
 end
@@ -2137,11 +2358,23 @@ arch floor_ostone1
 x 19
 y 17
 end
+arch grate1_1
+x 19
+y 17
+end
 arch floor_ostone1
 x 19
 y 18
 end
+arch grate1_3
+x 19
+y 18
+end
 arch floor_ostone1
+x 19
+y 19
+end
+arch grate1_3e
 x 19
 y 19
 end
@@ -2150,6 +2383,10 @@ x 19
 y 20
 end
 arch floor_ostone1
+x 19
+y 21
+end
+arch grate1_1
 x 19
 y 21
 end
@@ -2223,11 +2460,24 @@ arch floor_ostone1
 x 20
 y 13
 end
+arch grate1_1e
+x 20
+y 13
+end
 arch floor_ostone1
 x 20
 y 14
 end
+arch grate_closed
+connected 10
+x 20
+y 14
+end
 arch floor_ostone1
+x 20
+y 15
+end
+arch grate1_4
 x 20
 y 15
 end
@@ -2239,11 +2489,23 @@ arch floor_ostone1
 x 20
 y 17
 end
+arch grate1_4
+x 20
+y 17
+end
 arch floor_ostone1
 x 20
 y 18
 end
+arch grate1_3
+x 20
+y 18
+end
 arch floor_ostone1
+x 20
+y 19
+end
+arch grate1_4
 x 20
 y 19
 end
@@ -2252,6 +2514,10 @@ x 20
 y 20
 end
 arch floor_ostone1
+x 20
+y 21
+end
+arch grate1_1
 x 20
 y 21
 end
@@ -2333,6 +2599,10 @@ arch floor_ostone1
 x 21
 y 15
 end
+arch grate1_1
+x 21
+y 15
+end
 arch floor_ostone1
 x 21
 y 16
@@ -2354,6 +2624,10 @@ x 21
 y 20
 end
 arch floor_ostone1
+x 21
+y 21
+end
+arch grate1_1
 x 21
 y 21
 end
@@ -2435,7 +2709,15 @@ arch floor_ostone1
 x 22
 y 15
 end
+arch grate1_1e
+x 22
+y 15
+end
 arch floor_ostone1
+x 22
+y 16
+end
+arch grate1_3
 x 22
 y 16
 end
@@ -2443,7 +2725,15 @@ arch floor_ostone1
 x 22
 y 17
 end
+arch grate1_3
+x 22
+y 17
+end
 arch floor_ostone1
+x 22
+y 18
+end
+arch grate1_3
 x 22
 y 18
 end
@@ -2451,11 +2741,23 @@ arch floor_ostone1
 x 22
 y 19
 end
+arch grate1_3
+x 22
+y 19
+end
 arch floor_ostone1
 x 22
 y 20
 end
+arch grate1_3
+x 22
+y 20
+end
 arch floor_ostone1
+x 22
+y 21
+end
+arch grate1_4
 x 22
 y 21
 end
@@ -2477,179 +2779,91 @@ end
 arch wall_stone1_1
 x 23
 end
-arch floor_ostone1
+arch floor_marble1
 x 23
 y 1
 end
-arch wall_stone1_3
-x 23
-y 1
-end
-arch floor_ostone1
+arch floor_marble1
 x 23
 y 2
 end
-arch wall_stone1_3
-x 23
-y 2
-end
-arch floor_ostone1
+arch floor_marble1
 x 23
 y 3
 end
-arch wall_stone1_3
-x 23
-y 3
-end
-arch floor_ostone1
+arch floor_marble1
 x 23
 y 4
 end
-arch wall_stone1_3
-x 23
-y 4
-end
-arch floor_ostone1
+arch floor_marble1
 x 23
 y 5
 end
-arch wall_stone1_3
-x 23
-y 5
-end
-arch floor_ostone1
+arch floor_marble1
 x 23
 y 6
 end
-arch wall_stone1_3
-x 23
-y 6
-end
-arch floor_ostone1
+arch floor_marble1
 x 23
 y 7
 end
-arch wall_stone1_3
-x 23
-y 7
-end
-arch floor_ostone1
+arch floor_marble1
 x 23
 y 8
 end
-arch wall_stone1_3
-x 23
-y 8
-end
-arch floor_ostone1
+arch floor_marble1
 x 23
 y 9
 end
-arch wall_stone1_3
-x 23
-y 9
-end
-arch floor_ostone1
+arch floor_marble1
 x 23
 y 10
 end
-arch wall_stone1_3
-x 23
-y 10
-end
-arch floor_ostone1
+arch floor_marble1
 x 23
 y 11
 end
-arch wall_stone1_3
-x 23
-y 11
-end
-arch floor_ostone1
+arch floor_marble1
 x 23
 y 12
 end
-arch wall_stone1_3
-x 23
-y 12
-end
-arch floor_ostone1
+arch floor_marble1
 x 23
 y 13
 end
-arch wall_stone1_3
-x 23
-y 13
-end
-arch floor_ostone1
+arch floor_marble1
 x 23
 y 14
 end
-arch wall_stone1_3
-x 23
-y 14
-end
-arch floor_ostone1
+arch floor_marble1
 x 23
 y 15
 end
-arch wall_stone1_3
-x 23
-y 15
-end
-arch floor_ostone1
+arch floor_marble1
 x 23
 y 16
 end
-arch wall_stone1_3
-x 23
-y 16
-end
-arch floor_ostone1
+arch floor_marble1
 x 23
 y 17
 end
-arch wall_stone1_3
-x 23
-y 17
-end
-arch floor_ostone1
+arch floor_marble1
 x 23
 y 18
 end
-arch wall_stone1_3
-x 23
-y 18
-end
-arch floor_ostone1
+arch floor_marble1
 x 23
 y 19
 end
-arch wall_stone1_3
-x 23
-y 19
-end
-arch floor_ostone1
+arch floor_marble1
 x 23
 y 20
 end
-arch wall_stone1_3
-x 23
-y 20
-end
-arch floor_ostone1
+arch floor_marble1
 x 23
 y 21
 end
-arch wall_stone1_3
-x 23
-y 21
-end
-arch floor_ostone1
-x 23
-y 22
-end
-arch wall_stone1_3
+arch floor_marble1
 x 23
 y 22
 end
@@ -2657,7 +2871,7 @@ arch floor_ostone1
 x 23
 y 23
 end
-arch wall_stone1_4
+arch wall_stone1_1
 x 23
 y 23
 end
