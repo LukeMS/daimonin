@@ -394,6 +394,7 @@ int save_player(object *op, int flag) {
     op->y = backup_y;
   }
 #else
+
   save_object(fp, op, 3); /* don't check and don't remove */
 #endif
 

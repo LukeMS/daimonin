@@ -9,6 +9,7 @@ speed -0.1
 weapon_speed 0.044
 attack_acid 75
 attack_poison 30
+resist_poison 100
 ac 16
 wc 15
 dam 4

@@ -2110,6 +2110,11 @@ priest_church.151
 priest_church.152
 priest_church.153
 mina
+anim probebullet
+probe.101
+probe.102
+probe.103
+mina
 anim pudding_red
 facings 25
 trans.101

@@ -258,9 +258,9 @@ int command_who (object *op, char *params)
 	    new_draw_info(NDI_UNIQUE, 0,op,buf);
 	}
     }
-	sprintf(buf,"There %s %d player%s online  ( %d in transfer )", 
+	sprintf(buf,"There %s %d player%s online  (%d in login)", 
 								ip+il>1?"are":"is",ip+il,ip+il>1?"s":"",il);
-	new_draw_info(NDI_UNIQUE|NDI_NAVY, 0,op,buf);
+	new_draw_info(NDI_UNIQUE, 0,op,buf);
     return 1;
 }
 

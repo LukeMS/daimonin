@@ -864,15 +864,15 @@ treasure giant_hill
    chance 25
   more
   arch ring_generic
-  chance 10
+  chance 2
   more
   arch coppercoin
    chance 100
-   nrof 50
+   nrof 25
   more
   arch silvercoin
    chance 100
-   nrof 3
+   nrof 1
 end
 ############# TEST ############################
 treasureone random_test1

@@ -473,7 +473,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 
 #define NRSPELLPATHS	20
 
-#define NROFREALSPELLS	16	/* Number of different spells */
+#define NROFREALSPELLS	17	/* Number of different spells */
 
 /* Terrain type flags
  * These values are used from terrain_typ and terrain_flag

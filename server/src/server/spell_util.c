@@ -443,6 +443,7 @@ dirty_jump:
 
 		case SP_BULLET:
 		case SP_CAUSE_LIGHT:
+		case SP_PROBE:
 			success = fire_arch(op,caster,dir,spellarch[type],type,1); 
 		break;
 

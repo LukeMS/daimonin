@@ -327,10 +327,6 @@ arch wall_ruin1d_131
 x 3
 y 10
 end
-arch fmask_ruin1a.131
-x 3
-y 10
-end
 arch floor_ostone1
 x 3
 y 11
@@ -355,10 +351,6 @@ arch wall_ruin1d_131
 x 3
 y 13
 end
-arch fmask_ruin1a.131
-x 3
-y 13
-end
 arch floor_ostone1
 x 3
 y 14
@@ -380,10 +372,6 @@ x 3
 y 16
 end
 arch wall_ruin1d_131
-x 3
-y 16
-end
-arch fmask_ruin1b.131
 x 3
 y 16
 end
@@ -482,10 +470,6 @@ arch floor_ostone1
 x 4
 y 14
 end
-arch wmask_ruin1a.111
-x 4
-y 14
-end
 arch floor_ostone1
 x 4
 y 15
@@ -578,10 +562,6 @@ x 5
 y 13
 end
 arch floor_ostone1
-x 5
-y 14
-end
-arch wmask_ruin1a.111
 x 5
 y 14
 end
@@ -684,10 +664,6 @@ arch floor_ostone1
 x 6
 y 14
 end
-arch wmask_ruin1a.111
-x 6
-y 14
-end
 arch floor_ostone1
 x 6
 y 15
@@ -784,10 +760,6 @@ x 7
 y 13
 end
 arch floor_ostone1
-x 7
-y 14
-end
-arch wmask_ruin1a.111
 x 7
 y 14
 end

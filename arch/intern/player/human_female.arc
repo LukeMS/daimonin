@@ -133,7 +133,7 @@ sp -1
 maxsp 3
 grace -1
 maxgrace 3
-ac 10
+ac 15
 wc 25
 can_use_armour 1
 can_use_weapon 1

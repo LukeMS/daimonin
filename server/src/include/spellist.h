@@ -134,10 +134,21 @@ spell spells[NROFREALSPELLS]={
 								SPELL_USE_CAST, /* npc/god only atm */
 								SPELL_DESC_SELF|SPELL_DESC_TOWN|SPELL_DESC_WIS,
 								PATH_RESTORE, NULL/*"protection"*/,SPELL_ACTIVE
-}
+},
+{"probe",						SPELL_TYPE_WIZARD, 1, 5, 8.0f, 3, 6,0,1.0,
+								4,      5,      4,      4, 9,	SOUND_MAGIC_DEFAULT,
+								SPELL_USE_CAST|SPELL_USE_SCROLL|SPELL_USE_HORN|
+								SPELL_USE_WAND| SPELL_USE_ROD|SPELL_USE_BOOK,
+								SPELL_DESC_DIRECTION,
+								PATH_INFO, "probebullet",SPELL_ACTIVE
+},
 /* next we need a debuff - curse for example */
 };
-
+/*
+{"probe",			 1, 3, 40, 2, 1, 75,  6,  1, 0, 0, 0,
+0,0,0,0,0,0,1,0,0,1,
+ PATH_INFO, "probebullet",},
+*/
 
 
 /*
@@ -220,9 +231,6 @@ spell spells_DUMMY[]={
 {"invisible to undead",		 6,25,  0, 5, 1, 2,  2,  1, 1, 1, 1,
 0,0,0,1,0,0,0,1,0,0,
  PATH_NULL, "enchantment",},
-{"probe",			 1, 3, 40, 2, 1, 75,  6,  1, 0, 0, 0,
-0,0,0,0,0,0,1,0,0,1,
- PATH_INFO, "probebullet",},
 {"large bullet",		 4, 3, 33, 6, 0, 0,  4,  1, 0, 0, 0,
 0,1,0,0,0,0,0,0,0,0,
  PATH_MISSILE, "lbullet",},

@@ -819,4 +819,3 @@ racelink * get_racelist ( ) {
 
   return list;
 }
- 

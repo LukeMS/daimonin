@@ -87,7 +87,7 @@ skill skills[NROFSKILLS] = {
     { "impact weapons",     NULL, EXP_NONE, 0, 0, 1.0f,      STR,      DEX, NO_STAT_VAL },
     { "bow archery",        NULL, EXP_NONE, 0, 0, 1.0f,     DEX,      STR, NO_STAT_VAL },
 /* 25 */
-    { "throwing",           NULL, EXP_NONE, 0, 0, 1.0f,      DEX,      DEX, NO_STAT_VAL },
+    { "throwing",           NULL, EXP_NONE, 1, 0, 1.0f,      DEX,      DEX, NO_STAT_VAL },
     { "wizardry spells",	NULL, EXP_NONE, 1, 0, 0.0f,      POW,      INT, 	   WIS },
     { "remove traps",       NULL, EXP_NONE, 0, 1, 0.5f,    DEX,      INT, NO_STAT_VAL },
     { "set traps",          NULL, EXP_NONE, 0, 1, 0.5f,    INT,      DEX, NO_STAT_VAL }, 

@@ -888,22 +888,42 @@ x 2
 y 14
 end
 arch rod_heavy
+identified 1
+sp 16
+nrof 10
+level 1
 x 2
 y 14
 end
 arch dust_generic
+identified 1
+sp 16
+nrof 100
+level 1
 x 2
 y 14
 end
 arch scroll_generic
+identified 1
+sp 16
+nrof 100
+level 1
 x 2
 y 14
 end
 arch potion_generic
+identified 1
+sp 16
+nrof 100
+level 1
 x 2
 y 14
 end
 arch balm_generic
+identified 1
+sp 16
+nrof 100
+level 1
 x 2
 y 14
 end
