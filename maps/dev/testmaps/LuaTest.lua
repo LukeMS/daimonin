@@ -1,3 +1,5 @@
+require ("topic_list.lua")
+
 local me = event.me;
 local activator = event.activator;
 local msg = string.lower(event.message);
@@ -22,6 +24,10 @@ elseif (msg == 'typesafe2') then
     me:SayTo(activator, "Testing type safety (wrapping strange objects)");
     other = event.other; -- # This is NULL for 'Say' scripts
     me:SayTo(other, "This will not be written nor crash the server");
+elseif (msg == 'globals') then 
+	me:SayTo(activator, "Value of a_global was " .. tostring(a_global))
+	me:SayTo(activator, "Setting it to 42, please rerun this test")
+	a_global=42
 
 -- Test food-related things
 elseif (msg == 'food') then 
@@ -412,10 +418,28 @@ elseif (msg == 'map3') then
 elseif (msg == 'createobject') then 
     note = me.map:CreateObject("note", me.x-1, me.y-1)
     note.message = "I was created out here"
+
+-- Help the Drow to test recursion
+elseif msg == 'recursive_part_2' then
+	tl = TopicList()
+	tl:setDefault( function() event.me:Say("lvl2 tl: something wierd happened to the topiclist class") end)
+	tl:addTopics("recursive_part_2", function() event.me:Say("lvl2 tl ( CORRECT )") end)
+	tl:checkMessage()	
+	
+	me:Say("Hey, the drow wants me to recurse a little...")
+	me:Communicate("recursive3")
+	
+	tl2 = TopicList()
+	tl2:setDefault( function() event.me:Say("lvl2 tl: something wierd happened to the topiclist class") end)
+	tl2:addTopics("recursive_part_2", function() event.me:Say("lvl2 tl ( CORRECT )") end)
+	tl2:checkMessage()	
+
+elseif msg == 'recursive' or msg == 'recursive2' then
+	-- me:Say("I'm keeping quiet")
 else  
     me:SayTo(activator, 
         "Available tests:\n" ..
-        "^exception^ ^tostring^ ^typesafe1^\n" ..
+        "^exception^ ^tostring^ ^typesafe1^ ^globals^\n" ..
         "^food^ ^food2^\n" ..
 		"^invisible^ ^messaging^ ^getip^\n" ..
 		"^rank1^ ^rank2^ ^clone^ ^enemy^\n" ..
