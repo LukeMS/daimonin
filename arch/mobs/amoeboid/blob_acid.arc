@@ -4,11 +4,11 @@ race slime
 randomitems mob_slime
 is_neutral 1
 weight 13250
-exp 150
+exp 130
 speed -0.1
-weapon_speed 0.044
-attack_acid 100
-ac 5
+weapon_speed 0.0375
+attack_acid 75
+ac 9
 wc 1
 dam 4
 hp -1

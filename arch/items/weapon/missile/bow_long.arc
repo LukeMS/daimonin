@@ -3,7 +3,7 @@ name long bow
 layer 3
 race arrows
 type 14
-wc 1
+wc 6
 wc_range 25
 last_sp 0
 sub_type 0

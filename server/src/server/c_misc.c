@@ -260,11 +260,13 @@ int command_who (object *op, char *params)
 						QUERY_FLAG(pl->ob,FLAG_WIZ)?" [WIZ]":"",
 						pl->idle?" I":"", "<remove>",pl->ob->count);
 	    else
-		(void) sprintf(buf,"%s the %s  ( lvl %d ) %s",pl->ob->name,pl->title,pl->ob->level,
+			sprintf(buf,"%s the %s %s (lvl %d) %s",pl->ob->name, 
+			QUERY_FLAG(pl->ob, FLAG_IS_MALE)?"male":(QUERY_FLAG(pl->ob, FLAG_IS_FEMALE)?"female":"neuter"),
+			pl->ob->race,pl->ob->level,
 						QUERY_FLAG(pl->ob,FLAG_WIZ)?" [WIZ]":"");
 	    new_draw_info(NDI_UNIQUE, 0,op,buf);
 	}
-    }
+	}
 	sprintf(buf,"There %s %d player%s online  (%d in login)", 
 								ip+il>1?"are":"is",ip+il,ip+il>1?"s":"",il);
 	new_draw_info(NDI_UNIQUE, 0,op,buf);

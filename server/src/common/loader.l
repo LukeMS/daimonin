@@ -78,8 +78,8 @@
     "player_only" <-- only player can enter flag
 	"no_cleric" 
 	"one_drop"
-	"perm_cursed" 
-	"perm_damned"
+	"cursed_perm" 
+	"damned_perm"
 	"wc_range"
 */
 
@@ -336,8 +336,8 @@ op->oy= op->y;
 ^state{S}					op->state = IVAL;
 ^hidden{S}					op->hide = IVAL;
 ^layer{S}					op->layer = IVAL;
-^perm_cursed{S}				SET_OR_CLEAR_FLAG(op, FLAG_PERM_CURSED, IVAL);
-^perm_damned{S}				SET_OR_CLEAR_FLAG(op, FLAG_PERM_DAMNED, IVAL);
+^cursed_perm{S}				SET_OR_CLEAR_FLAG(op, FLAG_PERM_CURSED, IVAL);
+^damned_perm{S}				SET_OR_CLEAR_FLAG(op, FLAG_PERM_DAMNED, IVAL);
 ^one_drop{S}				SET_OR_CLEAR_FLAG(op, FLAG_ONE_DROP, IVAL);
 ^player_only{S}				SET_OR_CLEAR_FLAG(op, FLAG_PLAYER_ONLY, IVAL);
 ^is_named{S}				SET_OR_CLEAR_FLAG(op, FLAG_IS_NAMED, IVAL);
@@ -848,7 +848,7 @@ NULL /*is_removed*/,"been_applied", "auto_apply", "treasure", "is_neutral",	/* 2
 "is_vul_magic", "is_proof_magic", "is_vul_physical", "is_proof_physical", "sys_object", /* 110 */
 "use_fix_pos","unpaid","is_aged","make_invisible" , "make_ethereal","is_player",
 "is_named",NULL /* spawn mob flag */, "no_teleport", "corpse", "corpse_forced",
-"player_only", "no_cleric", "one_drop", "perm_cursed", "perm_damned"
+"player_only", "no_cleric", "one_drop", "cursed_perm", "damned_perm"
 };
 
  

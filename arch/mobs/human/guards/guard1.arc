@@ -7,7 +7,7 @@ direction 5
 is_male 1
 is_good 1
 terrain_flag 1
-weapon_speed 0.055
+weapon_speed 0.045
 corpse 1
 attack_weaponmagic 100
 face guard1.131
@@ -109,7 +109,7 @@ exp 200
 hp -1
 maxhp 25
 Pow 3
-ac 6
+ac 12
 wc 6
 dam 15
 level 1

@@ -316,7 +316,7 @@ void show_player_data(int x, int y)
             sprintf(buf,"%s %s %s",cpl.gender, cpl.race, cpl.title);
             StringBlt(ScreenSurface, &SystemFont,buf,6, 14,COLOR_HGOLD, NULL, NULL);
 			if(strcmp(cpl.godname,"none") )
-				sprintf(buf,"%s follower of %s\n", cpl.alignment, cpl.godname);
+				sprintf(buf,"%s follower of %s", cpl.alignment, cpl.godname);
 			else
 				strcpy(buf, cpl.alignment);
             StringBlt(ScreenSurface, &SystemFont,buf,6, 26,COLOR_HGOLD, NULL, NULL);
@@ -460,6 +460,7 @@ void show_player_stats(int x, int y)
         StringBlt(ScreenSurface, &Font6x3Out,"Used" ,x+274, y+78,COLOR_HGOLD, NULL, NULL);
         StringBlt(ScreenSurface, &Font6x3Out,"Skill" ,x+274, y+86,COLOR_HGOLD, NULL, NULL);
 
+		multi = 0;
 	    if(cpl.skill_name[0]!=0)
         {
             sprintf(buf, "%s", cpl.skill_name);
@@ -469,8 +470,30 @@ void show_player_stats(int x, int y)
             {
                 sprintf(buf, "%d / %-9d", skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level,skill_list[cpl.skill_g].entry[cpl.skill_e].exp );
                 StringBlt(ScreenSurface, &SystemFont,buf ,x+298, y+88,COLOR_WHITE, NULL, NULL);
+
+				level_exp = skill_list[cpl.skill_g].entry[cpl.skill_e].exp - server_level.exp[skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level];
+				multi = modf(((double)level_exp/(double)
+				(server_level.exp[skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level+1]-server_level.exp[skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level])*10.0), &line);
+
             }
         }
+	    sprite_blt(Bitmaps[BITMAP_EXP_SKILL_BORDER],x+413, y+90, NULL, NULL);
+
+		if(multi)
+        {
+			box.x =0;
+            box.y = 0;
+            box.h = Bitmaps[BITMAP_EXP_SKILL_LINE]->bitmap->h;
+            box.w = (int) (Bitmaps[BITMAP_EXP_SKILL_LINE]->bitmap->w*multi);
+            if(!box.w)
+				box.w =1;
+			if(box.w > Bitmaps[BITMAP_EXP_SKILL_LINE]->bitmap->w)
+				box.w=Bitmaps[BITMAP_EXP_SKILL_LINE]->bitmap->w;
+			sprite_blt(Bitmaps[BITMAP_EXP_SKILL_LINE],x+416, y+97, &box, NULL);
+			for(s=0;s<(int)line;s++)
+				sprite_blt(Bitmaps[BITMAP_EXP_SKILL_BUBBLE],x+416+s*5, y+92, NULL, NULL);
+        }
+
         StringBlt(ScreenSurface, &Font6x3Out,"Regeneration",x+177, y+1, COLOR_HGOLD, NULL, NULL);
 
         StringBlt(ScreenSurface, &SystemFont,"HP",x+234, y+13, COLOR_HGOLD, NULL, NULL);

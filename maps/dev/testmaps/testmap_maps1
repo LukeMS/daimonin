@@ -551,8 +551,8 @@ arch wyvern
 type 83
 speed 0.0
 dam 1
-stand_still 1
-unaggressive 1
+stand_still 0
+unaggressive 0
 hp 0
 maxhp 2
 speed_left -0.1

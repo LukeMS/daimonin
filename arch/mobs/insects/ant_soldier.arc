@@ -6,7 +6,7 @@ layer 6
 race insect
 corpse 1
 weapon_speed 0.035
-attack_cleave 90
+attack_cleave 80
 is_male 1
 is_neutral 1
 direction 5
@@ -73,7 +73,7 @@ no_pick 1
 alive 1
 can_see_in_dark 1
 exp 125
-ac 6
+ac 10
 wc 1
 dam 4
 hp -1

@@ -7,6 +7,6 @@ sys_object 1
 nrof 1
 no_drop 1
 sp 40
-wc 1
+wc 7
 wc_range 20
 end

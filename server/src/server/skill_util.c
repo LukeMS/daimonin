@@ -879,9 +879,15 @@ int init_player_exp(object *pl) {
 	if(!QUERY_FLAG(exp_ob[i],FLAG_APPLIED)) 
   	     SET_FLAG(exp_ob[i],FLAG_APPLIED); 
         /* GD: Update perm exp when loading player. */
+
         if (settings.use_permanent_experience)
             calc_perm_exp(exp_ob[i]);
-	pl->stats.exp += exp_ob[i]->stats.exp;
+		if(pl->stats.exp<exp_ob[i]->stats.exp)
+		{
+			pl->stats.exp = exp_ob[i]->stats.exp;
+			pl->level = exp_ob[i]->level;
+		}
+
 	player_lvl_adj(NULL, exp_ob[i]);
    } 
    return 1;

@@ -536,8 +536,11 @@ int cure_disease(object *sufferer,object *caster) {
     int casting_level, is_disease=0;
 
     if(caster) casting_level = caster->level;
-    else casting_level = 1000;  /* if null caster, CURE all.  */
-
+    else
+	{
+		caster = sufferer;
+		casting_level = 1000;  /* if null caster, CURE all.  */
+	}
 	if(caster != sufferer && sufferer->type == PLAYER)
 		new_draw_info_format(NDI_UNIQUE,0,sufferer,"%s casts cure disease on you!", caster->name?caster->name:"someone");
 

@@ -84,7 +84,7 @@ exp 200
 hp -1
 maxhp 25
 Pow 3
-ac 6
+ac 12
 wc 6
 dam 15
 level 1

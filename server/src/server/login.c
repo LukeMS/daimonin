@@ -529,6 +529,7 @@ void check_login(object *op) {
     int correct = 0;
     time_t    elapsed_save_time=0;
     struct stat	statbuf;
+	object *tmp;
 #ifdef PLUGINS
     CFParm CFP;
     int evtid;
@@ -834,10 +835,57 @@ void check_login(object *op) {
 	{
 		int i;
 
+		/* if this is a 0.95 char, we adjust the exp of every skill or exp_obj NOW */
+		/* in the first step, we clear out for recalculation the players level & exp and
+		 * every EXPERIENCE object type we found.
+		 * we don't use the normal exp functions here to avoid player messages like 
+		 * "you lose a level".
+		 */
+		op->level = 1;
+		op->stats.exp = 0;
+		for(tmp=op->inv;tmp!=NULL;tmp=tmp->below) 
+		{
+			if (tmp->type == EXPERIENCE)
+			{
+				tmp->level = 1;
+				tmp->stats.exp = 0;
+			}
+		}
+		/* now we collect all skills and recalculate the level - the exp are untouched here.
+		 * then we look in the releated EXPERIENCE object - its lower exp, we set it to
+		 * the releated skill. adjust main level/exp of the player on the fly too.
+		 */
+		for(tmp=op->inv;tmp!=NULL;tmp=tmp->below) 
+		{
+			if(tmp->type == SKILL)
+			{
+				for(i=0;i<=MAXLEVEL;i++)
+				{
+					/* if exp < exp from i+1, our level is i */
+					if((uint32)tmp->stats.exp <new_levels[i+1])
+					{
+						tmp->level = i;
+						break;
+					}
+				}
+				if(tmp->exp_obj->stats.exp < tmp->stats.exp)
+				{
+					tmp->exp_obj->stats.exp = tmp->stats.exp;
+					tmp->exp_obj->level = tmp->level;
+					/* and lets adjust our main level in the same way! */
+					if(op->stats.exp < tmp->exp_obj->stats.exp)
+					{
+						op->stats.exp = tmp->exp_obj->stats.exp;
+						op->level = tmp->exp_obj->level;
+					}
+				}
+			}
+		}
+
 		/* first we generate the hp table */
 		for(i=1;i<=op->level;i++)
 		{
-			if(i<=2)
+			if(i<=3)
 				pl->levhp[i]=(char) op->arch->clone.stats.maxhp;
 			else
 				pl->levhp[i]=(char)((RANDOM()%op->arch->clone.stats.maxhp)+1);
@@ -846,7 +894,7 @@ void check_login(object *op) {
 		/* now the sp chain */
 		for(i=1;i<=pl->sp_exp_ptr->level;i++)
 		{
-			if(i<=2)
+			if(i<=3)
 				pl->levsp[i]=(char)op->arch->clone.stats.maxsp;
 			else
 				pl->levsp[i]=(char)((RANDOM()%op->arch->clone.stats.maxsp)+1);
@@ -855,7 +903,7 @@ void check_login(object *op) {
 		/* and the grace chain */
 		for(i=1;i<=pl->grace_exp_ptr->level;i++)
 		{
-			if(i<=2)
+			if(i<=3)
 				pl->levgrace[i]=(char)op->arch->clone.stats.maxgrace;
 			else
 				pl->levgrace[i]=(char)((RANDOM()%op->arch->clone.stats.maxgrace)+1);

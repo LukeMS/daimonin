@@ -946,14 +946,12 @@ void esrv_update_stats(player *pl)
     for (i=0; i<NROFPROTECTIONS; i++)
         AddIfChar(pl->last_protection[i], pl->ob->protection[i], atnr_prot_stats[i]);
 
-    /* uh, now tis time to remove this generate_ext_title here - every time we change
-	 * some in the title we should add a dirty flag - if set, fix_player should do this
-	 * *one* time
-	 */
-	generate_ext_title(pl);
-    AddIfString(pl->socket.stats.ext_title , pl->ext_title, CS_STAT_EXT_TITLE);
-    pl->socket.ext_title_flag = 0;
-
+	if(pl->socket.ext_title_flag)
+	{
+		generate_ext_title(pl);
+		AddIfString(pl->socket.stats.ext_title , pl->ext_title, CS_STAT_EXT_TITLE);
+		pl->socket.ext_title_flag = 0;
+	}
     /* Only send it away if we have some actual data */
     if (sl.len>1)
 		Send_With_Handling(&pl->socket, &sl);

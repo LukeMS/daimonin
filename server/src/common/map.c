@@ -1290,7 +1290,8 @@ static int load_map_header(FILE *fp, mapstruct *m)
                             neighbour = has_been_loaded(value);
                             if(neighbour) {
                                 m->tile_map[tile-1] = neighbour;
-                                if (!strcmp(neighbour->tile_path[dest_tile], m->path))
+								/* the server bugged here one time because neighbour->tile_path[dest_tile] == NULL... MT */
+                                if (neighbour->tile_path[dest_tile] && !strcmp(neighbour->tile_path[dest_tile], m->path))
                                     neighbour->tile_map[dest_tile] = m;
                             }
                         }

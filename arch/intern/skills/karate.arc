@@ -4,6 +4,7 @@ weapon_speed 0.02
 attack_impact 100
 face skill.101
 dam 3
+wc 7
 type 43
 sub_type 0
 sys_object 1

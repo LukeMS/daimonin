@@ -6,7 +6,7 @@ direction 5
 is_neutral 1
 corpse 1
 terrain_flag 1
-weapon_speed 0.043
+weapon_speed 0.039
 face golem.131
 Wis 6
 anim
@@ -69,8 +69,8 @@ alive 1
 attack_impact 100
 can_see_in_dark 1
 exp 120
-ac 4
-wc 3
+ac 9
+wc 4
 dam 4
 hp -1
 maxhp 7

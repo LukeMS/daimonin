@@ -6,12 +6,12 @@ is_neutral 1
 weight 13250
 exp 150
 speed -0.1
-weapon_speed 0.044
-attack_poison 90
+weapon_speed 0.038
+attack_poison 65
 attack_acid 10
 resist_poison 100
 resist_paralyze 100
-ac 6
+ac 10
 wc 2
 dam 6
 hp -1
