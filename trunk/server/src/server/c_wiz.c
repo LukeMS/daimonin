@@ -877,6 +877,8 @@ int command_nowiz (object *op, char *params) /* 'noadm' is alias */
  * for socket users to become DM - in that case, it will check for the players
  * character name.
  */
+#define RESTRICTIVE_DM
+
 static int checkdm(object *op, char *pl_name, char *pl_passwd, char *pl_host)
 {
   FILE  *dmfile;
@@ -884,7 +886,7 @@ static int checkdm(object *op, char *pl_name, char *pl_passwd, char *pl_host)
   char  line_buf[160], name[160], passwd[160], host[160];
 
 #ifdef RESTRICTIVE_DM
-  *pl_name=op->name?op->name:"*";
+  pl_name=op->name?op->name:"*";
 #endif
 
   sprintf (buf, "%s/%s", settings.localdir, DMFILE);
