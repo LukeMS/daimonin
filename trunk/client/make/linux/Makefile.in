@@ -118,6 +118,7 @@ install:: all
 	$(CP) ../../cache/*.* $(prefix)/cache
 	$(CP) ../../icons/*.* $(prefix)/icons
 	$(CP) ../../srv_files/*.* $(prefix)/srv_files
+	$(CP) ../../gfx_user/*.* $(prefix)/gfx_user
 	$(CP) ../../bitmaps/*.* $(prefix)/bitmaps
 	$(CP) ../../options.dat $(prefix)
 	$(CP) ../../keys.dat $(prefix)
