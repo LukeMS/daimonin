@@ -78,7 +78,7 @@ struct mob_known_obj
                                                           negative attraction is fear) */
     int                     tmp_friendship, tmp_attraction; /* Temporary values */
 
-	uint32					flags[NROF_AI_KNOWN_OBJ_FLAGS/32];
+	uint32					flags[(NROF_AI_KNOWN_OBJ_FLAGS/32)+1 ];
 };
 
 /* Flags for parameters */

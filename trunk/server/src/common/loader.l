@@ -783,7 +783,7 @@ int load_object(void *fp, object *op, void *mybuffer, int bufstate, int map_flag
 		object_load_flag = 1; /* we are object load but object is not called */
 		while (1) /* we can be sure this will work - InitArtifact has tested this before */
 		{
-			fp +=lcount;
+			((char *)fp) +=lcount;
 			lcount = strlen((char *)fp)+1; /*we can even put this value at string start to save the strlen */
 			yybufstate=yy_scan_string((char *)fp);
 			retval=lex_load(op, map_flags); /* hopefully we have here a "end" - or we stay in this while a bit */
