@@ -1818,7 +1818,7 @@ void update_object(object *op, int action) {
  */
 
 void free_object(object *ob) {
-  object *tmp,*tmp_op, *tmp1=NULL, *tmp2=NULL, *tmp3=NULL, *tmp4=NULL;
+  object *tmp,*tmp_op,*tmp0=NULL,*tmp1=NULL, *tmp2=NULL, *tmp3=NULL, *tmp4=NULL,*tmp5=NULL,*tmp6=NULL,*tmp7=NULL;
 
     if (!QUERY_FLAG(ob,FLAG_REMOVED)) {
 	dump_object(ob);
@@ -1837,6 +1837,7 @@ void free_object(object *ob) {
     LOG(llevBug,"BUG: Trying to free freed object.\n%s\n",errmsg);
     return;
   }
+  tmp0=ob;
   if(ob->more!=NULL) {
     free_object(ob->more);
     ob->more=NULL;
@@ -1939,27 +1940,33 @@ void free_object(object *ob) {
 tmp1=ob;
   ob->speed = 0;
   update_ob_speed(ob);
+tmp2=ob;
 
   SET_FLAG(ob, FLAG_FREED);
   ob->count = 0;
   /* First free the object from the used objects list: */
   if(ob->prev==NULL) {
+ tmp3=ob->next;
     objects=ob->next;
     if(objects!=NULL)
+    {
+      tmp4=objects;
       objects->prev=NULL;
+    }
   }
   else {
+    tmp5=ob->next;
     ob->prev->next=ob->next;
     if(ob->next!=NULL)
+    {
+    tmp6=ob->prev;
       ob->next->prev=ob->prev;
+      }
   }
-  
-tmp2=ob;
+   tmp7=ob;
   /*LOG(llevDebug,"FO: a:%s %x >%s< (#%d)\n", ob->arch?(ob->arch->name?ob->arch->name:""):"", ob->name, ob->name?ob->name:"",ob->name?query_refcount(ob->name):0);*/
   if(ob->name!=NULL) {
- tmp3=ob;
     free_string(ob->name);
- tmp4=ob;
     ob->name=NULL;
   }
 
