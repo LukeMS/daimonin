@@ -243,6 +243,7 @@ static _bitmap_name  bitmap_name[BITMAP_INIT] =
         {"quad_button_up.png", PIC_TYPE_DEFAULT},
         {"quad_button_down.png", PIC_TYPE_DEFAULT},
         {"nchar_marker.png", PIC_TYPE_TRANS},
+        {"traped.png", PIC_TYPE_TRANS},
 };
 
 #define BITMAP_MAX (sizeof(bitmap_name)/sizeof(struct _bitmap_name))

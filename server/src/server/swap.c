@@ -121,7 +121,7 @@ void swap_map(mapstruct *map)
     CFParm CFP;
 #endif
 */
-    LOG(llevDebug,"Check map for swapping: %s. (players:%d)\n", map->path,players_on_map(map) );
+/*    LOG(llevDebug,"Check map for swapping: %s. (players:%d)\n", map->path,players_on_map(map) );*/
 
 	/* lets check some legal things... */
     if(map->in_memory != MAP_IN_MEMORY) 

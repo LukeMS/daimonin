@@ -33,8 +33,8 @@
 static PyMethodDef ObjectMethods[] =
 {
     {"SetSaveBed",  (PyCFunction)Daimonin_Object_SetSaveBed, METH_VARARGS},
-    {"SetSkillExperience",  (PyCFunction)Daimonin_Object_SetSkillExperience, METH_VARARGS},
-    {"GetSkillExperience",  (PyCFunction)Daimonin_Object_GetSkillExperience, METH_VARARGS},
+    {"GetSkill",  (PyCFunction)Daimonin_Object_GetSkill, METH_VARARGS},
+    {"SetSkill",  (PyCFunction)Daimonin_Object_SetSkill, METH_VARARGS},
     {"ActivateRune",  (PyCFunction)Daimonin_Object_ActivateRune, METH_VARARGS},
     {"CastAbility",  (PyCFunction)Daimonin_Object_CastAbility, METH_VARARGS},
     {"InsertInside",  (PyCFunction)Daimonin_Object_InsertInside, METH_VARARGS},
@@ -53,6 +53,8 @@ static PyMethodDef ObjectMethods[] =
     {"DoKnowSkill", (PyCFunction)Daimonin_Object_DoKnowSkill,METH_VARARGS},
     {"AcquireSkill", (PyCFunction)Daimonin_Object_AcquireSkill,METH_VARARGS},
     {"FindMarkedObject", (PyCFunction)Daimonin_Object_FindMarkedObject,METH_VARARGS},
+    {"CheckQuestObject", (PyCFunction)Daimonin_Object_CheckQuestObject,METH_VARARGS},
+    {"AddQuestObject", (PyCFunction)Daimonin_Object_AddQuestObject,METH_VARARGS},
     {"CreatePlayerForce", (PyCFunction)Daimonin_Object_CreatePlayerForce,METH_VARARGS},
     {"CreatePlayerInfo", (PyCFunction)Daimonin_Object_CreatePlayerInfo,METH_VARARGS},
     {"GetPlayerInfo", (PyCFunction)Daimonin_Object_GetPlayerInfo,METH_VARARGS},
@@ -61,7 +63,6 @@ static PyMethodDef ObjectMethods[] =
     {"CheckInvisibleObjectInside", (PyCFunction)Daimonin_Object_CheckInvisibleInside,METH_VARARGS},
     {"CreateInvisibleObjectInside", (PyCFunction)Daimonin_Object_CreateInvisibleInside,METH_VARARGS},
     {"CreateObjectInside", (PyCFunction)Daimonin_Object_CreateObjectInside,METH_VARARGS},
-    {"CheckArchInventory", (PyCFunction)Daimonin_Object_CheckArchInventory,METH_VARARGS},
     {"CheckInventory", (PyCFunction)Daimonin_Object_CheckInventory,METH_VARARGS},
     {"Remove", (PyCFunction)Daimonin_Object_Remove,METH_VARARGS},
     {"SetPosition", (PyCFunction)Daimonin_Object_SetPosition,METH_VARARGS},
@@ -88,6 +89,7 @@ static PyMethodDef ObjectMethods[] =
     {"Save", (PyCFunction)Daimonin_Object_Save,METH_VARARGS},
     {"GetIP", (PyCFunction)Daimonin_Object_GetIP,METH_VARARGS},
     {"GetArchName", (PyCFunction)Daimonin_Object_GetArchName,METH_VARARGS},
+    {"ShowCost",  (PyCFunction)Daimonin_Object_ShowCost,METH_VARARGS},
     {"GetItemCost",  (PyCFunction)Daimonin_Object_GetItemCost,METH_VARARGS},
     {"GetMoney",  (PyCFunction)Daimonin_Object_GetMoney,METH_VARARGS},
     {"PayForItem", (PyCFunction)Daimonin_Object_PayForItem,METH_VARARGS},
@@ -263,7 +265,7 @@ static char *flag_names[NUM_FLAGS+1] = {
     "f_is_hilly", "f_has_ready_skill", "f_has_ready_weapon",		/* 90 */
     "f_no_skill_ident", NULL /*was_wiz*/, "f_can_see_in_dark", "f_is_cauldron", 
     "f_is_dust", "f_no_steal", "f_one_hit", NULL /*client_sent*/, "f_berserk", "f_no_attack",	/* 100 */
-    "f_invulnerable", NULL /*obj_original*/, NULL /*obj_save_on_ovl*/, "f_is_vul_elemental",  "f_is_proof_elemental", /* 105 */
+    "f_invulnerable", "quest_item" , NULL /*obj_save_on_ovl*/, "f_is_vul_elemental",  "f_is_proof_elemental", /* 105 */
     "f_is_vul_magic", "f_is_proof_magic", "f_is_vul_physical", "f_is_proof_physical", "f_sys_object", /* 110 */
     "f_use_fix_pos","f_unpaid","f_is_aged","f_make_invisible" , "f_make_ethereal", NULL/*is_player*/,
     "f_is_named",NULL /* spawn mob flag */, "f_no_teleport", "f_corpse", "f_corpse_forced",
@@ -352,6 +354,20 @@ static Daimonin_Constant object_constants[] = {
 
     {"CLONE_WITH_INVENTORY", 0},
     {"CLONE_WITHOUT_INVENTORY", 1},
+
+    {"EXP_AGILITY", 1},
+    {"EXP_MENTAL", 2},
+    {"EXP_MAGICAL", 3},
+    {"EXP_PERSONAL", 4},
+    {"EXP_PHYSICAL", 5},
+    {"EXP_WISDOM", 6},
+
+    {"COLOR_ORANGE", NDI_ORANGE},
+    {"COLOR_WHITE", NDI_WHITE},
+    {"COLOR_NAVY", NDI_NAVY},
+    {"COLOR_YELLOW", NDI_YELLOW},
+    {"COLOR_BLUE", NDI_BLUE},
+    {"COLOR_RED", NDI_RED},
 
     /* Argh, the object types. Make sure to keep up-to date if any are added/removed */
     {"TYPE_PLAYER"		            ,PLAYER},
@@ -473,6 +489,7 @@ static Daimonin_Constant object_constants[] = {
     {"TYPE_NUGGET"		    ,117},
     {"TYPE_EVENT_OBJECT"		,118},
     {"TYPE_WAYPOINT_OBJECT"	,119},
+    {"TYPE_QUEST_CONTAINER"	,120},
     {"TYPE_CLOSE_CON"	            ,121},
     {"TYPE_CONTAINER"	            ,122},
     {"TYPE_ARMOUR_IMPROVER"        ,123},
@@ -500,75 +517,93 @@ static Daimonin_Constant object_constants[] = {
 /* FUNCTIONSTART -- Here all the Python plugin functions come */
 
 /*****************************************************************************/
-/* Name   : Daimonin_Object_GetSkillExperience                               */
-/* Python : object.GetSkillExperience(skill)                                 */
-/* Info   : FIXME: What do we expect in return here?                         */
-/* Status : Stable                                                           */
+/* Name   : Daimonin_Object_GetSkill                                         */
+/* Python : object.GetSkill(type, id)                                        */
+/* Info   : This function will fetch a skill or exp_skill object             */
+/* Status : Tested                                                           */
 /*****************************************************************************/
-
-static PyObject* Daimonin_Object_GetSkillExperience(Daimonin_Object *whoptr, PyObject* args)
+static PyObject* Daimonin_Object_GetSkill(Daimonin_Object *whoptr, PyObject* args)
 {
     object *tmp;
-    int skill;
+    int type, id;
 
-    if (!PyArg_ParseTuple(args,"i",&skill))
+    if (!PyArg_ParseTuple(args,"ii",&type, &id))
         return NULL;
 
-    /* Browse the inventory of object to find a matching skill. */
+    /* Browse the inventory of object to find a matching skill or exp_obj. */
     for (tmp=WHO->inv;tmp;tmp=tmp->below)
     {
-        if(tmp->type!=SKILL) continue;
-        if(tmp->stats.sp!=skill) continue;
-        if (tmp->exp_obj)            
-        {
-            /* Changed to return actual skill experience (not skill category experience) */
-            return Py_BuildValue("l",(long)(tmp->stats.exp)); 
-/*            return Py_BuildValue("l",(long)(tmp->exp_obj->stats.exp)); */
-        }
+		if(tmp->type == SKILL &&  tmp->stats.sp == id)
+            return wrap_object(tmp);
+
+		if(tmp->type == EXPERIENCE &&  tmp->sub_type1 == id)
+            return wrap_object(tmp);
+
     }
-    RAISE("Couldn't find requested skill");
+
+    Py_INCREF(Py_None);
+    return Py_None;
 }
 
-
 /*****************************************************************************/
-/* Name   : Daimonin_Object_SetSkillExperience                               */
-/* Python : object.SetSkillExperience(skillid,value)                         */
+/* Name   : Daimonin_Object_SetSkill                                         */
+/* Python : object.SetSkill(skillid,value)                                   */
 /* Info   : Sets objects's experience in the skill skillid as close to value */
 /*          as permitted. There is currently a limit of 1/4 of a level.      */
 /*          There's no limit on exp reduction.                               */
 /*          FIXME overall experience is not changed (should it be?)          */
 /* Status : Tested                                                           */
 /*****************************************************************************/
-static PyObject* Daimonin_Object_SetSkillExperience(Daimonin_Object *whoptr, PyObject* args)
+static PyObject* Daimonin_Object_SetSkill(Daimonin_Object *whoptr, PyObject* args)
 {
     object *tmp;
-    int skill;
-    int value;
-    int currentxp;
+    int type, skill, value, level, currentxp;
 
-    if (!PyArg_ParseTuple(args,"il", &skill,&value))
+    if (!PyArg_ParseTuple(args,"iill", &type, &skill,&level, &value))
         return NULL;
+
+	/* atm we don't set anything in exp_obj types */
+	if(type != SKILL)
+	{
+		Py_INCREF(Py_None);
+		return Py_None;
+	}	
 
     /* Browse the inventory of object to find a matching skill. */
     for (tmp=WHO->inv;tmp;tmp=tmp->below)
     {
-        if(tmp->type!=SKILL) continue;
-        if(tmp->stats.sp!=skill) continue;
-
-        if (tmp->exp_obj)
-        {
-            /* Gecko: Changed to use actuall skill experience */
-            currentxp = tmp->stats.exp;
-            value = value - currentxp;   
+        if(tmp->type==type && tmp->stats.sp == skill)
+		{
+			/* this is a bit tricky: some skills are marked with exp
+			 * -1 or -2 as special used skills (level but no exp):
+			 * if we have here a level > 0, we set level but NEVER
+			 * exp ... if we have level == 0, we only set exp - the
+			 * addexp 
+			 */
+			LOG(-1,"LEVEL1 %d (->%d) :: %s (exp %d)\n",tmp->level,level,query_name(tmp), tmp->stats.exp);
+			if(level>0)
+			{
+				tmp->level = level;
+			}
+	        else
+	        {
+				/* Gecko: Changed to use actuall skill experience */
+				currentxp = tmp->stats.exp;
+				value = value - currentxp;   
             
-            GCFP.Value[0] = (void *)(WHO);
-            GCFP.Value[1] = (void *)(&value);
-            GCFP.Value[2] = (void *)(&skill);
-            (PlugHooks[HOOK_ADDEXP])(&GCFP);
+				GCFP.Value[0] = (void *)(WHO);
+				GCFP.Value[1] = (void *)(&value);
+				GCFP.Value[2] = (void *)(&skill);
+				(PlugHooks[HOOK_ADDEXP])(&GCFP);
 
-            Py_INCREF(Py_None);
-            return Py_None;
-        }
+	        }
+			LOG(-1,"LEVEL2 %d (->%d) :: %s (exp %d)\n",tmp->level,level,query_name(tmp), tmp->stats.exp);
+			if(WHO->type == PLAYER && WHO->contr)
+				    WHO->contr->update_skills=1; /* we will sure change skill exp, mark for update */
+
+			Py_INCREF(Py_None);
+			return Py_None;
+		}
     }
 
     RAISE("Unknown skill");
@@ -865,7 +900,7 @@ static PyObject* Daimonin_Object_Take(Daimonin_Object *whoptr, PyObject* args)
 /* Python : object.Communicate(message)                                      */
 /* Info   : object says message to everybody on its map                      */
 /*          but instead of CFSay it is parsed for other npc or magic mouth   */
-/* Status : Stable                                                           */
+/* Status : Tested                                                           */
 /*****************************************************************************/
 static PyObject* Daimonin_Object_Communicate(Daimonin_Object *whoptr, PyObject* args)
 {
@@ -887,31 +922,37 @@ static PyObject* Daimonin_Object_Communicate(Daimonin_Object *whoptr, PyObject* 
 /* Name   : Daimonin_Object_Say                                              */
 /* Python : object.Say(message)                                              */
 /* Info   : object says message to everybody on its map                      */
-/* Status : Stable                                                           */
+/* Status : Tested                                                           */
 /*****************************************************************************/
 static PyObject* Daimonin_Object_Say(Daimonin_Object *whoptr, PyObject* args)
 {
     char *message;
     static char buf[HUGE_BUF];
-    int val, d= MAP_INFO_NORMAL,x,y;
+    int val, d= MAP_INFO_NORMAL,x,y, mode = 0;
 
-    if (!PyArg_ParseTuple(args,"s", &message))
+    if (!PyArg_ParseTuple(args,"s|i", &message, &mode))
         return NULL;
 
 	/* old dynamic buffer */
     /*buf = (char *)(malloc(sizeof(char)*(strlen(message)+strlen(query_name(who))+20)));*/
-    sprintf(buf, "%s says: %s", query_name(WHO),message);
 
     val = NDI_NAVY|NDI_UNIQUE;
 	x = WHO->x;
 	y = WHO->y;
-	
+
+	if(mode)
+		GCFP.Value[5] = (void *)(message);
+	else
+	{
+		sprintf(buf, "%s says: %s", query_name(WHO),message);
+		GCFP.Value[5] = (void *)(buf);
+	}
+
     GCFP.Value[0] = (void *)(&val);
     GCFP.Value[1] = (void *)(WHO->map);
     GCFP.Value[2] = (void *)(&x);
     GCFP.Value[3] = (void *)(&y);
     GCFP.Value[4] = (void *)(&d);
-    GCFP.Value[5] = (void *)(buf);
 
     (PlugHooks[HOOK_NEWINFOMAP])(&GCFP);
 
@@ -923,49 +964,56 @@ static PyObject* Daimonin_Object_Say(Daimonin_Object *whoptr, PyObject* args)
 /*****************************************************************************/
 /* Name   : Daimonin_Object_SayTo                                            */
 /* Python : object.SayTo(target, message)                                    */
-/* Status : Stable                                                           */
 /* Info   : NPC talks only to player but map get a "xx talks to" msg too.    */
+/* Status : Tested                                                           */
 /*****************************************************************************/
 static PyObject* Daimonin_Object_SayTo(Daimonin_Object* whoptr, PyObject* args)
 {    
     object *target;
     Daimonin_Object *obptr2;
-	int zero = 0;
+	int zero = 0, mode = 0;
     char *message;
     static char buf[HUGE_BUF];
     int val,d= MAP_INFO_NORMAL,x,y;
 
-    if (!PyArg_ParseTuple(args,"O!s", &Daimonin_ObjectType, &obptr2, &message))
+    if (!PyArg_ParseTuple(args,"O!s|i", &Daimonin_ObjectType, &obptr2, &message, &mode))
         return NULL;
 
     target = obptr2->obj;
 
     /*buf = (char *)(malloc(sizeof(char)*(strlen(message)+strlen(query_name(who))+20)));*/
     
-    sprintf(buf, "%s talks to %s.", query_name(WHO),query_name(target));
-	val = NDI_UNIQUE;
-	x = WHO->x;
-	y = WHO->y;
+	if(mode)
+		GCFP.Value[3] = (void *)(message);
+	else /* thats default */
+	{
+		sprintf(buf, "%s talks to %s.", query_name(WHO),query_name(target));
+		val = NDI_UNIQUE;
+		x = WHO->x;
+		y = WHO->y;
 
-    GCFP.Value[0] = (void *)(&val);
-    GCFP.Value[1] = (void *)(WHO->map);
-    GCFP.Value[2] = (void *)(&x);
-    GCFP.Value[3] = (void *)(&y);
-    GCFP.Value[4] = (void *)(&d);
-    GCFP.Value[5] = (void *)(WHO);
-    GCFP.Value[6] = (void *)(target);
-    GCFP.Value[7] = (void *)(buf);
-    (PlugHooks[HOOK_NEWINFOMAPEXCEPT])(&GCFP);
+		GCFP.Value[0] = (void *)(&val);
+		GCFP.Value[1] = (void *)(WHO->map);
+		GCFP.Value[2] = (void *)(&x);
+		GCFP.Value[3] = (void *)(&y);
+		GCFP.Value[4] = (void *)(&d);
+		GCFP.Value[5] = (void *)(WHO);
+		GCFP.Value[6] = (void *)(target);
+		GCFP.Value[7] = (void *)(buf);
+		(PlugHooks[HOOK_NEWINFOMAPEXCEPT])(&GCFP);
 
-    sprintf(buf, "%s says: %s", query_name(WHO),message);
+		sprintf(buf, "%s says: %s", query_name(WHO),message);
+		GCFP.Value[3] = (void *)(buf);
+
+	}
+
 	val = NDI_NAVY|NDI_UNIQUE;
 	GCFP.Value[0] = (void *)(&val);
-    GCFP.Value[1] = (void *)(&zero);
-    GCFP.Value[2] = (void *)(target);
-    GCFP.Value[3] = (void *)(buf);
-    (PlugHooks[HOOK_NEWDRAWINFO])(&GCFP);
+	GCFP.Value[1] = (void *)(&zero);
+	GCFP.Value[2] = (void *)(target);
+	(PlugHooks[HOOK_NEWDRAWINFO])(&GCFP);
 
-    /*free(buf);*/
+		/*free(buf);*/
     Py_INCREF(Py_None);
     return Py_None;
 }
@@ -1002,7 +1050,7 @@ static PyObject* Daimonin_Object_Write(Daimonin_Object *whoptr, PyObject* args)
 /* Info   : Changes the gender of object. gender_string should be one of     */
 /*          Daimonin.NEUTER, Daimonin.MALE, Daimonin.GENDER_FEMALE or        */
 /*          Daimonin.HERMAPHRODITE                                           */
-/* Status : Stable                                                           */
+/* Status : Tested                                                           */
 /*****************************************************************************/
 static PyObject* Daimonin_Object_SetGender(Daimonin_Object *whoptr, PyObject* args)
 {
@@ -1034,7 +1082,7 @@ static PyObject* Daimonin_Object_SetGender(Daimonin_Object *whoptr, PyObject* ar
 /* Python : object.SetRank(rank_string)                                      */
 /* Info   : Set the rank of an object to rank_string                         */
 /*          Rank string 'Mr' is special for no rank                          */
-/* Status : Stable                                                           */
+/* Status : Tested                                                           */
 /*****************************************************************************/
 static PyObject* Daimonin_Object_SetRank(Daimonin_Object *whoptr, PyObject* args)
 {
@@ -1074,7 +1122,7 @@ static PyObject* Daimonin_Object_SetRank(Daimonin_Object *whoptr, PyObject* args
 /*****************************************************************************/
 /* Name   : Daimonin_Object_SetAlignment                                     */
 /* Python : object.SetAlignment(alignment_string)                            */
-/* Status : Stable                                                           */
+/* Status : Tested                                                           */
 /*****************************************************************************/
 static PyObject* Daimonin_Object_SetAlignment(Daimonin_Object *whoptr, PyObject* args)
 {
@@ -1111,8 +1159,8 @@ static PyObject* Daimonin_Object_SetAlignment(Daimonin_Object *whoptr, PyObject*
 /*****************************************************************************/
 /* Name   : Daimonin_Object_GetAlignmentForce                                */
 /* Python : object.GetAlignmentForce()                                       */
-/* Status : Stable                                                           */
 /* Info   : This gets the aligment_force from a inventory (should be player?)*/
+/* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* Daimonin_Object_GetAlignmentForce(Daimonin_Object *whoptr, PyObject* args)
 {
@@ -1584,6 +1632,117 @@ static PyObject* Daimonin_Object_CreatePlayerForce(Daimonin_Object *whereptr, Py
 }
 
 /*****************************************************************************/
+/* Name   : Daimonin_Object_CheckQuestObject                                   */
+/* Python : object.CheckQuestObject(name)                                      */
+/* Status : Stable                                                           */
+/* Info   : We get and check the player has a misc'ed quest object           */
+/*        : If so, the player has usally solved this quest before.           */
+/*****************************************************************************/
+static PyObject* Daimonin_Object_CheckQuestObject(Daimonin_Object *whoptr, PyObject* args)
+{
+    char *arch_name;
+    char *name;
+    object *walk;
+    
+    if (!PyArg_ParseTuple(args,"ss", &arch_name, &name))
+        return NULL;
+
+	/* lets first check the inventory for the quest_container object */
+    for(walk=WHO->inv;walk!=NULL;walk=walk->below)
+    {
+		if(walk->type == TYPE_QUEST_CONTAINER)
+		{
+			/* now lets check our quest item is inside.
+			 * we use arch name and object name as id, if needed we
+			 * arch name is stored in the race field of the quest dummies.
+			 * can add more here
+			 */
+			for(walk=walk->inv;walk!=NULL;walk=walk->below)
+			{
+				if (walk->race && !strcmp(walk->race,arch_name) &&  walk->name && !strcmp(walk->name,name))
+					return wrap_object(walk);
+			}
+			break;
+		}
+    }
+
+    Py_INCREF(Py_None);
+    return Py_None; /* there was non */
+}
+
+/*****************************************************************************/
+/* Name   : Daimonin_Object_AddQuestObject                                   */
+/* Python : object.AddQuestObject(name)                                      */
+/* Status : Stable                                                           */
+/* Info   : Add the misc'ed quest object to players quest container.         */
+/*        : create the quest container if needed                             */
+/*****************************************************************************/
+static PyObject* Daimonin_Object_AddQuestObject(Daimonin_Object *whoptr, PyObject* args)
+{
+    char *arch_name;
+    char *name;
+    object *walk, *myob;
+    CFParm* CFR;
+	char txt2[32];
+    
+    if (!PyArg_ParseTuple(args,"ss", &arch_name, &name))
+        return NULL;
+
+	/* lets first check the inventory for the quest_container object */
+    for(walk=WHO->inv;walk!=NULL;walk=walk->below)
+    {
+		if(walk->type == TYPE_QUEST_CONTAINER)
+			break;
+    }
+
+	if(!walk) /* no quest container, create it */
+	{
+	    strcpy(txt2,"quest_container");
+    
+		GCFP.Value[0] = (void *)(txt2);
+		CFR = (PlugHooks[HOOK_GETARCHETYPE])(&GCFP);
+		walk = (object *)(CFR->Value[0]);
+		free(CFR);
+       
+		if(!walk)
+		{
+			LOG(llevDebug,"Python WARNING:: AddQuestObject: Cant't find archtype 'quest_container'\n");
+			RAISE("Cant't find archtype 'quest_container'");
+		}
+
+		insert_ob_in_ob_hook(walk, WHO);
+	}
+
+	strcpy(txt2,"player_info");
+    
+    GCFP.Value[0] = (void *)(txt2);
+    CFR = (PlugHooks[HOOK_GETARCHETYPE])(&GCFP);
+    myob = (object *)(CFR->Value[0]);
+    free(CFR);
+       
+    if(!myob)
+    {
+        LOG(llevDebug,"Python WARNING:: AddQuestObject: Cant't find archtype 'player_info'\n");
+        RAISE("Cant't find archtype 'player_info'");
+    }
+
+	/* store name & arch name of the quest obj. so we can id it later */
+   	if(myob->name);
+		FREE_STRING_HOOK(myob->name);
+	myob->name = add_string_hook(name);
+
+   	if(myob->race);
+		FREE_STRING_HOOK(myob->race);
+	myob->race = add_string_hook(arch_name);
+
+	myob = insert_ob_in_ob_hook(myob, walk);
+
+    Py_INCREF(Py_None);
+    return Py_None; /* there was non */
+}
+
+
+/*****************************************************************************/
 /* Name   : Daimonin_Object_CreatePlayerInfo                                 */
 /* Python : object.CreatePlayerInfo(name)                                    */
 /* Status : Stable                                                           */
@@ -1606,8 +1765,6 @@ static PyObject* Daimonin_Object_CreatePlayerInfo(Daimonin_Object *whereptr, PyO
     
     GCFP.Value[0] = (void *)(txt2);
     CFR = (PlugHooks[HOOK_GETARCHETYPE])(&GCFP);
-    
-    /*myob = get_archetype("player_info"); */
     myob = (object *)(CFR->Value[0]);
     free(CFR);
        
@@ -1795,57 +1952,70 @@ static PyObject* Daimonin_Object_CreateObjectInside(Daimonin_Object *whereptr, P
     return wrap_object(myob);
 }
 
-/*****************************************************************************/
-/* Name   : Daimonin_Object_CheckArchInventory                               */
-/* Python : object.CheckArchInventory(arch_name)                             */
-/* Status : Stable                                                           */
-/* Info   : Search for an arch_name in object's inventory                    */
-/*****************************************************************************/
-static PyObject* Daimonin_Object_CheckArchInventory(Daimonin_Object *whoptr, PyObject* args)
+
+/* help function for Daimonin_Object_CheckInventory
+ * to recursive check object inventories.
+ */
+static object* object_check_inventory_rec(object *tmp, int mode, char* arch_name, char *name, char *title, int type)
 {
-    char* whatstr;
-    object* tmp;
-    
-    if (!PyArg_ParseTuple(args,"s",&whatstr))
-        return NULL;
-    tmp = WHO->inv;
+	object *tmp2;
 
-    while (tmp)
-    {
-        if (!strcmp(tmp->arch->name,whatstr))
-            return wrap_object(tmp);
-        tmp = tmp->below;
-    }
+	while(tmp)
+	{
 
-    Py_INCREF(Py_None);
-    return Py_None; /* we don't find a arch with this arch_name in the inventory */
+		if( (!name||(tmp->name && !strcmp(tmp->name,name))) &&
+					(!title||(tmp->title && !strcmp(tmp->title,title))) &&
+					(!arch_name||(tmp->arch && tmp->arch->name && !strcmp(tmp->arch->name,arch_name))) &&
+					(type == -1 || tmp->type == type))
+            return tmp;
+
+		if(mode == 2 || mode && tmp->type == CONTAINER) 
+		{
+			if((tmp2 = object_check_inventory_rec(tmp->inv,mode, arch_name,name,title,type)))
+	            return tmp2;
+		}
+
+		tmp = tmp->below;
+	}
+
+	return NULL;
 }
 
 /*****************************************************************************/
 /* Name   : Daimonin_Object_CheckInventory                                   */
-/* Python : object.CheckInventory(name)                                      */
+/* Python : object.CheckInventory(arch name, object name, type)              */
 /* Info   : returns the first found object with the specified name if found  */
 /*          in object's inventory, or None if it wasn't found.               */
+/*        : arch or object name == NULL will be ignored for search			 */
+/*          also type == -1                                                  */
+/*		  : mode: 0=only inventory, 1: inventory and container, 2: all inv.  */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static PyObject* Daimonin_Object_CheckInventory(Daimonin_Object *whoptr, PyObject* args)
 {
-	int i;
-    char* whatstr;
-    object* tmp;
+	int type = -1, mode = 0;
+    char *name = NULL, *title=NULL, *arch_name = NULL;
+    object *tmp, *tmp2;
 
-    if (!PyArg_ParseTuple(args,"s", &whatstr))
+    if (!PyArg_ParseTuple(args,"iz|zzi", &mode, &arch_name, &name, &title, &type))
         return NULL;
 
     tmp = WHO->inv;
     
-	i = (int)strlen(whatstr);
 	while (tmp)
 	{
-		if (!strncmp(query_name(tmp),whatstr,i))
+		if( (!name||(tmp->name && !strcmp(tmp->name,name))) &&
+					(!title||(tmp->title && !strcmp(tmp->title,title))) &&
+					(!arch_name||(tmp->arch && tmp->arch->name && !strcmp(tmp->arch->name,arch_name))) &&
+					(type == -1 || tmp->type == type))
             return wrap_object(tmp);
-		if (tmp->name && !strncmp(tmp->name,whatstr,i))
-            return wrap_object(tmp);
+
+		if(mode == 2 || mode && tmp->type == CONTAINER) 
+		{
+			if((tmp2 = object_check_inventory_rec(tmp->inv,mode, arch_name,name,title,type)))
+	            return wrap_object(tmp2);
+		}
+
 		tmp = tmp->below;
 	}
 
@@ -2097,6 +2267,28 @@ static PyObject* Daimonin_Object_GetArchName(Daimonin_Object *whoptr, PyObject* 
     return Py_BuildValue("s",WHO->arch->name);
 }
 
+
+/*****************************************************************************/
+/* Name   : Daimonin_Object_ShowCost                                         */
+/* Python : buyer.ShowCost(value)                                            */
+/* Info   : Returns a string describing value as x gold, x silver, x copper  */
+/*        : cost string comes from shop.c and is temporary STATIC            */
+/* Status : Tested                                                           */
+/*****************************************************************************/
+static PyObject* Daimonin_Object_ShowCost(Daimonin_Object *whoptr, PyObject* args)
+{
+    int value;
+	char *cost_string;
+
+    CFParm* CFR;
+    if (!PyArg_ParseTuple(args,"i", &value))
+        return NULL;
+    GCFP.Value[0] = (void *)(&value);
+    CFR = (PlugHooks[HOOK_SHOWCOST])(&GCFP);
+    cost_string=(char *)(CFR->Value[0]);
+    return Py_BuildValue("s",cost_string);
+}
+
 /*****************************************************************************/
 /* Name   : Daimonin_Object_GetItemCost                                      */
 /* Python : buyer.GetItemCost(object,type)                                   */
@@ -2124,7 +2316,8 @@ static PyObject* Daimonin_Object_GetItemCost(Daimonin_Object *whoptr, PyObject* 
 /*****************************************************************************/
 /* Name   : Daimonin_Object_GetMoney                                         */
 /* Python : buyer.GetMoney()                                                 */
-/* Status : Untested                                                         */
+/* Info   : returns the amount of money the object carries in copper         */
+/* Status : Tested                                                           */
 /*****************************************************************************/
 
 static PyObject* Daimonin_Object_GetMoney(Daimonin_Object *whoptr, PyObject* args)
@@ -2166,7 +2359,7 @@ static PyObject* Daimonin_Object_PayForItem(Daimonin_Object *whoptr, PyObject* a
 /* Python : buyer.PayAmount(value)                                           */
 /* Info   : If buyer has enough money, value copper will be deducted from    */
 /*          buyer, and 1 will be returned. Otherwise returns 0               */
-/* Status : Stable                                                           */
+/* Status : Tested                                                           */
 /*****************************************************************************/
 static PyObject* Daimonin_Object_PayAmount(Daimonin_Object *whoptr, PyObject* args)
 {

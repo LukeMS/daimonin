@@ -115,7 +115,7 @@ static _option opt[] ={
  Skill Menue
 ******************************************************************/
 static char *skill_tab[SKILL_LIST_MAX]={
-	"Agility", "Person", "Mental", "Physique", "Magic", "Wisdom", "Misc"
+	"Agility", "Mental", "Magic", "Person","Physique", "Wisdom", "Misc"
 };
 #define SKILL_TAB_SIZE (sizeof(skill_tab)/sizeof(char*))
 
@@ -639,12 +639,18 @@ void show_skilllist(void)
 		{
 			StringBlt(ScreenSurface, &SystemFont, skill_list[skill_list_set.group_nr].entry[i].name
 				,x+TXT_START_NAME, y+TXT_Y_START, COLOR_WHITE, NULL, NULL);
-			if(skill_list[skill_list_set.group_nr].entry[i].exp != -1)
-				sprintf(buf,"%d",skill_list[skill_list_set.group_nr].entry[i].exp_level);
+			if(skill_list[skill_list_set.group_nr].entry[i].exp == -1)
+				strcpy(buf,"**");
 			else
-				strcpy(buf,"--");
+				sprintf(buf,"%d",skill_list[skill_list_set.group_nr].entry[i].exp_level);
+
 			StringBlt(ScreenSurface, &SystemFont,buf,x+TXT_START_LEVEL, y+TXT_Y_START, COLOR_WHITE, NULL, NULL);
-			if(skill_list[skill_list_set.group_nr].entry[i].exp != -1)
+
+			if(skill_list[skill_list_set.group_nr].entry[i].exp == -1)
+				strcpy(buf,"**");
+			else if(skill_list[skill_list_set.group_nr].entry[i].exp == -2)
+				strcpy(buf,"**");
+			else
 				sprintf(buf,"%d",skill_list[skill_list_set.group_nr].entry[i].exp);
 			StringBlt(ScreenSurface, &SystemFont,buf,x+TXT_START_EXP, y+TXT_Y_START, COLOR_WHITE, NULL, NULL);
 		}

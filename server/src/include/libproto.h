@@ -138,6 +138,7 @@ extern char *query_base_name(object *op);
 extern char *describe_item(object *op);
 extern int need_identify(object *op);
 extern void identify(object *op);
+extern void set_traped_flag(object *op);
 /* links.c */
 extern objectlink *get_objectlink(void);
 extern oblinkpt *get_objectlinkpt(void);

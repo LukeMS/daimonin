@@ -75,5 +75,4 @@ void tick_the_clock()
 	write_todclock();
     get_tod(&tod);
     world_darkness -=season_timechange[tod.season][tod.hour];
-	LOG(-1,"WD: %d\n",world_darkness); 
 }

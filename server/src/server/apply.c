@@ -3381,7 +3381,7 @@ int auto_apply (object *op) {
     if (op->randomitems==NULL) return 0;
     do {
       i=10; /* let's give it 10 tries */
-      while((tmp=generate_treasure(op->randomitems,op->map == NULL ?  op->stats.exp: op->map->difficulty ))==NULL&&--i);
+      while((tmp=generate_treasure(op->randomitems, op->level ?  op->level: op->map->difficulty )) ==NULL&&--i);
       if(tmp==NULL)
 	  return 0;
       
@@ -3404,7 +3404,7 @@ int auto_apply (object *op) {
   case TREASURE:
     while ((op->stats.hp--)>0)
       create_treasure(op->randomitems, op, op->map?GT_ENVIRONMENT:0,
-	    op->map == NULL ?  op->stats.exp: op->map->difficulty,T_STYLE_UNSET, ART_CHANCE_UNSET, 0);
+	    op->level ?  op->level: op->map->difficulty,T_STYLE_UNSET, ART_CHANCE_UNSET, 0);
 
     /* If we generated on object and put it in this object inventory,
      * move it to the parent object as the current object is about
@@ -3430,7 +3430,14 @@ int auto_apply (object *op) {
  * certain objects (most initialization of chests and creation of
  * treasures and stuff).  Calls auto_apply if appropriate.
  */
-
+/* this whole function looks broken.
+ * The check_trigger() stuff definitly only works for *some*
+ * cases and tmp->inv stuff don't handle deeper inventory 
+ * recursion when iam right... it should be possible to
+ * integrate this in the load_objects() function. Another
+ * problem is can see are multi tile saved above map borders.
+ * They don't trigger right here.
+ */
 void fix_auto_apply(mapstruct *m) {
 	object *tmp,*above=NULL;
 	int x,y;
@@ -3457,7 +3464,7 @@ void fix_auto_apply(mapstruct *m) {
 						else if(invtmp->type==TREASURE)
 						{
 							while ((invtmp->stats.hp--)>0)
-								create_treasure(invtmp->randomitems, invtmp, 0, m->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0);
+								create_treasure(invtmp->randomitems, invtmp, 0, tmp->level ? tmp->level:m->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0);
 						}
 					}
 				}
@@ -3467,7 +3474,7 @@ void fix_auto_apply(mapstruct *m) {
 				else if((tmp->type==TREASURE || (tmp->type==CONTAINER))&&tmp->randomitems)
 				{
 					while ((tmp->stats.hp--)>0)
-						create_treasure(tmp->randomitems, tmp, 0, m->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0);
+						create_treasure(tmp->randomitems, tmp, 0, tmp->level?tmp->level:m->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0);
 				}
 				else if(tmp->type==TIMED_GATE)
 				{
@@ -3475,10 +3482,11 @@ void fix_auto_apply(mapstruct *m) {
 					update_ob_speed(tmp);
 				}
 				if(tmp && tmp->arch && tmp->type!=PLAYER && tmp->type!=TREASURE && tmp->randomitems)
-					create_treasure(tmp->randomitems, tmp, GT_APPLY, m->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0);
+					create_treasure(tmp->randomitems, tmp, GT_APPLY, tmp->level?tmp->level:m->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0);
 			}
 		}
 	}
+	
 	for(x=0;x<MAP_WIDTH(m);x++)
 		for(y=0;y<MAP_HEIGHT(m);y++)
 			for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=tmp->above)

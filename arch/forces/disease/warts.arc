@@ -8,6 +8,7 @@ dam 1
 wc 1
 wc_range 20
 magic 1
+identified 1
 Cha -4
 maxhp 1
 maxgrace 50

@@ -743,7 +743,7 @@
  * major changes to the map.
  */
 
-#    define EMERGENCY_MAPPATH "emergency"
+#    define EMERGENCY_MAPPATH "/emergency"
 #    define EMERGENCY_X 0
 #    define EMERGENCY_Y 0
 

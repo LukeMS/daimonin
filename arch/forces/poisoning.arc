@@ -2,6 +2,7 @@ Object poisoning
 name applied poison
 type 105
 face force.101
+identified 1
 food 6
 speed -0.015
 speed_left -1.0

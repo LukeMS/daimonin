@@ -342,6 +342,8 @@ op->oy= op->y;
 ^cursed_perm{S}				SET_OR_CLEAR_FLAG(op, FLAG_PERM_CURSED, IVAL);
 ^damned_perm{S}				SET_OR_CLEAR_FLAG(op, FLAG_PERM_DAMNED, IVAL);
 ^one_drop{S}				SET_OR_CLEAR_FLAG(op, FLAG_ONE_DROP, IVAL);
+^is_traped{S}				SET_OR_CLEAR_FLAG(op, FLAG_IS_TRAPED, IVAL);
+^quest_item{S}				SET_OR_CLEAR_FLAG(op, FLAG_QUEST_ITEM, IVAL);
 ^player_only{S}				SET_OR_CLEAR_FLAG(op, FLAG_PLAYER_ONLY, IVAL);
 ^is_named{S}				SET_OR_CLEAR_FLAG(op, FLAG_IS_NAMED, IVAL);
 ^is_player{S}				SET_OR_CLEAR_FLAG(op, FLAG_IS_PLAYER, IVAL);
@@ -863,7 +865,7 @@ NULL /*is_removed*/,"been_applied", "auto_apply", "treasure", "is_neutral",	/* 2
 "is_hilly", "has_ready_skill", "has_ready_weapon",		/* 90 */
 "no_skill_ident","was_wiz", "can_see_in_dark", "is_cauldron", 
 "is_dust", "no_steal", "one_hit", NULL, "berserk", "no_attack",	/* 100 */
-"invulnerable", NULL, NULL, "is_vul_elemental",  "is_proof_elemental", /* 105 */
+"invulnerable", "quest_item", "is_traped", "is_vul_elemental",  "is_proof_elemental", /* 105 */
 "is_vul_magic", "is_proof_magic", "is_vul_physical", "is_proof_physical", "sys_object", /* 110 */
 "use_fix_pos","unpaid","is_aged","make_invisible" , "make_ethereal","is_player",
 "is_named",NULL /* spawn mob flag */, "no_teleport", "corpse", "corpse_forced",

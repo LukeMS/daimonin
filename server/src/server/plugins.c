@@ -1215,6 +1215,22 @@ CFParm* CFWGetFirstArchetype(CFParm* PParm)
     CFP->Value[0] = (void*)(first_archetype) ;
     return CFP;
 }
+
+/*****************************************************************************/
+/* show_cost wrapper.                                                       */
+/*****************************************************************************/
+/* 0 - value as integer                                                      */
+/* returns static string with "x gold, x silver ..."                         */
+/* so CFP is static here too                                                 */
+/*****************************************************************************/
+CFParm* CFWShowCost(CFParm* PParm)
+{
+    static CFParm CFP;
+
+	CFP.Value[0] = cost_string_from_value(*(int*)(PParm->Value[0]));
+    return &CFP;
+}
+
 /*****************************************************************************/
 /* query_cost wrapper.                                                       */
 /*****************************************************************************/

@@ -109,7 +109,9 @@ unsigned int query_flags (object *op)
 
     if (op->type == CONTAINER && (op->attacked_by || (!op->env && QUERY_FLAG(op,FLAG_APPLIED))))
 		flags |= F_OPEN;
-   
+
+	if(QUERY_FLAG(op,FLAG_IS_TRAPED))
+		flags |= F_TRAPED;
     if (QUERY_FLAG(op,FLAG_KNOWN_CURSED)) {
 	if(QUERY_FLAG(op,FLAG_DAMNED))
 	    flags |= F_DAMNED;
@@ -350,12 +352,6 @@ int esrv_draw_DM_inv(object *pl, SockList *sl, object *op)
 		if (QUERY_FLAG(tmp, FLAG_NO_PICK))
 			flags |=  F_NOPICK;
 
-		/* we send never the inventory animation here */
-		/*
-		if (QUERY_FLAG(tmp,FLAG_ANIMATE) && !pl->contr->socket.anims_sent[tmp->animation_id])
-			esrv_send_animation(&pl->contr->socket, tmp->animation_id);
-		*/
-
 		SockList_AddInt(sl, tmp->count);
 		SockList_AddInt(sl, flags);
 		SockList_AddInt(sl, QUERY_FLAG(tmp, FLAG_NO_PICK) ? -1 : WEIGHT(tmp));
@@ -460,6 +456,95 @@ void esrv_close_container(object *op)
 }
 
 
+static int esrv_send_inventory_DM(object *pl, SockList *sl, object *op)
+{
+    object *tmp;
+    int flags, got_one=0, anim_speed, len;
+    char item_n[MAX_BUF];
+        
+    for (tmp=op->inv; tmp; tmp=tmp->below) {
+
+	    flags = query_flags (tmp);
+	    if (QUERY_FLAG(tmp, FLAG_NO_PICK))
+		flags |=  F_NOPICK;
+
+		SockList_AddInt(sl, tmp->count);
+	    SockList_AddInt(sl, flags);
+	    SockList_AddInt(sl, QUERY_FLAG(tmp, FLAG_NO_PICK) ? -1 : WEIGHT(tmp));
+
+		if(tmp->inv_face && QUERY_FLAG(tmp, FLAG_IDENTIFIED))
+		{
+		    SockList_AddInt(sl, tmp->inv_face->number);
+		}
+		else
+		{
+		    SockList_AddInt(sl, tmp->face->number);
+		}
+			
+        SockList_AddChar(sl, tmp->facing);
+            SockList_AddChar(sl, tmp->type);
+            SockList_AddChar(sl, tmp->sub_type1);
+            if(QUERY_FLAG(tmp, FLAG_IDENTIFIED)) 
+            {
+                SockList_AddChar(sl, tmp->item_quality);
+                SockList_AddChar(sl, tmp->item_condition);
+                SockList_AddChar(sl, tmp->item_level);
+                SockList_AddChar(sl, tmp->item_skill);
+            }
+            else
+            {
+                SockList_AddChar(sl, (char) 255);
+                SockList_AddChar(sl, (char) 255);
+                SockList_AddChar(sl, (char)255);
+                SockList_AddChar(sl, (char)255);
+            }
+        strncpy(item_n,query_base_name(tmp),127);
+		item_n[127]=0;
+		len=strlen(item_n)+1;
+		SockList_AddChar(sl, (char) len);
+		memcpy(sl->buf+sl->len, item_n, len);
+		sl->len += len;
+		if(tmp->inv_animation_id)
+		{
+		    SockList_AddShort(sl,tmp->inv_animation_id);
+		}
+		else
+		{
+		    SockList_AddShort(sl,tmp->animation_id);
+		}
+		/* i use for both the same anim_speed - when we need a different,
+		 * i adding inv_anim_speed.
+		 */
+	    anim_speed=0;
+	    if (QUERY_FLAG(tmp,FLAG_ANIMATE)) {
+		if (tmp->anim_speed) anim_speed=tmp->anim_speed;
+		else {
+		    if (FABS(tmp->speed)<0.001) anim_speed=255;
+		    else if (FABS(tmp->speed)>=1.0) anim_speed=1;
+		    else anim_speed = (int) (1.0/FABS(tmp->speed));
+		}
+		if (anim_speed>255) anim_speed=255;
+	    }
+	    SockList_AddChar(sl, (char)anim_speed);
+	    SockList_AddInt(sl, tmp->nrof);
+	    SET_FLAG(tmp, FLAG_CLIENT_SENT);
+	    got_one++;
+
+	    /* IT is possible for players to accumulate a huge amount of
+	     * items (especially with some of the bags out there) to
+	     * overflow the buffer.  IF so, send multiple item1 commands.
+	     */
+	    if (sl->len > (MAXSOCKBUF-MAXITEMLEN)) {
+		Send_With_Handling(&pl->contr->socket, sl);
+		SOCKET_SET_BINARY_CMD(sl, BINARY_CMD_ITEMX);
+		SockList_AddInt(sl,-3); /* no delinv */
+		SockList_AddInt(sl, op->count);
+		got_one=0;
+	    }
+    }
+	return got_one;
+}
+
 /* send_inventory send the inventory for the player BUT also the inventory for
  * items. When the player obens a chest on the ground, this function is called to
  * send the inventory for the chest - and the items are shown in below. The client
@@ -507,19 +592,6 @@ void esrv_send_inventory(object *pl, object *op)
 	    if (QUERY_FLAG(tmp, FLAG_NO_PICK))
 		flags |=  F_NOPICK;
 
-		/*
-		if(tmp->inv_animation_id)
-		{
-			if (!pl->contr->socket.anims_sent[tmp->inv_animation_id])
-				esrv_send_animation(&pl->contr->socket, tmp->animation_id);
-		}
-		else
-		{
-			if (QUERY_FLAG(tmp,FLAG_ANIMATE) && 
-				!pl->contr->socket.anims_sent[tmp->animation_id])
-			esrv_send_animation(&pl->contr->socket, tmp->animation_id);
-		}
-		*/
 
 		SockList_AddInt(&sl, tmp->count);
 	    SockList_AddInt(&sl, flags);
@@ -593,7 +665,13 @@ void esrv_send_inventory(object *pl, object *op)
 		SockList_AddInt(&sl,-3); /* no delinv */
 		SockList_AddInt(&sl, op->count);
 		got_one=0;
+
 	    }
+		if(QUERY_FLAG(pl,FLAG_WIZ))
+		{
+		if(tmp->inv && tmp->type != CONTAINER)
+			got_one = esrv_send_inventory_DM(pl,&sl, tmp);
+		}
 	}
     }
     if (got_one || pl != op) /* container can be empty... */

@@ -1116,3 +1116,46 @@ void identify(object *op) {
 	esrv_send_item_func(pl, op);
   }
 }
+
+/* check a object marked with
+ * FLAG_IS_TRAPED has still a known
+ * trap in it!
+ */
+void set_traped_flag(object *op)
+{
+	object *tmp;
+	int flag;
+
+	if(!op)
+		return;
+
+	/* player & monsters are not marked */
+	if(op->type == PLAYER || op->type == MONSTER)
+		return;
+
+	flag = QUERY_FLAG(op, FLAG_IS_TRAPED);
+	for(tmp=op->inv;tmp!=NULL;tmp=tmp->below)
+	{
+		/* must be a rune AND visible */
+		if(tmp->type==RUNE&&tmp->stats.Cha<=1)
+		{
+			SET_FLAG(op, FLAG_IS_TRAPED);
+			if(!flag)
+				goto set_traped_view;
+			return;
+		}
+	}
+
+	CLEAR_FLAG(op, FLAG_IS_TRAPED); /* clean */
+	if(!flag)
+		return;
+
+set_traped_view:
+	if(!op->env) /* env object is on map */
+		update_object(op,UP_OBJ_FACE);
+	else /* somewhere else - if visible, update */
+	{
+		if(op->env->type == PLAYER || op->env->type == CONTAINER)
+			(*esrv_update_item_func) (UPD_FLAGS, op->env, op);
+	}
+}

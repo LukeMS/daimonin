@@ -935,6 +935,7 @@ int link_player_skills(object *pl) {
       if(tmp->type==EXPERIENCE) {
            exp_ob[exp_index] = tmp;
 	   find_skill_exp_name(pl, tmp, pl->contr->last_skill_index);
+	       /* hm, this mutiple instances ... no idea what it is... MT-2004 */
            tmp->nrof=1; /* to handle multiple instances */
            exp_index++;
       } else if (tmp->type==SKILL) {

@@ -2,7 +2,6 @@ Object trap_bear_trap
 name bear trap
 type 154
 face tspikes.101
-speed 1
 hp 1
 msg
 You are caught by a bear trap!

@@ -1,6 +1,7 @@
 Object experience_mental
 name mental
 type 44
+sub_type 2
 face exp.101
 sys_object 1
 no_drop 1

@@ -68,7 +68,8 @@ treasure player_human_male
   nrof 4
   more
   arch torch
-  nrof 2
+  more
+  arch torch
   more
   list player_starting_wealth
   more
@@ -100,7 +101,8 @@ treasure player_human_female
   nrof 4
   more
   arch torch
-  nrof 2
+  more
+  arch torch
   more
   list player_starting_wealth
   more
@@ -132,7 +134,8 @@ treasure player_half_elf_male
   nrof 4
   more
   arch torch
-  nrof 2
+  more
+  arch torch
   more
   list player_starting_wealth
   more
@@ -164,7 +167,8 @@ treasure player_half_elf_female
   nrof 4
   more
   arch torch
-  nrof 2
+  more
+  arch torch
   more
   list player_starting_wealth
   more
@@ -1752,6 +1756,13 @@ treasure mob_giant_hill
    chance 100
    nrof 1
 end
+treasure mob_giant_stone
+  list traps
+  chance 10
+  more
+  list default_drop
+  chance 50
+end
 treasure mob_troll
   list traps
   chance 10
@@ -1760,6 +1771,36 @@ treasure mob_troll
   chance 50
 end
 treasure mob_dragon_water
+  list traps
+  chance 10
+  more
+  list default_drop
+  chance 50
+end
+treasure mob_kobold_big
+  list traps
+  chance 10
+  more
+  list default_drop
+  chance 50
+end
+treasure mob_kobold
+  list traps
+  chance 10
+  more
+  list default_drop
+  chance 50
+end
+treasure mob_worm_purple
+  list traps
+  chance 10
+  more
+  list default_drop
+  chance 50
+end
+treasure mob_demilich
+  arch ability_icestorm
+  more
   list traps
   chance 10
   more

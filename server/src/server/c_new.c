@@ -808,9 +808,11 @@ void send_skilllist_cmd(object *op, object *skillp, int mode)
     
     if(skillp)
     {
-        if(skillp->last_eat)
+        if(skillp->last_eat == 1) /* normal skills */
             sprintf(tmp,"X%d /%s|%d|%d", mode, skillp->name, skillp->level, skillp->stats.exp );
-        else
+        else if(skillp->last_eat == 2) /* "buy level" skills */
+            sprintf(tmp,"X%d /%s|%d|-2", mode, skillp->name, skillp->level, skillp->stats.exp );
+        else /* no level skills */
             sprintf(tmp,"X%d /%s|%d|-1", mode, skillp->name, skillp->level);       
     }
     else
@@ -820,8 +822,10 @@ void send_skilllist_cmd(object *op, object *skillp, int mode)
         {
             if(tmp2->type==SKILL&&IS_SYS_INVISIBLE(tmp2))
             {
-                if(tmp2->last_eat)
+                if(tmp2->last_eat == 1)
                     sprintf(buf,"/%s|%d|%d",tmp2->name, tmp2->level, tmp2->stats.exp );
+                else if(tmp2->last_eat == 2)
+                    sprintf(buf,"/%s|%d|-2",tmp2->name, tmp2->level, tmp2->stats.exp );
                 else
                     sprintf(buf,"/%s|%d|-1",tmp2->name,tmp2->level);       
 

@@ -547,7 +547,7 @@ void drop_object (object *op, object *tmp, long nrof)
     char buf[MAX_BUF];
     object *floor;
 
-    if (QUERY_FLAG(tmp, FLAG_NO_DROP)) {
+    if (QUERY_FLAG(tmp, FLAG_NO_DROP) && !QUERY_FLAG(op,FLAG_WIZ)) {
 #if 0
       /* Eneq(@csd.uu.se): Objects with NO_DROP defined can't be dropped. */
       new_draw_info(NDI_UNIQUE, 0,op, "This item can't be dropped.");

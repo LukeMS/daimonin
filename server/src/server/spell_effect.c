@@ -1178,8 +1178,7 @@ int magic_wall(object *op,object *caster,int dir,int spell_type) {
 int cast_light(object *op,object *caster,int dir) {
   object *target=NULL,*tmp=NULL;
   mapstruct *m;
-  int x,y,dam=spells[SP_LIGHT].bdam    
-                  +SP_level_dam_adjust(op,caster,SP_LIGHT);;
+  int x,y,dam=spells[SP_LIGHT].bdam+SP_level_dam_adjust(op,caster,SP_LIGHT);
 
   if(!dir) {
     new_draw_info(NDI_UNIQUE, 0,op,"In what direction?");
@@ -1973,7 +1972,7 @@ int summon_pet(object *op, int dir, SpellTypeFrom item) {
     head = insert_ob_in_map (head, op->map, op,0);
     if (head != NULL && head->randomitems != NULL) {
       object *tmp;
-      create_treasure(head->randomitems,head,GT_APPLY,6,T_STYLE_UNSET,ART_CHANCE_UNSET,0);
+      create_treasure(head->randomitems,head,GT_APPLY,head->level,T_STYLE_UNSET,ART_CHANCE_UNSET,0);
       for(tmp = head->inv; tmp != NULL; tmp = tmp->below)
         if(!tmp->nrof)
           SET_FLAG(tmp, FLAG_NO_DROP);

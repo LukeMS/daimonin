@@ -281,6 +281,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define TYPE_NUGGET				117    /* use from the artifacts file */
 #define TYPE_EVENT_OBJECT		118	   /* event/script object */
 #define TYPE_WAYPOINT_OBJECT	119	   /* waypoint object */
+#define TYPE_QUEST_CONTAINER	120	   /* used to store quest infos in players */
 #define CLOSE_CON	            121    /* Eneq(@csd.uu.se): Id for close_container archetype. */
 #define CONTAINER	            122
 #define ARMOUR_IMPROVER         123
@@ -720,6 +721,13 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_BERSERK            99	/* monster will attack closest living object */
 #define FLAG_NO_ATTACK          100 /* object will not attack */
 #define FLAG_INVULNERABLE       101 /* monster can't be damaged */
+
+#define FLAG_QUEST_ITEM			102	/* this is a special quest object */
+
+#define FLAG_IS_TRAPED			103	/* object is traped - most common a container with
+									 * a known trap inside. This info so useful for client
+									 * below and inventory look.
+									 */
 
 #define FLAG_VUL_ELEMENTAL		104	/* Thats the item damage flags. Every flag determinate */
 #define FLAG_PROOF_ELEMENTAL	105 /* that a worn or wielded item can be damaged from this */

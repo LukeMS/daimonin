@@ -197,7 +197,7 @@ int remove_symptoms(object *disease) {
   object *symptom;
   symptom = find_symptom(disease);
   if(symptom!=NULL) {
-	 object *victim=symptom->env;;
+	 object *victim=symptom->env;
 	 remove_ob(symptom);
 	 free_object(symptom);
 	 if(victim) fix_player(victim);

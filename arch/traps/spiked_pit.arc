@@ -3,7 +3,6 @@ name spiked pit
 type 154
 face spiked_pit.101
 layer 4
-speed 1
 hp 1
 msg
 You are stabbed by spikes!
