@@ -65,15 +65,12 @@ void nuke_map_region(mapstruct *map,int xstart,int ystart, int xsize, int ysize)
         if(!QUERY_FLAG(tmp,FLAG_IS_FLOOR)) {
           if(tmp->head) tmp=tmp->head;
           remove_ob(tmp);
-          free_object(tmp);
           tmp=get_map_ob(mt,xt,yt);
         }
         if(tmp==NULL) break;
       }
     }
 }
-
-
 
 /* copy in_map into dest_map at point x,y */ 
 
@@ -159,8 +156,6 @@ void place_fountain_with_specials(mapstruct *map) {
     tries++;
   };
   if(i==-1) {  /* can't place fountain */
-    free_object(fountain);
-    free_object(potion);
     return;
   }
   ix += freearr_x[i];

@@ -118,7 +118,6 @@ int cast_raise_dead_spell(object *op,int dir,int spell_type, object * corpseobj)
        }
 	leveldead=temp->level;
        remove_ob(temp);
-       free_object(temp);
    }
    /* chance it fails to resurrect? -- implement here */
    /* also, chances you accidentally summon death or worse... */

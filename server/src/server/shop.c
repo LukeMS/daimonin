@@ -323,12 +323,11 @@ int pay_from_container(object *op, object *pouch, int to_pay) {
 			LOG(llevBug,"BUG: %s has two money entries of (%s)\n", query_name(pouch), coins[NUM_COINS-1-i]);
 			remove_ob(tmp);
 			coin_objs[i]->nrof += tmp->nrof;
-			esrv_del_item(pouch->contr, tmp->count, tmp->env);
-			free_object(tmp);
+			esrv_del_item(CONTR(pouch), tmp->count, tmp->env);
 		    }
 		    else {
 			remove_ob(tmp);
-			if(pouch->type==PLAYER) esrv_del_item(pouch->contr, tmp->count,tmp->env);
+			if(pouch->type==PLAYER) esrv_del_item(CONTR(pouch), tmp->count,tmp->env);
 			coin_objs[i] = tmp;
 		    }
 		    break;
@@ -385,9 +384,7 @@ int pay_from_container(object *op, object *pouch, int to_pay) {
 		esrv_send_item (who, who);
 		esrv_update_item (UPD_WEIGHT, who, who);
 	    }
-	} else {
-	    free_object(coin_objs[i]);
-	}
+	} 
     }
     return(remain);
 }
@@ -434,7 +431,7 @@ int get_payment2 (object *pl, object *op) {
 	    if (pl->type == PLAYER) 
 		{
 			if (tmp) {      /* it was merged */
-				esrv_del_item (pl->contr, c, c_cont);
+				esrv_del_item (CONTR(pl), c, c_cont);
 				op = tmp;
 			}
 	        esrv_send_item(pl, op);
@@ -743,10 +740,9 @@ int remove_money_type(object*who, object *op, int value, uint32 amount)
 					amount -= tmp->nrof;
 				remove_ob(tmp);
 				if(op->type == PLAYER) 
-					esrv_del_item(op->contr, tmp->count, NULL);
+					esrv_del_item(CONTR(op), tmp->count, NULL);
 				else
 					esrv_del_item(NULL, tmp->count, env);
-				free_object(tmp);
 			}
 			else
 			{

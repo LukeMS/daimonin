@@ -163,7 +163,6 @@ If outside, we decrement 'hp' until we're gone. */
     disease->value--;
     if(disease->value==0) {
       remove_ob(disease);
-      free_object(disease);
       return 1;
     }
   } else {
@@ -175,7 +174,6 @@ If outside, we decrement 'hp' until we're gone. */
 	remove_symptoms(disease);  /* remove the symptoms of this disease */
 	grant_immunity(disease);
 	remove_ob(disease);
-	free_object(disease);
 	return 1;
       }
     }
@@ -199,7 +197,6 @@ int remove_symptoms(object *disease) {
   if(symptom!=NULL) {
 	 object *victim=symptom->env;
 	 remove_ob(symptom);
-	 free_object(symptom);
 	 if(victim) fix_player(victim);
   }
   return 0;
@@ -478,7 +475,6 @@ int move_symptom(object *symptom) {
   int sp_reduce;
   if(victim == NULL || victim->map==NULL) {  /* outside a monster/player, die immediately */
 	 remove_ob(symptom);
-	 free_object(symptom);
 	 return 0;
   }
   if(symptom->stats.dam > 0)  hit_player(victim,symptom->stats.dam,symptom,symptom->attacktype);
@@ -568,7 +564,6 @@ int cure_disease(object *sufferer,object *caster) {
             /* we assume the caster has the right casting skill applied */
 		    if(caster && !caster->type == PLAYER) 
                 add_exp(caster,disease->stats.exp,caster->chosen_skill->stats.sp);
-		    free_object(disease);
 	    }
 		else
 		{

@@ -132,7 +132,7 @@ int attempt_steal(object* op, object* who)
 	    return 0;
 	else if (roll < chance ) {
 	    if (op->type == PLAYER)
-		esrv_del_item(op->contr, tmp->count,tmp->env);
+		esrv_del_item(CONTR(op), tmp->count,tmp->env);
 	    pick_up(who, tmp);
 	    if(can_pick(who,tmp)) {
 		/* for players, play_sound: steals item */
@@ -478,9 +478,9 @@ static int attempt_jump (object *pl, int dir, int spaces) {
 		new_draw_info_format(NDI_UNIQUE, 0,pl,"You jump into%s%s.", 
 		    tmp->type == PLAYER ? " " : " the ", tmp->name);
 		if(tmp->type!=PLAYER || 
-		   (pl->type==PLAYER && pl->contr->party_number==-1) ||
+		   (pl->type==PLAYER && CONTR(pl)->party_number==-1) ||
 		   (pl->type==PLAYER && tmp->type==PLAYER &&
-		    pl->contr->party_number!=tmp->contr->party_number)) 
+		    CONTR(pl)->party_number!=CONTR(tmp)->party_number)) 
  	     	    exp = skill_attack(tmp,pl,pl->facing,"kicked"); /* pl makes an attack */ 
 		(void) stop_jump(pl,i,spaces);
 		return exp;  /* note that calc_skill_exp() is already called by skill_attack() */ 
@@ -1135,7 +1135,7 @@ int write_scroll (object *pl, object *scroll) {
     }
 
     /* Check if we are ready to attempt inscription */
-    chosen_spell=pl->contr->chosen_spell;
+    chosen_spell=CONTR(pl)->chosen_spell;
     if(chosen_spell<0) {
 	new_draw_info(NDI_UNIQUE,0,pl,
 		    "You need a spell readied in order to inscribe!"); 
@@ -1560,7 +1560,11 @@ object *make_throw_ob (object *orig) {
 void do_throw(object *op, object *toss_item, int dir) {
     object *left_cont, *throw_ob=toss_item, *left=NULL, *tmp_op;
     tag_t left_tag;
-    int eff_str = 0,str=op->stats.Str,dam=0, weight_f=0;
+    int eff_str = 0,str=op->stats.Str,dam=0,weight_f=0;
+    int target_throw = 0;
+#if 0 /* disabled, see in the code */
+    rv_vector target_vec;
+#endif
     float str_factor=1.0f,load_factor=1.0f,item_factor=1.0f;
 
     if(throw_ob==NULL) {
@@ -1630,11 +1634,11 @@ void do_throw(object *op, object *toss_item, int dir) {
 	throw_ob = left;
 	remove_ob(left);
 	if (op->type==PLAYER)
-	    esrv_del_item(op->contr, left->count, left->env);
+	    esrv_del_item(CONTR(op), left->count, left->env);
     }
     else if (op->type==PLAYER) {
 	if (was_destroyed (left, left_tag))
-	    esrv_del_item(op->contr, left_tag, left_cont);
+	    esrv_del_item(CONTR(op), left_tag, left_cont);
 	else 
 	    esrv_update_item(UPD_NROF, op, left);
     }
@@ -1652,10 +1656,22 @@ void do_throw(object *op, object *toss_item, int dir) {
 		return;
     }
 
-	    /* 3 things here prevent a throw, you aimed at your feet, you
+    /* Gecko: disabled for now. Too much work to remove it, especially if it is accepted =) */
+#if 0
+    /* Experimental targetting throw hack */
+    if(! dir && op->type == PLAYER && OBJECT_VALID(CONTR(op)->target_object, CONTR(op)->target_object_count)) {
+        object *target = CONTR(op)->target_object;
+        get_rangevector(op, target, &target_vec, 0);
+        dir = target_vec.direction;
+        target_throw = 1;
+    } else
+        throw_ob->stats.grace = 0;
+#endif
+    
+    /* 3 things here prevent a throw, you aimed at your feet, you
      * have no effective throwing strength, or you threw at a wall
      */ 
-    if(!dir || (eff_str <= 1) ||
+    if(!dir  || (eff_str <= 1) ||
        wall(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir])) {
 
 	/* bounces off 'wall', and drops to feet */
@@ -1670,7 +1686,7 @@ void do_throw(object *op, object *toss_item, int dir) {
 			query_name(throw_ob));
 	    }
 	    else if(!dir) {
-		new_draw_info_format(NDI_UNIQUE, 0,op,"You drop %s at the ground.",
+            new_draw_info_format(NDI_UNIQUE, 0,op,"You drop %s at the ground.",
 				     query_name(throw_ob));
 	    }
 	    else
@@ -1728,6 +1744,30 @@ void do_throw(object *op, object *toss_item, int dir) {
     throw_ob->direction=dir;
     throw_ob->x = op->x;
     throw_ob->y = op->y;
+
+    /* Gecko: disabled for now. Too much work to remove it, especially if it is accepted =) */
+#if 0
+    /* Experimental targetting throw hack */
+    if(target_throw) {
+        int dx = target_vec.distance_x; /* hp */
+        int dy = target_vec.distance_y; /* sp */
+        int stepx, stepy;           /* maxhp, maxsp */
+        
+        if (dy < 0) { dy = -dy;  stepy = -1; } else { stepy = 1; }
+        if (dx < 0) { dx = -dx;  stepx = -1; } else { stepx = 1; }
+        
+        throw_ob->stats.hp = dx << 1;
+        throw_ob->stats.sp = dy << 1;
+        throw_ob->stats.maxhp = stepx;
+        throw_ob->stats.maxsp = stepy;
+        throw_ob->stats.grace = 666; /* target-throw marker =) TODO: probably better to use ob->enemy instead */
+        if(dx > dy) { /* fraction */
+            throw_ob->stats.exp = (dy << 1) - dx;  // same as 2*dy - dx
+        } else {
+            throw_ob->stats.exp = (dx << 1) - dy;  // same as 2*dx - dy
+        }
+    }
+#endif    
 
     /* the damage bonus from the force of the throw */
     dam = (int)(str_factor * (float)dam_bonus[eff_str]);

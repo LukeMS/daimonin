@@ -239,6 +239,7 @@ EXTERN long nrofallowedstr;		/* Only used in malloc_info() */
 
 EXTERN short nrofexpcat;	/* Current number of experience categories in the game */
 EXTERN object *exp_cat[MAX_EXP_CAT];	/* Array of experience objects in the game */ 
+extern object void_container; /* Container for objects without env or map (e.g. exp_cat[i])*/
 
 EXTERN char first_map_path[MAX_BUF];	/* The start-level */
 

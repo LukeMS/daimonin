@@ -56,11 +56,11 @@ static int find_spell_byname(object *op, char *params, int options)
     if(QUERY_FLAG(op, FLAG_WIZ))
 	numknown = NROFREALSPELLS;
     else 
-	numknown = op->contr->nrofknownspells;
+	numknown = CONTR(op)->nrofknownspells;
 
     for(i=0;i<numknown;i++){
 	if (QUERY_FLAG(op, FLAG_WIZ)) spnum = i;
-	else spnum = op->contr->known_spells[i];
+	else spnum = CONTR(op)->known_spells[i];
 
         if (!options)
           paramlen=strlen(params);
@@ -87,9 +87,9 @@ static void show_matching_spells(object *op, char *params, int cleric)
     int i,spnum,first_match=0;
     char lev[80], cost[80];
 
-    for (i=0; i<(QUERY_FLAG(op, FLAG_WIZ)?NROFREALSPELLS:op->contr->nrofknownspells); i++) {	
+    for (i=0; i<(QUERY_FLAG(op, FLAG_WIZ)?NROFREALSPELLS:CONTR(op)->nrofknownspells); i++) {	
 	if (QUERY_FLAG(op,FLAG_WIZ)) spnum=i;
-	else spnum = op->contr->known_spells[i];
+	else spnum = CONTR(op)->known_spells[i];
 
 	if (spells[spnum].type != (unsigned int) cleric) continue;
 	if (params && strncmp(spells[spnum].name,params, strlen(params)))
@@ -127,12 +127,12 @@ static void show_matching_spells(object *op, char *params, int cleric)
 int command_cast_spell (object *op, char *params)
 {
 	char *cp=NULL;
-	rangetype orig_rangetype=op->contr->shoottype;
-	int orig_spn = op->contr->chosen_spell;
+	rangetype orig_rangetype=CONTR(op)->shoottype;
+	int orig_spn = CONTR(op)->chosen_spell;
     int spnum=-1, spnum2=-1;  /* number of spell that is being cast */
 	int value;
 
-    if(!op->contr->nrofknownspells && !QUERY_FLAG(op, FLAG_WIZ))
+    if(!CONTR(op)->nrofknownspells && !QUERY_FLAG(op, FLAG_WIZ))
 	{
 		new_draw_info(NDI_UNIQUE, 0,op,"You don't know any spells.");
         return 0;
@@ -145,13 +145,12 @@ int command_cast_spell (object *op, char *params)
     }
 		
     /* When we control a golem we can't cast again - if we do, it breaks control */
-    if(op->contr->golem!=NULL) 
+    if(CONTR(op)->golem!=NULL) 
 	{
-		send_golem_control(op->contr->golem, GOLEM_CTR_RELEASE);
-        remove_friendly_object(op->contr->golem);
-        remove_ob(op->contr->golem);
-        free_object(op->contr->golem);
-        op->contr->golem=NULL;
+		send_golem_control(CONTR(op)->golem, GOLEM_CTR_RELEASE);
+        remove_friendly_object(CONTR(op)->golem);
+        remove_ob(CONTR(op)->golem);
+        CONTR(op)->golem=NULL;
     }
 
 	/* This assumes simply that if the name of
@@ -181,19 +180,19 @@ int command_cast_spell (object *op, char *params)
         return 0;
     }
 
-	op->contr->shoottype=range_magic; 
-	op->contr->chosen_spell=spnum;
+	CONTR(op)->shoottype=range_magic; 
+	CONTR(op)->chosen_spell=spnum;
 		
 	if(!check_skill_to_fire(op))
 	{  
 		if(!QUERY_FLAG(op,FLAG_WIZ) )
 		{
-			op->contr->chosen_spell=orig_spn;
+			CONTR(op)->chosen_spell=orig_spn;
 			return 0; 
 		}
 	}
-	op->contr->chosen_spell=orig_spn;
-	op->contr->shoottype=orig_rangetype;
+	CONTR(op)->chosen_spell=orig_spn;
+	CONTR(op)->shoottype=orig_rangetype;
 
 	/* we still recover from a casted spell before */
 	if(!check_skill_action_time(op, op->chosen_skill))
@@ -220,11 +219,11 @@ int command_cast_spell (object *op, char *params)
 int fire_cast_spell (object *op, char *params)
 {
 	char *cp=NULL;
-	rangetype orig_rangetype=op->contr->shoottype;
-	int orig_spn = op->contr->chosen_spell;
+	rangetype orig_rangetype=CONTR(op)->shoottype;
+	int orig_spn = CONTR(op)->chosen_spell;
     int spnum=-1, spnum2=-1;  /* number of spell that is being cast */
 
-    if(!op->contr->nrofknownspells && !QUERY_FLAG(op, FLAG_WIZ))
+    if(!CONTR(op)->nrofknownspells && !QUERY_FLAG(op, FLAG_WIZ))
 	{
 		new_draw_info(NDI_UNIQUE, 0,op,"You don't know any spells.");
         return 0;
@@ -237,13 +236,12 @@ int fire_cast_spell (object *op, char *params)
     }
 		
     /* When we control a golem we can't cast again - if we do, it breaks control */
-    if(op->contr->golem!=NULL) 
+    if(CONTR(op)->golem!=NULL) 
 	{
-		send_golem_control(op->contr->golem, GOLEM_CTR_RELEASE);
-        remove_friendly_object(op->contr->golem);
-        remove_ob(op->contr->golem);
-        free_object(op->contr->golem);
-        op->contr->golem=NULL;
+		send_golem_control(CONTR(op)->golem, GOLEM_CTR_RELEASE);
+        remove_friendly_object(CONTR(op)->golem);
+        remove_ob(CONTR(op)->golem);
+        CONTR(op)->golem=NULL;
     }
 
 	/* This assumes simply that if the name of
@@ -273,15 +271,15 @@ int fire_cast_spell (object *op, char *params)
         return 0;
     }
 
-	op->contr->shoottype=range_magic;
-	op->contr->chosen_spell=spnum;
+	CONTR(op)->shoottype=range_magic;
+	CONTR(op)->chosen_spell=spnum;
 
 	if(!QUERY_FLAG(op,FLAG_WIZ) )
 	{ 
 		if(!check_skill_to_fire(op))
 		{  
-			op->contr->chosen_spell=orig_spn;
-			op->contr->shoottype=orig_rangetype;
+			CONTR(op)->chosen_spell=orig_spn;
+			CONTR(op)->shoottype=orig_rangetype;
 		    return 0; 
 		}
 	}
@@ -308,21 +306,21 @@ int legal_range(object *op,int r) {
 	return 1;
     return 0;
   case range_magic: /* cast spells */
-    if (op->contr->nrofknownspells == 0)
+    if (CONTR(op)->nrofknownspells == 0)
       return 0;
-    for (i = 0; i < op->contr->nrofknownspells; i++)
-      if (op->contr->known_spells[i] == op->contr->chosen_spell)
+    for (i = 0; i < CONTR(op)->nrofknownspells; i++)
+      if (CONTR(op)->known_spells[i] == CONTR(op)->chosen_spell)
         return 1;
-    op->contr->chosen_spell = op->contr->known_spells[0];
+    CONTR(op)->chosen_spell = CONTR(op)->known_spells[0];
     return 1;
   case range_wand: /* use wands */
     for (tmp=op->inv; tmp!=NULL; tmp=tmp->below)
       if (tmp->type == WAND && QUERY_FLAG(tmp, FLAG_APPLIED)) {
         if (QUERY_FLAG(tmp, FLAG_BEEN_APPLIED) || QUERY_FLAG(tmp, FLAG_IDENTIFIED))
-          op->contr->known_spell = 1;
+          CONTR(op)->known_spell = 1;
         else
-          op->contr->known_spell = 0;
-        op->contr->chosen_item_spell=tmp->stats.sp;
+          CONTR(op)->known_spell = 0;
+        CONTR(op)->chosen_item_spell=tmp->stats.sp;
         return 1;
       }
     return 0;
@@ -330,10 +328,10 @@ int legal_range(object *op,int r) {
     for (tmp=op->inv; tmp!=NULL; tmp=tmp->below)
       if (tmp->type == ROD && QUERY_FLAG(tmp, FLAG_APPLIED)) {
         if (QUERY_FLAG(tmp,FLAG_BEEN_APPLIED) || QUERY_FLAG(tmp, FLAG_IDENTIFIED))
-          op->contr->known_spell = 1;
+          CONTR(op)->known_spell = 1;
         else
-          op->contr->known_spell = 0;
-        op->contr->chosen_item_spell=tmp->stats.sp;
+          CONTR(op)->known_spell = 0;
+        CONTR(op)->chosen_item_spell=tmp->stats.sp;
         return 1;
       }
     return 0;
@@ -341,10 +339,10 @@ int legal_range(object *op,int r) {
     for (tmp=op->inv; tmp!=NULL; tmp=tmp->below)
       if (tmp->type == HORN && QUERY_FLAG(tmp, FLAG_APPLIED)) {
         if (QUERY_FLAG(tmp,FLAG_BEEN_APPLIED) || QUERY_FLAG(tmp, FLAG_IDENTIFIED))
-          op->contr->known_spell = 1;
+          CONTR(op)->known_spell = 1;
         else
-          op->contr->known_spell = 0;
-        op->contr->chosen_item_spell=tmp->stats.sp;
+          CONTR(op)->known_spell = 0;
+        CONTR(op)->chosen_item_spell=tmp->stats.sp;
         return 1;
       }
     return 0;
@@ -362,21 +360,20 @@ int legal_range(object *op,int r) {
 /* this should not trigger in daimonin, but i added send_golem_control() for secure */
 void change_spell(object *op,char k) {
   char buf[MAX_BUF];
-  if(op->contr->golem!=NULL) {
-	send_golem_control(op->contr->golem, GOLEM_CTR_RELEASE);
-    remove_friendly_object(op->contr->golem);
-    remove_ob(op->contr->golem);
-    free_object(op->contr->golem);
-    op->contr->golem=NULL;
+  if(CONTR(op)->golem!=NULL) {
+	send_golem_control(CONTR(op)->golem, GOLEM_CTR_RELEASE);
+    remove_friendly_object(CONTR(op)->golem);
+    remove_ob(CONTR(op)->golem);
+    CONTR(op)->golem=NULL;
   }
   do {
-    op->contr->shoottype += ((k == '+') ? 1 : -1);
-    if(op->contr->shoottype >= range_size)
-      op->contr->shoottype = range_none;
-    else if (op->contr->shoottype <= range_bottom)
-      op->contr->shoottype = (rangetype)(range_size-1);
-  } while (!legal_range(op,op->contr->shoottype));
-  switch(op->contr->shoottype) {
+    CONTR(op)->shoottype += ((k == '+') ? 1 : -1);
+    if(CONTR(op)->shoottype >= range_size)
+      CONTR(op)->shoottype = range_none;
+    else if (CONTR(op)->shoottype <= range_bottom)
+      CONTR(op)->shoottype = (rangetype)(range_size-1);
+  } while (!legal_range(op,CONTR(op)->shoottype));
+  switch(CONTR(op)->shoottype) {
   case range_none:
     strcpy(buf,"No ranged attack chosen.");
     break;
@@ -391,22 +388,22 @@ void change_spell(object *op,char k) {
     break;
   case range_magic:
     sprintf(buf,"Switched to spells (%s).",
-            spells[op->contr->chosen_spell].name);
+            spells[CONTR(op)->chosen_spell].name);
     break;
   case range_wand:
     sprintf(buf,"Switched to wand (%s).",
-            op->contr->known_spell ?
-              spells[op->contr->chosen_item_spell].name : "unknown");
+            CONTR(op)->known_spell ?
+              spells[CONTR(op)->chosen_item_spell].name : "unknown");
     break;
   case range_rod:
     sprintf(buf, "Switched to rod (%s).",
-            op->contr->known_spell ?
-            spells[op->contr->chosen_item_spell].name : "unknown");
+            CONTR(op)->known_spell ?
+            spells[CONTR(op)->chosen_item_spell].name : "unknown");
     break;
   case range_horn:
     sprintf(buf, "Switched to horn (%s).",
-            op->contr->known_spell ?
-            spells[op->contr->chosen_item_spell].name : "unknown");
+            CONTR(op)->known_spell ?
+            spells[CONTR(op)->chosen_item_spell].name : "unknown");
     break;
   case range_skill: 
     sprintf (buf, "Switched to skill: %s", op->chosen_skill ?  

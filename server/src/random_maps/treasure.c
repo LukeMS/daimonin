@@ -557,7 +557,6 @@ void remove_monsters(int x,int y,mapstruct *map) {
     if(QUERY_FLAG(tmp,FLAG_MONSTER)) {
       if(tmp->head) tmp=tmp->head;
       remove_ob(tmp);
-      free_object(tmp);
       tmp=get_map_ob(map,x,y);
       if(tmp==NULL) break;
     };
@@ -696,7 +695,6 @@ void lock_and_hide_doors(object **doorlist,mapstruct *map,int opts,RMParms *RP) 
       new_door->x = door->x;
       new_door->y = door->y;
       remove_ob(door);
-      free_object(door);
       doorlist[i]=new_door;
       insert_ob_in_map(new_door,map,NULL,0);
       sprintf(keybuf,"%d",(int)RANDOM());
@@ -718,7 +716,6 @@ void lock_and_hide_doors(object **doorlist,mapstruct *map,int opts,RMParms *RP) 
         retrofit_joined_wall(map,door->x,door->y+1,0,RP);
         door->face = wallface->face;
         if(!QUERY_FLAG(wallface,FLAG_REMOVED)) remove_ob(wallface);
-        free_object(wallface);
       }
     }
   }

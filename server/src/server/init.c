@@ -557,7 +557,10 @@ void compile_info() {
 #else
   LOG(llevInfo,"Map reset:\t<false>\n");
 #endif
-  LOG(llevInfo,"Max objects:\t%d (allocated:%d free:%d)\n",MAX_OBJECTS,nrofallocobjects,nroffreeobjects );
+  LOG(llevInfo,"Max objects:\t%d (used:%d free:%d)\n",MAX_OBJECTS,
+          mempools[POOL_OBJECT].nrof_used, 
+          mempools[POOL_OBJECT].nrof_free);
+          
 
 #ifdef USE_CALLOC
   LOG(llevInfo,"Use_calloc:\t<true>\n");
@@ -691,6 +694,8 @@ void setup_library() {
   set_esrv_update_item(esrv_update_item);
   set_info_map(new_info_map);
   set_dragon_gain_func(dragon_ability_gain);
+
+  setup_poolfunctions(POOL_PLAYER, NULL, (chunk_destructor)free_player);
 }
 
 static void add_corpse_to_racelist (const char *race_name, archetype *op) {

@@ -33,20 +33,30 @@
 #include <skillist.h>
 #include <loader.h>
 
-#ifdef MEMORY_DEBUG
-    int nroffreeobjects = 0;
-    int nrofallocobjects = 0;
-    #undef OBJ_EXPAND
-    #define OBJ_EXPAND 1
-#else
-    object objarray[STARTMAX]; /* All objects, allocated this way at first */
-    int nroffreeobjects = STARTMAX;  /* How many OBs allocated and free (free) */
-    int nrofallocobjects = STARTMAX; /* How many OBs allocated (free + used) */
-#endif
-
-object *objects;           /* Pointer to the list of used objects */
-object *free_objects;      /* Pointer to the list of unused objects */
 object *active_objects;	/* List of active objects that need to be processed */
+struct mempool_chunk *removed_objects; /* List of objects that have been removed
+                                          during the last server timestep */
+/* The removedlist is not ended by NULL, but by a pointer to the end_marker */
+static struct mempool_chunk end_marker; /* only used as an end marker for the lists */
+
+object void_container; /* container for objects without real maps or envs */
+
+/* 
+ * The Life Cycle of an Object:
+ *
+ 
+ - expand_mempool(): Allocated from system memory and put into the freelist of the object pool.
+ - get_object():     Removed from freelist & put into removedlist (since it is not inserted anywhere yet).
+ - insert_ob_in_(map/ob)(): Filled with data & inserted into (any) environment    
+ ... end of timestep
+ - object_gc():      Removed from removedlist, but not freed (since it sits in an env).
+ ... 
+ - remove_ob():      Removed from environment
+ - Sits in removedlist until the end of this server timestep  
+ ... end of timestep
+ - object_gc():      Freed and moved to freelist 
+ (attrsets are freed and given back to their respective pools too).
+*/   
 
 /* This Table is sorted in 64er blocks of the same base material, defined in
    materialtype. Entrys, used for random selections should start from down of 
@@ -948,6 +958,440 @@ int freedir[SIZEOFFREE]= {
   0,1,2,3,4,5,6,7,8,1,2,2,2,3,4,4,4,5,6,6,6,7,8,8,8,
   1,2,2,2,2,2,3,4,4,4,4,4,5,6,6,6,6,6,7,8,8,8,8,8};
 
+/** Basic pooling memory management system **/
+
+/* TODO: move out into mempool.c & mempool.h files.
+ * TODO: increase efficiency by replacing nrof_used with nrof_allocated
+ * TODO: poolify objlinks
+ */
+
+/*
+ * A pool definition in the mempools[] array and an entry in the mempool id enum 
+ * is needed for each type of struct we want to use the pooling memory management for. 
+ */
+
+struct mempool mempools[NROF_MEMPOOLS] = {
+    #ifdef MEMPOOL_TRACKING
+    { NULL, 10, sizeof(struct puddle_info), 0, 0, NULL, NULL, "puddles", MEMPOOL_ALLOW_FREEING },
+    #endif
+    
+    { NULL, OBJECT_EXPAND, sizeof(object), 0, 0, 
+        (chunk_constructor)initialize_object, (chunk_destructor)destroy_object, "objects" },
+        
+    { NULL, 5, sizeof(player), 0, 0, NULL, NULL, "players", MEMPOOL_BYPASS_POOLS },
+    /* Actually, we will later set up the destructor to point towards free_player() */
+};
+
+/* The mempool system never frees memory back to the system, but is extremely efficient
+ * when it comes to allocating and returning pool chunks. Always use the get_poolchunk() 
+ * and return_poolchunk() functions for getting and returning memory chunks. expand_mempool() is
+ * used internally. 
+ *
+ * Be careful if you want to use the internal chunk or pool data, its semantics and
+ * format might change in the future.
+ */
+
+/* Initialize the mempools lists and related data structures */
+void init_mempools() {
+    int i;
+    
+    /* Initialize end-of-list pointers and a few other values*/
+    for(i=0; i<NROF_MEMPOOLS; i++) {
+        mempools[i].first_free = &end_marker;
+        mempools[i].nrof_used = 0;
+        mempools[i].nrof_free = 0;
+#ifdef MEMPOOL_TRACKING
+        mempools[i].first_puddle_info = NULL;
+#endif        
+    }
+    removed_objects = &end_marker;    
+
+    /* Set up container for "loose" objects */
+    initialize_object(&void_container);
+}
+
+/* A tiny little function to set up the constructors/destructors to functions that may
+ * reside outside the library */
+void setup_poolfunctions(mempool_id pool, chunk_constructor constructor, chunk_destructor destructor) {
+    if(pool >= NROF_MEMPOOLS)
+        LOG(llevBug, "BUG: setup_poolfunctions for illegal memory pool %d\n", pool); 
+      
+    mempools[pool].constructor = constructor;
+    mempools[pool].destructor = destructor;
+}
+
+/*
+ * Expands the memory pool with MEMPOOL_EXPAND new chunks. All new chunks
+ * are put into the pool's freelist for future use.
+ * expand_mempool is only meant to be used from get_poolchunk().
+ */
+static void expand_mempool(mempool_id pool) {
+    uint32 i;
+    struct mempool_chunk *first, *ptr;
+    int chunksize_real;
+    
+    if(pool >= NROF_MEMPOOLS)
+        LOG(llevBug, "BUG: expand_mempool for illegal memory pool %d\n", pool); 
+
+    if(mempools[pool].nrof_free > 0)
+        LOG(llevBug, "BUG: expand_mempool called with chunks still available in pool\n"); 
+
+    chunksize_real = sizeof(struct mempool_chunk) + mempools[pool].chunksize;
+    first = (struct mempool_chunk *)calloc(mempools[pool].expand_size,chunksize_real);
+
+    if(first==NULL)
+        LOG(llevError,"ERROR: expand_mempool(): Out Of Memory.\n");
+
+    mempools[pool].first_free = first;
+    mempools[pool].nrof_free += mempools[pool].expand_size;
+
+    /* Set up the linked list */
+    ptr = first;
+    for(i=0;i<mempools[pool].expand_size-1;i++) 
+        ptr = ptr->next = (struct mempool_chunk *)(((char *)ptr) + chunksize_real);
+    /* and the last element */
+    ptr->next = &end_marker;
+
+    #ifdef MEMPOOL_TRACKING
+    /* Track the allocation of puddles? */
+    {
+        struct puddle_info *p = get_poolchunk(POOL_PUDDLE);
+        p->first_chunk = first;
+        p->next = mempools[pool].first_puddle_info;
+        mempools[pool].first_puddle_info = p;
+    }
+    #endif
+}
+
+/* Get a chunk from the selected pool. The pool will be expanded if necessary. */
+void *get_poolchunk(mempool_id pool)
+{
+    struct mempool_chunk *new;
+
+    if(pool >= NROF_MEMPOOLS)
+        LOG(llevBug, "BUG: get_poolchunk for illegal memory pool %d\n", pool); 
+
+    if(mempools[pool].flags & MEMPOOL_BYPASS_POOLS) {
+        new = calloc(1, sizeof(struct mempool_chunk) + mempools[pool].chunksize);        
+    } else {
+        if(mempools[pool].nrof_free == 0) 
+            expand_mempool(pool);
+        new = mempools[pool].first_free;
+        mempools[pool].first_free = new->next;
+        mempools[pool].nrof_free--;
+    }
+
+    mempools[pool].nrof_used++;
+    new->next = NULL;
+
+    if(mempools[pool].constructor)
+        mempools[pool].constructor(MEM_USERDATA(new));
+
+    return MEM_USERDATA(new);
+}
+
+/* Return a chunk to the selected pool. Don't return memory to the wrong pool!
+ * Returned memory will be reused, so be careful about those stale pointers */
+void return_poolchunk(void *data, mempool_id pool) 
+{
+    struct mempool_chunk *old = MEM_POOLDATA(data);
+    
+    if(CHUNK_FREE(data))
+        LOG(llevBug, "BUG: return_poolchunk on already free chunk\n"); 
+    
+    if(pool >= NROF_MEMPOOLS)
+        LOG(llevBug, "BUG: return_poolchunk for illegal memory pool %d\n", pool); 
+    
+    if(mempools[pool].destructor)
+        mempools[pool].destructor(data);
+
+    if(mempools[pool].flags & MEMPOOL_BYPASS_POOLS) {
+        free(old);        
+    } else {
+        old->next = mempools[pool].first_free;
+        mempools[pool].first_free = old;
+        mempools[pool].nrof_free++;
+    }
+    mempools[pool].nrof_used--;
+}
+
+#ifdef MEMPOOL_TRACKING
+
+/* A Linked-List Memory Sort
+ * by Philip J. Erdelsky <pje@efgh.com>
+ * http://www.alumni.caltech.edu/~pje/
+ * (Public Domain)
+ *
+ * The function sort_linked_list() will sort virtually any kind of singly-linked list, using a comparison 
+ * function supplied by the calling program. It has several advantages over qsort().
+ *
+ * The function sorts only singly linked lists. If a list is doubly linked, the backward pointers can be 
+ * restored after the sort by a few lines of code.
+ * 
+ * Each element of a linked list to be sorted must contain, as its first members, one or more pointers. 
+ * One of the pointers, which must be in the same relative position in each element, is a pointer to the 
+ * next element. This pointer is <end_marker> (usually NULL) in the last element.
+ *
+ * The index is the position of this pointer in each element. 
+ * It is 0 for the first pointer, 1 for the second pointer, etc.
+ *
+ * Let n = compare(p,q,pointer) be a comparison function that compares two elements p and q as follows:
+ * void *pointer;  user-defined pointer passed to compare() by linked_list_sort()
+ * int n;          result of comparing *p and *q
+ *                      >0 if *p is to be after *q in sorted order
+ *                      <0 if *p is to be before *q in sorted order
+ *                       0 if the order of *p and *q is irrelevant
+ *
+ *
+ * The fourth argument (pointer) is passed to compare() without change. It can be an invaluable feature if 
+ * two or more comparison methods share a substantial amount of code and differ only in one or more parameter 
+ * values.
+ *
+ * The last argument (pcount) is of type (unsigned long *). 
+ * If it is not NULL, then *pcount is set equal to the number of records in the list.
+ *
+ * It is permissible to sort an empty list. If first == end_marker, the returned value will also be end_marker. 
+ */
+void *sort_singly_linked_list(void *p, unsigned index,
+  int (*compare)(void *, void *, void *), void *pointer, unsigned long *pcount,
+  void *end_marker)
+{
+  unsigned base;
+  unsigned long block_size;
+
+  struct record
+  {
+    struct record *next[1];
+    /* other members not directly accessed by this function */
+  };
+
+  struct tape
+  {
+    struct record *first, *last;
+    unsigned long count;
+  } tape[4];
+
+  /* Distribute the records alternately to tape[0] and tape[1]. */
+
+  tape[0].count = tape[1].count = 0L;
+  tape[0].first = NULL;
+  base = 0;
+  while (p != end_marker)
+  {
+    struct record *next = ((struct record *)p)->next[index];
+    ((struct record *)p)->next[index] = tape[base].first;
+    tape[base].first = ((struct record *)p);
+    tape[base].count++;
+    p = next;
+    base ^= 1;
+  }
+
+  /* If the list is empty or contains only a single record, then */
+  /* tape[1].count == 0L and this part is vacuous.               */
+
+  for (base = 0, block_size = 1L; tape[base+1].count != 0L;
+    base ^= 2, block_size <<= 1)
+  {
+    int dest;
+    struct tape *tape0, *tape1;
+    tape0 = tape + base;
+    tape1 = tape + base + 1;
+    dest = base ^ 2;
+    tape[dest].count = tape[dest+1].count = 0;
+    for (; tape0->count != 0; dest ^= 1)
+    {
+      unsigned long n0, n1;
+      struct tape *output_tape = tape + dest;
+      n0 = n1 = block_size;
+      while (1)
+      {
+        struct record *chosen_record;
+        struct tape *chosen_tape;
+        if (n0 == 0 || tape0->count == 0)
+        {
+          if (n1 == 0 || tape1->count == 0)
+            break;
+          chosen_tape = tape1;
+          n1--;
+        }
+        else if (n1 == 0 || tape1->count == 0)
+        {
+          chosen_tape = tape0;
+          n0--;
+        }
+        else if ((*compare)(tape0->first, tape1->first, pointer) > 0)
+        {
+          chosen_tape = tape1;
+          n1--;
+        }
+        else
+        {
+          chosen_tape = tape0;
+          n0--;
+        }
+        chosen_tape->count--;
+        chosen_record = chosen_tape->first;
+        chosen_tape->first = chosen_record->next[index];
+        if (output_tape->count == 0)
+          output_tape->first = chosen_record;
+        else
+          output_tape->last->next[index] = chosen_record;
+        output_tape->last = chosen_record;
+        output_tape->count++;
+      }
+    }
+  }
+
+  if (tape[base].count > 1L)
+    tape[base].last->next[index] = end_marker;
+  if (pcount != NULL)
+    *pcount = tape[base].count;
+  return tape[base].first;
+}
+
+/* Comparision function for sort_singly_linked_list */
+static int sort_puddle_by_nrof_free(void *a, void *b, void *args)
+{
+    if(((struct puddle_info *)a)->nrof_free < ((struct puddle_info *)b)->nrof_free)
+        return -1;
+    else if(((struct puddle_info *)a)->nrof_free > ((struct puddle_info *)b)->nrof_free)
+        return 1;
+    else 
+        return 0;
+}
+
+/*
+ * Go through the freelists and free puddles with no used chunks.
+ * This function is quite slow and dangerous to call. 
+ * The idea is that it should be called occasionally when CPU usage is low
+ * 
+ * Complexity of this function is O(N (M log M)) where
+ * N is number of pools and M is number of puddles in pool 
+ */
+void free_empty_puddles(mempool_id pool)
+{
+    int chunksize_real = sizeof(struct mempool_chunk) + mempools[pool].chunksize;
+    int freed = 0;
+    
+    struct mempool_chunk *last_free, *chunk;
+    struct puddle_info *puddle, *next_puddle;
+
+    if(mempools[pool].flags & MEMPOOL_BYPASS_POOLS)
+        return;
+    
+    /* Free empty puddles and setup puddle-local freelists */
+    for(puddle = mempools[pool].first_puddle_info, mempools[pool].first_puddle_info = NULL;
+            puddle != NULL; puddle = next_puddle) {
+      uint32 ii;
+      next_puddle = puddle->next;
+
+      /* Count free chunks in puddle, and set up a local freelist */
+      puddle->first_free = puddle->last_free=NULL;
+      puddle->nrof_free = 0;
+      for(ii=0; ii<mempools[pool].expand_size; ii++) {          
+        chunk = (struct mempool_chunk *)((char *)(puddle->first_chunk) + chunksize_real * ii);
+        /* Find free chunks. (Notice special case for objects here. Yuck!) */
+        if((pool == POOL_OBJECT && OBJECT_FREE((object *)MEM_USERDATA(chunk))) ||
+                (pool != POOL_OBJECT && CHUNK_FREE((object *)MEM_USERDATA(chunk)))) {
+            if(puddle->nrof_free == 0) {
+                puddle->first_free = chunk;
+                puddle->last_free = chunk;
+                chunk->next = NULL;
+            } else {
+                chunk->next = puddle->first_free;
+                puddle->first_free = chunk;
+            }
+
+            puddle->nrof_free ++;
+        }
+      }
+        
+      /* Can we actually free this puddle? */
+      if(puddle->nrof_free == mempools[pool].expand_size) {          
+          /* Yup. Forget about it. */
+          free(puddle->first_chunk);
+          return_poolchunk(puddle, POOL_PUDDLE);
+          mempools[pool].nrof_free -= mempools[pool].expand_size;
+          freed++;
+      } else {
+          /* Nope keep this puddle: put it back into the tracking list */
+          puddle->next = mempools[pool].first_puddle_info;
+          mempools[pool].first_puddle_info = puddle;
+      }
+    }
+
+    /* Sort the puddles by amount of free chunks. It will let us set up the freelist so that 
+     * the chunks from the fullest puddles are used first.
+     * This should (hopefully) help us free some of the lesser-used puddles earlier. */
+    mempools[pool].first_puddle_info = sort_singly_linked_list(mempools[pool].first_puddle_info, 0, sort_puddle_by_nrof_free, NULL, NULL, NULL);
+
+    /* Finally: restore the global freelist */
+    mempools[pool].first_free = &end_marker;
+    last_free = &end_marker;
+    LOG(llevDebug,"%s free in puddles: ", mempools[pool].chunk_description);
+    for(puddle = mempools[pool].first_puddle_info; puddle != NULL; puddle = puddle->next) {
+        if(puddle->nrof_free > 0) {
+            if(mempools[pool].first_free == &end_marker) 
+                mempools[pool].first_free = puddle->first_free;
+            else 
+                last_free->next = puddle->first_free;
+            puddle->last_free->next = &end_marker;
+            last_free = puddle->last_free;
+        }
+		        
+        LOG(llevDebug,"%d ", puddle->nrof_free);
+    }
+    LOG(llevDebug,"\n");
+    
+    LOG(llevInfo,"Freed %d %s puddles\n", freed, mempools[pool].chunk_description);
+}
+#endif
+/** Object management functions **/
+
+/* Put an object in the list of removal candidates.
+ * If the object has still FLAG_REMOVED set at the end of the
+ * server timestep it will be freed
+ */
+void mark_object_removed(object *ob) 
+{
+    struct mempool_chunk *mem = MEM_POOLDATA(ob);
+    
+    if(OBJECT_FREE(ob))
+        LOG(llevBug, "BUG: mark_object_removed() called for free object\n");  
+    
+    SET_FLAG(ob, FLAG_REMOVED);
+
+    /* Don't mark objects twice */
+    if(mem->next != NULL) 
+        return;
+
+    mem->next = removed_objects;
+    removed_objects = mem;
+}
+
+/* Go through all objects in the removed list and free the forgotten ones */
+void object_gc()
+{
+    struct mempool_chunk *current, *next;
+    object *ob;
+    
+    while((next = removed_objects) != &end_marker) {
+        removed_objects = &end_marker; /* destroy_object() may free some more objects (inventory items) */
+        while(next != &end_marker) {
+            current = next;
+            next = current->next;
+            current->next = NULL;
+
+            ob = (object *)MEM_USERDATA(current);
+            if(QUERY_FLAG(ob, FLAG_REMOVED)) {
+                if(OBJECT_FREE(ob)) 
+                    LOG(llevBug, "BUG: Freed object in remove list: %s\n", STRING_OBJ_NAME(ob)); 
+                else 
+                    return_poolchunk(ob, POOL_OBJECT);
+            }
+        }
+    }
+}
 
 /* Moved this out of define.h and in here, since this is the only file
  * it is used in.  Also, make it an inline function for cleaner
@@ -1108,7 +1552,6 @@ object *merge_ob(object *op, object *top) {
       top->nrof+=op->nrof;
       op->weight = 0; /* Don't want any adjustements now */
       remove_ob(op);
-      free_object(op);
       return top;
     }
   }
@@ -1289,6 +1732,8 @@ void dump_me(object *op, char *outstr)
     }
 }
 
+/* Gecko: outdated dumping functions */
+#if 0
 /*
  * This is really verbose...Can be triggered by the P key while in DM mode.
  * All objects are dumped to stderr (or alternate logfile, if in server-mode)
@@ -1321,16 +1766,23 @@ object *get_nearest_part(object *op,object *pl) {
   return closest;
 }
 */
+#endif
+
+/* Gecko: we could at least search through the active, friend and player lists here... */
+
 /*
  * Returns the object which has the count-variable equal to the argument.
  */
 
 object *find_object(int i) {
-  object *op;
+
+  return NULL;
+  /* object *op;
+  
   for(op=objects;op!=NULL;op=op->next)
     if(op->count==(tag_t) i)
       break;
- return op;
+ return op;*/
 }
 
 /*
@@ -1340,14 +1792,17 @@ object *find_object(int i) {
  */
 
 object *find_object_name(char *str) {
-  const char *name=find_string(str);
-  object *op;
-
+    return NULL;
+  
   /* if find_string() can't find the string -
    * then its impossible that op->name will match.
    * if we get a string - its the hash table
    * ptr for this string.
    */
+/*
+  const char *name=find_string(str);
+  object *op;
+
   if(name==NULL)
 	  return NULL;
 
@@ -1357,7 +1812,7 @@ object *find_object_name(char *str) {
 		break;
   }
 
-  return op;
+  return op;*/
 }
 
 void free_all_object_data() {
@@ -1372,8 +1827,8 @@ void free_all_object_data() {
 	op=next;
     }
 #endif
-    LOG(llevDebug,"%d allocated objects, %d free objects, STARMAX=%d\n", 
-	nrofallocobjects, nroffreeobjects,STARTMAX);
+    LOG(llevDebug,"%d allocated objects, %d free objects\n", 
+	mempools[POOL_OBJECT].nrof_used, mempools[POOL_OBJECT].nrof_free);
 }
 
 /*
@@ -1387,7 +1842,7 @@ void free_all_object_data() {
 object *get_owner(object *op) {
   if(!op || op->owner==NULL)
     return NULL;
-  if(!QUERY_FLAG(op->owner,FLAG_FREED) && op->owner->count==op->ownercount)
+  if(!OBJECT_FREE(op) && op->owner->count==op->ownercount)
     return op->owner;
   op->owner=NULL,op->ownercount=0;
   return NULL;
@@ -1499,11 +1954,11 @@ void copy_owner (object *op, object *clone)
 }
 
 /*
- * clear_object() frees everything allocated by an object, and also
- * clears all variables and flags to default settings.
+ * initialize_object() frees everything allocated by an object, and also
+ * initializes all variables and flags to default settings.
  */
 
-void clear_object(object *op) {
+void initialize_object(object *op) {
     /* the memset will clear all these values for us, but we need
      * to reduce the refcount on them.
      */
@@ -1516,24 +1971,9 @@ void clear_object(object *op) {
 	/* Using this memset is a lot easier (and probably faster)
      * than explicitly clearing the fields.
      */
-    memset((void*)((char*)op + offsetof(object, name)),
-		   0, sizeof(object)-offsetof(object, name));
-     /* Below here, we clear things that are not done by the memset,
-     * or set default values that are not zero.
-     */
-    /* This is more or less true */
-    SET_FLAG(op, FLAG_REMOVED);
+    memset(op, 0, sizeof(object));
 
-    op->contr = NULL;
-    op->below=NULL;
-    op->above=NULL;
-    op->inv=NULL;
-    op->env=NULL;
-    op->more=NULL;
-    op->head=NULL;
-    op->map=NULL;
-    /* What is not cleared is next, prev, active_next, active_prev, and count */
-
+    /* Set some values that should not be 0 by default */
 	op->anim_enemy_dir = -1;      /* control the facings 25 animations */
 	op->anim_moving_dir = -1;     /* the same for movement */
 	op->anim_enemy_dir_last = -1;
@@ -1543,6 +1983,9 @@ void clear_object(object *op) {
 
     op->face = blank_face;
     op->attacked_by_count= -1;
+
+    /* give the object a new (unique) count tag */
+    op->count= ++ob_count;
 }
 
 /*
@@ -1553,7 +1996,7 @@ void clear_object(object *op) {
 
 void copy_object(object *op2, object *op) 
 {
-	int is_freed=QUERY_FLAG(op,FLAG_FREED),is_removed=QUERY_FLAG(op,FLAG_REMOVED); 
+  int is_removed=QUERY_FLAG(op,FLAG_REMOVED); 
 
   FREE_ONLY_HASH(op->name);
   FREE_ONLY_HASH(op->title);
@@ -1564,10 +2007,10 @@ void copy_object(object *op2, object *op)
   (void) memcpy((void *)((char *) op +offsetof(object,name)),
                 (void *)((char *) op2+offsetof(object,name)),
                 sizeof(object)-offsetof(object, name));
-  if(is_freed)
-    SET_FLAG(op,FLAG_FREED);
-  if(is_removed)
-    SET_FLAG(op,FLAG_REMOVED);
+    
+    if(is_removed)
+        SET_FLAG(op,FLAG_REMOVED);    
+
   ADD_REF_NOT_NULL_HASH(op->name);
   ADD_REF_NOT_NULL_HASH(op->title);
   ADD_REF_NOT_NULL_HASH(op->race);
@@ -1579,15 +2022,17 @@ void copy_object(object *op2, object *op)
 		SET_FLAG(op,FLAG_KNOWN_MAGICAL);
 		SET_FLAG(op,FLAG_KNOWN_CURSED);
 	}
+
  /* Only alter speed_left when we sure we have not done it before */
   if(op->speed<0 && op->speed_left == op->arch->clone.speed_left) 
 	  op->speed_left+=(RANDOM()%90)/100.0f;
   update_ob_speed(op);
 }
 
+/* Same as above, but not touching the active list */
 void copy_object_data(object *op2, object *op) 
 {
-	int is_freed=QUERY_FLAG(op,FLAG_FREED),is_removed=QUERY_FLAG(op,FLAG_REMOVED); 
+  int is_removed=QUERY_FLAG(op,FLAG_REMOVED); 
 
   FREE_ONLY_HASH(op->name);
   FREE_ONLY_HASH(op->title);
@@ -1595,14 +2040,13 @@ void copy_object_data(object *op2, object *op)
   FREE_ONLY_HASH(op->slaying);
   FREE_ONLY_HASH(op->msg);
 
-
   (void) memcpy((void *)((char *) op +offsetof(object,name)),
                 (void *)((char *) op2+offsetof(object,name)),
                 sizeof(object)-offsetof(object, name));
-  if(is_freed)
-    SET_FLAG(op,FLAG_FREED);
-  if(is_removed)
-    SET_FLAG(op,FLAG_REMOVED);
+
+    if(is_removed)
+        SET_FLAG(op,FLAG_REMOVED);
+
   ADD_REF_NOT_NULL_HASH(op->name);
   ADD_REF_NOT_NULL_HASH(op->title);
   ADD_REF_NOT_NULL_HASH(op->race);
@@ -1618,84 +2062,15 @@ void copy_object_data(object *op2, object *op)
 }
 
 /*
- * expand_objects() allocates more objects for the list of unused objects.
- * It is called from get_object() if the unused list is empty.
- */
-
-void expand_objects() {
-  int i;
-  object *new;
-  new = (object *) CALLOC(OBJ_EXPAND,sizeof(object));
-
-  if(new==NULL)
-	LOG(llevError,"ERROR: expand_objects(): OOM.\n");
-  free_objects=new;
-  new[0].prev=NULL;
-  new[0].next= &new[1],
-  SET_FLAG(&(new[0]), FLAG_REMOVED);
-  SET_FLAG(&(new[0]), FLAG_FREED);
-
-  for(i=1;i<OBJ_EXPAND-1;i++) {
-    new[i].next= &new[i+1],
-    new[i].prev= &new[i-1],
-    SET_FLAG(&(new[i]), FLAG_REMOVED);
-    SET_FLAG(&(new[i]), FLAG_FREED);
-  }
-  new[OBJ_EXPAND-1].prev= &new[OBJ_EXPAND-2],
-  new[OBJ_EXPAND-1].next=NULL,
-  SET_FLAG(&(new[OBJ_EXPAND-1]), FLAG_REMOVED);
-  SET_FLAG(&(new[OBJ_EXPAND-1]), FLAG_FREED);
-
-  nrofallocobjects += OBJ_EXPAND;
-  nroffreeobjects += OBJ_EXPAND;
-}
-
-/*
  * get_object() grabs an object from the list of unused objects, makes
  * sure it is initialised, and returns it.
  * If there are no free objects, expand_objects() is called to get more.
  */
 
 object *get_object() {
-  object *op;
-
-  if(free_objects==NULL) {
-    expand_objects();
-  }
-  op=free_objects;
-#ifdef MEMORY_DEBUG
-  /* The idea is hopefully by doing a realloc, the memory
-   * debugging program will now use the current stack trace to
-   * report leaks.
-   */
-  op = realloc(op, sizeof(object));
-  SET_FLAG(op, FLAG_REMOVED);
-  SET_FLAG(op, FLAG_FREED);
-#endif
-
-  if(!QUERY_FLAG(op,FLAG_FREED))
-    LOG(llevError,"ERROR: get_object: Getting busy object.\n");
-
-  free_objects=op->next;
-  if(free_objects!=NULL)
-    free_objects->prev=NULL;
-  op->count= ++ob_count;
-  op->name=NULL;
-  op->title=NULL;
-  op->race=NULL;
-  op->slaying=NULL;
-  op->msg=NULL;
-  op->next=objects;
-  op->prev=NULL;
-  op->active_next = NULL;
-  op->active_prev = NULL;
-  if(objects!=NULL)
-    objects->prev=op;
-  objects=op;
-  clear_object(op);
-  SET_FLAG(op,FLAG_REMOVED);
-  nroffreeobjects--;
-  return op;
+    object *new = (object *)get_poolchunk(POOL_OBJECT);
+    mark_object_removed(new);
+    return new;
 }
 
 /*
@@ -1725,7 +2100,7 @@ void update_ob_speed(object *op) {
      */
 
 
-    if (QUERY_FLAG(op, FLAG_FREED) && op->speed) 
+    if (OBJECT_FREE(op) && op->speed) 
 	{
 		dump_object(op);
 		LOG(llevBug,"BUG: Object %s is freed but has speed.\n:%s\n", op->name,errmsg);
@@ -1752,6 +2127,7 @@ void update_ob_speed(object *op) {
 	if (op->active_next!=NULL)
 		op->active_next->active_prev = op;
 	active_objects = op;
+        op->active_prev = NULL;
     }
     else {
 	/* If not on the active list, nothing needs to be done */
@@ -2072,23 +2448,24 @@ static inline int add_one_drop_quest_item(object *target, object *obj)
 }
 
 /*
- * free_object() frees everything allocated by an object, removes
+ * destroy_object() frees everything allocated by an object, removes
  * it from the list of used objects, and puts it on the list of
- * free objects.  The IS_FREED() flag is set in the object.
+ * free objects. This function is called automatically to free unused objects
+ * (it is called from return_poolchunk() during garbage collection in object_gc() ).
  * The object must have been removed by remove_ob() first for
  * this function to succeed.
  */
-
-void free_object(object *ob) {
+void destroy_object(object *ob) {
   object *tmp,*tmp_op;
 
-    if (!QUERY_FLAG(ob,FLAG_REMOVED)) {
+    if (!QUERY_FLAG(ob, FLAG_REMOVED)) {
 	dump_object(ob);
-	LOG(llevBug,"BUG: Free object called with non removed object\n:%s\n",errmsg);
+	LOG(llevBug,"BUG: Destroy object called with non removed object\n:%s\n",errmsg);
     }
-  if(QUERY_FLAG(ob,FLAG_FREED)) {
+
+  if(OBJECT_FREE(ob)) {
     dump_object(ob);
-    LOG(llevBug,"BUG: Trying to free freed object.\n%s\n",errmsg);
+    LOG(llevBug,"BUG: Trying to destroy freed object.\n%s\n",errmsg);
     return;
   }
 
@@ -2098,10 +2475,6 @@ void free_object(object *ob) {
   if(ob->type == CONTAINER && ob->attacked_by) 
 	  container_unlink_func(NULL, ob);
 
-  if(ob->more!=NULL) {
-    free_object(ob->more);
-    ob->more=NULL;
-  }
   if (ob->inv) {
 	  /* i removed a check for wall(ob->map,ob->x,ob->y)... it will do no harm */
     if (ob->map==NULL || ob->map->in_memory!=MAP_IN_MEMORY)
@@ -2111,15 +2484,17 @@ void free_object(object *ob) {
 	  {
         tmp=tmp_op->below;
         remove_ob(tmp_op);
-        free_object(tmp_op);
         tmp_op=tmp;
       }
-    }
-    else {
+    } else {
 		if(ob->type == PLAYER) /* we don't handle players here */
-			LOG(llevBug,"BUG: free_object:() - try to drop items of %s\n", ob->name);
+			LOG(llevBug,"BUG: destroy_object:() - try to drop items of %s\n", ob->name);
 		else /* create race corpse and/or drop stuff to floor */
 		{
+            /* Gecko: I don't think this is a good place to drop corpses.
+             * This function should be related to object management only, and not gameplay. 
+             * (And an object that has come this is not supposed to be connected to a map anymore...)
+             */
 			object *corpse=NULL;
 			object *enemy = NULL;
 
@@ -2144,7 +2519,7 @@ void free_object(object *ob) {
 			while(tmp_op!=NULL)
 			{
 				tmp=tmp_op->below;
-				remove_ob(tmp_op);
+				remove_ob(tmp_op); /* This will be destroyed in next loop of object_gc() */
 					/* if we recall spawn mobs, we don't want drop their items as free.
 					* So, marking the mob itself with "FLAG_STARTEQUIP" will kill
 					* all inventory and not dropping it on the map.
@@ -2167,10 +2542,9 @@ void free_object(object *ob) {
 							 */
 							/* first: if the player has this item (normally from killing the
 							 * quest mob before) we free the quest item here and stop.
+                             * otherwise, move the item in the players inventory!
 							 */
-							if(find_quest_item(enemy, tmp_op))
-								free_object(tmp_op);
-							else /* ok, move the item in the players inventory! */
+							if(! find_quest_item(enemy, tmp_op))
 							{
 								char auto_buf[HUGE_BUF];
 
@@ -2189,15 +2563,13 @@ void free_object(object *ob) {
 								}
 								(*esrv_send_item_func) (enemy, tmp_op);
 							}
-
-
 						}
-					}
-					else if(QUERY_FLAG(ob,FLAG_STARTEQUIP) ||
-						(tmp_op->type != RUNE && (QUERY_FLAG(tmp_op,FLAG_SYS_OBJECT)||
-								QUERY_FLAG(tmp_op,FLAG_STARTEQUIP) ||QUERY_FLAG(tmp_op,FLAG_NO_DROP))))
-						free_object(tmp_op);
-					else 
+					} else if(!(QUERY_FLAG(ob,FLAG_STARTEQUIP) ||
+                            (tmp_op->type != RUNE && (QUERY_FLAG(tmp_op,FLAG_SYS_OBJECT)||
+                                                      QUERY_FLAG(tmp_op,FLAG_STARTEQUIP) ||QUERY_FLAG(tmp_op,FLAG_NO_DROP)))))
+                        /*                    else if(! QUERY_FLAG(ob,FLAG_STARTEQUIP) &&
+                            (tmp_op->type == RUNE || !(QUERY_FLAG(tmp_op,FLAG_SYS_OBJECT)||
+								QUERY_FLAG(tmp_op,FLAG_STARTEQUIP) || QUERY_FLAG(tmp_op,FLAG_NO_DROP))))*/
 					{
 						tmp_op->x=ob->x,tmp_op->y=ob->y;
 
@@ -2210,9 +2582,7 @@ void free_object(object *ob) {
 							 * removing the container where a trap is applied will
 							 * neutralize the trap too 
 							 */
-							if(tmp_op->type == RUNE)
-								free_object(tmp_op);
-							else
+							if(tmp_op->type != RUNE)
 								insert_ob_in_map(tmp_op,ob->map,NULL,0); /* Insert in same map as the envir */
 						}
 					}
@@ -2259,49 +2629,47 @@ void free_object(object *ob) {
 				else /* disabled */
 				{
 					/* if we are here, our corpse mob had something in inv but its nothing to drop */
-					if(!QUERY_FLAG(corpse,FLAG_REMOVED) )
+					if(!QUERY_FLAG(corpse, FLAG_REMOVED))
 						remove_ob(corpse);
-					free_object(corpse);
 				}
-
 			}
 		}
     }
   }
+
   /* Remove object from the active list */
   ob->speed = 0;
   update_ob_speed(ob);
  /*LOG(llevDebug,"FO: a:%s %x >%s< (#%d)\n", ob->arch?(ob->arch->name?ob->arch->name:""):"", ob->name, ob->name?ob->name:"",ob->name?query_refcount(ob->name):0);*/
-  /* First free the object from the used objects list: */
  
-  SET_FLAG(ob, FLAG_FREED);
-  ob->count = 0;
-  if(ob->prev==NULL) {
-    objects=ob->next;
-    if(objects!=NULL)
-      objects->prev=NULL;
-  }
-  else {
-    ob->prev->next=ob->next;
-    if(ob->next!=NULL)
-      ob->next->prev=ob->prev;
-  }
- 
-	FREE_AND_CLEAR_HASH2(ob->name);
-	FREE_AND_CLEAR_HASH2(ob->title);  
-	FREE_AND_CLEAR_HASH2(ob->race);
-	FREE_AND_CLEAR_HASH2(ob->slaying);
-	FREE_AND_CLEAR_HASH2(ob->msg);
+  /* Free attached attrsets */
+  if(ob->custom_attrset) {
+/*      LOG(llevDebug,"destroy_object() custom attrset found in object %s (type %d)\n", 
+              STRING_OBJ_NAME(ob), ob->type);*/
 
-  /* Now link it with the free_objects list: */
-  ob->prev=NULL;
-  ob->next=free_objects;
-  if(free_objects!=NULL)
-    free_objects->prev=ob;
-  free_objects=ob;
-  nroffreeobjects++;
+      switch(ob->type) {
+          case PLAYER:
+          case DEAD_OBJECT: /* PLayers are changed into DEAD_OBJECTs when they logout */              
+              return_poolchunk(ob->custom_attrset, POOL_PLAYER);
+              break;
+              
+          default:
+              LOG(llevBug,"BUG: destroy_object() custom attrset found in unsupported object %s (type %d)\n", 
+                      STRING_OBJ_NAME(ob), ob->type);
+      }
+      ob->custom_attrset = NULL;
+  }
+  
+  FREE_AND_CLEAR_HASH2(ob->name);
+  FREE_AND_CLEAR_HASH2(ob->title);  
+  FREE_AND_CLEAR_HASH2(ob->race);
+  FREE_AND_CLEAR_HASH2(ob->slaying);
+  FREE_AND_CLEAR_HASH2(ob->msg);
+
+  ob->count = 0; /* mark object as "do not use" and invalidate all references to it */
 }
 
+#if 0
 /*
  * count_free() returns the number of objects on the list of free objects.
  */
@@ -2325,19 +2693,7 @@ int count_used() {
     tmp=tmp->next, i++;
   return i;
 }
-
-/*
- * count_active() returns the number of objects on the list of active objects.
- */
-
-int count_active() {
-  int i=0;
-  object *tmp=active_objects;
-  while(tmp!=NULL)
-    tmp=tmp->active_next, i++;
-  return i;
-}
-
+#endif
 
 /* remove_ob(op):
  *   This function removes the object op from the linked list of objects
@@ -2355,9 +2711,8 @@ void remove_ob(object *op) {
     object *otmp;
     tag_t tag;
     int check_walk_off;
-    
 
-    if(QUERY_FLAG(op,FLAG_REMOVED)) 
+    if(QUERY_FLAG(op, FLAG_REMOVED)) 
 	{
 		/*dump_object(op)*/;
 		LOG(llevBug,"BUG: Trying to remove removed object.:%s map:%s (%d,%d)\n", query_name(op), 
@@ -2368,8 +2723,8 @@ void remove_ob(object *op) {
     if(op->more!=NULL)
 		remove_ob(op->more);
 
-    SET_FLAG(op, FLAG_REMOVED);
-
+    mark_object_removed(op);
+    
     /* 
      * In this case, the object to be removed is in someones
      * inventory.
@@ -2391,7 +2746,7 @@ void remove_ob(object *op) {
 		* made to players inventory.  If set, avoiding the call to save cpu time.
 		* the flag is set from outside... perhaps from a drop_all() function.
 		*/
-		if ((otmp=is_player_inv(op->env))!=NULL && otmp->contr && !QUERY_FLAG(otmp,FLAG_NO_FIX_PLAYER))
+		if ((otmp=is_player_inv(op->env))!=NULL && CONTR(otmp) && !QUERY_FLAG(otmp,FLAG_NO_FIX_PLAYER))
 		    fix_player(otmp);
 
 		if(op->above!=NULL)
@@ -2412,7 +2767,7 @@ void remove_ob(object *op) {
 			op->ox=op->x,op->oy=op->y;
 		#endif
 
-		op->map=op->env->map;
+		op->map=op->env->map; 
 		op->above=NULL,op->below=NULL;
 		op->env=NULL;
 		return;
@@ -2475,16 +2830,16 @@ void remove_ob(object *op) {
 	 */
 	if(op->type == PLAYER)
 	{
-		struct pl_player *pltemp=op->contr;
+		struct pl_player *pltemp=CONTR(op);
 		
 		/* now we remove us from the local map player chain */
 		if(pltemp->map_below)
-			pltemp->map_below->contr->map_above = pltemp->map_above;
+			CONTR(pltemp->map_below)->map_above = pltemp->map_above;
 		else
 			op->map->player_first = pltemp->map_above;
 
 		if(pltemp->map_above)
-			pltemp->map_above->contr->map_below = pltemp->map_below;
+			CONTR(pltemp->map_above)->map_below = pltemp->map_below;
 
 		pltemp->map_below = pltemp->map_above = NULL;
 
@@ -2529,6 +2884,7 @@ void remove_ob(object *op) {
 
 	update_object(op, UP_OBJ_REMOVE);		
 
+    op->env = NULL;
 }
 
 
@@ -2562,7 +2918,7 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
 	/* some tests to check all is ok... some cpu ticks
 	 * which tracks we have problems or not
 	 */
-    if (QUERY_FLAG (op, FLAG_FREED))
+    if (OBJECT_FREE(op))
 	{
 		dump_object(op);
 		LOG(llevBug, "BUG: insert_ob_in_map(): Trying to insert freed object %s in map %s!\n:%s\n", query_name(op), m->name,errmsg);
@@ -2575,7 +2931,7 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
 		return NULL;
     }
 		
-	if(!QUERY_FLAG(op,FLAG_REMOVED))
+	if(!QUERY_FLAG(op, FLAG_REMOVED))
 	{
 		dump_object(op);
 		LOG(llevBug,"BUG: insert_ob_in_map(): Trying to insert non removed object %s in map %s.\n%s\n", query_name(op), m->name, errmsg);
@@ -2589,7 +2945,6 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
 		return NULL;
 	}
 
-
     if(op->more)
 	{
 		if (insert_ob_in_map(op->more,op->more->map,originator,flag|INS_TAIL_MARKER) == NULL) 
@@ -2599,8 +2954,8 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
 			return NULL;
 		}
     }
-
-    CLEAR_FLAG(op,FLAG_REMOVED);
+    
+    CLEAR_FLAG(op, FLAG_REMOVED);
 
 #ifdef POSITION_DEBUG
     op->ox=op->x;
@@ -2637,7 +2992,6 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
 			{
 				op->nrof+=tmp->nrof;
 				remove_ob(tmp);
-				free_object(tmp);
 			}
 		}
     }
@@ -2807,13 +3161,13 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
 	 */
 	if(op->type == PLAYER)
 	{
-		op->contr->socket.update_tile = 0;
-		op->contr->update_los=1; /* thats always true when touching the players map pos. */
+		CONTR(op)->socket.update_tile = 0;
+		CONTR(op)->update_los=1; /* thats always true when touching the players map pos. */
 
 		if(op->map->player_first) 
 		{
-			op->map->player_first->contr->map_below = op;
-			op->contr->map_above = op->map->player_first;
+			CONTR(op->map->player_first)->map_below = op;
+			CONTR(op)->map_above = op->map->player_first;
 
 		}
 		op->map->player_first= op;
@@ -2853,7 +3207,6 @@ void replace_insert_ob_in_map(char *arch_string, object *op) {
     for(tmp=GET_MAP_OB(op->map,op->x,op->y); tmp!=NULL; tmp=tmp->above) {
 	if(!strcmp(tmp->arch->name,arch_string)) /* same archetype */ {
 	    remove_ob(tmp);
-	    free_object(tmp);
 	}
     }
 
@@ -2893,19 +3246,18 @@ object *get_split_ob(object *orig_ob,int nr) {
             insert_ob_in_ob(event, newob);
         }
     }
-    if(QUERY_FLAG(orig_ob, FLAG_UNPAID) && QUERY_FLAG(orig_ob, FLAG_NO_PICK))
-	; /* clone objects .... */
-	else
+//    if(QUERY_FLAG(orig_ob, FLAG_UNPAID) && QUERY_FLAG(orig_ob, FLAG_NO_PICK))
+//	; /* clone objects .... */
+//	else
 		orig_ob->nrof-=nr;
 
     if(orig_ob->nrof<1) 
 	{
 		
-		if ( ! is_removed)
+		if (! is_removed)
 		        remove_ob(orig_ob);
-		free_object(orig_ob);
     }
-    else if ( ! is_removed) 
+    else if (! is_removed) 
 	{
 		if(orig_ob->env!=NULL)
 			sub_weight (orig_ob->env,orig_ob->weight*nr);
@@ -2941,7 +3293,7 @@ object *decrease_ob_nr (object *op, int i)
     if (i > (int)op->nrof)
         i = (int)op->nrof;
 
-    if (QUERY_FLAG (op, FLAG_REMOVED))
+    if (QUERY_FLAG(op, FLAG_REMOVED))
     {
         op->nrof -= i;
     }
@@ -2980,7 +3332,7 @@ object *decrease_ob_nr (object *op, int i)
             remove_ob (op);
             op->nrof = 0;
             if (tmp) {
-                (*esrv_del_item_func) (tmp->contr, op->count,op->env);
+                (*esrv_del_item_func) (CONTR(tmp), op->count,op->env);
                 (*esrv_update_item_func) (UPD_WEIGHT, tmp, tmp);
             }
         }
@@ -3001,14 +3353,13 @@ object *decrease_ob_nr (object *op, int i)
                 if (op->nrof)
                     (*esrv_send_item_func) (tmp, op);
                 else
-                    (*esrv_del_item_func) (tmp->contr, op->count, op->env);
+                    (*esrv_del_item_func) (CONTR(tmp), op->count, op->env);
             }
     }
 
     if (op->nrof) {
         return op;
     } else {
-        free_object (op);
         return NULL;
     }
 }
@@ -3030,7 +3381,7 @@ object *decrease_ob_nr (object *op, int i)
 object *insert_ob_in_ob(object *op,object *where) {
   object *tmp, *otmp;
 
-  if(!QUERY_FLAG(op,FLAG_REMOVED)) {
+  if(!QUERY_FLAG(op, FLAG_REMOVED)) {
     dump_object(op);
     LOG(llevBug,"BUG: Trying to insert (ob) inserted object.\n%s\n", errmsg);
     return op;
@@ -3048,24 +3399,30 @@ object *insert_ob_in_ob(object *op,object *where) {
     LOG(llevError, "ERROR: Tried to insert multipart object %s (%d)\n", query_name(op), op->count);
     return op;
   }
+    
   CLEAR_FLAG(op, FLAG_REMOVED);
+
   if(op->nrof) {
     for(tmp=where->inv;tmp!=NULL;tmp=tmp->below)
       if ( CAN_MERGE(tmp,op) ) {
 	/* return the original object and remove inserted object
            (client needs the original object) */
         tmp->nrof += op->nrof;
+        
 	/* Weight handling gets pretty funky.  Since we are adding to
 	 * tmp->nrof, we need to increase the weight.
 	 */
-		add_weight (where, op->weight*op->nrof);
-        SET_FLAG(op, FLAG_REMOVED);
-        free_object(op); /* free the inserted object */
+	add_weight (where, op->weight*op->nrof);
+
+        /* Make sure we get rid of the old object */
+        mark_object_removed(op); 
+        
         op = tmp;
-        remove_ob (op); /* and fix old object's links */
-        CLEAR_FLAG(op, FLAG_REMOVED);
+        remove_ob (op); /* and fix old object's links (we will insert it further down)*/
+        CLEAR_FLAG(op, FLAG_REMOVED); /* Just kidding about previous remove */
 	break;
       }
+  
 
     /* I assume stackable objects have no inventory
      * We add the weight - this object could have just been removed
@@ -3107,7 +3464,7 @@ object *insert_ob_in_ob(object *op,object *where) {
 	 * marked as no fix.
 	 */
 	otmp=is_player_inv(where);
-	if (otmp&&otmp->contr!=NULL) 
+	if (otmp&&CONTR(otmp)!=NULL) 
 	{
 		if (QUERY_FLAG(op,FLAG_ONE_DROP))
 			SET_FLAG(op,FLAG_STARTEQUIP);
@@ -3478,9 +3835,11 @@ object *ObjectCreateClone (object *asrc) {
 
 int was_destroyed (object *op, tag_t old_tag)
 {
-    /* checking for FLAG_FREED isn't necessary, but makes this function more
+    /* checking for OBJECT_FREE isn't necessary, but makes this function more
      * robust */
-    return op->count != old_tag || QUERY_FLAG (op, FLAG_FREED);
+    /* Gecko: redefined "destroyed" a little broader: included removed objects.
+     * -> need to make sure this is never a problem with temporarily removed objects */
+    return QUERY_FLAG(op, FLAG_REMOVED) || op->count != old_tag || OBJECT_FREE(op);
 }
 
 /* GROS - Creates an object using a string representing its content.         */
@@ -3496,46 +3855,23 @@ object* load_object_str(char *obstr)
 	void *mybuffer;
     char filename[MAX_BUF];
     sprintf(filename,"%s/cfloadobstr2044",settings.tmpdir);
-    tempfile=fopen(filename,"w");
+    tempfile=fopen(filename,"w+");
     if (tempfile == NULL)
     {
         LOG(llevError,"ERROR: load_object_str(): Unable to access load object temp file\n");
         return NULL;
     };
     fprintf(tempfile,obstr);
-    fclose(tempfile);
 
     op=get_object();
 
-    tempfile=fopen(filename,"r");
-    if (tempfile == NULL)
-    {
-        LOG(llevError,"ERROR: Unable to read object temp file\n");
-        return NULL;
-    };
+    rewind(tempfile);    
 	mybuffer = create_loader_buffer(tempfile);
     load_object(tempfile,op,mybuffer,LO_REPEAT,0);
 	delete_loader_buffer(mybuffer);
     LOG(llevDebug," load str completed, object=%s\n",query_name(op));
-    CLEAR_FLAG(op,FLAG_REMOVED);
     fclose(tempfile);
     return op;
 }
 
-
-/* remove and free a object including all the inventory in ->inv */
-void destroy_object (object *op)
-{
-    object *tmp;
-    while ((tmp = op->inv))
-		destroy_object (tmp);
-
-    if (!QUERY_FLAG(op, FLAG_REMOVED))
-		remove_ob(op);
-    free_object(op);
-}
-
-
-
 /*** end of object.c ***/
-

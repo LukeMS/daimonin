@@ -74,7 +74,7 @@ int command_uskill ( object *pl, char *params) {
         return 0;
    }
    if(pl->type == PLAYER)
-        pl->contr->praying=0;
+        CONTR(pl)->praying=0;
    return use_skill(pl,params);
 }
 
@@ -86,7 +86,7 @@ int command_rskill ( object *pl, char *params) {
         return 0;
    }
    if(pl->type == PLAYER)
-       pl->contr->praying=0;
+       CONTR(pl)->praying=0;
    skillno=lookup_skill_by_name(params);
    if (skillno==-1) {
 	new_draw_info_format(NDI_UNIQUE,0,pl,"Couldn't find the skill %s", params);
@@ -98,7 +98,7 @@ int command_rskill ( object *pl, char *params) {
 int command_apply (object *op, char *params)
 {
     if(op->type == PLAYER)
-    	op->contr->praying=0;
+    	CONTR(op)->praying=0;
   if (!params) {
 	  LOG(-1,"her");
     player_apply_below(op);
@@ -183,7 +183,7 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
     int tmp_nrof = tmp->nrof ? tmp->nrof : 1;
 
     if(pl->type == PLAYER)
-    	pl->contr->praying=0;
+    	CONTR(pl)->praying=0;
 
     /* IF the player is flying & trying to take the item out of a container 
      * that is in his inventory, let him.  tmp->env points to the container 
@@ -200,10 +200,9 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
     if(QUERY_FLAG(tmp,FLAG_WAS_WIZ) && !QUERY_FLAG(pl, FLAG_WAS_WIZ)) {
 	new_draw_info(NDI_UNIQUE, 0,pl, "The object disappears in a puff of smoke!");
 	new_draw_info(NDI_UNIQUE, 0,pl, "It must have been an illusion.");
-	if (pl->type==PLAYER) esrv_del_item (pl->contr, tmp->count, tmp->env);
+	if (pl->type==PLAYER) esrv_del_item (CONTR(pl), tmp->count, tmp->env);
 	if ( ! QUERY_FLAG (tmp, FLAG_REMOVED))
             remove_ob (tmp);
-	free_object(tmp);
 	return;
     }
     
@@ -229,6 +228,24 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
     if(QUERY_FLAG(pl, FLAG_WAS_WIZ))
 	SET_FLAG(tmp, FLAG_WAS_WIZ);
 #endif
+    
+    if(QUERY_FLAG(tmp, FLAG_UNPAID))
+    {
+        if(QUERY_FLAG(tmp, FLAG_NO_PICK)) /* this is a clone shop - clone a item for inventory */
+        {
+            tmp = ObjectCreateClone(tmp);
+            CLEAR_FLAG(tmp, FLAG_NO_PICK);
+            SET_FLAG(tmp, FLAG_STARTEQUIP);
+            tmp->nrof = nrof;
+            tmp_nrof = nrof;
+            sprintf(buf,"You pick up %s for %s from the storage.", query_name(tmp),query_cost_string(tmp,pl,F_BUY));
+        }
+        else /* this is a unique shop item */
+            sprintf(buf,"%s will cost you %s.", query_name(tmp),
+                    query_cost_string(tmp,pl,F_BUY));
+    }
+    else
+        sprintf(buf,"You pick up the %s.", query_name(tmp));
 
     if (nrof != tmp_nrof) {
 	object *tmp2 = tmp, *tmp2_cont = tmp->env;
@@ -241,7 +258,7 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 	/* Tell a client what happened rest of objects */
 	if (pl->type == PLAYER) {
 	    if (was_destroyed (tmp2, tmp2_tag))
-		esrv_del_item (pl->contr, tmp2_tag,tmp2_cont);
+		esrv_del_item (CONTR(pl), tmp2_tag,tmp2_cont);
 	    else
 		esrv_send_item (pl, tmp2);
 	}
@@ -252,25 +269,10 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 	 */
         if ( ! QUERY_FLAG (tmp, FLAG_REMOVED)) {
 	    if (tmp->env && pl->type==PLAYER) 
-	        esrv_del_item (pl->contr, tmp->count,tmp->env);
+	        esrv_del_item (CONTR(pl), tmp->count,tmp->env);
 	    remove_ob(tmp); /* Unlink it */
 	}
     }
-    if(QUERY_FLAG(tmp, FLAG_UNPAID))
-	{
-	    if(QUERY_FLAG(tmp, FLAG_NO_PICK)) /* this is a clone shop - clone a item for inventory */
-		{
-			tmp = ObjectCreateClone(tmp);
-			CLEAR_FLAG(tmp, FLAG_NO_PICK);
-			SET_FLAG(tmp, FLAG_STARTEQUIP);
-			sprintf(buf,"You pick up %s for %s from the storage.", query_name(tmp),query_cost_string(tmp,pl,F_BUY));
-		}
-		else /* this is a unique shop item */
-			sprintf(buf,"%s will cost you %s.", query_name(tmp),
-												query_cost_string(tmp,pl,F_BUY));
-	}
-    else
-		sprintf(buf,"You pick up the %s.", query_name(tmp));
 
     new_draw_info(NDI_UNIQUE, 0,pl,buf);
     tmp = insert_ob_in_ob(tmp, op);
@@ -365,15 +367,15 @@ void pick_up(object *op,object *alt)
         goto leave;
 
     if (op->type==PLAYER) {
-	count=op->contr->count;
+	count=CONTR(op)->count;
 	if (count==0) count = tmp->nrof;
     }
     else
 	count=tmp->nrof;
 
     /* container is open, so use it */
-    if (op->type==PLAYER && op->contr->container) {
-	alt = op->contr->container;
+    if (op->type==PLAYER && CONTR(op)->container) {
+	alt = CONTR(op)->container;
 	if (alt != tmp->env && !sack_can_hold (op, alt, tmp,count))
 	    goto leave;
     } else { /* non container pickup */
@@ -399,7 +401,7 @@ void pick_up(object *op,object *alt)
     }
 #ifdef PICKUP_DEBUG
    if(op->type == PLAYER)
-      printf ("Pick_up(): %s picks %s (%d) and inserts it %s.\n",op->name, tmp->name,  op->contr->count, alt->name);
+      printf ("Pick_up(): %s picks %s (%d) and inserts it %s.\n",op->name, tmp->name,  CONTR(op)->count, alt->name);
    else
       printf ("Pick_up(): %s picks %s and inserts it %s.\n",op->name, tmp->name, alt->name);
 #endif
@@ -418,7 +420,7 @@ void pick_up(object *op,object *alt)
     if (was_destroyed (tmp, tag) || tmp->env)
         need_fix_tmp = 0;
     if (op->type == PLAYER)
-       op->contr->count=0;
+       CONTR(op)->count=0;
     goto leave;
 
   leave:
@@ -510,7 +512,7 @@ void put_object_in_sack (object *op, object *sack, object *tmp, long nrof)
 	}
 	/* Tell a client what happened other objects */ 
 	if (was_destroyed (tmp2, tmp2_tag))
-	      esrv_del_item (op->contr, tmp2_tag, tmp2_cont);
+	      esrv_del_item (CONTR(op), tmp2_tag, tmp2_cont);
 	else	/* this can proably be replaced with an update */
 	      esrv_send_item (op, tmp2);
     } 
@@ -547,7 +549,7 @@ void put_object_in_sack (object *op, object *sack, object *tmp, long nrof)
      * delete the original.
      */
     if (tmp2 != tmp)
-	esrv_del_item (op->contr, tmp_tag, tmp_cont);
+	esrv_del_item (CONTR(op), tmp_tag, tmp_cont);
 
     esrv_send_item (op, tmp2);
     /* update the sacks and players weight */
@@ -575,7 +577,7 @@ void drop_object (object *op, object *tmp, long nrof)
     }
 
     if (op->type == PLAYER)
-        op->contr->praying=0;
+        CONTR(op)->praying=0;
 
     if(QUERY_FLAG(tmp, FLAG_APPLIED)) {
       if (apply_special (op, tmp, AP_UNAPPLY | AP_NO_MERGE))
@@ -602,7 +604,7 @@ void drop_object (object *op, object *tmp, long nrof)
 	 if (op->type == PLAYER)
 	 {
                 if (was_destroyed (tmp2, tmp2_tag))
-                        esrv_del_item (op->contr, tmp2_tag, tmp2_cont);
+                        esrv_del_item (CONTR(op), tmp2_tag, tmp2_cont);
                 else
                         esrv_send_item (op, tmp2);
 	};
@@ -648,9 +650,8 @@ void drop_object (object *op, object *tmp, long nrof)
 			new_draw_info(NDI_UNIQUE, 0,op,"The shop magic put it back to the storage.");
 		else
 			new_draw_info(NDI_UNIQUE, 0,op,"The one-drop item vanish to nowhere as you drop it!");
-		esrv_del_item (op->contr, tmp->count, tmp->env);
+		esrv_del_item (CONTR(op), tmp->count, tmp->env);
 	  }
-      free_object(tmp);
       fix_player(op);
       return;
     }
@@ -665,9 +666,9 @@ void drop_object (object *op, object *tmp, long nrof)
      */
     if (op->type == PLAYER && !QUERY_FLAG(tmp, FLAG_UNPAID) &&
       (tmp->nrof ? tmp->value * tmp->nrof : tmp->value > 2000) &&
-      (op->contr->last_save_time + SAVE_INTERVAL) <= time(NULL)) {
+      (CONTR(op)->last_save_time + SAVE_INTERVAL) <= time(NULL)) {
 	  save_player(op, 1);
-	  op->contr->last_save_time = time(NULL);
+	  CONTR(op)->last_save_time = time(NULL);
     }
 #endif /* SAVE_INTERVAL */
 
@@ -683,9 +684,8 @@ void drop_object (object *op, object *tmp, long nrof)
 			if (op->type == PLAYER)
 			{
 				new_draw_info_format(NDI_UNIQUE, 0, op,"The shop magic put it to the storage.");
-				esrv_del_item (op->contr, tmp->count,tmp->env);
+				esrv_del_item (CONTR(op), tmp->count,tmp->env);
 			}
-			free_object(tmp);
 			fix_player(op);
 			if (op->type == PLAYER)
 				esrv_send_item (op, op);
@@ -698,7 +698,7 @@ void drop_object (object *op, object *tmp, long nrof)
     tmp->y = op->y;
 
     if (op->type == PLAYER)
-        esrv_del_item (op->contr, tmp->count, tmp->env);
+        esrv_del_item (CONTR(op), tmp->count, tmp->env);
 
     insert_ob_in_map(tmp, op->map, op,0);
 
@@ -727,7 +727,6 @@ void drop(object *op, object *tmp)
     if (IS_SYS_INVISIBLE(tmp)) {
 	if (tmp->env && tmp->env->type != PLAYER) {
 	    remove_ob(tmp);
-	    free_object(tmp);
 	    return;
 	} else {
 	    while(tmp!=NULL && IS_SYS_INVISIBLE(tmp))
@@ -754,11 +753,11 @@ void drop(object *op, object *tmp)
 
     if (op->type == PLAYER)
     {
-	    if (op->contr->container) 
-			put_object_in_sack (op, op->contr->container, tmp, op->contr->count);
+	    if (CONTR(op)->container) 
+			put_object_in_sack (op, CONTR(op)->container, tmp, CONTR(op)->count);
 		else
-			drop_object (op, tmp, op->contr->count);
-		op->contr->count = 0;
+			drop_object (op, tmp, CONTR(op)->count);
+		CONTR(op)->count = 0;
     }
 	else
 		drop_object(op,tmp,0);
@@ -798,7 +797,7 @@ int command_dropall (object *op, char *params) {
 				curinv->type != FOOD && curinv->type != KEY && curinv->type != SPECIAL_KEY && 
 				(curinv->type != GEM && curinv->type != TYPE_JEWEL && curinv->type != TYPE_NUGGET) &&
 				!IS_SYS_INVISIBLE(curinv) && (curinv->type!=CONTAINER || 
-				(op->type == PLAYER && op->contr->container!=curinv)))
+				(op->type == PLAYER && CONTR(op)->container!=curinv)))
 	{
 		if (QUERY_FLAG(op, FLAG_STARTEQUIP))
 			drop(op,curinv);
@@ -900,14 +899,14 @@ int command_drop (object *op, char *params)
 	if (!did_one) new_draw_info(NDI_UNIQUE, 0,op,"Nothing to drop.");
     }
     if (op->type==PLAYER)
-        op->contr->count=0;
+        CONTR(op)->count=0;
     return 0;
 }
 
 int command_examine (object *op, char *params)
 {
   if(op->type == PLAYER)
-      op->contr->praying=0;
+      CONTR(op)->praying=0;
   if (!params) {
     object *tmp=op->below;
     while (tmp && !LOOK_OBJ(tmp)) tmp=tmp->below;
@@ -964,8 +963,8 @@ static object *find_marked_object_rec(object *op, object **marked, uint32 *marke
  */
 int command_mark(object *op, char *params)
 {
-    if (!op->contr) return 1;
-	op->contr->praying=0;
+    if (!CONTR(op)) return 1;
+	CONTR(op)->praying=0;
     if (!params) {
 	object *mark=find_marked_object(op);
 	if (!mark) new_draw_info(NDI_UNIQUE,0,op,"You have no marked object.");
@@ -978,8 +977,8 @@ int command_mark(object *op, char *params)
 	    return 1;
 	}
 	else {
-	    op->contr->mark=mark1;
-	    op->contr->mark_count=mark1->count;
+	    CONTR(op)->mark=mark1;
+	    CONTR(op)->mark_count=mark1->count;
 	    new_draw_info_format(NDI_UNIQUE,0,op,"Marked item %s", query_name(mark1));
 	    return 0;
 	}
@@ -1000,11 +999,11 @@ object *find_marked_object(object *op)
     if(op->type != PLAYER)
         return NULL;
 
-    if (!op || !op->contr) return NULL;
-    if (!op->contr->mark)
+    if (!op || !CONTR(op)) return NULL;
+    if (!CONTR(op)->mark)
 		return NULL;
 
-    return find_marked_object_rec(op, &op->contr->mark, &op->contr->mark_count);
+    return find_marked_object_rec(op, &CONTR(op)->mark, &CONTR(op)->mark_count);
 }
 
 
@@ -1017,7 +1016,7 @@ void examine_monster(object *op,object *tmp) {
 	char *att;
 	int val, val2, i;
 
-	op->contr->praying=0;
+	CONTR(op)->praying=0;
 	if(QUERY_FLAG(mon,FLAG_IS_MALE))
 	{
 		if(QUERY_FLAG(mon,FLAG_IS_FEMALE))
@@ -1052,7 +1051,7 @@ void examine_monster(object *op,object *tmp) {
 		new_draw_info_format(NDI_UNIQUE, 0,op,"%s is a %s %s.",att,gender,mon->race);
 
 	if(mon->type == PLAYER)
-		new_draw_info_format(NDI_UNIQUE, 0,op,"%s is level %d and %d years old%s.",att,mon->level,mon->contr->age,QUERY_FLAG(mon,FLAG_IS_AGED)?" (magical aged)":"");
+		new_draw_info_format(NDI_UNIQUE, 0,op,"%s is level %d and %d years old%s.",att,mon->level,CONTR(mon)->age,QUERY_FLAG(mon,FLAG_IS_AGED)?" (magical aged)":"");
 	else
 		new_draw_info_format(NDI_UNIQUE, 0,op,"%s is level %d%s.",att,mon->level,QUERY_FLAG(mon,FLAG_IS_AGED)?" and unatural aged":"");
 
@@ -1602,13 +1601,13 @@ int command_pickup (object *op, char *params)
     /* if the new mode is used, just print the settings */
     /* yes, a GOTO is ugly, but its simpple and should stay until this
      * mode is cleanly integrated and the old one deprecated */
-    if(op->contr->mode & PU_NEWMODE) 
+    if(CONTR(op)->mode & PU_NEWMODE) 
     {
-      i=op->contr->mode;
+      i=CONTR(op)->mode;
       goto NEWPICKUP;
     }
     LOG(llevDebug ,"command_pickup: !params\n");
-    set_pickup_mode(op, (op->contr->mode > 6)? 0: op->contr->mode+1);
+    set_pickup_mode(op, (CONTR(op)->mode > 6)? 0: CONTR(op)->mode+1);
     return 0;
   }
   if(params==NULL || !sscanf(params, "%ud", &i) || i<0 ) {
@@ -1701,7 +1700,7 @@ void set_pickup_mode(object *op,int i) {
     return;
   }
   
-  switch(op->contr->mode=i) {
+  switch(CONTR(op)->mode=i) {
     case 0:
       new_draw_info(NDI_UNIQUE, 0,op,"Mode: Don't pick up.");
       break;
@@ -1740,13 +1739,13 @@ int command_search_items (object *op, char *params)
   }
   
   if(params == NULL) {
-	if(op->contr->search_str[0]=='\0') {
+	if(CONTR(op)->search_str[0]=='\0') {
 	  new_draw_info(NDI_UNIQUE, 0,op,"Example: &/search &magic+1");
 	  new_draw_info(NDI_UNIQUE, 0,op,"Would automatically pick up all");
 	  new_draw_info(NDI_UNIQUE, 0,op,"items containing the word 'magic+1'.");
 	  return 1;
 	}
-	op->contr->search_str[0]='\0';
+	CONTR(op)->search_str[0]='\0';
 	new_draw_info(NDI_UNIQUE, 0,op,"Search mode turned off.");
 	fix_player(op);
 	return 1;
@@ -1755,8 +1754,8 @@ int command_search_items (object *op, char *params)
 	new_draw_info(NDI_UNIQUE, 0,op,"Search string too long.");
 	return 1;
       }
-  strcpy(op->contr->search_str, params);
-      sprintf(buf,"Searching for '%s'.",op->contr->search_str);
+  strcpy(CONTR(op)->search_str, params);
+      sprintf(buf,"Searching for '%s'.",CONTR(op)->search_str);
       new_draw_info(NDI_UNIQUE, 0,op,buf);
 	fix_player(op);
       return 1;

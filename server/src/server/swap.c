@@ -242,6 +242,8 @@ mapstruct *map_least_timeout(const char *except_level)
 
 void swap_below_max(const char *except_level) {
     mapstruct *map;
+    int nroffreeobjects = mempools[POOL_OBJECT].nrof_free;
+    int nrofallocobjects = mempools[POOL_OBJECT].nrof_used + nroffreeobjects;
 
     if(nrofallocobjects - nroffreeobjects < MAX_OBJECTS)
 	return;
@@ -268,7 +270,7 @@ int players_on_map(mapstruct *m)
 	object *tmp;
 	int count;
 
-	for(count=0,tmp=m->player_first;tmp;tmp=tmp->contr->map_above)
+	for(count=0,tmp=m->player_first;tmp;tmp=CONTR(tmp)->map_above)
 		count++;
 
 	return count;

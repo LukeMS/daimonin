@@ -198,8 +198,8 @@ int command_t_tell (object *op, char *params)
 
 	if(op->type == PLAYER)
 	{
-		t_obj = op->contr->target_object;
-		if(t_obj && op->contr->target_object_count==t_obj->count)
+		t_obj = CONTR(op)->target_object;
+		if(t_obj && CONTR(op)->target_object_count==t_obj->count)
 		{
 
 			/* why i do this and not direct distance calculation?
@@ -221,14 +221,14 @@ int command_t_tell (object *op, char *params)
 					buf[MAX_BUF-1]=0;
 					new_draw_info(NDI_WHITE,0, op, buf);
 					talk_to_npc(op, t_obj,params);
-					play_sound_player_only(op->contr, SOUND_CLICK,SOUND_NORMAL,0,0);
+					play_sound_player_only(CONTR(op), SOUND_CLICK,SOUND_NORMAL,0,0);
 					return 1;
 				}
 			}
 		}
 	}
 	
-	play_sound_player_only(op->contr, SOUND_WAND_POOF,SOUND_NORMAL,0,0);
+	play_sound_player_only(CONTR(op), SOUND_WAND_POOF,SOUND_NORMAL,0,0);
     return 1;
 }
 
@@ -249,14 +249,14 @@ int command_reply (object *op, char *params) {
         new_draw_info(NDI_UNIQUE, 0, op, "Reply what?");
         return 1;
     }
-	
-    if (op->contr->last_tell[0] == '\0') {
+
+    if (CONTR(op)->last_tell[0] == '\0') {
         new_draw_info(NDI_UNIQUE, 0, op, "You can't reply to nobody.");
         return 1;
     }
 
     /* Find player object of player to reply to and check if player still exists */
-    pl = find_player(op->contr->last_tell);
+    pl = find_player(CONTR(op)->last_tell);
 
     if (pl == NULL || pl->dm_stealth)
 	{
@@ -604,7 +604,7 @@ static int basic_emote(object *op, char *params, int emotion)
     char buf[HUGE_BUF]="", buf2[HUGE_BUF]="", buf3[HUGE_BUF]="";
    player *pl;
 
-   LOG(llevDebug, "EMOTE: %x (%s) (params: >%s<) (t: %s) %d\n", op, query_name(op), params?params:"NULL", op->contr?query_name(op->contr->target_object):"NO CTRL!!", emotion);
+   LOG(llevDebug, "EMOTE: %x (%s) (params: >%s<) (t: %s) %d\n", op, query_name(op), params?params:"NULL", CONTR(op)?query_name(CONTR(op)->target_object):"NO CTRL!!", emotion);
 
    params = cleanup_chat_string(params);
    if (params && *params=='\0') /* in this case we have 100% a illegal parameter */
@@ -613,21 +613,20 @@ static int basic_emote(object *op, char *params, int emotion)
    if (!params) {
 
 	/* if we are a player with legal target, use it as target for the emote */
-	if(op->type == PLAYER && op->contr->target_object && op->contr->target_object != op && 
-		!QUERY_FLAG(op->contr->target_object, FLAG_FREED) &&
-		!QUERY_FLAG(op->contr->target_object, FLAG_REMOVED) && op->contr->target_object->name &&
-		 op->contr->target_object_count == op->contr->target_object->count)
+	if(op->type == PLAYER && CONTR(op)->target_object != op && 
+                OBJECT_VALID(CONTR(op)->target_object, CONTR(op)->target_object_count) && 
+                CONTR(op)->target_object->name)
 	{
 		rv_vector rv;
-		get_rangevector(op,op->contr->target_object, &rv, 0);
+		get_rangevector(op,CONTR(op)->target_object, &rv, 0);
 
 		if(rv.distance <= 4)
 		{
-			emote_other(op, op->contr->target_object, NULL, buf, buf2, buf3,emotion);				
+			emote_other(op, CONTR(op)->target_object, NULL, buf, buf2, buf3,emotion);				
 			new_draw_info(NDI_UNIQUE, 0, op, buf);
-			if(op->contr->target_object->type == PLAYER)
-				new_draw_info(NDI_UNIQUE|NDI_YELLOW, 0, op->contr->target_object, buf2);
-			new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, op, op->contr->target_object, buf3);
+			if(CONTR(op)->target_object->type == PLAYER)
+				new_draw_info(NDI_UNIQUE|NDI_YELLOW, 0, CONTR(op)->target_object, buf2);
+			new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, op, CONTR(op)->target_object, buf3);
 			return 0;
 		}
 		new_draw_info(NDI_UNIQUE, 0, op, "The target is not in range for this emote action.");

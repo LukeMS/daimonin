@@ -169,16 +169,16 @@ void enter_player_savebed(object *op)
 
     tmp=get_object();
 
-    FREE_AND_COPY_HASH(EXIT_PATH(tmp),op->contr->savebed_map);
-    EXIT_X(tmp) = op->contr->bed_x;
-    EXIT_Y(tmp) = op->contr->bed_y;
+    FREE_AND_COPY_HASH(EXIT_PATH(tmp),CONTR(op)->savebed_map);
+    EXIT_X(tmp) = CONTR(op)->bed_x;
+    EXIT_Y(tmp) = CONTR(op)->bed_y;
     enter_exit(op,tmp);
     /* If the player has not changed maps and the name does not match
      * that of the savebed, his savebed map is gone.  Lets go back
      * to the emergency path.  Update what the players savebed is
      * while we're at it.
      */
-    if (oldmap == op->map && strcmp(op->contr->savebed_map, oldmap->path)) 
+    if (oldmap == op->map && strcmp(CONTR(op)->savebed_map, oldmap->path)) 
 	{
 		/* HOTFIX: apartments: We have saved in beta 1 stoneglow apartments as
 		 * "_stoneglow_appartment" - but in beta 2 we need "$stoneglow$appartment"
@@ -186,37 +186,35 @@ void enter_player_savebed(object *op)
 		 * if we find it, change it to '§' version and give it another try.
 		 */
 		char *tmp_str;
-		if((tmp_str=strstr(op->contr->savebed_map,"_stoneglow_appartment")))
+		if((tmp_str=strstr(CONTR(op)->savebed_map,"_stoneglow_appartment")))
 		{
 			LOG(llevDebug,"HOTFIX (%s): found old save bed string -  trying '$' version.\n", query_name(op));
 			tmp_str[0] = '$';	
 			tmp_str[10] = '$';
 			
-		    FREE_AND_COPY_HASH(EXIT_PATH(tmp),op->contr->savebed_map);
+		    FREE_AND_COPY_HASH(EXIT_PATH(tmp),CONTR(op)->savebed_map);
 		    enter_exit(op,tmp);
-		    if (oldmap == op->map && strcmp(op->contr->savebed_map, oldmap->path)) 
+		    if (oldmap == op->map && strcmp(CONTR(op)->savebed_map, oldmap->path)) 
 			{
 				LOG(llevDebug,"HOTFIX (%s): failed.\n", query_name(op));
 			}
 			else
 			{
 				LOG(llevDebug,"HOTFIX (%s): success.\n", query_name(op));
-			    free_object(tmp); 
 				return;
 			}
 		}
 
 		LOG(llevDebug,"Player %s savebed location %s is invalid - going to EMERGENCY_MAPPATH (%s)\n",
-									    query_name(op), op->contr->savebed_map,EMERGENCY_MAPPATH);
-		strcpy(op->contr->savebed_map, EMERGENCY_MAPPATH);
-		op->contr->bed_x = EMERGENCY_X;
-		op->contr->bed_y = EMERGENCY_Y;
-		FREE_AND_COPY_HASH(EXIT_PATH(tmp),op->contr->savebed_map);
-		EXIT_X(tmp) = op->contr->bed_x;
-		EXIT_Y(tmp) = op->contr->bed_y;
+									    query_name(op), CONTR(op)->savebed_map,EMERGENCY_MAPPATH);
+		strcpy(CONTR(op)->savebed_map, EMERGENCY_MAPPATH);
+		CONTR(op)->bed_x = EMERGENCY_X;
+		CONTR(op)->bed_y = EMERGENCY_Y;
+		FREE_AND_COPY_HASH(EXIT_PATH(tmp),CONTR(op)->savebed_map);
+		EXIT_X(tmp) = CONTR(op)->bed_x;
+		EXIT_Y(tmp) = CONTR(op)->bed_y;
 		enter_exit(op,tmp);
     }
-    free_object(tmp);
 }
 
 
@@ -315,11 +313,13 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y, int pos_flag)
 #endif
 
   /* set single or all part of a multi arch */
+    
   for(tmp=op;tmp!=NULL;tmp=tmp->more)
   {
     tmp->x = tmp->arch->clone.x+x+freearr_x[i];
     tmp->y = tmp->arch->clone.y+y+freearr_y[i];
-	tmp->map = newmap;
+    /*  Gecko: this is done also by insert_ob_in_map 
+	tmp->map = newmap;*/
   }
   insert_ob_in_map(op, newmap, NULL,0);
 
@@ -345,36 +345,35 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y, int pos_flag)
 	/* do some action special for players after we have inserted them */
 	if(op->type == PLAYER)
 	{
-		if (op->contr) 
+		if (CONTR(op)) 
 		{
-			strcpy(op->contr->maplevel, newmap->path);
-			op->contr->count=0;
+			strcpy(CONTR(op)->maplevel, newmap->path);
+			CONTR(op)->count=0;
 		}
 
 		/* Update any golems */
-		if(op->contr->golem != NULL) 
+		if(CONTR(op)->golem != NULL) 
 		{
-			int i = find_free_spot(op->contr->golem->arch,newmap, x, y, 1, SIZEOFFREE+1);
+			int i = find_free_spot(CONTR(op)->golem->arch,newmap, x, y, 1, SIZEOFFREE+1);
 
-			remove_ob(op->contr->golem);
+			remove_ob(CONTR(op)->golem);
 			if (i==-1)
 			{
-				send_golem_control(op->contr->golem, GOLEM_CTR_RELEASE);
-				remove_friendly_object(op->contr->golem);
-				free_object(op->contr->golem);
-				op->contr->golem=NULL;
+				send_golem_control(CONTR(op)->golem, GOLEM_CTR_RELEASE);
+				remove_friendly_object(CONTR(op)->golem);
+				CONTR(op)->golem=NULL;
 			}
 			else 
 			{
 				object *tmp;
-				for (tmp=op->contr->golem; tmp!=NULL; tmp=tmp->more)
+				for (tmp=CONTR(op)->golem; tmp!=NULL; tmp=tmp->more)
 				{
 					tmp->x = x + freearr_x[i]+ (tmp->arch==NULL?0:tmp->arch->clone.x);
 					tmp->y = y + freearr_y[i]+ (tmp->arch==NULL?0:tmp->arch->clone.y);
 					tmp->map = newmap;
 				}
-				insert_ob_in_map(op->contr->golem, newmap, NULL,0);
-				op->contr->golem->direction = find_dir_2(op->x - op->contr->golem->x, op->y - op->contr->golem->y);
+				insert_ob_in_map(CONTR(op)->golem, newmap, NULL,0);
+				CONTR(op)->golem->direction = find_dir_2(op->x - CONTR(op)->golem->x, op->y - CONTR(op)->golem->y);
 			}
 		}
 		op->direction=0;
@@ -394,7 +393,7 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y, int pos_flag)
 #ifdef MAX_OBJECTS_LWM
 		swap_below_max (newmap->path);
 #endif
-        MapNewmapCmd( op->contr);
+        MapNewmapCmd( CONTR(op));
 	}
 }
 
@@ -580,7 +579,7 @@ static void enter_unique_map(object *op, object *exit_ob)
 
 /* Tries to move 'op' to exit_ob.  op is the character or monster that is
  * using the exit, where exit_ob is the exit object (boat, door, teleporter,
- * etc.)  if exit_ob is null, then op->contr->maplevel contains that map to
+ * etc.)  if exit_ob is null, then CONTR(op)->maplevel contains that map to
  * move the object to.  This is used when loading the player.
  *
  * Largely redone by MSW 2001-01-21 - this function was overly complex
@@ -692,12 +691,9 @@ void enter_exit(object *op, object *exit_ob)
 						break;
 				}
 				if(tmp)
-				{
 					remove_ob(tmp);
-					free_object(tmp);
-				}
-				strcpy(op->contr->savebed_map, normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob), tmp_path));
-				op->contr->bed_x = EXIT_X(exit_ob), op->contr->bed_y = EXIT_Y(exit_ob);
+				strcpy(CONTR(op)->savebed_map, normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob), tmp_path));
+				CONTR(op)->bed_x = EXIT_X(exit_ob), CONTR(op)->bed_y = EXIT_Y(exit_ob);
 				save_player(op, 1);
 			/* LOG(llevDebug,"enter_exit: Taking damned exit %s to (%d,%d) on map %s\n",
                * exit_ob->name?exit_ob->name:"(none)", exit_ob->x, exit_ob->y,  
@@ -724,24 +720,24 @@ void enter_exit(object *op, object *exit_ob)
 		* the localdir to that name.  So its an easy way to see of the map is
 		* unique or not.
 		*/
-		if (!strncmp(op->contr->maplevel, settings.localdir, strlen(settings.localdir)))
+		if (!strncmp(CONTR(op)->maplevel, settings.localdir, strlen(settings.localdir)))
 			flags = MAP_PLAYER_UNIQUE;
 
 		/* newmap returns the map (if already loaded), or loads it for
 		* us.
 		*/
-		newmap = ready_map_name(op->contr->maplevel, flags);
+		newmap = ready_map_name(CONTR(op)->maplevel, flags);
 		if (!newmap) 
 		{
 			/* HOTFIX; for beta 1 stoneglow apartments */
 			char *tmp_str;
-			if((tmp_str=strstr(op->contr->maplevel,"_stoneglow_appartment")))
+			if((tmp_str=strstr(CONTR(op)->maplevel,"_stoneglow_appartment")))
 			{
 				LOG(llevDebug,"HOTFIX (%s): found old save bed string -  trying '$' version.\n", query_name(op));
 				tmp_str[0] = '$';	
 				tmp_str[10] = '$';
 			
-				newmap = ready_map_name(op->contr->maplevel, flags);
+				newmap = ready_map_name(CONTR(op)->maplevel, flags);
 
 				LOG(llevDebug,"HOTFIX (%s): ready map %x.\n", query_name(op), newmap);
 			}
@@ -750,7 +746,7 @@ void enter_exit(object *op, object *exit_ob)
 			if (!newmap)
 			{
 				LOG(llevBug,"BUG: enter_exit(): Pathname to map does not exist! player: %s (%s)\n", 
-																	op->name,	op->contr->maplevel);
+																	op->name,	CONTR(op)->maplevel);
 				newmap = ready_map_name(EMERGENCY_MAPPATH, 0);
 				op->x = EMERGENCY_X;
 				op->y = EMERGENCY_Y;
@@ -853,10 +849,8 @@ void process_players1(mapstruct *map)
 				 * at end of this round... so, we have a "object turn invisible and
 				 * we do a last hit here"
 				 */
-				
-				if(pl->ob->enemy->count != pl->ob->enemy_count || 
-						pl->ob->enemy->owner == pl->ob || QUERY_FLAG(pl->ob->enemy, FLAG_REMOVED))
-						/*QUERY_FLAG(pl->ob->enemy, FLAG_FREED) || ->count should do this job */
+				if(! OBJECT_VALID(pl->ob->enemy, pl->ob->enemy_count) ||
+                        pl->ob->enemy->owner == pl->ob)
 					pl->ob->enemy=NULL;
                 else if(is_melee_range(pl->ob, pl->ob->enemy))
 				{
@@ -942,8 +936,20 @@ void process_events (mapstruct *map)
     op->active_next = &marker;
 
     /* Now process op */
-    if (QUERY_FLAG (op, FLAG_FREED)) {
-      LOG(llevBug, "BUG: process_events(): Free object on list\n");
+    if (OBJECT_FREE(op)) {
+      LOG(llevBug, "BUG: process_events(): Free object on active list\n");
+      op->speed = 0;
+      update_ob_speed (op);
+      continue;
+    }
+    
+    /* Gecko: This is not really a bug, but it has to be thought trough...
+     * If an sctive object is remove_ob():ed and not reinserted during process_events(), 
+     * this might happen. It normally means that the object was killed, but you never know...
+     */
+    if (QUERY_FLAG(op, FLAG_REMOVED)) {
+      LOG(llevDebug, "SEMIBUG: process_events(): Removed object on active list  %s (%s, type:%d count:%d)\n",
+              op->arch->name,query_name(op),op->type, op->count);
       op->speed = 0;
       update_ob_speed (op);
       continue;
@@ -960,7 +966,7 @@ void process_events (mapstruct *map)
 
     if (op->map == NULL && op->env == NULL && op->name && op->type != MAP && map == NULL)
     {
-	  if(op->type == PLAYER && op->contr->state != ST_PLAYING)
+	  if(op->type == PLAYER && CONTR(op)->state != ST_PLAYING)
 		  continue;
       LOG(llevBug, "BUG: process_events(): Object without map or inventory is on active list: %s (%d)\n",query_name(op), op->count);
       op->speed = 0;
@@ -1284,7 +1290,6 @@ void do_specials() {
 
     if (!(pticks % 5003))
 		write_book_archive();
-        
 }
 
 int main(int argc, char **argv)
@@ -1319,6 +1324,8 @@ int main(int argc, char **argv)
 	shutdown_agent(-1, NULL);			/* check & run a shutdown count (with messages & shutdown ) */
 
     doeric_server();		
+    object_gc();                /* Clean up the object pool */
+
     global_round_tag++;			/* global round ticker ! this is real a global */
     process_events(NULL);		/* "do" something with objects with speed */
     cftimer_process_timers();	/* Process the crossfire Timers */    

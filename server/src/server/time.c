@@ -154,7 +154,6 @@ void remove_door(object *op) {
   if(op->sub_type1 == ST1_DOOR_NORMAL)
 	  play_sound_map(op->map, op->x, op->y, SOUND_OPEN_DOOR, SOUND_NORMAL);
   remove_ob(op);
-  free_object(op);
 }
 
 void remove_door2(object *op, object *opener) {
@@ -189,7 +188,6 @@ void remove_door2(object *op, object *opener) {
 		if(op->sub_type1 == ST1_DOOR_NORMAL)
 		  play_sound_map(op->map, op->x, op->y, SOUND_OPEN_DOOR, SOUND_NORMAL);
 		remove_ob(op);
-		free_object(op);
   }
   else if(!op->last_eat) /* if set, we are have opened a closed door - now handle autoclose */
   {
@@ -237,7 +235,6 @@ void remove_door3(object *op)
 	  LOG(llevBug,"BUG: door with speed but no map?! killing object...done. (%s - (%d,%d))\n",
 									query_name(op), op->x, op->y);
 	  remove_ob(op);
-      free_object(op);
 	  return;
   }
 
@@ -299,7 +296,7 @@ void generate_monster(object *gen) {
       op->head=head,prev->more=op;
     if (rndm(0, 9)) generate_artifact(op, gen->map->difficulty,0,99);
     insert_ob_in_map(op,gen->map,gen,0);
-    if (QUERY_FLAG(op, FLAG_FREED)) return;
+    if (OBJECT_FREE(op)) return;
     if(op->randomitems!=NULL)
       create_treasure(op->randomitems,op,GT_APPLY,
 	  (op->level ? op->level:gen->map->difficulty),T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
@@ -325,14 +322,12 @@ void regenerate_rod(object *rod) {
 void remove_force(object *op) {
   if(op->env==NULL) {
     remove_ob(op);
-    free_object(op);
     return;
   }
   CLEAR_FLAG(op, FLAG_APPLIED);
   change_abil(op->env,op);
   fix_player(op->env);
   remove_ob(op);
-  free_object(op);
 }
 
 void remove_blindness(object *op) {
@@ -344,7 +339,6 @@ void remove_blindness(object *op) {
      fix_player(op->env);
   }
   remove_ob(op);
-  free_object(op);
 }
 
 void remove_confusion(object *op) {
@@ -355,7 +349,6 @@ void remove_confusion(object *op) {
     new_draw_info(NDI_UNIQUE, 0,op->env, "You regain your senses.\n");
   }
   remove_ob(op);
-  free_object(op);
 }
 
 void execute_wor(object *op) {
@@ -369,13 +362,11 @@ void execute_wor(object *op) {
       enter_exit(op,wor);
   }
   remove_ob(wor);
-  free_object(wor);
 }
 
 void poison_more(object *op) {
   if(op->env==NULL||!IS_LIVE(op->env)||op->env->stats.hp<0) {
     remove_ob(op);
-    free_object(op);
     return;
   }
   if(!op->stats.food) {
@@ -388,7 +379,6 @@ void poison_more(object *op) {
       new_draw_info(NDI_UNIQUE, 0,op->env,"You feel much better now.");
     }
     remove_ob(op);
-    free_object(op);
     return;
   }
   if(op->env->type==PLAYER) {
@@ -731,7 +721,6 @@ object *stop_item (object *op)
                 return NULL;
             remove_ob (payload);
             remove_ob (op);
-            free_object (op);
             return payload;
         }
 
@@ -761,7 +750,7 @@ void fix_stopped_item (object *op, mapstruct *map, object *originator)
 {
     if (map == NULL)
         return;
-    if (QUERY_FLAG (op, FLAG_REMOVED))
+    if (QUERY_FLAG(op, FLAG_REMOVED))
         insert_ob_in_map (op, map, originator,0);
     else if (op->type == ARROW)
         merge_ob (op, NULL);   /* only some arrows actually need this */
@@ -778,7 +767,6 @@ object *fix_stopped_arrow (object *op)
 	/*
     if(rndm(0, 99) < op->stats.food) {
         remove_ob (op);
-	free_object(op);
 	return NULL;
     }*/
 
@@ -872,17 +860,15 @@ void stop_arrow (object *op)
 		{
 			if (payload->stats.sp!= SP_NO_SPELL && spells[payload->stats.sp].flags&SPELL_DESC_DIRECTION)
 				cast_spell(payload,payload, payload->direction, payload->stats.sp, 1, spellPotion,NULL); /* apply potion ALWAYS fire on the spot the applier stands - good for healing - bad for firestorm */
-			free_object (payload);
 		}
 		else
 		{            
 			clear_owner(payload);
             /* Gecko: if the script didn't put the payload somewhere else */
-            if(!payload->env && !QUERY_FLAG(payload, FLAG_FREED)) 
+            if(!payload->env && !OBJECT_FREE(payload)) 
                 insert_ob_in_map (payload, op->map, payload,0);
 		}
         remove_ob (op);
-		free_object (op);
     } 
 	else 
 	{
@@ -905,7 +891,6 @@ void move_arrow(object *op) {
     if(op->map==NULL) {
 	LOG(llevBug, "BUG: Arrow %s had no map.\n", query_name(op));
 	remove_ob(op);
-	free_object(op);
 	return;
     }
 
@@ -923,8 +908,33 @@ void move_arrow(object *op) {
 	}
 
     /* Calculate target map square */
-    new_x = op->x + DIRX(op);
-    new_y = op->y + DIRY(op);
+    if(op->stats.grace == 666) {
+        /* Experimental target throwing hack. Using bresenham line algo */
+        
+        int dx = op->stats.hp;
+        int dy = op->stats.sp;
+        
+        if (dx > dy) {
+            if (op->stats.exp >= 0) {
+                new_y = op->y + op->stats.maxsp;
+                op->stats.exp -= dx;                           // same as fraction -= 2*dx
+            } else
+                new_y = op->y;
+            new_x = op->x + op->stats.maxhp;
+            op->stats.exp += dy;                           // same as fraction -= 2*dy
+        } else {
+            if (op->stats.exp >= 0) {
+                new_x = op->x + op->stats.maxhp;
+                op->stats.exp -= dy;
+            } else
+                new_x = op->x;
+            new_y = op->y + op->stats.maxsp;
+            op->stats.exp += dx;
+        }
+    } else {
+        new_x = op->x + DIRX(op);
+        new_y = op->y + DIRY(op);
+    }
     was_reflected = 0;
 
 	/* check we are legal */
@@ -1125,7 +1135,7 @@ void change_object(object *op) { /* Doesn`t handle linked objs yet */
 			/* this should handle in future insert_ob_in_ob() */
 			if(env->type == PLAYER) 
 			{
-				esrv_del_item(env->contr, op->count, NULL);
+				esrv_del_item(CONTR(env), op->count, NULL);
 				esrv_send_item(env, tmp);
 			}
 			else if(env->type == CONTAINER) 
@@ -1137,16 +1147,13 @@ void change_object(object *op) { /* Doesn`t handle linked objs yet */
 		else 
 		{
 			j=find_first_free_spot(tmp->arch,op->map,op->x,op->y);
-			if (j==-1)  /* No free spot */
-				free_object(tmp);
-			else 
+			if (j!=-1)  /* Found a free spot */
 			{
 				tmp->x=op->x+freearr_x[j],tmp->y=op->y+freearr_y[j];
 				insert_ob_in_map(tmp,op->map,op,0);
 			}
 		}
 	}
-	free_object(op);
 }
 
 
@@ -1216,7 +1223,6 @@ void move_teleporter(object *op) {
 				LOG(llevBug, "BUG: Removed illegal teleporter (map: %s (%d,%d)) -> (%d,%d)\n",
 											op->map->name, op->x, op->y, EXIT_X(op), EXIT_Y(op));
 				remove_ob(op);
-				free_object(op);
 				return;
 			}
 #ifdef PLUGINS
@@ -1336,7 +1342,6 @@ void move_player_mover(object *op) {
 
 	    if(QUERY_FLAG(op,FLAG_LIFESAVE)&&op->stats.hp--<0) {
 		remove_ob(op);
-		free_object(op);
 		return;
 	    }
 
@@ -1361,7 +1366,7 @@ void move_player_mover(object *op) {
 		     * place.  This can happen if the player used a spell to
 		     * get to this space.
 		     */
-		    victim->contr->fire_on=0;
+		    CONTR(victim)->fire_on=0;
 		    victim->speed_left=-FABS(victim->speed);
 		    move_player(victim, dir);
 		}
@@ -1424,10 +1429,8 @@ void move_marker(object *op) {
       for(tmp2=tmp->inv;tmp2 !=NULL; tmp2=tmp2->below) {
 		  if(tmp2->type == FORCE && tmp2->slaying && !strcmp(tmp2->slaying,op->name)) break;
       }
-		if(tmp2) {
+		if(tmp2) 
 		  remove_ob(tmp2);
-		  free_object(tmp2);
-		}
 
       /* cycle through his inventory to look for the MARK we want to place */
       for(tmp2=tmp->inv;tmp2 !=NULL; tmp2=tmp2->below) {
@@ -1454,7 +1457,6 @@ void move_marker(object *op) {
 		    if(op->stats.hp==0) {
 		      /* marker expires--granted mark number limit */
 		      remove_ob(op);
-		      free_object(op);
 		      return;
 		    }
 		  }
@@ -1469,7 +1471,7 @@ int process_object(object *op) {
 
 
   if(QUERY_FLAG(op, FLAG_MONSTER))
-    if(move_monster(op) || QUERY_FLAG(op, FLAG_FREED)) 
+    if(move_monster(op) || OBJECT_FREE(op)) 
       return 1;
 
   if(QUERY_FLAG(op, FLAG_CHANGING)&&!op->state) {
@@ -1495,8 +1497,6 @@ int process_object(object *op) {
 			op->stats.food+=3; /* give him a bit time back */
 			goto process_object_dirty_jump; /* go on */
 		}
-		/* now we are dirty! we remove *all* items inside */
-		clean_object(op);
 	}
 
 	/* IF necessary, delete the item from the players inventory */
@@ -1506,11 +1506,10 @@ int process_object(object *op) {
 	{
 		object *pl=is_player_inv(op);
 		if (pl)
-		    esrv_del_item(pl->contr, op->count, op->env);
+		    esrv_del_item(CONTR(pl), op->count, op->env);
 	}
 
       remove_ob(op);
-      free_object(op);
     }
     return 1;
   }

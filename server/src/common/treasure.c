@@ -590,7 +590,6 @@ object *generate_treasure(treasurelist *t, int difficulty)
 	if (ob->inv) {
 	    LOG(llevError,"ERROR: In generate treasure, created multiple objects.\n");
 	}
-	free_object(ob);
 	return tmp;
 }
 
@@ -1503,7 +1502,6 @@ int fix_generated_item (object *op, object *creator, int difficulty, int a_chanc
 			if(op->arch==NULL)
 			{
 				remove_ob(op);
-				free_object(op);
 				op=NULL;
 				break;
 			}
@@ -1519,7 +1517,6 @@ int fix_generated_item (object *op, object *creator, int difficulty, int a_chanc
 			{
 				if(!QUERY_FLAG(op,FLAG_REMOVED))
 					remove_ob(op);
-				free_object(op);
 			    op=arch_to_object(ring_arch_normal);
 				generate_artifact(op,difficulty, t_style,99);
 			}

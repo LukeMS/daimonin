@@ -179,7 +179,7 @@ void animate_object(object *op, int count) {
     {
 		if(op->type == PLAYER)
 		{
-			if(!op->contr->anim_flags && /* this should be changed if complexer flags are added */
+			if(!CONTR(op)->anim_flags && /* this should be changed if complexer flags are added */
 		            op->anim_moving_dir == op->anim_moving_dir_last &&
 			        op->anim_last_facing == op->anim_last_facing_last)
 				return; /* no need to set the frame new */        
@@ -225,38 +225,37 @@ void animate_object(object *op, int count) {
 						
 			/*LOG(-1,"ppA: %s fdir:%d mdir:%d ldir:%d (%d %d %d) state:%d\n",op->name,
 				op->anim_enemy_dir,op->anim_moving_dir,op->anim_last_facing,
-				op->contr->anim_flags & PLAYER_AFLAG_ENEMY,
-				op->contr->anim_flags & PLAYER_AFLAG_ADDFRAME,
-				op->contr->anim_flags & PLAYER_AFLAG_FIGHT, op->state); 
+				CONTR(op)->anim_flags & PLAYER_AFLAG_ENEMY,
+				CONTR(op)->anim_flags & PLAYER_AFLAG_ADDFRAME,
+				CONTR(op)->anim_flags & PLAYER_AFLAG_FIGHT, op->state); 
 			*/
 
 			/* lets check flags - perhaps we have hit something in close fight */
-			if((op->contr->anim_flags & PLAYER_AFLAG_ADDFRAME||op->contr->anim_flags & PLAYER_AFLAG_ENEMY) 
-								&& !(op->contr->anim_flags & PLAYER_AFLAG_FIGHT))
+			if((CONTR(op)->anim_flags & PLAYER_AFLAG_ADDFRAME||CONTR(op)->anim_flags & PLAYER_AFLAG_ENEMY) 
+								&& !(CONTR(op)->anim_flags & PLAYER_AFLAG_FIGHT))
 			{
 
 		        op->state=0; /* lets do a swing animation, starting at frame 0 */
-				if(op->contr->anim_flags & PLAYER_AFLAG_ENEMY)
+				if(CONTR(op)->anim_flags & PLAYER_AFLAG_ENEMY)
 				{
-					op->contr->anim_flags |= PLAYER_AFLAG_ADDFRAME; /* so we do one more swing */
-					op->contr->anim_flags |= PLAYER_AFLAG_FIGHT; /* so we do one swing */
+					CONTR(op)->anim_flags |= PLAYER_AFLAG_ADDFRAME; /* so we do one more swing */
+					CONTR(op)->anim_flags |= PLAYER_AFLAG_FIGHT; /* so we do one swing */
 					/* this can perhaps be skipped when we have a clean enemy handling in attack.c */
-					op->contr->anim_enemy = op->enemy; /* save this for be sure to skip unneeded animation */
-					op->contr->anim_enemy_count = op->enemy_count;
+					CONTR(op)->anim_enemy = op->enemy; /* save this for be sure to skip unneeded animation */
+					CONTR(op)->anim_enemy_count = op->enemy_count;
 				}
 				else
 				{
 					/* only do ADDFRAME if we still fight something */
-					if(op->enemy && op->enemy->count == op->contr->anim_enemy_count && 
-						!QUERY_FLAG(op->enemy,FLAG_REMOVED) &&!QUERY_FLAG(op->enemy,FLAG_FREED))
-						op->contr->anim_flags |= PLAYER_AFLAG_FIGHT; /* so we do one swing */
-					op->contr->anim_flags &=~PLAYER_AFLAG_ADDFRAME; /* we do our additional frame*/
+					if(OBJECT_VALID(op->enemy, CONTR(op)->anim_enemy_count))
+						CONTR(op)->anim_flags |= PLAYER_AFLAG_FIGHT; /* so we do one swing */
+					CONTR(op)->anim_flags &=~PLAYER_AFLAG_ADDFRAME; /* we do our additional frame*/
 				}
-				op->contr->anim_flags &=~PLAYER_AFLAG_ENEMY; /* clear enemy, set fight */
+				CONTR(op)->anim_flags &=~PLAYER_AFLAG_ENEMY; /* clear enemy, set fight */
 			}
 
 			/* now setup the best animation for our action */
-			if(op->contr->anim_flags & PLAYER_AFLAG_FIGHT)
+			if(CONTR(op)->anim_flags & PLAYER_AFLAG_FIGHT)
 			{
 				op->anim_enemy_dir_last = op->anim_enemy_dir;
 
@@ -304,7 +303,7 @@ void animate_object(object *op, int count) {
 			if (op->state>=max_state) 
 			{
 				op->state=0;
-				op->contr->anim_flags &=~PLAYER_AFLAG_FIGHT; /* clear always fight flag */
+				CONTR(op)->anim_flags &=~PLAYER_AFLAG_FIGHT; /* clear always fight flag */
 			}
 		}
 		else /* mobs & non player anims */

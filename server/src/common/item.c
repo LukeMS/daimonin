@@ -696,23 +696,23 @@ char *describe_item(object *op)
 
 	describe_terrain(op, retbuf);
 
-    if(op->contr->digestion) {
-      if(op->contr->digestion>0)
-        sprintf(buf,"(sustenance%+d)",op->contr->digestion);
-	else if(op->contr->digestion<0)
-		sprintf(buf,"(hunger%+d)",-op->contr->digestion);
+    if(CONTR(op)->digestion) {
+      if(CONTR(op)->digestion>0)
+        sprintf(buf,"(sustenance%+d)",CONTR(op)->digestion);
+	else if(CONTR(op)->digestion<0)
+		sprintf(buf,"(hunger%+d)",-CONTR(op)->digestion);
       strcat(retbuf,buf);
     }
-    if(op->contr->gen_grace) {
-      sprintf(buf,"(grace reg.%+d)",op->contr->gen_grace);
+    if(CONTR(op)->gen_grace) {
+      sprintf(buf,"(grace reg.%+d)",CONTR(op)->gen_grace);
       strcat(retbuf,buf);
     }
-    if(op->contr->gen_sp) {
-      sprintf(buf,"(mana reg.%+d)",op->contr->gen_sp);
+    if(CONTR(op)->gen_sp) {
+      sprintf(buf,"(mana reg.%+d)",CONTR(op)->gen_sp);
       strcat(retbuf,buf);
     }
-    if(op->contr->gen_hp) {
-      sprintf(buf,"(regeneration%+d)",op->contr->gen_hp);
+    if(CONTR(op)->gen_hp) {
+      sprintf(buf,"(regeneration%+d)",CONTR(op)->gen_hp);
       strcat(retbuf,buf);
     }
   }

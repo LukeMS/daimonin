@@ -178,9 +178,8 @@ void clean_friendly_list() {
 
     for (this_link=first_friendly_object; this_link!=NULL; this_link=next) {
 	next=this_link->next;
-	if (QUERY_FLAG(this_link->ob, FLAG_FREED) || 
-	    (!QUERY_FLAG(this_link->ob, FLAG_FRIENDLY) && this_link->ob->type != PLAYER)||
-	    ((tag_t)this_link->id != this_link->ob->count)) {
+	if (!OBJECT_VALID(this_link->ob, this_link->id) || 
+	    (!QUERY_FLAG(this_link->ob, FLAG_FRIENDLY) && this_link->ob->type != PLAYER)) {
 	    if (prev) {
 		prev->next = this_link->next;
 	    }

@@ -362,7 +362,7 @@ sint32 add_exp(object *op, int exp, int skill_nr) {
     }
             
     /* now we grap the skill exp. object from the player shortcut ptr array */
-    exp_skill = op->contr->skill_ptr[skill_nr];
+    exp_skill = CONTR(op)->skill_ptr[skill_nr];
                     
     if(!exp_skill) /* safety check */
     {
@@ -378,7 +378,7 @@ sint32 add_exp(object *op, int exp, int skill_nr) {
     if(exp_skill->level >= MAXLEVEL)
         return 0;    
             
-    op->contr->update_skills=1; /* we will sure change skill exp, mark for update */
+    CONTR(op)->update_skills=1; /* we will sure change skill exp, mark for update */
     exp_ob = exp_skill->exp_obj;            
 
     if(!exp_ob)
@@ -441,7 +441,7 @@ void player_lvl_adj(object *who, object *op) {
 		{
 			object *effect_ob;
 
-			play_sound_player_only (who->contr, SOUND_LEVEL_UP, SOUND_NORMAL, 0, 0);
+			play_sound_player_only (CONTR(who), SOUND_LEVEL_UP, SOUND_NORMAL, 0, 0);
 
 			if(level_up_arch)
 			{
@@ -456,7 +456,6 @@ void player_lvl_adj(object *who, object *op) {
 					/* something is wrong - kill object */
 					if(!QUERY_FLAG(effect_ob,FLAG_REMOVED))
 						remove_ob(effect_ob);
-					free_object(effect_ob);
 				}
 			}
 		}
@@ -469,11 +468,11 @@ void player_lvl_adj(object *who, object *op) {
 		{ 
 
 			if(who->level > 4)
-				who->contr->levhp[who->level]=(char)((RANDOM()%who->arch->clone.stats.maxhp)+1);
+				CONTR(who)->levhp[who->level]=(char)((RANDOM()%who->arch->clone.stats.maxhp)+1);
 			else if(who->level > 2)
-				who->contr->levhp[who->level]=(char)((RANDOM()%(who->arch->clone.stats.maxhp/2))+1)+(who->arch->clone.stats.maxhp/2);
+				CONTR(who)->levhp[who->level]=(char)((RANDOM()%(who->arch->clone.stats.maxhp/2))+1)+(who->arch->clone.stats.maxhp/2);
 			else
-				who->contr->levhp[who->level]=(char)who->arch->clone.stats.maxhp;
+				CONTR(who)->levhp[who->level]=(char)who->arch->clone.stats.maxhp;
 		}
 		if(op->level>1 && op->type==EXPERIENCE) 
 		{
@@ -482,16 +481,16 @@ void player_lvl_adj(object *who, object *op) {
 				if(op->stats.Pow) /* mana */
 				{
 					if(op->level > 4)
-						who->contr->levsp[op->level]=(char)((RANDOM()%who->arch->clone.stats.maxsp)+1);
+						CONTR(who)->levsp[op->level]=(char)((RANDOM()%who->arch->clone.stats.maxsp)+1);
 					else
-						who->contr->levsp[op->level]=(char)who->arch->clone.stats.maxsp;
+						CONTR(who)->levsp[op->level]=(char)who->arch->clone.stats.maxsp;
 				}
 				else if(op->stats.Wis) /* grace */
 				{
 					if(op->level > 4)
-						who->contr->levgrace[op->level]=(char)((RANDOM()%who->arch->clone.stats.maxgrace)+1);
+						CONTR(who)->levgrace[op->level]=(char)((RANDOM()%who->arch->clone.stats.maxgrace)+1);
 					else
-						who->contr->levgrace[op->level]=(char)who->arch->clone.stats.maxgrace;
+						CONTR(who)->levgrace[op->level]=(char)who->arch->clone.stats.maxgrace;
 				}
 			}
 			sprintf(buf,"You are now level %d in %s based skills.",op->level,op->name);
@@ -646,14 +645,14 @@ int adjust_exp(object *pl, object *op, int exp) {
 	/* this is old adding function - we use now the best group 
     for(i=0;i<MAX_EXP_CAT-1;i++)
     {
-        if((pl_exp += pl->contr->last_skill_ob[i]->stats.exp) > (sint32)MAX_EXPERIENCE)
+        if((pl_exp += CONTR(pl)->last_skill_ob[i]->stats.exp) > (sint32)MAX_EXPERIENCE)
             pl_exp = MAX_EXPERIENCE;
     }
 	*/
     for(i=0;i<MAX_EXP_CAT-1;i++)
     {
-		if(pl->contr->last_skill_ob[i]->stats.exp > pl_exp)
-			pl_exp = pl->contr->last_skill_ob[i]->stats.exp;
+		if(CONTR(pl)->last_skill_ob[i]->stats.exp > pl_exp)
+			pl_exp = CONTR(pl)->last_skill_ob[i]->stats.exp;
     }
 
     /* last action: set our player exp to highest group */
@@ -679,7 +678,7 @@ void apply_death_exp_penalty(object *op)
 	float loss_p;
 	long level_exp, loss_exp;
 
-    op->contr->update_skills=1; /* we will sure change skill exp, mark for update */
+    CONTR(op)->update_skills=1; /* we will sure change skill exp, mark for update */
     for(tmp=op->inv;tmp;tmp=tmp->below)
     {
 		/* only adjust skills with level and a positive exp value - negative exp has special meaning */

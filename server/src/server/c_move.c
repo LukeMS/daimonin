@@ -32,14 +32,14 @@ static int move_internal (object *op, char *params, int dir)
 {
   if (params) {
     if (params[0] == 'f') {
-      if (!op->contr->fire_on) {
-	op->contr->fire_on =1;
+      if (!CONTR(op)->fire_on) {
+	CONTR(op)->fire_on =1;
 	move_player(op, dir);
-	op->contr->fire_on =0;
+	CONTR(op)->fire_on =0;
 	return 0;
       }
-    } else if (params[0] == 'r' && !op->contr->run_on)
-      op->contr->run_on =1;
+    } else if (params[0] == 'r' && !CONTR(op)->run_on)
+      CONTR(op)->run_on =1;
   }
   move_player(op, dir);
   return 0;
@@ -87,7 +87,7 @@ int command_west (object *op, char *params)
 
 int command_stay (object *op, char *params)
 {
-  if (!op->contr->fire_on && (!params || params[0] != 'f'))
+  if (!CONTR(op)->fire_on && (!params || params[0] != 'f'))
     return 0;
   fire(op, 0);
   return 0;

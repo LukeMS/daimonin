@@ -405,8 +405,9 @@ void write_cs_stats()
 	now - cst_tot.time_start, cst_lst.ibytes, cst_lst.obytes,
 	cst_lst.max_conn, now - cst_lst.time_start);
 
-	LOG(llevInfo, "SYSINFO: objs:%d (%d free) arch-srh:%d (%d cmp)\n", 
-						nrofallocobjects,nroffreeobjects,arch_search,arch_cmp );
+	LOG(llevInfo, "SYSINFO: objs: %d used, %d free, arch-srh:%d (%d cmp)\n", 
+                mempools[POOL_OBJECT].nrof_used, mempools[POOL_OBJECT].nrof_free, 
+                arch_search,arch_cmp );
 
     cst_lst.ibytes=0;
     cst_lst.obytes=0;

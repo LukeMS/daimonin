@@ -107,8 +107,8 @@ int move_ob (object *op, int dir, object *originator)
 		insert_ob_in_map(op, op->map, op,0);
 		if (op->type==PLAYER)
 		{
-			esrv_map_scroll(&op->contr->socket, freearr_x[dir],freearr_y[dir]);
-			op->contr->socket.look_position=0;
+			esrv_map_scroll(&CONTR(op)->socket, freearr_x[dir],freearr_y[dir]);
+			CONTR(op)->socket.look_position=0;
 		}
 		return 1;
 	} 
@@ -145,8 +145,8 @@ int move_ob (object *op, int dir, object *originator)
 
 	if (op->type==PLAYER)
 	{
-		esrv_map_scroll(&op->contr->socket, freearr_x[dir],freearr_y[dir]);
-		op->contr->socket.look_position=0;
+		esrv_map_scroll(&CONTR(op)->socket, freearr_x[dir],freearr_y[dir]);
+		CONTR(op)->socket.look_position=0;
 	}
 
 	return 1;
@@ -197,7 +197,7 @@ int transfer_ob (object *op, int x, int y, int randomly, object *originator, obj
 	
 	ret = (insert_ob_in_map(op,op->map,originator,0) == NULL);
 	if (op->type==PLAYER)
-		MapNewmapCmd(op->contr);
+		MapNewmapCmd(CONTR(op));
   return ret;
 }
 
@@ -271,7 +271,7 @@ int teleport (object *teleporter, uint8 tele_type, object *user)
     }
     tmp = insert_ob_in_map(user,other_teleporter->map,NULL,0);
     if (tmp && tmp->type == PLAYER) 
-		MapNewmapCmd(tmp->contr);
+		MapNewmapCmd(CONTR(tmp));
     return (tmp == NULL);
 }
 
@@ -395,8 +395,8 @@ int push_ob(object *who, int dir, object *pusher) {
 	 * the case.  Putting the map_scroll should also improve performance some.
 	 */
 	if (pusher->type == PLAYER ) {
-	    esrv_map_scroll(&pusher->contr->socket, freearr_x[dir],freearr_y[dir]);
-	    pusher->contr->socket.look_position=0;
+	    esrv_map_scroll(&CONTR(pusher)->socket, freearr_x[dir],freearr_y[dir]);
+	    CONTR(pusher)->socket.look_position=0;
 	}
 	return 0;
   }
@@ -410,7 +410,7 @@ int push_ob(object *who, int dir, object *pusher) {
 	/* i disabled run/push attacks 
     if(owner != pusher &&  pusher->type == PLAYER && who->type != PLAYER &&
 													!QUERY_FLAG(who,FLAG_FRIENDLY)) {
-	if(pusher->contr->run_on) {
+	if(CONTR(pusher)->run_on) {
 	    new_draw_info_format(NDI_UNIQUE, 0, pusher,
               "You start to attack %s !!",who->name);
         set_npc_enemy(who, pusher, NULL);

@@ -181,7 +181,6 @@ int recharge(object *op) {
 	"The %s vibrates violently, then explodes!",query_name(wand));
     play_sound_map(op->map, op->x, op->y, SOUND_OB_EXPLODE, SOUND_NORMAL);
     remove_ob(wand);
-    free_object(wand);
     return 1;
   }
   new_draw_info_format(NDI_UNIQUE, 0, op,
@@ -257,10 +256,8 @@ void polymorph_living(object *op) {
 	next = tmp->below;
 	if(QUERY_FLAG(tmp, FLAG_APPLIED))
 	    manual_apply(op,tmp,0);
-	if(tmp->type == ABILITY) {
+	if(tmp->type == ABILITY) 
 	    remove_ob(tmp);
-	    free_object(tmp);
-	}
     }
 
     /* Remove the object, preserve some values for the new object */
@@ -312,7 +309,6 @@ void polymorph_melt(object *who, object *op)
             op->nrof?"":"The ",query_name(op));
     play_sound_map(op->map, op->x, op->y, SOUND_OB_EVAPORATE, SOUND_NORMAL);
     remove_ob(op);
-    free_object(op);
     return;
 }
 
@@ -369,13 +365,11 @@ void polymorph_item(object *who, object *op) {
     } while (new_ob->value > max_value && tries<10);
     if (IS_SYS_INVISIBLE(new_ob)) {
 	LOG(llevBug,"BUG: polymorph_item: fix_generated_object made %s invisible?!\n", query_name(new_ob));
-	free_object(new_ob);
     }
 
     /* Unable to generate an acceptable item?  Melt it */
     if (tries==10) {
 	polymorph_melt(who, op);
-	free_object(new_ob);
 	return;
     }
 
@@ -393,7 +387,6 @@ void polymorph_item(object *who, object *op) {
     new_ob->x = op->x;
     new_ob->y = op->y;
     remove_ob(op);
-    free_object(op);
     /* 
      * Don't want objects merged or re-arranged, as it then messes up the
      * order
@@ -623,7 +616,9 @@ int cast_invisible(object *op, object *caster, int spell_type) {
   }
   new_draw_info(NDI_UNIQUE, 0,op,"You can't see your hands!");
   update_object(op,UP_OBJ_FACE);
-  for (tmp = objects; tmp != NULL; tmp = tmp->next)
+
+  /* Gecko: fixed to only go through active objects. Nasty loop anyway... */
+  for (tmp = active_objects; tmp != NULL; tmp = tmp->active_next)
     if (tmp->enemy == op)
         set_npc_enemy(tmp, NULL, NULL);
   return 1;
@@ -680,9 +675,9 @@ int cast_wor(object *op, object *caster) {
   /* If we could take advantage of enter_player_savebed() here, it would be
    * nice, but until the map load fails, we can't.
    */
-  FREE_AND_COPY_HASH(EXIT_PATH(dummy), op->contr->savebed_map);
-  EXIT_X(dummy) = op->contr->bed_x;
-  EXIT_Y(dummy) = op->contr->bed_y;
+  FREE_AND_COPY_HASH(EXIT_PATH(dummy), CONTR(op)->savebed_map);
+  EXIT_X(dummy) = CONTR(op)->bed_x;
+  EXIT_Y(dummy) = CONTR(op)->bed_y;
   
   (void) insert_ob_in_ob(dummy,op);
   new_draw_info(NDI_UNIQUE, 0,op,"You feel a force starting to build up inside you.");
@@ -812,7 +807,6 @@ int perceive_self(object *op) {
      new_draw_info(NDI_UNIQUE | NDI_NAVY, 0,op,"You fix this place in your mind.\nYou feel you are able to come here from anywhere.");
      return 1;
      }
-   free_object (dummy);
    /* Here we know where the town portal should go to
     * We should kill any existing portal associated with the player.
     * Than we should create the 2 portals.
@@ -866,15 +860,12 @@ int perceive_self(object *op) {
            continue;
            }
          remove_ob (current_obj);
-         free_object (current_obj);
          break;
          }
        }
      remove_ob (old_force);
-     free_object (old_force);
      FREE_AND_CLEAR_HASH2(exitpath);
      }
-   free_object (dummy);
    /* Creating the portals.
     * The very first thing to do is to ensure
     * access to the destination map.
@@ -896,7 +887,6 @@ int perceive_self(object *op) {
    exitx=EXIT_X(force);
    exity=EXIT_Y(force);
    remove_ob(force); /*Delete the force inside the player*/
-   free_object(force);
    if (!strncmp(exitpath, settings.localdir, strlen(settings.localdir))) /*Ensure exit map is loaded*/
      exitmap = ready_map_name(exitpath, MAP_PLAYER_UNIQUE);
    else
@@ -1233,17 +1223,17 @@ int dimension_door(object *op,int dir) {
 	return 0;
     }
 
-    if(op->contr->count) {
-	for(dist=0;dist<op->contr->count; dist++)
+    if(CONTR(op)->count) {
+	for(dist=0;dist<CONTR(op)->count; dist++)
 	    if (blocks_magic(op->map,op->x+freearr_x[dir]*(dist+1),
                              op->y+freearr_y[dir]*(dist+1))) break;
 
-	if(dist<op->contr->count) {
+	if(dist<CONTR(op)->count) {
 	    new_draw_info(NDI_UNIQUE, 0,op,"Something blocks your magic.\n");
-	    op->contr->count=0;
+	    CONTR(op)->count=0;
 	    return 0;
 	}
-	op->contr->count=0;
+	CONTR(op)->count=0;
 
 	/* If the player is trying to dimension door to solid rock, choose
 	 * a random place on the map to put the player.
@@ -1263,7 +1253,7 @@ int dimension_door(object *op,int dir) {
 	    if(insert_ob_in_map(op,op->map,op,0) != NULL)
 		{
 			if( op->type == PLAYER)
-			    MapNewmapCmd(op->contr);
+			    MapNewmapCmd(CONTR(op));
 			return 1;
 		}
 	}
@@ -1295,7 +1285,7 @@ int dimension_door(object *op,int dir) {
         return 1;
 
     if( op->type == PLAYER)
-		MapNewmapCmd(op->contr);
+		MapNewmapCmd(CONTR(op));
     op->speed_left= -FABS(op->speed)*5; /* Freeze them for a short while */
     return 1;
 }
@@ -2041,7 +2031,7 @@ void animate_bomb(object *op) {
             return;
 
 	if (env->type == PLAYER)
-	    esrv_del_item(env->contr, op->count, op->env);
+	    esrv_del_item(CONTR(env), op->count, op->env);
 
 	remove_ob(op);
 	op->x = env->x;
@@ -2084,10 +2074,8 @@ int fire_cancellation(object *op,int dir,archetype *at, int magic) {
 void move_cancellation(object *op) {
   remove_ob(op);
   op->x+=DIRX(op),op->y+=DIRY(op);
-  if(!op->direction||wall(op->map,op->x,op->y)) {
-    free_object(op);
+  if(!op->direction||wall(op->map,op->x,op->y)) 
     return;
-  }
   if(reflwall(op->map,op->x,op->y, op)) {
 
     op->direction=absdir(op->direction+4);
@@ -2272,7 +2260,6 @@ static void alchemy_object(object *obj, int *small_nuggets,
     }
     weight += obj->weight;
     remove_ob(obj);
-    free_object(obj);
 }
 */
 
@@ -2360,8 +2347,6 @@ static void update_map(object *op, int small_nuggets, int large_nuggets,
 	    
 	    if (weight>weight_max) {
 		update_map(op, small_nuggets, large_nuggets, x, y);
-		free_object(large);
-		free_object(small);
 		return 1;
 	    }
 	  } 
@@ -2372,8 +2357,6 @@ static void update_map(object *op, int small_nuggets, int large_nuggets,
 
     }
   }
-  free_object(large);
-  free_object(small);
   */
   return 1;
 }
@@ -2423,7 +2406,6 @@ int remove_depletion(object *op, object *target)
 			}
 		}
 		remove_ob(depl);
-		free_object(depl);
 		fix_player(target);
     }
 
@@ -3020,10 +3002,8 @@ int create_the_feature(object *op, object *caster,int dir, int spell_effect)
 	tmp->y=op->y;
 	xt=tmp->x+freearr_x[dir];
 	yt=tmp->y+freearr_y[dir];
-    if (!(m=out_of_map(op->map, &xt,&yt))) {
-	free_object(tmp);
+    if (!(m=out_of_map(op->map, &xt,&yt))) 
 	return 0;
-    }
     if(putflag) { 
 		tmp->x = xt;
 		tmp->y = yt;
@@ -3188,19 +3168,15 @@ void counterspell(object *op,int dir)
 	switch(nflag) {
 	    case 1: {
 	    /* { if(op->level > tmp->level) { */ 
-	        if(SK_level(op) > tmp->level) {
+	        if(SK_level(op) > tmp->level) 
 		    remove_ob(tmp);
-		    free_object(tmp);
-		}
 		break;
 	    }
 	    case 2: {
 		if(rndm(0, 149) == 0) {
 		    tmp->stats.hp--;  /* weaken the rune */
-		    if(!tmp->stats.hp) {
+		    if(!tmp->stats.hp) 
 			remove_ob(tmp);
-			free_object(tmp);
-		    }
 		}
 		break;
 	    }
@@ -3538,8 +3514,8 @@ int summon_avatar(object *op,object *caster,int dir, archetype *at, int spellnum
 
   /* safety checks... */
   if(op->type==PLAYER)
-    if(op->contr->golem!=NULL&&!QUERY_FLAG(op->contr->golem,FLAG_FREED)) {
-      control_golem(op->contr->golem,dir);
+    if(CONTR(op)->golem!=NULL&&!OBJECT_FREE(CONTR(op)->golem)) {
+      control_golem(CONTR(op)->golem,dir);
       return 0;
     }
   if(!dir)
@@ -3590,7 +3566,7 @@ int summon_avatar(object *op,object *caster,int dir, archetype *at, int spellnum
   if(op->type==PLAYER) {
     /* give the player control of the golem */
 	send_golem_control(tmp, GOLEM_CTR_ADD);
-    op->contr->golem=tmp;
+    CONTR(op)->golem=tmp;
   } 
   insert_ob_in_map(tmp,op->map,op,0);
   return 1;
@@ -3733,7 +3709,6 @@ int finger_of_death(object *op, object *caster, int dir) {
         new_draw_info_format(NDI_UNIQUE,0,op,"The %s looks stronger!",
 	  query_name(target)); 	
 	target->stats.hp = target->stats.maxhp*2; 
-        free_object(hitter);
 	return 0;	
       }
   }  
@@ -3765,8 +3740,8 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
   }
   /* if player already has a golem, abort */
   if(op->type==PLAYER)
-    if(op->contr->golem!=NULL&&!QUERY_FLAG(op->contr->golem,FLAG_FREED)) {
-      control_golem(op->contr->golem,dir);
+    if(CONTR(op)->golem!=NULL&&!OBJECT_FREE(CONTR(op)->golem)) {
+      control_golem(CONTR(op)->golem,dir);
       return 0;
     } 
   if(op->type!=PLAYER) return 0;  /* exit if it's not a player using this spell. */
@@ -3820,7 +3795,7 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
     add_friendly_object(tmp);
     tmp->type=GOLEM;
     set_owner(tmp,op);
-    op->contr->golem=tmp;
+    CONTR(op)->golem=tmp;
 	send_golem_control(tmp, GOLEM_CTR_ADD);
   } else {
   /* If spell is cast by a pet, and the weapon is not cursed, make the animated
@@ -4143,7 +4118,6 @@ int cast_cause_disease(object *op, object *caster, int dir, archetype *disease_a
 			 char buf[128];
 			 object *flash;  /* visual effect for inflicting disease */
 			 sprintf(buf,"You inflict %s on %s!",disease->name,walk->name);
-			 free_object(disease); /* don't need this one anymore */
 			 new_draw_info(NDI_UNIQUE,0,op,buf);
 			 flash=get_archetype("detect_magic");
 			 flash->x = xt;
@@ -4152,7 +4126,6 @@ int cast_cause_disease(object *op, object *caster, int dir, archetype *disease_a
 			 insert_ob_in_map(flash,walk->map,op,0);
 			 return 1;
 		  }
-		  free_object(disease);
 		}
 		 /* no more infecting through walls - 
 		  * we will use PASS_THRU but P_NO_PASS only will stop us
@@ -4189,15 +4162,13 @@ void move_aura(object *aura) {
   remove_ob(aura);
 
   /* exit if we're out of gas */
-  if(aura->stats.food--< 0) {
-    free_object(aura);
+  if(aura->stats.food--< 0) 
     return;
-  }
+  
   /* auras only exist in inventories */
-  if(env == NULL || env->map==NULL) {
-    free_object(aura);
+  if(env == NULL || env->map==NULL)
     return;
-  }
+    
   aura->x = env->x;
   aura->y = env->y;
 

@@ -128,7 +128,7 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam, int base_
         roll += adj_attackroll(hitter,op); 
     
     if(hitter->type ==PLAYER)
-		hitter->contr->anim_flags |= PLAYER_AFLAG_ENEMY; /* so we do one swing */
+		CONTR(hitter)->anim_flags |= PLAYER_AFLAG_ENEMY; /* so we do one swing */
 
     /* Force player to face enemy */
     if(hitter->type ==PLAYER) {
@@ -358,11 +358,11 @@ int hit_player(object *op,int dam, object *hitter, int type)
 		/*LOG(llevDebug,"DMG-ADD: hl:%d tl_%d -> d:%d \n", hit_level,target_obj->level, dam);*/
 	}
 	/* something hit player (can be disease or poison too - break praying! */
-	if(op->type == PLAYER && op->contr->was_praying)
+	if(op->type == PLAYER && CONTR(op)->was_praying)
 	{
 		new_draw_info(NDI_UNIQUE, 0,op,"Your praying is disrupted.");
-		op->contr->praying=0;
-		op->contr->was_praying=0;
+		CONTR(op)->praying=0;
+		CONTR(op)->was_praying=0;
 	}
 
 
@@ -514,10 +514,9 @@ int hit_player(object *op,int dam, object *hitter, int type)
 	if(QUERY_FLAG(hitter,FLAG_FRIENDLY))
 	    remove_friendly_object(hitter);
 	remove_ob(hitter);
-	free_object(hitter);
     } 
     /* Lets handle creatures that are splitting now */
-    else if(type&AT_PHYSICAL&&!QUERY_FLAG(op, FLAG_FREED)&&QUERY_FLAG(op,FLAG_SPLITTING)) {
+    else if(type&AT_PHYSICAL&&!OBJECT_FREE(op)&&QUERY_FLAG(op,FLAG_SPLITTING)) {
 	int i;
 	int friendly = QUERY_FLAG(op,FLAG_FRIENDLY);
 	int unaggressive = QUERY_FLAG(op, FLAG_UNAGGRESSIVE);
@@ -543,20 +542,16 @@ int hit_player(object *op,int dam, object *hitter, int type)
 	    if (unaggressive)
 		SET_FLAG(tmp, FLAG_UNAGGRESSIVE);
 	    j=find_first_free_spot(tmp->arch,op->map,op->x,op->y);
-	    if (j==-1) /* No spot to put this monster */
-		free_object(tmp);
-	    else {
+	    if (j>=0) {/* Found spot to put this monster */
 		tmp->x=op->x+freearr_x[j],tmp->y=op->y+freearr_y[j];
 		insert_ob_in_map(tmp,op->map,NULL,0);
 	    }
 	}
 	if(friendly)
 	    remove_friendly_object(op);
-	free_object(op);
     }
     else if(type & AT_DRAIN &&  hitter->type==GRIMREAPER&&hitter->value++>10) {
 	remove_ob(hitter);
-	free_object(hitter);
     }
     return maxdam;
 }
@@ -572,12 +567,12 @@ int hit_map(object *op,int dir,int type) {
   int mflags, retflag=0;  /* added this flag..  will return 1 if it hits a monster */
   tag_t op_tag, next_tag=0;
 
-  if (QUERY_FLAG (op, FLAG_FREED)) {
+  if (OBJECT_FREE(op)) {
     LOG(llevBug, "BUG: hit_map(): free object\n");
     return 0;
   }
 
-  if (QUERY_FLAG (op, FLAG_REMOVED) || op->env != NULL) {
+  if (QUERY_FLAG(op, FLAG_REMOVED) || op->env != NULL) {
     LOG(llevBug, "BUG: hit_map(): hitter (arch %s, name %s) not on a map\n",op->arch->name, query_name(op));
     return 0;
   }
@@ -631,6 +626,9 @@ int hit_map(object *op,int dir,int type) {
        *
        * This happens whenever attack spells (like fire) hit a pile
        * of objects. This is not a bug - nor an error.
+       *
+       * Gecko: this may be a little different now, since we don't really destroy object until
+       * end of timestep.
 	   */
       break;
     }
@@ -639,7 +637,7 @@ int hit_map(object *op,int dir,int type) {
     if (next)
       next_tag = next->count;
 
-    if (QUERY_FLAG (tmp, FLAG_FREED)) 
+    if (OBJECT_FREE(tmp))
 	{
 		LOG(llevBug, "BUG: hit_map(): found freed object (%s)\n",tmp->arch->name?tmp->arch->name:"<NULL>");
 		break;
@@ -1126,12 +1124,11 @@ int kill_object(object *op,int dam, object *hitter, int type)
 	    if (get_owner (op) != NULL && op->owner->type == PLAYER)
 		{
 			send_golem_control(op, GOLEM_CTR_RELEASE);
-            op->owner->contr->golem=NULL;
+            CONTR(op->owner)->golem=NULL;
 		}
 	    else
             LOG(llevBug, "BUG: hit_player(): Encountered golem (%s - %s) without owner.\n",query_name(op), op->arch->name);
 	    remove_ob(op);
-	    free_object(op);
 	    return maxdam;
 	}
 
@@ -1221,7 +1218,7 @@ int kill_object(object *op,int dam, object *hitter, int type)
 	    if (battleg) 
             exp = 0;
 		
-	    if(hitter->type==PLAYER && hitter->contr->party_number<=0)
+	    if(hitter->type==PLAYER && CONTR(hitter)->party_number<=0)
         {
             if(exp) /* only player gets exp - when we have exp */
                 new_draw_info_format(NDI_UNIQUE, 0,hitter, "You got %d exp in skill %s.",
@@ -1236,12 +1233,12 @@ int kill_object(object *op,int dam, object *hitter, int type)
 
 		int shares=0,count=0;
 		player *pl;
-		int no=hitter->contr->party_number;
+		int no=CONTR(hitter)->party_number;
 #ifdef PARTY_KILL_LOG
 		add_kill_to_party(no,query_name(hitter),query_name(op),exp);
 #endif
 		for(pl=first_player;pl!=NULL;pl=pl->next) {
-		    if(pl->ob->contr->party_number==no && on_same_map(pl->ob, hitter)) {
+		    if(pl->CONTR(ob)->party_number==no && on_same_map(pl->ob, hitter)) {
 			count++;
                         shares+=(pl->ob->level+4);
 		    }
@@ -1251,7 +1248,7 @@ int kill_object(object *op,int dam, object *hitter, int type)
 		else {
 		    int share=exp/shares,given=0,nexp;
 		    for(pl=first_player;pl!=NULL;pl=pl->next) {
-                        if(pl->ob->contr->party_number==no && on_same_map(pl->ob, hitter))
+                        if(pl->CONTR(ob)->party_number==no && on_same_map(pl->ob, hitter))
                         {
                                 nexp=(pl->ob->level+4)*share;
                                 add_exp(pl->ob,nexp,old_hitter->chosen_skill->stats.sp);
@@ -1270,7 +1267,7 @@ int kill_object(object *op,int dam, object *hitter, int type)
                 if(owner!= NULL && owner->type == PLAYER) {
 		    sprintf(buf,"Your pet, the %s, is killed by %s.",
                                 op->name,hitter->name);
-		    play_sound_player_only(owner->contr, SOUND_PET_IS_KILLED,SOUND_NORMAL,0,0);
+		    play_sound_player_only(CONTR(owner), SOUND_PET_IS_KILLED,SOUND_NORMAL,0,0);
 		    new_draw_info(NDI_UNIQUE, 0,owner,buf);
 		}
                 remove_friendly_object(op);
@@ -1295,20 +1292,17 @@ int kill_object(object *op,int dam, object *hitter, int type)
 		/* harder drop rules: if exp== 0 or not a player or not a player invoked hitter: no drop */
 		if(!exp || hitter->type != PLAYER || (get_owner(hitter) && hitter->owner->type != PLAYER))
 			SET_FLAG(op,FLAG_STARTEQUIP); 
-
-	    
-		free_object(op);
 	}
 	/* Player has been killed! */
 	else {
 	    new_draw_info(NDI_ALL, 1, NULL, buf);
 	    if(hitter->type==PLAYER) {
-                sprintf(buf,"%s the %s",hitter->name,hitter->contr->title);
-                strncpy(op->contr->killer,buf,BIG_NAME);
+                sprintf(buf,"%s the %s",hitter->name,CONTR(hitter)->title);
+                strncpy(CONTR(op)->killer,buf,BIG_NAME);
 	    }
 	    else {
-		strncpy(op->contr->killer,hitter->name,BIG_NAME);
-                op->contr->killer[BIG_NAME-1]='\0';
+		strncpy(CONTR(op)->killer,hitter->name,BIG_NAME);
+                CONTR(op)->killer[BIG_NAME-1]='\0';
 	    }
 	  }
     }
@@ -1317,7 +1311,7 @@ int kill_object(object *op,int dam, object *hitter, int type)
 
 static int get_attack_mode (object **target, object **hitter,int *simple_attack)
 {
-    if (QUERY_FLAG (*target, FLAG_FREED) || QUERY_FLAG (*hitter, FLAG_FREED)) {
+    if (OBJECT_FREE(*target) || OBJECT_FREE(*hitter)) {
         LOG(llevBug, "BUG: get_attack_mode(): freed object\n");
         return 1;
     }
@@ -1329,8 +1323,7 @@ static int get_attack_mode (object **target, object **hitter,int *simple_attack)
         *simple_attack = 1;
         return 0;
     }
-    if (QUERY_FLAG (*target, FLAG_REMOVED)
-        || QUERY_FLAG (*hitter, FLAG_REMOVED)
+    if (QUERY_FLAG(*target, FLAG_REMOVED) || QUERY_FLAG(*hitter, FLAG_REMOVED) 
         || (*hitter)->map == NULL || !on_same_map((*hitter), (*target)))
     {
         LOG(llevBug, "BUG: hitter (arch %s, name %s) with no relation to target\n", (*hitter)->arch->name, query_name(*hitter));
@@ -1349,8 +1342,7 @@ static int abort_attack (object *target, object *hitter, int simple_attack)
 
     if (hitter->env == target || target->env == hitter)
         new_mode = 1;
-    else if (QUERY_FLAG (hitter, FLAG_REMOVED)
-             || QUERY_FLAG (target, FLAG_REMOVED)
+    else if (QUERY_FLAG(target, FLAG_REMOVED) || QUERY_FLAG(hitter, FLAG_REMOVED) 
              || hitter->map == NULL || !on_same_map(hitter, target))
         return 1;
     else
@@ -1483,10 +1475,8 @@ object *hit_with_arrow (object *op, object *victim)
      * but is no longer on the map. Ugh. (Beware: Such things can happen at
      * other places as well!) */
     if (was_destroyed (hitter, hitter_tag) || hitter->env != NULL) {
-        if (container) {
+        if (container) 
             remove_ob (container);
-            free_object (container);
-        }
         return NULL;
     }
 
@@ -1498,10 +1488,8 @@ object *hit_with_arrow (object *op, object *victim)
             hitter = fix_stopped_arrow (hitter);
             if (hitter == NULL)
                 return NULL;
-        } else {
+        } else 
             remove_ob (container);
-            free_object (container);
-        }
 
         /* Try to stick arrow into victim */
 		/* disabled - this will not work very well now with
@@ -1573,10 +1561,8 @@ void tear_down_wall(object *op)
 	perc = 1;
     } else if(!GET_ANIM_ID(op)) {
 	/* Object has been called - no animations, so remove it */
-	if(op->stats.hp<0) {
+	if(op->stats.hp<0) 
 	    remove_ob(op); /* Should update LOS */
-	    free_object(op);
-	}
 	return;	/* no animations, so nothing more to do */
     }
     perc = NUM_ANIMATIONS(op)
@@ -1588,12 +1574,10 @@ void tear_down_wall(object *op)
     SET_ANIMATION(op, perc);
     update_object(op,UP_OBJ_FACE);
     if(perc==NUM_ANIMATIONS(op)-1) { /* Reached the last animation */
-	if(op->face==blank_face) {
+	if(op->face==blank_face) 
 	    /* If the last face is blank, remove the ob */
 	    remove_ob(op); /* Should update LOS */
-	    free_object(op);
-
-	} else { /* The last face was not blank, leave an image */
+	else { /* The last face was not blank, leave an image */
 	    CLEAR_FLAG(op, FLAG_BLOCKSVIEW);
 	    CLEAR_FLAG(op, FLAG_NO_PASS);
 	    CLEAR_FLAG(op, FLAG_ALIVE);
@@ -1748,7 +1732,6 @@ void poison_player(object *op, object *hitter, float dam)
 				if(hitter->type == POISON) /* mob eats poison.. */
 				{
 					/* TODO */
-					free_object(tmp);
 				}
 				else /* is hit from poison force! */
 				{
@@ -2148,7 +2131,7 @@ void save_throw_object (object *op, int type, object *originator)
                    if(env) {  
 			op->x=env->x,op->y=env->y;
 			insert_ob_in_ob(op,env);
-			if (env->contr)
+			if (env->type == PLAYER && CONTR(env))
 			    esrv_send_item(env, op);
                    } else { 
                       op->x=x,op->y=y;
@@ -2171,13 +2154,12 @@ void save_throw_object (object *op, int type, object *originator)
 		object *tmp= is_player_inv(op->env);
 
 		if (tmp) {
-		    esrv_del_item(tmp->contr, op->count,op->env);
+		    esrv_del_item(CONTR(tmp), op->count,op->env);
 		    esrv_update_item(UPD_WEIGHT, tmp, tmp);
 		}
 	    }
-	    if ( ! QUERY_FLAG (op, FLAG_REMOVED))
+	    if (!QUERY_FLAG(op, FLAG_REMOVED))
                 remove_ob(op);
-	    free_object(op);
 	}
 	if(type&(AT_FIRE|AT_ELECTRICITY)) {
 	      if(env) {
@@ -2206,7 +2188,7 @@ void save_throw_object (object *op, int type, object *originator)
           tmp->x=op->x,tmp->y=op->y;
           insert_ob_in_map(tmp,op->map,originator,0);
         }
-        if ( ! QUERY_FLAG (op, FLAG_REMOVED))
+        if ( !QUERY_FLAG(op, FLAG_REMOVED) )
             remove_ob(op);
         (void) insert_ob_in_ob(op,tmp);
         return;

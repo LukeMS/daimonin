@@ -1067,7 +1067,6 @@ change_book (object *book, int msgtype)
 		      {
 			  FREE_AND_COPY_HASH(tmpbook->msg, book->msg);
 			  copy_object (tmpbook, book);
-			  free_object (tmpbook);
 		      }
 
 			FREE_AND_COPY_HASH(book->title, t->authour);
@@ -1462,7 +1461,6 @@ artifact_msg (int level, int booksize)
 	  if ((ch = describe_item (tmp)) != NULL && strlen (ch) > 1)
 	      sprintf (buf, "%s Properties of this artifact include: \n %s \n",
 		       buf, ch);
-	  free_object(tmp);
 	  /* add the buf if it will fit */
 	  if (!book_overflow (retbuf, buf, booksize))
 	      strcat (retbuf, buf);

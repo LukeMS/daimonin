@@ -332,8 +332,8 @@ void set_block(int x,int y,int bx, int by) {
 static void set_wall(object *op,int x,int y) {
     int i, xt, yt;
 
-	xt = (MAP_CLIENT_X - op->contr->socket.mapx)/2;
-	yt = (MAP_CLIENT_Y - op->contr->socket.mapy)/2;
+	xt = (MAP_CLIENT_X - CONTR(op)->socket.mapx)/2;
+	yt = (MAP_CLIENT_Y - CONTR(op)->socket.mapy)/2;
 
     for(i=0;i<block[x][y].index;i++) {
 	int dx=block[x][y].x[i],dy=block[x][y].y[i],ax,ay;
@@ -344,8 +344,8 @@ static void set_wall(object *op,int x,int y) {
 	ax = dx - xt;
 	ay = dy - yt;
 
-	if (ax < 0 || ax>=op->contr->socket.mapx ||
-	    ay < 0 || ay>=op->contr->socket.mapy) continue;
+	if (ax < 0 || ax>=CONTR(op)->socket.mapx ||
+	    ay < 0 || ay>=CONTR(op)->socket.mapy) continue;
 #if 0
 	LOG(llevInfo ,"blocked %d %d -> %d %d\n",dx, dy, ax, ay);
 #endif
@@ -353,8 +353,8 @@ static void set_wall(object *op,int x,int y) {
 	 * code wants the los to start from the 0,0
 	 * and not be relative to middle of los array.
 	 */
-	if(!(op->contr->blocked_los[ax][ay]&BLOCKED_LOS_OUT_OF_MAP))
-		op->contr->blocked_los[ax][ay]|=BLOCKED_LOS_BLOCKED; /* this tile can't be seen */
+	if(!(CONTR(op)->blocked_los[ax][ay]&BLOCKED_LOS_OUT_OF_MAP))
+		CONTR(op)->blocked_los[ax][ay]|=BLOCKED_LOS_BLOCKED; /* this tile can't be seen */
 	set_wall(op,dx,dy);
 
     }
@@ -373,8 +373,8 @@ static void check_wall(object *op,int x,int y) {
     int ax, ay, flags;
 
     /* ax, ay are coordinates as indexed into the look window */
-    ax = x - (MAP_CLIENT_X - op->contr->socket.mapx)/2;
-    ay = y - (MAP_CLIENT_Y - op->contr->socket.mapy)/2;
+    ax = x - (MAP_CLIENT_X - CONTR(op)->socket.mapx)/2;
+    ay = y - (MAP_CLIENT_Y - CONTR(op)->socket.mapy)/2;
 
 	/* this skips the "edges" of view area, the border tiles.
 	 * Naturally, this tiles can't block any view - there is
@@ -387,9 +387,9 @@ static void check_wall(object *op,int x,int y) {
 		 * blockview changes to this tiles will have no effect.
 		 */
 		if(blocks_view(op->map,op->x + x - MAP_CLIENT_X/2, op->y + y - MAP_CLIENT_Y/2)&P_OUT_OF_MAP)
-			op->contr->blocked_los[ax][ay]=BLOCKED_LOS_OUT_OF_MAP; /* mark the space as out_of_map */
+			CONTR(op)->blocked_los[ax][ay]=BLOCKED_LOS_OUT_OF_MAP; /* mark the space as out_of_map */
 		else
-			op->contr->blocked_los[ax][ay]|=BLOCKED_LOS_IGNORE; /* ignore means ignore for LOS */
+			CONTR(op)->blocked_los[ax][ay]|=BLOCKED_LOS_IGNORE; /* ignore means ignore for LOS */
 		return;
 	}
 
@@ -397,7 +397,7 @@ static void check_wall(object *op,int x,int y) {
     /* If the converted coordinates are outside the viewable
      * area for the client, return now.
      */
-    if (ax < 0 || ay < 0 || ax >= op->contr->socket.mapx || ay >= op->contr->socket.mapy)
+    if (ax < 0 || ay < 0 || ax >= CONTR(op)->socket.mapx || ay >= CONTR(op)->socket.mapy)
 		return;
 
 	/*LOG(-1,"SET_LOS: %d,%d\n", ax,ay);*/
@@ -406,16 +406,16 @@ static void check_wall(object *op,int x,int y) {
      * done the dependency chain.
 	 * but check for out_of_map to speedup our client map draw function.
      */
-    if (op->contr->blocked_los[ax][ay]&(BLOCKED_LOS_BLOCKED|BLOCKED_LOS_OUT_OF_MAP))
+    if (CONTR(op)->blocked_los[ax][ay]&(BLOCKED_LOS_BLOCKED|BLOCKED_LOS_OUT_OF_MAP))
 	{
-		if(op->contr->blocked_los[ax][ay]&BLOCKED_LOS_BLOCKED)
+		if(CONTR(op)->blocked_los[ax][ay]&BLOCKED_LOS_BLOCKED)
 		{
 			if((flags = blocks_view(op->map,op->x + x - MAP_CLIENT_X/2, op->y + y - MAP_CLIENT_Y/2)))
 			{
 				if(flags&P_OUT_OF_MAP)
-					op->contr->blocked_los[ax][ay]=BLOCKED_LOS_OUT_OF_MAP; /* mark the space as out_of_map */
+					CONTR(op)->blocked_los[ax][ay]=BLOCKED_LOS_OUT_OF_MAP; /* mark the space as out_of_map */
 				else
-					op->contr->blocked_los[ax][ay]|=BLOCKED_LOS_BLOCKSVIEW;
+					CONTR(op)->blocked_los[ax][ay]|=BLOCKED_LOS_BLOCKSVIEW;
 			}
 		}
 		return;
@@ -432,9 +432,9 @@ static void check_wall(object *op,int x,int y) {
 		
 		/* out of map clears all other flags! */
 		if(flags&P_OUT_OF_MAP)
-			op->contr->blocked_los[ax][ay]= BLOCKED_LOS_OUT_OF_MAP; /* mark the space as out_of_map */
+			CONTR(op)->blocked_los[ax][ay]= BLOCKED_LOS_OUT_OF_MAP; /* mark the space as out_of_map */
 		else
-			op->contr->blocked_los[ax][ay] |= BLOCKED_LOS_BLOCKSVIEW; 
+			CONTR(op)->blocked_los[ax][ay] |= BLOCKED_LOS_BLOCKSVIEW; 
 
 	}
 
@@ -446,7 +446,7 @@ static void check_wall(object *op,int x,int y) {
  */
 void update_los(object *op) 
 {
-    int dx = op->contr->socket.mapx_2, dy = op->contr->socket.mapy_2, x, y;
+    int dx = CONTR(op)->socket.mapx_2, dy = CONTR(op)->socket.mapy_2, x, y;
   
     if(QUERY_FLAG(op,FLAG_REMOVED))
 	return;
@@ -465,8 +465,8 @@ void update_los(object *op)
      * be blocked by different spaces in front, this mean that a lot of spaces
      * could be examined multile times, as each path would be looked at.
      */
-    for (x=(MAP_CLIENT_X - op->contr->socket.mapx)/2; x<(MAP_CLIENT_X + op->contr->socket.mapx)/2; x++) 
-		for (y=(MAP_CLIENT_Y - op->contr->socket.mapy)/2; y<(MAP_CLIENT_Y + op->contr->socket.mapy)/2; y++) 
+    for (x=(MAP_CLIENT_X - CONTR(op)->socket.mapx)/2; x<(MAP_CLIENT_X + CONTR(op)->socket.mapx)/2; x++) 
+		for (y=(MAP_CLIENT_Y - CONTR(op)->socket.mapy)/2; y<(MAP_CLIENT_Y + CONTR(op)->socket.mapy)/2; y++) 
 			check_wall(op, x, y);
 
 	expand_sight(op);
@@ -481,8 +481,8 @@ void update_los(object *op)
 		{
 			for (y = -4; y <= 4; y++)
 			{
-				if(op->contr->blocked_los[dx + x][dy + y] & BLOCKED_LOS_BLOCKED)
-					op->contr->blocked_los[dx + x][dy + y] &= ~BLOCKED_LOS_BLOCKED;
+				if(CONTR(op)->blocked_los[dx + x][dy + y] & BLOCKED_LOS_BLOCKED)
+					CONTR(op)->blocked_los[dx + x][dy + y] &= ~BLOCKED_LOS_BLOCKED;
 			}
 		}
 	}
@@ -495,7 +495,7 @@ void update_los(object *op)
 
 void inline clear_los(object *op) 
 {
-    (void)memset((void *) op->contr->blocked_los,BLOCKED_LOS_VISIBLE,sizeof(op->contr->blocked_los));
+    (void)memset((void *) CONTR(op)->blocked_los,BLOCKED_LOS_VISIBLE,sizeof(CONTR(op)->blocked_los));
 }
 
 /*
@@ -514,15 +514,15 @@ void expand_sight(object *op)
 {
     int i,x,y, dx, dy;
 
-    for(x=1;x<op->contr->socket.mapx-1;x++)	/* loop over inner squares */
+    for(x=1;x<CONTR(op)->socket.mapx-1;x++)	/* loop over inner squares */
 	{
-	for(y=1;y<op->contr->socket.mapy-1;y++) {
+	for(y=1;y<CONTR(op)->socket.mapy-1;y++) {
 #if 0
 	    LOG(llevInfo ,"expand_sight x,y = %d, %d  blocksview = %d, %d\n",
-		    x, y, op->x-op->contr->socket.mapx_2+x, op->y-op->contr->socket.mapy_2+y);
+		    x, y, op->x-CONTR(op)->socket.mapx_2+x, op->y-CONTR(op)->socket.mapy_2+y);
 #endif
-	    if(op->contr->blocked_los[x][y] <= BLOCKED_LOS_BLOCKSVIEW && /* if visible */
-	        !(op->contr->blocked_los[x][y] &BLOCKED_LOS_BLOCKSVIEW))  /* and not blocksview */
+	    if(CONTR(op)->blocked_los[x][y] <= BLOCKED_LOS_BLOCKSVIEW && /* if visible */
+	        !(CONTR(op)->blocked_los[x][y] &BLOCKED_LOS_BLOCKSVIEW))  /* and not blocksview */
 		{
 
 			/* mark all directions */
@@ -532,22 +532,22 @@ void expand_sight(object *op)
 				dx = x + freearr_x[i];
 				dy = y + freearr_y[i];
 			
-				if (dx < 0 || dy < 0 || dx > op->contr->socket.mapx || dy > op->contr->socket.mapy)
+				if (dx < 0 || dy < 0 || dx > CONTR(op)->socket.mapx || dy > CONTR(op)->socket.mapy)
 					continue;
 
-				if(op->contr->blocked_los[dx][dy]&BLOCKED_LOS_BLOCKED)
-					op->contr->blocked_los[dx][dy]|=BLOCKED_LOS_EXPAND;
+				if(CONTR(op)->blocked_los[dx][dy]&BLOCKED_LOS_BLOCKED)
+					CONTR(op)->blocked_los[dx][dy]|=BLOCKED_LOS_EXPAND;
 			}
 	    }
 	}
     }
 	
-    for (x = 0; x < op->contr->socket.mapx; x++)
+    for (x = 0; x < CONTR(op)->socket.mapx; x++)
 	{
-	for (y = 0; y < op->contr->socket.mapy; y++)
+	for (y = 0; y < CONTR(op)->socket.mapy; y++)
 	{
-	    if (op->contr->blocked_los[x][y]&BLOCKED_LOS_EXPAND)
-			op->contr->blocked_los[x][y] &= ~(BLOCKED_LOS_BLOCKED|BLOCKED_LOS_EXPAND);
+	    if (CONTR(op)->blocked_los[x][y]&BLOCKED_LOS_EXPAND)
+			CONTR(op)->blocked_los[x][y] &= ~(BLOCKED_LOS_BLOCKED|BLOCKED_LOS_EXPAND);
 	}
 	}
 	
@@ -582,15 +582,15 @@ void print_los(object *op)
     char buf[50], buf2[10];
 
     strcpy(buf,"   ");
-    for(x=0;x<op->contr->socket.mapx;x++) {
+    for(x=0;x<CONTR(op)->socket.mapx;x++) {
 	sprintf(buf2,"%2d",x);
 	strcat(buf,buf2);
     }
     (*draw_info_func)(NDI_UNIQUE, 0, op, buf);
-    for(y=0;y<op->contr->socket.mapy;y++) {
+    for(y=0;y<CONTR(op)->socket.mapy;y++) {
 	sprintf(buf,"%2d:",y);
-	for(x=0;x<op->contr->socket.mapx;x++) {
-	    sprintf(buf2," %1d",op->contr->blocked_los[x][y]);
+	for(x=0;x<CONTR(op)->socket.mapx;x++) {
+	    sprintf(buf2," %1d",CONTR(op)->blocked_los[x][y]);
 	    strcat(buf,buf2);
 	}
 	(*draw_info_func)(NDI_UNIQUE, 0, op, buf);
