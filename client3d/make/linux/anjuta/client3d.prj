@@ -83,10 +83,12 @@ module.include.files=\
 	player.h\
 	serverfile.h\
 	textwindow.h\
-	xyz.h\
 	zconf.h\
 	zlib.h\
-	zutil.h
+	zutil.h\
+	define.h\
+	sound.h\
+	textinput.h
 
 module.source.name=source
 module.source.type=
@@ -108,8 +110,8 @@ module.source.files=\
 	serverfile.cpp\
 	textwindow.cpp\
 	uncompr.c\
-	xyz.cpp\
-	zutil.c
+	zutil.c\
+	sound.cpp
 
 module.pixmap.name=pixmaps
 module.pixmap.type=

@@ -128,7 +128,7 @@ class Network
 	#ifdef WIN32
     unsigned int mSocket;
     #else
-	int mSocket
+	int mSocket;
 	#endif
 	
     Network(const Network&);  // disable copy-constructor.
