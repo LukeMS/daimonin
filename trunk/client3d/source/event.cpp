@@ -366,6 +366,7 @@ void Event::keyPressed(KeyEvent *e)
 
 		case KC_ADD:
 			mCameraZoom -= 10;
+			if (mCameraZoom < 10) mCameraZoom =10;
 			mCamera->setPosition(Vector3(0,mCameraZoom, mCameraZoom));
 		    mCamera->setNearClipDistance(mCameraZoom);
 			break;
