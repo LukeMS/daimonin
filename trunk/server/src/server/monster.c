@@ -588,30 +588,27 @@ void waypoint_compute_path(object *waypoint) {
     }
     
     path = compress_path(find_path(op, op->map, op->x, op->y, destmap, waypoint->stats.hp, waypoint->stats.sp));
-
-    if(path) {
-        
-        /* Check that path is at least of length 2 (the first element is always the starting position) */
-        if(! path->next) {
-            free_node_list(&path);
+    if(path) {        
+        /* Skip the first path element (always the starting position) */
+        path = path->next;
+        if(! path) 
             return;
-        }
         
+#ifdef DEBUG_PATHFINDING
         {
             path_node *tmp;
             LOG(llevDebug,"move_waypoint(): '%s' new path -> '%s': ", op->name, waypoint->name);
-            for(tmp = path->next; tmp; tmp = tmp->next) 
+            for(tmp = path; tmp; tmp = tmp->next) 
                 LOG(llevDebug,"(%d,%d) ", tmp->x, tmp->y);
             LOG(llevDebug,"\n");
         }
+#endif        
 
         if(waypoint->msg)
             FREE_AND_CLEAR_HASH(waypoint->msg);
 
-        waypoint->msg = encode_path(path->next);
+        waypoint->msg = encode_path(path);
         waypoint->stats.food = 0; /* path offset */
-
-        free_node_list(&path);
 
         waypoint->stats.Str = 0;  /* number of fails */
         waypoint->stats.dam = 30000; /* best distance */
@@ -751,7 +748,7 @@ void waypoint_move(object *op) {
     if((int)dest_rv->distance < waypoint->stats.dam)  {
         waypoint->stats.dam = dest_rv->distance;
         waypoint->stats.Str = 0; /* Number of times we failed getting closer to (sub)goal */
-    } else if(waypoint->stats.Str++ > 5) {
+    } else if(waypoint->stats.Str++ > 3) {
         /* Discard the current path, so that we can get a new one */
         FREE_AND_CLEAR_HASH(waypoint->msg);
     }
@@ -1191,7 +1188,7 @@ object *find_nearest_living_creature(object *npc) {
 			continue;
 
 		/* quick check - if nothing alive or player skip test for targets */
-		if (!(GET_MAP_FLAGS(m, nx, ny) & P_IS_ALIVE|P_IS_PLAYER))
+		if (!(GET_MAP_FLAGS(m, nx, ny) & (P_IS_ALIVE|P_IS_PLAYER)))
 			continue;
 
 	    tmp=get_map_ob(m,nx,ny);
@@ -1292,7 +1289,7 @@ int monster_cast_spell(object *head, object *part,object *pl,int dir, rv_vector 
         return 0;
     */
 	/* Might hit owner with spell - well we don't care anymore - we will handle this in attack.c *
-	/*
+	*
     if(QUERY_FLAG(head,FLAG_FRIENDLY) && (owner = get_owner(head)) != NULL)
     {
 	    get_rangevector(head, owner, &rv1, 0x1);
@@ -1637,7 +1634,7 @@ int check_good_armour(object *who, object *item) {
 
 void monster_check_pickup(object *monster) {
   object *tmp,*next;
-  int next_tag;
+  int next_tag = 0;
 
   for(tmp=monster->below;tmp!=NULL;tmp=next) {
     next=tmp->below;
@@ -2204,6 +2201,8 @@ static msglang *parse_message(char *msg) {
   return msgs;
 }
 
+#if 0
+/* Removed because it wasn't used according to gcc */
 static void dump_messages(msglang *msgs) {
   int messages, keywords;
   for(messages = 0; msgs->messages[messages]; messages++) {
@@ -2213,6 +2212,7 @@ static void dump_messages(msglang *msgs) {
     LOG(llevDebug, "\n%s\n",msgs->messages[messages]);
   }
 }
+#endif
 
 /* i changed this... This function is not to understimate when player talk alot
  * in areas which alot if map objects... This is one of this little extra cpu eaters
@@ -2640,7 +2640,7 @@ void spawn_point(object *op)
 static object *spawn_monster(object *gen, object *orig, int range) 
 {
   int i;
-  object *op,*head=NULL,*prev=NULL, *ret;
+  object *op,*head=NULL,*prev=NULL, *ret=NULL;
   archetype *at=gen->arch;
 
   i=find_free_spot(at,orig->map,orig->x,orig->y,0,range);

@@ -114,6 +114,13 @@ fi;
 
 AC_PATH_PROGS(BOURNE_SHELL, sh ksh bash)
 
+dnl The following are useful for debugging
+AC_ARG_ENABLE(warnings, [  --enable-warnings      compile with warnings enabled ],
+		EXTRA_CFLAGS="$EXTRA_CFLAGS -Wall", )
+
+AC_ARG_ENABLE(profiling, [  --enable-profiling      compile with profiling enabled ],
+		EXTRA_CFLAGS="$EXTRA_CFLAGS -pg"; LDFLAGS="$LDFLAGS -pg", )
+
 dnl The follow two are really just a way to specify where the xpm/gtk information
 dnl resides if not with the normal X11 stuff (ie, in /opt/X11 and not /usr
 dnl /usr/X11
@@ -235,6 +242,7 @@ AC_SUBST(no_x)
 AC_SUBST(X11LIBS)
 AC_SUBST(PERL)
 AC_SUBST(PYTHON)
+AC_SUBST(EXTRA_CFLAGS)
 
 dnl Do the evals because most of these are made up of sub variables and
 dnl we don't want the include to have something like

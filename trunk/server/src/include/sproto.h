@@ -469,7 +469,6 @@ int roll_ob(object *op, int dir, object *pusher);
 int push_ob(object *who, int dir, object *pusher);
 /* pathfinder.h */
 path_node *find_path(object *op, mapstruct *map1, int x1, int y1, mapstruct *map2, int x2, int y2);
-void free_node_list(path_node **first);
 int get_path_next(char *buf, sint16 *off, mapstruct **map, int *x, int *y);
 char *encode_path(path_node *path);
 path_node *compress_path(path_node *path);
