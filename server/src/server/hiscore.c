@@ -152,11 +152,11 @@ static score *get_score(char *bp) {
 static char * draw_one_high_score(score *sc) {
     static char retbuf[MAX_BUF];
 
-    if(!strncmp(sc->killer,"quit",MAX_NAME))
+    if(!strncasecmp(sc->killer,"quit",MAX_NAME))
 	sprintf(retbuf,"%3d %10ld %s the %s quit the game on map %s [%d][%d][%d].",
             sc->position,sc->exp,sc->name,sc->title,sc->maplevel,sc->maxhp,sc->maxsp,
 		sc->maxgrace);
-    else if(!strncmp(sc->killer,"left",MAX_NAME))
+    else if(!strncasecmp(sc->killer,"left",MAX_NAME))
 	sprintf(retbuf,"%3d %10ld %s the %s left the game on map %s [%d][%d][%d].",
             sc->position,sc->exp,sc->name,sc->title,sc->maplevel,sc->maxhp,sc->maxsp,
 		sc->maxgrace);

@@ -261,7 +261,7 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 			tmp = ObjectCreateClone(tmp);
 			CLEAR_FLAG(tmp, FLAG_NO_PICK);
 			SET_FLAG(tmp, FLAG_STARTEQUIP);
-			sprintf(buf,"You pick up %s from the storage.", query_name(tmp));
+			sprintf(buf,"You pick up %s for %s from the storage.", query_name(tmp),query_cost_string(tmp,pl,F_BUY));
 		}
 		else /* this is a unique shop item */
 			sprintf(buf,"%s will cost you %s.", query_name(tmp),
@@ -513,6 +513,20 @@ void put_object_in_sack (object *op, object *sack, object *tmp, long nrof)
 	      esrv_send_item (op, tmp2);
     } else
 	remove_ob(tmp);
+
+    if(QUERY_FLAG(tmp, FLAG_UNPAID))
+	{
+	    if(QUERY_FLAG(tmp, FLAG_NO_PICK)) /* this is a clone shop - clone a item for inventory */
+		{
+			CLEAR_FLAG(tmp, FLAG_NO_PICK);
+			SET_FLAG(tmp, FLAG_STARTEQUIP);
+			sprintf(buf,"You pick up %s for %s from the storage.", query_name(tmp),query_cost_string(tmp,op,F_BUY));
+		}
+		else /* this is a unique shop item */
+			sprintf(buf,"%s will cost you %s.", query_name(tmp),
+												query_cost_string(tmp,op,F_BUY));
+	    new_draw_info(NDI_UNIQUE, 0,op,buf);
+	}
 
     sprintf(buf, "You put the %s in ", query_name(tmp));
     strcat (buf, query_name(sack));

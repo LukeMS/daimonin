@@ -195,7 +195,7 @@ int command_summon (object *op, char *params)
          return 1;
       }
       for(pl=first_player;pl!=NULL;pl=pl->next) 
-    if(!strncmp(pl->ob->name, params, MAX_NAME)) 
+    if(!strncasecmp(pl->ob->name, params, MAX_NAME)) 
           break;
       if(pl==NULL) {
         new_draw_info(NDI_UNIQUE, 0,op,"No such player.");
@@ -241,7 +241,7 @@ int command_teleport (object *op, char *params) {
    }
 
    for (pl = first_player; pl != NULL; pl = pl->next) 
-      if (!strncmp(pl->ob->name, params, MAX_NAME)) 
+      if (!strncasecmp(pl->ob->name, params, MAX_NAME)) 
          break;
    if (pl == NULL) {
       new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
@@ -634,7 +634,7 @@ int command_addexp (object *op, char *params)
 
 	for(pl=first_player;pl!=NULL;pl=pl->next) 
 	{
-		if(!strncmp(pl->ob->name,buf,MAX_NAME)) 
+		if(!strncasecmp(pl->ob->name,buf,MAX_NAME)) 
 			break;
 	}
 
