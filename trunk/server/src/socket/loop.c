@@ -474,13 +474,16 @@ static int check_ip_ban(int num, uint32 ip)
 	count=0;
 	for(i=socket_info.allocated_sockets-1;i>0;i--) 
 	{
-		if(num != i &&  init_sockets[i].ip == ip)
+		if(init_sockets[i].status != Ns_Avail && num != i &&  init_sockets[i].ip == ip)
 		{
 			if(++count >1)
 			{
 				LOG(llevDebug,"check_ip_ban(): socket flood. mark Ns_Dead: %d (%d.%d.%d.%d)\n", 
 					num, (ip>>24)&255, (ip>>16)&255, (ip>>8)&255, ip&255);
 				init_sockets[i].status = Ns_Dead;
+				free_newsocket(&init_sockets[i]);
+				init_sockets[i].status = Ns_Avail;
+				socket_info.nconns--;
 			}
 		}
 	}
@@ -489,7 +492,7 @@ static int check_ip_ban(int num, uint32 ip)
 	count=0;
 	for (pl=first_player; pl; pl=pl->next)
 	{
-		if(pl->socket.ip == ip)
+		if(pl->socket.status != Ns_Dead && pl->socket.ip == ip)
 		{
 			count++;
 			if(!ptmp)
@@ -508,12 +511,9 @@ static int check_ip_ban(int num, uint32 ip)
 				 */
 				if(count>1) 
 				{
-					if(pl->socket.status != Ns_Dead)
-					{
-						LOG(llevDebug,"check_ip_ban(): connection flood: mark player %s Ns_Dead: %d (%d.%d.%d.%d)\n",
-							query_name(pl->ob),num, (ip>>24)&255, (ip>>16)&255, (ip>>8)&255, ip&255);
-						ptmp->socket.status = Ns_Dead;
-					}
+					LOG(llevDebug,"check_ip_ban(): connection flood: mark player %s Ns_Dead: %d (%d.%d.%d.%d)\n",
+						query_name(pl->ob),num, (ip>>24)&255, (ip>>16)&255, (ip>>8)&255, ip&255);
+					ptmp->socket.status = Ns_Dead;
 				}
 			}
 		}
@@ -629,7 +629,7 @@ void doeric_server(int update_client)
 
     if (pollret==-1) 
 	{
-		LOG(llevDebug,"doeric_server: error on select\n");
+		LOG(llevBug,"BUG: doeric_server(): error on select\n");
 		return;
     }
 
