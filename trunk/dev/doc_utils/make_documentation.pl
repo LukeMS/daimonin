@@ -1,5 +1,24 @@
 #! /usr/bin/perl -w
 
+#
+# Usage: 
+# perl make_documentation.pl ../../server/src/plugin_python/daimonin_map.c > ../../doc/plugins/Map_Methods.txt
+# perl make_documentation.pl ../../server/src/plugin_python/daimonin_object.c > ../../doc/plugins/Object_Methods.txt
+# perl make_documentation.pl ../../server/src/plugin_python/plugin_python.c > ../../doc/plugins/DaimoninFunctions.txt
+#
+# Or, with html output:
+# perl make_documentation.pl ../../server/src/plugin_python/daimonin_object.c > object.html
+# perl make_documentation.pl ../../server/src/plugin_python/daimonin_map.c > map.html
+# perl make_documentation.pl ../../server/src/plugin_python/plugin_python.c > daimonin.html
+
+
+# $writer = \&outputplaintext;
+
+use CGI qw/:standard/;
+$writer = \&outputhtml;
+$headwriter = \&outputhtmlhead;
+$footwriter = \&outputhtmlfoot;
+
 # Comments we search for to know in which general area to search for
 # python functions in.
 $functionstart = "FUNCTIONSTART";
@@ -29,6 +48,8 @@ $ST_PARSETUPLE = 6;     # Found the beginning of Py_ParseTuple() call
 $state = $ST_INIT;      # Initial state 
 $line = 0;              # Initial line number
 
+&$headwriter() if defined $headwriter;
+
 while($_ = <>) {
     $line ++;
     if($_ =~ /^\/\*.*$functionend.*\*\/$/) { last; }
@@ -53,7 +74,7 @@ while($_ = <>) {
             $state = $ST_COMMENT_START;
         }
     } elsif ($state == $ST_COMMENT_START) {
-        if($_ =~ /^\/\*(.*)\*\/$/) {
+        if($_ =~ /^\/\*(.*)\*\/\s*$/) {
             # Not a box line? If so, then extract comments
             if(not $1 =~ /^\*+$/) {
                 my $text = $1;
@@ -167,7 +188,7 @@ while($_ = <>) {
             # Actual output comes here:
             #
             
-            outputplaintext($pname);
+            &$writer($pname);
             
             $state = $ST_NEWCOMMENT;
         }
@@ -186,7 +207,7 @@ while($_ = <>) {
 
                 $varstring =~ s/\s//g;
                 my @vars = split ',', $varstring;
-                my @types = ($typestring =~ /O!?|[ldis|]/g);
+                my @types = ($typestring =~ /O!?|[ldisz|]/g);
 
                 my $varpos = 0;
 
@@ -208,6 +229,7 @@ while($_ = <>) {
                     push @b_input_types, $optional."speciall" if ($type eq 'O'); 
                     push @b_input_types, $optional."integer" if ($type =~ /[ldi]/);
                     push @b_input_types, $optional."string" if ($type eq 's'); 
+                    push @b_input_types, $optional."string or None" if ($type eq 'z'); 
                     $varpos++ if ($type =~ /[ldisO]/);
                 }
 
@@ -223,6 +245,8 @@ while($_ = <>) {
         }
     }
 }
+
+&$footwriter() if defined $headwriter;
 
 sub outputplaintext {
     my ($python_name) = @_;
@@ -258,4 +282,68 @@ sub outputplaintext {
     }
 
     print "\n";
+}
+
+sub outputhtmlhead {
+    @methods = ();    
+    print start_html(-style=>{'src'=>'pythonref.css'}, -title=>'Python Function Reference'),
+        h1('Python Function Reference'),
+        p("Generated from the plugin source code ", `date -I`),
+        '<div class="ClassBlock">';
+}
+
+sub outputhtmlfoot {
+
+    print h1(a({-name=>'index'},'Index'));
+    print "| ";
+    foreach my $function (sort @methods) {
+        print  a({-href=>"#".escapeHTML($function), -class=>FunctionLink}, escapeHTML($function))." | ";
+    }
+    
+    print '</div>';    
+    print end_html;
+}
+
+sub outputhtml {
+    my ($python_name) = @_;
+    
+    push @methods, $python_name;
+    
+    my $data = 
+        a({-href=>'#index', -class=>IndexLink}, 'Index &gt;&gt;').
+        a({-name=>$python_name, -class=>FunctionName}, escapeHTML($python_name)).
+        div({-class=>AfterNameDiv}, "&nbsp;").
+        div({-class=>PythonField}, escapeHTML($c_keywords{Python}));
+    
+    if(defined $c_keywords{'Info'}) {
+#        $c_keywords{'Info'} =~ s/\n/<BR>/g;
+        $data .= div({-class=>InfoField}, escapeHTML($c_keywords{Info}));
+    }
+
+    $data .= div({-class=>FieldHeader}, "Parameter types:");
+    for (my $i=0; $i <= $#c_param_names; $i++) {
+        $data .= div({-class=>ParameterDescription}, 
+                span({-class=>TypeName}, escapeHTML($b_input_types[$i])),
+                span({-class=>ParameterName}, escapeHTML($c_param_names[$i])));
+    }
+    
+    $data .= div({-class=>FieldHeader}, "Possible return types:");
+    foreach my $rettype (keys %b_return_types) {
+        $data .= div({-class=>ParameterDescription}, 
+                span({-class=>TypeName}, escapeHTML($rettype)));
+    }
+
+    #Order and definition of which other keywords to print next
+    my @print_keywords = ( "Warning", "Remark", "Status", "TODO" );
+
+    # Info from comments            
+    foreach $key (@print_keywords) {
+        if(defined $c_keywords{$key} and $c_keywords{$key} ne '') {
+            $data .= div({-class=>FieldHeader}, escapeHTML($key));
+#           $c_keywords{$key} =~ s/\n/<BR>/g;
+            $data .= div({-class=>InfoField}, escapeHTML($c_keywords{$key}));
+        } 
+    }
+
+    print div({-class => FunctionBlock}, $data), "\n";
 }
