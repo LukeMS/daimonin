@@ -198,7 +198,7 @@ void rune_attack(object *op,object *victim)
 			return;
 		}
 		/*  if there's a disease in the needle, put it in the player */
-		if(op->randomitems!=NULL) create_treasure(op->randomitems,op,0,
+		if(op->randomitems!=NULL) create_treasure_list(op->randomitems,op,0,
 			op->level?op->level:victim->map->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
 		if(op->inv && op->inv->type == DISEASE)
 		{

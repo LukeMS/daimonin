@@ -336,6 +336,10 @@ SOURCE=..\..\..\..\src\include\libproto.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\..\src\include\links.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\..\src\include\living.h
 # End Source File
 # Begin Source File

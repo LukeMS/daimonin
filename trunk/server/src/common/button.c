@@ -43,7 +43,7 @@ void push_button(object *op) {
 
   /*LOG(llevDebug, "push_button: %s (%d)\n", op->name, op->count);*/
   for (ol = get_button_links(op); ol; ol = ol->next) {
-    if (!ol->ob || ol->ob->count != ol->id) {
+    if (!ol->objlink.ob || ol->objlink.ob->count != ol->id) {
       LOG(llevBug, "BUG: Internal error in push_button (%s).\n", op->name);
       continue;
     }
@@ -54,12 +54,12 @@ void push_button(object *op) {
      * probably isn't important - it will get sorted out when the map is
      * re-loaded.  As such, just exit this function if that is the case.
      */
-    if (!OBJECT_ACTIVE(ol->ob)) 
+    if (!OBJECT_ACTIVE(ol->objlink.ob)) 
 	{
-		LOG(llevDebug, "DEBUG: push_button: button link with invalid object! (%x - %x)",QUERY_FLAG(ol->ob,FLAG_REMOVED), ol->ob->count);
+		LOG(llevDebug, "DEBUG: push_button: button link with invalid object! (%x - %x)",QUERY_FLAG(ol->objlink.ob,FLAG_REMOVED), ol->objlink.ob->count);
 		return;
 	}
-    tmp = ol->ob;
+    tmp = ol->objlink.ob;
     switch(tmp->type) {
     case GATE:
     case PIT:
@@ -145,11 +145,11 @@ void update_button(object *op) {
 
     /* LOG(llevDebug, "update_button: %s (%d)\n", op->name, op->count); */
     for (ol = get_button_links(op); ol; ol = ol->next) {
-	if (!ol->ob || ol->ob->count != ol->id) {
+	if (!ol->objlink.ob || ol->objlink.ob->count != ol->id) {
 	    LOG(llevDebug, "Internal error in update_button (%s).\n", op->name);
 	    continue;
 	}
-	tmp = ol->ob;
+	tmp = ol->objlink.ob;
 	if (tmp->type==BUTTON) {
 		fly = QUERY_FLAG(tmp,FLAG_FLY_ON);
 		move = QUERY_FLAG(tmp,FLAG_WALK_ON);
@@ -198,23 +198,23 @@ void update_buttons(mapstruct *m) {
 
   for (obp = m->buttons; obp; obp = obp->next)
   {
-	for (ol = obp->link; ol; ol = ol->next)
+	for (ol = obp->objlink.link; ol; ol = ol->next)
 	{
-	  if (!ol->ob || ol->ob->count != ol->id) 
+	  if (!ol->objlink.ob || ol->objlink.ob->count != ol->id) 
 	  {
 		  LOG(llevBug, "BUG: Internal error in update_button (%s (%dx%d):%d, connected %d ).\n",
-	    ol->ob?STRING_SAFE(ol->ob->name):"null",
-	    ol->ob?ol->ob->x:-1,
-	    ol->ob?ol->ob->y:-1,
+	    ol->objlink.ob?STRING_SAFE(ol->objlink.ob->name):"null",
+	    ol->objlink.ob?ol->objlink.ob->x:-1,
+	    ol->objlink.ob?ol->objlink.ob->y:-1,
 	    ol->id,
 	    obp->value);
         continue;
       }
-      if (ol->ob->type==BUTTON || ol->ob->type==PEDESTAL)
-		  update_button(ol->ob);
-	  else if (ol->ob->type == CHECK_INV )
+      if (ol->objlink.ob->type==BUTTON || ol->objlink.ob->type==PEDESTAL)
+		  update_button(ol->objlink.ob);
+	  else if (ol->objlink.ob->type == CHECK_INV )
 	  {
-		  tmp = ol->ob;
+		  tmp = ol->objlink.ob;
 		  fly = QUERY_FLAG(tmp,FLAG_FLY_ON);
 		  move = QUERY_FLAG(tmp,FLAG_WALK_ON);
 
@@ -224,14 +224,14 @@ void update_buttons(mapstruct *m) {
 			  check_inv (ab, tmp);
 		  }
 	  }
-	  else if (ol->ob->type == TRIGGER_BUTTON ||
-		  ol->ob->type == TRIGGER_PEDESTAL ||
-		  ol->ob->type == TRIGGER_ALTAR)
+	  else if (ol->objlink.ob->type == TRIGGER_BUTTON ||
+		  ol->objlink.ob->type == TRIGGER_PEDESTAL ||
+		  ol->objlink.ob->type == TRIGGER_ALTAR)
 	  {
 		 /* check_trigger will itself sort out the numbers of
 		  * items above the trigger
 		  */
-		check_trigger (ol->ob, ol->ob);
+		check_trigger (ol->objlink.ob, ol->objlink.ob);
 	  }
     }
   }
@@ -486,8 +486,8 @@ int check_trigger (object *op, object *cause)
 
 void add_button_link(object *button, mapstruct *map, int connected) {
   oblinkpt *obp;
-  objectlink *ol = get_objectlink();
-
+  objectlink *ol = get_objectlink(OBJLNK_FLAG_OB);
+  
   if (!map) {
     LOG(llevBug, "BUG: Tried to add button-link without map.\n");
     return;
@@ -498,21 +498,21 @@ void add_button_link(object *button, mapstruct *map, int connected) {
 
   SET_FLAG(button,FLAG_IS_LINKED);
 
-  ol->ob = button;
+  ol->objlink.ob = button;
   ol->id = button->count;
 
   for (obp = map->buttons; obp && obp->value != connected; obp = obp->next);
 
   if (obp) {
-    ol->next = obp->link;
-    obp->link = ol;
+    ol->next = obp->objlink.link;
+    obp->objlink.link = ol;
   } else {
     obp = get_objectlinkpt();
     obp->value = connected;
 
     obp->next = map->buttons;
     map->buttons = obp;
-    obp->link = ol;
+    obp->objlink.link = ol;
   }
 }
 
@@ -534,13 +534,13 @@ void remove_button_link(object *op) {
     return;
   }
   for (obp = op->map->buttons; obp; obp = obp->next)
-    for (olp = &obp->link; (ol = *olp); olp = &ol->next)
-      if (ol->ob == op) {
+    for (olp = &obp->objlink.link; (ol = *olp); olp = &ol->next)
+      if (ol->objlink.ob == op) {
 /*        LOG(llevDebug, "Removed link %d in button %s and map %s.\n",
            obp->value, op->name, op->map->path);
 */
         *olp = ol->next;
-        free(ol);
+        free_objectlink_simple(ol);
         return;
       }
   LOG(llevError, "remove_button_linked(): couldn't find object.\n");
@@ -558,9 +558,9 @@ objectlink *get_button_links(object *button) {
   if (!button->map)
     return NULL;
   for (obp = button->map->buttons; obp; obp = obp->next)
-    for (ol = obp->link; ol; ol = ol->next)
-      if (ol->ob == button && ol->id == button->count)
-        return obp->link;
+    for (ol = obp->objlink.link; ol; ol = ol->next)
+      if (ol->objlink.ob == button && ol->id == button->count)
+        return obp->objlink.link;
   return NULL;
 }
 
@@ -575,8 +575,8 @@ int get_button_value(object *button) {
   if (!button->map)
     return 0;
   for (obp = button->map->buttons; obp; obp = obp->next)
-    for (ol = obp->link; ol; ol = ol->next)
-      if (ol->ob == button && ol->id == button->count)
+    for (ol = obp->objlink.link; ol; ol = ol->next)
+      if (ol->objlink.ob == button && ol->id == button->count)
         return obp->value;
   return 0;
 }
@@ -721,9 +721,9 @@ void verify_button_links(mapstruct *map) {
     if (!map) return;
 
     for (obp = map->buttons; obp; obp = obp->next) {
-	for (ol=obp->link; ol; ol=ol->next) {
-	    if (ol->id!=ol->ob->count)
-	        LOG(llevError,"verify_button_links: object %s on list is corrupt (%d!=%d)\n",ol->ob->name, ol->id, ol->ob->count);
+	for (ol=obp->objlink.link; ol; ol=ol->next) {
+	    if (ol->id!=ol->objlink.ob->count)
+	        LOG(llevError,"verify_button_links: object %s on list is corrupt (%d!=%d)\n",ol->objlink.ob->name, ol->id, ol->objlink.ob->count);
 	}
     }
 }

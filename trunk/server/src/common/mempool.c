@@ -89,6 +89,7 @@ struct mempool mempools[NROF_MEMPOOLS] = {
     { "mob behaviour sets", 100, sizeof(struct mob_behaviourset), 0, NULL, NULL },        
     { "mob behaviours",     100, sizeof(struct mob_behaviour),    0, NULL, NULL },        
     { "mob behaviour parameter", 100, sizeof(struct mob_behaviour_param), 0, NULL, NULL },
+    { "object links",      500, sizeof(objectlink),     0, NULL, NULL }
 };
 
 /* Return the exponent exp needed to round n up to the nearest power of two, so that

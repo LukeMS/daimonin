@@ -70,6 +70,7 @@ void init_library() {
     init_globals();
     init_function_pointers();
     init_hash_table();
+	global_string_none = add_string("none"); 
     init_mempools(); /* Inits the pooling memory manager and the new object system */
     init_vars();
     init_block();

@@ -219,7 +219,7 @@ WS	[ \t]*{NL}
 					  * what you need to exclude at object/map loading time.
 					  */
 					else if(tmp->randomitems && (map_flags & MAP_ORIGINAL) &&(op->type != SPAWN_POINT ))
-						create_treasure(tmp->randomitems, tmp, 0, get_enviroment_level(tmp),T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
+						create_treasure_list(tmp->randomitems, tmp, 0, get_enviroment_level(tmp),T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
 
 				}
 			}
@@ -611,7 +611,7 @@ op->oy= op->y;
 ^is_blind{S}		SET_OR_CLEAR_FLAG(op, FLAG_BLIND, IVAL);
 ^can_see_in_dark{S}	SET_OR_CLEAR_FLAG(op, FLAG_SEE_IN_DARK, IVAL);
 ^is_cauldron{S}		SET_OR_CLEAR_FLAG(op, FLAG_IS_CAULDRON, IVAL);
-^randomitems{S}		op->randomitems = find_treasurelist(yval());
+^randomitems{S}		op->randomitems = link_treasurelists(yval(), OBJLNK_FLAG_REF);
 ^is_dust{S}		SET_OR_CLEAR_FLAG(op, FLAG_DUST, IVAL);
 ^no_steal{S}		SET_OR_CLEAR_FLAG(op, FLAG_NO_STEAL, IVAL);
 ^one_hit{S}		SET_OR_CLEAR_FLAG(op, FLAG_ONE_HIT, IVAL);
@@ -1189,9 +1189,29 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
     save_long(buf, "connected", tmp);
   if(op->glow_radius!=op2->glow_radius)
     save_long(buf, "glow_radius", op->glow_radius);
-  if (op->randomitems!=op2->randomitems) {
-    sprintf(buf2,"randomitems %s\n",(op->randomitems?op->randomitems->name:"none"));
-    strcat(buf,buf2);
+
+  if (op->randomitems!=op2->randomitems)
+   {
+		strcpy(buf2, "randomitems ");
+
+		/* special case: randomitems was set to null by "none" */
+		if(!op->randomitems)
+		    strcat(buf2, "none\n");
+		else /* we have different lists - generate the "list1;list2;list3" string */
+		{
+			struct oblnk *ol = op->randomitems;
+			strcat(buf2,ol->objlink.tl->listname);
+			ol=ol->next;
+
+			for(;ol;ol=ol->next)
+			{
+				strcat(buf2,";");
+				strcat(buf2,ol->objlink.tl->listname);
+			}
+
+			strcat(buf,buf2);
+			strcat(buf,"\n");
+		}
   }
 
   if(op->run_away!=op2->run_away)

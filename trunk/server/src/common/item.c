@@ -685,6 +685,7 @@ static void describe_terrain(object *op, char *retbuf)
  * MT-2003 */
 char *describe_item(object *op) 
 {
+	object *tmp;
 	int attr,val, more_info = 0, id_true=FALSE;
 	char buf[MAX_BUF];
 	static char retbuf[VERY_BIG_BUF*3];
@@ -741,37 +742,32 @@ char *describe_item(object *op)
 			strcat(retbuf,"(literated)");
 		if(QUERY_FLAG(op,FLAG_USE_RANGE))
 			strcat(retbuf,"(use range device)");
-		if(QUERY_FLAG(op,FLAG_CAN_USE_SKILL))
-			strcat(retbuf,"(skill user)");
-		if(QUERY_FLAG(op,FLAG_CAST_SPELL))
-			strcat(retbuf,"(spellcaster)");
 		if(QUERY_FLAG(op,FLAG_FRIENDLY))
 			strcat(retbuf,"(friendly)");
 		if(QUERY_FLAG(op,FLAG_UNAGGRESSIVE))
 			strcat(retbuf,"(unaggressive)");
 		if(QUERY_FLAG(op,FLAG_HITBACK))
 			strcat(retbuf,"(hitback)");
-
-		if(op->randomitems != NULL)
+		if(QUERY_FLAG(op,FLAG_CAN_USE_SKILL))
+			strcat(retbuf,"(skill user)");
+		if(QUERY_FLAG(op,FLAG_CAST_SPELL))
+			strcat(retbuf,"(spellcaster)");
+		
+		/* lets check the inv for spell ABILITY objects.
+		 * This was previous a randomitems search, but that
+		 * was wrong because its possible we use a random list to
+		 * generate different instances of this mob/item
+		 */
+		for (tmp=op->inv; tmp ; tmp=tmp->below)
 		{
-			treasure *t;
-			int first = 1;
-			for(t=op->randomitems->items; t != NULL; t=t->next)
+			if(tmp && (tmp->type == ABILITY))
 			{
-				if(t->item && (t->item->clone.type == ABILITY))
-				{
-					if(first)
-					{
-						first = 0;
-						strcat(retbuf,"(Spell abilities:)");
-					}
-					strcat(retbuf,"(");
-					strcat(retbuf,t->item->clone.name);
-					strcat(retbuf,")");
-				}
+				strcat(retbuf,"(");
+				strcat(retbuf,STRING_SAFE(tmp->name));
+				strcat(retbuf,")");
 			}
 		}
-
+		
 		if(FABS(op->speed)>MIN_ACTIVE_SPEED)
 		{
 			switch((int)((FABS(op->speed))*15))

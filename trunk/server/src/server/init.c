@@ -690,13 +690,13 @@ void setup_library() {
   set_info_map(new_info_map);
   set_dragon_gain_func(dragon_ability_gain);
 
-/*  setup_poolfunctions(POOL_PLAYER, NULL, (chunk_destructor)free_player); */
   setup_poolfunctions(POOL_PLAYER, NULL, NULL);
   setup_poolfunctions(POOL_MOBDATA, 
           (chunk_constructor)initialize_mob_data, 
           (chunk_destructor)cleanup_mob_data);
   setup_poolfunctions(POOL_MOB_KNOWN_OBJ, NULL, (chunk_destructor)cleanup_mob_known_obj);
   setup_poolfunctions(POOL_BEHAVIOURSET, NULL, (chunk_destructor)cleanup_behaviourset);
+  setup_poolfunctions(POOL_OBJECT_LINK, NULL, NULL);
 }
 
 static void add_ai_to_racelist (const char *race_name, archetype *op) {
@@ -803,7 +803,7 @@ void dump_races()
     for(list=first_race;list;list=list->next) {
       LOG(llevInfo,"\nRACE %s (%s - %d member): ",list->name, list->corpse->name, list->nrof); 
       for(tmp=list->member;tmp;tmp=tmp->next)
-        LOG(llevInfo,"%s(%d), ",tmp->ob->arch->name,tmp->ob->sub_type1);
+        LOG(llevInfo,"%s(%d), ",tmp->objlink.ob->arch->name,tmp->objlink.ob->sub_type1);
     }
 }
 
@@ -821,13 +821,13 @@ void add_to_racelist (const char *race_name, object *op) {
     FREE_AND_COPY_HASH(race->name, race_name);
   }
  
-  if(race->member->ob) {
-    objectlink *tmp = get_objectlink();
+  if(race->member->objlink.ob) {
+    objectlink *tmp = get_objectlink(OBJLNK_FLAG_OB);
     tmp->next=race->member;
     race->member = tmp;
   }
   race->nrof++;
-  race->member->ob = op;
+  race->member->objlink.ob = op;
 }
 
 racelink * get_racelist ( ) {
@@ -837,7 +837,7 @@ racelink * get_racelist ( ) {
   list->name=NULL;
   list->corpse=NULL;
   list->nrof=0;
-  list->member=get_objectlink();
+  list->member=get_objectlink(OBJLNK_FLAG_OB);
   list->next=NULL;
   list->ai = NULL;  
 

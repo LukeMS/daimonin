@@ -100,7 +100,7 @@ typedef struct obj
 
 	/* these are some internals */
 	struct archt *arch;						/* Pointer to archetype */
-	struct treasureliststruct *randomitems; /* Items to be generated */
+	struct oblnk *randomitems; /* thats now a linked list of treasurelist */
 
 	/* we can remove chosen_skill & exp_obj by drop here a uint8 with a list of skill
 	 * numbers. Mobs has no skill and player can grap it from player struct. For exp,
@@ -254,18 +254,6 @@ typedef struct obj
 #ifdef WIN32
 #pragma pack(pop)
 #endif
-
-typedef struct oblnk { /* Used to link together several objects */
-  object *ob;
-  struct oblnk *next;
-  tag_t id;
-} objectlink;
-
-typedef struct oblinkpt { /* Used to link together several object links */
-  struct oblnk *link;
-  long value;		/* Used as connected value in buttons/gates */
-  struct oblinkpt *next;
-} oblinkpt;
 
 #define CONTR(ob) ((player *)((ob)->custom_attrset))
 

@@ -177,7 +177,7 @@ int command_tell (object *op, char *params)
 			{
 				sprintf(buf2,"%s tells %s: ",op->name, pl->ob->name);
 				strncat(buf2, msg, MAX_BUF-strlen(buf)-1);
-				new_draw_info(NDI_PLAYER |NDI_UNIQUE | NDI_NAVY, 0, gbl_active_DM, buf2);
+				new_draw_info(NDI_PLAYER |NDI_UNIQUE | NDI_FLESH, 0, gbl_active_DM, buf2);
 			}
 			if(pl->dm_stealth)
 			{
@@ -294,7 +294,7 @@ int command_reply (object *op, char *params) {
 	{
 		sprintf(buf2,"%s replies %s: ",op->name, pl->ob->name);
 		strncat(buf2, params, MAX_BUF-strlen(buf)-1);
-		new_draw_info(NDI_PLAYER |NDI_UNIQUE | NDI_NAVY, 0, gbl_active_DM, buf2);
+		new_draw_info(NDI_PLAYER |NDI_UNIQUE | NDI_FLESH, 0, gbl_active_DM, buf2);
 	}
 
     sprintf(buf, "%s replies you: ", op->name);

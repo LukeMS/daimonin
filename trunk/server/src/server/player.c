@@ -528,11 +528,11 @@ int path_to_player(object *mon, object *pl,int mindiff) {
     return firstdir;
 }
 
-void give_initial_items(object *pl,treasurelist *items) {
+void give_initial_items(object *pl,struct oblnk *items) {
     object *op,*next=NULL;
 
     if(pl->randomitems!=NULL)
-	create_treasure(items,pl,GT_ONLY_GOOD|GT_NO_VALUE,1,T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
+		create_treasure_list(items,pl,GT_ONLY_GOOD|GT_NO_VALUE,1,T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
 
     for (op=pl->inv; op; op=next) {
 	next = op->below;

@@ -337,7 +337,7 @@ archetype *find_treasure_by_name (treasure *t, char *name, int depth)
 long find_ingred_cost (const char *name)
 {
   archetype    *at;
-  archetype    *at2;
+/*  archetype    *at2;*/
   artifactlist *al;
   artifact     *art;
   long          mult;
@@ -403,6 +403,10 @@ long find_ingred_cost (const char *name)
       for (at = first_archetype; at != NULL; at = at->next) 
 	if (! strcasecmp (at->clone.name, part1) && at->clone.title == NULL)
 	  {
+		/* not sure that this is useful - we should not check the treasurelists
+		 * in that way. IF we want check a recipe, look inside the ->inv.
+		 */
+		/*
 	    if (at->clone.randomitems != NULL)
 	      {
 		at2 = find_treasure_by_name (at->clone.randomitems->items,
@@ -410,6 +414,7 @@ long find_ingred_cost (const char *name)
 		if (at2 != NULL)
 		  return mult * at2->clone.value * isqrt (at->clone.level * 2);
 	      }
+		  */
 	  }
     }
   /* failed to find any matching items -- formula should be checked */

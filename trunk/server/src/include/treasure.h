@@ -84,8 +84,8 @@ typedef struct _change_arch {
 
 typedef struct treasurestruct {
   struct archt *item;		    /* Which item this link can be */
-  const char *name;			    /* If non null, name of list to use
-				       instead */
+  const char *name;			    /* If non null, name of list to use instead */
+  struct treasureliststruct *tlist; /* this list */
   struct treasurestruct *next;	    /* Next treasure-item in a linked list */
   struct treasurestruct *next_yes;  /* If this item was generated, use */
 				    /* this link instead of ->next */
@@ -113,7 +113,7 @@ typedef struct treasurestruct {
 
 
 typedef struct treasureliststruct {
-  const char *name;				/* Usually monster-name/combination */
+  const char *listname;				/* Usually monster-name/combination */
   int t_style;				/* global style (used from artifacts file) */
   int artifact_chance;	
   sint16 chance_fix;	/* if set it will overrule total_chance: */

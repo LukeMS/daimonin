@@ -1533,27 +1533,19 @@ void copy_owner (object *op, object *clone)
 }
 
 /*
- * initialize_object() frees everything allocated by an object, and also
+ * initialize_object().
+ * We don't should have here any valid ptr - having still valid
+ * pointer when our object is inside the memorypool should be a bug.
  * initializes all variables and flags to default settings.
+ * If used on any object structures, be sure all pointers of the
+ * base object are cleared until they are wiped with this function
  */
 
-void initialize_object(object *op) {
-    /* the memset will clear all these values for us, but we need
-     * to reduce the refcount on them.
-     */
-/*    FREE_ONLY_HASH(op->name);
-    FREE_ONLY_HASH(op->title);
-    FREE_ONLY_HASH(op->race);
-    FREE_ONLY_HASH(op->slaying);
-    FREE_ONLY_HASH(op->msg);*/
-    /* TODO: make sure we actually don't need to reduce refcount here */
-    op->name = op->title = op->race = op->slaying = op->msg = NULL; 
+void initialize_object(object *op) 
+{
 
-	/* Using this memset is a lot easier (and probably faster)
-     * than explicitly clearing the fields.
-     */
     memset(op, 0, sizeof(object));
-
+    op->name = op->title = op->race = op->slaying = op->msg = NULL; 
     /* Set some values that should not be 0 by default */
 	op->anim_enemy_dir = -1;      /* control the facings 25 animations */
 	op->anim_moving_dir = -1;     /* the same for movement */
@@ -1585,6 +1577,10 @@ void copy_object(object *op2, object *op)
   FREE_ONLY_HASH(op->slaying);
   FREE_ONLY_HASH(op->msg);
 
+  /* unlink old treasurelist if needed */
+  if(op->randomitems)
+	  unlink_treasurelists(op->randomitems, 0);
+
   (void) memcpy((void *)((char *) op +offsetof(object,name)),
                 (void *)((char *) op2+offsetof(object,name)),
                 sizeof(object)-offsetof(object, name));
@@ -1598,14 +1594,22 @@ void copy_object(object *op2, object *op)
   ADD_REF_NOT_NULL_HASH(op->slaying);
   ADD_REF_NOT_NULL_HASH(op->msg);
 
- 	if(QUERY_FLAG(op,FLAG_IDENTIFIED))
+	if(QUERY_FLAG(op,FLAG_IDENTIFIED))
 	{
 		SET_FLAG(op,FLAG_KNOWN_MAGICAL);
 		SET_FLAG(op,FLAG_KNOWN_CURSED);
 	}
 
+	/* perhaps we have a custom treasurelist. Then we need to
+	 * increase the refcount here.
+	 */
+	if(op->randomitems && (op->randomitems->flags&OBJLNK_FLAG_REF) )
+		op->randomitems->ref_count++;
+		
     /* We set the custom_attrset pointer to NULL to avoid
-     * really bad problems. TODO. this needs to be handled better */
+     * really bad problems. TODO. this needs to be handled better 
+	 * but it works until its only the player struct.
+	 */
     op->custom_attrset = NULL;
     
  /* Only alter speed_left when we sure we have not done it before */
@@ -1625,6 +1629,10 @@ void copy_object_data(object *op2, object *op)
   FREE_ONLY_HASH(op->slaying);
   FREE_ONLY_HASH(op->msg);
 
+  /* unlink old treasurelist if needed */
+  if(op->randomitems)
+	  unlink_treasurelists(op->randomitems, 0);
+  
   (void) memcpy((void *)((char *) op +offsetof(object,name)),
                 (void *)((char *) op2+offsetof(object,name)),
                 sizeof(object)-offsetof(object, name));
@@ -1645,7 +1653,13 @@ void copy_object_data(object *op2, object *op)
 		SET_FLAG(op,FLAG_KNOWN_CURSED);
 	}
     
-    /* We set the custom_attrset pointer to NULL to avoid
+	/* perhaps we have a custom treasurelist. Then we need to
+	 * increase the refcount here.
+	 */
+	if(op->randomitems && (op->randomitems->flags&OBJLNK_FLAG_REF) )
+		op->randomitems->ref_count++;
+
+	/* We set the custom_attrset pointer to NULL to avoid
      * really bad problems. TODO. this needs to be handled better */
     op->custom_attrset = NULL;
 }
@@ -2274,6 +2288,11 @@ void destroy_object(object *ob) {
  
   if(ob->type == CONTAINER && ob->attacked_by) 
 	  container_unlink_func(NULL, ob);
+
+  /* unlink old treasurelist if needed */
+  if(ob->randomitems)
+	  unlink_treasurelists(ob->randomitems, 0);
+  ob->randomitems = NULL;
 
   /* Make sure to get rid of the inventory, too. It will be destroy()ed at the next gc */
   /* TODO: maybe destroy() it here too? */
@@ -3703,7 +3722,7 @@ int auto_apply (object *op) {
 
   case TREASURE:
 	  level = get_enviroment_level(op);
-      create_treasure(op->randomitems, op, op->map?GT_ENVIRONMENT:0,level,T_STYLE_UNSET, ART_CHANCE_UNSET, 0,NULL);
+      create_treasure_list(op->randomitems, op, op->map?GT_ENVIRONMENT:0,level,T_STYLE_UNSET, ART_CHANCE_UNSET, 0,NULL);
 
     /* If we generated on object and put it in this object inventory,
      * move it to the parent object as the current object is about

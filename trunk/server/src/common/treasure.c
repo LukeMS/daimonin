@@ -41,7 +41,6 @@
 #include <funcpoint.h>
 #include <loader.h>
 
-static const char *treasure_string_none=NULL; /* for quick search for string "none" */
 char *coins[NUM_COINS+1] = {"mitcoin", "goldcoin", "silvercoin","coppercoin", NULL};
 archetype *coins_arch[NUM_COINS];
 
@@ -60,9 +59,9 @@ static treasure *get_empty_treasure(void);
 static void put_treasure (object *op, object *creator, int flags);
 static artifactlist *get_empty_artifactlist(void);
 static artifact *get_empty_artifact(void);
-static void check_treasurelist(treasure *t, treasurelist *tl);
 static inline void set_material_real(object *op, struct _change_arch *change_arch);
 static void create_money_table(void);
+static void postparse_treasurelist(treasure *t, treasurelist *tl);
 
 /*
  * Opens LIBDIR/treasure and reads all treasure-declarations from it.
@@ -72,13 +71,11 @@ static void create_money_table(void);
 void load_treasures() {
   FILE *fp;
   char filename[MAX_BUF], buf[MAX_BUF], name[MAX_BUF];
-  treasurelist *previous=NULL;
+  treasurelist *previous=NULL, *tl_tmp;
   treasure *t;
   int comp, t_style, a_chance;
 
   sprintf(filename,"%s/%s",settings.datadir,settings.treasures);
-
-  FREE_AND_COPY_HASH(treasure_string_none,"none"); 
   
   if((fp=open_and_uncompress(filename,0,&comp))==NULL) {
     LOG(llevError,"ERROR: Can't open treasure file.\n");
@@ -90,7 +87,19 @@ void load_treasures() {
       continue;
     if(sscanf(buf,"treasureone %s\n",name) || sscanf(buf,"treasure %s\n",name)) {
       treasurelist *tl=get_empty_treasurelist();
-      FREE_AND_COPY_HASH(tl->name, name);
+      FREE_AND_COPY_HASH(tl->listname, name);
+	  /* check for double used list name */
+	  for(tl_tmp=first_treasurelist;tl_tmp!=NULL;tl_tmp=tl_tmp->next)
+	  {
+		  if(tl->listname == tl_tmp->listname)
+			  break;
+	  }
+	  if(tl_tmp)
+	  {
+		  LOG(llevError,"ERROR: Treasure list name <%s> double used.\n", STRING_SAFE(tl->listname));
+		  return;
+	  }
+	
       if(previous==NULL)
         first_treasurelist=tl;
       else
@@ -112,7 +121,7 @@ void load_treasures() {
 #ifdef TREASURE_DEBUG
 	  if (t->next_yes || t->next_no) {
 	    LOG(llevBug,"BUG: Treasure %s is one item, but on treasure %s\n",
-		tl->name, t->item ? t->item->name : t->name);
+		tl->listname, t->item ? t->item->name : t->name);
 	    LOG(llevBug,"BUG:  the next_yes or next_no field is set");
 	  }
 #endif
@@ -124,21 +133,43 @@ void load_treasures() {
       }
     } else
 		LOG(llevError,"ERROR: Treasure-list didn't understand: %s\n",buf);
-  /* LOG(llevDebug,"Treasure-list found: %s",buf);*/
   }
   close_and_delete(fp, comp);
 
-#ifdef TREASURE_DEBUG
-/* Perform some checks on how valid the treasure data actually is.
- * verify that list transitions work (ie, the list that it is supposed
- * to transition to exists).  Also, verify that at least the name
- * or archetype is set for each treasure element.
- */
+
+  LOG(llevInfo, " link treasure lists pass 2...\n");
   for (previous=first_treasurelist; previous!=NULL; previous=previous->next)
-    check_treasurelist(previous->items, previous);
-#endif
+	  postparse_treasurelist(previous->items, previous);
 
 	create_money_table();
+}
+
+static void postparse_treasurelist(treasure *t, treasurelist *tl)
+{
+	treasurelist *tl_tmp;
+
+    if (t->item==NULL && t->name==NULL)
+		LOG(llevError,"ERROR: Treasurelist %s has element with no name or archetype\n", STRING_SAFE(tl->listname));
+    if (t->chance>=100 && t->next_yes && (t->next || t->next_no))
+		LOG(llevBug,"BUG: Treasurelist %s has element that has 100% generation, next_yes field as well as next or next_no\n",tl->listname);
+
+	/* if we have a list name && its not "none" -> link the list in */
+    if (t->name && t->name != global_string_none)
+	{
+		for(tl_tmp=first_treasurelist;tl_tmp!=NULL;tl_tmp=tl_tmp->next)
+		{
+			if(t->name == tl_tmp->listname)
+				break;
+		}
+		if(!tl_tmp)
+			LOG(llevError,"ERROR: Treasurelist %s has element with invalid name <%s>\n", STRING_SAFE(tl->listname),STRING_SAFE(t->name));
+
+		t->tlist = tl_tmp;
+	}
+
+    if (t->next) postparse_treasurelist(t->next, tl);
+    if (t->next_yes) postparse_treasurelist(t->next_yes,tl);
+    if (t->next_no) postparse_treasurelist(t->next_no, tl);
 }
 
 /* to generate from a value a set of coins (like 3 gold, 4 silver and 19 copper)
@@ -342,7 +373,7 @@ void init_artifacts()
 			cp = strchr(cp,' ') + 1;
 			if (!strcmp(cp,"all"))
 				continue;
-			if (!strcmp(cp,"none"))
+			if (!stricmp(cp,"none"))
 			{
 				none_flag= TRUE;
 				continue;
@@ -504,7 +535,7 @@ static treasurelist *get_empty_treasurelist(void) {
   treasurelist *tl = (treasurelist *) malloc(sizeof(treasurelist));
   if(tl==NULL)
 	LOG(llevError,"ERROR: get_empty_treasurelist(): OOM.\n");
-  tl->name=NULL;
+  tl->listname=NULL;
   tl->next=NULL;
   tl->items=NULL;
   tl->t_style = T_STYLE_UNSET; /* -2 is the "unset" marker and will virtually handled as 0 which can be overruled */
@@ -524,6 +555,7 @@ static treasure *get_empty_treasure(void) {
 	LOG(llevError,"ERROR: get_empty_treasure(): OOM.\n");
   t->change_arch.item_race=-1;
   t->change_arch.name=NULL;
+  t->tlist = NULL;
   t->change_arch.slaying=NULL;
   t->change_arch.title=NULL;
   t->t_style = T_STYLE_UNSET; /* -2 is the "unset" marker and will virtually handled as 0 which can be overruled */
@@ -553,42 +585,170 @@ static treasure *get_empty_treasure(void) {
  * Searches for the given treasurelist in the globally linked list
  * of treasurelists which has been built by load_treasures().
  */
+treasurelist *find_treasurelist(const char *name) 
+{
+	const char *tmp=find_string(name);
+	treasurelist *tl;
 
-treasurelist *find_treasurelist(const char *name) {
-  const char *tmp=find_string(name);
-  treasurelist *tl;
+	/* Special cases - randomitems of none is to override default.  If
+	* first_treasurelist is null, it means we are on the first pass of
+	* of loading archetyps, so for now, just return - second pass will
+	* init these values.
+	*/
+	if (tmp == global_string_none || !first_treasurelist)
+		return NULL;
+	if(tmp!=NULL)
+	{
+		for(tl=first_treasurelist;tl!=NULL;tl=tl->next)
+		{
+		  if(tmp==tl->listname)
+		    return tl;
+		}
+	}
 
-  /* Special cases - randomitems of none is to override default.  If
-   * first_treasurelist is null, it means we are on the first pass of
-   * of loading archetyps, so for now, just return - second pass will
-   * init these values.
-   */
-  if (!strcmp(name,"none") || (!first_treasurelist)) return NULL;
-  if(tmp!=NULL)
-    for(tl=first_treasurelist;tl!=NULL;tl=tl->next)
-      if(tmp==tl->name)
-        return tl;
-  LOG(llevBug,"Bug: Couldn't find treasurelist %s\n",name);
-  return NULL;
+	LOG(llevBug,"Bug: Couldn't find treasurelist %s\n",name);
+	return NULL;
 }
 
-
-/* This is similar to the old generate treasure function.  However,
- * it instead takes a treasurelist.  It is really just a wrapper around
- * create_treasure.  We create a dummy object that the treasure gets
- * inserted into, and then return that treausre
- */
-object *generate_treasure(treasurelist *t, int difficulty)
+static inline treasurelist *find_treasurelist_intern(const char *name) 
 {
-	object *ob = get_object(), *tmp;
+	treasurelist *tl;
 
-	create_treasure(t, ob, 0, difficulty, t->t_style, t->artifact_chance,0,NULL);
+	for(tl=first_treasurelist;tl!=NULL;tl=tl->next)
+	{
+	  if(name==tl->listname)
+	    return tl;
+	}
 
-	/* Don't want to free the object we are about to return */
-	tmp = ob->inv;
-	if (tmp!=NULL) remove_ob(tmp); /* remove from inv - no move off */
-	if (ob->inv) {
-	    LOG(llevError,"ERROR: In generate treasure, created multiple objects.\n");
+	return NULL;
+}
+
+/* link_treasurelists will generate a linked lists of treasure list
+ * using a string in format "listname1;listname2;listname3;..." as 
+ * argument. 
+ * Return: objectlink * to list of treasurelist
+ */
+objectlink *link_treasurelists(char *liststring, uint32 flags)
+{
+	char *tmp;
+	const char *name;
+	treasurelist *tl;
+	objectlink *list = NULL, *list_start=NULL;
+
+	if (!first_treasurelist)
+		return NULL;
+	
+	/*LOG(-1,"LINK list: %s - ",liststring);*/
+	do 
+	{
+		if((tmp = strchr(liststring, ';')))
+			*tmp=0;
+		if(!(name = find_string(liststring)))
+		{
+			/* no treasure list name in hash table = no treasure list with that name */
+			LOG(llevInfo,"BUG: link_treasurelists(): Treasurelist >%s< not found\n",liststring);			
+		}
+		else
+		{
+			/* we have a 'none' string?
+			 * normally, we should break here but perhaps
+			 * we have something like "list1;none;list2".
+			 * Can't think why but lets do it right.
+			 */
+			if (name != global_string_none)
+			{
+				tl = find_treasurelist_intern(name);
+				if(!tl)
+					LOG(llevInfo,"BUG: link_treasurelists(): Treasurelist >%s< not found\n",liststring);
+				else
+				{
+					if(list)
+					{
+						list->next = get_objectlink(OBJLNK_FLAG_TL);
+						list->next->prev = list;
+						list = list->next;
+					}
+					else
+					{
+						list_start = list = get_objectlink(OBJLNK_FLAG_TL);
+						/* important: we only mark the first list node with
+						 * static or refcount flag.
+						 */
+						list->flags|=flags;
+						if(flags & OBJLNK_FLAG_REF)
+							list->ref_count++;
+						/*LOG(-1," --> %x (%d)\n",list->flags,list->ref_count);*/
+					}
+
+					list->objlink.tl=tl;
+				}
+			}
+		}
+		if(tmp)
+			liststring = tmp+1;
+	}
+	while(tmp);
+
+	return list_start;
+}
+
+/* unlink a treasure list.
+ * if flag is set to TRUE, ignore (delete) the OBJLNK_FLAG_STATIC flag
+ */
+void unlink_treasurelists(objectlink *list, int flag)
+{
+	/*LOG(-1,"unlink list: %s (%x - %d)\n",list->objlink.tl->listname, list->flags, list->ref_count );*/
+	if(list && (list->flags & OBJLNK_FLAG_REF))
+		list->ref_count--;
+
+	/* skip if we have no list or refcount shows
+	 * that still other objects points to this list.
+	 */
+	if(!list || list->ref_count || ((list->flags&OBJLNK_FLAG_STATIC) && !flag))
+	{
+		/*LOG(-1,"skiped listpart: %s\n",list->objlink.tl->listname);*/
+		return;
+	}
+
+	do
+	{
+		/*LOG(-1,"freed listpat: %s\n",list->objlink.tl->listname);	*/
+		free_objectlink_simple(list);
+		/* hm, this should work... return_poolchunk() should not effect the objectlink itself */
+		list=list->next;			
+	}
+	while(list);
+}
+
+/* The point of generate_treasure is that is generates exactly *one* 
+ * item. I tweaked it a bit so it will work now with a linked list.
+ * generate_treasure can give back NULL (nothing generated). 
+ * We will browse the linked list until we get a valid target. 
+ * We break if we have a item or we are at the end of the list.
+ * MT-2005
+ */ 
+object *generate_treasure(struct oblnk *t, int difficulty)
+{
+	object *ob = get_object(), *tmp=NULL;
+
+	while(t)
+	{
+		create_treasure(t->objlink.tl, ob, 0, difficulty, t->objlink.tl->t_style, t->objlink.tl->artifact_chance,0,NULL);
+
+		if(!ob->inv) /* no treasure, try next tlist */
+			continue;
+
+		/* Don't want to free the object we are about to return */
+		tmp = ob->inv;
+		remove_ob(tmp); /* remove from inv - no move off */
+		if (ob->inv) 
+		{
+		    LOG(llevBug,"BUG: generate treasure(): created multiple objects for tlist %s.\n",STRING_SAFE(t->objlink.tl->listname));
+			/* remove objects so garbage collection can put them back */
+			for(;ob->inv;)
+				remove_ob(ob->inv);
+		}
+		return tmp;
 	}
 	return tmp;
 }
@@ -604,12 +764,21 @@ object *generate_treasure(treasurelist *t, int difficulty)
  * treasure list is generated. This is then the "base" list. We will use the real
  * first arch_change as base to other recursive calls.
  */
+/* help function to call a objectlink linked list of treasure lists */
+void create_treasure_list(struct oblnk *t, object *op, int flag, int difficulty, int t_style, int a_chance, int tries, struct _change_arch *arch_change)
+{
+	while(t)
+	{
+		create_treasure(t->objlink.tl, op, flag, difficulty,t_style,a_chance,tries, arch_change);
+		t=t->next;			
+	}
+}
+
 void create_treasure(treasurelist *t, object *op, int flag, int difficulty, int t_style, int a_chance, int tries, struct _change_arch *arch_change)
 {
-
     if (tries++>100)
 	{
-		LOG(llevDebug,"create_treasure(): tries >100 for t-list %s.",t->name?t->name:"<noname>");
+		LOG(llevDebug,"create_treasure(): tries >100 for t-list %s.",t->listname?t->listname:"<noname>");
 		return;
 	}
 
@@ -650,10 +819,10 @@ void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int
 
 	if((t->chance_fix!=CHANCE_FIX && !(RANDOM()%(int)t->chance_fix)) ||  (int)t->chance >= 100 || ((RANDOM()%100 + 1) < (int) t->chance)) {
 			/*LOG(-1,"CAT22: cs: %d (%d)(%s)\n", t->chance_fix, t->chance, t->name);*/
-    if (t->name) {
-	/*  LOG(-1,"-CAT2: %s (%d)\n", STRING_SAFE(t->name),change_arch?t->change_arch.material_quality:9999); */
-		if (strcmp(t->name,"NONE") && difficulty>=t->difficulty)
-			create_treasure(find_treasurelist(t->name), op, flag, difficulty, t_style, a_chance,tries,change_arch?change_arch:&t->change_arch);
+	if (t->tlist && difficulty>=t->difficulty)
+	{
+		/*  LOG(-1,"-CAT2: %s (%d)\n", STRING_SAFE(t->name),change_arch?t->change_arch.material_quality:9999); */
+			create_treasure(t->tlist, op, flag, difficulty, t_style, a_chance,tries,change_arch?change_arch:&t->change_arch);
     }
 	else if(difficulty>=t->difficulty)
 	{
@@ -775,14 +944,14 @@ void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty,
 
 	if (!t || value>0) 
 	{
-		LOG(llevBug, "BUG: create_one_treasure: got null object or not able to find treasure - tl:%s op:%s\n",tl?tl->name:"(null)",op?op->name:"(null)");
+		LOG(llevBug, "BUG: create_one_treasure: got null object or not able to find treasure - tl:%s op:%s\n",tl?tl->listname:"(null)",op?op->name:"(null)");
 		return;
     }
 
-    if (t->name) {
-		if (!strcmp(t->name,"NONE")) return;
+    if (t->tlist)
+	{
 		if (difficulty>=t->difficulty)
-		    create_treasure(find_treasurelist(t->name), op, flag, difficulty, t_style,a_chance, tries, change_arch);
+		    create_treasure(t->tlist, op, flag, difficulty, t_style,a_chance, tries, change_arch);
 		else if (t->nrof)
 			create_one_treasure(tl, op, flag, difficulty, t_style,a_chance, tries, change_arch);
 		return;
@@ -996,43 +1165,43 @@ int set_ring_bonus(object *op,int bonus, int level) {
 	 */
 	case 0: /* we are creating hp stuff! */
 		tmp = 5;
-		if(level < 10)
+		if(level < 5)
 		{
 			tmp += RANDOM()%10;
 			if(bonus>0)
 				op->value=(int)((float)op->value*1.3f);
 		}
-		else if(level < 20)
+		else if(level < 10)
 		{
 			tmp += 10+RANDOM()%10;			
 			if(bonus>0)
 				op->value=(int)((float)op->value*1.32f);
 		}
-		else if(level < 30)
+		else if(level < 15)
 		{
 			tmp += 15+RANDOM()%20;			
 			if(bonus>0)
 				op->value=(int)((float)op->value*1.34f);
 		}
-		else if(level < 40)
+		else if(level < 20)
 		{
 			tmp += 20+RANDOM()%21;			
 			if(bonus>0)
 				op->value=(int)((float)op->value*1.38f);
 		}
-		else if(level < 50)
+		else if(level < 25)
 		{
 			tmp += 25+RANDOM()%23;			
 			if(bonus>0)
 				op->value=(int)((float)op->value*1.4f);
 		}
-		else if(level < 60)
+		else if(level < 30)
 		{
 			tmp += 30+RANDOM()%25;			
 			if(bonus>0)
 				op->value=(int)((float)op->value*1.42f);
 		}
-		else if(level < 80)
+		else if(level < 40)
 		{
 			tmp += 40+RANDOM()%30;			
 			if(bonus>0)
@@ -1040,7 +1209,7 @@ int set_ring_bonus(object *op,int bonus, int level) {
 		}
 		else
 		{
-			tmp += 50+RANDOM()%40;			
+			tmp += (int)((double)level*0.65)+50+RANDOM()%40;			
 			if(bonus>0)
 				op->value=(int)((float)op->value*1.5f);
 		}
@@ -1049,7 +1218,10 @@ int set_ring_bonus(object *op,int bonus, int level) {
 			tmp =-tmp;
 		}
 		else
-			op->item_level = level;
+		{
+			op->value +=level*99;
+			op->item_level = (int)((double)level*(0.5+((double)(RANDOM()%40)/100.0)));
+		}
 		op->stats.maxhp = tmp;
 		break;
 	case 1:
@@ -1101,43 +1273,43 @@ int set_ring_bonus(object *op,int bonus, int level) {
 		if(!RANDOM()%3)
 			goto make_prot_items;
 		tmp = 3;
-		if(level < 10)
+		if(level < 5)
 		{
 			tmp += RANDOM()%3;
 			if(bonus>0)
 				op->value=(int)((float)op->value*1.3f);
 		}
-		else if(level < 20)
+		else if(level < 10)
 		{
 			tmp += 3+RANDOM()%4;			
 			if(bonus>0)
 				op->value=(int)((float)op->value*1.32f);
 		}
-		else if(level < 30)
+		else if(level < 15)
 		{
 			tmp += 4+RANDOM()%6;			
 			if(bonus>0)
 				op->value=(int)((float)op->value*1.34f);
 		}
-		else if(level < 40)
+		else if(level < 20)
 		{
 			tmp += 6+RANDOM()%8;			
 			if(bonus>0)
 				op->value=(int)((float)op->value*1.38f);
 		}
-		else if(level < 50)
+		else if(level < 25)
 		{
 			tmp += 8+RANDOM()%10;			
 			if(bonus>0)
 				op->value=(int)((float)op->value*1.4f);
 		}
-		else if(level < 60)
+		else if(level < 33)
 		{
 			tmp += 10+RANDOM()%12;			
 			if(bonus>0)
 				op->value=(int)((float)op->value*1.42f);
 		}
-		else if(level < 80)
+		else if(level < 44)
 		{
 			tmp += 15+RANDOM()%15;			
 			if(bonus>0)
@@ -1145,7 +1317,7 @@ int set_ring_bonus(object *op,int bonus, int level) {
 		}
 		else
 		{
-			tmp += 20+RANDOM()%20;			
+			tmp += (int)((double)level*0.53)+20+RANDOM()%20;			
 			if(bonus>0)
 				op->value=(int)((float)op->value*1.5f);
 		}
@@ -1154,7 +1326,10 @@ int set_ring_bonus(object *op,int bonus, int level) {
 			tmp =-tmp;
 		}
 		else
-			op->item_level = level;
+		{
+			op->value +=level*111;
+			op->item_level = (int)((double)level*(0.5+((double)(RANDOM()%40)/100.0)));
+		}
 		op->stats.maxsp = tmp;
 		break;
 		
@@ -1162,43 +1337,43 @@ int set_ring_bonus(object *op,int bonus, int level) {
 		if(!RANDOM()%3)
 			goto make_prot_items;
 		tmp = 3;
-		if(level < 10)
+		if(level < 5)
 		{
 			tmp += RANDOM()%3;
 			if(bonus>0)
 				op->value=(int)((float)op->value*1.3f);
 		}
-		else if(level < 20)
+		else if(level < 10)
 		{
 			tmp += 3+RANDOM()%4;			
 			if(bonus>0)
 				op->value=(int)((float)op->value*1.32f);
 		}
-		else if(level < 30)
+		else if(level < 15)
 		{
 			tmp += 4+RANDOM()%6;			
 			if(bonus>0)
 				op->value=(int)((float)op->value*1.34f);
 		}
-		else if(level < 40)
+		else if(level < 20)
 		{
 			tmp += 6+RANDOM()%8;			
 			if(bonus>0)
 				op->value=(int)((float)op->value*1.38f);
 		}
-		else if(level < 50)
+		else if(level < 25)
 		{
 			tmp += 8+RANDOM()%10;			
 			if(bonus>0)
 				op->value=(int)((float)op->value*1.4f);
 		}
-		else if(level < 60)
+		else if(level < 33)
 		{
 			tmp += 10+RANDOM()%12;			
 			if(bonus>0)
 				op->value=(int)((float)op->value*1.42f);
 		}
-		else if(level < 80)
+		else if(level < 44)
 		{
 			tmp += 15+RANDOM()%15;			
 			if(bonus>0)
@@ -1206,7 +1381,7 @@ int set_ring_bonus(object *op,int bonus, int level) {
 		}
 		else
 		{
-			tmp += 20+RANDOM()%20;			
+			tmp += (int)((double)level*0.53)+20+RANDOM()%20;			
 			if(bonus>0)
 				op->value=(int)((float)op->value*1.5f);
 		}
@@ -1215,10 +1390,13 @@ int set_ring_bonus(object *op,int bonus, int level) {
 			tmp =-tmp;
 		}
 		else
-			op->item_level = level;
+		{
+			op->value +=level*111;
+			op->item_level = (int)((double)level*(0.5+((double)(RANDOM()%40)/100.0)));
+		}
 		op->stats.maxsp = tmp;
 		break;
-		
+
 	case 13:
 make_prot_items:
 	case 14:
@@ -1650,7 +1828,7 @@ int fix_generated_item (object **op_ptr, object *creator, int difficulty, int a_
 		{
 			/* lets check we have a slaying/assassination arrow */
 			case ARROW:
-				if(op->slaying == treasure_string_none) /* compare hash ptrs */
+				if(op->slaying == global_string_none) /* compare hash ptrs */
 				{
 					int tmp = RANDOM() % global_race_counter;
 					racelink *list;
@@ -2100,12 +2278,11 @@ treasurelist *tl, *next;
 
     for (tl=first_treasurelist; tl!=NULL; tl=next) {
 	next=tl->next;
-	FREE_AND_CLEAR_HASH2(tl->name);
+	FREE_AND_CLEAR_HASH2(tl->listname);
 	if (tl->items) free_treasurestruct(tl->items);
 	free(tl);
     }
     free_artifactlist(first_artifactlist);
-	FREE_AND_CLEAR_HASH2(treasure_string_none);
 }
 
 /* set material_real... use fixed number when start == end or random range
@@ -2273,26 +2450,32 @@ set_material_real:
 
 void dump_monster_treasure (const char *name)
 {
-  archetype *at;
-  int        found;
+	archetype *at;
+	int	found;
 
-  found = 0;
-  LOG(llevInfo,"\n");
-  for (at = first_archetype; at != NULL; at = at->next) 
-    if (! strcasecmp (at->name, name))
-      {
-	LOG(llevInfo,"treasures for %s (arch: %s)\n", at->clone.name,
-		 at->name);
-	if (at->clone.randomitems != NULL)
-	  dump_monster_treasure_rec (at->clone.name,
-				     at->clone.randomitems->items, 1);
-	else
-	  LOG(llevInfo, "(nothing)\n");
-	LOG(llevInfo, "\n");
-	found++;
-      }
-  if (found == 0)
-    LOG(llevInfo, "No objects have the name %s!\n\n", name);
+	found = 0;
+	LOG(llevInfo,"\n");
+	for (at = first_archetype; at != NULL; at = at->next)
+	{
+		if (! strcasecmp (at->name, name))
+		{
+		LOG(llevInfo,"treasures for %s (arch: %s)\n", at->clone.name, at->name);
+
+		if (at->clone.randomitems != NULL)
+		{
+			struct oblnk *ol;
+
+			for(ol=at->clone.randomitems;ol;ol=ol->next)
+				dump_monster_treasure_rec (at->clone.name, ol->objlink.tl->items, 1);
+		}
+		else
+			LOG(llevInfo, "(nothing)\n");
+		LOG(llevInfo, "\n");
+		found++;
+		}
+	}
+	if (found == 0)
+		LOG(llevInfo, "No objects have the name %s!\n\n", name);
 }
 
 /* these function fetch the "enviroment level" for 
@@ -2345,28 +2528,3 @@ int get_enviroment_level(object *op)
 
 	return 1;
 }
-
-
-#ifdef TREASURE_DEBUG
-/* recursived checks the linked list.  Treasurelist is passed only
- * so that the treasure name can be printed out
- */
-/* TODO: i run in the problem, that i used the same treasurelist name in the treasures
- * file twice - the treasure list loader don't check for it. We should in include a check
- * here.
- */
-static void check_treasurelist(treasure *t, treasurelist *tl)
-{
-    if (t->item==NULL && t->name==NULL)
-	LOG(llevError,"ERROR: Treasurelist %s has element with no name or archetype\n", tl->name);
-    if (t->chance>=100 && t->next_yes && (t->next || t->next_no))
-	LOG(llevBug,"BUG: Treasurelist %s has element that has 100% generation, next_yes field as well as next or next_no\n",
-		tl->name);
-    /* find_treasurelist will print out its own error message */
-    if (t->name && strcmp(t->name,"NONE"))
-	(void) find_treasurelist(t->name);
-    if (t->next) check_treasurelist(t->next, tl);
-    if (t->next_yes) check_treasurelist(t->next_yes,tl);
-    if (t->next_no) check_treasurelist(t->next_no, tl);
-}
-#endif

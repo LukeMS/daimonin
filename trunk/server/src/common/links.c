@@ -26,16 +26,25 @@
 #include <global.h>
 
 /*
+ *	 I changed the objectlink module so it use not only the mempool
+ *   system but also uses one struct for objectlink and objectlinkpt.
+ *   This should not only speed up things and avoid memory fragmentation.
+ *   The new union{} part of the objectlink will turn this link object now
+ *   in a fast, easy to use and global used link for nearly every
+ *   game structure, dynamic or static. MT-2004
+ */
+
+/*
  * Allocates a new objectlink structure, initialises it, and returns
  * a pointer to it.
  */
 
-objectlink *get_objectlink() {
-  objectlink *ol=(objectlink *)CALLOC(1,sizeof(objectlink));
-  ol->ob=NULL;
-  ol->next=NULL;
-  ol->id = 0;
-  return ol;
+objectlink *get_objectlink(int id) 
+{
+	objectlink *ol=(objectlink *)get_poolchunk(POOL_OBJECT_LINK);
+	memset(ol,0,sizeof(objectlink));
+	ol->flags |= id;
+	return ol;
 }
 
 /*
@@ -44,11 +53,20 @@ objectlink *get_objectlink() {
  */
 
 oblinkpt *get_objectlinkpt() {
-  oblinkpt *obp = (oblinkpt *) malloc(sizeof(oblinkpt));
-  obp->link = NULL;
-  obp->next = NULL;
-  obp->value = 0;
+  oblinkpt *obp = (oblinkpt *) get_poolchunk(POOL_OBJECT_LINK);
+  memset(obp,0,sizeof(oblinkpt));
+  obp->flags |= OBJLNK_FLAG_LINK;
   return obp;
+}
+
+/* free objectlink 
+ * and clean up linked objects
+ */
+
+void free_objectlink(objectlink *ol) {
+	if(OBJECT_VALID(ol->objlink.ob,ol->id))
+		CLEAR_FLAG(ol->objlink.ob,FLAG_IS_LINKED);
+	free_objectlink_simple(ol);
 }
 
 /*
@@ -58,12 +76,12 @@ oblinkpt *get_objectlinkpt() {
  * objectlink malloc/free native.
 */
 
-void free_objectlink(objectlink *ol) {
+void free_objectlink_recursive(objectlink *ol) {
   if (ol->next)
-    free_objectlink(ol->next);
-  if(OBJECT_VALID(ol->ob,ol->id))
-	  CLEAR_FLAG(ol->ob,FLAG_IS_LINKED);
-  free(ol);
+    free_objectlink_recursive(ol->next);
+  if(OBJECT_VALID(ol->objlink.ob,ol->id))
+	  CLEAR_FLAG(ol->objlink.ob,FLAG_IS_LINKED);
+  free_objectlink_simple(ol);
 }
 
 /*
@@ -76,7 +94,7 @@ void free_objectlink(objectlink *ol) {
 void free_objectlinkpt(oblinkpt *obp) {
   if (obp->next)
     free_objectlinkpt(obp->next);
-  if (obp->link)
-    free_objectlink(obp->link);
-  free(obp);
+  if (obp->objlink.link)
+    free_objectlink_recursive(obp->objlink.link);
+  free_objectlinkpt_simple(obp);
 }
