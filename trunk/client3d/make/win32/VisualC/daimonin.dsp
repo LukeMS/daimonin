@@ -63,31 +63,11 @@ PostBuild_Cmds=copy Debug\*.exe ..\..\..\*.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
-SOURCE=..\..\..\source\adler32.c
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\..\source\client.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\source\crc32.c
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\..\source\dialog.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\source\inffast.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\source\inflate.c
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\source\inftrees.c
 # End Source File
 # Begin Source File
 
@@ -115,15 +95,11 @@ SOURCE=..\..\..\source\option_init.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\source\uncompr.c
+SOURCE=..\..\..\source\textwindow.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\..\source\xyz.cpp
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\source\zutil.c
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -135,31 +111,11 @@ SOURCE=..\..\..\source\include\client.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\source\include\crc32.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\..\source\include\dialog.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\source\include\ExampleApplication.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\..\source\include\frame_Listener.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\source\include\inffast.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\source\include\inflate.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\source\include\inftrees.h
 # End Source File
 # Begin Source File
 
@@ -175,15 +131,63 @@ SOURCE=..\..\..\source\include\option.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\source\include\ortho.h
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\..\source\include\player.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\source\include\textwindow.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\source\include\xyz.h
+# End Source File
+# End Group
+# Begin Group "Resource Files"
+
+# PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
+# End Group
+# Begin Group "3rd Party"
+
+# PROP Default_Filter ""
+# Begin Source File
+
+SOURCE=..\..\..\source\adler32.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\crc32.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\include\crc32.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\inffast.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\include\inffast.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\inflate.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\include\inflate.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\inftrees.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\include\inftrees.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\include\uncompr.c
 # End Source File
 # Begin Source File
 
@@ -195,12 +199,12 @@ SOURCE=..\..\..\source\include\zlib.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\source\zutil.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\source\include\zutil.h
 # End Source File
-# End Group
-# Begin Group "Resource Files"
-
-# PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 # End Group
 # End Target
 # End Project
