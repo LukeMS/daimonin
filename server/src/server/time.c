@@ -1492,9 +1492,11 @@ void move_marker(object *op) {
  
 int process_object(object *op) {
 
-
+  if(OBJECT_FREE(op))
+      return 1;
+  
   if(QUERY_FLAG(op, FLAG_MONSTER))
-    if(move_monster(op) || OBJECT_FREE(op)) 
+    if(move_monster(op)) 
       return 1;
 
   if(QUERY_FLAG(op, FLAG_CHANGING)&&!op->state) {
