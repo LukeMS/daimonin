@@ -2631,8 +2631,6 @@ int cast_identify(object *op, int level, object *single_ob, int mode)
 	if (op->type==PLAYER && (!success && !success2))
 		new_draw_info(NDI_UNIQUE, 0,op, "You can't reach anything unidentified in your inventory.");
 
-	spell_effect(SP_IDENTIFY, op->x, op->y, op->map, op); /* always play the tune */
-
   return success;
 }
 

@@ -33,8 +33,10 @@ int command_say (object *op, char *params)
     if (!params) 
 		return 0;
 
+//		if(op->type != PLAYER)
+			assert(0);
 
-	LOG(llevInfo,"SAY:%s >%s<\n", query_name(op), params);
+	LOG(llevInfo,"CHAT SAY:%s >%s<\n", query_name(op), params);
     communicate(op, params);
   
     return 0;
@@ -50,7 +52,7 @@ int command_shout (object *op, char *params)
     if (!params) 
 		return 1;
 
-	LOG(llevInfo,"SHOUT:%s >%s<\n", query_name(op), params);
+	LOG(llevInfo,"CHAT SHOUT:%s >%s<\n", query_name(op), params);
     strcpy(buf,op->name);
     strcat(buf," shouts: ");
     strncat(buf, params, MAX_BUF-30);
@@ -77,7 +79,7 @@ int command_tell (object *op, char *params)
 	if (!params) 
 		return 1;
 
-	LOG(llevInfo,"TELL:%s >%s<\n", query_name(op), params);
+	LOG(llevInfo,"CHAT TELL:%s >%s<\n", query_name(op), params);
 
 	name = params;
 	msg = strchr(name, ' ');
