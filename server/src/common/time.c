@@ -155,8 +155,9 @@ int time_until_next_tick(struct timeval *out)
     tick_time.tv_usec = max_time;
     add_time(&next_tick, &last_time, &tick_time);
     
-    GETTIMEOFDAY(&now);
-    if(timercmp(&next_tick, &now, <=)) /* Time for the next tick? */
+    GETTIMEOFDAY(&now); 
+    /* Time for the next tick? (timercmp does not work for <= / >=) */
+    if(timercmp(&next_tick, &now, <) || timercmp(&next_tick, &now, ==))
     {
         last_time.tv_sec = next_tick.tv_sec;
         last_time.tv_usec = next_tick.tv_usec;
