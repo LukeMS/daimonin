@@ -53,24 +53,12 @@ Event::Event(RenderWindow* win, Camera* cam, MouseMotionListener *mMMotionListen
     TextWin->setChild(ChatWin);
 	ChatWin->Print("Welcome to Daimonin 3D.  ", ColourValue::Black); 
 	ChatWin->Print("-----------------------  ", ColourValue::Black);
-    ChatWin->Print("Checking your sytem...   ", ColourValue::White);
-    ChatWin->Print("...              ", ColourValue::White);
-    ChatWin->Print("Harddisk space is ok.    ", ColourValue::Green);
-    ChatWin->Print("Memory space is ok.      ", ColourValue::Green);
-    ChatWin->Print("Video card test skipped. ", ColourValue::White);
-    ChatWin->Print("Processor test faild!!   ", ColourValue::Red);
-    ChatWin->Print(" Whats this, a toaster?  ", ColourValue::White);
-    ChatWin->Print(" Sorry, you need at least", ColourValue::White);
-    ChatWin->Print(" 4.5 more GHz.       ", ColourValue::White);
-	TextWin->Print("Press:");
-	TextWin->Print("  L            -> Localhost login");
-	TextWin->Print("  C            -> Camera detail");
-	TextWin->Print("  F            -> Filtering");
-	TextWin->Print("  Page Up/Down  -> Camera view.");
-	TextWin->Print("  Print          -> Screenshot.");
-	TextWin->Print("");
-	TextWin->Print("Keep coding...", ColourValue::White);
-	TextWin->Print("<polyveg>", ColourValue::White);
+	ChatWin->Print("  L            -> Lauch network");
+	ChatWin->Print("  C            -> Camera detail");
+	ChatWin->Print("  F            -> Filtering");
+	ChatWin->Print("  Page Up/Down  -> Camera view.");
+	ChatWin->Print("  Print          -> Screenshot.");
+	ChatWin->Print("");
 
 	/////////////////////////////////////////////////////////////////////////////////////////
 	// Create unbuffered key & mouse input.
@@ -145,7 +133,7 @@ bool Event::frameStarted(const FrameEvent& evt)
         if (processUnbufferedKeyInput(evt) == false) { return false; }
 	}
 */
-	if (Option::getSingelton().GameStatus > GAME_STATUS_WAITLOOP) { Network::getSingelton().Update(); }
+	if (Option::getSingelton().mStartNetwork) { Network::getSingelton().Update(); }
 
     if (mQuitGame) { return false; }
 	return true;
@@ -212,14 +200,17 @@ void Event::keyEventDialog(KeyEvent *e)
 			break;
 		case KC_DELETE:
 		case KC_BACK:
-			TextInput::getSingleton().delLastChar();
+			TextInput::getSingleton().backspace();
 			break;
 		case KC_ESCAPE:
 			TextInput::getSingleton().canceled();
 			break;
 		default:
+/*
 			if (e->getKeyChar()) 
 				TextInput::getSingleton().addChar(e->getKeyChar());
+*/
+			TextInput::getSingleton().keyEvent(e->getKeyChar(), e->getKey());
 			break;
 	}
 }
@@ -287,7 +278,7 @@ void Event::keyPressed(KeyEvent *e)
 			MaterialManager::getSingleton().setDefaultAnisotropy(mAniso);
 			break;
 		case KC_L:
-			Option::getSingelton().GameStatus = GAME_STATUS_STARTCONNECT;
+			Option::getSingelton().mStartNetwork = true;
 			break;
 		case KC_PGUP:
 		    mCamera->pitch(Degree(-0.13));
