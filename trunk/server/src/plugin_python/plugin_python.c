@@ -4944,7 +4944,7 @@ MODULEAPI int HandleEvent(CFParm* PParm)
 		query_name((object *)(PParm->Value[2])),
 		query_name((object *)(PParm->Value[3])),
 		(char *)(PParm->Value[4])!= NULL?(char *)(PParm->Value[4]):"<null>",
-		(int *)(PParm->Value[5]),(int *)(PParm->Value[6]),(char *)(PParm->Value[7]),(char *)(PParm->Value[8]));
+		*(int *)(PParm->Value[5]),*(int *)(PParm->Value[6]),*(int *)(PParm->Value[7]),*(int *)(PParm->Value[8]));
 #endif
     if (StackPosition == MAX_RECURSIVE_CALL)
     {
