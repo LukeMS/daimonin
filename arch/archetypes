@@ -10767,7 +10767,7 @@ editor_folder items/light
 race lamp_oil
 layer 3
 material 512
-value 15
+value 22
 weight 400
 food 800
 nrof 1
@@ -10783,7 +10783,7 @@ animation torch
 is_animated 0
 anim_speed 4
 material 144
-value 15
+value 10
 weight 500
 maxhp 500
 food 500
@@ -12285,7 +12285,7 @@ editor_folder items/weapon
 layer 3
 attack_cleave 100
 weapon_speed 0.02
-item_level 11
+item_level 10
 item_skill 4
 dam 8
 wc 7
@@ -12304,7 +12304,7 @@ layer 3
 attack_cleave 100
 weapon_speed 0.02
 dam 8
-item_level 11
+item_level 10
 item_skill 4
 wc 7
 sub_type 7
@@ -12322,7 +12322,7 @@ layer 3
 attack_cleave 100
 weapon_speed 0.02
 dam 8
-item_level 11
+item_level 10
 item_skill 4
 wc 7
 sub_type 7
@@ -12339,7 +12339,7 @@ editor_folder items/weapon
 layer 3
 attack_cleave 100
 weapon_speed 0.02
-item_level 11
+item_level 10
 item_skill 4
 dam 8
 wc 7
@@ -12376,7 +12376,7 @@ layer 3
 weapon_speed 0.02
 attack_impact 100
 dam 8
-item_level 11
+item_level 10
 item_skill 4
 wc 7
 sub_type 4
@@ -12411,7 +12411,7 @@ editor_folder items/weapon
 layer 3
 weapon_speed 0.0175
 attack_impact 100
-item_level 11
+item_level 10
 item_skill 4
 dam 8
 wc 6
@@ -12429,7 +12429,7 @@ editor_folder items/weapon
 layer 3
 weapon_speed 0.02
 attack_impact 100
-item_level 11
+item_level 10
 item_skill 4
 dam 8
 wc 7
@@ -12447,7 +12447,7 @@ editor_folder items/weapon
 layer 3
 weapon_speed 0.02
 attack_impact 100
-item_level 11
+item_level 10
 item_skill 4
 dam 8
 wc 7
@@ -12466,7 +12466,7 @@ layer 3
 weapon_speed 0.02
 attack_impact 100
 dam 8
-item_level 11
+item_level 10
 item_skill 4
 wc 7
 sub_type 4
@@ -12484,7 +12484,7 @@ layer 3
 weapon_speed 0.02
 attack_impact 100
 dam 8
-item_level 11
+item_level 10
 item_skill 4
 wc 7
 sub_type 4
@@ -12502,7 +12502,7 @@ layer 3
 weapon_speed 0.0175
 attack_impact 100
 dam 8
-item_level 11
+item_level 10
 item_skill 4
 wc 7
 sub_type 4
@@ -12519,7 +12519,7 @@ editor_folder items/weapon
 layer 3
 weapon_speed 0.02
 attack_pierce 100
-item_level 11
+item_level 10
 item_skill 4
 sub_type 6
 material 18
@@ -12537,7 +12537,7 @@ editor_folder items/weapon
 layer 3
 weapon_speed 0.02
 attack_pierce 100
-item_level 11
+item_level 10
 item_skill 4
 sub_type 6
 material 18
@@ -12555,7 +12555,7 @@ editor_folder items/weapon
 layer 3
 weapon_speed 0.02
 attack_pierce 100
-item_level 11
+item_level 10
 item_skill 4
 sub_type 6
 material 18
@@ -12573,7 +12573,7 @@ editor_folder items/weapon
 layer 3
 weapon_speed 0.02
 attack_pierce 100
-item_level 11
+item_level 10
 item_skill 4
 sub_type 6
 material 2
@@ -12592,7 +12592,7 @@ layer 3
 weapon_speed 0.02
 attack_slash 100
 sub_type 5
-item_level 11
+item_level 10
 item_skill 4
 material 2
 material_real 65
@@ -12610,7 +12610,7 @@ layer 3
 weapon_speed 0.02
 attack_slash 100
 sub_type 5
-item_level 11
+item_level 10
 item_skill 4
 material 2
 material_real 65
@@ -12627,7 +12627,7 @@ editor_folder items/weapon
 layer 3
 weapon_speed 0.02
 attack_slash 100
-item_level 11
+item_level 10
 item_skill 4
 sub_type 5
 material 2
@@ -12645,7 +12645,7 @@ editor_folder items/weapon
 layer 3
 weapon_speed 0.02
 attack_slash 100
-item_level 11
+item_level 10
 item_skill 4
 sub_type 5
 material 18
@@ -12663,7 +12663,7 @@ editor_folder items/weapon
 layer 3
 weapon_speed 0.02
 attack_slash 100
-item_level 11
+item_level 10
 item_skill 4
 sub_type 5
 material 2
@@ -12682,7 +12682,7 @@ layer 3
 weapon_speed 0.02
 attack_slash 100
 sub_type 5
-item_level 11
+item_level 10
 item_skill 4
 material 2
 material_real 65
@@ -12699,7 +12699,7 @@ editor_folder items/weapon
 layer 3
 weapon_speed 0.02
 attack_slash 100
-item_level 11
+item_level 10
 item_skill 4
 sub_type 5
 material 2
