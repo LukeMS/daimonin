@@ -2536,7 +2536,7 @@ end
 #
 Allowed ring_generic
 chance 15
-artifact ring_woe
+artifact ring_woe1
 def_arch ring_generic
 Object
 title of Woe
@@ -2560,7 +2560,7 @@ end
 #
 Allowed ring_generic
 chance 15
-artifact ring_woe
+artifact ring_woe2
 def_arch ring_generic
 Object
 title of Woe
@@ -2584,7 +2584,7 @@ end
 #
 Allowed ring_generic
 chance 20
-artifact ring_woe
+artifact ring_woe3
 def_arch ring_generic
 Object
 title of Woe
