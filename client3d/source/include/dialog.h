@@ -33,6 +33,7 @@ enum _dialog_stage
 	DIALOG_STAGE_LOGIN_GET_NAME,
 	DIALOG_STAGE_LOGIN_GET_PASSWD,
 	DIALOG_STAGE_LOGIN_GET_PASSWD_AGAIN,
+	DIALOG_STAGE_GET_META_SERVER,
 	DIALOG_STAGE_SUM
 };
 
@@ -54,6 +55,7 @@ class Dialog
 	bool isVisible() { return mVisible; }
 	void UpdateLogin(unsigned int stage);
 	void setWarning(int warning);
+	void setSelText(unsigned int pos, const char *text);
 
     Overlay *mLoginOverlay;
 	OverlayElement *mPlayerName, *mPlayerPasswd, *mPlayerRePasswd;
