@@ -76,6 +76,7 @@ static int  GameObject_CheckInventory(lua_State *L);
 static int  GameObject_Remove(lua_State *L);
 static int  GameObject_Destruct(lua_State *L);
 static int  GameObject_SetPosition(lua_State *L);
+static int  GameObject_Move(lua_State *L);
 static int  GameObject_IdentifyItem(lua_State *L);
 static int  GameObject_Write(lua_State *L);
 static int  GameObject_IsOfType(lua_State *L);

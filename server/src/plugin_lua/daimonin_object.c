@@ -79,6 +79,7 @@ static struct method_decl   GameObject_methods[]            =
     {"PayForItem", (lua_CFunction) GameObject_PayForItem}, {"PayAmount", (lua_CFunction) GameObject_PayAmount},
     {"SendCustomCommand",(lua_CFunction) GameObject_SendCustomCommand},
     {"CheckTrigger", (lua_CFunction) GameObject_CheckTrigger}, {"Clone", (lua_CFunction) GameObject_Clone},
+    {"Move", (lua_CFunction) GameObject_Move},
 
     // {"GetUnmodifiedAttribute", (lua_CFunction)GameObject_GetUnmodifiedAttribute},
     {NULL, NULL}
@@ -1881,6 +1882,28 @@ static int GameObject_SetPosition(lua_State *L)
     free(CFR);
 
     return 0;
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_Move                                                  */
+/* Lua    : object.Move(direction)                                           */
+/* Info   : Makes the object move in the desired direction (one of           */
+/*          game.NORTH, game.SOUTH, game.NORTHEAST etc.)                     */
+/*          Returns 0 if something blocked the move, 1 if moving succeeded,  */
+/*          or -1 if object was destroyed when moving.                       */
+/*          The object's terrain_flag attribute controls which terrains it   */
+/*          can move on.                                                     */
+/* Status : Tested                                                           */
+/*****************************************************************************/
+static int GameObject_Move(lua_State *L)
+{
+    lua_object *self;
+    int         d;
+
+    get_lua_args(L, "Oi", &self, &d);
+
+    lua_pushnumber(L, hooks->move_ob(WHO, d, WHO));
+    return 1;
 }
 
 /*****************************************************************************/

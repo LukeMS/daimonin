@@ -123,6 +123,10 @@ static int getObjectMember(lua_State *L)
                         if(obj->data.object->count != obj->tag )
                             luaL_error(L, "Invalid object");
                         break;
+                    case LUATYPE_MAP:
+                        if(obj->data.map->in_memory != MAP_IN_MEMORY )
+                            luaL_error(L, "Invalid map");
+                        break;
                     case LUATYPE_EVENT:
                         if(obj->data.context->tag != obj->tag )
                             luaL_error(L, "Invalid event context");
@@ -193,6 +197,10 @@ static int setObjectMember(lua_State *L)
                     case LUATYPE_OBJECT:
                         if(obj->data.object->count != obj->tag )
                             luaL_error(L, "Invalid object");
+                        break;
+                    case LUATYPE_MAP:
+                        if(obj->data.map->in_memory != MAP_IN_MEMORY )
+                            luaL_error(L, "Invalid map");
                         break;
                     case LUATYPE_EVENT:
                         if(obj->data.context->tag != obj->tag )
@@ -281,6 +289,10 @@ static int get_attribute(lua_State *L, lua_object *obj, struct attribute_decl *a
         case FIELDTYPE_MAP:
           /* TODO: maps should also include the tag (or whatever)
            * to handle validation in long-running scripts */
+          if((*(mapstruct **)field_ptr)->in_memory != MAP_IN_MEMORY ) {
+              lua_pushnil(L);
+              return 1;
+          }
           return push_object(L, &Map, *(mapstruct * *) field_ptr);
         case FIELDTYPE_OBJECT:
           return push_object(L, &GameObject, *(object * *) field_ptr);
@@ -308,7 +320,7 @@ static int set_attribute(lua_State *L, lua_object *obj, struct attribute_decl *a
 
     /* Call any class hooks */
     if (obj->class->setAttribute_Hook)
-        obj->class->            setAttribute_Hook(L, obj, attrib, 1);
+        obj->class->setAttribute_Hook(L, obj, attrib, 1);
 
     /* First check type */
     switch (attrib->type)
@@ -367,7 +379,7 @@ static int set_attribute(lua_State *L, lua_object *obj, struct attribute_decl *a
 
     /* Call any class hooks */
     if (obj->class->setAttribute_Hook)
-        obj->class->            setAttribute_Hook(L, obj, attrib, 0);
+        obj->class->setAttribute_Hook(L, obj, attrib, 0);
 
     /* pop value */
     lua_pop(L, 1);
@@ -398,6 +410,10 @@ static inline lua_object * get_object_arg(lua_State *L, int pos, lua_class *clas
             case LUATYPE_OBJECT:
                 if(obj->data.object->count != obj->tag )
                     param_type_err(L, pos, "an invalid object");
+                break;
+            case LUATYPE_MAP:
+                if(obj->data.map->in_memory != MAP_IN_MEMORY )
+                    param_type_err(L, pos, "an invalid map");
                 break;
             case LUATYPE_EVENT:
                 if(obj->data.context->tag != obj->tag )

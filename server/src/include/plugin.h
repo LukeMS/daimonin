@@ -278,8 +278,8 @@ struct plugin_hooklist
     void (*new_draw_info_format)(int flags, int pri, object *pl, char *format, ...);
     void (*new_info_map)(int color, mapstruct *map, int x, int y, int dist, const char *str);
     void (*new_info_map_except)(int color, mapstruct *map, int x, int y, int dist, object *op1, object *op, const char *str);
+    int (*wall)(mapstruct *map, int x, int y);
 
-    
     void (*free_string_shared)(const char *str);
     const char*(*add_string)(const char *str);
     const char*(*add_refcount)(const char *str);
@@ -293,6 +293,7 @@ struct plugin_hooklist
 
     object*(*insert_ob_in_ob)(object *op, object *where);
     object*(*insert_ob_in_map)(object *op, mapstruct *m, object *originator, int flag);
+    int (*move_ob)(object *op, int dir, object *originator);
 
     void (*free_mempool)(struct mempool *pool); 
     struct mempool*(*create_mempool)(const char *description, uint32 expand, uint32 size, 
