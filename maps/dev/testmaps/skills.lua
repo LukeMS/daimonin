@@ -5,9 +5,9 @@ whoami = event.me
 
 tl = TopicList()
 
-tl:addTopics("learn (.*)", 
+tl:AddTopics("learn (.*)", 
 	function(skillname)
-		skill = game.GetSkillNr(skillname)
+		skill = game:GetSkillNr(skillname)
 		if skill == -1 then
 			whoami:SayTo(activator,"Unknown skill \""..skillname.."\"" )
 		else
@@ -20,6 +20,6 @@ tl:addTopics("learn (.*)",
 	end
 )
 
-tl:setDefault("\nI am the Skillgiver.\nSay ^learn <skillname>^ or ^unlearn <skillname>^ (Note: unlearn skills is not implemented atm - the ideas of the daimonin skill system is to collect the skills - and don't lose them).")
+tl:SetDefault("\nI am the Skillgiver.\nSay ^learn <skillname>^ or ^unlearn <skillname>^ (Note: unlearn skills is not implemented atm - the ideas of the daimonin skill system is to collect the skills - and don't lose them).")
 
-tl:checkMessage()
+tl:CheckMessage(event)

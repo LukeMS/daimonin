@@ -1,13 +1,16 @@
 TopicList = {}
 _TopicList_mt = {__index = TopicList}
 
-function TopicList:new()
+-- Create a new topiclist object
+function TopicList:New()
 	local obj = {topics = {}}
 	setmetatable(obj, _TopicList_mt)
 	return obj
 end
 
-function TopicList:addGreeting(topics, ...)
+-- Add responses for the standard greeting phrases 
+-- (and for possibly additional greeting topics)
+function TopicList:AddGreeting(topics, ...)
 	if type(topics) ~= "table" then
 		topics = {topics}
 	end
@@ -15,17 +18,20 @@ function TopicList:addGreeting(topics, ...)
 	table.insert(topics, "hello")
 	table.insert(topics, "hey")
 	table.insert(topics, "hi")
-	self:addTopics(topics, unpack(arg))
+	self:AddTopics(topics, unpack(arg))
 end
 
-function TopicList:addTopics(topics, ...)
+-- Add responses to the given topics
+function TopicList:AddTopics(topics, ...)
 	if type(topics) ~= "table" then
 		topics = {topics}
 	end
 	table.insert(self.topics, {topics = topics, actions = arg})
 end
 
-function TopicList:_doActions(event, actions, captures)
+-- Internal function to execute the reponses tied to 
+-- certain topics
+function TopicList:_DoActions(event, actions, captures)
 	table.foreach(actions, function(k,v)
 		if type(v) == "function" then
 			v(unpack(captures))
@@ -35,8 +41,14 @@ function TopicList:_doActions(event, actions, captures)
 	end)
 end
 
-function TopicList:checkMessage()
-	local msg = string.lower(event.message)
+-- Check the given message for topics
+function TopicList:CheckMessage(event_param)
+	if(event_param == nil) then
+		print "TopicList - Warning: no event object to tl:CheckMessage(event)";
+		event_param = event -- this will be deprecated
+	end
+
+	local msg = string.lower(event_param.message)
 
     for i in pairs(self.topics) do
 		local topics = self.topics[i]
@@ -45,20 +57,22 @@ function TopicList:checkMessage()
 			if captures[1] then
 				table.remove(captures,1) -- get rid of indices
 				table.remove(captures,1)
-				self:_doActions(event, topics.actions, captures)
+				self:_DoActions(event_param, topics.actions, captures)
 				return
 			end
 		end
 	end
 
-	-- if no match
+	-- if no match, execute the default actions (if any)
 	if self.default ~= nil then
-		self:_doActions(event, self.default, {})
+		self:_DoActions(event_param, self.default, {})
 	end
 end
 
-function TopicList:setDefault(...)
+-- Set the default reponse(s)
+function TopicList:SetDefault(...)
 	self.default = arg
 end
 
-setmetatable(TopicList, {__call = TopicList.new})
+-- Sets up the topiclist class
+setmetatable(TopicList, {__call = TopicList.New})

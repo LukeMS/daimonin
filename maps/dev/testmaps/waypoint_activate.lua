@@ -6,7 +6,7 @@ tl        = TopicList()
 
 -- Test to trigger waypoints from scripts
 
-tl:addTopics("go", function()
+tl:AddTopics("go", function()
     tmp = whoami:CheckInventory(0, nil, "waypoint1")
     if not tmp then
         whoami:SayTo(activator, 'Oops... I seem to be lost.')
@@ -15,6 +15,6 @@ tl:addTopics("go", function()
 	end
 end)
 
-tl:setDefault('Tell me to ^go^ to activate my waypoint')
+tl:SetDefault('Tell me to ^go^ to activate my waypoint')
 
-tl:checkMessage()
+tl:CheckMessage(event)

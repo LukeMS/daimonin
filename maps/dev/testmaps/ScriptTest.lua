@@ -5,67 +5,67 @@ whoami = event.me
 
 tl = TopicList()
 
-tl:addTopics('detect curse',
+tl:AddTopics('detect curse',
 	function()
 		if activator:PayAmount(200) then
 			whoami:SayTo(activator,"\nOk, i will cast a 'detect curse' for 2s on you.")
 			activator:Write("You pay the money.", 0)
-			whoami:CastAbility(activator,game.GetSpellNr("detect curse"), 1,0,"")
+			whoami:CastAbility(activator,game:GetSpellNr("detect curse"), 1,0,"")
 		else
 			whoami:SayTo(activator,"\nSorry, you have not enough money.")
 		end
 	end
 )
 
-tl:addTopics('remove curse',
+tl:AddTopics('remove curse',
 	function()
 		if activator:PayAmount(300) then
 			whoami:SayTo(activator,"\nOk, i will cast a 'remove curse' for 3s on you.")
 			activator:Write("You pay the money.", 0)
-			whoami:CastAbility(activator,game.GetSpellNr("remove curse"), 1,0,"")
+			whoami:CastAbility(activator,game:GetSpellNr("remove curse"), 1,0,"")
 		else
 			whoami:SayTo(activator,"\nSorry, you have not enough money.")
 		end
 	end
 )
 
-tl:addTopics('remove damnation',
+tl:AddTopics('remove damnation',
 	function()
 		if activator:PayAmount(200) then
 			whoami:SayTo(activator,"\nOk, i will cast a 'remove damnation' for 30s on you.")
 			activator:Write("You pay the money.", 0)
-			whoami:CastAbility(activator,game.GetSpellNr("remove damnation"), 1,0,"")
+			whoami:CastAbility(activator,game:GetSpellNr("remove damnation"), 1,0,"")
 		else
 			whoami:SayTo(activator,"\nSorry, you have not enough money.")
 		end
 	end
 )
 
-tl:addTopics('detect magic', 
+tl:AddTopics('detect magic', 
 	function()
 		if activator:PayAmount(200) then
 			whoami:SayTo(activator,"\nOk, i will cast a 'detect magic' for 2s on you.")
 			activator:Write("You pay the money.", 0)
-			whoami:CastAbility(activator,game.GetSpellNr("detect magic"), 1,0,"")
+			whoami:CastAbility(activator,game:GetSpellNr("detect magic"), 1,0,"")
 		else
 			whoami:SayTo(activator,"\nSorry, you have not enough money.")
 		end
 	end
 )
 
-tl:addTopics('remove depletion', 
+tl:AddTopics('remove depletion', 
 	function()
 		if activator:PayAmount(200) then
 			whoami:SayTo(activator,"\nOk, i will cast a 'remove depletion' for 35s on you.")
 			activator:Write("You pay the money.", 0)
-			whoami:CastAbility(activator,game.GetSpellNr("remove depletion"), 1,0,"")
+			whoami:CastAbility(activator,game:GetSpellNr("remove depletion"), 1,0,"")
 		else
 			whoami:SayTo(activator,"\nSorry, you have not enough money.")
 		end
 	end
 )
 
-tl:addTopics('identify',
+tl:AddTopics('identify',
 	function()
 		object = activator:FindMarkedObject()
 		if object == nil then
@@ -82,7 +82,7 @@ tl:addTopics('identify',
 	end
 )
 
-tl:addTopics('identify all',
+tl:AddTopics('identify all',
 	function()
 		if activator:PayAmount(5000) then
 			whoami:SayTo(activator,"\nOk, i will cast a 'identify all' for 50s.")
@@ -94,14 +94,14 @@ tl:addTopics('identify all',
 	end
 )
 
-tl:addTopics('food', '\nYour stomach is filled again.', 
+tl:AddTopics('food', '\nYour stomach is filled again.', 
 	function() activator.food = 999 end)
 
-tl:setDefault([[
+tl:SetDefault([[
 
 Welcome to my shop. We have what you want!
 As service I can cast 'detect curse' or 'detect magic' for 20s on your items. I can also 'identify' single items for only 40s or all for 2g.
 Say ^detect curse^ or ^magic^, ^remove curse^ or ^damnation^ or ^depletion^, ^identify^ or ^identify all^ if you need my service.") 
 ]])
 
-tl:checkMessage(event)
+tl:CheckMessage(event)

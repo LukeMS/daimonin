@@ -7,9 +7,9 @@ function topicData()
 
 	local ds = DataStore("data_store_test")
 	local msg = table.concat(string.split(event.message), " ", 2)
-	ds:set("activator", event.activator)
-	ds:set("message", msg)
-	local msg2 = ds:get("message")
+	ds:Set("activator", event.activator)
+	ds:Set("message", msg)
+	local msg2 = ds:Get("message")
 	if msg2 == msg then
 		event.me:SayTo(event.activator, "Message '" .. msg .. "' saved.\nNow talk to the lost soul to see this message.")
 	else
@@ -27,9 +27,9 @@ function topicData2()
 	end
 	local ds = DataStore("data_store_test", msg[2])
 	msg = table.concat(msg, " ", 3)
-	ds:set("activator", event.activator)
-	ds:set("message", msg)
-	local msg2 = ds:get("message")
+	ds:Set("activator", event.activator)
+	ds:Set("message", msg)
+	local msg2 = ds:Get("message")
 	if msg2 == msg then
 		event.me:SayTo(event.activator, "Message '" .. msg .. "' saved.\nThe player will see this message if (s)he talks to the lost soul.")
 	else
@@ -115,15 +115,15 @@ end
 function topicRecursive3()
 	event.me:Say("Third level of recursion. Wee! (message = "..event.message..")");
 	local tl = TopicList()
-	tl:setDefault( function() event.me:Say("lvl3 tl: something weird happened to the topiclist class") end)
-	tl:addTopics("recursive", function() event.me:Say("lvl3 tl: recursive ( WRONG )") end)
-	tl:addTopics("recursive2", function() event.me:Say("lvl3 tl: recursive2 ( WRONG )") end)
-	tl:addTopics("recursive3", function() event.me:Say("lvl3 tl: recursive3 ( CORRECT )") end)
-	tl:checkMessage()
+	tl:SetDefault( function() event.me:Say("lvl3 tl: something weird happened to the topiclist class") end)
+	tl:AddTopics("recursive", function() event.me:Say("lvl3 tl: recursive ( WRONG )") end)
+	tl:AddTopics("recursive2", function() event.me:Say("lvl3 tl: recursive2 ( WRONG )") end)
+	tl:AddTopics("recursive3", function() event.me:Say("lvl3 tl: recursive3 ( CORRECT )") end)
+	tl:CheckMessage(event)
 end
 
 tl = TopicList()
-tl:setDefault([[
+tl:SetDefault([[
 
 Available tests/topics:
 ^recursive^
@@ -139,12 +139,12 @@ Available tests/topics:
 ^info^ dumps the contents of '_data_store'.
 ^save^ saves '_data_store'.]])
 
-tl:addTopics("recursive", topicRecursive)
-tl:addTopics("recursive2", topicRecursive2)
-tl:addTopics("recursive3", topicRecursive3)
-tl:addTopics("data2.*", topicData2)
-tl:addTopics("data.*", topicData)
-tl:addTopics("info", topicInfo)
-tl:addTopics("save", topicSave)
+tl:AddTopics("recursive", topicRecursive)
+tl:AddTopics("recursive2", topicRecursive2)
+tl:AddTopics("recursive3", topicRecursive3)
+tl:AddTopics("data2.*", topicData2)
+tl:AddTopics("data.*", topicData)
+tl:AddTopics("info", topicInfo)
+tl:AddTopics("save", topicSave)
 
-tl:checkMessage()
+tl:CheckMessage(event)
