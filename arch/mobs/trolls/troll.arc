@@ -78,8 +78,8 @@ Pow 2
 can_cast_spell 1
 exp 165
 ac 11
-wc 7
-dam 5
+wc 9
+dam 6
 hp -1
 maxhp 6
 sp -1
