@@ -1851,7 +1851,7 @@ static void apply_book(object *op, object *tmp)
 
 static void apply_skillscroll(object *op, object *tmp)
 {
-    switch ((int) learn_skill(op, tmp, NULL, 0, 1))
+    switch ((int) learn_skill(op, tmp, NULL, -1, 1))
     {
         case 0:
           new_draw_info(NDI_UNIQUE, 0, op, "You already possess the knowledge ");

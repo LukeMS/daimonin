@@ -1233,6 +1233,8 @@ static int GameObject_FindSkill(lua_State *L)
     CFR = (PlugHooks[HOOK_FINDSKILL]) (&GCFP);
 
     myob = (object *) (CFR->Value[0]);
+    if (!myob)
+        return 0;
     return push_object(L, &GameObject, myob);
 
 

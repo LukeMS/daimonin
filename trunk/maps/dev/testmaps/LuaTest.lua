@@ -54,7 +54,7 @@ elseif (words[1] == 'skill') then
     else 
         local skillnr = game.GetSkillNr(words[2]);
         me:SayTo(activator, "Checking on skill "..words[2].." (nr "..skillnr..")");
-        if (not activator:DoKnowSkill(skillnr)) then 
+        if activator:FindSkill(skillnr) == nil then 
             me:SayTo(activator, "You do not know that skill!");
         else 
             exp = activator:GetSkill(game.TYPE_SKILL, skillnr).experience;
