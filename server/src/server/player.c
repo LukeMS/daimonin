@@ -44,7 +44,7 @@ static object *find_arrow_ext(object *op, const char *type,int tag);
 player *find_player(char *plname)
 {
 	player *pl;
-	char name[MAX_PLAYER_NAME];
+	char name[MAX_PLAYER_NAME>16?MAX_PLAYER_NAME:16];
 	const char *name_hash;
 
 	int name_len = strlen(plname); /* we assume a legal string */
