@@ -1063,13 +1063,50 @@ CFParm* CFWInsertObjectInMap(CFParm* PParm)
 CFParm* CFWReadyMapName(CFParm* PParm)
 {
     CFParm* CFP;
-    mapstruct* val;
+    mapstruct* map=NULL;
+	char path[2048], *tmp;
+	char *string = (char *)(PParm->Value[0]);
+	object* op = (object *)(PParm->Value[2]);
+	int unique=0, flag = *(int *)(PParm->Value[1]);
+
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
-    val = ready_map_name(
-        (char *)(PParm->Value[0]),
-        *(int *)(PParm->Value[1])
-    );
-    CFP->Value[0] = (void *)(val);
+
+	if(flag & 3)
+        unique = MAP_PLAYER_UNIQUE;
+
+	if((flag & 2) && op) 
+	{
+		sprintf(path, "%s/%s/%s/%s", settings.localdir,settings.playerdir, op->name, clean_path(string));
+		tmp = path;
+	}
+	else
+		tmp = string;
+	
+	if((flag&4) && op) /* delete the map */
+		unlink(tmp);
+	
+	if((flag&3) && op)
+		map = ready_map_name(tmp, unique);
+
+	/* if we have map here now, we had loaded a before saved unique map */
+	if (!map)
+	{
+		/* if we are here, we have not a unique map OR we must load
+		 * and generate a unique map.
+		 */
+		if(!(flag&3))
+			unique = MAP_NAME_SHARED;
+		
+		map = ready_map_name((flag&2)?create_pathname(string):string, unique);
+
+		if(map && (flag&3)) /* unique map loaded - be sure unique is set right */
+		{
+			FREE_AND_COPY_HASH(map->path, path); /* goes to player dir */
+			map->map_flags |=MAP_FLAG_UNIQUE;	
+		}
+	}
+
+    CFP->Value[0] = (void *)(map);
     return CFP;
 }
 
@@ -1812,3 +1849,114 @@ CFParm* CFWCreateObject(CFParm* PParm)
     CFP.Value[0] = newobj;
     return (&CFP);
 }
+
+/*****************************************************************************/
+/* transfer map items wrapper.                                               */
+/*****************************************************************************/
+/* 0 - old_map;                                                              */
+/* 1 - new_map;                                                              */
+/*****************************************************************************/
+CFParm* CFTransferMapItems(CFParm* PParm)
+{
+	int x,y,i,j;
+	object *op, *tmp, *tmp2;
+	mapstruct *map_old, *map_new;
+
+    map_old = (mapstruct *)(PParm->Value[0]);
+    map_new = (mapstruct *)(PParm->Value[1]);
+
+	if(!map_old || ! map_new)
+		LOG(llevBug, "BUG:  CFTransferMapItems %s isd NULL\n", map_old?"map_new":"map_old");
+	
+    x = *(int *)(PParm->Value[2]);
+    y = *(int *)(PParm->Value[3]);
+
+    for(i = 0; i < MAP_WIDTH(map_old); i++)
+	{
+		for (j = 0; j < MAP_HEIGHT(map_old); j++) 
+		{
+			for(op = get_map_ob (map_old, i, j); op; op = tmp2)
+			{
+				tmp2=op->above;
+				/* if thats true, the player can't get it - no sense to transfer it! */
+				if(QUERY_FLAG(op,FLAG_SYS_OBJECT))
+					continue;
+
+				if(!QUERY_FLAG(op,FLAG_NO_PICK) ) 
+				{
+					remove_ob(op);
+					op->x = x;
+					op->y = y;
+					insert_ob_in_map(op, map_new, NULL, INS_NO_MERGE | INS_NO_WALK_ON);
+
+				}
+				else /* this is a fixed part of the map */
+				{
+					/* now we test we have a container type object.
+					 * The player can have items stored in it.
+					 * If so, we remove them too.
+					 * we don't check inv of non container object.
+					 * The player can't store in normal sense items
+					 * in them, so the items in them (perhaps special
+					 * marker of forces) should not be transfered.
+					 */
+
+					for(tmp=op->inv;tmp; tmp=tmp2) 
+					{
+						tmp2 = tmp->below;
+						/* well, non pickup container in non pickup container? no no... */
+						if(QUERY_FLAG(tmp,FLAG_SYS_OBJECT) ||QUERY_FLAG(tmp,FLAG_NO_PICK))
+							continue;
+						remove_ob(tmp);
+						tmp->x = x;
+						tmp->y = y;
+						insert_ob_in_map(tmp, map_new, NULL, INS_NO_MERGE | INS_NO_WALK_ON);
+					}
+					
+				}
+
+			}
+		}
+	}
+				
+	return NULL;
+}
+
+CFParm* CFMapSave(CFParm* PParm)
+{
+	mapstruct *map = (mapstruct *)(PParm->Value[0]);
+	int flags = *(int *)(PParm->Value[1]);
+
+	if(!map || map->in_memory != MAP_IN_MEMORY)
+		return NULL;
+
+	if (new_save_map (map, 0) == -1)
+	{
+		LOG(llevDebug,"CFMapSave(): failed to save map %s\n", map->path?map->path:"NO PATH");
+	}
+
+	if(flags)
+		map->in_memory = MAP_IN_MEMORY;
+	
+	return NULL;
+}
+
+CFParm* CFMapDelete(CFParm* PParm)
+{	
+	mapstruct *map =(mapstruct *)(PParm->Value[0]);
+	int flags = *(int *)(PParm->Value[1]);
+	
+	if(!map || !map->in_memory)
+		return NULL;
+
+	if(flags) /* really delete the map */
+	{
+		free_map(map,1);
+		delete_map(map);
+	}
+	else /* just swap it out */
+		free_map(map,1);
+
+	return NULL;
+}
+

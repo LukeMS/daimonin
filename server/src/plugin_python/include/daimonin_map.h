@@ -32,6 +32,8 @@
 #include <plugin_python.h>
 
 /* Map object methods */
+static PyObject* Daimonin_Map_Save(Daimonin_Map *map, PyObject* args);
+static PyObject* Daimonin_Map_Delete(Daimonin_Map *map, PyObject* args);
 static PyObject* Daimonin_Map_GetFirstObjectOnSquare(Daimonin_Map *self, PyObject* args);
 static PyObject* Daimonin_Map_PlaySound(Daimonin_Map *self, PyObject* args);
 static PyObject* Daimonin_Map_Message(Daimonin_Map *self, PyObject* args);

@@ -30,6 +30,8 @@
 
 static PyMethodDef MapMethods[] =
 {
+    {"Save",(PyCFunction)Daimonin_Map_Save,METH_VARARGS},
+    {"Delete",(PyCFunction)Daimonin_Map_Delete,METH_VARARGS},
     {"GetFirstObjectOnSquare", (PyCFunction)Daimonin_Map_GetFirstObjectOnSquare, METH_VARARGS},
     {"PlaySound",(PyCFunction)Daimonin_Map_PlaySound,METH_VARARGS},
     {"Message", (PyCFunction)Daimonin_Map_Message,METH_VARARGS},
@@ -171,6 +173,47 @@ static PyObject* Daimonin_Map_MapTileAt(Daimonin_Map *map, PyObject* args)
     return wrap_map(result);
 }
 
+/*****************************************************************************/
+/* Name   : Daimonin_Map_Save                                                */
+/* Python : map.Save(flag)                                                   */
+/* Status : Stable                                                           */
+/* Info   : Save the map. If flag is 1, unload map from memory               */
+/*****************************************************************************/
+static PyObject* Daimonin_Map_Save(Daimonin_Map *map, PyObject* args)
+{
+    int x;    
+    
+    if (!PyArg_ParseTuple(args,"|i", &x))
+        return NULL;
+    
+    GCFP.Value[0] = map->map;
+    GCFP.Value[1] = (void *)(&x);
+    (PlugHooks[HOOK_MAPSAVE])(&GCFP);   
+	
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+/*****************************************************************************/
+/* Name   : Daimonin_Map_Delete                                              */
+/* Python : map.Delete()                                                     */
+/* Status : Stable                                                           */
+/* Info   : Remove the map from memory and map list. Release all objects.    */
+/*****************************************************************************/
+static PyObject* Daimonin_Map_Delete(Daimonin_Map *map, PyObject* args)
+{       
+    int x;    
+    
+    if (!PyArg_ParseTuple(args,"|i", &x))
+        return NULL;
+
+    GCFP.Value[0] = map->map;
+    GCFP.Value[1] = (void *)(&x);
+    (PlugHooks[HOOK_MAPDELETE])(&GCFP);   
+	
+    Py_INCREF(Py_None);
+    return Py_None;
+}
 
 /*****************************************************************************/
 /* Name   : Daimonin_Map_PlaySound                                           */
