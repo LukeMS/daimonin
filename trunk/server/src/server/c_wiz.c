@@ -462,8 +462,11 @@ int command_create(object *op, char *params)
             SET_FLAG(tmp, FLAG_IDENTIFIED);
             CLEAR_FLAG(tmp, FLAG_KNOWN_MAGICAL);
         }
+		
         while (*bp2)
         {
+			bp4 = NULL;
+				
             /* find the first quote */
             for (bp3 = bp2, gotquote = 0, gotspace = 0; *bp3 && gotspace < 2; bp3++)
             {
@@ -483,6 +486,7 @@ int command_create(object *op, char *params)
                 else if (*bp3 == ' ')
                     gotspace++;
             }
+			
             if (!gotquote)
             {
                 /* then find the second space */
@@ -503,15 +507,24 @@ int command_create(object *op, char *params)
                     }
                 }
             }
+			
+			if(bp4 == NULL)
+			{
+                new_draw_info_format(NDI_UNIQUE, 0, op, "No parameter value for variable %s", bp2);
+				break;
+			}
+			
             /* now bp3 should be the argument, and bp2 the whole command */
             if (set_variable(tmp, bp2) == -1)
                 new_draw_info_format(NDI_UNIQUE, 0, op, "Unknown variable %s", bp2);
             else
                 new_draw_info_format(NDI_UNIQUE, 0, op, "(%s#%d)->%s=%s", tmp->name, tmp->count, bp2, bp3);
+			
             if (gotquote)
                 bp2 = bp4 + 2;
             else
                 bp2 = bp4 + 1;
+			
             /* WARNING: got a warning msg by compiler here - using obp without init. */
             /*if (obp == bp2)
             break;*/ /* invalid params */
@@ -521,12 +534,14 @@ int command_create(object *op, char *params)
         esrv_send_item(op, tmp);
         return 1;
     }
+
     for (i = 0 ; i < (set_nrof ? nrof : 1); i++)
     {
         archetype      *atmp;
         object*prev =   NULL, *head = NULL;
         for (atmp = at; atmp != NULL; atmp = atmp->more)
         {
+				
             tmp = arch_to_object(atmp);
             if (head == NULL)
                 head = tmp;
@@ -542,8 +557,11 @@ int command_create(object *op, char *params)
                 SET_FLAG(tmp, FLAG_IDENTIFIED);
                 CLEAR_FLAG(tmp, FLAG_KNOWN_MAGICAL);
             }
+			
             while (*bp2)
             {
+				bp4=NULL;
+				
                 /* find the first quote */
                 for (bp3 = bp2, gotquote = 0, gotspace = 0; *bp3 && gotspace < 2; bp3++)
                 {
@@ -563,6 +581,7 @@ int command_create(object *op, char *params)
                     else if (*bp3 == ' ')
                         gotspace++;
                 }
+
                 if (!gotquote)
                 {
                     /* then find the second space */
@@ -583,9 +602,16 @@ int command_create(object *op, char *params)
                         }
                     }
                 }
+
+				if(bp4 == NULL)
+				{
+               		new_draw_info_format(NDI_UNIQUE, 0, op, "No parameter value for variable %s", bp2);
+					break;
+				}
+			
                 /* now bp3 should be the argument, and bp2 the whole command */
                 if (set_variable(tmp, bp2) == -1)
-                    new_draw_info_format(NDI_UNIQUE, 0, op, "Unknown variable %s", bp2);
+                    new_draw_info_format(NDI_UNIQUE, 0, op, "Unknown variable '%s'", bp2);
                 else
                     new_draw_info_format(NDI_UNIQUE, 0, op, "(%s#%d)->%s=%s", tmp->name, tmp->count, bp2, bp3);
                 if (gotquote)
@@ -791,7 +817,7 @@ int command_addexp(object *op, char *params)
 int command_speed(object *op, char *params)
 {
     long i;
-    if (params == NULL || !sscanf(params, "%d", &i))
+    if (params == NULL || !sscanf(params, "%ld", &i))
     {
         new_draw_info_format(NDI_UNIQUE, 0, op, "Current speed is %ld ums (%f ticks/second)", pticks_ums, pticks_second);
         return 1;
@@ -901,7 +927,7 @@ int command_reset(object *op, char *params)
     int             count;
     mapstruct      *m;
     player         *pl;
-    object*dummy =  NULL, *tmp = NULL;
+    object*dummy =  NULL;
     const char     *mapfile_sh;
 
     if (params == NULL)
