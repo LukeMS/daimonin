@@ -304,6 +304,9 @@ extern int nroffreeobjects;
 #define UP_OBJ_FACE     4   /* Only thing that changed was the face */
 #define UP_OBJ_INV		5	/* object has changed invisibility - adjust map sorting */
 
+/* Macro for the often used object validity test (verify an pointer/count pair) */
+#define OBJECT_VALID(_ob_, _count_) ((_ob_) && (_ob_)->count == (_count_) && !QUERY_FLAG((_ob_), FLAG_REMOVED))
+
 /* These are flags passed to insert_ob_in_map and 
  * insert_ob_in_ob.  Note that all flags may not be meaningful
  * for both functions.

@@ -348,6 +348,15 @@ arch floor_ostone1
 x 2
 y 15
 end
+arch sign
+name unofficial maps
+msg
+To the unofficial map lobby.
+Requires an extra download!
+endmsg
+x 2
+y 15
+end
 arch floor_ostone1
 x 2
 y 16

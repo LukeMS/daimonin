@@ -628,34 +628,24 @@ void show_player_doll(int x, int y)
             else if(tmp->itype == TYPE_WAND ||tmp->itype == TYPE_ROD||tmp->itype == TYPE_HORN)
                 index = PDOLL_WAND;
             
-						if (index == PDOLL_RRING) index+= ++ring_flag & 1;
+
+			
+			if (index == PDOLL_RRING) index+= ++ring_flag & 1;
             if(index != -1){
-              blt_inv_item_centered(tmp, player_doll[index].xpos+x, player_doll[index].ypos+y);
-							SDL_GetMouseState(&mx, &my);
-							/* prepare item_name tooltip */
-							if (mx >= player_doll[index].xpos && mx < player_doll[index].xpos+33 
-							 && my >= player_doll[index].ypos && my < player_doll[index].ypos+33)
-							{
-								tooltip_index = index;
-								tooltip_text = tmp->s_name;
-							}
-						}
-					}
+            blt_inv_item_centered(tmp, player_doll[index].xpos+x, player_doll[index].ypos+y);
+			SDL_GetMouseState(&mx, &my);
+			/* prepare item_name tooltip */
+			if (mx >= player_doll[index].xpos && mx < player_doll[index].xpos+33 
+			&& my >= player_doll[index].ypos && my < player_doll[index].ypos+33)
+			{
+				tooltip_index = index;
+				tooltip_text = tmp->s_name;
+			}
+			}
+			}
    		 }
 		/* draw a item_name tooltip */
 		if (tooltip_index!= -1)
-		{
-			SDL_Rect rec;		
-			char *text = tooltip_text;
-
-			rec.w = 3;
-			while (*text) 
-				rec.w+= SystemFont.c[(int)*text++].w+ SystemFont.char_offset;         						
-			rec.x = mx+ 9;
-			rec.y = my+17;
-			rec.h = 12;
-			SDL_FillRect(ScreenSurface, &rec, -1);
-			StringBlt(ScreenSurface, &SystemFont, tooltip_text, mx+11, my+16, COLOR_BLACK, NULL, NULL);
-		}
+		      show_tooltip(mx, my, tooltip_text);
 }
 

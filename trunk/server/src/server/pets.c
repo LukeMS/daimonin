@@ -216,14 +216,10 @@ void pet_move(object * ob)
 		if (QUERY_FLAG(new_ob,FLAG_ALIVE) && !QUERY_FLAG(ob,FLAG_UNAGGRESSIVE)
 		    && !QUERY_FLAG(new_ob,FLAG_UNAGGRESSIVE) &&
 		    !QUERY_FLAG(new_ob,FLAG_FRIENDLY)) {
-
-            ob->enemy = new_ob;
-            ob->enemy_count = new_ob->count;
+    
+            set_npc_enemy(ob, new_ob, NULL);
             if(new_ob->enemy == NULL)
-            {
-                new_ob->enemy = ob;
-                new_ob->enemy_count = ob->count;
-            }
+                set_npc_enemy(new_ob, ob, NULL);
 			return;
 		} else if (new_ob->type == PLAYER) {
 		    new_draw_info(NDI_UNIQUE, 0,new_ob, "You stand in the way of someones pet.");

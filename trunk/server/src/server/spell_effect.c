@@ -160,8 +160,7 @@ void aggravate_monsters(object *op) {
 	  CLEAR_FLAG(tmp, FLAG_SLEEP);
           if (!QUERY_FLAG(tmp, FLAG_FRIENDLY))
           {
-              tmp->enemy = op;
-              tmp->enemy_count = op->count;
+            set_npc_enemy(tmp, op, NULL);
           }
         }
     }
@@ -630,7 +629,7 @@ int cast_invisible(object *op, object *caster, int spell_type) {
   update_object(op,UP_OBJ_FACE);
   for (tmp = objects; tmp != NULL; tmp = tmp->next)
     if (tmp->enemy == op)
-      tmp->enemy = NULL;
+        set_npc_enemy(tmp, NULL, NULL);
   return 1;
 }
 
@@ -1965,8 +1964,7 @@ int summon_pet(object *op, int dir, SpellTypeFrom item) {
 	    }
 	}
         tmp->speed_left = -1;
-        tmp->enemy = op->enemy;
-        tmp->enemy_count = op->enemy_count;
+        set_npc_enemy(tmp, op->enemy, NULL);
         tmp->type = 0;
       }
       if(head == NULL)
@@ -3639,8 +3637,7 @@ object *fix_summon_pet(archetype *at, object *op, int dir, int type ) {
 	  tmp->move_type = PETMOVE;
           tmp->speed_left = -1;
           tmp->type = 0;
-          tmp->enemy = op->enemy; 
-          tmp->enemy_count = op->enemy_count; 
+          set_npc_enemy(tmp->enemy, op->enemy, NULL);
         } else
 	  tmp->type = GOLEM;
        

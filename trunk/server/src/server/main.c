@@ -42,6 +42,7 @@
 #endif
 
 /* #include <Mmsystem.h> swing time debug */
+#include <pathfinder.h>
 
 #include <../random_maps/random_map.h>
 #include <../random_maps/rproto.h>
@@ -814,14 +815,8 @@ void process_players1(mapstruct *map)
                 else if(is_melee_range(pl->ob, pl->ob->enemy))
 				{
 					/* tell our enemy we swing at him now */
-					if (!pl->ob->enemy->enemy)
-					{
-						pl->ob->enemy->enemy=pl->ob;
-						pl->ob->enemy->enemy_count=pl->ob->count;
-						if(pl->ob->enemy->type != PLAYER)
-							set_mobile_speed(pl->ob->enemy, 0);
-
-					}
+					if (!OBJECT_VALID(pl->ob->enemy->enemy, pl->ob->enemy->enemy_count))
+                        set_npc_enemy(pl->ob->enemy, pl->ob, NULL);
 					else /* our target has already a enemy - then note we had attacked */
 					{
 						pl->ob->enemy->attacked_by=pl->ob;
@@ -1135,6 +1130,48 @@ int forbid_play()
 #endif
 }
 
+dequeue_path_requests()
+{
+#ifdef LEFTOVER_CPU_FOR_PATHFINDING
+    static struct timeval new_time;
+    long leftover_sec, leftover_usec;
+    object *wp;
+
+    /* TODO: check if any path is requested before entering loop */
+    do {
+        (void) GETTIMEOFDAY(&new_time);
+
+        leftover_sec = last_time.tv_sec - new_time.tv_sec;
+        leftover_usec = max_time - (new_time.tv_usec - last_time.tv_usec);
+
+        /* This is very ugly, but probably the fastest for our use: */
+        while (leftover_usec < 0)
+        {
+            leftover_usec += 1000000;
+            leftover_sec -= 1;
+        }
+        while (leftover_usec > 1000000)
+        {
+            leftover_usec -= 1000000;
+            leftover_sec +=1;
+        }
+
+        /* TODO: use an average pathfinding time for timeleft threshold */
+        if (leftover_sec > 0 || (leftover_sec == 0 && leftover_usec > 10000))
+        {            
+            wp = get_next_requested_path();
+            if(wp) 
+                waypoint_compute_path(wp);
+        } else
+            wp = NULL;
+    } while (wp);
+#else
+    object *wp = get_next_requested_path();
+    if(wp) 
+        waypoint_compute_path(wp);
+#endif /* LEFTOVER_CPU_FOR_PATHFINDING */
+}
+
 /*
  *  do_specials() is a collection of functions to call from time to time.
  * Modified 2000-1-14 MSW to use the global pticks count to determine how
@@ -1155,12 +1192,7 @@ int forbid_play()
 
 void do_specials() {
     if(!(pticks % 2)) 
-    {
-        object *wp = get_next_requested_path();
-        if(wp) {
-            waypoint_compute_path(wp);
-        }
-    }
+        dequeue_path_requests();
 
 #ifdef WATCHDOG
     if (!(pticks % 503))

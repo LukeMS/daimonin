@@ -226,6 +226,7 @@ EXTERN long nrofallowedstr;		/* Only used in malloc_info() */
 EXTERN short nrofexpcat;	/* Current number of experience categories in the game */
 EXTERN object *exp_cat[MAX_EXP_CAT];	/* Array of experience objects in the game */ 
 
+EXTERN archetype *aggro_wp_archetype;	/* Nice to have fast access to it */
 EXTERN archetype *empty_archetype;	/* Nice to have fast access to it */
 EXTERN archetype *base_info_archetype;	/* Nice to have fast access to it */
 EXTERN archetype *map_archeytpe;
@@ -233,6 +234,9 @@ EXTERN char first_map_path[MAX_BUF];	/* The start-level */
 
 EXTERN char errmsg[HUGE_BUF];
 EXTERN long ob_count;
+
+EXTERN struct timeval last_time;        /* Used for main loop timing */
+
 /*
  * Used in treasure.c
  */

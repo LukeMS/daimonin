@@ -452,23 +452,13 @@ int hit_player(object *op,int dam, object *hitter, int type)
     }
 
     /* if one get attacked, the attacker will become the enemy */
-    if(get_owner(hitter) && !op->enemy) /* assign the owner as bad boy */
-    {
-        op->enemy=hitter->owner;
-        op->enemy_count=hitter->owner->count;
-		if(op->type != PLAYER)
-			set_mobile_speed(op, 0);
-    }
-    else if (QUERY_FLAG(hitter,FLAG_MONSTER) && !op->enemy) /* or normal mob */
-    {
-		if(op->type != PLAYER)
-		{
-			op->last_eat = 0;	/* important: thats our "we lose aggro count" - reset to zero here of course */
-			set_mobile_speed(op, 0);
-		}
-        op->enemy=hitter;
-        op->enemy_count=hitter->count;
-    }
+    if(!OBJECT_VALID(op->enemy, op->enemy_count)) {
+        if(get_owner(hitter)) /* assign the owner as bad boy */
+            set_npc_enemy(op, hitter->owner, NULL);
+        else if (QUERY_FLAG(hitter,FLAG_MONSTER)) /* or normal mob */
+            set_npc_enemy(op, hitter, NULL);
+    } 
+    /* TODO: also handle op->attacked_by here */
 
     if(QUERY_FLAG(op,FLAG_UNAGGRESSIVE) && op->type != PLAYER) {
 	/* The unaggressives look after themselves 8) */
@@ -1269,7 +1259,7 @@ int kill_object(object *op,int dam, object *hitter, int type)
 		 */
 		if(owner->type != PLAYER || !op->enemy || op->enemy->type != PLAYER)
 		{
-			op->enemy = owner;			
+			op->enemy = owner;			   /* no set_npc_enemy since we are killing it... */
 			op->enemy_count = owner->count;
 		}
 	    free_object(op);

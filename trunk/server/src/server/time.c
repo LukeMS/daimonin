@@ -70,6 +70,10 @@ int open_door(object *op, mapstruct *m, int x, int y, int mode)
 {
 	object *tmp, *key=NULL;
 
+    /* Make sure a monster/npc actually can open doors */
+    if(op->type != PLAYER && !(op->will_apply&8))
+        return 0;
+    
 	/* Ok, this trick will save us *some* search time - because we
 	 * assume that a door is always on layer 5. But *careful* - 
 	 * if we assign in a map a different layer to a door this will

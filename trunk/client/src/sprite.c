@@ -720,3 +720,20 @@ int sprite_collision(int x1,int y1,int x2,int y2,_Sprite *sprite1, _Sprite *spri
     return(1);
     
 };
+
+void show_tooltip(int mx, int my, char* text)
+{
+	SDL_Rect rec;
+	char *tooltip=text;
+
+	rec.w = 3;
+	while (*text) 
+		rec.w+= SystemFont.c[(int)*text++].w+ SystemFont.char_offset;         						
+	rec.x = mx+ 9;
+	rec.y = my+17;
+	rec.h = 12;
+	SDL_FillRect(ScreenSurface, &rec, -1);
+	StringBlt(ScreenSurface, &SystemFont, tooltip, mx+11, my+16, COLOR_BLACK, NULL, NULL);
+}
+
+

@@ -107,8 +107,7 @@ static mapstruct *load_and_link_tiled_map(mapstruct *orig_map, int tile_num)
 			orig_map->tile_map[tile_num]->tile_map[dest_tile] = orig_map;
 	}
 	else
-		LOG(llevDebug,"load_and_link_tiled_map(): map %s (%d) points to map %s but has no relink\n", orig_map->path, tile_num, orig_map->tile_map[tile_num]->path);
-
+		LOG(llevBug,"BUG: load_and_link_tiled_map(): map %s (%d) points to map %s but has no relink\n", orig_map->path, tile_num, orig_map->tile_map[tile_num]->path);
 
     return orig_map->tile_map[tile_num];
 }
@@ -1360,8 +1359,8 @@ static int load_map_header(FILE *fp, mapstruct *m)
 	    } else {
 		*end = 0;
 		if (m->tile_path[tile-1]) {
-		    LOG(llevError,"ERROR: load_map_header: tile location %d duplicated (%s)\n",
-			tile, m->path);
+		    LOG(llevError,"ERROR: load_map_header: tile location %d duplicated (%s <-> %s)\n",
+			tile, m->path, m->tile_path[tile-1]);
 		    FREE_AND_CLEAR_HASH(m->tile_path[tile-1]);
 		}
                 
@@ -1389,7 +1388,7 @@ static int load_map_header(FILE *fp, mapstruct *m)
                         m->tile_map[tile-1] = neighbour;
                         /* the server bugged here one time because neighbour->tile_path[dest_tile] == NULL... MT */
                         if (neighbour->tile_path[dest_tile] == NULL || 
-                                !strcmp(neighbour->tile_path[dest_tile], m->path))
+                                !strcmp(neighbour->tile_path[dest_tile], m->path)) 
                             neighbour->tile_map[dest_tile] = m;
                     }
                 } /* If valid neighbour path */
@@ -1889,7 +1888,8 @@ void delete_map(mapstruct *m) {
 
 	/* This should hopefully get unrolled on a decent compiler */
 	for (i=0; i<TILED_MAPS; i++)
-	    if (tmp->tile_map[i] == m) tmp->tile_map[i]=NULL;
+	    if (tmp->tile_map[i] == m) 
+                tmp->tile_map[i]=NULL;
     }
 
     /* If last is null, then this should be the first map in the list */

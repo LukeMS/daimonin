@@ -204,6 +204,7 @@ void init_archetypes() { /* called from add_player() and edit() */
   arch_init = 0;
   empty_archetype=find_archetype("empty_archetype");
   base_info_archetype=find_archetype("base_info");
+  aggro_wp_archetype=find_archetype("waypoint");
 /*  init_blocksview();*/
 }
 

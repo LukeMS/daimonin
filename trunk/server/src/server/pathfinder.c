@@ -71,7 +71,6 @@ static path_node pathfinder_nodebuf[PATHFINDER_NODEBUF];
  *
  * About monster-to-player paths:
  *   - use smaller max-number-of-nodes value (we don't want a mob running away across the map)
- *   - the closer the mob is to the player - the more often we have to recompute the path
  */
 
 /*
@@ -119,7 +118,7 @@ void request_new_path(object *waypoint)
         return;
     
 #ifdef DEBUG_PATHFINDING    
-    LOG(llevDebug,"request_new_path(): enqueing path request for '%s' -> '%s´\n", waypoint->env->name, waypoint->name);
+    LOG(llevDebug,"request_new_path(): enqueing path request for >%s< -> >%s<\n", waypoint->env->name, waypoint->name);
 #endif    
 
     if(pathfinder_queue_enqueue(waypoint)) {
@@ -141,9 +140,8 @@ object *get_next_requested_path()
             return NULL;
         
         /* verify the waypoint and its monster */
-        if(QUERY_FLAG(waypoint, FLAG_FREED) || waypoint->count != count || !QUERY_FLAG(waypoint, FLAG_CURSED) ||
-                waypoint->owner == NULL || QUERY_FLAG(waypoint->owner, FLAG_FREED) ||
-                QUERY_FLAG(waypoint->owner, FLAG_REMOVED) || waypoint->ownercount != waypoint->owner->count)
+        if(!OBJECT_VALID(waypoint, count) || !OBJECT_VALID(waypoint->owner, waypoint->ownercount) ||
+                !(QUERY_FLAG(waypoint, FLAG_CURSED) || QUERY_FLAG(waypoint, FLAG_DAMNED)))
             waypoint = NULL;
     } while(waypoint == NULL);
     
@@ -167,7 +165,7 @@ static path_node *make_node(mapstruct *map, sint16 x, sint16 y, uint16 cost, pat
     /* Out of memory? */
     if(pathfinder_nodebuf_next == PATHFINDER_NODEBUF) {
 #ifdef DEBUG_PATHFINDING
-        LOG(llevDebug, "make_node(): out of static buffer memory\n");
+        LOG(llevDebug, "make_node(): out of static buffer memory (this is not a problem)\n");        
 #endif
         return NULL;
     }
@@ -453,6 +451,7 @@ int find_neighbours(path_node *node, path_node **open_list, path_node **closed_l
 {
     int i, x2, y2;
     mapstruct *map;
+    int block;
 
     for(i = 1; i<9; i++) {
         x2 = node->x + freearr_x[i]; 
@@ -467,7 +466,23 @@ int find_neighbours(path_node *node, path_node **open_list, path_node **closed_l
             searched_nodes++;
 #endif    
 
-            if(! blocked_link_2(op, map, x2, y2)) {  
+            /* Multi-arch or not? (blocked_link_2 works for normal archs too, but is more expensive) */
+            if(op->head || op->more)
+                block = blocked_link_2(op, map, x2, y2);
+                /* TODO: handle doors for multi-archs. Will require some modification to 
+                 * blocked_link_2 i guess: (don't return as soon as we find a block: if
+                 * that block is P_DOOR_CLOSED, keep searching and add P_DOOR_CLOSED to the return
+                 * value.)
+                 */
+            else {
+                block = blocked(op, map, x2, y2, op->terrain_flag);
+                /* Check for possible door openening */
+                /* TODO: increase path cost if we have to open doors? */
+                if(block == P_DOOR_CLOSED && open_door(op, map, x2, y2, 0))
+                    block = 0;
+            }
+            
+            if(! block) {  
                 path_node *new_node;
                 if((new_node = make_node(map, (sint16)x2, (sint16)y2, (uint16)(node->cost + 1), node))) {
                     new_node->heuristic = distance_heuristic(start, new_node, goal);
@@ -528,8 +543,9 @@ path_node * find_path(object *op,
         remove_node(tmp, &open_list);
         insert_node(tmp, &closed_list);
 
-        /* Reached the goal? */
-        if(tmp->x == x2 && tmp->y == y2 && tmp->map == map2) {
+        /* Reached the goal? (Or at least the tile next to it?) */
+        /* if(tmp->x == x2 && tmp->y == y2 && tmp->map == map2) { */
+        if(tmp->heuristic <= 1.2) {
             path_node *tmp2;
 
             /* Move all nodes used in the path to the path list */

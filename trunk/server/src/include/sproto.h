@@ -459,6 +459,7 @@ int monster_use_scroll(object *head, object *part,object *pl,int dir, rv_vector 
 int can_see_enemy(object *op, object *enemy);
 void spawn_point(object *op);
 void waypoint_compute_path(object *waypoint);
+void set_npc_enemy(object *npc, object *enemy, rv_vector *rv);
 /* move.c */
 int move_ob(object *op, int dir, object *originator);
 int transfer_ob(object *op, int x, int y, int randomly, object *originator, object *trap);
