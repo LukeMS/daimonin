@@ -406,12 +406,12 @@ void PlayerCmd(char *buf, int len, player *pl)
  * 'ncom' method which gives more information back to the client so it
  * can throttle.
  */
-void NewPlayerCmd(uint8 *buf, int len, player *pl)
+void NewPlayerCmd(char *buf, int len, player *pl)
 {
     uint16 packet;
-	int time,repeat;
+	int repeat;
     char    command[MAX_BUF];
-    SockList sl;
+/*    SockList sl;*/
 
     if (len < 7)
 	{
@@ -448,18 +448,16 @@ void NewPlayerCmd(uint8 *buf, int len, player *pl)
     pl->count=0;
 
     /* Send confirmation of command execution now */
+	/*
     sl.buf = (uint8*)command;
 	SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_COMC);
-	/*
-    strcpy((char*)sl.buf,"comc ");
-    sl.len=5;
-	*/
     SockList_AddShort(&sl,packet);
     if (FABS(pl->ob->speed) < 0.001) time=MAX_TIME * 100;
     else
 	time = (int)((float)MAX_TIME/ FABS(pl->ob->speed));
     SockList_AddInt(&sl,time);
     Send_With_Handling(&pl->socket, &sl);
+	*/
 }
 
 
@@ -702,16 +700,6 @@ void SetSound(char *buf, int len, NewSocket *ns)
     ns->sound = atoi(buf);
 }
 
-/* client wants the map resent */
-
-void MapRedrawCmd(char *buff, int len, player *pl)
-{
-    /* Okay, this is MAJOR UGLY. but the only way I know how to
-     * clear the "cache"
-	*/
-    memset(&pl->socket.lastmap, 0, sizeof(struct Map));
-    draw_client_map(pl->ob);
-}
 
 void MapNewmapCmd( player *pl)
 {
@@ -935,7 +923,11 @@ void esrv_update_stats(player *pl)
 	if(pl->socket.ext_title_flag)
 	{
 		generate_ext_title(pl);
-		AddIfString(pl->socket.stats.ext_title , pl->ext_title, CS_STAT_EXT_TITLE);
+		SockList_AddChar(&sl, (char)CS_STAT_EXT_TITLE); 
+		i = (int)strlen(pl->ext_title);
+		SockList_AddChar(&sl, (char) i);
+		strcpy((char*)sl.buf + sl.len, pl->ext_title);
+		sl.len += i;
 		pl->socket.ext_title_flag = 0;
 	}
     /* Only send it away if we have some actual data */

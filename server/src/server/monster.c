@@ -70,7 +70,7 @@ void set_npc_enemy(object *npc, object *enemy, rv_vector *rv)
     /* Non-aggro-waypoint related stuff */
     if(enemy) {
         if(rv)
-        	get_rangevector(npc, enemy, rv, RV_DIAGONAL_DISTANCE); 
+	       get_rangevector(npc, enemy, rv, RV_DIAGONAL_DISTANCE); 
         npc->enemy_count = enemy->count;
         
         npc->last_eat = 0;	/* important: thats our "we lose aggro count" - reset to zero here */

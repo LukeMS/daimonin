@@ -44,7 +44,12 @@
 #ifndef NEWCLIENT_H
 #define NEWCLIENT_H
 
-/* Maximum size of any packet we expect.  Using this makes it so we don't need to
+/* max. socket input buffer we can read/fill when reading from socket.
+ * This is raw data until we sort it out and put it in the player command queue.
+ */
+#define MAXSOCKBUF_IN (2*1024)
+
+ /* Maximum size of any packet we expect.  Using this makes it so we don't need to
  * allocated and deallocated teh same buffer over and over again and the price
  * of using a bit of extra memory.  IT also makes the code simpler.
  */
@@ -253,12 +258,6 @@ enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
 #define UPD_ANIMSPEED	0x40
 #define UPD_NROF	0x80
 #define UPD_DIRECTION	0x100
-
-/* Contains the base information we use to make up a packet we want to send. */
-typedef struct SockList {
-    int len;
-    unsigned char *buf;
-} SockList;
 
 typedef struct CS_Stats {
     int	    ibytes;	/* ibytes, obytes are bytes in, out */

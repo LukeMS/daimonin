@@ -223,6 +223,18 @@ extern int	global_darkness_table[MAX_DARKNESS+1];
 #pragma pack(push,1)
 #endif
 
+typedef struct MapCell_struct {
+    int		count;
+    short	faces[MAP_LAYERS];
+    uint8	fflag[MAP_LAYERS];  
+    uint8	ff_probe[MAP_LAYERS];  
+    char	quick_pos[MAP_LAYERS];
+} MapCell;
+
+struct Map {
+	struct MapCell_struct cells[MAP_CLIENT_X][MAP_CLIENT_Y];
+};
+
 typedef struct MapSpace_s {
 	object  *first;							/* start of the objects in this map tile */
 	object	*layer[MAX_ARCH_LAYERS*2];		/* array of visible layer objects + for invisible (*2)*/

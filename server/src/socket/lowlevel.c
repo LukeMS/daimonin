@@ -30,6 +30,7 @@
 
 #include <global.h>
 #include <newclient.h>
+#include <newserver.h>
 #include <sproto.h>
 #ifdef NO_ERRNO_H
     extern int errno;
@@ -71,6 +72,41 @@ void SockList_AddString(SockList *sl, char *data)
  *
  ******************************************************************************/
 
+
+/* TEMP. FUNCTIONS TO SIMULATE A NEW SOCKET - THIS IS JUST A QUICK HACK TO
+ * TEST THE read packet function. Code is in the style of education source.
+ */
+
+/* When called, we fill sl1 with a command. 
+ * If return is 1, we have a valid command.
+ * 0 means we got not a valid.
+ */
+int socket_read_pp(SockList *sl1,SockList *sl, int len)
+{
+    int toread, ret=0;
+	
+	sl1->buf[0]=0;
+	sl1->len = 0;
+	
+	if(sl->len>=2) /* there is something in our in buffer we had read before */
+	{
+		toread = 2+(sl->buf[0] << 8) + sl->buf[1]; /* len of the command */
+		
+		if(toread <= sl->len) /* if we have a command, copy it *now* */
+		{
+			memcpy(sl1->buf,sl->buf,toread);
+			sl1->len = toread;
+			if(sl->len-toread)
+				memcpy(sl->buf,sl->buf+toread,sl->len-toread);
+			sl->len -=toread;
+			ret = toread;	
+		}		
+	}
+	
+	return ret;
+}
+
+
 /* this readsfrom fd and puts the data in sl.  We return true if we think
  * we have a full packet, 0 if we have a partial packet.  The only processing
  * we do is remove the intial size value.  len (As passed) is the size of the
@@ -78,51 +114,89 @@ void SockList_AddString(SockList *sl, char *data)
  * at least 2 bytes long.
  */
  
-int SockList_ReadPacket(int fd, SockList *sl, int len)
+int SockList_ReadPacket(NewSocket *ns, int len)
+/*int SockList_ReadPacket(int fd, SockList *sl, int len)*/
 {
-    int stat,toread;
-    /* Sanity check - shouldn't happen */
+	SockList *sl = &ns->readbuf;
+    int stat, stat_ret,toread;
+
+#ifdef WIN32
+	stat_ret = recv(ns->fd, sl->buf + sl->len, len - sl->len, 0);
+#else
+	stat_ret = read(ns->fd, sl->buf + sl->len, len - sl->len);
+#endif
+
+	/*LOG(-1,"STAT: %d (%d)\n", stat_ret, sl->len);*/
+
+	if(stat_ret>0)
+		sl->len+=stat_ret;
+	else if(stat_ret == -1) /* lets check its a real problem */
+	{
+#ifdef WIN32
+		if (WSAGetLastError() !=WSAEWOULDBLOCK)
+		{
+			if(WSAGetLastError() == WSAECONNRESET)
+				LOG(llevDebug,"Connection closed by client\n");
+			else
+				LOG(llevDebug,"ReadPacket got error %d, returning 0\n",WSAGetLastError());		
+			return -1;
+		}
+#else
+		if (errno != EINTR && errno != EAGAIN && errno !=EWOULDBLOCK)
+		{
+			LOG(llevDebug,"ReadPacket got error %d, returning 0\n",errno);
+			return -1;	/* kick this user! */
+		}
+		
+#endif
+	}
+		
+	return 1;
+
+	
     if (sl->len < 0)
 		LOG(llevDebug,"FATAL SOCKET ERROR: sl->len <0 (%d)\n",sl->len);
     /* We already have a partial packet */
-    if (sl->len<2) {
-#ifdef WIN32 /* ***WIN32 SockList_ReadPacket: change read() to recv() */
-
-	stat=recv(fd, sl->buf + sl->len, 2-sl->len,0);
-
+    if (sl->len<2)
+	{
+#ifdef WIN32
+		stat=recv(ns->fd, sl->buf + sl->len, 2-sl->len,0);
 #else
-	do {
-		stat=read(fd, sl->buf + sl->len, 2-sl->len);
-	} while ((stat==-1) && (errno==EINTR));
-#endif
-	if (stat<0) {
-	    /* EAGAIN is set in non blocking mode when no data available.
-	     */
-#ifdef WIN32 /* ***WIN32 SockList_ReadPacket: error handling for win32 */
-	if ((stat==-1) && WSAGetLastError() !=WSAEWOULDBLOCK) {
-		if(WSAGetLastError() == WSAECONNRESET)
-			LOG(llevDebug,"Connection closed by client\n");
-		else
+		do 
 		{
-			LOG(llevDebug,"ReadPacket got error %d, returning 0\n",WSAGetLastError());
-		}
-		return -1;	/* kick this user! */
-	    }
+			stat=read(ns->fd, sl->buf + sl->len, 2-sl->len);
+		} while ((stat==-1) && (errno==EINTR));
+#endif
+		if (stat<0) 
+		{
+			/* EAGAIN is set in non blocking mode when no data available.*/
+#ifdef WIN32
+			if ((stat==-1) && WSAGetLastError() !=WSAEWOULDBLOCK)
+			{
+				if(WSAGetLastError() == WSAECONNRESET)
+					LOG(llevDebug,"Connection closed by client\n");
+				else
+					LOG(llevDebug,"ReadPacket got error %d, returning 0\n",WSAGetLastError());
+				return -1;	/* kick this user! */
+			}
 #else
-	if (errno != EAGAIN && errno !=EWOULDBLOCK) {
-		LOG(llevDebug,"ReadPacket got error %d, returning 0\n",errno);
-		return -1;	/* kick this user! */
-	}
+			if (errno != EAGAIN && errno !=EWOULDBLOCK)
+			{
+				LOG(llevDebug,"ReadPacket got error %d, returning 0\n",errno);
+				return -1;	/* kick this user! */
+			}
 #endif
-	    return 0;	/*Error */
-	}
-	if (stat==0) return -1;
-	sl->len += stat;
+			return 0;	/*Error */
+		}
+		if (stat==0)
+			return -1;
+		sl->len += stat;
 #ifdef CS_LOGSTATS
-	cst_tot.ibytes += stat;
-	cst_lst.ibytes += stat;
+		cst_tot.ibytes += stat;
+		cst_lst.ibytes += stat;
 #endif
-	if (stat<2) return 0;	/* Still don't have a full packet */
+		if (stat<2) 
+			return 0;	/* Still don't have a full packet */
     }
     /* Figure out how much more data we need to read.  Add 2 from the
      * end of this - size header information is not included.
@@ -137,10 +211,10 @@ int SockList_ReadPacket(int fd, SockList *sl, int len)
     }
     do {
 #ifdef WIN32 /* ***win32 SockList_ReadPacket: change read() to recv() */
-	stat = recv(fd, sl->buf+ sl->len, toread, 0);
+	stat = recv(ns->fd, sl->buf+ sl->len, toread, 0);
 #else
 	do {
-	    stat = read(fd, sl->buf+ sl->len, toread);
+	    stat = read(ns->fd, sl->buf+ sl->len, toread);
 	} while ((stat<0) && (errno==EINTR));
 #endif
 	if (stat<0) {

@@ -794,7 +794,7 @@ void process_players1(mapstruct *map)
 	for(pl=first_player;pl!=NULL;pl=plnext) {
 
 
-	    plnext=pl->next; /* In case a player exits the game in handle_player() */
+	    plnext=pl->next;
 /*	    if (map!=NULL && (pl->ob == NULL || pl->ob->map!=map)) continue;*/
 
 #ifdef AUTOSAVE
@@ -1320,9 +1320,8 @@ int main(int argc, char **argv)
 #endif
   compile_info();       /* its not a bad idea to show at start whats up */    
   memset(&marker, 0, sizeof(struct obj)); /* used from proccess_events() */
-
-
-
+  LOG(llevInfo,"Server ready.\nWaiting for connections...\n");
+  
   for(;;) 
   {
 	nroferrors = 0;				/* every llevBug will increase this - avoid LOG loops */
@@ -1348,7 +1347,8 @@ int main(int argc, char **argv)
 
     check_active_maps();		/* Removes unused maps after a certain timeout */
     do_specials();				/* Routines called from time to time. */
-	doeric_server_write();
+    doeric_server();		
+	/*doeric_server_write();*/
     sleep_delta();				/* Slepp proper amount of time before next tick */
   }
   return 0;

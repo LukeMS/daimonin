@@ -124,14 +124,19 @@ void InitConnection(NewSocket *ns, uint32 from)
      * just open and close connections could get this total up.
      */
     ns->inbuf.len=0;
-    ns->inbuf.buf=malloc(MAXSOCKBUF);
-    /* Basic initialization. Needed because we do a check in
-     * HandleClient for oldsocketmode without checking the
-     * length of data.
-     */
+    ns->inbuf.buf=malloc(MAXSOCKBUF_IN);
     ns->inbuf.buf[0] = 0;
-    memset(&ns->lastmap,0,sizeof(struct Map));
-    memset(&ns->stats,0,sizeof(struct statsinfo));
+
+	ns->readbuf.len=0;
+    ns->readbuf.buf=malloc(MAXSOCKBUF_IN);
+    ns->readbuf.buf[0] = 0;
+	
+	ns->cmdbuf.len=0;
+    ns->cmdbuf.buf=malloc(MAXSOCKBUF_IN*6);
+    ns->cmdbuf.buf[0] = 0;
+	
+	memset(&ns->lastmap,0,sizeof(struct Map));
+    /*memset(&ns->stats,0,sizeof(struct statsinfo));*/
     /* Do this so we don't send a face command for the client for
      * this face.  Face 0 is sent to the client to say clear
      * face information.
@@ -307,12 +312,6 @@ void free_newsocket(NewSocket *ns)
 	LOG(llevDebug,"Error closing socket %d\n", ns->fd);
 #endif
     }
-    if (ns->stats.range)
-		free(ns->stats.range);
-    if (ns->stats.ext_title)
-        free(ns->stats.ext_title);
-    if (ns->stats.title)
-        free(ns->stats.title);
 	if(ns->host)
 	    free(ns->host);
     if(ns->inbuf.buf);

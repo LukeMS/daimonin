@@ -796,7 +796,7 @@ void command_new_char(char *params, int len,player *pl)
 	send_spelllist_cmd(op, NULL, SPLIST_MODE_ADD);
 }
 
-void command_face_request(char *params, int len,player *pl)
+void command_face_request(char *params, int len, NewSocket *ns)
 {
 	int i, count;
 	
@@ -806,12 +806,10 @@ void command_face_request(char *params, int len,player *pl)
 
 	for(i=0;i<count;i++)
 	{
-		if(esrv_send_face(&pl->socket,*((short*)(params+1)+i),0) == SEND_FACE_OUT_OF_BOUNDS)
+		if(esrv_send_face(ns,*((short*)(params+1)+i),0) == SEND_FACE_OUT_OF_BOUNDS)
 		{
-			new_draw_info_format(NDI_UNIQUE|NDI_RED,0, pl->ob, "CLIENT ERROR: Your client requests bad face (#%d). Connection closed!",*((short*)(params+1)+i));
-			LOG(llevInfo,"CLIENT BUG: command_face_request (%d) out of bounds. player: %s. close connection.\n",
-													*((short*)(params+1)+i), pl->ob?pl->ob->name:"(->ob <no name>)");
-			pl->socket.status = Ns_Dead; /* killl socket */
+			LOG(llevInfo,"CLIENT BUG: command_face_request (%d) out of bounds. host: %s. close connection.\n",													*((short*)(params+1)+i), STRING_SAFE(ns->host));
+			ns->status = Ns_Dead; /* killl socket */
 			return;
 		}
 	}

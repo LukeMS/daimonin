@@ -1314,13 +1314,6 @@ int move_player(object *op,int dir)
     return 0;
 }
 
-/* This is similar to handle_player, below, but is only used by the
- * new client/server stuff.
- * This is sort of special, in that the new client/server actually uses
- * the new speed values for commands.
- *
- * Returns true if there are more actions we can do.
- */
 int handle_newcs_player(player *pl)
 {
 	object *op;

@@ -1085,7 +1085,7 @@ void ApplyCmd(char *buf, int len,player *pl)
 }
 
 /* Client wants to apply some object.  Lets do so. */
-void LockItem(uint8 *data, int len,player *pl)
+void LockItem(char *data, int len,player *pl)
 {
     int flag, tag;
     object *op;
@@ -1112,7 +1112,7 @@ void LockItem(uint8 *data, int len,player *pl)
 }
 
 /* Client wants to apply some object.  Lets do so. */
-void MarkItem(uint8 *data, int len,player *pl)
+void MarkItem(char *data, int len,player *pl)
 {
     int tag;
     object *op;
