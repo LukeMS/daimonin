@@ -163,7 +163,6 @@ static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int 
     /* TODO: effectivize somewhat by doing bidirectional search */
     /* TODO: big project: magically make work with pre- or dynamically computed bigmap data */
 
-	LOG(-1,"XL1: %x (%x) %x (%x) %x %x\n",map1,*map1,map2,*map2,x,y);
     /* Avoid overflow of traversal_id */
     if(traversal_id == 4294967295U /* UINT_MAX */) {
         mapstruct *m;
@@ -183,7 +182,6 @@ static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int 
     curr = get_poolchunk(POOL_MAP_BFS);    
     curr->map = map1;
     curr->dx = curr->dy = 0;
-	LOG(-1,"XL2: %x (%x) %x (%x) %x %x\n",map1,*map2,map2,*map2,x,y);
 	
     while(curr) {
         /* Expand one level */
@@ -193,12 +191,10 @@ static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int 
                 if (!curr->map->tile_map[i] || curr->map->tile_map[i]->in_memory != MAP_IN_MEMORY)
 				{
                     load_and_link_tiled_map(curr->map, i);
-					LOG(-1,"XL3: %x (%x) %x (%x) %x %x\n",map1,*map2,map2,*map2,x,y);
 				}
                                
                 /* TODO: avoid this bit of extra work if correct map */
                 node = get_poolchunk(POOL_MAP_BFS);
-				LOG(-1,"XL4: %x (%x) %x (%x) %x %x\n",map1,*map2,map2,*map2,x,y);
                 node->dx = curr->dx;
                 node->dy = curr->dy;
                 node->map = curr->map->tile_map[i];
@@ -214,7 +210,6 @@ static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int 
                     case 6: node->dy += MAP_HEIGHT(curr->map); node->dx -= MAP_WIDTH(curr->map->tile_map[i]); break;  /* Southwest */
                     case 7: node->dy -= MAP_HEIGHT(curr->map->tile_map[i]); node->dx -= MAP_WIDTH(curr->map->tile_map[i]); break;  /* Northwest */
                 }
-				LOG(-1,"XL5: %x (%x) %x (%x) %x %x\n",map1,*map2,map2,*map2,x,y);
 				
                 /* Correct map? */
                 if(node->map == map2) {
@@ -229,7 +224,6 @@ static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int 
                     success = TRUE;
                     return_poolchunk(node, POOL_MAP_BFS);
                     return_poolchunk(curr, POOL_MAP_BFS);
-					LOG(-1,"XL6: %x (%x) %x (%x) %x %x\n",map1,*map2,map2,*map2,x,y);
                     goto out;
                 }
      
@@ -244,7 +238,6 @@ static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int 
             }
         }
 
-		LOG(-1,"XL7: %x (%x) %x (%x) %x %x\n",map1,*map2,map2,*map2,x,y);
         return_poolchunk(curr, POOL_MAP_BFS);
 
         /* Depth-limitation */
@@ -262,10 +255,8 @@ static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int 
     }
 
 out:
-	LOG(-1,"XL8: %x (%x) %x (%x) %x %x\n",map1,*map2,map2,*map2,x,y);
     for(node = first; node; node = node->next)
         return_poolchunk(node, POOL_MAP_BFS);
-	LOG(-1,"XL9: %x (%x) %x (%x) %x %x\n",map1,*map2,map2,*map2,x,y);
 	
     return success;
 }
