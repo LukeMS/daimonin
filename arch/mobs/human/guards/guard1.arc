@@ -8,6 +8,7 @@ direction 5
 item_race 255
 item_level 255
 is_male 1
+wc_range 20
 is_good 1
 terrain_flag 1
 weapon_speed 0.045

@@ -4,6 +4,7 @@ type 80
 face ant_soldier.131
 layer 6
 race insect
+wc_range 20
 corpse 1
 item_race 255
 item_level 255

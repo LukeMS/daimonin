@@ -15177,6 +15177,7 @@ randomitems mob_slime
 is_neutral 1
 weight 13250
 exp 130
+wc_range 20
 item_race 255
 item_level 255
 speed -0.025
@@ -15210,6 +15211,7 @@ race slime
 randomitems mob_slime
 is_neutral 1
 weight 13250
+wc_range 20
 exp 130
 item_race 255
 item_level 255
@@ -15250,6 +15252,7 @@ weight 8250
 exp 115
 item_race 255
 item_level 255
+wc_range 20
 speed -0.025
 weapon_speed 0.040
 attack_pierce 75
@@ -15283,6 +15286,7 @@ is_neutral 1
 weight 13250
 exp 150
 item_race 255
+wc_range 20
 item_level 255
 speed -0.03
 weapon_speed 0.040
@@ -15318,6 +15322,7 @@ randomitems mob_slime
 is_neutral 1
 weight 13250
 exp 150
+wc_range 20
 item_race 255
 item_level 255
 speed -0.03
@@ -15354,6 +15359,7 @@ race slime
 randomitems mob_slime
 is_neutral 1
 weight 13250
+wc_range 20
 exp 150
 speed -0.032
 item_race 255
@@ -15391,6 +15397,7 @@ randomitems mob_slime
 is_neutral 1
 weight 13250
 exp 150
+wc_range 20
 speed -0.032
 weapon_speed 0.0375
 item_race 255
@@ -15428,6 +15435,7 @@ randomitems mob_slime
 is_neutral 1
 weight 16250
 exp 140
+wc_range 20
 speed -0.026
 weapon_speed 0.040
 attack_fire 40
@@ -15462,6 +15470,7 @@ race slime
 randomitems mob_slime
 is_neutral 1
 weight 16250
+wc_range 20
 exp 140
 speed -0.026
 weapon_speed 0.040
@@ -15495,6 +15504,7 @@ editor_folder mobs/amoeboid
 race slime
 randomitems mob_slime
 is_neutral 1
+wc_range 20
 weight 12250
 exp 135
 speed -0.024
@@ -15530,6 +15540,7 @@ race slime
 randomitems mob_slime
 is_neutral 1
 weight 16250
+wc_range 20
 exp 140
 speed -0.026
 weapon_speed 0.040
@@ -15565,6 +15576,7 @@ randomitems mob_slime
 is_neutral 1
 weight 16250
 exp 140
+wc_range 20
 speed -0.026
 weapon_speed 0.040
 attack_fire 80
@@ -15598,6 +15610,7 @@ race slime
 randomitems mob_slime
 is_neutral 1
 weight 16250
+wc_range 20
 exp 140
 speed -0.026
 weapon_speed 0.040
@@ -15633,6 +15646,7 @@ randomitems mob_slime
 is_neutral 1
 weight 13250
 exp 130
+wc_range 20
 item_race 255
 item_level 255
 speed -0.025
@@ -15664,6 +15678,7 @@ type 80
 editor_folder mobs/amoeboid
 race slime
 randomitems mob_slime
+wc_range 20
 is_neutral 1
 weight 13250
 exp 150
@@ -15704,6 +15719,7 @@ randomitems mob_slime
 is_neutral 1
 weight 12250
 exp 135
+wc_range 20
 item_race 255
 item_level 255
 speed -0.024
@@ -15850,6 +15866,7 @@ race giant
 randomitems mob_giant_hill
 will_apply 8
 is_evil 1
+wc_range 20
 is_male 1
 weight 13250
 item_race 255
@@ -15888,6 +15905,7 @@ is_evil 1
 is_male 1
 will_apply 8
 weight 13250
+wc_range 20
 exp 150
 item_race 255
 item_level 255
@@ -15924,6 +15942,7 @@ randomitems mob_giant_stone
 will_apply 8
 is_evil 1
 is_male 1
+wc_range 20
 weight 13250
 exp 165
 item_race 255
@@ -15962,6 +15981,7 @@ direction 5
 item_race 255
 item_level 255
 is_male 1
+wc_range 20
 is_good 1
 terrain_flag 1
 weapon_speed 0.045
@@ -16010,6 +16030,7 @@ item_level 255
 will_apply 8
 direction 5
 is_male 1
+wc_range 20
 is_good 1
 terrain_flag 1
 weapon_speed 0.045
@@ -16056,6 +16077,7 @@ layer 6
 will_apply 8
 item_race 255
 item_level 255
+wc_range 20
 direction 5
 is_male 1
 is_good 1
@@ -16105,6 +16127,7 @@ will_apply 8
 direction 5
 item_race 255
 item_level 255
+wc_range 20
 is_male 1
 is_good 1
 terrain_flag 1
@@ -16150,6 +16173,7 @@ editor_folder mobs/human
 race human
 layer 6
 direction 5
+wc_range 20
 will_apply 8
 is_male 1
 is_good 1
@@ -16198,6 +16222,7 @@ editor_folder mobs/human
 race human
 layer 6
 direction 5
+wc_range 20
 will_apply 8
 is_female 1
 is_good 1
@@ -16246,6 +16271,7 @@ editor_folder mobs/human
 race human
 layer 6
 will_apply 8
+wc_range 20
 direction 5
 is_male 1
 item_race 255
@@ -16295,6 +16321,7 @@ race human
 layer 6
 direction 5
 will_apply 8
+wc_range 20
 is_male 1
 is_good 1
 terrain_flag 1
@@ -16343,6 +16370,7 @@ race human
 layer 6
 will_apply 8
 item_race 255
+wc_range 20
 item_level 255
 direction 5
 is_male 1
@@ -16429,6 +16457,7 @@ is_female 1
 corpse 1
 layer 6
 direction 5
+wc_range 20
 is_neutral 1
 item_race 255
 item_level 255
@@ -16463,6 +16492,7 @@ type 80
 editor_folder mobs/insects
 layer 6
 race insect
+wc_range 20
 corpse 1
 item_race 255
 item_level 255
@@ -16500,6 +16530,7 @@ race insect
 is_female 1
 corpse 1
 layer 6
+wc_range 20
 direction 5
 is_neutral 1
 item_race 255
@@ -16538,6 +16569,7 @@ is_neutral 1
 corpse 1
 will_apply 8
 item_race 255
+wc_range 20
 item_level 255
 terrain_flag 1
 weapon_speed 0.039
@@ -16571,6 +16603,7 @@ layer 6
 will_apply 8
 item_race 255
 item_level 255
+wc_range 20
 direction 5
 terrain_flag 1
 weapon_speed 0.035
@@ -16606,6 +16639,7 @@ randomitems mob_wyvern
 direction 5
 speed -0.06
 corpse 1
+wc_range 20
 item_race 255
 item_level 255
 is_male 1
@@ -16689,7 +16723,7 @@ speed -0.0011
 no_teleport 1
 last_sp -1
 sp -1
-last_heal 1
+last_heal 9
 sys_object 1
 layer 0
 no_pick 1
@@ -16703,6 +16737,7 @@ editor_folder mobs/trolls
 race troll
 layer 6
 randomitems mob_troll
+wc_range 20
 direction 5
 speed -0.06
 corpse 1
@@ -16788,6 +16823,7 @@ layer 6
 race dragon
 corpse 1
 item_race 255
+wc_range 20
 item_level 255
 weapon_speed 0.035
 attack_cleave 80
@@ -16822,6 +16858,7 @@ editor_folder mobs/demihumans
 race kobold
 is_male 1
 corpse 1
+wc_range 20
 layer 6
 direction 5
 item_race 255
@@ -16856,6 +16893,7 @@ type 80
 editor_folder mobs/demihumans
 race kobold
 is_male 1
+wc_range 20
 corpse 1
 layer 6
 direction 5
@@ -16892,6 +16930,7 @@ editor_folder mobs/demihumans
 race kobold
 is_male 1
 corpse 1
+wc_range 20
 layer 6
 direction 5
 item_race 255
@@ -16926,6 +16965,7 @@ type 80
 editor_folder mobs/demihumans
 race kobold
 is_male 1
+wc_range 20
 corpse 1
 layer 6
 direction 5
@@ -16963,6 +17003,12 @@ race kobold
 is_male 1
 corpse 1
 layer 6
+Dex 13
+can_cast_spell 1
+maxsp 6
+Pow 2
+magic 5
+wc_range 20
 item_race 255
 item_level 255
 direction 5
@@ -16999,6 +17045,7 @@ race worm
 layer 6
 randomitems mob_worm_purple
 direction 5
+wc_range 20
 item_race 255
 item_level 255
 speed -0.06
@@ -17083,6 +17130,7 @@ race undead
 is_evil 1
 corpse 1
 glow_radius 2
+wc_range 20
 layer 6
 item_race 255
 item_level 255
@@ -17114,6 +17162,83 @@ level 1
 speed -0.0275
 weight 22500
 end
+Object skel_fighter3
+name skeleton fighter
+face skel_fighter3.131
+type 80
+editor_folder mobs/undead
+race undead
+is_male 1
+corpse 1
+layer 6
+wc_range 20
+direction 5
+is_evil 1
+terrain_flag 1
+item_race 255
+item_level 255
+weapon_speed 0.035
+attack_slash 80
+Wis 6
+randomitems mob_low
+animation skel_fighter3
+is_animated 1
+anim_speed 4
+monster 1
+no_pick 1
+alive 1
+can_see_in_dark 1
+exp 100
+ac 9
+wc 0
+dam 5
+hp -1
+maxhp 6
+level 1
+speed -0.0275
+weight 22500
+end
+Object skel_mage
+name skeleton mage
+face skel_mage.131
+type 80
+editor_folder mobs/undead
+race undead
+is_male 1
+can_cast_spell 1
+maxsp 6
+Pow 2
+Dex 13
+magic 5
+wc_range 20
+corpse 1
+layer 6
+direction 5
+is_evil 1
+terrain_flag 1
+item_race 255
+item_level 255
+weapon_speed 0.035
+attack_slash 80
+Wis 6
+randomitems mob_low
+animation skel_mage
+is_animated 1
+anim_speed 4
+monster 1
+no_pick 1
+alive 1
+can_see_in_dark 1
+exp 100
+ac 9
+wc 0
+dam 5
+hp -1
+maxhp 6
+level 1
+speed -0.0275
+weight 22500
+end
 Object skel_fighter1
 name skeleton fighter
 face skel_fighter1.131
@@ -17123,6 +17248,7 @@ race undead
 is_male 1
 corpse 1
 layer 6
+wc_range 20
 direction 5
 is_evil 1
 terrain_flag 1
@@ -17149,6 +17275,42 @@ level 1
 speed -0.0275
 weight 22500
 end
+Object skel_fighter2
+name skeleton fighter
+face skel_fighter2.131
+type 80
+editor_folder mobs/undead
+race undead
+is_male 1
+corpse 1
+wc_range 20
+layer 6
+direction 5
+is_evil 1
+terrain_flag 1
+item_race 255
+item_level 255
+weapon_speed 0.035
+attack_slash 80
+Wis 6
+randomitems mob_low
+animation skel_fighter2
+is_animated 1
+anim_speed 4
+monster 1
+no_pick 1
+alive 1
+can_see_in_dark 1
+exp 100
+ac 9
+wc 0
+dam 5
+hp -1
+maxhp 6
+level 1
+speed -0.0275
+weight 22500
+end
 Object lost_soul
 name lost soul
 face lost_soul.131
@@ -17156,6 +17318,7 @@ type 80
 editor_folder mobs/undead
 race undead
 is_male 1
+wc_range 20
 corpse 1
 layer 6
 direction 5
@@ -17184,6 +17347,41 @@ maxhp 6
 level 1
 speed -0.0275
 weight 22500
+end
+Object mud_hand
+name mud hand
+face mud_hand.101
+type 80
+editor_folder mobs/elementals
+layer 6
+race elemental
+corpse 1
+item_race 255
+item_level 255
+wc_range 20
+weapon_speed 0.035
+attack_cleave 80
+is_neutral 1
+direction 5
+terrain_flag 1
+randomitems mob_med
+Wis 6
+animation mud_hand
+is_animated 1
+anim_speed 4
+monster 1
+no_pick 1
+alive 1
+can_see_in_dark 1
+exp 125
+ac 10
+wc 1
+dam 5
+hp -1
+maxhp 7
+speed -0.0325
+level 1
+weight 25500
 end
 Object director
 name director

@@ -4,6 +4,7 @@ face kobold.131
 race kobold
 is_male 1
 corpse 1
+wc_range 20
 layer 6
 direction 5
 item_race 255

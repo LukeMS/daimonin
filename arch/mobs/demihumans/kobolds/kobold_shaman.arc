@@ -5,6 +5,12 @@ race kobold
 is_male 1
 corpse 1
 layer 6
+Dex 13
+can_cast_spell 1
+maxsp 6
+Pow 2
+magic 5
+wc_range 20
 item_race 255
 item_level 255
 direction 5

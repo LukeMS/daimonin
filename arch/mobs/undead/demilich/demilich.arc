@@ -5,6 +5,7 @@ race undead
 is_evil 1
 corpse 1
 glow_radius 2
+wc_range 20
 layer 6
 item_race 255
 item_level 255

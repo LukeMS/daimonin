@@ -4,6 +4,7 @@ race giant
 randomitems mob_giant_hill
 will_apply 8
 is_evil 1
+wc_range 20
 is_male 1
 weight 13250
 item_race 255

@@ -2,6 +2,7 @@ Object jelly_red
 name red jelly
 race slime
 randomitems mob_slime
+wc_range 20
 is_neutral 1
 weight 13250
 exp 150

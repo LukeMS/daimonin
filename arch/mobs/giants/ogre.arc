@@ -6,6 +6,7 @@ is_evil 1
 is_male 1
 will_apply 8
 weight 13250
+wc_range 20
 exp 150
 item_race 255
 item_level 255

@@ -3279,10 +3279,6 @@ int find_free_spot(archetype *at, mapstruct *m,int x,int y,int start,int stop) {
   int i,index=0;
   static int altern[SIZEOFFREE];
   for(i=start;i<stop;i++) {
-    /* Surprised the out_of_map check was missing. Without it, we may
-     * end up accessing garbage, which may say a space is free
-     */
-    if (arch_out_of_map(at, m, x+freearr_x[i],y+freearr_y[i])) continue;
     if(!arch_blocked(at,NULL, m,x+freearr_x[i],y+freearr_y[i]))
       altern[index++]=i;
     else if(wall(m,x+freearr_x[i],y+freearr_y[i])&&maxfree[i]<stop)
@@ -3308,6 +3304,15 @@ int find_first_free_spot(archetype *at, mapstruct *m,int x,int y) {
   return -1;
 }
 
+int find_first_free_spot2(archetype *at, mapstruct *m,int x,int y, int start, int range) 
+{
+  int i;
+  for(i=start;i<range;i++) {
+    if(!arch_blocked(at,NULL,m,x+freearr_x[i],y+freearr_y[i]))
+      return i;
+  }
+  return -1;
+}
 /*
  * find_dir(map, x, y, exclude) will search some close squares in the
  * given map at the given coordinates for live objects.
