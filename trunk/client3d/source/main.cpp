@@ -48,6 +48,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 extern "C" {
 #endif
 
+
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
 INT WINAPI WinMain( HINSTANCE hInst, HINSTANCE, LPSTR strCmdLine, INT )
 #else
@@ -64,8 +65,6 @@ int main(int argc, char **argv)
     read_spells();
     read_skills();
     read_anims();
-
-
 
 	// Init & start fmod
     FMUSIC_MODULE *mod = NULL;
@@ -116,8 +115,6 @@ int main(int argc, char **argv)
     */
     FMUSIC_FreeSong(mod);
     FSOUND_Close();
-	
-	
     return 0;
 }
 
