@@ -49,7 +49,7 @@
 CC=@CC@
 
 MKDIR = @MKDIR@
-CP = @CP@
+CP = @CP@ -u
 RM = @RM@
 RMDIR = @RMDIR@
 
