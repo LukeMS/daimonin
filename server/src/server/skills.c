@@ -1693,8 +1693,8 @@ void do_throw(object *op, object *toss_item, int dir)
     object *left_cont, *throw_ob = toss_item, *left = NULL, *tmp_op;
     tag_t   left_tag;
     int     eff_str = 0, str = op->stats.Str, dam = 0, weight_f = 0;
-    int     target_throw    = 0;
 #if 0 /* disabled, see in the code */
+    int     target_throw    = 0;
     rv_vector target_vec;
 #endif
     float   str_factor = 1.0f, load_factor = 1.0f, item_factor = 1.0f;

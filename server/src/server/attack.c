@@ -475,17 +475,8 @@ int hit_player(object *op, int dam, object *hitter, int type)
 #endif
     }
 
-    /* we insert the aggro data in the mob */
+    /* we insert the aggro data in the mob, and report to the AI system */
 	aggro_obj = aggro_update_info(op, target_obj, hitter, hit_obj, maxdam<op->stats.hp?maxdam:op->stats.hp, 0);
-
-    /* Update hittee's friendship level towards hitter */
-    {
-        object                 *root_hitter = get_owner(hitter) ? hitter->owner : hitter;
-        struct mob_known_obj   *enemy       = register_npc_known_obj(op, root_hitter, -dam);
-        if (enemy && enemy->friendship > FRIENDSHIP_ATTACK)
-            enemy->friendship += FRIENDSHIP_ATTACK;
-        //            modify_known_obj_friendship(enemy, FRIENDSHIP_ATTACK);
-    }
 
     /* this is needed to send the hit number animations to the clients */
     if (op->damage_round_tag != ROUND_TAG)

@@ -50,9 +50,14 @@ struct mobdata_pathfinding
     uint8                   path_requested; /* TODO: make a flag instead */
 };
 
-/* Keeps track of registered enemies to a mob (enemies it has seen
- * and enemies that has attacked it).
- * Can also be used for exp sharing
+#define AI_OBJFLAG_USES_DISTANCE_ATTACK 0 /* The object is known 
+											 to make use of distance
+											 attacks */
+#define NROF_AI_KNOWN_OBJ_FLAGS 1
+
+/* Keeps track of other objects known to a mob 
+ * (enemies, friends and nearby objects). Works as a mob's short-time
+ * memory about other objects.
  */
 struct mob_known_obj
 {
@@ -73,9 +78,7 @@ struct mob_known_obj
                                                           negative attraction is fear) */
     int                     tmp_friendship, tmp_attraction; /* Temporary values */
 
-    /* other possible fields:
-     * credz gained (for exp sharing)
-     */
+	uint32					flags[NROF_AI_KNOWN_OBJ_FLAGS];
 };
 
 /* Flags for parameters */

@@ -1079,7 +1079,6 @@ void move_arrow(object *op)
      */
     if (flag_tmp & P_REFL_MISSILE)
     {
-        int number  = op->face->number;
         missile_reflection_adjust(op, QUERY_FLAG(op, FLAG_WAS_REFLECTED));
 
         op->direction = absdir(op->direction + 4);

@@ -1225,37 +1225,73 @@ void ai_step_back_after_swing(object *op, struct mob_behaviour_param *params, mo
 
 void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_response *response)
 {
-    if (OBJECT_VALID(op->enemy, op->enemy_count) && mob_can_see_obj(op, op->enemy, MOB_DATA(op)->enemy))
+    /* TODO: not correct for multi-tile mobs, the in_line_of_fire() functions simply don't
+     * work for them. Possible solutions: 1) disable for multi-tile mobs (what do big monsters care
+     * about puny missiles, anyway?  2) fix the line-of-fire functions (can be very expensive) */
+	/* Disabled for multi-tile mobs */
+	if(op->more)
+		return;
+	
+    if (OBJECT_VALID(op->enemy, op->enemy_count))
     {
-        /* Works almost fine, but:
-         * TODO: not correct for multi-tile mobs, the in_line_of_fire() functions simply don't
-         * work for them. Possible solutions: 1) disable for multi-tile mobs (what do big monsters care
-         * about puny missiles, anyway?  2) fix the line-of-fire functions (can be very expensive)
-         * TODO: mobs will not approach enemy through narrow corridors, as they can't 
+        /* TODO: mobs will not approach enemy through narrow corridors, as they can't 
          * avoid missiles there. It also means they can get stuck in the middle of a corridor as
          * a sitting duck for any distance attacks. Possible fixes: 1) only activate if the enemy if 
          * known to use missiles (maybe easy with upcoming mob damage memory) 2) temporarily disable 
-         * if we get stuck somewhere. 3) detect getting stuck and either flee or attack.
+         * if we get stuck somewhere. 3) detect getting stuck and either flee or charge.
          */
         
-        rv_vector  *rv  = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE);
-        if (rv->distance > 2 && rv->distance < 8)
-        
-        {
-            mapstruct *m;
-            int x = op->x + freearr_x[rv->direction];
-            int y = op->y + freearr_y[rv->direction];
+		/* Disable behaviour if we don't think enemy uses missiles */
+		if(! QUERY_FLAG(MOB_DATA(op)->enemy, AI_OBJFLAG_USES_DISTANCE_ATTACK)) 
+		{
+			if(op->enemy->type == PLAYER) 
+			{
+				/* Nasty hack for quick detection of possible distance-attack
+				 * skills */
+				/* TODO: should preferably be using observed behaviour instead of
+				 * chosen skill, but this is quite cheap. */
+				char is_distance_skill[NROFSKILLS] = {
+					0,0,0,0,0, 0,0,0,0,0,
+					0,0,0,0,0, 0,0,0,1,0, /* Flame touch ? */
+					0,0,0,0,1, 1,1,0,0,1,
+					1,0,0,0,1, 1,0,0,0,0,
+					0,0 };
+					
+				if(op->enemy->chosen_skill == NULL || 
+						! is_distance_skill[op->enemy->chosen_skill->stats.sp])
+					return;
+				SET_FLAG(MOB_DATA(op)->enemy, AI_OBJFLAG_USES_DISTANCE_ATTACK);
+			} 
+			else if (op->enemy->type == MONSTER) 
+			{
+				if(! QUERY_FLAG(op->enemy, FLAG_CAST_SPELL) &&
+						! QUERY_FLAG(op->enemy, FLAG_READY_BOW)) 
+					return;
+				SET_FLAG(MOB_DATA(op)->enemy, AI_OBJFLAG_USES_DISTANCE_ATTACK);
+			}
+		}
+			
+		/* Behaviour core */
+		if(mob_can_see_obj(op, op->enemy, MOB_DATA(op)->enemy))
+		{
+        	rv_vector  *rv  = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE);
+        	if (rv->distance > 2 && rv->distance < 8)        
+	        {
+    	        mapstruct *m;
+        	    int x = op->x + freearr_x[rv->direction];
+            	int y = op->y + freearr_y[rv->direction];
             
-            /* Avoid moving into line of fire */
-            if ((m = out_of_map(op->map, &x, &y))) {
-                if(mapcoord_in_line_of_fire(op->enemy, m, x, y, 1))
-                    response->forbidden |= (1 << rv->direction);
-            }
+	            /* Avoid moving into line of fire */
+    	        if ((m = out_of_map(op->map, &x, &y))) {
+        	        if(mapcoord_in_line_of_fire(op->enemy, m, x, y, 1))
+            	        response->forbidden |= (1 << rv->direction);
+	            }
 
-            /* Avoid staying in line of fire */
-            if(can_hit_missile(op->enemy, op, rv, 1))
-                response->forbidden |= (1 << 0);
-        }
+    	        /* Avoid staying in line of fire */
+        	    if(can_hit_missile(op->enemy, op, rv, 1))
+            	    response->forbidden |= (1 << 0);
+	        }
+		}
     }
 }
 
