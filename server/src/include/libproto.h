@@ -137,9 +137,9 @@ extern int need_identify(object *op);
 extern void identify(object *op);
 extern void set_traped_flag(object *op);
 /* links.c */
-extern objectlink *get_objectlink(void);
+extern objectlink *get_objectlink(int id);
 extern oblinkpt *get_objectlinkpt(void);
-extern void free_objectlink(objectlink *ol);
+extern void free_objectlink_recursive(objectlink *ol);
 extern void free_objectlinkpt(oblinkpt *obp);
 /* living.c */
 extern void set_attr_value(living *stats, int attr, signed char value);
@@ -363,7 +363,10 @@ extern void load_treasures(void);
 extern void init_artifacts(void);
 extern void init_archetype_pointers(void);
 extern treasurelist *find_treasurelist(const char *name);
-extern object *generate_treasure(treasurelist *t, int difficulty);
+extern objectlink *link_treasurelists(char *liststring, uint32 flags);
+extern void unlink_treasurelists(objectlink *list, int flag);
+extern object *generate_treasure(struct oblnk *t, int difficulty);
+extern void create_treasure_list(struct oblnk *t, object *op, int flag, int difficulty, int t_style, int a_chance, int tries, struct _change_arch *arch_change);
 extern void create_treasure(treasurelist *t, object *op, int flag, int difficulty, int t_style, int a_chance, int tries, struct _change_arch *change_arch);
 extern void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int t_style, int a_chance, int tries, struct _change_arch *change_arch);
 extern void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty, int t_style, int a_chance, int tries, struct _change_arch *change_arch);

@@ -232,6 +232,9 @@ typedef unsigned int tag_t;
 /*
  * So far only used when dealing with artifacts.
  * (now used by alchemy and other code too. Nov 95 b.t).
+ * This is used in readable.c, recipe.c and treasure.c .
+ * its used in statical structures loaded at startup.
+ * NEVER use this in dynamical way.
  */
 typedef struct linked_char {
   const char *name;
@@ -244,6 +247,7 @@ typedef struct linked_char {
 #include "living.h"
 #include "mempool.h"
 #include "object.h"
+#include "links.h"
 #include "arch.h"
 #include "map.h"
 #include "tod.h"
@@ -359,6 +363,7 @@ extern spell spells[NROFREALSPELLS];
 EXTERN CS_Stats cst_tot, cst_lst;
 #endif
 
+EXTERN const char *global_string_none; /* for quick search for string "none" */
 EXTERN object *active_objects;	/* List of active objects that need to be processed */
 EXTERN struct mempool_chunk *removed_objects; /* List of objects that have been removed
 											   * during the last server timestep

@@ -1053,6 +1053,8 @@ void cleanup()
     clean_tmp_files();
     write_book_archive();
 
+	FREE_AND_CLEAR_HASH2(global_string_none);
+	
 	/* that must be redone: clear cleanup so we know 100% all memory is freed */
 /*
     free_all_maps();

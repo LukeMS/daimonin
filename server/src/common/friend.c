@@ -84,7 +84,7 @@ void add_friendly_object(object *op) {
      * the debugger here and see where the problem is happening. 
      */
     for (ol=first_friendly_object; ol!=NULL; ol=ol->next) {
-		if (ol->ob == op) {
+		if (ol->objlink.ob == op) {
 		    LOG(llevBug, "BUG: (bad bug!) add_friendly_object: Trying to add object already on list (%s)\n",query_name(op));
 		    return;
 		}
@@ -94,8 +94,8 @@ void add_friendly_object(object *op) {
 /*	LOG(llevDebug,"add f_obj %s (c:%d).\n",query_name(op), friendly_list_count);*/
 
 	ol=first_friendly_object;
-    first_friendly_object=get_objectlink();
-    first_friendly_object->ob = op;
+    first_friendly_object=get_objectlink(OBJLNK_FLAG_OB);
+    first_friendly_object->objlink.ob = op;
     first_friendly_object->id = op->count;
     first_friendly_object->next=ol;
 }
@@ -131,15 +131,15 @@ void remove_friendly_object(object *op) {
     /* if the first object happens to be the one, processing is pretty
      * easy.
      */
-    if(first_friendly_object->ob==op) {
+    if(first_friendly_object->objlink.ob==op) {
 	this=first_friendly_object;
 	first_friendly_object=this->next;
-	free(this);
+	free_objectlink_simple(this);
     } else {
 	objectlink *prev=first_friendly_object;
 
 	for (this=first_friendly_object->next; this!=NULL; this=this->next) {
-	    if (this->ob == op) break;
+	    if (this->objlink.ob == op) break;
 	    prev=this;
 	}
 	if (this) {
@@ -150,7 +150,7 @@ void remove_friendly_object(object *op) {
 		LOG(llevBug,"BUG: remove_friendly_object, tags do no match, %s, %d != %d\n",query_name(op), op->count, this->id);
 	    }
 	    prev->next = this->next;
-	    free(this);
+	    free_objectlink_simple(this);
 	}
     }
 
@@ -166,7 +166,7 @@ void dump_friendly_objects() {
     objectlink *ol;
 
     for(ol=first_friendly_object;ol!=NULL;ol=ol->next)
-	LOG(llevInfo, "%s (count: %d)\n",query_name(ol->ob),ol->ob->count);
+	LOG(llevInfo, "%s (count: %d)\n",query_name(ol->objlink.ob),ol->objlink.ob->count);
 }
 
 /* New function, MSW 2000-1-14
@@ -178,16 +178,16 @@ void clean_friendly_list() {
 
     for (this_link=first_friendly_object; this_link; this_link=next) {
 	next=this_link->next;
-	if (!OBJECT_VALID(this_link->ob, this_link->id) || 
-	    (!QUERY_FLAG(this_link->ob, FLAG_FRIENDLY) && this_link->ob->type != PLAYER)) {
+	if (!OBJECT_VALID(this_link->objlink.ob, this_link->id) || 
+	    (!QUERY_FLAG(this_link->objlink.ob, FLAG_FRIENDLY) && this_link->objlink.ob->type != PLAYER)) {
 	    if (prev) {
 		prev->next = this_link->next;
 	    }
 	    else {
 		first_friendly_object = this_link->next;
 	    }
-        LOG(llevDebug,"clean_friendly_list: Removed bogus link: %s\n", query_name(this_link->ob));
-	    free(this_link);
+        LOG(llevDebug,"clean_friendly_list: Removed bogus link: %s\n", query_name(this_link->objlink.ob));
+	    free_objectlink_simple(this_link);
 	}
 	/* If we removed the object, then prev is still valid.  */
 	else prev=this_link;

@@ -281,7 +281,7 @@ void polymorph_living(object *op) {
 
     if(op->randomitems != NULL)
         /* No GT_APPLY here because we'll do it manually. */
-	create_treasure(op->randomitems,op,GT_INVISIBLE,map->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
+		create_treasure_list(op->randomitems,op,GT_INVISIBLE,map->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
 
     /* Apply any objects.  This limits it to the first 20 items, which
      * I guess is reasonable.
@@ -1971,7 +1971,7 @@ int summon_pet(object *op, int dir, SpellTypeFrom item) {
     head = insert_ob_in_map (head, op->map, op,0);
     if (head != NULL && head->randomitems != NULL) {
       object *tmp;
-      create_treasure(head->randomitems,head,GT_APPLY,head->level,T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
+      create_treasure_list(head->randomitems,head,GT_APPLY,head->level,T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
       for(tmp = head->inv; tmp != NULL; tmp = tmp->below)
         if(!tmp->nrof)
           SET_FLAG(tmp, FLAG_NO_DROP);
@@ -3343,7 +3343,7 @@ object *choose_cult_monster(object *pl, object *god, int summon_level) {
     /* search for an apprplritate monster on this race list */ 
     mon_nr=0;
     for(tobl=list->member;tobl;tobl=tobl->next) {
-	otmp=tobl->ob;
+	otmp=tobl->objlink.ob;
 	if(!otmp||!QUERY_FLAG(otmp,FLAG_MONSTER)) continue;
 	if(otmp->level<=summon_level) mon_nr++;
     }
@@ -3355,7 +3355,7 @@ object *choose_cult_monster(object *pl, object *god, int summon_level) {
     if (!mon_nr) return NULL;
     mon_nr = rndm(0, mon_nr-1);
     for(tobl=list->member;tobl;tobl=tobl->next) {
-	otmp=tobl->ob;
+	otmp=tobl->objlink.ob;
 	if(!otmp||!QUERY_FLAG(otmp,FLAG_MONSTER)) continue;
 	if(otmp->level<=summon_level && !mon_nr--) return otmp;
     }
@@ -3479,7 +3479,7 @@ int summon_cult_monsters(object *op, int old_dir) {
 	
 	if (head != NULL && head->randomitems != NULL) {
 	    object *tmp;
-	    create_treasure(head->randomitems,head,GT_APPLY,6,T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
+	    create_treasure_list(head->randomitems,head,GT_APPLY,6,T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
 	    for(tmp = head->inv; tmp != NULL; tmp = tmp->below)
 		if(!tmp->nrof)
 		    SET_FLAG(tmp, FLAG_NO_DROP);

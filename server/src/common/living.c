@@ -1892,6 +1892,7 @@ void fix_monster(object *op)
 object *insert_base_info_object(object *op)
 {
 	object *tmp, *head;
+	objectlink *ol;
 
 	op->head!=NULL?(head=op->head):(head=op);
 
@@ -1906,7 +1907,16 @@ object *insert_base_info_object(object *op)
 
 	tmp=get_object();
 	tmp->arch = op->arch;
+	/* we don't need to trigger the 
+	 * treasurelist link/unlink stuff here.
+	 * IF we ever need the original treasurelist
+	 * in the baseinfo, just removes this lines,
+	 * it will do no harm and copy_object will link it in.
+	 */
+	ol = head->randomitems;
+	head->randomitems=NULL;
 	copy_object_data(head, tmp); /* copy without put on active list */
+	head->randomitems=ol;
 	tmp->type = TYPE_BASE_INFO;
 	tmp->speed_left = tmp->speed;
 	tmp->speed=0.0f; /* ensure this object will not be active in any way */

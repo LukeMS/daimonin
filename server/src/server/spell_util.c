@@ -2753,7 +2753,7 @@ void put_a_monster(object *op,const char *monstername) {
     }
 
     if (head->randomitems) 
-		create_treasure(head->randomitems, head, GT_INVISIBLE, op->level?op->level:op->map->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
+		create_treasure_list(head->randomitems, head, GT_INVISIBLE, op->level?op->level:op->map->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
     insert_ob_in_map(head,op->map,op,0);
 
     /* thought it'd be cool to insert a burnout, too.*/

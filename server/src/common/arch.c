@@ -369,7 +369,7 @@ void first_arch_pass(FILE *fp) {
     }
 	CLEAR_FLAG((&at->clone),FLAG_CLIENT_SENT); /* we using this flag for debugging - ignore */
     at=get_archetype_struct();
-    initialize_object(op);
+    initialize_object(op); /* clear - op is only temp. buffer for at->clone */
     op->arch=at;
   }
 	delete_loader_buffer(mybuffer);
@@ -411,15 +411,10 @@ void second_arch_pass(FILE *fp_start) {
         else if(at!=NULL)
           at->clone.other_arch=other;
       }
-    } else if(!strcmp("randomitems",variable)) {
-      if(at!=NULL) {
-        treasurelist *tl=find_treasurelist(argument);
-        if(tl==NULL)
-          LOG(llevBug,"BUG: Failed to link treasure to arch. (arch: %s ->%s\n",
-									STRING_OBJ_NAME(&at->clone), STRING_SAFE(argument));
-        else
-          at->clone.randomitems=tl;
-      }
+    } else if(!strcmp("randomitems",variable)) 
+	{
+      if(at) 
+		  at->clone.randomitems=link_treasurelists(argument,OBJLNK_FLAG_STATIC);
     }
   }
 
@@ -464,7 +459,11 @@ void second_arch_pass(FILE *fp_start) {
 
 			/* now copy from real arch the stuff from above to our "fake" arches */
 			at->clone.other_arch = other->clone.other_arch;
+			if(at->clone.randomitems)
+				unlink_treasurelists(at->clone.randomitems, FALSE);
 			at->clone.randomitems = other->clone.randomitems;
+			if(at->clone.randomitems && (at->clone.randomitems->flags&OBJLNK_FLAG_REF) )
+				at->clone.randomitems->ref_count++;
 		}
 		else if(!strcmp("other_arch",variable)) 
 		{	
@@ -475,11 +474,9 @@ void second_arch_pass(FILE *fp_start) {
 		}
 		else if(!strcmp("randomitems",variable)) 
 		{
-			treasurelist *tl=find_treasurelist(argument);
-			if(tl==NULL)
-				LOG(llevBug,"BUG: second artifacts pass: Failed to link treasure to arch. (arch: %s ->%s)\n",STRING_OBJ_NAME(&at->clone), STRING_SAFE(argument));
-			else if(at!=NULL)
-				at->clone.randomitems=tl;
+			if(at->clone.randomitems)
+				unlink_treasurelists(at->clone.randomitems, TRUE);
+			at->clone.randomitems=link_treasurelists(argument,OBJLNK_FLAG_STATIC);
 		}
 	}
 

@@ -979,7 +979,7 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags)
 		if(QUERY_FLAG(op,FLAG_AUTO_APPLY))
 			auto_apply(op); /* auto_apply() will remove the flag_auto_apply after first use */
 		else if((mapflags & MAP_ORIGINAL) && op->randomitems) /* for fresh maps, create treasures */ 
-			create_treasure(op->randomitems, op, op->type!=TREASURE?GT_APPLY:0, op->level?op->level:m->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
+			create_treasure_list(op->randomitems, op, op->type!=TREASURE?GT_APPLY:0, op->level?op->level:m->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
 
 		/* iam not sure this is senseful.
 		 * it was part of fix_auto_apply() but it should

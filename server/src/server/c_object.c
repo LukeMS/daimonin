@@ -29,25 +29,6 @@
 #include <sproto.h>
 #endif
 
-/*
- * Object id parsing functions
- */
-
-#define OBLINKMALLOC(p) if(!((p)=(objectlink *)malloc(sizeof(objectlink))))\
-                          fatal(OUT_OF_MEMORY);
-
-#define ADD_ITEM(NEW,COUNT)\
-	  if(!first) {\
-	    OBLINKMALLOC(first);\
-	    last=first;\
-	  } else {\
-	    OBLINKMALLOC(last->next);\
-	    last=last->next;\
-	  }\
-	  last->next=NULL;\
-	  last->ob=(NEW);\
-          last->id=(COUNT);
-
 /* Search the inventory of 'pl' for what matches best with params.
  * we use item_matched_string above - this gives us consistent behaviour
  * between many commands.  Return the best match, or NULL if no match.

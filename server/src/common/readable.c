@@ -790,8 +790,8 @@ static void init_mon_info (void)
 	       || QUERY_FLAG (&at->clone, FLAG_UNAGGRESSIVE))
 	      )
 	    {
-		objectlink *mon = (objectlink *) malloc (sizeof (objectlink));
-		mon->ob = &at->clone;
+		objectlink *mon = get_objectlink(OBJLNK_FLAG_OB);
+		mon->objlink.ob = &at->clone;
 		mon->id = nrofmon;
 		mon->next = first_mon_info;
 		first_mon_info = mon;
@@ -1219,7 +1219,7 @@ get_random_mon (int level)
 		LOG(llevBug, "BUG: get_random_mon: Didn't find a monster when we should have\n");
 		return NULL;
 	    }
-	  return mon->ob;
+	  return mon->objlink.ob;
       }
 
     /* Case where we are searching by level.  Redone 971225 to be clearer
@@ -1236,7 +1236,7 @@ get_random_mon (int level)
 
     /* First count number of monsters meeting level criteria */
     for (mon = first_mon_info, i = 0; mon; mon = mon->next)
-	if (mon->ob->level >= level)
+	if (mon->objlink.ob->level >= level)
 	    i++;
 
     if (i == 0)
@@ -1248,8 +1248,8 @@ get_random_mon (int level)
 
     monnr = RANDOM () % i;
     for (mon = first_mon_info; mon; mon = mon->next)
-	if (mon->ob->level >= level && monnr-- == 0)
-	    return mon->ob;
+	if (mon->objlink.ob->level >= level && monnr-- == 0)
+	    return mon->objlink.ob;
 
     if (!mon)
       {
@@ -1287,16 +1287,16 @@ get_next_mon (object *tmp)
     objectlink *mon;
 
     for (mon = first_mon_info; mon; mon = mon->next)
-	if (mon->ob == tmp)
+	if (mon->objlink.ob == tmp)
 	    break;
 
     /* didn't find a match */
     if (!mon)
 	return NULL;
     if (mon->next)
-	return mon->next->ob;
+	return mon->next->objlink.ob;
     else
-	return first_mon_info->ob;
+	return first_mon_info->objlink.ob;
 
 }
 
@@ -2033,10 +2033,11 @@ free_all_readable ()
 	  FREE_AND_CLEAR_HASH2(lmsg->name);
 	  free (lmsg);
       }
+	
     for (monlink = first_mon_info; monlink; monlink = nextmon)
       {
 	  nextmon = monlink->next;
-	  free (monlink);
+	  free_objectlink_simple(monlink);
       }
 }
 

@@ -23,6 +23,7 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 
+
 /* re-cmp.c
  * Pattern match a string, parsing some of the common RE-metacharacters.
  *
@@ -82,7 +83,7 @@ char *
 re_cmp(char *str, char *regexp) {
     char *next_regexp;
     Boolean once = False;
-    Boolean matched=False;
+    Boolean matched;
 
     if (re_init_done == False)
 	re_init();
@@ -153,16 +154,26 @@ re_cmp(char *str, char *regexp) {
 		    return str;
 		break;
 	}
+	/* The logic here is that re_match_token only sees
+	 * if the one letter matches.  Thus, if the
+	 * regex is like '@match eureca', and the
+	 * the user enters anything with an e, re_match_token
+	 * returns true, but they really need to match the
+	 * entire regexp, which re_cmp_step will do.
+	 * However, what happens is that there can be a case
+	 * where the string being match is something like
+	 * 'where is eureca'.  In this case, the re_match_token
+	 * matches that first e, but the re_cmp_step below,
+	 * fails because the next character (r) doesn't match
+	 * the u.  So we call re_cmp with the string
+	 * after the first r, so that it should hopefully match
+	 * up properly.
+	 */
 	if (re_cmp_step(str+1, next_regexp, 1, 0))
 	    return str;
+	else if (str+1 != 0)
+	    return re_cmp(str+1, regexp);
     }
-#if 0
-    do {
-	++str;
-	if (re_cmp_step(str, regexp, 0, 0))
-	    return str;
-    } while (*str);
-#endif
     return NULL;
 }
 
@@ -180,7 +191,7 @@ re_cmp_step(char *str, char *regexp, int slot, int matches) {
     Boolean matched;
 
 #ifdef DEBUG
-/*    LOG(llevInfo , "['%s', '%s', %d, %d]\n", str, regexp, slot, matches);*/
+/*    fprintf(stderr, "['%s', '%s', %d, %d]\n", str, regexp, slot, matches);*/
 #endif
 
     if (*regexp == 0) {
@@ -192,7 +203,7 @@ re_cmp_step(char *str, char *regexp, int slot, int matches) {
     /* This chunk of code makes sure that the regexp-tokenising happens
      * only once. We only tokenise as much as we need.
      */
-    if ((unsigned int) slot > re_token_depth) {
+    if ((unsigned int)slot > re_token_depth) {
 	re_token_depth = slot;
 	if (re_token[slot] == NULL)
 	    re_token[slot] = (selection *) malloc(sizeof(selection));
@@ -211,7 +222,7 @@ re_cmp_step(char *str, char *regexp, int slot, int matches) {
 	++matches;
 
     if (*str == 0)
-	return (*next_regexp == 0 || re_token[slot]->type == sel_end);
+	return (*next_regexp == 0 || re_token[slot]->type == sel_end) && matched;
 
     switch (re_token[slot]->repeat) {
 	case rep_once:
@@ -550,3 +561,4 @@ main(int argc, char *argv[]) {
     return 0;
 }
 #endif
+

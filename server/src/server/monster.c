@@ -1219,7 +1219,7 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
                 /* Problem: we couldn't find a relative direction between the
                  * maps. Usually it means that they are in different mapsets
                  * or too far away from each other. */
-                LOG(llevDebug,"ai_move_towards_waypoint(): No connection between maps: '%s' and '%s'\n", 
+                LOG(llevDebug,"BUG: ai_move_towards_waypoint(): No connection between maps: '%s' and '%s'\n", 
                         STRING_MAP_PATH(destmap), STRING_MAP_PATH(op->map));
                 CLEAR_FLAG(wp, WP_FLAG_ACTIVE); /* disable this waypoint */
                 try_next_wp = 1;
@@ -1233,7 +1233,9 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
                     if(MOB_PATHDATA(op)->goal_delay_counter < WP_DELAYTIME(wp)) {
                         MOB_PATHDATA(op)->goal_delay_counter++;
                     } else {
+#ifdef AI_DEBUG						
                         LOG(llevDebug,"ai_move_towards_waypoint(): '%s' reached destination '%s'\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(wp));
+#endif
 
 #ifdef PLUGINS
                         /* GROS: Handle for plugin trigger event */
@@ -1277,7 +1279,7 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
                 }
             }
         } else {
-            LOG(llevDebug,"ai_move_towards_waypoint(): '%s' ('%s') no such map: '%s'\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(wp), STRING_WP_MAP(wp));
+            LOG(llevDebug,"BUG: ai_move_towards_waypoint(): '%s' ('%s') no such map: '%s'\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(wp), STRING_WP_MAP(wp));
             CLEAR_FLAG(wp, WP_FLAG_ACTIVE);
             try_next_wp = 1;               
         }
@@ -1286,12 +1288,16 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
     /* If we reached or gave up on the current waypoint */
     if(try_next_wp && wp) {
         if(WP_NEXTWP(wp) && (wp = find_waypoint(op, WP_NEXTWP(wp)))) {
+#ifdef AI_DEBUG						
             LOG(llevDebug,"ai_move_towards_waypoint(): '%s' next WP: '%s'\n", STRING_OBJ_NAME(op), STRING_WP_NEXTWP(wp));
+#endif
             SET_FLAG(wp, WP_FLAG_ACTIVE); /* activate new waypoint */
             MOB_PATHDATA(op)->best_distance = -1;
             MOB_PATHDATA(op)->tried_steps = 0;
         } else {
+#ifdef AI_DEBUG									
             LOG(llevDebug,"ai_move_towards_waypoint(): '%s' no next WP\n", STRING_OBJ_NAME(op));
+#endif
             wp = NULL;
         }
     }
@@ -2725,7 +2731,7 @@ static object *spawn_monster(object *gen, object *orig, int range)
       op->head=head,prev->more=op;
     if (OBJECT_FREE(op)) return NULL;
     if(op->randomitems!=NULL)
-		create_treasure(op->randomitems,op,0,op->level?op->level:orig->map->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
+		create_treasure_list(op->randomitems,op,0,op->level?op->level:orig->map->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
     if(head==NULL)
       head=op;
     prev=op;

@@ -460,7 +460,7 @@ int add_player(NewSocket *ns);
 archetype *get_player_archetype(archetype *at);
 object *get_nearest_player(object *mon);
 int path_to_player(object *mon, object *pl, int mindiff);
-void give_initial_items(object *pl, treasurelist *items);
+void give_initial_items(object *pl, struct oblnk *items);
 void get_name(object *op);
 void get_password(object *op);
 void confirm_password(object *op);

@@ -105,6 +105,7 @@ typedef enum {
     POOL_BEHAVIOURSET,
     POOL_BEHAVIOUR,
     POOL_BEHAVIOUR_PARAM,
+	POOL_OBJECT_LINK,
     NROF_MEMPOOLS 
 } mempool_id;
 

@@ -201,6 +201,7 @@ static void check_special_prayers (object *op, object *god)
  * by 'god'.
  */
     treasure *tr;
+	objectlink *ol;
     object *tmp, *next_tmp;
     int spell;
 
@@ -220,22 +221,26 @@ static void check_special_prayers (object *op, object *god)
             continue;
 	}
 
-        /* Inner loop tries to find the special prayer in the god's treasure
-         * list. */
-        for (tr = god->randomitems->items; tr; tr = tr->next)
-        {
-            object *item;
-            if (tr->item == NULL)
-                continue;
-            item = &tr->item->clone;
+		/* Inner loop tries to find the special prayer in the god's treasure
+         * list. 
+		*/
+		for(ol=god->randomitems;ol;ol=ol->next)
+		{
+			for (tr = ol->objlink.tl->items; tr; tr = tr->next)
+			{
+				object *item;
+				if (tr->item == NULL)
+					continue;
+				item = &tr->item->clone;
 
-            if (item->type == SPELLBOOK && get_spell_number (item) == spell)
-            {
-                /* Current god allows this special prayer. */
-                spell = -1;
-                break;
-            }
-        }
+				if (item->type == SPELLBOOK && get_spell_number (item) == spell)
+				{
+					/* Current god allows this special prayer.*/
+					spell = -1;
+					break;
+				}
+			}
+		}
 
         if (spell >= 0)
             do_forget_spell (op, spell);
@@ -249,6 +254,7 @@ static void check_special_prayers (object *op, object *god)
  * items (from the former cult).
  */
 void become_follower (object *op, object *new_god) {
+	objectlink *ol;
     object *exp_obj = op->chosen_skill->exp_obj; /* obj. containing god data */
     object *old_god = NULL;                      /* old god */
     treasure *tr;
@@ -277,21 +283,17 @@ void become_follower (object *op, object *new_god) {
 	    item=op->inv;
 	}
     }*/
-    
-    /* remove any godgiven items from the old god */
-	/*
-    if (old_god) {
-        for(tr=old_god->randomitems->items; tr!=NULL; tr = tr->next) {
-	    if (tr->item && QUERY_FLAG(&tr->item->clone, FLAG_STARTEQUIP))
-	        follower_remove_similar_item(op, &tr->item->clone);
-	}
-    }*/
-    
+        
     /* give the player any special god-characteristic-items. */
-    for(tr=new_god->randomitems->items; tr!=NULL; tr = tr->next) {
-      if(tr->item && IS_SYS_INVISIBLE(&tr->item->clone) && tr->item->clone.type != SPELLBOOK &&
-         tr->item->clone.type != BOOK)
-        god_gives_present(op,new_god,tr); }
+	
+	for(ol=new_god->randomitems;ol;ol=ol->next)
+	{		
+		for(tr=ol->objlink.tl->items; tr!=NULL; tr = tr->next)
+		{
+		  if(tr->item&&IS_SYS_INVISIBLE(&tr->item->clone)&&tr->item->clone.type!=SPELLBOOK&&tr->item->clone.type!=BOOK)
+		    god_gives_present(op,new_god,tr); 
+		}
+	}
 
     if(!op||!new_god) return;
 
@@ -486,24 +488,28 @@ const char *determine_god(object *op) {
 
 archetype *determine_holy_arch (object *god, const char *type)
 {
-    treasure *tr;
+	object *item;
+	objectlink *ol;
+	treasure *tr;
 
     if ( ! god || ! god->randomitems) {
         LOG(llevBug, "BUG: determine_holy_arch(): no god or god without randomitems\n");
         return NULL;
     }
 
-    for (tr = god->randomitems->items; tr != NULL; tr = tr->next) {
-        object *item;
+	for(ol=god->randomitems;ol;ol=ol->next)
+	{
+	    for (tr = ol->objlink.tl->items; tr != NULL; tr = tr->next) 
+		{
 
-        if ( ! tr->item)
-            continue;
-        item = &tr->item->clone;
+	        if ( ! tr->item)
+	            continue;
+	        item = &tr->item->clone;
 
-        if (item->type == BOOK && IS_SYS_INVISIBLE(item)
-            && strcmp (item->name, type) == 0)
-            return item->other_arch;
-    }
+			if (item->type == BOOK && IS_SYS_INVISIBLE(item) && strcmp (item->name, type) == 0)
+			        return item->other_arch;
+		}
+	}
     return NULL;
 }
 
@@ -699,6 +705,7 @@ static int god_gives_present (object *op, object *god, treasure *tr)
 void god_intervention (object *op, object *god)
 {
     int level = SK_level (op);
+	objectlink *ol;
     treasure *tr;
 
     if ( ! god || ! god->randomitems) {
@@ -714,13 +721,17 @@ void god_intervention (object *op, object *god)
 
     new_draw_info (NDI_UNIQUE, 0, op, "You feel a holy presence!");
 
-    for (tr = god->randomitems->items; tr != NULL; tr = tr->next) {
+	for(ol=god->randomitems;ol;ol=ol->next)
+	{
+		
+    for (tr = ol->objlink.tl->items; tr != NULL; tr = tr->next) 
+	{
         object *item;
 
         if (tr->chance <= random_roll(0, 99, op, PREFER_HIGH))
             continue;
 
-        /* Treasurelist - generate some treasure for the follower */
+        // Treasurelist - generate some treasure for the follower 
         if (tr->name) {
             treasurelist *tl = find_treasurelist (tr->name);
             if (tl == NULL)
@@ -738,22 +749,22 @@ void god_intervention (object *op, object *god)
         }
         item = &tr->item->clone;
 
-        /* Grace limit */
+        // Grace limit 
         if (item->type == BOOK && IS_SYS_INVISIBLE(item)
             && strcmp (item->name, "grace limit") == 0)
         {
             if (op->stats.grace < item->stats.grace
                 || op->stats.grace < op->stats.maxgrace)
             {
-                /* Follower lacks the required grace for the following
-                 * treasure list items. */
+                // Follower lacks the required grace for the following
+                // treasure list items. 
                 (void) cast_change_attr (op, op, op,0, SP_HOLY_POSSESSION);
                 return;
             }
             continue;
         }
 
-        /* Restore grace */
+        // Restore grace 
         if (item->type == BOOK && IS_SYS_INVISIBLE(item)
             && strcmp (item->name, "restore grace") == 0)
         {
@@ -765,7 +776,7 @@ void god_intervention (object *op, object *god)
             return;
         }
 
-        /* Heal damage */
+        // Heal damage 
         if (item->type == BOOK && IS_SYS_INVISIBLE(item)
             && strcmp (item->name, "restore hitpoints") == 0)
         {
@@ -777,12 +788,12 @@ void god_intervention (object *op, object *god)
             return;
         }
 
-        /* Restore spellpoints */
+        // Restore spellpoints 
         if (item->type == BOOK && IS_SYS_INVISIBLE(item)
             && strcmp (item->name, "restore spellpoints") == 0)
         {
             int max = (int)((float)op->stats.maxsp * ((float)item->stats.maxsp / (float)100.0));
-            /* Restore to 50 .. 100%, if sp < 50% */
+            // Restore to 50 .. 100%, if sp < 50%
             int new_sp = (int)((float)random_roll(1000, 1999, op, PREFER_HIGH) / (float)2000.0 * (float)max);
             if (op->stats.sp >= max / 2)
                 continue;
@@ -791,7 +802,7 @@ void god_intervention (object *op, object *god)
             op->stats.sp = new_sp;
         }
 
-        /* Various heal spells */
+        // Various heal spells 
         if (item->type == BOOK && IS_SYS_INVISIBLE(item)
             && strcmp (item->name, "heal spell") == 0)
         {
@@ -801,7 +812,7 @@ void god_intervention (object *op, object *god)
                 continue;
         }
 
-        /* Remove curse */
+        // Remove curse 
         if (item->type == BOOK && IS_SYS_INVISIBLE(item)
             && strcmp (item->name, "remove curse") == 0)
         {
@@ -811,7 +822,7 @@ void god_intervention (object *op, object *god)
                 continue;
         }
 
-        /* Remove damnation */
+        // Remove damnation
         if (item->type == BOOK && IS_SYS_INVISIBLE(item)
             && strcmp (item->name, "remove damnation") == 0)
         {
@@ -821,7 +832,7 @@ void god_intervention (object *op, object *god)
                 continue;
         }
 
-        /* Heal depletion */
+        // Heal depletion 
         if (item->type == BOOK && IS_SYS_INVISIBLE(item)
             && strcmp (item->name, "heal depletion") == 0)
         {
@@ -847,7 +858,7 @@ void god_intervention (object *op, object *god)
         }
   
 
-        /* Messages */
+        // Messages 
         if (item->type == BOOK && IS_SYS_INVISIBLE(item)
             && strcmp (item->name, "message") == 0)
         {
@@ -855,7 +866,7 @@ void god_intervention (object *op, object *god)
             return;
         }
 
-        /* Enchant weapon */
+        // Enchant weapon 
         if (item->type == BOOK && IS_SYS_INVISIBLE(item)
             && strcmp (item->name, "enchant weapon") == 0)
         {
@@ -865,7 +876,7 @@ void god_intervention (object *op, object *god)
                 continue;
         }
 
-        /* Spellbooks - works correctly only for prayers */
+        // Spellbooks - works correctly only for prayers 
         if (item->type == SPELLBOOK)
         {
             int spell = get_spell_number (item);
@@ -893,15 +904,16 @@ void god_intervention (object *op, object *god)
                 continue;
         }
 
-        /* Other gifts */
+        // Other gifts 
         if ( !IS_SYS_INVISIBLE(item)) {
           if (god_gives_present (op, god, tr)) 
                 return;
             else
                 continue;
         }
-        /* else ignore it */
+        // else ignore it
     }
+	}
 
     new_draw_info (NDI_UNIQUE, 0, op, "You feel rapture.");
 }

@@ -750,9 +750,9 @@ void command_new_char(char *params, int len,player *pl)
 			new_draw_info_format(NDI_UNIQUE, 0,gbl_active_DM,"DM: %d players now playing.", player_active);
 	}
 	CLEAR_FLAG(op, FLAG_WIZ);
-	(void) init_player_exp(op);
+	init_player_exp(op);
 	give_initial_items(op,op->randomitems);
-	(void) link_player_skills(op);
+	link_player_skills(op);
 	CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
 	CONTR(op)->last_stats.exp=1;			/* force send of skill exp data to client */	
 	strcpy(CONTR(op)->title,op->race);		/* no title - just what we born */
