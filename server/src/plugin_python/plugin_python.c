@@ -649,7 +649,7 @@ static PyObject* CFReadyMap(PyObject* self, PyObject* args)
 static PyObject* CFTeleport(PyObject* self, PyObject* args)
 {
     long whoptr;
-    char *map;
+    char *map, *msg=NULL;
     int x, y, u;
 
     if (!PyArg_ParseTuple(args,"lsiii",&whoptr,&map,&x,&y, &u))
@@ -660,6 +660,7 @@ static PyObject* CFTeleport(PyObject* self, PyObject* args)
     GCFP.Value[2] = (void *)(&x);
     GCFP.Value[3] = (void *)(&y);
     GCFP.Value[4] = (void *)(&u);
+    GCFP.Value[5] = (char *)(msg);
     (PlugHooks[HOOK_TELEPORTOBJECT])(&GCFP);
 
     Py_INCREF(Py_None);
@@ -2543,21 +2544,21 @@ static PyObject* CFCreateObjectInside(PyObject* self, PyObject* args)
 	if(!myob)
 	{
 		LOG(llevDebug,"BUG python_CFCreateObjectInside(): ob:>%s< = NULL!\n", query_name(myob));
-	    GCFP.Value[0] = "singluarity";
+	    GCFP.Value[0] = "singularity";
 		CFR = (PlugHooks[HOOK_GETARCHETYPE])(&GCFP);
 		myob = (object *)(CFR->Value[0]);
 		free(CFR);
 		if(!myob) /* now we are REALLY messed up */
 		{
-			LOG(llevDebug,"BUG python_CFCreateObjectInside(): FAILED TO CREATE: %s AND no singluarity!\n", txt);
+			LOG(llevDebug,"BUG python_CFCreateObjectInside(): FAILED TO CREATE: %s AND no singularity!\n", txt);
 		    Py_INCREF(Py_None);
 			return Py_None; /* emergency return */
 		}
 	}
 
-	/* we created a singluarity - that should not happes - tell it the logs */
-    if (myob->name && !strncmp(myob->name, "singluarity",11))
-		LOG(llevDebug,"BUG python_CFCreateObjectInside(): FAILED TO CREATE: %s (>%s< = singluarity!)\n", txt,query_name(myob));
+	/* we created a singularity - that should not happes - tell it the logs */
+    if (myob->name && !strncmp(myob->name, "singularity",11))
+		LOG(llevDebug,"BUG python_CFCreateObjectInside(): FAILED TO CREATE: %s (>%s< = singularity!)\n", txt,query_name(myob));
 		
 	if(value != -1) /* -1 means, we use original value */
 		myob->value = (sint32) value;
