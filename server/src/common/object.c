@@ -1977,7 +1977,20 @@ static int find_quest_item_inv(object *target, object *obj)
 	return 0;
 }
 
-static inline int find_quest_item(object *target, object *obj)
+/* Inside the QUEST_CONTAINER we have 2 things: a INFO object which tells us
+ * we have "finished" the quest (if we kill the quest mob again it don't drop
+ * the quest item again) or a "quest status" info. 
+ * Whats the difference? We can do 2 kinds of quests - we killing a quest mob
+ * but we have not get any quest and don't know about the quest. We get the
+ * quest item as "quest start" and the player must search for that quest.
+ * Thats a "open" quest.
+ * A "closed" quest mob will never drop the item until we have before unlocked
+ * it by getting the quest of doing other action which give us the status to
+ * do the quest. Thats needed for "secret" quests and/or for quests with different
+ * steps.
+ * The FLAG_INV_LOCKED flag is used as marker here for closed quests.
+ */
+static inline int find_quest_item(object *target, object *obj, int drop_lock)
 {
 	object *tmp;
 
@@ -1989,10 +2002,26 @@ static inline int find_quest_item(object *target, object *obj)
 	{
 		for(tmp=tmp->inv;tmp;tmp=tmp->below)
 		{
-			if(tmp->name == obj->name && !strcmp(tmp->race, obj->arch->name) )
-				return 1;
+			if(tmp->name == obj->name && !strcmp(tmp->race, obj->arch->name))
+			{	
+				if (!drop_lock)					
+					return 1; /* return we have it - don't drop */
+				else
+				{
+					if(QUERY_FLAG(tmp,FLAG_INV_LOCKED)) /* we have it and its allowed to drop */
+					{
+						/* but don't drop if we had found it previous */
+						return find_quest_item_inv(target,obj);
+					}
+					else
+						return 1; /* always don't drop */	
+				}
+			}
 		}
 	}
+	/* its locked and a closed quest - don't drop because we have no trigger */
+	if(drop_lock)
+		return 1;
 
 	return find_quest_item_inv(target,obj);
 }
@@ -2103,7 +2132,7 @@ void drop_ob_inv(object *ob) {
                  * quest mob before) we free the quest item here and stop.
                  * otherwise, move the item in the players inventory!
                  */
-                if(! find_quest_item(enemy, tmp_op))
+                if(! find_quest_item(enemy, tmp_op,QUERY_FLAG(tmp_op,FLAG_INV_LOCKED)))
                 {
                     char auto_buf[HUGE_BUF];
 
@@ -2116,6 +2145,7 @@ void drop_ob_inv(object *ob) {
                     }
                     else
                     {
+						CLEAR_FLAG(tmp_op,FLAG_INV_LOCKED);
                         insert_ob_in_ob(tmp_op,enemy); 
                         sprintf(auto_buf,"You found the quest item %s!\n", query_name(tmp_op));
                         (*draw_info_func)(NDI_UNIQUE|NDI_NAVY, 0, enemy, auto_buf);

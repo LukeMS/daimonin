@@ -652,7 +652,7 @@ int command_addexp (object *op, char *params)
        return 1;
 	}
 
-	pl = find_player(params);
+	pl = find_player(buf);
 
 	if(pl==NULL)
 	{
