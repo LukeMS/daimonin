@@ -532,6 +532,10 @@
     quest container when a quest is finished and for that player
     this item will never drop again.
   </attribute>
+  <attribute arch="inv_locked" editor="inv or quest lock" type="bool">
+    Double used flag. Item is locked when in player inventory (can't be
+    dropped). It also marks closed (locked) quest info and items.
+  </attribute>
   <attribute arch="identified" editor="identified" type="bool">
     If an item is identified, the player has
     full knowledge about it.
