@@ -248,6 +248,9 @@ static _bitmap_name  bitmap_name[BITMAP_INIT] =
         {"options_mark_right.png", PIC_TYPE_TRANS},
         {"options_alpha.png", PIC_TYPE_DEFAULT},
 
+        {"exp_skill_border.png", PIC_TYPE_DEFAULT},
+        {"exp_skill_line.png", PIC_TYPE_DEFAULT},
+        {"exp_skill_bubble.png", PIC_TYPE_TRANS},
 };
 
 #define BITMAP_MAX (sizeof(bitmap_name)/sizeof(struct _bitmap_name))

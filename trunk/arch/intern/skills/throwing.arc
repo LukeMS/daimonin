@@ -1,6 +1,7 @@
 Object skill_throwing
 name throwing
 type 43
+wc 5
 sub_type 0
 face skill.101
 sys_object 1

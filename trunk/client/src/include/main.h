@@ -448,6 +448,10 @@ typedef enum _bitmap_index {
 		BITMAP_OPTIONS_MARK_LEFT,
 		BITMAP_OPTIONS_MARK_RIGHT,
 		BITMAP_OPTIONS_ALPHA,
+        BITMAP_EXP_SKILL_BORDER,
+        BITMAP_EXP_SKILL_LINE,
+        BITMAP_EXP_SKILL_BUBBLE,
+
         BITMAP_INIT
 }_bitmap_index;
 

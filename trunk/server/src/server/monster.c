@@ -1791,6 +1791,15 @@ void monster_apply_below(object *monster) {
 /* scary function - need rework. even in crossfire its changed now */
 void monster_check_apply(object *mon, object *item) {
 
+  /* and because its scary, we stop here... */
+  /* this function is simply to bad - for example will potions applied
+   * not depending on the situation... why applying a heal potion when
+   * full hp? firestorm potion when standing next to own people?
+   * IF we do some AI stuff here like using items we must FIRST
+   * add a AI - then doing the things. Think first, act later!
+   */
+  if(1)
+	  return;
   if(item->type==SPELLBOOK&&
      mon->arch!=NULL&&(QUERY_FLAG((&mon->arch->clone),FLAG_CAST_SPELL))) {
     SET_FLAG(mon, FLAG_CAST_SPELL);
@@ -1817,10 +1826,10 @@ void monster_check_apply(object *mon, object *item) {
       flag=0;
     break;
     case POTION:
-      flag=1;
+      flag=0;
       break;
     case FOOD: /* Can a monster eat food ?  Yes! (it heals) */
-      flag=1;
+      flag=0;
       break;
     case WEAPON:
 /*
@@ -1852,6 +1861,7 @@ void monster_check_apply(object *mon, object *item) {
     case BOW:
       flag=QUERY_FLAG(mon,FLAG_USE_BOW);
     }
+
     if (flag) {
         if(!QUERY_FLAG(item,FLAG_APPLIED))
           manual_apply(mon,item,0);

@@ -79,19 +79,19 @@ int thaco_bonus[MAX_STAT + 1]={
 
 /* CON - % of "real max hp" boni */
 static float con_bonus[MAX_STAT + 1]={
-	-0.8f, -0.6f, -0.5f, -0.4f, -0.35f,-0.3f,-0.25f,-0.2f, -0.15f, -0.1f, -0.5f, /* 0-10: mali */
+	-0.8f, -0.6f, -0.5f, -0.4f, -0.35f,-0.3f,-0.25f,-0.2f, -0.15f, -0.11f, -0.07f, /* 0-10: mali */
 	0.0f,0.0f,0.0f,0.0f,0.0f,
 	0.1f, 0.15f, 0.2f, 0.25f, 0.3f, 0.35f, 0.4f, 0.45f, 0.5f, 0.55f, 0.6f, 0.7f, 0.8f, 0.9f, 1.0f
 };
 
 static float pow_bonus[MAX_STAT + 1]={
-	-0.8f, -0.6f, -0.5f, -0.4f, -0.35f,-0.3f,-0.25f,-0.2f, -0.15f, -0.1f, -0.5f, /* 0-10: mali */
+	-0.8f, -0.6f, -0.5f, -0.4f, -0.35f,-0.3f,-0.25f,-0.2f, -0.15f, -0.11f, -0.07f, /* 0-10: mali */
 	0.0f,0.0f,0.0f,0.0f,0.0f,
 	0.1f, 0.2f, 0.3f, 0.24f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1.0f, 1.1f, 1.4f, 1.6f, 1.8f, 2.0f
 };
 
 static float wis_bonus[MAX_STAT + 1]={
-	-0.8f, -0.6f, -0.5f, -0.4f, -0.35f,-0.3f,-0.25f,-0.2f, -0.15f, -0.1f, -0.5f, /* 0-10: mali */
+	-0.8f, -0.6f, -0.5f, -0.4f, -0.35f,-0.3f,-0.25f,-0.2f, -0.15f, -0.11f, -0.07f, /* 0-10: mali */
 	0.0f,0.0f,0.0f,0.0f,0.0f,
 	0.1f, 0.2f, 0.3f, 0.24f, 0.5f, 0.6f, 0.7f, 0.8f, 0.9f, 1.0f, 1.1f, 1.4f, 1.6f, 1.8f, 2.0f
 };
@@ -1576,7 +1576,7 @@ void fix_player(object *op)
 	pl->weapon_sp = (char)(op->weapon_speed/0.0025f);
 	
     /* Regenerate HP */
-	base_reg = 40; /* default value */
+	base_reg = 38; /* default value */
 	if(op->contr->gen_hp>0)
 	{
 		op->contr->reg_hp_num =(op->contr->gen_hp/2)+1; /* how much we gain if we gain */
@@ -1629,7 +1629,7 @@ void fix_player(object *op)
 	op->contr->gen_client_sp = (uint16) (reg_sec*10.0f);
 
     /* Regenerate Grace */
-	base_reg = 35; /* default value */
+	base_reg = 25; /* default value */
 	if(op->contr->gen_grace>0)
 	{
 		op->contr->reg_grace_num =(op->contr->gen_grace/3)+1;
@@ -1869,7 +1869,7 @@ void fix_monster(object *op)
 	/* post adjust */
 	if((tmp_add = lev_damage[op->level/3]-0.75f) <0)
 		tmp_add =0;
-	op->stats.dam = (sint16) ((float)op->stats.dam * (lev_damage[op->level]+tmp_add));
+	op->stats.dam = (sint16) ((float)op->stats.dam * ((lev_damage[op->level]+tmp_add)*0.925f));
 
 }
 

@@ -2476,7 +2476,8 @@ int remove_curse(object *op, object *target, int type, SpellTypeFrom src)
 				if (type == SP_REMOVE_DAMNATION)
 					CLEAR_FLAG(tmp, FLAG_DAMNED);
 				CLEAR_FLAG(tmp, FLAG_CURSED);
-				CLEAR_FLAG(tmp, FLAG_KNOWN_CURSED);
+				if(!QUERY_FLAG(tmp,FLAG_PERM_CURSED))
+					CLEAR_FLAG(tmp, FLAG_KNOWN_CURSED);
 				if (target->type == PLAYER)
 					esrv_send_item(target, tmp);
 			}

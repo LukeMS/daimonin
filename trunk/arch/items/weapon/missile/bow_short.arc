@@ -3,7 +3,7 @@ name short bow
 layer 3
 race arrows
 type 14
-wc 0
+wc 4
 wc_range 18
 last_sp 0
 sub_type 0

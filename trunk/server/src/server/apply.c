@@ -2891,11 +2891,15 @@ int apply_special (object *who, object *op, int aflags)
     if ( ! (aflags & AP_IGNORE_CURSE)
         && (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED)))
     {
-      new_draw_info_format(NDI_UNIQUE, 0, who,
-	"No matter how hard you try, you just can't\nremove %s.",
-	      query_name(op));
+      new_draw_info_format(NDI_UNIQUE, 0, who, "No matter how hard you try, you just can't remove it!");
       return 1;
     }
+	
+	if(QUERY_FLAG(op, FLAG_PERM_CURSED))
+	    SET_FLAG(op, FLAG_CURSED);
+	if(QUERY_FLAG(op, FLAG_PERM_DAMNED))
+	    SET_FLAG(op, FLAG_DAMNED);
+		
     CLEAR_FLAG(op, FLAG_APPLIED);
     switch(op->type) {
     case WEAPON:
@@ -3156,6 +3160,12 @@ int apply_special (object *who, object *op, int aflags)
   fix_player(who);
   if(op->type != WAND && who->type == PLAYER)
     SET_FLAG(op,FLAG_BEEN_APPLIED);
+
+  if(QUERY_FLAG(op, FLAG_PERM_CURSED))
+	    SET_FLAG(op, FLAG_CURSED);
+	if(QUERY_FLAG(op, FLAG_PERM_DAMNED))
+	    SET_FLAG(op, FLAG_DAMNED);
+
   if (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED)) {
     if (who->type == PLAYER) {
       new_draw_info(NDI_UNIQUE, 0,who, "Oops, it feels deadly cold!");
@@ -3363,10 +3373,13 @@ void apply_player_light(object *who, object *op)
         if ( (QUERY_FLAG(op, FLAG_CURSED) || QUERY_FLAG(op, FLAG_DAMNED)))
         {
             new_draw_info_format(NDI_UNIQUE, 0, who,
-                "No matter how hard you try, you just can't\nremove %s.",
-                query_name(op));
+                "No matter how hard you try, you just can't remove it!");
             return;
         }
+		if(QUERY_FLAG(op, FLAG_PERM_CURSED))
+		    SET_FLAG(op, FLAG_CURSED);
+		if(QUERY_FLAG(op, FLAG_PERM_DAMNED))
+			SET_FLAG(op, FLAG_DAMNED);
         new_draw_info_format(NDI_UNIQUE, 0, who,
             "You unlight the %s.", query_name(op));
         if(op->glow_radius>0)
@@ -3458,9 +3471,13 @@ void apply_player_light(object *who, object *op)
                     if ((QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)))
                     {
                         new_draw_info_format(NDI_UNIQUE, 0, who,
-                            "No matter how hard you try, you just can't\nremove %s.", query_name(tmp));
+                            "No matter how hard you try, you just can't remove it!");
                         return;
                     }
+					if(QUERY_FLAG(tmp, FLAG_PERM_CURSED))
+						SET_FLAG(tmp, FLAG_CURSED);
+					if(QUERY_FLAG(tmp, FLAG_PERM_DAMNED))
+						SET_FLAG(tmp, FLAG_DAMNED);
                     new_draw_info_format(NDI_UNIQUE, 0, who,"You unlight the %s.", query_name(tmp));
                     tmp->glow_radius*=-1;
                     CLEAR_FLAG(tmp, FLAG_APPLIED);

@@ -525,11 +525,22 @@
   </attribute>
   <attribute arch="cursed" editor="cursed" type="bool">
     The item is cursed. This object can't be removed when
-    wielded or worn (without uncurse it).
+    wielded or worn (without uncurse it). Remove curse will
+    remove this flag.
+  </attribute>
+  <attribute arch="cursed_perm" editor="permanent cursed" type="bool">
+    The item is permanent cursed. If this flag set, applying 
+    or unapplying will set "cursed 1" again. This flag can't be
+    removed by remove curse.
   </attribute>
   <attribute arch="damned" editor="damned" type="bool">
     Stronger form of curse. Item can't be removed when
-    wielded or worn.
+    wielded or worn. Remove damnation will remove this flag.
+  </attribute>
+  <attribute arch="damned_perm" editor="permanent damned" type="bool">
+    The item is permanent damned. If this flag set, applying 
+    or unapplying will set "damned 1" again. This flag can't be
+    removed by remove damnation.
   </attribute>
   <attribute arch="no_magic" editor="no spells" type="bool">
     If enabled, it is impossible for players to use (wizard-)

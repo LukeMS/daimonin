@@ -9,7 +9,7 @@ direction 5
 is_neutral 1
 terrain_flag 1
 weapon_speed 0.035
-attack_cleave 80
+attack_cleave 75
 unaggressive 1
 random_move 1
 type 80
@@ -75,7 +75,7 @@ no_pick 1
 alive 1
 can_see_in_dark 1
 exp 100
-ac 5
+ac 9
 wc 0
 dam 4
 hp -1

@@ -425,8 +425,12 @@ char *query_name(object *op) {
 	safe_strcat(buf[use_buf]," (open)", &len, HUGE_BUF);
 
     if (QUERY_FLAG(op,FLAG_KNOWN_CURSED)||QUERY_FLAG(op,FLAG_IDENTIFIED)) {
-	if(QUERY_FLAG(op,FLAG_DAMNED))
+	if(QUERY_FLAG(op,FLAG_PERM_DAMNED))
+	    safe_strcat(buf[use_buf], " (perm. damned)", &len, HUGE_BUF);
+	else if(QUERY_FLAG(op,FLAG_DAMNED))
 	    safe_strcat(buf[use_buf], " (damned)", &len, HUGE_BUF);
+	else if(QUERY_FLAG(op,FLAG_PERM_CURSED))
+	    safe_strcat(buf[use_buf], " (perm. cursed)", &len, HUGE_BUF);
 	else if(QUERY_FLAG(op,FLAG_CURSED))
 	    safe_strcat(buf[use_buf], " (cursed)", &len, HUGE_BUF);
     }

@@ -9,7 +9,7 @@ material_real 258
 face crossbow_small.101
 weight 1250
 sp 40
-wc 0
+wc 4
 wc_range 17
 last_sp 0
 value 250

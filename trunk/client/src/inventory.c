@@ -131,8 +131,8 @@ static show_inventory_item_stats(item *tmp, int x, int y)
 		if(tmp->item_level)
         {
 			sprintf(buf,"allowed: lvl %d %s", tmp->item_level, skill_level_name[tmp->item_skill]);
-			if((!tmp->item_skill && tmp->item_level < cpl.stats.level) ||
-									(tmp->item_skill && tmp->item_level <cpl.stats.skill_level[tmp->item_skill-1] ) )
+			if((!tmp->item_skill && tmp->item_level <= cpl.stats.level) ||
+									(tmp->item_skill && tmp->item_level <=cpl.stats.skill_level[tmp->item_skill-1] ) )
 				StringBlt(ScreenSurface, &SystemFont,buf,x+82, y-14,COLOR_HGOLD, NULL, NULL);
 			else
 				StringBlt(ScreenSurface, &SystemFont,buf,x+82, y-14,COLOR_RED, NULL, NULL);

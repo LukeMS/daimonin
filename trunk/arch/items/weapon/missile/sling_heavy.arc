@@ -7,7 +7,7 @@ sub_type 2
 material 8
 material_real 193
 face sling_heavy.101
-wc 1
+wc 6
 wc_range 25
 last_sp 0
 weight 400

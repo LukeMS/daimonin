@@ -3,7 +3,7 @@ name bow
 layer 3
 race arrows
 type 14
-wc 1
+wc 5
 wc_range 20
 last_sp 0
 sub_type 0

@@ -2133,26 +2133,33 @@ void do_some_living(object *op)
 		/* "stay and pray" mechanism */
 		if(op->contr->praying && !op->contr->was_praying)
 		{
-		    object *god = find_god(determine_god(op));
-			if(god)
+			if(op->stats.grace<op->stats.maxgrace)
 			{
-				if(op->contr->combat_mode)
+			    object *god = find_god(determine_god(op));
+				if(god)
 				{
-					new_draw_info(NDI_UNIQUE, 0,op, "You can't pray when in combat mode!");
-					op->contr->praying=0;
+					if(op->contr->combat_mode)
+					{
+						new_draw_info_format(NDI_UNIQUE, 0,op,"You stop combat and start praying to %s...",god->name);
+						op->contr->combat_mode=0;
+						send_target_command(op->contr);
+					}
+					else
+						new_draw_info_format(NDI_UNIQUE, 0,op,"You start praying to %s...",god->name);
+					op->contr->was_praying=1;
 				}
 				else
 				{
-					new_draw_info_format(NDI_UNIQUE, 0,op,"You start praying to %s...",god->name);
-					op->contr->was_praying=1;
+					new_draw_info(NDI_UNIQUE, 0,op, "You worship no deity to pray to!");
+					op->contr->praying=0;
 				}
+				op->last_grace=op->contr->base_grace_reg;
 			}
-		else
+			else
 			{
-				new_draw_info(NDI_UNIQUE, 0,op, "You worship no living deity to pray to!");
 				op->contr->praying=0;
+				op->contr->was_praying=0;
 			}
-			op->last_grace=op->contr->base_grace_reg;
 		}
 		else if(!op->contr->praying && op->contr->was_praying)
 		{
@@ -2168,8 +2175,12 @@ void do_some_living(object *op)
 			{
 				if(op->stats.grace<op->stats.maxgrace)
 				op->stats.grace+=op->contr->reg_grace_num;
-				if(op->stats.grace>op->stats.maxgrace)
+				if(op->stats.grace>=op->stats.maxgrace)
+				{
 					op->stats.grace= op->stats.maxgrace;
+					new_draw_info(NDI_UNIQUE, 0,op,"Your are full of grace and stop praying.");
+					op->contr->was_praying=0;
+				}
 				op->last_grace=op->contr->base_grace_reg;
 			}
 		}
@@ -2274,7 +2285,7 @@ void kill_player(object *op)
         /* restore player */
         cast_heal(op, 110, op, SP_CURE_POISON);
         /*cast_heal(op, op, SP_CURE_CONFUSION);*/
-        cure_disease(op,op);  /* remove any disease */
+        cure_disease(op,NULL);  /* remove any disease */
         op->stats.hp=op->stats.maxhp;
         if (op->stats.food<=0) op->stats.food=999;
       
@@ -2519,7 +2530,7 @@ void kill_player(object *op)
     /* remove any poisoning and confusion the character may be suffering. */
     cast_heal(op, 110, op, SP_CURE_POISON);
     /*cast_heal(op, op, SP_CURE_CONFUSION);*/
-    cure_disease(op,op);  /* remove any disease */
+    cure_disease(op,NULL);  /* remove any disease */
 	
     apply_death_exp_penalty(op);
     if(op->stats.food < 0) op->stats.food = 900;
