@@ -513,9 +513,14 @@ void show_player_stats(int x, int y)
 			if(box.w > Bitmaps[BITMAP_EXP_SKILL_LINE]->bitmap->w)
 				box.w=Bitmaps[BITMAP_EXP_SKILL_LINE]->bitmap->w;
 			sprite_blt(Bitmaps[BITMAP_EXP_SKILL_LINE],x+416, y+97, &box, NULL);
+        }
+
+		if(line>0)
+		{
 			for(s=0;s<(int)line;s++)
 				sprite_blt(Bitmaps[BITMAP_EXP_SKILL_BUBBLE],x+416+s*5, y+92, NULL, NULL);
-        }
+		}
+
         StringBlt(ScreenSurface, &Font6x3Out,"Regeneration",x+177, y+1, COLOR_HGOLD, NULL, NULL);
         StringBlt(ScreenSurface, &SystemFont,"HP",x+234, y+13, COLOR_HGOLD, NULL, NULL);
         sprintf(buf,"%2.1f", cpl.gen_hp);
