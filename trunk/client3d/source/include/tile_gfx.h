@@ -31,7 +31,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 using namespace Ogre;
 
 const int MAXHASHSTRING		=   20; // for hash table (bmap, ...)
-const int BMAPTABLE			= 5003; // prime nubmer for hash table
+const unsigned int BMAPTABLE= 5003; // prime nubmer for hash table
 const int MAX_BMAPTYPE_TABLE= 5000;
 const int MAX_FACE_TILES	=10000; 
 
@@ -58,7 +58,7 @@ typedef struct _face_struct
 //    struct _Sprite *sprite;		// our face data. if != null, face is loaded.
 	Image			sprite;
     char           *name;		// our face name. if != null, face is requested.
-    uint32          checksum;	// checksum of face.
+    unsigned int    checksum;	// checksum of face.
     int             flags;
 }_face_struct;
  

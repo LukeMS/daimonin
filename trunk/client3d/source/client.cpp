@@ -90,9 +90,10 @@ bool DaimoninClient::setup(void)
 	/////////////////////////////////////////////////////////////////////////
     mCamera = mSceneMgr->createCamera("Camera");
     mCamera->setProjectionType(PT_ORTHOGRAPHIC);
+	mCamera->setPosition(Vector3(0,400, 400));
+	mCamera->lookAt(Vector3(0,0,0));
     mCamera->setNearClipDistance(400);
-    mCamera->setPosition(0, 400, 400);
-    mCamera->lookAt(0, 0, 0);
+    mCamera->setFarClipDistance(800);
 
 	/////////////////////////////////////////////////////////////////////////
     // Create one viewport, entire window
@@ -158,13 +159,13 @@ void DaimoninClient::createScene(void)
 
     mSceneMgr->setAmbientLight(ColourValue(0.5, 0.5, 0.5));
 
-	mEvent->World = mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(0, 0, 0));
+	mEvent->World = mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(0, 0, 0), Quaternion(1.0,0.0,0.0,0.0));
     Player::getSingleton().Init(mSceneMgr);
 	NPC_Enemy1->Init(mSceneMgr, mEvent->World);
 /*
 	Entity     *mEntity = mSceneMgr->createEntity("enemy", "scorpion.mesh");
 	SceneNode  *mNode;
-	mNode   = mEvent->World->createChildSceneNode(Vector3(0, 10, 0));
+	mNode   = mEvent->World->createChildSceneNode(Vector3(0, 10, 0), Quaternion(1.0,0.0,0.0,0.0));
 //	mFacing = Degree(0);
 
 //	Real faceing = atof(strTemp.c_str());
@@ -194,8 +195,9 @@ void DaimoninClient::createScene(void)
 
     Entity* ent;
     SceneNode* floor_node;
-
-
+	const int startX = -190;
+	const int startZ = - 60;
+	
 //	uchar *pImage = new uchar[512*512*4];
 //	mImage.loadDynamicImage(pImage, 100,100,PF_B8G8R8);
 
@@ -227,7 +229,7 @@ void DaimoninClient::createScene(void)
 		ent = mSceneMgr->createEntity(name+StringConverter::toString(x1), SceneManager::PT_PLANE);
 //		ent->setMaterialName("grass1");
 		ent->setMaterialName(mMaterial->getName());
-		floor_node = mEvent->World->createChildSceneNode(Vector3(x1*50, 0, 25));
+		floor_node = mEvent->World->createChildSceneNode(Vector3(startX+x1*50, -20, startZ+25), Quaternion(1.0,0.0,0.0,0.0));
 		floor_node->attachObject(ent);
 		floor_node->setScale(0.25, 0.25, 0.25);
 	}
@@ -238,7 +240,7 @@ void DaimoninClient::createScene(void)
 		ent = mSceneMgr->createEntity(name+StringConverter::toString(x2), SceneManager::PT_PLANE);
 //		ent->setMaterialName("grass2");
 		ent->setMaterialName(mMaterial->getName());
-		floor_node = mEvent->World->createChildSceneNode(Vector3(25+x2*50, 0, 50));
+		floor_node = mEvent->World->createChildSceneNode(Vector3(startX+25+x2*50, -20, startZ+50), Quaternion(1.0,0.0,0.0,0.0));
 		floor_node->attachObject(ent);
 		floor_node->setScale(0.25, 0.25, 0.25);
 	}
@@ -249,7 +251,7 @@ void DaimoninClient::createScene(void)
 		ent = mSceneMgr->createEntity(name+StringConverter::toString(x3), SceneManager::PT_PLANE);
 //		ent->setMaterialName("grass3");
 		ent->setMaterialName(mMaterial->getName());
-		floor_node = mEvent->World->createChildSceneNode(Vector3(x3*50, 0, 75));
+		floor_node = mEvent->World->createChildSceneNode(Vector3(startX+x3*50,-20, startZ+75), Quaternion(1.0,0.0,0.0,0.0));
 		floor_node->attachObject(ent);
 		floor_node->setScale(0.25, 0.25, 0.25);
 	}

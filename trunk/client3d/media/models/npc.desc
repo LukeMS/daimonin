@@ -22,9 +22,9 @@ MeshName : "scorpion.mesh"
 MeshSize : "0.3"
 
 # The pos of the model in the world.
-StartX   : "30"
-StartY   : "40"
-StartZ   : "80"
+StartX   : "-160"
+StartY   : "20"
+StartZ   : "20"
 
 # The facing direction in degrees.
 Facing   : "90"

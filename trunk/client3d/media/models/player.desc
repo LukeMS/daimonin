@@ -23,7 +23,7 @@ MeshSize : "0.3"
 
 # The pos of the model in the world.
 StartX   : "0"
-StartY   : "15"
+StartY   : "0"
 StartZ   : "0"
 
 # The facing direction in degrees.

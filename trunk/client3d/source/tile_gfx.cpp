@@ -24,13 +24,20 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include <string>
 #include <iostream>
 #include <fstream>
-
+#ifdef WIN32
+  #include <io.h>
+  #include <stdio.h>
+#endif
 #include "tile_gfx.h"
 #include "define.h"
 #include "logfile.h"
 #include "zlib.h"
 
 using namespace std;
+
+#ifdef MINGW
+  #define _NO_OLDNAMES
+#endif
 
 //=================================================================================================
 //
@@ -78,7 +85,7 @@ _bmaptype * TileGfx::find_bmap(char *name)
 //=================================================================================================
 void TileGfx::add_bmap(_bmaptype *at)
 {
-    int index = hashbmap(at->name,  BMAPTABLE),org_index = index;
+    unsigned int index = hashbmap(at->name,  BMAPTABLE),org_index = index;
 
     for (; ;)
     {

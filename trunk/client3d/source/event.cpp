@@ -334,10 +334,10 @@ void Event::keyPressed(KeyEvent *e)
 			Option::getSingleton().mStartNetwork = true;
 			break;
 		case KC_PGUP:
-		    mCamera->pitch(Degree(-0.13));
+		    mCamera->pitch(Radian(-0.1));
 			break;
 		case KC_PGDOWN:
-		    mCamera->pitch(Degree(+0.13));
+		    mCamera->pitch(Radian(+0.1));
 			break;
 
 		///////////////////////////////////////////////////////////////////////// 
@@ -389,7 +389,9 @@ void Event::keyReleased(KeyEvent* e)
 		case KC_J:
 		case KC_K:
 			NPC_Enemy1->turning(0);	
-	
+	        break;
+		default:
+			break;
 	}
 }
 

@@ -169,10 +169,6 @@ SOURCE=..\..\..\source\main.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\source\map.cpp
-# End Source File
-# Begin Source File
-
 SOURCE=..\..\..\source\network.cpp
 
 !IF  "$(CFG)" == "Daimonin - Win32 Debug"
@@ -265,6 +261,10 @@ SOURCE=..\..\..\source\textwindow.cpp
 
 SOURCE=..\..\..\source\tile_gfx.cpp
 # End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\tile_map.cpp
+# End Source File
 # End Group
 # Begin Group "Header Files"
 
@@ -288,10 +288,6 @@ SOURCE=..\..\..\source\include\event.h
 # Begin Source File
 
 SOURCE=..\..\..\source\include\logfile.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\source\include\map.h
 # End Source File
 # Begin Source File
 
@@ -332,6 +328,10 @@ SOURCE=..\..\..\source\include\textwindow.h
 # Begin Source File
 
 SOURCE=..\..\..\source\include\tile_gfx.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\include\tile_map.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"

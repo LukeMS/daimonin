@@ -61,23 +61,25 @@ bool NPC::Init(SceneManager *mSceneMgr, SceneNode  *Node)
 	Real posY = atof(strTemp.c_str());
 	Option::getSingleton().getDescStr("StartZ", strTemp);
 	Real posZ = atof(strTemp.c_str());
-	mNode   = Node->createChildSceneNode(Vector3(posX, posY, posZ));
+	mNode   = Node->createChildSceneNode(Vector3(posX, posY, posZ), Quaternion(1.0,0.0,0.0,0.0));
+
+	Option::getSingleton().getDescStr("MeshSize", strTemp);
+	Real size = atof(strTemp.c_str());
+	mNode->setScale(size, size, size);
 
 	Option::getSingleton().getDescStr("Facing", strTemp);
-	mFacing = Degree(atof(strTemp.c_str()));
-
-	mAnimGroup =0;
-	mAnimType =-1;
-
+	mFacing = Radian(atof(strTemp.c_str()));
+    mNode->yaw(mFacing);
+    
 	Option::getSingleton().getDescStr("FOffset", strTemp);
 	Real faceing = atof(strTemp.c_str());
 	mFacingOffset = faceing * RAD;
     mNode->attachObject(mEntity);
 
-	Option::getSingleton().getDescStr("MeshSize", strTemp);
-	Real size = atof(strTemp.c_str());
-	mNode->setScale(size, size, size);
-    mNode->yaw(mFacing);
+	mAnimGroup =0;
+	mAnimType =-1;
+	mTurning =0;
+	mWalking =0;
 
 	for (int state = 0; state < STATE_SUM; ++state)
 	{
@@ -123,20 +125,19 @@ void NPC::updateAnim(const FrameEvent& event)
 			mAnimState->setTimePosition(0.0f);
 		}
 	}
-
 	else
 	{
 		if (mTurning)
 		{
 			mAnimState= mAnimStates[STATE_IDLE1];
           	mAnimState->setLoop(true);
-  		    mFacing += Degree(mTurning);
-			mNode->yaw(Radian(Degree(mTurning)));
+  		    mFacing += Radian(event.timeSinceLastFrame *mTurning);
+			mNode->yaw(Radian(event.timeSinceLastFrame *mTurning));
 		}
 		if (mWalking)
 		{
 			mAnimState= mAnimStates[STATE_WALK1];
-                mAnimState->setLoop(true);
+			mAnimState->setLoop(true);
 	        mTranslateVector.z =  sin(mFacing.valueRadians()+mFacingOffset)* mWalking;
 		    mTranslateVector.x = -cos(mFacing.valueRadians()+mFacingOffset)* mWalking;
 			mAnimState->addTime(event.timeSinceLastFrame * mWalking);
@@ -145,6 +146,7 @@ void NPC::updateAnim(const FrameEvent& event)
 		{
 			mTranslateVector = Vector3(0,0,0);
 			mAnimState= mAnimStates[STATE_IDLE1];
+			mAnimState->setLoop(true);
 			mAnimState->addTime(event.timeSinceLastFrame * PLAYER_ANIM_SPEED);
 		}
 	}

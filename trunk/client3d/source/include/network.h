@@ -124,13 +124,7 @@ class Network
     int mCommand_time; // Time (in ms) players commands currently take to execute
     int mSocketStatusErrorNr;
     SockList  mInbuf;
-
-	#ifdef WIN32
-    unsigned int mSocket;
-    #else
 	int mSocket;
-	#endif
-	
     Network(const Network&);  // disable copy-constructor.
     bool InitSocket();
 };
