@@ -1906,7 +1906,7 @@ static PyObject* Daimonin_Object_CreateInvisibleInside(Daimonin_Object *whereptr
 static PyObject* Daimonin_Object_CreateObjectInside(Daimonin_Object *whereptr, PyObject* args)
 {
     object *myob, *tmp;
-	long value, id;
+	long value=-1, id, nrof=1;
     char *txt;
 /*    char *tmpname;
     object *test;
@@ -1916,10 +1916,11 @@ static PyObject* Daimonin_Object_CreateObjectInside(Daimonin_Object *whereptr, P
 	/* 0: name
 	   1: object we want give <name> 
 	   2: if 1, set FLAG_IDENTIFIED
+	   3: nr of objects to create: 0 and 1 don't change default nrof setting
 	   3: if not -1, use it for myob->value
 	   */
 
-    if (!PyArg_ParseTuple(args,"sll",&txt, &id, &value))
+    if (!PyArg_ParseTuple(args,"sll|l",&txt, &id, &nrof, &value))
         return NULL;
 
     GCFP.Value[0] = (void *)(txt);
@@ -1937,6 +1938,8 @@ static PyObject* Daimonin_Object_CreateObjectInside(Daimonin_Object *whereptr, P
 		myob->value = (sint32) value;
 	if(id)
 		SET_FLAG(myob,FLAG_IDENTIFIED);
+	if(nrof>1)
+		myob->nrof = nrof;
 
     myob = insert_ob_in_ob_hook(myob, WHERE);
     

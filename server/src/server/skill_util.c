@@ -643,13 +643,21 @@ int lookup_skill_by_name(char *string) {
 
 int check_skill_to_fire(object *who) {
   int skillnr=0;
+  object *tmp;
   rangetype shoottype=range_none;
 
   if(who->type!=PLAYER) return 1;
 
   switch((shoottype = who->contr->shoottype)) {
     case range_bow:
-       skillnr = SK_MISSILE_WEAPON;
+		if(!(tmp = who->contr->equipment[PLAYER_EQUIP_BOW]))
+			return 0;
+		if(tmp->sub_type1 == 2)
+	       skillnr = SK_SLING_WEAP;
+		else if(tmp->sub_type1 == 1)
+	       skillnr = SK_XBOW_WEAP;
+		else
+	       skillnr = SK_MISSILE_WEAPON;
        break;
     case range_none:
     case range_skill:
@@ -1254,8 +1262,7 @@ int change_skill (object *who, int sk_index)
         if (apply_special (who, who->chosen_skill, AP_UNAPPLY))
             LOG(llevBug, "BUG: change_skill(): can't unapply old skill (%s - %d)\n",who->name, sk_index);
     if (sk_index >= 0)
-        new_draw_info_format (NDI_UNIQUE, 0, who, "You have no knowledge "
-                              "of %s.", skills[sk_index].name);
+        new_draw_info_format (NDI_UNIQUE, 0, who, "You have no knowledge of %s.", skills[sk_index].name);
     return 0;
 }
 
