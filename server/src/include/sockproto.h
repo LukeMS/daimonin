@@ -42,7 +42,7 @@ void            esrv_move_object(object *pl, tag_t to, tag_t tag, long nrof);
 void            remove_ns_dead_player(player *pl);
 void            RequestInfo(char *buf, int len, NewSocket *ns);
 void            HandleClient(NewSocket *ns, player *pl);
-void            doeric_server(int update);
+void            doeric_server(int update, struct timeval *timeout);
 void            doeric_server_write(void);
 /* lowlevel.c */
 void            SockList_AddString(SockList *sl, char *data);

@@ -117,122 +117,86 @@ int enough_elapsed_time()
     return 0;
 }
 
+/* Generic function for simple timeval arithmetic (addition & subtraction) */
+void add_time(struct timeval *dst, struct timeval *a, struct timeval *b)
+{
+    dst->tv_sec = a->tv_sec + b->tv_sec;
+    dst->tv_usec = a->tv_usec + b->tv_usec;
+
+    if(dst->tv_sec < 0 || (dst->tv_sec == 0 && dst->tv_usec < 0))
+    {
+        while(dst->tv_usec < -1000000) {
+            dst->tv_sec -= 1;
+            dst->tv_usec += 1000000;
+        }        
+    } else 
+    {
+        while(dst->tv_usec < 0) {
+            dst->tv_sec -= 1;
+            dst->tv_usec += 1000000;
+        }
+        while(dst->tv_usec > 1000000) {
+            dst->tv_sec += 1;
+            dst->tv_usec -= 1000000;
+        }
+    }
+}
+
+/* Calculate time until the next tick 
+ * returns 0 and steps forward time for the next tick if called
+ * after the time for the next tick,
+ * otherwise returns 1 and the delta time for next tick */
+int time_until_next_tick(struct timeval *out)
+{
+    struct timeval now, next_tick, tick_time;
+
+    /* next_tick = last_time + tick_time */
+    tick_time.tv_sec = 0;
+    tick_time.tv_usec = max_time;
+    add_time(&next_tick, &last_time, &tick_time);
+    
+    GETTIMEOFDAY(&now);
+    if(timercmp(&next_tick, &now, <=)) /* Time for the next tick? */
+    {
+        last_time.tv_sec = next_tick.tv_sec;
+        last_time.tv_usec = next_tick.tv_usec;
+
+        out->tv_sec = 0;
+        out->tv_usec = 0;
+        return 0;
+    } 
+    
+    /* time_until_next_tick = next_tick - now */
+    now.tv_sec = -now.tv_sec;
+    now.tv_usec = -now.tv_usec;
+    add_time(out, &next_tick, &now);
+    
+    return 1;
+}
+
 /*
  * sleep_delta checks how much time has elapsed since last tick.
  * If it is less than max_time, the remaining time is slept with select().
- */
-
-/* of course - this is wasted time. it would be much nicer to 
- * poll the player socket in this time and store thee incoming data
- * in fast access buffers.
- * On the other hand runs some server as "guests" on their system -
- * their is reduced cpu usage very friendly.
+ *
+ * Polls the sockets and handles or queues incoming requests
+ * returns at the time for the next tick 
  */
 void sleep_delta()
 {
-    static struct timeval   new_time;
-    static struct timeval   def_time    =
-    {
-        0, 100000
-    };
-    static struct timeval   sleep_time;
-    int                     poll_socket, poll_socket_counter;
-    long                    sleep_sec, sleep_usec;
+    struct timeval timeout, now;
+    int keepgoing;
+   
+    /* Gecko: I don't know what the following does, but I'll leave it in here for now... */
+    GETTIMEOFDAY(&now);
+    log_time((now.tv_sec - last_time.tv_sec) * 1000000 + now.tv_usec - last_time.tv_usec);
 
-    poll_socket = FALSE;
-    poll_socket_counter=0;
-
-    (void) GETTIMEOFDAY(&new_time);
-    
-    sleep_sec = last_time.tv_sec - new_time.tv_sec;
-    sleep_usec = max_time - (new_time.tv_usec - last_time.tv_usec);
-    
-    /* This is very ugly, but probably the fastest for our use: */
-    while (sleep_usec < 0)
-    {
-        sleep_usec += 1000000;
-        sleep_sec -= 1;
-    }
-    
-    while (sleep_usec > 1000000)
-    {
-        sleep_usec -= 1000000;
-        sleep_sec += 1;
-    }
-
-    log_time((new_time.tv_sec - last_time.tv_sec) * 1000000 + new_time.tv_usec - last_time.tv_usec);
-    
-    while(sleep_sec >= 0 && sleep_usec > 0)
-    {
-        sleep_time.tv_sec = sleep_sec;
-        sleep_time.tv_usec = sleep_usec;
-
-        /*LOG(llevDebug,"SLEEP-Time: %ds and %dus\n",sleep_time.tv_sec,sleep_time.tv_usec);*/
-        /* we ignore seconds to sleep - there is NO reason to put the server
-                * for even a single second to sleep when there is someone connected.
-                */
-        if (sleep_time.tv_sec || sleep_time.tv_usec > 500000)
-        {
-            LOG(llevBug, "BUG: sleep_delta(): sleep delta out of range! (%ds %dus)\n",sleep_time.tv_sec,sleep_time.tv_usec);
-        }
-        else 
-        {
-            poll_socket = TRUE;
-            poll_socket_counter++;
-            doeric_server(SOCKET_UPDATE_CLIENT);
-        }
-/*
-#ifndef WIN32 
-            if (sleep_time.tv_sec || sleep_time.tv_usec > 500000)
-                select(0, NULL, NULL, NULL, &def_time);
-            else
-                select(0, NULL, NULL, NULL, &sleep_time);
-#else
-            if (sleep_time.tv_usec >= 1000)
-                Sleep((int) (sleep_time.tv_usec / 1000));
-            else if (sleep_time.tv_usec)
-                Sleep(1);
-#endif
-*/
-
-        (void) GETTIMEOFDAY(&new_time);
-        
-        sleep_sec = last_time.tv_sec - new_time.tv_sec;
-        sleep_usec = max_time - (new_time.tv_usec - last_time.tv_usec);
-        
-        /* This is very ugly, but probably the fastest for our use: */
-        while (sleep_usec < 0)
-        {
-            sleep_usec += 1000000;
-            sleep_sec -= 1;
-        }
-        
-        while (sleep_usec > 1000000)
-        {
-            sleep_usec -= 1000000;
-            sleep_sec += 1;
-        }
-
-    }
-    /*LOG(-1,"SLEEP: %d\n", poll_socket_counter);*/
-    /*
-    * Set last_time to when we're expected to wake up:
-    */
-    last_time.tv_usec += max_time;
-    while (last_time.tv_usec > 1000000)
-    {
-        last_time.tv_usec -= 1000000;
-        last_time.tv_sec++;
-    }
-    /*
-    * Don't do too much catching up:
-    * (Things can still get jerky on a slow/loaded computer)
-    */
-    if (last_time.tv_sec * 1000000 + last_time.tv_usec < new_time.tv_sec * 1000000 + new_time.tv_usec)
-    {
-        last_time.tv_sec = new_time.tv_sec;
-        last_time.tv_usec = new_time.tv_usec;
-    }
+    /* ideally we should use the return value from select to know if it
+     * timed out or returned because of some other reason, but this also works
+     * reasonably...
+     */
+    while(time_until_next_tick(&timeout) && 
+            (timeout.tv_sec > 0 || timeout.tv_usec > 500))
+        doeric_server(SOCKET_UPDATE_CLIENT, &timeout);        
 }
 
 void set_max_time(long t)
@@ -261,6 +225,7 @@ void get_tod(timeofday_t *tod)
         tod->season = 3;
     else
         tod->season = 4;
+    
 }
 
 void print_tod(object *op)

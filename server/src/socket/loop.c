@@ -438,7 +438,7 @@ void remove_ns_dead_player(player *pl)
 static int check_ip_ban(int num, uint32 ip)
 {
     int         count, i;
-    NewSocket  *ns  = &init_sockets[num];
+//    NewSocket  *ns  = &init_sockets[num];
     player     *pl, *ptmp = NULL;
 
     /* lets first check sensless connected sockets
@@ -502,9 +502,8 @@ static int check_ip_ban(int num, uint32 ip)
 /* This checks the sockets for input and exceptions, does the right thing.  A 
  * bit of this code is grabbed out of socket.c
  * There are 2 lists we need to look through - init_sockets is a list
- * 
  */
-void doeric_server(int update)
+void doeric_server(int update, struct timeval *timeout)
 {
     int                 i, pollret, rr, 
                         update_client=update&SOCKET_UPDATE_CLIENT, update_player=update&SOCKET_UPDATE_PLAYER;
@@ -547,8 +546,10 @@ void doeric_server(int update)
                 }
             }
             FD_SET((uint32) init_sockets[i].fd, &tmp_read);
-            FD_SET((uint32) init_sockets[i].fd, &tmp_write);
             FD_SET((uint32) init_sockets[i].fd, &tmp_exceptions);
+            /* Only check for writing if we actually want to write */
+            if (init_sockets[i].outputbuffer.len > 0)
+                FD_SET((uint32) init_sockets[i].fd, &tmp_write);
         }
     }
 
@@ -585,8 +586,10 @@ void doeric_server(int update)
             }
 
             FD_SET((uint32) pl->socket.fd, &tmp_read);
-            FD_SET((uint32) pl->socket.fd, &tmp_write);
             FD_SET((uint32) pl->socket.fd, &tmp_exceptions);
+            /* Only check for writing if we actually want to write */
+            if (pl->socket.outputbuffer.len > 0) 
+                FD_SET((uint32) pl->socket.fd, &tmp_write);
             pl = pl->next;
         }
     }
@@ -596,17 +599,11 @@ void doeric_server(int update)
         block_until_new_connection();
 #endif
 
-    /* Reset timeout each time, since some OS's will change the values on
-     * the return from select.
-     */
-    socket_info.timeout.tv_sec = 0;
-    socket_info.timeout.tv_usec = 0;
-
     /* our one and only select() - after this call, every player socket has signaled us
      * in the tmp_xxxx objects the signal status: FD_ISSET will check socket for socket
      * for thats signal and trigger read, write or exception (error on socket).
      */
-    pollret = select(socket_info.max_filedescriptor, &tmp_read, &tmp_write, &tmp_exceptions, &socket_info.timeout);
+    pollret = select(socket_info.max_filedescriptor, &tmp_read, &tmp_write, &tmp_exceptions, timeout);
 
     if (pollret == -1)
     {
@@ -784,6 +781,8 @@ void doeric_server_write(void)
 {
     player *pl, *next;
     uint32  update_below;
+    fd_set writeset;
+    struct timeval timeout = {0, 0};
 
     /* This does roughly the same thing, but for the players now */
     for (pl = first_player; pl != NULL; pl = next)
@@ -813,8 +812,16 @@ void doeric_server_write(void)
                 pl->socket.update_tile = update_below + 1;
             }
         }
+        
+        /* Check that a write won't block */
+        FD_ZERO(&writeset);
+        FD_SET(pl->socket.fd, &writeset);
+        timeout.tv_sec = 0;
+        timeout.tv_usec = 1;
+        select(pl->socket.fd + 1, NULL, &writeset, NULL, &timeout);
+                
         /* and *now* write back to player */
-        if (FD_ISSET(pl->socket.fd, &tmp_write))
+        if (FD_ISSET(pl->socket.fd, &writeset))
         {
             pl->socket.can_write = 1;
             write_socket_buffer(&pl->socket);
