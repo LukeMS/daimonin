@@ -20,5 +20,32 @@ LoginOverlay
         material login_title
      }
 
-   }
+     element TextArea(servername)
+     {
+        vert_align top
+        left   0.00
+        top    0.0
+        width  0.10
+        height 0.20
+        font_name TrebuchetMSBold
+        char_height 15
+        caption Servers 689hfgjkshgskhdblkjfhdsbkjsdhfkjgsfhdkgjhdfghsdkghkd
+        colour_top 0.8 0.8 0.5
+        colour_bottom 0.8 0.8 0.5
+     }
+
+     element TextArea(player)
+     {
+        metrics_mode pixels
+        left 85
+        top 60
+        width 300
+        height 20
+        font_name TrebuchetMSBold
+        char_height 15
+        caption Players
+        colour_top 0.8 0.8 0.5
+        colour_bottom 0.8 0.8 0.5
+     }
+  }
 }
