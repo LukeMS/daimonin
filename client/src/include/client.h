@@ -147,8 +147,12 @@ typedef enum _inventory_win {
 typedef struct Player_Struct {
     item	*ob;		/* Player object */
     item	*below;		/* Items below the player (pl.below->inv) */
-    item	*container;	/* open container */
+	item	*sack;		/* inventory of a open container */
+
+    item	*container;	/* ptr to open container */
+	sint32	container_tag;	/* tag of the container */
     item	*ranges[range_size];	/* Object that is used for that */
+
 
     uint32 weight_limit;
     uint32	count;		/* Repeat count on command */

@@ -323,12 +323,12 @@ int pay_from_container(object *op, object *pouch, int to_pay) {
 			LOG(llevBug,"BUG: %s has two money entries of (%s)\n", query_name(pouch), coins[NUM_COINS-1-i]);
 			remove_ob(tmp);
 			coin_objs[i]->nrof += tmp->nrof;
-			esrv_del_item(pouch->contr, tmp->count);
+			esrv_del_item(pouch->contr, tmp->count, tmp->env);
 			free_object(tmp);
 		    }
 		    else {
 			remove_ob(tmp);
-			if(pouch->type==PLAYER) esrv_del_item(pouch->contr, tmp->count);
+			if(pouch->type==PLAYER) esrv_del_item(pouch->contr, tmp->count,tmp->env);
 			coin_objs[i] = tmp;
 		    }
 		    break;
@@ -423,7 +423,7 @@ int get_payment2 (object *pl, object *op) {
 	    SET_FLAG(op, FLAG_UNPAID);
             return 0;
         } else {
-	    object *tmp;
+	    object *tmp, *c_cont = op->env;
 	    tag_t c = op->count;
 
 	    CLEAR_FLAG(op, FLAG_UNPAID);
@@ -433,7 +433,7 @@ int get_payment2 (object *pl, object *op) {
 		    new_draw_info_format(NDI_UNIQUE, 0, pl,
 						"You paid %s for %s.",buf,query_name(op));
 		if (tmp) {      /* it was merged */
-		    esrv_del_item (pl->contr, c);
+		    esrv_del_item (pl->contr, c, c_cont);
 		    op = tmp;
 		}
 	        esrv_send_item(pl, op);

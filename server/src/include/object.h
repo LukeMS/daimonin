@@ -50,11 +50,9 @@ typedef struct obj
 								 * Note: stacked in the *same* environment
 							     */
 	struct obj *inv;			/* Pointer to the first object in the inventory */
-	struct obj *container;		/* Current container being used.  I think this
-								 * is only used by the player right now.
-								 */
 	struct obj *env;			/* Pointer to the object which is the environment.
 								 * This is typically the container that the object is in.
+								 * if env == NULL then the object is on a map or in the nirvana.
 								 */
 	struct obj *more;			/* Pointer to the rest of a large body of objects */
 	struct obj *head;			/* Points to the main object of a large body */
@@ -104,7 +102,7 @@ typedef struct obj
 	New_Face *inv_face;			/* struct ptr to the inventory 'face' - the picture(s) */
 
 	sint32 weight;				/* Attributes of the object - the weight */
-	uint32 weight_limit;		/* Weight-limit of object */
+	uint32 weight_limit;		/* Weight-limit of object - player and container should have this... perhaps we can substitute it?*/
 	sint32 carrying;			/* How much weight this object contains (of objects in inv) */
 	uint32 path_attuned;		/* Paths the object is attuned to */
 	uint32 path_repelled;		/* Paths the object is repelled from */
@@ -298,11 +296,13 @@ extern int nroffreeobjects;
 /* Used by update_object to know if the object being passed is
  * being added or removed.
  */
-#define UP_OBJ_INSERT   1
-#define UP_OBJ_REMOVE   2
-#define UP_OBJ_CHANGE   3
+#define UP_OBJ_INSERT   1	/* object was inserted in a map */
+#define UP_OBJ_REMOVE   2   /* object was removed from a map tile */
+#define UP_OBJ_FLAGS    3   /* critical object flags has been changed, rebuild tile flags but NOT increase tile counter */
 #define UP_OBJ_FACE     4   /* Only thing that changed was the face */
-#define UP_OBJ_INV		5	/* object has changed invisibility - adjust map sorting */
+#define UP_OBJ_FLAGFACE 5   /* update flags & face (means increase tile update counter */
+#define UP_OBJ_ALL		6   /* force full update */
+#define UP_OBJ_LAYER	7   /* object layer was changed, rebuild layer systen - used from invisible for example */
 
 /* Macro for the often used object validity test (verify an pointer/count pair) */
 #define OBJECT_VALID(_ob_, _count_) ((_ob_) && (_ob_)->count == (_count_) && !QUERY_FLAG((_ob_), FLAG_REMOVED))

@@ -268,8 +268,8 @@
  * MSW 2001-05-28
  */
 
-#define MAP_CLIENT_X	19
-#define MAP_CLIENT_Y	19
+#define MAP_CLIENT_X	17
+#define MAP_CLIENT_Y	17
 
 /*
  * If you feel the game is too fast or too slow, change MAX_TIME.

@@ -36,9 +36,9 @@ type_func_int	emergency_save_func;
 type_func_void	clean_tmp_files_func;
 type_func_map	fix_auto_apply_func;
 type_func_ob	remove_friendly_object_func;
-/*type_func_void	process_active_maps_func;*/
 type_func_map	update_buttons_func;
 type_func_int_int_ob_cchar	draw_info_func;
+type_container_unlink_func	container_unlink_func;
 type_move_apply_func	move_apply_func;
 type_func_ob_ob	monster_check_apply_func;
 type_func_void	init_blocksview_players_func;
@@ -48,7 +48,7 @@ type_func_ob move_firewall_func;
 type_func_ob_int  trap_adjust_func;
 type_func_ob    move_creator_func;
 type_func_ob_ob esrv_send_item_func;
-type_func_player_int esrv_del_item_func;
+type_func_player_int_ob esrv_del_item_func;
 type_func_int_ob_ob esrv_update_item_func;
 type_func_dragon_gain dragon_gain_func;
 type_func_ob_int send_golem_control_func;
@@ -68,9 +68,9 @@ void init_function_pointers() {
   clean_tmp_files_func = dummy_function;
   fix_auto_apply_func = dummy_function_map;
   remove_friendly_object_func = dummy_function_ob;
-/*  process_active_maps_func = dummy_function;*/
   update_buttons_func = dummy_function_map;
   draw_info_func = dummy_draw_info;
+  container_unlink_func = dummy_container_unlink_func;
   move_apply_func = dummy_move_apply_func;
   monster_check_apply_func = dummy_function_ob2;
   init_blocksview_players_func = dummy_function;
@@ -80,7 +80,7 @@ void init_function_pointers() {
   trap_adjust_func = dummy_function_ob_int;
   move_creator_func = dummy_function_ob;
   esrv_send_item_func = dummy_function_ob2;
-  esrv_del_item_func = dummy_function_player_int;
+  esrv_del_item_func = dummy_function_player_int_ob;
   esrv_update_item_func = dummy_function_int_ob_ob;
   dragon_gain_func = dummy_function_dragongain;
   send_golem_control_func = dummy_function_ob_int;
@@ -121,17 +121,6 @@ void set_remove_friendly_object(type_func_ob addr) {
 }
 
 /*
- * Specify which function to call to do some work in active
- * maps.  That function might get called if there are several players,
- * and one player is using too much cpu to either load a map, or to
- * load pixmaps.
- */
-/*
-void set_process_active_maps(type_func_void addr) {
-  process_active_maps_func = addr;
-}
-*/
-/*
  * Specify which function to call to recoordinate all buttons.
  */
 
@@ -146,6 +135,14 @@ void set_update_buttons(type_func_map addr) {
 
 void set_draw_info(type_func_int_int_ob_cchar addr) {
   draw_info_func = addr;
+}
+
+/*
+ * Specify which function to call to unlink_container.
+ */
+
+void set_container_unlink(type_container_unlink_func addr) {
+  container_unlink_func = addr;
 }
 
 /*
@@ -202,7 +199,7 @@ void set_esrv_update_item (type_func_int_ob_ob addr) {
   esrv_update_item_func = addr;
 }
 
-void set_esrv_del_item(type_func_player_int addr) {
+void set_esrv_del_item(type_func_player_int_ob addr) {
   esrv_del_item_func = addr;
 }
 
@@ -249,6 +246,9 @@ void dummy_function_int_int(int i, int j) {
 void dummy_function_player_int(player *p, int j) {
 }
 
+void dummy_function_player_int_ob(player *p, int c, object *ob) 
+{
+}
 
 void dummy_function() {
 }
@@ -282,6 +282,10 @@ void dummy_function_mapstr(int a, mapstruct *map, const char *str) {
 }
 
 void dummy_function_int_ob_ob (int n, object *ob, object *ob2) {
+}
+
+int dummy_container_unlink_func (player *ob, object *ob2) {
+	return 0;
 }
 
 void dummy_move_apply_func (object *ob, object *ob2, object *ob3) {

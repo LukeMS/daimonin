@@ -1069,8 +1069,7 @@ void leave(player *pl, int draw_exit) {
 #endif
 
   /* be sure we have closed container when we leave */
-  if (pl->ob->container) 
-      esrv_apply_container (pl->ob, pl->ob->container);
+  container_unlink(pl,NULL);
 
     /* all player should be on friendly list - remove then */
 	remove_friendly_object(pl->ob);
@@ -1130,7 +1129,7 @@ int forbid_play()
 #endif
 }
 
-dequeue_path_requests()
+void dequeue_path_requests()
 {
 #ifdef LEFTOVER_CPU_FOR_PATHFINDING
     static struct timeval new_time;
@@ -1198,8 +1197,8 @@ void do_specials() {
     if (!(pticks % 503))
 	watchdog();
 #endif    
-/*            if (!(pticks % 5)) */ /*use this for debuging */
-    if (!(pticks % PTICKS_PER_CLOCK))
+            if (!(pticks % 5))  /*use this for debuging */
+/*    if (!(pticks % PTICKS_PER_CLOCK))*/
             tick_the_clock();
 
     if (!(pticks % 509))

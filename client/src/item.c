@@ -248,9 +248,14 @@ item *locate_item (sint32 tag)
     item *op;
 
     if (tag == 0)
-	return cpl.below;
+		return cpl.below;
+
+	if(tag == -1)
+		return cpl.sack;
 
     if ((op=locate_item_from_item(cpl.below->inv, tag)) != NULL)
+	return op;
+    if ((op=locate_item_from_item(cpl.sack->inv, tag)) != NULL)
 	return op;
     if ((op=locate_item_from_item(player, tag)) != NULL)
 	return op;
@@ -264,7 +269,7 @@ item *locate_item (sint32 tag)
 void remove_item (item *op) 
 {
     /* IF no op, or it is the player */
-    if (!op || op==player || op==cpl.below) return;
+    if (!op || op==player || op==cpl.below || op==cpl.sack) return;
     op->env->inv_updated = 1;
 
     /* Do we really want to do this? */
@@ -564,7 +569,9 @@ item *player_item ()
 {
     player = new_item(); 
     cpl.below = new_item();
+    cpl.sack = new_item();
     cpl.below->weight = -111;
+    cpl.sack->weight = -111;
     return player;
 }
 
@@ -699,7 +706,7 @@ void animate_objects()
 
 	if(cpl.container)
 	{
-		for (ip=cpl.container->inv; ip; ip=ip->next)
+		for (ip=cpl.sack->inv; ip; ip=ip->next)
 		{
 			if(ip->animation_id>0)
 				check_animation_status(ip->animation_id);

@@ -517,7 +517,8 @@ recipe *get_first_recipe() {
 }
 #endif
 
-const char * ingred_name (const char *name) {
+const char *ingred_name (const char *name) 
+{
   const char *cp=name;
  
   if(atoi(cp)) cp = strchr(cp,' ') + 1;
@@ -529,7 +530,8 @@ const char * ingred_name (const char *name) {
  * ASCII values in buf (times prepended integers).
  */
 
-int strtoint (const char *buf) {
+int strtoint (const char *buf) 
+{
   const char *cp = ingred_name(buf);
   int val=0, len=strlen(cp), mult=numb_ingred(buf);
 

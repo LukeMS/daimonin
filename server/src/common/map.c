@@ -447,7 +447,7 @@ void dump_all_maps() {
  */
 int wall(mapstruct *m, int x,int y) {
     if (!(m=out_of_map(m,&x,&y)))
-		return 1;
+		return (P_BLOCKSVIEW|P_NO_PASS|P_OUT_OF_MAP);
     return (GET_MAP_FLAGS(m,x,y) & (P_PLAYER_ONLY|P_NO_PASS|P_PASS_THRU));
 }
 
@@ -460,7 +460,7 @@ int blocks_view(mapstruct *m, int x, int y) {
     mapstruct *nm;
 
     if(!(nm = out_of_map(m, &x, &y)))
-		return 1;
+		return (P_BLOCKSVIEW|P_NO_PASS|P_OUT_OF_MAP);
 
     return (GET_MAP_FLAGS(nm,x,y) & P_BLOCKSVIEW);
 }
@@ -471,7 +471,7 @@ int blocks_view(mapstruct *m, int x, int y) {
 
 int blocks_magic(mapstruct *m, int x, int y) {
     if(!(m=out_of_map(m,&x,&y)))
-		return 1;
+		return (P_BLOCKSVIEW|P_NO_PASS|P_NO_MAGIC|P_OUT_OF_MAP);
     return (GET_MAP_FLAGS(m,x,y) & P_NO_MAGIC);
 
 }
@@ -481,7 +481,7 @@ int blocks_magic(mapstruct *m, int x, int y) {
  */
 int blocks_cleric(mapstruct *m, int x, int y) {
     if(!(m=out_of_map(m,&x,&y)))
-		return 1;
+		return (P_BLOCKSVIEW|P_NO_PASS|P_NO_CLERIC|P_OUT_OF_MAP);
     return (GET_MAP_FLAGS(m,x,y) & P_NO_CLERIC);
 }
 
@@ -845,9 +845,13 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags)
 			continue;
 		}
 
-		/* not sure but should not the editor we able to pre-set this? */
-		if (op->inv && op->type == CONTAINER) 
+		/* do some safety for containers */
+		if (op->type == CONTAINER)
+		{
+			op->attacked_by = NULL;
+			op->attacked_by_count = 0;
 			sum_weight(op);
+		}
 
 		if(op->type == MONSTER)
 		    fix_monster(op );
@@ -867,7 +871,7 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags)
 		/* expand a multi arch - we have only the head saved in a map! 
 		 * the *real* fancy point is, that our head/tail don't must fit
 		 * in this map! insert_ob will take about it and load the needed
-		 * map - then this function and the map loader is called rekursive!
+		 * map - then this function and the map loader is called recursive!
 		 */
 		if(op->arch->more) /* we have a multi arch head? */
 		{
@@ -876,8 +880,8 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags)
 			 * which changed type in spawn points and in the mob itself
 			 * as TYPE_BASE_INFO. As long as this arches are not on the map,
 			 * we will not come in trouble here because load_object() will them
-			 * load on the fly. This saves us for expanded multi arches in 
-			 * inventories.
+			 * load on the fly. That means too, that multi arches in inventories
+			 * are always NOT expanded - means no tail.
 			 */
 			tail = op->arch->more;
 		    prev=op,last_more=op;	
@@ -898,13 +902,13 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags)
 				/* now some tricky stuff again: 
 				 * to speed up some core functions like moving or remove_ob()/insert_ob
 				 * and because there are some "arch depending and not object depending"
-				 * flags, we init the tails with the head settings.
-				 * So, we don't must care about the head in the core functions.
+				 * flags, we init the tails with some of the head settings.
 				*/
-				QUERY_FLAG(op,FLAG_NO_APPLY) ? SET_FLAG(tmp,FLAG_NO_APPLY) : CLEAR_FLAG(tmp,FLAG_NO_APPLY);
-				QUERY_FLAG(op,FLAG_IS_INVISIBLE) ? SET_FLAG(tmp,FLAG_IS_INVISIBLE) : CLEAR_FLAG(tmp,FLAG_IS_INVISIBLE);
-				QUERY_FLAG(op,FLAG_FLYING) ? SET_FLAG(tmp,FLAG_FLYING) : CLEAR_FLAG(tmp,FLAG_FLYING);
-				QUERY_FLAG(op,FLAG_BLOCKSVIEW) ? SET_FLAG(tmp,FLAG_BLOCKSVIEW) : CLEAR_FLAG(tmp,FLAG_BLOCKSVIEW);
+				QUERY_FLAG(op,FLAG_NO_APPLY)		? SET_FLAG(tmp,FLAG_NO_APPLY) : CLEAR_FLAG(tmp,FLAG_NO_APPLY);
+				QUERY_FLAG(op,FLAG_IS_INVISIBLE)	? SET_FLAG(tmp,FLAG_IS_INVISIBLE) : CLEAR_FLAG(tmp,FLAG_IS_INVISIBLE);
+				QUERY_FLAG(op,FLAG_CAN_PASS_THRU)	? SET_FLAG(tmp,FLAG_CAN_PASS_THRU) : CLEAR_FLAG(tmp,FLAG_CAN_PASS_THRU);
+				QUERY_FLAG(op,FLAG_FLYING)			? SET_FLAG(tmp,FLAG_FLYING) : CLEAR_FLAG(tmp,FLAG_FLYING);
+				QUERY_FLAG(op,FLAG_BLOCKSVIEW)		? SET_FLAG(tmp,FLAG_BLOCKSVIEW) : CLEAR_FLAG(tmp,FLAG_BLOCKSVIEW);
 
 				/* this is the one and only point outside insert_ob we use TAIL_MARKER */
 				insert_ob_in_map(tmp,tmp->map,tmp,INS_NO_MERGE | INS_NO_WALK_ON | INS_TAIL_MARKER);
@@ -916,22 +920,19 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags)
 	    op->map = m;
     }
 
-	bufstate=LO_NEWFILE; /* don't remove or loader will fail when recursive called */
+	bufstate=LO_NEWFILE; /* don't remove or loader will fail when called recursive*/
     free_object(op);
 }
 
 
-/* This saves all the objects on the map in a non destructive fashion.
- * Except spawn point and mobs - see below.
+/* This saves all the objects on the map in a (most times) non destructive fashion.
+ * Except spawn point/mobs and multi arches - see below.
  * Modified by MSW 2001-07-01 to do in a single pass - reduces code,
  * and we only save the head of multi part objects - this is needed
  * in order to do map tiling properly.
+ * The function/engine is now multi arch/tiled map save - put on the
+ * map what you like. MT-07.02.04
  */
-/* again - not save for multi arch object, crossing map borders.
- * this function will explode the server when a multi arch is on this map,
- * but the head is on a different one. 
- * There is ONE and only ONE exception - thats spawn mobs. 
- * we will remove all spawn mobs here - so we can safly save .MT-2002 */
 void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
     int t, i, j = 0;
     object *head, *op,  *otmp, *tmp, *next;
@@ -2037,7 +2038,6 @@ int change_map_light(mapstruct *m, int change) {
     if(new_level<=0) {
         if(m->darkness)
         {
-            update_all_map_los(m);
             (info_map_func)(NDI_WHITE, m,"It becomes broad daylight.");
         }
         m->darkness = 0;
@@ -2055,7 +2055,6 @@ int change_map_light(mapstruct *m, int change) {
 
 	m->darkness=new_level;
 	/* All clients need to get re-updated for the change */
-	update_all_map_los(m);
 	return 1;
     }
     return 0;
@@ -2068,19 +2067,28 @@ int change_map_light(mapstruct *m, int change) {
  * has a living creatures, prevents people from passing
  * through, etc)
  */
-void update_position (mapstruct *m, int x, int y) {
+void update_position (mapstruct *m, int x, int y) 
+{
 	object *tmp;
 	MapSpace *mp;
 	int i,ii, flags,move_flags,light;
 
 #ifdef DEBUG_OLDFLAGS
 	int oldflags;
-	if (!((oldflags = GET_MAP_FLAGS(m,x,y)) & P_NEED_UPDATE))
-		LOG(llevDebug,"DBUG: update_position called with P_NEED_UPDATE not set: %s (%d, %d)\n",m->path, x, y);
+	if (!((oldflags = GET_MAP_FLAGS(m,x,y)) & (P_NEED_UPDATE|P_FLAGS_UPDATE)))
+		LOG(llevDebug,"DBUG: update_position called with P_NEED_UPDATE|P_FLAGS_UPDATE not set: %s (%d, %d)\n",m->path, x, y);
 #endif
 
+	flags=oldflags&P_NEED_UPDATE; /* save our update flag */
+
+	/* update our flags */
+	if(oldflags & P_FLAGS_UPDATE)
+	{
+#ifdef DEBUG_CORE
+    LOG(llevDebug,"UP - FLAGS: %d,%d\n", x,y);
+#endif
 	/*LOG(llevDebug,"flags:: %x (%d, %d) %x (NU:%x NE:%x)\n", oldflags, x, y,P_NEED_UPDATE|P_NO_ERROR,P_NEED_UPDATE,P_NO_ERROR);*/
-	flags=light=move_flags=0;
+	light=move_flags=0;
 
 	/* i really want here more control. In fact we ONLY need to move through
 	 * this stack when update is triggered by an object which is inserted/removed
@@ -2101,13 +2109,8 @@ void update_position (mapstruct *m, int x, int y) {
 		if (tmp->glow_radius > light)
 			light = (uint8) tmp->glow_radius;
 
-
-		if (QUERY_FLAG(tmp,FLAG_IS_FLOOR))
-		     move_flags|=tmp->terrain_type;         
-
 		if (QUERY_FLAG(tmp,FLAG_PLAYER_ONLY))
-			flags |= P_PLAYER_ONLY;
-      
+			flags |= P_PLAYER_ONLY;      
 		if(tmp->type == CHECK_INV)
 			flags |= P_CHECK_INV;
 		if(tmp->type == MAGIC_EAR)
@@ -2116,8 +2119,24 @@ void update_position (mapstruct *m, int x, int y) {
 			flags |= P_IS_PLAYER;
 		if (QUERY_FLAG(tmp,FLAG_DOOR_CLOSED))
 			flags |= P_DOOR_CLOSED;
-		else if (QUERY_FLAG(tmp,FLAG_ALIVE))
+		if (QUERY_FLAG(tmp,FLAG_ALIVE))
 			flags |= P_IS_ALIVE;
+		if (QUERY_FLAG(tmp,FLAG_NO_MAGIC))
+			flags |= P_NO_MAGIC;
+		if (QUERY_FLAG(tmp,FLAG_NO_CLERIC))
+			flags |= P_NO_CLERIC;
+		if (QUERY_FLAG(tmp,FLAG_BLOCKSVIEW))
+			flags |= P_BLOCKSVIEW;
+
+		if (QUERY_FLAG(tmp,FLAG_WALK_ON))
+			flags |= P_WALK_ON;
+		if (QUERY_FLAG(tmp,FLAG_WALK_OFF))
+			flags |= P_WALK_OFF;
+		if (QUERY_FLAG(tmp,FLAG_FLY_ON))
+			flags |= P_FLY_ON;
+		if (QUERY_FLAG(tmp,FLAG_FLY_OFF))
+			flags |= P_FLY_OFF;
+
 		if (QUERY_FLAG(tmp,FLAG_NO_PASS))
 		{
 			/* we also handle PASS_THRU here...
@@ -2139,12 +2158,9 @@ void update_position (mapstruct *m, int x, int y) {
 					flags |= P_PASS_THRU;
 			}
 		}
-		if (QUERY_FLAG(tmp,FLAG_NO_MAGIC))
-			flags |= P_NO_MAGIC;
-		if (QUERY_FLAG(tmp,FLAG_NO_CLERIC))
-			flags |= P_NO_CLERIC;
-		if (QUERY_FLAG(tmp,FLAG_BLOCKSVIEW))
-			flags |= P_BLOCKSVIEW;
+
+		if (QUERY_FLAG(tmp,FLAG_IS_FLOOR))
+		     move_flags|=tmp->terrain_type;         
     } /* for stack of objects */
 
 #ifdef DEBUG_OLDFLAGS
@@ -2152,24 +2168,24 @@ void update_position (mapstruct *m, int x, int y) {
      * since we're already doing the work, we calculate them here.
      * if they don't match, logic is broken someplace.
      */
-    if (((oldflags & ~(P_NEED_UPDATE|P_NO_ERROR)) != flags) && (!(oldflags & P_NO_ERROR)))
+    if (((oldflags & ~(P_FLAGS_UPDATE|P_FLAGS_ONLY|P_NO_ERROR)) != flags) && (!(oldflags & P_NO_ERROR)))
         LOG(llevDebug,"DBUG: update_position: updated flags do not match old flags: %s (%d,%d) old:%x != %x\n",
 									    m->path, x, y, (oldflags & ~P_NEED_UPDATE), flags);
 #endif
 
     SET_MAP_FLAGS(m, x, y, flags);
     SET_MAP_MOVE_FLAGS(m, x, y, move_flags);    
-    SET_MAP_LIGHT(m,x,y,light);
-    
-    /* ok, this must moved too!
-	 * we only need to sort this out when we really changed something.
-	 * we will get the ext. flags direct from the object flags, so we don't need
-	 * to backstore them here - no need to update.
-	 * we ONLY need to sort this out when we insert something when we remove something.
-	 * because we need to remove/insert objects which gets/lose invisibility, the
-	 * invisibility client_layer will be autoupdated too.
-	 */
+	/*    SET_MAP_LIGHT(m,x,y,light);*/
 
+	} /* end flag update */
+
+	/* check we must rebuild the map layers for client view */
+	if(oldflags&P_FLAGS_ONLY || !(oldflags&P_NEED_UPDATE))
+		return;
+
+#ifdef DEBUG_CORE
+    LOG(llevDebug,"UP - LAYER: %d,%d\n", x,y);
+#endif
 	mp = &m->spaces[x + m->width * y];
 	mp->client_mlayer[0]=0; /* ALWAYS is client layer 0 (cl0) a floor. force it */
 	mp->client_mlayer_inv[0]=0;
@@ -2232,6 +2248,9 @@ void update_position (mapstruct *m, int x, int y) {
 				break;
 			}
 		}
+
+		/* clear out need update flag */
+		SET_MAP_FLAGS(m, x, y, GET_MAP_FLAGS(m,x,y)&~P_NEED_UPDATE);
 }
 
 void set_map_reset_time(mapstruct *map) {
@@ -2522,14 +2541,17 @@ int on_same_map(object *op1, object *op2)
 {
 	if (op1->map == NULL || op2->map == NULL) return FALSE;
 
-    if (op1->map == op2->map || op1->map->tile_map[0] == op2->map ||
-	op1->map->tile_map[1] == op2->map ||
-	op1->map->tile_map[2] == op2->map ||
-	op1->map->tile_map[3] == op2->map ||
-	op1->map->tile_map[4] == op2->map ||
-	op1->map->tile_map[5] == op2->map ||
-	op1->map->tile_map[6] == op2->map ||
-	op1->map->tile_map[7] == op2->map) return TRUE;
+    if (op1->map == op2->map || 
+		op1->map->tile_map[0] == op2->map ||
+		op1->map->tile_map[1] == op2->map ||
+		op1->map->tile_map[2] == op2->map ||
+		op1->map->tile_map[3] == op2->map ||
+		op1->map->tile_map[4] == op2->map ||
+		op1->map->tile_map[5] == op2->map ||
+		op1->map->tile_map[6] == op2->map ||
+		op1->map->tile_map[7] == op2->map
+	) 
+		return TRUE;
 
     return FALSE;
 }

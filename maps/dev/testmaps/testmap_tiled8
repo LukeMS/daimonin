@@ -1495,5 +1495,6 @@ x 18
 y 18
 end
 arch wyvern
+is_invisible 1
 x 6
 end

@@ -1,27 +1,3 @@
-/*
-    Daimonin, the Massive Multiuser Online Role Playing Game
-    Server Applicatiom
-
-    Copyright (C) 2001 Michael Toennies
-
-	A split from Crossfire, a Multiplayer game for X-windows.
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
-    The author can be reached via e-mail to daimonin@nord-com.net
-*/
 /* anim.c */
 extern void free_all_anim(void);
 extern void init_anim(void);
@@ -41,7 +17,7 @@ extern void dump_all_archetypes(void);
 extern void free_all_archs(void);
 extern archetype *get_archetype_struct(void);
 extern void first_arch_pass(FILE *fp);
-extern void second_arch_pass(FILE *fp);
+extern void second_arch_pass(FILE *fp_start);
 extern void check_generators(void);
 extern void load_archetypes(void);
 extern object *arch_to_object(archetype *at);
@@ -76,7 +52,7 @@ extern uint32 level_exp(int level, double expmul);
 extern sint32 add_exp(object *op, int exp, int skill_nr);
 extern void player_lvl_adj(object *who, object *op);
 extern void calc_perm_exp(object *op);
-extern int adjust_exp(object *pl,object *op, int exp);
+extern int adjust_exp(object *pl, object *op, int exp);
 extern void apply_death_exp_penalty(object *op);
 extern int calc_level_difference(int who_lvl, int op_lvl);
 /* friend.c */
@@ -90,11 +66,10 @@ extern void set_emergency_save(type_func_int addr);
 extern void set_clean_tmp_files(type_func_void addr);
 extern void set_fix_auto_apply(type_func_map addr);
 extern void set_remove_friendly_object(type_func_ob addr);
-/*extern void set_process_active_maps(type_func_void addr);*/
 extern void set_update_buttons(type_func_map addr);
 extern void set_draw_info(type_func_int_int_ob_cchar addr);
+extern void set_container_unlink(type_container_unlink_func addr);
 extern void set_move_apply(type_move_apply_func addr);
-extern void set_draw(type_func_ob addr);
 extern void set_monster_check_apply(type_func_ob_ob addr);
 extern void set_init_blocksview_players(type_func_void addr);
 extern void set_info_map(type_func_int_map_char addr);
@@ -104,11 +79,13 @@ extern void set_trap_adjust(type_func_ob_int addr);
 extern void set_move_creator(type_func_ob addr);
 extern void set_esrv_send_item(type_func_ob_ob addr);
 extern void set_esrv_update_item(type_func_int_ob_ob addr);
-extern void set_esrv_del_item(type_func_player_int addr);
+extern void set_esrv_del_item(type_func_player_int_ob addr);
 extern void set_dragon_gain_func(type_func_dragon_gain addr);
+extern void set_send_golem_control_func(type_func_ob_int addr);
 extern void fatal(int err);
 extern void dummy_function_int(int i);
 extern void dummy_function_int_int(int i, int j);
+extern void dummy_function_player_int_ob(player *p, int c, object *ob); 
 extern void dummy_function_player_int(player *p, int j);
 extern void dummy_function(void);
 extern void dummy_function_map(mapstruct *m);
@@ -120,6 +97,7 @@ extern void dummy_function_txtnr(char *txt, int nr);
 extern void dummy_draw_info(int a, int b, object *ob, const char *txt);
 extern void dummy_function_mapstr(int a, mapstruct *map, const char *str);
 extern void dummy_function_int_ob_ob(int n, object *ob, object *ob2);
+extern int dummy_container_unlink_func(player *ob, object *ob2);
 extern void dummy_move_apply_func(object *ob, object *ob2, object *ob3);
 extern void dummy_function_dragongain(object *ob, int a1, int a2);
 /* holy.c */
@@ -183,8 +161,7 @@ extern void dragon_level_gain(object *who);
 extern void fix_monster(object *op);
 extern object *insert_base_info_object(object *op);
 extern object *find_base_info_object(object *op);
-extern void set_mobile_speed(object *op, int speed);
-
+extern void set_mobile_speed(object *op, int index);
 /* loader.c */
 extern int lex_load(object *op, int map_flags);
 extern void yyrestart(FILE *input_file);
@@ -201,14 +178,12 @@ extern void LOG(LogLevel logLevel, char *format, ...);
 /* los.c */
 extern void set_block(int x, int y, int bx, int by);
 extern void init_block(void);
-extern void clear_los(object *op);
+extern inline void clear_los(object *op);
 extern void expand_sight(object *op);
 extern int has_carried_lights(object *op);
 extern void expand_lighted_sight(object *op);
 extern void blinded_sight(object *op);
 extern void update_los(object *op);
-extern void update_all_map_los(mapstruct *map);
-extern void update_all_los(mapstruct *map, int x, int y);
 extern void print_los(object *op);
 extern void make_sure_seen(object *op);
 extern void make_sure_not_seen(object *op);
@@ -218,12 +193,13 @@ extern char *create_pathname(const char *name);
 extern int check_path(const char *name, int prepend_dir);
 extern void dump_map(mapstruct *m);
 extern void dump_all_maps(void);
+extern char *normalize_path(const char *src, const char *dst, char *path);
 extern int wall(mapstruct *m, int x, int y);
 extern int blocks_view(mapstruct *m, int x, int y);
 extern int blocks_magic(mapstruct *m, int x, int y);
 extern int blocks_cleric(mapstruct *m, int x, int y);
-extern int blocked(object *ob, mapstruct *m, int x, int y, int terrain);
-extern int blocked_link(object *ob, int x, int y);
+extern int blocked(object *op, mapstruct *m, int x, int y, int terrain);
+extern int blocked_link(object *op, int xoff, int yoff);
 extern int blocked_link_2(object *op, mapstruct *map, int x, int y);
 extern int blocked_tile(object *op, mapstruct *m, int x, int y);
 extern int arch_blocked(archetype *at, object *op, mapstruct *m, int x, int y);
@@ -249,11 +225,11 @@ extern mapstruct *out_of_map(mapstruct *m, int *x, int *y);
 extern int get_rangevector(object *op1, object *op2, rv_vector *retval, int flags);
 extern int get_rangevector_from_mapcoords(mapstruct *map1, int x1, int y1, mapstruct *map2, int x2, int y2, rv_vector *retval, int flags);
 extern int on_same_map(object *op1, object *op2);
-extern char *normalize_path (const char *src, const char *dst, char *path);
-extern int relative_tile_positon(mapstruct *map1, mapstruct *map2, int *x, int *y);
 /* object.c */
 extern signed long sum_weight(object *op);
 extern object *is_player_inv(object *op);
+extern int CAN_MERGE(object *ob1, object *ob2);
+extern object *merge_ob(object *op, object *top);
 extern void dump_object2(object *op);
 extern void dump_object(object *op);
 extern void dump_me(object *op, char *outstr);
@@ -280,7 +256,6 @@ extern int count_used(void);
 extern int count_active(void);
 extern void sub_weight(object *op, signed long weight);
 extern void remove_ob(object *op);
-extern object *merge_ob(object *op, object *top);
 extern object *insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag);
 extern void replace_insert_ob_in_map(char *arch_string, object *op);
 extern object *get_split_ob(object *orig_ob, int nr);
@@ -359,11 +334,11 @@ extern void free_all_recipes(void);
 /* shstr.c */
 extern void init_hash_table(void);
 extern const char *add_string(const char *str);
-extern const char *add_refcount(const char *str);
 extern int query_refcount(const char *str);
 extern const char *find_string(const char *str);
 extern void free_string_shared(const char *str);
 extern void ss_dump_statistics(void);
+extern const char *add_refcount(const char *str);
 extern char *ss_dump_table(int what);
 extern void ss_test_table(void);
 extern int buf_overflow(const char *buf1, const char *buf2, int bufsize);
@@ -378,13 +353,14 @@ extern void print_tod(object *op);
 extern void time_info(object *op);
 extern long seconds(void);
 /* treasure.c */
+extern void init_artifacts(void);
 extern void init_archetype_pointers(void);
+extern object *generate_treasure(treasurelist *t, int difficulty);
+extern void create_treasure(treasurelist *t, object *op, int flag, int difficulty, int t_style, int a_chance, int tries);
 extern void load_treasures(void);
 extern treasurelist *find_treasurelist(const char *name);
 extern void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int t_style, int a_chance, int tries);
 extern void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty, int t_style, int a_chance, int tries);
-extern void create_treasure(treasurelist *t, object *op, int flag, int difficulty, int t_style, int a_chance,int tries);
-extern object *generate_treasure(treasurelist *t, int difficulty);
 extern void set_abs_magic(object *op, int magic);
 extern int set_ring_bonus(object *op, int bonus, int level);
 extern int get_magic(int diff);
@@ -394,14 +370,13 @@ extern artifact *find_artifact(const char *name);
 extern archetype *find_artifact_archtype(const char *name);
 extern void dump_artifacts(void);
 extern void dump_monster_treasure_rec(const char *name, treasure *t, int depth);
-extern void dump_monster_treasure(const char *name);
-extern void init_artifacts(void);
-extern void give_artifact_abilities(object *op, artifact* art);
-extern int  generate_artifact(object *op, int difficulty, int t_style, int a_chance);
+extern void give_artifact_abilities(object *op, artifact *art);
+extern int generate_artifact(object *op, int difficulty, int t_style, int a_chance);
 extern void fix_flesh_item(object *item, object *donor);
 extern void free_treasurestruct(treasure *t);
 extern void free_charlinks(linked_char *lc);
 extern void free_artifact(artifact *at);
+extern void dump_monster_treasure(const char *name);
 extern void free_artifactlist(artifactlist *al);
 extern void free_all_treasures(void);
 /* utils.c */

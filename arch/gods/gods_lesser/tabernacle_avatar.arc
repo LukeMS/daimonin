@@ -3,6 +3,7 @@ face dummy.111
 race avatar
 type 80
 layer 6
+no_pick 1
 anim
 facings 25
 trans.101

@@ -46,17 +46,22 @@ int move_ob (object *op, int dir, object *originator)
 		LOG(llevBug,"BUG: move_ob(): Trying to move NULL.\n");
 		return 0;
     }
+
+    if (QUERY_FLAG(op, FLAG_REMOVED)) 
+	{
+		LOG(llevBug,"BUG: move_ob: monster has been removed - will not process further\n");
+		return 1;
+    }
+
     /* this function should now only be used on the head - it won't call itself
      * recursively, and functions calling us should pass the right part.
      */
-	/*
     if (op->head)
 	{
-		LOG(llevDebug,"move_ob called with non head object: %s %s (%d,%d)\n",
-										op->head->name, op->map->name, op->x, op->y);
+		LOG(llevDebug,"move_ob() called with non head object: %s %s (%d,%d)\n",
+					query_name(op->head),op->map->path? op->map->path:"<no map>", op->x, op->y);
 		op = op->head;
     }
-	*/
 
 	/* animation stuff */
     if(op->head)
@@ -68,11 +73,6 @@ int move_ob (object *op, int dir, object *originator)
 	xt=op->x+freearr_x[dir];
 	yt=op->y+freearr_y[dir];
 
-    if (QUERY_FLAG(op, FLAG_REMOVED)) {
-		LOG(llevBug,"BUG: move_ob: monster has been removed - will not process further\n");
-		/* Was not successful, but don't want to try and move again */
-		return 1;
-    }
 
 	/* we have here a out_of_map - we can skip all */
 	if (!(m=out_of_map(op->map,&xt,&yt))) 
@@ -108,7 +108,6 @@ int move_ob (object *op, int dir, object *originator)
 		if (op->type==PLAYER)
 		{
 			esrv_map_scroll(&op->contr->socket, freearr_x[dir],freearr_y[dir]);
-			op->contr->socket.update_look=1;
 			op->contr->socket.look_position=0;
 		}
 		return 1;
@@ -129,7 +128,7 @@ int move_ob (object *op, int dir, object *originator)
 			if ((flags&P_DOOR_CLOSED) && (op->will_apply&8)) /* a (closed) door which we can open? */
 			{
 				if(open_door(op, m, xt,yt,1)) /* yes, we can open this door */
-				return 1;
+					return 1;
 			}
 
 			/* in any case we don't move - door or not. This will avoid we open the door
@@ -147,7 +146,6 @@ int move_ob (object *op, int dir, object *originator)
 	if (op->type==PLAYER)
 	{
 		esrv_map_scroll(&op->contr->socket, freearr_x[dir],freearr_y[dir]);
-		op->contr->socket.update_look=1;
 		op->contr->socket.look_position=0;
 	}
 	return 1;
@@ -398,7 +396,6 @@ int push_ob(object *who, int dir, object *pusher) {
 	 */
 	if (pusher->type == PLAYER ) {
 	    esrv_map_scroll(&pusher->contr->socket, freearr_x[dir],freearr_y[dir]);
-	    pusher->contr->socket.update_look=1;
 	    pusher->contr->socket.look_position=0;
 	}
 	return 0;

@@ -89,12 +89,12 @@ depend:
 	$(DEPEND) $(DEPENDFLAGS) -- $(CFLAGS) $(INCLUDES) -I../include -- $(SRCS)
 
 proto:
-	cextract +p -P $(INCLUDES)  \
+#	cextract +p -P $(INCLUDES)  \
 		-cpp-program="gcc -E -C" \
 		$(SRCS)  > rproto.h.bak
-	$(SED) -e "s/#if __STDC__/#ifdef __STDC__/" -e "s/__signed/signed/g" -e "/__inline/d" -e "/YY_BUFFER/d" < rproto.h.bak >rproto.h
-	chmod 644 rproto.h
-	$(RM) -f rproto.h.bak
+#	$(SED) -e "s/#if __STDC__/#ifdef __STDC__/" -e "s/__signed/signed/g" -e "/__inline/d" -e "/YY_BUFFER/d" < rproto.h.bak >rproto.h
+#	chmod 644 rproto.h
+#	$(RM) -f rproto.h.bak
 
 archive:
 	@if [ ! -d $(ARCHIVE)/random_maps ]; then $(MKDIR) $(ARCHIVE)/random_maps; fi

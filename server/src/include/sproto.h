@@ -1,27 +1,3 @@
-/*
-    Daimonin, the Massive Multiuser Online Role Playing Game
-    Server Applicatiom
-
-    Copyright (C) 2001 Michael Toennies
-
-	A split from Crossfire, a Multiplayer game for X-windows.
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
-    The author can be reached via e-mail to daimonin@nord-com.net
-*/
 /* alchemy.c */
 char *cauldron_sound(void);
 void attempt_do_alchemy(object *caster, object *cauldron);
@@ -46,15 +22,18 @@ int improve_weapon(object *op, object *improver, object *weapon);
 int check_improve_weapon(object *op, object *tmp);
 int improve_armour(object *op, object *improver, object *armour);
 int convert_item(object *item, object *converter);
+int container_link(player *pl, object *sack);
+int container_unlink(player *pl, object *sack);
 int esrv_apply_container(object *op, object *sack);
 int container_trap(object *op, object *container);
 char *gravestone_text(object *op);
 void move_apply(object *trap, object *victim, object *originator);
 void do_learn_spell(object *op, int spell, int special_prayer);
 void do_forget_spell(object *op, int spell);
-int dragon_eat_flesh(object *op, object *meal);
 void apply_poison(object *op, object *tmp);
-void create_food_force(object* who, object *food, object *force);
+void create_food_force(object *who, object *food, object *force);
+void eat_special_food(object *who, object *food);
+int dragon_eat_flesh(object *op, object *meal);
 int is_legal_2ways_exit(object *op, object *exit);
 int manual_apply(object *op, object *tmp, int aflag);
 int player_apply(object *pl, object *op, int aflag, int quiet);
@@ -63,22 +42,19 @@ int apply_special(object *who, object *op, int aflags);
 int monster_apply_special(object *who, object *op, int aflags);
 int auto_apply(object *op);
 void fix_auto_apply(mapstruct *m);
-void eat_special_food(object *who, object *food);
 void apply_player_light_refill(object *who, object *op);
-void apply_player_light(object *who, object *lighter);
+void apply_player_light(object *who, object *op);
 void apply_lighter(object *who, object *lighter);
 void scroll_failure(object *op, int failure, int power);
 void apply_changes_to_player(object *pl, object *change);
 /* attack.c */
-int did_make_save_item(object *op, int type, object *originator);
-void save_throw_object(object *op, int type, object *originator);
-int hit_map(object *op, int dir, int type);
 int attack_ob(object *op, object *hitter);
+int hit_player(object *op, int dam, object *hitter, int type);
+int hit_map(object *op, int dir, int type);
+int hit_player_attacktype(object *op, object *hitter, int damage, uint32 attacknum, int magic);
+int kill_object(object *op, int dam, object *hitter, int type);
 object *hit_with_arrow(object *op, object *victim);
 void tear_down_wall(object *op);
-int hit_player_attacktype(object *op, object *hitter, int dam, uint32 attacknum, int magic);
-int kill_object(object *op, int dam, object *hitter, int type);
-int hit_player(object *op, int dam, object *hitter, int type);
 void poison_player(object *op, object *hitter, float dam);
 void slow_player(object *op, object *hitter, int dam);
 void confuse_player(object *op, object *hitter, int dam);
@@ -86,6 +62,8 @@ void blind_player(object *op, object *hitter, int dam);
 void paralyze_player(object *op, object *hitter, int dam);
 void deathstrike_player(object *op, object *hitter, int *dam);
 int adj_attackroll(object *hitter, object *target);
+int did_make_save_item(object *op, int type, object *originator);
+void save_throw_object(object *op, int type, object *originator);
 int is_aimed_missile(object *op);
 int is_melee_range(object *hitter, object *enemy);
 /* ban.c */
@@ -167,6 +145,7 @@ int command_time(object *op, char *params);
 int command_archs(object *op, char *params);
 int command_hiscore(object *op, char *params);
 int command_debug(object *op, char *params);
+int command_dumpbelowfull(object *op, char *params);
 int command_dumpbelow(object *op, char *params);
 int command_wizpass(object *op, char *params);
 int command_dumpallobjects(object *op, char *params);
@@ -188,8 +167,11 @@ int command_players(object *op, char *paramss);
 int command_logs(object *op, char *params);
 int command_usekeys(object *op, char *params);
 int command_resistances(object *op, char *params);
-int command_help(object *op, char *params);
 int command_praying(object *op, char *params);
+int command_help(object *op, char *params);
+int command_target(object *op, char *params);
+void command_face_request(char *params, int len, player *pl);
+void command_fire(char *params, int len, player *pl);
 int onoff_value(char *line);
 int command_quit(object *op, char *params);
 int command_sound(object *op, char *params);
@@ -213,9 +195,7 @@ CommArray_s *find_command_element(char *cmd, CommArray_s *commarray, int commsiz
 int execute_newserver_command(object *pl, char *command);
 int command_run(object *op, char *params);
 int command_run_stop(object *op, char *params);
-void command_fire(char *params, int len,player *pl);
-void command_face_request(char *params, int len,player *pl);
-int command_target(object *op, char *params);
+void send_target_command(player *pl);
 int command_combat(object *op, char *params);
 void send_mapstats_cmd(object *op, struct mapdef *map);
 void send_spelllist_cmd(object *op, char *spellname, int mode);
@@ -223,7 +203,6 @@ void send_skilllist_cmd(object *op, object *skillp, int mode);
 void send_ready_skill(object *op, char *skillname);
 void send_golem_control(object *golem, int mode);
 void generate_ext_title(player *pl);
-void send_target_command(player *pl);
 /* c_object.c */
 object *find_best_object_match(object *pl, char *params);
 int command_uskill(object *pl, char *params);
@@ -291,8 +270,6 @@ int command_loadplugin(object *op, char *params);
 int command_unloadplugin(object *op, char *params);
 /* commands.c */
 void init_commands(void);
-int parse_string(object *op, char *str);
-int parse_command(object *op, char *str);
 /* daemon.c */
 FILE *BecomeDaemon(char *filename);
 /* disease.c */
@@ -344,6 +321,7 @@ void set_dumpmon3(void);
 void set_dumpmon4(void);
 void set_dumpmon5(void);
 void set_dumpmon6(void);
+void set_dumpmonA(void);
 void set_dumpmon7(void);
 void set_dumpmon8(void);
 void set_dumpmon9(void);
@@ -403,7 +381,6 @@ void set_map_timeout(mapstruct *oldmap);
 char *clean_path(const char *file);
 char *unclean_path(char *src);
 void enter_exit(object *op, object *exit_ob);
-/*void process_active_maps(void);*/
 void process_players1(mapstruct *map);
 void process_players2(mapstruct *map);
 void process_events(mapstruct *map);
@@ -411,15 +388,25 @@ void clean_tmp_files(void);
 void cleanup(void);
 void leave(player *pl, int draw_exit);
 int forbid_play(void);
+void dequeue_path_requests(void);
 void do_specials(void);
 int main(int argc, char **argv);
 /* monster.c */
+void set_npc_enemy(object *npc, object *enemy, rv_vector *rv);
 object *check_enemy(object *npc, rv_vector *rv);
-object *find_nearest_living_creature(object *npc);
 object *find_enemy(object *npc, rv_vector *rv);
 int check_wakeup(object *op, object *enemy, rv_vector *rv);
-int move_randomly(object *op);
+int can_detect_enemy(object *op, object *enemy, rv_vector *rv);
+int stand_in_light(object *op);
+int can_see_enemy(object *op, object *enemy);
+object *get_active_waypoint(object *op);
+object *get_aggro_waypoint(object *op);
+object *find_waypoint(object *op, const char *name);
+void waypoint_compute_path(object *waypoint);
+void waypoint_move(object *op, object *waypoint);
 int move_monster(object *op);
+object *find_nearest_living_creature(object *npc);
+int move_randomly(object *op);
 int can_hit(object *ob1, object *ob2, rv_vector *rv);
 int can_apply(object *who, object *item);
 object *monster_choose_random_spell(object *monster);
@@ -453,13 +440,8 @@ void communicate(object *op, char *txt);
 int talk_to_npc(object *op, object *npc, char *txt);
 int talk_to_wall(object *npc, char *txt);
 object *find_mon_throw_ob(object *op);
-int can_detect_enemy(object *op, object *enemy, rv_vector *rv);
-int stand_in_light(object *op);
-int monster_use_scroll(object *head, object *part,object *pl,int dir, rv_vector *rv);
-int can_see_enemy(object *op, object *enemy);
+int monster_use_scroll(object *head, object *part, object *pl, int dir, rv_vector *rv);
 void spawn_point(object *op);
-void waypoint_compute_path(object *waypoint);
-void set_npc_enemy(object *npc, object *enemy, rv_vector *rv);
 /* move.c */
 int move_ob(object *op, int dir, object *originator);
 int transfer_ob(object *op, int x, int y, int randomly, object *originator, object *trap);
@@ -468,13 +450,6 @@ void recursive_roll(object *op, int dir, object *pusher);
 int try_fit(object *op, int x, int y);
 int roll_ob(object *op, int dir, object *pusher);
 int push_ob(object *who, int dir, object *pusher);
-/* pathfinder.h */
-path_node *find_path(object *op, mapstruct *map1, int x1, int y1, mapstruct *map2, int x2, int y2);
-int get_path_next(const char *buf, sint16 *off, mapstruct **map, int *x, int *y);
-const char *encode_path(path_node *path);
-path_node *compress_path(path_node *path);
-void request_new_path(object *waypoint);
-object *get_next_requested_path();
 /* pets.c */
 object *get_pet_enemy(object *pet, rv_vector *rv);
 void terminate_all_pets(object *owner);
@@ -522,7 +497,7 @@ void do_hidden_move(object *op);
 int stand_near_hostile(object *who);
 int player_can_view(object *pl, object *op);
 int action_makes_visible(object *op);
-int pvp_area(object *attacker, object* victim);
+int pvp_area(object *attacker, object *victim);
 int op_on_battleground(object *op, int *x, int *y);
 void dragon_ability_gain(object *who, int atnr, int level);
 /* plugins.c */
@@ -534,12 +509,13 @@ void initPlugins(void);
 void removeOnePlugin(const char *id);
 void initOnePlugin(const char *pluginfile);
 CFParm *CFWLog(CFParm *PParm);
-CFParm* CFWFixPlayer(CFParm* PParm);
+CFParm *CFWFixPlayer(CFParm *PParm);
 CFParm *CFWNewInfoMap(CFParm *PParm);
 CFParm *CFWNewInfoMapExcept(CFParm *PParm);
 CFParm *CFWSpringTrap(CFParm *PParm);
 CFParm *CFWCastSpell(CFParm *PParm);
 CFParm *CFWCmdRSkill(CFParm *PParm);
+CFParm *CFWOutOfMap(CFParm *PParm);
 CFParm *CFWBecomeFollower(CFParm *PParm);
 CFParm *CFWPickup(CFParm *PParm);
 CFParm *CFWGetMapObject(CFParm *PParm);
@@ -551,11 +527,12 @@ CFParm *CFWCmdTake(CFParm *PParm);
 CFParm *CFWTransferObject(CFParm *PParm);
 CFParm *CFWCmdTitle(CFParm *PParm);
 CFParm *CFWKillObject(CFParm *PParm);
-CFParm *CFWDoForgetSpell(CFParm *PParm);
-CFParm *CFWDoLearnSpell(CFParm *PParm);
-CFParm *CFWDoLearnSkill(CFParm *PParm);
 CFParm *CFWCheckSpellKnown(CFParm *PParm);
+CFParm *CFWGetSpellNr(CFParm *PParm);
+CFParm *CFWDoLearnSpell(CFParm *PParm);
 CFParm *CFWCheckSkillKnown(CFParm *PParm);
+CFParm *CFWGetSkillNr(CFParm *PParm);
+CFParm *CFWDoLearnSkill(CFParm *PParm);
 CFParm *CFWESRVSendInventory(CFParm *PParm);
 CFParm *CFWCreateArtifact(CFParm *PParm);
 CFParm *CFWGetArchetype(CFParm *PParm);
@@ -563,6 +540,7 @@ CFParm *CFWUpdateSpeed(CFParm *PParm);
 CFParm *CFWUpdateObject(CFParm *PParm);
 CFParm *CFWFindAnimation(CFParm *PParm);
 CFParm *CFWGetArchetypeByObjectName(CFParm *PParm);
+CFParm *CFWInsertObjectInObject(CFParm *PParm);
 CFParm *CFWInsertObjectInMap(CFParm *PParm);
 CFParm *CFWReadyMapName(CFParm *PParm);
 CFParm *CFWAddExp(CFParm *PParm);
@@ -592,17 +570,16 @@ CFParm *CFWCommunicate(CFParm *PParm);
 CFParm *CFWFindBestObjectMatch(CFParm *PParm);
 CFParm *CFWApplyBelow(CFParm *PParm);
 CFParm *CFWFreeObject(CFParm *PParm);
-CFParm* CFWFindMarkedObject (CFParm* PParm);
-CFParm* CFWIdentifyObject (CFParm* PParm);
-CFParm* CFWGetSpellNr (CFParm* PParm);
-CFParm* CFWGetSkillNr (CFParm* PParm);
+CFParm *CFWFindMarkedObject(CFParm *PParm);
+CFParm *CFWIdentifyObject(CFParm *PParm);
 CFParm *CFWObjectCreateClone(CFParm *PParm);
 CFParm *CFWTeleportObject(CFParm *PParm);
 CFParm *RegisterGlobalEvent(CFParm *PParm);
 CFParm *UnregisterGlobalEvent(CFParm *PParm);
-CFParm* CFWInsertObjectInObject(CFParm* PParm);
-CFParm* CFWPlaySoundMap(CFParm* PParm);
 void GlobalEvent(CFParm *PParm);
+CFParm *CFWPlaySoundMap(CFParm *PParm);
+CFParm *CFWCreateObject(CFParm *PParm);
+CFParm *CFWObjectCreateClone(CFParm *PParm);
 /* resurrection.c */
 void dead_player(object *op);
 int cast_raise_dead_spell(object *op, int dir, int spell_type, object *corpseobj);
@@ -656,7 +633,7 @@ int write_scroll(object *pl, object *scroll);
 int remove_trap(object *op, int dir);
 int skill_throw(object *op, int dir, char *params);
 object *find_throw_ob(object *op, char *request);
-object *find_throw_tag( object *op, tag_t tag);
+object *find_throw_tag(object *op, tag_t tag);
 object *make_throw_ob(object *orig);
 void do_throw(object *op, object *toss_item, int dir);
 /* skill_util.c */
@@ -721,7 +698,7 @@ int cast_destruction(object *op, object *caster, int dam, int attacktype);
 int magic_wall(object *op, object *caster, int dir, int spell_type);
 int cast_light(object *op, object *caster, int dir);
 int dimension_door(object *op, int dir);
-int cast_heal(object *op, int caster_level, object *target, int spell_type);
+int cast_heal(object *op, int level, object *target, int spell_type);
 int cast_regenerate_spellpoints(object *op);
 int cast_change_attr(object *op, object *caster, object *target, int dir, int spell_type);
 int summon_pet(object *op, int dir, SpellTypeFrom item);
@@ -735,7 +712,7 @@ int alchemy(object *op);
 int remove_depletion(object *op, object *target);
 int remove_curse(object *op, object *target, int type, SpellTypeFrom src);
 int cast_identify(object *op, int level, object *single_ob, int mode);
-int cast_detection(object *op,object *target, int type);
+int cast_detection(object *op, object *target, int type);
 int cast_pacify(object *op, object *weap, archetype *arch, int spellnum);
 int summon_fog(object *op, object *caster, int dir, int spellnum);
 int create_the_feature(object *op, object *caster, int dir, int spell_effect);
@@ -791,7 +768,7 @@ void check_fired_arch(object *op);
 void move_fired_arch(object *op);
 void drain_rod_charge(object *rod);
 void fix_rod_speed(object *rod);
-int find_target_for_spell(object *op, object *caster, object **target,int dir, uint32 flags);
+int find_target_for_spell(object *op, object *item, object **target, int dir, uint32 flags);
 void move_ball_lightning(object *op);
 int can_see_monsterP(mapstruct *m, int x, int y, int dir);
 int spell_find_dir(mapstruct *m, int x, int y, object *exclude);
@@ -839,7 +816,7 @@ void move_pit(object *op);
 object *stop_item(object *op);
 void fix_stopped_item(object *op, mapstruct *map, object *originator);
 object *fix_stopped_arrow(object *op);
-void stop_arrow (object *op);
+void stop_arrow(object *op);
 void move_arrow(object *op);
 void change_object(object *op);
 void move_teleporter(object *op);
@@ -852,6 +829,17 @@ void move_marker(object *op);
 int process_object(object *op);
 /* timers.c */
 void cftimer_process_timers(void);
+/* pathfinder.c */
+int pathfinder_queue_enqueue(object *waypoint);
+object *pathfinder_queue_dequeue(int *count);
+void request_new_path(object *waypoint);
+object *get_next_requested_path(void);
+const char *encode_path(path_node *path);
+int get_path_next(const char *buf, sint16 *off, mapstruct **map, int *x, int *y);
+path_node *compress_path(path_node *path);
+float distance_heuristic(path_node *start, path_node *current, path_node *goal);
+int find_neighbours(path_node *node, path_node **open_list, path_node **closed_list, path_node *start, path_node *goal, object *op, uint32 id);
+path_node *find_path(object *op, mapstruct *map1, int x1, int y1, mapstruct *map2, int x2, int y2);
 int cftimer_create(int id, long delay, object *ob, int mode);
 int cftimer_destroy(int id);
 int cftimer_find_free_id(void);

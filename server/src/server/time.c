@@ -275,8 +275,6 @@ void remove_door3(object *op)
 	  if(op->sub_type1 == ST1_DOOR_NORMAL)
 		  play_sound_map(op->map, op->x, op->y, SOUND_DOOR_CLOSE, SOUND_NORMAL);
       insert_ob_in_map(op,op->map,op,0);
-	  if(QUERY_FLAG(op,FLAG_BLOCKSVIEW))
-		  update_all_los(op->map, op->x, op->y);
   }
 }
 
@@ -404,11 +402,10 @@ void poison_more(object *op) {
  * Look in the code!
  * also, i included sounds for open & close gates! we need to add a tracker the
  * get is going up or down. 
- * ARGH: see the update_all_los() in this function.. is called not ONE time we
- * start open or close the door - its called EVERY animation ! this must be changed.
  */
 void move_gate(object *op) { /* 1 = going down, 0 = goind up */
     object *tmp;
+	int update = UP_OBJ_FACE; /* default update is only face */
 
     if(op->stats.wc < 0 || (int)op->stats.wc  >= (NUM_ANIMATIONS(op)/NUM_FACINGS(op))) 
 	{
@@ -434,23 +431,36 @@ void move_gate(object *op) { /* 1 = going down, 0 = goind up */
 
 		if((int)op->stats.wc < ((NUM_ANIMATIONS(op)/NUM_FACINGS(op))/2+1)) 
 		{
+			/* we do the QUERY_FLAG() here to check we must rebuild the tile flags or not,
+			 * if we don't change the object settings here, just change the face but
+			 * don't rebuild the flag tiles.
+			 */
 			if(op->last_heal) /* if != 0, we have a reversed timed gate, which starts open */
 			{
+				if(!QUERY_FLAG(op,FLAG_NO_PASS))
+					update = UP_OBJ_FLAGFACE;
 				SET_FLAG(op, FLAG_NO_PASS);    /* The coast is clear, block the way */
 				if(!op->arch->clone.stats.ac)
+				{
+					if(!QUERY_FLAG(op,FLAG_BLOCKSVIEW))
+						update = UP_OBJ_FLAGFACE;
 					SET_FLAG(op, FLAG_BLOCKSVIEW);
+				}
 			}
 			else 
 			{
+				if(QUERY_FLAG(op,FLAG_NO_PASS))
+					update = UP_OBJ_FLAGFACE;
 				CLEAR_FLAG(op, FLAG_NO_PASS);
+				if(QUERY_FLAG(op,FLAG_BLOCKSVIEW))
+					update = UP_OBJ_FLAGFACE;
 				CLEAR_FLAG(op, FLAG_BLOCKSVIEW);
 			}
-			update_all_los(op->map, op->x, op->y);
 		}
 
 		op->state = (uint8) op->stats.wc;
 		SET_ANIMATION(op, (NUM_ANIMATIONS(op)/NUM_FACINGS(op))*op->direction+op->state);
-		update_object(op,UP_OBJ_CHANGE);
+		update_object(op, update);
 		return;
     }
 
@@ -540,22 +550,31 @@ void move_gate(object *op) { /* 1 = going down, 0 = goind up */
 	    } else {
 		if(op->last_heal) /* if != 0, we have a reversed timed gate, which starts open */
 		{
+			if(QUERY_FLAG(op,FLAG_NO_PASS))
+				update = UP_OBJ_FLAGFACE;
 		    CLEAR_FLAG(op, FLAG_NO_PASS);
+			if(QUERY_FLAG(op,FLAG_BLOCKSVIEW))
+				update = UP_OBJ_FLAGFACE;
 		    CLEAR_FLAG(op, FLAG_BLOCKSVIEW);
 		}
 		else
 		{
+			if(!QUERY_FLAG(op,FLAG_NO_PASS))
+				update = UP_OBJ_FLAGFACE;
 			SET_FLAG(op, FLAG_NO_PASS);    /* The coast is clear, block the way */
 			if(!op->arch->clone.stats.ac)
+			{
+				if(!QUERY_FLAG(op,FLAG_BLOCKSVIEW))
+					update = UP_OBJ_FLAGFACE;
 			    SET_FLAG(op, FLAG_BLOCKSVIEW);
+			}
 		}
-		update_all_los(op->map, op->x, op->y);
 	    }
 	} /* gate is halfway up */
 
 	op->state = (uint8) op->stats.wc;
 	SET_ANIMATION(op, (NUM_ANIMATIONS(op)/NUM_FACINGS(op))*op->direction + op->state);
-	update_object(op,UP_OBJ_CHANGE);
+	update_object(op,update); /* takes care about map tile and player los update! */
     } /* gate is going up */
 }
 
@@ -1023,8 +1042,7 @@ void change_object(object *op) { /* Doesn`t handle linked objs yet */
             else            
                 tmp = op;
 
-			update_object(tmp,UP_OBJ_CHANGE);
-            update_all_map_los(tmp->map);
+			update_object(tmp,UP_OBJ_FACE);
             if(op->other_arch == NULL)
             {
                 op->stats.food=0; /* other_arch == NULL means it can be refilled */
@@ -1057,7 +1075,7 @@ void change_object(object *op) { /* Doesn`t handle linked objs yet */
 	 * updating the client, so we don't need to do that below.
 	 */
 	if ((pl=is_player_inv(env))!=NULL) {
-	    esrv_del_item(pl->contr, op->count);
+	    esrv_del_item(pl->contr, op->count, op->env);
 	    esrv_send_item(pl, tmp);
 	}
     } else {
@@ -1221,7 +1239,9 @@ void move_teleporter(object *op) {
     This was invented for giving classes, but there's no reason it
     can't be generalized.
 */
-
+/* *really* outdated... don't use this, i even have no object in the
+ * daimonin arches for this.
+ */
 void move_player_changer(object *op) {
   object *player;
   object *walk;
@@ -1481,7 +1501,7 @@ int process_object(object *op) {
 	/* IF necessary, delete the item from the players inventory */
 	object *pl=is_player_inv(op);
 	if (pl)
-	    esrv_del_item(pl->contr, op->count);
+	    esrv_del_item(pl->contr, op->count, op->env);
       remove_ob(op);
       free_object(op);
     }

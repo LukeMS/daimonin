@@ -62,8 +62,7 @@ void emergency_save(int flag) {
 	pl->ob->x = -1;
 	pl->ob->y = -1;
     }
-	if(pl->ob && pl->ob->container)
-		esrv_apply_container (pl->ob, pl->ob->container);
+	container_unlink(pl,NULL);
     if(!save_player(pl->ob,flag)) {
       LOG(llevSystem, "(failed) ");
       new_draw_info(NDI_UNIQUE, 0,pl->ob,"Emergency save failed, checking score...");
@@ -271,7 +270,7 @@ void destroy_object (object *op)
 int save_player(object *op, int flag) {
   FILE *fp;
   char filename[MAX_BUF], *tmpfilename,backupfile[MAX_BUF];
-  object *tmp, *container=NULL;
+  object *tmp;/* *container=NULL;*/
   player *pl = op->contr;
   int i,wiz=QUERY_FLAG(op,FLAG_WIZ);
   long checksum;
@@ -300,6 +299,9 @@ int save_player(object *op, int flag) {
     if (pl->state != ST_PLAYING && pl->state != ST_GET_PARTY_PASSWORD)
 	return 0;
 
+	/* perhaps we don't need it here?*/
+  /*container_unlink(pl,NULL);*/
+
   if (flag == 0)
     terminate_all_pets(op);
 
@@ -319,10 +321,6 @@ int save_player(object *op, int flag) {
   }
 
 /* Eneq(@csd.uu.se): If we have an open container hide it. */
-   if (op->container)  {
-     container=op->container;
-       op->container=NULL;
-   }
 
   fprintf(fp,"password %s\n",pl->password);
 
@@ -449,9 +447,10 @@ int save_player(object *op, int flag) {
 	unlink(backupfile);
 
   /* Eneq(@csd.uu.se): Reveal the container if we have one. */
+  /*
   if (flag&&container!=NULL) 
-    op->container = container;
-
+    op->contr->container = container;
+*/
   if (wiz) SET_FLAG(op,FLAG_WIZ);
   if(!flag)
 	esrv_send_inventory(op, op);
@@ -991,10 +990,11 @@ void check_login(object *op) {
 	 */
     enter_exit(op,NULL); /* kick player on map - load map if needed */
 
-    pl->socket.update_look=1;
+    pl->socket.update_tile=0;
     pl->socket.look_position=0;
     pl->socket.ext_title_flag = 1;
 	
+	pl->ob->direction = 4;
     esrv_new_player(op->contr,op->weight+op->carrying);
 	send_spelllist_cmd(op, NULL, SPLIST_MODE_ADD); /* send the known spells as list to client */
     send_skilllist_cmd(op, NULL, SPLIST_MODE_ADD);

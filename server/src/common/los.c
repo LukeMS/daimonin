@@ -23,8 +23,6 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 
-/* Nov 95 - inserted USE_LIGHTING code stuff in here - b.t. */
-
 #include <global.h>
 #include <funcpoint.h>
 #include <math.h>
@@ -44,37 +42,12 @@ typedef struct blstr {
   int index;
 } blocks;
 
-blocks block[MAP_CLIENT_X][MAP_CLIENT_Y];
-
-/*
- * Used to initialise the array used by the LOS routines.
- * What this sets if that x,y blocks the view of bx,by
- * This then sets up a relation - for example, something
- * at 5,4 blocks view at 5,3 which blocks view at 5,2
- * etc.  So when we check 5,4 and find it block, we have
- * the data to know that 5,3 and 5,2 and 5,1 should also
- * be blocked.
- */
-
-void set_block(int x,int y,int bx, int by) {
-    int index=block[x][y].index,i;
-
-    /* Due to flipping, we may get duplicates - better safe than sorry.
-     */
-    for (i=0; i<index; i++) {
-	if (block[x][y].x[i] == bx && block[x][y].y[i] == by) return;
-    }
-
-    block[x][y].x[index]=bx;
-    block[x][y].y[index]=by;
-    block[x][y].index++;
-#ifdef LOS_DEBUG
-    LOG(llevInfo ,"setblock: added %d %d -> %d %d (%d)\n", x, y, bx, by, block[x][y].index);
-#endif
-}
+static blocks block[MAP_CLIENT_X][MAP_CLIENT_Y];
 
 /*
  * initialises the array used by the LOS routines.
+ * This is NOT called for every LOS - only at server start to
+ * init the base block struct.
  */
 
 /* since we are only doing the upper left quadrant, only
@@ -149,6 +122,35 @@ void init_block() {
 
 /*
  * Used to initialise the array used by the LOS routines.
+ * What this sets if that x,y blocks the view of bx,by
+ * This then sets up a relation - for example, something
+ * at 5,4 blocks view at 5,3 which blocks view at 5,2
+ * etc.  So when we check 5,4 and find it block, we have
+ * the data to know that 5,3 and 5,2 and 5,1 should also
+ * be blocked.
+ */
+void set_block(int x,int y,int bx, int by) {
+    int index=block[x][y].index,i;
+
+    /* Due to flipping, we may get duplicates - better safe than sorry.
+     */
+    for (i=0; i<index; i++) {
+	if (block[x][y].x[i] == bx && block[x][y].y[i] == by) return;
+    }
+
+    block[x][y].x[index]=bx;
+    block[x][y].y[index]=by;
+    block[x][y].index++;
+#ifdef LOS_DEBUG
+    LOG(llevInfo ,"setblock: added %d %d -> %d %d (%d)\n", x, y, bx, by, block[x][y].index);
+#endif
+}
+
+
+
+
+/*
+ * Used to initialise the array used by the LOS routines.
  * x,y are indexes into the blocked[][] array.
  * This recursively sets the blocked line of sight view.
  * From the blocked[][] array, we know for example
@@ -159,7 +161,10 @@ void init_block() {
  */
 
 static void set_wall(object *op,int x,int y) {
-    int i;
+    int i, xt, yt;
+
+	xt = (MAP_CLIENT_X - op->contr->socket.mapx)/2;
+	yt = (MAP_CLIENT_Y - op->contr->socket.mapy)/2;
 
     for(i=0;i<block[x][y].index;i++) {
 	int dx=block[x][y].x[i],dy=block[x][y].y[i],ax,ay;
@@ -167,8 +172,8 @@ static void set_wall(object *op,int x,int y) {
 	/* ax, ay are the values as adjusted to be in the
 	 * socket look structure.
 	 */
-	ax = dx - (MAP_CLIENT_X - op->contr->socket.mapx)/2;
-	ay = dy - (MAP_CLIENT_Y - op->contr->socket.mapy)/2;
+	ax = dx - xt;
+	ay = dy - yt;
 
 	if (ax < 0 || ax>=op->contr->socket.mapx ||
 	    ay < 0 || ay>=op->contr->socket.mapy) continue;
@@ -179,8 +184,10 @@ static void set_wall(object *op,int x,int y) {
 	 * code wants the los to start from the 0,0
 	 * and not be relative to middle of los array.
 	 */
-	op->contr->blocked_los[ax][ay]=100;
+	if(!(op->contr->blocked_los[ax][ay]&BLOCKED_LOS_OUT_OF_MAP))
+		op->contr->blocked_los[ax][ay]|=BLOCKED_LOS_BLOCKED; /* this tile can't be seen */
 	set_wall(op,dx,dy);
+
     }
 }
 
@@ -189,54 +196,132 @@ static void set_wall(object *op,int x,int y) {
  * op is the object, x and y values based on MAP_CLIENT_X and Y.
  * this is because they index the blocked[][] arrays.
  */
-
+/* instead of useless darkness values, blocked_los[][] now tells the client
+ * update function what kind of tile we have: visible, sight blocked, blocksview trigger 
+ * or out of map.
+ */
 static void check_wall(object *op,int x,int y) {
-    int ax, ay;
-
-    if(!block[x][y].index)
-	return;
+    int ax, ay, flags;
 
     /* ax, ay are coordinates as indexed into the look window */
     ax = x - (MAP_CLIENT_X - op->contr->socket.mapx)/2;
     ay = y - (MAP_CLIENT_Y - op->contr->socket.mapy)/2;
 
+	/* this skips the "edges" of view area, the border tiles.
+	 * Naturally, this tiles can't block any view - there is
+	 * nothing behind them.
+	 */
+    if(!block[x][y].index)
+	{
+		/* to handle the "blocksview update" right, we give this special
+		 * tiles a "never use it to trigger a los_update()" flag.
+		 * blockview changes to this tiles will have no effect.
+		 */
+		if(blocks_view(op->map,op->x + x - MAP_CLIENT_X/2, op->y + y - MAP_CLIENT_Y/2)&P_OUT_OF_MAP)
+			op->contr->blocked_los[ax][ay]=BLOCKED_LOS_OUT_OF_MAP; /* mark the space as out_of_map */
+		else
+			op->contr->blocked_los[ax][ay]|=BLOCKED_LOS_IGNORE; /* ignore means ignore for LOS */
+		return;
+	}
+
+
     /* If the converted coordinates are outside the viewable
      * area for the client, return now.
      */
     if (ax < 0 || ay < 0 || ax >= op->contr->socket.mapx || ay >= op->contr->socket.mapy)
-	return;
+		return;
 
+	/*LOG(-1,"SET_LOS: %d,%d\n", ax,ay);*/
     /* If this space is already blocked, prune the processing - presumably
      * whatever has set this space to be blocked has done the work and already
      * done the dependency chain.
+	 * but check for out_of_map to speedup our client map draw function.
      */
-    if (op->contr->blocked_los[ax][ay] == 100) return;
+    if (op->contr->blocked_los[ax][ay]&(BLOCKED_LOS_BLOCKED|BLOCKED_LOS_OUT_OF_MAP))
+	{
+		if(op->contr->blocked_los[ax][ay]&BLOCKED_LOS_BLOCKED)
+		{
+			if((flags = blocks_view(op->map,op->x + x - MAP_CLIENT_X/2, op->y + y - MAP_CLIENT_Y/2)))
+			{
+				if(flags&P_OUT_OF_MAP)
+					op->contr->blocked_los[ax][ay]=BLOCKED_LOS_OUT_OF_MAP; /* mark the space as out_of_map */
+				else
+					op->contr->blocked_los[ax][ay]|=BLOCKED_LOS_BLOCKSVIEW;
+			}
+		}
+		return;
+	}
 
 #if 0
     LOG(llevInfo ,"check_wall, ax,ay=%d, %d  x,y = %d, %d  blocksview = %d, %d\n",
 	    ax, ay, x, y, op->x + x - MAP_CLIENT_X/2, op->y + y - MAP_CLIENT_Y/2);
 #endif
 
-    if(blocks_view(op->map,op->x + x - MAP_CLIENT_X/2, op->y + y - MAP_CLIENT_Y/2))
-	set_wall(op,x,y);
-#if 0
-    /* don't do this - much more efficient for our calling function to just
-     * iterate through all the spaces then this mechanism below, which may
-     * have us look at the same space numerous times.
-     */
-    else {
-	/* This goes and checkes to see if any spaces this space
-	 * may potentially be blocked are also blocked.  It
-	 * is actually not efficient to do it this way, because
-	 * one space may be blocked by many spaces in front, so
-	 * this means we may end up looking through a lot more
-	 * spaces then necessary.
-	 */
-	int i;
-	for(i=0;i<block[x][y].index;i++)
-	    check_wall(op,block[x][y].x[i],block[x][y].y[i]);
-    }
+    if((flags = blocks_view(op->map,op->x + x - MAP_CLIENT_X/2, op->y + y - MAP_CLIENT_Y/2)))
+	{
+		set_wall(op,x,y);
+		
+		/* out of map clears all other flags! */
+		if(flags&P_OUT_OF_MAP)
+			op->contr->blocked_los[ax][ay]= BLOCKED_LOS_OUT_OF_MAP; /* mark the space as out_of_map */
+		else
+			op->contr->blocked_los[ax][ay] |= BLOCKED_LOS_BLOCKSVIEW; 
+
+	}
+
+}
+
+/*
+ * update_los() recalculates the array which specifies what is
+ * visible for the given player-object.
+ */
+void update_los(object *op) 
+{
+    int dx = op->contr->socket.mapx_2, dy = op->contr->socket.mapy_2, x, y;
+  
+    if(QUERY_FLAG(op,FLAG_REMOVED))
+	return;
+
+#ifdef DEBUG_CORE
+	LOG(llevDebug,"LOS - %s\n", query_name(op));
 #endif
+
+    clear_los(op);
+
+    if(QUERY_FLAG(op,FLAG_WIZ))
+    	return;
+
+    /* For larger maps, this is more efficient than the old way which
+     * used the chaining of the block array.  Since many space views could
+     * be blocked by different spaces in front, this mean that a lot of spaces
+     * could be examined multile times, as each path would be looked at.
+     */
+    for (x=(MAP_CLIENT_X - op->contr->socket.mapx)/2; x<(MAP_CLIENT_X + op->contr->socket.mapx)/2; x++) 
+		for (y=(MAP_CLIENT_Y - op->contr->socket.mapy)/2; y<(MAP_CLIENT_Y + op->contr->socket.mapy)/2; y++) 
+			check_wall(op, x, y);
+
+    /* do the los of the player. 3 (potential) cases */
+    if(QUERY_FLAG(op,FLAG_BLIND)) /* player is blind */ 
+		blinded_sight(op);
+  	else
+		expand_sight(op);
+
+
+	/* give us a area we can look through when we have xray - this
+	 * stacks to normal LOS.
+	 */
+    if (QUERY_FLAG(op,FLAG_XRAYS)) 
+	{
+		int x, y;
+		for (x = -4; x <= 4; x++)
+		{
+			for (y = -4; y <= 4; y++)
+			{
+				if(op->contr->blocked_los[dx + x][dy + y] & BLOCKED_LOS_BLOCKED)
+					op->contr->blocked_los[dx + x][dy + y] &= ~BLOCKED_LOS_BLOCKED;
+			}
+		}
+	}
 }
 
 /*
@@ -244,14 +329,9 @@ static void check_wall(object *op,int x,int y) {
  * controlling the object.
  */
 
-void clear_los(object *op) {
-    /* This is safer than using the socket->mapx, mapy because
-     * we index the blocked_los as a 2 way array, so clearing
-     * the first z spaces may not not cover the spaces we are
-     * actually going to use
-     */
-    (void)memset((void *) op->contr->blocked_los,0,
-	       MAP_CLIENT_X * MAP_CLIENT_Y);
+void inline clear_los(object *op) 
+{
+    (void)memset((void *) op->contr->blocked_los,BLOCKED_LOS_VISIBLE,sizeof(op->contr->blocked_los));
 }
 
 /*
@@ -260,43 +340,55 @@ void clear_los(object *op) {
  * to a certain degree, be able to see into corners.
  * This is somewhat suboptimal, would be better to improve the formula.
  */
+/* thats true: we should migrate this function asap i the los - a bit better
+ * "pre calculated" LOS function (is it possible to pre calculate all cases from
+ *  player x,y to blocksview x,y? a few hundred kb or even some mb should be worth
+ * the time and cpu save) MT-2004
+ */
+#define BLOCKED_LOS_EXPAND 0x20
 
 void expand_sight(object *op) 
 {
     int i,x,y, dx, dy;
 
-    /* expand sight NOT when see in dark */
-    if(!QUERY_FLAG(op,FLAG_SEE_IN_DARK ) || QUERY_FLAG(op,FLAG_XRAYS))        
-    {
-        for(x=1;x<op->contr->socket.mapx-1;x++)	/* loop over inner squares */
+    for(x=1;x<op->contr->socket.mapx-1;x++)	/* loop over inner squares */
+	{
 	for(y=1;y<op->contr->socket.mapy-1;y++) {
 #if 0
 	    LOG(llevInfo ,"expand_sight x,y = %d, %d  blocksview = %d, %d\n",
 		    x, y, op->x-op->contr->socket.mapx_2+x, op->y-op->contr->socket.mapy_2+y);
 #endif
-	    if(!op->contr->blocked_los[x][y] &&
-	        !blocks_view(op->map,op->x-op->contr->socket.mapx_2+x,
-		op->y-op->contr->socket.mapy_2+y)) {
+	    if(op->contr->blocked_los[x][y] <= BLOCKED_LOS_BLOCKSVIEW && /* if visible */
+	        !(op->contr->blocked_los[x][y] &BLOCKED_LOS_BLOCKSVIEW))  /* and not blocksview */
+		{
 
-		for(i=1;i<=8;i+=1) {	/* mark all directions */
-		    dx = x + freearr_x[i];
-		    dy = y + freearr_y[i];
-		    if(op->contr->blocked_los[dx][dy] > 0) /* for any square blocked */
-			op->contr->blocked_los[dx][dy]= -1;
-		}
+			/* mark all directions */
+			for(i=1;i<=8;i+=1)
+			{
+			
+				dx = x + freearr_x[i];
+				dy = y + freearr_y[i];
+			
+				if (dx < 0 || dy < 0 || dx > op->contr->socket.mapx || dy > op->contr->socket.mapy)
+					continue;
+
+				if(op->contr->blocked_los[dx][dy]&BLOCKED_LOS_BLOCKED)
+					op->contr->blocked_los[dx][dy]|=BLOCKED_LOS_EXPAND;
+			}
 	    }
 	}
     }
-
-    /* no darkness when xray */
-    if(!QUERY_FLAG(op,FLAG_XRAYS) ) /* if xray, we have nightsight and expand_sight */        
-        expand_lighted_sight(op);
-    
-    /* clear mark squares */
+	
     for (x = 0; x < op->contr->socket.mapx; x++)
+	{
 	for (y = 0; y < op->contr->socket.mapy; y++)
-	    if (op->contr->blocked_los[x][y] < 0)
-		op->contr->blocked_los[x][y] = 0;
+	{
+	    if (op->contr->blocked_los[x][y]&BLOCKED_LOS_EXPAND)
+			op->contr->blocked_los[x][y] &= ~BLOCKED_LOS_BLOCKED;
+	}
+	}
+	
+
 }
 
 
@@ -317,10 +409,11 @@ int has_carried_lights(object *op) {
  
 void expand_lighted_sight(object *op)
 {
-    int x,y,darklevel,ax,ay, basex, basey;
-    mapstruct *m=op->map;
+    int x,y,darklevel,ax,ay, basex, basey,xt,yt, light;
+    mapstruct *m;
  
-    darklevel = MAP_DARKNESS(m);
+	return;
+    darklevel = MAP_DARKNESS(op->map);
 
     /* If the player can see in the dark, lower the darklevel for him */ 
     if(QUERY_FLAG(op,FLAG_SEE_IN_DARK)) darklevel -= 2;
@@ -335,10 +428,11 @@ void expand_lighted_sight(object *op)
     /* Do a sanity check.  If not valid, some code below may do odd
      * things.
      */
-    if (darklevel > MAX_DARKNESS) {
-	LOG(llevBug,"BUG: Map darkness for %s on %s is too high (%d)\n",
-										query_name(op), op->map->path, darklevel);
-	darklevel = MAX_DARKNESS;
+    if (darklevel > MAX_DARKNESS) 
+	{
+		LOG(llevBug,"BUG: Map darkness for %s on %s is too high (%d)\n",
+											query_name(op), op->map->path, darklevel);
+		darklevel = MAX_DARKNESS;
     }
 
     /* First, limit player furthest (unlighted) vision */
@@ -355,23 +449,23 @@ void expand_lighted_sight(object *op)
      */
     for (x=(op->x - op->contr->socket.mapx_2 - MAX_LIGHT_RADII), basex=-MAX_LIGHT_RADII;
       x < (op->x + op->contr->socket.mapx_2 + MAX_LIGHT_RADII); x++, basex++) {
-	if (x < 0 || x>=MAP_WIDTH(op->map)) continue;
 
 	for (y=(op->y - op->contr->socket.mapy_2 - MAX_LIGHT_RADII), basey=-MAX_LIGHT_RADII;
 	  y < (op->y + op->contr->socket.mapy_2 + MAX_LIGHT_RADII); y++, basey++) {
-	    if (y < 0 || y>=MAP_HEIGHT(op->map)) continue;
+
+		xt=x,yt=y;
+		if(!(m = out_of_map(op->map,&xt,&yt)))
+			continue;
 
 	    /* This space is providing light, so we need to brighten up the
 	     * spaces around here.
 	     */
-	    if (GET_MAP_LIGHT(op->map, x, y)) {
-#if 0
-		LOG(llevInfo ,"expand_lighted_sight: Found light at x=%d, y=%d, basex=%d, basey=%d\n", 
-			x, y, basex, basey);
-#endif
-		for (ax=basex - GET_MAP_LIGHT(op->map, x, y); ax<basex+GET_MAP_LIGHT(op->map, x, y); ax++) {
+	    if(light=(GET_MAP_LIGHT(m, xt, yt))) 
+		{
+
+			for (ax=basex - light; ax<basex+light; ax++) {
 		    if (ax<0 || ax>op->contr->socket.mapx) continue;
-		    for (ay=basey - GET_MAP_LIGHT(op->map, x, y); ay<basey+GET_MAP_LIGHT(op->map, x, y); ay++) {
+		    for (ay=basey - light; ay<basey+light; ay++) {
 			if (ay<0 || ay>op->contr->socket.mapy) continue;
 
 			/* If the space is fully blocked, do nothing.  Otherwise, we
@@ -385,13 +479,28 @@ void expand_lighted_sight(object *op)
 			 * 3 (2.82 or sqrt(8)) and not 2 like it is right now.
 			 */
 			if(op->contr->blocked_los[ax][ay]!=100)
-			    op->contr->blocked_los[ax][ay]-= (GET_MAP_LIGHT(op->map, x, y) - 
-							      MAX(abs(basex-ax),abs(basey -ay)));
+			    op->contr->blocked_los[ax][ay]-= light - MAX(abs(basex-ax),abs(basey -ay));
 		    } /* for ay */
 		} /* for ax */
 	    } /* if this space is providing light */
 	} /* for y */
     } /* for x */
+
+    /* Outdoor should never really be completely pitch black dark like
+     * a dungeon, so let the player at least see a little around themselves
+     */
+	  /*
+    if (MAP_OUTDOORS(op->map) && darklevel > (MAX_DARKNESS - 3)) {
+	if (op->contr->blocked_los[op->contr->socket.mapx/2][op->contr->socket.mapy/2] > (MAX_DARKNESS-3))
+	    op->contr->blocked_los[op->contr->socket.mapx/2][op->contr->socket.mapy/2] = MAX_DARKNESS - 3;
+
+	for (x=-1; x<=1; x++)
+	    for (y=-1; y<=1; y++) {
+		if (op->contr->blocked_los[x + op->contr->socket.mapx/2][y + op->contr->socket.mapy/2] > (MAX_DARKNESS-2))
+		    op->contr->blocked_los[x + op->contr->socket.mapx/2][y + op->contr->socket.mapy/2] = MAX_DARKNESS - 2;
+	    }
+    }
+*/
 
     /*  grant some vision to the player, based on the darklevel */
     for(x=darklevel-MAX_DARKNESS; x<MAX_DARKNESS + 1 -darklevel; x++)
@@ -408,177 +517,24 @@ void expand_lighted_sight(object *op)
  */
 
 void blinded_sight (object *op) {
+/*
     int x,y;
-
     for (x = 0; x < op->contr->socket.mapx; x++)
 	for (y = 0; y <  op->contr->socket.mapy; y++)
 	    op->contr->blocked_los[x][y] = 100;
 
     op->contr->blocked_los[ op->contr->socket.mapx_2][ op->contr->socket.mapy_2] = 0;
+	*/
 }
 
-/*
- * update_los() recalculates the array which specifies what is
- * visible for the given player-object.
- */
-
-void update_los(object *op) {
-    int dx = op->contr->socket.mapx_2, dy = op->contr->socket.mapy_2, x, y;
-  
-    if(QUERY_FLAG(op,FLAG_REMOVED))
-	return;
-
-    clear_los(op);
-    if(QUERY_FLAG(op,FLAG_WIZ))
-    	return;
-
-    /* For larger maps, this is more efficient than the old way which
-     * used the chaining of the block array.  Since many space views could
-     * be blocked by different spaces in front, this mean that a lot of spaces
-     * could be examined multile times, as each path would be looked at.
-     */
-    for (x=(MAP_CLIENT_X - op->contr->socket.mapx)/2; x<(MAP_CLIENT_X + op->contr->socket.mapx)/2; x++) 
-	for (y=(MAP_CLIENT_Y - op->contr->socket.mapy)/2; y<(MAP_CLIENT_Y + op->contr->socket.mapy)/2; y++) 
-	    check_wall(op, x, y);
-
-    /* do the los of the player. 3 (potential) cases */
-    if(QUERY_FLAG(op,FLAG_BLIND)) /* player is blind */ 
-	blinded_sight(op);
-    else
-    expand_sight(op);
-
-
-    if (QUERY_FLAG(op,FLAG_XRAYS)) {
-	int x, y;
-	for (x = -2; x <= 2; x++)
-	    for (y = -2; y <= 2; y++)
-		op->contr->blocked_los[dx + x][dy + y] = 0;
-    }
-}
-
-/* update all_map_los is like update_all_los below,
- * but updates everyone on the map, no matter where they
- * are.  This generally should not be used, as a per
- * specific map change doesn't make much sense when tiling
- * is considered (lowering darkness would certainly be a
- * strange effect if done on a tile map, as it makes
- * the distinction between maps much more obvious to the
- * players, which is should not be.
- * Currently, this function is called from the
- * change_map_light function
- */
-void update_all_map_los(mapstruct *map) {
-    player *pl;
-
-    for(pl=first_player;pl!=NULL;pl=pl->next) {
-	if(pl->ob->map==map)
-	    pl->do_los=1;
-    }
-}
-
-
-/*
- * This function makes sure that update_los() will be called for all
- * players on the given map within the next frame.
- * It is triggered by removal or inserting of objects which blocks
- * the sight in the map.
- * Modified by MSW 2001-07-12 to take a coordinate of the changed
- * position, and to also take map tiling into account.  This change
- * means that just being on the same map is not sufficient - the
- * space that changes must be withing your viewable area.
- *
- * map is the map that changed, x and y are the coordinates.
- */
-
-void update_all_los(mapstruct *map, int x, int y) {
-    player *pl;
-
-    for(pl=first_player;pl!=NULL;pl=pl->next) {
-	/* Player should not have a null map, but do this
-	 * check as a safety
-	 */
-	if (!pl->ob->map) continue;
-
-	/* Same map is simple case - see if pl is close enough.
-	 * Note in all cases, we did the check for same map first,
-	 * and then see if the player is close enough and update
-	 * los if that is the case.  If the player is on the
-	 * corresponding map, but not close enough, then the
-	 * player can't be on another map that may be closer,
-	 * so by setting it up this way, we trim processing
-	 * some.
-	 */
-	if(pl->ob->map==map) {
-	    if ((abs(pl->ob->x - x) <= pl->socket.mapx_2) &&
-	       (abs(pl->ob->y - y) <= pl->socket.mapy_2))
-		pl->do_los=1;
-
-	}
-	/* Now we check to see if player is on adjacent
-	 * maps to the one that changed and also within
-	 * view.  The tile_maps[] could be null, but in that
-	 * case it should never match the pl->ob->map, so
-	 * we want ever try to dereference any of the data in it.
-	 */
-
-	/* The logic for 0 and 3 is to see how far the player is
-	 * from the edge of the map (height/width) - pl->ob->(x,y)
-	 * and to add current position on this map - that gives a
-	 * distance.
-	 * For 1 and 2, we check to see how far the given
-	 * coordinate (x,y) is from the corresponding edge,
-	 * and then add the players location, which gives
-	 * a distance.
-	 */
-	else if (pl->ob->map == map->tile_map[0]) {
-	    if ((abs(pl->ob->x - x) <= pl->socket.mapx_2) &&
-	       (abs(y + MAP_HEIGHT(map->tile_map[0]) - pl->ob->y)  <= pl->socket.mapy_2))
-		pl->do_los=1;
-	}
-	else if (pl->ob->map == map->tile_map[2]) {
-	    if ((abs(pl->ob->x - x) <= pl->socket.mapx_2) &&
-	       (abs(pl->ob->y + MAP_HEIGHT(map) - y)  <= pl->socket.mapy_2))
-		pl->do_los=1;
-	}
-	else if (pl->ob->map == map->tile_map[1]) {
-	    if ((abs(pl->ob->x + MAP_WIDTH(map) - x) <= pl->socket.mapx_2) &&
-	       (abs(pl->ob->y - y)  <= pl->socket.mapy_2))
-		pl->do_los=1;
-	}
-	else if (pl->ob->map == map->tile_map[3]) {
-	    if ((abs(x + MAP_WIDTH(map->tile_map[3]) - pl->ob->x) <= pl->socket.mapx_2) &&
-	       (abs(pl->ob->y - y)  <= pl->socket.mapy_2))
-		pl->do_los=1;
-	}
-	else if (pl->ob->map == map->tile_map[4]) {
-	    if ((abs(pl->ob->x + MAP_WIDTH(map) - x) <= pl->socket.mapx_2) &&
-	       (abs(y + MAP_HEIGHT(map->tile_map[4]) - pl->ob->y)  <= pl->socket.mapy_2))
-		pl->do_los=1;
-	}
-	else if (pl->ob->map == map->tile_map[5]) {
-	    if ((abs(pl->ob->x + MAP_WIDTH(map) - x) <= pl->socket.mapx_2) &&
-	       (abs(pl->ob->y + MAP_HEIGHT(map) - y)  <= pl->socket.mapy_2))
-		pl->do_los=1;
-	}
-	else if (pl->ob->map == map->tile_map[6]) {
-	    if ((abs(x + MAP_WIDTH(map->tile_map[6]) - pl->ob->x) <= pl->socket.mapx_2) &&
-	       (abs(pl->ob->y + MAP_HEIGHT(map) - y)  <= pl->socket.mapy_2))
-		pl->do_los=1;
-	}
-	else if (pl->ob->map == map->tile_map[7]) {
-	    if ((abs(x + MAP_WIDTH(map->tile_map[7]) - pl->ob->x) <= pl->socket.mapx_2) &&
-	       (abs(y + MAP_HEIGHT(map->tile_map[7]) - pl->ob->y)  <= pl->socket.mapy_2))
-		pl->do_los=1;
-	}
-   }
-}
 
 /*
  * Debug-routine which dumps the array which specifies the visible
  * area of a player.  Triggered by the z key in DM mode.
  */
 
-void print_los(object *op) {
+void print_los(object *op)
+{
     int x,y;
     char buf[50], buf2[10];
 
@@ -598,15 +554,10 @@ void print_los(object *op) {
     }
 }
 
+
 /*
  * make_sure_seen: The object is supposed to be visible through walls, thus
  * check if any players are nearby, and edit their LOS array.
- */
-/* ARGH... this function here is really a #1 fighter for the "worst anti-multi-player".
- * Even not thinking to much about it i can imagine *some* ways to do this without
- * accessing the whole player pool and manipulating the los... why in hell changing 
- * the los when we only must mark the map tile for "update and send this one face`"???
- * MT-11-2002.
  */
 void make_sure_seen(object *op) {
 }

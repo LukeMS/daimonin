@@ -3,11 +3,11 @@ race human
 randomitems player_human_female
 layer 6
 will_apply 8
+no_pick 1
 is_female 1
 is_neutral 1
 identified 1
 direction 4
-alive 1
 terrain_flag 1
 weapon_speed 0.0125
 speed 0.85

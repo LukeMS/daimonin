@@ -73,7 +73,7 @@ PostBuild_Cmds=copy ReleaseLog\*.exe ..\..\..\*.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MD /W3 /Gi /GX /O2 /Ob2 /I "..\..\..\source\include" /I "..\..\..\source\random_maps" /I "..\..\..\source\plugin_python\include" /I "d:\Python22\include" /D "_CONSOLE" /D "DEBUG" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "DEBUG_MOVEATTACK" /YX"preheader.pch" /FD /c
-# ADD CPP /nologo /MDd /W3 /Gm /Gi /GX /Zi /Od /Ob2 /I "..\..\..\src\include" /I "..\..\..\src\random_maps" /I "..\..\..\src\plugin_python\include" /I "c:\Python22\include" /D "_CONSOLE" /D "DEBUG" /D "DEBUG_MOVEATTACK" /D "WIN32" /D "NDEBUG" /D "_MBCS" /FR /YX"preheader.pch" /FD /c
+# ADD CPP /nologo /MDd /W3 /Gm /Gi /GX /Zi /Od /Op /Ob2 /I "..\..\..\src\include" /I "..\..\..\src\random_maps" /I "..\..\..\src\plugin_python\include" /I "c:\Python22\include" /D "_CONSOLE" /D "DEBUG" /D "DEBUG_MOVEATTACK" /D "WIN32" /D "NDEBUG" /D "_MBCS" /FR /YX"preheader.pch" /FD /c
 # ADD BASE RSC /l 0x407 /d "NDEBUG"
 # ADD RSC /l 0x407 /d "NDEBUG"
 BSC32=bscmake.exe

@@ -100,8 +100,9 @@ int command_kick (object *op, char *params)
 			     "%s is kicked out of the game.",op->name);
 	strcpy(op->contr->killer,"left");
 	check_score(op); /* Always check score */
-	if(op->container)
-		esrv_apply_container (op, op->container);
+
+	container_unlink(op->contr,NULL);
+
 	(void)save_player(op,0);
 	op->contr->socket.status=Ns_Dead;
 #if MAP_MAXTIMEOUT
@@ -125,8 +126,7 @@ int command_shutdown(object *op, char *params)
      */
     command_kick(op,NULL);
     check_score(op); /* Always check score */
-	if(op->container)
-		esrv_apply_container (op, op->container);
+	container_unlink(op->contr,NULL);
     (void)save_player(op,0);
     /*play_again(op);*/
     cleanup();
@@ -864,11 +864,9 @@ int command_nowiz (object *op, char *params) /* 'noadm' is alias */
      CLEAR_FLAG(op, FLAG_WAS_WIZ);
 #endif
 	  fix_player(op);
-	  op->contr->socket.update_look=1;
+	  op->contr->socket.update_tile=0;
       esrv_send_inventory(op, op);
-      /*esrv_draw_look(op);*/
-	  update_position(op->map, op->x, op->y);
-      update_los(op);
+   	  op->contr->update_los=1;
      new_draw_info(NDI_UNIQUE, 0, op, "DM mode deactivated.");
      return 1;
   }
@@ -936,9 +934,9 @@ int command_dm (object *op, char *params)
       /*new_draw_info(NDI_UNIQUE | NDI_ALL, 1, NULL, "The Dungeon Master has arrived!");*/
       SET_FLAG(op, FLAG_FLYING);
       esrv_send_inventory(op, op);
-   	  op->contr->socket.update_look=1;
-	   /*esrv_draw_look(op);*/
-      clear_los(op);
+   	  op->contr->socket.update_tile=0; /* force a draw_look() */
+	  clear_los(op); /* set all to visible! */
+   	  op->contr->update_los=1;
       op->contr->write_buf[0] ='\0';
       return 1;
     } else {

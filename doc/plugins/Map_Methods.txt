@@ -1,0 +1,68 @@
+GetFirstObjectOnSquare
+------------------------------------------------------------
+  map.GetFirstObjectOnSquare(x,y)
+    Gets the bottom object on the tile. Use obj.above to browse objs
+  Parameter types:
+    integer x
+    integer y
+  Possible return types:
+    object
+  Status:
+    Stable
+
+MapTileAt
+------------------------------------------------------------
+  map.MapTileAt(x,y)
+  Parameter types:
+    integer x
+    integer y
+  Possible return types:
+    map
+  Status:
+    untested
+  TODO:
+    do someting about the new modified coordinates too?
+
+PlaySound
+------------------------------------------------------------
+  map.PlaySound(x, y, soundnumber, soundtype)
+  Parameter types:
+    integer x
+    integer y
+    integer soundnumber
+    integer soundtype
+  Possible return types:
+    None
+  Status:
+    Tested
+  TODO:
+    supply constants for the sounds
+
+Message
+------------------------------------------------------------
+  map.Message(message, color)
+    Writes a message to all players on a map
+    default color is NDI_BLUE|NDI_UNIQUE
+  Parameter types:
+    string message
+    (optional) integer color
+  Possible return types:
+    None
+  Status:
+    Tested
+  TODO:
+    Add constants for colours
+
+CreateObject
+------------------------------------------------------------
+  map.CreateObject(arch_name, x, y)
+    
+  Parameter types:
+    string arch_name
+    integer x
+    integer y
+  Possible return types:
+    object
+  Status:
+    Untested
+

@@ -88,7 +88,7 @@ install::
 proto:
 	cproto -e -o ../include/libproto.h.bak $(INCLUDES) \
 	$(SRCS)
-	$(SED) -e "s/__signed/signed/g" -e "/inline/d" -e "/YY_BUFFER/d" < ../include/libproto.h.bak > ../include/libproto.h
+	$(SED) -e "s/ = {0}//g" -e "s/__signed/signed/g" -e "/inline/d" -e "/YY_BUFFER/d" < ../include/libproto.h.bak > ../include/libproto.h
 	chmod 644 ../include/libproto.h
 	$(RM) -f ../include/libproto.h.bak
 

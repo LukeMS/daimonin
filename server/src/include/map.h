@@ -110,6 +110,10 @@
 #define SET_MAP_SPACE_CLID_INV(M_,L_,O_)		( (M_)->client_mlayer_inv[L_] = (sint8) (O_))
 
 
+#define GET_MAP_UPDATE_COUNTER(M,X,Y)	( (M)->spaces[(X) + (M)->width * (Y)].update_tile)
+
+#define INC_MAP_UPDATE_COUNTER(M,X,Y)	((M)->spaces[((X) + (M)->width * (Y))].update_tile++)
+
 #define GET_MAP_MOVE_FLAGS(M,X,Y)	( (M)->spaces[(X) + (M)->width * (Y)].move_flags )
 #define SET_MAP_MOVE_FLAGS(M,X,Y,C)	( (M)->spaces[(X) + (M)->width * (Y)].move_flags = C )
 #define GET_MAP_FLAGS(M,X,Y)	( (M)->spaces[(X) + (M)->width * (Y)].flags )
@@ -178,29 +182,34 @@
 #define P_CHECK_INV		0x100   /* we have something like inventory checker in this tile node.
 								 * if set, me must blocked_tile(), to see what happens to us
 								 */
-#define P_SET_INV		0x200	/* rebuild the invisible client_layer array */
-#define P_IS_PVP		0x400	/* This is ARENA flag - NOT PvP area flags - area flag is in mapheader */
-#define P_PASS_THRU		0x800	/* same as NO_PASS - but objects with PASS_THRU set can cross it.
+#define P_IS_PVP		0x200	/* This is ARENA flag - NOT PvP area flags - area flag is in mapheader */
+#define P_PASS_THRU		0x400	/* same as NO_PASS - but objects with PASS_THRU set can cross it.
 								 * Note: If a node has NO_PASS and P_PASS_THRU set, there are 2 objects
 								 * in the node, one with pass_thru and one with real no_pass - then
 								 * no_pass will overrule pass_thru 
 								 */
 
-#define P_MAGIC_EAR		0x1000   /* we have a magic ear in this map tile... later we should add a map
+#define P_MAGIC_EAR		0x800   /* we have a magic ear in this map tile... later we should add a map
 								  * pointer where we attach as chained list this stuff - no search
 								  * or flags then needed.
 								  */
-#define P_WALK_ON		0x2000	/* this 4 flags are for moving objects and what happens when they enter */ 
-#define P_WALK_OFF		0x4000  /* or leave a map tile */
-#define P_FLY_OFF		0x8000
+#define P_WALK_ON		0x1000	/* this 4 flags are for moving objects and what happens when they enter */ 
+#define P_WALK_OFF		0x2000  /* or leave a map tile */
+#define P_FLY_OFF		0x4000
 
 #define P_FLY_ON		0x10000
 
+
+#define P_OUT_OF_MAP	0x4000000 /* of course not set for map tiles but from blocked_xx()
+								   * function where the out_of_map() fails to grap a valid
+								   * map or tile.
+								   */
 /* these are special flags to control how and what the update_position() 
  * functions updates the map space.
  */
-#define P_UPDATE_LAYER	0x10000000	/* if set, update the flags by looping the map objects */
-#define P_NEED_UPDATE	0x20000000	/* this space is out of date - update the flags by looping the objects */
+#define P_FLAGS_ONLY	0x8000000	/* skip the layer update, do flags only */
+#define P_FLAGS_UPDATE	0x10000000	/* if set, update the flags by looping the map objects */
+#define P_NEED_UPDATE	0x20000000	/* resort the layer when updating */
 #define P_NO_ERROR      0x40000000	/* Purely temporary - if set, update_position
 									* does not complain if the flags are different.
 									*/
@@ -209,27 +218,16 @@
 								 * values of blocked...
 								 */
 
-/* Can't use MapCell as that is used in newserver.h
- * Instead of having numerous arrays that have information on a
- * particular space (was map, floor, floor2, map_ob),
- * have this structure take care of that information.
- * This puts it all in one place, and should also make it easier
- * to extend information about a space.
- */
-
 #ifdef WIN32
 #pragma pack(push,1)
 #endif
-
-/* well, we can also use instead a object* as client_layer a sint8 index, which is used
- * for layer[] - but its faster & easier for a few bytes more 
- */
 
 typedef struct MapSpace {
 	object  *first;							/* start of the objects in this map tile */
 	object	*layer[MAX_ARCH_LAYERS*2];		/* array of visible layer objects + for invisible (*2)*/
 	object  *last;							/* last object in this list */
     uint32  round_tag;						/* tag for last_damage */
+	uint32  update_tile;					/* counter for update tile */
     int		flags;							/* flags about this space (see the P_ values above) */
     uint16  last_damage;					/* last_damage tmp backbuffer */
     uint16  move_flags;						/* terrain type flags (water, underwater,...) */

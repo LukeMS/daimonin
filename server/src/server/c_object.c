@@ -198,7 +198,7 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
     if(QUERY_FLAG(tmp,FLAG_WAS_WIZ) && !QUERY_FLAG(pl, FLAG_WAS_WIZ)) {
 	new_draw_info(NDI_UNIQUE, 0,pl, "The object disappears in a puff of smoke!");
 	new_draw_info(NDI_UNIQUE, 0,pl, "It must have been an illusion.");
-	if (pl->type==PLAYER) esrv_del_item (pl->contr, tmp->count);
+	if (pl->type==PLAYER) esrv_del_item (pl->contr, tmp->count, tmp->env);
 	if ( ! QUERY_FLAG (tmp, FLAG_REMOVED))
             remove_ob (tmp);
 	free_object(tmp);
@@ -220,13 +220,16 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
     }
 	
 
+	if(tmp->type == CONTAINER)
+		container_unlink(NULL,tmp);
+
 #ifndef REAL_WIZ
     if(QUERY_FLAG(pl, FLAG_WAS_WIZ))
 	SET_FLAG(tmp, FLAG_WAS_WIZ);
 #endif
 
     if (nrof != tmp_nrof) {
-	object *tmp2 = tmp;
+	object *tmp2 = tmp, *tmp2_cont = tmp->env;
         tag_t tmp2_tag = tmp2->count;
 	tmp = get_split_ob (tmp, nrof);
 	if(!tmp) {
@@ -236,7 +239,7 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 	/* Tell a client what happened rest of objects */
 	if (pl->type == PLAYER) {
 	    if (was_destroyed (tmp2, tmp2_tag))
-		esrv_del_item (pl->contr, tmp2_tag);
+		esrv_del_item (pl->contr, tmp2_tag,tmp2_cont);
 	    else
 		esrv_send_item (pl, tmp2);
 	}
@@ -247,7 +250,7 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 	 */
         if ( ! QUERY_FLAG (tmp, FLAG_REMOVED)) {
 	    if (tmp->env && pl->type==PLAYER) 
-	        esrv_del_item (pl->contr, tmp->count);
+	        esrv_del_item (pl->contr, tmp->count,tmp->env);
 	    remove_ob(tmp); /* Unlink it */
 	}
     }
@@ -283,11 +286,11 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
         k = EVENT_PICKUP;
         l = SCRIPT_FIX_ALL;
         CFP.Value[0] = &k;
-        CFP.Value[1] = pl; // Gecko: We want the player/monster not the container (?)
+        CFP.Value[1] = pl; /* Gecko: We want the player/monster not the container (?) */
         CFP.Value[2] = tmp; 
-        CFP.Value[3] = op; // Gecko: Container id goes here
+        CFP.Value[3] = op; /* Gecko: Container id goes here */
         CFP.Value[4] = NULL;
-        CFP.Value[5] = &tmp_nrof; // nr of objects
+        CFP.Value[5] = &tmp_nrof; /* nr of objects */
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
@@ -333,8 +336,7 @@ void pick_up(object *op,object *alt)
     if (alt)
     {
         if ( ! can_pick (op, alt)) {
-            new_draw_info_format (NDI_UNIQUE, 0, op, "You can't pick up the %s.",
-                                  alt->name);
+            new_draw_info_format (NDI_UNIQUE, 0, op, "You can't pick up %s.", alt->name);
 	    goto leave;
         }
         tmp = alt;
@@ -342,12 +344,14 @@ void pick_up(object *op,object *alt)
     else
     {
         if (op->below == NULL || ! can_pick (op, op->below)) {
-             new_draw_info (NDI_UNIQUE, 0, op,
-                            "There is nothing to pick up here.");
+             new_draw_info (NDI_UNIQUE, 0, op, "There is nothing to pick up here.");
              goto leave;
         }
         tmp = op->below;
     }
+
+	if(tmp->type == CONTAINER)
+		container_unlink(NULL,tmp);
 
     /* Try to catch it. */
     tmp_map = tmp->map;
@@ -366,8 +370,8 @@ void pick_up(object *op,object *alt)
 	count=tmp->nrof;
 
     /* container is open, so use it */
-    if (op->container) {
-	alt = op->container;
+    if (op->type==PLAYER && op->contr->container) {
+	alt = op->contr->container;
 	if (alt != tmp->env && !sack_can_hold (op, alt, tmp,count))
 	    goto leave;
     } else { /* non container pickup */
@@ -429,7 +433,7 @@ void pick_up(object *op,object *alt)
 void put_object_in_sack (object *op, object *sack, object *tmp, long nrof) 
 {
     tag_t tmp_tag, tmp2_tag;
-    object *tmp2;
+    object *tmp2, *tmp_cont;
 	/*object *sack2;*/
     char buf[MAX_BUF];
   
@@ -438,12 +442,17 @@ void put_object_in_sack (object *op, object *sack, object *tmp, long nrof)
         return;
     }
 
-    if (sack==tmp) return;	/* Can't put an object in itself */
-    if (sack->type != CONTAINER) {
-      new_draw_info_format(NDI_UNIQUE, 0,op,
-	"The %s is not a container.", query_name(sack));
+    if (sack==tmp) 
+		return;	/* Can't put an object in itself */
+    if (sack->type != CONTAINER) 
+	{
+      new_draw_info_format(NDI_UNIQUE, 0,op,"The %s is not a container.", query_name(sack));
       return;
     }
+
+	if(tmp->type == CONTAINER)
+		container_unlink(NULL,tmp);
+
 	/*
     if (QUERY_FLAG(tmp,FLAG_STARTEQUIP)) {
       new_draw_info_format(NDI_UNIQUE, 0,op,
@@ -489,7 +498,7 @@ void put_object_in_sack (object *op, object *sack, object *tmp, long nrof)
 
     /* we want to put some portion of the item into the container */
     if (nrof && tmp->nrof != (uint32) nrof) {
-	object *tmp2 = tmp;
+	object *tmp2 = tmp, *tmp2_cont=tmp->env;
         tmp2_tag = tmp2->count;
 	tmp = get_split_ob (tmp, nrof);
 
@@ -499,7 +508,7 @@ void put_object_in_sack (object *op, object *sack, object *tmp, long nrof)
 	}
 	/* Tell a client what happened other objects */ 
 	if (was_destroyed (tmp2, tmp2_tag))
-	      esrv_del_item (op->contr, tmp2_tag);
+	      esrv_del_item (op->contr, tmp2_tag, tmp2_cont);
 	else	/* this can proably be replaced with an update */
 	      esrv_send_item (op, tmp2);
     } else
@@ -509,6 +518,7 @@ void put_object_in_sack (object *op, object *sack, object *tmp, long nrof)
     strcat (buf, query_name(sack));
     strcat (buf, ".");
     tmp_tag = tmp->count;
+	tmp_cont = tmp->env;
     tmp2 = insert_ob_in_ob(tmp, sack);
     new_draw_info(NDI_UNIQUE, 0,op,buf);
     fix_player(op); /* This is overkill, fix_player() is called somewhere */
@@ -518,7 +528,7 @@ void put_object_in_sack (object *op, object *sack, object *tmp, long nrof)
      * delete the original.
      */
     if (tmp2 != tmp)
-	esrv_del_item (op->contr, tmp_tag);
+	esrv_del_item (op->contr, tmp_tag, tmp_cont);
 
     esrv_send_item (op, tmp2);
     /* update the sacks and players weight */
@@ -553,11 +563,14 @@ void drop_object (object *op, object *tmp, long nrof)
           return;		/* can't unapply it */
     }
 
+	if(tmp->type == CONTAINER)
+		container_unlink(NULL,tmp);
+
     /* We are only dropping some of the items.  We split the current objec
      * off
      */
     if(nrof && tmp->nrof != (uint32) nrof) {
-	object *tmp2 = tmp;
+	object *tmp2 = tmp, *tmp2_cont=tmp->env;
         tag_t tmp2_tag = tmp2->count;
 	tmp = get_split_ob (tmp, nrof);
 	if(!tmp) {
@@ -570,7 +583,7 @@ void drop_object (object *op, object *tmp, long nrof)
 	 if (op->type == PLAYER)
 	 {
                 if (was_destroyed (tmp2, tmp2_tag))
-                        esrv_del_item (op->contr, tmp2_tag);
+                        esrv_del_item (op->contr, tmp2_tag, tmp2_cont);
                 else
                         esrv_send_item (op, tmp2);
 	};
@@ -592,7 +605,7 @@ void drop_object (object *op, object *tmp, long nrof)
         CFP.Value[2] = tmp;
         CFP.Value[3] = NULL;
         CFP.Value[4] = NULL;
-        CFP.Value[5] = &nrof; // Gecko: Moved nrof to numeric arg to avoid problems
+        CFP.Value[5] = &nrof; /* Gecko: Moved nrof to numeric arg to avoid problems */
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
@@ -616,7 +629,7 @@ void drop_object (object *op, object *tmp, long nrof)
 			new_draw_info(NDI_UNIQUE, 0,op,"The shop magic put it back to the storage.");
 		else
 			new_draw_info(NDI_UNIQUE, 0,op,"The one-drop item vanish to nowhere as you drop it!");
-		esrv_del_item (op->contr, tmp->count);
+		esrv_del_item (op->contr, tmp->count, tmp->env);
 	  }
       free_object(tmp);
       fix_player(op);
@@ -651,15 +664,13 @@ void drop_object (object *op, object *tmp, long nrof)
 			if (op->type == PLAYER)
 			{
 				new_draw_info_format(NDI_UNIQUE, 0, op,"The shop magic put it to the storage.");
-				esrv_del_item (op->contr, tmp->count);
+				esrv_del_item (op->contr, tmp->count,tmp->env);
 			}
 			free_object(tmp);
 			fix_player(op);
 			if (op->type == PLAYER)
-			{
-				op->contr->socket.update_look = 1;
 				esrv_send_item (op, op);
-			}
+
 			return;
 		}
 	}
@@ -668,7 +679,7 @@ void drop_object (object *op, object *tmp, long nrof)
     tmp->y = op->y;
 
     if (op->type == PLAYER)
-        esrv_del_item (op->contr, tmp->count);
+        esrv_del_item (op->contr, tmp->count, tmp->env);
 
     insert_ob_in_map(tmp, op->map, op,0);
 
@@ -677,17 +688,11 @@ void drop_object (object *op, object *tmp, long nrof)
     insert_ob_in_map(op, op->map, op, INS_NO_MERGE | INS_NO_WALK_ON);
     CLEAR_FLAG (op, FLAG_NO_APPLY);
 
-    /* Call this before we update the various windows/players.  At least
-     * that we, we know the weight is correct.
-     */
-    fix_player(op); /* This is overkill, fix_player() is called somewhere */
-		    /* in object.c */
-
+	/* Need to update the weight for the player */
     if (op->type == PLAYER)
     {
-    op->contr->socket.update_look = 1;
-    /* Need to update the weight for the player */
-    esrv_send_item (op, op);
+		fix_player(op);
+		esrv_send_item (op, op);
     }
 }
 
@@ -730,40 +735,15 @@ void drop(object *op, object *tmp)
 
     if (op->type == PLAYER)
     {
-		/* see last_used in player
-	    if (op->contr->last_used==tmp && (tag_t) op->contr->last_used_id == tmp->count) 
-		{
-			object *n=NULL;
-			if(tmp->below != NULL)
-				n = tmp->below;
-			else if(tmp->above != NULL)
-				n = tmp->above;
-			op->contr->last_used = n;
-			if (n != NULL)
-				op->contr->last_used_id = n->count;
-			else
-				op->contr->last_used_id = 0;
-		}
-		*/
-    };
-
-    if (op->container) {
-        if (op->type == PLAYER)
-        {
-                put_object_in_sack (op, op->container, tmp, op->contr->count);
-        } else {
-                put_object_in_sack(op, op->container, tmp, 0);
-        };
-    } else {
-        if (op->type == PLAYER)
-        {
-                drop_object (op, tmp, op->contr->count);
-        } else {
-                drop_object(op,tmp,0);
-        };
+	    if (op->contr->container) 
+			put_object_in_sack (op, op->contr->container, tmp, op->contr->count);
+		else
+			drop_object (op, tmp, op->contr->count);
+		op->contr->count = 0;
     }
-    if (op->type == PLAYER)
-        op->contr->count = 0;
+	else
+		drop_object(op,tmp,0);
+
 }
 
 
@@ -798,7 +778,8 @@ int command_dropall (object *op, char *params) {
       if(! QUERY_FLAG(curinv,FLAG_INV_LOCKED) && curinv->type != MONEY &&
 				curinv->type != FOOD && curinv->type != KEY && curinv->type != SPECIAL_KEY && 
 				(curinv->type != GEM && curinv->type != TYPE_JEWEL && curinv->type != TYPE_NUGGET) &&
-				!IS_SYS_INVISIBLE(curinv) && (curinv->type!=CONTAINER || op->container!=curinv))
+				!IS_SYS_INVISIBLE(curinv) && (curinv->type!=CONTAINER || 
+				(op->type == PLAYER && op->contr->container!=curinv)))
 	{
 		if (QUERY_FLAG(op, FLAG_STARTEQUIP))
 			drop(op,curinv);
@@ -872,9 +853,7 @@ int command_dropall (object *op, char *params) {
       curinv = nextinv;
     }
   }
-  if(op->type == PLAYER)
-      op->contr->socket.update_look=1;
-/*  draw_look(op);*/
+
   return 0;
 }
 
@@ -902,11 +881,7 @@ int command_drop (object *op, char *params)
 	if (!did_one) new_draw_info(NDI_UNIQUE, 0,op,"Nothing to drop.");
     }
     if (op->type==PLAYER)
-    {
         op->contr->count=0;
-        op->contr->socket.update_look=1;
-    };
-/*    draw_look(op);*/
     return 0;
 }
 
@@ -929,45 +904,36 @@ int command_examine (object *op, char *params)
   return 0;
 }
 
-/* op should be a player.
- * we return the object the player has marked with the 'mark' command
- * below.  If no match is found (or object has changed), we return
- * NULL.  We leave it up to the calling function to print messages if
- * nothing is found.
- */
-object *find_marked_object(object *op)
+/* Gecko: added a recursive part to search so that we also search in containers */
+static object *find_marked_object_rec(object *op, object **marked, uint32 *marked_count)
 {
-	object *tmp;
-  
-    if(op->type != PLAYER)
-        return NULL;
-
-    if (!op || !op->contr) return NULL;
-    if (!op->contr->mark)
-		return NULL;
-
+    object *tmp, *tmp2;
+    
     /* This may seem like overkill, but we need to make sure that they
      * player hasn't dropped the item.  We use count on the off chance that
      * an item got reincarnated at some point.
      */
-    /*
-     * FIXME: For completeness, this search should recurse into containers
-     */
     for (tmp=op->inv; tmp; tmp=tmp->below) 
-	{
+    {
 		if (IS_SYS_INVISIBLE(tmp))
 			continue;
-		if (tmp == op->contr->mark)
+		if (tmp == *marked)
 		{
-			if (tmp->count == op->contr->mark_count)
+			if (tmp->count == *marked_count)
 				return tmp;
 			else 
 			{
-				op->contr->mark=NULL;
-				op->contr->mark_count=0;
+				*marked=NULL;
+				*marked_count=0;
 				return NULL;
 			}
-		}
+		} else if(tmp->inv) {
+            tmp2 = find_marked_object_rec(tmp, marked, marked_count);
+            if(tmp2)
+                return tmp2;
+            if(*marked == NULL)
+                return NULL;
+        }
     }
     return NULL;
 }
@@ -1003,6 +969,26 @@ int command_mark(object *op, char *params)
 }
 
 
+/* op should be a player.
+ * we return the object the player has marked with the 'mark' command
+ * below.  If no match is found (or object has changed), we return
+ * NULL.  We leave it up to the calling function to print messages if
+ * nothing is found.
+ */
+object *find_marked_object(object *op)
+{
+  
+    if(op->type != PLAYER)
+        return NULL;
+
+    if (!op || !op->contr) return NULL;
+    if (!op->contr->mark)
+		return NULL;
+
+    return find_marked_object_rec(op, &op->contr->mark, &op->contr->mark_count);
+}
+
+
 /* op is the player
  * tmp is the monster being examined.
  */
@@ -1015,8 +1001,16 @@ void examine_monster(object *op,object *tmp) {
 	op->contr->praying=0;
 	if(QUERY_FLAG(mon,FLAG_IS_MALE))
 	{
-		gender = "male";
-		att = "He";
+		if(QUERY_FLAG(mon,FLAG_IS_FEMALE))
+        {
+			gender = "hermaphrodite";
+			att = "It";
+        } 
+		else 
+		{
+			gender = "male";
+			att = "He";
+		}
 	}
 	else if(QUERY_FLAG(mon,FLAG_IS_FEMALE))
 	{
@@ -1042,6 +1036,7 @@ void examine_monster(object *op,object *tmp) {
 		new_draw_info_format(NDI_UNIQUE, 0,op,"%s is level %d and %d years old%s.",att,mon->level,mon->contr->age,QUERY_FLAG(mon,FLAG_IS_AGED)?" (magical aged)":"");
 	else
 		new_draw_info_format(NDI_UNIQUE, 0,op,"%s is level %d%s.",att,mon->level,QUERY_FLAG(mon,FLAG_IS_AGED)?" and unatural aged":"");
+
 	new_draw_info_format(NDI_UNIQUE, 0,op,"%s has a base damage of %d and hp of %d.",att,mon->stats.dam,mon->stats.maxhp);
 	new_draw_info_format(NDI_UNIQUE, 0,op,"%s has a wc of %d and an ac of %d.",att,mon->stats.wc,mon->stats.ac);
 

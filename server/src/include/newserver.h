@@ -36,7 +36,7 @@
 #define ROUND_TAG global_round_tag /* put this here because the DIFF */
 extern uint32 global_round_tag; /* global round ticker ! this is real a global */
 
-#define NUM_LOOK_OBJECTS 25
+#define NUM_LOOK_OBJECTS 15
 
 #ifdef WIN32
 #pragma pack(push,1)
@@ -93,7 +93,8 @@ typedef struct NewSocket {
     int   mapx_2, mapy_2;	/* same like above but /2 */
     char    *host;	    /* Which host it is connected from (ip address)*/
     uint32  cs_version, sc_version; /* versions of the client */
-    uint16  look_position;  /* start of drawing of look window */
+	uint32 update_tile;		/* marker to see we must update the below windows of the tile the player is */
+    sint16 look_position;  /* start of drawing of look window */
     uint8   faceset;	    /* Set the client is using, default 0 */
     enum Sock_Status status;
     struct Map lastmap;
@@ -108,7 +109,6 @@ typedef struct NewSocket {
 	uint32  ext_title_flag:1; /* send ext title to client */
     uint32  darkness:1;	    /* True if client wants darkness information */
     uint32  image2:1;	    /* Client wants image2/face2 commands */
-    uint32  update_look:1;  /* If true, we need to send the look window */
     uint32  can_write:1;    /* Can we write to this socket? */
 	/* these blocks are simple flags to ensure
 	 * that the client don't hammer startup commands

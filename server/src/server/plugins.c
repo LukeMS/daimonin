@@ -576,20 +576,41 @@ CFParm* CFWPickup(CFParm* PParm)
 /*****************************************************************************/
 CFParm* CFWGetMapObject(CFParm* PParm)
 {
-    object* val;
-    CFParm *CFP;
-    CFP = (CFParm*)(malloc(sizeof(CFParm)));
+    object *val = NULL;
+    static CFParm CFP;
+    
+    mapstruct *mt = (mapstruct *)PParm->Value[0];
+    int x = *(int *)PParm->Value[1];
+    int y = *(int *)PParm->Value[2];
+    
+/*    CFP = (CFParm*)(malloc(sizeof(CFParm))); */
 
-	/* must include tiled map check */
-	/*if (!(mt=out_of_map (part->map, &xt, &yt)))*/
+	/* Gecko: added tiled map check */
+    if ((mt=out_of_map(mt, &x, &y)))
+        val = get_map_ob(mt, x, y);
 
-    val = get_map_ob(
-        (mapstruct *)(PParm->Value[0]),
-        *(int *)(PParm->Value[1]),
-        *(int *)(PParm->Value[2])
-    );
-    CFP->Value[0] = (void *)(val);
-    return CFP;
+    CFP.Value[0] = (void *)(val);
+    return &CFP;
+}
+
+/*****************************************************************************/
+/* out_of_map wrapper .                                                      */
+/*****************************************************************************/
+/* 0 - start map                                                             */
+/* 1 - x                                                                     */
+/* 2 - y                                                                     */
+/*****************************************************************************/
+CFParm* CFWOutOfMap(CFParm* PParm)
+{
+    static CFParm CFP;
+    
+    mapstruct *mt = (mapstruct *)PParm->Value[0];
+    int *x = (int *)PParm->Value[1];
+    int *y = (int *)PParm->Value[2];
+    
+    CFP.Value[0] = (void *)out_of_map(mt, x, y);
+    
+    return &CFP;
 }
 
 /*****************************************************************************/
@@ -1045,6 +1066,7 @@ CFParm* CFWReadyMapName(CFParm* PParm)
 /*****************************************************************************/
 /* 0 - object to increase experience of.                                     */
 /* 1 - amount of experience to add.                                          */
+/* 2 - Skill number to add xp in                                             */
 /*****************************************************************************/
 CFParm* CFWAddExp(CFParm* PParm)
 {
@@ -1488,6 +1510,7 @@ CFParm* CFWObjectCreateClone (CFParm* PParm)
         }
     return CFP;
 }
+
 /*****************************************************************************/
 /* teleport an object to another map                                         */
 /*****************************************************************************/
@@ -1588,4 +1611,35 @@ CFParm* CFWPlaySoundMap(CFParm* PParm)
         *(int *)(PParm->Value[2]),*(int *)(PParm->Value[3]),
         *(int *)(PParm->Value[4]));
     return NULL;
+}
+
+/*****************************************************************************/
+/* create_object wrapper.                                                    */
+/*****************************************************************************/
+/* 0 - archetype                                                             */
+/* 1 - map;                                                                  */
+/* 2 - x;                                                                    */
+/* 3 - y;                                                                    */
+/*****************************************************************************/
+CFParm* CFWCreateObject(CFParm* PParm)
+{
+	static CFParm CFP; 
+    archetype *arch;
+    object *newobj;
+
+    CFP.Value[0] = NULL;
+    
+    if(! (arch = find_archetype((char *)(PParm->Value[0]))))
+        return(&CFP);
+ 
+    if(! (newobj = arch_to_object(arch)))
+        return(&CFP);
+    
+    newobj->x = *(int *)(PParm->Value[2]);
+    newobj->y = *(int *)(PParm->Value[3]);
+    
+    newobj = insert_ob_in_map(newobj, (mapstruct *)(PParm->Value[1]), NULL, 0);
+    
+    CFP.Value[0] = newobj;
+    return (&CFP);
 }

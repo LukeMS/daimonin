@@ -24,7 +24,7 @@ SHELL = @BOURNE_SHELL@
 VPATH = @srcdir@
 srcdir = @srcdir@
 
-SRCS = \
+SOCKSRCS = \
 	image.c \
 	info.c \
 	init.c \
@@ -33,12 +33,16 @@ SRCS = \
 	lowlevel.c\
 	metaserver.c\
 	request.c\
-	sounds.c\
+	sounds.c
+
+ZLIBSRCS = \
 	adler32.c\
 	compress.c\
 	deflate.c\
 	trees.c\
 	zutil.c
+
+SRCS = $(SOCKSRCS) $(ZLIBSRCS)
 
 ALLFILES=$(SRCS) README Makefile.in
 
@@ -71,7 +75,7 @@ depend:
 install::
 
 proto:
-	cproto -D__CEXTRACT__ $(INCLUDES) $(SRCS) > ../include/sockproto.h
+	cproto -D__CEXTRACT__ $(INCLUDES) $(SOCKSRCS) > ../include/sockproto.h
 	chmod 644 ../include/sockproto.h
 
 archive:

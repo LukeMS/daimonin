@@ -153,11 +153,12 @@ void DoClient(ClientSocket *csocket)
 				data = csocket->inbuf.buf+3;
 				len = csocket->inbuf.len-3; /* 2 byte package len + 1 byte binary cmd */
 
-	            /*LOG(LOG_MSG,"Command #%d (LT:%d)(len:%d) ",cmd_id, LastTick, len);*/
+	            /* LOG(LOG_MSG,"Command #%d (LT:%d)(len:%d) ",cmd_id, LastTick, len);*/
 				if(!cmd_id || cmd_id >= BINAR_CMD)
 					LOG(LOG_ERROR,"Bad command from server (%d)\n",cmd_id);
 				else
 				{
+	                /*LOG(LOG_MSG,"(%s)\n",commands[cmd_id-1]);*/
 	                /*LOG(LOG_MSG,"(%s) >%s<\n",commands[cmd_id-1].cmdname,data);*/
 					commands[cmd_id-1].cmdproc(data,len);
 				}

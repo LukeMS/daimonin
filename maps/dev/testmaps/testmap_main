@@ -715,7 +715,8 @@ x 6
 y 11
 end
 arch ring_generic
-protect_cold 75
+protect_fire 126
+protect_cold 126
 x 6
 y 11
 end

@@ -199,6 +199,7 @@ CommArray_s WizCommands [] = {
   {"/d_maps", command_dumpallmaps,0.0},
   {"/d_map", command_dumpmap,0.0},
   {"/d_objects", command_dumpallobjects,0.0},
+  {"/d_belowfull", command_dumpbelowfull,0.0},
   {"/d_below", command_dumpbelow,0.0},
   {"/d_friendly", command_dumpfriendlyobjects,0.0},
 #ifdef DEBUG

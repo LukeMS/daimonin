@@ -43,7 +43,6 @@ typedef struct _msglang {
 
 extern spell spells[NROFREALSPELLS];
 static object *spawn_monster(object *gen, object *orig, int range);
-static object *get_aggro_waypoint(object *op);
 
 /* update (or clear) an npc's enemy. Performs m ost of the housekeeping
  * related to switching enemies. 
@@ -679,9 +678,12 @@ void waypoint_compute_path(object *waypoint) {
    
     /* Store final path destination (used by aggro wp) */
     if(QUERY_FLAG(waypoint, FLAG_DAMNED)) {
-        FREE_AND_COPY_HASH(waypoint->slaying, waypoint->enemy->map->path);
-        waypoint->x = waypoint->stats.hp = waypoint->enemy->x;
-        waypoint->y = waypoint->stats.sp = waypoint->enemy->y;
+		if(waypoint->enemy)
+		{
+			FREE_AND_COPY_HASH(waypoint->slaying, waypoint->enemy->map->path);
+			waypoint->x = waypoint->stats.hp = waypoint->enemy->x;
+			waypoint->y = waypoint->stats.sp = waypoint->enemy->y;
+		}
     }
     
     if(waypoint->slaying != NULL && *waypoint->slaying != '\0') {
@@ -1057,10 +1059,10 @@ int move_monster(object *op) {
     /* check if monster pops out of hidden spot */
     if(op->hide) do_hidden_move(op);
 
-	/*
     if(op->pick_up)
 	monster_check_pickup(op);
 
+    /*
     if(op->will_apply)
 	monster_apply_below(op);
 	*/
@@ -1136,8 +1138,7 @@ int move_monster(object *op) {
         return 0;
     }
    
-    /* doppleganger code to change monster facing to that of the nearest 
-	player */
+    /* doppleganger code to change monster facing to that of the nearest player */
     /* Disabled this since 
      * 1) we don't have dopplegangers and 
      * 2) the strcmp() is a waste of CPU cycles. We should use a flag or something instead.
@@ -1840,9 +1841,9 @@ void monster_check_pickup(object *monster) {
         CFP.Value[0] = &k;
         CFP.Value[1] = monster; 
         CFP.Value[2] = tmp; 
-        CFP.Value[3] = monster; // No container...
+        CFP.Value[3] = monster; /* No container...*/
         CFP.Value[4] = NULL;
-        CFP.Value[5] = &tmp->nrof; // nr of objects
+        CFP.Value[5] = &tmp->nrof; /* nr of objects */
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
