@@ -6,6 +6,8 @@ face t_rock.101
 weapon_speed 0.035
 attack_impact 100
 dam 1
+last_grace 11
+last_sp 7
 type 13
 sub_type 132
 wc_range 20

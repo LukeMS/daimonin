@@ -5,6 +5,8 @@ face t_dagger.101
 weapon_speed 0.027
 attack_pierce 100
 dam 3
+last_grace 11
+last_sp 7
 wc_range 20
 nrof 1
 type 13

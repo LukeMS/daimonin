@@ -11,8 +11,8 @@ material_real 193
 face sling_heavy.101
 wc 6
 wc_range 25
-last_sp 0
+last_sp 5
 weight 400
 value 850
-sp 50
+sp 6
 end

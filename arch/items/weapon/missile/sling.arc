@@ -11,8 +11,8 @@ item_skill 1
 face sling.101
 wc 5
 wc_range 20
-last_sp 0
+last_sp 4
 weight 300
 value 350
-sp 50
+sp 5
 end

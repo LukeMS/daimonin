@@ -3,6 +3,7 @@ name rod
 layer 3
 face rod_light.101
 sp -1
+last_grace 35
 anim
 rod_light.101
 rod_light.102

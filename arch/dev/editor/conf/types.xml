@@ -527,6 +527,12 @@
     If an item is identified, the player has
     full knowledge about it.
   </attribute>
+  <attribute arch="can_reflect_spell" editor="can reflect spells" type="bool">
+  object CAN reflect spells. See reflect spells.
+  </attribute>
+  <attribute arch="can_reflect_missile" editor="can reflect missiles" type="bool">
+   object CAN reflect missiles. See reflect missiles.
+  </attribute>
   <attribute arch="is_magical" editor="magical" type="bool">
     If set, this object count as "magical". Detect magic or
     identify will show this flag and the player will see a small
@@ -1228,7 +1234,7 @@
     invisible and tries to sneak around monsters.
     (At least that was the idea behind it)
   </attribute>
-  <attribute arch="reflect_spell" editor="reflect spells" type="bool">
+  <attribute arch="reflect_spell" editor="give reflect spells" type="bool">
     If a player is wearing any piece of equipment with
     the ability to &lt;reflect spells&gt;, all kinds of
     spell-bullets and -beams will bounce off him.
@@ -1239,7 +1245,7 @@
     This is a very powerful ability and it
     shouldn't be handed out cheap!
   </attribute>
-  <attribute arch="reflect_missile" editor="reflect missiles" type="bool">
+  <attribute arch="reflect_missile" editor="give reflect missiles" type="bool">
     If a player is wearing any piece of equipment with
     the ability to &lt;reflect missiles&gt;, all kinds of
     projectiles (e.g. arrows, bolts, boulders) will
@@ -2927,6 +2933,11 @@
     The casting level of the &lt;spell&gt; determines it's power.
     For attack spells, level should not be set too high.
   </attribute>
+  <attribute arch="last_grace" editor="use speed" type="int">
+  When fired/used, this value in ticks defines how long it needs
+  thats the player can fire it again. The value is in ticks.
+  8 ticks are a second.
+  </attribute>
   <attribute arch="hp" editor="initial spellpoints" type="int">
     This value represents the initial amount of spellpoints in the horn.
     Naturally, this is quite unimportant.
@@ -3680,11 +3691,6 @@
     Hence, &lt;movement speed&gt; has great effect on the monster's healing
     rate as well.
   </attribute>
-  <attribute arch="reflect_missile" editor="reflect missiles" type="bool">
-    A monster with this flag has the ability to &lt;reflect missiles&gt;,
-    all kinds of projectiles (e.g. arrows, bolts, boulders) will
-    bounce off.
-  </attribute>
   <attribute arch="hitback" editor="hitback" type="bool">
     Monsters with &lt;hitback&gt; enabled hurt the attacker in proportion
     to the amount of damage the *attacker* inflicted. This damage
@@ -3783,13 +3789,6 @@
   <attribute arch="can_cast_spell" editor="can cast spell" type="bool">
     If &lt;can cast spell&gt; is disabled, the monster cannot cast any spell.
     Only wands/rods/etc can be used, given the appropriate abilities.
-  </attribute>
-  <attribute arch="reflect_spell" editor="reflect spells" type="bool">
-    A monster with this flag has the ability to &lt;reflect spells&gt;,
-    all kinds of spell-bullets and -beams will bounce off.
-
-    Generally this flag should not be set because it puts
-    wizard-type players at an unfair disadvantage.
   </attribute>
   <attribute arch="sp" editor="spellpoints" type="int">
     Like players, monsters need &lt;spellpoints&gt; to do magic. Monsters use
@@ -4327,11 +4326,6 @@
     Hence, &lt;movement speed&gt; has great effect on the monster's healing
     rate as well.
   </attribute>
-  <attribute arch="reflect_missile" editor="reflect missiles" type="bool">
-    A monster with this flag has the ability to &lt;reflect missiles&gt;,
-    all kinds of projectiles (e.g. arrows, bolts, boulders) will
-    bounce off.
-  </attribute>
   <attribute arch="hitback" editor="hitback" type="bool">
     Monsters with &lt;hitback&gt; enabled hurt the attacker in proportion
     to the amount of damage the *attacker* inflicted. This damage
@@ -4430,13 +4424,6 @@
   <attribute arch="can_cast_spell" editor="can cast spell" type="bool">
     If &lt;can cast spell&gt; is disabled, the monster cannot cast any spell.
     Only wands/rods/etc can be used, given the appropriate abilities.
-  </attribute>
-  <attribute arch="reflect_spell" editor="reflect spells" type="bool">
-    A monster with this flag has the ability to &lt;reflect spells&gt;,
-    all kinds of spell-bullets and -beams will bounce off.
-
-    Generally this flag should not be set because it puts
-    wizard-type players at an unfair disadvantage.
   </attribute>
   <attribute arch="sp" editor="spellpoints" type="int">
     Like players, monsters need &lt;spellpoints&gt; to do magic. Monsters use
@@ -5207,6 +5194,15 @@
   Values >0 are used intern for special potions - don't play around with
   it here!
   </attribute>
+  <attribute arch="last_grace" editor="throw speed" type="int">
+  When throwable, this value in ticks defines how long it needs
+  thats the player can throw something again. The value is in ticks.
+  8 ticks are a second.
+  </attribute>
+  <attribute arch="last_sp" editor="throw range" type="int">
+    This value is supposed to be the base &lt;throw range&gt;,
+    The value is only valid for potions who can be thrown.
+  </attribute>
   <attribute arch="startequip" editor="godgiven item" type="bool">
     A godgiven item vanishes as soon as the player
     drops it to the ground.
@@ -5434,6 +5430,7 @@
     For arrows set "arrows", for crossbow bolts set
     "crossbow bolts" (big surprise).
 
+    ** a bow with race == NULL count as "broken". **
     In certain cases, the ammunition class is displayed in the game.
     Hence, when you create a new ammunition class, choose an
     intuitive name like "missiles", "spirit bolts" - whatever.
@@ -5452,10 +5449,19 @@
     done. Damage can be further increased by the shooting
     weapon's attributes.
   </attribute>
+  <attribute arch="last_grace" editor="shooting speed" type="int">
+  After shooting the player can't do a 2nd shoot for some time.
+  This value + the bow shooting delay (different bows can have
+  different delay) will terminate the time the player must wait.
+  The value is in ticks. 8 ticks are one second.
+  </attribute>
+  <attribute arch="last_sp" editor="throw/shooting range" type="int">
+    This value is supposed to be the base &lt;throw or shooting range&gt;,
+    For ammunition like arrows or bolts, the value is a base value which
+    is added to the shooting weapon base value (bow, xbow, sling).
+  </attribute>
   <attribute arch="wc" editor="weaponclass" type="int">
     This value is supposed to be the base &lt;weaponclass&gt;,
-    but it seems to have rather little effect.
-    High values are good here, low values bad.
   </attribute>
   <attribute arch="magic" editor="magic bonus" type="int">
     Magic bonus increases chance to hit and damage a little bit.
@@ -5599,6 +5605,11 @@
     rods to players, since they can be used endlessly without any mana cost!
     Rods with heal/ restoration/ protection spells, IF available, MUST be
     very very VERY hard to get!
+  </attribute>
+  <attribute arch="last_grace" editor="use speed" type="int">
+  When fired/used, this value in ticks defines how long it needs
+  thats the player can fire it again. The value is in ticks.
+  8 ticks are a second.
   </attribute>
   <attribute arch="level" editor="casting level" type="int">
     The casting level of the &lt;spell&gt; determines it's power.
@@ -5858,13 +5869,14 @@
     intuitive name like "missiles", "spirit bolts" - whatever.
   </attribute>
   <attribute arch="sp" editor="shooting speed" type="int">
-    After shooting a projectile, the player is frozen for a short
-    period of time (to prevent shooting arrows machine-gun-like).
-    The greater &lt;shooting speed&gt;, the shorter this period of time.
-    1 is minimum (=worst) and 100 is maximum (=best) value.
-
-    You shouldn't set &lt;shooting speed&gt; lower than 10. YOU MUST NOT
-    SET IT TO ZERO! (That would freeze the player for eternety).
+  After shooting the player can't do a 2nd shoot for some time.
+  This value + the arrow shooting delay (different arrows can have
+  different delay) will terminate the time the player must wait.
+  The value is in ticks. 8 ticks are one second.
+  </attribute>
+  <attribute arch="last_sp" editor="shooting range" type="int">
+    This value is supposed to be the base &lt;shooting range&gt;.
+    It is added to the base range of the used ammunition (arrow, bolt,...)    
   </attribute>
   <attribute arch="dam" editor="base damage" type="int">
     The &lt;base damage&gt; significantly affects the damage done
@@ -6746,7 +6758,7 @@
     invisible and tries to sneak around monsters.
     (At least that was the idea behind it)
   </attribute>
-  <attribute arch="reflect_spell" editor="reflect spells" type="bool">
+  <attribute arch="reflect_spell" editor="give reflect spells" type="bool">
     If a player is wearing any piece of equipment with
     the ability to &lt;reflect spells&gt;, all kinds of
     spell-bullets and -beams will bounce off him.
@@ -6757,7 +6769,7 @@
     This is a very powerful ability and it
     shouldn't be handed out cheap!
   </attribute>
-  <attribute arch="reflect_missile" editor="reflect missiles" type="bool">
+  <attribute arch="reflect_missile" editor="give reflect missiles" type="bool">
     If a player is wearing any piece of equipment with
     the ability to &lt;reflect missiles&gt;, all kinds of
     projectiles (e.g. arrows, bolts, boulders) will
@@ -6847,6 +6859,11 @@
   <attribute arch="food" editor="number of charges" type="int">
     The wand can be used &lt;number of charges&gt; times before it is
     used up. It can be recharged with scrolls of charging.
+  </attribute>
+  <attribute arch="last_grace" editor="use speed" type="int">
+  When fired/used, this value in ticks defines how long it needs
+  thats the player can fire it again. The value is in ticks.
+  8 ticks are a second.
   </attribute>
   <attribute arch="startequip" editor="godgiven item" type="bool">
     A godgiven item vanishes as soon as the player

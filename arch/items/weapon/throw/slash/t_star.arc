@@ -5,6 +5,8 @@ layer 3
 weapon_speed 0.027
 attack_slash 100
 dam 3
+last_grace 11
+last_sp 7
 nrof 1
 type 13
 wc_range 20

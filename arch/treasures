@@ -474,43 +474,43 @@ treasureone random_weapons_amun
     magic_chance 25
     magic 2
     chance 35
-    nrof 6
+    nrof 3
   more
   arch sstone
     magic_chance 25
     magic 2
     chance 35
-    nrof 6
+    nrof 3
   more
   arch bolt
     chance 35
     magic_chance 25
     magic 2
-    nrof 6
+    nrof 3
   end
 treasureone random_weapons_throw
   arch t_dagger
     magic_chance 20
     magic 2
-    nrof 10
+    nrof 3
     chance 30
   more
   arch t_axe
     magic_chance 20
     magic 2
-    nrof 10
+    nrof 3
     chance 30
   more
   arch t_star
     magic_chance 20
     magic 2
-    nrof 10
+    nrof 3
     chance 30
   more
   arch t_hammer
     magic_chance 20
     magic 2
-    nrof 10
+    nrof 3
     chance 30
   end
 treasureone random_weapons_missile
@@ -4017,8 +4017,7 @@ treasure random_testx
   end
   end
 end
-treasure random_test
-    arch girdle
-     artifact_chance 100
-     chance 100
+treasureone random_test
+list random_mtools
+ chance 100
 end

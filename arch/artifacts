@@ -571,7 +571,7 @@ Object
 is_magical 1
 title of minor holding
 type 122
-value 5500
+value 550
 weapon_speed 0.85
 end
 #
@@ -584,7 +584,7 @@ Object
 is_magical 1
 title of small holding
 type 122
-value 12500
+value 1250
 weapon_speed 0.75
 end
 #
@@ -597,12 +597,12 @@ Object
 is_magical 1
 title of medium holding
 type 122
-value 26000
+value 2600
 weapon_speed 0.65
 end
 #
 Allowed quiver,quiver_s,quiver_b,bag,sack,key_ring,r_sack,pouch
-chance 30
+chance 25
 difficulty 25
 artifact holding
 def_arch bag
@@ -610,12 +610,12 @@ Object
 is_magical 1
 title of holding
 type 122
-value 105000
+value 10500
 weapon_speed 0.55
 end
 #
 Allowed quiver,quiver_s,quiver_b,bag,sack,r_sack,pouch
-chance 25
+chance 15
 difficulty 35
 artifact holding_fine
 def_arch bag
@@ -623,12 +623,12 @@ Object
 is_magical 1
 title of fine holding
 type 122
-value 500000
+value 20200
 weapon_speed 0.45
 end
 #
 Allowed quiver,quiver_s,quiver_b,bag,sack,r_sack,pouch
-chance 20
+chance 10
 difficulty 50
 artifact holding_great
 def_arch bag
@@ -636,12 +636,12 @@ Object
 is_magical 1
 title of great holding
 type 122
-value 1250000
+value 40400
 weapon_speed 0.40
 end
 #
 Allowed quiver,quiver_s,quiver_b,bag,sack,r_sack,pouch
-chance 15
+chance 5
 difficulty 65
 artifact holding_greater
 def_arch bag
@@ -649,12 +649,12 @@ Object
 is_magical 1
 title of greater holding
 type 122
-value 1500000
-weapon_speed 0.30
+value 60450
+weapon_speed 0.35
 end
 #
 Allowed quiver,quiver_s,quiver_b,bag,sack,r_sack,pouch
-chance 10
+chance 3
 difficulty 85
 artifact holding_weight
 def_arch bag
@@ -662,8 +662,8 @@ Object
 is_magical 1
 title of weightless holding
 type 122
-value 1900000
-weapon_speed 0.25
+value 80420
+weapon_speed 0.30
 end
 #
 # Cloaks
@@ -2687,38 +2687,38 @@ end
 #
 #
 Allowed all
-chance 20
-difficulty 8
-artifact missile_ass_troll
+chance 15
+difficulty 15
+artifact missile_slaying
 def_arch arrow
 Object
-title of assassinating trolls
-slaying troll
-msg
-  These missiles are inscribed with 
-  powerful runes for the bane of 
-  trolls.  A scratch from one of
-  these arrows could smite one dead.
-endmsg
+title of slay
+value 450
 type 13
-value 500
-wc 7
 is_magical 1
+slaying none
 dam_add 1
 end
 #
 #
-Allowed arrow
-chance 100
-difficulty 15
-artifact missile_slay_dragon
+Allowed all
+chance 7
+difficulty 25
+artifact missile_assassin
 def_arch arrow
 Object
-title of slay dragon
+title of assassinating
+slaying none
+msg
+  These missiles are inscribed with 
+  powerful runes for the bane of 
+  their victims.
+endmsg
+value 850
 type 13
-value 150
+wc 7
+is_assassin 1
 is_magical 1
-slaying dragon
 dam_add 1
 end
 #
@@ -3253,3 +3253,42 @@ face cloak_green.101
 is_magical 1
 value 22100
 end
+#
+# These artifacts are not needed anymore - if you start a 
+# new server this arches can be removed!
+#
+Allowed none
+chance 1
+difficulty 25
+artifact missile_ass_troll
+def_arch arrow
+Object
+title of assassinating trolls
+slaying troll
+msg
+  These missiles are inscribed with 
+  powerful runes for the bane of 
+  trolls.  A scratch from one of
+  these arrows could smite one dead.
+endmsg
+value 850
+wc 7
+is assassin 1
+is_magical 1
+dam_add 1
+end
+#
+#
+Allowed none
+chance 1
+difficulty 15
+artifact missile_slay_dragon
+def_arch arrow
+Object
+title of slay dragon
+value 450
+is_magical 1
+slaying dragon
+dam_add 1
+end
+#
