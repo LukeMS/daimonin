@@ -111,7 +111,8 @@ module.source.files=\
 	textwindow.cpp\
 	uncompr.c\
 	zutil.c\
-	sound.cpp
+	sound.cpp\
+	player.cpp
 
 module.pixmap.name=pixmaps
 module.pixmap.type=
