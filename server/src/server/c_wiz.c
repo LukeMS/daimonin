@@ -1022,7 +1022,7 @@ static int checkdm(object *op, const char *pl_name, char *pl_passwd, char *pl_ho
 {
     FILE   *dmfile;
     char    buf[MAX_BUF];
-    char    line_buf[160], name[160], passwd[160], host[160];
+    char    line_buf[160], name[160], passwd[160], host[160], dummy[10];
 
 #ifdef RESTRICTIVE_DM
     pl_name = op->name ? op->name : "*";
@@ -1038,7 +1038,7 @@ static int checkdm(object *op, const char *pl_name, char *pl_passwd, char *pl_ho
     {
         if (line_buf[0] == '#')
             continue;
-        if (sscanf(line_buf, "%[^:]:%[^:]:%s%[\n\r]", name, passwd, host, NULL) < 3)
+        if (sscanf(line_buf, "%[^:]:%[^:]:%s%[\n\r]", name, passwd, host, dummy) < 3)
         {
             LOG(llevBug, "BUG: malformed dm file entry: %s", line_buf);
         }
