@@ -666,8 +666,11 @@ void doeric_server(int update, struct timeval *timeout)
     if (pollret)
         for (i = 1; i < socket_info.allocated_sockets; i++)
         {
-            if (init_sockets[i].status == Ns_Avail)
+            if (init_sockets[i].status == Ns_Avail) 
+            {
                 continue;
+            }
+
             if (FD_ISSET(init_sockets[i].fd, &tmp_exceptions))
             {
                 free_newsocket(&init_sockets[i]);
@@ -675,10 +678,11 @@ void doeric_server(int update, struct timeval *timeout)
                 socket_info.nconns--;
                 continue;
             }
+
             if (FD_ISSET(init_sockets[i].fd, &tmp_read))
             {
                 rr = SockList_ReadPacket(&init_sockets[i], MAXSOCKBUF_IN - 1);
-                if (rr < 0)
+                if (rr <= 0)
                 {
                     LOG(llevDebug, "Drop Connection: host %s\n", init_sockets[i].host ? init_sockets[i].host : "NONE");
                     init_sockets[i].status = Ns_Dead;
@@ -717,7 +721,9 @@ void doeric_server(int update, struct timeval *timeout)
 
         /* kill players if we have problems */
         if (pl->socket.status == Ns_Dead || FD_ISSET(pl->socket.fd, &tmp_exceptions))
+        {
             remove_ns_dead_player(pl);
+        }
         else
         {
             /* this will be triggered when its POSSIBLE to read
@@ -727,10 +733,10 @@ void doeric_server(int update, struct timeval *timeout)
             if (FD_ISSET(pl->socket.fd, &tmp_read))
             {
                 rr = SockList_ReadPacket(&pl->socket, MAXSOCKBUF_IN - 1);
-                if (rr < 0)
+                if (rr <= 0)
                 {
                     LOG(llevDebug, "Drop Connection: %s (%s)\n", (pl ? pl->ob->name : "NONE"),
-                        pl->socket.host ? pl->socket.host : "NONE");
+                            pl->socket.host ? pl->socket.host : "NONE");
                     pl->socket.status = Ns_Dead;
                 }
                 else
@@ -738,7 +744,9 @@ void doeric_server(int update, struct timeval *timeout)
             }
 
             if (pl->socket.status == Ns_Dead) /* perhaps something was bad in HandleClient() */
+            {
                 remove_ns_dead_player(pl);  /* or player has left game */
+            }
             else
             {
                 /* Update the players stats once per tick.  More efficient than

@@ -154,9 +154,10 @@ int SockList_ReadPacket(NewSocket *ns, int len)
             return stat_ret;
         }   
 #endif
-    }
+        return 1;
+    } 
 
-    return 1;
+    return stat_ret;
 }
 
 /*******************************************************************************
