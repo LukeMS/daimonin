@@ -82,6 +82,7 @@
 	"damned_perm"
 	"wc_range"
 	"door_closed"
+	"item_level_art" <- special token from artifact lists"
 */
 
 #define YY_DECL int lex_load(object *op, int map_flags)
@@ -604,6 +605,18 @@ op->oy= op->y;
 ^item_race{S}		op->item_race = IVAL;
 ^item_skill{S}		op->item_skill = IVAL;
 ^item_level{S}		op->item_level = IVAL;
+^item_level_art{S}	{ /* artifact list token - NEVER USE IN REAL ARCHES OR MAPS */
+					int ival_tmp = IVAL;
+				    /* when we have a artifact which has a min. use level of 10
+					 * but we give it a mithril armour of default use level 50,
+					 * we will create artifact mithril armour usable for level 10!
+					 * this command prevent it
+					 */
+					if(ival_tmp <=0 ) /* this is forcing the value! */
+						op->item_level = -ival_tmp;
+					else if(ival_tmp >op->item_level) 
+						op->item_level = ival_tmp;
+					}
 ^material_real{S}	op->material_real = IVAL;
 ^mpart_id{S}		op->quick_pos |= (((char)IVAL)<<4);
 ^mpart_nr{S}		op->quick_pos |= (char)IVAL;

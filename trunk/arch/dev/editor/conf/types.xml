@@ -1161,15 +1161,30 @@
     Positive &lt;health regen.&gt; bonus speeds up the
     player's healing process. Negative values slow it down.
   </attribute>
+  <attribute arch="maxhp" editor="health bonus" type="int">
+    Positive &lt;health bonus&gt; increase the hit points.
+    Negative decrease them (decrease can't reduce the total
+    hp of the wearer below 1).
+  </attribute>
   <attribute arch="sp" editor="mana regen." type="int">
     Positive &lt;mana regen.&gt; bonus speeds up the
     player's mana regeneration. Negative values slow it down.
+  </attribute>
+  <attribute arch="maxsp" editor="mana bonus" type="int">
+    Positive &lt;mana bonus&gt; increase the mana points.
+    Negative decrease them (decrease can't reduce the total
+    mana of the wearer below 1).
   </attribute>
   <attribute arch="grace" editor="grace regen." type="int">
     Positive &lt;grace regen.&gt; bonus speeds up the
     player's grace regeneration. Negative values slow it down.
     Since grace can be regenerated rather easy with praying,
     additional &lt;grace regen.&gt; bonus should be VERY RARE!!
+  </attribute>
+  <attribute arch="maxgrace" editor="grace bonus" type="int">
+    Positive &lt;grace bonus&gt; increase the hit points.
+    Negative decrease them (decrease can't reduce the total
+    grace of the wearer below 1).
   </attribute>
   <attribute arch="food" editor="food bonus" type="int">
     Positive &lt;food bonus&gt; slows down the player's digestion,

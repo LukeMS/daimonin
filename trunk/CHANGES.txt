@@ -1,4 +1,11 @@
 Daimonin CHANGES
+13.07.04	- fixed material_real use
+                - added new armour (+ring, ammy) attributes: hp, sp, grace boni
+                - added new artifacts
+                - added new random ring generation part of hp/sp/grace boni
+                - adjusted artifact items_level
+                - added ring item levels
+                - added new parse command for artifact list: item_level_art
 13.07.04	- fixed exp gain for low level
                 - fixed exp mali for dying
 10.07.04	- BETA 3 release.

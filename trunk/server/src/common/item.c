@@ -939,7 +939,7 @@ char *describe_item(object *op)
 			}
 		}
 	}
-  
+
 	/* some special info for some kind of identified items */
 	if (id_true && more_info)
 	{
@@ -958,7 +958,7 @@ char *describe_item(object *op)
 			sprintf(buf,"(regeneration%+d)",op->stats.hp);
 			strcat(retbuf,buf);
 	    }
-	    if(op->stats.food)
+		if(op->stats.food)
 		{
 			if(op->stats.food>0)
 				sprintf(buf,"(sustenance%+d)",op->stats.food);
@@ -1026,6 +1026,22 @@ char *describe_item(object *op)
 		DESCRIBE_PATH(retbuf, op->path_attuned, "Attuned");
 		DESCRIBE_PATH(retbuf, op->path_repelled, "Repelled");
 		DESCRIBE_PATH(retbuf, op->path_denied, "Denied");
+
+		if(op->stats.maxhp)
+		{
+			sprintf(buf,"(hp%+d)",op->stats.maxhp);
+			strcat(retbuf,buf);
+		}
+		if(op->stats.maxsp)
+		{
+			sprintf(buf,"(mana%+d)",op->stats.maxsp);
+			strcat(retbuf,buf);
+		}
+		if(op->stats.maxgrace)
+		{
+			sprintf(buf,"(grace%+d)",op->stats.maxgrace);
+			strcat(retbuf,buf);
+		}
 	}
 	return retbuf;
 }

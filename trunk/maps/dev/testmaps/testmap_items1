@@ -3019,6 +3019,10 @@ arch floor_ostone1
 x 18
 y 21
 end
+arch ring_generic
+x 18
+y 21
+end
 arch floor_ostone1
 x 18
 y 22
@@ -3158,6 +3162,10 @@ x 19
 y 20
 end
 arch floor_ostone1
+x 19
+y 21
+end
+arch amulet_generic
 x 19
 y 21
 end

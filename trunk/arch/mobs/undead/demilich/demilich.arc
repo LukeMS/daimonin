@@ -105,11 +105,11 @@ alive 1
 can_see_in_dark 1
 can_cast_spell 1
 exp 115
-ac 9
-wc 0
-dam 61
+ac 11
+wc 7
+dam 66
 hp -1
-maxhp 67
+maxhp 77
 sp -1
 maxsp 30
 level 1

@@ -2869,10 +2869,10 @@ treasure mob_beholder_dread
      chance_fix 48
  no
    list random_mtools
-     chance_fix 82
+     chance_fix 72
  no
    list random_talisman
-     chance_fix 99
+     chance_fix 79
   end
   end
   end
@@ -2921,10 +2921,10 @@ treasure mob_demilich
      chance_fix 48
  no
    list random_mtools
-     chance_fix 99
+     chance_fix 79
  no
    list random_talisman
-     chance_fix 99
+     chance_fix 79
   end
   end
   end
@@ -3129,10 +3129,10 @@ treasure mob_skeleton_mage
      chance_fix 138
  no
    list random_mtools
-     chance_fix 62
+     chance_fix 56
  no
    list random_talisman
-     chance_fix 69
+     chance_fix 59
   end
   end
   end
@@ -3493,10 +3493,10 @@ treasure mob_drow_mage
      chance_fix 80
  no
    list random_mtools
-     chance_fix 82
+     chance_fix 72
  no
    list random_talisman
-     chance_fix 99
+     chance_fix 89
   end
   end
   end
@@ -3912,7 +3912,7 @@ treasure mob_mage_l9
      chance_fix 78
  no
    list random_mtools
-     chance_fix 82
+     chance_fix 72
  no
    list random_talisman
      chance_fix 125
@@ -4018,54 +4018,7 @@ treasure random_testx
   end
 end
 treasure random_test
- list traps
-   chance 8
- more
- list default_wealth
-  chance 65
- no
-  list small_things
-     chance_fix 4
- no  
-   arch coppercoin
-     chance_fix 1
-     nrof 5
-  end
-  end
- more
- list default_drop
-   chance_fix 16
-   material_quality 80
-   material_range 3
- more
- list random_armour
-   material_quality 80
-   material_range 3
-   chance_fix 162
- no
-   list random_weapon
-     material_quality 80
-     material_range 3
-     chance_fix 138
- no
-   list random_mtools
-     chance_fix 62
- no
-   list random_talisman
-     chance_fix 69
-  end
-  end
-  end
- more
- list random_scroll
-   chance_fix 40
- no
-   list random_potion
-     chance_fix 40
- no
-   arch potion_improve
-     difficulty 6
-     chance_fix 101
-  end
-  end
+    arch girdle
+     artifact_chance 100
+     chance 100
 end

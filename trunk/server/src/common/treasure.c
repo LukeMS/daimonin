@@ -955,21 +955,31 @@ void set_abs_magic(object *op, int magic) {
 
 int set_ring_bonus(object *op,int bonus, int level) {
 
-    int r, off;
+    int tmp, r, off;
 	off=(level>=50?1:0)+(level>=60?1:0)+(level>=70?1:0)+(level >=80?1:0);
 	set_ring_bonus_jump1: /* lets repeat, to lazy for a loop */
-	r=RANDOM()%(bonus>0?25:11);
+	r=RANDOM()%(bonus>0?25:13);
 
 	SET_FLAG(op,FLAG_IS_MAGICAL);
-    if(op->type==AMULET) {
-	if(!(RANDOM()%21))
-	    r=20+RANDOM()%2;
-	else {
-	    if(RANDOM()&2)
-		r=10;
-	    else
-		r=11+RANDOM()%9;
-	}
+
+    if(op->type==AMULET) 
+	{
+		if(!(RANDOM()%21))
+			r=20+RANDOM()%2;
+		else if(!(RANDOM()%20))
+		{
+			tmp = RANDOM()%3;
+			if(tmp == 2)
+				r=0;
+			else if(!tmp)
+				r=11;
+			else
+				r=12;
+		}
+		else if(RANDOM()&2)
+			r=10;
+		else
+			r=13+RANDOM()%7;
     }
 
     switch(r % 25) {
@@ -977,7 +987,64 @@ int set_ring_bonus(object *op,int bonus, int level) {
 	 * bonuses and penalties will stack and add to existing values.
 	 * of the item.
 	 */
-	case 0:
+	case 0: /* we are creating hp stuff! */
+		tmp = 5;
+		if(level < 10)
+		{
+			tmp += RANDOM()%10;
+			if(bonus>0)
+				op->value=(int)((float)op->value*1.3f);
+		}
+		else if(level < 20)
+		{
+			tmp += 10+RANDOM()%10;			
+			if(bonus>0)
+				op->value=(int)((float)op->value*1.32f);
+		}
+		else if(level < 30)
+		{
+			tmp += 15+RANDOM()%20;			
+			if(bonus>0)
+				op->value=(int)((float)op->value*1.34f);
+		}
+		else if(level < 40)
+		{
+			tmp += 20+RANDOM()%21;			
+			if(bonus>0)
+				op->value=(int)((float)op->value*1.38f);
+		}
+		else if(level < 50)
+		{
+			tmp += 25+RANDOM()%23;			
+			if(bonus>0)
+				op->value=(int)((float)op->value*1.4f);
+		}
+		else if(level < 60)
+		{
+			tmp += 30+RANDOM()%25;			
+			if(bonus>0)
+				op->value=(int)((float)op->value*1.42f);
+		}
+		else if(level < 80)
+		{
+			tmp += 40+RANDOM()%30;			
+			if(bonus>0)
+				op->value=(int)((float)op->value*1.44f);
+		}
+		else
+		{
+			tmp += 50+RANDOM()%40;			
+			if(bonus>0)
+				op->value=(int)((float)op->value*1.5f);
+		}
+		if(bonus<0)
+		{
+			tmp =-tmp;
+		}
+		else
+			op->item_level = level;
+		op->stats.maxhp = tmp;
+		break;
 	case 1:
 	case 2:
 	case 3:
@@ -1023,10 +1090,130 @@ int set_ring_bonus(object *op,int bonus, int level) {
 		}
 	    break;
 
-	/* Item that gives protections/vulnerabilities */
 	case 11:
+		if(!RANDOM()%3)
+			goto make_prot_items;
+		tmp = 3;
+		if(level < 10)
+		{
+			tmp += RANDOM()%3;
+			if(bonus>0)
+				op->value=(int)((float)op->value*1.3f);
+		}
+		else if(level < 20)
+		{
+			tmp += 3+RANDOM()%4;			
+			if(bonus>0)
+				op->value=(int)((float)op->value*1.32f);
+		}
+		else if(level < 30)
+		{
+			tmp += 4+RANDOM()%6;			
+			if(bonus>0)
+				op->value=(int)((float)op->value*1.34f);
+		}
+		else if(level < 40)
+		{
+			tmp += 6+RANDOM()%8;			
+			if(bonus>0)
+				op->value=(int)((float)op->value*1.38f);
+		}
+		else if(level < 50)
+		{
+			tmp += 8+RANDOM()%10;			
+			if(bonus>0)
+				op->value=(int)((float)op->value*1.4f);
+		}
+		else if(level < 60)
+		{
+			tmp += 10+RANDOM()%12;			
+			if(bonus>0)
+				op->value=(int)((float)op->value*1.42f);
+		}
+		else if(level < 80)
+		{
+			tmp += 15+RANDOM()%15;			
+			if(bonus>0)
+				op->value=(int)((float)op->value*1.44f);
+		}
+		else
+		{
+			tmp += 20+RANDOM()%20;			
+			if(bonus>0)
+				op->value=(int)((float)op->value*1.5f);
+		}
+		if(bonus<0)
+		{
+			tmp =-tmp;
+		}
+		else
+			op->item_level = level;
+		op->stats.maxsp = tmp;
+		break;
+		
 	case 12:
+		if(!RANDOM()%3)
+			goto make_prot_items;
+		tmp = 3;
+		if(level < 10)
+		{
+			tmp += RANDOM()%3;
+			if(bonus>0)
+				op->value=(int)((float)op->value*1.3f);
+		}
+		else if(level < 20)
+		{
+			tmp += 3+RANDOM()%4;			
+			if(bonus>0)
+				op->value=(int)((float)op->value*1.32f);
+		}
+		else if(level < 30)
+		{
+			tmp += 4+RANDOM()%6;			
+			if(bonus>0)
+				op->value=(int)((float)op->value*1.34f);
+		}
+		else if(level < 40)
+		{
+			tmp += 6+RANDOM()%8;			
+			if(bonus>0)
+				op->value=(int)((float)op->value*1.38f);
+		}
+		else if(level < 50)
+		{
+			tmp += 8+RANDOM()%10;			
+			if(bonus>0)
+				op->value=(int)((float)op->value*1.4f);
+		}
+		else if(level < 60)
+		{
+			tmp += 10+RANDOM()%12;			
+			if(bonus>0)
+				op->value=(int)((float)op->value*1.42f);
+		}
+		else if(level < 80)
+		{
+			tmp += 15+RANDOM()%15;			
+			if(bonus>0)
+				op->value=(int)((float)op->value*1.44f);
+		}
+		else
+		{
+			tmp += 20+RANDOM()%20;			
+			if(bonus>0)
+				op->value=(int)((float)op->value*1.5f);
+		}
+		if(bonus<0)
+		{
+			tmp =-tmp;
+		}
+		else
+			op->item_level = level;
+		op->stats.maxsp = tmp;
+		break;
+		
 	case 13:
+make_prot_items:
 	case 14:
 	case 15:
 	case 16:
@@ -1107,6 +1294,8 @@ int set_ring_bonus(object *op,int bonus, int level) {
 
 	/*case 22: */
 	default:
+		if(!bonus)
+			bonus = 1;
 	    op->stats.exp+=bonus; /* Speed! */
 		op->value=(int)((float)op->value*1.4f);
 	break;
@@ -1929,7 +2118,7 @@ static inline void set_material_real(object *op, struct _change_arch *change_arc
 		if(change_arch->material_range>0 && change_arch->material)
             op->material_real += (RANDOM()%(change_arch->material_range+1));
 	}
-	else if(!op->material_real) /* if == 0, grap a valid material class.
+	else if(!op->material_real && op->material!=M_ADAMANT) /* if == 0, grap a valid material class.
 						    * we should assign to all objects a valid
 							* material_real value to avoid problems here.
 							* So, this is a hack 
