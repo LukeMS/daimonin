@@ -1654,9 +1654,11 @@ void move_bolt(object *op)
                 op->direction = absdir(op->direction + 4);
             else
             {
-                int left = wall(op->map,op->x+freearr_x[absdir(op->direction-1)],                               op->y+  freearr_y[absdir(op->direction - 1)]),
-                right = wall(op->map, op->x + freearr_x[absdir(op->direction + 1)],
-                                                                                                                        op->y + freearr_y[absdir(op->direction + 1)]);
+                int left = wall(op->map,op->x+freearr_x[absdir(op->direction-1)],
+								op->y+  freearr_y[absdir(op->direction - 1)]),
+					right = wall(op->map, op->x + freearr_x[absdir(op->direction + 1)],
+								op->y + freearr_y[absdir(op->direction + 1)]);
+
                 if (left == right)
                     op->direction = absdir(op->direction + 4);
                 else if (left)

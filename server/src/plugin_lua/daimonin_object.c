@@ -32,7 +32,9 @@
 /* Available python methods for the GameObject object */
 static struct method_decl   GameObject_methods[]            =
 {
-    {"SetSaveBed",  (lua_CFunction) GameObject_SetSaveBed}, {"GetSkill",  (lua_CFunction) GameObject_GetSkill},
+    {"Interface",  (lua_CFunction) GameObject_Interface},
+    {"SetSaveBed",  (lua_CFunction) GameObject_SetSaveBed},
+	{"GetSkill",  (lua_CFunction) GameObject_GetSkill},
     {"SetSkill",  (lua_CFunction) GameObject_SetSkill}, {"ActivateRune",  (lua_CFunction) GameObject_ActivateRune},
     {"CastAbility",  (lua_CFunction) GameObject_CastAbility},
     {"InsertInside",  (lua_CFunction) GameObject_InsertInside}, {"GetGod",  (lua_CFunction) GameObject_GetGod},
@@ -248,6 +250,26 @@ static const char          *GameObject_flags[NUM_FLAGS + 1 + 1] =
 /****************************************************************************/
 
 /* FUNCTIONSTART -- Here all the Lua plugin functions come */
+
+/*****************************************************************************/
+/*                                                                           */
+/*****************************************************************************/
+
+static int GameObject_Interface(lua_State *L)
+{
+    lua_object *self;
+    char       *txt;
+	int			mode;
+	
+    get_lua_args(L, "Ois", &self, &mode, &txt);
+	
+    GCFP.Value[0] = (void *) (WHO);
+    GCFP.Value[1] = (void *) (&mode);
+    GCFP.Value[2] = (char *) (txt);
+    (PlugHooks[HOOK_INTERFACE]) (&GCFP);
+	
+    return 0;
+}
 
 /*****************************************************************************/
 /* Name   : GameObject_GetSkill                                              */

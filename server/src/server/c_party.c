@@ -522,7 +522,7 @@ void party_client_group_update(object *member, int flag)
     }
 
 	SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_GROUP_UPDATE);
-	Send_With_Handling(&CONTR(member)->socket, &global_sl);
+	/*Send_With_Handling(&CONTR(member)->socket, &global_sl);*/
 	
     strcpy(global_sl.buf+global_sl.len, buf);
     global_sl.len += strlen(buf)+1;

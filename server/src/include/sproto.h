@@ -554,6 +554,7 @@ CFParm                     *CFTransferMapItems(CFParm *PParm);
 CFParm                     *CFMapSave(CFParm *PParm);
 CFParm                     *CFMapDelete(CFParm *PParm);
 CFParm                     *CFWDestructObject(CFParm *PParm);
+CFParm                     *CFInterface(CFParm *PParm);
 
 /* resurrection.c */
 void                        dead_player(object *op);

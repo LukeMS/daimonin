@@ -84,9 +84,10 @@
 #define EVENT_TRIGGER  10 /* Button pushed, lever pulled, etc.               */
 #define EVENT_CLOSE    11 /* Container closed.                               */
 #define EVENT_TIMER    12 /* Timer connected triggered it.                   */
+#define EVENT_TALK     13  /* Talk event for npc interface system            */
 
-#define NR_LOCAL_EVENTS 13
-#define NR_EVENTS 26
+#define NR_LOCAL_EVENTS 14
+#define NR_EVENTS 27
 
 #define EVENT_FLAG_NONE     0x0000
 #define EVENT_FLAG_APPLY    0x0001
@@ -101,6 +102,7 @@
 #define EVENT_FLAG_TRIGGER  0x0200
 #define EVENT_FLAG_CLOSE    0x0400
 #define EVENT_FLAG_TIMER    0x0800
+#define EVENT_FLAG_TALK     0x1000
 
 
 /*****************************************************************************/
@@ -115,7 +117,6 @@
 /* dont use this events until this line gets removed!! */
 /* Gecko: :-P */
 
-#define EVENT_BORN     13 /* A new character has been created.               */
 #define EVENT_CLOCK    14 /* Global time event.                              */
 #define EVENT_CRASH    15 /* Triggered when the server crashes. Not recursive*/
 #define EVENT_GDEATH   16 /* Global Death event                              */
@@ -128,6 +129,7 @@
 #define EVENT_REMOVE   23 /* A Player character has been removed.            */
 #define EVENT_SHOUT    24 /* A player 'shout' something.                     */
 #define EVENT_TELL     25 /* A player 'tell' something.                      */
+#define EVENT_BORN     26 /* A new character has been created.               */
 
 /*****************************************************************************/
 /* Hook codes. A hook is a function pointer passed from the server to the    */
@@ -215,8 +217,9 @@
 #define HOOK_MAPTRANSERITEMS     74
 #define HOOK_MAPSAVE             75
 #define HOOK_MAPDELETE           76
+#define HOOK_INTERFACE           77
 
-#define NR_OF_HOOKS              77
+#define NR_OF_HOOKS              78
 
 /*****************************************************************************/
 /* CFParm is the data type used to pass informations between the server and  */

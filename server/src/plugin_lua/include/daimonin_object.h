@@ -30,6 +30,7 @@
 #include <plugin_lua.h>
 
 /* GameObject methods  */
+static int  GameObject_Interface(lua_State *L);
 static int  GameObject_CheckTrigger(lua_State *L);
 static int  GameObject_SetSaveBed(lua_State *L);
 static int  GameObject_SetSkill(lua_State *L);

@@ -38,7 +38,9 @@ f_plugin    HookList[NR_OF_HOOKS]   =
     CFWMoveObject, CFWSetAnimation, CFWCommunicate, CFWFindBestObjectMatch, CFWApplyBelow, CFWDestructObject,
     CFWObjectCreateClone, CFWTeleportObject, CFWDoLearnSkill, CFWFindMarkedObject, CFWIdentifyObject, CFWGetSkillNr,
     CFWFindSkill, CFWNewInfoMapExcept, CFWInsertObjectInObject, CFWFixPlayer, CFWPlaySoundMap, CFWOutOfMap,
-    CFWCreateObject, CFWShowCost, CFWDeposit, CFWWithdraw, CFTransferMapItems, CFMapSave, CFMapDelete
+    CFWCreateObject, CFWShowCost, CFWDeposit, CFWWithdraw, CFTransferMapItems, CFMapSave, CFMapDelete,
+	CFInterface
+	
 };
 
 #endif /*PLUGPROTO_H_*/
