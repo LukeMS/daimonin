@@ -41,7 +41,8 @@ static struct method_decl   GameObject_methods[]            =
     {"Drop",  (lua_CFunction) GameObject_Drop}, {"Take",  (lua_CFunction) GameObject_Take},
     {"Fix", (lua_CFunction) GameObject_Fix}, {"Kill", (lua_CFunction) GameObject_Kill},
     {"CastSpell", (lua_CFunction) GameObject_CastSpell}, {"DoKnowSpell", (lua_CFunction) GameObject_DoKnowSpell},
-    {"AcquireSpell", (lua_CFunction) GameObject_AcquireSpell}, {"DoKnowSkill", (lua_CFunction) GameObject_DoKnowSkill},
+    {"AcquireSpell", (lua_CFunction) GameObject_AcquireSpell},
+    {"FindSkill", (lua_CFunction) GameObject_FindSkill},
     {"AcquireSkill", (lua_CFunction) GameObject_AcquireSkill},
     {"FindMarkedObject", (lua_CFunction) GameObject_FindMarkedObject},
     {"CheckQuestObject", (lua_CFunction) GameObject_CheckQuestObject},
@@ -230,7 +231,7 @@ static const char          *GameObject_flags[NUM_FLAGS + 1 + 1] =
     "f_can_use_skill", "f_is_thrown",               /* 80 */
     "f_is_vul_sphere", "f_is_proof_sphere", "f_is_male", "f_is_female", "f_applied", "f_inv_locked", "f_is_wooded",
     "f_is_hilly", "f_has_ready_skill", "f_has_ready_weapon",        /* 90 */
-    "f_no_skill_ident", NULL /* flag 92 */, "f_can_see_in_dark", "f_is_cauldron", "f_is_dust", "f_no_steal",
+    "f_no_skill_ident", "f_use_dmg_info", "f_can_see_in_dark", "f_is_cauldron", "f_is_dust", "f_no_steal",
     "f_one_hit", NULL, "f_berserk", "f_no_attack",   /* 100 */
     "f_invulnerable", "f_quest_item", "f_is_traped", "f_is_vul_elemental", "f_is_proof_elemental", /* 105 */
     "f_is_vul_magic", "f_is_proof_magic", "f_is_vul_physical", "f_is_proof_physical", "f_sys_object", /* 110 */
@@ -1214,28 +1215,29 @@ static int GameObject_AcquireSpell(lua_State *L)
 }
 
 /*****************************************************************************/
-/* Name   : GameObject_DoKnowSkill                                           */
-/* Lua    : object.DoKnowSkill(skill)                                        */
-/* Info   : true if the skill is known by object, false if it isn't          */
+/* Name   : GameObject_FindSkill                                             */
+/* Lua    : object.FindSkill(skill)                                          */
+/* Info   : skill ptr if the skill is known by object, NULL is it isn't      */
 /* Status : Tested                                                           */
 /*****************************************************************************/
-static int GameObject_DoKnowSkill(lua_State *L)
+static int GameObject_FindSkill(lua_State *L)
 {
     int         skill;
     CFParm     *CFR;
-    int         value;
+    object     *myob;
     lua_object *self;
 
     get_lua_args(L, "Oi", &self, &skill);
 
     GCFP.Value[0] = (void *) (WHO);
     GCFP.Value[1] = (void *) (&skill);
-    CFR = (PlugHooks[HOOK_CHECKFORSKILLKNOWN]) (&GCFP);
-    value = *(int *) (CFR->Value[0]);
-    free(CFR);
-
-    lua_pushboolean(L, value);
-    return 1;
+    CFR = (PlugHooks[HOOK_FINDSKILL]) (&GCFP);
+   
+    myob = (object *) (CFR->Value[0]);
+    if (!myob)
+        return 0;
+    
+    return push_object(L, &GameObject, myob);
 }
 
 /*****************************************************************************/
