@@ -525,7 +525,11 @@ draw_info(tz, COLOR_BLUE);
         						,&cpl.win_inv_start, &cpl.win_inv_count, INVITEMXLEN, INVITEMYLEN);
 								if (event.button.button == SDL_BUTTON_RIGHT)
 										process_macro_keys(KEYFUNC_MARK, 0);
-								else draggingInvItem(DRAG_IWIN_INV);
+								else
+								{
+									if(cpl.inventory_win == IWIN_INV)
+										draggingInvItem(DRAG_IWIN_INV);
+								}
    						}
 						}
 						break;
@@ -955,6 +959,7 @@ int key_event(SDL_KeyboardEvent *key )
 	return(0);
 }
 
+
 /* here we look in the user defined keymap and try to get same useful macros */
 static Boolean check_menu_macros(char *text)
 {
@@ -1020,12 +1025,36 @@ static Boolean check_menu_macros(char *text)
 		reset_keys();
     return TRUE;
 	}
+
 	return FALSE;
 }
 
+/* here we handle menu change direct from open menu to
+ * open menu, menu close by double press the trigger key
+ * and other menu handling stuff - but NOT they keys
+ * inside a menu!
+ */
+static int check_keys_menu_status(int key)
+{
+	int i,j;
+
+	for(j=0;j< BINDKEY_LIST_MAX; j++) /* groups */
+	{
+		for(i=0;i< OPTWIN_MAX_OPT; i++){
+			if(key == bindkey_list[j].entry[i].key)
+			{
+				if(check_menu_macros(bindkey_list[j].entry[i].text))
+					return TRUE;
+			}
+		}
+	}
+	return  FALSE;
+}
+
+
 static void check_keys(int key)
 {
-	register int i,j;
+	int i,j;
 	char buf[512];
 
 	for(j=0;j< BINDKEY_LIST_MAX; j++) /* groups */
@@ -1047,6 +1076,7 @@ static void check_keys(int key)
 	}
 }
 
+
 static Boolean check_macro_keys(char *text)
 {
 	register int i;
@@ -1062,6 +1092,7 @@ static Boolean check_macro_keys(char *text)
 	}
 	return(TRUE);
 }
+
 
 Boolean process_macro_keys(int id, int value)
 {
@@ -1686,7 +1717,8 @@ static void key_repeat(void)
 	}else{ /* check menu-keys for repeat */
 		if (SDL_GetTicks()- menuRepeatTicks > menuRepeatTime || !menuRepeatTicks||menuRepeatKey< 0){
 			menuRepeatTicks = SDL_GetTicks();
-			if (menuRepeatKey >=0){
+			if (menuRepeatKey >=0)
+			{
 				check_menu_keys(cpl.menustatus, menuRepeatKey);
 				menuRepeatTime = KEY_REPEAT_TIME;
 			}
@@ -1735,6 +1767,12 @@ void read_keybind_file(char *fname)
 			while (line[++i] && line[i]!='"')
    			bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].text[pos++]=line[i];
  			bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].text[pos]=0;
+
+			if(!strcmp(bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].text,"?M_GET"))
+				get_action_keycode = bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].key;
+			if(!strcmp(bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].text,"?M_DROP"))
+				drop_action_keycode = bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].key;
+
 			if (++bindkey_list_set.entry_nr == OPTWIN_MAX_OPT) break;
 		}
 		fclose( stream );
@@ -1801,7 +1839,10 @@ void check_menu_keys(int menu, int key)
 		reset_keys();
 		return;
 	}
-	
+
+	if(check_keys_menu_status(key))
+		return;
+
 	switch(menu)
 	{
 		case MENU_OPTION:
@@ -1838,8 +1879,9 @@ void check_menu_keys(int menu, int key)
  					menuRepeatKey = SDLK_DOWN;
 					break;
 				case SDLK_d:
-					draw_info("wanna save the options",2);
-//	        save_option_file(_FILE);
+/*					draw_info("wanna save the options",2);
+	        save_option_file(_FILE);
+*/
 	        sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);
 	        map_udate_flag=2;
 	        cpl.menustatus = MENU_NO;

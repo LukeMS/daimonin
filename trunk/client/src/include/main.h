@@ -143,7 +143,7 @@ typedef struct _srv_client_files {
 }_srv_client_files;
 
 extern _srv_client_files srv_client_files[SRV_CLIENT_FILES];
-extern 	Uint32 sdl_gray1, sdl_gray2, sdl_gray3, sdl_gray4, sdl_blue1;
+extern 	Uint32 sdl_dgreen,sdl_gray1, sdl_gray2, sdl_gray3, sdl_gray4, sdl_blue1;
 extern int mb_clicked;
 
 #define MAXMETAWINDOW 14		/* count max. shown server in meta window*/
@@ -492,7 +492,6 @@ typedef enum _bitmap_index {
   BITMAP_TARGET_HP_B,
   BITMAP_TEXTWIN_MASK,
   BITMAP_TEXTWIN_BLANK,
-  BITMAP_TEXTWIN_SPLIT,
   BITMAP_SLIDER_UP,
 	BITMAP_SLIDER_DOWN,
 	BITMAP_SLIDER,

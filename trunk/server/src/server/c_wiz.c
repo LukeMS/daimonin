@@ -491,7 +491,7 @@ int command_create (object *op, char *params)
 		tmp->head=head,prev->more=tmp;
 	    prev=tmp;
 	}
-        if (QUERY_FLAG(head, FLAG_ALIVE))
+        if (IS_LIVE(head))
 	    insert_ob_in_map(head, op->map, op, 0);
         else
 	    head = insert_ob_in_ob(head, op);

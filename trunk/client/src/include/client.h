@@ -486,3 +486,4 @@ extern int cs_write_string ( int fd, char *buf, int len );
 extern void finish_face_cmd(int pnum, uint32 checksum, char *face);
 extern int request_face(int num, int mode);
 extern void check_animation_status(int anum);
+extern char *adjust_string(char *buf);

@@ -82,8 +82,8 @@ row2:
 	pos =0; pos2 = 538;
 	while (text[pos] && pos2 <= mouseX){ 
 		if (text[pos++]=='^'){
-			if (key_start<0) key_start = pos; // start of a key 
-			else key_start =-1; // end of a key 
+			if (key_start<0) key_start = pos; /* start of a key */
+			else key_start =-1; /* end of a key */
 			continue;
 		}
 		pos2+= SystemFont.c[(int)text[pos]].w+ SystemFont.char_offset;
@@ -125,13 +125,14 @@ void say_clickedKeyword(int actWin, int mouseX, int mouseY){
 void textwin_init()
 {
 	int i;
-  for (i = TW_MIX; i < TW_SUM; i++)
-  {
+
+	for (i = TW_MIX; i < TW_SUM; i++)
+	{
 		txtwin[i].bot_drawLine =0;
 		txtwin[i].act_bufsize =0;    
 		txtwin[i].scroll =0;
 		txtwin[i].size = 9;
-  }
+	}
 }
 
 /******************************************************************
@@ -418,9 +419,9 @@ void textwin_show(int x, int y)
 		if ((SDL_GetModState() == KMOD_RALT || SDL_GetModState() == KMOD_LALT)
   	 && my > txtwin[TW_CHAT].y && mx > txtwin[TW_CHAT].x)
 			color = 40;
-		SDL_FillRect(ScreenSurface, &box, color);
+		SDL_FillRect(ScreenSurface, &box, sdl_dgreen);
 		box.y = y-1;
-		SDL_FillRect(ScreenSurface, &box, color);
+/*		SDL_FillRect(ScreenSurface, &box, color);*/
 	}
 	else
 	{

@@ -92,7 +92,7 @@ void move_deep_swamp (object *op)
 	  }
 	break;
       }
-    } else if (!QUERY_FLAG(above, FLAG_ALIVE)) {
+    } else if (!IS_LIVE(above)) {
       if (rndm(0, 2) == 0) decrease_ob(above);
     }
     above = nabove;

@@ -33,14 +33,14 @@ static int group_pos[MAX_GROUP_MEMBER][2] ={
 
 int quick_slots[MAX_QUICK_SLOTS];
 int quickslots_pos[MAX_QUICK_SLOTS][2] = {
-	{4,10},
-	{39,10},
-	{74,10},
-	{109,10},
-	{144,10},
-	{179,10},
-	{214,10},
-	{249,10}
+	{17,1},
+	{50,1},
+	{83,1},
+	{116,1},
+	{149,1},
+	{182,1},
+	{215,1},
+	{248,1}
 };
 
 void do_console(int x, int y)
@@ -1408,21 +1408,6 @@ void delete_server_chars(void)
 	first_server_char=NULL;
 }
 
-/* removes whitespace from right side */
-static char *adjust_string(char *buf)
-{
-	int i,len = strlen(buf);
-
-	for (i=len-1;i>=0;i--)
-	{
-		if(!isspace(buf[i]))
-			return buf;
-
-		buf[i]=0;
-	}
-	return buf;
-}
-
 
 /* find a face ID by name,
  * request the face (find it, load it or request it)
@@ -1849,6 +1834,7 @@ int get_quickslot(int x, int y)
 void show_quickslots(int x, int y)
 {
 	int i, mx, my;
+	char buf[16];
 
   SDL_GetMouseState(&mx, &my);
 	update_quickslots(-1);
@@ -1863,12 +1849,14 @@ void show_quickslots(int x, int y)
 			if(tmp)
 			{
 				blt_inv_item(tmp , x+quickslots_pos[i][0],y+quickslots_pos[i][1]);
-        /* show tooltip */
-        if (mx >= x+quickslots_pos[i][0] && mx < x+quickslots_pos[i][0]+33
-         && my >= y+quickslots_pos[i][1] && my < y+quickslots_pos[i][1]+33)
-          show_tooltip(mx, my, tmp->s_name);
+				/* show tooltip */
+				if (mx >= x+quickslots_pos[i][0] && mx < x+quickslots_pos[i][0]+33
+							&& my >= y+quickslots_pos[i][1] && my < y+quickslots_pos[i][1]+33)
+					show_tooltip(mx, my, tmp->s_name);
 			}
 		}
+		sprintf(buf,"F%d", i+1);
+		StringBlt(ScreenSurface, &Font6x3Out,buf,x+quickslots_pos[i][0]+12, y+quickslots_pos[i][1]-6,COLOR_DEFAULT, NULL, NULL);
 		
 	}
 }

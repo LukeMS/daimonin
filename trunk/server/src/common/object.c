@@ -2057,7 +2057,16 @@ void free_object(object *ob) {
 						if(corpse)
 							insert_ob_in_ob(tmp_op, corpse);
 						else
-							insert_ob_in_map(tmp_op,ob->map,NULL,0); /* Insert in same map as the envir */
+						{
+							/* don't drop traps from a container to the floor.
+							 * removing the container where a trap i applied to will
+							 * neutralize the trap too 
+							 */
+							if(tmp_op->type == RUNE)
+								free_object(tmp_op);
+							else
+								insert_ob_in_map(tmp_op,ob->map,NULL,0); /* Insert in same map as the envir */
+						}
 					}
 				tmp_op=tmp;
 			}
@@ -2470,7 +2479,7 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
 
     CLEAR_FLAG(op,FLAG_APPLIED); /* hack for fixing F_APPLIED in items of dead people */
     CLEAR_FLAG(op, FLAG_INV_LOCKED);
-    if (!QUERY_FLAG(op, FLAG_ALIVE))
+    if (!IS_LIVE(op))
 	CLEAR_FLAG(op, FLAG_NO_STEAL);
 
 	/* map layer system */

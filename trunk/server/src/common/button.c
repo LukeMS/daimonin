@@ -252,9 +252,8 @@ void animate_turning(object *op) /* only one part objects */
  
 int check_altar_sacrifice (object *altar, object *sacrifice)
 {
-  if ( ! QUERY_FLAG (sacrifice, FLAG_ALIVE)
-      && ! QUERY_FLAG (sacrifice, FLAG_IS_LINKED)
-      && sacrifice->type != PLAYER)
+  if ( !IS_LIVE(sacrifice)
+      && !QUERY_FLAG (sacrifice, FLAG_IS_LINKED))
   {
       if ((ARCH_SACRIFICE(altar) == sacrifice->arch->name ||
           ARCH_SACRIFICE(altar) == sacrifice->name ||

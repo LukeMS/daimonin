@@ -574,7 +574,7 @@ void show_skilllist(void)
 	/* tabs */
 	draw_tabs(skill_tab, SKILL_TAB_SIZE, &skill_list_set.group_nr, "Skill Group", x+8, y+ 70);
 
-	sprintf(buf,"press ~SHIFT~ + ~%c%c~ to select group           ~%c%c~ to select skill            ~RETURN~ for use",ASCII_UP, ASCII_DOWN,ASCII_UP, ASCII_DOWN);
+	sprintf(buf,"~SHIFT~ + ~%c%c~ to select group                  ~%c%c~ to select skill                    ~RETURN~ for use",ASCII_UP, ASCII_DOWN,ASCII_UP, ASCII_DOWN);
 	StringBlt(ScreenSurface,&SystemFont, buf, x+135, y+410, COLOR_WHITE,NULL, NULL);
 
 	/* Headline */
@@ -654,7 +654,7 @@ void show_skilllist(void)
   /* print skill description */
 	if(skill_list[skill_list_set.group_nr].entry[skill_list_set.entry_nr].flag>=LIST_ENTRY_KNOWN)
 	{
-		if ((mb & SDL_BUTTON(SDL_BUTTON_LEFT)) && mx >x-40 && mx < x-10 && my > y+10 && my < y+43){ // selected
+		if ((mb & SDL_BUTTON(SDL_BUTTON_LEFT)) && mx >x-40 && mx < x-10 && my > y+10 && my < y+43){ /* selected */
 	 		check_menu_keys(MENU_SKILL, SDLK_RETURN);
   	}
 		sprite_blt(skill_list[skill_list_set.group_nr].entry[skill_list_set.entry_nr].icon,x-42,y+10, NULL, NULL);
@@ -700,7 +700,7 @@ void show_spelllist(void)
 	/* tabs */
 	draw_tabs(spell_tab, SPELL_TAB_SIZE, &spell_list_set.group_nr, "Spell Path" ,x+8, y+ 70);
 
-	sprintf(buf,"press ~SHIFT~ + ~%c%c~ to select path           ~%c%c~ to select spell            ~RETURN~ for use",ASCII_UP, ASCII_DOWN,ASCII_UP, ASCII_DOWN);
+	sprintf(buf,"~SHIFT~ + ~%c%c~ to select path                   ~%c%c~ to select spell                    ~RETURN~ for use",ASCII_UP, ASCII_DOWN,ASCII_UP, ASCII_DOWN);
 	StringBlt(ScreenSurface,&SystemFont, buf, x+135, y+410, COLOR_WHITE,NULL, NULL);
 
 	/* spellClass buttons */
@@ -774,7 +774,7 @@ void show_spelllist(void)
   /* print spell description */
 	if(spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][spell_list_set.entry_nr].flag==LIST_ENTRY_KNOWN)
 	{
-		if (mb && mx >x-40 && mx < x-10 && my > y+10 && my < y+43){ // selected
+		if (mb && mx >x-40 && mx < x-10 && my > y+10 && my < y+43){ /* selected */
    		dblclk=0;
 	 		check_menu_keys(MENU_SPELL, SDLK_RETURN);
 		}
@@ -802,6 +802,7 @@ void show_spelllist(void)
 ******************************************************************/
 void show_optwin()
 {
+	char buf[128];
 	int x, y;
 	int mx, my, mb;
 	int numButton =0;
@@ -816,12 +817,14 @@ void show_optwin()
 	draw_tabs(opt_tab, OPTION_TAB_SIZE, &option_list_set.group_nr,  "Option Group", x+  8, y+ 70);
 	optwin_draw_options(x+130, y+ 90);
 
+	sprintf(buf,"~SHIFT~ + ~%c%c~ to select group            ~%c%c~ to select option          ~%c%c~ to change option",ASCII_UP, ASCII_DOWN,ASCII_UP, ASCII_DOWN, ASCII_RIGHT, ASCII_LEFT);
+	StringBlt(ScreenSurface,&SystemFont, buf, x+135, y+410, COLOR_WHITE,NULL, NULL);
 	/* mark active entry */
 	StringBlt(ScreenSurface, &SystemFont, ">", x+TXT_START_NAME-15
  		, y+10+TXT_Y_START+option_list_set.entry_nr*20, COLOR_HGOLD, NULL, NULL);
 
 	/* save button */
-	if (add_button(x+25, y+454, numButton++, BITMAP_DIALOG_BUTTON_UP, "Done", "°D°one"))
+	if (add_button(x+25, y+454, numButton++, BITMAP_DIALOG_BUTTON_UP, "Done", "~D~one"))
 		check_menu_keys(MENU_OPTION, SDLK_d);
 
 	if (!mb) active_button =-1;

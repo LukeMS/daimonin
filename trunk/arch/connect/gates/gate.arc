@@ -1,7 +1,9 @@
 Object gate_open
 name gate
 type 91
+level 1
 layer 5
+attack_impact 100
 no_teleport 1
 #activate_on_push 1
 #activate_on_release 1
@@ -96,6 +98,7 @@ name gate
 no_teleport 1
 type 91
 layer 5
+level 1
 #activate_on_push 1
 #activate_on_release 1
 no_pick 1
@@ -181,6 +184,7 @@ is_animated 0
 no_pass 1
 pass_thru 1
 direction 1
+attack_impact 100
 state 7
 blocksview 1
 wc 7

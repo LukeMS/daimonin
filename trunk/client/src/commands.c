@@ -723,6 +723,14 @@ void StatsCmd(unsigned char *data, int len)
 										strcat(cpl.rankandname, cpl.pname);
 										if(strlen(cpl.rankandname)>0)
 											cpl.rankandname[strlen(cpl.rankandname)-1] = 0;
+										adjust_string(cpl.rank);
+										adjust_string(cpl.rankandname);
+										adjust_string(cpl.pname);
+										adjust_string(cpl.race);
+										adjust_string(cpl.title);
+										adjust_string(cpl.alignment);
+										adjust_string(cpl.gender);
+										adjust_string(cpl.godname);
                                     }
                                     break;
                                 case CS_STAT_TITLE:

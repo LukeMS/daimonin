@@ -255,7 +255,7 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam, int base_
 			type=AT_PHYSICAL;
 
 	/* Handle monsters that hit back */
-	if ( ! simple_attack && QUERY_FLAG (op, FLAG_HITBACK && QUERY_FLAG (hitter, FLAG_ALIVE)))
+	if ( ! simple_attack && QUERY_FLAG (op, FLAG_HITBACK) && IS_LIVE(hitter) )
 	{
 	    hit_player(hitter, random_roll(0, (op->stats.dam), hitter,
 				      PREFER_LOW),op, op->attacktype);
@@ -660,7 +660,7 @@ int hit_map(object *op,int dir,int type) {
 		if (was_destroyed (op, op_tag))
 			break;
     }
-    else if (QUERY_FLAG (tmp, FLAG_ALIVE) )
+    else if (IS_LIVE(tmp) )
 	{
 	/*LOG(-1,"HM: %s hit %s with dam %d\n",op->name,tmp->name,op->stats.dam);*/
 	hit_player(tmp,op->stats.dam,op,type);
@@ -805,7 +805,7 @@ int hit_player_attacktype(object *op, object *hitter, int damage,  uint32 attack
 
 			send_attack_msg(op, hitter, attacknum, (int) dam, damage);
 
-			if(dam && QUERY_FLAG(op, FLAG_ALIVE))
+			if(dam && IS_LIVE(op))
 				poison_player(op,hitter,(float)dam);
 
 		break;
@@ -1820,7 +1820,7 @@ void deathstrike_player(object *op, object *hitter, int *dam)
  */
 static void thrown_item_effect (object *hitter, object *victim)
 {
-    if(!QUERY_FLAG(hitter,FLAG_ALIVE)) {
+    if(!IS_LIVE(hitter)) {
 	/* May not need a switch for just 2 types, but this makes it 
 	 * easier for expansion.
 	 */
@@ -1849,7 +1849,7 @@ static void thrown_item_effect (object *hitter, object *victim)
 
 	    case POISON: /* poison drinks */
 		/* As with potions, should monster get a save? */
-		if(QUERY_FLAG(victim,FLAG_ALIVE)&&!QUERY_FLAG(victim,FLAG_UNDEAD))
+		if(IS_LIVE(victim)&&!QUERY_FLAG(victim,FLAG_UNDEAD))
 			apply_poison(victim,hitter);
 		break;
 
@@ -1878,7 +1878,7 @@ int adj_attackroll (object *hitter, object *target) {
   if(is_aimed_missile(hitter)) {
     if ((attacker = get_owner(hitter))==NULL) attacker = hitter;
   }
-  else if(!QUERY_FLAG(hitter,FLAG_ALIVE))
+  else if(!IS_LIVE(hitter))
     return 0;
 
    /* determine the condtions under which we make an attack.  

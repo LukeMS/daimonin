@@ -563,10 +563,8 @@ error - Your ANSI C compiler should be defining __STDC__;
 	 op->type == CLOAK || op->type == BOOTS || op->type == GLOVES || \
 	 op->type == BRACERS || op->type == GIRDLE)
 
-#define IS_LIVE(op) \
-	(op->type == PLAYER || QUERY_FLAG(op,FLAG_MONSTER) || \
-	(QUERY_FLAG(op, FLAG_ALIVE) && !QUERY_FLAG(op, FLAG_GENERATOR) && \
-	!op->type == DOOR))
+#define IS_LIVE(__op__) ( (__op__)->type == PLAYER || QUERY_FLAG((__op__),FLAG_MONSTER) || \
+						 (QUERY_FLAG((__op__), FLAG_ALIVE) && !QUERY_FLAG((__op__), FLAG_GENERATOR)))
 
 #define IS_ARROW(op) \
 	(op->type==ARROW || op->type==MMISSILE || op->type==BULLET)

@@ -331,7 +331,7 @@ void show_player_data(int x, int y)
             sprintf(buf,"%s %s %s",cpl.gender, cpl.race, cpl.title);
             StringBlt(ScreenSurface, &SystemFont,buf,6, 14,COLOR_HGOLD, NULL, NULL);
 			if(strcmp(cpl.godname,"none") )
-;//				sprintf(buf,"%s follower of %s\n", cpl.alignment, cpl.godname);
+				sprintf(buf,"%s follower of %s", cpl.alignment, cpl.godname);
 			else
 				strcpy(buf, cpl.alignment);
             StringBlt(ScreenSurface, &SystemFont,buf,6, 26,COLOR_HGOLD, NULL, NULL);

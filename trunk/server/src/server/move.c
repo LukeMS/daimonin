@@ -311,7 +311,7 @@ int try_fit (object *op, int x, int y)
 	    if (tmp->head == op || tmp == op)
 		continue;
 
-	    if ((QUERY_FLAG(tmp,FLAG_ALIVE) && tmp->type!=DOOR))
+	    if (IS_LIVE(tmp))
 		return 1;
 
 	    if (QUERY_FLAG(tmp,FLAG_NO_PASS) && 
@@ -349,8 +349,7 @@ int roll_ob(object *op,int dir, object *pusher) {
 	{
 		if (tmp->head == op)
 			continue;
-		if (QUERY_FLAG(tmp,FLAG_ALIVE) ||
-						(QUERY_FLAG(tmp,FLAG_NO_PASS) && !roll_ob(tmp,dir,pusher)))
+		if (IS_LIVE(tmp) || (QUERY_FLAG(tmp,FLAG_NO_PASS) && !roll_ob(tmp,dir,pusher)))
 			return 0;
     }
     if (try_fit (op, op->x+freearr_x[dir], op->y+freearr_y[dir]))

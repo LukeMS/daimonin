@@ -35,7 +35,7 @@ struct sockaddr_in insock;	/* Server's attributes */
 ClientSocket csocket;
 int SocketStatusErrorNr;		/* if an socket error, this is it */
 
-Uint32 sdl_gray1, sdl_gray2, sdl_gray3, sdl_gray4, sdl_blue1;
+Uint32 sdl_dgreen, sdl_gray1, sdl_gray2, sdl_gray3, sdl_gray4, sdl_blue1;
 
 int music_global_fade = FALSE;
 int show_help_screen;
@@ -224,7 +224,6 @@ static _bitmap_name  bitmap_name[BITMAP_INIT] =
         {"target_hp_b.png", PIC_TYPE_DEFAULT},
         {"textwin_mask.png", PIC_TYPE_DEFAULT},
         {"textwin_blank.png", PIC_TYPE_DEFAULT},
-        {"textwin_split.png", PIC_TYPE_DEFAULT}, 
         {"slider_up.png", PIC_TYPE_TRANS},
         {"slider_down.png", PIC_TYPE_TRANS},
         {"slider.png", PIC_TYPE_TRANS},
@@ -1216,6 +1215,7 @@ int main(int argc, char *argv[])
 	}
 
 	/* 60, 70*/
+	sdl_dgreen = SDL_MapRGB(ScreenSurface->format, 0x00, 0x80, 0x00);
 	sdl_gray1 = SDL_MapRGB(ScreenSurface->format, 0x45, 0x45, 0x45);
 	sdl_gray2 = SDL_MapRGB(ScreenSurface->format, 0x55, 0x55, 0x55);
 
@@ -1395,7 +1395,7 @@ int main(int argc, char *argv[])
 		    {
 				if(GameStatus != GAME_STATUS_PLAY)
 					SDL_FillRect(ScreenSurface,NULL,0);
-				sprite_blt(Bitmaps[BITMAP_BUFFSPOT],518, 151, NULL, NULL);
+				sprite_blt(Bitmaps[BITMAP_BUFFSPOT],518, 143, NULL, NULL);
 				sprite_blt(Bitmaps[BITMAP_TEXTSPOT],226, 109, NULL, NULL);
 				sprite_blt(Bitmaps[BITMAP_PDOLL2_SPOT],0, 194, NULL, NULL);
 				sprite_blt(Bitmaps[BITMAP_CLEAR_SPOT],0, 306, NULL, NULL);

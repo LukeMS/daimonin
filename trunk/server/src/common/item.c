@@ -379,8 +379,8 @@ char *query_short_name(object *op)
 		break;
 
 		default:
-		if(op->magic && ((QUERY_FLAG(op,FLAG_BEEN_APPLIED) && 
-					need_identify(op)) || QUERY_FLAG(op,FLAG_IDENTIFIED)))
+		if(op->magic && 
+			(!need_identify(op) || QUERY_FLAG(op,FLAG_BEEN_APPLIED) || QUERY_FLAG(op,FLAG_IDENTIFIED)))
 		{
 			sprintf(buf2, " %+d", op->magic);
 			safe_strcat(buf, buf2, &len, HUGE_BUF);
@@ -612,14 +612,17 @@ char *query_base_name(object *op) {
 		}
 	break;
       default:
+		if(op->magic && 
+			(!need_identify(op) || QUERY_FLAG(op,FLAG_BEEN_APPLIED) || QUERY_FLAG(op,FLAG_IDENTIFIED)))
+		{
+			sprintf(buf2, " %+d", op->magic);
+			safe_strcat(buf, buf2, &len, MAX_BUF);
+		}
+
 	    if (op->title &&(need_identify(op) && QUERY_FLAG(op,FLAG_IDENTIFIED))) 
 		{
 			safe_strcat(buf, " ", &len, MAX_BUF);
 			safe_strcat(buf, op->title, &len, MAX_BUF);
-		}
-		if(op->magic && (need_identify(op) && QUERY_FLAG(op,FLAG_IDENTIFIED)))
-		{
-			sprintf(buf + strlen(buf), " %+d", op->magic);
 		}
     } /* switch */
 
