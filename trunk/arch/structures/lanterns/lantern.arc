@@ -5,14 +5,14 @@ face lantern_magic.131
 anim
 facings 9
 dummy.111
-lantern_magic.131
+lantern_magic.111
+lantern_magic.111
 lantern_magic.131
 lantern_magic.131
 lantern_magic.151
 lantern_magic.151
-lantern_magic.151
-lantern_magic.151
-lantern_magic.131
+lantern_magic.171
+lantern_magic.171
 mina
 is_animated 0
 anim_speed 0
