@@ -1,0 +1,30 @@
+# Project: Sample_TextureFX
+# Makefile created by Dev-C++ 4.9.9.2
+
+CPP  = g++.exe
+CC   = gcc.exe
+WINDRES = windres.exe
+RES  = 
+OBJ  = ../../../../../Bezier.o $(RES)
+LINKOBJ  = ../../../../../Bezier.o $(RES)
+LIBS =  -L"C:/Programme/Dev-Cpp/lib" -L"E:/daimonin/client/liba" -lOgreMain -Wl,--enable-runtime-pseudo-reloc  
+INCS =  -I"C:/Programme/Dev-Cpp/include"  -I"E:/daimonin/client/dependencies/devil/include"  -I"E:/daimonin/client/dependencies/freetype/include"  -I"E:/daimonin/client/dependencies/zlib/include"  -I"E:/daimonin/client/include" 
+CXXINCS =  -I"C:/Programme/Dev-Cpp/lib/gcc/mingw32/3.4.2/include"  -I"C:/Programme/Dev-Cpp/include/c++/3.4.2/backward"  -I"C:/Programme/Dev-Cpp/include/c++/3.4.2/mingw32"  -I"C:/Programme/Dev-Cpp/include/c++/3.4.2"  -I"C:/Programme/Dev-Cpp/include"  -I"E:/daimonin/client/dependencies/devil/include"  -I"E:/daimonin/client/dependencies/freetype/include"  -I"E:/daimonin/client/dependencies/zlib/include"  -I"E:/daimonin/client/include" 
+BIN  = ../../../bin/daimonin.exe
+CXXFLAGS = $(CXXINCS) -DWIN32 -DNDEBUG -D_WINDOWS -D_MCBS -D_USRDLL -march=pentium4 -mieee-fp -malign-double -m128bit-long-double -maccumulate-outgoing-args -mthreads -momit-leaf-frame-pointer -mmmx -msse -msse2 -mfpmath=sse -fpermissive -fms-extensions -finline-limit=1200 -fsched-spec-load-dangerous -ffast-math -funsafe-math-optimizations -ftracer -fprefetch-loop-arrays -O3  
+CFLAGS = $(INCS)   
+RM = rm -f
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before ../../../bin/daimonin.exe all-after
+
+
+clean: clean-custom
+	${RM} $(OBJ) $(BIN)
+
+$(BIN): $(OBJ)
+	$(CPP) $(LINKOBJ) -o "..\..\..\bin\daimonin.exe" $(LIBS)
+
+../../../../../Bezier.o: ../../../source/Bezier.cpp
+	$(CPP) -c ../../../source/Bezier.cpp -o ../../../../../Bezier.o $(CXXFLAGS)
