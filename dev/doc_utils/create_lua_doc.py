@@ -21,8 +21,8 @@ index_items_per_line = 6
 amp_re_obj = re.compile('&')
 attributes_re_obj = re.compile('\{\s*"(.*?)",\s*FIELDTYPE_(.*?),\s*offsetof\(.*?\),\s*(.*?)\s*[\},]')
 block_re_obj = re.compile('FUNCTIONSTART.*?FUNCTIONEND', re.S)
-field_start_re_obj = re.compile('(Lua|Info|Status|TODO)\s*:.*')
-colon_re_obj = re.compile('\s+:\s*')
+field_start_re_obj = re.compile('(Lua|Info|Status|TODO|Warning|Remark)\s*:\s*(.*)')
+colon_re_obj = re.compile('\s*:\s*')
 colon_find_re_obj = re.compile('\s*.+?:')
 colon_prefix_re_obj = re.compile('^\s*:\s*')
 comment_re_obj = re.compile('/\*+/[\n\r]+(.*)[\n\r]+/\*+/', re.S)
@@ -36,6 +36,7 @@ func_body_re_obj = re.compile('\s*static\s+int\s+.+?\(lua_State\s*\*\s*L\).*?\{(
 game_constants_block_re_obj = re.compile('\s*static\s+struct\s+constant_decl\s+Game_constants\[\]\s+=[\n\r]+\{(.*?)[\n\r]+\};', re.S)
 gt_re_obj = re.compile('>')
 lt_re_obj = re.compile('<')
+event_attributes_block_re_obj = re.compile('\s*struct\s+attribute_decl\s+Event_attributes\[\]\s+=[\n\r]+(.*?)[\n\r]+\};', re.S)
 map_attributes_block_re_obj = re.compile('\s*struct\s+attribute_decl\s+Map_attributes\[\]\s+=[\n\r]+(.*?)[\n\r]+\};', re.S)
 map_flags_block_re_obj = re.compile('\s*static\s+const\s+char\s*\*\s*Map_flags\[\]\s*=[\n\r]+(.*?)[\n\r]+\};', re.S)
 name_prefix_re_obj = re.compile('([A-Za-z_]*):.+')
@@ -99,17 +100,15 @@ for filename in listCFiles(sys.argv[1]):
 				comment = comment_suffix_re_obj.split(comment_prefix_re_obj.sub('', comment))
 				key = None
 				for line in comment:
-					match = field_start_re_obj.match(line)
-					if match != None:
-						lst = colon_re_obj.split(line)
-						if lst[0] != 'Name':
-							key = lst[0]
-							print lst
-							fields[key] = lst[1]
+					match = field_start_re_obj.findall(line)
+					if match:
+						match = match[0]
+						if match[0] != 'Name':
+							key = match[0]
+							fields[key] = match[1]
 					elif key != None and line:
 						fields[key] += "\n" + colon_prefix_re_obj.sub('', line)
 			if 'Lua' in fields:
-				print fields['Lua']
 				prefix = name_prefix_re_obj.findall(fields['Lua'])
 				if prefix:
 					prefix = prefix[0]
@@ -202,8 +201,33 @@ for filename in listCFiles(sys.argv[1]):
 		if constants:
 			for constant in constants:
 				doc['game']['constants'].append(constant)
+	if not 'event' in doc:
+		doc['event'] = {'attributes': {}, 'constants': [], 'flags': [], 'functions': {}}		
+	block = event_attributes_block_re_obj.findall(code)
+	if block:
+		attributes = attributes_re_obj.findall(code)
+		if attributes:
+			print attributes
+			for attribute in attributes:
+				special = ''
+				tp = ''
+				if attribute[1] == 'CSTR' or attribute[1] == 'SHSTR':							tp = 'string'
+				elif attribute[1] == 'SINT8' or attribute[1] == 'SINT16' or attribute[1] == 'SINT32' or attribute[1] == 'UINT8' or attribute[1] == 'UINT16' or attribute[1] == 'UINT32':
+					tp = 'integer'
+				elif attribute[1] == 'FLOAT':
+					tp = 'float'
+				elif attribute[1] == 'OBJECTREF':
+					tp = 'object'
+				if attribute[2] == 'FIELDFLAG_READONLY':
+					special = 'readonly'
+				elif attribute[2] == 'FIELDFLAG_PLAYER_READONLY':
+					special = 'readonly if object is a player'
+				elif attribute[2] == 'FIELDFLAG_PLAYER_FIX':
+					special = 'fix the player or mob after change'
+				if tp:
+					doc['event']['attributes'][attribute[0]] = (tp, special)
 	if not 'map' in doc:
-		doc['map'] = {'attributes': {}, 'constants': [], 'flags': [], 'functions': {}}
+		doc['map'] = {'attributes': {}, 'constants': [], 'flags': [], 'functions': {}}		
 	block = map_attributes_block_re_obj.findall(code)
 	if block:
 		attributes = attributes_re_obj.findall(code)
@@ -217,6 +241,8 @@ for filename in listCFiles(sys.argv[1]):
 					tp = 'integer'
 				elif attribute[1] == 'FLOAT':
 					tp = 'float'
+				elif attribute[1] == 'OBJECTREF':
+					tp = 'object'
 				if attribute[2] == 'FIELDFLAG_READONLY':
 					special = 'readonly'
 				elif attribute[2] == 'FIELDFLAG_PLAYER_READONLY':
@@ -246,6 +272,8 @@ for filename in listCFiles(sys.argv[1]):
 					tp = 'integer'
 				elif attribute[1] == 'FLOAT':
 					tp = 'float'
+				elif attribute[1] == 'OBJECTREF':
+					tp = 'object'
 				if attribute[2] == 'FIELDFLAG_READONLY':
 					special = 'readonly'
 				elif attribute[2] == 'FIELDFLAG_PLAYER_READONLY':
