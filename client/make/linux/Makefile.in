@@ -117,12 +117,11 @@ install:: all
 	$(CP) ../../media/*.* $(prefix)/media
 	$(CP) ../../cache/*.* $(prefix)/cache
 	$(CP) ../../icons/*.* $(prefix)/icons
-	$(CP) ../../srv_files/README $(prefix)/srv_files
+	$(CP) ../../srv_files/*.* $(prefix)/srv_files
 	$(CP) ../../bitmaps/*.* $(prefix)/bitmaps
 	$(CP) ../../options.dat $(prefix)
 	$(CP) ../../keys.dat $(prefix)
 	$(CP) ../../daimonin.p0 $(prefix)
-	$(CP) ../../README.txt $(prefix)
 	$(CP) ../../License $(prefix)
 	$(CP) ../../archdef.dat $(prefix)
 	$(CP) ../../src/daimonin $(prefix)
