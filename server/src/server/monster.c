@@ -905,6 +905,7 @@ void ai_move_towards_enemy(object *op, struct mob_behaviour_param *params, move_
         rv_vector *rv = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE);
         /* TODO: if we can't see op->enemy, goto last known position, or something... ( or do nothing, and make that a separate behaviour ) */
  
+		op->anim_enemy_dir = rv->direction;
         if(rv != NULL) {
             if(rv->distance > 1) {
                 response->type = MOVE_RESPONSE_OBJECT;
@@ -932,6 +933,7 @@ void ai_move_towards_enemy_last_known_pos(object *op, struct mob_behaviour_param
                     map, enemy->last_x, enemy->last_y, 
                     &rv, RV_EUCLIDIAN_DISTANCE)) 
         {
+			op->anim_enemy_dir = rv.direction;
             if(rv.distance > 3) {
                 response->type = MOVE_RESPONSE_COORD;
                 response->data.coord.x = enemy->last_x;
@@ -1164,9 +1166,9 @@ void ai_friendship(object *op, struct mob_behaviour_param *params)
 
         /* Now factor in distance and age of observation (preliminary method) */
         /* TODO: should probably use get_last_known_obj_rv() */
-        get_known_obj_rv(op, tmp, MAX_KNOWN_OBJ_RV_AGE);        
+/*        get_known_obj_rv(op, tmp, MAX_KNOWN_OBJ_RV_AGE);        
         tmp->tmp_friendship += (50 / (int) MAX(tmp->rv.distance,1.0)) * SGN(tmp->tmp_friendship);
-        /* TODO: test last_seen aging */
+*/        /* TODO: test last_seen aging */
         //        tmp->tmp_friendship /= MAX(global_round_tag - tmp->last_seen, 1);
 //        LOG(llevDebug,"ai_friendship(): '%s' -> '%s'. friendship: %d\n",  STRING_OBJ_NAME(op), STRING_OBJ_NAME(tmp->ob), tmp->tmp_friendship);
     }
@@ -1191,7 +1193,10 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
                 /* TODO: should probably use get_last_known_obj_rv() */
                 rv_vector *rv = get_known_obj_rv(op, tmp, MAX_KNOWN_OBJ_RV_AGE);
                 if(rv) 
+				{
+					op->anim_enemy_dir = rv->direction;
                     worst_enemy = tmp;
+				}
             }
         }
     }
@@ -1247,6 +1252,7 @@ int ai_melee_attack_enemy(object *op, struct mob_behaviour_param *params)
     
     /* TODO: the following test should be done in skill_attack! */
     /* TODO: what if wc underflows? */
+	op->anim_enemy_dir = rv->direction;
     if(QUERY_FLAG(op, FLAG_RUN_AWAY)) 
         rv->part->stats.wc -= 10;
     skill_attack(op->enemy,rv->part,0,NULL);
@@ -1278,6 +1284,7 @@ int ai_bow_attack_enemy(object *op, struct mob_behaviour_param *params)
     
 //    LOG(llevDebug,"ai_distance_attack_enemy(): '%s' -> '%s'\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(op->enemy));
 
+	op->anim_enemy_dir = rv->direction;
     direction = rv->direction;
     if(QUERY_FLAG(op,FLAG_CONFUSED))
         direction = absdir(direction + RANDOM()%5 - 2);
@@ -1405,6 +1412,7 @@ int ai_spell_attack_enemy(object *op, struct mob_behaviour_param *params)
     
 //    LOG(llevDebug,"ai_distance_attack_enemy(): '%s' -> '%s'\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(op->enemy));
 
+	op->anim_enemy_dir = rv->direction;
     direction = rv->direction;
     if(QUERY_FLAG(op,FLAG_CONFUSED))
         direction = absdir(direction + RANDOM()%5 - 2);
@@ -1790,7 +1798,7 @@ static inline int direction_from_response(object *op, move_response *response)
 /* Move-monster returns 1 if the object has been freed, otherwise 0.  */
 int move_monster(object *op) {
     move_response response;
-    int dir;
+    int dir, tmp_dir;
     int success;
     struct mob_behaviour *behaviour;
     
@@ -1803,6 +1811,7 @@ int move_monster(object *op) {
      * First, some general monster-managing
      */      
 
+	tmp_dir = op->anim_enemy_dir;
 	op->anim_enemy_dir = -1;      /* control the facings 25 animations */
 	op->anim_moving_dir = -1;     /* the same for movement */
 	
@@ -1888,18 +1897,6 @@ int move_monster(object *op) {
             break;
     }
     
-	/* this is a kind hack... we will do here later something like this for animation
-	 * -> normal move (or running)
-	 * -> moving attacking (drawn sword)
-	 * -> hit action (swinging weapon, firing bow, ...)
-	 */
-	if(op->enemy && op->enemy_count ==  op->enemy->count)
-	{
-		if(dir)
-			op->anim_enemy_dir = dir;
-		else
-			op->anim_enemy_dir = op->facing;
-	}
 	return 0;
 }
 
