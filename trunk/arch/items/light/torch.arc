@@ -18,7 +18,7 @@ food 500
 speed 0.15
 last_eat 1
 nrof 1
-glow_radius -2
+last_sp 3
 end
 Object torch_burnt
 name burnt out torch
@@ -27,6 +27,8 @@ face torch_burnt.101
 type 74
 material 144
 value 0
+last_sp 0
+glow_radius 0
 weight 425
 food 0
 nrof 1

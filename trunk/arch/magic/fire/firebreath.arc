@@ -4,6 +4,7 @@ type 88
 layer 7
 walk_on 1
 fly_on 1
+glow_radius 1
 face fire.101
 anim
 fire.101
@@ -20,6 +21,5 @@ level 1
 attack_fire 100
 terrain_flag 32767
 flying 1
-glow_radius 3
 no_pick 1
 end

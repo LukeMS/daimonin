@@ -43,7 +43,7 @@ RSC=rc.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_CONSOLE" /D "_MBCS" /YX /FD /c
-# ADD CPP /nologo /MD /W3 /Gi /GX /O2 /Ob2 /I "..\..\..\src\include" /I "..\..\..\src\random_maps" /I "..\..\..\src\plugin_python\include" /I "c:\Python22\include" /D "_CONSOLE" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "DEBUG" /YX"preheader.pch" /FD /c
+# ADD CPP /nologo /MD /W3 /Gi /GX /O2 /Ob2 /I "..\..\..\src\include" /I "..\..\..\src\random_maps" /I "..\..\..\src\plugin_python\include" /I "c:\Python23\include" /D "_CONSOLE" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "DEBUG" /YX"preheader.pch" /FD /c
 # ADD BASE RSC /l 0x407 /d "NDEBUG"
 # ADD RSC /l 0x407 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -51,7 +51,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /machine:I386
-# ADD LINK32 libcross.lib wsock32.lib winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /pdb:none /machine:I386 /libpath:"libcross\ReleaseLog" /libpath:"c:\python22\libs"
+# ADD LINK32 libcross.lib wsock32.lib winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /pdb:none /machine:I386 /libpath:"libcross\ReleaseLog" /libpath:"c:\python23\libs"
 # SUBTRACT LINK32 /debug
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
@@ -73,7 +73,7 @@ PostBuild_Cmds=copy ReleaseLog\*.exe ..\..\..\*.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MD /W3 /Gi /GX /O2 /Ob2 /I "..\..\..\source\include" /I "..\..\..\source\random_maps" /I "..\..\..\source\plugin_python\include" /I "d:\Python22\include" /D "_CONSOLE" /D "DEBUG" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "DEBUG_MOVEATTACK" /YX"preheader.pch" /FD /c
-# ADD CPP /nologo /MDd /W3 /Gm /Gi /GX /Zi /Od /Op /Ob2 /I "..\..\..\src\include" /I "..\..\..\src\random_maps" /I "..\..\..\src\plugin_python\include" /I "c:\Python22\include" /D "_CONSOLE" /D "DEBUG" /D "DEBUG_MOVEATTACK" /D "WIN32" /D "NDEBUG" /D "_MBCS" /FR /YX"preheader.pch" /FD /c
+# ADD CPP /nologo /MDd /W3 /Gm /Gi /GX /Zi /Od /Op /Ob2 /I "..\..\..\src\include" /I "..\..\..\src\random_maps" /I "..\..\..\src\plugin_python\include" /I "c:\Python23\include" /D "_CONSOLE" /D "DEBUG" /D "DEBUG_MOVEATTACK" /D "WIN32" /D "NDEBUG" /D "_MBCS" /FR /YX"preheader.pch" /FD /c
 # ADD BASE RSC /l 0x407 /d "NDEBUG"
 # ADD RSC /l 0x407 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -81,7 +81,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 wsock32.lib winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /pdb:none /machine:I386 /libpath:"d:\python22\libs"
-# ADD LINK32 libcross.lib wsock32.lib winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /map /debug /machine:I386 /libpath:"libcross\Debug" /libpath:"c:\python22\libs" /fixed:no
+# ADD LINK32 libcross.lib wsock32.lib winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /map /debug /machine:I386 /libpath:"libcross\Debug" /libpath:"c:\python23\libs" /fixed:no
 # SUBTRACT LINK32 /pdb:none
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
@@ -103,7 +103,7 @@ PostBuild_Cmds=copy Debug\*.exe ..\..\..\*.exe
 # PROP Ignore_Export_Lib 0
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MD /W3 /Gi /GX /Ob2 /I "..\..\..\src\include" /I "..\..\..\src\random_maps" /I "..\..\..\src\plugin_python\include" /I "d:\Python22\include" /D "_CONSOLE" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "DEBUG" /YX"preheader.pch" /FD /c
-# ADD CPP /nologo /MD /W3 /Gm /Gi /GX /Zi /Ob2 /I "..\..\..\src\include" /I "..\..\..\src\random_maps" /I "..\..\..\src\plugin_python\include" /I "c:\Python22\include" /D "_CONSOLE" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "DEBUG" /YX"preheader.pch" /FD /c
+# ADD CPP /nologo /MD /W3 /Gm /Gi /GX /Zi /Ob2 /I "..\..\..\src\include" /I "..\..\..\src\random_maps" /I "..\..\..\src\plugin_python\include" /I "c:\Python23\include" /D "_CONSOLE" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "DEBUG" /YX"preheader.pch" /FD /c
 # ADD BASE RSC /l 0x407 /d "NDEBUG"
 # ADD RSC /l 0x407 /d "NDEBUG"
 BSC32=bscmake.exe
@@ -112,7 +112,7 @@ BSC32=bscmake.exe
 LINK32=link.exe
 # ADD BASE LINK32 libcross.lib wsock32.lib winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /pdb:none /machine:I386 /libpath:"d:\python22\libs" /libpath:"libcross\ReleaseLog"
 # SUBTRACT BASE LINK32 /debug
-# ADD LINK32 libcross.lib wsock32.lib winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /pdb:none /debug /machine:I386 /libpath:"libcross\ReleaseDebug" /libpath:"c:\python22\libs"
+# ADD LINK32 libcross.lib wsock32.lib winmm.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:console /pdb:none /debug /machine:I386 /libpath:"libcross\ReleaseDebug" /libpath:"c:\python23\libs"
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
 PostBuild_Cmds=copy ReleaseDebug\*.exe ..\..\..\*.exe

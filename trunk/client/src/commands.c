@@ -1036,11 +1036,8 @@ void UpdateItemCmd(unsigned char *data, int len)
 			return;
         }
         *name='\0';
-/*		if(cpl.container_tag == tag)
-			loc = -1;
-		else*/
-	        loc=ip->env?ip->env->tag:0;
-LOG(-1,"UPDATE: loc:%d tag:%d\n",loc, tag); 
+	    loc=ip->env?ip->env->tag:0;
+		/*LOG(-1,"UPDATE: loc:%d tag:%d\n",loc, tag); */
         weight=(int)(ip->weight * 1000);
         face = ip->face;
 		request_face(face,0);

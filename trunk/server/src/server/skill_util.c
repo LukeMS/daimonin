@@ -1521,16 +1521,8 @@ int do_skill_attack(object *tmp, object *op, char *string) {
 		}
 #endif
 	  }
- 
-    /* lose invisiblity/hiding status for running attacks */
- 
-          if(op->type==PLAYER && op->contr->tmp_invis) {
-                 op->contr->tmp_invis=0;
-                 op->hide=0;
-                 update_object(op,UP_OBJ_FACE);
-          }
- 
-          success = attack_ob(tmp,op);
+  
+      success = attack_ob(tmp,op);
           
    /* print appropriate  messages to the player */
  
@@ -1544,7 +1536,7 @@ int do_skill_attack(object *tmp, object *op, char *string) {
                            "%s %s you!",query_name(op),buf);
           }
  
-          return success;
+	return success;
 
 }                         
 

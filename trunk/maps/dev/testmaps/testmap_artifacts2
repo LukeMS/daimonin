@@ -5,6 +5,7 @@ Creator: Daimonin Map Editor
 Date:    6/4/2003
 endmsg
 width 24
+darkness 700
 height 24
 difficulty 1
 tile_path_1 testmap_artifacts1

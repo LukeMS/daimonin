@@ -3527,10 +3527,8 @@ void apply_player_light(object *who, object *op)
 		    SET_FLAG(op, FLAG_CURSED);
 		if(QUERY_FLAG(op, FLAG_PERM_DAMNED))
 			SET_FLAG(op, FLAG_DAMNED);
-        new_draw_info_format(NDI_UNIQUE, 0, who,
-            "You unlight the %s.", query_name(op));
-        if(op->glow_radius>0)
-            op->glow_radius*=-1;
+        new_draw_info_format(NDI_UNIQUE, 0, who, "You unlight the %s.", query_name(op));
+        op->glow_radius=0;
         CLEAR_FLAG(op, FLAG_APPLIED);
         CLEAR_FLAG(op,FLAG_CHANGING);
         CLEAR_FLAG(op,FLAG_ANIMATE);
@@ -3546,22 +3544,23 @@ void apply_player_light(object *who, object *op)
          * them implicit.
          */
 
-        /* TYPE_LIGHT_APPLY light sources with glow_radius 0 are useless - for example
-         * burnt out torches. The burnt out lights are still from same type
+        /* TYPE_LIGHT_APPLY light sources with last_sp (aka glow_radius) 0 are useless -
+		 * for example burnt out torches. The burnt out lights are still from same type
          * because they are perhaps applied from the player as they burnt out
          * and we don't want a player applying a illegal item.
          */
-        if(!op->glow_radius)
+        if(!op->last_sp)
         {
-            new_draw_info_format(NDI_UNIQUE, 0, who,
-                "The %s can't be light.",
-                query_name(op));
+            new_draw_info_format(NDI_UNIQUE, 0, who, "The %s can't be light.", query_name(op));
             return;
         }
 
 
-        /* if glow_radius is <0, we have a unlight light source */
-        if(op->glow_radius <0)
+        /* if glow_radius == 0, we have a unlight light source.
+		/* before we can put it in the hand to use it, we have to turn
+		 * the light on.
+		 */
+        if(!op->glow_radius)
         {
             if(op->last_eat) /* we have a non permanent source */
             {
@@ -3597,7 +3596,7 @@ void apply_player_light(object *who, object *op)
                 
             new_draw_info_format(NDI_UNIQUE, 0, who,
                 "You prepare %s to light.", query_name(op));
-            op->glow_radius*=-1;
+            op->glow_radius = (sint8) op->last_sp;
             if(op->last_eat) /* we have a non permanent source */
                 SET_FLAG(op,FLAG_CHANGING);
             SET_FLAG(op,FLAG_ANIMATE);
@@ -3608,6 +3607,7 @@ void apply_player_light(object *who, object *op)
         }
         else
         {
+			/* remove any other applied light source first */
             for(tmp=who->inv;tmp!=NULL;tmp=tmp->below)
             {
                 if(tmp->type==op->type && QUERY_FLAG(tmp, FLAG_APPLIED)&&tmp!=op) 
@@ -3624,7 +3624,7 @@ void apply_player_light(object *who, object *op)
 					if(QUERY_FLAG(tmp, FLAG_PERM_DAMNED))
 						SET_FLAG(tmp, FLAG_DAMNED);
                     new_draw_info_format(NDI_UNIQUE, 0, who,"You unlight the %s.", query_name(tmp));
-                    tmp->glow_radius*=-1;
+                    tmp->glow_radius=0;
                     CLEAR_FLAG(tmp, FLAG_APPLIED);
                     CLEAR_FLAG(tmp,FLAG_CHANGING);
                     CLEAR_FLAG(tmp,FLAG_ANIMATE);
@@ -3650,7 +3650,7 @@ void apply_player_light(object *who, object *op)
  * Also burns up burnable material too. First object in the inventory is
  * the selected object to "burn". -b.t.
  */
-
+/* i have this item type not include in daimonin atm - MT-2004 */
 void apply_lighter(object *who, object *lighter) {
     object *item;
     tag_t count;

@@ -126,9 +126,25 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam, int base_
 	/* Adjust roll for various situations. */
     if ( ! simple_attack)
         roll += adj_attackroll(hitter,op); 
-
+    
     if(hitter->type ==PLAYER)
 		hitter->contr->anim_flags |= PLAYER_AFLAG_ENEMY; /* so we do one swing */
+
+    /* Force player to face enemy */
+    if(hitter->type ==PLAYER) {
+        rv_vector dir;
+        get_rangevector(hitter, op, &dir, RV_MANHATTAN_DISTANCE);
+
+        if(dir.direction != hitter->direction) {
+            if(hitter->head) {
+                hitter->head->anim_moving_dir = dir.direction;
+            } else {
+                hitter->anim_moving_dir = dir.direction;    
+            }
+            hitter->direction = dir.direction;
+            update_object(hitter,UP_OBJ_FACE);
+        }
+    }
 
 #if 0/* attack timing test */
     if(op->type ==PLAYER)
@@ -159,6 +175,8 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam, int base_
 	{
 		int hitdam = base_dam;
     
+        CLEAR_FLAG(op,FLAG_SLEEP); /* at this point NO ONE will still sleep */
+
 	    /* i don't use sub_type atm - using it should be smarter i the future */
 		if(hitter->type == ARROW)
 			play_sound_map(hitter->map, hitter->x, hitter->y, SOUND_ARROW_HIT, SOUND_NORMAL);
@@ -196,19 +214,13 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam, int base_
 
 		if ( ! simple_attack)
         {
-            /* If you hit something, the victim should *always* wake up.
-             * Before, invisible hitters could avoid doing this. 
-             * -b.t. */
-            if (QUERY_FLAG (op, FLAG_SLEEP))
-                CLEAR_FLAG(op,FLAG_SLEEP);
 
-            /* If the victim can't see the attacker, it may alert others
-             * for help. */
+			/* A NPC call for help - this should be part of AI
             if (op->type != PLAYER && ! can_see_enemy (op, hitter)
                 && ! get_owner (op) && rndm(0, op->stats.Int))
                 npc_call_help (op);
-
-            /* if you were hidden and hit by a creature, you are discovered*/
+			*/
+			/* old HIDE code
             if (op->hide && QUERY_FLAG (hitter, FLAG_ALIVE)) {
                 make_visible (op);
                 if (op->type == PLAYER)
@@ -216,6 +228,7 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam, int base_
                                    "You were hit by a wild attack. "
                                    "You are no longer hidden!");
             }
+			*/
 
             /* thrown items (hitter) will have various effects
              * when they hit the victim.  For things like thrown daggers,
@@ -1870,14 +1883,9 @@ int adj_attackroll (object *hitter, object *target) {
    /* determine the condtions under which we make an attack.  
     * Add more cases, as the need occurs. */
 
-  if(!can_see_enemy(attacker,target)) {
-     /* target is unseen */
-    if(IS_INVISIBLE(target,attacker) || QUERY_FLAG(attacker,FLAG_BLIND))
-      adjust -= 10;
-     /* dark map penalty for the hitter (lacks infravision if we got here). */
-    else if(target->map&&target->map->darkness>0&&!stand_in_light(target))
-      adjust -= target->map->darkness;
-  }
+  /* is invisible means, we can't see it - same for blind */
+  if(IS_INVISIBLE(target,attacker) || QUERY_FLAG(attacker,FLAG_BLIND))
+	adjust -= 12;
 
   if(QUERY_FLAG(attacker,FLAG_SCARED))
     adjust -= 3;

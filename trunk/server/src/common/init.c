@@ -55,9 +55,9 @@ RESET_LOCATION_TIME,
 0,0,0,0,0,0,0  /* worldmap settings*/
 };
 
-/* daytime & daytime (world) darkness */
-unsigned long todtick;
+/* daytime counter (day & night / lightning system) */
 int world_darkness;
+unsigned long todtick;
 archetype *level_up_arch=NULL;
 
 

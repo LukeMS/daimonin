@@ -132,9 +132,9 @@ void swap_map(mapstruct *map)
     for(i=0; i<TILED_MAPS; i++) 
 	{
 		/* if there is a map, is load AND in memory and players on OR perm_load, then... */
-        if (map->tile_map[i] && map->tile_map[i]->in_memory==MAP_IN_MEMORY && 
-							(map->tile_map[i]->player_first || map->tile_map[i]->perm_load))
-			return; /* no swap */
+//        if (map->tile_map[i] && map->tile_map[i]->in_memory==MAP_IN_MEMORY && 
+//							(map->tile_map[i]->player_first || map->tile_map[i]->perm_load))
+//			return; /* no swap */
 	}
 
 	/* when we are here, map is save to swap! */

@@ -204,7 +204,7 @@ void init_archetypes() { /* called from add_player() and edit() */
   arch_init = 0;
   empty_archetype=find_archetype("empty_archetype");
   base_info_archetype=find_archetype("base_info");
-  aggro_wp_archetype=find_archetype("waypoint");
+  wp_archetype=find_archetype("waypoint");
 /*  init_blocksview();*/
 }
 
@@ -330,14 +330,15 @@ archetype *get_archetype_struct() {
  */
 void first_arch_pass(FILE *fp) {
   object *op;
+  void *mybuffer;
   archetype *at,*prev=NULL,*last_more=NULL;
-  int i,first=2;
+  int i;
 
   op=get_object();
   op->arch=first_archetype=at=get_archetype_struct();
-  while((i=load_object(fp,op,first,MAP_STYLE))) 
+  mybuffer = create_loader_buffer(fp);
+  while((i=load_object(fp,op,mybuffer,LO_REPEAT,MAP_STYLE))) 
   {
-    first=0;
 	/* use copy_object_data() - we don't want adjust any speed_left here! */
     copy_object_data(op,&at->clone); 
 	/*
@@ -386,8 +387,9 @@ void first_arch_pass(FILE *fp) {
     clear_object(op);
     op->arch=at;
   }
-  free_object(op);
-  free(at);
+	delete_loader_buffer(mybuffer);
+	free_object(op);
+	free(at);
 }
 
 /*

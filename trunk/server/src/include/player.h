@@ -224,7 +224,6 @@ typedef struct pl_player
   
   uint32 known_spell:1;     /* True if you know the spell of the wand */
   uint32 last_known_spell:1;/* What was last updated with draw_stats() */
-  uint32 tmp_invis:1;       /* Will invis go away when we attack ? */
   uint32 update_skills:1;   /* update skill list when set */
 #ifdef EXPLORE_MODE
   uint32 explore:1;         /* if True, player is in explore mode */

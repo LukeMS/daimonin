@@ -22,11 +22,26 @@
 */
 #include <include.h>
 
-static double dark_value[4] = {
-    (const double) 1,
-        (const double)0.60,
-        (const double)0.40, 
-        (const double)0.30
+static double dark_value[DARK_LEVELS] = {
+    1.0,
+	0.828,
+    0.685,
+    0.542, 
+    0.399,
+    0.256, 
+    0.113
+/* thats the "normal values if we add 
+ * 1.0 / 7 =~0.143
+ * but we want it a bit darker - so we
+ * sub 3
+ *
+	0.858,
+    0.715,
+    0.572, 
+    0.429,
+    0.286, 
+    0.143
+	*/
 };         
     
 struct _anim *start_anim; /* anim queue of current active map */
@@ -129,8 +144,10 @@ _Sprite *sprite_tryload_file(char *fname, uint32 flag,SDL_RWops *rwop)
                     colors[i].b= bitmap->format->palette->colors[i].b;
                 }
 
-                /* we want 4 dark level. level 1 is our original brightness */
-                for(s=1;s<DARK_LEVELS;s++)
+                /* we want 7+1 dark level. level 0 is our original brightness ,
+				 * level 6 is darkest - level 7 is "total dark" = no light 
+				 */
+                for(s=1;s<DARK_LEVELS;s++) /* 1-6 darkened versions */
                 {
                     /* we adjust the colors. */
                     for(i=0;i<bitmap->format->palette->ncolors;i++)
@@ -217,9 +234,9 @@ static void fow_scale(SDL_Color *col_tab, SDL_Color*grey_tab, int numcol, int rc
         if(r != rcol || g != gcol || b != bcol )
         {
             g = 0.212671 * r + 0.715160 * g + 0.072169 * b;
-            r = (g * dark_value[2]);
-            b = (g * dark_value[2])+16; /* its a try... */
-            g = (g * dark_value[2]);
+            r = (g * 0.34);
+            b = (g * 0.34)+16; /* its a try... */
+            g = (g * 0.34);
         }
         grey_tab[i].r = (int) r;
         grey_tab[i].g = (int) g;

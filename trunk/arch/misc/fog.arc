@@ -33,7 +33,6 @@ name strange glowing fog
 layer 7
 type 79
 face fog.111
-glow_radius 2
 other_arch fog_glow1
 terrain_flag 65535
 anim
@@ -64,7 +63,6 @@ Object fog_glow2
 name strange glowing fog
 type 79
 face fog.111
-glow_radius 3
 layer 7
 terrain_flag 65535
 other_arch fog_glow2

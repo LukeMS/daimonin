@@ -44,6 +44,8 @@ typedef struct _msglang {
 extern spell spells[NROFREALSPELLS];
 static object *spawn_monster(object *gen, object *orig, int range);
 
+#define RETURNHOME_WP_NAME "- home -"
+
 /* update (or clear) an npc's enemy. Performs m ost of the housekeeping
  * related to switching enemies. 
  * You should always use this method to set (or clear) a npc's enemy.
@@ -73,7 +75,7 @@ void set_npc_enemy(object *npc, object *enemy, rv_vector *rv)
     if(enemy) {
         if(rv == NULL)
             rv = &rv2;
-        get_rangevector(npc, enemy, rv, 0x8); 
+        get_rangevector(npc, enemy, rv, RV_DIAGONAL_DISTANCE); 
         npc->enemy_count = enemy->count;
         
         npc->last_eat = 0;	/* important: thats our "we lose aggro count" - reset to zero here */
@@ -81,13 +83,52 @@ void set_npc_enemy(object *npc, object *enemy, rv_vector *rv)
         /* monster has changed status from normal to attack - lets hear it! */
         if(npc->enemy == NULL && !QUERY_FLAG(npc,FLAG_FRIENDLY))
             play_sound_map(npc->map, npc->x, npc->y, SOUND_GROWL, SOUND_NORMAL);
-    } 
+    } else {
+        /* If mob lost aggro, let it return home */
+        
+        if(OBJECT_VALID(npc->enemy, npc->enemy_count)) {
+            object *base = insert_base_info_object(npc);
+            object *wp = get_active_waypoint(npc);
+
+            if(base && !wp && wp_archetype) {
+                object *return_wp = get_return_waypoint(npc);
+
+#ifdef DEBUG_PATHFINDING        
+                LOG(llevDebug,"set_npc_enemy(): %s lost aggro and is returning home (%s:%d,%d)\n", 
+                        npc->name, base->slaying, base->x, base->y); 
+#endif            
+                if(! return_wp) {
+                    return_wp = arch_to_object(wp_archetype);
+                    insert_ob_in_ob(return_wp, npc);
+                    return_wp->owner = npc;
+                    return_wp->ownercount = npc->count;
+                    FREE_AND_COPY_HASH(return_wp->name, "- home -");
+                    SET_FLAG(return_wp, FLAG_REFLECTING); /* mark as return-home wp */
+                    SET_FLAG(return_wp, FLAG_NO_ATTACK);  /* mark as best-effort wp */
+                }
+
+                return_wp->stats.hp = base->x;
+                return_wp->stats.sp = base->y;
+                FREE_AND_ADD_REF_HASH(return_wp->slaying, base->slaying);
+                SET_FLAG(return_wp, FLAG_CURSED);     /* Activate wp */
+                return_wp->stats.Int = 0;             /* reset best-effort timer */
+ 
+                /* setup move_type to use waypoints */
+                return_wp->move_type = npc->move_type;
+                npc->move_type = (npc->move_type & LO4) | WPOINT;
+
+                wp = return_wp;
+            }
+
+            /* TODO: add a little pause to the active waypoint */
+        }
+    }
     npc->enemy = enemy;
     /* Update speed */
     set_mobile_speed(npc, 0);
 
     /* Setup aggro waypoint */
-    if(! aggro_wp_archetype) {
+    if(! wp_archetype) {
 #ifdef DEBUG_PATHFINDING        
         LOG(llevDebug,"set_npc_enemy(): Aggro waypoints disabled\n"); 
 #endif            
@@ -99,7 +140,7 @@ void set_npc_enemy(object *npc, object *enemy, rv_vector *rv)
     
     /* Create a new aggro wp for npc? */
     if(!aggro_wp && enemy) {
-        aggro_wp = arch_to_object(aggro_wp_archetype);
+        aggro_wp = arch_to_object(wp_archetype);
         insert_ob_in_ob(aggro_wp, npc);
         SET_FLAG(aggro_wp, FLAG_DAMNED); /* Mark as aggro WP */
         aggro_wp->owner = npc;
@@ -157,11 +198,6 @@ object *check_enemy(object *npc, rv_vector *rv) {
 		}
     }
 	
-	/* first check the easy stuff... enemy ptr, count, remove and "still somewhere we can reach".
-	 * also check here for "self hate" ;)
-	 !on_same_map(npc, npc->enemy) || <- this is in can_detect_enemy()
-	 */
-
     /*LOG(-1,"CHECK_START: %s -> %s (%x - %x)\n", query_name(npc),query_name(npc->enemy), npc->enemy?npc->enemy->count:2,npc->enemy_count);*/
     if(npc->enemy == NULL)
         return NULL;
@@ -282,355 +318,116 @@ object *find_enemy(object *npc, rv_vector *rv)
                 set_npc_enemy(npc, tmp, rv);
         }
     }
-	else /* here we have a valid enemy before we called this function and its still the same */
-	{
-		/* if our enemy is to far away ... */
-		if((int)rv->distance >= (MAX_AGGRO_RANGE>npc->stats.Wis?MAX_AGGRO_RANGE:npc->stats.Wis))
-		{
-			/* then start counting... */
-			if(++npc->last_eat > MAX_AGGRO_TIME)
-			{
-				/* last try - if for some reason a valid attacker there - give it a try */
-				if(OBJECT_VALID(npc->attacked_by, npc->attacked_by_count)) 
-                    set_npc_enemy(npc, npc->attacked_by, rv);
-                else if(npc->enemy)
-                    set_npc_enemy(npc, NULL, NULL);
-                
-                return npc->enemy;
-			}
-		}
-		else
-			npc->last_eat = 0; /* our mob is aggroed again - because target is in range again */
-	}
 
     npc->attacked_by = NULL;     /* always clear the attacker entry */        
     return tmp;
 }
 
-/* Sees if this monster should wake up.
- * Currently, this is only called from move_monster, and
- * if enemy is set, then so should be rv.
+/* this is for mobs:
+ * check this target - is it a possible valid enemy?
+ * this include possible to see, possible to reach...
+ * This must be used BEFORE we assign target as op enemy
  */
-
-int check_wakeup(object *op, object *enemy, rv_vector *rv) {
-    int radius = op->stats.Wis>MIN_MON_RADIUS?op->stats.Wis:MIN_MON_RADIUS;
-
-    /* Trim work - if no enemy, no need to do anything below */
-    if (!enemy) return 0;
-
-    /* blinded monsters can only find nearby objects to attack */
-    if(QUERY_FLAG(op, FLAG_BLIND) && !QUERY_FLAG(op, FLAG_SEE_INVISIBLE)) 
-	radius = MIN_MON_RADIUS;
-
-    /* This covers the situation where the monster is in the dark 
-     * and has an enemy. If the enemy has no carried light (or isnt 
-     * glowing!) then the monster has trouble finding the enemy. 
-     * Remember we already checked to see if the monster can see in 
-     * the dark. */
-
-    else if(op->map&&op->map->darkness>0&&enemy&&!IS_INVISIBLE(enemy,op)&&
-	    !stand_in_light(enemy)&&(!QUERY_FLAG(op,FLAG_SEE_IN_DARK)||
-	    !QUERY_FLAG(op,FLAG_SEE_INVISIBLE))) {
-		int dark = radius/(op->map->darkness);
-		radius = (dark>MIN_MON_RADIUS)?(dark+1):MIN_MON_RADIUS;
-    }
-    else if(!QUERY_FLAG(op,FLAG_SLEEP)) return 1;
-
-    /* enemy should already be on this map, so don't really need to check
-     * for that.
-     */
-    if (rv->distance < QUERY_FLAG(enemy, FLAG_STEALTH)?(radius/2)+1:radius) {
-	CLEAR_FLAG(op,FLAG_SLEEP);
-	return 1;
-    }
-    return 0;
-}
-
-/* determine if we can 'detect' the enemy. Check for walls blocking the
- * los. Also, just because its hidden/invisible, we may be sensitive/smart 
- * enough (based on Wis & Int) to figure out where the enemy is. -b.t. 
- * modified by MSW to use the get_rangevector so that map tiling works
- * properly.  I also so odd code in place that checked for x distance
- * OR y distance being within some range - that seemed wrong - both should
- * be within the valid range. MSW 2001-08-05
- */
-/* have not checked this function MT -2003 */
-/* better to check this function asap :) looks weird in many parts... MT-2003 - moved to todo list */
-int can_detect_enemy (object *op, object *enemy, rv_vector *rv) {
-
-    /* null detection for any of these condtions always */
-    if(!op || !enemy || !op->map || !enemy->map)
+int can_detect_target (object *op, object *target, int range, int srange, rv_vector *rv) 
+{
+    if(!op || !target || !on_same_map(op, target)) /* on_same_map() will check for legal maps too */
         return 0;
-
-    /* If the monster (op) has no way to get to the enemy, do nothing */
-    if (!on_same_map(op, enemy))
-        return 0;
-
-#if 0
-    /* this causes problems, dunno why.. */
-    /* are we trying to look through a wall? */ 
-    /* probably isn't safe for multipart maps either */
-    if(path_to_player(op->head?op->head:op,enemy,0)==0) return 0;
-#endif
 
 	/* we check for sys_invisible and normal */
-	/* this tmp_invis MUST BE CHECKED - i don't use it in new invis code - add or remove */
-	if(IS_INVISIBLE(enemy,op) && (!enemy->contr || !enemy->contr->tmp_invis))
+	if(IS_INVISIBLE(target,op))
 	    return 0;
 
-    get_rangevector(op, enemy, rv, 0);
+    get_rangevector(op, target, rv, 0);
 
+	if(QUERY_FLAG(target, FLAG_STEALTH) && !QUERY_FLAG(op, FLAG_XRAYS))
+	{
+		if(srange < (int) rv->distance)
+			return 0;
+	}
+	else
+	{
+		if(range < (int) rv->distance)
+			return 0;
+	}
 
-		/* opponent is unseen? We still have a chance to find them if
-     * they are 1) standing in dark square.
-     */
-    if(!can_see_enemy(op,enemy)) {
-	int radius = MIN_MON_RADIUS;
-	/* This is percentage change of being discovered while standing
-	 * *adjacent* to the monster */
-	int hide_discovery = enemy->hide?op->stats.Int/5:-1;
-
-	/* The rest of this is for monsters. Players are on their own for
-	 * finding enemies!
+	/* at this point we should handle hide in shadows and light/shadow effects
+	 * of the tile the player/npc is in.
+	 * depending on infravision or blind of the mobile we can create here more
+	 * tricky effects.
 	 */
-	if(op->type==PLAYER) return 0;
 
-	/* Determine Detection radii */
-	if(!enemy->hide)  /* to detect non-hidden (eg dark/invis enemy) */
-	    radius = (op->stats.Wis/5)+1>MIN_MON_RADIUS?(op->stats.Wis/5)+1:MIN_MON_RADIUS;
-	else { /* a level/INT/Dex adjustment for hiding */
-	    object *sk_hide;
-	    int bonus = (op->level/2) + (op->stats.Int/5);
+	return 1;
+}
 
-	    if(enemy->type==PLAYER) {
-		if((sk_hide = find_skill(enemy,SK_HIDING)))
-		    bonus -= sk_hide->level;
-		else { 
-		    LOG(llevBug,"BUG: can_detect_enemy() got hidden player w/o hiding skill!");
-		    make_visible(enemy);
-		    radius=radius<MIN_MON_RADIUS?MIN_MON_RADIUS:radius;
-		}
-	    }
-	    else /* enemy is not a player */
-		bonus -= enemy->level;
+/* controls a mob still can see/detect its enemy.
+ * includes visibility but also map & area control.
+ */
+int can_detect_enemy (object *op, object *enemy, rv_vector *rv)
+{
 
-	    radius += bonus/5;
-	    hide_discovery += bonus*5;
-	} /* else creature has modifiers for hiding */
-
-	/* Radii stealth adjustment. Only if you are stealthy 
-	 * will you be able to sneak up closer to creatures */ 
-	if(QUERY_FLAG(enemy,FLAG_STEALTH)) 
-	    radius = radius/2, hide_discovery = hide_discovery/3;
-
-	/* Radii adjustment for enemy standing in the dark */ 
-	if(op->map->darkness>0 && !stand_in_light(enemy)) {
-
-	    /* on dark maps body heat can help indicate location with infravision.
-	     * There was a check for immunity for fire here (to increase radius) -
-	     * I'm not positive if that makes sense - something could be immune to fire
-	     * but not be any warmer blooded than something else.
-	     */
-	    if(QUERY_FLAG(op,FLAG_SEE_IN_DARK) && is_true_undead(enemy))
-		radius += op->map->darkness/2;
-	    else
-		radius -= op->map->darkness/2;
-
-	    /* op next to a monster (and not in complete darkness) 
-	    * the monster should have a chance to see you. */
-	    if(radius<MIN_MON_RADIUS && op->map->darkness<5 && rv->distance<=1)
-		radius = MIN_MON_RADIUS;
-	} /* if on dark map */
-
-	/* Lets not worry about monsters that have incredible detection
-	 * radii, we only need to worry here about things the player can
-	 * (potentially) see. 
-	 * Increased this from 5 to 13 - with larger map code, things that
-	 * far out are visible.  Note that the distance field in the
-	 * vector is real distance, so in theory this should be 18 to
-	 * find that.
-	 */
-	if(radius>10) radius = 13;
-
-	/* Enemy in range! Now test for detection */
-	if ((int) rv->distance <= radius) {
-	    /* ah, we are within range, detected? take cases */
-	    if(!IS_INVISIBLE(enemy,op)) /* enemy in dark squares... are seen! */
-		return 1;
-	    else if(enemy->hide||(enemy->contr&&enemy->contr->tmp_invis)) { 
-		/* hidden or low-quality invisible */  
-
-		/* There is a a small chance each time we check this function 
-		 * that we can detect hidden enemy. This means the longer you stay 
-		 * near something, the greater the chance you have of being 
-		 * discovered. */
-		if(enemy->hide && (rv->distance <= 1) && (RANDOM()%100<=hide_discovery)) {
-		    make_visible(enemy);
-		    /* inform players of new status */
-		    if(enemy->type==PLAYER && player_can_view(enemy,op)) 
-			new_draw_info_format(NDI_UNIQUE,0, enemy,
-					     "You are discovered by %s!",op->name);
-		    return 1; /* detected enemy */ 
-		} /* if enemy is hiding */
-
-		/* If the hidden/tmp_invis enemy is nearby we accellerate the time of 
-		 * becoming unhidden/visible (ie as finding the enemy is easier)
-		 * In order to leave actual discovery (invisible=0 state) to
-		 * be handled above (not here) we only decrement so that 
-		 * enemy->invisible>1 is preserved. 
-		 */
-		/* ok, here we need some more tricky. invisible means always invisible
-		 * until a.) the effect wears out or b.) we can see it (by get see_invisible).
-		 * hiding is something really different.
-		 * I think i will handle player different - here simple spells will be broken
-		 * when you attack invisible. But heavy magic like the one ring will still
-		 * in effect even we attack. Or better: the item gets a "timeout" of x seconds
-		 * - then the item reinstall the invisibility. MT-11-2002 
-		 */
-		/*
-		if((enemy->invisible-=RANDOM()%(op->stats.Int+2))<1) 
-		    enemy->invisible=1;
-		*/
-	    } 
-		
-		/* enemy is hidding or invisible */
-
-	    /* MESSAGING: SO we didnt find them (wah!), we may warn a 
-	     * player that the monster is getting close to discovering them. 
-	     *
-	     * We only warn the player if: 
-	     *   1) player has los to the monster
-	     *   2) random value based on player Int value
-	     */
-	    if(enemy->type==PLAYER 
-	       && (RANDOM()%(enemy->stats.Int+10)> MAX_STAT/2)
-	       && player_can_view(enemy,op)) { 
-		    new_draw_info_format(NDI_UNIQUE,0, enemy, 
-					 "You see %s noticing your position.", query_name(op));
-	    } /* enemy is a player */
-
+    if(!op || !enemy || !on_same_map(op, enemy)) /* on_same_map() will check for legal maps too */
         return 0;
-	} /* creature is withing range */
-    } /* if creature can see its enemy */
-    /* returning 1 here suggests to me that if the enemy is visible, no matter
-     * how far away, the creature can see them.  Is that really what we want?
+
+	/* we check for sys_invisible and normal */
+	/* we should include here special parts like wild swings to 
+	 * invisible targets - invisibility is not added to fight
+	 * system atm.
 	 */
+	if(IS_INVISIBLE(enemy,op))
+	    return 0;
+
+	/* here we have to add special effects like hide in shadows and other.*/
+
+	/* if our enemy is to far away ... */
+    get_rangevector(op, enemy, rv, 0);
+	if((int)rv->distance >= (MAX_AGGRO_RANGE>op->stats.Wis?MAX_AGGRO_RANGE:op->stats.Wis))
+	{
+		/* then start counting until our mob lose aggro... */
+		if(++op->last_eat > MAX_AGGRO_TIME)
+		{
+			set_npc_enemy(op, NULL, NULL);
+            return 0;
+		}
+	}
+	else
+		op->last_eat = 0; /* our mob is aggroed again - because target is in range again */
 
     return 1;
 }
 
-/* determine if op stands in a lighted square. This is not a very
- * intellegent algorithm. For one thing, we ignore los here, SO it 
- * is possible for a bright light to illuminate a player on the 
- * other side of a wall (!). 
- */
-
-int stand_in_light( object *op) {
-
-    if(!op) return 0;
-    if(op->glow_radius) return 1;
-
-    if(op->map) {
-		mapstruct *m;
-		int x, y, xt, yt;
-
-	/* Check the spacs with the max light radius to see if any of them
-	 * have lights, and if the light is bright enough to illuminate
-	 * this object.  Like the los.c logic, this presumes a square
-	 * lighting area.
-	 */
-	for (x = op->x - MAX_LIGHT_RADII; x< op->x + MAX_LIGHT_RADII; x++) {
-	    for (y = op->y - MAX_LIGHT_RADII; y< op->y + MAX_LIGHT_RADII; y++) {
-		xt=x;yt=y;
-		if (!(m=out_of_map(op->map, &xt, &yt))) continue;
-
-		if (GET_MAP_LIGHT(m, xt, yt) > MAX(abs(x - op->x), abs(y - op->y))) return 1;
-	    }
-	}
-    }
-    return 0;
-}
-
-/* assuming no walls/barriers, lets check to see if its *possible* 
- * to see an enemy. Note, "detection" is different from "seeing".
- * See can_detect_enemy() for more details. -b.t.
- */
-int can_see_enemy (object *op, object *enemy) {
-  object *looker = op->head?op->head:op;
-
-  /* safety */
-  if(!looker||!enemy||!QUERY_FLAG(looker,FLAG_ALIVE))
-    return 0; 
-
-  /* we dont give a full treatment of xrays here (shorter range than normal,
-   * see through walls). Should we change the code elsewhere to make you 
-   * blind even if you can xray? */
-  if(QUERY_FLAG(looker,FLAG_BLIND)&&
-    (!QUERY_FLAG(looker,FLAG_SEE_INVISIBLE)||QUERY_FLAG(looker,FLAG_XRAYS)))
-    return 0;
-
-  /* checking for invisible things */
-  if(IS_INVISIBLE(enemy,looker)) {
-  
-    /* HIDDEN ENEMY. by definition, you can't see hidden stuff! 
-     * However,if you carry any source of light, then the hidden
-     * creature is seeable (and stupid) */
-    if(has_carried_lights(enemy)) { 
-      if(enemy->hide) { 
-	make_visible(enemy);
-        new_draw_info(NDI_UNIQUE,0, enemy,
-	  "Your light reveals your hidding spot!");
-      }
-      return 1;
-    } else if (enemy->hide) return 0; 
-
-    /* INVISIBLE ENEMY. */
-    if(!QUERY_FLAG(looker,FLAG_SEE_INVISIBLE)
-      &&(is_true_undead(looker)==(int)(QUERY_FLAG(enemy,FLAG_UNDEAD))))
-      return 0;
-
-  } else if(looker->type==PLAYER) /* for players, a (possible) shortcut */
-      if(player_can_view(looker,enemy)) return 1;
-
-  /* ENEMY IN DARK MAP. Without infravision, the enemy is not seen 
-   * unless they carry a light or stand in light. Darkness doesnt
-   * inhibit the undead per se (but we should give their archs
-   * CAN_SEE_IN_DARK, this is just a safety  
-   * we care about the enemy maps status, not the looker.
-   * only relevant for tiled maps, but it is possible that the
-   * enemy is on a bright map and the looker on a dark - in that
-   * case, the looker can still see the enemy
-   */
-  if(enemy->map->darkness>0&&!stand_in_light(enemy) 
-     &&(!QUERY_FLAG(looker,FLAG_SEE_IN_DARK)||
-        !is_true_undead(looker)||!QUERY_FLAG(looker,FLAG_XRAYS)))
-    return 0;
-
-  return 1;
-}
-
 /* Waypoint fields:
- * slaying - destination map (for aggro waypoints: path destination map)
- * title   - name of next wp in chain
- * msg     - precomputed path
- * race    - destination map (for the last used step in the precomputed path)
- * owner   - object that carries wp
- * ownercount - count of owner
- * x,y     - end location for path stored in msg
+ * slaying - destination map (for dynamic waypoints: path destination map)     [user]
+ * title   - name of next wp in chain                                          [user]
+ * msg     - precomputed path                                                  [intern]
+ * race    - destination map (for the last used step in the precomputed path)  [intern]
+ * owner   - object that carries wp (always same as wp->env?)                  [intern]
+ * ownercount - count of owner                                                 [intern]
+ * enemy   - target for dynamic/aggro waypoints                                [intern]
+ * enemycount - count of enemy                                                 [intern]
+ * x,y     - end location for path stored in msg                               [intern]
+ * attacked_by_distance - strlen(msg),used for sanity check of msg offsets     [intern]
+ * move_type - copy to monster's move_type when target reached (for return wps)[intern]
  * stats:
- *   hp, sp  - destination x and y
- *   ac      - wait timer (<= wc)
- *   wc      - wait time
- *   grace   - acceptable distance
- *   food    - current waypoint index in precomputed path
- *   dam     - closest distance to the (local) target
+ *   hp, sp  - destination x and y                                             [user]
+ *   ac      - wait timer (<= wc)                                              [intern]
+ *   wc      - destination wait time                                           [user]
+ *   grace   - acceptable distance                                             [user]
+ *   food    - current waypoint index in precomputed path                      [intern]
+ *   dam     - closest distance to the (local) target                          [intern]
+ *   Str     - number of moves we didn't get closer to (local) target          [intern]
+ *   Int     - number of tried paths we didn't get closer to (local) target    [intern]
+ *             (used only for best-effort waypoints)
  *      
  * flags:
- *   cursed - active (only one active wp per mob!)
- *   paralyzed - path computation requested
- *   damned - set for aggro waypoints, clear for "normal"
- *   confused - set when we fail to find a path (npc is already on best tile)
+ *   cursed - active (only one active wp per mob!)                             [intern/user]
+ *   paralyzed - path computation requested (is not saved)                     [intern]
+ *   damned - set for aggro waypoints, clear for "normal"                      [intern]
+ *   confused - set when we fail to find a path (npc is already on best tile)  [intern]
  *              cleared whenever a path is found.
+ *   no_attack - waypoint is best-effort. It will be considered reached if     [user/intern]
+ *               mob gets stuck.
+ *   reflecting - set to mark a waypoint as a "return-home" waypoint           [intern]
+ *                which contains the mobs stored move_type
  */
 
 /* Find a monster's currently active waypoint, if any */
@@ -650,6 +447,17 @@ object *get_aggro_waypoint(object *op) {
   
   for(wp=op->inv;wp!=NULL;wp=wp->below)
     if(wp->type == TYPE_WAYPOINT_OBJECT && QUERY_FLAG(wp, FLAG_DAMNED)) 
+      break;
+  
+  return wp;
+}
+
+/* Find a monster's current return-home wp, if any */
+object *get_return_waypoint(object *op) {
+  object *wp = NULL;
+  
+  for(wp=op->inv;wp!=NULL;wp=wp->below)
+    if(wp->type == TYPE_WAYPOINT_OBJECT && QUERY_FLAG(wp, FLAG_REFLECTING)) 
       break;
   
   return wp;
@@ -678,14 +486,16 @@ void waypoint_compute_path(object *waypoint) {
     path_node *path;
    
     /* Store final path destination (used by aggro wp) */
-    if(QUERY_FLAG(waypoint, FLAG_DAMNED)) {
-		if(waypoint->enemy)
+    if(QUERY_FLAG(waypoint, FLAG_DAMNED)) {        
+		if(OBJECT_VALID(waypoint->enemy, waypoint->enemy_count))
 		{
 			FREE_AND_COPY_HASH(waypoint->slaying, waypoint->enemy->map->path);
 			waypoint->x = waypoint->stats.hp = waypoint->enemy->x;
 			waypoint->y = waypoint->stats.sp = waypoint->enemy->y;
-		} else
+		} else {
             LOG(llevBug,"BUG: waypoint_compute_path(): dynamic waypoint without valid target:'%s'\n", waypoint->name);
+            return;
+        }
     }
     
     if(waypoint->slaying != NULL && *waypoint->slaying != '\0') {
@@ -729,7 +539,9 @@ void waypoint_compute_path(object *waypoint) {
 
         waypoint->msg = encode_path(path);
         waypoint->stats.food = 0; /* path offset */
+        waypoint->attacked_by_distance = strlen(waypoint->msg); /* Msg boundary */
 
+        waypoint->stats.Int = 0;  /* number of fails */
         waypoint->stats.Str = 0;  /* number of fails */
         waypoint->stats.dam = 30000; /* best distance */
         CLEAR_FLAG(waypoint, FLAG_CONFUSED);
@@ -785,8 +597,15 @@ void waypoint_move(object *op, object *waypoint) {
         return;
     }
     
-    if(! get_rangevector_from_mapcoords(op->map, op->x, op->y, destmap, waypoint->stats.hp, waypoint->stats.sp, &global_rv, 2|8)) 
+    if(! get_rangevector_from_mapcoords(op->map, op->x, op->y,
+                destmap, waypoint->stats.hp, waypoint->stats.sp, &global_rv, 
+                RV_RECURSIVE_SEARCH | RV_DIAGONAL_DISTANCE)) {
+        LOG(llevBug,"BUG: waypoint_move(): Maps are not connected: '%s' and '%s'\n", 
+                destmap->path, op->map->path);
+        CLEAR_FLAG(waypoint, FLAG_CURSED); /* disable this waypoint */
         return;
+    }
+    
     dest_rv = &global_rv;
   
     /* Reached the final destination? */
@@ -845,6 +664,10 @@ void waypoint_move(object *op, object *waypoint) {
         FREE_AND_CLEAR_HASH(waypoint->msg);   /* remove precomputed path */
         FREE_AND_CLEAR_HASH(waypoint->race);  /* remove precomputed path data */
 
+        /* Is it a return-home waypoint? */
+        if(QUERY_FLAG(waypoint, FLAG_REFLECTING)) 
+            op->move_type = waypoint->move_type;
+        
         /* Start over with the new waypoint, if any*/
         if(!QUERY_FLAG(waypoint, FLAG_DAMNED)) {
             nextwp = find_waypoint(op, waypoint->title);
@@ -900,13 +723,14 @@ void waypoint_move(object *op, object *waypoint) {
             int destx = waypoint->stats.hp, desty = waypoint->stats.sp;        
             new_offset = waypoint->stats.food;
            
-            if(get_path_next(waypoint->msg, &new_offset, &waypoint->race, &destmap, &destx, &desty)) {
+            if(new_offset < waypoint->attacked_by_distance && 
+                    get_path_next(waypoint->msg, &new_offset, &waypoint->race, &destmap, &destx, &desty)) {
                 get_rangevector_from_mapcoords(op->map, op->x, op->y, destmap, destx, desty, &local_rv, 2 | 8);
                 dest_rv = &local_rv;
             } else {
-                /* We seem to have an invalid path string. */
-                LOG(llevBug,"BUG: waypoint_move(): invalid path string '%s' in '%s' -> '%s'\n", 
-                        waypoint->msg, op->name, waypoint->name);
+                /* We seem to have an invalid path string or offset. */
+                LOG(llevBug,"BUG: waypoint_move(): invalid path string or offset '%s':%d in '%s' -> '%s'\n", 
+                        waypoint->msg, new_offset, op->name, waypoint->name);
                 FREE_AND_CLEAR_HASH(waypoint->msg);
                 request_new_path(waypoint);
             }
@@ -920,6 +744,17 @@ void waypoint_move(object *op, object *waypoint) {
     } else if(waypoint->stats.Str++ > 4) {
         /* Discard the current path, so that we can get a new one */
         FREE_AND_CLEAR_HASH(waypoint->msg);
+
+        /* For best-effort waypoints don't try too many times. */
+        if(QUERY_FLAG(waypoint, FLAG_NO_ATTACK) && waypoint->stats.Int++ > 10) {
+#ifdef DEBUG_PATHFINDING        
+            LOG(llevDebug,"Stuck with a best-effort waypoint (%s). Accepting current position\n", waypoint->name);
+#endif        
+            /* A bit ugly, but will work for now (we want to trigger the "reached goal" above) */
+            waypoint->stats.hp = op->x;
+            waypoint->stats.sp = op->y;
+            return;
+        }
     }
    
     if(global_rv.distance > 1 && waypoint->msg == NULL && QUERY_FLAG(waypoint, FLAG_CONFUSED)) {
@@ -1010,6 +845,7 @@ int move_monster(object *op) {
     else if((enemy= find_enemy(op, &rv)))
     {
 
+		CLEAR_FLAG(op,FLAG_SLEEP); 
         op->anim_enemy_dir = rv.direction;
         if(!enemy->attacked_by ||(enemy->attacked_by && enemy->attacked_by_distance >(int)rv.distance )) 
         {
@@ -1021,65 +857,48 @@ int move_monster(object *op) {
     }
 
     /*  generate hp, if applicable */
-    if(op->stats.Con&&op->stats.hp<op->stats.maxhp) {
-
-	/* last heal is in funny units.  Dividing by speed puts
-	 * the regeneration rate on a basis of time instead of
-	 * #moves the monster makes.  The scaling by 8 is
-	 * to capture 8th's of a hp fraction regens 
-	 */
-
-	if(++op->last_heal>5)
+    if(op->stats.Con&&op->stats.hp<op->stats.maxhp) 
 	{
-		op->last_heal = 0;
-		op->stats.hp+=op->stats.Con;
-	}
-	/* So if the monster has gained enough HP that they are no longer afraid */
-	if (QUERY_FLAG(op,FLAG_RUN_AWAY) &&
-	    op->stats.hp >= (signed short)(((float)op->run_away/(float)100)*
-                        (float)op->stats.maxhp))
-	    CLEAR_FLAG(op, FLAG_RUN_AWAY);
 
-	if(op->stats.hp>op->stats.maxhp)
-	    op->stats.hp=op->stats.maxhp;
+		if(++op->last_heal>5)
+		{
+			op->last_heal = 0;
+			op->stats.hp+=op->stats.Con;
+
+			if(op->stats.hp>op->stats.maxhp)
+				op->stats.hp=op->stats.maxhp;
+		}
+
+		/* So if the monster has gained enough HP that they are no longer afraid */
+		if (QUERY_FLAG(op,FLAG_RUN_AWAY) &&
+					op->stats.hp >= (signed short)(((float)op->run_away/(float)100)*(float)op->stats.maxhp))
+			CLEAR_FLAG(op, FLAG_RUN_AWAY);
     }
 
     /* generate sp, if applicable */
-    if(op->stats.Pow&&op->stats.sp<op->stats.maxsp) {
-
-	/*  last_sp is in funny units.  Dividing by speed puts
-         * the regeneration rate on a basis of time instead of
-         * #moves the monster makes.  The scaling by 8 is
-         * to capture 8th's of a sp fraction regens 
-	 */
-
-	 op->last_sp+= (int)((float)(8*op->stats.Pow)/FABS(op->speed));
-	op->stats.sp+=op->last_sp/128;  /* causes Pow/16 sp/tick */
-	op->last_sp%=128;
-	if(op->stats.sp>op->stats.maxsp)
-	    op->stats.sp=op->stats.maxsp;
+    if(op->stats.Pow&&op->stats.sp<op->stats.maxsp)
+	{
+		op->last_sp+= (int)((float)(8*op->stats.Pow)/FABS(op->speed));
+		op->stats.sp+=op->last_sp/128;  /* causes Pow/16 sp/tick */
+		op->last_sp%=128;
+		if(op->stats.sp>op->stats.maxsp)
+		    op->stats.sp=op->stats.maxsp;
     }
 
     if(QUERY_FLAG(op, FLAG_SCARED)&&!(RANDOM()%20))
-	CLEAR_FLAG(op,FLAG_SCARED); /* Time to regain some "guts"... */
-
-
-    if(QUERY_FLAG(op, FLAG_SLEEP)||QUERY_FLAG(op, FLAG_BLIND)
-       ||((op->map->darkness>0)&&!QUERY_FLAG(op,FLAG_SEE_IN_DARK)
-	  &&!QUERY_FLAG(op,FLAG_SEE_INVISIBLE))) {
-	    if(!check_wakeup(op,enemy,&rv))
-            return 0;
-    }
+		CLEAR_FLAG(op,FLAG_SCARED); /* Time to regain some "guts"... */
 
     /* check if monster pops out of hidden spot */
-    if(op->hide) do_hidden_move(op);
+    /*if(op->hide) do_hidden_move(op);*/
 
+	/* I disabled automatically pick & and apply of monsters.
+	 * we should not do it in that generic way - taking and using
+	 * items is a AI action - and thats something we still need to 
+	 * add in daimonin.
     if(op->pick_up)
-	monster_check_pickup(op);
-
-    /*
+		monster_check_pickup(op);
     if(op->will_apply)
-	monster_apply_below(op);
+		monster_apply_below(op);
 	*/
 
     /* If we don't have an enemy, do special movement or the like */
@@ -1153,18 +972,6 @@ int move_monster(object *op) {
         return 0;
     }
    
-    /* doppleganger code to change monster facing to that of the nearest player */
-    /* Disabled this since 
-     * 1) we don't have dopplegangers and 
-     * 2) the strcmp() is a waste of CPU cycles. We should use a flag or something instead.
-     * Gecko 2004-01-13    
-    if ( (op->race != NULL)&& strcmp(op->race,"doppleganger") == 0)
-    {
-	    op->face = enemy->face; 
-	    strcpy(op->name,enemy->name); * btw - if op->name uses hashed strings this is BAD *
-    }
-    */
-
     /* Move the check for scared up here - if the monster was scared,
      * we were not doing any of the logic below, so might as well save
      * a few cpu cycles.
@@ -1405,6 +1212,7 @@ object *find_nearest_living_creature(object *npc) {
                 tmp=tmp->above;
 		}
 
+		/* can see monster is a path finding function! it not checks visibility! */
 		if(tmp && can_see_monsterP(m,nx,ny,i))
 		    return tmp;
     }

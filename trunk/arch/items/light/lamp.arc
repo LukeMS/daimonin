@@ -18,5 +18,5 @@ maxhp 1000
 food 1000
 speed 0.15
 last_eat 1
-glow_radius -3
+last_sp 5
 end

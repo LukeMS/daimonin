@@ -454,6 +454,21 @@ int command_ssdumptable (object *op, char *params)
   return 0;
 }
 
+int command_setmaplight (object *op, char *params)
+{
+  int i;
+  char buf[256];
+
+  if(params==NULL || !sscanf(params, "%d", &i)) 
+	  return 0;
+
+	op->map->darkness = i;
+	sprintf(buf,"WIZ: set map darkness: %d -> map:%s (%d)", i, op->map->path,MAP_OUTDOORS(op->map));
+	new_draw_info(NDI_UNIQUE, 0,op, buf);
+
+  return 0;
+}
+
 int command_dumpmap (object *op, char *params)
 {
   if(op)

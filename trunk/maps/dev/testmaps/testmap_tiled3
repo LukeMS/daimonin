@@ -7,6 +7,7 @@ endmsg
 width 19
 height 19
 difficulty 1
+darkness 700
 tile_path_3 testmap_tiled6
 tile_path_4 testmap_tiled2
 tile_path_7 testmap_tiled5
@@ -69,6 +70,10 @@ end
 arch floor_marble1
 y 18
 end
+arch light9
+glow_radius -9
+y 18
+end
 arch floor_marble1
 x 1
 end
@@ -489,6 +494,11 @@ arch floor_marble1
 x 6
 y 6
 end
+arch light7
+glow_radius -7
+x 6
+y 6
+end
 arch floor_marble1
 x 6
 y 7
@@ -892,6 +902,11 @@ x 11
 y 9
 end
 arch floor_marble1
+x 11
+y 10
+end
+arch light7
+glow_radius -7
 x 11
 y 10
 end

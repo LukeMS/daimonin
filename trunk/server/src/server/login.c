@@ -518,6 +518,7 @@ static int spell_sort(const char *a1,const char *a2)
  */
 void check_login(object *op) {
     FILE *fp;
+	void *mybuffer;
     char filename[MAX_BUF];
     char buf[MAX_BUF],bufall[MAX_BUF];
     int i,value,comp;
@@ -768,7 +769,9 @@ void check_login(object *op) {
     op->contr = pl;
     pl->ob = op;
     /* this loads the standard objects values. */
-    load_object(fp, op, LO_NEWFILE,0);
+	mybuffer = create_loader_buffer(fp);
+    load_object(fp, op, mybuffer, LO_REPEAT,0);
+	delete_loader_buffer(mybuffer);
     close_and_delete(fp, comp);
 
     CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);

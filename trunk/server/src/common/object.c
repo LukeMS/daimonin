@@ -1743,8 +1743,9 @@ void update_ob_speed(object *op) {
  */
 void update_object(object *op, int action) 
 {
+	MapSpace *msp;
     int flags, newflags;
-    
+
 	/*LOG(-1, "update_object: %s (%d,%d) - action %x\n", op->name, op->x, op->y,action);*/
     if (op == NULL)
 	{
@@ -1774,7 +1775,8 @@ void update_object(object *op, int action)
 		return;
     } 
 	
-    newflags = GET_MAP_FLAGS(op->map, op->x, op->y);
+	msp = GET_MAP_SPACE_PTR(op->map,op->x,op->y);
+    newflags = msp->flags;
 	flags = newflags&~P_NEED_UPDATE;
 
     if (action == UP_OBJ_INSERT) /* always resort layer - but not always flags */
@@ -1783,12 +1785,17 @@ void update_object(object *op, int action)
 		LOG(llevDebug,"UO_INS - %s\n", query_name(op));
 #endif
 		newflags|=P_NEED_UPDATE; /* force layer rebuild */
-	 	INC_MAP_UPDATE_COUNTER(op->map, op->x, op->y);
+		msp->update_tile++;
+
+		/* handle lightning system */
+		if (op->glow_radius)
+			adjust_light_source(op->map, op->x, op->y, op->glow_radius);
 
 		/* this is handled a bit more complex, we must always loop the flags! */
-		/* floor is used to set terrain - we can do it here too but it works so */
-        if (QUERY_FLAG(op, FLAG_NO_PASS) || QUERY_FLAG(op, FLAG_PASS_THRU) || QUERY_FLAG(op,FLAG_IS_FLOOR))
+        if (QUERY_FLAG(op, FLAG_NO_PASS) || QUERY_FLAG(op, FLAG_PASS_THRU))
 			newflags|=P_FLAGS_UPDATE;
+		else if(QUERY_FLAG(op,FLAG_IS_FLOOR))
+			msp->light_value += op->last_sp;
 		else /* ok, we don't must use flag loop - we can set it by hand! */
 		{
 			if(op->type == CHECK_INV)
@@ -1826,7 +1833,16 @@ void update_object(object *op, int action)
 		LOG(llevDebug,"UO_REM - %s\n", query_name(op));
 #endif
 		newflags|=P_NEED_UPDATE; /* force layer rebuild */
-	 	INC_MAP_UPDATE_COUNTER(op->map, op->x, op->y);
+		msp->update_tile++;
+
+		/* we don't handle floor tile light/darkness setting here -
+		 * we assume we don't remove a floor tile ever before dropping
+		 * the map.
+		 */
+
+		/* handle lightning system */
+		if (op->glow_radius)
+			adjust_light_source(op->map, op->x, op->y, -(op->glow_radius));
 
 		/* we must rebuild the flags when one of this flags is touched from our object */
 		if(	QUERY_FLAG(op, FLAG_ALIVE) ||
@@ -1863,7 +1879,7 @@ void update_object(object *op, int action)
 		LOG(llevDebug,"UO_FLAGFACE - %s\n", query_name(op));
 #endif
 		newflags|=P_FLAGS_UPDATE; /* force flags rebuild */
-		INC_MAP_UPDATE_COUNTER(op->map, op->x, op->y); /* and tile counter */
+		msp->update_tile++;
     }
 	else if (action == UP_OBJ_LAYER) 
 	{
@@ -1871,7 +1887,7 @@ void update_object(object *op, int action)
 		LOG(llevDebug,"UO_LAYER - %s\n", query_name(op));
 #endif
 		newflags|=P_NEED_UPDATE; /* rebuild layers - most common when we change visibility of the object */
-		INC_MAP_UPDATE_COUNTER(op->map, op->x, op->y); /* and tile counter */
+		msp->update_tile++;
     }
 	else if (action == UP_OBJ_ALL)
 	{
@@ -1879,7 +1895,7 @@ void update_object(object *op, int action)
 		LOG(llevDebug,"UO_ALL - %s\n", query_name(op));
 #endif
 		newflags|=(P_FLAGS_UPDATE|P_NEED_UPDATE); /* force full tile update */
-		INC_MAP_UPDATE_COUNTER(op->map, op->x, op->y);
+		msp->update_tile++;
 	}
     else
 	{
@@ -1891,11 +1907,11 @@ void update_object(object *op, int action)
 	{
 		if(newflags&(P_FLAGS_UPDATE))  /* rebuild flags */
 		{
-	        SET_MAP_FLAGS(op->map, op->x, op->y, (newflags|P_NO_ERROR|P_FLAGS_ONLY));
+			msp->flags |= (newflags|P_NO_ERROR|P_FLAGS_ONLY);
 			update_position(op->map, op->x, op->y);
 		}
 		else
-	        SET_MAP_FLAGS(op->map, op->x, op->y, newflags);
+			msp->flags |= newflags;
     }
 
     if(op->more!=NULL)
@@ -2866,13 +2882,6 @@ object *insert_ob_in_ob(object *op,object *where) {
 #ifdef POSITION_DEBUG
   op->ox=0,op->oy=0;
 #endif
-  /* reset the light list and los of the players on the map */
-  if(op->glow_radius>0&&where->map)
-  {
-#ifdef DEBUG_LIGHTS
-      LOG(llevDebug, " insert_ob_in_ob(): got %s to insert in map/op\n",query_name(op));
-#endif /* DEBUG_LIGHTS */ 
-  }
 
   /* Client has no idea of ordering so lets not bother ordering it here.
    * It sure simplifies this function...
@@ -3288,6 +3297,7 @@ object* load_object_str(char *obstr)
 {
     object *op;
     FILE *tempfile;
+	void *mybuffer;
     char filename[MAX_BUF];
     sprintf(filename,"%s/cfloadobstr2044",settings.tmpdir);
     tempfile=fopen(filename,"w");
@@ -3307,7 +3317,9 @@ object* load_object_str(char *obstr)
         LOG(llevError,"ERROR: Unable to read object temp file\n");
         return NULL;
     };
-    load_object(tempfile,op,LO_NEWFILE,0);
+	mybuffer = create_loader_buffer(tempfile);
+    load_object(tempfile,op,mybuffer,LO_REPEAT,0);
+	delete_loader_buffer(mybuffer);
     LOG(llevDebug," load str completed, object=%s\n",query_name(op));
     CLEAR_FLAG(op,FLAG_REMOVED);
     fclose(tempfile);

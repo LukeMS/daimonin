@@ -109,7 +109,7 @@ is_magical 1
 type 74
 value 254500
 speed 0.15
-glow_radius -4
+last_sp 5
 end
 #
 #Artifact nuggets!

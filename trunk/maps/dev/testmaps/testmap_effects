@@ -4,10 +4,10 @@ msg
 Creator: Daimonin Map Editor
 Date:    6/4/2003
 endmsg
+darkness 700
 width 24
 height 24
 difficulty 1
-darkness 4
 end
 arch floor_ostone1
 end

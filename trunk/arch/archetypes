@@ -1,201 +1,3 @@
-Object altar
-face altar.111
-type 18
-editor_folder connect/connect
-slaying food
-layer 4
-food 10
-sp -1
-animation altar
-level 1
-is_animated 0
-anim_speed 1
-is_turnable 1
-direction 1
-no_pick 1
-walk_on 1
-end
-Object button_plate
-name large button
-face button_big.101
-type 92
-editor_folder connect/connect
-layer 3
-animation button_plate
-is_animated 0
-anim_speed 1
-no_pick 1
-weight 1000000
-walk_on 1
-walk_off 1
-end
-Object button_small
-name small button
-face button_small.101
-type 92
-editor_folder connect/connect
-layer 3
-animation button_small
-is_animated 0
-anim_speed 1
-no_pick 1
-weight 1
-walk_on 1
-walk_off 1
-end
-Object check_inv
-name check_inv
-face pedestal.111
-type 64
-editor_folder connect/connect
-layer 3
-animation check_inv
-is_animated 0
-anim_speed 1
-is_turnable 1
-direction 1
-no_pick 1
-walk_on 1
-walk_off 1
-last_sp 1
-end
-Object detector
-name detector
-face pedestal.111
-type 51
-editor_folder connect/connect
-slaying player
-layer 3
-animation detector
-is_animated 0
-anim_speed 1
-is_turnable 1
-direction 1
-speed 0.5
-no_pick 1
-sp 1
-end
-Object handle_lever
-name big lever
-face lever.111
-type 93
-editor_folder connect/connect
-layer 3
-no_pick 1
-animation handle_lever
-is_animated 0
-anim_speed 1
-is_turnable 1
-direction 1
-end
-Object magic_ear
-face magic_ear.111
-type 29
-msg
-@match sesame
-Click.
-endmsg
-editor_folder connect/connect
-no_teleport 1
-no_pick 1
-sys_object 1
-end
-Object pedestal
-name pedestal
-face pedestal.111
-type 17
-editor_folder connect/connect
-layer 3
-slaying player
-animation pedestal
-is_animated 0
-anim_speed 1
-is_turnable 1
-direction 1
-no_pick 1
-walk_on 1
-walk_off 1
-end
-Object shop_mat
-name shop teleporter
-face exit.101
-type 69
-editor_folder connect/connect
-layer 4
-no_pick 1
-animation shop_mat
-player_only 1
-is_animated 1
-anim_speed 4
-walk_on 1
-fly_on 1
-speed 0.50
-end
-Object altar_trigger
-name altar
-face altar.111
-type 31
-editor_folder connect/connect
-slaying food
-food 5
-layer 4
-level 1
-sp -1
-exp 30
-animation altar_trigger
-is_animated 0
-anim_speed 1
-is_turnable 1
-direction 1
-no_pick 1
-walk_on 1
-end
-Object button_trigger
-name button
-face button_small.101
-type 30
-editor_folder connect/connect
-layer 3
-animation button_trigger
-is_animated 0
-anim_speed 1
-weight 1
-exp 30
-no_pick 1
-walk_on 1
-walk_off 1
-end
-Object trigger_lever
-name lever
-face lever.111
-type 27
-editor_folder connect/connect
-layer 3
-no_pick 1
-animation trigger_lever
-is_animated 0
-anim_speed 1
-is_turnable 1
-direction 1
-exp 30
-end
-Object pedestal_trigger
-name pedestal
-face pedestal.111
-type 32
-editor_folder connect/connect
-slaying player
-layer 3
-animation pedestal_trigger
-is_animated 0
-anim_speed 1
-is_turnable 1
-direction 1
-exp 30
-no_pick 1
-walk_on 1
-walk_off 1
-end
 Object exit
 name exit
 face exit.101
@@ -565,28 +367,203 @@ walk_on 1
 wc 0
 maxsp 1
 end
-Object blocked
-face blocked.111
-type 71
-editor_folder floors/floors
-layer 1
-no_teleport 1
-is_floor 1
-blocksview 1
-terrain_type 1
+Object altar
+face altar.111
+type 18
+editor_folder connect/connect
+slaying food
+layer 4
+food 10
+sp -1
+animation altar
+level 1
+is_animated 0
+anim_speed 1
+is_turnable 1
+direction 1
 no_pick 1
-no_pass 1
+walk_on 1
 end
-Object floor_inv
-name floor
-face trans.101
-type 71
-editor_folder floors/floors
-layer 1
-terrain_type 1
-no_teleport 1
-is_floor 1
+Object button_plate
+name large button
+face button_big.101
+type 92
+editor_folder connect/connect
+layer 3
+animation button_plate
+is_animated 0
+anim_speed 1
 no_pick 1
+weight 1000000
+walk_on 1
+walk_off 1
+end
+Object button_small
+name small button
+face button_small.101
+type 92
+editor_folder connect/connect
+layer 3
+animation button_small
+is_animated 0
+anim_speed 1
+no_pick 1
+weight 1
+walk_on 1
+walk_off 1
+end
+Object check_inv
+name check_inv
+face pedestal.111
+type 64
+editor_folder connect/connect
+layer 3
+animation check_inv
+is_animated 0
+anim_speed 1
+is_turnable 1
+direction 1
+no_pick 1
+walk_on 1
+walk_off 1
+last_sp 1
+end
+Object detector
+name detector
+face pedestal.111
+type 51
+editor_folder connect/connect
+slaying player
+layer 3
+animation detector
+is_animated 0
+anim_speed 1
+is_turnable 1
+direction 1
+speed 0.5
+no_pick 1
+sp 1
+end
+Object handle_lever
+name big lever
+face lever.111
+type 93
+editor_folder connect/connect
+layer 3
+no_pick 1
+animation handle_lever
+is_animated 0
+anim_speed 1
+is_turnable 1
+direction 1
+end
+Object magic_ear
+face magic_ear.111
+type 29
+msg
+@match sesame
+Click.
+endmsg
+editor_folder connect/connect
+no_teleport 1
+no_pick 1
+sys_object 1
+end
+Object pedestal
+name pedestal
+face pedestal.111
+type 17
+editor_folder connect/connect
+layer 3
+slaying player
+animation pedestal
+is_animated 0
+anim_speed 1
+is_turnable 1
+direction 1
+no_pick 1
+walk_on 1
+walk_off 1
+end
+Object shop_mat
+name shop teleporter
+face exit.101
+type 69
+editor_folder connect/connect
+layer 4
+no_pick 1
+animation shop_mat
+player_only 1
+is_animated 1
+anim_speed 4
+walk_on 1
+fly_on 1
+speed 0.50
+end
+Object altar_trigger
+name altar
+face altar.111
+type 31
+editor_folder connect/connect
+slaying food
+food 5
+layer 4
+level 1
+sp -1
+exp 30
+animation altar_trigger
+is_animated 0
+anim_speed 1
+is_turnable 1
+direction 1
+no_pick 1
+walk_on 1
+end
+Object button_trigger
+name button
+face button_small.101
+type 30
+editor_folder connect/connect
+layer 3
+animation button_trigger
+is_animated 0
+anim_speed 1
+weight 1
+exp 30
+no_pick 1
+walk_on 1
+walk_off 1
+end
+Object trigger_lever
+name lever
+face lever.111
+type 27
+editor_folder connect/connect
+layer 3
+no_pick 1
+animation trigger_lever
+is_animated 0
+anim_speed 1
+is_turnable 1
+direction 1
+exp 30
+end
+Object pedestal_trigger
+name pedestal
+face pedestal.111
+type 32
+editor_folder connect/connect
+slaying player
+layer 3
+animation pedestal_trigger
+is_animated 0
+anim_speed 1
+is_turnable 1
+direction 1
+exp 30
+no_pick 1
+walk_on 1
+walk_off 1
 end
 Object floor_dark1a
 name floor
@@ -607,83 +584,6 @@ editor_folder floors/dark
 no_teleport 1
 layer 1
 terrain_type 1
-no_pick 1
-is_floor 1
-end
-Object earth_brown1
-name floor
-face earth_brown1.101
-type 71
-editor_folder floors/earth
-layer 1
-terrain_type 1
-no_teleport 1
-no_pick 1
-is_floor 1
-end
-Object earth_brown2
-name floor
-face earth_brown2.101
-type 71
-editor_folder floors/earth
-layer 1
-terrain_type 1
-no_teleport 1
-no_pick 1
-is_floor 1
-end
-Object earth_brown3
-name floor
-face earth_brown3.101
-type 71
-editor_folder floors/earth
-layer 1
-terrain_type 1
-no_teleport 1
-no_pick 1
-is_floor 1
-end
-Object earth_brown4
-name floor
-face earth_brown4.101
-type 71
-editor_folder floors/earth
-layer 1
-terrain_type 1
-no_teleport 1
-no_pick 1
-is_floor 1
-end
-Object earth_dark1
-name floor
-face earth_dark1.101
-type 71
-editor_folder floors/earth
-layer 1
-terrain_type 1
-no_teleport 1
-no_pick 1
-is_floor 1
-end
-Object earth_dark2
-name floor
-face earth_dark2.101
-type 71
-editor_folder floors/earth
-layer 1
-terrain_type 1
-no_teleport 1
-no_pick 1
-is_floor 1
-end
-Object earth_dark3
-name floor
-face earth_dark3.101
-type 71
-editor_folder floors/earth
-layer 1
-terrain_type 1
-no_teleport 1
 no_pick 1
 is_floor 1
 end
@@ -885,6 +785,83 @@ no_teleport 1
 layer 2
 no_pick 1
 end
+Object earth_brown1
+name floor
+face earth_brown1.101
+type 71
+editor_folder floors/earth
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object earth_brown2
+name floor
+face earth_brown2.101
+type 71
+editor_folder floors/earth
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object earth_brown3
+name floor
+face earth_brown3.101
+type 71
+editor_folder floors/earth
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object earth_brown4
+name floor
+face earth_brown4.101
+type 71
+editor_folder floors/earth
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object earth_dark1
+name floor
+face earth_dark1.101
+type 71
+editor_folder floors/earth
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object earth_dark2
+name floor
+face earth_dark2.101
+type 71
+editor_folder floors/earth
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object earth_dark3
+name floor
+face earth_dark3.101
+type 71
+editor_folder floors/earth
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
 Object floor_flagm1
 name floor
 face floor_flagm1.101
@@ -1038,270 +1015,6 @@ editor_folder floors/fmasks
 no_teleport 1
 layer 2
 no_pick 1
-end
-Object grass1
-name grass
-face grass.101
-type 71
-editor_folder floors/grass
-no_teleport 1
-layer 1
-terrain_type 1
-no_pick 1
-is_floor 1
-end
-Object grass2
-name grass
-face grass.102
-type 71
-editor_folder floors/grass
-no_teleport 1
-layer 1
-terrain_type 1
-no_pick 1
-is_floor 1
-end
-Object grass3
-name grass
-face grass.103
-type 71
-editor_folder floors/grass
-no_teleport 1
-layer 1
-terrain_type 1
-no_pick 1
-is_floor 1
-end
-Object grass_flowers1
-name grass
-face grass_flowers1.101
-type 71
-editor_folder floors/grass
-no_teleport 1
-layer 1
-terrain_type 1
-no_pick 1
-is_floor 1
-end
-Object grass_flowers2
-name grass
-face grass_flowers2.101
-type 71
-editor_folder floors/grass
-no_teleport 1
-layer 1
-terrain_type 1
-no_pick 1
-is_floor 1
-end
-Object grass_flowers3
-name grass
-face grass_flowers3.101
-type 71
-editor_folder floors/grass
-no_teleport 1
-layer 1
-terrain_type 1
-no_pick 1
-is_floor 1
-end
-Object grass_leaf1
-name leaves
-face grass_leaf1.101
-type 71
-editor_folder floors/grass
-no_teleport 1
-layer 1
-terrain_type 1
-no_pick 1
-is_floor 1
-end
-Object grass_leaf2
-name leaves
-face grass_leaf2.101
-type 71
-editor_folder floors/grass
-no_teleport 1
-layer 1
-terrain_type 1
-no_pick 1
-is_floor 1
-end
-Object grass_thick1
-name grass
-face grass_thick1.101
-type 71
-editor_folder floors/grass
-no_teleport 1
-layer 1
-terrain_type 1
-no_pick 1
-is_floor 1
-end
-Object grass_thick2
-name grass
-face grass_thick2.101
-type 71
-editor_folder floors/grass
-no_teleport 1
-layer 1
-terrain_type 1
-no_pick 1
-is_floor 1
-end
-Object grass_thick3
-name grass
-face grass_thick3.101
-type 71
-editor_folder floors/grass
-no_teleport 1
-layer 1
-terrain_type 1
-no_pick 1
-is_floor 1
-end
-Object grassd_1
-name grass
-face grassd_1.101
-type 71
-editor_folder floors/grass
-no_teleport 1
-layer 1
-terrain_type 1
-no_pick 1
-is_floor 1
-end
-Object grassd_2
-name grass
-face grassd_2.101
-type 71
-editor_folder floors/grass
-no_teleport 1
-layer 1
-terrain_type 1
-no_pick 1
-is_floor 1
-end
-Object grassd_3
-name grass
-face grassd_3.101
-type 71
-editor_folder floors/grass
-no_teleport 1
-layer 1
-terrain_type 1
-no_pick 1
-is_floor 1
-end
-Object grassd_4
-name grass
-face grassd_4.101
-type 71
-editor_folder floors/grass
-no_teleport 1
-layer 1
-terrain_type 1
-no_pick 1
-is_floor 1
-end
-Object grassd_5
-name grass
-face grassd_5.101
-type 71
-editor_folder floors/grass
-no_teleport 1
-layer 1
-terrain_type 1
-no_pick 1
-is_floor 1
-end
-Object grassd_6
-name grass
-face grassd_6.101
-type 71
-editor_folder floors/grass
-no_teleport 1
-layer 1
-terrain_type 1
-no_pick 1
-is_floor 1
-end
-Object grassd_7
-name grass
-face grassd_7.101
-type 71
-editor_folder floors/grass
-no_teleport 1
-layer 1
-terrain_type 1
-no_pick 1
-is_floor 1
-end
-Object grassd_8
-name grass
-face grassd_7.101
-type 71
-editor_folder floors/grass
-no_teleport 1
-layer 1
-terrain_type 1
-no_pick 1
-is_floor 1
-end
-Object grass_stone1
-name grass
-face grass_stone1.101
-type 71
-editor_folder floors/grass
-no_teleport 1
-layer 1
-terrain_type 1
-no_pick 1
-is_floor 1
-end
-Object grass_stone2
-name grass
-face grass_stone2.101
-type 71
-editor_folder floors/grass
-no_teleport 1
-layer 1
-terrain_type 1
-no_pick 1
-is_floor 1
-end
-Object grass_stone3
-name grass
-face grass_stone3.101
-type 71
-editor_folder floors/grass
-no_teleport 1
-layer 1
-terrain_type 1
-no_pick 1
-is_floor 1
-end
-Object grass_stone4
-name grass
-face grass_stone4.101
-type 71
-editor_folder floors/grass
-no_teleport 1
-layer 1
-terrain_type 1
-no_pick 1
-is_floor 1
-end
-Object grass_stone5
-name grass
-face grass_stone5.101
-type 71
-editor_folder floors/grass
-no_teleport 1
-layer 1
-terrain_type 1
-no_pick 1
-is_floor 1
 end
 Object grassd_m1
 name grass
@@ -1744,6 +1457,270 @@ no_teleport 1
 layer 2
 no_pick 1
 end
+Object grass1
+name grass
+face grass.101
+type 71
+editor_folder floors/grass
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object grass2
+name grass
+face grass.102
+type 71
+editor_folder floors/grass
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object grass3
+name grass
+face grass.103
+type 71
+editor_folder floors/grass
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object grass_flowers1
+name grass
+face grass_flowers1.101
+type 71
+editor_folder floors/grass
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object grass_flowers2
+name grass
+face grass_flowers2.101
+type 71
+editor_folder floors/grass
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object grass_flowers3
+name grass
+face grass_flowers3.101
+type 71
+editor_folder floors/grass
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object grass_leaf1
+name leaves
+face grass_leaf1.101
+type 71
+editor_folder floors/grass
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object grass_leaf2
+name leaves
+face grass_leaf2.101
+type 71
+editor_folder floors/grass
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object grass_thick1
+name grass
+face grass_thick1.101
+type 71
+editor_folder floors/grass
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object grass_thick2
+name grass
+face grass_thick2.101
+type 71
+editor_folder floors/grass
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object grass_thick3
+name grass
+face grass_thick3.101
+type 71
+editor_folder floors/grass
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object grassd_1
+name grass
+face grassd_1.101
+type 71
+editor_folder floors/grass
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object grassd_2
+name grass
+face grassd_2.101
+type 71
+editor_folder floors/grass
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object grassd_3
+name grass
+face grassd_3.101
+type 71
+editor_folder floors/grass
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object grassd_4
+name grass
+face grassd_4.101
+type 71
+editor_folder floors/grass
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object grassd_5
+name grass
+face grassd_5.101
+type 71
+editor_folder floors/grass
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object grassd_6
+name grass
+face grassd_6.101
+type 71
+editor_folder floors/grass
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object grassd_7
+name grass
+face grassd_7.101
+type 71
+editor_folder floors/grass
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object grassd_8
+name grass
+face grassd_7.101
+type 71
+editor_folder floors/grass
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object grass_stone1
+name grass
+face grass_stone1.101
+type 71
+editor_folder floors/grass
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object grass_stone2
+name grass
+face grass_stone2.101
+type 71
+editor_folder floors/grass
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object grass_stone3
+name grass
+face grass_stone3.101
+type 71
+editor_folder floors/grass
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object grass_stone4
+name grass
+face grass_stone4.101
+type 71
+editor_folder floors/grass
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object grass_stone5
+name grass
+face grass_stone5.101
+type 71
+editor_folder floors/grass
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
 Object floor_grey1a1
 name floor
 face floor_grey1a1.101
@@ -1928,116 +1905,6 @@ editor_folder floors/ornament
 no_teleport 1
 layer 1
 terrain_type 1
-no_pick 1
-is_floor 1
-end
-Object floor_ruin1
-name sand
-face floor_ruin1.101
-type 71
-editor_folder floors/sand
-layer 1
-terrain_type 1
-no_teleport 1
-no_pick 1
-is_floor 1
-end
-Object floor_ruin2
-name sand
-face floor_ruin2.101
-type 71
-editor_folder floors/sand
-layer 1
-terrain_type 1
-no_teleport 1
-no_pick 1
-is_floor 1
-end
-Object floor_ruin3
-name sand
-face floor_ruin3.101
-type 71
-editor_folder floors/sand
-layer 1
-terrain_type 1
-no_teleport 1
-no_pick 1
-is_floor 1
-end
-Object floor_ruin4
-name sand
-face floor_ruin4.101
-type 71
-editor_folder floors/sand
-layer 1
-terrain_type 1
-no_teleport 1
-no_pick 1
-is_floor 1
-end
-Object floor_ruin5
-name sand
-face floor_ruin5.101
-type 71
-editor_folder floors/sand
-layer 1
-terrain_type 1
-no_teleport 1
-no_pick 1
-is_floor 1
-end
-Object floor_ruin6
-name sand
-face floor_ruin6.101
-type 71
-editor_folder floors/sand
-layer 1
-terrain_type 1
-no_teleport 1
-no_pick 1
-is_floor 1
-end
-Object floor_sand_d1
-name floor
-face floor_sand_d1.101
-type 71
-editor_folder floors/sand
-layer 1
-terrain_type 1
-no_teleport 1
-no_pick 1
-is_floor 1
-end
-Object floor_sand_d2
-name floor
-face floor_sand_d2.101
-type 71
-editor_folder floors/sand
-layer 1
-terrain_type 1
-no_teleport 1
-no_pick 1
-is_floor 1
-end
-Object floor_sand_d3
-name floor
-face floor_sand_d3.101
-type 71
-editor_folder floors/sand
-layer 1
-terrain_type 1
-no_teleport 1
-no_pick 1
-is_floor 1
-end
-Object floor_sand_d4
-name floor
-face floor_sand_d4.101
-type 71
-editor_folder floors/sand
-layer 1
-terrain_type 1
-no_teleport 1
 no_pick 1
 is_floor 1
 end
@@ -2239,6 +2106,116 @@ no_teleport 1
 layer 2
 no_pick 1
 end
+Object floor_ruin1
+name sand
+face floor_ruin1.101
+type 71
+editor_folder floors/sand
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object floor_ruin2
+name sand
+face floor_ruin2.101
+type 71
+editor_folder floors/sand
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object floor_ruin3
+name sand
+face floor_ruin3.101
+type 71
+editor_folder floors/sand
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object floor_ruin4
+name sand
+face floor_ruin4.101
+type 71
+editor_folder floors/sand
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object floor_ruin5
+name sand
+face floor_ruin5.101
+type 71
+editor_folder floors/sand
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object floor_ruin6
+name sand
+face floor_ruin6.101
+type 71
+editor_folder floors/sand
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object floor_sand_d1
+name floor
+face floor_sand_d1.101
+type 71
+editor_folder floors/sand
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object floor_sand_d2
+name floor
+face floor_sand_d2.101
+type 71
+editor_folder floors/sand
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object floor_sand_d3
+name floor
+face floor_sand_d3.101
+type 71
+editor_folder floors/sand
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object floor_sand_d4
+name floor
+face floor_sand_d4.101
+type 71
+editor_folder floors/sand
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
 Object shop_floor
 name floor
 face shop_empty.111
@@ -2275,6 +2252,114 @@ terrain_type 1
 no_magic 1
 auto_apply 1
 randomitems empty
+end
+Object fstone1m1
+name stones
+face fstone1_m1.101
+type 79
+editor_folder floors/stone
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object fstone1m2
+name stones
+face fstone1_m2.101
+type 79
+editor_folder floors/stone
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object fstone1m3
+name stones
+face fstone1_m3.101
+type 79
+editor_folder floors/stone
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object fstone1m4
+name stones
+face fstone1_m4.101
+type 79
+editor_folder floors/stone
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object fstone1m5
+name stones
+face fstone1_m5.101
+type 79
+editor_folder floors/stone
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object fstone1m6
+name stones
+face fstone1_m6.101
+type 79
+editor_folder floors/stone
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object fstone1m7
+name stones
+face fstone1_m7.101
+type 79
+editor_folder floors/stone
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object fstone1m8
+name stones
+face fstone1_m8.101
+type 79
+editor_folder floors/stone
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object fstone1m9
+name stones
+face fstone1_m9.101
+type 79
+editor_folder floors/stone
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object fstone1m10
+name stones
+face fstone1_m10.101
+type 79
+editor_folder floors/stone
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object fstone1m11
+name stones
+face fstone1_m11.101
+type 79
+editor_folder floors/stone
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object fstone1m12
+name stones
+face fstone1_m12.101
+type 79
+editor_folder floors/stone
+no_teleport 1
+layer 2
+no_pick 1
 end
 Object floor_nstone1
 name floor
@@ -2419,125 +2504,6 @@ no_teleport 1
 no_pick 1
 is_floor 1
 end
-Object fstone1m1
-name stones
-face fstone1_m1.101
-type 79
-editor_folder floors/stone
-no_teleport 1
-layer 2
-no_pick 1
-end
-Object fstone1m2
-name stones
-face fstone1_m2.101
-type 79
-editor_folder floors/stone
-no_teleport 1
-layer 2
-no_pick 1
-end
-Object fstone1m3
-name stones
-face fstone1_m3.101
-type 79
-editor_folder floors/stone
-no_teleport 1
-layer 2
-no_pick 1
-end
-Object fstone1m4
-name stones
-face fstone1_m4.101
-type 79
-editor_folder floors/stone
-no_teleport 1
-layer 2
-no_pick 1
-end
-Object fstone1m5
-name stones
-face fstone1_m5.101
-type 79
-editor_folder floors/stone
-no_teleport 1
-layer 2
-no_pick 1
-end
-Object fstone1m6
-name stones
-face fstone1_m6.101
-type 79
-editor_folder floors/stone
-no_teleport 1
-layer 2
-no_pick 1
-end
-Object fstone1m7
-name stones
-face fstone1_m7.101
-type 79
-editor_folder floors/stone
-no_teleport 1
-layer 2
-no_pick 1
-end
-Object fstone1m8
-name stones
-face fstone1_m8.101
-type 79
-editor_folder floors/stone
-no_teleport 1
-layer 2
-no_pick 1
-end
-Object fstone1m9
-name stones
-face fstone1_m9.101
-type 79
-editor_folder floors/stone
-no_teleport 1
-layer 2
-no_pick 1
-end
-Object fstone1m10
-name stones
-face fstone1_m10.101
-type 79
-editor_folder floors/stone
-no_teleport 1
-layer 2
-no_pick 1
-end
-Object fstone1m11
-name stones
-face fstone1_m11.101
-type 79
-editor_folder floors/stone
-no_teleport 1
-layer 2
-no_pick 1
-end
-Object fstone1m12
-name stones
-face fstone1_m12.101
-type 79
-editor_folder floors/stone
-no_teleport 1
-layer 2
-no_pick 1
-end
-Object swamp1
-name swamp
-face swamp1.101
-type 71
-editor_folder floors/swamp
-no_teleport 1
-layer 1
-terrain_type 1
-no_pick 1
-is_floor 1
-end
 Object swamp1m1
 name swamp
 face swamp1m1.101
@@ -2628,6 +2594,17 @@ no_teleport 1
 layer 2
 no_pick 1
 end
+Object swamp1
+name swamp
+face swamp1.101
+type 71
+editor_folder floors/swamp
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
 Object water_still
 name water
 face lake.101
@@ -2676,77 +2653,28 @@ terrain_type 1
 no_pick 1
 is_floor 1
 end
-Object blindness
-name blindness
-face force.101
-type 49
-editor_folder forces/forces
-sys_object 1
-speed 0.05
-is_blind 1
-no_drop 1
+Object blocked
+face blocked.111
+type 71
+editor_folder floors/floors
+layer 1
+no_teleport 1
+is_floor 1
+blocksview 1
+terrain_type 1
+no_pick 1
+no_pass 1
 end
-Object confusion
-name confusion
-face force.101
-type 19
-editor_folder forces/forces
-sys_object 1
-speed 0.05
-no_drop 1
-food 8
-end
-Object depletion
-face force.101
-type 114
-editor_folder forces/forces
-layer 0
-sys_object 1
-no_drop 1
-end
-Object force
-name force
-face force.101
-type 114
-editor_folder forces/forces
-layer 0
-sys_object 1
-no_drop 1
-speed 0.002
-speed_left -1
-end
-Object luck
-face force.101
-type 114
-editor_folder forces/forces
-sys_object 1
-no_drop 1
-end
-Object poisoning
-name applied poison
-face force.101
-type 105
-editor_folder forces/forces
-food 6
-speed -0.015
-speed_left -1.0
-dam 1
-level 1
-attack_internal 100
-sys_object 1
-is_used_up 1
-no_drop 1
-end
-Object slowness
-face force.101
-type 114
-editor_folder forces/forces
-sys_object 1
-exp -1
-speed 0.05
-no_drop 1
-food 5
-is_used_up 1
+Object floor_inv
+name floor
+face trans.101
+type 71
+editor_folder floors/floors
+layer 1
+terrain_type 1
+no_teleport 1
+is_floor 1
+no_pick 1
 end
 Object ability_cause_lig_wound
 name ability cause light wounds
@@ -2946,21 +2874,77 @@ exp 100
 race *
 level 5
 end
-Object shrine1.111
-name shrine
-face shrine1.111
-type 79
-editor_folder gods/gods
-no_pick 1
-layer 4
+Object blindness
+name blindness
+face force.101
+type 49
+editor_folder forces/forces
+sys_object 1
+speed 0.05
+is_blind 1
+no_drop 1
 end
-Object shrine1.171
-name shrine
-face shrine1.171
-type 79
-editor_folder gods/gods
-no_pick 1
-layer 4
+Object confusion
+name confusion
+face force.101
+type 19
+editor_folder forces/forces
+sys_object 1
+speed 0.05
+no_drop 1
+food 8
+end
+Object depletion
+face force.101
+type 114
+editor_folder forces/forces
+layer 0
+sys_object 1
+no_drop 1
+end
+Object force
+name force
+face force.101
+type 114
+editor_folder forces/forces
+layer 0
+sys_object 1
+no_drop 1
+speed 0.002
+speed_left -1
+end
+Object luck
+face force.101
+type 114
+editor_folder forces/forces
+sys_object 1
+no_drop 1
+end
+Object poisoning
+name applied poison
+face force.101
+type 105
+editor_folder forces/forces
+food 6
+speed -0.015
+speed_left -1.0
+dam 1
+level 1
+attack_internal 100
+sys_object 1
+is_used_up 1
+no_drop 1
+end
+Object slowness
+face force.101
+type 114
+editor_folder forces/forces
+sys_object 1
+exp -1
+speed 0.05
+no_drop 1
+food 5
+is_used_up 1
 end
 Object Tabernacle
 name the Tabernacle
@@ -3063,67 +3047,19 @@ can_use_armour 1
 exp 1
 weight 1
 end
-Object basin1.101
-name basin
-face basin1.101
+Object shrine1.111
+name shrine
+face shrine1.111
 type 79
-editor_folder indoor/indoor
+editor_folder gods/gods
 no_pick 1
 layer 4
 end
-Object basin1_full.101
-name basin
-face basin1_full.101
+Object shrine1.171
+name shrine
+face shrine1.171
 type 79
-editor_folder indoor/indoor
-no_pick 1
-layer 4
-end
-Object basket1.101
-name basket
-face basket1.101
-type 79
-editor_folder indoor/indoor
-no_pick 1
-layer 4
-end
-Object basket2.101
-name basket
-face basket2.101
-type 79
-editor_folder indoor/indoor
-no_pick 1
-layer 4
-end
-Object bath_tube1.101
-name bath tube
-face bath_tube1.101
-type 79
-editor_folder indoor/indoor
-no_pick 1
-layer 4
-end
-Object bath_tube2.101
-name bath tube
-face bath_tube2.101
-type 79
-editor_folder indoor/indoor
-no_pick 1
-layer 4
-end
-Object bath_tube3.101
-name bath tube
-face bath_tube3.101
-type 79
-editor_folder indoor/indoor
-no_pick 1
-layer 4
-end
-Object bath_tube_big1.101
-name bath tube
-face bath_tube_big1.101
-type 79
-editor_folder indoor/indoor
+editor_folder gods/gods
 no_pick 1
 layer 4
 end
@@ -3172,54 +3108,6 @@ name bed
 face bed_2b.111
 type 79
 editor_folder indoor/beds
-no_pick 1
-layer 4
-end
-Object bowl1.101
-name bowl
-face bowl1.101
-type 79
-editor_folder indoor/indoor
-no_pick 1
-layer 4
-end
-Object bowl1_full.101
-name bowl
-face bowl1_full.101
-type 79
-editor_folder indoor/indoor
-no_pick 1
-layer 4
-end
-Object bowl2.101
-name bowl
-face bowl2.101
-type 79
-editor_folder indoor/indoor
-no_pick 1
-layer 4
-end
-Object wood_pile.101
-name pile of wood
-face wood_pile.101
-type 79
-editor_folder indoor/indoor
-no_pick 1
-layer 4
-end
-Object trash_wood1.101
-name wood
-face trash_wood1.101
-type 79
-editor_folder indoor/indoor
-no_pick 1
-layer 4
-end
-Object trash_wood2.101
-name wood
-face trash_wood2.101
-type 79
-editor_folder indoor/indoor
 no_pick 1
 layer 4
 end
@@ -3566,22 +3454,6 @@ no_teleport 1
 layer 2
 no_pick 1
 end
-Object broom.111
-name broom
-face broom.111
-type 79
-editor_folder indoor/indoor
-no_pick 1
-layer 4
-end
-Object broom.171
-name broom
-face broom.171
-type 79
-editor_folder indoor/indoor
-no_pick 1
-layer 4
-end
 Object wmask_bflag_fire1_1
 name big flag
 face wmask_bflag_fire1.u.151
@@ -3710,6 +3582,134 @@ editor_folder indoor/masks_wall
 no_pick 1
 layer 7
 end
+Object basin1.101
+name basin
+face basin1.101
+type 79
+editor_folder indoor/indoor
+no_pick 1
+layer 4
+end
+Object basin1_full.101
+name basin
+face basin1_full.101
+type 79
+editor_folder indoor/indoor
+no_pick 1
+layer 4
+end
+Object basket1.101
+name basket
+face basket1.101
+type 79
+editor_folder indoor/indoor
+no_pick 1
+layer 4
+end
+Object basket2.101
+name basket
+face basket2.101
+type 79
+editor_folder indoor/indoor
+no_pick 1
+layer 4
+end
+Object bath_tube1.101
+name bath tube
+face bath_tube1.101
+type 79
+editor_folder indoor/indoor
+no_pick 1
+layer 4
+end
+Object bath_tube2.101
+name bath tube
+face bath_tube2.101
+type 79
+editor_folder indoor/indoor
+no_pick 1
+layer 4
+end
+Object bath_tube3.101
+name bath tube
+face bath_tube3.101
+type 79
+editor_folder indoor/indoor
+no_pick 1
+layer 4
+end
+Object bath_tube_big1.101
+name bath tube
+face bath_tube_big1.101
+type 79
+editor_folder indoor/indoor
+no_pick 1
+layer 4
+end
+Object bowl1.101
+name bowl
+face bowl1.101
+type 79
+editor_folder indoor/indoor
+no_pick 1
+layer 4
+end
+Object bowl1_full.101
+name bowl
+face bowl1_full.101
+type 79
+editor_folder indoor/indoor
+no_pick 1
+layer 4
+end
+Object bowl2.101
+name bowl
+face bowl2.101
+type 79
+editor_folder indoor/indoor
+no_pick 1
+layer 4
+end
+Object wood_pile.101
+name pile of wood
+face wood_pile.101
+type 79
+editor_folder indoor/indoor
+no_pick 1
+layer 4
+end
+Object trash_wood1.101
+name wood
+face trash_wood1.101
+type 79
+editor_folder indoor/indoor
+no_pick 1
+layer 4
+end
+Object trash_wood2.101
+name wood
+face trash_wood2.101
+type 79
+editor_folder indoor/indoor
+no_pick 1
+layer 4
+end
+Object broom.111
+name broom
+face broom.111
+type 79
+editor_folder indoor/indoor
+no_pick 1
+layer 4
+end
+Object broom.171
+name broom
+face broom.171
+type 79
+editor_folder indoor/indoor
+no_pick 1
+layer 4
+end
 Object metal_bucket.101
 name metal bucket
 face metal_bucket.101
@@ -3816,28 +3816,6 @@ editor_folder indoor/indoor
 no_pick 1
 no_pass 1
 layer 4
-end
-Object base_info
-face info.101
-type 101
-editor_folder intern/intern
-layer 0
-sys_object 1
-no_drop 1
-end
-Object empty_archetype
-type 79
-editor_folder intern/intern
-layer 1
-end
-Object spawn_info
-face info.101
-type 84
-editor_folder intern/intern
-layer 0
-identified 1
-sys_object 1
-no_drop 1
 end
 Object tabernacle_avatar_info
 name avatar
@@ -5040,6 +5018,28 @@ last_eat 1
 level 1
 exp 0
 end
+Object base_info
+face info.101
+type 101
+editor_folder intern/intern
+layer 0
+sys_object 1
+no_drop 1
+end
+Object empty_archetype
+type 79
+editor_folder intern/intern
+layer 1
+end
+Object spawn_info
+face info.101
+type 84
+editor_folder intern/intern
+layer 0
+identified 1
+sys_object 1
+no_drop 1
+end
 Object gravestone
 face gravestone.101
 type 38
@@ -5056,69 +5056,6 @@ material 64
 weight 200000
 value 40
 nrof 1
-end
-Object random_chest_wood
-name treasure chest
-face chest_wood_s.111
-type 4
-msg
-Touching the treasure chest it crumbles to dust.
-endmsg
-editor_folder items/items
-nrof 0
-layer 4
-level 1
-hp 1
-material 18
-no_pick 1
-value 50
-weight 50000
-randomitems chest
-end
-Object random_chest_black
-name treasure chest
-face chest_black_s.111
-type 4
-msg
-Touching the treasure chest it crumbles to dust.
-endmsg
-editor_folder items/items
-nrof 0
-level 1
-no_pick 1
-layer 4
-hp 1
-material 18
-value 50
-weight 50000
-randomitems chest
-end
-Object random_chest_metal
-name chest
-face chest_metal_s.111
-type 4
-msg
-Touching the treasure chest it crumbles to dust.
-endmsg
-editor_folder items/items
-nrof 0
-level 1
-no_pick 1
-layer 4
-hp 1
-material 18
-value 50
-weight 50000
-randomitems chest
-end
-Object random_treasure
-face rand_treasure.111
-type 4
-editor_folder items/items
-layer 3
-hp 1
-randomitems chest
-auto_apply 1
 end
 Object gravedirt
 name pile
@@ -6841,406 +6778,6 @@ protect_pierce 6
 weight 940
 value 25
 end
-Object bag
-name bag
-face bag.101
-type 122
-editor_folder items/container
-other_arch close_bag
-layer 3
-level 1
-material 128
-material_real 450
-weight 200
-container 80000
-Str 5
-value 20
-end
-Object cauldron
-name cauldron
-face cauldron.101
-type 122
-editor_folder items/container
-other_arch cauldron_open
-layer 4
-no_pick 1
-material 2
-material_real 65
-weight 30000
-container 250000
-is_cauldron 1
-Str 0
-value 100000
-end
-Object bad_cauldron
-name cracked cauldron
-face cauldron.101
-type 122
-editor_folder items/container
-other_arch cauldron_open
-layer 4
-no_pick 1
-material 2
-material_real 65
-weight 30000
-container 250000
-Str -80
-value 5
-end
-Object chest
-name chest
-face chest_mm_closed.111
-type 122
-editor_folder items/container
-other_arch close_chest1_111
-layer 4
-no_pick 1
-level 1
-material 18
-material_real 65
-value 350
-container 500000
-weight 15000
-Str 5
-end
-Object chest1_171
-name chest
-face chest_mm_closed.171
-type 122
-editor_folder items/container
-other_arch close_chest1_171
-layer 4
-no_pick 1
-level 1
-material 18
-material_real 65
-value 350
-container 500000
-weight 15000
-Str 5
-end
-Object chest_m
-name chest
-face chest_lm_closed.111
-type 122
-editor_folder items/container
-other_arch close_chest_m1_1
-layer 4
-level 1
-no_pick 1
-material 2
-material_real 65
-value 350
-container 500000
-weight 17500
-Str 5
-end
-Object chest_m1_7
-name chest
-face chest_lm_closed.171
-type 122
-editor_folder items/container
-other_arch close_chest_m1_7
-layer 4
-level 1
-no_pick 1
-material 2
-material_real 65
-value 350
-container 500000
-weight 17500
-Str 5
-end
-Object chest_w1
-name chest
-face chest_lw_closed.111
-type 122
-editor_folder items/container
-other_arch close_chest_w1_1
-layer 4
-level 1
-no_pick 1
-material 18
-material_real 258
-value 350
-container 500000
-weight 15000
-Str 5
-end
-Object chest_w1_7
-name chest
-face chest_lw_closed.171
-type 122
-editor_folder items/container
-other_arch close_chest_w1_7
-layer 4
-level 1
-no_pick 1
-material 18
-material_real 258
-value 350
-container 500000
-weight 15000
-Str 5
-end
-Object chest_4.111
-name chest
-face chest_mw_closed.111
-type 122
-editor_folder items/container
-other_arch close_chest_4.111
-layer 4
-level 1
-no_pick 1
-material 18
-material_real 258
-value 350
-container 500000
-weight 15000
-Str 5
-end
-Object chest_4.171
-name chest
-face chest_mw_closed.171
-type 122
-editor_folder items/container
-other_arch close_chest_4.171
-layer 4
-level 1
-no_pick 1
-material 18
-material_real 258
-value 350
-container 500000
-weight 15000
-Str 5
-end
-Object chest_sm_1
-name chest
-face chest_sm_closed.111
-type 122
-editor_folder items/container
-other_arch close_chest_sm_1
-layer 4
-level 1
-no_pick 1
-material 18
-material_real 258
-value 350
-container 500000
-weight 15000
-Str 5
-end
-Object chest_sm_7
-name chest
-face chest_sm_closed.171
-type 122
-editor_folder items/container
-other_arch close_chest_sm_7
-layer 4
-level 1
-no_pick 1
-material 18
-material_real 258
-value 350
-container 500000
-weight 15000
-Str 5
-end
-Object chest_sw_1
-name chest
-face chest_sw_closed.111
-type 122
-editor_folder items/container
-other_arch close_chest_sw_1
-layer 4
-level 1
-no_pick 1
-material 18
-material_real 258
-value 350
-container 500000
-weight 15000
-Str 5
-end
-Object chest_sw_7
-name chest
-face chest_sw_closed.171
-type 122
-editor_folder items/container
-other_arch close_chest_sw_7
-layer 4
-level 1
-no_pick 1
-material 18
-material_real 258
-value 350
-container 500000
-weight 15000
-Str 5
-end
-Object depositbox
-name deposit box
-face depositbox.101
-type 122
-editor_folder items/container
-other_arch close_dbox
-race gold and jewels
-no_pick 1
-level 1
-layer 4
-material 66
-material_real 65
-weight 525
-value 4000
-container 150000
-Str 5
-end
-Object key_ring
-name key ring
-face key_ring.101
-type 122
-editor_folder items/container
-other_arch close_key_ring
-race keys
-layer 3
-level 1
-material 2
-material_real 65
-value 10
-weight 50
-container 2500
-Str 5
-end
-Object luggage
-name luggage
-face luggage.101
-type 122
-editor_folder items/container
-other_arch close_luggage
-layer 4
-no_pick 1
-level 1
-material 2
-material_real 65
-value 425
-weight 15000
-container 500000
-Str 5
-end
-Object mailbox
-name mailbox
-face mailbox.101
-type 122
-editor_folder items/container
-other_arch close_mail
-layer 4
-no_pick 1
-level 1
-material 18
-value 250
-container 1500
-weight 1500
-identified 1
-no_pick 1
-end
-Object pouch
-name pouch
-face pouch.101
-type 122
-editor_folder items/container
-other_arch close_pouch
-race gold and jewels
-layer 3
-level 1
-material 8
-material_real 193
-value 50
-weight 50
-container 50000
-Str 5
-end
-Object quiver
-name arrow quiver
-face quiver.101
-type 122
-editor_folder items/container
-race arrows
-food 13
-other_arch close_quiver
-level 1
-layer 3
-material 8
-material_real 193
-value 35
-weight 250
-container 50000
-Str 5
-end
-Object quiver_b
-name bolt quiver
-face quiver_b.101
-type 122
-editor_folder items/container
-race crossbow bolts
-food 13
-other_arch close_quiver_b
-layer 3
-level 1
-material 8
-material_real 193
-value 35
-weight 250
-container 50000
-Str 5
-end
-Object quiver_s
-name stone quiver
-face quiver_s.101
-type 122
-editor_folder items/container
-race sling stones
-food 13
-layer 3
-other_arch close_quiver_s
-level 1
-material 8
-material_real 193
-value 35
-weight 250
-container 50000
-Str 5
-end
-Object r_sack
-name rucksack
-face r_sack.101
-type 122
-editor_folder items/container
-other_arch close_rsack
-layer 3
-level 1
-material 8
-material_real 193
-value 35
-weight 300
-container 95000
-Str 7
-end
-Object sack
-name sack
-face sack.101
-type 122
-editor_folder items/container
-other_arch close_sack
-layer 3
-level 1
-material 128
-material_real 450
-value 15
-weight 250
-container 150000
-Str 5
-end
 Object desk1.111
 name desk
 face desk1.111
@@ -7647,6 +7184,406 @@ container 15000
 weight 15000
 Str 15
 end
+Object bag
+name bag
+face bag.101
+type 122
+editor_folder items/container
+other_arch close_bag
+layer 3
+level 1
+material 128
+material_real 450
+weight 200
+container 80000
+Str 5
+value 20
+end
+Object cauldron
+name cauldron
+face cauldron.101
+type 122
+editor_folder items/container
+other_arch cauldron_open
+layer 4
+no_pick 1
+material 2
+material_real 65
+weight 30000
+container 250000
+is_cauldron 1
+Str 0
+value 100000
+end
+Object bad_cauldron
+name cracked cauldron
+face cauldron.101
+type 122
+editor_folder items/container
+other_arch cauldron_open
+layer 4
+no_pick 1
+material 2
+material_real 65
+weight 30000
+container 250000
+Str -80
+value 5
+end
+Object chest
+name chest
+face chest_mm_closed.111
+type 122
+editor_folder items/container
+other_arch close_chest1_111
+layer 4
+no_pick 1
+level 1
+material 18
+material_real 65
+value 350
+container 500000
+weight 15000
+Str 5
+end
+Object chest1_171
+name chest
+face chest_mm_closed.171
+type 122
+editor_folder items/container
+other_arch close_chest1_171
+layer 4
+no_pick 1
+level 1
+material 18
+material_real 65
+value 350
+container 500000
+weight 15000
+Str 5
+end
+Object chest_m
+name chest
+face chest_lm_closed.111
+type 122
+editor_folder items/container
+other_arch close_chest_m1_1
+layer 4
+level 1
+no_pick 1
+material 2
+material_real 65
+value 350
+container 500000
+weight 17500
+Str 5
+end
+Object chest_m1_7
+name chest
+face chest_lm_closed.171
+type 122
+editor_folder items/container
+other_arch close_chest_m1_7
+layer 4
+level 1
+no_pick 1
+material 2
+material_real 65
+value 350
+container 500000
+weight 17500
+Str 5
+end
+Object chest_w1
+name chest
+face chest_lw_closed.111
+type 122
+editor_folder items/container
+other_arch close_chest_w1_1
+layer 4
+level 1
+no_pick 1
+material 18
+material_real 258
+value 350
+container 500000
+weight 15000
+Str 5
+end
+Object chest_w1_7
+name chest
+face chest_lw_closed.171
+type 122
+editor_folder items/container
+other_arch close_chest_w1_7
+layer 4
+level 1
+no_pick 1
+material 18
+material_real 258
+value 350
+container 500000
+weight 15000
+Str 5
+end
+Object chest_4.111
+name chest
+face chest_mw_closed.111
+type 122
+editor_folder items/container
+other_arch close_chest_4.111
+layer 4
+level 1
+no_pick 1
+material 18
+material_real 258
+value 350
+container 500000
+weight 15000
+Str 5
+end
+Object chest_4.171
+name chest
+face chest_mw_closed.171
+type 122
+editor_folder items/container
+other_arch close_chest_4.171
+layer 4
+level 1
+no_pick 1
+material 18
+material_real 258
+value 350
+container 500000
+weight 15000
+Str 5
+end
+Object chest_sm_1
+name chest
+face chest_sm_closed.111
+type 122
+editor_folder items/container
+other_arch close_chest_sm_1
+layer 4
+level 1
+no_pick 1
+material 18
+material_real 258
+value 350
+container 500000
+weight 15000
+Str 5
+end
+Object chest_sm_7
+name chest
+face chest_sm_closed.171
+type 122
+editor_folder items/container
+other_arch close_chest_sm_7
+layer 4
+level 1
+no_pick 1
+material 18
+material_real 258
+value 350
+container 500000
+weight 15000
+Str 5
+end
+Object chest_sw_1
+name chest
+face chest_sw_closed.111
+type 122
+editor_folder items/container
+other_arch close_chest_sw_1
+layer 4
+level 1
+no_pick 1
+material 18
+material_real 258
+value 350
+container 500000
+weight 15000
+Str 5
+end
+Object chest_sw_7
+name chest
+face chest_sw_closed.171
+type 122
+editor_folder items/container
+other_arch close_chest_sw_7
+layer 4
+level 1
+no_pick 1
+material 18
+material_real 258
+value 350
+container 500000
+weight 15000
+Str 5
+end
+Object depositbox
+name deposit box
+face depositbox.101
+type 122
+editor_folder items/container
+other_arch close_dbox
+race gold and jewels
+no_pick 1
+level 1
+layer 4
+material 66
+material_real 65
+weight 525
+value 4000
+container 150000
+Str 5
+end
+Object key_ring
+name key ring
+face key_ring.101
+type 122
+editor_folder items/container
+other_arch close_key_ring
+race keys
+layer 3
+level 1
+material 2
+material_real 65
+value 10
+weight 50
+container 2500
+Str 5
+end
+Object luggage
+name luggage
+face luggage.101
+type 122
+editor_folder items/container
+other_arch close_luggage
+layer 4
+no_pick 1
+level 1
+material 2
+material_real 65
+value 425
+weight 15000
+container 500000
+Str 5
+end
+Object mailbox
+name mailbox
+face mailbox.101
+type 122
+editor_folder items/container
+other_arch close_mail
+layer 4
+no_pick 1
+level 1
+material 18
+value 250
+container 1500
+weight 1500
+identified 1
+no_pick 1
+end
+Object pouch
+name pouch
+face pouch.101
+type 122
+editor_folder items/container
+other_arch close_pouch
+race gold and jewels
+layer 3
+level 1
+material 8
+material_real 193
+value 50
+weight 50
+container 50000
+Str 5
+end
+Object quiver
+name arrow quiver
+face quiver.101
+type 122
+editor_folder items/container
+race arrows
+food 13
+other_arch close_quiver
+level 1
+layer 3
+material 8
+material_real 193
+value 35
+weight 250
+container 50000
+Str 5
+end
+Object quiver_b
+name bolt quiver
+face quiver_b.101
+type 122
+editor_folder items/container
+race crossbow bolts
+food 13
+other_arch close_quiver_b
+layer 3
+level 1
+material 8
+material_real 193
+value 35
+weight 250
+container 50000
+Str 5
+end
+Object quiver_s
+name stone quiver
+face quiver_s.101
+type 122
+editor_folder items/container
+race sling stones
+food 13
+layer 3
+other_arch close_quiver_s
+level 1
+material 8
+material_real 193
+value 35
+weight 250
+container 50000
+Str 5
+end
+Object r_sack
+name rucksack
+face r_sack.101
+type 122
+editor_folder items/container
+other_arch close_rsack
+layer 3
+level 1
+material 8
+material_real 193
+value 35
+weight 300
+container 95000
+Str 7
+end
+Object sack
+name sack
+face sack.101
+type 122
+editor_folder items/container
+other_arch close_sack
+layer 3
+level 1
+material 128
+material_real 450
+value 15
+weight 250
+container 150000
+Str 5
+end
 Object coppercoin
 name coin
 face coppercoin.101
@@ -7829,7 +7766,7 @@ maxhp 1000
 food 1000
 speed 0.15
 last_eat 1
-glow_radius -3
+last_sp 5
 end
 Object oil_lamp
 name lamp oil
@@ -7863,7 +7800,7 @@ food 500
 speed 0.15
 last_eat 1
 nrof 1
-glow_radius -2
+last_sp 3
 end
 Object torch_burnt
 name burnt out torch
@@ -7873,6 +7810,8 @@ editor_folder items/light
 layer 3
 material 144
 value 0
+last_sp 0
+glow_radius 0
 weight 425
 food 0
 nrof 1
@@ -7955,6 +7894,47 @@ value 7
 weight 450
 material 16
 end
+Object head_ant_queen
+name ant queen head
+face head_ant_queen.101
+type 86
+editor_folder items/organic
+layer 3
+identified 1
+item_quality 100
+item_condition 100
+material 32
+weight 450
+value 120
+end
+Object tooth
+name tooth
+face tooth.101
+type 86
+editor_folder items/organic
+layer 3
+item_quality 100
+item_condition 100
+identified 1
+nrof 1
+material 32
+weight 1
+value 10
+end
+Object flesh_generic
+name piece of flesh
+face skin.101
+type 72
+editor_folder items/organic
+nrof 1
+item_quality 100
+item_condition 100
+material 32
+layer 3
+food 75
+weight 75
+value 10
+end
 Object booze_generic
 name booze
 face booze.101
@@ -8020,47 +8000,6 @@ material 32
 value 10
 weight 400
 end
-Object head_ant_queen
-name ant queen head
-face head_ant_queen.101
-type 86
-editor_folder items/organic
-layer 3
-identified 1
-item_quality 100
-item_condition 100
-material 32
-weight 450
-value 120
-end
-Object tooth
-name tooth
-face tooth.101
-type 86
-editor_folder items/organic
-layer 3
-item_quality 100
-item_condition 100
-identified 1
-nrof 1
-material 32
-weight 1
-value 10
-end
-Object flesh_generic
-name piece of flesh
-face skin.101
-type 72
-editor_folder items/organic
-nrof 1
-item_quality 100
-item_condition 100
-material 32
-layer 3
-food 75
-weight 75
-value 10
-end
 Object book
 name book
 face book.101
@@ -8123,6 +8062,34 @@ material 1
 value 50
 weight 4000
 end
+Object potion_generic
+name potion
+face potion_gen.101
+type 5
+editor_folder items/spells
+nrof 1
+layer 3
+sp -1
+inv_face potion_gen.101
+sub_type 128
+is_thrown 1
+material 512
+weight 200
+value 28
+end
+Object scroll_generic
+name scroll
+face scroll.101
+type 111
+editor_folder items/spells
+sp -1
+inv_face inv_s_generic.101
+layer 3
+nrof 1
+material 1
+weight 20
+value 3
+end
 Object balm_generic
 name balm
 face balm_gen.101
@@ -8173,34 +8140,6 @@ sub_type 129
 material 4
 is_dust 1
 weight 15
-value 3
-end
-Object potion_generic
-name potion
-face potion_gen.101
-type 5
-editor_folder items/spells
-nrof 1
-layer 3
-sp -1
-inv_face potion_gen.101
-sub_type 128
-is_thrown 1
-material 512
-weight 200
-value 28
-end
-Object scroll_generic
-name scroll
-face scroll.101
-type 111
-editor_folder items/spells
-sp -1
-inv_face inv_s_generic.101
-layer 3
-nrof 1
-material 1
-weight 20
 value 3
 end
 Object amulet_generic
@@ -10031,6 +9970,75 @@ ac 2
 weight 4500
 value 875
 end
+Object arrow
+name arrow
+face arrow.101
+type 13
+editor_folder items/weapon
+layer 3
+race arrows
+dam 3
+wc 0
+last_sp 0
+attack_pierce 100
+sub_type 1
+animation arrow
+anim_speed 1
+is_animated 0
+is_turnable 1
+nrof 1
+weight 75
+value 20
+material 16
+material_real 257
+food 20
+end
+Object bolt
+name bolt
+face bolt.101
+type 13
+editor_folder items/weapon
+layer 3
+race crossbow bolts
+attack_cleave 100
+dam 3
+wc 0
+last_sp 0
+sub_type 2
+animation bolt
+anim_speed 1
+is_animated 0
+is_turnable 1
+nrof 1
+weight 95
+value 20
+material 2
+material_real 65
+food 10
+end
+Object sstone
+name sling stone
+face sstone.101
+type 13
+editor_folder items/weapon
+race sling stones
+layer 3
+dam 3
+wc 0
+last_sp 0
+attack_impact 100
+animation sstone
+anim_speed 10
+is_animated 0
+is_turnable 1
+sub_type 3
+nrof 1
+weight 85
+value 15
+material 64
+material_real 385
+food 20
+end
 Object bow
 name bow
 face bow.101
@@ -10184,136 +10192,6 @@ weight 250
 value 250
 sp 50
 end
-Object arrow
-name arrow
-face arrow.101
-type 13
-editor_folder items/weapon
-layer 3
-race arrows
-dam 3
-wc 0
-last_sp 0
-attack_pierce 100
-sub_type 1
-animation arrow
-anim_speed 1
-is_animated 0
-is_turnable 1
-nrof 1
-weight 75
-value 20
-material 16
-material_real 257
-food 20
-end
-Object bolt
-name bolt
-face bolt.101
-type 13
-editor_folder items/weapon
-layer 3
-race crossbow bolts
-attack_cleave 100
-dam 3
-wc 0
-last_sp 0
-sub_type 2
-animation bolt
-anim_speed 1
-is_animated 0
-is_turnable 1
-nrof 1
-weight 95
-value 20
-material 2
-material_real 65
-food 10
-end
-Object sstone
-name sling stone
-face sstone.101
-type 13
-editor_folder items/weapon
-race sling stones
-layer 3
-dam 3
-wc 0
-last_sp 0
-attack_impact 100
-animation sstone
-anim_speed 10
-is_animated 0
-is_turnable 1
-sub_type 3
-nrof 1
-weight 85
-value 15
-material 64
-material_real 385
-food 20
-end
-Object t_boulder
-name boulder
-face t_boulder.101
-type 13
-editor_folder items/weapon
-race rock
-layer 3
-weapon_speed 0.035
-attack_impact 100
-dam 3
-sub_type 132
-nrof 1
-weight 20000
-value 1
-animation t_boulder
-anim_speed 5
-is_animated 0
-is_turnable 1
-is_thrown 1
-material 64
-end
-Object t_lboulder
-name large boulder
-face t_lboulder.101
-type 13
-editor_folder items/weapon
-race rock
-layer 3
-weapon_speed 0.035
-attack_impact 100
-dam 5
-sub_type 132
-nrof 1
-weight 120000
-animation t_lboulder
-anim_speed 5
-is_animated 0
-is_thrown 1
-value 2
-material 64
-end
-Object t_rock
-name rock
-face t_rock.101
-type 13
-editor_folder items/weapon
-race rock
-layer 3
-weapon_speed 0.035
-attack_impact 100
-dam 1
-sub_type 132
-nrof 1
-animation t_rock
-anim_speed 5
-is_animated 0
-is_thrown 1
-weight 500
-value 1
-material 64
-end
 Object t_axe
 name throwing axe
 face t_axe.101
@@ -10398,184 +10276,129 @@ material_real 65
 weight 200
 value 35
 end
-Object plant_big1
-name plant
-face plant_big1.101
-type 79
-mpart_id 1
-editor_folder landscape/plants
-material 32
-layer 5
-no_pass 1
-blocksview 1
-no_pick 1
+Object t_boulder
+name boulder
+face t_boulder.101
+type 13
+editor_folder items/weapon
+race rock
+layer 3
+weapon_speed 0.035
+attack_impact 100
+dam 3
+sub_type 132
+nrof 1
+weight 20000
+value 1
+animation t_boulder
+anim_speed 5
+is_animated 0
+is_turnable 1
+is_thrown 1
+material 64
 end
-More
-Object plant_big1b
-name plant
-type 79
-mpart_id 1
-mpart_nr 1
-layer 5
-no_pass 1
-no_pick 1
-blocksview 1
-y 1
+Object t_lboulder
+name large boulder
+face t_lboulder.101
+type 13
+editor_folder items/weapon
+race rock
+layer 3
+weapon_speed 0.035
+attack_impact 100
+dam 5
+sub_type 132
+nrof 1
+weight 120000
+animation t_lboulder
+anim_speed 5
+is_animated 0
+is_thrown 1
+value 2
+material 64
 end
-Object plant1
-name plant
-face plant1.101
-type 79
-editor_folder landscape/plants
-layer 4
-no_pick 1
+Object t_rock
+name rock
+face t_rock.101
+type 13
+editor_folder items/weapon
+race rock
+layer 3
+weapon_speed 0.035
+attack_impact 100
+dam 1
+sub_type 132
+nrof 1
+animation t_rock
+anim_speed 5
+is_animated 0
+is_thrown 1
+weight 500
+value 1
+material 64
 end
-Object plant2
-name plant
-face plant2.101
-type 79
-editor_folder landscape/plants
-layer 4
-no_pick 1
-end
-Object plant3
-name plant
-face plant3.101
-type 79
-editor_folder landscape/plants
-layer 4
-no_pick 1
-end
-Object plant4
-name plant
-face plant4.101
-type 79
-editor_folder landscape/plants
-layer 4
-no_pick 1
-end
-Object plant5
-name plant
-face plant5.101
-type 79
-editor_folder landscape/plants
-layer 4
-no_pick 1
-end
-Object plant6
-name plant
-face plant6.101
-type 79
-editor_folder landscape/plants
-layer 4
-no_pick 1
-end
-Object plant7
-name plant
-face plant7.101
-type 79
-editor_folder landscape/plants
-layer 4
-no_pick 1
-end
-Object plant8
-name plant
-face plant8.101
-type 79
-editor_folder landscape/plants
-layer 4
-no_pick 1
-end
-Object plant9
-name plant
-face plant9.101
-type 79
-editor_folder landscape/plants
-layer 4
-no_pick 1
-end
-Object plant10
-name plant
-face plant10.101
-type 79
-editor_folder landscape/plants
-layer 4
-no_pick 1
-end
-Object plant11
-name plant
-face plant11.101
-type 79
-editor_folder landscape/plants
-layer 4
-no_pick 1
-end
-Object plant12
-name plant
-face plant12.101
-type 79
-editor_folder landscape/plants
-layer 4
-no_pick 1
-end
-Object plant13
-name plant
-face plant13.101
-type 79
-editor_folder landscape/plants
-layer 4
-no_pick 1
-end
-Object plant14
-name plant
-face plant14.101
-type 79
-editor_folder landscape/plants
-layer 4
-no_pick 1
-end
-Object plant15
-name plant
-face plant15.101
-type 79
-editor_folder landscape/plants
-layer 4
-no_pick 1
-end
-Object plant16
-name plant
-face plant16.101
-type 79
-editor_folder landscape/plants
-layer 4
-no_pick 1
-end
-Object plant17
-name plant
-face plant17.101
-type 79
-editor_folder landscape/plants
-layer 4
-no_pick 1
-end
-Object thorns
-name thorns
-face thorns.101
-type 88
-editor_folder landscape/plants
+Object random_chest_wood
+name treasure chest
+face chest_wood_s.111
+type 4
+msg
+Touching the treasure chest it crumbles to dust.
+endmsg
+editor_folder items/items
+nrof 0
 layer 4
 level 1
-wc -1
-food 1
-no_pick 1
-walk_on 1
-is_wooded 1
-slow_move 3
-attack_pierce 1
-speed 0.2
 hp 1
-dam 3
-is_floor 1
+material 18
+no_pick 1
+value 50
+weight 50000
+randomitems chest
+end
+Object random_chest_black
+name treasure chest
+face chest_black_s.111
+type 4
+msg
+Touching the treasure chest it crumbles to dust.
+endmsg
+editor_folder items/items
+nrof 0
+level 1
+no_pick 1
+layer 4
+hp 1
+material 18
+value 50
+weight 50000
+randomitems chest
+end
+Object random_chest_metal
+name chest
+face chest_metal_s.111
+type 4
+msg
+Touching the treasure chest it crumbles to dust.
+endmsg
+editor_folder items/items
+nrof 0
+level 1
+no_pick 1
+layer 4
+hp 1
+material 18
+value 50
+weight 50000
+randomitems chest
+end
+Object random_treasure
+face rand_treasure.111
+type 4
+editor_folder items/items
+layer 3
+hp 1
+randomitems chest
+auto_apply 1
 end
 Object cactus
 name cactus
@@ -11006,6 +10829,185 @@ layer 5
 no_pick 1
 no_teleport 1
 end
+Object plant_big1
+name plant
+face plant_big1.101
+type 79
+mpart_id 1
+editor_folder landscape/plants
+material 32
+layer 5
+no_pass 1
+blocksview 1
+no_pick 1
+end
+More
+Object plant_big1b
+name plant
+type 79
+mpart_id 1
+mpart_nr 1
+layer 5
+no_pass 1
+no_pick 1
+blocksview 1
+y 1
+end
+Object plant1
+name plant
+face plant1.101
+type 79
+editor_folder landscape/plants
+layer 4
+no_pick 1
+end
+Object plant2
+name plant
+face plant2.101
+type 79
+editor_folder landscape/plants
+layer 4
+no_pick 1
+end
+Object plant3
+name plant
+face plant3.101
+type 79
+editor_folder landscape/plants
+layer 4
+no_pick 1
+end
+Object plant4
+name plant
+face plant4.101
+type 79
+editor_folder landscape/plants
+layer 4
+no_pick 1
+end
+Object plant5
+name plant
+face plant5.101
+type 79
+editor_folder landscape/plants
+layer 4
+no_pick 1
+end
+Object plant6
+name plant
+face plant6.101
+type 79
+editor_folder landscape/plants
+layer 4
+no_pick 1
+end
+Object plant7
+name plant
+face plant7.101
+type 79
+editor_folder landscape/plants
+layer 4
+no_pick 1
+end
+Object plant8
+name plant
+face plant8.101
+type 79
+editor_folder landscape/plants
+layer 4
+no_pick 1
+end
+Object plant9
+name plant
+face plant9.101
+type 79
+editor_folder landscape/plants
+layer 4
+no_pick 1
+end
+Object plant10
+name plant
+face plant10.101
+type 79
+editor_folder landscape/plants
+layer 4
+no_pick 1
+end
+Object plant11
+name plant
+face plant11.101
+type 79
+editor_folder landscape/plants
+layer 4
+no_pick 1
+end
+Object plant12
+name plant
+face plant12.101
+type 79
+editor_folder landscape/plants
+layer 4
+no_pick 1
+end
+Object plant13
+name plant
+face plant13.101
+type 79
+editor_folder landscape/plants
+layer 4
+no_pick 1
+end
+Object plant14
+name plant
+face plant14.101
+type 79
+editor_folder landscape/plants
+layer 4
+no_pick 1
+end
+Object plant15
+name plant
+face plant15.101
+type 79
+editor_folder landscape/plants
+layer 4
+no_pick 1
+end
+Object plant16
+name plant
+face plant16.101
+type 79
+editor_folder landscape/plants
+layer 4
+no_pick 1
+end
+Object plant17
+name plant
+face plant17.101
+type 79
+editor_folder landscape/plants
+layer 4
+no_pick 1
+end
+Object thorns
+name thorns
+face thorns.101
+type 88
+editor_folder landscape/plants
+layer 4
+level 1
+wc -1
+food 1
+no_pick 1
+walk_on 1
+is_wooded 1
+slow_move 3
+attack_pierce 1
+speed 0.2
+hp 1
+dam 3
+is_floor 1
+end
 Object boulder
 face boulder.101
 type 79
@@ -11344,22 +11346,6 @@ material 64
 no_pass 1
 no_pick 1
 end
-Object probebullet
-face probe.101
-type 2
-editor_folder magic/magic
-layer 7
-animation probebullet
-is_animated 1
-anim_speed 3
-terrain_flag 32767
-walk_on 1
-fly_on 1
-speed 1
-hp 14
-flying 1
-no_pick 1
-end
 Object bullet
 name magic bullet
 face bullet.101
@@ -11391,7 +11377,7 @@ layer 4
 animation burnout
 is_animated 1
 anim_speed 2
-glow_radius 3
+glow_radius 1
 speed 1
 food 41
 is_used_up 1
@@ -11440,6 +11426,7 @@ editor_folder magic/fire
 layer 7
 walk_on 1
 fly_on 1
+glow_radius 1
 animation firebreath
 is_animated 1
 anim_speed 4
@@ -11451,7 +11438,6 @@ level 1
 attack_fire 100
 terrain_flag 32767
 flying 1
-glow_radius 3
 no_pick 1
 end
 Object meffect_blue
@@ -11546,6 +11532,36 @@ attack_weaponmagic 100
 terrain_flag 32767
 flying 1
 end
+Object probebullet
+face probe.101
+type 2
+editor_folder magic/magic
+layer 7
+animation probebullet
+is_animated 1
+anim_speed 3
+terrain_flag 32767
+walk_on 1
+fly_on 1
+speed 1
+hp 14
+flying 1
+no_pick 1
+end
+Object level_up
+name magical sparkle
+face sparkle_lup.101
+type 79
+editor_folder misc/effects
+layer 7
+animation level_up
+is_animated 1
+anim_speed 1
+speed 1
+is_used_up 1
+no_pick 1
+food 9
+end
 Object fog
 face fog.111
 type 79
@@ -11573,7 +11589,6 @@ face fog.111
 type 79
 editor_folder misc/misc
 layer 7
-glow_radius 2
 other_arch fog_glow1
 terrain_flag 65535
 animation fog_glow1
@@ -11595,7 +11610,6 @@ name strange glowing fog
 face fog.111
 type 79
 editor_folder misc/misc
-glow_radius 3
 layer 7
 terrain_flag 65535
 other_arch fog_glow2
@@ -11638,34 +11652,6 @@ invulnerable 1
 material 1
 speed 0.01
 blocksview 1
-end
-Object level_up
-name magical sparkle
-face sparkle_lup.101
-type 79
-editor_folder misc/effects
-layer 7
-animation level_up
-is_animated 1
-anim_speed 1
-speed 1
-is_used_up 1
-no_pick 1
-food 9
-end
-Object spawn_point
-face spawn_point.101
-type 81
-editor_folder mobs/mobs
-other_arch spawn_info
-speed -0.0011
-no_teleport 1
-last_sp -1
-sp -1
-last_heal 1
-sys_object 1
-layer 0
-no_pick 1
 end
 Object blob_acid
 name acid blob
@@ -12615,115 +12601,19 @@ no_pick 1
 x 1
 y 1
 end
-Object bed_save
-name save bed
-face bed_save.111
-type 106
-editor_folder special/special
-layer 3
-weight 200000
-value 1
-no_pick 1
-no_magic 1
-damned 1
-end
-Object creator
-name creator
-face creator.111
-type 42
-editor_folder special/special
+Object spawn_point
+face spawn_point.101
+type 81
+editor_folder mobs/mobs
+other_arch spawn_info
+speed -0.0011
 no_teleport 1
+last_sp -1
+sp -1
+last_heal 1
+sys_object 1
 layer 0
-hp 1
-sys_object 1
 no_pick 1
-end
-Object light1
-name light
-face light_bulb_1.111
-type 78
-editor_folder special/special
-glow_radius 1
-no_pick 1
-no_drop 1
-no_teleport 1
-sys_object 1
-end
-Object light2
-name light
-face light_bulb_2.111
-type 78
-editor_folder special/special
-glow_radius 2
-no_pick 1
-no_drop 1
-no_teleport 1
-sys_object 1
-end
-Object light3
-name light
-face light_bulb_3.111
-type 78
-editor_folder special/special
-glow_radius 3
-no_pick 1
-no_drop 1
-no_teleport 1
-sys_object 1
-end
-Object light4
-name light
-face light_bulb_4.111
-type 78
-editor_folder special/special
-no_pick 1
-no_drop 1
-no_teleport 1
-glow_radius 4
-sys_object 1
-end
-Object magic_mouth
-face magicmouth.111
-type 98
-editor_folder special/special
-walk_on 1
-fly_on 1
-no_teleport 1
-no_pick 1
-sys_object 1
-end
-Object marker
-name marker
-face info.101
-type 55
-editor_folder special/special
-food 32700
-slaying put your code here
-speed 0.5
-sys_object 1
-no_pick 1
-end
-Object rand_drop
-face creator.111
-type 102
-editor_folder special/special
-carrying 0
-layer 0
-sys_object 1
-no_teleport 1
-no_pick 1
-no_drop 1
-end
-Object waypoint
-face waypoint.101
-type 119
-editor_folder special/special
-sp 0
-exp 0
-wc 0
-ac 0
-cursed 0
-sys_object 1
 end
 Object director
 name director
@@ -12827,6 +12717,171 @@ is_animated 1
 is_turnable 1
 anim_speed 3
 end
+Object bed_save
+name save bed
+face bed_save.111
+type 106
+editor_folder special/special
+layer 3
+weight 200000
+value 1
+no_pick 1
+no_magic 1
+damned 1
+end
+Object creator
+name creator
+face creator.111
+type 42
+editor_folder special/special
+no_teleport 1
+layer 0
+hp 1
+sys_object 1
+no_pick 1
+end
+Object light1
+name light
+face light_bulb_1.111
+type 78
+editor_folder special/special
+glow_radius 1
+no_pick 1
+no_drop 1
+no_teleport 1
+sys_object 1
+end
+Object light2
+name light
+face light_bulb_2.111
+type 78
+editor_folder special/special
+glow_radius 2
+no_pick 1
+no_drop 1
+no_teleport 1
+sys_object 1
+end
+Object light3
+name light
+face light_bulb_3.111
+type 78
+editor_folder special/special
+glow_radius 3
+no_pick 1
+no_drop 1
+no_teleport 1
+sys_object 1
+end
+Object light4
+name light
+face light_bulb_4.111
+type 78
+editor_folder special/special
+no_pick 1
+no_drop 1
+no_teleport 1
+glow_radius 4
+sys_object 1
+end
+Object light5
+name light
+face light_bulb_4.111
+type 78
+editor_folder special/special
+no_pick 1
+no_drop 1
+no_teleport 1
+glow_radius 5
+sys_object 1
+end
+Object light6
+name light
+face light_bulb_4.111
+type 78
+editor_folder special/special
+no_pick 1
+no_drop 1
+no_teleport 1
+glow_radius 6
+sys_object 1
+end
+Object light7
+name light
+face light_bulb_4.111
+type 78
+editor_folder special/special
+no_pick 1
+no_drop 1
+no_teleport 1
+glow_radius 7
+sys_object 1
+end
+Object light8
+name light
+face light_bulb_4.111
+type 78
+editor_folder special/special
+no_pick 1
+no_drop 1
+no_teleport 1
+glow_radius 8
+sys_object 1
+end
+Object light9
+name light
+face light_bulb_4.111
+type 78
+editor_folder special/special
+no_pick 1
+no_drop 1
+no_teleport 1
+glow_radius 9
+sys_object 1
+end
+Object magic_mouth
+face magicmouth.111
+type 98
+editor_folder special/special
+walk_on 1
+fly_on 1
+no_teleport 1
+no_pick 1
+sys_object 1
+end
+Object marker
+name marker
+face info.101
+type 55
+editor_folder special/special
+food 32700
+slaying put your code here
+speed 0.5
+sys_object 1
+no_pick 1
+end
+Object rand_drop
+face creator.111
+type 102
+editor_folder special/special
+carrying 0
+layer 0
+sys_object 1
+no_teleport 1
+no_pick 1
+no_drop 1
+end
+Object waypoint
+face waypoint.101
+type 119
+editor_folder special/special
+sp 0
+exp 0
+wc 0
+ac 0
+cursed 0
+sys_object 1
+end
 Object event_obj
 name Python
 face event.101
@@ -12887,7 +12942,6 @@ face lantern_magic.131
 type 79
 editor_folder structures/lanterns
 no_pass 1
-glow_radius 4
 layer 5
 no_pick 1
 end
@@ -12897,7 +12951,6 @@ face lantern_magic.151
 type 79
 editor_folder structures/lanterns
 no_pass 1
-glow_radius 4
 layer 5
 no_pick 1
 end
@@ -12906,7 +12959,6 @@ name magic lantern
 face lantern2_magic.131
 type 79
 editor_folder structures/lanterns
-glow_radius 4
 layer 5
 no_pick 1
 end
@@ -12915,7 +12967,6 @@ name magic lantern
 face lantern2_magic.151
 type 79
 editor_folder structures/lanterns
-glow_radius 4
 layer 5
 no_pick 1
 end
@@ -13165,6 +13216,28 @@ no_pass 1
 layer 5
 no_pick 1
 end
+Object rune_fire
+name Rune of Fire
+face rune_fire.101
+type 154
+msg
+You detonate a Rune of Fire!
+endmsg
+editor_folder traps/runes
+layer 4
+hp 1
+animation rune_fire
+speed 1
+level 1
+is_animated 0
+anim_speed 1
+is_invisible 1
+no_pick 1
+walk_on 1
+attack_fire 100
+dam 8
+Cha 20
+end
 Object trap_bear_trap
 name bear trap
 face tspikes.101
@@ -13338,28 +13411,6 @@ anim_speed 4
 walk_on 1
 no_pick 1
 weight 100000
-end
-Object rune_fire
-name Rune of Fire
-face rune_fire.101
-type 154
-msg
-You detonate a Rune of Fire!
-endmsg
-editor_folder traps/runes
-layer 4
-hp 1
-animation rune_fire
-speed 1
-level 1
-is_animated 0
-anim_speed 1
-is_invisible 1
-no_pick 1
-walk_on 1
-attack_fire 100
-dam 8
-Cha 20
 end
 Object wall_blue1.111
 name stone wall

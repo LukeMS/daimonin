@@ -530,12 +530,8 @@ int change_abil(object *op, object *tmp) {
     success=1;
     if(flag>0) {
         (*draw_info_func)(NDI_UNIQUE|NDI_WHITE, 0, op,"Your vision is better in the dark.");
-        if(op->type==PLAYER)
-          op->contr->update_los=1;
     } else {
         (*draw_info_func)(NDI_UNIQUE|NDI_GREY, 0, op,"You see less well in the dark.");
-        if(op->type==PLAYER)
-          op->contr->update_los=1;
     }  
   }  
 
@@ -779,7 +775,7 @@ void add_statbonus(object *op) {
 void fix_player(object *op) 
 {
 	int ring_count=0,skill_level_max=1;
-	int tmp_item;
+	int tmp_item, old_glow;
 	float tmp_con;
 	int i,j, inv_flag,inv_see_flag, light,weapon_weight, best_wc, best_ac, wc, ac;
 	int resists_boni[NROFATTACKS], resists_mali[NROFATTACKS];
@@ -816,7 +812,7 @@ void fix_player(object *op)
 	}
 
 	pl=op->contr;
-	inv_flag=inv_see_flag=light=weapon_weight=best_wc=best_ac=wc=ac=0;
+	inv_flag=inv_see_flag=weapon_weight=best_wc=best_ac=wc=ac=0;
 
     for(i=0;i<7;i++) 
       set_attr_value(&(op->stats),i,get_attr_value(&(pl->orig_stats),i));
@@ -848,6 +844,9 @@ void fix_player(object *op)
 	pl->levgrace[1]=(char)op->stats.maxgrace;
 	
 	op->stats.wc_range = op->arch->clone.stats.wc_range;
+
+	old_glow = op->glow_radius;
+	light = op->arch->clone.glow_radius;
 
 	op->stats.luck=op->arch->clone.stats.luck;
 	op->speed = op->arch->clone.speed;
@@ -927,8 +926,9 @@ void fix_player(object *op)
 		/* 
 		 * add here more types we can and must skip.
 		 */
-		if(    tmp->type == POTION			|| tmp->type==CONTAINER || tmp->type==CLOSE_CON
-			|| tmp->type ==TYPE_LIGHT_APPLY || tmp->type ==WAND		|| tmp->type == ROD
+		if(    tmp->type == SCROLL			||
+			   tmp->type == POTION			|| tmp->type==CONTAINER || tmp->type==CLOSE_CON
+			|| tmp->type == TYPE_LIGHT_REFILL || tmp->type ==WAND		|| tmp->type == ROD
 			|| tmp->type == HORN
 		  )
 			continue;
@@ -964,6 +964,10 @@ void fix_player(object *op)
 		{
 			switch(tmp->type) /* still applied stuff */
 			{
+			case TYPE_LIGHT_APPLY:
+				if (tmp->glow_radius > light)
+					light=tmp->glow_radius;
+			break;
 
 		        /* the new weapon skill system is more complex
 				 * when new applied, set_skill_weapon is set. 
@@ -1474,6 +1478,12 @@ void fix_player(object *op)
 	update_ob_speed(op);
 
 	op->weapon_speed_add = op->weapon_speed;
+
+
+	/* we must do -old_gow + light */
+	if(op->map && old_glow != light)
+		adjust_light_source(op->map, op->x, op->y, light-old_glow);
+
 	op->glow_radius = light;
 
 	/* for player, max hp depend on general level, sp on magic exp, grace on wisdom exp level
@@ -1912,6 +1922,12 @@ object *insert_base_info_object(object *op)
 	CLEAR_FLAG(tmp,FLAG_ALIVE);
 	CLEAR_FLAG(tmp,FLAG_MONSTER);
     insert_ob_in_ob(tmp,head); /* and put it in the mob */
+    
+    /* Store position (for returning home after aggro is lost...) */
+    /* Has to be done after insert_ob_in_ob() */
+    tmp->x = op->x;
+    tmp->y = op->y;
+    FREE_AND_ADD_REF_HASH(tmp->slaying, op->map->path);
 
 	return tmp;
 }

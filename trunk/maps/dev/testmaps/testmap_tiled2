@@ -7,6 +7,7 @@ endmsg
 width 19
 height 19
 difficulty 1
+darkness 300
 tile_path_2 testmap_tiled3
 tile_path_3 testmap_tiled5
 tile_path_4 testmap_tiled1
@@ -335,6 +336,11 @@ arch floor_grit1
 x 4
 y 6
 end
+arch light3
+glow_radius 8
+x 4
+y 6
+end
 arch floor_grit1
 x 4
 y 7
@@ -758,6 +764,11 @@ x 9
 y 14
 end
 arch floor_grit1
+x 9
+y 15
+end
+arch light2
+glow_radius 6
 x 9
 y 15
 end
@@ -1034,6 +1045,11 @@ x 13
 y 5
 end
 arch floor_grit1
+x 13
+y 6
+end
+arch light3
+glow_radius 12
 x 13
 y 6
 end
