@@ -229,17 +229,6 @@ hp -1
 sp -1
 no_pick 1
 end
-Object stairw_up_2
-name stairs going up
-type 66
-editor_folder connect/exists
-face stairs_wood.131
-no_teleport 1
-layer 5
-hp -1
-sp -1
-no_pick 1
-end
 Object teleporter
 type 41
 editor_folder connect/exists
