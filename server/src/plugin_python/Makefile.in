@@ -9,29 +9,13 @@ CROSSFIRE_PATH = /home/Daimonin/server/plugin_python
 # if needed.
 LIBS		= -lnsl -ldl -lpthread -lutil
 
-
-
-# Supply the Python version used. In most cases, this will be either 2.0 or 2.1
-
-PYTHONVER      = 2.x
-
-# Supply your library root directory. In case you have more than one (for
-# example, /usr/lib and /usr/local/lib), choose the one containing Python.
-
-LIBROOT        = /home/unitel/cf/lib
-
-# Supply your include directory. In case you have more than one (for example,
-# /usr/include and /usr/local/include), choose the one containing Python.
-
-INCLUDEROOT    = /home/unitel/cf/include
- 
 # Supply the Python version used. In most cases, this will be something like 2.x
 # If python is installed in very unusal positions, this must be changed by hand
-#PYTHONVER      	= @PYTHON_VER@
+PYTHONVER      	= @PYTHON_VER@
 
 # Supply the python /include and /lib positions
-#LIBROOT 	= @PYTHON_LIB@
-#INCLUDEROOT 	= @PYTHON_INC@
+LIBROOT 	= @PYTHON_LIB@
+INCLUDEROOT 	= @PYTHON_INC@
 
 EXTRA_CFLAGS    = @EXTRA_CFLAGS@
 
