@@ -1123,6 +1123,15 @@ arch floor_wood3e
 x 7
 y 15
 end
+arch archer
+x 7
+y 15
+arch event_obj
+name Lua
+race /relic/castle/scripts/commoner.lua
+sub_type 6
+end
+end
 arch floor_wood3e
 x 7
 y 16
@@ -1277,6 +1286,21 @@ end
 arch floor_wood3e
 x 8
 y 19
+end
+arch ranger
+level 15
+friendly 1
+random_move 1
+item_race 4
+item_level 4
+stand_still 0
+x 8
+y 19
+arch event_obj
+name lua
+race /relic/castle/scripts/Commoner.lua
+sub_type 6
+end
 end
 arch floor_wood3e
 x 8
