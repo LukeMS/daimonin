@@ -1818,7 +1818,7 @@ void update_object(object *op, int action) {
  */
 
 void free_object(object *ob) {
-  object *tmp,*tmp_op;
+  object *tmp,*tmp_op, *tmp1=NULL, *tmp2=NULL, *tmp3=NULL, *tmp4=NULL;
 
     if (!QUERY_FLAG(ob,FLAG_REMOVED)) {
 	dump_object(ob);
@@ -1936,6 +1936,7 @@ void free_object(object *ob) {
     }
   }
   /* Remove object from the active list */
+tmp1=ob;
   ob->speed = 0;
   update_ob_speed(ob);
 
@@ -1953,11 +1954,15 @@ void free_object(object *ob) {
       ob->next->prev=ob->prev;
   }
   
+tmp2=ob;
   /*LOG(llevDebug,"FO: a:%s %x >%s< (#%d)\n", ob->arch?(ob->arch->name?ob->arch->name:""):"", ob->name, ob->name?ob->name:"",ob->name?query_refcount(ob->name):0);*/
   if(ob->name!=NULL) {
+ tmp3=ob;
     free_string(ob->name);
+ tmp4=ob;
     ob->name=NULL;
   }
+
   if(ob->title!=NULL) {
     free_string(ob->title);
     ob->title=NULL;
