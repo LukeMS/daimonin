@@ -70,7 +70,8 @@ arch floor_ostone1
 x 3
 y 4
 end
-arch floor_ostone2
+arch floor_ostone5
+unique 1
 x 3
 y 5
 end

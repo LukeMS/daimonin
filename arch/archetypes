@@ -1456,6 +1456,17 @@ terrain_type 1
 no_pick 1
 is_floor 1
 end
+Object blocked
+face blocked.111
+type 79
+editor_folder floors/floors
+layer 1
+no_teleport 1
+is_floor 1
+blocksview 1
+no_pick 1
+no_pass 1
+end
 Object ability_dragon
 name dragonbreath
 face force.101
@@ -2336,22 +2347,6 @@ editor_folder indoor/indoor
 no_pick 1
 layer 4
 end
-Object rack.111
-name weapon rack
-face rack.111
-type 79
-editor_folder indoor/indoor
-no_pick 1
-layer 4
-end
-Object rack.171
-name weapon rack
-face rack.171
-type 79
-editor_folder indoor/indoor
-no_pick 1
-layer 4
-end
 Object basin1.101
 name basin
 face basin1.101
@@ -2525,6 +2520,22 @@ name mirror
 face mirror_big.171
 type 79
 editor_folder indoor/indoor
+no_pick 1
+layer 4
+end
+Object bed_1a.111
+name bed
+face bed_1a.111
+type 79
+editor_folder indoor/beds
+no_pick 1
+layer 4
+end
+Object bed_1b.111
+name bed
+face bed_1b.111
+type 79
+editor_folder indoor/beds
 no_pick 1
 layer 4
 end
@@ -2836,6 +2847,26 @@ editor_folder intern/items
 layer 3
 no_drop 1
 no_pick 1
+identified 1
+end
+Object close_chest_4.111
+name close the chest
+face close_chest_4.111
+type 121
+editor_folder intern/items
+layer 3
+no_pick 1
+no_drop 1
+identified 1
+end
+Object close_chest_4.171
+name close the chest
+face close_chest_4.171
+type 121
+editor_folder intern/items
+layer 3
+no_pick 1
+no_drop 1
 identified 1
 end
 Object alignment_force
@@ -4702,6 +4733,64 @@ material_real 193
 value 50
 weight 50
 container 50000
+Str 5
+end
+Object rack.111
+name weapon rack
+face rack.111
+type 122
+editor_folder items/container
+layer 4
+identified 1
+no_pick 1
+material 18
+value 3500
+container 250000
+weight 15000
+Str 15
+end
+Object rack.171
+name weapon rack
+face rack.171
+type 122
+editor_folder items/container
+layer 4
+identified 1
+no_pick 1
+material 18
+value 3500
+container 250000
+weight 15000
+Str 15
+end
+Object chest_4.111
+name chest
+face chest_4.111
+type 122
+editor_folder items/container
+other_arch close_chest_4.111
+layer 4
+level 1
+material 18
+material_real 258
+value 350
+container 500000
+weight 15000
+Str 5
+end
+Object chest_4.171
+name chest
+face chest_4.171
+type 122
+editor_folder items/container
+other_arch close_chest_4.171
+layer 4
+level 1
+material 18
+material_real 258
+value 350
+container 500000
+weight 15000
 Str 5
 end
 Object coppercoin
@@ -7866,17 +7955,6 @@ no_pick 1
 no_magic 1
 damned 1
 end
-Object blocked
-face blocked.111
-type 79
-editor_folder special/special
-layer 1
-no_teleport 1
-is_floor 1
-blocksview 1
-no_pick 1
-no_pass 1
-end
 Object creator
 name creator
 face creator.111
@@ -7944,6 +8022,16 @@ slaying put your code here
 speed 0.5
 sys_object 1
 no_pick 1
+end
+Object rand_drop
+face creator.111
+type 102
+editor_folder special/special
+layer 0
+sys_object 1
+no_teleport 1
+no_pick 1
+no_drop 1
 end
 Object cave_pillar1
 name cave pillar
