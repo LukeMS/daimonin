@@ -583,24 +583,21 @@ static int luaLoadFile(lua_State *L, const char *file)
 
     if ((res = luaFindFile(L, file, &path)) == 0)
     {
-//        if ((res = luaCompile(L, &path)) == 0)
+        if ((res = load_file_cache(L, path)) == 0)
         {
-            if ((res = load_file_cache(L, path)) == 0)
+            lua_rawgeti(L, LUA_REGISTRYINDEX, cache_ref);
+            lua_pushstring(L, file);
+            lua_rawget(L, -2);
+
+            if (!lua_isfunction(L, -1))
             {
-                lua_rawgeti(L, LUA_REGISTRYINDEX, cache_ref);
-                lua_pushstring(L, file);
-                lua_rawget(L, -2);
-
-                if (!lua_isfunction(L, -1))
-                {
-                    lua_pop(L, 1);
-                    lua_pushstring(L, file);
-                    lua_pushstring(L, path);
-                    lua_rawset(L, -3);
-                }
-
                 lua_pop(L, 1);
+                lua_pushstring(L, file);
+                lua_pushstring(L, path);
+                lua_rawset(L, -3);
             }
+
+            lua_pop(L, 1);
         }
     }
 
@@ -628,6 +625,107 @@ static int luaRequire(lua_State *L)
         lua_error(L);
 
     return 0;
+}
+
+/*****************************************************************************/
+/* Detached scripts handling                                                 */
+/*****************************************************************************/
+
+/* Insert a context in the global list */
+void lua_context_insert(struct lua_context *context)
+{
+    context->next = first_context;
+    first_context = context;
+    if(context->next)
+        context->next->prev = context;
+}
+
+/* Remove a context from the global list */
+void lua_context_remove(struct lua_context *context)
+{
+    if(first_context == context)
+        first_context = context->next;
+    if(context->prev)
+        context->prev->next = context->next;
+    if(context->next)
+        context->next->prev = context->prev;
+    context->next = context->prev = NULL;
+}
+
+void detach_lua_context(struct lua_context *context, int resume_time)
+{
+#ifdef LUA_DEBUG
+    LOG(llevDebug, "LUA - Detaching context (%s)\n", context->file);
+#endif    
+    context->resume_time = resume_time;
+    if(first_context == NULL)
+    {
+        /* Register for global tick events */
+        int evt = EVENT_CLOCK;
+        GCFP.Value[0] = (void *)(&evt);
+        GCFP.Value[1] = (void *)PLUGIN_NAME;
+        (PlugHooks[HOOK_REGISTEREVENT])(&GCFP);
+    }
+
+    lua_context_insert(context);
+}
+
+void terminate_lua_context(struct lua_context *context)
+{
+#ifdef LUA_DEBUG
+    LOG(llevDebug, "LUA - Terminating context (%s)\n", context->file);
+#endif    
+    if(context->prev || context->next || first_context == context) {
+        lua_context_remove(context);
+        if(first_context == NULL)
+        {
+            /* Unregister for global tick events */
+            int evt = EVENT_CLOCK;
+            GCFP.Value[0] = (void *)(&evt);
+            GCFP.Value[1] = (void *)PLUGIN_NAME;
+            (PlugHooks[HOOK_UNREGISTEREVENT])(&GCFP);
+        }
+    }
+    
+    /* Get rid of the thread object, which should leave the thread for gc */
+    luaL_unref(global_state, LUA_REGISTRYINDEX, context->threadidx);
+
+    return_poolchunk(context, pool_luacontext);
+}
+
+/* TODO: More efficient would be to keep the contexts sorted by time
+ * to resume (like an event queue). Then at every tick (or by using
+ * timers, if they work (?)) just pick the n first contexts that
+ * have triggered, not even traversing the rest.
+ */
+void resume_detached_contexts()
+{
+    struct lua_context *context, *next_context = NULL;
+    for(context = first_context; context != NULL; context = next_context)
+    {
+        next_context = context->next;
+        context->resume_time--;
+        if(context->resume_time < 0) {
+            lua_State *L = context->state;
+            int res;
+#ifdef LUA_DEBUG
+    LOG(llevDebug, "LUA - Resuming detached script: %s\n", context->file);
+#endif
+            res = lua_resume(L, 0);
+
+            if (res == 0)
+            {
+                /* Handle scripts that just wants to yield, not end */
+                if(lua_isnumber(L, -1) || lua_isstring(L, -1))  {
+                    context->resume_time = lua_tonumber(L, -1)* (lua_Number)(1000000 / MAX_TIME);
+                }
+            }
+
+            if(context->resume_time < 0) {
+                terminate_lua_context(context);
+            }
+        }
+    }
 }
 
 /*****************************************************************************/
@@ -689,9 +787,6 @@ MODULEAPI CFParm * triggerEvent(CFParm *PParm)
     static int  result;
 
     eventcode = *(int *) (PParm->Value[0]);
-#ifdef LUA_DEBUG
-    LOG(llevDebug, "LUA - triggerEvent:: eventcode %d\n", eventcode);
-#endif
     switch (eventcode)
     {
         case EVENT_NONE:
@@ -709,6 +804,9 @@ MODULEAPI CFParm * triggerEvent(CFParm *PParm)
         case EVENT_THROW:
         case EVENT_TRIGGER:
         case EVENT_CLOSE:
+#ifdef LUA_DEBUG
+    LOG(llevDebug, "LUA - triggerEvent:: eventcode %d\n", eventcode);
+#endif
           result = HandleEvent(PParm);
           break;
         case EVENT_BORN:
@@ -734,11 +832,17 @@ MODULEAPI CFParm * triggerEvent(CFParm *PParm)
 /*****************************************************************************/
 MODULEAPI int HandleGlobalEvent(CFParm *PParm)
 {
-    LOG(llevDebug, "Unimplemented for now\n");
-
-#if 0
+    
     switch(*(int *)(PParm->Value[0]))
     {
+        case EVENT_CLOCK:
+            resume_detached_contexts();
+            break;
+            
+        default: 
+            LOG(llevDebug, "Unimplemented for now\n");
+            break;
+#if 0
         case EVENT_CRASH:
             LOG(llevDebug, "Unimplemented for now\n");
             break;
@@ -798,9 +902,8 @@ MODULEAPI int HandleGlobalEvent(CFParm *PParm)
 
             RunLua   Script("python/python_mapreset.py");
             break;
-    }
-    StackPosition--;
 #endif
+    }
 
     return 0;
 }
@@ -851,13 +954,15 @@ static int RunLuaScript(struct lua_context *context)
 
         /* Loadfile puts the loaded chunk on top of the stack as a function,
          * we call it without parameters and not caring about return values */
-        res = lua_pcall(L, 0, 0, -2);
-        // res = lua_resume(L, 0);
+        // res = lua_pcall(L, 0, 1, -2);
+        // TODO: figure out how to get the error handler into the coroutine
+        res = lua_resume(L, 0);
 
         if (res == 0)
         {
-            /* TODO: if script just wants to yield, not end. store its
-             * global environment somewhere so we can continue later */
+            /* Handle scripts that just wants to yield, not end */
+            if(lua_isnumber(L, -1) || lua_isstring(L, -1)) 
+                detach_lua_context(context, lua_tonumber(L, -1) * (lua_Number)(1000000 / MAX_TIME));
 
             return 0;
         }
@@ -891,6 +996,7 @@ MODULEAPI int HandleEvent(CFParm *PParm)
     context = get_poolchunk(pool_luacontext);
 
     context->next = context->prev = NULL;
+    context->resume_time = -1;
     context->state = lua_newthread(global_state);
     context->threadidx = luaL_ref(global_state, LUA_REGISTRYINDEX);
 
@@ -909,14 +1015,9 @@ MODULEAPI int HandleEvent(CFParm *PParm)
 
     res = RunLuaScript(context);
 
-    /* Get rid of the thread object, and hope the thread gets collected */
-    /* TODO: make it possible to keep the thread & context alive,
-     * possibly using yield() and resume() */
-    luaL_unref(global_state, LUA_REGISTRYINDEX, context->threadidx);
-
     if (res)
     {
-        free(context);
+        terminate_lua_context(context);
         return 0;
     }
 
@@ -939,7 +1040,9 @@ MODULEAPI int HandleEvent(CFParm *PParm)
     }
 
     ret = context->returnvalue;
-    return_poolchunk(context, pool_luacontext);
+ 
+    if(context->resume_time == -1)
+        terminate_lua_context(context);
 
 #ifdef LUA_DEBUG
     LOG(llevDebug, "done (returned: %d)!\n", ret);
@@ -975,8 +1078,10 @@ MODULEAPI CFParm * removePlugin(CFParm *PParm)
 {
     LOG(llevDebug, "    Daimonin Lua Plugin unloading.....\n");
     
+    /* TODO: Terminate all detached threads */
+    
     lua_close(global_state);
-
+    
     hooks->free_mempool(pool_luacontext);
 
     return NULL;
@@ -1100,8 +1205,8 @@ MODULEAPI CFParm * postinitPlugin(CFParm *PParm)
     LOG(llevDebug, "LUA - Start postinitPlugin.\n");
 
     /*    GCFP.Value[1] = (void *)(add_string_hook(PLUGIN_NAME));*/
-    GCFP.Value[1] = (void *) PLUGIN_NAME;
     /*
+    GCFP.Value[1] = (void *) PLUGIN_NAME;
        i = EVENT_BORN;
        GCFP.Value[0] = (void *)(&i);
        (PlugHooks[HOOK_REGISTEREVENT])(&GCFP);
@@ -1160,6 +1265,7 @@ MODULEAPI void init_Daimonin_Lua()
     luaopen_table(global_state);
     luaopen_math(global_state);
     luaopen_io(global_state);
+    luaopen_debug(global_state);
 
     /* Initialize the classes */
     init_class(global_state, &Event);

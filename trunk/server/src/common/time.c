@@ -184,18 +184,16 @@ int time_until_next_tick(struct timeval *out)
 void sleep_delta()
 {
     struct timeval timeout, now;
-    int keepgoing;
    
     /* Gecko: I don't know what the following does, but I'll leave it in here for now... */
     GETTIMEOFDAY(&now);
     log_time((now.tv_sec - last_time.tv_sec) * 1000000 + now.tv_usec - last_time.tv_usec);
 
-    /* ideally we should use the return value from select to know if it
-     * timed out or returned because of some other reason, but this also works
-     * reasonably...
+    /* TODO: ideally we should use the return value from select to know if it
+     * timed out or returned because of some other reason, but this also 
+     * works reasonably well...
      */
-    while(time_until_next_tick(&timeout) && 
-            (timeout.tv_sec > 0 || timeout.tv_usec > 500))
+    while(time_until_next_tick(&timeout))
         doeric_server(SOCKET_UPDATE_CLIENT, &timeout);        
 }
 

@@ -1304,7 +1304,7 @@ void shutdown_agent(int timer, char *reason)
 
 int main(int argc, char **argv)
 {
-#ifdef PLUGINS_X
+#ifdef PLUGINS
     int     evtid;
     CFParm  CFP;
 #endif
@@ -1337,7 +1337,7 @@ int main(int argc, char **argv)
         process_events(NULL);       /* "do" something with objects with speed - process user cmds */
         cftimer_process_timers();   /* Process the crossfire Timers */    
 
-#ifdef PLUGINS_X
+#ifdef PLUGINS
         /* GROS : Here we handle the CLOCK global event */
         evtid = EVENT_CLOCK;
         CFP.Value[0] = (void *) (&evtid);
