@@ -3,15 +3,16 @@
 _media_file media_file[MEDIA_MAX];
 
 /* keybind menu */
-int keybind_entry=0;
 int keybind_status;
-Boolean keybind_repeat=TRUE;
-struct _keybind_key keybind_key;
 
 struct _spell_list spell_list[SPELL_LIST_MAX]; /* skill list entries */
 struct _skill_list skill_list[SKILL_LIST_MAX]; /* skill list entries */
-struct _spell_list_set spell_list_set;
-struct _skill_list_set skill_list_set;
+
+struct _dialog_list_set spell_list_set;
+struct _dialog_list_set skill_list_set;
+struct _dialog_list_set option_list_set;
+struct _dialog_list_set bindkey_list_set;
+struct _dialog_list_set create_list_set;
 
 int media_count;        /* buffered media files*/
 int media_show; /* show this media file*/
@@ -144,17 +145,16 @@ int client_command_check(char *cmd)
 			{
 				if(par2 <0 ||par2>255)
 					par2=128;
-				textwin_set.alpha=par2;
+				options.textwin_alpha= par2;
 			}
-			sprintf(tmp, ">>set textwin alpha ON (alpha=%d).",textwin_set.alpha);
+			options.use_TextwinAlpha	=1;
+			sprintf(tmp, ">>set textwin alpha ON (alpha=%d).",options.textwin_alpha);
 			draw_info(tmp ,COLOR_GREEN);
-			textwin_set.use_alpha=1;
 		}
 		else if(!strnicmp(cpar1,"OFF",strlen("OFF")) )
 		{
 			draw_info(">>set textwin alpha mode OFF." ,COLOR_GREEN);
-
-			textwin_set.use_alpha=0;
+			options.use_TextwinAlpha=0;
 		}
 		else
 			wrong = 1;
@@ -181,9 +181,9 @@ int client_command_check(char *cmd)
 				sprintf(tmp, ">>set textwin to split mode %d+%d rows.",par1,par2);
 				draw_info(tmp ,COLOR_GREEN);
 
-				textwin_set.split_flag=1;
-				textwin_set.split_size =par1-1;
-				textwin_set.top_size =par2-1;
+				options.use_TextwinSplit=1;
+				txtwin[TW_MSG ].size =par1-1;
+				txtwin[TW_CHAT].size =par2-1;
 			}
 		}
 		else
@@ -197,8 +197,8 @@ int client_command_check(char *cmd)
 			{
 				sprintf(tmp, ">>set textwin to %d rows.",par1);
 				draw_info(tmp ,COLOR_GREEN);
-				textwin_set.split_flag=0;
-				textwin_set.size = par1-1;
+				options.use_TextwinSplit =0;
+				txtwin[TW_MIX].size = par1-1;
 			}
 		}
 
@@ -289,47 +289,30 @@ void do_number(int x, int y)
 void do_keybind_input(void)
 {
 	show_help_screen=0;
-    if(InputStringEscFlag==TRUE)
-    {
-        reset_keys();
-        sound_play_effect(SOUND_CLICKFAIL,0,0,100);
-        cpl.input_mode = INPUT_MODE_NO;
-        keybind_status = KEYBIND_STATUS_NO;
-        map_udate_flag=2;
-    }
-    /* if set, we got a finished input!*/
-    if(InputStringFlag==FALSE
-        &&InputStringEndFlag==TRUE)
-    {
-        if(InputString[0]) 
-        {
-            strcpy(keybind_key.macro, InputString);
-            keybind_key.repeat_flag = keybind_repeat;
-            if(keybind_status == KEYBIND_STATUS_NEW)
-            {
-                keybind_key.entry = -1;
-                keybind_status = KEYBIND_STATUS_NEWKEY;            
-            }
-            else
-            {
-                keybind_key.entry = keybind_entry;
-                keybind_status = KEYBIND_STATUS_EDITKEY;            
-            }
-        }
-        else /* cleared string - delete entry when edit mode or ignore */
-        {
-            if(keybind_status == KEYBIND_STATUS_EDIT)
-            {
-                keybind_key.entry = keybind_entry;
-                keybind_key.macro[0]=0;
-                add_keybind_macro(&keybind_key);
-            }
-            keybind_status = KEYBIND_STATUS_NO;            
-        }
-        reset_keys();
-        cpl.input_mode = INPUT_MODE_NO;
-        map_udate_flag=2;
-    }
+	if(InputStringEscFlag==TRUE)
+	{
+		reset_keys();
+		sound_play_effect(SOUND_CLICKFAIL,0,0,100);
+		cpl.input_mode = INPUT_MODE_NO;
+		keybind_status = KEYBIND_STATUS_NO;
+		map_udate_flag=2;
+	}
+	/* if set, we got a finished input!*/
+	if(InputStringFlag==FALSE && InputStringEndFlag==TRUE)
+	{
+		if(InputString[0]){
+			strcpy(bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].text, InputString);
+			keybind_status = KEYBIND_STATUS_EDITKEY; /* now get the key code */
+		}else{ /* cleared string - delete entry */
+			bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].text[0]=0;
+			bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].keyname[0]=0;
+			bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].key=0;
+			keybind_status = KEYBIND_STATUS_NO;
+		}
+		reset_keys();
+		cpl.input_mode = INPUT_MODE_NO;
+		map_udate_flag=2;
+	}
 }
 
 
@@ -600,7 +583,6 @@ void show_range(int x, int y)
 
             break;
             case FIRE_MODE_SPELL:
-                    
                 if(fire_mode_tab[FIRE_MODE_SPELL].spell)
                 {
                         /* we use wiz spells as default */
@@ -684,108 +666,50 @@ void blt_inventory_face_from_tag(int tag, int x, int y)
 
 void show_menu(void)
 {
-        if(!cpl.menustatus)
-                return;
-        if(cpl.menustatus == MENU_KEYBIND)
-                show_keybind();
-        else if(cpl.menustatus == MENU_STATUS)
-                show_status();
-        else if(cpl.menustatus == MENU_SLIST)
-            show_spelllist();
-        else if(cpl.menustatus == MENU_SKILL)
-            show_skilllist();
+	if(!cpl.menustatus)
+		return;
+	if(cpl.menustatus == MENU_KEYBIND)
+		show_keybind();
+	else if(cpl.menustatus == MENU_STATUS)
+		show_status();
+	else if(cpl.menustatus == MENU_SPELL)
+		show_spelllist();
+	else if(cpl.menustatus == MENU_SKILL)
+		show_skilllist();
+	else if(cpl.menustatus == MENU_OPTION)
+		show_optwin();
+	else if(cpl.menustatus == MENU_CREATE)
+		show_newplayer_server();
 }
 
 void show_media(int x, int y)
 {
-        _Sprite *bmap;
-        int xtemp;
+	_Sprite *bmap;
+	int xtemp;
 
-        if(media_show!=MEDIA_SHOW_NO)
-        {
-                /* we show a png*/
-                if(media_file[media_show].type == MEDIA_TYPE_PNG)
-                {
-                        bmap = (_Sprite*) media_file[media_show].data;
-                        if(bmap)
-                        {
-                            xtemp = x-bmap->bitmap->w;
-                            sprite_blt(bmap ,xtemp, y, NULL, NULL);
-                        }
-                }
-        }
-}
-
-
-void show_keybind(void)
-{
-        int y, x,i;
-		SDL_Rect rec_in;
-		SDL_Rect rec_key;
-		SDL_Rect rec_macro;
-		rec_key.w   = 125;
-		rec_macro.w = 160;
-		rec_in.w    = 225;
-        x= SCREEN_XLEN/2-Bitmaps[BITMAP_KEYBIND]->bitmap->w/2;
-        y= SCREEN_YLEN/2-Bitmaps[BITMAP_KEYBIND]->bitmap->h/2;
-        sprite_blt(Bitmaps[BITMAP_KEYBIND],x, y, NULL, NULL);
-
-        if(keybind_status == KEYBIND_STATUS_NEW ||keybind_status == KEYBIND_STATUS_NEWKEY)
-            sprite_blt(Bitmaps[BITMAP_KEYBIND_NEW],x+17, y+330, NULL, NULL);
-        else if(keybind_status == KEYBIND_STATUS_EDIT ||keybind_status == KEYBIND_STATUS_EDITKEY)
-            sprite_blt(Bitmaps[BITMAP_KEYBIND_EDIT],x+91, y+330, NULL, NULL);
-        
-        if(!keybind_repeat)
-            sprite_blt(Bitmaps[BITMAP_KEYBIND_REPEAT],x+260, y+75, NULL, NULL);
-
-        if(keybind_status == KEYBIND_STATUS_NEW ||keybind_status == KEYBIND_STATUS_EDIT)
-        {
-            sprite_blt(Bitmaps[BITMAP_KEYBIND_INPUT],x+15, y+55, NULL, NULL);
-                StringBlt(ScreenSurface, &SystemFont,
-            show_input_string(InputString,&SystemFont,Bitmaps[BITMAP_KEYBIND_INPUT]->bitmap->w-22)
-                            ,x+17, y+57, COLOR_WHITE, NULL, NULL);
-        }
-
-        /* at last - show the new macro string and the PRESS KEY msg -
-         *  when pressed in event, it will be done there
-         */
-        if(keybind_status == KEYBIND_STATUS_EDITKEY || keybind_status == KEYBIND_STATUS_NEWKEY)
-        {
-            StringBlt(ScreenSurface, &SystemFont,keybind_key.macro,x+17, y+57, COLOR_WHITE, NULL, NULL);
-            sprite_blt(Bitmaps[BITMAP_KEYPRESS],x+261, y+56, NULL, NULL);
-        }
-
-        /* first, be sure our entry is inside the legal area */
-        if(keybind_entry < 0)
-            keybind_entry = 0;        
-        if(keybind_entry >= keymap_count && keybind_entry != 0)
-            keybind_entry = keymap_count-1;
-
-        /* adjust startoff for scrolling */
-        if(keybind_startoff+17 <keybind_entry)
-            keybind_startoff = keybind_entry-17;
-        if(keybind_startoff>keybind_entry)
-            keybind_startoff = keybind_entry;
-        
-        for(i=0;i+keybind_startoff<keymap_count && i<18;i++)
-        {
-            if(keybind_entry == keybind_startoff+i)
-                sprite_blt(Bitmaps[BITMAP_KEYBINDSLIDER],x+15, y+91+i*13, NULL, NULL);
-            StringBlt(ScreenSurface, &SystemFont, keymap[i+keybind_startoff].keyname,
-                                       x+20, y+91+i*13,COLOR_WHITE, &rec_key, NULL);
-            StringBlt(ScreenSurface, &SystemFont, keymap[i+keybind_startoff].text,
-                                          x+150, y+91+i*13,COLOR_WHITE, &rec_macro, NULL);
-        }        
-	 	blt_window_slider(Bitmaps[BITMAP_KEYBIND_SCROLL], keymap_count,18, keybind_startoff, -1, x+316, y+103);
+	if(media_show!=MEDIA_SHOW_NO)
+	{
+		/* we show a png*/
+		if(media_file[media_show].type == MEDIA_TYPE_PNG)
+		{
+			bmap = (_Sprite*) media_file[media_show].data;
+			if(bmap)
+			{
+				xtemp = x-bmap->bitmap->w;
+				sprite_blt(bmap ,xtemp, y, NULL, NULL);
+			}
+		}
+	}
 }
 
 void show_status(void)
 {
+/*
         int y, x;
-
         x= SCREEN_XLEN/2-Bitmaps[BITMAP_STATUS]->bitmap->w/2;
         y= SCREEN_YLEN/2-Bitmaps[BITMAP_STATUS]->bitmap->h/2;
         sprite_blt(Bitmaps[BITMAP_STATUS],x, y, NULL, NULL);
+*/
 }
 
 
@@ -918,105 +842,6 @@ int blt_window_slider(_Sprite *slider, int maxlen, int winlen, int startoff, int
 
 }
  
-
-void show_spelllist(void)
-{
-    int y, x,i;
-    
-    x= SCREEN_XLEN/2-Bitmaps[BITMAP_SPELLLIST]->bitmap->w/2;
-    y= SCREEN_YLEN/2-Bitmaps[BITMAP_SPELLLIST]->bitmap->h/2;
-    sprite_blt(Bitmaps[BITMAP_SPELLLIST],x, y, NULL, NULL);
-
-    sprite_blt(Bitmaps[BITMAP_SPELLLIST_BUTTON],x+108+33*spell_list_set.group_nr, y+42, NULL, NULL);
-    
-    if(spell_list_set.class_nr)
-        sprite_blt(Bitmaps[BITMAP_SPELLLIST_SLIDERG],x+270, y+69+13*spell_list_set.entry_nr, NULL, NULL);
-    else
-        sprite_blt(Bitmaps[BITMAP_SPELLLIST_SLIDER],x+19, y+69+13*spell_list_set.entry_nr, NULL, NULL);
-
-    for(i=0;i<SPELL_LIST_ENTRY;i++)
-    {
-        if(spell_list[spell_list_set.group_nr].entry[0][i].flag==LIST_ENTRY_KNOWN)
-            StringBlt(ScreenSurface, &SystemFont,
-            spell_list[spell_list_set.group_nr].entry[0][i].name
-                                        ,x+24, y+69+i*13, COLOR_WHITE, NULL, NULL);
-
-        if(spell_list[spell_list_set.group_nr].entry[1][i].flag==LIST_ENTRY_KNOWN)
-            StringBlt(ScreenSurface, &SystemFont,
-            spell_list[spell_list_set.group_nr].entry[1][i].name
-                                       ,x+275, y+69+i*13, COLOR_WHITE, NULL, NULL);
-    }
-
-    if(spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][spell_list_set.entry_nr].flag==LIST_ENTRY_KNOWN)
-    {
-        sprite_blt(spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][spell_list_set.entry_nr].icon,x+14,y+421, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,
-            &spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][spell_list_set.entry_nr].desc[0][0]
-            ,x+55, y+418+0*13, COLOR_BLACK, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,
-            &spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][spell_list_set.entry_nr].desc[1][0]
-            ,x+55, y+418+1*13, COLOR_BLACK, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,
-            &spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][spell_list_set.entry_nr].desc[2][0]
-            ,x+55, y+418+2*13, COLOR_BLACK, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,
-            &spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][skill_list_set.entry_nr].desc[3][0]
-            ,x+55, y+418+3*13, COLOR_BLACK, NULL, NULL);
-        
-    }
-}
-
-void show_skilllist(void)
-{
-    int y, x, i;
-    char buf[64];
-    
-    x= SCREEN_XLEN/2-Bitmaps[BITMAP_SKILL_LIST]->bitmap->w/2;
-    y= SCREEN_YLEN/2-Bitmaps[BITMAP_SKILL_LIST]->bitmap->h/2;
-    sprite_blt(Bitmaps[BITMAP_SKILL_LIST],x, y, NULL, NULL);
-
-    sprite_blt(Bitmaps[BITMAP_SKILL_LIST_BUTTON],x+21+60*skill_list_set.group_nr, y+46, NULL, NULL);
-
-    sprite_blt(Bitmaps[BITMAP_SKILL_LIST_SLIDER],x+19, y+69+13*skill_list_set.entry_nr, NULL, NULL);
-    
-    for(i=0;i<SKILL_LIST_ENTRY;i++)
-    {
-        if(skill_list[skill_list_set.group_nr].entry[i].flag==LIST_ENTRY_KNOWN)
-        {
-            StringBlt(ScreenSurface, &SystemFont,
-                    skill_list[skill_list_set.group_nr].entry[i].name
-                                    ,x+24, y+69+i*13, COLOR_WHITE, NULL, NULL);
-            if(skill_list[skill_list_set.group_nr].entry[i].exp != -1)
-                sprintf(buf,"%d",skill_list[skill_list_set.group_nr].entry[i].exp_level);
-            else
-                strcpy(buf,"--");
-            StringBlt(ScreenSurface, &SystemFont,buf,x+320, y+69+i*13, COLOR_WHITE, NULL, NULL);
-            if(skill_list[skill_list_set.group_nr].entry[i].exp != -1)
-                sprintf(buf,"%d",skill_list[skill_list_set.group_nr].entry[i].exp);
-            StringBlt(ScreenSurface, &SystemFont,buf,x+350, y+69+i*13, COLOR_WHITE, NULL, NULL);
-        }
-    }
-
-
-    if(skill_list[skill_list_set.group_nr].entry[skill_list_set.entry_nr].flag>=LIST_ENTRY_KNOWN)
-    {
-        sprite_blt(skill_list[skill_list_set.group_nr].entry[skill_list_set.entry_nr].icon,x+14,y+421, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,
-            &skill_list[skill_list_set.group_nr].entry[skill_list_set.entry_nr].desc[0][0]
-            ,x+55, y+418+0*13, COLOR_BLACK, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,
-            &skill_list[skill_list_set.group_nr].entry[skill_list_set.entry_nr].desc[1][0]
-            ,x+55, y+418+1*13, COLOR_BLACK, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,
-            &skill_list[skill_list_set.group_nr].entry[skill_list_set.entry_nr].desc[2][0]
-            ,x+55, y+418+2*13, COLOR_BLACK, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,
-            &skill_list[skill_list_set.group_nr].entry[skill_list_set.entry_nr].desc[3][0]
-            ,x+55, y+418+3*13, COLOR_BLACK, NULL, NULL);
-        
-    }
-}
-
 static int load_anim_tmp(void)
 {
 	int i, anim_len=0,new_anim = TRUE;
@@ -1120,7 +945,7 @@ int read_anim_tmp(void)
     FILE *stream, *ftmp;
 	int i,new_anim=TRUE,count=1;
 	char buf[HUGE_BUF],cmd[HUGE_BUF];
-    struct stat	stat_bmap, stat_tmp;
+    struct stat	stat_bmap, stat_anim, stat_tmp;
 
 	/* if this fails, we have a urgent problem somewhere before */
     if( (stream = fopen(FILE_BMAPS_TMP, "rb" )) == NULL )
@@ -1130,16 +955,30 @@ int read_anim_tmp(void)
 		exit(0);
 	}
 	fstat(fileno(stream), &stat_bmap);
-        fclose( stream );
+    fclose( stream );
+
+    if( (stream = fopen(FILE_CLIENT_ANIMS, "rb" )) == NULL )
+	{
+		LOG(LOG_ERROR,"read_anim_tmp:Error reading bmap.tmp for anim.tmp!");
+		SYSTEM_End(); /* fatal */
+		exit(0);
+	}
+	fstat(fileno(stream), &stat_anim);
+    fclose( stream );
 
     if( (stream = fopen(FILE_ANIMS_TMP, "rb" )) != NULL )
 	{
 		fstat(fileno(stream), &stat_tmp);
 		fclose( stream );
 
-		/* our anim file must be newer as our bmaps.tmp */
-		if(difftime(stat_tmp.st_mtime, stat_bmap.st_mtime) > 0.0f)
-			return load_anim_tmp(); /* all fine - load file */
+		/* our anim file must be newer as our default anim file */
+		if(difftime(stat_tmp.st_mtime, stat_anim.st_mtime) > 0.0f)
+		{
+
+			/* our anim file must be newer as our bmaps.tmp */
+			if(difftime(stat_tmp.st_mtime, stat_bmap.st_mtime) > 0.0f)
+				return load_anim_tmp(); /* all fine - load file */
+		}
 	}
 
 	unlink(FILE_ANIMS_TMP); /* for some reason - recreate this file */
@@ -1233,7 +1072,7 @@ void read_anims(void)
 		srv_client_files[SRV_CLIENT_ANIMS].len = i;
 		temp_buf=malloc(i);
 		fread(temp_buf, sizeof(char), i, stream);
-		srv_client_files[SRV_CLIENT_ANIMS].crc = adler32(i,temp_buf,i);
+		srv_client_files[SRV_CLIENT_ANIMS].crc = crc32(1L,temp_buf,i);
 		free(temp_buf);
         fclose( stream );
 		LOG(LOG_DEBUG," found file!(%d/%x)",srv_client_files[SRV_CLIENT_ANIMS].len,srv_client_files[SRV_CLIENT_ANIMS].crc );
@@ -1366,7 +1205,7 @@ void read_bmaps_p0(void)
 		}
 
 		fread(temp_buf, 1, len, fpic);
-		crc = adler32(len,temp_buf,len);
+		crc = crc32(1L,temp_buf,len);
 
 		/* now we got all we needed! */
 		sprintf(temp_buf, "%d %d %x %s",num, pos,crc,buf );
@@ -1527,7 +1366,7 @@ void read_bmaps(void)
 		srv_client_files[SRV_CLIENT_BMAPS].len = i;
 		temp_buf=malloc(i);
 		fread(temp_buf, sizeof(char), i, stream);
-		srv_client_files[SRV_CLIENT_BMAPS].crc = adler32(i,temp_buf,i);
+		srv_client_files[SRV_CLIENT_BMAPS].crc = crc32(1L,temp_buf,i);
 		free(temp_buf);
         fclose( stream );
 		LOG(LOG_DEBUG," found file!(%d/%x)",srv_client_files[SRV_CLIENT_BMAPS].len,srv_client_files[SRV_CLIENT_BMAPS].crc );
@@ -1545,31 +1384,181 @@ void read_bmaps(void)
 	
 }
 
+/* in the setting files we have a list of chars templates
+ * for char building. Delete this list here.
+ */
+void delete_server_chars(void)
+{
+	_server_char *tmp, *tmp1;
+
+	for(tmp1=tmp=first_server_char;tmp1;tmp=tmp1)
+	{
+		tmp1 = tmp->next;
+		free(tmp->name);
+		free(tmp->desc[0]);
+		free(tmp->desc[1]);
+		free(tmp->desc[2]);
+		free(tmp->desc[3]);
+		free(tmp->char_arch[0]);
+		free(tmp->char_arch[1]);
+		free(tmp->char_arch[2]);
+		free(tmp->char_arch[3]);
+		free(tmp);
+	}
+	first_server_char=NULL;
+}
+
+/* removes whitespace from right side */
+static char *adjust_string(char *buf)
+{
+	int i,len = strlen(buf);
+
+	for (i=len-1;i>=0;i--)
+	{
+		if(!isspace(buf[i]))
+			return buf;
+
+		buf[i]=0;
+	}
+	return buf;
+}
+
+
+/* find a face ID by name,
+ * request the face (find it, load it or request it)
+ * and return the ID
+ */
+static int get_bmap_id(char *name)
+{
+	int i;
+
+	for(i=0;i<bmaptype_table_size;i++)
+	{
+		if(!strcmp(bmaptype_table[i].name,name))
+		{
+			request_face(i, 0);
+			return i;
+		}
+	}
+
+	return -1;
+}
 
 void load_settings(void)
 {
     FILE *stream;
-	char buf[HUGE_BUF];
+	char buf[HUGE_BUF], buf1[HUGE_BUF],buf2[HUGE_BUF];
 	char cmd[HUGE_BUF];
 	char para[HUGE_BUF];
 	int para_count=0, last_cmd=0;
 	int tmp_level=0;
 
-	srv_client_files[SRV_CLIENT_SETTINGS].len = 0;
-	srv_client_files[SRV_CLIENT_SETTINGS].crc = 0;
+	delete_server_chars();
 	LOG(LOG_DEBUG,"Loading %s....\n",FILE_CLIENT_SETTINGS);
     if( (stream = fopen(FILE_CLIENT_SETTINGS, "rb" )) != NULL )
     {
 
 		while(fgets(buf, HUGE_BUF-1, stream)!=NULL)
 		{
-			if(buf[0] == '#')
+			if(buf[0] == '#' || buf[0] == '\0' )
 				continue;
 
 			if(last_cmd == 0)
 			{
-				sscanf(buf,"%s %s", cmd, para);
-				if(!strcmp(cmd, "level") )
+				sscanf(adjust_string(buf),"%s %s", cmd, para);
+				if(!strcmp(cmd, "char") )
+				{
+					_server_char *serv_char = malloc( sizeof(_server_char));
+
+					memset(serv_char,0,sizeof(_server_char));
+					/* copy name */
+					serv_char->name = malloc(strlen(para)+1);
+					strcpy(serv_char->name, para);
+
+					/* get next legal line */
+					while(fgets(buf, HUGE_BUF-1, stream)!=NULL && (buf[0] == '#'|| buf[0] == '\0'))
+						;
+					sscanf(adjust_string(buf),"%s %d %d %d %d %d %d", buf1,
+						&serv_char->bar[0], &serv_char->bar[1],&serv_char->bar[2],
+						&serv_char->bar_add[0], &serv_char->bar_add[1],&serv_char->bar_add[2]);
+
+					serv_char->pic_id = get_bmap_id(buf1);
+					LOG(-1,"PIC: >%s< %d\n", buf1, serv_char->pic_id);
+
+					while(fgets(buf, HUGE_BUF-1, stream)!=NULL && (buf[0] == '#'|| buf[0] == '\0'))
+						;
+					sscanf(adjust_string(buf),"%d %s %s", &serv_char->gender[0], buf1, buf2);
+					serv_char->char_arch[0] = malloc(strlen(buf1)+1);
+					strcpy(serv_char->char_arch[0], buf1);
+					serv_char->face_id[0] = get_bmap_id(buf2);
+
+					while(fgets(buf, HUGE_BUF-1, stream)!=NULL && (buf[0] == '#'|| buf[0] == '\0'))
+						;
+					sscanf(adjust_string(buf),"%d %s %s", &serv_char->gender[1], buf1, buf2);
+					serv_char->char_arch[1] = malloc(strlen(buf1)+1);
+					strcpy(serv_char->char_arch[1], buf1);
+					serv_char->face_id[1] = get_bmap_id(buf2);
+
+					while(fgets(buf, HUGE_BUF-1, stream)!=NULL && (buf[0] == '#'|| buf[0] == '\0'))
+						;
+					sscanf(adjust_string(buf),"%d %s %s", &serv_char->gender[2], buf1, buf2);
+					serv_char->char_arch[2] = malloc(strlen(buf1)+1);
+					strcpy(serv_char->char_arch[2], buf1);
+					serv_char->face_id[2] = get_bmap_id(buf2);
+
+					while(fgets(buf, HUGE_BUF-1, stream)!=NULL && (buf[0] == '#'|| buf[0] == '\0'))
+						;
+					sscanf(adjust_string(buf),"%d %s %s", &serv_char->gender[3], buf1, buf2);
+					serv_char->char_arch[3] = malloc(strlen(buf1)+1);
+					strcpy(serv_char->char_arch[3], buf1);
+					serv_char->face_id[3] = get_bmap_id(buf2);
+
+					while(fgets(buf, HUGE_BUF-1, stream)!=NULL && (buf[0] == '#'|| buf[0] == '\0'))
+						;
+					sscanf(adjust_string(buf),"%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d",
+						&serv_char->stat_points,
+						&serv_char->stats[0],&serv_char->stats_min[0],&serv_char->stats_max[0],
+						&serv_char->stats[1],&serv_char->stats_min[1],&serv_char->stats_max[1],
+						&serv_char->stats[2],&serv_char->stats_min[2],&serv_char->stats_max[2],
+						&serv_char->stats[3],&serv_char->stats_min[3],&serv_char->stats_max[3],
+						&serv_char->stats[4],&serv_char->stats_min[4],&serv_char->stats_max[4],
+						&serv_char->stats[5],&serv_char->stats_min[5],&serv_char->stats_max[5],
+						&serv_char->stats[6],&serv_char->stats_min[6],&serv_char->stats_max[6]
+						);
+
+					while(fgets(buf, HUGE_BUF-1, stream)!=NULL && (buf[0] == '#'|| buf[0] == '\0'))
+						;
+					serv_char->desc[0] = malloc(strlen(adjust_string(buf))+1);
+					strcpy(serv_char->desc[0], buf);
+					while(fgets(buf, HUGE_BUF-1, stream)!=NULL && (buf[0] == '#'|| buf[0] == '\0'))
+						;
+					serv_char->desc[1] = malloc(strlen(adjust_string(buf))+1);
+					strcpy(serv_char->desc[1], buf);
+					while(fgets(buf, HUGE_BUF-1, stream)!=NULL && (buf[0] == '#'|| buf[0] == '\0'))
+						;
+					serv_char->desc[2] = malloc(strlen(adjust_string(buf))+1);
+					strcpy(serv_char->desc[2], buf);
+					while(fgets(buf, HUGE_BUF-1, stream)!=NULL && (buf[0] == '#'|| buf[0] == '\0'))
+						;
+					serv_char->desc[3] = malloc(strlen(adjust_string(buf))+1);
+					strcpy(serv_char->desc[3], buf);
+
+					/* add this char template to list */
+					if(!first_server_char)
+						first_server_char = serv_char;
+					else
+					{
+						_server_char *tmpc;
+
+						for(tmpc=first_server_char;tmpc->next;tmpc=tmpc->next)
+							;
+						tmpc->next = serv_char;
+						serv_char->prev = tmpc;
+					}
+
+
+				}
+				else if(!strcmp(cmd, "level") )
 				{
 					tmp_level = atoi(para);
 					if(tmp_level<0 || tmp_level > 450)
@@ -1600,6 +1589,23 @@ void load_settings(void)
 		}
 	    fclose( stream );
 	}
+
+	if(first_server_char)
+	{
+		int g;
+
+		memcpy(&new_character, first_server_char, sizeof(_server_char));
+
+		/* adjust gender */
+		for(g=0;g<4;g++)
+		{
+			if(new_character.gender[g])
+			{
+				new_character.gender_selected = g;
+				break;
+			}
+		}
+	}
 }
 
 void read_settings(void)
@@ -1620,7 +1626,7 @@ void read_settings(void)
 		srv_client_files[SRV_CLIENT_SETTINGS].len = i;
 		temp_buf=malloc(i);
 		fread(temp_buf, sizeof(char), i, stream);
-		srv_client_files[SRV_CLIENT_SETTINGS].crc = adler32(i,temp_buf,i);
+		srv_client_files[SRV_CLIENT_SETTINGS].crc = crc32(1L,temp_buf,i);
 		free(temp_buf);
 	    fclose( stream );
 		LOG(LOG_DEBUG," found file!(%d/%x)",srv_client_files[SRV_CLIENT_SETTINGS].len,srv_client_files[SRV_CLIENT_SETTINGS].crc );
@@ -1639,7 +1645,7 @@ void read_spells(void)
     
 	for(i=0;i<SPELL_LIST_MAX;i++)
     {
-		for(ii=0;ii<SPELL_LIST_ENTRY;ii++)
+		for(ii=0;ii<DIALOG_LIST_ENTRY;ii++)
         {           
                 spell_list[i].entry[0][ii].flag = LIST_ENTRY_UNUSED;
                 spell_list[i].entry[1][ii].flag = LIST_ENTRY_UNUSED;
@@ -1662,7 +1668,7 @@ void read_spells(void)
 		srv_client_files[SRV_CLIENT_SPELLS].len = i;
 		temp_buf=malloc(i);
 		fread(temp_buf, sizeof(char), i, stream);
-		srv_client_files[SRV_CLIENT_SPELLS].crc = adler32(i,temp_buf,i);
+		srv_client_files[SRV_CLIENT_SPELLS].crc = crc32(1L,temp_buf,i);
 		free(temp_buf);
 		rewind(stream);
 
@@ -1735,7 +1741,7 @@ void read_skills(void)
     
 	for(i=0;i<SKILL_LIST_MAX;i++)
 	{
-		for(ii=0;ii<SKILL_LIST_ENTRY;ii++)
+		for(ii=0;ii<DIALOG_LIST_ENTRY;ii++)
 		{           
 			skill_list[i].entry[ii].flag=LIST_ENTRY_UNUSED;
             skill_list[i].entry[ii].name[0]=0;
@@ -1758,7 +1764,7 @@ void read_skills(void)
 		srv_client_files[SRV_CLIENT_SKILLS].len = i;
 		temp_buf=malloc(i);
 		fread(temp_buf, sizeof(char), i, stream);
-		srv_client_files[SRV_CLIENT_SKILLS].crc = adler32(i,temp_buf,i);
+		srv_client_files[SRV_CLIENT_SKILLS].crc = crc32(1L,temp_buf,i);
 		free(temp_buf);
 		rewind(stream);
 
@@ -1845,7 +1851,7 @@ void show_quickslots(int x, int y)
 	int i, mx, my;
 
   SDL_GetMouseState(&mx, &my);
-  update_quickslots(-1);
+	update_quickslots(-1);
     sprite_blt(Bitmaps[BITMAP_QUICKSLOTS],x, y, NULL, NULL);
 
 	for(i=MAX_QUICK_SLOTS;i>=0;i--)
@@ -1858,7 +1864,7 @@ void show_quickslots(int x, int y)
 			{
 				blt_inv_item(tmp , x+quickslots_pos[i][0],y+quickslots_pos[i][1]);
         /* show tooltip */
-        if (mx >= x+quickslots_pos[i][0] && mx < x+quickslots_pos[i][0]+33 
+        if (mx >= x+quickslots_pos[i][0] && mx < x+quickslots_pos[i][0]+33
          && my >= y+quickslots_pos[i][1] && my < y+quickslots_pos[i][1]+33)
           show_tooltip(mx, my, tmp->s_name);
 			}
@@ -1970,4 +1976,3 @@ void show_target(int x, int y)
 		}
 	}
 }
-

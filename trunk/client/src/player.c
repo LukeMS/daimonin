@@ -112,11 +112,21 @@ void new_player (long tag, char *name, long weight, short face)
         copy_name (cpl.ob->d_name, name);
 }
 
+
+void new_char(_server_char *nc)
+{
+	char buf[MAX_BUF];
+
+	sprintf(buf,"nc %s %d %d %d %d %d %d %d", nc->char_arch[nc->gender_selected],
+		nc->stats[0],nc->stats[1],nc->stats[2],nc->stats[3],nc->stats[4],nc->stats[5],nc->stats[6]);
+    cs_write_string(csocket.fd, buf, strlen(buf));
+}
+
 void look_at(int x, int y)
 {
         char buf[MAX_BUF];
 
-        sprintf(buf,"lookat %d %d", x, y);
+        sprintf(buf,"lt %d %d", x, y);
         cs_write_string(csocket.fd, buf, strlen(buf));
 }
 
@@ -124,7 +134,7 @@ void client_send_apply (int tag)
 {
         char buf[MAX_BUF];
 
-        sprintf(buf,"apply %d", tag);
+        sprintf(buf,"ap %d", tag);
         cs_write_string(csocket.fd, buf, strlen(buf));
 }
 
@@ -132,7 +142,7 @@ void client_send_examine (int tag)
 {
         char buf[MAX_BUF];
 
-        sprintf(buf,"examine %d", tag);
+        sprintf(buf,"ex %d", tag);
         cs_write_string(csocket.fd, buf, strlen(buf));
 }
 
@@ -141,7 +151,7 @@ void client_send_move (int loc, int tag, int nrof)
 {
         char buf[MAX_BUF];
 
-        sprintf(buf,"move %d %d %d", loc, tag, nrof);
+        sprintf(buf,"mv %d %d %d", loc, tag, nrof);
         cs_write_string(csocket.fd, buf, strlen(buf));
 }
 
@@ -195,7 +205,7 @@ int send_command(const char *command, int repeat, int must_send)
         }
         else
         {
-                sprintf(buf,"command %d %s", repeat,command);
+                sprintf(buf,"cm %d %s", repeat,command);
                 cs_write_string(csocket.fd, buf, strlen(buf));
         }
         if (repeat!=-1) cpl.count=0;
@@ -310,7 +320,7 @@ void init_player_data(void)
 void show_player_data(int x, int y)
 {
         char buf[256];
-        
+
         if(GameStatus == GAME_STATUS_PLAY)
         {
 			if(cpl.rank[0]!=0)
@@ -321,7 +331,7 @@ void show_player_data(int x, int y)
             sprintf(buf,"%s %s %s",cpl.gender, cpl.race, cpl.title);
             StringBlt(ScreenSurface, &SystemFont,buf,6, 14,COLOR_HGOLD, NULL, NULL);
 			if(strcmp(cpl.godname,"none") )
-				sprintf(buf,"%s follower of %s\n", cpl.alignment, cpl.godname);
+;//				sprintf(buf,"%s follower of %s\n", cpl.alignment, cpl.godname);
 			else
 				strcpy(buf, cpl.alignment);
             StringBlt(ScreenSurface, &SystemFont,buf,6, 26,COLOR_HGOLD, NULL, NULL);
@@ -500,7 +510,6 @@ void show_player_stats(int x, int y)
 				sprite_blt(Bitmaps[BITMAP_EXP_SKILL_BUBBLE],x+416+s*5, y+92, NULL, NULL);
         }
         StringBlt(ScreenSurface, &Font6x3Out,"Regeneration",x+177, y+1, COLOR_HGOLD, NULL, NULL);
-
         StringBlt(ScreenSurface, &SystemFont,"HP",x+234, y+13, COLOR_HGOLD, NULL, NULL);
         sprintf(buf,"%2.1f", cpl.gen_hp);
         StringBlt(ScreenSurface, &SystemFont,buf,x+248, y+13,COLOR_WHITE, NULL, NULL);
@@ -595,10 +604,10 @@ void show_player_doll(int x, int y)
     else 
         StringBlt(ScreenSurface, &SystemFont,"walk",x+44, x+242,COLOR_WHITE, NULL, NULL);         
     */
-    for (tmp = cpl.ob->inv; tmp; tmp=tmp->next)
-    {  
-        if(tmp->applied)
-        {
+	for (tmp = cpl.ob->inv; tmp; tmp=tmp->next)
+	{  
+		if(tmp->applied)
+		{
             index = -1;
             if(tmp->itype == TYPE_ARMOUR) 
                 index = PDOLL_ARMOUR;
@@ -630,25 +639,27 @@ void show_player_doll(int x, int y)
                 index = PDOLL_LIGHT;
             else if(tmp->itype == TYPE_WAND ||tmp->itype == TYPE_ROD||tmp->itype == TYPE_HORN)
                 index = PDOLL_WAND;
-            
 
-			
 			if (index == PDOLL_RRING) index+= ++ring_flag & 1;
-            if(index != -1){
-            blt_inv_item_centered(tmp, player_doll[index].xpos+x, player_doll[index].ypos+y);
-			SDL_GetMouseState(&mx, &my);
-			/* prepare item_name tooltip */
-			if (mx >= player_doll[index].xpos && mx < player_doll[index].xpos+33 
-			&& my >= player_doll[index].ypos && my < player_doll[index].ypos+33)
-			{
-				tooltip_index = index;
-				tooltip_text = tmp->s_name;
+			if(index != -1){
+				int mb;
+				blt_inv_item_centered(tmp, player_doll[index].xpos+x, player_doll[index].ypos+y);
+				mb = SDL_GetMouseState(&mx, &my);
+				/* prepare item_name tooltip */
+				if (mx >= player_doll[index].xpos && mx < player_doll[index].xpos+33
+				&& my >= player_doll[index].ypos && my < player_doll[index].ypos+33)
+				{
+					tooltip_index = index;
+					tooltip_text = tmp->s_name;
+					if ((mb & SDL_BUTTON(SDL_BUTTON_LEFT)) && !draggingInvItem(DRAG_GET_STATUS)){
+						cpl.win_pdoll_tag = tmp->tag;
+						draggingInvItem(DRAG_PDOLL);
+					}
+				}
 			}
-			}
-			}
-   		 }
-		/* draw a item_name tooltip */
-		if (tooltip_index!= -1)
-		      show_tooltip(mx, my, tooltip_text);
+		}
+	}
+	/* draw a item_name tooltip */
+	if (tooltip_index!= -1)
+		show_tooltip(mx, my, tooltip_text);
 }
-

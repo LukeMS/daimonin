@@ -24,27 +24,42 @@
 #if !defined(__TEXTWIN_H)
 #define __TEXTWIN_H
 
+#define TEXT_WIN_MAX 250
+#define MAX_KEYWORD_LEN 256
+
+enum {TW_MIX, TW_MSG, TW_CHAT, TW_SUM}; /* windows */
+enum {TW_CHECK_BUT_DOWN, TW_CHECK_BUT_UP, TW_CHECK_MOVE}; /* events */
+enum {TW_HL_NONE, TW_HL_UP, TW_ABOVE, TW_HL_SLIDER, TW_UNDER, TW_HL_DOWN}; 
+enum {TW_ACTWIN=0x0f, TW_SCROLL=0x10, TW_RESIZE=0x20}; /* flags */
+
+
+typedef struct _text_buf {
+	char buf[128];	 /* text */
+	int channel;		 /* which channel */
+	int flags;			 /* some flags */
+	int color;			 /* color of text */
+	int key_clipped; /* 1= key begin in row before 2= no key end */
+}_text_buf;
+
 typedef struct _textwin_set {
-	int split_flag;	/* if FALSE, normal window - if TRUE: splitted */
-	int size;		/* if not split, size of window min:9 max:37 */
-	int split_size; /* if split, main part: size min:9, max 36 */
-	int top_size;   /* top part if split, size: min: 1, max 27 */
-	int use_alpha;	/* true: use alpha - false: no alpha */
-	int alpha;		/* alpha value - from 0 to 255 */
-	int slider_start; /* start-offset of the slider */
-	int slider_h; 
+  int x,y;            /* startpos of the window */
+  int size;           /* number or printed textlines */
+  int scroll;         /* scroll offset */
+  int top_drawLine;   /* first printed textline */
+  int bot_drawLine;   /* last printed textline */
+  int act_bufsize;    /* 0 ... TEXTWIN_MAX */
+  int slider_h;       /* height of the scrollbar-slider  */
+  int slider_y;       /* start pos of the scrollbar-slider */
+  int highlight;      /* which part to highlight */
+  _text_buf text[TEXT_WIN_MAX];
 }_textwin_set;
 
-extern _textwin_set textwin_set;
-
-extern int text_win_soff;
-extern int text_win_soff_split;
-extern int text_win_soff_top;
-extern char *get_textWinRow(int pos);
-extern void draw_info ( char *str, int color );
-extern void show_textwin(int x, int y);
-extern uint32 win_lenbuf;
-void clear_textwin(void);
-
+extern _textwin_set txtwin[TW_SUM];
+extern int  textwin_flags;
+extern void textwin_event(int e, SDL_Event *event);
+extern void textwin_show(int x, int y);
+extern void textwin_init();
+extern void draw_info( char *str, int color );
 
 #endif
+

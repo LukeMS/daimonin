@@ -204,15 +204,15 @@
 " "
 "divine prayers"
 5 a sk_035.png
-"This skill allows praying to a deity and casting divine prayer spells"
-"using grace. The kind and numbers of prayers depend on the players deity."
+"This skill allows praying to a deity and casting divine prayer spells using"
+"grace. The kind and numbers of prayers depend on the players deity."
 "This skill is auto-used when casting the spell."
 " "
 "meditation"
 5 m sk_036.png
-"The player can meditate to regenerate in a fast way hitpoints, grace and mana."
+"The player can meditate to regenerate in a fast way hitpoints,"
+"grace and mana."
 "This skill works direct when used."
-" "
 " "
 "sense curse"
 5 t sk_037.png
@@ -228,9 +228,9 @@
 " "
 "bargaining"
 6 g sk_039.png
-"The player will gain more money when selling or needing less when purchase."
+"The player will gain more money when selling or needing less"
+"when purchase."
 "This skill is auto-used."
-" "
 " "
 "ranger lore"
 6 k sk_040.png

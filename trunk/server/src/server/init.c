@@ -565,12 +565,6 @@ void compile_info() {
   LOG(llevInfo,"Use_calloc:\t<false>\n");
 #endif
 
-#ifdef USE_SWAP_STATS
-  LOG(llevInfo,"Use_swap_stats:\t<true>\n");
-#else
-  LOG(llevInfo,"Use_swap_stats:\t<false>\n");
-#endif
-
 #ifdef EXPLORE_MODE
   LOG(llevInfo,"Explore mode:\t<true>\n");
 #else
@@ -735,7 +729,7 @@ void init_races () {
 
 	for(at = first_archetype;at!=NULL;at=at->next)
 	{
-	if (at->clone.type == MONSTER)
+	if (at->clone.type == MONSTER || at->clone.type == PLAYER)
 		{
 			add_to_racelist(at->clone.race, &at->clone);
 		}

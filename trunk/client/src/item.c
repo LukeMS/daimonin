@@ -245,21 +245,19 @@ item *locate_item_from_item (item *op, sint32 tag)
  */
 item *locate_item (sint32 tag)
 {
-    item *op;
+	item *op;
 
-    if (tag == 0)
+	if (tag == 0)
 		return cpl.below;
-
 	if(tag == -1)
 		return cpl.sack;
-
-    if (cpl.below && (op=locate_item_from_item(cpl.below->inv, tag)) != NULL)
-	return op;
-    if (cpl.sack && (op=locate_item_from_item(cpl.sack->inv, tag)) != NULL)
-	return op;
-    if ((op=locate_item_from_item(player, tag)) != NULL)
-	return op;
-    return NULL;
+	if (cpl.below && (op=locate_item_from_item(cpl.below->inv, tag)) != NULL)
+		return op;
+	if (cpl.sack && (op=locate_item_from_item(cpl.sack->inv, tag)) != NULL)
+		return op;
+	if ((op=locate_item_from_item(player, tag)) != NULL)
+		return op;
+	return NULL;
 }
 
 /*

@@ -26,42 +26,60 @@
 #define MAX_KEYS 512
 #define MAX_KEYMAP 512
 
-typedef struct _keymap
+typedef struct _key_macro
 {
-    char text[256];/*the command text, submited to server when key pressed*/
-    char keyname[256];
-    int key;/*scancode of key*/
-    int repeatflag;/*if true, key will be repeated when pressed*/
-    int mode;/*the send mode OR the menu id*/
-    int menu_mode;
-}_keymap;
+	char macro[64]; /* the macro*/
+	char cmd[64]; /* our cmd string*/
+	int internal;/*intern: Use this function to generate the cmd*/
+	int value;/* a default value for cmds*/
+	int mode;/* the default send mode*/
+	int menu_mode;
+} _key_macro;
+
 enum {
-    KEYBIND_STATUS_NO,
-        KEYBIND_STATUS_NEW,
-        KEYBIND_STATUS_EDIT,
-        KEYBIND_STATUS_NEWKEY,
-        KEYBIND_STATUS_EDITKEY
+	KEYBIND_STATUS_NO,
+	KEYBIND_STATUS_EDIT,
+	KEYBIND_STATUS_EDITKEY
+};
+
+enum {
+	KEYFUNC_NO, KEYFUNC_RUN, KEYFUNC_MOVE,
+	KEYFUNC_CONSOLE, KEYFUNC_CURSOR, KEYFUNC_RANGE,
+	KEYFUNC_APPLY, KEYFUNC_DROP, KEYFUNC_GET,
+	KEYFUNC_LOCK,KEYFUNC_MARK, KEYFUNC_EXAMINE,
+	KEYFUNC_PAGEUP, KEYFUNC_PAGEDOWN,
+	KEYFUNC_PAGEUP_TOP, KEYFUNC_PAGEDOWN_TOP,
+	KEYFUNC_STATUS,  KEYFUNC_HELP,
+	KEYFUNC_OPTION,  KEYFUNC_SPELL,
+	KEYFUNC_KEYBIND, KEYFUNC_SKILL,
+	KEYFUNC_LAYER0,	KEYFUNC_LAYER1,	KEYFUNC_LAYER2,	KEYFUNC_LAYER3,
+	KEYFUNC_TARGET_ENEMY, KEYFUNC_TARGET_FRIEND, KEYFUNC_TARGET_SELF,
+	KEYFUNC_FIREREADY, KEYFUNC_COMBAT,
 };
 
 typedef struct _keybind_key {
-    char macro[256];            /* the text */
-    char keyname[256];            /* the text */
-    int entry;                  /* -1: new macro - 0-xx edit entry */
-    int key;
-    int repeat_flag;
+	char macro[256];            /* the text */
+	char keyname[256];            /* the text */
+	int entry;                  /* -1: new macro - 0-xx edit entry */
+	int key;
+	int repeat_flag;
 }_keybind_key;
 
-extern _keymap keymap[MAX_KEYMAP]; /* thats the one and only key bind table*/
+enum {DRAG_GET_STATUS =-1, DRAG_NONE, DRAG_IWIN_BELOW, DRAG_IWIN_INV, DRAG_QUICKSLOT, DRAG_PDOLL};
 
 extern int KeyScanFlag; /* for debug/alpha , remove later */
-extern int keymap_count;	/* how much keys we have in the the keymap...*/
-extern int cursor_type; 
-extern int draggingInvItem(int value);
+extern int cursor_type;
+extern _key_macro defkey_macro[];
+extern const int DEFAULT_KEYMAP_MACROS;
+extern int draggingInvItem(int src);
 extern int Event_PollInputDevice(void);
 extern void init_keys(void);
 extern void reset_keys(void);
 extern void read_keybind_file(char *fname);
-extern void add_keybind_macro(struct _keybind_key *keybind_key);
 extern void save_keybind_file(char *fname);
+extern void check_menu_keys(int menu, int value);
+
+Boolean process_macro_keys(int id, int value);
 
 #endif
+

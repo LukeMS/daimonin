@@ -892,7 +892,7 @@ error - Your ANSI C compiler should be defining __STDC__;
  */
 
 #define ST_PLAYING      0
-#define ST_PLAY_AGAIN   1
+/*#define ST_PLAY_AGAIN   1*/
 #define ST_ROLL_STAT    2
 #define ST_CHANGE_CLASS 3
 #define ST_CONFIRM_QUIT 4

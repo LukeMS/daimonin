@@ -141,7 +141,6 @@
  * STAT_LOSS_ON_DEATH - toggle between stat loss or stat depletion
  * USE_LIGHTING - enable light/darkness & light sources
  * USE_PERMANENT_EXPERIENCE - allow players to accumulate permanent experience?
- * USE_SWAP_STATS - allows stat swapping for new characters
  * WATCHDOG - allows use of an external watchdog program
  *
  ***********************************************************************/
@@ -441,21 +440,6 @@
 #define PERM_EXP_MINIMUM_RATIO        0.25f
 #define PERM_EXP_GAIN_RATIO           0.10f
 #define PERM_EXP_MAX_LOSS_RATIO       0.50f
-
-/*
- * SWAP_STATS is fixed now - rgg.
- *
- * Swap stats allows players to swap the values for their stats around
- * in the "Roll again" phase of the character selection.  This should
- * hopefully make character selection quicker, allowing for quicker
- * game start ups. 
- * Bugs:    c.blackwood@rdt.monash.edu.au
- * SORT_ROLLED_STATS - only useful with USE_SWAP_STATS - will order
- * stats from lowest to highest on initial roll.
- */ 
-
-#define	USE_SWAP_STATS
-#define SORT_ROLLED_STATS
 
 /*
  * WATCHDOG lets sends datagrams to port 13325 on localhost

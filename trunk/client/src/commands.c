@@ -402,7 +402,7 @@ void SkillRdyCmd(char *data, int len)
     /* lets find the skill... and setup the shortcuts to the exp values*/
     for(ii=0;ii<SKILL_LIST_MAX;ii++)
     {
-        for(i=0;i<SKILL_LIST_ENTRY;i++)
+        for(i=0;i<DIALOG_LIST_ENTRY;i++)
         {
             /* we have a list entry */
             if(skill_list[ii].entry[i].flag==LIST_ENTRY_KNOWN)
@@ -770,16 +770,6 @@ void PreParseInfoStat(char *cmd)
         {
                 LOG(LOG_MSG,"Login: Enter verify password\n");
                 GameStatus = GAME_STATUS_VERIFYPSWD;
-        }
-        if(strstr( cmd, "[y] to roll new stats [n] to use stats" ))
-        {
-                LOG(LOG_MSG,"Login: Stats.\n");
-                GameStatus = GAME_STATUS_SETSTATS;
-        }
-        if(strstr( cmd, "Now choose a character." ))
-        {
-                LOG(LOG_MSG,"Login: Race.\n");
-                GameStatus = GAME_STATUS_SETRACE;
         }
         if(GameStatus >= GAME_STATUS_NAME && GameStatus <=GAME_STATUS_VERIFYPSWD)
                 open_input_mode(12);
@@ -1529,7 +1519,7 @@ void SkilllistCmd(unsigned char *data, int len)
         /* we have a name, the level and exp - now setup the list */
         for(ii=0;ii<SKILL_LIST_MAX;ii++)
         {
-            for(i=0;i<SKILL_LIST_ENTRY;i++)
+            for(i=0;i<DIALOG_LIST_ENTRY;i++)
             {
                 /* we have a list entry */
                 if(skill_list[ii].entry[i].flag!=LIST_ENTRY_UNUSED)
@@ -1586,7 +1576,7 @@ void SpelllistCmd(unsigned char *data, int len)
 		
         for(i=0;i<SPELL_LIST_MAX;i++)
         {
-            for(ii=0;ii<SPELL_LIST_ENTRY;ii++)
+            for(ii=0;ii<DIALOG_LIST_ENTRY;ii++)
             {           
                 if(spell_list[i].entry[0][ii].flag >= LIST_ENTRY_USED)
                 {
@@ -1664,6 +1654,12 @@ static void save_data_cmd_file(char *path, char*data, int len)
 	}
 	else
 		LOG(LOG_ERROR,"save data cmd file : Can't open %s for write. (len:%d)\n", path,len);
+}
+
+/* server tells us to go to the new char creation */
+void NewCharCmd(char *data, int len)
+{
+	GameStatus =GAME_STATUS_NEW_CHAR;
 }
 
 /* server has send us a block of data...

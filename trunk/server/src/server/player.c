@@ -183,9 +183,6 @@ static player* get_player(player *p) {
      * we deal with that below this point.
      */
     p->party_number=-1;
-#ifdef USE_SWAP_STATS
-    p->Swap_First = -1;
-#endif
 
 #ifdef AUTOSAVE
     p->last_save_tick = 9999999;
@@ -202,7 +199,6 @@ static player* get_player(player *p) {
 	/* i let it in but there is no use atm for run_away and player */
     op->run_away = 0; /* Then we panick... */
 
-    roll_stats(op);
     p->state=ST_ROLL_STAT;
 
 	p->target_hp = -1;
@@ -243,32 +239,6 @@ static player* get_player(player *p) {
     p->last_stats.exp = -1;
 
     return p;
-}
- 
-/* This loads the first map an puts the player on it. */
-static void set_first_map(object *op)
-{
-
-    object* current;
-
-    strcpy(op->contr->maplevel, first_map_path);
-    op->x = -1;
-    op->y = -1;
-
-	if(!strcmp(first_map_path, "/tutorialx"))
-	{
-		current=get_object();
-	    FREE_AND_COPY_HASH(EXIT_PATH(current),first_map_path);
-		EXIT_X(current)=1;
-		EXIT_Y(current)=1;
-		current->last_eat = MAP_PLAYER_MAP;
-	    enter_exit(op, current);
-	}
-	else
-	{
-	    enter_exit(op, NULL);
-	}
-
 }
 
 /* Tries to add player on the connection passwd in ns.
@@ -561,17 +531,6 @@ int path_to_player(object *mon, object *pl,int mindiff) {
 
 void give_initial_items(object *pl,treasurelist *items) {
     object *op,*next=NULL;
-    /* Lets at least use the SP_ values here and not just numbers, like 0, 1, ... */
-
-    int start_spells[] = {SP_BULLET, SP_S_FIREBALL, SP_FIRESTORM,
-	SP_S_LIGHTNING, SP_M_MISSILE ,SP_ICESTORM, SP_S_SNOWSTORM};
-    int nrof_start_spells = sizeof start_spells / sizeof start_spells[0];
-
-    int start_prayers[] = {SP_TURN_UNDEAD, SP_HOLY_WORD, SP_MINOR_HEAL,
-	SP_CAUSE_LIGHT};
-    int nrof_start_prayers = sizeof start_prayers / sizeof start_prayers[0];
-    int idx;
-
 
     if(pl->randomitems!=NULL)
 	create_treasure(items,pl,GT_ONLY_GOOD|GT_NO_VALUE,1,T_STYLE_UNSET,ART_CHANCE_UNSET,0);
@@ -579,11 +538,7 @@ void give_initial_items(object *pl,treasurelist *items) {
     for (op=pl->inv; op; op=next) {
 	next = op->below;
 	
-	/* Forces get applied per default, unless they have the
-           flag "neutral" set. Sorry but I can't think of a better way */
-	/* hm, i removed the neutral flag - perhaps we need here a better control.
-	 * if needed we must insert here a flag. MT-11-2002
-	 */
+	/* Forces get applied per default */
   	if(op->type==FORCE)
 		SET_FLAG(op,FLAG_APPLIED);
 	
@@ -602,30 +557,6 @@ void give_initial_items(object *pl,treasurelist *items) {
 	  }
 	}
 	
-  	if(op->type==SPELLBOOK) { /* fix spells for first level spells */
-	    if (op->sub_type1 == ST1_SPELLBOOK_CLERIC) {
-		if (nrof_start_prayers <= 0) {
-		    remove_ob (op);
-		    free_object (op);
-		    continue;
-		}
-		idx = RANDOM() % nrof_start_prayers;
-		op->stats.sp = start_prayers[idx];
-		/* This makes sure the character does not get duplicate spells */
-		start_prayers[idx] = start_prayers[nrof_start_prayers - 1];
-		nrof_start_prayers--;
-	    } else {
-		if (nrof_start_spells <= 0) {
-		    remove_ob (op);
-		    free_object (op);
-		    continue;
-		}
-		idx = RANDOM() % nrof_start_spells;
-		op->stats.sp = start_spells[idx];
-		start_spells[idx] = start_spells[nrof_start_spells - 1];
-		nrof_start_spells--;
-	    }
-	}
 	/* Give starting characters identified, uncursed, and undamned
 	 * items.  Just don't identify gold or silver, or it won't be
 	 * merged properly.
@@ -670,322 +601,6 @@ void get_party_password(object *op, int partyid) {
   send_query(&op->contr->socket, CS_QUERY_HIDEINPUT, "What is the password?\n:");
 }
 
-
-/* This rolls four 1-6 rolls and sums the best 3 of the 4. */
-int roll_stat() {
-  int a[4],i,j,k;
-  for(i=0;i<4;i++)
-    a[i]=(int)RANDOM()%6+1;
-  for(i=0,j=0,k=7;i<4;i++)
-    if(a[i]<k)
-      k=a[i],j=i;
-  for(i=0,k=0;i<4;i++) {
-    if(i!=j)
-      k+=a[i];
-  }
-  return k;
-}
-
-void roll_stats(object *op) {
-  int sum=0;
-  do {
-      /*
-    op->stats.Str=roll_stat();
-    op->stats.Dex=roll_stat();
-    op->stats.Int=roll_stat();
-    op->stats.Con=roll_stat();
-    op->stats.Wis=roll_stat();
-    op->stats.Pow=roll_stat();
-    op->stats.Cha=roll_stat();
-*/
-    op->stats.Str=14;
-    op->stats.Dex=14;
-    op->stats.Int=13;
-    op->stats.Con=12;
-    op->stats.Wis=12;
-    op->stats.Pow=12;
-    op->stats.Cha=12;
-    sum=op->stats.Str+op->stats.Dex+op->stats.Int+
-	op->stats.Con+op->stats.Wis+op->stats.Pow+
-	op->stats.Cha;
-  } while(sum<82||sum>116);
-#if defined( USE_SWAP_STATS) && defined(SORT_ROLLED_STATS)
-	/* Sort the stats so that rerolling is easier... */
-	{
-	        int             i = 0, j = 0;
-	        int             statsort[7];
-
-	        statsort[0] = op->stats.Str;
-	        statsort[1] = op->stats.Dex;
-	        statsort[2] = op->stats.Int;
-	        statsort[3] = op->stats.Con;
-	        statsort[4] = op->stats.Wis;
-	        statsort[5] = op->stats.Pow;
-	        statsort[6] = op->stats.Cha;
-
-	        /* a quick and dirty bubblesort? */
-	        do {
-	                if (statsort[i] < statsort[i + 1]) {
-	                        j = statsort[i];
-	                        statsort[i] = statsort[i + 1];
-	                        statsort[i + 1] = j;
-	                        i = 0;
-	              } else {
-	                        i++;
-	              }
-	      } while (i < 6);
-
-	        op->stats.Str = statsort[0];
-	        op->stats.Dex = statsort[1];
-	        op->stats.Con = statsort[2];
-	        op->stats.Int = statsort[3];
-	        op->stats.Wis = statsort[4];
-	        op->stats.Pow = statsort[5];
-	        op->stats.Cha = statsort[6];
-      }
-#endif /* SWAP_STATS */
-
-  op->contr->orig_stats.Str=op->stats.Str;
-  op->contr->orig_stats.Dex=op->stats.Dex;
-  op->contr->orig_stats.Int=op->stats.Int;
-  op->contr->orig_stats.Con=op->stats.Con;
-  op->contr->orig_stats.Wis=op->stats.Wis;
-  op->contr->orig_stats.Pow=op->stats.Pow;
-  op->contr->orig_stats.Cha=op->stats.Cha;
-  op->stats.hp= -1;
-  op->level=1;
-  op->stats.exp=0;
-  op->stats.sp=-1;
-  op->stats.grace=-1;
-  op->stats.ac=0;
-  op->stats.wc=0;
-  op->stats.dam=0;
-  op->contr->orig_stats=op->stats;
-}
-
-void Roll_Again(object *op)
-{
-    esrv_new_player(op->contr, 0);
-#ifndef USE_SWAP_STATS
-    send_query(&op->contr->socket,CS_QUERY_SINGLECHAR,"Roll again (y/n)? ");
-#else
-    send_query(&op->contr->socket,CS_QUERY_SINGLECHAR,"[y] to roll new stats [n] to use stats\n[1-7] [1-7] to swap stats.\nRoll again (y/n/1-7)?  ");
-#endif /* USE_SWAP_STATS */
-}
-
-void Swap_Stat(object *op,int Swap_Second)
-{
-#ifdef USE_SWAP_STATS
-  signed char tmp;
-  char buf[MAX_BUF];
-
-    if ( op->contr->Swap_First == -1 ) 
-	{
-		LOG(llevBug,"BUG: Swap_Stat(): called without Swap_First for player %s\n", query_name(op));
-		return;
-    }
-
-    tmp = get_attr_value(&op->contr->orig_stats, op->contr->Swap_First);
-
-    set_attr_value(&op->contr->orig_stats, op->contr->Swap_First,
-	get_attr_value(&op->contr->orig_stats, Swap_Second));
-
-    set_attr_value(&op->contr->orig_stats, Swap_Second, tmp);
-
-    sprintf(buf,"%s done\n", short_stat_name[Swap_Second]);
-    new_draw_info(NDI_UNIQUE, 0,op, buf);
-    op->stats.Str = op->contr->orig_stats.Str;
-    op->stats.Dex = op->contr->orig_stats.Dex;
-    op->stats.Con = op->contr->orig_stats.Con;
-    op->stats.Int = op->contr->orig_stats.Int;
-    op->stats.Wis = op->contr->orig_stats.Wis;
-    op->stats.Pow = op->contr->orig_stats.Pow;
-    op->stats.Cha = op->contr->orig_stats.Cha;
-    op->stats.hp= -1;
-    op->level=1;
-    op->stats.exp=0;
-    op->stats.sp=-1;
-    op->stats.grace=-1;
-    op->stats.ac=0;
-    op->contr->Swap_First=-1;
-#endif /* USE_SWAP_STATS */
-}
-
-
-/* This code has been greatly reduced, because with set_attr_value
- * and get_attr_value, the stats can be accessed just numeric
- * ids.  stat_trans is a table that translate the number entered
- * into the actual stat.  It is needed because the order the stats
- * are displayed in the stat window is not the same as how
- * the number's access that stat.  The table does that translation.
- */
-int key_roll_stat(object *op, char key)
-{
-    int keynum = key -'0';
-    char buf[MAX_BUF];
-    static sint8 stat_trans[] = {-1, STR, DEX, CON, INTELLIGENCE, WIS, POW, CHA};
-
-#ifdef USE_SWAP_STATS
-    if (keynum>0 && keynum<=7) {
-	if (op->contr->Swap_First==-1) {
-	    op->contr->Swap_First=stat_trans[keynum];
-	    sprintf(buf,"%s ->", short_stat_name[stat_trans[keynum]]);
-	    new_draw_info(NDI_UNIQUE, 0,op,buf);
-	}
-	else
-	    Swap_Stat(op,stat_trans[keynum]);
-
-	send_query(&op->contr->socket,CS_QUERY_SINGLECHAR,"");
-	return 1;
-    }
-#endif
-    switch (key) {
-	case 'n':
-        case 'N': {
-	    SET_FLAG(op, FLAG_WIZ);
-		SET_ANIMATION(op, 4*(NUM_ANIMATIONS(op)/NUM_FACINGS(op)));     /* So player faces south */
-	    add_statbonus(op);
-		update_object(op,UP_OBJ_FACE);
-	    esrv_update_item(UPD_FACE,op,op);
-		op->contr->last_value= -1;
-		op->stats.maxsp = op->arch->clone.stats.maxsp;
-		op->stats.maxhp = op->arch->clone.stats.maxhp;
-		op->stats.maxgrace = op->arch->clone.stats.maxgrace;
-		op->contr->last_stats.exp=-1;
-		esrv_update_stats(op->contr);
-
-	    send_query(&op->contr->socket,CS_QUERY_SINGLECHAR,"Now choose a character.\nPress any key to change outlook.\nPress `d' when you're pleased.\n");
-	    op->contr->state = ST_CHANGE_CLASS;
-		new_draw_info(NDI_WHITE, 0, op, "Press &N 'ext for a different race or gender.");
-		new_draw_info(NDI_WHITE, 0, op, "Press &G 'et for start playing with this char.");
-	    if (op->msg)
-			new_draw_info(NDI_BLUE, 0, op, op->msg);
-	    return 0;
-	}
-     case 'y':
-     case 'Y':
-	roll_stats(op);
-	send_query(&op->contr->socket,CS_QUERY_SINGLECHAR,"");
-	return 1;
-
-     default:
-#ifndef USE_SWAP_STATS
-	  send_query(&op->contr->socket,CS_QUERY_SINGLECHAR,"Yes, No or Quit. Roll again?");
-#else
-	  send_query(&op->contr->socket,CS_QUERY_SINGLECHAR,"Yes, No, Quit or 1-6.  Roll again?");
-#endif /* USE_SWAP_STATS */
-	return 0;
-    }
-    return 0;
-}
-
-/* This function takes the key that is passed, and does the
- * appropriate action with it (change class, or other things.
- */
-
-int key_change_class(object *op, char key)
-{
-      int tmp_loop;
-#ifdef PLUGINS
-    int evtid;
-    CFParm CFP;
-#endif
-
-    if(key=='q'||key=='Q') {
-      remove_ob(op);
-	  op->contr->socket.status=Ns_Dead;
-      /*play_again(op)*/
-      return 0;
-    }
-    if(key=='d'||key=='D') {
-	char buf[MAX_BUF];
-
-	SET_FLAG(op, FLAG_NO_FIX_PLAYER);
-	/* this must before then initial items are given */
-	esrv_new_player(op->contr, op->weight+op->carrying);
-#ifdef PLUGINS
-    /* GROS : Here we handle the BORN global event */
-    evtid = EVENT_BORN;
-    CFP.Value[0] = (void *)(&evtid);
-    CFP.Value[1] = (void *)(op);
-    GlobalEvent(&CFP);
-
-    /* GROS : We then generate a LOGIN event */
-    evtid = EVENT_LOGIN;
-    CFP.Value[0] = (void *)(&evtid);
-    CFP.Value[1] = (void *)(op->contr);
-    CFP.Value[2] = (void *)(op->contr->socket.host);
-    GlobalEvent(&CFP);
-#endif
-	op->contr->state=ST_PLAYING;
-
-	FREE_AND_CLEAR_HASH2(op->msg);
-
-	/* We create this now because some of the unique maps will need it
-	 * to save here.
-	 */
-	sprintf(buf,"%s/%s/%s",settings.localdir,settings.playerdir,op->name);
-	make_path_to_file(buf);
-
-#ifdef AUTOSAVE
-	op->contr->last_save_tick = pticks;
-#endif
-	display_motd(op);
-	new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, op,"%s entered the game.",op->name);
-	CLEAR_FLAG(op, FLAG_WIZ);
-	(void) init_player_exp(op);
-	give_initial_items(op,op->randomitems);
-	(void) link_player_skills(op);
-	CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
-	op->contr->last_stats.exp=1;			/* force send of skill exp data to client */
-	strcpy(op->contr->title,op->race);		/* no title - just what we born */
-    fix_player(op);					/* THATS our first fix_player() when we create a new char
-									 * add this time, hp and sp will be set 
-									 */
-	esrv_send_inventory(op, op);
-	/* NOW we set our new char in the right map - we have a 100% right init player */
-    set_first_map(op);
-    SET_FLAG(op, FLAG_FRIENDLY);
-    add_friendly_object(op);
-	op->contr->socket.update_tile=0;
-    op->contr->socket.look_position=0;
-    op->contr->socket.ext_title_flag = 1;
-    esrv_new_player(op->contr,op->weight+op->carrying);
-    send_skilllist_cmd(op, NULL, SPLIST_MODE_ADD);
-    send_spelllist_cmd(op, NULL, SPLIST_MODE_ADD);
-	return 0;
-    }
-
-    /* Following actually changes the class - this is the default command
-     * if we don't match with one of the options above.
-     */
-
-    tmp_loop = 0;
-    while(!tmp_loop) {
-      const char *name = NULL;
-      int x = op->x, y = op->y;
-
-	  FREE_AND_ADD_REF_HASH(name,op->name);
-      remove_statbonus(op);
-      op->arch = get_player_archetype(op->arch);
-      copy_object (&op->arch->clone, op);
-      op->stats = op->contr->orig_stats;
-      FREE_AND_CLEAR_HASH2(op->name);
-      op->name = name;
-      op->x = x;
-      op->y = y;
-	  SET_ANIMATION(op, 4*(NUM_ANIMATIONS(op)/NUM_FACINGS(op)));     /* So player faces south */
-      add_statbonus(op);
-      tmp_loop=allowed_class(op);
-    }
-    update_object(op,UP_OBJ_FACE);
-    esrv_update_item(UPD_FACE,op,op);
-    op->contr->last_value= -1;
-    if (op->msg) 
-	new_draw_info(NDI_BLUE, 0, op, op->msg);
-    send_query(&op->contr->socket,CS_QUERY_SINGLECHAR,"Press any key for the next race.\nPress `d' to play this race.\n");
-    return 0;
-}
 
 int key_confirm_quit(object *op, char key)
 {

@@ -23,6 +23,28 @@
 #if !defined(__MAIN_H)
 #define __MAIN_H
 
+
+typedef struct _server_char {
+	struct _server_char *next;
+	struct _server_char *prev;
+	int pic_id;
+	char *name; /* race name: human, elf */
+	char *desc[4]; /* 4 description strings */
+	int bar[3];
+	int bar_add[3];
+	int gender[4]; /* male, female, neutrum, herm. */
+	int gender_selected;
+	char *char_arch[4]; /* 4 description strings */
+	int face_id[4];
+	int stat_points; /* points which can be added to char stats */
+	int stats[7];
+	int stats_min[7];
+	int stats_max[7];
+}_server_char;
+
+extern _server_char *first_server_char;
+extern _server_char new_character; /* if we login as new char, thats the values of it we set */
+
 #define SKIN_POS_QUICKSLOT_X 518
 #define SKIN_POS_QUICKSLOT_Y 109
 
@@ -44,6 +66,29 @@ typedef struct _bmaptype {
 }_bmaptype;
 
 extern _bmaptype *bmap_table[BMAPTABLE];
+
+typedef struct _keymap
+{
+	char text[256];/*the command text, submited to server when key pressed*/
+	char keyname[256];
+	int key;/*scancode of key*/
+	int repeatflag;/*if true, key will be repeated when pressed*/
+	int mode;/*the send mode OR the menu id*/
+	int menu_mode;
+}_keymap;
+
+typedef struct _server
+{
+        struct _server *next;	/* go on in list. NULL: no following this node*/
+        char *nameip;
+        char *version;
+        char *desc1;
+        char *desc2;
+        char *desc3;
+        char *desc4;
+        int player;
+        int port;
+} _server;
 
 #define MAX_BMAPTYPE_TABLE 5000
 
@@ -98,35 +143,43 @@ typedef struct _srv_client_files {
 }_srv_client_files;
 
 extern _srv_client_files srv_client_files[SRV_CLIENT_FILES];
-
+extern 	Uint32 sdl_gray1, sdl_gray2, sdl_gray3, sdl_gray4, sdl_blue1;
+extern int mb_clicked;
 
 #define MAXMETAWINDOW 14		/* count max. shown server in meta window*/
 
-#define MAX_HELP_SCREEN 3
+#define MAX_HELP_SCREEN 2
 
 #define MAXFACES 4
 
 #define MAX_GROUP_MEMBER 8      /* max members in a daimonin group (shown in client) */
 
+/* IMPORTANT: if you change datatype it must also be changed in dialog.c */
 typedef struct _options {
-    char metaserver[256];
-	float warning_hp;
-	float warning_food;
+  char metaserver[256];
+
+	Uint8 video_bpp;
+	Uint8 used_video_bpp;
+	Uint8 real_video_bpp;
+	int warning_hp;
+	int warning_food;
 	int no_meta;
-	uint32 sleep;
 	int player_names;
 	int show_target_self;
-    int metaserver_port;
-    int music_volume;
-    int sound_volume;
+  int metaserver_port;
+  int music_volume;
+  int sound_volume;
+	int textwin_alpha;
+	uint32 videoflags_win;
+	uint32 videoflags_full;
+	uint32 sleep;
+    Boolean use_TextwinAlpha;
+    Boolean use_TextwinSplit;
     Boolean fullscreen;
+    Boolean show_tooltips;
+    Boolean show_d_key_infos; /* key-infos in dialog-wins. */
     Boolean max_speed;
     Boolean use_rect;
-    uint32 videoflags_win;
-    uint32 videoflags_full;
-    Uint8 video_bpp;
-    Uint8 used_video_bpp;
-    Uint8 real_video_bpp;
     Boolean auto_bpp_flag;
     Boolean Full_HWSURFACE;
     Boolean Full_SWSURFACE;
@@ -171,66 +224,75 @@ extern struct _options options;
 
 typedef struct _face_struct
 {
-        struct _Sprite *sprite; /* our face data. if != null, face is loaded*/
-        char *name;				/* our face name. if != null, face is requested*/
-        uint32 checksum;		/* checksum of face */
-		int flags;
+	struct _Sprite *sprite; /* our face data. if != null, face is loaded*/
+	char *name;				/* our face name. if != null, face is requested*/
+	uint32 checksum;		/* checksum of face */
+	int flags;
 }_face_struct;
-
-#define LIST_NAME_MAX 64
-
-/* skill list defines */
-#define SKILL_LIST_MAX 7        /* groups of skills */
-#define SKILL_LIST_ENTRY 26
-
-#define LIST_ENTRY_UNUSED -1 /* this entry is unused */
-#define LIST_ENTRY_USED    1 /* entry is used but player don't have it */
-#define LIST_ENTRY_KNOWN   2 /* player know this used entry */
 
 #define GOLEM_CTR_RELEASE  0
 #define GOLEM_CTR_ADD	   1
 
+
+#define LIST_ENTRY_UNUSED -1 /* this entry is unused */
+#define LIST_ENTRY_USED    1 /* entry is used but player don't have it */
+#define LIST_ENTRY_KNOWN   2 /* player know this used entry */
+#define LIST_NAME_MAX 64
+#define DIALOG_LIST_ENTRY 26
+#define OPTWIN_MAX_TABLEN 14
+
+/* skill list defines */
+#define SKILL_LIST_MAX 7        /* groups of skills */
+
 typedef struct _skill_list_entry {
     int flag;                   /* -1: entry is unused */
-    int exp_level;              /* -1: skill has no level or exp */
-    int exp;                    /* exp of this skill */
-    struct _Sprite *icon;
     char name[LIST_NAME_MAX];   /* name of entry */
     char icon_name[32];
-    char desc[4][96];               /* description */
+    struct _Sprite *icon;
+    char desc[4][96];               /* description (in 4 rows) */
+    int exp_level;              /* -1: skill has no level or exp */
+    int exp;                    /* exp of this skill */
 }_skill_list_entry;
 
 typedef struct _skill_list {
-    _skill_list_entry entry[SKILL_LIST_ENTRY];
+    _skill_list_entry entry[DIALOG_LIST_ENTRY];
 }_skill_list;
 
-typedef struct _skill_list_set {
-    int group_nr;
-    int entry_nr;
-}_skill_list_set;
+/* bind key list defines */
+#define BINDKEY_LIST_MAX 10        /* groups of keys */
+
+typedef struct _bindkey_list {
+	_keymap entry[DIALOG_LIST_ENTRY];
+	char name[OPTWIN_MAX_TABLEN];
+	int size;
+}_bindkey_list;
+
+typedef struct _dialog_list_set {
+	int group_nr;
+	int entry_nr;
+	int class_nr;   /* for spell-list => spell, prayer, ... */
+	int key_change;
+}_dialog_list_set;
+
+/* option list defines */
+#define OPTION_LIST_MAX 5
 
 /* spell list defines */
 #define SPELL_LIST_MAX 10        /* groups of spells */
 #define SPELL_LIST_CLASS 2
-#define SPELL_LIST_ENTRY 26
 
 typedef struct _spell_list_entry {
-    int flag;           /* -1: entry is unused */
-    char name[LIST_NAME_MAX];      /* name of entry */
-    char icon_name[32];
-    struct _Sprite *icon;
-    char desc[4][96];               /* description */
+	int flag;           /* -1: entry is unused */
+	char name[LIST_NAME_MAX];      /* name of entry */
+	char icon_name[32];
+	struct _Sprite *icon;
+	char desc[4][96];               /* description (in 4 rows) */
 }_spell_list_entry;
 
 typedef struct _spell_list {
-    _spell_list_entry entry[SPELL_LIST_CLASS][SPELL_LIST_ENTRY];
+	_spell_list_entry entry[SPELL_LIST_CLASS][DIALOG_LIST_ENTRY];
 }_spell_list;
 
-typedef struct _spell_list_set {
-    int group_nr;                   /* 1 to 10 */
-    int class_nr;                   /* 0:wizard 1:priest */
-    int entry_nr;                   /* 0 - 26 */
-}_spell_list_set;
 
 typedef struct _fire_mode {
     int item;
@@ -241,46 +303,40 @@ typedef struct _fire_mode {
 }_fire_mode;
 
 typedef enum _fire_mode_id {
-    FIRE_MODE_BOW,
-        FIRE_MODE_SPELL,
-        FIRE_MODE_WAND,
-        FIRE_MODE_SKILL,
-        FIRE_MODE_THROW,
-        FIRE_MODE_SUMMON,
-        
-        FIRE_MODE_INIT
+	FIRE_MODE_BOW,
+	FIRE_MODE_SPELL,
+	FIRE_MODE_WAND,
+	FIRE_MODE_SKILL,
+	FIRE_MODE_THROW,
+	FIRE_MODE_SUMMON,
+	FIRE_MODE_INIT
 }_fire_mode_id;
 
 #define FIRE_ITEM_NO (-1)
 
 typedef enum _game_status
 {
-        GAME_STATUS_INIT, /* cal this add start to autoinit */
-        GAME_STATUS_META,/* to to connect to meta server */
-        GAME_STATUS_START,/* start all up without full reset or meta calling*/
-        GAME_STATUS_WAITLOOP,/* we are NOT connected to anything*/
-        GAME_STATUS_STARTCONNECT,/* we have a server+port, init and start*/
-        GAME_STATUS_CONNECT,/* if this is set, we start connecting*/
-        GAME_STATUS_VERSION, /* now the steps: Connect, we send version*/
-        GAME_STATUS_WAITVERSION, /* wait for response... add up in version cmd*/
-        GAME_STATUS_SETUP, /* we ready to send setup commands*/
-        GAME_STATUS_WAITSETUP,/* we wait for server response*/
-        GAME_STATUS_REQUEST_FILES, /* after we get response from setup, we request files if needed */
-        GAME_STATUS_ADDME,   /* all setup is done, now try to enter game!*/
-        GAME_STATUS_LOGIN,       /* now we wait for LOGIN request of the
-server*/
-        GAME_STATUS_NAME,          /* all this here is tricky*/
-        GAME_STATUS_PSWD,          /* server will trigger this when asking for*/
-        GAME_STATUS_VERIFYPSWD,    /* client will then show input panel or so*/
-        GAME_STATUS_SETSTATS,      /* until it send answer back. Then the
-client*/
-        GAME_STATUS_SETRACE,       /* fall back to _LOGIN and wait for next
-part*/
-		GAME_STATUS_WAITFORPLAY,	/* we simply wait for game start */
+	GAME_STATUS_INIT, /* cal this add start to autoinit */
+	GAME_STATUS_META,/* to to connect to meta server */
+	GAME_STATUS_START,/* start all up without full reset or meta calling*/
+	GAME_STATUS_WAITLOOP,/* we are NOT connected to anything*/
+	GAME_STATUS_STARTCONNECT,/* we have a server+port, init and start*/
+	GAME_STATUS_CONNECT,/* if this is set, we start connecting*/
+	GAME_STATUS_VERSION, /* now the steps: Connect, we send version*/
+	GAME_STATUS_WAITVERSION, /* wait for response... add up in version cmd*/
+	GAME_STATUS_SETUP, /* we ready to send setup commands*/
+	GAME_STATUS_WAITSETUP,/* we wait for server response*/
+	GAME_STATUS_REQUEST_FILES, /* after we get response from setup, we request files if needed */
+	GAME_STATUS_ADDME,   /* all setup is done, now try to enter game!*/
+	GAME_STATUS_LOGIN,       /* now we wait for LOGIN request of the server*/
+	GAME_STATUS_NAME,          /* all this here is tricky*/
+	GAME_STATUS_PSWD,          /* server will trigger this when asking for*/
+	GAME_STATUS_VERIFYPSWD,    /* client will then show input panel or so*/
+	GAME_STATUS_NEW_CHAR,	   /* show new char creation screen and send /nc command when finished */
+	GAME_STATUS_WAITFORPLAY,	/* we simply wait for game start */
         /* means, this is not a serial stepping here*/
-
-        GAME_STATUS_QUIT,   /* we are in quit menu*/
-        GAME_STATUS_PLAY,   /* we play now!!*/
+	GAME_STATUS_QUIT,   /* we are in quit menu*/
+	GAME_STATUS_PLAY,   /* we play now!!*/
 } _game_status;
 
 extern int debug_layer[MAXFACES];
@@ -313,6 +369,7 @@ extern int esc_menu_index;
 
 enum {
 	ESC_MENU_KEYS,
+	ESC_MENU_SETTINGS,
 	ESC_MENU_LOGOUT,
 	ESC_MENU_BACK,
 
@@ -325,140 +382,139 @@ enum {
 #define SURFACE_FLAG_COLKEY_16M 2   /* use this when you want a colkey in a true color picture - color should be 0 */
 
 typedef enum _bitmap_index {
-        BITMAP_PALETTE,
-        BITMAP_FONT1,
-        BITMAP_FONT6x3OUT,
-        BITMAP_BIGFONT,
-        BITMAP_FONT1OUT,
-        BITMAP_INTRO,
+  BITMAP_PALETTE,
+  BITMAP_FONT1,
+  BITMAP_FONT6x3OUT,
+  BITMAP_BIGFONT,
+  BITMAP_FONT1OUT,
+  BITMAP_INTRO,
+  BITMAP_DOLL,
+  BITMAP_BLACKTILE, /* blacktile for map*/
+  BITMAP_TEXTWIN,
+  BITMAP_LOGIN_INP,
+  BITMAP_INVSLOT,
+  BITMAP_HP,
+  BITMAP_HP_BACK,
+  BITMAP_SP,
+  BITMAP_SP_BACK,
+  BITMAP_GRACE,
+  BITMAP_GRACE_BACK,
+  BITMAP_FOOD,
+  BITMAP_FOOD_BACK,
+  BITMAP_APPLY,
+  BITMAP_UNPAID,
+  BITMAP_CURSED,
+  BITMAP_DAMNED,
+  BITMAP_LOCK,
+  BITMAP_MAGIC,
+  BITMAP_RANGE,
+  BITMAP_RANGE_MARKER,
+  BITMAP_RANGE_CTRL,
+  BITMAP_RANGE_CTRL_NO,
+  BITMAP_RANGE_SKILL,
+  BITMAP_RANGE_SKILL_NO,
+  BITMAP_RANGE_THROW,
+  BITMAP_RANGE_THROW_NO,
+  BITMAP_RANGE_TOOL,
+  BITMAP_RANGE_TOOL_NO,
+  BITMAP_RANGE_WIZARD,
+  BITMAP_RANGE_WIZARD_NO,
+  BITMAP_RANGE_PRIEST,
+  BITMAP_RANGE_PRIEST_NO,
+  BITMAP_CMARK_START,
+  BITMAP_CMARK_END,
+  BITMAP_CMARK_MIDDLE,
+  BITMAP_TWIN_SCROLL,
+  BITMAP_INV_SCROLL,
+  BITMAP_BELOW_SCROLL,
+  BITMAP_NUMBER,
+  BITMAP_INVSLOT_U,
+  BITMAP_DEATH,
+  BITMAP_SLEEP,
+  BITMAP_CONFUSE,
+  BITMAP_PARALYZE,
+  BITMAP_SCARED,
+  BITMAP_BLIND,
+  BITMAP_ENEMY1,
+  BITMAP_ENEMY2,
+  BITMAP_PROBE,
+  BITMAP_QUICKSLOTS,
+  BITMAP_INVENTORY,
+  BITMAP_GROUP,
+  BITMAP_EXP_BORDER,
+  BITMAP_EXP_SLIDER,
+  BITMAP_EXP_BUBBLE1,
+  BITMAP_EXP_BUBBLE2,
+  BITMAP_STATS,
+  BITMAP_BUFFSPOT,
+  BITMAP_TEXTSPOT,
+  BITMAP_PDOLL2,
+  BITMAP_PDOLL2_SPOT,
+  BITMAP_CLEAR_SPOT,
+  BITMAP_BORDER1,
+  BITMAP_BORDER2,
+  BITMAP_BORDER3,
+  BITMAP_BORDER4,
+  BITMAP_BORDER5,
+  BITMAP_BORDER6,
+  BITMAP_PANEL_P1,
+  BITMAP_GROUP_SPOT,
+  BITMAP_TARGET_SPOT,
+  BITMAP_BELOW,
+  BITMAP_FLINE,
+  BITMAP_HELP1,
+  BITMAP_TARGET_ATTACK,
+  BITMAP_TARGET_TALK,
+  BITMAP_TARGET_NORMAL,
+  BITMAP_LOADING,
+  BITMAP_HELP2,
+  BITMAP_WARN_HP,
+  BITMAP_WARN_FOOD,
+  BITMAP_LOGO270,
+  BITMAP_DIALOG_BG,
+  BITMAP_DIALOG_TITLE_OPTIONS,
+  BITMAP_DIALOG_TITLE_KEYBIND,
+  BITMAP_DIALOG_TITLE_SKILL,
+  BITMAP_DIALOG_TITLE_SPELL,
+  BITMAP_DIALOG_TITLE_CREATION,
+  BITMAP_DIALOG_TITLE_LOGIN,
+  BITMAP_DIALOG_BUTTON_UP,
+	BITMAP_DIALOG_BUTTON_DOWN,
+	BITMAP_DIALOG_TAB_START,
+	BITMAP_DIALOG_TAB,
+	BITMAP_DIALOG_TAB_STOP,
+	BITMAP_DIALOG_TAB_SEL,
+	BITMAP_DIALOG_CHECKER,
+	BITMAP_DIALOG_RANGE_OFF,
+	BITMAP_DIALOG_RANGE_L,
+	BITMAP_DIALOG_RANGE_R,
+  BITMAP_TARGET_HP,
+  BITMAP_TARGET_HP_B,
+  BITMAP_TEXTWIN_MASK,
+  BITMAP_TEXTWIN_BLANK,
+  BITMAP_TEXTWIN_SPLIT,
+  BITMAP_SLIDER_UP,
+	BITMAP_SLIDER_DOWN,
+	BITMAP_SLIDER,
+	BITMAP_GROUP_CLEAR,
+	BITMAP_EXP_SKILL_BORDER,
+  BITMAP_EXP_SKILL_LINE,
+  BITMAP_EXP_SKILL_BUBBLE,
+	BITMAP_OPTIONS_HEAD,
+	BITMAP_OPTIONS_KEYS,
+	BITMAP_OPTIONS_SETTINGS,
+	BITMAP_OPTIONS_LOGOUT,
+	BITMAP_OPTIONS_BACK,
+	BITMAP_OPTIONS_MARK_LEFT,
+	BITMAP_OPTIONS_MARK_RIGHT,
+	BITMAP_OPTIONS_ALPHA,
+	BITMAP_PENTAGRAM,
+	BITMAP_BUTTONQ_UP,
+	BITMAP_BUTTONQ_DOWN,
+	BITMAP_NCHAR_MARKER,
 
-        BITMAP_DOLL,
-        BITMAP_BLACKTILE, /* blacktile for map*/
-        BITMAP_TEXTWIN,
-        BITMAP_META,
-        BITMAP_METASLIDER,
-        BITMAP_LOGIN,
-        BITMAP_NEWPLAYER,
-        BITMAP_LOGIN_INP,
-        BITMAP_INVSLOT,
-        BITMAP_HP,
-        BITMAP_HP_BACK,
-        BITMAP_SP,
-        BITMAP_SP_BACK,
-        BITMAP_GRACE,
-        BITMAP_GRACE_BACK,
-        BITMAP_FOOD,
-        BITMAP_FOOD_BACK,
-        BITMAP_APPLY,
-        BITMAP_UNPAID,
-        BITMAP_CURSED,
-        BITMAP_DAMNED,
-        BITMAP_LOCK,
-        BITMAP_MAGIC,
-        BITMAP_STATUS,
-        BITMAP_SPELLLIST,
-        BITMAP_KEYBIND,
-        BITMAP_KEYBINDSLIDER,
-        BITMAP_KEYPRESS,
-        BITMAP_RANGE,
-        BITMAP_RANGE_MARKER,
-        BITMAP_RANGE_CTRL,
-        BITMAP_RANGE_CTRL_NO,
-        BITMAP_RANGE_SKILL,
-        BITMAP_RANGE_SKILL_NO,
-        BITMAP_RANGE_THROW,
-        BITMAP_RANGE_THROW_NO,
-        BITMAP_RANGE_TOOL,
-        BITMAP_RANGE_TOOL_NO,
-        BITMAP_RANGE_WIZARD,
-        BITMAP_RANGE_WIZARD_NO,
-        BITMAP_RANGE_PRIEST,
-        BITMAP_RANGE_PRIEST_NO,
-        BITMAP_CMARK_START,
-        BITMAP_CMARK_END,
-        BITMAP_CMARK_MIDDLE,
-        BITMAP_TWIN_SCROLL,
-        BITMAP_INV_SCROLL,
-        BITMAP_BELOW_SCROLL,
-        BITMAP_NUMBER,
-        BITMAP_KEYBIND_NEW,
-        BITMAP_KEYBIND_EDIT,
-        BITMAP_KEYBIND_INPUT,
-        BITMAP_KEYBIND_SCROLL,
-        BITMAP_KEYBIND_REPEAT,
-        BITMAP_INVSLOT_U,
-        BITMAP_SKILL_LIST,
-        BITMAP_SKILL_LIST_SLIDER,
-        BITMAP_SKILL_LIST_BUTTON,
-        BITMAP_SPELLLIST_SLIDER,
-        BITMAP_SPELLLIST_SLIDERG,
-        BITMAP_SPELLLIST_BUTTON,
-        BITMAP_DEATH,
-        BITMAP_SLEEP,
-        BITMAP_CONFUSE,
-        BITMAP_PARALYZE,
-        BITMAP_SCARED,
-        BITMAP_BLIND,
-        BITMAP_ENEMY1,
-        BITMAP_ENEMY2,
-        BITMAP_PROBE,
-        BITMAP_QUICKSLOTS,
-        BITMAP_INVENTORY,
-        BITMAP_GROUP,
-        BITMAP_EXP_BORDER,
-        BITMAP_EXP_SLIDER,
-        BITMAP_EXP_BUBBLE1,
-        BITMAP_EXP_BUBBLE2,
-        BITMAP_STATS,
-        BITMAP_BUFFSPOT,
-        BITMAP_TEXTSPOT,
-        BITMAP_PDOLL2,
-        BITMAP_PDOLL2_SPOT,
-        BITMAP_CLEAR_SPOT,
-        BITMAP_BORDER1,
-        BITMAP_BORDER2,
-        BITMAP_BORDER3,
-        BITMAP_BORDER4,
-        BITMAP_BORDER5,
-        BITMAP_BORDER6,
-        BITMAP_PANEL_P1,
-        BITMAP_GROUP_SPOT,
-        BITMAP_TARGET_SPOT,
-        BITMAP_BELOW,
-        BITMAP_FLINE,
-        BITMAP_META_SCROLL,
-        BITMAP_HELP1,
-		BITMAP_TARGET_ATTACK,
-        BITMAP_TARGET_TALK,		
-        BITMAP_TARGET_NORMAL,
-        BITMAP_LOADING,
-        BITMAP_HELP2,
-        BITMAP_HELP3,
-		
-        BITMAP_WARN_HP,
-        BITMAP_WARN_FOOD,
+	BITMAP_INIT
 
-        BITMAP_TARGET_HP,
-        BITMAP_TARGET_HP_B,
-        BITMAP_TEXTWIN_MASK,
-        BITMAP_TEXTWIN_BLANK,
-       BITMAP_TEXTWIN_SPLIT,
-		BITMAP_SLIDER_UP,
-		BITMAP_SLIDER_DOWN,
-		BITMAP_SLIDER,
-		BITMAP_GROUP_CLEAR,
-		BITMAP_OPTIONS_HEAD,
-		BITMAP_OPTIONS_KEYS,
-		BITMAP_OPTIONS_LOGOUT,
-		BITMAP_OPTIONS_BACK,
-		BITMAP_OPTIONS_MARK_LEFT,
-		BITMAP_OPTIONS_MARK_RIGHT,
-		BITMAP_OPTIONS_ALPHA,
-		        
-		BITMAP_EXP_SKILL_BORDER,
-        BITMAP_EXP_SKILL_LINE,
-        BITMAP_EXP_SKILL_BUBBLE, 
-        BITMAP_INIT
 }_bitmap_index;
 
 
@@ -485,7 +541,6 @@ extern SDL_Surface *ScreenSurface;      /* our main bla and so on surface */
 extern struct sockaddr_in insock;       /* Server's attributes*/
 extern int SocketStatusErrorNr; /* if an socket error, this is it */
 
-
 extern int main ( int argc, char *argv[] );
 extern void open_input_mode(int maxchar);
 extern void add_metaserver_data(char *server, int port, int player, char *ver, char *desc1, char *desc2, char *desc3, char *desc4);
@@ -495,3 +550,4 @@ extern void free_faces(void);
 extern void load_options_dat(void);
 
 #endif
+

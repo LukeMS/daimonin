@@ -230,7 +230,7 @@ void read_client_images()
 	    if ((i=fread(facesets[fileno].faces[num].data, len, 1, infile))!=1)
 			LOG(llevError,"read_client_images: Did not read desired amount of data, wanted %d, got %d\n%s",len, i, buf);
 
-		facesets[fileno].faces[num].checksum=(uint32)adler32(len, facesets[fileno].faces[num].data,len);
+		facesets[fileno].faces[num].checksum=(uint32)crc32(1L, facesets[fileno].faces[num].data,len);
 		sprintf(buf,"%x %x %s\n",len,facesets[fileno].faces[num].checksum,new_faces[num].name);
 		fputs(buf, fbmap);
 	}

@@ -523,6 +523,159 @@ int command_target(object *op, char *params)
 	return 1;
 }
 
+/* This loads the first map an puts the player on it. */
+static void set_first_map(object *op)
+{
+
+    object* current;
+
+    strcpy(op->contr->maplevel, first_map_path);
+    op->x = -1;
+    op->y = -1;
+
+	if(!strcmp(first_map_path, "/tutorial"))
+	{
+		current=get_object();
+	    FREE_AND_COPY_HASH(EXIT_PATH(current),first_map_path);
+		EXIT_X(current)=1;
+		EXIT_Y(current)=1;
+		current->last_eat = MAP_PLAYER_MAP;
+	    enter_exit(op, current);
+	}
+	else
+	{
+	    enter_exit(op, NULL);
+	}
+
+}
+
+/* client send us a new char creation.
+ * at this point we know for *pl the name and
+ * the password but nothing about his (player char)
+ * base arch.
+ * This command tells us which the player has selected
+ * and how he has setup the stats.
+ * We need to control the stats *CAREFUL*.
+ * If *whatever* is not correct here - kill this socket!
+ */
+void command_new_char(char *params, int len,player *pl)
+{
+	archetype *p_arch = NULL;
+	const char *name_tmp = NULL;
+	object *op=pl->ob;
+    int x = pl->ob->x, y = pl->ob->y;
+	int stats[7];
+#ifdef PLUGINS
+    int evtid;
+    CFParm CFP;
+#endif
+	char name[HUGE_BUF];
+	char buf[HUGE_BUF];
+
+	if(!params || len > MAX_BUF)
+	{
+		pl->socket.status = Ns_Dead; /* killl socket */
+		return;
+	}
+
+	sscanf(params,"%s %d %d %d %d %d %d %d\n", name,
+		&stats[0],&stats[1],&stats[2],&stats[3],&stats[4],&stats[5],&stats[6]);
+
+	/* now: we have to verify every *bit* of what the client has send us */
+
+	p_arch = find_archetype(name);
+
+	/* invalid player arch? */
+	if(!p_arch || p_arch->clone.type != PLAYER)
+	{
+		pl->socket.status = Ns_Dead; /* killl socket */
+		return;
+	}
+
+
+	LOG(llevDebug,"ARCH: %s (%d %d %d %d %d %d %d)\n", name,
+		stats[0],stats[1],stats[2],stats[3],stats[4],stats[5],stats[6]);
+
+	/* all is ok - now lets create this sucker */
+	/* the stats of a player a saved in pl struct and copied to the object */
+
+	FREE_AND_ADD_REF_HASH(name_tmp,op->name); /* need to copy the name to new arch */
+    copy_object (&p_arch->clone, op);
+    op->contr->last_value= -1;
+    FREE_AND_CLEAR_HASH2(op->name);
+    op->name = name_tmp;
+    op->x = x;
+    op->y = y;
+	SET_ANIMATION(op, 4*(NUM_ANIMATIONS(op)/NUM_FACINGS(op)));     /* So player faces south */
+
+	pl->orig_stats.Str = stats[0];
+	pl->orig_stats.Dex = stats[1];
+	pl->orig_stats.Con = stats[2];
+	pl->orig_stats.Int = stats[3];
+	pl->orig_stats.Wis = stats[4];
+	pl->orig_stats.Pow = stats[5];
+	pl->orig_stats.Cha = stats[6];
+
+	SET_FLAG(op, FLAG_NO_FIX_PLAYER);
+	/* this must before then initial items are given */
+	esrv_new_player(op->contr, op->weight+op->carrying);
+#ifdef PLUGINS
+    /* GROS : Here we handle the BORN global event */
+    evtid = EVENT_BORN;
+    CFP.Value[0] = (void *)(&evtid);
+    CFP.Value[1] = (void *)(op);
+    GlobalEvent(&CFP);
+
+    /* GROS : We then generate a LOGIN event */
+    evtid = EVENT_LOGIN;
+    CFP.Value[0] = (void *)(&evtid);
+    CFP.Value[1] = (void *)(op->contr);
+    CFP.Value[2] = (void *)(op->contr->socket.host);
+    GlobalEvent(&CFP);
+#endif
+
+	op->contr->state=ST_PLAYING;
+	FREE_AND_CLEAR_HASH2(op->msg);
+
+	/* We create this now because some of the unique maps will need it
+	 * to save here.
+	 */
+	sprintf(buf,"%s/%s/%s",settings.localdir,settings.playerdir,op->name);
+	make_path_to_file(buf);
+
+#ifdef AUTOSAVE
+	op->contr->last_save_tick = pticks;
+#endif
+
+	display_motd(op);
+	new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, op,"%s entered the game.",op->name);
+	
+	CLEAR_FLAG(op, FLAG_WIZ);
+	(void) init_player_exp(op);
+	give_initial_items(op,op->randomitems);
+	(void) link_player_skills(op);
+	CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
+	op->contr->last_stats.exp=1;			/* force send of skill exp data to client */	
+	strcpy(op->contr->title,op->race);		/* no title - just what we born */
+	fix_player(op);							/* THATS our first fix_player() when we create a new char
+											 * add this time, hp and sp will be set 
+											 */
+    esrv_update_item(UPD_FACE,op,op);
+	esrv_send_inventory(op, op);
+	
+	/* NOW we set our new char in the right map - we have a 100% right init player */
+	set_first_map(op);
+	SET_FLAG(op, FLAG_FRIENDLY);
+	add_friendly_object(op);
+		
+	op->contr->socket.update_tile=0;	
+	op->contr->socket.look_position=0;
+	op->contr->socket.ext_title_flag = 1;	
+	esrv_new_player(op->contr,op->weight+op->carrying);
+	send_skilllist_cmd(op, NULL, SPLIST_MODE_ADD);
+	send_spelllist_cmd(op, NULL, SPLIST_MODE_ADD);
+}
+
 void command_face_request(char *params, int len,player *pl)
 {
 	int i, count;

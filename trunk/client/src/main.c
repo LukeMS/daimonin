@@ -23,6 +23,9 @@
 
 #include <include.h>
 
+_server_char *first_server_char=NULL; /* list of possible chars/race with setup when we want create a char */
+_server_char new_character; /* if we login as new char, thats the values of it we set */
+
 SDL_Surface *ScreenSurface; /* THE main surface (backbuffer)*/
 _Font SystemFont;			/* our main font*/
 _Font SystemFontOut;		/* our main font - black outlined*/
@@ -32,8 +35,11 @@ struct sockaddr_in insock;	/* Server's attributes */
 ClientSocket csocket;
 int SocketStatusErrorNr;		/* if an socket error, this is it */
 
+Uint32 sdl_gray1, sdl_gray2, sdl_gray3, sdl_gray4, sdl_blue1;
+
 int music_global_fade = FALSE;
 int show_help_screen;
+int mb_clicked = 0;
 
 int debug_layer[MAXFACES];
 int bmaptype_table_size;
@@ -91,19 +97,6 @@ Boolean load_bitmap(int index);
 
 #define NCOMMANDS (sizeof(commands)/sizeof(struct CmdMapping))
 
-typedef struct _server
-{
-        struct _server *next;	/* go on in list. NULL: no following this node*/
-        char *nameip;
-        char *version;
-        char *desc1;
-        char *desc2;
-        char *desc3;
-        char *desc4;
-        int player;
-        int port;
-} _server;
-
 _server *start_server, *end_server;
 int metaserver_start, metaserver_sel,metaserver_count;
 
@@ -130,10 +123,6 @@ static _bitmap_name  bitmap_name[BITMAP_INIT] =
         {"player_doll1.png", PIC_TYPE_TRANS},
         {"black_tile.png", PIC_TYPE_DEFAULT},
         {"textwin.png", PIC_TYPE_DEFAULT},
-        {"meta1.png", PIC_TYPE_DEFAULT},
-        {"metaslider.png", PIC_TYPE_DEFAULT},
-        {"login.png", PIC_TYPE_DEFAULT},
-        {"newplayer.png", PIC_TYPE_DEFAULT},
         {"login_inp.png", PIC_TYPE_DEFAULT},
         {"invslot.png", PIC_TYPE_TRANS},
         {"hp.png", PIC_TYPE_DEFAULT},
@@ -150,11 +139,6 @@ static _bitmap_name  bitmap_name[BITMAP_INIT] =
         {"damned.png", PIC_TYPE_DEFAULT},
         {"lock.png", PIC_TYPE_DEFAULT},
         {"magic.png", PIC_TYPE_DEFAULT},
-        {"status.png", PIC_TYPE_DEFAULT},
-        {"spelllist.png", PIC_TYPE_DEFAULT},
-        {"keybind.png", PIC_TYPE_DEFAULT},
-        {"keybindslider.png", PIC_TYPE_DEFAULT},
-        {"keypress.png", PIC_TYPE_DEFAULT},
         {"range.png", PIC_TYPE_TRANS},
         {"range_marker.png", PIC_TYPE_TRANS},
         {"range_ctrl.png", PIC_TYPE_TRANS},
@@ -176,18 +160,7 @@ static _bitmap_name  bitmap_name[BITMAP_INIT] =
         {"inv_scroll.png", PIC_TYPE_DEFAULT},
         {"below_scroll.png", PIC_TYPE_DEFAULT},
         {"number.png", PIC_TYPE_DEFAULT},
-        {"keybind_new.png", PIC_TYPE_DEFAULT},
-        {"keybind_edit.png", PIC_TYPE_DEFAULT},
-        {"keybind_input.png", PIC_TYPE_DEFAULT},
-        {"keybind_scroll.png", PIC_TYPE_DEFAULT},
-        {"keybind_repeat.png", PIC_TYPE_DEFAULT},
         {"invslot_u.png", PIC_TYPE_TRANS},
-        {"skill_list.png", PIC_TYPE_DEFAULT},
-        {"skill_list_slider.png", PIC_TYPE_DEFAULT},
-        {"skill_list_button.png", PIC_TYPE_TRANS},
-        {"spelllist_slider.png", PIC_TYPE_DEFAULT},
-        {"spelllist_sliderg.png", PIC_TYPE_DEFAULT},
-        {"spelllist_button.png", PIC_TYPE_TRANS},
         {"death.png", PIC_TYPE_TRANS},
         {"sleep.png", PIC_TYPE_TRANS},
         {"confused.png", PIC_TYPE_TRANS},
@@ -216,59 +189,71 @@ static _bitmap_name  bitmap_name[BITMAP_INIT] =
         {"border4.png", PIC_TYPE_TRANS},
         {"border5.png", PIC_TYPE_TRANS},
         {"border6.png", PIC_TYPE_TRANS},
-
         {"panel_p1.png", PIC_TYPE_DEFAULT},
         {"group_spot.png", PIC_TYPE_DEFAULT},
         {"target_spot.png", PIC_TYPE_DEFAULT},
         {"below.png", PIC_TYPE_DEFAULT},
         {"frame_line.png", PIC_TYPE_DEFAULT},
-        {"meta_scroll.png", PIC_TYPE_DEFAULT},
         {"help1.png", PIC_TYPE_DEFAULT},
         {"target_attack.png", PIC_TYPE_TRANS},
         {"target_talk.png", PIC_TYPE_TRANS},
         {"target_normal.png", PIC_TYPE_TRANS},
         {"loading.png", PIC_TYPE_TRANS},
         {"help2.png", PIC_TYPE_DEFAULT},
-        {"help3.png", PIC_TYPE_DEFAULT},
-
         {"warn_hp.png", PIC_TYPE_DEFAULT},
         {"warn_food.png", PIC_TYPE_DEFAULT},
-
+        {"logo270.png", PIC_TYPE_DEFAULT},
+        {"dialog_bg.png", PIC_TYPE_DEFAULT},
+        {"dialog_title_options.png", PIC_TYPE_DEFAULT},
+        {"dialog_title_keybind.png", PIC_TYPE_DEFAULT},
+        {"dialog_title_skill.png", PIC_TYPE_DEFAULT},
+        {"dialog_title_spell.png", PIC_TYPE_DEFAULT},
+        {"dialog_title_creation.png", PIC_TYPE_DEFAULT},
+        {"dialog_title_login.png", PIC_TYPE_DEFAULT},
+        {"dialog_button_up.png", PIC_TYPE_DEFAULT},
+        {"dialog_button_down.png", PIC_TYPE_DEFAULT},
+        {"dialog_tab_start.png", PIC_TYPE_DEFAULT},
+        {"dialog_tab.png", PIC_TYPE_DEFAULT},
+        {"dialog_tab_stop.png", PIC_TYPE_DEFAULT},
+        {"dialog_tab_sel.png", PIC_TYPE_DEFAULT},
+        {"dialog_checker.png", PIC_TYPE_DEFAULT},
+        {"dialog_range_off.png", PIC_TYPE_DEFAULT},
+        {"dialog_range_l.png", PIC_TYPE_DEFAULT},
+        {"dialog_range_r.png", PIC_TYPE_DEFAULT},
         {"target_hp.png", PIC_TYPE_DEFAULT},
         {"target_hp_b.png", PIC_TYPE_DEFAULT},
         {"textwin_mask.png", PIC_TYPE_DEFAULT},
         {"textwin_blank.png", PIC_TYPE_DEFAULT},
         {"textwin_split.png", PIC_TYPE_DEFAULT}, 
-
         {"slider_up.png", PIC_TYPE_TRANS},
         {"slider_down.png", PIC_TYPE_TRANS},
         {"slider.png", PIC_TYPE_TRANS},
         {"group_clear.png", PIC_TYPE_DEFAULT},
+        {"exp_skill_border.png", PIC_TYPE_DEFAULT},
+        {"exp_skill_line.png", PIC_TYPE_DEFAULT},
+        {"exp_skill_bubble.png", PIC_TYPE_TRANS}, 
         {"options_head.png", PIC_TYPE_TRANS},
         {"options_keys.png", PIC_TYPE_TRANS},
+        {"options_settings.png", PIC_TYPE_TRANS},
         {"options_logout.png", PIC_TYPE_TRANS},
         {"options_back.png", PIC_TYPE_TRANS},
         {"options_mark_left.png", PIC_TYPE_TRANS},
         {"options_mark_right.png", PIC_TYPE_TRANS},
         {"options_alpha.png", PIC_TYPE_DEFAULT},
-
-        {"exp_skill_border.png", PIC_TYPE_DEFAULT},
-        {"exp_skill_line.png", PIC_TYPE_DEFAULT},
-        {"exp_skill_bubble.png", PIC_TYPE_TRANS}, 
+        {"pentagram.png", PIC_TYPE_DEFAULT},
+        {"quad_button_up.png", PIC_TYPE_DEFAULT},
+        {"quad_button_down.png", PIC_TYPE_DEFAULT},
+        {"nchar_marker.png", PIC_TYPE_TRANS},
 };
 
 #define BITMAP_MAX (sizeof(bitmap_name)/sizeof(struct _bitmap_name))
 _Sprite *Bitmaps[BITMAP_MAX];
 
 static void count_meta_server(void);
-static void show_meta_server(void);
-static void show_login_server(void);
-static void show_request_server(void);
 static void flip_screen(void);
 static void show_intro(char *text);
 static void delete_player_lists(void);
 void reset_input_mode(void);
-void show_newplayer_server(void);
 
 static void delete_player_lists(void)
 {
@@ -285,7 +270,7 @@ static void delete_player_lists(void)
 
         for(i=0;i<SKILL_LIST_MAX;i++)
         {
-            for(ii=0;ii<SKILL_LIST_ENTRY;ii++)
+            for(ii=0;ii<DIALOG_LIST_ENTRY;ii++)
             {   
 				if(skill_list[i].entry[ii].flag==LIST_ENTRY_KNOWN)
 	                skill_list[i].entry[ii].flag=LIST_ENTRY_USED;
@@ -294,7 +279,7 @@ static void delete_player_lists(void)
                 
         for(i=0;i<SPELL_LIST_MAX;i++)
         {
-            for(ii=0;ii<SPELL_LIST_ENTRY;ii++)
+            for(ii=0;ii<DIALOG_LIST_ENTRY;ii++)
             {      
 				if(spell_list[i].entry[0][ii].flag == LIST_ENTRY_KNOWN)
 					spell_list[i].entry[0][ii].flag = LIST_ENTRY_USED;
@@ -308,23 +293,20 @@ static void delete_player_lists(void)
 /* pre init, overrule in hardware module if needed */
 void init_game_data(void)
 {
-    int i;
-    
-		textwin_set.split_flag = TRUE;
-		textwin_set.size = 9;
-		textwin_set.split_size = 9;
-		textwin_set.top_size = 4;
-		textwin_set.use_alpha = TRUE;
-		textwin_set.alpha = 156;
+	int i;
+	textwin_init();
+	textwin_flags=0;
+	first_server_char=NULL;
 
-		esc_menu_flag = FALSE;
+	esc_menu_flag = FALSE;
+	srand(time(NULL));
 
-		memset(anim_table, 0 , sizeof(anim_table));
-		memset(animations, 0 , sizeof(animations));
-		memset(bmaptype_table, 0 , sizeof(bmaptype_table));
-        ToggleScreenFlag=FALSE;
-        KeyScanFlag = FALSE;   
-        memset(&fire_mode_tab,0,sizeof(fire_mode_tab));
+	memset(anim_table, 0 , sizeof(anim_table));
+	memset(animations, 0 , sizeof(animations));
+	memset(bmaptype_table, 0 , sizeof(bmaptype_table));
+	ToggleScreenFlag=FALSE;
+	KeyScanFlag = FALSE;   
+	memset(&fire_mode_tab,0,sizeof(fire_mode_tab));
 
 		for(i=0;i<MAXFACES;i++)
 			debug_layer[i]=TRUE;
@@ -371,14 +353,19 @@ void init_game_data(void)
         media_count=0;	/* buffered media files*/
         media_show=MEDIA_SHOW_NO; /* show this media file*/
 
-		delete_player_lists();
-        load_options_dat(); /* now load options, allowing the user to override the presetings */     
+	delete_player_lists();
+	load_options_dat(); /* now load options, allowing the user to override the presetings */
 }
 
 void load_options_dat(void)
 {
     FILE *stream;
     char line[256], keyword[256], parameter[256];
+
+
+	options.show_d_key_infos= TRUE; /* show key-infos in dialog-win */
+	options.show_tooltips =TRUE;
+
     
     if( (stream = fopen( OPTION_FILE, "r" )) != NULL )
     {
@@ -460,70 +447,73 @@ void load_options_dat(void)
                 options.player_names = atoi(parameter);
             else if(!strcmp(keyword,"ShowTargetSelf"))
                 options.show_target_self = atoi(parameter);
+            else if(!strcmp(keyword,"ShowTooltips"))
+                options.show_tooltips = atoi(parameter);
+
+
 			/* text windows settings */
 			else if(!strcmp(keyword,"TextWinSplit"))
-                textwin_set.split_flag = atoi(parameter);
+				options.use_TextwinSplit=atoi(parameter);
 			else if(!strcmp(keyword,"TextWinAlphaFlag"))
-                textwin_set.use_alpha = atoi(parameter);
+       options.use_TextwinAlpha = atoi(parameter);
 			else if(!strcmp(keyword,"TextWinAlpha"))
-                textwin_set.alpha = atoi(parameter);
+				options.textwin_alpha = atoi(parameter);
 			else if(!strcmp(keyword,"TextWinSizeDefault"))
 			{
-                textwin_set.size = atoi(parameter)-1;
-				if(textwin_set.size<9)
-					textwin_set.size = 9;
-				else if(textwin_set.size>37)
-					textwin_set.size = 37;
+                txtwin[TW_MIX].size = atoi(parameter)-1;
+				if(txtwin[TW_MIX].size<9)
+					txtwin[TW_MIX].size = 9;
+				else if(txtwin[TW_MIX].size>37)
+					txtwin[TW_MIX].size = 37;
 			}
 			else if(!strcmp(keyword,"TextWinSizeBody"))
 			{
-                textwin_set.split_size = atoi(parameter)-1;
-				if(textwin_set.split_size <1)
-					textwin_set.split_size=1;
-				else if(textwin_set.split_size >37)
-					textwin_set.split_size  = 37;
+                txtwin[TW_MSG].size = atoi(parameter)-1;
+				if(txtwin[TW_MSG].size <1)
+					txtwin[TW_MSG].size=1;
+				else if(txtwin[TW_MSG].size >37)
+					txtwin[TW_MSG].size = 37;
 			}
 			else if(!strcmp(keyword,"TextWinSizeTop"))
 			{
-                textwin_set.top_size = atoi(parameter)-1;
-				if(textwin_set.top_size <1)
-					textwin_set.top_size=1;
-				else if(textwin_set.top_size >37)
-					textwin_set.top_size  = 37;
+                txtwin[TW_CHAT].size = atoi(parameter)-1;
+				if(txtwin[TW_CHAT].size <1)
+					txtwin[TW_CHAT].size=1;
+				else if(txtwin[TW_CHAT].size >37)
+					txtwin[TW_CHAT].size  = 37;
 			}
-            else if(!strcmp(keyword,"WarningFood"))
+      else if(!strcmp(keyword,"WarningFood"))
 			{
-				int tmp = atoi(parameter);
+				options.warning_food = atoi(parameter);
 
-				if(tmp <0)
-					tmp = 0;
-				else if(tmp>100)
-					tmp = 100;
-                options.warning_food = ((float)tmp)/100.0f;
+				if(options.warning_food <0)
+					options.warning_food = 0;
+				else if(options.warning_food>100)
+					options.warning_food = 100;
+
 			}
-            else if(!strcmp(keyword,"WarningHP"))
+      else if(!strcmp(keyword,"WarningHP"))
 			{
-				int tmp = atoi(parameter);
+				options.warning_hp = atoi(parameter);
 
-				if(tmp <0)
-					tmp = 0;
-				else if(tmp>100)
-					tmp = 100;
-                options.warning_hp = ((float)tmp)/100.0f;
+				if(options.warning_hp <0)
+					options.warning_hp = 0;
+				else if(options.warning_hp>100)
+					options.warning_hp = 100;
 			}
-            else
-                LOG(LOG_MSG, "WARNING: Unknown setting in %s: %s\n", OPTION_FILE,line);                
-        }
+      else
+        LOG(LOG_MSG, "WARNING: Unknown setting in %s: %s\n", OPTION_FILE,line);
+     }
 		fclose(stream);
-		if((textwin_set.top_size+textwin_set.split_size)>36)
+		if((txtwin[TW_MSG].size+txtwin[TW_CHAT].size)>36)
 		{
-			textwin_set.top_size=16;
-			textwin_set.split_size=16;
+			txtwin[TW_MSG].size=16;
+			txtwin[TW_CHAT].size=16;
 		}
-		else if((textwin_set.top_size+textwin_set.split_size)<8)
+		else if((txtwin[TW_MSG].size+txtwin[TW_CHAT].size)<8)
 		{
-			textwin_set.top_size=3;
-			textwin_set.split_size=5;
+			txtwin[TW_MSG].size=5;
+			txtwin[TW_CHAT].size=3;
 		}
     }
     else
@@ -538,15 +528,19 @@ Boolean game_status_chain(void)
         /* autoinit or reset prg data */
         if(GameStatus == GAME_STATUS_INIT)
         {
+          LOG(LOG_MSG, "GAMES_STATUS_INIT_1\n");
 	        map_udate_flag=2;
-			delete_player_lists();
-#ifdef INSTALL_SOUND
-			if(!music.flag || strcmp(music.name,"orchestral.ogg"))
+					delete_player_lists();
+          LOG(LOG_MSG, "GAMES_STATUS_INIT_2\n");
+					#ifdef INSTALL_SOUND
+					if(!music.flag || strcmp(music.name,"orchestral.ogg"))
 	            sound_play_music("orchestral.ogg",options.music_volume,0,-1,0,MUSIC_MODE_DIRECT);
-#endif
-                clear_map();
-                clear_metaserver_data();
-                GameStatus = GAME_STATUS_META;
+					#endif
+          clear_map();
+          LOG(LOG_MSG, "GAMES_STATUS_INIT_3\n");
+          clear_metaserver_data();
+          LOG(LOG_MSG, "GAMES_STATUS_INIT_4\n");
+          GameStatus = GAME_STATUS_META;
         }
         /* connect to meta and get server data */
         else if(GameStatus == GAME_STATUS_META)
@@ -821,11 +815,7 @@ Boolean game_status_chain(void)
 	        map_udate_flag=2;
 			map_transfer_flag = 1;
         }
-        else if(GameStatus == GAME_STATUS_SETSTATS)
-        {
-			map_transfer_flag=0;
-        }
-        else if(GameStatus == GAME_STATUS_SETRACE)
+        else if(GameStatus == GAME_STATUS_NEW_CHAR)
         {
 			map_transfer_flag=0;
         }
@@ -992,229 +982,26 @@ void get_meta_server_data(int num, char *server, int *port)
 }
 
 
-void show_meta_server(void)
-{
-        int x,y,i;
-        _server *node;
-        char buf[1024];
-		SDL_Rect rec_name;
-		SDL_Rect rec_desc;
-
-		rec_name.w = 272;
-		rec_desc.w = 325;
-
-        x= SCREEN_XLEN/2-Bitmaps[BITMAP_META]->bitmap->w/2+7;
-        y=108;
-        sprite_blt(Bitmaps[BITMAP_META],x, y, NULL, NULL);
-	 	blt_window_slider(Bitmaps[BITMAP_META_SCROLL], metaserver_count,14, metaserver_start, -1,x+339, y+120);
-
-        node = start_server;
-        StringBlt(ScreenSurface,&SystemFont, "Select Server", x+17, y+92,
-                COLOR_HGOLD,NULL, NULL);
-        StringBlt(ScreenSurface,&SystemFont, "Players", x+296, y+92,
-                COLOR_HGOLD, NULL, NULL);
-
-        for(i=0;node && i<metaserver_start;i++)
-                node=node->next;
-
-        for(i=0;node && i<MAXMETAWINDOW;i++)
-        {
-                if(i== metaserver_sel-metaserver_start)
-                {
-                        sprintf(buf,"Version %s",node->version);
-                        StringBlt(ScreenSurface,&SystemFont, buf, x+17,
-                                y+300, COLOR_HGOLD, NULL, NULL);
-                        StringBlt(ScreenSurface,&SystemFont,
-                            node->desc1, x+17, y+312, COLOR_HGOLD, &rec_desc,NULL);
-                        StringBlt(ScreenSurface,&SystemFont,
-                            node->desc2, x+17, y+312+11, COLOR_HGOLD,&rec_desc,NULL);
-                        StringBlt(ScreenSurface,&SystemFont,
-                            node->desc3, x+17, y+312+22, COLOR_HGOLD, &rec_desc,NULL);
-                        StringBlt(ScreenSurface,&SystemFont,
-                            node->desc4, x+17, y+312+33, COLOR_HGOLD, &rec_desc,NULL);
-                        sprite_blt(Bitmaps[BITMAP_METASLIDER],x+14, y+108+i*13,
-                                NULL, NULL);
-                }
-                StringBlt(ScreenSurface,&SystemFont, node->nameip , x+17,
-                    y+108+i*13, COLOR_WHITE, &rec_name, NULL);
-                if(node->player >=0)
-                    sprintf(buf,"%d",node->player);
-                else
-                    sprintf(buf,"-");
-                StringBlt(ScreenSurface,&SystemFont, buf , x+296,
-                    y+108+i*13, COLOR_WHITE, NULL, NULL);
-                node = node->next;
-        }
-}
 
 void reset_input_mode(void)
 {
-        InputString[0]=0;
-        InputCount =0;
-        InputStringFlag=FALSE;
-        InputStringEndFlag=FALSE;
-        InputStringEscFlag=FALSE;
+	InputString[0]=0;
+	InputCount =0;
+	InputStringFlag=FALSE;
+	InputStringEndFlag=FALSE;
+	InputStringEscFlag=FALSE;
 }
 
 void open_input_mode(int maxchar)
 {
-        reset_input_mode();
-        InputMax =maxchar;
-		SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY , SDL_DEFAULT_REPEAT_INTERVAL);
-		if(cpl.input_mode != INPUT_MODE_NUMBER)
-			cpl.inventory_win = IWIN_BELOW;
-        InputStringFlag=TRUE;
-        /* if true keyboard and game is in input str mode*/
+	reset_input_mode();
+	InputMax =maxchar;
+	SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY , SDL_DEFAULT_REPEAT_INTERVAL);
+	if(cpl.input_mode != INPUT_MODE_NUMBER)
+		cpl.inventory_win = IWIN_BELOW;
+	InputStringFlag=TRUE;
+	/* if true keyboard and game is in input str mode*/
 }
-
-void show_newplayer_server(void)
-{
-	int x,y;
-    char buf[64];
-    
-	x= SCREEN_XLEN/2-Bitmaps[BITMAP_NEWPLAYER]->bitmap->w/2+7;
-	y=108;
-	sprite_blt(Bitmaps[BITMAP_NEWPLAYER],x, y, NULL, NULL);
-
-    StringBlt(ScreenSurface,&SystemFont, "Create new Character", x+125, y+92,
-        COLOR_HGOLD,NULL, NULL);
-    
-        StringBlt(ScreenSurface, &SystemFont,"1" , x+20, y+206, COLOR_WHITE, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,"2" , x+20, y+218, COLOR_WHITE, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,"3" , x+20, y+230, COLOR_WHITE, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,"4" , x+20, y+242, COLOR_WHITE, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,"5" , x+20, y+254, COLOR_WHITE, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,"6" , x+20, y+266, COLOR_WHITE, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,"7" , x+20, y+278, COLOR_WHITE, NULL, NULL);
-
-        StringBlt(ScreenSurface, &SystemFont,"STR" , x+40, y+206, COLOR_HGOLD, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,"DEX" , x+40, y+218, COLOR_HGOLD, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,"CON" , x+40, y+230, COLOR_HGOLD, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,"INT" , x+40, y+242, COLOR_HGOLD, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,"WIS" , x+40, y+254, COLOR_HGOLD, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,"POW" , x+40, y+266, COLOR_HGOLD, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,"CHA" , x+40, y+278, COLOR_HGOLD, NULL, NULL);
-
-        sprintf(buf, "%d", cpl.stats.Str);
-		StringBlt(ScreenSurface, &SystemFont,buf , x+80, y+206, COLOR_GREEN, NULL, NULL);
-		sprintf(buf, "%d", cpl.stats.Dex);
-		StringBlt(ScreenSurface, &SystemFont,buf , x+80, y+218, COLOR_GREEN, NULL, NULL);
-		sprintf(buf, "%d", cpl.stats.Con);
-		StringBlt(ScreenSurface, &SystemFont,buf , x+80, y+230, COLOR_GREEN, NULL, NULL);
-		sprintf(buf, "%d", cpl.stats.Int);
-		StringBlt(ScreenSurface, &SystemFont,buf , x+80, y+242, COLOR_GREEN, NULL, NULL);
-		sprintf(buf, "%d", cpl.stats.Wis);
-		StringBlt(ScreenSurface, &SystemFont,buf , x+80, y+254, COLOR_GREEN, NULL, NULL);
-		sprintf(buf, "%d", cpl.stats.Pow);
-		StringBlt(ScreenSurface, &SystemFont,buf , x+80, y+266, COLOR_GREEN, NULL, NULL);
-		sprintf(buf, "%d", cpl.stats.Cha);
-		StringBlt(ScreenSurface, &SystemFont,buf , x+80, y+278, COLOR_GREEN, NULL, NULL);
-
-    if(GameStatus ==GAME_STATUS_SETSTATS)
-    {
-        StringBlt(ScreenSurface, &SystemFont,"Select your Stats." , x+20, y+190, COLOR_HGOLD, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,"G" , x+20, y+308, COLOR_RED, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,"et stats." , x+28, y+308, COLOR_HGOLD, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,"N" , x+20, y+321, COLOR_RED, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,"ew stats." , x+28, y+321, COLOR_HGOLD, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,"1-7" , x+20, y+334, COLOR_RED, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,"for exchange stats." , x+37, y+334, COLOR_HGOLD, NULL, NULL);
-    }
-	else
-	{
-		if(cpl.ob)
-			if(cpl.ob->face >0)
-				if(FaceList[cpl.ob->face].sprite)
-				sprite_blt(FaceList[cpl.ob->face].sprite ,x+95, y+118, NULL, NULL);
-
-		StringBlt(ScreenSurface, &SystemFont,"Select Race and Gender." , x+170, y+110, COLOR_HGOLD, NULL, NULL);
-
-        StringBlt(ScreenSurface, &SystemFont,"Race" , x+172, y+130, COLOR_HGOLD, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,"Gender" , x+172, y+142, COLOR_HGOLD, NULL, NULL);
-
-        sprintf(buf,": %s", cpl.race);
-        StringBlt(ScreenSurface, &SystemFont,buf , x+210, y+130, COLOR_HGOLD, NULL, NULL);
-        sprintf(buf,": %s", cpl.gender);
-        StringBlt(ScreenSurface, &SystemFont,buf , x+210, y+142, COLOR_HGOLD, NULL, NULL);
-        
-        
-        StringBlt(ScreenSurface, &SystemFont,"N" , x+170, y+162, COLOR_RED, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,"ext choice." , x+178, y+162, COLOR_HGOLD, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,"G" , x+170, y+174, COLOR_RED, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,"et this character." , x+178, y+174, COLOR_HGOLD, NULL, NULL);
-        
-    }
-}
-void show_request_server(void)
-{
-	int x,y;
-	
-	x= SCREEN_XLEN/2-Bitmaps[BITMAP_META]->bitmap->w/2+7;
-	y=108;
-    sprite_blt(Bitmaps[BITMAP_LOGIN],x, y, NULL, NULL);
-
-	StringBlt(ScreenSurface, &SystemFont,"UPDATING FILES" , x+20, y+120, COLOR_WHITE, NULL, NULL);
-    if(request_file_chain >=0)
-		StringBlt(ScreenSurface, &SystemFont,"Updating settings file from server...." , x+20, y+140, COLOR_WHITE, NULL, NULL);
-	if(request_file_chain >1)
-		StringBlt(ScreenSurface, &SystemFont,"Updating skills file from server...." , x+20, y+152, COLOR_WHITE, NULL, NULL);
-	if(request_file_chain >3)
-		StringBlt(ScreenSurface, &SystemFont,"Updating spells file from server...." , x+20, y+164, COLOR_WHITE, NULL, NULL);
-	if(request_file_chain >5)
-		StringBlt(ScreenSurface, &SystemFont,"Updating bmaps file from server...." , x+20, y+176, COLOR_WHITE, NULL, NULL);
-	if(request_file_chain >7)
-		StringBlt(ScreenSurface, &SystemFont,"Updating anims file from server...." , x+20, y+188, COLOR_WHITE, NULL, NULL);
-	if(request_file_chain >9)
-		StringBlt(ScreenSurface, &SystemFont,"Sync files..." , x+20, y+200, COLOR_WHITE, NULL, NULL);
-
-	/* if set, we have requested something and the stuff in the socket buffer is our file! */
-	if(request_file_chain == 1 || request_file_chain == 3 || request_file_chain ==  5 || request_file_chain == 7)
-	{
-		char buf[256];
-		sprintf(buf,"loading %d bytes", csocket.inbuf.len);
-		StringBlt(ScreenSurface, &SystemFont,buf , x+20, y+300, COLOR_WHITE, NULL, NULL);
-	}
-}
-
-void show_login_server(void)
-{
-	int x,y, i;
-    char buf[256];
-
-	x= SCREEN_XLEN/2-Bitmaps[BITMAP_META]->bitmap->w/2+7;
-	y=108;
-    sprite_blt(Bitmaps[BITMAP_LOGIN],x, y, NULL, NULL);
-    
-	StringBlt(ScreenSurface, &SystemFont,"Enter your Name" , x+20, y+120, COLOR_HGOLD, NULL, NULL);
-	sprite_blt(Bitmaps[BITMAP_LOGIN_INP],x+18, y+135, NULL, NULL);
-	if(GameStatus == GAME_STATUS_NAME)
-		StringBlt(ScreenSurface, &SystemFont,show_input_string(InputString,&SystemFont,Bitmaps[BITMAP_LOGIN_INP]->bitmap->w-16) , x+22, y+137, COLOR_WHITE, NULL, NULL);
-	else
-		StringBlt(ScreenSurface, &SystemFont,cpl.name , x+22, y+137, COLOR_WHITE, NULL, NULL);
-
-	StringBlt(ScreenSurface, &SystemFont,"Enter your Password" , x+20, y+160, COLOR_HGOLD, NULL, NULL);
-	sprite_blt(Bitmaps[BITMAP_LOGIN_INP],x+18, y+175, NULL, NULL);
-	if(GameStatus == GAME_STATUS_PSWD)
-    {
-        strcpy(buf,show_input_string(InputString,&SystemFont,Bitmaps[BITMAP_LOGIN_INP]->bitmap->w-16));        
-        for(i=0;i<(int)strlen(InputString);i++)buf[i]='*';
-        StringBlt(ScreenSurface, &SystemFont,buf , x+22, y+177, COLOR_WHITE, NULL, NULL);
-    }
-	else
-    {
-        for(i=0;i<(int)strlen(cpl.password);i++)buf[i]='*';buf[i]=0;
-        StringBlt(ScreenSurface, &SystemFont,buf , x+22, y+177, COLOR_WHITE, NULL, NULL);
-    }
-	if(GameStatus == GAME_STATUS_VERIFYPSWD)
-	{
-		StringBlt(ScreenSurface, &SystemFont,"New Character: Verify Password" , x+20, y+200, COLOR_HGOLD, NULL, NULL);
-		sprite_blt(Bitmaps[BITMAP_LOGIN_INP],x+18, y+215, NULL, NULL);
-        strcpy(buf,show_input_string(InputString,&SystemFont,Bitmaps[BITMAP_LOGIN_INP]->bitmap->w-16));
-        for(i=0;i<(int)strlen(InputString);i++)buf[i]='*';
-        StringBlt(ScreenSurface, &SystemFont, buf, x+22, y+217, COLOR_WHITE, NULL, NULL);
-	}
-}
-
 
 
 static void play_action_sounds(void)
@@ -1297,31 +1084,32 @@ void list_vid_modes(void)
 static void show_option(int mark, int x, int y)
 {
 	int index=0, x1,y1=0,x2,y2=0;
-    _BLTFX bltfx;
+	_BLTFX bltfx;
 
-    bltfx.alpha=128;
+	bltfx.alpha=128;
 	bltfx.flags = BLTFX_FLAG_SRCALPHA;
-	sprite_blt(Bitmaps[BITMAP_OPTIONS_ALPHA],x-Bitmaps[BITMAP_OPTIONS_ALPHA]->bitmap->w/2, y-20, NULL, &bltfx);
-
+	sprite_blt(Bitmaps[BITMAP_OPTIONS_ALPHA],x-Bitmaps[BITMAP_OPTIONS_ALPHA]->bitmap->w/2, y, NULL, &bltfx);
 	sprite_blt(Bitmaps[BITMAP_OPTIONS_HEAD],x-Bitmaps[BITMAP_OPTIONS_HEAD]->bitmap->w/2, y, NULL, NULL);
-	sprite_blt(Bitmaps[BITMAP_OPTIONS_KEYS],x-Bitmaps[BITMAP_OPTIONS_KEYS]->bitmap->w/2, y+110, NULL, NULL);
-	sprite_blt(Bitmaps[BITMAP_OPTIONS_LOGOUT],x-Bitmaps[BITMAP_OPTIONS_LOGOUT]->bitmap->w/2, y+180, NULL, NULL);
-	sprite_blt(Bitmaps[BITMAP_OPTIONS_BACK],x-Bitmaps[BITMAP_OPTIONS_BACK]->bitmap->w/2, y+250, NULL, NULL);
+	sprite_blt(Bitmaps[BITMAP_OPTIONS_KEYS],x-Bitmaps[BITMAP_OPTIONS_KEYS]->bitmap->w/2, y+100, NULL, NULL);
+	sprite_blt(Bitmaps[BITMAP_OPTIONS_SETTINGS],x-Bitmaps[BITMAP_OPTIONS_SETTINGS]->bitmap->w/2, y+165, NULL, NULL);
+	sprite_blt(Bitmaps[BITMAP_OPTIONS_LOGOUT],x-Bitmaps[BITMAP_OPTIONS_LOGOUT]->bitmap->w/2, y+235, NULL, NULL);
+	sprite_blt(Bitmaps[BITMAP_OPTIONS_BACK],x-Bitmaps[BITMAP_OPTIONS_BACK]->bitmap->w/2, y+305, NULL, NULL);
 
-	if(esc_menu_index== ESC_MENU_KEYS)
-	{
+	if(esc_menu_index== ESC_MENU_KEYS){
 		index = BITMAP_OPTIONS_KEYS;
-		y1=y2=y+115;
+		y1=y2=y+105;
 	}
-	if(esc_menu_index== ESC_MENU_LOGOUT)
-	{
+	if(esc_menu_index== ESC_MENU_SETTINGS){
+		index = BITMAP_OPTIONS_SETTINGS;
+		y1=y2=y+170;
+	}
+	if(esc_menu_index== ESC_MENU_LOGOUT){
 		index = BITMAP_OPTIONS_LOGOUT;
-		y1=y2=y+185;
+		y1=y2=y+244;
 	}
-	if(esc_menu_index== ESC_MENU_BACK)
-	{
+	if(esc_menu_index== ESC_MENU_BACK){
 		index = BITMAP_OPTIONS_BACK;
-		y1=y2=y+255;
+		y1=y2=y+310;
 	}
 
 	x1=x-Bitmaps[index]->bitmap->w/2-6;
@@ -1426,8 +1214,17 @@ int main(int argc, char *argv[])
         info = SDL_GetVideoInfo( );
         options.real_video_bpp =info->vfmt->BitsPerPixel;
 	}
-         
-    SDL_EnableUNICODE(1);        
+
+	/* 60, 70*/
+	sdl_gray1 = SDL_MapRGB(ScreenSurface->format, 0x45, 0x45, 0x45);
+	sdl_gray2 = SDL_MapRGB(ScreenSurface->format, 0x55, 0x55, 0x55);
+
+	sdl_gray3 = SDL_MapRGB(ScreenSurface->format, 0x55, 0x55, 0x55);
+	sdl_gray4 = SDL_MapRGB(ScreenSurface->format, 0x60, 0x60, 0x60);
+
+	sdl_blue1 = SDL_MapRGB(ScreenSurface->format, 0x00, 0x00, 0xef);
+	
+	SDL_EnableUNICODE(1);
     load_bitmaps();
 	show_intro("start sound system");
     sound_init();
@@ -1479,22 +1276,22 @@ int main(int argc, char *argv[])
 	}; /* wait for keypress */
 
 	sprintf(buf, "Welcome to Daimonin v%s", PACKAGE_VERSION); 
-    draw_info(buf, COLOR_HGOLD);
-    draw_info("init network...", COLOR_GREEN);
-    if(!SOCKET_InitSocket()) /* log in function*/
-		exit(1);
+	draw_info(buf, COLOR_HGOLD);
+	draw_info("init network...", COLOR_GREEN);
+	if(!SOCKET_InitSocket()) /* log in function*/
+	exit(1);
         
-    maxfd = csocket.fd + 1;
-    LastTick =tmpGameTick =anim_tick = SDL_GetTicks();
-    GameTicksSec=0;		/* ticks since this second frame in ms */
+	maxfd = csocket.fd + 1;
+	LastTick =tmpGameTick =anim_tick = SDL_GetTicks();
+	GameTicksSec=0;		/* ticks since this second frame in ms */
 
             
 	/* the one and only main loop */
-    /* TODO: frame update can be optimized. It uses some cpu time because it
-     * draws every loop some parts.
-     */
-    while(!done)
-    {
+  /* TODO: frame update can be optimized. It uses some cpu time because it
+   * draws every loop some parts.
+   */
+	while(!done)
+	{
 		done = Event_PollInputDevice();
 
 		#ifdef INSTALL_SOUND
@@ -1580,8 +1377,6 @@ int main(int argc, char *argv[])
 				sprite_blt(Bitmaps[BITMAP_HELP1],0, 0, NULL, NULL);
 			else if(show_help_screen==2)
 				sprite_blt(Bitmaps[BITMAP_HELP2],0, 0, NULL, NULL);
-			else if(show_help_screen==3)
-				sprite_blt(Bitmaps[BITMAP_HELP3],0, 0, NULL, NULL);
 		}
 		else
 		{
@@ -1613,12 +1408,12 @@ int main(int argc, char *argv[])
 					/* draw warning-icons above player */
 					if ((gfx_toggle++ & 63) < 25)
 					{	
-						if (options.warning_hp && ((float)cpl.stats.hp / (float)cpl.stats.maxhp) <= options.warning_hp) 
+						if (options.warning_hp && ((float)cpl.stats.hp / (float)cpl.stats.maxhp)*100 <= options.warning_hp)
 							sprite_blt(Bitmaps[BITMAP_WARN_HP],393, 298, NULL, NULL);	 
 					}
 					else
 					{
-						if (options.warning_food &&  ((float)cpl.stats.food/1000.0f) <= options.warning_food) /* low food */
+						if (options.warning_food &&  ((float)cpl.stats.food/1000.0f)*100 <= options.warning_food) /* low food */
 							sprite_blt(Bitmaps[BITMAP_WARN_FOOD],390, 294, NULL, NULL);
 					}
 				}
@@ -1660,23 +1455,8 @@ int main(int argc, char *argv[])
 				}
 				show_range(3, 403);
 
-				if ((y=draggingInvItem(-1)))
-				{
-			      	item *Item;
-					if (y ==1) 
-						Item = locate_item (cpl.win_inv_tag);
-					else if (y ==2) 
-						Item = locate_item (cpl.win_below_tag);
-					else 
-						Item = locate_item (cpl.win_quick_tag);
-
-					SDL_GetMouseState(&x, &y);
-					if (Item->weight >=0)
-						blt_inv_item_centered(Item, x, y);
-				}
-
 				if(esc_menu_flag == TRUE ||
-					(textwin_set.use_alpha == TRUE &&(textwin_set.split_size+textwin_set.top_size)>9))
+					(options.use_TextwinAlpha &&(txtwin[TW_MSG].size+txtwin[TW_CHAT].size)>9))
 					map_udate_flag=1;
 				else if(!options.force_redraw)
 				{
@@ -1687,11 +1467,9 @@ int main(int argc, char *argv[])
 				}
 			} /* map update */
 
-
-
 			show_player_stats(226, 0);
 			show_resist(500,0);                
-			show_textwin(539,485);
+			textwin_show(539,485);
 			if(GameStatus  == GAME_STATUS_PLAY)
 			{
 				SDL_Rect tmp_rect;
@@ -1704,81 +1482,54 @@ int main(int argc, char *argv[])
 				else if(cpl.input_mode == INPUT_MODE_GETKEY)
 					do_keybind_input();
 			}
-			else
+				else
+				{
+					if(GameStatus == GAME_STATUS_WAITFORPLAY)
+						StringBlt(ScreenSurface, &SystemFont,"Transfer Character to Map...",300, 300,COLOR_DEFAULT, NULL, NULL);
+				}
+			} 
+
+		/* if not connected, walk through connection chain and/or wait for action */
+		if(GameStatus != GAME_STATUS_PLAY)
+		{
+			if(!game_status_chain())
 			{
-				if(GameStatus == GAME_STATUS_WAITFORPLAY)
-					StringBlt(ScreenSurface, &SystemFont,"Transfer Character to Map...",300, 300,COLOR_DEFAULT, NULL, NULL);
+				LOG(LOG_ERROR, "Error connecting: GStatus: %d  SocketError: %d\n",GameStatus,SOCKET_GetError());
+				exit(1);
 			}
-		} /* show game screen */
+		}
 
-        /* if not connected, walk through connection chain and/or wait for action */
-        if(GameStatus != GAME_STATUS_PLAY)
-        {
-            if(!game_status_chain())
-            {
-                LOG(LOG_ERROR, "Error connecting: GStatus: %d  SocketError: %d\n",GameStatus,SOCKET_GetError());
-                exit(1);
-                        
-            }
-        }
+		show_player_doll(0, 0);
+		show_player_data(0,0);		
 
-
-		if(GameStatus == GAME_STATUS_REQUEST_FILES)
-			show_request_server();
-		else if(GameStatus <GAME_STATUS_LOGIN)
-			show_meta_server();
-         else if(GameStatus <GAME_STATUS_SETSTATS)
-            show_login_server();
-         else if(GameStatus <=GAME_STATUS_SETRACE)
-            show_newplayer_server();
-
-         /* we count always last frame*/
-         FrameCount++;
-         LastTick = SDL_GetTicks();
-
-         /* print frame rate*/
-         if(options.show_frame)
-         {
-             
-             SDL_Rect rec;
-             sprintf(buf,"fps %d (%d) (%d %d) %s%s%s%s%s%s%s%s%s%s %d %d", ((LastTick - tmpGameTick)/
-                            FrameCount)?1000/((LastTick - tmpGameTick)/FrameCount):0,
-                            (LastTick - tmpGameTick)/FrameCount, GameStatus,cpl.input_mode,
-                            ScreenSurface->flags&SDL_FULLSCREEN?"F":"",
-                            ScreenSurface->flags&SDL_HWSURFACE?"H":"S",
-                            ScreenSurface->flags&SDL_HWACCEL?"A":"",
-                            ScreenSurface->flags&SDL_DOUBLEBUF?"D":"",
-                            ScreenSurface->flags&SDL_ASYNCBLIT?"a":"",
-                            ScreenSurface->flags&SDL_ANYFORMAT?"f":"",
-                            ScreenSurface->flags&SDL_HWPALETTE?"P":"",
-                            options.rleaccel_flag?"R":"",
-                            options.force_redraw?"r":"",
-                            options.use_rect?"u":"",
-                            options.used_video_bpp,options.real_video_bpp
-                            );
-                            
-	         if(GameStatus  == GAME_STATUS_PLAY)
-			 {
-				 rec.x = 228;
-			     rec.y = 122;
-		         rec.h = 14;
-	             rec.w = 225;    
-		         SDL_FillRect(ScreenSurface, &rec, 0);             
-	             StringBlt(ScreenSurface, &SystemFont,buf,rec.x, rec.y,COLOR_DEFAULT, NULL, NULL);
-
-			 }
-         }
-         show_player_doll(0, 0);
-			   show_player_data(0,0);		
-         show_menu();
+		/* show main-option menu */
+		if(esc_menu_flag == TRUE)
+			show_option(esc_menu_index, 400, 130);
 
 		if(map_transfer_flag)
 			StringBlt(ScreenSurface, &SystemFont,"Transfer Character to Map...",300, 300,COLOR_DEFAULT, NULL, NULL);
 
-		if(esc_menu_flag == TRUE)
-			show_option(esc_menu_index, 400, 130);
-		if (cursor_type && cpl.resize_twin_marker==TRUE && cpl.resize_twin==TRUE)
-  	{
+		/* show the current dragged item */
+		if ((y=draggingInvItem(DRAG_GET_STATUS)))
+		{
+			item *Item;
+			if (y ==DRAG_IWIN_INV)
+				Item = locate_item(cpl.win_inv_tag);
+			else if (y ==DRAG_IWIN_BELOW)
+				Item = locate_item(cpl.win_below_tag);
+			else if (y ==DRAG_QUICKSLOT)
+				Item = locate_item(cpl.win_quick_tag);
+			else if (y ==DRAG_PDOLL)
+				Item = locate_item(cpl.win_pdoll_tag);
+			else
+				Item = locate_item(cpl.win_quick_tag);
+			SDL_GetMouseState(&x, &y);
+			/* if (Item->weight >=0) */
+				blt_inv_item_centered(Item, x, y);
+		}
+
+		/* we have a non-standard mouse-pointer (win-size changer, etc.) */
+		if (cursor_type){
 			SDL_Rect rec;
 			SDL_GetMouseState(&x, &y);
 			rec.w = 14;
@@ -1789,19 +1540,62 @@ int main(int argc, char *argv[])
 			rec.y = y-5;			
 			SDL_FillRect(ScreenSurface, &rec, -1);
 		} 
+		if(GameStatus <GAME_STATUS_REQUEST_FILES)
+			show_meta_server(start_server, metaserver_start, metaserver_sel);
+	    else if(GameStatus >= GAME_STATUS_REQUEST_FILES && GameStatus <GAME_STATUS_NEW_CHAR)
+			show_login_server();
+		else if(GameStatus == GAME_STATUS_NEW_CHAR)
+			cpl.menustatus = MENU_CREATE;
+		
+		/* show all kind of the big dialog windows */
+		show_menu();
+		/* show all kind of the small dialog windows */
+		/* show_requester(); */
+
+		/* we count always last frame*/
+    FrameCount++;
+    LastTick = SDL_GetTicks();
+    /* print frame rate*/
+		if(options.show_frame && cpl.menustatus == MENU_NO)
+		{
+			SDL_Rect rec;
+			sprintf(buf,"fps %d (%d) (%d %d) %s%s%s%s%s%s%s%s%s%s %d %d", ((LastTick - tmpGameTick)/
+			FrameCount)?1000/((LastTick - tmpGameTick)/FrameCount):0,
+			(LastTick - tmpGameTick)/FrameCount, GameStatus,cpl.input_mode,
+			ScreenSurface->flags&SDL_FULLSCREEN?"F":"",
+			ScreenSurface->flags&SDL_HWSURFACE?"H":"S",
+			ScreenSurface->flags&SDL_HWACCEL?"A":"",
+			ScreenSurface->flags&SDL_DOUBLEBUF?"D":"",
+			ScreenSurface->flags&SDL_ASYNCBLIT?"a":"",
+			ScreenSurface->flags&SDL_ANYFORMAT?"f":"",
+			ScreenSurface->flags&SDL_HWPALETTE?"P":"",
+			options.rleaccel_flag?"R":"",
+			options.force_redraw?"r":"",
+			options.use_rect?"u":"",
+			options.used_video_bpp,options.real_video_bpp);
+			if(GameStatus  == GAME_STATUS_PLAY)
+			{
+				rec.x = 228;
+				rec.y = 122;
+				rec.h = 14;
+				rec.w = 225;
+				SDL_FillRect(ScreenSurface, &rec, 0);
+				StringBlt(ScreenSurface, &SystemFont,buf,rec.x, rec.y,COLOR_DEFAULT, NULL, NULL);
+			}
+		}
+
 		flip_screen();
+		if(!options.max_speed)
+		SDL_Delay(options.sleep);		/* force the thread to sleep */
+	}
 
-        if(!options.max_speed)
-			SDL_Delay(options.sleep);		/* force the thread to sleep */
-    }
-
-    /* we have leaved main loop and shut down the client */
-    SOCKET_DeinitSocket();
-    sound_freeall();
-    sound_deinit();
-    free_bitmaps();
-    SYSTEM_End();
-    return(0);
+	/* we have leaved main loop and shut down the client */
+	SOCKET_DeinitSocket();
+	sound_freeall();
+	sound_deinit();
+	free_bitmaps();
+	SYSTEM_End();
+	return(0);
 }
 
 static void show_intro(char *text)

@@ -115,14 +115,14 @@ static char msgbuf[HUGE_BUF];
 
 %}
 
-
+LF	\x0A
+CR	\x0D
+NL	{CR}?{LF}
 
 S	[ \t]+.+
-WS	[ \t]*
+WS	[ \t]*{NL}
 
 %x MESSAGE
-
-%x SCRIPT
 
 /* Don't have to link with -lfl with this */
 %option noyywrap
@@ -216,8 +216,8 @@ WS	[ \t]*
 			object_load_flag = 1; /* ok - now we know the pre speed values are valid */
 		    }
 
-^msg{WS}$	    {	BEGIN( MESSAGE ); msgbuf[0]='\0'; msg_flag=0;}
-<MESSAGE>^endmsg{WS}$ {	BEGIN( INITIAL );
+^msg{WS}	    {	BEGIN( MESSAGE ); msgbuf[0]='\0'; msg_flag=0;}
+<MESSAGE>^endmsg{WS} {	BEGIN( INITIAL );
 			FREE_AND_COPY_HASH(op->msg, msgbuf);
 			/* Just print a warning so we can be reasonably safe
 			 * about not overflowing the buffer.
@@ -249,13 +249,13 @@ WS	[ \t]*
 			    op->inv_animation_id = find_animation (yval());
 		    }
 
-^more{WS}$	    { /* We need to record that this is a multipart object,
+^more{WS}	    { /* We need to record that this is a multipart object,
 		       * so the calling function can glue things back together
 		       */
 			ismore=1;
 		    }
 
-^end{WS}$	    { if (ismore) return LL_MORE; else return LL_NORMAL; }
+^end{WS}	    { if (ismore) return LL_MORE; else return LL_NORMAL; }
 ^object_int1{S}		op->enemy_count = IVAL;
 ^object_int2{S}		op->attacked_by_count = IVAL;
 ^object_int3{S}		op->ownercount = IVAL;
@@ -612,8 +612,8 @@ op->oy= op->y;
 					}
 
 
-<*>(^{WS}$)|\n		{/* ignore empty lines, newlines we don't do above */}
-#.*\n			{}
+<*>(^{WS})|{NL}	{/* ignore empty lines, newlines we don't do above */}
+#.*{NL}			{}
 
 <<EOF>>			{/* If we got an error, return the error.  Otherwise, return that we got EOF */
 			    if (lex_error!=0) return lex_error; else return LL_EOF;}
@@ -655,7 +655,7 @@ static char *yval()
     /* Got last character before null and strip
      * off tailing whitespace
      */
-    for (end=cp+strlen(cp)-1; *end==' '; end--) {
+    for (end=cp+strlen(cp)-1; *end==' ' || *end == 0x0A || *end==0x0D; end--) {
 	if (end==cp) return em;
 	*end='\0';
     }

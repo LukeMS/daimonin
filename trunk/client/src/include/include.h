@@ -66,8 +66,8 @@ typedef signed char     sint8;
 #include <client.h>
 #include <sdlsocket.h>
 #include <commands.h>
-#include <player.h>
 #include <main.h>
+#include <player.h>
 #include <misc.h>
 #include <event.h>
 #include <sound.h>
@@ -76,4 +76,5 @@ typedef signed char     sint8;
 #include <textwin.h>
 #include <inventory.h>
 #include <menu.h>
+#include <dialog.h>
 #endif

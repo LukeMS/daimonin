@@ -98,18 +98,19 @@ struct PlCmdMapping {
  * command for example. MT-11-2002
  */
 static struct PlCmdMapping plcommands[] = {
-    { "examine",	ExamineCmd },
-    { "apply",		ApplyCmd },
-    { "move",		MoveCmd },
+    { "ex",	ExamineCmd },
+    { "ap",		ApplyCmd },
+    { "mv",		MoveCmd },
     { "reply",		ReplyCmd},
-    { "command",	PlayerCmd},
+    { "cm",	PlayerCmd},
     { "ncom",		(func_uint8_int_pl)NewPlayerCmd},
-    { "lookat",		LookAt},
+    { "lt",		LookAt},
     { "mapredraw",	MapRedrawCmd},	/* Added: phil */
     { "lock",		(func_uint8_int_pl)LockItem},
     { "mark",		(func_uint8_int_pl)MarkItem},
 	{"/fire",		command_fire},
 	{"fr",			command_face_request},
+	{"nc",			command_new_char},
     { NULL, NULL}	/* terminator */
 };
 

@@ -123,6 +123,70 @@ treasure player_human_female
   more
   arch guild_force
 end
+treasure player_half_elf_male
+  arch padded_armour
+  more
+  arch sandals
+  more
+  arch food_generic
+  nrof 4
+  more
+  arch torch
+  nrof 2
+  more
+  list player_starting_wealth
+  more
+  arch skill_praying
+  more
+  arch skill_use_magic_item
+  more
+  arch skill_literacy
+  more
+  arch skill_throwing
+  more
+  arch skill_punching
+  more
+  arch rank_force
+  more
+  arch alignment_force
+  title true neutral
+  more
+  arch age_force_half_elf
+  more
+  arch guild_force
+end
+treasure player_half_elf_female
+  arch padded_armour
+  more
+  arch sandals
+  more
+  arch food_generic
+  nrof 4
+  more
+  arch torch
+  nrof 2
+  more
+  list player_starting_wealth
+  more
+  arch skill_praying
+  more
+  arch skill_use_magic_item
+  more
+  arch skill_punching
+  more
+  arch skill_literacy
+  more
+  arch skill_throwing
+  more
+  arch rank_force
+  more
+  arch alignment_force
+  title true neutral
+  more
+  arch age_force_half_elf
+  more
+  arch guild_force
+end
 treasureone player_starting_wealth
   arch coppercoin
     nrof 80
@@ -1687,6 +1751,13 @@ treasure mob_giant_hill
   arch silvercoin
    chance 100
    nrof 1
+end
+treasure mob_troll
+  list traps
+  chance 10
+  more
+  list default_drop
+  chance 50
 end
 ############# TEST ############################
 treasureone random_test_all

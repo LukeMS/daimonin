@@ -23,18 +23,30 @@
 #if !defined(__MENU_H)
 #define __MENU_H
 
-#define MENU_NO 1 
-#define MENU_KEYBIND 2 
-#define MENU_STATUS 4
-#define MENU_SLIST 8
-#define MENU_SKILL 16
+#define MENU_NO       1
+#define MENU_KEYBIND  2
+#define MENU_STATUS   4
+#define MENU_SPELL    8
+#define MENU_SKILL   16
+#define MENU_OPTION  32
+#define MENU_CREATE  64
 
-extern int keybind_startoff;
-extern _skill_list skill_list[SKILL_LIST_MAX];
-extern _skill_list_set skill_list_set;
+#define MENU_ALL (MENU_NO & MENU_KEYBIND & MENU_SPELL & MENU_STATUS & MENU_OPTION)
+
+#define MENU_SOUND_VOL 40
+struct _skill_list skill_list[SKILL_LIST_MAX];
+extern _dialog_list_set skill_list_set;
 
 struct _spell_list spell_list[SPELL_LIST_MAX]; /* skill list entries */
-extern _spell_list_set spell_list_set;
+extern _dialog_list_set spell_list_set;
+
+extern _dialog_list_set option_list_set;
+
+struct _bindkey_list bindkey_list[BINDKEY_LIST_MAX];
+extern _dialog_list_set bindkey_list_set;
+
+extern _dialog_list_set create_list_set;
+extern int keybind_status;
 
 #define MAX_QUICK_SLOTS 8
 extern int quick_slots[MAX_QUICK_SLOTS];
@@ -51,16 +63,11 @@ typedef struct _media_file
 
 typedef enum _media_type
 {
-        MEDIA_TYPE_NO, MEDIA_TYPE_PNG
+	MEDIA_TYPE_NO, MEDIA_TYPE_PNG
 }_media_type;
 
 #define MEDIA_MAX 10
 #define MEDIA_SHOW_NO -1
-
-extern _keybind_key keybind_key;
-extern int keybind_entry;
-extern int keybind_status;
-extern Boolean keybind_repeat;
 
 extern _media_file media_file[MEDIA_MAX];
 
@@ -92,6 +99,7 @@ extern void read_anims(void);
 extern void read_bmaps_p0(void);
 extern void delete_bmap_tmp(void);
 extern void read_bmaps(void);
+extern void delete_server_chars(void);
 extern void load_settings(void);
 extern void read_settings(void);
 extern void read_spells(void);

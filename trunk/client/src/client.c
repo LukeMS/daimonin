@@ -83,6 +83,7 @@ enum {
 	BINARY_CMD_SETUP,
 	BINARY_CMD_QUERY,
 	BINARY_CMD_DATA,
+	BINARY_CMD_NEW_CHAR,
 
 	BINAR_CMD /* last entry */
 };
@@ -119,6 +120,7 @@ struct CmdMapping commands[] =
         { "setup", (CmdProc)SetupCmd},
         { "query", (CmdProc)handle_query},
         { "data", (CmdProc)DataCmd},
+        { "new_char", (CmdProc)NewCharCmd},
 
 		/* unused! */
         { "magicmap", MagicMapCmd},
@@ -153,12 +155,11 @@ void DoClient(ClientSocket *csocket)
 				data = csocket->inbuf.buf+3;
 				len = csocket->inbuf.len-3; /* 2 byte package len + 1 byte binary cmd */
 
-	            /* LOG(LOG_MSG,"Command #%d (LT:%d)(len:%d) ",cmd_id, LastTick, len);*/
+	            /*LOG(LOG_MSG,"Command #%d (LT:%d)(len:%d) ",cmd_id, LastTick, len);*/
 				if(!cmd_id || cmd_id >= BINAR_CMD)
 					LOG(LOG_ERROR,"Bad command from server (%d)\n",cmd_id);
 				else
 				{
-	                /*LOG(LOG_MSG,"(%s)\n",commands[cmd_id-1]);*/
 	                /*LOG(LOG_MSG,"(%s) >%s<\n",commands[cmd_id-1].cmdname,data);*/
 					commands[cmd_id-1].cmdproc(data,len);
 				}
@@ -290,7 +291,7 @@ void finish_face_cmd(int pnum, uint32 checksum, char *face)
 				checksum = 1; /* now we are 100% different to newsum */
 			}
 			else /* lets go for the checksum check*/
-				newsum =adler32(len, data,len);
+				newsum =crc32(1L, data,len);
 			free(data);
 
             if (newsum == checksum)
@@ -438,7 +439,7 @@ int request_face(int pnum, int mode)
 				sprintf(buf,"%s%s.png", GetGfxUserDirectory(), bmaptype_table[num].name);
 				FaceList[num].name = (char*) malloc(strlen(buf)+1);
 				strcpy(FaceList[num].name,buf);
-				FaceList[num].checksum =adler32(len, data,len);
+				FaceList[num].checksum =crc32(1L, data,len);
 				free(data);
 				return 1;
 				}

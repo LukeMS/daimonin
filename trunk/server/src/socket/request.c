@@ -481,15 +481,6 @@ void ReplyCmd(char *buf, int len, player *pl)
 	    LOG(llevBug,"BUG: Got reply message with ST_PLAYING input state (player %s)\n", query_name(pl->ob));
 	    break;
 
-	case ST_ROLL_STAT:
-	    key_roll_stat(pl->ob,buf[0]);
-	    break;
-
-	case ST_CHANGE_CLASS:
-
-        key_change_class(pl->ob, buf[0]);
-        break;
-
 	case ST_CONFIRM_QUIT:
 	    key_confirm_quit(pl->ob, buf[0]);
 	    break;

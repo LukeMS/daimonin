@@ -1271,79 +1271,6 @@ void move_teleporter(object *op) {
 	}
 }
 
-
-/*  This object will teleport someone to a different map
-    and will also apply changes to the player from its inventory.
-    This was invented for giving classes, but there's no reason it
-    can't be generalized.
-*/
-/* *really* outdated... don't use this, i even have no object in the
- * daimonin arches for this.
- */
-void move_player_changer(object *op) {
-  object *player;
-  object *walk;
-  char c;
-   if(op->above!=NULL) {
-    if(EXIT_PATH(op)) {
-      if(op->above->type==PLAYER) {
-#ifdef PLUGINS
-      /* GROS: Handle for plugin TRIGGER event */
-      if(op->event_flags&EVENT_FLAG_TRIGGER)
-      {
-        CFParm CFP;
-        CFParm* CFR;
-        int k, l, m;
-        int rtn_script = 0;
-		object *event_obj = get_event_object(op, EVENT_TRIGGER);
-        m = 0;
-        k = EVENT_TRIGGER;
-        l = SCRIPT_FIX_NOTHING;
-        CFP.Value[0] = &k;
-        CFP.Value[1] = op->above;
-        CFP.Value[2] = op;
-        CFP.Value[3] = NULL;
-        CFP.Value[4] = NULL;
-        CFP.Value[5] = &m;
-        CFP.Value[6] = &m;
-        CFP.Value[7] = &m;
-        CFP.Value[8] = &l;
-        CFP.Value[9] = (char *)event_obj->race;
-        CFP.Value[10]= (char *)event_obj->slaying;
-        if (findPlugin(event_obj->name)>=0)
-        {
-          CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
-          rtn_script = *(int *)(CFR->Value[0]);
-        }
-        if (rtn_script!=0) return;
-      }
-#endif
-	player=op->above;
-	for(walk=op->inv;walk!=NULL;walk=walk->below) 
-	  apply_changes_to_player(player,walk);
-	link_player_skills(op->above);
-	esrv_send_inventory(op->above,op->above);
-	esrv_update_item(UPD_FACE, op->above, op->above);
-	
-	/* update players death & WoR home-position */
-	sscanf(EXIT_PATH(op), "%c", &c);
-	if (c == '/') {
-	  strcpy(player->contr->savebed_map, EXIT_PATH(op));
-	  player->contr->bed_x = EXIT_X(op), player->contr->bed_y = EXIT_Y(op);
-	}
-	else
-	  LOG(llevDebug, "WARNING: destination '%s' in player_changer must be an absolute path!",
-	      EXIT_PATH(op));
-	
-	enter_exit(op->above,op);
-	save_player(player, 1);
-      }
-      else
-        return;
-    }
-   }
-}
-
 /*  peterm:  firewalls generalized to be able to shoot any type
     of spell at all.  the stats.dam field of a firewall object
     contains it's spelltype.      The direction of the wall is stored
@@ -1695,9 +1622,6 @@ int process_object(object *op) {
     return 0;
   case MARKER:
     move_marker(op);
-    return 0;
-  case PLAYER_CHANGER:
-    move_player_changer(op);
     return 0;
   case AURA:
     move_aura(op);

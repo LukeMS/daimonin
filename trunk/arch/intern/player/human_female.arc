@@ -12,14 +12,6 @@ terrain_flag 1
 weapon_speed 0.0125
 speed 0.85
 face human_m.isw.111
-msg
-Humans are the generalists of the races.
-They are fit for any trade, and usually
-pick up a skill from their parents in
-addition to what they've learned as
-apprentices in their craft. Females 
-has the same stats as males.
-endmsg
 anim
 facings 25
 trans.101
@@ -141,11 +133,4 @@ can_use_weapon 1
 is_player 1
 weight 55000
 food 750
-Str 0
-Dex 0
-Con 0
-Wis 0
-Cha 0
-Int 0
-Pow 0
 end
