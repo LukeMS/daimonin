@@ -1948,12 +1948,13 @@ int move_player(object *op,int dir) {
     if(op->map == NULL || op->map->in_memory != MAP_IN_MEMORY)
 		return 0;
 
-    op->facing = dir;
+	if(dir)
+		op->facing = dir;
     if(QUERY_FLAG(op,FLAG_CONFUSED) && dir)
 		dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
 
     op->anim_moving_dir = -1;
-    op->anim_enemy_dir = -1;
+	op->anim_enemy_dir = -1;
     op->anim_last_facing = -1;
 
 	/* puh, we should move hide to FLAG_ ASAP */
@@ -1967,8 +1968,11 @@ int move_player(object *op,int dir) {
     if(op->contr->firemode_type!=-1)
     {
     	fire(op,dir);
-        op->anim_enemy_dir = dir;
-        op->contr->fire_on=0;
+		if(dir)
+	        op->anim_enemy_dir = dir;
+		else
+	        op->anim_enemy_dir = op->facing;
+		op->contr->fire_on=0;
         
     }
     else

@@ -47,59 +47,59 @@ spell spells[NROFREALSPELLS]={
 								SPELL_USE_CAST|SPELL_USE_BALM|SPELL_USE_SCROLL|
 										SPELL_USE_ROD|SPELL_USE_POTION|SPELL_USE_BOOK,
 								SPELL_DESC_SELF|SPELL_DESC_FRIENDLY|SPELL_DESC_WIS|SPELL_DESC_TOWN,
-								PATH_RESTORE, NULL /*"healing"*/,SPELL_ACTIVE
+								PATH_RESTORE, "meffect_green" /*"healing"*/,SPELL_ACTIVE
 },
 {"cure poison",					SPELL_TYPE_PRIEST, 1, 5, 8.0f, 3, 6,4, 1.0,/* potion only */
 								0,       0,     0,      0,0,	SOUND_MAGIC_STAT,
 								SPELL_USE_CAST|SPELL_USE_POTION|SPELL_USE_BOOK,
 								SPELL_DESC_SELF|SPELL_DESC_FRIENDLY|SPELL_DESC_WIS|SPELL_DESC_TOWN,
-								PATH_RESTORE, NULL /*"healing"*/,SPELL_ACTIVE
+								PATH_RESTORE, "meffect_purple" /*"healing"*/,SPELL_ACTIVE
 },
 {"cure disease",				SPELL_TYPE_PRIEST, 1, 5, 8.0f, 3, 6,4, 1.0,/* balm only */
 								0,       0,     0,      0,0,	SOUND_MAGIC_STAT,
 								SPELL_USE_CAST|SPELL_USE_BALM|SPELL_USE_BOOK,
 								SPELL_DESC_SELF|SPELL_DESC_FRIENDLY|SPELL_DESC_WIS|SPELL_DESC_TOWN,
-								PATH_RESTORE,NULL,SPELL_ACTIVE
+								PATH_RESTORE,"meffect_purple",SPELL_ACTIVE
 },
 {"strength self",				SPELL_TYPE_WIZARD, 1, 5, 8.0f, 3, 6,0,1.0,
 								0,       0,     0,      4, 0,	SOUND_MAGIC_STAT,
 								SPELL_USE_CAST|SPELL_USE_HORN|SPELL_USE_WAND|SPELL_USE_POTION|
 										SPELL_USE_ROD|SPELL_USE_SCROLL|SPELL_USE_BOOK,
 								SPELL_DESC_SELF|SPELL_DESC_TOWN,
-								PATH_SELF, NULL,SPELL_ACTIVE
+								PATH_SELF, "meffect_yellow",SPELL_ACTIVE
 },
 {"identify",					SPELL_TYPE_WIZARD, 1, 5, 8.0f, 3, 6,2,1.0,
 								0,       0,     0,      0,0,	SOUND_MAGIC_DEFAULT,
 								SPELL_USE_CAST|SPELL_USE_HORN|SPELL_USE_WAND|
 								SPELL_USE_ROD|SPELL_USE_SCROLL|SPELL_USE_BOOK,
 								SPELL_DESC_SELF|SPELL_DESC_TOWN,
-								PATH_INFO, NULL/*"enchantment"*/,SPELL_ACTIVE
+								PATH_INFO, "meffect_pink"/*"enchantment"*/,SPELL_ACTIVE
 },
 {"detect magic",				SPELL_TYPE_WIZARD, 1, 5, 1.0f, 3, 6,0,1.0,
 								0,       0,     0,      0,0,	SOUND_MAGIC_DEFAULT,
 								SPELL_USE_CAST|SPELL_USE_HORN|SPELL_USE_WAND|
 										SPELL_USE_ROD|SPELL_USE_SCROLL|SPELL_USE_BOOK,
 								SPELL_DESC_SELF|SPELL_DESC_TOWN,
-								PATH_INFO, NULL/*"detect_magic"*/,SPELL_ACTIVE
+								PATH_INFO, "meffect_pink"/*"detect_magic"*/,SPELL_ACTIVE
 },
 {"detect curse",				SPELL_TYPE_PRIEST, 1, 5, 8.0f, 3, 6,0,1.0,
 								0,       0,     0,      0,0,	SOUND_MAGIC_DEFAULT,
 								SPELL_USE_CAST|SPELL_USE_WAND|
 										SPELL_USE_ROD|SPELL_USE_SCROLL|SPELL_USE_BOOK,
 								SPELL_DESC_SELF|SPELL_DESC_TOWN|SPELL_DESC_WIS,
-								PATH_INFO, NULL/*"detect_magic"*/,SPELL_ACTIVE
+								PATH_INFO, "meffect_pink"/*"detect_magic"*/,SPELL_ACTIVE
 },
 {"remove curse",				SPELL_TYPE_PRIEST, 1, 5, 8.0f, 3, 6,2,1.0,
 								0,       0,     0,      0,0, SOUND_MAGIC_DEFAULT,
 								SPELL_USE_CAST|SPELL_USE_SCROLL|SPELL_USE_BOOK,		/* scroll */
 								SPELL_DESC_SELF|SPELL_DESC_TOWN|SPELL_DESC_FRIENDLY|SPELL_DESC_WIS,
-								PATH_RESTORE, NULL/*"protection"*/,SPELL_ACTIVE
+								PATH_RESTORE, "meffect_blue"/*"protection"*/,SPELL_ACTIVE
 },
 {"remove damnation",			SPELL_TYPE_PRIEST, 1, 5, 8.0f, 3, 6,2,1.0,
 								0,       0,     0,      0,0,	SOUND_MAGIC_DEFAULT,
 								SPELL_USE_CAST|SPELL_USE_SCROLL|SPELL_USE_BOOK, /* scroll*/
 								SPELL_DESC_SELF|SPELL_DESC_TOWN|SPELL_DESC_FRIENDLY|SPELL_DESC_WIS,
-								PATH_RESTORE, NULL/*"protection"*/,SPELL_ACTIVE
+								PATH_RESTORE, "meffect_blue"/*"protection"*/,SPELL_ACTIVE
 },
 {"cause light wounds",			SPELL_TYPE_PRIEST, 1, 4, 8.0f, 3, 6,0,	1.0,/* scroll*/
 								4,      5,      4,      4,	9,	SOUND_MAGIC_WOUND,
@@ -133,7 +133,7 @@ spell spells[NROFREALSPELLS]={
 								0,       0,     0,      0,0,	SOUND_MAGIC_STAT,
 								SPELL_USE_CAST, /* npc/god only atm */
 								SPELL_DESC_SELF|SPELL_DESC_TOWN|SPELL_DESC_WIS,
-								PATH_RESTORE, NULL/*"protection"*/,SPELL_ACTIVE
+								PATH_RESTORE, "meffect_purple"/*"protection"*/,SPELL_ACTIVE
 },
 {"probe",						SPELL_TYPE_WIZARD, 1, 5, 8.0f, 3, 6,0,1.0,
 								4,      5,      4,      4, 9,	SOUND_MAGIC_DEFAULT,

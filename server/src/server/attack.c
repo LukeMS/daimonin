@@ -368,12 +368,12 @@ int hit_player(object *op,int dam, object *hitter, int type)
 	else
 		hit_level = hitter->level;
 
-	if(hit_level == 0 || target_obj->level == 0)
+	if(hit_level == 0 || target_obj->level == 0) /* very useful sanity check! */
 		LOG(llevDebug,"DEBUG: hit_player(): hit or target object level == 0(h:>%s< (o:>%s<) l->%d t:>%s< (>%s<)(o:>%s<) l->%d\n",
 										query_name(hitter), query_name(get_owner(hitter)), hit_level,
 										query_name(op), target_obj->arch->name, query_name(get_owner(op)), target_obj->level);
 
-	if(hit_level > target_obj->level)
+	if(hit_level > target_obj->level && hit_obj->type != PLAYER) /* i turned it now off for players! */
 	{
 		dam += (int)((float)(dam/2)*((float)(hit_level-target_obj->level)/
 									(target_obj->level>25?25.0f:(float)target_obj->level)));

@@ -608,6 +608,7 @@ void enter_exit(object *op, object *exit_ob)
 	object *tmp;
 
 
+	LOG(llevDebug,"EE: enter...\n");
 	if(op->head)
 		op=op->head;
 
@@ -768,6 +769,7 @@ void enter_exit(object *op, object *exit_ob)
 		}
 		enter_map(op, newmap, op->x, op->y,1);
 	}
+	LOG(llevDebug,"EE: leave...\n");
 }
 
 /*
