@@ -4,10 +4,11 @@ DialogOverlay
    container Panel(Dialog/Background)
    {	
       vert_align top
-      left   0.15
-      top    0.15
-      width  0.50
-      height 0.70
+      metrics_mode pixels
+      left   100
+      top    100
+      width  500
+      height 500
       material dialog_panel
 
       element Panel(Dialog/Title/Login)
@@ -28,7 +29,7 @@ DialogOverlay
       {
          metrics_mode pixels
          left 155
-         top 332
+         top 310
          width 300
          height 20
          material dialog_text_input
@@ -36,7 +37,7 @@ DialogOverlay
          {
             metrics_mode pixels
             left    0
-            top   -16
+            top   -14
             width 150
             height 20
             font_name TrebuchetMSBold
@@ -67,7 +68,7 @@ DialogOverlay
       {
          metrics_mode pixels
          left 155
-         top 376
+         top 350
          width 300
          height 20
          material dialog_text_input
@@ -75,7 +76,7 @@ DialogOverlay
          {
             metrics_mode pixels
             left    0
-            top   -16 
+            top   -14 
             width 150
             height 20
             font_name TrebuchetMSBold
@@ -106,7 +107,7 @@ DialogOverlay
       {
          metrics_mode pixels
          left  155
-         top   420
+         top   390
          width 300
          height 20
          material dialog_text_input
@@ -114,7 +115,7 @@ DialogOverlay
          {
             metrics_mode pixels
             left    0
-            top   -16
+            top   -14
             width 150
             height 16
             font_name TrebuchetMSBold
@@ -138,7 +139,40 @@ DialogOverlay
       }
 
       //////////////////////////////////////////////
-      // 
+      // Meta Server choice
       //////////////////////////////////////////////
+      container Panel(Dialog/MetaSelect/Back)
+      {
+         metrics_mode pixels
+         left   140
+         top    100
+         width  332
+         height 314
+         material dialog_back_select
+         element Panel(Dialog/MetaSelect/select)
+         {
+            metrics_mode pixels
+            left     1
+            top      1
+            width  330
+            height  12
+            material dialog_select
+         }
+      }
    }
 }
+
+template element TextArea(Dialog/TextRow)
+{
+    metrics_mode pixels
+    left      3
+    top     101
+    width   330
+    height   13
+    font_name TrebuchetMSBold
+    char_height 14
+    colour_top    1.0 1.0 1.0
+    colour_bottom 0.7 0.7 0.7
+}
+
+
