@@ -1,0 +1,32 @@
+material login_panel
+{
+   technique
+   {
+     pass
+     {
+         ambient 0.5 0.5 0.5
+         scene_blend alpha_blend
+         texture_unit
+         {
+               // scale 2.0 2.0
+               texture dialog_bg.png
+          }
+     }
+   }
+}
+material login_title
+{
+   technique
+   {
+     pass
+     {
+         ambient 0.5 0.5 0.5
+         scene_blend alpha_blend
+         texture_unit
+         {
+               // scale 2.0 2.0
+               texture dialog_title_login.png
+          }
+     }
+   }
+}
