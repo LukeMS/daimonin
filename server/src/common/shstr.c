@@ -116,6 +116,7 @@ new_shared_string(const char *str) {
     ss->u.previous = NULL;
     ss->next = NULL;
     ss->refcount = 1;
+	/*LOG(llevDebug,"SS: >%s< #%d - new\n",str,ss->refcount& ~TOPBIT);*/
     strcpy(ss->string, str);
 
     return ss;
@@ -176,6 +177,7 @@ add_string(const char *str) {
 		     */
 		    GATHER(add_stats.linked);
 		    ++(ss->refcount);
+			/*LOG(llevDebug,"SS: >%s< #%d add-s\n", ss->string,ss->refcount& ~TOPBIT);*/
 
 		    return ss->string;
 		}
@@ -196,6 +198,7 @@ add_string(const char *str) {
 	}
 	GATHER(add_stats.hashed);
 	++(ss->refcount);
+	/*LOG(llevDebug,"SS: >%s< #%d add-s\n", ss->string,ss->refcount& ~TOPBIT);*/
 	return ss->string;
     } else {
 	/* The string isn't registered, and the slot is empty.
@@ -224,6 +227,7 @@ char *
 add_refcount(char *str) {
     GATHER(add_ref_stats.calls);
     ++(SS(str)->refcount);
+	/*LOG(llevDebug,"SS: >%s< #%d addref\n", str,SS(str)->refcount& ~TOPBIT);*/
     /* This function should be declared 
      *    const char *add_refcount(const char *)
      * Unfortunately, that would require changing a lot of structs
@@ -239,9 +243,8 @@ add_refcount(char *str) {
  *      - length
  */
 
-int
-query_refcount(const char *str) {
-    return SS(str)->refcount;
+int query_refcount(const char *str) {
+    return SS(str)->refcount& ~TOPBIT;
 }
 
 /*
@@ -306,6 +309,7 @@ void free_string_shared(char *str) {
     ss = SS(str);
 
     if ((--ss->refcount & ~TOPBIT) == 0) {
+	/*LOG(llevDebug,"SS: >%s< #%d remove!\n", str,ss->refcount& ~TOPBIT);*/
 	/* Remove this entry.
 	 */
 	if (ss->refcount & TOPBIT) {
@@ -328,6 +332,9 @@ void free_string_shared(char *str) {
 	    free(ss);
 	}
     }
+	/*
+	else
+		LOG(llevDebug,"SS: >%s< #%d dec\n", str,ss->refcount& ~TOPBIT);*/
 }
 
 #ifdef SS_STATISTICS

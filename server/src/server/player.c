@@ -1781,7 +1781,7 @@ static int player_attack_door(object *op, object *door)
 	else if(door->type==LOCKED_DOOR) {
 	    new_draw_info_format(NDI_UNIQUE, NDI_BROWN, op, 
 		     "You open the door with the %s", query_short_name(key));
-	    remove_door2(door); /* remove door without violence ;-) */
+	    remove_door2(door, op); /* remove door without violence ;-) */
 	}
 	/* Do this after we print the message */
 	decrease_ob(key); /* Use up one of the keys */
@@ -1792,7 +1792,7 @@ static int player_attack_door(object *op, object *door)
     } else if (door->type==LOCKED_DOOR) 
 	{
 		if(!door->slaying)
-		    remove_door2(door); /* remove door without violence ;-) */	
+		    remove_door2(door,op); /* remove door without violence ;-) */	
 		else /* Might as well return now - no other way to open this */
 			new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, door->msg);
 		return 1;
@@ -2714,8 +2714,7 @@ void fix_weight() {
       continue;
     fix_player(pl->ob);
     esrv_update_item(UPD_WEIGHT, pl->ob, pl->ob);
-    LOG(llevDebug,"Fixed inventory in %s (%d -> %d)\n",
-	pl->ob->name, old, sum);
+    /*LOG(llevDebug,"Fixed inventory in %s (%d -> %d)\n",query_name(pl->ob), old, sum);*/
   }
 }
 

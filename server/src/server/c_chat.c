@@ -33,6 +33,8 @@ int command_say (object *op, char *params)
     if (!params) 
 		return 0;
 
+
+	LOG(llevInfo,"SAY:%s >%s<\n", query_name(op), params);
     communicate(op, params);
   
     return 0;
@@ -45,10 +47,10 @@ int command_shout (object *op, char *params)
     int evtid;
     CFParm CFP;
 #endif
-    if (params == NULL) {
-	new_draw_info(NDI_UNIQUE, 0,op,"Shout what?");
-	return 1;
-    }
+    if (!params) 
+		return 1;
+
+	LOG(llevInfo,"SHOUT:%s >%s<\n", query_name(op), params);
     strcpy(buf,op->name);
     strcat(buf," shouts: ");
     strncat(buf, params, MAX_BUF-30);
@@ -70,15 +72,21 @@ int command_tell (object *op, char *params)
     char buf[MAX_BUF],*name = NULL ,*msg = NULL;
     char buf2[MAX_BUF];
     player *pl;
-    if ( params != NULL){
-        name = params;
-        msg = strchr(name, ' ');
-        if(msg){
-	     *(msg++)=0;
-	     if(*msg == 0)
-		msg = NULL;
-        }
-    }
+
+
+	if (!params) 
+		return 1;
+
+	LOG(llevInfo,"TELL:%s >%s<\n", query_name(op), params);
+
+	name = params;
+	msg = strchr(name, ' ');
+    if(msg)
+	{
+		*(msg++)=0;
+		if(*msg == 0)
+			msg = NULL;
+	}
 
     if( name == NULL ){
 	new_draw_info(NDI_UNIQUE, 0,op,"Tell whom what?");

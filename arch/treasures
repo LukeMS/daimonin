@@ -21,8 +21,8 @@
 # magic_chance:
 # This value can be between 0 to 1000. If there is no magic_chance
 # value, chance for magic item is 0. 1000 means a 100% chance to 
-# generate a magic item. the map difficulty will add to the base
-# chance if the value is >0 with difficulty*8.
+# generate a magic item. The map difficulty will add to the base
+# chance if the value is >0 with (difficulty or level)*8.
 #
 # magic:
 # If magic_fix is 0 and magic_chance gives a magic item, magic
@@ -157,14 +157,14 @@ treasureone needle_diseases
   end
 treasureone traps
   list physical_traps
-#    chance 50
+    chance 50
   more
   list magical_traps
     chance 50
   end
 treasureone physical_traps
   arch trap_diseased_needle
-#    chance 70
+    chance 70
   more
   arch trap_blades
     chance 33
@@ -195,9 +195,13 @@ treasure door
   list traps
   chance 30
 end
-treasure grave
-  arch gravedirt
-  end
+treasure default_drop
+  list traps
+  chance 10
+end
+treasure door_100
+  list traps
+end
 ##############################################################
 #
 # TREASURE CHESTS
@@ -217,14 +221,6 @@ treasure chest
   end
 end
 treasureone chest_items
-  arch goldcoin
-    chance 5
-    nrof 15
-  more
-  arch silvercoin
-    chance 5
-    nrof 90
-  more
   list random_weapon
     chance 30
   more
@@ -235,14 +231,18 @@ treasureone chest_items
     chance 10
   more
   list random_wealth
-    chance 5
-    difficulty 5
+     chance 10
   more
-  list random_wealth
-     chance 5
-     difficulty 10
+  list random_potion
+    chance 3
   more
-  list containers
+  list random_talisman
+    chance 3
+  more
+  list random_containers
+    chance 3
+  more
+  list random_wands
     chance 3
   more
   list random_scroll
@@ -251,19 +251,98 @@ treasureone chest_items
 ##############################################################
 #
 # RANDOM ITEM LISTS
+# this lists *can* return something or not
 #
-treasureone random_artifact
-  arch chain_mail
+#
+# General lists - one of this group
+#
+treasureone random_weapon
+  list random_missile_weapons
+    chance 5
+  more
+  list random_melee_weapons
+    chance 20
+  more
+  list random_2h_weapons
+    chance 10
+  more
+  list random_pole_weapons
+    chance 10
+  more
+  list random_throw_weapons
+    chance 5
+  end
+treasureone random_missile_weapons
+  arch bow
+    chance 10
+  more
+  arch arrow
+    magic_chance 45
+    magic 2
+    chance 35
+    nrof 30
+  more
+  arch crossbow
+    chance 10
+    magic_chance 45
+    magic 1
+  more
+  arch bolt
+    chance 35
+    magic_chance 45
+    magic 2
+    nrof 25
+  end
+treasureone random_throw_weapons
+  arch t_dagger
+    magic_chance 45
+    magic 2
+    nrof 8
+    chance 30
+  more
+  arch t_hammer
+    magic_chance 45
+    magic 2
+    nrof 4
+    chance 15
+  end
+treasureone random_melee_weapons
+  arch dagger
     magic_chance 45
     magic 1
     chance 5
-end
-treasureone random_weapon
-  list missile_weapons
+  more
+  arch sword
+    magic_chance 45
+    magic 1
     chance 5
   more
-  list melee_weapons
-    chance 10
+  arch club
+    magic_chance 45
+    magic 1
+    chance 5
+  more
+  arch axe
+    magic_chance 45
+    magic 1
+    chance 5
+  end
+treasureone random_2h_weapons
+  arch sword2h
+    chance 20
+  more
+  arch axe_2h
+    chance 20
+  more
+  arch bo
+    chance 20
+  more
+  arch trident
+    chance 20
+  end
+treasureone random_pole_weapons
+  arch trident
+    chance 20
   end
 treasureone random_armour
   arch leather_armour
@@ -319,110 +398,79 @@ treasureone random_armour
   arch cloak
     chance 10
   end
+treasureone random_boots
+ arch sandals
+ chance 35
+ more
+ arch high_boots
+ chance 35
+ more
+ arch low_boots
+ chance 35
+end
+#
+treasureone random_wealth
+  list random_coin
+  chance 95
+  more
+  list random_gem
+  chance 5
+  end
+treasureone random_coin
+  arch silvercoin
+    chance 5
+    nrof 2
+  more
+  arch silvercoin
+    chance 5
+    nrof 5
+  more
+  arch silvercoin
+    chance 5
+    nrof 7
+  more
+  arch silvercoin
+    chance 5
+    nrof 10
+  more
+  arch silvercoin
+    chance 5
+    nrof 12
+  more
+  arch coppercoin
+    chance 5
+    nrof 20
+  more
+  arch coppercoin
+    chance 5
+    nrof 50
+  more
+  arch coppercoin
+    chance 5
+    nrof 100
+  more
+  arch coppercoin
+    chance 5
+    nrof 150
+  more
+  arch coppercoin
+    chance 5
+    nrof 200
+  more
+   arch coppercoin
+    nrof 101
+end
+treasureone random_gem
+  arch emerald_great
+  chance 100
+end
+#
 treasureone random_food
   arch food_generic
     chance 35
   more
   arch poison_food
     chance 13
-  end
-treasureone random_coin
-  arch goldcoin
-    chance 5
-    nrof 50
-  more
-  arch goldcoin
-    chance 5
-    nrof 100
-  more
-  arch goldcoin
-    chance 5
-    nrof 150
-  more
-  arch goldcoin
-    chance 5
-    nrof 200
-  more
-  arch goldcoin
-    chance 5
-    nrof 250
-  more
-  arch silvercoin
-    chance 5
-    nrof 250
-  more
-  arch silvercoin
-    chance 5
-    nrof 500
-  more
-  arch silvercoin
-    chance 5
-    nrof 750
-  more
-  arch silvercoin
-    chance 5
-    nrof 1000
-  more
-  arch silvercoin
-    chance 5
-    nrof 1500
-  more
-  arch mitcoin
-    chance 5
-    nrof 2
-  more
-  arch mitcoin
-    chance 5
-    nrof 4
-end
-treasureone random_wealth
-  arch goldcoin
-    chance 5
-    nrof 50
-  more
-  arch goldcoin
-    chance 5
-    nrof 100
-  more
-  arch goldcoin
-    chance 5
-    nrof 150
-  more
-  arch goldcoin
-    chance 5
-    nrof 200
-  more
-  arch goldcoin
-    chance 5
-    nrof 250
-  more
-  arch silvercoin
-    chance 5
-    nrof 250
-  more
-  arch silvercoin
-    chance 5
-    nrof 500
-  more
-  arch silvercoin
-    chance 5
-    nrof 750
-  more
-  arch silvercoin
-    chance 5
-    nrof 1000
-  more
-  arch silvercoin
-    chance 5
-    nrof 1500
-  more
-  arch mitcoin
-    chance 5
-    nrof 2
-  more
-  arch mitcoin
-    chance 5
-    nrof 4
   end
 treasureone random_alchemy
   arch gravedirt
@@ -446,7 +494,7 @@ treasureone random_potion
     nrof 1
     chance 5
   end
-treasureone containers
+treasureone random_containers
   arch sack
     chance 25
   more
@@ -471,95 +519,6 @@ treasureone containers
   arch quiver_s
     chance 10
   end
-treasureone missile_weapons
-  arch bow
-    magic_chance 45
-    magic 1
-    chance 10
-  more
-  arch arrow
-    magic_chance 45
-    magic 2
-    chance 35
-    nrof 30
-  more
-  arch crossbow
-    chance 10
-    magic_chance 45
-    magic 1
-  more
-  arch bolt
-    chance 35
-    magic_chance 45
-    magic 2
-    nrof 25
-  more
-  arch quiver
-    chance 10
-  end
-treasureone throw_weapons
-  arch t_dagger
-    magic_chance 45
-    magic 2
-    nrof 8
-    chance 30
-  more
-  arch t_hammer
-    magic_chance 45
-    magic 2
-    nrof 4
-    chance 15
-  end
-treasureone melee_weapons
-  arch dagger
-    magic_chance 45
-    magic 1
-    chance 5
-  more
-  arch sword
-    magic_chance 45
-    magic 1
-    chance 5
-  more
-  arch club
-    magic_chance 45
-    magic 1
-    chance 5
-  more
-  arch axe
-    magic_chance 45
-    magic 1
-    chance 5
-  more
-  list uncommon_weapons
-    chance 10
-  end
-treasureone uncommon_weapons
-  arch trident
-    magic_chance 45
-    magic 1
-    chance 5
-  end
-treasureone list14
-  arch amulet_generic
-    chance 10
-  more
-  arch ring_generic
-    chance 10
-  more
-  arch book
-    chance 10
-  more
-  arch wand
-    chance 10
-  more
-  arch rod_light
-    chance 5
-  more
-  arch scroll_generic
-    nrof 9
-    chance 30
-  end
 treasureone random_scroll
   arch scroll_generic
     chance 10
@@ -583,13 +542,6 @@ treasureone random_scroll
   list random_read
     chance 5
   end
-treasure random_amulet
-  arch amulet_generic
-    chance 98
-    no
-      arch amulet_generic
-    end
-  end
 treasureone random_wands
   arch wand
     chance 95
@@ -597,19 +549,12 @@ treasureone random_wands
   arch rod_light
     chance 5
   more
+  arch horn
+    chance 3
+  more
   arch rod_heavy
     chance 1
   end
-treasure shop_rings
-  arch ring_generic
-  end
-treasure random_books
-  arch book
-    chance 55
-    no
-      list random_read
-      end
-    end
 treasureone random_read
   arch tome
     chance 45
@@ -620,21 +565,9 @@ treasureone random_read
   arch note
     chance 65
   end
-treasure random_gem
-  arch emerald_great
-  chance 100
-end
 treasureone random_inorganic
   arch rock2
     chance 25
-  end
-treasureone random_spells
-  arch scroll_generic
-    chance 15
-    nrof 3
-  more
-  arch wand
-    chance 10
   end
 treasureone random_talisman
   arch ring_generic
@@ -646,115 +579,13 @@ treasureone random_talisman
   arch ring_generic
     chance 5
 end
-treasureone uncommon_items
-  arch horn
-    chance 5
-  more
-  arch crown_generic
-    magic_chance 45
-    magic 1
-    chance 15
-  more
-  arch rod_light
-    chance 35
-  more
-  arch rod_heavy
-    chance 10
-  more
-  list NONE
-    chance 25
-  end
-treasure wand
-  arch wand
-  chance 4
-  end
-treasure rod
-  arch rod_light
-  chance 2
-  no
-    arch rod_heavy
-    chance 1
-    end
-  end
-treasure ring
-  arch ring_generic
-  chance 2
-  end
-treasureone normal_boots
-  arch sandals
-    magic_chance 45
-    magic 1
-    chance 5
-  more
-  arch high_boots
-    magic_chance 45
-    magic 1
-    chance 5
-  more
-  arch low_boots
-    magic_chance 45
-    magic 1
-    chance 5
-end
-treasureone def_metal_armour
-  arch banded_mail
-    magic_chance 45
-    magic 1
-    chance 5
-  more
-  arch chain_mail
-    magic_chance 45
-    magic 1
-    chance 5
-  end
-treasureone def_ammun
-  arch arrow
-    magic_chance 45
-    magic 2
-    chance 5
-  more
-  arch bolt
-    magic_chance 45
-    magic 2
-    chance 5
-  more
-  arch sstone
-    magic_chance 45
-    magic 2
-    chance 5
-  end
-treasureone def_leather_armour
-  arch padded_armour
-    magic 1
-    magic_chance 50
-    chance 5
-  more
-  arch leather_armour
-    magic_chance 50
-    magic 1
-    chance 5
-  end
-treasureone random_boots
- arch sandals
- magic_chance 45
- magic 1
- chance 35
- more
- arch high_boots
- magic_chance 45
- magic 1
- chance 35
- more
- arch low_boots
- magic_chance 45
- magic 1
- chance 35
-end
 ##############################################################
 #
 # MOB TREASURES
 #
 treasure ant
+  list default_drop
+  more
   arch dagger
     magic_chance 45
     magic 1
@@ -780,6 +611,8 @@ treasure ant
     nrof 6
 end
 treasure ant_special
+  list default_drop
+  more
   arch dagger
     magic_chance 45
     magic 1
@@ -804,6 +637,8 @@ treasure ant_special
     chance 5
 end
 treasure ant_queen
+  list default_drop
+  more
    arch dagger
     magic_chance 45
     magic 1
@@ -829,6 +664,8 @@ treasure ant_queen
   nrof 6
 end
 treasure slime
+  list default_drop
+  more
   arch food_generic
   chance 25
   nrof 1
@@ -851,6 +688,8 @@ treasure slime
   nrof 6
 end
 treasure wyvern
+  list default_drop
+  more
   arch food_generic
   chance 25
   nrof 1
@@ -879,6 +718,8 @@ treasure wyvern
   nrof 3
 end
 treasure ogre
+  list default_drop
+  more
   arch club
     magic_chance 10
     magic 1
@@ -890,6 +731,8 @@ treasure ogre
    nrof 6
 end
 treasure giant_hill
+  list default_drop
+  more
   arch club
     magic_chance 20
     magic 1
@@ -939,7 +782,7 @@ treasureone random_test1
  chance 35
 end
 # t_style 1 = fire
-treasureone random_test
+treasureone random_test1
  t_style 1
  arch jewel_generic
  t_style 2
@@ -959,4 +802,13 @@ treasureone random_test
  arch sandals
  artifact_chance 100
  chance 50
+end
+treasureone random_bracers
+  arch bracers_ac
+end
+treasureone random_test
+ arch nugget_generic
+ more
+ arch gem_generic
+ difficulty 80
 end

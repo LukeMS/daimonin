@@ -736,7 +736,11 @@ error - Your ANSI C compiler should be defining __STDC__;
                                      * it decayed - then items drop on ground and all can grap it */
 #define FLAG_CORPSE_FORCED		121 /* normally, corpses will only be placed when the mob has some items to drop.
 									 * this flag will drop a corpse even the corpse is empty */
-#define NUM_FLAGS		121 /* Should always be equal to the last defined flag */
+#define FLAG_PLAYER_ONLY		122 /* if a item with this flag is placed in a tile, this tile can't be entered
+									 * from anything ecept a player
+									 */
+#define FLAG_NO_CLERIC			123
+#define NUM_FLAGS		123 /* Should always be equal to the last defined flag */
 #define NUM_FLAGS_32	4	/* the number of uint32 we need to store all flags */
 
 /* macros for invisible test. the first tests only system objects */

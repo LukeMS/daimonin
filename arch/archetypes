@@ -3,6 +3,7 @@ name exit
 face exit.101
 type 66
 editor_folder connect/exists
+player_only 1
 speed 0.1
 hp -1
 sp -1
@@ -30,6 +31,7 @@ Object invis_exit
 face inv_exit.101
 type 66
 editor_folder connect/exists
+player_only 1
 layer 0
 hp -1
 sp -1
@@ -132,6 +134,7 @@ Object teleporter
 face exit.101
 type 41
 editor_folder connect/exists
+player_only 1
 layer 5
 hp -1
 sp -1
@@ -5721,6 +5724,7 @@ nrof 1
 weight 75
 value 20
 material 16
+material_real 257
 food 20
 end
 Object bolt
@@ -5765,7 +5769,8 @@ sub_type 3
 nrof 1
 weight 85
 value 15
-material 16
+material 64
+material_real 385
 food 20
 end
 Object bow
@@ -5793,6 +5798,7 @@ layer 3
 race crossbow bolts
 sub_type 1
 material 16
+material_real 258
 weight 2500
 sp 40
 wc 0
@@ -5807,7 +5813,8 @@ editor_folder items/weapon
 layer 3
 race sling stones
 sub_type 2
-material 16
+material 8
+material_real 193
 wc 0
 last_sp 0
 weight 300
@@ -7221,38 +7228,6 @@ material 1
 speed 0.01
 blocksview 1
 end
-Object blob_acid
-name acid blob
-face acid_blob.111
-type 80
-editor_folder mobs/amoeboid
-race slime
-randomitems slime
-is_neutral 1
-weight 13250
-exp 150
-speed -0.1
-weapon_speed 0.044
-attack_acid 100
-ac 16
-wc 15
-dam 4
-hp -1
-maxhp 5
-terrain_flag 1
-Wis 6
-can_see_in_dark 1
-animation blob_acid
-is_animated 1
-anim_speed 4
-layer 6
-direction 5
-corpse 1
-monster 1
-no_pick 1
-alive 1
-level 1
-end
 Object cube_gel
 name gelantinous cube
 face gel_cube.111
@@ -7373,6 +7348,178 @@ terrain_flag 1
 Wis 6
 can_see_in_dark 1
 animation slime
+is_animated 1
+anim_speed 4
+layer 6
+direction 5
+corpse 1
+monster 1
+no_pick 1
+alive 1
+level 1
+end
+Object blob_acid
+name acid blob
+face acid_blob.111
+type 80
+editor_folder mobs/amoeboid
+race slime
+randomitems slime
+is_neutral 1
+weight 13250
+exp 150
+speed -0.1
+weapon_speed 0.044
+attack_acid 100
+ac 16
+wc 15
+dam 4
+hp -1
+maxhp 5
+terrain_flag 1
+Wis 6
+can_see_in_dark 1
+animation blob_acid
+is_animated 1
+anim_speed 4
+layer 6
+direction 5
+corpse 1
+monster 1
+no_pick 1
+alive 1
+level 1
+end
+Object blob_quivering
+name quivering blob
+face quivering_blob.111
+type 80
+editor_folder mobs/amoeboid
+race slime
+randomitems slime
+is_neutral 1
+weight 13250
+exp 150
+speed -0.1
+weapon_speed 0.044
+attack_poison 50
+attack_acid 50
+resist_paralyze 100
+resist_poison 100
+resist_acid 100
+ac 16
+wc 15
+dam 4
+hp -1
+maxhp 5
+terrain_flag 1
+Wis 6
+can_see_in_dark 1
+animation blob_quivering
+is_animated 1
+anim_speed 4
+layer 6
+direction 5
+corpse 1
+monster 1
+no_pick 1
+alive 1
+level 1
+end
+Object jelly_blue
+name blue jelly
+face blue_jelly.111
+type 80
+editor_folder mobs/amoeboid
+race slime
+randomitems slime
+is_neutral 1
+weight 13250
+exp 150
+speed -0.1
+weapon_speed 0.044
+attack_cold 100
+resist_poison 100
+resist_paralyze 100
+ac 16
+wc 15
+dam 6
+hp -1
+maxhp 5
+terrain_flag 1
+Wis 6
+can_see_in_dark 1
+animation jelly_blue
+is_animated 1
+anim_speed 4
+layer 6
+direction 5
+corpse 1
+monster 1
+no_pick 1
+alive 1
+level 1
+end
+Object jelly_green
+name green jelly
+face green_jelly.111
+type 80
+editor_folder mobs/amoeboid
+race slime
+randomitems slime
+is_neutral 1
+weight 13250
+exp 150
+speed -0.1
+weapon_speed 0.044
+attack_poison 90
+attack_acid 10
+resist_poison 100
+resist_paralyze 100
+ac 16
+wc 15
+dam 6
+hp -1
+maxhp 5
+terrain_flag 1
+Wis 6
+can_see_in_dark 1
+animation jelly_green
+is_animated 1
+anim_speed 4
+layer 6
+direction 5
+corpse 1
+monster 1
+no_pick 1
+alive 1
+level 1
+end
+Object jelly_spotted
+name spotted jelly
+face spotted_jelly.111
+type 80
+editor_folder mobs/amoeboid
+race slime
+randomitems slime
+is_neutral 1
+weight 13250
+exp 150
+speed -0.1
+weapon_speed 0.044
+attack_poison 50
+attack_cold 50
+resist_poison 100
+resist_paralyze 100
+ac 16
+wc 15
+dam 6
+hp -1
+maxhp 5
+terrain_flag 1
+Wis 6
+can_see_in_dark 1
+animation jelly_spotted
 is_animated 1
 anim_speed 4
 layer 6

@@ -405,8 +405,8 @@ void first_arch_pass(FILE *fp) {
     clear_object(op);
     op->arch=at;
   }
-  free(at);
   free_object(op);
+  free(at);
 }
 
 /*

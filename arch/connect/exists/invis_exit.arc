@@ -1,5 +1,6 @@
 Object invis_exit
 face inv_exit.101
+player_only 1
 layer 0
 hp -1
 sp -1
