@@ -2043,8 +2043,11 @@ static int readNextQuickSlots(FILE *fp, char *server, int *port, char *name, _qu
  Restore quickslots from last game.
 ******************************************************************/
 #define QUICKSLOT_FILE "quick.dat"
+#define QUICKSLOT_FILE_VERSION 1
+#define QUICKSLOT_FILE_HEADER ((QUICKSLOT_FILE_VERSION << 24) | 0x53 << 16 | 0x51 << 8 | 0x44)
 void load_quickslots_entrys()
 {
+    long        header;
     int         i, port;
     char        name[40], server[2048];
     _quickslot  quickslots[MAX_QUICK_SLOTS];
@@ -2052,6 +2055,13 @@ void load_quickslots_entrys()
 
     if (!(stream = fopen(QUICKSLOT_FILE, "rb")))
         return;
+    fread(&header, sizeof(long), 1, stream);
+    if (header != QUICKSLOT_FILE_HEADER)
+    {
+        fclose(stream);
+        remove(QUICKSLOT_FILE);
+        return;
+    }
     while (readNextQuickSlots(stream, server, &port, name, quickslots))
     {
         if (!strcmp(ServerName, server) && ServerPort == port)
@@ -2133,6 +2143,7 @@ void load_quickslots_entrys()
 ******************************************************************/
 void save_quickslots_entrys()
 {
+    long        header;
     char        name[40], server[2048];
     int         n, size, w;
     _quickslot  quickslots[MAX_QUICK_SLOTS];
@@ -2143,6 +2154,8 @@ void save_quickslots_entrys()
         if (!(stream = fopen(QUICKSLOT_FILE, "wb+")))
             return;
     }
+    header = QUICKSLOT_FILE_HEADER;
+    fwrite(&header, sizeof(long), 1, stream);
     for (n = w = 0; n != MAX_QUICK_SLOTS; ++n)
     {
         w += sizeof(Boolean);
