@@ -1,3 +1,90 @@
+Object ai_generic
+name Generic AI
+type 126
+msg
+processes:
+look_for_other_mobs
+friendship
+choose_enemy
+
+moves: 
+sleep
+move_towards_enemy
+move_towards_enemy_last_known_pos
+search_for_lost_enemy
+move_towards_waypoint
+move_towards_home
+
+reaction_moves:
+
+actions:
+melee_attack_enemy
+bow_attack_enemy
+spell_attack_enemy
+endmsg
+editor_folder ai/ai
+face ai.101
+sys_object 1
+end
+Object guard_arch_ai
+name Guard arch AI
+type 126
+msg
+processes:
+look_for_other_mobs
+friendship
+choose_enemy
+
+moves: 
+stand_still
+
+reaction_moves:
+
+actions:
+melee_attack_enemy
+bow_attack_enemy
+spell_attack_enemy
+endmsg
+editor_folder ai/arch_defaults
+face ai.101
+sys_object 1
+end
+Object empty_ai
+name Empty AI
+type 126
+msg
+processes:
+moves: 
+reaction_moves:
+actions:
+endmsg
+editor_folder ai/ai
+face ai.101
+sys_object 1
+end
+Object slime_race_ai
+name Slime race AI
+type 126
+msg
+processes:
+look_for_other_mobs
+friendship
+choose_enemy
+
+moves: 
+sleep
+move_towards_enemy
+move_towards_home
+
+reaction_moves:
+
+actions:
+melee_attack_enemy
+endmsg
+editor_folder ai/race_defaults
+face ai.101
+sys_object 1
+end
 Object altar
 type 18
 editor_folder connect/connect

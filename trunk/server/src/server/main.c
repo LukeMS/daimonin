@@ -1220,6 +1220,7 @@ void dequeue_path_requests()
     }
 #else
     object *op = get_next_requested_path();
+    extern void object_accept_path(object *op);
     if(wp) 
         object_accept_path(op);
 #endif /* LEFTOVER_CPU_FOR_PATHFINDING */

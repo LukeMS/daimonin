@@ -189,7 +189,7 @@ typedef struct obj
 	uint8 item_level;			/* level needed to use or apply this item */
 	uint8 item_skill;			/* if set and item_level, item_level in this skill is needed */
 
-    /* TODO: get rid of */
+    /* TODO: get rid of those two with AI system change */
 	sint8 move_status;			/* What stage in attack mode */
     uint8 move_type;			/* What kind of attack movement */
 
@@ -204,6 +204,7 @@ typedef struct obj
     uint8 anim_speed;			/* animation speed in ticks */
 	uint8 last_anim;			/* ticks between animation-frames */
 	uint8 will_apply;			/* See crossfire.doc */
+    /* TODO: get rid of this one with AI system change */
 	uint8 run_away;				/* Monster runs away if it's hp goes below this percentage. */
 
 	uint8 pick_up;				/* pickup mode - See crossfire.doc */  
@@ -213,6 +214,7 @@ typedef struct obj
 								 */
 	uint8 layer;				/* the layer in a map, this object will be sorted in */
 
+    /* TODO: get rid of using attrsets? */
 	sint8 resist[NROFATTACKS];	/* Intrinsic resist against damage - range from -125 to +125 */
 
 	uint8 attack[NROFATTACKS];	/* our attack values - range from 0%-125%. (negative values makes no sense).
@@ -371,6 +373,9 @@ typedef enum {
     POOL_PATHSEGMENT,
     POOL_MOBDATA,
     POOL_MOB_KNOWN_OBJ,
+    POOL_BEHAVIOURSET,
+    POOL_BEHAVIOUR,
+    POOL_BEHAVIOUR_PARAM,
     NROF_MEMPOOLS 
 } mempool_id;
 

@@ -987,10 +987,19 @@ struct mempool mempools[NROF_MEMPOOLS] = {
         NULL, NULL, "path segments" },
     
     { NULL, 100, sizeof(struct mobdata), 0, 0,
-        /*(chunk_constructor)initialize_aidata*/NULL, NULL, "mob brains" },
+        NULL, NULL, "mob brains" },
     
     { NULL, 100, sizeof(struct mob_known_obj), 0, 0,
         NULL, NULL, "mob known objects" },    
+    
+    { NULL, 100, sizeof(struct mob_behaviourset), 0, 0,
+        NULL, NULL, "mob behaviour sets" },    
+    
+    { NULL, 100, sizeof(struct mob_behaviour), 0, 0,
+        NULL, NULL, "mob behaviours" },        
+    
+    { NULL, 100, sizeof(struct mob_behaviour_param), 0, 0,
+        NULL, NULL, "mob behaviour parameter" },    
 };
 
 /* The mempool system never frees memory back to the system, but is extremely efficient
