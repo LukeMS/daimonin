@@ -384,8 +384,7 @@ op->oy= op->y;
 							if (IVAL) 
 							{
 								SET_FLAG(op, FLAG_FRIENDLY);
-								if (op->type != PLAYER) 
-									add_friendly_object(op);
+								add_friendly_object(op);
 							}
 							else 
 								CLEAR_FLAG(op, FLAG_FRIENDLY);

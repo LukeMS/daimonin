@@ -1031,12 +1031,11 @@ void free_object(object *ob) {
 					 * - and looter will be stopped.
 					 */
 
-					/* carefull, we assume that this virgin slaying field is NULL - this is to single player*/
+					/* carefull, we assume that this virgin slaying field is NULL */
 					if(ob->enemy && ob->enemy->type == PLAYER && ob->enemy->count == ob->enemy_count)
 						corpse->slaying = add_refcount(ob->enemy->name);
-					else if(ob->attacked_by && ob->attacked_by->type == PLAYER && ob->attacked_by->count == ob->attacked_by_count)
-						corpse->slaying = add_refcount(ob->attacked_by->name);
 
+					/* later, we add here other sub type or slaying names for killing groups, clans, etc */
 					if(corpse->slaying) /* change sub_type to mark this corpse */
 						corpse->sub_type1 = ST1_CONTAINER_CORPSE_player;
 
@@ -1633,6 +1632,12 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
 	/* all players are layer 6 this can not be changed - so we can skip objects of different layer type */
 	/* wizs can be layer 0, but we will autoforce a wizs look */
     for(tmp=GET_MAP_OB_LAYER(op->map,op->x,op->y,5);tmp!=NULL;tmp=tmp->above)
+	{
+		if (tmp->type == PLAYER)
+		    tmp->contr->socket.update_look=1;
+    }
+	/* and the same for invisible players ... */
+    for(tmp=GET_MAP_OB_LAYER(op->map,op->x,op->y,5+MAX_ARCH_LAYERS);tmp!=NULL;tmp=tmp->above)
 	{
 		if (tmp->type == PLAYER)
 		    tmp->contr->socket.update_look=1;

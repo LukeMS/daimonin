@@ -1314,6 +1314,9 @@ int fix_generated_item (object *op, object *creator, int difficulty, int max_mag
       SET_FLAG(op, FLAG_CURSED);
   }
 
+  if (flags & GT_NO_VALUE && op->type != MONEY)
+	  op->value = 0;
+
   if (flags & GT_STARTEQUIP) {
       if (op->nrof < 2 && op->type != CONTAINER
           && op->type != MONEY && ! QUERY_FLAG (op, FLAG_IS_THROWN))

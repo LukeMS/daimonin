@@ -2509,7 +2509,10 @@ static PyObject* CFCreateObjectInside(PyObject* self, PyObject* args)
 
     if (!strncmp(query_name(myob), "singluarity",11))
     {
-        free_object(myob);
+		GCFP.Value[0] = (void *)(myob);
+		(PlugHooks[HOOK_FREEOBJECT])(&GCFP);
+
+        /*free_object(myob);*/
         CFR = (PlugHooks[HOOK_GETARCHETYPE])(&GCFP);
         myob = (object *)(CFR->Value[0]);
         free(CFR);
@@ -2792,7 +2795,10 @@ static PyObject* CFCreateObject(PyObject* self, PyObject* args)
 
     if (!strncmp(query_name(myob), "singluarity",11))
     {
-        free_object(myob);
+		GCFP.Value[0] = (void *)(myob);
+	    (PlugHooks[HOOK_FREEOBJECT])(&GCFP);
+
+        /*free_object(myob);*/
         /*myob = get_archetype(txt); */
         GCFP.Value[0] = (void *)(txt);
         CFR = (PlugHooks[HOOK_GETARCHBYOBJNAME])(&GCFP);
@@ -2867,7 +2873,9 @@ static PyObject* CFRemoveObject(PyObject* self, PyObject* args)
 /*    esrv_send_inventory(guile_current_activator[guile_stack_position], */
 /*guile_current_activator[guile_stack_position]); */
     };
-    free_object(myob);
+    GCFP.Value[0] = (void *)(myob);
+    (PlugHooks[HOOK_FREEOBJECT])(&GCFP);
+    /*free_object(myob);*/
     Py_INCREF(Py_None);
     return Py_None;
 };

@@ -72,6 +72,12 @@ void add_friendly_object(object *op) {
 		LOG(llevDebug, "DEBUG: friendly list called for non mob/player (%s - %s)\n",query_name(op), op->arch->name);
 		return;
 	}
+	/* special case: player can be or not friendly - if in logon process, we don't gave
+	 * them friendly to avoid illegal (player is not on map but in login limbus) on this
+	 * list. This is not a bug but we will do it more clever in map attached friendly lists.
+	 */
+	if(op->type == PLAYER && !QUERY_FLAG(op,FLAG_FRIENDLY) )
+		return;
     /* Add some error checking.  This shouldn't happen, but the friendly
      * object list usually isn't very long, and remove_friendly_object
      * won't remove it either.  Plus, it is easier to put a breakpoint in
@@ -109,6 +115,13 @@ void remove_friendly_object(object *op) {
 		LOG(llevDebug, "DEBUG: friendly list called for remove non mob/player (%s - %s)\n",query_name(op), op->arch->name);
 		return;
 	}
+
+	/* special case: player can be or not friendly - if in logon process, we don't gave
+	 * them friendly to avoid illegal (player is not on map but in login limbus) on this
+	 * list. This is not a bug but we will do it more clever in map attached friendly lists.
+	 */
+	if(op->type == PLAYER && !QUERY_FLAG(op,FLAG_FRIENDLY) )
+		return;
 
     CLEAR_FLAG(op,FLAG_FRIENDLY);
     if (!first_friendly_object) {

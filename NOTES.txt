@@ -1,5 +1,7 @@
 Daimonin TODO
 
+20.10.2003 - monster.c/can_detect_enemy() - rework this function
+
 KNOWN BUGS:
 24.09.2003 - there seems a little bug in the target system, sometimes a possible target
              is not selected. 

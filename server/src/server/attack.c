@@ -1228,6 +1228,20 @@ int kill_object(object *op,int dam, object *hitter, int type)
 		/* harder drop rules: if exp== 0 or not a player or not a player invoked hitter: no drop */
 		if(!exp || hitter->type != PLAYER || (get_owner(hitter) && hitter->owner->type != PLAYER))
 			SET_FLAG(op,FLAG_STARTEQUIP);
+
+		/* rules: 
+		 * a.) mob will drop corpse for his target, not for kill hit giving player.
+		 * b.) npc kill hit WILL overwrite player target = on drop
+		 * c.) we are nice: kill hit will count if target was a npc (of mob).
+		 * will allow a bit "cheating" by serving only one hit and let kill the mob
+		 * by the npc to 99% - but this needs brain, tactic and a good timing and
+		 * so we will give him a present for it.
+		 */
+		if(owner->type != PLAYER || !op->enemy || op->enemy->type != PLAYER)
+		{
+			op->enemy = owner;			
+			op->enemy_count = owner->count;
+		}
 	    free_object(op);
 	}
 	/* Player has been killed! */

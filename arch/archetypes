@@ -2028,6 +2028,38 @@ no_pick 1
 no_pass 1
 layer 4
 end
+Object anvil_111
+name anvil
+face anvil.111
+type 79
+editor_folder indoor/smithy
+no_pick 1
+layer 4
+end
+Object anvil_131
+name anvil
+face anvil.131
+type 79
+editor_folder indoor/smithy
+no_pick 1
+layer 4
+end
+Object forge_111
+name forge
+face forge.111
+type 79
+editor_folder indoor/smithy
+no_pick 1
+layer 4
+end
+Object forge_171
+name forge
+face forge.171
+type 79
+editor_folder indoor/smithy
+no_pick 1
+layer 4
+end
 Object carpet1
 name carpet
 face carpet1.101
@@ -2073,6 +2105,46 @@ no_teleport 1
 layer 2
 no_pick 1
 end
+Object table_round1
+name table
+face table_round1.101
+type 79
+editor_folder indoor/tables
+no_pick 1
+layer 4
+end
+Object table_small1
+name table
+face table_small1.101
+type 79
+editor_folder indoor/tables
+no_pick 1
+layer 4
+end
+Object table_small1b
+name table
+face table_small1b.101
+type 79
+editor_folder indoor/tables
+no_pick 1
+layer 4
+end
+Object table_wood1.111
+name table
+face table_wood1.111
+type 79
+editor_folder indoor/tables
+no_pick 1
+layer 4
+end
+Object table_wood1.171
+name table
+face table_wood1.171
+type 79
+editor_folder indoor/tables
+no_pick 1
+layer 4
+end
 Object wmask_bflag_fire1_1
 name big flag
 face wmask_bflag_fire1.u.151
@@ -2095,7 +2167,7 @@ face wmask_fire_on.151
 type 77
 editor_folder indoor/masks_wall
 no_pick 1
-layer 6
+layer 7
 end
 Object wmask_fire_on_3
 name big flag
@@ -2103,7 +2175,7 @@ face wmask_fire_on.131
 type 77
 editor_folder indoor/masks_wall
 no_pick 1
-layer 6
+layer 7
 end
 Object wmask_fire_off_1
 name big flag
@@ -2111,7 +2183,7 @@ face wmask_fire_off.151
 type 77
 editor_folder indoor/masks_wall
 no_pick 1
-layer 6
+layer 7
 end
 Object wmask_fire_off_3
 name big flag
@@ -2119,7 +2191,7 @@ face wmask_fire_off.131
 type 77
 editor_folder indoor/masks_wall
 no_pick 1
-layer 6
+layer 7
 end
 Object wmask_wanted.131
 name big flag
@@ -2201,75 +2273,78 @@ editor_folder indoor/masks_wall
 no_pick 1
 layer 7
 end
-Object anvil_111
-name anvil
-face anvil.111
+Object straw1.101
+name straw
+face straw1.101
 type 79
-editor_folder indoor/smithy
+editor_folder indoor/indoor
+no_pick 1
+no_pass 1
+layer 4
+end
+Object straw2.111
+name straw
+face straw2.111
+type 79
+editor_folder indoor/indoor
+no_pick 1
+no_pass 1
+layer 4
+end
+Object straw2.131
+name straw
+face straw2.131
+type 79
+editor_folder indoor/indoor
+no_pick 1
+no_pass 1
+layer 4
+end
+Object bath_tube1.101
+name bath tube
+face bath_tube1.101
+type 79
+editor_folder indoor/indoor
 no_pick 1
 layer 4
 end
-Object anvil_131
-name anvil
-face anvil.131
+Object bath_tube2.101
+name bath tube
+face bath_tube2.101
 type 79
-editor_folder indoor/smithy
+editor_folder indoor/indoor
 no_pick 1
 layer 4
 end
-Object forge_111
-name forge
-face forge.111
+Object bath_tube3.101
+name bath tube
+face bath_tube3.101
 type 79
-editor_folder indoor/smithy
+editor_folder indoor/indoor
 no_pick 1
 layer 4
 end
-Object forge_171
-name forge
-face forge.171
+Object bath_tube_big1.101
+name bath tube
+face bath_tube_big1.101
 type 79
-editor_folder indoor/smithy
+editor_folder indoor/indoor
 no_pick 1
 layer 4
 end
-Object table_round1
-name table
-face table_round1.101
+Object rack.111
+name weapon rack
+face rack.111
 type 79
-editor_folder indoor/tables
+editor_folder indoor/indoor
 no_pick 1
 layer 4
 end
-Object table_small1
-name table
-face table_small1.101
+Object rack.171
+name weapon rack
+face rack.171
 type 79
-editor_folder indoor/tables
-no_pick 1
-layer 4
-end
-Object table_small1b
-name table
-face table_small1b.101
-type 79
-editor_folder indoor/tables
-no_pick 1
-layer 4
-end
-Object table_wood1.111
-name table
-face table_wood1.111
-type 79
-editor_folder indoor/tables
-no_pick 1
-layer 4
-end
-Object table_wood1.171
-name table
-face table_wood1.171
-type 79
-editor_folder indoor/tables
+editor_folder indoor/indoor
 no_pick 1
 layer 4
 end
@@ -2324,6 +2399,30 @@ end
 Object bowl2.101
 name bowl
 face bowl2.101
+type 79
+editor_folder indoor/indoor
+no_pick 1
+layer 4
+end
+Object wood_pile.101
+name pile of wood
+face wood_pile.101
+type 79
+editor_folder indoor/indoor
+no_pick 1
+layer 4
+end
+Object trash_wood1.101
+name wood
+face trash_wood1.101
+type 79
+editor_folder indoor/indoor
+no_pick 1
+layer 4
+end
+Object trash_wood2.101
+name wood
+face trash_wood2.101
 type 79
 editor_folder indoor/indoor
 no_pick 1
@@ -2420,105 +2519,6 @@ end
 Object mirror_big.171
 name mirror
 face mirror_big.171
-type 79
-editor_folder indoor/indoor
-no_pick 1
-layer 4
-end
-Object rack.111
-name weapon rack
-face rack.111
-type 79
-editor_folder indoor/indoor
-no_pick 1
-layer 4
-end
-Object rack.171
-name weapon rack
-face rack.171
-type 79
-editor_folder indoor/indoor
-no_pick 1
-layer 4
-end
-Object straw1.101
-name straw
-face straw1.101
-type 79
-editor_folder indoor/indoor
-no_pick 1
-no_pass 1
-layer 4
-end
-Object straw2.111
-name straw
-face straw2.111
-type 79
-editor_folder indoor/indoor
-no_pick 1
-no_pass 1
-layer 4
-end
-Object straw2.131
-name straw
-face straw2.131
-type 79
-editor_folder indoor/indoor
-no_pick 1
-no_pass 1
-layer 4
-end
-Object bath_tube1.101
-name bath tube
-face bath_tube1.101
-type 79
-editor_folder indoor/indoor
-no_pick 1
-layer 4
-end
-Object bath_tube2.101
-name bath tube
-face bath_tube2.101
-type 79
-editor_folder indoor/indoor
-no_pick 1
-layer 4
-end
-Object bath_tube3.101
-name bath tube
-face bath_tube3.101
-type 79
-editor_folder indoor/indoor
-no_pick 1
-layer 4
-end
-Object bath_tube_big1.101
-name bath tube
-face bath_tube_big1.101
-type 79
-editor_folder indoor/indoor
-no_pick 1
-layer 4
-end
-Object wood_pile.101
-name pile of wood
-face wood_pile.101
-type 79
-editor_folder indoor/indoor
-no_pick 1
-layer 4
-end
-Object trash_wood1.101
-name wood
-face trash_wood1.101
-type 79
-editor_folder indoor/indoor
-no_pick 1
-layer 4
-end
-Object trash_wood2.101
-name wood
-face trash_wood2.101
 type 79
 editor_folder indoor/indoor
 no_pick 1
@@ -2886,54 +2886,6 @@ applied 0
 no_drop 1
 layer 0
 end
-Object human_male
-face human_m.isw.111
-type 1
-msg
-Humans are the generalists of the races.
-They are fit for any trade, and usually
-pick up a skill from their parents in
-addition to what they've learned as
-apprentices in their craft.
-endmsg
-editor_folder intern/player
-race human
-randomitems human_male
-layer 6
-is_male 1
-direction 4
-identified 1
-alive 1
-is_neutral 1
-weapon_speed 0.0125
-speed 0.85
-attack_impact 100
-terrain_flag 1
-animation human_male
-is_animated 1
-anim_speed 3
-level 1
-ac 10
-wc 25
-hp -1
-maxhp 8
-sp -1
-maxsp 3
-grace -1
-maxgrace 3
-can_use_armour 1
-can_use_weapon 1
-is_player 1
-weight 70000
-food 999
-Str 0
-Dex 0
-Con 0
-Wis 0
-Cha 0
-Int 0
-Pow 0
-end
 Object rank_force
 name RANK_FORCE
 face force.101
@@ -3019,6 +2971,67 @@ Cha 0
 Int 0
 Pow 0
 end
+Object human_male
+face human_m.isw.111
+type 1
+msg
+Humans are the generalists of the races.
+They are fit for any trade, and usually
+pick up a skill from their parents in
+addition to what they've learned as
+apprentices in their craft.
+endmsg
+editor_folder intern/player
+race human
+randomitems human_male
+layer 6
+is_male 1
+direction 4
+identified 1
+alive 1
+is_neutral 1
+weapon_speed 0.0125
+speed 0.85
+attack_impact 100
+terrain_flag 1
+animation human_male
+is_animated 1
+anim_speed 3
+level 1
+ac 10
+wc 25
+hp -1
+maxhp 8
+sp -1
+maxsp 3
+grace -1
+maxgrace 3
+can_use_armour 1
+can_use_weapon 1
+is_player 1
+weight 70000
+food 999
+Str 0
+Dex 0
+Con 0
+Wis 0
+Cha 0
+Int 0
+Pow 0
+end
+Object skill_spellcasting
+name wizardry spells
+face skill.101
+type 43
+editor_folder intern/skills
+sub_type 0
+sys_object 1
+no_drop 1
+sp 26
+last_eat 1
+level 1
+exp 0
+end
 Object skill_alchemy
 name alchemy
 face skill.101
@@ -3044,6 +3057,19 @@ level 1
 exp 0
 sp 9
 end
+Object skill_use_magic_item
+name magic devices
+face skill.101
+type 43
+editor_folder intern/skills
+sub_type 0
+sys_object 1
+no_drop 1
+sp 29
+last_eat 1
+level 1
+exp 0
+end
 Object skill_bowyer
 name bowyer lore
 face skill.101
@@ -3053,6 +3079,45 @@ sub_type 2
 sys_object 1
 no_drop 1
 sp 4
+level 1
+exp 0
+end
+Object skill_stealing
+name stealing
+face skill.101
+type 43
+editor_folder intern/skills
+sub_type 1
+sys_object 1
+no_drop 1
+sp 0
+last_eat 1
+level 1
+exp 0
+end
+Object skill_throwing
+name throwing
+face skill.101
+type 43
+editor_folder intern/skills
+sub_type 0
+sys_object 1
+no_drop 1
+sp 25
+last_heal 25
+last_eat 1
+level 1
+exp 0
+end
+Object skill_2h_mastery
+name two-hand mastery
+face skill.101
+type 43
+editor_folder intern/skills
+sub_type 2
+sys_object 1
+no_drop 1
+sp 40
 level 1
 exp 0
 end
@@ -3129,6 +3194,19 @@ exp 0
 Con 1
 Str 1
 end
+Object skill_cleave_weapon
+name cleave weapons
+face skill.101
+type 43
+editor_folder intern/skills
+sub_type 0
+sys_object 1
+no_drop 1
+sp 38
+last_eat 1
+level 1
+exp 0
+end
 Object experience_power
 name magic
 face exp.101
@@ -3139,6 +3217,30 @@ no_drop 1
 level 1
 exp 0
 Pow 1
+end
+Object skill_pole_mastery
+name polearm mastery
+face skill.101
+type 43
+editor_folder intern/skills
+sub_type 2
+sys_object 1
+no_drop 1
+sp 41
+level 1
+exp 0
+end
+Object skill_woodsman
+name ranger lore
+face skill.101
+type 43
+editor_folder intern/skills
+sub_type 2
+sys_object 1
+no_drop 1
+sp 21
+level 1
+exp 0
 end
 Object experience_wis
 name wisdom
@@ -3219,6 +3321,19 @@ last_eat 1
 level 1
 exp 0
 end
+Object skill_impact_weapon
+name impact weapons
+face skill.101
+type 43
+editor_folder intern/skills
+sub_type 0
+sys_object 1
+no_drop 1
+sp 23
+last_eat 1
+level 1
+exp 0
+end
 Object skill_jeweler
 name jeweler lore
 face skill.101
@@ -3228,6 +3343,19 @@ sub_type 2
 sys_object 1
 no_drop 1
 sp 5
+level 1
+exp 0
+end
+Object skill_pierce_weapon
+name pierce weapons
+face skill.101
+type 43
+editor_folder intern/skills
+sub_type 0
+sys_object 1
+no_drop 1
+sp 39
+last_eat 1
 level 1
 exp 0
 end
@@ -3243,6 +3371,19 @@ dam 5
 last_sp 1
 exp 0
 sp 10
+end
+Object skill_slash_weapon
+name slash weapons
+face skill.101
+type 43
+editor_folder intern/skills
+sub_type 0
+sys_object 1
+no_drop 1
+sp 37
+last_eat 1
+level 1
+exp 0
 end
 Object skill_karate
 name karate
@@ -3498,147 +3639,6 @@ sys_object 1
 no_drop 1
 sp 3
 last_eat 1
-level 1
-exp 0
-end
-Object skill_spellcasting
-name wizardry spells
-face skill.101
-type 43
-editor_folder intern/skills
-sub_type 0
-sys_object 1
-no_drop 1
-sp 26
-last_eat 1
-level 1
-exp 0
-end
-Object skill_stealing
-name stealing
-face skill.101
-type 43
-editor_folder intern/skills
-sub_type 1
-sys_object 1
-no_drop 1
-sp 0
-last_eat 1
-level 1
-exp 0
-end
-Object skill_throwing
-name throwing
-face skill.101
-type 43
-editor_folder intern/skills
-sub_type 0
-sys_object 1
-no_drop 1
-sp 25
-last_heal 25
-last_eat 1
-level 1
-exp 0
-end
-Object skill_use_magic_item
-name magic devices
-face skill.101
-type 43
-editor_folder intern/skills
-sub_type 0
-sys_object 1
-no_drop 1
-sp 29
-last_eat 1
-level 1
-exp 0
-end
-Object skill_2h_mastery
-name two-hand mastery
-face skill.101
-type 43
-editor_folder intern/skills
-sub_type 2
-sys_object 1
-no_drop 1
-sp 40
-level 1
-exp 0
-end
-Object skill_pole_mastery
-name polearm mastery
-face skill.101
-type 43
-editor_folder intern/skills
-sub_type 2
-sys_object 1
-no_drop 1
-sp 41
-level 1
-exp 0
-end
-Object skill_cleave_weapon
-name cleave weapons
-face skill.101
-type 43
-editor_folder intern/skills
-sub_type 0
-sys_object 1
-no_drop 1
-sp 38
-last_eat 1
-level 1
-exp 0
-end
-Object skill_impact_weapon
-name impact weapons
-face skill.101
-type 43
-editor_folder intern/skills
-sub_type 0
-sys_object 1
-no_drop 1
-sp 23
-last_eat 1
-level 1
-exp 0
-end
-Object skill_pierce_weapon
-name pierce weapons
-face skill.101
-type 43
-editor_folder intern/skills
-sub_type 0
-sys_object 1
-no_drop 1
-sp 39
-last_eat 1
-level 1
-exp 0
-end
-Object skill_slash_weapon
-name slash weapons
-face skill.101
-type 43
-editor_folder intern/skills
-sub_type 0
-sys_object 1
-no_drop 1
-sp 37
-last_eat 1
-level 1
-exp 0
-end
-Object skill_woodsman
-name ranger lore
-face skill.101
-type 43
-editor_folder intern/skills
-sub_type 2
-sys_object 1
-no_drop 1
-sp 21
 level 1
 exp 0
 end
@@ -4467,6 +4467,57 @@ container 80000
 Str 5
 value 20
 end
+Object quiver
+name arrow quiver
+face quiver.101
+type 122
+editor_folder items/container
+race arrows
+food 13
+other_arch close_quiver
+level 1
+layer 3
+material 8
+material_real 193
+value 35
+weight 250
+container 50000
+Str 5
+end
+Object quiver_b
+name bolt quiver
+face quiver_b.101
+type 122
+editor_folder items/container
+race crossbow bolts
+food 13
+other_arch close_quiver_b
+layer 3
+level 1
+material 8
+material_real 193
+value 35
+weight 250
+container 50000
+Str 5
+end
+Object quiver_s
+name stone quiver
+face quiver_s.101
+type 122
+editor_folder items/container
+race sling stones
+food 13
+layer 3
+other_arch close_quiver_s
+level 1
+material 8
+material_real 193
+value 35
+weight 250
+container 50000
+Str 5
+end
 Object cauldron
 name cauldron
 face cauldron.101
@@ -4526,6 +4577,21 @@ container 500000
 weight 17500
 Str 5
 end
+Object sack
+name sack
+face sack.101
+type 122
+editor_folder items/container
+other_arch close_sack
+layer 3
+level 1
+material 128
+material_real 450
+value 15
+weight 250
+container 150000
+Str 5
+end
 Object chest_w1
 name chest
 face chest_wood_b.101
@@ -4540,6 +4606,21 @@ value 350
 container 500000
 weight 15000
 Str 5
+end
+Object r_sack
+name rucksack
+face r_sack.101
+type 122
+editor_folder items/container
+other_arch close_rsack
+layer 3
+level 1
+material 8
+material_real 193
+value 35
+weight 300
+container 95000
+Str 7
 end
 Object depositbox
 name deposit box
@@ -4617,87 +4698,6 @@ material_real 193
 value 50
 weight 50
 container 50000
-Str 5
-end
-Object quiver
-name arrow quiver
-face quiver.101
-type 122
-editor_folder items/container
-race arrows
-food 13
-other_arch close_quiver
-level 1
-layer 3
-material 8
-material_real 193
-value 35
-weight 250
-container 50000
-Str 5
-end
-Object quiver_b
-name bolt quiver
-face quiver_b.101
-type 122
-editor_folder items/container
-race crossbow bolts
-food 13
-other_arch close_quiver_b
-layer 3
-level 1
-material 8
-material_real 193
-value 35
-weight 250
-container 50000
-Str 5
-end
-Object quiver_s
-name stone quiver
-face quiver_s.101
-type 122
-editor_folder items/container
-race sling stones
-food 13
-layer 3
-other_arch close_quiver_s
-level 1
-material 8
-material_real 193
-value 35
-weight 250
-container 50000
-Str 5
-end
-Object r_sack
-name rucksack
-face r_sack.101
-type 122
-editor_folder items/container
-other_arch close_rsack
-layer 3
-level 1
-material 8
-material_real 193
-value 35
-weight 300
-container 95000
-Str 7
-end
-Object sack
-name sack
-face sack.101
-type 122
-editor_folder items/container
-other_arch close_sack
-layer 3
-level 1
-material 128
-material_real 450
-value 15
-weight 250
-container 150000
 Str 5
 end
 Object coppercoin
@@ -7713,7 +7713,7 @@ face spawn_point.101
 type 81
 editor_folder mobs/mobs
 other_arch spawn_info
-speed 0.003
+speed -0.0011
 no_teleport 1
 last_sp -1
 sp -1
@@ -8001,76 +8001,52 @@ layer 5
 no_pick 1
 end
 Object fmask_ruin1a.111
-name mask
+name ruin parts
 face fmask_ruin1a.111
 type 79
 editor_folder structures/ruin
 layer 2
 no_pick 1
-layer 6
 end
 Object fmask_ruin1a.131
-name mask
+name ruin parts
 face fmask_ruin1a.131
 type 79
 editor_folder structures/ruin
 layer 2
 no_pick 1
-layer 6
-end
-Object fmask_ruin1b.111
-name mask
-face fmask_ruin1b.111
-type 79
-editor_folder structures/ruin
-layer 2
-no_pick 1
-layer 6
-end
-Object fmask_ruin1b.131
-name mask
-face fmask_ruin1b.131
-type 79
-editor_folder structures/ruin
-layer 2
-no_pick 1
-layer 6
 end
 Object fmask_ruin1_s1.101
-name mask
+name ruin parts
 face fmask_ruin1_s1.101
 type 79
 editor_folder structures/ruin
 layer 2
 no_pick 1
-layer 6
 end
 Object fmask_ruin1_s2.101
-name mask
+name ruin parts
 face fmask_ruin1_s2.101
 type 79
 editor_folder structures/ruin
 layer 2
 no_pick 1
-layer 6
 end
 Object fmask_ruin1_s3.101
-name mask
+name ruin parts
 face fmask_ruin1_s3.101
 type 79
 editor_folder structures/ruin
 layer 2
 no_pick 1
-layer 6
 end
 Object fmask_ruin1_s4.101
-name mask
+name ruin parts
 face fmask_ruin1_s4.101
 type 79
 editor_folder structures/ruin
 layer 2
 no_pick 1
-layer 6
 end
 Object pillar_ruin1a_a
 name ruin
@@ -8178,15 +8154,31 @@ face wmask_ruin1a.111
 type 77
 editor_folder structures/ruin
 no_pick 1
-layer 6
+layer 7
 end
-Object wmask_ruin1.131
+Object wmask_ruin1a.131
 name runes
 face wmask_ruin1a.131
 type 77
 editor_folder structures/ruin
 no_pick 1
-layer 6
+layer 7
+end
+Object wmask_ruin1b.111
+name runes
+face wmask_ruin1b.111
+type 77
+editor_folder structures/ruin
+no_pick 1
+layer 7
+end
+Object wmask_ruin1b.131
+name runes
+face wmask_ruin1b.131
+type 77
+editor_folder structures/ruin
+no_pick 1
+layer 7
 end
 Object statue_hero_a
 name statue

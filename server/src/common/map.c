@@ -677,8 +677,6 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags) {
 
     if(op->type == MONSTER)
         fix_monster(op );
-    else if(op->type == SPAWN_POINT) /* force a object tick at first possible global tick */
-        op->speed_left = 0;
 
 	/* important pre set for the animation/face of a object */
 	if(QUERY_FLAG(op, FLAG_IS_TURNABLE) || QUERY_FLAG(op, FLAG_ANIMATE))
@@ -767,10 +765,11 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 							if (t==-1) /* no place.. but we are fair, give them another chance to reappear */
 							{
 								tmp->owner->stats.sp = tmp->owner->last_sp; /* force a pre spawn setting */
+								tmp->owner->speed_left +=1.0f; /* we force a active spawn point */
+								tmp->owner->enemy = NULL;
 								remove_ob(head);
 								SET_FLAG(head,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
 							    free_object(head);
-								tmp->owner->enemy = NULL;
 								break; 
 							}
 
@@ -786,10 +785,11 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 						}
 						/* skip saving this mob but tell spawn to respawn it when reloaded */
 						tmp->owner->stats.sp = tmp->owner->last_sp; /* force a pre spawn setting */
+						tmp->owner->speed_left +=1.0f; /* we force a active spawn point */
+						tmp->owner->enemy = NULL;
 						remove_ob(head);
 						SET_FLAG(head,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
 						free_object(head);
-						tmp->owner->enemy = NULL;
 						break;
 					}
 				}
@@ -799,7 +799,8 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 				remove_ob(head);
 				SET_FLAG(head,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
 			    free_object(head);
-				tmp->owner->enemy = NULL;
+				if(tmp->owner)
+					tmp->owner->enemy = NULL;
 				continue;
 				
 
@@ -816,6 +817,7 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 				if(op->enemy_count == op->enemy->count && !QUERY_FLAG(op,FLAG_REMOVED))
 				{
 					op->stats.sp = op->last_sp; /* force a pre spawn setting */
+					op->speed_left += 1.0f;
 					remove_ob(op->enemy);
 					SET_FLAG(op->enemy,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
 					free_object(op->enemy);
@@ -1901,12 +1903,12 @@ void update_position (mapstruct *m, int x, int y) {
 		}
 
 		/* inv LAYER: perhaps we have something invisible before it*/
-		for(ii=6+7;ii>i+7;ii--)
+		for(ii=6+7;ii>i+6;ii--) /* we skip layer 7 - no invisible stuff on layer 7 */
 		{
 			if(mp->layer[ii])
 			{
+				mp->client_mlayer_inv[2]=mp->client_mlayer_inv[3];
 				mp->client_mlayer_inv[3]=ii; /* the last*/
-				ii--;
 				break;
 			}
 		}
@@ -1921,11 +1923,14 @@ void update_position (mapstruct *m, int x, int y) {
 			}
 		}
 
-		for(;ii>8;ii--)
+		/* in layer[2] we have now normal layer 3 or normal layer 2
+		 * now seek a possible inv. object to substitute normal
+		 */
+		for(ii--;ii>8;ii--)
 		{
 			if(mp->layer[ii])
 			{
-				mp->client_mlayer_inv[2]=ii; /* the last*/
+				mp->client_mlayer_inv[2]=ii; 
 				break;
 			}
 		}

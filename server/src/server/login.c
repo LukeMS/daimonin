@@ -813,10 +813,6 @@ void check_login(object *op) {
 	 */
     enter_exit(op,NULL); /* kick player on map - load map if needed */
 
-	/* add as friendly object */
-	SET_FLAG(op,FLAG_FRIENDLY);
-    add_friendly_object(op);
-
     pl->socket.update_look=1;
     pl->socket.look_position=0;
     pl->socket.ext_title_flag = 1;

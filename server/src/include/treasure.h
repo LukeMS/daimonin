@@ -55,7 +55,8 @@ enum {
   GT_STARTEQUIP = 0x0004,
   GT_APPLY = 0x0008,		/* treasure gets applied when inserted in mob! (food eaten, skill applied...) */
   GT_ONLY_GOOD = 0x0010,
-  GT_UPDATE_INV = 0x0020
+  GT_UPDATE_INV = 0x0020,
+  GT_NO_VALUE = 0x0040      /* set value of all created treasures to 0 */
 };
 
 
