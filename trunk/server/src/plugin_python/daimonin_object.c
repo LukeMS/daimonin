@@ -317,8 +317,12 @@ PyTypeObject Daimonin_ObjectType = {
     Daimonin_Object_new,       /* tp_new */
 };
 
+
 /* Object constants */
 static Daimonin_Constant object_constants[] = {
+    {"MAP_INFO_NORMAL", MAP_INFO_NORMAL},
+    {"MAP_INFO_ALL", MAP_INFO_ALL},
+
     {"COST_TRUE", F_TRUE},
     {"COST_BUY", F_BUY},
     {"COST_SELL", F_SELL},
@@ -890,7 +894,7 @@ static PyObject* Daimonin_Object_Say(Daimonin_Object *whoptr, PyObject* args)
 {
     char *message;
     static char buf[HUGE_BUF];
-    int val;
+    int val, d= MAP_INFO_NORMAL,x,y;
 
     if (!PyArg_ParseTuple(args,"s", &message))
         return NULL;
@@ -900,10 +904,15 @@ static PyObject* Daimonin_Object_Say(Daimonin_Object *whoptr, PyObject* args)
     sprintf(buf, "%s says: %s", query_name(WHO),message);
 
     val = NDI_NAVY|NDI_UNIQUE;
-
+	x = WHO->x;
+	y = WHO->y;
+	
     GCFP.Value[0] = (void *)(&val);
     GCFP.Value[1] = (void *)(WHO->map);
-    GCFP.Value[2] = (void *)(buf);
+    GCFP.Value[2] = (void *)(&x);
+    GCFP.Value[3] = (void *)(&y);
+    GCFP.Value[4] = (void *)(&d);
+    GCFP.Value[5] = (void *)(buf);
 
     (PlugHooks[HOOK_NEWINFOMAP])(&GCFP);
 
@@ -925,7 +934,7 @@ static PyObject* Daimonin_Object_SayTo(Daimonin_Object* whoptr, PyObject* args)
 	int zero = 0;
     char *message;
     static char buf[HUGE_BUF];
-    int val;
+    int val,d= MAP_INFO_NORMAL,x,y;
 
     if (!PyArg_ParseTuple(args,"O!s", &Daimonin_ObjectType, &obptr2, &message))
         return NULL;
@@ -936,11 +945,17 @@ static PyObject* Daimonin_Object_SayTo(Daimonin_Object* whoptr, PyObject* args)
     
     sprintf(buf, "%s talks to %s.", query_name(WHO),query_name(target));
 	val = NDI_UNIQUE;
+	x = WHO->x;
+	y = WHO->y;
 
     GCFP.Value[0] = (void *)(&val);
     GCFP.Value[1] = (void *)(WHO->map);
-    GCFP.Value[2] = (void *)(target);
-    GCFP.Value[3] = (void *)(buf);
+    GCFP.Value[2] = (void *)(&x);
+    GCFP.Value[3] = (void *)(&y);
+    GCFP.Value[4] = (void *)(&d);
+    GCFP.Value[5] = (void *)(WHO);
+    GCFP.Value[6] = (void *)(target);
+    GCFP.Value[7] = (void *)(buf);
     (PlugHooks[HOOK_NEWINFOMAPEXCEPT])(&GCFP);
 
     sprintf(buf, "%s says: %s", query_name(WHO),message);

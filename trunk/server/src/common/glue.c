@@ -42,7 +42,7 @@ type_container_unlink_func	container_unlink_func;
 type_move_apply_func	move_apply_func;
 type_func_ob_ob	monster_check_apply_func;
 type_func_void	init_blocksview_players_func;
-type_func_int_map_char	info_map_func;
+type_func_int_map_int_int_int_char	info_map_func;
 type_func_ob	move_teleporter_func;
 type_func_ob move_firewall_func;
 type_func_ob_int  trap_adjust_func;
@@ -171,7 +171,7 @@ void set_init_blocksview_players(type_func_void addr) {
   init_blocksview_players_func = addr;
 }
 
-void set_info_map(type_func_int_map_char addr) {
+void set_info_map(type_func_int_map_int_int_int_char addr) {
   info_map_func = addr;
 }
 
@@ -270,15 +270,13 @@ void dummy_function_ob_int(object *ob, int i) {
 }
 
 void dummy_function_txtnr(char *txt, int nr) {
-  LOG(llevInfo, "%d: %s\n",nr,txt);
 }
 
 void dummy_draw_info(int a, int b, object *ob, const char *txt) {
-  LOG(llevInfo,  "%s\n", txt);
 }
 
-void dummy_function_mapstr(int a, mapstruct *map, const char *str) {
-  LOG(llevInfo, "info_map: %s\n", str);
+void dummy_function_mapstr(int a, mapstruct *map, int x, int y, int dist, const char *str) 
+{
 }
 
 void dummy_function_int_ob_ob (int n, object *ob, object *ob2) {

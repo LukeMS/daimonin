@@ -854,6 +854,8 @@ MODULEAPI int cmd_customPython(object *op, char *params)
 
 MODULEAPI int cmd_aboutPython(object *op, char *params)
 {
+	/* ehm... a map info version msg??? MT? should be drawinfo, or missed i something? */
+	/*
     int color = NDI_BLUE|NDI_UNIQUE;
     char message[1024];
 
@@ -863,6 +865,7 @@ MODULEAPI int cmd_aboutPython(object *op, char *params)
     GCFP.Value[2] = (void *)(message);
 
     (PlugHooks[HOOK_NEWINFOMAP])(&GCFP);
+	*/
     return 0;
 }
 

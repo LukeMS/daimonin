@@ -71,7 +71,7 @@ void push_button(object *op) {
 	break;
     case SIGN:
       if (!tmp->stats.food || tmp->last_eat < tmp->stats.food) {
-        (*info_map_func)(NDI_UNIQUE | NDI_NAVY,tmp->map,tmp->msg);
+        (*info_map_func)(NDI_UNIQUE | NDI_NAVY,tmp->map,tmp->x, tmp->y, MAP_INFO_NORMAL, tmp->msg);
         if (tmp->stats.food) tmp->last_eat++;
       }
       break;
@@ -308,7 +308,7 @@ int operate_altar (object *altar, object **sacrifice)
     *sacrifice = decrease_ob_nr (*sacrifice, NROF_SACRIFICE(altar));
  
   if (altar->msg)
-    (*info_map_func) (NDI_WHITE, altar->map, altar->msg);
+    (*info_map_func) (NDI_WHITE, altar->map, altar->x, altar->y, MAP_INFO_NORMAL,altar->msg);
   return 1;
 }
 
