@@ -2453,19 +2453,18 @@ type 13
 is_magical 1
 value 50
 wc 7
-dam -8
-food 50
+dam_add 1
 end
 #
 #
 Allowed all
 chance 20
+difficulty 8
 artifact missile_ass_troll
 def_arch arrow
 Object
 title of assassinating trolls
 slaying troll
-attacktype 131072
 msg
   These missiles are inscribed with 
   powerful runes for the bane of 
@@ -2476,29 +2475,24 @@ type 13
 value 500
 wc 7
 is_magical 1
-dam -20
-food 100
-nrof 10
-level 40
+dam_add 1
 end
 #
 #
 Allowed arrow
 chance 100
-difficulty 5
+difficulty 15
 artifact missile_slay_dragon
 def_arch arrow
 Object
 title of slay dragon
 type 13
-value 5
+value 150
 is_magical 1
 slaying dragon
-dam -12
-food 10
+dam_add 1
 end
 #
-
 #
 # Bows
 #

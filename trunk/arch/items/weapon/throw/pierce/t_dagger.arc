@@ -5,6 +5,7 @@ face t_dagger.101
 weapon_speed 0.027
 attack_pierce 100
 dam 3
+wc_range 20
 nrof 1
 type 13
 sub_type 130

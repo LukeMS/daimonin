@@ -6,6 +6,7 @@ weapon_speed 0.027
 attack_cleave 100
 dam 3
 nrof 1
+wc_range 20
 type 13
 sub_type 131
 anim
