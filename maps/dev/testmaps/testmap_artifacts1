@@ -233,11 +233,23 @@ arch floor_ostone1
 x 1
 y 11
 end
+arch crystal_light4
+x 1
+y 11
+end
 arch floor_ostone1
 x 1
 y 12
 end
+arch nug_bronze_small
+x 1
+y 12
+end
 arch floor_ostone1
+x 1
+y 13
+end
+arch zircon_small
 x 1
 y 13
 end
@@ -638,6 +650,11 @@ arch floor_ostone1
 x 5
 y 6
 end
+arch bracers_dex
+identified 1
+x 5
+y 6
+end
 arch floor_ostone1
 x 5
 y 7
@@ -659,6 +676,11 @@ x 5
 y 11
 end
 arch floor_ostone1
+x 5
+y 12
+end
+arch boots_less_fire
+identified 1
 x 5
 y 12
 end
@@ -741,6 +763,11 @@ arch floor_ostone1
 x 6
 y 6
 end
+arch bracers_str
+identified 1
+x 6
+y 6
+end
 arch floor_ostone1
 x 6
 y 7
@@ -762,6 +789,11 @@ x 6
 y 11
 end
 arch floor_ostone1
+x 6
+y 12
+end
+arch boots_less_cold
+identified 1
 x 6
 y 12
 end
@@ -844,6 +876,11 @@ arch floor_ostone1
 x 7
 y 6
 end
+arch bracers_con
+identified 1
+x 7
+y 6
+end
 arch floor_ostone1
 x 7
 y 7
@@ -865,6 +902,11 @@ x 7
 y 11
 end
 arch floor_ostone1
+x 7
+y 12
+end
+arch boots_less_elec
+identified 1
 x 7
 y 12
 end
@@ -947,6 +989,11 @@ arch floor_ostone1
 x 8
 y 6
 end
+arch bracers_int
+identified 1
+x 8
+y 6
+end
 arch floor_ostone1
 x 8
 y 7
@@ -968,6 +1015,11 @@ x 8
 y 11
 end
 arch floor_ostone1
+x 8
+y 12
+end
+arch boots_less_poison
+identified 1
 x 8
 y 12
 end
@@ -1045,6 +1097,11 @@ arch floor_ostone1
 x 9
 y 6
 end
+arch bracers_pow
+identified 1
+x 9
+y 6
+end
 arch floor_ostone1
 x 9
 y 7
@@ -1066,6 +1123,11 @@ x 9
 y 11
 end
 arch floor_ostone1
+x 9
+y 12
+end
+arch boots_less_acid
+identified 1
 x 9
 y 12
 end
@@ -1143,6 +1205,11 @@ arch floor_ostone1
 x 10
 y 6
 end
+arch bracers_cha
+identified 1
+x 10
+y 6
+end
 arch floor_ostone1
 x 10
 y 7
@@ -1164,6 +1231,11 @@ x 10
 y 11
 end
 arch floor_ostone1
+x 10
+y 12
+end
+arch leggings_less_fire
+identified 1
 x 10
 y 12
 end
@@ -1241,6 +1313,11 @@ arch floor_ostone1
 x 11
 y 6
 end
+arch bracers_wis
+identified 1
+x 11
+y 6
+end
 arch floor_ostone1
 x 11
 y 7
@@ -1262,6 +1339,11 @@ x 11
 y 11
 end
 arch floor_ostone1
+x 11
+y 12
+end
+arch leggings_less_cold
+identified 1
 x 11
 y 12
 end
@@ -1363,6 +1445,11 @@ arch floor_ostone1
 x 12
 y 12
 end
+arch leggings_less_electricity
+identified 1
+x 12
+y 12
+end
 arch floor_ostone1
 x 12
 y 13
@@ -1461,6 +1548,11 @@ arch floor_ostone1
 x 13
 y 12
 end
+arch leggings_less_poison
+identified 1
+x 13
+y 12
+end
 arch floor_ostone1
 x 13
 y 13
@@ -1556,6 +1648,11 @@ x 14
 y 11
 end
 arch floor_ostone1
+x 14
+y 12
+end
+arch leggings_less_acid
+identified 1
 x 14
 y 12
 end
