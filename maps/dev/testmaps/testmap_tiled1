@@ -7,7 +7,7 @@ endmsg
 width 19
 height 19
 difficulty 1
-darkness 300
+darkness 80
 tile_path_2 testmap_tiled2
 tile_path_3 testmap_tiled4
 tile_path_6 testmap_tiled5
