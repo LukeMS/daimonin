@@ -22,7 +22,7 @@ instbin() {
 	# version before replacing. This way installation works even on
 	# a running server.
 	[ -f $2 ] && rm -f $2
-	cp $1 $2 || fail	
+	cp $1 $2 || fail
 }
 
 mmkdir() {
@@ -30,9 +30,9 @@ mmkdir() {
 }
 
 echo "Copy binaries"
-instbin ./../../src/server/$prgname ./../../$prgname 
-instbin ./../../src/plugin_lua/$luaplug ./../../plugins/$luaplug 
-instbin $basedir/src/utils/dmonloop $basedir 
+instbin ./../../src/server/$prgname ./../../$prgname
+instbin ./../../src/plugin_lua/$luaplug ./../../plugins/$luaplug
+instbin $basedir/src/utils/dmonloop $basedir
 
 echo "Create data folders"
 mmkdir $basedir/$datadir
@@ -42,9 +42,9 @@ mmkdir $basedir/$datadir/players
 mmkdir $basedir/$datadir/unique-items
 
 echo "Copy server data"
-cp $basedir/install/* $basedir/$datadir
+cp -u $basedir/install/* $basedir/$datadir
 
 mmkdir $basedir/lib
 echo "Copy arch and lib files"
-cp ./../../../arch/* $basedir/lib
+cp -u ./../../../arch/* $basedir/lib
 echo "done."

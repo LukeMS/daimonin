@@ -222,6 +222,7 @@ void initOnePlugin(const char *pluginfile)
         strcpy(PlugList[PlugNR].id, (char *) (InitParm->Value[0]));
         strcpy(PlugList[PlugNR].fullname, (char *) (InitParm->Value[1]));
     }
+    PlugList[PlugNR].removefunc = (f_plugin) (GetProcAddress(DLLInstance, "removePlugin"));
     PlugList[PlugNR].hookfunc = (f_plugin) (GetProcAddress(DLLInstance, "registerHook"));
     PlugList[PlugNR].eventfunc = (f_plugin) (GetProcAddress(DLLInstance, "triggerEvent"));
     PlugList[PlugNR].pinitfunc = (f_plugin) (GetProcAddress(DLLInstance, "postinitPlugin"));
@@ -280,6 +281,8 @@ void removeOnePlugin(const char *id)
     plid = findPlugin(id);
     if (plid < 0)
         return;
+    if (PlugList[plid].removefunc != NULL)
+        PlugList[plid].removefunc(NULL);
     /* We unload the library... */
     FreeLibrary(PlugList[plid].libptr);
     /* Then we copy the rest on the list back one position */
@@ -350,6 +353,8 @@ void removeOnePlugin(const char *id)
     plid = findPlugin(id);
     if (plid < 0)
         return;
+    if (PlugList[plid].removefunc != NULL)
+        PlugList[plid].removefunc(NULL);
     /* We unload the library... */
     dlclose(PlugList[plid].libptr);
     /* Then we copy the rest on the list back one position */
@@ -404,6 +409,7 @@ void initOnePlugin(const char *pluginfile)
         strcpy(PlugList[PlugNR].id, (char *) (InitParm->Value[0]));
         strcpy(PlugList[PlugNR].fullname, (char *) (InitParm->Value[1]));
     }
+    PlugList[PlugNR].removefunc = (f_plugin) (dlsym(ptr, "removePlugin"));
     PlugList[PlugNR].hookfunc = (f_plugin) (dlsym(ptr, "registerHook"));
     PlugList[PlugNR].eventfunc = (f_plugin) (dlsym(ptr, "triggerEvent"));
     PlugList[PlugNR].pinitfunc = (f_plugin) (dlsym(ptr, "postinitPlugin"));
@@ -448,6 +454,22 @@ void initOnePlugin(const char *pluginfile)
     LOG(llevInfo, "[Done]\n");
 }
 #endif /*WIN32*/
+
+void removePlugins(void)
+{
+    if (PlugNR)
+    {
+        int e = PlugNR, i;
+        char* ids[32];
+
+        LOG(llevInfo, "Unloading plugins:\n");
+        for (i = 0; i != PlugNR; ++i)
+            ids[i] = PlugList[i].id;
+        for (i = 0; i != 32; ++i)
+            if (ids[i] != NULL)
+                removeOnePlugin(ids[i]);
+    }
+}
 
 /*****************************************************************************/
 /* Hook functions. Those are wrappers to crosslib functions, used by plugins.*/
@@ -1244,7 +1266,7 @@ CFParm * CFWDeposit(CFParm *PParm)
     _money_block                        money;
 
     val = 0;
-    get_word_from_string(text, &pos);       
+    get_word_from_string(text, &pos);
     get_money_from_string(text + pos, &money);
 
     CFP.Value[0] = (void *) &val;
@@ -1621,7 +1643,7 @@ CFParm * CFWApplyBelow(CFParm *PParm)
 /*****************************************************************************/
 CFParm * CFWFindMarkedObject(CFParm *PParm)
 {
-    static CFParm   CFP; 
+    static CFParm   CFP;
 
     object         *op  = (object *) PParm->Value[0];
     if (op)
@@ -1691,7 +1713,7 @@ CFParm * CFWObjectCreateClone(CFParm *PParm)
 CFParm * CFWTeleportObject(CFParm *PParm)
 {
     object *current;
-    /*    char * mapname; not used 
+    /*    char * mapname; not used
         int mapx;
         int mapy;
         int unique; not used */
@@ -1792,7 +1814,7 @@ CFParm * CFWPlaySoundMap(CFParm *PParm)
 /*****************************************************************************/
 CFParm * CFWCreateObject(CFParm *PParm)
 {
-    static CFParm   CFP; 
+    static CFParm   CFP;
     archetype      *arch;
     object         *newobj;
 

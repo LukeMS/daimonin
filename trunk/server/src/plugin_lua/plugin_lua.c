@@ -105,7 +105,7 @@ static struct method_decl       Game_methods[]      =
 {
     {"FileUnlink", Game_FileUnlink}, {"TransferMapItems", Game_TransferMapItems}, {"LoadObject", Game_LoadObject},
     {"ReadyMap", Game_ReadyMap}, {"CheckMap", Game_CheckMap}, {"MatchString", Game_MatchString},
-    {"FindPlayer", Game_FindPlayer}, {"GetSpellNr", Game_GetSpellNr}, 
+    {"FindPlayer", Game_FindPlayer}, {"GetSpellNr", Game_GetSpellNr},
     {"GetSkillNr", Game_GetSkillNr}, {"IsValid", Game_IsValid},
     //    {"RegisterCommand", Game_RegisterCommand},
     {NULL, NULL}
@@ -176,35 +176,35 @@ static struct constant_decl     Game_constants[]    =
     {"TYPE_LIGHTER"                 ,LIGHTER}, {"TYPE_TRAP_PART"               ,TRAP_PART},
     {"TYPE_WALL"                    ,WALL}, {"TYPE_LIGHT_SOURCE"            ,LIGHT_SOURCE},
     {"TYPE_MISC_OBJECT"             ,MISC_OBJECT}, {"TYPE_MONSTER"                 ,MONSTER},
-    {"TYPE_SPAWN_POINT"             ,SPAWN_POINT}, {"TYPE_LIGHT_REFILL"            ,TYPE_LIGHT_REFILL}, 
-    {"TYPE_SPAWN_POINT_MOB"         ,SPAWN_POINT_MOB }, {"TYPE_SPAWN_POINT_INFO"        ,SPAWN_POINT_INFO}, 
+    {"TYPE_SPAWN_POINT"             ,SPAWN_POINT}, {"TYPE_LIGHT_REFILL"            ,TYPE_LIGHT_REFILL},
+    {"TYPE_SPAWN_POINT_MOB"         ,SPAWN_POINT_MOB }, {"TYPE_SPAWN_POINT_INFO"        ,SPAWN_POINT_INFO},
     {"TYPE_SPELLBOOK"               ,SPELLBOOK}, {"TYPE_ORGANIC"             ,ORGANIC},
-    {"TYPE_CLOAK"                   ,CLOAK}, {"TYPE_CONE"                    ,CONE}, 
-    {"TYPE_AURA"                    ,AURA}, {"TYPE_SPINNER"             ,SPINNER}, 
+    {"TYPE_CLOAK"                   ,CLOAK}, {"TYPE_CONE"                    ,CONE},
+    {"TYPE_AURA"                    ,AURA}, {"TYPE_SPINNER"             ,SPINNER},
     {"TYPE_GATE"                    ,GATE}, {"TYPE_BUTTON"                  ,BUTTON},
-    {"TYPE_CF_HANDLE"               ,CF_HANDLE}, {"TYPE_PIT"                 ,PIT}, 
-    {"TYPE_TRAPDOOR"                ,TRAPDOOR}, {"TYPE_WORD_OF_RECALL"          ,WORD_OF_RECALL}, 
+    {"TYPE_CF_HANDLE"               ,CF_HANDLE}, {"TYPE_PIT"                 ,PIT},
+    {"TYPE_TRAPDOOR"                ,TRAPDOOR}, {"TYPE_WORD_OF_RECALL"          ,WORD_OF_RECALL},
     {"TYPE_PARAIMAGE"               ,PARAIMAGE}, {"TYPE_SIGN"                    ,SIGN},
-    {"TYPE_BOOTS"                   ,BOOTS}, {"TYPE_GLOVES"                  ,GLOVES}, 
-    {"TYPE_BASE_INFO"               ,TYPE_BASE_INFO}, {"TYPE_RANDOM_DROP"     ,TYPE_RANDOM_DROP}, 
+    {"TYPE_BOOTS"                   ,BOOTS}, {"TYPE_GLOVES"                  ,GLOVES},
+    {"TYPE_BASE_INFO"               ,TYPE_BASE_INFO}, {"TYPE_RANDOM_DROP"     ,TYPE_RANDOM_DROP},
     {"TYPE_CONVERTER"               ,CONVERTER}, {"TYPE_BRACERS"             ,BRACERS},
-    {"TYPE_POISONING"               ,POISONING}, {"TYPE_SAVEBED"             ,SAVEBED}, 
-    {"TYPE_POISONCLOUD"             ,POISONCLOUD}, {"TYPE_FIREHOLES"               ,FIREHOLES}, 
+    {"TYPE_POISONING"               ,POISONING}, {"TYPE_SAVEBED"             ,SAVEBED},
+    {"TYPE_POISONCLOUD"             ,POISONCLOUD}, {"TYPE_FIREHOLES"               ,FIREHOLES},
     {"TYPE_WAND"                    ,WAND}, {"TYPE_ABILITY"             ,ABILITY},
-    {"TYPE_SCROLL"                  ,SCROLL}, {"TYPE_DIRECTOR"                ,DIRECTOR}, 
-    {"TYPE_GIRDLE"                  ,GIRDLE}, {"TYPE_FORCE"                   ,FORCE}, 
+    {"TYPE_SCROLL"                  ,SCROLL}, {"TYPE_DIRECTOR"                ,DIRECTOR},
+    {"TYPE_GIRDLE"                  ,GIRDLE}, {"TYPE_FORCE"                   ,FORCE},
     {"TYPE_POTION_EFFECT"           ,POTION_EFFECT}, {"TYPE_JEWEL"               ,TYPE_JEWEL},
-    {"TYPE_NUGGET"                  ,TYPE_NUGGET}, {"TYPE_EVENT_OBJECT"        ,TYPE_EVENT_OBJECT}, 
-    {"TYPE_WAYPOINT_OBJECT"         ,TYPE_WAYPOINT_OBJECT}, {"TYPE_QUEST_CONTAINER" ,TYPE_QUEST_CONTAINER}, 
+    {"TYPE_NUGGET"                  ,TYPE_NUGGET}, {"TYPE_EVENT_OBJECT"        ,TYPE_EVENT_OBJECT},
+    {"TYPE_WAYPOINT_OBJECT"         ,TYPE_WAYPOINT_OBJECT}, {"TYPE_QUEST_CONTAINER" ,TYPE_QUEST_CONTAINER},
     {"TYPE_CLOSE_CON"               ,CLOSE_CON}, {"TYPE_CONTAINER"               ,CONTAINER},
-    {"TYPE_ARMOUR_IMPROVER"         ,ARMOUR_IMPROVER}, {"TYPE_WEAPON_IMPROVER"        ,WEAPON_IMPROVER}, 
+    {"TYPE_ARMOUR_IMPROVER"         ,ARMOUR_IMPROVER}, {"TYPE_WEAPON_IMPROVER"        ,WEAPON_IMPROVER},
     {"TYPE_WEALTH"                  ,TYPE_WEALTH}, {"TYPE_AI"                   ,TYPE_AI},
     {"TYPE_AGGRO_HISTORY"           ,TYPE_AGGRO_HISTORY}, {"TYPE_DAMAGE_INFO"            ,TYPE_DAMAGE_INFO},
-    {"TYPE_SKILLSCROLL"             ,SKILLSCROLL}, {"TYPE_DEEP_SWAMP"              ,DEEP_SWAMP}, 
-    {"TYPE_IDENTIFY_ALTAR"          ,IDENTIFY_ALTAR}, {"TYPE_CANCELLATION"            ,CANCELLATION}, 
+    {"TYPE_SKILLSCROLL"             ,SKILLSCROLL}, {"TYPE_DEEP_SWAMP"              ,DEEP_SWAMP},
+    {"TYPE_IDENTIFY_ALTAR"          ,IDENTIFY_ALTAR}, {"TYPE_CANCELLATION"            ,CANCELLATION},
     {"TYPE_MENU"                    ,MENU}, {"TYPE_BALL_LIGHTNING"         ,BALL_LIGHTNING},
-    {"TYPE_SWARM_SPELL"             ,SWARM_SPELL}, {"TYPE_RUNE"                   ,RUNE}, 
-    {"TYPE_POWER_CRYSTAL"           ,POWER_CRYSTAL,}, {"TYPE_CORPSE"                 ,CORPSE}, 
+    {"TYPE_SWARM_SPELL"             ,SWARM_SPELL}, {"TYPE_RUNE"                   ,RUNE},
+    {"TYPE_POWER_CRYSTAL"           ,POWER_CRYSTAL,}, {"TYPE_CORPSE"                 ,CORPSE},
     {"TYPE_DISEASE"                 ,DISEASE}, {"TYPE_SYMPTOM"                ,SYMPTOM},
     {NULL, 0}
 };
@@ -456,21 +456,21 @@ static int Game_IsValid(lua_State *L)
 {
     lua_object *obj;
 
-    if(lua_gettop(L) != 1) 
+    if(lua_gettop(L) != 1)
         luaL_error(L, "wrong number of arguments to game.IsValid() (1 expected, got %d)", lua_gettop(L));
-    
+
     /* Nil is never valid, so we can just return it */
-    if(lua_isnil(L, -1)) 
+    if(lua_isnil(L, -1))
     {
         lua_pushboolean(L, 0);
-    } 
-    else if(! (obj = lua_touserdata(L, -1))) 
+    }
+    else if(! (obj = lua_touserdata(L, -1)))
     {
         luaL_error(L, "parameter is not nil, a GameObject or a Map");
     }
     else
     {
-        if(obj->class == &GameObject) 
+        if(obj->class == &GameObject)
         {
             lua_pushboolean(L, obj->data.object->count == obj->tag);
         } else if(obj->class == &Map)
@@ -481,7 +481,7 @@ static int Game_IsValid(lua_State *L)
             luaL_error(L, "parameter is not nil, a GameObject or a Map");
         }
     }
-    
+
     return 1;
 }
 
@@ -710,7 +710,7 @@ void detach_lua_context(struct lua_context *context, int resume_time)
 {
 #ifdef LUA_DEBUG
     LOG(llevDebug, "LUA - Detaching context (%s)\n", context->file);
-#endif    
+#endif
     context->resume_time = resume_time;
     if(first_context == NULL)
     {
@@ -728,7 +728,7 @@ void terminate_lua_context(struct lua_context *context)
 {
 #ifdef LUA_DEBUG
     LOG(llevDebug, "LUA - Terminating context (%s)\n", context->file);
-#endif    
+#endif
     if(context->prev || context->next || first_context == context) {
         lua_context_remove(context);
         if(first_context == NULL)
@@ -740,7 +740,7 @@ void terminate_lua_context(struct lua_context *context)
             (PlugHooks[HOOK_UNREGISTEREVENT])(&GCFP);
         }
     }
-    
+
     /* Get rid of the thread object, which should leave the thread for gc */
     luaL_unref(global_state, LUA_REGISTRYINDEX, context->threadidx);
     context->tag = 0;
@@ -780,7 +780,7 @@ void resume_detached_contexts()
                 lua_pushcclosure(L,luaError,0);
                 lua_pushvalue(L, -2);
                 lua_pcall(L, 1, 1, 0);
-    
+
                 if ((error = lua_tostring(L, -1)))
                     LOG(llevDebug, "LUA - %s\n", error);
                 else
@@ -899,14 +899,14 @@ MODULEAPI CFParm * triggerEvent(CFParm *PParm)
 /*****************************************************************************/
 MODULEAPI int HandleGlobalEvent(CFParm *PParm)
 {
-    
+
     switch(*(int *)(PParm->Value[0]))
     {
         case EVENT_CLOCK:
             resume_detached_contexts();
             break;
-            
-        default: 
+
+        default:
             LOG(llevDebug, "Unimplemented for now\n");
             break;
 #if 0
@@ -1022,7 +1022,7 @@ static int RunLuaScript(struct lua_context *context)
         if (res == 0)
         {
             /* Handle scripts that just wants to yield, not end */
-            if(lua_isnumber(L, -1) || lua_isstring(L, -1)) 
+            if(lua_isnumber(L, -1) || lua_isstring(L, -1))
                 detach_lua_context(context, lua_tonumber(L, -1) * (lua_Number)(1000000 / MAX_TIME));
 
             return 0;
@@ -1034,7 +1034,7 @@ static int RunLuaScript(struct lua_context *context)
     lua_pushcclosure(L,luaError,0);
     lua_pushvalue(L, -2);
     lua_pcall(L, 1, 1, 0);
-    
+
     if ((error = lua_tostring(L, -1)))
         LOG(llevDebug, "LUA - %s\n", error);
     else
@@ -1111,7 +1111,7 @@ MODULEAPI int HandleEvent(CFParm *PParm)
     }
 
     ret = context->returnvalue;
- 
+
     if(context->resume_time == -1)
         terminate_lua_context(context);
 
@@ -1148,11 +1148,17 @@ MODULEAPI CFParm * initPlugin(CFParm *PParm)
 MODULEAPI CFParm * removePlugin(CFParm *PParm)
 {
     LOG(llevDebug, "    Daimonin Lua Plugin unloading.....\n");
-    
+
+    /* Try to find the function '_shutdown' and run it */
+    lua_pushliteral(global_state, "_shutdown");
+    lua_rawget(global_state, LUA_GLOBALSINDEX);
+    if (lua_isfunction(global_state, -1))
+        lua_call(global_state, 0, 0);
+
     /* TODO: Terminate all detached threads */
-    
+
     lua_close(global_state);
-    
+
     hooks->free_mempool(pool_luacontext);
 
     return NULL;
@@ -1327,7 +1333,7 @@ MODULEAPI void init_Daimonin_Lua()
     map_path = hooks->create_pathname("");
 
     pool_luacontext = hooks->create_mempool("lua contexts", 5, sizeof(struct lua_context), 0, NULL, NULL);
-    
+
     global_state = lua_open();
 
     /* Initialize the libs */

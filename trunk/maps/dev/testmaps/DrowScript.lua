@@ -5,11 +5,11 @@ string.split("")
 function topicData()
 	-- Tests the storage of global data
 
-	local dt = DataTable("data_store_test")
+	local ds = DataStore("data_store_test")
 	local msg = table.concat(string.split(event.message), " ", 2)
-	dt:set("activator", event.activator)
-	dt:set("message", msg)
-	local msg2 = dt:get("message")
+	ds:set("activator", event.activator)
+	ds:set("message", msg)
+	local msg2 = ds:get("message")
 	if msg2 == msg then
 		event.me:SayTo(event.activator, "Message '" .. msg .. "' saved.\nNow talk to the lost soul to see this message.")
 	else
@@ -25,11 +25,11 @@ function topicData2()
 		event.me:SayTo(event.activator, "Say '^data2^ <player> <message>'")
 		return
 	end
-	local dt = DataTable("data_store_test", msg[2])
+	local ds = DataStore("data_store_test", msg[2])
 	msg = table.concat(msg, " ", 3)
-	dt:set("activator", event.activator)
-	dt:set("message", msg)
-	local msg2 = dt:get("message")
+	ds:set("activator", event.activator)
+	ds:set("message", msg)
+	local msg2 = ds:get("message")
 	if msg2 == msg then
 		event.me:SayTo(event.activator, "Message '" .. msg .. "' saved.\nThe player will see this message if (s)he talks to the lost soul.")
 	else
@@ -39,9 +39,9 @@ end
 
 function topicInfo()
 	local msg = "\nContents of data_store:\nGlobal:"
-	for k1, v1 in pairs(data_store) do
-		if k1 ~= "n" and k1 ~= "_players" then
-			msg = msg .. "\n'" .. tostring(k1) .. "' => DataTable:\nLast change: " .. os.date("!%Y-%m-%d %H:%M:%S %Z", v1._changed) .. "\nContents:\n---"
+	for k1, v1 in pairs(_data_store) do
+		if k1 ~= "n" and k1 ~= "_players" and k1 ~= "_serialize" and k1 ~= "_unserialize" and k1 ~= "_ignore" and k1 ~= "_save" and k1 ~= "_ignore_player" and k1 ~= "_load" and k1 ~= "save" then
+			msg = msg .. "\n'" .. tostring(k1) .. "' => DataStore:\nLast change: " .. os.date("!%Y-%m-%d %H:%M:%S %Z", v1._changed) .. "\nContents:\n---"
 			for k2, v2 in pairs(v1) do
 				if k2 ~= "_changed" then
 					msg = msg .. "\n'" .. tostring(k2) .. "' => '" .. tostring(v2) .. "'"
@@ -51,11 +51,11 @@ function topicInfo()
 		end
 	end
 	msg = msg .. "\nLocal:"
-	for k1, v1 in pairs(data_store._players) do
+	for k1, v1 in pairs(_data_store._players) do
 		msg = msg .. "\nPlayer '" .. tostring(k1) .. "':"
 		for k2, v2 in pairs(v1) do
 			if k2 ~= "n" then
-				msg = msg .. "\n'" .. tostring(k2) .. "' => DataTable:\nLast change: " .. os.date("!%Y-%m-%d %H:%M:%S %Z", v2._changed) .. "\nContents:\n---"
+				msg = msg .. "\n'" .. tostring(k2) .. "' => DataStore:\nLast change: " .. os.date("!%Y-%m-%d %H:%M:%S %Z", v2._changed) .. "\nContents:\n---"
 				for k3, v3 in pairs(v2) do
 					if k3 ~= "_changed" then
 						msg = msg .. "\n'" .. tostring(k3) .. "' => '" .. tostring(v3) .. "'"
@@ -66,6 +66,11 @@ function topicInfo()
 		end
 	end
 	event.me:SayTo(event.activator, msg)
+end
+
+function topicSave()
+	_data_store.save(true)
+	event.me:SayTo(event.activator, "Done.")
 end
 
 function topicRecursive()
@@ -126,11 +131,13 @@ Available tests/topics:
 ^data^ <message>
 ^data2^ <player> <message>
 ^info^
+^save^
 
 ^recursive^ and ^recursive2^ tests recursive scripts.
 ^data^ tests the storage of global data.
 ^data2^ tests the storage of data for a player.
-^info^ dumps the contents of 'data_store'.]])
+^info^ dumps the contents of '_data_store'.
+^save^ saves '_data_store'.]])
 
 tl:addTopics("recursive", topicRecursive)
 tl:addTopics("recursive2", topicRecursive2)
@@ -138,5 +145,6 @@ tl:addTopics("recursive3", topicRecursive3)
 tl:addTopics("data2.*", topicData2)
 tl:addTopics("data.*", topicData)
 tl:addTopics("info", topicInfo)
+tl:addTopics("save", topicSave)
 
 tl:checkMessage()

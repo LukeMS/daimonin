@@ -1,9 +1,9 @@
 TopicList = {}
-TopicList_mt = {__index = TopicList}
+_TopicList_mt = {__index = TopicList}
 
 function TopicList:new()
 	local obj = {topics = {}}
-	setmetatable(obj, TopicList_mt)
+	setmetatable(obj, _TopicList_mt)
 	return obj
 end
 
@@ -46,7 +46,7 @@ function TopicList:checkMessage()
 				table.remove(captures,1) -- get rid of indices
 				table.remove(captures,1)
 				self:_doActions(event, topics.actions, captures)
-				return 
+				return
 			end
 		end
 	end

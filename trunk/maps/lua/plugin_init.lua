@@ -10,6 +10,19 @@
 
 require("data_store")
 
+function string.capitalize(s, b_keep)
+	local f = string.sub(s, 1, 1)
+	if string.len(s) > 1 then
+	s = string.sub(s, 2)
+	if not b_keep then
+		s = string.lower(s)
+	end
+	else
+		s = ""
+	end
+	return string.upper(f) .. s
+end
+
 -- string.split() function
 function string.split(s, sep)
 	if s == nil then return nil end
@@ -40,6 +53,10 @@ function _error(msg)
         msg_wiz_obj(event.me)
         msg_wiz_obj(event.other)
     end
-	
+
     return msg
+end
+
+function _shutdown()
+	_data_store.save(true)
 end

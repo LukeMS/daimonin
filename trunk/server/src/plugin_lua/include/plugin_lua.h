@@ -39,8 +39,8 @@
 #define PLUGIN_LUA_H
 
 /* First the required header files - only the module interface and lua */
-#include <lua.h> 
-#include <lauxlib.h> 
+#include <lua.h>
+#include <lauxlib.h>
 #include <plugin.h>
 
 #undef MODULEAPI
@@ -129,7 +129,7 @@ extern MODULEAPI int        HandleUseWeaponEvent(CFParm *CFP);
 extern MODULEAPI int        HandleEvent(CFParm *CFP);
 extern MODULEAPI int        HandleGlobalEvent(CFParm *CFP);
 
-/* Called to start the Lua interpreter. */        
+/* Called to start the Lua interpreter. */
 extern MODULEAPI void       init_Daimonin_Lua();
 
 /* This is the new-style hook data */
@@ -146,10 +146,10 @@ struct lua_context
     struct lua_context *next, *prev;
     int resume_time;
     tag_t tag;
-    
+
     /* Runtime statistics */
     struct timeval start_time, running_time;
-    
+
     /* Lua environment data */
     lua_State          *state; /* The actual lua environment */
     int                 threadidx; /* ref to thread object in the registry */
@@ -202,7 +202,7 @@ typedef struct lua_object_s
 
 typedef struct lua_class_s
 {
-    enum lua_object_type    type; 
+    enum lua_object_type    type;
     const char             *name;
     int                     meta;    /* ref to the metatable for class objects */
 
@@ -314,4 +314,4 @@ extern PythonCmd CustomCommand[NR_CUSTOM_CMD];
 /* way I found to pass the command index to cmd_customPython.                */
 extern int NextCustomCommand;
 #endif
-#endif /*PLUGIN_PYTHON_H*/
+#endif /*PLUGIN_LUA_H*/

@@ -454,6 +454,7 @@ int                         findPlugin(const char *id);
 void                        initPlugins(void);
 void                        removeOnePlugin(const char *id);
 void                        initOnePlugin(const char *pluginfile);
+void                        removePlugins(void);
 CFParm                     *CFWLog(CFParm *PParm);
 CFParm                     *CFWFixPlayer(CFParm *PParm);
 CFParm                     *CFWNewInfoMap(CFParm *PParm);
