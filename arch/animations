@@ -557,11 +557,6 @@ curtain1.132
 curtain1.131
 curtain1.132
 mina
-anim detect_magic
-det_magic.111
-det_magic.112
-det_magic.113
-mina
 anim detector
 facings 9
 dummy.111
@@ -2115,6 +2110,36 @@ magic_wall.171
 dummy.111
 magic_wall.181
 dummy.111
+mina
+anim meffect_blue
+effect1_blue.101
+effect1_blue.102
+effect1_blue.103
+effect1_blue.104
+mina
+anim meffect_green
+effect1_green.101
+effect1_green.102
+effect1_green.103
+effect1_green.104
+mina
+anim meffect_pink
+effect1_pink.101
+effect1_pink.102
+effect1_pink.103
+effect1_pink.104
+mina
+anim meffect_purple
+effect1_purble.101
+effect1_purble.102
+effect1_purble.103
+effect1_purble.104
+mina
+anim meffect_yellow
+effect1_yellow.101
+effect1_yellow.102
+effect1_yellow.103
+effect1_yellow.104
 mina
 anim monk
 facings 25

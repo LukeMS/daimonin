@@ -7066,20 +7066,75 @@ flying 1
 glow_radius 3
 no_pick 1
 end
-Object detect_magic
+Object meffect_yellow
 name magic glow
-face det_magic.111
+face effect1_yellow.101
 type 79
 editor_folder magic/spell_effect
 layer 7
-animation detect_magic
+animation meffect_yellow
 is_animated 1
-anim_speed 4
+anim_speed 1
 speed 1
 is_used_up 1
 no_pick 1
-see_anywhere 1
-food 3
+food 5
+end
+Object meffect_blue
+name magic glow
+face effect1_blue.101
+type 79
+editor_folder magic/spell_effect
+layer 7
+animation meffect_blue
+is_animated 1
+anim_speed 1
+speed 1
+is_used_up 1
+no_pick 1
+food 5
+end
+Object meffect_green
+name magic glow
+face effect1_green.101
+type 79
+editor_folder magic/spell_effect
+layer 7
+animation meffect_green
+is_animated 1
+anim_speed 1
+speed 1
+is_used_up 1
+no_pick 1
+food 5
+end
+Object meffect_pink
+name magic glow
+face effect1_pink.101
+type 79
+editor_folder magic/spell_effect
+layer 7
+animation meffect_pink
+is_animated 1
+anim_speed 1
+speed 1
+is_used_up 1
+no_pick 1
+food 5
+end
+Object meffect_purple
+name magic glow
+face effect1_purble.101
+type 79
+editor_folder magic/spell_effect
+layer 7
+animation meffect_purple
+is_animated 1
+anim_speed 1
+speed 1
+is_used_up 1
+no_pick 1
+food 5
 end
 Object cause_wounds
 name cause light wounds
