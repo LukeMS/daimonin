@@ -6,13 +6,13 @@ face leather_ar.101
 last_heal 6
 last_sp 18
 ac 3
-protect_impact 15
+protect_impact 10
 protect_cleave 15
 protect_slash 15
-protect_pierce 15
+protect_pierce 10
 weight 3450
 value 30
-is_vul_acid 1
+is_vul_physical 1
 is_vul_elemental 1
 is_vul_magic 1
 is_vul_sphere 1

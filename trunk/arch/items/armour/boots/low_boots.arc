@@ -4,11 +4,11 @@ face low_boots.101
 layer 3
 value 40
 weight 450
-protect_pierce 4
-protect_impact 4
-protect_cleave 4
-protect_slash 4
-is_vul_acid 1
+protect_pierce 6
+protect_impact 6
+protect_cleave 6
+protect_slash 6
+is_vul_physical 1
 is_vul_elemental 1
 is_vul_magic 1
 is_vul_sphere 1

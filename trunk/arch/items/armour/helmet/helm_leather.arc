@@ -6,12 +6,12 @@ face helm_leather.101
 last_heal 5
 weight 900
 ac 1
-protect_impact 3
-protect_cleave 3
-protect_slash 3
-protect_pierce 3
+protect_impact 4
+protect_cleave 4
+protect_slash 4
+protect_pierce 4
 value 15
-is_vul_acid 1
+is_vul_physical 1
 is_vul_elemental 1
 is_vul_magic 1
 is_vul_sphere 1

@@ -1,0 +1,20 @@
+Object shield_defender
+name defender
+type 33
+layer 3
+face shield_defender.101
+ac 2
+item_level 10
+protect_impact 12
+protect_cleave 6
+protect_pierce 6
+protect_slash 12
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+material_real 65
+material 2
+weight 1500
+value 324
+end

@@ -4,11 +4,11 @@ type 33
 layer 3
 face shield.101
 ac 1
-protect_impact 5
+protect_impact 10
 protect_cleave 5
 protect_pierce 5
-protect_slash 5
-is_vul_acid 1
+protect_slash 10
+is_vul_physical 1
 is_vul_elemental 1
 is_vul_magic 1
 is_vul_sphere 1

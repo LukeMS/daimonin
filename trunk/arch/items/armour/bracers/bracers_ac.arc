@@ -4,11 +4,11 @@ layer 3
 type 104
 face bracers_ac.101
 ac 1
-protect_impact 3
-protect_slash 3
-protect_pierce 3
-protect_cleave 3
-is_vul_acid 1
+protect_impact 6
+protect_slash 6
+protect_pierce 6
+protect_cleave 6
+is_vul_physical 1
 is_vul_elemental 1
 is_vul_magic 1
 is_vul_sphere 1
