@@ -46,8 +46,8 @@ const Real PLAYER_WALK_SPEED = 2.0f;
 class Player
 {
   private:
-	int mWalking;
-	int mTurning;
+	Real mWalking;
+	Real mTurning;
     Real     _anim_speed;
 	Radian   mFacing;
 	Real mIdleTime;
@@ -76,8 +76,8 @@ class Player
 		mAnimStates[WALK]  = entity->getAnimationState("Walk");
 	}
 
-	void walking(int walk)  { mWalking = walk; }
-	void turning(int turn)  { mTurning = turn; }	
+	void walking(Real walk)  { mWalking = walk; }
+	void turning(Real turn)  { mTurning = turn; }	
 	const Vector3& getPos() { return mTranslateVector; }
     static Player &getSingelton() { static Player singelton; return singelton; }
 

@@ -29,7 +29,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 static std::string mStrPlayerName;
 
 const int SELECTION_POS_Y = 101;
-const int MAX_DIALOG_TXT_LINES = 12;
+const unsigned int MAX_DIALOG_TXT_LINES = 12;
 static OverlayElement *mElementLine[MAX_DIALOG_TXT_LINES], *mElementSelectionBar;
 static OverlayContainer *mDialogSelPanel;
 static std::string mStrPassword;
@@ -74,7 +74,7 @@ bool Dialog::Init()
 	
 	mDialogSelPanel= static_cast<OverlayContainer*>(OverlayManager::getSingleton().getOverlayElement("Dialog/MetaSelect/Back"));
 	std::string name= "Dialog/Text/";
-    for (int i=0; i < MAX_DIALOG_TXT_LINES; i++)
+    for (unsigned int i=0; i < MAX_DIALOG_TXT_LINES; i++)
 	{
          mElementLine[i]= OverlayManager::getSingleton().
 			cloneOverlayElementFromTemplate("Dialog/TextRow",name+"Line_"+ StringConverter::toString(i));
