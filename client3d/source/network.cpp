@@ -1,4 +1,4 @@
-/*
+/*GAME_STATUS_CONNECT
 -----------------------------------------------------------------------------
 This source file is part of Daimonin (http://daimonin.sourceforge.net)
 
@@ -274,6 +274,7 @@ void Network::Update()
 			{
 				Dialog::getSingelton().setSelText(i++, (*iter)->nameip.c_str());
 			}
+			Dialog::getSingelton().UpdateLogin(DIALOG_STAGE_GET_META_SERVER);
 		}
 		if (TextInput::getSingleton().isCanceled())
 		{
@@ -306,7 +307,7 @@ void Network::Update()
 		///////////////////////////////////////////////////////////////////////// 
 		mGameStatusVersionFlag = false;
 		list<mStructServer*>::const_iterator iter = mServerList.begin();
-		for (unsigned int i=0 ; i < Option::getSingelton().mSelectedMetaServer; ) { ++iter; }
+		for (unsigned int i=0 ; i < Option::getSingelton().mSelectedMetaServer; ++i) { ++iter; }
 		if (!OpenSocket((char*)(*iter)->nameip.c_str(), (*iter)->port))
 		{
 			TextWin->Print("connection failed!", ColourValue::Red);
@@ -453,21 +454,21 @@ void Network::Update()
         Option::getSingelton().GameStatus = GAME_STATUS_LOGIN;
         // now wait for login request of the server
 	}
-    else if (Option::getSingelton().GameStatus == GAME_STATUS_LOGIN)
-    {
-        // map_transfer_flag = 0;
+	else if (Option::getSingelton().GameStatus == GAME_STATUS_LOGIN)
+	{
+		// map_transfer_flag = 0;
 		TextInput::getSingleton().startTextInput(1); // every start() needs a stop()!
-        if (TextInput::getSingleton().isCanceled())
-        {
-            TextWin->Print("Break Login.", ColourValue::Red);
+		if (TextInput::getSingleton().isCanceled())
+		{
+			TextWin->Print("Break Login.", ColourValue::Red);
 			TextInput::getSingleton().stop();
 			Dialog::getSingelton().visible(false);
-            Option::getSingelton().GameStatus = GAME_STATUS_START;
-        }
-    }
-    else if (Option::getSingelton().GameStatus == GAME_STATUS_NAME)
-    {
-        // map_transfer_flag = 0;
+			Option::getSingelton().GameStatus = GAME_STATUS_START;
+		}
+	}
+	else if (Option::getSingelton().GameStatus == GAME_STATUS_NAME)
+	{
+		// map_transfer_flag = 0;
 		Dialog::getSingelton().UpdateLogin(DIALOG_STAGE_LOGIN_GET_NAME);
 		if (TextInput::getSingleton().isCanceled())
 		{
@@ -475,14 +476,14 @@ void Network::Update()
 		}
 		else if (TextInput::getSingleton().isFinished())
 		{
-            //strcpy(cpl.name, InputString);
-            send_reply((char*)TextInput::getSingleton().getString());
-            Dialog::getSingelton().setWarning(DIALOG_WARNING_NONE);
+			//strcpy(cpl.name, InputString);
+			send_reply((char*)TextInput::getSingleton().getString());
+			Dialog::getSingelton().setWarning(DIALOG_WARNING_NONE);
 			Option::getSingelton().GameStatus = GAME_STATUS_LOGIN;
-        }
+		}
 	}
-    else if (Option::getSingelton().GameStatus == GAME_STATUS_PSWD)
-    {
+	else if (Option::getSingelton().GameStatus == GAME_STATUS_PSWD)
+	{
 		// map_transfer_flag = 0;
         // textwin_clearhistory();
 		Dialog::getSingelton().UpdateLogin(DIALOG_STAGE_LOGIN_GET_PASSWD);
@@ -775,7 +776,7 @@ void Network::read_metaserver_data()
 	strDesc4 = strMetaData.substr(startPos, strMetaData.size()-startPos);
 
 	const int port = 13327;
-	add_metaserver_data(strIP.c_str(), port, atoi(strPlayer.c_str()), strVersion.c_str(),
+	add_metaserver_data(strName.c_str(), port, atoi(strPlayer.c_str()), strVersion.c_str(),
 		strDesc1.c_str(),  strDesc2.c_str(),  strDesc3.c_str(),  strDesc4.c_str());
 }
 
@@ -1117,6 +1118,7 @@ int Network::read_socket()
 			{
 				LogFile::getSingelton().Error("ReadPacket got error %d, returning 0",errno);
 				TextWin->Print("WARNING: Lost or bad server connection.", ColourValue::Red);
+				return -1;
 			}
 			return 0;
 		}
