@@ -167,16 +167,43 @@ void enter_player_savebed(object *op)
      * to the emergency path.  Update what the players savebed is
      * while we're at it.
      */
-    if (oldmap == op->map && strcmp(op->contr->savebed_map, oldmap->path)) {
-	LOG(llevDebug,"Player %s savebed location %s is invalid - going to EMERGENCY_MAPPATH\n",
-	    op->name, op->contr->savebed_map);
-	strcpy(op->contr->savebed_map, EMERGENCY_MAPPATH);
-	op->contr->bed_x = EMERGENCY_X;
-	op->contr->bed_y = EMERGENCY_Y;
-    FREE_AND_COPY_HASH(EXIT_PATH(tmp),op->contr->savebed_map);
-	EXIT_X(tmp) = op->contr->bed_x;
-	EXIT_Y(tmp) = op->contr->bed_y;
-	enter_exit(op,tmp);
+    if (oldmap == op->map && strcmp(op->contr->savebed_map, oldmap->path)) 
+	{
+		/* HOTFIX: apartments: We have saved in beta 1 stoneglow apartments as
+		 * "_stoneglow_appartment" - but in beta 2 we need "$stoneglow$appartment"
+		 * lets search for "_stoneglow_appartment" in the save bed string.
+		 * if we find it, change it to '§' version and give it another try.
+		 */
+		char *tmp_str;
+		if((tmp_str=strstr(op->contr->savebed_map,"_stoneglow_appartment")))
+		{
+			LOG(llevDebug,"HOTFIX (%s): found old save bed string -  trying '$' version.\n", query_name(op));
+			tmp_str[0] = '$';	
+			tmp_str[10] = '$';
+			
+		    FREE_AND_COPY_HASH(EXIT_PATH(tmp),op->contr->savebed_map);
+		    enter_exit(op,tmp);
+		    if (oldmap == op->map && strcmp(op->contr->savebed_map, oldmap->path)) 
+			{
+				LOG(llevDebug,"HOTFIX (%s): failed.\n", query_name(op));
+			}
+			else
+			{
+				LOG(llevDebug,"HOTFIX (%s): success.\n", query_name(op));
+			    free_object(tmp); 
+				return;
+			}
+		}
+
+		LOG(llevDebug,"Player %s savebed location %s is invalid - going to EMERGENCY_MAPPATH (%s)\n",
+									    query_name(op), op->contr->savebed_map,EMERGENCY_MAPPATH);
+		strcpy(op->contr->savebed_map, EMERGENCY_MAPPATH);
+		op->contr->bed_x = EMERGENCY_X;
+		op->contr->bed_y = EMERGENCY_Y;
+		FREE_AND_COPY_HASH(EXIT_PATH(tmp),op->contr->savebed_map);
+		EXIT_X(tmp) = op->contr->bed_x;
+		EXIT_Y(tmp) = op->contr->bed_y;
+		enter_exit(op,tmp);
     }
     free_object(tmp);
 }
@@ -390,7 +417,7 @@ char *clean_path(const char *file)
     strncpy(newpath, file, MAX_BUF-1);
     newpath[MAX_BUF-1]='\0';
     for (cp=newpath; *cp!='\0'; cp++) {
-	if (*cp=='/') *cp='_';
+	if (*cp=='/') *cp='$';
     }
     return newpath;
 }
@@ -416,7 +443,7 @@ char *unclean_path(const char *src)
     newpath[MAX_BUF-1]='\0';
 
     for (cp2=newpath; *cp2!='\0'; cp2++) {
-	if (*cp2=='_') *cp2='/';
+	if (*cp2=='$') *cp2='/';
     }
     return newpath;
 }
@@ -492,7 +519,7 @@ static void enter_unique_map(object *op, object *exit_ob)
 	    /* Need to copy this over, as clean_path only has one static return buffer */
 	    strcpy(tmpc, clean_path(reldir));
 	    /* Remove final component, if any */ 
-	    if ((cp=strrchr(tmpc, '_'))!=NULL) *cp=0;
+	    if ((cp=strrchr(tmpc, '$'))!=NULL) *cp=0;
 
 	    sprintf(apartment, "%s/%s/%s/%s_%s", settings.localdir,
 		    settings.playerdir, op->name, tmpc,
@@ -629,7 +656,7 @@ void enter_exit(object *op, object *exit_ob)
 			if (!newmap)
 			{
 				if(op->type == PLAYER)
-					new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is closed.", exit_ob->name);
+					new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is closed.", query_name(exit_ob));
 				return;
 			}
 
@@ -693,12 +720,28 @@ void enter_exit(object *op, object *exit_ob)
 		newmap = ready_map_name(op->contr->maplevel, flags);
 		if (!newmap) 
 		{
-			LOG(llevBug,"BUG: enter_exit(): Pathname to map does not exist! player: %s (%s)\n", 
-																	op->name,	op->contr->maplevel);
-			newmap = ready_map_name(EMERGENCY_MAPPATH, 0);
-			op->x = EMERGENCY_X;
-			op->y = EMERGENCY_Y;
+			/* HOTFIX; for beta 1 stoneglow apartments */
+			char *tmp_str;
+			if((tmp_str=strstr(op->contr->maplevel,"_stoneglow_appartment")))
+			{
+				LOG(llevDebug,"HOTFIX (%s): found old save bed string -  trying '$' version.\n", query_name(op));
+				tmp_str[0] = '$';	
+				tmp_str[10] = '$';
+			
+				newmap = ready_map_name(op->contr->maplevel, flags);
 
+				LOG(llevDebug,"HOTFIX (%s): ready map %x.\n", query_name(op), newmap);
+			}
+
+
+			if (!newmap)
+			{
+				LOG(llevBug,"BUG: enter_exit(): Pathname to map does not exist! player: %s (%s)\n", 
+																	op->name,	op->contr->maplevel);
+				newmap = ready_map_name(EMERGENCY_MAPPATH, 0);
+				op->x = EMERGENCY_X;
+				op->y = EMERGENCY_Y;
+			}
 			/* If we can't load the emergency map, something is probably really
 			* screwed up, so bail out now.
 			*/

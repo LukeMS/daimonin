@@ -158,7 +158,7 @@ static item *new_item ()
     op->face = 0;
     op->weight = 0;
     op->magical = op->cursed = op->damned = 0;
-    op->unpaid = op->locked = op->applied = 0;
+    op->traped =op->unpaid = op->locked = op->applied = 0;
     op->flagsval=0;
     op->animation_id=0;
     op->last_anim=0;
@@ -400,7 +400,7 @@ static void set_flag_string (item *op)
 	strcat (op->flags, " (unpaid)");
 }
 
-static void get_flags (item *op, uint16 flags)
+static void get_flags (item *op, int flags)
 {
     op->open    = flags & F_OPEN    ? 1 : 0;
     op->damned  = flags & F_DAMNED  ? 1 : 0;
@@ -409,6 +409,7 @@ static void get_flags (item *op, uint16 flags)
     op->unpaid  = flags & F_UNPAID  ? 1 : 0;
     op->applied = flags & F_APPLIED ? 1 : 0;
     op->locked  = flags & F_LOCKED  ? 1 : 0;
+    op->traped  = flags & F_TRAPED  ? 1 : 0;
     op->flagsval= flags;
     op->apply_type = flags & F_APPLIED;
     set_flag_string(op);
@@ -455,7 +456,7 @@ static sint32 get_nrof(char *name)
 }
 
 void set_item_values (item *op, char *name, sint32 weight, uint16 face, 
-		      uint16 flags, uint16 anim, uint16 animspeed,
+		      int flags, uint16 anim, uint16 animspeed,
 		      sint32 nrof,uint8 itype, uint8 stype,
               uint8 qual,uint8 cond,uint8 skill,uint8 level,uint8 dir) 
 {
@@ -594,7 +595,7 @@ void update_item(int tag, int loc, char *name, int weight, int face, int flags,
     player->nrof = get_nrof(name);
 	player->weight = (float) weight / 1000;
 	player->face = face;
-	get_flags (player, (uint16)flags);
+	get_flags (player, flags);
     if (player->inv) player->inv->inv_updated = 1;
 	player->animation_id = anim;
     player->anim_speed = animspeed;
@@ -606,7 +607,7 @@ void update_item(int tag, int loc, char *name, int weight, int face, int flags,
 	    remove_item(ip);
 	    ip=NULL;
 	}
-        set_item_values(ip?ip:create_new_item(env,tag), name, weight,(uint16) face, (uint16)flags,
+        set_item_values(ip?ip:create_new_item(env,tag), name, weight,(uint16) face, flags,
 			(uint16)anim,(uint16) animspeed,nrof, itype, stype,qual,cond,skill,level, direction);
     }
 }

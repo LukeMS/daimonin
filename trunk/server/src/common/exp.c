@@ -459,38 +459,46 @@ int adjust_exp(object *pl, object *op, int exp) {
     return exp;	/* return the actual amount changed stats.exp we REALLY have added to our skill */ 
 }
 
-
-/* OLD: Applies a death penalty experience.  20% or 3 levels, whichever is
-   less experience lost. */
-/* NEW: We run through the skills and reduce every skill by 5%-skilllevel/10. 
-   but min 1%. This is only the first try - better will come */
+/* we are now VERY friendly - but not because we want. With the
+ * new sytem, we never lose level, just % of the exp we gained for
+ * the next level. Why? Because dropping the level on purpose by
+ * dying again & again will allow under some special circumstances
+ * rich players to use exploits.
+ * This here is newbie friendly and it allows to make the higher
+ * level simply harder. By losing increased levels at high levels
+ * you need at last to make recover easy. Now you will not lose much
+ * but it will be hard in any case to get exp in high levels.
+ * This is a just a design adjustment.
+ */
 void apply_death_exp_penalty(object *op)
 {
     object *tmp;
-    long int del_exp=0;
-    int loss_5p, loss;
+	float loss_p;
+	long level_exp, loss_exp;
 
     op->contr->update_skills=1; /* we will sure change skill exp, mark for update */
     for(tmp=op->inv;tmp;tmp=tmp->below)
     {
-        if(tmp->type==SKILL && tmp->stats.exp)
+		/* only adjust skills with level and a positive exp value - negative exp has special meaning */
+        if(tmp->type==SKILL && tmp->level && tmp->last_eat == 1)
         { 
-            loss_5p = 10 -(tmp->level/10);
-            if(loss_5p >10)
-                loss_5p =10;
-            if (loss_5p <=0)
-                loss_5p = 1;
+			/* first, lets check there are exp we can drain. */
+			level_exp = tmp->stats.exp - new_levels[tmp->level];
+			if(level_exp < 0) /* just a sanity check */
+				LOG(llevBug," DEATH_EXP: Skill %s (%d %d) for player %s -> less exp as level need!\n", 
+									query_name(tmp), tmp->level, tmp->stats.exp, query_name(op));
+			if(!level_exp)
+				continue;
 
-            loss = (int) (((float)tmp->stats.exp/100.0f)*(float)loss_5p);
-            if(loss<=0)
-                loss = 1;
-            if (loss>500000)
-                loss=500000;
-            if(loss >=tmp->stats.exp)
-                loss = tmp->stats.exp;
-            del_exp+=adjust_exp(op, tmp,-loss);
-            
-            player_lvl_adj(op,tmp);
+			loss_p = 0.9f - (((float)tmp->level/10.0f)*0.1f);
+			loss_exp = level_exp - (int)((float)level_exp * loss_p);
+
+			/* again some sanity checks */
+			if(loss_exp>0 && loss_exp <= level_exp)
+			{
+				adjust_exp(op, tmp,-loss_exp);            
+				player_lvl_adj(op,tmp);
+			}
         }
     }
 

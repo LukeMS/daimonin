@@ -2,7 +2,6 @@ Object trap_needle
 name poison needle
 type 154
 face needle.101
-speed 1
 hp 1
 msg
 You are pricked by a needle!

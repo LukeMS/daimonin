@@ -8,6 +8,7 @@ wc 0
 wc_range 20
 magic 0
 maxhp 1
+identified 1
 dam 0
 maxgrace 10
 speed 0.001

@@ -1089,7 +1089,7 @@ int fix_generated_item (object *op, object *creator, int difficulty, int a_chanc
 		}
 	}
 
-	if (!op->title && op->type != RUNE) /* Only modify object if not special */
+	if (!op->title || op->type == RUNE) /* Only modify object if not special */
 	{
 		switch(op->type) 
 		{
@@ -1323,10 +1323,7 @@ int fix_generated_item (object *op, object *creator, int difficulty, int a_chanc
 			break;
 
 			case RUNE:
-				(*trap_adjust_func)(op,difficulty);
-				if(op->level == 0)
-					LOG(llevDebug,"fix_generated_items(): Trap (%s) level == 0! (creator: %s lvl: %d)\n", 
-					query_name(op), query_name(creator), creator?creator->level:-1); 
+				(*trap_adjust_func)(op,difficulty); /* artifact AND normal treasure runes!! */
 			break;
 		} /* end switch */
 	}
@@ -1838,7 +1835,7 @@ static void set_material_real(object *op, sint8 start, sint8 end)
 	op->material_real +=v;
 
     op->item_quality = material_real[op->material_real].quality;
-    op->item_condition = op->item_quality ;             
+    op->item_condition = op->item_quality;             
 }
 
 /*

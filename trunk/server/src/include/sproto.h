@@ -365,7 +365,6 @@ void init_level_color_table(void);
 /* login.c */
 void emergency_save(int flag);
 void delete_character(const char *name, int new);
-void unlock_player(const char *name);
 int verify_player(char *name, char *password);
 int check_name(player *me, char *name);
 int create_savedir_if_needed(char *savedir);
@@ -551,6 +550,7 @@ CFParm *CFWFreeString(CFParm *PParm);
 CFParm *CFWGetFirstMap(CFParm *PParm);
 CFParm *CFWGetFirstPlayer(CFParm *PParm);
 CFParm *CFWGetFirstArchetype(CFParm *PParm);
+CFParm *CFWShowCost(CFParm *PParm);
 CFParm *CFWQueryCost(CFParm *PParm);
 CFParm *CFWQueryMoney(CFParm *PParm);
 CFParm *CFWPayForItem(CFParm *PParm);

@@ -2,7 +2,6 @@ Object trap_rocks
 name falling rocks trap
 type 154
 face falling_rocks.101
-speed 1
 hp 1
 msg
 You set off a falling rocks trap!

@@ -155,6 +155,28 @@ sp -1
 layer 5
 no_pick 1
 end
+Object sewer_hole1
+name sewer hole
+face sewer_hole1.101
+type 66
+editor_folder connect/exists
+layer 3
+hp -1
+sp -1
+no_teleport 1
+no_pick 1
+end
+Object sewer_hole2
+name sewer hole
+face sewer_hole2.101
+type 66
+editor_folder connect/exists
+layer 3
+hp -1
+sp -1
+no_teleport 1
+no_pick 1
+end
 Object gate_open
 name gate
 face gate_door1.114
@@ -2859,6 +2881,7 @@ name ability cause light wounds
 face force.101
 type 110
 editor_folder forces/ability
+identified 1
 is_magical 1
 sys_object 1
 no_drop 1
@@ -2870,10 +2893,10 @@ name dragonbreath
 face force.101
 type 110
 editor_folder forces/ability
+identified 1
 sys_object 1
 no_drop 1
 hp 3
-sp 58
 maxsp 5
 end
 Object ability_firestorm
@@ -2882,27 +2905,29 @@ face force.101
 type 110
 editor_folder forces/ability
 sys_object 1
+identified 1
 is_magical 1
 no_drop 1
 no_pick 1
-sp 1
 end
 Object ability_icestorm
 name ability icestorm
 face force.101
 type 110
 editor_folder forces/ability
+identified 1
 sys_object 1
 is_magical 1
 no_drop 1
 no_pick 1
-sp 2
+sp 1
 end
 Object ability_mbullet
 name ability magic bullet
 face force.101
 type 110
 editor_folder forces/ability
+identified 1
 sys_object 1
 is_magical 1
 no_drop 1
@@ -2915,6 +2940,7 @@ face force.101
 type 14
 editor_folder forces/ability
 race rock
+identified 1
 sys_object 1
 nrof 1
 no_drop 1
@@ -2937,6 +2963,7 @@ wc 1
 wc_range 20
 magic 1
 Dex -3
+identified 1
 maxhp 1
 speed 0.005
 maxgrace 10
@@ -2962,6 +2989,7 @@ wc 0
 wc_range 20
 magic 0
 maxhp 1
+identified 1
 dam 0
 maxgrace 10
 speed 0.001
@@ -2979,6 +3007,7 @@ type 79
 editor_folder forces/disease
 layer 3
 value 0
+identified 1
 no_pick 1
 food 15
 speed 0.01
@@ -2990,6 +3019,7 @@ face force.101
 type 98
 editor_folder forces/disease
 title immunity
+identified 1
 sys_object 1
 end
 Object symptom
@@ -2998,6 +3028,7 @@ type 159
 editor_folder forces/disease
 sys_object 1
 speed 0.001
+identified 1
 end
 Object tapeworms
 name tapeworms
@@ -3016,6 +3047,7 @@ wc_range 20
 magic 1
 maxhp 1
 maxgrace -1
+identified 1
 food -1
 speed 0.001
 last_sp 0
@@ -3040,6 +3072,7 @@ dam 1
 wc 1
 wc_range 20
 magic 1
+identified 1
 Cha -4
 maxhp 1
 maxgrace 50
@@ -3057,6 +3090,7 @@ name blindness
 face force.101
 type 49
 editor_folder forces/forces
+identified 1
 sys_object 1
 speed 0.05
 is_blind 1
@@ -3067,6 +3101,7 @@ name confusion
 face force.101
 type 19
 editor_folder forces/forces
+identified 1
 sys_object 1
 speed 0.05
 no_drop 1
@@ -3076,6 +3111,7 @@ Object depletion
 face force.101
 type 114
 editor_folder forces/forces
+identified 1
 layer 0
 sys_object 1
 no_drop 1
@@ -3086,6 +3122,7 @@ face force.101
 type 114
 editor_folder forces/forces
 layer 0
+identified 1
 sys_object 1
 no_drop 1
 speed 0.002
@@ -3096,6 +3133,7 @@ face force.101
 type 114
 editor_folder forces/forces
 sys_object 1
+identified 1
 no_drop 1
 end
 Object poisoning
@@ -3103,6 +3141,7 @@ name applied poison
 face force.101
 type 105
 editor_folder forces/forces
+identified 1
 food 6
 speed -0.015
 speed_left -1.0
@@ -3119,6 +3158,7 @@ type 114
 editor_folder forces/forces
 sys_object 1
 exp -1
+identified 1
 speed 0.05
 no_drop 1
 food 5
@@ -3439,6 +3479,22 @@ editor_folder indoor/chairs
 no_pick 1
 layer 4
 end
+Object throne.111
+name throne
+face throne.111
+type 79
+editor_folder indoor/chairs
+no_pick 1
+layer 4
+end
+Object throne.131
+name throne
+face throne.131
+type 79
+editor_folder indoor/chairs
+no_pick 1
+layer 4
+end
 Object anvil_111
 name anvil
 face anvil.111
@@ -3466,6 +3522,14 @@ end
 Object forge_171
 name forge
 face forge.171
+type 79
+editor_folder indoor/smithy
+no_pick 1
+layer 4
+end
+Object anvil_big_111
+name big anvil
+face anvil_big.111
 type 79
 editor_folder indoor/smithy
 no_pick 1
@@ -3542,6 +3606,54 @@ type 79
 editor_folder indoor/containers
 no_pick 1
 no_pass 1
+layer 4
+end
+Object pottery1.101
+name pottery
+face pottery1.101
+type 79
+editor_folder indoor/containers
+no_pick 1
+layer 4
+end
+Object pottery2.101
+name pottery
+face pottery2.101
+type 79
+editor_folder indoor/containers
+no_pick 1
+layer 4
+end
+Object pottery3.101
+name pottery
+face pottery3.101
+type 79
+editor_folder indoor/containers
+no_pick 1
+layer 4
+end
+Object pottery4.101
+name pottery
+face pottery4.101
+type 79
+editor_folder indoor/containers
+no_pick 1
+layer 4
+end
+Object pottery5.101
+name pottery
+face pottery5.101
+type 79
+editor_folder indoor/containers
+no_pick 1
+layer 4
+end
+Object pottery6.101
+name pottery
+face pottery6.101
+type 79
+editor_folder indoor/containers
+no_pick 1
 layer 4
 end
 Object table_round1
@@ -4394,6 +4506,26 @@ no_drop 1
 no_pick 1
 identified 1
 end
+Object close_chest7_111
+name open chest
+face chest_mm2_open.111
+type 121
+editor_folder intern/items
+layer 3
+no_pick 1
+no_drop 1
+identified 1
+end
+Object close_chest7_171
+name open chest
+face chest_mm2_open.171
+type 121
+editor_folder intern/items
+layer 3
+no_pick 1
+no_drop 1
+identified 1
+end
 Object alignment_force
 name ALIGNMENT_FORCE
 face force.101
@@ -4428,7 +4560,7 @@ speed 0
 end
 Object player_info
 face info.101
-type 98
+type 79
 editor_folder intern/player
 sys_object 1
 applied 0
@@ -4613,6 +4745,15 @@ is_player 1
 weight 70000
 food 750
 end
+Object quest_container
+face info.101
+type 120
+editor_folder intern/player
+sys_object 1
+applied 0
+no_drop 1
+layer 0
+end
 Object skill_spellcasting
 name wizardry spells
 face skill.101
@@ -4738,9 +4879,9 @@ type 43
 editor_folder intern/skills
 sub_type 1
 sys_object 1
+last_eat 2
 no_drop 1
 sp 33
-last_eat 1
 level 1
 exp 0
 end
@@ -4749,6 +4890,7 @@ name agility
 face exp.101
 type 44
 editor_folder intern/skills
+sub_type 1
 sys_object 1
 no_drop 1
 level 1
@@ -4760,6 +4902,7 @@ name personality
 face exp.101
 type 44
 editor_folder intern/skills
+sub_type 4
 sys_object 1
 no_drop 1
 level 1
@@ -4771,6 +4914,7 @@ name mental
 face exp.101
 type 44
 editor_folder intern/skills
+sub_type 2
 sys_object 1
 no_drop 1
 level 1
@@ -4782,6 +4926,7 @@ name physique
 face exp.101
 type 44
 editor_folder intern/skills
+sub_type 5
 sys_object 1
 no_drop 1
 level 1
@@ -4807,6 +4952,7 @@ name magic
 face exp.101
 type 44
 editor_folder intern/skills
+sub_type 3
 sys_object 1
 no_drop 1
 level 1
@@ -4842,6 +4988,7 @@ name wisdom
 face exp.101
 type 44
 editor_folder intern/skills
+sub_type 6
 sys_object 1
 no_drop 1
 level 1
@@ -4855,9 +5002,9 @@ type 43
 editor_folder intern/skills
 sub_type 1
 sys_object 1
+last_eat 2
 no_drop 1
 sp 15
-last_eat 1
 level 1
 exp 0
 end
@@ -5170,7 +5317,7 @@ sub_type 1
 sys_object 1
 no_drop 1
 sp 27
-last_eat 1
+last_eat 2
 level 1
 exp 0
 end
@@ -7823,6 +7970,68 @@ weight 250
 container 75000
 weapon_speed 1.0
 end
+Object wagon_small.111
+name small wagon
+face wagon_small.111
+type 122
+editor_folder items/container
+layer 4
+identified 1
+no_pick 1
+material 18
+value 350
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object wagon_small.131
+name small wagon
+face wagon_small.131
+type 122
+editor_folder items/container
+layer 4
+identified 1
+no_pick 1
+material 18
+value 350
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object chest7_111
+name chest
+face chest_mm2_closed.111
+type 122
+editor_folder items/container
+other_arch close_chest7_111
+layer 4
+no_pick 1
+identified 1
+level 1
+material 18
+material_real 65
+value 350
+container 225000
+weight 15000
+weapon_speed 1.0
+end
+Object chest7_171
+name chest
+face chest_mm2_closed.171
+type 122
+editor_folder items/container
+other_arch close_chest7_171
+layer 4
+no_pick 1
+identified 1
+level 1
+material 18
+material_real 65
+value 350
+container 225000
+weight 15000
+weapon_speed 1.0
+end
 Object coppercoin
 name coin
 face coppercoin.101
@@ -8018,7 +8227,6 @@ material 512
 value 15
 weight 400
 food 800
-speed 0.15
 nrof 1
 end
 Object torch
@@ -8053,6 +8261,22 @@ glow_radius 0
 weight 425
 food 0
 nrof 1
+end
+Object grave_fire.101
+name grave fire
+face grave_fire_off.101
+type 74
+editor_folder items/light
+layer 3
+no_pick 1
+animation grave_fire.101
+is_animated 0
+anim_speed 15
+material 64
+speed 0.02
+last_sp 5
+weight 100000
+food 1
 end
 Object horn
 face horn.101
@@ -11652,6 +11876,7 @@ type 88
 editor_folder magic/cold
 layer 7
 level 1
+glow_radius 1
 animation icestorm
 is_animated 1
 anim_speed 3
@@ -12385,6 +12610,40 @@ no_pick 1
 alive 1
 level 1
 end
+Object giant_stone
+name stone giant
+face giant_stone.131
+type 80
+editor_folder mobs/giants
+race stone giant
+randomitems mob_giant_stone
+will_apply 8
+is_evil 1
+is_male 1
+weight 13250
+exp 165
+speed -0.035
+weapon_speed 0.042
+attack_impact 90
+protect_acid 25
+ac 10
+wc 4
+dam 6
+hp -1
+maxhp 7
+terrain_flag 1
+Wis 6
+animation giant_stone
+is_animated 1
+anim_speed 4
+layer 6
+direction 5
+corpse 1
+monster 1
+no_pick 1
+alive 1
+level 1
+end
 Object guard
 name guard
 face guard1.131
@@ -12894,7 +13153,7 @@ no_pick 1
 end
 Object troll
 name troll
-face troll.141
+face troll.131
 type 80
 mpart_id 3
 editor_folder mobs/trolls
@@ -13007,6 +13266,193 @@ maxhp 9
 speed -0.0225
 level 1
 weight 295500
+end
+Object kobold
+name kobold
+face kobold.131
+type 80
+editor_folder mobs/demihumans
+race kobold
+is_male 1
+corpse 1
+layer 6
+direction 5
+is_neutral 1
+terrain_flag 1
+weapon_speed 0.035
+attack_slash 75
+Wis 6
+randomitems mob_kobold
+animation kobold
+is_animated 1
+anim_speed 4
+monster 1
+no_pick 1
+alive 1
+can_see_in_dark 1
+exp 100
+ac 9
+wc 0
+dam 5
+hp -1
+maxhp 6
+level 1
+speed -0.041
+weight 22500
+end
+Object kobold_big
+name big kobold
+face kobold_big.131
+type 80
+editor_folder mobs/demihumans
+race kobold
+is_male 1
+corpse 1
+layer 6
+direction 5
+is_neutral 1
+terrain_flag 1
+weapon_speed 0.035
+attack_slash 75
+Wis 6
+randomitems mob_kobold_big
+animation kobold_big
+is_animated 1
+anim_speed 4
+monster 1
+no_pick 1
+alive 1
+can_see_in_dark 1
+exp 100
+ac 9
+wc 0
+dam 5
+hp -1
+maxhp 6
+level 1
+speed -0.041
+weight 22500
+end
+Object worm_purple
+name purple worm
+face worm_purple.131
+type 80
+mpart_id 3
+editor_folder mobs/misc
+race worm
+layer 6
+randomitems mob_worm_purple
+direction 5
+speed -0.06
+corpse 1
+is_male 1
+is_neutral 1
+Wis 7
+terrain_flag 1
+animation worm_purple
+is_animated 1
+anim_speed 5
+monster 1
+level 1
+Con 2
+Pow 2
+can_cast_spell 1
+exp 165
+ac 11
+wc 7
+dam 5
+hp -1
+maxhp 6
+sp -1
+maxsp 10
+weapon_speed 0.040
+resist_fire 100
+resist_pierce 25
+resist_slash 25
+resist_impact 25
+resist_cleave 25
+resist_fear 100
+resist_cold -30
+attack_pierce 90
+alive 1
+no_pick 1
+weight 950000
+run_away 6
+end
+More
+Object worm_purple_b
+name purple worm
+mpart_id 3
+mpart_nr 1
+layer 6
+terrain_flag 1
+monster 1
+alive 1
+no_pick 1
+x 1
+end
+More
+Object worm_purple_c
+name purple worm
+mpart_id 3
+mpart_nr 2
+layer 6
+terrain_flag 1
+monster 1
+alive 1
+no_pick 1
+y 1
+end
+More
+Object worm_purple_d
+name purple worm
+mpart_id 3
+mpart_nr 3
+layer 6
+terrain_flag 1
+monster 1
+alive 1
+no_pick 1
+x 1
+y 1
+end
+Object demilich
+name demilich
+face demilich.131
+type 80
+editor_folder mobs/undead
+race undead
+is_evil 1
+corpse 1
+glow_radius 2
+layer 6
+direction 5
+terrain_flag 1
+weapon_speed 0.035
+attack_cleave 75
+Wis 6
+Dex 3
+Pow 2
+randomitems mob_demilich
+animation demilich
+is_animated 1
+anim_speed 4
+monster 1
+no_pick 1
+alive 1
+can_see_in_dark 1
+can_cast_spell 1
+exp 150
+ac 9
+wc 0
+dam 5
+hp -1
+maxhp 6
+sp -1
+maxsp 30
+level 1
+speed -0.0275
+weight 22500
 end
 Object director
 name director
@@ -13609,6 +14055,149 @@ no_pass 1
 layer 5
 no_pick 1
 end
+Object grave_cross1.111
+name grave
+face grave_cross1.111
+type 79
+editor_folder structures/grave
+layer 5
+no_pass 1
+no_pick 1
+end
+Object grave_cross1.131
+name grave
+face grave_cross1.131
+type 79
+editor_folder structures/grave
+layer 5
+no_pass 1
+no_pick 1
+end
+Object grave_cross2.111
+name grave
+face grave_cross2.111
+type 79
+editor_folder structures/grave
+layer 5
+no_pass 1
+no_pick 1
+end
+Object grave_cross2.131
+name grave
+face grave_cross2.131
+type 79
+editor_folder structures/grave
+layer 5
+no_pass 1
+no_pick 1
+end
+Object grave1.111
+name grave
+face grave1.111
+type 79
+editor_folder structures/grave
+layer 5
+no_pass 1
+no_pick 1
+end
+Object grave1.131
+name grave
+face grave1.131
+type 79
+editor_folder structures/grave
+layer 5
+no_pass 1
+no_pick 1
+end
+Object grave2.111
+name grave
+face grave2.111
+type 79
+editor_folder structures/grave
+layer 5
+no_pass 1
+no_pick 1
+end
+Object grave2.131
+name grave
+face grave2.131
+type 79
+editor_folder structures/grave
+layer 5
+no_pass 1
+no_pick 1
+end
+Object grave_open.111
+name open grave
+face grave_open.111
+type 79
+editor_folder structures/grave
+layer 5
+no_pass 1
+no_pick 1
+end
+Object grave_open.131
+name open grave
+face grave_open.131
+type 79
+editor_folder structures/grave
+layer 5
+no_pass 1
+no_pick 1
+end
+Object coffin_wood.111
+name wooden coffin
+face coffin_wood.111
+type 79
+editor_folder structures/grave
+layer 5
+no_pass 1
+no_pick 1
+end
+Object coffin_wood.131
+name wooden coffin
+face coffin_wood.131
+type 79
+editor_folder structures/grave
+layer 5
+no_pass 1
+no_pick 1
+end
+Object coffin_stone.111
+name stone coffin
+face coffin_stone.111
+type 79
+editor_folder structures/grave
+layer 5
+no_pass 1
+no_pick 1
+end
+Object coffin_stone.131
+name stone coffin
+face coffin_stone.131
+type 79
+editor_folder structures/grave
+layer 5
+no_pass 1
+no_pick 1
+end
+Object obelisk.101
+name obelisk
+face obelisk.101
+type 79
+editor_folder structures/grave
+layer 5
+no_pass 1
+no_pick 1
+end
+Object pool_poison
+name poison pool
+face pool_poison.101
+type 79
+editor_folder structures/pools
+layer 5
+no_pick 1
+end
 Object rune_fire
 name Rune of Fire
 face rune_fire.101
@@ -13620,7 +14209,6 @@ editor_folder traps/runes
 layer 4
 hp 1
 animation rune_fire
-speed 1
 level 1
 is_animated 0
 anim_speed 1
@@ -13639,7 +14227,6 @@ msg
 You are caught by a bear trap!
 endmsg
 editor_folder traps/traps
-speed 1
 hp 1
 animation trap_bear_trap
 level 1
@@ -13661,7 +14248,6 @@ msg
 You set off a Blades trap!
 endmsg
 editor_folder traps/traps
-speed 1
 hp 1
 animation trap_blades
 level 1
@@ -13683,7 +14269,6 @@ msg
 You set off a falling rocks trap!
 endmsg
 editor_folder traps/traps
-speed 1
 hp 1
 animation trap_rocks
 level 1
@@ -13719,7 +14304,6 @@ You are pricked by a needle!
 endmsg
 editor_folder traps/traps
 randomitems traps_needle_diseases
-speed 1
 hp 1
 animation trap_diseased_needle
 anim_speed 1
@@ -13741,7 +14325,6 @@ msg
 You are pricked by a needle!
 endmsg
 editor_folder traps/traps
-speed 1
 hp 1
 animation trap_needle
 level 1
@@ -13778,7 +14361,6 @@ You are stabbed by spikes!
 endmsg
 editor_folder traps/traps
 layer 4
-speed 1
 hp 1
 animation trap_spike_pit
 level 1
@@ -15246,6 +15828,60 @@ blocksview 1
 layer 5
 no_pick 1
 no_pass 1
+end
+Object scarecrow.111
+name scarecrow
+face scarecrow.111
+type 79
+editor_folder outdoor/scarecrow
+layer 5
+no_pass 1
+no_pick 1
+end
+Object scarecrow.131
+name scarecrow
+face scarecrow.131
+type 79
+editor_folder outdoor/scarecrow
+layer 5
+no_pass 1
+no_pick 1
+end
+Object target.111
+name target
+face target.111
+type 79
+editor_folder outdoor/target
+layer 5
+no_pass 1
+no_pick 1
+end
+Object target.131
+name target
+face target.131
+type 79
+editor_folder outdoor/target
+layer 5
+no_pass 1
+no_pick 1
+end
+Object sewer_close.101
+name closed sewer hole
+face sewer_close.101
+type 79
+editor_folder outdoor/sewers
+layer 5
+no_pass 1
+no_pick 1
+end
+Object sewer_plate.101
+name sewer hole plate
+face sewer_plate.101
+type 79
+editor_folder outdoor/sewers
+layer 5
+no_pass 1
+no_pick 1
 end
 Object map
 x 16

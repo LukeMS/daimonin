@@ -212,7 +212,9 @@ char *query_cost_string(object *tmp,object *who,int flag) {
 /* This function finds out how much money the player is carrying,	*
  * and returns that value						*/
 /* Now includes any coins in active containers -- DAMN			*/
-int query_money(object *op) {
+/* or every gold type container (even not applied) */
+int query_money(object *op)
+{
     object *tmp;
     int	total=0;
 
@@ -220,14 +222,12 @@ int query_money(object *op) {
 	LOG(llevBug, "BUG: Query money called with non player/container.\n");
 	return 0;
     }
-    for (tmp = op->inv; tmp; tmp= tmp->below) {
-	if (tmp->type==MONEY) {
-	    total += tmp->nrof * tmp->value;
-	} else if (tmp->type==CONTAINER &&
-		   QUERY_FLAG(tmp,FLAG_APPLIED) &&
-		   (tmp->race==NULL || strstr(tmp->race,"gold"))) {
-	    total += query_money(tmp);
-	}
+    for (tmp = op->inv; tmp; tmp= tmp->below) 
+	{
+		if (tmp->type==MONEY)
+		    total += tmp->nrof * tmp->value;
+		else if (tmp->type==CONTAINER && (strstr(tmp->race,"gold") || QUERY_FLAG(tmp,FLAG_APPLIED))) 
+		    total += query_money(tmp);
     }
     return total;
 }
@@ -243,12 +243,10 @@ int pay_for_amount(int to_pay,object *pl) {
 
     to_pay = pay_from_container(NULL, pl, to_pay);
 
-    for (pouch=pl->inv; (pouch!=NULL) && (to_pay>0); pouch=pouch->below) {
-	if (pouch->type == CONTAINER
-	    && QUERY_FLAG(pouch, FLAG_APPLIED)
-	    && (pouch->race == NULL || strstr(pouch->race, "gold"))) {
-	    to_pay = pay_from_container(NULL, pouch, to_pay);
-	}
+    for (pouch=pl->inv; (pouch!=NULL) && (to_pay>0); pouch=pouch->below) 
+	{
+		if (pouch->type == CONTAINER && (strstr(pouch->race, "gold") || QUERY_FLAG(pouch, FLAG_APPLIED)))
+			to_pay = pay_from_container(NULL, pouch, to_pay);
     }
 
 #ifndef REAL_WIZ
@@ -272,12 +270,10 @@ int pay_for_item(object *op,object *pl) {
 
     to_pay = pay_from_container(op, pl, to_pay);
 
-    for (pouch=pl->inv; (pouch!=NULL) && (to_pay>0); pouch=pouch->below) {
-	if (pouch->type == CONTAINER
-	    && QUERY_FLAG(pouch, FLAG_APPLIED)
-	    && (pouch->race == NULL || strstr(pouch->race, "gold"))) {
-	    to_pay = pay_from_container(op, pouch, to_pay);
-	}
+    for (pouch=pl->inv; (pouch!=NULL) && (to_pay>0); pouch=pouch->below) 
+	{
+		if (pouch->type == CONTAINER && (QUERY_FLAG(pouch, FLAG_APPLIED) || strstr(pouch->race, "gold")))
+		    to_pay = pay_from_container(op, pouch, to_pay);
     }
 
 #ifndef REAL_WIZ

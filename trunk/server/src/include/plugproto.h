@@ -97,7 +97,8 @@ f_plugin HookList[NR_OF_HOOKS] =
 	CFWFixPlayer,
 	CFWPlaySoundMap,
     CFWOutOfMap,
-    CFWCreateObject
+    CFWCreateObject,
+    CFWShowCost
 };
 
 #endif /*PLUGPROTO_H_*/

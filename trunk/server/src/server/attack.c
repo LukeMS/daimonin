@@ -365,7 +365,7 @@ int hit_player(object *op,int dam, object *hitter, int type)
 										query_name(hitter), query_name(get_owner(hitter)), hit_level,
 										query_name(op), target_obj->arch->name, query_name(get_owner(op)), target_obj->level);
 
-	if(hit_level > target_obj->level && hit_obj->type != PLAYER) /* i turned it now off for players! */
+	if(hit_level > target_obj->level && hit_obj->type != MONSTER) /* i turned it now off for players! */
 	{
 		dam += (int)((float)(dam/2)*((float)(hit_level-target_obj->level)/
 									(target_obj->level>25?25.0f:(float)target_obj->level)));
@@ -410,6 +410,7 @@ int hit_player(object *op,int dam, object *hitter, int type)
 	 * crush the door. And because we have hybrid chars (can cast too)
 	 * we don't need to handle both for balancing. 
 	 */
+	/*
     if ( ! simple_attack && op->type == DOOR)
 	{
         object *tmp;
@@ -423,7 +424,7 @@ int hit_player(object *op,int dam, object *hitter, int type)
                 break;
             }
     }
-
+    */
 	/* i removed the "is_alive" check. We should handle this before we are here.
 	 * if a object is IS_PLAYER or IS_ALIVE - it should can be attackable.
 	 * It it has HP>0, it is still alive/not destroyed.
@@ -457,9 +458,10 @@ int hit_player(object *op,int dam, object *hitter, int type)
 		}
 #else
 		{
-			LOG(-1, "hitter: %f - %s (dam:%d/%d) (wc:%d/%d)(wcr:%d/%d)(ac:%d/%d) ap:%d\n",hitter->speed, 
+/*			LOG(-1, "hitter: %f - %s (dam:%d/%d) (wc:%d/%d)(wcr:%d/%d)(ac:%d/%d) ap:%d\n",hitter->speed, 
 				hitter->name,hitter->stats.dam,op->stats.dam, hitter->stats.wc,op->stats.wc,hitter->stats.wc_range,op->stats.wc_range,
 				hitter->stats.ac,op->stats.ac,hitter->attack[attacknum]);
+*/
 			maxdam +=hit_player_attacktype(op,hitter,dam,attacknum,0);
 		}
 #endif
@@ -845,7 +847,7 @@ static void send_attack_msg(object *op, object *hitter, int attacknum, int dam, 
 	}
 	if (hitter->type == PLAYER)
 	{
-        new_draw_info_format(NDI_ORANGE, 0,hitter,"You hit %s for %d (%d) %s dmg.",
+        new_draw_info_format(NDI_ORANGE, 0,hitter,"You hit %s for %d (%d) %s.",
 			op->name,(int)dam, ((int)dam)-damage,attacktype_desc[attacknum]);
 	}
 }
@@ -1256,9 +1258,6 @@ int kill_object(object *op,int dam, object *hitter, int type)
 	    }
 	    remove_ob(op);
 
-		/* harder drop rules: if exp== 0 or not a player or not a player invoked hitter: no drop */
-		if(!exp || hitter->type != PLAYER || (get_owner(hitter) && hitter->owner->type != PLAYER))
-			SET_FLAG(op,FLAG_STARTEQUIP);
 
 		/* rules: 
 		 * a.) mob will drop corpse for his target, not for kill hit giving player.
@@ -1273,7 +1272,13 @@ int kill_object(object *op,int dam, object *hitter, int type)
 			op->enemy = owner;			   /* no set_npc_enemy since we are killing it... */
 			op->enemy_count = owner->count;
 		}
-	    free_object(op);
+
+		/* harder drop rules: if exp== 0 or not a player or not a player invoked hitter: no drop */
+		if(!exp || hitter->type != PLAYER || (get_owner(hitter) && hitter->owner->type != PLAYER))
+			SET_FLAG(op,FLAG_STARTEQUIP); 
+
+	    
+		free_object(op);
 	}
 	/* Player has been killed! */
 	else {

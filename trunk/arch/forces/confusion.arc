@@ -1,5 +1,6 @@
 Object confusion
 name confusion
+identified 1
 type 19
 face force.101
 sys_object 1

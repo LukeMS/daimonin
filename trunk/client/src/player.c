@@ -482,11 +482,18 @@ void show_player_stats(int x, int y)
             sprintf(buf, "%s", cpl.skill_name);
 			
             StringBlt(ScreenSurface, &SystemFont,buf ,x+298, y+78,COLOR_WHITE, NULL, NULL);
-            if(skill_list[cpl.skill_g].entry[cpl.skill_e].exp!=-1)
-            {
+            
+			if(skill_list[cpl.skill_g].entry[cpl.skill_e].exp >=0)
                 sprintf(buf, "%d / %-9d", skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level,skill_list[cpl.skill_g].entry[cpl.skill_e].exp );
-                StringBlt(ScreenSurface, &SystemFont,buf ,x+298, y+88,COLOR_WHITE, NULL, NULL);
+			else if(skill_list[cpl.skill_g].entry[cpl.skill_e].exp == -2)
+                sprintf(buf, "%d / **", skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level );
+			else
+                sprintf(buf, "** / **");
 
+			StringBlt(ScreenSurface, &SystemFont,buf ,x+298, y+88,COLOR_WHITE, NULL, NULL);
+
+			if(skill_list[cpl.skill_g].entry[cpl.skill_e].exp >= 0)
+            {
 				level_exp = skill_list[cpl.skill_g].entry[cpl.skill_e].exp - server_level.exp[skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level];
 				multi = modf(((double)level_exp/(double)
 				(server_level.exp[skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level+1]-server_level.exp[skill_list[cpl.skill_g].entry[cpl.skill_e].exp_level])*10.0), &line);

@@ -1,6 +1,7 @@
 Object ability_cause_lig_wound
 name ability cause light wounds
 type 110
+identified 1
 face force.101
 is_magical 1
 sys_object 1

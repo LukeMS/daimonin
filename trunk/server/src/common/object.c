@@ -1371,7 +1371,7 @@ void free_all_object_data() {
  */
 
 object *get_owner(object *op) {
-  if(op->owner==NULL)
+  if(!op || op->owner==NULL)
     return NULL;
   if(!QUERY_FLAG(op->owner,FLAG_FREED) && op->owner->count==op->ownercount)
     return op->owner;
@@ -1970,6 +1970,88 @@ void update_object(object *op, int action)
 		update_object(op->more, action);
 }
 
+/* search a player inventory for quest item placeholder.
+ * this function is NOT called very often - even it takes some
+ * cycles when we examine a group.
+ */
+static int find_quest_item_inv(object *target, object *obj)
+{
+		object *tmp;
+
+	for(tmp=target->inv;tmp;tmp=tmp->below)
+	{
+		if(tmp->inv)
+		{
+			if(find_quest_item_inv(tmp->inv, obj))
+				return 1;
+		}
+
+		if(tmp->type == obj->type && tmp->name == obj->name && tmp->arch->name == obj->arch->name)
+			return 1;
+	}
+
+	return 0;
+}
+
+static inline int find_quest_item(object *target, object *obj)
+{
+	object *tmp;
+
+	if(!target || target->type != PLAYER)
+		return 0;
+
+	tmp=present_in_ob(TYPE_QUEST_CONTAINER, target);
+	if(tmp)
+	{
+		for(tmp=tmp->inv;tmp;tmp=tmp->below)
+		{
+			if(tmp->name == obj->name && !strcmp(tmp->race, obj->arch->name) )
+				return 1;
+		}
+	}
+
+	return find_quest_item_inv(target,obj);
+}
+
+/* we give a player a one drop item. This also 
+ * adds this item to the quest_container - instead to quest
+ * items which will be added when the next quest step is triggered.
+ * (most times from a quest script)
+ */
+static inline int add_one_drop_quest_item(object *target, object *obj)
+{
+	object *tmp, *q_tmp;
+
+	if(!target || target->type != PLAYER)
+		return 0;
+
+	if(!(tmp=present_in_ob(TYPE_QUEST_CONTAINER, target)))
+	{
+		/* create and insert a quest container in player */
+		tmp = get_object();
+		copy_object(get_archetype("quest_container"), tmp);
+		insert_ob_in_ob(tmp, target);
+	}
+
+	q_tmp = get_object();
+	copy_object_data(obj, q_tmp); /* copy without put on active list */
+	/* just to be on the secure side ... */
+	q_tmp->speed = 0.0f;
+	CLEAR_FLAG(q_tmp, FLAG_ANIMATE);
+	CLEAR_FLAG(q_tmp, FLAG_ALIVE);
+	/* we are storing the arch name of quest dummy items in race */
+	FREE_AND_COPY_HASH(q_tmp->race, obj->arch->name);
+
+	insert_ob_in_ob(q_tmp, tmp); /* dummy copy in quest container */
+	SET_FLAG(obj, FLAG_IDENTIFIED);
+	CLEAR_FLAG(obj, FLAG_QUEST_ITEM); /* now the player can use this item normal,
+									   * even trade and sell it
+										*/
+	CLEAR_FLAG(obj,FLAG_SYS_OBJECT);
+	insert_ob_in_ob(obj, target); /* real object to player */
+
+	return 1;
+}
 
 /*
  * free_object() frees everything allocated by an object, removes
@@ -2003,10 +2085,12 @@ void free_object(object *ob) {
     ob->more=NULL;
   }
   if (ob->inv) {
-    if (ob->map==NULL || ob->map->in_memory!=MAP_IN_MEMORY || wall(ob->map,ob->x,ob->y))
+	  /* i removed a check for wall(ob->map,ob->x,ob->y)... it will do no harm */
+    if (ob->map==NULL || ob->map->in_memory!=MAP_IN_MEMORY)
     {
       tmp_op=ob->inv;
-      while(tmp_op!=NULL) {
+      while(tmp_op!=NULL) 
+	  {
         tmp=tmp_op->below;
         remove_ob(tmp_op);
         free_object(tmp_op);
@@ -2019,6 +2103,12 @@ void free_object(object *ob) {
 		else /* create race corpse and/or drop stuff to floor */
 		{
 			object *corpse=NULL;
+			object *enemy = NULL;
+
+			if(ob->enemy && ob->enemy->type == PLAYER)
+				enemy = ob->enemy;
+			else
+				enemy = get_owner(ob->enemy);
 
 			if((QUERY_FLAG(ob,FLAG_CORPSE) && !QUERY_FLAG(ob,FLAG_STARTEQUIP))
 														|| QUERY_FLAG(ob,FLAG_CORPSE_FORCED))
@@ -2037,7 +2127,7 @@ void free_object(object *ob) {
 			{
 				tmp=tmp_op->below;
 				remove_ob(tmp_op);
-					/* if we move spawn mobs, we don't want drop their items as free.
+					/* if we recall spawn mobs, we don't want drop their items as free.
 					* So, marking the mob itself with "FLAG_STARTEQUIP" will kill
 					* all inventory and not dropping it on the map.
 					* This also happens when a player slays a to low mob/non exp mob.
@@ -2045,7 +2135,47 @@ void free_object(object *ob) {
 					* any use... when we do it, a disease needle for example
 					* is dropping his disease force and so on.
 					*/
-					if(QUERY_FLAG(ob,FLAG_STARTEQUIP) || 
+					
+					if(QUERY_FLAG(tmp_op, FLAG_QUEST_ITEM))
+					{
+						/* legal, non freed enemy */
+						if(enemy && enemy->type == PLAYER && enemy->count == ob->enemy_count)
+						{
+							/* this is the new quest item & one drop quest item code!
+							 * Dropping quest items to the ground in a corpse can invoke
+							 * alot of problems and glitches. The only way to avoid it is,
+							 * to move the quest item HERE in the inventory of the player or
+							 * group. For one drop quests it is the really only usable way.
+							 */
+							/* first: if the player has this item (normally from killing the
+							 * quest mob before) we free the quest item here and stop.
+							 */
+							if(find_quest_item(enemy, tmp_op))
+								free_object(tmp_op);
+							else /* ok, move the item in the players inventory! */
+							{
+								char auto_buf[HUGE_BUF];
+
+								/* first, lets check what we have: quest or one drop quest */
+								if(QUERY_FLAG(tmp_op, FLAG_SYS_OBJECT) ) /* marks one drop quest items */
+								{
+									add_one_drop_quest_item(enemy, tmp_op);
+									sprintf(auto_buf,"You solved the one drop quest %s!\n", query_name(tmp_op));
+									(*draw_info_func)(NDI_UNIQUE|NDI_NAVY, 0, enemy, auto_buf);
+								}
+								else
+								{
+									insert_ob_in_ob(tmp_op,enemy); 
+									sprintf(auto_buf,"You found the quest item %s!\n", query_name(tmp_op));
+									(*draw_info_func)(NDI_UNIQUE|NDI_NAVY, 0, enemy, auto_buf);
+								}
+								(*esrv_send_item_func) (enemy, tmp_op);
+							}
+
+
+						}
+					}
+					else if(QUERY_FLAG(ob,FLAG_STARTEQUIP) ||
 						(tmp_op->type != RUNE && (QUERY_FLAG(tmp_op,FLAG_SYS_OBJECT)||
 								QUERY_FLAG(tmp_op,FLAG_STARTEQUIP) ||QUERY_FLAG(tmp_op,FLAG_NO_DROP))))
 						free_object(tmp_op);
@@ -2059,7 +2189,7 @@ void free_object(object *ob) {
 						else
 						{
 							/* don't drop traps from a container to the floor.
-							 * removing the container where a trap i applied to will
+							 * removing the container where a trap is applied will
 							 * neutralize the trap too 
 							 */
 							if(tmp_op->type == RUNE)
@@ -2080,15 +2210,27 @@ void free_object(object *ob) {
 				 */
 				if(QUERY_FLAG(ob,FLAG_CORPSE_FORCED) || corpse)
 				{
-					/* ok... we have a corpse AND we insert it.
+					/* ok... we have a corpse AND we insert something in.
 					 * now check enemy and/or attacker to find a player.
 					 * if there is one - personlize this corpse container.
 					 * this gives the player the chance to grap this stuff first
 					 * - and looter will be stopped.
 					 */
 
-					if(ob->enemy && ob->enemy->type == PLAYER && ob->enemy->count == ob->enemy_count)
-						FREE_AND_ADD_REF_HASH(corpse->slaying,ob->enemy->name);
+					if(enemy && enemy->type == PLAYER)
+					{
+						if(enemy->count == ob->enemy_count)
+							FREE_AND_ADD_REF_HASH(corpse->slaying,enemy->name);
+					}
+					else if(QUERY_FLAG(ob,FLAG_CORPSE_FORCED)) /* && no player */
+					{
+						/* normallly only player drop corpse. But in some cases
+						 * npc can do it too. Then its smart to remove that corpse fast.
+						 * It will not harm anything because we never deal for NPC with
+						 * bounty.
+						 */
+						corpse->stats.food = 3;
+					}
 
 					/* later, we add here other sub type or slaying names for killing groups, clans, etc */
 					if(corpse->slaying) /* change sub_type to mark this corpse */
@@ -2096,7 +2238,7 @@ void free_object(object *ob) {
 
 					insert_ob_in_map (corpse, ob->map, NULL,0);
 				}
-				else
+				else /* disabled */
 				{
 					/* if we are here, our corpse mob had something in inv but its nothing to drop */
 					if(!QUERY_FLAG(corpse,FLAG_REMOVED) )

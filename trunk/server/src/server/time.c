@@ -302,7 +302,7 @@ void generate_monster(object *gen) {
     if (QUERY_FLAG(op, FLAG_FREED)) return;
     if(op->randomitems!=NULL)
       create_treasure(op->randomitems,op,GT_APPLY,
-                      gen->map->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0);
+	  (op->level ? op->level:gen->map->difficulty),T_STYLE_UNSET,ART_CHANCE_UNSET,0);
     if(head==NULL)
       head=op;
     prev=op;
@@ -1462,9 +1462,15 @@ int process_object(object *op) {
       remove_force(op);
     else {
 	/* IF necessary, delete the item from the players inventory */
-	object *pl=is_player_inv(op);
-	if (pl)
-	    esrv_del_item(pl->contr, op->count, op->env);
+	if (op->env && op->env->type == CONTAINER)
+	    esrv_del_item(NULL, op->count, op->env);
+	else
+	{
+		object *pl=is_player_inv(op);
+		if (pl)
+		    esrv_del_item(pl->contr, op->count, op->env);
+	}
+
       remove_ob(op);
       free_object(op);
     }
@@ -1609,8 +1615,6 @@ int process_object(object *op) {
     return 0;
   case SWARM_SPELL:
     move_swarm_spell(op);
-    return 0;
-  case RUNE:
     return 0;
   case PLAYERMOVER:
     move_player_mover(op);

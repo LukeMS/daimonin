@@ -826,7 +826,10 @@ void esrv_update_skills(player *pl)
             if(tmp2->stats.exp != pl->skill_exp[i] || 
                 tmp2->level != pl->skill_level[i])
             {
-                sprintf(buf,"/%s|%d|%d",tmp2->name, tmp2->level, tmp2->stats.exp );
+				if(tmp2->last_eat == 1)
+	                sprintf(buf,"/%s|%d|%d",tmp2->name, tmp2->level, tmp2->stats.exp );
+				else
+	                sprintf(buf,"/%s|%d|-2",tmp2->name, tmp2->level);
                 strcat(tmp, buf);
                 pl->skill_exp[i] = tmp2->stats.exp;
                 pl->skill_level[i] = tmp2->level;

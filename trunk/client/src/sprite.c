@@ -316,10 +316,10 @@ void CreateNewFont(_Sprite *sprite, _Font *font, int xlen, int ylen, int c32len)
 void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y,int col, SDL_Rect *area, _BLTFX *bltfx)
 {
 	register int i,tmp, line_clip=-1,line_count=0;
-  register Boolean gflag;
+	register Boolean gflag;
 	int colorToggle=0;
-  SDL_Rect src, dst;
-  SDL_Color color, color_g;
+	SDL_Rect src, dst;
+	SDL_Color color, color_g;
 
 	if(area)
 		line_clip = area->w;

@@ -11,7 +11,6 @@ anim
 rune_fire.101
 fire.101
 mina
-speed 1
 level 1
 is_animated 0
 anim_speed 1

@@ -2,7 +2,6 @@ Object trap_blades
 name Blades trap
 type 154
 face blades.101
-speed 1
 hp 1
 msg
 You set off a Blades trap!

@@ -51,6 +51,8 @@ extern int	global_darkness_table[MAX_DARKNESS+1];
 #define MAP_UNIQUE(m)			((m)->map_flags & MAP_FLAG_UNIQUE)
 #define MAP_FIXED_RESETTIME(m)	((m)->map_flags & MAP_FLAG_FIXED_RTIME)
 
+#define MAP_NOSAVE(m)			((m)->map_flags & MAP_FLAG_NO_SAVE)
+
 #define MAP_NOMAGIC(m)			((m)->map_flags & MAP_FLAG_NOMAGIC)
 #define MAP_NOPRIEST(m)			((m)->map_flags & MAP_FLAG_NOPRIEST)
 #define MAP_NOHARM(m)			((m)->map_flags & MAP_FLAG_NOHARM)
@@ -269,6 +271,8 @@ typedef struct MapSpace {
 #define MAP_FLAG_ULTRADEATH			1024	/* this map is a ultra death map */
 #define MAP_FLAG_ULTIMATEDEATH		2048	/* this map is a ultimate death map */
 #define MAP_FLAG_PVP				4096	/* PvP is possible on this map */
+#define MAP_FLAG_NO_SAVE			8192	/* don't save maps - atm only used with unique maps */
+
 
 #define SET_MAP_TILE_VISITED(m, x, y, id) { \
     if((m)->pathfinding_id != (id)) { \

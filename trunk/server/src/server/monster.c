@@ -2689,7 +2689,7 @@ static object *spawn_monster(object *gen, object *orig, int range)
       op->head=head,prev->more=op;
     if (QUERY_FLAG(op, FLAG_FREED)) return NULL;
     if(op->randomitems!=NULL)
-      create_treasure(op->randomitems,op,0,orig->map->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0);
+		create_treasure(op->randomitems,op,0,op->level?op->level:orig->map->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0);
     if(head==NULL)
       head=op;
     prev=op;

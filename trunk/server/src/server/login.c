@@ -35,7 +35,6 @@ extern long pticks;
  * keep the game running.  Thus, we don't want to free any information.
  */
 void emergency_save(int flag) {
-  player *pl;
 #ifndef NO_EMERGENCY_SAVE
   trying_emergency_save = 1;
 
@@ -70,14 +69,6 @@ void emergency_save(int flag) {
 #else
   LOG(llevSystem,"Emergency saves disabled, no save attempted\n");
 #endif
-  /* If the game is exiting, remove the player locks */
-  if (!flag) {
-    for(pl=first_player;pl!=NULL;pl=pl->next) {
-      if(pl->ob) {
-	unlock_player(pl->ob->name);
-      }
-    }
-  }
 }
 
 /* Delete character with name.  if new is set, also delete the new
@@ -100,48 +91,6 @@ void delete_character(const char *name, int new) {
     }
 }
 
-/* Lock/unlock player functions.  In reality, the only time they are
- * really needed is if 2 players are logging in at the same time and
- * trying to use the same name to create characters (not very likely,
- * but...)  Otherwise, it checks against the existance of other active
- * players for duplicate names.  In reality, these functions could
- * probably be removed and it wouldn't create any problems.  However,
- * they are minor enough and the extra safety the grant is probably
- * worth keeping them around.
- */
-
-/* Renamed from 'remove_lock' to unlock_player to better match with
- * lock_player below.  Basically, given player 'pl', it removes the
- * corresponding lock file.
- */
-
-void unlock_player(const char *name) {
-    char buf[MAX_BUF];
-
-    sprintf(buf,"%s/%s/%s.lock",settings.localdir,settings.playerdir,name);
-    if(!rmdir(buf)) {
-		LOG(llevBug,"BUG: Couldn't remove lockfile(dir): %s\n", buf);
-    }
-}
-
-#if 0
-/* creates a lock for player 'name'.  returns 0 if the lock is successful,
- * 1 otherwise.
- */
-
-static int lock_player(char *name) {
-    char buf[MAX_BUF];
-
-    sprintf(buf,"%s/%s/%s.lock",settings.localdir,settings.playerdir,name);
-    if(!mkdir(buf,0770))
-	return 0;
-    if(errno != EEXIST) {
-		LOG(llevBug,"BUG: Couldn't create lockfile(dir): %s\n", buf);
-	return 1;
-    }
-    return 1;
-}
-#endif
 
 /* This verify that a character of name exits, and that it matches
  * password.  It return 0 if there is match, 1 if no such player,
@@ -196,28 +145,9 @@ int check_name(player *me,char *name) {
 	    return 0;
 	}
 
-#if 0
-    /* This is commented out - unexpected client/server crashes can leave the
-     * lock files laying around.  In retrospect, I don't think the reason
-     * give above is needed for lock files.  If two new people are creating
-     * characters at the same time (or logging in), the server data
-     * is still consistent (ie, it will get the name from player 1, store
-     * it in the player object, get the name from player 2, check it against
-     * current players and find a duplicated.)
-     */
-    if(lock_player(name)) {
-	/* Include the 'locked' so that the error message is more descriptive.
-	 * This way, players can include a slightly more detailed message
-	 * on the problem they are having.
-	 */
-	new_draw_info(NDI_UNIQUE, 0,me->ob,"That name is already in use (locked).");
-	return 0;
-    }
-#endif
     if(!playername_ok(name)) {
-	unlock_player(name);
-	new_draw_info(NDI_UNIQUE, 0,me->ob,"That name contains illegal characters.");
-	return 0;
+		new_draw_info(NDI_UNIQUE, 0,me->ob,"That name contains illegal characters.");
+		return 0;
     }
     return 1;
 }
@@ -599,14 +529,12 @@ void check_login(object *op) {
 	new_draw_info(NDI_UNIQUE, 0,op," ");
 	new_draw_info(NDI_UNIQUE, 0,op,"Wrong Password!");
 	new_draw_info(NDI_UNIQUE, 0,op," ");
-	unlock_player(pl->ob->name);
 	FREE_AND_COPY_HASH(op->name, "noname");
 	pl->last_value= -1;
 	get_name(op);
 	return;	    /* Once again, rest of code just loads the char */
     }
 
-    unlock_player(pl->ob->name);
 #ifdef SAVE_INTERVAL
     pl->last_save_time=time(NULL);
 #endif /* SAVE_INTERVAL */

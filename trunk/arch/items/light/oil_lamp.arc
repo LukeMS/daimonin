@@ -8,6 +8,5 @@ material 512
 value 15
 weight 400
 food 800
-speed 0.15
 nrof 1
 end

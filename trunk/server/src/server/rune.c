@@ -172,26 +172,48 @@ int write_rune(object *op,int dir,int inspell,int level,char *runename) {
 
 
 /*  peterm: rune_attack
-
-  function handles those runes which detonate but do not cast spells.  */
+ *
+ * function handles those runes which detonate but do not cast spells.
+ * Remember: at this point we KNOW the trap will hit the victim - 
+ * so no need for wc or wc_range.
+ * all we need is dam and a attack form
+ */
 void rune_attack(object *op,object *victim)
 {
-    if(victim) {
-         tag_t tag = victim->count;
-	 hit_player(victim,op->stats.dam,op,op->attacktype);
-         if (was_destroyed (victim, tag))
-                return;
-	 /*  if there's a disease in the needle, put it in the player */
-	 if(op->randomitems!=NULL) create_treasure(op->randomitems,op,0,
-		(victim->map?victim->map->difficulty:1),T_STYLE_UNSET,ART_CHANCE_UNSET,0);
-	 if(op->inv && op->inv->type == DISEASE) {
-		object *disease=op->inv;
-		infect_object(victim, disease, 1);
-		remove_ob(disease);
-		free_object(disease);
-	 }
+	int dam = op->stats.dam; /* save damage */
+
+	/* lets first calc the damage - we use base dmg * level 
+	 * For rune, the damage will *not* get additional 
+	 * level range boni
+	 * we do here a more simple system like the normal monster damage.
+	 * with the hard set float we can control the damage a bit better.
+	 */
+	op->stats.dam = (sint16) ((float)dam * (lev_damage[op->level]*0.925f));
+
+    if(victim)
+	{
+		tag_t tag = victim->count;
+		hit_player(victim,op->stats.dam,op,op->attacktype);
+		if (was_destroyed (victim, tag))
+		{
+			op->stats.dam = dam;
+			return;
+		}
+		/*  if there's a disease in the needle, put it in the player */
+		if(op->randomitems!=NULL) create_treasure(op->randomitems,op,0,
+			op->level?op->level:victim->map->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0);
+		if(op->inv && op->inv->type == DISEASE)
+		{
+			object *disease=op->inv;
+			infect_object(victim, disease, 1);
+			remove_ob(disease);
+			free_object(disease);
+		}
     }
-    else  hit_map(op,0,op->attacktype);
+    else  
+		hit_map(op,0,op->attacktype);
+
+	op->stats.dam = dam;
 }
 
 /*  This function generalizes attacks by runes/traps.  This ought to make
@@ -199,66 +221,78 @@ void rune_attack(object *op,object *victim)
     it'll spring the trap on the victim.  */
    
 void spring_trap(object *trap,object *victim)
-{  int spell_in_rune;
-   object *env;
-   tag_t trap_tag = trap->count;
+{  
+	int spell_in_rune;
+	object *env;
+	tag_t trap_tag = trap->count;
 
-  /* Prevent recursion */
-  if (trap->stats.hp <= 0)
-    return;
+	/* Prevent recursion */
+	if (trap->stats.hp <= 0)
+		return;
 
-  /*  get the spell number from the name in the slaying field, and set
-      that as the spell to be cast. */
-  if (trap->slaying && (spell_in_rune = look_up_spell_by_name (NULL, trap->slaying)) != -1)
-    trap->stats.sp=spell_in_rune;
+	/* get the spell number from the name in the slaying field, and set
+	 * that as the spell to be cast.
+	*/
+	if (trap->slaying && (spell_in_rune = look_up_spell_by_name (NULL, trap->slaying)) != -1)
+		trap->stats.sp=spell_in_rune;
 
-  /* Only living objects can trigger runes that don't cast spells, as
-   * doing direct damage to a non-living object doesn't work anyway.
-   * Typical example is an arrow attacking a door.
-   */
-  if(!IS_LIVE(victim) && ! trap->stats.sp)
-    return;
+	/* Only living objects can trigger runes that don't cast spells, as
+	* doing direct damage to a non-living object doesn't work anyway.
+	* Typical example is an arrow attacking a door.
+	*/
+	if(!IS_LIVE(victim) && ! trap->stats.sp)
+		return;
 
-  trap->stats.hp--;  /*decrement detcount */
-  if(victim && victim->type==PLAYER)
-	  new_draw_info(NDI_UNIQUE, 0,victim,trap->msg);
-  /*  Flash an image of the trap on the map so the poor sod
-   *   knows what hit him.  */
-  for (env = trap; env->env != NULL; env = env->env)
-    ;
-  trap_show(trap,env);  
-  trap->type=MISC_OBJECT;  /* make the trap impotent */
+	trap->stats.hp--;  /*decrement detcount */
+  
+	if(victim && victim->type==PLAYER)
+		new_draw_info(NDI_UNIQUE, 0,victim,trap->msg);
+
+	/* Flash an image of the trap on the map so the poor sod
+	*   knows what hit him.
+	*/
+	for (env = trap; env->env != NULL; env = env->env)
+		;
+	trap_show(trap,env);  
+	trap->type=MISC_OBJECT;  /* make the trap impotent */
 	CLEAR_FLAG(trap,FLAG_FLY_ON);
 	CLEAR_FLAG(trap,FLAG_WALK_ON);
 	FREE_AND_CLEAR_HASH2(trap->msg);
-  trap->stats.food=20;  /* make it stick around until its spells are gone */
-  SET_FLAG(trap,FLAG_IS_USED_UP);	/* ok, let the trap wear off */
+	trap->stats.food=20;  /* make it stick around until its spells are gone */
+	SET_FLAG(trap,FLAG_IS_USED_UP);	/* ok, let the trap wear off */
+	trap->speed = trap->speed_left = 1.0f;
+	update_ob_speed(trap);
 
-  if ( ! trap->stats.sp)
-  {
-    rune_attack(trap,victim); 
-    if (was_destroyed (trap, trap_tag))
-      return;
-  }
-  else
-  {
-    /* This is necessary if the trap is inside something else */
-    remove_ob(trap);
-    trap->x=victim->x;trap->y=victim->y;
-    insert_ob_in_map(trap,victim->map,trap,0);
-    if (was_destroyed (trap, trap_tag))
-      return;
-    cast_spell(trap,trap,trap->direction,trap->stats.sp,1,spellNormal,NULL);
-  }
+	if ( ! trap->stats.sp)
+	{
+		rune_attack(trap,victim); 
+		set_traped_flag(env);
+		if (was_destroyed (trap, trap_tag))
+			return;
+	}
+	else
+	{
+		/* This is necessary if the trap is inside something else */
+		remove_ob(trap);
+		set_traped_flag(env);
+		trap->x=victim->x;trap->y=victim->y;
+		insert_ob_in_map(trap,victim->map,trap,0);
+		if (was_destroyed (trap, trap_tag))
+			return;
+		cast_spell(trap,trap,trap->direction,trap->stats.sp-1,1,spellNormal,NULL);
+	}
 
-  if (trap->stats.hp <= 0) {
-    trap->type=MISC_OBJECT;  /* make the trap impotent */
-	CLEAR_FLAG(trap,FLAG_FLY_ON);
-	CLEAR_FLAG(trap,FLAG_WALK_ON);
-	FREE_AND_CLEAR_HASH2(trap->msg);
-    trap->stats.food=20;  /* make it stick around until its spells are gone */
-    SET_FLAG(trap,FLAG_IS_USED_UP);
-  }
+	if (trap->stats.hp <= 0)
+	{
+		trap->type=MISC_OBJECT;  /* make the trap impotent */
+		CLEAR_FLAG(trap,FLAG_FLY_ON);
+		CLEAR_FLAG(trap,FLAG_WALK_ON);
+		FREE_AND_CLEAR_HASH2(trap->msg);
+		trap->stats.food=20;  /* make it stick around until its spells are gone */
+		SET_FLAG(trap,FLAG_IS_USED_UP);
+		trap->speed = trap->speed_left = 1.0f;
+		update_ob_speed(trap);
+	}
 }
 
 /*  dispel_rune:  by peterm  
@@ -304,40 +338,37 @@ int dispel_rune(object *op,int dir,int risk)
 	
 }
 
-int trap_see(object *op,object *trap) {
-  char buf[MAX_BUF];
-  int chance;
+int trap_see(object *op,object *trap) 
+{
+	char buf[MAX_BUF];
+	int chance;
 
-  chance = random_roll(0, 99, op, PREFER_HIGH);;
+	chance = random_roll(0, 99, op, PREFER_HIGH);
   
-  /*  decide if we see the rune or not */
-  if((trap->stats.Cha==1) || (chance >
-        MIN(95,MAX(5,((int)((float) (op->map->difficulty 
-	+ trap->level + trap->stats.Cha-op->level)/10.0 * 50.0))))))
-  {
-      sprintf(buf,"You spot a %s!",trap->name);
-      new_draw_info(NDI_UNIQUE, 0,op,buf);
-      return 1;
-  }
-  return 0;
+	/*  decide if we see the rune or not */
+	if((trap->stats.Cha==1) || (chance >
+			MIN(95,MAX(5,((int)((float) (op->map->difficulty + 
+			trap->level + trap->stats.Cha-op->level)/10.0 * 50.0))))))
+	{
+		sprintf(buf,"You spot a %s (lvl %d)!",trap->name, trap->level);
+		new_draw_info(NDI_UNIQUE, 0,op,buf);
+		return 1;
+	}
+	return 0;
 }
 
 /* I changed the use of this function... Now, this function deos what the
  * name says: He get a trap and makes them visible and reinsert it. 
- * It NOT set the map to autodestroy - so, this can be used from trigger but
+ * This can be used from trigger but
  * also from detection sources - just be sure you set FLAG_IS_USED_UP in
- * your trigger functions. MT-2003
+ * your trigger functions as speed when you want start the auto destroy. MT-2003
  */
 int trap_show(object *trap, object *where)
 {
+	object *env;
+
     if(where==NULL) 
 		return 0;
-
-	/* old cf code... we insert a dummy from type SIGN which has used_up set..
-    tmp2=get_archetype("runedet");
-    tmp2->face=&new_faces[GET_ANIMATION(trap, 0)];
-    tmp2->x=where->x;tmp2->y=where->y;tmp2->map=where->map;
-	*/
 
 	/* Because we don't want unhide traps by using "see invisible" (because
 	 * traps are not invisibile - they are hidden) and the normal "see hidden"
@@ -347,13 +378,29 @@ int trap_show(object *trap, object *where)
 	 * For that, we set sys_object 0 and layer 4. Don't forget to set the player 
 	 * because level 0 is really a special thing.
 	 */
+	env = trap->env;
 	remove_ob(trap); /* we must remove and reinsert it.. */
 	CLEAR_FLAG(trap, FLAG_SYS_OBJECT);
 	CLEAR_MULTI_FLAG(trap, FLAG_IS_INVISIBLE);
-	trap->layer = 4;
-	trap->speed = 1.0;
-	trap->speed_left = 1.0; /* we want show this some time */
-    insert_ob_in_map(trap,where->map,NULL,0);
+	trap->layer = 7;
+
+	if(env && env->type != PLAYER && env->type != MONSTER && env->type != LOCKED_DOOR && !QUERY_FLAG(env,FLAG_NO_PASS))
+	{
+		SET_FLAG(env,FLAG_IS_TRAPED);
+		if(!env->env) /* env object is on map */
+	        update_object(env,UP_OBJ_FACE);
+		else /* somewhere else - if visible, update */
+		{
+			if(env->env->type == PLAYER || env->env->type == CONTAINER)
+				esrv_update_item (UPD_FLAGS, env->env, env);
+		}
+
+		insert_ob_in_ob(trap, env);
+		if(env->type == PLAYER || env->type == CONTAINER)
+			esrv_update_item (UPD_LOCATION, env, trap);
+	}
+	else
+	    insert_ob_in_map(trap,where->map,NULL,0);
     return 1;
 
 }
@@ -363,6 +410,7 @@ int trap_show(object *trap, object *where)
 #endif
 int trap_disarm(object *disarmer, object *trap, int risk) {
 
+	object *env=trap->env;
   int trapworth;  /* need to compute the experience worth of the trap
                      before we kill it */
   int disarmer_level = SK_level (disarmer);
@@ -376,9 +424,10 @@ int trap_disarm(object *disarmer, object *trap, int risk) {
        MIN(20,trap->level-disarmer_level
 	   +5 - disarmer->stats.Dex/2))-1), disarmer, PREFER_LOW)))
         {
-            new_draw_info_format(NDI_UNIQUE, 0,disarmer,"You successfuly remove the %s!", trap->name);
+            new_draw_info_format(NDI_UNIQUE, 0,disarmer,"You successfuly remove the %s (lvl %d)!", trap->name, trap->level);
             remove_ob(trap);
             free_object(trap);
+			set_traped_flag(env);
 	    /* If it is your own trap, (or any players trap), don't you don't
 	     * get exp for it.
 	     */
@@ -388,7 +437,7 @@ int trap_disarm(object *disarmer, object *trap, int risk) {
         }
     else
         {
-            new_draw_info_format(NDI_UNIQUE, 0,disarmer,"You fail to remove the %s.", trap->name);
+            new_draw_info_format(NDI_UNIQUE, 0,disarmer,"You fail to remove the %s (lvl %d).", trap->name, trap->level);
 	    if(! (random_roll(0, (MAX(2,disarmer_level-trap->level 
 	       + disarmer->stats.Dex/2-6))-1, disarmer, PREFER_LOW)) &&risk) {
 		new_draw_info(NDI_UNIQUE, 0,disarmer,"In fact, you set it off!");
@@ -398,44 +447,25 @@ int trap_disarm(object *disarmer, object *trap, int risk) {
         }
 }
 
-
 /*  traps need to be adjusted for the difficulty of the map.  The
 default traps are too strong for wimpy level 1 players, and 
 unthreatening to anyone of high level */
 
 void trap_adjust(object *trap, int difficulty)
-{ int i;
-  /*  first we set the sp value of the trap if it has a spell in it. */
-  if(trap->slaying) {
-	trap->stats.sp = look_up_spell_name(trap->slaying);
-	trap->stats.dam = 0;
-  }
-  if(trap->stats.sp ==-1) trap->stats.sp = 0;
+{
+	int off;
 
-  /* now we set the trap level to match the difficulty of the level */
-  /* the formula below will give a level from 1 to (2*difficulty) with */
-  /* a peak probability at difficulty */
+	if(difficulty < 1)
+		difficulty=1;
 
-  trap->level = MAX(1, rndm(0, difficulty-1) + rndm(0, difficulty-1));
+	off = (int)((float)difficulty * 0.2f);
 
-  /* set the hiddenness of the trap, similar formula to above */
-  trap->stats.Cha = rndm(0, 19) + rndm(0, difficulty-1) + rndm(0, difficulty-1);
+	trap->level = rndm(difficulty-off,difficulty+off);
+	if(trap->level <1)
+		trap->level = 1;
 
-  /* set the damage of the trap if it's not a spellcasting trap 
-	we get 0-4 pts of damage per level of difficulty of the map in
-        the trap*/
-
-  if(trap->stats.sp == 0) {
-	trap->stats.dam = 0;
-	for(i=0;i<difficulty;i++) trap->stats.dam+=rndm(0, 4);
-  }
-    
-
-  /*  the poison trap special case */
-  if(trap->attacktype & AT_POISON)
-      trap->stats.dam = MAX(1, rndm(0, difficulty-1));  
-
-  /*  so we get an appropriate amnt of exp for AT_DEATH traps */
-  if(trap->attacktype & AT_DEATH) trap->stats.dam = 127;
-
+	/* set the hiddenness of the trap, similar formula to above */
+	trap->stats.Cha = rndm(0, 19) + rndm(difficulty-off,difficulty+off);
+	if(trap->stats.Cha < 1)
+		trap->stats.Cha = 1;
 }

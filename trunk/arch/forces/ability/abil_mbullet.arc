@@ -1,6 +1,7 @@
 Object ability_mbullet
 name ability magic bullet
 type 110
+identified 1
 face force.101
 sys_object 1
 is_magical 1

@@ -8,7 +8,7 @@ width 17
 height 17
 enter_x 1
 enter_y 1
-difficulty 1
+difficulty 3
 end
 arch floor_ostone1
 end
@@ -161,6 +161,7 @@ y 7
 end
 arch chest
 randomitems traps
+level 3
 x 1
 y 7
 end
@@ -741,6 +742,10 @@ arch floor_ostone1
 x 7
 y 8
 end
+arch wall_blue1.111
+x 7
+y 8
+end
 arch floor_ostone1
 x 7
 y 9
@@ -754,6 +759,17 @@ x 7
 y 11
 end
 arch floor_ostone1
+x 7
+y 12
+end
+arch pudding_red
+randomitems traps
+level 7
+no_attack 1
+unaggressive 1
+stand_still 1
+hp 1
+maxhp 1
 x 7
 y 12
 end
@@ -814,6 +830,12 @@ end
 arch floor_ostone1
 x 8
 y 8
+end
+arch door1_locked
+x 8
+y 8
+arch trap_rocks
+end
 end
 arch floor_ostone1
 x 8
@@ -900,6 +922,10 @@ arch floor_ostone1
 x 9
 y 8
 end
+arch wall_blue1.111
+x 9
+y 8
+end
 arch floor_ostone1
 x 9
 y 9
@@ -989,6 +1015,21 @@ end
 arch floor_ostone1
 x 10
 y 12
+end
+arch spawn_point
+speed -0.11
+x 10
+y 12
+arch ant_soldier
+type 83
+randomitems traps
+level 7
+no_attack 1
+unaggressive 1
+stand_still 1
+hp 1
+maxhp 1
+end
 end
 arch floor_ostone1
 x 10

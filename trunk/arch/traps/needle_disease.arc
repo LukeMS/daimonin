@@ -3,7 +3,6 @@ name diseased needle
 type 154
 face needle.101
 randomitems traps_needle_diseases
-speed 1
 hp 1
 msg
 You are pricked by a needle!

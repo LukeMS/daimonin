@@ -855,60 +855,6 @@ int singing(object *pl, int dir) {
     return exp;
 }
 
-/* The FIND_TRAPS skill. This routine is taken mostly from the 
- * command_search loop. It seemed easier to have a separate command,
- * rather than overhaul the existing code - this makes sure things 
- * still work for those people who don't want to have skill code 
- * implemented.
- */
-
-int find_traps (object *pl) {  
-   object *tmp,*tmp2;
-   mapstruct *m;
-   int xt,yt,i,expsum=0;
-  /*First we search all around us for runes and traps, which are
-    all type RUNE */
-   for(i=0;i<9;i++) { 
-        /*  Check everything in the square for trapness */
-	   xt = pl->x + freearr_x[i];
-		yt =pl->y + freearr_y[i];
-        if(!(m=out_of_map(pl->map,&xt,&yt))) continue;
-        for(tmp = get_map_ob(m,xt,yt); tmp!=NULL;tmp=tmp->above) {
-
-            /*  And now we'd better do an inventory traversal of each
-                of these objects' inventory */
-
-            for(tmp2=tmp->inv;tmp2!=NULL;tmp2=tmp2->below)
-                if(tmp2->type==RUNE)  
-		  if(trap_see(pl,tmp2)) { 
-			trap_show(tmp2,tmp); 
-  			if(tmp2->stats.Cha>1) { 
-			    if (!tmp2->owner || tmp2->owner->type!=PLAYER)
-				expsum += calc_skill_exp(pl,tmp2);
-			    /* do the following so calc_skill_exp will know 
-			     * how much xp to award for disarming
-			     */
-			    tmp2->stats.exp = tmp2->stats.Cha * tmp2->level; 
-			    tmp2->stats.Cha = 1; /* unhide the trap */ 
-			}
-		  }
-            if(tmp->type==RUNE)  
-		  if(trap_see(pl,tmp)) { 
-			trap_show(tmp,tmp); 
-  			if(tmp->stats.Cha>1) {
-			    if (!tmp->owner || tmp->owner->type!=PLAYER)
-				expsum += calc_skill_exp(pl,tmp);
-			    /* do the following so calc_skill_exp will know 
-			     * how much xp to award for disarming
-			     */
-			    tmp->stats.exp = tmp->stats.Cha * tmp->level; 
-			    tmp->stats.Cha = 1; /* unhide the trap */ 
-			}
-            	  }
-	   }
-   }
-   return expsum;
-}  
 
 /* pray() - when this skill is called from do_skill(), it allows
  * the player to regain lost grace points at a faster rate. -b.t.
@@ -1301,43 +1247,96 @@ int write_scroll (object *pl, object *scroll) {
     return (-10*spells[chosen_spell].level);
 }
 
+/* The FIND_TRAPS skill. This routine is taken mostly from the 
+ * command_search loop. It seemed easier to have a separate command,
+ * rather than overhaul the existing code - this makes sure things 
+ * still work for those people who don't want to have skill code 
+ * implemented.
+ */
+
+int find_traps (object *pl)
+{  
+   object *tmp,*tmp2;
+   mapstruct *m;
+   int xt,yt,i;
+  /*First we search all around us for runes and traps, which are
+    all type RUNE */
+   for(i=0;i<9;i++)
+   { 
+        /*  Check everything in the square for trapness */
+	   xt = pl->x + freearr_x[i];
+		yt =pl->y + freearr_y[i];
+        if(!(m=out_of_map(pl->map,&xt,&yt))) 
+			continue;
+        for(tmp = get_map_ob(m,xt,yt); tmp!=NULL;tmp=tmp->above) 
+		{
+
+            /*  And now we'd better do an inventory traversal of each
+                of these objects' inventory */
+			if(pl != tmp && (tmp->type == PLAYER || tmp->type == MONSTER))
+				continue;
+
+            for(tmp2=tmp->inv;tmp2!=NULL;tmp2=tmp2->below)
+			{
+				if(tmp2->type==RUNE && trap_see(pl,tmp2))
+				{ 
+					trap_show(tmp2,tmp);
+					tmp2->stats.Cha = 1;
+				}
+			}
+
+            if(tmp->type==RUNE && trap_see(pl,tmp))  
+			{
+				trap_show(tmp,tmp); 
+				tmp->stats.Cha = 1;
+			}
+	   }
+   }
+   return 0;
+}  
+
 /* remove_trap() - This skill will disarm any previously discovered trap 
  * the algorithm is based (almost totally) on the old command_disarm() - b.t. 
  */ 
 
-int remove_trap (object *op, int dir) {
-  object *tmp,*tmp2;
-  mapstruct *m;
-  int i,x,y,success=0;    
+int remove_trap (object *op, int dir) 
+{
+	object *tmp,*tmp2;
+	mapstruct *m;
+	int i,x,y;    
 
-   for(i=0;i<9;i++) {
-      x = op->x + freearr_x[i];
-      y = op->y + freearr_y[i];
-      if(!(m=out_of_map(op->map,&x,&y)))
-	continue;
+	for(i=0;i<9;i++) 
+	{
+		x = op->x + freearr_x[i];
+		y = op->y + freearr_y[i];
+		if(!(m=out_of_map(op->map,&x,&y)))
+			continue;
 
-  /*  Check everything in the square for trapness */
-   for(tmp = get_map_ob(m,x,y);tmp!=NULL;tmp=tmp->above) {
+		/*  Check everything in the square for trapness */
+		for(tmp = get_map_ob(m,x,y);tmp!=NULL;tmp=tmp->above) 
+		{
 
-      /* And now we'd better do an inventory traversal of each
-       * of these objects' inventory */
+			/* And now we'd better do an inventory traversal of each
+			   * of these objects' inventory */
 
-      for(tmp2=tmp->inv;tmp2!=NULL;tmp2=tmp2->below)
-         if(tmp2->type==RUNE&&tmp2->stats.Cha<=1) {
-              trap_show(tmp2,tmp);
-              if(trap_disarm(op,tmp2,1) && (!tmp2->owner || tmp2->owner->type!=PLAYER))
-		   success += calc_skill_exp(op,tmp2);
-         }
-
-      if(tmp->type==RUNE&&tmp->stats.Cha<=1) {
-         trap_show(tmp,tmp);
-         if (trap_disarm(op,tmp,1) && (!tmp->owner || tmp->owner->type!=PLAYER))
-		   success += calc_skill_exp(op,tmp);
-      }  
-    }
-  }
- 
-   return success;
+			for(tmp2=tmp->inv;tmp2!=NULL;tmp2=tmp2->below)
+			{
+				if(tmp2->type==RUNE&&tmp2->stats.Cha<=1)
+				{
+					if(QUERY_FLAG(tmp2, FLAG_SYS_OBJECT) || QUERY_FLAG(tmp2,FLAG_IS_INVISIBLE))
+						trap_show(tmp2,tmp);
+					trap_disarm(op,tmp2,1);
+				}
+			}
+			if(tmp->type==RUNE&&tmp->stats.Cha<=1)
+			{
+				if(QUERY_FLAG(tmp, FLAG_SYS_OBJECT) || QUERY_FLAG(tmp,FLAG_IS_INVISIBLE))
+					trap_show(tmp,tmp);
+				trap_disarm(op,tmp,1);
+			}  
+		}
+	}
+   return 0;
 }
 
 int skill_throw (object *op, int dir, char *params) {

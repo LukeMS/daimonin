@@ -33,10 +33,9 @@
 
 /* Daimonin_Object methods  */
 static PyObject* Daimonin_Object_CheckTrigger(Daimonin_Object* self, PyObject* args);
-static PyObject* Daimonin_Object_CheckArchInventory(Daimonin_Object *self, PyObject* args);
 static PyObject* Daimonin_Object_SetSaveBed(Daimonin_Object *self, PyObject* args);
-static PyObject* Daimonin_Object_SetSkillExperience(Daimonin_Object *self, PyObject* args);
-static PyObject* Daimonin_Object_GetSkillExperience(Daimonin_Object *self, PyObject* args);
+static PyObject* Daimonin_Object_SetSkill(Daimonin_Object *self, PyObject* args);
+static PyObject* Daimonin_Object_GetSkill(Daimonin_Object *self, PyObject* args);
 static PyObject* Daimonin_Object_ActivateRune(Daimonin_Object *self, PyObject* args);
 static PyObject* Daimonin_Object_CastAbility(Daimonin_Object *self, PyObject* args);
 static PyObject* Daimonin_Object_GetGod(Daimonin_Object *self, PyObject* args);
@@ -65,6 +64,8 @@ static PyObject* Daimonin_Object_DoKnowSkill(Daimonin_Object *self, PyObject* ar
 static PyObject* Daimonin_Object_AcquireSkill(Daimonin_Object *self, PyObject* args);
 static PyObject* Daimonin_Object_FindMarkedObject(Daimonin_Object *whoptr, PyObject* args);
 static PyObject* Daimonin_Object_CreatePlayerForce(Daimonin_Object *self, PyObject* args);
+static PyObject* Daimonin_Object_CheckQuestObject(Daimonin_Object *whoptr, PyObject* args);
+static PyObject* Daimonin_Object_AddQuestObject(Daimonin_Object *whoptr, PyObject* args);
 static PyObject* Daimonin_Object_CreatePlayerInfo(Daimonin_Object *self, PyObject* args);
 static PyObject* Daimonin_Object_GetPlayerInfo(Daimonin_Object *self, PyObject* args);
 static PyObject* Daimonin_Object_GetNextPlayerInfo(Daimonin_Object *self, PyObject* args);
@@ -79,6 +80,7 @@ static PyObject* Daimonin_Object_Write(Daimonin_Object *self, PyObject* args);
 static PyObject* Daimonin_Object_IsOfType(Daimonin_Object *self, PyObject* args);
 static PyObject* Daimonin_Object_GetIP(Daimonin_Object *self, PyObject* args);
 static PyObject* Daimonin_Object_GetArchName(Daimonin_Object *self, PyObject* args);
+static PyObject* Daimonin_Object_ShowCost(Daimonin_Object *self, PyObject* args);
 static PyObject* Daimonin_Object_GetItemCost(Daimonin_Object *self, PyObject* args);
 static PyObject* Daimonin_Object_GetMoney(Daimonin_Object *self, PyObject* args);
 static PyObject* Daimonin_Object_Save(Daimonin_Object *self, PyObject* args);

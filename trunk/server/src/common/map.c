@@ -1338,6 +1338,9 @@ static int load_map_header(FILE *fp, mapstruct *m)
         m->light_value = atoi(value);
 
 	/* i assume that the default map_flags settings is 0 - so we don't handle <flagset> 0 */
+	} else if (!strcmp(key,"no_save")) {
+		if(atoi(value))
+			m->map_flags |= MAP_FLAG_NO_SAVE;
 	} else if (!strcmp(key,"no_magic")) {
 		if(atoi(value))
 			m->map_flags |= MAP_FLAG_NOMAGIC;
@@ -1669,10 +1672,18 @@ int new_save_map(mapstruct *m, int flag)
     
     if (flag || MAP_UNIQUE(m)) 
 	{
-		if (!MAP_UNIQUE(m))  /* flag is set */
+		if (!MAP_UNIQUE(m))
 			strcpy (filename, create_pathname (m->path));
-		else 
+		else
+		{
+			/* that ensures we always reload from original maps */
+			if(MAP_NOSAVE(m))
+			{
+				LOG(llevDebug,"skip map %s (no_save flag)\n", m->path);
+				return 0;
+			}
 			strcpy (filename, m->path);
+		}
 
 		/* If the compression suffix already exists on the filename, don't
 		* put it on again.  This nasty looking strcmp checks to see if the
@@ -1736,6 +1747,7 @@ int new_save_map(mapstruct *m, int flag)
     if (MAP_UNIQUE(m)) fprintf(fp,"unique %d\n", MAP_UNIQUE(m)?1:0);
     if (MAP_OUTDOORS(m)) fprintf(fp,"outdoor %d\n", MAP_OUTDOORS(m)?1:0);
 
+    if (MAP_NOSAVE(m)) fprintf(fp,"no_save %d\n", MAP_NOSAVE(m)?1:0);
     if (MAP_NOMAGIC(m)) fprintf(fp,"no_magic %d\n", MAP_NOMAGIC(m)?1:0);
     if (MAP_NOPRIEST(m)) fprintf(fp,"no_priest %d\n", MAP_NOPRIEST(m)?1:0);
     if (MAP_NOHARM(m)) fprintf(fp,"no_harm %d\n", MAP_NOHARM(m)?1:0);

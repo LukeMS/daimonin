@@ -63,6 +63,7 @@ typedef struct item_struct {
     uint16 damned:1;		/* item is damned */
     uint16 unpaid:1;		/* item is unpaid */
     uint16 locked:1;		/* item is locked */
+    uint16 traped:1;		/* item is traped */
     uint16 applied:1;		/* item is applied */
     uint16 open:1;		/* container is open */
     uint16 inv_updated:1;	/* item's inventory is updated, this is set
@@ -275,7 +276,7 @@ extern void remove_item_inventory ( item *op );
 extern item *create_new_item ( item *env, sint32 tag );
 
 extern void set_item_values (item *op, char *name, sint32 weight, uint16 face, 
-                      uint16 flags, uint16 anim, uint16 animspeed,
+                      int flags, uint16 anim, uint16 animspeed,
                       sint32 nrof,uint8 itype, uint8 stype,uint8 q,uint8 c,uint8 s,uint8 l,uint8 dir); 
                       extern void toggle_locked ( item *op );
 extern void send_mark_obj ( item *op );
