@@ -169,12 +169,12 @@ static _bitmap_name bitmap_name[BITMAP_INIT]    =
     {"options_mark_right.png", PIC_TYPE_TRANS}, {"options_alpha.png", PIC_TYPE_DEFAULT},
     {"pentagram.png", PIC_TYPE_DEFAULT}, {"quad_button_up.png", PIC_TYPE_DEFAULT},
     {"quad_button_down.png", PIC_TYPE_DEFAULT}, {"nchar_marker.png", PIC_TYPE_TRANS}, {"traped.png", PIC_TYPE_TRANS},
-    {"pray.png", PIC_TYPE_TRANS}, {"wand.png", PIC_TYPE_TRANS}, {"invite.png", PIC_TYPE_DEFAULT}, 
+    {"pray.png", PIC_TYPE_TRANS}, {"wand.png", PIC_TYPE_TRANS}, {"invite.png", PIC_TYPE_DEFAULT},
     {"dialog_button_black_up.png", PIC_TYPE_DEFAULT},{"dialog_button_black_down.png", PIC_TYPE_DEFAULT},
     {"button_small_up.png", PIC_TYPE_DEFAULT},{"button_small_down.png", PIC_TYPE_DEFAULT},
     {"group_mana.png", PIC_TYPE_DEFAULT},{"group_grace.png", PIC_TYPE_DEFAULT},
     {"group_hp.png", PIC_TYPE_DEFAULT},
-    
+
 };
 
 #define BITMAP_MAX (sizeof(bitmap_name)/sizeof(struct _bitmap_name))
@@ -236,7 +236,7 @@ void init_game_data(void)
     memset(animations, 0, sizeof(animations));
     memset(bmaptype_table, 0, sizeof(bmaptype_table));
     ToggleScreenFlag = FALSE;
-    KeyScanFlag = FALSE;   
+    KeyScanFlag = FALSE;
     memset(&fire_mode_tab, 0, sizeof(fire_mode_tab));
 
     for (i = 0; i < MAXFACES; i++)
@@ -299,9 +299,9 @@ void save_options_dat(void)
 
     if (!(stream = fopen(OPTION_FILE, "w")))
         return;
-    fputs("###############################################\n", stream);      
+    fputs("###############################################\n", stream);
     fputs("# This is the Daimonin SDL client option file #\n", stream);
-    fputs("###############################################\n", stream);         
+    fputs("###############################################\n", stream);
     while (opt_tab[++i])
     {
         fputs("\n# ", stream);
@@ -323,12 +323,12 @@ void save_options_dat(void)
                   sprintf(txtBuffer, " %d", *((uint8 *) opt[j].value));
                   break;
             }
-            fputs(txtBuffer, stream);      
+            fputs(txtBuffer, stream);
             fputs("\n", stream);
         }
     }
     fclose(stream);
-} 
+}
 
 /******************************************************************
  Load the option file.
@@ -356,7 +356,7 @@ void load_options_dat(void)
             case VAL_CHAR:
               *((uint8 *) opt[i].value) = (uint8) opt[i].default_val;
               break;
-              /* case VAL_STR 
+              /* case VAL_STR
               ...  = opt[j].info2;
               */
         }
@@ -403,10 +403,10 @@ void load_options_dat(void)
     }
     fclose(stream);
     /*
-     TODO implement server options. 
+     TODO implement server options.
     */
     strcpy(options.metaserver, "damn.informatik.uni-bremen.de");
-    options.metaserver_port = 13326; 
+    options.metaserver_port = 13326;
 
     if ((txtwin[TW_MSG].size + txtwin[TW_CHAT].size) > 36)
     {
@@ -456,7 +456,7 @@ Boolean game_status_chain(void)
         else
         {
             draw_info("query metaserver...", COLOR_GREEN);
-            sprintf(buf, "trying %s:%d", options.metaserver, options.metaserver_port); 
+            sprintf(buf, "trying %s:%d", options.metaserver, options.metaserver_port);
             draw_info(buf, COLOR_GREEN);
             if (SOCKET_OpenSocket(&csocket.fd, &csocket, options.metaserver, options.metaserver_port))
             {
@@ -778,7 +778,7 @@ int is_username_valid(const char *name)
     }
     return 1;
 }
- 
+
 /* free the skin & standard gfx */
 void free_bitmaps(void)
 {
@@ -989,15 +989,15 @@ void list_vid_modes(void)
 
 
     vinfo = SDL_GetVideoInfo();
-    LOG(LOG_MSG, "VideoInfo: hardware surfaces? %s\n", vinfo->hw_available ? "yes" : "no"); 
-    LOG(LOG_MSG, "VideoInfo: windows manager? %s\n", vinfo->wm_available ? "yes" : "no"); 
-    LOG(LOG_MSG, "VideoInfo: hw to hw blit? %s\n", vinfo->blit_hw ? "yes" : "no"); 
-    LOG(LOG_MSG, "VideoInfo: hw to hw ckey blit? %s\n", vinfo->blit_hw_CC ? "yes" : "no"); 
-    LOG(LOG_MSG, "VideoInfo: hw to hw alpha blit? %s\n", vinfo->blit_hw_A ? "yes" : "no"); 
-    LOG(LOG_MSG, "VideoInfo: sw to hw blit? %s\n", vinfo->blit_sw ? "yes" : "no"); 
-    LOG(LOG_MSG, "VideoInfo: sw to hw ckey blit? %s\n", vinfo->blit_sw_CC ? "yes" : "no"); 
-    LOG(LOG_MSG, "VideoInfo: sw to hw alpha blit? %s\n", vinfo->blit_sw_A ? "yes" : "no"); 
-    LOG(LOG_MSG, "VideoInfo: color fill? %s\n", vinfo->blit_fill ? "yes" : "no"); 
+    LOG(LOG_MSG, "VideoInfo: hardware surfaces? %s\n", vinfo->hw_available ? "yes" : "no");
+    LOG(LOG_MSG, "VideoInfo: windows manager? %s\n", vinfo->wm_available ? "yes" : "no");
+    LOG(LOG_MSG, "VideoInfo: hw to hw blit? %s\n", vinfo->blit_hw ? "yes" : "no");
+    LOG(LOG_MSG, "VideoInfo: hw to hw ckey blit? %s\n", vinfo->blit_hw_CC ? "yes" : "no");
+    LOG(LOG_MSG, "VideoInfo: hw to hw alpha blit? %s\n", vinfo->blit_hw_A ? "yes" : "no");
+    LOG(LOG_MSG, "VideoInfo: sw to hw blit? %s\n", vinfo->blit_sw ? "yes" : "no");
+    LOG(LOG_MSG, "VideoInfo: sw to hw ckey blit? %s\n", vinfo->blit_sw_CC ? "yes" : "no");
+    LOG(LOG_MSG, "VideoInfo: sw to hw alpha blit? %s\n", vinfo->blit_sw_A ? "yes" : "no");
+    LOG(LOG_MSG, "VideoInfo: color fill? %s\n", vinfo->blit_fill ? "yes" : "no");
     LOG(LOG_MSG, "VideoInfo: video memory: %dKB\n", vinfo->video_mem);
 }
 
@@ -1104,7 +1104,7 @@ int main(int argc, char *argv[])
     LOG(LOG_MSG, "Try then to start the client with 'SDL_AUDIODRIVER=null ./daimonin'\n");
     LOG(LOG_MSG, "Read the README_LINUX.txt file for more information.\n");
 #endif
-#ifdef INSTALL_OPENGL        
+#ifdef INSTALL_OPENGL
     if (options.use_gl)
     {
         const SDL_VideoInfo    *info    = NULL;
@@ -1207,7 +1207,7 @@ int main(int argc, char *argv[])
         SDL_Delay(25);      /* force the thread to sleep */
     }; /* wait for keypress */
 
-    sprintf(buf, "Welcome to Daimonin v%s", PACKAGE_VERSION); 
+    sprintf(buf, "Welcome to Daimonin v%s", PACKAGE_VERSION);
     draw_info(buf, COLOR_HGOLD);
     draw_info("init network...", COLOR_GREEN);
     if (!SOCKET_InitSocket()) /* log in function*/
@@ -1242,7 +1242,7 @@ int main(int argc, char *argv[])
             tf = flags = get_video_flags();
             attempt_fullscreen_toggle(&ScreenSurface, &flags);
             ToggleScreenFlag = FALSE;
-        }   
+        }
 #endif
 
 
@@ -1260,7 +1260,7 @@ int main(int argc, char *argv[])
             if (csocket.fd == SOCKET_NO)
             {
                 /* connection closed, so we go back to INIT here*/
-                if (GameStatus == GAME_STATUS_PLAY) 
+                if (GameStatus == GAME_STATUS_PLAY)
                 {
                     GameStatus = GAME_STATUS_INIT;
                     PasswordAlreadyAsked = 0;
@@ -1279,7 +1279,7 @@ int main(int argc, char *argv[])
                 FD_SET((unsigned int) csocket.fd, &tmp_write);
 
 
-                /*          
+                /*
                                 if (MAX_TIME!=0)
                                 {
                                     timeout.tv_sec = MAX_TIME / 100000;
@@ -1364,7 +1364,7 @@ int main(int argc, char *argv[])
                 StringBlt(ScreenSurface, &Font6x3Out, "Group", 5, 525, COLOR_HGOLD, NULL, NULL);
                 sprite_blt(Bitmaps[BITMAP_FLINE], 1, 306, NULL, NULL);
                 sprite_blt(Bitmaps[BITMAP_BELOW], 264, 550, NULL, NULL);
-                cpl.container = NULL; /* this will be set right on the fly in get_inventory_data() */   
+                cpl.container = NULL; /* this will be set right on the fly in get_inventory_data() */
                 if (GameStatus == GAME_STATUS_PLAY)
                 {
                     cpl.win_inv_tag = get_inventory_data(cpl.ob, &cpl.win_inv_ctag, &cpl.win_inv_slot,
@@ -1375,7 +1375,7 @@ int main(int argc, char *argv[])
                     sprintf(buf, "%4.3f kg", cpl.real_weight);
                     StringBlt(ScreenSurface, &SystemFont, buf, 125 + 35, 470, COLOR_DEFAULT, NULL, NULL);
                     StringBlt(ScreenSurface, &SystemFont, "Limit", 125, 481, COLOR_HGOLD, NULL, NULL);
-                    sprintf(buf, "%4.3f kg", (float) (cpl.weight_limit / 1000));                            
+                    sprintf(buf, "%4.3f kg", (float) (cpl.weight_limit / 1000));
                     StringBlt(ScreenSurface, &SystemFont, buf, 125 + 35, 481, COLOR_DEFAULT, NULL, NULL);
                     cpl.win_below_tag = get_inventory_data(cpl.below, &cpl.win_below_ctag, &cpl.win_below_slot,
                                                            &cpl.win_below_start, &cpl.win_below_count, INVITEMBELOWXLEN,
@@ -1403,7 +1403,7 @@ int main(int argc, char *argv[])
             } /* map update */
 
             show_player_stats(226, 0);
-            show_resist(500, 0);                
+            show_resist(500, 0);
             textwin_show(539, 485);
             if (GameStatus == GAME_STATUS_PLAY)
             {
@@ -1423,7 +1423,7 @@ int main(int argc, char *argv[])
                     StringBlt(ScreenSurface, &SystemFont, "Transfer Character to Map...", 300, 300, COLOR_DEFAULT, NULL,
                               NULL);
             }
-        } 
+        }
 
         /* if not connected, walk through connection chain and/or wait for action */
         if (GameStatus != GAME_STATUS_PLAY)
@@ -1436,7 +1436,7 @@ int main(int argc, char *argv[])
         }
 
         show_player_doll(0, 0);
-        show_player_data(0, 0);     
+        show_player_data(0, 0);
 
         /* show main-option menu */
         if (esc_menu_flag == TRUE)
@@ -1460,7 +1460,7 @@ int main(int argc, char *argv[])
             /*  else Item = locate_item(cpl.win_quick_tag); */
             SDL_GetMouseState(&x, &y);
             if (drag == DRAG_QUICKSLOT_SPELL)
-                sprite_blt(spell_list[quick_slots[cpl.win_quick_tag].groupNr].entry[quick_slots[cpl.win_quick_tag].classNr][quick_slots[cpl.win_quick_tag].spellNr].icon,
+                sprite_blt(spell_list[quick_slots.spell.[cpl.win_quick_tag].groupNr].entry[quick_slots.spell.[cpl.win_quick_tag].classNr][quick_slots.spell.[cpl.win_quick_tag].spellNr].icon,
                            x, y, NULL, NULL);
             else
                 blt_inv_item_centered(Item, x, y);
@@ -1476,9 +1476,9 @@ int main(int argc, char *argv[])
             rec.x = x - 7;
             rec.y = y - 2;
             SDL_FillRect(ScreenSurface, &rec, -1);
-            rec.y = y - 5;          
+            rec.y = y - 5;
             SDL_FillRect(ScreenSurface, &rec, -1);
-        } 
+        }
         if (GameStatus < GAME_STATUS_REQUEST_FILES)
             show_meta_server(start_server, metaserver_start, metaserver_sel);
         else if (GameStatus >= GAME_STATUS_REQUEST_FILES && GameStatus < GAME_STATUS_NEW_CHAR)
@@ -1548,7 +1548,7 @@ static void show_intro(char *text)
 
 static void flip_screen(void)
 {
-#ifdef INSTALL_OPENGL        
+#ifdef INSTALL_OPENGL
     if (options.use_gl)
         SDL_GL_SwapBuffers();
     else
@@ -1559,7 +1559,7 @@ static void flip_screen(void)
             SDL_UpdateRect(ScreenSurface, 0, 0, SCREEN_XLEN, SCREEN_YLEN);
         else
             SDL_Flip(ScreenSurface);
-#ifdef INSTALL_OPENGL        
+#ifdef INSTALL_OPENGL
     }
 #endif
 }
