@@ -163,6 +163,7 @@ struct lua_context
     const char         *file;             /* Script file (not normalized) */
     int                 parm1, parm2, parm3, parm4;  /* Parameters from event */
     int                 returnvalue;              /* Return value from script */
+    move_response      *move_response;    /* For AI move behaviours */
 };
 
 enum lua_object_type
@@ -171,6 +172,7 @@ enum lua_object_type
     LUATYPE_GAME,
     LUATYPE_MAP,
     LUATYPE_OBJECT,
+    LUATYPE_AI,
     /* These are never exposed outside the engine: */
     LUATYPE_ATTRIBUTE,
     LUATYPE_METHOD,
@@ -285,8 +287,10 @@ extern lua_class        GameObject;
 extern lua_class        Map;
 extern lua_class        Event;
 extern lua_class        Game;
+extern lua_class        AI;
 extern int              GameObject_init(lua_State *s);
 extern int              Map_init(lua_State *s);
+extern int              AI_init(lua_State *s);
 
 /*****************************************************************************/
 /* Commands management part.                                                 */

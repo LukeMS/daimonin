@@ -24,11 +24,11 @@
 #undef Behaviour
 #undef Parameter        
 
-#define INTEGER AI_INTEGER_TYPE
-#define STRING AI_INTEGER_TYPE
+#define INTEGER   AI_INTEGER_TYPE
+#define STRING    AI_STRING_TYPE
 #define STRINGINT AI_STRINGINT_TYPE
-#define OPTIONAL AI_OPTIONAL_PARAM
-#define MULTI AI_MULTI_PARAM
+#define OPTIONAL  AI_OPTIONAL_PARAM
+#define MULTI     AI_MULTI_PARAM
 #define MANDATORY AI_MANDATORY_PARAM
 
 #define BehaviourClass(name, behaviours) behaviours

@@ -895,6 +895,7 @@ MODULEAPI CFParm * triggerEvent(CFParm *PParm)
         case EVENT_THROW:
         case EVENT_TRIGGER:
         case EVENT_CLOSE:
+        case EVENT_AI_BEHAVIOUR:
 #ifdef LUA_DEBUG
     LOG(llevDebug, "LUA - triggerEvent:: eventcode %d\n", eventcode);
 #endif
@@ -1089,7 +1090,7 @@ MODULEAPI int HandleEvent(CFParm *PParm)
     context->resume_time = -1;
     context->state = lua_newthread(global_state);
     context->threadidx = luaL_ref(global_state, LUA_REGISTRYINDEX);
-
+    
     /* And all the event parameters */
     context->activator = (object *) (PParm->Value[1]);
     context->activator_tag = context->activator ? context->activator->count : 0;
@@ -1105,6 +1106,11 @@ MODULEAPI int HandleEvent(CFParm *PParm)
     context->file = (const char *) (PParm->Value[9]);
     context->options = (const char *) (PParm->Value[10]);
     context->returnvalue = 0;
+    if(*(int *)PParm->Value[0] == EVENT_AI_BEHAVIOUR) 
+        context->move_response = PParm->Value[11];
+    else
+        context->move_response = NULL;
+
 
     res = RunLuaScript(context);
 
@@ -1127,7 +1133,8 @@ MODULEAPI int HandleEvent(CFParm *PParm)
         if (context->activator && context->activator->type == PLAYER)
             hooks->fix_player(context->activator);
     }
-    else if (context->parm4 == SCRIPT_FIX_ACTIVATOR && context->activator->type == PLAYER)
+    else if (context->parm4 == SCRIPT_FIX_ACTIVATOR && 
+            context->activator && context->activator->type == PLAYER)
     {
         hooks->fix_player(context->activator);
     }
@@ -1371,6 +1378,7 @@ MODULEAPI void init_Daimonin_Lua()
     init_class(global_state, &Game);
     GameObject_init(global_state);
     Map_init(global_state);
+    AI_init(global_state);
 
     /* Set up the global Game object  */
     lua_pushliteral(global_state, "game");

@@ -86,8 +86,11 @@
 #define EVENT_TIMER    12 /* Timer connected triggered it.                   */
 #define EVENT_TALK     13  /* Talk event for npc interface system            */
 
-#define NR_LOCAL_EVENTS 14
-#define NR_EVENTS 27
+/* AI events are slightly different, but still linked to a specific object */
+#define EVENT_AI_BEHAVIOUR 14 /* Behaviour event for the AI system           */
+
+#define NR_LOCAL_EVENTS 15
+#define NR_EVENTS 28
 
 #define EVENT_FLAG_NONE     0x0000
 #define EVENT_FLAG_APPLY    0x0001
@@ -117,19 +120,19 @@
 /* dont use this events until this line gets removed!! */
 /* Gecko: :-P */
 
-#define EVENT_CLOCK    14 /* Global time event.                              */
-#define EVENT_CRASH    15 /* Triggered when the server crashes. Not recursive*/
-#define EVENT_GDEATH   16 /* Global Death event                              */
-#define EVENT_GKILL    17 /* Triggered when anything got killed by anyone.   */
-#define EVENT_LOGIN    18 /* Player login.                                   */
-#define EVENT_LOGOUT   19 /* Player logout.                                  */
-#define EVENT_MAPENTER 20 /* A player entered a map.                         */
-#define EVENT_MAPLEAVE 21 /* A player left a map.                            */
-#define EVENT_MAPRESET 22 /* A map is resetting.                             */
-#define EVENT_REMOVE   23 /* A Player character has been removed.            */
-#define EVENT_SHOUT    24 /* A player 'shout' something.                     */
-#define EVENT_TELL     25 /* A player 'tell' something.                      */
-#define EVENT_BORN     26 /* A new character has been created.               */
+#define EVENT_CLOCK    15 /* Global time event.                              */
+#define EVENT_CRASH    16 /* Triggered when the server crashes. Not recursive*/
+#define EVENT_GDEATH   17 /* Global Death event                              */
+#define EVENT_GKILL    18 /* Triggered when anything got killed by anyone.   */
+#define EVENT_LOGIN    19 /* Player login.                                   */
+#define EVENT_LOGOUT   20 /* Player logout.                                  */
+#define EVENT_MAPENTER 21 /* A player entered a map.                         */
+#define EVENT_MAPLEAVE 22 /* A player left a map.                            */
+#define EVENT_MAPRESET 23 /* A map is resetting.                             */
+#define EVENT_REMOVE   24 /* A Player character has been removed.            */
+#define EVENT_SHOUT    25 /* A player 'shout' something.                     */
+#define EVENT_TELL     26 /* A player 'tell' something.                      */
+#define EVENT_BORN     27 /* A new character has been created.               */
 
 /*****************************************************************************/
 /* Hook codes. A hook is a function pointer passed from the server to the    */

@@ -378,7 +378,7 @@ static int parse_stringint_parameter(struct mob_behaviour_param *param, const ch
         buf[sep-value] = '\0';
         param->stringvalue = add_string(buf);
         param->intvalue = atoi(sep+1);
-        LOG(llevDebug, "Stringint: %s:%d\n", param->stringvalue, param->intvalue);
+//        LOG(llevDebug, "Stringint: %s:%d\n", param->stringvalue, param->intvalue);
         return 0;
     } else
         return -1;
@@ -458,7 +458,7 @@ static int parse_behaviour_parameters(const char *start, const char *end, struct
                 continue;
             }
         }
-
+                
         /* Fill in fields depending on type */
         switch (paramdecl->type)
         {
@@ -470,6 +470,8 @@ static int parse_behaviour_parameters(const char *start, const char *end, struct
             case AI_STRING_TYPE:
               param->stringvalue = add_string(valuebuf);
               param->flags |= AI_PARAM_PRESENT;
+        LOG(llevDebug, "parameter %s for behaviour %s, value %s\n", namebuf, behaviour->declaration->name, valuebuf);
+
               break;
               
             case AI_STRINGINT_TYPE:
@@ -519,6 +521,115 @@ static int parse_behaviour_parameters(const char *start, const char *end, struct
     }
 
     return 0;
+}
+
+static struct mob_behaviour *setup_plugin_behaviour(
+        behaviourclass_t class, 
+        char *buf, char *colonpos, const char *tok_end, const char *conf_text)
+{
+    int plugin_index, behaviour_index, options_index;
+    int behaviour_id;
+    struct mob_behaviour *new_behaviour = NULL;
+    const char *line_end = conf_text;
+        
+    /* Set up a plugin:behaviour */
+    switch(class) {
+        case BEHAVIOURCLASS_PROCESSES:
+            behaviour_id = AIBEHAVIOUR_PLUGIN_PROCESS;
+            plugin_index = AIPARAM_PLUGIN_PROCESS_PLUGIN;
+            behaviour_index = AIPARAM_PLUGIN_PROCESS_BEHAVIOUR;
+            options_index = AIPARAM_PLUGIN_PROCESS_OPTIONS;
+            break;
+        case BEHAVIOURCLASS_MOVES:
+            behaviour_id = AIBEHAVIOUR_PLUGIN_MOVE;
+            plugin_index = AIPARAM_PLUGIN_MOVE_PLUGIN;
+            behaviour_index = AIPARAM_PLUGIN_MOVE_BEHAVIOUR;
+            options_index = AIPARAM_PLUGIN_MOVE_OPTIONS;
+            break;
+        case BEHAVIOURCLASS_ACTIONS:
+            behaviour_id = AIBEHAVIOUR_PLUGIN_ACTION;
+            plugin_index = AIPARAM_PLUGIN_ACTION_PLUGIN;
+            behaviour_index = AIPARAM_PLUGIN_ACTION_BEHAVIOUR;
+            options_index = AIPARAM_PLUGIN_ACTION_OPTIONS;
+            break;
+        default:                        
+            LOG(llevBug, "BUG: behaviour %s without class\n", buf);
+            break;
+    }
+    new_behaviour = init_behaviour(class, behaviour_id);
+   
+    /* Split up plugin and behaviour names. Validate plugin */
+    *colonpos = '\0';
+    if(findPlugin(buf) == -1)
+    {
+        LOG(llevBug, "BUG: behaviour plugin %s unknown\n", buf);
+        return NULL;
+    }              
+    
+    new_behaviour->parameters[plugin_index].stringvalue = add_string(buf);
+    new_behaviour->parameters[plugin_index].flags |= AI_PARAM_PRESENT;
+    
+    new_behaviour->parameters[behaviour_index].stringvalue = add_string(colonpos+1);
+    new_behaviour->parameters[behaviour_index].flags |= AI_PARAM_PRESENT;
+    
+    /* See if there were any parameters */
+    while (*line_end == '\n' || *line_end == '\r')
+        line_end--;
+    
+    if(tok_end < line_end) {
+       new_behaviour->parameters[options_index].stringvalue = add_lstring(tok_end + 1, line_end - tok_end);
+       new_behaviour->parameters[options_index].flags |= AI_PARAM_PRESENT;
+    }
+
+    return new_behaviour;
+}
+
+static struct mob_behaviour *setup_behaviour(
+        object *op, behaviourclass_t class, 
+        char *buf, const char *tok_end, const char *conf_text)
+{
+    int behaviour_id;
+    struct mob_behaviour *new_behaviour = NULL;
+    
+    /* find the corresponding behaviour declaration */
+    /* TODO: here we can speed up search significantly using a
+     * perfect hash function */
+    
+    for (behaviour_id = 0; behaviourclasses[class].behaviours[behaviour_id].func; behaviour_id++)
+    {
+        if (!strcasecmp(buf, behaviourclasses[class].behaviours[behaviour_id].name))
+        {
+            new_behaviour = init_behaviour(class, behaviour_id);
+            //                    LOG(llevDebug,"    behaviour %s\n", buf);
+            break;
+        }
+    }
+    
+    if (new_behaviour == NULL)
+    {
+        LOG(llevBug, "BUG: unknown %s behaviour %s of %s\n", behaviourclasses[class].name, buf,
+            STRING_OBJ_NAME(op));
+        return NULL;
+    } 
+
+    /* Parse parameters to behaviour */
+    if (new_behaviour->parameters)
+    {
+        /* Parse behaviour parameters */
+        if (parse_behaviour_parameters(tok_end, conf_text, new_behaviour) == -1)
+        {
+            LOG(llevBug, "BUG: bad parameterlist for %s of %s\n", buf, STRING_OBJ_NAME(op));
+            return_poolchunk(new_behaviour, pool_mob_behaviour);
+            return NULL;
+        }
+    }
+
+    /* Special handling for some behaviours */
+    if(class == BEHAVIOURCLASS_PROCESSES && 
+            behaviour_id == AIBEHAVIOUR_ATTITUDE)
+        MOB_DATA(op)->attitudes = new_behaviour->parameters;
+
+    return new_behaviour;
 }
 
 struct mob_behaviourset * parse_behaviourconfig(const char *conf_text, object *op)
@@ -621,12 +732,17 @@ struct mob_behaviourset * parse_behaviourconfig(const char *conf_text, object *o
         }
         else
         {
-            int behaviour_id;
+            char *colonpos = NULL;
 
             /* extract behaviour name */
             while (tok_start < tok_end)
             {
                 buf[tok_start - conf_text] = *tok_start;
+
+                /* Separator char for plugin:behaviour */
+                if(*tok_start == ':')
+                    colonpos = &buf[tok_start - conf_text];
+
                 tok_start++;
             }
             buf[tok_start - conf_text] = '\0';
@@ -642,49 +758,23 @@ struct mob_behaviourset * parse_behaviourconfig(const char *conf_text, object *o
                 continue;
             }
 
-            /* find the corresponding behaviour declaration */
-            /* TODO: here we can speed up search significantly using a
-             * perfect hash function */
-            new_behaviour = NULL;
-            for (behaviour_id = 0; behaviourclasses[class].behaviours[behaviour_id].func; behaviour_id++)
-            {
-                if (!strcasecmp(buf, behaviourclasses[class].behaviours[behaviour_id].name))
-                {
-                    new_behaviour = init_behaviour(class, behaviour_id);
-                    //                    LOG(llevDebug,"    behaviour %s\n", buf);
-                    break;
-                }
-            }            
-            if (new_behaviour == NULL)
-            {
-                LOG(llevBug, "BUG: unknown %s behaviour %s of %s\n", behaviourclasses[class].name, buf,
-                    STRING_OBJ_NAME(op));
-                continue;
-            } 
-
-            /* Parse parameters to behaviour */
-            if (new_behaviour->parameters)
-            {
-                /* Parse behaviour parameters */
-                if (parse_behaviour_parameters(tok_end, conf_text, new_behaviour) == -1)
-                {
-                    LOG(llevBug, "BUG: bad parameterlist for %s of %s\n", buf, STRING_OBJ_NAME(op));
-                    return_poolchunk(new_behaviour, pool_mob_behaviour);
-                    continue;
-                }
-            }
-
-            /* Special handling for some behaviours */
-            if(class == BEHAVIOURCLASS_PROCESSES && 
-                    behaviour_id == AIBEHAVIOUR_ATTITUDE)
-                MOB_DATA(op)->attitudes = new_behaviour->parameters;
-	    
-            /* If everything checks out, add the behaviour to the set */ 
-            if (last_behaviour[class] == NULL)
-                behaviourset->behaviours[class] =                           new_behaviour;
+            if(colonpos)
+                new_behaviour = setup_plugin_behaviour(class, buf, colonpos, tok_end, conf_text);
             else
-                last_behaviour[class]->next =                               new_behaviour;
-            last_behaviour[class] =                         new_behaviour;
+                new_behaviour = setup_behaviour(op, class, buf, tok_end, conf_text);
+
+            if(new_behaviour == NULL) 
+            {
+                LOG(llevBug, "BUG: Failed setting up behaviour for %s\n", STRING_OBJ_NAME(op));
+                continue;
+            }
+            
+            /* If everything checks out, add the behaviour to the list */ 
+            if (last_behaviour[class] == NULL)
+                behaviourset->behaviours[class] = new_behaviour;
+            else
+                last_behaviour[class]->next = new_behaviour;
+            last_behaviour[class] = new_behaviour;
             new_behaviour->next = NULL;
         }
     }
@@ -1760,6 +1850,31 @@ void ai_run_away_from_enemy(object *op, struct mob_behaviour_param *params, move
     }
 }
 
+/* AI <-> plugin interface for movement behaviours */
+void ai_plugin_move(object *op, struct mob_behaviour_param *params, move_response *response)
+{
+#ifdef PLUGINS
+    CFParm  CFP;
+    int     k, l, m;
+    k = EVENT_AI_BEHAVIOUR;
+    l = 0; /* SCRIPT_FIX_ALL; */ /* Script fix none */
+    m = 0;
+    CFP.Value[0] = &k;   /* Event type */
+    CFP.Value[1] = NULL; /* Activator */
+    CFP.Value[2] = op;   /* Me */
+    CFP.Value[3] = NULL; /* Other */
+    CFP.Value[4] = NULL; /* Message */
+    CFP.Value[5] = &m;
+    CFP.Value[6] = &m;
+    CFP.Value[7] = &m;
+    CFP.Value[8] = &l; /* Fix settings */
+    CFP.Value[9] = (char *)AIPARAM_STRING(AIPARAM_PLUGIN_MOVE_BEHAVIOUR);  
+    CFP.Value[10] = (char *)AIPARAM_STRING(AIPARAM_PLUGIN_MOVE_OPTIONS);
+    CFP.Value[11] = (void *) response;
+    PlugList[findPlugin(AIPARAM_STRING(AIPARAM_PLUGIN_MOVE_PLUGIN))].eventfunc (&CFP);
+#endif 
+}
+
 /*
  * Misc behaviours
  */
@@ -1889,6 +2004,31 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
         }
         set_mobile_speed(op, 0);
     }
+}
+
+/* AI <-> plugin interface for processes */
+void ai_plugin_process(object *op, struct mob_behaviour_param *params)
+{
+#ifdef PLUGINS
+    CFParm  CFP;
+    int     k, l, m;
+    k = EVENT_AI_BEHAVIOUR;
+    l = 0; /* SCRIPT_FIX_ALL; */ /* Script fix none */
+    m = 0;
+    CFP.Value[0] = &k;   /* Event type */
+    CFP.Value[1] = NULL; /* Activator */
+    CFP.Value[2] = op;   /* Me */
+    CFP.Value[3] = NULL; /* Other */
+    CFP.Value[4] = NULL; /* Message */
+    CFP.Value[5] = &m;
+    CFP.Value[6] = &m;
+    CFP.Value[7] = &m;
+    CFP.Value[8] = &l; /* Fix settings */
+    CFP.Value[9] = (char *)AIPARAM_STRING(AIPARAM_PLUGIN_PROCESS_BEHAVIOUR);   /* file */
+    CFP.Value[10] = (char *)AIPARAM_STRING(AIPARAM_PLUGIN_PROCESS_OPTIONS);
+    CFP.Value[11] = NULL;
+    PlugList[findPlugin(AIPARAM_STRING(AIPARAM_PLUGIN_PROCESS_PLUGIN))].eventfunc (&CFP);
+#endif 
 }
 
 /*
@@ -2155,6 +2295,34 @@ int ai_spell_attack_enemy(object *op, struct mob_behaviour_param *params)
     return TRUE;
 }
 
+/* AI <-> plugin interface for actions */
+int ai_plugin_action(object *op, struct mob_behaviour_param *params)
+{
+    int ret = 0;
+#ifdef PLUGINS
+    CFParm  CFP, * retCFP;
+    int     k, l, m;
+    k = EVENT_AI_BEHAVIOUR;
+    l = 0; /* SCRIPT_FIX_ALL; */ /* Script fix none */
+    m = 0;
+    CFP.Value[0] = &k;   /* Event type */
+    CFP.Value[1] = NULL; /* Activator */
+    CFP.Value[2] = op;   /* Me */
+    CFP.Value[3] = NULL; /* Other */
+    CFP.Value[4] = NULL; /* Message */
+    CFP.Value[5] = &m;
+    CFP.Value[6] = &m;
+    CFP.Value[7] = &m;
+    CFP.Value[8] = &l; /* Fix settings */
+    CFP.Value[9] = (char *) AIPARAM_STRING(AIPARAM_PLUGIN_PROCESS_BEHAVIOUR);   /* file */
+    CFP.Value[10] = (char *) AIPARAM_STRING(AIPARAM_PLUGIN_PROCESS_OPTIONS);
+    CFP.Value[11] = NULL;
+    retCFP = PlugList[findPlugin(AIPARAM_STRING(AIPARAM_PLUGIN_PROCESS_PLUGIN))].eventfunc (&CFP);
+    ret = *(int *)retCFP->Value[0];
+#endif 
+
+    return ret;
+}
 /*
  * Support functions for move_monster()
  */
