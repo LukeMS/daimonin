@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -25,44 +25,45 @@
 #ifndef RANDOM_MAP_H
 #define RANDOM_MAP_H
 
-typedef struct {
-  char wallstyle[512];
-  char wall_name[512];
-  char floorstyle[512];
-  char monsterstyle[512];
-  char treasurestyle[512];
-  char layoutstyle[512];
-  char doorstyle[512];
-  char decorstyle[512];
-  char origin_map[512];
-  char final_map[512];
-  char exitstyle[512];
-  char this_map[512];
+typedef struct
+{
+    char                wallstyle[512];
+    char                wall_name[512];
+    char                floorstyle[512];
+    char                monsterstyle[512];
+    char                treasurestyle[512];
+    char                layoutstyle[512];
+    char                doorstyle[512];
+    char                decorstyle[512];
+    char                origin_map[512];
+    char                final_map[512];
+    char                exitstyle[512];
+    char                this_map[512];
 
-  int Xsize;
-  int Ysize;
-  int expand2x;
-  int layoutoptions1;
-  int layoutoptions2;
-  int layoutoptions3;
-  int symmetry;
-  int difficulty;
-  int difficulty_given;
-  int dungeon_level;
-  int dungeon_depth;
-  int decoroptions;
-  int orientation;
-  int origin_y;
-  int origin_x;
-  int random_seed;
-  long unsigned int total_map_hp;
-  int map_layout_style;
-  int treasureoptions;
-  int symmetry_used;
-  int generate_treasure_now;
+    int                 Xsize;
+    int                 Ysize;
+    int                 expand2x;
+    int                 layoutoptions1;
+    int                 layoutoptions2;
+    int                 layoutoptions3;
+    int                 symmetry;
+    int                 difficulty;
+    int                 difficulty_given;
+    int                 dungeon_level;
+    int                 dungeon_depth;
+    int                 decoroptions;
+    int                 orientation;
+    int                 origin_y;
+    int                 origin_x;
+    int                 random_seed;
+    long unsigned int   total_map_hp;
+    int                 map_layout_style;
+    int                 treasureoptions;
+    int                 symmetry_used;
+    int                 generate_treasure_now;
 } RMParms;
 
-int load_parameters(FILE *fp, int bufstate,RMParms *RP);
+int                 load_parameters(FILE *fp, int bufstate, RMParms *RP);
 
 
 #define ONION_LAYOUT 1
@@ -78,13 +79,13 @@ int load_parameters(FILE *fp, int bufstate,RMParms *RP);
  * other files (like square_spiral) also uses them.
 
 options:
-0	Pick random options below
-1	"centered"
-2	linear doors (default is nonlinear)
-4	bottom "centered"
+0   Pick random options below
+1   "centered"
+2   linear doors (default is nonlinear)
+4   bottom "centered"
 8  bottom-right centered
-16	irregularly/randomly spaced layers (default: regular)
-32	outer wall off:  i.e., no outer wall.
+16  irregularly/randomly spaced layers (default: regular)
+32  outer wall off:  i.e., no outer wall.
 
 */
 

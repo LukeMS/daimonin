@@ -5,6 +5,7 @@ sub_type 0
 face skill.101
 sys_object 1
 dam 2
+magic 3
 last_sp 3
 no_drop 1
 last_eat 1

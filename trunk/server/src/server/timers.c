@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,9 +23,6 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 #include <timers.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
 
 /*****************************************************************************/
 /* Processes all timers.                                                     */
@@ -33,14 +30,14 @@
 void cftimer_process_timers(void)
 {
     int i;
-    for(i=0;i<MAX_TIMERS;i++)
+    for (i = 0; i < MAX_TIMERS; i++)
     {
         if (timers_table[i].mode == TIMER_MODE_CYCLES)
         {
             timers_table[i].delay --;
             if (timers_table[i].delay == 0)
             {
-            /* Call object timer event */
+                /* Call object timer event */
                 timers_table[i].mode = TIMER_MODE_DEAD;
             }
         }
@@ -48,7 +45,7 @@ void cftimer_process_timers(void)
         {
             if (timers_table[i].delay <= seconds())
             {
-            /* Call object timer event */
+                /* Call object timer event */
                 timers_table[i].mode = TIMER_MODE_DEAD;
             }
         }
@@ -68,7 +65,7 @@ void cftimer_process_timers(void)
 /*  TIMER_ERR_MODE : Invalid mode.                                           */
 /*  TIMER_ERR_OBJ  : Invalid object.                                         */
 /*****************************************************************************/
-int cftimer_create(int id, long delay, object* ob, int mode)
+int cftimer_create(int id, long delay, object *ob, int mode)
 {
     if (id >= MAX_TIMERS)
         return TIMER_ERR_ID;
@@ -80,12 +77,12 @@ int cftimer_create(int id, long delay, object* ob, int mode)
         return TIMER_ERR_MODE;
     if (ob == NULL)
         return TIMER_ERR_OBJ;
-	/* this must be redone!
-    if (ob->event_hook[EVENT_TIMER] == NULL)
-        return TIMER_ERR_OBJ;
-	*/
+    /* this must be redone!
+       if (ob->event_hook[EVENT_TIMER] == NULL)
+           return TIMER_ERR_OBJ;
+    */
     timers_table[id].mode = mode;
-    timers_table[id].ob   = ob;
+    timers_table[id].ob = ob;
     if (mode == TIMER_MODE_CYCLES)
         timers_table[id].delay = delay;
     else
@@ -121,7 +118,7 @@ int cftimer_destroy(int id)
 int cftimer_find_free_id(void)
 {
     int i;
-    for(i=0;i<MAX_TIMERS;i++)
+    for (i = 0; i < MAX_TIMERS; i++)
     {
         if (timers_table[i].mode == TIMER_MODE_DEAD)
             return i;

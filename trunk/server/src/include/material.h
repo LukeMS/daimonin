@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,61 +26,63 @@
 #ifndef MATERIAL_H
 #define MATERIAL_H
 
-#define NROFMATERIALS			13
-#define NROFMATERIALS_REAL		64
+#define NROFMATERIALS           13
+#define NROFMATERIALS_REAL      64
 
-#define M_NONE			0
-#define M_PAPER			1
-#define M_IRON			2
-#define M_GLASS			4
-#define M_LEATHER		8
-#define M_WOOD			16
-#define M_ORGANIC		32
-#define M_STONE			64
-#define M_CLOTH			128
-#define M_ADAMANT		256
-#define M_LIQUID		512
+#define M_NONE          0
+#define M_PAPER         1
+#define M_IRON          2
+#define M_GLASS         4
+#define M_LEATHER       8
+#define M_WOOD          16
+#define M_ORGANIC       32
+#define M_STONE         64
+#define M_CLOTH         128
+#define M_ADAMANT       256
+#define M_LIQUID        512
 #define M_SOFT_METAL    1024
-#define M_BONE			2048
-#define M_ICE			4096
+#define M_BONE          2048
+#define M_ICE           4096
 
 /* this is all stuff we want load after the system is stable from file */
 
 #define MATERIAL_MISC           0       /* 0 */
-#define M_START_PAPER			0*64+1  /* 1-64 */
-#define M_START_IRON			1*64+1  /* 65 - 128 */
-#define M_START_GLASS			2*64+1  /* 129 - 192 */
-#define M_START_LEATHER		    3*64+1  /* 193 - 256 */
-#define M_START_WOOD			4*64+1  /* 257 - 320 */
-#define M_START_ORGANIC		    5*64+1  /* 321 - 384 */
-#define M_START_STONE			6*64+1  /* 385 - 448 */
-#define M_START_CLOTH			7*64+1  /* 449 - 512 */
-#define M_START_ADAMANT		    8*64+1  /* 513 - 576 */
-#define M_START_LIQUID		    9*64+1  /* 577 - 640 */
+#define M_START_PAPER           0*64+1  /* 1-64 */
+#define M_START_IRON            1*64+1  /* 65 - 128 */
+#define M_START_GLASS           2*64+1  /* 129 - 192 */
+#define M_START_LEATHER         3*64+1  /* 193 - 256 */
+#define M_START_WOOD            4*64+1  /* 257 - 320 */
+#define M_START_ORGANIC         5*64+1  /* 321 - 384 */
+#define M_START_STONE           6*64+1  /* 385 - 448 */
+#define M_START_CLOTH           7*64+1  /* 449 - 512 */
+#define M_START_ADAMANT         8*64+1  /* 513 - 576 */
+#define M_START_LIQUID          9*64+1  /* 577 - 640 */
 #define M_START_SOFT_METAL      10*64+1 /* 641 - 704 */
-#define M_START_BONE			11*64+1 /* 705 - 768 */
-#define M_START_ICE			    12*64+1 /* 769 - 832 */
+#define M_START_BONE            11*64+1 /* 705 - 768 */
+#define M_START_ICE             12*64+1 /* 769 - 832 */
 
-typedef struct {
-  char	*name;
-  sint8	 save[NROFATTACKS];
+typedef struct
+{
+    char   *name;
+    sint8   save[NROFATTACKS];
 } materialtype;
 
-typedef struct _material_real_struct {
-    char *name;                 /* name of this material */
-    int tearing;                /* % value: speed of tearing when used. (used from item_condition) NOT IMPLEMENTED YET */
-    int quality;               /* material base quality */
-    
-    int ext1;                   /* unused ext. for later use */
-    int ext2;                   
-    int ext3;
-    
-    int type;                   /* back ref. to material type */
-    int def_race;               /* we can assign a default race for this material. */
+typedef struct _material_real_struct
+{
+    char                       *name;                 /* name of this material */
+    int                         tearing;                /* % value: speed of tearing when used. (used from item_condition) NOT IMPLEMENTED YET */
+    int                         quality;               /* material base quality */
+
+    int                         ext1;                   /* unused ext. for later use */
+    int                         ext2;                   
+    int                         ext3;
+
+    int                         type;                   /* back ref. to material type */
+    int                         def_race;               /* we can assign a default race for this material. */
     /* these race have this material then exclusive */
 } material_real_struct;
 
-extern materialtype material[NROFMATERIALS];
-extern material_real_struct material_real[NROFMATERIALS*NROFMATERIALS_REAL+1];
+extern materialtype         material[NROFMATERIALS];
+extern material_real_struct material_real[NROFMATERIALS *NROFMATERIALS_REAL + 1];
 
 #endif

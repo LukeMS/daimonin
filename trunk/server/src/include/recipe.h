@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,25 +23,27 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 /* 'recipe' and 'recipelist' are used by the alchemy code */
-typedef struct recipestruct {
-        const char *title;      /* distinguishing name of product */
-        const char *arch_name;   /* the archetype of the final product made */
-        int chance;       /* chance that recipe for this item will appear
-                           * in an alchemical grimore */
-	int index;	  /* an index value derived from formula ingredients */
-	int transmute;	  /* if defined, one of the formula ingredients is
-			   * used as the basis for the product object */
-	int yield;        /*  The maximum number of items produced by the recipe */
-        linked_char *ingred;    /* comma delimited list of ingredients */
-        struct recipestruct *next;
-  const char *keycode;   /* keycode needed to use the recipe */
+typedef struct recipestruct
+{
+    const char             *title;      /* distinguishing name of product */
+    const char             *arch_name;   /* the archetype of the final product made */
+    int                     chance;       /* chance that recipe for this item will appear
+                                           * in an alchemical grimore */
+    int                     index;    /* an index value derived from formula ingredients */
+    int                     transmute;    /* if defined, one of the formula ingredients is
+                                          * used as the basis for the product object */
+    int                     yield;        /*  The maximum number of items produced by the recipe */
+    linked_char            *ingred;    /* comma delimited list of ingredients */
+    struct recipestruct    *next;
+    const char             *keycode;   /* keycode needed to use the recipe */
 } recipe;
 
-typedef struct recipeliststruct {
-        int total_chance;
-        int number;			/* number of recipes in this list */ 
-        struct recipestruct *items;	/* pointer to first recipe in this list */ 
-	struct recipeliststruct *next; 	/* pointer to next recipe list */ 
+typedef struct recipeliststruct
+{
+    int                         total_chance;
+    int                         number;         /* number of recipes in this list */ 
+    struct recipestruct        *items;  /* pointer to first recipe in this list */ 
+    struct recipeliststruct    *next;   /* pointer to next recipe list */
 } recipelist;
 
 

@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,10 +29,10 @@
  *
  *     char *find_string(const char *str)
  *     char *add_string(const char *str)
- *	char *add_refcount(char *str)
- *	void free_string_shared(char *str)
- *	char *ss_dump_table(int what)
- *	void ss_dump_statistics()
+ *  char *add_refcount(char *str)
+ *  void free_string_shared(char *str)
+ *  char *ss_dump_table(int what)
+ *  void ss_dump_statistics()
  *
  * Author: Kjetil T. Homme, Oslo 1992.
  */
@@ -61,12 +61,13 @@
 extern char errmsg[];
 
 #ifdef SS_STATISTICS
-static struct statistics {
-    int calls;
-    int hashed;
-    int strcmps;
-    int search;
-    int linked;
+static struct statistics
+{
+    int                     calls;
+    int                     hashed;
+    int                     strcmps;
+    int                     search;
+    int                     linked;
 } add_stats, add_ref_stats, free_stats, find_stats, hash_stats;
 #define GATHER(n) (++n) 
 #else /* !SS_STATISTICS */
@@ -83,17 +84,17 @@ static struct statistics {
 /* small hack to insert LOG here to without the whole other externs */
 #include "logger.h"
 
-static shared_string *hash_table[TABLESIZE];
+static shared_string   *hash_table[TABLESIZE];
 
 /*
  * Initialises the hash-table used by the shared string library.
  */
 
-void
-init_hash_table() {
+void init_hash_table()
+{
     /* A static object should be zeroed out always */
 #if !defined(__STDC__)
-    (void) memset((void *)hash_table, 0, TABLESIZE * sizeof(shared_string *));
+    (void) memset((void *) hash_table, 0, TABLESIZE * sizeof(shared_string *));
 #endif
 }
 
@@ -101,19 +102,20 @@ init_hash_table() {
  * Hashing-function used by the shared string library.
  */
 
-static int
-hashstr(const char *str) {
+static int hashstr(const char *str)
+{
     unsigned long hash = 0;
-    int i = 0, rot = 0;
+    int         i = 0, rot = 0;
     const char *p;
 
     GATHER(hash_stats.calls);
 
-    for (p = str; i < MAXSTRING && *p; p++, i++) {
-	hash ^= (unsigned long) *p << rot;
-	rot += 2;
-	if (rot >= (sizeof(long) - sizeof(char)) * CHAR_BIT)
-	    rot = 0;
+    for (p = str; i < MAXSTRING && *p; p++, i++)
+    {
+        hash ^= (unsigned long) * p << rot;
+        rot += 2;
+        if (rot >= (sizeof(long) - sizeof(char)) * CHAR_BIT)
+            rot = 0;
     }
     return (hash % TABLESIZE);
 }
@@ -123,20 +125,19 @@ hashstr(const char *str) {
  * the string str.
  */
 
-static shared_string *
-new_shared_string(const char *str) {
-    shared_string *ss;
+static shared_string * new_shared_string(const char *str)
+{
+    shared_string  *ss;
 
     /* Allocate room for a struct which can hold str. Note
      * that some bytes for the string are already allocated in the 
      * shared_string struct.
      */
-    ss = (shared_string *) malloc(sizeof(shared_string) - PADDING +
-				  strlen(str) + 1);
+    ss = (shared_string *) malloc(sizeof(shared_string) - PADDING + strlen(str) + 1);
     ss->u.previous = NULL;
     ss->next = NULL;
     ss->refcount = 1;
-	/*LOG(llevDebug,"SS: >%s< #%d - new\n",str,ss->refcount& ~TOPBIT);*/
+    /*LOG(llevDebug,"SS: >%s< #%d - new\n",str,ss->refcount& ~TOPBIT);*/
     strcpy(ss->string, str);
 
     return ss;
@@ -150,10 +151,10 @@ new_shared_string(const char *str) {
  *      - pointer to string identical to str
  */
 
-const char *
-add_string(const char *str) {
-    shared_string *ss;
-    int ind;
+const char * add_string(const char *str)
+{
+    shared_string  *ss;
+    int             ind;
 
     GATHER(add_stats.calls);
 
@@ -161,77 +162,85 @@ add_string(const char *str) {
      * add_string with a null parameter.  But this will prevent a few
      * core dumps.
      */
-    if (str==NULL)
-	{
-		LOG(llevBug,"BUG: add_string(): try to add null string to hash table\n");	
-		return NULL;
-	}
+    if (str == NULL)
+    {
+        LOG(llevBug, "BUG: add_string(): try to add null string to hash table\n");  
+        return NULL;
+    }
     ind = hashstr(str);
     ss = hash_table[ind];
 
     /* Is there an entry for that hash?
      */
-    if (ss) {
-	/* Simple case first: See if the first pointer matches.
-	 */
-	if (str != ss->string) {
-	    GATHER(add_stats.strcmps);
-	    if (strcmp(ss->string, str)) {
-		/* Apparantly, a string with the same hash value has this 
-		 * slot. We must see in the list if "str" has been 
-		 * registered earlier.
-		 */
-		while (ss->next) {
-		    GATHER(add_stats.search);
-		    ss = ss->next;
-		    if (ss->string != str) {
-			GATHER(add_stats.strcmps);
-			if (strcmp(ss->string, str)) {
-			    /* This wasn't the right string...
-			     */
-			    continue;
-			}
-		    }
-		    /* We found an entry for this string. Fix the
-		     * refcount and exit.
-		     */
-		    GATHER(add_stats.linked);
-		    ++(ss->refcount);
-			/*LOG(llevDebug,"SS: >%s< #%d add-s\n", ss->string,ss->refcount& ~TOPBIT);*/
+    if (ss)
+    {
+        /* Simple case first: See if the first pointer matches.
+         */
+        if (str != ss->string)
+        {
+            GATHER(add_stats.strcmps);
+            if (strcmp(ss->string, str))
+            {
+                /* Apparantly, a string with the same hash value has this 
+                     * slot. We must see in the list if "str" has been 
+                     * registered earlier.
+                     */
+                while (ss->next)
+                {
+                    GATHER(add_stats.search);
+                    ss = ss->next;
+                    if (ss->string != str)
+                    {
+                        GATHER(add_stats.strcmps);
+                        if (strcmp(ss->string, str))
+                        {
+                            /* This wasn't the right string...
+                                     */
+                            continue;
+                        }
+                    }
+                    /* We found an entry for this string. Fix the
+                         * refcount and exit.
+                         */
+                    GATHER(add_stats.linked);
+                    ++(ss->refcount);
+                    /*LOG(llevDebug,"SS: >%s< #%d add-s\n", ss->string,ss->refcount& ~TOPBIT);*/
 
-		    return ss->string;
-		}
-		/* There are no occurences of this string in the hash table.
-		 */
-		{
-		    shared_string *new_ss;
+                    return ss->string;
+                }
+                /* There are no occurences of this string in the hash table.
+                     */
+                {
+                    shared_string  *new_ss;
 
-		    GATHER(add_stats.linked);
-		    new_ss = new_shared_string(str);
-		    ss->next = new_ss;
-		    new_ss->u.previous = ss;
-		    return new_ss->string;
-		}
-	    }
-	    /* Fall through.
-	     */
-	}
-	GATHER(add_stats.hashed);
-	++(ss->refcount);
-	/*LOG(llevDebug,"SS: >%s< #%d add-s\n", ss->string,ss->refcount& ~TOPBIT);*/
-	return ss->string;
-    } else {
-	/* The string isn't registered, and the slot is empty.
-	 */
-	GATHER(add_stats.hashed);
-	hash_table[ind] = new_shared_string(str);
+                    GATHER(add_stats.linked);
+                    new_ss = new_shared_string(str);
+                    ss->next = new_ss;
+                    new_ss->u.previous = ss;
+                    return new_ss->string;
+                }
+            }
+            /* Fall through.
+               */
+        }
+        GATHER(add_stats.hashed);
+        ++(ss->refcount);
+        /*LOG(llevDebug,"SS: >%s< #%d add-s\n", ss->string,ss->refcount& ~TOPBIT);*/
+        return ss->string;
+    }
+    else
+    {
+        /* The string isn't registered, and the slot is empty.
+         */
+        GATHER(add_stats.hashed);
+        hash_table[ind] = new_shared_string(str);
 
-	/* One bit in refcount is used to keep track of the union.
-	 */
-	hash_table[ind]->refcount |= TOPBIT;
-	hash_table[ind]->u.array = &(hash_table[ind]);
+        /* One bit in refcount is used to keep track of the union.
+         */
+        hash_table[ind]->refcount |= TOPBIT;
+        hash_table[ind]->u.array = &(hash_table[ind]);
 
-	return hash_table[ind]->string;
+        return hash_table[ind]->string;
     }
 }
 
@@ -243,8 +252,9 @@ add_string(const char *str) {
  *      - length
  */
 
-int query_refcount(const char *str) {
-    return SS(str)->refcount& ~TOPBIT;
+int query_refcount(const char *str)
+{
+    return SS(str)->refcount & ~TOPBIT;
 }
 
 /*
@@ -255,10 +265,10 @@ int query_refcount(const char *str) {
  *      - pointer to identical string or NULL
  */
 
-const char * find_string(const char *str) 
+const char * find_string(const char *str)
 {
-    shared_string *ss;
-    int ind;
+    shared_string  *ss;
+    int             ind;
 
     GATHER(find_stats.calls);
 
@@ -267,28 +277,34 @@ const char * find_string(const char *str)
 
     /* Is there an entry for that hash?
      */
-    if (ss) {
-	/* Simple case first: Is the first string the right one?
-	 */
-	GATHER(find_stats.strcmps);
-	if (!strcmp(ss->string, str)) {
-	    GATHER(find_stats.hashed);
-	    return ss->string;
-	} else {
-	    /* Recurse through the linked list, if there's one.
-	     */
-	    while (ss->next) {
-		GATHER(find_stats.search);
-		GATHER(find_stats.strcmps);
-		ss = ss->next;
-		if (!strcmp(ss->string, str)) {
-		    GATHER(find_stats.linked);
-		    return ss->string;
-		}
-	    }
-	    /* No match. Fall through.
-	     */
-	}
+    if (ss)
+    {
+        /* Simple case first: Is the first string the right one?
+         */
+        GATHER(find_stats.strcmps);
+        if (!strcmp(ss->string, str))
+        {
+            GATHER(find_stats.hashed);
+            return ss->string;
+        }
+        else
+        {
+            /* Recurse through the linked list, if there's one.
+               */
+            while (ss->next)
+            {
+                GATHER(find_stats.search);
+                GATHER(find_stats.strcmps);
+                ss = ss->next;
+                if (!strcmp(ss->string, str))
+                {
+                    GATHER(find_stats.linked);
+                    return ss->string;
+                }
+            }
+            /* No match. Fall through.
+               */
+        }
     }
     return NULL;
 }
@@ -305,20 +321,20 @@ const char * find_string(const char *str)
  * Return values:
  *      - str
  */
-const char * add_refcount(const char *str) 
+const char * add_refcount(const char *str)
 {
-	#ifdef SECURE_SHSTR_HASH
-	char *tmp_str = find_string(str);
-	if(!str || str != tmp_str)
-	{
-		LOG(llevBug,"BUG: add_refcount(shared_string)(): tried to free a invalid string! >%s<\n", STRING_SAFE(str));
-		return NULL;
-	}
+#ifdef SECURE_SHSTR_HASH
+    char   *tmp_str = find_string(str);
+    if (!str || str != tmp_str)
+    {
+        LOG(llevBug, "BUG: add_refcount(shared_string)(): tried to free a invalid string! >%s<\n", STRING_SAFE(str));
+        return NULL;
+    }
 #endif
 
     GATHER(add_ref_stats.calls);
     ++(SS(str)->refcount);
-	/*LOG(llevDebug,"SS: >%s< #%d addref\n", str,SS(str)->refcount& ~TOPBIT);*/
+    /*LOG(llevDebug,"SS: >%s< #%d addref\n", str,SS(str)->refcount& ~TOPBIT);*/
     return str;
 }
 
@@ -330,66 +346,66 @@ const char * add_refcount(const char *str)
  *     None
  */
 
-void free_string_shared(const char *str) 
+void free_string_shared(const char *str)
 {
-    shared_string *ss;
+    shared_string  *ss;
 
-/* we check str is in the hash table - if not, something
- * is VERY wrong here. We can also be sure, that SS(str) is
- * a safe operation - except we really messed something 
- * strange up inside the hash table. This will check for
- * free, wrong or non SS() objects.
- */
+    /* we check str is in the hash table - if not, something
+     * is VERY wrong here. We can also be sure, that SS(str) is
+     * a safe operation - except we really messed something 
+     * strange up inside the hash table. This will check for
+     * free, wrong or non SS() objects.
+     */
 #ifdef SECURE_SHSTR_HASH
-	const char *tmp_str = find_string(str);
-	if(!str || str != tmp_str)
-	{
-		LOG(llevBug,"BUG: free_string_shared(): tried to free a invalid string! >%s<\n", STRING_SAFE(str));
-		return;
-	}
+    const char     *tmp_str = find_string(str);
+    if (!str || str != tmp_str)
+    {
+        LOG(llevBug, "BUG: free_string_shared(): tried to free a invalid string! >%s<\n", STRING_SAFE(str));
+        return;
+    }
 #endif
 
     GATHER(free_stats.calls);
 
     ss = SS(str);
-	--ss->refcount;
+    --ss->refcount;
     if ((ss->refcount & ~TOPBIT) == 0)
-	{
-		/* Remove this entry.
-		 */
-		if (ss->refcount & TOPBIT)
-		{
-			/* We must put a new value into the hash_table[].
-			 */
-			if (ss->next)
-			{
-				/*LOG(llevDebug,"SS: >%s< #%d remove_a!\n", str,ss->refcount& ~TOPBIT);*/
-				*(ss->u.array) = ss->next;
-				ss->next->u.array = ss->u.array;
-				ss->next->refcount |= TOPBIT;
-			} 
-			else 
-			{
-				/*LOG(llevDebug,"SS: >%s< #%d remove_b!\n", str,ss->refcount& ~TOPBIT);*/
-				*(ss->u.array) = NULL;
-			}
-			free(ss);
-		} 
-		else 
-		{
-			/*LOG(llevDebug,"SS: >%s< #%d remove_c!\n", str,ss->refcount& ~TOPBIT);*/
-			/* Relink and free this struct.
-			 */
-			if (ss->next)
-				ss->next->u.previous = ss->u.previous;
-			ss->u.previous->next = ss->next;
-			free(ss);
-		}
+    {
+        /* Remove this entry.
+             */
+        if (ss->refcount & TOPBIT)
+        {
+            /* We must put a new value into the hash_table[].
+                     */
+            if (ss->next)
+            {
+                /*LOG(llevDebug,"SS: >%s< #%d remove_a!\n", str,ss->refcount& ~TOPBIT);*/
+                *(ss->u.array) = ss->next;
+                ss->next->u.array = ss->u.array;
+                ss->next->refcount |= TOPBIT;
+            }
+            else
+            {
+                /*LOG(llevDebug,"SS: >%s< #%d remove_b!\n", str,ss->refcount& ~TOPBIT);*/
+                *(ss->u.array) = NULL;
+            }
+            free(ss);
+        }
+        else
+        {
+            /*LOG(llevDebug,"SS: >%s< #%d remove_c!\n", str,ss->refcount& ~TOPBIT);*/
+            /* Relink and free this struct.
+                     */
+            if (ss->next)
+                ss->next->u.previous = ss->u.previous;
+            ss->u.previous->next = ss->next;
+            free(ss);
+        }
     }
-/*
-	else
-		LOG(llevDebug,"SS: >%s< #%d dec\n", str,ss->refcount& ~TOPBIT);
-*/
+    /*
+        else
+            LOG(llevDebug,"SS: >%s< #%d dec\n", str,ss->refcount& ~TOPBIT);
+    */
 }
 
 /*
@@ -400,34 +416,28 @@ void free_string_shared(const char *str)
  * Return values:
  *      None
  */
-char *ss_dump_statistics() 
+char * ss_dump_statistics()
 {
-    char line[126];
-	errmsg[0]='\0';
+    char    line[126];
+    errmsg[0] = '\0';
 
 #ifdef SS_STATISTICS
-    sprintf(errmsg, "%-13s   %6s %6s %6s %6s %6s\n", 
-	    "hashtable  :", "calls", "hashed", "strcmp", "search", "linked");
-    sprintf(line, "%-13s %6d %6d %6d %6d %6d\n", 
-	    "add_string:", add_stats.calls, add_stats.hashed, 
-	    add_stats.strcmps, add_stats.search, add_stats.linked);
+    sprintf(errmsg, "%-13s   %6s %6s %6s %6s %6s\n", "hashtable  :", "calls", "hashed", "strcmp", "search", "linked");
+    sprintf(line, "%-13s %6d %6d %6d %6d %6d\n", "add_string:", add_stats.calls, add_stats.hashed, add_stats.strcmps,
+            add_stats.search, add_stats.linked);
     strcat(errmsg, line);
-    sprintf(line, "%-13s %6d %6d %6d %6d %6d\n", 
-		"find_string:", find_stats.calls, find_stats.hashed, 
-		find_stats.strcmps, find_stats.search, find_stats.linked);
+    sprintf(line, "%-13s %6d %6d %6d %6d %6d\n", "find_string:", find_stats.calls, find_stats.hashed,
+            find_stats.strcmps, find_stats.search, find_stats.linked);
     strcat(errmsg, line);
-    sprintf(line, "%-13s %6d\n",
-	    "add_refcount:", add_ref_stats.calls);
+    sprintf(line, "%-13s %6d\n", "add_refcount:", add_ref_stats.calls);
     strcat(errmsg, line);
-    sprintf(line, "%-13s %6d\n",
-	    "free_string:", free_stats.calls);
+    sprintf(line, "%-13s %6d\n", "free_string:", free_stats.calls);
     strcat(errmsg, line);
-    sprintf(line, "%-13s %6d",
-	    "hashstr:", hash_stats.calls);
+    sprintf(line, "%-13s %6d", "hashstr:", hash_stats.calls);
     strcat(errmsg, line);
 #endif
-	
-	return errmsg;
+
+    return errmsg;
 }
 
 /*
@@ -437,51 +447,55 @@ char *ss_dump_statistics()
  * Return values:
  *      - a string or NULL
  */
-char * ss_dump_table(int what) {
+char * ss_dump_table(int what)
+{
     static char totals[80];
-    int entries = 0, refs = 0, links = 0;
-    int i;
+    int         entries = 0, refs = 0, links = 0;
+    int         i;
 
-    for (i = 0; i < TABLESIZE; i++) {
-	shared_string *ss;
-	
-	if ((ss = hash_table[i])!=NULL) {
-	    ++entries;
-	    refs += (ss->refcount & ~TOPBIT);
-		if (what & SS_DUMP_TOTALS)
-			LOG(llevSystem, "%4d -- %4d refs '%s' %c\n",
-						i, (ss->refcount & ~TOPBIT), ss->string, (ss->refcount & TOPBIT ? ' ' : '#'));
-	    while (ss->next) {
-		ss = ss->next;
-		++links;
-		refs += (ss->refcount & ~TOPBIT);
-		if (what & SS_DUMP_TOTALS)
-			LOG(llevSystem, "     -- %4d refs '%s' %c\n",
-					    (ss->refcount & ~TOPBIT), ss->string, (ss->refcount & TOPBIT ? '*' : ' '));
-	    }
-	}
+    for (i = 0; i < TABLESIZE; i++)
+    {
+        shared_string  *ss;
+
+        if ((ss = hash_table[i]) != NULL)
+        {
+            ++entries;
+            refs += (ss->refcount & ~TOPBIT);
+            if (what & SS_DUMP_TOTALS)
+                LOG(llevSystem, "%4d -- %4d refs '%s' %c\n", i, (ss->refcount & ~TOPBIT), ss->string,
+                    (ss->refcount & TOPBIT ? ' ' : '#'));
+            while (ss->next)
+            {
+                ss = ss->next;
+                ++links;
+                refs += (ss->refcount & ~TOPBIT);
+                if (what & SS_DUMP_TOTALS)
+                    LOG(llevSystem, "     -- %4d refs '%s' %c\n", (ss->refcount & ~TOPBIT), ss->string,
+                        (ss->refcount & TOPBIT ? '*' : ' '));
+            }
+        }
     }
 
-	sprintf(totals, "%d entries, %d refs, %d links.", entries, refs, links);
-        
-	return totals;
+    sprintf(totals, "%d entries, %d refs, %d links.", entries, refs, links);
+
+    return totals;
 }
 
 /* to find memory leak! 
  * This is not used atm
 void ss_test_table(void)
 {
-	shared_string *ss;
+    shared_string *ss;
     int entries = 0;
     int i;
-	char c;
+    char c;
 
     for (i = 0; i < TABLESIZE; i++) {
-	
-	if ((ss = hash_table[i])!=NULL) 
-	{
-	    ++entries;
-		c = ss->string[0];
+    
+    if ((ss = hash_table[i])!=NULL) 
+    {
+        ++entries;
+        c = ss->string[0];
     }
-}	}
+}   }
 */

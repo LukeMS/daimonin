@@ -26,14 +26,14 @@
 
 #define MAX_INPUT_STR 256
 
-void FreeMemory(void **p);
-char *show_input_string(char *text, struct _Font *font, int wlen);
-int read_substr_char(char *srcstr, char *desstr, int *sz, char ct);
-int isqrt(int n);
+void                    FreeMemory(void **p);
+char                   *show_input_string(char *text, struct _Font *font, int wlen);
+int                     read_substr_char(char *srcstr, char *desstr, int *sz, char ct);
+int                     isqrt(int n);
 
-void * _my_malloc(size_t blen, char *info);
-extern unsigned long hasharch(char *str, int tablesize);
-extern _bmaptype *find_bmap(char *name);
-extern void add_bmap(_bmaptype *at);
+void                   *_my_malloc(size_t blen, char *info);
+extern unsigned long    hasharch(char *str, int tablesize);
+extern _bmaptype       *find_bmap(char *name);
+extern void             add_bmap(_bmaptype *at);
 
 #endif

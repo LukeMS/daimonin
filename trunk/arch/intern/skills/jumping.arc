@@ -4,6 +4,7 @@ type 43
 sub_type 1
 face skill.101
 sys_object 1
+magic 6
 no_drop 1
 dam 5
 last_sp 1

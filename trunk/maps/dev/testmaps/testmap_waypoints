@@ -478,8 +478,8 @@ sp 15
 wc 3
 end
 arch event_obj
-name Python
-race /dev/testmaps/waypoint_activate.py
+name Lua
+race /dev/testmaps/waypoint_activate.lua
 sub_type 6
 end
 end
@@ -562,8 +562,8 @@ title waypoint2
 sp 3
 hp 3
 arch event_obj
-name Python
-race /dev/testmaps/waypoint.py
+name Lua
+race /dev/testmaps/waypoint.lua
 sub_type 10
 end
 end
@@ -574,8 +574,8 @@ hp 7
 sp 3
 end
 arch event_obj
-name Python
-race /dev/testmaps/waypoint_activate.py
+name Lua
+race /dev/testmaps/waypoint_activate.lua
 sub_type 6
 end
 end
@@ -1024,7 +1024,7 @@ sp 1
 end
 arch event_obj
 sub_type 6
-race /dev/testmaps/waypoint_activate.py
+race /dev/testmaps/waypoint_activate.lua
 end
 end
 arch floor_ostone1
@@ -1543,8 +1543,8 @@ sp 16
 wc 3
 end
 arch event_obj
-name Python
-race /dev/testmaps/waypoint_activate.py
+name Lua
+race /dev/testmaps/waypoint_activate.lua
 sub_type 6
 end
 end
@@ -1722,8 +1722,8 @@ sp 3
 wc 10
 end
 arch event_obj
-name Python
-race /dev/testmaps/waypoint_activate.py
+name Lua
+race /dev/testmaps/waypoint_activate.lua
 sub_type 6
 end
 arch waypoint
@@ -2970,8 +2970,8 @@ hp 20
 sp 5
 end
 arch event_obj
-name Python
-race /dev/testmaps/waypoint_activate.py
+name Lua
+race /dev/testmaps/waypoint_activate.lua
 sub_type 6
 end
 end

@@ -39,9 +39,9 @@
 
 /* This is for the DevCpp IDE */
 #ifndef __WIN_32
- #ifdef WIN32
-  #define __WIN_32
- #endif
+#ifdef WIN32
+#define __WIN_32
+#endif
 #endif 
 
 typedef unsigned int    uint32;
@@ -77,4 +77,5 @@ typedef signed char     sint8;
 #include <inventory.h>
 #include <menu.h>
 #include <dialog.h>
+#include <group.h>
 #endif

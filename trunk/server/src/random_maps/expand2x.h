@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -40,6 +40,6 @@
  * Don't forget to free the old layout after this is called (it does not
  * presume to do so itself).
  */
-char **expand2x(char **layout, int xsize, int ysize);
+char   **expand2x(char **layout, int xsize, int ysize);
 
 #endif /* EXPAND2X_H */

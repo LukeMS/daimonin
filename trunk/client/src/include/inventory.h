@@ -31,12 +31,12 @@
 #define INVITEMXLEN 7 
 #define INVITEMYLEN 3
 
-extern void show_inventory_window(int x, int y);
-extern void show_below_window(item *op, int x, int y);
-extern void blt_inv_item(item *tmp, int x, int y);
-extern int get_inventory_data(item *op, int *cflag, int *slot, int *start, int *count, int wxlen, int wylen);
-extern void examine_range_inv(void);
-extern void examine_range_marks(int tag);
-extern Boolean blt_inv_item_centered(item *tmp, int x, int y);
+extern void     show_inventory_window(int x, int y);
+extern void     show_below_window(item *op, int x, int y);
+extern void     blt_inv_item(item *tmp, int x, int y);
+extern int      get_inventory_data(item *op, int *cflag, int *slot, int *start, int *count, int wxlen, int wylen);
+extern void     examine_range_inv(void);
+extern void     examine_range_marks(int tag);
+extern Boolean  blt_inv_item_centered(item *tmp, int x, int y);
 
 #endif

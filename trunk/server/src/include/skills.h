@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -76,49 +76,84 @@
 
 #define NO_SKILL_READY -1
 
-enum skillnrs { 
+enum skillnrs
+{
     /* 0 */
-    SK_STEALING,		/* DISABLED: steal from other players/NPCs */
-    SK_LOCKPICKING,		/* open doors without having to bash them */
-    SK_HIDING, 			/* player can hide from monsters */
-    SK_SMITH,			/* can auto-ident arms/armour */
-    SK_BOWYER,			/* can auto-ident bows/x-bow/arrows/bolts */
+    SK_STEALING,
+    /* DISABLED: steal from other players/NPCs */
+    SK_LOCKPICKING,
+    /* open doors without having to bash them */
+    SK_HIDING,
+    /* player can hide from monsters */
+    SK_SMITH,
+    /* can auto-ident arms/armour */
+    SK_BOWYER,
+    /* can auto-ident bows/x-bow/arrows/bolts */
     /* 5 */
-    SK_JEWELER,			/* can auto-identify gems */
-    SK_ALCHEMY,			/* can auto-identify potions/amulets/containers */
-    SK_THAUMATURGY,		/* can auto-identify staffs/rods/wands */
-    SK_LITERACY,		/* can auto-identify scrolls/books */
-    SK_BARGAINING,		/* sells equip at Cha + level-based bonus (30 max) */
+    SK_JEWELER,
+    /* can auto-identify gems */
+    SK_ALCHEMY,
+    /* can auto-identify potions/amulets/containers */
+    SK_THAUMATURGY,
+    /* can auto-identify staffs/rods/wands */
+    SK_LITERACY,
+    /* can auto-identify scrolls/books */
+    SK_BARGAINING,
+    /* sells equip at Cha + level-based bonus (30 max) */
     /* 10 */
-    SK_JUMPING, 		/* player may 'hop' over 1-2 spaces */ 
-    SK_DET_MAGIC, 		/* player may sense magic in handled items */ 
-    SK_ORATORY,			/* player may charm unaggressive monsters */ 
-    SK_MUSIC, 			/* Player may pacify hostile monsters once */ 
-    SK_DET_CURSE, 		/* player may sense cursed items in inventory */ 
+    SK_JUMPING,
+    /* player may 'hop' over 1-2 spaces */ 
+    SK_DET_MAGIC,
+    /* player may sense magic in handled items */ 
+    SK_ORATORY,
+    /* player may charm unaggressive monsters */ 
+    SK_MUSIC,
+    /* Player may pacify hostile monsters once */ 
+    SK_DET_CURSE,
+    /* player may sense cursed items in inventory */ 
     /* 15 */
-    SK_FIND_TRAPS,		/* player can find traps better */ 
-    SK_MEDITATION,		/* player can regain sp/hp at a faster rate */ 
-    SK_BOXING,			/* can attack hand-to-hand, see attack_hth() */ 
-    SK_FLAME_TOUCH,		/* player attack for fireborn characters */ 
-    SK_KARATE,			/* can attack hand-to-hand, see attack_hth() */ 
+    SK_FIND_TRAPS,
+    /* player can find traps better */ 
+    SK_MEDITATION,
+    /* player can regain sp/hp at a faster rate */ 
+    SK_BOXING,
+    /* can attack hand-to-hand, see attack_hth() */ 
+    SK_FLAME_TOUCH,
+    /* player attack for fireborn characters */ 
+    SK_KARATE,
+    /* can attack hand-to-hand, see attack_hth() */ 
     /* 20 */
-    SK_CLIMBING,		/* player moves quickly over hills/mountains  */ 
-    SK_WOODSMAN,		/* player moves quickly through jungle/forest */ 
-    SK_INSCRIPTION, 		/* player may write spell scrolls */ 
-    SK_MELEE_WEAPON,		/* player can attack with melee weapons */ 
-    SK_MISSILE_WEAPON,		/* player can attack with missile weapons */ 
+    SK_CLIMBING,
+    /* player moves quickly over hills/mountains  */ 
+    SK_WOODSMAN,
+    /* player moves quickly through jungle/forest */ 
+    SK_INSCRIPTION,
+    /* player may write spell scrolls */ 
+    SK_MELEE_WEAPON,
+    /* player can attack with melee weapons */ 
+    SK_MISSILE_WEAPON,
+    /* player can attack with missile weapons */ 
     /* 25 */
-    SK_THROWING,		/* player can throw items */ 
-    SK_SPELL_CASTING,		/* player can cast magic spells */ 
-    SK_REMOVE_TRAP, 		/* player can remove traps */ 
-    SK_SET_TRAP, 		/* player can set traps - not implemented */ 
-    SK_USE_MAGIC_ITEM, 		/* player use wands/horns/rods */ 
+    SK_THROWING,
+    /* player can throw items */ 
+    SK_SPELL_CASTING,
+    /* player can cast magic spells */ 
+    SK_REMOVE_TRAP,
+    /* player can remove traps */ 
+    SK_SET_TRAP,
+    /* player can set traps - not implemented */ 
+    SK_USE_MAGIC_ITEM,
+    /* player use wands/horns/rods */ 
     /* 30 */
-    SK_PRAYING,			/* player can cast cleric spells, regen grace points */ 
-    SK_CLAWING,			/* player attack for troll, dragon characters */ 
-	SK_LEVITATION,       /* skill for players who can fly. */
+    SK_PRAYING,
+    /* player can cast cleric spells, regen grace points */ 
+    SK_CLAWING,
+    /* player attack for troll, dragon characters */ 
+    SK_LEVITATION,
+    /* skill for players who can fly. */
 
-    SK_DISARM_TRAPS,    /* disarm removes traps and graps sometimes trap items for set traps */
+    SK_DISARM_TRAPS,
+    /* disarm removes traps and graps sometimes trap items for set traps */
     SK_XBOW_WEAP,
     SK_SLING_WEAP,
     SK_IDENTIFY,
@@ -127,25 +162,27 @@ enum skillnrs {
     SK_PIERCE_WEAP,
     SK_TWOHANDS,
     SK_POLEARMS,
-    NROFSKILLS,       /* always last index! */
+    NROFSKILLS,
+    /* always last index! */
 };
 
-typedef struct skill_struct {
-      char *name;       /* how to describe it to the player */
-	  archetype *at;    /* pointer to the skill archetype in the archlist */
-      short category;   /* the experience category to which this skill belongs */
-      short time;       /* base number of ticks it takes to use the skill */
-      long bexp;        /* base exp gain for this skill */
-      float lexp;       /* level multiplier of exp gain for using this skill */
-      short stat1;      /* primary stat effecting use of this skill */
-      short stat2;      /* secondary stat for this skill */
-      short stat3;      /* tertiary stat for this skill */
+typedef struct skill_struct
+{
+    char           *name;       /* how to describe it to the player */
+    archetype      *at;    /* pointer to the skill archetype in the archlist */
+    short           category;   /* the experience category to which this skill belongs */
+    short           time;       /* base number of ticks it takes to use the skill */
+    long            bexp;        /* base exp gain for this skill */
+    float           lexp;       /* level multiplier of exp gain for using this skill */
+    short           stat1;      /* primary stat effecting use of this skill */
+    short           stat2;      /* secondary stat for this skill */
+    short           stat3;      /* tertiary stat for this skill */
 } skill;
 
 
-extern skill skills[];
+extern skill    skills[];
 
 /* yet more convenience macros. */
 
 #define USING_SKILL(op, skill) \
-	((op)->chosen_skill->stats.sp == skill)
+    ((op)->chosen_skill->stats.sp == skill)

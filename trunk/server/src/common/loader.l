@@ -440,6 +440,7 @@ op->oy= op->y;
 ^can_reflect_missile{S} SET_OR_CLEAR_FLAG(op, FLAG_CAN_REFL_MISSILE, IVAL);
 ^reflect_spell{S}   SET_OR_CLEAR_FLAG(op, FLAG_REFL_SPELL, IVAL);
 ^can_reflect_spell{S}   SET_OR_CLEAR_FLAG(op, FLAG_CAN_REFL_SPELL, IVAL);
+^use_dmg_info{S}	SET_OR_CLEAR_FLAG(op, FLAG_USE_DMG_INFO, IVAL);
 ^no_magic{S} 	    SET_OR_CLEAR_FLAG(op, FLAG_NO_MAGIC, IVAL);
 ^no_cleric{S} 	    SET_OR_CLEAR_FLAG(op, FLAG_NO_CLERIC, IVAL);
 ^wiz{S}  	    {	if (IVAL) {
@@ -917,7 +918,7 @@ NULL /*is_removed*/,"been_applied", "auto_apply", "treasure", "is_neutral",	/* 2
 "is_vul_sphere", "is_proof_sphere", "is_male",
 "is_female", "applied",  "inv_locked", "is_wooded",
 "is_hilly", "has_ready_skill", "has_ready_weapon",		/* 90 */
-"no_skill_ident",NULL /* free FLAG 92 */, "can_see_in_dark", "is_cauldron", 
+"no_skill_ident","use_dmg_info", "can_see_in_dark", "is_cauldron", 
 "is_dust", "no_steal", "one_hit", NULL, "berserk", "no_attack",	/* 100 */
 "invulnerable", "quest_item", "is_traped", "is_vul_elemental",  "is_proof_elemental", /* 105 */
 "is_vul_magic", "is_proof_magic", "is_vul_physical", "is_proof_physical", "sys_object", /* 110 */

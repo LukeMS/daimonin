@@ -62,59 +62,65 @@
 #endif
 
 #ifdef NO_ERRNO_H
-    extern int errno;
+extern int  errno;
 #else
 #   include <errno.h>
 #endif
 #include <stdio.h>
 #include <sys/file.h>
 
-FILE *BecomeDaemon (char *filename)
+FILE * BecomeDaemon(char *filename)
 {
-  FILE *logfile;
-  register int i;
-  int forkresult;
- 
-  if((logfile=fopen(filename,"a"))==NULL){
-    printf("Couldn't create logfile %s.\n",filename);
-    exit(0);
-  } 
-  fputs("\n========================\n",logfile);    
-  fputs("Begin New Server Session\n",logfile);    
-  fputs("========================\n\n",logfile);    
-  fflush(logfile);
+    FILE   *logfile;
+    register int i;
+    int forkresult;
+
+    if ((logfile = fopen(filename, "a")) == NULL)
+    {
+        printf("Couldn't create logfile %s.\n", filename);
+        exit(0);
+    } 
+    fputs("\n========================\n", logfile);    
+    fputs("Begin New Server Session\n", logfile);    
+    fputs("========================\n\n", logfile);    
+    fflush(logfile);
     /*
      * fork so that the process goes into the background automatically. Also
      * has a nice side effect of having the child process get inherited by
      * init (pid 1).
      */
 
-    if ( (forkresult = fork ()) ){	/* if parent */
-	  if(forkresult < 0 ){
-		perror("Fork error!");
-	  }
-	  exit (0);			/* then no more work to do */
-      }
+    if ((forkresult = fork()))
+    {
+        /* if parent */
+        if (forkresult < 0)
+        {
+            perror("Fork error!");
+        }
+        exit(0);            /* then no more work to do */
+    }
 
     /*
      * Close standard file descriptors and get rid of controlling tty
      */
 
-    close (0); 
-    close (1);
-    close (2);
+    close(0); 
+    close(1);
+    close(2);
 
     /*
      * Set up the standard file descriptors.
      */
-    (void) open ("/", O_RDONLY);	/* root inode already in core */
-    (void) dup2 (0, 1);
-    (void) dup2 (0, 2);
+    (void) open("/", O_RDONLY); /* root inode already in core */
+    (void) dup2(0, 1);
+    (void) dup2(0, 2);
 
-    if ((i = open ("/dev/tty", O_RDWR)) >= 0) {	/* did open succeed? */
+    if ((i = open("/dev/tty", O_RDWR)) >= 0)
+    {
+        /* did open succeed? */
 #if (defined(SYSV) || defined(hpux)) && defined(TIOCTTY)
-	int zero = 0;
-	(void) ioctl (i, TIOCTTY, &zero);
+        int zero    = 0;
+        (void) ioctl(i, TIOCTTY, &zero);
 #else
 
 #  ifdef HAVE_SYS_TERMIOS_H
@@ -124,21 +130,21 @@ FILE *BecomeDaemon (char *filename)
 #      include <sys/ttycom.h>
 #    endif
 #  endif
-	(void) ioctl (i, TIOCNOTTY, (char *) 0);    /* detach, BSD style */
+        (void) ioctl(i, TIOCNOTTY, (char *) 0);    /* detach, BSD style */
 #endif
-	(void) close (i);
+        (void) close(i);
     }
 
 
 #ifdef HAVE_SETSID
     setsid();
 #else
-/* Are these really different?  */
+    /* Are these really different?  */
 #  if defined(SYSV) || defined(SVR4)
-      setpgrp (0, 0);
+    setpgrp(0, 0);
 #  else /* Non SYSV machines */
-      setpgrp (0, getpid());
+    setpgrp(0, getpid());
 #  endif
 #endif
-  return(logfile);
+    return(logfile);
 }

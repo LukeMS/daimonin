@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@
 #endif
 
 #if defined(osf1) && !defined(__osf__)
-#  define	__osf__
+#  define   __osf__
 #endif
 
 #if defined(sgi) && !defined(__sgi__)
@@ -117,8 +117,8 @@
 #endif
 
 #if defined(vax) || defined(ibm032)
- size_t strftime(char *, size_t, const char *, const struct tm *);
- time_t mktime(struct tm *);
+size_t  strftime(char *, size_t, const char *, const struct tm *);
+time_t  mktime(struct tm *);
 #endif
 
 #ifndef WIN32 /* ---win32 we define this stuff in win32.h */

@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,39 +23,29 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 #include <global.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
 
-const int season_timechange[5][HOURS_PER_DAY] = {
-    {   0, 0,  0,  0,  0, -1,-1, -1, -2, 0, 0, 0,
-        0, 0,  0,  0,  0,  0,  2,  1, 1, 1, 0, 0  },
-
-    {   0, 0,  0,  0,  0, -1,-1, -1, -2, 0, 0, 0,
-        0, 0,  0,  0,  0,  0,  0,  2,  1, 1, 1, 0  },
-
-    {   0, 0,  0,  0,  0, -1,-1, -1, -2, 0, 0, 0,
-        0, 0,  0,  0,  0,  0,  0,  2,  1, 1, 1, 0  },
-
-    {   0, 0,  0,  0,  -1,-1, -1, -2, 0, 0, 0, 0,
-        0, 0,  0,  0,  0,  0,  0,  2,  1, 1, 1, 0  },
-
-    {   0, 0,  0,  0,  0, -1,-1, -1, -2, 0, 0, 0,
-        0, 0,  0,  0,  0,  0,  0,  2,  1, 1, 1, 0  }
+const int   season_timechange[5][HOURS_PER_DAY] =
+{
+    {   0, 0,  0,  0,  0, -1, -1, -1, -2, 0, 0, 0,
+    0, 0,  0,  0,  0,  0,  2,  1, 1, 1, 0, 0  }, {   0, 0,  0,  0,  0, -1, -1, -1, -2, 0, 0, 0,
+    0, 0,  0,  0,  0,  0,  0,  2,  1, 1, 1, 0  }, {   0, 0,  0,  0,  0, -1, -1, -1, -2, 0, 0, 0,
+    0, 0,  0,  0,  0,  0,  0,  2,  1, 1, 1, 0  }, {   0, 0,  0,  0, -1, -1, -1, -2, 0, 0, 0, 0,
+    0, 0,  0,  0,  0,  0,  0,  2,  1, 1, 1, 0  }, {   0, 0,  0,  0,  0, -1, -1, -1, -2, 0, 0, 0,
+    0, 0,  0,  0,  0,  0,  0,  2,  1, 1, 1, 0  }
 };
- 
+
 void init_word_darkness(void)
 {
-    int i;
+    int         i;
     timeofday_t tod;
-    
-    world_darkness=MAX_DARKNESS;
+
+    world_darkness = MAX_DARKNESS;
     get_tod(&tod);
 
-    for (i = HOURS_PER_DAY/2; i < HOURS_PER_DAY; i++)
-        world_darkness -=season_timechange[tod.season][i];
+    for (i = HOURS_PER_DAY / 2; i < HOURS_PER_DAY; i++)
+        world_darkness -= season_timechange[tod.season][i];
     for (i = 0; i <= tod.hour; i++) /* must be <= and not < ... */
-        world_darkness -=season_timechange[tod.season][i];
+        world_darkness -= season_timechange[tod.season][i];
 }
 
 /*
@@ -71,8 +61,25 @@ void tick_the_clock()
     timeofday_t tod ;
 
     todtick++;
-    if (todtick%20 == 0)
-	write_todclock();
     get_tod(&tod);
-    world_darkness -=season_timechange[tod.season][tod.hour];
+    world_darkness -= season_timechange[tod.season][tod.hour];
+}
+
+/*
+ * Write out the current time to the file so time does not
+ * reset every time the server reboots.
+ */
+void write_todclock()
+{
+    char    filename[MAX_BUF];
+    FILE   *fp;
+
+    sprintf(filename, "%s/clockdata", settings.localdir);
+    if ((fp = fopen(filename, "w")) == NULL)
+    {
+        LOG(llevBug, "BUG: Cannot open %s for writing\n", filename);
+        return;
+    }
+    fprintf(fp, "%lu", todtick);
+    fclose(fp);
 }

@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,7 +31,6 @@
  * But if the player is loged in - all DRAWINFO are generated here.
  */
 #include <global.h>
-#include <sproto.h>
 #include <stdarg.h>
 
 /*
@@ -48,55 +47,58 @@
  * in the flags.
  *
  */
-void new_draw_info(int flags,int pri, object *pl, const char *buf)
+void new_draw_info(int flags, int pri, object *pl, const char *buf)
 {
-	char info_string[HUGE_BUF];
-	SockList sl;
+    char        info_string[HUGE_BUF];
+    SockList    sl;
 
-	if(!buf) /* should not happen - generate save string and LOG it */
-	{
-		buf = "[NULL]";
-		LOG(llevBug,"BUG:: new_draw_info: NULL string send! %s (%x - %d)\n", query_name(pl),flags,pri);
-	}
+    if (!buf) /* should not happen - generate save string and LOG it */
+    {
+        buf = "[NULL]";
+        LOG(llevBug, "BUG:: new_draw_info: NULL string send! %s (%x - %d)\n", query_name(pl), flags, pri);
+    }
 
-	/* here we handle global messages - still not sure i want this here */
-    if (flags & NDI_ALL) {
-		player	*tmppl;
-		for (tmppl=first_player; tmppl!=NULL; tmppl=tmppl->next)
-			new_draw_info((flags & ~NDI_ALL), pri, tmppl->ob, buf);
-		return;
+    /* here we handle global messages - still not sure i want this here */
+    if (flags & NDI_ALL)
+    {
+        player *tmppl;
+        for (tmppl = first_player; tmppl != NULL; tmppl = tmppl->next)
+            new_draw_info((flags & ~NDI_ALL), pri, tmppl->ob, buf);
+        return;
     }
 
 
-	/* here handle some security stuff... a bit overhead for max secure */
-    if (!pl || pl->type!=PLAYER)
-	{
-		LOG(llevBug,"BUG:: new_draw_info: called for object != PLAYER! %s (%x - %d) msg: %s\n", query_name(pl),flags,pri,buf);
-		return;
-	}
+    /* here handle some security stuff... a bit overhead for max secure */
+    if (!pl || pl->type != PLAYER)
+    {
+        LOG(llevBug, "BUG:: new_draw_info: called for object != PLAYER! %s (%x - %d) msg: %s\n", query_name(pl), flags,
+            pri, buf);
+        return;
+    }
 
-	if(CONTR(pl)==NULL)
-	{
-		LOG(llevBug,"BUG:: new_draw_info: called for player with contr==NULL! %s (%x - %d) msg: %s\n", query_name(pl),flags,pri,buf);
-		return;
-	}
+    if (CONTR(pl) == NULL)
+    {
+        LOG(llevBug, "BUG:: new_draw_info: called for player with contr==NULL! %s (%x - %d) msg: %s\n", query_name(pl),
+            flags, pri, buf);
+        return;
+    }
 
-	if(CONTR(pl)->state!=ST_PLAYING)
-		return;
+    if (CONTR(pl)->state != ST_PLAYING)
+        return;
 
-    if (pri>=CONTR(pl)->listening) /* player don't want this */
-		return;
+    if (pri >= CONTR(pl)->listening) /* player don't want this */
+        return;
 
     sl.buf = info_string;
-	SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_DRAWINFO2);
-	SockList_AddShort(&sl, flags&NDI_FLAG_MASK);
-	strcpy(sl.buf+sl.len, buf);
+    SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_DRAWINFO2);
+    SockList_AddShort(&sl, flags & NDI_FLAG_MASK);
+    strcpy(sl.buf + sl.len, buf);
     sl.len += strlen(buf);
     Send_With_Handling(&CONTR(pl)->socket, &sl);
 
-/*	sprintf(info_string,"X%d %s", flags&NDI_FLAG_MASK, buf);
-    Write_String_To_Socket(&CONTR(pl)->socket, BINARY_CMD_DRAWINFO,info_string, strlen(info_string));
-	*/
+    /*  sprintf(info_string,"X%d %s", flags&NDI_FLAG_MASK, buf);
+        Write_String_To_Socket(&CONTR(pl)->socket, BINARY_CMD_DRAWINFO,info_string, strlen(info_string));
+        */
 }
 
 /* This is a pretty trivial function, but it allows us to use printf style
@@ -105,9 +107,9 @@ void new_draw_info(int flags,int pri, object *pl, const char *buf)
  * client/server bandwidth (client could keep track of various strings
  */
 
-void new_draw_info_format(int flags, int pri,object *pl, char *format, ...)
+void new_draw_info_format(int flags, int pri, object *pl, char *format, ...)
 {
-    char buf[HUGE_BUF];
+    char    buf[HUGE_BUF];
 
     va_list ap;
     va_start(ap, format);
@@ -121,18 +123,18 @@ void new_draw_info_format(int flags, int pri,object *pl, char *format, ...)
 
 /* we want give msg to all people on one, specific map
  */
-static void new_info_map_all_except(int color, mapstruct *map, object *op1, object *op, const char *str) 
+static void new_info_map_all_except(int color, mapstruct *map, object *op1, object *op, const char *str)
 {
-	object *tmp;
+    object *tmp;
 
-	if(map->player_first)
-	{
-		for(tmp=map->player_first;tmp;tmp=CONTR(tmp)->map_above)
-		{
-			if(tmp != op && tmp != op1)
-			    new_draw_info(color, 0, tmp, str);
-		}
-	}
+    if (map->player_first)
+    {
+        for (tmp = map->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        {
+            if (tmp != op && tmp != op1)
+                new_draw_info(color, 0, tmp, str);
+        }
+    }
 }
 
 /*
@@ -141,209 +143,209 @@ static void new_info_map_all_except(int color, mapstruct *map, object *op1, obje
 */
 void new_info_map(int color, mapstruct *map, int x, int y, int dist, const char *str)
 {
-	int xt, yt, d;
-	object *tmp;
+    int     xt, yt, d;
+    object *tmp;
 
-	if(!map || map->in_memory!=MAP_IN_MEMORY)
-		return;
+    if (!map || map->in_memory != MAP_IN_MEMORY)
+        return;
 
-	if(dist != MAP_INFO_ALL)
-		d=POW2(dist);
-	else
-	{
-		new_info_map_all_except(color, map, NULL , NULL, str); /* we want all on this map */
-		return;
-	}
+    if (dist != MAP_INFO_ALL)
+        d = POW2(dist);
+    else
+    {
+        new_info_map_all_except(color, map, NULL, NULL, str); /* we want all on this map */
+        return;
+    }
 
-	if(map->player_first) /* any player on this map? */
-	{
-		for(tmp=map->player_first;tmp;tmp=CONTR(tmp)->map_above)
-		{
-			if( (POW2(tmp->x - x) + POW2(tmp->y - y)) <= d)
-			    new_draw_info(color, 0, tmp, str);
-		}
-	}
+    if (map->player_first) /* any player on this map? */
+    {
+        for (tmp = map->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        {
+            if ((POW2(tmp->x - x) + POW2(tmp->y - y)) <= d)
+                new_draw_info(color, 0, tmp, str);
+        }
+    }
 
-	if (map->tile_map[0] && map->tile_map[0]->in_memory==MAP_IN_MEMORY && map->tile_map[0]->player_first)
-	{
-		yt = y+MAP_HEIGHT(map->tile_map[0]);
-		for(tmp=map->tile_map[0]->player_first;tmp;tmp=CONTR(tmp)->map_above)
-		{
-			if( (POW2(tmp->x - x) + POW2(tmp->y - yt)) <= d)
-			    new_draw_info(color, 0, tmp, str);
-		}
-	}
-	if (map->tile_map[1] && map->tile_map[1]->in_memory==MAP_IN_MEMORY && map->tile_map[1]->player_first)
-	{
-		xt = x-MAP_WIDTH(map);
-		for(tmp=map->tile_map[1]->player_first;tmp;tmp=CONTR(tmp)->map_above)
-		{
-			if( (POW2(tmp->x - xt) + POW2(tmp->y - y)) <= d)
-			    new_draw_info(color, 0, tmp, str);
-		}
-	}
-	if (map->tile_map[2] && map->tile_map[2]->in_memory==MAP_IN_MEMORY && map->tile_map[2]->player_first)
-	{
-		yt = y-MAP_HEIGHT(map);
-		for(tmp=map->tile_map[2]->player_first;tmp;tmp=CONTR(tmp)->map_above)
-		{
-			if( (POW2(tmp->x - x) + POW2(tmp->y - yt)) <= d)
-			    new_draw_info(color, 0, tmp, str);
-		}
-	}
-	if (map->tile_map[3] && map->tile_map[3]->in_memory==MAP_IN_MEMORY && map->tile_map[3]->player_first)
-	{
-		xt =x+MAP_WIDTH(map->tile_map[3]);
-		for(tmp=map->tile_map[3]->player_first;tmp;tmp=CONTR(tmp)->map_above)
-		{
-			if( (POW2(tmp->x - xt) + POW2(tmp->y - y)) <= d)
-			    new_draw_info(color, 0, tmp, str);
-		}
-	}
-	if (map->tile_map[4] && map->tile_map[4]->in_memory==MAP_IN_MEMORY && map->tile_map[4]->player_first)
-	{
-		yt = y+MAP_HEIGHT(map->tile_map[4]);
-		xt = x-MAP_WIDTH(map);
-		for(tmp=map->tile_map[4]->player_first;tmp;tmp=CONTR(tmp)->map_above)
-		{
-			if( (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
-			    new_draw_info(color, 0, tmp, str);
-		}
-	}
-	if (map->tile_map[5] && map->tile_map[5]->in_memory==MAP_IN_MEMORY && map->tile_map[5]->player_first)
-	{
-		xt = x-MAP_WIDTH(map);
-		yt = y-MAP_HEIGHT(map);
-		for(tmp=map->tile_map[5]->player_first;tmp;tmp=CONTR(tmp)->map_above)
-		{
-			if( (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
-			    new_draw_info(color, 0, tmp, str);
-		}
-	}
-	if (map->tile_map[6] && map->tile_map[6]->in_memory==MAP_IN_MEMORY && map->tile_map[6]->player_first)
-	{
-		xt =x+MAP_WIDTH(map->tile_map[6]);
-		yt = y-MAP_HEIGHT(map);
-		for(tmp=map->tile_map[6]->player_first;tmp;tmp=CONTR(tmp)->map_above)
-		{
-			if( (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
-			    new_draw_info(color, 0, tmp, str);
-		}
-	}
-	if (map->tile_map[7] && map->tile_map[7]->in_memory==MAP_IN_MEMORY && map->tile_map[7]->player_first)
-	{
-		xt =x+MAP_WIDTH(map->tile_map[7]);
-		yt = y+MAP_HEIGHT(map->tile_map[7]);
-		for(tmp=map->tile_map[7]->player_first;tmp;tmp=CONTR(tmp)->map_above)
-		{
-			if( (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
-			    new_draw_info(color, 0, tmp, str);
-		}
-	}
+    if (map->tile_map[0] && map->tile_map[0]->in_memory == MAP_IN_MEMORY && map->tile_map[0]->player_first)
+    {
+        yt = y + MAP_HEIGHT(map->tile_map[0]);
+        for (tmp = map->tile_map[0]->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        {
+            if ((POW2(tmp->x - x) + POW2(tmp->y - yt)) <= d)
+                new_draw_info(color, 0, tmp, str);
+        }
+    }
+    if (map->tile_map[1] && map->tile_map[1]->in_memory == MAP_IN_MEMORY && map->tile_map[1]->player_first)
+    {
+        xt = x - MAP_WIDTH(map);
+        for (tmp = map->tile_map[1]->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        {
+            if ((POW2(tmp->x - xt) + POW2(tmp->y - y)) <= d)
+                new_draw_info(color, 0, tmp, str);
+        }
+    }
+    if (map->tile_map[2] && map->tile_map[2]->in_memory == MAP_IN_MEMORY && map->tile_map[2]->player_first)
+    {
+        yt = y - MAP_HEIGHT(map);
+        for (tmp = map->tile_map[2]->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        {
+            if ((POW2(tmp->x - x) + POW2(tmp->y - yt)) <= d)
+                new_draw_info(color, 0, tmp, str);
+        }
+    }
+    if (map->tile_map[3] && map->tile_map[3]->in_memory == MAP_IN_MEMORY && map->tile_map[3]->player_first)
+    {
+        xt = x + MAP_WIDTH(map->tile_map[3]);
+        for (tmp = map->tile_map[3]->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        {
+            if ((POW2(tmp->x - xt) + POW2(tmp->y - y)) <= d)
+                new_draw_info(color, 0, tmp, str);
+        }
+    }
+    if (map->tile_map[4] && map->tile_map[4]->in_memory == MAP_IN_MEMORY && map->tile_map[4]->player_first)
+    {
+        yt = y + MAP_HEIGHT(map->tile_map[4]);
+        xt = x - MAP_WIDTH(map);
+        for (tmp = map->tile_map[4]->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        {
+            if ((POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
+                new_draw_info(color, 0, tmp, str);
+        }
+    }
+    if (map->tile_map[5] && map->tile_map[5]->in_memory == MAP_IN_MEMORY && map->tile_map[5]->player_first)
+    {
+        xt = x - MAP_WIDTH(map);
+        yt = y - MAP_HEIGHT(map);
+        for (tmp = map->tile_map[5]->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        {
+            if ((POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
+                new_draw_info(color, 0, tmp, str);
+        }
+    }
+    if (map->tile_map[6] && map->tile_map[6]->in_memory == MAP_IN_MEMORY && map->tile_map[6]->player_first)
+    {
+        xt = x + MAP_WIDTH(map->tile_map[6]);
+        yt = y - MAP_HEIGHT(map);
+        for (tmp = map->tile_map[6]->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        {
+            if ((POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
+                new_draw_info(color, 0, tmp, str);
+        }
+    }
+    if (map->tile_map[7] && map->tile_map[7]->in_memory == MAP_IN_MEMORY && map->tile_map[7]->player_first)
+    {
+        xt = x + MAP_WIDTH(map->tile_map[7]);
+        yt = y + MAP_HEIGHT(map->tile_map[7]);
+        for (tmp = map->tile_map[7]->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        {
+            if ((POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
+                new_draw_info(color, 0, tmp, str);
+        }
+    }
 }
 
 /*
  * write to everyone on the map *except* op.  This is useful for emotions.
  */
-void new_info_map_except(int color, mapstruct *map, int x, int y, int dist, object *op1, object *op, const char *str) 
+void new_info_map_except(int color, mapstruct *map, int x, int y, int dist, object *op1, object *op, const char *str)
 {
-	int xt, yt, d;
-	object *tmp;
+    int     xt, yt, d;
+    object *tmp;
 
-	if(!map || map->in_memory!=MAP_IN_MEMORY)
-		return;
+    if (!map || map->in_memory != MAP_IN_MEMORY)
+        return;
 
-	if(dist != MAP_INFO_ALL)
-		d=POW2(dist);
-	else
-	{
-		new_info_map_all_except(color, map, op1, op,str); /* we want all on this map */
-		return;
-	}
+    if (dist != MAP_INFO_ALL)
+        d = POW2(dist);
+    else
+    {
+        new_info_map_all_except(color, map, op1, op, str); /* we want all on this map */
+        return;
+    }
 
-	if(map->player_first) /* any player on this map? */
-	{
-		for(tmp=map->player_first;tmp;tmp=CONTR(tmp)->map_above)
-		{
-			if(tmp != op && tmp != op1 && (POW2(tmp->x - x) + POW2(tmp->y - y)) <= d)
-			    new_draw_info(color, 0, tmp, str);
-		}
-	}
+    if (map->player_first) /* any player on this map? */
+    {
+        for (tmp = map->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        {
+            if (tmp != op && tmp != op1 && (POW2(tmp->x - x) + POW2(tmp->y - y)) <= d)
+                new_draw_info(color, 0, tmp, str);
+        }
+    }
 
-	if (map->tile_map[0] && map->tile_map[0]->in_memory==MAP_IN_MEMORY && map->tile_map[0]->player_first)
-	{
-		yt = y+MAP_HEIGHT(map->tile_map[0]);
-		for(tmp=map->tile_map[0]->player_first;tmp;tmp=CONTR(tmp)->map_above)
-		{
-			if(tmp != op && tmp != op1 && (POW2(tmp->x - x) + POW2(tmp->y - yt)) <= d)
-			    new_draw_info(color, 0, tmp, str);
-		}
-	}
-	if (map->tile_map[1] && map->tile_map[1]->in_memory==MAP_IN_MEMORY && map->tile_map[1]->player_first)
-	{
-		xt = x-MAP_WIDTH(map);
-		for(tmp=map->tile_map[1]->player_first;tmp;tmp=CONTR(tmp)->map_above)
-		{
-			if(tmp != op && tmp != op1 && (POW2(tmp->x - xt) + POW2(tmp->y - y)) <= d)
-			    new_draw_info(color, 0, tmp, str);
-		}
-	}
-	if (map->tile_map[2] && map->tile_map[2]->in_memory==MAP_IN_MEMORY && map->tile_map[2]->player_first)
-	{
-		yt = y-MAP_HEIGHT(map);
-		for(tmp=map->tile_map[2]->player_first;tmp;tmp=CONTR(tmp)->map_above)
-		{
-			if(tmp != op && tmp != op1 && (POW2(tmp->x - x) + POW2(tmp->y - yt)) <= d)
-			    new_draw_info(color, 0, tmp, str);
-		}
-	}
-	if (map->tile_map[3] && map->tile_map[3]->in_memory==MAP_IN_MEMORY && map->tile_map[3]->player_first)
-	{
-		xt =x+MAP_WIDTH(map->tile_map[3]);
-		for(tmp=map->tile_map[3]->player_first;tmp;tmp=CONTR(tmp)->map_above)
-		{
-			if(tmp != op && tmp != op1 && (POW2(tmp->x - xt) + POW2(tmp->y - y)) <= d)
-			    new_draw_info(color, 0, tmp, str);
-		}
-	}
-	if (map->tile_map[4] && map->tile_map[4]->in_memory==MAP_IN_MEMORY && map->tile_map[4]->player_first)
-	{
-		yt = y+MAP_HEIGHT(map->tile_map[4]);
-		xt = x-MAP_WIDTH(map);
-		for(tmp=map->tile_map[4]->player_first;tmp;tmp=CONTR(tmp)->map_above)
-		{
-			if(tmp != op && tmp != op1 && (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
-			    new_draw_info(color, 0, tmp, str);
-		}
-	}
-	if (map->tile_map[5] && map->tile_map[5]->in_memory==MAP_IN_MEMORY && map->tile_map[5]->player_first)
-	{
-		xt = x-MAP_WIDTH(map);
-		yt = y-MAP_HEIGHT(map);
-		for(tmp=map->tile_map[5]->player_first;tmp;tmp=CONTR(tmp)->map_above)
-		{
-			if(tmp != op && tmp != op1 && (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
-			    new_draw_info(color, 0, tmp, str);
-		}
-	}
-	if (map->tile_map[6] && map->tile_map[6]->in_memory==MAP_IN_MEMORY && map->tile_map[6]->player_first)
-	{
-		xt =x+MAP_WIDTH(map->tile_map[6]);
-		yt = y-MAP_HEIGHT(map);
-		for(tmp=map->tile_map[6]->player_first;tmp;tmp=CONTR(tmp)->map_above)
-		{
-			if(tmp != op && tmp != op1 && (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
-			    new_draw_info(color, 0, tmp, str);
-		}
-	}
-	if (map->tile_map[7] && map->tile_map[7]->in_memory==MAP_IN_MEMORY && map->tile_map[7]->player_first)
-	{
-		xt =x+MAP_WIDTH(map->tile_map[7]);
-		yt = y+MAP_HEIGHT(map->tile_map[7]);
-		for(tmp=map->tile_map[7]->player_first;tmp;tmp=CONTR(tmp)->map_above)
-		{
-			if(tmp != op && tmp != op1 && (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
-			    new_draw_info(color, 0, tmp, str);
-		}
-	}
+    if (map->tile_map[0] && map->tile_map[0]->in_memory == MAP_IN_MEMORY && map->tile_map[0]->player_first)
+    {
+        yt = y + MAP_HEIGHT(map->tile_map[0]);
+        for (tmp = map->tile_map[0]->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        {
+            if (tmp != op && tmp != op1 && (POW2(tmp->x - x) + POW2(tmp->y - yt)) <= d)
+                new_draw_info(color, 0, tmp, str);
+        }
+    }
+    if (map->tile_map[1] && map->tile_map[1]->in_memory == MAP_IN_MEMORY && map->tile_map[1]->player_first)
+    {
+        xt = x - MAP_WIDTH(map);
+        for (tmp = map->tile_map[1]->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        {
+            if (tmp != op && tmp != op1 && (POW2(tmp->x - xt) + POW2(tmp->y - y)) <= d)
+                new_draw_info(color, 0, tmp, str);
+        }
+    }
+    if (map->tile_map[2] && map->tile_map[2]->in_memory == MAP_IN_MEMORY && map->tile_map[2]->player_first)
+    {
+        yt = y - MAP_HEIGHT(map);
+        for (tmp = map->tile_map[2]->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        {
+            if (tmp != op && tmp != op1 && (POW2(tmp->x - x) + POW2(tmp->y - yt)) <= d)
+                new_draw_info(color, 0, tmp, str);
+        }
+    }
+    if (map->tile_map[3] && map->tile_map[3]->in_memory == MAP_IN_MEMORY && map->tile_map[3]->player_first)
+    {
+        xt = x + MAP_WIDTH(map->tile_map[3]);
+        for (tmp = map->tile_map[3]->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        {
+            if (tmp != op && tmp != op1 && (POW2(tmp->x - xt) + POW2(tmp->y - y)) <= d)
+                new_draw_info(color, 0, tmp, str);
+        }
+    }
+    if (map->tile_map[4] && map->tile_map[4]->in_memory == MAP_IN_MEMORY && map->tile_map[4]->player_first)
+    {
+        yt = y + MAP_HEIGHT(map->tile_map[4]);
+        xt = x - MAP_WIDTH(map);
+        for (tmp = map->tile_map[4]->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        {
+            if (tmp != op && tmp != op1 && (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
+                new_draw_info(color, 0, tmp, str);
+        }
+    }
+    if (map->tile_map[5] && map->tile_map[5]->in_memory == MAP_IN_MEMORY && map->tile_map[5]->player_first)
+    {
+        xt = x - MAP_WIDTH(map);
+        yt = y - MAP_HEIGHT(map);
+        for (tmp = map->tile_map[5]->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        {
+            if (tmp != op && tmp != op1 && (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
+                new_draw_info(color, 0, tmp, str);
+        }
+    }
+    if (map->tile_map[6] && map->tile_map[6]->in_memory == MAP_IN_MEMORY && map->tile_map[6]->player_first)
+    {
+        xt = x + MAP_WIDTH(map->tile_map[6]);
+        yt = y - MAP_HEIGHT(map);
+        for (tmp = map->tile_map[6]->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        {
+            if (tmp != op && tmp != op1 && (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
+                new_draw_info(color, 0, tmp, str);
+        }
+    }
+    if (map->tile_map[7] && map->tile_map[7]->in_memory == MAP_IN_MEMORY && map->tile_map[7]->player_first)
+    {
+        xt = x + MAP_WIDTH(map->tile_map[7]);
+        yt = y + MAP_HEIGHT(map->tile_map[7]);
+        for (tmp = map->tile_map[7]->player_first; tmp; tmp = CONTR(tmp)->map_above)
+        {
+            if (tmp != op && tmp != op1 && (POW2(tmp->x - xt) + POW2(tmp->y - yt)) <= d)
+                new_draw_info(color, 0, tmp, str);
+        }
+    }
 }

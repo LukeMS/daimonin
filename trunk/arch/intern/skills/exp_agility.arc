@@ -1,7 +1,7 @@
 Object experience_agility
 name agility
 type 44
-sub_type 1
+sub_type 0
 sys_object 1
 no_drop 1
 face exp.101

@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -33,27 +33,28 @@
  * we want using lists of objects (examples are treasure lists,
  * friendly/enemy list, button link list...). MT-2004
  */
-typedef struct oblnk {
-	union 
-	{
-		struct oblnk	*link;
-		object			*ob;
-		struct treasureliststruct	*tl;
-	} objlink;
+typedef struct oblnk
+{
+    union
+    {
+        struct oblnk               *link;
+        object                     *ob;
+        struct treasureliststruct  *tl;
+    } objlink;
 
-	struct oblnk		*prev;
-	struct oblnk		*next;
+    struct oblnk               *prev;
+    struct oblnk               *next;
 
-	tag_t		id;
-	int			value;
-	uint32		flags;
-	uint32		ref_count;
+    tag_t                       id;
+    int                         value;
+    uint32                      flags;
+    uint32                      ref_count;
 } objectlink;
 
 /* oblink union is used as */
-#define OBJLNK_FLAG_OB		0x1
-#define OBJLNK_FLAG_LINK	0x2
-#define OBJLNK_FLAG_TL		0x4
+#define OBJLNK_FLAG_OB      0x1
+#define OBJLNK_FLAG_LINK    0x2
+#define OBJLNK_FLAG_TL      0x4
 
 /* The use of _STATIC and _REF defines how we handle instancing & freeing.
  * Example: When we loading the base arches, we
@@ -71,8 +72,8 @@ typedef struct oblnk {
  * like we do with the hash list for strings. Its possible - perhaps 
  * its useful and speed up things but atm we don't have to much of them.
  */
-#define OBJLNK_FLAG_STATIC	0x1000
-#define OBJLNK_FLAG_REF		0x2000
+#define OBJLNK_FLAG_STATIC  0x1000
+#define OBJLNK_FLAG_REF     0x2000
 
 #define free_objectlink_simple(_chunk_) return_poolchunk((_chunk_), POOL_OBJECT_LINK);
 #define free_objectlinkpt_simple(_chunk_) return_poolchunk((_chunk_), POOL_OBJECT_LINK);

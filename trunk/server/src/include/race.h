@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,14 +23,16 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 /* thats the race list - init is in init.c */
-typedef struct ralnk {  /* Used to link the race lists together */
-  const char *name;		/* name of this race entry */ 
-  int nrof;		/* nrof things belonging to this race */
-  struct archt *corpse; /* thats the default corpse of this race */
-  struct oblnk *member; /* linked object list of things belonging to this race */
-  struct ralnk *next;
+typedef struct ralnk
+{
+    /* Used to link the race lists together */
+    const char                 *name;       /* name of this race entry */ 
+    int                         nrof;       /* nrof things belonging to this race */
+    struct archt               *corpse; /* thats the default corpse of this race */
+    struct oblnk               *member; /* linked object list of things belonging to this race */
+    struct ralnk               *next;
 
-  struct mob_behaviourset *ai; /* That is the default ai for this race */
+    struct mob_behaviourset    *ai; /* That is the default ai for this race */
 } racelink;
 
 #define RACE_TYPE_NONE 0
@@ -38,27 +40,28 @@ typedef struct ralnk {  /* Used to link the race lists together */
 /* WARNING: this list is used for the items prefixes and not for the race
  * list. Both are different lists with different meanings.
  */
-typedef enum _race_names_enum {
+typedef enum _race_names_enum
+{
     RACE_NAME_DEFAULT,
-        RACE_NAME_DWARVEN,
-        RACE_NAME_ELVEN,
-        RACE_NAME_GNOMISH,
-        RACE_NAME_DROW,
-        RACE_NAME_ORCISH,
-        RACE_NAME_GOBLIN,
-        RACE_NAME_KOBOLD,
-        RACE_NAME_GIANT,
-        RACE_NAME_TINY,
-        RACE_NAME_DEMONISH,
-        RACE_NAME_DRACONISH,
-        RACE_NAME_OGRE,
-        
-        RACE_NAME_INIT
-}_race_names_enum;
+    RACE_NAME_DWARVEN,
+    RACE_NAME_ELVEN,
+    RACE_NAME_GNOMISH,
+    RACE_NAME_DROW,
+    RACE_NAME_ORCISH,
+    RACE_NAME_GOBLIN,
+    RACE_NAME_KOBOLD,
+    RACE_NAME_GIANT,
+    RACE_NAME_TINY,
+    RACE_NAME_DEMONISH,
+    RACE_NAME_DRACONISH,
+    RACE_NAME_OGRE,
+    RACE_NAME_INIT
+}   _race_names_enum;
 
-typedef struct _races {
-    char *name;				/* prefix name for this race */
-    uint32 usable;        /* race can use (wear, wield, apply...) items from this races */
+typedef struct _races
+{
+    char                   *name;               /* prefix name for this race */
+    uint32                  usable;        /* race can use (wear, wield, apply...) items from this races */
 }_races;
 
-extern struct _races item_race_table[RACE_NAME_INIT];
+extern struct _races    item_race_table[RACE_NAME_INIT];

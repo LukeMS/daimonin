@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,15 +23,15 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 #define LL_IGNORED  -1
-#define LL_EOF	    0
-#define LL_MORE	    1
+#define LL_EOF      0
+#define LL_MORE     1
 #define LL_NORMAL   2
 
 /* see loader.l for more details on this */
 #define LO_REPEAT   0
 #define LO_LINEMODE 1
 #define LO_NEWFILE  2
-#define	LO_NOREAD   3
+#define LO_NOREAD   3
 #define LO_MEMORYMODE 4
 
-extern int nroffiles, nrofpixmaps;
+extern int  nroffiles, nrofpixmaps;

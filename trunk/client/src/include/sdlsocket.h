@@ -25,15 +25,15 @@
 
 #define SOCKET_NO -1
 
-extern Boolean SOCKET_InitSocket(void);
-extern Boolean SOCKET_DeinitSocket(void);
-extern Boolean SOCKET_OpenSocket(SOCKET *socket_temp, struct ClientSocket *csock, char *host, int port);
-extern Boolean SOCKET_CloseSocket(SOCKET socket);
-extern int SOCKET_GetError(void);	/* returns socket error */
+extern Boolean  SOCKET_InitSocket(void);
+extern Boolean  SOCKET_DeinitSocket(void);
+extern Boolean  SOCKET_OpenSocket(SOCKET *socket_temp, struct ClientSocket *csock, char *host, int port);
+extern Boolean  SOCKET_CloseSocket(SOCKET socket);
+extern int      SOCKET_GetError(void);  /* returns socket error */
 
-extern int write_socket(int fd, unsigned char *buf, int len);
-extern int read_socket ( int fd, struct SockList *sl, int len );
+extern int      write_socket(int fd, unsigned char *buf, int len);
+extern int      read_socket(int fd, struct SockList *sl, int len);
 
-void read_metaserver_data(void);
+void            read_metaserver_data(void);
 
 #endif

@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@
  * these from the treasure file.  Some things to look for are:
  *
  * prepare_weapon, improve_*: Allow characters to enchant their own
- *	weapons
+ *  weapons
  * ench_armour: Allow characters to enchant their armor.
  *
  * In theory, most of the values here should just be defaults, and 
@@ -50,7 +50,7 @@
    (and NOT makefiles... this is a installation thing, not a compilation part.
     Depending on OS, this can be a big difference.).
  */
-  
+
 /* Location of read-only machine independent data */
 #ifndef DATADIR
 #define DATADIR "./lib"
@@ -102,13 +102,6 @@
 #define HELPDIR   "./man"
 #endif
 
-/* To be removed soon (setable by player) */
-/* IF this is set, then the range type will not switch to skill when
- * you use a melee weapon - this better emulates pre-skill code.
- */
-
-#define NO_AUTO_SKILL_SWITCH
-
 /* There are 4 main sections to this file-
  * Section 1 is feature selection (enabling/disabling certain features)
  *
@@ -124,34 +117,32 @@
  * Section 4 deals with save file related options.
  */
 
- /*******************************************************************
- * SECTION 1 - FEATURES
- *
- * You don't have to change anything here to get a working program, but
- * you may want to on personal preferance.  Items are arranged
- * alphabetically.
- *
- * Short list of features, and what to search for:
- * ALCHEMY - enables alchemy code
- * BALANCED_STAT_LOSS - Based death stat depletion on level etc?
- * CS_LOGSTATS - log various new client/server data.
- * DEBUG - more verbose message logging?
- * MAP_CLIENT_X, MAP_CLIENT_Y - determines max size client map will receive
- * MAX_TIME - how long an internal tick is in microseconds
- * MULTIPLE_GODS - adds numerous gods to the game, with different powers
- * NOT_PERMADEATH - should death be the final end or not?
- * PARTY_KILL_LOG - stores party kill information
- * RECYCLE_TMP_MAPS - use tmp maps across multiple runs?
- * RESURRECTION - lets players bring other dead players back to life.
- * SEARCH_ITEMS - let players search for items on the ground
- * SECURE - Allow overriding values with run time flags?
- * SPELL_* - various spell related options
- * STAT_LOSS_ON_DEATH - toggle between stat loss or stat depletion
- * USE_LIGHTING - enable light/darkness & light sources
- * USE_PERMANENT_EXPERIENCE - allow players to accumulate permanent experience?
- * WATCHDOG - allows use of an external watchdog program
- *
- ***********************************************************************/
+/*******************************************************************
+* SECTION 1 - FEATURES
+*
+* You don't have to change anything here to get a working program, but
+* you may want to on personal preferance.  Items are arranged
+* alphabetically.
+*
+* Short list of features, and what to search for:
+* ALCHEMY - enables alchemy code
+* BALANCED_STAT_LOSS - Based death stat depletion on level etc?
+* CS_LOGSTATS - log various new client/server data.
+* DEBUG - more verbose message logging?
+* MAP_CLIENT_X, MAP_CLIENT_Y - determines max size client map will receive
+* MAX_TIME - how long an internal tick is in microseconds
+* MULTIPLE_GODS - adds numerous gods to the game, with different powers
+* NOT_PERMADEATH - should death be the final end or not?
+* RECYCLE_TMP_MAPS - use tmp maps across multiple runs?
+* RESURRECTION - lets players bring other dead players back to life.
+* SEARCH_ITEMS - let players search for items on the ground
+* SECURE - Allow overriding values with run time flags?
+* SPELL_* - various spell related options
+* STAT_LOSS_ON_DEATH - toggle between stat loss or stat depletion
+* USE_LIGHTING - enable light/darkness & light sources
+* USE_PERMANENT_EXPERIENCE - allow players to accumulate permanent experience?
+*
+***********************************************************************/
 
 /* Enables Brian Thomas's new alchemy code.  Might unbalance the game - lets
  * characters make potions and other special items.
@@ -217,7 +208,7 @@
  * in the crosssite.def file if I want this.  By default, you probably
  * dont want this defined.
  */
-#ifndef WIN32			/* ***win32 we set the following stuff in the IDE */
+#ifndef WIN32           /* ***win32 we set the following stuff in the IDE */
 #ifndef DEBUG
 #define DEBUG
 #endif
@@ -244,8 +235,8 @@
  * MSW 2001-05-28
  */
 
-#define MAP_CLIENT_X	17
-#define MAP_CLIENT_Y	17
+#define MAP_CLIENT_X    17
+#define MAP_CLIENT_Y    17
 
 /*
  * If you feel the game is too fast or too slow, change MAX_TIME.
@@ -254,7 +245,7 @@
  * players, monsters, or items with speed 1 can do one thing.
  */
 /* thats 8 ticks per second now - 100.000 are 10 ticks */
-#define MAX_TIME	125000
+#define MAX_TIME    125000
 
 
 /* Polymorph as it currently stands is unbalancing, so by default
@@ -277,16 +268,6 @@
  */
 
 #define NOT_PERMADEATH
-
-
-/* This determine how many entries are stored in the kill log.  You
- * can see this information with the 'party kills' command.  More entries
- * mean slower performance and more memory.  IF this is not defined, then
- * this feature is disabled.
- */
-/*
-#define PARTY_KILL_LOG 20
-*/
 
 /*
  * Set this if you want the temporary maps to be saved and reused across
@@ -406,16 +387,6 @@
 #define PERM_EXP_GAIN_RATIO           0.10f
 #define PERM_EXP_MAX_LOSS_RATIO       0.50f
 
-/*
- * WATCHDOG lets sends datagrams to port 13325 on localhost
- * in (more-or-less) regular intervals, so an external watchdog
- * program can kill the server if it hangs (for whatever reason).
- * It shouldn't hurt anyone if this is defined but you don't
- * have an watchdog program.
- */
-#ifndef WIN32	/* ***win32 disable watchdog as win32 default */
-/*#define WATCHDOG*/
-#endif
 
 /***********************************************************************
  * SECTION 2 - Machine/Compiler specific stuff.
@@ -474,25 +445,24 @@
  * MAX_OBJECTS - how many objects to keep in memory.
  * MAX_OBJECTS_LWM - only swap maps out if below that value
  * MOTD - message of the day - printed each time someone joins the game
- * PERM_FILE - limit play times
  * SHUTDOWN - used when shutting down the server
  * USE_CALLOC for some memory requests
  ***********************************************************************
  */
 
- /*
- * BUGFILE - file used for the /bug command to store online submited bugs from
- * players.
- */
+/*
+* BUGFILE - file used for the /bug command to store online submited bugs from
+* players.
+*/
 
 #ifndef BUG_LOG
 #define BUG_LOG "bug_log"
 #endif
 
- /*
- * BANFILE - file used to ban certain sites from playing.  See the example
- * ban_file for examples.
- */
+/*
+* BANFILE - file used to ban certain sites from playing.  See the example
+* ban_file for examples.
+*/
 
 #ifndef BANFILE
 #define BANFILE         "ban_file"
@@ -555,7 +525,7 @@
  */
 
 /* How many ticks till maps are swapped out */
-#define MAP_MAXTIMEOUT	1000
+#define MAP_MAXTIMEOUT  1000
 /* At least that many ticks before swapout */
 #define MAP_MINTIMEOUT  500
 
@@ -577,7 +547,7 @@
  */
 
 #define MAP_RESET
-#define MAP_MAXRESET	7200
+#define MAP_MAXRESET    7200
 
 /*
  * MAX_OBJECTS is no hard limit.  If this limit is exceeded, crossfire
@@ -593,7 +563,7 @@
  * 25000 is about 8.5 MB
  */
 
-#define MAX_OBJECTS	100000
+#define MAX_OBJECTS 100000
 
 /*
  * Max objects low water mark (lwm).  If defined, the map swapping strategy
@@ -618,7 +588,7 @@
  * many maps to get below the low water mark.
  */
 
-/*#define MAX_OBJECTS_LWM	MAX_OBJECTS/2*/
+/*#define MAX_OBJECTS_LWM   MAX_OBJECTS/2*/
 
 /*
  * If you want to have a Message Of The Day file, define MOTD to be
@@ -630,13 +600,6 @@
 #ifndef MOTD
 #define MOTD "motd"
 #endif
-
-/*
- * You can restrict playing in certain times by creating a PERMIT_FILE
- * in LIBDIR. See teh sample for usabe notes.
- */
-
-#define PERM_FILE "forbid"
 
 /*
  * If you want to take the game down while installing new versions, or
@@ -681,20 +644,20 @@
  * archetypes highscore and treaures files and directories can be found.
  */
 
-#define ARCHETYPES	"archetypes"
-#define HIGHSCORE	"highscore"
-#define TREASURES	"treasures"
+#define ARCHETYPES  "archetypes"
+#define HIGHSCORE   "highscore"
+#define TREASURES   "treasures"
 #define SETTINGS    "settings"
 
-#define MAX_ERRORS	25	/* Bail out if more are received during tick */
+#define MAX_ERRORS  25  /* Bail out if more are received during tick */
 #define OBJECT_EXPAND      100     /* How big steps to use when expanding array */
 
-#define HIGHSCORE_LENGTH 10	/* How many entries there are room for */
+#define HIGHSCORE_LENGTH 10 /* How many entries there are room for */
 
 /* this value must be a prime number! */
 #define MAXSTRING 20
 
-#define COMMAND_HASH_SIZE 107	/* If you change this, delete all characters :) */
+#define COMMAND_HASH_SIZE 107   /* If you change this, delete all characters :) */
 
 
 
@@ -746,7 +709,7 @@
  * Kjetil W. J{\o}rgensen, jorgens@pvv.unit.no
  * (Note: something should probably be done with lock-file permission)
  */
-#define	SAVE_MODE	0660
+#define SAVE_MODE   0660
 
 /* NOTE ON SAVE_INTERVAL and AUTOSAVE:  Only one of these two really
  * needs to be selected.  You can set both, and things will work fine,
@@ -802,5 +765,5 @@
  * location.
  */
 
-#define RESET_LOCATION_TIME	0
+#define RESET_LOCATION_TIME 0
 

@@ -10,6 +10,7 @@ sub_type 0
 sys_object 1
 last_sp 2
 no_drop 1
+magic 3
 sp 19
 last_eat 1
 level 1

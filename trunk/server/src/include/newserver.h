@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -39,77 +39,89 @@
 #define MAXANIMNUM  2000
 
 #define FACE_TYPES  1
-#define PNG_FACE_INDEX	0
+#define PNG_FACE_INDEX  0
 
 /* This contains basic information on the socket structure.  status is its
  * current state.  we set up our on buffers for sending/receiving, so we can
  * handle some higher level functions.  fd is the actual file descriptor we
  * are using.
  */
-enum Sock_Status {Ns_Avail, Ns_Wait,Ns_Add,Ns_Login, Ns_Dead};
+enum Sock_Status
+{
+    Ns_Avail,
+    Ns_Wait,
+    Ns_Add,
+    Ns_Login,
+    Ns_Dead
+};
 
 /* The following is the setup for a ring buffer for storing outbut
  * data that the OS can't handle right away.
  */
 
-typedef struct Buffer_struct {
-	int	    start;
-    int	    len;
+typedef struct Buffer_struct
+{
+    int     start;
+    int     len;
     char    data[MAXSOCKBUF];
 } Buffer;
 
 /* Contains the base information we use to make up a packet we want to send. */
-typedef struct SockList_struct {
-    int len;
-    unsigned char *buf;
+typedef struct SockList_struct
+{
+    int             len;
+    unsigned char  *buf;
 } SockList;
 
-typedef struct NewSocket_struct {
-    int fd;
-	struct player *pl;			/* if != NULL this socket is part of a player struct */
-    struct Map lastmap;			/* Thats the VISIBLE map area of the player, used to send to client */
-	uint32 ip;
-	int login_count;			/* if someone is too long idle in the login, we kick him here! */
-    int   mapx, mapy;			/* How large a map the client wants */
-    int   mapx_2, mapy_2;		/* same like above but /2 */
-    char    *host;				/* Which host it is connected from (ip address)*/
-    uint32  cs_version;			/*client/server versions */
-	uint32  sc_version;	
-	uint32 update_tile;			/* marker to see we must update the below windows of the tile the player is */
-    enum Sock_Status status;
-    SockList	inbuf;			/* This holds *one* command we try to handle */
-	SockList	readbuf;		/* Raw data read in from the socket  */
-	SockList	cmdbuf;			/* buffer for the *real* player/char commands */
-	
-    Buffer  outputbuffer;		/* For undeliverable data */
-	uint32  addme:1;			/* important: when set, a "connect" was initizialised as "player" */
-    uint32  facecache:1;		/* If true, client is caching images */
-    uint32  sent_scroll:1;
-    uint32  sound:1;			/* does the client want sound */
-    uint32  map2cmd:1;			/* Always use map2 protocol command */
-	uint32  ext_title_flag:1;	/* send ext title to client */
-    uint32  darkness:1;			/* True if client wants darkness information */
-    uint32  image2:1;			/* Client wants image2/face2 commands */
-    uint32  can_write:1;		/* Can we write to this socket? */
-	uint32	version:1;		
-    uint32  write_overflow:1;		
-	uint32	setup:1;		
-	uint32	rf_settings:1;
-	uint32	rf_skills:1;
-	uint32	rf_spells:1;
-	uint32	rf_anims:1;
-	uint32	rf_bmaps:1;
+typedef struct NewSocket_struct
+{
+    int                 fd;
+    struct player      *pl;             /* if != NULL this socket is part of a player struct */
+    struct Map          lastmap;        /* Thats the VISIBLE map area of the player, used to send to client */
+    uint32              ip;
+    uint32              login_count;        /* if someone is too long idle in the login, we kick him here! */
+    int                 mapx, mapy;         /* How large a map the client wants */
+    int                 mapx_2, mapy_2;     /* same like above but /2 */
+    char               *host;               /* Which host it is connected from (ip address)*/
+    uint32              cs_version;         /*client/server versions */
+    uint32              sc_version; 
+    uint32              update_tile;        /* marker to see we must update the below windows of the tile the player is */
+    enum Sock_Status    status;
+    SockList            inbuf;          /* This holds *one* command we try to handle */
+    SockList            readbuf;        /* Raw data read in from the socket  */
+    SockList            cmdbuf;         /* buffer for the *real* player/char commands */
 
-    sint16 look_position;  /* start of drawing of look window */
-    uint8   faceset;	    /* Set the client is using, default 0 */
+    Buffer              outputbuffer;       /* For undeliverable data */
+    uint32              idle_flag       : 1;        /* idle warning was given and we count for disconnect */
+    uint32              addme           : 1;        /* important: when set, a "connect" was initizialised as "player" */
+    uint32              facecache       : 1;        /* If true, client is caching images */
+    uint32              sent_scroll     : 1;
+    uint32              sound           : 1;        /* does the client want sound */
+    uint32              map2cmd         : 1;        /* Always use map2 protocol command */
+    uint32              ext_title_flag  : 1;        /* send ext title to client */
+    uint32              darkness        : 1;        /* True if client wants darkness information */
+    uint32              image2          : 1;        /* Client wants image2/face2 commands */
+    uint32              can_write       : 1;        /* Can we write to this socket? */
+    uint32              version         : 1;        
+    uint32              write_overflow  : 1;        
+    uint32              setup           : 1;        
+    uint32              rf_settings     : 1;
+    uint32              rf_skills       : 1;
+    uint32              rf_spells       : 1;
+    uint32              rf_anims        : 1;
+    uint32              rf_bmaps        : 1;
+
+    sint16              look_position;  /* start of drawing of look window */
+    uint8               faceset;        /* Set the client is using, default 0 */
 } NewSocket;
 
 
-typedef struct Socket_Info_struct {
-    struct timeval timeout;	/* Timeout for select */
-    int	    max_filedescriptor;	/* max filedescriptor on the system */
-    int	    nconns;		/* Number of connections */
-    int	    allocated_sockets;	/* number of allocated in init_sockets */
+typedef struct Socket_Info_struct
+{
+    struct timeval  timeout;    /* Timeout for select */
+    int             max_filedescriptor; /* max filedescriptor on the system */
+    int             nconns;     /* Number of connections */
+    int             allocated_sockets;  /* number of allocated in init_sockets */
 } Socket_Info;
-	
+
 #endif

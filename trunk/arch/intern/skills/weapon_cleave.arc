@@ -4,6 +4,7 @@ type 43
 sub_type 0
 face skill.101
 sys_object 1
+magic 3
 no_drop 1
 sp 38
 last_eat 1

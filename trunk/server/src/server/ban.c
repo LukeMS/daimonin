@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,7 +31,6 @@
  */ 
 
 #include <global.h>
-#include <sproto.h>
 #ifndef WIN32 /* ---win32 : remove unix headers */
 #include <sys/ioctl.h>
 #endif /* win32 */
@@ -41,7 +40,7 @@
 
 #ifndef WIN32 /* ---win32 : remove unix headers */
 #ifdef NO_ERRNO_H
-    extern int errno;
+extern int  errno;
 #else
 #   include <errno.h>
 #endif
@@ -52,70 +51,78 @@
 /* reloading every time this list? i don't think so! */
 int checkbanned(char *login, char *host)
 {
-  FILE  *bannedfile;
-  char  buf[MAX_BUF];
-  char  log_buf[64], host_buf[64], line_buf[160];
-  char  *indexpos;
-  int           num1;
-  int   Hits=0;                 /* Hits==2 means we're banned */
+    FILE   *bannedfile;
+    char    buf[MAX_BUF];
+    char    log_buf[64], host_buf[64], line_buf[160];
+    char   *indexpos;
+    int     num1;
+    int     Hits    = 0;                 /* Hits==2 means we're banned */
 
-  if(Hits==0)
-	  return 0;
+    if (Hits == 0)
+        return 0;
 
-  sprintf (buf, "%s/%s", settings.localdir, BANFILE);
-  if ((bannedfile = fopen(buf, "r")) == NULL) {
-    LOG(llevDebug, "Could not find file Banned file.\n");
-    return(0);
-  }
-  while(fgets(line_buf, 160, bannedfile) != NULL) {
-    /* Split line up */
-    if((*line_buf=='#')||(*line_buf=='\n'))
-      continue;
-    if ((indexpos = (char *) strrchr(line_buf, '@')) == 0) {
-      LOG(llevDebug, "Bad line in banned file\n");
-      continue;
+    sprintf(buf, "%s/%s", settings.localdir, BANFILE);
+    if ((bannedfile = fopen(buf, "r")) == NULL)
+    {
+        LOG(llevDebug, "Could not find file Banned file.\n");
+        return(0);
     }
-    num1 = indexpos - line_buf;
-    strncpy(log_buf, line_buf, num1); /* copy login name into log_buf */
-    log_buf[num1] = '\0';
-    strncpy(host_buf, indexpos + 1, 64); /* copy host name into host_buf */
-    /* Cut off any extra spaces on the host buffer */
-    indexpos = host_buf;
-    while (!isspace(*indexpos))
-      indexpos++;
-    *indexpos = '\0';
+    while (fgets(line_buf, 160, bannedfile) != NULL)
+    {
+        /* Split line up */
+        if ((*line_buf == '#') || (*line_buf == '\n'))
+            continue;
+        if ((indexpos = (char *) strrchr(line_buf, '@')) == 0)
+        {
+            LOG(llevDebug, "Bad line in banned file\n");
+            continue;
+        }
+        num1 = indexpos - line_buf;
+        strncpy(log_buf, line_buf, num1); /* copy login name into log_buf */
+        log_buf[num1] = '\0';
+        strncpy(host_buf, indexpos + 1, 64); /* copy host name into host_buf */
+        /* Cut off any extra spaces on the host buffer */
+        indexpos = host_buf;
+        while (!isspace(*indexpos))
+            indexpos++;
+        *indexpos = '\0';
 
-    /*
-      LOG(llevDebug, "Login: <%s>; host: <%s>\n", login, host);
-      LOG(llevDebug, "    Checking Banned <%s> and <%s>.\n",log_buf,host_buf);
-    */
-    if(*log_buf=='*')
-
-      Hits=1;
-    else if (!strcmp(login, log_buf))
-      Hits=1;
-    if(Hits==1)
-      {
-        if (*host_buf == '*'){  /* Lock out any host */
-          Hits++;
-          break;                /* break out now. otherwise Hits will get reset
-                                   to one */
+        /*
+          LOG(llevDebug, "Login: <%s>; host: <%s>\n", login, host);
+          LOG(llevDebug, "    Checking Banned <%s> and <%s>.\n",log_buf,host_buf);
+        */
+        if (*log_buf == '*')
+            Hits = 1;
+        else if (!strcmp(login, log_buf))
+            Hits = 1;
+        if (Hits == 1)
+        {
+            if (*host_buf == '*')
+            {
+                /* Lock out any host */
+                Hits++;
+                break;                /* break out now. otherwise Hits will get reset
+                                         to one */
+            }
+            else if (strstr(host, host_buf) != NULL)
+            {
+                /* Lock out subdomains (eg, "*@usc.edu" */
+                Hits++;
+                break;                /* break out now. otherwise Hits will get reset
+                                         to one */
+            }
+            else if (!strcmp(host, host_buf))
+            {
+                /* Lock out specific host */
+                Hits++;
+                break;                /* break out now. otherwise Hits will get reset
+                                         to one */
+            }
         }
-        else if(strstr(host,host_buf)!=NULL){ /* Lock out subdomains (eg, "*@usc.edu" */
-          Hits++;
-          break;                /* break out now. otherwise Hits will get reset
-                                   to one */
-        }
-        else if (!strcmp(host, host_buf)){ /* Lock out specific host */
-          Hits++;
-          break;                /* break out now. otherwise Hits will get reset
-                                   to one */
-        }
-      }
-  }
-  fclose(bannedfile);
-  if(Hits>=2)
-    return(1);
-  else
-    return(0);
+    }
+    fclose(bannedfile);
+    if (Hits >= 2)
+        return(1);
+    else
+        return(0);
 }

@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@
  */
 
 #include <global.h>
-#include <funcpoint.h>
 
 /*
  * The random functions here take luck into account when rolling random
@@ -46,33 +45,36 @@
  * not the recipient (ie, the poor slob getting hit). [garbled 20010916]
  */
 
-int random_roll(int min, int max, object *op, int goodbad) {
+int random_roll(int min, int max, object *op, int goodbad)
+{
     int omin, diff, luck, base;
 
     omin = min;
     diff = max - min + 1;
     ((diff > 2) ? (base = 20) : (base = 50)); /* d2 and d3 are corner cases */
 
-    if (max < 1 || diff < 1) {
-      LOG(llevBug, "BUG: Calling random_roll with min=%d max=%d\n", min, max);
-      return(min); /* avoids a float exception */
+    if (max < 1 || diff < 1)
+    {
+        LOG(llevBug, "BUG: Calling random_roll with min=%d max=%d\n", min, max);
+        return(min); /* avoids a float exception */
     }
 
     if (op->type != PLAYER)
-	return((RANDOM()%diff)+min);
+        return((RANDOM() % diff) + min);
 
     luck = op->stats.luck;
-    if (RANDOM()%base < MIN(10, abs(luck))) {
-	/* we have a winner */
-	((luck > 0) ? (luck = 1) : (luck = -1));
-	diff -= luck;
-	if (diff < 1)
-	    return(omin); /*check again*/
-	((goodbad) ? (min += luck) : (diff));
+    if (RANDOM() % base < MIN(10, abs(luck)))
+    {
+        /* we have a winner */
+        ((luck > 0) ? (luck = 1) : (luck = -1));
+        diff -= luck;
+        if (diff < 1)
+            return(omin); /*check again*/
+        ((goodbad) ? (min += luck) : (diff));
 
-	return(MAX(omin, MIN(max, (RANDOM()%diff)+min)));
+        return(MAX(omin, MIN(max, (RANDOM() % diff) + min)));
     }
-    return((RANDOM()%diff)+min);
+    return((RANDOM() % diff) + min);
 }
 
 /*
@@ -83,34 +85,40 @@ int random_roll(int min, int max, object *op, int goodbad) {
  * The args are num D size (ie 4d6)  [garbled 20010916]
  */
 
-int die_roll(int num, int size, object *op, int goodbad) {
+int die_roll(int num, int size, object *op, int goodbad)
+{
     int min, diff, luck, total, i, gotlucky, base;
 
     diff = size;
     min = 1;
     luck = total = gotlucky = 0;
     ((diff > 2) ? (base = 20) : (base = 50)); /* d2 and d3 are corner cases */
-    if (size < 2 || diff < 1) {
-      LOG(llevBug, "BUG: Calling die_roll with num=%d size=%d\n", num, size);
-      return(num); /* avoids a float exception */
+    if (size < 2 || diff < 1)
+    {
+        LOG(llevBug, "BUG: Calling die_roll with num=%d size=%d\n", num, size);
+        return(num); /* avoids a float exception */
     }
 
     if (op->type == PLAYER)
-	luck = op->stats.luck;
+        luck = op->stats.luck;
 
-    for (i = 0; i < num; i++) {
-	if (RANDOM()%base < MIN(10, abs(luck)) && !gotlucky) {
-	    /* we have a winner */
-	    gotlucky++;
-	    ((luck > 0) ? (luck = 1) : (luck = -1));
-	    diff -= luck;
-	    if (diff < 1)
-		return(num); /*check again*/
-	    ((goodbad) ? (min += luck) : (diff));
-	    total += MAX(1, MIN(size, (RANDOM()%diff)+min));
-	} else {
-	    total += RANDOM()%size+1;
-	}
+    for (i = 0; i < num; i++)
+    {
+        if (RANDOM() % base < MIN(10, abs(luck)) && !gotlucky)
+        {
+            /* we have a winner */
+            gotlucky++;
+            ((luck > 0) ? (luck = 1) : (luck = -1));
+            diff -= luck;
+            if (diff < 1)
+                return(num); /*check again*/
+            ((goodbad) ? (min += luck) : (diff));
+            total += MAX(1, MIN(size, (RANDOM() % diff) + min));
+        }
+        else
+        {
+            total += RANDOM() % size + 1;
+        }
     }
     return(total);
 }
@@ -124,13 +132,13 @@ int die_roll(int num, int size, object *op, int goodbad) {
 
 int rndm(int min, int max)
 {
-  int diff;
+    int diff;
 
-  diff = max - min + 1;
-  if (max < 1 || diff < 1)
-    return(min);
+    diff = max - min + 1;
+    if (max < 1 || diff < 1)
+        return(min);
 
-  return(RANDOM()%diff+min);
+    return(RANDOM() % diff + min);
 }
 
 
@@ -138,23 +146,28 @@ int rndm(int min, int max)
  *  Return the number of the spell that whose name passes the pasesed string
  *  argument.   Return -1 if no such spell name match is found.
  */
-int look_up_spell_name( const char * spname ){
-   register int i;
-   for(i=0;i< NROFREALSPELLS;i++){
-      if( strcmp(spname, spells[i].name) == 0) return i;
-   }
-   return -1;
+int look_up_spell_name(const char *spname)
+{
+    register int i;
+    for (i = 0; i < NROFREALSPELLS; i++)
+    {
+        if (strcmp(spname, spells[i].name) == 0)
+            return i;
+    }
+    return -1;
 }
 
 
-racelink * find_racelink( const char *name ) {
-  racelink *test=NULL;
- 
-  if(name&&first_race)
-    for(test=first_race;test&&test!=test->next;test=test->next)
-       if(!test->name||!strcmp(name,test->name)) break;
- 
-  return test;
+racelink * find_racelink(const char *name)
+{
+    racelink   *test    = NULL;
+
+    if (name && first_race)
+        for (test = first_race; test && test != test->next; test = test->next)
+            if (!test->name || !strcmp(name, test->name))
+                break;
+
+    return test;
 }
 
 /* this function does 2 things: controlling we have
@@ -162,42 +175,42 @@ racelink * find_racelink( const char *name ) {
  * - remove all whitespace in front (if all are whitespace
  *   we return NULL)
  */
-char *cleanup_string(char *ustring)
+char * cleanup_string(char *ustring)
 {
-	/* kill all whitespace */
-	while (*ustring !='\0' && isspace(*ustring)) 
-		ustring++;
+    /* kill all whitespace */
+    while (*ustring != '\0' && isspace(*ustring))
+        ustring++;
 
-	/* this happens when whitespace only string was submited */
-    if (!ustring || *ustring=='\0') 
-		return NULL;
+    /* this happens when whitespace only string was submited */
+    if (!ustring || *ustring == '\0')
+        return NULL;
 
-	return ustring;
+    return ustring;
 }
 
 
 /* returns a single word from a string, free from left & right whitespaces.
  * return NULL means that there is word left in str.
  */
-char *get_word_from_string(char *str, int *pos)
+char * get_word_from_string(char *str, int *pos)
 {
-	static char buf[HUGE_BUF]; /* this is used for controled input which never should bigger as this */
-	int i=0;
+    static char buf[HUGE_BUF]; /* this is used for controled input which never should bigger as this */
+    int         i   = 0;
 
-	buf[0]='\0';
+    buf[0] = '\0';
 
-	while (*(str+(*pos)) !='\0' && (!isalnum(*(str+(*pos))) && !isalpha(*(str+(*pos))))) 
-		(*pos)++;
-	
-	if(*(str+(*pos)) == '\0') /* nothing left! */
-		return NULL;
+    while (*(str + (*pos)) != '\0' && (!isalnum(*(str + (*pos))) && !isalpha(*(str + (*pos)))))
+        (*pos)++;
 
-	/* copy until end of string nor whitespace */
-	while (*(str+(*pos)) !='\0' && (isalnum(*(str+(*pos))) || isalpha(*(str+(*pos))))) 
-		buf[i++]=*(str+(*pos)++);		
+    if (*(str + (*pos)) == '\0') /* nothing left! */
+        return NULL;
 
-	buf[i]='\0';
-	return buf;
+    /* copy until end of string nor whitespace */
+    while (*(str + (*pos)) != '\0' && (isalnum(*(str + (*pos))) || isalpha(*(str + (*pos)))))
+        buf[i++] = *(str + (*pos)++);       
+
+    buf[i] = '\0';
+    return buf;
 }
 
 
@@ -205,16 +218,16 @@ char *get_word_from_string(char *str, int *pos)
  * buf1 by adding on buf2! Returns true if overflow will occur.
  */
 
-int buf_overflow (const char *buf1, const char *buf2, int bufsize)
+int buf_overflow(const char *buf1, const char *buf2, int bufsize)
 {
-    int     len1 = 0, len2 = 0;
+    int len1 = 0, len2 = 0;
 
     if (buf1)
-	len1 = strlen (buf1);
+        len1 = strlen(buf1);
     if (buf2)
-	len2 = strlen (buf2);
+        len2 = strlen(buf2);
     if ((len1 + len2) >= bufsize)
-	return 1;
+        return 1;
     return 0;
 }
 
@@ -226,15 +239,19 @@ int buf_overflow (const char *buf1, const char *buf2, int bufsize)
  */
 int transform_name_string(char *name)
 {
-	char *tmp=name;
+    char   *tmp = name;
 
-	if(!tmp || *tmp=='\0')
-		return 0;
-	
-	*tmp = toupper(*tmp);
+    if (!tmp || *tmp == '\0')
+        return 0;
 
-	while(*(++tmp)!='\0')
-		*tmp = tolower(*tmp);
+    *tmp = toupper(*tmp);
 
-	return tmp-name; /* i love C */
+    while (*(++tmp) != '\0')
+        *tmp = tolower(*tmp);
+
+    /* trim the string on the right side */
+    while(tmp>=name && *(tmp-1) ==' ')
+        *(--tmp)='\0';
+
+    return tmp - name; /* i love C */
 }

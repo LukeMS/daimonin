@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,28 +31,29 @@
 #define MEMPOOL_TRACKING /* Enable tracking/freeing of mempools ? */
 
 /*#define MEMPOOL_OBJECT_TRACKING*/ /* enable a global list of *all* objects
-                                 * we have allocated. We can browse them to
-								 * control & debug them. WARNING: Enabling this
-								 * feature will slow down the server *EXTREMLY* and should
-								 * only be done in real debug runs
-								 */
+                                    * we have allocated. We can browse them to
+                                    * control & debug them. WARNING: Enabling this
+                                    * feature will slow down the server *EXTREMLY* and should
+                                    * only be done in real debug runs
+                                    */
 
 /* Minimalistic memory management data for a single chunk of memory 
  * It is (currently) up to the application to keep track of which pool 
  * it belongs to.
  */
-struct mempool_chunk {
+struct mempool_chunk
+{
     /* This struct must always be padded for longword alignment of the data coming behind it.
      * Not a problem as long as we only keep a single pointer here, but be careful
      * if adding more data. */
-    struct mempool_chunk *next; /* Used for the free list and the removed list. NULL if this
-                                   memory chunk has been allocated and is in use */
+    struct mempool_chunk   *next; /* Used for the free list and the removed list. NULL if this
+                                     memory chunk has been allocated and is in use */
 #ifdef MEMPOOL_OBJECT_TRACKING
-	struct mempool_chunk *obj_prev; /* for debug only */
-	struct mempool_chunk *obj_next; /* for debug only */
-	uint32 flags; 	
-	uint32 pool_id; /* to what mpool is this memory part related? */
-	uint32 id;	  /* the REAL unique ID number */
+    struct mempool_chunk   *obj_prev; /* for debug only */
+    struct mempool_chunk   *obj_next; /* for debug only */
+    uint32                  flags;  
+    uint32                  pool_id; /* to what mpool is this memory part related? */
+    uint32                  id;   /* the REAL unique ID number */
 #endif
 };
 
@@ -64,50 +65,53 @@ typedef void (* chunk_destructor) (void *ptr);      /* Optional destructor to be
 #define MEMPOOL_MAX_ARRAYSIZE (1 << MEMPOOL_NROF_FREELISTS) /* = 256 if NROF_FREELISTS == 8 */
 
 /* Data for a single memory pool */
-struct mempool {    
+struct mempool
+{
     /* Fields that need need declaration */
-    char *chunk_description;            /* Description of chunks. Mostly for debugging */
-    uint32 expand_size;                 /* How many chunks to allocate at each expansion */
-    uint32 chunksize;                   /* size of chunks, excluding sizeof(mempool_chunk) and padding */
-    uint32 flags;                       /* Special handling flags. See definitions below */
-    chunk_constructor constructor;      /* Optional constructor to be called when getting chunks */
-    chunk_destructor destructor;        /* Optional destructor to be called when returning chunks */
-    
+    char                   *chunk_description;            /* Description of chunks. Mostly for debugging */
+    uint32                  expand_size;                 /* How many chunks to allocate at each expansion */
+    uint32                  chunksize;                   /* size of chunks, excluding sizeof(mempool_chunk) and padding */
+    uint32                  flags;                       /* Special handling flags. See definitions below */
+    chunk_constructor       constructor;      /* Optional constructor to be called when getting chunks */
+    chunk_destructor        destructor;        /* Optional destructor to be called when returning chunks */
+
     /* Runtime fields */
-    struct mempool_chunk *freelist[MEMPOOL_NROF_FREELISTS];   /* First free chunk */    
-    uint32 nrof_free[MEMPOOL_NROF_FREELISTS], nrof_allocated[MEMPOOL_NROF_FREELISTS]; /* List size counters */
+    struct mempool_chunk   *freelist[MEMPOOL_NROF_FREELISTS];   /* First free chunk */    
+    uint32                  nrof_free[MEMPOOL_NROF_FREELISTS], nrof_allocated[MEMPOOL_NROF_FREELISTS]; /* List size counters */
 #ifdef MEMPOOL_TRACKING
-    struct puddle_info *first_puddle_info; /* List of puddles used for mempool tracking */
+    struct puddle_info     *first_puddle_info; /* List of puddles used for mempool tracking */
 #endif
 };
 
 #ifdef MEMPOOL_TRACKING
-struct puddle_info {
-    struct puddle_info *next;
-    struct mempool_chunk *first_chunk;
-    
+struct puddle_info
+{
+    struct puddle_info     *next;
+    struct mempool_chunk   *first_chunk;
+
     /* Local freelist only for this puddle. Temporary used when freeing memory*/
-    struct mempool_chunk *first_free, *last_free;
-    uint32 nrof_free;
+    struct mempool_chunk   *first_free, *last_free;
+    uint32                  nrof_free;
 };
 #endif
 
-typedef enum {
+typedef enum
+{
 #ifdef MEMPOOL_TRACKING
     POOL_PUDDLE,
 #endif    
-    POOL_OBJECT, 
-    POOL_PLAYER, 
-    POOL_MAP_BFS, 
+    POOL_OBJECT,
+    POOL_PLAYER,
+    POOL_MAP_BFS,
     POOL_PATHSEGMENT,
     POOL_MOBDATA,
     POOL_MOB_KNOWN_OBJ,
     POOL_BEHAVIOURSET,
     POOL_BEHAVIOUR,
     POOL_BEHAVIOUR_PARAM,
-	POOL_OBJECT_LINK,
-    NROF_MEMPOOLS 
-} mempool_id;
+    POOL_OBJECT_LINK,
+    NROF_MEMPOOLS
+}                            mempool_id;
 
 /* Get the memory management struct for a chunk of memory */
 #define MEM_POOLDATA(ptr) (((struct mempool_chunk *)(ptr)) - 1)
@@ -119,7 +123,7 @@ typedef enum {
 #define MEMPOOL_ALLOW_FREEING 1 /* Allow puddles from this pool to be freed */
 #define MEMPOOL_BYPASS_POOLS  2 /* Don't use pooling, but only malloc/free instead */
 
-extern struct mempool mempools[];
+extern struct mempool       mempools[];
 extern struct mempool_chunk end_marker; /* only used as an end marker for the lists */
 
 #define get_poolchunk(_pool_) get_poolchunk_array_real((_pool_), 0)

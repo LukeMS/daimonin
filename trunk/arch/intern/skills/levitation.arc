@@ -6,6 +6,7 @@ sub_type 1
 sys_object 1
 last_sp 2
 flying 1
+magic 2
 no_drop 1
 sp 32
 level 1

@@ -8022,12 +8022,30 @@ face trash_wood2.101
 no_pick 1
 layer 4
 end
+Object aggro_history
+type 127
+editor_folder intern/intern
+layer 0
+no_save 1
+sys_object 1
+face ah.101
+no_drop 1
+end
 Object base_info
 type 101
 editor_folder intern/intern
 layer 0
 sys_object 1
 face info.101
+no_drop 1
+end
+Object dmg_info
+type 128
+editor_folder intern/intern
+layer 0
+no_save 1
+sys_object 1
+face dmg.101
 no_drop 1
 end
 Object empty_archetype
@@ -8712,6 +8730,7 @@ face skill.101
 sub_type 2
 sys_object 1
 no_drop 1
+magic 6
 sp 6
 last_eat 1
 level 1
@@ -8725,6 +8744,7 @@ face skill.101
 sub_type 2
 sys_object 1
 no_drop 1
+magic 6
 level 1
 exp 0
 sp 9
@@ -8736,6 +8756,7 @@ editor_folder intern/skills
 face skill.101
 sub_type 2
 sys_object 1
+magic 6
 no_drop 1
 sp 4
 level 1
@@ -8749,6 +8770,7 @@ sub_type 0
 face skill.101
 sys_object 1
 dam 2
+magic 3
 last_sp 3
 no_drop 1
 last_eat 1
@@ -8773,7 +8795,7 @@ Object experience_agility
 name agility
 type 44
 editor_folder intern/skills
-sub_type 1
+sub_type 0
 sys_object 1
 no_drop 1
 face exp.101
@@ -8785,7 +8807,7 @@ Object experience_charisma
 name personality
 type 44
 editor_folder intern/skills
-sub_type 4
+sub_type 1
 sys_object 1
 face exp.101
 no_drop 1
@@ -8805,11 +8827,23 @@ level 1
 exp 0
 Int 1
 end
+Object experience_misc
+name msic
+type 44
+editor_folder intern/skills
+sub_type 6
+sys_object 1
+face exp.101
+no_drop 1
+level 1
+exp 0
+Wis 1
+end
 Object experience_physical
 name physique
 type 44
 editor_folder intern/skills
-sub_type 5
+sub_type 3
 sys_object 1
 face exp.101
 no_drop 1
@@ -8822,7 +8856,7 @@ Object experience_power
 name magic
 type 44
 editor_folder intern/skills
-sub_type 3
+sub_type 4
 face exp.101
 sys_object 1
 no_drop 1
@@ -8834,7 +8868,7 @@ Object experience_wis
 name wisdom
 type 44
 editor_folder intern/skills
-sub_type 6
+sub_type 5
 sys_object 1
 face exp.101
 no_drop 1
@@ -8864,6 +8898,7 @@ face skill.101
 sys_object 1
 dam 2
 last_sp 4
+magic 4
 attacktype 4
 no_drop 1
 sp 18
@@ -8892,6 +8927,7 @@ sub_type 1
 face skill.101
 sys_object 1
 no_drop 1
+magic 6
 sp 36
 last_eat 1
 level 1
@@ -8905,6 +8941,7 @@ sub_type 2
 face skill.101
 sys_object 1
 no_drop 1
+magic 6
 sp 22
 last_eat 1
 level 1
@@ -8917,6 +8954,7 @@ editor_folder intern/skills
 face skill.101
 sub_type 2
 sys_object 1
+magic 6
 no_drop 1
 sp 5
 level 1
@@ -8929,6 +8967,7 @@ editor_folder intern/skills
 sub_type 1
 face skill.101
 sys_object 1
+magic 6
 no_drop 1
 dam 5
 last_sp 1
@@ -8948,6 +8987,7 @@ sub_type 0
 sys_object 1
 last_sp 2
 no_drop 1
+magic 3
 sp 19
 last_eat 1
 level 1
@@ -8962,6 +9002,7 @@ sub_type 1
 sys_object 1
 last_sp 2
 flying 1
+magic 2
 no_drop 1
 sp 32
 level 1
@@ -8973,6 +9014,7 @@ type 43
 editor_folder intern/skills
 sub_type 2
 face skill.101
+magic 2
 sys_object 1
 no_drop 1
 sp 8
@@ -8998,6 +9040,7 @@ type 43
 editor_folder intern/skills
 sub_type 2
 face skill.101
+magic 6
 no_drop 1
 sp 7
 sys_object 1
@@ -9011,6 +9054,7 @@ editor_folder intern/skills
 sub_type 1
 face skill.101
 sys_object 1
+magic 2
 no_drop 1
 sp 16
 level 1
@@ -9023,6 +9067,7 @@ editor_folder intern/skills
 sub_type 2
 sys_object 1
 face skill.101
+magic 6
 no_drop 1
 sp 20
 level 1
@@ -9035,6 +9080,7 @@ editor_folder intern/skills
 sub_type 1
 no_drop 1
 face skill.101
+magic 1
 sp 12
 sys_object 1
 last_eat 1
@@ -9049,6 +9095,7 @@ sub_type 2
 face skill.101
 sys_object 1
 no_drop 1
+magic 5
 sp 30
 last_eat 1
 level 1
@@ -9064,6 +9111,7 @@ attack_impact 100
 dam 1
 wc 5
 sub_type 0
+magic 3
 sys_object 1
 no_drop 1
 sp 17
@@ -9138,6 +9186,7 @@ face skill.101
 sys_object 1
 no_drop 1
 sp 14
+magic 4
 last_eat 1
 level 1
 exp 0
@@ -9150,6 +9199,7 @@ sub_type 1
 face skill.101
 sys_object 1
 no_drop 1
+magic 4
 sp 11
 last_eat 1
 level 1
@@ -9162,6 +9212,7 @@ editor_folder intern/skills
 sub_type 1
 face skill.101
 sys_object 1
+magic 2
 no_drop 1
 sp 28
 last_eat 1
@@ -9175,6 +9226,7 @@ editor_folder intern/skills
 sub_type 1
 face skill.101
 sys_object 1
+magic 1
 no_drop 1
 sp 13
 last_eat 1
@@ -9188,6 +9240,7 @@ editor_folder intern/skills
 sub_type 2
 face skill.101
 sys_object 1
+magic 6
 no_drop 1
 sp 3
 last_eat 1
@@ -9202,6 +9255,7 @@ sub_type 0
 face skill.101
 sys_object 1
 no_drop 1
+magic 4
 sp 26
 last_eat 1
 level 1
@@ -9214,6 +9268,7 @@ editor_folder intern/skills
 face skill.101
 sub_type 1
 sys_object 1
+magic 0
 no_drop 1
 sp 0
 last_eat 1
@@ -9243,6 +9298,7 @@ sub_type 0
 face skill.101
 sys_object 1
 no_drop 1
+magic 4
 sp 29
 last_eat 1
 level 1
@@ -9255,6 +9311,7 @@ editor_folder intern/skills
 sub_type 0
 face skill.101
 sys_object 1
+magic 3
 no_drop 1
 sp 38
 last_eat 1
@@ -9269,6 +9326,7 @@ sub_type 0
 face skill.101
 sys_object 1
 no_drop 1
+magic 3
 sp 23
 last_eat 1
 level 1
@@ -9281,6 +9339,7 @@ editor_folder intern/skills
 sub_type 0
 sys_object 1
 face skill.101
+magic 3
 no_drop 1
 sp 39
 last_eat 1
@@ -9294,6 +9353,7 @@ editor_folder intern/skills
 sub_type 0
 face skill.101
 sys_object 1
+magic 3
 no_drop 1
 sp 37
 last_eat 1
@@ -9307,6 +9367,7 @@ editor_folder intern/skills
 sub_type 2
 face skill.101
 sys_object 1
+magic 3
 no_drop 1
 sp 40
 level 1
@@ -9320,6 +9381,7 @@ sub_type 2
 sys_object 1
 no_drop 1
 face skill.101
+magic 3
 sp 41
 level 1
 exp 0
@@ -9331,6 +9393,7 @@ editor_folder intern/skills
 sub_type 2
 face skill.101
 sys_object 1
+magic 6
 no_drop 1
 sp 21
 level 1
@@ -11113,28 +11176,6 @@ protect_cleave 6
 protect_pierce 6
 weight 940
 value 25
-end
-Object ball
-name ball
-type 13
-editor_folder items/items
-face ball.101
-layer 3
-material_real 193
-material 8
-value 3
-weight 150
-weapon_speed 0.035
-last_grace 13
-last_sp 7
-dam 0
-wc_range 20
-sub_type 132
-animation ball
-anim_speed 5
-is_animated 0
-is_turnable 1
-is_thrown 1
 end
 Object bag
 name bag
@@ -14849,6 +14890,28 @@ weight 250
 value 250
 sp 4
 end
+Object ball
+name ball
+type 13
+editor_folder items/weapon
+face ball.101
+layer 3
+material_real 193
+material 8
+value 3
+weight 150
+weapon_speed 0.035
+last_grace 13
+last_sp 7
+dam 0
+wc_range 20
+sub_type 132
+animation ball
+anim_speed 5
+is_animated 0
+is_turnable 1
+is_thrown 1
+end
 Object t_axe
 name throwing axe
 type 13
@@ -17451,6 +17514,8 @@ editor_folder magic/cold
 layer 7
 level 1
 no_save 1
+last_heal 12
+use_dmg_info 1
 glow_radius 1
 face icestorm.101
 animation icestorm
@@ -17458,10 +17523,10 @@ is_animated 1
 anim_speed 3
 terrain_flag 32767
 attack_cold 100
-speed 1
+speed 1.0
 wc 200
 wc_range 20
-dam 3
+dam 5
 flying 1
 fly_on 1
 walk_on 1
@@ -17471,20 +17536,21 @@ Object firebreath
 name fire
 type 88
 editor_folder magic/fire
-no_save 1
 layer 7
-no_save 1
 walk_on 1
+last_heal 12
+use_dmg_info 1
 fly_on 1
+no_save 1
 glow_radius 1
 face fire.101
 animation firebreath
 is_animated 1
 anim_speed 4
-speed 1
+speed 1.0
 wc 200
 wc_range 20
-dam 3
+dam 5
 level 1
 attack_fire 100
 terrain_flag 32767

@@ -25,16 +25,15 @@ VPATH = @srcdir@
 srcdir = @srcdir@
 
 SRCS = \
+	aggro.c \
 	anim.c \
 	arch.c\
 	button.c\
 	exp.c\
 	friend.c\
-	glue.c\
 	holy.c\
 	info.c\
 	image.c \
-	init.c\
 	item.c\
 	links.c\
 	living.c\
@@ -45,7 +44,6 @@ SRCS = \
 	mempool.c\
 	object.c\
 	porting.c\
-	player.c\
 	re-cmp.c\
 	readable.c\
 	recipe.c\
@@ -102,7 +100,7 @@ loader.c: loader.l
 
 
 clean::
-	$(RM) -f $(OBJS)
+	$(RM) -f $(OBJS) libcross.a
 
 distclean:: clean
 	$(RM) -f Makefile libcross.a loader.c
