@@ -78,7 +78,7 @@
 
 enum skillnrs { 
     /* 0 */
-    SK_STEALING,		/* steal from other players/NPCs */
+    SK_STEALING,		/* DISABLED: steal from other players/NPCs */
     SK_LOCKPICKING,		/* open doors without having to bash them */
     SK_HIDING, 			/* player can hide from monsters */
     SK_SMITH,			/* can auto-ident arms/armour */

@@ -468,3 +468,16 @@ int push_ob(object *who, int dir, object *pusher) {
   
     return 1;
 }
+
+int missile_reflection_adjust(object *op, int flag)
+{
+	if(!op->stats.maxgrace) /* no more direction/reflection! */
+	return FALSE;
+				
+	op->stats.maxgrace--;
+	/* restore the "how long we can fly" counter */
+	if(!flag)
+		op->last_sp = op->stats.grace;
+				
+	return TRUE; /* go on with reflection/direction */
+}

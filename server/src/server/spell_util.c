@@ -184,7 +184,7 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
 {
 	spell *s=find_spell(type);
 	const char *godname=NULL;
-	object *target, *cast_op;
+	object *target=NULL, *cast_op;
 	int success=0, duration, points_used=0;
 	rv_vector rv;
 
@@ -249,11 +249,6 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
 		return 0;
 	}
 
-	if(item==spellPotion)
-	{  /*  if the potion casts an onself spell, don't use the facing direction (given by apply.c)*/
-		if( spells[type].flags&SPELL_DESC_SELF)
-			dir = 0;
-	}
 	/* ok... its item == spellNPC then op is the target of this spell  */
 	if (op->type==PLAYER )
 	{
@@ -305,7 +300,15 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
 	 * perhaps some else happens but first we look for
 	 * a valid target.
 	 */
-	if(find_target_for_spell(op,caster,&target,dir,spells[type].flags) == FALSE)
+	if(item==spellPotion) /* applying potions always go in the applier itself (aka drink or break) */
+	{  /*  if the potion casts an onself spell, don't use the facing direction (given by apply.c)*/
+		if( spells[type].flags&SPELL_DESC_SELF)
+		{
+			target = op;
+			dir = 0;
+		}
+	}
+	else if(find_target_for_spell(op,caster,&target,dir,spells[type].flags) == FALSE)
 	{
 		/* little trick - if we fail we set target== NULL - thats mark its "yourself" */
 		if (op->type==PLAYER )
@@ -327,36 +330,6 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
 	/* tell player his spell is redirect to himself */
 	if(op->type == PLAYER && target == op && op->contr->target_object != op)
 		new_draw_info(NDI_UNIQUE, 0,op, "You auto-target yourself with this spell!");
-
-#ifdef CASTING_TIME
-	if (op->casting==-1) /* begin the casting */
-	{
-		if (item == spellNormal&&!ability)
-		{
-			op->casting = s->time*PATH_TIME_MULT(op,s);
-			op->spell   = s;  /* so no one cast a spell and switchs to get lower casting times!!! */
-			op->spelltype = type;
-			op->spell_state = 1;
-			/*  put the stringarg into the object struct so that when the
-			* spell is actually cast, it knows about the stringarg.
-			* necessary for the invoke command spells.
-			*/
-			if(stringarg)
-			{
-				op->spellarg = strdup_local(stringarg);  
-			}
-			else
-				op->spellarg=NULL;
-			return 0;
-		}
-	} 
-	else if (op->casting != 0) 
-	{
-		if (op->type == PLAYER )
-			new_draw_info(NDI_UNIQUE, 0,op,"You are casting!");
-		return 0;
-	}
-#endif /* casting time */
 
 	/*  ban removed on clerical spells in no-magic areas */
 	if (!ability && ( ((!s->flags&SPELL_DESC_WIS)&&blocks_magic(op->map,op->x,op->y))||
@@ -407,10 +380,6 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
 	{
 	    play_sound_player_only(op->contr, SOUND_FUMBLE_SPELL,SOUND_NORMAL,0,0);
 		new_draw_info(NDI_UNIQUE, 0,op,"You fumble the prayer because your wisdom is low.");
-#ifdef CASTING_TIME
-		op->casting = -1;
-		op->spell_state = 1;
-#endif    
     
 		if(s->sp==0) /* Shouldn't happen... */
 			return 0;
@@ -429,32 +398,26 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
 		}
 	}
 
-	/*
-	* This is a simplification of the time it takes to cast a spell.
-	* In the future, the time will have to be spent before the
-	* spell takes effect, and the caster can possibly be disturbed.
-	* (maybe that should depend upon the spell cast?)
-	*/
-#ifdef CASTING_TIME
-	if (item == spellNormal && !ability )
+	/* now lets talk about action/shooting speed */
+	if(op->type == PLAYER)
 	{
-		op->casting = -1;
-		op->spell_state = 1;
-		s = op->spell; /* set s to the cast spell */
-		type = op->spelltype;
-		stringarg = op->spellarg;
-	}
+		switch(op->contr->shoottype)
+		{
+			case range_wand:
+			case range_rod:
+			case range_horn:
+				op->chosen_skill->stats.maxsp = caster->last_grace; 
+			break;
 
-#else
-	{
-		/*
-		float ftmp=(s->time*(float)PATH_TIME_MULT(op,s) / 10.0f) * FABS(op->speed);
-		LOG(llevInfo,"SPELL-SPEED: %f path_time_mult: %f object_speed: %f\n",s->time,(float)PATH_TIME_MULT(op,s), FABS(op->speed));
-		*/
-		op->speed_left -= s->time*(float)PATH_TIME_MULT(op,s) * FABS(op->speed);
+				/*case range_scroll:
+			case range_potion:
+			case range_magic:
+			case range_dust:*/
+			default:
+			break;
+		}
+		
 	}
-#endif
-
 
 dirty_jump:
   switch((enum spellnrs) type)
@@ -840,17 +803,11 @@ dirty_jump:
 			+spells[spellinrune].sp;
 	if(op->stats.sp<total_sp_cost) {
 	  new_draw_info(NDI_UNIQUE, 0,op,"Not enough spellpoints.");
-#ifdef CASTING_TIME
-	  if(stringarg) {free(stringarg);stringarg=NULL; };
-#endif
 	  return 0;
 	}
 	success=write_rune(op,dir,spellinrune,caster->level,stringarg);
 	return (success ? total_sp_cost : 0);
       }
-#ifdef CASTING_TIME
-	  if(stringarg) {free(stringarg);stringarg=NULL; };
-#endif
       return 0;
     }
     break;
@@ -858,10 +815,6 @@ dirty_jump:
     if(caster->type == PLAYER)
       success=write_rune(op,dir,0,-2,stringarg);
     else success= 0;
-#ifdef CASTING_TIME
-	  if(stringarg) {free(stringarg);stringarg=NULL; };
-#endif
-
 
     break;
   case SP_LIGHT:
@@ -932,10 +885,6 @@ dirty_jump:
 	} /* end of switch */
 
 	play_sound_map(op->map, op->x, op->y, spells[type].sound,SOUND_SPELL);
-#ifdef CASTING_TIME
-	/* free the spell arg */
-	if(stringarg) {free(stringarg);stringarg=NULL; };
-#endif
 
 	if(item == spellNPC)
 		return success;
@@ -1180,6 +1129,9 @@ int fire_arch_from_position (object *op, object *caster, sint16 x, sint16 y,
   tmp->stats.hp=spells[type].bdur+SP_level_strength_adjust(op,caster,type);
   tmp->x=x, tmp->y=y;
   tmp->direction=dir;
+  tmp->stats.grace = tmp->last_sp;
+  tmp->stats.maxgrace = 60+(RANDOM()%12);
+		
   if (get_owner (op) != NULL)
     copy_owner (tmp, op);
   else
@@ -1575,26 +1527,31 @@ void forklightning(object *op, object *tmp) {
  * be reflected from the given mapsquare. Returns 1 if true.
  * (Note that for living creatures there is a small chance that
  * reflect_spell fails.)
+ * This function don't scale up now - it uses map tile flags. MT-2004
  */
-int reflwall(mapstruct *m,int x,int y, object *sp_op) {
-  object *op;
+int reflwall(mapstruct *m,int x,int y, object *sp_op) 
+{
+	/* no reflection when we have a illegal space and/or non reflection flag set */
+	if(!(m=out_of_map(m,&x,&y)) || !(GET_MAP_FLAGS(m, x, y)&P_REFL_SPELLS)) 
+		return 0; 
+	  
+	/* we have reflection. But there is a small chance it will fail.
+    * test it.
+    */
+	if(sp_op->type==LIGHTNING) /* reflect always */
+		return 1;
 
-  if(!(m=out_of_map(m,&x,&y))) 
-	  return 0;
-  for(op=get_map_ob(m,x,y);op!=NULL;op=op->above)
-  {
-    if(QUERY_FLAG(op, FLAG_REFL_SPELL) && (!IS_LIVE(op) ||
-					    sp_op->type==LIGHTNING || (rndm(0, 99)) < 90-sp_op->level/10))
+	if(!missile_reflection_adjust(sp_op,QUERY_FLAG(sp_op,FLAG_WAS_REFLECTED)))
+		return 0;
+	
+	/* we get resisted - except a small fail chance */
+	if((rndm(0, 99)) < 90-sp_op->level/10)
 	{
-		/* the reflector trick - new owner will be the reflecting object */
-		if(op->owner)
-			sp_op->owner = get_owner(op);
-		else
-			sp_op->owner = op;
-			return 1;
+		SET_FLAG(sp_op,FLAG_WAS_REFLECTED);
+		return 1;
 	}
-  }
-  return 0;
+
+	return 0;
 }
 
 void move_bolt(object *op) {
@@ -1939,11 +1896,15 @@ void explode_object(object *op)
     
 }
 
+/* if we are here, the arch (spell) we check was able to move
+ * to this place. Wall() has failed include reflection.
+ * now we look for a target.
+ */
 void check_fired_arch (object *op)
 {
     tag_t op_tag = op->count, tmp_tag;
-    object *tmp;
-    int dam;
+    object *tmp, *hitter;
+    int dam, flag;
 
 	/* we return here if we have NOTHING blocking here */
 	if ( ! blocked(op, op->map, op->x, op->y,op->terrain_flag))
@@ -1962,11 +1923,19 @@ void check_fired_arch (object *op)
 		return;
 	}
 
+	hitter = get_owner(op);
+	if(!hitter)
+		hitter = op;
 
+	flag = GET_MAP_FLAGS(op->map,op->x,op->y)&P_IS_PVP;
     for (tmp = get_map_ob (op->map,op->x,op->y); tmp != NULL; tmp = tmp->above)
     {
-        if (IS_LIVE (tmp)) {
+        if (IS_LIVE (tmp) && ((tmp->type!=PLAYER && hitter->type == PLAYER)||
+			(tmp->type==PLAYER && hitter->type != PLAYER) || 
+			(hitter->type == PLAYER && (flag || tmp->map->map_flags&MAP_FLAG_PVP))))
+		{
             tmp_tag = tmp->count;
+
             dam = hit_player (tmp, op->stats.dam, op, op->attacktype);
             if (was_destroyed (op, op_tag) || ! was_destroyed (tmp, tmp_tag)
                 || (op->stats.dam -= dam) < 0)
@@ -2004,7 +1973,8 @@ void move_fired_arch (object *op)
         return;
     }
 
-    if ( ! op->direction || wall (m, new_x, new_y)) {
+	/* the spell has reached a wall and/or the end of its moving points */
+    if (!op->last_sp-- || (! op->direction || wall (m, new_x, new_y))) {
         if (op->other_arch) {
             explode_object (op);
         } else {
@@ -2849,7 +2819,7 @@ int cast_smite_spell (object *op, object *caster,int dir, int type) {
     /* if we don't worship a god, or target a creature
      * of our god, the spell will fail.  
      */
-   if(!target || QUERY_FLAG(target,FLAG_REFL_SPELL)
+   if(!target || QUERY_FLAG(target,FLAG_CAN_REFL_SPELL)
       ||!god
       ||(target->title&&!strcmp(target->title,god->name))
       ||(target->race&&strstr(target->race,god->race))

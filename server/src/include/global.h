@@ -245,6 +245,12 @@ EXTERN char first_map_path[MAX_BUF];	/* The start-level */
 EXTERN char errmsg[HUGE_BUF];
 EXTERN long ob_count;
 
+EXTERN uint32 global_round_tag; /* global round ticker ! this is real a global */
+#define ROUND_TAG global_round_tag /* put this here because the DIFF */
+
+EXTERN int global_race_counter; /* global race counter */
+
+
 EXTERN struct timeval last_time;        /* Used for main loop timing */
 
 /*

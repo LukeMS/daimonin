@@ -582,7 +582,7 @@ int probe(object *op)
 				new_draw_info_format(NDI_UNIQUE, 0,op->owner,"Your probe analyse %s.", tmp->name);
 				if(tmp->head!=NULL)
 					tmp=tmp->head;
-				examine_monster(op->owner,tmp);
+				examine(op->owner,tmp);
 				return 1;
 			}
 		}
@@ -3708,7 +3708,7 @@ int finger_of_death(object *op, object *caster, int dir) {
   object *hitter,*target=get_pointed_target(op,dir);
   int success = 1;
 
-  if(!target || QUERY_FLAG(target,FLAG_REFL_SPELL)) {
+  if(!target || QUERY_FLAG(target,FLAG_CAN_REFL_SPELL)) {
         new_draw_info(NDI_UNIQUE,0,op,"Nothing happens.");
 	return 0;
   }

@@ -1,4 +1,25 @@
 Daimonin CHANGES
+08.08.04	- every range weapons pieces has not a delay 
+                  value and range value shown in the info.
+                  Its possible to get a quick bow with quick arrows
+                  and shot faster as with other setups.
+                - Slaying & assassination throw weapons for every race.
+                - slaying does a bit less damage now but assassination more.
+
+05.08.04	- added shooting/throwing range
+                - added some info to range items (delay, range)
+                - rebalanced damage and speed of damage
+
+03.08.04	- added shooting/using speed (to bows/arrows, throw obj, spells, skills)
+                - added timer for use speed with message - removed obj speed delay
+		- fixed reflection behaviour
+                - fixed pk bug with reflection
+                - mobs can't block arrows/spells from mobs now
+
+29.07.04	- fixed arrow warp bug
+                - /apply don't use items from bags anymore
+                - fixed several small bugs
+
 13.07.04	- fixed material_real use
                 - added new armour (+ring, ammy) attributes: hp, sp, grace boni
                 - added new artifacts

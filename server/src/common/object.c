@@ -1543,9 +1543,6 @@ void clear_object(object *op) {
 
     op->face = blank_face;
     op->attacked_by_count= -1;
-#ifdef CASTING_TIME
-    op->casting = -1;
-#endif
 }
 
 /*
@@ -1891,6 +1888,11 @@ void update_object(object *op, int action)
 				newflags|=P_FLY_OFF;
 			if (QUERY_FLAG(op, FLAG_DOOR_CLOSED))
 				newflags|=P_DOOR_CLOSED;
+			if (QUERY_FLAG(op, FLAG_CAN_REFL_SPELL))
+				newflags|=P_REFL_SPELLS;
+			if (QUERY_FLAG(op, FLAG_CAN_REFL_MISSILE))
+				newflags|=P_REFL_MISSILE;
+			
 		}
     } 
 	else if (action == UP_OBJ_REMOVE) 
@@ -1924,6 +1926,8 @@ void update_object(object *op, int action)
 			QUERY_FLAG(op, FLAG_FLY_ON) ||
 			QUERY_FLAG(op, FLAG_WALK_OFF) ||
 			QUERY_FLAG(op, FLAG_FLY_OFF) ||
+			QUERY_FLAG(op, FLAG_CAN_REFL_SPELL) ||
+			QUERY_FLAG(op, FLAG_CAN_REFL_MISSILE) ||
 			QUERY_FLAG(op,	FLAG_IS_FLOOR) ||
 			op->type == CHECK_INV ||
 			op->type == MAGIC_EAR

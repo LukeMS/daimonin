@@ -100,6 +100,7 @@ int command_apply (object *op, char *params)
     if(op->type == PLAYER)
     	op->contr->praying=0;
   if (!params) {
+	  LOG(-1,"her");
     player_apply_below(op);
     return 0;
   }
@@ -1126,6 +1127,7 @@ char *long_desc(object *tmp)
 		case GLOVES:
 		case AMULET:
 		case GIRDLE:
+		case POTION:
 		case BOW:
 		case ARROW:
 		case CLOAK:

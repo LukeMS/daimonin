@@ -396,6 +396,11 @@ char *query_short_name(object *op)
 			safe_strcat(buf, " ", &len, sizeof(buf));
 			safe_strcat(buf, op->title, &len, sizeof(buf));
 		}
+		if(op->type == ARROW && op->slaying)
+		{
+			safe_strcat(buf, " ", &len, sizeof(buf));
+			safe_strcat(buf, op->slaying, &len, sizeof(buf));
+		}
     }
     return buf;
 }
@@ -635,6 +640,11 @@ char *query_base_name(object *op) {
 			safe_strcat(buf, " ", &len, sizeof(buf));
 			safe_strcat(buf, op->title, &len, sizeof(buf));
 		}
+		if(op->type == ARROW && op->slaying)
+		{
+			safe_strcat(buf, " ", &len, sizeof(buf));
+			safe_strcat(buf, op->slaying, &len, sizeof(buf));
+		}
     } /* switch */
 
     return buf;
@@ -807,11 +817,15 @@ char *describe_item(object *op)
 		/* now lets deal with special cases */
 		switch(op->type)
 		{
-
 			case WAND:
 			case ROD:
 			case HORN:
-			break;
+				if(id_true)
+				{
+					sprintf(buf,"(delay%+2.1fs)",((float)op->last_grace/(1000000/MAX_TIME)));
+					strcat(retbuf,buf);
+				}
+				break;
 
 			/* Armor type objects */
 			case ARMOUR:
@@ -848,6 +862,22 @@ char *describe_item(object *op)
 			case ARROW:
 				if(id_true)
 				{
+					if(op->type == BOW)
+					{
+						sprintf(buf,"(delay%+2.1fs)",((float)op->stats.sp/(1000000/MAX_TIME)));
+						strcat(retbuf,buf);
+					}
+					else if(op->type == ARROW)
+					{
+						sprintf(buf,"(delay%+2.1fs)",((float)op->last_grace/(1000000/MAX_TIME)));
+						strcat(retbuf,buf);
+					}
+					
+					if(op->last_sp)
+					{
+						sprintf(buf,"(range%+d)",op->last_sp);
+						strcat(retbuf,buf);
+					}
 					if(op->stats.wc)
 					{
 						sprintf(buf,"(wc%+d)",op->stats.wc);
@@ -915,7 +945,16 @@ char *describe_item(object *op)
 				}
 			break;
 
-			/* potions, scrolls, ...*/
+			case POTION:
+				if(id_true)
+				{
+					if(op->last_sp)
+					{
+						sprintf(buf,"(range%+d)",op->last_sp);
+						strcat(retbuf,buf);
+					}
+				}
+				/* potions, scrolls, ...*/
 		    default: /* no more infos for all items we don't have handled in the switch */
 			 return retbuf;
 		}
@@ -969,38 +1008,40 @@ char *describe_item(object *op)
 	}
 
 	/* here we deal with all the special flags */
-	if(id_true) 
+	if(id_true || QUERY_FLAG(op,FLAG_MONSTER) || op->type == PLAYER) 
 	{
 		if(op->stats.luck)
 		{
 			sprintf(buf,"(luck%+d)",op->stats.luck);
 			strcat(retbuf,buf);
 		}
-	    if(QUERY_FLAG(op,FLAG_SEE_INVISIBLE))
+		if(QUERY_FLAG(op,FLAG_SEE_INVISIBLE))
 			strcat(retbuf,"(see invisible)");
-	    if(QUERY_FLAG(op,FLAG_MAKE_ETHEREAL))
+		if(QUERY_FLAG(op,FLAG_MAKE_ETHEREAL))
 			strcat(retbuf,"(makes ethereal)");
-	    if(QUERY_FLAG(op,FLAG_IS_ETHEREAL))
+		if(QUERY_FLAG(op,FLAG_IS_ETHEREAL))
 			strcat(retbuf,"(ethereal)");
-	    if(QUERY_FLAG(op,FLAG_MAKE_INVISIBLE))
+		if(QUERY_FLAG(op,FLAG_MAKE_INVISIBLE))
 			strcat(retbuf,"(makes invisible)");
-	    if(QUERY_FLAG(op,FLAG_IS_INVISIBLE))
+		if(QUERY_FLAG(op,FLAG_IS_INVISIBLE))
 			strcat(retbuf,"(invisible)");
-	    if(QUERY_FLAG(op,FLAG_XRAYS))
+		if(QUERY_FLAG(op,FLAG_XRAYS))
 			strcat(retbuf,"(xray-vision)");
 		if(QUERY_FLAG(op,FLAG_SEE_IN_DARK))
 			strcat(retbuf,"(infravision)");
 		if(QUERY_FLAG(op,FLAG_LIFESAVE))
 			strcat(retbuf,"(lifesaving)");
-		if(QUERY_FLAG(op,FLAG_REFL_SPELL))
+		if(QUERY_FLAG(op,FLAG_REFL_SPELL)||QUERY_FLAG(op,FLAG_CAN_REFL_SPELL))
 			strcat(retbuf,"(reflect spells)");
-		if(QUERY_FLAG(op,FLAG_REFL_MISSILE))
+		if(QUERY_FLAG(op,FLAG_REFL_MISSILE)||QUERY_FLAG(op,FLAG_CAN_REFL_MISSILE))
 			strcat(retbuf,"(reflect missiles)");
 		if(QUERY_FLAG(op,FLAG_STEALTH))
 			strcat(retbuf,"(stealth)");
 		if(QUERY_FLAG(op,FLAG_FLYING))
 			strcat(retbuf,"(levitate)");
-
+	}
+	if(id_true) 
+	{
 		if(op->slaying!=NULL)
 		{
 			strcat(retbuf,"(slay ");
@@ -1027,7 +1068,7 @@ char *describe_item(object *op)
 		DESCRIBE_PATH(retbuf, op->path_repelled, "Repelled");
 		DESCRIBE_PATH(retbuf, op->path_denied, "Denied");
 
-		if(op->stats.maxhp)
+		if(op->stats.maxhp &&(op->type != HORN && op->type != ROD && op->type != WAND))
 		{
 			sprintf(buf,"(hp%+d)",op->stats.maxhp);
 			strcat(retbuf,buf);

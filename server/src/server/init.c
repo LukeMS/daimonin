@@ -781,6 +781,7 @@ void add_to_racelist (const char *race_name, object *op) {
   race=find_racelink(race_name);
  
   if(!race) { /* add in a new race list */
+	global_race_counter++; /* we need this for treasure generation (slaying race) */
     race = get_racelist();
     race->next = first_race;
     first_race = race;

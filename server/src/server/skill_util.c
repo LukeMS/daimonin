@@ -217,28 +217,35 @@ int do_skill (object *op, int dir, char *string) {
         success = remove_trap(op,dir,op->chosen_skill->level);
         break;
       case SK_THROWING:
-	success = skill_throw(op,dir,string);
+		  new_draw_info(NDI_UNIQUE, 0,op,"This skill is not usable in this way.");
+		  return success;
+		  /*success = skill_throw(op,dir,string);*/
 	break;
 
       case SK_SET_TRAP:
            new_draw_info(NDI_UNIQUE, 0,op,"This skill is not currently implemented.");
-        break;
+		   return success;
+		   break;
       case SK_USE_MAGIC_ITEM:
       case SK_MISSILE_WEAPON:
            new_draw_info(NDI_UNIQUE, 0,op,"There is no special attack for this skill.");
-        break;
+		   return success;
+		   break;
       case SK_PRAYING:
            new_draw_info(NDI_UNIQUE, 0,op,"This skill is not usable in this way.");
-	/*success = pray(op);*/
+		   return success;
+		   /*success = pray(op);*/
 	break;
       case SK_SPELL_CASTING:
       case SK_CLIMBING:
       case SK_BARGAINING:
            new_draw_info(NDI_UNIQUE, 0,op,"This skill is already in effect.");
-        break;
+		   return success;
+		   break;
       default:
         LOG(llevDebug,"%s attempted to use unknown skill: %d\n"
                 ,query_name(op), op->chosen_skill->stats.sp);
+		return success;
         break;
     }
  
@@ -321,7 +328,7 @@ int calc_skill_exp(object *who, object *op)
 	tmp=((float)(new_levels[who_lvl+1]-new_levels[who_lvl])*0.1f)*max_mul;
 	if((float) op_exp > tmp)
 	{
-		LOG(llevDebug,"exp to high(%d)! adjusted to: %d",op_exp, (int)tmp);
+		/*LOG(-1,"exp to high(%d)! adjusted to: %d",op_exp, (int)tmp);*/
 		op_exp = (int)tmp;
 	}
 
@@ -354,9 +361,9 @@ int calc_skill_exp(object *who, object *op)
 			op_exp = 0;
 	}
 */
-	LOG(llevDebug,"\nEXP:: %s (lvl %d(%d)) gets %d exp in %s from %s (lvl %d)(%x - %d) (max:%f)\n", query_name(who), who_lvl, who->level, op_exp,
+/*	LOG(llevDebug,"\nEXP:: %s (lvl %d(%d)) gets %d exp in %s from %s (lvl %d)(%x - %d) (max:%f)\n", query_name(who), who_lvl, who->level, op_exp,
 		who->chosen_skill?query_name(who->chosen_skill):"<BUG: NO SKILL!>",query_name(op), op_lvl, op, op->count,tmp);
-
+*/
 	/* old code. I skipped skill[].lexp and bexp - perhaps later back in
 	if(who->chosen_skill==NULL)
 	{
@@ -1608,12 +1615,40 @@ object *SK_skill(object *op)
  * the random nature in which use_monster_skill is called
  * already simulates this. -b.t. 
  */
+/* I reworked this function. The original idea was
+ * very basic just adding a value to the global
+ * (player) object speed value. Thats the old style
+ * way from crossfire, but not what we want. I addding
+ * here now the "skill action timer" and a modified
+ * speed thingy.- MT 2004
+ */
+float get_skill_time(object *op, int skillnr)
+{
+	float time = skills[skillnr].time;
 
-float get_skill_time(object *op, int skillnr) {
-  float time = skills[skillnr].time;
-
-  if(!time || op->type!=PLAYER) 
-     return 0;
+	if(op->type!=PLAYER) 
+		return 0;
+	
+	/* tis is only temp! Cast delay fixed to 1 seconds - this will
+	 * be more senseful values for different spells in the future.
+	 */
+	if(skillnr == SK_SPELL_CASTING || skillnr == SK_PRAYING)
+	{
+		op->contr->action_casting = global_round_tag+8;
+		return 0;		
+	}
+	/* these are skills using the "fire/range" menu - throwing, archery 
+	 * and use of rods/wands...
+	 */
+	else  if(skillnr == SK_USE_MAGIC_ITEM || skillnr == SK_MISSILE_WEAPON ||
+			skillnr == SK_THROWING || skillnr == SK_XBOW_WEAP ||skillnr == SK_SLING_WEAP)
+	{
+		op->contr->action_range = global_round_tag+op->chosen_skill->stats.maxsp;
+		return 0;		
+	}
+	
+  if(!time) 
+     return 0.0f;
   else {
     /*int sum = get_weighted_skill_stat_sum (op,skillnr);*/
     int level = SK_level(op)/10; 
@@ -1626,11 +1661,66 @@ float get_skill_time(object *op, int skillnr) {
 		time -= (level/3)*0.1f;
 		if(time<1.0f)
 			time = 1.0f;
-	}
-	
+	}	
   }
   
   return FABS(time);
+}
+
+/* player only: we check the action time for a skill.
+ * if skill action is possible, return true.
+ * if the action is not possible, drop the right message
+ * and/or queue the command.
+ */
+int check_skill_action_time(object *op, object *skill)
+{
+					
+	switch(skill->stats.sp)
+	{
+		/* spells */
+		case SK_PRAYING:
+		case SK_SPELL_CASTING:
+			if(op->contr->action_casting > global_round_tag)
+			{
+				new_draw_info_format(NDI_UNIQUE, 0,op, "You can cast in %2.2f seconds again.", 
+					(float)(op->contr->action_casting-global_round_tag)/(1000000/MAX_TIME));
+				return FALSE;
+			}
+		break;
+
+		/* archery */
+		case SK_SLING_WEAP:
+		case SK_XBOW_WEAP:
+		case SK_MISSILE_WEAPON:
+			if(op->contr->action_range > global_round_tag)
+			{
+				new_draw_info_format(NDI_UNIQUE, 0,op, "You can shot in %2.2f seconds again.", 
+					(float)(op->contr->action_range-global_round_tag)/(1000000/MAX_TIME));
+				return FALSE;
+			}
+		break;
+		
+		case SK_USE_MAGIC_ITEM:
+			if(op->contr->action_range > global_round_tag)
+			{
+				new_draw_info_format(NDI_UNIQUE, 0,op, "You can use a device in %2.2f seconds again.", 
+					(float)(op->contr->action_range-global_round_tag)/(1000000/MAX_TIME));
+				return FALSE;
+			}
+
+		case SK_THROWING:
+			if(op->contr->action_range > global_round_tag)
+			{
+				new_draw_info_format(NDI_UNIQUE, 0,op, "You can throw in %2.2f seconds again.", 
+					(float)(op->contr->action_range-global_round_tag)/(1000000/MAX_TIME));
+				return FALSE;
+			}
+		default:
+			break;
+
+	}
+
+	return TRUE;
 }
 
 /* get_skill_stat1() - returns the value of the primary skill

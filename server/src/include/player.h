@@ -146,6 +146,10 @@ typedef struct pl_player
 	int firemode_tag1;
 	int firemode_tag2;
 
+	/* "skill action timers" - used for action delays like cast time */
+	uint32 action_casting;
+	uint32 action_range;
+
 	uint32	mark_count;				/* count or mark object */
 	sint32 last_skill_exp[MAX_EXP_CAT]; /* shadow register. if != exp. obj update client */
 	sint32 skill_exp[NROFSKILLS];	 /* shadow register for updating skill values to client */
@@ -211,6 +215,11 @@ typedef struct pl_player
 	char levsp[MAXLEVEL+1];
 	char levgrace[MAXLEVEL+1];
 	sint8 last_protection[NROFPROTECTIONS];	/* shadow register for client update resistance table */
+
+	uint32 player_loaded:1;			/* this flags is set when the player is loaded from file 
+									 * and not just created. It is used to overrule the "no save
+									 * when exp is 0" rule - which can lead inventory duping.
+									 */
 
 	uint32 name_changed:1;			/* If true, the player has set a name. */
 	uint32 update_los:1;				/* If true, update_los() in draw(), and clear */

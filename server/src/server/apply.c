@@ -1485,9 +1485,17 @@ void move_apply (object *trap, object *victim, object *originator)
     goto leave;
 
   case DIRECTOR:
-    if(victim->direction) {
-      victim->direction= trap->direction;
-      update_turn_face(victim);
+	if(victim->direction) 
+	{
+		if(QUERY_FLAG(victim,FLAG_IS_MISSILE))
+		{
+			SET_FLAG(victim,FLAG_WAS_REFLECTED);
+			if(!missile_reflection_adjust(victim,0))
+				goto leave;				
+		}
+
+		victim->direction= trap->direction;
+        update_turn_face(victim);
     }
     goto leave;
 
@@ -3001,7 +3009,12 @@ void player_apply_below (object *pl)
     /* If using a container, set the starting item to be the top
      * item in the container.  Otherwise, use the map.
      */
-    tmp = (pl->contr->container != NULL) ? pl->contr->container->inv : pl->below;
+	/* i removed this... it can lead in very evil situations like
+	 * someone hammers on the /apply macro for fast leaving a map but
+	 * invokes dozens of potions from a open bag.....
+	 */
+    /*tmp = (pl->contr->container != NULL) ? pl->contr->container->inv : pl->below;*/
+	tmp = pl->below;
 
     /* This is perhaps more complicated.  However, I want to make sure that
      * we don't use a corrupt pointer for the next object, so we get the

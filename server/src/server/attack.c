@@ -192,26 +192,6 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam, int base_
 			else
 				play_sound_map(hitter->map, hitter->x, hitter->y, SOUND_HIT_PIERCE, SOUND_NORMAL);
 		}
-#ifdef CASTING_TIME
-		if ((hitter->type == PLAYER)&&(hitter->casting > -1))
-		{
-			hitter->casting = -1;
-			hitter->spell_state = 1;
-			new_draw_info(NDI_UNIQUE, 0,hitter,"You attacked and lost your spell!");
-		}
-		if ((op->casting > -1)&&(hitdam > 0))
-		{
-			op->casting = -1;
-			op->spell_state = 1;
-			if (op->type == PLAYER)
-			{
-				new_draw_info(NDI_UNIQUE, 0,op,"You were hit and lost your spell!");
-				new_draw_info_format(NDI_ALL|NDI_UNIQUE,5,NULL,
-							"%s was hit by %s and lost a spell.",op->name,hitter->name);
-			}
-		}
-
-#endif
 
 		if ( ! simple_attack)
         {
@@ -743,8 +723,11 @@ int hit_player_attacktype(object *op, object *hitter, int damage,  uint32 attack
 	                            strstr(op->arch->name, hitter->slaying)))
         {
 	        doesnt_slay = 0;
-	        damage *= 3;
-			dam = damage;
+			if(QUERY_FLAG(hitter,FLAG_IS_ASSASSINATION))
+				damage = (int)((double)damage*2.25);
+			else
+				damage = (int)((double)damage*1.75);
+			dam = (double) damage;
         }
     }
 
@@ -1538,7 +1521,7 @@ object *hit_with_arrow (object *op, object *victim)
             remove_ob (hitter);
             hitter->x = victim_x;
             hitter->y = victim_y;
-            insert_ob_in_map (hitter, hitter->map, hitter,0);
+            insert_ob_in_map (hitter, victim->map, hitter,0);
         } else {
             /* Else leave arrow where it is */
             hitter = merge_ob (hitter, NULL);

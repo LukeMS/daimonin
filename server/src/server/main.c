@@ -51,8 +51,6 @@
 void free_all_srv_files();
 void free_racelist();
  
-uint32 global_round_tag=1; /* global round ticker ! this is real a global */
-
 object *gbl_active_DM=NULL; /* ony for testing, TODO list of DMs */
 
 static object marker; /* object for proccess_obejct(); */
@@ -828,17 +826,6 @@ void process_players1(mapstruct *map)
     } /* for flag */
     for(pl=first_player;pl!=NULL;pl=pl->next) {
 	if (map!=NULL && (pl->ob == NULL || pl->ob->map!=map)) continue;
-#ifdef CASTING_TIME
-	if (pl->ob->casting > 0){
-	    pl->ob->casting--;
-	    pl->ob->start_holding = 1;
-	}
-	/* set spell_state so we can update the range in stats field */
-	if ((pl->ob->casting == 0) && (pl->ob->start_holding ==1)){
-	    pl->ob->start_holding = 0;
-	    pl->ob->spell_state = 1;
-	}
-#endif
     
     do_some_living(pl->ob);
 
@@ -1034,11 +1021,6 @@ void process_events (mapstruct *map)
 			op->last_anim++;
 		}
 	}
-
-#ifdef CASTING_TIME
-    if (op->casting > 0)
-      op->casting--;
-#endif
 
     if (op->speed_left <= 0)
 			op->speed_left += FABS (op->speed);

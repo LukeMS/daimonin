@@ -1532,6 +1532,7 @@ object *make_throw_ob (object *orig) {
     }
     copy_object(orig,toss_item);
     toss_item->type = THROWN_OBJ;
+	SET_FLAG(toss_item, FLAG_IS_MISSILE);
     CLEAR_FLAG(toss_item,FLAG_CHANGING);
     toss_item->stats.dam = 0; /* default damage */
 #ifdef DEBUG_THROW
@@ -1559,9 +1560,8 @@ object *make_throw_ob (object *orig) {
 void do_throw(object *op, object *toss_item, int dir) {
     object *left_cont, *throw_ob=toss_item, *left=NULL, *tmp_op;
     tag_t left_tag;
-    int eff_str = 0,str=op->stats.Str,dam=0;
-    int pause_f,weight_f=0;
-    float str_factor=1.0,load_factor=1.0,item_factor=1.0;
+    int eff_str = 0,str=op->stats.Str,dam=0, weight_f=0;
+    float str_factor=1.0f,load_factor=1.0f,item_factor=1.0f;
 
     if(throw_ob==NULL) {
 	if(op->type==PLAYER)
@@ -1574,7 +1574,6 @@ void do_throw(object *op, object *toss_item, int dir) {
 	return;
     }
 	
-
     /* Because throwing effectiveness must be reduced by the
      * encumbrance of the thrower and weight of the object. THus,
      * we use the concept of 'effective strength' as defined below. 
@@ -1641,9 +1640,16 @@ void do_throw(object *op, object *toss_item, int dir) {
     }
 
     /* special case: throwing powdery substances like dust, dirt */
-    if(QUERY_FLAG(throw_ob,FLAG_DUST)) { 
-	cast_dust(op,throw_ob,dir); 
-	return;
+    if(QUERY_FLAG(throw_ob,FLAG_DUST)) 
+	{ 
+		cast_dust(op,throw_ob,dir); 
+		/* update the shooting speed for the player action timer.
+		 * We init the used skill with it - its not calculated here.
+		 * cast_dust() can change the used skill...
+		 */
+		if(op->type == PLAYER)
+			op->chosen_skill->stats.maxsp = throw_ob->last_grace; 
+		return;
     }
 
 	    /* 3 things here prevent a throw, you aimed at your feet, you
@@ -1700,7 +1706,6 @@ void do_throw(object *op, object *toss_item, int dir) {
 				}
 			}
 		}
-
 	}
 
     /* Make a thrown object -- insert real object in a 'carrier' object.
@@ -1731,7 +1736,8 @@ void do_throw(object *op, object *toss_item, int dir) {
     /* Now, lets adjust the properties of the thrown_ob. */
 
     /* how far to fly */
-    throw_ob->last_sp = (eff_str*2)/7;
+	/* we have set this in the arches now... */
+    /* throw_ob->last_sp = (eff_str*2)/7; */
 
     /* speed */
     throw_ob->speed = (speed_bonus[eff_str]+1.0f)/1.5f;
@@ -1769,13 +1775,14 @@ void do_throw(object *op, object *toss_item, int dir) {
 	 */
 	throw_ob->stats.wc_range = op->stats.wc_range;
     if(QUERY_FLAG(throw_ob->inv,FLAG_IS_THROWN)) {
-		throw_ob->last_sp += eff_str/3; /* fly a little further */
+		/*throw_ob->last_sp += eff_str/3;*/ /* fly a little further */
 		throw_ob->stats.dam = throw_ob->inv->stats.dam + throw_ob->magic;
 		throw_ob->stats.wc += throw_ob->magic + throw_ob->inv->stats.wc;
 
 		/* adjust for players */
 		if(op->type == PLAYER)
 		{
+			op->chosen_skill->stats.maxsp = throw_ob->last_grace; 
 			/* i don't want overpower the throwing - so dam_bonus/2 */
 			throw_ob->stats.dam=FABS((int)((float)(throw_ob->stats.dam+dam_bonus[op->stats.Str]/2)*lev_damage[SK_level(op)]));
 			/* hm, i want not give to much boni for str */
@@ -1787,6 +1794,9 @@ void do_throw(object *op, object *toss_item, int dir) {
 			throw_ob->stats.wc +=10+op->level;
 		}
 
+		throw_ob->stats.grace = throw_ob->last_sp;
+		throw_ob->stats.maxgrace = 60+(RANDOM()%12);
+		
 		/* only throw objects get directional faces */
 		if(GET_ANIM_ID(throw_ob) && NUM_ANIMATIONS(throw_ob))
 			SET_ANIMATION(throw_ob, (NUM_ANIMATIONS(throw_ob)/NUM_FACINGS(throw_ob))*dir);
@@ -1817,29 +1827,12 @@ void do_throw(object *op, object *toss_item, int dir) {
  
     /* some limits, and safeties (needed?) */
     if(throw_ob->stats.dam<0) throw_ob->stats.dam=0;
-    if(throw_ob->last_sp>eff_str) throw_ob->last_sp=eff_str;
+    /*if(throw_ob->last_sp>eff_str) throw_ob->last_sp=eff_str;*/
     if(throw_ob->stats.food<0) throw_ob->stats.food=0;
     if(throw_ob->stats.food>100) throw_ob->stats.food=100;
     if(throw_ob->stats.wc>30) throw_ob->stats.wc=30;
 
-	/* in fact, we only need it when we throw a item which effects the player -
-	 * and thats only applied ones... TODO. MT
-	 */
-/*    fix_player(op);*/
 
-    /* how long to pause the thrower. Higher values mean less pause */
-    pause_f = ((2*eff_str)/3)+20+SK_level(op);
-
-    /* Put a lower limit on this */
-    if (pause_f < 10) pause_f=10;
-    if (pause_f > 100) pause_f=100;
-
-    /* Changed in 0.94.2 - the calculation before was really goofy.
-     * In short summary, a throw can take anywhere between speed 5 and
-     * speed 0.5
-     */
-
-    op->speed_left -=  50 / pause_f;
 
     update_ob_speed(throw_ob);
     throw_ob->speed_left = 0;

@@ -195,13 +195,21 @@ int command_cast_spell (object *op, char *params)
 	op->contr->chosen_spell=orig_spn;
 	op->contr->shoottype=orig_rangetype;
 
+	/* we still recover from a casted spell before */
+	if(!check_skill_action_time(op, op->chosen_skill))
+		return 0;
+
 	value = cast_spell(op,op,op->facing,spnum,0,spellNormal,cp);
 
-	if(spells[spnum].flags&SPELL_DESC_WIS) 
-		op->stats.grace -= value;
-	else 
-		op->stats.sp -= value;
+	if(value)
+	{
+		get_skill_time(op, op->chosen_skill->stats.sp);
 
+		if(spells[spnum].flags&SPELL_DESC_WIS) 
+			op->stats.grace -= value;
+		else 
+			op->stats.sp -= value;
+	}
 	 return 1;
 
 }

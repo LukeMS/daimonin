@@ -454,7 +454,7 @@ int change_abil(object *op, object *tmp) {
       (*draw_info_func)(NDI_UNIQUE|NDI_GREY, 0, op,"You don't feel protected anymore.");
     }
   }
-  if ( QUERY_FLAG(op,FLAG_REFL_MISSILE) != QUERY_FLAG(&refop,FLAG_REFL_MISSILE)){
+  if ( QUERY_FLAG(op,FLAG_CAN_REFL_MISSILE) != QUERY_FLAG(&refop,FLAG_CAN_REFL_MISSILE)){
     success=1;
     if(flag>0) {
       (*draw_info_func)(NDI_UNIQUE|NDI_WHITE, 0, op,"A magic force shimmers around you.");
@@ -462,7 +462,7 @@ int change_abil(object *op, object *tmp) {
       (*draw_info_func)(NDI_UNIQUE|NDI_GREY, 0, op,"The magic force fades away.");
     }
   }
-  if ( QUERY_FLAG(op,FLAG_REFL_SPELL) != QUERY_FLAG(&refop,FLAG_REFL_SPELL)){
+  if ( QUERY_FLAG(op,FLAG_CAN_REFL_SPELL) != QUERY_FLAG(&refop,FLAG_CAN_REFL_SPELL)){
     success=1;
     if(flag>0) {
       (*draw_info_func)(NDI_UNIQUE|NDI_WHITE, 0, op,"You feel more safe now, somehow.");
@@ -858,6 +858,10 @@ void fix_player(object *op)
 
 	FREE_AND_CLEAR_HASH(op->slaying); 
 
+	/* HOTFIX: we parted refl_xxx from can_refl_xxx */
+	CLEAR_FLAG(op,FLAG_REFL_MISSILE);
+	CLEAR_FLAG(op,FLAG_REFL_SPELL);
+	
 	if (QUERY_FLAG (op, FLAG_IS_INVISIBLE))
 		inv_flag = 1;
 	if (QUERY_FLAG (op, FLAG_SEE_INVISIBLE))
@@ -880,10 +884,10 @@ void fix_player(object *op)
 		CLEAR_FLAG(op,FLAG_BLIND);
 	if ( ! QUERY_FLAG (&op->arch->clone, FLAG_FLYING))
 		CLEAR_MULTI_FLAG(op, FLAG_FLYING);
-	if ( ! QUERY_FLAG (&op->arch->clone, FLAG_REFL_SPELL))
-		CLEAR_FLAG(op,FLAG_REFL_SPELL);
-	if ( ! QUERY_FLAG (&op->arch->clone, FLAG_REFL_MISSILE))
-		CLEAR_FLAG(op,FLAG_REFL_MISSILE);
+	if ( ! QUERY_FLAG (&op->arch->clone, FLAG_CAN_REFL_SPELL))
+		CLEAR_FLAG(op,FLAG_CAN_REFL_SPELL);
+	if ( ! QUERY_FLAG (&op->arch->clone, FLAG_CAN_REFL_MISSILE))
+		CLEAR_FLAG(op,FLAG_CAN_REFL_MISSILE);
 	if(!QUERY_FLAG(&op->arch->clone,FLAG_UNDEAD))
 		CLEAR_FLAG(op,FLAG_UNDEAD);
 	if ( ! QUERY_FLAG (&op->arch->clone, FLAG_SEE_IN_DARK))
@@ -1257,9 +1261,9 @@ void fix_player(object *op)
 			if(QUERY_FLAG(tmp,FLAG_LIFESAVE))
 				SET_FLAG(op,FLAG_LIFESAVE);
 			if(QUERY_FLAG(tmp,FLAG_REFL_SPELL))
-				SET_FLAG(op,FLAG_REFL_SPELL);
+				SET_FLAG(op,FLAG_CAN_REFL_SPELL);
 			if(QUERY_FLAG(tmp,FLAG_REFL_MISSILE))
-				SET_FLAG(op,FLAG_REFL_MISSILE);
+				SET_FLAG(op,FLAG_CAN_REFL_MISSILE);
 			if(QUERY_FLAG(tmp,FLAG_STEALTH))
 				SET_FLAG(op,FLAG_STEALTH);
 			if(QUERY_FLAG(tmp,FLAG_UNDEAD)&&!QUERY_FLAG(&op->arch->clone,FLAG_UNDEAD))
