@@ -457,8 +457,8 @@ int get_payment(object *pl) {
  * new money type needs to be explicity code in here.			*/
 /* Modified to fill available race: gold containers before dumping	*
  * remaining coins in character's inventory. -- DAMN 			*/
-void sell_item(object *op, object *pl) {
-  int i=(int)query_cost(op,pl,F_SELL), count;
+void sell_item(object *op, object *pl, int value) {
+  int i, count;
   object *tmp;
   object *pouch;
   archetype *at;
@@ -467,8 +467,15 @@ void sell_item(object *op, object *pl) {
     LOG(llevDebug,"Object other than player tried to sell something.\n");
     return;
   }
+
+  if(op == NULL)
+	  i=value;
+  else
+	  i=(int)query_cost(op,pl,F_SELL);
+
   if(!i) {
-    new_draw_info_format(NDI_UNIQUE, 0, pl,
+	  if(op)
+	    new_draw_info_format(NDI_UNIQUE, 0, pl,
 					"We're not interested in %s.",query_name(op));
 
     /* Even if the character doesn't get anything for it, it may still be
@@ -489,6 +496,8 @@ void sell_item(object *op, object *pl) {
   }
   /* i can't say i understand this... MT-2004 */
   for (count=0; coins[count]!=NULL; count++) {
+
+	  /* this can be speed up - we have now a prebuild table for this MT-2004 */
       at = find_archetype(coins[count]);
       if (at==NULL) LOG(llevBug, "BUG: Could not find %s archetype", coins[count]);
       else if ((i/at->clone.value) > 0) {
@@ -529,12 +538,13 @@ void sell_item(object *op, object *pl) {
       }
   }
 
+  if(!op)
+	  return;
+
   if (i!=0) 
 	LOG(llevBug,"BUG: Warning - payment not zero: %d\n", i);
 
-  new_draw_info_format(NDI_UNIQUE, 0, pl,
-	"You receive %s for %s.",query_cost_string(op,pl,1),
-          query_name(op));
+  new_draw_info_format(NDI_UNIQUE, 0, pl,"You receive %s for %s.",query_cost_string(op,pl,1), query_name(op));
   SET_FLAG(op, FLAG_UNPAID);
 /* TODO: unique item shop will work like old CF shops
   identify(op);
@@ -615,3 +625,158 @@ void shop_listing(object *op)
 	/* i removed this code - there was to much artifacts in i don't want */
 }
 
+/* return 0 = we have nothing found.
+ * return 1 = we have some money.
+ * return -1 = we have keyword "all"
+ */
+int get_money_from_string(char *text, struct _money_block *money)
+{
+	int pos = 0;
+	char *word;
+
+	memset(money, 0, sizeof(struct _money_block));
+
+	/* kill all whitespace */
+	while (*text !='\0' && isspace(*text)) 
+		text++;
+	
+	/* easy, special case: all money */
+	if(!strnicmp(text, "all", 3))
+	{
+		money->mode = MONEYSTRING_ALL;
+		return money->mode;
+	}
+
+	/* parse that sucker. we simply look for a word
+	 * which is a number and then we test the next
+	 * word is like "mithril", "gold", "silver" or "copper".
+	 * is not, we go on.
+	 */
+	money->mode = MONEYSTRING_NOTHING;
+
+	while ((word = get_word_from_string(text, &pos)))
+	{
+		int i=0, flag = *word;
+
+		
+		while(*(word+i) !='\0')
+		{
+			if(*(word+i) <'0' || *(word+i)>'9' )
+				flag=0;
+			i++;
+		}
+
+		if(flag) /* if still set, we have a valid number in the word string */
+		{
+			int value = atoi(word);
+
+			if(value>0 && value <1000000) /* a valid number - now lets look we have a valid money keyword */
+			{
+				if((word=get_word_from_string(text, &pos)) && *word != '\0')
+				{
+					int len = strlen(word);
+					/* there is no way to test the coin arches direct for
+					 * the name - they get the "silver", "gold" part from
+					 * material...
+					 */
+					if(!strnicmp("mithril",word, len))
+					{
+						money->mode = MONEYSTRING_AMOUNT;
+						money->mithril+=value;
+					}
+					else if(!strnicmp("gold",word, len))
+					{
+						money->mode = MONEYSTRING_AMOUNT;
+						money->gold+=value;
+					}
+					else if(!strnicmp("silver",word, len))
+					{
+						money->mode = MONEYSTRING_AMOUNT;
+						money->silver+=value;
+					}
+					else if(!strnicmp("copper",word, len))
+					{
+						money->mode = MONEYSTRING_AMOUNT;
+						money->copper+=value;						
+					}
+				}
+			}
+		}
+	}
+
+	return money->mode;
+}
+
+int query_money_type(object *op, int value)
+{
+    object *tmp;
+    int	total=0;
+
+    for (tmp = op->inv; tmp; tmp= tmp->below) 
+	{
+		if (tmp->type==MONEY && tmp->value == value )
+		    total += tmp->nrof;
+		else if (tmp->type==CONTAINER && !tmp->slaying && ((!tmp->race || strstr(tmp->race,"gold")))) 
+		    total += query_money_type(tmp, value);
+    }
+    return total;
+}
+
+int remove_money_type(object*who, object *op, int value, uint32 amount)
+{
+    object *tmp, *tmp2;
+	
+    for (tmp = op->inv; tmp; tmp= tmp2) 
+	{
+		tmp2=tmp->below;
+
+		if(!amount && value != -1)
+			return amount;
+		if (tmp->type==MONEY && (tmp->value == value || value == -1))
+		{	
+			if(tmp->nrof<=amount || value == -1)
+			{
+				object *env=tmp->env;
+				if(value == -1)
+					amount += (tmp->nrof*tmp->value);
+				else
+					amount -= tmp->nrof;
+				remove_ob(tmp);
+				if(op->type == PLAYER) 
+					esrv_del_item(op->contr, tmp->count, NULL);
+				else
+					esrv_del_item(NULL, tmp->count, env);
+				free_object(tmp);
+			}
+			else
+			{
+				tmp->nrof-=amount;
+				amount = 0;
+				
+				esrv_send_item(who, tmp);
+				esrv_send_item (who, op);
+				esrv_update_item (UPD_WEIGHT, who, op);
+				if (op->type != PLAYER) {
+					esrv_send_item (who, who);
+					esrv_update_item (UPD_WEIGHT, who, who);
+				}
+			}
+
+		}
+		else if (tmp->type==CONTAINER && !tmp->slaying && ((!tmp->race || strstr(tmp->race,"gold")))) 
+			amount = remove_money_type(who, tmp, value, amount);
+    }
+    return amount;
+}
+
+void insert_money_in_player(object *pl,object *money, uint32 nrof)
+{
+	object *tmp;
+	tmp = get_object();
+	copy_object(money, tmp);
+	tmp->nrof = nrof;
+	tmp = insert_ob_in_ob(tmp, pl);
+	esrv_send_item (pl, tmp);
+	esrv_send_item (pl, pl);
+	esrv_update_item (UPD_WEIGHT, pl, pl);
+}

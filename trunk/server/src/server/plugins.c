@@ -1218,6 +1218,142 @@ CFParm* CFWGetFirstArchetype(CFParm* PParm)
     return CFP;
 }
 
+
+CFParm* CFWDeposit(CFParm* PParm)
+{
+    static CFParm CFP;
+	static int val=0;
+	int pos=0;
+	char *text = (char *)(PParm->Value[2]);
+	object *who = (object *)(PParm->Value[0]), *bank = (object *)(PParm->Value[1]);
+	_money_block money;
+
+	get_word_from_string(text, &pos);		
+	get_money_from_string(text+pos , &money);
+
+	CFP.Value[0] = (void*) &val;
+	
+	if(!money.mode)
+		new_draw_info (NDI_UNIQUE, 0, who, "deposit what?");
+	else if(money.mode == MONEYSTRING_ALL)
+	{
+		val = 1;
+		bank->value += remove_money_type(who, who,-1,0);
+	}
+	else
+	{
+		if(money.mithril)
+		{
+			if(query_money_type(who, coins_arch[0]->clone.value)<money.mithril)
+			{
+				new_draw_info (NDI_UNIQUE, 0, who, "You don't have that much mithril coins.");
+				return &CFP;
+			}
+		}
+		if(money.gold)
+		{
+			if(query_money_type(who, coins_arch[1]->clone.value)<money.gold)
+			{
+				new_draw_info (NDI_UNIQUE, 0, who, "You don't have that much gold coins.");
+				return &CFP;
+			}
+		}
+		if(money.silver)
+		{
+			if(query_money_type(who, coins_arch[2]->clone.value)<money.silver)
+			{
+				new_draw_info (NDI_UNIQUE, 0, who, "You don't have that much silver coins.");
+				return &CFP;
+			}
+		}
+		if(money.copper)
+		{
+			if(query_money_type(who, coins_arch[3]->clone.value)<money.copper)
+			{
+				new_draw_info (NDI_UNIQUE, 0, who, "You don't have that much copper coins.");
+				return &CFP;
+			}
+		}
+
+		/* all ok - now remove the money from the player and add it to the bank object! */
+		val = 1;
+
+		if(money.mithril)
+			remove_money_type(who, who, coins_arch[0]->clone.value, money.mithril);
+		if(money.gold)
+			remove_money_type(who, who, coins_arch[1]->clone.value, money.gold);
+		if(money.silver)
+			remove_money_type(who, who, coins_arch[2]->clone.value, money.silver);
+		if(money.copper)
+			remove_money_type(who, who, coins_arch[3]->clone.value, money.copper);
+		
+		bank->value += money.mithril*coins_arch[0]->clone.value +
+						money.gold*coins_arch[1]->clone.value +
+						money.silver*coins_arch[2]->clone.value +
+						money.copper*coins_arch[3]->clone.value;
+	}
+	
+    return &CFP;
+}
+
+CFParm* CFWWithdraw(CFParm* PParm)
+{
+    static CFParm CFP;
+	static int val=0;
+	int pos=0;
+	double big_value; /* remember: value should be int64 later! */
+	char *text = (char *)(PParm->Value[2]);
+	object *who = (object *)(PParm->Value[0]), *bank = (object *)(PParm->Value[1]);
+	_money_block money;
+	
+	get_word_from_string(text, &pos);
+	get_money_from_string(text+pos , &money);
+	CFP.Value[0] = (void*) &val;
+	
+	if(!money.mode)
+		new_draw_info (NDI_UNIQUE, 0, who, "withdraw what?");
+	else if(money.mode == MONEYSTRING_ALL)
+	{
+		val = 1;
+		sell_item(NULL, who, bank->value);
+		bank->value =0;
+	}
+	else
+	{
+		val = 1;
+		/* just to set a border.... */
+		if(money.mithril>100000 || money.gold>100000 || money.silver>1000000 || money.copper>1000000)
+		{
+			new_draw_info (NDI_UNIQUE, 0, who, "withdraw values to high.");
+			return &CFP;
+		}
+		big_value = (double)money.mithril*(double)coins_arch[0]->clone.value+
+					(double)money.gold*(double)coins_arch[1]->clone.value+
+					(double)money.silver*(double)coins_arch[2]->clone.value+
+					(double)money.copper*(double)coins_arch[3]->clone.value;
+
+		if(big_value > (double) bank->value)
+		{
+			val = 0;
+			return &CFP;
+		}
+
+		if(money.mithril)
+			insert_money_in_player(who,&coins_arch[0]->clone, money.mithril);
+		if(money.gold)
+			insert_money_in_player(who,&coins_arch[1]->clone, money.gold);
+		if(money.silver)
+			insert_money_in_player(who,&coins_arch[2]->clone, money.silver);
+		if(money.copper)
+			insert_money_in_player(who,&coins_arch[3]->clone, money.copper);
+	
+		bank->value -= (sint32) big_value;
+	}
+
+    return &CFP;
+}
+
+
 /*****************************************************************************/
 /* show_cost wrapper.                                                       */
 /*****************************************************************************/

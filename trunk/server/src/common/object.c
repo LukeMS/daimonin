@@ -2371,6 +2371,11 @@ void remove_ob(object *op) {
     if(op->env!=NULL)
 	{
 
+		/* this is not enough... when we for example remove money from a pouch
+		 * which is in a sack (which is itself in the player inv) then the weight
+		 * of the sack is not calculated right. This is only a temporary effect but
+		 * we need to fix it here a recursive ->env chain.
+		 */
 		if(op->nrof)
 			sub_weight(op->env, op->weight*op->nrof);
 		else

@@ -476,7 +476,7 @@ void show_player_stats(int x, int y)
         StringBlt(ScreenSurface, &Font6x3Out,"Skill" ,x+274, y+86,COLOR_HGOLD, NULL, NULL);
 
 
-		multi = 0;
+		multi = line = 0;
 	    if(cpl.skill_name[0]!=0)
         {
             sprintf(buf, "%s", cpl.skill_name);

@@ -46,6 +46,8 @@ static PyObject* Daimonin_Object_Apply(Daimonin_Object *self, PyObject* args);
 static PyObject* Daimonin_Object_PickUp(Daimonin_Object *self, PyObject* args);
 static PyObject* Daimonin_Object_Drop(Daimonin_Object *self, PyObject* args);
 static PyObject* Daimonin_Object_Take(Daimonin_Object *self, PyObject* args);
+static PyObject* Daimonin_Object_Deposit(Daimonin_Object *self, PyObject* args);
+static PyObject* Daimonin_Object_Withdraw(Daimonin_Object *self, PyObject* args);
 static PyObject* Daimonin_Object_Communicate(Daimonin_Object *self, PyObject* args);
 static PyObject* Daimonin_Object_Say(Daimonin_Object *self, PyObject* args);
 static PyObject* Daimonin_Object_SayTo(Daimonin_Object *whoptr, PyObject* args);

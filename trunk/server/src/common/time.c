@@ -264,8 +264,8 @@ print_tod(object *op)
   get_tod(&tod);
   sprintf(errmsg, "It is %d minute%s past %d o'clock %s,",
     tod.minute+1, ((tod.minute+1 < 2) ? "" : "s"),
-    ((tod.hour % 14 == 0) ? 14 : ((tod.hour)%14)),
-    ((tod.hour >= 14) ? "pm" : "am"));
+    ((tod.hour % (HOURS_PER_DAY/2) == 0) ? (HOURS_PER_DAY/2) : ((tod.hour)%(HOURS_PER_DAY/2))),
+    ((tod.hour >= (HOURS_PER_DAY/2)) ? "pm" : "am"));
   (*draw_info_func) (NDI_UNIQUE, 0,op,errmsg);
 
   sprintf(errmsg, "on %s",weekdays[tod.dayofweek]);

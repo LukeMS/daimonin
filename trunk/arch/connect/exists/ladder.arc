@@ -5,7 +5,7 @@ type 66
 no_teleport 1
 hp -1
 sp -1
-layer 4
+layer 5
 no_pick 1
 end
 Object ladder_up

@@ -891,7 +891,16 @@ void check_login(object *op) {
     qsort((void *)pl->known_spells,pl->nrofknownspells,
 	sizeof(pl->known_spells[0]),(void*)(int (*)())spell_sort);
 
-
+	/* hm, this is for secure - be SURE our player is on
+	 * friendly list. If friendly is set, this was be done
+	 * in loader.c.
+	 */
+	if(!QUERY_FLAG(op,FLAG_FRIENDLY))
+	{
+		LOG(llevBug, "BUG: Player %s was loaded without friendly flag!", query_name(op));
+		SET_FLAG(op, FLAG_FRIENDLY);
+		add_friendly_object(op);
+	}		
 	/* ok, we are done with the login.
 	 * Lets put the player on the map and send all player lists to the client.
 	 * The player is active now.

@@ -1424,11 +1424,19 @@ int cast_heal(object *op,int level, object *target,int spell_type)
 			success = 1;
 			heal=random_roll(2, 5+level, op, PREFER_HIGH)+6;
 			if(op->type == PLAYER)
-				new_draw_info_format(NDI_UNIQUE, 0,op, "The prayer heals %s for %d hp!", op==target?"you":(target?target->name:"NULL"), heal);
+			{
+				if(heal>0)
+					new_draw_info_format(NDI_UNIQUE, 0,op, "The prayer heals %s for %d hp!", op==target?"you":(target?target->name:"NULL"), heal);
+				else
+					new_draw_info(NDI_UNIQUE, 0,op, "The healing prayer fails!");
+			}
 
 			if(op != target && target->type == PLAYER)
 			{
-				new_draw_info_format(NDI_UNIQUE, 0,target, "%s casts minor healing on you healing %d hp!", op->name, heal);
+				if(heal>0)
+					new_draw_info_format(NDI_UNIQUE, 0,target, "%s casts minor healing on you healing %d hp!", op->name, heal);
+				else
+					new_draw_info_format(NDI_UNIQUE, 0,target, "%s casts minor healing on you but it fails!", op->name);
 			}
 		break;
 /*
@@ -2591,7 +2599,7 @@ int cast_identify(object *op, int level, object *single_ob, int mode)
 	if (op->type==PLAYER && (!success && !success2))
 		new_draw_info(NDI_UNIQUE, 0,op, "You can't reach anything unidentified in your inventory.");
 
-  return success;
+  return success2;
 }
 
 /* gthe routine under this one is the old detect routine - i
