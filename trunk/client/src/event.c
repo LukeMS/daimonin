@@ -793,6 +793,9 @@ static void key_string_event(SDL_KeyboardEvent *key )
 /* we have a key event */
 int key_event(SDL_KeyboardEvent *key )
 {
+    if(GameStatus != GAME_STATUS_PLAY && GameStatus !=GAME_STATUS_NEW_CHAR)
+		return 0;
+
 	if( key->type == SDL_KEYUP )
 	{
 		if(KeyScanFlag){
