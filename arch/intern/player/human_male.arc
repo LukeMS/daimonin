@@ -127,6 +127,7 @@ type 1
 level 1
 ac 0
 wc 0
+wc_range 20
 hp -1
 maxhp 8
 sp -1

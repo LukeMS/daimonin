@@ -13,7 +13,8 @@ anim_speed 3
 terrain_flag 32767
 attack_cold 100
 speed 1
-wc -30
+wc 200
+wc_range 20
 dam 3
 flying 1
 fly_on 1

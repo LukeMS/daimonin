@@ -9,6 +9,7 @@ face trident.101
 material 2
 material_real 65
 dam 8
+wc 3
 weight 2250
 value 750
 end

@@ -260,32 +260,33 @@ treasureone random_weapon
   list random_missile_weapons
     chance 5
   more
-  list random_melee_weapons
+  list random_melee_weapons_slash
     chance 20
   more
-  list random_2h_weapons
-    chance 10
+  list random_melee_weapons_cleave
+    chance 20
   more
-  list random_pole_weapons
-    chance 10
+  list random_melee_weapons_pierce
+    chance 20
+  more
+  list random_melee_weapons_impact
+    chance 20
   more
   list random_throw_weapons
     chance 5
   end
-treasureone random_missile_weapons
-  arch bow
-    chance 10
-  more
+treasureone random_missile_amun
   arch arrow
     magic_chance 45
     magic 2
     chance 35
     nrof 30
   more
-  arch crossbow
-    chance 10
+  arch sstone
     magic_chance 45
-    magic 1
+    magic 2
+    chance 35
+    nrof 30
   more
   arch bolt
     chance 35
@@ -293,8 +294,60 @@ treasureone random_missile_weapons
     magic 2
     nrof 25
   end
+treasureone random_missile_weapons
+  arch bow_short
+    magic_chance 45
+    chance 12
+  more
+  arch bow
+    magic_chance 45
+    chance 10
+  more
+  arch bow_long
+    magic_chance 45
+    chance 5
+  more
+  arch sling_small
+    magic_chance 45
+    chance 12
+  more
+  arch sling
+    magic_chance 45
+    chance 10
+  more
+  arch sling_heavy
+    magic_chance 45
+    chance 5
+  more
+  arch crossbow_small
+    chance 12
+    magic_chance 45
+    magic 1
+  more
+  arch crossbow
+    chance 10
+    magic_chance 45
+    magic 1
+  more
+  arch crossbow_large
+    chance 5
+    magic_chance 45
+    magic 1
+  end
 treasureone random_throw_weapons
   arch t_dagger
+    magic_chance 45
+    magic 2
+    nrof 8
+    chance 30
+  more
+  arch t_axe
+    magic_chance 45
+    magic 2
+    nrof 8
+    chance 30
+  more
+  arch t_star
     magic_chance 45
     magic 2
     nrof 8
@@ -306,44 +359,121 @@ treasureone random_throw_weapons
     nrof 4
     chance 15
   end
-treasureone random_melee_weapons
-  arch dagger
-    magic_chance 45
-    magic 1
-    chance 5
+treasureone random_1h_weapons
+  list random_weapons_cleave_1h
+    chance 25
   more
-  arch sword
-    magic_chance 45
-    magic 1
-    chance 5
+  list random_weapons_slash_1h
+    chance 25
   more
-  arch club
-    magic_chance 45
-    magic 1
-    chance 5
+  list random_weapons_impact_1h
+    chance 25
   more
-  arch axe
-    magic_chance 45
-    magic 1
-    chance 5
+  list random_weapons_pierce_1h
+    chance 25
   end
 treasureone random_2h_weapons
-  arch sword2h
-    chance 20
+  list random_weapons_cleave_2h
+    chance 25
   more
-  arch axe_2h
-    chance 20
+  list random_weapons_slash_2h
+    chance 25
   more
-  arch bo
-    chance 20
+  list random_weapons_impact_2h
+    chance 25
   more
-  arch trident
-    chance 20
+  list random_weapons_pierce_2h
+    chance 25
   end
 treasureone random_pole_weapons
-  arch trident
-    chance 20
+  list random_weapons_cleave_pole
+    chance 25
+  more
+  list random_weapons_slash_pole
+    chance 25
+  more
+  list random_weapons_impact_pole
+    chance 25
+  more
+  list random_weapons_pierce_pole
+    chance 25
   end
+treasureone random_melee_weapons_cleave
+  list random_weapons_cleave_1h
+   chance 55
+  more
+  list random_weapons_cleave_2h
+   chance 35
+  more
+  list random_weapons_cleave_pole
+   chance 10
+end
+treasureone random_weapons_cleave_1h
+  arch trident
+end
+treasureone random_weapons_cleave_2h
+  arch trident
+end
+treasureone random_weapons_cleave_pole
+  arch trident
+end
+treasureone random_melee_weapons_slash
+  list random_weapons_slash_1h
+   chance 55
+  more
+  list random_weapons_slash_2h
+   chance 35
+  more
+  list random_weapons_slash_pole
+   chance 10
+end
+treasureone random_weapons_slash_1h
+  arch trident
+end
+treasureone random_weapons_slash_2h
+  arch trident
+end
+treasureone random_weapons_slash_pole
+  arch trident
+end
+treasureone random_melee_weapons_impact
+  list random_weapons_impact_1h
+   chance 55
+  more
+  list random_weapons_impact_2h
+   chance 35
+  more
+  list random_weapons_impact_pole
+   chance 10
+end
+treasureone random_weapons_impact_1h
+  arch trident
+end
+treasureone random_weapons_impact_2h
+  arch trident
+end
+treasureone random_weapons_impact_pole
+  arch trident
+end
+treasureone random_melee_weapons_pierce
+  list random_weapons_pierce_1h
+   chance 55
+  more
+  list random_weapons_pierce_2h
+   chance 35
+  more
+  list random_weapons_pierce_pole
+   chance 10
+end
+treasureone random_weapons_pierce_1h
+  arch trident
+end
+treasureone random_weapons_pierce_2h
+  arch trident
+end
+treasureone random_weapons_pierce_pole
+  arch trident
+end
 treasureone random_armour
   list random_bracers
     chance 10
@@ -859,6 +989,8 @@ end
 ############# TEST ############################
 treasureone random_test_all
  list random_potion
+ more
+ list random_missile_amun
  more
  list random_scroll
  more

@@ -82,6 +82,7 @@ path_denied 0
 exp 900
 ac 10
 wc 10
+wc_range 25
 dam 15
 hp -1
 maxhp 30

@@ -73,8 +73,9 @@ resist_impact 40
 path_attuned 131096
 path_repelled 256
 path_denied 66561
-ac -5
-wc -1
+ac 20
+wc 20
+wc_range 20
 dam 40
 hp 300
 level 15

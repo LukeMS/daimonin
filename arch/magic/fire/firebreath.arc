@@ -13,7 +13,8 @@ mina
 is_animated 1
 anim_speed 4
 speed 1
-wc -30
+wc 200
+wc_range 20
 dam 3
 level 1
 attack_fire 100
