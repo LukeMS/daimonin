@@ -172,7 +172,13 @@ int command_tell (object *op, char *params)
 			sprintf(buf,"%s tells you: ",op->name);
 			strncat(buf, msg, MAX_BUF-strlen(buf)-1);
 			buf[MAX_BUF-1]=0;
-						
+
+			if(gbl_active_DM && pl->ob != gbl_active_DM && op != gbl_active_DM)
+			{
+				sprintf(buf2,"%s tells %s: ",op->name, pl->ob->name);
+				strncat(buf2, msg, MAX_BUF-strlen(buf)-1);
+				new_draw_info(NDI_PLAYER |NDI_UNIQUE | NDI_NAVY, 0, gbl_active_DM, buf2);
+			}
 			if(pl->dm_stealth)
 			{
 				sprintf(buf,"%s tells you (dm_stealth): ",op->name);
@@ -190,8 +196,10 @@ int command_tell (object *op, char *params)
 				new_draw_info(NDI_PLAYER |NDI_UNIQUE | NDI_NAVY, 0, pl->ob, buf);
 		        /* Update last_tell value [mids 01/14/2002] */
 				strcpy(pl->last_tell, op->name);
-			    return 1;
+				return 1;
 			}
+
+				
 		}
 	}
     new_draw_info(NDI_UNIQUE, 0,op,"No such player.");
@@ -272,7 +280,7 @@ int command_reply (object *op, char *params) {
         new_draw_info(NDI_UNIQUE, 0, op, "You can't reply to nobody.");
         return 1;
     }
-
+	
     /* Find player object of player to reply to and check if player still exists */
     pl = find_player(CONTR(op)->last_tell);
 
@@ -282,10 +290,20 @@ int command_reply (object *op, char *params) {
         return 1;
     }
 
+	if(gbl_active_DM && pl->ob != gbl_active_DM && op != gbl_active_DM)
+	{
+		sprintf(buf2,"%s replies %s: ",op->name, pl->ob->name);
+		strncat(buf2, params, MAX_BUF-strlen(buf)-1);
+		new_draw_info(NDI_PLAYER |NDI_UNIQUE | NDI_NAVY, 0, gbl_active_DM, buf2);
+	}
+
     sprintf(buf, "%s replies you: ", op->name);
     strncat(buf, params, MAX_BUF-strlen(buf)-1);
     buf[MAX_BUF-1] = 0;
 
+	LOG(llevInfo,"CLOG REPLY:%s >%s<\n", query_name(op), buf);
+
+	
     /* Update last_tell value */
     strcpy(pl->last_tell, op->name);
 

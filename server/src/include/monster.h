@@ -77,6 +77,44 @@ struct mob_known_obj {
      * credz gained (for exp sharing)
      */
 };
+  
+typedef enum {
+    BEHAVIOURCLASS_NONE=-1, 
+    BEHAVIOURCLASS_PROCESSES=0, 
+    BEHAVIOURCLASS_MOVES, 
+    BEHAVIOURCLASS_REACTION_MOVES, 
+    BEHAVIOURCLASS_ACTIONS,
+    NROF_BEHAVIOURCLASSES    
+} behaviourclass_t;
+
+/* Internally used behaviour declaration */
+struct mob_behaviourdecl {
+    const char *name;
+    void *func;
+};
+
+/* A behaviour parameter */
+struct mob_behaviour_param {
+    struct mob_behaviour_param *next; /* Linked list */
+    const char *name;             /* Parameter name */
+    const char *stringvalue;      /* Parameter value as string */
+    int intvalue;                 /* Integer value */
+};
+
+/* Call info for a behaviour */
+struct mob_behaviour {
+    struct mob_behaviour *next; /* Linked list */
+    void *func;          /* Badly typed function pointer */
+    struct mob_behaviour_param *parameters; /* Parameters */
+};
+
+struct mob_behaviourset {
+    // struct mob_behaviourset *prev, *next; /* Linked list */
+    // int refcount;                         /* Nr of active mobs using this def */
+    // const char *definition;               /* The string definition */
+        
+    struct mob_behaviour *behaviours[NROF_BEHAVIOURCLASSES];
+};
 
 struct mobdata {
     struct mobdata_pathfinding pathfinding;
@@ -85,6 +123,8 @@ struct mobdata {
     struct mob_known_obj *known_objs; /* TODO optimization for search: binary heap */
 
     struct mob_known_obj *leader, *enemy;
+
+    struct mob_behaviourset *behaviours;
 };
 
 #define MOB_DATA(ob) ((struct mobdata *)((ob)->custom_attrset))

@@ -695,6 +695,7 @@ void setup_library() {
           (chunk_constructor)initialize_mob_data, 
           (chunk_destructor)cleanup_mob_data);
   setup_poolfunctions(POOL_MOB_KNOWN_OBJ, NULL, (chunk_destructor)cleanup_mob_known_obj);
+  setup_poolfunctions(POOL_BEHAVIOURSET, NULL, (chunk_destructor)cleanup_behaviourset);
 }
 
 static void add_corpse_to_racelist (const char *race_name, archetype *op) {

@@ -626,6 +626,27 @@
 </ignore_list>
 
 <!--####################################################################-->
+<type number="126" name="AI Object">
+  <ignore>
+    <ignore_list name="default_setting" />
+  </ignore>
+  <description><![CDATA[
+    AI objects define how a mob behaves in the game. By select and fine-tuning low-level 
+    behaviours many different kinds of high-level behaviours can be achieved.
+    For now it may be a good idea to start out with a predefined AI and change some
+    of the parameters.
+    <br> 
+    We aim to create a better behaviour editor in the future. Contact the devteam if
+    you are interested in implementing it.
+    ]]>
+  </description>
+  <attribute arch_begin="msg" arch_end="endmsg" editor="Behaviour list" type="text">
+    This is where behaviours are defined. A behaviour belongs to one of the predefined classes,
+    and may take parameters. 
+  </attribute>
+</type>
+
+<!--####################################################################-->
 <type number="79" name="Misc Object">
   <ignore>
     <ignore_list name="default_setting" />

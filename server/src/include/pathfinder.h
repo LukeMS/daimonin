@@ -58,10 +58,6 @@ static inline void free_path(struct path_segment *p)
     }
 }
 
-/* Psuedo-flag used to mark waypoints as "has requested path" */
-/* Reuses a non-saved flag                                    */
-#define FLAG_WP_PATH_REQUESTED FLAG_PARALYZED
-
 /* Uncomment this to enable some verbose pathfinding debug messages */
 /* #define DEBUG_PATHFINDING */
 

@@ -392,6 +392,7 @@ int main(int argc, char **argv);
 int is_friend_of(object *op, object *obj);
 void initialize_mob_data(struct mobdata *data);
 void cleanup_mob_data(struct mobdata *data);
+void cleanup_behaviourset(struct mob_behaviourset *data);
 void cleanup_mob_known_obj(struct mob_known_obj *data);
 struct mob_known_obj *register_npc_known_obj(object *npc, object *enemy, int friendship);
 object *check_enemy(object *npc, rv_vector *rv);

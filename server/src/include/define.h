@@ -63,6 +63,9 @@ error - Your ANSI C compiler should be defining __STDC__;
 #ifndef MAX
 #define MAX(x,y) ((x)>(y)?(x):(y))
 #endif
+#ifndef SGN
+#define SGN(x) ((x)>0?1:((x)<0?-1:0))
+#endif
 
 #define MAX_STAT		30	/* The maximum legal value of any stat */
 #define MIN_STAT		1	/* The minimum legal value of any stat */
@@ -293,9 +296,8 @@ error - Your ANSI C compiler should be defining __STDC__;
 										 * tranformed to money by using level of mob or map to generating
 										 * a fitting amount of money basing on the base setting).
 										 */
-/* unused: 126 - 129
- * type 125 was MONEY_CHANGER
- */
+#define TYPE_AI                 126 /* MOB AI definition object */                               
+/* unused: 127 - 129 */
 #define SKILLSCROLL	            130	/* can add a skill to player's inventory -bt.*/
 #define DEEP_SWAMP	            138
 #define IDENTIFY_ALTAR	        139

@@ -141,6 +141,7 @@
   <type number="123" name="ARMOUR_IMPROVER" />
   <type number="124" name="WEAPON_IMPROVER" />
   <type number="125" name="TYPE_WEALTH" />
+  <type number="126" name="TYPE_MOB_AI" />
 
   <type number="130" name="SKILLSCROLL" />
   
