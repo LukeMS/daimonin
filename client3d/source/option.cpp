@@ -57,6 +57,11 @@ bool Option::Init(char *filename)
     _options  *ptions = &options; 
 
 
+	mMetaServer ="damn.informatik.uni-bremen.de";
+	mMetaServerPort = 13326;
+	mSelectedMetaServer =0;
+	mStartNetwork = false;
+
 /*
 	for (int i=0; opt[i].name; ++i)
     {

@@ -24,9 +24,9 @@ http://www.gnu.org/copyleft/lesser.txt.
 #ifndef OPTION_H
 #define OPTION_H
 
-//#include <Ogre.h>
+#include <string>
 
-//using namespace Ogre;
+using namespace std;
 
 
 typedef struct _options
@@ -107,21 +107,17 @@ class Option
     _options  *my_options; 
 
     int GameStatus;
-	/*
-	int mMetaServerPort = 13326; 
-	const char mMetaServer ="damn.informatik.uni-bremen.de";
 
-	int mMetaServerPort = 13327; 
-	const char mMetaServer ="127.0.0.1";
-    */    
+	std::string mMetaServer;
+	unsigned int  mMetaServerPort;
+	unsigned int  mSelectedMetaServer;
+    bool mStartNetwork;
+
 
     bool Init(char *);
   private:
     Option(const Option&); // disable copy-constructor.
     bool mLogin;
-
-
-
 
 }; 
 

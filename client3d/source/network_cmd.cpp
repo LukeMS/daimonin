@@ -251,20 +251,20 @@ void Network::PreParseInfoStat(char *cmd)
 */
 		TextInput::getSingleton().stop();
         Option::getSingelton().GameStatus = GAME_STATUS_NAME;
-		TextInput::getSingleton().start(MAX_LEN_LOGIN_NAME, false, false); // every start() needs a stop()!
+		TextInput::getSingleton().startTextInput(MAX_LEN_LOGIN_NAME, false, false); // every start() needs a stop()!
     }
     if (strstr(cmd, "What is your password?"))
     {
 		TextInput::getSingleton().stop();
         Option::getSingelton().GameStatus = GAME_STATUS_PSWD;
-		TextInput::getSingleton().start(MAX_LEN_LOGIN_NAME); // every start() needs a stop()!
+		TextInput::getSingleton().startTextInput(MAX_LEN_LOGIN_NAME); // every start() needs a stop()!
 		mPasswordAlreadyAsked = 1;
     }
     if (strstr(cmd, "Please type your password again."))
     {
 		TextInput::getSingleton().stop();
         Option::getSingelton().GameStatus = GAME_STATUS_VERIFYPSWD;
-		TextInput::getSingleton().start(MAX_LEN_LOGIN_NAME); // every start() needs a stop()!
+		TextInput::getSingleton().startTextInput(MAX_LEN_LOGIN_NAME); // every start() needs a stop()!
         mPasswordAlreadyAsked = 2;
     }
 }
