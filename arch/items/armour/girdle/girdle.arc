@@ -9,7 +9,7 @@ protect_cleave 2
 protect_slash 2
 weight 200
 value 20
-is_vul_acid 1
+is_vul_physical 1
 is_vul_elemental 1
 is_vul_magic 1
 is_vul_sphere 1
