@@ -339,10 +339,9 @@ void free_string_shared(char *str)
     GATHER(free_stats.calls);
 
     ss = SS(str);
-
-    if (--ss->refcount & ~TOPBIT == 0)
+	--ss->refcount;
+    if ((ss->refcount & ~TOPBIT) == 0)
 	{
-		/*LOG(llevDebug,"SS: >%s< #%d remove!\n", str,ss->refcount& ~TOPBIT);*/
 		/* Remove this entry.
 		 */
 		if (ss->refcount & TOPBIT)
@@ -351,18 +350,21 @@ void free_string_shared(char *str)
 			 */
 			if (ss->next)
 			{
+				LOG(llevDebug,"SS: >%s< #%d remove_a!\n", str,ss->refcount& ~TOPBIT);
 				*(ss->u.array) = ss->next;
 				ss->next->u.array = ss->u.array;
 				ss->next->refcount |= TOPBIT;
 			} 
 			else 
 			{
+				LOG(llevDebug,"SS: >%s< #%d remove_b!\n", str,ss->refcount& ~TOPBIT);
 				*(ss->u.array) = NULL;
 			}
 			free(ss);
 		} 
 		else 
 		{
+			LOG(llevDebug,"SS: >%s< #%d remove_c!\n", str,ss->refcount& ~TOPBIT);
 			/* Relink and free this struct.
 			 */
 			if (ss->next)
@@ -371,9 +373,10 @@ void free_string_shared(char *str)
 			free(ss);
 		}
     }
-	/*
+/*
 	else
-		LOG(llevDebug,"SS: >%s< #%d dec\n", str,ss->refcount& ~TOPBIT);*/
+		LOG(llevDebug,"SS: >%s< #%d dec\n", str,ss->refcount& ~TOPBIT);
+*/
 }
 
 #ifdef SS_STATISTICS
