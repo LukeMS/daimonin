@@ -1225,10 +1225,8 @@ int kill_object(object *op,int dam, object *hitter, int type)
 	    }
 	    remove_ob(op);
 
-		/* if we got exp == 0 AND hitter is player ,we skip item dropping - bad to kill to low
-		 * mobs for items only 
-		 */
-		if(!exp && (hitter->type == PLAYER || (get_owner(hitter) && hitter->owner->type == PLAYER)))
+		/* harder drop rules: if exp== 0 or not a player or not a player invoked hitter: no drop */
+		if(!exp || hitter->type != PLAYER || (get_owner(hitter) && hitter->owner->type != PLAYER))
 			SET_FLAG(op,FLAG_STARTEQUIP);
 	    free_object(op);
 	}

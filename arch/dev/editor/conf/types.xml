@@ -3862,7 +3862,7 @@
   </attribute>
   <attribute arch="sp" editor="first spawn chance" type="int">
     If -1 at start, the spawn point will do a normal spawn.
-    If set to 0-99999, the spawn point will be forced to spawn
+    If set to 0-9999, the spawn point will be forced to spawn
     the mob with the nearest set chance (lower or same value)
     ONE TIME when the spawn point is called the first time.
     See SPAWN POINT MOB objects for more information.
@@ -3971,7 +3971,7 @@
     type thats they act totally synchron.
   </attribute>
   <attribute arch="object_int1" editor="chance to spawn" type="int">
-    The spawn point will use a random number between 0-99999 to
+    The spawn point will use a random number between 0-9999 to
     find a usable mob to spawn. If this value is nearest but
     not higher, this mob is selected. A number of 0 and only one
     mob in the spawn point means this mob is spawned always. A 

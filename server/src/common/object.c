@@ -961,8 +961,7 @@ void free_object(object *ob) {
     ob->more=NULL;
   }
   if (ob->inv) {
-    if (ob->map==NULL || ob->map->in_memory!=MAP_IN_MEMORY ||
-       wall(ob->map,ob->x,ob->y))
+    if (ob->map==NULL || ob->map->in_memory!=MAP_IN_MEMORY || wall(ob->map,ob->x,ob->y))
     {
       op=ob->inv;
       while(op!=NULL) {
@@ -979,7 +978,7 @@ void free_object(object *ob) {
 		{
 			object *corpse=NULL;
 
-			if((QUERY_FLAG(ob,FLAG_CORPSE) && ob->inv && !QUERY_FLAG(ob,FLAG_STARTEQUIP))
+			if((QUERY_FLAG(ob,FLAG_CORPSE) && !QUERY_FLAG(ob,FLAG_STARTEQUIP))
 														|| QUERY_FLAG(ob,FLAG_CORPSE_FORCED))
 			{
 				racelink *race_corpse = find_racelink(ob->race);

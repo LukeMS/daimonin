@@ -817,7 +817,7 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 				{
 					op->stats.sp = op->last_sp; /* force a pre spawn setting */
 					remove_ob(op->enemy);
-					SET_FLAG(op,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
+					SET_FLAG(op->enemy,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
 					free_object(op->enemy);
 				}
 			}
