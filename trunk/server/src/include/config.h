@@ -134,7 +134,6 @@
  * Short list of features, and what to search for:
  * ALCHEMY - enables alchemy code
  * BALANCED_STAT_LOSS - Based death stat depletion on level etc?
- * CASTING_TIME - makes spells take time to cast
  * CS_LOGSTATS - log various new client/server data.
  * DEBUG - more verbose message logging?
  * EXPLORE_MODE - add an explore mode method of play?
@@ -201,19 +200,6 @@
 #define BALSL_NUMBER_LOSSES_RATIO  6
 #define BALSL_MAX_LOSS_RATIO       2
 
-/* casting times for spells, if you have this defined then it takes a
- * specific amount of time for a spell to go off. You may attack or
- * be hit during this time, and this will cause you to lose the spell.
- * I commented this out on my copy - I don't like the 'double clutch'
- * needed to cast it (first direction key starts casting, the
- * next actually puts the spell into effect.)  It could perhaps
- * be changed so that the initial direction is where it goes, and it
- * is cast automatically in that direction (so only 1 key is needed.)
- * But this could be undesirable as various things move while you cast it.
- */
-/*
-#define CASTING_TIME
-*/
 
 /* CS_LOGSTATS will cause the server to log various usage stats
  * (number of connections, amount of data sent, amount of data received,

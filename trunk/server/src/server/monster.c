@@ -1418,7 +1418,7 @@ int monster_cast_spell(object *head, object *part,object *pl,int dir, rv_vector 
     ability = (spell_item->type==ABILITY && QUERY_FLAG(spell_item,FLAG_IS_MAGICAL) );
 
     /* If we cast a spell, only use up casting_time speed */
-    head->speed_left+=(float)1.0 - (float) spells[sp_typ].time/(float)20.0*(float)FABS(head->speed); 
+    /*head->speed_left+=(float)1.0 - (float) spells[sp_typ].time/(float)20.0*(float)FABS(head->speed); */
 
     head->stats.sp-=SP_level_spellpoint_cost(head,head,sp_typ);
 
@@ -1640,9 +1640,12 @@ int monster_use_bow(object *head, object *part, object *pl, int dir) {
   arrow->map=head->map;
   arrow->last_sp = 12; /* we use fixed value for mobs */
   SET_FLAG(arrow, FLAG_FLYING);
+  SET_FLAG(arrow, FLAG_IS_MISSILE);
   SET_FLAG(arrow, FLAG_FLY_ON);
   SET_FLAG(arrow, FLAG_WALK_ON);
   tag = arrow->count;
+  arrow->stats.grace = arrow->last_sp;
+  arrow->stats.maxgrace = 60+(RANDOM()%12);
   insert_ob_in_map(arrow,head->map,head,0);
   play_sound_map(arrow->map, arrow->x, arrow->y,SOUND_THROW, SOUND_NORMAL);
   if (!was_destroyed(arrow, tag))

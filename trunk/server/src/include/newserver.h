@@ -33,8 +33,6 @@
 #ifndef NEWSERVER_H
 #define NEWSERVER_H
 
-#define ROUND_TAG global_round_tag /* put this here because the DIFF */
-extern uint32 global_round_tag; /* global round ticker ! this is real a global */
 
 #define NUM_LOOK_OBJECTS 15
 

@@ -221,15 +221,6 @@ typedef struct obj
 	uint32	attacktype;			/* REMOVE IS IN PROCESS */
 
 
-#ifdef CASTING_TIME
-	sint16 casting;				/* time left before spell goes off */
-	uint16 spell_state;
-	uint16 start_holding;
-	struct spell_struct *spell;
-	uint32 spelltype;
-	char *spellarg;
-#endif
-
 #ifdef POSITION_DEBUG
 	sint16 ox,oy;				/* For debugging: Where it was last inserted */
 #endif

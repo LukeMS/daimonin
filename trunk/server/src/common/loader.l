@@ -83,6 +83,8 @@
 	"wc_range"
 	"door_closed"
 	"item_level_art" <- special token from artifact lists"
+	"was_reflected"
+	"is_assassin"
 */
 
 #define YY_DECL int lex_load(object *op, int map_flags)
@@ -354,6 +356,9 @@ op->oy= op->y;
 ^is_thrown{S}				SET_OR_CLEAR_FLAG(op, FLAG_IS_THROWN, IVAL);
 ^auto_apply{S}				SET_OR_CLEAR_FLAG(op, FLAG_AUTO_APPLY, IVAL);
 ^treasure{S}				SET_OR_CLEAR_FLAG(op, FLAG_TREASURE, IVAL);
+^was_reflected{S}			SET_OR_CLEAR_FLAG(op, FLAG_WAS_REFLECTED, IVAL);
+^is_assassin{S}				SET_OR_CLEAR_FLAG(op, FLAG_IS_ASSASSINATION, IVAL);
+^is_missile{S}				SET_OR_CLEAR_FLAG(op, FLAG_IS_MISSILE, IVAL);
 ^see_invisible{S}			SET_OR_CLEAR_FLAG(op, FLAG_SEE_INVISIBLE, IVAL);
 ^make_invisible{S}			SET_OR_CLEAR_FLAG(op, FLAG_MAKE_INVISIBLE, IVAL);
 ^make_ethereal{S}			SET_OR_CLEAR_FLAG(op, FLAG_MAKE_ETHEREAL, IVAL);
@@ -407,7 +412,9 @@ op->oy= op->y;
 ^scared{S}  	    SET_OR_CLEAR_FLAG(op, FLAG_SCARED, IVAL);
 ^unaggressive{S}    SET_OR_CLEAR_FLAG(op, FLAG_UNAGGRESSIVE, IVAL);
 ^reflect_missile{S} SET_OR_CLEAR_FLAG(op, FLAG_REFL_MISSILE, IVAL);
+^can_reflect_missile{S} SET_OR_CLEAR_FLAG(op, FLAG_CAN_REFL_MISSILE, IVAL);
 ^reflect_spell{S}   SET_OR_CLEAR_FLAG(op, FLAG_REFL_SPELL, IVAL);
+^can_reflect_spell{S}   SET_OR_CLEAR_FLAG(op, FLAG_CAN_REFL_SPELL, IVAL);
 ^no_magic{S} 	    SET_OR_CLEAR_FLAG(op, FLAG_NO_MAGIC, IVAL);
 ^no_cleric{S} 	    SET_OR_CLEAR_FLAG(op, FLAG_NO_CLERIC, IVAL);
 ^wiz{S}  	    {	if (IVAL) {
@@ -882,7 +889,8 @@ NULL /*is_removed*/,"been_applied", "auto_apply", "treasure", "is_neutral",	/* 2
 "is_vul_magic", "is_proof_magic", "is_vul_physical", "is_proof_physical", "sys_object", /* 110 */
 "use_fix_pos","unpaid","is_aged","make_invisible" , "make_ethereal","is_player",
 "is_named",NULL /* spawn mob flag */, "no_teleport", "corpse", "corpse_forced",
-"player_only", "no_cleric", "one_drop", "cursed_perm", "damned_perm", "door_closed"
+"player_only", "no_cleric", "one_drop", "cursed_perm", "damned_perm", "door_closed",
+"was_reflected", "is_missile","can_reflect_missile","can_reflect_spell","is_assassin"
 };
 
  

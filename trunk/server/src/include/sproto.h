@@ -451,6 +451,7 @@ void recursive_roll(object *op, int dir, object *pusher);
 int try_fit(object *op, int x, int y);
 int roll_ob(object *op, int dir, object *pusher);
 int push_ob(object *who, int dir, object *pusher);
+int missile_reflection_adjust(object *op, int flag);
 /* pets.c */
 object *get_pet_enemy(object *pet, rv_vector *rv);
 void terminate_all_pets(object *owner);
@@ -667,6 +668,7 @@ int do_skill_attack(object *tmp, object *op, char *string);
 int SK_level(object *op);
 object *SK_skill(object *op);
 float get_skill_time(object *op, int skillnr);
+int check_skill_action_time(object *op, object *skill);
 int get_skill_stat1(object *op);
 int get_skill_stat2(object *op);
 int get_skill_stat3(object *op);

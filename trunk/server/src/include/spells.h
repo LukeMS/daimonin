@@ -26,13 +26,9 @@
 #ifndef SPELLS_H
 #define SPELLS_H
 
-extern Fontindex fbface[];
-extern Fontindex lface[];
-extern Fontindex  mmface[];
-extern int turn_bonus[];
+extern int turn_bonus[]; /* chance array for stat values */
 extern int fear_bonus[];
 extern int cleric_chance[];
-
 
 #define SPELL_USE_INTERN 0x00 /* special spells - don't list them as avaible spell */
 #define SPELL_USE_CAST   0x01 /* spell can be casted normal */

@@ -41,40 +41,40 @@
  * Normal game commands
  */
 CommArray_s Commands[] = {
-  {"/stay",			command_stay,			1.0}, 
-  {"/n",			command_north,			1.0},
-  {"/e",			command_east,			1.0},
-  {"/s",			command_south,			1.0},
-  {"/w",			command_west,			1.0},
-  {"/ne",			command_northeast,		1.0},
-  {"/se",			command_southeast,		1.0},
-  {"/sw",			command_southwest,		1.0},
-  {"/nw",			command_northwest,		1.0},
-  {"/apply",		command_apply,			1.0},	/* should be variable */
-  {"/target",		command_target,			0.25f}, /* enter combat and attack object in reach */
-  {"/combat",		command_combat,			0.25f}, /* toggle attack mode of player */
-  {"/pray",			command_praying,		1.0},
+  {"/stay",			command_stay,			1.0f}, 
+  {"/n",			command_north,			1.0f},
+  {"/e",			command_east,			1.0f},
+  {"/s",			command_south,			1.0f},
+  {"/w",			command_west,			1.0f},
+  {"/ne",			command_northeast,		1.0f},
+  {"/se",			command_southeast,		1.0f},
+  {"/sw",			command_southwest,		1.0f},
+  {"/nw",			command_northwest,		1.0f},
+  {"/apply",		command_apply,			1.0f},	/* should be variable */
+  {"/target",		command_target,			0.1f}, /* enter combat and attack object in reach */
+  {"/combat",		command_combat,			0.1f}, /* toggle attack mode of player */
+  {"/pray",			command_praying,		0.2f},
 
-  {"/run",			command_run,			1.0},
-  {"/run_stop",		command_run_stop,		0.0},
-  {"/cast",			command_cast_spell,		0.0},	/* use time comes from spells! */ 
-  {"/say",			command_say,			1.0},
-  {"/shout",		command_shout,			1.0},
-  {"/tell",			command_tell,			1.0},
-  {"/t_tell",		command_t_tell,			1.0},
-  {"/who",			command_who,			5.0},
-  {"/mapinfo",		command_mapinfo,		5.0},
-  {"/motd",			command_motd,			5.0},
-  {"/dm",			command_dm,				1.0},
-  {"/reply",		command_reply,			1.0},
-  {"/usekeys",		command_usekeys,		1.0},
-  {"/time",			command_time,			1.0},
-  {"/version",		command_version,		1.0},
-  {"/mark",			command_mark,			1.0},
-  {"/help",			command_help,			1.0},
-  {"/save",			command_save,			1.0},
-  {"/use_skill",	command_uskill,			0.2f},
-  {"/ready_skill",	command_rskill,			0.2f},
+  {"/run",			command_run,			0.05f},
+  {"/run_stop",		command_run_stop,		0.01f},
+  {"/cast",			command_cast_spell,		0.0f},	/* use time comes from spells! */ 
+  {"/say",			command_say,			1.0f},
+  {"/shout",		command_shout,			1.0f},
+  {"/tell",			command_tell,			1.0f},
+  {"/t_tell",		command_t_tell,			1.0f},
+  {"/who",			command_who,			5.0f},
+  {"/mapinfo",		command_mapinfo,		5.0f},
+  {"/motd",			command_motd,			5.0f},
+  {"/dm",			command_dm,				1.0f},
+  {"/reply",		command_reply,			1.0f},
+  {"/usekeys",		command_usekeys,		1.0f},
+  {"/time",			command_time,			1.0f},
+  {"/version",		command_version,		1.0f},
+  {"/mark",			command_mark,			1.0f},
+  {"/help",			command_help,			1.0f},
+  {"/save",			command_save,			1.0f},
+  {"/use_skill",	command_uskill,			0.1f},
+  {"/ready_skill",	command_rskill,			0.1f},
 /*  {"/sound",		command_sound,			1.0},*/
 /*  {"/delete",		command_quit,			1.0},*/
 /*  {"/pickup",		command_pickup,			1.0}, we don't want and need this anymore */

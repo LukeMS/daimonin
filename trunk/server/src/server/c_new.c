@@ -306,10 +306,12 @@ int command_combat(object *op, char *params)
 /* TODO: at some time, we should move the target stuff to the client. but for this,
  * we need a better and smarter client information strategy - MT2003 
  */
+/* this function needs a rework... its a bit bulky after adding all this exceptions MT-2004 */
 int command_target(object *op, char *params)
 {
 	mapstruct *m;
 	object *tmp, *head;
+	int jump_in,jump_in_n,get_ob_flag;
 	int n,nt,xt,yt, block, pvp_flag = FALSE;
 
 	if(!op || !op->map || !op->contr || !params || params[0]==0)
@@ -446,15 +448,32 @@ int command_target(object *op, char *params)
 			/* if our target before was a non enemy, start new search
 			 * if it was an enemy, use old value.
 			 */
-			n=1; /* don't start with ourself */
+			n=0;
 			nt=-1;
-		
 			/* lets search for last friendly object position! */
-			if(op->contr->target_object && op->contr->target_object_count==op->contr->target_object->count 
-												&& QUERY_FLAG(op->contr->target_object,FLAG_FRIENDLY ))
+			if(op->contr->target_object == op)
+			{
+				get_ob_flag=0;
+				jump_in=1;
+				jump_in_n=n;		
+				tmp = op->above;
+			}
+			else if(op->contr->target_object && op->contr->target_object_count==op->contr->target_object->count 
+				&& (QUERY_FLAG(op->contr->target_object,FLAG_FRIENDLY )||op->contr->target_object->type == PLAYER))
+			{
+				get_ob_flag=0;
+				jump_in=1;
 				n=op->contr->target_map_pos;
+				jump_in_n=n;		
+				tmp = op->contr->target_object->above;				
+			}
 			else
+			{
+				n=1;
 				op->contr->target_object=NULL;
+				jump_in=0;
+				get_ob_flag=1;
+			}
 		
 			/* now check where we are. IF we are on a PvP map or in a PvP area - then we can
 			 * target players on a PvP area too... TODO: group check for group PvP
@@ -462,11 +481,13 @@ int command_target(object *op, char *params)
 			if(GET_MAP_FLAGS(op->map,op->x,op->y)&P_IS_PVP || op->map->map_flags&MAP_FLAG_PVP)
 				pvp_flag = TRUE;
 
+
 			for(;n<NROF_MAP_NODE && n!=nt;n++)
 			{
 				int xx,yy;
 				if(nt==-1)
 					nt=n;
+dirty_jump_in1:
 				xt=op->x+(xx=map_pos_array[n][MAP_POS_X]);
 				yt=op->y+(yy=map_pos_array[n][MAP_POS_Y]);
 				block = op->contr->blocked_los[xx+op->contr->socket.mapx_2][yy+op->contr->socket.mapy_2];
@@ -480,7 +501,10 @@ int command_target(object *op, char *params)
 				* on a square - but i try this first without 
 				* handle it.
 				*/
-				for(tmp=get_map_ob(m,xt,yt);tmp!=NULL;tmp=tmp->above)
+				if(get_ob_flag)
+					tmp=get_map_ob(m,xt,yt);
+
+				for(get_ob_flag=1;tmp!=NULL;tmp=tmp->above)
 				{
 					/* this is a possible target */
 					tmp->head!=NULL?(head=tmp->head):(head=tmp); /* ensure we have head */
@@ -502,6 +526,17 @@ int command_target(object *op, char *params)
 				}
 				if((n+1)==NROF_MAP_NODE) /* force a full loop */
 					n=-1;
+			}
+
+			if(jump_in) /* force another dirty jump ;) */
+			{
+				n = jump_in_n;
+				jump_in=0;
+				if((n+1)==NROF_MAP_NODE)
+					nt=-1;
+				else
+					nt=n;
+				goto dirty_jump_in1;
 			}
 		}
 	}

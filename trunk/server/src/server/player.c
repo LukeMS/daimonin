@@ -893,8 +893,7 @@ object *find_arrow(object *op, const char *type)
 }
 
 /*
- *  Player fires a bow. This probably should be combined with
- *  monster_use_bow().
+ *  Player fires a bow.
  */
 static void fire_bow(object *op, int dir)
 {
@@ -906,17 +905,16 @@ static void fire_bow(object *op, int dir)
     return;
   }
 
-  /* TODO: put applied_bow ptr for quick access in player struct */
-  for(bow=op->inv; bow; bow=bow->below)
-    if(bow->type==BOW && QUERY_FLAG(bow, FLAG_APPLIED))
-      break;
-
+  bow = op->contr->equipment[PLAYER_EQUIP_BOW];
   if (!bow)
     LOG(llevBug, "BUG: Range: bow without activated bow (%s - %d).\n", op->name, dir);
-  if( !bow->race ) {
+  
+  if( !bow->race ) 
+  {
     new_draw_info_format(NDI_UNIQUE, 0,op, "Your %s is broken.", bow->name);
     return;
   }
+
   if ((arrow=find_arrow_ext(op, bow->race, op->contr->firemode_tag2)) == NULL) {
     new_draw_info_format(NDI_UNIQUE, 0,op,"You have no %s left.", bow->race);
     return;
@@ -927,6 +925,7 @@ static void fire_bow(object *op, int dir)
   }
   /* this should not happen, but sometimes does */
   if (arrow->nrof==0) {
+	LOG(llevDebug,"BUG?: arrow->nrof == 0 in fire_bow() (%s)\n", query_name(arrow));
 	remove_ob(arrow);
 	free_object(arrow);
 	return;
@@ -940,8 +939,12 @@ static void fire_bow(object *op, int dir)
   arrow->x = op->x;
   arrow->y = op->y;
   arrow->speed = 1;
-  op->speed_left = 0.01f - FABS(op->speed) * 100.0f / (float)bow->stats.sp;
-  fix_player(op);
+
+  /* now the trick: we transfer the shooting speed in the used
+   * skill - that will allow us to use "set_skill_speed() as global
+   * function.
+   */
+  op->chosen_skill->stats.maxsp = bow->stats.sp + arrow->last_grace;
   update_ob_speed(arrow);
   arrow->speed_left = 0;
   SET_ANIMATION(arrow, (NUM_ANIMATIONS(arrow)/NUM_FACINGS(arrow))*dir);
@@ -981,8 +984,11 @@ static void fire_bow(object *op, int dir)
 								 */
   arrow->map = op->map;
   SET_MULTI_FLAG(arrow, FLAG_FLYING);
+  SET_FLAG(arrow, FLAG_IS_MISSILE);
   SET_FLAG(arrow, FLAG_FLY_ON);
   SET_FLAG(arrow, FLAG_WALK_ON);
+  arrow->stats.grace = arrow->last_sp; /* temp. buffer for "tiles to fly" */
+  arrow->stats.maxgrace = 60+(RANDOM()%12); /* reflection timer */
   play_sound_map(op->map, op->x, op->y, SOUND_FIRE_ARROW, SOUND_NORMAL);
   insert_ob_in_map(arrow,op->map,op,0);
   move_arrow(arrow);
@@ -993,7 +999,8 @@ static void fire_bow(object *op, int dir)
 }
 
 
-void fire(object *op,int dir) {
+void fire(object *op,int dir)
+{
   object *weap=NULL;
   int spellcost=0;
 
@@ -1027,8 +1034,10 @@ void fire(object *op,int dir) {
             tmp = find_throw_tag(op, (tag_t) op->contr->firemode_tag1);            
             if(tmp)
 			{
-                do_throw(op,tmp,dir);            
-				op->speed_left -= get_skill_time(op,op->chosen_skill->stats.sp);
+				if(!check_skill_action_time(op, op->chosen_skill))
+					return;
+                do_throw(op,tmp,dir);
+				get_skill_time(op,op->chosen_skill->stats.sp);
 			}
             return;
         }
@@ -1062,22 +1071,28 @@ void fire(object *op,int dir) {
   case range_bow:
     if(op->contr->firemode_tag2!= -1)
 	{
+		/* we still recover from range action? */
+		if(!check_skill_action_time(op, op->chosen_skill))
+			return;
+		
         fire_bow(op, dir);
-		op->speed_left -= get_skill_time(op,op->chosen_skill->stats.sp);
+		get_skill_time(op,op->chosen_skill->stats.sp);
+		/* op->speed_left -= get_skill_time(op,op->chosen_skill->stats.sp); */
 	}
     return;
 
   case range_magic: /* Casting spells */
 
-    spellcost=cast_spell(op,op,dir,op->contr->chosen_spell,0,spellNormal,NULL);
-	/* we should use spell time not skill time */
-	/*op->speed_left -= get_skill_time(op,op->chosen_skill->stats.sp); */
+	  if(!check_skill_action_time(op, op->chosen_skill))
+		  return;
+	  spellcost=cast_spell(op,op,dir,op->contr->chosen_spell,0,spellNormal,NULL);
 
     if(spells[op->contr->chosen_spell].flags&SPELL_DESC_WIS)
         op->stats.grace-=spellcost;
     else
 		op->stats.sp-=spellcost;
 
+	get_skill_time(op,op->chosen_skill->stats.sp);
     return;
 
   case range_wand:
@@ -1089,10 +1104,12 @@ void fire(object *op,int dir) {
               goto trick_jump;
           }
 
+	if(!check_skill_action_time(op, op->chosen_skill))
+		return;
     if(weap->stats.food<=0) {
       play_sound_player_only(op->contr, SOUND_WAND_POOF,SOUND_NORMAL,0,0);
       new_draw_info(NDI_UNIQUE, 0,op,"The wand says poof.");
-	  op->speed_left -= get_skill_time(op,op->chosen_skill->stats.sp);
+	  /*op->speed_left -= get_skill_time(op,op->chosen_skill->stats.sp);*/
       return;
     }
     
@@ -1112,7 +1129,8 @@ void fire(object *op,int dir) {
 	    esrv_update_item(UPD_ANIM, tmp, weap);
       }
     }
-	op->speed_left -= get_skill_time(op,op->chosen_skill->stats.sp);
+	get_skill_time(op,op->chosen_skill->stats.sp);
+	/*op->speed_left -= get_skill_time(op,op->chosen_skill->stats.sp);*/
     return;
   case range_rod:
   case range_horn:
@@ -1135,7 +1153,8 @@ trick_jump:
                 return;
               }
           }
-          
+	if(!check_skill_action_time(op, op->chosen_skill))
+			  return;
     if(weap->stats.hp<spells[weap->stats.sp].sp) {
       play_sound_player_only(op->contr, SOUND_WAND_POOF,SOUND_NORMAL,0,0);
       if (op->contr->shoottype == range_rod)
@@ -1143,7 +1162,6 @@ trick_jump:
       else
 	new_draw_info(NDI_UNIQUE, 0,op,
 	          "No matter how hard you try you can't get another note out.");
-	  op->speed_left -= get_skill_time(op,op->chosen_skill->stats.sp);
       return;
     }
     /*new_draw_info_format(NDI_ALL|NDI_UNIQUE,5,NULL,"Use %s - cast spell %d\n",weap->name,weap->stats.sp);*/
@@ -1152,8 +1170,8 @@ trick_jump:
       SET_FLAG(op, FLAG_BEEN_APPLIED); /* You now know something about it */
       drain_rod_charge(weap);
     }
-	  op->speed_left -= get_skill_time(op,op->chosen_skill->stats.sp);
-    return;
+	get_skill_time(op,op->chosen_skill->stats.sp);
+	return;
   case range_scroll: /* Control summoned monsters from scrolls */
     if(op->contr->golem==NULL) {
       op->contr->shoottype=range_none;

@@ -551,11 +551,12 @@ static PyObject* Daimonin_Object_GetSkill(Daimonin_Object *whoptr, PyObject* arg
 
 /*****************************************************************************/
 /* Name   : Daimonin_Object_SetSkill                                         */
-/* Python : object.SetSkill(skillid,value)                                   */
+/* Python : object.SetSkill(type, skillid, level, value)                     */
 /* Info   : Sets objects's experience in the skill skillid as close to value */
 /*          as permitted. There is currently a limit of 1/4 of a level.      */
 /*          There's no limit on exp reduction.                               */
 /*          FIXME overall experience is not changed (should it be?)          */
+/*          FIXME need updated documentation                                 */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static PyObject* Daimonin_Object_SetSkill(Daimonin_Object *whoptr, PyObject* args)
@@ -929,11 +930,12 @@ static PyObject* Daimonin_Object_Deposit(Daimonin_Object *whoptr, PyObject* args
 }
 
 /*****************************************************************************/
-/* Name   : Daimonin_Object_Deposit                                          */
-/* Python : object.Deposit(deposit_object, string)                           */
-/* Info   : deposit value or string money from object in deposit_object.     */
+/* Name   : Daimonin_Object_Withdraw                                         */
+/* Python : object.Withdraw(deposit_object, string)                          */
+/* Info   : withdraw value or string money from object in deposit_object.    */
 /*          Control first object has that amount of money, then remove it    */
 /*          from object and add it in ->value of deposit_object.             */
+/*          FIXME Needs updated documentation                                */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static PyObject* Daimonin_Object_Withdraw(Daimonin_Object *whoptr, PyObject* args)
@@ -981,8 +983,9 @@ static PyObject* Daimonin_Object_Communicate(Daimonin_Object *whoptr, PyObject* 
 
 /*****************************************************************************/
 /* Name   : Daimonin_Object_Say                                              */
-/* Python : object.Say(message)                                              */
+/* Python : object.Say(message, mode)                                        */
 /* Info   : object says message to everybody on its map                      */
+/*          FIXME needs documentation of mode                                */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static PyObject* Daimonin_Object_Say(Daimonin_Object *whoptr, PyObject* args)
@@ -1024,8 +1027,9 @@ static PyObject* Daimonin_Object_Say(Daimonin_Object *whoptr, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : Daimonin_Object_SayTo                                            */
-/* Python : object.SayTo(target, message)                                    */
+/* Python : object.SayTo(target, message, mode)                              */
 /* Info   : NPC talks only to player but map get a "xx talks to" msg too.    */
+/*          FIXME needs documentation of mode parameter                      */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static PyObject* Daimonin_Object_SayTo(Daimonin_Object* whoptr, PyObject* args)
@@ -1693,8 +1697,8 @@ static PyObject* Daimonin_Object_CreatePlayerForce(Daimonin_Object *whereptr, Py
 }
 
 /*****************************************************************************/
-/* Name   : Daimonin_Object_CheckQuestObject                                   */
-/* Python : object.CheckQuestObject(name)                                      */
+/* Name   : Daimonin_Object_CheckQuestObject                                 */
+/* Python : object.CheckQuestObject(archetype, name)                         */
 /* Status : Stable                                                           */
 /* Info   : We get and check the player has a misc'ed quest object           */
 /*        : If so, the player has usally solved this quest before.           */
@@ -1733,7 +1737,7 @@ static PyObject* Daimonin_Object_CheckQuestObject(Daimonin_Object *whoptr, PyObj
 
 /*****************************************************************************/
 /* Name   : Daimonin_Object_AddQuestObject                                   */
-/* Python : object.AddQuestObject(name)                                      */
+/* Python : object.AddQuestObject(archetype, name)                           */
 /* Status : Stable                                                           */
 /* Info   : Add the misc'ed quest object to players quest container.         */
 /*        : create the quest container if needed                             */
@@ -1955,7 +1959,7 @@ static PyObject* Daimonin_Object_CreateInvisibleInside(Daimonin_Object *whereptr
 
 /*****************************************************************************/
 /* Name   : Daimonin_Object_CreateObjectInside                               */
-/* Python : object.CreateObjectInside(archname, identified, value)           */
+/* Python : object.CreateObjectInside(archname, identified, number, value)   */
 /* Info   : Creates an object from archname and inserts into object.         */
 /*          identified is either Daimonin.IDENTIFIED or Daimonin.UNIDENTIFIED*/
 /*          If value is >= 0 it will be used as the new object's value,      */
@@ -2051,12 +2055,12 @@ static object* object_check_inventory_rec(object *tmp, int mode, char* arch_name
 
 /*****************************************************************************/
 /* Name   : Daimonin_Object_CheckInventory                                   */
-/* Python : object.CheckInventory(arch name, object name, type)              */
+/* Python : object.CheckInventory(mode, arch, name, title, type)             */
 /* Info   : returns the first found object with the specified name if found  */
 /*          in object's inventory, or None if it wasn't found.               */
-/*        : arch or object name == NULL will be ignored for search			 */
+/*          title, arch or object == None will be ignored for search	     */
 /*          also type == -1                                                  */
-/*		  : mode: 0=only inventory, 1: inventory and container, 2: all inv.  */
+/*		    mode: 0=only inventory, 1: inventory and container, 2: all inv.  */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static PyObject* Daimonin_Object_CheckInventory(Daimonin_Object *whoptr, PyObject* args)
@@ -2823,7 +2827,11 @@ Daimonin_Object_dealloc(Daimonin_Object* self)
     /* Clean up "dangling" objects 
      * i.e. objects with no environment (from obj.Clone()) or removed objects
      */
-    if(self->obj && !QUERY_FLAG(self->obj, FLAG_FREED)) {
+
+    /* With the semiautomatic gargbage collection this is no longer needed */
+    
+#if 0
+    if(self->obj && !OBJECT_FREE(self->obj)) {
         if(QUERY_FLAG(self->obj, FLAG_REMOVED)) {
             LOG(llevDebug, "PYTHON - Freeing removed object %s \"%s\"\n", 
                     STRING_OBJ_ARCH_NAME(self->obj), STRING_OBJ_NAME(self->obj));
@@ -2839,6 +2847,7 @@ Daimonin_Object_dealloc(Daimonin_Object* self)
             (PlugHooks[HOOK_FREEOBJECT])(&GCFP);
         }
     }
+#endif    
 
     
     self->obj = NULL;

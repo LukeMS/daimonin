@@ -195,8 +195,10 @@ extern int	global_darkness_table[MAX_DARKNESS+1];
 #define P_WALK_ON		0x1000	/* this 4 flags are for moving objects and what happens when they enter */ 
 #define P_WALK_OFF		0x2000  /* or leave a map tile */
 #define P_FLY_OFF		0x4000
+#define P_FLY_ON		0x8000
 
-#define P_FLY_ON		0x10000
+#define P_REFL_SPELLS	0x10000  /* something on the tile reflect spells */
+#define P_REFL_MISSILE	0x20000 /* something on the tile reflect missiles */
 
 
 #define P_OUT_OF_MAP	0x4000000 /* of course not set for map tiles but from blocked_xx()

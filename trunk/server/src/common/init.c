@@ -136,6 +136,10 @@ void init_globals() {
 	logfile = stderr;
 	LOG(llevInfo, "Unable to open %s as the logfile - will use stderr instead\n",settings.logfilename);
     }
+
+	global_round_tag=1; /* global round ticker ! this is real a global */
+	global_race_counter=0; /* global race counter */
+	
     exiting = 0;
     first_player=NULL;
     first_friendly_object=NULL;

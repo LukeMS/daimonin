@@ -782,6 +782,11 @@ object *fix_stopped_arrow (object *op)
 	return NULL;
     }*/
 
+
+	/* used as temp. vars to control reflection/move speed */
+	op->stats.grace = 0;
+	op->stats.maxgrace = 0;
+
     op->direction=0;
     CLEAR_FLAG(op, FLAG_WALK_ON);
     CLEAR_FLAG(op, FLAG_FLY_ON);
@@ -825,6 +830,7 @@ object *fix_stopped_arrow (object *op)
 void stop_arrow (object *op)
 {
 	play_sound_map(op->map, op->x, op->y, SOUND_DROP_THROW, SOUND_NORMAL);
+	CLEAR_FLAG(op, FLAG_IS_MISSILE);
     if (op->inv) 
 	{
 		object *payload = op->inv;
@@ -890,8 +896,9 @@ void stop_arrow (object *op)
  */
 
 void move_arrow(object *op) {
-    object *tmp=NULL;
+    object *tmp=NULL, *hitter;
     int new_x, new_y;
+	int flag_tmp;
     int was_reflected;
     mapstruct *m=op->map;
 
@@ -920,52 +927,60 @@ void move_arrow(object *op) {
     new_y = op->y + DIRY(op);
     was_reflected = 0;
 
-    /* See if there is any living object on target map square */
-    if((m= out_of_map(op->map,&new_x,&new_y)))        
-        tmp = get_map_ob (m, new_x, new_y);
+	/* check we are legal */
+    if(!(m= out_of_map(op->map,&new_x,&new_y)))
+	{
+		stop_arrow (op); /* out of map... here is the end */
+		return;
+	}
+	
+	if(!(hitter = get_owner(op)))
+		hitter = op;
 
-    while (tmp && ! IS_LIVE(tmp))
-	tmp = tmp->above;
+	/* ok, lets check there is something we can hit */
+	if((flag_tmp=GET_MAP_FLAGS(m, new_x, new_y)) & (P_IS_ALIVE|P_IS_PLAYER))
+	{
+		/* search for a vulnerable object */
+		for(tmp=GET_MAP_OB_LAYER(m, new_x, new_y,5);tmp!=NULL;tmp=tmp->above)
+		{
+			/* lets fire mobs through mobs! */
+			if(tmp->type!=PLAYER && hitter->type != PLAYER)
+				continue;
 
-    /* A bad problem was that a monster throw or fire something and then
-     * it runs in it. Not only this is a sync. problem, the monster will also
-     * hit themself and used as his own enemy! Result is, that many monsters
-     * start to hit themself dead.
-     * I removed both: No monster can be hit from his own missile and it can't 
-     * be his own enemy. - MT, 25.11.01 */
-    
-    if (tmp && tmp != op->owner)
-    {        
-        /* Found living object, but it is reflecting the missile.  Update
-         * as below. (Note that for living creatures there is a small
-         * chance that reflect_missile fails.)
-         */
-        if (QUERY_FLAG (tmp, FLAG_REFL_MISSILE) && (!IS_LIVE(tmp) || (rndm(0, 99)) < 90-op->level/10))
-        {
-            int number = op->face->number;
+			if(IS_LIVE(tmp) && (!QUERY_FLAG (tmp, FLAG_CAN_REFL_MISSILE) || (rndm(0, 99)) < 90-op->level/10))
+			{
+				/* Attack the object. */
+				op = hit_with_arrow (op, tmp);
+				if (op == NULL) /* the arrow has hit and is destroyed! */
+					return;
+			}
+			
+		}
+	}
+
+	/* if we are here, there is no target and/or we have not hit.
+	 * now we do a simple reflection test.
+	 */
+	if(flag_tmp & P_REFL_MISSILE)
+	{
+		int number = op->face->number;
+		missile_reflection_adjust(op,QUERY_FLAG(op,FLAG_WAS_REFLECTED));
 	    
-			op->owner = tmp; /* bad thing: now the reflector is owner of this and can kill us! */
-            op->direction = absdir (op->direction + 4);
-            op->state = 0;
-            if (GET_ANIM_ID (op)) 
-				SET_ANIMATION(op, (NUM_ANIMATIONS(op)/NUM_FACINGS(op))*op->direction);			
-			if (wall (m, new_x, new_y)) {
-                /* Target is standing on a wall.  Let arrow turn around before
-                 * the wall. */
-                new_x = op->x;
-                new_y = op->y;
-            }
-            was_reflected = 1;   /* skip normal movement calculations */
-        }
-        else
-        {
-            /* Attack the object. */
-            op = hit_with_arrow (op, tmp);
-            if (op == NULL)
-                return;
-        }
-    }
-
+		op->direction = absdir (op->direction + 4);
+        op->state = 0;
+        if (GET_ANIM_ID (op)) 
+			SET_ANIMATION(op, (NUM_ANIMATIONS(op)/NUM_FACINGS(op))*op->direction);			
+		if (wall (m, new_x, new_y))
+		{
+			/* Target is standing on a wall.  Let arrow turn around before
+             * the wall. */
+             new_x = op->x;
+             new_y = op->y;
+		}
+		SET_FLAG(op,FLAG_WAS_REFLECTED);
+        was_reflected = 1;   /* skip normal movement calculations */
+	}
+				
     if ( ! was_reflected && wall (m, new_x, new_y))
     {
 	/* if the object doesn't reflect, stop the arrow from moving */

@@ -642,9 +642,9 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_UNDEAD			36 /* Monster is undead */
 #define FLAG_FREED	 		37 /* Object is in the list of free objects */
 #define FLAG_UNAGGRESSIVE	38 /* Monster doesn't attack players */
-#define FLAG_REFL_MISSILE	39 /* Arrows will reflect from object */
+#define FLAG_REFL_MISSILE	39 /* object will give missile reflection */
 
-#define FLAG_REFL_SPELL		40 /* Spells (some) will reflect from object */
+#define FLAG_REFL_SPELL		40 /* object will give spell reflection */
 #define FLAG_NO_MAGIC		41 /* Spells (some) can't pass this object */
 #define FLAG_NO_FIX_PLAYER	42 /* fix_player() won't be called */
 #define FLAG_IS_EVIL		43 /* alignment flags */
@@ -783,10 +783,15 @@ error - Your ANSI C compiler should be defining __STDC__;
 									   * is to trigger the right map flags, so a moving objects
 									   * know that spot is blocked by a door and he must open it first->
 									   */
-/* flag 102 and 103 is free */									   
+#define FLAG_WAS_REFLECTED		128	  /* object was reflected (arrow, throw object...) */
+#define FLAG_IS_MISSILE			129	  /* object is used as missile (arrow, potion, magic bullet, ...) */
+#define FLAG_CAN_REFL_MISSILE	130		/* Arrows WILL reflect from object (most times) */
+#define FLAG_CAN_REFL_SPELL		131		/* Spells WILL reflect from object (most times) */
 
-#define NUM_FLAGS		127 /* Should always be equal to the last defined flag */
-#define NUM_FLAGS_32	4	/* the number of uint32 we need to store all flags */
+#define FLAG_IS_ASSASSINATION	132		/* If a attacking force and slaying is set, this is 3 times damage */
+
+#define NUM_FLAGS		132 /* Should always be equal to the last defined flag */
+#define NUM_FLAGS_32	5	/* the number of uint32 we need to store all flags */
 
 /* macros for invisible test. the first tests only system objects */
 #define IS_SYS_INVISIBLE(__ob_)			QUERY_FLAG(__ob_, FLAG_SYS_OBJECT)

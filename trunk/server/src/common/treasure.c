@@ -41,6 +41,7 @@
 #include <funcpoint.h>
 #include <loader.h>
 
+static const char *treasure_string_none=NULL; /* for quick search for string "none" */
 char *coins[NUM_COINS+1] = {"mitcoin", "goldcoin", "silvercoin","coppercoin", NULL};
 archetype *coins_arch[NUM_COINS];
 
@@ -76,10 +77,14 @@ void load_treasures() {
   int comp, t_style, a_chance;
 
   sprintf(filename,"%s/%s",settings.datadir,settings.treasures);
+
+  FREE_AND_COPY_HASH(treasure_string_none,"none"); 
+  
   if((fp=open_and_uncompress(filename,0,&comp))==NULL) {
     LOG(llevError,"ERROR: Can't open treasure file.\n");
     return;
   }
+
   while(fgets(buf,MAX_BUF,fp)!=NULL) {
       if(*buf=='#')
       continue;
@@ -1399,7 +1404,7 @@ int fix_generated_item (object *op, object *creator, int difficulty, int a_chanc
 
 		}
 	}
-
+		
 	if (!op->title || op->type == RUNE) /* Only modify object if not special */
 	{
 		switch(op->type) 
@@ -1583,7 +1588,7 @@ int fix_generated_item (object *op, object *creator, int difficulty, int a_chanc
 					break;
 
 				SET_FLAG(op,FLAG_IS_MAGICAL); /* marks at magical */
-				op->stats.food=RANDOM()%spells[op->stats.sp].charges+1; /* charges */
+				op->stats.food=(RANDOM()%spells[op->stats.sp].charges+1)+12; /* charges */
 		
 				temp = (((difficulty*100)-(difficulty*20))+(difficulty*(RANDOM()%35)))/100;
 				if(temp <1)
@@ -1593,7 +1598,7 @@ int fix_generated_item (object *op, object *creator, int difficulty, int a_chanc
 				if(temp < spells[op->stats.sp].level)
 					temp = spells[op->stats.sp].level;
 				op->level = temp;
-				op->value = (int) (120.0f * spells[op->stats.sp].value_mul);
+				op->value = (int) (16.3f * spells[op->stats.sp].value_mul);
 			break;
 
 			case HORN:
@@ -1612,7 +1617,7 @@ int fix_generated_item (object *op, object *creator, int difficulty, int a_chanc
 				op->level = temp;
 				if(temp < spells[op->stats.sp].level)
 					temp = spells[op->stats.sp].level;
-				op->value = (int) (8500.0f * spells[op->stats.sp].value_mul);
+				op->value = (int) (1850.0f * spells[op->stats.sp].value_mul);
 			break;
 
 			case ROD:
@@ -1630,13 +1635,32 @@ int fix_generated_item (object *op, object *creator, int difficulty, int a_chanc
 				op->level = temp;
 				if(temp < spells[op->stats.sp].level)
 					temp = spells[op->stats.sp].level;
-				op->value = (int) (8500.0f * spells[op->stats.sp].value_mul);
+				op->value = (int) (1850.0f * spells[op->stats.sp].value_mul);
 			break;
 
 			case RUNE:
 				(*trap_adjust_func)(op,difficulty); /* artifact AND normal treasure runes!! */
 			break;
 		} /* end switch */
+	}
+	else /* ->title != NULL */
+	{
+		switch(op->type) 
+		{
+			/* lets check we have a slaying/assassination arrow */
+			case ARROW:
+				if(op->slaying == treasure_string_none) /* compare hash ptrs */
+				{
+					int tmp = RANDOM() % global_race_counter;
+					racelink *list;
+
+					/* get the right race */
+					for(list=first_race;list && tmp;list=list->next, tmp--)
+						;						
+					FREE_AND_COPY_HASH(op->slaying, list->name);
+				}
+			break;
+		}
 	}
 
 	if (flags & GT_NO_VALUE && op->type != MONEY)
@@ -2081,6 +2105,7 @@ treasurelist *tl, *next;
 	free(tl);
     }
     free_artifactlist(first_artifactlist);
+	FREE_AND_CLEAR_HASH2(treasure_string_none);
 }
 
 /* set material_real... use fixed number when start == end or random range

@@ -461,7 +461,7 @@ void dump_all_maps() {
 int wall(mapstruct *m, int x,int y) {
     if (!(m=out_of_map(m,&x,&y)))
 		return (P_BLOCKSVIEW|P_NO_PASS|P_OUT_OF_MAP);
-    return (GET_MAP_FLAGS(m,x,y) & (P_PLAYER_ONLY|P_NO_PASS|P_PASS_THRU));
+    return (GET_MAP_FLAGS(m,x,y) & (P_DOOR_CLOSED|P_PLAYER_ONLY|P_NO_PASS|P_PASS_THRU));
 }
 
 /*
@@ -2167,7 +2167,11 @@ void update_position (mapstruct *m, int x, int y)
 			flags |= P_NO_CLERIC;
 		if (QUERY_FLAG(tmp,FLAG_BLOCKSVIEW))
 			flags |= P_BLOCKSVIEW;
-
+		if (QUERY_FLAG(tmp,FLAG_CAN_REFL_SPELL))
+			flags |= P_REFL_SPELLS;
+		if (QUERY_FLAG(tmp,FLAG_CAN_REFL_MISSILE))
+			flags |= P_REFL_MISSILE;
+		
 		if (QUERY_FLAG(tmp,FLAG_WALK_ON))
 			flags |= P_WALK_ON;
 		if (QUERY_FLAG(tmp,FLAG_WALK_OFF))

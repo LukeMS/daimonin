@@ -196,7 +196,7 @@ int save_player(object *op, int flag) {
   sint16 backup_x, backup_y;
 #endif
 
-  if (!op->stats.exp) return 0;	/* no experience, no save */
+  if (!op->stats.exp && (!op->contr || !op->contr->player_loaded)) return 0;	/* no experience, no save */
 
   flag&=1;
 
@@ -835,6 +835,8 @@ void check_login(object *op) {
 	}
 	set_dragon_name(op, abil, skin);
     }
+
+	pl->player_loaded = 1; /* important: there is a player file */
 
     new_draw_info(NDI_UNIQUE, 0,op,"Welcome Back!");
 	if(!pl->dm_stealth)
