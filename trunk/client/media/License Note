@@ -1,0 +1,48 @@
+Daimonin Media License
+----------------------
+
+Disclaimer
+
+The Daimonin Media License is the Artistic License, which can be found
+in the Daimonin main folder.
+
+Because the Daimonin/client/media folder can be user extended, the Daimonin
+Artistic License is ONLY VALID FOR MEDIA FILES WHICH ARE PART OF THE DAIMONIN
+OPEN SOURCE PROJECT.
+
+This includes ONLY files which are part of the Daimonin CVS tree.
+
+Is a file in this folder NOT part of the Daimonin CVS tree, it is NOT a official
+Daimonin media file. In this case a 3rd party (user) has altered the content
+of the media folder and/or the whole Daimonin package.
+
+The common alteration of the media folder comes with "media extension packages" 
+for the daimonin project. This kind of packages are not official project parts
+and/or submited by users or a different 3rd party.
+
+It IS allowed to change, delete or extend the media folder for personal use.
+
+It is NOT allowed to make this altered package public as part of the Daimonin 
+project - it is only allowed to make it puplic as a  "user media extension package
+for Daimonin".
+
+This kind of package must be declared as daimonin media extension. It is not allowed
+to trade any original Daimonin project file inside this packages, except licence or
+documentation files.
+
+A copyright note inside that package must explain this explicit to avoid any confusion.
+
+A file inside the media folder will NEVER be send or even altered to or from the
+server - a server or 3rd party has no direct access to the media folder. The only way
+to change files inside the media folder is to user install them.
+
+Remember that you have to control the right use of copyrights when you use 3rd
+party files for this folder.
+
+You can control the official Daimonin files by browsing the Daimonin CVS file
+list which can be found on the Daimonin project page.
+
+Personal note: 
+I had written this file to avoid any copyright problems with 3rd partys who think they 
+can/should trade unofficial files in the media folder as part of Daimonin. It is not
+to harm any 3rd party extension.
