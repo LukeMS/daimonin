@@ -547,7 +547,7 @@ void expand_sight(object *op)
 	for (y = 0; y < op->contr->socket.mapy; y++)
 	{
 	    if (op->contr->blocked_los[x][y]&BLOCKED_LOS_EXPAND)
-			op->contr->blocked_los[x][y] &= ~BLOCKED_LOS_BLOCKED;
+			op->contr->blocked_los[x][y] &= ~(BLOCKED_LOS_BLOCKED|BLOCKED_LOS_EXPAND);
 	}
 	}
 	

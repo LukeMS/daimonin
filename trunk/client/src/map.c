@@ -635,34 +635,6 @@ static char tile_mask[TILE_ISO_YLEN][TILE_ISO_XLEN+1] ={
 * clac the tile-pos(tx,ty) from mouse-pos(x,y).
 * ret: 0 ok  ;  <0 not a valid position.
 ******************************************************************/
-/*
-int get_tile_position( int x, int y, int *tx, int *ty ) 
-{
-	if (x<MAP_START_XOFF) x-=MAP_TILE_POS_XOFF;
-	x-= MAP_START_XOFF;
-	y-= MAP_START_YOFF;
-	*tx = x/MAP_TILE_POS_XOFF + y/MAP_TILE_YOFF;
-	*ty = y/MAP_TILE_YOFF - x/MAP_TILE_POS_XOFF;
-	
-	if (x<0) x+= MAP_TILE_POS_XOFF<<3;
-	x%= MAP_TILE_POS_XOFF;
-	y%= MAP_TILE_YOFF;
-	
-	if (x< MAP_TILE_POS_XOFF2)
-	{
-		if (x+y+y < MAP_TILE_POS_XOFF2) --(*tx);
-		else if (y-x >0)	++(*ty);
-	}
-	else
-	{
-		x-= MAP_TILE_POS_XOFF2;
-		if (x-y-y >0)	--(*ty);
-		else if (x+y+y > MAP_TILE_POS_XOFF)	++(*tx);
-	}
-	if (*tx <0 || *tx >16 || *ty <0 || *ty >16) return -1;
-	return 0; 
-}
-*/
 int get_tile_position( int x, int y, int *tx, int *ty ) 
 {
 	if (x<MAP_START_XOFF) x-=MAP_TILE_POS_XOFF;
