@@ -1301,57 +1301,35 @@ static int load_map_header(FILE *fp, mapstruct *m)
 			tile, m->path);
 		    FREE_AND_CLEAR_HASH(m->tile_path[tile-1]);
 		}
-		if (!editor) {
-		    if (check_path(value, 1)==-1) {
-                        /* Gecko: replaced with call to normalize_path */
-                        /*
-                        int i;
-			 * Need to try and normalize the path.  msgbuf is safe to use,
-			 * as that is all read in at one time.
-			 *
-			strcpy(msgbuf, m->path);
-			for (i=0; msgbuf[i]!=0; i++)
-			    if (msgbuf[i] == '/') end = msgbuf + i;
-			if (!end) {
-			    LOG(llevBug,"BUG: get_map_header: Can not normalize tile path %s %s\n",
-				m->path, value);
-			    value = NULL;
-			} else {
-			    strcpy(end+1, value);
-			    if (check_path(msgbuf,1)==-1) {
-				LOG(llevBug,"BUG: get_map_header: Can not normalize tile path %s %s %s %s\n",
-				    m->path, value, msgbuf, end);
-				value = NULL;
-			    } else
-				value = msgbuf;
-			}
-                        */
-                        normalize_path(m->path, value, msgbuf);
-                        if (check_path(msgbuf,1)==-1) {
-                            LOG(llevBug,"BUG: get_map_header: Can not normalize tile path %s %s %s\n",
-                                    m->path, value, msgbuf);
-                            value = NULL;
-                        } else {
-                            mapstruct *neighbour;
-                            int dest_tile = (tile + 1) % TILED_MAPS;                            
-                            value = msgbuf;
-                            
-                            /* If the neighbouring map tile has been loaded, set up the map pointers */
-                            neighbour = has_been_loaded(value);
-                            if(neighbour) {
-                                m->tile_map[tile-1] = neighbour;
-								/* the server bugged here one time because neighbour->tile_path[dest_tile] == NULL... MT */
-                                if (neighbour->tile_path[dest_tile] && !strcmp(neighbour->tile_path[dest_tile], m->path))
-                                    neighbour->tile_map[dest_tile] = m;
-                            }
-                        }
-		    } /* if unable to load path as given */
-		} /* if not editor */
-		if (value)
-        {
-		    m->tile_path[tile-1] = add_string(value);
-            LOG(llevDebug,"add t_map %s (%d). ",value, tile-1);
-        }
+                
+                /* If path not absoulute, try to normalize it */
+                if (check_path(value, 1)==-1) {
+                    normalize_path(m->path, value, msgbuf);
+                    if (check_path(msgbuf,1)==-1) {
+                        LOG(llevBug,"BUG: get_map_header: Can not normalize tile path %s %s %s\n",
+                                m->path, value, msgbuf);
+                        value = NULL;
+                    } else 
+                        value = msgbuf;
+                } /* if unable to load path as given */
+                
+                /* We have a correct path to a neighbour tile */
+                if (value) {
+                    mapstruct *neighbour;
+                    int dest_tile = (tile + 1) % TILED_MAPS;                            
+
+                    m->tile_path[tile-1] = add_string(value);
+                    LOG(llevDebug,"add t_map %s (%d). ",value, tile-1);
+                    
+                    /* If the neighbouring map tile has been loaded, set up the map pointers */
+                    if((neighbour = has_been_loaded(value))) {
+                        m->tile_map[tile-1] = neighbour;
+                        /* the server bugged here one time because neighbour->tile_path[dest_tile] == NULL... MT */
+                        if (neighbour->tile_path[dest_tile] == NULL || 
+                                !strcmp(neighbour->tile_path[dest_tile], m->path))
+                            neighbour->tile_map[dest_tile] = m;
+                    }
+                } /* If valid neighbour path */
 	    }
 	}
 	else if (!strcmp(key,"end")) break;

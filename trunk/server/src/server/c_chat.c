@@ -189,7 +189,7 @@ int command_t_tell (object *op, char *params)
 			 * because the player perhaps has leaved the mapset with the
 			 * target which will invoke some nasty searchings.
 			 */
-			for(i = 0; i <= SIZEOFFREE; i++)
+			for(i = 0; i <= SIZEOFFREE2; i++)
 			{
 				xt = op->x+freearr_x[i];
 				yt = op->y+freearr_y[i];
@@ -204,6 +204,7 @@ int command_t_tell (object *op, char *params)
 					buf[MAX_BUF-1]=0;
 					new_draw_info(NDI_WHITE,0, op, buf);
 					talk_to_npc(op, t_obj,params);
+					play_sound_player_only(op->contr, SOUND_CLICK,SOUND_NORMAL,0,0);
 					return 1;
 				}
 			}

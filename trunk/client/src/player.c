@@ -243,6 +243,8 @@ void init_player_data(void)
         new_player (0, "", 0,0);
 
         cpl.fire_on=cpl.firekey_on=0;
+        cpl.resize_twin = 0;
+        cpl.resize_twin_marker = 0;
         cpl.run_on=cpl.runkey_on=0;
         cpl.inventory_win =IWIN_BELOW;
 

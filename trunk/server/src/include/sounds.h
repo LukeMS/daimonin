@@ -73,6 +73,7 @@
 #define SOUND_ARROW_HIT			30
 #define SOUND_DOOR_CLOSE		31
 #define SOUND_TELEPORT			32
+#define SOUND_CLICK				33
 
 /* these are general spell sounds. Different spells can have
  * the same sound - we don't want have 1000 different spell

@@ -579,6 +579,10 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_NO_PASS		10 /* Nothing can pass (wall() is true) */
 #define FLAG_ANIMATE		11 /* The object looks at archetype for faces */
 #define FLAG_SLOW_MOVE		12 /* Uses the stats.exp/1000 to slow down */
+                               /* I use this flag now in 2 ways: for objects like floors
+							    * it force objects to move slow. For monsters with speed,
+								* it force monsters to move slow! (slow spell or snared!)
+								*/
 #define FLAG_FLYING			13 /* Not affected by WALK_ON or SLOW_MOVE) */
 #define FLAG_MONSTER		14 /* A object with this flag is used like a object with
                                 * type == MONSTER. SO, we can use type GOLEMS objects

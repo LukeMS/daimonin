@@ -87,6 +87,7 @@ static char* sound_files[SOUND_MAX] = {
 	,"arrow_hit.wav"
 	,"door_close.wav"
 	,"teleport.wav"
+	,"scroll.wav"
 
 	,"step1.wav" /* here starts client side sounds */
 	,"step2.wav"
@@ -94,7 +95,6 @@ static char* sound_files[SOUND_MAX] = {
 	,"console.wav"
 	,"click_fail.wav"
 	,"change1.wav"
-	,"scroll.wav"
 	,"warning_food.wav"
 	,"warning_drain.wav"
 	,"warning_statup.wav"
