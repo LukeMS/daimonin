@@ -305,6 +305,8 @@ struct plugin_hooklist
     uint32 (*nearest_pow_two_exp)(uint32 n);
     void (*return_poolchunk_array_real)(void *data, uint32 arraysize_exp, struct mempool *pool);
     void*(*get_poolchunk_array_real)(struct mempool *pool, uint32 arraysize_exp);
+	object * (*arch_to_object)(archetype *at);
+	archetype * (*find_archetype)(const char *name);
 };
 
 /*****************************************************************************/
@@ -323,7 +325,7 @@ extern MODULEAPI CFParm    *triggerEvent(CFParm *PParm);
 
 
 /* Table of all loaded plugins */
-extern CFPlugin             PlugList[32];
+extern CFPlugin             PlugList[34];
 extern int                  PlugNR;
 
 #endif /*PLUGIN_H_*/
