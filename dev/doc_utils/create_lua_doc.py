@@ -16,6 +16,8 @@ if not os.path.isdir(dest):
 	print dest + " is not a directory"
 	sys.exit(1)
 
+index_items_per_line = 6
+
 amp_re_obj = re.compile('&')
 attributes_re_obj = re.compile('\{\s*"(.*?)",\s*FIELDTYPE_(.*?),\s*offsetof\(.*?\),\s*(.*?)\s*[\},]')
 block_re_obj = re.compile('FUNCTIONSTART.*?FUNCTIONEND', re.S)
@@ -73,9 +75,8 @@ def listCFiles(directory):
 
 def start(filename, title):
 	f = file(os.path.join(dest, filename + '.html'), 'w')
-	f.write('''<?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/dtd/xhtml11.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"><head><title>Lua reference - ''' + title + '</title></head><body><h1>Lua reference - ' + title + '</h1>')
+	f.write('''<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/dtd/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><title>Daimonin Lua Core reference - ''' + title + '</title></head><body><h1>Daimonin Lua Core reference - ' + title + '</h1>')
 	return f
 
 doc = {}
@@ -122,7 +123,8 @@ for filename in listCFiles(sys.argv[1]):
 						length = len(names)
 						nil = 0
 						types = parameter_types_re_obj.findall(body)
-						types = types[0]
+						if len(types) > 0:
+							types = types[0]
 						for i in range(len(types)):
 							tp = ''
 							if types[i] == 's':
@@ -264,16 +266,23 @@ for key in doc_keys:
 			index.write('<hr />')
 		else:
 			first = 0
-		index.write('<h2><code><a href="' + quoted + '.html">' + entities(key) + '</a></code></h2>')
+		index.write('<h2>Class: <code><a href="' + quoted + '.html">' + entities(key) + '</a></code></h2>')
 		f = start(key, key)
 		if doc[key]['constants']:
 			index.write('<h3><a href="' + quoted + '.html#constants">Constants</a></h3><p><code>')
 			f.write('<hr /><h2><a id="constants">Constants</a></h2><p><code>')
 			constants = doc[key]['constants']
 			constants.sort()
-			for constant in constants:
+			count = 0
+			for constant in constants:				
 				quoted2 = urllib.quote(constant)
-				index.write('<a href="' + quoted + '.html#' + quoted2 + '">' + entities(constant) + '</a><br />')
+				index.write('<a href="' + quoted + '.html#' + quoted2 + '">' + entities(constant) + '</a>')
+				count = count + 1
+				if count == index_items_per_line:
+					count = 0
+					index.write('<br />')
+				else:
+					index.write(' | ')
 				f.write('<b><a id="' + quoted2 + '">' + entities(key + '.' + constant) + '</a></b><br />')
 			f.write('</code></p><p><a href="index.html">Back to the index</a></p>')
 			index.write('</code></p>')
@@ -282,10 +291,17 @@ for key in doc_keys:
 			f.write('<hr /><h2><a id="attributes">Attributes</a></h2><p><code>')
 			keys = doc[key]['attributes'].keys()
 			keys.sort()
+			count = 0
 			for key2 in keys:
 				attribute = doc[key]['attributes'][key2]
 				quoted2 = urllib.quote(key2)
-				index.write('<a href="' + quoted + '.html#' + quoted2 + '">' + entities(key2) + '</a><br />')
+				index.write('<a href="' + quoted + '.html#' + quoted2 + '">' + entities(key2) + '</a>')
+				count = count + 1
+				if count == index_items_per_line:
+					count = 0
+					index.write('<br />')
+				else:
+					index.write(' | ')
 				f.write(entities(attribute[0]) + ' <b><a id="' + quoted2 + '">' + entities(key + '.' + key2) + '</a></b>')
 				if attribute[1]:
 					f.write(' (' + entities(attribute[1]) + ')')
@@ -297,9 +313,16 @@ for key in doc_keys:
 			f.write('<hr /><h2><a id="flags">Flags</a></h2><p><code>')
 			flags = doc[key]['flags']
 			flags.sort()
+			count = 0
 			for flag in flags:
 				quoted2 = urllib.quote(flag)
-				index.write('<a href="' + quoted + '.html#' + quoted2 + '">' + entities(flag) + '</a><br />')
+				index.write('<a href="' + quoted + '.html#' + quoted2 + '">' + entities(flag) + '</a>')
+				count = count + 1
+				if count == index_items_per_line:
+					count = 0
+					index.write('<br />')
+				else:
+					index.write(' | ')
 				f.write('<b><a id="' + quoted2 + '">' + entities(key + '.' + flag) + '</a></b><br />')
 			f.write('</code></p><p><a href="index.html">Back to the index</a></p>')
 			index.write('</code></p>')
@@ -309,11 +332,18 @@ for key in doc_keys:
 			f.write('<hr /><h2><a id="functions">Functions</a></h2>')
 			keys = doc[key]['functions'].keys()
 			keys.sort()
+			count = 0
 			for key2 in keys:
 				fields = doc[key]['functions'][key2]
 				if 'Lua' in fields and 'Status' in fields:
 					quoted2 = urllib.quote(key2)
-					index.write('<a href="' + quoted + '.html#' + quoted2 + '">' + entities(key2) + '</a><br />')
+					index.write('<a href="' + quoted + '.html#' + quoted2 + '">' + entities(key2) + '</a>')
+					count = count + 1
+					if count == index_items_per_line:
+						count = 0
+						index.write('<br />')
+					else:
+						index.write(' | ')
 					if not first2:
 						f.write('<hr />')
 					else:
