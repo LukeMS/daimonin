@@ -28,6 +28,21 @@
 #include <sproto.h>
 #endif
 
+static int tdir1;
+static int tdir2;
+static int tdir3;
+static int tdir4;
+static int tdir5;
+static int tdir6;
+static int tdir7;
+static int tdir8;
+static int tdir9;
+static int tdir10;
+static int tdir11;
+static int tdir12;
+static int tdir13;
+static int tdir14;
+
 /* Maximum number of ticks a mob remembers an object that it can't see */
 #define MAX_KNOWN_OBJ_AGE 200
 
@@ -1284,13 +1299,16 @@ static int do_move_monster(object *op, int dir)
 {
     int m;
     
+	tdir11=dir;
     /* Confused monsters need a small adjustment */
     if(QUERY_FLAG(op,FLAG_CONFUSED))
         dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
-
+	tdir12=dir;
+	
     if(move_object(op,dir)) /* Can the monster move directly toward waypoint? */
         return TRUE;
     
+	tdir13=dir;
     m = 1-(RANDOM()&2);          /* Try left or right first? */
     /* try different detours */
     if(move_object(op,absdir(dir + m)) ||
@@ -1298,7 +1316,8 @@ static int do_move_monster(object *op, int dir)
             move_object(op,absdir(dir + m*2)) ||  
             move_object(op,absdir(dir - m*2))) 
         return TRUE;
-
+	tdir14=dir;
+	
     /* Couldn't move at all... */
     return FALSE;
 }
@@ -1358,7 +1377,10 @@ int move_monster(object *op) {
     int dir;
     int success;
     
-    /*
+	tdir1=tdir2=tdir3=tdir4=tdir5=tdir6=tdir7=tdir8=
+		tdir9=tdir10=tdir11=tdir12=tdir13=tdir14=-123456;
+
+	/*
      * First, some general monster-managing
      */
     
@@ -1387,24 +1409,34 @@ int move_monster(object *op) {
      */
     response.type = MOVE_RESPONSE_NONE; /* Clear the movement response */
 
-    if(response.type == MOVE_RESPONSE_NONE) 
-        ai_stand_still(op, &response);
+	/* if(response.type == MOVE_RESPONSE_NONE) */    
+	ai_stand_still(op, &response);
+
+	tdir1=response.data.direction;
     if(response.type == MOVE_RESPONSE_NONE) 
         ai_run_away_from_enemy(op, &response);
+	tdir2=response.data.direction;
     if(response.type == MOVE_RESPONSE_NONE) 
         ai_sleep(op, &response);
+	tdir3=response.data.direction;
     if(response.type == MOVE_RESPONSE_NONE) 
         ai_move_towards_enemy(op, &response);
+	tdir4=response.data.direction;
     if(response.type == MOVE_RESPONSE_NONE) 
         ai_move_towards_enemy_last_known_pos(op, &response);
+	tdir5=response.data.direction;
     if(response.type == MOVE_RESPONSE_NONE) 
         ai_search_for_lost_enemy(op, &response);
+	tdir6=response.data.direction;
     if(response.type == MOVE_RESPONSE_NONE) 
         ai_move_towards_waypoint(op, &response);
+	tdir7=response.data.direction;
     if(QUERY_FLAG(op, FLAG_RANDOM_MOVE) && response.type == MOVE_RESPONSE_NONE)
         ai_move_randomly(op, &response);
+	tdir8=response.data.direction;
     if(response.type == MOVE_RESPONSE_NONE) 
         ai_move_towards_home(op, &response);
+	tdir9=response.data.direction;
     /* move_home alternative: move_towards_friend */
 
     /* TODO make it possible to move _away_ from waypoint or object */
@@ -1418,6 +1450,7 @@ int move_monster(object *op) {
     
     /* Calculate direction from response needed and execute movement */
     dir = direction_from_response(op, &response);
+	tdir10=response.data.direction;
     if(dir > 0) {
         success = do_move_monster(op, dir);
         /* TODO: handle success=0 and precomputed paths/giving up */    

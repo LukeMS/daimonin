@@ -3478,8 +3478,16 @@ void apply_player_light(object *who, object *op)
         op->glow_radius=0;
         CLEAR_FLAG(op, FLAG_APPLIED);
         CLEAR_FLAG(op,FLAG_CHANGING);
-        CLEAR_FLAG(op,FLAG_ANIMATE);
-        op->face = op->arch->clone.face;
+		if(op->other_arch && op->other_arch->clone.sub_type1 & 1)
+		{
+			op->animation_id = op->other_arch->clone.animation_id;
+			SET_ANIMATION(op, (NUM_ANIMATIONS(op)/NUM_FACINGS(op))*op->direction);
+		}
+		else
+		{
+			CLEAR_FLAG(op,FLAG_ANIMATE);
+			op->face = op->arch->clone.face;
+		}
         update_object(who, UP_OBJ_FACE);
         fix_player(who);
     }
@@ -3562,6 +3570,7 @@ void apply_player_light(object *who, object *op)
 				if(op->last_eat) /* we have a non permanent source */
 					SET_FLAG(op,FLAG_CHANGING);
 				SET_FLAG(op,FLAG_ANIMATE);
+				op->animation_id = op->arch->clone.animation_id; /* be sure to get the right anim */
 				SET_ANIMATION(op, (NUM_ANIMATIONS(op)/NUM_FACINGS(op))*op->direction);
 				if(tricky_flag)
 		            op=insert_ob_in_ob(op, op_old->env);
@@ -3574,6 +3583,7 @@ void apply_player_light(object *who, object *op)
 				if(op->last_eat) /* we have a non permanent source */
 					SET_FLAG(op,FLAG_CHANGING);
 				SET_FLAG(op,FLAG_ANIMATE);
+				op->animation_id = op->arch->clone.animation_id;
 				SET_ANIMATION(op, (NUM_ANIMATIONS(op)/NUM_FACINGS(op))*op->direction);
 
 				if(QUERY_FLAG(op, FLAG_PERM_CURSED))
@@ -3624,9 +3634,19 @@ void apply_player_light(object *who, object *op)
 						tmp->glow_radius=0;
 						CLEAR_FLAG(tmp, FLAG_APPLIED);
 						CLEAR_FLAG(tmp,FLAG_CHANGING);
-			            CLEAR_FLAG(tmp,FLAG_ANIMATE);
+						if(tmp->other_arch && tmp->other_arch->clone.sub_type1 & 1)
+						{
+							tmp->animation_id = tmp->other_arch->clone.animation_id;
+							SET_ANIMATION(tmp, (NUM_ANIMATIONS(tmp)/NUM_FACINGS(tmp))*tmp->direction);
+						}
+						else
+						{
+							CLEAR_FLAG(tmp,FLAG_ANIMATE);
+							tmp->face = tmp->arch->clone.face;
+						}
+/*						CLEAR_FLAG(tmp,FLAG_ANIMATE);
 			            tmp->face = tmp->arch->clone.face;
-			            update_object(tmp,UP_OBJ_FACE);
+*/			            update_object(tmp,UP_OBJ_FACE);
 		                esrv_send_item(who, tmp);
 		            }
 		        }
@@ -3649,9 +3669,19 @@ void apply_player_light(object *who, object *op)
 				op->glow_radius=0;
 				CLEAR_FLAG(op, FLAG_APPLIED);
 				CLEAR_FLAG(op,FLAG_CHANGING);
-			    CLEAR_FLAG(op,FLAG_ANIMATE);
+				if(op->other_arch && op->other_arch->clone.sub_type1 & 1)
+				{
+					op->animation_id = op->other_arch->clone.animation_id;
+					SET_ANIMATION(op, (NUM_ANIMATIONS(op)/NUM_FACINGS(op))*op->direction);
+				}
+				else
+				{
+					CLEAR_FLAG(op,FLAG_ANIMATE);
+					op->face = op->arch->clone.face;
+				}
+/*				CLEAR_FLAG(op,FLAG_ANIMATE);
 			    op->face = op->arch->clone.face;
-			    update_object(op,UP_OBJ_FACE);
+*/			    update_object(op,UP_OBJ_FACE);
 			}
         }
     }

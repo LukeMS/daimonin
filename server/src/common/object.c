@@ -1567,7 +1567,7 @@ int CAN_MERGE(object *ob1, object *ob2)
             ob1->material_real != ob2->material_real || ob1->magic != ob2->magic ||
             ob1->item_quality!=ob2->item_quality ||ob1->item_condition!=ob2->item_condition ||
             ob1->item_race!=ob2->item_race || ob1->speed != ob2->speed || 
-            ob1->value !=ob2->value || ob1->weight != ob2->weight) 
+            ob1->value !=ob2->value || ob1->weight != ob2->weight || ob1->stats.food != ob2->stats.food) 
         return 0;
 
     
