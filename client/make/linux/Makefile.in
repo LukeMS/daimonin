@@ -111,6 +111,7 @@ install:: all
 	$(MKDIR) -p $(prefix)/media
 	$(MKDIR) -p $(prefix)/cache
 	$(MKDIR) -p $(prefix)/bitmaps
+	$(MKDIR) -p $(prefix)/gfx_user
 	$(MKDIR) -p $(prefix)/srv_files
 	$(MKDIR) -p $(prefix)/icons
 	$(CP) ../../sfx/*.* $(prefix)/sfx
