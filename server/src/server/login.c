@@ -91,7 +91,13 @@ int check_name(player *me, char *name)
 
 int check_password(char *typed, char *crypted)
 {
-    return !strcmp(crypt_string(typed, crypted), crypted);
+	/* login hack to have uncrypted passwords.
+	 * Its senseless to store crypted passwords as long we transfer
+	 * them uncrypted!
+	 */
+    if(!strcmp(typed, crypted) || !strcmp(crypt_string(typed, crypted), crypted))
+		return 1;
+    return 0;
 }
 
 int create_savedir_if_needed(char *savedir)
