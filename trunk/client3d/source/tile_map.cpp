@@ -20,11 +20,27 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/copyleft/lesser.txt.
 -----------------------------------------------------------------------------
 */
+#include <Ogre.h>
+#include <OgreImage.h>
+#include <OgreTexture.h>
+#include <OgreHardwarePixelBuffer.h>
+#include <OgreTextureManager.h>
+#include <OgreSceneManager.h>
 
 #include "tile_map.h"
+#include "tile_gfx.h"
 #include "define.h"
 #include "string.h"
 #include "logfile.h"
+
+using namespace Ogre;
+
+const int LAYER_SIZE_X = 1024;
+const int LAYER_SIZE_Y =  768;
+
+const int SUM_TILES_X = LAYER_SIZE_X / TILE_WIDTH-1;
+const int SUM_TILES_Y = (LAYER_SIZE_Y / TILE_HEIGHT)*2;
+
 
 
 //extern _Sprite         *test_sprite;
@@ -56,7 +72,7 @@ void TileMap::adjust_map_cache(int xpos, int ypos)
     register MapCell *map;
     int xreal, yreal;
 
-    memset(TheMapCache, 0, 9 * (MapData.xlen * MapData.ylen) * sizeof(struct MapCell));    
+    memset(TheMapCache, 0, 9 * (MapData.xlen * MapData.ylen) * sizeof(struct MapCell));
     for (y = 0; y < MapStatusY; y++)
     {
         for (x = 0; x < MapStatusX; x++)
@@ -154,7 +170,7 @@ void TileMap::display_mapscroll(int dx, int dy)
 //=================================================================================================
 //
 //=================================================================================================
-void TileMap::map_draw_map_clear(void)
+void TileMap::clear(void)
 {
     register int ypos, xpos, x,y;
 
@@ -189,11 +205,11 @@ void TileMap::InitMapData(char *name, int xl, int yl, int px, int py)
     int     music_fade = 0;
     if (!music_fade) // there was no music tag or playon tag in this map - fade out
     {
-        // now a interesting problem - when we have some seconds before a fadeout 
+        // now a interesting problem - when we have some seconds before a fadeout
         // to a file (and not to "mute") and we want mute now - is it possible that
         // the mixer callback is called in a different thread? and then this thread
         // stuck BEHIND the music_new.flag = 1 check - then the fadeout of this mute
-        // will drop whatever - the callback will play the old file. 
+        // will drop whatever - the callback will play the old file.
         // that the classic thread/semphore problem.
      //   sound_fadeout_music(0);
     }
@@ -211,7 +227,7 @@ void TileMap::InitMapData(char *name, int xl, int yl, int px, int py)
         // maps to our map - we want cache a map except its 2 maps aways-
         // WARNING: tiled maps must be of same size... don't attach a 32x32
         // map on a 16x16 map. Its possible to handle this here, but then we need
-        // to know the sizes of the attached maps here 
+        // to know the sizes of the attached maps here
         TheMapCache = new MapCell[9 * xl * yl];
         memset(TheMapCache, 0, 9 * xl * yl * sizeof(struct MapCell));
     }
@@ -326,9 +342,81 @@ void TileMap::set_map_darkness(int x, int y, unsigned char darkness)
 //=================================================================================================
 //
 //=================================================================================================
-void TileMap::map_draw_map(void)
+void TileMap::drawTile(Image *img, int offX, int offY)
 {
-    if (!TheMapCache) { return; }
+	const PixelBox &pb = mHardwareBuffer->getCurrentLock();
+    uint32 *dest= static_cast<uint32*>(pb.data) + pb.rowPitch * offY * (TILE_HEIGHT/2);
+	dest += offX * TILE_WIDTH;
+	uint32 *src  = (uint32*) (img->getData() + img->getSize());
+	if (offY &1) { dest += TILE_WIDTH/2; }
+	for(unsigned int y=0; y< img->getHeight(); ++y)
+	{
+		for(unsigned int x=0; x< img->getWidth(); ++x)
+		{
+			if (*src >0x00ffffff) *dest = *src;
+			++dest;
+			--src;
+		}
+		dest += pb.rowPitch-img->getWidth();
+	}
+}
+
+const int SKIP_FRAMES = 500;
+//=================================================================================================
+//
+//=================================================================================================
+void TileMap::draw(void)
+{
+//    if (!TheMapCache) { return; }
+
+	static int frame =SKIP_FRAMES;
+	static Image *img = 0;
+	static Image *img2;
+	if (!img)
+	{
+		TileGfx::getSingleton().load_picture_from_pack(405);
+		img = &TileGfx::getSingleton().getSprite(405);
+		TileGfx::getSingleton().load_picture_from_pack(2856);
+		img2 = &TileGfx::getSingleton().getSprite(2856);
+
+	}
+
+if (++frame > SKIP_FRAMES)
+{
+  	mHardwareBuffer->lock(HardwareBuffer::HBL_DISCARD);
+	int y,gfxNr;
+	for (y = 0; y < SUM_TILES_Y; ++y)
+	{
+		for (int x = 0; x < SUM_TILES_X; ++x) drawTile(img, x, y);
+		gfxNr--;
+	}
+	drawTile(img2, 35, 8);
+	mHardwareBuffer->unlock();
+	frame =1;
+}
+
+
+/*
+  	mHardwareBuffer->lock(HardwareBuffer::HBL_DISCARD);
+	int y,gfxNr;
+	Image *img;
+	gfxNr = 405;
+	for (y = 0; y < SUM_TILES_Y; ++y)
+	{
+		TileGfx::getSingleton().load_picture_from_pack(gfxNr);
+		img = &TileGfx::getSingleton().getSprite(gfxNr);
+		for (int x = 0; x < SUM_TILES_X; ++x) drawTile(img, x, y);
+		gfxNr--;
+	}
+	// lantern
+	gfxNr =2856;
+	TileGfx::getSingleton().load_picture_from_pack(gfxNr);
+	img = &TileGfx::getSingleton().getSprite(gfxNr);
+	drawTile(img, 35, 8);
+	mHardwareBuffer->unlock();
+*/
+
+
 /*
     register MapCell *map;
     register int ypos, xpos;
@@ -394,14 +482,14 @@ void TileMap::map_draw_map(void)
                             {
                                 mnr = map->pos[k];
                                 mid = mnr >> 4;
-                                mnr &= 0x0f; 
+                                mnr &= 0x0f;
                                 xml = MultiArchs[mid].xlen;
                                 yl = ypos
                                    - MultiArchs[mid].part[mnr].yoff
                                    + MultiArchs[mid].ylen
                                    - face_sprite->bitmap->h;
                                 // we allow overlapping x borders - we simply center then
-                                 
+
                                 xl = 0;
                                 if (face_sprite->bitmap->w > MultiArchs[mid].xlen)
                                     xl = (MultiArchs[mid].xlen - face_sprite->bitmap->w) >> 1;
@@ -413,7 +501,7 @@ void TileMap::map_draw_map(void)
                             }
                             else // single tile...
                             {
-                                // first, we calc the shift positions 
+                                // first, we calc the shift positions
                                 xml = MAP_TILE_POS_XOFF;
                                 yl = (ypos + MAP_TILE_POS_YOFF) - face_sprite->bitmap->h;
                                 xmpos = xl = xpos;
@@ -421,7 +509,7 @@ void TileMap::map_draw_map(void)
                                     xl -= (face_sprite->bitmap->w - MAP_TILE_POS_XOFF) / 2;
                             }
 
-                            // blt the face in the darkness level, the tile pos has 
+                            // blt the face in the darkness level, the tile pos has
                             temp = map->darkness;
                             if		(temp == 210)  { bltfx.dark_level = 0; }
                             else if (temp == 180)  { bltfx.dark_level = 1; }
@@ -432,8 +520,8 @@ void TileMap::map_draw_map(void)
                             else if (temp == 0)    { bltfx.dark_level = 7; }
                             else                   { bltfx.dark_level = 6; }
 
-                            // all done, just blt the face 
-                            bltfx.flags = 0;                        
+                            // all done, just blt the face
+                            bltfx.flags = 0;
                             if (k && ((x > player_posx && y >= player_posy) || (x >= player_posx && y > player_posy)))
                             {
                                 if (face_sprite && face_sprite->bitmap && k > 1)
@@ -499,12 +587,12 @@ void TileMap::map_draw_map(void)
                             // have we a playername? then print it!
                             if (options.player_names && map->pname[k][0])
                             {
-                                // we must take care here later for rank! - 
-                                // then we must trick a bit here! (use rank + name 
-                                // and strncmp() 
+                                // we must take care here later for rank! -
+                                // then we must trick a bit here! (use rank + name
+                                // and strncmp()
                                 if (options.player_names
                                  == 1
-                                ||  // all names 
+                                ||  // all names
                                     (options.player_names == 2 && strnicmp(map->pname[k], cpl.rankandname,
                                                                            strlen(cpl.rankandname)))
                                 ||  // names from other players only
@@ -586,4 +674,37 @@ void TileMap::map_draw_map(void)
         }
     }
 */
+}
+
+//=================================================================================================
+//
+//=================================================================================================
+bool TileMap::Init(SceneManager *SceneMgr, SceneNode  *Node)
+{
+	MapStatusX = MAP_MAX_SIZE;
+	MapStatusY = MAP_MAX_SIZE;
+	TheMapCache = 0;
+
+	unsigned char *mImgBuffer = new uchar[LAYER_SIZE_X * LAYER_SIZE_Y*4];
+	Image mLayerImage;
+	mLayerImage.loadDynamicImage(mImgBuffer,LAYER_SIZE_X, LAYER_SIZE_Y, PF_A8B8G8R8 );
+	std::string texName = "mat_dyn_layer_01";
+	MaterialPtr mMaterial = MaterialManager::getSingleton().getByName("dyn_layer_01");
+	mTexture = TextureManager::getSingleton().loadImage(texName, "General", mLayerImage, TEX_TYPE_2D, 3,1.0f);
+	mHardwareBuffer = mTexture->getBuffer(0, 0); 
+	mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(texName);
+	mMaterial->load();
+
+	// Define a floor plane mesh
+	Plane p;
+	p.normal = Vector3(0, 1, 0);
+	p.d = 10;
+	MeshManager::getSingleton().createPlane("Layer0", "General", p, 900, 900, SUM_TILES_X, SUM_TILES_Y, true, 1, 1, 1, Vector3( 0, 0, 1 ));
+	// Create an entity (the floor)
+	Entity *ent = SceneMgr->createEntity("floor", "Layer0");
+	ent->setMaterialName(mMaterial->getName());
+    SceneNode *floor_node = Node->createChildSceneNode(Vector3(0, 0, 0), Quaternion(1.0,0.0,0.0,0.0));
+	floor_node->attachObject(ent);
+	floor_node->translate(0,0,-300);
+	return true;
 }

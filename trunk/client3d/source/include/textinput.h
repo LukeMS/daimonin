@@ -53,7 +53,7 @@ class TextInput
 
 	void stop()
 	{
-		mStrTextInput= ""; 
+		mStrTextInput= "";
 		mSize =0;
 		mInProgress  = false;
 		mChange = false;

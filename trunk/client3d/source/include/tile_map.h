@@ -24,8 +24,16 @@ http://www.gnu.org/copyleft/lesser.txt.
 #ifndef TILE_MAP_H
 #define TILE_MAP_H
 
+#include <Ogre.h>
+#include <OgreImage.h>
+#include <OgreTexture.h>
+#include <OgreHardwarePixelBuffer.h>
+#include <OgreTextureManager.h>
+#include <OgreSceneManager.h>
 
 #include "define.h"
+
+using namespace Ogre;
 
 ////////////////////////////////////////////////////////////
 // Defines.
@@ -41,7 +49,8 @@ const int MAP_TILE_YOFF		=  24;
 const int MAP_MAX_SIZE		=  17;
 const int MAXFACES			=   4;
 
-
+const int TILE_WIDTH = 48;
+const int TILE_HEIGHT= 23;
 
 // Table of pre definded multi arch objects. 
 // mpart_id and mpart_nr in the arches are commited from server 
@@ -105,41 +114,40 @@ class TileMap
     ////////////////////////////////////////////////////////////
 	// Functions.
 	////////////////////////////////////////////////////////////
-    static TileMap &getSingleton()
-	{
-       static TileMap Singleton;
-       return Singleton;
-	}
-	
-     TileMap()
-	 {
-		 MapStatusX = MAP_MAX_SIZE;
-		 MapStatusY = MAP_MAX_SIZE;
-		 TheMapCache = 0;
-	 }
-    ~TileMap()		{;}
+     TileMap() {;}
+    ~TileMap() {;}
+    static TileMap &getSingleton() { static TileMap Singleton; return Singleton; }
     bool Init() {return true;}
 	void clear_map(void);
 	void display_map_clearcell(long x, long y);
 	void set_map_darkness(int x, int y, unsigned char darkness);
 	void set_map_face(int x, int y, int layer, int face, int pos, int ext, char *name);
-	void map_draw_map(void);
+	void draw(void);
 	void display_mapscroll(int dx, int dy);
 	void InitMapData(char *name, int xl, int yl, int px, int py);
 	void set_map_ext(int x, int y, int layer, int ext, int probe);
-	void map_draw_map_clear(void);
+	void clear(void);
 	void load_mapdef_dat(void);
 	void adjust_map_cache(int x, int y);
 	int  get_tile_position(int mx, int my, int *tx, int *ty);
+	bool Init(SceneManager *SceneMgr, SceneNode  *Node);
+	void freeRecources()
+	{
+		// Cannot be done by the destuctor!
+		mHardwareBuffer.setNull();
+		mTexture.setNull();
+	}
 
   private:
-
 	MapCell *TheMapCache;
+	TexturePtr mTexture;
+	HardwarePixelBufferSharedPtr mHardwareBuffer;
 
     ////////////////////////////////////////////////////////////
 	// Functions.
     ////////////////////////////////////////////////////////////
     TileMap(const TileMap&); // disable copy-constructor.
+	void drawTile(Image *img, int offX, int offY);
 };
 
 #endif
