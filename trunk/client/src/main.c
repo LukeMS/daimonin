@@ -571,16 +571,14 @@ Boolean game_status_chain(void)
 			    FaceList[MAX_FACE_TILES-1].sprite=sprite_tryload_file(sbuf,0,NULL);
 
 	            map_udate_flag=2;
-                sprintf(buf,"trying server %s:%d ...", ServerName,
-                        ServerPort);
+                sprintf(buf,"trying server %s:%d ...", ServerName, ServerPort);
                 draw_info(buf, COLOR_GREEN);
                 GameStatus = GAME_STATUS_CONNECT;
         }
         else if(GameStatus == GAME_STATUS_CONNECT)
         {
                 GameStatusVersionFlag = FALSE;
-                if(!SOCKET_OpenSocket(&csocket.fd,&csocket, ServerName,
-                        ServerPort))
+                if(!SOCKET_OpenSocket(&csocket.fd,&csocket, ServerName, ServerPort))
                 {
                         sprintf(buf,"connection failed!");
                         draw_info(buf, COLOR_RED);
