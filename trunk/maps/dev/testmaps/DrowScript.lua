@@ -1,5 +1,7 @@
 require("topic_list")
 
+string.split("")
+
 function topicData()
 	-- Tests the storage of global data
 
@@ -7,7 +9,28 @@ function topicData()
 	local msg = table.concat(string.split(event.message), " ", 2)
 	dt:set("activator", event.activator)
 	dt:set("message", msg)
-	event.me:SayTo(event.activator, "Message '" .. dt:get("message") .. "' saved.")
+	local msg2 = dt:get("message")
+	if msg2 == msg then
+		event.me:SayTo(event.activator, "Message '" .. msg .. "' saved.\nNow talk to the lost soul to see this message.")
+	else
+		event.me:SayTo(event.activator, "Error: Message wasn't saved!")
+	end
+end
+
+function topicInfo()
+	local msg = "\nContents of data_store:"
+	for k1, v1 in pairs(data_store) do
+		if k1 ~= "n" then
+			msg = msg .. "\n'" .. tostring(k1) .. "' => DataTable:\nLast change: " .. os.date("!%Y-%m-%d %H:%M:%S %Z", v1._changed) .. "\nContents:\n---"
+			for k2, v2 in pairs(v1) do
+				if k2 ~= "_changed" then
+					msg = msg .. "\n'" .. tostring(k2) .. "' => '" .. tostring(v2) .. "'"
+				end
+			end
+			msg = msg .. "\n---"
+		end
+	end
+	event.me:SayTo(event.activator, msg)
 end
 
 function topicRecursive()
@@ -52,7 +75,7 @@ end
 function topicRecursive3()
 	event.me:Say("Third level of recursion. Wee! (message = "..event.message..")");
 	local tl = TopicList()
-	tl:setDefault( function() event.me:Say("lvl3 tl: something wierd happened to the topiclist class") end)
+	tl:setDefault( function() event.me:Say("lvl3 tl: something weird happened to the topiclist class") end)
 	tl:addTopics("recursive", function() event.me:Say("lvl3 tl: recursive ( WRONG )") end)
 	tl:addTopics("recursive2", function() event.me:Say("lvl3 tl: recursive2 ( WRONG )") end)
 	tl:addTopics("recursive3", function() event.me:Say("lvl3 tl: recursive3 ( CORRECT )") end)
@@ -62,15 +85,20 @@ end
 tl = TopicList()
 tl:setDefault([[
 
-Welcome, you can test
-^recursive^, ^recursive2^ scripts or the storage of ^data^.
-If you want to test the second say
-data <message>
-This message will be the new message of the lost soul.]])
+Available tests/topics:
+^recursive^
+^recursive2^
+^data^ <message>
+^info^
+
+^recursive^ and ^recursive2^ tests recursive scripts.
+^data^ tests the storage of global data.
+^info^ dumps the contents of 'data_store'.]])
 
 tl:addTopics("recursive", topicRecursive)
 tl:addTopics("recursive2", topicRecursive2)
 tl:addTopics("recursive3", topicRecursive3)
 tl:addTopics("data.*", topicData)
+tl:addTopics("info", topicInfo)
 
 tl:checkMessage()

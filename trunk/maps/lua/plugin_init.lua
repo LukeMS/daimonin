@@ -11,10 +11,13 @@
 require("data_store")
 
 -- string.split() function
-function string.split(s)
+function string.split(s, sep)
 	if s == nil then return nil end
+	if sep == nil or sep == "" then
+		sep = "%s"
+	end
 	local t={}, n
-	for n in string.gfind(s, "%a+") do
+	for n in string.gfind(s, "[^" .. sep .. "]+") do
 		table.insert(t, n)
 	end
 	return t

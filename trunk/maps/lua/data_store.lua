@@ -24,7 +24,18 @@ function DataTable.get(table, key)
 		if object and object.count == value.id then
 			value = object
 		else
-			value = nil
+			if value.type_id and value.type then
+				local id = value.type_id
+				local t = value.type
+				if t == game.TYPE_PLAYER then
+					value = game.FindPlayer(id)
+					if value then
+						table:set(key, value)
+					end
+				end
+			else
+				value = nil
+			end
 		end
 	end
 	return value
@@ -32,7 +43,13 @@ end
 
 function DataTable.set(table, key, value)
 	if value ~= nil and type(value) == "userdata" and value.count then
-		value = {id = value.count, object = value}
+		local ref = {id = value.count, object = value}
+		local t = value.type
+		if t == game.TYPE_PLAYER then
+			ref.type = t
+			ref.type_id = value.name
+		end
+		value = ref
 	end
 	rawset(table, key, value)
 	rawset(table, "_changed", os.time())
@@ -40,7 +57,7 @@ end
 
 DataTable_mt = {__index = DataTable, __newindex = function() error("Use set() to add/change values") end}
 
-function DataTable.new(id)
+function DataTable:new(id)
 	local obj = data_store[id]
 	if obj == nil then
 		obj = {_changed = 0}

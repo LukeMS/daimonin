@@ -3,8 +3,9 @@ dt = DataTable("data_store_test")
 msg = dt:get("message")
 
 if msg then
-	if dt:get("activator") ~= nil then
-		event.me:SayTo(event.activator, "\nA message from " .. dt:get("activator").name .. ":\n" .. msg)
+	ac = dt:get("activator")
+	if ac ~= nil then
+		event.me:SayTo(event.activator, "\nA message from " .. ac.name .. ":\n" .. msg)
 	else
 		event.me:SayTo(event.activator, "\nA message from an unkown object:\n" .. msg)
 	end
