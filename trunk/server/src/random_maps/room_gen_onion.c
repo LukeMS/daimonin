@@ -55,8 +55,8 @@ centered, linear onion        bottom/right centered, nonlinear
 */
 
 
-int *free_x_list;
-int *free_y_list;
+/*int *free_x_list;
+int *free_y_list;*/
 #include <global.h>
 #include <random_map.h>
 

@@ -1062,7 +1062,7 @@ static int	darkness_table[] = {0,10,30,60,120,260,480,960};
 void draw_client_map2(object *pl)
 {
 	static uint32 map2_count=0;
-    struct MapCell *mp;
+    MapCell *mp;
 	MapSpace *msp;
 	New_Face	*face;
     mapstruct *m;
@@ -1732,11 +1732,11 @@ void esrv_map_scroll(NewSocket *ns,int dx,int dy)
     for(x=0;x<ns->mapx;x++) {
 	for(y=0;y<ns->mapy;y++) {
 	    if (x+dx < 0 || x+dx >= ns->mapx || y+dy < 0 || y+dy >= ns->mapy) {
-		memset(&(newmap.cells[x][y]), 0, sizeof(struct MapCell));
+		memset(&(newmap.cells[x][y]), 0, sizeof(MapCell));
 		continue;
 	    }
 	    memcpy(&(newmap.cells[x][y]),
-		   &(ns->lastmap.cells[x+dx][y+dy]),sizeof(struct MapCell));
+		   &(ns->lastmap.cells[x+dx][y+dy]),sizeof(MapCell));
 	}
     }
     memcpy(&(ns->lastmap), &newmap,sizeof(struct Map));

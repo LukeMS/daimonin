@@ -58,6 +58,19 @@
 #include <dmalloc.h>
 #endif
 
+#ifdef SS_STATISTICS
+static struct statistics {
+    int calls;
+    int hashed;
+    int strcmps;
+    int search;
+    int linked;
+} add_stats, add_ref_stats, free_stats, find_stats, hash_stats;
+#define GATHER(n) (++n) 
+#else /* !SS_STATISTICS */
+#define GATHER(n)
+#endif /* SS_STATISTICS */
+
 /* define this will make the hash table more secure but
  * also somewhat slower - if no problems happens after
  * some testings (no bug messages from this module)

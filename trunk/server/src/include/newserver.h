@@ -42,16 +42,16 @@ extern uint32 global_round_tag; /* global round ticker ! this is real a global *
 #pragma pack(push,1)
 #endif
 
-struct MapCell {
+typedef struct MapCell_struct {
     int		count;
     short	faces[MAP_LAYERS];
     uint8	fflag[MAP_LAYERS];  
     uint8	ff_probe[MAP_LAYERS];  
     char	quick_pos[MAP_LAYERS];
-}MapCell;
+} MapCell;
 
 struct Map {
-  struct MapCell cells[MAP_CLIENT_X][MAP_CLIENT_Y];
+  struct MapCell_struct cells[MAP_CLIENT_X][MAP_CLIENT_Y];
 };
 
 /* True max is 16383 given current map compaction method */
@@ -76,7 +76,7 @@ enum Sock_Status {Ns_Avail, Ns_Add, Ns_Dead};
  * data that the OS can't handle right away.
  */
 
-typedef struct Buffer {
+typedef struct Buffer_struct {
     int	    start;
     int	    len;
     char    data[SOCKETBUFSIZE];
@@ -87,7 +87,7 @@ typedef struct Buffer {
 #pragma pack(pop)
 #endif
 
-typedef struct NewSocket {
+typedef struct NewSocket_struct {
     int fd;
     int   mapx, mapy;	    /* How large a map the client wants */
     int   mapx_2, mapy_2;	/* same like above but /2 */
@@ -132,7 +132,7 @@ typedef struct NewSocket {
 
 #define PNG_FACE_INDEX	0
 
-typedef struct Socket_Info {
+typedef struct Socket_Info_struct {
     struct timeval timeout;	/* Timeout for select */
     int	    max_filedescriptor;	/* max filedescriptor on the system */
     int	    nconns;		/* Number of connections */

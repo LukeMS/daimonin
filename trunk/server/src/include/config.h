@@ -67,6 +67,11 @@
 #define LOCALDIR "./data"
 #endif
 
+/* Location of plugins */
+#ifndef PLUGINDIR
+#define PLUGINDIR "./plugins"
+#endif
+
 /*
  * Your tmp-directory should be large enough to hold the uncompressed
  * map-files for all who are playing.
@@ -77,19 +82,25 @@
  * something that is NFS mounted (but performance may suffer as NFS is
  * slower than local disk)
  */
-#define TMPDIR "./data/tmp"
+#ifndef TMPDIR
+#define TMPDIR LOCALDIR"/tmp"
+#endif
 
 /* Directory to use for unique items. This is placed into the 'lib' 
  * directory.  Changing this will cause any old unique items file
  * not to be used.
  */
+#ifndef UNIQUE_DIR
 #define UNIQUE_DIR "unique-items"
+#endif
 
 #ifndef PLAYERDIR
 #define PLAYERDIR "players"
 #endif
 
-#define HELPDIR         "./man"
+#ifndef HELPDIR
+#define HELPDIR   "./man"
+#endif
 
 /* To be removed soon (setable by player) */
 /* IF this is set, then the range type will not switch to skill when

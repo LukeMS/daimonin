@@ -39,8 +39,10 @@ char **map_gen_spiral(int xsize, int ysize, int option);
 #define MAX_SPIRAL_OPT 8  /* this should be 2x the last real option */
 #include <math.h>
 
+/*
 int *free_x_list;
 int *free_y_list;
+*/
 
 #ifndef MIN
 #define MIN(x,y) (((x)<(y))? (x):(y))

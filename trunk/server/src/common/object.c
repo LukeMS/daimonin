@@ -56,7 +56,7 @@ object *active_objects;	/* List of active objects that need to be processed */
 /* this IS extrem ugly - i will move it ASAP to a data file, which can be used
  * from editor too!
  */
-struct _material_real_struct material_real[NROFMATERIALS*NROFMATERIALS_REAL+1] = {
+material_real_struct material_real[NROFMATERIALS*NROFMATERIALS_REAL+1] = {
     /* undefined Material - for stuff we don't need material information about */
     {"", 100,100,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
 

@@ -37,7 +37,6 @@
  * Global variables:
  */
 long max_time = MAX_TIME;
-struct timeval last_time;
 
 #define PBUFLEN 100
 long process_utime_save[PBUFLEN];
