@@ -70,7 +70,7 @@ CFParm                          GCFP2;
 /* script context list */
 struct lua_context             *first_context;
 /* Tag counter for contexts */
-uint32 lua_context_tag_counter;
+tag_t lua_context_tag_counter;
 
 /* Our global state from which we spawn threads for running scripts */
 struct lua_State               *global_state;
@@ -115,9 +115,9 @@ static struct method_decl       Game_methods[]      =
 
 static struct attribute_decl    Event_attributes[]  =
 {
-    {"me", FIELDTYPE_OBJECT, offsetof(struct lua_context, self), FIELDFLAG_READONLY},
-    {"activator", FIELDTYPE_OBJECT, offsetof(struct lua_context, activator), FIELDFLAG_READONLY},
-    {"other", FIELDTYPE_OBJECT, offsetof(struct lua_context, other), FIELDFLAG_READONLY},
+    {"me", FIELDTYPE_OBJECTREF, offsetof(struct lua_context, self), FIELDFLAG_READONLY, offsetof(struct lua_context, self_tag)},
+    {"activator", FIELDTYPE_OBJECTREF, offsetof(struct lua_context, activator), FIELDFLAG_READONLY, offsetof(struct lua_context, activator_tag)},
+    {"other", FIELDTYPE_OBJECTREF, offsetof(struct lua_context, other), FIELDFLAG_READONLY, offsetof(struct lua_context, other_tag)},
     {"message", FIELDTYPE_SHSTR, offsetof(struct lua_context, text), FIELDFLAG_READONLY},
     {"options", FIELDTYPE_SHSTR, offsetof(struct lua_context, options), FIELDFLAG_READONLY},
     {"returnvalue", FIELDTYPE_SINT32, offsetof(struct lua_context, returnvalue)}, {NULL}
@@ -1070,8 +1070,11 @@ MODULEAPI int HandleEvent(CFParm *PParm)
 
     /* And all the event parameters */
     context->activator = (object *) (PParm->Value[1]);
+    context->activator_tag = context->activator ? context->activator->count : 0;
     context->self = (object *) (PParm->Value[2]);
+    context->self_tag = context->self ? context->self->count : 0;
     context->other = (object *) (PParm->Value[3]);
+    context->other_tag = context->other ? context->other->count : 0;
     context->text = (const char *) (PParm->Value[4]);
     context->parm1 = *(int *) (PParm->Value[5]);
     context->parm2 = *(int *) (PParm->Value[6]);
