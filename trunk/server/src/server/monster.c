@@ -168,6 +168,7 @@ void initialize_mob_data(struct mobdata *data)
     data->enemy = NULL;
 
     data->behaviours = NULL;
+    data->attitudes = NULL;
 }
 
 /*
@@ -292,14 +293,14 @@ struct mob_behaviourset * generate_behaviourset(object *op)
     else
     {
         last = set->behaviours[BEHAVIOURCLASS_MOVES] = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_SLEEP);
-		
+
         if (op->run_away)
         {
             last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_RUN_AWAY_FROM_ENEMY);
             last->parameters[AIPARAM_RUN_AWAY_FROM_ENEMY_HP_THRESHOLD].intvalue = op->run_away;   
             last->parameters[AIPARAM_RUN_AWAY_FROM_ENEMY_HP_THRESHOLD].flags |= AI_PARAM_PRESENT;
         }
-		
+
         if (!QUERY_FLAG(op, FLAG_NO_ATTACK))
         {
             if (QUERY_FLAG(op, FLAG_CAST_SPELL) || QUERY_FLAG(op, FLAG_READY_BOW))
@@ -363,9 +364,30 @@ struct mob_behaviourset * generate_behaviourset(object *op)
     return set;
 }
 
+/* Parse a stringint value in the form "string:int"
+ * to separate string and int values.
+ * Returns: 0 at success, non-zero on failure */
+static int parse_stringint_parameter(struct mob_behaviour_param *param, const char *value)
+{
+    char *sep = strchr(value, ':'); 
+    char buf[256];
+    if(sep && sep > value && *(sep+1) != '\0')
+    {
+        strncpy(buf, value, sep-value);
+        /* TODO: an add_string_l(buf, length) function to avoid copying here */
+        buf[sep-value] = '\0';
+        param->stringvalue = add_string(buf);
+        param->intvalue = atoi(sep+1);
+        LOG(llevDebug, "Stringint: %s:%d\n", param->stringvalue, param->intvalue);
+        return 0;
+    } else
+        return -1;
+}
+
 /* Parse a single parameter=value pair into a 
- * mob_behaviour_param struct */
-int parse_behaviour_parameters(const char *start, const char *end, struct mob_behaviour *behaviour)
+ * mob_behaviour_param struct 
+ * Returns: 0 at success, non-zero on failure */
+static int parse_behaviour_parameters(const char *start, const char *end, struct mob_behaviour *behaviour)
 {
     char                        namebuf[256], valuebuf[256], *ptr;
     struct mob_behaviour_param *param;
@@ -442,18 +464,25 @@ int parse_behaviour_parameters(const char *start, const char *end, struct mob_be
         {
             case AI_INTEGER_TYPE:
               param->intvalue = atoi(valuebuf);
+              param->flags |= AI_PARAM_PRESENT;
               break;
+
             case AI_STRING_TYPE:
               param->stringvalue = add_string(valuebuf);
+              param->flags |= AI_PARAM_PRESENT;
               break;
+              
             case AI_STRINGINT_TYPE:
-              LOG(llevBug, "BUG: STRINGINT type not implemented yet\n");
-              param->stringvalue = add_string("somestring");
-              param->intvalue = 42;
+              if(parse_stringint_parameter(param, valuebuf))
+                  LOG(llevBug, "BUG: Bad STRINGINT format (\"%s\") for parameter %s\n", valuebuf, namebuf);
+              else 
+                  param->flags |= AI_PARAM_PRESENT;
+              break;
+
+            default:
+              LOG(llevBug, "BUG: unknown type for parameter %s\n", namebuf);
               break;
         }
-
-        param->flags |= AI_PARAM_PRESENT;
     }
 
     /* Finally, make sure all mandatory parameters were supplied, and
@@ -481,9 +510,8 @@ int parse_behaviour_parameters(const char *start, const char *end, struct mob_be
                       behaviour->parameters[i].stringvalue = add_string(behaviour->declaration->params[i].defaultvalue);
                       break;
                     case AI_STRINGINT_TYPE:
-                      LOG(llevBug, "BUG: STRINGINT type not implemented yet\n");
-                      param->stringvalue = add_string("somestring");
-                      param->intvalue = 42;
+                      if(parse_stringint_parameter(&behaviour->parameters[i], behaviour->declaration->params[i].defaultvalue))
+                          LOG(llevBug, "BUG: Bad STRINGINT default value (\"%s\") for parameter %s:%s\n", valuebuf, behaviour->declaration->name, behaviour->declaration->params[i].name);
                       break;
                 }
             }
@@ -498,7 +526,7 @@ struct mob_behaviourset * parse_behaviourconfig(const char *conf_text, object *o
     struct mob_behaviourset    *behaviourset;
     struct mob_behaviour       *last_behaviour[NROF_BEHAVIOURCLASSES];
     struct mob_behaviour       *new_behaviour;
-    behaviourclass_t                 class  = BEHAVIOURCLASS_NONE;
+    behaviourclass_t            class = BEHAVIOURCLASS_NONE;
 
     int         i;
 
@@ -593,7 +621,7 @@ struct mob_behaviourset * parse_behaviourconfig(const char *conf_text, object *o
         }
         else
         {
-            int i;
+            int behaviour_id;
 
             /* extract behaviour name */
             while (tok_start < tok_end)
@@ -618,11 +646,11 @@ struct mob_behaviourset * parse_behaviourconfig(const char *conf_text, object *o
             /* TODO: here we can speed up search significantly using a
              * perfect hash function */
             new_behaviour = NULL;
-            for (i = 0; behaviourclasses[class].behaviours[i].func; i++)
+            for (behaviour_id = 0; behaviourclasses[class].behaviours[behaviour_id].func; behaviour_id++)
             {
-                if (strcasecmp(buf, behaviourclasses[class].behaviours[i].name) == 0)
+                if (!strcasecmp(buf, behaviourclasses[class].behaviours[behaviour_id].name))
                 {
-                    new_behaviour = init_behaviour(class, i);
+                    new_behaviour = init_behaviour(class, behaviour_id);
                     //                    LOG(llevDebug,"    behaviour %s\n", buf);
                     break;
                 }
@@ -646,6 +674,11 @@ struct mob_behaviourset * parse_behaviourconfig(const char *conf_text, object *o
                 }
             }
 
+            /* Special handling for some behaviours */
+            if(class == BEHAVIOURCLASS_PROCESSES && 
+                    behaviour_id == AIBEHAVIOUR_ATTITUDE)
+                MOB_DATA(op)->attitudes = new_behaviour->parameters;
+	    
             /* If everything checks out, add the behaviour to the set */ 
             if (last_behaviour[class] == NULL)
                 behaviourset->behaviours[class] =                           new_behaviour;
@@ -714,10 +747,10 @@ int mob_can_see_obj(object *op, object *obj, struct mob_known_obj *known_obj)
 {
     int  aggro_range, stealth_range;
 
-	/* Cache values */
-	static tag_t cached_op_tag, cached_obj_tag;
-	static uint32 cache_time;
-	static int cached_result;
+    /* Cache values */
+    static tag_t cached_op_tag, cached_obj_tag;
+    static uint32 cache_time;
+    static int cached_result;
 
     rv_vector   rv, *rv_p = NULL;
 
@@ -725,12 +758,12 @@ int mob_can_see_obj(object *op, object *obj, struct mob_known_obj *known_obj)
     if (known_obj && known_obj->last_seen == ROUND_TAG)
         return TRUE;
 
-	/* Try using cache */
-	if (cached_op_tag == op->count && cached_obj_tag == obj->count &&
-					cache_time == ROUND_TAG)
-		return cached_result;
-	
-	/* Invisibility */
+    /* Try using cache */
+    if (cached_op_tag == op->count && cached_obj_tag == obj->count &&
+                    cache_time == ROUND_TAG)
+        return cached_result;
+    
+    /* Invisibility */
     if (QUERY_FLAG(obj, FLAG_IS_INVISIBLE) && !QUERY_FLAG(op, FLAG_SEE_INVISIBLE))
         return FALSE;
 
@@ -739,9 +772,9 @@ int mob_can_see_obj(object *op, object *obj, struct mob_known_obj *known_obj)
     /* Extra range to alerted monsters */
     if (op->enemy) {
         aggro_range += 3;
-		if (op->enemy == obj)
-			aggro_range += 3;
-	}
+        if (op->enemy == obj)
+            aggro_range += 3;
+    }
 
     /* Much less range if asleep or blind */
     if (QUERY_FLAG(op, FLAG_SLEEP) || QUERY_FLAG(op, FLAG_BLIND))
@@ -755,17 +788,17 @@ int mob_can_see_obj(object *op, object *obj, struct mob_known_obj *known_obj)
         rv_p = get_known_obj_rv(op, known_obj, MAX_KNOWN_OBJ_RV_AGE);
     else if (get_rangevector(op, obj, &rv, 0))
         rv_p = &rv;
-	
+    
     if (rv_p == NULL)
-		cached_result = FALSE;
-	else if ((int) rv_p->distance > (QUERY_FLAG(obj, FLAG_STEALTH) ? stealth_range : aggro_range))
         cached_result = FALSE;
-	else
-		cached_result = TRUE;
+    else if ((int) rv_p->distance > (QUERY_FLAG(obj, FLAG_STEALTH) ? stealth_range : aggro_range))
+        cached_result = FALSE;
+    else
+        cached_result = TRUE;
 
-	cached_op_tag = op->count;
-	cached_obj_tag = obj->count;
-	cache_time = ROUND_TAG;
+    cached_op_tag = op->count;
+    cached_obj_tag = obj->count;
+    cache_time = ROUND_TAG;
 
     /* TODO also test darkness, stealth detection, LOS etc */
     return cached_result;
@@ -895,12 +928,60 @@ void npc_call_for_help(object *op) {
 }
 #endif
 
+int calc_friendship_from_attitude(object *op, object *other)    
+{
+    int friendship = 0;
+    struct mob_behaviour_param *attitudes = MOB_DATA(op)->attitudes;
+    struct mob_behaviour_param *tmp;
+
+    if(attitudes == NULL)
+        return 0;
+
+    /* Race attitude */
+    if(attitudes[AIPARAM_ATTITUDE_RACE].flags & AI_PARAM_PRESENT)
+    {
+        for(tmp = &attitudes[AIPARAM_ATTITUDE_RACE]; tmp != NULL;
+                tmp = tmp->next)
+        {
+            if(other->race && tmp->stringvalue == other->race)
+                friendship += tmp->intvalue;
+        }
+    }
+    
+    /* Arch attitude */
+    if(attitudes[AIPARAM_ATTITUDE_ARCH].flags & AI_PARAM_PRESENT)
+    {
+        for(tmp = &attitudes[AIPARAM_ATTITUDE_ARCH]; tmp != NULL;
+                tmp = tmp->next)
+        {
+            if(other->arch->name && tmp->stringvalue == other->arch->name)
+                friendship += tmp->intvalue;
+        }
+    }
+    
+    /* Named object attitude */
+    if(attitudes[AIPARAM_ATTITUDE_NAME].flags & AI_PARAM_PRESENT)
+    {
+        for(tmp = &attitudes[AIPARAM_ATTITUDE_NAME]; tmp != NULL;
+                tmp = tmp->next)
+        {
+            if(other->name && tmp->stringvalue == other->name)
+                friendship += tmp->intvalue;
+        }
+    }
+
+    LOG(llevDebug, "Attitude friendship modifier: %d (%s->%s)\n", friendship, STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
+
+
+    return friendship;
+}
+
 /* register a new enemy or friend for the NPC */
 struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int friendship)
 {
     struct mob_known_obj   *tmp;
     struct mob_known_obj   *last    = NULL;
-	int i;
+    int i;
 
     if (npc == NULL)
     {
@@ -983,7 +1064,7 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
     /* TODO: keep count of enemies and push out less
      * important if new ones are added beyond a reasonable max number */
 
-    /* No, it is new */
+    /* No, it is a new object */
     tmp = get_poolchunk(pool_mob_knownobj);
     tmp->next = NULL;
     tmp->prev = last;
@@ -997,13 +1078,13 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
     tmp->last_seen = ROUND_TAG;
     tmp->rv_time = 0; /* Makes cached rv invalid */
 
-    tmp->friendship = friendship;
+    tmp->friendship = friendship + calc_friendship_from_attitude(npc, other);
     tmp->attraction = 0;
     tmp->tmp_friendship = 0;
     tmp->tmp_attraction = 0;
-	
-	for(i=0; i<=NROF_AI_KNOWN_OBJ_FLAGS/32; i++)
-	    tmp->flags[i] = 0;
+    
+    for(i=0; i<=NROF_AI_KNOWN_OBJ_FLAGS/32; i++)
+        tmp->flags[i] = 0;
 
     /* Insert last in list of known objects */
     if (last)
@@ -1240,13 +1321,13 @@ void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_
 {
     if (OBJECT_VALID(op->enemy, op->enemy_count))
     {
-    	/* TODO: not correct for multi-tile mobs, the in_line_of_fire() functions simply don't
-	     * work for them. Possible solutions: 1) disable for multi-tile mobs (what do big monsters care
-    	 * about puny missiles, anyway?  2) fix the line-of-fire functions (can be very expensive) */
-		/* Disabled for multi-tile mobs */
-		if(op->more)
-			return;
-			
+        /* TODO: not correct for multi-tile mobs, the in_line_of_fire() functions simply don't
+         * work for them. Possible solutions: 1) disable for multi-tile mobs (what do big monsters care
+         * about puny missiles, anyway?  2) fix the line-of-fire functions (can be very expensive) */
+        /* Disabled for multi-tile mobs */
+        if(op->more)
+            return;
+            
         /* TODO: mobs will not approach enemy through narrow corridors, as they can't 
          * avoid missiles there. It also means they can get stuck in the middle of a corridor as
          * a sitting duck for any distance attacks. Possible fixes: 1) only activate if the enemy if 
@@ -1254,64 +1335,64 @@ void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_
          * if we get stuck somewhere. 3) detect getting stuck and either flee or charge.
          */
         
-		/* Disable behaviour if we don't think enemy uses missiles */
-		if(! QUERY_FLAG(MOB_DATA(op)->enemy, AI_OBJFLAG_USES_DISTANCE_ATTACK)) 
-		{
-			if(op->enemy->type == PLAYER) 
-			{
-				/* Nasty hack for quick detection of possible distance-attack
-				 * skills */
-				/* TODO: should preferably be using observed behaviour instead of
-				 * chosen skill, but this is quite cheap. */
-				char is_distance_skill[NROFSKILLS] = {
-					0,0,0,0,0, 0,0,0,0,0,
-					0,0,0,0,0, 0,0,0,1,0, /* Flame touch ? */
-					0,0,0,0,1, 1,1,0,0,1,
-					1,0,0,0,1, 1,0,0,0,0,
-					0,0 };
-					
-				if(op->enemy->chosen_skill == NULL || 
-						! is_distance_skill[op->enemy->chosen_skill->stats.sp])
-					return;
-				SET_FLAG(MOB_DATA(op)->enemy, AI_OBJFLAG_USES_DISTANCE_ATTACK);
-			} 
-			else if (op->enemy->type == MONSTER) 
-			{
-				if(! QUERY_FLAG(op->enemy, FLAG_CAST_SPELL) &&
-						! QUERY_FLAG(op->enemy, FLAG_READY_BOW)) 
-					return;
-				SET_FLAG(MOB_DATA(op)->enemy, AI_OBJFLAG_USES_DISTANCE_ATTACK);
-			}
-		}
-			
-		/* Behaviour core */
-		if(mob_can_see_obj(op, op->enemy, MOB_DATA(op)->enemy))
-		{
-        	rv_vector  *rv  = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE);
-		
-        	if (rv->distance > 2 && rv->distance < 8)        
-	        {
-				int i;
-
-   	        	/* Avoid staying in line of fire */
-    	    	if(can_hit_missile(op->enemy, op, rv, 1))
-   	    	    	response->forbidden |= (1 << 0);
-
-				for(i=-3; i<=3; i++) {
-	    	        mapstruct *m;
-					int d = absdir(rv->direction + i);
-    	    	    int x = op->x + freearr_x[d];
-	            	int y = op->y + freearr_y[d];
+        /* Disable behaviour if we don't think enemy uses missiles */
+        if(! QUERY_FLAG(MOB_DATA(op)->enemy, AI_OBJFLAG_USES_DISTANCE_ATTACK)) 
+        {
+            if(op->enemy->type == PLAYER) 
+            {
+                /* Nasty hack for quick detection of possible distance-attack
+                 * skills */
+                /* TODO: should preferably be using observed behaviour instead of
+                 * chosen skill, but this is quite cheap. */
+                char is_distance_skill[NROFSKILLS] = {
+                    0,0,0,0,0, 0,0,0,0,0,
+                    0,0,0,0,0, 0,0,0,1,0, /* Flame touch ? */
+                    0,0,0,0,1, 1,1,0,0,1,
+                    1,0,0,0,1, 1,0,0,0,0,
+                    0,0 };
+                    
+                if(op->enemy->chosen_skill == NULL || 
+                        ! is_distance_skill[op->enemy->chosen_skill->stats.sp])
+                    return;
+                SET_FLAG(MOB_DATA(op)->enemy, AI_OBJFLAG_USES_DISTANCE_ATTACK);
+            } 
+            else if (op->enemy->type == MONSTER) 
+            {
+                if(! QUERY_FLAG(op->enemy, FLAG_CAST_SPELL) &&
+                        ! QUERY_FLAG(op->enemy, FLAG_READY_BOW)) 
+                    return;
+                SET_FLAG(MOB_DATA(op)->enemy, AI_OBJFLAG_USES_DISTANCE_ATTACK);
+            }
+        }
             
-	    	        /* Avoid moving into line of fire */
-    	    	    if ((m = out_of_map(op->map, &x, &y))) 
-					{
-        	    	    if(mapcoord_in_line_of_fire(op->enemy, m, x, y, 1))
-            	    	    response->forbidden |= (1 << d);
-		            }
-				}
-	        }
-		}
+        /* Behaviour core */
+        if(mob_can_see_obj(op, op->enemy, MOB_DATA(op)->enemy))
+        {
+            rv_vector  *rv  = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE);
+        
+            if (rv->distance > 2 && rv->distance < 8)        
+            {
+                int i;
+
+                   /* Avoid staying in line of fire */
+                if(can_hit_missile(op->enemy, op, rv, 1))
+                       response->forbidden |= (1 << 0);
+
+                for(i=-3; i<=3; i++) {
+                    mapstruct *m;
+                    int d = absdir(rv->direction + i);
+                    int x = op->x + freearr_x[d];
+                    int y = op->y + freearr_y[d];
+            
+                    /* Avoid moving into line of fire */
+                    if ((m = out_of_map(op->map, &x, &y))) 
+                    {
+                        if(mapcoord_in_line_of_fire(op->enemy, m, x, y, 1))
+                            response->forbidden |= (1 << d);
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -1320,19 +1401,19 @@ void ai_optimize_line_of_fire(object *op, struct mob_behaviour_param *params, mo
     /* TODO: not correct for multi-tile mobs, the in_line_of_fire() functions simply don't
      * work for them. Possible solutions: 1) disable for multi-tile mobs (what do big monsters care
      * about puny missiles, anyway?  2) fix the line-of-fire functions (can be very expensive) */
-	/* Disabled for multi-tile mobs */
-	if(op->more)
-		return;
-	
+    /* Disabled for multi-tile mobs */
+    if(op->more)
+        return;
+    
     if (OBJECT_VALID(op->enemy, op->enemy_count))
     {
-		/* Behaviour core */
-		if(mob_can_see_obj(op, op->enemy, MOB_DATA(op)->enemy))
-		{
+        /* Behaviour core */
+        if(mob_can_see_obj(op, op->enemy, MOB_DATA(op)->enemy))
+        {
             int i;
             int good_directions = 0, ok_directions = 0;
 
-        	rv_vector  *rv  = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE);
+            rv_vector  *rv  = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE);
             
             /* Too close or too far to care? */
             if(rv->distance <= 2 || rv->distance > 8)
@@ -1350,19 +1431,19 @@ void ai_optimize_line_of_fire(object *op, struct mob_behaviour_param *params, mo
              * the mob starts zipping between two "half-good" spots */
             for(i=-2; i<=2; i++) 
             {
-    	        mapstruct *m;
+                mapstruct *m;
                 int dir = absdir(rv->direction+i);
-        	    int x = op->x + freearr_x[dir];
-            	int y = op->y + freearr_y[dir];
+                int x = op->x + freearr_x[dir];
+                int y = op->y + freearr_y[dir];
 
-	            /* Find a spot in or near line of fire, and forbid movements to other spots */
-    	        if ((m = out_of_map(op->map, &x, &y))) 
+                /* Find a spot in or near line of fire, and forbid movements to other spots */
+                if ((m = out_of_map(op->map, &x, &y))) 
                 {
-        	        if(mapcoord_in_line_of_fire(op->enemy, m, x, y, 1)) /* good spot? */
+                    if(mapcoord_in_line_of_fire(op->enemy, m, x, y, 1)) /* good spot? */
                         good_directions |= (1 << dir);
                     else if(mapcoord_in_line_of_fire(op->enemy, m, x, y, 2)) /* ok spot? */
                         ok_directions |= (1 << dir);
-	            }
+                }
             }
 
             /* See if we have a movement response... */
@@ -1378,7 +1459,7 @@ void ai_optimize_line_of_fire(object *op, struct mob_behaviour_param *params, mo
                     response->type = MOVE_RESPONSE_DIRS;
                 }
             }
-		}
+        }
     }
 }
 
@@ -1417,17 +1498,17 @@ void ai_keep_distance_to_enemy(object *op, struct mob_behaviour_param *params, m
 
         if (rv)
         {
-			/* keep distance is something different as run away.
-			 * But a endless "keep distance" is or at last looks the same.
-			 * So, we must avoid it.
-			 * With the "action movement delay, this should work very well.
-			 * We should also handle this more tricky in the AI behaviour itself.
-			 */
-			if(rv->distance <= 1)
-			{
-				ai_move_towards_enemy(op, params, response);
-				return;
-			}
+            /* keep distance is something different as run away.
+             * But a endless "keep distance" is or at last looks the same.
+             * So, we must avoid it.
+             * With the "action movement delay, this should work very well.
+             * We should also handle this more tricky in the AI behaviour itself.
+             */
+            if(rv->distance <= 1)
+            {
+                ai_move_towards_enemy(op, params, response);
+                return;
+            }
             
             if (rv->distance < (unsigned int) AIPARAM_INT(AIPARAM_KEEP_DISTANCE_TO_ENEMY_MIN_DIST))
             {
@@ -1683,6 +1764,12 @@ void ai_run_away_from_enemy(object *op, struct mob_behaviour_param *params, move
  * Misc behaviours
  */
 
+/* Placeholder function for some special processes */
+void ai_fake_process(object *op, struct mob_behaviour_param *params)
+{
+    LOG(llevBug, "BUG: ai_fake_process() should never be called\n");
+}
+
 void ai_look_for_other_mobs(object *op, struct mob_behaviour_param *params)
 {
     /* TODO Very stupid solution for now: scan through all active and
@@ -1936,16 +2023,16 @@ int ai_bow_attack_enemy(object *op, struct mob_behaviour_param *params)
 
     op->weapon_speed_left += FABS((int) op->weapon_speed_left) + 1;
 
-	/* hack: without this, a monster with a bow is invinsible by a non range monster
-	 * with same speed. It simply runs away, can't be catched but will range kill
-	 * the other. Thats not what we want.
-	 * To remove this speed thingy, we need a flag for the AI which skips the movement
-	 * phase after a cast/arrow action.
-	 * At last we must skip a action which brings the mob out of range ... so, a movement
-	 * to the enemy should be allowed. This is not a question of reality of not - this will
-	 * destroy not only game play but also every map design and is a critical misbehaviour.
-	 */
-	op->speed_left--;
+    /* hack: without this, a monster with a bow is invinsible by a non range monster
+     * with same speed. It simply runs away, can't be catched but will range kill
+     * the other. Thats not what we want.
+     * To remove this speed thingy, we need a flag for the AI which skips the movement
+     * phase after a cast/arrow action.
+     * At last we must skip a action which brings the mob out of range ... so, a movement
+     * to the enemy should be allowed. This is not a question of reality of not - this will
+     * destroy not only game play but also every map design and is a critical misbehaviour.
+     */
+    op->speed_left--;
     return 1;
 }
 
@@ -2064,7 +2151,7 @@ int ai_spell_attack_enemy(object *op, struct mob_behaviour_param *params)
     /* TODO: what does the return value of cast_spell do ? */
     cast_spell(rv->part, rv->part, direction, sp_type, ability, spellNormal, NULL);
 
-	op->speed_left--;/* hack: see bow bahaviour! */	
+    op->speed_left--;/* hack: see bow bahaviour! */    
     return TRUE;
 }
 
@@ -2408,7 +2495,7 @@ int move_monster(object *op)
     }
 
     /*
-     * First, some general monster-managing
+     * First, some general monster-management
      */      
 
     tmp_dir = op->anim_enemy_dir;
@@ -2436,7 +2523,10 @@ int move_monster(object *op)
          behaviour != NULL;
          behaviour = behaviour->next)
     {
-        ((void(*) (object *, struct mob_behaviour_param *)) behaviour->declaration->func) (op, behaviour->parameters);
+        /* TODO: find a slightly more efficient way of handling 
+         * non-executable "fake" processes */
+        if(behaviour->declaration->func != ai_fake_process)
+            ((void(*) (object *, struct mob_behaviour_param *)) behaviour->declaration->func) (op, behaviour->parameters);
     }
 
     /*

@@ -24,7 +24,7 @@ enum
 #define AI_OPTIONAL_PARAM  0 /* default: param is optional */
 #define AI_MANDATORY_PARAM 1 /* param is mandatory */
 #define AI_SINGLE_PARAM    0 /* default: param can only be specified once */
-#define AI_MULTI_PARAM     2 /* param can be specified multiple times */
+#define AI_MULTI_PARAM     2 /* param can be specified 0 or more times */
 
 struct behaviourparam_decl
 {
