@@ -29,6 +29,7 @@
 #include <sounds.h>
 
 extern object *objects;
+static void insert_spell_effect(char *archname, mapstruct *m, int x, int y);
 
 /* 
  * spell_failure()  handles the various effects for differing degrees
@@ -1316,6 +1317,35 @@ int dimension_door(object *op,int dir) {
     return 1;
 }
 
+static void insert_spell_effect(char *archname, mapstruct *m, int x, int y)
+{
+	archetype *effect_arch;
+	object *effect_ob;
+
+	if(!archname || !m)
+		return;
+
+    effect_arch = find_archetype(archname);
+    if (effect_arch == (archetype *) NULL) 
+	{
+		LOG(llevBug, "BUG: insert_spell_effect: Couldn't find effect arch (%s).\n", archname);
+		return;
+    }
+
+	effect_ob = arch_to_object(effect_arch);
+	effect_ob->map = m;
+	/* out of map? */
+	if(!(m=out_of_map(m, &x, &y)))
+	{
+		LOG(llevBug, "BUG: insert_spell_effect: effect arch (%s) out of map (%s) (%d,%d).\n", 
+														archname, effect_ob->map->name, x, y);
+		return;
+    }
+
+	effect_ob->x = x;
+	effect_ob->y = y;
+	insert_ob_in_map(effect_ob, m, NULL,0);
+}
 
 
 int cast_heal(object *op,object *target,int spell_type) 
@@ -1504,8 +1534,11 @@ int cast_heal(object *op,object *target,int spell_type)
 	}
 
 	if (success)
+	{
 		op->speed_left = -FABS(op->speed)*3;
+	}
 
+	insert_spell_effect(spells[spell_type].archname,target->map,target->x,target->y);
 	return success;
 }
 
@@ -1590,6 +1623,7 @@ int cast_change_attr(object *op,object *caster,object *target, int dir,int spell
 					new_draw_info_format(NDI_UNIQUE, 0,op,"%s don't grow stronger but the spell is refreshed.", tmp->name?tmp->name:"someone"); 
 			}
 
+		insert_spell_effect(spells[SP_STRENGTH].archname,target->map,target->x,target->y);
 	    break;
 
 
@@ -2392,6 +2426,7 @@ int remove_depletion(object *op, object *target)
 	if(!op || !target)
 		return success;
 
+
 	if(target->type != PLAYER)
 	{
 		if(op->type == PLAYER) /* fake messages for non player... */
@@ -2437,6 +2472,7 @@ int remove_depletion(object *op, object *target)
 	if (op!=target && target->type==PLAYER && !success) /* if success, target got infos before */
 		new_draw_info(NDI_UNIQUE, 0,target, "There is no depletion.");
 
+	insert_spell_effect(spells[SP_REMOVE_DEPLETION].archname,target->map,target->x,target->y);
 	return success;
 }
 
@@ -2503,6 +2539,8 @@ int remove_curse(object *op, object *target, int type, SpellTypeFrom src)
 				new_draw_info(NDI_UNIQUE, 0,target, "You hear manical laughter in the distance.");
 		}
 	}
+	
+	insert_spell_effect(spells[SP_REMOVE_CURSE].archname,target->map,target->x,target->y);
 	return success;
 }
 
@@ -2531,6 +2569,7 @@ int cast_identify(object *op, int level, object *single_ob, int mode)
 		goto inside_jump1;
 	}
 
+	insert_spell_effect(spells[SP_IDENTIFY].archname,op->map,op->x,op->y);
 	for (tmp = op->inv; tmp ; tmp = tmp->below)
 	{
 		inside_jump1:
@@ -2559,6 +2598,8 @@ int cast_identify(object *op, int level, object *single_ob, int mode)
 					break;
 			}
 		}
+		if(mode == IDENTIFY_MODE_MARKED)
+			break;
 	}
   /* If all the power of the spell has been used up, don't go and identify
    * stuff on the floor.  Only identify stuff on the floor if the spell
@@ -2603,14 +2644,6 @@ int cast_detection(object *op, object *target,int type)
 	int nx,ny, suc=FALSE;
     object *tmp;
     mapstruct *m;
-    archetype *detect_arch;
-
-    detect_arch = find_archetype("detect_magic");
-    if (detect_arch == (archetype *) NULL) 
-	{
-		LOG(llevBug, "BUG: Couldn't find archetype detect_magic (%s).\n", query_name(op));
-		return 0;
-    }
 
 	switch(type) 
 	{
@@ -2704,7 +2737,6 @@ int cast_detection(object *op, object *target,int type)
 			new_draw_info(NDI_UNIQUE, 0,op,"The spell detects something.");
 		if(target->type == PLAYER && target != op)
 			new_draw_info(NDI_UNIQUE, 0,target,"The spell detects something.");
-
 	}
 	else
 	{
@@ -2715,6 +2747,7 @@ int cast_detection(object *op, object *target,int type)
 
 	}
 
+	insert_spell_effect(spells[type].archname,target->map,target->x,target->y);
 	return 1;
 }
 

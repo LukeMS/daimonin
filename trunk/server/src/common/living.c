@@ -1944,7 +1944,7 @@ void fix_monster(object *op)
 	}
 
 	/* pre adjust */
-	op->stats.maxhp = base->stats.maxhp * (op->level+3);
+	op->stats.maxhp = base->stats.maxhp * (op->level+3)+(op->level/2)*base->stats.maxhp;
 	op->stats.maxsp = base->stats.maxsp * (op->level+1);
 	op->stats.maxgrace = base->stats.maxgrace * (op->level+1);
 	
