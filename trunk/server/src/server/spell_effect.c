@@ -286,7 +286,7 @@ void polymorph_living(object *op) {
 
     if(op->randomitems != NULL)
         /* No GT_APPLY here because we'll do it manually. */
-	create_treasure(op->randomitems,op,GT_INVISIBLE,map->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0);
+	create_treasure(op->randomitems,op,GT_INVISIBLE,map->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
 
     /* Apply any objects.  This limits it to the first 20 items, which
      * I guess is reasonable.
@@ -1972,7 +1972,7 @@ int summon_pet(object *op, int dir, SpellTypeFrom item) {
     head = insert_ob_in_map (head, op->map, op,0);
     if (head != NULL && head->randomitems != NULL) {
       object *tmp;
-      create_treasure(head->randomitems,head,GT_APPLY,head->level,T_STYLE_UNSET,ART_CHANCE_UNSET,0);
+      create_treasure(head->randomitems,head,GT_APPLY,head->level,T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
       for(tmp = head->inv; tmp != NULL; tmp = tmp->below)
         if(!tmp->nrof)
           SET_FLAG(tmp, FLAG_NO_DROP);
@@ -3487,7 +3487,7 @@ int summon_cult_monsters(object *op, int old_dir) {
 	head = insert_ob_in_map (head, op->map, op,0);
 	if (head != NULL && head->randomitems != NULL) {
 	    object *tmp;
-	    create_treasure(head->randomitems,head,GT_APPLY,6,T_STYLE_UNSET,ART_CHANCE_UNSET,0);
+	    create_treasure(head->randomitems,head,GT_APPLY,6,T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
 	    for(tmp = head->inv; tmp != NULL; tmp = tmp->below)
 		if(!tmp->nrof)
 		    SET_FLAG(tmp, FLAG_NO_DROP);

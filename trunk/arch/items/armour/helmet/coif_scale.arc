@@ -6,6 +6,7 @@ layer 3
 last_heal 5
 weight 1200
 ac 1
+item_level 5
 protect_impact 10
 protect_cleave 8
 protect_slash 10

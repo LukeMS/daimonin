@@ -239,17 +239,17 @@ char *query_short_name(object *op)
 	return op->name; 
 	*/
     if(op->nrof) {
-		safe_strcat(buf, get_number(op->nrof), &len, HUGE_BUF);
+		safe_strcat(buf, get_number(op->nrof), &len, sizeof(buf));
 
 		if (op->nrof!=1) 
-			safe_strcat(buf, " ", &len, HUGE_BUF);
+			safe_strcat(buf, " ", &len, sizeof(buf));
 		/* add the item race name */
-		safe_strcat(buf, item_race_table[op->item_race].name, &len, HUGE_BUF);
+		safe_strcat(buf, item_race_table[op->item_race].name, &len, sizeof(buf));
 
 		if(op->material_real && QUERY_FLAG(op,FLAG_IDENTIFIED))
-			safe_strcat(buf,material_real[op->material_real].name, &len, HUGE_BUF);
+			safe_strcat(buf,material_real[op->material_real].name, &len, sizeof(buf));
 
-		safe_strcat(buf,op->name, &len, HUGE_BUF);
+		safe_strcat(buf,op->name, &len, sizeof(buf));
 		if (op->nrof != 1)
 		{
 			char *buf3 = strstr(buf, " of ");
@@ -266,7 +266,7 @@ char *query_short_name(object *op)
 			* (after and including the " of "), to the buffer string.
 			*/
 			if (buf3)
-				safe_strcat(buf, buf2, &len, HUGE_BUF);
+				safe_strcat(buf, buf2, &len, sizeof(buf));
 		}
 	} 
 	else 
@@ -274,12 +274,12 @@ char *query_short_name(object *op)
 		/* if nrof is 0, the object is not mergable, and thus, op->name
 		should contain the name to be used. */
 
-		safe_strcat(buf, item_race_table[op->item_race].name, &len, HUGE_BUF);
+		safe_strcat(buf, item_race_table[op->item_race].name, &len, sizeof(buf));
 
 		if(op->material_real && QUERY_FLAG(op,FLAG_IDENTIFIED))
-			safe_strcat(buf,material_real[op->material_real].name, &len, HUGE_BUF);
+			safe_strcat(buf,material_real[op->material_real].name, &len, sizeof(buf));
 
-		safe_strcat(buf,op->name, &len, HUGE_BUF);
+		safe_strcat(buf,op->name, &len, sizeof(buf));
     }
 
 	switch(op->type) 
@@ -289,17 +289,17 @@ char *query_short_name(object *op)
 			{
 				if(op->title) 
 				{
-					safe_strcat(buf, " ", &len, MAX_BUF);
-					safe_strcat(buf, op->title, &len, MAX_BUF);
+					safe_strcat(buf, " ", &len, sizeof(buf));
+					safe_strcat(buf, op->title, &len, sizeof(buf));
 				}
 			}
 			if(op->sub_type1>=ST1_CONTAINER_NORMAL_player)
 			{
 				if(op->sub_type1 == ST1_CONTAINER_CORPSE_player && op->slaying)
 				{
-					safe_strcat(buf," (bounty of ", &len, HUGE_BUF);	
-					safe_strcat(buf,op->slaying, &len, HUGE_BUF);	
-					safe_strcat(buf,")", &len, HUGE_BUF);	
+					safe_strcat(buf," (bounty of ", &len, sizeof(buf));	
+					safe_strcat(buf,op->slaying, &len, sizeof(buf));	
+					safe_strcat(buf,")", &len, sizeof(buf));	
 				}
 			}
 		break;
@@ -309,21 +309,21 @@ char *query_short_name(object *op)
 			{
 				if(!op->title) 
 				{
-					safe_strcat(buf," of ", &len, HUGE_BUF);
+					safe_strcat(buf," of ", &len, sizeof(buf));
 					if(op->slaying) 
-						safe_strcat(buf,op->slaying, &len, HUGE_BUF);
+						safe_strcat(buf,op->slaying, &len, sizeof(buf));
 					else
 					{
 						if(op->stats.sp == SP_NO_SPELL)
-							safe_strcat(buf,"nothing", &len, HUGE_BUF);
+							safe_strcat(buf,"nothing", &len, sizeof(buf));
 						else
-							safe_strcat(buf,spells[op->stats.sp].name, &len, MAX_BUF);
+							safe_strcat(buf,spells[op->stats.sp].name, &len, sizeof(buf));
 					}
 				}
 				else
 				{
-					safe_strcat(buf, " ", &len, HUGE_BUF);
-					safe_strcat(buf, op->title, &len, HUGE_BUF);
+					safe_strcat(buf, " ", &len, sizeof(buf));
+					safe_strcat(buf, op->title, &len, sizeof(buf));
 				}
 			}
 		break;
@@ -339,19 +339,19 @@ char *query_short_name(object *op)
 				{
 					if(op->stats.sp != SP_NO_SPELL)
 					{
-						safe_strcat(buf," of ", &len, HUGE_BUF);
-						safe_strcat(buf,spells[op->stats.sp].name, &len, HUGE_BUF);
+						safe_strcat(buf," of ", &len, sizeof(buf));
+						safe_strcat(buf,spells[op->stats.sp].name, &len, sizeof(buf));
 					}
 					else
-						safe_strcat(buf," of nothing", &len, HUGE_BUF);
+						safe_strcat(buf," of nothing", &len, sizeof(buf));
 			    }
 				else
 				{
-					safe_strcat(buf, " ", &len, HUGE_BUF);
-					safe_strcat(buf, op->title, &len, HUGE_BUF);
+					safe_strcat(buf, " ", &len, sizeof(buf));
+					safe_strcat(buf, op->title, &len, sizeof(buf));
 				}
 				sprintf(buf2, " (lvl %d)", op->level);
-				safe_strcat(buf, buf2, &len, HUGE_BUF);
+				safe_strcat(buf, buf2, &len, sizeof(buf));
 			}
 		break;
 
@@ -366,14 +366,14 @@ char *query_short_name(object *op)
 				char *s = describe_item(op);
 				if (s[0])
 				{
-					safe_strcat (buf, " ", &len, HUGE_BUF);
-					safe_strcat(buf, s, &len, HUGE_BUF);
+					safe_strcat (buf, " ", &len, sizeof(buf));
+					safe_strcat(buf, s, &len, sizeof(buf));
 				}
 			}
 			else
 			{
-				safe_strcat(buf, " ", &len, HUGE_BUF);
-				safe_strcat(buf, op->title, &len, HUGE_BUF);
+				safe_strcat(buf, " ", &len, sizeof(buf));
+				safe_strcat(buf, op->title, &len, sizeof(buf));
 			}
 			}
 		break;
@@ -383,12 +383,12 @@ char *query_short_name(object *op)
 			(!need_identify(op) || QUERY_FLAG(op,FLAG_BEEN_APPLIED) || QUERY_FLAG(op,FLAG_IDENTIFIED)))
 		{
 			sprintf(buf2, " %+d", op->magic);
-			safe_strcat(buf, buf2, &len, HUGE_BUF);
+			safe_strcat(buf, buf2, &len, sizeof(buf));
 		}
 	    if (op->title && QUERY_FLAG(op,FLAG_IDENTIFIED))
 		{
-			safe_strcat(buf, " ", &len, HUGE_BUF);
-			safe_strcat(buf, op->title, &len, HUGE_BUF);
+			safe_strcat(buf, " ", &len, sizeof(buf));
+			safe_strcat(buf, op->title, &len, sizeof(buf));
 		}
     }
     return buf;
@@ -522,8 +522,8 @@ char *query_base_name(object *op) {
 			{
 				if(op->title) 
 				{
-					safe_strcat(buf, " ", &len, MAX_BUF);
-					safe_strcat(buf, op->title, &len, MAX_BUF);
+					safe_strcat(buf, " ", &len, sizeof(buf));
+					safe_strcat(buf, op->title, &len, sizeof(buf));
 				}
 			}
 
@@ -531,9 +531,9 @@ char *query_base_name(object *op) {
 			{
 				if(op->sub_type1 == ST1_CONTAINER_CORPSE_player && op->slaying)
 				{
-					safe_strcat(buf," (bounty of ", &len, HUGE_BUF);	
-					safe_strcat(buf,op->slaying, &len, HUGE_BUF);	
-					safe_strcat(buf,")", &len, HUGE_BUF);	
+					safe_strcat(buf," (bounty of ", &len, sizeof(buf));	
+					safe_strcat(buf,op->slaying, &len, sizeof(buf));	
+					safe_strcat(buf,")", &len, sizeof(buf));	
 				}
 			}
 		break;
@@ -543,21 +543,21 @@ char *query_base_name(object *op) {
 			{
 				if(!op->title) 
 				{
-					safe_strcat(buf," of ", &len, MAX_BUF);
+					safe_strcat(buf," of ", &len, sizeof(buf));
 					if(op->slaying) 
-						safe_strcat(buf,op->slaying, &len, MAX_BUF);
+						safe_strcat(buf,op->slaying, &len, sizeof(buf));
 					else
 					{
 						if(op->stats.sp == SP_NO_SPELL)
-							safe_strcat(buf,"nothing", &len, HUGE_BUF);
+							safe_strcat(buf,"nothing", &len, sizeof(buf));
 						else
-							safe_strcat(buf,spells[op->stats.sp].name, &len, MAX_BUF);
+							safe_strcat(buf,spells[op->stats.sp].name, &len, sizeof(buf));
 					}
 				}
 				else
 				{
-					safe_strcat(buf, " ", &len, MAX_BUF);
-					safe_strcat(buf, op->title, &len, MAX_BUF);
+					safe_strcat(buf, " ", &len, sizeof(buf));
+					safe_strcat(buf, op->title, &len, sizeof(buf));
 				}
 			}
 		break;
@@ -573,19 +573,19 @@ char *query_base_name(object *op) {
 				{	
 					if(op->stats.sp != SP_NO_SPELL)
 					{
-						safe_strcat(buf," of ", &len, HUGE_BUF);
-						safe_strcat(buf,spells[op->stats.sp].name, &len, HUGE_BUF);
+						safe_strcat(buf," of ", &len, sizeof(buf));
+						safe_strcat(buf,spells[op->stats.sp].name, &len, sizeof(buf));
 					}
 					else
-						safe_strcat(buf," of nothing", &len, HUGE_BUF);
+						safe_strcat(buf," of nothing", &len, sizeof(buf));
 			    }
 				else
 				{
-					safe_strcat(buf, " ", &len, MAX_BUF);
-					safe_strcat(buf, op->title, &len, MAX_BUF);
+					safe_strcat(buf, " ", &len, sizeof(buf));
+					safe_strcat(buf, op->title, &len, sizeof(buf));
 				}
 				sprintf(buf2, " (lvl %d)", op->level);
-				safe_strcat(buf, buf2, &len, MAX_BUF);
+				safe_strcat(buf, buf2, &len, sizeof(buf));
 			}
 		break;
 
@@ -600,14 +600,14 @@ char *query_base_name(object *op) {
 				char *s = describe_item(op);
 				if (s[0])
 				{
-					safe_strcat (buf, " ", &len, MAX_BUF);
-					safe_strcat (buf, s, &len, MAX_BUF);
+					safe_strcat (buf, " ", &len, sizeof(buf));
+					safe_strcat (buf, s, &len, sizeof(buf));
 				}
 			}
 			else
 			{
-				safe_strcat(buf, " ", &len, MAX_BUF);
-				safe_strcat(buf, op->title, &len, MAX_BUF);
+				safe_strcat(buf, " ", &len, sizeof(buf));
+				safe_strcat(buf, op->title, &len, sizeof(buf));
 			}
 		}
 	break;
@@ -616,13 +616,13 @@ char *query_base_name(object *op) {
 			(!need_identify(op) || QUERY_FLAG(op,FLAG_BEEN_APPLIED) || QUERY_FLAG(op,FLAG_IDENTIFIED)))
 		{
 			sprintf(buf2, " %+d", op->magic);
-			safe_strcat(buf, buf2, &len, MAX_BUF);
+			safe_strcat(buf, buf2, &len, sizeof(buf));
 		}
 
 	    if (op->title &&(need_identify(op) && QUERY_FLAG(op,FLAG_IDENTIFIED))) 
 		{
-			safe_strcat(buf, " ", &len, MAX_BUF);
-			safe_strcat(buf, op->title, &len, MAX_BUF);
+			safe_strcat(buf, " ", &len, sizeof(buf));
+			safe_strcat(buf, op->title, &len, sizeof(buf));
 		}
     } /* switch */
 

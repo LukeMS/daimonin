@@ -110,7 +110,7 @@ int auto_apply (object *op) {
   case TREASURE:
     while ((op->stats.hp--)>0)
       create_treasure(op->randomitems, op, GT_ENVIRONMENT,
-	op->map == NULL ?  op->stats.exp: op->map->difficulty,T_STYLE_UNSET, ART_CHANCE_UNSET, 0);
+	op->map == NULL ?  op->stats.exp: op->map->difficulty,T_STYLE_UNSET, ART_CHANCE_UNSET, 0,NULL);
     remove_ob(op);
     free_object(op);
     break;
@@ -139,17 +139,17 @@ void fix_auto_apply(mapstruct *m) {
         else if(tmp->type==TREASURE) {
 	  while ((tmp->stats.hp--)>0)
             create_treasure(tmp->randomitems, tmp, 0,
-                            m->difficulty,T_STYLE_UNSET, ART_CHANCE_UNSET,0);
+                            m->difficulty,T_STYLE_UNSET, ART_CHANCE_UNSET,0, NULL);
 	}
         if(tmp && tmp->arch && tmp->type!=PLAYER && tmp->type!=TREASURE &&
 	   tmp->randomitems){
 	  if(tmp->type==CONTAINER) {
 	    while ((tmp->stats.hp--)>0)
 	      create_treasure(tmp->randomitems, tmp, 0,
-			      m->difficulty,T_STYLE_UNSET, ART_CHANCE_UNSET,0);
+			      m->difficulty,T_STYLE_UNSET, ART_CHANCE_UNSET,0,NULL);
 	  }
 	  else create_treasure(tmp->randomitems, tmp, GT_APPLY,
-			      m->difficulty,T_STYLE_UNSET, ART_CHANCE_UNSET,0);
+			      m->difficulty,T_STYLE_UNSET, ART_CHANCE_UNSET,0,NULL);
 	}
       }
   for(x=0;x<MAP_WIDTH(m);x++)

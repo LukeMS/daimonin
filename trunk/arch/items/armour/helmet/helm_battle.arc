@@ -5,6 +5,7 @@ layer 3
 face helm_battle.101
 last_heal 8
 ac 2
+item_level 10
 protect_impact 6
 protect_cleave 6
 protect_slash 8

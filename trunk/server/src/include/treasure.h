@@ -29,18 +29,10 @@
 #ifndef TREASURE_H
 #define TREASURE_H
 
-#define MAGIC_VALUE		10000	/* Might need to increase later */
 #define CHANCE_FOR_ARTIFACT	20
 
-#define STARTMAL        100
-#define STEPMAL         10
-
-/* List, What type to clone_arch(), max magic, how many */
-
-#define MAXMAGIC 4
-
-#define DIFFLEVELS 31
-
+#define NUM_COINS 4	/* number of coin types */
+extern char *coins[NUM_COINS+1];
 
 /*
  * Flags to generate_treasures():
@@ -74,10 +66,11 @@ typedef struct _change_arch {
     const char *title;             /* is != NULL, copy this over the original arch name */
     const char *slaying;           /* is != NULL, copy this over the original arch name */
     int item_race;
-    sint8 material_start;     /* if -1, we set material_real to 0 */
-    sint8 material_end;       /* if -1 and material_start not, we use material_start
-                             * as fixed entry. if both >0, we use them as random range.
-                             */
+    int material;					/* the real, fixed material value */
+    int material_quality;			/* find a material matching this quality */
+    int material_range;				/* using material_quality, find quality inside this range */
+	int quality;					/* quality value. It overwrites the material default value */
+	int quality_range;				/* used for random range */
 } _change_arch;
 
 

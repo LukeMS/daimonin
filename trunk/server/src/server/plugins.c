@@ -399,7 +399,7 @@ void initOnePlugin(const char* pluginfile)
                 HookParm = (CFParm *)(malloc(sizeof(CFParm)));
                 HookParm->Value[0]=(int *)(malloc(sizeof(int)));
 
-                for(j=1; j<=NR_OF_HOOKS;j++)
+                for(j=1; j<NR_OF_HOOKS;j++)
                 {
                     memcpy(HookParm->Value[0], &j, sizeof(int));
                     HookParm->Value[1] = HookList[j];

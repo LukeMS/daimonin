@@ -8,7 +8,7 @@ exp 150
 speed -0.032
 weapon_speed 0.0375
 attack_acid 55
-attack_poison 30
+attack_poison 40
 resist_poison 100
 ac 9
 wc 2

@@ -224,7 +224,8 @@ void player_lvl_adj(object *who, object *op) {
 	if(op->type == SKILL && !op->last_eat) /* no exp gain for indirect skills */
 	{
 		LOG(llevBug,"BUG: player_lvl_adj() called for indirect skill %s (who: %s)\n", 
-												op->name, who==NULL?"<null>":who->name);
+												query_name(op),
+                                                who==NULL?"<null>":query_name(who));
 		return;
 	}
 

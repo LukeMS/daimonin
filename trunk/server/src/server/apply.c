@@ -3404,7 +3404,7 @@ int auto_apply (object *op) {
   case TREASURE:
     while ((op->stats.hp--)>0)
       create_treasure(op->randomitems, op, op->map?GT_ENVIRONMENT:0,
-	    op->level ?  op->level: op->map->difficulty,T_STYLE_UNSET, ART_CHANCE_UNSET, 0);
+	    op->level ?  op->level: op->map->difficulty,T_STYLE_UNSET, ART_CHANCE_UNSET, 0,NULL);
 
     /* If we generated on object and put it in this object inventory,
      * move it to the parent object as the current object is about
@@ -3464,7 +3464,7 @@ void fix_auto_apply(mapstruct *m) {
 						else if(invtmp->type==TREASURE)
 						{
 							while ((invtmp->stats.hp--)>0)
-								create_treasure(invtmp->randomitems, invtmp, 0, tmp->level ? tmp->level:m->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0);
+								create_treasure(invtmp->randomitems, invtmp, 0, tmp->level ? tmp->level:m->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
 						}
 					}
 				}
@@ -3474,7 +3474,7 @@ void fix_auto_apply(mapstruct *m) {
 				else if((tmp->type==TREASURE || (tmp->type==CONTAINER))&&tmp->randomitems)
 				{
 					while ((tmp->stats.hp--)>0)
-						create_treasure(tmp->randomitems, tmp, 0, tmp->level?tmp->level:m->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0);
+						create_treasure(tmp->randomitems, tmp, 0, tmp->level?tmp->level:m->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
 				}
 				else if(tmp->type==TIMED_GATE)
 				{
@@ -3482,7 +3482,7 @@ void fix_auto_apply(mapstruct *m) {
 					update_ob_speed(tmp);
 				}
 				if(tmp && tmp->arch && tmp->type!=PLAYER && tmp->type!=TREASURE && tmp->randomitems)
-					create_treasure(tmp->randomitems, tmp, GT_APPLY, tmp->level?tmp->level:m->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0);
+					create_treasure(tmp->randomitems, tmp, GT_APPLY, tmp->level?tmp->level:m->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
 			}
 		}
 	}

@@ -327,7 +327,7 @@ int calc_skill_exp(object *who, object *op)
 		tmp = (who_lvl - op_lvl)*3;
 		LOG(llevDebug,"EXP (higher hitter %d):: target %s (base:%d lvl:%d mul: %f) tmp:%d ",who_lvl, query_name(op),op_exp,op_lvl,lev_exp[op_lvl],tmp);
 
-		if(tmp > op_lvl*2 && (who_lvl - op_lvl)>2)
+		if((who_lvl - op_lvl)>2)
 			tmp = calc_level_difference(who_lvl, op_lvl);
 		if(tmp)
 		{

@@ -111,7 +111,6 @@ typedef unsigned int tag_t;
 #define EXP_NONE (MAX_EXP_CAT - 1)  /* "NULL" exp. object. This is the last 
 				     * experience obj always.*/ 
 
-
 #define MAXLEVEL      110
 extern uint32 new_levels[MAXLEVEL+2];
 extern float lev_exp[MAXLEVEL+1];

@@ -34,8 +34,6 @@
  * system in daimonin. 32bit will be broken when a player has ~250 mithril coins.
  */
 
-#define NUM_COINS 4	/* number of coin types */
-static char *coins[] = {"mitcoin", "goldcoin", "silvercoin","coppercoin", NULL};
 
 /* i reworked this function in most parts. I removed every part which try to recalculate
  * the item value. Now we always use the real value or the clone value and only adjust 
@@ -482,7 +480,8 @@ void sell_item(object *op, object *pl) {
       at = find_archetype(coins[count]);
       if (at==NULL) LOG(llevBug, "BUG: Could not find %s archetype", coins[count]);
       else if ((i/at->clone.value) > 0) {
-	  for ( pouch=pl->inv ; pouch ; pouch=pouch->below ) {
+	  for ( pouch=pl->inv ; pouch ; pouch=pouch->below )
+	  {
 	      if ( pouch->type==CONTAINER && QUERY_FLAG(pouch, FLAG_APPLIED) && pouch->race && strstr(pouch->race, "gold") ) {
 		  int w = (int)((float)at->clone.weight * pouch->weapon_speed);
 		  int n = i/at->clone.value;
