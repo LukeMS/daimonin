@@ -1547,7 +1547,8 @@ int SK_level(object *op)
   object *head = op->head ? op->head : op;
   int level;
 
-  if(head->type==PLAYER && head->chosen_skill && head->chosen_skill->level!=0) {
+  if(head->type==PLAYER && head->chosen_skill && head->chosen_skill->level!=0) 
+  {
 	level = head->chosen_skill->level;
   } else {
 	level = head->level;
