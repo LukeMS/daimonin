@@ -14478,6 +14478,7 @@ face rock_big1.101
 type 79
 editor_folder landscape/rocks
 layer 5
+blocksview 1
 material 64
 weight 1500000
 no_pass 1
@@ -14501,6 +14502,7 @@ face rock_big3.101
 type 79
 editor_folder landscape/rocks
 layer 5
+blocksview 1
 material 64
 weight 1500000
 no_pass 1

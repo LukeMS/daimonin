@@ -1,6 +1,7 @@
 Object rock_big1
 name rock
 layer 5
+blocksview 1
 type 79
 face rock_big1.101
 material 64
@@ -22,6 +23,7 @@ end
 Object rock_big3
 name rock
 layer 5
+blocksview 1
 type 79
 face rock_big3.101
 material 64
