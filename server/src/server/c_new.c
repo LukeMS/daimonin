@@ -200,7 +200,7 @@ void send_target_command(player *pl)
 	pl->ob->enemy=NULL;
 	pl->ob->enemy_count=0;
 	/* target still legal? */
-	if(!pl->target_object || pl->target_object == pl->ob) /* thats we self */
+	if(!pl->target_object || !OBJECT_ACTIVE(pl->target_object) ||pl->target_object == pl->ob) /* thats we self */
 		aim_self_flag = TRUE;
 	else if(pl->target_object_count == pl->target_object->count)
 	{
@@ -381,7 +381,8 @@ int command_target(object *op, char *params)
 		nt=-1;
 		
 		/* lets search for enemy object! */
-		if(CONTR(op)->target_object && CONTR(op)->target_object_count==CONTR(op)->target_object->count 
+		if(CONTR(op)->target_object &&OBJECT_ACTIVE(CONTR(op)->target_object) && 
+			CONTR(op)->target_object_count==CONTR(op)->target_object->count 
 												&& !QUERY_FLAG(CONTR(op)->target_object,FLAG_FRIENDLY ))
 			n=CONTR(op)->target_map_pos;
 		else
@@ -436,7 +437,8 @@ int command_target(object *op, char *params)
 	else if(params[0]=='1') /* friend */
 	{
 		/* if /target friend but old target was enemy - target self first */
-		if(CONTR(op)->target_object && CONTR(op)->target_object_count==CONTR(op)->target_object->count 
+		if(CONTR(op)->target_object &&OBJECT_ACTIVE(CONTR(op)->target_object)&&
+			CONTR(op)->target_object_count==CONTR(op)->target_object->count 
 						&& !QUERY_FLAG(CONTR(op)->target_object,FLAG_FRIENDLY ))
 		{
 			CONTR(op)->target_object=op;

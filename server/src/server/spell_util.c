@@ -422,6 +422,10 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
 	}
 
 dirty_jump:
+	/* a last sanity check: are caster and target *really* valid? */
+	if(!OBJECT_ACTIVE(caster) || !OBJECT_ACTIVE(target))
+		return 0;
+
   switch((enum spellnrs) type)
 	{
 	  /*
@@ -2062,7 +2066,7 @@ int find_target_for_spell(object *op,object *item, object **target, int dir, uin
 		tmp = CONTR(op)->target_object;
 
 		/* lets check our target - we have one? friend or enemy? */
-		if(!tmp || tmp==CONTR(op)->ob || CONTR(op)->target_object_count!=tmp->count) 
+		if(!tmp || !OBJECT_ACTIVE(tmp) || tmp==CONTR(op)->ob || CONTR(op)->target_object_count!=tmp->count) 
 		{
 			/* no valid target, or we target self! */
 
@@ -2152,7 +2156,7 @@ int find_target_for_spell(object *op,object *item, object **target, int dir, uin
 		 */
 		
 		/* sanity check for a legal target */
-		if(op->enemy && op->enemy->count == op->enemy_count)
+		if(op->enemy && OBJECT_ACTIVE(op->enemy) && op->enemy->count == op->enemy_count)
 		{
 			*target = op; 
 			return TRUE;

@@ -834,7 +834,7 @@ void process_players1(mapstruct *map)
 		/* now use the new target system to hit our target... Don't hit non
 		 * friendly objects, ourself or when we are not in combat mode.
 		 */
-		if(pl->target_object && pl->combat_mode &&
+		if(pl->target_object && pl->combat_mode && OBJECT_ACTIVE(pl->target_object) && 
 			pl->target_object_count!=pl->ob->count && !QUERY_FLAG(pl->target_object,FLAG_FRIENDLY) )
         {
             if(pl->ob->weapon_speed_left<=0)
