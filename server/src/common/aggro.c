@@ -724,8 +724,10 @@ object *aggro_calculate_exp(struct obj *victim, struct obj *slayer, char *kill_m
 #ifdef DEBUG_AGGRO    
     LOG(-1,"end.\n");
 #endif
-    if(ret == TRUE)
-        return highest_hitter->enemy; /* used to create the corpse bounty */
-    else
-        return NULL;
+
+	/* be sure not to drop items */
+    if(ret == FALSE)
+	SET_FLAG(victim, FLAG_STARTEQUIP);
+    
+    return highest_hitter->enemy; /* used to create the corpse bounty */
 }

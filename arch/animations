@@ -5158,14 +5158,14 @@ mina
 anim lantern_magic.131
 facings 9
 dummy.111
-lantern_magic.131
+lantern_magic.111
+lantern_magic.111
 lantern_magic.131
 lantern_magic.131
 lantern_magic.151
 lantern_magic.151
-lantern_magic.151
-lantern_magic.151
-lantern_magic.131
+lantern_magic.171
+lantern_magic.171
 mina
 anim lavagolem
 facings 25
