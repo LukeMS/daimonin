@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,9 +31,6 @@
 /* Some commands not accepted from socket */
 
 #include <global.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
 
 /* Gecko: since we no longer maintain a complete list of all objects,
  * all functions using find_object are a lot less useful...
@@ -43,11 +40,14 @@
  * object nubmer (specified via num #whatever).
  */
 
-static object *find_object_both(char *params)
+static object * find_object_both(char *params)
 {
-    if (!params) return NULL;
-    if(params[0]=='#') return find_object(atol(params+1));
-    else return find_object_name(params);
+    if (!params)
+        return NULL;
+    if (params[0] == '#')
+        return find_object(atol(params + 1));
+    else
+        return find_object_name(params);
 }
 
 /* Sets the god for some objects.  params should contain two values -
@@ -56,35 +56,40 @@ static object *find_object_both(char *params)
 int command_setgod(object *op, char *params)
 {
     object *ob;
-    char    *str;
+    char   *str;
 
-    if (!params || !(str=strchr(params,' '))) {
-	new_draw_info(NDI_UNIQUE,0,op,"Usage: setgod object god");
-	return 0;
+    if (!params || !(str = strchr(params, ' ')))
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "Usage: setgod object god");
+        return 0;
     }
     /* kill the space, and set string to the next param */
-    *str++='\0';
-    if(!(ob=find_object_both(params))) {
-    	new_draw_info_format(NDI_UNIQUE,0,op,"Set whose god - can not find object %s?",params);
-    	return 1;
+    *str++ = '\0';
+    if (!(ob = find_object_both(params)))
+    {
+        new_draw_info_format(NDI_UNIQUE, 0, op, "Set whose god - can not find object %s?", params);
+        return 1;
     }
     /* Perhaps this is overly restrictive?  Should we perhaps be able
      * to rebless altars and the like?
      */
-    if (ob->type!=PLAYER) {
-    	new_draw_info_format(NDI_UNIQUE,0,op,"%s is not a player - can not change its god",ob->name);
-    	return 1;
+    if (ob->type != PLAYER)
+    {
+        new_draw_info_format(NDI_UNIQUE, 0, op, "%s is not a player - can not change its god", ob->name);
+        return 1;
     }
-    change_skill(ob,SK_PRAYING);
-    if(!ob->chosen_skill||ob->chosen_skill->stats.sp!=SK_PRAYING) {
-    	new_draw_info_format(NDI_UNIQUE,0,op,"%s doesn't have praying skill.",ob->name);
-    	return 1;
+    change_skill(ob, SK_PRAYING);
+    if (!ob->chosen_skill || ob->chosen_skill->stats.sp != SK_PRAYING)
+    {
+        new_draw_info_format(NDI_UNIQUE, 0, op, "%s doesn't have praying skill.", ob->name);
+        return 1;
     }
-    if(find_god(str)==NULL) {
-    	new_draw_info_format(NDI_UNIQUE,0,op,"No such god %s.",str);
-    	return 1;
+    if (find_god(str) == NULL)
+    {
+        new_draw_info_format(NDI_UNIQUE, 0, op, "No such god %s.", str);
+        return 1;
     }
-    become_follower(ob,find_god(str));
+    become_follower(ob, find_god(str));
     return 1;
 }
 
@@ -92,434 +97,479 @@ int command_setgod(object *op, char *params)
  * NULl,NULL will global kick *all* players, the 2nd format only <player name>.
  * op,NULL is invalid
  */
-int command_kick (object *ob, char *params)
+int command_kick(object *ob, char *params)
 {
-	struct pl_player *pl;
-	const char *name_hash;
+    struct pl_player   *pl;
+    const char         *name_hash;
 
-	if(ob && params == NULL)
-	{
-		new_draw_info_format(NDI_UNIQUE, 0, ob,"Use: /kick <name>");
-		return 1;
-	}
+    if (ob && params == NULL)
+    {
+        new_draw_info_format(NDI_UNIQUE, 0, ob, "Use: /kick <name>");
+        return 1;
+    }
 
-	if(ob)
-	{
-		transform_name_string(params);
-		if(!(name_hash = find_string(params)))
-		{
-			new_draw_info(NDI_UNIQUE, 0,ob,"No such player.");
-			return 1;
-		}	
-	}
-	
-	if(ob && ob->name == name_hash)
-	{
-		new_draw_info_format(NDI_UNIQUE, 0, ob,"You can't /kick yourself!");
-		return 1;
-	}
+    if (ob)
+    {
+        transform_name_string(params);
+        if (!(name_hash = find_string(params)))
+        {
+            new_draw_info(NDI_UNIQUE, 0, ob, "No such player.");
+            return 1;
+        }
+    }
+
+    if (ob && ob->name == name_hash)
+    {
+        new_draw_info_format(NDI_UNIQUE, 0, ob, "You can't /kick yourself!");
+        return 1;
+    }
 
 
-	for(pl=first_player;pl!=NULL;pl=pl->next)
-	{
-      if (!ob || (pl->ob!=ob && pl->ob->name && pl->ob->name==name_hash)) 
-		{
-			object *op;
-			op=pl->ob;
-			remove_ob(op);
-			check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
-			op->direction=0;
-			if(params)
-				new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, ob,"%s is kicked out of the game.",op->name);
-			LOG(llevInfo,"%s is kicked out of the game.\n",op->name);
-			CONTR(op)->killer[0]='\0';
-			check_score(op); /* Always check score */
-			container_unlink(CONTR(op),NULL);
-			save_player(op,1);
-			CONTR(op)->socket.status=Ns_Dead;
-		#if MAP_MAXTIMEOUT
-			op->map->timeout = MAP_TIMEOUT(op->map);
-		#endif
-      }
-  }
+    for (pl = first_player; pl != NULL; pl = pl->next)
+    {
+        if (!ob || (pl->ob != ob && pl->ob->name && pl->ob->name == name_hash))
+        {
+            object *op;
+            op = pl->ob;
+            remove_ob(op);
+            check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
+            op->direction = 0;
+            if (params)
+                new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, ob, "%s is kicked out of the game.", op->name);
+            LOG(llevInfo, "%s is kicked out of the game.\n", op->name);
+            CONTR(op)->killer[0] = '\0';
+            check_score(op); /* Always check score */
+            container_unlink(CONTR(op), NULL);
+            save_player(op, 1);
+            CONTR(op)->socket.status = Ns_Dead;
+#if MAP_MAXTIMEOUT
+            op->map->timeout = MAP_TIMEOUT(op->map);
+#endif
+        }
+    }
 
     /* not reached for NULL, NULL calling */
-	return 1;
+    return 1;
 }
 
 
 int command_shutdown(object *op, char *params)
 {
-
-    if(op!=NULL && !QUERY_FLAG(op,FLAG_WIZ)) 
+    if (op != NULL && !QUERY_FLAG(op, FLAG_WIZ))
     {
-	/*new_draw_info(NDI_UNIQUE,0,op,"Sorry, you can't shutdown the server.");*/
-	return 1;
+        /*new_draw_info(NDI_UNIQUE,0,op,"Sorry, you can't shutdown the server.");*/
+        return 1;
     }
-	LOG(llevSystem,"SERVER SHUTDOWN STARTED\n");
-    command_kick(NULL,NULL);
-    cleanup();
+    LOG(llevSystem, "SERVER SHUTDOWN STARTED\n");
+    command_kick(NULL, NULL);
+    cleanup(EXIT_SHUTODWN);
     /* not reached - server will terminate itself before that line */
     return 1;
 }
 
-int command_goto (object *op, char *params)
+int command_goto(object *op, char *params)
 {
-    char *name;
+    char   *name;
     object *dummy;
 
     if (!op)
-	return 0;
+        return 0;
 
-    if(params == NULL) {
-        new_draw_info(NDI_UNIQUE, 0,op,"Go to what level?");
+    if (params == NULL)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "Go to what level?");
         return 1;
-      }
+    }
     name = params;
-    dummy=get_object();
+    dummy = get_object();
     dummy->map = op->map;
-    FREE_AND_COPY_HASH(EXIT_PATH(dummy),name);
-    FREE_AND_COPY_HASH(dummy->name,name);
+    FREE_AND_COPY_HASH(EXIT_PATH(dummy), name);
+    FREE_AND_COPY_HASH(dummy->name, name);
 
-    enter_exit(op,dummy);
-	new_draw_info_format(NDI_UNIQUE, 0, op,"Difficulty: %d.",op->map->difficulty);
+    enter_exit(op, dummy);
+    new_draw_info_format(NDI_UNIQUE, 0, op, "Difficulty: %d.", op->map->difficulty);
     return 1;
 }
 
 /* is this function called from somewhere ? -Tero */
-int command_generate (object *op, char *params)
+int command_generate(object *op, char *params)
 {
-      object *tmp;
-      int nr = 1, i, retry;
+    object *tmp;
+    int     nr = 1, i, retry;
 
-  if (!op)
-    return 0;
+    if (!op)
+        return 0;
 
-  if (params != NULL)
-    sscanf(params, "%d", &nr);
-      for(i = 0; i < nr; i++) {
+    if (params != NULL)
+        sscanf(params, "%d", &nr);
+    for (i = 0; i < nr; i++)
+    {
         retry = 50;
-        while((tmp=generate_treasure(0,op->map->difficulty))==NULL && --retry);
-        if (tmp != NULL) {
-          tmp = insert_ob_in_ob(tmp, op);
-	  if (op->type == PLAYER)
-	      esrv_send_item (op, tmp);
+        while ((tmp = generate_treasure(0, op->map->difficulty)) == NULL && --retry);
+        if (tmp != NULL)
+        {
+            tmp = insert_ob_in_ob(tmp, op);
+            if (op->type == PLAYER)
+                esrv_send_item(op, tmp);
         }
-      }
-      return 1;
     }
+    return 1;
+}
 
-int command_summon (object *op, char *params)
+int command_summon(object *op, char *params)
 {
-	int i;
+    int     i;
     object *dummy;
-	player *pl;
+    player *pl;
 
-	if (!op)
-		return 0;
+    if (!op)
+        return 0;
 
-	if(params==NULL) 
-	{
-         new_draw_info(NDI_UNIQUE, 0,op,"Usage: summon <player>.");
-         return 1;
-	}
-
-	pl = find_player(params);
-
-	if(pl==NULL) 
-	{
-        new_draw_info(NDI_UNIQUE, 0,op,"No such player.");
+    if (params == NULL)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "Usage: summon <player>.");
         return 1;
     }
-      if (pl->ob == op) {
+
+    pl = find_player(params);
+
+    if (pl == NULL)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
+        return 1;
+    }
+    if (pl->ob == op)
+    {
         new_draw_info(NDI_UNIQUE, 0, op, "You can't summon yourself next to yourself.");
         return 1;
-      }
-      if(pl->state != ST_PLAYING) {
-        new_draw_info(NDI_UNIQUE, 0,op,"That player can't be summoned right now.");
-        return 1;
-      }
-      i=find_free_spot(op->arch,op->map,op->x,op->y,1,8);
-      if (i==-1) {
-	new_draw_info(NDI_UNIQUE, 0, op, "Can not find a free spot to place summoned player.");
-	return 1;
-      }
-      dummy=get_object();
-      FREE_AND_ADD_REF_HASH(EXIT_PATH(dummy), op->map->path);
-      EXIT_X(dummy)=op->x+freearr_x[i];
-      EXIT_Y(dummy)=op->y+freearr_y[i];
-      enter_exit(pl->ob,dummy);
-      new_draw_info(NDI_UNIQUE, 0,pl->ob,"You are summoned.");
-      new_draw_info(NDI_UNIQUE, 0,op,"OK.");
-      return 1;
     }
+    if (pl->state != ST_PLAYING)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "That player can't be summoned right now.");
+        return 1;
+    }
+    i = find_free_spot(op->arch, op->map, op->x, op->y, 1, 8);
+    if (i == -1)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "Can not find a free spot to place summoned player.");
+        return 1;
+    }
+    dummy = get_object();
+    FREE_AND_ADD_REF_HASH(EXIT_PATH(dummy), op->map->path);
+    EXIT_X(dummy) = op->x + freearr_x[i];
+    EXIT_Y(dummy) = op->y + freearr_y[i];
+    enter_exit(pl->ob, dummy);
+    new_draw_info(NDI_UNIQUE, 0, pl->ob, "You are summoned.");
+    new_draw_info(NDI_UNIQUE, 0, op, "OK.");
+    return 1;
+}
 
 /* Teleport next to target player */
 /* mids 01/16/2002 */
-int command_teleport (object *op, char *params) {
-   int i;
-   object *dummy;
-   player *pl;
-
-   if (!op)
-      return 0;
-
-   if (params==NULL) {
-      new_draw_info(NDI_UNIQUE, 0,op,"Usage: teleport <player>.");
-      return 1;
-   }
-
-   pl = find_player(params);
-
-   if (pl == NULL) {
-      new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
-      return 1;
-   }
-   if (pl->ob == op) {
-      new_draw_info(NDI_UNIQUE, 0, op, "You can't teleport yourself next to yourself.");
-      return 1;
-   }
-   if (pl->state != ST_PLAYING) {
-      new_draw_info(NDI_UNIQUE, 0, op, "You can't teleport to that player right now.");
-      return 1;
-   }
-   i = find_free_spot(pl->ob->arch, pl->ob->map, pl->ob->x, pl->ob->y, 1, 8);
-   if (i==-1) {
-      new_draw_info(NDI_UNIQUE, 0, op, "Can not find a free spot to teleport to.");
-      return 1;
-   }
-   dummy = get_object();
-   FREE_AND_ADD_REF_HASH(EXIT_PATH(dummy), pl->ob->map->path);
-   EXIT_X(dummy) = pl->ob->x + freearr_x[i];
-   EXIT_Y(dummy) = pl->ob->y + freearr_y[i];
-   enter_exit(op, dummy);
-   /*new_draw_info(NDI_UNIQUE, 0, pl->ob, "You see a portal open.");*/
-   new_draw_info(NDI_UNIQUE, 0, op, "OK.");
-   return 1;
-}
-
-int command_create (object *op, char *params)
+int command_teleport(object *op, char *params)
 {
-      object *tmp=NULL;
-      int nrof,i, magic, set_magic = 0, set_nrof = 0, gotquote, gotspace;
-      char buf[MAX_BUF], *cp, *bp = buf, *bp2, *bp3, *bp4=NULL, *obp;
-      archetype *at;
-      artifact *art=NULL;
+    int     i;
+    object *dummy;
+    player *pl;
 
     if (!op)
-	return 0;
+        return 0;
 
-    if (params == NULL) {
-        new_draw_info(NDI_UNIQUE, 0, op, 
-	    "Usage: create [nr] [magic] <archetype> [ of <artifact>]"
-	    " [variable_to_patch setting]");
+    if (params == NULL)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "Usage: teleport <player>.");
+        return 1;
+    }
+
+    pl = find_player(params);
+
+    if (pl == NULL)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
+        return 1;
+    }
+    if (pl->ob == op)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "You can't teleport yourself next to yourself.");
+        return 1;
+    }
+    if (pl->state != ST_PLAYING)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "You can't teleport to that player right now.");
+        return 1;
+    }
+    i = find_free_spot(pl->ob->arch, pl->ob->map, pl->ob->x, pl->ob->y, 1, 8);
+    if (i == -1)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "Can not find a free spot to teleport to.");
+        return 1;
+    }
+    dummy = get_object();
+    FREE_AND_ADD_REF_HASH(EXIT_PATH(dummy), pl->ob->map->path);
+    EXIT_X(dummy) = pl->ob->x + freearr_x[i];
+    EXIT_Y(dummy) = pl->ob->y + freearr_y[i];
+    enter_exit(op, dummy);
+    /*new_draw_info(NDI_UNIQUE, 0, pl->ob, "You see a portal open.");*/
+    new_draw_info(NDI_UNIQUE, 0, op, "OK.");
+    return 1;
+}
+
+int command_create(object *op, char *params)
+{
+    object     *tmp = NULL;
+    int         nrof, i, magic, set_magic = 0, set_nrof = 0, gotquote, gotspace;
+    char        buf[MAX_BUF], *cp, *bp = buf, *bp2, *bp3, *bp4 = NULL, *obp;
+    archetype  *at;
+    artifact   *art = NULL;
+
+    if (!op)
+        return 0;
+
+    if (params == NULL)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op,
+                      "Usage: create [nr] [magic] <archetype> [ of <artifact>]"
+                      " [variable_to_patch setting]");
         return 1;
     }
     bp = params;
-     
-    if(sscanf(bp, "%d ", &nrof)) {
-	if ((bp = strchr(params, ' ')) == NULL) {
-	    new_draw_info(NDI_UNIQUE, 0, op,
-		"Usage: create [nr] [magic] <archetype> [ of <artifact>]"
-	    " [variable_to_patch setting]");
-	    return 1;
-	}
+
+    if (sscanf(bp, "%d ", &nrof))
+    {
+        if ((bp = strchr(params, ' ')) == NULL)
+        {
+            new_draw_info(NDI_UNIQUE, 0, op,
+                          "Usage: create [nr] [magic] <archetype> [ of <artifact>]"
+                          " [variable_to_patch setting]");
+            return 1;
+        }
         bp++;
         set_nrof = 1;
         LOG(llevDebug, "%s creates: (%d) %s\n", op->name, nrof, bp);
     }
-    if (sscanf(bp, "%d ", &magic)) {
-	if ((bp = strchr(bp, ' ')) == NULL) {
-	    new_draw_info(NDI_UNIQUE, 0, op,
-		"Usage: create [nr] [magic] <archetype> [ of <artifact>]"
-	    " [variable_to_patch setting]");
-	    return 1;
-	}
-	bp++;
+    if (sscanf(bp, "%d ", &magic))
+    {
+        if ((bp = strchr(bp, ' ')) == NULL)
+        {
+            new_draw_info(NDI_UNIQUE, 0, op,
+                          "Usage: create [nr] [magic] <archetype> [ of <artifact>]"
+                          " [variable_to_patch setting]");
+            return 1;
+        }
+        bp++;
         set_magic = 1;
         LOG(llevDebug, "%s creates: (%d) (%d) %s\n", op->name, nrof, magic, bp);
     }
-    if ((cp = strstr(bp, " of ")) != NULL) {
-	*cp = '\0';
+    if ((cp = strstr(bp, " of ")) != NULL)
+    {
+        *cp = '\0';
         cp += 4;
     }
 
-    for (bp2=bp; *bp2; bp2++)
-	if (*bp2 == ' ') {
-	    *bp2 = '\0';
-	    bp2++;
-	    break;
-	}
+    for (bp2 = bp; *bp2; bp2++)
+        if (*bp2 == ' ')
+        {
+            *bp2 = '\0';
+            bp2++;
+            break;
+        }
 
-	/* ok - first step: browse the archtypes for the name - perhaps it is a base item */
-    if((at=find_archetype(bp))==NULL) 
-	{
-		new_draw_info(NDI_UNIQUE, 0, op, "No such archetype or artifact name.");
-		return 1;
-    }
-
-    if (cp) {
-	if (find_artifactlist(at->clone.type)==NULL) {
-	    new_draw_info_format(NDI_UNIQUE, 0, op,
-		"No artifact list for type %d\n", at->clone.type);
-	}
-	else {
-	    art = find_artifactlist(at->clone.type)->items;
-
-	    do {
-		if (!strcmp(art->def_at.clone.name, cp)) break;
-		art = art->next;
-	    } while (art!=NULL);
-            if (!art) {
-		new_draw_info_format(NDI_UNIQUE, 0, op,
-		    "No such artifact ([%d] of %s)", at->clone.type, cp);
-	    }
-	}
-        LOG(llevDebug, "%s creates: (%d) (%d) (%s) of (%s)\n", op->name,
-            set_nrof ? nrof : 0, set_magic ? magic : 0 , bp, cp);
-    } /* if cp */
-
-    if(at->clone.nrof) {
-	tmp=arch_to_object(at);
-	tmp->x=op->x,tmp->y=op->y;
-	if (set_nrof)
-	    tmp->nrof = nrof;
-	tmp->map=op->map;
-	if (set_magic)
-	    set_abs_magic(tmp, magic);
-	if (art)
-	    give_artifact_abilities(tmp, art);
-        if (need_identify(tmp)) {
-	    SET_FLAG(tmp, FLAG_IDENTIFIED);
-	    CLEAR_FLAG(tmp, FLAG_KNOWN_MAGICAL);
-	}
-	while (*bp2) {
-	    /* find the first quote */
-	    for (bp3=bp2, gotquote=0, gotspace=0; *bp3 && gotspace < 2; bp3++) {
-		if (*bp3 == '"') {
-		    *bp3 = ' ';
-		    gotquote++;
-		    bp3++;
-		    for (bp4=bp3; *bp4; bp4++)
-			if (*bp4 == '"') {
-			    *bp4 = '\0';
-			    break;
-			}
-		    break;
-		} else if (*bp3 == ' ')
-		     gotspace++;
-            }
-	    if (!gotquote) { /* then find the second space */
-		for (bp3=bp2; *bp3; bp3++) {
-		    if (*bp3 == ' ') {
-			bp3++;
-			for (bp4=bp3; *bp4; bp4++) {
-			    if (*bp4 == ' ') {
-				*bp4 = '\0';
-				break;
-			    }
-			}
-			break;
-		    }
-		}
-	    }
-	    /* now bp3 should be the argument, and bp2 the whole command */
-	    if(set_variable(tmp, bp2) == -1)   
-		new_draw_info_format(NDI_UNIQUE, 0, op,
-		    "Unknown variable %s", bp2);
-	    else
-		new_draw_info_format(NDI_UNIQUE, 0, op,
-		    "(%s#%d)->%s=%s", tmp->name, tmp->count, bp2, bp3);
-	    if (gotquote)
-		bp2=bp4+2;
-	    else
-		bp2=bp4+1;
-        /* WARNING: got a warning msg by compiler here - using obp without init. */
-	    /*if (obp == bp2)
-		break;*/ /* invalid params */
-	    obp=bp2;
-	}
-        tmp = insert_ob_in_ob(tmp, op);
-	esrv_send_item(op, tmp);
+    /* ok - first step: browse the archtypes for the name - perhaps it is a base item */
+    if ((at = find_archetype(bp)) == NULL)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "No such archetype or artifact name.");
         return 1;
     }
-    for (i=0 ; i < (set_nrof ? nrof : 1); i++) {
-	archetype *atmp;
-	object *prev=NULL,*head=NULL;
-	for (atmp=at; atmp!=NULL; atmp=atmp->more) {
-	    tmp=arch_to_object(atmp);
-	    if(head==NULL)
-		head=tmp;
-	    tmp->x=op->x+tmp->arch->clone.x;
-	    tmp->y=op->y+tmp->arch->clone.y;
-	    tmp->map=op->map;
-	    if (set_magic)
-		set_abs_magic(tmp, magic);
-	    if (art)
-		give_artifact_abilities(tmp, art);
-	    if (need_identify(tmp)) {
-		SET_FLAG(tmp, FLAG_IDENTIFIED);
-		CLEAR_FLAG(tmp, FLAG_KNOWN_MAGICAL);
-	    }
-	    while (*bp2) {
-		/* find the first quote */
-		for (bp3=bp2, gotquote=0, gotspace=0; *bp3 && gotspace < 2;
-		     bp3++) {
-		    if (*bp3 == '"') {
-			*bp3 = ' ';
-			gotquote++;
-			bp3++;
-			for (bp4=bp3; *bp4; bp4++)
-			    if (*bp4 == '"') {
-				*bp4 = '\0';
-				break;
-			    }
-			break;
-		    } else if (*bp3 == ' ')
-		        gotspace++;
-                }
-		if (!gotquote) { /* then find the second space */
-		    for (bp3=bp2; *bp3; bp3++) {
-			if (*bp3 == ' ') {
-			    bp3++;
-			    for (bp4=bp3; *bp4; bp4++) {
-				if (*bp4 == ' ') {
-				    *bp4 = '\0';
-				    break;
-				}
-			    }
-			    break;
-			}
-		    }
-	        }
-	/* now bp3 should be the argument, and bp2 the whole command */
-		if(set_variable(tmp, bp2) == -1)   
-		    new_draw_info_format(NDI_UNIQUE, 0, op,
-			"Unknown variable %s", bp2);
-		else
-		    new_draw_info_format(NDI_UNIQUE, 0, op,
-			"(%s#%d)->%s=%s", tmp->name, tmp->count, bp2, bp3);
-		if (gotquote)
-		    bp2=bp4+2;
-		else
-		    bp2=bp4+1;
-        /* WARNING: got a warning msg by compiler here - using obp without init. */
-        /*if (obp == bp2)
-		    break;*/ /* invalid params */
-		obp=bp2;
-	    }
-	    if(head!=tmp)
-		tmp->head=head,prev->more=tmp;
-	    prev=tmp;
-	}
-        if (IS_LIVE(head))
-		    insert_ob_in_map(head, op->map, op, INS_NO_MERGE | INS_NO_WALK_ON);
+
+    if (cp)
+    {
+        if (find_artifactlist(at->clone.type) == NULL)
+        {
+            new_draw_info_format(NDI_UNIQUE, 0, op, "No artifact list for type %d\n", at->clone.type);
+        }
         else
-	    head = insert_ob_in_ob(head, op);
+        {
+            art = find_artifactlist(at->clone.type)->items;
+
+            do
+            {
+                if (!strcmp(art->def_at.clone.name, cp))
+                    break;
+                art = art->next;
+            }
+            while (art != NULL);
+            if (!art)
+            {
+                new_draw_info_format(NDI_UNIQUE, 0, op, "No such artifact ([%d] of %s)", at->clone.type, cp);
+            }
+        }
+        LOG(llevDebug, "%s creates: (%d) (%d) (%s) of (%s)\n", op->name, set_nrof ? nrof : 0, set_magic ? magic : 0, bp,
+            cp);
+    } /* if cp */
+
+    if (at->clone.nrof)
+    {
+        tmp = arch_to_object(at);
+        tmp->x = op->x,tmp->y = op->y;
+        if (set_nrof)
+            tmp->nrof = nrof;
+        tmp->map = op->map;
+        if (set_magic)
+            set_abs_magic(tmp, magic);
+        if (art)
+            give_artifact_abilities(tmp, art);
+        if (need_identify(tmp))
+        {
+            SET_FLAG(tmp, FLAG_IDENTIFIED);
+            CLEAR_FLAG(tmp, FLAG_KNOWN_MAGICAL);
+        }
+        while (*bp2)
+        {
+            /* find the first quote */
+            for (bp3 = bp2, gotquote = 0, gotspace = 0; *bp3 && gotspace < 2; bp3++)
+            {
+                if (*bp3 == '"')
+                {
+                    *bp3 = ' ';
+                    gotquote++;
+                    bp3++;
+                    for (bp4 = bp3; *bp4; bp4++)
+                        if (*bp4 == '"')
+                        {
+                            *bp4 = '\0';
+                            break;
+                        }
+                    break;
+                }
+                else if (*bp3 == ' ')
+                    gotspace++;
+            }
+            if (!gotquote)
+            {
+                /* then find the second space */
+                for (bp3 = bp2; *bp3; bp3++)
+                {
+                    if (*bp3 == ' ')
+                    {
+                        bp3++;
+                        for (bp4 = bp3; *bp4; bp4++)
+                        {
+                            if (*bp4 == ' ')
+                            {
+                                *bp4 = '\0';
+                                break;
+                            }
+                        }
+                        break;
+                    }
+                }
+            }
+            /* now bp3 should be the argument, and bp2 the whole command */
+            if (set_variable(tmp, bp2) == -1)
+                new_draw_info_format(NDI_UNIQUE, 0, op, "Unknown variable %s", bp2);
+            else
+                new_draw_info_format(NDI_UNIQUE, 0, op, "(%s#%d)->%s=%s", tmp->name, tmp->count, bp2, bp3);
+            if (gotquote)
+                bp2 = bp4 + 2;
+            else
+                bp2 = bp4 + 1;
+            /* WARNING: got a warning msg by compiler here - using obp without init. */
+            /*if (obp == bp2)
+            break;*/ /* invalid params */
+            obp = bp2;
+        }
+        tmp = insert_ob_in_ob(tmp, op);
+        esrv_send_item(op, tmp);
+        return 1;
+    }
+    for (i = 0 ; i < (set_nrof ? nrof : 1); i++)
+    {
+        archetype      *atmp;
+        object*prev =   NULL, *head = NULL;
+        for (atmp = at; atmp != NULL; atmp = atmp->more)
+        {
+            tmp = arch_to_object(atmp);
+            if (head == NULL)
+                head = tmp;
+            tmp->x = op->x + tmp->arch->clone.x;
+            tmp->y = op->y + tmp->arch->clone.y;
+            tmp->map = op->map;
+            if (set_magic)
+                set_abs_magic(tmp, magic);
+            if (art)
+                give_artifact_abilities(tmp, art);
+            if (need_identify(tmp))
+            {
+                SET_FLAG(tmp, FLAG_IDENTIFIED);
+                CLEAR_FLAG(tmp, FLAG_KNOWN_MAGICAL);
+            }
+            while (*bp2)
+            {
+                /* find the first quote */
+                for (bp3 = bp2, gotquote = 0, gotspace = 0; *bp3 && gotspace < 2; bp3++)
+                {
+                    if (*bp3 == '"')
+                    {
+                        *bp3 = ' ';
+                        gotquote++;
+                        bp3++;
+                        for (bp4 = bp3; *bp4; bp4++)
+                            if (*bp4 == '"')
+                            {
+                                *bp4 = '\0';
+                                break;
+                            }
+                        break;
+                    }
+                    else if (*bp3 == ' ')
+                        gotspace++;
+                }
+                if (!gotquote)
+                {
+                    /* then find the second space */
+                    for (bp3 = bp2; *bp3; bp3++)
+                    {
+                        if (*bp3 == ' ')
+                        {
+                            bp3++;
+                            for (bp4 = bp3; *bp4; bp4++)
+                            {
+                                if (*bp4 == ' ')
+                                {
+                                    *bp4 = '\0';
+                                    break;
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+                /* now bp3 should be the argument, and bp2 the whole command */
+                if (set_variable(tmp, bp2) == -1)
+                    new_draw_info_format(NDI_UNIQUE, 0, op, "Unknown variable %s", bp2);
+                else
+                    new_draw_info_format(NDI_UNIQUE, 0, op, "(%s#%d)->%s=%s", tmp->name, tmp->count, bp2, bp3);
+                if (gotquote)
+                    bp2 = bp4 + 2;
+                else
+                    bp2 = bp4 + 1;
+                /* WARNING: got a warning msg by compiler here - using obp without init. */
+                /*if (obp == bp2)
+                   break;*/ /* invalid params */
+                obp = bp2;
+            }
+            if (head != tmp)
+                tmp->head = head,prev->more = tmp;
+            prev = tmp;
+        }
+        if (IS_LIVE(head))
+            insert_ob_in_map(head, op->map, op, INS_NO_MERGE | INS_NO_WALK_ON);
+        else
+            head = insert_ob_in_ob(head, op);
         if (at->clone.randomitems)
-		    create_treasure_list(at->clone.randomitems, head, GT_APPLY,
-								get_enviroment_level(head), T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
-	    esrv_send_item(op, head);
+            create_treasure_list(at->clone.randomitems, head, GT_APPLY, get_enviroment_level(head), T_STYLE_UNSET,
+                                 ART_CHANCE_UNSET, 0, NULL);
+        esrv_send_item(op, head);
     }
     return 1;
 }
@@ -530,185 +580,185 @@ int command_create (object *op, char *params)
  * Now follows dm-commands which are also acceptable from sockets
  */
 
-int command_inventory (object *op, char *params)
+int command_inventory(object *op, char *params)
 {
     object *tmp;
-    int i;
+    int     i;
 
-  if (!params) {
-    inventory(op, NULL);
-    return 0;
-  }
-
-  if(!sscanf(params, "%d", &i) || (tmp=find_object(i))==NULL) {
-      new_draw_info(NDI_UNIQUE, 0,op,"Inventory of what object (nr)?");
-      return 1;
+    if (!params)
+    {
+        inventory(op, NULL);
+        return 0;
     }
-    inventory(op,tmp);
+
+    if (!sscanf(params, "%d", &i) || (tmp = find_object(i)) == NULL)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "Inventory of what object (nr)?");
+        return 1;
+    }
+    inventory(op, tmp);
     return 1;
-  }
-
-/* just show player's their skills for now. Dm's can
- * already see skills w/ inventory command - b.t.
- */
-
-int command_skills (object *op, char *params)
-{
- 	show_skills(op);
- 	return 0;
 }
 
-int command_dump (object *op, char *params)
-{
-    int i;
-  object *tmp;
 
-  if(params!=NULL && !strcmp(params, "me"))
-      tmp=op;
-  else if(params==NULL || !sscanf(params, "%d", &i) ||
-	  (tmp=find_object(i))==NULL) {
-      new_draw_info(NDI_UNIQUE, 0,op,"Dump what object (nr)?");
-      return 1;
+int command_dump(object *op, char *params)
+{
+    int     i;
+    object *tmp;
+
+    if (params != NULL && !strcmp(params, "me"))
+        tmp = op;
+    else if (params == NULL || !sscanf(params, "%d", &i) || (tmp = find_object(i)) == NULL)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "Dump what object (nr)?");
+        return 1;
     }
     dump_object(tmp);
     new_draw_info(NDI_UNIQUE, 0, op, errmsg);
     return 1;
-  }
+}
 
-int command_patch (object *op, char *params)
+int command_patch(object *op, char *params)
 {
-    int i;
-    char *arg,*arg2;
-    char buf[MAX_BUF];
-  object *tmp;
+    int     i;
+    char   *arg, *arg2;
+    char    buf[MAX_BUF];
+    object *tmp;
 
-    tmp=NULL;
-  if(params != NULL) {
-    if(!strncmp(params, "me", 2))
-        tmp=op;
-    else if(sscanf(params, "%d", &i))
-        tmp=find_object(i);
-    else if(sscanf(params, "%s", buf))
-        tmp=find_object_name(buf);
+    tmp = NULL;
+    if (params != NULL)
+    {
+        if (!strncmp(params, "me", 2))
+            tmp = op;
+        else if (sscanf(params, "%d", &i))
+            tmp = find_object(i);
+        else if (sscanf(params, "%s", buf))
+            tmp = find_object_name(buf);
     }
-    if(tmp==NULL) {
-      new_draw_info(NDI_UNIQUE, 0,op,"Patch what object (nr)?");
-      return 1;
+    if (tmp == NULL)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "Patch what object (nr)?");
+        return 1;
     }
-  arg=strchr(params, ' ');
-    if(arg==NULL) {
-      new_draw_info(NDI_UNIQUE, 0,op,"Patch what values?");
-      return 1;
+    arg = strchr(params, ' ');
+    if (arg == NULL)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "Patch what values?");
+        return 1;
     }
-    if((arg2=strchr(++arg,' ')))
-      arg2++;
-    if(set_variable(tmp,arg) == -1)
-      new_draw_info_format(NDI_UNIQUE, 0,op,"Unknown variable %s", arg);
-    else {
-      new_draw_info_format(NDI_UNIQUE, 0, op,
-	"(%s#%d)->%s=%s",tmp->name,tmp->count,arg,arg2);
+    if ((arg2 = strchr(++arg, ' ')))
+        arg2++;
+    if (set_variable(tmp, arg) == -1)
+        new_draw_info_format(NDI_UNIQUE, 0, op, "Unknown variable %s", arg);
+    else
+    {
+        new_draw_info_format(NDI_UNIQUE, 0, op, "(%s#%d)->%s=%s", tmp->name, tmp->count, arg, arg2);
     }
     return 1;
-  }
+}
 
-int command_remove (object *op, char *params)
+int command_remove(object *op, char *params)
 {
-    int i;
-  object *tmp;
+    int     i;
+    object *tmp;
 
-  if(params==NULL || !sscanf(params, "%d", &i) || (tmp=find_object(i))==NULL) {
-      new_draw_info(NDI_UNIQUE, 0,op,"Remove what object (nr)?");
-      return 1;
+    if (params == NULL || !sscanf(params, "%d", &i) || (tmp = find_object(i)) == NULL)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "Remove what object (nr)?");
+        return 1;
     }
     remove_ob(tmp);
-	check_walk_off (tmp, NULL,MOVE_APPLY_VANISHED);
-	return 1;
-  }
+    check_walk_off(tmp, NULL, MOVE_APPLY_VANISHED);
+    return 1;
+}
 
-int command_free (object *op, char *params)
+int command_free(object *op, char *params)
 {
-    int i;
-  object *tmp;
+    int     i;
+    object *tmp;
 
-  if(params==NULL || !sscanf(params, "%d", &i) || (tmp=find_object(i))==NULL) {
-      new_draw_info(NDI_UNIQUE, 0,op,"Free what object (nr)?");
-      return 1;
+    if (params == NULL || !sscanf(params, "%d", &i) || (tmp = find_object(i)) == NULL)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "Free what object (nr)?");
+        return 1;
     }
     /* free_object(tmp); TODO: remove me*/
-     
-    return 1;
-  }
 
-int command_addexp (object *op, char *params)
+    return 1;
+}
+
+int command_addexp(object *op, char *params)
 {
-	char buf[MAX_BUF];
-    int exp, snr;
-	object *exp_skill,*exp_ob;
+    char    buf[MAX_BUF];
+    int     exp, snr;
+    object *exp_skill, *exp_ob;
     player *pl;
 
-	if(params==NULL || sscanf(params, "%s %d %d", buf ,&snr, &exp)!=3) 
-	{
-       new_draw_info(NDI_UNIQUE, 0,op,"Usage: addexp [who] [skill nr] [how much].");
-       return 1;
-	}
+    if (params == NULL || sscanf(params, "%s %d %d", buf, &snr, &exp) != 3)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "Usage: addexp [who] [skill nr] [how much].");
+        return 1;
+    }
 
-	pl = find_player(buf);
+    pl = find_player(buf);
 
-	if(pl==NULL)
-	{
-		new_draw_info(NDI_UNIQUE, 0,op,"No such player.");
-		return 1;
-	}
-	
+    if (pl == NULL)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
+        return 1;
+    }
+
     exp_skill = pl->skill_ptr[snr];
-                    
-    if(!exp_skill) /* safety check */
+
+    if (!exp_skill) /* safety check */
     {
         /* our player don't have this skill?
          * This can happens when group exp is devided.
          * We must get a useful sub or we skip the exp.
          */
-         LOG(llevDebug,"TODO: add_exp(): called for %s with skill nr %d / %d exp - object has not this skill.\n",query_name(pl->ob),snr, exp);
-         return 0; /* TODO: groups comes later  - now we skip all times */
+        LOG(llevDebug, "TODO: add_exp(): called for %s with skill nr %d / %d exp - object has not this skill.\n",
+            query_name(pl->ob), snr, exp);
+        return 0; /* TODO: groups comes later  - now we skip all times */
     }
 
     /* if we are full in this skill, then nothing is to do */
-    if(exp_skill->level >= MAXLEVEL)
+    if (exp_skill->level >= MAXLEVEL)
         return 0;    
-            
-    pl->update_skills=1; /* we will sure change skill exp, mark for update */
+
+    pl->update_skills = 1; /* we will sure change skill exp, mark for update */
     exp_ob = exp_skill->exp_obj;            
 
-    if(!exp_ob)
+    if (!exp_ob)
     {
-		LOG(llevBug,"BUG: add_exp() skill:%s - no exp_op found!!\n",query_name(exp_skill));
-		return 0;
+        LOG(llevBug, "BUG: add_exp() skill:%s - no exp_op found!!\n", query_name(exp_skill));
+        return 0;
     }
-    
-    exp = adjust_exp(pl->ob, exp_skill,exp);   /* first we see what we can add to our skill */ 
-            
+
+    exp = adjust_exp(pl->ob, exp_skill, exp);   /* first we see what we can add to our skill */ 
+
     /* adjust_exp has adjust the skill and all exp_obj and player exp */
     /* now lets check for level up in all categories */
-    player_lvl_adj(pl->ob,exp_skill);   
-    player_lvl_adj(pl->ob,exp_ob);   
-    player_lvl_adj(pl->ob,NULL);   
- 
-    return 1;
-  }
+    player_lvl_adj(pl->ob, exp_skill);   
+    player_lvl_adj(pl->ob, exp_ob);   
+    player_lvl_adj(pl->ob, NULL);   
 
-int command_speed (object *op, char *params)
+    return 1;
+}
+
+int command_speed(object *op, char *params)
 {
     int i;
-  if(params==NULL || !sscanf(params, "%d", &i)) {
-      sprintf(errmsg,"Current speed is %ld",max_time);
-      new_draw_info(NDI_UNIQUE, 0,op,errmsg);
-      return 1;
+    if (params == NULL || !sscanf(params, "%d", &i))
+    {
+        sprintf(errmsg, "Current speed is %ld", max_time);
+        new_draw_info(NDI_UNIQUE, 0, op, errmsg);
+        return 1;
     }
     set_max_time(i);
     reset_sleep();
-    new_draw_info(NDI_UNIQUE, 0,op,"The speed is changed.");
+    new_draw_info(NDI_UNIQUE, 0, op, "The speed is changed.");
     return 1;
-  }
+}
 
 
 /**************************************************************************/
@@ -716,251 +766,247 @@ int command_speed (object *op, char *params)
 /* CSUChico : tvangod@cscihp.ecst.csuchico.edu                            */
 /**************************************************************************/
 
-int command_stats (object *op, char *params)
+int command_stats(object *op, char *params)
 {
-	player *pl;
-	char buf[MAX_BUF];
+    player *pl;
+    char    buf[MAX_BUF];
 
-	if(params==NULL) 
-	{
-		new_draw_info(NDI_UNIQUE, 0,op,"Who?");
-		return 1;
-	}
-	if(!(pl = find_player(params)))
-	{
-		new_draw_info(NDI_UNIQUE, 0,op,"No such player.");
-		return 1;
-	}
+    if (params == NULL)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "Who?");
+        return 1;
+    }
+    if (!(pl = find_player(params)))
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
+        return 1;
+    }
 
-    sprintf(buf,"Str : %-2d      H.P. : %-4d  MAX : %d",
-                 pl->ob->stats.Str,pl->ob->stats.hp,pl->ob->stats.maxhp);
-    new_draw_info(NDI_UNIQUE, 0,op,buf);
-    sprintf(buf,"Dex : %-2d      S.P. : %-4d  MAX : %d",
-                 pl->ob->stats.Dex,pl->ob->stats.sp,pl->ob->stats.maxsp) ;
-    new_draw_info(NDI_UNIQUE, 0,op,buf);
-	sprintf(buf,"Con : %-2d        AC : %-4d  WC  : %d",
-                 pl->ob->stats.Con,pl->ob->stats.ac,pl->ob->stats.wc) ;
-    new_draw_info(NDI_UNIQUE, 0,op,buf);
-	sprintf(buf,"Wis : %-2d       EXP : %d",
-                 pl->ob->stats.Wis,pl->ob->stats.exp);
-    new_draw_info(NDI_UNIQUE, 0,op,buf);
-    sprintf(buf,"Cha : %-2d      Food : %d",
-                 pl->ob->stats.Cha,pl->ob->stats.food) ;
-    new_draw_info(NDI_UNIQUE, 0,op,buf);
-    sprintf(buf,"Int : %-2d    Damage : %d",
-                 pl->ob->stats.Int,pl->ob->stats.dam) ;
-    sprintf(buf,"Pow : %-2d    Grace : %d",
-                 pl->ob->stats.Pow,pl->ob->stats.grace) ;
-	new_draw_info(NDI_UNIQUE, 0,op,buf);
+    sprintf(buf, "Str : %-2d      H.P. : %-4d  MAX : %d", pl->ob->stats.Str, pl->ob->stats.hp, pl->ob->stats.maxhp);
+    new_draw_info(NDI_UNIQUE, 0, op, buf);
+    sprintf(buf, "Dex : %-2d      S.P. : %-4d  MAX : %d", pl->ob->stats.Dex, pl->ob->stats.sp, pl->ob->stats.maxsp) ;
+    new_draw_info(NDI_UNIQUE, 0, op, buf);
+    sprintf(buf, "Con : %-2d        AC : %-4d  WC  : %d", pl->ob->stats.Con, pl->ob->stats.ac, pl->ob->stats.wc) ;
+    new_draw_info(NDI_UNIQUE, 0, op, buf);
+    sprintf(buf, "Wis : %-2d       EXP : %d", pl->ob->stats.Wis, pl->ob->stats.exp);
+    new_draw_info(NDI_UNIQUE, 0, op, buf);
+    sprintf(buf, "Cha : %-2d      Food : %d", pl->ob->stats.Cha, pl->ob->stats.food) ;
+    new_draw_info(NDI_UNIQUE, 0, op, buf);
+    sprintf(buf, "Int : %-2d    Damage : %d", pl->ob->stats.Int, pl->ob->stats.dam) ;
+    sprintf(buf, "Pow : %-2d    Grace : %d", pl->ob->stats.Pow, pl->ob->stats.grace) ;
+    new_draw_info(NDI_UNIQUE, 0, op, buf);
 
-	return 1;
+    return 1;
 }
 
-int command_abil (object *op, char *params)
+int command_abil(object *op, char *params)
 {
-	char thing[20], thing2[20];
-	int iii;
-	player *pl;
-	char buf[MAX_BUF];
+    char    thing[20], thing2[20];
+    int     iii;
+    player *pl;
+    char    buf[MAX_BUF];
 
     iii = 0;
     thing[0] = '\0';
     thing2[0] = '\0';
-	if(params==NULL || !sscanf(params, "%s %s %d", thing, thing2, &iii) || thing==NULL)
-	{
-       new_draw_info(NDI_UNIQUE, 0,op,"Who?");
-       return 1;
+    if (params == NULL || !sscanf(params, "%s %s %d", thing, thing2, &iii) || thing == NULL)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "Who?");
+        return 1;
     }
-    if (thing2==NULL)
-	{
-       new_draw_info(NDI_UNIQUE, 0,op,"You can't change that.");
-       return 1;
-    }
-
-	if(!(pl = find_player(thing)))
-	{
-		new_draw_info(NDI_UNIQUE, 0,op,"No such player.");
-		return 1;
-	}
-	
-
-    if (iii<MIN_STAT||iii>MAX_STAT) {
-      new_draw_info(NDI_UNIQUE, 0,op,"Illegal range of stat.\n");
-      return 1;
+    if (thing2 == NULL)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "You can't change that.");
+        return 1;
     }
 
-	if(!strcmp("str",thing2))
-		pl->ob->stats.Str = iii,pl->orig_stats.Str = iii;
-	if(!strcmp("dex",thing2))   
-		pl->ob->stats.Dex = iii,pl->orig_stats.Dex = iii;
-    if(!strcmp("con",thing2))
-		pl->ob->stats.Con = iii,pl->orig_stats.Con = iii;
-    if(!strcmp("wis",thing2))
-		pl->ob->stats.Wis = iii,pl->orig_stats.Wis = iii;
-    if(!strcmp("cha",thing2))
-		pl->ob->stats.Cha = iii,pl->orig_stats.Cha = iii;
-    if(!strcmp("int",thing2))
-		pl->ob->stats.Int = iii,pl->orig_stats.Int = iii;
-    if(!strcmp("pow",thing2))
-		pl->ob->stats.Pow = iii,pl->orig_stats.Pow = iii;
-    sprintf(buf,"%s has been altered.",pl->ob->name);
-    new_draw_info(NDI_UNIQUE, 0,op,buf);
+    if (!(pl = find_player(thing)))
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
+        return 1;
+    }
+
+
+    if (iii<MIN_STAT || iii>MAX_STAT)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "Illegal range of stat.\n");
+        return 1;
+    }
+
+    if (!strcmp("str", thing2))
+        pl->ob->stats.Str = iii,pl->orig_stats.Str = iii;
+    if (!strcmp("dex", thing2))
+        pl->ob->stats.Dex = iii,pl->orig_stats.Dex = iii;
+    if (!strcmp("con", thing2))
+        pl->ob->stats.Con = iii,pl->orig_stats.Con = iii;
+    if (!strcmp("wis", thing2))
+        pl->ob->stats.Wis = iii,pl->orig_stats.Wis = iii;
+    if (!strcmp("cha", thing2))
+        pl->ob->stats.Cha = iii,pl->orig_stats.Cha = iii;
+    if (!strcmp("int", thing2))
+        pl->ob->stats.Int = iii,pl->orig_stats.Int = iii;
+    if (!strcmp("pow", thing2))
+        pl->ob->stats.Pow = iii,pl->orig_stats.Pow = iii;
+    sprintf(buf, "%s has been altered.", pl->ob->name);
+    new_draw_info(NDI_UNIQUE, 0, op, buf);
     fix_player(pl->ob);
     return 1;
 }
 
-int command_reset (object *op, char *params)
+int command_reset(object *op, char *params)
 {
-	int count;
-    mapstruct *m;
-	player *pl;
-    object *dummy = NULL, *tmp = NULL;
-    const char *mapfile_sh;
+    int             count;
+    mapstruct      *m;
+    player         *pl;
+    object*dummy =  NULL, *tmp = NULL;
+    const char     *mapfile_sh;
 
     if (params == NULL)
         m = has_been_loaded_sh(op->map->path);
-	else 
-	{
+    else
+    {
         mapfile_sh = add_string(params);
         m = has_been_loaded_sh(mapfile_sh);
         free_string_shared(mapfile_sh);
     }
 
-	if (m==NULL)	
-	{
-		new_draw_info(NDI_UNIQUE, 0,op,"No such map.");
-		return 1;	
-	}
-
-	dummy=get_object();
-	dummy->map = NULL;
-	FREE_AND_ADD_REF_HASH(EXIT_PATH(dummy), m->path);
-
-    if (m->in_memory != MAP_SWAPPED) 
-	{
-		if(m->in_memory != MAP_IN_MEMORY)
-		{
-			LOG(llevBug,"BUG: Tried to swap out map which was not in memory.\n");
-			return 0;
-		}
-
-		new_draw_info_format(NDI_UNIQUE, 0,op,"Start reseting map %s.", STRING_SAFE(m->path));
-		/* remove now all players from this map - flag them so we can
-		 * put them back later.
-		 */
-		count=0;
-		for (pl = first_player; pl != NULL; pl = pl->next) 
-		{
-			if (pl->ob->map == m ) 
-			{
-				count++;
-				remove_ob(pl->ob); /* no walk off check */
-				pl->dm_removed_from_map=1;
-			/*tmp=op;*/
-			}
-			else
-				pl->dm_removed_from_map=0;
-
-		}
-		new_draw_info_format(NDI_UNIQUE, 0,op,"removed %d players from map. Swap map.", count);
-		swap_map(m, 1);
+    if (m == NULL)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "No such map.");
+        return 1;
     }
 
-    if (m->in_memory == MAP_SWAPPED) 
-	{	
-		LOG(llevDebug,"Resetting map %s.\n",m->path);
-		clean_tmp_map(m);
-		if (m->tmpname) free(m->tmpname);
-		m->tmpname = NULL;
-		/* setting this effectively causes an immediate reload */
-		m->reset_time = 1;
-		new_draw_info(NDI_UNIQUE, 0,op,"Swap successful. Inserting players.");
+    dummy = get_object();
+    dummy->map = NULL;
+    FREE_AND_ADD_REF_HASH(EXIT_PATH(dummy), m->path);
 
-		for (pl = first_player; pl != NULL; pl = pl->next) 
-		{
-			if(pl->dm_removed_from_map)
-			{
-				EXIT_X(dummy) = pl->ob->x;
-				EXIT_Y(dummy) = pl->ob->y;
-				enter_exit(pl->ob, dummy);
-                if(pl->ob != op) {
-                    if(QUERY_FLAG(pl->ob,FLAG_WIZ)) 
-                        new_draw_info_format(NDI_UNIQUE, 0,pl->ob,"Map reset by %s.", op->name);
+    if (m->in_memory != MAP_SWAPPED)
+    {
+        if (m->in_memory != MAP_IN_MEMORY)
+        {
+            LOG(llevBug, "BUG: Tried to swap out map which was not in memory.\n");
+            return 0;
+        }
+
+        new_draw_info_format(NDI_UNIQUE, 0, op, "Start reseting map %s.", STRING_SAFE(m->path));
+        /* remove now all players from this map - flag them so we can
+             * put them back later.
+             */
+        count = 0;
+        for (pl = first_player; pl != NULL; pl = pl->next)
+        {
+            if (pl->ob->map == m)
+            {
+                count++;
+                remove_ob(pl->ob); /* no walk off check */
+                pl->dm_removed_from_map = 1;
+                /*tmp=op;*/
+            }
+            else
+                pl->dm_removed_from_map = 0;
+        }
+        new_draw_info_format(NDI_UNIQUE, 0, op, "removed %d players from map. Swap map.", count);
+        swap_map(m, 1);
+    }
+
+    if (m->in_memory == MAP_SWAPPED)
+    {
+        LOG(llevDebug, "Resetting map %s.\n", m->path);
+        clean_tmp_map(m);
+        if (m->tmpname)
+            free(m->tmpname);
+        m->tmpname = NULL;
+        /* setting this effectively causes an immediate reload */
+        m->reset_time = 1;
+        new_draw_info(NDI_UNIQUE, 0, op, "Swap successful. Inserting players.");
+
+        for (pl = first_player; pl != NULL; pl = pl->next)
+        {
+            if (pl->dm_removed_from_map)
+            {
+                EXIT_X(dummy) = pl->ob->x;
+                EXIT_Y(dummy) = pl->ob->y;
+                enter_exit(pl->ob, dummy);
+                if (pl->ob != op)
+                {
+                    if (QUERY_FLAG(pl->ob, FLAG_WIZ))
+                        new_draw_info_format(NDI_UNIQUE, 0, pl->ob, "Map reset by %s.", op->name);
                     else /* Write a nice little confusing message to the players */
-                        new_draw_info(NDI_UNIQUE, 0,pl->ob,"Your surroundings seem different but still familiar. Haven't you been here before?");
+                        new_draw_info(NDI_UNIQUE, 0, pl->ob,
+                                      "Your surroundings seem different but still familiar. Haven't you been here before?");
                 }
-			}
-		}
+            }
+        }
 
-		new_draw_info(NDI_UNIQUE, 0,op,"resetmap done.");
-    } 
-	else
-	{
-		/* Need to re-insert player if swap failed for some reason */
-		for (pl = first_player; pl != NULL; pl = pl->next)
-		{
-			if(pl->dm_removed_from_map)
-				insert_ob_in_map(pl->ob, m, NULL,INS_NO_MERGE | INS_NO_WALK_ON);
-	    }
-		new_draw_info(NDI_UNIQUE, 0,op,"Reset failed, couldn't swap map!");
-	}
+        new_draw_info(NDI_UNIQUE, 0, op, "resetmap done.");
+    }
+    else
+    {
+        /* Need to re-insert player if swap failed for some reason */
+        for (pl = first_player; pl != NULL; pl = pl->next)
+        {
+            if (pl->dm_removed_from_map)
+                insert_ob_in_map(pl->ob, m, NULL, INS_NO_MERGE | INS_NO_WALK_ON);
+        }
+        new_draw_info(NDI_UNIQUE, 0, op, "Reset failed, couldn't swap map!");
+    }
 
-	return 1;
+    return 1;
 }
 
-int command_nowiz (object *op, char *params) 
+int command_nowiz(object *op, char *params)
 {
-     CLEAR_FLAG(op, FLAG_WIZ);
-	 gbl_active_DM = NULL; /* clear this dm from global dm list. TODO : make a list from it */
-     CLEAR_FLAG(op, FLAG_WIZPASS);
-     CLEAR_MULTI_FLAG(op, FLAG_FLYING);
-	  fix_player(op);
-	  CONTR(op)->socket.update_tile=0;
-      esrv_send_inventory(op, op);
-   	  CONTR(op)->update_los=1;
-     new_draw_info(NDI_UNIQUE, 0, op, "DM mode deactivated.");
-     return 1;
+    CLEAR_FLAG(op, FLAG_WIZ);
+    gbl_active_DM = NULL; /* clear this dm from global dm list. TODO : make a list from it */
+    CLEAR_FLAG(op, FLAG_WIZPASS);
+    CLEAR_MULTI_FLAG(op, FLAG_FLYING);
+    fix_player(op);
+    CONTR(op)->socket.update_tile = 0;
+    esrv_send_inventory(op, op);
+    CONTR(op)->update_los = 1;
+    new_draw_info(NDI_UNIQUE, 0, op, "DM mode deactivated.");
+    return 1;
 }
 
 /* warning: these function is for heavy debugging.
  * Its somewhat useless under windows.
  */
-int command_check_fd(object *op, char *params) 
+int command_check_fd(object *op, char *params)
 {
-	struct _stat buf;
-	int handle_max=socket_info.max_filedescriptor<100?100:socket_info.max_filedescriptor, fh;
+    struct _stat    buf;
+    int             handle_max  = socket_info.max_filedescriptor < 100 ? 100 : socket_info.max_filedescriptor, fh;
 
-	/* remember, max_filedescriptor don't works under windows */
-	new_draw_info_format(NDI_UNIQUE, 0, op, "check file handles from 0 to %d.", handle_max);
-	LOG(llevSystem,"check file handles from 0 to %d.", handle_max);
-	for(fh=0;fh<=handle_max;fh++)
-	{
-		/* Check if statistics are valid: */
-		if(!_fstat( fh, &buf ))
-		{	
-			/* no ttyname() under windows... well, 
-			 * debugging fh's is always more clever on linux.
-			 */
+    /* remember, max_filedescriptor don't works under windows */
+    new_draw_info_format(NDI_UNIQUE, 0, op, "check file handles from 0 to %d.", handle_max);
+    LOG(llevSystem, "check file handles from 0 to %d.", handle_max);
+    for (fh = 0; fh <= handle_max; fh++)
+    {
+        /* Check if statistics are valid: */
+        if (!_fstat(fh, &buf))
+        {
+            /* no ttyname() under windows... well, 
+                     * debugging fh's is always more clever on linux.
+                     */
 #ifdef WIN32
-		LOG(llevSystem,"FH %d ::(%d) size     : %ld\n", fh, _isatty(fh), buf.st_size );
+            LOG(llevSystem, "FH %d ::(%d) size     : %ld\n", fh, _isatty(fh), buf.st_size);
 #else
-		player *pp;
-		char *name1=NULL;
+            player *pp;
+            char   *name1   = NULL;
 
-		/* collect some senseless handle numbers... */
-		for (pp=first_player;pp;pp=pp->next) 
-		{
-			if(pp->socket.fd == fh)
-				break;
-		}
-		name1=ttyname(_isatty(fh));
+            /* collect some senseless handle numbers... */
+            for (pp = first_player; pp; pp = pp->next)
+            {
+                if (pp->socket.fd == fh)
+                    break;
+            }
+            name1 = ttyname(_isatty(fh));
 
-		LOG(llevSystem,"FH %d ::(%s) (%s) size: %ld\n", fh, 
-			name1?name1:"><", pp?(pp->ob?query_name(pp->ob):">player<"):"",buf.st_size );
+            LOG(llevSystem, "FH %d ::(%s) (%s) size: %ld\n", fh, name1 ? name1 : "><",
+                pp ? (pp->ob ? query_name(pp->ob) : ">player<") : "", buf.st_size);
 #endif
-		}
-	}
-	return 1;
+        }
+    }
+    return 1;
 }
 
 
@@ -974,136 +1020,146 @@ int command_check_fd(object *op, char *params)
 
 static int checkdm(object *op, const char *pl_name, char *pl_passwd, char *pl_host)
 {
-  FILE  *dmfile;
-  char  buf[MAX_BUF];
-  char  line_buf[160], name[160], passwd[160], host[160];
+    FILE   *dmfile;
+    char    buf[MAX_BUF];
+    char    line_buf[160], name[160], passwd[160], host[160];
 
 #ifdef RESTRICTIVE_DM
-  pl_name=op->name?op->name:"*";
+    pl_name = op->name ? op->name : "*";
 #endif
 
-  sprintf (buf, "%s/%s", settings.localdir, DMFILE);
-  if ((dmfile = fopen(buf, "r")) == NULL) {
-    LOG(llevDebug, "Could not find DM file.\n");
-    return(0);
-  }
-  while(fgets(line_buf, 160, dmfile) != NULL) {
-    if (line_buf[0]=='#') continue;
-    if (sscanf(line_buf,"%[^:]:%[^:]:%s\n",name, passwd, host)!=3) {
-	LOG(llevBug,"BUG: malformed dm file entry: %s", line_buf);
+    sprintf(buf, "%s/%s", settings.localdir, DMFILE);
+    if ((dmfile = fopen(buf, "r")) == NULL)
+    {
+        LOG(llevDebug, "Could not find DM file.\n");
+        return(0);
     }
-    else if ((!strcmp(name,"*") || (pl_name && !strcmp(pl_name, name)))
-      && (!strcmp(passwd,"*") || !strcmp(passwd,pl_passwd)) &&
-      (!strcmp(host,"*") || !strcmp(host, pl_host))) {
-	fclose(dmfile);
-	return (1);
+    while (fgets(line_buf, 160, dmfile) != NULL)
+    {
+        if (line_buf[0] == '#')
+            continue;
+        if (sscanf(line_buf, "%[^:]:%[^:]:%s\n", name, passwd, host) != 3)
+        {
+            LOG(llevBug, "BUG: malformed dm file entry: %s", line_buf);
+        }
+        else if ((!strcmp(name, "*") || (pl_name && !strcmp(pl_name, name)))
+              && (!strcmp(passwd, "*") || !strcmp(passwd, pl_passwd))
+              && (!strcmp(host, "*") || !strcmp(host, pl_host)))
+        {
+            fclose(dmfile);
+            return (1);
+        }
     }
-  }
-  fclose(dmfile);
-  return (0);
+    fclose(dmfile);
+    return (0);
 }
 
 /* Actual command to perhaps become dm.  Changed aroun a bit in version 0.92.2
  * - allow people on sockets to become dm, and allow better dm file
  */
 
-int command_dm (object *op, char *params)
+int command_dm(object *op, char *params)
 {
-		/* IF we are DM, then turn mode off */
-	if(QUERY_FLAG(op,FLAG_WIZ) && op->type == PLAYER )
-	{
-		command_nowiz (op, params);
-		return 1;
-	}
-
-  if (op->type != PLAYER || !CONTR(op)) return 0;
-  else {
-    if (checkdm(op, op->name,
-		(params?params:"*"), CONTR(op)->socket.host)) {
-	  gbl_active_DM = op; /* ad this dm to global dm list. TODO : make a list from it */
-      SET_FLAG(op, FLAG_WIZ);
-      SET_FLAG(op, FLAG_WIZPASS);
-      new_draw_info_format(NDI_UNIQUE, 0,op, "DM mode activated for %s!", op->name);
-      /*new_draw_info(NDI_UNIQUE | NDI_ALL, 1, NULL, "The Dungeon Master has arrived!");*/
-      SET_MULTI_FLAG(op, FLAG_FLYING);
-      esrv_send_inventory(op, op);
-	  clear_los(op);
-   	  CONTR(op)->socket.update_tile=0; /* force a draw_look() */
-   	  CONTR(op)->update_los=1;
-      CONTR(op)->write_buf[0] ='\0';
-      return 1;
-    } else {
-		/* don't give our player even something to think about it when 
-		 * they are not allowed to be DM
-		 */
-      /*new_draw_info(NDI_UNIQUE, 0,op, "Sorry Pal, I don't think so.");*/
-      CONTR(op)->write_buf[0] ='\0';
-      return 1;
+    /* IF we are DM, then turn mode off */
+    if (QUERY_FLAG(op, FLAG_WIZ) && op->type == PLAYER)
+    {
+        command_nowiz(op, params);
+        return 1;
     }
-  }
+
+    if (op->type != PLAYER || !CONTR(op))
+        return 0;
+    else
+    {
+        if (checkdm(op, op->name, (params ? params : "*"), CONTR(op)->socket.host))
+        {
+            gbl_active_DM = op; /* ad this dm to global dm list. TODO : make a list from it */
+            SET_FLAG(op, FLAG_WIZ);
+            SET_FLAG(op, FLAG_WIZPASS);
+            new_draw_info_format(NDI_UNIQUE, 0, op, "DM mode activated for %s!", op->name);
+            /*new_draw_info(NDI_UNIQUE | NDI_ALL, 1, NULL, "The Dungeon Master has arrived!");*/
+            SET_MULTI_FLAG(op, FLAG_FLYING);
+            esrv_send_inventory(op, op);
+            clear_los(op);
+            CONTR(op)->socket.update_tile = 0; /* force a draw_look() */
+            CONTR(op)->update_los = 1;
+            CONTR(op)->write_buf[0] = '\0';
+            return 1;
+        }
+        else
+        {
+            /* don't give our player even something to think about it when 
+                 * they are not allowed to be DM
+                 */
+            /*new_draw_info(NDI_UNIQUE, 0,op, "Sorry Pal, I don't think so.");*/
+            CONTR(op)->write_buf[0] = '\0';
+            return 1;
+        }
+    }
 }
 
-int command_invisible (object *op, char *params)
+int command_invisible(object *op, char *params)
 {
-  if (!op)
+    if (!op)
+        return 0;
+
+
+    if (IS_SYS_INVISIBLE(op))
+    {
+        CLEAR_FLAG(op, FLAG_SYS_OBJECT);
+        new_draw_info(NDI_UNIQUE, 0, op, "You turn visible.");
+    }
+    else
+    {
+        SET_FLAG(op, FLAG_SYS_OBJECT);
+        new_draw_info(NDI_UNIQUE, 0, op, "You turn invisible.");
+    }
+    update_object(op, UP_OBJ_FACE);
     return 0;
-	  
-		
-      if(IS_SYS_INVISIBLE(op))
-	  {
-		  CLEAR_FLAG(op,FLAG_SYS_OBJECT);
-	      new_draw_info(NDI_UNIQUE, 0,op,"You turn visible.");
-	  }
-	  else
-	  {
-		  SET_FLAG(op,FLAG_SYS_OBJECT);
-	      new_draw_info(NDI_UNIQUE, 0,op,"You turn invisible.");
-	  }
-      update_object(op,UP_OBJ_FACE);
-  return 0;
 }
 
 
-static int command_learn_spell_or_prayer (object *op, char *params,
-                                          int special_prayer)
+static int command_learn_spell_or_prayer(object *op, char *params, int special_prayer)
 {
     int spell;
 
     if (op->type != PLAYER || CONTR(op) == NULL || params == NULL)
         return 0;
 
-    if ((spell = look_up_spell_name (params)) <= 0) {
-        new_draw_info (NDI_UNIQUE, 0, op, "Unknown spell.");
+    if ((spell = look_up_spell_name(params)) <= 0)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "Unknown spell.");
         return 1;
     }
 
-    do_learn_spell (op, spell, special_prayer);
+    do_learn_spell(op, spell, special_prayer);
     return 1;
 }
 
-int command_learn_spell (object *op, char *params)
+int command_learn_spell(object *op, char *params)
 {
-    return command_learn_spell_or_prayer (op, params, 0);
+    return command_learn_spell_or_prayer(op, params, 0);
 }
 
-int command_learn_special_prayer (object *op, char *params)
+int command_learn_special_prayer(object *op, char *params)
 {
-    return command_learn_spell_or_prayer (op, params, 1);
+    return command_learn_spell_or_prayer(op, params, 1);
 }
 
-int command_forget_spell (object *op, char *params)
+int command_forget_spell(object *op, char *params)
 {
     int spell;
 
     if (op->type != PLAYER || CONTR(op) == NULL || params == NULL)
         return 0;
 
-    if ((spell = look_up_spell_name (params)) <= 0) {
-        new_draw_info (NDI_UNIQUE, 0, op, "Unknown spell.");
+    if ((spell = look_up_spell_name(params)) <= 0)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "Unknown spell.");
         return 1;
     }
 
-    do_forget_spell (op, spell);
+    do_forget_spell(op, spell);
     return 1;
 }
 /* GROS */
@@ -1119,11 +1175,11 @@ int command_listplugins(object *op, char *params)
 /* than once at a time, or bad things could happen.                          */
 int command_loadplugin(object *op, char *params)
 {
-    char buf[MAX_BUF];
+    char    buf[MAX_BUF];
 
-    strcpy(buf,DATADIR);
-    strcat(buf,"/../plugins/");
-    strcat(buf,params);
+    strcpy(buf, DATADIR);
+    strcat(buf, "/../plugins/");
+    strcat(buf, params);
     printf("Requested plugin file is %s\n", buf);
     initOnePlugin(buf);
     return 1;
@@ -1138,73 +1194,3 @@ int command_unloadplugin(object *op, char *params)
     return 1;
 }
 
-void shutdown_agent(int timer, char *reason)
-{
-	static int sd_timer=-1, m_count, real_count=-1;
-    static struct timeval tv1,tv2;
-
-	if(timer == -1 && sd_timer == -1)
-	{
-		if(real_count>0)
-		{
-			if(--real_count <= 0)
-			{
-				LOG(llevSystem,"SERVER SHUTDOWN STARTED\n");
-			    command_kick(NULL,NULL);
-			    cleanup();
-			}
-		}
-		return; /* nothing to do */
-	}
-
-	if(timer!=-1) /* reset shutdown count */
-	{
-		int t_min = timer/60;
-		int t_sec = timer-(int)(timer/60)*60;
-		sd_timer=timer;
-
-		new_draw_info(NDI_PLAYER |NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "[Server]: ** SERVER SHUTDOWN STARTED **");
-		if(reason)
-		new_draw_info_format(NDI_PLAYER |NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "[Server]: %s", reason);
-
-		if(t_sec)
-			new_draw_info_format(NDI_PLAYER |NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "[Server]: SERVER REBOOT in %d minutes and %d seconds",t_min,t_sec);
-		else
-			new_draw_info_format(NDI_PLAYER |NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "[Server]: SERVER REBOOT in %d minutes",t_min);
-		GETTIMEOFDAY(&tv1);
-		m_count = timer/60-1;
-		real_count=-1;
-	}
-	else /* count the shutdown tango */
-	{
-		int t_min;
-		int t_sec=0;
-		GETTIMEOFDAY(&tv2);
-
-		if((int)(tv2.tv_sec-tv1.tv_sec) >= sd_timer) /* end countdown */
-		{
-			new_draw_info(NDI_PLAYER |NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "[Server]: ** SERVER GOES DOWN NOW!!! **");
-			if(reason)
-				new_draw_info_format(NDI_PLAYER |NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "[Server]: %s", reason);
-			sd_timer=-1;
-			real_count=30;
-		}
-
-		t_min = (sd_timer-(int)(tv2.tv_sec-tv1.tv_sec))/60;
-		t_sec = (sd_timer-(int)(tv2.tv_sec-tv1.tv_sec))-(int)((sd_timer-(int)(tv2.tv_sec-tv1.tv_sec))/60)*60;
-
-		/*LOG(-1,"SEC: %d (%d - %d)\n", tv2.tv_sec-tv1.tv_sec,t_min,t_sec);*/
-
-		if((t_min == m_count && !t_sec))
-		{
-			m_count = t_min-1;
-			if(t_sec)
-				new_draw_info_format(NDI_PLAYER |NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "[Server]: SERVER REBOOT in %d minutes and %d seconds",t_min,t_sec);
-			else
-				new_draw_info_format(NDI_PLAYER |NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "[Server]: SERVER REBOOT in %d minutes",t_min);
-		}
-
-	}
-
-
-}

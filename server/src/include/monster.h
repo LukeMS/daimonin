@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -30,52 +30,54 @@
 
 /** Monster extended data **/
 
-struct mobdata_pathfinding {
-    object *target_obj;  /* either an obj on map or a waypoint */
-    tag_t target_count; /* (or a mob base info object) (or NULL) */
+struct mobdata_pathfinding
+{
+    object                 *target_obj;  /* either an obj on map or a waypoint */
+    tag_t                   target_count; /* (or a mob base info object) (or NULL) */
 
-    const char *target_map;   /* target is those coords if target_obj is  */
-    int target_x, target_y;   /* NULL */
-    
-    struct path_segment *path; /* Precomputed path from pathfinder.c   */
+    const char             *target_map;   /* target is those coords if target_obj is  */
+    int                     target_x, target_y;   /* NULL */
 
-    const char *goal_map;   /* Original goal. Used to keep track of */
-    int goal_x, goal_y;        /* moving objects */
-    
-    uint16 goal_delay_counter; /* compared to wp->goal_delay */
-    sint16 best_distance; /* to subgoal */
-    uint8 tried_steps; /* steps that didn't get us closer to subgoal */
+    struct path_segment    *path; /* Precomputed path from pathfinder.c   */
 
-    uint8 path_requested; /* TODO: make a flag instead */
+    const char             *goal_map;   /* Original goal. Used to keep track of */
+    int                     goal_x, goal_y;        /* moving objects */
+
+    uint16                  goal_delay_counter; /* compared to wp->goal_delay */
+    sint16                  best_distance; /* to subgoal */
+    uint8                   tried_steps; /* steps that didn't get us closer to subgoal */
+
+    uint8                   path_requested; /* TODO: make a flag instead */
 };
 
 /* Keeps track of registered enemies to a mob (enemies it has seen
  * and enemies that has attacked it).
  * Can also be used for exp sharing
  */
-struct mob_known_obj {
-    struct mob_known_obj *next, *prev;
-    object *obj;
-    tag_t obj_count;
+struct mob_known_obj
+{
+    struct mob_known_obj   *next, *prev;
+    object                 *obj;
+    tag_t                   obj_count;
 
-    uint32 last_seen; /* tick that this thing was last seen. Used for timeout */
-    const char *last_map;   /* Last known position */
-    int last_x, last_y;        
-    
+    uint32                  last_seen; /* tick that this thing was last seen. Used for timeout */
+    const char             *last_map;   /* Last known position */
+    int                     last_x, last_y;        
+
     /* this stored rv saves some CPU at the cost of some memory, is it really worth it? */
-    rv_vector rv;    /* Stored vector to the object */
-    uint32 rv_time;   /* Last time the rv was recalculated (or 0 for invalid) */
+    rv_vector               rv;    /* Stored vector to the object */
+    uint32                  rv_time;   /* Last time the rv was recalculated (or 0 for invalid) */
 
-    int friendship, attraction;   /* Cumulative friendship and fear values
-                                     (negative friendship is enemosity and
-                                      negative attraction is fear) */
-    int tmp_friendship, tmp_attraction; /* Temporary values */
-    
+    int                     friendship, attraction;   /* Cumulative friendship and fear values
+                                                         (negative friendship is enemosity and
+                                                          negative attraction is fear) */
+    int                     tmp_friendship, tmp_attraction; /* Temporary values */
+
     /* other possible fields:
      * credz gained (for exp sharing)
      */
 };
- 
+
 /* Flags for parameters */
 #define AI_PARAM_PRESENT   1 /* The parameter is present */
 #define AIPARAM_PRESENT(param) (params[(param)].flags & AI_PARAM_PRESENT)
@@ -83,38 +85,42 @@ struct mob_known_obj {
 #define AIPARAM_STRING(param) params[(param)].stringvalue
 
 /* A behaviour parameter */
-struct mob_behaviour_param {
+struct mob_behaviour_param
+{
     struct mob_behaviour_param *next; /* Linked list of multiple definitions*/
-    const char *stringvalue;      /* Parameter value as string */
-    int intvalue;                 /* Integer value */
-    int flags;
+    const char                 *stringvalue;      /* Parameter value as string */
+    int                         intvalue;                 /* Integer value */
+    int                         flags;
 };
 
 /* Call info for a behaviour */
-struct mob_behaviour {
-    struct behaviour_decl *declaration; /* static info about this behaviour */
-    struct mob_behaviour *next; /* Linked list */
+struct mob_behaviour
+{
+    struct behaviour_decl      *declaration; /* static info about this behaviour */
+    struct mob_behaviour       *next; /* Linked list */
     struct mob_behaviour_param *parameters; /* Parameter array */
 };
 
-struct mob_behaviourset {
-    struct mob_behaviourset *prev, *next; /* Linked list */
-    int refcount;                         /* Nr of active mobs using this def */
-    const char *definition;               /* The string definition */
-    uint32 bghash;                        /* Hash for generated behaviours */
-        
-    struct mob_behaviour *behaviours[NROF_BEHAVIOURCLASSES]; 
+struct mob_behaviourset
+{
+    struct mob_behaviourset    *prev, *next; /* Linked list */
+    int                         refcount;                         /* Nr of active mobs using this def */
+    const char                 *definition;               /* The string definition */
+    uint32                      bghash;                        /* Hash for generated behaviours */
+
+    struct mob_behaviour       *behaviours[NROF_BEHAVIOURCLASSES];
 };
 
-struct mobdata {
-    struct mobdata_pathfinding pathfinding;
+struct mobdata
+{
+    struct mobdata_pathfinding  pathfinding;
 
-    struct mob_known_obj *known_mobs; /* TODO optimization for search: binary heap */
-    struct mob_known_obj *known_objs; /* TODO optimization for search: binary heap */
+    struct mob_known_obj       *known_mobs; /* TODO optimization for search: binary heap */
+    struct mob_known_obj       *known_objs; /* TODO optimization for search: binary heap */
 
-    struct mob_known_obj *leader, *enemy;
+    struct mob_known_obj       *leader, *enemy;
 
-    struct mob_behaviourset *behaviours;
+    struct mob_behaviourset    *behaviours;
 };
 
 #define MOB_DATA(ob) ((struct mobdata *)((ob)->custom_attrset))
@@ -129,27 +135,35 @@ struct mobdata {
 #define FRIENDSHIP_DIST_MAX      50 /* Max effect of distance */
 #define FRIENDSHIP_HELP         100 /* Added if helped */
 
-typedef enum {
-    MOVE_RESPONSE_NONE, 
-    MOVE_RESPONSE_DIR,           /* simple move in a direction */
-    MOVE_RESPONSE_WAYPOINT,      /* move towards a (permanent) waypoint */
-    MOVE_RESPONSE_COORD,         /* move towards a generic coordinate */
+typedef enum
+{
+    MOVE_RESPONSE_NONE,
+    MOVE_RESPONSE_DIR,
+    /* simple move in a direction */
+    MOVE_RESPONSE_WAYPOINT,
+    /* move towards a (permanent) waypoint */
+    MOVE_RESPONSE_COORD,
+    /* move towards a generic coordinate */
     MOVE_RESPONSE_OBJECT         /* move towards a (possibly moving) object */
-} move_response_type; 
+}    move_response_type; 
 
-typedef struct behaviour_move_response {
-    move_response_type type;
-    union {
+typedef struct behaviour_move_response
+{
+    move_response_type  type;
+    union
+    {
         int direction;
-        
-        struct {
-            int x,y; 
-            mapstruct *map;
+
+        struct
+        {
+            int         x, y; 
+            mapstruct  *map;
         } coord;
-        
-        struct {
+
+        struct
+        {
             object *obj;
-            tag_t obj_count;
+            tag_t   obj_count;
         } target;
     } data;
 } move_response;

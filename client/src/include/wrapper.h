@@ -1,13 +1,13 @@
-/*	=========================================================================
- *	=                        	       					=
- *	= --------------------------------------------------------------------- =
- *	=  						                        =
- *	=  c) 2001/2002  by Michael Toennies					=
- *	=========================================================================
+/*  =========================================================================
+ *  =                                                   =
+ *  = --------------------------------------------------------------------- =
+ *  =                                               =
+ *  =  c) 2001/2002  by Michael Toennies                    =
+ *  =========================================================================
  *
- *	Modified	 by 			reason
- *	========	 == 			======
- *	23.06.00	 Michael Toennies  	Init module.
+ *  Modified     by             reason
+ *  ========     ==             ======
+ *  23.06.00     Michael Toennies   Init module.
  */
 
 #if !defined(__WRAPPER_H)
@@ -34,37 +34,37 @@
 
 typedef enum _LOGLEVEL
 {
-        LOG_MSG,
-        LOG_ERROR,
-        LOG_DEBUG
-} _LOGLEVEL;
+    LOG_MSG,
+    LOG_ERROR,
+    LOG_DEBUG
+}    _LOGLEVEL;
 #define LOGLEVEL LOG_DEBUG
-extern void LOG (int logLevel, char *format, ...);
+extern void     LOG(int logLevel, char *format, ...);
 
-extern char * GetCacheDirectory(void);
-extern char * GetGfxUserDirectory(void);
-extern char * GetBitmapDirectory(void);
-extern char * GetSfxDirectory(void);
-extern char * GetMediaDirectory(void);
-extern char * GetIconDirectory(void);
+extern char    *GetCacheDirectory(void);
+extern char    *GetGfxUserDirectory(void);
+extern char    *GetBitmapDirectory(void);
+extern char    *GetSfxDirectory(void);
+extern char    *GetMediaDirectory(void);
+extern char    *GetIconDirectory(void);
 
-extern Boolean SYSTEM_Start(void);
-extern Boolean SYSTEM_End(void);
-int attempt_fullscreen_toggle(SDL_Surface **surface, uint32 *flags);
-uint32 get_video_flags(void);
-void parse_metaserver_data(char *info);
+extern Boolean  SYSTEM_Start(void);
+extern Boolean  SYSTEM_End(void);
+int             attempt_fullscreen_toggle(SDL_Surface **surface, uint32 *flags);
+uint32          get_video_flags(void);
+void            parse_metaserver_data(char *info);
 
 #if defined(HAVE_STRNICMP)
 #else
 #if !defined(HAVE_STRNCASECMP)
-int strncasecmp(char *s1, char *s2, int n);
+int             strncasecmp(char *s1, char *s2, int n);
 #endif
 #endif
 
 #if defined(HAVE_STRICMP)
 #else
 #if !defined(HAVE_STRCASECMP)
-int strcasecmp(char *s1, char*s2);
+int             strcasecmp(char *s1, char *s2);
 #endif
 #endif
 

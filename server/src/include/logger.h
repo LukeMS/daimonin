@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -50,24 +50,32 @@
  * ingore llevSystem - its used for additional infos used by llevError and llevBug 
  */
 
-typedef enum LogLevel {
-  llevNoLog = -1,       /* set GLOBAL_LOG_LEVEL to this, and no message will be printed out */     
-  llevSystem = 0,       /* internal: used for llevError msg and llevBug message - don't set this! */
-  llevError,		    /* thats fatal errors - server stability is unsafe after this */  
-  llevBug,				/* thats a bug - but we have it under control (we hope so) */
-  llevInfo,				/* just tell the log stuff we think its useful to know */
-  llevDebug,			/* give out maximal information for debug and bug control */
-  llevMonster,			/* SPECIAL DEBUG: give out full monster infos & debugs msg */
-} LogLevel;
+typedef enum LogLevel
+{
+    llevNoLog                                                                           = -1,
+    /* set GLOBAL_LOG_LEVEL to this, and no message will be printed out */     
+    llevSystem                                                                          = 0,
+    /* internal: used for llevError msg and llevBug message - don't set this! */
+    llevError,
+    /* thats fatal errors - server stability is unsafe after this */  
+    llevBug,
+    /* thats a bug - but we have it under control (we hope so) */
+    llevInfo,
+    /* just tell the log stuff we think its useful to know */
+    llevDebug,
+    /* give out maximal information for debug and bug control */
+    llevMonster,
+    /* SPECIAL DEBUG: give out full monster infos & debugs msg */
+}    LogLevel;
 
 
 /* if not set from outside, we force a useful setting here */
 #ifndef GLOBAL_LOG_LEVEL
-	#ifdef DEBUG
-		#define GLOBAL_LOG_LEVEL llevMonster
-	#else
-		#define GLOBAL_LOG_LEVEL llevInfo
-	#endif
+#ifdef DEBUG
+#define GLOBAL_LOG_LEVEL llevMonster
+#else
+#define GLOBAL_LOG_LEVEL llevInfo
+#endif
 #endif
 
 /* WARNING: this extern will also be in ...proto.h 

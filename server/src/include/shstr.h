@@ -37,26 +37,28 @@
 #define SS(x) ((shared_string *) ((x) - offsetof(shared_string, string)))
 
 #ifndef SS_DUMP_TOTALS
-#define SS_DUMP_TOTALS	1
+#define SS_DUMP_TOTALS  1
 #endif
 
-#define TOPBIT	(1 << (sizeof(REFCOUNT_TYPE) * CHAR_BIT - 1))
+#define TOPBIT  (1 << (sizeof(REFCOUNT_TYPE) * CHAR_BIT - 1))
 
-#define PADDING	((2 * sizeof(long) - sizeof(REFCOUNT_TYPE)) % sizeof(long)) + 1
+#define PADDING ((2 * sizeof(long) - sizeof(REFCOUNT_TYPE)) % sizeof(long)) + 1
 
-typedef struct _shared_string {
-    union {
-	struct _shared_string **array;
-	struct _shared_string *previous;
+typedef struct _shared_string
+{
+    union
+    {
+        struct _shared_string  **array;
+        struct _shared_string  *previous;
     } u;
-    struct _shared_string *next;
+    struct _shared_string  *next;
     /* The top bit of "refcount" is used to signify that "u.array" points
      * at the array entry.
      */
-    unsigned REFCOUNT_TYPE refcount;
+    unsigned REFCOUNT_TYPE  refcount;
     /* Padding will be unused memory, since we can't know how large 
      * the padding when allocating memory. We assume here that
      * sizeof(long) is a good boundary.
      */
-    char string[PADDING];
+    char                    string[PADDING];
 } shared_string;

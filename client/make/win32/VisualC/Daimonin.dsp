@@ -128,6 +128,10 @@ SOURCE=..\..\..\src\event.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\src\group.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\src\inffast.c
 # End Source File
 # Begin Source File
@@ -225,6 +229,10 @@ SOURCE=..\..\..\src\include\dialog.h
 # Begin Source File
 
 SOURCE=..\..\..\src\include\event.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\include\group.h
 # End Source File
 # Begin Source File
 

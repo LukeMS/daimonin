@@ -84,7 +84,7 @@ archive:
 	$(CP) $(ALLFILES) $(ARCHIVE)/socket
 
 clean:
-	$(RM) -f $(OBJS) Makefile.bak
+	$(RM) -f $(OBJS) Makefile.bak socket.a
 
 distclean: clean
 	$(RM) -f Makefile socket.a

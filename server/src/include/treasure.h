@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -29,11 +29,11 @@
 #ifndef TREASURE_H
 #define TREASURE_H
 
-#define CHANCE_FOR_ARTIFACT	20
+#define CHANCE_FOR_ARTIFACT 20
 
-#define NUM_COINS 4	/* number of coin types */
-extern char *coins[NUM_COINS+1];
-extern archetype *coins_arch[NUM_COINS];
+#define NUM_COINS 4 /* number of coin types */
+extern char        *coins[NUM_COINS + 1];
+extern archetype   *coins_arch[NUM_COINS];
 
 /*
  * Flags to generate_treasures():
@@ -42,14 +42,16 @@ extern archetype *coins_arch[NUM_COINS];
 /* i really hate all this value not documented. I wasted some times debugging by
  * see that i have included/copy a wrong flag of this kind somehwere.
  */
-enum {
-  GT_ENVIRONMENT = 0x0001,
-  GT_INVISIBLE = 0x0002,
-  GT_STARTEQUIP = 0x0004,
-  GT_APPLY = 0x0008,		/* treasure gets applied when inserted in mob! (food eaten, skill applied...) */
-  GT_ONLY_GOOD = 0x0010,
-  GT_UPDATE_INV = 0x0020,
-  GT_NO_VALUE = 0x0040      /* set value of all created treasures to 0 */
+enum
+{
+    GT_ENVIRONMENT                                                                          = 0x0001,
+    GT_INVISIBLE                                                                            = 0x0002,
+    GT_STARTEQUIP                                                                           = 0x0004,
+    GT_APPLY                                                                                = 0x0008,
+    /* treasure gets applied when inserted in mob! (food eaten, skill applied...) */
+    GT_ONLY_GOOD                                                                            = 0x0010,
+    GT_UPDATE_INV                                                                           = 0x0020,
+    GT_NO_VALUE                                                                             = 0x0040      /* set value of all created treasures to 0 */
 };
 
 
@@ -62,16 +64,17 @@ enum {
  * This will allow ANY changes which is possible and we use ony one parser.
  */
 
-typedef struct _change_arch {
+typedef struct _change_arch
+{
     const char *name;              /* is != NULL, copy this over the original arch name */
     const char *title;             /* is != NULL, copy this over the original arch name */
     const char *slaying;           /* is != NULL, copy this over the original arch name */
-    int item_race;
-    int material;					/* the real, fixed material value */
-    int material_quality;			/* find a material matching this quality */
-    int material_range;				/* using material_quality, find quality inside this range */
-	int quality;					/* quality value. It overwrites the material default value */
-	int quality_range;				/* used for random range */
+    int         item_race;
+    int         material;                   /* the real, fixed material value */
+    int         material_quality;           /* find a material matching this quality */
+    int         material_range;             /* using material_quality, find quality inside this range */
+    int         quality;                    /* quality value. It overwrites the material default value */
+    int         quality_range;              /* used for random range */
 } _change_arch;
 
 
@@ -82,48 +85,50 @@ typedef struct _change_arch {
  * is generated (from a generator)
 */
 
-typedef struct treasurestruct {
-  struct archt *item;		    /* Which item this link can be */
-  const char *name;			    /* If non null, name of list to use instead */
-  struct treasureliststruct *tlist; /* this list */
-  struct treasurestruct *next;	    /* Next treasure-item in a linked list */
-  struct treasurestruct *next_yes;  /* If this item was generated, use */
-				    /* this link instead of ->next */
-  struct treasurestruct *next_no;   /* If this item was not generated, */
-				    /* then continue here */
-  int t_style;		/* local t_style (will overrule global one) - used from artifacts */
-  int magic_chance;	/* value from 0-1000. chance of item is magic. */
-  int magic_fix;	/* if this value is != 0, use this as fixed magic value.
-					 * if it 0, look at magic to generate perhaps a random magic value
-					 */
-  int artifact_chance;	/* default = -1 = ignore this value. 0=NEVER make a artifact for this treasure.
-						 * 1-100 = % chance of make a artifact from this treasure.
-						 */
+typedef struct treasurestruct
+{
+    struct archt               *item;           /* Which item this link can be */
+    const char                 *name;               /* If non null, name of list to use instead */
+    struct treasureliststruct  *tlist; /* this list */
+    struct treasurestruct      *next;       /* Next treasure-item in a linked list */
+    struct treasurestruct      *next_yes;  /* If this item was generated, use */
+    /* this link instead of ->next */
+    struct treasurestruct      *next_no;   /* If this item was not generated, */
+    /* then continue here */
+    int                         t_style;        /* local t_style (will overrule global one) - used from artifacts */
+    int                         magic_chance;   /* value from 0-1000. chance of item is magic. */
+    int                         magic_fix;  /* if this value is != 0, use this as fixed magic value.
+                                             * if it 0, look at magic to generate perhaps a random magic value
+                                             */
+    int                         artifact_chance;    /* default = -1 = ignore this value. 0=NEVER make a artifact for this treasure.
+                                                     * 1-100 = % chance of make a artifact from this treasure.
+                                                     */
 
-  int magic;	    /* Max magic bonus to item */
-  int difficulty; /* If the entry is a list transition,
-				     * it contains the difficulty
-				     * required to go to the new list
- 				     */
-  uint16 nrof;			    /* random 1 to nrof items are generated */
-  sint16 chance_fix;     /* will overrule chance: if set (!=-1) it will create 1/chance_single */
-  uint8 chance;			    /* Percent chance for this item */
-  struct _change_arch change_arch;  /* override default arch values if set in treasure list */
+    int                         magic;      /* Max magic bonus to item */
+    int                         difficulty; /* If the entry is a list transition,
+                                              * it contains the difficulty
+                                              * required to go to the new list
+                                              */
+    uint16                      nrof;               /* random 1 to nrof items are generated */
+    sint16                      chance_fix;     /* will overrule chance: if set (!=-1) it will create 1/chance_single */
+    uint8                       chance;             /* Percent chance for this item */
+    struct _change_arch         change_arch;  /* override default arch values if set in treasure list */
 } treasure;
 
 
-typedef struct treasureliststruct {
-  const char *listname;				/* Usually monster-name/combination */
-  int t_style;				/* global style (used from artifacts file) */
-  int artifact_chance;	
-  sint16 chance_fix;	/* if set it will overrule total_chance: */
-  sint16 total_chance;			/* If non-zero, only 1 item on this
-					 * list should be generated.  The
-					 * total_chance contains the sum of
-					 * the chance for this list.
-					 */
-  struct treasureliststruct *next;	/* Next treasure-item in linked list */
-  struct treasurestruct *items;		/* Items in this list, linked */
+typedef struct treasureliststruct
+{
+    const char                 *listname;               /* Usually monster-name/combination */
+    int                         t_style;                /* global style (used from artifacts file) */
+    int                         artifact_chance;    
+    sint16                      chance_fix; /* if set it will overrule total_chance: */
+    sint16                      total_chance;           /* If non-zero, only 1 item on this
+                                                        * list should be generated.  The
+                                                        * total_chance contains the sum of
+                                                        * the chance for this list.
+                                                        */
+    struct treasureliststruct  *next;   /* Next treasure-item in linked list */
+    struct treasurestruct      *items;      /* Items in this list, linked */
 } treasurelist;
 
 

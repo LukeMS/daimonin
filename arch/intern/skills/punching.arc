@@ -7,6 +7,7 @@ dam 1
 wc 5
 type 43
 sub_type 0
+magic 3
 sys_object 1
 no_drop 1
 sp 17

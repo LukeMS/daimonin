@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@
 */
 #include <stdarg.h>
 #include <global.h>
-#include <funcpoint.h>
 
 static char log_buf[MAXSOCKBUF*2];
 
@@ -39,47 +38,48 @@ static char log_buf[MAXSOCKBUF*2];
 
 void LOG(LogLevel logLevel, char *format, ...)
 {
-  static int fatal_error = FALSE;
+    static int  fatal_error = FALSE;
 
-  va_list ap;
-  va_start(ap, format);
+    va_list     ap;
+    va_start(ap, format);
 
-  log_buf[0] = '\0';
-  if (logLevel <= settings.debug)
-  {
-    vsprintf(log_buf, format, ap);
+    log_buf[0] = '\0';
+    if (logLevel <= settings.debug)
+    {
+        vsprintf(log_buf, format, ap);
 #ifdef WIN32 /* ---win32 change log handling for win32 */
-	if(logfile )
-		fputs(log_buf, logfile);    /* wrote to file or stdout */
-	else
-		fputs(log_buf, stderr); 
+        if (logfile)
+            fputs(log_buf, logfile);    /* wrote to file or stdout */
+        else
+            fputs(log_buf, stderr); 
 
-	#ifdef DEBUG				/* if we have a debug version, we want see ALL output */
-	if(logfile )
-		fflush(logfile);    /* so flush this! */
-	#endif
-	if(logfile && logfile != stderr)   /* if was it a logfile wrote it to screen too */ 
-		fputs(log_buf, stderr); 
-#else
-	if(logfile)
-	    fputs(log_buf, logfile);
-	else
-		fputs(log_buf, stderr); 
+#ifdef DEBUG                /* if we have a debug version, we want see ALL output */
+        if (logfile)
+            fflush(logfile);    /* so flush this! */
 #endif
-  }
+        if (logfile && logfile != stderr)   /* if was it a logfile wrote it to screen too */
+            fputs(log_buf, stderr); 
+#else
+        if (logfile)
+            fputs(log_buf, logfile);
+        else
+            fputs(log_buf, stderr); 
+#endif
+    }
 
-  va_end(ap);
+    va_end(ap);
 
-  if (logLevel == llevBug)
-	  ++nroferrors;
+    if (logLevel == llevBug)
+        ++nroferrors;
 
-  if (nroferrors > MAX_ERRORS || logLevel == llevError)
-  {
-    exiting = 1;
-	if(fatal_error == FALSE)
-	{
-		fatal_error = TRUE;
-		fatal(logLevel);
-	}
-  }
+    if (nroferrors > MAX_ERRORS || logLevel == llevError)
+    {
+        exiting = 1;
+        if (fatal_error == FALSE)
+        {
+            fatal_error = TRUE;
+            LOG(llevSystem, "Fatal: Shutdown server. Reason: %s\n", logLevel == llevError ? "Fatal Error" : "BUG fload");
+            fatal_signal(0,1);
+        }
+    }
 }

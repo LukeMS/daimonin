@@ -44,60 +44,65 @@
  * masks are.
  */
 
-typedef struct _multi_part_tile {
+typedef struct _multi_part_tile
+{
     int xoff;       /* X-offset */
     int yoff;       /* Y-offset */
 }_multi_part_tile;
 
-typedef struct _multi_part_obj {
-    int xlen;                   /* natural xlen of the whole multi arch */
-    int ylen;                   /* same for ylen */
-    _multi_part_tile part[16];
+typedef struct _multi_part_obj
+{
+    int                 xlen;                   /* natural xlen of the whole multi arch */
+    int                 ylen;                   /* same for ylen */
+    _multi_part_tile    part[16];
 }_multi_part_obj;
 
 typedef struct _mapdata
 {
-    char name[256];
-    char music[256];
-    int xlen;
-    int ylen;
-    int posx;
-    int posy;
+    char    name[256];
+    char    music[256];
+    int     xlen;
+    int     ylen;
+    int     posx;
+    int     posy;
 }_mapdata;
 
-struct MapCell {
-    short faces[MAXFACES];
-    short pos[MAXFACES];
+struct MapCell
+{
+    short   faces[MAXFACES];
+    short   pos[MAXFACES];
     Boolean fog_of_war;
-    uint8 ext[MAXFACES];
-    char pname[MAXFACES][32];
-    uint8 probe[MAXFACES];
-    uint8 darkness;
+    uint8   ext[MAXFACES];
+    char    pname[MAXFACES][32];
+    uint8   probe[MAXFACES];
+    uint8   darkness;
 }MapCell;
 
-struct Map {
-	struct MapCell cells[MAP_MAX_SIZE][MAP_MAX_SIZE];
+struct Map
+{
+    struct MapCell  cells[MAP_MAX_SIZE][MAP_MAX_SIZE];
 }Map;
 
-typedef struct {
-	int x;
-	int y;
+typedef struct
+{
+    int                     x;
+    int                     y;
 } MapPos;
 
-extern _mapdata MapData;
-extern _multi_part_obj MultiArchs[16];
+extern _mapdata         MapData;
+extern _multi_part_obj  MultiArchs[16];
 
-extern void clear_map(void);
-extern void display_map_clearcell(long x, long y);
-extern void set_map_darkness(int x, int y, uint8 darkness);
-extern void set_map_face(int x, int y, int layer, int face, int pos, int ext, char *name);
-extern void map_draw_map(void);
-extern void display_mapscroll ( int dx, int dy );
-extern void InitMapData(char *name, int xl, int yl, int px, int py);
-extern void set_map_ext(int x, int y, int layer,int ext, int probe);
-extern void map_draw_map_clear(void);
-extern void load_mapdef_dat(void);
-extern void adjust_map_cache(int x, int y);
-extern int get_tile_position( int mx, int my, int *tx, int *ty );
+extern void             clear_map(void);
+extern void             display_map_clearcell(long x, long y);
+extern void             set_map_darkness(int x, int y, uint8 darkness);
+extern void             set_map_face(int x, int y, int layer, int face, int pos, int ext, char *name);
+extern void             map_draw_map(void);
+extern void             display_mapscroll(int dx, int dy);
+extern void             InitMapData(char *name, int xl, int yl, int px, int py);
+extern void             set_map_ext(int x, int y, int layer, int ext, int probe);
+extern void             map_draw_map_clear(void);
+extern void             load_mapdef_dat(void);
+extern void             adjust_map_cache(int x, int y);
+extern int              get_tile_position(int mx, int my, int *tx, int *ty);
 
 #endif

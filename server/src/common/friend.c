@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -55,142 +55,164 @@
  * parts of our world (= content = objects).
  */
 
-static int friendly_list_count=0;
+static int  friendly_list_count = 0;
 /*
  * Add a new friendly object to the linked list of friendly objects.
  * No checking to see if the object is already in the linked list is done.
  */
 
-void add_friendly_object(object *op) {
+void add_friendly_object(object *op)
+{
     objectlink *ol;
 
-	/* only add senseful here - give a note ... i use it as info -
-	 * this will change when we chain the friendly list to maps 
-	 */
-	if(op->type != PLAYER && op->type != MONSTER && !QUERY_FLAG(op, FLAG_ALIVE) && !QUERY_FLAG(op,FLAG_MONSTER) )
-	{
-		LOG(llevDebug, "DEBUG: friendly list called for non mob/player (%s - %s)\n",query_name(op), op->arch->name);
-		return;
-	}
-	/* special case: player can be or not friendly - if in logon process, we don't gave
-	 * them friendly to avoid illegal (player is not on map but in login limbus) on this
-	 * list. This is not a bug but we will do it more clever in map attached friendly lists.
-	 */
-	if(op->type == PLAYER && !QUERY_FLAG(op,FLAG_FRIENDLY) )
-		return;
+    /* only add senseful here - give a note ... i use it as info -
+     * this will change when we chain the friendly list to maps 
+     */
+    if (op->type != PLAYER && op->type != MONSTER && !QUERY_FLAG(op, FLAG_ALIVE) && !QUERY_FLAG(op, FLAG_MONSTER))
+    {
+        LOG(llevDebug, "DEBUG: friendly list called for non mob/player (%s - %s)\n", query_name(op), op->arch->name);
+        return;
+    }
+    /* special case: player can be or not friendly - if in logon process, we don't gave
+     * them friendly to avoid illegal (player is not on map but in login limbus) on this
+     * list. This is not a bug but we will do it more clever in map attached friendly lists.
+     */
+    if (op->type == PLAYER && !QUERY_FLAG(op, FLAG_FRIENDLY))
+        return;
     /* Add some error checking.  This shouldn't happen, but the friendly
      * object list usually isn't very long, and remove_friendly_object
      * won't remove it either.  Plus, it is easier to put a breakpoint in
      * the debugger here and see where the problem is happening. 
      */
-    for (ol=first_friendly_object; ol!=NULL; ol=ol->next) {
-		if (ol->objlink.ob == op) {
-		    LOG(llevBug, "BUG: (bad bug!) add_friendly_object: Trying to add object already on list (%s)\n",query_name(op));
-		    return;
-		}
+    for (ol = first_friendly_object; ol != NULL; ol = ol->next)
+    {
+        if (ol->objlink.ob == op)
+        {
+            LOG(llevBug, "BUG: (bad bug!) add_friendly_object: Trying to add object already on list (%s)\n",
+                query_name(op));
+            return;
+        }
     }
 
-	friendly_list_count++;
-/*	LOG(llevDebug,"add f_obj %s (c:%d).\n",query_name(op), friendly_list_count);*/
+    friendly_list_count++;
+    /*  LOG(llevDebug,"add f_obj %s (c:%d).\n",query_name(op), friendly_list_count);*/
 
-	ol=first_friendly_object;
-    first_friendly_object=get_objectlink(OBJLNK_FLAG_OB);
+    ol = first_friendly_object;
+    first_friendly_object = get_objectlink(OBJLNK_FLAG_OB);
     first_friendly_object->objlink.ob = op;
     first_friendly_object->id = op->count;
-    first_friendly_object->next=ol;
+    first_friendly_object->next = ol;
 }
 
 /*
  * Removes the specified object from the linked list of friendly objects.
  */
 
-void remove_friendly_object(object *op) {
+void remove_friendly_object(object *op)
+{
     objectlink *this;
 
-	/* only add senseful here - give a note ... i use it as info -
-	 * this will change when we chain the friendly list to maps 
-	 */
-	if(op->type != PLAYER && op->type != MONSTER && !QUERY_FLAG(op, FLAG_ALIVE) && !QUERY_FLAG(op,FLAG_MONSTER) )
-	{
-		LOG(llevDebug, "DEBUG: friendly list called for remove non mob/player (%s - %s)\n",query_name(op), op->arch->name);
-		return;
-	}
+    /* only add senseful here - give a note ... i use it as info -
+     * this will change when we chain the friendly list to maps 
+     */
+    if (op->type != PLAYER && op->type != MONSTER && !QUERY_FLAG(op, FLAG_ALIVE) && !QUERY_FLAG(op, FLAG_MONSTER))
+    {
+        LOG(llevDebug, "DEBUG: friendly list called for remove non mob/player (%s - %s)\n", query_name(op),
+            op->arch->name);
+        return;
+    }
 
-	/* special case: player can be or not friendly - if in logon process, we don't gave
-	 * them friendly to avoid illegal (player is not on map but in login limbus) on this
-	 * list. This is not a bug but we will do it more clever in map attached friendly lists.
-	 */
-	if(op->type == PLAYER && !QUERY_FLAG(op,FLAG_FRIENDLY) )
-		return;
+    /* special case: player can be or not friendly - if in logon process, we don't gave
+     * them friendly to avoid illegal (player is not on map but in login limbus) on this
+     * list. This is not a bug but we will do it more clever in map attached friendly lists.
+     */
+    if (op->type == PLAYER && !QUERY_FLAG(op, FLAG_FRIENDLY))
+        return;
 
-    CLEAR_FLAG(op,FLAG_FRIENDLY);
-    if (!first_friendly_object) {
-		LOG(llevBug,"BUG: remove_friendly_object called with empty friendly list, remove ob=%s\n", query_name(op));
-		return;
+    CLEAR_FLAG(op, FLAG_FRIENDLY);
+    if (!first_friendly_object)
+    {
+        LOG(llevBug, "BUG: remove_friendly_object called with empty friendly list, remove ob=%s\n", query_name(op));
+        return;
     }
     /* if the first object happens to be the one, processing is pretty
      * easy.
      */
-    if(first_friendly_object->objlink.ob==op) {
-	this=first_friendly_object;
-	first_friendly_object=this->next;
-	free_objectlink_simple(this);
-    } else {
-	objectlink *prev=first_friendly_object;
+    if (first_friendly_object->objlink.ob == op)
+    {
+        this = first_friendly_object;
+        first_friendly_object = this->next;
+        free_objectlink_simple(this);
+    }
+    else
+    {
+        objectlink *prev    = first_friendly_object;
 
-	for (this=first_friendly_object->next; this!=NULL; this=this->next) {
-	    if (this->objlink.ob == op) break;
-	    prev=this;
-	}
-	if (this) {
-	    /* This should not happen.  But if it does, presumably the
-	     * call to remove it is still valid.
-	     */
-	    if (this->id != op->count) {
-		LOG(llevBug,"BUG: remove_friendly_object, tags do no match, %s, %d != %d\n",query_name(op), op->count, this->id);
-	    }
-	    prev->next = this->next;
-	    free_objectlink_simple(this);
-	}
+        for (this = first_friendly_object->next; this != NULL; this = this->next)
+        {
+            if (this->objlink.ob == op)
+                break;
+            prev = this;
+        }
+        if (this)
+        {
+            /* This should not happen.  But if it does, presumably the
+               * call to remove it is still valid.
+               */
+            if (this->id != op->count)
+            {
+                LOG(llevBug, "BUG: remove_friendly_object, tags do no match, %s, %d != %d\n", query_name(op), op->count,
+                    this->id);
+            }
+            prev->next = this->next;
+            free_objectlink_simple(this);
+        }
     }
 
-	friendly_list_count--;
-/*	LOG(llevDebug,"remove f_obj %s (c:%d).\n",query_name(op), friendly_list_count);*/
+    friendly_list_count--;
+    /*  LOG(llevDebug,"remove f_obj %s (c:%d).\n",query_name(op), friendly_list_count);*/
 }
 
 /*
  * Dumps all friendly objects.  Invoked in DM-mode with the G key.
  */
 
-void dump_friendly_objects() {
+void dump_friendly_objects()
+{
     objectlink *ol;
 
-    for(ol=first_friendly_object;ol!=NULL;ol=ol->next)
-	LOG(llevInfo, "%s (count: %d)\n",query_name(ol->objlink.ob),ol->objlink.ob->count);
+    for (ol = first_friendly_object; ol != NULL; ol = ol->next)
+        LOG(llevInfo, "%s (count: %d)\n", query_name(ol->objlink.ob), ol->objlink.ob->count);
 }
 
 /* New function, MSW 2000-1-14
  * It traverses the friendly list removing objects that should not be here
  * (ie, do not have friendly flag set, freed, etc)
  */
-void clean_friendly_list() {
-    objectlink *this_link, *prev=NULL, *next;
+void clean_friendly_list()
+{
+    objectlink *this_link, *prev = NULL, *next;
 
-    for (this_link=first_friendly_object; this_link; this_link=next) {
-	next=this_link->next;
-	if (!OBJECT_VALID(this_link->objlink.ob, this_link->id) || 
-	    (!QUERY_FLAG(this_link->objlink.ob, FLAG_FRIENDLY) && this_link->objlink.ob->type != PLAYER)) {
-	    if (prev) {
-		prev->next = this_link->next;
-	    }
-	    else {
-		first_friendly_object = this_link->next;
-	    }
-        LOG(llevDebug,"clean_friendly_list: Removed bogus link: %s\n", query_name(this_link->objlink.ob));
-	    free_objectlink_simple(this_link);
-	}
-	/* If we removed the object, then prev is still valid.  */
-	else prev=this_link;
+    for (this_link = first_friendly_object; this_link; this_link = next)
+    {
+        next = this_link->next;
+        if (!OBJECT_VALID(this_link->objlink.ob, this_link->id)
+         || (!QUERY_FLAG(this_link->objlink.ob, FLAG_FRIENDLY) && this_link->objlink.ob->type != PLAYER))
+        {
+            if (prev)
+            {
+                prev->next = this_link->next;
+            }
+            else
+            {
+                first_friendly_object = this_link->next;
+            }
+            LOG(llevDebug, "clean_friendly_list: Removed bogus link: %s\n", query_name(this_link->objlink.ob));
+            free_objectlink_simple(this_link);
+        }
+        /* If we removed the object, then prev is still valid.  */
+        else
+            prev = this_link;
     }
 }
 

@@ -5,6 +5,7 @@ sub_type 2
 face skill.101
 sys_object 1
 no_drop 1
+magic 6
 sp 22
 last_eat 1
 level 1

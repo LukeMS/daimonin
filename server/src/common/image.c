@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -47,12 +47,13 @@
  * the bmaps file is created in a sorted order.
  */
 
-struct bmappair {
-    char *name;
-    unsigned int number;
+struct bmappair
+{
+    char                   *name;
+    unsigned int            number;
 };
 
-static struct bmappair *xbm=NULL;
+static struct bmappair *xbm = NULL;
 
 /* nroffiles is the actual number of bitmaps defined.
  * nrofpixmaps is the higest numbers bitmap that is loaded.  With
@@ -60,10 +61,11 @@ static struct bmappair *xbm=NULL;
  * to nroffiles.
  *
  */
-int nroffiles = 0, nrofpixmaps=0;
+int                     nroffiles = 0, nrofpixmaps = 0;
 
-static int compar (struct bmappair *a, struct bmappair *b) {
-    return strcmp (a->name, b->name);
+static int compar(struct bmappair *a, struct bmappair *b)
+{
+    return strcmp(a->name, b->name);
 }
 
 
@@ -73,81 +75,87 @@ static int compar (struct bmappair *a, struct bmappair *b) {
  * difference.)
  */
 
-int ReadBmapNames () {
-    char buf[MAX_BUF], *p, *q;
-    FILE *fp;
-    int value, nrofbmaps = 0, i;
+int ReadBmapNames()
+{
+    char    buf[MAX_BUF], *p, *q;
+    FILE   *fp;
+    int     value, nrofbmaps = 0, i;
 
-    bmaps_checksum=0;
-    sprintf (buf,"%s/bmaps", settings.datadir);
-    LOG(llevDebug,"Reading bmaps from %s...",buf);
-    if ((fp=fopen(buf,"r"))==NULL)
-		LOG(llevError,"ERROR: Can't open bmaps file buf = %s\n", buf);
-    
+    bmaps_checksum = 0;
+    sprintf(buf, "%s/bmaps", settings.datadir);
+    LOG(llevDebug, "Reading bmaps from %s...", buf);
+    if ((fp = fopen(buf, "r")) == NULL)
+        LOG(llevError, "ERROR: Can't open bmaps file buf = %s\n", buf);
+
     /* First count how many bitmaps we have, so we can allocate correctly */
-    while (fgets (buf, MAX_BUF, fp)!=NULL)
-	if(buf[0] != '#' && buf[0] != '\n' )
-	    nrofbmaps++;
+    while (fgets(buf, MAX_BUF, fp) != NULL)
+        if (buf[0] != '#' && buf[0] != '\n')
+            nrofbmaps++;
     rewind(fp);
-    
+
     xbm = (struct bmappair *) malloc(sizeof(struct bmappair) * (nrofbmaps + 1));
-    memset (xbm, 0, sizeof (struct bmappair) * (nrofbmaps + 1));
-    
-    while(fgets (buf, MAX_BUF, fp)!=NULL) {
-	if (*buf == '#')
-	    continue;
-	
-	p = (*buf == '\\') ? (buf + 1): buf;
-	if (!(p = strtok (p , " \t")) || !(q = strtok (NULL , " \t\n"))) {
-	    LOG(llevDebug,"Warning, syntax error: %s\n", buf);
-	    continue;
-	}
-	value = atoi (p);
-	xbm[nroffiles].name = strdup_local(q);
+    memset(xbm, 0, sizeof(struct bmappair) * (nrofbmaps + 1));
 
-	/* We need to calculate the checksum of the bmaps file
-	 * name->number mapping to send to the client.  This does not
-	 * need to match what sum or other utility may come up with -
-	 * as long as we get the same results on the same real file
-	 * data, it does the job as it lets the client know if
-	 * the file has the same data or not.
-	 */
-	ROTATE_RIGHT(bmaps_checksum);
-	bmaps_checksum += value & 0xff;
-	bmaps_checksum &= 0xffffffff;
+    while (fgets(buf, MAX_BUF, fp) != NULL)
+    {
+        if (*buf == '#')
+            continue;
 
-	ROTATE_RIGHT(bmaps_checksum);
-	bmaps_checksum += (value >> 8) & 0xff;
-	bmaps_checksum &= 0xffffffff;
-	for (i=0; i<(int) strlen(q); i++) {
-	    ROTATE_RIGHT(bmaps_checksum);
-	    bmaps_checksum += q[i];
-	    bmaps_checksum &= 0xffffffff;
-	}
-	
+        p = (*buf == '\\') ? (buf + 1) : buf;
+        if (!(p = strtok(p, " \t")) || !(q = strtok(NULL, " \t\n")))
+        {
+            LOG(llevDebug, "Warning, syntax error: %s\n", buf);
+            continue;
+        }
+        value = atoi(p);
+        xbm[nroffiles].name = strdup_local(q);
 
-	xbm[nroffiles].number = value;
-	nroffiles++;
-	if(value > nrofpixmaps)
-	    nrofpixmaps = value;
+        /* We need to calculate the checksum of the bmaps file
+         * name->number mapping to send to the client.  This does not
+         * need to match what sum or other utility may come up with -
+         * as long as we get the same results on the same real file
+         * data, it does the job as it lets the client know if
+         * the file has the same data or not.
+         */
+        ROTATE_RIGHT(bmaps_checksum);
+        bmaps_checksum += value & 0xff;
+        bmaps_checksum &= 0xffffffff;
+
+        ROTATE_RIGHT(bmaps_checksum);
+        bmaps_checksum += (value >> 8) & 0xff;
+        bmaps_checksum &= 0xffffffff;
+        for (i = 0; i < (int) strlen(q); i++)
+        {
+            ROTATE_RIGHT(bmaps_checksum);
+            bmaps_checksum += q[i];
+            bmaps_checksum &= 0xffffffff;
+        }
+
+
+        xbm[nroffiles].number = value;
+        nroffiles++;
+        if (value > nrofpixmaps)
+            nrofpixmaps = value;
     }
     fclose(fp);
 
-    LOG(llevDebug,"done (got %d/%d/%d)\n",nrofpixmaps,nrofbmaps,nroffiles);
+    LOG(llevDebug, "done (got %d/%d/%d)\n", nrofpixmaps, nrofbmaps, nroffiles);
 
-    new_faces = (New_Face *)malloc(sizeof(New_Face) * (nrofpixmaps+1));
-    for (i = 0; i <= nrofpixmaps; i++) {
-	new_faces[i].name = "";
-	new_faces[i].number = i;
+    new_faces = (New_Face *) malloc(sizeof(New_Face) * (nrofpixmaps + 1));
+    for (i = 0; i <= nrofpixmaps; i++)
+    {
+        new_faces[i].name = "";
+        new_faces[i].number = i;
     }
-	
-    for (i = 0; i < nroffiles; i++) {
-	new_faces[xbm[i].number].name = xbm[i].name;
+
+    for (i = 0; i < nroffiles; i++)
+    {
+        new_faces[xbm[i].number].name = xbm[i].name;
     }
 
     nrofpixmaps++;
 
-    qsort (xbm, nrofbmaps, sizeof(struct bmappair), (void*)(int (*)())compar);
+    qsort(xbm, nrofbmaps, sizeof(struct bmappair), (void *) (int (*) ()) compar);
 
     blank_face = &new_faces[FindFace(BLANK_FACE_NAME, 0)];
     blank_look.face = blank_face;
@@ -173,27 +181,28 @@ int ReadBmapNames () {
  * (needed in client, so that it will know to request that image
  * from the server)
  */
-int FindFace (char *name, int error) {
-    int i;
-    struct bmappair *bp, tmp;
-    char *p;
+int FindFace(char *name, int error)
+{
+    int                 i;
+    struct bmappair    *bp, tmp;
+    char               *p;
 
 
     /* Using actual numbers for faces is a very bad idea.  This is because
      * each time the archetype file is rebuilt, all the face numbers
      * change.
      */
-    if ((i = atoi(name))) {
-	LOG(llevBug,"BUG: Integer face name used: %s\n", name);
-	return i;
+    if ((i = atoi(name)))
+    {
+        LOG(llevBug, "BUG: Integer face name used: %s\n", name);
+        return i;
     }
 
-    if ((p = strchr (name, '\n')))
-	*p = '\0';
+    if ((p = strchr(name, '\n')))
+        *p = '\0';
 
     tmp.name = name;
-    bp = (struct bmappair *)bsearch 
-	(&tmp, xbm, nroffiles, sizeof(struct bmappair), (void*)(int (*)())compar);
+    bp = (struct bmappair *) bsearch(&tmp, xbm, nroffiles, sizeof(struct bmappair), (void *) (int (*) ()) compar);
 
     return bp ? bp->number : error;
 }
@@ -202,8 +211,8 @@ void free_all_images()
 {
     int i;
 
-    for (i=0; i<nroffiles; i++)
-	free(xbm[i].name);
+    for (i = 0; i < nroffiles; i++)
+        free(xbm[i].name);
     free(xbm);
     free(new_faces);
 }

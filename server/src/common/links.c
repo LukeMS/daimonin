@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,7 +26,7 @@
 #include <global.h>
 
 /*
- *	 I changed the objectlink module so it use not only the mempool
+ *   I changed the objectlink module so it use not only the mempool
  *   system but also uses one struct for objectlink and objectlinkpt.
  *   This should not only speed up things and avoid memory fragmentation.
  *   The new union{} part of the objectlink will turn this link object now
@@ -39,12 +39,12 @@
  * a pointer to it.
  */
 
-objectlink *get_objectlink(int id) 
+objectlink * get_objectlink(int id)
 {
-	objectlink *ol=(objectlink *)get_poolchunk(POOL_OBJECT_LINK);
-	memset(ol,0,sizeof(objectlink));
-	ol->flags |= id;
-	return ol;
+    objectlink *ol  = (objectlink *) get_poolchunk(POOL_OBJECT_LINK);
+    memset(ol, 0, sizeof(objectlink));
+    ol->flags |= id;
+    return ol;
 }
 
 /*
@@ -52,21 +52,23 @@ objectlink *get_objectlink(int id)
  * a pointer to it.
  */
 
-oblinkpt *get_objectlinkpt() {
-  oblinkpt *obp = (oblinkpt *) get_poolchunk(POOL_OBJECT_LINK);
-  memset(obp,0,sizeof(oblinkpt));
-  obp->flags |= OBJLNK_FLAG_LINK;
-  return obp;
+oblinkpt * get_objectlinkpt()
+{
+    oblinkpt   *obp = (oblinkpt *) get_poolchunk(POOL_OBJECT_LINK);
+    memset(obp, 0, sizeof(oblinkpt));
+    obp->flags |= OBJLNK_FLAG_LINK;
+    return obp;
 }
 
 /* free objectlink 
  * and clean up linked objects
  */
 
-void free_objectlink(objectlink *ol) {
-	if(OBJECT_VALID(ol->objlink.ob,ol->id))
-		CLEAR_FLAG(ol->objlink.ob,FLAG_IS_LINKED);
-	free_objectlink_simple(ol);
+void free_objectlink(objectlink *ol)
+{
+    if (OBJECT_VALID(ol->objlink.ob, ol->id))
+        CLEAR_FLAG(ol->objlink.ob, FLAG_IS_LINKED);
+    free_objectlink_simple(ol);
 }
 
 /*
@@ -76,12 +78,13 @@ void free_objectlink(objectlink *ol) {
  * objectlink malloc/free native.
 */
 
-void free_objectlink_recursive(objectlink *ol) {
-  if (ol->next)
-    free_objectlink_recursive(ol->next);
-  if(OBJECT_VALID(ol->objlink.ob,ol->id))
-	  CLEAR_FLAG(ol->objlink.ob,FLAG_IS_LINKED);
-  free_objectlink_simple(ol);
+void free_objectlink_recursive(objectlink *ol)
+{
+    if (ol->next)
+        free_objectlink_recursive(ol->next);
+    if (OBJECT_VALID(ol->objlink.ob, ol->id))
+        CLEAR_FLAG(ol->objlink.ob, FLAG_IS_LINKED);
+    free_objectlink_simple(ol);
 }
 
 /*
@@ -91,10 +94,11 @@ void free_objectlink_recursive(objectlink *ol) {
  * objectlink malloc/free native.
 */
 
-void free_objectlinkpt(oblinkpt *obp) {
-  if (obp->next)
-    free_objectlinkpt(obp->next);
-  if (obp->objlink.link)
-    free_objectlink_recursive(obp->objlink.link);
-  free_objectlinkpt_simple(obp);
+void free_objectlinkpt(oblinkpt *obp)
+{
+    if (obp->next)
+        free_objectlinkpt(obp->next);
+    if (obp->objlink.link)
+        free_objectlink_recursive(obp->objlink.link);
+    free_objectlinkpt_simple(obp);
 }

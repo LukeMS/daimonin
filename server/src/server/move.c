@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,9 +23,6 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 #include <global.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
 
 /* object op is trying to move in direction dir.
  * originator is typically the same as op, but
@@ -37,128 +34,128 @@
  * Return -1 if the object is destroyed in the move process (most likely
  * when hit a deadly trap or something).
  */
-int move_ob (object *op, int dir, object *originator)
+int move_ob(object *op, int dir, object *originator)
 {
-    object *tmp;
-	mapstruct *m;
-	int xt,yt, flags;
+    object     *tmp;
+    mapstruct  *m;
+    int         xt, yt, flags;
 
-    if(op==NULL)
-	{
-		LOG(llevBug,"BUG: move_ob(): Trying to move NULL.\n");
-		return 0;
+    if (op == NULL)
+    {
+        LOG(llevBug, "BUG: move_ob(): Trying to move NULL.\n");
+        return 0;
     }
 
-    if (QUERY_FLAG(op, FLAG_REMOVED)) 
-	{
-		LOG(llevBug,"BUG: move_ob: monster has been removed - will not process further\n");
-		return 0;
+    if (QUERY_FLAG(op, FLAG_REMOVED))
+    {
+        LOG(llevBug, "BUG: move_ob: monster has been removed - will not process further\n");
+        return 0;
     }
 
     /* this function should now only be used on the head - it won't call itself
      * recursively, and functions calling us should pass the right part.
      */
     if (op->head)
-	{
-		LOG(llevDebug,"move_ob() called with non head object: %s %s (%d,%d)\n",
-					query_name(op->head),op->map->path? op->map->path:"<no map>", op->x, op->y);
-		op = op->head;
+    {
+        LOG(llevDebug, "move_ob() called with non head object: %s %s (%d,%d)\n", query_name(op->head),
+            op->map->path ? op->map->path : "<no map>", op->x, op->y);
+        op = op->head;
     }
 
-	/* animation stuff */
-    if(op->head)
+    /* animation stuff */
+    if (op->head)
         op->head->anim_moving_dir = dir;
     else
         op->anim_moving_dir = dir;    
     op->direction = dir;
 
-	xt=op->x+freearr_x[dir];
-	yt=op->y+freearr_y[dir];
+    xt = op->x + freearr_x[dir];
+    yt = op->y + freearr_y[dir];
 
 
-	/* we have here a out_of_map - we can skip all */
-	if (!(m=out_of_map(op->map,&xt,&yt))) 
-		return 0;
+    /* we have here a out_of_map - we can skip all */
+    if (!(m = out_of_map(op->map, &xt, &yt)))
+        return 0;
 
-	/* totally new logic here... blocked() handles now ALL map flags... blocked_two()
-	* is called implicit from blocked() - really only called for nodes where a checker
-	* is inside. blocked_link() is used for multi arch blocked_test().
-	* Inside here we use a extended version of blocked_link(). Reason is, that even when
-	* we can't move the multi arch on the new spot, we have perhaps a legal earthwall
-	* in the step - we need to hit it here too. That a 3x3 multi arch monster can't 
-	* enter a corridor of 2 tiles is right - but when the entry is closed by a wall 
-	* then there is no reason why we can't hit the wall - even when we can't enter in.
-	*/
+    /* totally new logic here... blocked() handles now ALL map flags... blocked_two()
+    * is called implicit from blocked() - really only called for nodes where a checker
+    * is inside. blocked_link() is used for multi arch blocked_test().
+    * Inside here we use a extended version of blocked_link(). Reason is, that even when
+    * we can't move the multi arch on the new spot, we have perhaps a legal earthwall
+    * in the step - we need to hit it here too. That a 3x3 multi arch monster can't 
+    * enter a corridor of 2 tiles is right - but when the entry is closed by a wall 
+    * then there is no reason why we can't hit the wall - even when we can't enter in.
+    */
 
-	/* multi arch objects... */
+    /* multi arch objects... */
     if (op->more)
-	{
-		/* insert new blocked_link() here which can hit ALL earthwalls */
-		/* but as long monster don't destroy walls and no mult arch player 
-		 * are ingame - we can stay with this
-		 */
-		/* look in single tile move to see how we handle doors.
-		 * This needs to be done before we allow multi tile mobs to do 
-		 * more fancy things.
-		 */
-		if(blocked_link(op,freearr_x[dir],freearr_y[dir]) )
-			return 0;
+    {
+        /* insert new blocked_link() here which can hit ALL earthwalls */
+        /* but as long monster don't destroy walls and no mult arch player 
+             * are ingame - we can stay with this
+             */
+        /* look in single tile move to see how we handle doors.
+             * This needs to be done before we allow multi tile mobs to do 
+             * more fancy things.
+             */
+        if (blocked_link(op, freearr_x[dir], freearr_y[dir]))
+            return 0;
 
-		remove_ob(op);
-		if(check_walk_off (op, originator, MOVE_APPLY_MOVE) & (CHECK_WALK_DESTROYED|CHECK_WALK_MOVED))
-			return 1;
+        remove_ob(op);
+        if (check_walk_off(op, originator, MOVE_APPLY_MOVE) & (CHECK_WALK_DESTROYED | CHECK_WALK_MOVED))
+            return 1;
 
-		for(tmp = op; tmp != NULL; tmp = tmp->more)
-			tmp->x+=freearr_x[dir], tmp->y+=freearr_y[dir];
-		if (op->type==PLAYER)
-		{
-			esrv_map_scroll(&CONTR(op)->socket, freearr_x[dir],freearr_y[dir]);
-			CONTR(op)->socket.look_position=0;
-		}
-		insert_ob_in_map(op, op->map, op,0);
+        for (tmp = op; tmp != NULL; tmp = tmp->more)
+            tmp->x += freearr_x[dir], tmp->y += freearr_y[dir];
+        if (op->type == PLAYER)
+        {
+            esrv_map_scroll(&CONTR(op)->socket, freearr_x[dir], freearr_y[dir]);
+            CONTR(op)->socket.look_position = 0;
+        }
+        insert_ob_in_map(op, op->map, op, 0);
 
-		return 1;
-	} 
+        return 1;
+    } 
 
     /* single arch */
-	if (!QUERY_FLAG(op,FLAG_WIZPASS))
-	{
-		/* is the spot blocked from something? */
-		if(( flags=blocked(op,m,xt,yt,op->terrain_flag)) )
-		{
-			/* blocked!... BUT perhaps we have a door here to open.
-			 * If P_DOOR_CLOSED returned by blocked() then we have a door here.
-			 * If there is a door but not touchable from op, then blocked()
-			 * will hide the flag! So, if the flag is set, we can try our
-			 * luck - but only if op can open doors!
-			 */
-			if ((flags&P_DOOR_CLOSED) && (op->will_apply&8)) /* a (closed) door which we can open? */
-			{
-				if(open_door(op, m, xt,yt,1)) /* yes, we can open this door */
-					return 1;
-			}
+    if (!QUERY_FLAG(op, FLAG_WIZPASS))
+    {
+        /* is the spot blocked from something? */
+        if ((flags = blocked(op, m, xt, yt, op->terrain_flag)))
+        {
+            /* blocked!... BUT perhaps we have a door here to open.
+                     * If P_DOOR_CLOSED returned by blocked() then we have a door here.
+                     * If there is a door but not touchable from op, then blocked()
+                     * will hide the flag! So, if the flag is set, we can try our
+                     * luck - but only if op can open doors!
+                     */
+            if ((flags & P_DOOR_CLOSED) && (op->will_apply & 8)) /* a (closed) door which we can open? */
+            {
+                if (open_door(op, m, xt, yt, 1)) /* yes, we can open this door */
+                    return 1;
+            }
 
-			/* in any case we don't move - door or not. This will avoid we open the door
-			 * and do the move in one turn.
-			 */
-			return 0;
-		}
-	}
+            /* in any case we don't move - door or not. This will avoid we open the door
+                     * and do the move in one turn.
+                     */
+            return 0;
+        }
+    }
 
-	remove_ob(op);
-	if(check_walk_off (op, originator, MOVE_APPLY_MOVE) & (CHECK_WALK_DESTROYED|CHECK_WALK_MOVED))
-		return 1;
+    remove_ob(op);
+    if (check_walk_off(op, originator, MOVE_APPLY_MOVE) & (CHECK_WALK_DESTROYED | CHECK_WALK_MOVED))
+        return 1;
 
-	op->x+=freearr_x[dir];
-	op->y+=freearr_y[dir];
-	if (op->type==PLAYER)
-	{
-		esrv_map_scroll(&CONTR(op)->socket, freearr_x[dir],freearr_y[dir]);
-		CONTR(op)->socket.look_position=0;
-	}
-	insert_ob_in_map(op,op->map,originator,0);
+    op->x += freearr_x[dir];
+    op->y += freearr_y[dir];
+    if (op->type == PLAYER)
+    {
+        esrv_map_scroll(&CONTR(op)->socket, freearr_x[dir], freearr_y[dir]);
+        CONTR(op)->socket.look_position = 0;
+    }
+    insert_ob_in_map(op, op->map, originator, 0);
 
-	return 1;
+    return 1;
 }
 
 
@@ -174,42 +171,43 @@ int move_ob (object *op, int dir, object *originator)
  * Return value: 1 if object was destroyed, 0 otherwise.
  */
 
-int transfer_ob (object *op, int x, int y, int randomly, object *originator, object *trap)
+int transfer_ob(object *op, int x, int y, int randomly, object *originator, object *trap)
 {
-	int i, ret;
-	object *tmp;
+    int     i, ret;
+    object *tmp;
 
-	/* this is not 100% tested for mobs - enter_exit will still fail to return for mobs */
-	/* but some testing should make it for mobs too */
-    if (trap != NULL && EXIT_PATH (trap))
-	{
-		if (op->type == PLAYER && trap->msg && strncmp(EXIT_PATH(trap),"/!",2) && strncmp(EXIT_PATH(trap), "/random/", 8))
-		    new_draw_info (NDI_NAVY, 0, op, trap->msg);
-		enter_exit (op, trap);
-		return 1;
+    /* this is not 100% tested for mobs - enter_exit will still fail to return for mobs */
+    /* but some testing should make it for mobs too */
+    if (trap != NULL && EXIT_PATH(trap))
+    {
+        if (op->type == PLAYER && trap->msg && strncmp(EXIT_PATH(trap), "/!", 2) && strncmp(EXIT_PATH(trap), "/random/",
+                                                                                            8))
+            new_draw_info(NDI_NAVY, 0, op, trap->msg);
+        enter_exit(op, trap);
+        return 1;
     }
-	else if (randomly)
-		i = find_free_spot (op->arch,op->map,x,y,0,SIZEOFFREE);
-	else
-		i = find_first_free_spot(op->arch,op->map,x,y);
-	if (i==-1)
-		return 0;	/* No free spot */
+    else if (randomly)
+        i = find_free_spot(op->arch, op->map, x, y, 0, SIZEOFFREE);
+    else
+        i = find_first_free_spot(op->arch, op->map, x, y);
+    if (i == -1)
+        return 0;   /* No free spot */
 
-	if(op->head!=NULL)
-		op=op->head;
-	remove_ob(op);
-	if(check_walk_off (op, NULL,MOVE_APPLY_DEFAULT) != CHECK_WALK_OK)
-		return 1;
-	for(tmp=op;tmp!=NULL;tmp=tmp->more)
-	{
-		tmp->x=x+freearr_x[i]+(tmp->arch==NULL?0:tmp->arch->clone.x);
-		tmp->y=y+freearr_y[i]+(tmp->arch==NULL?0:tmp->arch->clone.y);
-	}
-	
-	ret = (insert_ob_in_map(op,op->map,originator,0) == NULL);
-	if (op->type==PLAYER)
-		MapNewmapCmd(CONTR(op));
-  return ret;
+    if (op->head != NULL)
+        op = op->head;
+    remove_ob(op);
+    if (check_walk_off(op, NULL, MOVE_APPLY_DEFAULT) != CHECK_WALK_OK)
+        return 1;
+    for (tmp = op; tmp != NULL; tmp = tmp->more)
+    {
+        tmp->x = x + freearr_x[i] + (tmp->arch == NULL ? 0 : tmp->arch->clone.x);
+        tmp->y = y + freearr_y[i] + (tmp->arch == NULL ? 0 : tmp->arch->clone.y);
+    }
+
+    ret = (insert_ob_in_map(op, op->map, originator, 0) == NULL);
+    if (op->type == PLAYER)
+        MapNewmapCmd(CONTR(op));
+    return ret;
 }
 
 /*
@@ -224,79 +222,80 @@ int transfer_ob (object *op, int x, int y, int randomly, object *originator, obj
  * be used close to each other and not have the player put to the
  * one of another type.
  */
-int teleport (object *teleporter, uint8 tele_type, object *user)
+int teleport(object *teleporter, uint8 tele_type, object *user)
 {
-    object *altern[120]; /* Better use c/malloc here in the future */
-    int i,j,k,nrofalt=0,xt,yt;
-    object *other_teleporter, *tmp;
-	mapstruct *m;
+    object     *altern[120]; /* Better use c/malloc here in the future */
+    int         i, j, k, nrofalt = 0, xt, yt;
+    object     *other_teleporter, *tmp;
+    mapstruct  *m;
 
-    if(user==NULL) return 0;
-    if(user->head!=NULL)
-	user=user->head;
+    if (user == NULL)
+        return 0;
+    if (user->head != NULL)
+        user = user->head;
 
     /* Find all other teleporters within range.  This range
      * should really be setable by some object attribute instead of
      * using hard coded values.
      */
-    for(i= -5;i<6;i++)
-	for(j= -5;j<6;j++) {
-	    if(i==0&&j==0)
-			continue;
-		xt=teleporter->x+i;
-		yt=teleporter->y+j;
-	    if(!(m=out_of_map(teleporter->map,&xt,&yt)))
-			continue;
-	    other_teleporter=get_map_ob(m,xt,yt);
+    for (i = -5; i < 6; i++)
+        for (j = -5; j < 6; j++)
+        {
+            if (i == 0 && j == 0)
+                continue;
+            xt = teleporter->x + i;
+            yt = teleporter->y + j;
+            if (!(m = out_of_map(teleporter->map, &xt, &yt)))
+                continue;
+            other_teleporter = get_map_ob(m, xt, yt);
 
-	    while (other_teleporter) 
-		{
-			if (other_teleporter->type == tele_type) 
-				break;
-			other_teleporter = other_teleporter->above;
-	    }
-	    if (other_teleporter)
-			altern[nrofalt++]=other_teleporter;
-	}
+            while (other_teleporter)
+            {
+                if (other_teleporter->type == tele_type)
+                    break;
+                other_teleporter = other_teleporter->above;
+            }
+            if (other_teleporter)
+                altern[nrofalt++] = other_teleporter;
+        }
 
-    if(!nrofalt) 
-	{
-		LOG(llevBug,"BUG: No alternative teleporters around!\n");
-		return 0;
+    if (!nrofalt)
+    {
+        LOG(llevBug, "BUG: No alternative teleporters around!\n");
+        return 0;
     }
 
-    other_teleporter=altern[RANDOM()%nrofalt];
-    k=find_free_spot(user->arch,other_teleporter->map,
-                        other_teleporter->x,other_teleporter->y,1,9);
-    if (k==-1)
-		return 0;
+    other_teleporter = altern[RANDOM() % nrofalt];
+    k = find_free_spot(user->arch, other_teleporter->map, other_teleporter->x, other_teleporter->y, 1, 9);
+    if (k == -1)
+        return 0;
 
     remove_ob(user);
-	if(check_walk_off (user, NULL,MOVE_APPLY_VANISHED) != CHECK_WALK_OK)
-		return 1;
-		
+    if (check_walk_off(user, NULL, MOVE_APPLY_VANISHED) != CHECK_WALK_OK)
+        return 1;
+
     /* Update location for the object */
-    for(tmp=user;tmp!=NULL;tmp=tmp->more) {
-	tmp->x=other_teleporter->x+freearr_x[k]+
-           (tmp->arch==NULL?0:tmp->arch->clone.x);
-	tmp->y=other_teleporter->y+freearr_y[k]+
-           (tmp->arch==NULL?0:tmp->arch->clone.y);
+    for (tmp = user; tmp != NULL; tmp = tmp->more)
+    {
+        tmp->x = other_teleporter->x + freearr_x[k] + (tmp->arch == NULL ? 0 : tmp->arch->clone.x);
+        tmp->y = other_teleporter->y + freearr_y[k] + (tmp->arch == NULL ? 0 : tmp->arch->clone.y);
     }
-    tmp = insert_ob_in_map(user,other_teleporter->map,NULL,0);
-    if (tmp && tmp->type == PLAYER) 
-		MapNewmapCmd(CONTR(tmp));
+    tmp = insert_ob_in_map(user, other_teleporter->map, NULL, 0);
+    if (tmp && tmp->type == PLAYER)
+        MapNewmapCmd(CONTR(tmp));
     return (tmp == NULL);
 }
 
-void recursive_roll(object *op,int dir,object *pusher) {
-  if(!roll_ob(op,dir,pusher)) {
-    new_draw_info_format(NDI_UNIQUE, 0, pusher,
-	"You fail to push the %s.",query_name(op));
+void recursive_roll(object *op, int dir, object *pusher)
+{
+    if (!roll_ob(op, dir, pusher))
+    {
+        new_draw_info_format(NDI_UNIQUE, 0, pusher, "You fail to push the %s.", query_name(op));
+        return;
+    }
+    (void) move_ob(pusher, dir, pusher);
+    new_draw_info_format(NDI_WHITE, 0, pusher, "You roll the %s.", query_name(op));
     return;
-  }
-  (void) move_ob(pusher,dir,pusher);
-  new_draw_info_format(NDI_WHITE, 0, pusher,"You roll the %s.",query_name(op));
-  return;
 }
 
 /*
@@ -306,32 +305,33 @@ void recursive_roll(object *op,int dir,object *pusher) {
  * very new version handles also multipart objects
  */
 
-int try_fit (object *op, int x, int y) 
+int try_fit(object *op, int x, int y)
 {
-    object *tmp, *more;
-	mapstruct *m;
-    int tx, ty;
-    if (op->head) 
-	op = op->head;
+    object     *tmp, *more;
+    mapstruct  *m;
+    int         tx, ty;
+    if (op->head)
+        op = op->head;
 
-    for (more = op; more ; more = more->more) {
-	tx = x + more->x - op->x;
-	ty = y + more->y - op->y;
-	if (!(m=out_of_map(op->map,&tx,&ty)))
-	    return 1;
+    for (more = op; more ; more = more->more)
+    {
+        tx = x + more->x - op->x;
+        ty = y + more->y - op->y;
+        if (!(m = out_of_map(op->map, &tx, &ty)))
+            return 1;
 
-	for (tmp = get_map_ob (m, tx, ty); tmp; tmp=tmp->above) {
-	    if (tmp->head == op || tmp == op)
-		continue;
+        for (tmp = get_map_ob(m, tx, ty); tmp; tmp = tmp->above)
+        {
+            if (tmp->head == op || tmp == op)
+                continue;
 
-	    if (IS_LIVE(tmp))
-		return 1;
+            if (IS_LIVE(tmp))
+                return 1;
 
-	    if (QUERY_FLAG(tmp,FLAG_NO_PASS) && 
-		(!QUERY_FLAG(tmp,FLAG_PASS_THRU) ||
-		 !QUERY_FLAG(more,FLAG_CAN_PASS_THRU)))
-		return 1;
-	}
+            if (QUERY_FLAG(tmp, FLAG_NO_PASS)
+             && (!QUERY_FLAG(tmp, FLAG_PASS_THRU) || !QUERY_FLAG(more, FLAG_CAN_PASS_THRU)))
+                return 1;
+        }
     }
     return 0;
 }
@@ -341,90 +341,94 @@ int try_fit (object *op, int x, int y)
  * it does not roll objects behind multipart objects properly.
  */
 
-int roll_ob(object *op,int dir, object *pusher) {
-    object *tmp;
-	mapstruct *m;
-    int x, y;
+int roll_ob(object *op, int dir, object *pusher)
+{
+    object     *tmp;
+    mapstruct  *m;
+    int         x, y;
 
-    if (op->head) 
-		op = op->head;
+    if (op->head)
+        op = op->head;
 
-    if(!QUERY_FLAG(op,FLAG_CAN_ROLL) || 
-		(op->weight&&random_roll(0,op->weight/50000-1,pusher,PREFER_LOW)>pusher->stats.Str))
-			return 0;
+    if (!QUERY_FLAG(op, FLAG_CAN_ROLL)
+     || (op->weight && random_roll(0, op->weight / 50000 - 1, pusher, PREFER_LOW) > pusher->stats.Str))
+        return 0;
 
-    x=op->x+freearr_x[dir];
-    y=op->y+freearr_y[dir];
-    if(!(m=out_of_map(op->map,&x,&y)))
-		return 0;
-	
-    for(tmp=get_map_ob(m,x,y); tmp!=NULL; tmp=tmp->above) 
-	{
-		if (tmp->head == op)
-			continue;
-		if (IS_LIVE(tmp) || (QUERY_FLAG(tmp,FLAG_NO_PASS) && !roll_ob(tmp,dir,pusher)))
-			return 0;
+    x = op->x + freearr_x[dir];
+    y = op->y + freearr_y[dir];
+    if (!(m = out_of_map(op->map, &x, &y)))
+        return 0;
+
+    for (tmp = get_map_ob(m, x, y); tmp != NULL; tmp = tmp->above)
+    {
+        if (tmp->head == op)
+            continue;
+        if (IS_LIVE(tmp) || (QUERY_FLAG(tmp, FLAG_NO_PASS) && !roll_ob(tmp, dir, pusher)))
+            return 0;
     }
-    if (try_fit (op, op->x+freearr_x[dir], op->y+freearr_y[dir]))
-		return 0;
+    if (try_fit(op, op->x + freearr_x[dir], op->y + freearr_y[dir]))
+        return 0;
 
     remove_ob(op);
-	if(check_walk_off (op, NULL,MOVE_APPLY_VANISHED) != CHECK_WALK_OK)
-		return 0;
+    if (check_walk_off(op, NULL, MOVE_APPLY_VANISHED) != CHECK_WALK_OK)
+        return 0;
 
-	for(tmp=op; tmp!=NULL; tmp=tmp->more)
-		tmp->x+=freearr_x[dir],tmp->y+=freearr_y[dir];
-    insert_ob_in_map(op,op->map,pusher,0);
+    for (tmp = op; tmp != NULL; tmp = tmp->more)
+        tmp->x += freearr_x[dir],tmp->y += freearr_y[dir];
+    insert_ob_in_map(op, op->map, pusher, 0);
     return 1;
 }
 
 /* returns 1 if pushing invokes a attack, 0 when not */
 /* new combat command do the attack now - i disabled push attacks */
-int push_ob(object *who, int dir, object *pusher) {
-    int str1, str2;
+int push_ob(object *who, int dir, object *pusher)
+{
+    int     str1, str2;
     object *owner;
 
     if (who->head != NULL)
-	who = who->head;
+        who = who->head;
     owner = get_owner(who);
 
     /* Wake up sleeping monsters that may be pushed */
-    CLEAR_FLAG(who,FLAG_SLEEP);
-  
+    CLEAR_FLAG(who, FLAG_SLEEP);
+
     /* player change place with his pets or summoned creature */
     /* TODO: allow multi arch pushing. Can't be very difficult */
-    if (who->more == NULL && owner == pusher) {
-	int temp;
-	temp = pusher->x;
-	temp = pusher->y;
-	remove_ob(who);
-	if(check_walk_off (who, NULL,MOVE_APPLY_DEFAULT) != CHECK_WALK_OK)
-		return 0;
+    if (who->more == NULL && owner == pusher)
+    {
+        int temp;
+        temp = pusher->x;
+        temp = pusher->y;
+        remove_ob(who);
+        if (check_walk_off(who, NULL, MOVE_APPLY_DEFAULT) != CHECK_WALK_OK)
+            return 0;
 
-	remove_ob(pusher);
-	if(check_walk_off (pusher, NULL,MOVE_APPLY_DEFAULT) != CHECK_WALK_OK)
-	{
-		/* something is wrong, put who back */
-		insert_ob_in_map (who,who->map,NULL,0); 
-		return 0;
-	}
-	pusher->x = who->x;
-	who->x = temp;	
-	pusher->y = who->y;
-	who->y = temp;
-	/* we presume that if the player is pushing his put, he moved in
-	 * direction 'dir'.  I can' think of any case where this would not be
-	 * the case.  Putting the map_scroll should also improve performance some.
-	 */
-	if (pusher->type == PLAYER ) {
-	    esrv_map_scroll(&CONTR(pusher)->socket, freearr_x[dir],freearr_y[dir]);
-	    CONTR(pusher)->socket.look_position=0;
-	}
-	insert_ob_in_map (who,who->map,pusher,0);
-	insert_ob_in_map (pusher,pusher->map,pusher,0);
+        remove_ob(pusher);
+        if (check_walk_off(pusher, NULL, MOVE_APPLY_DEFAULT) != CHECK_WALK_OK)
+        {
+            /* something is wrong, put who back */
+            insert_ob_in_map(who, who->map, NULL, 0); 
+            return 0;
+        }
+        pusher->x = who->x;
+        who->x = temp;  
+        pusher->y = who->y;
+        who->y = temp;
+        /* we presume that if the player is pushing his put, he moved in
+         * direction 'dir'.  I can' think of any case where this would not be
+         * the case.  Putting the map_scroll should also improve performance some.
+         */
+        if (pusher->type == PLAYER)
+        {
+            esrv_map_scroll(&CONTR(pusher)->socket, freearr_x[dir], freearr_y[dir]);
+            CONTR(pusher)->socket.look_position = 0;
+        }
+        insert_ob_in_map(who, who->map, pusher, 0);
+        insert_ob_in_map(pusher, pusher->map, pusher, 0);
 
-	return 0;
-  }
+        return 0;
+    }
 
 
     /* We want ONLY become enemy of evil, unaggressive monster. We must RUN in them */
@@ -432,30 +436,29 @@ int push_ob(object *who, int dir, object *pusher) {
     /* we so often become an enemy of friendly monsters... */
     /* funny: was they set to unaggressive 0 (= not so nice) they don't attack */
 
-	/* i disabled run/push attacks 
-    if(owner != pusher &&  pusher->type == PLAYER && who->type != PLAYER &&
-													!QUERY_FLAG(who,FLAG_FRIENDLY)) {
-	if(CONTR(pusher)->run_on) {
-	    new_draw_info_format(NDI_UNIQUE, 0, pusher,
-              "You start to attack %s !!",who->name);
-        register_npc_known_obj(who, pusher, FRIENDSHIP_PUSH);
-        return 1;
-	}
-	else 
-	{
-	    new_draw_info_format(NDI_UNIQUE, 0, pusher,
-				 "You avoid to attack %s .",who->name);
-	}
-    }*/
+    /* i disabled run/push attacks 
+       if(owner != pusher &&  pusher->type == PLAYER && who->type != PLAYER &&
+                                                    !QUERY_FLAG(who,FLAG_FRIENDLY)) {
+    if(CONTR(pusher)->run_on) {
+        new_draw_info_format(NDI_UNIQUE, 0, pusher,
+                 "You start to attack %s !!",who->name);
+           register_npc_known_obj(who, pusher, FRIENDSHIP_PUSH);
+           return 1;
+    }
+    else 
+    {
+        new_draw_info_format(NDI_UNIQUE, 0, pusher,
+                 "You avoid to attack %s .",who->name);
+    }
+       }*/
 
     /* now, lets test stand still we NEVER can psuh stand_still monsters. */
-    if(QUERY_FLAG(who,FLAG_STAND_STILL))
+    if (QUERY_FLAG(who, FLAG_STAND_STILL))
     {
-	new_draw_info_format(NDI_UNIQUE, 0, pusher,
-          "You can't push %s.",who->name);
-	return 0;
+        new_draw_info_format(NDI_UNIQUE, 0, pusher, "You can't push %s.", who->name);
+        return 0;
     }
-  
+
     /* This block is basically if you are pushing friendly but
      * non pet creaturs.
      * It basically does a random strength comparision to
@@ -463,18 +466,25 @@ int push_ob(object *who, int dir, object *pusher) {
      * this pushes the other person away - its not a swap.
      */
 
-    str1 = (who->stats.Str>0?who->stats.Str:who->level);
-    str2 = (pusher->stats.Str>0?pusher->stats.Str:pusher->level);
-    if(QUERY_FLAG(who,FLAG_WIZ) ||
-       random_roll(str1, str1/2+str1*2, who, PREFER_HIGH) >= 
-       random_roll(str2, str2/2+str2*2, pusher, PREFER_HIGH) ||
-       !move_ob(who,dir,pusher))
+    str1 = (who->stats.Str > 0 ? who->stats.Str : who->level);
+    str2 = (pusher->stats.Str > 0 ? pusher->stats.Str : pusher->level);
+    if (QUERY_FLAG(who, FLAG_WIZ)
+     || random_roll(str1, str1 / 2 + str1 * 2, who, PREFER_HIGH)
+     >= random_roll(str2,
+                                                                                                             str2
+                                                                                                           / 2
+                                                                                                           + str2 * 2,
+                                                                                                             pusher,
+                                                                                                             PREFER_HIGH)
+     || !move_ob(who,
+                 dir,
+                 pusher))
     {
-	if (who ->type == PLAYER) {
-	    new_draw_info_format(NDI_UNIQUE, 0, who,
-		 "%s tried to push you.",pusher->name);
-	}
-	return 0;
+        if (who ->type == PLAYER)
+        {
+            new_draw_info_format(NDI_UNIQUE, 0, who, "%s tried to push you.", pusher->name);
+        }
+        return 0;
     }
 
     /* If we get here, the push succeeded.  Let each now the
@@ -482,27 +492,27 @@ int push_ob(object *who, int dir, object *pusher) {
      * to be in an else block - the message is going to a different
      * player
      */
-    if (who->type == PLAYER) {
-	new_draw_info_format(NDI_UNIQUE, 0, who,
-			     "%s pushed you.",pusher->name);
+    if (who->type == PLAYER)
+    {
+        new_draw_info_format(NDI_UNIQUE, 0, who, "%s pushed you.", pusher->name);
     }
-    else if (QUERY_FLAG(who, FLAG_MONSTER)) {
-	new_draw_info_format(NDI_UNIQUE, 0, pusher,
-		"You pushed %s back.", who->name);
+    else if (QUERY_FLAG(who, FLAG_MONSTER))
+    {
+        new_draw_info_format(NDI_UNIQUE, 0, pusher, "You pushed %s back.", who->name);
     }
-  
+
     return 1;
 }
 
 int missile_reflection_adjust(object *op, int flag)
 {
-	if(!op->stats.maxgrace) /* no more direction/reflection! */
-	return FALSE;
-				
-	op->stats.maxgrace--;
-	/* restore the "how long we can fly" counter */
-	if(!flag)
-		op->last_sp = op->stats.grace;
-				
-	return TRUE; /* go on with reflection/direction */
+    if (!op->stats.maxgrace) /* no more direction/reflection! */
+        return FALSE;
+
+    op->stats.maxgrace--;
+    /* restore the "how long we can fly" counter */
+    if (!flag)
+        op->last_sp = op->stats.grace;
+
+    return TRUE; /* go on with reflection/direction */
 }

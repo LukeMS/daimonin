@@ -23,35 +23,35 @@
 #include <include.h>
 
 #if defined( __WIN_32)  || defined(__LINUX)
-	FILE *logstream;
-	Boolean logFlush;
+FILE   *logstream;
+Boolean logFlush;
 #endif
-void LOG (int logLevel, char *format, ...)
+void LOG(int logLevel, char *format, ...)
 {
 #if defined( __WIN_32)  || defined(__LINUX)
-        Boolean flag=FALSE;
-        va_list ap;
+    Boolean flag    = FALSE;
+    va_list ap;
 
-        if(LOGLEVEL <0)	/* we want log exactly ONE logLevel*/
-        {
-                if(LOGLEVEL*(-1) == logLevel)
-                        flag = TRUE;
-        }
-        else    /* we log all logLevel < LOGLEVEL*/
-        {
-                if(logLevel <= LOGLEVEL)
-                        flag = TRUE;
-        }
-        if(!logstream)		/* secure: we have no open stream*/
-                flag = FALSE;
-        va_start(ap, format);
-        if(flag)
-		{
-			vfprintf(stdout, format, ap);
-			vfprintf(logstream, format, ap);
-		}
-        va_end(ap);
-        fflush(logstream);
+    if (LOGLEVEL < 0)   /* we want log exactly ONE logLevel*/
+    {
+        if (LOGLEVEL * (-1) == logLevel)
+            flag = TRUE;
+    }
+    else    /* we log all logLevel < LOGLEVEL*/
+    {
+        if (logLevel <= LOGLEVEL)
+            flag = TRUE;
+    }
+    if (!logstream)     /* secure: we have no open stream*/
+        flag = FALSE;
+    va_start(ap, format);
+    if (flag)
+    {
+        vfprintf(stdout, format, ap);
+        vfprintf(logstream, format, ap);
+    }
+    va_end(ap);
+    fflush(logstream);
 
 #endif
 }
@@ -59,32 +59,32 @@ void LOG (int logLevel, char *format, ...)
 
 Boolean SYSTEM_Start(void)
 {
-    SDL_Surface *icon;
-    char buf[256];
+    SDL_Surface    *icon;
+    char            buf[256];
 
-    sprintf(buf,"%s%s",GetBitmapDirectory(),CLIENT_ICON_NAME);
-    if((icon = IMG_Load(buf)) != NULL)
+    sprintf(buf, "%s%s", GetBitmapDirectory(), CLIENT_ICON_NAME);
+    if ((icon = IMG_Load(buf)) != NULL)
         SDL_WM_SetIcon(icon, 0);   
-    
+
     SDL_WM_SetCaption(PACKAGE_NAME, PACKAGE_NAME);
-    
+
 #if defined( __WIN_32)  || defined(__LINUX)
-	logstream  = fopen( LOG_FILE, "w" );
-	return(TRUE);
+    logstream = fopen(LOG_FILE, "w");
+    return(TRUE);
 #endif
 }
 
 Boolean SYSTEM_End(void)
 {
 #if defined( __WIN_32)  || defined(__LINUX)
-	return(TRUE);
+    return(TRUE);
 #endif
 }
 
 char * GetBitmapDirectory(void)
 {
 #if defined( __WIN_32)  || defined(__LINUX)
-	return("./bitmaps/");
+    return("./bitmaps/");
 #endif
 }
 
@@ -98,28 +98,28 @@ char * GetIconDirectory(void)
 char * GetSfxDirectory(void)
 {
 #if defined( __WIN_32)  || defined(__LINUX)
-	return("./sfx/");
+    return("./sfx/");
 #endif
 }
 
 char * GetCacheDirectory(void)
 {
 #if defined( __WIN_32)  || defined(__LINUX)
-	return("./cache/");
+    return("./cache/");
 #endif
 }
 
 char * GetGfxUserDirectory(void)
 {
 #if defined( __WIN_32)  || defined(__LINUX)
-	return("./gfx_user/");
+    return("./gfx_user/");
 #endif
 }
 
 
 char * GetMediaDirectory(void)
 {
-#if defined( __WIN_32)  || defined(__LINUX)	
+#if defined( __WIN_32)  || defined(__LINUX) 
     return("./media/");
 #endif
 }
@@ -159,24 +159,24 @@ char * GetMediaDirectory(void)
 
 int attempt_fullscreen_toggle(SDL_Surface **surface, uint32 *flags)
 {
-    long framesize = 0;
-    void *pixels = NULL;
-    SDL_Rect clip;
-    uint32 tmpflags = 0;
-    int w = 0;
-    int h = 0;
-    int bpp = 0;
-    int grabmouse = (SDL_WM_GrabInput(SDL_GRAB_QUERY) == SDL_GRAB_ON);
-    int showmouse = SDL_ShowCursor(-1);
+    long        framesize   = 0;
+    void       *pixels      = NULL;
+    SDL_Rect    clip;
+    uint32      tmpflags    = 0;
+    int         w           = 0;
+    int         h           = 0;
+    int         bpp         = 0;
+    int         grabmouse   = (SDL_WM_GrabInput(SDL_GRAB_QUERY) == SDL_GRAB_ON);
+    int         showmouse   = SDL_ShowCursor(-1);
 
 #ifdef BROKEN
-    SDL_Color *palette = NULL;
-    int ncolors = 0;
+    SDL_Color  *palette     = NULL;
+    int         ncolors     = 0;
 #endif
 
     sdldebug("attempting to toggle fullscreen flag...");
 
-    if ( (!surface) || (!(*surface)) )  /* don't try if there's no surface. */
+    if ((!surface) || (!(*surface)))  /* don't try if there's no surface. */
     {
         sdldebug("Null surface (?!). Not toggling fullscreen flag.");
         return(0);
@@ -190,7 +190,7 @@ int attempt_fullscreen_toggle(SDL_Surface **surface, uint32 *flags)
         return(1);
     } /* if */
 
-    if ( !(SDL_GetVideoInfo()->wm_available) )
+    if (!(SDL_GetVideoInfo()->wm_available))
     {
         sdldebug("No window manager. Not toggling fullscreen flag.");
         return(0);
@@ -207,8 +207,8 @@ int attempt_fullscreen_toggle(SDL_Surface **surface, uint32 *flags)
 
     SDL_GetClipRect(*surface, &clip);
 
-        /* save the contents of the screen. */
-    if ( (!(tmpflags & SDL_OPENGL)) && (!(tmpflags & SDL_OPENGLBLIT)) )
+    /* save the contents of the screen. */
+    if ((!(tmpflags & SDL_OPENGL)) && (!(tmpflags & SDL_OPENGLBLIT)))
     {
         framesize = (w * h) * ((*surface)->format->BytesPerPixel);
         pixels = malloc(framesize);
@@ -221,14 +221,13 @@ int attempt_fullscreen_toggle(SDL_Surface **surface, uint32 *flags)
     if ((*surface)->format->palette != NULL)
     {
         ncolors = (*surface)->format->palette->ncolors;
-        palette = malloc(ncolors * sizeof (SDL_Color));
+        palette = malloc(ncolors * sizeof(SDL_Color));
         if (palette == NULL)
         {
             free(pixels);
             return(0);
         } /* if */
-        memcpy(palette, (*surface)->format->palette->colors,
-               ncolors * sizeof (SDL_Color));
+        memcpy(palette, (*surface)->format->palette->colors, ncolors * sizeof(SDL_Color));
     } /* if */
 #endif
 
@@ -241,7 +240,6 @@ int attempt_fullscreen_toggle(SDL_Surface **surface, uint32 *flags)
 
     if (*surface != NULL)
         *flags ^= SDL_FULLSCREEN;
-
     else  /* yikes! Try to put it back as it was... */
     {
         sdldebug("Set it back...");
@@ -269,7 +267,7 @@ int attempt_fullscreen_toggle(SDL_Surface **surface, uint32 *flags)
 #ifdef BROKEN
     if (palette != NULL)
     {
-            /* !!! FIXME : No idea if that flags param is right. */
+        /* !!! FIXME : No idea if that flags param is right. */
         SDL_SetPalette(*surface, SDL_LOGPAL, palette, 0, ncolors);
         free(palette);
     } /* if */
@@ -290,63 +288,63 @@ int attempt_fullscreen_toggle(SDL_Surface **surface, uint32 *flags)
 /* when settings are changed at runtime, this MUST called again */
 uint32 get_video_flags(void)
 {
-    uint32 videoflags_full,videoflags_win;
+    uint32  videoflags_full, videoflags_win;
 
-        videoflags_full = SDL_FULLSCREEN;
- 
-        if(options.Full_DOUBLEBUF)
-            videoflags_full |= SDL_DOUBLEBUF;
-        if(options.Full_HWSURFACE)
-            videoflags_full |= SDL_HWSURFACE;
-        if(options.Full_SWSURFACE)
-            videoflags_full |= SDL_SWSURFACE;
-        if(options.Full_HWACCEL)
-            videoflags_full |= SDL_HWACCEL;
-        if(options.Full_ANYFORMAT)
-            videoflags_full |= SDL_ANYFORMAT;
-        if(options.Full_ASYNCBLIT)
-            videoflags_full |= SDL_ASYNCBLIT;
-        if(options.Full_HWPALETTE)
-            videoflags_full |= SDL_HWPALETTE;
-        if(options.Full_RESIZABLE)
-            videoflags_full |= SDL_RESIZABLE;
-        if(options.Full_NOFRAME)
-            videoflags_full |= SDL_NOFRAME;
-        
-        videoflags_win = 0;
-        if(options.Win_DOUBLEBUF)
-            videoflags_win |= SDL_DOUBLEBUF;
-        if(options.Win_HWSURFACE)
-            videoflags_win |= SDL_HWSURFACE;
-        if(options.Win_SWSURFACE)
-            videoflags_win |= SDL_SWSURFACE;
-        if(options.Win_HWACCEL)
-            videoflags_win |= SDL_HWACCEL;
-        if(options.Win_ANYFORMAT)
-            videoflags_win |= SDL_ANYFORMAT;
-        if(options.Win_ASYNCBLIT)
-            videoflags_win |= SDL_ASYNCBLIT;
-        if(options.Win_HWPALETTE)
-            videoflags_win |= SDL_HWPALETTE;
-        if(options.Win_RESIZABLE)
-            videoflags_win |= SDL_RESIZABLE;
-        if(options.Win_NOFRAME)
-            videoflags_win |= SDL_NOFRAME;
-        
-        options.videoflags_win=videoflags_win;
-        options.videoflags_full=videoflags_full;
+    videoflags_full = SDL_FULLSCREEN;
 
-   
-    if(options.fullscreen)
+    if (options.Full_DOUBLEBUF)
+        videoflags_full |= SDL_DOUBLEBUF;
+    if (options.Full_HWSURFACE)
+        videoflags_full |= SDL_HWSURFACE;
+    if (options.Full_SWSURFACE)
+        videoflags_full |= SDL_SWSURFACE;
+    if (options.Full_HWACCEL)
+        videoflags_full |= SDL_HWACCEL;
+    if (options.Full_ANYFORMAT)
+        videoflags_full |= SDL_ANYFORMAT;
+    if (options.Full_ASYNCBLIT)
+        videoflags_full |= SDL_ASYNCBLIT;
+    if (options.Full_HWPALETTE)
+        videoflags_full |= SDL_HWPALETTE;
+    if (options.Full_RESIZABLE)
+        videoflags_full |= SDL_RESIZABLE;
+    if (options.Full_NOFRAME)
+        videoflags_full |= SDL_NOFRAME;
+
+    videoflags_win = 0;
+    if (options.Win_DOUBLEBUF)
+        videoflags_win |= SDL_DOUBLEBUF;
+    if (options.Win_HWSURFACE)
+        videoflags_win |= SDL_HWSURFACE;
+    if (options.Win_SWSURFACE)
+        videoflags_win |= SDL_SWSURFACE;
+    if (options.Win_HWACCEL)
+        videoflags_win |= SDL_HWACCEL;
+    if (options.Win_ANYFORMAT)
+        videoflags_win |= SDL_ANYFORMAT;
+    if (options.Win_ASYNCBLIT)
+        videoflags_win |= SDL_ASYNCBLIT;
+    if (options.Win_HWPALETTE)
+        videoflags_win |= SDL_HWPALETTE;
+    if (options.Win_RESIZABLE)
+        videoflags_win |= SDL_RESIZABLE;
+    if (options.Win_NOFRAME)
+        videoflags_win |= SDL_NOFRAME;
+
+    options.videoflags_win = videoflags_win;
+    options.videoflags_full = videoflags_full;
+
+
+    if (options.fullscreen)
     {
         options.fullscreen_flag = TRUE;
         options.doublebuf_flag = FALSE;
         options.rleaccel_flag = FALSE;
-        if(options.Full_RLEACCEL)
+        if (options.Full_RLEACCEL)
             options.rleaccel_flag = TRUE;        
-        if(options.videoflags_full&SDL_DOUBLEBUF)
+        if (options.videoflags_full & SDL_DOUBLEBUF)
             options.doublebuf_flag = TRUE;
-    
+
         return videoflags_full;
     }
     else
@@ -354,14 +352,13 @@ uint32 get_video_flags(void)
         options.fullscreen_flag = FALSE;
         options.doublebuf_flag = FALSE;
         options.rleaccel_flag = FALSE;
-        if(options.Win_RLEACCEL)
+        if (options.Win_RLEACCEL)
             options.rleaccel_flag = TRUE;
-        if(options.videoflags_win&SDL_DOUBLEBUF)
+        if (options.videoflags_win & SDL_DOUBLEBUF)
             options.doublebuf_flag = TRUE;
-        
+
         return videoflags_win;
     }
-        
 }
 
 /* This is really, really a bad implementation.
@@ -369,69 +366,69 @@ uint32 get_video_flags(void)
  */
 void parse_metaserver_data(char *info)
 {
-    char server[1024], version[1024],desc[1025], desc_line[4][47], *tmp;
-    int port, player, count,s,ss,sss;
-	void *tmp_free;
-    
-    tmp = (char*)malloc(MAX_METASTRING_BUFFER);
-    for(count=0;;)
+    char    server[1024], version[1024], desc[1025], desc_line[4][47], *tmp;
+    int     port, player, count, s, ss, sss;
+    void   *tmp_free;
+
+    tmp = (char *) malloc(MAX_METASTRING_BUFFER);
+    for (count = 0; ;)
     {
-        if((s=read_substr_char(info, tmp, &count, '|'))==-1)
+        if ((s = read_substr_char(info, tmp, &count, '|')) == -1)
         {
             break;
         }
-        if((s=read_substr_char(info, tmp, &count, '|'))==-1)
+        if ((s = read_substr_char(info, tmp, &count, '|')) == -1)
             break;
-        if((s=read_substr_char(info, tmp, &count, '|'))==-1)
+        if ((s = read_substr_char(info, tmp, &count, '|')) == -1)
             break;
         strncpy(server, tmp, s);
-        if(s>=1023)
-            s=1023;
-        server[s]=0;
+        if (s >= 1023)
+            s = 1023;
+        server[s] = 0;
         /* player */
-        if((s=read_substr_char(info, tmp, &count, '|'))==-1)
+        if ((s = read_substr_char(info, tmp, &count, '|')) == -1)
             break;
         player = atoi(tmp);
         /* version; */
-        if((s=read_substr_char(info, tmp, &count, '|'))==-1)
+        if ((s = read_substr_char(info, tmp, &count, '|')) == -1)
             break;
         strncpy(version, tmp, s);
-        if(s>=1023)
-            s=1023;
-        version[s]=0;
+        if (s >= 1023)
+            s = 1023;
+        version[s] = 0;
         /* desc */
-        desc_line[0][0]=0;
-        desc_line[1][0]=0;
-        desc_line[2][0]=0;
-        desc_line[3][0]=0;
-        if((s=read_substr_char(info, tmp, &count, '|'))!=-1)
-        {        
-            if(s>=1023)
-                s=1023;
+        desc_line[0][0] = 0;
+        desc_line[1][0] = 0;
+        desc_line[2][0] = 0;
+        desc_line[3][0] = 0;
+        if ((s = read_substr_char(info, tmp, &count, '|')) != -1)
+        {
+            if (s >= 1023)
+                s = 1023;
             strncpy(desc, tmp, s);
-            desc[s]=0;
-        
-            sss=0;
-            for(ss=0;ss<45 && sss<s;ss++,sss++)
+            desc[s] = 0;
+
+            sss = 0;
+            for (ss = 0; ss < 45 && sss < s; ss++,sss++)
                 desc_line[0][ss] = desc[sss];
-            desc_line[0][ss]=0;
-            for(ss=0;ss<45 && sss<s;ss++,sss++)
+            desc_line[0][ss] = 0;
+            for (ss = 0; ss < 45 && sss < s; ss++,sss++)
                 desc_line[1][ss] = desc[sss];
-            desc_line[1][ss]=0;
-            for(ss=0;ss<45 && sss<s;ss++,sss++)
+            desc_line[1][ss] = 0;
+            for (ss = 0; ss < 45 && sss < s; ss++,sss++)
                 desc_line[2][ss] = desc[sss];
-            desc_line[2][ss]=0;
-            for(ss=0;ss<45 && sss<s;ss++,sss++)
+            desc_line[2][ss] = 0;
+            for (ss = 0; ss < 45 && sss < s; ss++,sss++)
                 desc_line[3][ss] = desc[sss];
-            desc_line[3][ss]=0;
+            desc_line[3][ss] = 0;
         }
         read_substr_char(info, tmp, &count, 0x0a);
         port = 13327;
         /*if(version[0] == 'D')*/ /* Daimonin marker */    
-		add_metaserver_data(server, port, player, version, &desc_line[0][0],&desc_line[1][0],&desc_line[2][0],&desc_line[3][0]);
-        
+        add_metaserver_data(server, port, player, version, &desc_line[0][0], &desc_line[1][0], &desc_line[2][0],
+                            &desc_line[3][0]);
     }
-	tmp_free = &tmp;
+    tmp_free = &tmp;
     FreeMemory(tmp_free);
 }
 
@@ -441,20 +438,21 @@ void parse_metaserver_data(char *info)
 #if !defined(HAVE_STRNCASECMP)
 int strncasecmp(char *s1, char *s2, int n)
 {
-  register int c1, c2;
+    register int c1, c2;
 
-  while (*s1 && *s2 && n) {
-    c1 = tolower(*s1);
-    c2 = tolower(*s2);
-    if (c1 != c2)
-      return (c1 - c2);
-    s1++;
-    s2++;
-    n--;
-  }
-  if (!n)
-    return(0);
-  return (int) (*s1 - *s2);
+    while (*s1 && *s2 && n)
+    {
+        c1 = tolower(*s1);
+        c2 = tolower(*s2);
+        if (c1 != c2)
+            return (c1 - c2);
+        s1++;
+        s2++;
+        n--;
+    }
+    if (!n)
+        return(0);
+    return (int) (*s1 - *s2);
 }
 #endif
 #endif
@@ -462,21 +460,22 @@ int strncasecmp(char *s1, char *s2, int n)
 #if defined(HAVE_STRICMP)
 #else
 #if !defined(HAVE_STRCASECMP)
-int strcasecmp(char *s1, char*s2)
+int strcasecmp(char *s1, char *s2)
 {
-  register int c1, c2;
+    register int c1, c2;
 
-  while (*s1 && *s2) {
-    c1 = tolower(*s1);
-    c2 = tolower(*s2);
-    if (c1 != c2)
-      return (c1 - c2);
-    s1++;
-    s2++;
-  }
-  if (*s1=='\0' && *s2=='\0')
-	return 0;
-  return (int) (*s1 - *s2);
+    while (*s1 && *s2)
+    {
+        c1 = tolower(*s1);
+        c2 = tolower(*s2);
+        if (c1 != c2)
+            return (c1 - c2);
+        s1++;
+        s2++;
+    }
+    if (*s1 == '\0' && *s2 == '\0')
+        return 0;
+    return (int) (*s1 - *s2);
 }
 #endif
 #endif

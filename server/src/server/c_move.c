@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -24,73 +24,74 @@
 */
 
 #include <global.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
 
-static int move_internal (object *op, char *params, int dir)
+static int move_internal(object *op, char *params, int dir)
 {
-  if (params) {
-    if (params[0] == 'f') {
-      if (!CONTR(op)->fire_on) {
-	CONTR(op)->fire_on =1;
-	move_player(op, dir);
-	CONTR(op)->fire_on =0;
-	return 0;
-      }
-    } else if (params[0] == 'r' && !CONTR(op)->run_on)
-      CONTR(op)->run_on =1;
-  }
-  move_player(op, dir);
-  return 0;
-}
-
-int command_east (object *op, char *params)
-{
-  return move_internal(op, params, 3);
-}
-
-int command_north (object *op, char *params)
-{
-  return move_internal(op, params, 1);
-}
-
-int command_northeast (object *op, char *params)
-{
-  return move_internal(op, params, 2);
-}
-
-int command_northwest (object *op, char *params)
-{
-  return move_internal(op, params, 8);
-}
-
-int command_south (object *op, char *params)
-{
-  return move_internal(op, params, 5);
-}
-
-int command_southeast (object *op, char *params)
-{
-  return move_internal(op, params, 4);
-}
-
-int command_southwest (object *op, char *params)
-{
-  return move_internal(op, params, 6);
-}
-
-int command_west (object *op, char *params)
-{
-  return move_internal(op, params, 7);
-}
-
-int command_stay (object *op, char *params)
-{
-  if (!CONTR(op)->fire_on && (!params || params[0] != 'f'))
+    if (params)
+    {
+        if (params[0] == 'f')
+        {
+            if (!CONTR(op)->fire_on)
+            {
+                CONTR(op)->fire_on = 1;
+                move_player(op, dir);
+                CONTR(op)->fire_on = 0;
+                return 0;
+            }
+        }
+        else if (params[0] == 'r' && !CONTR(op)->run_on)
+            CONTR(op)->run_on = 1;
+    }
+    move_player(op, dir);
     return 0;
-  fire(op, 0);
-  return 0;
+}
+
+int command_east(object *op, char *params)
+{
+    return move_internal(op, params, 3);
+}
+
+int command_north(object *op, char *params)
+{
+    return move_internal(op, params, 1);
+}
+
+int command_northeast(object *op, char *params)
+{
+    return move_internal(op, params, 2);
+}
+
+int command_northwest(object *op, char *params)
+{
+    return move_internal(op, params, 8);
+}
+
+int command_south(object *op, char *params)
+{
+    return move_internal(op, params, 5);
+}
+
+int command_southeast(object *op, char *params)
+{
+    return move_internal(op, params, 4);
+}
+
+int command_southwest(object *op, char *params)
+{
+    return move_internal(op, params, 6);
+}
+
+int command_west(object *op, char *params)
+{
+    return move_internal(op, params, 7);
+}
+
+int command_stay(object *op, char *params)
+{
+    if (!CONTR(op)->fire_on && (!params || params[0] != 'f'))
+        return 0;
+    fire(op, 0);
+    return 0;
 }
 
 

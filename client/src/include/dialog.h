@@ -30,22 +30,31 @@
 
 typedef struct _option
 {
-	char *name;
-	char *info1;	/* info text row 1 */
-	char *info2;	/* info text row 2 */
-	char *val_text; /* text-replacement for number values */
-	int  sel_type;
-	int  minRange, maxRange, deltaRange;
-	int default_val;
-	void *value;
-	int value_type;
+    char           *name;
+    char           *info1;  /* info text row 1 */
+    char           *info2;  /* info text row 2 */
+    char           *val_text; /* text-replacement for number values */
+    int             sel_type;
+    int             minRange, maxRange, deltaRange;
+    int             default_val;
+    void           *value;
+    int             value_type;
 }_option;
-extern _option opt[];
+extern _option  opt[];
 
-extern enum {VAL_BOOL,  VAL_TEXT, VAL_CHAR, VAL_INT, VAL_U32} value_type;
-extern char *opt_tab[]; 
-extern int dialog_new_char_warn;
+extern enum
+{
+    VAL_BOOL,
+    VAL_TEXT,
+    VAL_CHAR,
+    VAL_INT,
+    VAL_U32
+}               value_type;
+extern char    *opt_tab[]; 
+extern int      dialog_new_char_warn;
+extern int      active_button;
 
+int add_button(int x, int y, int xo, int yo, int id, int gfxNr, char *text, char *text_h);
 extern void show_optwin(void);
 extern void show_newplayer_server(void);
 extern void show_login_server(void);

@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -35,8 +35,8 @@
 #endif /* _MSC_VER > 1000 */
 
 #endif /* !defined(AFX_STDAFX_H__31666CA1_2474_11D5_AE6C_F07569C10000__INCLUDED_) */
- 
-#define WIN32_LEAN_AND_MEAN	
+
+#define WIN32_LEAN_AND_MEAN 
 /* includes for VC - plz add other include settings for different compiler 
  * when needed and comment it
  */
@@ -44,7 +44,7 @@
 #include <time.h>
 #include <direct.h>
 #include <math.h>
-#include <sys/stat.h>	/* odd: but you don't get stat here with __STDC__ */
+#include <sys/stat.h>   /* odd: but you don't get stat here with __STDC__ */
 #include <io.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -53,7 +53,7 @@
 
 
 #define __STDC__ 1      /* odd too: CF want this, but don't include it */
-                        /* before the standard includes */
+/* before the standard includes */
 #ifndef HAVE_SNPRINTF
 #define HAVE_SNPRINTF 1
 #define snprintf _snprintf
@@ -68,10 +68,10 @@
 #define CS_LOGSTATS
 #define HAVE_SRAND
 #ifndef HAVE_FCNTL_H
-    #define HAVE_FCNTL_H
+#define HAVE_FCNTL_H
 #endif
 #ifndef HAVE_STDDEF_H
-    #define HAVE_STDDEF_H
+#define HAVE_STDDEF_H
 #endif
 #define GETTIMEOFDAY_TWO_ARGS
 #define MAXPATHLEN 256
@@ -84,7 +84,7 @@
 #define popen(__a, __b) _popen(__a, __b)
 #define pclose(__a) _pclose(__a)
 
-#define R_OK 6		/* for __access() */
+#define R_OK 6      /* for __access() */
 #define F_OK 6
 
 #define PREFIXDIR ""
@@ -125,28 +125,30 @@
 
 /* struct dirent - same as Unix */
 
-typedef struct dirent {
-	long d_ino;					/* inode (always 1 in WIN32) */
-	off_t d_off;				/* offset to this dirent */
-	unsigned short d_reclen;	/* length of d_name */
-	char d_name[_MAX_FNAME + 1];	/* filename (null terminated) */
+typedef struct dirent
+{
+    long            d_ino;                  /* inode (always 1 in WIN32) */
+    off_t           d_off;              /* offset to this dirent */
+    unsigned short  d_reclen;   /* length of d_name */
+    char            d_name[_MAX_FNAME + 1]; /* filename (null terminated) */
 }dirent;
 
 #define NAMLEN(dirent) strlen((dirent)->d_name)
 
 /* typedef DIR - not the same as Unix */
-typedef struct {
-	long handle;				/* _findfirst/_findnext handle */
-	short offset;				/* offset into directory */
-	short finished;				/* 1 if there are not more files */
-	struct _finddata_t fileinfo;	/* from _findfirst/_findnext */
-	char *dir;					/* the dir we are reading */
-	struct dirent dent;			/* the dirent to return */
+typedef struct
+{
+    long                    handle;             /* _findfirst/_findnext handle */
+    short                   offset;             /* offset into directory */
+    short                   finished;               /* 1 if there are not more files */
+    struct _finddata_t      fileinfo;   /* from _findfirst/_findnext */
+    char                   *dir;                    /* the dir we are reading */
+    struct dirent           dent;           /* the dirent to return */
 } DIR;
 
 /* Function prototypes */
-extern int gettimeofday(struct timeval *time_Info, struct timezone *timezone_Info);
-extern DIR *opendir(const char *);
-extern struct dirent *readdir(DIR *);
-extern int closedir(DIR *);
-extern void rewinddir(DIR *);
+extern int              gettimeofday(struct timeval *time_Info, struct timezone *timezone_Info);
+extern DIR             *opendir(const char *);
+extern struct dirent   *readdir(DIR *);
+extern int              closedir(DIR *);
+extern void             rewinddir(DIR *);

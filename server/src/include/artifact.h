@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,23 +22,25 @@
 
     The author can be reached via e-mail to daimonin@nord-com.net
 */
-typedef struct artifactstruct {
-	char					*parse_text; /* memory block with artifacts parse commands for loader.c */
-	const char				*name; /* thats the fake arch name when chained to arch list */
-	const char				*def_at_name; /* we use it as marker for def_at is valid and quick name access */
-	struct artifactstruct	*next;
-	linked_char				*allowed;
-	archetype				def_at; /* thats the base archtype object - this is chained to arch list */
-	int						t_style;
-	uint16					chance;
-	uint8					difficulty;
+typedef struct artifactstruct
+{
+    char                   *parse_text; /* memory block with artifacts parse commands for loader.c */
+    const char             *name; /* thats the fake arch name when chained to arch list */
+    const char             *def_at_name; /* we use it as marker for def_at is valid and quick name access */
+    struct artifactstruct  *next;
+    linked_char            *allowed;
+    archetype               def_at; /* thats the base archtype object - this is chained to arch list */
+    int                     t_style;
+    uint16                  chance;
+    uint8                   difficulty;
 } artifact;
 
-typedef struct artifactliststruct {
-	struct artifactliststruct	*next;
-	struct artifactstruct		*items;
-	uint16	total_chance;	/* sum of chance for are artifacts on this list */
-	sint16	type;			/* Object type that this list represents. 
-							 * -1 are "Allowed none" items. They are called explicit by name
-							 */
+typedef struct artifactliststruct
+{
+    struct artifactliststruct  *next;
+    struct artifactstruct      *items;
+    uint16                      total_chance;   /* sum of chance for are artifacts on this list */
+    sint16                      type;           /* Object type that this list represents. 
+                                                         * -1 are "Allowed none" items. They are called explicit by name
+                                                         */
 } artifactlist;

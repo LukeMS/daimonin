@@ -1,7 +1,7 @@
 Object experience_physical
 name physique
 type 44
-sub_type 5
+sub_type 3
 sys_object 1
 face exp.101
 no_drop 1

@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -26,32 +26,34 @@
 #ifndef PATHFINDER_H
 #define PATHFINDER_H
 
-typedef struct astar_node 
+typedef struct astar_node
 {
-    struct astar_node *next;    /* Next node in linked list */
-    struct astar_node *prev;    /* Previous node in linked list */
-    
-    struct astar_node *parent;  /* Node this was reached from */
-        
-    struct mapdef *map;
-	sint16 x;					/* X-Position in the map for this node */
-	sint16 y;					/* Y-Position in the map for this object */
-    
-    uint16 cost;                /* Cost of reaching this node (distance from origin) */
-    float heuristic;            /* Estimated cost of reaching the goal from this node */
+    struct astar_node  *next;    /* Next node in linked list */
+    struct astar_node  *prev;    /* Previous node in linked list */
+
+    struct astar_node  *parent;  /* Node this was reached from */
+
+    struct mapdef      *map;
+    sint16              x;                  /* X-Position in the map for this node */
+    sint16              y;                  /* Y-Position in the map for this object */
+
+    uint16              cost;                /* Cost of reaching this node (distance from origin) */
+    float               heuristic;            /* Estimated cost of reaching the goal from this node */
 } path_node;
 
-struct path_segment {
-    struct path_segment *next;
-    int x, y;
-    const char *map;
+struct path_segment
+{
+    struct path_segment    *next;
+    int                     x, y;
+    const char             *map;
 };
 
-extern void return_poolchunk_array_real(void *, uint32, mempool_id);
-extern void free_string_shared(const char *str);
-static inline void free_path(struct path_segment *p) 
-{ 
-    for(; p; p=p->next) {
+extern void             return_poolchunk_array_real(void *, uint32, mempool_id);
+extern void             free_string_shared(const char *str);
+static inline void free_path(struct path_segment *p)
+{
+    for (; p; p = p->next)
+    {
         free_string_shared(p->map);
         return_poolchunk(p, POOL_PATHSEGMENT);
         /* assumes poolchunk is still valid */

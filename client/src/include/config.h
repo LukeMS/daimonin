@@ -33,7 +33,7 @@
 #define LOG_FILE     "./client.log"
 
 #define CLIENT_ICON_NAME "icon.png"
- 
+
 /* socket timeout value */
 #define MAX_TIME 0
 
@@ -52,10 +52,10 @@
 
 #define MAXANIM 2000
 
-#define MAP_MAX_SIZE	17
+#define MAP_MAX_SIZE    17
 
 /* Careful when changing this, should be no need */
-#define MAX_INPUT_STRING 256				/* max. string len in input string*/
+#define MAX_INPUT_STRING 256                /* max. string len in input string*/
 #define MAX_HISTORY_LINES 20                           /* max input history lines */
 
 

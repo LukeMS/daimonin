@@ -27,6 +27,7 @@ SRCS = \
 	client.c\
 	commands.c\
 	event.c\
+	group.c\
 	inventory.c\
 	item.c\
 	main.c\

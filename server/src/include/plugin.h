@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -43,7 +43,7 @@
 
 #undef MODULEAPI
 #ifdef WIN32
-#ifdef PYTHON_PLUGIN_EXPORTS
+#ifdef LUA_PLUGIN_EXPORTS
 #define MODULEAPI __declspec(dllexport)
 #else
 #define MODULEAPI __declspec(dllimport)
@@ -52,13 +52,9 @@
 #define MODULEAPI
 #endif
 
-#include <global.h>
-
 #ifdef HAVE_TIME_H
 #include <time.h>
 #endif
-#include <../random_maps/random_map.h>
-#include <../random_maps/rproto.h>
 
 
 /*****************************************************************************/
@@ -205,7 +201,7 @@
 #define HOOK_FINDMARKEDOBJECT    61
 #define HOOK_IDENTIFYOBJECT      62
 #define HOOK_CHECKFORSKILLNAME   63
-#define HOOK_CHECKFORSKILLKNOWN	 64
+#define HOOK_FINDSKILL           64
 #define HOOK_NEWINFOMAPEXCEPT    65
 #define HOOK_INSERTOBJECTINOB    66
 #define HOOK_FIXPLAYER           67
@@ -216,8 +212,8 @@
 #define HOOK_DEPOSIT             72
 #define HOOK_WITHDRAW            73
 #define HOOK_MAPTRANSERITEMS     74
-#define HOOK_MAPSAVE			 75
-#define HOOK_MAPDELETE			 76
+#define HOOK_MAPSAVE             75
+#define HOOK_MAPDELETE           76
 
 #define NR_OF_HOOKS              77
 
@@ -230,14 +226,14 @@
 typedef struct _CFParm
 {
     int     Type[15];   /* Currently unused, but may prove useful later.     */
-    void*   Value[15];  /* The values contained in the CFParm structure.     */
+    void   *Value[15];  /* The values contained in the CFParm structure.     */
 } CFParm;
 
 
 /*****************************************************************************/
 /* Generic plugin function prototype. All hook functions follow this.        */
 /*****************************************************************************/
-typedef CFParm* (*f_plugin) (CFParm* PParm);
+typedef CFParm*(*f_plugin) (CFParm *PParm);
 
 /*****************************************************************************/
 /* CFPlugin contains all pertinent informations about one plugin. The server */
@@ -252,17 +248,36 @@ typedef CFParm* (*f_plugin) (CFParm* PParm);
 #endif
 typedef struct _CFPlugin
 {
-    f_plugin        eventfunc;          /* Event Handler function            */
-    f_plugin        initfunc;           /* Plugin Initialization function.   */
-    f_plugin        pinitfunc;          /* Plugin Post-Init. function.       */
-    f_plugin        endfunc;            /* Plugin Closing function.          */
-    f_plugin        hookfunc;           /* Plugin CF-funct. hooker function  */
-    f_plugin        propfunc;           /* Plugin getProperty function       */
-    LIBPTRTYPE      libptr;             /* Pointer to the plugin library     */
-    char            id[MAX_BUF];        /* Plugin identification string      */
-    char            fullname[MAX_BUF];  /* Plugin full name                  */
-    int             gevent[NR_EVENTS];  /* Global events registered          */
+    f_plugin    eventfunc;          /* Event Handler function            */
+    f_plugin    initfunc;           /* Plugin Initialization function.   */
+    f_plugin    pinitfunc;          /* Plugin Post-Init. function.       */
+    f_plugin    endfunc;            /* Plugin Closing function.          */
+    f_plugin    hookfunc;           /* Plugin CF-funct. hooker function  */
+    f_plugin    propfunc;           /* Plugin getProperty function       */
+    LIBPTRTYPE  libptr;             /* Pointer to the plugin library     */
+    char        id[MAX_BUF];        /* Plugin identification string      */
+    char        fullname[MAX_BUF];  /* Plugin full name                  */
+    int         gevent[NR_EVENTS];  /* Global events registered          */
 } CFPlugin;
+
+/* Test of a new, more efficient hook system */
+/* The new way to use hooks is better, because
+ * - we don't need to copy arguments to and from the CFParm structs
+ * - we can choose to call the hooked function directly instead of through a wrapper
+ * - we can still use wrappers if we want to
+ * - we get type safety and a cleaner code
+ */
+struct plugin_hooklist
+{
+    void (*LOG)(LogLevel, char *, ...);
+    char*(*create_pathname)(const char *);
+    char*(*re_cmp)(char *, char *);
+    
+    void (*new_draw_info)(int flags, int pri, object *pl, const char *buf);
+    void (*new_draw_info_format)(int flags, int pri, object *pl, char *format, ...);
+    void (*new_info_map)(int color, mapstruct *map, int x, int y, int dist, const char *str);
+    void (*new_info_map_except)(int color, mapstruct *map, int x, int y, int dist, object *op1, object *op, const char *str);
+};
 
 /*****************************************************************************/
 /* Exportable functions. Any plugin should define all those.                 */
@@ -272,15 +287,15 @@ typedef struct _CFPlugin
 /* registerHook      is used to transmit hook pointers from server to plugin.*/
 /* triggerEvent      is called whenever an event occurs.                     */
 /*****************************************************************************/
-extern MODULEAPI CFParm* initPlugin(CFParm* PParm);
-extern MODULEAPI CFParm* endPlugin(CFParm* PParm);
-extern MODULEAPI CFParm* getPluginProperty(CFParm* PParm);
-extern MODULEAPI CFParm* registerHook(CFParm* PParm);
-extern MODULEAPI CFParm* triggerEvent(CFParm* PParm);
+extern MODULEAPI CFParm    *initPlugin(CFParm *PParm);
+extern MODULEAPI CFParm    *endPlugin(CFParm *PParm);
+extern MODULEAPI CFParm    *getPluginProperty(CFParm *PParm);
+extern MODULEAPI CFParm    *registerHook(CFParm *PParm);
+extern MODULEAPI CFParm    *triggerEvent(CFParm *PParm);
 
 
 /* Table of all loaded plugins */
-extern CFPlugin PlugList[32];
-extern int PlugNR;
+extern CFPlugin             PlugList[32];
+extern int                  PlugNR;
 
 #endif /*PLUGIN_H_*/

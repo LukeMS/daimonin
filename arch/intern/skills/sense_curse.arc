@@ -6,6 +6,7 @@ face skill.101
 sys_object 1
 no_drop 1
 sp 14
+magic 4
 last_eat 1
 level 1
 exp 0

@@ -5,16 +5,21 @@
  * behaviour classes 
  */
 
-struct obj;
-struct mob_behaviour_param;
-struct behaviour_move_response;
+struct  obj;
+struct  mob_behaviour_param;
+struct  behaviour_move_response;
 typedef void (PROCESSES_behaviour_t)(struct obj *, struct mob_behaviour_param *);
 typedef void (MOVES_behaviour_t)(struct obj *, struct mob_behaviour_param *, struct behaviour_move_response *);
-typedef int (REACTION_MOVES_behaviour_t)(int, int, void *);
+typedef int (REACTION_MOVES_behaviour_t)(struct obj *, struct mob_behaviour_param *, struct behaviour_move_response *);
 typedef int (ACTIONS_behaviour_t)(struct obj *, struct mob_behaviour_param *);
 
 /* Some flags and types we can use in the declaration */
-enum {AI_INTEGER_TYPE, AI_STRING_TYPE, AI_STRINGINT_TYPE};
+enum
+{
+    AI_INTEGER_TYPE,
+    AI_STRING_TYPE,
+    AI_STRINGINT_TYPE
+};
 
 /* Attributes for parameter specifications */
 #define AI_OPTIONAL_PARAM  0 /* default: param is optional */
@@ -22,25 +27,28 @@ enum {AI_INTEGER_TYPE, AI_STRING_TYPE, AI_STRINGINT_TYPE};
 #define AI_SINGLE_PARAM    0 /* default: param can only be specified once */
 #define AI_MULTI_PARAM     2 /* param can be specified multiple times */
 
-struct behaviourparam_decl {
+struct behaviourparam_decl
+{
     const char *name;
-    int type, attribs;
-    void *defaultvalue;
+    int         type, attribs;
+    void       *defaultvalue;
 };
 
-struct behaviour_decl {
-    const char *name;
-    void *func;
-    int nrof_params;
+struct behaviour_decl
+{
+    const char                 *name;
+    void                       *func;
+    int                         nrof_params;
     struct behaviourparam_decl *params;
 };
 
-struct behaviourclass_decl {
-    const char *name;
-    struct behaviour_decl *behaviours;
+struct behaviourclass_decl
+{
+    const char                         *name;
+    struct behaviour_decl              *behaviours;
 };
 
-extern struct behaviourclass_decl behaviourclasses[];
+extern struct behaviourclass_decl   behaviourclasses[];
 
 /* This is our BDL file declaring all the behaviours */
 #define BEHAVIOUR_DECLARATION_FILE "behaviourdecl.h"
@@ -65,24 +73,27 @@ extern struct behaviourclass_decl behaviourclasses[];
 /* Declare behaviour class enum */
 #define BehaviourClass(x, y) \
     BEHAVIOURCLASS_##x, 
-typedef enum {BEHAVIOURCLASS_NONE=-1,
+typedef enum
+{
+    BEHAVIOURCLASS_NONE                     = -1,
 #include BEHAVIOUR_DECLARATION_FILE
-    NROF_BEHAVIOURCLASSES} behaviourclass_t;        
+    NROF_BEHAVIOURCLASSES
+}    behaviourclass_t;        
 
 /* Declare behaviour enums */
 #undef BehaviourClass
 #undef Behaviour    
- 
+
 #define BehaviourClass(name, behaviours) \
         enum { behaviours NROF_##name##_BEHAVIOURS};
 #define Behaviour(name, func, params) \
         AIBEHAVIOUR_##name, 
 #include BEHAVIOUR_DECLARATION_FILE
-    
+
 /* Declare behaviour parameter enums */
 #undef BehaviourClass
 #undef Behaviour    
-    
+
 #define BehaviourClass(name, behaviours) behaviours
 #define Behaviour(name, func, params) \
     enum { params  NROF_AIPARAMS_##name };

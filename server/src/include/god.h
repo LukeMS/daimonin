@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -22,11 +22,13 @@
 
     The author can be reached via e-mail to daimonin@nord-com.net
 */
-typedef struct glnk { /* Used to link together the gods */
-  const char *name;    		/* name of this god */
-  struct archt *arch;      	/* pointer to the archetype of this god */
-  int id;               	/* id of the god */ 
-  char *pantheon;      		/* the name of the group this god belongs to */
-  struct glnk *next;    
+typedef struct glnk
+{
+    /* Used to link together the gods */
+    const char     *name;           /* name of this god */
+    struct archt   *arch;       /* pointer to the archetype of this god */
+    int             id;                 /* id of the god */ 
+    char           *pantheon;           /* the name of the group this god belongs to */
+    struct glnk    *next;
 } godlink; 
 

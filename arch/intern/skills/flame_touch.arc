@@ -6,6 +6,7 @@ face skill.101
 sys_object 1
 dam 2
 last_sp 4
+magic 4
 attacktype 4
 no_drop 1
 sp 18

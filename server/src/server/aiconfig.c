@@ -23,13 +23,13 @@
 #undef BehaviourClass
 #undef Behaviour
 #undef Parameter        
-    
+
 #define INTEGER AI_INTEGER_TYPE
 #define STRING AI_INTEGER_TYPE
 #define STRINGINT AI_STRINGINT_TYPE
 #define OPTIONAL AI_OPTIONAL_PARAM
 #define MANDATORY AI_MANDATORY_PARAM
-            
+
 #define BehaviourClass(name, behaviours) behaviours
 #define Behaviour(name, func, params) \
     static struct behaviourparam_decl param_decl_ ## name[] = { params {NULL}};
@@ -41,7 +41,7 @@
 /* Generate extern declarations for behaviour callbacks */
 #undef BehaviourClass
 #undef Behaviour
-    
+
 #define BehaviourClass(name, behaviours) \
     extern name ## _behaviour_t behaviours __dummy_ ## name ## _ai_function_name;
 #define Behaviour(name, func, params) \
@@ -66,6 +66,8 @@
 #define BehaviourClass(x, y) \
     { #x, class_decl_ ## x },
 
-struct behaviourclass_decl behaviourclasses[NROF_BEHAVIOURCLASSES] = {
-#include BEHAVIOUR_DECLARATION_FILE
+struct behaviourclass_decl  behaviourclasses[NROF_BEHAVIOURCLASSES] =
+{
+    #include BEHAVIOUR_DECLARATION_FILE
+
 };

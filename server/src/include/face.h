@@ -4,7 +4,7 @@
 
     Copyright (C) 2001 Michael Toennies
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -27,24 +27,27 @@
  * face only - you can not change the color of an item - you need to instead
  * create a new face with that color.
  */
-typedef struct new_face_struct {
-    const char	*name;
-    uint16	number;		/* This is the image id.  It should be the */
-						/* same value as its position in the array */
+typedef struct new_face_struct
+{
+    const char *name;
+    uint16      number;     /* This is the image id.  It should be the */
+    /* same value as its position in the array */
 } New_Face;
 
-typedef struct map_look_struct {
-    New_Face *face;
-    uint8	flags;
+typedef struct map_look_struct
+{
+    New_Face   *face;
+    uint8       flags;
 } MapLook;
 
 
-typedef struct {
+typedef struct
+{
     const char *name;       /* Name of the animation sequence */
-    Fontindex *faces;       /* The different animations */
-    uint16 num;             /* Where we are in the array */
-    uint8 num_animations;   /* How many different faces to animate */
-    uint8 facings;          /* How many facings (9 and 25 are allowed only with the new ext anim system ) */
+    Fontindex  *faces;       /* The different animations */
+    uint16      num;             /* Where we are in the array */
+    uint8       num_animations;   /* How many different faces to animate */
+    uint8       facings;          /* How many facings (9 and 25 are allowed only with the new ext anim system ) */
 } Animations;
 
 

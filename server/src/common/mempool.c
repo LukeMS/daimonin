@@ -5,7 +5,7 @@
     Copyright (C) 2001 Michael Toennies
     Memory Management Routines Copyright (C) 2004 Björn Axelsson
 
-	A split from Crossfire, a Multiplayer game for X-windows.
+    A split from Crossfire, a Multiplayer game for X-windows.
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -36,14 +36,14 @@
 #endif /* win32 */
 
 #ifdef MEMPOOL_OBJECT_TRACKING
-	#define MEMPOOL_OBJECT_FLAG_FREE 1
-	#define MEMPOOL_OBJECT_FLAG_USED 2
-	static struct mempool_chunk *used_object_list=NULL; /* for debugging only! */
-    static uint32 chunk_tracking_id = 1;
+#define MEMPOOL_OBJECT_FLAG_FREE 1
+#define MEMPOOL_OBJECT_FLAG_USED 2
+static struct mempool_chunk    *used_object_list        = NULL; /* for debugging only! */
+static uint32                   chunk_tracking_id       = 1;
 #endif
 
 /* The removedlist is not ended by NULL, but by a pointer to the end_marker */
-struct mempool_chunk end_marker; /* only used as an end marker for the lists */
+struct mempool_chunk            end_marker; /* only used as an end marker for the lists */
 
 /* 
  * The Life Cycle of an Object:
@@ -74,38 +74,41 @@ struct mempool_chunk end_marker; /* only used as an end marker for the lists */
  * is needed for each type of struct we want to use the pooling memory management for. 
  */
 
-struct mempool mempools[NROF_MEMPOOLS] = {
-    #ifdef MEMPOOL_TRACKING
+struct mempool                  mempools[NROF_MEMPOOLS] =
+{
+#ifdef MEMPOOL_TRACKING
     { "puddles",             10, sizeof(struct puddle_info),      MEMPOOL_ALLOW_FREEING, NULL, NULL},
-    #endif    
+#endif    
     { "objects", OBJECT_EXPAND,  sizeof(object),                  0,
-        (chunk_constructor)initialize_object, (chunk_destructor)destroy_object },
-    
+    (chunk_constructor) initialize_object, (chunk_destructor) destroy_object },
     { "players",              5, sizeof(player),                  MEMPOOL_BYPASS_POOLS, NULL, NULL },
     { "map BFS nodes",       16, sizeof(struct mapsearch_node),   0, NULL, NULL },
     { "path segments",      500, sizeof(struct path_segment),     0, NULL, NULL },
-    { "mob brains",         100, sizeof(struct mobdata),          0, NULL, NULL },    
-    { "mob known objects",  100, sizeof(struct mob_known_obj),    0, NULL, NULL },        
-    { "mob behaviour sets", 100, sizeof(struct mob_behaviourset), 0, NULL, NULL },        
-    { "mob behaviours",     100, sizeof(struct mob_behaviour),    0, NULL, NULL },        
+    { "mob brains",         100, sizeof(struct mobdata),          0, NULL, NULL },
+    { "mob known objects",  100, sizeof(struct mob_known_obj),    0, NULL, NULL },
+    { "mob behaviour sets", 100, sizeof(struct mob_behaviourset), 0, NULL, NULL },
+    { "mob behaviours",     100, sizeof(struct mob_behaviour),    0, NULL, NULL },
     { "mob behaviour parameter", 100, sizeof(struct mob_behaviour_param), 0, NULL, NULL },
     { "object links",      500, sizeof(objectlink),     0, NULL, NULL }
 };
 
 /* Return the exponent exp needed to round n up to the nearest power of two, so that
  * (1 << exp) >= n and (1 << (exp -1)) < n */
-uint32 nearest_pow_two_exp(uint32 n) 
+uint32 nearest_pow_two_exp(uint32 n)
 {
     /* Lookup table generated with: 
      *  perl -e 'for($n=0; $n<=64; $n++) {for($i=0; (1 << $i) < $n; $i++) {} print "$i,";}' 
      */
-    static const uint32 exp_lookup[65] = { 0,
-        0,1,2,2,3,3,3,3,4,4,4,4,4,4,4,4,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,5,
-        6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6,6 };
-    uint32 i;
-    if(n <= 64)
+    static const uint32 exp_lookup[65]  =
+    {
+        0, 0, 1, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 5, 6, 6, 6, 6,
+        6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6
+    };
+    uint32              i;
+    if (n <= 64)
         return exp_lookup[n];
-    for(i=7; (uint32)(1 << i) < n; i++) ;
+    for (i = 7; (uint32) (1 << i) < n; i++)
+        ;
     return i;
 }
 
@@ -119,12 +122,15 @@ uint32 nearest_pow_two_exp(uint32 n)
  */
 
 /* Initialize the mempools lists and related data structures */
-void init_mempools() {
+void init_mempools()
+{
     int i, j;
-    
+
     /* Initialize end-of-list pointers and a few other values*/
-    for(i=0; i<NROF_MEMPOOLS; i++) {
-        for(j=0; j<MEMPOOL_NROF_FREELISTS; j++) {
+    for (i = 0; i < NROF_MEMPOOLS; i++)
+    {
+        for (j = 0; j < MEMPOOL_NROF_FREELISTS; j++)
+        {
             mempools[i].freelist[j] = &end_marker;
             mempools[i].nrof_free[j] = 0;
             mempools[i].nrof_allocated[j] = 0;
@@ -137,15 +143,16 @@ void init_mempools() {
 
     /* Set up container for "loose" objects */
     initialize_object(&void_container);
-	void_container.type = TYPE_VOID_CONTAINER;
+    void_container.type = TYPE_VOID_CONTAINER;
 }
 
 /* A tiny little function to set up the constructors/destructors to functions that may
  * reside outside the library */
-void setup_poolfunctions(mempool_id pool, chunk_constructor constructor, chunk_destructor destructor) {
-    if(pool >= NROF_MEMPOOLS)
+void setup_poolfunctions(mempool_id pool, chunk_constructor constructor, chunk_destructor destructor)
+{
+    if (pool >= NROF_MEMPOOLS)
         LOG(llevBug, "BUG: setup_poolfunctions for illegal memory pool %d\n", pool); 
-      
+
     mempools[pool].constructor = constructor;
     mempools[pool].destructor = destructor;
 }
@@ -158,27 +165,29 @@ void setup_poolfunctions(mempool_id pool, chunk_constructor constructor, chunk_d
  * arraysize_exp is the exponent for the array size, for example 3 for 
  * arrays of length 8 (2^3 = 8)
  */
-static void expand_mempool(mempool_id pool, uint32 arraysize_exp) {
-    uint32 i;
-	struct mempool_chunk *first, *ptr;
-    int chunksize_real;
-    int nrof_arrays;
-    
-    if(mempools[pool].nrof_free[arraysize_exp] > 0)
+static void expand_mempool(mempool_id pool, uint32 arraysize_exp)
+{
+    uint32                  i;
+    struct mempool_chunk   *first, *ptr;
+    int                     chunksize_real;
+    int                     nrof_arrays;
+
+    if (mempools[pool].nrof_free[arraysize_exp] > 0)
         LOG(llevBug, "BUG: expand_mempool called with chunks still available in pool\n"); 
 
     nrof_arrays = mempools[pool].expand_size >> arraysize_exp;
 
-    if(nrof_arrays == 0) {
+    if (nrof_arrays == 0)
+    {
         LOG(llevDebug, "WARNING: expand_mempool called with too big array size for its expand_size\n");
-        nrof_arrays=1;
+        nrof_arrays = 1;
     }
-    
-    chunksize_real = sizeof(struct mempool_chunk) + (mempools[pool].chunksize << arraysize_exp);
-    first = (struct mempool_chunk *)malloc(nrof_arrays*chunksize_real);
 
-    if(first==NULL)
-        LOG(llevError,"ERROR: expand_mempool(): Out Of Memory.\n");
+    chunksize_real = sizeof(struct mempool_chunk) + (mempools[pool].chunksize << arraysize_exp);
+    first = (struct mempool_chunk *) malloc(nrof_arrays * chunksize_real);
+
+    if (first == NULL)
+        LOG(llevError, "ERROR: expand_mempool(): Out Of Memory.\n");
 
     mempools[pool].freelist[arraysize_exp] = first;
     mempools[pool].nrof_allocated[arraysize_exp] += nrof_arrays;
@@ -186,50 +195,53 @@ static void expand_mempool(mempool_id pool, uint32 arraysize_exp) {
 
     /* Set up the linked list */
     ptr = first;
-    for(i=0;(int)i<nrof_arrays-1;i++) 
+    for (i = 0; (int) i < nrof_arrays - 1; i++)
     {
 #ifdef MEMPOOL_OBJECT_TRACKING
-		ptr->obj_next=ptr->obj_prev=0; /* secure */
-		ptr->pool_id = pool;
-		ptr->id=chunk_tracking_id++; /* this is a real, unique object id  allows tracking beyond get/free objects */
-		ptr->flags |=MEMPOOL_OBJECT_FLAG_FREE;
+        ptr->obj_next = ptr->obj_prev = 0; /* secure */
+        ptr->pool_id = pool;
+        ptr->id = chunk_tracking_id++; /* this is a real, unique object id  allows tracking beyond get/free objects */
+        ptr->flags |= MEMPOOL_OBJECT_FLAG_FREE;
 #endif
-        ptr = ptr->next = (struct mempool_chunk *)(((char *)ptr) + chunksize_real);
-	}
-		
+        ptr = ptr->next = (struct mempool_chunk *) (((char *) ptr) + chunksize_real);
+    }
+
     /* and the last element */
     ptr->next = &end_marker;
 #ifdef MEMPOOL_OBJECT_TRACKING
-		ptr->obj_next=ptr->obj_prev=0; /* secure */
-		ptr->pool_id = pool;
-		ptr->id=chunk_tracking_id++; /* this is a real, unique object id  allows tracking beyond get/free objects */
-		ptr->flags |=MEMPOOL_OBJECT_FLAG_FREE;
+    ptr->obj_next = ptr->obj_prev = 0; /* secure */
+    ptr->pool_id = pool;
+    ptr->id = chunk_tracking_id++; /* this is a real, unique object id  allows tracking beyond get/free objects */
+    ptr->flags |= MEMPOOL_OBJECT_FLAG_FREE;
 #endif
-        
-    #ifdef MEMPOOL_TRACKING
+
+#ifdef MEMPOOL_TRACKING
     /* Track the allocation of puddles? */
     {
-        struct puddle_info *p = get_poolchunk(POOL_PUDDLE);
+        struct puddle_info *p   = get_poolchunk(POOL_PUDDLE);
         p->first_chunk = first;
         p->next = mempools[pool].first_puddle_info;
         mempools[pool].first_puddle_info = p;
     }
-    #endif
+#endif
 }
 
 /* Get a chunk from the selected pool. The pool will be expanded if necessary. */
-void *get_poolchunk_array_real(mempool_id pool, uint32 arraysize_exp)
+void * get_poolchunk_array_real(mempool_id pool, uint32 arraysize_exp)
 {
-    struct mempool_chunk *new_obj;
+    struct mempool_chunk   *new_obj;
 
-    if(pool >= NROF_MEMPOOLS)
+    if (pool >= NROF_MEMPOOLS)
         LOG(llevBug, "BUG: get_poolchunk for illegal memory pool %d\n", pool); 
 
-    if(mempools[pool].flags & MEMPOOL_BYPASS_POOLS) {
+    if (mempools[pool].flags & MEMPOOL_BYPASS_POOLS)
+    {
         new_obj = malloc(sizeof(struct mempool_chunk) + (mempools[pool].chunksize << arraysize_exp));
         mempools[pool].nrof_allocated[arraysize_exp]++;
-    } else {
-        if(mempools[pool].nrof_free[arraysize_exp] == 0) 
+    }
+    else
+    {
+        if (mempools[pool].nrof_free[arraysize_exp] == 0)
             expand_mempool(pool, arraysize_exp);
         new_obj = mempools[pool].freelist[arraysize_exp];
         mempools[pool].freelist[arraysize_exp] = new_obj->next;
@@ -237,24 +249,24 @@ void *get_poolchunk_array_real(mempool_id pool, uint32 arraysize_exp)
     }
 
     new_obj->next = NULL;
-	
-    if(mempools[pool].constructor)
+
+    if (mempools[pool].constructor)
         mempools[pool].constructor(MEM_USERDATA(new_obj));
 
 #ifdef MEMPOOL_OBJECT_TRACKING
-	/* that should never happens! */
-	if(new_obj->obj_prev || new_obj->obj_next)
-	{
-		LOG(llevDebug,"WARNING:DEBUG_OBJ::get_poolchunk() object >%d< is in used_object list!!\n",  new_obj->id);
-	}
-	
-	/* put it in front of the used object list */
-	new_obj->obj_next = used_object_list;
-	if(new_obj->obj_next)
-		new_obj->obj_next->obj_prev = new_obj;
-	used_object_list = new_obj;
-	new_obj->flags &=~MEMPOOL_OBJECT_FLAG_FREE;
-	new_obj->flags |=MEMPOOL_OBJECT_FLAG_USED;
+    /* that should never happens! */
+    if (new_obj->obj_prev || new_obj->obj_next)
+    {
+        LOG(llevDebug, "WARNING:DEBUG_OBJ::get_poolchunk() object >%d< is in used_object list!!\n", new_obj->id);
+    }
+
+    /* put it in front of the used object list */
+    new_obj->obj_next = used_object_list;
+    if (new_obj->obj_next)
+        new_obj->obj_next->obj_prev = new_obj;
+    used_object_list = new_obj;
+    new_obj->flags &= ~MEMPOOL_OBJECT_FLAG_FREE;
+    new_obj->flags |= MEMPOOL_OBJECT_FLAG_USED;
 #endif
 
     return MEM_USERDATA(new_obj);
@@ -262,37 +274,40 @@ void *get_poolchunk_array_real(mempool_id pool, uint32 arraysize_exp)
 
 /* Return a chunk to the selected pool. Don't return memory to the wrong pool!
  * Returned memory will be reused, so be careful about those stale pointers */
-void return_poolchunk_array_real(void *data, uint32 arraysize_exp, mempool_id pool) 
+void return_poolchunk_array_real(void *data, uint32 arraysize_exp, mempool_id pool)
 {
-    struct mempool_chunk *old = MEM_POOLDATA(data);
-    
-    if(CHUNK_FREE(data))
-        LOG(llevBug, "BUG: return_poolchunk on already free chunk (pool %d \"%s\")\n", 
-                pool, mempools[pool].chunk_description); 
-    
-    if(pool >= NROF_MEMPOOLS)
-        LOG(llevBug, "BUG: return_poolchunk for illegal memory pool %d\n", pool); 
-    
-#ifdef MEMPOOL_OBJECT_TRACKING
-	if(old->obj_next)
-		old->obj_next->obj_prev = old->obj_prev;
-	if(old->obj_prev)
-		old->obj_prev->obj_next = old->obj_next;
-	else
-		used_object_list = old->obj_next;
+    struct mempool_chunk   *old = MEM_POOLDATA(data);
 
-	old->obj_next=old->obj_prev=0; /* secure */
-	old->flags &=~MEMPOOL_OBJECT_FLAG_USED;
-	old->flags |=MEMPOOL_OBJECT_FLAG_FREE;
+    if (CHUNK_FREE(data))
+        LOG(llevBug, "BUG: return_poolchunk on already free chunk (pool %d \"%s\")\n", pool,
+            mempools[pool].chunk_description); 
+
+    if (pool >= NROF_MEMPOOLS)
+        LOG(llevBug, "BUG: return_poolchunk for illegal memory pool %d\n", pool); 
+
+#ifdef MEMPOOL_OBJECT_TRACKING
+    if (old->obj_next)
+        old->obj_next->obj_prev = old->obj_prev;
+    if (old->obj_prev)
+        old->obj_prev->obj_next = old->obj_next;
+    else
+        used_object_list = old->obj_next;
+
+    old->obj_next = old->obj_prev = 0; /* secure */
+    old->flags &= ~MEMPOOL_OBJECT_FLAG_USED;
+    old->flags |= MEMPOOL_OBJECT_FLAG_FREE;
 #endif
 
-    if(mempools[pool].destructor)
+    if (mempools[pool].destructor)
         mempools[pool].destructor(data);
 
-    if(mempools[pool].flags & MEMPOOL_BYPASS_POOLS) {
+    if (mempools[pool].flags & MEMPOOL_BYPASS_POOLS)
+    {
         free(old);        
         mempools[pool].nrof_allocated[arraysize_exp]--;
-    } else {
+    }
+    else
+    {
         old->next = mempools[pool].freelist[arraysize_exp];
         mempools[pool].freelist[arraysize_exp] = old;
         mempools[pool].nrof_free[arraysize_exp]++;
@@ -309,72 +324,71 @@ void return_poolchunk_array_real(void *data, uint32 arraysize_exp, mempool_id po
  */
 void check_use_object_list(void)
 {
-    struct mempool_chunk *chunk;
-	
-	for(chunk = used_object_list;chunk;chunk=chunk->obj_next)
-	{
+    struct mempool_chunk   *chunk;
 
-		
+    for (chunk = used_object_list; chunk; chunk = chunk->obj_next)
+    {
 #ifdef MEMPOOL_TRACKING
-		if(chunk->pool_id == POOL_PUDDLE) /* ignore for now */
-		{
-		}
-		else
-#endif
-		if(chunk->pool_id == POOL_OBJECT)
-		{
-			object *tmp2 ,*tmp = MEM_USERDATA(chunk);
+        if (chunk->pool_id == POOL_PUDDLE) /* ignore for now */
+        {
+        }
+        else
+        #endif
+        if (chunk->pool_id == POOL_OBJECT)
+        {
+            object *tmp2, *tmp = MEM_USERDATA(chunk);
 
-			/*LOG(llevDebug,"DEBUG_OBJ:: object >%s< (%d)\n",  query_name(tmp), chunk->id);*/
+            /*LOG(llevDebug,"DEBUG_OBJ:: object >%s< (%d)\n",  query_name(tmp), chunk->id);*/
 
-			if(QUERY_FLAG(tmp, FLAG_REMOVED)) 
-				LOG(llevDebug,"VOID:DEBUG_OBJ:: object >%s< (%d) has removed flag set!\n",  query_name(tmp), chunk->id);
-			
-			if(tmp->map) /* we are on a map */
-			{
-				if(tmp->map->in_memory != MAP_IN_MEMORY)
-					LOG(llevDebug,"BUG:DEBUG_OBJ:: object >%s< (%d) has invalid map! >%d<!\n",  query_name(tmp), tmp->map->name?tmp->map->name:"NONE", chunk->id);
-				else
-				{
-					for(tmp2= get_map_ob (tmp->map, tmp->x, tmp->y); tmp2; tmp2 = tmp2->above)
-					{
-						if(tmp2 == tmp)
-							goto goto_object_found;
-					}
-						
-					LOG(llevDebug,"BUG:DEBUG_OBJ:: object >%s< (%d) has invalid map! >%d<!\n",  query_name(tmp), tmp->map->name?tmp->map->name:"NONE", chunk->id);
-				}
-					
-			}
-			else if (tmp->env)
-			{
-				/* object claims to be here... lets check it IS here */
-				for (tmp2=tmp->env->inv; tmp2; tmp2=tmp2->below) 
-				{
-					if(tmp2 == tmp)
-						goto goto_object_found;
+            if (QUERY_FLAG(tmp, FLAG_REMOVED))
+                LOG(llevDebug, "VOID:DEBUG_OBJ:: object >%s< (%d) has removed flag set!\n", query_name(tmp), chunk->id);
 
-				}
-					
-				LOG(llevDebug,"BUG:DEBUG_OBJ:: object >%s< (%d) has invalid env >%d<!\n",  query_name(tmp), query_name(tmp->env), chunk->id);
-			}
-			else /* where we are ? */
-			{
-				LOG(llevDebug,"BUG:DEBUG_OBJ:: object >%s< (%d) has no env/map\n",  query_name(tmp), chunk->id);
-			}
-		}
-		else if(chunk->pool_id == POOL_PLAYER)
-		{
-			player *tmp = MEM_USERDATA(chunk);
+            if (tmp->map) /* we are on a map */
+            {
+                if (tmp->map->in_memory != MAP_IN_MEMORY)
+                    LOG(llevDebug, "BUG:DEBUG_OBJ:: object >%s< (%d) has invalid map! >%d<!\n", query_name(tmp),
+                        tmp->map->name ? tmp->map->name : "NONE", chunk->id);
+                else
+                {
+                    for (tmp2 = get_map_ob(tmp->map, tmp->x, tmp->y); tmp2; tmp2 = tmp2->above)
+                    {
+                        if (tmp2 == tmp)
+                            goto goto_object_found;
+                    }
 
-			/*LOG(llevDebug,"DEBUG_OBJ:: player >%s< (%d)\n",  tmp->ob?query_name(tmp->ob):"NONE", chunk->id);*/
-		}
-		else
-		{
-			LOG(llevDebug,"BUG:DEBUG_OBJ: wrong pool ID! (%d - %d)",  chunk->pool_id, chunk->id);
-		}
-goto_object_found:;
-	}	
+                    LOG(llevDebug, "BUG:DEBUG_OBJ:: object >%s< (%d) has invalid map! >%d<!\n", query_name(tmp),
+                        tmp->map->name ? tmp->map->name : "NONE", chunk->id);
+                }
+            }
+            else if (tmp->env)
+            {
+                /* object claims to be here... lets check it IS here */
+                for (tmp2 = tmp->env->inv; tmp2; tmp2 = tmp2->below)
+                {
+                    if (tmp2 == tmp)
+                        goto goto_object_found;
+                }
+
+                LOG(llevDebug, "BUG:DEBUG_OBJ:: object >%s< (%d) has invalid env >%d<!\n", query_name(tmp),
+                    query_name(tmp->env), chunk->id);
+            }
+            else /* where we are ? */
+            {
+                LOG(llevDebug, "BUG:DEBUG_OBJ:: object >%s< (%d) has no env/map\n", query_name(tmp), chunk->id);
+            }
+        }
+        else if (chunk->pool_id == POOL_PLAYER)
+        {
+            player *tmp = MEM_USERDATA(chunk);
+
+            /*LOG(llevDebug,"DEBUG_OBJ:: player >%s< (%d)\n",  tmp->ob?query_name(tmp->ob):"NONE", chunk->id);*/
+        }
+        else
+        {
+            LOG(llevDebug, "BUG:DEBUG_OBJ: wrong pool ID! (%d - %d)", chunk->pool_id, chunk->id);
+        }
+        goto_object_found:;
+    }
 }
 #endif
 
@@ -415,111 +429,109 @@ goto_object_found:;
  *
  * It is permissible to sort an empty list. If first == end_marker, the returned value will also be end_marker. 
  */
-void *sort_singly_linked_list(void *p, unsigned index,
-  int (*compare)(void *, void *, void *), void *pointer, unsigned long *pcount,
-  void *end_marker)
+void * sort_singly_linked_list(void *p, unsigned index, int (*compare) (void *, void *, void *), void *pointer,
+                               unsigned long *pcount, void *end_marker)
 {
-  unsigned base;
-  unsigned long block_size;
+    unsigned base;
+    unsigned long block_size;
 
-  struct record
-  {
-    struct record *next[1];
-    /* other members not directly accessed by this function */
-  };
-
-  struct tape
-  {
-    struct record *first, *last;
-    unsigned long count;
-  } tape[4];
-
-  /* Distribute the records alternately to tape[0] and tape[1]. */
-
-  tape[0].count = tape[1].count = 0L;
-  tape[0].first = NULL;
-  base = 0;
-  while (p != end_marker)
-  {
-    struct record *next = ((struct record *)p)->next[index];
-    ((struct record *)p)->next[index] = tape[base].first;
-    tape[base].first = ((struct record *)p);
-    tape[base].count++;
-    p = next;
-    base ^= 1;
-  }
-
-  /* If the list is empty or contains only a single record, then */
-  /* tape[1].count == 0L and this part is vacuous.               */
-
-  for (base = 0, block_size = 1L; tape[base+1].count != 0L;
-    base ^= 2, block_size <<= 1)
-  {
-    int dest;
-    struct tape *tape0, *tape1;
-    tape0 = tape + base;
-    tape1 = tape + base + 1;
-    dest = base ^ 2;
-    tape[dest].count = tape[dest+1].count = 0;
-    for (; tape0->count != 0; dest ^= 1)
+    struct record
     {
-      unsigned long n0, n1;
-      struct tape *output_tape = tape + dest;
-      n0 = n1 = block_size;
-      while (1)
-      {
-        struct record *chosen_record;
-        struct tape *chosen_tape;
-        if (n0 == 0 || tape0->count == 0)
-        {
-          if (n1 == 0 || tape1->count == 0)
-            break;
-          chosen_tape = tape1;
-          n1--;
-        }
-        else if (n1 == 0 || tape1->count == 0)
-        {
-          chosen_tape = tape0;
-          n0--;
-        }
-        else if ((*compare)(tape0->first, tape1->first, pointer) > 0)
-        {
-          chosen_tape = tape1;
-          n1--;
-        }
-        else
-        {
-          chosen_tape = tape0;
-          n0--;
-        }
-        chosen_tape->count--;
-        chosen_record = chosen_tape->first;
-        chosen_tape->first = chosen_record->next[index];
-        if (output_tape->count == 0)
-          output_tape->first = chosen_record;
-        else
-          output_tape->last->next[index] = chosen_record;
-        output_tape->last = chosen_record;
-        output_tape->count++;
-      }
-    }
-  }
+        struct record  *next[1];
+        /* other members not directly accessed by this function */
+    };
 
-  if (tape[base].count > 1L)
-    tape[base].last->next[index] = end_marker;
-  if (pcount != NULL)
-    *pcount = tape[base].count;
-  return tape[base].first;
+    struct tape
+    {
+        struct record  *first, *last;
+        unsigned long   count;
+    } tape[4];
+
+    /* Distribute the records alternately to tape[0] and tape[1]. */
+
+    tape[0].count = tape[1].count = 0L;
+    tape[0].first = NULL;
+    base = 0;
+    while (p != end_marker)
+    {
+        struct record  *next    = ((struct record *) p)->next[index];
+        ((struct record *) p)->next[index] = tape[base].first;
+        tape[base].first = ((struct record *) p);
+        tape[base].count++;
+        p = next;
+        base ^= 1;
+    }
+
+    /* If the list is empty or contains only a single record, then */
+    /* tape[1].count == 0L and this part is vacuous.               */
+
+    for (base = 0, block_size = 1L; tape[base + 1].count != 0L; base ^= 2, block_size <<= 1)
+    {
+        int             dest;
+        struct tape    *tape0, *tape1;
+        tape0 = tape + base;
+        tape1 = tape + base + 1;
+        dest = base ^ 2;
+        tape[dest].count = tape[dest + 1].count = 0;
+        for (; tape0->count != 0; dest ^= 1)
+        {
+            unsigned long n0, n1;
+            struct tape    *output_tape = tape + dest;
+            n0 = n1 = block_size;
+            while (1)
+            {
+                struct record  *chosen_record;
+                struct tape    *chosen_tape;
+                if (n0 == 0 || tape0->count == 0)
+                {
+                    if (n1 == 0 || tape1->count == 0)
+                        break;
+                    chosen_tape = tape1;
+                    n1--;
+                }
+                else if (n1 == 0 || tape1->count == 0)
+                {
+                    chosen_tape = tape0;
+                    n0--;
+                }
+                else if ((*compare) (tape0->first, tape1->first, pointer) > 0)
+                {
+                    chosen_tape = tape1;
+                    n1--;
+                }
+                else
+                {
+                    chosen_tape = tape0;
+                    n0--;
+                }
+                chosen_tape->count--;
+                chosen_record = chosen_tape->first;
+                chosen_tape->first = chosen_record->next[index];
+                if (output_tape->count == 0)
+                    output_tape->first = chosen_record;
+                else
+                    output_tape->last->next[index] = chosen_record;
+                output_tape->last = chosen_record;
+                output_tape->count++;
+            }
+        }
+    }
+
+    if (tape[base].count > 1L)
+        tape[base].last->next[index] = end_marker;
+    if (pcount != NULL)
+        *pcount = tape[base].count;
+    return tape[base].first;
 }
 
 /* Comparision function for sort_singly_linked_list */
 static int sort_puddle_by_nrof_free(void *a, void *b, void *args)
 {
-    if(((struct puddle_info *)a)->nrof_free < ((struct puddle_info *)b)->nrof_free)
+    if (((struct puddle_info *) a)->nrof_free < ((struct puddle_info *) b)->nrof_free)
         return -1;
-    else if(((struct puddle_info *)a)->nrof_free > ((struct puddle_info *)b)->nrof_free)
+    else if (((struct puddle_info *) a)->nrof_free > ((struct puddle_info *) b)->nrof_free)
         return 1;
-    else 
+    else
         return 0;
 }
 
@@ -603,13 +615,13 @@ void free_empty_puddles(mempool_id pool)
             puddle->last_free->next = &end_marker;
             last_free = puddle->last_free;
         }
-		        
+                
         LOG(llevDebug,"%d ", puddle->nrof_free);
     }
     LOG(llevDebug,"\n");
     
     LOG(llevInfo,"Freed %d %s puddles\n", freed, mempools[pool].chunk_description);
 #endif
-    LOG(llevInfo,"Memory recovery temporarily disabled\n");
+    LOG(llevInfo, "Memory recovery temporarily disabled\n");
 }
 #endif
