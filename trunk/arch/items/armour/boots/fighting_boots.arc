@@ -1,13 +1,14 @@
-Object low_boots
-name low boots
-face low_boots.101
+Object fighting_boots
+name fighting boots
+face fighting_boots.101
 layer 3
-value 40
-weight 450
-protect_pierce 4
+item_level 3
+value 120
+weight 550
+protect_pierce 3
 protect_impact 4
 protect_cleave 4
-protect_slash 4
+protect_slash 7
 is_vul_acid 1
 is_vul_elemental 1
 is_vul_magic 1
