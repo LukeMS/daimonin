@@ -1050,7 +1050,6 @@ void esrv_move_object (object *pl, tag_t to, tag_t tag, long nrof)
     }
 
     if (!to) {	/* drop it to the ground */
-/*	printf ("Drop it on the ground.\n");*/
 
 	if (op->map && !op->env) {
 /*	    LOG(llevDebug,"Dropping object to ground that is already on ground\n");*/
@@ -1061,6 +1060,7 @@ void esrv_move_object (object *pl, tag_t to, tag_t tag, long nrof)
 	 */
 	if (op->inv && QUERY_FLAG(op, FLAG_APPLIED)) {
 	    object *current, *next;
+		/*LOG(-1,"applied container...\n");*/
 	    for (current=op->inv; current!=NULL; current=next) {
 		next=current->below;
 		drop_object(pl, current, 0);
@@ -1068,6 +1068,7 @@ void esrv_move_object (object *pl, tag_t to, tag_t tag, long nrof)
 	    esrv_update_item(UPD_WEIGHT, pl, op);
 	}
 	else {
+	/*	LOG(-1,"unapplied container...\n");*/
 	    drop_object (pl, op, nrof);
 	}
 	return;
@@ -1076,6 +1077,7 @@ void esrv_move_object (object *pl, tag_t to, tag_t tag, long nrof)
 	if (op->env == pl) return;
 
 	pl->contr->count = nrof;
+	/*LOG(-1,"pick up...\n");*/
 	pick_up(pl, op);
 	return ;
     }
@@ -1094,6 +1096,7 @@ void esrv_move_object (object *pl, tag_t to, tag_t tag, long nrof)
      * an make sure env is in fact a container for that matter.
      */
     if (env->type == CONTAINER && can_pick(pl, op) && sack_can_hold(pl, env, op, nrof)) {
+	/*LOG(-1,"put in sack...\n");*/
 	put_object_in_sack (pl, env, op, nrof);
     }
 }

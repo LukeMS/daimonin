@@ -62,6 +62,8 @@ void emergency_save(int flag) {
 	pl->ob->x = -1;
 	pl->ob->y = -1;
     }
+	if(pl->ob && pl->ob->container)
+		esrv_apply_container (pl->ob, pl->ob->container);
     if(!save_player(pl->ob,flag)) {
       LOG(llevSystem, "(failed) ");
       new_draw_info(NDI_UNIQUE, 0,pl->ob,"Emergency save failed, checking score...");

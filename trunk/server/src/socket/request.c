@@ -503,7 +503,7 @@ void MoveCmd(char *buf, int len,player *pl)
     }
     vals[2]=atoi(buf);
 
-/*    LOG(llevDebug,"Move item %d (nrof=%d) to %d.\n", vals[1], vals[2], vals[0]);*/
+/*   LOG(llevDebug,"Move item %d (nrof=%d) to %d.\n", vals[1], vals[2], vals[0]);*/
     esrv_move_object(pl->ob,vals[0], vals[1], vals[2]);
 }
 

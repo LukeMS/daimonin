@@ -491,7 +491,7 @@ static PyObject* CFGetMessage(PyObject* self, PyObject* args)
     {
         if (strlen(WHO->msg)>=4096)
         {
-            printf("Warning ! Buffer overflow - The message will be truncated\n");
+            LOG(llevDebug,"Warning ! Buffer overflow - The message will be truncated\n");
             strncpy(buf, WHO->msg, 4096);
             buf[4095]=0x0;
         }
@@ -604,12 +604,12 @@ static PyObject* CFSetWeight(PyObject* self, PyObject* args)
     /* I used an arbitrary bound of 32000 here */
     if (value > 32000)
     {
-        printf( "SetWeight: Value must be lower than 32000\n");
+        LOG(llevDebug, "SetWeight: Value must be lower than 32000\n");
         return NULL;
     }
     else if (value < 0)
     {
-        printf( "(set-weight): Value must be greater than 0\n");
+        LOG(llevDebug, "(set-weight): Value must be greater than 0\n");
         return NULL;
     };
     WHO->weight = value;
@@ -637,14 +637,14 @@ static PyObject* CFReadyMap(PyObject* self, PyObject* args)
     GCFP.Value[0] = (void *)(mapname);
     GCFP.Value[1] = (void *)(&val);
 
-    printf( "Ready to call readymapname with %s %i\n",
+    LOG(llevDebug, "Ready to call readymapname with %s %i\n",
         (char *)(GCFP.Value[0]),
         *(int *)(GCFP.Value[1])
     );
     /* mymap = ready_map_name(mapname,0); */
     CFR = (PlugHooks[HOOK_READYMAPNAME])(&GCFP);
     mymap = (mapstruct *)(CFR->Value[0]);
-    printf( "Map file is %s\n",mymap->path);
+    LOG(llevDebug, "Map file is %s\n",mymap->path);
     free(CFR);
     return Py_BuildValue("l",(long)(mymap));
 };
@@ -727,7 +727,7 @@ static PyObject* CFGetWeight(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
-    printf( "GetWeight: requested target is %s\n", query_name(WHO));
+    LOG(llevDebug, "GetWeight: requested target is %s\n", query_name(WHO));
     return Py_BuildValue("l",WHO->weight);
 };
 
@@ -861,7 +861,7 @@ static PyObject* CFGetFirstObjectOnSquare(PyObject* self, PyObject* args)
     GCFP.Value[2] = (void *)(&y);
     CFR = (PlugHooks[HOOK_GETMAPOBJECT])(&GCFP);
     val = (object *)(CFR->Value[0]);
-    printf( "First object is known by %s\n",query_name(val));
+    LOG(llevDebug, "First object is known by %s\n",query_name(val));
     free(CFR);
     return Py_BuildValue("l",(long)(val));
 };
@@ -883,12 +883,12 @@ static PyObject* CFSetQuantity(PyObject* self, PyObject* args)
     /* I used an arbitrary bound of 100k here */
     if (value > 100000)
     {
-        printf( "(set-quantity): Value must be lower than 100000\n");
+        LOG(llevDebug, "(set-quantity): Value must be lower than 100000\n");
         return NULL;
     }
     else if (value < 0)
     {
-        printf( "(set-quantity): Value must be greater than 0\n");
+        LOG(llevDebug, "(set-quantity): Value must be greater than 0\n");
         return NULL;
     };
     WHAT->nrof = value;
@@ -1260,7 +1260,7 @@ static PyObject* CFSetRank(PyObject* self, PyObject* args)
             return Py_BuildValue("l",(long) (walk));
         }            
     }
-    printf("Python Warning -> SetRank: Object %s has no rank_force!\n", query_name(who));
+    LOG(llevDebug,"Python Warning -> SetRank: Object %s has no rank_force!\n", query_name(who));
 
     Py_INCREF(Py_None);
     return Py_None;
@@ -1293,7 +1293,7 @@ static PyObject* CFSetAlignment(PyObject* self, PyObject* args)
             return Py_BuildValue("l",(long) (walk));
         }            
     }
-    printf("Python Warning -> SetAlignment: Object %s has no alignment_force!\n", query_name(who));
+    LOG(llevDebug,"Python Warning -> SetAlignment: Object %s has no alignment_force!\n", query_name(who));
     Py_INCREF(Py_None);
     return Py_None;
 };
@@ -1317,7 +1317,7 @@ static PyObject* CFGetAlignmentForce(PyObject* self, PyObject* args)
         if (!strcmp(walk->name,"ALIGNMENT_FORCE")  && !strcmp(walk->arch->name,"alignment_force"))
             return Py_BuildValue("l",(long) (walk));
     }
-    printf("Python Warning -> GetAlignmentForce: Object %s has no aligment_force!\n", query_name(WHO));
+    LOG(llevDebug,"Python Warning -> GetAlignmentForce: Object %s has no aligment_force!\n", query_name(WHO));
     Py_INCREF(Py_None);
     return Py_None;
 };
@@ -1356,7 +1356,7 @@ static PyObject* CFSetGuildForce(PyObject* self, PyObject* args)
             return Py_BuildValue("l",(long) (walk));
         }            
     }
-    printf("Python Warning -> SetGuild: Object %s has no guild_force!\n", query_name(who));
+    LOG(llevDebug,"Python Warning -> SetGuild: Object %s has no guild_force!\n", query_name(who));
     Py_INCREF(Py_None);
     return Py_None;
 }
@@ -1380,7 +1380,7 @@ static PyObject* CFGetGuildForce(PyObject* self, PyObject* args)
         if (!strcmp(walk->name,"GUILD_FORCE") && !strcmp(walk->arch->name,"guild_force"))
             return Py_BuildValue("l",(long) (walk));
     }
-    printf("Python Warning -> GetGuild: Object %s has no guild_force!\n", query_name(WHO));
+    LOG(llevDebug,"Python Warning -> GetGuild: Object %s has no guild_force!\n", query_name(WHO));
     Py_INCREF(Py_None);
     return Py_None;
 };
@@ -1892,7 +1892,7 @@ static PyObject* CFKillObject(PyObject* self, PyObject* args)
 
     if(QUERY_FLAG(WHAT,FLAG_REMOVED))
     {
-        printf( "Warning (from KillObject): Trying to remove removed object\n");
+        LOG(llevDebug, "Warning (from KillObject): Trying to remove removed object\n");
         return NULL;
     }
     else
@@ -2308,7 +2308,7 @@ static PyObject* CFCreatePlayerForce(PyObject* self, PyObject* args)
     
     if(!myob)
     {
-        printf("Python WARNING:: CreatePlayerForce: Can't find archtype 'player_force'\n");
+        LOG(llevDebug,"Python WARNING:: CreatePlayerForce: Can't find archtype 'player_force'\n");
         return NULL;
     }
     
@@ -2356,7 +2356,7 @@ static PyObject* CFCreatePlayerInfo(PyObject* self, PyObject* args)
     
     if(!myob)
     {
-        printf("Python WARNING:: CreatePlayerInfo: Cant't find archtype 'player_info'\n");
+        LOG(llevDebug,"Python WARNING:: CreatePlayerInfo: Cant't find archtype 'player_info'\n");
         return NULL;
     }
     
@@ -2468,7 +2468,7 @@ static PyObject* CFCreateInvisibleInside(PyObject* self, PyObject* args)
 
     if(!myob)
     {
-        printf("Python WARNING:: CFCreateInvisibleInside: Can't find archtype 'force'\n");
+        LOG(llevDebug,"Python WARNING:: CFCreateInvisibleInside: Can't find archtype 'force'\n");
         return NULL;
     }
     myob->speed = 0.0;
@@ -2523,7 +2523,7 @@ static PyObject* CFCreateObjectInside(PyObject* self, PyObject* args)
 
 	if(!myob)
 	{
-		printf("BUG python_CFCreateObjectInside(): ob:>%s< = NULL!\n", query_name(myob));
+		LOG(llevDebug,"BUG python_CFCreateObjectInside(): ob:>%s< = NULL!\n", query_name(myob));
 	    GCFP.Value[0] = "singluarity";
 		CFR = (PlugHooks[HOOK_GETARCHETYPE])(&GCFP);
 		myob = (object *)(CFR->Value[0]);
@@ -2532,7 +2532,7 @@ static PyObject* CFCreateObjectInside(PyObject* self, PyObject* args)
 	
     if (myob->name && !strncmp(myob->name, "singluarity",11))
     {
-		printf("BUG python_CFCreateObjectInside(): FAILED TO CREATE: >%s< = singluarity!\n", query_name(myob));
+		LOG(llevDebug,"BUG python_CFCreateObjectInside(): FAILED TO CREATE: >%s< = singluarity!\n", query_name(myob));
 		/*
 		GCFP.Value[0] = (void *)(myob);
 		(PlugHooks[HOOK_FREEOBJECT])(&GCFP);
@@ -4517,7 +4517,7 @@ static PyObject* CFGetIP(PyObject* self, PyObject* args)
     }
     else
     {
-        printf( "PYTHON - Error - This object has no controller\n");
+        LOG(llevDebug, "PYTHON - Error - This object has no controller\n");
         return Py_BuildValue("s","");
     };
 };
@@ -4573,7 +4573,7 @@ static PyObject* CFRegisterCommand(PyObject* self, PyObject* args)
         {
             if (!strcmp(CustomCommand[i].name,cmdname))
             {
-                printf( "PYTHON - This command is already registered !\n");
+                LOG(llevDebug, "PYTHON - This command is already registered !\n");
                 return NULL;
             }
         }
@@ -4799,11 +4799,11 @@ MODULEAPI CFParm* triggerEvent(CFParm* PParm)
 
     
     eventcode = *(int *)(PParm->Value[0]);
-    printf( "PYTHON - triggerEvent:: eventcode %d\n",eventcode);
+    LOG(llevDebug, "PYTHON - triggerEvent:: eventcode %d\n",eventcode);
     switch(eventcode)
     {
         case EVENT_NONE:
-            printf( "PYTHON - Warning - EVENT_NONE requested\n");
+            LOG(llevDebug, "PYTHON - Warning - EVENT_NONE requested\n");
             break;
         case EVENT_ATTACK:
         case EVENT_APPLY:
@@ -4845,7 +4845,7 @@ MODULEAPI int HandleGlobalEvent(CFParm* PParm)
 
     if (StackPosition == MAX_RECURSIVE_CALL)
     {
-        printf( "Can't execute script - No space left of stack\n");
+        LOG(llevDebug, "Can't execute script - No space left of stack\n");
         return 0;
     };
 
@@ -4854,11 +4854,11 @@ MODULEAPI int HandleGlobalEvent(CFParm* PParm)
     switch(*(int *)(PParm->Value[0]))
     {
         case EVENT_CRASH:
-            printf( "Unimplemented for now\n");
+            LOG(llevDebug, "Unimplemented for now\n");
             break;
         case EVENT_BORN:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
-            /*printf( "Event BORN generated by %s\n",query_name(StackActivator[StackPosition])); */
+            /*LOG(llevDebug, "Event BORN generated by %s\n",query_name(StackActivator[StackPosition])); */
             Scriptfile = fopen(create_pathname("python/python_born.py"),"r");
             if (Scriptfile != NULL)
             {
@@ -4870,8 +4870,8 @@ MODULEAPI int HandleGlobalEvent(CFParm* PParm)
             StackActivator[StackPosition] = ((player *)(PParm->Value[1]))->ob;
             StackWho[StackPosition] = ((player *)(PParm->Value[1]))->ob;
             StackText[StackPosition] = (char *)(PParm->Value[2]);
-            /*printf( "Event LOGIN generated by %s\n",query_name(StackActivator[StackPosition])); */
-            /*printf( "IP is %s\n", (char *)(PParm->Value[2])); */
+            /*LOG(llevDebug, "Event LOGIN generated by %s\n",query_name(StackActivator[StackPosition])); */
+            /*LOG(llevDebug, "IP is %s\n", (char *)(PParm->Value[2])); */
             Scriptfile = fopen(create_pathname("python/python_login.py"),"r");
             if (Scriptfile != NULL)
             {
@@ -4884,7 +4884,7 @@ MODULEAPI int HandleGlobalEvent(CFParm* PParm)
             StackActivator[StackPosition] = ((player *)(PParm->Value[1]))->ob;
             StackWho[StackPosition] = ((player *)(PParm->Value[1]))->ob;
             StackText[StackPosition] = (char *)(PParm->Value[2]);
-            /*printf( "Event LOGOUT generated by %s\n",query_name(StackActivator[StackPosition])); */
+            /*LOG(llevDebug, "Event LOGOUT generated by %s\n",query_name(StackActivator[StackPosition])); */
             Scriptfile = fopen(create_pathname("python/python_logout.py"),"r");
             if (Scriptfile != NULL)
             {
@@ -4894,7 +4894,7 @@ MODULEAPI int HandleGlobalEvent(CFParm* PParm)
             break;
         case EVENT_REMOVE:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
-            /*printf( "Event REMOVE generated by %s\n",query_name(StackActivator[StackPosition])); */
+            /*LOG(llevDebug, "Event REMOVE generated by %s\n",query_name(StackActivator[StackPosition])); */
 
             Scriptfile = fopen(create_pathname("python/python_remove.py"),"r");
             if (Scriptfile != NULL)
@@ -4906,9 +4906,9 @@ MODULEAPI int HandleGlobalEvent(CFParm* PParm)
         case EVENT_SHOUT:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
             StackText[StackPosition] = (char *)(PParm->Value[2]);
-            /*printf( "Event SHOUT generated by %s\n",query_name(StackActivator[StackPosition])); */
+            /*LOG(llevDebug, "Event SHOUT generated by %s\n",query_name(StackActivator[StackPosition])); */
 
-            /*printf( "Message shout is %s\n",StackText[StackPosition]); */
+            /*LOG(llevDebug, "Message shout is %s\n",StackText[StackPosition]); */
             Scriptfile = fopen(create_pathname("python/python_shout.py"),"r");
             if (Scriptfile != NULL)
             {
@@ -4918,7 +4918,7 @@ MODULEAPI int HandleGlobalEvent(CFParm* PParm)
             break;
         case EVENT_MAPENTER:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
-            /*printf( "Event MAPENTER generated by %s\n",query_name(StackActivator[StackPosition])); */
+            /*LOG(llevDebug, "Event MAPENTER generated by %s\n",query_name(StackActivator[StackPosition])); */
 
             Scriptfile = fopen(create_pathname("python/python_mapenter.py"),"r");
             if (Scriptfile != NULL)
@@ -4929,7 +4929,7 @@ MODULEAPI int HandleGlobalEvent(CFParm* PParm)
             break;
         case EVENT_MAPLEAVE:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
-            /*printf( "Event MAPLEAVE generated by %s\n",query_name(StackActivator[StackPosition])); */
+            /*LOG(llevDebug, "Event MAPLEAVE generated by %s\n",query_name(StackActivator[StackPosition])); */
 
             Scriptfile = fopen(create_pathname("python/python_mapleave.py"),"r");
             if (Scriptfile != NULL)
@@ -4939,7 +4939,7 @@ MODULEAPI int HandleGlobalEvent(CFParm* PParm)
             }
             break;
         case EVENT_CLOCK:
-            /* printf( "Event CLOCK generated\n"); */
+            /* LOG(llevDebug, "Event CLOCK generated\n"); */
             Scriptfile = fopen(create_pathname("/python/python_clock.py"),"r");
             if (Scriptfile != NULL)
             {
@@ -4949,7 +4949,7 @@ MODULEAPI int HandleGlobalEvent(CFParm* PParm)
             break;
         case EVENT_MAPRESET:
             StackText[StackPosition] = (char *)(PParm->Value[1]);/* Map name/path */
-            printf( "Event MAPRESET generated by %s\n", StackText[StackPosition]);
+            LOG(llevDebug, "Event MAPRESET generated by %s\n", StackText[StackPosition]);
 
             Scriptfile = fopen(create_pathname("python/python_mapreset.py"),"r");
             if (Scriptfile != NULL)
@@ -4981,7 +4981,7 @@ MODULEAPI int HandleEvent(CFParm* PParm)
 #endif
     if (StackPosition == MAX_RECURSIVE_CALL)
     {
-        printf( "PYTHON - Can't execute script - No space left of stack\n");
+        LOG(llevDebug, "PYTHON - Can't execute script - No space left of stack\n");
         return 0;
     };
     StackPosition++;
@@ -4998,20 +4998,20 @@ MODULEAPI int HandleEvent(CFParm* PParm)
     Scriptfile = fopen(create_pathname((char *)(PParm->Value[9])),"r");
     if (Scriptfile == NULL)
     {
-        printf( "PYTHON - The Script file %s can't be opened\n",(char *)(PParm->Value[9]));
+        LOG(llevDebug, "PYTHON - The Script file %s can't be opened\n",(char *)(PParm->Value[9]));
         return 0;
     };
 #ifdef PYTHON_DEBUG
-    printf( "PYTHON:: PyRun_SimpleFile! ");
+    LOG(llevDebug, "PYTHON:: PyRun_SimpleFile! ");
 #endif
     PyRun_SimpleFile(Scriptfile, create_pathname((char *)(PParm->Value[9])));
 #ifdef PYTHON_DEBUG
-    printf( "closing (%d). ",StackPosition);
+    LOG(llevDebug, "closing (%d). ",StackPosition);
 #endif
     fclose(Scriptfile);
 
 #ifdef PYTHON_DEBUG
-    printf( "fixing. ");
+    LOG(llevDebug, "fixing. ");
 #endif
 
     if (StackParm4[StackPosition] == SCRIPT_FIX_ALL)
@@ -5029,7 +5029,7 @@ MODULEAPI int HandleEvent(CFParm* PParm)
     };
     StackPosition--;
 #ifdef PYTHON_DEBUG
-    printf( "done (%d)!\n",StackReturn[StackPosition]);
+    LOG(llevDebug, "done (%d)!\n",StackReturn[StackPosition]);
 #endif
     return StackReturn[StackPosition];
 };
@@ -5045,10 +5045,10 @@ MODULEAPI int HandleEvent(CFParm* PParm)
 /*****************************************************************************/
 MODULEAPI CFParm* initPlugin(CFParm* PParm)
 {
-    printf("    CFPython Plugin loading.....\n");
+    LOG(llevDebug,"    CFPython Plugin loading.....\n");
     Py_Initialize();
     initCFPython();
-    printf( "[Done]\n");
+    LOG(llevDebug, "[Done]\n");
     GCFP.Value[0] = (void *) add_string(PLUGIN_NAME);
     GCFP.Value[1] = (void *) add_string(PLUGIN_VERSION);
     return &GCFP;
@@ -5089,7 +5089,7 @@ MODULEAPI CFParm* getPluginProperty(CFParm* PParm)
                     {
                         if (!strcmp(CustomCommand[i].name,(char *)(PParm->Value[1])))
                         {
-                            printf( "PYTHON - Running command %s\n",CustomCommand[i].name);
+                            LOG(llevDebug, "PYTHON - Running command %s\n",CustomCommand[i].name);
                             GCFP.Value[0] = PParm->Value[1];
                             GCFP.Value[1] = cmd_customPython;
                             GCFP.Value[2] = &(CustomCommand[i].speed);
@@ -5102,7 +5102,7 @@ MODULEAPI CFParm* getPluginProperty(CFParm* PParm)
         }
         else
         {
-            printf( "PYTHON - Unknown property tag: %s\n",(char *)(PParm->Value[0]));
+            LOG(llevDebug, "PYTHON - Unknown property tag: %s\n",(char *)(PParm->Value[0]));
         };
     };
     return NULL;
@@ -5112,11 +5112,11 @@ MODULEAPI int cmd_customPython(object *op, char *params)
 {
     FILE* Scriptfile;
 #ifdef PYTHON_DEBUG
-    printf( "PYTHON - cmd_customPython called:: script file: %s\n",CustomCommand[NextCustomCommand].script);
+    LOG(llevDebug, "PYTHON - cmd_customPython called:: script file: %s\n",CustomCommand[NextCustomCommand].script);
 #endif
     if (StackPosition == MAX_RECURSIVE_CALL)
     {
-        printf( "PYTHON - Can't execute script - No space left of stack\n");
+        LOG(llevDebug, "PYTHON - Can't execute script - No space left of stack\n");
         return 0;
     };
     StackPosition++;
@@ -5128,7 +5128,7 @@ MODULEAPI int cmd_customPython(object *op, char *params)
     Scriptfile = fopen(create_pathname(CustomCommand[NextCustomCommand].script),"r");
     if (Scriptfile == NULL)
     {
-        printf( "PYTHON - The Script file %s can't be opened\n",CustomCommand[NextCustomCommand].script);
+        LOG(llevDebug, "PYTHON - The Script file %s can't be opened\n",CustomCommand[NextCustomCommand].script);
         return 0;
     };
     PyRun_SimpleFile(Scriptfile, create_pathname(CustomCommand[NextCustomCommand].script));
@@ -5168,7 +5168,7 @@ MODULEAPI CFParm* postinitPlugin(CFParm* PParm)
     /* Registering them as local would be probably useful*/
     /* for extended logging facilities.                  */
 
-    printf( "PYTHON - Start postinitPlugin.\n");
+    LOG(llevDebug, "PYTHON - Start postinitPlugin.\n");
     
     GCFP.Value[1] = (void *)(add_string(PLUGIN_NAME));
 	/*
@@ -5224,7 +5224,7 @@ MODULEAPI void initCFPython()
         PyObject *m, *d;
         int i;
 
-        printf( "PYTHON - Start initCFPython.\n");
+        LOG(llevDebug, "PYTHON - Start initCFPython.\n");
         
         m = Py_InitModule("CFPython", CFPythonMethods);
         d = PyModule_GetDict(m);

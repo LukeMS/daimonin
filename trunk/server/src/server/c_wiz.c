@@ -100,6 +100,8 @@ int command_kick (object *op, char *params)
 			     "%s is kicked out of the game.",op->name);
 	strcpy(op->contr->killer,"left");
 	check_score(op); /* Always check score */
+	if(op->container)
+		esrv_apply_container (op, op->container);
 	(void)save_player(op,0);
 	play_again(op);
 	op->map->players--;
@@ -143,6 +145,8 @@ int command_shutdown(object *op, char *params)
      */
     command_kick(op,NULL);
     check_score(op); /* Always check score */
+	if(op->container)
+		esrv_apply_container (op, op->container);
     (void)save_player(op,0);
     play_again(op);
     cleanup();
