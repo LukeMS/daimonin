@@ -298,6 +298,7 @@ extern void             free_all_recipes(void);
 /* shstr.c */
 extern void             init_hash_table(void);
 extern const char      *add_string(const char *str);
+extern const char      *add_lstring(const char *str, int n);
 extern int              query_refcount(const char *str);
 extern const char      *find_string(const char *str);
 extern const char      *add_refcount(const char *str);

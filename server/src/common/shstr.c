@@ -102,7 +102,7 @@ void init_hash_table()
  * Hashing-function used by the shared string library.
  */
 
-static int hashstr(const char *str)
+static int hashstr(const char *str, int n)
 {
     unsigned long hash = 0;
     int         i = 0, rot = 0;
@@ -110,7 +110,7 @@ static int hashstr(const char *str)
 
     GATHER(hash_stats.calls);
 
-    for (p = str; i < MAXSTRING && *p; p++, i++)
+    for (p = str; i < n && *p; p++, i++)
     {
         hash ^= (unsigned long) * p << rot;
         rot += 2;
@@ -125,7 +125,7 @@ static int hashstr(const char *str)
  * the string str.
  */
 
-static shared_string * new_shared_string(const char *str)
+static shared_string * new_shared_string(const char *str, int n)
 {
     shared_string  *ss;
 
@@ -133,14 +133,119 @@ static shared_string * new_shared_string(const char *str)
      * that some bytes for the string are already allocated in the 
      * shared_string struct.
      */
-    ss = (shared_string *) malloc(sizeof(shared_string) - PADDING + strlen(str) + 1);
+    ss = (shared_string *) malloc(sizeof(shared_string) - PADDING + n + 1);
     ss->u.previous = NULL;
     ss->next = NULL;
     ss->refcount = 1;
     /*LOG(llevDebug,"SS: >%s< #%d - new\n",str,ss->refcount& ~TOPBIT);*/
-    strcpy(ss->string, str);
+    memcpy(ss->string, str, n);
+    ss->string[n] = '\0';
 
     return ss;
+}
+
+/*
+ * Description:
+ *      This will add 'str' to the hash table. If there's no entry for this
+ *      string, a copy will be allocated, and a pointer to that is returned.
+ *      Only n characters will be added, and a NULL char will be added at the
+ *      end of the string. 
+ *      This function is useful for adding parts of other buffers.
+ * Return values:
+ *      - pointer to string identical to str
+ */
+
+const char * add_lstring(const char *str, int n)
+{
+    shared_string  *ss;
+    int             ind;
+
+    GATHER(add_stats.calls);
+
+    /* Should really core dump here, since functions should not be calling
+     * add_string with a null parameter.  But this will prevent a few
+     * core dumps.
+     */
+    if (str == NULL)
+    {
+        LOG(llevBug, "BUG: add_string(): try to add null string to hash table\n");  
+        return NULL;
+    }
+    ind = hashstr(str, n);
+    ss = hash_table[ind];
+
+    /* Is there an entry for that hash?
+     */
+    if (ss)
+    {
+        /* Simple case first: See if the first pointer matches.
+         */
+        if (str != ss->string)
+        {
+            GATHER(add_stats.strcmps);
+            if (strncmp(ss->string, str, n) || strlen(ss->string) != n)
+            {
+                /* Apparantly, a string with the same hash value has this 
+                     * slot. We must see in the list if "str" has been 
+                     * registered earlier.
+                     */
+                while (ss->next)
+                {
+                    GATHER(add_stats.search);
+                    ss = ss->next;
+                    if (ss->string != str)
+                    {
+                        GATHER(add_stats.strcmps);
+                        if (strncmp(ss->string, str, n) || strlen(ss->string) != n)
+                        {
+                            /* This wasn't the right string...
+                                     */
+                            continue;
+                        }
+                    }
+                    /* We found an entry for this string. Fix the
+                         * refcount and exit.
+                         */
+                    GATHER(add_stats.linked);
+                    ++(ss->refcount);
+                    /*LOG(llevDebug,"SS: >%s< #%d add-s\n", ss->string,ss->refcount& ~TOPBIT);*/
+
+                    return ss->string;
+                }
+                /* There are no occurences of this string in the hash table.
+                     */
+                {
+                    shared_string  *new_ss;
+
+                    GATHER(add_stats.linked);
+                    new_ss = new_shared_string(str, n);
+                    ss->next = new_ss;
+                    new_ss->u.previous = ss;
+                    return new_ss->string;
+                }
+            }
+            /* Fall through.
+               */
+        }
+        GATHER(add_stats.hashed);
+        ++(ss->refcount);
+        /*LOG(llevDebug,"SS: >%s< #%d add-s\n", ss->string,ss->refcount& ~TOPBIT);*/
+        return ss->string;
+    }
+    else
+    {
+        /* The string isn't registered, and the slot is empty.
+         */
+        GATHER(add_stats.hashed);
+        hash_table[ind] = new_shared_string(str, n);
+
+        /* One bit in refcount is used to keep track of the union.
+         */
+        hash_table[ind]->refcount |= TOPBIT;
+        hash_table[ind]->u.array = &(hash_table[ind]);
+
+        return hash_table[ind]->string;
+    }
 }
 
 /*
@@ -167,7 +272,7 @@ const char * add_string(const char *str)
         LOG(llevBug, "BUG: add_string(): try to add null string to hash table\n");  
         return NULL;
     }
-    ind = hashstr(str);
+    ind = hashstr(str, MAXSTRING);
     ss = hash_table[ind];
 
     /* Is there an entry for that hash?
@@ -214,7 +319,7 @@ const char * add_string(const char *str)
                     shared_string  *new_ss;
 
                     GATHER(add_stats.linked);
-                    new_ss = new_shared_string(str);
+                    new_ss = new_shared_string(str, strlen(str));
                     ss->next = new_ss;
                     new_ss->u.previous = ss;
                     return new_ss->string;
@@ -233,7 +338,7 @@ const char * add_string(const char *str)
         /* The string isn't registered, and the slot is empty.
          */
         GATHER(add_stats.hashed);
-        hash_table[ind] = new_shared_string(str);
+        hash_table[ind] = new_shared_string(str, strlen(str));
 
         /* One bit in refcount is used to keep track of the union.
          */
@@ -272,7 +377,7 @@ const char * find_string(const char *str)
 
     GATHER(find_stats.calls);
 
-    ind = hashstr(str);
+    ind = hashstr(str, MAXSTRING);
     ss = hash_table[ind];
 
     /* Is there an entry for that hash?
