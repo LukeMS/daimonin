@@ -694,7 +694,8 @@ void setup_library() {
   set_info_map(new_info_map);
   set_dragon_gain_func(dragon_ability_gain);
 
-  setup_poolfunctions(POOL_PLAYER, NULL, (chunk_destructor)free_player);
+/*  setup_poolfunctions(POOL_PLAYER, NULL, (chunk_destructor)free_player); */
+  setup_poolfunctions(POOL_PLAYER, NULL, NULL);
 }
 
 static void add_corpse_to_racelist (const char *race_name, archetype *op) {

@@ -306,17 +306,9 @@ static PyObject* Daimonin_ReadyMap(PyObject* self, PyObject* args)
 	if(obptr)
 	    GCFP.Value[2] = (void *)(obptr->obj);
 
-	/*
-    LOG(llevDebug, "Ready to call readymapname with %s %i (%x) (%s)\n",
-        (char *)(GCFP.Value[0]),
-        *(int *)(GCFP.Value[1]),
-        (object *)(GCFP.Value[2]), query_name(obptr->obj)
-    );
-	*/
     CFR = (PlugHooks[HOOK_READYMAPNAME])(&GCFP);
     mymap = (mapstruct *)(CFR->Value[0]);
         
-	/*LOG(llevDebug, "Map file is %s\n",mymap?mymap->path*"NULL");*/
     free(CFR);
     return wrap_map(mymap);
 }
@@ -873,7 +865,7 @@ MODULEAPI int HandleEvent(CFParm* PParm)
 		query_name((object *)(PParm->Value[1])),
 		query_name((object *)(PParm->Value[2])),
 		query_name((object *)(PParm->Value[3])),
-		(char *)(PParm->Value[4])!= NULL?(char *)(PParm->Value[4]):"<null>",
+		STRING_SAFE((char *)(PParm->Value[4])),
 		*(int *)(PParm->Value[5]),*(int *)(PParm->Value[6]),*(int *)(PParm->Value[7]),*(int *)(PParm->Value[8]),
 		StackPosition);
 #endif

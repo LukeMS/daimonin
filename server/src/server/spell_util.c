@@ -71,7 +71,7 @@ void dump_spells()
         if (spellarch[i]->clone.other_arch)
           name2 = spellarch[i]->clone.other_arch->name;
       }
-      LOG(llevInfo,"%s: %s: %s\n", spells[i].name, (name1?name1:"null"), (name2?name2:"null"));
+      LOG(llevInfo,"%s: %s: %s\n", STRING_SAFE(spells[i].name),STRING_SAFE(name1), STRING_SAFE(name2));
     }
 }
 

@@ -3481,7 +3481,6 @@ object *get_split_ob(object *orig_ob,int nr) {
 object *decrease_ob_nr (object *op, int i)
 {
     object *tmp;
-    player *pl;
 
     if (i == 0)   /* objects with op->nrof require this check */
         return op;
@@ -3493,73 +3492,73 @@ object *decrease_ob_nr (object *op, int i)
     {
         op->nrof -= i;
     }
-    else if (op->env != NULL)
+    else if (op->env && OBJECT_ACTIVE(op->env))
     {
-	/* is this object in the players inventory, or sub container
-	 * therein?
-	 */
-        tmp = is_player_inv (op->env);
-	/* nope.  Is this a container the player has opened?
-	 * If so, set tmp to that player.
-	 * IMO, searching through all the players will mostly
-	 * likely be quicker than following op->env to the map,
-	 * and then searching the map for a player.
-		*/
-	/* this is another nasty "search all players"...
-	 * i skip this to rework as i do the container patch -
-	 * but we can do this now much smarter ! TODO
-	 * MT -08.02.04 
-	 */
-	if (!tmp) {
-	    for (pl=first_player; pl; pl=pl->next)
-		if (pl->container == op->env) break;
-	    if (pl) tmp=pl->ob;
-	    else tmp=NULL;
-	}
+		/* is this object in the players inventory? */
+		if (!(tmp = is_player_inv (op->env))) 
+		{
+			/* No... But perhaps tmp is in a container viewed by a player?
+			 * Lets check the container is linked to a player.
+			 */
+			if(op->env->type == CONTAINER && op->env->attacked_by && CONTR(op->env->attacked_by) 
+												&& CONTR(op->env->attacked_by)->container == op->env)
+				tmp=op->env->attacked_by;
+		}
 
-        if (i < (int)op->nrof) {
+        if (i < (int)op->nrof) /* there are still some */
+		{
             sub_weight (op->env, op->weight * i);
             op->nrof -= i;
-            if (tmp) {
+            if (tmp)
+			{
                 (*esrv_send_item_func) (tmp, op);
                 (*esrv_update_item_func) (UPD_WEIGHT, tmp, tmp);
             }
-        } else {
-            remove_ob(op);
-			check_walk_off (op, NULL, MOVE_APPLY_VANISHED);
+        } 
+		else /* we removed all! */
+		{
             op->nrof = 0;
-            if (tmp) {
-                (*esrv_del_item_func) (CONTR(tmp), op->count,op->env);
-                (*esrv_update_item_func) (UPD_WEIGHT, tmp, tmp);
+            if (tmp) 
+			{
+				if(tmp->type != CONTAINER)
+					(*esrv_del_item_func) (CONTR(tmp), op->count,op->env);
+				else
+					(*esrv_del_item_func) (NULL, op->count,op->env);
             }
+            remove_ob(op);
         }
     }
     else 
     {
-	object *above = op->above;
+		object *above = op->above;
 
-        if (i < (int)op->nrof) {
+        if (i < (int)op->nrof)
+		{
             op->nrof -= i;
-        } else {
+        } 
+		else 
+		{
             remove_ob(op);
 			check_walk_off (op, NULL, MOVE_APPLY_VANISHED);
             op->nrof = 0;
         }
-	/* Since we just removed op, op->above is null */
+		/* Since we just removed op, op->above is null */
         for (tmp = above; tmp != NULL; tmp = tmp->above)
-            if (tmp->type == PLAYER) {
+		{
+            if (tmp->type == PLAYER) 
+			{
                 if (op->nrof)
                     (*esrv_send_item_func) (tmp, op);
                 else
                     (*esrv_del_item_func) (CONTR(tmp), op->count, op->env);
             }
+		}
     }
 
-    if (op->nrof) {
+    if (op->nrof)
         return op;
-    } else {
+    else
         return NULL;
-    }
 }
 
 /*

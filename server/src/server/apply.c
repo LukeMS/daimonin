@@ -2164,7 +2164,7 @@ static void apply_food (object *op, object *tmp)
 				if((op->stats.food+tmp->stats.food)-999>tmp->stats.food/5)
 				{
 					new_draw_info(NDI_UNIQUE, 0,op,"You are to full to eat this right now!");
-					return;
+//					return;
 				}
 				if(tmp->type==FOOD || tmp->type==FLESH)
 					new_draw_info(NDI_UNIQUE, 0,op,"You feel full, but what a waste of food!");

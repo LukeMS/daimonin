@@ -186,7 +186,18 @@ static player* get_player(player *p) {
 
 void free_player(player *pl) 
 {
-    /* Remove from list of players */
+	/* first, we removing the player from map or whatever */
+    if(pl->ob != NULL) 
+	{
+		SET_FLAG(pl->ob, FLAG_NO_FIX_PLAYER);
+        if (!QUERY_FLAG(pl->ob, FLAG_REMOVED)) 
+		{
+			remove_ob(pl->ob);
+			check_walk_off (pl->ob, NULL,MOVE_APPLY_VANISHED);
+		}
+    }
+
+    /* Now remove from list of players */
     if (first_player!=pl) 
 	{
 		player *prev=first_player;
@@ -198,17 +209,6 @@ void free_player(player *pl)
     } 
 	else
 		first_player=pl->next;
-
-	/* the inventory delete was before in save_player()... bad bad bad */
-    if(pl->ob != NULL) 
-	{
-		SET_FLAG(pl->ob, FLAG_NO_FIX_PLAYER);
-        if (!QUERY_FLAG(pl->ob, FLAG_REMOVED)) 
-		{
-			remove_ob(pl->ob);
-			check_walk_off (pl->ob, NULL,MOVE_APPLY_VANISHED);
-		}
-    }
 
     free_newsocket(&pl->socket);
 }

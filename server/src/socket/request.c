@@ -562,7 +562,7 @@ void RequestFileCmd(char *buf, int len,NewSocket *ns)
 	/* *only* allow this command between the first login and the "addme" command! */
     if (ns->status != Ns_Add || !buf)
     {
-        LOG(llevInfo, "RF: received bad rf command for IP:%s\n",ns->host?ns->host:"NULL");
+        LOG(llevInfo, "RF: received bad rf command for IP:%s\n",STRING_SAFE(ns->host));
         ns->status=Ns_Dead;
         return;
     }
@@ -570,7 +570,7 @@ void RequestFileCmd(char *buf, int len,NewSocket *ns)
     id = atoi(buf);
 	if(id <0 ||id >=SRV_CLIENT_FILES)
     {
-        LOG(llevInfo, "RF: received bad rf command for IP:%s\n",ns->host?ns->host:"NULL");
+        LOG(llevInfo, "RF: received bad rf command for IP:%s\n",STRING_SAFE(ns->host));
         ns->status=Ns_Dead;
         return;
     }

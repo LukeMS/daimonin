@@ -165,10 +165,10 @@ void dump_gods() {
   	god->level,god->speed);
       LOG(llevInfo,"  wc:%d ac:%d hp:%d dam:%d \n",
   	god->stats.wc,god->stats.ac,god->stats.hp,god->stats.dam);
-      LOG(llevInfo," enemy: %s\n",god->title?god->title:"NONE");
+      LOG(llevInfo," enemy: %s\n",STRING_OBJ_TITLE(god));
       if(god->other_arch) {
 	object *serv = &god->other_arch->clone;
-        LOG(llevInfo," servant stats: (%s)\n",god->other_arch->name);
+        LOG(llevInfo," servant stats: (%s)\n",STRING_ARCH_NAME(god->other_arch));
         LOG(llevInfo,"  S:%d C:%d D:%d I:%d W:%d P:%d\n", 
 	  serv->stats.Str,serv->stats.Con,serv->stats.Dex, 
   	  serv->stats.Int,serv->stats.Wis,serv->stats.Pow);
@@ -178,8 +178,8 @@ void dump_gods() {
   	  serv->stats.wc,serv->stats.ac,serv->stats.hp,serv->stats.dam);
       } else
         LOG(llevInfo," servant: NONE\n");
-      LOG(llevInfo," aligned_race(s): %s\n",god->race);
-      LOG(llevInfo," enemy_race(s): %s\n",(god->slaying?god->slaying:"none"));
+      LOG(llevInfo," aligned_race(s): %s\n",STRING_OBJ_RACE(god));
+      LOG(llevInfo," enemy_race(s): %s\n",STRING_OBJ_SLAYING(god));
       LOG(llevInfo,"%s", describe_resistance(god, 1));
 
       strcat(tmpbuf,"\n aura:");
@@ -198,7 +198,7 @@ void dump_gods() {
         DESCRIBE_PATH(tmpbuf, tmpvar, "Denied");
       }
       LOG(llevInfo,"%s\n",tmpbuf);
-      LOG(llevInfo," Desc: %s",god->msg?god->msg:"---\n");
+      LOG(llevInfo," Desc: %s",STRING_OBJ_MSG(god));
       LOG(llevInfo," Priest gifts/limitations: ");
       if(!QUERY_FLAG(god,FLAG_USE_WEAPON)) {gifts=1; LOG(llevInfo,"\n  weapon use is forbidden");} 
       if(!QUERY_FLAG(god,FLAG_USE_ARMOUR)) {gifts=1; LOG(llevInfo,"\n  no armour may be worn");} 

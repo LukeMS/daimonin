@@ -311,7 +311,7 @@ const char * add_refcount(const char *str)
 	char *tmp_str = find_string(str);
 	if(!str || str != tmp_str)
 	{
-		LOG(llevBug,"BUG: add_refcount(shared_string)(): tried to free a invalid string! >%s<\n", str?str:">NULL<");
+		LOG(llevBug,"BUG: add_refcount(shared_string)(): tried to free a invalid string! >%s<\n", STRING_SAFE(str));
 		return NULL;
 	}
 #endif
@@ -344,7 +344,7 @@ void free_string_shared(const char *str)
 	const char *tmp_str = find_string(str);
 	if(!str || str != tmp_str)
 	{
-		LOG(llevBug,"BUG: free_string_shared(): tried to free a invalid string! >%s<\n", str?str:">NULL<");
+		LOG(llevBug,"BUG: free_string_shared(): tried to free a invalid string! >%s<\n", STRING_SAFE(str));
 		return;
 	}
 #endif

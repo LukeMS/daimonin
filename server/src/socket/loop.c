@@ -52,8 +52,7 @@
 
 #include <newserver.h>
 
-
-char _idle_warn_text[64] = "X4 8 minutes idle warning!";					
+char _idle_warn_text[128] = "X4 8 minutes idle warning!\nServer will disconnect you in 2 minutes.";					
 char _idle_warn_text2[64] = "X3 You was to long idle! Server closed connection.";					
 static fd_set tmp_read, tmp_exceptions, tmp_write;
 
@@ -251,7 +250,7 @@ void HandleClient(NewSocket *ns, player *pl)
 		* user could certainly send a whole bunch of invalid commands.
 		*/
 
-		LOG(llevDebug,"HACKBUG: Bad command from client (%s) (%s)\n",ns->inbuf.buf+2,data?data:"null");
+		LOG(llevDebug,"HACKBUG: Bad command from client (%s) (%s)\n",STRING_SAFE(ns->inbuf.buf+2),STRING_SAFE(data));
 		ns->status =Ns_Dead;
 		return;
 
@@ -350,6 +349,7 @@ static void remove_ns_dead_player(player *pl)
 		int players;
 
 		for(pl_tmp=first_player,players=0;pl_tmp!=NULL;pl_tmp=pl_tmp->next,players++);
+
 		new_draw_info_format(NDI_UNIQUE, 0,gbl_active_DM,"%s leaves the game (%d still playing).", query_name(pl->ob), players-1);
 	}
 
@@ -365,6 +365,8 @@ static void remove_ns_dead_player(player *pl)
     
     LOG(llevDebug,"remove_ns_dead_player(): %s leaving\n", STRING_OBJ_NAME(pl->ob));
 	leave(pl,1);
+
+	free_player(pl); /* we *,must* do this here and not in the memory pool - it needs to be a syncron action */
 }
 
 /* This checks the sockets for input and exceptions, does the right thing.  A 

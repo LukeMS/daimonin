@@ -645,7 +645,7 @@ int hit_map(object *op,int dir,int type) {
 
     if (OBJECT_FREE(tmp))
 	{
-		LOG(llevBug, "BUG: hit_map(): found freed object (%s)\n",tmp->arch->name?tmp->arch->name:"<NULL>");
+		LOG(llevBug, "BUG: hit_map(): found freed object (%s)\n",STRING_SAFE(tmp->arch->name));
 		break;
     }
 

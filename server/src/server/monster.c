@@ -2496,8 +2496,8 @@ int talk_to_npc(object *op, object *npc, char *txt) {
       CFP.Value[6] = &m;
       CFP.Value[7] = &m;
       CFP.Value[8] = &l;
-      CFP.Value[9] = event_obj ? (char *)event_obj->race : "<null>";
-      CFP.Value[10]= event_obj ? (char *)event_obj->slaying : "<null>";
+      CFP.Value[9] = (char *) (STRING_OBJ_RACE(event_obj));
+      CFP.Value[10]= (char *) (STRING_OBJ_SLAYING(event_obj));
       if (event_obj && findPlugin(event_obj->name)>=0)
       {
           ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
