@@ -919,12 +919,14 @@ void process_events (mapstruct *map)
     }
     
     /* Gecko: This is not really a bug, but it has to be thought trough...
-     * If an sctive object is remove_ob():ed and not reinserted during process_events(), 
+     * If an active object is remove_ob():ed and not reinserted during process_events(), 
      * this might happen. It normally means that the object was killed, but you never know...
      */
     if (QUERY_FLAG(op, FLAG_REMOVED)) {
+		/*
       LOG(llevDebug, "PROBLEM: process_events(): Removed object on active list  %s (%s, type:%d count:%d)\n",
-              op->arch->name,query_name(op),op->type, op->count);
+				              op->arch->name,query_name(op),op->type, op->count);
+		*/
       op->speed = 0;
       update_ob_speed (op);
       continue;

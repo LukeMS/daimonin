@@ -1159,8 +1159,8 @@ static int calc_direction_towards(object *op, object *target, mapstruct *map, in
     mapstruct *path_map;
     rv_vector target_rv, segment_rv;
 
-	target_rv.direction = -54321;
-	segment_rv.direction = -654321;
+	target_rv.direction = 1234543;
+	segment_rv.direction = 1234542;
 
     pf = MOB_PATHDATA(op);
     
@@ -1477,7 +1477,10 @@ int move_monster(object *op) {
     dir = direction_from_response(op, &response);
 	tdir10=response.data.direction;
     if(dir > 0) {
-        success = do_move_monster(op, dir);
+		if(dir == 1234543 || dir == 1234542)
+			LOG(llevDebug, "CRASHBUG: Got the bug... %d", dir);
+		else
+	        success = do_move_monster(op, dir);
         /* TODO: handle success=0 and precomputed paths/giving up */    
     }
     
