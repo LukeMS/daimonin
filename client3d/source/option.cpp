@@ -96,8 +96,6 @@ bool Option::Init()
 	// filename: FILE_OPTIONS
 	LogFile::getSingleton().Headline("Init Options");
 
-    _options  *ptions = &options; 
-
 	mDescFile = 0;
 	mMetaServer ="damn.informatik.uni-bremen.de";
 	mMetaServerPort = 13326;
@@ -105,13 +103,15 @@ bool Option::Init()
 	mStartNetwork = false;
 
 /*
+    _options  *ptions = &options;
+
 	for (int i=0; opt[i].name; ++i)
     {
 		if (opt[i].name[0] == '#') { continue; }
         opt[i].clean_memory = false;
 
 
-        //*((int*) opt[i].int_value) = i;
+        // *((int*) opt[i].int_value) = i;
 
 		int val = opt[i].int_value;
 		opt[i].int_value = i;

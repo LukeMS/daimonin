@@ -25,7 +25,6 @@ http://www.gnu.org/copyleft/lesser.txt.
 #define CLIENT_H
 
 #include <Ogre.h>
-#include <OgreConfigFile.h>
 #include <OgreSceneManager.h>
 #include "event.h"
 

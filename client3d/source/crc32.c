@@ -1,3 +1,7 @@
+// -----------------------------------------------------------------------------
+// This file was altered by The Daimonin Team in 2005.
+// -----------------------------------------------------------------------------
+
 /* crc32.c -- compute the CRC-32 of a data stream
  * Copyright (C) 1995-2003 Mark Adler
  * For conditions of distribution and use, see copyright notice in zlib.h
@@ -196,10 +200,7 @@ const unsigned long FAR * ZEXPORT get_crc_table()
 #define DO8 DO1; DO1; DO1; DO1; DO1; DO1; DO1; DO1
 
 /* ========================================================================= */
-unsigned long ZEXPORT   crc32(crc, buf, len)
-unsigned long               crc;
-const unsigned char FAR    *buf;
-unsigned                    len;
+unsigned long ZEXPORT   crc32(unsigned long crc, const unsigned char FAR *buf,unsigned len)
 {
     if (buf == Z_NULL)
         return 0UL;
@@ -245,10 +246,7 @@ unsigned                    len;
 #define DOLIT32 DOLIT4; DOLIT4; DOLIT4; DOLIT4; DOLIT4; DOLIT4; DOLIT4; DOLIT4
 
 /* ========================================================================= */
-local unsigned long crc32_little(crc, buf, len)
-unsigned long               crc;
-const unsigned char FAR    *buf;
-unsigned                    len;
+local unsigned long crc32_little(unsigned long crc, const unsigned char FAR *buf, unsigned len)
 {
     register u4 c;
     register const u4 FAR * buf4;
@@ -291,10 +289,7 @@ unsigned                    len;
 #define DOBIG32 DOBIG4; DOBIG4; DOBIG4; DOBIG4; DOBIG4; DOBIG4; DOBIG4; DOBIG4
 
 /* ========================================================================= */
-local unsigned long crc32_big(crc, buf, len)
-unsigned long               crc;
-const unsigned char FAR    *buf;
-unsigned                    len;
+local unsigned long crc32_big(unsigned long crc, const unsigned char FAR *buf, unsigned len)
 {
     register u4 c;
     register const u4 FAR * buf4;

@@ -44,7 +44,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "serverfile.h"
 #include "textinput.h"
 #include "textwindow.h"
-#include "map.h"
+#include "tile_map.h"
 #include "tile_gfx.h"
 
 #define DEBUG_ON
@@ -367,7 +367,7 @@ void Network::Update()
 		ServerFile::getSingleton().checkFiles();  
 		sprintf(buf, "setup sound %d map2cmd 1 mapsize %dx%d darkness 1 facecache 1"
 			" skf %d|%x spf %d|%x bpf %d|%x stf %d|%x amf %d|%x", 
-			SoundStatus, Map::getSingleton().MapStatusX, Map::getSingleton().MapStatusY, 
+			SoundStatus, TileMap::getSingleton().MapStatusX, TileMap::getSingleton().MapStatusY,
 			ServerFile::getSingleton().getLength(SERVER_FILE_SKILLS),
 			ServerFile::getSingleton().getCRC   (SERVER_FILE_SKILLS),
 			ServerFile::getSingleton().getLength(SERVER_FILE_SPELLS),

@@ -25,6 +25,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 #define DIALOG_H
 
 #include <Ogre.h>
+#include "textwindow.h"
 
 using namespace Ogre;
 
@@ -59,8 +60,8 @@ public:
 	bool isVisible() { return mVisible; }
 	void UpdateLogin(unsigned int stage);
 	void setWarning(int warning);
-	void setSelText (unsigned int pos, const char *text, ColourValue = ColourValue::White);
-	void setInfoText(unsigned int pos, const char *text, ColourValue = ColourValue::White);
+	void setSelText (unsigned int pos, const char *text, ColourValue = TXT_WHITE);
+	void setInfoText(unsigned int pos, const char *text, ColourValue = TXT_WHITE);
 	void clearInfoText();
 
 private:
