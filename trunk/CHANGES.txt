@@ -1,4 +1,30 @@
 Daimonin CHANGES
+10.11.2003      - testing & submit of new python plugin.
+                  This should fix some of the last crashes.
+
+09.11.2003      - reworked whole potion object and system
+                - core debugging
+                - find and fixed script plugin bugs
+
+08.11.2003	- reworked stat boni system for players.
+                - added quest item flag FLAG_NO_DROP. If a player
+                  touching/getting a object marked with this, is
+                  changed to one drop item (FLAG_STARTEQUIP is set).
+                - reworked random hp/sp/grace get per level for use
+                  with improvement potion.
+
+07.11.20003	- adding several new artifacts
+                - reworking treasure list
+                - adding new bracers.
+                - adding new cloaks.
+                - reworked hp,sp and grace regeneration system for 
+                  players
+                - adding more spellcasting for monsters
+
+05.11.2003	- fixed some minor glitches (like confused LOG() mesg)
+		- preparing new maps (cutting pictures, drawing)
+		- adding new mobs
+
 04.11.2003      - fixed several small bugs
                 - fixed teleporter bug with non player objects
                 - added FLAG_NO_CLERIC and changed context from damned to it

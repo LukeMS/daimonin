@@ -67,10 +67,10 @@ CommArray_s *find_plugin_command(char *cmd, object *op)
             RTNCmd.time = *(float *)(RTNValue->Value[2]);
             LOG(llevInfo,"RTNCMD: name %s, time %f\n", RTNCmd.name, RTNCmd.time);
             return &RTNCmd;
-        };
-    };
+        }
+    }
     return NULL;
-};
+}
 
 /*****************************************************************************/
 /* Displays a list of loaded plugins (keystrings and description) in the     */
@@ -89,8 +89,8 @@ void displayPluginsList(object *op)
         strcat(buf, ", ");
         strcat(buf, PlugList[i].fullname);
         new_draw_info (NDI_UNIQUE, 0, op, buf);
-    };
-};
+    }
+}
 
 /*****************************************************************************/
 /* Searches in the loaded plugins list for a plugin with a keyname of id.    */
@@ -104,7 +104,7 @@ int findPlugin(char* id)
         if(!strcmp(id,PlugList[i].id))
             return i;
     return -1;
-};
+}
 
 #ifdef WIN32
 /*****************************************************************************/
@@ -142,7 +142,7 @@ void initPlugins(void)
             }
         }
     }
-};
+}
 
 /*****************************************************************************/
 /* WIN32 Plugin initialization. Initializes a plugin known by its filename.  */
@@ -215,20 +215,20 @@ void initOnePlugin(char* pluginfile)
             HookParm->Value[1] = HookList[j];
 
             PlugList[PlugNR].hookfunc(HookParm);
-        };
+        }
         free(HookParm->Value[0]);
         free(HookParm);
-    };
+    }
     if (PlugList[PlugNR].eventfunc==NULL)
     {
         LOG(llevBug,"BUG: Event plugin error\n");
         FreeLibrary(ptr);
         return;
-    };
+    }
     PlugNR++;
     PlugList[PlugNR-1].pinitfunc(NULL);
     LOG(llevInfo,"Done\n");
-};
+}
 
 /*****************************************************************************/
 /* Removes one plugin from memory. The plugin is identified by its keyname.  */
@@ -249,8 +249,8 @@ void removeOnePlugin(char *id)
     for (j=plid+1;j<32;j++)
     {
         PlugList[j-1] = PlugList[j];
-    };
-};
+    }
+}
 
 #else
 
@@ -291,9 +291,9 @@ void initPlugins(void)
                         initOnePlugin(buf2);
                     }
                 }
-            };
+            }
         if (namelist != NULL) free(namelist);
-};
+}
 
 /*****************************************************************************/
 /* Removes one plugin from memory. The plugin is identified by its keyname.  */
@@ -314,8 +314,8 @@ void removeOnePlugin(char *id)
     for (j=plid+1;j<32;j++)
     {
         PlugList[j-1] = PlugList[j];
-    };
-};
+    }
+}
 
 /*****************************************************************************/
 /* UNIX Plugin initialization. Initializes a plugin known by its filename.   */
@@ -334,7 +334,7 @@ void initOnePlugin(char* pluginfile)
         {
                 LOG(llevInfo,"Plugin error: %s\n", dlerror());
                 return;
-        };
+        }
         PlugList[PlugNR].libptr = ptr;
         PlugList[PlugNR].initfunc = (f_plugin)(dlsym(ptr,"initPlugin"));
         if (PlugList[PlugNR].initfunc==NULL)
@@ -351,7 +351,7 @@ void initOnePlugin(char* pluginfile)
             );
             strcpy(PlugList[PlugNR].id,(char *)(InitParm->Value[0]));
             strcpy(PlugList[PlugNR].fullname,(char *)(InitParm->Value[1]));
-        };
+        }
         PlugList[PlugNR].hookfunc = (f_plugin)(dlsym(ptr,"registerHook"));
         PlugList[PlugNR].eventfunc = (f_plugin)(dlsym(ptr,"triggerEvent"));
         PlugList[PlugNR].pinitfunc = (f_plugin)(dlsym(ptr,"postinitPlugin"));
@@ -365,7 +365,7 @@ void initOnePlugin(char* pluginfile)
         for(i=0;i<NR_EVENTS;i++)
         {
             PlugList[PlugNR].gevent[i] = 0;
-        };
+        }
         if (PlugList[PlugNR].hookfunc==NULL)
         {
                 LOG(llevInfo,"Plugin hook error: %s\n", dlerror());
@@ -382,18 +382,18 @@ void initOnePlugin(char* pluginfile)
                     memcpy(HookParm->Value[0], &j, sizeof(int));
                     HookParm->Value[1] = HookList[j];
                     PlugList[PlugNR].hookfunc(HookParm);
-                };
+                }
                 free(HookParm->Value[0]);
                 free(HookParm);
-        };
+        }
         if (PlugList[PlugNR].eventfunc==NULL)
         {
                 LOG(llevBug,"BUG: Event plugin error %s\n", dlerror());
-        };
+        }
         PlugNR++;
         PlugList[PlugNR-1].pinitfunc(NULL);
         LOG(llevInfo,"[Done]\n");
-};
+}
 #endif /*WIN32*/
 
 /*****************************************************************************/
@@ -406,13 +406,24 @@ void initOnePlugin(char* pluginfile)
 /* LOG wrapper                                                               */
 /*****************************************************************************/
 /* 0 - Level of logging;                                                     */
-/* 1 - Message.                                                              */
+/* 1 - Message string                                                        */
 /*****************************************************************************/
 CFParm* CFWLog(CFParm* PParm)
 {
-        LOG(*(int *)(PParm->Value[0]),(char *)(PParm->Value[1]));
-        return NULL;
-};
+	LOG(*(int *)(PParm->Value[0]),"%s",(char *)(PParm->Value[1]));
+	return NULL;
+}
+
+/*****************************************************************************/
+/* fix_player wrapper                                                        */
+/*****************************************************************************/
+/* 0 - (player) object                                                       */
+/*****************************************************************************/
+CFParm* CFWFixPlayer(CFParm* PParm)
+{
+	fix_player((object *)(PParm->Value[0]));
+	return NULL;
+}
 
 /*****************************************************************************/
 /* new_info_map wrapper.                                                     */
@@ -426,7 +437,7 @@ CFParm* CFWNewInfoMap(CFParm* PParm)
     new_info_map(*(int *)(PParm->Value[0]), (struct mapdef *)(PParm->Value[1]),
         (char*)(PParm->Value[2]));
     return NULL;
-};
+}
 
 /*****************************************************************************/
 /* new_info_map wrapper.                                                     */
@@ -441,7 +452,7 @@ CFParm* CFWNewInfoMapExcept(CFParm* PParm)
     new_info_map_except(*(int *)(PParm->Value[0]), (struct mapdef *)(PParm->Value[1]),
 							        (object *)(PParm->Value[2]), (char*)(PParm->Value[3]));
     return NULL;
-};
+}
 
 /*****************************************************************************/
 /* spring_trap wrapper.                                                      */
@@ -453,7 +464,7 @@ CFParm* CFWSpringTrap(CFParm* PParm)
 {
     spring_trap((object *)(PParm->Value[0]),(object *)(PParm->Value[1]));
     return NULL;
-};
+}
 
 /*
  * type of firing express how the dir parameter was parsed
@@ -492,7 +503,7 @@ CFParm* CFWCastSpell(CFParm* PParm)
         (char *)(PParm->Value[6])/*,*(int *) (PParm->Value[7])*/);
     CFP->Value[0] = (void *)(&val);
     return CFP;
-};
+}
 
 /*****************************************************************************/
 /* command_rskill wrapper.                                                   */
@@ -509,7 +520,7 @@ CFParm* CFWCmdRSkill(CFParm* PParm)
         (char *)(PParm->Value[1]));
     CFP->Value[0] = (void *)(&val);
     return CFP;
-};
+}
 
 /*****************************************************************************/
 /* become_follower wrapper.                                                  */
@@ -521,7 +532,7 @@ CFParm* CFWBecomeFollower(CFParm* PParm)
 {
     become_follower((object *)(PParm->Value[0]),(object *)(PParm->Value[1]));
     return NULL;
-};
+}
 
 /*****************************************************************************/
 /* pick_up wrapper.                                                          */
@@ -533,7 +544,7 @@ CFParm* CFWPickup(CFParm* PParm)
 {
     pick_up((object *)(PParm->Value[0]),(object *)(PParm->Value[1]));
     return NULL;
-};
+}
 
 /*****************************************************************************/
 /* pick_up wrapper.                                                          */
@@ -557,7 +568,7 @@ CFParm* CFWGetMapObject(CFParm* PParm)
     );
     CFP->Value[0] = (void *)(val);
     return CFP;
-};
+}
 
 /*****************************************************************************/
 /* esrv_send_item wrapper.                                                   */
@@ -572,7 +583,7 @@ CFParm* CFWESRVSendItem(CFParm* PParm)
         (object *)(PParm->Value[1])
     );
     return(PParm);
-};
+}
 
 /*****************************************************************************/
 /* find_player wrapper.                                                      */
@@ -587,7 +598,7 @@ CFParm* CFWFindPlayer(CFParm* PParm)
     pl = find_player((char *)(PParm->Value[0]));
     CFP->Value[0] = (void *)(pl);
     return CFP;
-};
+}
 
 /*****************************************************************************/
 /* manual_apply wrapper.                                                     */
@@ -605,7 +616,7 @@ CFParm* CFWManualApply(CFParm* PParm)
         (object *)(PParm->Value[1]),*(int *)(PParm->Value[2]));
     CFP->Value[0] = &val;
     return CFP;
-};
+}
 
 /*****************************************************************************/
 /* command_drop wrapper.                                                     */
@@ -621,7 +632,7 @@ CFParm* CFWCmdDrop(CFParm* PParm)
     val = command_drop((object *)(PParm->Value[0]),(char *)(PParm->Value[1]));
     CFP->Value[0] = &val;
     return CFP;
-};
+}
 
 /*****************************************************************************/
 /* command_take wrapper.                                                     */
@@ -637,7 +648,7 @@ CFParm* CFWCmdTake(CFParm* PParm)
     /*val = command_take((object *)(PParm->Value[0]),(char *)(PParm->Value[1]));*/
     CFP->Value[0] = &val;
     return CFP;
-};
+}
 
 /*****************************************************************************/
 /* transfer_ob wrapper.                                                      */
@@ -663,7 +674,7 @@ CFParm* CFWTransferObject(CFParm* PParm)
         );
     CFP->Value[0] = &val;
     return CFP;
-};
+}
 
 /*****************************************************************************/
 /* command_title wrapper.                                                    */
@@ -678,7 +689,7 @@ CFParm* CFWCmdTitle(CFParm* PParm)
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
     CFP->Value[0] = &val;
     return CFP;
-};
+}
 
 /*****************************************************************************/
 /* kill_object wrapper.                                                      */
@@ -701,7 +712,7 @@ CFParm* CFWKillObject(CFParm* PParm)
         );
     CFP->Value[0] = &val;
     return CFP;
-};
+}
 
 
 /*****************************************************************************/
@@ -722,7 +733,7 @@ CFParm* CFWCheckSpellKnown(CFParm* PParm)
         );
     CFP->Value[0] = &val;
     return CFP;
-};
+}
 
 /*****************************************************************************/
 /* check_spell_known wrapper.                                                */
@@ -739,7 +750,7 @@ CFParm* CFWGetSpellNr(CFParm* PParm)
 
     CFP.Value[0] = &val;
     return &CFP;
-};
+}
 
 /*****************************************************************************/
 /* do_learn_spell wrapper.                                                   */
@@ -771,7 +782,7 @@ CFParm* CFWDoLearnSpell(CFParm* PParm)
 		 */
 	}
     return NULL;
-};
+}
 
 
 /*****************************************************************************/
@@ -791,7 +802,7 @@ CFParm* CFWCheckSkillKnown(CFParm* PParm)
         );
     CFP->Value[0] = &val;
     return CFP;
-};
+}
 
 /*****************************************************************************/
 /* check_skill_known wrapper.                                                */
@@ -808,7 +819,7 @@ CFParm* CFWGetSkillNr(CFParm* PParm)
 
     CFP.Value[0] = &val;
     return &CFP;
-};
+}
 
 
 /*****************************************************************************/
@@ -832,7 +843,7 @@ CFParm* CFWDoLearnSkill(CFParm* PParm)
 		    *(int *)(PParm->Value[1]), 0);
 	}
     return NULL;
-};
+}
 
 /*****************************************************************************/
 /* esrv_send_inventory wrapper.                                              */
@@ -847,7 +858,7 @@ CFParm* CFWESRVSendInventory(CFParm* PParm)
         (object *)(PParm->Value[1])
     );
     return NULL;
-};
+}
 
 /*****************************************************************************/
 /* create_artifact wrapper.                                                  */
@@ -866,7 +877,7 @@ CFParm* CFWCreateArtifact(CFParm* PParm)
     );
     CFP->Value[0] = (void *)(val);
     return CFP;
-};
+}
 
 /*****************************************************************************/
 /* get_archetype wrapper.                                                    */
@@ -884,7 +895,7 @@ CFParm* CFWGetArchetype(CFParm* PParm)
     
     CFP->Value[0] = (void *)(val);
     return CFP;
-};
+}
 
 /*****************************************************************************/
 /* update_ob_speed wrapper.                                                  */
@@ -897,7 +908,7 @@ CFParm* CFWUpdateSpeed(CFParm* PParm)
         (object *)(PParm->Value[0])
     );
     return NULL;
-};
+}
 
 /*****************************************************************************/
 /* update_object wrapper.                                                    */
@@ -911,7 +922,7 @@ CFParm* CFWUpdateObject(CFParm* PParm)
         *(int *)(PParm->Value[1])
     );
     return NULL;
-};
+}
 
 /*****************************************************************************/
 /* find_animation wrapper.                                                   */
@@ -928,7 +939,7 @@ CFParm* CFWFindAnimation(CFParm* PParm)
     LOG(llevInfo,"Returned val: %i\n",val);
     CFP->Value[0] = (void *)(&val);
     return CFP;
-};
+}
 
 /*****************************************************************************/
 /* get_archetype_by_object_name wrapper                                      */
@@ -945,7 +956,24 @@ CFParm* CFWGetArchetypeByObjectName(CFParm* PParm)
     );
     CFP->Value[0] = (void *)(val);
     return CFP;
-};
+}
+
+/*****************************************************************************/
+/* insert_ob_in_ob wrapper.                                                 */
+/*****************************************************************************/
+/* 0 - object to insert;                                                     */
+/* 1 - target object;                                                        */
+/*****************************************************************************/
+CFParm* CFWInsertObjectInObject(CFParm* PParm)
+{
+    static CFParm CFP; /* do it static */
+
+    CFP.Value[0] = (void *) insert_ob_in_ob(
+        (object *)(PParm->Value[0]),
+        (object *)(PParm->Value[1])
+    );
+    return &CFP;
+}
 
 /*****************************************************************************/
 /* insert_ob_in_map wrapper.                                                 */
@@ -968,7 +996,8 @@ CFParm* CFWInsertObjectInMap(CFParm* PParm)
     );
     CFP->Value[0] = (void *)(val);
     return CFP;
-};
+}
+
 
 /*****************************************************************************/
 /* ready_map_name wrapper.                                                   */
@@ -987,7 +1016,7 @@ CFParm* CFWReadyMapName(CFParm* PParm)
     );
     CFP->Value[0] = (void *)(val);
     return CFP;
-};
+}
 
 /*****************************************************************************/
 /* add_exp wrapper.                                                          */
@@ -1003,7 +1032,7 @@ CFParm* CFWAddExp(CFParm* PParm)
         *(int *)(PParm->Value[2])
         );
     return(PParm);
-};
+}
 
 /*****************************************************************************/
 /* determine_god wrapper.                                                    */
@@ -1020,7 +1049,7 @@ CFParm* CFWDetermineGod(CFParm* PParm)
     );
     CFP->Value[0] = (void *)(val);
     return CFP;
-};
+}
 
 /*****************************************************************************/
 /* find_god wrapper.                                                         */
@@ -1037,7 +1066,7 @@ CFParm* CFWFindGod(CFParm* PParm)
     );
     CFP->Value[0] = (void *)(val);
     return CFP;
-};
+}
 
 /*****************************************************************************/
 /* dump_me wrapper.                                                          */
@@ -1054,7 +1083,7 @@ CFParm* CFWDumpObject(CFParm* PParm)
     dump_me((object *)(PParm->Value[0]),val);
     CFP->Value[0] = (void *)(val);
     return CFP;
-};
+}
 
 /*****************************************************************************/
 /* load_object_str wrapper.                                                  */
@@ -1071,7 +1100,7 @@ CFParm* CFWLoadObject(CFParm* PParm)
     LOG(llevDebug,"CFWLoadObject: %s\n",query_name(val));
     CFP->Value[0] = (void *)(val);
     return CFP;
-};
+}
 
 /*****************************************************************************/
 /* remove_ob wrapper.                                                        */
@@ -1082,17 +1111,18 @@ CFParm* CFWRemoveObject(CFParm* PParm)
 {
     remove_ob((object *)(PParm->Value[0]));
     return NULL;
-};
+}
 CFParm* CFWAddString(CFParm* PParm)
 {
-    CFParm* CFP;
+    static CFParm CFP;
     char* val;
-    CFP = (CFParm*)(malloc(sizeof(CFParm)));
+    /*CFP = (CFParm*)(malloc(sizeof(CFParm)));*/
     val = (char *)(PParm->Value[0]);
-    CFP->Value[0] = (void*) add_string (val);
-    return CFP;
-};
+    CFP.Value[0] = (void*) add_string (val);
+    return &CFP;
+}
 
+/* not really need, add_string() will look for this too */
 CFParm* CFWAddRefcount(CFParm* PParm)
 {
     CFParm* CFP;
@@ -1101,15 +1131,14 @@ CFParm* CFWAddRefcount(CFParm* PParm)
     val = (char *)(PParm->Value[0]);
     CFP->Value[0] = (void*) add_refcount (val);
     return CFP;
-};
+}
 CFParm* CFWFreeString(CFParm* PParm)
 {
-/*  CFParm* CFP; not used */
     char* val;
     val = (char *)(PParm->Value[0]);
     free_string (val);
     return NULL;
-};
+}
 
 CFParm* CFWGetFirstMap(CFParm* PParm)
 {
@@ -1117,7 +1146,7 @@ CFParm* CFWGetFirstMap(CFParm* PParm)
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
     CFP->Value[0] = (void*)(first_map) ;
     return CFP;
-};
+}
 
 CFParm* CFWGetFirstPlayer(CFParm* PParm)
 {
@@ -1125,7 +1154,7 @@ CFParm* CFWGetFirstPlayer(CFParm* PParm)
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
     CFP->Value[0] = (void*)(first_player) ;
     return CFP;
-};
+}
 
 CFParm* CFWGetFirstArchetype(CFParm* PParm)
 {
@@ -1133,7 +1162,7 @@ CFParm* CFWGetFirstArchetype(CFParm* PParm)
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
     CFP->Value[0] = (void*)(first_archetype) ;
     return CFP;
-};
+}
 /*****************************************************************************/
 /* query_cost wrapper.                                                       */
 /*****************************************************************************/
@@ -1155,7 +1184,7 @@ CFParm* CFWQueryCost(CFParm* PParm)
     val=query_cost (whatptr,whoptr,flag);
     CFP->Value[0] = (void*) &val;
     return CFP;
-};
+}
 
 /*****************************************************************************/
 /* query_money wrapper.                                                      */
@@ -1172,7 +1201,7 @@ CFParm* CFWQueryMoney(CFParm* PParm)
     val=query_money (whoptr);
     CFP->Value[0] = (void*) &val;
     return CFP;
-};
+}
 
 /*****************************************************************************/
 /* pay_for_item wrapper.                                                     */
@@ -1192,7 +1221,7 @@ CFParm* CFWPayForItem(CFParm* PParm)
     val= pay_for_item (whatptr,whoptr);
     CFP->Value[0] = (void*) &val;
     return CFP;
-};
+}
 
 /*****************************************************************************/
 /* pay_for_amount wrapper.                                                   */
@@ -1212,7 +1241,7 @@ CFParm* CFWPayForAmount(CFParm* PParm)
     val= pay_for_amount (amount,whoptr);
     CFP->Value[0] = (void*) &val;
     return CFP;
-};
+}
 
 /*new_draw_info(int flags, int pri, object *pl, const char *buf); */
 CFParm* CFWNewDrawInfo(CFParm* PParm)
@@ -1222,7 +1251,7 @@ CFParm* CFWNewDrawInfo(CFParm* PParm)
                   (object *)(PParm->Value[2]),
                   (char *)(PParm->Value[3]));
     return NULL;
-};
+}
 /*****************************************************************************/
 /* move_player wrapper.                                                      */
 /*****************************************************************************/
@@ -1263,7 +1292,7 @@ CFParm* CFWSendCustomCommand(CFParm* PParm)
 {
     send_plugin_custom_message((object *)(PParm->Value[0]),(char *)(PParm->Value[1]));
     return NULL;
-};
+}
 
 CFParm* CFWCFTimerCreate(CFParm* PParm)
 {
@@ -1277,7 +1306,7 @@ CFParm* CFWCFTimerCreate(CFParm* PParm)
                          *(int *)(PParm->Value[3]));
     CFP->Value[0] = (void *)(&val);
     return CFP;
-};
+}
 
 CFParm* CFWCFTimerDestroy(CFParm* PParm)
 {
@@ -1288,7 +1317,7 @@ CFParm* CFWCFTimerDestroy(CFParm* PParm)
     val = cftimer_destroy(*(int *)(PParm->Value[0]));
     CFP->Value[0] = (void *)(&val);
     return CFP;
-};
+}
 /*****************************************************************************/
 /* SET_ANIMATION wrapper.                                                    */
 /*****************************************************************************/
@@ -1484,7 +1513,7 @@ CFParm* RegisterGlobalEvent(CFParm* PParm)
     LOG(llevDebug,"Plugin %s (%i) registered the event %i\n",(char *)(PParm->Value[1]),PNR,*(int *)(PParm->Value[0]));
     PlugList[PNR].gevent[*(int *)(PParm->Value[0])] = 1;
     return NULL;
-};
+}
 
 /*****************************************************************************/
 /* The following unregisters a global event.                                 */
@@ -1497,7 +1526,7 @@ CFParm* UnregisterGlobalEvent(CFParm* PParm)
     int PNR = findPlugin((char *)(PParm->Value[1]));
     PlugList[PNR].gevent[*(int *)(PParm->Value[0])] = 0;
     return NULL;
-};
+}
 
 /*****************************************************************************/
 /* When a specific global event occurs, this function is called.             */
@@ -1514,7 +1543,7 @@ void GlobalEvent(CFParm *PParm)
         {
         /* That plugin registered the event ! Then we pass it the event */
             (PlugList[i].eventfunc)(PParm);
-        };
-    };
-};
+        }
+    }
+}
 

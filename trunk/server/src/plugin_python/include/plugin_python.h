@@ -122,7 +122,6 @@ static PyObject* CFCheckTrigger(PyObject* self, PyObject* args);
 static PyObject* CFSetUnaggressive(PyObject* self, PyObject* args);
 static PyObject* CFCastAbility(PyObject* self, PyObject* args);
 static PyObject* CFGetMapPath(PyObject* self, PyObject* args);
-static PyObject* CFGetMapObject(PyObject* self, PyObject* args);
 static PyObject* CFGetMessage(PyObject* self, PyObject* args);
 static PyObject* CFGetGod(PyObject* self, PyObject* args);
 static PyObject* CFSetGod(PyObject* self, PyObject* args);
@@ -281,7 +280,6 @@ static PyObject* CFGetMaxSP(PyObject* self, PyObject* args);
 static PyObject* CFGetXPos(PyObject* self, PyObject* args);
 static PyObject* CFGetYPos(PyObject* self, PyObject* args);
 static PyObject* CFSetPosition(PyObject* self, PyObject* args);
-static PyObject* CFSetNickname(PyObject* self, PyObject* args);
 static PyObject* CFSetAC(PyObject* self, PyObject* args);
 static PyObject* CFSetCha(PyObject* self, PyObject* args);
 static PyObject* CFSetCon(PyObject* self, PyObject* args);
@@ -375,7 +373,6 @@ static PyMethodDef CFPythonMethods[] =
         {"SetUnaggressive", CFSetUnaggressive, METH_VARARGS},
         {"CastAbility", CFCastAbility, METH_VARARGS},
         {"GetMapPath", CFGetMapPath, METH_VARARGS},
-        {"GetMapObject", CFGetMapObject, METH_VARARGS},
         {"GetMessage", CFGetMessage, METH_VARARGS},
         {"GetGod", CFGetGod, METH_VARARGS},
         {"SetGod", CFSetGod, METH_VARARGS},
@@ -523,7 +520,6 @@ static PyMethodDef CFPythonMethods[] =
         {"GetXPosition",CFGetXPos,METH_VARARGS},
         {"GetYPosition",CFGetYPos,METH_VARARGS},
         {"SetPosition",CFSetPosition,METH_VARARGS},
-        {"SetNickname",CFSetNickname,METH_VARARGS},
         {"SetAC",CFSetAC,METH_VARARGS},
         {"SetCharisma",CFSetCha,METH_VARARGS},
         {"SetConstitution",CFSetCon,METH_VARARGS},

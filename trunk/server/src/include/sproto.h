@@ -527,6 +527,7 @@ void initPlugins(void);
 void removeOnePlugin(char *id);
 void initOnePlugin(char *pluginfile);
 CFParm *CFWLog(CFParm *PParm);
+CFParm* CFWFixPlayer(CFParm* PParm);
 CFParm *CFWNewInfoMap(CFParm *PParm);
 CFParm *CFWNewInfoMapExcept(CFParm *PParm);
 CFParm *CFWSpringTrap(CFParm *PParm);
@@ -592,6 +593,7 @@ CFParm *CFWObjectCreateClone(CFParm *PParm);
 CFParm *CFWTeleportObject(CFParm *PParm);
 CFParm *RegisterGlobalEvent(CFParm *PParm);
 CFParm *UnregisterGlobalEvent(CFParm *PParm);
+CFParm* CFWInsertObjectInObject(CFParm* PParm);
 void GlobalEvent(CFParm *PParm);
 /* resurrection.c */
 void dead_player(object *op);

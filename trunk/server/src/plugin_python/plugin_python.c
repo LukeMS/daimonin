@@ -88,31 +88,48 @@
 /*****************************************************************************/
 
 
-/*****************************************************************************/
-/* Stalingrad: XML Support Subsection starts here                            */
-/*****************************************************************************/
+/* START several inline HOOK functions */
 
-/*****************************************************************************/
-/* Name   : CFLoadXMLObject                                                  */
-/* Python : LoadXMLObject(filename)                                          */
-/* Status : Untested                                                         */
-/*****************************************************************************/
-/* Loads a crossfire XML-file into an object, including subobjects (if any). */
-/* Note that I may have broken some XML rules (I hope I didn't, but...).     */
-/*****************************************************************************/
+/* we don't have a hook for query_name() - we assume that this 
+ * function only collect information and don't set/use any static
+ * reference from crosslib.a
+ */
 
-/*****************************************************************************/
-/* Name   : CFSaveXMLObject                                                  */
-/* Python : SaveXMLObject(filename, object)                                  */
-/* Status : Untested                                                         */
-/*****************************************************************************/
-/* Saves a crossfire object (subobjects included) into a file, using an XML  */
-/* format. (At least I think it is mostly XML-compliant :)                   */
-/*****************************************************************************/
+static inline char *add_string_hook(char *stxt)
+{
+    CFParm* CFR;
 
-/*****************************************************************************/
-/* Stalingrad: XML Support Subsection ends here                              */
-/*****************************************************************************/
+	GCFP.Value[0] = (void *)(stxt);
+    CFR=(PlugHooks[HOOK_ADDSTRING])(&GCFP);
+	
+	return (char *)CFR->Value[0];
+}
+
+#define FREE_STRING_HOOK(_txt_) free_string_hook(_txt_);_txt_=NULL; 
+static inline void free_string_hook(char *stxt)
+{
+	GCFP.Value[0] = (void *)(stxt);
+    (PlugHooks[HOOK_FREESTRING])(&GCFP);
+}
+
+static inline void fix_player_hook(object *fp1)
+{
+	GCFP.Value[0] = (void *)(fp1);
+    (PlugHooks[HOOK_FIXPLAYER])(&GCFP);
+}
+
+static inline object *insert_ob_in_ob_hook(object *ob1, object *ob2)
+{
+    CFParm* CFR;
+
+	GCFP.Value[0] = (void *)(ob1);
+	GCFP.Value[1] = (void *)(ob2);
+    CFR=(PlugHooks[HOOK_INSERTOBJECTINOB])(&GCFP);
+
+	return (object *)CFR->Value[0];
+}
+
+/* END inline HOOK functions */
 
 /*****************************************************************************/
 /* Name   : CFGetMapWidth                                                    */
@@ -127,7 +144,7 @@ static PyObject* CFGetMapWidth(PyObject* self, PyObject* args)
         return NULL;
     val = ((mapstruct *)(map))->width;
     return Py_BuildValue("i",val);
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFGetMapHeight                                                   */
@@ -142,7 +159,7 @@ static PyObject* CFGetMapHeight(PyObject* self, PyObject* args)
         return NULL;
     val = ((mapstruct *)(map))->height;
     return Py_BuildValue("i",val);
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFGetObjectAt                                                    */
@@ -153,17 +170,22 @@ static PyObject* CFGetObjectAt(PyObject* self, PyObject* args)
 {
     int x, y;
     long map;
+	/*
     long whoptr=0;
 	mapstruct *mt;
-
+*/
     if (!PyArg_ParseTuple(args,"lii",&map,&x,&y))
         return NULL;
 
 	/* fixed for tiled maps. MT-2002 */
+	/* we must use a hook here for out of map!
 	if((mt=out_of_map((mapstruct *)(map),&x,&y)))
 	    whoptr = (long)(get_map_ob(mt,x,y));
     return Py_BuildValue("l",whoptr);
-};
+	*/
+	Py_INCREF(Py_None);
+    return Py_None;
+}
 
 /*****************************************************************************/
 /* Name   : CFSetValue                                                       */
@@ -182,7 +204,7 @@ static PyObject* CFSetValue(PyObject* self, PyObject* args)
     WHO->value = newvalue;
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFGetValue                                                       */
@@ -198,14 +220,14 @@ static PyObject* CFGetValue(PyObject* self, PyObject* args)
         return NULL;
 
     return Py_BuildValue("i",WHO->value);
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFSetSkillExperience                                             */
 /* Python : CFPython.SetSkillExperience(object,skillid,value)                */
-/* Status : NOT Stable <- NEED UPDATE                                        */
+/* Status : Unfinished                                                       */
 /*****************************************************************************/
-
+/* DO NOT USE - MUST BE REWRITTEN! */
 static PyObject* CFSetSkillExperience(PyObject* self, PyObject* args)
 {
     object *tmp;
@@ -231,10 +253,8 @@ static PyObject* CFSetSkillExperience(PyObject* self, PyObject* args)
             oldchosen = WHO->chosen_skill;
             WHO->chosen_skill = tmp;
             currentxp = tmp->exp_obj->stats.exp;
-            /* Don't know how this will react if negative value
-            * passed to add_exp */
-            /*add_exp(WHO, value-currentxp);*/
             GCFP.Value[0] = (void *)(WHO);
+
             value = value - currentxp;
             GCFP.Value[1] = (void *)(&value);
             /*GCFP.Value[2] = NULL;*/ /* FIX ME */
@@ -243,10 +263,11 @@ static PyObject* CFSetSkillExperience(PyObject* self, PyObject* args)
 
             Py_INCREF(Py_None);
             return Py_None;
-        };
-    };
-    return NULL;
-};
+        }
+    }
+	Py_INCREF(Py_None);
+    return Py_None;
+}
 
 /*****************************************************************************/
 /* Name   : CFGetSkillExperience                                             */
@@ -271,10 +292,10 @@ static PyObject* CFGetSkillExperience(PyObject* self, PyObject* args)
         if (tmp->exp_obj)
         {
             return Py_BuildValue("l",(long)(tmp->exp_obj->stats.exp));
-        };
-    };
+        }
+    }
     return NULL;
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFMatchString                                                    */
@@ -293,13 +314,10 @@ static PyObject* CFMatchString(PyObject* self, PyObject* args)
 
     result = re_cmp(premiere, seconde);
     if (result != NULL)
-    {
         return Py_BuildValue("i",1);
-    } else
-    {
+    else
         return Py_BuildValue("i",0);
-    };
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFSetCursed                                                      */
@@ -316,16 +334,13 @@ static PyObject* CFSetCursed(PyObject* self, PyObject* args)
         return NULL;
 
   if (value!=0)
-  {
         SET_FLAG(WHO, FLAG_CURSED);
-  }
   else
-  {
-        CLEAR_FLAG(WHO, FLAG_CURSED);
-  };
+		CLEAR_FLAG(WHO, FLAG_CURSED);
+ 
   Py_INCREF(Py_None);
   return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFActivateRune                                                   */
@@ -344,18 +359,17 @@ static PyObject* CFActivateRune(PyObject* self, PyObject* args)
     GCFP.Value[0] = (void *)(WHAT);
     GCFP.Value[1] = (void *)(WHO);
     (PlugHooks[HOOK_SPRINGTRAP])(&GCFP);
-    /*spring_trap(WHAT,WHO); */
 
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFCheckTrigger                                                   */
 /* Python : CFPython.CheckTrigger(object,objectwhat)                         */
-/* Status : Untested                                                         */
+/* Status : Unfinished                                                       */
 /*****************************************************************************/
-
+/* MUST DO THE HOOK HERE ! */
 static PyObject* CFCheckTrigger(PyObject* self, PyObject* args)
 {
     long whoptr;
@@ -364,11 +378,11 @@ static PyObject* CFCheckTrigger(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"ll",&whoptr,&whatptr))
         return NULL;
 
-    check_trigger(WHAT,WHO);
+   /* check_trigger(WHAT,WHO); should be hook too! */
 
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFSetUnaggressive                                                */
@@ -385,16 +399,12 @@ static PyObject* CFSetUnaggressive(PyObject* self, PyObject* args)
         return NULL;
 
     if (value!=0)
-    {
         SET_FLAG(WHO, FLAG_UNAGGRESSIVE);
-    }
     else
-    {
         CLEAR_FLAG(WHO, FLAG_UNAGGRESSIVE);
-    };
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFCastAbility                                                    */
@@ -440,7 +450,7 @@ static PyObject* CFCastAbility(PyObject* self, PyObject* args)
     free(CFR);
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFGetMapPath                                                     */
@@ -455,20 +465,7 @@ static PyObject* CFGetMapPath(PyObject* self, PyObject* args)
         return NULL;
 
     return Py_BuildValue("s",((mapstruct *)(where))->path);
-};
-
-/*****************************************************************************/
-/* Name   : CFGetMapObject                                                   */
-/* Python : CFPython.GetMapObject()                                          */
-/* Status : KIA                                                              */
-/*****************************************************************************/
-/* Remark : This function is deprecated and should not be used anymore.      */
-/*****************************************************************************/
-
-static PyObject* CFGetMapObject(PyObject* self, PyObject* args)
-{
-    return NULL; /* Deprecated */
-};
+}
 
 
 /*****************************************************************************/
@@ -504,7 +501,7 @@ static PyObject* CFGetMessage(PyObject* self, PyObject* args)
     else
         buf[0] = 0x0;
     return Py_BuildValue("s",buf);
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFSetMessage                                                     */
@@ -519,11 +516,11 @@ static PyObject* CFSetMessage(PyObject* self, PyObject* args)
         return NULL;
 
     if (WHO->msg != NULL)
-        free_string(WHO->msg);
-    WHO->msg = add_string(txt);
+        FREE_STRING_HOOK(WHO->msg);
+    WHO->msg = add_string_hook(txt);
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFGetGod                                                         */
@@ -544,14 +541,14 @@ static PyObject* CFGetGod(PyObject* self, PyObject* args)
     value = (char *)(CFR->Value[0]);
     free(CFR);
     return Py_BuildValue("s",value);
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFSetGod                                                         */
 /* Python : CFPython.SetGod(object,godstr)                                   */
-/* Status : Stable                                                           */
+/* Status : Unfinished!                                                      */
 /*****************************************************************************/
-
+/* god stuff has changed! */
 static PyObject* CFSetGod(PyObject* self, PyObject* args)
 {
     long whoptr;
@@ -565,7 +562,7 @@ static PyObject* CFSetGod(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"ls",&whoptr,&txt))
         return NULL;
 
-    prayname = add_string("praying");
+    prayname = add_string_hook("praying");
 
     GCFP1.Value[0] = (void *)(WHO);
     GCFP1.Value[1] = (void *)(prayname);
@@ -582,10 +579,10 @@ static PyObject* CFSetGod(PyObject* self, PyObject* args)
     if (value)
         (PlugHooks[HOOK_BECOMEFOLLOWER])(&GCFP2);
     free(CFR);
-    free_string(prayname);
+    FREE_STRING_HOOK(prayname);
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFSetWeight                                                      */
@@ -601,22 +598,16 @@ static PyObject* CFSetWeight(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"ll",&whoptr,&value))
         return NULL;
 
-    /* I used an arbitrary bound of 32000 here */
-    if (value > 32000)
-    {
-        LOG(llevDebug, "SetWeight: Value must be lower than 32000\n");
-        return NULL;
-    }
-    else if (value < 0)
+    if (value < 0)
     {
         LOG(llevDebug, "(set-weight): Value must be greater than 0\n");
-        return NULL;
-    };
+        value = 0;
+    }
     WHO->weight = value;
 
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFReadyMap                                                       */
@@ -647,7 +638,7 @@ static PyObject* CFReadyMap(PyObject* self, PyObject* args)
     LOG(llevDebug, "Map file is %s\n",mymap->path);
     free(CFR);
     return Py_BuildValue("l",(long)(mymap));
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFTeleport                                                       */
@@ -673,15 +664,14 @@ static PyObject* CFTeleport(PyObject* self, PyObject* args)
 
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFOutOfMap                                                       */
 /* Python : CFPython.IsOutOfMap(object,x,y)                                  */
-/* Status : Stable                                                           */
+/* Status : UNFINISHED!                                                      */
 /*****************************************************************************/
-
-/* THIS MUST BE REWRITTEN TO DROP OUT: 0= out of map. 1: in same map: 2: in other map */
+/* must use hook for out_of_map! */
 static PyObject* CFIsOutOfMap(PyObject* self, PyObject* args)
 {
     long whoptr;
@@ -691,7 +681,7 @@ static PyObject* CFIsOutOfMap(PyObject* self, PyObject* args)
         return NULL;
 
     return Py_BuildValue("i", OUT_OF_REAL_MAP(WHO->map,x,y));
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFPickUp                                                         */
@@ -713,7 +703,7 @@ static PyObject* CFPickUp(PyObject* self, PyObject* args)
     /*pick_up(WHO,WHAT); */
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFGetWeight                                                      */
@@ -727,9 +717,8 @@ static PyObject* CFGetWeight(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
-    LOG(llevDebug, "GetWeight: requested target is %s\n", query_name(WHO));
     return Py_BuildValue("l",WHO->weight);
-};
+}
 
 
 /*****************************************************************************/
@@ -746,7 +735,7 @@ static PyObject* CFIsCanBePicked(PyObject* self, PyObject* args)
         return NULL;
 
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_NO_PICK));
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFGetMap                                                         */
@@ -762,7 +751,7 @@ static PyObject* CFGetMap(PyObject* self, PyObject* args)
         return NULL;
 
     return Py_BuildValue("l",(long)(WHO->map));
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFSetNextObject                                                  */
@@ -782,7 +771,7 @@ static PyObject* CFSetNextObject(PyObject* self, PyObject* args)
     WHO->below = WHAT;
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFSetPreviousObject                                              */
@@ -802,7 +791,7 @@ static PyObject* CFSetPreviousObject(PyObject* self, PyObject* args)
     WHO->above = WHAT;
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFGetNextObject                                                  */
@@ -820,7 +809,7 @@ static PyObject* CFGetNextObject(PyObject* self, PyObject* args)
     if (WHO==NULL) return NULL;
 
     return Py_BuildValue("l",(long)(WHO->below));
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFGetPreviousObject                                              */
@@ -838,7 +827,7 @@ static PyObject* CFGetPreviousObject(PyObject* self, PyObject* args)
     if (WHO==NULL) return NULL;
 
     return Py_BuildValue("l",(long)(WHO->above));
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFGetFirstObjectOnSquare                                         */
@@ -861,10 +850,10 @@ static PyObject* CFGetFirstObjectOnSquare(PyObject* self, PyObject* args)
     GCFP.Value[2] = (void *)(&y);
     CFR = (PlugHooks[HOOK_GETMAPOBJECT])(&GCFP);
     val = (object *)(CFR->Value[0]);
-    LOG(llevDebug, "First object is known by %s\n",query_name(val));
     free(CFR);
+
     return Py_BuildValue("l",(long)(val));
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFSetQuantity                                                    */
@@ -883,18 +872,18 @@ static PyObject* CFSetQuantity(PyObject* self, PyObject* args)
     /* I used an arbitrary bound of 100k here */
     if (value > 100000)
     {
-        LOG(llevDebug, "(set-quantity): Value must be lower than 100000\n");
-        return NULL;
+        LOG(llevDebug, "(set-quantity): Value for %s must be lower than 100000\n",query_name(WHAT));
+        value = 100000;
     }
     else if (value < 0)
     {
-        LOG(llevDebug, "(set-quantity): Value must be greater than 0\n");
-        return NULL;
-    };
+        LOG(llevDebug, "(set-quantity): Value for %s must be higher 0\n",query_name(WHAT));
+        value = 0;
+    }
     WHAT->nrof = value;
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFGetQuantity                                                    */
@@ -910,7 +899,7 @@ static PyObject* CFGetQuantity(PyObject* self, PyObject* args)
         return NULL;
 
     return Py_BuildValue("l",WHAT->nrof);
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFInsertObjectInside                                             */
@@ -933,18 +922,18 @@ static PyObject* CFInsertObjectInside(PyObject* self, PyObject* args)
         GCFP.Value[0] = (void *)(myob);
         (PlugHooks[HOOK_REMOVEOBJECT])(&GCFP);
     }
-    myob = insert_ob_in_ob(myob, WHERE);
+    myob = insert_ob_in_ob_hook(myob, WHERE);
+
     if (WHERE->type == PLAYER)
     {
         GCFP.Value[0] = (void *)(WHERE);
         GCFP.Value[1] = (void *)(myob);
-        /*esrv_send_item(WHERE, myob); */
         (PlugHooks[HOOK_ESRVSENDITEM])(&GCFP);
-    };
+    }
     Py_INCREF(Py_None);
     return Py_None;
 
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFFindPlayer                                                     */
@@ -972,7 +961,7 @@ static PyObject* CFFindPlayer(PyObject* self, PyObject* args)
     else
         foundob = NULL;
     return Py_BuildValue("l",(long)(foundob));
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFApply                                                          */
@@ -998,7 +987,7 @@ static PyObject* CFApply(PyObject* self, PyObject* args)
     retval = *(int *)(CFR->Value[0]);
     free(CFR);
     return Py_BuildValue("i",retval);
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFDrop                                                           */
@@ -1022,7 +1011,7 @@ static PyObject* CFDrop(PyObject* self, PyObject* args)
     free(CFR);
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFTake                                                           */
@@ -1046,7 +1035,7 @@ static PyObject* CFTake(PyObject* self, PyObject* args)
     free(CFR);
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFIsInvisible                                                    */
@@ -1060,8 +1049,8 @@ static PyObject* CFIsInvisible(PyObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
-    return Py_BuildValue("i",IS_SYS_INVISIBLE(WHO));
-};
+    return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_IS_INVISIBLE));
+}
 
 /*****************************************************************************/
 /* Name   : CFWhoAmI                                                         */
@@ -1074,7 +1063,7 @@ static PyObject* CFWhoAmI(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("l",(long)(StackWho[StackPosition]));
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFWhoIsActivator                                                 */
@@ -1087,7 +1076,7 @@ static PyObject* CFWhoIsActivator(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("l",(long)(StackActivator[StackPosition]));
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFWhatIsMessage                                                  */
@@ -1100,7 +1089,7 @@ static PyObject* CFWhatIsMessage(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("s",StackText[StackPosition]);
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFSay                                                            */
@@ -1113,8 +1102,7 @@ static PyObject* CFSay(PyObject* self, PyObject* args)
     object *who;
     long obptr;
     char *message;
-    /* Stalingrad: Changed from static to dynamic buffer */
-    char *buf;
+    static char buf[MAX_BUF*2];
     int val;
 
     if (!PyArg_ParseTuple(args,"ls",&obptr,&message))
@@ -1122,8 +1110,8 @@ static PyObject* CFSay(PyObject* self, PyObject* args)
 
     who = (object *)(obptr);
 
-    /* Stalingrad: static->dynamic buffer */
-    buf = (char *)(malloc(sizeof(char)*(strlen(message)+strlen(query_name(who))+20)));
+	/* old dynamic buffer */
+    /*buf = (char *)(malloc(sizeof(char)*(strlen(message)+strlen(query_name(who))+20)));*/
     sprintf(buf, "%s says: %s", query_name(who),message);
     val = NDI_NAVY|NDI_UNIQUE;
 
@@ -1133,12 +1121,10 @@ static PyObject* CFSay(PyObject* self, PyObject* args)
 
     (PlugHooks[HOOK_NEWINFOMAP])(&GCFP);
 
-
-    /* Stalingrad: static->dynamic buffer */
-    free(buf);
+    /*free(buf);*/
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFSayTo                                                          */
@@ -1153,8 +1139,7 @@ static PyObject* CFSayTo(PyObject* self, PyObject* args)
     long obptr, obptr2;
 	int zero = 0;
     char *message;
-    /* Stalingrad: Changed from static to dynamic buffer */
-    char *buf;
+    static char buf[MAX_BUF*2];
     int val;
 
     if (!PyArg_ParseTuple(args,"lls",&obptr,&obptr2, &message))
@@ -1163,8 +1148,7 @@ static PyObject* CFSayTo(PyObject* self, PyObject* args)
     who = (object *)(obptr);
     target = (object *)(obptr2);
 
-    /* Stalingrad: static->dynamic buffer */
-    buf = (char *)(malloc(sizeof(char)*(strlen(message)+strlen(query_name(who))+20)));
+    /*buf = (char *)(malloc(sizeof(char)*(strlen(message)+strlen(query_name(who))+20)));*/
     
     sprintf(buf, "%s talks to %s.", query_name(who),query_name(target));
 	val = NDI_UNIQUE;
@@ -1183,11 +1167,10 @@ static PyObject* CFSayTo(PyObject* self, PyObject* args)
     GCFP.Value[3] = (void *)(buf);
     (PlugHooks[HOOK_NEWDRAWINFO])(&GCFP);
 
-    /* Stalingrad: static->dynamic buffer */
-    free(buf);
+    /*free(buf);*/
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFSetGender                                                      */
@@ -1209,6 +1192,12 @@ static PyObject* CFSetGender(PyObject* self, PyObject* args)
 	CLEAR_FLAG(who,FLAG_IS_MALE);
 	CLEAR_FLAG(who,FLAG_IS_FEMALE);
 
+	if(!gender)
+	{
+	    Py_INCREF(Py_None);
+		return Py_None;
+	}
+
 	/* reset to male or female */
 	if(strcmp(gender,"male"))
 		SET_FLAG(who,FLAG_IS_MALE);
@@ -1221,7 +1210,7 @@ static PyObject* CFSetGender(PyObject* self, PyObject* args)
 
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFSetRank                                                        */
@@ -1239,7 +1228,7 @@ static PyObject* CFSetRank(PyObject* self, PyObject* args)
 
     who = (object *)(obptr);
     
-	if(who->type != PLAYER)
+	if(who->type != PLAYER || !rank)
 	{
 	    Py_INCREF(Py_None);
 	    return Py_None;
@@ -1247,14 +1236,14 @@ static PyObject* CFSetRank(PyObject* self, PyObject* args)
 	
     for(walk=who->inv;walk!=NULL;walk=walk->below)
     {
-        if (!strcmp(walk->name,"RANK_FORCE") && !strcmp(walk->arch->name,"rank_force"))
+        if (walk->name && !strcmp(walk->name,"RANK_FORCE") && !strcmp(walk->arch->name,"rank_force"))
         {
             /* we find the rank of the player, now change it to new one */
             if(walk->title)
-                DELETE_STRING(walk->title);
+                FREE_STRING_HOOK(walk->title);
 
             if (strcmp(rank,"Mr")) /* Mr = keyword to clear title and not add it as rank */
-                walk->title = add_string(rank);
+                walk->title = add_string_hook(rank);
             
             who->contr->socket.ext_title_flag = 1; /* demand update to client */
             return Py_BuildValue("l",(long) (walk));
@@ -1264,7 +1253,7 @@ static PyObject* CFSetRank(PyObject* self, PyObject* args)
 
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFSetAlignment                                                   */
@@ -1289,10 +1278,12 @@ static PyObject* CFSetAlignment(PyObject* self, PyObject* args)
     
     for(walk=who->inv;walk!=NULL;walk=walk->below)
     {
-        if (!strcmp(walk->name,"ALIGNMENT_FORCE")  && !strcmp(walk->arch->name,"alignment_force"))
+        if (walk->name && !strcmp(walk->name,"ALIGNMENT_FORCE")  && !strcmp(walk->arch->name,"alignment_force"))
         {
             /* we find the alignment of the player, now change it to new one */
-            FREE_AND_COPY(walk->title, align);
+			if(walk->title);
+				FREE_STRING_HOOK(walk->title);
+			walk->title = add_string_hook(align);
 
             who->contr->socket.ext_title_flag = 1; /* demand update to client */
             return Py_BuildValue("l",(long) (walk));
@@ -1301,7 +1292,7 @@ static PyObject* CFSetAlignment(PyObject* self, PyObject* args)
     LOG(llevDebug,"Python Warning -> SetAlignment: Object %s has no alignment_force!\n", query_name(who));
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFGetAlignmentForce                                              */
@@ -1325,13 +1316,13 @@ static PyObject* CFGetAlignmentForce(PyObject* self, PyObject* args)
 
     for(walk=WHO->inv;walk!=NULL;walk=walk->below)
     {
-        if (!strcmp(walk->name,"ALIGNMENT_FORCE")  && !strcmp(walk->arch->name,"alignment_force"))
+        if (walk->name && !strcmp(walk->name,"ALIGNMENT_FORCE")  && !strcmp(walk->arch->name,"alignment_force"))
             return Py_BuildValue("l",(long) (walk));
     }
     LOG(llevDebug,"Python Warning -> GetAlignmentForce: Object %s has no aligment_force!\n", query_name(WHO));
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFSetGuildForce                                                  */
@@ -1360,14 +1351,14 @@ static PyObject* CFSetGuildForce(PyObject* self, PyObject* args)
 
     for(walk=who->inv;walk!=NULL;walk=walk->below)
     {
-        if (!strcmp(walk->name,"GUILD_FORCE") && !strcmp(walk->arch->name,"guild_force"))
+        if (walk->name && !strcmp(walk->name,"GUILD_FORCE") && !strcmp(walk->arch->name,"guild_force"))
         {
             /* we find the rank of the player, now change it to new one */
             if(walk->title)
-                DELETE_STRING(walk->title);
+                FREE_STRING_HOOK(walk->title);
 
             if (guild && strcmp(guild, ""))
-                walk->title = add_string(guild);
+                walk->title = add_string_hook(guild);
             
             who->contr->socket.ext_title_flag = 1; /* demand update to client */
             return Py_BuildValue("l",(long) (walk));
@@ -1400,13 +1391,13 @@ static PyObject* CFGetGuildForce(PyObject* self, PyObject* args)
 
     for(walk=WHO->inv;walk!=NULL;walk=walk->below)
     {
-        if (!strcmp(walk->name,"GUILD_FORCE") && !strcmp(walk->arch->name,"guild_force"))
+        if (walk->name && !strcmp(walk->name,"GUILD_FORCE") && !strcmp(walk->arch->name,"guild_force"))
             return Py_BuildValue("l",(long) (walk));
     }
     LOG(llevDebug,"Python Warning -> GetGuild: Object %s has no guild_force!\n", query_name(WHO));
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 
 /*****************************************************************************/
@@ -1424,13 +1415,13 @@ static PyObject* CFSetInvisible(PyObject* self, PyObject* args)
         return NULL;
 
 	if(value)
-		SET_FLAG(WHO, FLAG_SYS_OBJECT);
+		SET_FLAG(WHO, FLAG_IS_INVISIBLE);
 	else
-		CLEAR_FLAG(WHO, FLAG_SYS_OBJECT);
+		CLEAR_FLAG(WHO, FLAG_IS_INVISIBLE);
 
 	Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFGetExperience                                                  */
@@ -1445,7 +1436,7 @@ static PyObject* CFGetExperience(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("l",WHO->stats.exp);
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFGetLevel                                                       */
@@ -1460,7 +1451,7 @@ static PyObject* CFGetLevel(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("l", WHO->level );
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFGetSpeed                                                       */
@@ -1476,7 +1467,7 @@ static PyObject* CFGetSpeed(PyObject* self, PyObject* args)
         return NULL;
 
     return Py_BuildValue("d",WHO->speed);
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFSetSpeed                                                       */
@@ -1497,7 +1488,7 @@ static PyObject* CFSetSpeed(PyObject* self, PyObject* args)
     WHO->speed = (float) value;
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFGetFood                                                        */
@@ -1513,7 +1504,7 @@ static PyObject* CFGetFood(PyObject* self, PyObject* args)
         return NULL;
 
     return Py_BuildValue("i",WHO->stats.food);
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFSetFood                                                        */
@@ -1536,7 +1527,7 @@ static PyObject* CFSetFood(PyObject* self, PyObject* args)
 
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFGetGrace                                                       */
@@ -1552,7 +1543,7 @@ static PyObject* CFGetGrace(PyObject* self, PyObject* args)
         return NULL;
 
     return Py_BuildValue("i",WHO->stats.grace);
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFSetGrace                                                       */
@@ -1575,7 +1566,7 @@ static PyObject* CFSetGrace(PyObject* self, PyObject* args)
 
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFGetReturnValue                                                 */
@@ -1589,7 +1580,7 @@ static PyObject* CFGetReturnValue(PyObject* self, PyObject* args)
         return NULL;
 
     return Py_BuildValue("i",StackReturn[StackPosition]);
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFSetReturnValue                                                 */
@@ -1606,7 +1597,7 @@ static PyObject* CFSetReturnValue(PyObject* self, PyObject* args)
     StackReturn[StackPosition] = value;
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFGetDirection                                                   */
@@ -1622,14 +1613,14 @@ static PyObject* CFGetDirection(PyObject* self, PyObject* args)
         return NULL;
 
     return Py_BuildValue("i",WHO->direction);
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFSetDirection                                                   */
 /* Python : CFPython.SetDirection(object, value)                             */
 /* Status : Untested                                                         */
 /*****************************************************************************/
-
+/* this function will fail imho - for animation[] we need to call a hook! */
 static PyObject* CFSetDirection(PyObject* self, PyObject* args)
 {
     int value;
@@ -1642,7 +1633,7 @@ static PyObject* CFSetDirection(PyObject* self, PyObject* args)
     SET_ANIMATION(WHO, WHO->direction);
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFGetLastSP                                                      */
@@ -1658,7 +1649,7 @@ static PyObject* CFGetLastSP(PyObject* self, PyObject* args)
         return NULL;
 
     return Py_BuildValue("i",WHO->last_sp);
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFSetLastSP                                                      */
@@ -1681,7 +1672,7 @@ static PyObject* CFSetLastSP(PyObject* self, PyObject* args)
 
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFGetLastGrace                                                   */
@@ -1697,7 +1688,7 @@ static PyObject* CFGetLastGrace(PyObject* self, PyObject* args)
         return NULL;
 
     return Py_BuildValue("i",WHO->last_grace);
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -1720,7 +1711,7 @@ static PyObject* CFSetLastGrace(PyObject* self, PyObject* args)
 
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -1735,10 +1726,10 @@ static PyObject* CFFixObject(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
 
-    fix_player(WHO);
+    fix_player_hook(WHO);
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -1769,7 +1760,7 @@ static PyObject* CFSetFace(PyObject* self, PyObject* args)
 
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -1785,7 +1776,7 @@ static PyObject* CFGetAttackType(PyObject* self, PyObject* args)
         return NULL;
 
     return Py_BuildValue("i",WHO->attacktype);
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -1805,7 +1796,7 @@ static PyObject* CFSetAttackType(PyObject* self, PyObject* args)
 
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -1828,7 +1819,7 @@ static PyObject* CFSetDamage(PyObject* self, PyObject* args)
 
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -1844,7 +1835,7 @@ static PyObject* CFGetDamage(PyObject* self, PyObject* args)
         return NULL;
 
     return Py_BuildValue("i",WHO->stats.dam);
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -1867,7 +1858,7 @@ static PyObject* CFSetBeenApplied(PyObject* self, PyObject* args)
 
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -1890,14 +1881,14 @@ static PyObject* CFSetIdentified(PyObject* self, PyObject* args)
 
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
-
+/* add hooks before use! */
 static PyObject* CFKillObject(PyObject* self, PyObject* args)
 {
     long whoptr;
@@ -1911,7 +1902,7 @@ static PyObject* CFKillObject(PyObject* self, PyObject* args)
 
     WHAT->speed = 0;
     WHAT->speed_left = 0.0;
-    update_ob_speed(WHAT);
+    update_ob_speed(WHAT); /* NEED HOOK HERE ! */
 
     if(QUERY_FLAG(WHAT,FLAG_REMOVED))
     {
@@ -1929,7 +1920,7 @@ static PyObject* CFKillObject(PyObject* self, PyObject* args)
         CFR = (PlugHooks[HOOK_KILLOBJECT])(&GCFP);
         free(CFR);
         /*kill_object(killed,1,killer, type); */
-    };
+    }
 
     /* WHAT->script_str_death = NULL; */
     /* WHAT->script_death = NULL; */
@@ -1945,10 +1936,10 @@ static PyObject* CFKillObject(PyObject* self, PyObject* args)
     if (WHAT==StackOther[StackPosition])
     {
         StackOther[StackPosition] = NULL;
-    };
+    }
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -1961,7 +1952,7 @@ static PyObject* CFWhoIsOther(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("l",(long)(StackOther[StackPosition]));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -1975,7 +1966,7 @@ static PyObject* CFDirectionN(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("i",i);
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -1989,7 +1980,7 @@ static PyObject* CFDirectionNE(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("i",i);
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -2003,7 +1994,7 @@ static PyObject* CFDirectionE(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("i",i);
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -2017,7 +2008,7 @@ static PyObject* CFDirectionSE(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("i",i);
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -2031,7 +2022,7 @@ static PyObject* CFDirectionS(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("i",i);
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -2045,7 +2036,7 @@ static PyObject* CFDirectionSW(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("i",i);
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -2059,7 +2050,7 @@ static PyObject* CFDirectionW(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("i",i);
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -2073,7 +2064,7 @@ static PyObject* CFDirectionNW(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("i",i);
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFCastAbility                                                    */
@@ -2115,7 +2106,7 @@ static PyObject* CFCastSpell(PyObject* self, PyObject* args)
     free(CFR);
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -2135,7 +2126,7 @@ static PyObject* CFGetSpellNr(PyObject* self, PyObject* args)
     CFR = (PlugHooks[HOOK_CHECKFORSPELLNAME])(&GCFP);
     value = *(int *)(CFR->Value[0]);
     return Py_BuildValue("i",value);
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -2159,7 +2150,7 @@ static PyObject* CFDoKnowSpell(PyObject* self, PyObject* args)
     value = *(int *)(CFR->Value[0]);
     free(CFR);
     return Py_BuildValue("i",value);
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -2184,7 +2175,7 @@ static PyObject* CFAcquireSpell(PyObject* self, PyObject* args)
     Py_INCREF(Py_None);
     return Py_None;
 
-};
+}
 
 
 /*****************************************************************************/
@@ -2205,7 +2196,7 @@ static PyObject* CFGetSkillNr(PyObject* self, PyObject* args)
     CFR = (PlugHooks[HOOK_CHECKFORSKILLNAME])(&GCFP);
     value = *(int *)(CFR->Value[0]);
     return Py_BuildValue("i",value);
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -2229,7 +2220,7 @@ static PyObject* CFDoKnowSkill(PyObject* self, PyObject* args)
     value = *(int *)(CFR->Value[0]);
     free(CFR);
     return Py_BuildValue("i",value);
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFAcquireSkill                                                   */
@@ -2252,7 +2243,7 @@ static PyObject* CFAcquireSkill(PyObject* self, PyObject* args)
     
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -2274,7 +2265,7 @@ static PyObject* CFFindMarkedObject(PyObject* self, PyObject* args)
     value = (object *)(CFR->Value[0]);
     /*free(CFR); findmarkedobject use static parameters */
     return Py_BuildValue("l",value);
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -2295,10 +2286,10 @@ static PyObject* CFCheckInvisibleInside(PyObject* self, PyObject* args)
     {
         if(tmp2->type == FORCE && tmp2->slaying && !strcmp(tmp2->slaying,id))
             break;
-    };
+    }
 
     return Py_BuildValue("l",(long)(tmp2));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -2336,8 +2327,10 @@ static PyObject* CFCreatePlayerForce(PyObject* self, PyObject* args)
     }
     
     /* setup the force and put it in activator */
-    FREE_AND_COPY(myob->name, txt);
-    myob = insert_ob_in_ob(myob, where);
+ 	if(myob->name);
+		FREE_STRING_HOOK(myob->name);
+	myob->name = add_string_hook(txt);
+    myob = insert_ob_in_ob_hook(myob, where);
 
     /*esrv_send_item((object *)(gh_scm2long(where)), myob); */
     GCFP.Value[0] = (void *)(where);
@@ -2345,7 +2338,7 @@ static PyObject* CFCreatePlayerForce(PyObject* self, PyObject* args)
     (PlugHooks[HOOK_ESRVSENDITEM])(&GCFP);
 
     return Py_BuildValue("l",(long)(myob));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -2375,8 +2368,7 @@ static PyObject* CFCreatePlayerInfo(PyObject* self, PyObject* args)
     /*myob = get_archetype("player_info"); */
     myob = (object *)(CFR->Value[0]);
     free(CFR);
-    
-    
+       
     if(!myob)
     {
         LOG(llevDebug,"Python WARNING:: CreatePlayerInfo: Cant't find archtype 'player_info'\n");
@@ -2384,8 +2376,10 @@ static PyObject* CFCreatePlayerInfo(PyObject* self, PyObject* args)
     }
     
     /* setup the info and put it in activator */
-    FREE_AND_COPY(myob->name, txt);
-    myob = insert_ob_in_ob(myob, where);
+   	if(myob->name);
+		FREE_STRING_HOOK(myob->name);
+	myob->name = add_string_hook(txt);
+    myob = insert_ob_in_ob_hook(myob, where);
     
     /*esrv_send_item((object *)(gh_scm2long(where)), myob); */
     GCFP.Value[0] = (void *)(where);
@@ -2393,7 +2387,7 @@ static PyObject* CFCreatePlayerInfo(PyObject* self, PyObject* args)
     (PlugHooks[HOOK_ESRVSENDITEM])(&GCFP);
     
     return Py_BuildValue("l",(long)(myob));
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFGetPlayerInfo                                                  */
@@ -2416,13 +2410,13 @@ static PyObject* CFGetPlayerInfo(PyObject* self, PyObject* args)
     /* get the first linked player_info arch in this inventory */
     for(walk=who->inv;walk!=NULL;walk=walk->below)
     {
-        if (!strcmp(walk->arch->name,"player_info") &&  !strcmp(walk->name,name))
+        if (walk->name && !strcmp(walk->arch->name,"player_info") &&  !strcmp(walk->name,name))
             return Py_BuildValue("l",(long)(walk));
     }
 
     Py_INCREF(Py_None);
     return Py_None; /* there was non */
-};
+}
 
 
 /*****************************************************************************/
@@ -2452,13 +2446,13 @@ static PyObject* CFGetNextPlayerInfo(PyObject* self, PyObject* args)
     /* get the next linked player_info arch in this inventory */
     for(walk=myob->below;walk!=NULL;walk=walk->below)
     {
-        if (!strcmp(walk->arch->name,"player_info") &&  !strcmp(walk->name,name))
+        if (walk->name && !strcmp(walk->arch->name,"player_info") &&  !strcmp(walk->name,name))
             return Py_BuildValue("l",(long)(walk));
     }
 
     Py_INCREF(Py_None);
     return Py_None; /* there was non left */
-};
+}
 
 
 /*****************************************************************************/
@@ -2499,15 +2493,17 @@ static PyObject* CFCreateInvisibleInside(PyObject* self, PyObject* args)
     (PlugHooks[HOOK_UPDATESPEED])(&GCFP);
 
     /*update_ob_speed(myob); */
-    FREE_AND_COPY(myob->slaying, txt);
-    myob = insert_ob_in_ob(myob, where);
+   	if(myob->slaying);
+		FREE_STRING_HOOK(myob->slaying);
+	myob->slaying = add_string_hook(txt);
+    myob = insert_ob_in_ob_hook(myob, where);
 
     GCFP.Value[0] = (void *)(where);
     GCFP.Value[1] = (void *)(myob);
   /*esrv_send_item((object *)(gh_scm2long(where)), myob); */
     (PlugHooks[HOOK_ESRVSENDITEM])(&GCFP);
     return Py_BuildValue("l",(long)(myob));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -2551,65 +2547,32 @@ static PyObject* CFCreateObjectInside(PyObject* self, PyObject* args)
 		CFR = (PlugHooks[HOOK_GETARCHETYPE])(&GCFP);
 		myob = (object *)(CFR->Value[0]);
 		free(CFR);
+		if(!myob) /* now we are REALLY messed up */
+		{
+			LOG(llevDebug,"BUG python_CFCreateObjectInside(): FAILED TO CREATE: %s AND no singluarity!\n", txt);
+		    Py_INCREF(Py_None);
+			return Py_None; /* emergency return */
+		}
 	}
-	
-    if (myob->name && !strncmp(myob->name, "singluarity",11))
-    {
-		LOG(llevDebug,"BUG python_CFCreateObjectInside(): FAILED TO CREATE: >%s< = singluarity!\n", query_name(myob));
-		/*
-		GCFP.Value[0] = (void *)(myob);
-		(PlugHooks[HOOK_FREEOBJECT])(&GCFP);
 
-        CFR = (PlugHooks[HOOK_GETARCHETYPE])(&GCFP);
-        myob = (object *)(CFR->Value[0]);
-        free(CFR);
-		*/
-    }
-	/*
-    else
-    {
-		
-        if (strcmp(query_name(myob),txt))
-        {
-            for(i=strlen(query_name(myob)); i>0;i--)
-            {
-                tmpname = (char *)(malloc(i+1));
-                strncpy(tmpname,query_name(myob),i);
-                tmpname[i] = 0x0;
-                if (!strcmp(query_name(myob),tmpname))
-                {
-                    free_string(tmpname);
-                    tmpname = txt + i;
-                    GCFP.Value[0] = (void *)(myob);
-                    GCFP.Value[1] = (void *)(tmpname);
-                   
-                    CFR = (PlugHooks[HOOK_CREATEARTIFACT])(&GCFP);
-                    test = (object *)(CFR->Value[0]);
-                    free(CFR);
-                }
-                else
-                {
-                    free_string(tmpname);
-                }
-            }
-        }
-    }
-*/
+	/* we created a singluarity - that should not happes - tell it the logs */
+    if (myob->name && !strncmp(myob->name, "singluarity",11))
+		LOG(llevDebug,"BUG python_CFCreateObjectInside(): FAILED TO CREATE: %s (>%s< = singluarity!)\n", txt,query_name(myob));
 		
 	if(value != -1) /* -1 means, we use original value */
 		myob->value = (sint32) value;
 	if(id)
 		SET_FLAG(myob,FLAG_IDENTIFIED);
-    myob = insert_ob_in_ob(myob, where);
+    myob = insert_ob_in_ob_hook(myob, where);
     if (where->type == PLAYER)
     {
         GCFP.Value[0] = (void *)(where);
         GCFP.Value[1] = (void *)(myob);
         (PlugHooks[HOOK_ESRVSENDITEM])(&GCFP);
 /*        esrv_send_item((object *)(gh_scm2long(where)), myob); */
-    };
+    }
     return Py_BuildValue("l",(long)(myob));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -2632,7 +2595,7 @@ static PyObject* CFCheckMap(PyObject* self, PyObject* args)
         x,y
     );
     return Py_BuildValue("l",(long)(foundob));
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFCheckArchInventory                                             */
@@ -2655,11 +2618,11 @@ static PyObject* CFCheckArchInventory(PyObject* self, PyObject* args)
         if (!strcmp(tmp->arch->name,whatstr))
             return Py_BuildValue("l",(long)(tmp));
         tmp = tmp->below;
-    };
+    }
 
     Py_INCREF(Py_None);
     return Py_None; /* we don't find a arch with this arch_name in the inventory */
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -2669,31 +2632,27 @@ static PyObject* CFCheckArchInventory(PyObject* self, PyObject* args)
 static PyObject* CFCheckInventory(PyObject* self, PyObject* args)
 {
     long whoptr;
+	int i;
     char* whatstr;
     object* tmp;
-    object* foundob;
-
+ 
     if (!PyArg_ParseTuple(args,"ls",&whoptr,&whatstr))
         return NULL;
     tmp = WHO->inv;
-    foundob = present_arch_in_ob(find_archetype(whatstr),WHO);
-    if (foundob == NULL)
-    {
-        while (tmp)
-        {
-            if (!strncmp(query_name(tmp),whatstr,strlen(whatstr)))
-            {
-                return Py_BuildValue("l",(long)(tmp));
-            };
-            if (!strncmp(tmp->name,whatstr,strlen(whatstr)))
-            {
-                return Py_BuildValue("l",(long)(tmp));
-            };
-            tmp = tmp->below;
-        };
-    };
-    return Py_BuildValue("l",(long)(foundob));
-};
+
+	i = (int)strlen(whatstr);
+	while (tmp)
+	{
+		if (!strncmp(query_name(tmp),whatstr,i))
+			return Py_BuildValue("l",(long)(tmp));
+		if (tmp->name && !strncmp(tmp->name,whatstr,i))
+			return Py_BuildValue("l",(long)(tmp));
+		tmp = tmp->below;
+	}
+
+    Py_INCREF(Py_None);
+    return Py_None; /* we don't find a arch with this arch_name in the inventory */
+}
 
 /*****************************************************************************/
 /* Name   : CFGetName                                                        */
@@ -2707,7 +2666,7 @@ static PyObject* CFGetName(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("s",WHO->name);
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFSetName                                                        */
@@ -2722,12 +2681,12 @@ static PyObject* CFSetName(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"ls",&whoptr,&txt))
         return NULL;
     if (WHO->name != NULL)
-        DELETE_STRING(WHO->name);
+        FREE_STRING_HOOK(WHO->name);
     if(txt && strcmp(txt,""))
-        WHO->name = add_string(txt);
+        WHO->name = add_string_hook(txt);
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -2741,7 +2700,7 @@ static PyObject* CFGetTitle(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("s",WHO->title);
-};
+}
 
 
 /*****************************************************************************/
@@ -2757,12 +2716,12 @@ static PyObject* CFSetTitle(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"ls",&whoptr,&txt))
         return NULL;
     if (WHO->title != NULL)
-        DELETE_STRING(WHO->title);
+        FREE_STRING_HOOK(WHO->title);
     if(txt && strcmp(txt,""))
-        WHO->title = add_string(txt);
+        WHO->title = add_string_hook(txt);
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -2775,7 +2734,7 @@ static PyObject* CFGetSlaying(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("s",WHO->slaying);
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFSetSlaying                                                     */
@@ -2790,12 +2749,12 @@ static PyObject* CFSetSlaying(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"ls",&whoptr,&txt))
         return NULL;
     if (WHO->slaying != NULL)
-        DELETE_STRING(WHO->slaying);
+        FREE_STRING_HOOK(WHO->slaying);
     if(txt && strcmp(txt,""))
-        WHO->slaying = add_string(txt);
+        WHO->slaying = add_string_hook(txt);
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFSetSaveBed                                                     */
@@ -2820,96 +2779,34 @@ static PyObject* CFSetSaveBed(PyObject* self, PyObject* args)
     }
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 
 /*****************************************************************************/
 /* Name   :                                                                  */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Unfinished                                                       */
 /*****************************************************************************/
 
 static PyObject* CFCreateObject(PyObject* self, PyObject* args)
 {
-    object *myob;
-    object *test;
     char *txt;
-    int i = 0;
-    char *tmpname;
-    CFParm* CFR;
     int x,y;
-    int val;
     long map = (long)((StackWho[StackPosition])->map);
 
     if (!PyArg_ParseTuple(args,"s(ii)|l",&txt, &x,&y,&map))
         return NULL;
 
-    /*myob = get_archetype(txt); */
-    /*myob = get_archetype_by_object_name(txt); */
-    GCFP.Value[0] = (void *)(txt);
-    CFR = (PlugHooks[HOOK_GETARCHBYOBJNAME])(&GCFP);
-    myob = (object *)(CFR->Value[0]);
-    free(CFR);
-
-    if (!strncmp(query_name(myob), "singluarity",11))
-    {
-		GCFP.Value[0] = (void *)(myob);
-	    (PlugHooks[HOOK_FREEOBJECT])(&GCFP);
-
-        /*free_object(myob);*/
-        /*myob = get_archetype(txt); */
-        GCFP.Value[0] = (void *)(txt);
-        CFR = (PlugHooks[HOOK_GETARCHBYOBJNAME])(&GCFP);
-        myob = (object *)(CFR->Value[0]);
-        free(CFR);
-    }
-    else
-    {
-        if (strcmp(query_name(myob),txt))
-        {
-            for(i=strlen(query_name(myob)); i>0;i--)
-            {
-                tmpname = (char *)(malloc(i+1));
-                strncpy(tmpname,query_name(myob),i);
-                tmpname[i] = 0x0;
-                if (!strcmp(query_name(myob),tmpname))
-                {
-                    free_string(tmpname);
-                    tmpname = txt + i;
-                    GCFP.Value[0] = (void *)(myob);
-                    GCFP.Value[1] = (void *)(tmpname);
-                    CFR = (PlugHooks[HOOK_CREATEARTIFACT])(&GCFP);
-                    /*test = create_artifact(myob,tmpname); */
-                    test = (object *)(CFR->Value[0]);
-                    free(CFR);
-                }
-                else
-                {
-                    free_string(tmpname);
-                };
-            };
-        };
-    };
-    myob->x = x;
-    myob->y = y;
-    val = 0;
-    GCFP.Value[0] = (void *)(myob);
-    GCFP.Value[1] = (void *)(map);
-    GCFP.Value[2] = NULL;
-    GCFP.Value[3] = (void *)(&val);
-    /*myob = insert_ob_in_map(myob, map ,NULL,0); */
-    CFR = (PlugHooks[HOOK_INSERTOBJECTINMAP])(&GCFP);
-    myob = (object *)(CFR->Value[0]);
-    free(CFR);
-    return Py_BuildValue("l",(long)(myob));
-};
+    Py_INCREF(Py_None);
+    return Py_None;
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
-
+/* hm, this should be named delete or free object... */
 static PyObject* CFRemoveObject(PyObject* self, PyObject* args)
 {
     long whoptr;
@@ -2921,22 +2818,18 @@ static PyObject* CFRemoveObject(PyObject* self, PyObject* args)
     myob = (object *)(whoptr);
     GCFP.Value[0] = (void *)(myob);
     (PlugHooks[HOOK_REMOVEOBJECT])(&GCFP);
-    /*remove_ob(myob); */
 
     if (StackActivator[StackPosition]->type == PLAYER)
     {
         GCFP.Value[0] = (void *)(StackActivator[StackPosition]);
         GCFP.Value[1] = (void *)(StackActivator[StackPosition]);
         (PlugHooks[HOOK_ESRVSENDINVENTORY])(&GCFP);
-/*    esrv_send_inventory(guile_current_activator[guile_stack_position], */
-/*guile_current_activator[guile_stack_position]); */
-    };
+    }
     GCFP.Value[0] = (void *)(myob);
     (PlugHooks[HOOK_FREEOBJECT])(&GCFP);
-    /*free_object(myob);*/
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -2950,7 +2843,7 @@ static PyObject* CFIsAlive(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_ALIVE));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -2964,7 +2857,7 @@ static PyObject* CFIsWiz(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_WIZ));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -2978,7 +2871,7 @@ static PyObject* CFWasWiz(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_WAS_WIZ));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -2992,7 +2885,7 @@ static PyObject* CFIsApplied(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_APPLIED));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3006,7 +2899,7 @@ static PyObject* CFIsUnpaid(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_UNPAID));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3020,7 +2913,7 @@ static PyObject* CFIsFlying(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_FLYING));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3034,7 +2927,7 @@ static PyObject* CFIsMonster(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_MONSTER));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3048,7 +2941,7 @@ static PyObject* CFIsFriendly(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_FRIENDLY));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3062,7 +2955,7 @@ static PyObject* CFIsGenerator(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_GENERATOR));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3076,7 +2969,7 @@ static PyObject* CFIsThrown(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_IS_THROWN));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3090,7 +2983,7 @@ static PyObject* CFCanSeeInvisible(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_SEE_INVISIBLE));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3104,7 +2997,7 @@ static PyObject* CFCanRoll(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_CAN_ROLL));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3118,7 +3011,7 @@ static PyObject* CFIsTurnable(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_IS_TURNABLE));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3132,7 +3025,7 @@ static PyObject* CFIsUsedUp(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_IS_USED_UP));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3148,7 +3041,7 @@ static PyObject* CFIsIdentified(PyObject* self, PyObject* args)
         return NULL;
     retval = QUERY_FLAG(WHO,FLAG_IDENTIFIED);
     return Py_BuildValue("i",retval);
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3162,7 +3055,7 @@ static PyObject* CFIsSplitting(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_SPLITTING));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3176,7 +3069,7 @@ static PyObject* CFHitBack(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_HITBACK));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3190,7 +3083,7 @@ static PyObject* CFBlocksView(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_BLOCKSVIEW));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3204,7 +3097,7 @@ static PyObject* CFIsUndead(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_UNDEAD));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3218,7 +3111,7 @@ static PyObject* CFIsScared(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_SCARED));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3232,7 +3125,7 @@ static PyObject* CFIsUnaggressive(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_UNAGGRESSIVE));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3246,7 +3139,7 @@ static PyObject* CFReflectMissiles(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_REFL_MISSILE));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3260,7 +3153,7 @@ static PyObject* CFReflectSpells(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_REFL_SPELL));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3274,7 +3167,7 @@ static PyObject* CFIsRunningAway(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_RUN_AWAY));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3288,7 +3181,7 @@ static PyObject* CFCanPassThru(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_CAN_PASS_THRU));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3302,7 +3195,7 @@ static PyObject* CFCanPickUp(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_PICK_UP));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3316,7 +3209,7 @@ static PyObject* CFIsUnique(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_UNIQUE));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3330,7 +3223,7 @@ static PyObject* CFCanCastSpell(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_CAST_SPELL));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3344,7 +3237,7 @@ static PyObject* CFCanUseScroll(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_USE_SCROLL));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3358,7 +3251,7 @@ static PyObject* CFCanUseWand(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_USE_RANGE));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3372,7 +3265,7 @@ static PyObject* CFCanUseBow(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_USE_BOW));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3386,7 +3279,7 @@ static PyObject* CFCanUseArmour(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_USE_ARMOUR));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3400,7 +3293,7 @@ static PyObject* CFCanUseWeapon(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_USE_WEAPON));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3414,7 +3307,7 @@ static PyObject* CFCanUseRing(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_USE_RING));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3428,7 +3321,7 @@ static PyObject* CFHasXRays(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_XRAYS));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3442,7 +3335,7 @@ static PyObject* CFIsFloor(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_IS_FLOOR));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3456,7 +3349,7 @@ static PyObject* CFIsLifeSaver(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_LIFESAVE));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3470,7 +3363,7 @@ static PyObject* CFIsSleeping(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_SLEEP));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3484,7 +3377,7 @@ static PyObject* CFStandStill(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_STAND_STILL));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3498,7 +3391,7 @@ static PyObject* CFOnlyAttack(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_ONLY_ATTACK));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3512,7 +3405,7 @@ static PyObject* CFIsConfused(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_CONFUSED));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3526,7 +3419,7 @@ static PyObject* CFHasStealth(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_STEALTH));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3540,7 +3433,7 @@ static PyObject* CFIsCursed(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_CURSED));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3554,7 +3447,7 @@ static PyObject* CFIsDamned(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_DAMNED));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3568,7 +3461,7 @@ static PyObject* CFIsKnownMagical(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_KNOWN_MAGICAL));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3582,7 +3475,7 @@ static PyObject* CFIsKnownCursed(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_KNOWN_CURSED));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3596,7 +3489,7 @@ static PyObject* CFCanUseSkill(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_CAN_USE_SKILL));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3610,7 +3503,7 @@ static PyObject* CFHasBeenApplied(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_BEEN_APPLIED));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3624,7 +3517,7 @@ static PyObject* CFCanUseRod(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_USE_RANGE));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3638,7 +3531,7 @@ static PyObject* CFCanUseHorn(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_USE_RANGE));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3652,7 +3545,7 @@ static PyObject* CFMakeInvisible(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_SEE_INVISIBLE));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3666,7 +3559,7 @@ static PyObject* CFIsBlind(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_BLIND));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3680,7 +3573,7 @@ static PyObject* CFCanSeeInDark(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_SEE_IN_DARK));
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3694,7 +3587,7 @@ static PyObject* CFGetAC(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",WHO->stats.ac);
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3708,7 +3601,7 @@ static PyObject* CFGetCha(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",WHO->stats.Cha);
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3722,7 +3615,7 @@ static PyObject* CFGetCon(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",WHO->stats.Con);
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3736,7 +3629,7 @@ static PyObject* CFGetDex(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",WHO->stats.Dex);
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3751,7 +3644,7 @@ static PyObject* CFGetHP(PyObject* self, PyObject* args)
         return NULL;
     return Py_BuildValue("i",WHO->stats.hp);
 
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3765,7 +3658,7 @@ static PyObject* CFGetInt(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",WHO->stats.Int);
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3779,7 +3672,7 @@ static PyObject* CFGetPow(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",WHO->stats.Pow);
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3793,7 +3686,7 @@ static PyObject* CFGetSP(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",WHO->stats.sp);
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3807,7 +3700,7 @@ static PyObject* CFGetStr(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",WHO->stats.Str);
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3821,7 +3714,7 @@ static PyObject* CFGetWis(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",WHO->stats.Wis);
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3835,7 +3728,7 @@ static PyObject* CFGetMaxHP(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",WHO->stats.maxhp);
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3849,7 +3742,7 @@ static PyObject* CFGetMaxSP(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",WHO->stats.maxsp);
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFGetXPos                                                        */
@@ -3863,7 +3756,7 @@ static PyObject* CFGetXPos(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",WHO->x);
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFGetYPos                                                        */
@@ -3877,7 +3770,7 @@ static PyObject* CFGetYPos(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",WHO->y);
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3909,48 +3802,8 @@ static PyObject* CFSetPosition(PyObject* self, PyObject* args)
     free(&CFR);
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
-/*****************************************************************************/
-/* Name   :                                                                  */
-/* Python :                                                                  */
-/* Status : Untested                                                                */
-/*****************************************************************************/
-
-static PyObject* CFSetNickname(PyObject* self, PyObject* args)
-{
-    long whoptr;
-    char *newnick;
-    CFParm* CFR;
-    /*int val = UP_OBJ_CHANGE; */
-
-    if (!PyArg_ParseTuple(args,"ls",&whoptr,&newnick))
-        return NULL;
-
-    if (WHO->type==PLAYER)
-    {
-        GCFP.Value[0] = (void *)(WHO);
-        GCFP.Value[1] = (void *)(newnick);
-        CFR = (PlugHooks[HOOK_CMDTITLE])(&GCFP);
-        free(CFR);
-    }
-    else
-    {
-        FREE_AND_COPY(WHO->title, newnick);
-        if (WHO->env != NULL)
-        {
-            if (WHO->env->type == PLAYER)
-            {
-                GCFP.Value[0] = (void *)(WHO->env);
-                GCFP.Value[1] = (void *)(WHO);
-                (PlugHooks[HOOK_ESRVSENDITEM])(&GCFP);
-            }
-        };
-    };
-
-    Py_INCREF(Py_None);
-    return Py_None;
-};
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3972,7 +3825,7 @@ static PyObject* CFSetAC(PyObject* self, PyObject* args)
     WHO->stats.ac = value;
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -3995,11 +3848,11 @@ static PyObject* CFSetCha(PyObject* self, PyObject* args)
     if (WHO->type == PLAYER)
     {
         WHO->contr->orig_stats.Cha = value;
-		fix_player(WHO);
+		fix_player_hook(WHO);
     }
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -4022,11 +3875,11 @@ static PyObject* CFSetCon(PyObject* self, PyObject* args)
     if (WHO->type == PLAYER)
     {
         WHO->contr->orig_stats.Con = value;
-	    fix_player(WHO);
+	    fix_player_hook(WHO);
     }
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -4049,11 +3902,11 @@ static PyObject* CFSetDex(PyObject* self, PyObject* args)
     if (WHO->type == PLAYER)
     {
         WHO->contr->orig_stats.Dex = value;
-	    fix_player(WHO);
+	    fix_player_hook(WHO);
     }
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -4069,13 +3922,12 @@ static PyObject* CFSetHP(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"li",&whoptr,&value))
         return NULL;
 
-    if (value>16000) return NULL;
     if (value<0) return NULL;
 
     WHO->stats.hp = value;
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -4098,11 +3950,11 @@ static PyObject* CFSetInt(PyObject* self, PyObject* args)
     if (WHO->type == PLAYER)
     {
         WHO->contr->orig_stats.Int = value;
-		fix_player(WHO);
+		fix_player_hook(WHO);
     }
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -4124,7 +3976,7 @@ static PyObject* CFSetMaxHP(PyObject* self, PyObject* args)
     WHO->stats.maxhp = value;
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -4146,7 +3998,7 @@ static PyObject* CFSetMaxSP(PyObject* self, PyObject* args)
     WHO->stats.maxsp = value;
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -4169,11 +4021,11 @@ static PyObject* CFSetPow(PyObject* self, PyObject* args)
     if (WHO->type == PLAYER)
     {
         WHO->contr->orig_stats.Pow = value;
-	    fix_player(WHO);
+	    fix_player_hook(WHO);
     }
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -4195,7 +4047,7 @@ static PyObject* CFSetSP(PyObject* self, PyObject* args)
     WHO->stats.sp = value;
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -4218,11 +4070,11 @@ static PyObject* CFSetStr(PyObject* self, PyObject* args)
     if (WHO->type == PLAYER)
     {
         WHO->contr->orig_stats.Str = value;
-	    fix_player(WHO);
+	    fix_player_hook(WHO);
     }
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -4244,11 +4096,11 @@ static PyObject* CFSetWis(PyObject* self, PyObject* args)
     if (WHO->type == PLAYER)
     {
         WHO->contr->orig_stats.Wis = value;
-	    fix_player(WHO);
+	    fix_player_hook(WHO);
     }
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   : IdentifyObject(caster, target, object, mode)                     */
@@ -4271,7 +4123,7 @@ static PyObject* CFIdentifyObject(PyObject* self, PyObject* args)
 
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   : Message(who, message,[color])                                    */
@@ -4297,7 +4149,7 @@ static PyObject* CFMessage(PyObject* self, PyObject* args)
 
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   :	Write(who, message,[color])                                      */
@@ -4325,7 +4177,7 @@ static PyObject* CFWrite(PyObject* self, PyObject* args)
 
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -4346,7 +4198,7 @@ static PyObject* CFIsOfType(PyObject* self, PyObject* args)
     else
         value = 0;
     return Py_BuildValue("i",value);
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -4360,7 +4212,7 @@ static PyObject* CFGetType(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("i",WHO->type);
-};
+}
 
 /* Those replace the old get-script... and set-script... system */
 /*****************************************************************************/
@@ -4377,7 +4229,7 @@ static PyObject* CFGetEventHandler(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"li",&whoptr,&eventnr))
         return NULL;
     return Py_BuildValue("s",WHO->event_hook[eventnr]);
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -4394,10 +4246,10 @@ static PyObject* CFSetEventHandler(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"lis",&whoptr, &eventnr, &scriptname))
         return NULL;
 
-    WHO->event_hook[eventnr] = add_string(scriptname);
+    WHO->event_hook[eventnr] = add_string_hook(scriptname);
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -4413,7 +4265,7 @@ static PyObject* CFGetEventPlugin(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"li",&whoptr, &eventnr))
         return NULL;
     return Py_BuildValue("s", WHO->event_plugin[eventnr]);
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -4430,10 +4282,10 @@ static PyObject* CFSetEventPlugin(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"lis",&whoptr,&eventnr,&scriptname))
         return NULL;
 
-    WHO->event_plugin[eventnr] = add_string(scriptname);
+    WHO->event_plugin[eventnr] = add_string_hook(scriptname);
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -4452,9 +4304,9 @@ static PyObject* CFGetEventOptions(PyObject* self, PyObject* args)
     {
         strcpy(estr,"");
         return Py_BuildValue("s", estr);
-    };
+    }
     return Py_BuildValue("s", WHO->event_options[eventnr]);
-};
+}
 
 /*****************************************************************************/
 /* Name   :                                                                  */
@@ -4471,11 +4323,11 @@ static PyObject* CFSetEventOptions(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"lis",&whoptr,&eventnr,&scriptname))
         return NULL;
 
-    WHO->event_options[eventnr] = add_string(scriptname);
+    WHO->event_options[eventnr] = add_string_hook(scriptname);
 
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFLoadObject                                                     */
@@ -4498,7 +4350,7 @@ static PyObject* CFLoadObject(PyObject* self, PyObject* args)
     free(CFR);
 
     return Py_BuildValue("l",(long)(whoptr));
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFSaveObject                                                     */
@@ -4520,7 +4372,7 @@ static PyObject* CFSaveObject(PyObject* self, PyObject* args)
     free(CFR);
 
     return Py_BuildValue("s",result);
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFGetIP                                                          */
@@ -4541,7 +4393,7 @@ static PyObject* CFGetIP(PyObject* self, PyObject* args)
 	    return Py_None;
 	}
 
-    if (WHO->contr!=NULL)
+    if (WHO->contr)
     {
         result = WHO->contr->socket.host;
         return Py_BuildValue("s",result);
@@ -4550,8 +4402,8 @@ static PyObject* CFGetIP(PyObject* self, PyObject* args)
     {
         LOG(llevDebug, "PYTHON - Error - This object has no controller\n");
         return Py_BuildValue("s","");
-    };
-};
+    }
+}
 
 /*****************************************************************************/
 /* Name   : CFGetInventory                                                   */
@@ -4566,7 +4418,7 @@ static PyObject* CFGetInventory(PyObject* self, PyObject* args)
         return NULL;
 
     return Py_BuildValue("l", (long)(WHO->inv));
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFGetInternalName                                                */
@@ -4580,51 +4432,8 @@ static PyObject* CFGetArchName(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"l",&whoptr))
         return NULL;
     return Py_BuildValue("s",WHO->name);
-};
+}
 
-/*****************************************************************************/
-/* Name   : CFRegisterCommand                                                */
-/* Python : RegisterCommand(cmdname,scriptname,speed)                        */
-/* Status : Untested                                                         */
-/*****************************************************************************/
-
-static PyObject* CFRegisterCommand(PyObject* self, PyObject* args)
-{
-    char *cmdname;
-    char *scriptname;
-    double cmdspeed;
-    int i;
-
-    if (!PyArg_ParseTuple(args, "ssd",&cmdname,&scriptname,&cmdspeed))
-        return NULL;
-
-    for (i=0;i<NR_CUSTOM_CMD;i++)
-    {
-        if (CustomCommand[i].name != NULL)
-        {
-            if (!strcmp(CustomCommand[i].name,cmdname))
-            {
-                LOG(llevDebug, "PYTHON - This command is already registered !\n");
-                return NULL;
-            }
-        }
-    }
-    for (i=0;i<NR_CUSTOM_CMD;i++)
-    {
-        if (CustomCommand[i].name == NULL)
-        {
-            CustomCommand[i].name = (char *)(malloc(sizeof(char)*strlen(cmdname)));
-            CustomCommand[i].script = (char *)(malloc(sizeof(char)*strlen(scriptname)));
-            strcpy(CustomCommand[i].name,cmdname);
-            strcpy(CustomCommand[i].script,scriptname);
-            CustomCommand[i].speed = cmdspeed;
-            i = NR_CUSTOM_CMD;
-        }
-    };
-
-    Py_INCREF(Py_None);
-    return Py_None;
-};
 
 /*****************************************************************************/
 /* Name   : CFCostFlagFTrue                                                  */
@@ -4638,7 +4447,7 @@ static PyObject* CFCostFlagFTrue(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("i",flag);
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFCostFlagFBuy                                                   */
@@ -4652,7 +4461,7 @@ static PyObject* CFCostFlagFBuy(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("i",flag);
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFCostFlagFSell                                                  */
@@ -4666,7 +4475,7 @@ static PyObject* CFCostFlagFSell(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"",NULL))
         return NULL;
     return Py_BuildValue("i",flag);
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFGetObjectCost                                                  */
@@ -4691,7 +4500,7 @@ static PyObject* CFGetObjectCost(PyObject* self, PyObject* args)
     cost=*(int*)(CFR->Value[0]);
     free (CFR);
     return Py_BuildValue("i",cost);
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFGetObjectMoney                                                 */
@@ -4712,7 +4521,7 @@ static PyObject* CFGetObjectMoney(PyObject* self, PyObject* args)
     amount=*(int*)(CFR->Value[0]);
     free (CFR);
     return Py_BuildValue("i",amount);
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFPayForItem                                                     */
@@ -4735,7 +4544,7 @@ static PyObject* CFPayForItem(PyObject* self, PyObject* args)
     val=*(int*)(CFR->Value[0]);
     free (CFR);
     return Py_BuildValue("i",val);
-};
+}
 
 /*****************************************************************************/
 /* Name   : CFPayAmount                                                      */
@@ -4758,7 +4567,51 @@ static PyObject* CFPayAmount(PyObject* self, PyObject* args)
     val=*(int*)(CFR->Value[0]);
     free (CFR);
     return Py_BuildValue("i",val);
-};
+}
+
+/*****************************************************************************/
+/* Name   : CFRegisterCommand                                                */
+/* Python : RegisterCommand(cmdname,scriptname,speed)                        */
+/* Status : Untested                                                         */
+/*****************************************************************************/
+/* pretty untested... */
+static PyObject* CFRegisterCommand(PyObject* self, PyObject* args)
+{
+    char *cmdname;
+    char *scriptname;
+    double cmdspeed;
+    int i;
+
+    if (!PyArg_ParseTuple(args, "ssd",&cmdname,&scriptname,&cmdspeed))
+        return NULL;
+
+    for (i=0;i<NR_CUSTOM_CMD;i++)
+    {
+        if (CustomCommand[i].name)
+        {
+            if (!strcmp(CustomCommand[i].name,cmdname))
+            {
+                LOG(llevDebug, "PYTHON - This command is already registered !\n");
+                return NULL;
+            }
+        }
+    }
+    for (i=0;i<NR_CUSTOM_CMD;i++)
+    {
+        if (CustomCommand[i].name == NULL)
+        {
+            CustomCommand[i].name = (char *)(malloc(sizeof(char)*strlen(cmdname)));
+            CustomCommand[i].script = (char *)(malloc(sizeof(char)*strlen(scriptname)));
+            strcpy(CustomCommand[i].name,cmdname);
+            strcpy(CustomCommand[i].script,scriptname);
+            CustomCommand[i].speed = cmdspeed;
+            i = NR_CUSTOM_CMD;
+        }
+    }
+
+    Py_INCREF(Py_None);
+    return Py_None;
+}
 
 /*****************************************************************************/
 /* Name   : CFSendCustomCommand                                              */
@@ -4777,7 +4630,7 @@ static PyObject* CFSendCustomCommand(PyObject* self, PyObject* args)
     (PlugHooks[HOOK_SENDCUSTOMCOMMAND])(&GCFP);
     Py_INCREF(Py_None);
     return Py_None;
-};
+}
 
 /*****************************************************************************/
 /* The Plugin Management Part.                                               */
@@ -4801,7 +4654,7 @@ MODULEAPI CFParm* registerHook(CFParm* PParm)
     Hook=(f_plugin)(PParm->Value[1]);
     PlugHooks[Pos]=Hook;
     return NULL;
-};
+}
 
 /*****************************************************************************/
 /* Called whenever an event is triggered, both Local and Global ones.        */
@@ -4862,10 +4715,10 @@ MODULEAPI CFParm* triggerEvent(CFParm* PParm)
         case EVENT_MAPRESET:
             result = HandleGlobalEvent(PParm);
             break;
-    };
+    }
     GCFP.Value[0] = (void *)(&result);
     return &GCFP;
-};
+}
 
 /*****************************************************************************/
 /* Handles standard global events.                                            */
@@ -4878,7 +4731,7 @@ MODULEAPI int HandleGlobalEvent(CFParm* PParm)
     {
         LOG(llevDebug, "Can't execute script - No space left of stack\n");
         return 0;
-    };
+    }
 
     StackPosition++;
 
@@ -4989,10 +4842,10 @@ MODULEAPI int HandleGlobalEvent(CFParm* PParm)
                 fclose(Scriptfile);
             }
             break;
-    };
+    }
     StackPosition--;
     return 0;
-};
+}
 
 /*****************************************************************************/
 /* Handles standard local events.                                            */
@@ -5014,7 +4867,7 @@ MODULEAPI int HandleEvent(CFParm* PParm)
     {
         LOG(llevDebug, "PYTHON - Can't execute script - No space left of stack\n");
         return 0;
-    };
+    }
     StackPosition++;
     StackActivator[StackPosition]   = (object *)(PParm->Value[1]);
     StackWho[StackPosition]         = (object *)(PParm->Value[2]);
@@ -5031,7 +4884,7 @@ MODULEAPI int HandleEvent(CFParm* PParm)
     {
         LOG(llevDebug, "PYTHON - The Script file %s can't be opened\n",(char *)(PParm->Value[9]));
         return 0;
-    };
+    }
 #ifdef PYTHON_DEBUG
     LOG(llevDebug, "PYTHON:: PyRun_SimpleFile! ");
 #endif
@@ -5048,22 +4901,22 @@ MODULEAPI int HandleEvent(CFParm* PParm)
     if (StackParm4[StackPosition] == SCRIPT_FIX_ALL)
     {
         if (StackOther[StackPosition] != NULL)
-            fix_player(StackOther[StackPosition]);
+            fix_player_hook(StackOther[StackPosition]);
         if (StackWho[StackPosition] != NULL)
-            fix_player(StackWho[StackPosition]);
+            fix_player_hook(StackWho[StackPosition]);
         if (StackActivator[StackPosition] != NULL)
-            fix_player(StackActivator[StackPosition]);
+            fix_player_hook(StackActivator[StackPosition]);
     }
     else if (StackParm4[StackPosition] == SCRIPT_FIX_ACTIVATOR)
     {
-        fix_player(StackActivator[StackPosition]);
-    };
+        fix_player_hook(StackActivator[StackPosition]);
+    }
     StackPosition--;
 #ifdef PYTHON_DEBUG
     LOG(llevDebug, "done (%d)!\n",StackReturn[StackPosition]);
 #endif
     return StackReturn[StackPosition];
-};
+}
 
 /*****************************************************************************/
 /* Plugin initialization.                                                    */
@@ -5080,10 +4933,13 @@ MODULEAPI CFParm* initPlugin(CFParm* PParm)
     Py_Initialize();
     initCFPython();
     LOG(llevDebug, "[Done]\n");
-    GCFP.Value[0] = (void *) add_string(PLUGIN_NAME);
-    GCFP.Value[1] = (void *) add_string(PLUGIN_VERSION);
+/*    GCFP.Value[0] = (void *) add_string_hook(PLUGIN_NAME);
+    GCFP.Value[1] = (void *) add_string_hook(PLUGIN_VERSION);
+	*/
+    GCFP.Value[0] = (void *) PLUGIN_NAME;
+    GCFP.Value[1] = (void *) PLUGIN_VERSION;
     return &GCFP;
-};
+}
 
 /*****************************************************************************/
 /* Used to do cleanup before killing the plugin.                             */
@@ -5091,7 +4947,7 @@ MODULEAPI CFParm* initPlugin(CFParm* PParm)
 MODULEAPI CFParm* removePlugin(CFParm* PParm)
 {
         return NULL;
-};
+}
 
 /*****************************************************************************/
 /* This function is called to ask various informations to the plugin.        */
@@ -5103,9 +4959,9 @@ MODULEAPI CFParm* getPluginProperty(CFParm* PParm)
     int i;
     if (PParm!=NULL)
     {
-        if(!strcmp((char *)(PParm->Value[0]),"command?"))
+        if(PParm->Value[0] && !strcmp((char *)(PParm->Value[0]),"command?"))
         {
-            if(!strcmp((char *)(PParm->Value[1]),PLUGIN_NAME))
+            if(PParm->Value[1] && !strcmp((char *)(PParm->Value[1]),PLUGIN_NAME))
             {
                 GCFP.Value[0] = PParm->Value[1];
                 GCFP.Value[1] = &cmd_aboutPython;
@@ -5116,7 +4972,7 @@ MODULEAPI CFParm* getPluginProperty(CFParm* PParm)
             {
                 for (i=0;i<NR_CUSTOM_CMD;i++)
                 {
-                    if (CustomCommand[i].name != NULL)
+                    if (CustomCommand[i].name)
                     {
                         if (!strcmp(CustomCommand[i].name,(char *)(PParm->Value[1])))
                         {
@@ -5134,10 +4990,10 @@ MODULEAPI CFParm* getPluginProperty(CFParm* PParm)
         else
         {
             LOG(llevDebug, "PYTHON - Unknown property tag: %s\n",(char *)(PParm->Value[0]));
-        };
-    };
+        }
+    }
     return NULL;
-};
+}
 
 MODULEAPI int cmd_customPython(object *op, char *params)
 {
@@ -5149,7 +5005,7 @@ MODULEAPI int cmd_customPython(object *op, char *params)
     {
         LOG(llevDebug, "PYTHON - Can't execute script - No space left of stack\n");
         return 0;
-    };
+    }
     StackPosition++;
     StackActivator[StackPosition]   = op;
     StackWho[StackPosition]         = op;
@@ -5161,12 +5017,12 @@ MODULEAPI int cmd_customPython(object *op, char *params)
     {
         LOG(llevDebug, "PYTHON - The Script file %s can't be opened\n",CustomCommand[NextCustomCommand].script);
         return 0;
-    };
+    }
     PyRun_SimpleFile(Scriptfile, create_pathname(CustomCommand[NextCustomCommand].script));
     fclose(Scriptfile);
     StackPosition--;
     return StackReturn[StackPosition+1];
-};
+}
 
 MODULEAPI int cmd_aboutPython(object *op, char *params)
 {
@@ -5180,7 +5036,7 @@ MODULEAPI int cmd_aboutPython(object *op, char *params)
 
     (PlugHooks[HOOK_NEWINFOMAP])(&GCFP);
     return 0;
-};
+}
 
 /*****************************************************************************/
 /* The postinitPlugin function is called by the server when the plugin load  */
@@ -5201,7 +5057,8 @@ MODULEAPI CFParm* postinitPlugin(CFParm* PParm)
 
     LOG(llevDebug, "PYTHON - Start postinitPlugin.\n");
     
-    GCFP.Value[1] = (void *)(add_string(PLUGIN_NAME));
+/*    GCFP.Value[1] = (void *)(add_string_hook(PLUGIN_NAME));*/
+    GCFP.Value[1] = (void *)PLUGIN_NAME;
 	/*
     i = EVENT_BORN;
     GCFP.Value[0] = (void *)(&i);
@@ -5244,7 +5101,7 @@ MODULEAPI CFParm* postinitPlugin(CFParm* PParm)
     (PlugHooks[HOOK_REGISTEREVENT])(&GCFP);
 */
     return NULL;
-};
+}
 
 /*****************************************************************************/
 /* Initializes the Python Interpreter.                                       */
@@ -5266,6 +5123,6 @@ MODULEAPI void initCFPython()
             CustomCommand[i].name   = NULL;
             CustomCommand[i].script = NULL;
             CustomCommand[i].speed  = 0.0;
-        };
-};
+        }
+}
 

@@ -92,8 +92,9 @@ f_plugin HookList[NR_OF_HOOKS] =
     CFWIdentifyObject,
     CFWGetSkillNr,
     CFWCheckSkillKnown,
-	CFWNewInfoMapExcept
-
+	CFWNewInfoMapExcept,
+    CFWInsertObjectInObject,
+	CFWFixPlayer
 };
 
 #endif /*PLUGPROTO_H_*/
