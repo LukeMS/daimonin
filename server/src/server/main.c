@@ -47,6 +47,10 @@
 #include <../random_maps/random_map.h>
 #include <../random_maps/rproto.h>
 
+
+#ifdef MEMPOOL_OBJECT_TRACKING
+extern void check_use_object_list(void);
+#endif
 /* Prototypes of functions used only here. */
 void free_all_srv_files();
 void free_racelist();
@@ -225,7 +229,7 @@ void leave_map(object *op)
 {
     mapstruct *oldmap = op->map;
 
-    remove_ob(op);
+    remove_ob(op); /* TODO: hmm... never drop inv here? */
 
 	if (oldmap && !oldmap->player_first && !oldmap->perm_load)
 	    set_map_timeout(oldmap);
@@ -1325,6 +1329,9 @@ int main(int argc, char **argv)
 
     doeric_server();		
     object_gc();                /* Clean up the object pool */
+#ifdef MEMPOOL_OBJECT_TRACKING
+	check_use_object_list();
+#endif
 
     global_round_tag++;			/* global round ticker ! this is real a global */
     process_events(NULL);		/* "do" something with objects with speed */

@@ -480,7 +480,7 @@ void init_exp_obj() {
     nrofexpcat = 0;
     for(at=first_archetype;at!=NULL;at=at->next)
         if(at->clone.type==EXPERIENCE) {
-             exp_cat[nrofexpcat] = get_object() ;
+             exp_cat[nrofexpcat] = get_object();
 	     exp_cat[nrofexpcat]->level = 1;
 	     exp_cat[nrofexpcat]->stats.exp = 0;
              copy_object(&at->clone, exp_cat[nrofexpcat]);

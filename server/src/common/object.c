@@ -33,6 +33,13 @@
 #include <skillist.h>
 #include <loader.h>
 
+#ifdef MEMPOOL_OBJECT_TRACKING
+	static struct mempool_chunk *used_object_list=NULL; /* for debugging only! */
+
+#define MEMPOOL_OBJECT_FLAG_FREE 1
+#define MEMPOOL_OBJECT_FLAG_USED 2
+#endif
+
 object *active_objects;	/* List of active objects that need to be processed */
 struct mempool_chunk *removed_objects; /* List of objects that have been removed
                                           during the last server timestep */
@@ -1008,6 +1015,7 @@ void init_mempools() {
 
     /* Set up container for "loose" objects */
     initialize_object(&void_container);
+	void_container.type = TYPE_VOID_CONTAINER;
 }
 
 /* A tiny little function to set up the constructors/destructors to functions that may
@@ -1027,8 +1035,11 @@ void setup_poolfunctions(mempool_id pool, chunk_constructor constructor, chunk_d
  */
 static void expand_mempool(mempool_id pool) {
     uint32 i;
-    struct mempool_chunk *first, *ptr;
+	struct mempool_chunk *first, *ptr;
     int chunksize_real;
+#ifdef MEMPOOL_OBJECT_TRACKING
+	static uint32 real_id = 1;
+#endif
     
     if(pool >= NROF_MEMPOOLS)
         LOG(llevBug, "BUG: expand_mempool for illegal memory pool %d\n", pool); 
@@ -1048,10 +1059,17 @@ static void expand_mempool(mempool_id pool) {
     /* Set up the linked list */
     ptr = first;
     for(i=0;i<mempools[pool].expand_size-1;i++) 
+	{
         ptr = ptr->next = (struct mempool_chunk *)(((char *)ptr) + chunksize_real);
-    /* and the last element */
+		/* and the last element */
+#ifdef MEMPOOL_OBJECT_TRACKING
+		ptr->obj_next=ptr->obj_prev=0; /* secure */
+		ptr->pool_id = pool;
+		ptr->id=real_id++; /* this is a real, unique object id  allows tracking beyond get/free objects */
+		ptr->flags |=MEMPOOL_OBJECT_FLAG_FREE;
+#endif
+	}
     ptr->next = &end_marker;
-
     #ifdef MEMPOOL_TRACKING
     /* Track the allocation of puddles? */
     {
@@ -1087,6 +1105,23 @@ void *get_poolchunk(mempool_id pool)
     if(mempools[pool].constructor)
         mempools[pool].constructor(MEM_USERDATA(new));
 
+#ifdef MEMPOOL_OBJECT_TRACKING
+	
+	/* that should never happens! */
+	if(new->obj_prev || new->obj_next)
+	{
+		LOG(llevDebug,"WARNING:DEBUG_OBJ::get_poolchunk() object >%d< is in used_object list!!\n",  new->id);
+	}
+	
+	/* put it in front of the used object list */
+	new->obj_next = used_object_list;
+	if(new->obj_next)
+		new->obj_next->obj_prev = new;
+	used_object_list = new;
+	new->flags &=~MEMPOOL_OBJECT_FLAG_FREE;
+	new->flags |=MEMPOOL_OBJECT_FLAG_USED;
+#endif
+
     return MEM_USERDATA(new);
 }
 
@@ -1102,6 +1137,19 @@ void return_poolchunk(void *data, mempool_id pool)
     if(pool >= NROF_MEMPOOLS)
         LOG(llevBug, "BUG: return_poolchunk for illegal memory pool %d\n", pool); 
     
+#ifdef MEMPOOL_OBJECT_TRACKING
+	if(old->obj_next)
+		old->obj_next->obj_prev = old->obj_prev;
+	if(old->obj_prev)
+		old->obj_prev->obj_next = old->obj_next;
+	else
+		used_object_list = old->obj_next;
+
+	old->obj_next=old->obj_prev=0; /* secure */
+	old->flags &=~MEMPOOL_OBJECT_FLAG_USED;
+	old->flags |=MEMPOOL_OBJECT_FLAG_FREE;
+#endif
+
     if(mempools[pool].destructor)
         mempools[pool].destructor(data);
 
@@ -1114,6 +1162,85 @@ void return_poolchunk(void *data, mempool_id pool)
     }
     mempools[pool].nrof_used--;
 }
+
+#ifdef MEMPOOL_OBJECT_TRACKING
+
+/* this is time consuming DEBUG only 
+ * function. Mainly, it checks the different memory parts
+ * and controls they are was they are - if a object claims its
+ * in a inventory we check the inventory - same for map.
+ * If we have detached but not deleted a object - we will find it here.
+ */
+void check_use_object_list(void)
+{
+    struct mempool_chunk *chunk;
+	
+	for(chunk = used_object_list;chunk;chunk=chunk->obj_next)
+	{
+
+		
+#ifdef MEMPOOL_TRACKING
+		if(chunk->pool_id == POOL_PUDDLE) /* ignore for now */
+		{
+		}
+		else
+#endif
+		if(chunk->pool_id == POOL_OBJECT)
+		{
+			object *tmp2 ,*tmp = MEM_USERDATA(chunk);
+
+			/*LOG(llevDebug,"DEBUG_OBJ:: object >%s< (%d)\n",  query_name(tmp), chunk->id);*/
+
+			if(QUERY_FLAG(tmp, FLAG_REMOVED)) 
+				LOG(llevDebug,"VOID:DEBUG_OBJ:: object >%s< (%d) has removed flag set!\n",  query_name(tmp), chunk->id);
+			
+			if(tmp->map) /* we are on a map */
+			{
+				if(tmp->map->in_memory != MAP_IN_MEMORY)
+					LOG(llevDebug,"BUG:DEBUG_OBJ:: object >%s< (%d) has invalid map! >%d<!\n",  query_name(tmp), tmp->map->name?tmp->map->name:"NONE", chunk->id);
+				else
+				{
+					for(tmp2= get_map_ob (tmp->map, tmp->x, tmp->y); tmp2; tmp2 = tmp2->above)
+					{
+						if(tmp2 == tmp)
+							goto goto_object_found;
+					}
+						
+					LOG(llevDebug,"BUG:DEBUG_OBJ:: object >%s< (%d) has invalid map! >%d<!\n",  query_name(tmp), tmp->map->name?tmp->map->name:"NONE", chunk->id);
+				}
+					
+			}
+			else if (tmp->env)
+			{
+				/* object claims to be here... lets check it IS here */
+				for (tmp2=tmp->env->inv; tmp2; tmp2=tmp2->below) 
+				{
+					if(tmp2 == tmp)
+						goto goto_object_found;
+
+				}
+					
+				LOG(llevDebug,"BUG:DEBUG_OBJ:: object >%s< (%d) has invalid env >%d<!\n",  query_name(tmp), query_name(tmp->env), chunk->id);
+			}
+			else /* where we are ? */
+			{
+				LOG(llevDebug,"BUG:DEBUG_OBJ:: object >%s< (%d) has no env/map\n",  query_name(tmp), chunk->id);
+			}
+		}
+		else if(chunk->pool_id == POOL_PLAYER)
+		{
+			player *tmp = MEM_USERDATA(chunk);
+
+			/*LOG(llevDebug,"DEBUG_OBJ:: player >%s< (%d)\n",  tmp->ob?query_name(tmp->ob):"NONE", chunk->id);*/
+		}
+		else
+		{
+			LOG(llevDebug,"BUG:DEBUG_OBJ: wrong pool ID! (%d - %d)",  chunk->pool_id, chunk->id);
+		}
+goto_object_found:;
+	}	
+}
+#endif
 
 #ifdef MEMPOOL_TRACKING
 
@@ -2069,7 +2196,8 @@ void copy_object_data(object *op2, object *op)
 
 object *get_object() {
     object *new = (object *)get_poolchunk(POOL_OBJECT);
-    mark_object_removed(new);
+
+	mark_object_removed(new);
     return new;
 }
 
@@ -2447,6 +2575,183 @@ static inline int add_one_drop_quest_item(object *target, object *obj)
 	return 1;
 }
 
+/* Drops the inventory of ob into ob's current environment. */
+/* Makes some decisions whether to actually drop or not, and/or to
+ * create a corpse for the stuff */
+void drop_ob_inv(object *ob) {
+    object *corpse=NULL;
+    object *enemy = NULL;
+    object *tmp_op = NULL;
+    object *tmp = NULL;
+
+    if(ob->type == PLAYER) { /* we don't handle players here */
+        LOG(llevBug,"BUG: drop_ob_inv() - try to drop items of %s\n", ob->name);
+        return;
+    }
+    
+    if(ob->env== NULL && (ob->map == NULL || ob->map->in_memory != MAP_IN_MEMORY)) { /* TODO */
+        LOG(llevDebug,"BUG: drop_ob_inv() - can't drop inventory of objects not in map yet: %s (%x)\n", ob->name, ob->map);
+        return;
+    }
+
+    /* create race corpse and/or drop stuff to floor */
+    if(ob->enemy && ob->enemy->type == PLAYER)
+        enemy = ob->enemy;
+    else
+        enemy = get_owner(ob->enemy);
+
+    if((QUERY_FLAG(ob,FLAG_CORPSE) && !QUERY_FLAG(ob,FLAG_STARTEQUIP))
+            || QUERY_FLAG(ob,FLAG_CORPSE_FORCED))
+    {
+        racelink *race_corpse = find_racelink(ob->race);
+        if(race_corpse)
+        {
+            corpse=arch_to_object(race_corpse->corpse);
+            corpse->x=ob->x;corpse->y=ob->y;corpse->map=ob->map;
+            corpse->weight = ob->weight;
+        }
+    }
+
+    tmp_op=ob->inv;
+    while(tmp_op!=NULL)
+    {
+        tmp=tmp_op->below;
+        remove_ob(tmp_op); /* This will be destroyed in next loop of object_gc() */
+        /* if we recall spawn mobs, we don't want drop their items as free.
+         * So, marking the mob itself with "FLAG_STARTEQUIP" will kill
+         * all inventory and not dropping it on the map.
+         * This also happens when a player slays a to low mob/non exp mob.
+         * Don't drop any sys_object in inventory... I can't think about
+         * any use... when we do it, a disease needle for example
+         * is dropping his disease force and so on.
+         */
+
+        if(QUERY_FLAG(tmp_op, FLAG_QUEST_ITEM))
+        {
+            /* legal, non freed enemy */
+            if(enemy && enemy->type == PLAYER && enemy->count == ob->enemy_count)
+            {
+                /* this is the new quest item & one drop quest item code!
+                 * Dropping quest items to the ground in a corpse can invoke
+                 * alot of problems and glitches. The only way to avoid it is,
+                 * to move the quest item HERE in the inventory of the player or
+                 * group. For one drop quests it is the really only usable way.
+                 */
+                /* first: if the player has this item (normally from killing the
+                 * quest mob before) we free the quest item here and stop.
+                 * otherwise, move the item in the players inventory!
+                 */
+                if(! find_quest_item(enemy, tmp_op))
+                {
+                    char auto_buf[HUGE_BUF];
+
+                    /* first, lets check what we have: quest or one drop quest */
+                    if(QUERY_FLAG(tmp_op, FLAG_SYS_OBJECT) ) /* marks one drop quest items */
+                    {
+                        add_one_drop_quest_item(enemy, tmp_op);
+                        sprintf(auto_buf,"You solved the one drop quest %s!\n", query_name(tmp_op));
+                        (*draw_info_func)(NDI_UNIQUE|NDI_NAVY, 0, enemy, auto_buf);
+                    }
+                    else
+                    {
+                        insert_ob_in_ob(tmp_op,enemy); 
+                        sprintf(auto_buf,"You found the quest item %s!\n", query_name(tmp_op));
+                        (*draw_info_func)(NDI_UNIQUE|NDI_NAVY, 0, enemy, auto_buf);
+                    }
+                    (*esrv_send_item_func) (enemy, tmp_op);
+                }
+            }
+        } else if(!(QUERY_FLAG(ob,FLAG_STARTEQUIP) ||
+                    (tmp_op->type != RUNE && (QUERY_FLAG(tmp_op,FLAG_SYS_OBJECT)||
+                                              QUERY_FLAG(tmp_op,FLAG_STARTEQUIP) ||QUERY_FLAG(tmp_op,FLAG_NO_DROP)))))
+        {
+            tmp_op->x=ob->x,tmp_op->y=ob->y;
+
+            /* if we have a corpse put the item in it */
+            if(corpse)
+                insert_ob_in_ob(tmp_op, corpse);
+            else
+            {
+                /* don't drop traps from a container to the floor.
+                 * removing the container where a trap is applied will
+                 * neutralize the trap too 
+				 * Also not drop it in env - be safe here
+                 */
+                if(tmp_op->type != RUNE)
+				{
+					if(ob->env)
+					{
+						insert_ob_in_ob(tmp_op, ob->env);
+						/* this should handle in future insert_ob_in_ob() */
+						if(ob->env->type == PLAYER) 
+							(*esrv_send_item_func)(ob->env, tmp_op);
+						else if(ob->env->type == CONTAINER) 
+							(*esrv_send_item_func)(ob->env, tmp_op);
+					}
+					else
+	                    insert_ob_in_map(tmp_op,ob->map,NULL,0); /* Insert in same map as the envir */
+				}
+            }
+        }
+        tmp_op=tmp;
+    }
+
+    if(corpse)
+    {
+        /* drop the corpse when something is in OR corpse_forced is set */
+        /* i changed this to drop corpse always even they have no items
+         * inside (player get confused when corpse don't drop. To avoid
+         * clear corpses, change below "||corpse " to "|| corpse->inv"
+         */
+        if(QUERY_FLAG(ob,FLAG_CORPSE_FORCED) || corpse)
+        {
+            /* ok... we have a corpse AND we insert something in.
+             * now check enemy and/or attacker to find a player.
+             * if there is one - personlize this corpse container.
+             * this gives the player the chance to grap this stuff first
+             * - and looter will be stopped.
+             */
+
+            if(enemy && enemy->type == PLAYER)
+            {
+                if(enemy->count == ob->enemy_count)
+                    FREE_AND_ADD_REF_HASH(corpse->slaying,enemy->name);
+            }
+            else if(QUERY_FLAG(ob,FLAG_CORPSE_FORCED)) /* && no player */
+            {
+                /* normallly only player drop corpse. But in some cases
+                 * npc can do it too. Then its smart to remove that corpse fast.
+                 * It will not harm anything because we never deal for NPC with
+                 * bounty.
+                 */
+                corpse->stats.food = 3;
+            }
+
+            /* later, we add here other sub type or slaying names for killing groups, clans, etc */
+            if(corpse->slaying) /* change sub_type to mark this corpse */
+                corpse->sub_type1 = ST1_CONTAINER_CORPSE_player;
+
+			if(ob->env)
+			{
+				insert_ob_in_ob(corpse, ob->env);
+				/* this should handle in future insert_ob_in_ob() */
+				if(ob->env->type == PLAYER) 
+					(*esrv_send_item_func)(ob->env, corpse);
+				else if(ob->env->type == CONTAINER) 
+					(*esrv_send_item_func)(ob->env,corpse);
+		}
+		else
+	            insert_ob_in_map (corpse, ob->map, NULL,0);
+        }
+        else /* disabled */
+        {
+            /* if we are here, our corpse mob had something in inv but its nothing to drop */
+            if(!QUERY_FLAG(corpse, FLAG_REMOVED))
+                remove_ob(corpse);
+        }
+    }
+}
+
 /*
  * destroy_object() frees everything allocated by an object, removes
  * it from the list of used objects, and puts it on the list of
@@ -2456,7 +2761,6 @@ static inline int add_one_drop_quest_item(object *target, object *obj)
  * this function to succeed.
  */
 void destroy_object(object *ob) {
-  object *tmp,*tmp_op;
 
     if (!QUERY_FLAG(ob, FLAG_REMOVED)) {
 	dump_object(ob);
@@ -2475,167 +2779,9 @@ void destroy_object(object *ob) {
   if(ob->type == CONTAINER && ob->attacked_by) 
 	  container_unlink_func(NULL, ob);
 
-  if (ob->inv) {
-	  /* i removed a check for wall(ob->map,ob->x,ob->y)... it will do no harm */
-    if (ob->map==NULL || ob->map->in_memory!=MAP_IN_MEMORY)
-    {
-      tmp_op=ob->inv;
-      while(tmp_op!=NULL) 
-	  {
-        tmp=tmp_op->below;
-        remove_ob(tmp_op);
-        tmp_op=tmp;
-      }
-    } else {
-		if(ob->type == PLAYER) /* we don't handle players here */
-			LOG(llevBug,"BUG: destroy_object:() - try to drop items of %s\n", ob->name);
-		else /* create race corpse and/or drop stuff to floor */
-		{
-            /* Gecko: I don't think this is a good place to drop corpses.
-             * This function should be related to object management only, and not gameplay. 
-             * (And an object that has come this is not supposed to be connected to a map anymore...)
-             */
-			object *corpse=NULL;
-			object *enemy = NULL;
-
-			if(ob->enemy && ob->enemy->type == PLAYER)
-				enemy = ob->enemy;
-			else
-				enemy = get_owner(ob->enemy);
-
-			if((QUERY_FLAG(ob,FLAG_CORPSE) && !QUERY_FLAG(ob,FLAG_STARTEQUIP))
-														|| QUERY_FLAG(ob,FLAG_CORPSE_FORCED))
-			{
-				racelink *race_corpse = find_racelink(ob->race);
-				if(race_corpse)
-				{
-					corpse=arch_to_object(race_corpse->corpse);
-				    corpse->x=ob->x;corpse->y=ob->y;corpse->map=ob->map;
-					corpse->weight = ob->weight;
-				}
-			}
-
-			tmp_op=ob->inv;
-			while(tmp_op!=NULL)
-			{
-				tmp=tmp_op->below;
-				remove_ob(tmp_op); /* This will be destroyed in next loop of object_gc() */
-					/* if we recall spawn mobs, we don't want drop their items as free.
-					* So, marking the mob itself with "FLAG_STARTEQUIP" will kill
-					* all inventory and not dropping it on the map.
-					* This also happens when a player slays a to low mob/non exp mob.
-					* Don't drop any sys_object in inventory... I can't think about
-					* any use... when we do it, a disease needle for example
-					* is dropping his disease force and so on.
-					*/
-					
-					if(QUERY_FLAG(tmp_op, FLAG_QUEST_ITEM))
-					{
-						/* legal, non freed enemy */
-						if(enemy && enemy->type == PLAYER && enemy->count == ob->enemy_count)
-						{
-							/* this is the new quest item & one drop quest item code!
-							 * Dropping quest items to the ground in a corpse can invoke
-							 * alot of problems and glitches. The only way to avoid it is,
-							 * to move the quest item HERE in the inventory of the player or
-							 * group. For one drop quests it is the really only usable way.
-							 */
-							/* first: if the player has this item (normally from killing the
-							 * quest mob before) we free the quest item here and stop.
-                             * otherwise, move the item in the players inventory!
-							 */
-							if(! find_quest_item(enemy, tmp_op))
-							{
-								char auto_buf[HUGE_BUF];
-
-								/* first, lets check what we have: quest or one drop quest */
-								if(QUERY_FLAG(tmp_op, FLAG_SYS_OBJECT) ) /* marks one drop quest items */
-								{
-									add_one_drop_quest_item(enemy, tmp_op);
-									sprintf(auto_buf,"You solved the one drop quest %s!\n", query_name(tmp_op));
-									(*draw_info_func)(NDI_UNIQUE|NDI_NAVY, 0, enemy, auto_buf);
-								}
-								else
-								{
-									insert_ob_in_ob(tmp_op,enemy); 
-									sprintf(auto_buf,"You found the quest item %s!\n", query_name(tmp_op));
-									(*draw_info_func)(NDI_UNIQUE|NDI_NAVY, 0, enemy, auto_buf);
-								}
-								(*esrv_send_item_func) (enemy, tmp_op);
-							}
-						}
-					} else if(!(QUERY_FLAG(ob,FLAG_STARTEQUIP) ||
-                            (tmp_op->type != RUNE && (QUERY_FLAG(tmp_op,FLAG_SYS_OBJECT)||
-                                                      QUERY_FLAG(tmp_op,FLAG_STARTEQUIP) ||QUERY_FLAG(tmp_op,FLAG_NO_DROP)))))
-                        /*                    else if(! QUERY_FLAG(ob,FLAG_STARTEQUIP) &&
-                            (tmp_op->type == RUNE || !(QUERY_FLAG(tmp_op,FLAG_SYS_OBJECT)||
-								QUERY_FLAG(tmp_op,FLAG_STARTEQUIP) || QUERY_FLAG(tmp_op,FLAG_NO_DROP))))*/
-					{
-						tmp_op->x=ob->x,tmp_op->y=ob->y;
-
-						/* if we have a corpse put the item in it */
-						if(corpse)
-							insert_ob_in_ob(tmp_op, corpse);
-						else
-						{
-							/* don't drop traps from a container to the floor.
-							 * removing the container where a trap is applied will
-							 * neutralize the trap too 
-							 */
-							if(tmp_op->type != RUNE)
-								insert_ob_in_map(tmp_op,ob->map,NULL,0); /* Insert in same map as the envir */
-						}
-					}
-				tmp_op=tmp;
-			}
-
-			if(corpse)
-			{
-				/* drop the corpse when something is in OR corpse_forced is set */
-				/* i changed this to drop corpse always even they have no items
-				 * inside (player get confused when corpse don't drop. To avoid
-				 * clear corpses, change below "||corpse " to "|| corpse->inv"
-				 */
-				if(QUERY_FLAG(ob,FLAG_CORPSE_FORCED) || corpse)
-				{
-					/* ok... we have a corpse AND we insert something in.
-					 * now check enemy and/or attacker to find a player.
-					 * if there is one - personlize this corpse container.
-					 * this gives the player the chance to grap this stuff first
-					 * - and looter will be stopped.
-					 */
-
-					if(enemy && enemy->type == PLAYER)
-					{
-						if(enemy->count == ob->enemy_count)
-							FREE_AND_ADD_REF_HASH(corpse->slaying,enemy->name);
-					}
-					else if(QUERY_FLAG(ob,FLAG_CORPSE_FORCED)) /* && no player */
-					{
-						/* normallly only player drop corpse. But in some cases
-						 * npc can do it too. Then its smart to remove that corpse fast.
-						 * It will not harm anything because we never deal for NPC with
-						 * bounty.
-						 */
-						corpse->stats.food = 3;
-					}
-
-					/* later, we add here other sub type or slaying names for killing groups, clans, etc */
-					if(corpse->slaying) /* change sub_type to mark this corpse */
-						corpse->sub_type1 = ST1_CONTAINER_CORPSE_player;
-
-					insert_ob_in_map (corpse, ob->map, NULL,0);
-				}
-				else /* disabled */
-				{
-					/* if we are here, our corpse mob had something in inv but its nothing to drop */
-					if(!QUERY_FLAG(corpse, FLAG_REMOVED))
-						remove_ob(corpse);
-				}
-			}
-		}
-    }
-  }
+  /* Make sure to get rid of the inventory, too. It will be destroy()ed at the next gc */
+  /* TODO: maybe destroy() it here too? */
+  remove_ob_inv(ob);
 
   /* Remove object from the active list */
   ob->speed = 0;
@@ -2695,6 +2841,14 @@ int count_used() {
 }
 #endif
 
+/* Drop op's inventory on the floor and remove op from the map.
+ * Used mainly for physical destruction of normal objects and mobs
+ */
+void destruct_ob(object *op) {
+	if(op->inv) 
+	    drop_ob_inv(op);
+    remove_ob(op);
+}
 
 /* remove_ob(op):
  *   This function removes the object op from the linked list of objects
@@ -2712,7 +2866,7 @@ void remove_ob(object *op) {
     object *otmp;
     tag_t tag;
     int check_walk_off;
-
+		
     if(QUERY_FLAG(op, FLAG_REMOVED)) 
 	{
 		/*dump_object(op)*/;
@@ -2872,7 +3026,7 @@ void remove_ob(object *op) {
 				 * but really not a bug. Of course not smart to handle this
 				 * AFTER the remove.
 				 */
-				LOG(llevBug, "BUG: remove_ob(): name %s, archname %s destroyed leaving object\n", tmp->name, tmp->arch->name);
+				LOG(llevBug, "SEMIBUG: (walk off stuff - is on TODO)remove_ob(): name %s, archname %s destroyed leaving object\n", tmp->name, tmp->arch->name);
 			}
 		}
 
@@ -2883,7 +3037,7 @@ void remove_ob(object *op) {
 		last=tmp;
     }
 
-	update_object(op, UP_OBJ_REMOVE);		
+    update_object(op, UP_OBJ_REMOVE);		
 
     op->env = NULL;
 }
@@ -3345,7 +3499,7 @@ object *decrease_ob_nr (object *op, int i)
                 (*esrv_update_item_func) (UPD_WEIGHT, tmp, tmp);
             }
         } else {
-            remove_ob (op);
+            remove_ob(op);
             op->nrof = 0;
             if (tmp) {
                 (*esrv_del_item_func) (CONTR(tmp), op->count,op->env);
@@ -3360,7 +3514,7 @@ object *decrease_ob_nr (object *op, int i)
         if (i < (int)op->nrof) {
             op->nrof -= i;
         } else {
-            remove_ob (op);
+            remove_ob(op);
             op->nrof = 0;
         }
 	/* Since we just removed op, op->above is null */
@@ -3434,7 +3588,7 @@ object *insert_ob_in_ob(object *op,object *where) {
         mark_object_removed(op); 
         
         op = tmp;
-        remove_ob (op); /* and fix old object's links (we will insert it further down)*/
+        remove_ob(op); /* and fix old object's links (we will insert it further down)*/
         CLEAR_FLAG(op, FLAG_REMOVED); /* Just kidding about previous remove */
 	break;
       }
@@ -3855,7 +4009,7 @@ int was_destroyed (object *op, tag_t old_tag)
      * robust */
     /* Gecko: redefined "destroyed" a little broader: included removed objects.
      * -> need to make sure this is never a problem with temporarily removed objects */
-    return QUERY_FLAG(op, FLAG_REMOVED) || op->count != old_tag || OBJECT_FREE(op);
+    return QUERY_FLAG(op, FLAG_REMOVED) && (op->count != old_tag) && OBJECT_FREE(op);
 }
 
 /* GROS - Creates an object using a string representing its content.         */

@@ -841,7 +841,7 @@ void god_intervention (object *op, object *god)
             for (i = 0; i < 7; i++)
                 if (get_attr_value (&depl->stats, i))
                     new_draw_info (NDI_UNIQUE, 0, op, restore_msg[i]);
-            remove_ob (depl);
+            remove_ob(depl);
             fix_player (op);
             return;
         }

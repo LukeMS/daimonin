@@ -578,7 +578,7 @@ void remove_contents (object *first_ob, object *save_item) {
           if(!(tmp=next)) break;
           else next=next->below;
 	}
- 	if(tmp->inv) remove_contents(tmp->inv,NULL);
+ /*	if(tmp->inv) remove_contents(tmp->inv,NULL); */
         remove_ob(tmp);
         tmp=next;
     }

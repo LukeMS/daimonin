@@ -1345,7 +1345,7 @@ static int apply_shop_mat (object *shop_mat, object *op)
 		} 
 		else 
 		{
-			remove_ob (op);
+			remove_ob(op);
 			op->x += freearr_x[i];
 			op->y += freearr_y[i];
 			rv = (insert_ob_in_map (op, op->map, shop_mat,0) == NULL);
@@ -1512,7 +1512,7 @@ void move_apply (object *trap, object *victim, object *originator)
       tag_t trap_tag = trap->count;
       hit_player (victim, trap->stats.dam, trap, AT_MAGIC);
       if ( ! was_destroyed (trap, trap_tag)) 
-          remove_ob (trap);
+          remove_ob(trap);
     }
     goto leave;
 
@@ -1822,14 +1822,14 @@ extern void do_learn_spell (object *op, int spell, int special_prayer)
             LOG(llevBug, "BUG: do_learn_spell(): spell already known, but can't upgrade it\n");
             return;
         }
-        remove_ob (tmp);
+        remove_ob(tmp);
         return;
     }
 
     /* Learn new spell/prayer */
     if (tmp) {
         LOG(llevBug, "BUG: do_learn_spell(): spell unknown, but special prayer mark present\n");
-        remove_ob (tmp);
+        remove_ob(tmp);
     }
     play_sound_player_only (CONTR(op), SOUND_LEARN_SPELL, SOUND_NORMAL, 0, 0);
     CONTR(op)->known_spells[CONTR(op)->nrofknownspells++] = spell;
@@ -1867,7 +1867,7 @@ extern void do_forget_spell (object *op, int spell)
     send_spelllist_cmd(op, spells[spell].name, SPLIST_MODE_REMOVE);
     tmp = find_special_prayer_mark (op, spell);
     if (tmp) 
-        remove_ob (tmp);
+        remove_ob(tmp);
 
     for (i = 0; i < CONTR(op)->nrofknownspells; i++)
     {
@@ -2961,7 +2961,7 @@ int player_apply (object *pl, object *op, int aflag, int quiet)
         new_draw_info (NDI_UNIQUE, 0, pl, "The object disappears in a puff "
                        "of smoke!");
         new_draw_info (NDI_UNIQUE, 0, pl, "It must have been an illusion.");
-        remove_ob (op);
+        remove_ob(op);
         return 1;
     }
 

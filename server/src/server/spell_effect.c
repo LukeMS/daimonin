@@ -180,7 +180,7 @@ int recharge(object *op) {
     new_draw_info_format(NDI_UNIQUE, 0, op,
 	"The %s vibrates violently, then explodes!",query_name(wand));
     play_sound_map(op->map, op->x, op->y, SOUND_OB_EXPLODE, SOUND_NORMAL);
-    remove_ob(wand);
+    destruct_ob(wand);
     return 1;
   }
   new_draw_info_format(NDI_UNIQUE, 0, op,
@@ -308,7 +308,7 @@ void polymorph_melt(object *who, object *op)
 	"%s%s glows red, melts and evaporates!",
             op->nrof?"":"The ",query_name(op));
     play_sound_map(op->map, op->x, op->y, SOUND_OB_EVAPORATE, SOUND_NORMAL);
-    remove_ob(op);
+    destruct_ob(op);
     return;
 }
 
@@ -386,7 +386,7 @@ void polymorph_item(object *who, object *op) {
 
     new_ob->x = op->x;
     new_ob->y = op->y;
-    remove_ob(op);
+    destruct_ob(op);
     /* 
      * Don't want objects merged or re-arranged, as it then messes up the
      * order
@@ -859,11 +859,11 @@ int perceive_self(object *op) {
            current_obj=current_obj->above;
            continue;
            }
-         remove_ob (current_obj);
+         remove_ob(current_obj);
          break;
          }
        }
-     remove_ob (old_force);
+     remove_ob(old_force);
      FREE_AND_CLEAR_HASH2(exitpath);
      }
    /* Creating the portals.
@@ -2033,7 +2033,7 @@ void animate_bomb(object *op) {
 	if (env->type == PLAYER)
 	    esrv_del_item(CONTR(env), op->count, op->env);
 
-	remove_ob(op);
+	destruct_ob(op);
 	op->x = env->x;
 	op->y = env->y;
 	if ((op = insert_ob_in_map (op, env->map, op,0)) == NULL)
@@ -3823,7 +3823,7 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
       LOG(llevBug, "BUG: animate_weapon(): can't unapply weapon (%s - %s)!\n",query_name(op), query_name(caster));
       return 0;
     }
-    remove_ob (weapon);
+    remove_ob(weapon);
     insert_ob_in_ob (weapon, tmp);
     if (op->type == PLAYER)
       esrv_send_item(op, weapon);

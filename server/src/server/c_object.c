@@ -202,7 +202,7 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 	new_draw_info(NDI_UNIQUE, 0,pl, "It must have been an illusion.");
 	if (pl->type==PLAYER) esrv_del_item (CONTR(pl), tmp->count, tmp->env);
 	if ( ! QUERY_FLAG (tmp, FLAG_REMOVED))
-            remove_ob (tmp);
+            remove_ob(tmp);
 	return;
     }
     
@@ -609,7 +609,7 @@ void drop_object (object *op, object *tmp, long nrof)
                         esrv_send_item (op, tmp2);
 	};
     } else
-      remove_ob (tmp);
+      remove_ob(tmp);
 #ifdef PLUGINS
       /* GROS: Handle for plugin drop event */
       if(tmp->event_flags&EVENT_FLAG_DROP)
