@@ -641,7 +641,7 @@ static void add_shop_item(object *tmp, shopinv *items, int *numitems, int *numal
     case BOOTS:
     case GLOVES:
     case GIRDLE:
-        sprintf(buf,"%s %s",query_base_name(tmp),describe_item(tmp));
+        sprintf(buf,"%s %s",query_base_name(tmp, NULL),describe_item(tmp));
         items[*numitems].item_sort = strdup_local(buf);
         sprintf(buf,"%s %s",query_name(tmp),describe_item(tmp));
         items[*numitems].item_real = strdup_local(buf);
@@ -649,8 +649,8 @@ static void add_shop_item(object *tmp, shopinv *items, int *numitems, int *numal
         break;
 
     default:
-        items[*numitems].item_sort = strdup_local(query_base_name(tmp));
-        items[*numitems].item_real = strdup_local(query_base_name(tmp));
+        items[*numitems].item_sort = strdup_local(query_base_name(tmp, NULL));
+        items[*numitems].item_real = strdup_local(query_base_name(tmp, NULL));
         (*numitems)++;
         break;
     }

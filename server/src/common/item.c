@@ -236,7 +236,7 @@ char * get_number(int i)
  * query_short_name(object) is similar to query_name, but doesn't 
  * contain any information about object status (worn/cursed/etc.)
  */
-char * query_short_name(object *op)
+char * query_short_name(object *op, object *caller)
 {
     static char buf[HUGE_BUF];
     char        buf2[HUGE_BUF];
@@ -308,7 +308,21 @@ char * query_short_name(object *op)
                   safe_strcat(buf, op->title, &len, sizeof(buf));
               }
           }
-          if (op->sub_type1 >= ST1_CONTAINER_NORMAL_player)
+
+        if (op->sub_type1 >= ST1_CONTAINER_NORMAL_group)
+        {
+            if (op->sub_type1 == ST1_CONTAINER_CORPSE_group)
+            {
+                if(!caller)
+                    safe_strcat(buf, " (bounty of a group)", &len, sizeof(buf));                  
+                else if(CONTR(caller)->group_status & GROUP_STATUS_GROUP &&
+                            CONTR(CONTR(caller)->group_leader)->group_id == op->stats.maxhp)
+                    safe_strcat(buf, " (bounty of your group)", &len, sizeof(buf));  
+                else /* its a different group */
+                    safe_strcat(buf, " (bounty of another group)", &len, sizeof(buf));  
+            }
+        }
+        else if (op->sub_type1 >= ST1_CONTAINER_NORMAL_player)
           {
               if (op->sub_type1 == ST1_CONTAINER_CORPSE_player && op->slaying)
               {
@@ -427,7 +441,7 @@ char * query_short_name(object *op)
  * use several names much easier (don't need to store them to temp variables.)
  *
  */
-char * query_name(object *op)
+char  *query_name_full(object *op, object *caller)
 {
     static char buf[5][HUGE_BUF];
     static int  use_buf = 0;
@@ -442,7 +456,7 @@ char * query_name(object *op)
         return buf[use_buf];
     }
 
-    safe_strcat(buf[use_buf], query_short_name(op), &len, HUGE_BUF);
+    safe_strcat(buf[use_buf], query_short_name(op, caller), &len, HUGE_BUF);
 
     if (QUERY_FLAG(op, FLAG_INV_LOCKED))
         safe_strcat(buf[use_buf], " *", &len, HUGE_BUF);
@@ -515,7 +529,7 @@ char * query_name(object *op)
  * don't include the item count or item status.  Used for inventory sorting
  * and sending to client.
  */
-char * query_base_name(object *op)
+char *query_base_name(object *op, object *caller)
 {
     static char buf[MAX_BUF];
     char        buf2[32];
@@ -555,7 +569,20 @@ char * query_base_name(object *op)
               }
           }
 
-          if (op->sub_type1 >= ST1_CONTAINER_NORMAL_player)
+          if (op->sub_type1 >= ST1_CONTAINER_NORMAL_group)
+          {
+              if (op->sub_type1 == ST1_CONTAINER_CORPSE_group)
+              {
+                  if(!caller)
+                      safe_strcat(buf, " (bounty of a group)", &len, sizeof(buf));                  
+                  else if(CONTR(caller)->group_status & GROUP_STATUS_GROUP &&
+                      CONTR(CONTR(caller)->group_leader)->group_id == op->stats.maxhp)
+                      safe_strcat(buf, " (bounty of your group)", &len, sizeof(buf));  
+                  else /* its a different group */
+                      safe_strcat(buf, " (bounty of another group)", &len, sizeof(buf));  
+              }
+          }
+          else if (op->sub_type1 >= ST1_CONTAINER_NORMAL_player)
           {
               if (op->sub_type1 == ST1_CONTAINER_CORPSE_player && op->slaying)
               {

@@ -2525,7 +2525,7 @@ void dragon_ability_gain(object *who, int atnr, int level)
     {
         /* generate misc. treasure */
         tmp = arch_to_object(tr->item);
-        sprintf(buf, "You gained %s", query_short_name(tmp));
+        sprintf(buf, "You gained %s", query_short_name(tmp, NULL));
         new_draw_info(NDI_UNIQUE | NDI_BLUE, 0, who, buf);
         tmp = insert_ob_in_ob(tmp, who);
         if (who->type == PLAYER)

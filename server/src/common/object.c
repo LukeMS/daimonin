@@ -2113,10 +2113,50 @@ static inline int add_one_drop_quest_item(object *target, object *obj)
     CLEAR_FLAG(obj, FLAG_QUEST_ITEM); /* now the player can use this item normal,
                                          * even trade and sell it
                                         */
-    CLEAR_FLAG(obj, FLAG_SYS_OBJECT);
-    insert_ob_in_ob(obj, target); /* real object to player */
-
+    q_tmp = get_object();
+    copy_object(obj, q_tmp);
+    CLEAR_FLAG(q_tmp, FLAG_SYS_OBJECT);
+    insert_ob_in_ob(q_tmp, target); /* real object to player */
+    esrv_send_item(target, q_tmp);
+    
     return 1;
+}
+
+/* this is the new quest item & one drop quest item code!
+ * Dropping quest items to the ground in a corpse can invoke
+ * alot of problems and glitches. The only way to avoid it is,
+ * to move the quest item HERE in the inventory of the player or
+ * group. For one drop quests it is the really only usable way.
+ */
+static inline void insert_quest_item(object *item, object *target)
+{
+    /* first: if the player has this item (normally from killing the
+     * quest mob before) we free the quest item here and stop.
+     * otherwise, move the item in the players inventory!
+     */
+    if (!find_quest_item(target, item, QUERY_FLAG(item, FLAG_INV_LOCKED)))
+    {
+        char    auto_buf[MAX_BUF];
+
+        /* first, lets check what we have: quest or one drop quest */
+        if (QUERY_FLAG(item, FLAG_SYS_OBJECT)) /* marks one drop quest items */
+        {
+            add_one_drop_quest_item(target, item);
+            sprintf(auto_buf, "You solved the one drop quest %s!\n", query_name(item));
+            new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, target, auto_buf);
+        }
+        else
+        {
+            object *q_tmp;
+            q_tmp = get_object();
+            copy_object(item, q_tmp);
+            CLEAR_FLAG(q_tmp, FLAG_INV_LOCKED);
+            insert_ob_in_ob(q_tmp, target); 
+            sprintf(auto_buf, "You found the quest item %s!\n", query_name(q_tmp));
+            new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, target, auto_buf);
+            esrv_send_item(target, q_tmp);
+        }
+    }
 }
 
 /* Drops the inventory of ob into ob's current environment. */
@@ -2124,10 +2164,10 @@ static inline int add_one_drop_quest_item(object *target, object *obj)
  * create a corpse for the stuff */
 void drop_ob_inv(object *ob)
 {
+    player *pl      = NULL;
     object *corpse  = NULL;
-    object *enemy   = NULL;
     object *tmp_op  = NULL;
-    object *tmp     = NULL;
+    object *gtmp, *tmp     = NULL;
 
     if (ob->type == PLAYER)
     {
@@ -2144,12 +2184,10 @@ void drop_ob_inv(object *ob)
         return;
     }
 
-    /* create race corpse and/or drop stuff to floor */
-    if (ob->enemy && ob->enemy->type == PLAYER)
-        enemy = ob->enemy;
-    else
-        enemy = get_owner(ob->enemy);
+    if(ob->enemy && ob->enemy->type == PLAYER && ob->enemy_count == ob->enemy->count)
+        pl = CONTR(ob->enemy);
 
+    /* create race corpse and/or drop stuff to floor */
     if ((QUERY_FLAG(ob, FLAG_CORPSE) && !QUERY_FLAG(ob, FLAG_STARTEQUIP)) || QUERY_FLAG(ob, FLAG_CORPSE_FORCED))
     {
         racelink   *race_corpse = find_racelink(ob->race);
@@ -2178,37 +2216,18 @@ void drop_ob_inv(object *ob)
         if (QUERY_FLAG(tmp_op, FLAG_QUEST_ITEM))
         {
             /* legal, non freed enemy */
-            if (enemy && enemy->type == PLAYER && enemy->count == ob->enemy_count)
+            if (pl)
             {
-                /* this is the new quest item & one drop quest item code!
-                 * Dropping quest items to the ground in a corpse can invoke
-                 * alot of problems and glitches. The only way to avoid it is,
-                 * to move the quest item HERE in the inventory of the player or
-                 * group. For one drop quests it is the really only usable way.
-                 */
-                /* first: if the player has this item (normally from killing the
-                 * quest mob before) we free the quest item here and stop.
-                 * otherwise, move the item in the players inventory!
-                 */
-                if (!find_quest_item(enemy, tmp_op, QUERY_FLAG(tmp_op, FLAG_INV_LOCKED)))
+                if(!(pl->group_status & GROUP_STATUS_GROUP))
+                    insert_quest_item(tmp_op, pl->ob); /* single player */
+                else
                 {
-                    char    auto_buf[HUGE_BUF];
-
-                    /* first, lets check what we have: quest or one drop quest */
-                    if (QUERY_FLAG(tmp_op, FLAG_SYS_OBJECT)) /* marks one drop quest items */
+                    for(gtmp=pl->group_leader;gtmp;gtmp=CONTR(gtmp)->group_next)
                     {
-                        add_one_drop_quest_item(enemy, tmp_op);
-                        sprintf(auto_buf, "You solved the one drop quest %s!\n", query_name(tmp_op));
-                        new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, enemy, auto_buf);
+                        /* check for out of (kill) range */
+                        if(!(CONTR(gtmp)->group_status & GROUP_STATUS_NOEXP))
+                           insert_quest_item(tmp_op, gtmp); /* give it to member */
                     }
-                    else
-                    {
-                        CLEAR_FLAG(tmp_op, FLAG_INV_LOCKED);
-                        insert_ob_in_ob(tmp_op, enemy); 
-                        sprintf(auto_buf, "You found the quest item %s!\n", query_name(tmp_op));
-                        new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, enemy, auto_buf);
-                    }
-                    esrv_send_item(enemy, tmp_op);
                 }
             }
         }
@@ -2267,10 +2286,9 @@ void drop_ob_inv(object *ob)
              * - and looter will be stopped.
              */
 
-            if (enemy && enemy->type == PLAYER)
+            if (pl)
             {
-                if (enemy->count == ob->enemy_count)
-                    FREE_AND_ADD_REF_HASH(corpse->slaying, enemy->name);
+                FREE_AND_ADD_REF_HASH(corpse->slaying, pl->ob->name);
             }
             else if (QUERY_FLAG(ob, FLAG_CORPSE_FORCED)) /* && no player */
             {
@@ -2282,9 +2300,16 @@ void drop_ob_inv(object *ob)
                 corpse->stats.food = 6;
             }
 
-            /* later, we add here other sub type or slaying names for killing groups, clans, etc */
             if (corpse->slaying) /* change sub_type to mark this corpse */
-                corpse->sub_type1 = ST1_CONTAINER_CORPSE_player;
+            {
+                if(pl->group_status & GROUP_STATUS_GROUP)
+                {
+                    corpse->stats.maxhp = CONTR(pl->group_leader)->group_id;
+                    corpse->sub_type1 = ST1_CONTAINER_CORPSE_group;
+                }
+                else
+                    corpse->sub_type1 = ST1_CONTAINER_CORPSE_player;
+            }
 
             if (ob->env)
             {
@@ -2501,7 +2526,7 @@ void remove_ob(object *op)
     /* If we get here, we are removing it from a map */
     if (!op->map)
     {
-        LOG(llevBug, "BUG: remove_ob(): object %s (%s) not on map or env.\n", query_short_name(op),
+        LOG(llevBug, "BUG: remove_ob(): object %s (%s) not on map or env.\n", query_short_name(op, NULL),
             op->arch ? (op->arch->name ? op->arch->name : "<nor arch name!>") : "<no arch!>");
         return;
     }

@@ -933,7 +933,7 @@ void load_objects(mapstruct *m, FILE *fp, int mapflags)
         if (i == LL_MORE)
         {
             LOG(llevDebug, "BUG: load_objects(%s): object %s - its a tail!.\n", m->path ? m->path : ">no map<",
-                query_short_name(op));
+                query_short_name(op, NULL));
             continue;
         }
         /* if the archetype for the object is null, means that we
@@ -943,7 +943,7 @@ void load_objects(mapstruct *m, FILE *fp, int mapflags)
         if (op->arch == NULL)
         {
             LOG(llevDebug, "BUG:load_objects(%s): object %s (%d)- invalid archetype. (pos:%d,%d)\n",
-                m->path ? m->path : ">no map<", query_short_name(op), op->type, op->x, op->y);
+                m->path ? m->path : ">no map<", query_short_name(op, NULL), op->type, op->x, op->y);
             continue;
         }
 

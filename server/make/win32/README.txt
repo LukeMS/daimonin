@@ -1,29 +1,21 @@
 How to Compile a Daimonin Server on Windows:
 
+Note:
+The daimonin_server.dsp/The daimonin_server.dsw files are for Visual Studio 6.
+The daimonin_server.vcproj is a Visual Studio 7 (Visual Studio .NET 2002/2003)
+project file.
+
 Please follow the steps in the right order!
 (Note: The Visual C++ project is our default one. The way to compile
        will be of course different for other compilers. Browse the make/win32
        folder for your system and read the README.txt inside for more infos.)
 
-o First step: Before you can compile the Daimonin server source,
-  you must install a python script engine on your computer.
-  Python is the default script engine of the Daimonin server.
-  You can find the python engine here: http://www.python.org/.
-  The current Daimonin server use Python 2.x.x .
-  The package comes with installer and pre compiled libs & dlls,
-  you only have to run the installer. The VisualC Daimonin server settings are
-  for d:\python2x . You can install the package of course on a different
-  spot, but you habe then to change the pathes in the VC settings.
-  Go in settings/c++ and settings/link and change the optional
-  include and libs path to the new python installation path.
-
-o 2nd step: You must compile the program.
+o First step: You must compile the program.
   After unpacking the Daimonin package, run the "daimonin_server.dsw". 
-  There are 3 projects in your workspace: daimonin_server (the server),
-  libcross.lib and plugin_python . You need to compile all 3. Easiest
-  way is to select the daimonin_server - ReleaseLog as active project,
-  this will compile all others automatically too.
-  Then - in visual c++ - press <F7> to compile.
+  There are some projects in your workspace: You need to compile all.
+  Easiest way is to select the daimonin_server - ReleaseLog as active
+  project, this will compile all others automatically too.
+  Then - in visual studio 6 - press <F7> to compile.
 
   In the win32 folder of the /dev folder is a flex.exe. This is the flex
   program, used to generate loader.c from loader.l and reader.c from reader.l.
@@ -35,7 +27,7 @@ o 2nd step: You must compile the program.
 
 o Last step: If the compile was successful, you should have now a
   daimonin_server.exe inside your Daimonin/server folder and a
-  python_plugin.dll inside your Daimonin/server/plugins folder
+  lua_plugin.dll inside your Daimonin/server/plugins folder
   (the vc studio will copy this files automatically after a succesfull
   compile to this folders). 
 

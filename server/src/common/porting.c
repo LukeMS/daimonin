@@ -378,7 +378,7 @@ char *ltostr10(signed long n) {
   else
     flag=0;
   do {
-    *(--cp) = '0'+n%10;
+    *(--cp) = (char)('0'+n%10);
     n/=10;
   } while(n);
   if(flag)

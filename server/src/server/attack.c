@@ -1067,16 +1067,15 @@ static void send_attack_msg(object *op, object *hitter, int attacknum, int dam, 
  */
 int kill_object(object *op, int dam, object *hitter, int type)
 {
-    char        buf[MAX_BUF];
-    char        buf2[MAX_BUF];
-    object     *old_hitter          = NULL; /* this is used in case of servant monsters */
+    object     *corpse_owner, *owner, *old_hitter; /* this is used in case of servant monsters */
+    int         evtid;
     int         maxdam              = 0;
     int         exp                 = 0;
     int         battleg             = 0;    /* true if op standing on battleground */
     int         killed_script_rtn   = 0;
-    object     *owner               = NULL;
     mapstruct  *map;
-    int         evtid;
+    char *buf_ptr;
+
 #ifdef PLUGINS
     CFParm      CFP;
 #endif
@@ -1120,28 +1119,32 @@ int kill_object(object *op, int dam, object *hitter, int type)
         GlobalEvent(&CFP);
 #endif
 
+
+        corpse_owner = owner = old_hitter = NULL;
         maxdam = op->stats.hp - 1;
 
-        if (op->type == DOOR)
+        /* very old door code for destroyable code.*/
+        /*if (op->type == DOOR)
         {
             op->speed = 0.1f;
             update_ob_speed(op);
             op->speed_left = -0.05f;
             return maxdam;
-        }
+        }*/
 
-        /* Show Damage System for clients */
-        /* whatever is dead now, we check map. If it on map, we redirect last_damage
-           to map space, giving player the chance to see the last hit damage they had
-           done. If there is more as one object killed on a single map tile, we overwrite
-           it now. This visual effect works pretty good. MT */
+        /* Show Damage System for clients 
+         * whatever is dead now, we check map. If it on map, we redirect last_damage
+         * to map space, giving player the chance to see the last hit damage they had
+         *  done. If there is more as one object killed on a single map tile, we overwrite
+         *  it now. This visual effect works pretty good. MT 
+         */
 
         /* no pet/player/monster checking now, perhaps not needed */
-        /* only when some damage is stored */
+
         if (op->damage_round_tag == ROUND_TAG)
         {
             /* is on map */
-            if ((map = op->map)) /* hm, can we sure we are on a legal map position... hope so*/
+            if ((map = op->map)) /* hm, can we sure we are on a legal map position... hope so */
             {
                 SET_MAP_DAMAGE(op->map, op->x, op->y, op->last_damage);
                 SET_MAP_RTAG(op->map, op->x, op->y, ROUND_TAG);
@@ -1151,6 +1154,7 @@ int kill_object(object *op, int dam, object *hitter, int type)
         if (op->map)
             play_sound_map(op->map, op->x, op->y, SOUND_PLAYER_KILLS, SOUND_NORMAL);
 
+        /* old golem/npc code
         if (QUERY_FLAG(op, FLAG_FRIENDLY) && op->type != PLAYER)
         {
             remove_friendly_object(op);
@@ -1164,195 +1168,94 @@ int kill_object(object *op, int dam, object *hitter, int type)
             update_ob_speed(op);
             destruct_ob(op);
             return maxdam;
-        }
+        } */
 
-        /* Now lets start dealing with experience we get for killing something */
-
-        owner = get_owner(hitter);
-        if (owner == NULL)
+        /* do some checks */
+        if ((owner = get_owner(hitter)) == NULL)
             owner = hitter;
+        battleg = op_on_battleground(op, NULL, NULL);
 
-        /* is the victim (op) standing on battleground? */
-        if (op_on_battleground(op, NULL, NULL))
-            battleg = 1;
-
-        /* Player killed something */
+        buf_ptr = NULL;
+            
+        /* Create kill message */
         if (owner->type == PLAYER)
         {
+            char        buf[MAX_BUF];
+            char        buf2[MAX_BUF];
+
+            /* old pet code */
+            /* if (owner != NULL)
+            {
+                sprintf(buf, "%s killed %s with %s%s.", hitter->owner->name, query_name(op), query_name(hitter),
+                    battleg ? " (duel)" : "");
+                old_hitter = hitter;
+                owner->exp_obj = hitter->exp_obj;
+                hitter = hitter->owner;
+            }*/
+
+            buf_ptr = &buf2[0]; /* well, we need to trick in the kill msg before exp */
             if (owner != hitter)
             {
-                sprintf(buf2, "killed %s with %s.", query_name(op), query_name(hitter));
-                if(CONTR(owner)->group_id != GROUP_NO) /* broadcast to group members */
-                    party_message(NDI_YELLOW, 0, CONTR(owner)->group_leader, owner, "%s %s", query_name(owner),buf2);
-                sprintf(buf, "You %s.", buf2);
+                sprintf(buf, "You killed %s with %s.", query_name(op), query_name(hitter));
+                sprintf(buf2, "%s killed %s with %s.", query_name(owner), query_name(op), query_name(hitter));
+                //if(CONTR(owner)->group_id != GROUP_NO) /* broadcast to group members */
+                //    party_message(PMSG_MODE_NOEXP, NDI_YELLOW, 0, CONTR(owner)->group_leader, owner, "%s %s", query_name(owner),buf2);
                 old_hitter = hitter;
                 owner->exp_obj = hitter->exp_obj;
             }
             else
             {
-                if(CONTR(owner)->group_id != GROUP_NO) /* broadcast to group members */
-                    party_message( NDI_YELLOW, 0, CONTR(owner)->group_leader, owner, "%s killed %s.", 
-                                   query_name(owner), query_name(op));
+                //if(CONTR(owner)->group_id != GROUP_NO) /* broadcast to group members */
+                   // party_message(PMSG_MODE_NOEXP,NDI_YELLOW, 0, CONTR(owner)->group_leader, owner, "%s killed %s.", 
+                    //               query_name(owner), query_name(op));
+                sprintf(buf2, "%s killed %s.",  query_name(owner), query_name(op));
                 sprintf(buf, "You killed %s.", query_name(op));
             }
             new_draw_info(NDI_WHITE, 0, owner, buf);
-            /*}*/ /* message should be displayed */
-        } /* was a player that hit this creature */
-
-        /* Pet killed something. */
-        if (get_owner(hitter) != NULL)
-        {
-            sprintf(buf, "%s killed %s with %s%s.", hitter->owner->name, query_name(op), query_name(hitter),
-                           battleg ? " (duel)" : "");
-            old_hitter = hitter;
-            owner->exp_obj = hitter->exp_obj;
-            hitter = hitter->owner;
         }
-        else
-            sprintf(buf, "%s killed %s%s.", hitter->name, op->name, battleg ? " (duel)" : "");
-
-        /* If you didn't kill yourself, and your not the wizard */
-        if (hitter != op)
-        {
-            /* exp giving and messages has now moved to aggro.c and exp.c .
-             * Note, that we have now shared xp in 2 ways:
-             * a.) Using different skills for killing will part the exp into
-             * that different skills.
-             * b.) have 2 or more player with or without group killed a mob,
-             * is the exp shared to that players following some special
-             * rules.
-             */
-            /* give exp only for non players, non owned player things and non arena */
-            if (op->type != PLAYER && !battleg)
-            {
-                if (old_hitter && hitter->type == PLAYER)
-                {
-                    object *old_skill   = hitter->chosen_skill;
-                    hitter->chosen_skill = old_hitter->chosen_skill;
-                    aggro_calculate_exp(op, hitter);
-                    hitter->chosen_skill = old_skill;
-                }
-                else
-                    aggro_calculate_exp(op, hitter);
-            }
-            /* new exp system in here. Try to insure the right skill is modifying gained exp */
-            /* only calc exp for a player who has not killed a player */
-            /*
-            if (hitter->type == PLAYER && !old_hitter && op->type != PLAYER)
-                exp = calc_skill_exp(hitter, op, -1);
-            // case for attack spells, summoned monsters killing 
-            if (old_hitter && hitter->type == PLAYER)
-            {
-                object *old_skill   = hitter->chosen_skill;
-
-                hitter->chosen_skill = old_hitter->chosen_skill;
-                if (hitter->type == PLAYER && op->type != PLAYER)
-                    exp = calc_skill_exp(hitter, op, -1);
-                hitter->chosen_skill = old_skill;
-            }
-            */
-
-            /* here is the skill fix: 
-             * We REALLY want assign to our owner (who is the hitter or owner of hitter)
-             * the right skill. This is set from set_owner() for spells and all objects
-             * which does indirect (not from owner object) damage.
-             */
-            /*
-            if (!old_hitter) // when != NULL, it is our non owner object (spell, arrow)
-                old_hitter = hitter;
-
-            if (op->type == PLAYER && owner->type == PLAYER)
-            {
-                LOG(llevDebug, "Owner %s gets %d exp in %s from %s\n", owner->name, exp,
-                    old_hitter->chosen_skill != NULL ? old_hitter->chosen_skill->name : "<>", op->name);
-                if (battleg)
-                {
-                    new_draw_info(NDI_UNIQUE, 0, owner, "Your foe has fallen!");
-                    new_draw_info(NDI_UNIQUE, 0, owner, "VICTORY!!!");
-                }
-                else
-                    exp = 0; // never xp for pvp 
-            }
-            if (battleg)
-                exp = 0;
-            */
-                
-
-            /*
-    	    if(hitter->type==PLAYER)
-            {
-                if (exp)
-                    new_draw_info_format(NDI_UNIQUE, 0, hitter, "You got %d exp in skill %s.",
-                                         add_exp(hitter, exp, old_hitter->chosen_skill->stats.sp),
-                                         skills[old_hitter->chosen_skill->stats.sp].name);
-                else
-                    new_draw_info_format(NDI_UNIQUE, 0, hitter, "Your enemy was to low for exp.");
-            }
-            */
-        }
-
+        
+        /* Give exp and create the corpse. Decide we get a loot or not */
         if (op->type != PLAYER)
         {
-            /*new_draw_info(NDI_ALL, 10, NULL, buf);*/
+            if (!battleg)
+                corpse_owner = aggro_calculate_exp(op, owner, buf_ptr);
+
             if (QUERY_FLAG(op, FLAG_FRIENDLY))
-            {
-                object *owner   = get_owner(op);
-                if (owner != NULL && owner->type == PLAYER)
-                {
-                    sprintf(buf, "Your pet, the %s, is killed by %s.", op->name, hitter->name);
-                    play_sound_player_only(CONTR(owner), SOUND_PET_IS_KILLED, SOUND_NORMAL, 0, 0);
-                    new_draw_info(NDI_UNIQUE, 0, owner, buf);
-                }
                 remove_friendly_object(op);
-            }
+
             op->speed = 0;
             update_ob_speed(op); /* remove from active list (if on) */
 
-            /* rules: 
-                 * a.) mob will drop corpse for his target, not for kill hit giving player.
-                 * b.) npc kill hit WILL overwrite player target = on drop
-                 * c.) we are nice: kill hit will count if target was a npc (of mob).
-                 * will allow a bit "cheating" by serving only one hit and let kill the mob
-                 * by the npc to 99% - but this needs brain, tactic and a good timing and
-                 * so we will give him a present for it.
-                 */
-            if (owner->type != PLAYER || !op->enemy || op->enemy->type != PLAYER)
+            /* destruct_ob() will remove the killed mob/object from the game.
+             * It will also trigger the drop of a corpse & with the loot (inv of that object).
+             * FLAG_STARTEQUIP will avoid to drop the standard loot for example when
+             * a npc killed another npc.
+             */
+            if(corpse_owner)
             {
-                op->enemy = owner;             /* no register_npc_enemy since we are killing it... */
-                op->enemy_count = owner->count;
-            }
-
-            /* harder drop rules: if exp== 0 or not a player or not a player invoked hitter: no drop */
-            if (!exp || hitter->type != PLAYER || (get_owner(hitter) && hitter->owner->type != PLAYER))
-                SET_FLAG(op, FLAG_STARTEQUIP); 
-
-            if (hitter->type != PLAYER && op->type != PLAYER)
-            {
-                if ((QUERY_FLAG(hitter, FLAG_FRIENDLY) && !QUERY_FLAG(op, FLAG_FRIENDLY))
-                 || (!QUERY_FLAG(hitter, FLAG_FRIENDLY) && QUERY_FLAG(op, FLAG_FRIENDLY)))
+                /* drop_inv() will use ->enemy to create the "bounty look" for a corpse container */
+                if(corpse_owner->type == PLAYER)
                 {
+                    op->enemy = corpse_owner;
+                    op->enemy_count = corpse_owner->count;
+                }
+                else /* mob/npc kill - force a droped corpse without items */
+                {
+                    op->enemy = NULL;
                     SET_FLAG(op, FLAG_CORPSE_FORCED); 
                     SET_FLAG(op, FLAG_STARTEQUIP);
                 }
             }
-            destruct_ob(op);
-        }
-        /* Player has been killed! */
-        else
-        {
-            new_draw_info(NDI_ALL, 1, NULL, buf);
-            if (hitter->type == PLAYER)
-            {
-                sprintf(buf, "%s the %s", hitter->name, CONTR(hitter)->title);
-                strncpy(CONTR(op)->killer, buf, BIG_NAME);
-            }
             else
             {
-                strncpy(CONTR(op)->killer, hitter->name, BIG_NAME);
-                CONTR(op)->killer[BIG_NAME - 1] = '\0';
+                op->enemy = NULL;
+                SET_FLAG(op, FLAG_STARTEQUIP); 
             }
+            
+            destruct_ob(op);
         }
-    }
+   }
+
     return maxdam;
 }
 

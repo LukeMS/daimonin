@@ -95,7 +95,7 @@ int open_door(object *op, mapstruct *m, int x, int y, int mode)
                 remove_door2(tmp, op);
                 if (op->type == PLAYER && key)
                     new_draw_info_format(NDI_UNIQUE, NDI_BROWN, op, "You open the door with the %s.",
-                                         query_short_name(key));
+                                         query_short_name(key, op));
             }
 
             return 1;

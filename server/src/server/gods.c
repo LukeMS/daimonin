@@ -702,9 +702,9 @@ static void follower_remove_similar_item(object *op, object *item)
             {
                 /* message */
                 if (tmp->nrof > 1)
-                    new_draw_info_format(NDI_UNIQUE, 0, op, "The %s crumble to dust!", query_short_name(tmp));
+                    new_draw_info_format(NDI_UNIQUE, 0, op, "The %s crumble to dust!", query_short_name(tmp, op));
                 else
-                    new_draw_info_format(NDI_UNIQUE, 0, op, "The %s crumbles to dust!", query_short_name(tmp));
+                    new_draw_info_format(NDI_UNIQUE, 0, op, "The %s crumbles to dust!", query_short_name(tmp, op));
 
                 remove_ob(tmp);    /* remove obj from players inv. */
                 esrv_del_item(CONTR(op), tmp->count, tmp->env); /* notify client */
@@ -723,7 +723,7 @@ static int god_gives_present(object *op, object *god, treasure *tr)
         return 0;
 
     tmp = arch_to_object(tr->item);
-    new_draw_info_format(NDI_UNIQUE, 0, op, "%s lets %s appear in your hands.", god->name, query_short_name(tmp));
+    new_draw_info_format(NDI_UNIQUE, 0, op, "%s lets %s appear in your hands.", god->name, query_short_name(tmp, op));
     tmp = insert_ob_in_ob(tmp, op);
     if (op->type == PLAYER)
         esrv_send_item(op, tmp);
