@@ -85,6 +85,10 @@ int freedir[SIZEOFFREE]= {
 
 inline int CAN_MERGE(object *ob1, object *ob2) 
 {
+	/* just some quick hack */
+	if(ob1->type == MONEY && ob1->type == ob2->type && ob1->arch == ob2->arch)
+		return 1;
+
 	/* just a brain dead long check for things NEVER NEVER should be different 
 	 * this is true under all circumstances for all objects.
 	 */
