@@ -7,7 +7,7 @@ weight 13250
 exp 150
 speed -0.03
 weapon_speed 0.038
-attack_poison 65
+attack_cleave 65
 attack_acid 10
 resist_poison 100
 resist_paralyze 100

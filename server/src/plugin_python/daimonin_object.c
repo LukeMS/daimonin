@@ -494,6 +494,8 @@ static Daimonin_Constant object_constants[] = {
     {"TYPE_CONTAINER"	            ,122},
     {"TYPE_ARMOUR_IMPROVER"        ,123},
     {"TYPE_WEAPON_IMPROVER"        ,124},
+    {"TYPE_WEALTH"        ,125},
+
     {"TYPE_SKILLSCROLL"	        ,130},
     {"TYPE_DEEP_SWAMP"	            ,138},
     {"TYPE_IDENTIFY_ALTAR"	        ,139},
@@ -2017,7 +2019,7 @@ static PyObject* Daimonin_Object_CheckInventory(Daimonin_Object *whoptr, PyObjec
 					(type == -1 || tmp->type == type))
             return wrap_object(tmp);
 
-		if(mode == 2 || (mode && tmp->type == CONTAINER)) 
+		if(mode == 2 || (mode == 1 && tmp->type == CONTAINER)) 
 		{
 			if((tmp2 = object_check_inventory_rec(tmp->inv,mode, arch_name,name,title,type)))
 	            return wrap_object(tmp2);

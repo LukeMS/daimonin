@@ -287,7 +287,13 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define ARMOUR_IMPROVER         123
 #define WEAPON_IMPROVER         124
 
-/* unused: 125 - 129
+#define TYPE_WEALTH				125		/* this is a "raw" (abstract) wealth object. When generated
+									     * its tranformed in real money depending on the enviroment
+										 * where its generated. (most times by treasure list and
+										 * tranformed to money by using level of mob or map to generating
+										 * a fitting amount of money basing on the base setting).
+										 */
+/* unused: 126 - 129
  * type 125 was MONEY_CHANGER
  */
 #define SKILLSCROLL	            130	/* can add a skill to player's inventory -bt.*/

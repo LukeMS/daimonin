@@ -1869,7 +1869,7 @@ void fix_monster(object *op)
 	/* post adjust */
 	if((tmp_add = lev_damage[op->level/3]-0.75f) <0)
 		tmp_add =0;
-	op->stats.dam = (sint16) ((float)op->stats.dam * ((lev_damage[op->level]+tmp_add)*0.925f));
+	op->stats.dam = (sint16) ((float)op->stats.dam * ((lev_damage[(op->level < 0) ? 0 : op->level]+tmp_add)*0.925f));
 
 	set_mobile_speed(op, 0);
 }

@@ -7,7 +7,8 @@ weight 16250
 exp 140
 speed -0.026
 weapon_speed 0.040
-attack_fire 80
+attack_fire 40
+attack_acid 40
 ac 10
 wc 3
 dam 5
@@ -16,59 +17,59 @@ maxhp 5
 terrain_flag 1
 Wis 6
 can_see_in_dark 1
-face red_pudding.111
+face pudding_red.111
 anim
 facings 25
 trans.101
 trans.101
-red_pudding.111
-red_pudding.112
-red_pudding.111
-red_pudding.112
-red_pudding.111
-red_pudding.112
-red_pudding.111
-red_pudding.112
-red_pudding.111
-red_pudding.112
-red_pudding.111
-red_pudding.112
-red_pudding.111
-red_pudding.112
-red_pudding.111
-red_pudding.112
-red_pudding.111
-red_pudding.112
-red_pudding.111
-red_pudding.112
-red_pudding.111
-red_pudding.112
-red_pudding.111
-red_pudding.112
-red_pudding.111
-red_pudding.112
-red_pudding.111
-red_pudding.112
-red_pudding.111
-red_pudding.112
-red_pudding.111
-red_pudding.112
-red_pudding.111
-red_pudding.112
-red_pudding.111
-red_pudding.112
-red_pudding.111
-red_pudding.112
-red_pudding.111
-red_pudding.112
-red_pudding.111
-red_pudding.112
-red_pudding.111
-red_pudding.112
-red_pudding.111
-red_pudding.112
-red_pudding.111
-red_pudding.112
+pudding_red.111
+pudding_red.112
+pudding_red.111
+pudding_red.112
+pudding_red.111
+pudding_red.112
+pudding_red.111
+pudding_red.112
+pudding_red.111
+pudding_red.112
+pudding_red.111
+pudding_red.112
+pudding_red.111
+pudding_red.112
+pudding_red.111
+pudding_red.112
+pudding_red.111
+pudding_red.112
+pudding_red.111
+pudding_red.112
+pudding_red.111
+pudding_red.112
+pudding_red.111
+pudding_red.112
+pudding_red.111
+pudding_red.112
+pudding_red.111
+pudding_red.112
+pudding_red.111
+pudding_red.112
+pudding_red.111
+pudding_red.112
+pudding_red.111
+pudding_red.112
+pudding_red.111
+pudding_red.112
+pudding_red.111
+pudding_red.112
+pudding_red.111
+pudding_red.112
+pudding_red.111
+pudding_red.112
+pudding_red.111
+pudding_red.112
+pudding_red.111
+pudding_red.112
+pudding_red.111
+pudding_red.112
 mina
 is_animated 1
 anim_speed 4

@@ -739,7 +739,7 @@ int hit_player_attacktype(object *op, object *hitter, int damage,  uint32 attack
 		if(hitter->type == POISONING) /* we have a poison force object (thats the poison we had inserted) */
 		{
 			attacknum = ATNR_POISON; /* map to poison... */
-			if(op->resist[attacknum]==100 || op->protection[attacknum]==100)
+			if(op->resist[attacknum]==100 || op->protection[protection_tab[attacknum]]==100)
 			{
 				dam = 0;
 				send_attack_msg(op, hitter, attacknum, (int) dam, damage);
@@ -761,13 +761,12 @@ int hit_player_attacktype(object *op, object *hitter, int damage,  uint32 attack
 	/* quick check for immunity - if so, we skip here.
      * our formula is (100-resist)/100 - so test for 100 = zero division 
 	 */
-    if(op->resist[attacknum]==100 || op->protection[attacknum]==100)
+    if(op->resist[attacknum]==100 || op->protection[protection_tab[attacknum]]==100)
 	{
 		dam = 0;
 		send_attack_msg(op, hitter, attacknum, (int) dam, damage);
 		goto jump_show_dmg;
 	}
-
 	
     switch(attacknum) 
     {

@@ -2424,6 +2424,13 @@ int talk_to_npc(object *op, object *npc, char *txt) {
         return 0;
     }
   }
+    
+  /* Gecko: FIXME if the python is not loaded the if() { ...; return 0; } will not
+   * be executed above and the server will crash on the code below. I'm not really
+   * sure why, but it should be investigated. I added some verification code below
+   * to catch the error.
+   */
+  
   /* GROS - Here we let the objects inside inventories hear and answer, too. */
   /* This allows the existence of "intelligent" weapons you can discuss with */
   for(cobj=npc->inv;cobj!=NULL;)
@@ -2445,13 +2452,15 @@ int talk_to_npc(object *op, object *npc, char *txt) {
       CFP.Value[6] = &m;
       CFP.Value[7] = &m;
       CFP.Value[8] = &l;
-      CFP.Value[9] = (char *)event_obj->race;
-      CFP.Value[10]= (char *)event_obj->slaying;
-      if (findPlugin(event_obj->name)>=0)
+      CFP.Value[9] = event_obj ? (char *)event_obj->race : "<null>";
+      CFP.Value[10]= event_obj ? (char *)event_obj->slaying : "<null>";
+      if (event_obj && findPlugin(event_obj->name)>=0)
       {
           ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
           return 0;
-      }
+      } else {
+          LOG(llevBug,"An object (%s) had a event flag but no event object (SAY)\n",cobj->name);
+      }          
     }
     cobj = cobj->below;
   }
@@ -2696,7 +2705,7 @@ static object *spawn_monster(object *gen, object *orig, int range)
       op->head=head,prev->more=op;
     if (QUERY_FLAG(op, FLAG_FREED)) return NULL;
     if(op->randomitems!=NULL)
-		create_treasure(op->randomitems,op,0,op->level?op->level:orig->map->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0);
+		create_treasure(op->randomitems,op,0,op->level?op->level:orig->map->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
     if(head==NULL)
       head=op;
     prev=op;

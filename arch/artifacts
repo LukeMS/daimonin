@@ -2583,7 +2583,7 @@ end
 Allowed all
 chance 40
 artifact scroll_min_heal
-difficulty 3
+difficulty 1
 def_arch scroll_generic
 Object
 level 1
@@ -2597,7 +2597,7 @@ end
 Allowed all
 chance 35
 artifact scroll_str_self
-difficulty 3
+difficulty 1
 def_arch scroll_generic
 Object
 level 1
@@ -2611,7 +2611,7 @@ end
 Allowed all
 chance 25
 artifact scroll_identify
-difficulty 3
+difficulty 4
 def_arch scroll_generic
 Object
 level 1
@@ -2625,7 +2625,7 @@ end
 Allowed all
 chance 40
 artifact scroll_dmagic
-difficulty 3
+difficulty 1
 def_arch scroll_generic
 Object
 level 1
@@ -2653,7 +2653,7 @@ end
 Allowed all
 chance 25
 artifact scroll_rem_curse
-difficulty 3
+difficulty 5
 def_arch scroll_generic
 Object
 level 1
@@ -2667,7 +2667,7 @@ end
 Allowed all
 chance 20
 artifact scroll_rem_damn
-difficulty 3
+difficulty 6
 def_arch scroll_generic
 Object
 level 1
@@ -2681,7 +2681,7 @@ end
 Allowed all
 chance 35
 artifact scroll_cause_lwound
-difficulty 3
+difficulty 2
 def_arch scroll_generic
 Object
 inv_face scroll_wound.101

@@ -1258,7 +1258,7 @@ void show_login_server(void)
 
 	mb = SDL_GetMouseState(&mx, &my);
 	/* background */
-	x= SCREEN_XLEN/2-Bitmaps[BITMAP_DIALOG_BG]->bitmap->w/2;
+	x= SCREEN_XLEN/2-Bitmaps[BITMAP_DIALOG_BG]->bitmap->w/2; 
 	y= SCREEN_YLEN/2-Bitmaps[BITMAP_DIALOG_BG]->bitmap->h/2;
 	sprite_blt(Bitmaps[BITMAP_DIALOG_BG],x, y, NULL, NULL);
 	sprite_blt(Bitmaps[BITMAP_LOGO270],x+20, y+85, NULL, NULL);

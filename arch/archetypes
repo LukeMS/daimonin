@@ -5307,9 +5307,9 @@ terrain_type 1
 no_pick 1
 is_floor 1
 end
-Object bridge_wood.111
+Object bridge_wood_EW.101
 name wood bridge
-face bridge_wood.111
+face bridge_wood_EW.101
 type 71
 editor_folder floors/bridge_wood
 no_teleport 1
@@ -5318,9 +5318,9 @@ terrain_type 1
 no_pick 1
 is_floor 1
 end
-Object bridge_wood.171
+Object bridge_wood_EW.111
 name wood bridge
-face bridge_wood.171
+face bridge_wood_EW.111
 type 71
 editor_folder floors/bridge_wood
 no_teleport 1
@@ -5329,90 +5329,255 @@ terrain_type 1
 no_pick 1
 is_floor 1
 end
-Object bridge_wood_end.111
+Object bridge_wood_EW.121
 name wood bridge
-face bridge_wood_end.111
+face bridge_wood_EW.121
 type 79
 editor_folder floors/bridge_wood
 no_teleport 1
 layer 2
 no_pick 1
 end
-Object bridge_wood_end.131
+Object bridge_wood_EW.131
 name wood bridge
-face bridge_wood_end.131
+face bridge_wood_EW.131
 type 79
 editor_folder floors/bridge_wood
 no_teleport 1
 layer 2
 no_pick 1
 end
-Object bridge_wood_end.151
+Object bridge_wood_EW.141
 name wood bridge
-face bridge_wood_end.151
+face bridge_wood_EW.141
 type 79
 editor_folder floors/bridge_wood
 no_teleport 1
 layer 2
 no_pick 1
 end
-Object bridge_wood_end.171
+Object bridge_wood_EW.151
 name wood bridge
-face bridge_wood_end.171
+face bridge_wood_EW.151
 type 79
 editor_folder floors/bridge_wood
 no_teleport 1
 layer 2
 no_pick 1
 end
-Object bridge_wood_end2.111
-name wood bridg
-face bridge_wood_end2.111
+Object bridge_wood_EW.161
+name wood bridge
+face bridge_wood_EW.161
 type 79
 editor_folder floors/bridge_wood
 no_teleport 1
 layer 2
 no_pick 1
 end
-Object bridge_wood_end2.131
+Object bridge_wood_EW.171
 name wood bridge
-face bridge_wood_end2.131
+face bridge_wood_EW.171
 type 79
 editor_folder floors/bridge_wood
 no_teleport 1
 layer 2
 no_pick 1
 end
-Object bridge_wood_end2.151
+Object bridge_wood_EW.181
 name wood bridge
-face bridge_wood_end2.151
+face bridge_wood_EW.181
 type 79
 editor_folder floors/bridge_wood
 no_teleport 1
 layer 2
 no_pick 1
 end
-Object bridge_wood_end2.171
+Object bridge_wood_NS.101
 name wood bridge
-face bridge_wood_end2.171
+face bridge_wood_NS.101
+type 71
+editor_folder floors/bridge_wood
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object bridge_wood_NS.171
+name wood bridge
+face bridge_wood_NS.171
+type 71
+editor_folder floors/bridge_wood
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object bridge_wood_NS.111
+name wood bridge
+face bridge_wood_NS.111
 type 79
 editor_folder floors/bridge_wood
 no_teleport 1
 layer 2
 no_pick 1
 end
-Object bridge_wood_out.111
+Object bridge_wood_NS.121
 name wood bridge
-face bridge_wood_out.111
+face bridge_wood_NS.121
 type 79
 editor_folder floors/bridge_wood
 no_teleport 1
 layer 2
 no_pick 1
 end
-Object bridge_wood_out.171
+Object bridge_wood_NS.131
 name wood bridge
-face bridge_wood_out.171
+face bridge_wood_NS.131
+type 79
+editor_folder floors/bridge_wood
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object bridge_wood_NS.141
+name wood bridge
+face bridge_wood_NS.141
+type 79
+editor_folder floors/bridge_wood
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object bridge_wood_NS.151
+name wood bridge
+face bridge_wood_NS.151
+type 79
+editor_folder floors/bridge_wood
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object bridge_wood_NS.161
+name wood bridge
+face bridge_wood_NS.161
+type 79
+editor_folder floors/bridge_wood
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object bridge_wood_NS.181
+name wood bridge
+face bridge_wood_NS.181
+type 79
+editor_folder floors/bridge_wood
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object bridge_wood_corner.121
+name wood bridge
+face bridge_wood_corner.121
+type 71
+editor_folder floors/bridge_wood
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object bridge_wood_corner.141
+name wood bridge
+face bridge_wood_corner.141
+type 71
+editor_folder floors/bridge_wood
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object bridge_wood_corner.161
+name wood bridge
+face bridge_wood_corner.161
+type 71
+editor_folder floors/bridge_wood
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object bridge_wood_corner.181
+name wood bridge
+face bridge_wood_corner.181
+type 71
+editor_folder floors/bridge_wood
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object bridge_wood_01
+name wood bridge
+face bridge_wood_01
+type 79
+editor_folder floors/bridge_wood
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object bridge_wood_02
+name wood bridge
+face bridge_wood_02
+type 79
+editor_folder floors/bridge_wood
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object bridge_wood_03
+name wood bridge
+face bridge_wood_03
+type 79
+editor_folder floors/bridge_wood
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object bridge_wood_04
+name wood bridge
+face bridge_wood_04
+type 79
+editor_folder floors/bridge_wood
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object bridge_wood_05
+name wood bridge
+face bridge_wood_05
+type 79
+editor_folder floors/bridge_wood
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object bridge_wood_06
+name wood bridge
+face bridge_wood_06
+type 79
+editor_folder floors/bridge_wood
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object bridge_wood_07
+name wood bridge
+face bridge_wood_07
 type 79
 editor_folder floors/bridge_wood
 no_teleport 1
@@ -7968,6 +8133,15 @@ weight 200000
 value 40
 nrof 1
 end
+Object wealth
+face wealth.101
+type 125
+editor_folder intern/intern
+value 7
+sys_object 1
+no_pick 1
+layer 0
+end
 Object gravedirt
 name pile
 face dirt.101
@@ -8247,6 +8421,7 @@ editor_folder items/armour
 layer 3
 ac 1
 weight 550
+item_level 3
 value 40
 protect_impact 8
 protect_slash 8
@@ -8286,6 +8461,7 @@ editor_folder items/armour
 layer 3
 ac 1
 last_heal 3
+item_level 5
 protect_impact 8
 protect_cleave 8
 protect_slash 8
@@ -8327,6 +8503,7 @@ editor_folder items/armour
 layer 3
 ac 1
 last_heal 5
+item_level 10
 protect_impact 10
 protect_cleave 10
 protect_slash 10
@@ -8370,6 +8547,7 @@ protect_impact 5
 protect_cleave 5
 protect_slash 5
 ac 1
+item_level 10
 weight 2000
 value 200
 is_vul_physical 1
@@ -8407,6 +8585,7 @@ layer 3
 last_heal 5
 weight 1100
 ac 1
+item_level 5
 protect_impact 8
 protect_cleave 10
 protect_slash 8
@@ -8428,6 +8607,7 @@ layer 3
 last_heal 5
 weight 1200
 ac 1
+item_level 5
 protect_impact 10
 protect_cleave 8
 protect_slash 10
@@ -8506,6 +8686,7 @@ editor_folder items/armour
 layer 3
 last_heal 8
 ac 2
+item_level 10
 protect_impact 6
 protect_cleave 6
 protect_slash 8
@@ -8527,6 +8708,7 @@ editor_folder items/armour
 layer 3
 last_heal 8
 ac 2
+item_level 10
 protect_impact 10
 protect_cleave 6
 protect_slash 6
@@ -8548,6 +8730,7 @@ editor_folder items/armour
 layer 3
 last_heal 10
 ac 2
+item_level 10
 protect_impact 6
 protect_cleave 10
 protect_slash 6
@@ -8569,6 +8752,7 @@ editor_folder items/armour
 layer 3
 last_heal 8
 ac 2
+item_level 10
 protect_impact 8
 protect_cleave 8
 protect_slash 6
@@ -8653,6 +8837,7 @@ editor_folder items/armour
 layer 3
 last_heal 9
 ac 2
+item_level 10
 protect_impact 6
 protect_cleave 6
 protect_slash 10
@@ -8674,6 +8859,7 @@ editor_folder items/armour
 layer 3
 last_heal 10
 ac 2
+item_level 10
 protect_impact 6
 protect_cleave 6
 protect_slash 6
@@ -9313,6 +9499,8 @@ editor_folder items/armour
 layer 3
 ac 2
 wc 1
+item_level 4
+item_skill 4
 last_heal 5
 protect_impact 5
 protect_cleave 10
@@ -9334,7 +9522,8 @@ type 33
 editor_folder items/armour
 layer 3
 ac 4
-item_level 10
+item_level 19
+item_skill 4
 last_heal 15
 protect_impact 12
 protect_cleave 6
@@ -9365,8 +9554,8 @@ is_vul_physical 1
 is_vul_elemental 1
 is_vul_magic 1
 is_vul_sphere 1
-material_real 65
-material 2
+material_real 258
+material 16
 weight 1500
 value 20
 end
@@ -9377,6 +9566,8 @@ type 33
 editor_folder items/armour
 layer 3
 ac 2
+item_level 3
+item_skill 4
 last_heal 5
 protect_impact 10
 protect_cleave 5
@@ -9399,7 +9590,8 @@ editor_folder items/armour
 layer 3
 ac 4
 last_heal 15
-item_level 10
+item_skill 4
+item_level 19
 protect_impact 6
 protect_cleave 12
 protect_pierce 6
@@ -9420,6 +9612,8 @@ type 33
 editor_folder items/armour
 layer 3
 ac 3
+item_level 9
+item_skill 4
 last_heal 10
 protect_impact 10
 protect_cleave 4
@@ -9441,6 +9635,8 @@ type 33
 editor_folder items/armour
 layer 3
 ac 3
+item_level 9
+item_skill 4
 last_heal 10
 protect_impact 4
 protect_cleave 10
@@ -9463,7 +9659,8 @@ editor_folder items/armour
 layer 3
 ac 4
 last_heal 15
-item_level 10
+item_level 19
+item_skill 4
 protect_impact 12
 protect_cleave 6
 protect_pierce 6
@@ -9484,7 +9681,9 @@ type 33
 editor_folder items/armour
 layer 3
 ac 4
+item_level 19
 last_heal 15
+item_skill 4
 protect_impact 5
 protect_cleave 10
 protect_pierce 10
@@ -9506,7 +9705,9 @@ type 33
 editor_folder items/armour
 layer 3
 ac 3
+item_level 9
 last_heal 10
+item_skill 4
 protect_impact 5
 protect_cleave 5
 protect_pierce 10
@@ -9527,6 +9728,8 @@ type 33
 editor_folder items/armour
 layer 3
 ac 3
+item_level 9
+item_skill 4
 last_heal 10
 protect_impact 5
 protect_cleave 10
@@ -9549,7 +9752,8 @@ editor_folder items/armour
 layer 3
 ac 3
 last_heal 10
-item_level 10
+item_skill 4
+item_level 9
 protect_impact 12
 protect_cleave 12
 protect_pierce 6
@@ -9570,6 +9774,8 @@ type 33
 editor_folder items/armour
 layer 3
 ac 2
+item_level 3
+item_skill 4
 last_heal 5
 protect_impact 10
 protect_cleave 5
@@ -9592,7 +9798,8 @@ editor_folder items/armour
 layer 3
 ac 4
 last_heal 15
-item_level 10
+item_skill 4
+item_level 19
 protect_impact 6
 protect_cleave 12
 protect_pierce 6
@@ -9613,6 +9820,8 @@ type 33
 editor_folder items/armour
 layer 3
 ac 2
+item_level 3
+item_skill 4
 last_heal 5
 protect_impact 5
 protect_cleave 5
@@ -9622,8 +9831,8 @@ is_vul_physical 1
 is_vul_elemental 1
 is_vul_magic 1
 is_vul_sphere 1
-material_real 65
-material 2
+material_real 258
+material 16
 weight 1600
 value 115
 end
@@ -9634,6 +9843,8 @@ type 33
 editor_folder items/armour
 layer 3
 ac 3
+item_level 9
+item_skill 4
 last_heal 10
 protect_impact 10
 protect_cleave 10
@@ -9655,6 +9866,8 @@ type 33
 editor_folder items/armour
 layer 3
 ac 4
+item_skill 4
+item_level 19
 last_heal 15
 protect_impact 5
 protect_cleave 10
@@ -13055,6 +13268,8 @@ wc 5
 wc_range 20
 last_sp 0
 sub_type 0
+item_level 7
+item_skill 1
 material 16
 material_real 258
 weight 1300
@@ -13069,6 +13284,8 @@ editor_folder items/weapon
 layer 3
 race arrows
 wc 6
+item_level 19
+item_skill 1
 wc_range 25
 last_sp 0
 sub_type 0
@@ -13103,6 +13320,8 @@ editor_folder items/weapon
 layer 3
 race crossbow bolts
 sub_type 1
+item_level 7
+item_skill 1
 material 16
 material_real 258
 weight 2500
@@ -13120,6 +13339,8 @@ editor_folder items/weapon
 layer 3
 race crossbow bolts
 sub_type 1
+item_level 19
+item_skill 1
 material 16
 material_real 258
 weight 4250
@@ -13156,6 +13377,8 @@ race sling stones
 sub_type 2
 material 8
 material_real 193
+item_level 7
+item_skill 1
 wc 5
 wc_range 20
 last_sp 0
@@ -13171,6 +13394,8 @@ editor_folder items/weapon
 layer 3
 race sling stones
 sub_type 2
+item_level 19
+item_skill 1
 material 8
 material_real 193
 wc 6
@@ -14668,7 +14893,7 @@ blocksview 1
 end
 Object blob_acid
 name acid blob
-face acid_blob.111
+face blob_acid.111
 type 80
 editor_folder mobs/amoeboid
 race slime
@@ -14710,8 +14935,7 @@ weight 13250
 exp 130
 speed -0.025
 weapon_speed 0.038
-attack_poison 35
-attack_acid 40
+attack_slash 100
 resist_paralyze 100
 resist_poison 100
 resist_acid 100
@@ -14906,7 +15130,7 @@ level 1
 end
 Object pudding_red
 name red pudding
-face red_pudding.111
+face pudding_red.111
 type 80
 editor_folder mobs/amoeboid
 race slime
@@ -14926,6 +15150,38 @@ terrain_flag 1
 Wis 6
 can_see_in_dark 1
 animation pudding_red
+is_animated 1
+anim_speed 4
+layer 6
+direction 5
+corpse 1
+monster 1
+no_pick 1
+alive 1
+level 1
+end
+Object pudding_blue
+name black pudding
+face pudding_blue.111
+type 80
+editor_folder mobs/amoeboid
+race slime
+randomitems mob_slime
+is_neutral 1
+weight 16250
+exp 140
+speed -0.026
+weapon_speed 0.040
+attack_fire 80
+ac 10
+wc 3
+dam 5
+hp -1
+maxhp 5
+terrain_flag 1
+Wis 6
+can_see_in_dark 1
+animation pudding_blue
 is_animated 1
 anim_speed 4
 layer 6
@@ -14958,6 +15214,201 @@ terrain_flag 1
 Wis 6
 can_see_in_dark 1
 animation slime
+is_animated 1
+anim_speed 4
+layer 6
+direction 5
+corpse 1
+monster 1
+no_pick 1
+alive 1
+level 1
+end
+Object pudding_black
+name black pudding
+face pudding_black.111
+type 80
+editor_folder mobs/amoeboid
+race slime
+randomitems mob_slime
+is_neutral 1
+weight 16250
+exp 140
+speed -0.026
+weapon_speed 0.040
+attack_fire 80
+ac 10
+wc 3
+dam 5
+hp -1
+maxhp 5
+terrain_flag 1
+Wis 6
+can_see_in_dark 1
+animation pudding_black
+is_animated 1
+anim_speed 4
+layer 6
+direction 5
+corpse 1
+monster 1
+no_pick 1
+alive 1
+level 1
+end
+Object pudding_brown
+name black pudding
+face pudding_brown.111
+type 80
+editor_folder mobs/amoeboid
+race slime
+randomitems mob_slime
+is_neutral 1
+weight 16250
+exp 140
+speed -0.026
+weapon_speed 0.040
+attack_fire 80
+ac 10
+wc 3
+dam 5
+hp -1
+maxhp 5
+terrain_flag 1
+Wis 6
+can_see_in_dark 1
+animation pudding_brown
+is_animated 1
+anim_speed 4
+layer 6
+direction 5
+corpse 1
+monster 1
+no_pick 1
+alive 1
+level 1
+end
+Object pudding_green
+name black pudding
+face pudding_green.111
+type 80
+editor_folder mobs/amoeboid
+race slime
+randomitems mob_slime
+is_neutral 1
+weight 16250
+exp 140
+speed -0.026
+weapon_speed 0.040
+attack_fire 80
+ac 10
+wc 3
+dam 5
+hp -1
+maxhp 5
+terrain_flag 1
+Wis 6
+can_see_in_dark 1
+animation pudding_green
+is_animated 1
+anim_speed 4
+layer 6
+direction 5
+corpse 1
+monster 1
+no_pick 1
+alive 1
+level 1
+end
+Object blob_poison
+name acid blob
+face blob_poison.111
+type 80
+editor_folder mobs/amoeboid
+race slime
+randomitems mob_slime
+is_neutral 1
+weight 13250
+exp 130
+speed -0.025
+weapon_speed 0.0375
+attack_acid 75
+ac 9
+wc 1
+dam 4
+hp -1
+maxhp 5
+terrain_flag 1
+Wis 6
+can_see_in_dark 1
+animation blob_poison
+is_animated 1
+anim_speed 4
+layer 6
+direction 5
+corpse 1
+monster 1
+no_pick 1
+alive 1
+level 1
+end
+Object jelly_red
+name red jelly
+face jelly_red.111
+type 80
+editor_folder mobs/amoeboid
+race slime
+randomitems mob_slime
+is_neutral 1
+weight 13250
+exp 150
+speed -0.03
+weapon_speed 0.038
+attack_poison 65
+attack_acid 10
+resist_poison 100
+resist_paralyze 100
+ac 10
+wc 2
+dam 6
+hp -1
+maxhp 5
+terrain_flag 1
+Wis 6
+can_see_in_dark 1
+animation jelly_red
+is_animated 1
+anim_speed 4
+layer 6
+direction 5
+corpse 1
+monster 1
+no_pick 1
+alive 1
+level 1
+end
+Object gray_ooze
+name gray ooze
+face gray_ooze.111
+type 80
+editor_folder mobs/amoeboid
+race slime
+randomitems mob_slime
+is_neutral 1
+weight 12250
+exp 135
+speed -0.024
+weapon_speed 0.040
+attack_impact 75
+ac 10
+wc 2
+dam 4
+hp -1
+maxhp 5
+terrain_flag 1
+Wis 6
+can_see_in_dark 1
+animation gray_ooze
 is_animated 1
 anim_speed 4
 layer 6
@@ -16128,6 +16579,39 @@ hp -1
 maxhp 6
 sp -1
 maxsp 30
+level 1
+speed -0.0275
+weight 22500
+end
+Object skel_fighter1
+name skeleton fighter
+face skel_fighter1.131
+type 80
+editor_folder mobs/undead
+race undead
+is_male 1
+corpse 1
+layer 6
+direction 5
+is_evil 1
+terrain_flag 1
+weapon_speed 0.035
+attack_slash 80
+Wis 6
+randomitems mob_low
+animation skel_fighter1
+is_animated 1
+anim_speed 4
+monster 1
+no_pick 1
+alive 1
+can_see_in_dark 1
+exp 100
+ac 9
+wc 0
+dam 5
+hp -1
+maxhp 6
 level 1
 speed -0.0275
 weight 22500

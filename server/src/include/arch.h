@@ -23,6 +23,9 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 
+#ifndef ARCH_H
+#define ARCH_H
+
 /*
  * The archetype structure is a set of rules on how to generate and manipulate
  * objects which point to archetypes.
@@ -49,3 +52,4 @@ typedef struct archt {
 
 EXTERN archetype *first_archetype;
 
+#endif /* ARCH_H */

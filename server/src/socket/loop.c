@@ -144,7 +144,7 @@ void RequestInfo(char *buf, int len, NewSocket *ns)
     slen = 1;
 	bigbuf[0] =BINARY_CMD_REPLYINFO;
 	bigbuf[1]=0;
-    safe_strcat(bigbuf, buf, &slen, MAX_BUF);
+    safe_strcat(bigbuf, buf, &slen, sizeof(bigbuf));
 
     /* find the first space, make it null, and update the
      * params pointer.

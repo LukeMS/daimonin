@@ -677,6 +677,11 @@ arch floor_ostone1
 x 4
 y 5
 end
+arch belt
+identified 1
+x 4
+y 5
+end
 arch floor_ostone1
 x 4
 y 6
@@ -2657,6 +2662,10 @@ x 16
 y 5
 end
 arch floor_ostone1
+x 16
+y 6
+end
+arch helm_guard
 x 16
 y 6
 end

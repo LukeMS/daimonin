@@ -7,6 +7,8 @@ wc 5
 wc_range 20
 last_sp 0
 sub_type 0
+item_level 7
+item_skill 1
 material 16
 material_real 258
 face bow.101

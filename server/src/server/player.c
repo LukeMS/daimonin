@@ -533,7 +533,7 @@ void give_initial_items(object *pl,treasurelist *items) {
     object *op,*next=NULL;
 
     if(pl->randomitems!=NULL)
-	create_treasure(items,pl,GT_ONLY_GOOD|GT_NO_VALUE,1,T_STYLE_UNSET,ART_CHANCE_UNSET,0);
+	create_treasure(items,pl,GT_ONLY_GOOD|GT_NO_VALUE,1,T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
 
     for (op=pl->inv; op; op=next) {
 	next = op->below;

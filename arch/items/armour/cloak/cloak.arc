@@ -5,6 +5,7 @@ face cloak_leather.101
 layer 3
 ac 1
 weight 550
+item_level 3
 value 40
 protect_impact 8
 protect_slash 8

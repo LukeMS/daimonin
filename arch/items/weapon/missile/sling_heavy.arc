@@ -4,6 +4,8 @@ layer 3
 race sling stones
 type 14
 sub_type 2
+item_level 19
+item_skill 1
 material 8
 material_real 193
 face sling_heavy.101

@@ -1332,8 +1332,13 @@ static int load_map_header(FILE *fp, mapstruct *m)
         MAP_DARKNESS(m) = atoi(value);
 		if(MAP_DARKNESS(m) == -1)
 	        m->light_value = global_darkness_table[MAX_DARKNESS];
-		else
-		    m->light_value = global_darkness_table[MAP_DARKNESS(m)];
+		else {
+            if(MAP_DARKNESS(m) < 0 || MAP_DARKNESS(m) > MAX_DARKNESS) {
+                LOG(llevBug,"\nBug: Illegal map darkness %d, setting to %d\n", MAP_DARKNESS(m), MAX_DARKNESS);
+                MAP_DARKNESS(m) = MAX_DARKNESS;
+            }
+            m->light_value = global_darkness_table[MAP_DARKNESS(m)];
+        }
 	} else if (!strcmp(key, "light")) {
         m->light_value = atoi(value);
 

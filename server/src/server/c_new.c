@@ -811,7 +811,7 @@ void send_skilllist_cmd(object *op, object *skillp, int mode)
         if(skillp->last_eat == 1) /* normal skills */
             sprintf(tmp,"X%d /%s|%d|%d", mode, skillp->name, skillp->level, skillp->stats.exp );
         else if(skillp->last_eat == 2) /* "buy level" skills */
-            sprintf(tmp,"X%d /%s|%d|-2", mode, skillp->name, skillp->level, skillp->stats.exp );
+            sprintf(tmp,"X%d /%s|%d|-2", mode, skillp->name, skillp->level);
         else /* no level skills */
             sprintf(tmp,"X%d /%s|%d|-1", mode, skillp->name, skillp->level);       
     }
@@ -825,7 +825,7 @@ void send_skilllist_cmd(object *op, object *skillp, int mode)
                 if(tmp2->last_eat == 1)
                     sprintf(buf,"/%s|%d|%d",tmp2->name, tmp2->level, tmp2->stats.exp );
                 else if(tmp2->last_eat == 2)
-                    sprintf(buf,"/%s|%d|-2",tmp2->name, tmp2->level, tmp2->stats.exp );
+                    sprintf(buf,"/%s|%d|-2",tmp2->name, tmp2->level);
                 else
                     sprintf(buf,"/%s|%d|-1",tmp2->name,tmp2->level);       
 

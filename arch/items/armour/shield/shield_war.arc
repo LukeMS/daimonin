@@ -4,6 +4,8 @@ type 33
 layer 3
 face shield_war.101
 ac 4
+item_skill 4
+item_level 19
 last_heal 15
 protect_impact 5
 protect_cleave 10

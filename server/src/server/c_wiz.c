@@ -497,7 +497,7 @@ int command_create (object *op, char *params)
 	    head = insert_ob_in_ob(head, op);
         if (at->clone.randomitems!=NULL)
 	    create_treasure(at->clone.randomitems, head, GT_APPLY,
-		op->level?op->level:op->map->difficulty, T_STYLE_UNSET,ART_CHANCE_UNSET,0);
+		op->level?op->level:op->map->difficulty, T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
 	    esrv_send_item(op, head);
     }
     return 1;

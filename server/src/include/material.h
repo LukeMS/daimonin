@@ -26,7 +26,8 @@
 #ifndef MATERIAL_H
 #define MATERIAL_H
 
-#define NROFMATERIALS		13
+#define NROFMATERIALS			13
+#define NROFMATERIALS_REAL		64
 
 #define M_NONE			0
 #define M_PAPER			1
@@ -42,8 +43,6 @@
 #define M_SOFT_METAL    1024
 #define M_BONE			2048
 #define M_ICE			4096
-
-#define ITEM_QUALITY_DEFAULT 100
 
 /* this is all stuff we want load after the system is stable from file */
 
@@ -82,6 +81,6 @@ typedef struct _material_real_struct {
 }_material_real_struct;
 
 EXTERN materialtype material[NROFMATERIALS];
-EXTERN _material_real_struct material_real[833];
+EXTERN _material_real_struct material_real[NROFMATERIALS*NROFMATERIALS_REAL+1];
 
 #endif

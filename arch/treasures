@@ -38,6 +38,11 @@
 # 
 # Gods - treasures of gods are special.
 #
+# wealth:
+# The wealth arch is transformed to real money based on the difficulty/level of its
+# enviroment. The default setting is in value of the wealth arch but can be altered
+# by using the magic keyword.
+#
 #########################################################
 # Default "deity" - The Tabernacle
 #
@@ -262,25 +267,33 @@ treasure default_door
   list traps
   chance 30
 end
+treasure default_wealth
+  arch wealth
+  chance 75
+  no
+    list random_gem
+    chance 8
+    end
+end
 treasure default_door_100
   list traps
 end
-treasureone default_drop
-  list random_potion
-  chance 30
-  more
-  list random_food
-  chance 20
-  more
-  list random_scroll
-  chance 20
-  more
-  list random_container
-  chance 20
-  more
-  arch potion_improve
-  difficulty 5
-  chance 10
+treasure default_drop
+   list random_food
+   chance 30
+   no
+      list random_scroll
+      chance 30
+      no
+         list random_potion
+         chance 25
+         no
+            arch potion_improve
+            difficulty 6
+            chance 8
+          end
+      end
+   end
 end
 ##############################################################
 #
@@ -340,6 +353,9 @@ treasureone random_weapon
   list random_weapons_missile
     chance 5
   more
+  list random_weapons_amun
+    chance 10
+  more
   list random_weapons_slash
     chance 20
   more
@@ -360,19 +376,19 @@ treasureone random_weapons_amun
     magic_chance 25
     magic 2
     chance 35
-    nrof 20
+    nrof 6
   more
   arch sstone
     magic_chance 25
     magic 2
     chance 35
-    nrof 20
+    nrof 6
   more
   arch bolt
     chance 35
     magic_chance 25
     magic 2
-    nrof 20
+    nrof 6
   end
 treasureone random_weapons_throw
   arch t_dagger
@@ -1043,42 +1059,52 @@ treasureone random_armour
 treasureone random_armour_mail
   arch banded_mail
   magic 1
+  difficulty 9
   chance 20
  more
   arch bone_armour
   magic 1
+  difficulty 6
   chance 30
  more
   arch bplate_mail
+  difficulty 12
   magic 1
   chance 30
  more
   arch breastplate
   magic 1
+  difficulty 19
   chance 15
  more
   arch brigandine
   magic 1
+  difficulty 6
   chance 25
  more
   arch chain_hauberk
   magic 1
+  difficulty 9
   chance 20
  more
   arch chain_mail
   magic 1
+  difficulty 6
   chance 25
  more
   arch chitin_mail
   magic 1
+  difficulty 9
   chance 25
  more
   arch crystal_mail
   magic 1
+  difficulty 48
   chance 4
  more
   arch lamellar_mail
   magic 1
+  difficulty 6
   chance 20
  more
   arch leather_armour
@@ -1087,6 +1113,7 @@ treasureone random_armour_mail
  more
   arch leather_cuirass
   magic 1
+  difficulty 6
   chance 20
  more
   arch padded_armour
@@ -1098,46 +1125,57 @@ treasureone random_armour_mail
   chance 25
  more
   arch leather_studded
+  difficulty 3
   magic 1
   chance 20
  more
   arch ring_mail
+  difficulty 3
   magic 1
   chance 25
  more
   arch mithril_armour
+  difficulty 29
   magic 1
   chance 4
  more
   arch mithril_coat
   magic 1
+  difficulty 49
   chance 4
  more
   arch mithril_ring
   magic 1
+  difficulty 14
   chance 4
  more
   arch plate_field
   magic 1
+  difficulty 19
   chance 15
  more
   arch plate_full
   magic 1
+  difficulty 19
   chance 15
  more
   arch plate_mail
+  difficulty 19
   magic 1
   chance 15
  more
   arch scale_armour
+  difficulty 6
   magic 1
   chance 20
  more
   arch scale_mail
+  difficulty 9
   magic 1
   chance 25
  more
   arch splint_mail
+  difficulty 9
   magic 1
   chance 20
 end
@@ -1191,7 +1229,7 @@ treasureone random_armour_boots
  difficulty 12
  more
  arch leggings_plate
- difficulty 25
+ difficulty 19
  magic 1
  chance 8
 end
@@ -1200,82 +1238,94 @@ arch buckler
  magic 1
 chance 20
 more
+arch shield_round
+ difficulty 3
+ magic 1
+chance 15
+more
 arch small_shield
  magic 1
 chance 20
 more
 arch shield
+ difficulty 3
  magic 1
 chance 20
 more
 arch shield_battle
  magic 1
- difficulty 6
+ difficulty 18
 chance 15
 more
 arch shield_defender
  magic 1
- difficulty 6
+ difficulty 18
 chance 15
 more
 arch shield_heater
  magic 1
+ difficulty 8
 chance 15
 more
 arch shield_high
+ difficulty 7
  magic 1
 chance 15
 more
 arch shield_kite
  magic 1
+ difficulty 3
 chance 15
 more
 arch shield_protector
  magic 1
- difficulty 6
-chance 15
-more
-arch shield_round
- magic 1
+ difficulty 18
 chance 15
 more
 arch shield_war
  magic 1
- difficulty 6
+ difficulty 18
 chance 15
 more
 arch blade_stopper
  magic 1
- difficulty 12
+ difficulty 18
 chance 10
 more
 arch shield_chitin
  magic 1
+ difficulty 8
 chance 10
 more
 arch shield_bone
+ difficulty 8
  magic 1
 chance 10
 more
 arch shield_scale
  magic 1
+ difficulty 8
 chance 10
 more
 arch ball_and_chain
  magic 1
+ difficulty 3
 chance 10
 more
 arch shield_demon
  magic 1
+ difficulty 18
 chance 5
 more
 arch shield_eye
  magic 1
+ difficulty 8
 chance 5
 end
 treasureone random_armour_cloak
  arch cloak
  magic 1
+ difficulty 3
  chance 30
  more
  arch cape
@@ -1292,7 +1342,8 @@ arch gloves
 chance 40
 more
 arch gauntlets
- magic 1
+magic 1
+difficulty 4
 chance 25
 more
 arch gauntlets_leather
@@ -1300,7 +1351,8 @@ arch gauntlets_leather
 chance 25
 more
 arch gauntlets_plate
- magic 1
+difficulty 9
+magic 1
 chance 10
 end
 treasureone random_armour_girdle
@@ -1308,40 +1360,48 @@ arch girdle
 chance 15
  more
 arch belt
- difficulty 10
+ difficulty 9
  magic 1
 chance 15
 end
 treasureone random_armour_helm
  arch helm_field
+ difficulty 9
  magic 1
  chance 12
  more
  arch helm_plate
+ difficulty 9
  magic 1
  chance 10
  more
  arch helm_war
+ difficulty 9
  magic 1
  chance 12
  more
  arch full_helmet
+ difficulty 9
  magic 1
  chance 10
  more
  arch helm_battle
+ difficulty 9
  magic 1
  chance 10
  more
  arch helm_guard
+ difficulty 9
  magic 1
  chance 10
  more
  arch coif_scale
+ difficulty 4
  magic 1
  chance 15
  more
  arch coif_chain
+ difficulty 4
  magic 1
  chance 15
  more
@@ -1369,7 +1429,6 @@ treasureone random_armour_helm
  magic 1
  chance 5
 end
-#
 #
 treasureone random_wealth
   list random_coin
@@ -1463,23 +1522,16 @@ treasureone random_container
   end
 treasureone random_scroll
   arch scroll_generic
-    chance 10
-    nrof 5
+    chance 80
+    nrof 1
   more
   arch scroll_generic
-    chance 20
-    nrof 4
-  more
-  arch scroll_generic
-    chance 30
-    nrof 3
-  more
-  arch scroll_generic
-    chance 40
+    chance 15
     nrof 2
   more
   arch scroll_generic
-    chance 60
+    chance 5
+    nrof 3
   end
 treasureone random_talisman
   arch ring_generic
@@ -1556,256 +1608,403 @@ treasureone random_inorganic
   arch rock2
     chance 25
   end
+treasureone random_equipment
+  list random_weapon
+   chance 25
+  more
+  list random_armour
+   chance 40
+end
+treasureone random_tools
+  list random_container
+   chance 50
+  more
+  list random_talisman
+   chance 25
+  more
+  list random_mtools
+   chance 20
+end
 ##############################################################
 #
 # MOB TREASURES
 #
-treasure mob_ant
-  list traps
-  chance 10
-  more
-  list default_drop
-  chance 50
-  more
-  arch dagger
-    magic_chance 45
-    magic 1
+treasure mob_low_no_tools
+ list traps
+   chance 10
+ more
+ list default_wealth
+   chance 90
+ more
+ list default_drop
+   chance 8
+ no
+  list random_equipment
+    material_quality 80
+    material_range 2
     chance 15
-    item_race 7
-    material_end 1
-  more
-    arch t_dagger
-    nrof 5
-    chance 25
-  more
-    list random_food
-    chance 75
-    nrof 1
+   end
+end
+treasure mob_med_no_tools
+ list traps
+   chance 10
+ more
+ list default_wealth
+   chance 90
+ more
+ list default_drop
+   chance 8
+ no
+  list random_equipment
+    material_quality 83
+    material_range 6
+    chance 15
+   end
+end
+treasure mob_low
+ list traps
+   chance 10
+ more
+ list default_wealth
+   chance 75
+ more
+ list default_drop
+   chance 20
+ no
+  list random_equipment
+    material_quality 80
+    material_range 3
+    chance 15
+  no
+     list random_tools
+       material_quality 80
+       material_range 3
+       chance 10
+       difficulty 3
+    end
+   end
+end
+treasure mob_med
+ list traps
+   chance 10
+ more
+ list default_wealth
+   chance 75
+ more
+ list default_drop
+   chance 20
+ no
+  list random_equipment
+    material_quality 83
+    material_range 6
+    chance 15
+  no
+     list random_tools
+       material_quality 83
+       material_range 6
+       chance 10
+       difficulty 3
+    end
+   end
+end
+treasure mob_ant
+ list traps
+   chance 10
+ more
+ list default_wealth
+   chance 90
+ more
+ list default_drop
+   chance 8
+ no
+  list random_equipment
+    artifact_chance 0
+    material_quality 80
+    material_range 2
+    chance 15
+   end
   more
     arch small_shield
+    material_quality 80
+    material_range 2
     magic_fix 1
     artifact_chance 0
-    chance 5
+    chance 2
     name small ant shield
-  more
-    arch coppercoin
-    chance 100
-    nrof 6
 end
 treasure mob_ant_special
-  list traps
-  chance 10
-  more
-  list default_drop
-  chance 50
-  more
-  arch dagger
-    magic_chance 45
-    magic 1
+ list traps
+   chance 10
+ more
+ list default_wealth
+   chance 75
+ more
+ list default_drop
+   chance 20
+ no
+  list random_equipment
+    material_quality 80
+    material_range 3
     chance 15
-    item_race 7
-    material_end 1
-  more
-    list random_food
-    chance 75
-    nrof 1
-  more
-    arch small_shield
-    magic_fix 1
-    chance 20
-    name small ant shield
-  more
-    arch coppercoin
-    chance 100
-    nrof 6
-  more
-    arch ring_generic
-    chance 5
+  no
+     list random_tools
+       material_quality 80
+       material_range 3
+       chance 10
+       difficulty 3
+    end
+   end
 end
 treasure mob_ant_queen
-  list traps
-  chance 10
-  more
-  list default_drop
-  chance 50
-    more
-   arch dagger
-    magic_chance 45
-    magic 1
+ list traps
+   chance 10
+ more
+ list default_wealth
+   chance 75
+ more
+ list default_drop
+   chance 20
+ no
+  list random_equipment
+    material_quality 80
+    material_range 3
     chance 15
-    item_race 7
-    material_end 1
-  more
-   arch t_dagger
-   nrof 5
-   chance 25
-  more
- list random_food
-  chance 75
-  nrof 1
-  more
-  arch small_shield
-  magic_fix 1
-  chance 10
-  name small ant shield
-  more
-  arch coppercoin
-  chance 100
-  nrof 6
+  no
+     list random_tools
+       material_quality 80
+       material_range 3
+       chance 10
+       difficulty 3
+    end
+   end
 end
 treasure mob_slime
-  list traps
-  chance 10
-  more
-  list default_drop
-  chance 50
-  more
-  list random_food
-  chance 25
-  nrof 1
-  more
-  arch chain_mail
-  chance 3
-  nrof 1
-  more
-  arch full_helmet
-  chance 3
-  difficulty 5
-  nrof 1
-  more
-   arch t_star
-   nrof 5
-   chance 2
-  more
-  arch coppercoin
-  chance 100
-  nrof 6
+ list traps
+   chance 10
+ more
+ list default_wealth
+   chance 75
+ more
+ list default_drop
+   chance 20
+ no
+  list random_equipment
+    material_quality 80
+    material_range 3
+    chance 12
+  no
+     list random_tools
+       material_quality 80
+       material_range 3
+       chance 13
+       difficulty 3
+    end
+   end
 end
 treasure mob_wyvern
-  list traps
-  chance 10
-  more
-  list default_drop
-  chance 50
-  more
-  list random_food
-  chance 25
-  nrof 1
-  more
-  arch banded_mail
-  chance 3
-  magic_chance 450
-  magic 1
-  difficulty 5
-  nrof 1
-  more
-  arch amulet_generic
-  chance 2
-  difficulty 7
-  nrof 1
-  more
-   arch t_star
-   nrof 5
-   chance 2
-  more
-  arch coppercoin
+ list traps
+   chance 10
+ more
+ list default_wealth
    chance 75
-   nrof 30
-  arch silvercoin
-  chance 25
-  nrof 3
+ more
+ list default_drop
+   chance 20
+ no
+  list random_equipment
+    material_quality 80
+    material_range 3
+    chance 15
+  no
+     list random_tools
+       material_quality 80
+       material_range 3
+       chance 10
+       difficulty 3
+    end
+   end
 end
 treasure mob_ogre
-  list traps
-  chance 10
-  more
-  list default_drop
-  chance 50
-  more
-  arch club_rough
-    magic_chance 10
-    magic 1
-   item_race 12
-   chance 25
-  more
-  arch coppercoin
-   chance 100
-   nrof 6
+ list traps
+   chance 10
+ more
+ list default_wealth
+   chance 75
+ more
+ list default_drop
+   chance 20
+ no
+  list random_equipment
+    item_race 12
+    material_quality 80
+    material_range 3
+    chance 12
+  no
+     list random_tools
+       material_quality 80
+       material_range 3
+       chance 13
+       difficulty 3
+    end
+   end
 end
 treasure mob_giant_hill
-  list traps
-  chance 10
-  more
-  list default_drop
-  chance 50
-  more
-  arch club_giant
-    magic_chance 20
-    magic 1
-   item_race 8
-   chance 25
-  more
-  arch ring_generic
-  chance 2
-  more
-  arch coppercoin
-   chance 100
-   nrof 25
-  more
-  arch silvercoin
-   chance 100
-   nrof 1
+ list traps
+   chance 10
+ more
+ list default_wealth
+   chance 75
+ more
+ list default_drop
+   chance 20
+ no
+  list random_equipment
+    item_race 8
+    material_quality 80
+    material_range 3
+    chance 12
+  no
+     list random_tools
+       material_quality 80
+       material_range 3
+       chance 13
+       difficulty 3
+    end
+   end
 end
 treasure mob_giant_stone
-  list traps
-  chance 10
-  more
-  list default_drop
-  chance 50
-end
-treasure mob_troll
-  list traps
-  chance 10
-  more
-  list default_drop
-  chance 50
+ list traps
+   chance 10
+ more
+ list default_wealth
+   chance 75
+ more
+ list default_drop
+   chance 20
+ no
+  list random_equipment
+    item_race 8
+    material_quality 80
+    material_range 3
+    chance 12
+  no
+     list random_tools
+       material_quality 80
+       material_range 3
+       chance 13
+       difficulty 3
+    end
+   end
 end
 treasure mob_dragon_water
-  list traps
-  chance 10
-  more
-  list default_drop
-  chance 50
+ list traps
+   chance 10
+ more
+ list default_wealth
+   chance 75
+ more
+ list default_drop
+   chance 20
+ no
+  list random_equipment
+    material_quality 80
+    material_range 3
+    chance 12
+  no
+     list random_tools
+       material_quality 80
+       material_range 3
+       chance 13
+       difficulty 3
+    end
+   end
 end
 treasure mob_kobold_big
-  list traps
-  chance 10
-  more
-  list default_drop
-  chance 50
+ list traps
+   chance 10
+ more
+ list default_wealth
+   chance 75
+ more
+ list default_drop
+   chance 20
+ no
+  list random_equipment
+    item_race 7
+    material_quality 80
+    material_range 3
+    chance 12
+  no
+     list random_tools
+       material_quality 80
+       material_range 3
+       chance 13
+       difficulty 3
+    end
+   end
 end
 treasure mob_kobold
-  list traps
-  chance 10
-  more
-  list default_drop
-  chance 50
+ list traps
+   chance 10
+ more
+ list default_wealth
+   chance 90
+ more
+ list default_drop
+   chance 8
+ no
+  list random_equipment
+    item_race 7
+    material_quality 80
+    material_range 2
+    chance 15
+   end
 end
 treasure mob_worm_purple
-  list traps
-  chance 10
-  more
-  list default_drop
-  chance 50
+ list traps
+   chance 10
+ more
+ list default_wealth
+   chance 75
+ more
+ list default_drop
+   chance 20
+ no
+  list random_equipment
+    material_quality 80
+    material_range 3
+    chance 12
+  no
+     list random_tools
+       material_quality 80
+       material_range 3
+       chance 13
+       difficulty 3
+    end
+   end
 end
 treasure mob_demilich
-  arch ability_icestorm
-  more
-  list traps
-  chance 10
-  more
-  list default_drop
-  chance 50
+ list traps
+   chance 10
+ more
+ list default_wealth
+   chance 75
+ more
+ list default_drop
+   chance 20
+ no
+  list random_equipment
+    material_quality 80
+    material_range 3
+    chance 12
+  no
+     list random_tools
+       material_quality 80
+       material_range 3
+       chance 13
+       difficulty 3
+    end
+   end
 end
 ############# TEST ############################
 treasureone random_test_all
@@ -1841,21 +2040,69 @@ treasureone random_style1
  t_style 2
  artifact_chance 100
  chance 50
- more
- arch nugget_generic
- t_style 0
- artifact_chance 100
- chance 50
- more
- arch gem_generic
- t_style 0
- artifact_chance 100
- chance 50
- more
- arch sandals
- artifact_chance 100
- chance 50
 end
-treasureone random_test
-list mob_ant
+treasure random_testx
+ list traps
+   chance 10
+ more
+ list default_wealth
+   chance 75
+ more
+ list default_drop
+   chance 20
+ no
+  list random_equipment
+    t_style 2
+    item_race 7
+    artifact_chance 90
+    material_quality 90
+    material_range 3
+    chance 15
+  no
+     list random_tools
+       chance 10
+       difficulty 3
+    end
+   end
+#more
+#list random_weapon
+#arch shield_bone
+# chance 95
+# t_style 2
+# artifact_chance 90
+# material_quality 90
+# material_range 3
+end
+treasure random_test
+#    arch small_shield
+#    material_quality 85
+#    material_range 2
+#    magic_fix 1
+#    artifact_chance 0
+#    chance 90
+#    name small ant shield
+list traps
+   chance 10
+ more
+ list default_wealth
+   chance 75
+ more
+ list default_drop
+   chance 5
+ no
+  list random_equipment
+    artifact_chance 0
+    material_quality 80
+    material_range 2
+    chance 5
+   end
+  more
+    arch small_shield
+    material_quality 85
+    material_range 2
+    magic_fix 1
+    artifact_chance 0
+    chance 90
+    name small ant shield
+
 end

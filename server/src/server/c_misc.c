@@ -244,7 +244,7 @@ int command_who (object *op, char *params)
     for(pl=first_player;pl!=NULL;pl=pl->next) 
 	{
 
-		if(pl->dm_stealth)
+		if(pl->dm_stealth && !QUERY_FLAG(op,FLAG_WIZ) )
 		    continue;
 
 		if(pl->ob->map == NULL)

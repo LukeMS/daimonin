@@ -4,6 +4,8 @@ layer 3
 race arrows
 type 14
 wc 6
+item_level 19
+item_skill 1
 wc_range 25
 last_sp 0
 sub_type 0
