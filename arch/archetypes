@@ -664,6 +664,204 @@ no_teleport 1
 no_pick 1
 is_floor 1
 end
+Object earth_m1
+name earth
+face earth_m1.101
+type 79
+editor_folder floors/earth
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object earth_m2
+name earth
+face earth_m2.101
+type 79
+editor_folder floors/earth
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object earth_m3
+name earth
+face earth_m3.101
+type 79
+editor_folder floors/earth
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object earth_m4
+name earth
+face earth_m4.101
+type 79
+editor_folder floors/earth
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object earth_m5
+name earth
+face earth_m5.101
+type 79
+editor_folder floors/earth
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object earth_m6
+name earth
+face earth_m6.101
+type 79
+editor_folder floors/earth
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object earth_m7
+name earth
+face earth_m7.101
+type 79
+editor_folder floors/earth
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object earth_m8
+name earth
+face earth_m8.101
+type 79
+editor_folder floors/earth
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object earth_m9
+name earth
+face earth_m9.101
+type 79
+editor_folder floors/earth
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object earth_m10
+name earth
+face earth_m10.101
+type 79
+editor_folder floors/earth
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object earth_m11
+name earth
+face earth_m11.101
+type 79
+editor_folder floors/earth
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object earth_m12
+name earth
+face earth_m12.101
+type 79
+editor_folder floors/earth
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object earth_m13
+name earth
+face earth_m13.101
+type 79
+editor_folder floors/earth
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object earth_m14
+name earth
+face earth_m14.101
+type 79
+editor_folder floors/earth
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object earth_m15
+name earth
+face earth_m15.101
+type 79
+editor_folder floors/earth
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object earth_m16
+name earth
+face earth_m16.101
+type 79
+editor_folder floors/earth
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object earth_m17
+name earth
+face earth_m17.101
+type 79
+editor_folder floors/earth
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object earth_m18
+name earth
+face earth_m18.101
+type 79
+editor_folder floors/earth
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object earth_m19
+name earth
+face earth_m19.101
+type 79
+editor_folder floors/earth
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object earth_m20
+name earth
+face earth_m20.101
+type 79
+editor_folder floors/earth
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object earth_m21
+name earth
+face earth_m21.101
+type 79
+editor_folder floors/earth
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object earth_m22
+name earth
+face earth_m22.101
+type 79
+editor_folder floors/earth
+no_teleport 1
+layer 2
+no_pick 1
+end
 Object floor_flagm1
 name floor
 face floor_flagm1.101
@@ -836,6 +1034,330 @@ no_teleport 1
 layer 2
 no_pick 1
 end
+Object grass_leafm1
+name leaves
+face grass_leafm1.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grass_leafm2
+name leaves
+face grass_leafm2.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grass_leafm3
+name leaves
+face grass_leafm3.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grass_leafm4
+name leaves
+face grass_leafm4.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grass_leafm5
+name leaves
+face grass_leafm5.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grass_leafm6
+name leaves
+face grass_leafm6.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grass_leafm7
+name leaves
+face grass_leafm7.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grass_leafm8
+name leaves
+face grass_leafm8.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grass_leafm9
+name leaves
+face grass_leafm9.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grass_leafm10
+name leaves
+face grass_leafm10.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grass_leafm11
+name leaves
+face grass_leafm11.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grass_leafm12
+name leaves
+face grass_leafm12.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grass_leafm13
+name leaves
+face grass_leafm13.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grass_leafm14
+name leaves
+face grass_leafm14.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grassd_m1
+name grass
+face grassd_m1.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grassd_m2
+name grass
+face grassd_m2.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grassd_m3
+name grass
+face grassd_m3.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grassd_m4
+name grass
+face grassd_m4.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grassd_m5
+name grass
+face grassd_m5.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grassd_m6
+name grass
+face grassd_m6.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grassd_m7
+name grass
+face grassd_m7.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grassd_m8
+name grass
+face grassd_m8.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grassd_m9
+name grass
+face grassd_m9.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grassd_m10
+name grass
+face grassd_m10.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grassd_m11
+name grass
+face grassd_m11.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grassd_m12
+name grass
+face grassd_m12.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grassd_m13
+name grass
+face grassd_m13.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grassd_m14
+name grass
+face grassd_m14.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grass_thickm1
+name grass
+face grass_thick_m1.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grass_thickm2
+name grass
+face grass_thick_m2.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grass_thickm3
+name grass
+face grass_thick_m3.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grass_thickm4
+name grass
+face grass_thick_m4.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grass_thickm5
+name grass
+face grass_thick_m5.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grass_thickm6
+name grass
+face grass_thick_m6.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grass_thickm7
+name grass
+face grass_thick_m7.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object grass_thickm8
+name grass
+face grass_thick_m8.101
+type 79
+editor_folder floors/grass
+no_teleport 1
+layer 2
+no_pick 1
+end
 Object grass1
 name grass
 face grass.101
@@ -979,6 +1501,17 @@ terrain_type 1
 no_pick 1
 is_floor 1
 end
+Object grassd_8
+name grass
+face grassd_7.101
+type 71
+editor_folder floors/grass
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
 Object grass_stone1
 name grass
 face grass_stone1.101
@@ -1026,6 +1559,61 @@ end
 Object grass_stone5
 name grass
 face grass_stone5.101
+type 71
+editor_folder floors/grass
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object grass_leaf1
+name leaves
+face grass_leaf1.101
+type 71
+editor_folder floors/grass
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object grass_leaf2
+name leaves
+face grass_leaf2.101
+type 71
+editor_folder floors/grass
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object grass_thick1
+name grass
+face grass_thick1.101
+type 71
+editor_folder floors/grass
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object grass_thick2
+name grass
+face grass_thick2.101
+type 71
+editor_folder floors/grass
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object grass_thick3
+name grass
+face grass_thick3.101
 type 71
 editor_folder floors/grass
 no_teleport 1
@@ -1331,6 +1919,204 @@ no_teleport 1
 no_pick 1
 is_floor 1
 end
+Object sand_dm1
+name sand
+face sand_dm1.101
+type 79
+editor_folder floors/sand
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object sand_dm2
+name sand
+face sand_dm2.101
+type 79
+editor_folder floors/sand
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object sand_dm3
+name sand
+face sand_dm3.101
+type 79
+editor_folder floors/sand
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object sand_dm4
+name sand
+face sand_dm4.101
+type 79
+editor_folder floors/sand
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object sand_dm5
+name sand
+face sand_dm5.101
+type 79
+editor_folder floors/sand
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object sand_dm6
+name sand
+face sand_dm6.101
+type 79
+editor_folder floors/sand
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object sand_dm7
+name sand
+face sand_dm7.101
+type 79
+editor_folder floors/sand
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object sand_dm8
+name sand
+face sand_dm8.101
+type 79
+editor_folder floors/sand
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object sand_dm9
+name sand
+face sand_dm9.101
+type 79
+editor_folder floors/sand
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object sand_dm10
+name sand
+face sand_dm10.101
+type 79
+editor_folder floors/sand
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object sand_dm11
+name sand
+face sand_dm11.101
+type 79
+editor_folder floors/sand
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object sand_dm12
+name sand
+face sand_dm12.101
+type 79
+editor_folder floors/sand
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object sand_dm13
+name sand
+face sand_dm13.101
+type 79
+editor_folder floors/sand
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object sand_dm14
+name sand
+face sand_dm14.101
+type 79
+editor_folder floors/sand
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object sand_dm15
+name sand
+face sand_dm15.101
+type 79
+editor_folder floors/sand
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object sand_dm16
+name sand
+face sand_dm16.101
+type 79
+editor_folder floors/sand
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object sand_dm17
+name sand
+face sand_dm17.101
+type 79
+editor_folder floors/sand
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object sand_dm18
+name sand
+face sand_dm18.101
+type 79
+editor_folder floors/sand
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object sand_dm19
+name sand
+face sand_dm19.101
+type 79
+editor_folder floors/sand
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object sand_dm20
+name sand
+face sand_dm20.101
+type 79
+editor_folder floors/sand
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object sand_dm21
+name sand
+face sand_dm21.101
+type 79
+editor_folder floors/sand
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object sand_dm22
+name sand
+face sand_dm22.101
+type 79
+editor_folder floors/sand
+no_teleport 1
+layer 2
+no_pick 1
+end
 Object shop_floor
 name floor
 face shop_empty.111
@@ -1478,6 +2264,147 @@ terrain_type 1
 no_pick 1
 is_floor 1
 end
+Object fstone1a
+name floor
+face fstone1a.101
+type 71
+editor_folder floors/stone
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object fstone1b
+name floor
+face fstone1b.101
+type 71
+editor_folder floors/stone
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object fstone1c
+name floor
+face fstone1c.101
+type 71
+editor_folder floors/stone
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object fstone1m1
+name stones
+face fstone1_m1.101
+type 79
+editor_folder floors/stone
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object fstone1m2
+name stones
+face fstone1_m2.101
+type 79
+editor_folder floors/stone
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object fstone1m3
+name stones
+face fstone1_m3.101
+type 79
+editor_folder floors/stone
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object fstone1m4
+name stones
+face fstone1_m4.101
+type 79
+editor_folder floors/stone
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object fstone1m5
+name stones
+face fstone1_m5.101
+type 79
+editor_folder floors/stone
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object fstone1m6
+name stones
+face fstone1_m6.101
+type 79
+editor_folder floors/stone
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object fstone1m7
+name stones
+face fstone1_m7.101
+type 79
+editor_folder floors/stone
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object fstone1m8
+name stones
+face fstone1_m8.101
+type 79
+editor_folder floors/stone
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object fstone1m9
+name stones
+face fstone1_m9.101
+type 79
+editor_folder floors/stone
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object fstone1m10
+name stones
+face fstone1_m10.101
+type 79
+editor_folder floors/stone
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object fstone1m11
+name stones
+face fstone1_m11.101
+type 79
+editor_folder floors/stone
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object fstone1m12
+name stones
+face fstone1_m12.101
+type 79
+editor_folder floors/stone
+no_teleport 1
+layer 2
+no_pick 1
+end
 Object water_still
 name water
 face lake.101
@@ -1547,6 +2474,206 @@ layer 1
 terrain_type 1
 no_teleport 1
 is_floor 1
+no_pick 1
+end
+Object reed_sm1
+name reed
+face reed_small_m1.101
+type 79
+editor_folder floors/fmasks
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object reed_sm2
+name reed
+face reed_small_m2.101
+type 79
+editor_folder floors/fmasks
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object reed_sm3
+name reed
+face reed_small_m3.101
+type 79
+editor_folder floors/fmasks
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object reed_sm4
+name reed
+face reed_small_m4.101
+type 79
+editor_folder floors/fmasks
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object reed_sm5
+name reed
+face reed_small_m5.101
+type 79
+editor_folder floors/fmasks
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object reed_sm6
+name reed
+face reed_small_m6.101
+type 79
+editor_folder floors/fmasks
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object reed_sm7
+name reed
+face reed_small_m7.101
+type 79
+editor_folder floors/fmasks
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object reed_sm8
+name reed
+face reed_small_m8.101
+type 79
+editor_folder floors/fmasks
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object reed_sm9
+name reed
+face reed_small_m9.101
+type 79
+editor_folder floors/fmasks
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object reed_sm10
+name reed
+face reed_small_m10.101
+type 79
+editor_folder floors/fmasks
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object reed_sm11
+name reed
+face reed_small_m11.101
+type 79
+editor_folder floors/fmasks
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object swamp1
+name swamp
+face swamp1.101
+type 71
+editor_folder floors/swamp
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object swamp1m1
+name swamp
+face swamp1m1.101
+type 79
+editor_folder floors/swamp
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object swamp1m2
+name swamp
+face swamp1m2.101
+type 79
+editor_folder floors/swamp
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object swamp1m3
+name swamp
+face swamp1m3.101
+type 79
+editor_folder floors/swamp
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object swamp1m4
+name swamp
+face swamp1m4.101
+type 79
+editor_folder floors/swamp
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object swamp1m5
+name swamp
+face swamp1m5.101
+type 79
+editor_folder floors/swamp
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object swamp1m6
+name swamp
+face swamp1m6.101
+type 79
+editor_folder floors/swamp
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object swamp1m7
+name swamp
+face swamp1m7.101
+type 79
+editor_folder floors/swamp
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object swamp1m8
+name swamp
+face swamp1m8.101
+type 79
+editor_folder floors/swamp
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object swamp1m9
+name swamp
+face swamp1m9.101
+type 79
+editor_folder floors/swamp
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object swamp1m10
+name swamp
+face swamp1m10.101
+type 79
+editor_folder floors/swamp
+no_teleport 1
+layer 2
 no_pick 1
 end
 Object ability_cause_lig_wound
