@@ -1,5 +1,5 @@
 Object door1_locked
-name locked door
+name metal door
 layer 5
 type 20
 blocksview 1
