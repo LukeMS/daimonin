@@ -266,7 +266,7 @@ int command_teleport (object *op, char *params) {
    EXIT_Y(dummy) = pl->ob->y + freearr_y[i];
    enter_exit(op, dummy);
    free_object(dummy);
-   new_draw_info(NDI_UNIQUE, 0, pl->ob, "You see a portal open.");
+   /*new_draw_info(NDI_UNIQUE, 0, pl->ob, "You see a portal open.");*/
    new_draw_info(NDI_UNIQUE, 0, op, "OK.");
    return 1;
 }

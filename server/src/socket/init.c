@@ -207,7 +207,17 @@ void init_ericserver()
 		LOG(llevBug,"BUG: init_ericserver: Error getting protox\n");
 		return;
     }
+
+
+#ifdef WIN32 /* ***win32  -  we init a windows socket */
+	/* there was reported problems under windows using the protox
+	 * struct - IPPROTO_TCP should fix it.
+	 */
+    init_sockets[0].fd = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+#else
     init_sockets[0].fd = socket(PF_INET, SOCK_STREAM, protox->p_proto);
+#endif
+
     if (init_sockets[0].fd == -1)
 		LOG(llevError, "ERROR: Error creating socket on port\n");
     insock.sin_family = AF_INET;

@@ -8,7 +8,7 @@ material 32
 weapon_speed 1.0
 container 350000
 weight 50000
-food 25
+food 40
 is_used_up 1
 speed 0.01
 identified 1

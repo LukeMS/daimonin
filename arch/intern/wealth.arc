@@ -1,5 +1,5 @@
 Object wealth
-value 7
+value 4
 face wealth.101
 sys_object 1
 no_pick 1

@@ -63,7 +63,7 @@ int gettimeofday(struct timeval *time_Info, struct timezone *timezone_Info)
   {
     time_t0 = time(NULL);
     time_delta = 0;
-    mm_t0 = timeGetTime();
+     mm_t0 = timeGetTime();
     t_initialized = 1;
   }
   /* Get the time, if they want it */
