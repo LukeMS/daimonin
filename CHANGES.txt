@@ -1,0 +1,12 @@
+Daimonin CHANGES
+
+25.10.2003	Added some gfx - new chest, bed..
+25.10.2003	Added several locations to stoneglow
+25.10.2003	Added permanent player appartments.
+25.10.2003	changed exit marker to unique map from unique 1 to
+                last_eat 1. This avoided that normal exits (aka default
+                map objects) are saved in unique map files.
+
+For help ask the dev team:
+
+http://daimonin.sourceforge.net
