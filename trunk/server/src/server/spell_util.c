@@ -194,7 +194,7 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
 
 	if(s==NULL)
 	{
-		LOG(llevBug,"BUG: unknown spell: %d\n",type);
+		LOG(llevBug,"BUG: unknown spell: %d from: %s (%s)\n",type, query_name(op), query_name(caster));
 		return 0;
 	}
 	

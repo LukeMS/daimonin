@@ -242,6 +242,15 @@ rv_vector *get_known_obj_rv(object *op, struct mob_known_obj *known_obj, int max
         }
     }
 
+	/* hotfix for this bug. part should here NOT be NULL */
+	if(known_obj->rv.part)
+	{
+		LOG(-1,"CRASHBUG: rv->part == NULL for %s on map %s with enemy %s and map %s\n", 
+				query_name(op), op->map?STRING_SAFE(op->map->path):"NULL", 
+				query_name(known_obj->obj), 
+				known_obj->obj?STRING_SAFE(known_obj->obj->map?STRING_SAFE(known_obj->obj->map->path):"NULL"):"NULL");
+		return NULL;
+	}
     return &known_obj->rv;
 }
 
