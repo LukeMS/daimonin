@@ -2660,8 +2660,6 @@ int dragon_eat_flesh(object *op, object *meal)
 
 static void apply_savebed(object *pl)
 {
-    mapstruct  *oldmap  = pl->map;
-
     if (!CONTR(pl)->name_changed || !pl->stats.exp)
     {
         new_draw_info(NDI_UNIQUE, 0, pl, "You don't deserve to save your character yet.");
