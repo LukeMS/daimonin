@@ -413,9 +413,7 @@ int push_ob(object *who, int dir, object *pusher) {
 	if(pusher->contr->run_on) {
 	    new_draw_info_format(NDI_UNIQUE, 0, pusher,
               "You start to attack %s !!",who->name);
-	    CLEAR_FLAG(who,FLAG_UNAGGRESSIVE);
-        who->enemy = pusher;
-        who->enemy_count = pusher->count;
+        set_npc_enemy(who, pusher, NULL);
         return 1;
 	}
 	else 

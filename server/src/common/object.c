@@ -969,7 +969,14 @@ int CAN_MERGE(object *ob1, object *ob2)
 		return 1;
 
     /* Gecko: Moved out special handling of event obejct nrof */
-    if((!ob1->nrof || !ob2->nrof) && ob1->type != TYPE_EVENT_OBJECT)
+	/* important: don't merge objects with glow_radius set - or we come
+	 * in heavy side effect situations. Because we really not know what
+	 * our calling function will do after this merge (and the calling function
+	 * then must first find out a merge has happen or not). The sense of stacks
+	 * are to store inactive items. Because glow_radius items can be active even
+	 * when not apllied, merging is simply wrong here. MT.
+	 */
+    if(((!ob1->nrof || !ob2->nrof) && ob1->type != TYPE_EVENT_OBJECT) || ob1->glow_radius || ob2->glow_radius)
         return 0;
 
 	/* just a brain dead long check for things NEVER NEVER should be different 

@@ -43,8 +43,6 @@ typedef struct _msglang {
 
 extern spell spells[NROFREALSPELLS];
 
-#define RETURNHOME_WP_NAME "- home -"
-
 /* update (or clear) an npc's enemy. Performs m ost of the housekeeping
  * related to switching enemies. 
  * You should always use this method to set (or clear) a npc's enemy.
@@ -70,7 +68,7 @@ void set_npc_enemy(object *npc, object *enemy, rv_vector *rv)
         return;
     }
     
-    /* Non-waypoint related stuff */
+    /* Non-aggro-waypoint related stuff */
     if(enemy) {
         if(rv == NULL)
             rv = &rv2;
@@ -82,19 +80,24 @@ void set_npc_enemy(object *npc, object *enemy, rv_vector *rv)
         /* monster has changed status from normal to attack - lets hear it! */
         if(npc->enemy == NULL && !QUERY_FLAG(npc,FLAG_FRIENDLY))
             play_sound_map(npc->map, npc->x, npc->y, SOUND_GROWL, SOUND_NORMAL);
+    
+        if(QUERY_FLAG(npc,FLAG_UNAGGRESSIVE)) {
+            /* The unaggressives look after themselves 8) */
+            CLEAR_FLAG(npc, FLAG_UNAGGRESSIVE);
+            npc_call_help(npc);
+        }
     } else {
         /* If mob lost aggro, let it return home */
-        
         if(OBJECT_VALID(npc->enemy, npc->enemy_count)) {
             object *base = insert_base_info_object(npc);
             object *wp = get_active_waypoint(npc);
 
             if(base && !wp && wp_archetype) {
                 object *return_wp = get_return_waypoint(npc);
-
+                
 #ifdef DEBUG_PATHFINDING        
                 LOG(llevDebug,"set_npc_enemy(): %s lost aggro and is returning home (%s:%d,%d)\n", 
-                        npc->name, base->slaying, base->x, base->y); 
+                        STRING_OBJ_NAME(npc), base->slaying, base->x, base->y); 
 #endif            
                 if(! return_wp) {
                     return_wp = arch_to_object(wp_archetype);
@@ -144,7 +147,7 @@ void set_npc_enemy(object *npc, object *enemy, rv_vector *rv)
         SET_FLAG(aggro_wp, FLAG_DAMNED); /* Mark as aggro WP */
         aggro_wp->owner = npc;
 #ifdef DEBUG_PATHFINDING        
-        LOG(llevDebug,"set_npc_enemy(): created wp for '%s'\n", npc->name); 
+        LOG(llevDebug,"set_npc_enemy(): created wp for '%s'\n", STRING_OBJ_NAME(npc)); 
 #endif            
     }                                            
 
@@ -270,8 +273,9 @@ object *find_enemy(object *npc, rv_vector *rv)
         npc->attacked_by = NULL;     /* always clear the attacker entry */    
         tmp= get_pet_enemy(npc,rv);
 		npc->last_eat = 0;
-	 	if (tmp) get_rangevector(npc, tmp, rv, 0);
-			return tmp;
+	 	if (tmp) 
+            get_rangevector(npc, tmp, rv, 0);
+        return tmp;
     }
     /* we check our old enemy. */
 
@@ -315,6 +319,9 @@ object *find_enemy(object *npc, rv_vector *rv)
            
             if(tmp != npc->enemy)
                 set_npc_enemy(npc, tmp, rv);
+        } else if (npc->enemy) {
+            /* Make sure to clear the enemy, even if FLAG_UNAGRESSIVE is true */
+            set_npc_enemy(npc, NULL, NULL); 
         }
     }
 
@@ -379,7 +386,7 @@ int can_detect_enemy (object *op, object *enemy, rv_vector *rv)
 
 	/* if our enemy is to far away ... */
     get_rangevector(op, enemy, rv, 0);
-	if((int)rv->distance >= (MAX_AGGRO_RANGE>op->stats.Wis?MAX_AGGRO_RANGE:op->stats.Wis))
+	if((int)rv->distance >= MAX(MAX_AGGRO_RANGE, op->stats.Wis))
 	{
 		/* then start counting until our mob lose aggro... */
 		if(++op->last_eat > MAX_AGGRO_TIME)
