@@ -321,6 +321,25 @@ static void block_until_new_connection()
 }
 
 
+static void remove_ns_dead_player(player *pl)
+{
+				
+	if(pl->ob && pl->ob->container) /* close container */
+		esrv_apply_container (pl->ob, pl->ob->container);
+			
+	save_player(pl->ob, 0);
+			
+	if(!QUERY_FLAG(pl->ob,FLAG_REMOVED))
+	{
+		terminate_all_pets(pl->ob);
+		leave_map(pl->ob);
+	}
+			
+	leave(pl,1);
+	final_free_player(pl);
+
+}
+
 /* This checks the sockets for input and exceptions, does the right thing.  A 
  * bit of this code is grabbed out of socket.c
  * There are 2 lists we need to look through - init_sockets is a list
@@ -339,50 +358,52 @@ void doeric_server()
 	write_cs_stats();
 #endif
 
+	/* would it not be possible to use FD_CLR too and avoid the 
+	 * reseting every time?
+	 */
     FD_ZERO(&tmp_read);
     FD_ZERO(&tmp_write);
     FD_ZERO(&tmp_exceptions);
 
-    for(i=0;i<socket_info.allocated_sockets;i++) {
-	if (init_sockets[i].status == Ns_Dead) {
-	    free_newsocket(&init_sockets[i]);
-	    init_sockets[i].status = Ns_Avail;
-	    socket_info.nconns--;
-	} else if (init_sockets[i].status != Ns_Avail){
-	    FD_SET((uint32)init_sockets[i].fd, &tmp_read);
-	    FD_SET((uint32)init_sockets[i].fd, &tmp_write);
-	    FD_SET((uint32)init_sockets[i].fd, &tmp_exceptions);
-	}
+    for(i=0;i<socket_info.allocated_sockets;i++) 
+	{
+		if (init_sockets[i].status == Ns_Dead)
+		{
+			free_newsocket(&init_sockets[i]);
+			init_sockets[i].status = Ns_Avail;
+			socket_info.nconns--;
+		} 
+		else if (init_sockets[i].status != Ns_Avail) /* ns_add... */
+		{
+			FD_SET((uint32)init_sockets[i].fd, &tmp_read);
+			FD_SET((uint32)init_sockets[i].fd, &tmp_write);
+			FD_SET((uint32)init_sockets[i].fd, &tmp_exceptions);
+		}
     }
 
     /* Go through the players.  Let the loop set the next pl value,
      * since we may remove some
      */
-    for (pl=first_player; pl!=NULL; ) {
-	if (pl->socket.status == Ns_Dead) {
-	    player *npl=pl->next;
+    for (pl=first_player; pl!=NULL; )
+	{
+		if (pl->socket.status == Ns_Dead)
+		{
+			player *npl=pl->next;
 
-		if(pl->ob && pl->ob->container)
-			esrv_apply_container (pl->ob, pl->ob->container);
-	    save_player(pl->ob, 0);
-	    if(!QUERY_FLAG(pl->ob,FLAG_REMOVED)) {
-		terminate_all_pets(pl->ob);
-		leave_map(pl->ob);
-	    }
-	    leave(pl,1);
-	    final_free_player(pl);
-	    pl=npl;
-	}
-	else {
-	    FD_SET((uint32)pl->socket.fd, &tmp_read);
-	    FD_SET((uint32)pl->socket.fd, &tmp_write);
-	    FD_SET((uint32)pl->socket.fd, &tmp_exceptions);
-	    pl=pl->next;
-	}
+			remove_ns_dead_player(pl);
+			pl=npl;
+		}
+		else 
+		{
+			FD_SET((uint32)pl->socket.fd, &tmp_read);
+			FD_SET((uint32)pl->socket.fd, &tmp_write);
+			FD_SET((uint32)pl->socket.fd, &tmp_exceptions);
+			pl=pl->next;
+		}
     }
 
     if (socket_info.nconns==1 && first_player==NULL) 
-	block_until_new_connection();
+		block_until_new_connection();
 
     /* Reset timeout each time, since some OS's will change the values on
      * the return from select.
@@ -393,13 +414,11 @@ void doeric_server()
     pollret= select(socket_info.max_filedescriptor, &tmp_read, &tmp_write, 
 		    &tmp_exceptions, &socket_info.timeout);
 
-    if (pollret==-1) {
+    if (pollret==-1) 
+	{
 		LOG(llevDebug,"doeric_server: error on select\n");
 		return;
     }
-
-    /* We need to do some of the processing below regardless */
-/*    if (!pollret) return;*/
 
     /* Following adds a new connection */
     if (pollret && FD_ISSET(init_sockets[0].fd, &tmp_read)) 
@@ -443,86 +462,84 @@ void doeric_server()
     }
 
     /* Check for any exceptions/input on the sockets */
-    if (pollret) for(i=1;i<socket_info.allocated_sockets;i++) {
-	if (init_sockets[i].status == Ns_Avail) continue;
-	if (FD_ISSET(init_sockets[i].fd,&tmp_exceptions)) {
-	    free_newsocket(&init_sockets[i]);
-	    init_sockets[i].status = Ns_Avail;
-	    socket_info.nconns--;
-	    continue;
-	}
-	if (FD_ISSET(init_sockets[i].fd, &tmp_read)) {
-	    HandleClient(&init_sockets[i], NULL);
-	}
-	if (FD_ISSET(init_sockets[i].fd, &tmp_write)) {
-	    init_sockets[i].can_write=1;
-	}
+    if (pollret) for(i=1;i<socket_info.allocated_sockets;i++) 
+	{
+		if (init_sockets[i].status == Ns_Avail) 
+			continue;
+		if (FD_ISSET(init_sockets[i].fd,&tmp_exceptions))
+		{
+			free_newsocket(&init_sockets[i]);
+			init_sockets[i].status = Ns_Avail;
+			socket_info.nconns--;
+			continue;
+		}
+		if (FD_ISSET(init_sockets[i].fd, &tmp_read))
+		    HandleClient(&init_sockets[i], NULL);
+
+		if (FD_ISSET(init_sockets[i].fd, &tmp_write))
+		    init_sockets[i].can_write=1;
     }
 
     /* This does roughly the same thing, but for the players now */
-    for (pl=first_player; pl!=NULL; pl=next) {
+    for (pl=first_player; pl!=NULL; pl=next) 
+	{
+		next=pl->next;
+		if (pl->socket.status==Ns_Dead)
+			continue;
 
-	next=pl->next;
-	if (pl->socket.status==Ns_Dead) continue;
-
-	if (FD_ISSET(pl->socket.fd,&tmp_write)) {
-	    if (!pl->socket.can_write)  {
-#if 0
-		LOG(llevDebug,"Player %s socket now write enabled\n", pl->ob->name);
-#endif
-		pl->socket.can_write=1;
-		write_socket_buffer(&pl->socket);
-	    }
-	    /* if we get an error on the write_socket buffer, no reason to
-	     * continue on this socket.
-	     */
-	    if (pl->socket.status==Ns_Dead) continue;
-	}
-	else 	    pl->socket.can_write=0;
-
-	if (FD_ISSET(pl->socket.fd,&tmp_exceptions)) {
-		if(pl->ob && pl->ob->container)
-			esrv_apply_container (pl->ob, pl->ob->container);
-	    save_player(pl->ob, 0);
-	    if(!QUERY_FLAG(pl->ob,FLAG_REMOVED)) {
-		terminate_all_pets(pl->ob);
-		remove_ob(pl->ob);
-	    }
-	    leave(pl,1);
-	    final_free_player(pl);
-	}
-	else {
-	    HandleClient(&pl->socket, pl);
-	    /* If the player has left the game, then the socket status
-	     * will be set to this be the leave function.  We don't
-	     * need to call leave again, as it has already been called
-	     * once.
-	     */
-	    if (pl->socket.status==Ns_Dead) {
-			if(pl->ob && pl->ob->container)
-				esrv_apply_container (pl->ob, pl->ob->container);
-			save_player(pl->ob, 0);
-
-		if(!QUERY_FLAG(pl->ob,FLAG_REMOVED)) {
-		    terminate_all_pets(pl->ob);
-		    remove_ob(pl->ob);
+		if (FD_ISSET(pl->socket.fd,&tmp_write))
+		{
+			/* i see no really sense here... can_write is REALLY
+			 * only set if socket() marks the write channel as free.
+			 * and can_write in loop flow only set here.
+			 * i would prefer a to exclude writing only here - and then
+			 * another tries in the "sleep" phase.
+			 * i think this was added as a "there is something in a buffer"
+			 * and then changed in context.
+			 */
+			if (!pl->socket.can_write)
+			{
+				pl->socket.can_write=1;
+				write_socket_buffer(&pl->socket);
+			}
+			/* if we get an error on the write_socket buffer, no reason to
+			* continue on this socket.
+			*/
+			if (pl->socket.status==Ns_Dead)
+				continue;
 		}
-		leave(pl,1);
-		final_free_player(pl);
-	    } else {
+		else 
+			pl->socket.can_write=0;
 
-		/* Update the players stats once per tick.  More efficient than
-		 * sending them whenever they change, and probably just as useful
-		 * (why is update the stats per tick more efficent as we set a update sflag??? MT)
-		 */
-		esrv_update_stats(pl);
-        if(pl->update_skills)
-	        esrv_update_skills(pl);
-        pl->update_skills=0;
-		draw_client_map(pl->ob);
-		if (pl->socket.update_look) 
-			esrv_draw_look(pl->ob);
-	    }
-	}
+		if (FD_ISSET(pl->socket.fd,&tmp_exceptions))
+			remove_ns_dead_player(pl);
+		else 
+		{
+			if (FD_ISSET(pl->socket.fd, &tmp_read))
+				HandleClient(&pl->socket, pl);
+			/* If the player has left the game, then the socket status
+			* will be set to this be the leave function.  We don't
+			* need to call leave again, as it has already been called
+			* once.
+			*/
+		    if (pl->socket.status==Ns_Dead)
+				remove_ns_dead_player(pl);
+			else
+			{
+
+				/* Update the players stats once per tick.  More efficient than
+				* sending them whenever they change, and probably just as useful
+				* (why is update the stats per tick more efficent as we set a update sflag??? MT)
+				*/
+				esrv_update_stats(pl);
+				if(pl->update_skills)
+					esrv_update_skills(pl);
+				pl->update_skills=0;
+				draw_client_map(pl->ob);
+				if (pl->socket.update_look) 
+					esrv_draw_look(pl->ob);
+			}
+		}
     }
 }
+
