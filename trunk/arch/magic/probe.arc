@@ -8,6 +8,8 @@ probe.102
 probe.103
 mina
 is_animated 1
+last_sp 12
+is_missile 1
 anim_speed 3
 terrain_flag 32767
 walk_on 1

@@ -3,6 +3,7 @@ name heavy rod
 face rod_heavy.101
 layer 3
 sp -1
+last_grace 45
 anim
 rod_heavy.101
 rod_heavy.102

@@ -9,6 +9,8 @@ wounds.102
 wounds.103
 mina
 is_animated 1
+last_sp 12
+is_missile 1
 anim_speed 4
 is_turnable 0
 no_pick 1

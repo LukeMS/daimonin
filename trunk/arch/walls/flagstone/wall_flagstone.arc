@@ -115,7 +115,7 @@ no_pass 1
 end
 Object wall_fstone.100
 name stone wall
-face wall_fstone.100
+face wall_fstone.d.100
 blocksview 1
 type 77
 layer 5
@@ -124,7 +124,7 @@ no_pass 1
 end
 Object wall_fstone_corner.101
 name stone wall
-face wall_fstone_corner.101
+face wall_fstone_corner.d.101
 blocksview 1
 type 77
 layer 5
@@ -133,7 +133,7 @@ no_pass 1
 end
 Object wall_fstone_half.101
 name stone wall
-face wall_fstone_half.101
+face wall_fstone_half.d.101
 blocksview 1
 type 77
 layer 5

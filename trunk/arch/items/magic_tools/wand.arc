@@ -8,6 +8,7 @@ wand.102
 wand.103
 mina
 is_animated 1
+last_grace 12
 anim_speed 5
 speed -0.1
 type 109

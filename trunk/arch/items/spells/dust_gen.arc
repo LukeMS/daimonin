@@ -5,6 +5,8 @@ name dust
 sp -1
 face dust_gen.101
 type 5
+last_grace 13
+last_sp 7
 sub_type 129
 wc_range 20
 material 4
