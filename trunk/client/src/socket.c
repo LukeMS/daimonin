@@ -183,7 +183,8 @@ Boolean SOCKET_DeinitSocket(void)
 Boolean SOCKET_OpenSocket(SOCKET *socket_temp, struct ClientSocket *csock, char *host, int port)
 {
         struct protoent *protox;
-        int error, temp;
+        int error;
+        long temp;
         struct hostent *hostbn;
         int oldbufsize;
         int newbufsize=65535, buflen=sizeof(int);

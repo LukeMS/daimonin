@@ -738,8 +738,8 @@ void stop_arrow (object *op)
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
-        CFP.Value[9] = event_obj->race;
-        CFP.Value[10]= event_obj->slaying;
+        CFP.Value[9] = (char *)event_obj->race;
+        CFP.Value[10]= (char *)event_obj->slaying;
         if (findPlugin(event_obj->name)>=0)
             ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
     }
@@ -1040,8 +1040,8 @@ void move_teleporter(object *op) {
 				CFP.Value[6] = &m;
 				CFP.Value[7] = &m;
 				CFP.Value[8] = &l;
-				CFP.Value[9] = event_obj->race;
-				CFP.Value[10]= event_obj->slaying;
+				CFP.Value[9] = (char *)event_obj->race;
+				CFP.Value[10]= (char *)event_obj->slaying;
 				if (findPlugin(event_obj->name)>=0)
 				{
 					CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
@@ -1084,8 +1084,8 @@ void move_teleporter(object *op) {
 				CFP.Value[6] = &m;
 				CFP.Value[7] = &m;
 				CFP.Value[8] = &l;
-				CFP.Value[9] = event_obj->race;
-				CFP.Value[10]= event_obj->slaying;
+				CFP.Value[9] = (char *)event_obj->race;
+				CFP.Value[10]= (char *)event_obj->slaying;
 				if (findPlugin(event_obj->name)>=0)
 				{
 					CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
@@ -1120,8 +1120,8 @@ void move_teleporter(object *op) {
 				CFP.Value[6] = &m;
 				CFP.Value[7] = &m;
 				CFP.Value[8] = &l;
-				CFP.Value[9] = event_obj->race;
-				CFP.Value[10]= event_obj->slaying;
+				CFP.Value[9] = (char *)event_obj->race;
+				CFP.Value[10]= (char *)event_obj->slaying;
 				if (findPlugin(event_obj->name)>=0)
 				{
 					CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
@@ -1170,8 +1170,8 @@ void move_player_changer(object *op) {
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
-        CFP.Value[9] = event_obj->race;
-        CFP.Value[10]= event_obj->slaying;
+        CFP.Value[9] = (char *)event_obj->race;
+        CFP.Value[10]= (char *)event_obj->slaying;
         if (findPlugin(event_obj->name)>=0)
         {
           CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
@@ -1430,8 +1430,8 @@ int process_object(object *op) {
     CFP.Value[6] = &m;
     CFP.Value[7] = &m;
     CFP.Value[8] = &l;
-    CFP.Value[9] = event_obj->race;
-    CFP.Value[10]= event_obj->slaying;
+    CFP.Value[9] = (char *)event_obj->race;
+    CFP.Value[10]= (char *)event_obj->slaying;
     if (findPlugin(event_obj->name)>=0)
         ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
   }

@@ -211,7 +211,7 @@ FILE *popen_local(const char *command, const char *type)
  * A replacement of strdup(), since it's not defined at some
  * unix variants.
  */
-char *strdup_local(char *str) {
+char *strdup_local(const char *str) {
   char *c=(char *)malloc(sizeof(char)*(strlen(str)+1));
   strcpy(c,str);
   return c;

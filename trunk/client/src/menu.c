@@ -16,6 +16,7 @@ struct _skill_list_set skill_list_set;
 int media_count;        /* buffered media files*/
 int media_show; /* show this media file*/
 int media_show_update;
+int keybind_startoff=0;
 static char *get_range_item_name(int id);
 
 static int group_pos[MAX_GROUP_MEMBER][2] ={
@@ -123,7 +124,15 @@ int client_command_check(char *cmd)
 	char cpar1[256];
 	int par1, par2;
 
-	if(!strnicmp(cmd,"/setwinalpha",strlen("/setwinalpha")) )
+	if(!strnicmp(cmd,"/pray",strlen("/pray")) )
+	{
+		/* give out "you are at full grace." when needed -
+		 * server will not send us anything when this happens
+		 */
+		if(cpl.stats.grace == cpl.stats.maxgrace)
+			draw_info("You are at full grace. You stop praying." ,COLOR_WHITE);
+	}
+	else if(!strnicmp(cmd,"/setwinalpha",strlen("/setwinalpha")) )
 	{
 		int wrong=0;
 		par2=-1;
@@ -186,7 +195,7 @@ int client_command_check(char *cmd)
 			}
 			else
 			{
-				sprintf(tmp, ">>set textwin to %d rows.",par1,par2);
+				sprintf(tmp, ">>set textwin to %d rows.",par1);
 				draw_info(tmp ,COLOR_GREEN);
 				textwin_set.split_flag=0;
 				textwin_set.size = par1-1;
@@ -714,8 +723,6 @@ void show_keybind(void)
 		SDL_Rect rec_in;
 		SDL_Rect rec_key;
 		SDL_Rect rec_macro;
-        static int keybind_startoff=0;
-
 		rec_key.w   = 125;
 		rec_macro.w = 160;
 		rec_in.w    = 225;
@@ -846,8 +853,36 @@ int init_media_tag(char *tag)
 		return ret;
 }
 
+/*
+int blt_window_slider(_Sprite *slider, int maxlen, int winlen, int startoff, int len_h, int x, int y)
+{
+	SDL_Rect box;
+	int startpos;
 
-void blt_window_slider(_Sprite *slider, int maxlen, int winlen, int startoff, int len, int x, int y)
+	if (len_h < 0)
+		len_h = slider->bitmap->h;
+
+	if(maxlen < winlen)
+		maxlen=winlen;
+	if(startoff+winlen >maxlen)
+		maxlen=startoff+winlen;
+
+	box.x=0;
+	box.y=0;
+	box.w=slider->bitmap->w;
+
+	box.h = (len_h*winlen)/maxlen; 
+	startpos = (startoff *len_h)/maxlen; 
+	if(box.h < 1)
+		box.h=1;
+
+	if(startoff+winlen >=maxlen && startpos+box.h<len_h)
+		startpos ++;
+
+	sprite_blt(slider,x,y+startpos, &box, NULL);
+}
+*/
+int blt_window_slider(_Sprite *slider, int maxlen, int winlen, int startoff, int len, int x, int y)
 {
     SDL_Rect box;
     double temp;
@@ -879,8 +914,10 @@ void blt_window_slider(_Sprite *slider, int maxlen, int winlen, int startoff, in
 		startpos ++;
 
    sprite_blt(slider,x,y+startpos, &box, NULL);
-}
+   return 0;
 
+}
+ 
 
 void show_spelllist(void)
 {
@@ -1515,8 +1552,8 @@ void load_settings(void)
 	char buf[HUGE_BUF];
 	char cmd[HUGE_BUF];
 	char para[HUGE_BUF];
-	int para_count, last_cmd=0;
-	int tmp_level;
+	int para_count=0, last_cmd=0;
+	int tmp_level=0;
 
 	srv_client_files[SRV_CLIENT_SETTINGS].len = 0;
 	srv_client_files[SRV_CLIENT_SETTINGS].crc = 0;
@@ -1902,6 +1939,8 @@ void show_target(int x, int y)
 		else
 			ptr = "target friend";
 	}
+	if(cpl.target_code)
+		sprite_blt(Bitmaps[BITMAP_TARGET_TALK],x+200, y, NULL, NULL);	
 
 	if(options.show_target_self || cpl.target_code!=0)
 	{

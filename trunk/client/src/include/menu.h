@@ -29,7 +29,7 @@
 #define MENU_SLIST 8
 #define MENU_SKILL 16
 
-
+extern int keybind_startoff;
 extern _skill_list skill_list[SKILL_LIST_MAX];
 extern _skill_list_set skill_list_set;
 
@@ -83,7 +83,7 @@ extern void show_media(int x, int y);
 extern void show_range(int x, int y);
 extern int init_media_tag(char *tag);
 extern void blt_inventory_face_from_tag(int tag, int x, int y);
-extern void blt_window_slider(_Sprite *slider, int max_win, int winlen, int off, int len, int x, int y);
+extern int blt_window_slider(_Sprite *slider, int max_win, int winlen, int off, int len, int x, int y);
 extern void do_keybind_input(void);
 
 extern int read_anim_tmp(void);

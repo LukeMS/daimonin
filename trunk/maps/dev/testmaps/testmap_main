@@ -228,6 +228,13 @@ arch floor_ostone1
 x 1
 y 15
 end
+arch stair_gs_up_r
+slaying /unofficial/lobby
+hp 1
+sp 15
+x 1
+y 15
+end
 arch floor_ostone1
 x 1
 y 16

@@ -280,7 +280,7 @@ int command_create (object *op, char *params)
 {
       object *tmp=NULL;
       int nrof,i, magic, set_magic = 0, set_nrof = 0, gotquote, gotspace;
-      char buf[MAX_BUF], *cp, *bp = buf, *bp2, *bp3, *bp4, *obp;
+      char buf[MAX_BUF], *cp, *bp = buf, *bp2, *bp3, *bp4=NULL, *obp;
       archetype *at;
       artifact *art=NULL;
 
@@ -888,7 +888,7 @@ int command_nowiz (object *op, char *params) /* 'noadm' is alias */
  */
 #define RESTRICTIVE_DM
 
-static int checkdm(object *op, char *pl_name, char *pl_passwd, char *pl_host)
+static int checkdm(object *op, const char *pl_name, char *pl_passwd, char *pl_host)
 {
   FILE  *dmfile;
   char  buf[MAX_BUF];

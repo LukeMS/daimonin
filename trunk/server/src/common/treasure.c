@@ -264,7 +264,7 @@ void init_artifacts()
 	char filename[MAX_BUF], buf[MAX_BUF], *cp, *next;
 	artifact *art=NULL;
 	linked_char *tmp;
-	int lcount,value, comp, none_flag;
+	int lcount,value, comp, none_flag=0;
 	artifactlist *al;
 	char buf_text[10*1024]; /* ok, 10k arch text... if we bug here, we have a design problem */
 
@@ -508,8 +508,8 @@ static treasure *get_empty_treasure(void) {
  * of treasurelists which has been built by load_treasures().
  */
 
-treasurelist *find_treasurelist(char *name) {
-  char *tmp=find_string(name);
+treasurelist *find_treasurelist(const char *name) {
+  const char *tmp=find_string(name);
   treasurelist *tl;
 
   /* Special cases - randomitems of none is to override default.  If
@@ -1407,7 +1407,7 @@ artifactlist *find_artifactlist(int type) {
 }
 
 /* not used ATM - MT 2003 */
-artifact *find_artifact(char *name)
+artifact *find_artifact(const char *name)
 {
 	artifactlist *al;
 	artifact *art=NULL;
@@ -1428,7 +1428,7 @@ artifact *find_artifact(char *name)
 }
 
 /* find the default archetype from artifact by intern artifactlist name */
-archetype *find_artifact_archtype(char *name)
+archetype *find_artifact_archtype(const char *name)
 {
 	artifactlist *al;
 	artifact *art=NULL;
@@ -1477,7 +1477,7 @@ void dump_artifacts() {
 /*
  * For debugging purposes.  Dumps all treasures recursively (see below).
  */
-void dump_monster_treasure_rec (char *name, treasure *t, int depth)
+void dump_monster_treasure_rec (const char *name, treasure *t, int depth)
 {
   treasurelist *tl;
   int           i;
@@ -1530,7 +1530,7 @@ void dump_monster_treasure_rec (char *name, treasure *t, int depth)
 static int legal_artifact_combination(object *op, artifact *art) {
   int neg, success = 0;
   linked_char *tmp;
-  char *name;
+  const char *name;
 
   if (art->allowed == (linked_char *) NULL)
     return 1; /* Ie, "all" */
@@ -1839,7 +1839,7 @@ static void set_material_real(object *op, sint8 start, sint8 end)
  * Created originally by Raphael Quinet for debugging the alchemy code.
  */
 
-void dump_monster_treasure (char *name)
+void dump_monster_treasure (const char *name)
 {
   archetype *at;
   int        found;

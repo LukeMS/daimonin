@@ -307,8 +307,9 @@ void free_newsocket(NewSocket *ns)
 
 void final_free_player(player *pl)
 {
+	/*
 	char buf[2]="X";
-    /*Write_String_To_Socket(&pl->socket, BINARY_CMD_BYE, buf, 1);*/
+    Write_String_To_Socket(&pl->socket, BINARY_CMD_BYE, buf, 1);*/
     free_newsocket(&pl->socket);
     free_player(pl);
 }
@@ -316,11 +317,12 @@ void final_free_player(player *pl)
 /* as long the server don't have a autoupdate/login server
  * as frontend we must serve our depending client files self.
  */
-static load_srv_files(char *fname, int id, int cmd)
+static void load_srv_files(char *fname, int id, int cmd)
 {
     FILE *fp;
 	char *file_tmp, *comp_tmp;
-	int flen, numread;
+	int flen;
+	unsigned long numread;
 	struct stat statbuf;
 
     LOG(llevDebug,"Loading %s...", fname);
@@ -329,17 +331,17 @@ static load_srv_files(char *fname, int id, int cmd)
 	fstat (fileno (fp), &statbuf);
 	flen = (int) statbuf.st_size;
 	file_tmp = malloc(flen);
-	numread = fread(file_tmp, sizeof( char ), flen, fp );
+	numread = (unsigned long) fread(file_tmp, sizeof( char ), flen, fp );
 	/* get a crc from the unpacked file */
 	SrvClientFiles[id].crc = adler32(numread, file_tmp, numread); 
 	SrvClientFiles[id].len_ucomp = numread;
 	numread=flen*2;
-	comp_tmp = malloc(numread);
-	compress2 (comp_tmp, (unsigned long *)&numread, file_tmp, flen, Z_BEST_COMPRESSION);
+	comp_tmp = (char*)malloc(numread);
+	compress2 (comp_tmp, &numread, file_tmp, flen, Z_BEST_COMPRESSION);
 	/* we prepare the files with the right commands - so we can flush
 	 * then direct from this buffer to the client.
 	 */
-	if(numread < flen)
+	if((int)numread < flen)
 	{
 		/* copy the compressed file in the right buffer */
 		SrvClientFiles[id].file = malloc(numread+2);
@@ -398,7 +400,7 @@ static void create_client_settings(void)
 	fclose(fset_default);
 	
 	/* now we add the server specific date 
-	/* first: the exp levels! 
+	 * first: the exp levels! 
 	*/
 	sprintf(buf,"level %d\n", MAXLEVEL); /* param: number of levels we have */
 	fputs(buf,fset_create);

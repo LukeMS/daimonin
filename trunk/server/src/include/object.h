@@ -72,13 +72,13 @@ typedef struct obj
      * copy_object to do so.  Everything below here also gets cleared
      * by clear_object() 
 	 */
-	char *name;					/* The name of the object, obviously... */
-	char *title;				/* Of foo, etc */
-	char *race;					/* human, goblin, dragon, etc */
-	char *slaying;				/* Which race to do double damage to 
+	const char *name;					/* The name of the object, obviously... */
+	const char *title;				/* Of foo, etc */
+	const char *race;					/* human, goblin, dragon, etc */
+	const char *slaying;				/* Which race to do double damage to 
 								 * If this is an exit, this is the filename
 								 */
-	char *msg;					/* If this is a book/sign/magic mouth/etc */
+	const char *msg;					/* If this is a book/sign/magic mouth/etc */
 	
 	/* here starts copy_object() releated data */
 
@@ -267,7 +267,7 @@ typedef struct oblinkpt { /* Used to link together several object links */
  */
 
 typedef struct archt {
-    char *name;					/* More definite name, like "generate_kobold" */
+    const char *name;			/* More definite name, like "generate_kobold" */
     struct archt *next;			/* Next archetype in a linked list */
     struct archt *head;			/* The main part of a linked object */
     struct archt *more;			/* Next part of a linked object */

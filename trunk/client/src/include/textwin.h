@@ -31,6 +31,8 @@ typedef struct _textwin_set {
 	int top_size;   /* top part if split, size: min: 1, max 27 */
 	int use_alpha;	/* true: use alpha - false: no alpha */
 	int alpha;		/* alpha value - from 0 to 255 */
+	int slider_start; /* start-offset of the slider */
+	int slider_h; 
 }_textwin_set;
 
 extern _textwin_set textwin_set;
@@ -38,9 +40,10 @@ extern _textwin_set textwin_set;
 extern int text_win_soff;
 extern int text_win_soff_split;
 extern int text_win_soff_top;
-
+extern char *get_textWinRow(int pos);
 extern void draw_info ( char *str, int color );
 extern void show_textwin(int x, int y);
+extern uint32 win_lenbuf;
 void clear_textwin(void);
 
 

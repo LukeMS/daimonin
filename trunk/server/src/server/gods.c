@@ -42,7 +42,7 @@
 static int god_gives_present (object *op, object *god, treasure *tr);
 static void follower_remove_similar_item (object *op, object *item);
 
-int lookup_god_by_name(char *name) {
+int lookup_god_by_name(const char *name) {
   int godnr=-1,nmlen = strlen(name);
  
   if(name&&strcmp(name,"none")) { 
@@ -55,7 +55,7 @@ int lookup_god_by_name(char *name) {
   return godnr;
 }
 
-object *find_god(char *name) {
+object *find_god(const char *name) {
   object *god=NULL;
 
   if(name) { 
@@ -90,8 +90,8 @@ void pray_at_altar(object *pl, object *altar) {
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
-        CFP.Value[9] = event_obj->race;
-        CFP.Value[10]= event_obj->slaying;
+        CFP.Value[9] = (char *)event_obj->race;
+        CFP.Value[10]= (char *)event_obj->slaying;
         if (findPlugin(event_obj->name)>=0)
         {
             CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
@@ -437,7 +437,7 @@ void update_priest_flag (object *god, object *exp_ob, uint32 flag) {
  * no god, we give them a random one. -b.t.
  */
 
-char *determine_god(object *op) {
+const char *determine_god(object *op) {
     int godnr = -1;
 
     /* spells */

@@ -64,7 +64,7 @@ void dump_spells()
     int i;
 
     for (i = 0; i < NROFREALSPELLS; i++) {
-      char *name1 = NULL, *name2 = NULL;
+      const char *name1 = NULL, *name2 = NULL;
       if (spellarch[i]) {
         name1 = spellarch[i]->name;
 
@@ -183,7 +183,7 @@ int check_spell_known (object *op, int spell_type)
 int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeFrom item,char *stringarg) 
 {
 	spell *s=find_spell(type);
-	char *godname;
+	const char *godname=NULL;
 	object *target, *cast_op;
 	int success=0, duration, points_used=0;
 	rv_vector rv;
@@ -1884,9 +1884,11 @@ void explode_object(object *op)
 	 * for it. MT.
 	 */
 
-    /*tmp->stats.dam += SP_level_dam_adjust(op,op,op->stats.sp);/*
+    /*tmp->stats.dam += SP_level_dam_adjust(op,op,op->stats.sp);*/
+	/*
     if(op->attacktype&AT_MAGIC)
       tmp->attacktype|=AT_MAGIC;
+	  */
     copy_owner (tmp, op);
     if(op->stats.hp)
       tmp->stats.hp=op->stats.hp;
@@ -2014,7 +2016,7 @@ void move_fired_arch (object *op)
     if (reflwall (op->map, op->x, op->y, op)) {
 		if(op->type == BULLET && op->stats.sp == SP_PROBE)
 		{
-			if (GET_MAP_FLAGS(op->map, op->x, op->y)&P_IS_ALIVE|P_IS_PLAYER) 
+			if (GET_MAP_FLAGS(op->map, op->x, op->y)&(P_IS_ALIVE|P_IS_PLAYER)) 
 			{
 				probe(op);
 		        remove_ob (op);
@@ -2673,7 +2675,7 @@ int create_aura(object *op, object *caster, archetype *aura_arch, int spell_type
     -1 is returned.  */
 
 
-int look_up_spell_by_name(object *op,char *spname) {
+int look_up_spell_by_name(object *op,const char *spname) {
     int numknown;
     int spnum;
     int plen;
@@ -2702,7 +2704,7 @@ int look_up_spell_by_name(object *op,char *spname) {
 
 
 
-void put_a_monster(object *op,char *monstername) {
+void put_a_monster(object *op,const char *monstername) {
   object *tmp,*head=NULL,*prev=NULL;
   archetype *at;
   int dir;
@@ -2801,7 +2803,7 @@ in spell_parameters.  The format in there MUST be:
 
 spell name (SP_P = SP_PARAMTERS)
 spells.level spells.sp  SP_P.bdam SP_P.bdur SP_P.ldam SP_P.ldur SP_P.spl
-
+*/
 
 /* get_pointed_target() - this is used by finger of death
  * and the 'smite' spells. Returns the pointer to the first

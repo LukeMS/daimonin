@@ -524,6 +524,8 @@ struct _anim *add_anim(int type, int x, int y, int mapx, int mapy, int value)
 {
     struct _anim *tmp, *anim;
 
+    int num_ticks;
+   
     for(tmp=start_anim;tmp;tmp=tmp->next)
     {
         if(!tmp->next)
@@ -541,14 +543,32 @@ struct _anim *add_anim(int type, int x, int y, int mapx, int mapy, int value)
     anim->next = NULL;
 
     anim->type = type;
-    anim->x = 0;
-    anim->y = -5;
+    anim->x = 0;                  /* starting X position */
+    anim->y = -5;                 /* starting Y position */
     anim->xoff=0;
-    anim->yoff=0;
-    anim->mapx = mapx;
+    anim->yoff=1;  /* this looks like it makes it move up the screen -- was 0*/
+    anim->mapx = mapx;            /* Map cordinates */
     anim->mapy = mapy;
-    anim->value = value;
-    anim->last_ticks = LastTick;
+    anim->value = value;          /* Amount of damage */
+    anim->start_tick = LastTick;  /* current time in MilliSeconds */
+    
+    
+    
+    switch (type) 
+      {
+       case ANIM_DAMAGE:
+         num_ticks = 850;  /* how many ticks to display */
+         anim->last_tick = anim->start_tick + num_ticks;
+         anim->yoff = ( 25.0f / 850.0f ); /* 850 ticks 25 pixel move up */
+         break;
+       case ANIM_KILL:
+         num_ticks = 850;  /* how many ticks to display */
+         anim->last_tick = anim->start_tick + num_ticks;
+         anim->yoff = ( 25.0f / 850.0f); /* 850 ticks 25 pixel move up */
+         break;
+      }
+    
+    
     
     return(anim);
 }
@@ -595,58 +615,56 @@ void play_anims(int mx, int my)
 {
     struct _anim *anim, *tmp;
     int xpos, ypos, tmp_off;
+    int num_ticks;
     char buf[32];
+    int tmp_y;
 
     for(anim=start_anim;anim;anim=tmp)
     {
         tmp = anim->next;
 
-        switch(anim->type)
-        {
-            case ANIM_DAMAGE:
-                if((LastTick - anim->last_ticks )>850)
+      if( LastTick > anim->last_tick)  /* have we passed the last tick */
                     remove_anim(anim);
                 else
                 {
-                    anim->y -=anim->yoff;
+         num_ticks = LastTick - anim->start_tick;
+         switch(anim->type)
+          {
+            case ANIM_DAMAGE:
+              tmp_y = anim->y-(int)( (float)num_ticks * anim->yoff ); /*   * num_ticks ); */ 
+              
                     if(anim->mapx >= MapData.posx && anim->mapx <MapData.posx+MapStatusX &&
                         anim->mapy >= MapData.posy && anim->mapy <MapData.posy+MapStatusY)
                     {
                         xpos = MAP_START_XOFF+(anim->mapx-MapData.posx)*MAP_TILE_YOFF-(anim->mapy-MapData.posy-1)*MAP_TILE_YOFF-4;
                         ypos = MAP_START_YOFF+(anim->mapx-MapData.posx)*MAP_TILE_XOFF+(anim->mapy-MapData.posy-1)*MAP_TILE_XOFF-34;
                         sprintf(buf,"%d",anim->value);
-                        StringBlt(ScreenSurface, &SystemFontOut,buf,xpos+anim->x, ypos+anim->y,COLOR_RED, NULL, NULL);
-                     }
-
+                 StringBlt(ScreenSurface, &SystemFontOut,buf,xpos+anim->x, ypos+tmp_y,COLOR_RED, NULL, NULL);
                 }
             break;
-
             case ANIM_KILL:
-                if((LastTick - anim->last_ticks )>700)
-                    remove_anim(anim);
-                else
-                {
-                    anim->y -=anim->yoff;
+              tmp_y = anim->y-(int)( (float)num_ticks * anim->yoff ); /*   * num_ticks ); */ 
+             
                     if(anim->mapx >= MapData.posx && anim->mapx <MapData.posx+MapStatusX &&
                         anim->mapy >= MapData.posy && anim->mapy <MapData.posy+MapStatusY)
                     {
                         xpos = MAP_START_XOFF+(anim->mapx-MapData.posx)*MAP_TILE_YOFF-(anim->mapy-MapData.posy-1)*MAP_TILE_YOFF-4;
                         ypos = MAP_START_YOFF+(anim->mapx-MapData.posx)*MAP_TILE_XOFF+(anim->mapy-MapData.posy-1)*MAP_TILE_XOFF-26;
-                        sprite_blt(Bitmaps[BITMAP_DEATH],xpos+anim->x-5, ypos+anim->y-4, NULL, NULL);
+                  sprite_blt(Bitmaps[BITMAP_DEATH],xpos+anim->x-5, ypos+tmp_y-4, NULL, NULL);
                         sprintf(buf,"%d",anim->value);
                         tmp_off=0;
-                        if(strlen(buf) ==1)
+ 
+                   /* Lets check the size of the value */
+                  if (anim->value < 10) 
                             tmp_off = 6;
-                        else if(strlen(buf) ==2)
+                  else if(anim->value < 100) 
                             tmp_off = 0;
-                        else if(strlen(buf) ==3)
+                   else if(anim->value < 1000) 
                             tmp_off = -6;
-                        else if(strlen(buf) ==4)
+                   else if(anim->value < 10000 )
                             tmp_off = -12;
                         
-                        StringBlt(ScreenSurface, &SystemFontOut,buf,xpos+anim->x+tmp_off, ypos+anim->y,COLOR_ORANGE, NULL, NULL);
-                    }
-                    
+                   StringBlt(ScreenSurface, &SystemFontOut,buf,xpos+anim->x+tmp_off, ypos+tmp_y,COLOR_ORANGE, NULL, NULL);
                 }
             break;
 
@@ -655,6 +673,7 @@ void play_anims(int mx, int my)
             break;
         }
     }
+}
 }
 
 /* a very special collision for the multi tile face & the player sprite, 

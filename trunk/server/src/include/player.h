@@ -149,6 +149,7 @@ typedef struct pl_player
 
 	float last_speed;
 
+	sint16 client_dam; /* condition adjusted damage send to client */
     sint16 age;		/* the age of our player */
     sint16 age_add;	/* unnatural changes to our age - can be removed by restoration */
     sint16 age_changes; /* permanent changes .... very bad (or good when younger) */
@@ -285,7 +286,7 @@ typedef struct pl_player
 /* not really the player, but tied pretty closely */  
 typedef struct party_struct {
   sint16 partyid;
-  char * partyleader;
+  const char * partyleader;
   char passwd[9];
   struct party_struct *next;
   char *partyname;

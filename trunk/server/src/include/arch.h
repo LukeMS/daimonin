@@ -26,7 +26,7 @@
 #define ARCH_CACHE_SIZE 20
 
 typedef struct arch_recent_struct {
-  char *name; /* Don't use add_ref or similar functions on this */
+  const char *name; /* Don't use add_ref or similar functions on this (WHAT? See holy.c:244) */
   archetype *arch;
 } arch_recent;
 

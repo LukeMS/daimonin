@@ -557,7 +557,7 @@ object *get_active_waypoint(object *op) {
 }
 
 /* Find a monster's waypoint by name (used for getting the next waypoint) */
-object *find_waypoint(object *op, char *name) {
+object *find_waypoint(object *op, const char *name) {
   object *wp = NULL;
 
   if(name == NULL)
@@ -677,8 +677,8 @@ void waypoint_move(object *op) {
                 CFP.Value[6] = &m;
                 CFP.Value[7] = &m;
                 CFP.Value[8] = &l;
-                CFP.Value[9] = event_obj->race;
-                CFP.Value[10]= event_obj->slaying;
+                CFP.Value[9] = (char *)event_obj->race;
+                CFP.Value[10]= (char *)event_obj->slaying;
                 if (findPlugin(event_obj->name)>=0)
                 {
                     CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
@@ -1664,8 +1664,8 @@ void monster_check_pickup(object *monster) {
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
-        CFP.Value[9] = event_obj->race;
-        CFP.Value[10]= event_obj->slaying;
+        CFP.Value[9] = (char *)event_obj->race;
+        CFP.Value[10]= (char *)event_obj->slaying;
         if (findPlugin(event_obj->name)>=0)
         {
           CFR = ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
@@ -2088,7 +2088,7 @@ static void free_messages(msglang *msgs) {
   free(msgs);
 }
 
-static msglang *parse_message(char *msg) {
+static msglang *parse_message(const char *msg) {
   msglang *msgs;
   int nrofmsgs, msgnr, i;
   char *cp, *line, *last;
@@ -2357,8 +2357,8 @@ int talk_to_npc(object *op, object *npc, char *txt) {
     CFP.Value[6] = &m;
     CFP.Value[7] = &m;
     CFP.Value[8] = &l;
-    CFP.Value[9] = event_obj->race;
-    CFP.Value[10]= event_obj->slaying;
+    CFP.Value[9] = (char *)event_obj->race;
+    CFP.Value[10]= (char *)event_obj->slaying;
     if (findPlugin(event_obj->name)>=0)
     {
         ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
@@ -2386,8 +2386,8 @@ int talk_to_npc(object *op, object *npc, char *txt) {
       CFP.Value[6] = &m;
       CFP.Value[7] = &m;
       CFP.Value[8] = &l;
-      CFP.Value[9] = event_obj->race;
-      CFP.Value[10]= event_obj->slaying;
+      CFP.Value[9] = (char *)event_obj->race;
+      CFP.Value[10]= (char *)event_obj->slaying;
       if (findPlugin(event_obj->name)>=0)
       {
           ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));

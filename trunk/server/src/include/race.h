@@ -24,7 +24,7 @@
 */
 /* thats the race list - init is in init.c */
 typedef struct ralnk {  /* Used to link the race lists together */
-  char *name;		/* name of this race entry */ 
+  const char *name;		/* name of this race entry */ 
   int nrof;		/* nrof things belonging to this race */
   struct archt *corpse; /* thats the default corpse of this race */
   struct oblnk *member; /* linked object list of things belonging to this race */

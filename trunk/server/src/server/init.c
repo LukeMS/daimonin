@@ -703,7 +703,7 @@ void setup_library() {
   set_dragon_gain_func(dragon_ability_gain);
 }
 
-static void add_corpse_to_racelist (char *race_name, archetype *op) {
+static void add_corpse_to_racelist (const char *race_name, archetype *op) {
   racelink *race;
  
   if(!op||!race_name) return;
@@ -784,7 +784,7 @@ void dump_races()
     }
 }
 
-void add_to_racelist (char *race_name, object *op) {
+void add_to_racelist (const char *race_name, object *op) {
   racelink *race;
  
   if(!op||!race_name) return;

@@ -61,7 +61,7 @@ extern int rmap_lex_read ( RMParms *RP );
 extern void rmaprestart ( FILE *input_file );
 extern void rmap_load_buffer_state ( void );
 extern int load_parameters ( FILE *fp, int bufstate, RMParms *RP );
-extern int set_random_map_variable ( RMParms *rp, char *buf );
+extern int set_random_map_variable ( RMParms *rp, const char *buf );
 extern mapstruct *make_map_floor ( char **layout, char *floorstyle, RMParms *RP );
 extern int surround_flag ( char **layout, int i, int j, RMParms *RP );
 extern int surround_flag2 ( char **layout, int i, int j, RMParms *RP );

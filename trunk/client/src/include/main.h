@@ -110,6 +110,8 @@ extern _srv_client_files srv_client_files[SRV_CLIENT_FILES];
 
 typedef struct _options {
     char metaserver[256];
+	float warning_hp;
+	float warning_food;
 	int no_meta;
 	uint32 sleep;
 	int player_names;
@@ -427,16 +429,20 @@ typedef enum _bitmap_index {
         BITMAP_META_SCROLL,
         BITMAP_HELP1,
 		BITMAP_TARGET_ATTACK,
+        BITMAP_TARGET_TALK,		
         BITMAP_TARGET_NORMAL,
         BITMAP_LOADING,
         BITMAP_HELP2,
         BITMAP_HELP3,
 		
+        BITMAP_WARN_HP,
+        BITMAP_WARN_FOOD,
+
         BITMAP_TARGET_HP,
         BITMAP_TARGET_HP_B,
         BITMAP_TEXTWIN_MASK,
         BITMAP_TEXTWIN_BLANK,
-        BITMAP_TEXTWIN_SPLIT,
+       BITMAP_TEXTWIN_SPLIT,
 		BITMAP_SLIDER_UP,
 		BITMAP_SLIDER_DOWN,
 		BITMAP_SLIDER,
@@ -448,10 +454,10 @@ typedef enum _bitmap_index {
 		BITMAP_OPTIONS_MARK_LEFT,
 		BITMAP_OPTIONS_MARK_RIGHT,
 		BITMAP_OPTIONS_ALPHA,
-        BITMAP_EXP_SKILL_BORDER,
+		        
+		BITMAP_EXP_SKILL_BORDER,
         BITMAP_EXP_SKILL_LINE,
-        BITMAP_EXP_SKILL_BUBBLE,
-
+        BITMAP_EXP_SKILL_BUBBLE, 
         BITMAP_INIT
 }_bitmap_index;
 

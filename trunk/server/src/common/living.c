@@ -42,19 +42,19 @@
 #define RN_DRACONISH    4096
 
 _races item_race_table[RACE_NAME_INIT] = {
-    "",             RN_DEFAULT,  /* default value - human like */
-        "dwarven ",     RN_DWARVEN,
-        "elven ",       RN_ELVEN,
-        "gnomish ",     RN_GNOMISH,
-        "drow ",        RN_DROW,
-        "orcish ",      RN_ORCISH,
-        "goblin ",      RN_GOBLIN,
-        "kobold ",      RN_KOBOLD,  /* count also as tiny, but "unclean" */
-        "giant ",       RN_GIANT,  /* all demihumans "bigger as humans" */
-        "tiny ",        RN_TINY,  /* different small race (sprites, ...) */
-        "demonish ",    RN_DEMONISH,  /* this is usable from all sizes */
-        "draconish ",   RN_DRACONISH,   /* usable from all sizes */
-        "ogre ",		RN_GIANT     /* count as giant */
+    {"",             RN_DEFAULT},  /* default value - human like */
+	{"dwarven ",     RN_DWARVEN},
+	{"elven ",       RN_ELVEN},
+	{"gnomish ",     RN_GNOMISH},
+	{"drow ",        RN_DROW},
+	{"orcish ",      RN_ORCISH},
+	{"goblin ",      RN_GOBLIN},
+	{"kobold ",      RN_KOBOLD},  /* count also as tiny, but "unclean" */
+	{"giant ",       RN_GIANT},  /* all demihumans "bigger as humans" */
+	{"tiny ",        RN_TINY},  /* different small race (sprites, ...) */
+	{"demonish ",    RN_DEMONISH},  /* this is usable from all sizes */
+	{"draconish ",   RN_DRACONISH},   /* usable from all sizes */
+	{"ogre ",		RN_GIANT}     /* count as giant */
 };
 
 /* when we carry more as this of our weight_limit, we get encumbered. */
@@ -1490,12 +1490,10 @@ void fix_player(object *op)
 	}
 
 	/* now adjust with the % of the stats mali/boni.
-	 * con_bonus is used for all 3 as a kind of % boni - perhaps we use different
-	 * % boni for sp/hp/grace in future.
 	 */
 	op->stats.maxhp += (int)((float)op->stats.maxhp*con_bonus[op->stats.Con]);
-	op->stats.maxsp += (int)((float)op->stats.maxsp*con_bonus[op->stats.Pow]);
-	op->stats.maxgrace += (int)((float)op->stats.maxgrace*con_bonus[op->stats.Wis]);
+	op->stats.maxsp += (int)((float)op->stats.maxsp*pow_bonus[op->stats.Pow]);
+	op->stats.maxgrace += (int)((float)op->stats.maxgrace*wis_bonus[op->stats.Wis]);
 
 	/* when this is set, this object comes fresh in game.
 	 * we must adjust now hp,sp and grace with the max values.
@@ -1535,6 +1533,7 @@ void fix_player(object *op)
 
 	 if(pl->set_skill_weapon==NO_SKILL_READY) /* ok, no weapon in our hand - we must use our hands */
 	 {
+		 f = 1.0f;
 		 if(skill_weapon) 
 		 {
 		/* now we must add this special skill attack */
@@ -1555,6 +1554,7 @@ void fix_player(object *op)
 	 }
 	 else /* weapon in hand */
 	 {
+			f = (float)(pl->equipment[PLAYER_EQUIP_WEAPON1]->item_condition)/100.0f;
 		 /* ouch - weapon without the skill applied... */
 		 if(!pl->skill_ptr[pl->set_skill_weapon])
 			LOG(llevBug,"BUG: fix_player(): player %s has weapon selected but not the skill #%d!!!\n",op->name, pl->set_skill_weapon);
@@ -1570,6 +1570,7 @@ void fix_player(object *op)
 	 if(op->stats.dam<0)
 		op->stats.dam=0;
 
+	 op->contr->client_dam = (sint16)((float)op->stats.dam*f);
 	 op->stats.wc +=thaco_bonus[op->stats.Dex];
 
 	 /* thats for the client ... */
@@ -1812,7 +1813,7 @@ void fix_monster(object *op)
 
 	base = insert_base_info_object(op); /* will insert or/and return base info */
 
-	QUERY_FLAG(op, FLAG_READY_BOW);
+	CLEAR_FLAG(op, FLAG_READY_BOW);
     for(tmp=op->inv;tmp;tmp=tmp->below)
     {
 		/* check for bow and use it! */

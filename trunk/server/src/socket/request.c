@@ -92,9 +92,6 @@ CS_STAT_PROT_HOLY,
 CS_STAT_PROT_CORRUPT
 };
 
-/* thats *not* thread safe - but thats the whole server, isn't it? */   
-static char setup_data[SOCKETBUFSIZE];
-
 /* This is the Setup cmd - easy first implementation */
 void SetUp(char *buf, int len, NewSocket *ns)
 {
@@ -915,7 +912,7 @@ void esrv_update_stats(player *pl)
 		AddIfInt(pl->last_stats.exp, pl->ob->stats.exp, CS_STAT_EXP);	
 		AddIfShort(pl->last_stats.wc, pl->ob->stats.wc, CS_STAT_WC);
 		AddIfShort(pl->last_stats.ac, pl->ob->stats.ac, CS_STAT_AC);
-		AddIfShort(pl->last_stats.dam, pl->ob->stats.dam, CS_STAT_DAM);
+		AddIfShort(pl->last_stats.dam, pl->client_dam, CS_STAT_DAM);
 		AddIfShort(pl->last_stats.food, pl->ob->stats.food, CS_STAT_FOOD);
 
     }
@@ -1029,6 +1026,8 @@ void esrv_send_animation(NewSocket *ns, short anim_num)
 /* This adds face_num to a map cell at x,y.  If the client doesn't have
  * the face yet, we will also send it.
  */
+/* not used */
+/*
 static void esrv_map_setbelow(NewSocket *ns, int x,int y,
 			      short face_num, struct Map *newmap)
 {
@@ -1039,12 +1038,8 @@ static void esrv_map_setbelow(NewSocket *ns, int x,int y,
 		LOG(llevError,"ERROR: Too many faces in map cell %d %d\n",x,y);
     newmap->cells[x][y].faces[newmap->cells[x][y].count] = face_num;
     newmap->cells[x][y].count ++;
-	/*
-    if (ns->faces_sent[face_num] == 0)
-	esrv_send_face(ns,face_num,0);
-	*/
 }
-
+*/
 struct LayerCell {
   uint16 xy;
   short face;
@@ -1054,7 +1049,7 @@ struct MapLayer {
   int count;
   struct LayerCell lcells[MAP_CLIENT_X * MAP_CLIENT_Y];
 };
-
+/*
 static int mapcellchanged(NewSocket *ns,int i,int j, struct Map *newmap)
 {
   int k;
@@ -1069,7 +1064,7 @@ static int mapcellchanged(NewSocket *ns,int i,int j, struct Map *newmap)
   }
   return 0;
 }
-
+*/
 
 /* Clears a map cell */
 static void map_clearcell(struct MapCell *cell)

@@ -275,6 +275,10 @@ arch floor_ostone1
 x 3
 y 1
 end
+arch altar_tabernacle
+x 3
+y 1
+end
 arch floor_ostone1
 x 3
 y 2
@@ -288,10 +292,6 @@ x 3
 y 4
 end
 arch floor_ostone1
-x 3
-y 5
-end
-arch Eldath
 x 3
 y 5
 end
@@ -439,20 +439,11 @@ arch floor_ostone1
 x 5
 y 4
 end
-arch altar_eldath
-x 5
-y 4
-end
 arch floor_ostone1
 x 5
 y 5
 end
 arch floor_ostone1
-x 5
-y 6
-end
-arch altar_eldath
-direction 3
 x 5
 y 6
 end

@@ -55,7 +55,7 @@ extern _keymap keymap[MAX_KEYMAP]; /* thats the one and only key bind table*/
 
 extern int KeyScanFlag; /* for debug/alpha , remove later */
 extern int keymap_count;	/* how much keys we have in the the keymap...*/
-
+extern int cursor_type; 
 extern int draggingInvItem(int value);
 extern int Event_PollInputDevice(void);
 extern void init_keys(void);

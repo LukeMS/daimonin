@@ -88,7 +88,7 @@ void emergency_save(int flag) {
  * style directory, otherwise, just delete the old style playfile
  * (needed for transition)
  */
-void delete_character(char *name, int new) {
+void delete_character(const char *name, int new) {
     char buf[MAX_BUF];
 
     sprintf(buf,"%s/%s/%s.pl",settings.localdir,settings.playerdir,name);
@@ -119,7 +119,7 @@ void delete_character(char *name, int new) {
  * corresponding lock file.
  */
 
-void unlock_player(char *name) {
+void unlock_player(const char *name) {
     char buf[MAX_BUF];
 
     sprintf(buf,"%s/%s/%s.lock",settings.localdir,settings.playerdir,name);
@@ -927,7 +927,7 @@ void check_login(object *op) {
     
     /* if it's a dragon player, set the correct title here */
     if (is_dragon_pl(op) && op->inv != NULL) {
-        object *tmp, *abil, *skin;
+        object *tmp, *abil=NULL, *skin=NULL;
         for (tmp=op->inv; tmp!=NULL; tmp=tmp->below) {
 	    if (tmp->type == FORCE) {
 	        if (strcmp(tmp->arch->name, "dragon_ability_force")==0)

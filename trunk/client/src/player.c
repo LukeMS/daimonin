@@ -316,7 +316,7 @@ void show_player_data(int x, int y)
             sprintf(buf,"%s %s %s",cpl.gender, cpl.race, cpl.title);
             StringBlt(ScreenSurface, &SystemFont,buf,6, 14,COLOR_HGOLD, NULL, NULL);
 			if(strcmp(cpl.godname,"none") )
-				sprintf(buf,"%s follower of %s", cpl.alignment, cpl.godname);
+				sprintf(buf,"%s follower of %s\n", cpl.alignment, cpl.godname);
 			else
 				strcpy(buf, cpl.alignment);
             StringBlt(ScreenSurface, &SystemFont,buf,6, 26,COLOR_HGOLD, NULL, NULL);
@@ -460,6 +460,7 @@ void show_player_stats(int x, int y)
         StringBlt(ScreenSurface, &Font6x3Out,"Used" ,x+274, y+78,COLOR_HGOLD, NULL, NULL);
         StringBlt(ScreenSurface, &Font6x3Out,"Skill" ,x+274, y+86,COLOR_HGOLD, NULL, NULL);
 
+
 		multi = 0;
 	    if(cpl.skill_name[0]!=0)
         {
@@ -493,7 +494,6 @@ void show_player_stats(int x, int y)
 			for(s=0;s<(int)line;s++)
 				sprite_blt(Bitmaps[BITMAP_EXP_SKILL_BUBBLE],x+416+s*5, y+92, NULL, NULL);
         }
-
         StringBlt(ScreenSurface, &Font6x3Out,"Regeneration",x+177, y+1, COLOR_HGOLD, NULL, NULL);
 
         StringBlt(ScreenSurface, &SystemFont,"HP",x+234, y+13, COLOR_HGOLD, NULL, NULL);
@@ -544,8 +544,10 @@ void show_player_stats(int x, int y)
 void show_player_doll(int x, int y)
 {
     item *tmp;
+    char *tooltip_text= NULL;
     char buf[128];
-    int index, ring_flag=0;
+    int index, tooltip_index =-1, ring_flag=0;
+		int mx, my;
 
 	/* this is ugly to calculate because its a curve which increase heavily 
 	 * with lower weapon_speed... so, we use a table
@@ -593,22 +595,20 @@ void show_player_doll(int x, int y)
         if(tmp->applied)
         {
             index = -1;
-            if(tmp->itype == TYPE_ARMOUR)
+            if(tmp->itype == TYPE_ARMOUR) 
                 index = PDOLL_ARMOUR;
             else if(tmp->itype == TYPE_HELMET)
                 index = PDOLL_HELM;
             else if(tmp->itype == TYPE_GIRDLE)
                 index = PDOLL_GIRDLE;
-            else if(tmp->itype == TYPE_BOOTS)
-                index = PDOLL_BOOT;
+            else if(tmp->itype == TYPE_BOOTS) 
+                index = PDOLL_BOOT; 
             else if(tmp->itype == TYPE_WEAPON)
                 index = PDOLL_RHAND;
             else if(tmp->itype == TYPE_SHIELD)
                 index = PDOLL_LHAND;
-            else if(tmp->itype == TYPE_RING && !ring_flag)
+            else if(tmp->itype == TYPE_RING)
                 index = PDOLL_RRING;
-            else if(tmp->itype == TYPE_RING && ring_flag==1)
-                index = PDOLL_LRING;
             else if(tmp->itype == TYPE_BRACERS)
                 index = PDOLL_BRACER;
             else if(tmp->itype == TYPE_AMULET)
@@ -617,19 +617,43 @@ void show_player_doll(int x, int y)
                 index = PDOLL_SKILL;
             else if(tmp->itype == TYPE_BOW)
                 index = PDOLL_BOW;
-            else if(tmp->itype == TYPE_WAND ||tmp->itype == TYPE_ROD||tmp->itype == TYPE_HORN)
-                index = PDOLL_WAND;
             else if(tmp->itype == TYPE_GLOVES)
                 index = PDOLL_GAUNTLET;
             else if(tmp->itype == TYPE_CLOAK)
                 index = PDOLL_ROBE;
             else if(tmp->itype == TYPE_LIGHT_APPLY)
                 index = PDOLL_LIGHT;
+            else if(tmp->itype == TYPE_WAND ||tmp->itype == TYPE_ROD||tmp->itype == TYPE_HORN)
+                index = PDOLL_WAND;
             
-            if(index == PDOLL_RRING ||index == PDOLL_LRING)
-                ring_flag++;
-            if(index != -1)
-               blt_inv_item_centered(tmp, player_doll[index].xpos+x, player_doll[index].ypos+y);
-        }
-    }
+						if (index == PDOLL_RRING) index+= ++ring_flag & 1;
+            if(index != -1){
+              blt_inv_item_centered(tmp, player_doll[index].xpos+x, player_doll[index].ypos+y);
+							SDL_GetMouseState(&mx, &my);
+							/* prepare item_name tooltip */
+							if (mx >= player_doll[index].xpos && mx < player_doll[index].xpos+33 
+							 && my >= player_doll[index].ypos && my < player_doll[index].ypos+33)
+							{
+								tooltip_index = index;
+								tooltip_text = tmp->s_name;
+							}
+						}
+					}
+   		 }
+		/* draw a item_name tooltip */
+		if (tooltip_index!= -1)
+		{
+			SDL_Rect rec;		
+			char *text = tooltip_text;
+
+			rec.w = 3;
+			while (*text) 
+				rec.w+= SystemFont.c[(int)*text++].w+ SystemFont.char_offset;         						
+			rec.x = mx+ 9;
+			rec.y = my+17;
+			rec.h = 12;
+			SDL_FillRect(ScreenSurface, &rec, -1);
+			StringBlt(ScreenSurface, &SystemFont, tooltip_text, mx+11, my+16, COLOR_BLACK, NULL, NULL);
+		}
 }
+

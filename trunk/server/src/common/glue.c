@@ -277,7 +277,7 @@ void dummy_draw_info(int a, int b, object *ob, const char *txt) {
   LOG(llevInfo,  "%s\n", txt);
 }
 
-void dummy_function_mapstr(int a, mapstruct *map, char *str) {
+void dummy_function_mapstr(int a, mapstruct *map, const char *str) {
   LOG(llevInfo, "info_map: %s\n", str);
 }
 

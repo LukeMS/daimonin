@@ -98,6 +98,6 @@ extern void set_map_ext(int x, int y, int layer,int ext, int probe);
 extern void map_draw_map_clear(void);
 extern void load_mapdef_dat(void);
 extern void adjust_map_cache(int x, int y);
-extern void get_tile_position( int mx, int my, int *tx, int *ty );
+extern int get_tile_position( int mx, int my, int *tx, int *ty );
 
 #endif
