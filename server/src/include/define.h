@@ -226,7 +226,6 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define SPAWN_POINT_MOB			83 /* inactive default mob inside spawn point inv.
 									* This object is somewhat special because its generated
 									* ITS IS ONLY A COPY AND NOT A REAL MONSTER NOR A ACTIVE OBJECT.
-									* only in the map editor or by runtime - not in the arches.
 									*/
 #define SPAWN_POINT_INFO		84	/* this is put inside a mob, created from a spawn point.
 									 * It is used to track back the mob to the spawn point.

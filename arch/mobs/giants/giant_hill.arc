@@ -6,8 +6,8 @@ is_evil 1
 is_male 1
 weight 13250
 exp 165
-speed -0.25
-weapon_speed 0.0375
+speed -0.035
+weapon_speed 0.042
 attack_impact 90
 protect_acid 25
 ac 10

@@ -2676,6 +2676,28 @@ no_teleport 1
 layer 2
 no_pick 1
 end
+Object earth2
+name floor
+face earth2.101
+type 71
+editor_folder floors/floors
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object earth3
+name floor
+face earth3.101
+type 71
+editor_folder floors/floors
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
 Object ability_cause_lig_wound
 name ability cause light wounds
 face force.101
@@ -11668,7 +11690,7 @@ randomitems mob_slime
 is_neutral 1
 weight 13250
 exp 130
-speed -0.1
+speed -0.025
 weapon_speed 0.0375
 attack_acid 75
 ac 9
@@ -11700,7 +11722,7 @@ randomitems mob_slime
 is_neutral 1
 weight 13250
 exp 130
-speed -0.1
+speed -0.025
 weapon_speed 0.038
 attack_poison 35
 attack_acid 40
@@ -11736,7 +11758,7 @@ randomitems mob_slime
 is_neutral 1
 weight 8250
 exp 115
-speed -0.1
+speed -0.025
 weapon_speed 0.040
 attack_pierce 75
 ac 8
@@ -11768,7 +11790,7 @@ randomitems mob_slime
 is_neutral 1
 weight 13250
 exp 150
-speed -0.1
+speed -0.03
 weapon_speed 0.040
 attack_cold 75
 resist_poison 100
@@ -11802,7 +11824,7 @@ randomitems mob_slime
 is_neutral 1
 weight 13250
 exp 150
-speed -0.1
+speed -0.03
 weapon_speed 0.038
 attack_poison 65
 attack_acid 10
@@ -11837,7 +11859,7 @@ randomitems mob_slime
 is_neutral 1
 weight 13250
 exp 150
-speed -0.1
+speed -0.032
 weapon_speed 0.0375
 attack_acid 55
 attack_poison 30
@@ -11871,7 +11893,7 @@ randomitems mob_slime
 is_neutral 1
 weight 13250
 exp 150
-speed -0.1
+speed -0.032
 weapon_speed 0.0375
 attack_poison 40
 attack_cold 40
@@ -11906,7 +11928,7 @@ randomitems mob_slime
 is_neutral 1
 weight 16250
 exp 140
-speed -0.1
+speed -0.026
 weapon_speed 0.040
 attack_fire 80
 ac 10
@@ -11938,7 +11960,7 @@ randomitems mob_slime
 is_neutral 1
 weight 12250
 exp 135
-speed -0.1
+speed -0.024
 weapon_speed 0.040
 attack_impact 75
 ac 10
@@ -12055,8 +12077,8 @@ is_evil 1
 is_male 1
 weight 13250
 exp 165
-speed -0.25
-weapon_speed 0.0375
+speed -0.035
+weapon_speed 0.042
 attack_impact 90
 protect_acid 25
 ac 10
@@ -12088,8 +12110,8 @@ is_evil 1
 is_male 1
 weight 13250
 exp 150
-speed -0.32
-weapon_speed 0.038
+speed -0.0275
+weapon_speed 0.04
 attack_impact 80
 protect_poison 25
 protect_acid 25
@@ -12128,7 +12150,7 @@ attack_weaponmagic 100
 animation guard
 is_animated 1
 anim_speed 4
-speed -0.25
+speed -0.025
 alive 1
 monster 1
 Wis 7
@@ -12173,7 +12195,7 @@ attack_weaponmagic 100
 animation mage_old
 is_animated 1
 anim_speed 4
-speed -0.25
+speed -0.025
 alive 1
 monster 1
 Wis 7
@@ -12218,7 +12240,7 @@ attack_weaponmagic 100
 animation monk
 is_animated 1
 anim_speed 4
-speed -0.25
+speed -0.025
 alive 1
 monster 1
 Wis 7
@@ -12263,7 +12285,7 @@ attack_weaponmagic 100
 animation priest_church
 is_animated 1
 anim_speed 4
-speed -0.25
+speed -0.025
 alive 1
 monster 1
 Wis 7
@@ -12308,7 +12330,7 @@ attack_weaponmagic 100
 animation ranger
 is_animated 1
 anim_speed 4
-speed -0.25
+speed -0.025
 alive 1
 monster 1
 Wis 7
@@ -12353,7 +12375,7 @@ attack_weaponmagic 100
 animation smith
 is_animated 1
 anim_speed 4
-speed -0.25
+speed -0.025
 alive 1
 monster 1
 Wis 7
@@ -12412,7 +12434,7 @@ dam 5
 hp -1
 maxhp 7
 level 1
-speed -0.1
+speed -0.03
 weight 22500
 end
 Object ant_red
@@ -12447,7 +12469,7 @@ dam 4
 hp -1
 maxhp 6
 level 1
-speed -0.1
+speed -0.0275
 weight 22500
 end
 Object ant_soldier
@@ -12479,7 +12501,7 @@ wc 1
 dam 4
 hp -1
 maxhp 7
-speed -0.18
+speed -0.0325
 level 1
 weight 25500
 end
@@ -12509,7 +12531,7 @@ dam 4
 hp -1
 maxhp 7
 level 1
-speed -0.1
+speed -0.03
 no_pick 1
 weight 120000
 end
@@ -12523,7 +12545,7 @@ race dragon
 layer 6
 randomitems mob_wyvern
 direction 5
-speed -0.26
+speed -0.06
 corpse 1
 is_male 1
 is_neutral 1
