@@ -1,0 +1,8 @@
+
+ ***** who command *****
+
+syntax: /who
+
+This command shows all players
+online. Also /who reveals player's
+level.

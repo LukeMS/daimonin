@@ -1,0 +1,21 @@
+
+      ***** Usefull Keys *****
+1. General keys
+a - Apply.
+g - Get. pickup items or insert item to bag.
+d - Drop.
+p - Pray. 
+e - Examine. Give detailed info about item.
+F9 - Spells dialog.
+F10 - Skills dialog.
+F11 - Keybindings dialog.
+F12 - Help screen.
+
+<SHIFT> - If shift is down, you see inventory.
+<SPACE> - Applies first appliable item on floor.
+<ALT>+<dir key> - Run in specified direction. You must hold <ALT> to keep running.
+2. Fighting
+s - Select friendly NPC or player.
+x - Select mob.
+c - Toggle fighting mode.
+<CTRL>+<dir key> - Shoot, fire or throw in specified direction. Action depends on selected skill.

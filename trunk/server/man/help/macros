@@ -1,0 +1,61 @@
+
+      ***** Macros Help *****
+1. Description
+Macro is a helpful way to reduce
+ingame typing. It allows to bind 
+long commands to single keys.
+Macros are useful in, for example, 
+spellcasting.
+
+2. How-to
+To setup new macro, enter 'Macros' 
+dialog box by hitting F11. 
+Then, select one of the tabs by 
+using cusror keys (up and down) with
+SHIFT key down.
+Next, enter first empty line (without
+shift key) and hit ENTER. Type the 
+macro command of you choice. Examples
+are in the next section.
+After accepting with next ENTER hit,
+you will be asked about key you want 
+to bind new macro to.
+One last thing to do is to choose 
+wether macro should be 'repeatable'
+or not. Do it by right-clicking on 
+last column of table. Doing so, 
+toggles 'on' or 'off' value.
+IMPORTANT: Do not press ESCAPE to 
+exit current dialog box. Hit 'Done'
+button, in down-left dialog side.
+Otherwise, client won't save new 
+entries.
+
+3. Examples of macros
+
+These is small set of predefined
+macros already set up for you.
+One of them, used to pray, is:
+(macro)       (key)    (repeat)
+/pray           p           off
+
+To construct spellcasting macros,
+use the same format and choose your
+keys.
+Here is a list of currently usable 
+macro commands:
+/cast magic bullet
+/cast cause light wounds
+/cast probe
+/cast minor healing
+/use_skill remove traps
+/use_skill find traps
+
+You can also use macro, for example,
+to shout or say:
+/shout buying good items
+
+Just dont overuse /shout macros, 
+most player dont like spamming.
+Generally, try to keep 'repeat' value
+set to 'off' for /shout macros.

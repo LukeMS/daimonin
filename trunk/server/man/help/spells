@@ -1,0 +1,11 @@
+
+  ***** Spellcasting Help *****
+
+To use a spell, you can either use the range system or type "/cast <spellname>". 
+If you type it in, then you will fire in the direction that you are facing. 
+If it's a friendly spell, then it will auto-target you. 
+To use the range system, look at the top right corner of your screen for a button that is labled "spells".
+Click on that to open your spell window. 
+Locate the spell that you are going to use (if you have any yet) and click on it. 
+A little picture will light up. Click on that and it will automatically ready it for casting. 
+Now all that you need to do is hold control and then direct the spell with the numberpad.

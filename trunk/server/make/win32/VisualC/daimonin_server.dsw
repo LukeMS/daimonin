@@ -12,28 +12,13 @@ Package=<5>
 Package=<4>
 {{{
     Begin Project Dependency
-    Project_Dep_Name libcross
-    End Project Dependency
-    Begin Project Dependency
-    Project_Dep_Name plugin_python
+    Project_Dep_Name plugin_lua
     End Project Dependency
 }}}
 
 ###############################################################################
 
-Project: "libcross"=.\libcross\libcross.dsp - Package Owner=<4>
-
-Package=<5>
-{{{
-}}}
-
-Package=<4>
-{{{
-}}}
-
-###############################################################################
-
-Project: "plugin_python"=.\plugin_python\plugin_python.dsp - Package Owner=<4>
+Project: "plugin_lua"=.\plugin_lua\plugin_lua.dsp - Package Owner=<4>
 
 Package=<5>
 {{{
@@ -42,8 +27,38 @@ Package=<5>
 Package=<4>
 {{{
     Begin Project Dependency
-    Project_Dep_Name libcross
+    Project_Dep_Name Lualib
     End Project Dependency
+    Begin Project Dependency
+    Project_Dep_Name Lualiblib
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "Lualib"=.\lua\Lualib.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name Lualiblib
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "Lualiblib"=.\lua\Lualiblib.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+}}}
+
+Package=<4>
+{{{
 }}}
 
 ###############################################################################
