@@ -62,6 +62,8 @@ static void send_attack_msg(object *op, object *hitter, int attacknum, int dam, 
 int attack_ob (object *op, object *hitter)
 {
 
+    if (op->head)
+        op = op->head;
     if (hitter->head)
         hitter = hitter->head;
     return attack_ob_simple (op, hitter, hitter->stats.dam, hitter->stats.wc);
@@ -76,6 +78,11 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam, int base_
     int simple_attack, roll, dam=0;
     uint32 type;
     tag_t op_tag, hitter_tag;
+
+    if (op->head)
+        op = op->head;
+    if (hitter->head)
+        hitter = hitter->head;
 
     if (get_attack_mode (&op, &hitter, &simple_attack))
         goto error;
@@ -336,6 +343,11 @@ int hit_player(object *op,int dam, object *hitter, int type)
     if (QUERY_FLAG (op, FLAG_WIZ) || QUERY_FLAG (op, FLAG_INVULNERABLE))
         return 0;
 
+    if (hitter->head)
+        hitter = hitter->head;
+    if (op->head)
+        op = op->head;
+
 	/* now we are nasty: we add some "level boni" - in small words: If a high level
 	 * object hits a lower level object it becomes a level boni depending on the 
 	 * level difference!
@@ -352,18 +364,18 @@ int hit_player(object *op,int dam, object *hitter, int type)
 		target_obj = op;
 
 	if(hit_obj->type == PLAYER)
-		hit_level = SK_level(hitter); /* get from hitter object the right skill level! */
+		hit_level = SK_level(hit_obj); /* get from hitter object the right skill level! */
 	else
 		hit_level = hitter->level;
 
 	if(hit_level == 0 || target_obj->level == 0)
-		LOG(llevDebug,"DEBUG: hit_player(): hit or target object level == 0(h:%s (o:%s) l->%d t:%s (o:%s) l->%d\n",
+		LOG(llevDebug,"DEBUG: hit_player(): hit or target object level == 0(h:>%s< (o:>%s<) l->%d t:>%s< (>%s<)(o:>%s<) l->%d\n",
 										query_name(hitter), query_name(get_owner(hitter)), hit_level,
-										query_name(op), query_name(get_owner(op)), target_obj->level);
+										query_name(op), target_obj->arch->name, query_name(get_owner(op)), target_obj->level);
 
 	if(hit_level > target_obj->level)
 	{
-		dam += (int)((float)(dam/2)*((float)(hitter->level-target_obj->level)/
+		dam += (int)((float)(dam/2)*((float)(hit_level-target_obj->level)/
 									(target_obj->level>25?25.0f:(float)target_obj->level)));
 		/*LOG(llevDebug,"DMG-ADD: hl:%d tl_%d -> d:%d + %d\n", hit_level,target_obj->level, dam,tmp_d);*/
 	}
@@ -587,7 +599,8 @@ int hit_map(object *op,int dir,int type) {
     return 0;
   }
 
-  if (op->head) op=op->head;
+  if (op->head) 
+	  op=op->head;
 
   op_tag = op->count;
 
@@ -691,7 +704,7 @@ int hit_player_attacktype(object *op, object *hitter, int damage,  uint32 attack
     /* just a sanity check */
     if (dam < 0)
     {
-    	LOG(llevBug,"BUG: hit_player_attacktype called with negative damage: %d from object: %s\n", dam, op->name);
+    	LOG(llevBug,"BUG: hit_player_attacktype called with negative damage: %d from object: %s\n", dam, query_name(op));
 	    return 0;
     }
     
