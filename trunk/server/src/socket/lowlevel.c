@@ -111,7 +111,8 @@ int SockList_ReadPacket(int fd, SockList *sl, int len)
 #else
 	if (errno != EAGAIN && errno !=EWOULDBLOCK) {
 		LOG(llevDebug,"ReadPacket got error %d, returning 0\n",errno);
-	    }
+		return -1;	/* kick this user! */
+	}
 #endif
 	    return 0;	/*Error */
 	}
@@ -157,7 +158,8 @@ int SockList_ReadPacket(int fd, SockList *sl, int len)
 #else
 	if (errno != EAGAIN && errno !=EWOULDBLOCK) {
 		LOG(llevDebug,"ReadPacket got error %d, returning 0\n",errno);
-	    }
+		return -1;	/* kick this user! */
+	}
 #endif
 	    return 0;	/*Error */
 	}

@@ -213,6 +213,7 @@ int add_player(NewSocket *ns) {
      * Note that this can result in a client reset if there is partial data
      * on the uncoming socket.
      */
+	p->socket.status = Ns_Login; /* now, we start the login procedure! */
     p->socket.update_tile=0;
     p->socket.look_position=0;
     p->socket.inbuf.len = 0;
