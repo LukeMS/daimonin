@@ -2663,7 +2663,7 @@ Object
 title of inaccuracy
 type 13
 is_magical 1
-wc -7
+wc_add -7
 cursed_perm 1
 cursed 1
 end
@@ -2678,7 +2678,7 @@ title of accuracy
 type 13
 is_magical 1
 value 50
-wc 7
+wc_add 7
 dam_add 1
 end
 #
@@ -2713,7 +2713,7 @@ msg
 endmsg
 value 850
 type 13
-wc 7
+wc_add 4
 is_assassin 1
 is_magical 1
 dam_add 1
@@ -2732,7 +2732,7 @@ type 14
 value 5500
 is_magical 1
 weight 80
-wc 4
+wc_add 4
 end
 #
 #
