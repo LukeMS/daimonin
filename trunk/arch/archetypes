@@ -823,6 +823,61 @@ no_teleport 1
 layer 2
 no_pick 1
 end
+Object floor_earth1a
+name floor
+face floor_earth1a.101
+type 71
+editor_folder floors/earth
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object floor_earth1b
+name floor
+face floor_earth1b.101
+type 71
+editor_folder floors/earth
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object floor_earth1c
+name floor
+face floor_earth1c.101
+type 71
+editor_folder floors/earth
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object floor_earth1d
+name floor
+face floor_earth1d.101
+type 71
+editor_folder floors/earth
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object floor_earth1e
+name floor
+face floor_earth1e.101
+type 71
+editor_folder floors/earth
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
 Object earth_brown1
 name floor
 face earth_brown1.101
@@ -900,6 +955,116 @@ no_teleport 1
 no_pick 1
 is_floor 1
 end
+Object floor_earth_light1a
+name floor
+face floor_earth_light1a.101
+type 71
+editor_folder floors/earth
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object floor_earth_light1b
+name floor
+face floor_earth_light1b.101
+type 71
+editor_folder floors/earth
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object floor_fs_grey1a
+name floor
+face floor_fs_grey1a.101
+type 71
+editor_folder floors/flagstone
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object floor_fs_grey1b
+name floor
+face floor_fs_grey1b.101
+type 71
+editor_folder floors/flagstone
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object floor_fs_grey1c
+name floor
+face floor_fs_grey1c.101
+type 71
+editor_folder floors/flagstone
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object floor_fs_grey1d
+name floor
+face floor_fs_grey1d.101
+type 71
+editor_folder floors/flagstone
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object floor_flagstone1a
+name floor
+face floor_flagstone1a.101
+type 71
+editor_folder floors/flagstone
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object floor_flagstone1b
+name floor
+face floor_flagstone1b.101
+type 71
+editor_folder floors/flagstone
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object floor_flagstone1c
+name floor
+face floor_flagstone1c.101
+type 71
+editor_folder floors/flagstone
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object floor_flagstone1d
+name floor
+face floor_flagstone1d.101
+type 71
+editor_folder floors/flagstone
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
 Object floor_flagm1
 name floor
 face floor_flagm1.101
@@ -947,6 +1112,116 @@ end
 Object floor_rhomb
 name floor
 face floor_rhomb.101
+type 71
+editor_folder floors/flagstone
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object floor_fstone2a
+name floor
+face floor_fstone2a.101
+type 71
+editor_folder floors/flagstone
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object floor_fstone2b
+name floor
+face floor_fstone2b.101
+type 71
+editor_folder floors/flagstone
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object floor_fstone2c
+name floor
+face floor_fstone2c.101
+type 71
+editor_folder floors/flagstone
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object floor_fstone2d
+name floor
+face floor_fstone2d.101
+type 71
+editor_folder floors/flagstone
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object floor_fstone2e
+name floor
+face floor_fstone2e.101
+type 71
+editor_folder floors/flagstone
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object floor_fstone2f
+name floor
+face floor_fstone2f.101
+type 71
+editor_folder floors/flagstone
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object floor_fstone2g
+name floor
+face floor_fstone2g.101
+type 71
+editor_folder floors/flagstone
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object floor_fstone2h
+name floor
+face floor_fstone2h.101
+type 71
+editor_folder floors/flagstone
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object floor_fstone2i
+name floor
+face floor_fstone2i.101
+type 71
+editor_folder floors/flagstone
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object floor_fstone2j
+name floor
+face floor_fstone2j.101
 type 71
 editor_folder floors/flagstone
 layer 1
@@ -1803,6 +2078,149 @@ terrain_type 1
 no_pick 1
 is_floor 1
 end
+Object floor_grey2
+name floor
+face floor_grey2.101
+type 71
+editor_folder floors/grey
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_grey3
+name floor
+face floor_grey3.101
+type 71
+editor_folder floors/grey
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_grey4
+name floor
+face floor_grey4.101
+type 71
+editor_folder floors/grey
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_grey5
+name floor
+face floor_grey5.101
+type 71
+editor_folder floors/grey
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_grey6
+name floor
+face floor_grey6.101
+type 71
+editor_folder floors/grey
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_grey7
+name floor
+face floor_grey7.101
+type 71
+editor_folder floors/grey
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_grey8
+name floor
+face floor_grey8.101
+type 71
+editor_folder floors/grey
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_grey9
+name floor
+face floor_grey9.101
+type 71
+editor_folder floors/grey
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_grey9a
+name floor
+face floor_grey9a.101
+type 71
+editor_folder floors/grey
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_grey9b
+name floor
+face floor_grey9b.101
+type 71
+editor_folder floors/grey
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_grey9c
+name floor
+face floor_grey9c.101
+type 71
+editor_folder floors/grey
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_grey9d
+name floor
+face floor_grey9d.101
+type 71
+editor_folder floors/grey
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_grey10
+name floor
+face floor_grey10.101
+type 71
+editor_folder floors/grey
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
 Object floor_grit1
 name floor
 face floor_grit1.101
@@ -1817,6 +2235,83 @@ end
 Object floor_grit2
 name floor
 face floor_grit2.101
+type 71
+editor_folder floors/grit
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_grit3a
+name floor
+face floor_grit3a.101
+type 71
+editor_folder floors/grit
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_grit3b
+name floor
+face floor_grit3b.101
+type 71
+editor_folder floors/grit
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_grit3c
+name floor
+face floor_grit3c.101
+type 71
+editor_folder floors/grit
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_grit4a
+name floor
+face floor_grit4a.101
+type 71
+editor_folder floors/grit
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_grit4b
+name floor
+face floor_grit4b.101
+type 71
+editor_folder floors/grit
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_grit4c
+name floor
+face floor_grit4c.101
+type 71
+editor_folder floors/grit
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_grit4d
+name floor
+face floor_grit4d.101
 type 71
 editor_folder floors/grit
 no_teleport 1
@@ -1850,6 +2345,424 @@ end
 Object floor_marble1b
 name floor
 face floor_marble1b.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble1c
+name floor
+face floor_marble1c.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble1d
+name floor
+face floor_marble1d.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble1e
+name floor
+face floor_marble1e.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble1f
+name floor
+face floor_marble1f.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble1g
+name floor
+face floor_marble1g.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble1h
+name floor
+face floor_marble1h.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble_b1a
+name floor
+face floor_marble_b1a.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble_b1b
+name floor
+face floor_marble_b1b.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble_b1c
+name floor
+face floor_marble_b1c.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble_b1d
+name floor
+face floor_marble_b1d.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble_grey
+name floor
+face floor_marble_grey.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble2a
+name floor
+face floor_marble2a.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble2b
+name floor
+face floor_marble2b.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble2c
+name floor
+face floor_marble2c.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble3a
+name floor
+face floor_marble3a.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble3b
+name floor
+face floor_marble3b.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble3c
+name floor
+face floor_marble3c.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble3d
+name floor
+face floor_marble3d.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble3e
+name floor
+face floor_marble3e.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble3f
+name floor
+face floor_marble3f.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble4a
+name floor
+face floor_marble4a.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble4b
+name floor
+face floor_marble4b.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble4c
+name floor
+face floor_marble4c.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble4d
+name floor
+face floor_marble4d.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble4e
+name floor
+face floor_marble4e.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble4f
+name floor
+face floor_marble4f.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble6a
+name floor
+face floor_marble6a.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble6b
+name floor
+face floor_marble6b.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble6c
+name floor
+face floor_marble6c.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble6d
+name floor
+face floor_marble6d.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble6e
+name floor
+face floor_marble6e.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble6f
+name floor
+face floor_marble6f.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble5a
+name floor
+face floor_marble5a.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble5b
+name floor
+face floor_marble5b.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble5c
+name floor
+face floor_marble5c.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble5d
+name floor
+face floor_marble5d.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble5e
+name floor
+face floor_marble5e.101
+type 71
+editor_folder floors/marble
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_marble5f
+name floor
+face floor_marble5f.101
 type 71
 editor_folder floors/marble
 no_teleport 1
@@ -1913,7 +2826,7 @@ terrain_type 1
 no_pick 1
 is_floor 1
 end
-Object floor_ostone14
+Object floor_ostone4
 name floor
 face floor_ostone4.101
 type 71
@@ -1938,6 +2851,94 @@ end
 Object floor_ostone6
 name floor
 face floor_ostone6.101
+type 71
+editor_folder floors/ornament
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_ostone7
+name floor
+face floor_ostone7.101
+type 71
+editor_folder floors/ornament
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_ostone8
+name floor
+face floor_ostone8.101
+type 71
+editor_folder floors/ornament
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_ostone9
+name floor
+face floor_ostone9.101
+type 71
+editor_folder floors/ornament
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_ostone10
+name floor
+face floor_ostone10.101
+type 71
+editor_folder floors/ornament
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_ostone11
+name floor
+face floor_ostone11.101
+type 71
+editor_folder floors/ornament
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_ostone12
+name floor
+face floor_ostone12.101
+type 71
+editor_folder floors/ornament
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_ostone13
+name floor
+face floor_ostone13.101
+type 71
+editor_folder floors/ornament
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_ostone14
+name floor
+face floor_ostone14.101
 type 71
 editor_folder floors/ornament
 no_teleport 1
@@ -2443,6 +3444,17 @@ no_teleport 1
 no_pick 1
 is_floor 1
 end
+Object floor_sblack1b
+name floor
+face floor_sblack1b.101
+type 71
+editor_folder floors/stone
+layer 1
+terrain_type 1
+no_teleport 1
+no_pick 1
+is_floor 1
+end
 Object floor_sblack2
 name floor
 face floor_sblack2.101
@@ -2454,9 +3466,31 @@ terrain_type 1
 no_pick 1
 is_floor 1
 end
+Object floor_sblack2b
+name floor
+face floor_sblack2b.101
+type 71
+editor_folder floors/stone
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
 Object floor_sblack3
 name floor
 face floor_sblack3.101
+type 71
+editor_folder floors/stone
+layer 1
+no_teleport 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_sblack3b
+name floor
+face floor_sblack3b.101
 type 71
 editor_folder floors/stone
 layer 1
@@ -2539,6 +3573,127 @@ editor_folder floors/stone
 layer 1
 terrain_type 1
 no_teleport 1
+no_pick 1
+is_floor 1
+end
+Object floor_stone1a
+name floor
+face floor_stone1a.101
+type 71
+editor_folder floors/stone
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_stone1b
+name floor
+face floor_stone1b.101
+type 71
+editor_folder floors/stone
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_stone1c
+name floor
+face floor_stone1c.101
+type 71
+editor_folder floors/stone
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_stone2a
+name floor
+face floor_stone2a.101
+type 71
+editor_folder floors/stone
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_stone2b
+name floor
+face floor_stone2b.101
+type 71
+editor_folder floors/stone
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_stone2c
+name floor
+face floor_stone2c.101
+type 71
+editor_folder floors/stone
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_stone3a
+name floor
+face floor_stone3a.101
+type 71
+editor_folder floors/stone
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_stone3b
+name floor
+face floor_stone3b.101
+type 71
+editor_folder floors/stone
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_stone3c
+name floor
+face floor_stone3c.101
+type 71
+editor_folder floors/stone
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_stone3d
+name floor
+face floor_stone3d.101
+type 71
+editor_folder floors/stone
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_stone3e
+name floor
+face floor_stone3e.101
+type 71
+editor_folder floors/stone
+no_teleport 1
+layer 1
+terrain_type 1
 no_pick 1
 is_floor 1
 end
@@ -2658,9 +3813,31 @@ terrain_type 2
 no_pick 1
 is_floor 1
 end
+Object floor_wood_hole1
+name floor
+face floor_wood_hole1.101
+type 71
+editor_folder floors/wood
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
 Object floor_wood1
 name floor
 face floor_wood1.101
+type 71
+editor_folder floors/wood
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_wood1b
+name floor
+face floor_wood1b.101
 type 71
 editor_folder floors/wood
 no_teleport 1
@@ -2680,9 +3857,185 @@ terrain_type 1
 no_pick 1
 is_floor 1
 end
-Object floor_wood_hole1
+Object floor_wood2b
 name floor
-face floor_wood_hole1.101
+face floor_wood2b.101
+type 71
+editor_folder floors/wood
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_wood2_d1
+name floor
+face floor_wood2_d1.101
+type 71
+editor_folder floors/wood
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_wood2_d2
+name floor
+face floor_wood2_d2.101
+type 71
+editor_folder floors/wood
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_wood2_l1
+name floor
+face floor_wood2_l1.101
+type 71
+editor_folder floors/wood
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_wood2_l2
+name floor
+face floor_wood2_l2.101
+type 71
+editor_folder floors/wood
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_wood3a
+name floor
+face floor_wood3a.101
+type 71
+editor_folder floors/wood
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_wood3b
+name floor
+face floor_wood3b.101
+type 71
+editor_folder floors/wood
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_wood3c
+name floor
+face floor_wood3c.101
+type 71
+editor_folder floors/wood
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_wood3d
+name floor
+face floor_wood3d.101
+type 71
+editor_folder floors/wood
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_wood3e
+name floor
+face floor_wood3e.101
+type 71
+editor_folder floors/wood
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_wood3f
+name floor
+face floor_wood3f.101
+type 71
+editor_folder floors/wood
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_wood3g
+name floor
+face floor_wood3g.101
+type 71
+editor_folder floors/wood
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_wood3h
+name floor
+face floor_wood3h.101
+type 71
+editor_folder floors/wood
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_wood4a
+name floor
+face floor_wood4a.101
+type 71
+editor_folder floors/wood
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_wood4b
+name floor
+face floor_wood4b.101
+type 71
+editor_folder floors/wood
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_wood4c
+name floor
+face floor_wood4c.101
+type 71
+editor_folder floors/wood
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_wood4d
+name floor
+face floor_wood4d.101
 type 71
 editor_folder floors/wood
 no_teleport 1
@@ -2872,6 +4225,1196 @@ name knot
 face knot_4d.111
 type 79
 editor_folder floors/knot
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object floor_black1a
+name floor
+face floor_black1a.101
+type 71
+editor_folder floors/black
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_black1b
+name floor
+face floor_black1b.101
+type 71
+editor_folder floors/black
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_black1c
+name floor
+face floor_black1c.101
+type 71
+editor_folder floors/black
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_black1d
+name floor
+face floor_black1d.101
+type 71
+editor_folder floors/black
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_black2a
+name floor
+face floor_black2a.101
+type 71
+editor_folder floors/black
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_black2b
+name floor
+face floor_black2b.101
+type 71
+editor_folder floors/black
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_black2c
+name floor
+face floor_black2c.101
+type 71
+editor_folder floors/black
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_black2d
+name floor
+face floor_black2d.101
+type 71
+editor_folder floors/black
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_bw1
+name floor
+face floor_bw1.101
+type 71
+editor_folder floors/blackwhite
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_bw2a
+name floor
+face floor_bw2a.101
+type 71
+editor_folder floors/blackwhite
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_bw2b
+name floor
+face floor_bw2b.101
+type 71
+editor_folder floors/blackwhite
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_bw2c
+name floor
+face floor_bw2c.101
+type 71
+editor_folder floors/blackwhite
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_bw2d
+name floor
+face floor_bw2d.101
+type 71
+editor_folder floors/blackwhite
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_bw3
+name floor
+face floor_bw3.101
+type 71
+editor_folder floors/blackwhite
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_bw4
+name floor
+face floor_bw4.101
+type 71
+editor_folder floors/blackwhite
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_cave1
+name floor
+face floor_cave1.101
+type 71
+editor_folder floors/cave
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_cave2
+name floor
+face floor_cave2.101
+type 71
+editor_folder floors/cave
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_cave3
+name floor
+face floor_cave3.101
+type 71
+editor_folder floors/cave
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_cave4
+name floor
+face floor_cave4.101
+type 71
+editor_folder floors/cave
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_cave5
+name floor
+face floor_cave5.101
+type 71
+editor_folder floors/cave
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_cave6
+name floor
+face floor_cave6.101
+type 71
+editor_folder floors/cave
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_farm1a
+name field
+face floor_farm1a.101
+type 71
+editor_folder floors/farm
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_farm1b
+name field
+face floor_farm1b.101
+type 71
+editor_folder floors/farm
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_farm1c
+name field
+face floor_farm1c.101
+type 71
+editor_folder floors/farm
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_farm1d
+name field
+face floor_farm1d.101
+type 71
+editor_folder floors/farm
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_farm1e
+name field
+face floor_farm1e.101
+type 71
+editor_folder floors/farm
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_farm1f
+name field
+face floor_farm1f.101
+type 71
+editor_folder floors/farm
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_farm1g
+name field
+face floor_farm1g.101
+type 71
+editor_folder floors/farm
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_farm1h
+name field
+face floor_farm1h.101
+type 71
+editor_folder floors/farm
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_farm1i
+name field
+face floor_farm1i.101
+type 71
+editor_folder floors/farm
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_farm1j
+name field
+face floor_farm1j.101
+type 71
+editor_folder floors/farm
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_farm1k
+name field
+face floor_farm1k.101
+type 71
+editor_folder floors/farm
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_farm1l
+name field
+face floor_farm1l.101
+type 71
+editor_folder floors/farm
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_farm1m
+name field
+face floor_farm1m.101
+type 71
+editor_folder floors/farm
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_farm1n
+name field
+face floor_farm1n.101
+type 71
+editor_folder floors/farm
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_farm1o
+name field
+face floor_farm1o.101
+type 71
+editor_folder floors/farm
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_farm1p
+name field
+face floor_farm1p.101
+type 71
+editor_folder floors/farm
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_fire1a
+name fire
+face floor_fire1a.101
+type 71
+editor_folder floors/fire
+no_teleport 1
+layer 1
+terrain_type 8
+no_pick 1
+is_floor 1
+end
+Object floor_fire1b
+name fire
+face floor_fire1b.101
+type 71
+editor_folder floors/fire
+no_teleport 1
+layer 1
+terrain_type 8
+no_pick 1
+is_floor 1
+end
+Object floor_fire1c
+name fire
+face floor_fire1c.101
+type 71
+editor_folder floors/fire
+no_teleport 1
+layer 1
+terrain_type 8
+no_pick 1
+is_floor 1
+end
+Object floor_blue1
+name floor
+face floor_blue1.101
+type 71
+editor_folder floors/color
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_blue2
+name floor
+face floor_blue2.101
+type 71
+editor_folder floors/color
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_blue3
+name floor
+face floor_blue3.101
+type 71
+editor_folder floors/color
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_green1
+name floor
+face floor_green1.101
+type 71
+editor_folder floors/color
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_orange1
+name floor
+face floor_orange1.101
+type 71
+editor_folder floors/color
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_red1
+name floor
+face floor_red1.101
+type 71
+editor_folder floors/color
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_white1
+name floor
+face floor_white1.101
+type 71
+editor_folder floors/color
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_yellow1
+name floor
+face floor_yellow1.101
+type 71
+editor_folder floors/color
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_yellow2
+name floor
+face floor_yellow2.101
+type 71
+editor_folder floors/color
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_fur1
+name floor
+face floor_fur1.101
+type 71
+editor_folder floors/misc
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_fur2
+name floor
+face floor_fur2.101
+type 71
+editor_folder floors/misc
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_parquet1a
+name floor
+face floor_parquet1a.101
+type 71
+editor_folder floors/parquet
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_parquet1b
+name floor
+face floor_parquet1b.101
+type 71
+editor_folder floors/parquet
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_parquet1c
+name floor
+face floor_parquet1c.101
+type 71
+editor_folder floors/parquet
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_parquet1d
+name floor
+face floor_parquet1d.101
+type 71
+editor_folder floors/parquet
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_parquet1e
+name floor
+face floor_parquet1e.101
+type 71
+editor_folder floors/parquet
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_parquet1f
+name floor
+face floor_parquet1f.101
+type 71
+editor_folder floors/parquet
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_parquet2a
+name floor
+face floor_parquet2a.101
+type 71
+editor_folder floors/parquet
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_parquet2b
+name floor
+face floor_parquet2b.101
+type 71
+editor_folder floors/parquet
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_parquet2c
+name floor
+face floor_parquet2c.101
+type 71
+editor_folder floors/parquet
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_parquet2d
+name floor
+face floor_parquet2d.101
+type 71
+editor_folder floors/parquet
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_parquet2e
+name floor
+face floor_parquet2e.101
+type 71
+editor_folder floors/parquet
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_parquet2f
+name floor
+face floor_parquet2f.101
+type 71
+editor_folder floors/parquet
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_parquet3a
+name floor
+face floor_parquet3a.101
+type 71
+editor_folder floors/parquet
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_parquet3b
+name floor
+face floor_parquet3b.101
+type 71
+editor_folder floors/parquet
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_parquet3c
+name floor
+face floor_parquet3c.101
+type 71
+editor_folder floors/parquet
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_parquet3d
+name floor
+face floor_parquet3d.101
+type 71
+editor_folder floors/parquet
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_parquet3e
+name floor
+face floor_parquet3e.101
+type 71
+editor_folder floors/parquet
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_parquet3f
+name floor
+face floor_parquet3f.101
+type 71
+editor_folder floors/parquet
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_parquet3g
+name floor
+face floor_parquet3g.101
+type 71
+editor_folder floors/parquet
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_parquet3h
+name floor
+face floor_parquet3h.101
+type 71
+editor_folder floors/parquet
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_parquet3i
+name floor
+face floor_parquet3i.101
+type 71
+editor_folder floors/parquet
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_parquet3j
+name floor
+face floor_parquet3j.101
+type 71
+editor_folder floors/parquet
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_pattern_brown1
+name floor
+face floor_pattern_brown1.101
+type 71
+editor_folder floors/pattern
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_pattern_brown2
+name floor
+face floor_pattern_brown2.101
+type 71
+editor_folder floors/pattern
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_pattern_brown3
+name floor
+face floor_pattern_brown3.101
+type 71
+editor_folder floors/pattern
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_pattern1a
+name floor
+face floor_pattern1a.101
+type 71
+editor_folder floors/pattern
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_pattern1b
+name floor
+face floor_pattern1b.101
+type 71
+editor_folder floors/pattern
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_pattern1c
+name floor
+face floor_pattern1c.101
+type 71
+editor_folder floors/pattern
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_pattern1d
+name floor
+face floor_pattern1d.101
+type 71
+editor_folder floors/pattern
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_pattern1e
+name floor
+face floor_pattern1e.101
+type 71
+editor_folder floors/pattern
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_pattern1f
+name floor
+face floor_pattern1f.101
+type 71
+editor_folder floors/pattern
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_white1a
+name floor
+face floor_white1a.101
+type 71
+editor_folder floors/white
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_white1b
+name floor
+face floor_white1b.101
+type 71
+editor_folder floors/white
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_white1c
+name floor
+face floor_white1c.101
+type 71
+editor_folder floors/white
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_white1d
+name floor
+face floor_white1d.101
+type 71
+editor_folder floors/white
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_white1e
+name floor
+face floor_white1e.101
+type 71
+editor_folder floors/white
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_white2a
+name floor
+face floor_white2a.101
+type 71
+editor_folder floors/white
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_white2b
+name floor
+face floor_white2b.101
+type 71
+editor_folder floors/white
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_white2c
+name floor
+face floor_white2c.101
+type 71
+editor_folder floors/white
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_white2d
+name floor
+face floor_white2d.101
+type 71
+editor_folder floors/white
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_white2e
+name floor
+face floor_white2e.101
+type 71
+editor_folder floors/white
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_white2f
+name floor
+face floor_white2f.101
+type 71
+editor_folder floors/white
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_white2g
+name floor
+face floor_white2g.101
+type 71
+editor_folder floors/white
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_white3a
+name floor
+face floor_white3a.101
+type 71
+editor_folder floors/white
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_white3b
+name floor
+face floor_white3b.101
+type 71
+editor_folder floors/white
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_white3c
+name floor
+face floor_white3c.101
+type 71
+editor_folder floors/white
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_white3d
+name floor
+face floor_white3d.101
+type 71
+editor_folder floors/white
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object bridge_wood.111
+name wood bridge
+face bridge_wood.111
+type 71
+editor_folder floors/bridge_wood
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object bridge_wood.171
+name wood bridge
+face bridge_wood.171
+type 71
+editor_folder floors/bridge_wood
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object bridge_wood_end.111
+name wood bridge
+face bridge_wood_end.111
+type 79
+editor_folder floors/bridge_wood
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object bridge_wood_end.131
+name wood bridge
+face bridge_wood_end.131
+type 79
+editor_folder floors/bridge_wood
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object bridge_wood_end.151
+name wood bridge
+face bridge_wood_end.151
+type 79
+editor_folder floors/bridge_wood
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object bridge_wood_end.171
+name wood bridge
+face bridge_wood_end.171
+type 79
+editor_folder floors/bridge_wood
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object bridge_wood_end2.111
+name wood bridg
+face bridge_wood_end2.111
+type 79
+editor_folder floors/bridge_wood
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object bridge_wood_end2.131
+name wood bridge
+face bridge_wood_end2.131
+type 79
+editor_folder floors/bridge_wood
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object bridge_wood_end2.151
+name wood bridge
+face bridge_wood_end2.151
+type 79
+editor_folder floors/bridge_wood
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object bridge_wood_end2.171
+name wood bridge
+face bridge_wood_end2.171
+type 79
+editor_folder floors/bridge_wood
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object bridge_wood_out.111
+name wood bridge
+face bridge_wood_out.111
+type 79
+editor_folder floors/bridge_wood
+no_teleport 1
+layer 2
+no_pick 1
+end
+Object bridge_wood_out.171
+name wood bridge
+face bridge_wood_out.171
+type 79
+editor_folder floors/bridge_wood
 no_teleport 1
 layer 2
 no_pick 1
@@ -14555,6 +17098,26 @@ end
 Object wall_blue1.181
 name stone wall
 face wall_blue1.d.181
+type 77
+editor_folder walls/blue
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_blue1_w.111
+name stone wall
+face wall_blue1_w.111
+type 77
+editor_folder walls/blue
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_blue1_w.131
+name stone wall
+face wall_blue1_w.131
 type 77
 editor_folder walls/blue
 blocksview 1
