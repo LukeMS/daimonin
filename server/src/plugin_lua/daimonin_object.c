@@ -251,7 +251,7 @@ static const char          *GameObject_flags[NUM_FLAGS + 1 + 1] =
 
 /*****************************************************************************/
 /* Name   : GameObject_GetSkill                                              */
-/* Lua    : object.GetSkill(type, id)                                        */
+/* Lua    : object:GetSkill(type, id)                                        */
 /* Info   : This function will fetch a skill or exp_skill object             */
 /* Status : Tested                                                           */
 /*****************************************************************************/
@@ -286,7 +286,7 @@ static int GameObject_GetSkill(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_SetSkill                                              */
-/* Lua    : object.SetSkill(type, skillid, level, value)                     */
+/* Lua    : object:SetSkill(type, skillid, level, value)                     */
 /* Info   : Sets objects's experience in the skill skillid as close to value */
 /*          as permitted. There is currently a limit of 1/4 of a level.      */
 /*          There's no limit on exp reduction.                               */
@@ -347,7 +347,7 @@ static int GameObject_SetSkill(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_ActivateRune                                          */
-/* Lua    : object.ActivateRune(what)                                        */
+/* Lua    : object:ActivateRune(what)                                        */
 /* Status : Untested                                                         */
 /*****************************************************************************/
 
@@ -367,7 +367,7 @@ static int GameObject_ActivateRune(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_CheckTrigger                                          */
-/* Lua    : object.CheckTrigger(what)                                        */
+/* Lua    : object:CheckTrigger(what)                                        */
 /* Status : Unfinished                                                       */
 /*****************************************************************************/
 /* MUST DO THE HOOK HERE ! */
@@ -387,7 +387,7 @@ static int GameObject_CheckTrigger(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_GetGod                                                */
-/* Lua    : object.GetGod()                                                  */
+/* Lua    : object:GetGod()                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
 
@@ -409,7 +409,7 @@ static int GameObject_GetGod(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_SetGod                                                */
-/* Lua    : object.SetGod(godname)                                           */
+/* Lua    : object:SetGod(godname)                                           */
 /* Status : Unfinished!                                                      */
 /*****************************************************************************/
 static int GameObject_SetGod(lua_State *L)
@@ -450,7 +450,7 @@ static int GameObject_SetGod(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_TeleportTo                                            */
-/* Lua    : object.TeleportTo(map, x, y, unique)                             */
+/* Lua    : object:TeleportTo(map, x, y, unique)                             */
 /* Info   : Teleports object to the given position of map.                   */
 /* Status : Tested                                                           */
 /*****************************************************************************/
@@ -477,7 +477,7 @@ static int GameObject_TeleportTo(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_InsertInside                                          */
-/* Lua    : object.InsertInside(where)                                       */
+/* Lua    : object:InsertInside(where)                                       */
 /* Info   : Inserts object into where.                                       */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -518,7 +518,7 @@ static int GameObject_InsertInside(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_Apply                                                 */
-/* Lua    : object.Apply(what, flags)                                        */
+/* Lua    : object:Apply(what, flags)                                        */
 /* Info   : forces object to apply what.                                     */
 /*          flags should be a reasonable combination of the following:       */
 /*          Daimonin.APPLY_TOGGLE - normal apply (toggle)                    */
@@ -554,7 +554,7 @@ static int GameObject_Apply(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_PickUp                                                */
-/* Lua    : object.PickUp(what)                                              */
+/* Lua    : object:PickUp(what)                                              */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 
@@ -574,7 +574,7 @@ static int GameObject_PickUp(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_Drop                                                  */
-/* Lua    : object.Drop(what)                                                */
+/* Lua    : object:Drop(what)                                                */
 /* Info   : Equivalent to the player command "drop" (name is an object name, */
 /*          "all", "unpaid", "cursed", "unlocked" or a count + object name : */
 /*          "<nnn> <object name>", or a base name, or a short name...)       */
@@ -599,7 +599,7 @@ static int GameObject_Drop(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_Take                                                  */
-/* Lua    : object.Take(name)                                                */
+/* Lua    : object:Take(name)                                                */
 /* Status : Temporary disabled (see commands.c)                              */
 /*****************************************************************************/
 
@@ -622,7 +622,7 @@ static int GameObject_Take(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_Deposit                                               */
-/* Lua    : object.Deposit(deposit_object, string)                           */
+/* Lua    : object:Deposit(deposit_object, string)                           */
 /* Info   : deposit value or string money from object in deposit_object.     */
 /*          Control first object has that amount of money, then remove it    */
 /*          from object and add it in ->value of deposit_object.             */
@@ -652,7 +652,7 @@ static int GameObject_Deposit(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_Withdraw                                              */
-/* Lua    : object.Withdraw(deposit_object, string)                          */
+/* Lua    : object:Withdraw(deposit_object, string)                          */
 /* Info   : withdraw value or string money from object in deposit_object.    */
 /*          Control first object has that amount of money, then remove it    */
 /*          from object and add it in ->value of deposit_object.             */
@@ -681,7 +681,7 @@ static int GameObject_Withdraw(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_Communicate                                           */
-/* Lua    : object.Communicate(message)                                      */
+/* Lua    : object:Communicate(message)                                      */
 /* Info   : object says message to everybody on its map                      */
 /*          but instead of CFSay it is parsed for other npc or magic mouth   */
 /* Status : Tested                                                           */
@@ -703,7 +703,7 @@ static int GameObject_Communicate(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_Say                                                   */
-/* Lua    : object.Say(message, mode)                                        */
+/* Lua    : object:Say(message, mode)                                        */
 /* Info   : object says message to everybody on its map                      */
 /*          FIXME needs documentation of mode                                */
 /* Status : Tested                                                           */
@@ -746,7 +746,7 @@ static int GameObject_Say(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_SayTo                                                 */
-/* Lua    : object.SayTo(target, message, mode)                              */
+/* Lua    : object:SayTo(target, message, mode)                              */
 /* Info   : NPC talks only to player but map get a "xx talks to" msg too.    */
 /*          FIXME needs documentation of mode parameter                      */
 /* Status : Tested                                                           */
@@ -780,7 +780,7 @@ static int GameObject_SayTo(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_Write                                                 */
-/* Lua    : object.Write(message, color)                                     */
+/* Lua    : object:Write(message, color)                                     */
 /* Info   : Writes a message to a specific player.                           */
 /* Status : Tested                                                           */
 /*****************************************************************************/
@@ -805,7 +805,7 @@ static int GameObject_Write(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_SetGender                                             */
-/* Lua    : object.SetGender(gender)                                         */
+/* Lua    : object:SetGender(gender)                                         */
 /* Info   : Changes the gender of object. gender_string should be one of     */
 /*          Daimonin.NEUTER, Daimonin.MALE, Daimonin.GENDER_FEMALE or        */
 /*          Daimonin.HERMAPHRODITE                                           */
@@ -837,7 +837,7 @@ static int GameObject_SetGender(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_SetRank                                               */
-/* Lua    : object.SetRank(rank_string)                                      */
+/* Lua    : object:SetRank(rank_string)                                      */
 /* Info   : Set the rank of an object to rank_string                         */
 /*          Rank string 'Mr' is special for no rank                          */
 /* Status : Tested                                                           */
@@ -877,7 +877,7 @@ static int GameObject_SetRank(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_SetAlignment                                          */
-/* Lua    : object.SetAlignment(alignment_string)                            */
+/* Lua    : object:SetAlignment(alignment_string)                            */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static int GameObject_SetAlignment(lua_State *L)
@@ -909,7 +909,7 @@ static int GameObject_SetAlignment(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_GetAlignmentForce                                     */
-/* Lua    : object.GetAlignmentForce()                                       */
+/* Lua    : object:GetAlignmentForce()                                       */
 /* Info   : This gets the aligment_force from a inventory (should be player?)*/
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -935,7 +935,7 @@ static int GameObject_GetAlignmentForce(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_SetGuildForce                                         */
-/* Lua    : object.SetGuildForce(rank_string)                                */
+/* Lua    : object:SetGuildForce(rank_string)                                */
 /* Info   : Sets the current rank of object to rank_string. Returns          */
 /*          the guild_force object that was modified.                        */
 /* Status : Stable                                                           */
@@ -975,7 +975,7 @@ static int GameObject_SetGuildForce(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_GetGuildForce                                         */
-/* Lua    : object.GetGuildForce()                                           */
+/* Lua    : object:GetGuildForce()                                           */
 /* Info   : This gets the guild_force from a inventory (should be player?)   */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -1001,7 +1001,7 @@ static int GameObject_GetGuildForce(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_Fix                                                   */
-/* Lua    : object.Fix()                                                     */
+/* Lua    : object:Fix()                                                     */
 /* Info   : Recalculates a player's or monster's stats depending on          */
 /*          equipment, forces, skills etc.                                   */
 /* Status : Untested                                                         */
@@ -1018,7 +1018,7 @@ static int GameObject_Fix(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_Kill                                                  */
-/* Lua    : object.Kill(what, how)                                           */
+/* Lua    : object:Kill(what, how)                                           */
 /* Status : Untested                                                         */
 /*****************************************************************************/
 /* add hooks before use! */
@@ -1073,7 +1073,7 @@ static int GameObject_Kill(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_CastAbility                                           */
-/* Lua    : object.CastAbility(target, spellno, mode, direction, option)     */
+/* Lua    : object:CastAbility(target, spellno, mode, direction, option)     */
 /* Info   : object casts the ability numbered spellno on target.             */
 /*          mode = Daimonin.CAST_NORMAL or Daimonin.CAST_POTION              */
 /*          direction is the direction to cast the ability in                */
@@ -1125,7 +1125,7 @@ static int GameObject_CastAbility(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_CastSpell                                             */
-/* Lua    : object.CastSpell(target, spell, mode, direction, option)         */
+/* Lua    : object:CastSpell(target, spell, mode, direction, option)         */
 /* Info   : object casts the spell numbered spellno on target.               */
 /*          mode = Daimonin.CAST_NORMAL or Daimonin.CAST_POTION              */
 /*          direction is the direction to cast the spell in                  */
@@ -1177,7 +1177,7 @@ static int GameObject_CastSpell(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_DoKnowSpell                                           */
-/* Lua    : object.DoKnowSpell(spell)                                        */
+/* Lua    : object:DoKnowSpell(spell)                                        */
 /* Info   : true if the spell is known by object, false if it isn't          */
 /* Status : Tested                                                           */
 /*****************************************************************************/
@@ -1202,7 +1202,7 @@ static int GameObject_DoKnowSpell(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_AcquireSpell                                          */
-/* Lua    : object.AcquireSpell(spell, mode)                                 */
+/* Lua    : object:AcquireSpell(spell, mode)                                 */
 /* Info   : object will learn or unlearn spell.                              */
 /*          mode: Daimonin.LEARN or Daimonin.UNLEARN                         */
 /* Status : Tested                                                           */
@@ -1225,7 +1225,7 @@ static int GameObject_AcquireSpell(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_FindSkill                                             */
-/* Lua    : object.FindSkill(skill)                                          */
+/* Lua    : object:FindSkill(skill)                                          */
 /* Info   : skill ptr if the skill is known by object, NULL is it isn't      */
 /* Status : Tested                                                           */
 /*****************************************************************************/
@@ -1251,7 +1251,7 @@ static int GameObject_FindSkill(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_AcquireSkill                                          */
-/* Lua    : object.AcquireSkill(skillno, mode)                               */
+/* Lua    : object:AcquireSkill(skillno, mode)                               */
 /* Info   : object will learn or unlearn skill.                              */
 /*          mode: Daimonin.LEARN or Daimonin.UNLEARN                         */
 /*          Get skill number with Daimonin.GetSkillNr()                      */
@@ -1274,7 +1274,7 @@ static int GameObject_AcquireSkill(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_FindMarkedObject                                      */
-/* Lua    : object.FindMarkedObject()                                        */
+/* Lua    : object:FindMarkedObject()                                        */
 /* Info   : Returns the marked object in object's inventory, or None if no   */
 /*          object is marked.                                                */
 /* Status : Stable                                                           */
@@ -1297,7 +1297,7 @@ static int GameObject_FindMarkedObject(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_CheckInvisibleInside                                  */
-/* Lua    : object.CheckInvisibleInside(id)                                  */
+/* Lua    : object:CheckInvisibleInside(id)                                  */
 /* Status : Untested                                                         */
 /*****************************************************************************/
 
@@ -1320,7 +1320,7 @@ static int GameObject_CheckInvisibleInside(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_CreatePlayerForce                                     */
-/* Lua    : object.CreatePlayerForce(force_name, time)                       */
+/* Lua    : object:CreatePlayerForce(force_name, time)                       */
 /* Info   : Creates and insters a player force named force_name in object.   */
 /*          The values of a player force will effect the player.             */
 /*          If time is given and > 0, the force will be removed again after  */
@@ -1370,7 +1370,7 @@ static int GameObject_CreatePlayerForce(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_CheckQuestObject                                      */
-/* Lua    : object.CheckQuestObject(archetype, name)                         */
+/* Lua    : object:CheckQuestObject(archetype, name)                         */
 /* Status : Stable                                                           */
 /* Info   : We get and check the player has a misc'ed quest object           */
 /*        : If so, the player has usally solved this quest before.           */
@@ -1408,7 +1408,7 @@ static int GameObject_CheckQuestObject(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_AddQuestObject                                        */
-/* Lua    : object.AddQuestObject(archetype, name)                           */
+/* Lua    : object:AddQuestObject(archetype, name)                           */
 /* Status : Stable                                                           */
 /* Info   : Add the misc'ed quest object to players quest container.         */
 /*        : create the quest container if needed                             */
@@ -1468,7 +1468,7 @@ static int GameObject_AddQuestObject(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_CreatePlayerInfo                                      */
-/* Lua    : object.CreatePlayerInfo(name)                                    */
+/* Lua    : object:CreatePlayerInfo(name)                                    */
 /* Status : Stable                                                           */
 /* Info   : Creates a player_info object of specified name in object's       */
 /*          inventory                                                        */
@@ -1507,7 +1507,7 @@ static int GameObject_CreatePlayerInfo(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_GetPlayerInfo                                         */
-/* Lua    : object.GetPlayerInfo(name)                                       */
+/* Lua    : object:GetPlayerInfo(name)                                       */
 /* Status : Stable                                                           */
 /* Info   : get first player_info with the specified name in who's inventory */
 /*****************************************************************************/
@@ -1532,7 +1532,7 @@ static int GameObject_GetPlayerInfo(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_GetNextPlayerInfo                                     */
-/* Lua    : object.GetNextPlayerInfo(player_info)                            */
+/* Lua    : object:GetNextPlayerInfo(player_info)                            */
 /* Status : Stable                                                           */
 /* Info   : get next player_info in who's inventory with same name as        */
 /*          player_info                                                      */
@@ -1563,7 +1563,7 @@ static int GameObject_GetNextPlayerInfo(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_CreateInvisibleInside                                 */
-/* Lua    : object.CreateInvisibleInside(id)                                 */
+/* Lua    : object:CreateInvisibleInside(id)                                 */
 /* Status : Untested                                                         */
 /*****************************************************************************/
 static int GameObject_CreateInvisibleInside(lua_State *L)
@@ -1603,7 +1603,7 @@ static int GameObject_CreateInvisibleInside(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_CreateObjectInside                                    */
-/* Lua    : object.CreateObjectInside(archname, identified, number, value)   */
+/* Lua    : object:CreateObjectInside(archname, identified, number, value)   */
 /* Info   : Creates an object from archname and inserts into object.         */
 /*          identified is either game.IDENTIFIED or game.UNIDENTIFIED        */
 /*          If value is >= 0 it will be used as the new object's value,      */
@@ -1695,7 +1695,7 @@ static object * object_check_inventory_rec(object *tmp, int mode, char *arch_nam
 
 /*****************************************************************************/
 /* Name   : GameObject_CheckInventory                                        */
-/* Lua    : object.CheckInventory(mode, arch, name, title, type)             */
+/* Lua    : object:CheckInventory(mode, arch, name, title, type)             */
 /* Info   : returns the first found object with the specified name if found  */
 /*          in object's inventory, or nil if it wasn't found.                */
 /*          title, arch or object == nil will be ignored for search          */
@@ -1736,7 +1736,7 @@ static int GameObject_CheckInventory(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_SetSaveBed                                            */
-/* Lua    : object.SetSaveBed(map, x, y)                                     */
+/* Lua    : object:SetSaveBed(map, x, y)                                     */
 /* Info   : Sets the current savebed position for object to the specified    */
 /*          coordinates on the map.                                          */
 /* Status : Stable                                                           */
@@ -1760,7 +1760,7 @@ static int GameObject_SetSaveBed(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_Remove                                                */
-/* Lua    : object.Remove()                                                  */
+/* Lua    : object:Remove()                                                  */
 /* Info   : Takes the object out of whatever map or inventory it is in. The  */
 /*          object can then be inserted or teleported somewhere else, or just*/
 /*          left alone for the garbage collection to take care of.           */
@@ -1809,7 +1809,7 @@ static int GameObject_Remove(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_Destruct                                              */
-/* Lua    : object.Destruct()                                                */
+/* Lua    : object:Destruct()                                                */
 /* Info   : Removes the object out of whatever map or inventory it is in and */
 /*          drops all items in object's inventory on the floor or in a       */
 /*          corpse                                                           */
@@ -1858,7 +1858,7 @@ static int GameObject_Destruct(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_SetPosition                                           */
-/* Lua    : object.SetPosition(x, y)                                         */
+/* Lua    : object:SetPosition(x, y)                                         */
 /* Info   : Cannot be used to move objects out of containers. (Use Drop() or */
 /*          TeleportTo() for that)                                           */
 /* Status : Tested                                                           */
@@ -1893,7 +1893,7 @@ static int GameObject_SetPosition(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_Move                                                  */
-/* Lua    : object.Move(direction)                                           */
+/* Lua    : object:Move(direction)                                           */
 /* Info   : Makes the object move in the desired direction (one of           */
 /*          game.NORTH, game.SOUTH, game.NORTHEAST etc.)                     */
 /*          Returns 0 if something blocked the move, 1 if moving succeeded,  */
@@ -1915,7 +1915,7 @@ static int GameObject_Move(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_IdentifyItem                                          */
-/* Lua    : object.IdentifyItem(target, marked, mode)                        */
+/* Lua    : object:IdentifyItem(target, marked, mode)                        */
 /* Info   : object identifies object(s) in target's inventory.               */
 /*          mode: game.IDENTIFY_NORMAL, game.IDENTIFY_ALL or                 */
 /*          game.IDENTIFY_MARKED                                             */
@@ -1957,7 +1957,7 @@ static int GameObject_IdentifyItem(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_IsOfType                                              */
-/* Lua    : object.IsOfType(type)                                            */
+/* Lua    : object:IsOfType(type)                                            */
 /* Info   : returns 1 if object is of the specified type, or 0 otherwise.    */
 /*          (e.g. game.TYPE_MONSTER for monster/NPC, or game.TYPE_PLAYER for */
 /*          players)                                                         */
@@ -1976,7 +1976,7 @@ static int GameObject_IsOfType(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_Save                                                  */
-/* Lua    : object.Save()                                                    */
+/* Lua    : object:Save()                                                    */
 /* Status : Untested                                                         */
 /*****************************************************************************/
 static int GameObject_Save(lua_State *L)
@@ -1998,7 +1998,7 @@ static int GameObject_Save(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_GetIP                                                 */
-/* Lua    : object.GetIP()                                                   */
+/* Lua    : object:GetIP()                                                   */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static int GameObject_GetIP(lua_State *L)
@@ -2027,7 +2027,7 @@ static int GameObject_GetIP(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_GetArchName                                           */
-/* Lua    : object.GetArchName()                                             */
+/* Lua    : object:GetArchName()                                             */
 /* Info   :                                                                  */
 /* Status : Tested                                                           */
 /*****************************************************************************/
@@ -2043,7 +2043,7 @@ static int GameObject_GetArchName(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_ShowCost                                              */
-/* Lua    : object.ShowCost(value)                                           */
+/* Lua    : object:ShowCost(value)                                           */
 /* Info   : Returns a string describing value as x gold, x silver, x copper  */
 /*        : cost string comes from shop.c and is temporary STATIC            */
 /*        : note: whoptr is not used - perhaps we use this in future with it */
@@ -2068,7 +2068,7 @@ static int GameObject_ShowCost(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_GetItemCost                                           */
-/* Lua    : object.GetItemCost(object,type)                                  */
+/* Lua    : object:GetItemCost(object,type)                                  */
 /* Info   : type is one of game.COST_TRUE, game.COST_BUY or game.COST_SELL   */
 /* Status : Untested                                                         */
 /*****************************************************************************/
@@ -2096,7 +2096,7 @@ static int GameObject_GetItemCost(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_GetMoney                                              */
-/* Lua    : object.GetMoney()                                                */
+/* Lua    : object:GetMoney()                                                */
 /* Info   : returns the amount of money the object carries in copper         */
 /* Status : Tested                                                           */
 /*****************************************************************************/
@@ -2120,7 +2120,7 @@ static int GameObject_GetMoney(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_PayForItem                                            */
-/* Lua    : object.PayForItem(object)                                        */
+/* Lua    : object:PayForItem(object)                                        */
 /* Status : Untested                                                         */
 /*****************************************************************************/
 
@@ -2144,7 +2144,7 @@ static int GameObject_PayForItem(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_PayAmount                                             */
-/* Lua    : object.PayAmount(value)                                          */
+/* Lua    : object:PayAmount(value)                                          */
 /* Info   : If object has enough money, value copper will be deducted from   */
 /*          object, and 1 will be returned. Otherwise returns 0              */
 /* Status : Tested                                                           */
@@ -2168,7 +2168,7 @@ static int GameObject_PayAmount(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_SendCustomCommand                                     */
-/* Lua    : object.SendCustomCommand(customcommand)                          */
+/* Lua    : object:SendCustomCommand(customcommand)                          */
 /* Status : Untested                                                         */
 /*****************************************************************************/
 static int GameObject_SendCustomCommand(lua_State *L)
@@ -2187,7 +2187,7 @@ static int GameObject_SendCustomCommand(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_Clone                                                 */
-/* Lua    : object.Clone(mode)                                               */
+/* Lua    : object:Clone(mode)                                               */
 /* Info   : mode = game.CLONE_WITH_INVENTORY (default) or                    */
 /*          game.CLONE_WITHOUT_INVENTORY                                     */
 /*          You should do something with the clone. TeleportTo() or          */
@@ -2225,7 +2225,7 @@ static int GameObject_Clone(lua_State *L)
 #if 0
 /*****************************************************************************/
 /* Name   : GameObject_GetUnmodifiedAttribute                           */
-/* Lua    : object.GetUnmodifiedAttribute(attribute_id)                      */
+/* Lua    : object:GetUnmodifiedAttribute(attribute_id)                      */
 /* Status : UNFINISHED <- fields not available...                            */
 /*****************************************************************************/
 static int GameObject_GetUnmodifiedAttribute(GameObject* whoptr, PyObject* args)

@@ -62,7 +62,7 @@ static const char              *Map_flags[]         =
 
 /*****************************************************************************/
 /* Name   : Map_GetFirstObjectOnSquare                                       */
-/* Lua    : map.GetFirstObjectOnSquare(x, y)                                 */
+/* Lua    : map:GetFirstObjectOnSquare(x, y)                                 */
 /* Info   : Gets the bottom object on the tile. Use obj.above to browse objs */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -86,7 +86,7 @@ static int Map_GetFirstObjectOnSquare(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : Map_IsWallOnSquare                                               */
-/* Lua    : map.IsWallOnSquare(x, y)                                         */
+/* Lua    : map:IsWallOnSquare(x, y)                                         */
 /* Info   : returns true if the square at x,y is a wall                      */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -103,7 +103,7 @@ static int Map_IsWallOnSquare(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : Map_MapTileAt                                                    */
-/* Lua    : map.MapTileAt(x, y)                                              */
+/* Lua    : map:MapTileAt(x, y)                                              */
 /* Status : untested                                                         */
 /* TODO   : do someting about the new modified coordinates too?              */
 /*****************************************************************************/
@@ -127,7 +127,7 @@ static int Map_MapTileAt(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : Map_Save                                                         */
-/* Lua    : map.Save(flag)                                                   */
+/* Lua    : map:Save(flag)                                                   */
 /* Status : Stable                                                           */
 /* Info   : Save the map. If flag is 1, unload map from memory               */
 /*****************************************************************************/
@@ -147,7 +147,7 @@ static int Map_Save(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : Map_Delete                                                       */
-/* Lua    : map.Delete(flags)                                                */
+/* Lua    : map:Delete(flags)                                                */
 /* Status : Stable                                                           */
 /* Info   : Remove the map from memory and map list. Release all objects.    */
 /*****************************************************************************/
@@ -167,7 +167,7 @@ static int Map_Delete(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : Map_PlaySound                                                    */
-/* Lua    : map.PlaySound(x, y, soundnumber, soundtype)                      */
+/* Lua    : map:PlaySound(x, y, soundnumber, soundtype)                      */
 /* Status : Tested                                                           */
 /* TODO   : supply constants for the sounds                                  */
 /*****************************************************************************/
@@ -190,7 +190,7 @@ static int Map_PlaySound(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : Map_Message                                                      */
-/* Lua    : map.Message(x, y, distance, messagem,color)                      */
+/* Lua    : map:Message(x, y, distance, messagem,color)                      */
 /* Info   : Writes a message to all players on a map                         */
 /*          Starting point x,y for all players in distance                   */
 /*          default color is game.COLOR_BLUE | game.COLOR_UNIQUE             */
@@ -219,7 +219,7 @@ static int Map_Message(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : Map_CreateObject                                                 */
-/* Lua    : map.CreateObject(arch_name, x, y)                                */
+/* Lua    : map:CreateObject(arch_name, x, y)                                */
 /* Info   :                                                                  */
 /* Status : Untested                                                         */
 /*****************************************************************************/
