@@ -34,7 +34,7 @@ RSC=rc.exe
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 1
-# PROP Output_Dir "Debug"
+# PROP Output_Dir "../../../"
 # PROP Intermediate_Dir "Debug"
 # PROP Ignore_Export_Lib 1
 # PROP Target_Dir ""
@@ -49,7 +49,7 @@ BSC32=bscmake.exe
 # ADD BSC32 /nologo
 LINK32=link.exe
 # ADD BASE LINK32 kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:IX86 /pdbtype:sept
-# ADD LINK32 fmodvc.lib OgreMain_d.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:IX86 /nodefaultlib:"LIBCMT" /out:"Debug/daimonin3d.exe" /pdbtype:sept /libpath:"..\ogre_lib" /libpath:"..\fmod_lib"
+# ADD LINK32 ws2_32.lib fmodvc.lib OgreMain_d.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /nologo /subsystem:windows /debug /machine:IX86 /nodefaultlib:"LIBCMT" /out:"Debug/daimonin3d.exe" /pdbtype:sept /libpath:"..\ogre_lib" /libpath:"..\fmod_lib"
 # SUBTRACT LINK32 /verbose
 # Begin Special Build Tool
 SOURCE="$(InputPath)"
@@ -63,7 +63,67 @@ PostBuild_Cmds=copy Debug\*.exe ..\..\..\*.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=..\..\..\source\adler32.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\client.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\crc32.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\dialog.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\inffast.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\inflate.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\inftrees.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\logfile.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\source\main.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\network.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\network_cmd.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\option.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\option_init.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\uncompr.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\xyz.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\zutil.c
 # End Source File
 # End Group
 # Begin Group "Header Files"
@@ -71,15 +131,71 @@ SOURCE=..\..\..\source\main.cpp
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=..\..\..\source\include\client.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\include\crc32.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\include\dialog.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\source\include\ExampleApplication.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\source\include\ExampleFrameListener.h
+SOURCE=..\..\..\source\include\frame_Listener.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\include\inffast.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\include\inflate.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\include\inftrees.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\include\logfile.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\include\network.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\include\option.h
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\..\source\include\ortho.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\include\player.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\include\xyz.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\include\zconf.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\include\zlib.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\include\zutil.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"
