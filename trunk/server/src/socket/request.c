@@ -509,11 +509,11 @@ static void version_mismatch_msg(NewSocket *ns)
 {
 	char buf[256];
     char *text1 = "3 This is Daimonin Server.";
-    char *text2 = "3 Your client version is outdated!";
-    char *text3 = "3 Go to http://daimonin.sourceforge.net";
-    char *text4 = "3 and download the latest Daimonin client!";
-    char *text5 = "3 Goodbye. (connection closed)";
-
+    char *text2 = "3 Go to http://daimonin.sourceforge.net";
+    char *text3 = "3 and download the latest Daimonin client!";
+    char *text4 = "3 Goodbye. (connection closed)";
+    char *text5 = "3 Your client version is outdated!";
+	
 	if(ns->cs_version==991013)
 	{
 		SockList sl;

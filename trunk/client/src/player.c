@@ -341,117 +341,210 @@ void show_player_data(int x, int y)
 /* player data like stats, hp etc */
 void show_player_stats(int x, int y)
 {
-        char buf[256];
-        double temp, multi, line;
-        SDL_Rect box;
-		int s, level_exp;
+   char buf[256];
+   double temp, multi, line;
+   SDL_Rect box;
+   int s, level_exp;
+   int mx, my;
 
-        sprite_blt(Bitmaps[BITMAP_STATS],x, y, NULL, NULL);
+   SDL_GetMouseState(&mx, &my);
 
-        StringBlt(ScreenSurface, &Font6x3Out,"Stats",x+8, y+1,COLOR_HGOLD, NULL, NULL);
-        sprintf(buf, "%02d", cpl.stats.Str);
-        StringBlt(ScreenSurface, &SystemFont,"Str",x+8, y+17,COLOR_WHITE, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,buf,x+30, y+17,COLOR_GREEN, NULL, NULL);
-        sprintf(buf, "%02d", cpl.stats.Dex);
-        StringBlt(ScreenSurface, &SystemFont,"Dex",x+8, y+28,COLOR_WHITE, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,buf,x+30, y+28,COLOR_GREEN, NULL, NULL);
-        sprintf(buf, "%02d", cpl.stats.Con);
-        StringBlt(ScreenSurface, &SystemFont,"Con",x+8, y+39,COLOR_WHITE, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,buf,x+30, y+39,COLOR_GREEN, NULL, NULL);
-        sprintf(buf, "%02d", cpl.stats.Int);
-        StringBlt(ScreenSurface, &SystemFont,"Int",x+8, y+50,COLOR_WHITE, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,buf,x+30, y+50,COLOR_GREEN, NULL, NULL);
-        sprintf(buf, "%02d", cpl.stats.Wis);
-        StringBlt(ScreenSurface, &SystemFont,"Wis",x+8, y+61,COLOR_WHITE, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,buf,x+30, y+61,COLOR_GREEN, NULL, NULL);
-        sprintf(buf, "%02d", cpl.stats.Pow);
-        StringBlt(ScreenSurface, &SystemFont,"Pow",x+8, y+72,COLOR_WHITE, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,buf,x+30, y+72,COLOR_GREEN, NULL, NULL);
-        sprintf(buf, "%02d", cpl.stats.Cha);
-        StringBlt(ScreenSurface, &SystemFont,"Cha",x+8, y+83,COLOR_WHITE, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,buf,x+30, y+83,COLOR_GREEN, NULL, NULL);
+   sprite_blt(Bitmaps[BITMAP_STATS],x, y, NULL, NULL);
 
-        StringBlt(ScreenSurface, &SystemFont,"HP",x+58, y+10,COLOR_WHITE, NULL, NULL);
-        sprintf(buf,"%d (%d)",cpl.stats.hp,cpl.stats.maxhp);
-        StringBlt(ScreenSurface, &SystemFont,buf,x+160-get_string_pixel_length(buf,&SystemFont), y+10,COLOR_GREEN, NULL, NULL);
-        if(cpl.stats.maxhp)
-        {
-            int tmp = cpl.stats.hp;
-            if(tmp <0)
-                tmp = 0;
-                temp = (double)tmp /(double)cpl.stats.maxhp;
-                box.x =0;
-                box.y = 0;
-                box.h = Bitmaps[BITMAP_HP]->bitmap->h;
-                box.w = (int) (Bitmaps[BITMAP_HP]->bitmap->w*temp);
-                if(tmp && !box.w)
-                        box.w =1;
-                if(box.w > Bitmaps[BITMAP_HP]->bitmap->w)
-                        box.w=Bitmaps[BITMAP_HP]->bitmap->w;
-                sprite_blt(Bitmaps[BITMAP_HP_BACK],x+57, y+23, NULL, NULL);
-                sprite_blt(Bitmaps[BITMAP_HP],x+57, y+23, &box, NULL);
+   StringBlt(ScreenSurface, &Font6x3Out,"Stats",x+8, y+1,COLOR_HGOLD, NULL, NULL);
+   sprintf(buf, "%02d", cpl.stats.Str);
+   StringBlt(ScreenSurface, &SystemFont,"Str",x+8, y+17,COLOR_WHITE, NULL, NULL);
+   StringBlt(ScreenSurface, &SystemFont,buf,x+30, y+17,COLOR_GREEN, NULL, NULL);
+   sprintf(buf, "%02d", cpl.stats.Dex);
+   StringBlt(ScreenSurface, &SystemFont,"Dex",x+8, y+28,COLOR_WHITE, NULL, NULL);
+   StringBlt(ScreenSurface, &SystemFont,buf,x+30, y+28,COLOR_GREEN, NULL, NULL);
+   sprintf(buf, "%02d", cpl.stats.Con);
+   StringBlt(ScreenSurface, &SystemFont,"Con",x+8, y+39,COLOR_WHITE, NULL, NULL);
+   StringBlt(ScreenSurface, &SystemFont,buf,x+30, y+39,COLOR_GREEN, NULL, NULL);
+   sprintf(buf, "%02d", cpl.stats.Int);
+   StringBlt(ScreenSurface, &SystemFont,"Int",x+8, y+50,COLOR_WHITE, NULL, NULL);
+   StringBlt(ScreenSurface, &SystemFont,buf,x+30, y+50,COLOR_GREEN, NULL, NULL);
+   sprintf(buf, "%02d", cpl.stats.Wis);
+   StringBlt(ScreenSurface, &SystemFont,"Wis",x+8, y+61,COLOR_WHITE, NULL, NULL);
+   StringBlt(ScreenSurface, &SystemFont,buf,x+30, y+61,COLOR_GREEN, NULL, NULL);
+   sprintf(buf, "%02d", cpl.stats.Pow);
+   StringBlt(ScreenSurface, &SystemFont,"Pow",x+8, y+72,COLOR_WHITE, NULL, NULL);
+   StringBlt(ScreenSurface, &SystemFont,buf,x+30, y+72,COLOR_GREEN, NULL, NULL);
+   sprintf(buf, "%02d", cpl.stats.Cha);
+   StringBlt(ScreenSurface, &SystemFont,"Cha",x+8, y+83,COLOR_WHITE, NULL, NULL);
+   StringBlt(ScreenSurface, &SystemFont,buf,x+30, y+83,COLOR_GREEN, NULL, NULL);
+
+   if (options.gfx_statusbars)
+   {
+	   int tmp = cpl.stats.hp;
+	   sprite_blt(Bitmaps[BITMAP_TESTTUBES],x+52, y, NULL, NULL);
+      if(cpl.stats.maxhp)
+      {
+         box.x =0;
+         box.w = Bitmaps[BITMAP_HP_BACK2]->bitmap->w;
+         if(tmp <0)
+            tmp = 0;
+         temp = (double)tmp /(double)cpl.stats.maxhp;
+         box.h = (int)(Bitmaps[BITMAP_HP_BACK2]->bitmap->h*temp);
+         box.y = Bitmaps[BITMAP_HP_BACK2]->bitmap->h - box.h;
+         sprite_blt(Bitmaps[BITMAP_HP_BACK2],x+56, y+24+box.y, &box, NULL);
+      }
+      if(cpl.stats.maxsp)
+      {
+		  int tmp = cpl.stats.sp;
+		  box.x =0;
+         box.w = Bitmaps[BITMAP_SP_BACK2]->bitmap->w;
+         if(tmp <0)
+            tmp = 0;
+         temp = (double)tmp /(double)cpl.stats.maxsp;
+         box.h = (int)(Bitmaps[BITMAP_SP_BACK2]->bitmap->h*temp);
+         box.y = Bitmaps[BITMAP_SP_BACK2]->bitmap->h - box.h;
+         sprite_blt(Bitmaps[BITMAP_SP_BACK2],x+80, y+24+box.y, &box, NULL);
+      }
+      if(cpl.stats.maxgrace)
+      {
+		  int tmp = cpl.stats.grace;
+		  box.x =0;
+         box.w = Bitmaps[BITMAP_SP_BACK2]->bitmap->w;
+         if(tmp <0)
+            tmp = 0;
+         temp = (double)tmp /(double)cpl.stats.maxgrace;
+         box.h = (int)(Bitmaps[BITMAP_GRACE_BACK2]->bitmap->h*temp);
+         box.y = Bitmaps[BITMAP_GRACE_BACK2]->bitmap->h - box.h;
+         sprite_blt(Bitmaps[BITMAP_GRACE_BACK2],x+104, y+24+box.y, &box, NULL);
+      }
+      if(cpl.stats.food)
+      {
+		  int tmp = cpl.stats.food;
+		  box.x =0;
+         box.w = Bitmaps[BITMAP_FOOD_BACK2]->bitmap->w;
+         if(tmp <0)
+            tmp = 0;
+         temp = (double)tmp /1000;
+         box.h = (int)(Bitmaps[BITMAP_FOOD_BACK2]->bitmap->h*temp);
+         box.y = Bitmaps[BITMAP_FOOD_BACK2]->bitmap->h - box.h;
+         sprite_blt(Bitmaps[BITMAP_FOOD_BACK2],x+128, y+24+box.y, &box, NULL);
+      }
+      /* draw tooltips */
+      if (my < 95 && mx > 277 && mx < 345)
+      {
+         box.h = 11;
+         box.y = 41;
+         if (mx < 295)
+         {
+            sprintf(buf,"HP: %d (%d)",cpl.stats.hp,cpl.stats.maxhp);
+            box.w = get_string_pixel_length(buf,&SystemFont)+5;
+            box.x = 260;
+            SDL_FillRect(ScreenSurface, &box, -1);
+            StringBlt(ScreenSurface, &SystemFont,buf,263, 40,COLOR_BLACK, NULL, NULL);
+         }
+         else if (mx >301 && mx < 320)
+         {
+            sprintf(buf,"Mana: %d (%d)",cpl.stats.sp,cpl.stats.maxsp);
+            box.w = get_string_pixel_length(buf,&SystemFont)+5;
+            box.x = 284;
+            SDL_FillRect(ScreenSurface, &box, -1);
+            StringBlt(ScreenSurface, &SystemFont,buf,287, 40,COLOR_BLACK, NULL, NULL);
+         }
+         else if (mx >326)
+         {
+            sprintf(buf,"Grace: %d (%d)",cpl.stats.grace,cpl.stats.maxgrace);
+            box.w = get_string_pixel_length(buf,&SystemFont)+5;
+            box.x = 308;
+            SDL_FillRect(ScreenSurface, &box, -1);
+            StringBlt(ScreenSurface, &SystemFont,buf,311, 40,COLOR_BLACK, NULL, NULL);
         }
+      }
+   }
+   else /* old style statusbars */
+   {
+	   StringBlt(ScreenSurface, &SystemFont,"HP",x+58, y+10,COLOR_WHITE, NULL, NULL);
+	   sprintf(buf,"%d (%d)",cpl.stats.hp,cpl.stats.maxhp);
+	   StringBlt(ScreenSurface, &SystemFont,buf,x+160-get_string_pixel_length(buf,&SystemFont), y+10,COLOR_GREEN, NULL, NULL);
+	   
+	   sprite_blt(Bitmaps[BITMAP_HP_BACK],x+57, y+23, NULL, NULL);
+	   
+	   if(cpl.stats.maxhp)
+	   {
+		   int tmp = cpl.stats.hp;
+		   if(tmp <0)
+			   tmp = 0;
+		   temp = (double)tmp /(double)cpl.stats.maxhp;
+		   box.x =0;
+		   box.y = 0;
+		   box.h = Bitmaps[BITMAP_HP]->bitmap->h;
+		   box.w = (int) (Bitmaps[BITMAP_HP]->bitmap->w*temp);
+		   if(tmp && !box.w)
+			   box.w =1;
+		   if(box.w > Bitmaps[BITMAP_HP]->bitmap->w)
+			   box.w=Bitmaps[BITMAP_HP]->bitmap->w;
+		   sprite_blt(Bitmaps[BITMAP_HP_BACK],x+57, y+23, NULL, NULL);
+		   sprite_blt(Bitmaps[BITMAP_HP],x+57, y+23, &box, NULL);
+	   }
+	   
+	   StringBlt(ScreenSurface, &SystemFont,"Mana",x+58, y+34,COLOR_WHITE, NULL, NULL);
+	   sprintf(buf,"%d (%d)",cpl.stats.sp ,cpl.stats.maxsp);
+	   StringBlt(ScreenSurface, &SystemFont,buf,x+160-get_string_pixel_length(buf,&SystemFont), y+34,COLOR_GREEN, NULL, NULL);
+	   if(cpl.stats.maxsp)
+	   {
+		   int tmp = cpl.stats.sp;
+		   if(tmp <0)
+			   tmp = 0;
+		   temp = (double)tmp /(double)cpl.stats.maxsp;
+		   box.x =0;
+		   box.y = 0;
+		   box.h = Bitmaps[BITMAP_SP]->bitmap->h;
+		   box.w = (int) (Bitmaps[BITMAP_SP]->bitmap->w*temp);
+		   if(tmp && !box.w)
+			   box.w =1;
+		   if(box.w > Bitmaps[BITMAP_SP]->bitmap->w)
+			   box.w=Bitmaps[BITMAP_SP]->bitmap->w;
+		   sprite_blt(Bitmaps[BITMAP_SP_BACK],x+57, y+47, NULL, NULL);
+		   sprite_blt(Bitmaps[BITMAP_SP],x+57, y+47, &box, NULL);
+	   }
+	   StringBlt(ScreenSurface, &SystemFont,"Grace",x+58, y+58,COLOR_WHITE, NULL, NULL);
+	   sprintf(buf,"%d (%d)",cpl.stats.grace ,cpl.stats.maxgrace);
+	   StringBlt(ScreenSurface, &SystemFont,buf,x+160-get_string_pixel_length(buf,&SystemFont), y+58,COLOR_GREEN, NULL, NULL);
+	   if(cpl.stats.maxgrace)
+	   {
+		   int tmp = cpl.stats.grace;
+		   if(tmp <0)
+			   tmp = 0;
+		   temp = (double)tmp /(double)cpl.stats.maxgrace;
+		   
+		   box.x =0;
+		   box.y = 0;
+		   box.h = Bitmaps[BITMAP_GRACE]->bitmap->h;
+		   box.w = (int) (Bitmaps[BITMAP_GRACE]->bitmap->w*temp);
+		   if(tmp && !box.w)
+			   box.w =1;
+		   if(box.w > Bitmaps[BITMAP_GRACE]->bitmap->w)
+			   box.w=Bitmaps[BITMAP_GRACE]->bitmap->w;
+		   sprite_blt(Bitmaps[BITMAP_GRACE_BACK],x+57, y+71, NULL, NULL);
+		   sprite_blt(Bitmaps[BITMAP_GRACE],x+57, y+71, &box, NULL);
+	   }
+	   
+	   StringBlt(ScreenSurface, &SystemFont,"Food",x+58, y+84,COLOR_WHITE, NULL, NULL);
+	   sprite_blt(Bitmaps[BITMAP_FOOD_BACK],x+87, y+88, NULL, NULL);
+	   if(cpl.stats.food)
+	   {
+		   int tmp = cpl.stats.food;
+		   if(tmp <0)
+			   tmp = 0;
+		   temp = (double)tmp /1000;
+		   box.x =0;
+		   box.y = 0;
+		   box.h = Bitmaps[BITMAP_FOOD]->bitmap->h;
+		   box.w = (int) (Bitmaps[BITMAP_FOOD]->bitmap->w*temp);
+		   if(tmp && !box.w)
+			   box.w =1;
+		   if(box.w > Bitmaps[BITMAP_FOOD]->bitmap->w)
+			   box.w=Bitmaps[BITMAP_FOOD]->bitmap->w;
+		   sprite_blt(Bitmaps[BITMAP_FOOD],x+87, y+88, &box, NULL);
+	   }
+   }
 
-        StringBlt(ScreenSurface, &SystemFont,"Mana",x+58, y+34,COLOR_WHITE, NULL, NULL);
-        sprintf(buf,"%d (%d)",cpl.stats.sp ,cpl.stats.maxsp);
-        StringBlt(ScreenSurface, &SystemFont,buf,x+160-get_string_pixel_length(buf,&SystemFont), y+34,COLOR_GREEN, NULL, NULL);
-        if(cpl.stats.maxsp)
-        {
-            int tmp = cpl.stats.sp;
-            if(tmp <0)
-                tmp = 0;
-            temp = (double)tmp /(double)cpl.stats.maxsp;
-            box.x =0;
-            box.y = 0;
-            box.h = Bitmaps[BITMAP_SP]->bitmap->h;
-            box.w = (int) (Bitmaps[BITMAP_SP]->bitmap->w*temp);
-            if(tmp && !box.w)
-                box.w =1;
-            if(box.w > Bitmaps[BITMAP_SP]->bitmap->w)
-                box.w=Bitmaps[BITMAP_SP]->bitmap->w;
-            sprite_blt(Bitmaps[BITMAP_SP_BACK],x+57, y+47, NULL, NULL);
-            sprite_blt(Bitmaps[BITMAP_SP],x+57, y+47, &box, NULL);
-        }
-        StringBlt(ScreenSurface, &SystemFont,"Grace",x+58, y+58,COLOR_WHITE, NULL, NULL);
-        sprintf(buf,"%d (%d)",cpl.stats.grace ,cpl.stats.maxgrace);
-        StringBlt(ScreenSurface, &SystemFont,buf,x+160-get_string_pixel_length(buf,&SystemFont), y+58,COLOR_GREEN, NULL, NULL);
-        if(cpl.stats.maxgrace)
-        {
-            int tmp = cpl.stats.grace;
-            if(tmp <0)
-                tmp = 0;
-            temp = (double)tmp /(double)cpl.stats.maxgrace;
-                
-            box.x =0;
-            box.y = 0;
-            box.h = Bitmaps[BITMAP_GRACE]->bitmap->h;
-            box.w = (int) (Bitmaps[BITMAP_GRACE]->bitmap->w*temp);
-            if(tmp && !box.w)
-                box.w =1;
-            if(box.w > Bitmaps[BITMAP_GRACE]->bitmap->w)
-                box.w=Bitmaps[BITMAP_GRACE]->bitmap->w;
-            sprite_blt(Bitmaps[BITMAP_GRACE_BACK],x+57, y+71, NULL, NULL);
-            sprite_blt(Bitmaps[BITMAP_GRACE],x+57, y+71, &box, NULL);
-        }
 
-        StringBlt(ScreenSurface, &SystemFont,"Food",x+58, y+84,COLOR_WHITE, NULL, NULL);
-        sprite_blt(Bitmaps[BITMAP_FOOD_BACK],x+87, y+88, NULL, NULL);
-        if(cpl.stats.food)
-        {
-            int tmp = cpl.stats.food;
-            if(tmp <0)
-                tmp = 0;
-            temp = (double)tmp /1000;
-                box.x =0;
-                box.y = 0;
-                box.h = Bitmaps[BITMAP_FOOD]->bitmap->h;
-                box.w = (int) (Bitmaps[BITMAP_FOOD]->bitmap->w*temp);
-                if(tmp && !box.w)
-                        box.w =1;
-                if(box.w > Bitmaps[BITMAP_FOOD]->bitmap->w)
-                        box.w=Bitmaps[BITMAP_FOOD]->bitmap->w;
-                sprite_blt(Bitmaps[BITMAP_FOOD],x+87, y+88, &box, NULL);
-        }
         StringBlt(ScreenSurface, &Font6x3Out,"Skill Groups",x+472, y+1, COLOR_HGOLD, NULL, NULL);
         StringBlt(ScreenSurface, &Font6x3Out,"name / level",x+472, y+13, COLOR_HGOLD, NULL, NULL);
         sprintf(buf, " %d", cpl.stats.skill_level[0]);

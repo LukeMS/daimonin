@@ -54,7 +54,7 @@ struct itimerval {
 
 int gettimeofday(struct timeval *time_Info, struct timezone *timezone_Info)
 {
-  // remarks: a DWORD is an unsigned long
+  /* remarks: a DWORD is an unsigned long */
   static DWORD time_t0, time_delta, mm_t0;
   static int t_initialized = 0;
   DWORD mm_t, delta_t;
@@ -69,11 +69,12 @@ int gettimeofday(struct timeval *time_Info, struct timezone *timezone_Info)
   /* Get the time, if they want it */
   if (time_Info != NULL) 
   {
-    // timeGetTime() returns the system time in milliseconds
+    /* timeGetTime() returns the system time in milliseconds */
     mm_t = timeGetTime();
   
-    // handle wrap around of system time (happens every 
-    // 2^32 milliseconds = 49.71 days)
+    /* handle wrap around of system time (happens every 
+     * 2^32 milliseconds = 49.71 days)
+	*/
     if( mm_t < mm_t0 )
       delta_t = (0xffffffff - mm_t0) + mm_t + 1; 
     else

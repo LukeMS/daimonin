@@ -28,6 +28,22 @@
 #define OPTWIN_MAX_OPT 26
 #define OPTWIN_MAX_KEYS 100
 
+typedef struct _option
+{
+	char *name;
+	char *info1;	/* info text row 1 */
+	char *info2;	/* info text row 2 */
+	char *val_text; /* text-replacement for number values */
+	int  sel_type;
+	int  minRange, maxRange, deltaRange;
+	int default_val;
+	void *value;
+	int value_type;
+}_option;
+extern _option opt[];
+
+extern enum {VAL_BOOL,  VAL_TEXT, VAL_CHAR, VAL_INT, VAL_U32} value_type;
+extern char *opt_tab[]; 
 extern int dialog_new_char_warn;
 
 extern void show_optwin(void);
@@ -36,3 +52,4 @@ extern void show_login_server(void);
 extern void show_meta_server(_server *node, int metaserver_start, int metaserver_sel);
 extern void accept_char();
 #endif
+

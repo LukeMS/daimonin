@@ -407,6 +407,33 @@ static int spell_sort(const char *a1,const char *a2)
 }
 #endif
 
+/* helper function to reorder the reverse loaded
+ * player inventory. This will recursive reorder
+ * the container inventories.
+ */
+static void reorder_inventory(object *op)
+{
+	object *tmp,*tmp2;
+
+	tmp2 = op->inv->below;
+	op->inv->above = NULL;
+	op->inv->below = NULL;
+
+	if(op->inv->inv)
+		reorder_inventory(op->inv);
+
+	for(;tmp2;)
+	{
+		tmp = tmp2;
+		tmp2 = tmp->below; /* save the following element */
+		tmp->above = NULL;
+		tmp->below = op->inv; /* resort it like in insert_ob_in_ob() */
+		tmp->below->above = tmp;
+		op->inv = tmp;
+		if(tmp->inv)
+			reorder_inventory(tmp);
+	}
+}
 
 /* this whole player loading routine is REALLY not optimized - 
  * just look for all these scanf()
@@ -423,7 +450,7 @@ void check_login(object *op) {
     int correct = 0;
     time_t    elapsed_save_time=0;
     struct stat	statbuf;
-	object *tmp;
+	object *tmp, *tmp2;
 #ifdef PLUGINS
     CFParm CFP;
     int evtid;
@@ -674,6 +701,34 @@ void check_login(object *op) {
     load_object(fp, op, mybuffer, LO_REPEAT,0);
 	delete_loader_buffer(mybuffer);
     close_and_delete(fp, comp);
+
+	/* at this moment, the inventory is reverse loaded.
+	 * Lets exchange it here.
+	 * Caution: We do it on the hard way here without
+	 * calling remove/insert again.
+	 */
+	if(op->inv)
+	{
+		tmp2 = op->inv->below;
+		op->inv->above = NULL;
+		op->inv->below = NULL;
+
+		if(op->inv->inv)
+			reorder_inventory(op->inv);
+		
+		for(;tmp2;)
+		{
+			tmp = tmp2;
+			tmp2 = tmp->below; /* save the following element */
+			tmp->above = NULL;
+			tmp->below = op->inv; /* resort it like in insert_ob_in_ob() */
+			tmp->below->above = tmp;
+			op->inv = tmp;
+			if(tmp->inv)
+				reorder_inventory(tmp);
+		}
+
+	}
 
     op->custom_attrset = pl;
     pl->ob = op;

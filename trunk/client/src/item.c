@@ -205,6 +205,28 @@ void free_all_items (item *op)
         }
 }
 
+int locate_item_nr_from_tag (item *op, int tag)
+{
+	int count=0;
+    for (; op!= NULL; count++,op=op->next)
+    {
+        if (op->tag == tag)
+            return count;
+    }
+    return -1;
+}
+
+int locate_item_tag_from_nr (item *op, int nr)
+{
+	int count=0;
+    for (; op!= NULL; op=op->next, count++)
+    {
+        if (count == nr)
+            return op->tag;
+    }
+    return -1;
+}
+
 /*
  *  Recursive function, only check inventory of op
  * *not* items inside other containers.
@@ -325,27 +347,43 @@ void remove_item_inventory (item *op)
 }
 
 /*
- *  add_item() adds item op to end of the inventory of item env
+ * We adding it now to the start inv.
+ *  OLD: add_item() adds item op to end of the inventory of item env
  */
-static void add_item (item *env, item *op) 
+static void add_item (item *env, item *op, int bflag) 
 {
     item *tmp;
     
 	if (!op)
 		return;
-    for (tmp = env->inv; tmp && tmp->next; tmp=tmp->next)
-	;
 
-    op->next = NULL;
-    op->prev = tmp;
-    op->env = env;
-    if (!tmp) {
-	env->inv = op;
-    } else {
-	if (tmp->next)
-	    tmp->next->prev = op;
-	tmp->next = op;
-    }
+	if(bflag == FALSE)
+	{
+		op->next = env->inv;
+		if(op->next)
+			op->next->prev = op;
+		op->prev = NULL;
+		env->inv = op;
+		op->env = env;
+	}
+	else /* sort reverse - for inventory lists */
+	{
+	    for (tmp = env->inv; tmp && tmp->next; tmp=tmp->next)
+		;
+		op->next = NULL;
+		op->prev = tmp;
+		op->env = env;
+
+		if (!tmp) 
+		{
+			env->inv = op;
+		} else 
+		{
+			if (tmp->next)
+				tmp->next->prev = op;
+			tmp->next = op;
+		}
+	}
 }
 
 /*
@@ -353,7 +391,7 @@ static void add_item (item *env, item *op)
  *  and sets its tag field and clears locked flag (all other fields
  *  are unitialized and may contain random values)
  */
-item *create_new_item (item *env, sint32 tag)
+item *create_new_item (item *env, sint32 tag, int bflag)
 {
     item *op;
 
@@ -367,7 +405,7 @@ item *create_new_item (item *env, sint32 tag)
 
     op->tag = tag;
     op->locked = 0;
-    if (env) add_item (env, op);
+    if (env) add_item (env, op,bflag);
     return op;
 }
 
@@ -579,7 +617,7 @@ item *player_item ()
 /* Upates an item with new attributes. */
 void update_item(int tag, int loc, char *name, int weight, int face, int flags,
 		 int anim, int animspeed, int nrof, uint8 itype, uint8 stype,
-         uint8 qual,uint8 cond,uint8 skill,uint8 level,uint8 direction)
+         uint8 qual,uint8 cond,uint8 skill,uint8 level,uint8 direction, int bflag)
 {
     item *ip,*env;
 
@@ -609,7 +647,7 @@ void update_item(int tag, int loc, char *name, int weight, int face, int flags,
 	    remove_item(ip);
 	    ip=NULL;
 	}
-        set_item_values(ip?ip:create_new_item(env,tag), name, weight,(uint16) face, flags,
+        set_item_values(ip?ip:create_new_item(env,tag, bflag), name, weight,(uint16) face, flags,
 			(uint16)anim,(uint16) animspeed,nrof, itype, stype,qual,cond,skill,level, direction);
     }
 }

@@ -81,6 +81,11 @@ _key_macro defkey_macro[] =
 };
 #define DEFAULT_KEYMAP_MACROS (sizeof(defkey_macro)/sizeof(struct _key_macro))
 
+/* Magic console macro: when this is found at the beginning of a user defined macro, then
+ * what follows this macro will be put in the input console ready to be edited
+ */
+char macro_magic_console[]="?M_MCON";
+
 int KeyScanFlag; /* for debug/alpha , remove later */
 int cursor_type = 0;
 #define KEY_REPEAT_TIME 35
@@ -282,12 +287,22 @@ int Event_PollInputDevice(void)
 								process_macro_keys(KEYFUNC_APPLY, 0); /* drop to player-doll */
 					}
 
+					  /* range field */
+					  if (draggingInvItem(DRAG_GET_STATUS) == DRAG_IWIN_INV && x < 90 && y > 400 && y <440)
+            		  {
+                        RangeFireMode = 4; 
+					    process_macro_keys(KEYFUNC_FIREREADY, 0); /* drop to player-doll */
+
+					   }
+
+
 					if (draggingInvItem(DRAG_GET_STATUS) == DRAG_IWIN_INV && x < 223 && y < 300){
 						if ((locate_item(cpl.win_inv_tag))->applied)
 							draw_info("This is applied already!", COLOR_WHITE);
 						else
 							process_macro_keys(KEYFUNC_APPLY, 0); /* drop to player-doll */
-					}
+
+                    }
 
 					/* drop to quickslots */
 					if (x >= SKIN_POS_QUICKSLOT_X && x < SKIN_POS_QUICKSLOT_X+282 &&
@@ -296,10 +311,22 @@ int Event_PollInputDevice(void)
 						int ind = get_quickslot(x,y);
 						if(ind != -1) /* valid slot */
 						{
+    					   if (draggingInvItem(DRAG_GET_STATUS)==DRAG_QUICKSLOT_SPELL)
+    					   {
+    					     quick_slots[ind].spell = TRUE;
+    					     quick_slots[ind].groupNr = quick_slots[cpl.win_quick_tag].groupNr;
+    					     quick_slots[ind].classNr = quick_slots[cpl.win_quick_tag].classNr;
+      					     quick_slots[ind].tag = quick_slots[cpl.win_quick_tag].spellNr;                      	
+                			 cpl.win_quick_tag =-1;    
+  					        }
+  					        else
+  					        {
 							if (draggingInvItem(DRAG_GET_STATUS) ==DRAG_IWIN_INV
 							|| draggingInvItem(DRAG_GET_STATUS) ==DRAG_PDOLL)
 								cpl.win_quick_tag = cpl.win_inv_tag;
-							quick_slots[ind]=cpl.win_quick_tag;
+							quick_slots[ind].tag =cpl.win_quick_tag;
+							quick_slots[ind].invSlot = ind;
+							quick_slots[ind].spell = FALSE;
 							/* now we do some tests... first, ensure this item can fit */
 							update_quickslots(-1);
 							/* now: if this is null, item is *not* in the main inventory
@@ -312,13 +339,22 @@ int Event_PollInputDevice(void)
 								draw_info("Only items from main inventory allowed in quickbar!", COLOR_WHITE);
 							}
 							else
+							{
+    							char buf[256];
 								sound_play_effect(SOUND_GET,0,0,100); /* no bug - we 'get' it in quickslots */
+                                sprintf(buf,"set F%d to %s", ind+1, locate_item (cpl.win_quick_tag)->s_name);
+                                draw_info(buf,COLOR_DGOLD);
+							}
+						}	
 						}
 					}
 					
 					/* drop to ground */
 					if (mouseInPlayfield(x, y) || (y > 565 && x >265 && x < 529))
+					{
+					   if (draggingInvItem(DRAG_GET_STATUS)!=DRAG_QUICKSLOT_SPELL)
 						process_macro_keys(KEYFUNC_DROP, 0);
+					}
 
 					cpl.inventory_win = old_inv_win;
 					cpl.win_inv_tag = old_inv_tag;
@@ -392,6 +428,13 @@ draw_info(tz, COLOR_BLUE);
 					break;
 				}
 
+				/* toggle range */
+				if(x > 3 && x < 37 && y > 403 && y< 437)
+				{
+      				process_macro_keys(KEYFUNC_RANGE, 0);
+      				break;
+      			}
+             
 				/* schow-menu buttons*/
 				if(x >=748 && x<=790)
 				{
@@ -425,6 +468,12 @@ draw_info(tz, COLOR_BLUE);
 					break;
 				}
 
+				/* Prayer button */
+				if (x > 85 && x< 115 && y < 435 && y > 410){
+				   if(!client_command_check("/pray")) 
+                      send_command("/pray", -1, SC_NORMAL);
+                   break;
+                }
 
 				/********************************************************
 				 beyond here only when no menu is active.
@@ -471,24 +520,34 @@ draw_info(tz, COLOR_BLUE);
 						break;
 					}
 
-					/* quickslots */
+		
+					/* drag from quickslots */
 					else if (x >= SKIN_POS_QUICKSLOT_X && x < SKIN_POS_QUICKSLOT_X+282 &&
 						y >= SKIN_POS_QUICKSLOT_Y && y<SKIN_POS_QUICKSLOT_Y+42)
 					{
 						int ind = get_quickslot(x,y);
-						if(ind != -1 && quick_slots[ind]!=-1) /* valid slot */
+						if(ind != -1 && quick_slots[ind].tag !=-1) /* valid slot */
 						{
-							cpl.win_quick_tag= quick_slots[ind];
+							cpl.win_quick_tag= quick_slots[ind].tag;
 							if ((SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)))
 							{
-								quick_slots[ind]=-1;
-								draggingInvItem(DRAG_QUICKSLOT);
+								if (quick_slots[ind].spell==TRUE)
+								{
+								    draggingInvItem(DRAG_QUICKSLOT_SPELL);
+								    quick_slots[ind].spellNr = quick_slots[ind].tag;
+								    cpl.win_quick_tag = ind;
+				                }
+								else
+								{
+								  draggingInvItem(DRAG_QUICKSLOT);
+						        }
+								quick_slots[ind].tag =-1;
 							}
 							else
 							{
 								int stemp = cpl.inventory_win, itemp = cpl.win_inv_tag;
 								cpl.inventory_win = IWIN_INV;
-								cpl.win_inv_tag= quick_slots[ind];
+								cpl.win_inv_tag= quick_slots[ind].tag;
 								process_macro_keys(KEYFUNC_APPLY, 0);
 								cpl.inventory_win = stemp;
 								cpl.win_inv_tag= itemp;
@@ -672,6 +731,7 @@ int key_meta_menu(SDL_KeyboardEvent *key )
 static void key_string_event(SDL_KeyboardEvent *key )
 {
 	register char c;
+	register int i;
 
 	if( key->type == SDL_KEYDOWN )
 	{
@@ -689,13 +749,104 @@ static void key_string_event(SDL_KeyboardEvent *key )
 				{
 					SDL_EnableKeyRepeat(0 , SDL_DEFAULT_REPEAT_INTERVAL);
 					InputStringFlag=FALSE;
-					InputStringEndFlag = TRUE;/* mark that we got some here*/
+					InputStringEndFlag = TRUE; /* mark that we've got something here */
+
+					/* record this line in input history only if we are in console mode */
+					if(cpl.input_mode==INPUT_MODE_CONSOLE) textwin_addhistory(InputString);
 				}
 			break;
 
-			case SDLK_BACKSPACE:
-				if(InputCount)
-					InputString[--InputCount]=0;
+			case SDLK_BACKSPACE: /* erases the previous character or word if CTRL is pressed */
+				if(InputCount && CurrentCursorPos)
+				{
+					register int ii;
+
+					ii = CurrentCursorPos;  /* actual position of the cursor */
+					i = ii - 1;				/* where we will end up, by default one character back */
+					if (key->keysym.mod & KMOD_CTRL)
+					{
+						while(InputString[i] == ' ' && i >= 0) i--; /* jumps eventual whitespaces */
+						while(InputString[i] != ' ' && i >= 0) i--; /* jumps a word */
+						i++; /* we end up at the beginning of the current word */
+					}
+					/* this loop copies even the terminating \0 of the buffer */
+					while(ii <= InputCount) InputString[i++] = InputString[ii++];
+					CurrentCursorPos -= (ii-i) ;
+					InputCount -= (ii-i);
+				}
+			break;
+
+			case SDLK_LEFT:   /* shifts a character or a word if CTRL is pressed */
+				if (key->keysym.mod & KMOD_CTRL)
+				{
+					i = CurrentCursorPos-1;
+					while(InputString[i] == ' ' && i >= 0) i--; /* jumps eventual whitespaces*/
+					while(InputString[i] != ' ' && i >= 0) i--; /* jumps a word */
+					CurrentCursorPos = i+1; /* places the cursor on the first letter of this word */
+					break;
+				}
+				else if (CurrentCursorPos > 0) CurrentCursorPos--;
+				break;
+
+			case SDLK_RIGHT:  /* shifts a character or a word if CTRL is pressed */
+				if (key->keysym.mod & KMOD_CTRL)
+				{
+					i = CurrentCursorPos;
+					while(InputString[i] == ' ' && i < InputCount) i++; /* jumps eventual whitespaces*/
+					while(InputString[i] != ' ' && i < InputCount) i++; /* jumps a word */
+					CurrentCursorPos = i; /* places the cursor right after the jumped word */
+					break;
+				}
+				else if (CurrentCursorPos < InputCount) CurrentCursorPos++;
+				break;
+
+			case SDLK_UP: /* If we are in CONSOLE mode, let player scroll back the lines in history */
+				if(cpl.input_mode==INPUT_MODE_CONSOLE && HistoryPos < MAX_HISTORY_LINES && InputHistory[HistoryPos+1][0])
+				{
+					/* First history line is special, it records what we were writing before
+					 * scrolling back the history; so, by returning back to zero, we can continue
+					 * our editing where we left it
+					 */
+					if(HistoryPos==0) strncpy(InputHistory[0],InputString,InputCount);
+					HistoryPos++;
+					textwin_putstring(InputHistory[HistoryPos]);
+				}
+				break;
+
+			case SDLK_DOWN: /* If we are in CONSOLE mode, let player scroll forward the lines in history */
+				if(cpl.input_mode==INPUT_MODE_CONSOLE && HistoryPos > 0)
+				{
+					HistoryPos--;
+					textwin_putstring(InputHistory[HistoryPos]);
+				}
+				break;
+
+			case SDLK_DELETE:
+				{
+					register int ii;
+
+					ii = CurrentCursorPos;  /* actual position of the cursor */
+					i = ii + 1;				/* where we will end up, by default one character ahead */
+					if (ii == InputCount)
+						break;
+					if (key->keysym.mod & KMOD_CTRL)
+					{
+						while(InputString[i] == ' ' && i < InputCount) i++; /* jumps eventual whitespaces */
+						while(InputString[i] != ' ' && i < InputCount) i++; /* jumps a word */
+					}
+					/* this loop copies even the terminating \0 of the buffer */
+					while(i <= InputCount) InputString[ii++] = InputString[i++];
+
+					InputCount -= (i-ii);
+				}
+				break;
+
+			case SDLK_HOME:
+				CurrentCursorPos = 0;
+				break;
+
+			case SDLK_END:
+				CurrentCursorPos = InputCount;
 				break;
 
 			default:
@@ -766,7 +917,8 @@ static void key_string_event(SDL_KeyboardEvent *key )
 						}
 						if(c)
 						{
-							InputString[InputCount++]=c;
+							InputString[CurrentCursorPos++]=c;
+							InputCount++;
 							InputString[InputCount]=0;
 						}
 					}
@@ -778,9 +930,17 @@ static void key_string_event(SDL_KeyboardEvent *key )
 						if(c>=32)
 						{
 							if(key->keysym.mod & KMOD_SHIFT)
-								c = toupper( c);
+								c = toupper(c);
 	
-							InputString[InputCount++]=c;
+							i = InputCount;
+							while(i >= CurrentCursorPos)
+							{
+								InputString[i+1] = InputString[i];
+								i--;
+							}
+							InputString[CurrentCursorPos]=c;
+							CurrentCursorPos++;
+							InputCount++;
 							InputString[InputCount]=0;
 						}
 					}
@@ -938,6 +1098,7 @@ int key_event(SDL_KeyboardEvent *key )
 								}
 								else if(esc_menu_index == ESC_MENU_LOGOUT)
 								{
+                                   save_quickslots_entrys();
 									SOCKET_CloseSocket(csocket.fd);
 									GameStatus = GAME_STATUS_INIT;
 								}
@@ -1093,7 +1254,15 @@ static void check_keys(int key)
 static Boolean check_macro_keys(char *text)
 {
 	register int i;
+	int magic_len;
 
+	magic_len=strlen(macro_magic_console);
+	if(!strncmp(macro_magic_console,text,magic_len) && (int)strlen(text)>magic_len)
+	{
+		process_macro_keys(KEYFUNC_CONSOLE,0);
+		textwin_putstring(&text[magic_len]);
+		return(FALSE);
+	}
 	for(i=0;i<DEFAULT_KEYMAP_MACROS;i++)
 	{
 		if(!strcmp(defkey_macro[i].macro, text) )
@@ -1356,8 +1525,16 @@ Boolean process_macro_keys(int id, int value)
                 return FALSE;
            if(nrof == 1)
 				nrof = 0;
+				
             else
             {
+
+            if( options.collectAll==1)
+              {
+               nrof = cpl.nrof;
+               goto collectAll;
+              }
+
 								
                 reset_keys();
                 cpl.input_mode = INPUT_MODE_NUMBER;
@@ -1366,13 +1543,14 @@ Boolean process_macro_keys(int id, int value)
                 cpl.tag =tag;
 		cpl.nrof = nrof;
 		cpl.nummode = NUM_MODE_GET;
-		sprintf(InputString,"%d",nrof);
-                InputCount =strlen(InputString);
+		sprintf(buf,"%d",nrof);
+		textwin_putstring(buf);
 		strncpy(cpl.num_text,it->s_name,250);
 		cpl.num_text[250]=0;
                 return FALSE;
 
             }
+collectAll:
 			sound_play_effect(SOUND_GET,0,0,100);
             sprintf(buf,"get %s", it->s_name);
 			draw_info(buf,COLOR_DGOLD);
@@ -1484,8 +1662,8 @@ Boolean process_macro_keys(int id, int value)
 				cpl.tag =tag;
 				cpl.nrof = nrof;
 				cpl.nummode = NUM_MODE_DROP;
-				sprintf(InputString,"%d",nrof);
-				InputCount =strlen(InputString); 
+				sprintf(buf,"%d",nrof);
+				textwin_putstring(buf);
 				strncpy(cpl.num_text,it->s_name,250);
 				cpl.num_text[250]=0;
 				return FALSE;
@@ -1581,36 +1759,84 @@ static void cursor_keys(int num)
 		break;
 	}
 }
-static void quickslot_key(SDL_KeyboardEvent *key,int slot)
+
+/******************************************************************
+ Handle quickslot key event.
+******************************************************************/
+static void quickslot_key(SDL_KeyboardEvent *key, int slot)
 {
-	int tag;
-	char buf[256];
+   int tag;
+   char buf[256];
 
-	/* set or apply */
-	if(key->keysym.mod & (KMOD_SHIFT|KMOD_CTRL|KMOD_ALT))
-	{
-		if(cpl.inventory_win == IWIN_BELOW)
-			return;
-		tag = cpl.win_inv_tag;
+   /* put spell into quickslot */
+   if(!key && cpl.menustatus == MENU_SPELL) 
+   {
+      if (spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][spell_list_set.entry_nr].flag==LIST_ENTRY_KNOWN)
+      {
+		  if(quick_slots[slot].spell == TRUE && quick_slots[slot].tag == spell_list_set.entry_nr)
+		  {
+			  quick_slots[slot].spell = FALSE;
+			  quick_slots[slot].tag = -1;
+			  sprintf(buf,"unset F%d.", slot+1);
+			  draw_info(buf,COLOR_DGOLD);
+		  }
+		  else
+		  {
+			  quick_slots[slot].spell = TRUE;
+			  quick_slots[slot].groupNr = spell_list_set.group_nr;
+			  quick_slots[slot].classNr = spell_list_set.class_nr;
+			  quick_slots[slot].tag = spell_list_set.entry_nr;
+			  sprintf(buf,"set F%d to %s", slot+1, spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][spell_list_set.entry_nr].name);
+			  draw_info(buf,COLOR_DGOLD);
+		  }
+      }
+   }
+   /* put item into quickslot */
+   else if(key && key->keysym.mod & (KMOD_SHIFT|KMOD_ALT))
+   {
+      if(cpl.inventory_win == IWIN_BELOW)
+         return;
+      tag = cpl.win_inv_tag;
 
-		if(tag == -1 || !locate_item(tag))
-			return;
-		quick_slots[slot]=tag;
-		sprintf(buf,"set F%d to %s", slot+1,locate_item (tag)->s_name);
-		draw_info(buf,COLOR_DGOLD);
-	}
-	else
-	{
-		if(quick_slots[slot]!=-1 && locate_item(quick_slots[slot]))
-		{
-			sprintf(buf,"F%d quick apply %s", slot+1,locate_item (quick_slots[slot])->s_name);
-			draw_info(buf,COLOR_DGOLD);
-			client_send_apply (quick_slots[slot]);
-			return;
-		}
-		sprintf(buf,"F%d quick slot is empty", slot+1);
-		draw_info(buf,COLOR_DGOLD);
-	}
+      if(tag == -1 || !locate_item(tag))
+         return;
+      quick_slots[slot].spell = FALSE;
+	  if(quick_slots[slot].tag == tag)
+		  quick_slots[slot].tag=-1;
+	  else
+	  {
+		  quick_slots[slot].tag=tag;
+		  quick_slots[slot].invSlot= cpl.win_inv_slot;
+		  sprintf(buf,"set F%d to %s", slot+1,locate_item (tag)->s_name);
+		  draw_info(buf,COLOR_DGOLD);
+	  }
+   }
+   /* apply item or ready spell */
+   else if(key)
+   {
+      if(quick_slots[slot].tag!=-1)
+      {
+          if (quick_slots[slot].spell == TRUE)
+          {
+             fire_mode_tab[FIRE_MODE_SPELL].spell = 
+               &spell_list[quick_slots[slot].groupNr].entry[quick_slots[slot].classNr][quick_slots[slot].tag];
+             RangeFireMode = 1;
+             spell_list_set.group_nr = quick_slots[slot].groupNr;
+             spell_list_set.class_nr = quick_slots[slot].classNr;
+             spell_list_set.entry_nr = quick_slots[slot].tag;
+             return;
+          }
+          if (locate_item(quick_slots[slot].tag))
+          {
+             sprintf(buf,"F%d quick apply %s", slot+1,locate_item (quick_slots[slot].tag)->s_name);
+             draw_info(buf,COLOR_DGOLD);
+             client_send_apply (quick_slots[slot].tag);
+             return;
+          }
+      }
+      sprintf(buf,"F%d quick slot is empty", slot+1);
+      draw_info(buf,COLOR_DGOLD);
+   }
 }
 
 static void move_keys(int num)
@@ -1851,247 +2077,299 @@ void save_keybind_file(char *fname)
 ******************************************************************/
 void check_menu_keys(int menu, int key)
 {
-	int shiftPressed = SDL_GetModState() & KMOD_SHIFT;
+   int shiftPressed = SDL_GetModState() & KMOD_SHIFT;
 
-	if (cpl.menustatus == MENU_NO)
- 		return;
-	if(key == SDLK_ESCAPE){ /* close menue */
-        if(cpl.menustatus == MENU_KEYBIND)
-            save_keybind_file(KEYBIND_FILE);
+   if (cpl.menustatus == MENU_NO)
+      return;
 
-		if (cpl.menustatus == MENU_CREATE){
-			SOCKET_CloseSocket(csocket.fd);
-			GameStatus = GAME_STATUS_INIT;		
-		}
-		cpl.menustatus = MENU_NO;
-		map_udate_flag=2;
-		reset_keys();
-		return;
-	}
+   /* close menue */
+   if(key == SDLK_ESCAPE)
+   { 
+      if(cpl.menustatus == MENU_KEYBIND)
+      save_keybind_file(KEYBIND_FILE);
 
-	if(check_keys_menu_status(key))
-		return;
+      if (cpl.menustatus == MENU_CREATE)
+      {
+         SOCKET_CloseSocket(csocket.fd);
+         GameStatus = GAME_STATUS_INIT;		
+      }
+      cpl.menustatus = MENU_NO;
+      map_udate_flag=2;
+      reset_keys();
+      return;
+   }
 
-	switch(menu)
-	{
-		case MENU_OPTION:
-			switch(key){
-				case SDLK_LEFT:
-					option_list_set.key_change =-1;
-		      /*sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);*/
- 					menuRepeatKey = SDLK_LEFT;
-					break;
-				case SDLK_RIGHT:
-					option_list_set.key_change = 1;
-		      /*sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);*/
- 					menuRepeatKey = SDLK_RIGHT;
-					break;
-				case SDLK_UP:
-					if (!shiftPressed){
-		 				if (option_list_set.entry_nr>0){
-							option_list_set.entry_nr--;
-						}else
-							sound_play_effect(SOUND_CLICKFAIL,0,0,MENU_SOUND_VOL);
- 					}else{
-		    		if (option_list_set.group_nr>0)
-							option_list_set.group_nr--;
-					}
-					menuRepeatKey = SDLK_UP;
-					break;
-				case SDLK_DOWN:
-					if (!shiftPressed){
-							option_list_set.entry_nr++;
-					}else{
-						if (option_list_set.group_nr < OPTION_LIST_MAX-1)
-						option_list_set.group_nr++;
-					}
- 					menuRepeatKey = SDLK_DOWN;
-					break;
-				case SDLK_d:
-/*					draw_info("wanna save the options",2);
-	        save_option_file(_FILE);
-*/
-	        sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);
-	        map_udate_flag=2;
-			if(cpl.menustatus == MENU_KEYBIND)
-				save_keybind_file(KEYBIND_FILE);
-			cpl.menustatus = MENU_NO;
-	        reset_keys();
-	        break;
-				}
-			break;
+   if(check_keys_menu_status(key))
+      return;
 
-		case MENU_SKILL:
-			switch(key){
-				case SDLK_RETURN:
-					if(skill_list[skill_list_set.group_nr].entry[skill_list_set.entry_nr].flag==LIST_ENTRY_KNOWN)
-					{
-							fire_mode_tab[FIRE_MODE_SKILL].skill =
-								&skill_list[skill_list_set.group_nr].entry[skill_list_set.entry_nr];
-							RangeFireMode = FIRE_MODE_SKILL;
-							sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);
-					}else
-						sound_play_effect(SOUND_CLICKFAIL,0,0,MENU_SOUND_VOL);
-					map_udate_flag=2;
-					cpl.menustatus = MENU_NO;
-					reset_keys();
-					break;
-				case SDLK_UP:
-					if (!shiftPressed){
-		 				if (skill_list_set.entry_nr>0)
-							skill_list_set.entry_nr--;
-					}else{
-			    	if (skill_list_set.group_nr>0)
-							skill_list_set.group_nr--;
-					}
-					menuRepeatKey = SDLK_UP;
-					break;
-				case SDLK_DOWN:
-					if (!shiftPressed){
-		   			if (skill_list_set.entry_nr < DIALOG_LIST_ENTRY-1)
-							skill_list_set.entry_nr++;
-					}else{
-						if (skill_list_set.group_nr < SKILL_LIST_MAX-1)
-							skill_list_set.group_nr++;
-					}
-					menuRepeatKey = SDLK_DOWN;
-					break;
-			}
-			break;
+   switch(menu)
+   {
+      case MENU_OPTION:
+         switch(key){
+            case SDLK_LEFT:
+               option_list_set.key_change =-1;
+               /*sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);*/
+               menuRepeatKey = SDLK_LEFT;
+               break;
+            case SDLK_RIGHT:
+               option_list_set.key_change = 1;
+               /*sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);*/
+               menuRepeatKey = SDLK_RIGHT;
+               break;
+            case SDLK_UP:
+               if (!shiftPressed){
+                  if (option_list_set.entry_nr>0)
+                     option_list_set.entry_nr--;
+                  else
+                     sound_play_effect(SOUND_CLICKFAIL,0,0,MENU_SOUND_VOL);
+               }else{
+                  if (option_list_set.group_nr>0)
+                  {
+                      option_list_set.group_nr--;
+                      option_list_set.entry_nr =0;
+                  }		
+               }
+               menuRepeatKey = SDLK_UP;
+               break;
+            case SDLK_DOWN:
+               if (!shiftPressed){
+                   option_list_set.entry_nr++;
+                }else{
+                    if (opt_tab[option_list_set.group_nr+1])
+                    {
+                       option_list_set.group_nr++;
+                       option_list_set.entry_nr =0;						
+                    }
+                }
+                menuRepeatKey = SDLK_DOWN;
+                break;
+            case SDLK_d:
+                sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);
+                map_udate_flag=2;
+                if(cpl.menustatus == MENU_KEYBIND)
+                   save_keybind_file(KEYBIND_FILE);
+                 if(cpl.menustatus == MENU_OPTION)
+                   save_options_dat();				
+                 cpl.menustatus = MENU_NO;
+               reset_keys();
+               break; 
+           }
+           break;
 
-		case MENU_SPELL:
-			switch(key){
-				case SDLK_RETURN:
-					if(spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][spell_list_set.entry_nr].flag==LIST_ENTRY_KNOWN){
-						fire_mode_tab[FIRE_MODE_SPELL].spell =
-							&spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][spell_list_set.entry_nr];
-						RangeFireMode = FIRE_MODE_SPELL;
-						sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);
-					}
-     			else
-        		sound_play_effect(SOUND_CLICKFAIL,0,0,MENU_SOUND_VOL);
-  		    map_udate_flag=2;
-					cpl.menustatus = MENU_NO;
-					reset_keys();
-					break;
-				case SDLK_LEFT:
-					if (spell_list_set.class_nr > 0)
-						spell_list_set.class_nr--;
-		      sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);
-					break;
-				case SDLK_RIGHT:
-					if (spell_list_set.class_nr < SPELL_LIST_CLASS-1)
-						spell_list_set.class_nr++;
-			      sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);
-					break;
-				case SDLK_UP:
-					if (!shiftPressed){
-		 				if (spell_list_set.entry_nr>0)
-							spell_list_set.entry_nr--;
-					}else{
-			    	if (spell_list_set.group_nr>0)
-							spell_list_set.group_nr--;
-					}
-					menuRepeatKey = SDLK_UP;
-					break;
-				case SDLK_DOWN:
-					if (!shiftPressed){
-		   			if (spell_list_set.entry_nr < DIALOG_LIST_ENTRY-1)
-							spell_list_set.entry_nr++;
-					}else{
-						if (spell_list_set.group_nr < SPELL_LIST_MAX-1)
-						spell_list_set.group_nr++;
-					}
- 					menuRepeatKey = SDLK_DOWN;
-					break;
-			}
-			break;
+      case MENU_SKILL:
+         switch(key){
+            case SDLK_RETURN:
+               if(skill_list[skill_list_set.group_nr].entry[skill_list_set.entry_nr].flag==LIST_ENTRY_KNOWN)
+               {
+                  fire_mode_tab[FIRE_MODE_SKILL].skill =
+                    &skill_list[skill_list_set.group_nr].entry[skill_list_set.entry_nr];
+                  RangeFireMode = FIRE_MODE_SKILL;
+                  sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);
+               }else
+                   sound_play_effect(SOUND_CLICKFAIL,0,0,MENU_SOUND_VOL);
+               map_udate_flag=2;
+               cpl.menustatus = MENU_NO;
+               reset_keys();
+               break;
+            case SDLK_UP:
+               if (!shiftPressed){
+                  if (skill_list_set.entry_nr>0)
+                     skill_list_set.entry_nr--;
+                   }else{
+                      if (skill_list_set.group_nr>0)
+                      {
+                         skill_list_set.group_nr--;
+                         skill_list_set.entry_nr=0;
+                      }
+               }
+               menuRepeatKey = SDLK_UP;
+               break;
+            case SDLK_DOWN:
+               if (!shiftPressed){
+                  if (skill_list_set.entry_nr < DIALOG_LIST_ENTRY-1)
+                     skill_list_set.entry_nr++;
+                  }else{
+                     if (skill_list_set.group_nr < SKILL_LIST_MAX-1)
+                     {
+                        skill_list_set.group_nr++;
+                        skill_list_set.entry_nr=0;
+                     }
+                  }
+                menuRepeatKey = SDLK_DOWN;
+                break;
+            }
+            break;
 
-		case MENU_KEYBIND:
-			switch(key){
-				case SDLK_UP:
-					if (!shiftPressed){
-		 				if (bindkey_list_set.entry_nr>0)
-							bindkey_list_set.entry_nr--;
-					}else {
-			    	if (bindkey_list_set.group_nr>0)
-							bindkey_list_set.group_nr--;
-					}
-					menuRepeatKey = SDLK_UP;
-					break;
-				case SDLK_DOWN:
-					if (!shiftPressed){
-						if (bindkey_list_set.entry_nr < OPTWIN_MAX_OPT-1)
-			  			bindkey_list_set.entry_nr++;
-					}else{
-						if (bindkey_list_set.group_nr < BINDKEY_LIST_MAX-1
-						&& bindkey_list[bindkey_list_set.group_nr+1].name[0])
-						bindkey_list_set.group_nr++;
-					}
- 					menuRepeatKey = SDLK_DOWN;
-					break;
-				case SDLK_d:
-	        save_keybind_file(KEYBIND_FILE);
-	        sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);
-	        map_udate_flag=2;
-	        cpl.menustatus = MENU_NO;
-	        reset_keys();
- 		      sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);
-	        break;
-				case SDLK_RETURN:
-	        sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);
-	        keybind_status = KEYBIND_STATUS_EDIT;
-	        reset_keys();
-	        open_input_mode(240);
-	        strcpy(InputString, bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].text);
-	        InputCount = strlen(bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].text);
-	        cpl.input_mode = INPUT_MODE_GETKEY;
-		      sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);
-					break;
-				case SDLK_r:
-	        sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);
-					bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].repeatflag
-     				=bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].repeatflag?FALSE:TRUE;
-		      sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);
-	        break;
-			}
-			break;
+      case MENU_SPELL:			  
+		  
+		  switch(key){
 
-		case MENU_CREATE:
-			switch(key){
-				case SDLK_RETURN:
-					break;
-				case SDLK_c:
-					if(new_character.stat_points)
-					{
-						dialog_new_char_warn = TRUE;
-						sound_play_effect(SOUND_CLICKFAIL,0,0,100);
-						break;
-					}
-					dialog_new_char_warn = FALSE;
-					new_char(&new_character);
-					GameStatus = GAME_STATUS_WAITFORPLAY;
-					cpl.menustatus = MENU_NO;
-					break;
-				case SDLK_LEFT:
-					create_list_set.key_change =-1;
-					menuRepeatKey = SDLK_LEFT;
-					break;
-				case SDLK_RIGHT:
-					create_list_set.key_change = 1;
-					menuRepeatKey = SDLK_RIGHT;
-					break;
-				case SDLK_UP:
-	   			if (create_list_set.entry_nr > 0)
-						create_list_set.entry_nr--;
-					menuRepeatKey = SDLK_UP;
-					break;
-				case SDLK_DOWN:
-					create_list_set.entry_nr++;
- 					menuRepeatKey = SDLK_DOWN;
-					break;
-			}
-			break;
-	}
+		  case SDLK_F1:
+			  quickslot_key(NULL,0);
+			  break;
+		  case SDLK_F2:
+			  quickslot_key(NULL,1);
+			  break;
+		  case SDLK_F3:
+			  quickslot_key(NULL,2);
+			  break;
+		  case SDLK_F4:
+			  quickslot_key(NULL,3);
+			  break;
+		  case SDLK_F5:
+			  quickslot_key(NULL,4);
+			  break;
+		  case SDLK_F6:
+			  quickslot_key(NULL,5);
+			  break;
+		  case SDLK_F7:
+			  quickslot_key(NULL,6);
+			  break;
+		  case SDLK_F8:
+			  quickslot_key(NULL,7);
+			  break;
+			  
+            case SDLK_RETURN:
+               if(spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][spell_list_set.entry_nr].flag==LIST_ENTRY_KNOWN){
+                  fire_mode_tab[FIRE_MODE_SPELL].spell =
+                    &spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][spell_list_set.entry_nr];
+                  RangeFireMode = FIRE_MODE_SPELL;
+                  sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);
+               }
+               else
+                  sound_play_effect(SOUND_CLICKFAIL,0,0,MENU_SOUND_VOL);
+               map_udate_flag=2;
+               cpl.menustatus = MENU_NO;
+               reset_keys();
+               break;
+            case SDLK_LEFT:
+               if (spell_list_set.class_nr > 0)
+                  spell_list_set.class_nr--;
+                sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);
+                break;
+            case SDLK_RIGHT:
+                if (spell_list_set.class_nr < SPELL_LIST_CLASS-1)
+                   spell_list_set.class_nr++;
+                   sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);
+                break;
+             case SDLK_UP:
+                 if (!shiftPressed){
+                    if (spell_list_set.entry_nr>0)
+                       spell_list_set.entry_nr--;
+                 }else{
+                     if (spell_list_set.group_nr>0)
+                     {
+                         spell_list_set.group_nr--;
+                         spell_list_set.entry_nr=0;
+                     }
+                 }
+                 menuRepeatKey = SDLK_UP;
+                 break;
+             case SDLK_DOWN:
+                if (!shiftPressed){
+                   if (spell_list_set.entry_nr < DIALOG_LIST_ENTRY-1)
+                      spell_list_set.entry_nr++;
+                }else{
+                    if (spell_list_set.group_nr < SPELL_LIST_MAX-1)
+                    {
+                       spell_list_set.group_nr++;
+                       spell_list_set.entry_nr=0;
+                    }
+                }
+                menuRepeatKey = SDLK_DOWN;
+                break;
+         }
+         break;
+
+      case MENU_KEYBIND:
+         switch(key){
+            case SDLK_UP:
+               if (!shiftPressed){
+                  if (bindkey_list_set.entry_nr>0)
+                     bindkey_list_set.entry_nr--;
+               }else{
+                  if (bindkey_list_set.group_nr>0)
+                  {
+                     bindkey_list_set.group_nr--;
+                     bindkey_list_set.entry_nr=0;
+                  }
+               }
+               menuRepeatKey = SDLK_UP;
+               break;
+            case SDLK_DOWN:
+               if (!shiftPressed){
+                  if (bindkey_list_set.entry_nr < OPTWIN_MAX_OPT-1)
+                     bindkey_list_set.entry_nr++;
+               }else{
+                  if (bindkey_list_set.group_nr < BINDKEY_LIST_MAX-1 && bindkey_list[bindkey_list_set.group_nr+1].name[0])
+                  {
+                     bindkey_list_set.group_nr++;
+                     bindkey_list_set.entry_nr=0;
+                  }
+               }
+               menuRepeatKey = SDLK_DOWN;
+               break;
+            case SDLK_d:
+               save_keybind_file(KEYBIND_FILE);
+               sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);
+               map_udate_flag=2;
+               cpl.menustatus = MENU_NO;
+               reset_keys();
+               sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);
+               break;
+            case SDLK_RETURN:
+               sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);
+               keybind_status = KEYBIND_STATUS_EDIT;
+               reset_keys();
+               open_input_mode(240);
+	       textwin_putstring(bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].text);
+               cpl.input_mode = INPUT_MODE_GETKEY;
+               sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);
+               break;
+            case SDLK_r:
+               sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);
+               bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].repeatflag
+                  =bindkey_list[bindkey_list_set.group_nr].entry[bindkey_list_set.entry_nr].repeatflag?FALSE:TRUE;
+               sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);
+               break;
+         }
+         break;
+
+       case MENU_CREATE:
+          switch(key){
+             case SDLK_RETURN:
+                break;
+             case SDLK_c:
+                 if(new_character.stat_points)
+                 {
+                    dialog_new_char_warn = TRUE;
+                    sound_play_effect(SOUND_CLICKFAIL,0,0,100);
+                    break;
+                 }
+                 dialog_new_char_warn = FALSE;
+                 new_char(&new_character);
+                 GameStatus = GAME_STATUS_WAITFORPLAY;
+                 cpl.menustatus = MENU_NO;
+                 break;
+             case SDLK_LEFT:
+                 create_list_set.key_change =-1;
+                 menuRepeatKey = SDLK_LEFT;
+                 break;
+             case SDLK_RIGHT:
+                 create_list_set.key_change = 1;
+                 menuRepeatKey = SDLK_RIGHT;
+                 break;
+             case SDLK_UP:
+                 if (create_list_set.entry_nr > 0)
+                    create_list_set.entry_nr--;
+                 menuRepeatKey = SDLK_UP;
+                break;
+             case SDLK_DOWN:
+                create_list_set.entry_nr++;
+                menuRepeatKey = SDLK_DOWN;
+                break;
+      }
+      break;
+   }
 }
 

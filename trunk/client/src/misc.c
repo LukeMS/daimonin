@@ -89,12 +89,20 @@ void FreeMemory(void **p)
 
 char *show_input_string(char *text, struct _Font *font, int wlen)
 {
-        register int i, len;
+        register int i, j,len;
 
         static char buf[MAX_INPUT_STR];
         strcpy(buf, text);
-        strcat(buf,"_");
-        for(len = 0,i=strlen(buf);i>=0;i--)
+
+		len = strlen(buf);
+		while(len >= CurrentCursorPos)
+		{
+			buf[len+1] = buf[len];
+			len--;
+		}
+		buf[CurrentCursorPos]='_';
+
+		for(len = 25,i=CurrentCursorPos;i>=0;i--)
         {
                 if(!buf[i])
                         continue;
@@ -105,8 +113,18 @@ char *show_input_string(char *text, struct _Font *font, int wlen)
                 }
                 len += font->c[(int)(buf[i])].w+font->char_offset;
         }
-        if(GameTicksSec >500)
-                buf[strlen(buf)-1]=0;
+
+		len -= 25;
+		for(j=CurrentCursorPos;j<=(int)strlen(buf);j++)
+		{
+			if(len+font->c[(int)(buf[j])].w+font->char_offset >=wlen )
+			{
+				break;
+			}
+			len += font->c[(int)(buf[j])].w+font->char_offset;
+		}
+		buf[j] = 0;
+
         return(&buf[++i]);
 }
 

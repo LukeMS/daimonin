@@ -322,8 +322,13 @@ void GoodbyeCmd(char *data, int len)
          * reconnect to the server or a different server without having to
          * rerun the client.
          */
-        fprintf(stderr,"Received goodbye command from server - exiting\n");
-        exit(0);
+
+		/* Damn, this should not be here - if the version not matches, the server
+		 * drops the connnect - so we get a client shutdown here? 
+		 * NEVER do this again.
+		 */
+		/* fprintf(stderr,"Received goodbye command from server - exiting\n");
+        exit(0);*/
 }
 
 void AnimCmd(unsigned char *data, int len)
@@ -853,70 +858,10 @@ void PlayerCmd(unsigned char *data, int len)
 		map_draw_map_clear();
 		map_transfer_flag = 1;
         map_udate_flag=2;        
+   load_quickslots_entrys();
 }
 
 
-/* ItemCmd grabs and display information for items in the inventory */
-void Item1Cmd(unsigned char *data, int len)
-{
-        int weight, loc, tag, face, flags,pos=0,nlen,anim,nrof;
-        uint8 itype,stype,item_qua,item_con,item_skill,item_level;
-        uint8 animspeed,direction=0;
-        char name[MAX_BUF];
-        
-        map_udate_flag=2;
-        itype=stype=item_qua=item_con=item_skill=item_level=0;
-        loc = GetInt_String(data);
-        pos+=4;
-
-        if (pos == len)
-        {
-                LOG(LOG_ERROR,"ItemCmd: Got location with no other data\n");
-        }
-        else if (loc < 0)
-        {
-                LOG(LOG_ERROR,
-                "ItemCmd: got location with negative value (%d)\n", loc);
-                return;
-        }
-        else
-        {
-                while (pos < len)
-                {
-                        tag=GetInt_String(data+pos); pos+=4;
-                        flags = GetInt_String(data+pos); pos+=4;
-                        weight = GetInt_String(data+pos); pos+=4;
-                        face = GetInt_String(data+pos); pos+=4;
-						request_face(face,0);
-                        direction = data[pos++];
-                        if(loc)
-                        {
-                            itype =data[pos++];
-                            stype = data[pos++];
-
-                            item_qua = data[pos++];
-                            item_con = data[pos++];
-                            item_level = data[pos++];
-                            item_skill = data[pos++];
-                        }
-                        nlen = data[pos++];
-                        memcpy(name, (char*)data+pos, nlen);
-                        pos += nlen;
-                        name[nlen]='\0';
-						/*LOG(LOG_DEBUG,"item1 name:  %s   -> type:%d stype:%d\n", name,nlen, strlen(name));*/
-                        anim = GetShort_String(data+pos); pos+=2;
-                        animspeed = data[pos++];
-                        nrof = GetInt_String(data+pos); pos+=4;
-                        update_item (tag, loc, name, weight, face, flags, anim,
-                            animspeed, nrof,itype, stype,item_qua, item_con,
-                            item_skill, item_level,direction);
-                }
-                if (pos>len)
-                        LOG(LOG_ERROR,
-                        "ItemCmd: Overread buffer: %d > %d\n", pos, len);
-        }
-        map_udate_flag=2;
-}
 
 /* no item command, including the delinv... */
 /* this is a bit hacked now - perhaps we should consider
@@ -940,26 +885,20 @@ void ItemXCmd(unsigned char *data, int len)
 		loc = GetInt_String(data+pos);
 
 		if(dmode >=0)
-		{
-			/*LOG(-1,"clear inv! (tag: %d)\n", loc);*/
 		    remove_item_inventory(locate_item(loc));
-		}
 
 		if(dmode==-4) /* send item flag */
 		{
-			/*LOG(-1,"ITEM-S! (loc: %d) (cont: %d}\n", loc);*/
 			if(loc == cpl.container_tag)
 				loc = -1; /* and redirect it to our invisible sack */	
 		}
 		else if(dmode==-1)	/* container flag! */
 		{
-			/*LOG(-1,"WE GOT CONTAINER! (tag: %d)\n", loc);*/
 			cpl.container_tag = loc; /* we catch the REAL container tag */
 			remove_item_inventory(locate_item(-1));
 
 			if(loc==-1) /* if this happens, we want close the container */
 			{
-				/*LOG(-1,"CLOSE CON!\n");*/
 				cpl.container_tag = -998;
 				return;
 			}
@@ -1000,19 +939,108 @@ void ItemXCmd(unsigned char *data, int len)
                         memcpy(name, (char*)data+pos, nlen);
                         pos += nlen;
                         name[nlen]='\0';
-						/*LOG(LOG_DEBUG,"item1 name:  %s   -> type:%d stype:%d\n", name,nlen, strlen(name));*/
                         anim = GetShort_String(data+pos); pos+=2;
                         animspeed = data[pos++];
                         nrof = GetInt_String(data+pos); pos+=4;
                         update_item (tag, loc, name, weight, face, flags, anim,
                             animspeed, nrof,itype, stype,item_qua, item_con,
-                            item_skill, item_level,direction);
+                            item_skill, item_level,direction, FALSE);
                 }
                 if (pos>len)
                         LOG(LOG_ERROR, "ItemCmd: ERROR: Overread buffer: %d > %d\n", pos, len);
         }
         map_udate_flag=2;
 }
+
+/* no item command, including the delinv... */
+/* this is a bit hacked now - perhaps we should consider
+ * in the future a new designed item command.
+ */
+void ItemYCmd(unsigned char *data, int len)
+{
+        int weight, loc, tag, face, flags,pos=0,nlen,anim,nrof,dmode;
+        uint8 itype,stype,item_qua,item_con,item_skill,item_level;
+        uint8 animspeed, direction=0;
+        char name[MAX_BUF];
+        
+        map_udate_flag=2;
+        itype=stype=item_qua=item_con=item_skill=item_level=0;
+
+        dmode = GetInt_String(data);
+        pos+=4;
+			
+		/*LOG(-1,"ITEMX:(%d) %s\n", dmode, locate_item(dmode)?(locate_item(dmode)->d_name?locate_item(dmode)->s_name:"no name"):"no LOC");*/
+
+		loc = GetInt_String(data+pos);
+
+		if(dmode >=0)
+		    remove_item_inventory(locate_item(loc));
+
+		if(dmode==-4) /* send item flag */
+		{
+			if(loc == cpl.container_tag)
+				loc = -1; /* and redirect it to our invisible sack */	
+		}
+		else if(dmode==-1)	/* container flag! */
+		{
+			cpl.container_tag = loc; /* we catch the REAL container tag */
+			remove_item_inventory(locate_item(-1));
+
+			if(loc==-1) /* if this happens, we want close the container */
+			{
+				cpl.container_tag = -998;
+				return;
+			}
+			
+			loc = -1; /* and redirect it to our invisible sack */	
+
+		}
+
+
+        pos+=4;
+
+        if (pos == len && loc != -1)
+        {
+                LOG(LOG_ERROR,"ItemCmd: Got location with no other data\n");
+        }
+        else
+        {
+                while (pos < len)
+                {
+                        tag=GetInt_String(data+pos); pos+=4;
+                        flags = GetInt_String(data+pos); pos+=4;
+                        weight = GetInt_String(data+pos); pos+=4;
+                        face = GetInt_String(data+pos); pos+=4;
+						request_face(face,0);
+                        direction = data[pos++];
+
+                        if(loc)
+                        {
+                            itype =data[pos++];
+                            stype = data[pos++];
+
+                            item_qua = data[pos++];
+                            item_con = data[pos++];
+                            item_level = data[pos++];
+                            item_skill = data[pos++];
+                        }
+                        nlen = data[pos++];
+                        memcpy(name, (char*)data+pos, nlen);
+                        pos += nlen;
+                        name[nlen]='\0';
+                        anim = GetShort_String(data+pos); pos+=2;
+                        animspeed = data[pos++];
+                        nrof = GetInt_String(data+pos); pos+=4;
+                        update_item (tag, loc, name, weight, face, flags, anim,
+                            animspeed, nrof,itype, stype,item_qua, item_con,
+                            item_skill, item_level,direction, TRUE);
+                }
+                if (pos>len)
+                        LOG(LOG_ERROR, "ItemCmd: ERROR: Overread buffer: %d > %d\n", pos, len);
+        }
+        map_udate_flag=2;
+}
+
 
 /* UpdateItemCmd updates some attributes of an item */
 void UpdateItemCmd(unsigned char *data, int len)
@@ -1100,7 +1128,7 @@ void UpdateItemCmd(unsigned char *data, int len)
                 nrof = GetInt_String(data+pos);
                 pos+=4;
         }
-        update_item (tag, loc, name, weight, face, flags,anim,animspeed,nrof,254,254,254,254,254,254,direction);
+        update_item (tag, loc, name, weight, face, flags,anim,animspeed,nrof,254,254,254,254,254,254,direction, FALSE);
         map_udate_flag=2;
 }
 
@@ -1403,9 +1431,9 @@ void VersionCmd(char *data, int len)
             sprintf(buf, "Invalid CS version (%d,%d)", VERSION_CS,csocket.cs_version);
             draw_info(buf,COLOR_RED);
 			if (VERSION_CS > csocket.cs_version)
-	           sprintf(buf, "The server is outdated!\nSelect a different one!\n");
+	           sprintf(buf, "The server is outdated!\nSelect a different one!");
 			else
-	            sprintf(buf, "Your client is outdated!\nUpdate your client!\n");
+	            sprintf(buf, "Your client is outdated!\nUpdate your client!");
             draw_info(buf,COLOR_RED);
             LOG(LOG_ERROR, "%s\n", buf);            
             return;

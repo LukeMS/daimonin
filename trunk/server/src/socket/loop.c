@@ -365,7 +365,6 @@ static void remove_ns_dead_player(player *pl)
     
     LOG(llevDebug,"remove_ns_dead_player(): %s leaving\n", STRING_OBJ_NAME(pl->ob));
 	leave(pl,1);
-//	final_free_player(pl);
 }
 
 /* This checks the sockets for input and exceptions, does the right thing.  A 

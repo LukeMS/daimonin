@@ -567,3 +567,38 @@ void textwin_event(int e, SDL_Event *event)
 	}
 }
 
+void textwin_addhistory(char* text)
+{
+	register int i;
+
+	/* If new line is empty identical to last inserted one, skip it */
+	if (!text[0] || strcmp(InputHistory[0], text)==0) return;
+	
+	for (i = MAX_HISTORY_LINES-1; i > 1; i--) /* shift history lines */
+	{
+		strncpy(InputHistory[i], InputHistory[i-1], MAX_INPUT_STRING);
+	}
+	
+	strncpy(InputHistory[1], text, MAX_INPUT_STRING); /* insert new one */
+	*InputHistory[0]=0; /* clear tmp editing line */
+	HistoryPos = 0;
+}
+
+void textwin_clearhistory()
+{
+	register int i;
+	for (i=0; i<MAX_HISTORY_LINES; i++)
+	{
+		InputHistory[i][0]=0; /* it's enough to clear only the first byte of each history line */
+	}
+	HistoryPos = 0;
+}
+
+void textwin_putstring(char* text)
+{
+int len;
+
+      len=strlen(text);
+      strncpy(InputString,text,MAX_INPUT_STRING); /* copy buf to input buffer */
+      CurrentCursorPos=InputCount=len;           /* set cursor after inserted text */
+}

@@ -84,7 +84,8 @@ enum {
 	BINARY_CMD_QUERY,
 	BINARY_CMD_DATA,
 	BINARY_CMD_NEW_CHAR,
-
+	BINARY_CMD_ITEMY,
+	
 	BINAR_CMD /* last entry */
 };
 
@@ -121,11 +122,11 @@ struct CmdMapping commands[] =
         { "query", (CmdProc)handle_query},
         { "data", (CmdProc)DataCmd},
         { "new_char", (CmdProc)NewCharCmd},
-
+        { "itemy", ItemYCmd },
+		
 		/* unused! */
         { "magicmap", MagicMapCmd},
         { "delinv", DeleteInventory },
-        { "item1", Item1Cmd },
 };
 
 #define NCOMMANDS (sizeof(commands)/sizeof(struct CmdMapping))

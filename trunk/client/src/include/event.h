@@ -65,7 +65,8 @@ typedef struct _keybind_key {
 	int repeat_flag;
 }_keybind_key;
 
-enum {DRAG_GET_STATUS =-1, DRAG_NONE, DRAG_IWIN_BELOW, DRAG_IWIN_INV, DRAG_QUICKSLOT, DRAG_PDOLL};
+enum {DRAG_GET_STATUS =-1, DRAG_NONE, DRAG_IWIN_BELOW, DRAG_IWIN_INV, 
+      DRAG_QUICKSLOT, DRAG_QUICKSLOT_SPELL, DRAG_PDOLL};
 
 extern int KeyScanFlag; /* for debug/alpha , remove later */
 extern int cursor_type;

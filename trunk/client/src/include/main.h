@@ -154,64 +154,76 @@ extern int mb_clicked;
 
 #define MAX_GROUP_MEMBER 8      /* max members in a daimonin group (shown in client) */
 
-/* IMPORTANT: if you change datatype it must also be changed in dialog.c */
+/* IMPORTANT: datatype it must also be changed in dialog.c */
 typedef struct _options {
-  char metaserver[256];
+   /* Sound */
+   int sound_volume;
+   int music_volume;
 
-	Uint8 video_bpp;
-	Uint8 used_video_bpp;
-	Uint8 real_video_bpp;
-	int warning_hp;
-	int warning_food;
-	int no_meta;
-	int player_names;
-	int show_target_self;
-  int metaserver_port;
-  int music_volume;
-  int sound_volume;
-	int textwin_alpha;
-	uint32 videoflags_win;
-	uint32 videoflags_full;
-	uint32 sleep;
-    Boolean use_TextwinAlpha;
-    Boolean use_TextwinSplit;
-    Boolean fullscreen;
-    Boolean show_tooltips;
-    Boolean show_d_key_infos; /* key-infos in dialog-wins. */
-    Boolean max_speed;
-    Boolean use_rect;
-    Boolean auto_bpp_flag;
-    Boolean Full_HWSURFACE;
-    Boolean Full_SWSURFACE;
-    Boolean Full_HWACCEL;
-    Boolean Full_DOUBLEBUF;
-    Boolean Full_ANYFORMAT;
-    Boolean Full_ASYNCBLIT;
-    Boolean Full_HWPALETTE;
-    Boolean Full_RESIZABLE;
-    Boolean Full_NOFRAME;
-    Boolean Full_RLEACCEL;
-    Boolean Win_HWSURFACE;
-    Boolean Win_SWSURFACE;
-    Boolean Win_HWACCEL;
-    Boolean Win_DOUBLEBUF;
-    Boolean Win_ANYFORMAT;
-    Boolean Win_ASYNCBLIT;
-    Boolean Win_HWPALETTE;
-    Boolean Win_RESIZABLE;
-    Boolean Win_NOFRAME;
-    Boolean Win_RLEACCEL;
+   /* Server */
+   char metaserver[256];
+   int metaserver_port;
+
+   /* Visual */
+   int video_bpp;
+   int fullscreen;
+   Boolean use_TextwinSplit;
+   Boolean use_TextwinAlpha;
+   int textwin_alpha;
+
+   /* Look & Feel */
+   int player_names;
+   int show_target_self;
+   int warning_hp;
+   int warning_food;
+   Boolean gfx_statusbars;
+   Boolean show_tooltips;
+   Boolean show_d_key_infos; /* key-infos in dialog-wins. */
+   Boolean collectAll;
+
+   /* Debug */
+   Boolean force_redraw;
+   Boolean show_frame;         /* true: show frame rate */ 
+   Boolean use_gl; 
+   int sleep;
+   Boolean max_speed;
+   Boolean auto_bpp_flag;
+   Boolean use_rect;
+
+   /* Fullscreen Flags */
+   Boolean Full_HWSURFACE;
+   Boolean Full_SWSURFACE;
+   Boolean Full_HWACCEL;
+   Boolean Full_DOUBLEBUF;
+   Boolean Full_ANYFORMAT;
+   Boolean Full_ASYNCBLIT;
+   Boolean Full_HWPALETTE;
+   Boolean Full_RESIZABLE;
+   Boolean Full_NOFRAME;
+   Boolean Full_RLEACCEL;
+
+   /* Windowed flags */
+   Boolean Win_HWSURFACE;
+   Boolean Win_SWSURFACE;
+   Boolean Win_HWACCEL;
+   Boolean Win_DOUBLEBUF;
+   Boolean Win_ANYFORMAT;
+   Boolean Win_ASYNCBLIT;
+   Boolean Win_HWPALETTE;
+   Boolean Win_RESIZABLE;
+   Boolean Win_NOFRAME;
+   Boolean Win_RLEACCEL;
     
-    /* debug & testing settings */
-    Boolean force_redraw;
-    Boolean show_frame;         /* true: show frame rate */ 
-    Boolean use_gl; 
-
     /* INTERN FLAGS - Setup depends on option settings and selected mode */
-    Boolean fullscreen_flag;      /* we are in fullscreen mode */
-    Boolean doublebuf_flag;       /* we doublebuf */
-    Boolean rleaccel_flag;
-}_options;
+   Boolean fullscreen_flag;      /* we are in fullscreen mode */
+   Boolean doublebuf_flag;       /* we doublebuf */
+   Boolean rleaccel_flag;
+   int no_meta;
+   Uint8 used_video_bpp;
+   Uint8 real_video_bpp;
+   uint32 videoflags_full;
+   uint32 videoflags_win;
+}_options; 
 
 extern struct _options options;
 
@@ -273,9 +285,6 @@ typedef struct _dialog_list_set {
 	int class_nr;   /* for spell-list => spell, prayer, ... */
 	int key_change;
 }_dialog_list_set;
-
-/* option list defines */
-#define OPTION_LIST_MAX 5
 
 /* spell list defines */
 #define SPELL_LIST_MAX 20        /* groups of spells */
@@ -393,14 +402,22 @@ typedef enum _bitmap_index {
   BITMAP_TEXTWIN,
   BITMAP_LOGIN_INP,
   BITMAP_INVSLOT,
-  BITMAP_HP,
-  BITMAP_HP_BACK,
-  BITMAP_SP,
-  BITMAP_SP_BACK,
-  BITMAP_GRACE,
-  BITMAP_GRACE_BACK,
-  BITMAP_FOOD,
-  BITMAP_FOOD_BACK,
+
+   /* Status bars */
+   BITMAP_TESTTUBES,
+   BITMAP_HP,
+   BITMAP_SP,
+   BITMAP_GRACE,
+   BITMAP_FOOD,
+   BITMAP_HP_BACK,
+   BITMAP_SP_BACK,
+   BITMAP_GRACE_BACK,
+   BITMAP_FOOD_BACK,
+   BITMAP_HP_BACK2,
+   BITMAP_SP_BACK2,
+   BITMAP_GRACE_BACK2,
+   BITMAP_FOOD_BACK2,
+
   BITMAP_APPLY,
   BITMAP_UNPAID,
   BITMAP_CURSED,
@@ -512,13 +529,17 @@ typedef enum _bitmap_index {
 	BITMAP_BUTTONQ_DOWN,
 	BITMAP_NCHAR_MARKER,
 	BITMAP_TRAPED,
-
+    BITMAP_PRAY,
+    BITMAP_WAND,
 	BITMAP_INIT
 
 }_bitmap_index;
 
 
 extern char InputString[MAX_INPUT_STRING];			/* our text char string*/
+extern char InputHistory[MAX_HISTORY_LINES][MAX_INPUT_STRING];  /* input lines history buffer */
+extern int HistoryPos;
+extern int CurrentCursorPos;
 extern int InputCount, InputMax;					/* nr. of char in string and max chars. */
 extern Boolean InputStringFlag;	/* if true keyboard and game is in input str mode*/
 extern Boolean InputStringEndFlag;	/* if true, we had entered some in text mode and its ready*/
@@ -548,6 +569,6 @@ extern void clear_metaserver_data(void);
 extern void get_meta_server_data(int num, char *server, int *port);
 extern void free_faces(void);
 extern void load_options_dat(void);
-
+extern void save_options_dat(void); 
 #endif
 
