@@ -34,7 +34,7 @@ static struct method_decl   GameObject_methods[]            =
 {
     {"Interface",  (lua_CFunction) GameObject_Interface},
     {"SetSaveBed",  (lua_CFunction) GameObject_SetSaveBed},
-	{"GetSkill",  (lua_CFunction) GameObject_GetSkill},
+    {"GetSkill",  (lua_CFunction) GameObject_GetSkill},
     {"SetSkill",  (lua_CFunction) GameObject_SetSkill}, {"ActivateRune",  (lua_CFunction) GameObject_ActivateRune},
     {"CastAbility",  (lua_CFunction) GameObject_CastAbility},
     {"InsertInside",  (lua_CFunction) GameObject_InsertInside}, {"GetGod",  (lua_CFunction) GameObject_GetGod},
@@ -82,6 +82,7 @@ static struct method_decl   GameObject_methods[]            =
     {"SendCustomCommand",(lua_CFunction) GameObject_SendCustomCommand},
     {"CheckTrigger", (lua_CFunction) GameObject_CheckTrigger}, {"Clone", (lua_CFunction) GameObject_Clone},
     {"Move", (lua_CFunction) GameObject_Move},
+    {"GetAI", (lua_CFunction) GameObject_GetAI},
 
     // {"GetUnmodifiedAttribute", (lua_CFunction)GameObject_GetUnmodifiedAttribute},
     {NULL, NULL}
@@ -259,15 +260,15 @@ static int GameObject_Interface(lua_State *L)
 {
     lua_object *self;
     char       *txt;
-	int			mode;
-	
+    int            mode;
+    
     get_lua_args(L, "Ois", &self, &mode, &txt);
-	
+    
     GCFP.Value[0] = (void *) (WHO);
     GCFP.Value[1] = (void *) (&mode);
     GCFP.Value[2] = (char *) (txt);
     (PlugHooks[HOOK_INTERFACE]) (&GCFP);
-	
+    
     return 0;
 }
 
@@ -778,7 +779,7 @@ static int GameObject_SayTo(lua_State *L)
     lua_object *self;
     object     *target;
     lua_object *obptr2;
-	int mode = 0;
+    int mode = 0;
     char *message;
     static char buf[HUGE_BUF];
 
@@ -790,12 +791,12 @@ static int GameObject_SayTo(lua_State *L)
         hooks->new_draw_info(NDI_NAVY|NDI_UNIQUE, 0, target, message);
     else /* thats default */
     {
-		snprintf(buf, sizeof(buf), "%s talks to %s.", STRING_OBJ_NAME(WHO),STRING_OBJ_NAME(target));
+        snprintf(buf, sizeof(buf), "%s talks to %s.", STRING_OBJ_NAME(WHO),STRING_OBJ_NAME(target));
         hooks->new_info_map_except(NDI_UNIQUE, WHO->map, WHO->x, WHO->y, MAP_INFO_NORMAL, WHO, target, buf);
 
-		snprintf(buf, sizeof(buf), "%s says: %s", STRING_OBJ_NAME(WHO), message);
+        snprintf(buf, sizeof(buf), "%s says: %s", STRING_OBJ_NAME(WHO), message);
         hooks->new_draw_info(NDI_NAVY|NDI_UNIQUE, 0, target, buf);
-	}
+    }
 
     return 0;
 }
@@ -993,17 +994,15 @@ static int GameObject_SetGuildForce(lua_State *L)
     }
     LOG(llevDebug, "Lua Warning -> SetGuild: Object %s has no guild_force! Adding it.\n", STRING_OBJ_NAME(WHO));
 
-	walk = hooks->arch_to_object(hooks->find_archetype("guild_force"));
+    walk = hooks->arch_to_object(hooks->find_archetype("guild_force"));
     walk= hooks->insert_ob_in_ob(walk, WHO);
-	if (guild && strcmp(guild, "")) {
-		FREE_AND_COPY_HASH(walk->title, guild);
-	} else
-		FREE_ONLY_HASH(walk->title);
-	
-	CONTR(WHO)->socket.ext_title_flag = 1; /* demand update to client */
-	return push_object(L, &GameObject, walk);
-	
-    return 0;
+    if (guild && strcmp(guild, "")) {
+        FREE_AND_COPY_HASH(walk->title, guild);
+    } else
+        FREE_ONLY_HASH(walk->title);
+    
+    CONTR(WHO)->socket.ext_title_flag = 1; /* demand update to client */
+    return push_object(L, &GameObject, walk);
 }
 
 /*****************************************************************************/
@@ -1029,11 +1028,10 @@ static int GameObject_GetGuildForce(lua_State *L)
     }
 
     LOG(llevDebug, "Lua Warning -> GetGuild: Object %s has no guild_force! Adding it.\n", STRING_OBJ_NAME(WHO));
-	walk = hooks->arch_to_object(hooks->find_archetype("guild_force"));
+    walk = hooks->arch_to_object(hooks->find_archetype("guild_force"));
     walk= hooks->insert_ob_in_ob(walk, WHO);
-	
-	return push_object(L, &GameObject, walk);
-    return 0;
+    
+    return push_object(L, &GameObject, walk);
 }
 
 /*****************************************************************************/
@@ -2255,6 +2253,28 @@ static int GameObject_Clone(lua_State *L)
     }
 
     return push_object(L, &GameObject, clone);
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_GetAI                                                 */
+/* Lua    : object:GetAI()                                                   */
+/* Info   : Get the AI object for a mob. Mostly useful in behaviours.        */
+/*          Will return nil if the mob's AI hasn't been initialized yet      */
+/* Status : Tested                                                           */
+/*****************************************************************************/
+static int GameObject_GetAI(lua_State *L)
+{
+    lua_object *self;
+
+    get_lua_args(L, "O", &self);
+
+    if (self->data.object->type != MONSTER)
+        luaL_error(L, "Can only get AI from monsters");        
+    
+    if(self->data.object->custom_attrset == NULL)
+        return 0;
+
+    return push_object(L, &AI, self->data.object);
 }
 
 /* FUNCTIONEND -- End of the GameObject methods. */

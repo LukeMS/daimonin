@@ -28,12 +28,10 @@
  * <parameter> := 
  *      "Parameter(" behaviourname "," parametername "," type "," flags "," defaultvalue ")"
  *
- * - As you can see, NIL is used for empty lists and not for terminating lists. 
+ * - NIL is used for empty lists and not for terminating lists. 
  *   Lists are (currently) not comma-separated. 
  * - Behaviour.behaviourfunc and Parameter.behaviourname are not important
  *   for mapmakers and are only relevant for the internal handling of processes.
- * - There's currenty no way of defining default string values for stringint
- *   parameters, this might be fixed in the future.
  */
 
 /**
@@ -64,6 +62,16 @@ BehaviourClass(PROCESSES,
     /** Choose the known mob with the lowest negative friendship as the current enemy 
      * should always come after friendship */
     Behaviour(CHOOSE_ENEMY, ai_choose_enemy, NIL)
+    
+    /** Plugin interface for processes */
+    Behaviour(PLUGIN_PROCESS, ai_plugin_process, 
+        /** Plugin name, e.g. "lua" */
+        Parameter(PLUGIN_PROCESS, PLUGIN, STRING, MANDATORY, NULL)
+        /** Behaviour name visible to plugin */
+        Parameter(PLUGIN_PROCESS, BEHAVIOUR, STRING, MANDATORY, NULL)
+        /** Behaviour parameters visible to plugin */
+        Parameter(PLUGIN_PROCESS, OPTIONS, STRING, OPTIONAL, "")
+    )
 )
 
 /**
@@ -126,12 +134,22 @@ BehaviourClass(MOVES,
     )
 
     /** Try to stay out of the line of fire as much as possible
-	 * if we belive our enemy uses distance attacks */
+     * if we belive our enemy uses distance attacks */
     Behaviour(AVOID_LINE_OF_FIRE, ai_avoid_line_of_fire, NIL)
 
     /** Try to move to a position with free line of fire towards
      * enemy. A good archer's answer to AVOID_LINE_OF_FIRE */
     Behaviour(OPTIMIZE_LINE_OF_FIRE, ai_optimize_line_of_fire, NIL)
+    
+    /** Plugin interface for moves */
+    Behaviour(PLUGIN_MOVE, ai_plugin_move, 
+        /** Plugin name, e.g. "lua" */
+        Parameter(PLUGIN_MOVE, PLUGIN, STRING, MANDATORY, NULL)
+        /** Behaviour name visible to plugin */
+        Parameter(PLUGIN_MOVE, BEHAVIOUR, STRING, MANDATORY, NULL)
+        /** Behaviour parameters visible to plugin */
+        Parameter(PLUGIN_MOVE, OPTIONS, STRING, OPTIONAL, "")
+    )
 ) 
 
 /** Actions are misc actions that takes time, but aren't movement.
@@ -151,4 +169,14 @@ BehaviourClass(ACTIONS,
     /** Attack the current enemy with distance spells if within range
      * and line of fire */
     Behaviour(SPELL_ATTACK_ENEMY, ai_spell_attack_enemy, NIL)
+    
+    /** Plugin interface for actions */
+    Behaviour(PLUGIN_ACTION, ai_plugin_action, 
+        /** Plugin name, e.g. "lua" */
+        Parameter(PLUGIN_ACTION, PLUGIN, STRING, MANDATORY, NULL)
+        /** Behaviour name visible to plugin */
+        Parameter(PLUGIN_ACTION, BEHAVIOUR, STRING, MANDATORY, NULL)
+        /** Behaviour parameters visible to plugin */
+        Parameter(PLUGIN_ACTION, OPTIONS, STRING, OPTIONAL, "")
+    )
 )

@@ -123,6 +123,10 @@ static int getObjectMember(lua_State *L)
                         if(obj->data.object->count != obj->tag )
                             luaL_error(L, "Invalid object");
                         break;
+                    case LUATYPE_AI:
+                        if(obj->data.object->count != obj->tag )
+                            luaL_error(L, "Invalid AI");
+                        break;
                     case LUATYPE_MAP:
                         /* TODO: also check tag! */
                         if(obj->data.map->in_memory != MAP_IN_MEMORY )
@@ -193,11 +197,16 @@ static int setObjectMember(lua_State *L)
 
             if ((member = lua_touserdata(L, -1)))
             {
-                switch(obj->class->type)
+		/* TODO: replace with a validate class method */
+                switch(obj->class->type)		
                 {
                     case LUATYPE_OBJECT:
                         if(obj->data.object->count != obj->tag )
                             luaL_error(L, "Invalid object");
+                        break;
+                    case LUATYPE_AI:
+                        if(obj->data.object->count != obj->tag )
+                            luaL_error(L, "Invalid AI");
                         break;
                     case LUATYPE_MAP:
                         if(obj->data.map->in_memory != MAP_IN_MEMORY )
@@ -412,6 +421,10 @@ static inline lua_object * get_object_arg(lua_State *L, int pos, lua_class *clas
                 if(obj->data.object->count != obj->tag )
                     param_type_err(L, pos, "an invalid object");
                 break;
+            case LUATYPE_AI:
+                if(obj->data.object->count != obj->tag )
+                    param_type_err(L, pos, "an invalid AI");
+                break;
             case LUATYPE_MAP:
                 if(obj->data.map->in_memory != MAP_IN_MEMORY )
                     param_type_err(L, pos, "an invalid map");
@@ -509,6 +522,11 @@ void get_lua_args(lua_State *L, const char *fmt, ...)
               /* Event */
               *va_arg(ap, lua_object * *) = get_object_arg(L, pos, &Event);
               break;
+            
+	    case 'A':
+              /* AI */
+              *va_arg(ap, lua_object * *) = get_object_arg(L, pos, &AI);
+              break;
 
             case 'i':
               /* integer (int) */
@@ -575,6 +593,7 @@ int push_object(lua_State *L, lua_class *class, void *data)
 
     switch(class->type) {
         case LUATYPE_OBJECT:
+        case LUATYPE_AI:
             obj->tag = obj->data.object->count;
             break;
         case LUATYPE_EVENT:
