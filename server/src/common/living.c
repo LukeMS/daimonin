@@ -588,24 +588,24 @@ int change_abil(object *op, object *tmp) {
       }
     }
   }
-  if(tmp->stats.hp && op->type==PLAYER) {
+  if((tmp->stats.hp || tmp->stats.maxhp)&& op->type==PLAYER) {
     success=1;
-    if(flag*tmp->stats.hp>0)
+    if(flag*tmp->stats.hp>0 || flag*tmp->stats.maxhp>0)
       (*draw_info_func)(NDI_UNIQUE|NDI_WHITE, 0, op,"You feel much more healthy!");
     else
       (*draw_info_func)(NDI_UNIQUE|NDI_GREY, 0, op,"You feel much less healthy!");
   }
-  if(tmp->stats.sp && op->type==PLAYER && tmp->type!=SKILL) {
+  if((tmp->stats.sp||tmp->stats.maxsp )&& op->type==PLAYER && tmp->type!=SKILL) {
     success=1;
-    if(flag*tmp->stats.sp>0)
+    if(flag*tmp->stats.sp>0 || flag*tmp->stats.maxsp>0)
       (*draw_info_func)(NDI_UNIQUE|NDI_WHITE, 0, op,"You feel one with the powers of magic!");
     else
       (*draw_info_func)(NDI_UNIQUE|NDI_GREY, 0, op,"You suddenly feel very mundane.");
   }
   /* for the future when artifacts set this -b.t. */
-  if(tmp->stats.grace && op->type==PLAYER) {
+  if((tmp->stats.grace||tmp->stats.maxgrace )&& op->type==PLAYER) {
     success=1;
-     if(flag*tmp->stats.grace>0)
+     if(flag*tmp->stats.grace>0 || flag*tmp->stats.maxgrace)
       (*draw_info_func)(NDI_UNIQUE|NDI_WHITE, 0, op,"You feel closer to your deity!");
     else 
       (*draw_info_func)(NDI_UNIQUE|NDI_GREY, 0, op,"You suddenly feel less holy.");
@@ -766,7 +766,7 @@ void change_luck(object *op, int value) {
 void fix_player(object *op) 
 {
 	int ring_count=0,skill_level_max=1;
-	int tmp_item, old_glow;
+	int tmp_item, old_glow, max_boni_hp=0, max_boni_sp=0, max_boni_grace=0;
 	float tmp_con;
 	int i,j, inv_flag,inv_see_flag, light,weapon_weight, best_wc, best_ac, wc, ac;
 	int resists_boni[NROFATTACKS], resists_mali[NROFATTACKS];
@@ -1053,6 +1053,9 @@ void fix_player(object *op)
 					 * a differnet meaning
 					 * add some of this below when used from other applied objects too!
 					 */
+					max_boni_hp		  += tmp->stats.maxhp;
+					max_boni_sp		  += tmp->stats.maxsp;
+					max_boni_grace    += tmp->stats.maxgrace;
 					pl->digestion     += tmp->stats.food;
 					pl->gen_sp        += tmp->stats.sp;
 					pl->gen_grace     += tmp->stats.grace;
@@ -1504,11 +1507,17 @@ void fix_player(object *op)
 
 	/* now adjust with the % of the stats mali/boni.
 	 */
-	op->stats.maxhp += (int)((float)op->stats.maxhp*con_bonus[op->stats.Con]);
-	op->stats.maxsp += (int)((float)op->stats.maxsp*pow_bonus[op->stats.Pow]);
-	op->stats.maxgrace += (int)((float)op->stats.maxgrace*wis_bonus[op->stats.Wis]);
+	op->stats.maxhp += (int)((float)op->stats.maxhp*con_bonus[op->stats.Con])+max_boni_hp;
+	op->stats.maxsp += (int)((float)op->stats.maxsp*pow_bonus[op->stats.Pow])+max_boni_sp;
+	op->stats.maxgrace += (int)((float)op->stats.maxgrace*wis_bonus[op->stats.Wis])+max_boni_grace;
 
-	/* when this is set, this object comes fresh in game.
+	if(op->stats.maxhp<1)
+		op->stats.maxhp=1;
+	if(op->stats.maxsp<1)
+		op->stats.maxsp=1;
+	if(op->stats.maxgrace<1)
+		op->stats.maxgrace=1;
+		/* when this is set, this object comes fresh in game.
 	 * we must adjust now hp,sp and grace with the max values.
 	 * if hp/sp/grace == -1, then set it to max value.
 	 * if it != 0, then leave it.

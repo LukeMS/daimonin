@@ -1215,6 +1215,11 @@ arch floor_ostone1
 x 11
 y 7
 end
+arch high_boots
+maxhp 20
+x 11
+y 7
+end
 arch floor_ostone1
 x 11
 y 8
@@ -1411,6 +1416,11 @@ x 13
 y 7
 end
 arch floor_ostone1
+x 13
+y 8
+end
+arch girdle
+maxsp 15
 x 13
 y 8
 end
