@@ -16,8 +16,8 @@ dnl g++ version check
 if test x$GCC = xyes; then
 	AC_MSG_CHECKING([version 3.x of gcc])
     if test -n "`$CC --version 2>&1|grep '3.'`"; then
-    	AC_DEFINE(EXT_HASH,, Use old STL hash options)
-        AC_DEFINE(GCC_3_1,, 3.x GCC version)
+#    	AC_DEFINE(EXT_HASH,, Use old STL hash options)
+#        AC_DEFINE(GCC_3_1,, 3.x GCC version)
         AC_MSG_RESULT(yes);
     else
         AC_MSG_RESULT(no)!
@@ -28,6 +28,10 @@ dnl find the ogre package
 PKG_CHECK_MODULES(OGRE, OGRE)
 AC_SUBST(OGRE_CFLAGS)
 AC_SUBST(OGRE_LIBS)
+
+# Find fmod stuff
+AC_SUBST(FMOD_CFLAGS, "-I/home/gecko/src/fmodapi374linux/api/inc")
+AC_SUBST(FMOD_LIBS, "-L/home/gecko/src/fmodapi374linux/api -lfmod-3.74")
 
 AC_PATH_PROG(DEPEND, makedepend)
 AC_PATH_PROG(CP,cp)
@@ -46,4 +50,4 @@ else
 fi
 
 #AC_CONFIG_HEADER(../../src/include/define.h)
-AC_OUTPUT(Makefile source/Makefile)
+AC_OUTPUT(Makefile source/Makefile source/include/Makefile)

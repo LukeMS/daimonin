@@ -72,8 +72,12 @@ int main(int argc, char **argv)
 	
     if (FSOUND_GetVersion() < FMOD_VERSION)
     {
+#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
         sprintf(buf,"Error : You are using the wrong DLL version!  You should be using FMOD %.02f\n", FMOD_VERSION);
         MessageBox( NULL, buf, "Fmod: Wrong DLL", MB_OK | MB_ICONERROR | MB_TASKMODAL);
+#else
+        std::cerr << "FMOD: Wrong version. You need " << FMOD_VERSION << std::endl;
+#endif
         exit(1);
     }
     
@@ -83,7 +87,11 @@ int main(int argc, char **argv)
     if (!FSOUND_Init(32000, 64, 0))
     {
         sprintf(buf,"%s\n", FMOD_ErrorString(FSOUND_GetError()));
+#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
         MessageBox( NULL, buf, "FMOD INIT ERROR", MB_OK | MB_ICONERROR | MB_TASKMODAL);
+#else
+        std::cerr << "FMOD: INIT ERROR " << buf;
+#endif
         exit(1);
     }
 	/*
@@ -94,7 +102,11 @@ int main(int argc, char **argv)
     if (!mod)
     {
         sprintf(buf,"%s\n", FMOD_ErrorString(FSOUND_GetError()));
+#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
         MessageBox( NULL, buf, "FMOD: Can't find sound file", MB_OK | MB_ICONERROR | MB_TASKMODAL);
+#else
+        std::cerr << "FMOD: Can't find sound file: " << buf;
+#endif
 		exit(1);
     }
     FMUSIC_PlaySong(mod);   
