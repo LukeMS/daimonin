@@ -5,6 +5,8 @@ randomitems mob_slime
 is_neutral 1
 weight 13250
 exp 150
+item_race 255
+item_level 255
 speed -0.03
 weapon_speed 0.038
 attack_cleave 65

@@ -800,6 +800,10 @@
     "paralyze" of &lt;importance&gt; 1 will averagely cast three out of four
     times the "small fireball".
   </attribute>
+  <attribute arch="last_grace" editor="casting delay" type="int">
+  The casting delay this spell/ability invoke to a monster using it.
+  This is cumulative added to the monster default casting delay.
+  </attribute>
   <attribute arch="is_magical" editor="is magical" type="bool">
     This flag specifies wether the ability &lt;is magical&gt; in nature.
     If enabled, all spells produced by this ability will have magic
@@ -3801,6 +3805,10 @@
     fast enough, give it the spell-ability of "regenerate mana".
     That, paired with high &lt;max spellpoints&gt;, is the ultimate thing.
   </attribute>
+  <attribute arch="magic" editor="casting delay" type="int">
+  The casting delay this monster invoke every cast.
+  This is cumulative added to the spell default casting delay.
+  </attribute>
   <attribute arch="path_attuned" editor="attuned paths" type="bitmask_spellpath">
     Click on the &lt;attuned paths&gt; button to select spellpaths.
     The creature will get attuned to the specified spellpaths.
@@ -3884,6 +3892,16 @@
     Specifically, that means they do not approach enemy players
     when agressive, but they never stand still either.
   </attribute>
+
+  <attribute arch="item_race" editor="random move range X" type="int">
+   if random_move is set, this determinates a ABS() value of x position
+   the creatures can move away from the spawn point.
+  </attribute>
+  <attribute arch="item_level" editor="random move range Y" type="int">
+   if random_move is set, this determinates a ABS() value of y position
+   the creatures can move away from the spawn point.
+  </attribute>
+
   <attribute arch="stand_still" editor="stand still" type="bool">
     Monsters which &lt;stand still&gt; won't move to leave their position.
     When agressive, they will attack all enemies who get close to
@@ -4427,6 +4445,10 @@
     fast enough, give it the spell-ability of "regenerate mana".
     That, paired with high &lt;max spellpoints&gt;, is the ultimate thing.
   </attribute>
+  <attribute arch="magic" editor="casting delay" type="int">
+  The casting delay this monster invoke every cast.
+  This is cumulative added to the spell default casting delay.
+  </attribute>
   <attribute arch="path_attuned" editor="attuned paths" type="bitmask_spellpath">
     Click on the &lt;attuned paths&gt; button to select spellpaths.
     The creature will get attuned to the specified spellpaths.
@@ -4509,6 +4531,14 @@
     Monsters with this flag enabled move around at random.
     Specifically, that means they do not approach enemy players
     when agressive, but they never stand still either.
+  </attribute>
+  <attribute arch="item_race" editor="random move range X" type="int">
+   if random_move is set, this determinates a ABS() value of x position
+   the creatures can move away from the spawn point.
+  </attribute>
+  <attribute arch="item_level" editor="random move range Y" type="int">
+   if random_move is set, this determinates a ABS() value of y position
+   the creatures can move away from the spawn point.
   </attribute>
   <attribute arch="stand_still" editor="stand still" type="bool">
     Monsters which &lt;stand still&gt; won't move to leave their position.

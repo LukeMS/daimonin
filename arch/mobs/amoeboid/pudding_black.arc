@@ -7,6 +7,8 @@ weight 16250
 exp 140
 speed -0.026
 weapon_speed 0.040
+item_race 255
+item_level 255
 attack_acid 80
 ac 10
 wc 3

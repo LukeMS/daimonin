@@ -5591,6 +5591,7 @@ type 110
 editor_folder forces/ability
 identified 1
 is_magical 1
+last_grace 10
 sys_object 1
 no_drop 1
 no_pick 1
@@ -5603,6 +5604,7 @@ type 110
 editor_folder forces/ability
 identified 1
 sys_object 1
+last_grace 10
 no_drop 1
 hp 3
 maxsp 5
@@ -5616,6 +5618,7 @@ sys_object 1
 identified 1
 is_magical 1
 no_drop 1
+last_grace 10
 no_pick 1
 end
 Object ability_icestorm
@@ -5627,6 +5630,7 @@ identified 1
 sys_object 1
 is_magical 1
 no_drop 1
+last_grace 10
 no_pick 1
 sp 1
 end
@@ -5638,6 +5642,7 @@ editor_folder forces/ability
 identified 1
 sys_object 1
 is_magical 1
+last_grace 10
 no_drop 1
 no_pick 1
 sp 13
@@ -5649,6 +5654,7 @@ type 14
 editor_folder forces/ability
 race rock
 identified 1
+last_grace 10
 sys_object 1
 nrof 1
 no_drop 1
@@ -14917,6 +14923,8 @@ randomitems mob_slime
 is_neutral 1
 weight 13250
 exp 130
+item_race 255
+item_level 255
 speed -0.025
 weapon_speed 0.0375
 attack_acid 75
@@ -14949,6 +14957,8 @@ randomitems mob_slime
 is_neutral 1
 weight 13250
 exp 130
+item_race 255
+item_level 255
 speed -0.025
 weapon_speed 0.038
 attack_slash 100
@@ -14984,6 +14994,8 @@ randomitems mob_slime
 is_neutral 1
 weight 8250
 exp 115
+item_race 255
+item_level 255
 speed -0.025
 weapon_speed 0.040
 attack_pierce 75
@@ -15016,6 +15028,8 @@ randomitems mob_slime
 is_neutral 1
 weight 13250
 exp 150
+item_race 255
+item_level 255
 speed -0.03
 weapon_speed 0.040
 attack_cold 75
@@ -15050,6 +15064,8 @@ randomitems mob_slime
 is_neutral 1
 weight 13250
 exp 150
+item_race 255
+item_level 255
 speed -0.03
 weapon_speed 0.038
 attack_cleave 65
@@ -15086,6 +15102,8 @@ is_neutral 1
 weight 13250
 exp 150
 speed -0.032
+item_race 255
+item_level 255
 weapon_speed 0.0375
 attack_acid 55
 attack_poison 40
@@ -15121,6 +15139,8 @@ weight 13250
 exp 150
 speed -0.032
 weapon_speed 0.0375
+item_race 255
+item_level 255
 attack_poison 40
 attack_cold 40
 resist_poison 100
@@ -15158,6 +15178,8 @@ speed -0.026
 weapon_speed 0.040
 attack_fire 40
 attack_acid 40
+item_race 255
+item_level 255
 ac 10
 wc 3
 dam 5
@@ -15178,7 +15200,7 @@ alive 1
 level 1
 end
 Object pudding_blue
-name black pudding
+name blue pudding
 face pudding_blue.111
 type 80
 editor_folder mobs/amoeboid
@@ -15189,6 +15211,8 @@ weight 16250
 exp 140
 speed -0.026
 weapon_speed 0.040
+item_race 255
+item_level 255
 attack_cold 80
 ac 10
 wc 3
@@ -15223,6 +15247,8 @@ speed -0.024
 weapon_speed 0.040
 attack_impact 75
 ac 10
+item_race 255
+item_level 255
 wc 2
 dam 4
 hp -1
@@ -15253,6 +15279,8 @@ weight 16250
 exp 140
 speed -0.026
 weapon_speed 0.040
+item_race 255
+item_level 255
 attack_acid 80
 ac 10
 wc 3
@@ -15274,7 +15302,7 @@ alive 1
 level 1
 end
 Object pudding_brown
-name black pudding
+name brown pudding
 face pudding_brown.111
 type 80
 editor_folder mobs/amoeboid
@@ -15286,6 +15314,8 @@ exp 140
 speed -0.026
 weapon_speed 0.040
 attack_fire 80
+item_race 255
+item_level 255
 ac 10
 wc 3
 dam 5
@@ -15306,7 +15336,7 @@ alive 1
 level 1
 end
 Object pudding_green
-name black pudding
+name green pudding
 face pudding_green.111
 type 80
 editor_folder mobs/amoeboid
@@ -15319,6 +15349,8 @@ speed -0.026
 weapon_speed 0.040
 attack_poison 80
 ac 10
+item_race 255
+item_level 255
 wc 3
 dam 5
 hp -1
@@ -15347,6 +15379,8 @@ randomitems mob_slime
 is_neutral 1
 weight 13250
 exp 130
+item_race 255
+item_level 255
 speed -0.025
 weapon_speed 0.0375
 attack_poison 75
@@ -15380,6 +15414,8 @@ is_neutral 1
 weight 13250
 exp 150
 speed -0.03
+item_race 255
+item_level 255
 weapon_speed 0.038
 attack_poison 65
 attack_acid 10
@@ -15414,6 +15450,8 @@ randomitems mob_slime
 is_neutral 1
 weight 12250
 exp 135
+item_race 255
+item_level 255
 speed -0.024
 weapon_speed 0.040
 attack_impact 75
@@ -15560,6 +15598,8 @@ will_apply 8
 is_evil 1
 is_male 1
 weight 13250
+item_race 255
+item_level 255
 exp 165
 speed -0.035
 weapon_speed 0.042
@@ -15595,6 +15635,8 @@ is_male 1
 will_apply 8
 weight 13250
 exp 150
+item_race 255
+item_level 255
 speed -0.0275
 weapon_speed 0.04
 attack_impact 80
@@ -15630,6 +15672,8 @@ is_evil 1
 is_male 1
 weight 13250
 exp 165
+item_race 255
+item_level 255
 speed -0.035
 weapon_speed 0.042
 attack_impact 90
@@ -15661,6 +15705,8 @@ race human
 layer 6
 will_apply 8
 direction 5
+item_race 255
+item_level 255
 is_male 1
 is_good 1
 terrain_flag 1
@@ -15705,6 +15751,8 @@ type 80
 editor_folder mobs/human
 race human
 layer 6
+item_race 255
+item_level 255
 will_apply 8
 direction 5
 is_male 1
@@ -15752,6 +15800,8 @@ editor_folder mobs/human
 race human
 layer 6
 will_apply 8
+item_race 255
+item_level 255
 direction 5
 is_male 1
 is_good 1
@@ -15799,6 +15849,8 @@ race human
 layer 6
 will_apply 8
 direction 5
+item_race 255
+item_level 255
 is_male 1
 is_good 1
 terrain_flag 1
@@ -15847,6 +15899,8 @@ direction 5
 will_apply 8
 is_male 1
 is_good 1
+item_race 255
+item_level 255
 terrain_flag 1
 weapon_speed 0.040
 corpse 1
@@ -15894,6 +15948,8 @@ will_apply 8
 is_female 1
 is_good 1
 terrain_flag 1
+item_race 255
+item_level 255
 weapon_speed 0.040
 corpse 1
 attack_weaponmagic 100
@@ -15938,6 +15994,8 @@ layer 6
 will_apply 8
 direction 5
 is_male 1
+item_race 255
+item_level 255
 is_good 1
 terrain_flag 1
 weapon_speed 0.045
@@ -15986,6 +16044,8 @@ will_apply 8
 is_male 1
 is_good 1
 terrain_flag 1
+item_race 255
+item_level 255
 weapon_speed 0.040
 corpse 1
 attack_weaponmagic 100
@@ -16028,6 +16088,8 @@ editor_folder mobs/human
 race human
 layer 6
 will_apply 8
+item_race 255
+item_level 255
 direction 5
 is_male 1
 is_good 1
@@ -16075,6 +16137,8 @@ race insect
 is_female 1
 corpse 1
 will_apply 8
+item_race 255
+item_level 255
 layer 6
 direction 5
 is_neutral 1
@@ -16112,6 +16176,8 @@ corpse 1
 layer 6
 direction 5
 is_neutral 1
+item_race 255
+item_level 255
 terrain_flag 1
 weapon_speed 0.035
 attack_cleave 75
@@ -16144,6 +16210,8 @@ editor_folder mobs/insects
 layer 6
 race insect
 corpse 1
+item_race 255
+item_level 255
 weapon_speed 0.035
 attack_cleave 80
 is_male 1
@@ -16179,6 +16247,8 @@ direction 5
 is_neutral 1
 corpse 1
 will_apply 8
+item_race 255
+item_level 255
 terrain_flag 1
 weapon_speed 0.039
 Wis 6
@@ -16212,9 +16282,12 @@ randomitems mob_wyvern
 direction 5
 speed -0.06
 corpse 1
+item_race 255
+item_level 255
 is_male 1
 is_neutral 1
 Wis 7
+Dex 13
 terrain_flag 1
 animation wyvern
 is_animated 1
@@ -16309,6 +16382,8 @@ randomitems mob_troll
 direction 5
 speed -0.06
 corpse 1
+item_race 255
+item_level 255
 is_male 1
 is_neutral 1
 Wis 7
@@ -16388,6 +16463,8 @@ editor_folder mobs/dragon
 layer 6
 race dragon
 corpse 1
+item_race 255
+item_level 255
 weapon_speed 0.035
 attack_cleave 80
 is_male 1
@@ -16423,6 +16500,8 @@ is_male 1
 corpse 1
 layer 6
 direction 5
+item_race 255
+item_level 255
 is_neutral 1
 terrain_flag 1
 weapon_speed 0.035
@@ -16457,12 +16536,119 @@ corpse 1
 layer 6
 direction 5
 is_neutral 1
+item_race 255
+item_level 255
 terrain_flag 1
 weapon_speed 0.035
 attack_slash 75
 Wis 6
 randomitems mob_kobold_big
 animation kobold_big
+is_animated 1
+anim_speed 4
+monster 1
+no_pick 1
+alive 1
+can_see_in_dark 1
+exp 100
+ac 9
+wc 0
+dam 5
+hp -1
+maxhp 6
+level 1
+speed -0.041
+weight 22500
+end
+Object kobold_fighter
+name kobold fighter
+face kobold_fighter.131
+type 80
+editor_folder mobs/demihumans
+race kobold
+is_male 1
+corpse 1
+layer 6
+direction 5
+item_race 255
+item_level 255
+is_neutral 1
+terrain_flag 1
+weapon_speed 0.035
+attack_slash 75
+Wis 6
+randomitems mob_kobold
+animation kobold_fighter
+is_animated 1
+anim_speed 4
+monster 1
+no_pick 1
+alive 1
+can_see_in_dark 1
+exp 100
+ac 9
+wc 0
+dam 5
+hp -1
+maxhp 6
+level 1
+speed -0.041
+weight 22500
+end
+Object kobold_guard
+name kobold guard
+face kobold_guard.131
+type 80
+editor_folder mobs/demihumans
+race kobold
+is_male 1
+corpse 1
+layer 6
+direction 5
+is_neutral 1
+terrain_flag 1
+item_race 255
+item_level 255
+weapon_speed 0.035
+attack_slash 75
+Wis 6
+randomitems mob_kobold
+animation kobold_guard
+is_animated 1
+anim_speed 4
+monster 1
+no_pick 1
+alive 1
+can_see_in_dark 1
+exp 100
+ac 9
+wc 0
+dam 5
+hp -1
+maxhp 6
+level 1
+speed -0.041
+weight 22500
+end
+Object kobold_shaman
+name kobold shaman
+face kobold_shaman.131
+type 80
+editor_folder mobs/demihumans
+race kobold
+is_male 1
+corpse 1
+layer 6
+item_race 255
+item_level 255
+direction 5
+is_neutral 1
+terrain_flag 1
+weapon_speed 0.035
+attack_slash 75
+Wis 6
+randomitems mob_kobold
+animation kobold_shaman
 is_animated 1
 anim_speed 4
 monster 1
@@ -16489,6 +16675,8 @@ race worm
 layer 6
 randomitems mob_worm_purple
 direction 5
+item_race 255
+item_level 255
 speed -0.06
 corpse 1
 is_male 1
@@ -16572,6 +16760,8 @@ is_evil 1
 corpse 1
 glow_radius 2
 layer 6
+item_race 255
+item_level 255
 direction 5
 terrain_flag 1
 weapon_speed 0.035
@@ -16612,6 +16802,8 @@ layer 6
 direction 5
 is_evil 1
 terrain_flag 1
+item_race 255
+item_level 255
 weapon_speed 0.035
 attack_slash 80
 Wis 6
@@ -16644,6 +16836,8 @@ corpse 1
 layer 6
 direction 5
 is_evil 1
+item_race 255
+item_level 255
 terrain_flag 1
 weapon_speed 0.035
 attack_slash 40

@@ -231,8 +231,9 @@ char *query_short_name(object *op)
     char buf2[HUGE_BUF];
     int len=0;
 
+	buf[0]=0;
     if(!op || !op->name)
-	return "";
+	return buf;
 	
 	/* To speed things up (or make things slower?) 
     if(!op->nrof && !op->weight && !op->title && !is_magical(op)) 
@@ -244,7 +245,8 @@ char *query_short_name(object *op)
 		if (op->nrof!=1) 
 			safe_strcat(buf, " ", &len, sizeof(buf));
 		/* add the item race name */
-		safe_strcat(buf, item_race_table[op->item_race].name, &len, sizeof(buf));
+		if(!IS_LIVE(op) && op->type != TYPE_BASE_INFO)
+			safe_strcat(buf, item_race_table[op->item_race].name, &len, sizeof(buf));
 
 		if(op->material_real && QUERY_FLAG(op,FLAG_IDENTIFIED))
 			safe_strcat(buf,material_real[op->material_real].name, &len, sizeof(buf));
@@ -274,7 +276,8 @@ char *query_short_name(object *op)
 		/* if nrof is 0, the object is not mergable, and thus, op->name
 		should contain the name to be used. */
 
-		safe_strcat(buf, item_race_table[op->item_race].name, &len, sizeof(buf));
+		if(!IS_LIVE(op) && op->type != TYPE_BASE_INFO)
+			safe_strcat(buf, item_race_table[op->item_race].name, &len, sizeof(buf));
 
 		if(op->material_real && QUERY_FLAG(op,FLAG_IDENTIFIED))
 			safe_strcat(buf,material_real[op->material_real].name, &len, sizeof(buf));
@@ -382,8 +385,11 @@ char *query_short_name(object *op)
 		if(op->magic && 
 			(!need_identify(op) || QUERY_FLAG(op,FLAG_BEEN_APPLIED) || QUERY_FLAG(op,FLAG_IDENTIFIED)))
 		{
-			sprintf(buf2, " %+d", op->magic);
-			safe_strcat(buf, buf2, &len, sizeof(buf));
+			if(!IS_LIVE(op) && op->type != TYPE_BASE_INFO)
+			{
+				sprintf(buf2, " %+d", op->magic);
+				safe_strcat(buf, buf2, &len, sizeof(buf));
+			}
 		}
 	    if (op->title && QUERY_FLAG(op,FLAG_IDENTIFIED))
 		{
@@ -494,11 +500,13 @@ char *query_base_name(object *op) {
 	char buf2[32];
     int len;
 
+	buf[0]=0;
     if(op->name == NULL)
 	return "(null)";
 
     /* add the item race name */
-    strcpy(buf, item_race_table[op->item_race].name);
+	if(!IS_LIVE(op) && op->type != TYPE_BASE_INFO)
+		strcpy(buf, item_race_table[op->item_race].name);
 
 	/* we add the real material name as prefix. Because real_material == 0 is
 	 * "" (clear string) we don't must check item types for adding something here
@@ -615,8 +623,11 @@ char *query_base_name(object *op) {
 		if(op->magic && 
 			(!need_identify(op) || QUERY_FLAG(op,FLAG_BEEN_APPLIED) || QUERY_FLAG(op,FLAG_IDENTIFIED)))
 		{
-			sprintf(buf2, " %+d", op->magic);
-			safe_strcat(buf, buf2, &len, sizeof(buf));
+			if(!IS_LIVE(op) && op->type != TYPE_BASE_INFO)
+			{
+				sprintf(buf2, " %+d", op->magic);
+				safe_strcat(buf, buf2, &len, sizeof(buf));
+			}
 		}
 
 	    if (op->title &&(need_identify(op) && QUERY_FLAG(op,FLAG_IDENTIFIED))) 

@@ -6,6 +6,8 @@ is_evil 1
 corpse 1
 glow_radius 2
 layer 6
+item_race 255
+item_level 255
 direction 5
 terrain_flag 1
 weapon_speed 0.035

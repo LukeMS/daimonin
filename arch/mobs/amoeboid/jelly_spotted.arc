@@ -7,6 +7,8 @@ weight 13250
 exp 150
 speed -0.032
 weapon_speed 0.0375
+item_race 255
+item_level 255
 attack_poison 40
 attack_cold 40
 resist_poison 100
