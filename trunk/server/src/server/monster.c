@@ -629,11 +629,12 @@ void waypoint_move(object *op, object *waypoint) {
                 op->name, waypoint->name);
         return;
     }
-    
+
+    /* TODO: degrade gracefully if maps are not close */
     if(! get_rangevector_from_mapcoords(op->map, op->x, op->y,
                 destmap, waypoint->stats.hp, waypoint->stats.sp, &global_rv, 
                 RV_RECURSIVE_SEARCH | RV_DIAGONAL_DISTANCE)) {
-        LOG(llevBug,"BUG: waypoint_move(): Maps are not connected: '%s' and '%s'\n", 
+        LOG(llevDebug,"waypoint_move(): Could not find connection between maps: '%s' and '%s'\n", 
                 destmap->path, op->map->path);
         CLEAR_FLAG(waypoint, FLAG_CURSED); /* disable this waypoint */
         return;

@@ -114,43 +114,6 @@ static mapstruct *load_and_link_tiled_map(mapstruct *orig_map, int tile_num)
     return orig_map->tile_map[tile_num];
 }
 
-/* 
- * The recursive part of the function below.
- */
-static int relative_tile_position_rec(mapstruct *map1, mapstruct *map2, int *x, int *y, uint32 id) {    
-    int i;
-    
-    if(map1 == map2)
-        return TRUE;
-    
-    map1->traversed = id;
-    
-    /* TODO: A bidirectional breadth-first search would be more efficient */
-    /* Depth-first search for the destination map */
-    for(i=0; i<TILED_MAPS; i++) {
-        if (map1->tile_path[i]) {
-            if (!map1->tile_map[i] || map1->tile_map[i]->in_memory != MAP_IN_MEMORY)
-                load_and_link_tiled_map(map1, i);
-          
-            if (map1->tile_map[i]->traversed != id && ((map1->tile_map[i] == map2) ||
-                        relative_tile_position_rec(map1->tile_map[i], map2, x, y, id))) {
-                switch(i) {
-                    case 0: *y -= MAP_HEIGHT(map1->tile_map[i]); return TRUE;  /* North */
-                    case 1: *x += MAP_WIDTH(map1);    return TRUE;  /* East */
-                    case 2: *y += MAP_HEIGHT(map1);   return TRUE;  /* South */
-                    case 3: *x -= MAP_WIDTH(map1->tile_map[i]);  return TRUE;  /* West */
-
-                    case 4: *y -= MAP_HEIGHT(map1->tile_map[i]); *x += MAP_WIDTH(map1); return TRUE;  /* Northest */
-                    case 5: *y += MAP_HEIGHT(map1); *x += MAP_WIDTH(map1); return TRUE;  /* Southest */
-                    case 6: *y += MAP_HEIGHT(map1); *x -= MAP_WIDTH(map1->tile_map[i]); return TRUE;  /* Southwest */
-                    case 7: *y -= MAP_HEIGHT(map1->tile_map[i]); *x -= MAP_WIDTH(map1->tile_map[i]); return TRUE;  /* Northwest */
-                }
-            }
-        }
-    }
-    return FALSE;
-}
-
 /* Find the distance between two map tiles on a tiled map.
  * Returns true if the two tiles are part of the same map.
  * the distance from the topleft (0,0) corner of map1 to the topleft corner of map2
@@ -159,43 +122,47 @@ static int relative_tile_position_rec(mapstruct *map1, mapstruct *map2, int *x, 
  * This function does not work well with assymetrically tiled maps.
  * It will also (naturally) perform bad on very large tilesets such as the world map
  * as it may need to load all tiles into memory before finding a path between two tiles.
- * We probably want to handle the world map as a special case, considering that
- * all tiles are of equal size, and that we might be able to parse their coordinates from
- * their names...
+ * 
+ * One solution is to handle the world map as a special case, requiring that all tiles are
+ * of equal size, and that we might be able to parse their coordinates from their names...
+ *
+ * A more generic and robust solution would be to build some sort of "routing table" for
+ * inter-tile pathfinding. This can be built dynamically when searching, or off-line before
+ * server startup and saved to a file or just in memory. The dynamic model handles dynamic
+ * map changes better.
  */
 static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int *y)
 {    
     int i;
     static uint32 traversal_id = 0;
+    struct mapsearch_node *first, *last, *curr, *node;
+    int success = FALSE;
+    int searched_tiles = 0;
 
     /* Save some time in the simplest cases ( very similar to on_same_map() )*/
     if(map1 == NULL || map2 == NULL)
         return FALSE;
-    
+ 
     if(map1 == map2)
         return TRUE;
 
-    for(i=0; i<TILED_MAPS; i++) {
-        if (map1->tile_path[i]) {
-            if (!map1->tile_map[i] || map1->tile_map[i]->in_memory != MAP_IN_MEMORY)
-                load_and_link_tiled_map(map1, i);
-            
-            if (map1->tile_map[i] == map2) {
-                switch(i) {
-                    case 0: *y -= MAP_HEIGHT(map1->tile_map[i]); return TRUE;  /* North */
-                    case 1: *x += MAP_WIDTH(map1);    return TRUE;  /* East */
-                    case 2: *y += MAP_HEIGHT(map1);   return TRUE;  /* South */
-                    case 3: *x -= MAP_WIDTH(map1->tile_map[i]);  return TRUE;  /* West */
-
-                    case 4: *y -= MAP_HEIGHT(map1->tile_map[i]); *x += MAP_WIDTH(map1); return TRUE;  /* Northest */
-                    case 5: *y += MAP_HEIGHT(map1); *x += MAP_WIDTH(map1); return TRUE;  /* Southest */
-                    case 6: *y += MAP_HEIGHT(map1); *x -= MAP_WIDTH(map1->tile_map[i]); return TRUE;  /* Southwest */
-                    case 7: *y -= MAP_HEIGHT(map1->tile_map[i]); *x -= MAP_WIDTH(map1->tile_map[i]); return TRUE;  /* Northwest */
-                }
-            }
-        }
+    /* The caching really helps when pathifinding across map tiles,
+     * but not in many other cases. */
+    /* Check for cached pathfinding */    
+    if(map1->cached_dist_map == map2->path) {
+        *x += map1->cached_dist_x;
+        *y += map1->cached_dist_y;
+        return TRUE;
+    }
+    if(map2->cached_dist_map == map1->path) {
+        *x -= map2->cached_dist_x;
+        *y -= map2->cached_dist_y;
+        return TRUE;
     }
     
+    /* TODO: effectivize somewhat by doing bidirectional search */
+    /* TODO: big project: magically make work with pre- or dynamically computed bigmap data */
+
     /* Avoid overflow of traversal_id */
     if(traversal_id == 4294967295U /* UINT_MAX */) {
         mapstruct *m;
@@ -207,9 +174,86 @@ static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int 
 
         traversal_id = 0;
     }
+        
+    map1->traversed = ++traversal_id;
 
-    /* recursive search */
-    return relative_tile_position_rec(map1, map2, x, y, ++traversal_id);
+    /* initial queue and node values */
+    first = last = NULL;
+    curr = get_poolchunk(POOL_MAP_BFS);    
+    curr->map = map1;
+    curr->dx = curr->dy = 0;
+
+    while(curr) {
+        /* Expand one level */
+        for(i=0; i<TILED_MAPS; i++) {
+            if (curr->map->tile_path[i] && (curr->map->tile_map[i] == NULL ||
+                        curr->map->tile_map[i]->traversed != traversal_id)) {
+                if (!curr->map->tile_map[i] || curr->map->tile_map[i]->in_memory != MAP_IN_MEMORY)
+                    load_and_link_tiled_map(curr->map, i);
+                               
+                /* TODO: avoid this bit of extra work if correct map */
+                node = get_poolchunk(POOL_MAP_BFS);
+                node->dx = curr->dx;
+                node->dy = curr->dy;
+                node->map = curr->map->tile_map[i];
+                
+                /* Calc dx/dy */
+                switch(i) {
+                    case 0: node->dy -= MAP_HEIGHT(curr->map->tile_map[i]);  break;  /* North */
+                    case 1: node->dx += MAP_WIDTH(curr->map); break;  /* East */
+                    case 2: node->dy += MAP_HEIGHT(curr->map); break;  /* South */
+                    case 3: node->dx -= MAP_WIDTH(curr->map->tile_map[i]);  break;  /* West */
+                    case 4: node->dy -= MAP_HEIGHT(curr->map->tile_map[i]); node->dx += MAP_WIDTH(curr->map); break;  /* Northest */
+                    case 5: node->dy += MAP_HEIGHT(curr->map); node->dx += MAP_WIDTH(curr->map); break;  /* Southest */
+                    case 6: node->dy += MAP_HEIGHT(curr->map); node->dx -= MAP_WIDTH(curr->map->tile_map[i]); break;  /* Southwest */
+                    case 7: node->dy -= MAP_HEIGHT(curr->map->tile_map[i]); node->dx -= MAP_WIDTH(curr->map->tile_map[i]); break;  /* Northwest */
+                }
+             
+                /* Correct map? */
+                if(node->map == map2) {
+                    /* store info in cache */
+                    FREE_AND_ADD_REF_HASH(map1->cached_dist_map, map2->path);
+                    map1->cached_dist_x = node->dx;
+                    map1->cached_dist_y = node->dy;
+                    
+                    /* return result and clean up */
+                    *x += node->dx;
+                    *y += node->dy;
+                    success = TRUE;
+                    return_poolchunk(node, POOL_MAP_BFS);
+                    return_poolchunk(curr, POOL_MAP_BFS);
+                    goto out;
+                }
+     
+                /* No success, add the new tile to the queue */
+                node->next = NULL;
+                if(first) {
+                    last->next = node;
+                    last = node;
+                } else 
+                    first = last = node;
+                node->map->traversed = traversal_id;
+            }
+        }
+
+        return_poolchunk(curr, POOL_MAP_BFS);
+
+        /* Depth-limitation */
+        if(++searched_tiles >= MAX_SEARCH_MAP_TILES) {
+            LOG(llevDebug,"relative_tile_position(): reached max nrof search tiles - bailing out\n");
+            break;
+        }
+        
+        /* dequeue next tile to check */
+        curr = first;
+        first = curr->next;
+    }
+
+out:
+    for(node = first; node; node = node->next)
+        return_poolchunk(node, POOL_MAP_BFS);
+
+    return success;
 }
 
 /*
@@ -1288,6 +1332,7 @@ mapstruct *get_linked_map() {
     else
 	mp->next=map;
 
+    map->cached_dist_map = NULL;
 	map->buttons = NULL;
 	map->first_light = NULL;
     map->bitmap = NULL;
@@ -1998,6 +2043,7 @@ void free_map(mapstruct *m,int flag) {
         free(m->bitmap);
         m->bitmap = NULL;
     }
+    FREE_AND_CLEAR_HASH(m->cached_dist_map);
     m->in_memory = MAP_SWAPPED;
 }
 

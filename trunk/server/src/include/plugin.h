@@ -198,7 +198,7 @@
 #define HOOK_COMMUNICATE         54
 #define HOOK_FINDBESTOBJECTMATCH 55
 #define HOOK_APPLYBELOW          56
-#define HOOK_FREEOBJECT          57
+#define HOOK_DESTRUCTOBJECT      57
 #define HOOK_CLONEOBJECT         58
 #define HOOK_TELEPORTOBJECT      59
 #define HOOK_LEARNSKILL          60

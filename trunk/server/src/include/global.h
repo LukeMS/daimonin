@@ -78,10 +78,10 @@ typedef struct _money_block {
 #define MAP_INFO_NORMAL 12
 #define MAP_INFO_ALL 9999
 
-/* use this macros *only* to access the global hash table!
+/* use *only* these macros to access the global hash table!
  * Note: there is a 2nd hash table for the arch list - thats a static
- * list BUT the arch names are inserted in the global hash to - so every
- * archlist name has 2 entries!
+ * list BUT the arch names are inserted in the global hash too - so every
+ * archlist name has 2 entries (so you can't always use == for string comparison!)
  */
 #define FREE_AND_COPY_HASH(_sv_,_nv_) { if (_sv_) free_string_shared(_sv_); _sv_=add_string(_nv_); }
 #define FREE_AND_ADD_REF_HASH(_sv_,_nv_) { if (_sv_) free_string_shared(_sv_); _sv_=add_refcount(_nv_); }

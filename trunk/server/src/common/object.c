@@ -987,6 +987,7 @@ struct mempool mempools[NROF_MEMPOOLS] = {
         (chunk_constructor)initialize_object, (chunk_destructor)destroy_object, "objects" },
         
     { NULL, 5, sizeof(player), 0, 0, NULL, NULL, "players", MEMPOOL_BYPASS_POOLS },
+    { NULL, 16, sizeof(struct mapsearch_node), 0, 0, NULL, NULL, "map BFS nodes", 0 },
     /* Actually, we will later set up the destructor to point towards free_player() */
 };
 
@@ -2846,9 +2847,6 @@ int count_used() {
 }
 #endif
 
-/* Drop op's inventory on the floor and remove op from the map.
- * Used mainly for physical destruction of normal objects and mobs
- */
 void destruct_ob(object *op) {
 	if(op->inv) 
 	    drop_ob_inv(op);

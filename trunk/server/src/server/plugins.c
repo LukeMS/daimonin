@@ -1193,7 +1193,7 @@ CFParm* CFWLoadObject(CFParm* PParm)
 }
 
 /*****************************************************************************/
-/* remove_ob wrapper. TODO drop inv support                                  */
+/* remove_ob wrapper.                                                        */
 /*****************************************************************************/
 /* 0 - object to remove.                                                     */
 /*****************************************************************************/
@@ -1202,6 +1202,18 @@ CFParm* CFWRemoveObject(CFParm* PParm)
     remove_ob((object *)(PParm->Value[0]));
     return NULL;
 }
+
+/*****************************************************************************/
+/* destruct_ob wrapper.                                                      */
+/*****************************************************************************/
+/* 0 - object to destruct.                                                   */
+/*****************************************************************************/
+CFParm* CFWDestructObject(CFParm* PParm)
+{
+    destruct_ob((object *)(PParm->Value[0]));
+    return NULL;
+}
+
 CFParm* CFWAddString(CFParm* PParm)
 {
     static CFParm CFP;
@@ -1635,17 +1647,6 @@ CFParm* CFWApplyBelow (CFParm* PParm)
     object* op=(object*)PParm->Value[0];
     if (!op) return NULL;
     player_apply_below (op);
-    return NULL;
-}
-/*****************************************************************************/
-/* free_object wrapper. TODO: get rid of                                     */
-/*****************************************************************************/
-/* 0 - object                                                                */
-/*****************************************************************************/
-CFParm* CFWFreeObject (CFParm* PParm)
-{
-    object* op=(object*)PParm->Value[0];
-   /* if (op) free_object(op); */
     return NULL;
 }
 

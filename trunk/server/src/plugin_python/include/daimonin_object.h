@@ -76,6 +76,7 @@ static PyObject* Daimonin_Object_CreateInvisibleInside(Daimonin_Object *self, Py
 static PyObject* Daimonin_Object_CreateObjectInside(Daimonin_Object *self, PyObject* args);
 static PyObject* Daimonin_Object_CheckInventory(Daimonin_Object *self, PyObject* args);
 static PyObject* Daimonin_Object_Remove(Daimonin_Object *self, PyObject* args);
+static PyObject* Daimonin_Object_Destruct(Daimonin_Object *self, PyObject* args);
 static PyObject* Daimonin_Object_SetPosition(Daimonin_Object *self, PyObject* args);
 static PyObject* Daimonin_Object_IdentifyItem(Daimonin_Object *self, PyObject* args);
 static PyObject* Daimonin_Object_Write(Daimonin_Object *self, PyObject* args);

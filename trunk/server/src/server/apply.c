@@ -3432,11 +3432,25 @@ void apply_player_light_refill(object *who, object *op)
     }
     else
     {
+        object *filler;
+        if(op->nrof > 1) {
+            filler = get_split_ob(op, 1);
+            filler->stats.food -=tmp;
+            insert_ob_in_ob(filler, who);
+            if(QUERY_FLAG(op, FLAG_REMOVED))
+                esrv_del_item(CONTR(who), op->count, op->env);
+            else
+                esrv_send_item(who, op);
+        } else {
+            filler = op;
+            filler->stats.food -=tmp;
+        }
+        
         item->stats.food += tmp;
-        op->stats.food -=tmp;
         new_draw_info_format(NDI_UNIQUE, 0, who,
-            "You refill the %s with %d units %s.", query_name(item),tmp, query_name(op));
-        esrv_send_item(who, op);
+            "You refill the %s with %d units %s.", query_name(item),tmp, query_name(filler));
+         
+        esrv_send_item(who, filler);
     }
     esrv_send_item(who, item);
     fix_player(who);    
