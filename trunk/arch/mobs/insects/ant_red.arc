@@ -75,8 +75,8 @@ no_pick 1
 alive 1
 can_see_in_dark 1
 exp 125
-ac 15
-wc 16
+ac 17
+wc 17
 dam 4
 hp -1
 maxhp 7

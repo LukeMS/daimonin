@@ -2956,7 +2956,7 @@ sp -1
 maxsp 3
 grace -1
 maxgrace 3
-ac 10
+ac 15
 wc 25
 can_use_armour 1
 can_use_weapon 1
@@ -2998,8 +2998,8 @@ animation human_male
 is_animated 1
 anim_speed 3
 level 1
-ac 10
-wc 25
+ac 15
+wc 22
 hp -1
 maxhp 8
 sp -1
@@ -6856,6 +6856,22 @@ attack_weaponmagic 100
 terrain_flag 32767
 flying 1
 end
+Object probebullet
+face probe.101
+type 2
+editor_folder magic/magic
+layer 7
+animation probebullet
+is_animated 1
+anim_speed 3
+terrain_flag 32767
+walk_on 1
+fly_on 1
+speed 1
+hp 14
+flying 1
+no_pick 1
+end
 Object fog
 face fog.111
 type 79
@@ -7044,6 +7060,7 @@ speed -0.1
 weapon_speed 0.044
 attack_acid 75
 attack_poison 30
+resist_poison 100
 ac 16
 wc 15
 dam 4
@@ -7218,14 +7235,16 @@ type 80
 editor_folder mobs/giants
 race giant
 randomitems giant_hill
-is_neutral 1
+is_evil 1
+is_male 1
 weight 13250
 exp 250
-speed -0.1
+speed -0.25
 weapon_speed 0.045
 attack_impact 100
-ac 15
-wc 15
+protect_acid 25
+ac 14
+wc 14
 dam 7
 hp -1
 maxhp 9
@@ -7249,13 +7268,16 @@ type 80
 editor_folder mobs/giants
 race giant
 randomitems ogre
-is_neutral 1
+is_evil 1
+is_male 1
 weight 13250
 exp 150
-speed -0.1
+speed -0.32
 weapon_speed 0.045
 attack_impact 100
-ac 17
+protect_poison 25
+protect_acid 25
+ac 15
 wc 16
 dam 5
 hp -1
@@ -7290,7 +7312,7 @@ attack_weaponmagic 100
 animation guard
 is_animated 1
 anim_speed 4
-speed -0.06
+speed -0.25
 alive 1
 monster 1
 Wis 7
@@ -7335,7 +7357,7 @@ attack_weaponmagic 100
 animation mage_old
 is_animated 1
 anim_speed 4
-speed -0.06
+speed -0.25
 alive 1
 monster 1
 Wis 7
@@ -7380,7 +7402,7 @@ attack_weaponmagic 100
 animation priest_church
 is_animated 1
 anim_speed 4
-speed -0.06
+speed -0.25
 alive 1
 monster 1
 Wis 7
@@ -7425,7 +7447,7 @@ attack_weaponmagic 100
 animation ranger
 is_animated 1
 anim_speed 4
-speed -0.06
+speed -0.25
 alive 1
 monster 1
 Wis 7
@@ -7470,7 +7492,7 @@ attack_weaponmagic 100
 animation smith
 is_animated 1
 anim_speed 4
-speed -0.06
+speed -0.25
 alive 1
 monster 1
 Wis 7
@@ -7522,8 +7544,8 @@ no_pick 1
 alive 1
 can_see_in_dark 1
 exp 125
-ac 15
-wc 16
+ac 14
+wc 14
 dam 4
 hp -1
 maxhp 7
@@ -7557,8 +7579,8 @@ no_pick 1
 alive 1
 can_see_in_dark 1
 exp 125
-ac 15
-wc 16
+ac 17
+wc 17
 dam 4
 hp -1
 maxhp 7
@@ -7590,12 +7612,12 @@ no_pick 1
 alive 1
 can_see_in_dark 1
 exp 160
-ac 17
-wc 17
+ac 15
+wc 15
 dam 5
 hp -1
 maxhp 7
-speed -0.13
+speed -0.18
 level 1
 weight 25500
 end
@@ -7639,7 +7661,7 @@ race dragon
 layer 6
 randomitems empty
 direction 5
-speed -0.13
+speed -0.26
 corpse 1
 is_male 1
 is_neutral 1

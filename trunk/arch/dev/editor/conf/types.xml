@@ -3830,6 +3830,63 @@
   <attribute arch="resist_psionic" editor="resist psionic %" length="15" type="int">
   </attribute>
 </section>
+<section name="protect">
+  <attribute arch="protect_impact" editor="shield impact %" length="15" type="int">
+    This adds resistance against physical damage from clubs, maces
+    or a simple fist. The number is a percent-value in the range 0-100.
+  </attribute>
+  <attribute arch="protect_slash" editor="shield slash %" length="15" type="int">
+    This adds resistance against physical damage from swords and claws.
+    The number is a percent-value in the range 0-100.
+  </attribute>
+  <attribute arch="protect_cleave" editor="shield cleave %" length="15" type="int">
+    This adds resistance against physical damage from axes and
+    halbards. The number is a percent-value in the range 0-100.
+  </attribute>
+  <attribute arch="protect_pierce" editor="shield pierce %" length="15" type="int">
+    This adds resistance against physical damage from arrows and
+    rapier weapons. The number is a percent-value in the range 0-100.
+  </attribute>
+  <attribute arch="protect_weapon_magic" editor="shield w.magic %" length="15" type="int">
+    This adds resistance against (physical) weapon magic damage.
+    Attention! Weaponmagic is a very powerful attacktype which
+    is derived from the power of artifact weapons.
+    This kind of resistance must not be easy to get.
+    The number is a percent-value in the range 0-100.
+  </attribute>
+  <attribute arch="protect_fire" editor="shield fire %" length="15" type="int">
+  </attribute>
+  <attribute arch="protect_cold" editor="shield cold %" length="15" type="int">
+  </attribute>
+  <attribute arch="protect_electricity" editor="shield electricity %" length="15" type="int">
+  </attribute>
+  <attribute arch="protect_poison" editor="shield poison %" length="15" type="int">
+  </attribute>
+  <attribute arch="protect_acid" editor="shield acid %" length="15" type="int">
+  </attribute>
+  <attribute arch="protect_magic" editor="shield magic %" length="15" type="int">
+  </attribute>
+  <attribute arch="protect_mind" editor="shield mind %" length="15" type="int">
+  </attribute>
+  <attribute arch="protect_body" editor="shield body %" length="15" type="int">
+  </attribute>
+  <attribute arch="protect_psionic" editor="shield psionic %" length="15" type="int">
+  </attribute>
+  <attribute arch="protect_force" editor="shield force %" length="15" type="int">
+  </attribute>
+  <attribute arch="protect_nether" editor="shield nether %" length="15" type="int">
+  </attribute>
+  <attribute arch="protect_chaos" editor="shield chaos %" length="15" type="int">
+  </attribute>
+  <attribute arch="protect_death" editor="shield death %" length="15" type="int">
+  </attribute>
+  <attribute arch="protect_chaos" editor="shield chaos %" length="15" type="int">
+  </attribute>
+  <attribute arch="protect_holy" editor="shield holy %" length="15" type="int">
+  </attribute>
+  <attribute arch="protect_corruption" editor="shield corruption %" length="15" type="int">
+  </attribute>         	
+</section>
   <attribute arch_begin="msg" arch_end="endmsg" editor="npc message" type="text">
   </attribute>
 </type>
@@ -4372,6 +4429,63 @@
   </attribute>
   <attribute arch="resist_psionic" editor="resist psionic %" length="15" type="int">
   </attribute>
+</section>
+<section name="protect">
+  <attribute arch="protect_impact" editor="shield impact %" length="15" type="int">
+    This adds resistance against physical damage from clubs, maces
+    or a simple fist. The number is a percent-value in the range 0-100.
+  </attribute>
+  <attribute arch="protect_slash" editor="shield slash %" length="15" type="int">
+    This adds resistance against physical damage from swords and claws.
+    The number is a percent-value in the range 0-100.
+  </attribute>
+  <attribute arch="protect_cleave" editor="shield cleave %" length="15" type="int">
+    This adds resistance against physical damage from axes and
+    halbards. The number is a percent-value in the range 0-100.
+  </attribute>
+  <attribute arch="protect_pierce" editor="shield pierce %" length="15" type="int">
+    This adds resistance against physical damage from arrows and
+    rapier weapons. The number is a percent-value in the range 0-100.
+  </attribute>
+  <attribute arch="protect_weapon_magic" editor="shield w.magic %" length="15" type="int">
+    This adds resistance against (physical) weapon magic damage.
+    Attention! Weaponmagic is a very powerful attacktype which
+    is derived from the power of artifact weapons.
+    This kind of resistance must not be easy to get.
+    The number is a percent-value in the range 0-100.
+  </attribute>
+  <attribute arch="protect_fire" editor="shield fire %" length="15" type="int">
+  </attribute>
+  <attribute arch="protect_cold" editor="shield cold %" length="15" type="int">
+  </attribute>
+  <attribute arch="protect_electricity" editor="shield electricity %" length="15" type="int">
+  </attribute>
+  <attribute arch="protect_poison" editor="shield poison %" length="15" type="int">
+  </attribute>
+  <attribute arch="protect_acid" editor="shield acid %" length="15" type="int">
+  </attribute>
+  <attribute arch="protect_magic" editor="shield magic %" length="15" type="int">
+  </attribute>
+  <attribute arch="protect_mind" editor="shield mind %" length="15" type="int">
+  </attribute>
+  <attribute arch="protect_body" editor="shield body %" length="15" type="int">
+  </attribute>
+  <attribute arch="protect_psionic" editor="shield psionic %" length="15" type="int">
+  </attribute>
+  <attribute arch="protect_force" editor="shield force %" length="15" type="int">
+  </attribute>
+  <attribute arch="protect_nether" editor="shield nether %" length="15" type="int">
+  </attribute>
+  <attribute arch="protect_chaos" editor="shield chaos %" length="15" type="int">
+  </attribute>
+  <attribute arch="protect_death" editor="shield death %" length="15" type="int">
+  </attribute>
+  <attribute arch="protect_chaos" editor="shield chaos %" length="15" type="int">
+  </attribute>
+  <attribute arch="protect_holy" editor="shield holy %" length="15" type="int">
+  </attribute>
+  <attribute arch="protect_corruption" editor="shield corruption %" length="15" type="int">
+  </attribute>         	
 </section>
   <attribute arch_begin="msg" arch_end="endmsg" editor="npc message" type="text">
   </attribute>

@@ -2,14 +2,16 @@ Object giant_hill
 name hill giant
 race giant
 randomitems giant_hill
-is_neutral 1
+is_evil 1
+is_male 1
 weight 13250
 exp 250
-speed -0.1
+speed -0.25
 weapon_speed 0.045
 attack_impact 100
-ac 15
-wc 15
+protect_acid 25
+ac 14
+wc 14
 dam 7
 hp -1
 maxhp 9

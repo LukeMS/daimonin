@@ -937,6 +937,7 @@ void examine_monster(object *op,object *tmp) {
     object *mon=tmp->head?tmp->head:tmp;
 	char *gender;
 	char *att;
+	int val, val2, i;
 
 	op->contr->praying=0;
 	if(QUERY_FLAG(mon,FLAG_IS_MALE))
@@ -965,13 +966,35 @@ void examine_monster(object *op,object *tmp) {
 		new_draw_info_format(NDI_UNIQUE, 0,op,"%s is a %s %s.",att,gender,mon->race);
 
 	if(mon->type == PLAYER)
-		new_draw_info_format(NDI_UNIQUE, 0,op,"%s is level %d and %d years old%s.",att,mon->level,mon->contr->age,QUERY_FLAG(mon,FLAG_IS_AGED)?" (very aged)":"");
+		new_draw_info_format(NDI_UNIQUE, 0,op,"%s is level %d and %d years old%s.",att,mon->level,mon->contr->age,QUERY_FLAG(mon,FLAG_IS_AGED)?" (magical aged)":"");
 	else
-		new_draw_info_format(NDI_UNIQUE, 0,op,"%s is level %d%s.",att,mon->level,QUERY_FLAG(mon,FLAG_IS_AGED)?" and badly aged":"");
+		new_draw_info_format(NDI_UNIQUE, 0,op,"%s is level %d%s.",att,mon->level,QUERY_FLAG(mon,FLAG_IS_AGED)?" and unatural aged":"");
 	new_draw_info_format(NDI_UNIQUE, 0,op,"%s has a base damage of %d and hp of %d.",att,mon->stats.dam,mon->stats.maxhp);
 	new_draw_info_format(NDI_UNIQUE, 0,op,"%s has a wc of %d and an ac of %d.",att,mon->stats.wc,mon->stats.ac);
 
+	for(val=val2=-1,i=0;i<NROFATTACKS;i++)
+	{
+		if(mon->resist[i] > 0)
+			val = i;
+		else if(mon->resist[i] < 0)
+			val = i;
+	}
+	if(val!=-1)
+		new_draw_info_format(NDI_UNIQUE, 0,op,"%s can natural resist some attacks.",att);
+	if(val2!=-1)
+		new_draw_info_format(NDI_UNIQUE, 0,op,"%s is natural vulnerable to some attacks.",att);
     
+	for(val=-1,val2=i=0;i<NROFPROTECTIONS;i++)
+	{
+		if(mon->protection[i] > val2)
+		{
+			val = i;
+			val2=mon->protection[i];
+		}
+	}
+	if(val!=-1)
+		new_draw_info_format(NDI_UNIQUE, 0,op,"Best armour protection seems to be for %s.",protection_name[val]);
+
     if(QUERY_FLAG(mon,FLAG_UNDEAD))
 	new_draw_info(NDI_UNIQUE, 0,op,"It is an undead force.");
     /* Anyone know why this used to use the clone value instead of the
@@ -991,8 +1014,6 @@ void examine_monster(object *op,object *tmp) {
 	    new_draw_info_format(NDI_UNIQUE, 0,op,"%s is in excellent shape.",att);
 	    break;
     }
-	if(mon->attacktype&AT_ACID)
-		new_draw_info_format(NDI_UNIQUE, 0,op,"%s seem there is an acrid odor.",att);
     if(present_in_ob(POISONING,mon)!=NULL)
 		new_draw_info_format(NDI_UNIQUE, 0,op,"%s looks very ill.",att);
 }
