@@ -104,7 +104,7 @@ clean::
 	$(RM) -f $(OBJS)
 
 distclean:: clean
-	$(RM) -f Makefile libcross.a
+	$(RM) -f Makefile libcross.a loader.c
 
 .c.o:
 	$(CC) $(CFLAGS) $(INCLUDES)  -c $*.c
