@@ -388,9 +388,10 @@ int command_sstable(object *op, char *params)
     return 1;
 }
 
+
 int command_time(object *op, char *params)
 {
-    time_info(op);
+    print_tod(op);
     return 1;
 }
 

@@ -78,7 +78,7 @@ struct obj *aggro_get_damage(struct obj *target, struct obj *hitter)
 							if(tmp->weight_limit == hitter->weight_limit)
 								return tmp;
 							/* because we have this sucker accessed...lets do some gc on the fly */
-							if (tmp->damage_round_tag+DEFAULT_DMG_INVALID_TIME < global_round_tag)
+							if (tmp->damage_round_tag+DEFAULT_DMG_INVALID_TIME < ROUND_TAG)
 								remove_ob(tmp);
 						}	
 					}
@@ -121,7 +121,7 @@ struct obj *aggro_insert_damage(struct obj *target, struct obj *hitter)
 	/* damage source is hitter and tick global_round_tag */
 	tmp->weight_limit = hitter->weight_limit;
     /*LOG(-1,"add dmg: %x\n", hitter->weight_limit); */
-	tmp->damage_round_tag = global_round_tag;
+	tmp->damage_round_tag = ROUND_TAG;
 
 	return tmp;
 }
@@ -186,7 +186,7 @@ struct obj *aggro_update_info(struct obj *target, struct obj *target_owner,
 				{
 					if(aggro->enemy_count == hitter->count)
 						break;
-					if(aggro->damage_round_tag+DEFAULT_DMG_INVALID_TIME < global_round_tag)
+					if(aggro->damage_round_tag+DEFAULT_DMG_INVALID_TIME < ROUND_TAG)
 						remove_ob(aggro);
 				}
 			}
@@ -202,11 +202,11 @@ struct obj *aggro_update_info(struct obj *target, struct obj *target_owner,
 				aggro->enemy_count = hitter->count;	/* tag so we can identify the hitter */
 				aggro->enemy = hitter;	/* so we can find later this damage dealer */
 				aggro->stats.hp = dmg;
-				aggro->update_tag = global_round_tag; /* using this we can determinate who does first damage */
+                aggro->update_tag = ROUND_TAG; /* using this we can determinate who does first damage */
 				if(hitter->type == PLAYER)
 					aggro->last_sp = PLAYER;
 			}
-			aggro->damage_round_tag = global_round_tag; /* last time this hitter does some = right now */
+			aggro->damage_round_tag = ROUND_TAG; /* last time this hitter does some = right now */
 
 			/* for players, we want to store the used skills */
 			if(hitter->type == PLAYER)
@@ -506,7 +506,7 @@ object *aggro_calculate_exp(struct obj *victim, struct obj *slayer)
 		tmp2 = tmp->below;
 		total_dmg_all += tmp->stats.hp;
 		/* remove illegal enemy pointer and/or non player dmg */
-		if(tmp->type != TYPE_DAMAGE_INFO || tmp->damage_round_tag+DEFAULT_DMG_INVALID_TIME < global_round_tag || 
+		if(tmp->type != TYPE_DAMAGE_INFO || tmp->damage_round_tag+DEFAULT_DMG_INVALID_TIME < ROUND_TAG || 
 						  !tmp->enemy || tmp->enemy->count!=tmp->enemy_count /*|| tmp->enemy->type!=PLAYER*/)
 			remove_ob(tmp);
 		else

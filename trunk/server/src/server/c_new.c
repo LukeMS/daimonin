@@ -748,7 +748,7 @@ void command_new_char(char *params, int len, player *pl)
     make_path_to_file(buf);
 
 #ifdef AUTOSAVE
-    CONTR(op)->last_save_tick = pticks;
+    CONTR(op)->last_save_tick = ROUND_TAG;
 #endif
 
     display_motd(op);

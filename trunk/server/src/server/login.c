@@ -796,7 +796,7 @@ void check_login(object *op)
     pl->name_changed = 1;
     pl->state = ST_PLAYING;
 #ifdef AUTOSAVE
-    pl->last_save_tick = pticks;
+    pl->last_save_tick = ROUND_TAG;
 #endif
     op->carrying = sum_weight(op);
 

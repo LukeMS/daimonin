@@ -834,7 +834,7 @@ char * describe_item(object *op)
             case HORN:
               if (id_true)
               {
-                  sprintf(buf, "(delay%+2.1fs)", ((float) op->last_grace / (1000000 / MAX_TIME)));
+                  sprintf(buf, "(delay%+2.1fs)", ((float) op->last_grace / pticks_second));
                   strcat(retbuf, buf);
               }
               break;
@@ -876,12 +876,12 @@ char * describe_item(object *op)
               {
                   if (op->type == BOW)
                   {
-                      sprintf(buf, "(delay%+2.1fs)", ((float) op->stats.sp / (1000000 / MAX_TIME)));
+                      sprintf(buf, "(delay%+2.1fs)", ((float) op->stats.sp / pticks_second));
                       strcat(retbuf, buf);
                   }
                   else if (op->type == ARROW)
                   {
-                      sprintf(buf, "(delay%+2.1fs)", ((float) op->last_grace / (1000000 / MAX_TIME)));
+                      sprintf(buf, "(delay%+2.1fs)", ((float) op->last_grace / pticks_second));
                       strcat(retbuf, buf);
                   }
 

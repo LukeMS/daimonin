@@ -722,7 +722,7 @@ int mob_can_see_obj(object *op, object *obj, struct mob_known_obj *known_obj)
     rv_vector   rv, *rv_p = NULL;
 
     /* Quick answer if possible */
-    if (known_obj && known_obj->last_seen == global_round_tag)
+    if (known_obj && known_obj->last_seen == ROUND_TAG)
         return TRUE;
 
     if (QUERY_FLAG(obj, FLAG_IS_INVISIBLE) && !QUERY_FLAG(op, FLAG_SEE_INVISIBLE))
@@ -826,7 +826,7 @@ rv_vector * get_known_obj_rv(object *op, struct mob_known_obj *known_obj, int ma
     if (op == NULL || known_obj == NULL)
         return NULL;    
 
-    if (global_round_tag - known_obj->rv_time >= (uint32) maxage || known_obj->rv_time == 0 || maxage == 0)
+    if (ROUND_TAG - known_obj->rv_time >= (uint32) maxage || known_obj->rv_time == 0 || maxage == 0)
     {
         /*
         if(!mob_can_see_obj(op, known_obj->obj, NULL)) {
@@ -846,7 +846,7 @@ rv_vector * get_known_obj_rv(object *op, struct mob_known_obj *known_obj, int ma
 
         if (get_rangevector(op, known_obj->obj, &known_obj->rv, 0))
         {
-            known_obj->rv_time = global_round_tag;
+            known_obj->rv_time = ROUND_TAG;
         }
         else
         {
@@ -958,7 +958,7 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
     {
         if (tmp->obj == other && tmp->obj_count == other->count)
         {
-            tmp->last_seen = global_round_tag;
+            tmp->last_seen = ROUND_TAG;
             FREE_AND_ADD_REF_HASH(tmp->last_map, other->map->path);
             tmp->last_x = other->x;
             tmp->last_y = other->y;
@@ -984,7 +984,7 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
     tmp->last_x = other->x;
     tmp->last_y = other->y;
 
-    tmp->last_seen = global_round_tag;
+    tmp->last_seen = ROUND_TAG;
     tmp->rv_time = 0; /* Makes cached rv invalid */
 
     tmp->friendship = friendship;
@@ -2184,7 +2184,7 @@ static inline void cleanup_mob_knowns(struct mob_known_obj **first)
     struct mob_known_obj   *tmp;
     for (tmp = *first; tmp; tmp = tmp->next)
     {
-        if (!OBJECT_VALID(tmp->obj, tmp->obj_count) || global_round_tag - tmp->last_seen > MAX_KNOWN_OBJ_AGE)
+        if (!OBJECT_VALID(tmp->obj, tmp->obj_count) || ROUND_TAG - tmp->last_seen > MAX_KNOWN_OBJ_AGE)
         {
             if (tmp->next)
                 tmp->next->prev = tmp->prev;

@@ -1673,7 +1673,7 @@ void fix_player(object *op)
 
     CONTR(op)->base_hp_reg = base_reg; /* thats the real hp reg count in ticks */
 
-    reg_sec = ((float) (1000000 / MAX_TIME) / (float) base_reg) * (float) CONTR(op)->reg_hp_num;
+    reg_sec = (pticks_second / (float) base_reg) * (float) CONTR(op)->reg_hp_num;
     if (reg_sec > 100)
         reg_sec = 99.9f;
     else if (reg_sec && reg_sec < 0.1)
@@ -1699,7 +1699,7 @@ void fix_player(object *op)
 
     CONTR(op)->base_sp_reg = base_reg; /* thats the real sp reg count in ticks */
 
-    reg_sec = ((float) (1000000 / MAX_TIME) / (float) base_reg) * (float) CONTR(op)->reg_sp_num;    
+    reg_sec = (pticks_second / (float) base_reg) * (float) CONTR(op)->reg_sp_num;    
     if (reg_sec > 100)
         reg_sec = 99.9f;
     else if (reg_sec && reg_sec < 0.1)
@@ -1726,7 +1726,7 @@ void fix_player(object *op)
 
     CONTR(op)->base_grace_reg = base_reg; /* thats the real sp reg count in ticks */
 
-    reg_sec = ((float) (1000000 / MAX_TIME) / (float) base_reg) * (float) CONTR(op)->reg_grace_num;
+    reg_sec = (pticks_second / (float) base_reg) * (float) CONTR(op)->reg_grace_num;
     if (reg_sec > 100)
         reg_sec = 99.9f;
     else if (reg_sec && reg_sec < 0.1)

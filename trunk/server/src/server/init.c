@@ -88,11 +88,12 @@ static void init_globals()
     arch_search = 0;    /* How many searches */
     arch_init = 0;      /* True if doing arch initialization */
 
-    global_round_tag = 1; /* global round ticker ! this is real a global */
-    global_race_counter = 0; /* global race counter */
-    max_time = MAX_TIME;
+    pticks = 1;        /* global round ticker ! this is real a global */
 
+    global_race_counter = 0; /* global race counter */
     global_group_tag=0; /* every group gets a unique group tag identifier */
+
+    set_pticks_time(MAX_TIME);
 
     exiting = 0;
     player_active = 0;
@@ -905,7 +906,7 @@ void compile_info()
 #else
     LOG(llevInfo, "Shop listings:\t<false>\n");
 #endif
-    LOG(llevInfo, "Max_time:\t%d\n", MAX_TIME);
+    LOG(llevInfo, "Max_time:\t%d (%f)\n", pticks_ums, pticks_second);
 
     LOG(llevInfo, "Logfilename:\t%s (llev:%d)\n", settings.logfilename, settings.debug);
     LOG(llevInfo, "ObjectSize:\t%d (living: %d)\n", sizeof(object), sizeof(living));
@@ -1121,7 +1122,6 @@ void init(int argc, char **argv)
     init_beforeplay();
     init_ericserver();
     metaserver_init();
-    reset_sleep();
     init_arch_default_behaviours();
     init_done = 1;
 }

@@ -239,7 +239,6 @@
 
 /*
  * If you feel the game is too fast or too slow, change MAX_TIME.
- * You can experiment with the 'speed <new_max_time> command first.
  * The length of a tick is MAX_TIME microseconds.  During a tick,
  * players, monsters, or items with speed 1 can do one thing.
  */

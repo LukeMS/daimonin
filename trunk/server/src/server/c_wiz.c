@@ -747,16 +747,16 @@ int command_addexp(object *op, char *params)
 
 int command_speed(object *op, char *params)
 {
-    int i;
+    long i;
     if (params == NULL || !sscanf(params, "%d", &i))
     {
-        sprintf(errmsg, "Current speed is %ld", max_time);
-        new_draw_info(NDI_UNIQUE, 0, op, errmsg);
+        new_draw_info_format(NDI_UNIQUE, 0, op, "Current speed is %ld ums (%f ticks/second)", pticks_ums, pticks_second);
         return 1;
     }
-    set_max_time(i);
+    set_pticks_time(i);
     reset_sleep();
-    new_draw_info(NDI_UNIQUE, 0, op, "The speed is changed.");
+    new_draw_info_format(NDI_UNIQUE, 0, op, "Set speed to %ld ums (%f ticks/second)", pticks_ums, pticks_second);
+    
     return 1;
 }
 

@@ -1094,7 +1094,7 @@ float get_skill_time(object *op, int skillnr)
      */
     if (skillnr == SK_SPELL_CASTING || skillnr == SK_PRAYING)
     {
-        CONTR(op)->action_casting = global_round_tag + 8;
+        CONTR(op)->action_casting = ROUND_TAG + 8;
         return 0;
     }
     /* these are skills using the "fire/range" menu - throwing, archery 
@@ -1106,7 +1106,7 @@ float get_skill_time(object *op, int skillnr)
           || skillnr == SK_XBOW_WEAP
           || skillnr == SK_SLING_WEAP)
     {
-        CONTR(op)->action_range = global_round_tag + op->chosen_skill->stats.maxsp;
+        CONTR(op)->action_range = ROUND_TAG + op->chosen_skill->stats.maxsp;
         return 0;
     }
 
@@ -1143,10 +1143,10 @@ int check_skill_action_time(object *op, object *skill)
           /* spells */
         case SK_PRAYING:
         case SK_SPELL_CASTING:
-          if (CONTR(op)->action_casting > global_round_tag)
+          if (CONTR(op)->action_casting > ROUND_TAG)
           {
               new_draw_info_format(NDI_UNIQUE, 0, op, "You can cast in %2.2f seconds again.",
-                                   (float) (CONTR(op)->action_casting - global_round_tag) / (1000000 / MAX_TIME));
+                                   (float) (CONTR(op)->action_casting - ROUND_TAG) / pticks_second);
               return FALSE;
           }
           break;
@@ -1155,27 +1155,27 @@ int check_skill_action_time(object *op, object *skill)
         case SK_SLING_WEAP:
         case SK_XBOW_WEAP:
         case SK_MISSILE_WEAPON:
-          if (CONTR(op)->action_range > global_round_tag)
+          if (CONTR(op)->action_range > ROUND_TAG)
           {
               new_draw_info_format(NDI_UNIQUE, 0, op, "You can shot in %2.2f seconds again.",
-                                   (float) (CONTR(op)->action_range - global_round_tag) / (1000000 / MAX_TIME));
+                                   (float) (CONTR(op)->action_range - ROUND_TAG) / pticks_second);
               return FALSE;
           }
           break;
 
         case SK_USE_MAGIC_ITEM:
-          if (CONTR(op)->action_range > global_round_tag)
+          if (CONTR(op)->action_range > ROUND_TAG)
           {
               new_draw_info_format(NDI_UNIQUE, 0, op, "You can use a device in %2.2f seconds again.",
-                                   (float) (CONTR(op)->action_range - global_round_tag) / (1000000 / MAX_TIME));
+                                   (float) (CONTR(op)->action_range - ROUND_TAG) / pticks_second);
               return FALSE;
           }
 
         case SK_THROWING:
-          if (CONTR(op)->action_range > global_round_tag)
+          if (CONTR(op)->action_range > ROUND_TAG)
           {
               new_draw_info_format(NDI_UNIQUE, 0, op, "You can throw in %2.2f seconds again.",
-                                   (float) (CONTR(op)->action_range - global_round_tag) / (1000000 / MAX_TIME));
+                                   (float) (CONTR(op)->action_range - ROUND_TAG) / pticks_second);
               return FALSE;
           }
         default:

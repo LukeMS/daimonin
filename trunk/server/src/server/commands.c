@@ -156,7 +156,8 @@ CommArray_s WizCommands[]           =
     {"/d_belowfull", command_dumpbelowfull,0.0}, {"/d_below", command_dumpbelow,0.0},
     {"/d_friendly", command_dumpfriendlyobjects,0.0}, {"/d_hash", command_sstable,  0.0},
     {"/set_map_light", command_setmaplight,0.0}, {"/stats", command_stats,0.0}, {"/check_fd", command_check_fd,0.0},
-
+    {"/dm_speed", command_speed,0.0},
+    
 
     /*
     {"/archs", command_archs, 0.0},
@@ -175,7 +176,6 @@ CommArray_s WizCommands[]           =
     {"/resistances", command_resistances, 0.0},
     {"/remove", command_remove,0.0},
     {"/set_god", command_setgod, 0.0},
-    {"/speed", command_speed,0.0},
     {"/spellreset", command_spell_reset,0.0},
     {"/style_info", command_style_map_info, 0.0},
     {"/wizpass", command_wizpass,0.0},
