@@ -783,7 +783,7 @@ object *fix_stopped_arrow (object *op)
     op->direction=0;
     CLEAR_FLAG(op, FLAG_WALK_ON);
     CLEAR_FLAG(op, FLAG_FLY_ON);
-    CLEAR_FLAG(op, FLAG_FLYING);
+    CLEAR_MULTI_FLAG(op, FLAG_FLYING);
 
 	/* food is a self destruct marker - that long the item will need to be destruct! */
 	if(op->stats.food && op->type == ARROW)
@@ -818,20 +818,26 @@ object *fix_stopped_arrow (object *op)
 
 void stop_arrow (object *op)
 {
+	play_sound_map(op->map, op->x, op->y, SOUND_DROP_THROW, SOUND_NORMAL);
+    if (op->inv) {
+		object *payload = op->inv;
+
+		remove_ob (payload);
+        
 #ifdef PLUGINS
     /* GROS: Handle for plugin stop event */
-    if(op->event_flags&EVENT_FLAG_STOP)
+    if(payload->event_flags&EVENT_FLAG_STOP)
     {
         CFParm CFP;
         int k, l, m;
-		object *event_obj = get_event_object(op, EVENT_STOP);
+        object *event_obj = get_event_object(payload, EVENT_STOP);
         k = EVENT_STOP;
         l = SCRIPT_FIX_NOTHING;
         m = 0;
         CFP.Value[0] = &k;
         CFP.Value[1] = NULL;
-        CFP.Value[2] = op;
-        CFP.Value[3] = NULL;
+        CFP.Value[2] = payload;
+        CFP.Value[3] = op;
         CFP.Value[4] = NULL;
         CFP.Value[5] = &m;
         CFP.Value[6] = &m;
@@ -843,10 +849,6 @@ void stop_arrow (object *op)
             ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
     }
 #endif
-	play_sound_map(op->map, op->x, op->y, SOUND_DROP_THROW, SOUND_NORMAL);
-    if (op->inv) {
-		object *payload = op->inv;
-		remove_ob (payload);
 		/* we have a thrown potion here.
 		 * This potion has NOT hit a target.
 		 * it has hitten a wall or just dropped to the ground.
@@ -860,9 +862,11 @@ void stop_arrow (object *op)
 			free_object (payload);
 		}
 		else
-		{
+		{            
 			clear_owner(payload);
-	        insert_ob_in_map (payload, op->map, payload,0);
+            /* Gecko: if the script didn't put the payload somewhere else */
+            if(!payload->env && !QUERY_FLAG(payload, FLAG_FREED)) 
+                insert_ob_in_map (payload, op->map, payload,0);
 		}
         remove_ob (op);
 		free_object (op);

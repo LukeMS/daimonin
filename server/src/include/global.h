@@ -57,6 +57,9 @@ typedef signed char	sint8;
 typedef unsigned short Fontindex;
 typedef unsigned int tag_t;
 
+
+#define POW2(x) ((x) * (x))
+
 /* map distance values for draw_info_map functions 
  * This value is in tiles
  */
@@ -95,7 +98,8 @@ typedef unsigned int tag_t;
 #define SEND_FACE_OUT_OF_BOUNDS 1
 #define SEND_FACE_NO_DATA 2
 
-#define TILED_MAPS 8 /* should be 8 to get the corners too */
+/* number of connected maps from a tiled map */
+#define TILED_MAPS 8
 
 /* global stuff used by new skill/experience system -b.t.
  * Needed before player.h
@@ -114,9 +118,16 @@ extern float lev_exp[MAXLEVEL+1];
 
 extern uint32 global_map_tag; /* our global map_tag value for the server (map.c)*/
 
-/* This blob, in this order, is needed to actually define maps */
+/*
+ * So far only used when dealing with artifacts.
+ * (now used by alchemy and other code too. Nov 95 b.t).
+ */
+typedef struct linked_char {
+  const char *name;
+  struct linked_char *next;
+} linked_char;
+
 #include "face.h"
-/* Include the basic defines from spells.h */
 #include "attack.h" /* needs to be before material.h */
 #include "material.h"
 #include "living.h"
@@ -139,16 +150,6 @@ extern uint32 global_map_tag; /* our global map_tag value for the server (map.c)
 
 #include "commands.h"
 
-/*
- * So far only used when dealing with artifacts.
- * (now used by alchemy and other code too. Nov 95 b.t).
- */
-typedef struct linked_char {
-  const char *name;
-  struct linked_char *next;
-} linked_char;
-
-
 /* Pull in artifacts */
 #include "artifact.h"
 
@@ -166,6 +167,7 @@ typedef struct linked_char {
 /* Now for spells */
 #include "spells.h"
 
+/* pointer for the glue.c interface between crosslib and server */
 #include "funcpoint.h"
 
 /*****************************************************************************
@@ -175,7 +177,7 @@ typedef struct linked_char {
  * last_eat == 0 is no special potion - means they are used
  * as spell effect carrier. 
  */
-#define special_potion(__op_sp) __op_sp->last_eat
+#define special_potion(__op_sp) (__op_sp)->last_eat
 
 /* arch.c - sysinfo for lowlevel */
 extern int arch_cmp;		/* How many strcmp's */
@@ -205,11 +207,6 @@ EXTERN racelink *first_race;
 
 #define NROF_COMPRESS_METHODS 4
 EXTERN char *uncomp[NROF_COMPRESS_METHODS][3];
-/*
- * The editor uses these (will get them out of here later):
- */
-
-EXTERN long editor;     /* if true, edit maps instead of playing (almost obsolete) */
 
 /*
  * Variables set by different flags (see init.c):
@@ -283,15 +280,6 @@ extern unsigned long todtick;
 extern int world_darkness;
 extern archetype *level_up_arch;
 
-
-EXTERN char *font_graphic;
-
-#ifndef __CEXTRACT__
-#include "libproto.h"
-#include "sockproto.h"
-#endif
-
-
 #define decrease_ob(xyz) decrease_ob_nr(xyz,1)
 
 #define FREE_AND_NULL_PTR(_xyz_) {if(_xyz_){free(_xyz_); _xyz_=NULL; }}
@@ -308,24 +296,6 @@ EXTERN char *font_graphic;
 # define CFREE(x)	free(x)
 #endif
 
-#ifndef WIN32 /* ---win32 we define this stuff in win32.h */
-#if HAVE_DIRENT_H
-# include <dirent.h>
-# define NAMLEN(dirent) strlen((dirent)->d_name)
-#else
-# define dirent direct
-# define NAMLEN(dirent) (dirnet)->d_namlen
-# if HAVE_SYS_NDIR_H
-#  include <sys/ndir.h>
-# endif
-# if HAVE_SYS_DIR_H
-#  include <sys/dir.h>
-# endif
-# if HAVE_NDIR_H
-#  include <ndir.h>
-# endif
-#endif
-#endif
 
 typedef struct Settings {
     char    *logfilename;   /* logfile to use */
@@ -387,6 +357,13 @@ extern Settings settings;
 #define SCRIPT_FIX_ALL 1
 #define SCRIPT_FIX_NOTHING 0
 
+/* include some global project headers */
+#ifndef __CEXTRACT__
+#include "libproto.h"
+#include "sockproto.h"
+#endif
+
 #include "plugin.h"
+
 
 #endif /* GLOBAL_H */

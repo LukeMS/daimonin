@@ -46,7 +46,7 @@ typedef struct astar_node
 #define FLAG_WP_PATH_REQUESTED FLAG_PARALYZED
 
 /* Uncomment this to enable some verbose pathfinding debug messages */
-/*#define DEBUG_PATHFINDING */
+/* #define DEBUG_PATHFINDING */
 
 /* Uncomment this to enable more intelligent use of CPU time for path finding */
 #define LEFTOVER_CPU_FOR_PATHFINDING    

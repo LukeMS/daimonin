@@ -50,7 +50,7 @@ static struct {
     { "height", FIELDTYPE_UINT16, offsetof(mapstruct, height) },
     { "width", FIELDTYPE_UINT16, offsetof(mapstruct, width) },
     { "darkness", FIELDTYPE_UINT8, offsetof(mapstruct, darkness) },
-    { "path", FIELDTYPE_CARY, offsetof(mapstruct, path) }
+    { "path", FIELDTYPE_SHSTR, offsetof(mapstruct, path) }
 };
 
 static char *mapflag_names[] = {

@@ -121,11 +121,14 @@ fi;
 AC_PATH_PROGS(BOURNE_SHELL, sh ksh bash)
 
 dnl The following are useful for debugging
-AC_ARG_ENABLE(warnings, [  --enable-warnings      compile with warnings enabled ],
+AC_ARG_ENABLE(warnings, [  --enable-warnings       compile with warnings enabled ],
 		EXTRA_CFLAGS="$EXTRA_CFLAGS -Wall", )
 
 AC_ARG_ENABLE(profiling, [  --enable-profiling      compile with profiling enabled ],
 		EXTRA_CFLAGS="$EXTRA_CFLAGS -pg"; LDFLAGS="$LDFLAGS -pg", )
+
+AC_ARG_ENABLE(optimizing, [  --disable-optimizing    compile without optimization ],
+		EXTRA_CFLAGS="$EXTRA_CFLAGS -O0", )
 
 dnl The follow two are really just a way to specify where the xpm/gtk information
 dnl resides if not with the normal X11 stuff (ie, in /opt/X11 and not /usr

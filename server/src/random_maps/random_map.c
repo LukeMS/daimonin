@@ -81,7 +81,7 @@ mapstruct *generate_random_map(char *OutFileName, RMParms *RP) {
   theMap = make_map_floor(layout,RP->floorstyle,RP); 
 
   /* set the name of the map. */
-  strcpy(theMap->path,OutFileName);
+  FREE_AND_COPY_HASH(theMap->path,OutFileName);
 
   make_map_walls(theMap,layout,RP->wallstyle,RP);
 

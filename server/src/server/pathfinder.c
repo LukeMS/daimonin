@@ -106,7 +106,6 @@ object *pathfinder_queue_dequeue(int *count) {
     
     if(++ pathfinder_queue_first >= PATHFINDER_QUEUE_SIZE)
         pathfinder_queue_first = 0;
-
     
     return waypoint;
 }
@@ -141,7 +140,8 @@ object *get_next_requested_path()
         
         /* verify the waypoint and its monster */
         if(!OBJECT_VALID(waypoint, count) || !OBJECT_VALID(waypoint->owner, waypoint->ownercount) ||
-                !(QUERY_FLAG(waypoint, FLAG_CURSED) || QUERY_FLAG(waypoint, FLAG_DAMNED)))
+                !(QUERY_FLAG(waypoint, FLAG_CURSED) || QUERY_FLAG(waypoint, FLAG_DAMNED)) ||
+                (QUERY_FLAG(waypoint, FLAG_DAMNED) && !OBJECT_VALID(waypoint->enemy, waypoint->enemy_count)))
             waypoint = NULL;
     } while(waypoint == NULL);
     
@@ -213,25 +213,39 @@ static void insert_node(path_node *node, path_node **list)
 /* Insert a node in a sorted list (lowest heuristic first in list) */
 static void insert_priority_node(path_node *node, path_node **list)
 {
-    path_node *tmp;
+    path_node *tmp, *last, *insert_before = NULL;
     
     /* TODO: make more efficient. use skip list or heaps */
-    /* Find node to insert after (NULL if insert first, or if list is empty) */
-    for(tmp = *list; tmp && tmp->next; tmp = tmp->next) {
+    /* Find node to insert before */
+    for(tmp = *list; tmp; tmp = tmp->next) {
+        last = tmp;
         if(node->heuristic <= tmp->heuristic) {
-            tmp = tmp->prev;
+            insert_before = tmp;       
             break;
         }
     }
     
-    if(tmp) {
-        node->next = tmp->next;
-        node->prev = tmp;
-        tmp->next = node;
-        if(node->next)
-            node->next->prev = node;
-    } else 
+    if(insert_before == *list) {  /* Insert first */
         insert_node(node, list);
+    } else if (! insert_before) {  /* insert last */
+        node->next = NULL;
+        node->prev = last;
+        last->next = node;
+    } else {                   /* insert in middle */
+        node->next = insert_before;
+        node->prev = insert_before->prev;
+        insert_before->prev = node;
+        if(node->prev)
+            node->prev->next = node;
+    }
+   
+    /* Print out the values of the prioqueue -> should be ordered */
+    /*
+    printf("post: ");
+    for(tmp = *list; tmp; tmp = tmp->next) 
+        printf("%.3f ", tmp->heuristic);        
+    printf("\n");
+    */
 }
 
 /*
@@ -279,53 +293,62 @@ const char *encode_path(path_node *path)
  * (to handle paths without map strings)
  *
  * If a location is found, the function will return TRUE and update map, x, y and off. 
+ * (off will be set to the index to use for the next call to this function)
  * Otherwise FALSE will be returned and the values of map, x and y will be undefined and off 
  * will not be touched.
+ *
+ * Example text path description:
+ * /dev/testmaps/testmap_waypoints 17,7 17,10 18,11 19,10 20,10
+ * /dev/testmaps/testmap_waypoints2 8,22
+ * /dev/testmaps/testmap_waypoints3 0,22 1,23
+ * /dev/testmaps/testmap_waypoints4 1,1 2,2
  */
-int get_path_next(const char *buf, sint16 *off, mapstruct **map, int *x, int *y)
+int get_path_next(const char *buf, sint16 *off, const char **mappath, mapstruct **map, int *x, int *y)
 {
     const char *coord_start = buf + *off, *coord_end, *map_def = coord_start;
-    
+ 
+    /* TODO: I want to get rid of this strlen call -> could store buflen in a separate waypoint field... */
     if(buf == NULL || *map == NULL || *off >= (int)strlen(buf)) {
         LOG(llevBug,"get_path_next: Illegal parameters: %s %p %d\n", buf, *map, *off);
         return FALSE;
     }
     
-    /* Scan backwards from requested offset to previous linebreak or start of string */
-    /* TODO: If the "current" map is stored in another field in the waypoint we can 
-     * skip this search. Better? */
-    for(map_def = coord_start; map_def > buf && *(map_def -1) != '\n'; map_def--) 
-        ;
+    /* TODO: hmm... I don't think this is necessary anymore, since we have the store path name */
+    if(*mappath == NULL || **mappath == '\0') {
+        /* Scan backwards from requested offset to previous linebreak or start of string */
+        for(map_def = coord_start; map_def > buf && *(map_def -1) != '\n'; map_def--) 
+            ;
+    }
     
-    /* Extract map name if any */
+    /* Extract map path if any at the current position (this part is only used when we go between
+     * map tiles, or when we extract the first step) */
     if(! isdigit(*map_def)) {
-        char tmp_buf[HUGE_BUF], map_name[HUGE_BUF];
-        const char *mapend = strchr(map_def, ' ');
+        char map_name[HUGE_BUF];                   /* Temporary buffer for map path extraction */
+        const char *mapend = strchr(map_def, ' '); /* Find the end of the map path */
 
         if(mapend == NULL) {
             LOG(llevBug,"get_path_next: No delimeter after map name in path description '%s' off %d\n", buf, *off);
             return FALSE;
         }            
 
-        /* TODO: measure the impact of this test (Hints towards implementation of map path hash system) */
-#if 1
-        if(strncmp((*map)->path, map_def, mapend - map_def) || (*map)->path[mapend-map_def] != '\0') 
-#endif            
-        {
-            strncpy(map_name, map_def, mapend - map_def);
-            map_name[mapend - map_def] = '\0';
-            /* TODO: handle unique maps? */
-            *map = ready_map_name(normalize_path((*map)->path, map_name, tmp_buf), 0);
-        } 
-        
-        if(*map == NULL) {
-            LOG(llevBug,"get_path_next: Couldn't load map from description '%s' off %d\n", buf, *off);
-            return FALSE;
-        }            
-    
+        strncpy(map_name, map_def, mapend - map_def);
+        map_name[mapend - map_def] = '\0';
+
+        FREE_AND_COPY_HASH(*mappath, map_name); /* store the new map path in the given shared string */
+        /* Adjust coordinate pointer to point after map path */
         if(! isdigit(*coord_start))
             coord_start = mapend + 1;
     }
+        
+    /* Select the map we are aiming at */
+    /* TODO: handle unique maps? */
+    if(*mappath)
+        *map = ready_map_name(*mappath, MAP_NAME_SHARED); /* We assume map name is already normalized */
+
+    if(*map == NULL) {
+        LOG(llevBug,"get_path_next: Couldn't load map from description '%s' off %d\n", buf, *off);
+        return FALSE;
+    }            
 
     /* Get the requested coordinate pair */
     coord_end = coord_start + strcspn(coord_start, " \n");    
@@ -387,7 +410,6 @@ path_node *compress_path(path_node *path)
         get_rangevector_from_mapcoords(tmp->map, tmp->x, tmp->y, next->map, next->x, next->y, &v, 0); 
         if(last_dir == v.direction) {
             remove_node(tmp, &path);
-/*            free(tmp); */
 #ifdef DEBUG_PATHFINDING
             removed_nodes++;
 #endif
@@ -590,6 +612,18 @@ path_node * find_path(object *op,
 #ifdef DEBUG_PATHFINDING
     LOG(llevDebug,"find_path(): explored %d tiles, stored %d.\n", searched_nodes, pathfinder_nodebuf_next);
     searched_nodes = 0;
+ 
+    /* This writes out the explored tiles on the source map. Useful for heuristic tweaking */
+    /*
+    {
+        int y, x;
+        for(y=0; y<map1->height; y++) {
+            for(x=0; x<map1->height; x++) 
+                printf("%c", (map1->bitmap[y] & (1U << x)) ? 'X' : '-');
+            printf("\n");
+        }
+    }
+    */
 #endif
     
     return found_path;

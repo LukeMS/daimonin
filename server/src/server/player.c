@@ -1451,7 +1451,7 @@ static void fire_bow(object *op, int dir)
 								 * no level use elsewhere.
 								 */
   arrow->map = op->map;
-  SET_FLAG(arrow, FLAG_FLYING);
+  SET_MULTI_FLAG(arrow, FLAG_FLYING);
   SET_FLAG(arrow, FLAG_FLY_ON);
   SET_FLAG(arrow, FLAG_WALK_ON);
   play_sound_map(op->map, op->x, op->y, SOUND_FIRE_ARROW, SOUND_NORMAL);
@@ -2478,7 +2478,6 @@ void cast_dust (object *op, object *throw_ob, int dir) {
 
 void make_visible (object *op) {
     op->hide = 0;
-    /*CLEAR_FLAG(op,FLAG_IS_INVISIBLE); hu, we don't handle this in this way anymore */
     if(op->type==PLAYER) 
       op->contr->tmp_invis = 0;
     if(QUERY_FLAG(op, FLAG_UNDEAD)&&!is_true_undead(op)) 

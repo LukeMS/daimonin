@@ -34,8 +34,6 @@
 #include <sproto.h>
 #include <stdarg.h>
 
-#define POW2(x) ((x) * (x))
-
 /*
  * new_draw_info:
  *

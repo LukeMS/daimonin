@@ -87,6 +87,7 @@
 #define MAP_BLOCK	    0x4
 #define MAP_STYLE	    0x8
 #define MAP_ARTIFACT	0x20
+#define MAP_NAME_SHARED	0x40 /* indicates that the name string is a shared string */
 
 /* Values for in_memory below.  Should probably be an enumerations */
 #define MAP_IN_MEMORY 1
@@ -295,7 +296,8 @@ typedef struct mapdef {
     MapSpace *spaces;				/* Array of spaces on this map */
     oblinkpt *buttons;				/* Linked list of linked lists of buttons */
 
-    const char *tile_path[TILED_MAPS];			/* path to adjoining maps */
+    const char *path;   	       	/* Filename of the map (shared string now) */
+    const char *tile_path[TILED_MAPS];			/* path to adjoining maps (shared strings) */
     struct mapdef *tile_map[TILED_MAPS];		/* Next map, linked list */
 	object *player_first;			/* chained list of player on this map */
 
@@ -339,7 +341,6 @@ typedef struct mapdef {
     sint8 windspeed;				/* windspeed of this tile */
     sint8 winddir;					/* direction of wind */
     sint8 sky;						/* sky conditions */
-    char path[HUGE_BUF];			/* Filename of the map, hm, dynamic malloc should ok,too */
 
 } mapstruct;
 

@@ -807,7 +807,7 @@ int perceive_self(object *op) {
       * 2. Let the player know it worked.
       */
      {
-     FREE_AND_COPY_HASH(dummy->name, op->map->path);
+     FREE_AND_ADD_REF_HASH(dummy->name, op->map->path);
      EXIT_X(dummy)= op->x;
      EXIT_Y(dummy)= op->y;
      dummy->speed=0.0;
@@ -852,7 +852,7 @@ int perceive_self(object *op) {
       *   -We destruct the force indicating that portal.
       */
      {
-     FREE_AND_COPY_HASH(exitpath,old_force->race);
+     FREE_AND_ADD_REF_HASH(exitpath,old_force->race);
      exitx=EXIT_X(old_force);
      exity=EXIT_Y(old_force);
      LOG(llevDebug,"Trying to kill a portal in %s (%d,%d)\n",exitpath,exitx,exity);
@@ -894,7 +894,7 @@ int perceive_self(object *op) {
    else if (op_level<60)
          snprintf (portal_message,1024,"\nA sort of door opens in the air in front of you,\nshowing you the path to somewhere else.\n");
    else snprintf (portal_message,1024,"\nAs you walk on %s's portal, flowers comes\nfrom the ground around you.\nYou feel quiet.\n",op->name);
-   exitpath = NULL;
+   FREE_AND_CLEAR_HASH(exitpath);
    /* we want ensure that the force->name is still in hash table */
    FREE_AND_ADD_REF_HASH(exitpath, force->name);
    exitx=EXIT_X(force);
@@ -925,7 +925,7 @@ int perceive_self(object *op) {
      }
    dummy->speed = 0.0;
    update_ob_speed (dummy);
-   FREE_AND_COPY_HASH(EXIT_PATH(dummy),exitpath);
+   FREE_AND_ADD_REF_HASH(EXIT_PATH(dummy),exitpath);
    EXIT_X(dummy)=exitx;
    EXIT_Y(dummy)=exity;
    FREE_AND_COPY_HASH(dummy->name, portal_name);
@@ -942,7 +942,7 @@ int perceive_self(object *op) {
      return 0;
    }
    FREE_AND_COPY_HASH(force->slaying, PORTAL_ACTIVE_NAME);
-   FREE_AND_COPY_HASH(force->race, op->map->path);
+   FREE_AND_ADD_REF_HASH(force->race, op->map->path);
    FREE_AND_COPY_HASH(force->name, portal_name);
    EXIT_X(force)=dummy->x;
    EXIT_Y(force)=dummy->y;
@@ -963,7 +963,7 @@ int perceive_self(object *op) {
      }
    dummy->speed = 0.0;
    update_ob_speed (dummy);
-   FREE_AND_COPY_HASH(EXIT_PATH(dummy), op->map->path);
+   FREE_AND_ADD_REF_HASH(EXIT_PATH(dummy), op->map->path);
    EXIT_X(dummy)=op->x;
    EXIT_Y(dummy)=op->y;
    FREE_AND_COPY_HASH(dummy->name, portal_name);
@@ -982,7 +982,7 @@ int perceive_self(object *op) {
      return 0;
    }
    FREE_AND_COPY_HASH(force->slaying,PORTAL_ACTIVE_NAME);
-   FREE_AND_COPY_HASH(force->race,exitpath);
+   FREE_AND_ADD_REF_HASH(force->race,exitpath);
    FREE_AND_COPY_HASH(force->name,portal_name);
    EXIT_X(force)=dummy->x;
    EXIT_Y(force)=dummy->y;
@@ -1781,7 +1781,7 @@ int cast_change_attr(object *op,object *caster,object *target, int dir,int spell
     / ((caster->path_denied & path) ? 2 : 1);
     break;
   case SP_LEVITATE:
-    SET_FLAG(force, FLAG_FLYING);
+    SET_MULTI_FLAG(force, FLAG_FLYING);
     break;
   /* The following immunity spells are obsolete... -AV */
   case SP_IMMUNE_COLD:

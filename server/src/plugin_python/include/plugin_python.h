@@ -136,6 +136,7 @@ extern MODULEAPI void init_Daimonin_Python();
 /* If for some reason you think it is not enough, simply increase its size.  */
 /* The code will still work, but the plugin will eat more memory.            */
 #define MAX_RECURSIVE_CALL 100
+
 extern int StackPosition;
 extern object* StackActivator[MAX_RECURSIVE_CALL];
 extern object* StackWho[MAX_RECURSIVE_CALL];
@@ -146,6 +147,7 @@ extern int StackParm2[MAX_RECURSIVE_CALL];
 extern int StackParm3[MAX_RECURSIVE_CALL];
 extern int StackParm4[MAX_RECURSIVE_CALL];
 extern int StackReturn[MAX_RECURSIVE_CALL];
+extern char *StackOptions[MAX_RECURSIVE_CALL];
 
 /* Type used for numeric constants */
 typedef struct {

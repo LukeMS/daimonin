@@ -971,14 +971,42 @@ int CAN_MERGE(object *ob1, object *ob2)
 	/* just a brain dead long check for things NEVER NEVER should be different 
 	 * this is true under all circumstances for all objects.
 	 */
-    if (!ob1->nrof || !ob2->nrof || ob1->type != ob2->type || ob1 == ob2 || ob1->arch != ob2->arch || 
-	        ob1->sub_type1 != ob2->sub_type1 || ob1->material!=ob2->material || 
-			ob1->material_real != ob2->material_real || ob1->magic != ob2->magic ||
-		    ob1->item_quality!=ob2->item_quality ||ob1->item_condition!=ob2->item_condition ||
-			ob1->item_race!=ob2->item_race || ob1->speed != ob2->speed || ob1->inv || ob2->inv ||
-			ob1->value !=ob2->value || ob1->weight != ob2->weight) 
+    if (ob1->type != ob2->type || ob1 == ob2 || ob1->arch != ob2->arch || 
+            ob1->sub_type1 != ob2->sub_type1 || ob1->material!=ob2->material || 
+            ob1->material_real != ob2->material_real || ob1->magic != ob2->magic ||
+            ob1->item_quality!=ob2->item_quality ||ob1->item_condition!=ob2->item_condition ||
+            ob1->item_race!=ob2->item_race || ob1->speed != ob2->speed || 
+            ob1->value !=ob2->value || ob1->weight != ob2->weight) 
+        return 0;
 
-		return 0;
+    /* Gecko: Moved out special handling of event obejct nrof */
+    if((!ob1->nrof || !ob2->nrof) && ob1->type != TYPE_EVENT_OBJECT)
+        return 0;
+    
+    /* Gecko: added bad special check for event objects 
+     * Idea is: if inv is identical events only then go ahead and merge)
+     * This goes hand in hand with the event keeping addition in get_split_ob()
+     */
+    if(ob1->inv || ob2->inv) {
+        object *tmp1, *tmp2;
+        if(!ob1->inv || !ob2->inv)
+            return 0;
+        
+        /* Check that all inv objects are event objects */
+        for(tmp1 = ob1->inv, tmp2 = ob2->inv; tmp1 && tmp2; tmp1 = tmp1->below, tmp2=tmp2->below) 
+            if(tmp1->type != TYPE_EVENT_OBJECT || tmp2->type != TYPE_EVENT_OBJECT)
+                return 0;
+        if(tmp1 || tmp2) /* Same number of events */
+            return 0;
+        
+        for(tmp1 = ob1->inv; tmp1; tmp1 = tmp1->below) {
+            for(tmp2 = ob2->inv; tmp2; tmp2 = tmp2->below)
+                if(CAN_MERGE(tmp1, tmp2))
+                    break;
+            if(!tmp2) /* Couldn't find something to merge event from ob1 with? */
+                return 0;
+        }
+    }
 
 	/* check the refcount pointer */
 	if	(	ob1->name != ob2->name ||
@@ -2621,6 +2649,7 @@ void replace_insert_ob_in_map(char *arch_string, object *op) {
 
 object *get_split_ob(object *orig_ob,int nr) {
     object *newob;
+    object *tmp, *event;
     int is_removed = (QUERY_FLAG (orig_ob, FLAG_REMOVED) != 0);
 
     if((int) orig_ob->nrof<nr) {
@@ -2630,6 +2659,16 @@ object *get_split_ob(object *orig_ob,int nr) {
     }
     newob=get_object();
     copy_object(orig_ob,newob);
+    
+    /* Gecko: copy inventory (event objects)  */
+    for(tmp = orig_ob->inv; tmp; tmp = tmp->below) {
+        if(tmp->type == TYPE_EVENT_OBJECT) {
+            event = get_object();
+            copy_object(tmp, event);
+            insert_ob_in_ob(event, newob);
+        }
+    }
+                
     if((orig_ob->nrof-=nr)<1) {
 	if ( ! is_removed)
             remove_ob(orig_ob);

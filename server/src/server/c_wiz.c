@@ -215,7 +215,7 @@ int command_summon (object *op, char *params)
 	return 1;
       }
       dummy=get_object();
-      FREE_AND_COPY_HASH(EXIT_PATH(dummy), op->map->path);
+      FREE_AND_ADD_REF_HASH(EXIT_PATH(dummy), op->map->path);
       EXIT_X(dummy)=op->x+freearr_x[i];
       EXIT_Y(dummy)=op->y+freearr_y[i];
       enter_exit(pl->ob,dummy);
@@ -261,7 +261,7 @@ int command_teleport (object *op, char *params) {
       return 1;
    }
    dummy = get_object();
-   FREE_AND_COPY_HASH(EXIT_PATH(dummy), pl->ob->map->path);
+   FREE_AND_ADD_REF_HASH(EXIT_PATH(dummy), pl->ob->map->path);
    EXIT_X(dummy) = pl->ob->x + freearr_x[i];
    EXIT_Y(dummy) = pl->ob->y + freearr_y[i];
    enter_exit(op, dummy);
@@ -795,14 +795,19 @@ int command_reset (object *op, char *params)
 {
     mapstruct *m;
     object *dummy = NULL, *tmp = NULL;
+    const char *mapfile_sh;
 
     if (params == NULL) {
 	new_draw_info(NDI_UNIQUE, 0,op,"Reset what map [name]?");
 	return 1;	
     }
-    if (strcmp(params, ".") == 0)
-	params = op->map->path;
-    m = has_been_loaded(params);
+    if (strcmp(params, ".") == 0) {
+        m = has_been_loaded_sh(op->map->path);
+    } else {
+        mapfile_sh = add_string(params);
+        m = has_been_loaded_sh(mapfile_sh);
+        free_string_shared(mapfile_sh);
+    }
     if (m==NULL) {
 	new_draw_info(NDI_UNIQUE, 0,op,"No such map.");
 	return 1;	
@@ -821,7 +826,7 @@ int command_reset (object *op, char *params)
 	    dummy->map = NULL;
 	    EXIT_X(dummy) = op->x;
 	    EXIT_Y(dummy) = op->y;
-	    FREE_AND_COPY_HASH(EXIT_PATH(dummy), op->map->path);
+	    FREE_AND_ADD_REF_HASH(EXIT_PATH(dummy), op->map->path);
 	    remove_ob(op);
 	    op->map = NULL;
 	    tmp=op;
@@ -859,7 +864,7 @@ int command_nowiz (object *op, char *params) /* 'noadm' is alias */
 {
      CLEAR_FLAG(op, FLAG_WIZ);
      CLEAR_FLAG(op, FLAG_WIZPASS);
-     CLEAR_FLAG(op, FLAG_FLYING);
+     CLEAR_MULTI_FLAG(op, FLAG_FLYING);
 #ifdef REAL_WIZ
      CLEAR_FLAG(op, FLAG_WAS_WIZ);
 #endif
@@ -932,10 +937,10 @@ int command_dm (object *op, char *params)
       SET_FLAG(op, FLAG_WIZPASS);
       new_draw_info_format(NDI_UNIQUE, 0,op, "DM mode activated for %s!", op->name);
       /*new_draw_info(NDI_UNIQUE | NDI_ALL, 1, NULL, "The Dungeon Master has arrived!");*/
-      SET_FLAG(op, FLAG_FLYING);
+      SET_MULTI_FLAG(op, FLAG_FLYING);
       esrv_send_inventory(op, op);
+	  clear_los(op);
    	  op->contr->socket.update_tile=0; /* force a draw_look() */
-	  clear_los(op); /* set all to visible! */
    	  op->contr->update_los=1;
       op->contr->write_buf[0] ='\0';
       return 1;

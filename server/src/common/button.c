@@ -460,7 +460,7 @@ void add_button_link(object *button, mapstruct *map, int connected) {
     LOG(llevBug, "BUG: Tried to add button-link without map.\n");
     return;
   }
-  if (!editor) button->path_attuned = connected;  /* peterm:  I need this so I can rebuild 
+  button->path_attuned = connected;  /* peterm:  I need this so I can rebuild 
 							a connected map from a template map. */
 /*  LOG(llevDebug,"adding button %s (%d)\n", button->name, connected);*/
 
