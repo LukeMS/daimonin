@@ -194,7 +194,7 @@ int do_skill (object *op, int dir, char *string) {
           (void) attack_melee_weapon(op,dir,NULL);
         break;
       case SK_FIND_TRAPS:
-        success = find_traps(op);
+		  success = find_traps(op,op->chosen_skill->level);
         break;
       case SK_MUSIC:
         success = singing(op,dir);
@@ -214,7 +214,7 @@ int do_skill (object *op, int dir, char *string) {
         success = skill_ident(op);
         break;
       case SK_REMOVE_TRAP:
-        success = remove_trap(op,dir);
+        success = remove_trap(op,dir,op->chosen_skill->level);
         break;
       case SK_THROWING:
 	success = skill_throw(op,dir,string);

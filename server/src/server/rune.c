@@ -338,7 +338,7 @@ int dispel_rune(object *op,int dir,int risk)
 	
 }
 
-int trap_see(object *op,object *trap) 
+int trap_see(object *op,object *trap, int level) 
 {
 	char buf[MAX_BUF];
 	int chance;
@@ -346,7 +346,7 @@ int trap_see(object *op,object *trap)
 	chance = random_roll(0, 99, op, PREFER_HIGH);
   
 	/*  decide if we see the rune or not */
-	if((trap->stats.Cha==1) || (chance >
+	if((trap->level <= level && RANDOM()%10) || trap->stats.Cha==1 || (chance >
 			MIN(95,MAX(5,((int)((float) (op->map->difficulty + 
 			trap->level + trap->stats.Cha-op->level)/10.0 * 50.0))))))
 	{
@@ -420,9 +420,7 @@ int trap_disarm(object *disarmer, object *trap, int risk) {
 	sqr(MAX(trap->stats.dam,spells[trap->stats.sp].sp)) /
 	disarmer_level;
 
-    if(!(random_roll(0, (MAX(2,
-       MIN(20,trap->level-disarmer_level
-	   +5 - disarmer->stats.Dex/2))-1), disarmer, PREFER_LOW)))
+    if((trap->level <= disarmer_level && (RANDOM()%10)) ||!(random_roll(0, (MAX(2,MIN(20,trap->level-disarmer_level+5 - disarmer->stats.Dex/2))-1), disarmer, PREFER_LOW)))
         {
             new_draw_info_format(NDI_UNIQUE, 0,disarmer,"You successfuly remove the %s (lvl %d)!", trap->name, trap->level);
             remove_ob(trap);
@@ -438,11 +436,13 @@ int trap_disarm(object *disarmer, object *trap, int risk) {
     else
         {
             new_draw_info_format(NDI_UNIQUE, 0,disarmer,"You fail to remove the %s (lvl %d).", trap->name, trap->level);
-	    if(! (random_roll(0, (MAX(2,disarmer_level-trap->level 
-	       + disarmer->stats.Dex/2-6))-1, disarmer, PREFER_LOW)) &&risk) {
-		new_draw_info(NDI_UNIQUE, 0,disarmer,"In fact, you set it off!");
-		spring_trap(trap,disarmer);
-	    }
+		if((trap->level > disarmer_level*1.4f || (RANDOM()%3)))
+		{
+			if(! (random_roll(0, (MAX(2,disarmer_level-trap->level+ disarmer->stats.Dex/2-6))-1, disarmer, PREFER_LOW)) &&risk) {
+				new_draw_info(NDI_UNIQUE, 0,disarmer,"In fact, you set it off!");
+				spring_trap(trap,disarmer);
+			}
+		}
             return 0;
         }
 }

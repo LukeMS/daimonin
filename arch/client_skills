@@ -8,14 +8,14 @@
 0 h sk_003.png
 "After a trap is revealed this skill can remove the trap."
 "The success of removing depends on the skill level and the trap level."
-"The skill has a area effect on the tile it is used and all around."
 "Is the level of the trap is to high the trap can be backfire."
+"** You have to buy level for this skill from NPC's or teachers! **"
 "find traps"
 0 k sk_014.png
 "This skill will find and reveal a trap near to the player."
 "It is used in a direction but has a range effect."
 "The tile under the player and all around are searched. "
-"The success chance depends on the agility level."
+"** You have to buy level for this skill from NPC's or teachers! **"
 "bow archery"
 0 p sk_007.png
 "This skill will allow the use of bows as range weapons."
