@@ -17639,6 +17639,16 @@ no_pass 1
 layer 5
 no_pick 1
 end
+Object fwall_grey2
+name wall
+face fwall_grey2.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+no_pass 1
+layer 5
+no_pick 1
+end
 Object fwall_plant
 name wall
 face fwall_plant.d.101
@@ -17682,6 +17692,526 @@ end
 Object fwall_brown1
 name stone wall
 face fwall_brown1.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_cave1a
+name wall
+face fwall_cave1a.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_cave1b
+name wall
+face fwall_cave1b.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_cave1c
+name wall
+face fwall_cave1c.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_fire1a
+name wall
+face fwall_fire1a.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_fire1b
+name wall
+face fwall_fire1b.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_fire1c
+name wall
+face fwall_fire1c.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_flagstone1a
+name wall
+face fwall_flagstone1a.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_flagstone2a
+name wall
+face fwall_flagstone2a.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_fstone1a
+name wall
+face fwall_fstone1a.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_fstone1b
+name wall
+face fwall_fstone1b.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_fstone1c
+name wall
+face fwall_fstone1c.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_grit1a
+name wall
+face fwall_grit1a.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_grit1b
+name wall
+face fwall_grit1b.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_grit1c
+name wall
+face fwall_grit1c.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_grit2a
+name wall
+face fwall_grit2a.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_grit2b
+name wall
+face fwall_grit2b.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_marble1a
+name wall
+face fwall_marble1a.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_marble1b
+name wall
+face fwall_marble1b.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_marble1c
+name wall
+face fwall_marble1c.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_marble2a
+name wall
+face fwall_marble2a.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_marble2b
+name wall
+face fwall_marble2b.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_marble2c
+name wall
+face fwall_marble2c.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_marble3a
+name wall
+face fwall_marble3a.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_marble3b
+name wall
+face fwall_marble3b.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_marble3c
+name wall
+face fwall_marble3c.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_pattern1
+name wall
+face fwall_pattern1.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_pattern2
+name wall
+face fwall_pattern2.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_pattern3
+name wall
+face fwall_pattern3.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_pattern4
+name wall
+face fwall_pattern4.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_pattern5
+name wall
+face fwall_pattern5.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_pattern6
+name wall
+face fwall_pattern6.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_pattern7
+name wall
+face fwall_pattern7.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_pattern8
+name wall
+face fwall_pattern8.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_pattern9
+name wall
+face fwall_pattern9.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_pattern10
+name wall
+face fwall_pattern10.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_pattern11
+name wall
+face fwall_pattern11.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_pattern12
+name wall
+face fwall_pattern12.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_pattern13
+name wall
+face fwall_pattern13.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_pattern14
+name wall
+face fwall_pattern14.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_pattern15
+name wall
+face fwall_pattern15.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_pattern16
+name wall
+face fwall_pattern16.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_pattern17
+name wall
+face fwall_pattern17.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_pattern18
+name wall
+face fwall_pattern18.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_pattern19
+name wall
+face fwall_pattern19.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_sand1a
+name wall
+face fwall_sand1a.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_sand1b
+name wall
+face fwall_sand1b.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_sstone1a
+name wall
+face fwall_sstone1a.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_sstone1b
+name wall
+face fwall_sstone1b.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_sstone1c
+name wall
+face fwall_sstone1c.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_wood1a
+name wall
+face fwall_wood1a.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_wood1b
+name wall
+face fwall_wood1b.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_wood1c
+name wall
+face fwall_wood1c.d.101
 type 77
 editor_folder walls/fwalls
 blocksview 1
