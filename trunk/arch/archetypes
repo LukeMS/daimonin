@@ -1458,25 +1458,26 @@ is_floor 1
 end
 Object blocked
 face blocked.111
-type 79
+type 71
 editor_folder floors/floors
 layer 1
 no_teleport 1
 is_floor 1
 blocksview 1
+terrain_type 1
 no_pick 1
 no_pass 1
 end
-Object ability_dragon
-name dragonbreath
-face force.101
-type 110
-editor_folder forces/ability
-sys_object 1
-no_drop 1
-hp 3
-sp 58
-maxsp 5
+Object floor_inv
+name floor
+face trans.101
+type 71
+editor_folder floors/floors
+layer 1
+terrain_type 1
+no_teleport 1
+is_floor 1
+no_pick 1
 end
 Object ability_stone_throw
 name rock thrower
@@ -1487,9 +1488,52 @@ race rock
 sys_object 1
 nrof 1
 no_drop 1
-dam 0
 sp 40
 wc 1
+end
+Object ability_cause_lig_wound
+name ability cause light wounds
+face force.101
+type 110
+editor_folder forces/ability
+is_magical 1
+sys_object 1
+no_drop 1
+no_pick 1
+sp 11
+end
+Object ability_firestorm
+name ability firestorm
+face force.101
+type 110
+editor_folder forces/ability
+sys_object 1
+is_magical 1
+no_drop 1
+no_pick 1
+sp 1
+end
+Object ability_icestorm
+name ability icestorm
+face force.101
+type 110
+editor_folder forces/ability
+sys_object 1
+is_magical 1
+no_drop 1
+no_pick 1
+sp 2
+end
+Object ability_mbullet
+name ability magic bullet
+face force.101
+type 110
+editor_folder forces/ability
+sys_object 1
+is_magical 1
+no_drop 1
+no_pick 1
+sp 13
 end
 Object atheletes_foot
 name athelete's foot
@@ -4875,7 +4919,7 @@ end
 Object jewel_generic
 name jewel
 face jewel_clear.101
-type 60
+type 116
 editor_folder items/jewel
 race gold and jewels
 layer 3
@@ -4890,13 +4934,13 @@ end
 Object nugget_generic
 name nugget
 face nugget_gold_s.101
-type 60
+type 117
 editor_folder items/jewel
 race gold and jewels
 layer 3
 nrof 1
 material 1024
-material_real 643
+material_real 641
 item_quality 100
 item_condition 100
 value 5
@@ -5776,6 +5820,10 @@ sub_type 132
 nrof 1
 weight 20000
 value 1
+animation t_boulder
+anim_speed 5
+is_animated 0
+is_turnable 1
 is_thrown 1
 material 64
 end
@@ -5792,6 +5840,9 @@ dam 5
 sub_type 132
 nrof 1
 weight 120000
+animation t_lboulder
+anim_speed 5
+is_animated 0
 is_thrown 1
 value 2
 material 64
@@ -5808,6 +5859,9 @@ attack_impact 100
 dam 1
 sub_type 132
 nrof 1
+animation t_rock
+anim_speed 5
+is_animated 0
 is_thrown 1
 weight 500
 value 1
@@ -8027,6 +8081,7 @@ Object rand_drop
 face creator.111
 type 102
 editor_folder special/special
+carrying 0
 layer 0
 sys_object 1
 no_teleport 1
@@ -8103,7 +8158,6 @@ name magic lantern
 face lantern2_magic.131
 type 79
 editor_folder structures/lanterns
-no_pass 1
 glow_radius 4
 layer 5
 no_pick 1
@@ -8113,7 +8167,6 @@ name magic lantern
 face lantern2_magic.151
 type 79
 editor_folder structures/lanterns
-no_pass 1
 glow_radius 4
 layer 5
 no_pick 1

@@ -777,6 +777,7 @@ void update_ob_speed(object *op) {
 
         /* process_events() expects us to insert the object at the beginning
          * of the list. */
+	/*LOG(-1,"SPEED: add object to speed list: %s (%d,%d)\n",query_name(op),op->x,op->y);*/
 	op->active_next = active_objects;
 	if (op->active_next!=NULL)
 		op->active_next->active_prev = op;
@@ -787,6 +788,7 @@ void update_ob_speed(object *op) {
 	if (!op->active_next && !op->active_prev && op!=active_objects)
 	    return;
 
+	/*LOG(-1,"SPEED: remove object from speed list: %s (%d,%d)\n",query_name(op),op->x,op->y);*/
 	if (op->active_prev==NULL) {
 	    active_objects = op->active_next;
 	    if (op->active_next!=NULL)
@@ -1173,8 +1175,9 @@ void remove_ob(object *op) {
 
     if(QUERY_FLAG(op,FLAG_REMOVED)) 
 	{
-		dump_object(op);
-		LOG(llevBug,"BUG: Trying to remove removed object.\n:%s\n", errmsg);
+		/*dump_object(op)*/;
+		LOG(llevBug,"BUG: Trying to remove removed object.\n:%s map:%s (%d,%d)\n", query_name(op), 
+			op->map?(op->map->path?op->map->path:"op->map->path == NULL"):"op->map==NULL",op->x,op->y);
 		return;
     }
 
@@ -1314,7 +1317,7 @@ void remove_ob(object *op) {
 				 * but really not a bug. Of course not smart to handle this
 				 * AFTER the remove.
 				 */
-				LOG (llevBug, "BUG: remove_ob(): name %s, archname %s destroyed leaving object\n", tmp->name, tmp->arch->name);
+				LOG(llevBug, "BUG: remove_ob(): name %s, archname %s destroyed leaving object\n", tmp->name, tmp->arch->name);
 			}
 		}
 
@@ -1393,7 +1396,7 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
     if (QUERY_FLAG (op, FLAG_FREED))
 	{
 		dump_object(op);
-		LOG (llevBug, "BUG: Trying to insert freed object %s in map %s!\n:%s\n", op->name, m->name,errmsg);
+		LOG(llevBug, "BUG: Trying to insert freed object %s in map %s!\n:%s\n", op->name, m->name,errmsg);
 		return NULL;
     }
     if(m==NULL)
@@ -1415,7 +1418,7 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
 		if (insert_ob_in_map(op->more,m,originator,flag) == NULL) 
 		{
 			if ( ! op->head)
-				LOG (llevBug, "BUG: insert_ob_in_map(): inserting op->more killed op %s in map %s\n",op->name, m->name);
+				LOG(llevBug, "BUG: insert_ob_in_map(): inserting op->more killed op %s in map %s\n",op->name, m->name);
 			return NULL;
 		}
     }

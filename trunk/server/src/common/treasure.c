@@ -43,12 +43,13 @@
 
 /* Give 1 re-roll attempt per artifact */
 #define ARTIFACT_TRIES 2
+#define T_STYLE_UNSET (-2)
 
 static archetype *ring_arch=NULL,*ring_arch_normal=NULL, *amulet_arch=NULL,*crown_arch=NULL;
 
 
 /* static functions */
-static treasure *load_treasure(FILE *fp);
+static treasure *load_treasure(FILE *fp, int *t_style);
 static void change_treasure(treasure *t, object *op); /* overrule default values */
 static treasurelist *get_empty_treasurelist(void);
 static treasure *get_empty_treasure(void);
@@ -69,7 +70,7 @@ void load_treasures() {
   char filename[MAX_BUF], buf[MAX_BUF], name[MAX_BUF];
   treasurelist *previous=NULL;
   treasure *t;
-  int comp;
+  int comp, t_style;
 
   sprintf(filename,"%s/%s",settings.datadir,settings.treasures);
   if((fp=open_and_uncompress(filename,0,&comp))==NULL) {
@@ -87,7 +88,10 @@ void load_treasures() {
       else
         previous->next=tl;
       previous=tl;
-      tl->items=load_treasure(fp);
+	  t_style= T_STYLE_UNSET;
+      tl->items=load_treasure(fp,&t_style);
+	  if(tl->t_style == T_STYLE_UNSET)
+		  tl->t_style = t_style;
       /* This is a one of the many items on the list should be generated.
        * Add up the chance total, and check to make sure the yes & no
        * fields of the treasures are not being used.
@@ -130,11 +134,12 @@ void load_treasures() {
  * into an internal treasure structure (very linked lists)
  */
 
-static treasure *load_treasure(FILE *fp) 
+static treasure *load_treasure(FILE *fp, int *t_style) 
 {
   char buf[MAX_BUF], *cp, variable[MAX_BUF];
   treasure *t=get_empty_treasure();
   int value;
+  int start_marker=0, t_style2;
 
   nroftreasures++;
   while(fgets(buf,MAX_BUF,fp)!=NULL) {
@@ -145,13 +150,27 @@ static treasure *load_treasure(FILE *fp)
     cp=buf;
     while(*cp==' ') /* Skip blanks */
       cp++;
-    if(sscanf(cp,"arch %s",variable)) 
+    if(sscanf(cp,"t_style %d",&value)) 
 	{
-      if((t->item=find_archetype(variable))==NULL)
-        LOG(llevBug,"BUG: Treasure lacks archetype: %s\n",variable);
+		if(start_marker)
+			t->t_style = value;
+//			t->item->t_style = value;
+		else	
+		{
+			*t_style = value; /* no, its global for the while treasure list entry */
+		}
+    }
+    else if(sscanf(cp,"arch %s",variable)) 
+	{
+		if((t->item=find_archetype(variable))==NULL)
+			LOG(llevBug,"BUG: Treasure lacks archetype: %s\n",variable);
+		start_marker = 1;
     }
 	else if (sscanf(cp, "list %s", variable))
+	{
+		start_marker = 1;
         t->name = add_string(variable);
+	}
     else if (sscanf(cp, "name %s", variable))
       t->change_arch.name = add_string(cp+5);
     else if (sscanf(cp, "title %s", variable)) 
@@ -168,6 +187,8 @@ static treasure *load_treasure(FILE *fp)
         t->magic=value;
     else if(sscanf(cp,"magic_fix %d",&value))
         t->magic_fix= value;
+    else if(sscanf(cp,"artifact_chance %d",&value))
+        t->artifact_chance = value;
     else if(sscanf(cp,"magic_chance %d",&value))
         t->magic_chance=value;
     else if(sscanf(cp,"difficulty %d",&value))
@@ -177,13 +198,26 @@ static treasure *load_treasure(FILE *fp)
     else if(sscanf(cp,"material_end %d",&value))
         t->change_arch.material_end =(sint8) value;
     else if(!strcmp(cp,"yes"))
-      t->next_yes=load_treasure(fp);
+	{
+	  t_style2 = T_STYLE_UNSET;
+      t->next_yes=load_treasure(fp, &t_style2);
+	  if(t->next_yes->t_style == T_STYLE_UNSET)
+		  t->next_yes->t_style = t_style2;
+	}
     else if(!strcmp(cp,"no"))
-      t->next_no=load_treasure(fp);
+	{
+	  t_style2 = T_STYLE_UNSET;
+      t->next_no=load_treasure(fp, &t_style2);
+	  if(t->next_no->t_style == T_STYLE_UNSET)
+		  t->next_no->t_style = t_style2;
+	}
     else if(!strcmp(cp,"end"))
       return t;
     else if(!strcmp(cp,"more")) {
-      t->next=load_treasure(fp);
+	  t_style2 = T_STYLE_UNSET;
+      t->next=load_treasure(fp,&t_style2);
+	  if(t->next->t_style == T_STYLE_UNSET)
+		  t->next->t_style = t_style2;
       return t;
     } else
       LOG(llevBug,"BUG: Unknown treasure-command: '%s', last entry %s\n",cp,t->name?t->name:"null");
@@ -259,6 +293,8 @@ void init_artifacts()
 				art->allowed = tmp;
 			} while ((cp=next)!=NULL);
 		}
+		else if (sscanf(cp, "t_style %d", &value))
+			art->t_style = value;
 		else if (sscanf(cp, "chance %d", &value))
 			art->chance = (uint16) value;
 		else if (sscanf(cp, "difficulty %d", &value))
@@ -410,6 +446,7 @@ static treasurelist *get_empty_treasurelist(void) {
   tl->name=NULL;
   tl->next=NULL;
   tl->items=NULL;
+  tl->t_style = T_STYLE_UNSET; /* -2 is the "unset" marker and will virtually handled as 0 which can be overruled */
   tl->total_chance=0;
   return tl;
 }
@@ -426,6 +463,7 @@ static treasure *get_empty_treasure(void) {
   t->change_arch.name=NULL;
   t->change_arch.slaying=NULL;
   t->change_arch.title=NULL;
+  t->t_style = T_STYLE_UNSET; /* -2 is the "unset" marker and will virtually handled as 0 which can be overruled */
   t->change_arch.material_start = -1;
   t->change_arch.material_end = -1;
   t->item=NULL;
@@ -433,6 +471,7 @@ static treasure *get_empty_treasure(void) {
   t->next=NULL;
   t->next_yes=NULL;
   t->next_no=NULL;
+  t->artifact_chance = -1;
   t->chance=100;
   t->magic_fix=0;
   t->difficulty = 0;
@@ -505,7 +544,7 @@ void create_treasure(treasurelist *t, object *op, int flag, int difficulty, int 
     if (t->total_chance) 
 		create_one_treasure(t, op, flag,difficulty, tries);
     else
-  		create_all_treasures(t->items, op, flag, difficulty, tries);
+  		create_all_treasures(t->items, op, flag, difficulty, (t->items->t_style==T_STYLE_UNSET)?t->t_style:t->items->t_style, tries);
 }
 
 
@@ -522,7 +561,7 @@ void create_treasure(treasurelist *t, object *op, int flag, int difficulty, int 
  */
 
 
-void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int tries) 
+void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int t_style, int tries) 
 {
   object *tmp;
 
@@ -537,7 +576,7 @@ void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int
         if(t->nrof&&tmp->nrof<=1)
           tmp->nrof = RANDOM()%((int) t->nrof) + 1;
 		/* ret 1 = artifact is generated - don't overwrite anything here */
-        if(!fix_generated_item (tmp, op, difficulty, t->magic, t->magic_fix, t->magic_chance, flag))
+        if(!fix_generated_item (tmp, op, difficulty, t->artifact_chance, t_style, t->magic, t->magic_fix, t->magic_chance, flag))
 	        change_treasure(t, tmp);        
         put_treasure (tmp, op, flag);
 		/* if treasure is "identified", created items are too */
@@ -550,12 +589,12 @@ void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int
       }
     }
     if(t->next_yes!=NULL)
-      create_all_treasures(t->next_yes,op,flag,difficulty, tries);
+		create_all_treasures(t->next_yes,op,flag,difficulty, (t->next_yes->t_style==T_STYLE_UNSET)?t->t_style:t->next_yes->t_style, tries);
   } else
     if(t->next_no!=NULL)
-      create_all_treasures(t->next_no,op,flag,difficulty,tries);
+      create_all_treasures(t->next_no,op,flag,difficulty,(t->next_no->t_style==T_STYLE_UNSET)?t->t_style:t->next_no->t_style, tries);
   if(t->next!=NULL)
-    create_all_treasures(t->next,op,flag,difficulty, tries);
+    create_all_treasures(t->next,op,flag,difficulty, (t->next->t_style==T_STYLE_UNSET)?t->t_style:t->next->t_style,tries);
 }
 
 void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty, int tries)
@@ -591,7 +630,7 @@ void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty,
 	object *tmp=arch_to_object(t->item);
         if(t->nrof&&tmp->nrof<=1)
           tmp->nrof = RANDOM()%((int) t->nrof) + 1;
-        if(!fix_generated_item (tmp, op, difficulty, t->magic, t->magic_fix, t->magic_chance, flag))
+        if(!fix_generated_item (tmp, op, difficulty,t->artifact_chance, (t->t_style==T_STYLE_UNSET)?tl->t_style:t->t_style, t->magic, t->magic_fix, t->magic_chance, flag))
 			change_treasure(t, tmp);        
         put_treasure (tmp, op, flag);
 		/* if trasure is "identified", created items are too */
@@ -984,7 +1023,7 @@ static int get_random_spell(int level, int flags)
  *     Sets FLAG_STARTEQIUP on item if appropriate, or clears the item's
  *     value.
  */
-int fix_generated_item (object *op, object *creator, int difficulty, int max_magic, int fix_magic, int chance_magic, int flags)
+int fix_generated_item (object *op, object *creator, int difficulty, int a_chance, int t_style, int max_magic, int fix_magic, int chance_magic, int flags)
 {
 	int temp, retval=0, was_magic = op->magic;
 
@@ -995,17 +1034,25 @@ int fix_generated_item (object *op, object *creator, int difficulty, int max_mag
 	if (difficulty<1)
 		difficulty=1;
 
+	/* i have not looked in all the crown stuff atm - MT -10.2003 */
 	if (op->arch == crown_arch)
 	{
 		set_magic(difficulty>25?30:difficulty+5, op, max_magic, fix_magic, chance_magic, flags);
-		retval = generate_artifact(op,difficulty);
+		retval = generate_artifact(op,difficulty, t_style, a_chance);
 	} 
 	else if(op->type != POTION)
 	{
 		if((!op->magic && max_magic) || fix_magic)
 			set_magic(difficulty,op,max_magic, fix_magic, chance_magic, flags);
-		if ((!was_magic && !(RANDOM()%CHANCE_FOR_ARTIFACT)) || op->type == HORN || difficulty >= 999 )
-			retval = generate_artifact(op, difficulty);
+		if(a_chance != 0)
+		{
+			if ((!was_magic && !(RANDOM()%CHANCE_FOR_ARTIFACT)) || op->type == HORN ||
+											difficulty >= 999 || ((RANDOM()%100)+1)<=a_chance )
+			{
+				retval = generate_artifact(op, difficulty, t_style, a_chance);
+			}
+
+		}
 	}
 
 	if (!op->title) /* Only modify object if not special */
@@ -1054,7 +1101,7 @@ int fix_generated_item (object *op, object *creator, int difficulty, int max_mag
 				{
 					while(!(is_special=special_potion(op)) && op->stats.sp==SP_NO_SPELL)
 					{
-						generate_artifact(op,difficulty);
+						generate_artifact(op,difficulty, t_style, 100);
 						if(too_many_tries++ > 10)
 							goto jump_break1;
 					}
@@ -1099,7 +1146,7 @@ int fix_generated_item (object *op, object *creator, int difficulty, int max_mag
 					remove_ob(op);
 				free_object(op);
 			    op=arch_to_object(ring_arch_normal);
-				generate_artifact(op,difficulty);
+				generate_artifact(op,difficulty, t_style,99);
 			}
 
 			if ( ! (flags & GT_ONLY_GOOD) && ! (RANDOM() % 3))
@@ -1366,6 +1413,7 @@ static artifact *get_empty_artifact(void)
 	t->next=NULL;
 	t->name=NULL;
 	t->def_at_name = NULL;
+	t->t_style=0;
 	t->chance=0;
 	t->difficulty=0;
 	t->allowed = NULL;
@@ -1441,8 +1489,8 @@ void dump_artifacts() {
   for (al=first_artifactlist; al!=NULL; al=al->next) {
     LOG(llevInfo,"Artifact has type %d, total_chance=%d\n", al->type, al->total_chance);
     for (art=al->items; art!=NULL; art=art->next) {
-      LOG(llevInfo,"Artifact %-30s Difficulty %3d Chance %5d\n",
-	art->name, art->difficulty, art->chance);
+      LOG(llevInfo,"Artifact %-30s Difficulty %3d T-Style %d Chance %5d\n",
+	art->name, art->difficulty, art->t_style, art->chance);
       if (art->allowed !=NULL) {
 	LOG(llevInfo,"\tAllowed combinations:");
 	for (next=art->allowed; next!=NULL; next=next->next)
@@ -1585,60 +1633,89 @@ for(j=0;j<NR_LOCAL_EVENTS;j++)
  * Then calls give_artifact_abilities in order to actually create
  * the artifact.
  */
-int generate_artifact(object *op, int difficulty) {
-  artifactlist *al;
-  artifact *art;
-  int i;
+int generate_artifact(object *op, int difficulty, int t_style, int a_chance) 
+{
+	artifactlist *al;
+	artifact *art;
+	artifact *art_tmp=NULL;
+	int i, chance_tmp = 0;
 
 	al = find_artifactlist(op->type);
+
+	if(t_style == T_STYLE_UNSET) /* NOW we overrule unset to 0 */
+		t_style = 0;
   
-  if (al==NULL) {
+	if (al==NULL) 
+	{
 #ifdef TREASURE_VERBOSE
-      LOG(llevDebug, "Couldn't change %s into artifact - no table.\n", op->name);
+		  LOG(llevDebug, "Couldn't change %s into artifact - no table.\n", op->name);
 #endif
-    return 0;
-  }
+		return 0;
+	}
 
-  for (i = 0; i < ARTIFACT_TRIES; i++) {
-    int roll = RANDOM()% al->total_chance;
+	for (i = 0; i < ARTIFACT_TRIES; i++) 
+	{
+		int roll = RANDOM()% al->total_chance;
 
-    for (art=al->items; art!=NULL; art=art->next) {
-      roll -= art->chance;
-      if (roll<0) break;
-    }
+		for (art=al->items; art!=NULL; art=art->next)
+		{
+			roll -= art->chance;
+			if (roll<0) 
+				break;
+		}
 	
-    if (art == NULL || roll>=0) {
-#if 1
-      LOG(llevBug, "BUG: Got null entry and non zero roll in generate_artifact, type %d\n",
-	op->type);
-#endif
-      return 0;
-    }
+		if (art == NULL || roll>=0) 
+		{
+			LOG(llevBug, "BUG: Got null entry and non zero roll in generate_artifact, type %d\n",op->type);
+			return 0;
+		}
 
-	/* i comment this out - reason is that we can't generate a sword +4 
-	 * because we don't want random swords >+2
-    if (FABS(op->magic) < art->item->magic)
-      continue;*/ /* Not magic enough to be this item */
 
-#ifdef TREASURE_VERBOSE
-    LOG(0,"Difficulty: map:%d art:%d\n", difficulty, art->difficulty);
-#endif
-    /* Map difficulty not high enough */
-    if (difficulty<art->difficulty)
-	continue;
+	    /* Map difficulty not high enough OR the t_style is set and don't match */
+		/*LOG(-1,"ARTIFACT: for %s \n%s\n t_style %d art->t_style:%d\n", query_name(op), art->parse_text, t_style, art->t_style);*/
+	    if (difficulty<art->difficulty || (t_style==-1 && (art->t_style && art->t_style!=T_STYLE_UNSET)) ||
+			(t_style && (art->t_style != t_style && art->t_style!=T_STYLE_UNSET)))
+			continue;
 
-    if (!legal_artifact_combination(op, art)) {
-#ifdef TREASURE_VERBOSE
-      LOG(llevDebug, "%s of %s was not a legal combination.\n",
-          op->name, art->item->name);
-#endif
-      continue;
-    }
-    give_artifact_abilities(op, art);
-	break;
-  }
-    return 1;
+	    if (!legal_artifact_combination(op, art)) 
+		{
+			#ifdef TREASURE_VERBOSE
+				LOG(llevDebug, "%s of %s was not a legal combination.\n",op->name, art->item->name);
+			#endif
+			continue;
+		}
+		give_artifact_abilities(op, art);
+		return 1;
+	}
+
+	/* if we are here then we failed to generate a artifact by chance.
+	 * the reasons can be many - most times we just skipped over the 
+	 * useful one.
+	 * If (and only if) we have a a_chance of 100% - then now we force our way:
+	 * - lets get (if there are one) a legal artifact with the highest chance.
+	 */
+	if(a_chance == 100)
+	{
+		for (art=al->items; art!=NULL; art=art->next)
+		{
+			if(art->chance <= chance_tmp)
+				continue;
+		    if (difficulty<art->difficulty || (t_style==-1 && (art->t_style && art->t_style!=T_STYLE_UNSET)) ||
+						(t_style && (art->t_style != t_style && art->t_style!=T_STYLE_UNSET)))
+				continue;
+		    if (!legal_artifact_combination(op, art))
+				continue;
+			art_tmp = art; /* there we go! */
+		}
+	}
+
+	/* now we MUST have one - if there was at last one legal possible artifact */
+	if(art_tmp)
+		give_artifact_abilities(op, art_tmp);
+
+	return 1;
 }
+
 
 /* fix_flesh_item() - objects of type FLESH are similar to type
  * FOOD, except they inherit properties (name, food value, etc).

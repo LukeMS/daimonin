@@ -6,7 +6,6 @@ face force.101
 sys_object 1
 nrof 1
 no_drop 1
-dam 0
 sp 40
 wc 1
 end

@@ -367,7 +367,8 @@ void doeric_server()
 	    save_player(pl->ob, 0);
 	    if(!QUERY_FLAG(pl->ob,FLAG_REMOVED)) {
 		terminate_all_pets(pl->ob);
-		remove_ob(pl->ob);
+		leave_map(pl->ob);
+		remove_ob(pl->ob); /* in leave map... */
 	    }
 	    leave(pl,1);
 	    final_free_player(pl);

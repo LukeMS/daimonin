@@ -577,7 +577,7 @@ int skill_ident(object *pl) {
 		    + do_skill_ident(pl,FLESH);
                 break; 
            case SK_JEWELER:
-                success += do_skill_ident(pl,GEM) + do_skill_ident(pl,RING);
+                success += do_skill_ident(pl,GEM) +do_skill_ident(pl,TYPE_JEWEL) +do_skill_ident(pl,TYPE_NUGGET) + do_skill_ident(pl,RING);
                 break; 
 	   case SK_LITERACY:
                 success += do_skill_ident(pl,SPELLBOOK) 
@@ -928,7 +928,7 @@ int pray (object *pl) {
 
 	if(1)
 	{
-		LOG(llevBug,"BUG: pray() called (praying skill used) from %sn", pl->name);
+		LOG(llevBug,"BUG: pray() called (praying skill used) from %s\n", query_name(pl));
 		return 0;
 	}
     if(pl->type!=PLAYER) return 0;
@@ -1391,7 +1391,7 @@ object *find_throw_ob( object *op, char *request ) {
         tmp = NULL;
       } else {
         if (apply_special (op, tmp, AP_UNAPPLY | AP_NO_MERGE)) {
-          LOG (llevBug, "BUG: find_throw_ob(): couldn't unapply\n");
+          LOG(llevBug, "BUG: find_throw_ob(): %s / %s - couldn't unapply\n",query_name(op),query_name(tmp));
           tmp = NULL;
         }
       }
@@ -1399,7 +1399,7 @@ object *find_throw_ob( object *op, char *request ) {
   }
 
   if (tmp && QUERY_FLAG (tmp, FLAG_INV_LOCKED)) {
-    LOG (llevBug, "BUG: find_throw_ob(): object is locked\n");
+    LOG(llevBug, "BUG: find_throw_ob(): %s / %s object is locked\n",query_name(op),query_name(tmp));
     tmp=NULL;
   }
 
@@ -1457,7 +1457,7 @@ object *find_throw_tag( object *op, tag_t tag)
 		{
 			if (apply_special (op, tmp, AP_UNAPPLY | AP_NO_MERGE)) 
 			{
-				LOG (llevBug, "BUG: find_throw_ob(): couldn't unapply throwing item %s from %s\n", tmp->name, op->name);
+				LOG(llevBug, "BUG: find_throw_ob(): couldn't unapply throwing item %s from %s\n", query_name(tmp), query_name(op));
 				tmp = NULL;
 			}
 		}
@@ -1491,7 +1491,7 @@ object *make_throw_ob (object *orig) {
   if(orig) {
     toss_item=get_object();
     if (QUERY_FLAG (orig, FLAG_APPLIED)) {
-      LOG (llevBug, "BUG: make_throw_ob(): ob is applied\n");
+      LOG(llevBug, "BUG: make_throw_ob(): ob is applied (%s)\n",query_name(orig));
       /* insufficient workaround, but better than nothing */
       CLEAR_FLAG (orig, FLAG_APPLIED);
     }

@@ -110,8 +110,9 @@ void read_map_log()
  * then we can skip there this player check after some testing
  */
 void swap_map(mapstruct *map) {
+	mapstruct *tmp_map;
     player *pl;
-	int i;
+	/*int i;*/
 #ifdef PLUGINS
     int evtid;
     CFParm CFP;
@@ -143,27 +144,209 @@ void swap_map(mapstruct *map) {
 	 * XmX
 	 * XXX
 	 */
-	for(i=0;i<TILED_MAPS;i++)
+
+		/* now we check the "edges" */
+		/* special checks - again - UGLY code - i just copy & paste - here
+		 * we will use m->players in the future!
+		 */
+		 
+	if(map->tile_map[0] && map->tile_map[0]->in_memory == MAP_IN_MEMORY)
 	{
-		if(map->tile_map[i])
+		for(pl=first_player;pl!=NULL;pl=pl->next)
 		{
-			/* we have a tiled map which is swaped out - no problem - skip it */
-			if(map->tile_map[i]->in_memory != MAP_IN_MEMORY) 
-				continue;
+			if(pl->ob == NULL || (!(QUERY_FLAG(pl->ob,FLAG_REMOVED)) && pl->ob->map == map->tile_map[0]))
+				break;
+		}
+		if(pl != NULL) 
+		{
+			LOG(llevDebug,"skip: player on t_map [0] (%s).\n",map->tile_map[0]->name);
+			return;
+		}
+
+		if(map->tile_map[0]->tile_map[3] && map->tile_map[0]->tile_map[3]->in_memory == MAP_IN_MEMORY)
+		{
+			
+			tmp_map = map->tile_map[0]->tile_map[3];
 
 			for(pl=first_player;pl!=NULL;pl=pl->next)
 			{
-				if(pl->ob == NULL || (!(QUERY_FLAG(pl->ob,FLAG_REMOVED)) && pl->ob->map == map->tile_map[i]))
+				if(pl->ob == NULL || (!(QUERY_FLAG(pl->ob,FLAG_REMOVED)) && pl->ob->map == tmp_map))
 					break;
 			}
 
 		    if(pl != NULL) 
 			{
-				LOG(llevDebug,"Wanted to swap out map with player on attached tiled map.skiped.\n");
+				LOG(llevDebug,"skip: player on t_map [0][3] (%s).\n",tmp_map->name);
+				return;
+			}
+		}
+		
+		if(map->tile_map[0]->tile_map[1] && map->tile_map[0]->tile_map[1]->in_memory == MAP_IN_MEMORY)
+		{
+			
+			tmp_map = map->tile_map[0]->tile_map[1];
+
+			for(pl=first_player;pl!=NULL;pl=pl->next)
+			{
+				if(pl->ob == NULL || (!(QUERY_FLAG(pl->ob,FLAG_REMOVED)) && pl->ob->map == tmp_map))
+					break;
+			}
+
+		    if(pl != NULL) 
+			{
+				LOG(llevDebug,"skip: player on t_map [0][1] (%s).\n",tmp_map->name);
 				return;
 			}
 		}
 	}
+
+	if(map->tile_map[2] && map->tile_map[2]->in_memory == MAP_IN_MEMORY)
+	{
+		for(pl=first_player;pl!=NULL;pl=pl->next)
+		{
+			if(pl->ob == NULL || (!(QUERY_FLAG(pl->ob,FLAG_REMOVED)) && pl->ob->map == map->tile_map[2]))
+				break;
+		}
+		if(pl != NULL) 
+		{
+			LOG(llevDebug,"skip: player on t_map [2] (%s).\n",map->tile_map[2]->name);
+			return;
+		}
+
+		if(map->tile_map[2]->tile_map[3] && map->tile_map[2]->tile_map[3]->in_memory == MAP_IN_MEMORY)
+		{
+			
+			tmp_map = map->tile_map[2]->tile_map[3];
+
+			for(pl=first_player;pl!=NULL;pl=pl->next)
+			{
+				if(pl->ob == NULL || (!(QUERY_FLAG(pl->ob,FLAG_REMOVED)) && pl->ob->map == tmp_map))
+					break;
+			}
+
+		    if(pl != NULL) 
+			{
+				LOG(llevDebug,"skip: player on t_map [2][3] (%s).\n",tmp_map->name);
+				return;
+			}
+		}
+		if(map->tile_map[2]->tile_map[1] && map->tile_map[2]->tile_map[1]->in_memory == MAP_IN_MEMORY)
+		{
+			
+			tmp_map = map->tile_map[2]->tile_map[1];
+
+			for(pl=first_player;pl!=NULL;pl=pl->next)
+			{
+				if(pl->ob == NULL || (!(QUERY_FLAG(pl->ob,FLAG_REMOVED)) && pl->ob->map == tmp_map))
+					break;
+			}
+
+		    if(pl != NULL) 
+			{
+				LOG(llevDebug,"skip: player on t_map [2][1] (%s).\n",tmp_map->name);
+				return;
+			}
+		}
+	}
+
+	if(map->tile_map[1] && map->tile_map[1]->in_memory == MAP_IN_MEMORY)
+	{
+		for(pl=first_player;pl!=NULL;pl=pl->next)
+		{
+			if(pl->ob == NULL || (!(QUERY_FLAG(pl->ob,FLAG_REMOVED)) && pl->ob->map == map->tile_map[1]))
+				break;
+		}
+		if(pl != NULL) 
+		{
+			LOG(llevDebug,"skip: player on t_map [1] (%s).\n",map->tile_map[1]->name);
+			return;
+		}
+
+		if(map->tile_map[1]->tile_map[0] && map->tile_map[1]->tile_map[0]->in_memory == MAP_IN_MEMORY)
+		{
+			
+			tmp_map = map->tile_map[1]->tile_map[0];
+
+			for(pl=first_player;pl!=NULL;pl=pl->next)
+			{
+				if(pl->ob == NULL || (!(QUERY_FLAG(pl->ob,FLAG_REMOVED)) && pl->ob->map == tmp_map))
+					break;
+			}
+
+		    if(pl != NULL) 
+			{
+				LOG(llevDebug,"skip: player on t_map [1][0] (%s).\n",tmp_map->name);
+				return;
+			}
+		}
+		if(map->tile_map[1]->tile_map[2] && map->tile_map[1]->tile_map[2]->in_memory == MAP_IN_MEMORY)
+		{
+			
+			tmp_map = map->tile_map[1]->tile_map[2];
+
+			for(pl=first_player;pl!=NULL;pl=pl->next)
+			{
+				if(pl->ob == NULL || (!(QUERY_FLAG(pl->ob,FLAG_REMOVED)) && pl->ob->map == tmp_map))
+					break;
+			}
+
+		    if(pl != NULL) 
+			{
+				LOG(llevDebug,"skip: player on t_map [1][2] (%s).\n",tmp_map->name);
+				return;
+			}
+		}
+	}
+
+	if(map->tile_map[3] && map->tile_map[3]->in_memory == MAP_IN_MEMORY)
+	{	
+		for(pl=first_player;pl!=NULL;pl=pl->next)
+		{
+			if(pl->ob == NULL || (!(QUERY_FLAG(pl->ob,FLAG_REMOVED)) && pl->ob->map == map->tile_map[3]))
+				break;
+		}
+		if(pl != NULL) 
+		{
+			LOG(llevDebug,"skip: player on t_map [3] (%s).\n",map->tile_map[3]->name);
+			return;
+		}
+
+		if(map->tile_map[3]->tile_map[0] && map->tile_map[3]->tile_map[0]->in_memory == MAP_IN_MEMORY)
+		{
+			
+			tmp_map = map->tile_map[3]->tile_map[0];
+
+			for(pl=first_player;pl!=NULL;pl=pl->next)
+			{
+				if(pl->ob == NULL || (!(QUERY_FLAG(pl->ob,FLAG_REMOVED)) && pl->ob->map == tmp_map))
+					break;
+			}
+
+		    if(pl != NULL) 
+			{
+				LOG(llevDebug,"skip: player on t_map [3][0] (%s).\n",tmp_map->name);
+				return;
+			}
+		}
+		if(map->tile_map[3]->tile_map[2] && map->tile_map[3]->tile_map[2]->in_memory == MAP_IN_MEMORY)
+		{
+			
+			tmp_map = map->tile_map[3]->tile_map[2];
+
+			for(pl=first_player;pl!=NULL;pl=pl->next)
+			{
+				if(pl->ob == NULL || (!(QUERY_FLAG(pl->ob,FLAG_REMOVED)) && pl->ob->map == tmp_map))
+					break;
+			}
+
+		    if(pl != NULL) 
+			{
+				LOG(llevDebug,"skip: player on t_map [3][2] (%s).\n",tmp_map->name);
+				return;
+			}
+		}
+	}
+
 
     remove_all_pets(map); /* Give them a chance to follow */
 
@@ -174,32 +357,33 @@ void swap_map(mapstruct *map) {
     /* If it is immediate reset time, don't bother saving it - just get
      * rid of it right away.
      */
-    if (map->reset_time <= (uint32) seconds()) {
-	mapstruct *oldmap = map;
+    if (map->reset_time <= (uint32) seconds())
+	{
+		mapstruct *oldmap = map;
 
-	LOG(llevDebug,"Resetting map %s.\n",map->path);
+		LOG(llevDebug,"Resetting map %s.\n",map->path);
 #ifdef PLUGINS
-	/* GROS : Here we handle the MAPRESET global event */
-	evtid = EVENT_MAPRESET;
-	CFP.Value[0] = (void *)(&evtid);
-	CFP.Value[1] = (void *)(map->path);
-	GlobalEvent(&CFP);
+		/* GROS : Here we handle the MAPRESET global event */
+		evtid = EVENT_MAPRESET;
+		CFP.Value[0] = (void *)(&evtid);
+		CFP.Value[1] = (void *)(map->path);
+		GlobalEvent(&CFP);
 #endif
-	map = map->next;
-	delete_map(oldmap);
-	return;
+		map = map->next;
+		delete_map(oldmap);
+		return;
     }
 
     if (new_save_map (map, 0) == -1) {
-	LOG(llevBug, "BUG: Failed to swap map %s.\n", map->path);
-	/* need to reset the in_memory flag so that delete map will also
-	 * free the objects with it.
-	 */
-	map->in_memory = MAP_IN_MEMORY;
-	delete_map(map);
-    } else {
-	free_map(map,1);
-    }
+		LOG(llevBug, "BUG: Failed to swap map %s.\n", map->path);
+		/* need to reset the in_memory flag so that delete map will also
+		* free the objects with it.
+		*/
+		map->in_memory = MAP_IN_MEMORY;
+		delete_map(map);
+    } 
+	else 
+		free_map(map,1);
 
 #ifdef RECYCLE_TMP_MAPS
     write_map_log();

@@ -400,7 +400,7 @@ int hit_player(object *op,int dam, object *hitter, int type)
 		/* seems to happen with throwing items alot... i let it still in to see
 		 * what else possible invoke this glitch. we catch it here and ok.
 		 */
-        LOG (llevDebug, "FIXME: victim (arch %s, name %s) already dead in hit_player()\n", op->arch->name, op->name);
+        LOG(llevDebug, "FIXME: victim (arch %s, name %s) already dead in hit_player()\n", op->arch->name, query_name(op));
     	return 0;
     }
 
@@ -547,13 +547,12 @@ int hit_map(object *op,int dir,int type) {
   tag_t op_tag, next_tag=0;
 
   if (QUERY_FLAG (op, FLAG_FREED)) {
-    LOG (llevBug, "BUG: hit_map(): free object\n");
+    LOG(llevBug, "BUG: hit_map(): free object\n");
     return 0;
   }
 
   if (QUERY_FLAG (op, FLAG_REMOVED) || op->env != NULL) {
-    LOG (llevBug, "BUG: hit_map(): hitter (arch %s, name %s) not on a map\n",
-         op->arch->name, op->name);
+    LOG(llevBug, "BUG: hit_map(): hitter (arch %s, name %s) not on a map\n",op->arch->name, query_name(op));
     return 0;
   }
 
@@ -562,7 +561,7 @@ int hit_map(object *op,int dir,int type) {
   op_tag = op->count;
 
   if ( ! op->map) {
-    LOG (llevBug,"BUG: hit_map(): %s has no map", op->name);
+    LOG(llevBug,"BUG: hit_map(): %s has no map.\n", query_name(op));
     return 0;
   }
 
@@ -609,7 +608,7 @@ int hit_map(object *op,int dir,int type) {
 
     if (QUERY_FLAG (tmp, FLAG_FREED)) 
 	{
-		LOG (llevBug, "BUG: hit_map(): found freed object (%s)\n",tmp->arch->name?tmp->arch->name:"<NULL>");
+		LOG(llevBug, "BUG: hit_map(): found freed object (%s)\n",tmp->arch->name?tmp->arch->name:"<NULL>");
 		break;
     }
 
@@ -1077,7 +1076,7 @@ int kill_object(object *op,int dam, object *hitter, int type)
             op->owner->contr->golem=NULL;
 		}
 	    else
-            LOG (llevBug, "BUG: hit_player(): Encountered golem (%s - %s) without owner.\n",op->name, op->arch->name);
+            LOG(llevBug, "BUG: hit_player(): Encountered golem (%s - %s) without owner.\n",query_name(op), op->arch->name);
 	    remove_ob(op);
 	    free_object(op);
 	    return maxdam;
@@ -1263,7 +1262,7 @@ int kill_object(object *op,int dam, object *hitter, int type)
 static int get_attack_mode (object **target, object **hitter,int *simple_attack)
 {
     if (QUERY_FLAG (*target, FLAG_FREED) || QUERY_FLAG (*hitter, FLAG_FREED)) {
-        LOG (llevBug, "BUG: get_attack_mode(): freed object\n");
+        LOG(llevBug, "BUG: get_attack_mode(): freed object\n");
         return 1;
     }
     if ((*target)->head)
@@ -1278,8 +1277,7 @@ static int get_attack_mode (object **target, object **hitter,int *simple_attack)
         || QUERY_FLAG (*hitter, FLAG_REMOVED)
         || (*hitter)->map == NULL || !on_same_map((*hitter), (*target)))
     {
-        LOG (llevBug, "BUG: hitter (arch %s, name %s) with no relation to "
-             "target\n", (*hitter)->arch->name, (*hitter)->name);
+        LOG(llevBug, "BUG: hitter (arch %s, name %s) with no relation to target\n", (*hitter)->arch->name, query_name(*hitter));
         return 1;
     }
     *simple_attack = 0;
@@ -1708,8 +1706,7 @@ void deathstrike_player(object *op, object *hitter, int *dam)
 
     def_lev = op->level;
     if (def_lev < 1) {
-        LOG (llevBug, "BUG: arch %s, name %s with level < 1\n",
-             op->arch->name, op->name);
+        LOG(llevBug, "BUG: arch %s, name %s with level < 1\n",op->arch->name, query_name(op));
         def_lev = 1;
     }
     atk_lev = SK_level (hitter) / 2;
@@ -1793,7 +1790,7 @@ int adj_attackroll (object *hitter, object *target) {
 
   /* safety */
   if(!target||!hitter||!hitter->map||!target->map||!on_same_map(hitter,target)) {
-    LOG (llevBug, "BUG: adj_attackroll(): hitter and target not on same map\n");
+    LOG(llevBug, "BUG: adj_attackroll(): hitter and target not on same map\n");
     return 0;
   }
 

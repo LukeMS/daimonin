@@ -60,7 +60,7 @@ void set_playerdir(char *path) { settings.playerdir=path; }
 void set_tmpdir(char *path) { settings.tmpdir=path; }
 
 void showscoresparm(char *data) { 
-    display_high_score(NULL,9999,data); 
+/*    display_high_score(NULL,9999,data); */
     exit(0); 
 }
 

@@ -35,7 +35,7 @@
  * and llevError are always printed, regardless of debug mode.
  */
 
-void LOG (LogLevel logLevel, char *format, ...)
+void LOG(LogLevel logLevel, char *format, ...)
 {
   static fatal_error = FALSE;
   char buf[20480];  /* This needs to be really really big - larger

@@ -307,7 +307,7 @@ archetype *get_player_archetype(archetype* at)
 	if(at->clone.type==PLAYER)
 	    return at;
 	if (at == start) {
-	    LOG (llevError, "ERROR: No Player achetypes\n");
+	    LOG(llevError, "ERROR: No Player achetypes\n");
 	    exit (-1);
 	}
     }
@@ -578,7 +578,7 @@ void give_initial_items(object *pl,treasurelist *items) {
 
 
     if(pl->randomitems!=NULL)
-	create_treasure(items,pl,GT_STARTEQUIP|GT_ONLY_GOOD|GT_NO_VALUE,1,0);
+	create_treasure(items,pl,GT_ONLY_GOOD|GT_NO_VALUE,1,0);
 
     for (op=pl->inv; op; op=next) {
 	next = op->below;
@@ -835,7 +835,7 @@ void Swap_Stat(object *op,int Swap_Second)
 
     if ( op->contr->Swap_First == -1 ) 
 	{
-		LOG(llevBug,"BUG: Swap_Stat(): called without Swap_First for player %s\n", op->name);
+		LOG(llevBug,"BUG: Swap_Stat(): called without Swap_First for player %s\n", query_name(op));
 		return;
     }
 
@@ -1188,7 +1188,7 @@ int check_pick(object *op) {
 		break;
 
 	case 7:
-		if (tmp->type == MONEY || tmp->type == GEM)
+		if (tmp->type == MONEY || tmp->type == GEM|| tmp->type == TYPE_JEWEL|| tmp->type == TYPE_NUGGET)
 		  pick_up(op, tmp);
 		break;
 
@@ -1293,7 +1293,7 @@ int check_pick(object *op) {
 
       if(op->contr->mode & PU_VALUABLES)
       {
-	if (tmp->type == MONEY || tmp->type == GEM) 
+	if (tmp->type == MONEY || tmp->type == GEM|| tmp->type == TYPE_JEWEL|| tmp->type == TYPE_NUGGET) 
 	{ pick_up(op, tmp); /*LOG(llevInfo ,"MONEY/GEM\n");*/ continue; }
       }
 
@@ -1421,7 +1421,7 @@ static void fire_bow(object *op, int dir)
       break;
 
   if (!bow)
-    LOG (llevBug, "BUG: Range: bow without activated bow (%s - %d).\n", op->name, dir);
+    LOG(llevBug, "BUG: Range: bow without activated bow (%s - %d).\n", op->name, dir);
   if( !bow->race ) {
     new_draw_info_format(NDI_UNIQUE, 0,op, "Your %s is broken.", bow->name);
     return;
@@ -2734,7 +2734,7 @@ void cast_dust (object *op, object *throw_ob, int dir) {
 
   if(!(spells[throw_ob->stats.sp].flags&SPELL_DESC_DIRECTION))
   {
-	  LOG(llevBug,"DEBUG: Warning, dust %s is not a ae spell!!\n", throw_ob->name?throw_ob->name:"<no name>");
+	  LOG(llevBug,"DEBUG: Warning, dust %s is not a ae spell!!\n", query_name(throw_ob));
 	  return;
   }
 

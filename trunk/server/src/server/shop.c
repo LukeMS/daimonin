@@ -68,12 +68,12 @@ double query_cost(object *tmp, object *who, int flag)
 		{
 			if (flag == F_BUY) 
 			{
-				LOG(llevBug, "Asking for buy-value of unidentified object %s.", tmp->name);
+				LOG(llevBug, "BUG: Asking for buy-value of unidentified object %s.\n", query_name(tmp));
 				val = (double)tmp->arch->clone.value * (double)number;
 			}
 			else	/* Trying to sell something, or get true value */
 			{
-				if(tmp->type == GEM) /* selling unidentified gems is *always* stupid */
+				if(tmp->type == GEM || tmp->type == TYPE_JEWEL|| tmp->type == TYPE_NUGGET) /* selling unidentified gems is *always* stupid */
 					val = (double)number * 3.0;
 				else if (tmp->type == POTION)
 					val = (double)number * 50.0; /* Don't want to give anything away */
@@ -83,10 +83,10 @@ double query_cost(object *tmp, object *who, int flag)
 		}
 		else 
 		{ /* No archetype with this object - we generate some dummy values to avoid server break */
-			LOG(llevBug,"In sell item: Have object with no archetype: %s\n", tmp->name);
+			LOG(llevBug,"BUG: In sell item: Have object with no archetype: %s\n", query_name(tmp));
 			if (flag == F_BUY)
 			{
-				LOG(llevBug, "Asking for buy-value of unidentified object without arch.");
+				LOG(llevBug, "BUG: Asking for buy-value of unidentified object without arch.\n");
 				val = (double)number * 100.0;
 			}
 			else
@@ -217,7 +217,7 @@ int query_money(object *op) {
     int	total=0;
 
     if (op->type!=PLAYER && op->type!=CONTAINER) {
-	LOG(llevBug, "BUG: Query money called with non player/container");
+	LOG(llevBug, "BUG: Query money called with non player/container.\n");
 	return 0;
     }
     for (tmp = op->inv; tmp; tmp= tmp->below) {
@@ -320,8 +320,7 @@ int pay_from_container(object *op, object *pouch, int to_pay) {
 		    /* This should not happen, but if it does, just		*
 		     * merge the two.						*/
 		    if (coin_objs[i]!=NULL) {
-			LOG(llevBug,"BUG: %s has two money entries of (%s)\n",
-			    pouch->name, coins[NUM_COINS-1-i]);
+			LOG(llevBug,"BUG: %s has two money entries of (%s)\n", query_name(pouch), coins[NUM_COINS-1-i]);
 			remove_ob(tmp);
 			coin_objs[i]->nrof += tmp->nrof;
 			esrv_del_item(pouch->contr, tmp->count);

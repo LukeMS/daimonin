@@ -56,7 +56,7 @@ int checkbanned(char *login, char *host)
 
   sprintf (buf, "%s/%s", settings.localdir, BANFILE);
   if ((bannedfile = fopen(buf, "r")) == NULL) {
-    LOG (llevDebug, "Could not find file Banned file.\n");
+    LOG(llevDebug, "Could not find file Banned file.\n");
     return(0);
   }
   while(fgets(line_buf, 160, bannedfile) != NULL) {
@@ -64,7 +64,7 @@ int checkbanned(char *login, char *host)
     if((*line_buf=='#')||(*line_buf=='\n'))
       continue;
     if ((indexpos = (char *) strrchr(line_buf, '@')) == 0) {
-      LOG (llevDebug, "Bad line in banned file\n");
+      LOG(llevDebug, "Bad line in banned file\n");
       continue;
     }
     num1 = indexpos - line_buf;
@@ -78,8 +78,8 @@ int checkbanned(char *login, char *host)
     *indexpos = '\0';
 
     /*
-      LOG (llevDebug, "Login: <%s>; host: <%s>\n", login, host);
-      LOG (llevDebug, "    Checking Banned <%s> and <%s>.\n",log_buf,host_buf);
+      LOG(llevDebug, "Login: <%s>; host: <%s>\n", login, host);
+      LOG(llevDebug, "    Checking Banned <%s> and <%s>.\n",log_buf,host_buf);
     */
     if(*log_buf=='*')
 

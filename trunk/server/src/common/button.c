@@ -284,7 +284,7 @@ int operate_altar (object *altar, object **sacrifice)
 {
 
   if ( ! altar->map) {
-    LOG (llevBug, "BUG: operate_altar(): altar has no map\n");
+    LOG(llevBug, "BUG: operate_altar(): altar has no map\n");
     return 0;
   }
 

@@ -538,7 +538,7 @@ int move_monster(object *op) {
  
 	if(op->head)
 	{
-		LOG(llevBug,"BUG: move_monster(): called from tail part. (%s -- %s)\n", op->name, op->arch->name);
+		LOG(llevBug,"BUG: move_monster(): called from tail part. (%s -- %s)\n", query_name(op), op->arch->name);
 		return 0;
 	}
  
@@ -731,37 +731,39 @@ int move_monster(object *op) {
 	        if(QUERY_FLAG(op,FLAG_CONFUSED))
 		        dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
 
-	        if(QUERY_FLAG(op,FLAG_CAST_SPELL))
-            {
-                if(monster_cast_spell(op,part,enemy,dir,&rv1))
-                    return 0;
-            }
-
-	        if(QUERY_FLAG(op,FLAG_READY_RANGE)&&!(RANDOM()%3))
-            {
-                if(monster_use_wand(op,part,enemy,dir))
-                    return 0;
-            }
-	        if(QUERY_FLAG(op,FLAG_READY_RANGE)&&!(RANDOM()%4))
-            {
-                if(monster_use_rod(op,part,enemy,dir))
-                    return 0;
-            }
-	        if(QUERY_FLAG(op,FLAG_READY_RANGE)&&!(RANDOM()%5))
-            {
-                if(monster_use_horn(op,part,enemy,dir))
-                    return 0;
-            }
-	        if(QUERY_FLAG(op,FLAG_READY_SKILL)&&!(RANDOM()%3))
-            {
-                if(monster_use_skill(op,part,enemy,dir))
-                    return 0;
-            }
-	        if(QUERY_FLAG(op,FLAG_READY_BOW)&&!(RANDOM()%2))
-            {
-                if(monster_use_bow(op,part,enemy,dir))
-                    return 0;
-            }
+			if(op->stats.Dex && !(RANDOM()%op->stats.Dex))
+			{
+				if(QUERY_FLAG(op,FLAG_CAST_SPELL))
+				{
+					if(monster_cast_spell(op,part,enemy,dir,&rv1))
+						return 0;
+				}
+				if(QUERY_FLAG(op,FLAG_READY_RANGE)&&!(RANDOM()%3))
+				{
+				    if(monster_use_wand(op,part,enemy,dir))
+				        return 0;
+				}
+				if(QUERY_FLAG(op,FLAG_READY_RANGE)&&!(RANDOM()%4))
+				{
+					if(monster_use_rod(op,part,enemy,dir))
+				        return 0;
+				}
+				if(QUERY_FLAG(op,FLAG_READY_RANGE)&&!(RANDOM()%5))
+				{
+				    if(monster_use_horn(op,part,enemy,dir))
+				        return 0;
+				}
+				if(QUERY_FLAG(op,FLAG_READY_SKILL)&&!(RANDOM()%3))
+				{
+				    if(monster_use_skill(op,part,enemy,dir))
+				        return 0;
+				}
+				if(QUERY_FLAG(op,FLAG_READY_BOW)&&!(RANDOM()%2))
+				{
+				    if(monster_use_bow(op,part,enemy,dir))
+				        return 0;
+				}
+			}
 	    } /* for processing of all parts */        
     } /* If not scared */
 
@@ -985,13 +987,15 @@ int monster_cast_spell(object *head, object *part,object *pl,int dir, rv_vector 
     object *spell_item;
     spell *sp;
     int sp_typ, ability;
-    object *owner;
-    rv_vector	rv1;
+   /* object *owner;
+    rv_vector	rv1;*/
 
+	/*LOG(-1,"CAST: dir:%d (%d)- target:%s\n", dir, rv->direction, query_name(head->enemy) );*/
     /* TODO: Remove this here - this should not decided here! */
+	/*
     if(!(RANDOM()%3)) 
     	return 0;
-   
+	*/
     
     /* If you want monsters to cast spells over friends, this spell should
      * be removed.  It probably should be in most cases, since monsters still
@@ -999,61 +1003,71 @@ int monster_cast_spell(object *head, object *part,object *pl,int dir, rv_vector 
      * clear path to the player, the side aspects of the code will still hit
      * other monsters)
      */
+	/*
     if(!(dir=path_to_player(part,pl,0)))
         return 0;
-    
+    */
+	/* Might hit owner with spell - well we don't care anymore - we will handle this in attack.c *
+	/*
     if(QUERY_FLAG(head,FLAG_FRIENDLY) && (owner = get_owner(head)) != NULL)
     {
 	    get_rangevector(head, owner, &rv1, 0x1);
 	    if(dirdiff(dir,rv1.direction) < 2)
         {
-	        return 0; /* Might hit owner with spell */
+	        return 0; /
         }
     }
+	*/
     if(QUERY_FLAG(head,FLAG_CONFUSED))
-	dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
+		dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
 
-    /*  If the monster hasn't already chosen a spell, choose one */
-    if(head->spellitem==NULL) {
-	if((spell_item=monster_choose_random_spell(head))==NULL) {
-	    LOG(llevMonster,"Turned off spells in %s\n",head->name);
-	    CLEAR_FLAG(head, FLAG_CAST_SPELL); /* Will be turned on when picking up book */
-	    return 0;
+	if((spell_item=monster_choose_random_spell(head))==NULL) 
+	{
+		LOG(llevDebug,"DEBUG: monster_cast_spell: No spell found! Turned off spells in %s (%s) (%d,%d)\n",
+			query_name(head),head->map?(head->map->name?head->map->name:"<no map name>"):"<no map!>", head->x, head->y );
+		CLEAR_FLAG(head, FLAG_CAST_SPELL); /* Will be turned on when picking up book */
+		return 0;
 	}
-    }
-    else
-	spell_item=head->spellitem; 
 
-    if(spell_item->stats.hp) {
-	/* Alternate long-range spell: check how far away enemy is */
-	if(rv->distance>6)
-	    sp_typ=spell_item->stats.hp;
+    if(spell_item->stats.hp)
+	{
+		/* Alternate long-range spell: check how far away enemy is */
+		if(rv->distance>6)
+			sp_typ=spell_item->stats.hp;
+		else
+			sp_typ=spell_item->stats.sp;
+    } 
 	else
-	    sp_typ=spell_item->stats.sp;
-    } else
-	sp_typ=spell_item->stats.sp;
+		sp_typ=spell_item->stats.sp;
 
-    if((sp=find_spell(sp_typ))==NULL) {
-	LOG(llevBug,"BUG: Couldn't find spell in item.\n");
-	return 0;
+    if((sp=find_spell(sp_typ))==NULL)
+	{
+		LOG(llevDebug,"DEBUG: monster_cast_spell: Can't find spell #%d for mob %s (%s) (%d,%d)\n", sp_typ,
+			query_name(head),head->map?(head->map->name?head->map->name:"<no map name>"):"<no map!>", head->x, head->y );
+		return 0;
     }
+
     if (sp->flags&SPELL_DESC_SELF) /* Spell should be cast on caster (ie, heal, strength) */
-	dir = 0;
+		dir = 0;
   
     /* Monster doesn't have enough spell-points */
     if(head->stats.sp<SP_level_spellpoint_cost(head,head,sp_typ))
 	    return 0;
 
-    ability = (spell_item->type==ABILITY && !(spell_item->attacktype&AT_MAGIC));
+	/* Note: in cf is possible to give the mob a spellbook - this will be used
+	 * as "spell source" (aka ability object like) too. I will remove this - 
+	 * using special prepared stuff like this is more useful.
+	 * Also i noticed tha "long range stuff" - can this be handled from 
+	 * spellbooks too???
+	 */
+    ability = (spell_item->type==ABILITY && QUERY_FLAG(spell_item,FLAG_IS_MAGICAL) );
 
     /* If we cast a spell, only use up casting_time speed */
     head->speed_left+=(float)1.0 - (float) spells[sp_typ].time/(float)20.0*(float)FABS(head->speed); 
 
     head->stats.sp-=SP_level_spellpoint_cost(head,head,sp_typ);
-    /* choose the spell the monster will cast next */
-    /* choose the next spell to cast */
-    head->spellitem = monster_choose_random_spell(head);  
     
+	/*LOG(-1,"CAST2: dir:%d (%d)- target:%s\n", dir, rv->direction, query_name(head->enemy) );*/
     return cast_spell(part,part,dir,sp_typ,ability, spellNormal,NULL);
 }
 
@@ -1123,8 +1137,7 @@ int monster_use_wand(object *head,object *part,object *pl,int dir) {
     if(wand->type==WAND&&QUERY_FLAG(wand,FLAG_APPLIED))
       break;
   if(wand==NULL) {
-    LOG(llevBug,"BUG: Monster %s (%d) HAS_READY_WAND() without wand.\n",
-            head->name,head->count);
+    LOG(llevBug,"BUG: Monster %s (%d) HAS_READY_WAND() without wand.\n",query_name(head),head->count);
     CLEAR_FLAG(head, FLAG_READY_RANGE);
     return 0;
   }
@@ -1161,8 +1174,7 @@ int monster_use_rod(object *head,object *part,object *pl,int dir) {
     if(rod->type==ROD&&QUERY_FLAG(rod,FLAG_APPLIED))
       break;
   if(rod==NULL) {
-    LOG(llevBug,"BUG: Monster %s (%d) HAS_READY_ROD() without rod.\n",
-            head->name,head->count);
+    LOG(llevBug,"BUG: Monster %s (%d) HAS_READY_ROD() without rod.\n",query_name(head),head->count);
     CLEAR_FLAG(head, FLAG_READY_RANGE);
     return 0;
   }
@@ -1191,8 +1203,7 @@ int monster_use_horn(object *head,object *part,object *pl,int dir) {
     if(horn->type==ROD&&QUERY_FLAG(horn,FLAG_APPLIED))
       break;
   if(horn==NULL) {
-    LOG(llevBug,"BUG: Monster %s (%d) HAS_READY_HORN() without horn.\n",
-            head->name,head->count);
+    LOG(llevBug,"BUG: Monster %s (%d) HAS_READY_HORN() without horn.\n",query_name(head),head->count);
     CLEAR_FLAG(head, FLAG_READY_RANGE);
     return 0;
   }
@@ -1207,24 +1218,29 @@ int monster_use_horn(object *head,object *part,object *pl,int dir) {
 }
 
 int monster_use_bow(object *head, object *part, object *pl, int dir) {
-  object *bow, *arrow, *owner;
+  object *bow, *arrow;
+  /*object *owner;*/
   int tag;
 
+  /* this can be interesting in the future for some spells.
   if(!(dir=path_to_player(part,pl,0)))
     return 0;
-  if(QUERY_FLAG(head,FLAG_CONFUSED))
-    dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
+
   if(QUERY_FLAG(head,FLAG_FRIENDLY) && (owner = get_owner(head)) != NULL) {
     int dir2 = find_dir_2(head->x-owner->x, head->y-owner->y);
     if(dirdiff(dir,dir2) < 1)
-      return 0; /* Might hit owner with spell */
+      return 0; 
   }
+  */
+
+	if(QUERY_FLAG(head,FLAG_CONFUSED))
+		dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
+
   for(bow=head->inv;bow!=NULL;bow=bow->below)
     if(bow->type==BOW&&QUERY_FLAG(bow,FLAG_APPLIED))
       break;
   if(bow==NULL) {
-    LOG(llevBug,"BUG: Monster %s (%d) HAS_READY_BOW() without bow.\n",
-            head->name,head->count);
+    LOG(llevBug,"BUG: Monster %s (%d) HAS_READY_BOW() without bow.\n",query_name(head),head->count);
     CLEAR_FLAG(head, FLAG_READY_BOW);
     return 0;
   }
@@ -1234,7 +1250,21 @@ int monster_use_bow(object *head, object *part, object *pl, int dir) {
     CLEAR_FLAG(head, FLAG_READY_BOW);
     return 0;
   }
-  arrow=get_split_ob(arrow,1);
+  /* thats a infinitve arrow! dupe it. */
+  if(QUERY_FLAG(arrow,FLAG_SYS_OBJECT) )
+  {
+		object *new_arrow = get_object();
+		copy_object(arrow,new_arrow);
+		CLEAR_FLAG(new_arrow,FLAG_SYS_OBJECT);
+		new_arrow->nrof=0;
+
+		/* now setup the self destruction */
+		new_arrow->stats.food = 20;
+		arrow = new_arrow;
+  }
+  else
+	  arrow=get_split_ob(arrow,1);
+
   set_owner(arrow,head);
   arrow->direction=dir;
   arrow->x=part->x,arrow->y=part->y;
@@ -1255,6 +1285,7 @@ int monster_use_bow(object *head, object *part, object *pl, int dir) {
   SET_FLAG(arrow, FLAG_WALK_ON);
   tag = arrow->count;
   insert_ob_in_map(arrow,head->map,head,0);
+  play_sound_map(arrow->map, arrow->x, arrow->y,SOUND_THROW, SOUND_NORMAL);
   if (!was_destroyed(arrow, tag))
     move_arrow(arrow);
   return 1;
@@ -1356,6 +1387,8 @@ int monster_can_pick(object *monster, object *item) {
   else switch(item->type) {
   case MONEY:
   case GEM:
+  case TYPE_JEWEL:
+  case TYPE_NUGGET:
     flag=monster->pick_up&2;
     break;
   case FOOD:
@@ -1793,7 +1826,7 @@ static msglang *parse_message(char *msg) {
 		    * NULL, as that's used to terminate the for loop in     *
 		    * talk_to_npc.  Using xxxx should also help map         *
 		    * developers track down the problem cases.              */
-		   LOG (llevBug, "BUG: parse_message(): Tried to set a zero length message in parse_message\n");
+		   LOG(llevBug, "BUG: parse_message(): Tried to set a zero length message in parse_message\n");
 		   /* I think this is a error worth reporting at a reasonably *
 		    * high level. When logging gets redone, this should       *
 		    * be something like MAP_ERROR, or whatever gets put in    *
@@ -2177,6 +2210,7 @@ void spawn_point(object *op)
 {	
 	int rmt;
     object *tmp, *mob, *next, *item;
+    object *tmp2, *next2;
 
 	if(op->enemy)
 	{
@@ -2188,7 +2222,7 @@ void spawn_point(object *op)
 
 	/* now we get a random value from 0 to 9999. */
 	if(op->stats.sp == -1)
-		op->stats.sp = (RANDOM() % 10000);
+		op->stats.sp = (RANDOM() % SPAWN_RANDOM_RANGE);
 
 		/* now we move through the spawn point inventory and
 	 * get the mob with a number under this value AND nearest.
@@ -2199,7 +2233,7 @@ void spawn_point(object *op)
 
 		if(tmp->type != SPAWN_POINT_MOB)
 			LOG(llevBug,"SPAWN: spawn point in map %s (%d,%d) with wrong type object (%d) in inv: %s\n",
-											op->map?op->map->name:"<no map>", op->x, op->y, tmp->type, tmp->name);
+											op->map?op->map->name:"<no map>", op->x, op->y, tmp->type, query_name(tmp));
 		else if((int)tmp->enemy_count <= op->stats.sp && (int)tmp->enemy_count >= rmt)
 		{
 			rmt = (int)tmp->enemy_count;
@@ -2219,16 +2253,40 @@ void spawn_point(object *op)
 		return; /* that happens when we have no free spot....*/
 
 	/* we have a mob - now insert a copy of all items the spawn point mob has.
+	 * take care about RANDOM DROP objects.
 	 * usually these items are put from the map maker inside the spawn mob inv.
 	 * remember that these are additional items to the treasures list ones.
 	 */
     for(; tmp; tmp = next)
 	{
 		next = tmp->below;
-		item = get_object();
-		copy_object(tmp,item);
-	    insert_ob_in_ob(item,mob);      /* and put it in the mob */
+		if(tmp->type == TYPE_RANDOM_DROP)
+		{
+			if((RANDOM() %RANDOM_DROP_RAND_RANGE) >= tmp->carrying) /* skip this container - drop the ->inv */
+			{
+			    for(tmp2=tmp->inv; tmp2; tmp2 = next2)
+				{
+					next2 = tmp2->below;
+					if(tmp2->type == TYPE_RANDOM_DROP)
+						LOG(llevDebug,"DEBUG:: Spawn:: RANDOM_DROP (102) not allowed inside RANDOM_DROP.mob:>%s< map:%s (%d,%d)\n",
+								query_name(mob),op->map?op->map->path:"BUG: S-Point without map!", op->x, op->y);
+					else
+					{
+						item = get_object();
+						copy_object(tmp2,item);
+						insert_ob_in_ob(item,mob);      /* and put it in the mob */
+					}
+				}
+			}
+		}
+		else /* remember this can be sys_objects too! */ 
+		{
+			item = get_object();
+			copy_object(tmp,item);
+			insert_ob_in_ob(item,mob);      /* and put it in the mob */
+		}
 	}
+	fix_monster(mob); /* i moved this from spawn_monster because now we can add the given items from above */
 
 	op->last_sp = rmt; /* this is the last rand() for what we have spawned! */
 
@@ -2289,6 +2347,5 @@ static object *spawn_monster(object *gen, object *orig, int range)
     prev=op;
     at=at->more;
   }
-  fix_monster(ret);
   return ret; /* return object ptr to our spawn */
 }

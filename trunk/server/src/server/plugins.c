@@ -1456,7 +1456,7 @@ CFParm* CFWTeleportObject (CFParm* PParm)
     EXIT_PATH(current)=add_string ((char*)PParm->Value[1]);
     EXIT_X(current)=*(int*)PParm->Value[2];
     EXIT_Y(current)=*(int*)PParm->Value[3];
-    if (*(int*)PParm->Value[4]) SET_FLAG(current,FLAG_UNIQUE);
+    if (*(int*)PParm->Value[4]) current->last_eat = MAP_PLAYER_MAP;
     if (PParm->Value[5]) current->msg=add_string ((char*)PParm->Value[5]);
     enter_exit ((object*) PParm->Value[0],current);
     free_object (current);

@@ -366,11 +366,11 @@ void polymorph_item(object *who, object *op) {
 	    }
 	}
 	copy_object(&(at->clone),new_ob);
-	fix_generated_item(new_ob,op,difficulty,FABS(op->magic),0,0,GT_ENVIRONMENT);
+	fix_generated_item(new_ob,op,difficulty,-1,0,FABS(op->magic),0,0,GT_ENVIRONMENT);
 	++tries;
     } while (new_ob->value > max_value && tries<10);
     if (IS_SYS_INVISIBLE(new_ob)) {
-	LOG(llevBug,"BUG: polymorph_item: fix_generated_object made %s invisible?!\n", new_ob->name);
+	LOG(llevBug,"BUG: polymorph_item: fix_generated_object made %s invisible?!\n", query_name(new_ob));
 	free_object(new_ob);
     }
 
@@ -674,7 +674,7 @@ int cast_wor(object *op, object *caster) {
   }
   dummy=get_archetype("force");
   if(dummy == NULL){
-    LOG(llevBug,"BUG: cast_wor(): get_object failed (%s - %s)!\n", op->name, caster->name);
+    LOG(llevBug,"BUG: cast_wor(): get_object failed (%s - %s)!\n", query_name(op), query_name(caster));
     return 0;
   }
   if(op->owner) op=op->owner; /* better insert the spell in the player */
@@ -840,7 +840,7 @@ int perceive_self(object *op) {
    /* First step: killing existing town portals */
    dummy=get_archetype("force");
    if(dummy == NULL){
-     LOG(llevBug,"BUG: get_object failed (force) in cast_create_town_portal for %s!\n",op->name);
+     LOG(llevBug,"BUG: get_object failed (force) in cast_create_town_portal for %s!\n",query_name(op));
      return 0;
    }
    free_string (dummy->name);
@@ -860,7 +860,7 @@ int perceive_self(object *op) {
      exitpath=add_string (old_force->race);
      exitx=EXIT_X(old_force);
      exity=EXIT_Y(old_force);
-     LOG (llevDebug,"Trying to kill a portal in %s (%d,%d)\n",exitpath,exitx,exity);
+     LOG(llevDebug,"Trying to kill a portal in %s (%d,%d)\n",exitpath,exitx,exity);
      if (!strncmp(exitpath, settings.localdir, strlen(settings.localdir))) exitmap = ready_map_name(exitpath, MAP_PLAYER_UNIQUE);
      else exitmap = ready_map_name(exitpath, 0);
      if (exitmap)
@@ -880,7 +880,6 @@ int perceive_self(object *op) {
        }
      remove_ob (old_force);
      free_object (old_force);
-     LOG (llevDebug,"\n",old_force->name);
      free_string (exitpath);
      }
    free_object (dummy);
@@ -922,7 +921,7 @@ int perceive_self(object *op) {
    dummy=get_archetype ("perm_magic_portal"); /*The portal*/
    if(dummy == NULL)
      {
-     LOG(llevBug,"BUG: get_object failed (perm_magic_portal) in cast_create_town_portal for %s!\n",op->name);
+     LOG(llevBug,"BUG: get_object failed (perm_magic_portal) in cast_create_town_portal for %s!\n",query_name(op));
      free_string (exitpath);
      return 0;
      }
@@ -942,7 +941,7 @@ int perceive_self(object *op) {
    cast_create_obj (op, caster, dummy, 0);
    force=get_archetype("force");              /*The force*/
    if(force == NULL){
-     LOG(llevBug,"BUG: get_object failed (force) in cast_create_town_portal for %s!\n",op->name);
+     LOG(llevBug,"BUG: get_object failed (force) in cast_create_town_portal for %s!\n",query_name(op));
      free_string (exitpath);
      return 0;
    }
@@ -962,7 +961,7 @@ int perceive_self(object *op) {
    dummy=get_archetype ("perm_magic_portal"); /*The portal*/
    if(dummy == NULL)
      {
-     LOG(llevBug,"BUG: get_object failed (perm_magic_portal) in cast_create_town_portal for %s!\n",op->name);
+     LOG(llevBug,"BUG: get_object failed (perm_magic_portal) in cast_create_town_portal for %s!\n",query_name(op));
      free_string (exitpath);
      return 0;
      }
@@ -984,7 +983,7 @@ int perceive_self(object *op) {
    insert_ob_in_map(dummy,exitmap,op,0);
    force=get_archetype("force");              /*The force*/
    if(force == NULL){
-     LOG(llevBug,"BUG: get_object failed (force) in cast_create_town_portal for %s!\n",op->name);
+     LOG(llevBug,"BUG: get_object failed (force) in cast_create_town_portal for %s!\n",query_name(op));
      free_string (exitpath);
      return 0;
    }
@@ -1216,7 +1215,7 @@ int cast_light(object *op,object *caster,int dir) {
   /* ok, looks groovy to just insert a new light on the map */
   tmp=get_archetype("light");
   if(!tmp) { 
-	LOG(llevBug,"BUG: spell arch for cast_light() missing (%s).\n", caster->name);
+	LOG(llevBug,"BUG: spell arch for cast_light() missing (%s).\n", query_name(caster));
 	return 0;
   }
 
@@ -1329,7 +1328,7 @@ int cast_heal(object *op,object *target,int spell_type)
 
 	if(!op || !target)
 	{
-		LOG(llevBug,"BUG: cast_heal(): target or caster NULL (op: %s target: %s)\n", op?op->name:"NULL",target?target->name:"NULL");
+		LOG(llevBug,"BUG: cast_heal(): target or caster NULL (op: %s target: %s)\n", query_name(op),query_name(target));
 		return 0;
 	}
 
@@ -1921,7 +1920,7 @@ int summon_pet(object *op, int dir, SpellTypeFrom item) {
   }
   at = find_archetype(monster);
   if(at == NULL) {
-    LOG(llevBug,"BUG: Unknown archetype in summon pet: %s (%s)\n",monster,op->name);
+    LOG(llevBug,"BUG: Unknown archetype in summon pet: %s (%s)\n",monster,query_name(op));
     return 0;
   }
   if (!dir)
@@ -2236,7 +2235,7 @@ static void alchemy_object(object *obj, int *small_nuggets,
 	 */
     if (QUERY_FLAG(obj, FLAG_UNPAID))
 	value=0;
-    else if (obj->type==MONEY || obj->type==GEM)
+    else if (obj->type==MONEY || obj->type==GEM || obj->type==TYPE_JEWEL || obj->type==TYPE_NUGGET)
 	value /=3;
     else if (QUERY_FLAG(obj,FLAG_UNPAID)) value=0;
     else
@@ -2609,7 +2608,7 @@ int cast_detection(object *op, object *target,int type)
     detect_arch = find_archetype("detect_magic");
     if (detect_arch == (archetype *) NULL) 
 	{
-		LOG(llevBug, "BUG: Couldn't find archetype detect_magic (%s).\n", op->name);
+		LOG(llevBug, "BUG: Couldn't find archetype detect_magic (%s).\n", query_name(op));
 		return 0;
     }
 
@@ -2728,7 +2727,7 @@ static int cast_detection_old(object *op, object *target,int type) {
     detect_arch = find_archetype("detect_magic");
     if (detect_arch == (archetype *) NULL) 
 	{
-		LOG(llevBug, "BUG: Couldn't find archetype detect_magic (%s).\n", op->name);
+		LOG(llevBug, "BUG: Couldn't find archetype detect_magic (%s).\n", query_name(op));
 		return 0;
     }
 
@@ -3791,7 +3790,7 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
   int magic;
  
   if(!at){
-    LOG(llevBug,"BUG: animate_weapon failed: missing archetype (%s - %s)!\n",op->name, caster->name);
+    LOG(llevBug,"BUG: animate_weapon failed: missing archetype (%s - %s)!\n",query_name(op), query_name(caster));
     return 0;
   }
   /* if player already has a golem, abort */
@@ -3815,7 +3814,7 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
     if(weapon_at) {
       weapon = &(weapon_at->clone);
     } else {
-      LOG(llevBug,"BUG: animate_weapon failed: missing archetype! (%s - %s)!\n",op->name, caster->name);
+      LOG(llevBug,"BUG: animate_weapon failed: missing archetype! (%s - %s)!\n",query_name(op), query_name(caster));
       return 0;
     }
   } else {
@@ -3876,7 +3875,7 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
     if (apply_special (op, weapon,
                        AP_UNAPPLY | AP_IGNORE_CURSE | AP_NO_MERGE))
     {
-      LOG (llevBug, "BUG: animate_weapon(): can't unapply weapon (%s - %s)!\n",op->name, caster->name);
+      LOG(llevBug, "BUG: animate_weapon(): can't unapply weapon (%s - %s)!\n",query_name(op), query_name(caster));
       return 0;
     }
     remove_ob (weapon);
@@ -3885,7 +3884,7 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
       esrv_send_item(op, weapon);
     SET_FLAG (tmp, FLAG_USE_WEAPON);
     if (apply_special (tmp, weapon, AP_APPLY))
-      LOG (llevBug, "BUG: animate_weapon(): golem can't apply weapon (%s - %s)!\n",op->name, caster->name);
+      LOG(llevBug, "BUG: animate_weapon(): golem can't apply weapon (%s - %s)!\n",query_name(op), query_name(caster));
   }
 
   /* modify weapon's animated wc */
@@ -3947,8 +3946,7 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
     }
   }
   tmp->resist[ATNR_PHYSICAL] = 100 - (int)((100.0-(float)tmp->resist[ATNR_PHYSICAL])/(30.0-2.0*(a>14?14.0:(float)a)));
-  LOG (llevDebug, "animate_weapon: slaying %s\n",
-       tmp->slaying ? tmp->slaying : "nothing");
+  LOG(llevDebug, "animate_weapon: slaying %s\n", tmp->slaying ? tmp->slaying : "nothing");
 
   /* Determine golem's speed */
   /* This formula is apparently broken.  I write a replacement. */
@@ -4110,7 +4108,7 @@ int make_object_glow(object *op, int radius, int time) {
    tmp=insert_ob_in_ob(tmp,op);
 
    if(!tmp->env||op!=tmp->env) { 
-	LOG(llevBug,"BUG: make_object_glow() failed to insert glowing force in %s\n", op->name); 
+	LOG(llevBug,"BUG: make_object_glow() failed to insert glowing force in %s\n", query_name(op)); 
 	return 0; 
    }
    return 1;

@@ -36,6 +36,7 @@
 #include <sproto.h>
 
 static object *esrv_get_ob_from_count_DM(object *pl, tag_t count);
+static int check_container(object *pl, object *con);
 
 /* This is the maximum number of bytes we expect any one item to take up */
 #define MAXITEMLEN  300
@@ -1037,68 +1038,112 @@ void LookAt(char *buf, int len,player *pl)
 void esrv_move_object (object *pl, tag_t to, tag_t tag, long nrof)
 {
     object *op, *env;
+	int tmp;
+
+	/*LOG(llevDebug,"Move item %d (nrof=%d) to %d.\n", tag, nrof,to);*/
 
     op = esrv_get_ob_from_count(pl, tag);
-    if (!op) {
-	/* this happens very often and can be forced when moving and trying to access 
-	 * a item in the below window - because latency effects, the client has still
-	 * the inventory id from a tile even the server has moved the player and updated
-	 * the inventory. MT-11-2002
-	 */
-	/*LOG(llevDebug, "Player '%s' tried to move the unknown object (%ld)\n",pl->name, tag);*/
-	return;
-    }
+    if (!op) /* latency effect - we have moved before we applied this (or below from player changed) */
+		return; 
 
-    if (!to) {	/* drop it to the ground */
+    if (!to) /* drop it to the ground */
+	{	
 
-	if (op->map && !op->env) {
-/*	    LOG(llevDebug,"Dropping object to ground that is already on ground\n");*/
-	    return;
-	}
-	/* If it is an active container, then we should drop all objects
-	 * in the container and not the container itself.
-	 */
-	if (op->inv && QUERY_FLAG(op, FLAG_APPLIED)) {
+		if (op->map && !op->env) 
+			return;
+
+		/* If it is an active container, then we should drop all objects
+		* in the container and not the container itself.
+		*/
+		/* i removed this. This has as some good ideas more bad
+		* effects as good. Following Murphy we hit this function
+		* most time in a situation we don't want it. MT
+		*/
+	
+		/*if (op->inv && QUERY_FLAG(op, FLAG_APPLIED)) {
 	    object *current, *next;
-		/*LOG(-1,"applied container...\n");*/
 	    for (current=op->inv; current!=NULL; current=next) {
 		next=current->below;
 		drop_object(pl, current, 0);
 	    }
 	    esrv_update_item(UPD_WEIGHT, pl, op);
-	}
-	else {
-	/*	LOG(-1,"unapplied container...\n");*/
-	    drop_object (pl, op, nrof);
-	}
-	return;
-    } else if (to == pl->count) {     /* pick it up to the inventory */
-	/* return if player has already picked it up */
-	if (op->env == pl) return;
+		}
+		else {
+		drop_object (pl, op, nrof);
+		}*/
 
-	pl->contr->count = nrof;
-	/*LOG(-1,"pick up...\n");*/
-	pick_up(pl, op);
-	return ;
+		if(pl->container == op)
+			esrv_apply_container (pl, pl->container);
+		/*LOG(-1,"drop it... (%d)\n",check_container(pl,op));*/
+	
+		if((tmp=check_container(pl,op)))
+			new_draw_info(NDI_UNIQUE, 0,pl,"Remove first all one-drop items from this container!");
+		else
+			drop_object (pl, op, nrof);
+		return;
+	} 
+	/* the second is special case: we get an open container on the floor */
+	else if (to == pl->count || (to == op->count && !op->env)) /* pick it up to the inventory */
+	{ 
+		/* return if player has already picked it up */
+		if (op->env == pl) 
+			return;
+		if(to == op->count)
+		{
+			if(pl->container == op)
+				esrv_apply_container (pl, pl->container);
+		}
+		pl->contr->count = nrof;
+		/*LOG(-1,"pick up...\n");*/
+		pick_up(pl, op);
+		return ;
     }
     /* If not dropped or picked up, we are putting it into a sack */
     env = esrv_get_ob_from_count(pl, to);
-    if (!env) {
-      /*LOG(llevDebug, "Player '%s' tried to move object to the unknown location (%d)\n",pl->name, to);*/
+    if (!env)
       return;
-    }
-#if 0
-    printf ("Sacks name was '%s'.\n", env->name);
-#endif
+
     /* put_object_in_sack presumes that necessary sanity checking
      * has already been done (eg, it can be picked up and fits in
      * in a sack, so check for those things.  We should also check
      * an make sure env is in fact a container for that matter.
      */
-    if (env->type == CONTAINER && can_pick(pl, op) && sack_can_hold(pl, env, op, nrof)) {
-	/*LOG(-1,"put in sack...\n");*/
-	put_object_in_sack (pl, env, op, nrof);
+    if (env->type == CONTAINER && can_pick(pl, op) && sack_can_hold(pl, env, op, nrof)) 
+	{
+		/*LOG(-1,"put in sack...\n");*/
+		if(pl->container == op)
+			esrv_apply_container (pl, pl->container);
+		if((tmp=check_container(pl,op)) && env->env != pl)
+			new_draw_info(NDI_UNIQUE, 0,pl,"Remove first all one-drop items from this container!");
+		else if(QUERY_FLAG(op,FLAG_STARTEQUIP) && env->env != pl)
+			new_draw_info(NDI_UNIQUE, 0,pl,"You can't store one-drop items outside your inventory!");
+		else
+			put_object_in_sack (pl, env, op, nrof);
+		return;
     }
+		
 }
 
 
+/* thats the safest rule: you can't drop containers which holds
+ * a startequip item or a container holding one.
+ * return is the number of one drops in this container chain.
+ */
+static int check_container(object *pl, object *con)
+{
+	object *current, *next;
+	int ret = 0;
+	
+	if(con->type != CONTAINER) /* only check stuff *inside* a container */
+		return ret;
+	
+	for (current=con->inv; current!=NULL; current=next) 
+	{
+		next=current->below;
+		ret+=check_container(pl,current);
+
+		if(QUERY_FLAG(current, FLAG_STARTEQUIP))
+			ret +=1;
+	}
+	return ret;
+}

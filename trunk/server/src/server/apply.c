@@ -722,7 +722,7 @@ int esrv_apply_container (object *op, object *sack)
 	return 0; /* This might change */
 
     if (sack==NULL || sack->type != CONTAINER) {
-	LOG (llevBug, "BUG: esrv_apply_container: %s is not container!\n",sack?sack->name:"NULL");
+	LOG(llevBug, "BUG: esrv_apply_container: %s is not container!\n",query_name(sack));
 	return 0;
     }
 
@@ -1015,7 +1015,7 @@ static int apply_shop_mat (object *shop_mat, object *op)
 		int i = find_free_spot (op->arch, op->map, op->x, op->y, 1, 9);
 		if(i == -1)
 		{
-			LOG (llevBug, "BUG: Internal shop-mat problem (map:%s object:%s pos: %d,%d).\n",op->map->name,op->name,op->x,op->y);
+			LOG(llevBug, "BUG: Internal shop-mat problem (map:%s object:%s pos: %d,%d).\n",op->map->name,op->name,op->x,op->y);
 		} 
 		else 
 		{
@@ -1091,7 +1091,7 @@ void move_apply (object *trap, object *victim, object *originator)
      nearby rune detonates.  This sort of recursion is expected and
      proper.  This code was causing needless crashes. */
   if (recursion_depth >= 500) {
-    LOG (llevDebug, "WARNING: move_apply(): aborting recursion "
+    LOG(llevDebug, "WARNING: move_apply(): aborting recursion "
          "[trap arch %s, name %s; victim arch %s, name %s]\n",
          trap->arch->name, trap->name, victim->arch->name, victim->name);
     return;
@@ -1321,7 +1321,7 @@ void move_apply (object *trap, object *victim, object *originator)
         spring_trap(trap, victim);
     goto leave;
   default:
-    LOG (llevDebug, "name %s, arch %s, type %d with fly/walk on/off not "
+    LOG(llevDebug, "name %s, arch %s, type %d with fly/walk on/off not "
          "handled in move_apply()\n", trap->name, trap->arch->name,
          trap->type);
     goto leave;
@@ -1475,7 +1475,7 @@ extern void do_learn_spell (object *op, int spell, int special_prayer)
     object *tmp = find_special_prayer_mark (op, spell);
 
     if (op->type != PLAYER) {
-        LOG (llevBug, "BUG: do_learn_spell(): not a player ->%s\n",op->name);
+        LOG(llevBug, "BUG: do_learn_spell(): not a player ->%s\n",op->name);
         return;
     }
 
@@ -1486,7 +1486,7 @@ extern void do_learn_spell (object *op, int spell, int special_prayer)
             "You already know the spell '%s'!", spells[spell].name);
 
         if (special_prayer || ! tmp) {
-            LOG (llevBug, "BUG: do_learn_spell(): spell already known, but can't upgrade it\n");
+            LOG(llevBug, "BUG: do_learn_spell(): spell already known, but can't upgrade it\n");
             return;
         }
         remove_ob (tmp);
@@ -1496,7 +1496,7 @@ extern void do_learn_spell (object *op, int spell, int special_prayer)
 
     /* Learn new spell/prayer */
     if (tmp) {
-        LOG (llevBug, "BUG: do_learn_spell(): spell unknown, but special prayer mark present\n");
+        LOG(llevBug, "BUG: do_learn_spell(): spell unknown, but special prayer mark present\n");
         remove_ob (tmp);
         free_object (tmp);
     }
@@ -1521,11 +1521,11 @@ extern void do_forget_spell (object *op, int spell)
     int i;
 
     if (op->type != PLAYER) {
-        LOG (llevBug, "BUG: do_forget_spell(): not a player\n");
+        LOG(llevBug, "BUG: do_forget_spell(): not a player: %s (%d)\n", query_name(op), spell);
         return;
     }
     if ( ! check_spell_known (op, spell)) {
-        LOG (llevBug, "BUG: do_forget_spell(): spell not known\n");
+        LOG(llevBug, "BUG: do_forget_spell(): spell %d not known\n", spell);
         return;
     }
     
@@ -1548,7 +1548,7 @@ extern void do_forget_spell (object *op, int spell)
             return;
         }
     }
-    LOG (llevBug, "BUG: do_forget_spell(): couldn't find spell\n");
+    LOG(llevBug, "BUG: do_forget_spell(): couldn't find spell %d\n", spell);
 }
 
 static void apply_spellbook (object *op, object *tmp)
@@ -2189,19 +2189,27 @@ int dragon_eat_flesh(object *op, object *meal) {
 
 static void apply_savebed (object *pl)
 {
+	mapstruct *oldmap = pl->map;
+
     if(!pl->contr->name_changed||!pl->stats.exp) {
       new_draw_info(NDI_UNIQUE, 0,pl,"You don't deserve to save your character yet.");
       return;
     }
+	/* removed some trash here... MT*/
+	/*
     if(QUERY_FLAG(pl,FLAG_WAS_WIZ)) {
       new_draw_info(NDI_UNIQUE, 0,pl,"Since you have cheated you can't save.");
       return;
     }
-    remove_ob(pl);
+	*/
+	/*
+    leave_map(pl);
     pl->direction=0;
+	*/
+	/*
     new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, pl,
 	"%s leaves the game.",pl->name);
-    
+    */
     /* update respawn position */
     strcpy(pl->contr->savebed_map, pl->map->path);
     pl->contr->bed_x = pl->x;
@@ -2209,16 +2217,26 @@ static void apply_savebed (object *pl)
     
     strcpy(pl->contr->killer,"left");
     check_score(pl); /* Always check score */
+	/* if we are in our appartment - save this too! */			
+	/* i really hate this localdir hack... must remove it and use senseful map flags for it! MT 2003 */
+	if(pl->map && !strncmp(oldmap->path, settings.localdir, strlen(settings.localdir)))
+	{
+	    new_draw_info(NDI_UNIQUE, 0,pl,"You appartment is saved.");
+		new_save_map(oldmap,0);
+		oldmap->in_memory=MAP_IN_MEMORY; /* new_save_map() sets status to SAVED */
+		
+	}
+    new_draw_info(NDI_UNIQUE, 0,pl,"You save and quit the game. Bye!\nleaving...");
+	pl->contr->socket.status=Ns_Dead;
+
+	/* ALL done implicit with NS_DEAD 
 	if(pl->container)
 		esrv_apply_container (pl, pl->container);
     (void)save_player(pl,0);
     play_again(pl);
-    pl->map->players--;
-#if MAP_MAXTIMEOUT 
-    MAP_SWAP_TIME(pl->map) = MAP_TIMEOUT(pl->map);
-#endif
     pl->speed = 0;
     update_ob_speed(pl);
+	*/
 }
 
 
@@ -2731,7 +2749,7 @@ int apply_special (object *who, object *op, int aflags)
 
     case SKILL:         /* allows objects to impart skills */
       if (op != who->chosen_skill) {
-          LOG (llevBug, "BUG: apply_special(): applied skill is not chosen skill\n");
+          LOG(llevBug, "BUG: apply_special(): applied skill is not chosen skill\n");
       }
       if (who->type==PLAYER) {
           who->contr->shoottype = range_none;
@@ -2905,7 +2923,7 @@ int apply_special (object *who, object *op, int aflags)
   /* this part is needed for skill-tools */ 
   case SKILL:
     if (who->chosen_skill) {
-        LOG (llevBug, "BUG: apply_special(): can't apply two skills\n");
+        LOG(llevBug, "BUG: apply_special(): can't apply two skills\n");
         return 1;
     }
     if (who->type == PLAYER) {
@@ -2913,8 +2931,7 @@ int apply_special (object *who, object *op, int aflags)
         if ( ! IS_INVISIBLE(op,who)) {
             /* for tools */
             if (op->exp_obj)
-                LOG (llevBug, "BUG: apply_special(SKILL): found unapplied "
-                     "tool with experience object\n");
+                LOG(llevBug, "BUG: apply_special(SKILL): found unapplied tool with experience object\n");
             else
                 (void) link_player_skill (who, op);
             new_draw_info_format (NDI_UNIQUE, 0, who, "You ready %s.",

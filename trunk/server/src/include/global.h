@@ -61,6 +61,9 @@ typedef unsigned int tag_t;
 
 #define FREE_AND_COPY(sv,nv) { if (sv) free_string(sv); sv=add_string(nv); }
 
+#define SPAWN_RANDOM_RANGE 10000
+#define RANDOM_DROP_RAND_RANGE 1000000
+
 /* mob defines */
 #define MIN_MON_RADIUS 2  /* minimum monster detection radius */
 #define MAX_AGGRO_RANGE 9 /* if target of mob is out of this range (or stats.Wis if higher)*/

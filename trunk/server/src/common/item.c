@@ -1037,6 +1037,8 @@ int need_identify(object *op) {
   case CLOSE_CON:
   case CLOAK:
   case GEM:
+  case TYPE_JEWEL:
+  case TYPE_NUGGET:
   case POWER_CRYSTAL:
   case POISON:
   case BOOK:

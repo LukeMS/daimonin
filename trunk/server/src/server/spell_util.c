@@ -107,8 +107,8 @@ int path_level_mod (object *caster, int base_level, int spell_type)
  {
    /* This case is not a bug, just the fact that this function is
     * usually called BEFORE checking for path_deny. -AV
-   LOG (llevBug, "BUG: path_level_mod (arch %s, name %s): casting denied "
-   "spell\n", caster->arch->name, caster->name); */
+   LOG(llevBug, "BUG: path_level_mod (arch %s, name %s): casting denied "
+   "spell\n", caster->arch->name, query_name(caster)); */
    return 1;
  }
  new_level = base_level
@@ -1248,11 +1248,11 @@ cast_cone(object *op, object *caster,int dir, int strength, int spell_type,arche
 	*/
     tmp->stats.maxhp=tmp->count;
     if ( ! QUERY_FLAG (tmp, FLAG_FLYING))
-      LOG (llevDebug, "cast_cone(): arch %s doesn't have flying 1\n",
+      LOG(llevDebug, "cast_cone(): arch %s doesn't have flying 1\n",
            spell_arch->name);
     if (( ! QUERY_FLAG (tmp, FLAG_WALK_ON) || ! QUERY_FLAG (tmp, FLAG_FLY_ON))
         && tmp->stats.dam)
-      LOG (llevDebug, "cast_cone(): arch %s doesn't have walk_on 1 and "
+      LOG(llevDebug, "cast_cone(): arch %s doesn't have walk_on 1 and "
            "fly_on 1\n", spell_arch->name);
     insert_ob_in_map(tmp,op->map,op,0);
     if(tmp->other_arch) cone_drop(tmp);
@@ -1347,8 +1347,7 @@ void move_cone(object *op) {
 
     /* if no map then hit_map will crash so just ignore object */
     if (! op->map) {
-	LOG(llevBug,"BUG: Tried to move_cone object %s without a map.\n",
-	    op->name ? op->name : "unknown");
+	LOG(llevBug,"BUG: Tried to move_cone object %s without a map.\n", query_name(op));
         op->speed = 0;
         update_ob_speed (op);
 	return;
@@ -1427,11 +1426,11 @@ void fire_a_ball (object *op, int dir, int strength)
   object *tmp;
 
   if ( ! op->other_arch) {
-    LOG (llevBug, "BUG: fire_a_ball(): %s no other_arch\n", op->name);
+    LOG(llevBug, "BUG: fire_a_ball(): %s no other_arch\n", op->name);
     return;
   }
   if ( ! dir) {
-    LOG (llevBug, "BUG: fire_a_ball(): %s no direction\n", op->name);
+    LOG(llevBug, "BUG: fire_a_ball(): %s no direction\n", op->name);
     return;
   }
   tmp = arch_to_object (op->other_arch);
@@ -1800,7 +1799,7 @@ void explode_object(object *op)
     play_sound_map(op->map, op->x, op->y, SOUND_OB_EXPLODE, SOUND_NORMAL);
 	if (op->other_arch == NULL) 
 	{
-		LOG (llevBug, "BUG: explode_object(): op %s without other_arch\n", op->name);
+		LOG(llevBug, "BUG: explode_object(): op %s without other_arch\n", query_name(op));
 		remove_ob (op);
 		free_object (op);
 		return;
@@ -1814,7 +1813,7 @@ void explode_object(object *op)
 		yt = env->y;
 		if (!(m=out_of_map (env->map, &xt,&yt))) 
 		{
-			LOG (llevBug, "BUG: explode_object(): env out of map (%s)\n",op->name);
+			LOG(llevBug, "BUG: explode_object(): env out of map (%s)\n",query_name(op));
 			remove_ob (op);
 			free_object (op);
 			return;
@@ -2862,7 +2861,7 @@ int SP_lvl_dam_adjust2(object *caster, int spell_type, int base_dam)
 	/* sanity check */
 	if(level <=0 || level >110)
 	{
-		LOG(llevBug,"SP_lvl_dam_adjust2(): object %s has invalid level %d\n", caster);
+		LOG(llevBug,"SP_lvl_dam_adjust2(): object %s has invalid level %d\n", query_name(caster),level);
 		if(level <=0)
 			level = 1;
 		else 

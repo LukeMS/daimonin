@@ -172,6 +172,7 @@ static char * draw_one_high_score(score *sc) {
  */
 
 static score *add_score(score *new_score) {
+	/*
   FILE *fp;
   static score old_score;
   score *tmp_score,pscore[HIGHSCORE_LENGTH];
@@ -191,7 +192,7 @@ static score *add_score(score *new_score) {
         if(++nrofscores>=HIGHSCORE_LENGTH)
           break;
       }
-      if(!strcmp(new_score->name,tmp_score->name)) { /* Another entry */
+      if(!strcmp(new_score->name,tmp_score->name)) { 
         copy_score(tmp_score,&old_score);
         old_score.position=nrofscores;
         if(flag)
@@ -202,7 +203,7 @@ static score *add_score(score *new_score) {
     close_and_delete(fp, comp);
   }
   if(old_score.position!=-1&&old_score.exp>=new_score->exp)
-    return &old_score; /* Did not beat old score */
+    return &old_score;
   if(!flag&&nrofscores<HIGHSCORE_LENGTH)
     copy_score(new_score,&pscore[nrofscores++]);
   if((fp=fopen(filename,"w"))==NULL) {
@@ -215,8 +216,6 @@ static score *add_score(score *new_score) {
   }
   fclose(fp);
   if(flag) {
-/* Eneq(@csd.uu.se): Patch to fix error in adding a new score to the
-   hiscore-list */
     if(old_score.position==-1)
       return new_score;
     return &old_score;
@@ -229,16 +228,19 @@ static score *add_score(score *new_score) {
     return &old_score;
   }
   LOG(llevBug,"BUG: Highscore error.\n");
+  */
   return NULL;
 }
 
 void check_score(object *op) {
+	/*
     score new_score;
     score *old_score;
-
+*/
+	
     if(op->stats.exp==0)
 	return;
-
+/*
     if(!op->contr->name_changed) {
 	if(op->stats.exp>0) {
 	    new_draw_info(NDI_UNIQUE, 0,op,"As you haven't changed your name, you won't");
@@ -280,7 +282,7 @@ void check_score(object *op) {
 	return;
     }
     if(new_score.position == -1) {
-	new_score.position = HIGHSCORE_LENGTH+1; /* Not strictly correct... */
+	new_score.position = HIGHSCORE_LENGTH+1;
 	if(!strcmp(old_score->name,new_score.name))
 	    new_draw_info(NDI_UNIQUE, 0,op,"You didn't beat your last highscore:");
 	else
@@ -296,6 +298,7 @@ void check_score(object *op) {
 
     new_draw_info(NDI_UNIQUE, 0,op, draw_one_high_score(old_score));
     new_draw_info(NDI_UNIQUE, 0,op, draw_one_high_score(&new_score));
+	*/
 }
 
 

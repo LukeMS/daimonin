@@ -268,7 +268,7 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
         /* set the exit down. */
 #endif
         /* load it */
-        if((new_map=ready_map_name(RP->final_map,0)) == NULL) 
+        if((new_map=ready_map_name(RP->final_map,MAP_UNIQUE(map)?1:0)) == NULL) 
 	    return;
 
         the_exit_down->slaying = add_string(RP->final_map);

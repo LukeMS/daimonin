@@ -438,7 +438,7 @@ void dump_alchemy_costs (void)
 	if ((at = find_archetype (string)) != NULL) {
           art = locate_recipe_artifact (formula);
           if (!art && strcmp (formula->title,"NONE")) 
-	    LOG (llevBug, "BUG: Formula %s has no artifact\n", formula->title);
+	    LOG(llevBug, "BUG: Formula %s has no artifact\n", formula->title);
 	  else
 	    {
 	      if (! strcmp (formula->title, "NONE"))

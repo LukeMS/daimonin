@@ -39,6 +39,8 @@ void map_info(object *op) {
   char buf[MAX_BUF], map_path[MAX_BUF];
   long sec = seconds();
 #ifdef MAP_RESET
+  LOG(llevSystem, "Current time is: %02ld:%02ld:%02ld.\n",(sec%86400)/3600,(sec%3600)/60,sec%60);
+
   new_draw_info_format(NDI_UNIQUE, 0, op,
 	"Current time is: %02ld:%02ld:%02ld.",
 	  (sec%86400)/3600,(sec%3600)/60,sec%60);
@@ -59,6 +61,11 @@ void map_info(object *op) {
               map_path, m->players,players_on_map(m),m->in_memory,m->timeout,
               m->difficulty);
 #else
+      LOG(llevSystem,"%s pom:%d (%d) status:%d timeout:%d diff:%d  reset:%02d:%02d:%02d\n",
+              m->path, m->players,players_on_map(m),
+              m->in_memory,m->timeout,m->difficulty,
+	      (MAP_WHEN_RESET(m)%86400)/3600,(MAP_WHEN_RESET(m)%3600)/60,
+              MAP_WHEN_RESET(m)%60);
       sprintf(buf,"%-18.18s %2d %2d   %1d %4d %2d  %02d:%02d:%02d",
               map_path, m->players,players_on_map(m),
               m->in_memory,m->timeout,m->difficulty,
@@ -312,7 +319,7 @@ int command_archs (object *op, char *params)
 
 int command_hiscore (object *op, char *params)
 {
-    display_high_score(op,op==NULL?9999:50, params);
+    /*display_high_score(op,op==NULL?9999:50, params);*/
     return 1;
   }
 
@@ -984,12 +991,21 @@ int command_save (object *op, char *params)
     if (blocks_cleric(op->map, op->x, op->y)) {
 	new_draw_info(NDI_UNIQUE, 0, op, "You can not save on unholy ground");
     } else if (!op->stats.exp) {
-	new_draw_info(NDI_UNIQUE, 0, op, "You don't deserve to save yet.");
+	new_draw_info(NDI_UNIQUE, 0, op, "To avoid to much unused player accounts you must get some exp before you can save!");
     } else {
 	if(save_player(op,1))
 	    new_draw_info(NDI_UNIQUE, 0,op,"You have been saved.");
 	else
 	    new_draw_info(NDI_UNIQUE, 0,op,"SAVE FAILED!");
+
+	/* if we are in our appartment - save this too! */			
+	/* i really hate this localdir hack... must remove it and use senseful map flags for it! MT 2003 */
+	if(op->map && !strncmp(op->map->path, settings.localdir, strlen(settings.localdir)))
+	{
+		new_save_map(op->map,0);
+		op->map->in_memory=MAP_IN_MEMORY; /* new_save_map() sets status to SAVED */
+	}
+
     }
     return 1;
 }

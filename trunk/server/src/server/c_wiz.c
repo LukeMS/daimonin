@@ -86,7 +86,7 @@ int command_setgod(object *op, char *params)
 
 int command_kick (object *op, char *params)
 {
-  struct pl *pl;
+  struct pl_player *pl;
 
   for(pl=first_player;pl!=NULL;pl=pl->next) 
     if((params==NULL || !strcmp(pl->ob->name,params)) && pl->ob!=op)
@@ -114,21 +114,6 @@ int command_kick (object *op, char *params)
 
 int command_save_overlay(object *op, char *params)
 {
-    if (!op)
-	return(0);
-
-    if (op!=NULL && !QUERY_FLAG(op, FLAG_WIZ)) {
-	new_draw_info(NDI_UNIQUE, 0, op,
-	    "Sorry, you can't force an overlay save.");
-	return(1);
-    }
-    new_save_map(op->map, 2);
-    new_save_map(op->map, 0);
-    new_draw_info(NDI_UNIQUE, 0, op, "Current map has been saved as an"
-	" overlay.");
-
-    ready_map_name(op->map->path, 0);
-
     return(1);
 } 
 
@@ -137,7 +122,7 @@ int command_shutdown(object *op, char *params)
 
     if(op!=NULL && !QUERY_FLAG(op,FLAG_WIZ)) 
     {
-	new_draw_info(NDI_UNIQUE,0,op,"Sorry, you can't shutdown the server.");
+	/*new_draw_info(NDI_UNIQUE,0,op,"Sorry, you can't shutdown the server.");*/
 	return 1;
     }
     /* We need to give op - command_kick expects it.  however, this means
@@ -148,7 +133,7 @@ int command_shutdown(object *op, char *params)
 	if(op->container)
 		esrv_apply_container (op, op->container);
     (void)save_player(op,0);
-    play_again(op);
+    /*play_again(op);*/
     cleanup();
     /* not reached */
     return 1;
@@ -895,7 +880,7 @@ static int checkdm(object *op, char *pl_name, char *pl_passwd, char *pl_host)
 
   sprintf (buf, "%s/%s", settings.localdir, DMFILE);
   if ((dmfile = fopen(buf, "r")) == NULL) {
-    LOG (llevDebug, "Could not find DM file.\n");
+    LOG(llevDebug, "Could not find DM file.\n");
     return(0);
   }
   while(fgets(line_buf, 160, dmfile) != NULL) {

@@ -762,15 +762,9 @@
  * major changes to the map.
  */
 
-#  ifdef NEW_WORLD_MAP
-#    define EMERGENCY_MAPPATH "./world/world_105_115"
-#    define EMERGENCY_X 5
-#    define EMERGENCY_Y 37
-#  else
-#    define EMERGENCY_MAPPATH "./city/city"
-#    define EMERGENCY_X 15
-#    define EMERGENCY_Y 19
-#  endif
+#    define EMERGENCY_MAPPATH "emergency"
+#    define EMERGENCY_X 0
+#    define EMERGENCY_Y 0
 
 
 /*

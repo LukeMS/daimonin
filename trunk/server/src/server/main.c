@@ -186,7 +186,7 @@ static char *normalize_path (char *src, char *dst) {
     char buf[HUGE_BUF];
     static char path[HUGE_BUF];
 
-    /* LOG(llevDebug,"path before normalization >%s<>%s<\n", src, dst); */
+    /*LOG(llevDebug,"path before normalization >%s<>%s<\n", src, dst);*/
 
     if (*dst == '/') {
 	strcpy (buf, dst);
@@ -214,7 +214,7 @@ static char *normalize_path (char *src, char *dst) {
 		*q = '\0';
 	    else {
 		*path = '\0';
-		LOG (llevBug, "BUG: Illegal path.\n");
+		LOG(llevBug, "BUG: Illegal path.\n");
 	    }
 	} else {
 	    strcat (path, "/");
@@ -222,7 +222,7 @@ static char *normalize_path (char *src, char *dst) {
 	}
 	p = strtok (NULL, "/");
     }
-    /* LOG(llevDebug,"path after normalization >%s<\n", path); */
+    /*LOG(llevDebug,"path after normalization >%s<\n", path);*/
 
     return (path);
 }
@@ -517,7 +517,7 @@ static void enter_random_map(object *pl, object *exit_ob)
 	y=EXIT_Y(exit_ob) = MAP_ENTER_Y(new_map);
 	EXIT_PATH(exit_ob) = add_string(newmap_name);
 	strcpy(new_map->path, newmap_name);
-	enter_map(pl, new_map, 	x, y,QUERY_FLAG(exit_ob,FLAG_USE_FIX_POS)?1:0);
+	enter_map(pl, new_map, 	x, y,QUERY_FLAG(exit_ob,FLAG_USE_FIX_POS));
     }
 }
 
@@ -577,7 +577,7 @@ static void enter_unique_map(object *op, object *exit_ob)
     if (newmap) {
 	strcpy(newmap->path, apartment);
 		newmap->map_flags |=MAP_FLAG_UNIQUE;
-	enter_map(op, newmap, EXIT_X(exit_ob), EXIT_Y(exit_ob),QUERY_FLAG(exit_ob,FLAG_USE_FIX_POS)?1:0);
+	enter_map(op, newmap, EXIT_X(exit_ob), EXIT_Y(exit_ob),QUERY_FLAG(exit_ob,FLAG_USE_FIX_POS));
     } else {
 	new_draw_info_format(NDI_UNIQUE, 0, op, "The %s is closed.", exit_ob->name);
 	/* Perhaps not critical, but I would think that the unique maps
@@ -624,7 +624,7 @@ void enter_exit(object *op, object *exit_ob)
 				play_sound_map(exit_ob->map, exit_ob->x, exit_ob->y, SOUND_TELEPORT, SOUND_NORMAL);
 			enter_random_map(op, exit_ob);
 		}
-		else if (QUERY_FLAG(exit_ob, FLAG_UNIQUE))
+		else if (exit_ob->last_eat == MAP_PLAYER_MAP)
 		{
 			if(op->type != PLAYER)
 				return;
@@ -642,7 +642,14 @@ void enter_exit(object *op, object *exit_ob)
 
 			if (exit_ob->map)
 			{
-				newmap = ready_map_name(normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob)), 0);
+				/* wir sind auf einer unique map - appartment.
+				 * WARNING: This is a work around - i need for personl/group maps to change
+				 * ready_map_name in a more clever way!
+				 */
+				if (strncmp(exit_ob->map->path, settings.localdir, strlen(settings.localdir)))
+					newmap = ready_map_name(normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob)), 0);
+				else
+					newmap = ready_map_name(normalize_path("",EXIT_PATH(exit_ob)), 0);
 				/* Random map was previously generated, but is no longer about.  Lets generate a new
 				* map.
 				*/
@@ -713,7 +720,7 @@ void enter_exit(object *op, object *exit_ob)
 			}
 			if(exit_ob->sub_type1 == ST1_EXIT_SOUND && exit_ob->map)
 				play_sound_map(exit_ob->map, exit_ob->x, exit_ob->y, SOUND_TELEPORT, SOUND_NORMAL);
-			enter_map(op, newmap, x, y,QUERY_FLAG(exit_ob,FLAG_USE_FIX_POS)?1:0);
+			enter_map(op, newmap, x, y,QUERY_FLAG(exit_ob,FLAG_USE_FIX_POS));
 		}
 		/* For exits that cause damages (like pits) */
 		if(exit_ob->stats.dam && op->type==PLAYER)
@@ -970,17 +977,16 @@ void process_events (mapstruct *map)
 
     /* Now process op */
     if (QUERY_FLAG (op, FLAG_FREED)) {
-      LOG (llevBug, "BUG: process_events(): Free object on list\n");
+      LOG(llevBug, "BUG: process_events(): Free object on list\n");
       op->speed = 0;
       update_ob_speed (op);
       continue;
     }
 
-	/*LOG(-1,"POBJ: %s (%s) s:%f sl:%f (%f)\n",op->name?op->name:"(null)",op->arch->clone.name, op->speed,op->speed_left,op->arch->clone.speed_left);*/
+	/*LOG(-1,"POBJ: %s (%s) s:%f sl:%f (%f)\n",query_name(op),op->arch->clone.name, op->speed,op->speed_left,op->arch->clone.speed_left);*/
     if ( ! op->speed)
 	{
-      LOG (llevBug, "BUG: process_events(): Object %s has no speed, "
-           "but is on active list\n", op->arch->name);
+      LOG(llevBug, "BUG: process_events(): Object %s (%s)has no speed, but is on active list\n", op->arch->name,query_name(op));
       update_ob_speed (op);
       continue;
     }
@@ -990,9 +996,7 @@ void process_events (mapstruct *map)
     {
 	  if(op->type == PLAYER && op->contr->state != ST_PLAYING)
 		  continue;
-      LOG (llevBug, "BUG: process_events(): Object without map or "
-           "inventory is on active list: %s (%d)\n",
-           op->name, op->count);
+      LOG(llevBug, "BUG: process_events(): Object without map or inventory is on active list: %s (%d)\n",query_name(op), op->count);
       op->speed = 0;
       update_ob_speed (op);
       continue;

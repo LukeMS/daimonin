@@ -1120,8 +1120,16 @@ x 9
 y 12
 arch ogre
 type 83
-speed 0
+level 25
 speed_left -0.1
+can_cast_spell 1
+sp 30
+maxsp 30
+Pow 2
+Dex 3
+speed 0
+arch ability_firestorm
+end
 end
 end
 arch floor_ostone1
@@ -1542,8 +1550,17 @@ x 13
 y 12
 arch giant_hill
 type 83
-speed 0
 speed_left -0.1
+Dex 1
+can_use_bow 1
+attack_movement 3
+speed 0
+arch ability_stone_throw
+end
+arch t_lboulder
+nrof 10
+sys_object 1
+end
 end
 end
 arch floor_ostone1

@@ -624,7 +624,7 @@ init_msgfile (void)
     did_init_msgfile = 1;
 
     sprintf (fname, "%s/messages", settings.datadir);
-    LOG (llevDebug, "Reading messages from %s...", fname);
+    LOG(llevDebug, "Reading messages from %s...", fname);
 
     if ((fp = open_and_uncompress (fname, 0, &comp)) != NULL)
       {
@@ -642,8 +642,8 @@ init_msgfile (void)
 		  {
 		      if (strlen (msgbuf) > BOOK_BUF)
 			{
-			    LOG (llevDebug, "Warning: this string exceeded max book buf size:");
-			    LOG (llevDebug, "  %s", msgbuf);
+			    LOG(llevDebug, "Warning: this string exceeded max book buf size:");
+			    LOG(llevDebug, "  %s", msgbuf);
 			}
 		      tmp->name = add_string (msgbuf);
 		      tmp->next = first_msg;
@@ -667,9 +667,9 @@ init_msgfile (void)
       }
 
 #ifdef BOOK_MSG_DEBUG
-    LOG (llevDebug, "\ninit_info_listfile() got %d messages.\n", nrofmsg);
+    LOG(llevDebug, "\ninit_info_listfile() got %d messages.\n", nrofmsg);
 #endif
-    LOG (llevDebug, "done.\n");
+    LOG(llevDebug, "done.\n");
 }
 
 
@@ -696,7 +696,7 @@ init_book_archive (void)
 	booklist = bl;
 
     sprintf (fname, "%s/bookarch", settings.localdir);
-    LOG (llevDebug, " Reading bookarch from %s...\n", fname);
+    LOG(llevDebug, " Reading bookarch from %s...\n", fname);
 
     if ((fp = open_and_uncompress (fname, 0, &comp)) != NULL)
       {
@@ -750,22 +750,22 @@ init_book_archive (void)
 		      bl->number++;
 		  }
 	    }
-	  LOG (llevDebug, " book archives(used/avail): ");
+	  LOG(llevDebug, " book archives(used/avail): ");
 	  bl = booklist;
 	  while (bl && max_titles[i])
 	    {
-		LOG (llevDebug, "(%d/%d)", bl->number, max_titles[i]);
+		LOG(llevDebug, "(%d/%d)", bl->number, max_titles[i]);
 		bl = bl->next;
 		i++;
 	    }
-	  LOG (llevDebug, "\n");
+	  LOG(llevDebug, "\n");
 	  close_and_delete (fp, comp);
       }
 
 #ifdef BOOK_MSG_DEBUG
-    LOG (llevDebug, "\n init_book_archive() got %d titles.\n", nroftitle);
+    LOG(llevDebug, "\n init_book_archive() got %d titles.\n", nroftitle);
 #endif
-    LOG (llevDebug, " done.\n");
+    LOG(llevDebug, " done.\n");
 }
 
 /* init_mon_info() - creates the linked list of pointers to 
@@ -797,7 +797,7 @@ static void init_mon_info (void)
 		nrofmon++;
 	    }
       }
-    LOG (llevDebug, "init_mon_info() got %d monsters ...", nrofmon);
+    LOG(llevDebug, "init_mon_info() got %d monsters ...", nrofmon);
 }
 
 
@@ -816,11 +816,11 @@ init_readable (void)
     if (did_this) return;
     did_this = 1;
 
-    LOG (llevDebug, "Initializing reading data...");
+    LOG(llevDebug, "Initializing reading data...");
     init_msgfile ();
     init_book_archive ();
     init_mon_info ();
-    LOG (llevDebug, " done.\n");
+    LOG(llevDebug, " done.\n");
 
 }
 
@@ -857,7 +857,7 @@ find_title (object *book, int msgtype)
 
 #ifdef ARCHIVE_DEBUG
     if (t)
-	LOG (llevDebug, "Found title match (list %d): %s %s (%d)\n",
+	LOG(llevDebug, "Found title match (list %d): %s %s (%d)\n",
 	     msgtype, t->name, t->authour, t->msg_index);
 #endif
 
@@ -1002,7 +1002,7 @@ add_book_to_list (object *book, int msgtype)
 
     if (!tl)
       {
-	  LOG (llevBug, "BUG: add_book_to_list() can't get booklist!\n");
+	  LOG(llevBug, "BUG: add_book_to_list() can't get booklist!\n");
 	  return;
       }
 
@@ -1022,7 +1022,7 @@ add_book_to_list (object *book, int msgtype)
     need_to_write_bookarchive=1;
 
 #ifdef ARCHIVE_DEBUG
-    LOG (llevDebug, "Archiving new title: %s %s (%d)\n", book->name,
+    LOG(llevDebug, "Archiving new title: %s %s (%d)\n", book->name,
 	 book->title, msgtype);
 #endif
 
@@ -1093,7 +1093,7 @@ change_book (object *book, int msgtype)
 
 		    if (!tl)
 		      {
-			  LOG (llevBug, "BUG: change_book_name(): can't find title list");
+			  LOG(llevBug, "BUG: change_book_name(): can't find title list");
 			  numb = 0;
 		      }
 		    else
@@ -1102,7 +1102,7 @@ change_book (object *book, int msgtype)
 		    if (numb == maxnames)
 		      {
 #ifdef ARCHIVE_DEBUG
-			  LOG (llevDebug, "titles for list %d full (%d possible).\n",
+			  LOG(llevDebug, "titles for list %d full (%d possible).\n",
 			       msgtype, maxnames);
 #endif
 			  break;
@@ -1130,7 +1130,7 @@ change_book (object *book, int msgtype)
 		    if (tries == MAX_TITLE_CHECK || numb == maxnames)
 		      {		/* got to check maxnames again */
 #ifdef ARCHIVE_DEBUG
-			  LOG (llevDebug, "Failed to obtain unique title for %s %s (names:%d/%d)\n",
+			  LOG(llevDebug, "Failed to obtain unique title for %s %s (names:%d/%d)\n",
 			       book->name, book->title, numb, maxnames);
 #endif
 			  /* restore old book properties here */
@@ -1172,7 +1172,7 @@ change_book (object *book, int msgtype)
 	  book->name = add_string (name);
 	  break;
       default:
-	  LOG (llevBug, "BUG: change_book_name() called w/ illegal obj type.\n");
+	  LOG(llevBug, "BUG: change_book_name() called w/ illegal obj type.\n");
 	  return;
       }
 }
@@ -1222,7 +1222,7 @@ get_random_mon (int level)
 
 	  if (!mon)
 	    {
-		LOG (llevBug, "BUG: get_random_mon: Didn't find a monster when we should have\n");
+		LOG(llevBug, "BUG: get_random_mon: Didn't find a monster when we should have\n");
 		return NULL;
 	    }
 	  return mon->ob;
@@ -1247,7 +1247,7 @@ get_random_mon (int level)
 
     if (i == 0)
       {
-	  LOG (llevBug, "BUG: get_random_mon() couldnt return monster for level %d\n",
+	  LOG(llevBug, "BUG: get_random_mon() couldnt return monster for level %d\n",
 	       level);
 	  return NULL;
       }
@@ -1259,7 +1259,7 @@ get_random_mon (int level)
 
     if (!mon)
       {
-	  LOG (llevBug, "BUG: get_random_mon(): didn't find a monster when we should have\n");
+	  LOG(llevBug, "BUG: get_random_mon(): didn't find a monster when we should have\n");
 	  return NULL;
       }
     return NULL;		/* Should be unreached, by keeps warnings down */
@@ -1346,7 +1346,7 @@ mon_info_msg (int level, int booksize)
     while (tmp);
 
 #ifdef BOOK_MSG_DEBUG
-    LOG (llevDebug, "\n mon_info_msg() created strng: %d\n", strlen (retbuf));
+    LOG(llevDebug, "\n mon_info_msg() created strng: %d\n", strlen (retbuf));
     LOG(llevInfo , " MADE THIS:\n%s\n", retbuf);
 #endif
 
@@ -1479,7 +1479,7 @@ artifact_msg (int level, int booksize)
       }
 
 #ifdef BOOK_MSG_DEBUG
-    LOG (llevDebug, "artifact_msg() created strng: %d\n", strlen (retbuf));
+    LOG(llevDebug, "artifact_msg() created strng: %d\n", strlen (retbuf));
     LOG(llevInfo , " MADE THIS:\n%s", retbuf);
 #endif
     return retbuf;
@@ -1553,7 +1553,7 @@ spellpath_msg (int level, int booksize)
     else
       {
 #ifdef BOOK_MSG_DEBUG
-	  LOG (llevDebug, "\n spellpath_msg() created strng: %d\n", strlen (retbuf));
+	  LOG(llevDebug, "\n spellpath_msg() created strng: %d\n", strlen (retbuf));
 	  LOG(llevInfo , " MADE THIS: path=%d pray=%d\n%s\n", path, prayers, retbuf);
 #endif
 	  strcat (retbuf, "\n");
@@ -1633,7 +1633,7 @@ void make_formula_book(object *book, int level) {
 	if ((at = find_archetype (op_name)) != (archetype *) NULL)
 	    op_name = at->clone.name;
 	else
-	    LOG (llevBug, "BUG: formula_msg() can't find arch %s for formula.", op_name);
+	    LOG(llevBug, "BUG: formula_msg() can't find arch %s for formula.", op_name);
 
 	/* item name */
 	if (strcmp (formula->title, "NONE")) {
@@ -1681,7 +1681,7 @@ void make_formula_book(object *book, int level) {
 	    }
 	}
 	else
-	    LOG (llevBug, "BUG: formula_msg() no ingredient list for object %s of %s", op_name, formula->title);
+	    LOG(llevBug, "BUG: formula_msg() no ingredient list for object %s of %s", op_name, formula->title);
 	if (retbuf[strlen(retbuf)-1]!= '\n') strcat(retbuf, "\n");
 	if (book->msg) free_string(book->msg);
 	book->msg = add_string(retbuf);
@@ -1717,8 +1717,8 @@ msgfile_msg (int level, int booksize)
 	sprintf (retbuf, "\n <undecipherable text>");
 
 #ifdef BOOK_MSG_DEBUG
-    LOG (llevDebug, "\n info_list_msg() created strng: %d\n", strlen (retbuf));
-    LOG (llevDebug, " MADE THIS:\n%s\n", retbuf);
+    LOG(llevDebug, "\n info_list_msg() created strng: %d\n", strlen (retbuf));
+    LOG(llevDebug, " MADE THIS:\n%s\n", retbuf);
 #endif
 
     return retbuf;
@@ -1911,7 +1911,7 @@ god_info_msg (int level, int booksize)
 	  strcat (retbuf, "  hopelessly garbled!]\n ---\n");
       }
 #ifdef BOOK_MSG_DEBUG
-    LOG (llevDebug, "\n god_info_msg() created strng: %d\n", strlen (retbuf));
+    LOG(llevDebug, "\n god_info_msg() created strng: %d\n", strlen (retbuf));
     LOG(llevInfo , " MADE THIS:\n%s", retbuf);
 #endif
     return retbuf;
@@ -2021,7 +2021,7 @@ free_all_readable ()
     linked_char *lmsg, *nextmsg;
     objectlink *monlink, *nextmon;
 
-    LOG (llevDebug, "freeing all book information\n");
+    LOG(llevDebug, "freeing all book information\n");
 
     for (tlist = booklist; tlist != NULL; tlist = tnext)
       {
@@ -2076,11 +2076,11 @@ write_book_archive (void)
     need_to_write_bookarchive=0;
 
     sprintf (fname, "%s/bookarch", settings.localdir);
-    LOG (llevDebug, "Updating book archive: %s...\n", fname);
+    LOG(llevDebug, "Updating book archive: %s...\n", fname);
 
     if ((fp = fopen (fname, "w")) == NULL)
       {
-	  LOG (llevDebug, "Can't open book archive file %s\n", fname);
+	  LOG(llevDebug, "Can't open book archive file %s\n", fname);
       }
     else
       {

@@ -273,13 +273,17 @@ int calc_skill_exp(object *who, object *op)
     int op_exp=0,op_lvl= 0;
     float exp_mul;
 
-	if(who->type != PLAYER) /* no exp for non players... its senseless to do */
+	if(!who || who->type != PLAYER) /* no exp for non players... its senseless to do */
+	{
+		LOG(llevDebug,"DEBUG: calc_skill_exp() called with who != PLAYER or NULL (%s (%s)- %s)\n", query_name(who), !who?"NULL":"", query_name(op));
 		return 0;
+	}
 
 	who_lvl= SK_level(who); /* thats the releated skill level */
 
     if(!op) /* hm.... */
 	{ 		 
+		LOG(llevBug,"BUG: calc_skill_exp() called with op == NULL (%s - %s)\n", query_name(who), query_name(op));
         op_lvl= who->map->difficulty < 1 ? 1: who->map->difficulty;
         op_exp = 0;
     } 
@@ -327,7 +331,7 @@ int calc_skill_exp(object *who, object *op)
 		}
 	}
 
-	LOG(llevDebug,"EXP:: %s (lvl %d) gets %d exp in %s from %s (lvl %d)\n", query_name(who), who_lvl, op_exp,
+	LOG(llevDebug,"EXP:: %s (lvl %d(%d)) gets %d exp in %s from %s (lvl %d)\n", query_name(who), who_lvl, who->level, op_exp,
 		who->chosen_skill?query_name(who->chosen_skill):"<BUG: NO SKILL!>",query_name(op), op_lvl);
 	/* old code. I skipped skill[].lexp and bexp - perhaps later back in
 	if(who->chosen_skill==NULL)
@@ -656,7 +660,7 @@ int check_skill_to_fire(object *who) {
        skillnr = SK_USE_MAGIC_ITEM;
        break;
     default:
-       LOG(llevBug,"BUG: bad call of check_skill_to_fire() from %s\n",who->name);
+       LOG(llevBug,"BUG: bad call of check_skill_to_fire() from %s\n",query_name(who));
        return 0;
   }
   if (change_skill(who,skillnr)) { 
@@ -751,7 +755,7 @@ int check_skill_to_apply(object *who, object *item)
  
 	/* this should not happen */
 	if(skill == NO_SKILL_READY)
-		LOG(llevBug,"BUG: check_skill_to_apply() called for %s and item %s with skill NO_SKILL_READY\n", who->name, item->name);
+		LOG(llevBug,"BUG: check_skill_to_apply() called for %s and item %s with skill NO_SKILL_READY\n", query_name(who), query_name(item));
 
     /* lets check the additional skill if there is one */
     if(add_skill != NO_SKILL_READY)
@@ -787,7 +791,7 @@ int init_player_exp(object *pl) {
   object *tmp,*exp_ob[MAX_EXP_CAT];
 
    if(pl->type!=PLAYER) {
-        LOG(llevBug, "BUG: init_player_exp(): called non-player %s.\n",pl->name);
+        LOG(llevBug, "BUG: init_player_exp(): called non-player %s.\n",query_name(pl));
 	return 0;
    }
 
@@ -868,7 +872,7 @@ void unlink_skill(object *skillop) {
   object *op=skillop?skillop->env:NULL;
 
   if(!op||op->type!=PLAYER) { 
-	  LOG(llevBug,"BUG: unlink_skill() called for non-player %s!\n",op?op->name:"(NULL)");
+	  LOG(llevBug,"BUG: unlink_skill() called for non-player %s!\n",query_name(op));
 	return;
   }
   send_skilllist_cmd(op, skillop, SPLIST_MODE_REMOVE);
@@ -914,7 +918,7 @@ int link_player_skills(object *pl) {
       } 
 
    if(exp_index!=nrofexpcat) {
-       LOG(llevBug,"BUG: link_player_skills() - player %s has bad number of exp obj\n", pl->name);
+       LOG(llevBug,"BUG: link_player_skills() - player %s has bad number of exp obj\n", query_name(pl));
        if(!init_player_exp(pl)) { 
           LOG(llevBug,"BUG: link_player_skills() - failed to correct problem.\n");
 	  return 0;
@@ -1211,7 +1215,7 @@ int change_skill (object *who, int sk_index)
         && (tmp = find_skill (who, sk_index)) != NULL)
     {
         if (apply_special (who, tmp, AP_APPLY)) {
-            LOG (llevBug, "BUG: change_skill(): can't apply new skill (%s - %d)\n",who->name, sk_index);
+            LOG(llevBug, "BUG: change_skill(): can't apply new skill (%s - %d)\n",who->name, sk_index);
             return 0;
         }
         return 1;
@@ -1219,7 +1223,7 @@ int change_skill (object *who, int sk_index)
 
     if (who->chosen_skill)
         if (apply_special (who, who->chosen_skill, AP_UNAPPLY))
-            LOG (llevBug, "BUG: change_skill(): can't unapply old skill (%s - %d)\n",who->name, sk_index);
+            LOG(llevBug, "BUG: change_skill(): can't unapply old skill (%s - %d)\n",who->name, sk_index);
     if (sk_index >= 0)
         new_draw_info_format (NDI_UNIQUE, 0, who, "You have no knowledge "
                               "of %s.", skills[sk_index].name);
@@ -1245,12 +1249,12 @@ int change_skill_to_skill (object *who, object *skl)
     }
 
     if (skl->env != who) {
-		LOG(llevBug,"BUG: change_skill_to_skill: skill is not in players inventory (%s - %s)\n",who->name, skl->name);
+		LOG(llevBug,"BUG: change_skill_to_skill: skill is not in players inventory (%s - %s)\n",query_name(who), query_name(skl));
 	return 1;
     }
 
     if (apply_special (who, skl, AP_APPLY)) {
-	LOG (llevBug, "BUG: change_skill(): can't apply new skill (%s - %s)\n",who->name, skl->name);
+	LOG(llevBug, "BUG: change_skill(): can't apply new skill (%s - %s)\n",query_name(who), query_name(skl));
             return 1;
     }
     return 0;
@@ -1406,13 +1410,13 @@ int do_skill_attack(object *tmp, object *op, char *string) {
 			{
 				if(change_skill_to_skill(op,op->contr->skill_weapon))
 				{ 
-			       	LOG(llevBug,"BUG: do_skill_attack() could'nt give new hth skill to %s\n",op->name);
+			       	LOG(llevBug,"BUG: do_skill_attack() could'nt give new hth skill to %s\n",query_name(op));
 					return 0;
 				}
 			}
 			else
 			{
-				LOG(llevBug,"BUG: do_skill_attack(): no hth skill in player %s\n",op->name);
+				LOG(llevBug,"BUG: do_skill_attack(): no hth skill in player %s\n",query_name(op));
 				return 0;
 			}
 		}
@@ -1532,7 +1536,7 @@ int SK_level(object *op)
 
   if(level<=0)
   {
-    LOG (llevBug, "BUG: SK_level(arch %s, name %s): level <= 0\n", op->arch->name, op->name);
+    LOG(llevBug, "BUG: SK_level(arch %s, name %s): level <= 0\n", op->arch->name, query_name(op));
     level = 1;	 /* safety */
   }
 

@@ -90,9 +90,9 @@ enum {
 #endif
 
 /* slowly reworking this struct - some old values in - MT2003 */
-typedef struct pl 
+typedef struct pl_player
 {
-	struct pl *next;				/* Pointer to next player, NULL if this is last */
+	struct pl_player *next;				/* Pointer to next player, NULL if this is last */
 	object *ob;						/* The object representing the player */
 	int bed_x;						/* x,y - coordinates of respawn (savebed) */
 	int bed_y;

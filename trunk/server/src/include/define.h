@@ -251,6 +251,9 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define BOOTS		            99
 #define GLOVES		            100
 #define TYPE_BASE_INFO			101	/* This object holds the real base stats of mobs or other active objects */
+#define TYPE_RANDOM_DROP		102	/* only true for spawn points atm: if found, there is a random check against
+									 * carrying. If greater as carrying - all ->inv is droped.
+									 */
 #define CONVERTER	            103
 #define BRACERS		            104
 #define POISONING	            105 /* thats the poison force... if á player applies for example
@@ -268,6 +271,8 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define GIRDLE		            113
 #define FORCE		            114
 #define POTION_EFFECT           115    /* a force, holding the effect of a potion */
+#define TYPE_JEWEL				116	   /* to make it different from GEM - thats needed to have a better */
+#define TYPE_NUGGET				117    /* use from the artifacts file */
 #define CLOSE_CON	            121    /* Eneq(@csd.uu.se): Id for close_container archetype. */
 #define CONTAINER	            122
 #define ARMOUR_IMPROVER         123

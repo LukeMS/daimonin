@@ -64,7 +64,7 @@ typedef enum LogLevel {
 /* if not set from outside, we force a useful setting here */
 #ifndef GLOBAL_LOG_LEVEL
 	#ifdef DEBUG
-		#define GLOBAL_LOG_LEVEL llevDebug
+		#define GLOBAL_LOG_LEVEL llevMonster
 	#else
 		#define GLOBAL_LOG_LEVEL llevInfo
 	#endif

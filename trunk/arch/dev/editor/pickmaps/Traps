@@ -91,7 +91,8 @@ arch floor_ostone3
 x 4
 y 4
 end
-arch floor_ostone1
+arch floor_inv
+unique 1
 x 4
 y 5
 end
