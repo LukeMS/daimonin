@@ -622,7 +622,8 @@ static int basic_emote(object *op, char *params, int emotion)
     char buf[HUGE_BUF]="", buf2[HUGE_BUF]="", buf3[HUGE_BUF]="";
    player *pl;
 
-   LOG(llevDebug, "EMOTE: %x (%s) (params: >%s<) (t: %s) %d\n", op, query_name(op), STRING_SAFE(params), CONTR(op)?query_name(CONTR(op)->target_object):"NO CTRL!!", emotion);
+   LOG(llevDebug, "EMOTE: %x (%s) (params: >%s<) (t: %s) %d\n", op, query_name(op), STRING_SAFE(params), 
+	   (op->type == PLAYER&&CONTR(op)&&OBJECT_VALID(CONTR(op)->target_object, CONTR(op)->target_object_count))?query_name(CONTR(op)->target_object):"NO CTRL!!", emotion);
 
    params = cleanup_chat_string(params);
    if (params && *params=='\0') /* illegal name? */
