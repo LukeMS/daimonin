@@ -2,7 +2,7 @@ Object wyvern
 name wyvern
 race dragon
 layer 6
-randomitems empty
+randomitems wyvern
 face wyvern.141
 direction 5
 speed -0.26

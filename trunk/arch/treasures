@@ -833,8 +833,36 @@ treasure slime
   chance 25
   nrof 1
   more
-  arch leather_armour
-  chance 8
+  arch chain_mail
+  chance 3
+  nrof 1
+  more
+  arch full_helmet
+  chance 3
+  difficulty 5
+  nrof 1
+  more
+   arch t_star
+   nrof 5
+   chance 2
+  more
+  arch coppercoin
+  chance 100
+  nrof 6
+end
+treasure wyvern
+  arch food_generic
+  chance 25
+  nrof 1
+  more
+  arch banded_mail
+  chance 2
+  difficulty 5
+  nrof 1
+  more
+  arch amulet_generic
+  chance 100
+  difficulty 7
   nrof 1
   more
    arch t_star

@@ -2111,6 +2111,7 @@ face table_round1.101
 type 79
 editor_folder indoor/tables
 no_pick 1
+no_pass 1
 layer 4
 end
 Object table_small1
@@ -2134,6 +2135,7 @@ name table
 face table_wood1.111
 type 79
 editor_folder indoor/tables
+no_pass 1
 no_pick 1
 layer 4
 end
@@ -2142,6 +2144,7 @@ name table
 face table_wood1.171
 type 79
 editor_folder indoor/tables
+no_pass 1
 no_pick 1
 layer 4
 end
@@ -7659,7 +7662,7 @@ mpart_id 3
 editor_folder mobs/wyvern
 race dragon
 layer 6
-randomitems empty
+randomitems wyvern
 direction 5
 speed -0.26
 corpse 1
@@ -7928,7 +7931,7 @@ sys_object 1
 end
 Object marker
 name marker
-face creator.111
+face info.101
 type 55
 editor_folder special/special
 food 32700

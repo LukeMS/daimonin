@@ -139,7 +139,7 @@ spell spells[NROFREALSPELLS]={
 								4,      5,      4,      4, 9,	SOUND_MAGIC_DEFAULT,
 								SPELL_USE_CAST|SPELL_USE_SCROLL|SPELL_USE_HORN|
 								SPELL_USE_WAND| SPELL_USE_ROD|SPELL_USE_BOOK,
-								SPELL_DESC_DIRECTION,
+								SPELL_DESC_TOWN|SPELL_DESC_DIRECTION,
 								PATH_INFO, "probebullet",SPELL_ACTIVE
 },
 /* next we need a debuff - curse for example */

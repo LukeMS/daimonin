@@ -155,7 +155,7 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
 {
 	spell *s=find_spell(type);
 	char *godname;
-	object *target;
+	object *target, *cast_op;
 	int success=0, duration, points_used=0;
 	rv_vector rv;
 
@@ -170,6 +170,7 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
 	if(!op)
 		op=caster;
 
+	/* script NPC can ALWAYS cast - even in no spell areas! */ 
 	if(item == spellNPC)
 	{
 		target = op; /* if spellNPC, this comes useally from a script */
@@ -180,8 +181,44 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
 	/* It looks like the only properties we ever care about from the casting
 	* object (caster) is spell paths and level.
 	*/
-	if (!caster && item==spellNormal)
-		caster=op;
+	cast_op = op;
+	if (!caster)
+	{
+		if(item==spellNormal)
+			caster=op;
+	}
+	else
+	{
+		if(caster->map) /* caster has a map? then we use caster */
+			cast_op = caster;
+	}
+
+	/* Now check we can cast this spell! */
+	/* we need to ad here floor flags too! */
+	if(MAP_NOMAGIC(cast_op->map) && !(spells[type].flags&SPELL_DESC_WIS) ) /* no magic & not a prayer... */
+	{
+		if (op->type==PLAYER )
+			new_draw_info(NDI_UNIQUE, 0,op, "Powerful countermagic cancels all spellcasting here!");
+		return 0;
+	}
+	if(MAP_NOPRIEST(cast_op->map) && (spells[type].flags&SPELL_DESC_WIS) ) /* no prayer & and a prayer... */
+	{
+		if (op->type==PLAYER )
+			new_draw_info(NDI_UNIQUE, 0,op, "Powerful countermagic cancels all prayer spells here!");
+		return 0;
+	}
+	if(MAP_NOHARM(cast_op->map) && !(spells[type].flags&SPELL_DESC_TOWN) ) /* no harm spell & not town safe */
+	{
+		if (op->type==PLAYER )
+			new_draw_info(NDI_UNIQUE, 0,op, "Powerful countermagic cancels all harmful magic here!");
+		return 0;
+	}
+	if(MAP_NOSUMMON(cast_op->map) && (spells[type].flags&SPELL_DESC_SUMMON) ) /* no summon & a summon cast */
+	{
+		if (op->type==PLAYER )
+			new_draw_info(NDI_UNIQUE, 0,op, "Powerful countermagic cancels all summoning here!");
+		return 0;
+	}
 
 	if(item==spellPotion)
 	{  /*  if the potion casts an onself spell, don't use the facing direction (given by apply.c)*/

@@ -1,6 +1,6 @@
 Object marker
 name marker
-face creator.111
+face info.101
 food 32700
 slaying put your code here
 speed 0.5
