@@ -991,7 +991,18 @@ static int GameObject_SetGuildForce(lua_State *L)
             return push_object(L, &GameObject, walk);
         }
     }
-    LOG(llevDebug, "Lua Warning -> SetGuild: Object %s has no guild_force!\n", STRING_OBJ_NAME(WHO));
+    LOG(llevDebug, "Lua Warning -> SetGuild: Object %s has no guild_force! Adding it.\n", STRING_OBJ_NAME(WHO));
+
+	walk = hooks->arch_to_object(hooks->find_archetype("guild_force"));
+    walk= hooks->insert_ob_in_ob(walk, WHO);
+	if (guild && strcmp(guild, "")) {
+		FREE_AND_COPY_HASH(walk->title, guild);
+	} else
+		FREE_ONLY_HASH(walk->title);
+	
+	CONTR(WHO)->socket.ext_title_flag = 1; /* demand update to client */
+	return push_object(L, &GameObject, walk);
+	
     return 0;
 }
 
@@ -1017,7 +1028,11 @@ static int GameObject_GetGuildForce(lua_State *L)
             return push_object(L, &GameObject, walk);
     }
 
-    LOG(llevDebug, "Lua Warning -> GetGuild: Object %s has no guild_force!\n", STRING_OBJ_NAME(WHO));
+    LOG(llevDebug, "Lua Warning -> GetGuild: Object %s has no guild_force! Adding it.\n", STRING_OBJ_NAME(WHO));
+	walk = hooks->arch_to_object(hooks->find_archetype("guild_force"));
+    walk= hooks->insert_ob_in_ob(walk, WHO);
+	
+	return push_object(L, &GameObject, walk);
     return 0;
 }
 

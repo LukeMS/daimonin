@@ -218,3 +218,13 @@ void init_commands()
     qsort((char *) WizCommands, WizCommandsSize, sizeof(CommArray_s), compare_A);
 }
 
+/* Send a "remove NPC interface" command to the client.
+ * For example if a player->npc communication stops because
+ * the npc is gone (moved away, dead) or stops talking.
+ * This is needed to end the asynchron communication way.
+ */
+void send_clear_interface(player *pl)
+{
+	SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_INTERFACE);
+	Send_With_Handling(&pl->socket, &global_sl);	
+}

@@ -229,6 +229,10 @@ typedef unsigned int    tag_t;
 #define MAP_INFO_NORMAL 12
 #define MAP_INFO_ALL 9999
 
+/* client interface communication */
+#define NPC_INTERFACE_MODE_NO  -1
+#define NPC_INTERFACE_MODE_NPC  1
+
 /* number of connected maps from a tiled map */
 #define TILED_MAPS 8
 

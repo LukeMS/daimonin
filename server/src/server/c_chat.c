@@ -272,78 +272,88 @@ int command_tell(object *op, char *params)
 
 int command_t_tell(object *op, char *params)
 {
-    char        buf[256 * 2];
     object     *t_obj;
     int         i, xt, yt;
     mapstruct  *m;
 
-    if (!params)
-        return 0;
+	/* we don't allow npc top npc talk here */
+    if (op->type != PLAYER)
+		return 0;
 
+		if (!params)
+		{
+			send_clear_interface(CONTR(op));
+	        return 0;
+		}
+		
     params = cleanup_chat_string(params);
     /* this happens when whitespace only string was submited */
     if (!params || *params == '\0')
+	{
+		send_clear_interface(CONTR(op));
         return 0;
+	}
 
-    if (op->type == PLAYER)
+ 
+	t_obj = CONTR(op)->target_object;
+    if (t_obj && CONTR(op)->target_object_count == t_obj->count)
     {
-        t_obj = CONTR(op)->target_object;
-        if (t_obj && CONTR(op)->target_object_count == t_obj->count)
+		/* why i do this and not direct distance calculation?
+         * because the player perhaps has leaved the mapset with the
+         * target which will invoke some nasty searchings.
+         */
+        for (i = 0; i <= SIZEOFFREE2; i++)
         {
-            /* why i do this and not direct distance calculation?
-                     * because the player perhaps has leaved the mapset with the
-                     * target which will invoke some nasty searchings.
-                     */
-            for (i = 0; i <= SIZEOFFREE2; i++)
-            {
-                xt = op->x + freearr_x[i];
-                yt = op->y + freearr_y[i];
-                if (!(m = out_of_map(op->map, &xt, &yt)))
-                    continue;
-
-                if (m == t_obj->map && xt == t_obj->x && yt == t_obj->y)
-                {
-                    LOG(llevInfo, "CLOG NPC:%s >%s<\n", query_name(op), params);
-                    sprintf(buf, "you talk to %s: ", query_name(t_obj));
-                    strncat(buf, params, MAX_BUF - strlen(buf) - 1);
-                    buf[MAX_BUF - 1] = 0;
-                    new_draw_info(NDI_WHITE, 0, op, buf);
-
-					if (t_obj->event_flags & EVENT_FLAG_TALK)
+			xt = op->x + freearr_x[i];
+            yt = op->y + freearr_y[i];
+            if (!(m = out_of_map(op->map, &xt, &yt)))
+				continue;
+                
+			if (m == t_obj->map && xt == t_obj->x && yt == t_obj->y)    
+			{
+				/*char        buf[256 * 2];*/
+				/* we do this client sided now
+				sprintf(buf, "you talk to %s: ", query_name(t_obj));
+                strncat(buf, params, MAX_BUF - strlen(buf) - 1);
+                buf[MAX_BUF - 1] = 0;
+                new_draw_info(NDI_WHITE, 0, op, buf);
+				*/
+					
+				if (t_obj->event_flags & EVENT_FLAG_TALK)
+				{
+					CFParm  CFP;
+					int     k, l, m;
+					object *event_obj   = get_event_object(t_obj, EVENT_TALK);
+					k = EVENT_TALK;
+					l = SCRIPT_FIX_ACTIVATOR;
+					m = 0;
+					CFP.Value[0] = &k;
+					CFP.Value[1] = op;
+					CFP.Value[2] = t_obj;
+					CFP.Value[3] = NULL;
+					CFP.Value[4] = params;
+					CFP.Value[5] = &m;
+					CFP.Value[6] = &m;
+					CFP.Value[7] = &m;
+					CFP.Value[8] = &l;
+					CFP.Value[9] = (char *) STRING_OBJ_RACE(event_obj);
+					CFP.Value[10] = (char *) STRING_OBJ_SLAYING(event_obj);
+	
+					if (findPlugin(event_obj->name) >= 0)
 					{
-						CFParm  CFP;
-						int     k, l, m;
-						object *event_obj   = get_event_object(t_obj, EVENT_TALK);
-						k = EVENT_TALK;
-						l = SCRIPT_FIX_ACTIVATOR;
-						m = 0;
-						CFP.Value[0] = &k;
-						CFP.Value[1] = op;
-						CFP.Value[2] = t_obj;
-						CFP.Value[3] = NULL;
-						CFP.Value[4] = params;
-						CFP.Value[5] = &m;
-						CFP.Value[6] = &m;
-						CFP.Value[7] = &m;
-						CFP.Value[8] = &l;
-						CFP.Value[9] = (char *) STRING_OBJ_RACE(event_obj);
-						CFP.Value[10] = (char *) STRING_OBJ_SLAYING(event_obj);
-						
-						if (findPlugin(event_obj->name) >= 0)
-						{
-							((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
-							return 0;
-						}
+						((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
+						return 0;
 					}
-                    /*talk_to_npc(op, t_obj, params);
-                    play_sound_player_only(CONTR(op), SOUND_CLICK, SOUND_NORMAL, 0, 0);*/
-                    return 1;
-                }
+				}
+				else
+					send_clear_interface(CONTR(op));
+                
+                return 1;
             }
         }
-    }
+	}
 
-    /*play_sound_player_only(CONTR(op), SOUND_WAND_POOF, SOUND_NORMAL, 0, 0);*/
+	send_clear_interface(CONTR(op));
     return 1;
 }
 

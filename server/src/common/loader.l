@@ -1273,7 +1273,7 @@ void save_object(FILE *fp,object *op, int flag) {
     /*if(op->owner!=NULL || fp == NULL) this will wreck item we throw - they get player as owner*/
 
     /* If it is unpaid and we don't want to save those, just return. */
-    if(!fp || (!(flag&1) && (QUERY_FLAG(op, FLAG_UNPAID))))
+    if(!fp || QUERY_FLAG(op, FLAG_NO_SAVE) || (!(flag&1) && (QUERY_FLAG(op, FLAG_UNPAID))))
 		return;
 
     if((at=op->arch)==NULL) 

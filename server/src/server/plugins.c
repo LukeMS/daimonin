@@ -42,10 +42,11 @@ struct plugin_hooklist  hooklist    =
     lookup_skill_by_name, look_up_spell_name,
     insert_ob_in_ob, insert_ob_in_map, move_ob,
     free_mempool, create_mempool, nearest_pow_two_exp,
-    return_poolchunk_array_real, get_poolchunk_array_real
+    return_poolchunk_array_real, get_poolchunk_array_real,
+	arch_to_object, find_archetype,
 };
 
-CFPlugin                PlugList[32];
+CFPlugin                PlugList[34];
 int                     PlugNR      = 0;
 
 /* get_event_object()
@@ -1953,10 +1954,13 @@ CFParm * CFInterface(CFParm *PParm)
 	
 	SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_INTERFACE);
 
-	SockList_AddChar(&global_sl, (char)mode);
-		
-    strcpy(global_sl.buf+global_sl.len, text);
-    global_sl.len += strlen(text)+1;
+	/* NPC_INTERFACE_MODE_NO will send a clear body = remove interface to the client */
+	if(mode != NPC_INTERFACE_MODE_NO)
+	{
+		SockList_AddChar(&global_sl, (char)mode);	
+		strcpy(global_sl.buf+global_sl.len, text);
+		global_sl.len += strlen(text)+1;
+	}
 
 	Send_With_Handling(&CONTR(who)->socket, &global_sl);
     return NULL;

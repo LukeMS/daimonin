@@ -283,6 +283,7 @@ int                         command_loadplugin(object *op, char *params);
 int                         command_unloadplugin(object *op, char *params);
 /* commands.c */
 void                        init_commands(void);
+void						send_clear_interface(player *pl);
 /* daemon.c */
 FILE                       *BecomeDaemon(char *filename);
 /* disease.c */
