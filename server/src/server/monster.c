@@ -42,7 +42,6 @@ typedef struct _msglang {
 
 
 extern spell spells[NROFREALSPELLS];
-static object *spawn_monster(object *gen, object *orig, int range);
 
 #define RETURNHOME_WP_NAME "- home -"
 
@@ -2654,6 +2653,84 @@ int monster_use_scroll(object *head, object *part,object *pl,int dir, rv_vector 
     return 1;
 }
 
+/* spawn point releated function
+ * perhaps its time to make a new module?
+ */
+
+/* drop a monster on the map, by copying a monster object or
+ * monster object head. Add treasures.
+ */
+static object *spawn_monster(object *gen, object *orig, int range) 
+{
+  int i;
+  object *op,*head=NULL,*prev=NULL, *ret=NULL;
+  archetype *at=gen->arch;
+
+  i=find_free_spot(at,orig->map,orig->x,orig->y,0,range);
+  if (i==-1)
+	  return NULL; 
+  while(at!=NULL) {
+	op = get_object();
+    if(head==NULL) /* copy single/head from spawn inventory */
+	{
+		gen->type = MONSTER;
+		copy_object(gen,op);
+		gen->type = SPAWN_POINT_MOB;
+		ret = op;
+	}
+	else /* but the tails for multi arch from the clones */
+	{
+		copy_object(&at->clone,op);
+	}
+    op->x=orig->x+freearr_x[i]+at->clone.x;
+    op->y=orig->y+freearr_y[i]+at->clone.y;
+	op->map = orig->map;
+    if(head!=NULL)
+      op->head=head,prev->more=op;
+    if (QUERY_FLAG(op, FLAG_FREED)) return NULL;
+    if(op->randomitems!=NULL)
+      create_treasure(op->randomitems,op,0,orig->map->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0);
+    if(head==NULL)
+      head=op;
+    prev=op;
+    at=at->more;
+  }
+  return ret; /* return object ptr to our spawn */
+}
+
+/* check the current darkness on this map allows to spawn 
+ * 0: not allowed, 1: allowed
+ */
+static inline int spawn_point_darkness(object *spoint, int darkness)
+{
+	int map_light;
+
+	if(!spoint->map)
+		return 0;
+
+	if(MAP_OUTDOORS(spoint->map)) /* outdoor map */
+		map_light = world_darkness;
+	else
+	{
+		if(MAP_DARKNESS(spoint->map) == -1)
+			map_light = MAX_DARKNESS;
+		else
+			map_light = MAP_DARKNESS(spoint->map);
+	}
+
+	if(darkness < 0)
+	{
+		if(map_light < -darkness)
+			return 1;
+	}
+	else
+	{
+		if(map_light > darkness)
+			return 1;
+	}
+	return 0;
+}
+
 
 /* central spawn point function.
  * Control, generate or remove the generated object.
@@ -2667,8 +2744,24 @@ void spawn_point(object *op)
 	if(op->enemy)
 	{
 		if(OBJECT_VALID(op->enemy, op->enemy_count)) /* all ok, our spawn have fun */
-			return;
-		op->enemy = NULL;
+		{
+			if(op->last_eat) /* check darkness if needed */
+			{
+				/* 1 = darkness is ok */
+				if(spawn_point_darkness(op, op->last_eat))
+					return;
+									
+				/* darkness has changed - now remove the spawned monster */
+				SET_MULTI_FLAG(op->enemy, FLAG_NO_APPLY);
+				remove_ob(op->enemy);
+				SET_FLAG(op->enemy,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
+				free_object(op->enemy);
+
+			}
+			else
+				return;
+		}
+		op->enemy = NULL; /* spawn point has nothing spawned */
 	}
 
 
@@ -2688,6 +2781,14 @@ void spawn_point(object *op)
 											op->map?op->map->name:"<no map>", op->x, op->y, tmp->type, query_name(tmp));
 		else if((int)tmp->enemy_count <= op->stats.sp && (int)tmp->enemy_count >= rmt)
 		{
+			/* we have a possible hit - control special settings now */
+			if(tmp->last_eat) /* darkness */
+			{
+				/* 1: darkness on map of spawn point is ok */
+				if(!spawn_point_darkness(op, tmp->last_eat))
+					continue;
+			}
+
 			rmt = (int)tmp->enemy_count;
 			mob = tmp;
 		}
@@ -2703,6 +2804,14 @@ void spawn_point(object *op)
 	tmp = mob->inv; /* quick save the def mob inventory */
 	if(!(mob = spawn_monster(mob, op, op->last_heal)))
 		return; /* that happens when we have no free spot....*/
+	
+	/* setup special monster -> spawn point values */
+	op->last_eat = 0;
+	if(mob->last_eat) /* darkness controled spawns */
+	{
+		op->last_eat = mob->last_eat;
+		mob->last_eat = 0;
+	}
 
 	/* we have a mob - now insert a copy of all items the spawn point mob has.
 	 * take care about RANDOM DROP objects.
@@ -2755,43 +2864,3 @@ void spawn_point(object *op)
     insert_ob_in_map(mob,mob->map,op,0); /* *now* all is done - *now* put it on map */
 }
 
-/* drop a monster on the map, by copying a monster object or
- * monster object head. Add treasures.
- */
-static object *spawn_monster(object *gen, object *orig, int range) 
-{
-  int i;
-  object *op,*head=NULL,*prev=NULL, *ret=NULL;
-  archetype *at=gen->arch;
-
-  i=find_free_spot(at,orig->map,orig->x,orig->y,0,range);
-  if (i==-1)
-	  return NULL; 
-  while(at!=NULL) {
-	op = get_object();
-    if(head==NULL) /* copy single/head from spawn inventory */
-	{
-		gen->type = MONSTER;
-		copy_object(gen,op);
-		gen->type = SPAWN_POINT_MOB;
-		ret = op;
-	}
-	else /* but the tails for multi arch from the clones */
-	{
-		copy_object(&at->clone,op);
-	}
-    op->x=orig->x+freearr_x[i]+at->clone.x;
-    op->y=orig->y+freearr_y[i]+at->clone.y;
-	op->map = orig->map;
-    if(head!=NULL)
-      op->head=head,prev->more=op;
-    if (QUERY_FLAG(op, FLAG_FREED)) return NULL;
-    if(op->randomitems!=NULL)
-      create_treasure(op->randomitems,op,0,orig->map->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0);
-    if(head==NULL)
-      head=op;
-    prev=op;
-    at=at->more;
-  }
-  return ret; /* return object ptr to our spawn */
-}

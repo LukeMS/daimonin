@@ -4175,13 +4175,6 @@
     random start value. This will avoid for generated objects of same 
     type thats they act totally synchron.
   </attribute>
-  <attribute arch="object_int1" editor="chance to spawn" type="int">
-    The spawn point will use a random number between 0-9999 to
-    find a usable mob to spawn. If this value is nearest but
-    not higher, this mob is selected. A number of 0 and only one
-    mob in the spawn point means this mob is spawned always. A 
-    number of 5000 means a 50% chance to spawn.
-  </attribute>
   <attribute arch="other_arch" editor="breed monster" type="string">
     This only takes effect if &lt;multiply&gt; is enabled. The monster will
     create a &lt;breed monster&gt; every once in a while. &lt;breed monster&gt;
@@ -4212,6 +4205,26 @@
     value can be set to reflect the slowdown due to
     the carried weight.
   </attribute>
+<section name="spawn-settings">
+  <attribute arch="object_int1" editor="chance to spawn" type="int">
+    The spawn point will use a random number between 0-9999 to
+    find a usable mob to spawn. If this value is nearest but
+    not higher, this mob is selected. A number of 0 and only one
+    mob in the spawn point means this mob is spawned always. A 
+    number of 5000 means a 50% chance to spawn.
+  </attribute>
+  <attribute arch="last_eat" editor="darkness to spawn" type="int">
+    The monster will a.) only spawn when this dark settings are same
+    like the map darkness or world darkness (outdoor flag set) is equal.
+    b.) if the monster is set from the spawn point and the darkness change
+    to a invalid value, the spawn point remove the monster.
+    A positive darkness value means "if higher".
+    A negative darkness value means "if lower" from absolute value.
+    A value of 4 means monster will be shown until darkness drops to 4 or lower.
+    A value of -4 means monster will be shown until darkness is 4 or higher.
+    Note that this is a exclusive notation. 0 means "show always" (default).
+  </attribute>
+</section>
 <section name="melee">
   <attribute arch="dam" editor="damage" type="int">
     Among other parameters, &lt;damage&gt; affects how much melee damage

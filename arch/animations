@@ -619,6 +619,34 @@ door_wood2.132
 door_wood2.131
 door_wood2.132
 mina
+anim dragon_water_small
+facings 25
+trans.101
+dragon_water.131
+dragon_water.131
+dragon_water.131
+dragon_water.131
+dragon_water.151
+dragon_water.151
+dragon_water.151
+dragon_water.151
+dragon_water.131
+dragon_water.131
+dragon_water.131
+dragon_water.131
+dragon_water.151
+dragon_water.151
+dragon_water.151
+dragon_water.151
+dragon_water.131
+dragon_water.131
+dragon_water.131
+dragon_water.131
+dragon_water.151
+dragon_water.151
+dragon_water.151
+dragon_water.151
+mina
 anim exit
 exit.101
 exit.102
