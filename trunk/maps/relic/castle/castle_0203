@@ -405,7 +405,6 @@ x 3
 end
 arch stair_down
 is_invisible 1
-slaying
 x 3
 end
 arch floor_fs_grey1a
@@ -2448,7 +2447,6 @@ y 7
 end
 arch door_wood1
 direction 3
-slaying
 x 17
 y 7
 end
@@ -3431,7 +3429,6 @@ y 18
 end
 arch door_wood1
 direction 3
-slaying
 x 23
 y 18
 end

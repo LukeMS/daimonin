@@ -2105,7 +2105,6 @@ y 17
 end
 arch door_wood1
 direction 3
-slaying
 x 17
 y 17
 end
@@ -2912,7 +2911,6 @@ y 7
 end
 arch door_wood1
 direction 3
-slaying
 x 23
 y 7
 end
@@ -3018,7 +3016,6 @@ y 19
 end
 arch door_wood1
 direction 3
-slaying
 x 23
 y 19
 end
