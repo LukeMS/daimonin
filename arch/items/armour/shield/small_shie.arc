@@ -3,7 +3,7 @@ name small shield
 face small_shie.101
 type 33
 layer 3
-ac 1
+ac 2
 is_vul_physical 1
 is_vul_elemental 1
 is_vul_magic 1
