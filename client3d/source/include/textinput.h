@@ -28,6 +28,8 @@ http://www.gnu.org/copyleft/lesser.txt.
 
 using namespace std;
 
+enum { INPUT_MODE_TEXT, INPUT_MODE_CURSOR_SELECTION, INPUT_MODE_SUM };
+
 class TextInput
 {
   public:
@@ -54,6 +56,7 @@ class TextInput
 		mStrTextInput= ""; 
 		mSize =0;
 		mInProgress  = false;
+		mChange = false;
 	}
 
 	const char *getString()
@@ -62,11 +65,12 @@ class TextInput
 	}
 
 
-	void start(int maxChars, bool useNumbers = true, bool useWhitespaces = true)
+	void startTextInput(int maxChars, bool useNumbers = true, bool useWhitespaces = true)
 	{
 		// we start only over, if the last operation was ended.
 		if (mInProgress == true) { return; }
 		mInProgress      = true;
+		mInputMode = INPUT_MODE_TEXT;
 		mFinished        = false;
 		mCanceled        = false;
 		mUseNumbers      = useNumbers;
@@ -74,31 +78,72 @@ class TextInput
 		mMaxChars    = maxChars;
 	}
 
-	void addChar(const char addChar )
+
+	//=================================================================================================
+	// Init a cursor selection input.
+	// Returns true if it is the first call (will be used for init overlay elements only once).
+	//=================================================================================================
+	bool startCursorSelection(unsigned int minValue, unsigned int maxValue, unsigned int startValue=0)
+	{
+		if (mInProgress == true) { return false; }
+		mInProgress      = true;
+		mInputMode = INPUT_MODE_CURSOR_SELECTION;
+		mFinished        = false;
+		mCanceled        = false;
+		mActValue = startValue;
+		mMaxValue = maxValue-1;
+		mMinValue = minValue;
+		return true;
+	}
+
+	void keyEvent(const unsigned char keyChar, const unsigned char key)
 	{ 
-		if (mStrTextInput.size() >= mMaxChars) return;
-		if (!mUseNumbers    && (addChar >= '0' && addChar <= '9')) return;
-		if (!mUseWhitespaces && (addChar <'A' || addChar > 'z' 
-			|| (addChar >'Z' && addChar < 'a'))	) return;
-			
-		mStrTextInput+= addChar;
-		++mSize;
+		if (mInputMode == INPUT_MODE_TEXT)
+		{
+			if (!keyChar || mStrTextInput.size() >= mMaxChars) return;
+			if (!mUseNumbers    && (keyChar >= '0' && keyChar <= '9')) return;
+			if (!mUseWhitespaces && (keyChar <'A' || keyChar > 'z' 
+				|| (keyChar >'Z' && keyChar < 'a'))	) return;
+			mStrTextInput+= keyChar;
+			++mSize;
+		}
+		else
+		{
+			unsigned int change = mActValue;
+			if		(key == 0xC8) { if (mActValue > mMinValue) --mActValue; } // cursor up.
+			else if	(key == 0xD0) { if (mActValue < mMaxValue) ++mActValue; } // cursor down.
+			if (change != mActValue) mChange =true;
+		}
 	}
 	
-	void delLastChar()
+	void backspace()
 	{ 
-		if (mStrTextInput.size())
+		if (mInputMode == INPUT_MODE_TEXT && mStrTextInput.size())
 		{ 
 			mStrTextInput.resize(mStrTextInput.size()-1); 
 			--mSize;
 		}
 	}
 
+	int getInputMode() { return mInputMode; }
+	unsigned int getSelCursorPos() { return mActValue;  }
+	bool getChange()
+	{
+		if (!mChange) { return false; }
+		mChange = false;
+		return true;
+	}
+
+
+
   private:
+	bool mChange;
+	unsigned int mMinValue, mActValue, mMaxValue;
 	bool mFinished, mCanceled, mInProgress;
 	unsigned int  mMaxChars;
 	int mSize;
 	bool mUseNumbers;
+	int mInputMode;
 	bool mUseWhitespaces;
     TextInput(const TextInput&); // disable copy-constructor.
 	string mStrTextInput;
