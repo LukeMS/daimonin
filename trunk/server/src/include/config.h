@@ -467,7 +467,7 @@
  * have an watchdog program.
  */
 #ifndef WIN32	/* ***win32 disable watchdog as win32 default */
-#define WATCHDOG
+/*#define WATCHDOG*/
 #endif
 
 /***********************************************************************

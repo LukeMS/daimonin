@@ -22,9 +22,7 @@
 
     The author can be reached via e-mail to daimonin@nord-com.net
 */
-/* Eneq(@csd.uu.se): Added weight-modifiers in environment of objects.
-   sub/add_weight will transcend the environment updating the carrying
-   variable. */
+
 #include <global.h>
 #ifndef WIN32 /* ---win32 exclude headers */
 #include <stdio.h>

@@ -1617,7 +1617,8 @@ void do_throw(object *op, object *toss_item, int dir) {
        wall(op->map,op->x+freearr_x[dir],op->y+freearr_y[dir])) {
 
 	/* bounces off 'wall', and drops to feet */
-	 remove_ob(throw_ob);
+	if(!QUERY_FLAG(throw_ob,FLAG_REMOVED))
+             remove_ob(throw_ob);
 	 throw_ob->x = op->x; throw_ob->y = op->y;
 	 insert_ob_in_map(throw_ob,op->map,op,0);
 	if(op->type==PLAYER) {
