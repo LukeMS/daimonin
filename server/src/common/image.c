@@ -113,6 +113,12 @@ int ReadBmapNames()
             continue;
         }
         value = atoi(p);
+
+        /* Kill the newline */
+        i = strlen(q) - 1;
+        while(isspace(q[i]) && i >= 0)
+            q[i--] = '\0';
+        
         xbm[nroffiles].name = strdup_local(q);
 
         /* We need to calculate the checksum of the bmaps file
