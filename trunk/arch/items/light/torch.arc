@@ -11,7 +11,7 @@ mina
 is_animated 0
 anim_speed 4
 material 144
-value 15
+value 10
 weight 500
 maxhp 500
 food 500

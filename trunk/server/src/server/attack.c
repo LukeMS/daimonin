@@ -1497,9 +1497,15 @@ object *hit_with_arrow (object *op, object *victim)
         }
 
         /* Try to stick arrow into victim */
+		/* disabled - this will not work very well now with
+		 * the loot system of corpses.. if several people shot
+		 * at same guys.
+		 */
+		/*
         if ( ! was_destroyed (victim, victim_tag)
              && stick_arrow (hitter, victim))
             return NULL;
+		*/
 
         /* Else try to put arrow on victim's map square */
         if ((victim_x != hitter->x || victim_y != hitter->y)

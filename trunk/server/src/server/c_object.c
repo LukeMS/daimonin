@@ -261,7 +261,7 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 			tmp = ObjectCreateClone(tmp);
 			CLEAR_FLAG(tmp, FLAG_NO_PICK);
 			SET_FLAG(tmp, FLAG_STARTEQUIP);
-			sprintf(buf,"You pick up a %s from the storage.", query_name(tmp));
+			sprintf(buf,"You pick up %s from the storage.", query_name(tmp));
 		}
 		else /* this is a unique shop item */
 			sprintf(buf,"%s will cost you %s.", query_name(tmp),

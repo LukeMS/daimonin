@@ -4,7 +4,7 @@ name giant spiked club
 face club_giant_spiked.101
 weapon_speed 0.0175
 attack_impact 100
-item_level 11
+item_level 10
 item_skill 4
 dam 8
 wc 6

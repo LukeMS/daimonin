@@ -424,14 +424,15 @@ int get_payment2 (object *pl, object *op) {
 
 	    CLEAR_FLAG(op, FLAG_UNPAID);
 	    CLEAR_FLAG(op, FLAG_STARTEQUIP);
+	    if (pl->type == PLAYER) 
+			new_draw_info_format(NDI_UNIQUE, 0, pl, "You paid %s for %s.",buf,query_name(op));
 	    tmp=merge_ob(op,NULL);
-	    if (pl->type == PLAYER) {
-		    new_draw_info_format(NDI_UNIQUE, 0, pl,
-						"You paid %s for %s.",buf,query_name(op));
-		if (tmp) {      /* it was merged */
-		    esrv_del_item (pl->contr, c, c_cont);
-		    op = tmp;
-		}
+	    if (pl->type == PLAYER) 
+		{
+			if (tmp) {      /* it was merged */
+				esrv_del_item (pl->contr, c, c_cont);
+				op = tmp;
+			}
 	        esrv_send_item(pl, op);
 	    }
 	}

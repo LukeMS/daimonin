@@ -5,7 +5,7 @@ face bo.101
 weapon_speed 0.02
 attack_impact 100
 dam 8
-item_level 11
+item_level 10
 item_skill 4
 wc 7
 type 15

@@ -2878,22 +2878,31 @@ object *get_split_ob(object *orig_ob,int nr) {
             insert_ob_in_ob(event, newob);
         }
     }
-                
-    if((orig_ob->nrof-=nr)<1) {
-	if ( ! is_removed)
-            remove_ob(orig_ob);
-	free_object(orig_ob);
+    if(QUERY_FLAG(orig_ob, FLAG_UNPAID) && QUERY_FLAG(orig_ob, FLAG_NO_PICK))
+	; /* clone objects .... */
+	else
+		orig_ob->nrof-=nr;
+
+    if(orig_ob->nrof<1) 
+	{
+		
+		if ( ! is_removed)
+		        remove_ob(orig_ob);
+		free_object(orig_ob);
     }
-    else if ( ! is_removed) {
-	if(orig_ob->env!=NULL)
-	    sub_weight (orig_ob->env,orig_ob->weight*nr);
-	if (orig_ob->env == NULL && orig_ob->map->in_memory!=MAP_IN_MEMORY) {
-	    strcpy(errmsg, "Tried to split object whose map is not in memory.");
-	    LOG(llevDebug,
-		    "Error, Tried to split object whose map is not in memory.\n");
-	    return NULL;
-	}
+    else if ( ! is_removed) 
+	{
+		if(orig_ob->env!=NULL)
+			sub_weight (orig_ob->env,orig_ob->weight*nr);
+		if (orig_ob->env == NULL && orig_ob->map->in_memory!=MAP_IN_MEMORY) 
+		{
+			strcpy(errmsg, "Tried to split object whose map is not in memory.");
+			LOG(llevDebug,
+			    "Error, Tried to split object whose map is not in memory.\n");
+			return NULL;
+		}
     }
+
     newob->nrof=nr;
     return newob;
 }
