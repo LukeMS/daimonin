@@ -20,7 +20,7 @@ and the daimonin3d.exe is in (aka. /client3d ).
 Install Linux
 ---------------
 
-** We have to write makefiles first - no compile/run test atm **
+There is an Anjuta Project file with howto.
 
 
 HOW TO EXCHANGE THE MODEL

@@ -58,14 +58,6 @@ int main(int argc, char **argv)
     // Create application object
 	DaimoninClient client;
 
-    LogFile::getSingelton().Init("client_log.html");
-	LogFile::getSingelton().Headline("Init Options");
-    Option ::getSingelton().Init("options.dat");
-    read_settings();
-    read_spells();
-    read_skills();
-    read_anims();
-
 	// Init & start fmod
     FMUSIC_MODULE *mod = NULL;
 	char buf[256];

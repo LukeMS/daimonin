@@ -21,85 +21,59 @@ http://www.gnu.org/copyleft/lesser.txt.
 -----------------------------------------------------------------------------
 */
 
-#include "option.h"
+#include <fstream>
+#include <sstream>
+#include <iterator>
+#include <iomanip>
+#include "serverfile.h"
+#include "logfile.h"
+#include "xyz.h"
+#include "zlib.h"
 
-
-enum
-{
-    SEL_BUTTON,
-    SEL_CHECKBOX,
-    SEL_RANGE,
-    SEL_TEXT
-}; /* selection types */ 
-
-_options options;
-
-struct _option opt[] =
-{
-    /* Sound */
-    {"Sound volume:", "set sound volume for effects.","", "",SEL_RANGE, 0,100,5,100, &options.sound_volume, VAL_INT},
-    {"Music volume:", "set music volume for background.","Sub info","", SEL_RANGE, 0,100,5,80, &options.music_volume, VAL_INT},
-    {"#"},
-    /* End of Page */
-
-    {0} /* End of Options */
-}; 
-
-
+using namespace std;
 
 //=================================================================================================
-// Create/Overwrite the Optionfile.
+// Get length and checksum from (server sended) files.
 //=================================================================================================
-bool Option::Init(char *filename)
+void ServerFile::getFileAttibutes(int file_enum)
 {
+    setStatus(file_enum, SERVER_FILE_STATUS_OK);
+	setLength(file_enum, SERVER_FILE_STATUS_OK);
+	setCRC   (file_enum, SERVER_FILE_STATUS_OK);
 
-
-    _options  *ptions = &options; 
-
-
-/*
-	for (int i=0; opt[i].name; ++i)
-    {
-		if (opt[i].name[0] == '#') { continue; }
-        opt[i].clean_memory = false;
-
-
-        //*((int*) opt[i].int_value) = i;
-
-		int val = opt[i].int_value;
-		opt[i].int_value = i;
-
-		// *((bool *) opt[i].value)
-        if (opt[i].name[0])
-		{   // int value. 
-            opt[i].val_actual = opt[i].val_default;
-		}
-		else
-		{  // string value.
-			opt[i].val_actual = 0; // offset to defualt string.
-            //opt[i].str_value  = 
-		}
-	}
-*/	
-
-  
-    return true;
- }
-
-//=================================================================================================
-// Destructor.
-//=================================================================================================
-Option::~Option()
-{
-/*
-    for (int i=0; opt[i].name; ++i)
-    { 
-		if (opt[i].name[0] == '#') { continue; }
-        if (opt[i].clean_memory == true)  { delete[] opt[i].val_text; }
-	}	
-*/
+    LogFile::getSingelton().Info("- Reading Attributes from %s...", srv_file[file_enum].filename);
+    ifstream in(srv_file[file_enum].filename, ios::in|ios::binary);
+    if (!in)
+	{ 
+        LogFile::getSingelton().Info("File not found.\n");
+		return;
+	} 
+	ostringstream out(ios::binary);
+	in.unsetf(ios::skipws); // don't skip whitespace  (!ios::skipws and ios::binary must be set).
+    copy(istream_iterator<char>(in), istream_iterator<char>(), ostream_iterator<char>(out));
+    setCRC   (file_enum, crc32(1L, (const unsigned char *)out.str().c_str(),  out.str().size()));
+    setLength(file_enum, out.str().size());
+    LogFile::getSingelton().Info("(Size: %d)l\n", out.str().size(), srv_file[file_enum].length);    
 }
 
 //=================================================================================================
-// Returns the option as string.
+// Get length and checksum from (server sended) files.
 //=================================================================================================
+void ServerFile::checkFiles()
+{
+    LogFile::getSingelton().Info("Checking all files coming from server:\n");
+    for (int i=0; i< SERVER_FILE_SUM; i++)
+	{ 
+		getFileAttibutes(i);
+	}
+    LogFile::getSingelton().Info("\n");
+}
+
+//=================================================================================================
+// Return the instance.
+//=================================================================================================
+ServerFile &ServerFile::getSingelton()
+{
+   static ServerFile singelton;
+   return singelton;
+}

@@ -1,0 +1,20 @@
+Daimonin client3d
+-----------------
+
+Anjuta HowTo:
+
+1) Copy the all files to ~/daimonin/client3d
+2) Edit the plugins.cfg if needed.
+3) Load the project into anjuta.
+4) If fmod is not in /usr/local/include ; /usr/local/lib 
+   set in Compiler and Linker option your library and include path.
+5) In Compiler and Linker option replace the include path with
+   your own. If it is already there (if your username is andreas, too)
+   Delete it and type in again. Cause anjuta will only generate
+   the makefile stuff if there was a chnge.
+6) You are asked for a complete rebuild. say yes. 
+   Now anjuta creates the makefile stuff.
+7) build->autogenerate.
+
+<polyveg>
+   

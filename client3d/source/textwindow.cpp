@@ -24,9 +24,6 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "textwindow.h"
 #include "logfile.h"
 
-CTextwindow *ChatWin=0, *TextWin=0;
-
-
 //=================================================================================================
 // Init all static Elemnts.
 //=================================================================================================
@@ -42,7 +39,7 @@ CTextwindow::CTextwindow(std::string title, Real Xpos, Real height, bool visible
 	/////////////////////////////////////////////////////////////////////////
 	std::string name= StringConverter::toString(mInstanceNr)+"_TextWindow/";    
     mOverlay        = OverlayManager::getSingleton().create(name + "Overlay");
-    mOverlay->setZOrder(500);
+    mOverlay->setZOrder(510-mInstanceNr);
 	mContainerFrame = static_cast<OverlayContainer*>(OverlayManager::getSingleton().
 		cloneOverlayElementFromTemplate("TextWindow/Frame", name + "Frame"));
 	mOverlay->add2D(mContainerFrame);
@@ -66,8 +63,6 @@ CTextwindow::CTextwindow(std::string title, Real Xpos, Real height, bool visible
     mElementTitle ->setWidth(-Xpos-mElementButUp->getWidth()*2);   
     mElementButUp  ->setLeft(-Xpos-mElementButUp->getWidth()*2);
     mElementButDown->setLeft(-Xpos-mElementButUp->getWidth());
-
-    
     mElementTitleTxt0= OverlayManager::getSingleton().
         cloneOverlayElementFromTemplate("TextWindow/TitleText", name+"Title0");
     mElementTitleTxt0->setCaption(title);
@@ -80,15 +75,14 @@ CTextwindow::CTextwindow(std::string title, Real Xpos, Real height, bool visible
         cloneOverlayElementFromTemplate("TextWindow/TitleText", name+"Title1");
     mElementTitleTxt1->setCaption(title);
     static_cast<OverlayContainer*>(mElementTitle)->addChild(mElementTitleTxt1);
-
-
-
-
  	++mInstanceNr;
 
     ///////////////////////////////////////////////////////////////////////// 
     // Init all variables.
 	/////////////////////////////////////////////////////////////////////////
+	mChild        = 0;
+    mParent       = 0;
+
     mMinHeight    = -mElementTitle->getHeight();
 	mMaxHeight    = -FONT_SIZE * MAX_TEXT_LINES;
     if (-height < mMaxHeight) height = mMaxHeight;
@@ -102,9 +96,6 @@ CTextwindow::CTextwindow(std::string title, Real Xpos, Real height, bool visible
     mBufferPos    = 0;
     mPrintPos     = 0;
 	mRowsToScroll = 0;
-	mChild        = 0;
-    mParent       = 0;
-	mParent       = 0;
     mScroll       = 0;
     setVisible(visible);
 }
@@ -173,7 +164,6 @@ void CTextwindow::Update()
 			    top = mParent->mContainerFrame->getTop()+mMinHeight;;
                 mIsClosing = false;
             }
-
         }
         mContainerFrame->setTop(top);
         SizeChanged();
@@ -202,7 +192,7 @@ void CTextwindow::Update()
 	///////////////////////////////////////////////////////////////////////// 
     // Scroll the text.
 	/////////////////////////////////////////////////////////////////////////
-    Scrolling();
+    if (mRowsToScroll) { Scrolling(); }
 }
 
 //=================================================================================================
@@ -260,7 +250,7 @@ void CTextwindow::SizeChanged()
     else
         mFirstYPos = -mContainerFrame->getTop();
     mContainerFrame->setHeight(mFirstYPos);
-    mSumRows   = (mFirstYPos+6) / FONT_SIZE;
+    mSumRows   = (int) ((mFirstYPos+6) / FONT_SIZE);
     if (mSumRows > MAX_TEXT_LINES) { mSumRows = MAX_TEXT_LINES; }
     int i=0;
     for (; i < mSumRows; ++i)
@@ -283,7 +273,6 @@ void CTextwindow::DockChild()
     if (!mChild) { return; }
     mChild->mContainerFrame->setTop(mContainerFrame->getTop()-mChild->mContainerFrame->getHeight());
 }
-
 
 //=================================================================================================
 // Add a line of text.

@@ -39,6 +39,7 @@ typedef struct _options
     char  metaserver[256];
     int   metaserver_port;
 }_options; 
+extern _options  options; 
 
 typedef struct _option
 {
