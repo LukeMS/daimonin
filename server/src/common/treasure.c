@@ -74,6 +74,7 @@ void load_treasures()
     treasurelist*previous = NULL, *tl_tmp;
     treasure               *t;
     int                     comp, t_style, a_chance;
+    char                    dummy[10];
 
     sprintf(filename, "%s/%s", settings.datadir, settings.treasures);
 
@@ -87,7 +88,7 @@ void load_treasures()
     {
         if (*buf == '#' || *buf == '\n' || *buf == '\r')
             continue;
-        if (sscanf(buf, "treasureone %s%[\n\r]", name, NULL) || sscanf(buf, "treasure %s%[\n\r]", name, NULL))
+        if (sscanf(buf, "treasureone %s%[\n\r]", name, dummy) || sscanf(buf, "treasure %s%[\n\r]", name, dummy))
         {
             treasurelist   *tl  = get_empty_treasurelist();
             FREE_AND_COPY_HASH(tl->listname, name);
