@@ -1,7 +1,7 @@
-Object chest_w1
+Object chest_sw_1
 name chest
-other_arch close_chest_w1_1
-face chest_lw_closed.111
+other_arch close_chest_sw_1
+face chest_sw_closed.111
 layer 4
 level 1
 no_pick 1
@@ -13,10 +13,10 @@ container 500000
 weight 15000
 Str 5
 end
-Object chest_w1_7
+Object chest_sw_7
 name chest
-other_arch close_chest_w1_7
-face chest_lw_closed.171
+other_arch close_chest_sw_7
+face chest_sw_closed.171
 layer 4
 level 1
 no_pick 1
