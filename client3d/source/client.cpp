@@ -59,7 +59,6 @@ bool DaimoninClient::setup(void)
     if (! configure() ) { return false; }
 
     Network::getSingelton().Init();
-
     chooseSceneManager();
     createCamera();
     createViewports();
@@ -158,7 +157,7 @@ void DaimoninClient::createScene(void)
     l->setDiffuseColour(0.5, 1.0, 0.5);
     mFrameListener->World->attachObject(l);
 
-    mWindow->setDebugText("Press 'L' for localhost login -- Server must run, or framerate will drop :)");
+    mWindow->setDebugText("Press 'L' for localhost login -- Server must run");
 
 
     Entity* ent;

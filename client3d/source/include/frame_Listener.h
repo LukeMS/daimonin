@@ -41,7 +41,6 @@ http://www.gnu.org/copyleft/lesser.txt.
 using namespace Ogre;
 
 
-
 class Frame_Listener: public FrameListener, public KeyListener, public MouseMotionListener, public MouseListener
 {
   private:
@@ -90,11 +89,37 @@ class Frame_Listener: public FrameListener, public KeyListener, public MouseMoti
 		// Create all Overlays.
 		/////////////////////////////////////////////////////////////////////////////////////////
         mDebugOverlay = OverlayManager::getSingleton().getByName("Core/DebugOverlay");
+        showDebugOverlay(true);
         mMouseCursor  = OverlayManager::getSingleton().getByName("CursorOverlay");        
         mMouseX = mMouseY =0;
 		mMouseCursor->show();
-        Dialog    ::getSingelton().Init();
-        Textwindow::getSingelton().Init();
+        Dialog::getSingelton().Init();
+        TextWin = new CTextwindow("Message Window", -280, 300);
+        ChatWin = new CTextwindow("Chat Window"   , -280, 300);
+        TextWin->setChild(ChatWin);
+
+		ChatWin->Print("Welcome to Daimonin 3D.  ", ColourValue::Black); 
+		ChatWin->Print("-----------------------  ", ColourValue::Black);
+        ChatWin->Print("Checking your sytem...   ", ColourValue::White);
+        ChatWin->Print("...                      ", ColourValue::White);
+        ChatWin->Print("Harddisk space is ok.    ", ColourValue::Green);
+        ChatWin->Print("Memory space is ok.      ", ColourValue::Green);
+        ChatWin->Print("Video card test skipped. ", ColourValue::White);
+        ChatWin->Print("Processor test faild!!   ", ColourValue::Red);
+        ChatWin->Print(" Whats this, a toaster?  ", ColourValue::White);
+        ChatWin->Print(" Sorry, you need at least", ColourValue::White);
+        ChatWin->Print(" 4.5 more GHz.           ", ColourValue::White);
+
+		TextWin->Print("Perhaps we should add a ");
+		TextWin->Print("system-info window.");
+        TextWin->Print("For all non gaming stuff");
+		TextWin->Print("like system messages");
+		TextWin->Print("We WILL get a new (non docked)", ColourValue::Blue);
+        TextWin->Print("window.", ColourValue::Blue);
+		TextWin->Print("For talking to mobs.", ColourValue::Blue);
+		TextWin->Print("Keep coding...", ColourValue::White);
+		TextWin->Print("<polyveg>", ColourValue::White);
+
 
 		/////////////////////////////////////////////////////////////////////////////////////////
 		// .
@@ -136,13 +161,15 @@ class Frame_Listener: public FrameListener, public KeyListener, public MouseMoti
         mAniso = 1;
         mFiltering = TFO_BILINEAR;
 
-        showDebugOverlay(true);
+
     }
 
     ~Frame_Listener()
     {
 		if (mInputTypeSwitchingOn) { delete mEventProcessor; }
         else                       { PlatformManager::getSingleton().destroyInputReader( mInputDevice ); }
+        if (TextWin) delete TextWin;
+        if (ChatWin) delete ChatWin;
     }
 
 
@@ -256,9 +283,9 @@ class Frame_Listener: public FrameListener, public KeyListener, public MouseMoti
 		{
 			mSceneDetailIndex = (mSceneDetailIndex+1)%3 ;
 			switch(mSceneDetailIndex) {
-				case 0 : mCamera->setDetailLevel(SDL_SOLID) ; break ;
+				case 0 : mCamera->setDetailLevel(SDL_SOLID) ;     break ;
 				case 1 : mCamera->setDetailLevel(SDL_WIREFRAME) ; break ;
-				case 2 : mCamera->setDetailLevel(SDL_POINTS) ; break ;
+				case 2 : mCamera->setDetailLevel(SDL_POINTS) ;    break ;
 			}
 			mTimeUntilNextToggle = 0.5;
 		}
@@ -394,6 +421,10 @@ class Frame_Listener: public FrameListener, public KeyListener, public MouseMoti
 		return true;
     }
 
+    /////////////////////////////////////////////////////////////////////////////////////////
+    //
+    /////////////////////////////////////////////////////////////////////////////////////////
+
     bool frameEnded(const FrameEvent& evt)
     {
         static String currFps  = "Current FPS: ";
@@ -425,11 +456,9 @@ class Frame_Listener: public FrameListener, public KeyListener, public MouseMoti
             OverlayElement* guiDbg = OverlayManager::getSingleton().getOverlayElement("Core/DebugText");
             guiDbg->setCaption(mWindow->getDebugText());
 
-
-            /////////////////////////////////////////////////////////////////////////////////////////
-            // Create all Overlays.
-            /////////////////////////////////////////////////////////////////////////////////////////
-            Textwindow::getSingelton().Update();
+			TextWin->Update();
+            
+			ChatWin->Update();
 
 		}
         catch(...)
@@ -439,6 +468,9 @@ class Frame_Listener: public FrameListener, public KeyListener, public MouseMoti
         return true;
     }
 
+    ///////////////////////////////////////////////////////////////////////// 
+    // Key Events.
+	/////////////////////////////////////////////////////////////////////////
 	void switchKeyMode() 
 	{
         mUseBufferedInputKeys = !mUseBufferedInputKeys;
@@ -454,12 +486,13 @@ class Frame_Listener: public FrameListener, public KeyListener, public MouseMoti
 	}
 
 
-
 	void keyPressed (KeyEvent* e) {}
 	void keyReleased(KeyEvent* e) {}
 
-
-    void mouseMoved (MouseEvent *e)
+    ///////////////////////////////////////////////////////////////////////// 
+    // Mouse Events.
+	/////////////////////////////////////////////////////////////////////////
+     void mouseMoved (MouseEvent *e)
 	{
         mMouseX += e->getRelX();
 		mMouseY += e->getRelY();
@@ -469,49 +502,52 @@ class Frame_Listener: public FrameListener, public KeyListener, public MouseMoti
 
     void mouseDragged(MouseEvent *e)
 	{
-		if (!Textwindow::getSingelton().MouseAction(M_DRAGGED, mMouseX, mMouseY, e->getRelY()*mSreenHeight))
-			return;
+		if (!TextWin->MouseAction(M_DRAGGED, mMouseX, mMouseY, e->getRelY()*mSreenHeight)) { return; }
+		if (!ChatWin->MouseAction(M_DRAGGED, mMouseX, mMouseY, e->getRelY()*mSreenHeight)) { return; }
 		mouseMoved(e);
         e->consume();
 	}
 
     void mouseClicked (MouseEvent *e)
 	{
-		if (!Textwindow::getSingelton().MouseAction(M_CLICKED, mMouseX, mMouseY)) { return; }
+		if (!TextWin->MouseAction(M_CLICKED, mMouseX, mMouseY)) { return; }
+		if (!ChatWin->MouseAction(M_CLICKED, mMouseX, mMouseY)) { return; }
 		mouseMoved(e);
         e->consume();
 	}
 
     void mouseEntered (MouseEvent *e)
 	{
-		Textwindow::getSingelton().MouseAction(M_ENTERED, mMouseX, mMouseY);
+        TextWin->MouseAction(M_ENTERED, mMouseX, mMouseY);
+        ChatWin->MouseAction(M_ENTERED, mMouseX, mMouseY);
 		mouseMoved(e);
         e->consume();
 	}
 
     void mouseExited  (MouseEvent *e)
 	{
-		Textwindow::getSingelton().MouseAction(M_EXITED,mMouseX, mMouseY);
+		TextWin->MouseAction(M_EXITED,mMouseX, mMouseY);
+		ChatWin->MouseAction(M_EXITED,mMouseX, mMouseY);
 		mouseMoved(e);
         e->consume();
 	}
 
 	void mousePressed (MouseEvent *e)
 	{
-		Textwindow::getSingelton().MouseAction(M_PRESSED, mMouseX, mMouseY);
+		TextWin->MouseAction(M_PRESSED, mMouseX, mMouseY);
+		ChatWin->MouseAction(M_PRESSED, mMouseX, mMouseY);
 		mouseMoved(e);
         e->consume();
 	}
 
 	void mouseReleased(MouseEvent *e)
 	{
-		Textwindow::getSingelton().MouseAction(M_RELEASED, mMouseX, mMouseY);
+    	LogFile::getSingelton().Info("Pressed\n");
+		TextWin->MouseAction(M_RELEASED, mMouseX, mMouseY);
+		ChatWin->MouseAction(M_RELEASED, mMouseX, mMouseY);
 		mouseMoved(e);
         e->consume();
 	}
-
-
-
 };
 
 #endif

@@ -187,7 +187,7 @@ SOURCE=..\..\..\source\include\inftrees.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\source\include\uncompr.c
+SOURCE=..\..\..\source\uncompr.c
 # End Source File
 # Begin Source File
 

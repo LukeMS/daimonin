@@ -26,7 +26,6 @@ http://www.gnu.org/copyleft/lesser.txt.
 
 #include <Ogre.h>
 #include <string>
-#include <vector>
 #include "xyz.h"
 
 using namespace Ogre;
@@ -34,53 +33,74 @@ using namespace Ogre;
 ////////////////////////////////////////////////////////////
 // Defines.
 ////////////////////////////////////////////////////////////
-const Real CLOSING_SPEED =   10.0f;
-const Real SCROLL_SPEED  =    0.5f;
-const Real FONT_SIZE     =   16.0f;
-const int  MAX_TEXT_LINES=   12;
+const Real CLOSING_SPEED      =   10.0f;  // default: 10.0f  
+const Real SCROLL_SPEED       =    1.0f;  // default:  1.0f
+const Real FONT_SIZE          =   16.0f;  // default: 16.0f
+const int  MAX_TEXT_LINES     =   20;
+const int  SIZE_STRING_BUFFER =  128;     // MUST be 2^X.
 
-class Textwindow
+enum { COLOR_RED, COLOR_GREEN, COLOR_BLUE}; 
+
+class CTextwindow
 {
   public:
     ////////////////////////////////////////////////////////////
 	// Functions.
     ////////////////////////////////////////////////////////////
-    static Textwindow &getSingelton();
-    Textwindow();
-    ~Textwindow();
-    bool Init();
+     CTextwindow(std::string name, Real Xpos, Real height, bool visible = true);
+    ~CTextwindow();
     void Update();
+	void Init();
 	void setVisible(bool show);
 	void OpenTextWin();
 	void CloseTextWin();
 	bool MouseAction(int action, Real xpos, Real pos, Real yRelative = 0);
-    void addText(const char *newTextLine);
+    void Print(const char *newTextLine, ColourValue = ColourValue::Green);
+    void setChild(CTextwindow *Child);
+	void setDimension(Real x, Real y, Real w, Real h);
 
   private:
     ////////////////////////////////////////////////////////////
 	// Functions.
     ////////////////////////////////////////////////////////////
-	Textwindow(const Textwindow&); // disable copy-constructor.
     inline void Scrolling();
-	void SizeChange();
+    inline void DockChild();
+    void SizeChanged();
+
+    ////////////////////////////////////////////////////////////
+	// Structs.
+    ////////////////////////////////////////////////////////////
+    struct _row
+	{
+        std::string str;
+        ColourValue color;
+	}
+    row[SIZE_STRING_BUFFER];
 
     ////////////////////////////////////////////////////////////
 	// Variables.
     ////////////////////////////////////////////////////////////
-	std::vector<std::string> mvLine;
-    Overlay        *mOverlay;
-	OverlayElement *mElementFrame, *mElementTitle;
-	OverlayElement *mElementButUp, *mElementButDown;
-	OverlayElement *mElementLine[MAX_TEXT_LINES]; 
-	Real mScrollOffset;          // Text scrolling offset 
+	static int mInstanceNr;
+    CTextwindow *mChild, *mParent;
+    Overlay *mOverlay;
+	OverlayContainer *mContainerFrame; 
+	OverlayElement   *mElementTitle, *mElementTitleTxt0, *mElementTitleTxt1; 
+    OverlayElement   *mElementButUp, *mElementButDown;
+	OverlayElement   *mElementLine[MAX_TEXT_LINES]; 
 	Real mClose;                 // Only Headline visible.
-    Real mLastTopPos;            // The pos before window was closed.   
+    Real mLastHeight;            // The height before window was closed.
     Real mMinHeight, mMaxHeight;
-	bool mIsClosing, mIsOpening; // User pressed open/close.
+	Real mFirstYPos;
+	Real mScroll;
+    bool mIsClosing, mIsOpening; // User pressed open/close button.
     bool mVisible;
 	bool mDragging;
     int  mRowsToScroll;
-	int  sumRows;
+	int  mSumRows;
+	int  mPrintPos;
+	int  mBufferPos;
 };
+
+extern CTextwindow *ChatWin, *TextWin;
 
 #endif
