@@ -1,0 +1,44 @@
+material textwin/head
+{
+   technique
+   {
+      pass
+      {
+         scene_blend alpha_blend
+         texture_unit
+         {
+            texture textwin_head.png
+         }
+      }
+   }
+}
+
+material textwin/button01_up
+{
+   technique
+   {
+      pass
+      {
+         scene_blend alpha_blend
+         texture_unit
+         {
+            texture dialog_range_u.png
+         }
+      }
+   }
+}
+
+material textwin/button02_up
+{
+   technique
+   {
+      pass
+      {
+         scene_blend alpha_blend
+         texture_unit
+         {
+            texture dialog_range_d.png
+         }
+      }
+   }
+}

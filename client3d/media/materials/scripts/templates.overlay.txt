@@ -1,0 +1,13 @@
+template element TextArea(TextWindow/TextLineTemplate)
+{
+         metrics_mode pixels
+            left      5
+            top     100
+            width   320
+            height   30
+            font_name TrebuchetMSBold
+            char_height 16
+            caption Daimonin 3D Client is starting...
+            colour_top    0.5 0.7 0.5
+            colour_bottom 0.3 0.5 0.3
+}

@@ -1,3 +1,26 @@
+/*
+-----------------------------------------------------------------------------
+This source file is part of Daimonin (http://daimonin.sourceforge.net)
+
+Copyright (c) 2005 The Daimonin Team
+Also see acknowledgements in Readme.html
+
+This program is free software; you can redistribute it and/or modify it under
+the terms of the GNU Lesser General Public License as published by the Free Software
+Foundation; either version 2 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License along with
+this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+http://www.gnu.org/copyleft/lesser.txt.
+-----------------------------------------------------------------------------
+*/
+
 #include <Ogre.h>
 #include <OgreConfigFile.h>
 #include <OgreSceneManager.h>
@@ -11,7 +34,6 @@
 using namespace Ogre;
 
 Player    *player;
-SceneNode *world;
 
 // ========================================================================
 // Start the example
@@ -47,9 +69,9 @@ bool DaimoninClient::setup(void)
 		
 //      createResourceListener(); // Create any resource listeners (for loading screens)
     loadResources();          // Load resources
-     createScene();            // Create the scene
-     createFrameListener();
-     return true;
+    createFrameListener();
+    createScene();            // Create the scene
+    return true;
 }
 
 // ========================================================================
@@ -76,10 +98,10 @@ bool DaimoninClient::configure(void)
 void DaimoninClient::createViewports(void)
 {
     // Create one viewport, entire window
-    Viewport* vp = mWindow->addViewport(mCamera);
-    vp->setBackgroundColour(ColourValue(0,0,0));
+    mVP = mWindow->addViewport(mCamera);
+    mVP->setBackgroundColour(ColourValue(0,0,0));
     // Alter the camera aspect ratio to match the viewport
-    mCamera->setAspectRatio(Real(vp->getActualWidth()) / Real(vp->getActualHeight()));
+    mCamera->setAspectRatio(Real(mVP->getActualWidth()) / Real(mVP->getActualHeight()));
 }
 
 // ========================================================================
@@ -122,18 +144,19 @@ void DaimoninClient::createScene(void)
 
     player = new Player(mSceneMgr);
 
-    world = mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(0, 0, 0));
+	mFrameListener->World = mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(0, 0, 0));
+ 
 
     Light* l;
     l = mSceneMgr->createLight("BlueLight");
     l->setPosition(-200,-80,-100);
     l->setDiffuseColour(0.5, 0.5, 1.0);
-    world->attachObject(l);
+	mFrameListener->World->attachObject(l);
 
     l = mSceneMgr->createLight("GreenLight");
     l->setPosition(0,0,-100);
     l->setDiffuseColour(0.5, 1.0, 0.5);
-    world->attachObject(l);
+    mFrameListener->World->attachObject(l);
 
     mWindow->setDebugText("Press 'L' for localhost login -- Server must run, or framerate will drop :)");
 
@@ -144,21 +167,21 @@ void DaimoninClient::createScene(void)
 		// create floor-tile.
         ent = mSceneMgr->createEntity("dfgd", SceneManager::PT_PLANE);
         ent->setMaterialName("grass1");
-        floor_node = world->createChildSceneNode(Vector3(0, 0, 0));
+        floor_node = mFrameListener->World->createChildSceneNode(Vector3(0, 0, 0));
         floor_node->attachObject(ent);
         floor_node->pitch(Radian(Degree(-90)));
         floor_node->setScale(0.25, 0.25, 0.25);
 
         ent = mSceneMgr->createEntity("234", SceneManager::PT_PLANE);
         ent->setMaterialName("grass2");
-        floor_node = world->createChildSceneNode(Vector3(50, 0, 0));
+        floor_node = mFrameListener->World->createChildSceneNode(Vector3(50, 0, 0));
         floor_node->attachObject(ent);
         floor_node->pitch(Radian(Degree(-90)));
         floor_node->setScale(0.25, 0.25, 0.25);
 
         ent = mSceneMgr->createEntity("s3", SceneManager::PT_PLANE);
         ent->setMaterialName("grass3");
-        floor_node = world->createChildSceneNode(Vector3(25, 1, 25));
+        floor_node = mFrameListener->World->createChildSceneNode(Vector3(25, 1, 25));
         floor_node->attachObject(ent);
         floor_node->pitch(Radian(Degree(-90)));
         floor_node->setScale(0.25, 0.25, 0.25);
@@ -167,22 +190,32 @@ void DaimoninClient::createScene(void)
 		
     ent = mSceneMgr->createEntity("hier", SceneManager::PT_PLANE);
     ent->setMaterialName("stone1");
-    floor_node = world->createChildSceneNode(Vector3(60, 0, 60));
+    floor_node = mFrameListener->World->createChildSceneNode(Vector3(60, 0, 60));
     floor_node->attachObject(ent);
     floor_node->pitch(Radian(Degree(-90)));
     floor_node->setScale(0.2, 0.2, 0.2);
     floor_node->roll(Radian(Degree(-45))); // rotate around z-axis.
 	
 
-
     Entity* ent1 = ent->clone("test");
     ent1->setMaterialName("stone1");
     SceneNode* floor_node1;
-    floor_node1 = world->createChildSceneNode(Vector3(88, 0, 88));
+    floor_node1 = mFrameListener->World->createChildSceneNode(Vector3(88, 0, 88));
     floor_node1->attachObject(ent1);
     floor_node1->pitch(Radian(Degree(-90)));
     floor_node1->setScale(0.2, 0.2, 0.2);
     floor_node1->roll(Radian(Degree(-45))); // rotate around z-axis.
+
+
+    Entity* ent2 = ent->clone("test2");
+    ent2->setMaterialName("stone1");
+    SceneNode* floor_node2;
+    floor_node2 = mFrameListener->World->createChildSceneNode(Vector3(130, 0, 130));
+    floor_node2->attachObject(ent2);
+    floor_node2->pitch(Radian(Degree(-90)));
+    floor_node2->setScale(0.2, 0.2, 0.2);
+    floor_node2->roll(Radian(Degree(-45))); // rotate around z-axis.
+
 }
 
 // ========================================================================

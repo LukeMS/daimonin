@@ -1,0 +1,230 @@
+// Daimonin Client TextWindow
+TextWindowOverlay
+{
+    zorder 500
+    container Panel(TextWindow/Frame)
+    {
+        metrics_mode pixels
+        vert_align bottom
+        horz_align right
+        left    -330 
+        top     -150
+        width    330
+        height   150
+        material Color/TextwindowColor 
+        // Headline
+
+        element TextArea(TextWindow/Line_0)
+        {
+            metrics_mode pixels
+            left      5
+            top       0
+            width   320
+            height   30
+            font_name TrebuchetMSBold
+            char_height 16
+            caption Daimonin Client
+            colour_top    0.5 0.7 0.5
+            colour_bottom 0.3 0.5 0.3
+        }
+
+        element TextArea(TextWindow/Line_1)
+        {
+            metrics_mode pixels
+            left      5
+            top       0
+            width   320
+            height   30
+            font_name TrebuchetMSBold
+            char_height 16
+            caption Daimonin Client
+            colour_top    0.5 0.7 0.5
+            colour_bottom 0.3 0.5 0.3
+        }
+        element TextArea(TextWindow/Line_2)
+        {
+            metrics_mode pixels
+            left      5
+            top       0
+            width   320
+            height   30
+            font_name TrebuchetMSBold
+            char_height 16
+            caption Daimonin Client
+            colour_top    0.5 0.7 0.5
+            colour_bottom 0.3 0.5 0.3
+        }
+        element TextArea(TextWindow/Line_3)
+        {
+            metrics_mode pixels
+            left      5
+            top       0
+            width   320
+            height   30
+            font_name TrebuchetMSBold
+            char_height 16
+            caption Daimonin Client
+            colour_top    0.5 0.7 0.5
+            colour_bottom 0.3 0.5 0.3
+        }
+        element TextArea(TextWindow/Line_4)
+        {
+            metrics_mode pixels
+            left      5
+            top       0
+            width   320
+            height   30
+            font_name TrebuchetMSBold
+            char_height 16
+            caption Daimonin Client
+            colour_top    0.5 0.7 0.5
+            colour_bottom 0.3 0.5 0.3
+        }
+
+        element TextArea(TextWindow/Line_5)
+        {
+            metrics_mode pixels
+            left      5
+            top       0
+            width   320
+            height   30
+            font_name TrebuchetMSBold
+            char_height 16
+            caption Daimonin Client
+            colour_top    0.5 0.7 0.5
+            colour_bottom 0.3 0.5 0.3
+        }
+
+        element TextArea(TextWindow/Line_6)
+        {
+            metrics_mode pixels
+            left      5
+            top       0
+            width   320
+            height   30
+            font_name TrebuchetMSBold
+            char_height 16
+            caption Daimonin Client
+            colour_top    0.5 0.7 0.5
+            colour_bottom 0.3 0.5 0.3
+        }
+
+        element TextArea(TextWindow/Line_7)
+        {
+            metrics_mode pixels
+            left      5
+            top       0
+            width   320
+            height   30
+            font_name TrebuchetMSBold
+            char_height 16
+            caption Daimonin Client
+            colour_top    0.5 0.7 0.5
+            colour_bottom 0.3 0.5 0.3
+        }
+
+        element TextArea(TextWindow/Line_8)
+        {
+            metrics_mode pixels
+            left      5
+            top       0
+            width   320
+            height   30
+            font_name TrebuchetMSBold
+            char_height 16
+            caption Daimonin Client
+            colour_top    0.5 0.7 0.5
+            colour_bottom 0.3 0.5 0.3
+        }
+
+        element TextArea(TextWindow/Line_9)
+        {
+            metrics_mode pixels
+            left      5
+            top       0
+            width   320
+            height   30
+            font_name TrebuchetMSBold
+            char_height 16
+            caption Daimonin Client
+            colour_top    0.5 0.7 0.5
+            colour_bottom 0.3 0.5 0.3
+        }
+
+        element TextArea(TextWindow/Line_10)
+        {
+            metrics_mode pixels
+            left      5
+            top       0
+            width   320
+            height   30
+            font_name TrebuchetMSBold
+            char_height 16
+            caption Daimonin Client
+            colour_top    0.5 0.7 0.5
+            colour_bottom 0.3 0.5 0.3
+        }
+
+        element TextArea(TextWindow/Line_11)
+        {
+            metrics_mode pixels
+            left      5
+            top       0
+            width   320
+            height   30
+            font_name TrebuchetMSBold
+            char_height 16
+            caption Daimonin Client
+            colour_top    0.5 0.7 0.5
+            colour_bottom 0.3 0.5 0.3
+        }
+
+        element TextArea(TextWindow/Line_12)
+        {
+            metrics_mode pixels
+            left      5
+            top       0
+            width   320
+            height   30
+            font_name TrebuchetMSBold
+            char_height 16
+            caption Daimonin Client
+            colour_top    0.5 0.7 0.5
+            colour_bottom 0.3 0.5 0.3
+        }
+
+
+
+
+        element Panel(TextWindow/Headline)
+        {
+            metrics_mode pixels
+            left     0 
+            top      0
+            width  300
+            height  18
+            material textwin/head
+        }
+        element Panel(TextWindow/Button01)
+        {
+            metrics_mode pixels
+            left   301 
+            top      0
+            width   14
+            height  18
+            material textwin/button01_up
+        }
+        element Panel(TextWindow/Button02)
+        {
+            metrics_mode pixels
+            left   316 
+            top      0
+            width   14
+            height  18
+            material textwin/button02_up
+        }
+
+
+    }				
+
+}
