@@ -24,47 +24,34 @@ http://www.gnu.org/copyleft/lesser.txt.
 #ifndef NETWORK_H
 #define NETWORK_H
 
-// We need this for OGRE_PLATFORM later
-#include <Ogre.h>
-
-// Maximum size of any packet we expect.  Using this makes it so we don't need to
-// allocated and deallocated the same buffer over and over again and the price
-// of using a bit of extra memory. IT also makes the code simpler.
-const int MAXSOCKBUF = 64*1024;
-
-
-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
- #define STRICT
- #include <winsock2.h>
- typedef int socklen_t;
+#ifdef WIN32
+  #define STRICT
+  #include <winsock2.h>
 #else
   #include <sys/types.h>
-  #include <sys/socket.h>
   #include <netinet/in.h>
+  #include <sys/socket.h>
   #include <arpa/inet.h>
   #include <netdb.h>
   #include <errno.h>
   #include <fcntl.h>
-  #include <unistd.h>
   typedef int SOCKET;
-  #define SOCKET_ERROR -1
+  const int SOCKET_ERROR =-1;
 #endif
 
-#ifndef FALSE
-#   define FALSE 0
-#   define TRUE -1
-#endif /*ifndef FALSE */
-  
-const int SOCKET_NO = -1;
-const int MAX_METASTRING_BUFFER = 128*2013;
-const int STRINGCOMMAND = 0;
-const int MAX_BUF = 256;
-const int BIG_BUF = 1024; 
-
-#define VERSION_CS 991017
-#define VERSION_SC 991017
-#undef PACKAGE_NAME
-#define PACKAGE_NAME "Daimonin SDL Client" 
+// Maximum size of any packet we expect.  Using this makes it so we don't need to
+// allocated and deallocated the same buffer over and over again and the price
+// of using a bit of extra memory. IT also makes the code simpler.
+const int  MAXSOCKBUF = 64*1024;
+const int  SOCKET_NO = -1;
+const int  MAX_METASTRING_BUFFER = 128*2013;
+const int  STRINGCOMMAND = 0;
+const int  MAX_BUF = 256;
+const int  BIG_BUF = 1024; 
+const int  VERSION_CS = 991017;
+const int  VERSION_SC = 991017;
+const int  DATA_PACKED_CMD = 0x80;
+const char VERSION_NAME[] = "Daimonin SDL Client";
 
 struct SockList
 {
@@ -72,50 +59,11 @@ struct SockList
     unsigned char *buf;
 };
 
-#define DATA_PACKED_CMD 0x80
-enum
-{
-    DATA_CMD_NO,
-    DATA_CMD_SKILL_LIST,
-    DATA_CMD_SPELL_LIST,
-    DATA_CMD_SETTINGS_LIST,
-    DATA_CMD_ANIM_LIST,
-    DATA_CMD_BMAP_LIST
-}; 
-enum
-{
-    SRV_CLIENT_SKILLS,
-    SRV_CLIENT_SPELLS,
-    SRV_CLIENT_SETTINGS,
-    SRV_CLIENT_ANIMS,
-    SRV_CLIENT_BMAPS,
-    SRV_CLIENT_FILES /* last index */
-};
-enum
-{
-    SRV_CLIENT_STATUS_OK,
-    SRV_CLIENT_STATUS_UPDATE,
-};
-
 #define SRV_CLIENT_FLAG_BMAP 1
 #define SRV_CLIENT_FLAG_ANIM 2
 #define SRV_CLIENT_FLAG_SETTING 4
 #define SRV_CLIENT_FLAG_SKILL 8
 #define SRV_CLIENT_FLAG_SPELL 16
-
-typedef struct _srv_client_files
-{
-    int          status;      // is set from setup exchange.
-    int          len;
-    unsigned int crc;
-    int          server_len;
-    unsigned int server_crc;
-}_srv_client_files;
-
-extern _srv_client_files    srv_client_files[SRV_CLIENT_FILES];
-
-
-
 
 
 //*************************************************************************
@@ -172,7 +120,6 @@ class Network
     void VersionCmd(char *data, int len);
 	void SetupCmd  (char *buf,  int len);
     void DataCmd   (char *data, int len);
-    void save_data_cmd_file(const char *path, char *data, int len);
     void handle_query(char *data, int len);
     void PreParseInfoStat(char *cmd);
     void PlayerCmd(unsigned char *data, int len);

@@ -1,3 +1,4 @@
+
 /*
 -----------------------------------------------------------------------------
 This source file is part of Daimonin (http://daimonin.sourceforge.net)
@@ -25,11 +26,14 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include <OgreConfigFile.h>
 #include <OgreSceneManager.h>
 
-#include "frame_Listener.h"
+#include "event.h"
 #include "client.h"
 #include "player.h"
 #include "network.h"
 #include "logfile.h"
+#include "textwindow.h"
+#include "dialog.h"
+#include "option.h"
 
 using namespace Ogre;
 
@@ -46,7 +50,6 @@ void DaimoninClient::go(void)
     destroyScene();
 }
 
-
 // ========================================================================
 // These internal methods package up the stages in the startup process
 // Sets up the application - returns false if user abandon configuration.
@@ -54,53 +57,62 @@ void DaimoninClient::go(void)
 
 bool DaimoninClient::setup(void)
 {
-    mRoot = new Root();
-    setupResources();
-    if (! configure() ) { return false; }
+	LogFile::getSingelton().Init("client_log.html");
+	LogFile::getSingelton().Headline("Init Options");
+	Network::getSingelton().Init();
+	Option ::getSingelton().Init("options.dat");
+	mRoot = new Root();
+	setupResources();
 
-    Network::getSingelton().Init();
-    chooseSceneManager();
-    createCamera();
-    createViewports();
-
-    // Set default mipmap level (NB some APIs ignore this)
-    TextureManager::getSingleton().setDefaultNumMipmaps(5);
-		
-//      createResourceListener(); // Create any resource listeners (for loading screens)
-    loadResources();          // Load resources
-    createFrameListener();
-    createScene();            // Create the scene
-    return true;
-}
-
-// ========================================================================
-// Configures the application - returns false if user abandon configuration.
-// ========================================================================
-bool DaimoninClient::configure(void)
-{
-    // Show the configuration dialog and initialise the system
-    // You can skip this and use root.restoreConfig() to load configuration
-    // settings if you were sure there are valid ones saved in ogre.cfg
-    if(mRoot->showConfigDialog())
+	///////////////////////////////////////////////////////////////////////// 
+	// Show the configuration dialog and initialise the system
+	// You can skip this and use root.restoreConfig() to load configuration
+	// settings if you were sure there are valid ones saved in ogre.cfg
+	///////////////////////////////////////////////////////////////////////// 
+	if(mRoot->showConfigDialog())
 	{
-        // If returned true, user clicked OK so initialise
-        // Here we choose to let the system create a default rendering window by passing 'true'
-        mWindow = mRoot->initialise(true);
-        return true;
+		mWindow = mRoot->initialise(true);
 	}
-    return false;
-}
+	else return false;
 
-// ========================================================================
-// Create all Viewports.
-// ========================================================================
-void DaimoninClient::createViewports(void)
-{
+
+    ///////////////////////////////////////////////////////////////////////// 
+    // Get the SceneManager, in this case a generic one
+	/////////////////////////////////////////////////////////////////////////
+    mSceneMgr = mRoot->getSceneManager(ST_GENERIC);
+    ///////////////////////////////////////////////////////////////////////// 
+    // Create a camera
+	/////////////////////////////////////////////////////////////////////////
+    mCamera = mSceneMgr->createCamera("Camera");
+    mCamera->setProjectionType(PT_ORTHOGRAPHIC);
+    mCamera->setNearClipDistance(400);
+    mCamera->setPosition(0, 400, 400);
+    mCamera->lookAt(0, 0, 0);
+
+	/////////////////////////////////////////////////////////////////////////
     // Create one viewport, entire window
+	/////////////////////////////////////////////////////////////////////////
     mVP = mWindow->addViewport(mCamera);
     mVP->setBackgroundColour(ColourValue(0,0,0));
     // Alter the camera aspect ratio to match the viewport
     mCamera->setAspectRatio(Real(mVP->getActualWidth()) / Real(mVP->getActualHeight()));
+
+    ///////////////////////////////////////////////////////////////////////// 
+    // Set default mipmap level (NB some APIs ignore this)
+    ///////////////////////////////////////////////////////////////////////// 
+    TextureManager::getSingleton().setDefaultNumMipmaps(5);
+
+    ///////////////////////////////////////////////////////////////////////// 
+    // Optional override method where you can perform resource group loading
+    // Must at least do ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
+    // Initialise, parse scripts etc
+    ///////////////////////////////////////////////////////////////////////// 
+    ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
+    mEvent= new Event(mWindow, mCamera, mMouseMotionListener, mMouseListener);
+    mRoot->addFrameListener(mEvent);
+    mEvent->setResolution(mVP->getActualWidth(), mVP->getActualHeight());
+    createScene();            // Create the scene
+	return true;
 }
 
 // ========================================================================
@@ -143,21 +155,19 @@ void DaimoninClient::createScene(void)
 
     player = new Player(mSceneMgr);
 
-	mFrameListener->World = mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(0, 0, 0));
+	mEvent->World = mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(0, 0, 0));
  
 
     Light* l;
     l = mSceneMgr->createLight("BlueLight");
     l->setPosition(-200,-80,-100);
     l->setDiffuseColour(0.5, 0.5, 1.0);
-	mFrameListener->World->attachObject(l);
+	mEvent->World->attachObject(l);
 
     l = mSceneMgr->createLight("GreenLight");
     l->setPosition(0,0,-100);
     l->setDiffuseColour(0.5, 1.0, 0.5);
-    mFrameListener->World->attachObject(l);
-
-    mWindow->setDebugText("Press 'L' for localhost login -- Server must run");
+    mEvent->World->attachObject(l);
 
 
     Entity* ent;
@@ -166,21 +176,21 @@ void DaimoninClient::createScene(void)
 		// create floor-tile.
         ent = mSceneMgr->createEntity("dfgd", SceneManager::PT_PLANE);
         ent->setMaterialName("grass1");
-        floor_node = mFrameListener->World->createChildSceneNode(Vector3(0, 0, 0));
+        floor_node = mEvent->World->createChildSceneNode(Vector3(0, 0, 0));
         floor_node->attachObject(ent);
         floor_node->pitch(Radian(Degree(-90)));
         floor_node->setScale(0.25, 0.25, 0.25);
 
         ent = mSceneMgr->createEntity("234", SceneManager::PT_PLANE);
         ent->setMaterialName("grass2");
-        floor_node = mFrameListener->World->createChildSceneNode(Vector3(50, 0, 0));
+        floor_node = mEvent->World->createChildSceneNode(Vector3(50, 0, 0));
         floor_node->attachObject(ent);
         floor_node->pitch(Radian(Degree(-90)));
         floor_node->setScale(0.25, 0.25, 0.25);
 
         ent = mSceneMgr->createEntity("s3", SceneManager::PT_PLANE);
         ent->setMaterialName("grass3");
-        floor_node = mFrameListener->World->createChildSceneNode(Vector3(25, 1, 25));
+        floor_node = mEvent->World->createChildSceneNode(Vector3(25, 1, 25));
         floor_node->attachObject(ent);
         floor_node->pitch(Radian(Degree(-90)));
         floor_node->setScale(0.25, 0.25, 0.25);
@@ -189,7 +199,7 @@ void DaimoninClient::createScene(void)
 		
     ent = mSceneMgr->createEntity("hier", SceneManager::PT_PLANE);
     ent->setMaterialName("stone1");
-    floor_node = mFrameListener->World->createChildSceneNode(Vector3(60, 0, 60));
+    floor_node = mEvent->World->createChildSceneNode(Vector3(60, 0, 60));
     floor_node->attachObject(ent);
     floor_node->pitch(Radian(Degree(-90)));
     floor_node->setScale(0.2, 0.2, 0.2);
@@ -199,7 +209,7 @@ void DaimoninClient::createScene(void)
     Entity* ent1 = ent->clone("test");
     ent1->setMaterialName("stone1");
     SceneNode* floor_node1;
-    floor_node1 = mFrameListener->World->createChildSceneNode(Vector3(88, 0, 88));
+    floor_node1 = mEvent->World->createChildSceneNode(Vector3(88, 0, 88));
     floor_node1->attachObject(ent1);
     floor_node1->pitch(Radian(Degree(-90)));
     floor_node1->setScale(0.2, 0.2, 0.2);
@@ -209,7 +219,7 @@ void DaimoninClient::createScene(void)
     Entity* ent2 = ent->clone("test2");
     ent2->setMaterialName("stone1");
     SceneNode* floor_node2;
-    floor_node2 = mFrameListener->World->createChildSceneNode(Vector3(130, 0, 130));
+    floor_node2 = mEvent->World->createChildSceneNode(Vector3(130, 0, 130));
     floor_node2->attachObject(ent2);
     floor_node2->pitch(Radian(Degree(-90)));
     floor_node2->setScale(0.2, 0.2, 0.2);

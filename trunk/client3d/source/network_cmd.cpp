@@ -21,6 +21,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 -----------------------------------------------------------------------------
 */
 
+#include <fstream>
 #include "network.h"
 #include "logfile.h"
 #include "stdio.h"
@@ -28,8 +29,9 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "zconf.h"
 #include "zlib.h"
 #include "xyz.h"
-_srv_client_files   srv_client_files[SRV_CLIENT_FILES]; 
+#include "serverfile.h"
 
+using namespace std;
 
 // ========================================================================
 // Compare server and client version number.
@@ -39,8 +41,8 @@ void Network::VersionCmd(char *data, int len)
     char   *cp;
     char    buf[1024];
 
-    mGameStatusVersionOKFlag = FALSE;
-    mGameStatusVersionFlag = TRUE;
+    mGameStatusVersionOKFlag = false;
+    mGameStatusVersionFlag   =  true;
     mCs_version = atoi(data);
 
     // The first version is the client to server version the server wants
@@ -84,20 +86,18 @@ void Network::VersionCmd(char *data, int len)
     }
 
     LogFile::getSingelton().Info("Playing on server type %s\n", cp);
-    mGameStatusVersionOKFlag = TRUE;
+    mGameStatusVersionOKFlag = true;
 }
 
-const int OFFSET = 3;  // 2 byte package len + 1 byte binary cmd.
-
 // ========================================================================
-// .
+// Server has send the setup command..
 // ========================================================================
 void Network::SetupCmd(char *buf, int len)
 {
-    int     s;
+    const int OFFSET = 3;  // 2 byte package len + 1 byte binary cmd.
+    int     s, f;
     char   *cmd, *param;
     LogFile::getSingelton().Info("Get SetupCmd: %s\n", mInbuf.buf + OFFSET); 
-//    scrolldy = scrolldx = 0;
     for (s = 0; ;)
     {
 		// command.
@@ -117,126 +117,9 @@ void Network::SetupCmd(char *buf, int len)
         // skip whitspaces.
         while (buf[s] == ' ') { ++s; }
 
-        if (!strcmp(cmd, "sound"))
-        {
-            if (!strcmp(param, "FALSE"))
-            {
-            }
-        }
-        else if (!strcmp(cmd, "skf"))
-        {
-            if (!strcmp(param, "FALSE"))
-            {
-                LogFile::getSingelton().Info("Get skf:: %s\n", param);
-            }
-            else if (strcmp(param, "OK"))
-            {
-                char   *cp;
-
-                srv_client_files[SRV_CLIENT_SKILLS].status = SRV_CLIENT_STATUS_UPDATE;
-                for (cp = param; *cp != 0; cp++)
-                {
-                    if (*cp == '|')
-                    {
-                        *cp = 0;    
-                        srv_client_files[SRV_CLIENT_SKILLS].server_len = atoi(param);
-                        srv_client_files[SRV_CLIENT_SKILLS].server_crc = strtoul(cp + 1, NULL, 16);
-                        break;
-                    }
-                }
-            }
-        }
-        else if (!strcmp(cmd, "spf"))
-        {
-            if (!strcmp(param, "FALSE"))
-            {
-                LogFile::getSingelton().Info("Get spf:: %s\n", param);
-            }
-            else if (strcmp(param, "OK"))
-            {
-                char   *cp;
-
-                srv_client_files[SRV_CLIENT_SPELLS].status = SRV_CLIENT_STATUS_UPDATE;
-                for (cp = param; *cp != 0; cp++)
-                {
-                    if (*cp == '|')
-                    {
-                        *cp = 0;    
-                        srv_client_files[SRV_CLIENT_SPELLS].server_len = atoi(param);
-                        srv_client_files[SRV_CLIENT_SPELLS].server_crc = strtoul(cp + 1, NULL, 16);
-                        break;
-                    }
-                }
-            }
-        }
-        else if (!strcmp(cmd, "stf"))
-        {
-            if (!strcmp(param, "FALSE"))
-            {
-                LogFile::getSingelton().Info("Get stf:: %s\n", param);
-            }
-            else if (strcmp(param, "OK"))
-            {
-                char   *cp;
-
-                srv_client_files[SRV_CLIENT_SETTINGS].status = SRV_CLIENT_STATUS_UPDATE;
-                for (cp = param; *cp != 0; cp++)
-                {
-                    if (*cp == '|')
-                    {
-                        *cp = 0;    
-                        srv_client_files[SRV_CLIENT_SETTINGS].server_len = atoi(param);
-                        srv_client_files[SRV_CLIENT_SETTINGS].server_crc = strtoul(cp + 1, NULL, 16);
-                        break;
-                    }
-                }
-            }
-        }
-        else if (!strcmp(cmd, "bpf"))
-        {
-            if (!strcmp(param, "FALSE"))
-            {
-                LogFile::getSingelton().Info("Get bpf:: %s\n", param);
-            }
-            else if (strcmp(param, "OK"))
-            {
-                char   *cp;
-
-                srv_client_files[SRV_CLIENT_BMAPS].status = SRV_CLIENT_STATUS_UPDATE;
-                for (cp = param; *cp != 0; cp++)
-                {
-                    if (*cp == '|')
-                    {
-                        *cp = 0;    
-                        srv_client_files[SRV_CLIENT_BMAPS].server_len = atoi(param);
-                        srv_client_files[SRV_CLIENT_BMAPS].server_crc = strtoul(cp + 1, NULL, 16);
-                        break;
-                    }
-                }
-            }
-        }
-        else if (!strcmp(cmd, "amf"))
-        {
-            if (!strcmp(param, "FALSE"))
-            {
-                LogFile::getSingelton().Info("Get amf:: %s\n", param);
-            }
-            else if (strcmp(param, "OK"))
-            {
-                char   *cp;
-
-                srv_client_files[SRV_CLIENT_ANIMS].status = SRV_CLIENT_STATUS_UPDATE;
-                for (cp = param; *cp != 0; cp++)
-                {
-                    if (*cp == '|')
-                    {
-                        *cp = 0;    
-                        srv_client_files[SRV_CLIENT_ANIMS].server_len = atoi(param);
-                        srv_client_files[SRV_CLIENT_ANIMS].server_crc = strtoul(cp + 1, NULL, 16);
-                        break;
-                    }
-                }
-            }
+        // parse the command.
+        if      (!strcmp(cmd, "sound"))
+		{
         }
         else if (!strcmp(cmd, "mapsize"))
         {
@@ -250,7 +133,29 @@ void Network::SetupCmd(char *buf, int len)
         else if (!strcmp(cmd, "facecache"))
         {
         }
-        else
+        for (f=0; f< SERVER_FILE_SUM; f++)
+		{
+            if (!ServerFile::getSingelton().checkID(f, cmd)) { continue; }
+            if (!strcmp(param, "FALSE"))
+            {
+                LogFile::getSingelton().Info("Get %s: %s\n", cmd, param);
+            }
+            else if (strcmp(param, "OK"))
+            {
+                ServerFile::getSingelton().setStatus(f, SERVER_FILE_STATUS_UPDATE);
+                for (char *cp = param; *cp != 0; cp++)
+                {
+                    if (*cp == '|')
+                    {
+                        *cp = 0;    
+                        ServerFile::getSingelton().setLength(f, atoi(param));
+                        ServerFile::getSingelton().setCRC   (f, strtoul(cp + 1, NULL, 16));
+                        break;
+                    }
+                }
+            }
+        }
+		if (f == SERVER_FILE_SUM-1)
         {
             LogFile::getSingelton().Error("Got setup for a command we don't understand: %s %s\n", cmd, param);
         }
@@ -259,107 +164,63 @@ void Network::SetupCmd(char *buf, int len)
 }
 
 // ========================================================================
-// 
-// ========================================================================
-void Network::save_data_cmd_file(const char *path, char *data, int len)
-{
-    FILE   *stream;
-
-    if ((stream = fopen(path, "wb")) != NULL)
-    {
-        if (fwrite(data, sizeof(char), len, stream) != (size_t) len)
-            LogFile::getSingelton().Error("save data cmd file : write() of %s failed. (len:%d)\n", path);
-        fclose(stream);
-    }
-    else
-        LogFile::getSingelton().Error("save data cmd file : Can't open %s for write. (len:%d)\n", path, len);
-}
-
-// ========================================================================
-// 
+// Server has send us a file: uncompress and save it. 
 // ========================================================================
 void Network::DataCmd(char *data, int len)
 {
+    ///////////////////////////////////////////////////////////////////////// 
+    // check for valid command:
+    // 0 = NC, 1 = SERVER_FILE_SKILLS, 2 = SERVER_FILE_SPELLS, (...)
+    ///////////////////////////////////////////////////////////////////////// 
     unsigned char data_type = data[0];
-    unsigned char data_comp ;
-    // warning! if the uncompressed size of a incoming compressed(!) file is larger
-    // as this dest_len default setting, the file is cutted and
-    // the rest skiped. Look at the zlib docu for more info.
-    unsigned long dest_len = 512 * 1024; 
-    char *dest = new char[dest_len];
-    data_comp = (data_type & DATA_PACKED_CMD);
+	unsigned char data_cmd  = (data_type &~DATA_PACKED_CMD) -1; 
+    if (data_cmd > SERVER_FILE_SUM)
+	{
+        LogFile::getSingelton().Error("data cmd: unknown type %d (len:%d)\n", data_type, len);
+		return;
+	}
     --len;
     ++data;
-
- LogFile::getSingelton().Error("ghrouegheougah\n");
-
-    switch (data_type & ~DATA_PACKED_CMD)
-    {
-        case DATA_CMD_SKILL_LIST:
-          // this is a server send skill list 
-          // uncompress when needed and save it
-          if (data_comp)
-          {
-              uncompress((unsigned char *)dest, &dest_len, (unsigned char *)data, len);
-              data = dest;
-              len = dest_len;
-          }
-          ++mRequest_file_chain;
-          save_data_cmd_file(FILE_CLIENT_SKILLS, data, len);
-          read_skills();
-          break;
-        case DATA_CMD_SPELL_LIST:
-          if (data_comp)
-          {
-              uncompress((unsigned char *)dest, &dest_len, (unsigned char *)data, len);
-              data = dest;
-              len = dest_len;
-          }
-          ++mRequest_file_chain;
-          save_data_cmd_file(FILE_CLIENT_SPELLS, data, len);
-          read_spells();
-          break;
-        case DATA_CMD_SETTINGS_LIST:
-          if (data_comp)
-          {
-              uncompress((unsigned char *)dest, &dest_len, (unsigned char *)data, len);
-              data = dest;
-              len = dest_len;
-          }
-          ++mRequest_file_chain;
-          save_data_cmd_file(FILE_CLIENT_SETTINGS, data, len);
-          break;
-
-        case DATA_CMD_BMAP_LIST:
-          if (data_comp)
-          {
-              uncompress((unsigned char *)dest, &dest_len, (unsigned char *)data, len);
-              data = dest;
-              len = dest_len;
-          }
-          ++mRequest_file_chain;
-          save_data_cmd_file(FILE_CLIENT_BMAPS, data, len);
-          mRequest_file_flags |= SRV_CLIENT_FLAG_BMAP;
-          break;
-
-        case DATA_CMD_ANIM_LIST:
-          if (data_comp)
-          {
-              uncompress((unsigned char *)dest, &dest_len, (unsigned char *)data, len);
-              data = dest;
-              len = dest_len;
-          }
-          ++mRequest_file_chain;
-          save_data_cmd_file(FILE_CLIENT_ANIMS, data, len);
-          mRequest_file_flags |= SRV_CLIENT_FLAG_ANIM;
-          break;
-
-        default:
-          LogFile::getSingelton().Error("data cmd: unknown type %d (len:%d)\n", data_type, len);
-          break;
+    
+    ///////////////////////////////////////////////////////////////////////// 
+    // Uncompress if needed.
+	/////////////////////////////////////////////////////////////////////////
+    char *dest =0;
+    if (data_type & DATA_PACKED_CMD)
+	{
+        // warning! if the uncompressed size of a incoming compressed(!) file 
+		// is larger as this dest_len default setting, the file is cutted and
+        // the rest skiped. Look at the zlib docu for more info.
+        unsigned long dest_len = 512 * 1024; 
+        dest = new char[dest_len];
+        uncompress((unsigned char *)dest, &dest_len, (unsigned char *)data, len);
+        data = dest;
+        len  = dest_len;
     }
-    delete[] dest;
+    ++mRequest_file_chain;
+
+    ///////////////////////////////////////////////////////////////////////// 
+    // Save the file.
+	/////////////////////////////////////////////////////////////////////////
+    ofstream out(ServerFile::getSingelton().getFilename(data_cmd), ios::out|ios::binary);
+    if (!out)
+	{
+        LogFile::getSingelton().Error("save data cmd file : write() of %s failed. (len:%d)\n", 
+		    ServerFile::getSingelton().getFilename(data_cmd));
+	}					 
+    else
+	{
+	    out.write(data, len);
+	}
+    if (dest) { delete[] dest; }
+
+    ///////////////////////////////////////////////////////////////////////// 
+    // Reload the new file.
+	/////////////////////////////////////////////////////////////////////////
+//    if (data_command-1 == SERVER_FILE_SKILLS) { read_skills(); }
+//    if (data_command-1 == SERVER_FILE_SPELLS) { read_spells(); }
 }
+
 
 // ========================================================================
 // 
@@ -460,4 +321,4 @@ void Network::PlayerCmd(unsigned char *data, int len)
     map_udate_flag = 2;        
     load_quickslots_entrys();
 */
-} 
+}

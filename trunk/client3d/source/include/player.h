@@ -28,8 +28,6 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include <OgreConfigFile.h>
 #include <OgreSceneManager.h>
 
-// #include "ExampleFrameListener.h"
-
 using namespace Ogre;
 
 enum PlayerState

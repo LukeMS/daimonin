@@ -1,0 +1,113 @@
+/*
+-----------------------------------------------------------------------------
+This source file is part of Daimonin (http://daimonin.sourceforge.net)
+
+Copyright (c) 2005 The Daimonin Team
+Also see acknowledgements in Readme.html
+
+This program is free software; you can redistribute it and/or modify it under
+the terms of the GNU Lesser General Public License as published by the Free Software
+Foundation; either version 2 of the License, or (at your option) any later
+version.
+
+This program is distributed in the hope that it will be useful, but WITHOUT
+ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License for more details.
+
+You should have received a copy of the GNU Lesser General Public License along with
+this program; if not, write to the Free Software Foundation, Inc., 59 Temple
+Place - Suite 330, Boston, MA 02111-1307, USA, or go to
+http://www.gnu.org/copyleft/lesser.txt.
+-----------------------------------------------------------------------------
+*/
+
+#ifndef EVENT_H
+#define EVENT_H
+
+#include <Ogre.h>
+#include <OgreKeyEvent.h>
+#include <OgreEventListeners.h>
+#include <OgreStringConverter.h>
+#include <OgreException.h>
+
+#include "player.h"
+#include "xyz.h"
+
+using namespace Ogre;
+
+
+class Event: public FrameListener, public KeyListener, public MouseMotionListener, public MouseListener
+{
+  private:
+	int mSceneDetailIndex;
+    Real mMoveSpeed;
+    Degree mRotateSpeed;
+    Overlay *mDebugOverlay;
+	Overlay *mMouseCursor; 
+    EventProcessor* mEventProcessor;
+    InputReader* mInputDevice;
+    Camera* mCamera;
+    MouseMotionListener *mMouseMotionListener;
+	MouseListener *mMouseListener;
+    Vector3 mTranslateVector;
+    RenderWindow* mWindow;
+    int mSreenHeight, mSreenWidth;
+    Real mMouseX, mMouseY;
+	bool mStatsOn;
+    bool mUseBufferedInputKeys, mUseBufferedInputMouse, mInputTypeSwitchingOn;
+	unsigned int mNumScreenShots;
+    float mMoveScale;
+    Degree mRotScale;
+    // just to stop toggles flipping too fast
+    Real mTimeUntilNextToggle ;
+    Radian mRot;
+    TextureFilterOptions mFiltering;
+    int mAniso;
+
+  public:
+
+    SceneNode *World;
+
+	void setResolution(int SreenWidth, int SreenHeight)
+	{ 
+	    mSreenHeight = SreenHeight;
+		mSreenWidth  = SreenWidth;
+	}
+
+	// Constructor takes a RenderWindow because it uses that to determine input context
+    Event(RenderWindow* win, Camera* cam, MouseMotionListener *mMMotionListener, 
+		MouseListener *mMListener, bool useBufferedInputKeys = false, bool useBufferedInputMouse = true);
+    ~Event();
+
+    void showDebugOverlay(bool show);
+    bool processUnbufferedKeyInput(const FrameEvent& evt);
+
+
+    ///////////////////////////////////////////////////////////////////////// 
+    // Frame Events.
+	/////////////////////////////////////////////////////////////////////////
+    bool frameStarted(const FrameEvent& evt);
+    bool frameEnded  (const FrameEvent& evt);
+
+    ///////////////////////////////////////////////////////////////////////// 
+    // Key Events.
+	/////////////////////////////////////////////////////////////////////////
+	void switchKeyMode();
+	void keyClicked(KeyEvent* e);
+	void keyPressed (KeyEvent* e) {}
+	void keyReleased(KeyEvent* e) {}
+
+    ///////////////////////////////////////////////////////////////////////// 
+    // Mouse Events.
+	/////////////////////////////////////////////////////////////////////////
+    void mouseMoved   (MouseEvent *e);
+    void mouseDragged (MouseEvent *e);
+    void mouseClicked (MouseEvent *e);
+    void mouseEntered (MouseEvent *e);
+    void mouseExited  (MouseEvent *e);
+	void mousePressed (MouseEvent *e);
+	void mouseReleased(MouseEvent *e);
+};
+
+#endif
+

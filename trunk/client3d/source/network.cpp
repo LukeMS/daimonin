@@ -21,12 +21,11 @@ http://www.gnu.org/copyleft/lesser.txt.
 -----------------------------------------------------------------------------
 */
 
-#include <Ogre.h>
 #include "network.h"
 #include "logfile.h"
 #include "option.h"
-
-using namespace Ogre;
+#include "xyz.h"
+#include "serverfile.h"
 
 #define DEBUG_ON
 
@@ -70,7 +69,7 @@ Network::Network()
 // ========================================================================
 Network::~Network()
 {
-	delete[] mInbuf.buf;
+    delete[] mInbuf.buf;
 }
 
 
@@ -194,7 +193,7 @@ void Network::Update()
     }
     else if (Option::getSingelton().GameStatus == GAME_STATUS_CONNECT)
     {
-		mGameStatusVersionFlag = FALSE; 
+		mGameStatusVersionFlag = false; 
         if (!OpenSocket(ServerName, ServerPort))
         {
             //sprintf(buf, "connection failed!");
@@ -210,7 +209,7 @@ void Network::Update()
     else if (Option::getSingelton().GameStatus == GAME_STATUS_VERSION)
     {   // Send client version.
         LogFile::getSingelton().Info("Send Version\n");
-        sprintf(buf, "version %d %d %s", VERSION_CS, VERSION_SC, PACKAGE_NAME);
+        sprintf(buf, "version %d %d %s", VERSION_CS, VERSION_SC, VERSION_NAME);
         cs_write_string(buf, strlen(buf)); 
         Option::getSingelton().GameStatus = GAME_STATUS_WAITVERSION;
     }
@@ -240,29 +239,22 @@ void Network::Update()
 	}
     else if (Option::getSingelton().GameStatus == GAME_STATUS_SETUP)
     {
-		LogFile::getSingelton().Info("GAME_STATUS_SETUP\n");
-        srv_client_files[SRV_CLIENT_SETTINGS].status = SRV_CLIENT_STATUS_OK;
-        srv_client_files[SRV_CLIENT_BMAPS].status    = SRV_CLIENT_STATUS_OK;
-        srv_client_files[SRV_CLIENT_ANIMS].status    = SRV_CLIENT_STATUS_OK;
-        srv_client_files[SRV_CLIENT_SKILLS].status   = SRV_CLIENT_STATUS_OK;
-        srv_client_files[SRV_CLIENT_SPELLS].status   = SRV_CLIENT_STATUS_OK;
-        sprintf(buf,
-                "setup sound %d map2cmd 1 mapsize %dx%d darkness 1 facecache 1 skf %d|%x spf %d|%x bpf %d|%x stf %d|%x amf %d|%x", 
-                SoundStatus, MapStatusX, MapStatusY,       srv_client_files[SRV_CLIENT_SKILLS].len,
-                srv_client_files[SRV_CLIENT_SKILLS].crc,   srv_client_files[SRV_CLIENT_SPELLS].len,
-                srv_client_files[SRV_CLIENT_SPELLS].crc,   srv_client_files[SRV_CLIENT_BMAPS].len,
-                srv_client_files[SRV_CLIENT_BMAPS].crc,    srv_client_files[SRV_CLIENT_SETTINGS].len,
-                srv_client_files[SRV_CLIENT_SETTINGS].crc, srv_client_files[SRV_CLIENT_ANIMS].len,
-                srv_client_files[SRV_CLIENT_ANIMS].crc);
-//        cs_write_string(buf, strlen(buf));
-//		LogFile::getSingelton().Info(buf); LogFile::getSingelton().Info("\n");
-
-char test[]="setup sound 1 map2cmd 1 mapsize 17x17 darkness 1 facecache 1 skf 3386|dd2527ea spf 2678|f6d05927 bpf 102062|a0cf8e35 stf 1853|81e29fc6 amf 132149|6b4136db";
-cs_write_string(test, strlen(test));
-LogFile::getSingelton().Info("%s\n",test);
-
-
-
+        ServerFile::getSingelton().checkFiles();		
+        sprintf(buf, "setup sound %d map2cmd 1 mapsize %dx%d darkness 1 facecache 1"
+		    " skf %d|%x spf %d|%x bpf %d|%x stf %d|%x amf %d|%x", 
+            SoundStatus, MapStatusX, MapStatusY, 
+			ServerFile::getSingelton().getLength(SERVER_FILE_SKILLS),
+			ServerFile::getSingelton().getCRC   (SERVER_FILE_SKILLS),
+			ServerFile::getSingelton().getLength(SERVER_FILE_SPELLS),
+			ServerFile::getSingelton().getCRC   (SERVER_FILE_SPELLS),
+			ServerFile::getSingelton().getLength(SERVER_FILE_BMAPS),
+			ServerFile::getSingelton().getCRC   (SERVER_FILE_BMAPS),
+			ServerFile::getSingelton().getLength(SERVER_FILE_SETTINGS),
+			ServerFile::getSingelton().getCRC   (SERVER_FILE_SETTINGS),
+			ServerFile::getSingelton().getLength(SERVER_FILE_ANIMS),
+			ServerFile::getSingelton().getCRC   (SERVER_FILE_ANIMS));
+        cs_write_string(buf, strlen(buf));
+		LogFile::getSingelton().Info(buf); LogFile::getSingelton().Info("\n");
         mRequest_file_chain = 0;
         mRequest_file_flags = 0;
         Option::getSingelton().GameStatus = GAME_STATUS_WAITSETUP;
@@ -272,50 +264,50 @@ LogFile::getSingelton().Info("%s\n",test);
 		LogFile::getSingelton().Info("GAME_STATUS_REQUEST FILES (%d)\n", mRequest_file_chain);
         if (mRequest_file_chain == 0) // check setting list
         {
-            if (srv_client_files[SRV_CLIENT_SETTINGS].status == SRV_CLIENT_STATUS_UPDATE)
+            if (ServerFile::getSingelton().getStatus(SERVER_FILE_SETTINGS) == SERVER_FILE_STATUS_UPDATE)
             {
                 mRequest_file_chain = 1;
-                RequestFile(SRV_CLIENT_SETTINGS);
+                RequestFile(SERVER_FILE_SETTINGS);
             }
             else
                 mRequest_file_chain = 2;
         }
         else if (mRequest_file_chain == 2) // check spell list
         {
-            if (srv_client_files[SRV_CLIENT_SPELLS].status == SRV_CLIENT_STATUS_UPDATE)
+            if (ServerFile::getSingelton().getStatus(SERVER_FILE_SPELLS) == SERVER_FILE_STATUS_UPDATE)
             {
                 mRequest_file_chain = 3;
-                RequestFile(SRV_CLIENT_SPELLS);
+                RequestFile(SERVER_FILE_SPELLS);
             }
             else
                 mRequest_file_chain = 4;
         }
         else if (mRequest_file_chain == 4) // check skill list
         {
-            if (srv_client_files[SRV_CLIENT_SKILLS].status == SRV_CLIENT_STATUS_UPDATE)
+            if (ServerFile::getSingelton().getStatus(SERVER_FILE_SPELLS) == SERVER_FILE_STATUS_UPDATE)
             {
                 mRequest_file_chain = 5;
-                RequestFile(SRV_CLIENT_SKILLS);
+                RequestFile(SERVER_FILE_SKILLS);
             }
             else
                 mRequest_file_chain = 6;
         }
         else if (mRequest_file_chain == 6)
         {
-            if (srv_client_files[SRV_CLIENT_BMAPS].status == SRV_CLIENT_STATUS_UPDATE)
+            if (ServerFile::getSingelton().getStatus(SERVER_FILE_BMAPS) == SERVER_FILE_STATUS_UPDATE)
             {
                 mRequest_file_chain = 7;
-                RequestFile(SRV_CLIENT_BMAPS);
+                RequestFile(SERVER_FILE_BMAPS);
             }
             else
                 mRequest_file_chain = 8;
         }
         else if (mRequest_file_chain == 8)
         {
-            if (srv_client_files[SRV_CLIENT_ANIMS].status == SRV_CLIENT_STATUS_UPDATE)
+            if (ServerFile::getSingelton().getStatus(SERVER_FILE_ANIMS) == SERVER_FILE_STATUS_UPDATE)
             {
                 mRequest_file_chain = 9;
-                RequestFile(SRV_CLIENT_ANIMS);
+                RequestFile(SERVER_FILE_ANIMS);
             }
             else
                 mRequest_file_chain = 10;
@@ -327,11 +319,11 @@ LogFile::getSingelton().Info("%s\n",test);
         else if (mRequest_file_chain == 11)
         {
             // ok... now we check for bmap & anims processing...
-/*
-            read_bmap_tmp();
-            read_anim_tmp();
-            load_settings();
-*/
+
+//            read_bmap_tmp();
+//            read_anim_tmp();
+//            load_settings();
+
             mRequest_file_chain++;
         }
         else if (mRequest_file_chain == 12)
@@ -379,7 +371,7 @@ Option::getSingelton().GameStatus = GAME_STATUS_LOGIN;
         // we have a fininshed console input
         if (InputStringEscFlag)
             Option::getSingelton().GameStatus = GAME_STATUS_LOGIN;
-        else if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
+        else if (InputStringFlag == false && InputStringEndFlag == true)
         {
             int check;
             check = is_username_valid(InputString);
@@ -421,7 +413,7 @@ Option::getSingelton().GameStatus = GAME_STATUS_LOGIN;
         }
 */
 {
-send_reply("myNameLang");  
+send_reply("myNameLang");
 Option::getSingelton().GameStatus = GAME_STATUS_LOGIN;
 }	
   
@@ -512,25 +504,25 @@ bool Network::Init()
 // =====================================================================
 inline bool Network::InitSocket()
 {
-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
+#ifdef WIN32
     int error;
     mSocket     = SOCKET_NO;
     mCs_version = 0;
-    mSocketStatusErrorNr = 0;    
+    mSocketStatusErrorNr = 0;
     WSADATA w;
     error = WSAStartup(0x0101, &w);
     if (error)
     {
         LogFile::getSingelton().Error("Init Winsockfaild: %d\n", error);
-        return(FALSE);
+        return false;
     }
     if (w.wVersion != 0x0101)
     {
         LogFile::getSingelton().Error("Wrong WinSock version!\n");
-        return(FALSE);
-    }
-#endif
-    return true;
+		return false;
+	}
+	#endif
+	return true;
 }
 
 
@@ -587,125 +579,107 @@ inline bool Network::GetServerData()
      //   draw_info(buf, COLOR_GREEN);
     
     
-
-
    return true;
 }
+
+
 
 // ========================================================================
 // .
 // ========================================================================
 inline bool Network::OpenSocket(const char *host, int port)
 {
-    // The way to make the sockets work on XP Home - The 'unix' style socket seems to fail inder xp home.
-    mSocket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-
     mInbuf.len = 0;
     mInsock.sin_family = AF_INET;
     mInsock.sin_port = htons((unsigned short) port);
-
     if (isdigit(*host))
-	{ 
-		mInsock.sin_addr.s_addr = inet_addr(host);
-	}
+    {
+        mInsock.sin_addr.s_addr = inet_addr(host);
+    }
     else
     {
         mHostbn = gethostbyname(host);
         if (mHostbn == (struct hostent *) NULL)
         {
-			LogFile::getSingelton().Error("Unknown host: %s\n", host);
+            LogFile::getSingelton().Error("Unknown host: %s\n", host);
             mSocket = SOCKET_NO;
-        return false;
+            return false;
         }
         memcpy(&mInsock.sin_addr, mHostbn->h_addr, mHostbn->h_length);
     }
-
     mCommand_sent = 0;
     mCommand_received = 0;
     mCommand_time = 0;
 
-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-    unsigned long temp = 1; // non-block.
+	 LogFile::getSingelton().Error("HIER 01\n");
+	
+	#ifdef WIN32
+	// The way to make the sockets work on XP Home - The 'unix' style socket seems to fail inder xp home.
+	unsigned long temp = 1; // non-block.
+    mSocket = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (ioctlsocket(mSocket, FIONBIO, &temp) == -1)
     {
         LogFile::getSingelton().Error("Error in ioctlsocket(*socket_temp, FIONBIO , &temp)\n");
         mSocket = SOCKET_NO;
         return false;
     }
-#else
-    long tmp = fcntl(mSocket, F_GETFL, &tmp);
-    if(tmp == -1) 
-    {
-        LogFile::getSingelton().Error("Error in fcntl(mSocket, F_GETFL, &temp)\n");
-        mSocket = SOCKET_NO;
-        return false;
-    }
-    tmp |= O_NONBLOCK;
-    if(fcntl(mSocket, F_SETFL, &tmp) == -1)
-    {
-        LogFile::getSingelton().Error("Error in fcntl(mSocket, F_SETFL, &temp)\n");
-        mSocket = SOCKET_NO;
-        return false;
-    }    
-#endif
-
     int error = 0;
     int retries = 15;
-
     while (connect(mSocket, (struct sockaddr *) &mInsock, sizeof(mInsock)) == SOCKET_ERROR)
-    {        
+    {
+        Sleep(3);
         if (--retries == 0)
         {
             LogFile::getSingelton().Error("Connect Error:  %d\n", mSocketStatusErrorNr);
             mSocket = SOCKET_NO;
             return false;
         }
-        
-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-        Sleep(3);
         mSocketStatusErrorNr = WSAGetLastError();
         if (mSocketStatusErrorNr == WSAEISCONN)  // we have a connect!
             break;
-
         if (mSocketStatusErrorNr == WSAEWOULDBLOCK
          || mSocketStatusErrorNr == WSAEALREADY
          ||(mSocketStatusErrorNr == WSAEINVAL && error)) // loop until we finished
         {
             error = 1;
         }
-#else
-        mSocketStatusErrorNr = errno;
-        if (mSocketStatusErrorNr == 0)
-            break;
-
-        if (mSocketStatusErrorNr == EWOULDBLOCK ||
-                mSocketStatusErrorNr == EALREADY || 
-                ( mSocketStatusErrorNr == EINVAL && error))
-        {
-            error = 1;
-        }
-                                
-        sleep(3);
-#endif        
-    }
-
-    // we got a connect here!
-    int oldbufsize;
-    int newbufsize = 65535;
-    socklen_t buflen = sizeof(oldbufsize);
-    if (getsockopt(mSocket, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, &buflen) == -1)
+	}
+		 LogFile::getSingelton().Error("HIER 02\n");
+	#else
+	if (connect(mSocket,(struct sockaddr *)&mInsock,sizeof(mInsock)) ==  SOCKET_ERROR)
 	{
-        oldbufsize = 0;
-    }
-    if (oldbufsize < newbufsize)
-    {
-        if (setsockopt(mSocket, SOL_SOCKET, SO_RCVBUF, (char *) &newbufsize, sizeof(&newbufsize)))
-        {
-            setsockopt(mSocket, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, sizeof(&oldbufsize));
-        }
-    }
-    LogFile::getSingelton().Info("Connected to %s:%d\n", host, port);
-    return true;
+		LogFile::getSingelton().Error("Can't connect to server");
+		return false;
+	}
+	if (fcntl(mSocket, F_SETFL, O_NDELAY) == SOCKET_ERROR)
+	{
+		LogFile::getSingelton().Error("InitConnection:  Error on fcntl.\n");
+	}
+	#endif
+	 LogFile::getSingelton().Error("HIER 02\n");
+	// we got a connect here!
+	int oldbufsize;
+	int newbufsize = 65535, buflen = sizeof(int); 
+	#ifdef WIN32
+	if (getsockopt(mSocket, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, &buflen) == -1)
+	#else
+		 LogFile::getSingelton().Error("HIER 04\n");
+	socklen_t socklen= buflen;
+	if (getsockopt(mSocket, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, &socklen) == -1)
+	#endif
+	{
+		oldbufsize = 0;
+	}
+	if (oldbufsize < newbufsize)
+	{
+		if (setsockopt(mSocket, SOL_SOCKET, SO_RCVBUF, (char *) &newbufsize, sizeof(&newbufsize)))
+		{
+			LogFile::getSingelton().Error("InitConnection: setsockopt unable to set output buf size to %d\n", newbufsize);
+			setsockopt(mSocket, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, sizeof(&oldbufsize));
+		}
+	}
+	LogFile::getSingelton().Info("Connected to %s:%d\n", host, port);
+	return true;
 }
 
 // ========================================================================
@@ -714,14 +688,14 @@ inline bool Network::OpenSocket(const char *host, int port)
 bool Network::CloseSocket()
 {
     if (mSocket == SOCKET_NO) { return true; }
-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
+    #ifdef WIN32
     // seems differents sockets have different way to shutdown connects??
     // win32 needs this hard way, normally you should wait for a read() == 0...
     shutdown(mSocket, SD_BOTH);
-    closesocket(mSocket);
-#else
+    closesocket(mSocket); 
+    #else
     close(mSocket);
-#endif
+    #endif
     mSocket = SOCKET_NO; 
     return true;
 }
@@ -740,13 +714,12 @@ void Network::read_metaserver_data()
 		stat = recv(mSocket, ptr, MAX_METASTRING_BUFFER, 0);
 	    if (stat <= 0) 
         {
-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-            if (WSAGetLastError() != WSAEWOULDBLOCK)
-			   LogFile::getSingelton().Error("Error reading metaserver data!: %d\n", WSAGetLastError());
-#else            
-            if (errno != EWOULDBLOCK)
-			   LogFile::getSingelton().Error("Error reading metaserver data!: %s\n", strerror(errno));
-#endif            
+			#ifdef WIN32
+			if (WSAGetLastError() != WSAEWOULDBLOCK)
+				LogFile::getSingelton().Error("Error reading metaserver data!: %d\n", WSAGetLastError());
+			#else
+			LogFile::getSingelton().Error("Error reading metaserver data!:\n");
+			#endif
             break;
         }
         else if (stat > 0)
@@ -795,7 +768,7 @@ int Network::send_socklist(SockList &msg)
 
 
 // ========================================================================
-// 
+// Write socket.
 // ========================================================================
 int Network::write_socket(unsigned char *buf, int len)
 {
@@ -805,40 +778,35 @@ int Network::write_socket(unsigned char *buf, int len)
     // If we manage to write more than we wanted, take it as a bonus
     while (len > 0)
     {
+		#ifdef Win32
         amt = send(mSocket, (char*)pos, len, 0);
-
-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
         if (amt == -1 && WSAGetLastError() != WSAEWOULDBLOCK)
         {
             LogFile::getSingelton().Error("New socket write failed (wsb) (%d).\n", WSAGetLastError());
-            //draw_info("SOCKET ERROR: Server write failed.", COLOR_RED);                
+            //draw_info("SOCKET ERROR: Server write failed.", COLOR_RED);
             return -1;
         }
         if (amt == 0)
         {
             LogFile::getSingelton().Error("Write_To_Socket: No data written out (%d).\n", WSAGetLastError());
-            //draw_info("SOCKET ERROR: No data written out", COLOR_RED);                
+            //draw_info("SOCKET ERROR: No data written out", COLOR_RED);
             return -1;
         }
-#else
-        if (amt == -1 && errno != EWOULDBLOCK)
-        {
-            LogFile::getSingelton().Error("New socket write failed (wsb) (%s).\n", strerror(errno));
-            //draw_info("SOCKET ERROR: Server write failed.", COLOR_RED);                
-            return -1;
-        }
-        if (amt == 0)
-        {
-            LogFile::getSingelton().Error("Write_To_Socket: No data written out (%s).\n", strerror(errno));
-            //draw_info("SOCKET ERROR: No data written out", COLOR_RED);                
-            return -1;
-        }
-#endif        
-        len -= amt;
-        pos += amt;
-    }
-    return 0;
-} 
+		#else
+		amt = write(mSocket, pos, len);
+		if (amt < 0)
+		{
+			if (errno==EINTR) { continue; }
+			 LogFile::getSingelton().Error("New socket (fd=%d) write failed.\n", mSocket);
+			//draw_info("SOCKET ERROR: Server write failed.",COLOR_RED);
+			return -1;
+		}
+		#endif
+		len -= amt;
+		pos += amt;
+	}
+	return 0;
+}
 
 // ========================================================================
 // 
@@ -1076,12 +1044,9 @@ void Network::DoClient()
          //             GroupUpdateCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
         default: // ERROR
-            #ifdef DEBUG_ON
 			LogFile::getSingelton().Info("command: <UNKNOWN> (%d)\n", mInbuf.buf[2]); 
-            #endif
-         //             LogFile::getSingelton().Error("Bad command from server (%d)\n", mInbuf.buf[2]);
 			break;
-		}
+	}
 	mInbuf.len =0;
 }
 
@@ -1098,22 +1063,18 @@ int Network::read_socket()
         stat = recv(mSocket, (char*)mInbuf.buf + mInbuf.len, 2 - mInbuf.len, 0);
         if (stat < 0)
         {
-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
+			#ifdef WIN32
             if ((stat == -1) && WSAGetLastError() != WSAEWOULDBLOCK)
             {
                 LogFile::getSingelton().Error("ReadPacket got error %d, returning -1\n", WSAGetLastError());
                 //draw_info("WARNING: Lost or bad server connection.", COLOR_RED);                
                 return -1;
             }
-#else
-            if ((stat == -1) && errno != EWOULDBLOCK)
-            {
-                LogFile::getSingelton().Error("ReadPacket got error %s, returning -1\n", strerror(errno));
-                //draw_info("WARNING: Lost or bad server connection.", COLOR_RED);                
-                return -1;
-            }
-#endif            
             return 0;
+			#else
+			LogFile::getSingelton().Error("ReadPacket got error.\n");
+			return -1;
+			#endif
         }
         if (stat == 0)
         {
@@ -1141,22 +1102,18 @@ int Network::read_socket()
         stat = recv(mSocket, (char*)mInbuf.buf + mInbuf.len, toread, 0);
         if (stat < 0)
         {
-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
+			#ifdef WIN32
             if ((stat == -1) && WSAGetLastError() != WSAEWOULDBLOCK)
             {
                 LogFile::getSingelton().Error("ReadPacket got error %d, returning 0", WSAGetLastError());
                 //draw_info("WARNING: Lost or bad server connection.", COLOR_RED);                
                 return -1;
             }
-#else
-            if ((stat == -1) && errno != EWOULDBLOCK)
-            {
-                LogFile::getSingelton().Error("ReadPacket got error %d, returning 0", errno);
-                //draw_info("WARNING: Lost or bad server connection.", COLOR_RED);                
-                return -1;
-            }
-#endif            
             return 0;
+			#else
+			LogFile::getSingelton().Error("ReadPacket got error\n");
+			return -1;
+			#endif
         }
         if (stat == 0)
         {
@@ -1178,13 +1135,11 @@ int Network::read_socket()
 } 
 
 // ========================================================================
-// .
+// Request a file from server.
 // ========================================================================
 void Network::RequestFile(int index)
-{        
-	char    buf[MAX_BUF];
-
-    sprintf(buf, "rf %d", index);
-    cs_write_string(buf, strlen(buf));
+{
+	char buf[MAX_BUF];
+	sprintf(buf, "rf %d", index);
+	cs_write_string(buf, strlen(buf));
 }
-
