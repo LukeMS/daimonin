@@ -26,7 +26,7 @@ function getPushDirection()
 	local obj = me.map:GetFirstObjectOnSquare(me.x, me.y)
 	while obj ~= nil do
 		if obj.type == game.TYPE_PLAYER then
-			return obj.direction
+			return obj.facing
 		end		
 		obj = obj.above
 	end
