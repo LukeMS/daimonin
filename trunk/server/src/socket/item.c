@@ -1233,7 +1233,6 @@ void esrv_move_object (object *pl, tag_t to, tag_t tag, long nrof)
 			drop_object (pl, op, nrof);
 		return;
 	} 
-	/* the second is special case: we get an open container on the floor */
 	else if (to == pl->count || (to == op->count && !op->env)) /* pick it up to the inventory */
 	{ 
 		/* return if player has already picked it up */
@@ -1242,7 +1241,7 @@ void esrv_move_object (object *pl, tag_t to, tag_t tag, long nrof)
 
 		pl->contr->count = nrof;
 		/*LOG(-1,"pick up...\n");*/
-		pick_up(pl, op);
+		pick_up(pl, op); /* it goes in player inv or readied container */
 		return ;
     }
     /* If not dropped or picked up, we are putting it into a sack */
@@ -1255,6 +1254,7 @@ void esrv_move_object (object *pl, tag_t to, tag_t tag, long nrof)
      * in a sack, so check for those things.  We should also check
      * an make sure env is in fact a container for that matter.
      */
+	/* player have for example a opend container in the inventory */
     if (env->type == CONTAINER && can_pick(pl, op) && sack_can_hold(pl, env, op, nrof)) 
 	{
 		/*LOG(-1,"put in sack...\n");*/
