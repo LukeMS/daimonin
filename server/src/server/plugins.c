@@ -849,11 +849,11 @@ CFParm * CFWDoLearnSpell(CFParm *PParm)
 CFParm * CFWFindSkill(CFParm *PParm)
 {
     static CFParm   CFP;
-    static object  *ptr;
+    object  *ptr;
 
     ptr = find_skill((object *) (PParm->Value[0]), *(int *) (PParm->Value[1]));
 
-    CFP.Value[0] = &ptr;
+    CFP.Value[0] = ptr;
     return &CFP;
 }
 
@@ -886,6 +886,7 @@ CFParm * CFWDoLearnSkill(CFParm *PParm)
 {
     if (*(int *) (PParm->Value[2]))
     {
+        /* TODO: add again unlearn skills. atm we don't need to unlearn them */
     }
     else
     {

@@ -11,7 +11,7 @@ tl:addTopics("learn (.*)",
 		if skill == -1 then
 			whoami:SayTo(activator,"Unknown skill \""..skillname.."\"" )
 		else
-			if activator:DoKnowSkill(skill) then
+			if activator:FindSkill(skill) ~= nil then
 				whoami:SayTo(activator,"You already learned this skill." )
 			else
 				activator:AcquireSkill(skill, game.LEARN)

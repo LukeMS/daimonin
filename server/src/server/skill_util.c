@@ -130,7 +130,7 @@ object * find_skill(object *op, int skillnr)
     if(op->type != PLAYER || !CONTR(op))
     {
         LOG(llevDebug, "BUG: find_skill() called for non player/no CONTR() object %s (%d)\n", query_name(op), skillnr);
-        return 0;
+        return NULL;
     }
     
     return CONTR(op)->skill_ptr[skillnr];
@@ -367,7 +367,7 @@ void read_skill_params()
     char    fname[MAX_BUF];
     char    skill_name[256];
     char    skill_attrib[256];
-    int     cat, bexp, time, stat1, stat2, stat3, skillindex;
+    int     i, cat, bexp, time, stat1, stat2, stat3, skillindex;
     float   lexp;
 
     sprintf(fname, "%s/%s", settings.datadir, "skill_params");
@@ -398,6 +398,16 @@ void read_skill_params()
         skills[skillindex].stat3 = stat3;
     }
     fclose(skill_params);
+
+    for (i = 0; i < NROFSKILLS; i++)
+    {
+        /* link the skill archetype ptr to skill list for fast access.
+        * now we can access the skill archetype by skill number or skill name.
+        */
+        if (!(skills[i].at = get_skill_archetype(i)))
+            LOG(llevError, "ERROR: Aborting! Skill #%d (%s) not found in archlist!\n", i, skills[i].name);
+    }        
+
     LOG(llevDebug, "done.\n");
 }
 
@@ -640,40 +650,38 @@ int learn_skill(object *pl, object *scroll, char *name, int skillnr, int scroll_
 {
     object     *tmp;
     archetype  *skill           = NULL;
-    object     *tmp2;
     int         has_meditation  = 0;
 
-    if (scroll)
+
+    if(pl->type != PLAYER)
+        return 2;
+
+    if(skillnr!= -1)
+        skill = skills[skillnr].at;
+    else if (scroll)
         skill = find_archetype(scroll->slaying);
     else if (name)
         skill = find_archetype(name);
-    else
-        skill = skills[skillnr].at;
+
     if (!skill)
         return 2;
+
+    skillnr = skill->clone.stats.sp;    
+    if(find_skill(pl,skillnr))
+    {
+        new_draw_info_format(NDI_UNIQUE, 0, pl, "You already know the skill '%s'!", query_name(&skill->clone));
+        return 0;
+    }
+
     tmp = arch_to_object(skill);
     if (!tmp)
         return 2;
-
-    /* check if player already has it */
-    for (tmp2 = pl->inv; tmp2; tmp2 = tmp2->below)
-    {
-        if (tmp2->type == SKILL)
-        {
-            if (tmp2->stats.sp == tmp->stats.sp)
-            {
-                new_draw_info_format(NDI_UNIQUE, 0, pl, "You already know the skill '%s'!", tmp->name);
-                return 0;
-            }
-            else if (tmp2->stats.sp == SK_MEDITATION)
-                has_meditation = 1;
-        }
-    }
-
+    
     /* Special check - if the player has meditation (monk), they can not
      * learn melee weapons.  Prevents monk from getting this
      * skill.
      */
+    /* disabled the meditation check for now - MT-2005 */
     if (tmp->stats.sp == SK_MELEE_WEAPON && has_meditation)
     {
         new_draw_info(NDI_UNIQUE, 0, pl, "Your knowledge of inner peace prevents you from learning about melee weapons.");
@@ -687,8 +695,9 @@ int learn_skill(object *pl, object *scroll, char *name, int skillnr, int scroll_
             return 2; /* failure :< */
     }
     /* Everything is cool. Give'em the skill */
-    (void) insert_ob_in_ob(tmp, pl);
-    (void) link_player_skill(pl, tmp);  
+    insert_ob_in_ob(tmp, pl);
+    CONTR(pl)->skill_ptr[tmp->stats.sp] = tmp;
+    link_player_skill(pl, tmp);  
     play_sound_player_only(CONTR(pl), SOUND_LEARN_SPELL, SOUND_NORMAL, 0, 0);
     new_draw_info_format(NDI_UNIQUE, 0, pl, "You have learned the skill %s!", tmp->name);
 
