@@ -1023,8 +1023,9 @@ hp 1
 sp 1
 end
 arch event_obj
-sub_type 6
+name Lua
 race /dev/testmaps/waypoint_activate.lua
+sub_type 6
 end
 end
 arch floor_ostone1
