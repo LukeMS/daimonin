@@ -197,6 +197,7 @@
   <entry value="10" name="trigger" />
   <entry value="11" name="close" />
   <entry value="12" name="timer" />
+  <entry value="13" name="talk" />
 </list>
 
 <list name="direction">
