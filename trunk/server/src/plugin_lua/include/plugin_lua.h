@@ -138,12 +138,15 @@ struct plugin_hooklist *hooks;
 #undef LOG
 #define LOG hooks->LOG
 
+extern uint32 lua_context_tag_counter;
+
 struct lua_context
 {
     /* Data related to detached lua threads */
     struct lua_context *next, *prev;
     int resume_time;
-
+    uint32 tag;
+    
     /* Runtime statistics */
     struct timeval start_time, running_time;
     

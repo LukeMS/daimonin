@@ -69,6 +69,8 @@ CFParm                          GCFP2;
 
 /* script context list */
 struct lua_context             *first_context;
+/* Tag counter for contexts */
+uint32 lua_context_tag_counter;
 
 /* Our global state from which we spawn threads for running scripts */
 struct lua_State               *global_state;
@@ -99,12 +101,14 @@ static int  Game_GetSkillNr(lua_State *L);
 static int  Game_CheckMap(lua_State *L);
 // static int Game_RegisterCommand(lua_State *L);
 static int  Game_LoadObject(lua_State *L);
+static int  Game_IsValid(lua_State *L);
 
 static struct method_decl       Game_methods[]      =
 {
     {"FileUnlink", Game_FileUnlink}, {"TransferMapItems", Game_TransferMapItems}, {"LoadObject", Game_LoadObject},
     {"ReadyMap", Game_ReadyMap}, {"CheckMap", Game_CheckMap}, {"MatchString", Game_MatchString},
-    {"FindPlayer", Game_FindPlayer}, {"GetSpellNr", Game_GetSpellNr}, {"GetSkillNr", Game_GetSkillNr},
+    {"FindPlayer", Game_FindPlayer}, {"GetSpellNr", Game_GetSpellNr}, 
+    {"GetSkillNr", Game_GetSkillNr}, {"IsValid", Game_IsValid},
     //    {"RegisterCommand", Game_RegisterCommand},
     {NULL, NULL}
 };
@@ -174,26 +178,36 @@ static struct constant_decl     Game_constants[]    =
     {"TYPE_LIGHTER"                 ,LIGHTER}, {"TYPE_TRAP_PART"               ,TRAP_PART},
     {"TYPE_WALL"                    ,WALL}, {"TYPE_LIGHT_SOURCE"            ,LIGHT_SOURCE},
     {"TYPE_MISC_OBJECT"             ,MISC_OBJECT}, {"TYPE_MONSTER"                 ,MONSTER},
-    /* TODO: keep replaceing with the true defines... */
-    {"TYPE_SPAWN_POINT"             ,81}, {"TYPE_LIGHT_REFILL"            ,82}, {"TYPE_SPAWN_POINT_MOB"     ,83 },
-    {"TYPE_SPAWN_POINT_INFO"        ,84}, {"TYPE_SPELLBOOK"               ,85}, {"TYPE_ORGANIC"             ,86},
-    {"TYPE_CLOAK"                   ,87}, {"TYPE_CONE"                    ,88}, {"TYPE_AURA"                   ,89},
-    {"TYPE_SPINNER"             ,90}, {"TYPE_GATE"                    ,91}, {"TYPE_BUTTON"                  ,92},
-    {"TYPE_CF_HANDLE"               ,93}, {"TYPE_PIT"                 ,94}, {"TYPE_TRAPDOOR"                ,95},
-    {"TYPE_WORD_OF_RECALL"          ,96}, {"TYPE_PARAIMAGE"               ,97}, {"TYPE_SIGN"                    ,98},
-    {"TYPE_BOOTS"                   ,99}, {"TYPE_GLOVES"                  ,100}, {"TYPE_BASE_INFO"           ,101},
-    {"TYPE_RANDOM_DROP"     ,102}, {"TYPE_CONVERTER"               ,103}, {"TYPE_BRACERS"             ,104},
-    {"TYPE_POISONING"               ,105 }, {"TYPE_SAVEBED"             ,106}, {"TYPE_POISONCLOUD"         ,107},
-    {"TYPE_FIREHOLES"               ,108}, {"TYPE_WAND"                    ,109}, {"TYPE_ABILITY"             ,110},
-    {"TYPE_SCROLL"                  ,111}, {"TYPE_DIRECTOR"                ,112}, {"TYPE_GIRDLE"                  ,113},
-    {"TYPE_FORCE"                   ,114}, {"TYPE_POTION_EFFECT"         ,115}, {"TYPE_JEWEL"               ,116},
-    {"TYPE_NUGGET"          ,117}, {"TYPE_EVENT_OBJECT"        ,118}, {"TYPE_WAYPOINT_OBJECT" ,119},
-    {"TYPE_QUEST_CONTAINER" ,120}, {"TYPE_CLOSE_CON"               ,121}, {"TYPE_CONTAINER"               ,122},
-    {"TYPE_ARMOUR_IMPROVER"        ,123}, {"TYPE_WEAPON_IMPROVER"        ,124}, {"TYPE_WEALTH"        ,125},
-    {"TYPE_SKILLSCROLL"         ,130}, {"TYPE_DEEP_SWAMP"              ,138}, {"TYPE_IDENTIFY_ALTAR"          ,139},
-    {"TYPE_CANCELLATION"            ,141}, {"TYPE_MENU"                    ,150}, {"TYPE_BALL_LIGHTNING"         ,151},
-    {"TYPE_SWARM_SPELL"            ,153}, {"TYPE_RUNE"                   ,154}, {"TYPE_POWER_CRYSTAL"          ,156},
-    {"TYPE_CORPSE"                 ,157}, {"TYPE_DISEASE"                ,158}, {"TYPE_SYMPTOM"                ,159},
+    {"TYPE_SPAWN_POINT"             ,SPAWN_POINT}, {"TYPE_LIGHT_REFILL"            ,TYPE_LIGHT_REFILL}, 
+    {"TYPE_SPAWN_POINT_MOB"         ,SPAWN_POINT_MOB }, {"TYPE_SPAWN_POINT_INFO"        ,SPAWN_POINT_INFO}, 
+    {"TYPE_SPELLBOOK"               ,SPELLBOOK}, {"TYPE_ORGANIC"             ,ORGANIC},
+    {"TYPE_CLOAK"                   ,CLOAK}, {"TYPE_CONE"                    ,CONE}, 
+    {"TYPE_AURA"                    ,AURA}, {"TYPE_SPINNER"             ,SPINNER}, 
+    {"TYPE_GATE"                    ,GATE}, {"TYPE_BUTTON"                  ,BUTTON},
+    {"TYPE_CF_HANDLE"               ,CF_HANDLE}, {"TYPE_PIT"                 ,PIT}, 
+    {"TYPE_TRAPDOOR"                ,TRAPDOOR}, {"TYPE_WORD_OF_RECALL"          ,WORD_OF_RECALL}, 
+    {"TYPE_PARAIMAGE"               ,PARAIMAGE}, {"TYPE_SIGN"                    ,SIGN},
+    {"TYPE_BOOTS"                   ,BOOTS}, {"TYPE_GLOVES"                  ,GLOVES}, 
+    {"TYPE_BASE_INFO"               ,TYPE_BASE_INFO}, {"TYPE_RANDOM_DROP"     ,TYPE_RANDOM_DROP}, 
+    {"TYPE_CONVERTER"               ,CONVERTER}, {"TYPE_BRACERS"             ,BRACERS},
+    {"TYPE_POISONING"               ,POISONING}, {"TYPE_SAVEBED"             ,SAVEBED}, 
+    {"TYPE_POISONCLOUD"             ,POISONCLOUD}, {"TYPE_FIREHOLES"               ,FIREHOLES}, 
+    {"TYPE_WAND"                    ,WAND}, {"TYPE_ABILITY"             ,ABILITY},
+    {"TYPE_SCROLL"                  ,SCROLL}, {"TYPE_DIRECTOR"                ,DIRECTOR}, 
+    {"TYPE_GIRDLE"                  ,GIRDLE}, {"TYPE_FORCE"                   ,FORCE}, 
+    {"TYPE_POTION_EFFECT"           ,POTION_EFFECT}, {"TYPE_JEWEL"               ,TYPE_JEWEL},
+    {"TYPE_NUGGET"                  ,TYPE_NUGGET}, {"TYPE_EVENT_OBJECT"        ,TYPE_EVENT_OBJECT}, 
+    {"TYPE_WAYPOINT_OBJECT"         ,TYPE_WAYPOINT_OBJECT}, {"TYPE_QUEST_CONTAINER" ,TYPE_QUEST_CONTAINER}, 
+    {"TYPE_CLOSE_CON"               ,CLOSE_CON}, {"TYPE_CONTAINER"               ,CONTAINER},
+    {"TYPE_ARMOUR_IMPROVER"         ,ARMOUR_IMPROVER}, {"TYPE_WEAPON_IMPROVER"        ,WEAPON_IMPROVER}, 
+    {"TYPE_WEALTH"                  ,TYPE_WEALTH}, {"TYPE_AI"                   ,TYPE_AI},
+    {"TYPE_AGGRO_HISTORY"           ,TYPE_AGGRO_HISTORY}, {"TYPE_DAMAGE_INFO"            ,TYPE_DAMAGE_INFO},
+    {"TYPE_SKILLSCROLL"             ,SKILLSCROLL}, {"TYPE_DEEP_SWAMP"              ,DEEP_SWAMP}, 
+    {"TYPE_IDENTIFY_ALTAR"          ,IDENTIFY_ALTAR}, {"TYPE_CANCELLATION"            ,CANCELLATION}, 
+    {"TYPE_MENU"                    ,MENU}, {"TYPE_BALL_LIGHTNING"         ,BALL_LIGHTNING},
+    {"TYPE_SWARM_SPELL"             ,SWARM_SPELL}, {"TYPE_RUNE"                   ,RUNE}, 
+    {"TYPE_POWER_CRYSTAL"           ,POWER_CRYSTAL,}, {"TYPE_CORPSE"                 ,CORPSE}, 
+    {"TYPE_DISEASE"                 ,DISEASE}, {"TYPE_SYMPTOM"                ,SYMPTOM},
     {NULL, 0}
 };
 
@@ -428,6 +442,46 @@ static int Game_GetSkillNr(lua_State *L)
     get_lua_args(L, "s", &skill);
 
     lua_pushnumber(L, hooks->lookup_skill_by_name(skill));
+    return 1;
+}
+
+/*****************************************************************************/
+/* Name   : Game_IsValid                                                     */
+/* Lua    : game.IsValid(what)                                               */
+/* Info   : Test if a map or object is still valid. (Useful for datastore    */
+/*          and coroutine usage)                                             */
+/* Status : Tested                                                           */
+/*****************************************************************************/
+static int Game_IsValid(lua_State *L)
+{
+    lua_object *obj;
+
+    if(lua_gettop(L) != 1) 
+        luaL_error(L, "wrong number of arguments to game.IsValid() (1 expected, got %d)", lua_gettop(L));
+    
+    /* Nil is never valid, so we can just return it */
+    if(lua_isnil(L, -1)) 
+    {
+        lua_pushboolean(L, 0);
+    } 
+    else if(! (obj = lua_touserdata(L, -1))) 
+    {
+        luaL_error(L, "parameter is not nil, a GameObject or a Map");
+    }
+    else
+    {
+        if(obj->class == &GameObject) 
+        {
+            lua_pushboolean(L, obj->data.object->count == obj->tag);
+        } else if(obj->class == &Map)
+        {
+            luaL_error(L, "validation of Maps not yet supported");
+        } else
+        {
+            luaL_error(L, "parameter is not nil, a GameObject or a Map");
+        }
+    }
+    
     return 1;
 }
 
@@ -689,6 +743,7 @@ void terminate_lua_context(struct lua_context *context)
     
     /* Get rid of the thread object, which should leave the thread for gc */
     luaL_unref(global_state, LUA_REGISTRYINDEX, context->threadidx);
+    context->tag = 0;
 
     return_poolchunk(context, pool_luacontext);
 }
@@ -719,6 +774,18 @@ void resume_detached_contexts()
                 if(lua_isnumber(L, -1) || lua_isstring(L, -1))  {
                     context->resume_time = lua_tonumber(L, -1)* (lua_Number)(1000000 / MAX_TIME);
                 }
+            } else
+            {
+                const char *error;
+                lua_pushcclosure(L,luaError,0);
+                lua_pushvalue(L, -2);
+                lua_pcall(L, 1, 1, 0);
+    
+                if ((error = lua_tostring(L, -1)))
+                    LOG(llevDebug, "LUA - %s\n", error);
+                else
+                    LOG(llevDebug, "LUA - unknown error %d type %s\n", res,
+                            lua_typename(L, lua_type(L, -1)));
             }
 
             if(context->resume_time < 0) {
@@ -941,9 +1008,6 @@ static int RunLuaScript(struct lua_context *context)
     push_object(L, &Event, context);
     lua_rawset(L, LUA_GLOBALSINDEX);
 
-    /* Set up the error handler function */
-    lua_pushcclosure(L, luaError, 0);
-
     /* Load the actual script function */
     res = luaLoadFile(L, context->file);
     if (res == 0)
@@ -952,10 +1016,7 @@ static int RunLuaScript(struct lua_context *context)
         lua_pushvalue(L, LUA_GLOBALSINDEX);
         lua_setfenv(L, -2);
 
-        /* Loadfile puts the loaded chunk on top of the stack as a function,
-         * we call it without parameters and not caring about return values */
-        // res = lua_pcall(L, 0, 1, -2);
-        // TODO: figure out how to get the error handler into the coroutine
+        /* Call the function as a coroutine */
         res = lua_resume(L, 0);
 
         if (res == 0)
@@ -968,6 +1029,12 @@ static int RunLuaScript(struct lua_context *context)
         }
     }
 
+    /* Call our error function. */
+    /* TODO: set it up as a error handler so we can get a stack traceback */
+    lua_pushcclosure(L,luaError,0);
+    lua_pushvalue(L, -2);
+    lua_pcall(L, 1, 1, 0);
+    
     if ((error = lua_tostring(L, -1)))
         LOG(llevDebug, "LUA - %s\n", error);
     else
@@ -995,6 +1062,7 @@ MODULEAPI int HandleEvent(CFParm *PParm)
 
     context = get_poolchunk(pool_luacontext);
 
+    context->tag = ++lua_context_tag_counter;
     context->next = context->prev = NULL;
     context->resume_time = -1;
     context->state = lua_newthread(global_state);
