@@ -3,6 +3,7 @@ name orc berserker
 face orc_berserker.131
 race orc
 is_male 1
+will_apply 8
 wc_range 20
 corpse 1
 layer 6
@@ -100,7 +101,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 81
+exp 101
 ac 10
 wc 3
 dam 56

@@ -223,7 +223,7 @@ anim_speed 4
 monster 1
 no_pick 1
 alive 1
-exp 82
+exp 102
 ac 12
 wc 4
 wc_range 20

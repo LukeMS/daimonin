@@ -1,6 +1,7 @@
 Object drow_sorcerer
 name drow sorcerer
 face drow_sorcerer.131
+will_apply 8
 race drows
 is_female 1
 wc_range 20
@@ -15,7 +16,7 @@ weapon_speed 0.035
 attack_pierce 75
 type 80
 Wis 6
-randomitems mob_drow
+randomitems mob_drow_mage
 anim
 facings 25
 trans.101
@@ -100,7 +101,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 85
+exp 107
 ac 10
 wc 3
 dam 52

@@ -1323,6 +1323,13 @@ arch floor_ostone1
 x 12
 y 10
 end
+arch amulet_generic
+reflect_spell 1
+reflect_missile 1
+identified 1
+x 12
+y 10
+end
 arch floor_ostone1
 x 12
 y 11

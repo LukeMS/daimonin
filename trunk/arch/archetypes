@@ -15564,7 +15564,7 @@ race slime
 randomitems mob_slime
 is_neutral 1
 weight 13250
-exp 80
+exp 100
 wc_range 20
 item_race 255
 item_level 255
@@ -15600,7 +15600,7 @@ randomitems mob_slime
 is_neutral 1
 weight 13250
 wc_range 20
-exp 77
+exp 97
 item_race 255
 item_level 255
 speed -0.025
@@ -15637,7 +15637,7 @@ race slime
 randomitems mob_slime
 is_neutral 1
 weight 8250
-exp 70
+exp 90
 item_race 255
 item_level 255
 wc_range 20
@@ -15672,7 +15672,7 @@ race slime
 randomitems mob_slime
 is_neutral 1
 weight 13250
-exp 81
+exp 101
 item_race 255
 wc_range 20
 item_level 255
@@ -15709,7 +15709,7 @@ race slime
 randomitems mob_slime
 is_neutral 1
 weight 13250
-exp 85
+exp 105
 wc_range 20
 item_race 255
 item_level 255
@@ -15748,7 +15748,7 @@ randomitems mob_slime
 is_neutral 1
 weight 13250
 wc_range 20
-exp 91
+exp 111
 speed -0.032
 item_race 255
 item_level 255
@@ -15784,7 +15784,7 @@ race slime
 randomitems mob_slime
 is_neutral 1
 weight 13250
-exp 86
+exp 106
 wc_range 20
 speed -0.032
 weapon_speed 0.0375
@@ -15822,7 +15822,7 @@ race slime
 randomitems mob_slime
 is_neutral 1
 weight 16250
-exp 79
+exp 109
 wc_range 20
 speed -0.026
 weapon_speed 0.040
@@ -15859,7 +15859,7 @@ randomitems mob_slime
 is_neutral 1
 weight 16250
 wc_range 20
-exp 84
+exp 104
 speed -0.026
 weapon_speed 0.040
 item_race 255
@@ -15894,7 +15894,7 @@ randomitems mob_slime
 is_neutral 1
 wc_range 20
 weight 12250
-exp 74
+exp 94
 speed -0.024
 weapon_speed 0.040
 attack_impact 75
@@ -15929,7 +15929,7 @@ randomitems mob_slime
 is_neutral 1
 weight 16250
 wc_range 20
-exp 91
+exp 111
 speed -0.026
 weapon_speed 0.040
 item_race 255
@@ -15963,7 +15963,7 @@ race slime
 randomitems mob_slime
 is_neutral 1
 weight 16250
-exp 83
+exp 103
 wc_range 20
 speed -0.026
 weapon_speed 0.040
@@ -15999,7 +15999,7 @@ randomitems mob_slime
 is_neutral 1
 weight 16250
 wc_range 20
-exp 88
+exp 108
 speed -0.026
 weapon_speed 0.040
 attack_poison 80
@@ -16033,7 +16033,7 @@ race slime
 randomitems mob_slime
 is_neutral 1
 weight 13250
-exp 82
+exp 102
 wc_range 20
 item_race 255
 item_level 255
@@ -16069,7 +16069,7 @@ randomitems mob_slime
 wc_range 20
 is_neutral 1
 weight 13250
-exp 81
+exp 101
 speed -0.03
 item_race 255
 item_level 255
@@ -16106,7 +16106,7 @@ race slime
 randomitems mob_slime
 is_neutral 1
 weight 12250
-exp 66
+exp 86
 wc_range 20
 item_race 255
 item_level 255
@@ -16259,7 +16259,7 @@ is_male 1
 weight 473250
 item_race 255
 item_level 255
-exp 82
+exp 102
 speed -0.035
 weapon_speed 0.042
 attack_impact 90
@@ -16294,7 +16294,7 @@ is_male 1
 will_apply 8
 weight 153250
 wc_range 20
-exp 75
+exp 105
 item_race 255
 item_level 255
 speed -0.0275
@@ -16332,7 +16332,7 @@ is_evil 1
 is_male 1
 wc_range 20
 weight 732500
-exp 85
+exp 105
 item_race 255
 item_level 255
 speed -0.045
@@ -16365,6 +16365,7 @@ editor_folder mobs/giants
 race giants
 is_male 1
 wc_range 20
+will_apply 8
 corpse 1
 layer 6
 direction 5
@@ -16383,7 +16384,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 87
+exp 107
 ac 10
 wc 4
 dam 62
@@ -16855,7 +16856,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 96
+exp 116
 ac 12
 wc 4
 wc_range 20
@@ -16894,7 +16895,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 65
+exp 85
 ac 9
 wc 0
 dam 50
@@ -16930,7 +16931,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 75
+exp 95
 ac 10
 wc 1
 dam 50
@@ -16967,7 +16968,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 77
+exp 97
 ac 9
 wc 0
 dam 51
@@ -17004,7 +17005,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 80
+exp 95
 ac 10
 wc 3
 dam 50
@@ -17042,7 +17043,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 80
+exp 101
 ac 9
 wc 7
 dam 55
@@ -17081,7 +17082,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 82
+exp 101
 ac 9
 wc 6
 dam 55
@@ -17114,7 +17115,7 @@ monster 1
 alive 1
 attack_impact 100
 can_see_in_dark 1
-exp 75
+exp 95
 ac 9
 wc 6
 dam 48
@@ -17135,6 +17136,7 @@ race dragon
 layer 6
 randomitems mob_wyvern
 direction 5
+will_apply 8
 speed -0.06
 corpse 1
 wc_range 20
@@ -17152,7 +17154,7 @@ monster 1
 level 1
 Con 2
 Pow 2
-exp 83
+exp 103
 ac 11
 wc 7
 dam 56
@@ -17223,6 +17225,7 @@ randomitems mob_troll
 wc_range 20
 direction 5
 speed -0.06
+will_apply 8
 corpse 1
 item_race 255
 item_level 255
@@ -17238,7 +17241,7 @@ level 1
 Con 2
 Pow 2
 can_cast_spell 1
-exp 102
+exp 122
 ac 11
 wc 9
 dam 61
@@ -17303,6 +17306,7 @@ editor_folder mobs/dragon
 layer 6
 race dragon
 corpse 1
+will_apply 8
 item_race 255
 wc_range 20
 item_level 255
@@ -17321,7 +17325,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 95
+exp 115
 ac 13
 wc 4
 dam 60
@@ -17344,6 +17348,7 @@ direction 5
 speed -0.06
 corpse 1
 wc_range 20
+will_apply 8
 item_race 255
 item_level 255
 is_male 1
@@ -17358,7 +17363,7 @@ monster 1
 level 1
 Con 2
 Pow 2
-exp 112
+exp 132
 ac 11
 wc 7
 dam 72
@@ -17424,6 +17429,7 @@ type 80
 editor_folder mobs/demihumans
 race kobold
 is_male 1
+will_apply 8
 corpse 1
 wc_range 20
 layer 6
@@ -17443,7 +17449,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 70
+exp 90
 ac 9
 wc 0
 dam 51
@@ -17463,6 +17469,7 @@ is_male 1
 wc_range 20
 corpse 1
 layer 6
+will_apply 8
 direction 5
 is_evil 1
 item_race 255
@@ -17479,7 +17486,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 75
+exp 95
 ac 9
 wc 0
 dam 51
@@ -17498,6 +17505,7 @@ race kobold
 is_male 1
 corpse 1
 wc_range 20
+will_apply 8
 layer 6
 direction 5
 item_race 255
@@ -17515,7 +17523,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 79
+exp 99
 ac 9
 wc 0
 dam 51
@@ -17536,6 +17544,7 @@ wc_range 20
 corpse 1
 layer 6
 direction 5
+will_apply 8
 is_evil 1
 terrain_flag 1
 item_race 255
@@ -17551,7 +17560,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 80
+exp 100
 ac 9
 wc 0
 dam 52
@@ -17572,6 +17581,7 @@ corpse 1
 layer 6
 Dex 13
 can_cast_spell 1
+will_apply 8
 sp -1
 maxsp 6
 Pow 2
@@ -17593,7 +17603,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 85
+exp 105
 ac 9
 wc 0
 dam 50
@@ -17612,6 +17622,7 @@ race gnoll
 is_male 1
 wc_range 20
 corpse 1
+will_apply 8
 layer 6
 direction 5
 is_evil 1
@@ -17629,7 +17640,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 79
+exp 99
 ac 10
 wc 3
 dam 58
@@ -17649,6 +17660,7 @@ is_male 1
 wc_range 20
 corpse 1
 layer 6
+will_apply 8
 direction 5
 is_evil 1
 item_race 255
@@ -17665,7 +17677,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 75
+exp 95
 ac 10
 wc 3
 dam 51
@@ -17685,6 +17697,7 @@ is_male 1
 wc_range 20
 corpse 1
 layer 6
+will_apply 8
 direction 5
 is_evil 1
 item_race 255
@@ -17701,7 +17714,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 75
+exp 95
 ac 10
 wc 3
 dam 54
@@ -17737,7 +17750,7 @@ monster 1
 level 1
 Con 2
 Pow 2
-exp 91
+exp 111
 ac 11
 wc 7
 dam 56
@@ -17804,7 +17817,7 @@ randomitems mob_slugs
 wc_range 20
 is_neutral 1
 weight 23250
-exp 78
+exp 98
 speed -0.03
 item_race 255
 item_level 255
@@ -17841,6 +17854,7 @@ editor_folder mobs/undead
 race undead
 is_evil 1
 corpse 1
+will_apply 8
 glow_radius 2
 wc_range 20
 layer 6
@@ -17862,7 +17876,7 @@ no_pick 1
 alive 1
 can_see_in_dark 1
 can_cast_spell 1
-exp 95
+exp 115
 ac 9
 wc 0
 dam 61
@@ -17883,6 +17897,7 @@ race undead
 is_male 1
 corpse 1
 layer 6
+will_apply 8
 wc_range 20
 direction 5
 is_evil 1
@@ -17900,7 +17915,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 77
+exp 97
 ac 9
 wc 4
 dam 53
@@ -17919,6 +17934,7 @@ race undead
 is_male 1
 can_cast_spell 1
 maxsp 6
+will_apply 8
 Pow 2
 Dex 13
 magic 5
@@ -17941,7 +17957,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 85
+exp 111
 ac 9
 wc 6
 dam 53
@@ -17958,6 +17974,7 @@ type 80
 editor_folder mobs/undead
 race undead
 is_male 1
+will_apply 8
 corpse 1
 layer 6
 wc_range 20
@@ -17977,7 +17994,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 77
+exp 97
 ac 9
 wc 3
 dam 51
@@ -17995,6 +18012,7 @@ editor_folder mobs/undead
 race undead
 is_male 1
 corpse 1
+will_apply 8
 wc_range 20
 layer 6
 direction 5
@@ -18013,7 +18031,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 77
+exp 97
 ac 10
 wc 3
 dam 52
@@ -18050,7 +18068,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 83
+exp 103
 ac 7
 wc 3
 dam 52
@@ -18067,6 +18085,7 @@ type 80
 editor_folder mobs/undead
 race undead
 is_male 1
+can_pass_thru 1
 wc_range 20
 corpse 1
 layer 6
@@ -18087,7 +18106,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 83
+exp 110
 ac 7
 wc 3
 dam 53
@@ -18105,6 +18124,7 @@ editor_folder mobs/undead
 race undead
 is_male 1
 wc_range 20
+will_apply 8
 corpse 1
 layer 6
 direction 5
@@ -18124,7 +18144,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 83
+exp 103
 ac 10
 wc 3
 dam 53
@@ -18159,7 +18179,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 75
+exp 95
 ac 10
 wc 1
 dam 52
@@ -18194,7 +18214,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 80
+exp 100
 ac 10
 wc 5
 dam 52
@@ -18229,7 +18249,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 76
+exp 96
 ac 10
 wc 3
 dam 52
@@ -18266,6 +18286,7 @@ direction 5
 speed -0.06
 corpse 1
 wc_range 20
+will_apply 8
 item_race 255
 item_level 255
 is_male 1
@@ -18280,7 +18301,7 @@ monster 1
 level 1
 Con 2
 Pow 2
-exp 112
+exp 132
 ac 11
 wc 8
 dam 69
@@ -18361,7 +18382,7 @@ anim_speed 4
 monster 1
 no_pick 1
 alive 1
-exp 82
+exp 102
 ac 12
 wc 4
 wc_range 20
@@ -18381,6 +18402,7 @@ race orc
 is_male 1
 wc_range 20
 corpse 1
+will_apply 8
 layer 6
 direction 5
 is_evil 1
@@ -18398,7 +18420,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 88
+exp 108
 ac 10
 wc 4
 dam 62
@@ -18418,6 +18440,7 @@ is_male 1
 wc_range 20
 corpse 1
 layer 6
+will_apply 8
 direction 5
 is_evil 1
 item_race 255
@@ -18426,7 +18449,7 @@ terrain_flag 1
 weapon_speed 0.035
 attack_pierce 75
 Wis 6
-randomitems mob_orc
+randomitems mob_orc_mage
 animation orc_priest
 is_animated 1
 anim_speed 4
@@ -18434,7 +18457,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 80
+exp 100
 ac 10
 wc 3
 dam 51
@@ -18456,6 +18479,7 @@ type 80
 editor_folder mobs/orcs
 race orc
 is_male 1
+will_apply 8
 wc_range 20
 corpse 1
 layer 6
@@ -18475,7 +18499,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 81
+exp 101
 ac 10
 wc 3
 dam 56
@@ -18493,6 +18517,7 @@ editor_folder mobs/orcs
 race orc
 is_male 1
 wc_range 20
+will_apply 8
 corpse 1
 layer 6
 direction 5
@@ -18511,7 +18536,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 82
+exp 102
 ac 10
 wc 3
 dam 58
@@ -18531,6 +18556,7 @@ is_male 1
 wc_range 20
 corpse 1
 layer 6
+will_apply 8
 direction 5
 is_evil 1
 item_race 255
@@ -18539,7 +18565,7 @@ terrain_flag 1
 weapon_speed 0.035
 attack_cleave 75
 Wis 6
-randomitems mob_orc
+randomitems mob_orc_mage
 animation orc_sorcerer
 is_animated 1
 anim_speed 4
@@ -18547,7 +18573,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 80
+exp 100
 ac 10
 wc 3
 dam 53
@@ -18570,6 +18596,7 @@ editor_folder mobs/orcs
 race orc
 is_male 1
 wc_range 20
+will_apply 8
 corpse 1
 layer 6
 direction 5
@@ -18588,7 +18615,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 86
+exp 106
 ac 10
 wc 3
 dam 61
@@ -18607,6 +18634,7 @@ race orc
 is_male 1
 wc_range 20
 corpse 1
+will_apply 8
 layer 6
 direction 5
 is_evil 1
@@ -18624,7 +18652,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 75
+exp 95
 ac 10
 wc 4
 dam 61
@@ -18643,6 +18671,7 @@ race orc
 is_male 1
 wc_range 20
 corpse 1
+will_apply 8
 layer 6
 direction 5
 is_evil 1
@@ -18660,7 +18689,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 85
+exp 105
 ac 11
 wc 4
 dam 61
@@ -18677,6 +18706,7 @@ type 80
 editor_folder mobs/elves
 race drows
 is_male 1
+will_apply 8
 wc_range 20
 corpse 1
 layer 6
@@ -18696,7 +18726,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 85
+exp 106
 ac 11
 wc 6
 dam 54
@@ -18714,6 +18744,7 @@ editor_folder mobs/elves
 race drows
 is_male 1
 wc_range 20
+will_apply 8
 corpse 1
 layer 6
 direction 5
@@ -18732,7 +18763,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 85
+exp 105
 ac 12
 wc 6
 dam 62
@@ -18750,6 +18781,7 @@ editor_folder mobs/elves
 race drows
 is_male 1
 wc_range 20
+will_apply 8
 corpse 1
 layer 6
 direction 5
@@ -18768,7 +18800,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 84
+exp 104
 ac 11
 wc 6
 dam 51
@@ -18783,6 +18815,7 @@ name drow sorcerer
 face drow_sorcerer.131
 type 80
 editor_folder mobs/elves
+will_apply 8
 race drows
 is_female 1
 wc_range 20
@@ -18796,7 +18829,7 @@ terrain_flag 1
 weapon_speed 0.035
 attack_pierce 75
 Wis 6
-randomitems mob_drow
+randomitems mob_drow_mage
 animation drow_sorcerer
 is_animated 1
 anim_speed 4
@@ -18804,7 +18837,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 85
+exp 107
 ac 10
 wc 3
 dam 52
@@ -18827,6 +18860,7 @@ editor_folder mobs/elves
 race drows
 is_male 1
 wc_range 20
+will_apply 8
 corpse 1
 layer 6
 direction 5
@@ -18837,7 +18871,7 @@ terrain_flag 1
 weapon_speed 0.035
 attack_pierce 75
 Wis 6
-randomitems mob_drow
+randomitems mob_drow_mage
 animation drow_annihilator
 is_animated 1
 anim_speed 4
@@ -18846,7 +18880,7 @@ no_pick 1
 alive 1
 can_see_in_dark 1
 can_cast_spell 1
-exp 95
+exp 115
 ac 10
 wc 3
 dam 61

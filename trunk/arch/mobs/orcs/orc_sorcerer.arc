@@ -6,6 +6,7 @@ is_male 1
 wc_range 20
 corpse 1
 layer 6
+will_apply 8
 direction 5
 is_evil 1
 item_race 255
@@ -15,7 +16,7 @@ weapon_speed 0.035
 attack_cleave 75
 type 80
 Wis 6
-randomitems mob_orc
+randomitems mob_orc_mage
 anim
 facings 25
 trans.101
@@ -100,7 +101,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 80
+exp 100
 ac 10
 wc 3
 dam 53

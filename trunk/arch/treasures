@@ -1658,15 +1658,15 @@ treasure mob_ant
      chance_fix 38
  no
    list random_talisman
-     chance_fix 266
+     chance_fix 466
   end
   end
  more
  list random_scroll
-   chance_fix 65
+   chance_fix 165
  no
    list random_potion
-     chance_fix 75
+     chance_fix 175
   end
   more
     arch small_shield
@@ -1700,15 +1700,15 @@ treasure mob_ant_special
      chance_fix 38
  no
    list random_talisman
-     chance_fix 126
+     chance_fix 326
   end
   end
  more
  list random_scroll
-   chance_fix 55
+   chance_fix 155
  no
    list random_potion
-     chance_fix 55
+     chance_fix 155
   end
   more
     arch small_shield
@@ -1742,15 +1742,15 @@ treasure mob_ant_queen
      chance_fix 38
  no
    list random_talisman
-     chance_fix 99
+     chance_fix 299
   end
   end
  more
  list random_scroll
-   chance_fix 55
+   chance_fix 155
  no
    list random_potion
-     chance_fix 55
+     chance_fix 155
   end
 end
 treasure mob_insect
@@ -1776,15 +1776,15 @@ treasure mob_insect
      chance_fix 38
  no
    list random_talisman
-     chance_fix 199
+     chance_fix 499
   end
   end
  more
  list random_scroll
-   chance_fix 55
+   chance_fix 155
  no
    list random_potion
-     chance_fix 55
+     chance_fix 155
   end
 end
 treasure mob_slime
@@ -1810,7 +1810,7 @@ treasure mob_slime
      chance_fix 32
  no
    list random_talisman
-     chance_fix 75
+     chance_fix 375
   end
   end
  more
@@ -1822,7 +1822,7 @@ treasure mob_slime
  no
    arch potion_improve
      difficulty 6
-     chance_fix 99
+     chance_fix 199
   end
   end
 end
@@ -1849,23 +1849,23 @@ treasure mob_wyvern
      chance_fix 48
  no
    list random_mtools
-     chance_fix 82
+     chance_fix 182
  no
    list random_talisman
-     chance_fix 66
+     chance_fix 202
   end
   end
   end
  more
  list random_scroll
-   chance_fix 45
+   chance_fix 75
  no
    list random_potion
-     chance_fix 45
+     chance_fix 55
  no
    arch potion_improve
      difficulty 6
-     chance_fix 99
+     chance_fix 199
   end
   end
 end
@@ -1892,23 +1892,23 @@ treasure mob_ogre
      chance_fix 48
  no
    list random_mtools
-     chance_fix 82
+     chance_fix 182
  no
    list random_talisman
-     chance_fix 66
+     chance_fix 202
   end
   end
   end
  more
  list random_scroll
-   chance_fix 45
+   chance_fix 75
  no
    list random_potion
-     chance_fix 45
+     chance_fix 55
  no
    arch potion_improve
      difficulty 6
-     chance_fix 99
+     chance_fix 199
   end
   end
 end
@@ -1935,23 +1935,23 @@ treasure mob_giant_hill
      chance_fix 48
  no
    list random_mtools
-     chance_fix 82
+     chance_fix 182
  no
    list random_talisman
-     chance_fix 66
+     chance_fix 202
   end
   end
   end
  more
  list random_scroll
-   chance_fix 45
+   chance_fix 75
  no
    list random_potion
-     chance_fix 45
+     chance_fix 65
  no
    arch potion_improve
      difficulty 6
-     chance_fix 99
+     chance_fix 199
   end
   end
 end
@@ -1978,23 +1978,23 @@ treasure mob_giant_stone
      chance_fix 48
  no
    list random_mtools
-     chance_fix 82
+     chance_fix 182
  no
    list random_talisman
-     chance_fix 66
+     chance_fix 202
   end
   end
   end
  more
  list random_scroll
-   chance_fix 45
+   chance_fix 75
  no
    list random_potion
-     chance_fix 45
+     chance_fix 55
  no
    arch potion_improve
      difficulty 6
-     chance_fix 99
+     chance_fix 199
   end
   end
 end
@@ -2021,23 +2021,23 @@ treasure mob_dragon_water
      chance_fix 48
  no
    list random_mtools
-     chance_fix 82
+     chance_fix 182
  no
    list random_talisman
-     chance_fix 66
+     chance_fix 202
   end
   end
   end
  more
  list random_scroll
-   chance_fix 45
+   chance_fix 75
  no
    list random_potion
-     chance_fix 45
+     chance_fix 65
  no
    arch potion_improve
      difficulty 6
-     chance_fix 99
+     chance_fix 199
   end
   end
 end
@@ -2064,23 +2064,23 @@ treasure mob_kobold_big
      chance_fix 48
  no
    list random_mtools
-     chance_fix 82
+     chance_fix 282
  no
    list random_talisman
-     chance_fix 66
+     chance_fix 366
   end
   end
   end
  more
  list random_scroll
-   chance_fix 45
+   chance_fix 145
  no
    list random_potion
-     chance_fix 45
+     chance_fix 145
  no
    arch potion_improve
      difficulty 6
-     chance_fix 99
+     chance_fix 199
   end
   end
 end
@@ -2107,23 +2107,23 @@ treasure mob_kobold
      chance_fix 48
  no
    list random_mtools
-     chance_fix 82
+     chance_fix 282
  no
    list random_talisman
-     chance_fix 66
+     chance_fix 366
   end
   end
   end
  more
  list random_scroll
-   chance_fix 45
+   chance_fix 145
  no
    list random_potion
-     chance_fix 45
+     chance_fix 145
  no
    arch potion_improve
      difficulty 6
-     chance_fix 99
+     chance_fix 299
   end
   end
 end
@@ -2150,23 +2150,23 @@ treasure mob_worm_purple
      chance_fix 48
  no
    list random_mtools
-     chance_fix 82
+     chance_fix 182
  no
    list random_talisman
-     chance_fix 66
+     chance_fix 202
   end
   end
   end
  more
  list random_scroll
-   chance_fix 45
+   chance_fix 75
  no
    list random_potion
-     chance_fix 45
+     chance_fix 65
  no
    arch potion_improve
      difficulty 6
-     chance_fix 99
+     chance_fix 199
   end
   end
 end
@@ -2193,23 +2193,23 @@ treasure mob_ettin
      chance_fix 48
  no
    list random_mtools
-     chance_fix 82
+     chance_fix 182
  no
    list random_talisman
-     chance_fix 66
+     chance_fix 202
   end
   end
   end
  more
  list random_scroll
-   chance_fix 45
+   chance_fix 75
  no
    list random_potion
-     chance_fix 45
+     chance_fix 65
  no
    arch potion_improve
      difficulty 6
-     chance_fix 99
+     chance_fix 199
   end
   end
 end
@@ -2236,23 +2236,23 @@ treasure mob_wraith
      chance_fix 48
  no
    list random_mtools
-     chance_fix 82
+     chance_fix 120
  no
    list random_talisman
-     chance_fix 66
+     chance_fix 175
   end
   end
   end
  more
  list random_scroll
-   chance_fix 45
+   chance_fix 65
  no
    list random_potion
      chance_fix 45
  no
    arch potion_improve
      difficulty 6
-     chance_fix 99
+     chance_fix 125
   end
   end
 end
@@ -2279,10 +2279,10 @@ treasure mob_lost_soul
      chance_fix 48
  no
    list random_mtools
-     chance_fix 82
+     chance_fix 125
  no
    list random_talisman
-     chance_fix 66
+     chance_fix 175
   end
   end
   end
@@ -2295,7 +2295,7 @@ treasure mob_lost_soul
  no
    arch potion_improve
      difficulty 6
-     chance_fix 99
+     chance_fix 199
   end
   end
 end
@@ -2322,10 +2322,10 @@ treasure mob_slugs
      chance_fix 48
  no
    list random_mtools
-     chance_fix 82
+     chance_fix 282
  no
    list random_talisman
-     chance_fix 66
+     chance_fix 366
   end
   end
   end
@@ -2338,7 +2338,7 @@ treasure mob_slugs
  no
    arch potion_improve
      difficulty 6
-     chance_fix 99
+     chance_fix 199
   end
   end
 end
@@ -2365,10 +2365,10 @@ treasure mob_dragon_skeletal
      chance_fix 48
  no
    list random_mtools
-     chance_fix 82
+     chance_fix 150
  no
    list random_talisman
-     chance_fix 66
+     chance_fix 120
   end
   end
   end
@@ -2377,11 +2377,11 @@ treasure mob_dragon_skeletal
    chance_fix 45
  no
    list random_potion
-     chance_fix 45
+     chance_fix 145
  no
    arch potion_improve
      difficulty 6
-     chance_fix 99
+     chance_fix 120
   end
   end
 end
@@ -2411,20 +2411,20 @@ treasure mob_beholder_dread
      chance_fix 82
  no
    list random_talisman
-     chance_fix 66
+     chance_fix 99
   end
   end
   end
  more
  list random_scroll
-   chance_fix 45
+   chance_fix 55
  no
    list random_potion
-     chance_fix 45
+     chance_fix 65
  no
    arch potion_improve
      difficulty 6
-     chance_fix 99
+     chance_fix 101
   end
   end
 end
@@ -2451,10 +2451,10 @@ treasure mob_demilich
      chance_fix 48
  no
    list random_mtools
-     chance_fix 82
+     chance_fix 99
  no
    list random_talisman
-     chance_fix 56
+     chance_fix 99
   end
   end
   end
@@ -2467,7 +2467,7 @@ treasure mob_demilich
  no
    arch potion_improve
      difficulty 6
-     chance_fix 99
+     chance_fix 101
   end
   end
 end
@@ -2494,23 +2494,23 @@ treasure mob_troll
      chance_fix 48
  no
    list random_mtools
-     chance_fix 82
+     chance_fix 182
  no
    list random_talisman
-     chance_fix 66
+     chance_fix 202
   end
   end
   end
  more
  list random_scroll
-   chance_fix 45
+   chance_fix 65
  no
    list random_potion
-     chance_fix 45
+     chance_fix 65
  no
    arch potion_improve
      difficulty 6
-     chance_fix 99
+     chance_fix 110
   end
   end
 end
@@ -2540,7 +2540,7 @@ treasure mob_skeleton1
      chance_fix 182
  no
    list random_talisman
-     chance_fix 166
+     chance_fix 366
   end
   end
   end
@@ -2553,7 +2553,7 @@ treasure mob_skeleton1
  no
    arch potion_improve
      difficulty 6
-     chance_fix 99
+     chance_fix 199
   end
   end
 end
@@ -2583,7 +2583,7 @@ treasure mob_skeleton2
      chance_fix 182
  no
    list random_talisman
-     chance_fix 166
+     chance_fix 366
   end
   end
   end
@@ -2596,7 +2596,7 @@ treasure mob_skeleton2
  no
    arch potion_improve
      difficulty 6
-     chance_fix 99
+     chance_fix 199
   end
   end
 end
@@ -2615,18 +2615,18 @@ treasure mob_skeleton_mage
  list random_armour
    material_quality 80
    material_range 3
-   chance_fix 62
+   chance_fix 162
  no
    list random_weapon
      material_quality 80
      material_range 3
-     chance_fix 38
+     chance_fix 138
  no
    list random_mtools
-     chance_fix 72
+     chance_fix 62
  no
    list random_talisman
-     chance_fix 59
+     chance_fix 69
   end
   end
   end
@@ -2639,7 +2639,7 @@ treasure mob_skeleton_mage
  no
    arch potion_improve
      difficulty 6
-     chance_fix 89
+     chance_fix 101
   end
   end
 end
@@ -2666,10 +2666,53 @@ treasure mob_orc
      chance_fix 48
  no
    list random_mtools
+     chance_fix 182
+ no
+   list random_talisman
+     chance_fix 366
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 45
+ no
+   list random_potion
+     chance_fix 145
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 199
+  end
+  end
+end
+treasure mob_orc_mage
+ list traps
+   chance 8
+ more
+ list default_wealth
+  chance 65
+ more
+ list default_drop
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 142
+ no
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 148
+ no
+   list random_mtools
      chance_fix 82
  no
    list random_talisman
-     chance_fix 66
+     chance_fix 130
   end
   end
   end
@@ -2682,7 +2725,7 @@ treasure mob_orc
  no
    arch potion_improve
      difficulty 6
-     chance_fix 99
+     chance_fix 250
   end
   end
 end
@@ -2709,10 +2752,10 @@ treasure mob_hobgoblin
      chance_fix 48
  no
    list random_mtools
-     chance_fix 82
+     chance_fix 182
  no
    list random_talisman
-     chance_fix 66
+     chance_fix 166
   end
   end
   end
@@ -2721,11 +2764,11 @@ treasure mob_hobgoblin
    chance_fix 45
  no
    list random_potion
-     chance_fix 45
+     chance_fix 65
  no
    arch potion_improve
      difficulty 6
-     chance_fix 99
+     chance_fix 199
   end
   end
 end
@@ -2752,23 +2795,23 @@ treasure mob_goblin
      chance_fix 48
  no
    list random_mtools
-     chance_fix 82
+     chance_fix 182
  no
    list random_talisman
-     chance_fix 66
+     chance_fix 366
   end
   end
   end
  more
  list random_scroll
-   chance_fix 45
+   chance_fix 75
  no
    list random_potion
      chance_fix 45
  no
    arch potion_improve
      difficulty 6
-     chance_fix 99
+     chance_fix 199
   end
   end
 end
@@ -2795,10 +2838,10 @@ treasure mob_gnoll
      chance_fix 48
  no
    list random_mtools
-     chance_fix 82
+     chance_fix 120
  no
    list random_talisman
-     chance_fix 66
+     chance_fix 366
   end
   end
   end
@@ -2811,7 +2854,7 @@ treasure mob_gnoll
  no
    arch potion_improve
      difficulty 6
-     chance_fix 99
+     chance_fix 199
   end
   end
 end
@@ -2841,7 +2884,7 @@ treasure mob_drow
      chance_fix 82
  no
    list random_talisman
-     chance_fix 66
+     chance_fix 120
   end
   end
   end
@@ -2854,7 +2897,50 @@ treasure mob_drow
  no
    arch potion_improve
      difficulty 6
+     chance_fix 125
+  end
+  end
+end
+treasure mob_drow_mage
+ list traps
+   chance 8
+ more
+ list default_wealth
+  chance 65
+ more
+ list default_drop
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 142
+ no
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 80
+ no
+   list random_mtools
+     chance_fix 82
+ no
+   list random_talisman
      chance_fix 99
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 45
+ no
+   list random_potion
+     chance_fix 45
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 120
   end
   end
 end
@@ -2881,10 +2967,10 @@ treasure mob_ghoul
      chance_fix 48
  no
    list random_mtools
-     chance_fix 82
+     chance_fix 182
  no
    list random_talisman
-     chance_fix 66
+     chance_fix 366
   end
   end
   end
@@ -2897,7 +2983,7 @@ treasure mob_ghoul
  no
    arch potion_improve
      difficulty 6
-     chance_fix 99
+     chance_fix 199
   end
   end
 end
@@ -2928,10 +3014,10 @@ treasure mob_fire
      chance_fix 48
  no
    list random_mtools
-     chance_fix 82
+     chance_fix 182
  no
    list random_talisman
-     chance_fix 66
+     chance_fix 266
   end
   end
   end
@@ -2944,7 +3030,7 @@ treasure mob_fire
  no
    arch potion_improve
      difficulty 6
-     chance_fix 99
+     chance_fix 199
   end
   end
 end
@@ -2975,10 +3061,10 @@ treasure mob_ice
      chance_fix 48
  no
    list random_mtools
-     chance_fix 82
+     chance_fix 182
  no
    list random_talisman
-     chance_fix 66
+     chance_fix 266
   end
   end
   end
@@ -2991,7 +3077,7 @@ treasure mob_ice
  no
    arch potion_improve
      difficulty 6
-     chance_fix 99
+     chance_fix 199
   end
   end
 end
@@ -3018,23 +3104,23 @@ treasure mob_mud_hand
      chance_fix 48
  no
    list random_mtools
-     chance_fix 82
+     chance_fix 182
  no
    list random_talisman
-     chance_fix 66
+     chance_fix 266
   end
   end
   end
  more
  list random_scroll
-   chance_fix 45
+   chance_fix 75
  no
    list random_potion
-     chance_fix 45
+     chance_fix 75
  no
    arch potion_improve
      difficulty 6
-     chance_fix 99
+     chance_fix 199
   end
   end
 end
@@ -3061,23 +3147,23 @@ treasure mob_quickwood
      chance_fix 48
  no
    list random_mtools
-     chance_fix 82
+     chance_fix 182
  no
    list random_talisman
-     chance_fix 66
+     chance_fix 266
   end
   end
   end
  more
  list random_scroll
-   chance_fix 45
+   chance_fix 65
  no
    list random_potion
-     chance_fix 45
+     chance_fix 65
  no
    arch potion_improve
      difficulty 6
-     chance_fix 99
+     chance_fix 199
   end
   end
 end
@@ -3104,10 +3190,10 @@ treasure mob_treant
      chance_fix 48
  no
    list random_mtools
-     chance_fix 82
+     chance_fix 182
  no
    list random_talisman
-     chance_fix 66
+     chance_fix 366
   end
   end
   end
@@ -3120,7 +3206,7 @@ treasure mob_treant
  no
    arch potion_improve
      difficulty 6
-     chance_fix 99
+     chance_fix 199
   end
   end
 end

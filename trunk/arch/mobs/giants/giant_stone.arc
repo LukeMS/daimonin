@@ -7,7 +7,7 @@ is_evil 1
 is_male 1
 wc_range 20
 weight 732500
-exp 85
+exp 105
 item_race 255
 item_level 255
 speed -0.045

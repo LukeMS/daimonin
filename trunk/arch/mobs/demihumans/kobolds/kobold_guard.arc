@@ -7,6 +7,7 @@ wc_range 20
 corpse 1
 layer 6
 direction 5
+will_apply 8
 is_evil 1
 terrain_flag 1
 item_race 255
@@ -100,7 +101,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 80
+exp 100
 ac 9
 wc 0
 dam 52

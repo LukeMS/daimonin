@@ -3,6 +3,7 @@ name kobold
 face kobold.131
 race kobold
 is_male 1
+will_apply 8
 corpse 1
 wc_range 20
 layer 6
@@ -75,7 +76,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 70
+exp 90
 ac 9
 wc 0
 dam 51

@@ -3,6 +3,7 @@ name drow fighter
 face drow_fighter.131
 race drows
 is_male 1
+will_apply 8
 wc_range 20
 corpse 1
 layer 6
@@ -100,7 +101,7 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 85
+exp 106
 ac 11
 wc 6
 dam 54

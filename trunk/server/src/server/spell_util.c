@@ -1585,7 +1585,14 @@ int reflwall(mapstruct *m,int x,int y, object *sp_op) {
   {
     if(QUERY_FLAG(op, FLAG_REFL_SPELL) && (!IS_LIVE(op) ||
 					    sp_op->type==LIGHTNING || (rndm(0, 99)) < 90-sp_op->level/10))
-      return 1;
+	{
+		/* the reflector trick - new owner will be the reflecting object */
+		if(op->owner)
+			sp_op->owner = get_owner(op);
+		else
+			sp_op->owner = op;
+			return 1;
+	}
   }
   return 0;
 }

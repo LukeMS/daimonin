@@ -75,7 +75,7 @@ monster 1
 level 1
 Con 2
 Pow 2
-exp 91
+exp 111
 ac 11
 wc 7
 dam 56
