@@ -281,6 +281,7 @@ extern int can_pick(object *who, object *item);
 extern object *ObjectCreateClone(object *asrc);
 extern int was_destroyed(object *op, tag_t old_tag);
 extern object *load_object_str(char *obstr);
+extern void destroy_object(object *op);
 /* porting.c */
 extern char *tempnam_local(char *dir, char *pfx);
 extern void remove_directory(const char *path);

@@ -84,36 +84,50 @@ int command_setgod(object *op, char *params)
     return 1;
 }
 
-int command_kick (object *op, char *params)
+/* called command_kick(NULL,NULL) or command_kick(op,<player name>.
+ * NULl,NULL will global kick *all* players, the 2nd format only <player name>.
+ * op,NULL is invalid
+ */
+int command_kick (object *ob, char *params)
 {
 	struct pl_player *pl;
 
-	if(params == NULL || !QUERY_FLAG(op,FLAG_WIZ))
+	if(ob!= NULL && params == NULL)
 	{
-		new_draw_info_format(NDI_UNIQUE, 0, op,"Use: /kick <name>");
+		new_draw_info_format(NDI_UNIQUE, 0, ob,"Use: /kick <name>");
+		return 1;
+	}
+
+		if(ob && ob->name && !strncasecmp(ob->name, params, MAX_NAME))
+	{
+		new_draw_info_format(NDI_UNIQUE, 0, ob,"You can't /kick yourself!");
 		return 1;
 	}
 
 	for(pl=first_player;pl!=NULL;pl=pl->next)
 	{
-      if (pl->ob!=op && pl->ob->name && !strncasecmp(pl->ob->name, params, MAX_NAME)) 
+      if (!ob || (pl->ob!=ob && pl->ob->name && !strncasecmp(pl->ob->name, params, MAX_NAME))) 
 		{
 			object *op;
 			op=pl->ob;
 			remove_ob(op);
 			op->direction=0;
-			new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, op,"%s is kicked out of the game.",op->name);
+			if(params)
+				new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, ob,"%s is kicked out of the game.",op->name);
+			LOG(llevInfo,"%s is kicked out of the game.\n",op->name);
 			strcpy(op->contr->killer,"left");
 			check_score(op); /* Always check score */
 			container_unlink(op->contr,NULL);
-			(void)save_player(op,0);
+			(void)save_player(op,1);
 			op->contr->socket.status=Ns_Dead;
 		#if MAP_MAXTIMEOUT
 			op->map->timeout = MAP_TIMEOUT(op->map);
 		#endif
       }
   }
-  return 1;
+
+    /* not reached for NULL, NULL calling */
+	return 1;
 }
 
 
@@ -125,14 +139,8 @@ int command_shutdown(object *op, char *params)
 	/*new_draw_info(NDI_UNIQUE,0,op,"Sorry, you can't shutdown the server.");*/
 	return 1;
     }
-    /* We need to give op - command_kick expects it.  however, this means
-     * the op won't get kicked off, so we do it ourselves
-     */
-    command_kick(op,NULL);
-    check_score(op); /* Always check score */
-	container_unlink(op->contr,NULL);
-    (void)save_player(op,0);
-    /*play_again(op);*/
+	LOG(llevSystem,"SERVER SHUTDOWN STARTED\n");
+    command_kick(NULL,NULL);
     cleanup();
     /* not reached */
     return 1;
@@ -1094,6 +1102,7 @@ void shutdown_agent(int timer, char *reason)
 		{
 			if(--real_count <= 0)
 			{
+				LOG(llevSystem,"SERVER SHUTDOWN STARTED\n");
 			    command_kick(NULL,NULL);
 			    cleanup();
 			}

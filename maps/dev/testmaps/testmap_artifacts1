@@ -180,6 +180,11 @@ arch floor_ostone1
 x 1
 y 4
 end
+arch cloak_rhun
+identified 1
+x 1
+y 4
+end
 arch floor_ostone1
 x 1
 y 5

@@ -499,18 +499,29 @@ int command_start_shutdown (object *op, char *params)
 	char *bp=NULL;
 	int i=-2;
 
-
-	sscanf(params, "%d ", &i);
-	if ((bp = strchr(params, ' ')) != NULL)
-		bp++;
-
-	if(params==NULL || i<-1) 
+	if(params==NULL) 
 	{
 		new_draw_info(NDI_UNIQUE, 0,op, "DM usage: /start_shutdown <-1 ... x>");
 		return 0;
 	}
 
+	sscanf(params, "%d ", &i);
+	if ((bp = strchr(params, ' ')) != NULL)
+		bp++;
+
+	if(bp && bp==0)
+		bp = NULL;
+	
+	if(i<-1) 
+	{
+		new_draw_info(NDI_UNIQUE, 0,op, "DM usage: /start_shutdown <-1 ... x>");
+		return 0;
+	}
+
+	LOG(llevSystem,"Shutdown Agent started!\n");
 	shutdown_agent(i, bp);
+	new_draw_info_format(NDI_UNIQUE|NDI_GREEN, 0,op, "shutdown agent started! (timer set to %d seconds).",i);
+
 	return 0;
 }
 

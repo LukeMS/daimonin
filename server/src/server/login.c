@@ -176,24 +176,16 @@ int create_savedir_if_needed(char *savedir)
  return 1;
 }
 
-void destroy_object (object *op)
-{
-    object *tmp;
-    while ((tmp = op->inv))
-	destroy_object (tmp);
-
-    if (!QUERY_FLAG(op, FLAG_REMOVED))
-	remove_ob(op);
-    free_object(op);
-}
-
 /*
  * If flag is set, it's only backup, ie dont remove objects from inventory
  * If BACKUP_SAVE_AT_HOME is set, and the flag is set, then the player
  * will be saved at the emergency save location.
  * Returns non zero if successful.
  */
-
+/* flag is now not used as before. Delete pets & destroy inventory objects
+ * has moved outside of this function (as they should).
+ * Player is now all deleted in free_player().
+ */
 int save_player(object *op, int flag) {
   FILE *fp;
   char filename[MAX_BUF], *tmpfilename,backupfile[MAX_BUF];
@@ -208,14 +200,6 @@ int save_player(object *op, int flag) {
 
   flag&=1;
 
-  if(!pl->name_changed||(!flag&&!op->stats.exp)) {
-    if(!flag) {
-      new_draw_info(NDI_UNIQUE, 0,op,"Your game is not valid,");
-      new_draw_info(NDI_UNIQUE, 0,op,"Game not saved.");
-    }
-    return 0;
-  }
-
     /* Sanity check - some stuff changes this when player is exiting */
     if (op->type != PLAYER) return 0;
 
@@ -227,10 +211,7 @@ int save_player(object *op, int flag) {
 
 	/* perhaps we don't need it here?*/
   /*container_unlink(pl,NULL);*/
-
-  if (flag == 0)
-    terminate_all_pets(op);
-
+	
   /* Delete old style file */
   sprintf(filename,"%s/%s/%s.pl",settings.localdir,settings.playerdir,op->name);
   unlink(filename);
@@ -289,14 +270,6 @@ int save_player(object *op, int flag) {
   fprintf(fp,"Wis %d\n",pl->orig_stats.Wis);
   fprintf(fp,"Cha %d\n",pl->orig_stats.Cha);
 
-  /* old lev_array code 
-  fprintf(fp,"lev_array %d\n",op->level>10?10:op->level);
-  for(i=1;i<=pl->last_level&&i<=10;i++) {
-    fprintf(fp,"%d\n",pl->levhp[i]);
-    fprintf(fp,"%d\n",pl->levsp[i]);
-	 fprintf(fp,"%d\n",pl->levgrace[i]);
-  }
-  */
   /* save hp table */
   fprintf(fp,"lev_hp %d\n",op->level);
   for(i=1;i<=op->level;i++)
@@ -375,8 +348,6 @@ int save_player(object *op, int flag) {
     op->contr->container = container;
 */
   if (wiz) SET_FLAG(op,FLAG_WIZ);
-  if(!flag)
-	esrv_send_inventory(op, op);
 
   chmod(filename,SAVE_MODE);
   CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);

@@ -3524,6 +3524,19 @@ object* load_object_str(char *obstr)
 }
 
 
+/* remove and free a object including all the inventory in ->inv */
+void destroy_object (object *op)
+{
+    object *tmp;
+    while ((tmp = op->inv))
+		destroy_object (tmp);
+
+    if (!QUERY_FLAG(op, FLAG_REMOVED))
+		remove_ob(op);
+    free_object(op);
+}
+
+
 
 /*** end of object.c ***/
 
