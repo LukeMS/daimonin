@@ -1,0 +1,138 @@
+# Daimonin MMORGP
+# This is a server generated file!
+# Don't change anything here!
+# see also command_new_char() in server code!
+char Human
+human_m.isw.111 8 3 3 0 0 0
+1 human_male human_m.isw.111
+1 human_female human_f.isw.111
+0 x x
+0 x x
+5 12 12 14 12 12 14 12 12 14 12 12 14 12 12 14 12 12 14 12 12 14
+Humans are the generalists of the races. 
+They are fit for any trade, and usually pick up a skill from 
+their parents in addition to what they've learned as apprentices
+in their craft. Females has the same stats as males.
+char Half-Elf
+human_m.isw.111 8 3 3 0 0 0
+1 half_elf_male human_m.isw.111
+1 half_elf_female halfelf_f.isw.111
+0 x x
+0 x x
+5 12 12 14 13 13 15 11 11 13 12 12 14 11 11 13 13 13 15 12 12 14
+The name half-elf can be confusing because it is used for humans
+which elvish blood in the 2nd or 3rd generation. Real half bloods
+are normally counted to the elves. Half-elves are very similiar to
+humans but a bit more focused to power and dexterity.
+level 110
+0
+0
+5dc
+fa0
+1f40
+3e80
+7d00
+fa00
+1e848
+3d090
+7a120
+10c8e0
+231860
+36ee80
+4c4b40
+632ea0
+7b98a0
+958940
+b10080
+cdfe60
+ec82e0
+10c8e00
+12e1fc0
+1513820
+175d720
+19bfcc0
+1c3a900
+1ecdbe0
+2179560
+243d580
+2719c40
+2a0e9a0
+2d1bda0
+3041840
+337f980
+36d6160
+3a44fe0
+3dcc500
+416c0c0
+4524320
+48f4c20
+4cddbc0
+50df200
+54f8ee0
+592b260
+5d75c80
+61d8d40
+66544a0
+6ae82a0
+6f94740
+7459280
+7936460
+7e2bce0
+8339c00
+88601c0
+8d9ee20
+92f6120
+9865ac0
+9dedb00
+a38e1e0
+a946f60
+af18380
+b501e40
+bb03fa0
+c11e7a0
+c751640
+cd9cb80
+d400760
+da7c9e0
+e111300
+e7be2c0
+ee83920
+f561620
+fc579c0
+10366400
+10a8d4e0
+111ccc60
+11924a80
+12094f40
+1281daa0
+12fbeca0
+13778540
+13f4a480
+14734a60
+14f376e0
+15752a00
+15f863c0
+167d2420
+17036b20
+178b38c0
+18148d00
+189f67e0
+192bc960
+19b9b180
+1a492040
+1ada15a0
+1b6c91a0
+1c009440
+1c961d80
+1d2d2d60
+1dc5c3e0
+1e5fe100
+1efb84c0
+1f98af20
+20376020
+20d797c0
+21795600
+221c9ae0
+22c16660
+2367b880
+240f9140
