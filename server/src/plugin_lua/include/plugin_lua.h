@@ -90,6 +90,7 @@ extern int              cache_ref;
 
 #define ADD_REF_NOT_NULL(_nv_) if(_nv_!=NULL)add_refcount(_nv_);
 
+/* Hooks-based mempool macros */
 #undef get_poolchunk
 #undef get_poolarray
 #undef return_poolchunk
@@ -102,7 +103,6 @@ extern int              cache_ref;
     hooks->return_poolchunk_array_real((_data_), 0, (_pool_))
 #define return_poolarray(_data_, _arraysize_, _pool_) \
     hooks->return_poolchunk_array_real((_data_), nearest_pow_two_exp(_arraysize_), (_pool_))
-
 
 /* Some practical stuff, often used in the plugin */
 #define WHO (self->data.object)
@@ -140,11 +140,18 @@ struct plugin_hooklist *hooks;
 
 struct lua_context
 {
+    /* Data related to detached lua threads */
     struct lua_context *next, *prev;
+    int resume_time;
+
+    /* Runtime statistics */
+    struct timeval start_time, running_time;
+    
+    /* Lua environment data */
     lua_State          *state; /* The actual lua environment */
     int                 threadidx; /* ref to thread object in the registry */
-    // TODO: more stuff, like callback function and interval counter
 
+    /* Script event data, accessible in lua through the event variable */
     object             *self, *activator, *other; /* Involved objects */
     const char         *text;             /* Text for SAY events */
 
@@ -160,7 +167,7 @@ enum lua_object_type
     LUATYPE_GAME,
     LUATYPE_MAP,
     LUATYPE_OBJECT,
-    /* These are never exposed outside the engine */
+    /* These are never exposed outside the engine: */
     LUATYPE_ATTRIBUTE,
     LUATYPE_METHOD,
     LUATYPE_CONSTANT,
@@ -186,6 +193,7 @@ typedef struct lua_object_s
 
         void                   *anything;
     } data;
+    uint32 tag; /* Tag used for objects and maps */
 } lua_object;
 
 typedef struct lua_class_s
@@ -252,6 +260,8 @@ struct attribute_decl
     uint32                  extra_data; /* extra data for some special fields */
 };
 
+/* Marks the end of flag lists, since NULL pointers indicate non-accessible
+ * flags. */
 #define FLAGLIST_END_MARKER "$end$"
 
 /* Special flags for object attribute access */

@@ -113,6 +113,7 @@
  * with it.
  */
 /* dont use this events until this line gets removed!! */
+/* Gecko: :-P */
 
 #define EVENT_BORN     13 /* A new character has been created.               */
 #define EVENT_CLOCK    14 /* Global time event.                              */
