@@ -212,7 +212,8 @@ static struct attribute_decl    Event_attributes[]  =
     {"other", FIELDTYPE_OBJECTREF, offsetof(struct lua_context, other), FIELDFLAG_READONLY, offsetof(struct lua_context, other_tag)},
     {"message", FIELDTYPE_SHSTR, offsetof(struct lua_context, text), FIELDFLAG_READONLY},
     {"options", FIELDTYPE_SHSTR, offsetof(struct lua_context, options), FIELDFLAG_READONLY},
-    {"returnvalue", FIELDTYPE_SINT32, offsetof(struct lua_context, returnvalue)}, {NULL}
+    {"returnvalue", FIELDTYPE_SINT32, offsetof(struct lua_context, returnvalue), 0},
+    {NULL}
 };
 
 /* Basic script classes */
