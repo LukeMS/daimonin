@@ -1,4 +1,7 @@
 Daimonin CHANGES
+06.06.04	- socket patch to avoid server crashes
+                - finished login control
+
 05.06.04	- bank script & functions
 		- small fix in client (exp bubble draw function)
 		- small fix mouse moving (client)

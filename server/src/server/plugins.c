@@ -1222,23 +1222,28 @@ CFParm* CFWGetFirstArchetype(CFParm* PParm)
 CFParm* CFWDeposit(CFParm* PParm)
 {
     static CFParm CFP;
-	static int val=0;
+	static int val;
 	int pos=0;
 	char *text = (char *)(PParm->Value[2]);
 	object *who = (object *)(PParm->Value[0]), *bank = (object *)(PParm->Value[1]);
 	_money_block money;
 
+	val=0;
 	get_word_from_string(text, &pos);		
 	get_money_from_string(text+pos , &money);
-
+	
 	CFP.Value[0] = (void*) &val;
 	
 	if(!money.mode)
-		new_draw_info (NDI_UNIQUE, 0, who, "deposit what?");
+	{
+		val=-1;
+		new_draw_info (NDI_UNIQUE, 0, who, "deposit what?\nUse 'deposit all' or 'deposit 40 gold, 20 silver...'");
+	}
 	else if(money.mode == MONEYSTRING_ALL)
 	{
 		val = 1;
 		bank->value += remove_money_type(who, who,-1,0);
+		fix_player(who);
 	}
 	else
 	{
@@ -1291,6 +1296,7 @@ CFParm* CFWDeposit(CFParm* PParm)
 						money.gold*coins_arch[1]->clone.value +
 						money.silver*coins_arch[2]->clone.value +
 						money.copper*coins_arch[3]->clone.value;
+		fix_player(who);
 	}
 	
     return &CFP;
@@ -1299,24 +1305,29 @@ CFParm* CFWDeposit(CFParm* PParm)
 CFParm* CFWWithdraw(CFParm* PParm)
 {
     static CFParm CFP;
-	static int val=0;
+	static int val;
 	int pos=0;
 	double big_value; /* remember: value should be int64 later! */
 	char *text = (char *)(PParm->Value[2]);
 	object *who = (object *)(PParm->Value[0]), *bank = (object *)(PParm->Value[1]);
 	_money_block money;
 	
+	val=0;
 	get_word_from_string(text, &pos);
 	get_money_from_string(text+pos , &money);
 	CFP.Value[0] = (void*) &val;
 	
 	if(!money.mode)
-		new_draw_info (NDI_UNIQUE, 0, who, "withdraw what?");
+	{
+		val = -1;
+		new_draw_info (NDI_UNIQUE, 0, who, "withdraw what?\nUse 'withdraw all' or 'withdraw 30 gold, 20 silver....'");
+	}
 	else if(money.mode == MONEYSTRING_ALL)
 	{
 		val = 1;
 		sell_item(NULL, who, bank->value);
 		bank->value =0;
+		fix_player(who);
 	}
 	else
 	{
@@ -1348,6 +1359,7 @@ CFParm* CFWWithdraw(CFParm* PParm)
 			insert_money_in_player(who,&coins_arch[3]->clone, money.copper);
 	
 		bank->value -= (sint32) big_value;
+		fix_player(who);
 	}
 
     return &CFP;

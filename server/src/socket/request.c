@@ -347,6 +347,7 @@ void AddMeCmd(char *buf, int len, NewSocket *ns)
 	 * stuff in ns is still relevant.
 	 */
 	Write_String_To_Socket(ns,BINARY_CMD_ADDME_SUC, cmd_buf,1);
+	ns->addme = 1;
 	socket_info.nconns--;
 	ns->status = Ns_Avail;
     }
@@ -478,16 +479,8 @@ void ReplyCmd(char *buf, int len, player *pl)
     
     switch (pl->state) {
 	case ST_PLAYING:
+		pl->socket.status = Ns_Dead;
 	    LOG(llevBug,"BUG: Got reply message with ST_PLAYING input state (player %s)\n", query_name(pl->ob));
-	    break;
-
-	case ST_CONFIRM_QUIT:
-	    key_confirm_quit(pl->ob, buf[0]);
-	    break;
-
-	case ST_CONFIGURE:
-	    LOG(llevBug,"BUG: In client input handling, but into configure state (%s)\n", pl->ob->name);
-	    pl->state = ST_PLAYING;
 	    break;
 
 	case ST_GET_NAME:
@@ -499,12 +492,10 @@ void ReplyCmd(char *buf, int len, player *pl)
 	    receive_player_password(pl->ob,13);
 	    break;
 
-	case ST_GET_PARTY_PASSWORD:        /* Get password for party */
-	receive_party_password(pl->ob,13);
-	    break;
-
 	default:
-	    LOG(llevBug,"BUG: Unknown input state: %d\n", pl->state);
+		pl->socket.status = Ns_Dead;
+		LOG(llevBug,"BUG: Unknown input state: %d\n", pl->state);
+		break;
     }
 }
 

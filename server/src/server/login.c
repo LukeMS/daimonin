@@ -206,7 +206,7 @@ int save_player(object *op, int flag) {
     /* Prevent accidental saves if connection is reset after player has
      * mostly exited.
      */
-    if (pl->state != ST_PLAYING && pl->state != ST_GET_PARTY_PASSWORD)
+    if (pl->state != ST_PLAYING)
 	return 0;
 
 	/* perhaps we don't need it here?*/
