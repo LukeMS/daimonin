@@ -175,7 +175,8 @@ arch floor_ostone1
 x 1
 y 3
 end
-arch chest_sw_7
+arch chest_sw_1
+direction 5
 x 1
 y 3
 end
@@ -191,7 +192,8 @@ arch floor_ostone1
 x 1
 y 5
 end
-arch chest_sm_7
+arch chest_sm_1
+direction 5
 x 1
 y 5
 end
@@ -207,7 +209,8 @@ arch floor_ostone1
 x 1
 y 7
 end
-arch chest_4.171
+arch chest_4.111
+direction 5
 x 1
 y 7
 end
@@ -223,7 +226,8 @@ arch floor_ostone1
 x 1
 y 9
 end
-arch chest_w1_7
+arch chest_w1
+direction 5
 x 1
 y 9
 end
@@ -239,7 +243,8 @@ arch floor_ostone1
 x 1
 y 11
 end
-arch chest_m1_7
+arch chest_m
+direction 5
 x 1
 y 11
 end
@@ -255,7 +260,8 @@ arch floor_ostone1
 x 1
 y 13
 end
-arch chest1_171
+arch chest
+direction 5
 x 1
 y 13
 end
@@ -271,7 +277,8 @@ arch floor_ostone1
 x 1
 y 15
 end
-arch chest7_171
+arch chest7_111
+direction 5
 x 1
 y 15
 end

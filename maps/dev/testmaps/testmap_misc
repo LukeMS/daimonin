@@ -1,5 +1,5 @@
 arch map
-name Testmaps - Gods
+name Testmaps - Misc
 msg
 Creator: Daimonin Map Editor
 Date:    4/13/2003
@@ -135,9 +135,31 @@ arch floor_ostone1
 x 1
 y 3
 end
+arch sign
+name Container decrease_nr test
+msg
+Very special test:
+In that container is food. If applied, its eaten.
+That calls a "decrease number function".
+That function must call the container updates.
+So, 2 player should look in that container and
+one needs to eat the food to test the update
+function.
+endmsg
+x 1
+y 3
+end
 arch floor_ostone1
 x 1
 y 4
+end
+arch chest_sm_1
+direction 5
+x 1
+y 4
+arch food_generic
+nrof 3
+end
 end
 arch floor_ostone1
 x 1
