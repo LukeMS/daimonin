@@ -31,6 +31,7 @@
 #define X_COL3 430
 
 int dialog_new_char_warn    = FALSE;
+int dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
 
 int add_rangebox(int x, int y, int id, int text_x, int text_, char *text, int text_color);
 
@@ -1568,6 +1569,7 @@ void show_login_server(void)
 
     StringBlt(ScreenSurface, &SystemFont, "Enter your Password", x + 2, y + 40, COLOR_HGOLD, NULL, NULL);
     sprite_blt(Bitmaps[BITMAP_LOGIN_INP], x - 2, y + 55, NULL, NULL);
+
     if (GameStatus == GAME_STATUS_PSWD)
     {
         strcpy(buf, show_input_string(InputString, &SystemFont, Bitmaps[BITMAP_LOGIN_INP]->bitmap->w - 16));
@@ -1595,15 +1597,76 @@ void show_login_server(void)
     }
 
     y += 160;
-    StringBlt(ScreenSurface, &SystemFont, "To start playing enter your character ~name~ and ~password~.", x - 10, y + 1,
-              COLOR_BLACK, NULL, NULL);
-    StringBlt(ScreenSurface, &SystemFont, "To start playing enter your character ~name~ and ~password~.", x - 11, y,
-              COLOR_WHITE, NULL, NULL);
-    y += 12;
-    StringBlt(ScreenSurface, &SystemFont, "You will be asked to ~verify~ the password for new characters.", x - 10,
-              y + 1, COLOR_BLACK, NULL, NULL);
-    StringBlt(ScreenSurface, &SystemFont, "You will be asked to ~verify~ the password for new characters.", x - 11, y,
-              COLOR_WHITE, NULL, NULL);
+    switch (dialog_login_warning_level)
+    {
+        case DIALOG_LOGIN_WARNING_NONE:
+            StringBlt(ScreenSurface, &SystemFont, 
+                    "To start playing enter your character ~name~ and ~password~." ,
+                    x-10, y+1, COLOR_BLACK, NULL, NULL);
+            StringBlt(ScreenSurface, &SystemFont, "To start playing enter your character ~name~ and ~password~.",
+                    x-11, y  , COLOR_WHITE, NULL, NULL);
+            y+=12;
+            StringBlt(ScreenSurface, &SystemFont, "You will be asked to ~verify~ the password for new characters." ,
+                    x-10, y+1, COLOR_BLACK, NULL, NULL);
+            StringBlt(ScreenSurface, &SystemFont, "You will be asked to ~verify~ the password for new characters." ,
+                    x-11  , y  , COLOR_WHITE, NULL, NULL);
+            break;
+        case DIALOG_LOGIN_WARNING_WRONGNAME:
+            StringBlt(ScreenSurface, &SystemFont,
+                    "You entered an invalid character name.", x-10, y+1, COLOR_BLACK, NULL, NULL);
+            StringBlt(ScreenSurface, &SystemFont,
+                    "You entered an invalid character name.", x-11, y, COLOR_RED, NULL, NULL);
+            y+=12;
+            StringBlt(ScreenSurface, &SystemFont,            
+                    "Your character name can only contain letters:",
+                    x-10, y+1, COLOR_BLACK, NULL, NULL);
+            StringBlt(ScreenSurface, &SystemFont,            
+                    "Your character name can only contain letters:",
+                    x-11, y, COLOR_WHITE, NULL, NULL);
+            y+=12;
+            StringBlt(ScreenSurface, &SystemFont,            
+                    "Numbers or special characters aren't allowed.",
+                    x-10, y+1, COLOR_BLACK, NULL, NULL);
+            StringBlt(ScreenSurface, &SystemFont,            
+                    "Numbers or special characters aren't allowed.",
+                    x-11, y, COLOR_WHITE, NULL, NULL);
+
+            break;
+        case DIALOG_LOGIN_WARNING_WRONGPASS:
+            StringBlt(ScreenSurface, &SystemFont,
+                    "You entered a wrong password.", x-10, y+1, COLOR_BLACK, NULL, NULL);
+            StringBlt(ScreenSurface, &SystemFont,
+                    "You entered a wrong password.", x-11, y, COLOR_RED, NULL, NULL);
+            y+=12;
+            StringBlt(ScreenSurface, &SystemFont,            
+                    "Check your ~name~ and ~password~ and try again. If you were creating a",
+                    x-10, y+1, COLOR_BLACK, NULL, NULL);
+            StringBlt(ScreenSurface, &SystemFont,            
+                    "Check your ~name~ and ~password~ and try again. If you were creating a",
+                    x-11, y, COLOR_WHITE, NULL, NULL);
+            y+=12;
+            StringBlt(ScreenSurface, &SystemFont,            
+                    "new character, please choose another name.",
+                    x-10, y+1, COLOR_BLACK, NULL, NULL);
+            StringBlt(ScreenSurface, &SystemFont,            
+                    "new character, please choose another name.",
+                    x-11, y, COLOR_WHITE, NULL, NULL);
+            break;
+            
+        case DIALOG_LOGIN_WARNING_VERIFY_FAILED:
+            StringBlt(ScreenSurface, &SystemFont,
+                    "Password verification failed.", x-10, y+1, COLOR_BLACK, NULL, NULL);
+            StringBlt(ScreenSurface, &SystemFont,
+                    "Password verification failed.", x-11, y, COLOR_RED, NULL, NULL);
+            y+=12;
+            StringBlt(ScreenSurface, &SystemFont,            
+                    "Please try again, and be careful to enter the same password twice.",
+                    x-10, y+1, COLOR_BLACK, NULL, NULL);
+            StringBlt(ScreenSurface, &SystemFont,            
+                    "Please try again, and be careful to enter the same password twice.",
+                    x-11, y, COLOR_WHITE, NULL, NULL);
+            break;
+    }
 }
 
 
