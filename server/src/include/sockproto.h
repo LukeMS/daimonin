@@ -66,14 +66,18 @@ void RequestInfo(char *buf, int len, NewSocket *ns);
 void HandleClient(NewSocket *ns, player *pl);
 void watchdog(void);
 void doeric_server(void);
+void doeric_server_write(void);
 /* lowlevel.c */
-void SockList_Init(SockList *sl);
+/* changed to macros!
 void SockList_AddChar(SockList *sl, char c);
-void SockList_AddString(SockList *sl, char *data);
 void SockList_AddShort(SockList *sl, uint16 data);
 void SockList_AddInt(SockList *sl, uint32 data);
+*/
+void SockList_AddString(SockList *sl, char *data);
+/*
 int GetInt_String(unsigned char *data);
 short GetShort_String(unsigned char *data);
+*/
 int SockList_ReadPacket(int fd, SockList *sl, int len);
 void write_socket_buffer(NewSocket *ns);
 void Write_To_Socket(NewSocket *ns, unsigned char *buf, int len);

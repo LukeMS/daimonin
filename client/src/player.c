@@ -40,10 +40,12 @@
  */
 
 #include <include.h>
-
+#include <math.h>
 /*
  *  Initialiazes player item, information is received from server
  */
+
+_server_level server_level;
 
 typedef enum _player_doll_enum {
         PDOLL_ARMOUR,
@@ -78,10 +80,10 @@ _player_doll_pos player_doll[PDOLL_INIT] = {
     {93,194},
     {135,131},
     {50,131},
-    {45,170},
-    {140,170},
+    {50,170},
+    {135,170},
     {54,87},
-    {145,45},
+    {141,46},
     {5,200},
     {5,238},
     {5,144},
@@ -249,6 +251,11 @@ void init_player_data(void)
         memset(&cpl.stats,0, sizeof(Stats));
         cpl.stats.maxsp=1;
         cpl.stats.maxhp=1;
+		cpl.gen_hp = 0.0f;
+		cpl.gen_sp = 0.0f;
+		cpl.gen_grace = 0.0f;
+		cpl.target_hp = 0;
+
         cpl.stats.maxgrace=1;
         cpl.stats.speed=1;
         cpl.input_text[0]='\0';
@@ -320,9 +327,9 @@ void show_player_data(int x, int y)
 void show_player_stats(int x, int y)
 {
         char buf[256];
-        double temp;
+        double temp, multi, line;
         SDL_Rect box;
-		int s;
+		int s, level_exp;
 
         sprite_blt(Bitmaps[BITMAP_STATS],x, y, NULL, NULL);
 
@@ -351,7 +358,7 @@ void show_player_stats(int x, int y)
 
         StringBlt(ScreenSurface, &SystemFont,"HP",x+58, y+10,COLOR_WHITE, NULL, NULL);
         sprintf(buf,"%d (%d)",cpl.stats.hp,cpl.stats.maxhp);
-        StringBlt(ScreenSurface, &SystemFont,buf,x+120, y+10,COLOR_GREEN, NULL, NULL);
+        StringBlt(ScreenSurface, &SystemFont,buf,x+160-get_string_pixel_length(buf,&SystemFont), y+10,COLOR_GREEN, NULL, NULL);
         if(cpl.stats.maxhp)
         {
             int tmp = cpl.stats.hp;
@@ -372,7 +379,7 @@ void show_player_stats(int x, int y)
 
         StringBlt(ScreenSurface, &SystemFont,"Mana",x+58, y+34,COLOR_WHITE, NULL, NULL);
         sprintf(buf,"%d (%d)",cpl.stats.sp ,cpl.stats.maxsp);
-        StringBlt(ScreenSurface, &SystemFont,buf,x+120, y+34,COLOR_GREEN, NULL, NULL);
+        StringBlt(ScreenSurface, &SystemFont,buf,x+160-get_string_pixel_length(buf,&SystemFont), y+34,COLOR_GREEN, NULL, NULL);
         if(cpl.stats.maxsp)
         {
             int tmp = cpl.stats.sp;
@@ -392,7 +399,7 @@ void show_player_stats(int x, int y)
         }
         StringBlt(ScreenSurface, &SystemFont,"Grace",x+58, y+58,COLOR_WHITE, NULL, NULL);
         sprintf(buf,"%d (%d)",cpl.stats.grace ,cpl.stats.maxgrace);
-        StringBlt(ScreenSurface, &SystemFont,buf,x+120, y+58,COLOR_GREEN, NULL, NULL);
+        StringBlt(ScreenSurface, &SystemFont,buf,x+160-get_string_pixel_length(buf,&SystemFont), y+58,COLOR_GREEN, NULL, NULL);
         if(cpl.stats.maxgrace)
         {
             int tmp = cpl.stats.grace;
@@ -430,27 +437,26 @@ void show_player_stats(int x, int y)
                         box.w=Bitmaps[BITMAP_FOOD]->bitmap->w;
                 sprite_blt(Bitmaps[BITMAP_FOOD],x+87, y+88, &box, NULL);
         }
-
         StringBlt(ScreenSurface, &Font6x3Out,"Skill Groups",x+472, y+1, COLOR_HGOLD, NULL, NULL);
-        sprintf(buf, "%d / %-9d", cpl.stats.skill_level[0],cpl.stats.skill_exp[0]);
-        StringBlt(ScreenSurface, &SystemFont,"Ag",x+473, y+17,COLOR_HGOLD, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,buf,x+490, y+17,COLOR_WHITE, NULL, NULL);
-        sprintf(buf, "%d / %-9d", cpl.stats.skill_level[2],cpl.stats.skill_exp[2]);
-        StringBlt(ScreenSurface, &SystemFont,"Me",x+473, y+29,COLOR_HGOLD, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,buf,x+490, y+29,COLOR_WHITE, NULL, NULL);
-        sprintf(buf, "%d / %-9d", cpl.stats.skill_level[4],cpl.stats.skill_exp[4]);
-        StringBlt(ScreenSurface, &SystemFont,"Ma",x+473, y+41,COLOR_HGOLD, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,buf,x+490, y+41,COLOR_WHITE, NULL, NULL);
-        sprintf(buf, "%d / %-9d", cpl.stats.skill_level[1],cpl.stats.skill_exp[1]);
-        StringBlt(ScreenSurface, &SystemFont,"Pe",x+473, y+53,COLOR_HGOLD, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,buf,x+490, y+53,COLOR_WHITE, NULL, NULL);
-        sprintf(buf, "%d / %-9d", cpl.stats.skill_level[3],cpl.stats.skill_exp[3]);
-        StringBlt(ScreenSurface, &SystemFont,"Ph",x+473, y+65,COLOR_HGOLD, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,buf,x+490, y+65,COLOR_WHITE, NULL, NULL);
-        sprintf(buf, "%d / %-9d", cpl.stats.skill_level[5],cpl.stats.skill_exp[5]);
-        StringBlt(ScreenSurface, &SystemFont,"Wi",x+473, y+77,COLOR_HGOLD, NULL, NULL);
-        StringBlt(ScreenSurface, &SystemFont,buf,x+490, y+77,COLOR_WHITE, NULL, NULL);
-
+        StringBlt(ScreenSurface, &Font6x3Out,"name / level",x+472, y+13, COLOR_HGOLD, NULL, NULL);
+        sprintf(buf, " %d", cpl.stats.skill_level[0]);
+        StringBlt(ScreenSurface, &SystemFont,"Ag:",x+475, y+26,COLOR_HGOLD, NULL, NULL);
+        StringBlt(ScreenSurface, &SystemFont,buf,x+513-get_string_pixel_length(buf,&SystemFont), y+26,COLOR_WHITE, NULL, NULL);
+        sprintf(buf, " %d", cpl.stats.skill_level[2]);
+        StringBlt(ScreenSurface, &SystemFont,"Me:",x+475, y+38,COLOR_HGOLD, NULL, NULL);
+        StringBlt(ScreenSurface, &SystemFont,buf,x+513-get_string_pixel_length(buf,&SystemFont), y+38,COLOR_WHITE, NULL, NULL);
+        sprintf(buf, " %d", cpl.stats.skill_level[4]);
+        StringBlt(ScreenSurface, &SystemFont,"Ma:",x+475, y+49,COLOR_HGOLD, NULL, NULL);
+        StringBlt(ScreenSurface, &SystemFont,buf,x+513-get_string_pixel_length(buf,&SystemFont), y+49,COLOR_WHITE, NULL, NULL);
+        sprintf(buf, " %d", cpl.stats.skill_level[1]);
+        StringBlt(ScreenSurface, &SystemFont,"Pe:",x+475, y+62,COLOR_HGOLD, NULL, NULL);
+        StringBlt(ScreenSurface, &SystemFont,buf,x+513-get_string_pixel_length(buf,&SystemFont), y+62,COLOR_WHITE, NULL, NULL);
+        sprintf(buf, " %d", cpl.stats.skill_level[3]);
+        StringBlt(ScreenSurface, &SystemFont,"Ph:",x+475, y+74,COLOR_HGOLD, NULL, NULL);
+        StringBlt(ScreenSurface, &SystemFont,buf,x+513-get_string_pixel_length(buf,&SystemFont), y+74,COLOR_WHITE, NULL, NULL);
+        sprintf(buf, " %d", cpl.stats.skill_level[5]);
+        StringBlt(ScreenSurface, &SystemFont,"Wi:",x+475, y+86,COLOR_HGOLD, NULL, NULL);
+        StringBlt(ScreenSurface, &SystemFont,buf,x+513-get_string_pixel_length(buf,&SystemFont), y+86,COLOR_WHITE, NULL, NULL);
         StringBlt(ScreenSurface, &Font6x3Out,"Used" ,x+274, y+78,COLOR_HGOLD, NULL, NULL);
         StringBlt(ScreenSurface, &Font6x3Out,"Skill" ,x+274, y+86,COLOR_HGOLD, NULL, NULL);
 
@@ -465,22 +471,50 @@ void show_player_stats(int x, int y)
                 StringBlt(ScreenSurface, &SystemFont,buf ,x+298, y+88,COLOR_WHITE, NULL, NULL);
             }
         }
+        StringBlt(ScreenSurface, &Font6x3Out,"Regeneration",x+177, y+1, COLOR_HGOLD, NULL, NULL);
 
-        StringBlt(ScreenSurface, &Font6x3Out,"Level",x+177, y+1, COLOR_HGOLD, NULL, NULL);
+        StringBlt(ScreenSurface, &SystemFont,"HP",x+234, y+13, COLOR_HGOLD, NULL, NULL);
+        sprintf(buf,"%2.1f", cpl.gen_hp);
+        StringBlt(ScreenSurface, &SystemFont,buf,x+248, y+13,COLOR_WHITE, NULL, NULL);
+
+		StringBlt(ScreenSurface, &SystemFont,"Mana",x+178, y+13, COLOR_HGOLD, NULL, NULL);
+        StringBlt(ScreenSurface, &SystemFont,"Grace",x+178, y+24, COLOR_HGOLD, NULL, NULL);
+        sprintf(buf,"%2.1f", cpl.gen_sp);
+        StringBlt(ScreenSurface, &SystemFont,buf,x+208, y+13,COLOR_WHITE, NULL, NULL);
+        sprintf(buf,"%2.1f", cpl.gen_grace);
+        StringBlt(ScreenSurface, &SystemFont,buf,x+208, y+24,COLOR_WHITE, NULL, NULL);
+
+        StringBlt(ScreenSurface, &Font6x3Out,"Level / Exp",x+177, y+40, COLOR_HGOLD, NULL, NULL);
         sprintf(buf,"%d", cpl.stats.level);
-        StringBlt(ScreenSurface, &BigFont ,buf,x+216, y+10,COLOR_WHITE, NULL, NULL);
-        StringBlt(ScreenSurface, &Font6x3Out,"Exp",x+177, y+40, COLOR_HGOLD, NULL, NULL);
+        StringBlt(ScreenSurface, &BigFont ,buf,x+264-get_string_pixel_length(buf,&BigFont), y+43,COLOR_WHITE, NULL, NULL);
         sprintf(buf,"%d", cpl.stats.exp);
-        StringBlt(ScreenSurface, &SystemFont,buf,x+178, y+55,COLOR_WHITE, NULL, NULL);
-
+        StringBlt(ScreenSurface, &SystemFont,buf,x+178, y+59,COLOR_WHITE, NULL, NULL);
 
 		/* calc the exp bubbles */
+		level_exp = cpl.stats.exp - server_level.exp[cpl.stats.level];
+		multi = modf(((double)level_exp/(double)
+			(server_level.exp[cpl.stats.level+1]-server_level.exp[cpl.stats.level])*10.0), &line);
+
 		sprite_blt(Bitmaps[BITMAP_EXP_BORDER],x+182, y+88, NULL, NULL);
+		if(multi)
+        {
+			box.x =0;
+            box.y = 0;
+            box.h = Bitmaps[BITMAP_EXP_SLIDER]->bitmap->h;
+            box.w = (int) (Bitmaps[BITMAP_EXP_SLIDER]->bitmap->w*multi);
+            if(!box.w)
+				box.w =1;
+			if(box.w > Bitmaps[BITMAP_EXP_SLIDER]->bitmap->w)
+				box.w=Bitmaps[BITMAP_EXP_SLIDER]->bitmap->w;
+			sprite_blt(Bitmaps[BITMAP_EXP_SLIDER],x+182, y+88, &box, NULL);
+        }
+
+
 		for(s=0;s<10;s++)
-		{
 			sprite_blt(Bitmaps[BITMAP_EXP_BUBBLE2],x+183+s*8, y+79, NULL, NULL);
-		}
-		
+		for(s=0;s<(int)line;s++)
+			sprite_blt(Bitmaps[BITMAP_EXP_BUBBLE1],x+183+s*8, y+79, NULL, NULL);
+
 }
 
 /* player doll with inventory */
@@ -493,7 +527,7 @@ void show_player_doll(int x, int y)
 	/* this is ugly to calculate because its a curve which increase heavily 
 	 * with lower weapon_speed... so, we use a table
 	 */
-	int ws_temp = (int)cpl.stats.weapon_sp;
+	int ws_temp = cpl.stats.weapon_sp;
 
 	if(ws_temp <0)
 		ws_temp=0;

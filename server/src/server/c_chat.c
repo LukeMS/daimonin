@@ -28,16 +28,41 @@
 #include <loader.h>
 #include <sproto.h>
 
+/* this function does 3 things: controlling we have
+ * a legal string - if not, return NULL  - if return string*
+ * - remove all whitespace in front (if all are whitespace
+ *   we return NULL)
+ * - change and/or process all our control chars like '^' or '§'
+ */
+static char *cleanup_chat_string(char *ustring)
+{
+	int i;
+
+	/* kill all whitespace */
+	while (*ustring !='\0' && isspace(*ustring)) 
+		ustring++;
+
+	/* this happens when whitespace only string was submited */
+    if (*ustring=='\0') 
+		return NULL;
+
+	/* now process all control chars */
+	for(i=0;*(ustring+i) != '\0';i++)
+	{
+		if(*(ustring+i) == '^' || *(ustring+i) == '§')
+			*(ustring+i) = ' ';
+	}
+	return ustring;
+}
+
 int command_say (object *op, char *params)
 {
     if (!params) 
 		return 0;
 
 	LOG(llevInfo,"CLOG SAY:%s >%s<\n", query_name(op), params);
-	/* strip whitespaces */
-	while (*params !='\0' && isspace(*params)) 
-		params++;
 
+	params = cleanup_chat_string(params);
 	/* this happens when whitespace only string was submited */
     if (*params=='\0') 
 		return 0;
@@ -58,10 +83,8 @@ int command_shout (object *op, char *params)
 		return 0;
 
 	LOG(llevInfo,"CLOG SHOUT:%s >%s<\n", query_name(op), params);
-	/* strip whitespaces */
-	while (*params !='\0' && isspace(*params)) 
-		params++;
 
+	params = cleanup_chat_string(params);
 	/* this happens when whitespace only string was submited */
     if (*params=='\0') 
 		return 0;
@@ -70,7 +93,7 @@ int command_shout (object *op, char *params)
     strcat(buf," shouts: ");
     strncat(buf, params, MAX_BUF-30);
     buf[MAX_BUF - 30] = '\0';
-    new_draw_info(NDI_UNIQUE | NDI_ALL | NDI_ORANGE, 1, NULL, buf);
+    new_draw_info(NDI_PLAYER |NDI_UNIQUE | NDI_ALL | NDI_ORANGE, 1, NULL, buf);
 #ifdef PLUGINS
     /* GROS : Here we handle the SHOUT global event */
     evtid = EVENT_SHOUT;
@@ -93,10 +116,8 @@ int command_tell (object *op, char *params)
 		return 0;
 
 	LOG(llevInfo,"CLOG TELL:%s >%s<\n", query_name(op), params);
-	/* strip whitespaces */
-	while (*params !='\0' && isspace(*params)) 
-		params++;
 
+	params = cleanup_chat_string(params);
 	/* this happens when whitespace only string was submited */
     if (*params=='\0') 
 		return 0;
@@ -118,6 +139,10 @@ int command_tell (object *op, char *params)
 	new_draw_info(NDI_UNIQUE, 0,op,buf);
 	return 1;
     }
+	/* send to yourself? intelligent... */
+	if(strncasecmp(op->name,name,MAX_NAME)==0)
+		return 1;
+
 
     sprintf(buf,"%s tells you: ",op->name);
     strncat(buf, msg, MAX_BUF-strlen(buf)-1);
@@ -126,9 +151,9 @@ int command_tell (object *op, char *params)
     for(pl=first_player;pl!=NULL;pl=pl->next)
       if(strncasecmp(pl->ob->name,name,MAX_NAME)==0)
       {
-        new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, pl->ob, buf);
-        sprintf(buf2, "You tell to %s: %s",name,msg);
-        new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, op, buf2);
+        sprintf(buf2, "You tell %s: %s",name,msg);
+        new_draw_info(NDI_PLAYER |NDI_UNIQUE, 0, op, buf2);
+        new_draw_info(NDI_PLAYER |NDI_UNIQUE | NDI_NAVY, 0, pl->ob, buf);
 
         /* Update last_tell value [mids 01/14/2002] */
         strcpy(pl->last_tell, op->name);

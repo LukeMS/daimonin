@@ -321,10 +321,18 @@ void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y,int col,
     gflag= FALSE;
     for(i=0;text[i] != '\0';i++)
     {
-		if(text[i] == '&')
+		if(text[i] == '^')
         {
-			SDL_SetPalette(font->sprite->bitmap, SDL_LOGPAL|SDL_PHYSPAL, &color_g, 1, 1);			
-            gflag = TRUE;
+			if(gflag)
+			{
+				SDL_SetPalette(font->sprite->bitmap, SDL_LOGPAL|SDL_PHYSPAL, &color, 1, 1);			
+			    gflag= FALSE;
+			}
+			else
+			{
+				SDL_SetPalette(font->sprite->bitmap, SDL_LOGPAL|SDL_PHYSPAL, &color_g, 1, 1);			
+				gflag = TRUE;
+			}
             continue;
         }
 
@@ -345,8 +353,6 @@ void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y,int col,
 			src.h = font->c[(int)(text[i])].h;
             SDL_BlitSurface(font->sprite->bitmap, &src, surf, &dst);
         }
-		else if(gflag) 
-			SDL_SetPalette(font->sprite->bitmap, SDL_LOGPAL|SDL_PHYSPAL, &color, 1, 1);			
 
 		dst.x+=tmp;
 	}
@@ -455,6 +461,17 @@ Uint32 GetSurfacePixel(SDL_Surface *Surface, Sint32 X, Sint32 Y)
         return -1;
 }
 
+
+int get_string_pixel_length(char *text, struct _Font *font)
+{
+	register int i, len=0;
+
+	for(i=0;text[i]!=0;i++)
+		len += font->c[(int)text[i]].w+font->char_offset;
+
+	return len;
+}
+
 void sprite_blt(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx)
 {
         SDL_Rect dst;
@@ -484,7 +501,7 @@ void sprite_blt(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx)
 
             if(bltfx->flags&BLTFX_FLAG_SRCALPHA && !(ScreenSurface->flags&SDL_HWSURFACE))
             {
-                SDL_SetAlpha(blt_sprite, SDL_SRCALPHA, 128);
+                SDL_SetAlpha(blt_sprite, SDL_SRCALPHA, bltfx->alpha);
             }
 
         }

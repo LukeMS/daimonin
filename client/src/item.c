@@ -206,6 +206,20 @@ void free_all_items (item *op)
 }
 
 /*
+ *  Recursive function, only check inventory of op
+ * *not* items inside other containers.
+ */
+item *locate_item_from_inv (item *op, sint32 tag)
+{
+    for (; op!= NULL; op=op->next)
+    {
+        if (op->tag == tag)
+            return op;
+    }
+    return NULL;
+}
+
+/*
  *  Recursive function, used by locate_item()
  */
 item *locate_item_from_item (item *op, sint32 tag)

@@ -31,7 +31,7 @@
 #define CON 2
 #define WIS 3
 #define CHA 4
-#define INT 5
+#define INTELLIGENCE 5
 #define POW 6
 
 #define NUM_STATS 7

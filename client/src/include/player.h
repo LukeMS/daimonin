@@ -24,6 +24,14 @@
 #if !defined(__PLAYER_H)
 #define __PLAYER_H
 
+typedef struct _server_level {
+	int level;
+	uint32 exp[500];
+} _server_level;
+
+extern _server_level server_level;
+
+
 extern void CompleteCmd ( unsigned char *data, int len );
 
 extern void new_player ( long tag, char *name, long weight, short face );

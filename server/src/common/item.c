@@ -528,7 +528,7 @@ char *query_base_name(object *op) {
 		break;
 
 		case SPELLBOOK:
-			if (QUERY_FLAG(op,FLAG_IDENTIFIED)||QUERY_FLAG(op,FLAG_BEEN_APPLIED))
+			if (QUERY_FLAG(op,FLAG_IDENTIFIED))
 			{
 				if(!op->title) 
 				{
@@ -556,7 +556,7 @@ char *query_base_name(object *op) {
 		case ROD:
 		case HORN:
 		case POTION:
-			if (QUERY_FLAG(op,FLAG_IDENTIFIED)||QUERY_FLAG(op,FLAG_BEEN_APPLIED))
+			if (QUERY_FLAG(op,FLAG_IDENTIFIED))
 			{
 			    if(!op->title) 
 				{	
@@ -581,30 +581,34 @@ char *query_base_name(object *op) {
       case SKILL:
       case AMULET:
       case RING:
-	if (!op->title) {
-	    /* If ring has a title, full description isn't so useful */ 
-	    char *s = describe_item(op);
-	    if (s[0]) {
-		safe_strcat (buf, " ", &len, MAX_BUF);
-		safe_strcat (buf, s, &len, MAX_BUF);
-	    }
-	}
-				else
+		if (QUERY_FLAG(op,FLAG_IDENTIFIED))
+		{
+			if (!op->title) 
+			{
+				/* If ring has a title, full description isn't so useful */ 
+				char *s = describe_item(op);
+				if (s[0])
 				{
-					safe_strcat(buf, " ", &len, MAX_BUF);
-					safe_strcat(buf, op->title, &len, MAX_BUF);
+					safe_strcat (buf, " ", &len, MAX_BUF);
+					safe_strcat (buf, s, &len, MAX_BUF);
 				}
+			}
+			else
+			{
+				safe_strcat(buf, " ", &len, MAX_BUF);
+				safe_strcat(buf, op->title, &len, MAX_BUF);
+			}
+		}
 	break;
       default:
-		if(op->magic && ((QUERY_FLAG(op,FLAG_BEEN_APPLIED) && 
-							need_identify(op)) || QUERY_FLAG(op,FLAG_IDENTIFIED)))
-		{
-			sprintf(buf + strlen(buf), " %+d", op->magic);
-		}
-	    if (op->title && QUERY_FLAG(op,FLAG_IDENTIFIED)) 
+	    if (op->title &&(need_identify(op) && QUERY_FLAG(op,FLAG_IDENTIFIED))) 
 		{
 			safe_strcat(buf, " ", &len, MAX_BUF);
 			safe_strcat(buf, op->title, &len, MAX_BUF);
+		}
+		if(op->magic && (need_identify(op) && QUERY_FLAG(op,FLAG_IDENTIFIED)))
+		{
+			sprintf(buf + strlen(buf), " %+d", op->magic);
 		}
     } /* switch */
 

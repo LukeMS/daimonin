@@ -59,6 +59,7 @@ enum {
 	BINARY_CMD_COMC=1,
 	BINARY_CMD_MAP2,
 	BINARY_CMD_DRAWINFO,
+	BINARY_CMD_DRAWINFO2,
 	BINARY_CMD_MAP_SCROLL,
 	BINARY_CMD_ITEMX,
 	BINARY_CMD_SOUND,
@@ -94,6 +95,7 @@ struct CmdMapping commands[] =
         { "comc", CompleteCmd},
         { "map2", Map2Cmd },
         { "drawinfo", (CmdProc)DrawInfoCmd },
+        { "drawinfo2", (CmdProc)DrawInfoCmd2 },
         { "map_scroll", (CmdProc)map_scrollCmd },
         { "itemx", ItemXCmd },
         { "sound", SoundCmd},
@@ -232,10 +234,11 @@ int cs_write_string(int fd, char *buf, int len)
 void finish_face_cmd(int pnum, uint32 checksum, char *face)
 {
         char buf[2048];
-	FILE *stream;
+		FILE *stream;
+		struct stat statbuf;
         int len;
         static uint32 newsum=0;
-        unsigned char data[65536];
+        unsigned char *data;
 		void *tmp_free;
 
         /* first, check our memory... perhaps we have it loaded */
@@ -245,8 +248,8 @@ void finish_face_cmd(int pnum, uint32 checksum, char *face)
                 /* lets check the name and checksum and sprite. ONLY if all is
                  * ok, we stay with it
                  */
-                 if(strcmp(face, FaceList[pnum].name) &&
-                        checksum != FaceList[pnum].checksum &&
+                 if(!strcmp(face, FaceList[pnum].name) &&
+                        checksum == FaceList[pnum].checksum &&
                         FaceList[pnum].sprite)
 				 {
 						face_flag_extension(pnum, FaceList[pnum].name);
@@ -265,13 +268,17 @@ void finish_face_cmd(int pnum, uint32 checksum, char *face)
         sprintf(buf,"%s.png", face);
         FaceList[pnum].name = (char *) _malloc(strlen(buf)+1, "finish_face_cmd(): FaceList name");
         strcpy(FaceList[pnum].name, buf);
+
         FaceList[pnum].checksum = checksum;
 
         /* Check private cache first */
         sprintf(buf,"%s%s", GetCacheDirectory(), FaceList[pnum].name);
         if ((stream=fopen(buf,"rb" ))!=NULL)
         {
-            len=fread(data, 1,65535,stream);
+			fstat (fileno (stream), &statbuf);
+			len = (int) statbuf.st_size;
+			data=malloc(len);
+            len=fread(data, 1,len,stream);
             fclose(stream);
 			newsum = 0;
 			if(len <= 0) /* something is wrong... now unlink the file and
@@ -283,6 +290,8 @@ void finish_face_cmd(int pnum, uint32 checksum, char *face)
 			}
 			else /* lets go for the checksum check*/
 				newsum =adler32(len, data,len);
+			free(data);
+
             if (newsum == checksum)
             {
 				FaceList[pnum].sprite=sprite_tryload_file(buf,0,NULL);
@@ -373,6 +382,11 @@ static int load_picture_from_pack(int num)
 int request_face(int pnum, int mode)
 {
 	char buf[256*2];
+	FILE *stream;
+	struct stat statbuf;
+    int len;
+    static uint32 newsum=0;
+    unsigned char *data;
 	static int count=0;
 	static char fr_buf[REQUEST_FACE_MAX*sizeof(uint16)+4];
 	uint16 num =(uint16)(pnum&~0x8000);
@@ -393,13 +407,48 @@ int request_face(int pnum, int mode)
 	if(FaceList[num].name || FaceList[num].flags&FACE_REQUESTED) /* loaded OR requested.. */
 		return 1;
 
-	/* ok - at this point we hook in our client stored png lib.
-	*/
 	if(num >= bmaptype_table_size)
 	{
 		LOG(LOG_ERROR, "REQUEST_FILE(): server sent picture id to big (%d %d)\n", num, bmaptype_table_size);
 		return 0;
 	}
+
+	/* now lets check BEFORE we do any other test for this name in /gfx_user.
+	 * Perhaps we have a customized picture here.
+	 */
+	sprintf(buf,"%s%s.png", GetGfxUserDirectory(), bmaptype_table[num].name);
+    if ((stream=fopen(buf,"rb" ))!=NULL)
+	{
+		/* yes we have a picture with this name in /gfx_user! 
+		 * lets try to load.
+		 */
+		fstat (fileno (stream), &statbuf);
+		len = (int) statbuf.st_size;
+		data=malloc(len);
+		len=fread(data, 1,len,stream);
+		fclose(stream);
+		if(len > 0) 
+		{
+
+			/* lets try to load first... */
+			FaceList[num].sprite=sprite_tryload_file(buf,0,NULL);
+			if(FaceList[num].sprite) /* NOW we have a valid png with right name ...*/
+			{
+				face_flag_extension(num, buf);
+				sprintf(buf,"%s.png", GetGfxUserDirectory(), bmaptype_table[num].name);
+				FaceList[num].name = (char*) malloc(strlen(buf)+1);
+				strcpy(FaceList[num].name,buf);
+				FaceList[num].checksum =adler32(len, data,len);
+				free(data);
+				return 1;
+				}
+		}
+		/* if we are here something was wrong with the gfx_user file.*/
+		free(data);
+	}
+
+	/* ok - at this point we hook in our client stored png lib.
+	*/
 
 	if(bmaptype_table[num].pos != -1) /* best case - we have it in daimonin.p0! */
 	{

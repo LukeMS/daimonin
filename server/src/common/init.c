@@ -111,6 +111,7 @@ void init_environ() {
     cp=getenv("CROSSFIRE_TMPDIR");
     if (cp) settings.tmpdir=cp;
 #endif
+
 }
     
 
@@ -250,4 +251,3 @@ void init_clocks()
     LOG(llevDebug, "todtick=%lu\n", todtick);
     fclose(fp);
 }
-

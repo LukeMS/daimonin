@@ -356,7 +356,6 @@ int save_player(object *op, int flag) {
   
   fprintf(fp,"savebed_map %s\n", pl->savebed_map);
   fprintf(fp,"bed_x %d\nbed_y %d\n", pl->bed_x, pl->bed_y);
-  fprintf(fp,"weapon_sp %f\n",pl->weapon_sp);
   fprintf(fp,"Str %d\n",pl->orig_stats.Str);
   fprintf(fp,"Dex %d\n",pl->orig_stats.Dex);
   fprintf(fp,"Con %d\n",pl->orig_stats.Con);
@@ -669,8 +668,6 @@ void check_login(object *op) {
 	    pl->bed_x=value;
 	else if (!strcmp(buf,"bed_y"))
 	    pl->bed_y=value;
-	else if (!strcmp(buf,"weapon_sp"))
-	    sscanf(buf,"weapon_sp %f",&pl->weapon_sp);
         else if (!strcmp(buf,"Str"))
 	    pl->orig_stats.Str=value;
         else if (!strcmp(buf,"Dex"))
@@ -802,6 +799,15 @@ void check_login(object *op) {
 
     /* make sure he's a player--needed because of class change. */
     op->type = PLAYER;
+
+	/* this is a funny thing: what happens when the autosave function saves a player
+	 * with negative hp? (never thought thats possible but happens in a 0.95 server)
+	 * Well, the sever tries to create a gravestone and heals the player... and then
+	 * server tries to insert gravestone and anim on a map - but player is still in login!
+	 * So, we are nice and set hp to 1 if here negative-.
+	 */
+	if(op->stats.hp <0)
+		op->stats.hp=1;
 
     pl->name_changed=1;
     pl->state = ST_PLAYING;

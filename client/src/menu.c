@@ -59,8 +59,9 @@ void do_console(int x, int y)
         if(InputString[0])
         {
 			char buf[MAX_INPUT_STRING+32];
+			/*
 			sprintf(buf,":%s",InputString);
-			draw_info(buf,COLOR_DGOLD);
+			draw_info(buf,COLOR_DGOLD);*/
 
 			if(*InputString != '/') /* if not a command ... its chat */
 			{
@@ -118,7 +119,85 @@ void do_console(int x, int y)
 
 int client_command_check(char *cmd)
 {
-	if(!strncmp(cmd,"/keybind",strlen("/keybind")) )
+	char tmp[256];
+	char cpar1[256];
+	int par1, par2;
+
+	if(!strnicmp(cmd,"/setwinalpha",strlen("/setwinalpha")) )
+	{
+		int wrong=0;
+		par2=-1;
+		sscanf(cmd, "%s %s %d", tmp, cpar1, &par2);
+		
+		if(!strnicmp(cpar1,"ON",strlen("ON")) )
+		{
+			if(par2 != -1)
+			{
+				if(par2 <0 ||par2>255)
+					par2=128;
+				textwin_set.alpha=par2;
+			}
+			sprintf(tmp, ">>set textwin alpha ON (alpha=%d).",textwin_set.alpha);
+			draw_info(tmp ,COLOR_GREEN);
+			textwin_set.use_alpha=1;
+		}
+		else if(!strnicmp(cpar1,"OFF",strlen("OFF")) )
+		{
+			draw_info(">>set textwin alpha mode OFF." ,COLOR_GREEN);
+
+			textwin_set.use_alpha=0;
+		}
+		else
+			wrong = 1;
+
+
+		if(wrong)
+			draw_info("Usage: '/setwinalpha on|off |<alpha>|'\nExample:\n/setwinalpha ON 172\n/setwinalpha OFF" ,COLOR_WHITE);
+		return TRUE;
+	}
+	else if(!strnicmp(cmd,"/setwin",strlen("/setwin")) )
+	{
+		int wrong = 0;
+		par1=9, par2=-1;
+		sscanf(cmd, "%s %d %d", tmp, &par1, &par2);
+		if(par2 != -1) /* split mode */
+		{
+			if(par1<2 || par1>38 || par2<2 || par2>38 || (par1+par2)<10 || (par1+par2)>38)
+			{
+				wrong = 1;
+				draw_info("/setwin: parameters out of bounds." ,COLOR_RED);
+			}
+			else
+			{
+				sprintf(tmp, ">>set textwin to split mode %d+%d rows.",par1,par2);
+				draw_info(tmp ,COLOR_GREEN);
+
+				textwin_set.split_flag=1;
+				textwin_set.split_size =par1-1;
+				textwin_set.top_size =par2-1;
+			}
+		}
+		else
+		{
+			if(par1<2 || par1>38)
+			{
+				wrong = 1;
+				draw_info("/setwin: parameters out of bounds." ,COLOR_RED);
+			}
+			else
+			{
+				sprintf(tmp, ">>set textwin to %d rows.",par1,par2);
+				draw_info(tmp ,COLOR_GREEN);
+				textwin_set.split_flag=0;
+				textwin_set.size = par1-1;
+			}
+		}
+
+		if(wrong)
+			draw_info("Usage: '/setwin <body> |<top>|'\nExample:\n/setwin 9 5\n/setwin 12" ,COLOR_WHITE);
+		return TRUE;
+	}
+	else if(!strnicmp(cmd,"/keybind",strlen("/keybind")) )
 	{
 		map_udate_flag=2;
 		if(cpl.menustatus != MENU_KEYBIND)
@@ -181,6 +260,11 @@ void do_number(int x, int y)
             {
                 client_send_move (cpl.loc, cpl.tag, tmp);            
                 sprintf(buf,"%s %d from %d %s", cpl.nummode == NUM_MODE_GET?"get":"drop", tmp, cpl.nrof, cpl.num_text);
+				if(cpl.nummode == NUM_MODE_GET)
+					sound_play_effect(SOUND_GET,0,0,100);
+				else
+					sound_play_effect(SOUND_DROP,0,0,100);
+					
                 draw_info(buf,COLOR_DGOLD);
                 
             }
@@ -264,76 +348,77 @@ void show_resist(int x, int y)
     StringBlt(ScreenSurface, &Font6x3Out,"Physical",x, y+16, COLOR_HGOLD, NULL, NULL);
     StringBlt(ScreenSurface, &SystemFont,"I",x+43, y+17, COLOR_HGOLD, NULL, NULL);
     sprintf(buf,"%02d", cpl.stats.protection[0]);
-    StringBlt(ScreenSurface, &SystemFont,buf,x+53, y+17, COLOR_WHITE, NULL, NULL);
+
+    StringBlt(ScreenSurface, &SystemFont,buf,x+53, y+17, cpl.stats.protection[0]?COLOR_WHITE:COLOR_GREY, NULL, NULL);
 
     StringBlt(ScreenSurface, &SystemFont,"S",x+73, y+17, COLOR_HGOLD, NULL, NULL);
     sprintf(buf,"%02d", cpl.stats.protection[1]);
-    StringBlt(ScreenSurface, &SystemFont,buf,x+83, y+17, COLOR_WHITE, NULL, NULL);
+    StringBlt(ScreenSurface, &SystemFont,buf,x+83, y+17, cpl.stats.protection[1]?COLOR_WHITE:COLOR_GREY, NULL, NULL);
 
 
     StringBlt(ScreenSurface, &SystemFont,"C",x+103, y+17, COLOR_HGOLD, NULL, NULL);
     sprintf(buf,"%02d", cpl.stats.protection[2]);
-    StringBlt(ScreenSurface, &SystemFont,buf,x+113, y+17, COLOR_WHITE, NULL, NULL);
+    StringBlt(ScreenSurface, &SystemFont,buf,x+113, y+17, cpl.stats.protection[2]?COLOR_WHITE:COLOR_GREY, NULL, NULL);
     StringBlt(ScreenSurface, &SystemFont,"P",x+133, y+17, COLOR_HGOLD, NULL, NULL);
     sprintf(buf,"%02d", cpl.stats.protection[3]);
-    StringBlt(ScreenSurface, &SystemFont,buf,x+143, y+17, COLOR_WHITE, NULL, NULL);
+    StringBlt(ScreenSurface, &SystemFont,buf,x+143, y+17, cpl.stats.protection[3]?COLOR_WHITE:COLOR_GREY, NULL, NULL);
     StringBlt(ScreenSurface, &SystemFont,"W",x+163, y+17, COLOR_HGOLD, NULL, NULL);
     sprintf(buf,"%02d", cpl.stats.protection[4]);
-    StringBlt(ScreenSurface, &SystemFont,buf,x+173, y+17, COLOR_WHITE, NULL, NULL);
+    StringBlt(ScreenSurface, &SystemFont,buf,x+173, y+17, cpl.stats.protection[4]?COLOR_WHITE:COLOR_GREY, NULL, NULL);
 
     StringBlt(ScreenSurface, &Font6x3Out,"Elemental",x, y+31, COLOR_HGOLD, NULL, NULL);
     StringBlt(ScreenSurface, &SystemFont,"F",x+43, y+32, COLOR_HGOLD, NULL, NULL);
     sprintf(buf,"%02d", cpl.stats.protection[5]);
-    StringBlt(ScreenSurface, &SystemFont,buf,x+53, y+32, COLOR_WHITE, NULL, NULL);
+    StringBlt(ScreenSurface, &SystemFont,buf,x+53, y+32, cpl.stats.protection[5]?COLOR_WHITE:COLOR_GREY, NULL, NULL);
     StringBlt(ScreenSurface, &SystemFont,"C",x+73, y+32, COLOR_HGOLD, NULL, NULL);
     sprintf(buf,"%02d", cpl.stats.protection[6]);
-    StringBlt(ScreenSurface, &SystemFont,buf,x+83, y+32, COLOR_WHITE, NULL, NULL);
+    StringBlt(ScreenSurface, &SystemFont,buf,x+83, y+32, cpl.stats.protection[6]?COLOR_WHITE:COLOR_GREY, NULL, NULL);
     
     StringBlt(ScreenSurface, &SystemFont,"E",x+103, y+32, COLOR_HGOLD, NULL, NULL);
     sprintf(buf,"%02d", cpl.stats.protection[7]);
-    StringBlt(ScreenSurface, &SystemFont,buf,x+113, y+32, COLOR_WHITE, NULL, NULL);
+    StringBlt(ScreenSurface, &SystemFont,buf,x+113, y+32, cpl.stats.protection[7]?COLOR_WHITE:COLOR_GREY, NULL, NULL);
     StringBlt(ScreenSurface, &SystemFont,"P",x+133, y+32, COLOR_HGOLD, NULL, NULL);
     sprintf(buf,"%02d", cpl.stats.protection[8]);
-    StringBlt(ScreenSurface, &SystemFont,buf,x+143, y+32, COLOR_WHITE, NULL, NULL);
+    StringBlt(ScreenSurface, &SystemFont,buf,x+143, y+32, cpl.stats.protection[8]?COLOR_WHITE:COLOR_GREY, NULL, NULL);
     StringBlt(ScreenSurface, &SystemFont,"A",x+163, y+32, COLOR_HGOLD, NULL, NULL);
     sprintf(buf,"%02d", cpl.stats.protection[9]);
-    StringBlt(ScreenSurface, &SystemFont,buf,x+173, y+32, COLOR_WHITE, NULL, NULL);
+    StringBlt(ScreenSurface, &SystemFont,buf,x+173, y+32, cpl.stats.protection[9]?COLOR_WHITE:COLOR_GREY, NULL, NULL);
 
     StringBlt(ScreenSurface, &Font6x3Out,"Magical",x, y+46, COLOR_HGOLD, NULL, NULL);
     StringBlt(ScreenSurface, &SystemFont,"M",x+43, y+47, COLOR_HGOLD, NULL, NULL);
     sprintf(buf,"%02d", cpl.stats.protection[10]);
-    StringBlt(ScreenSurface, &SystemFont,buf,x+53, y+47, COLOR_WHITE, NULL, NULL);
+    StringBlt(ScreenSurface, &SystemFont,buf,x+53, y+47, cpl.stats.protection[10]?COLOR_WHITE:COLOR_GREY, NULL, NULL);
     StringBlt(ScreenSurface, &SystemFont,"Mi",x+70, y+47, COLOR_HGOLD, NULL, NULL);
     sprintf(buf,"%02d", cpl.stats.protection[11]);
-    StringBlt(ScreenSurface, &SystemFont,buf,x+83, y+47, COLOR_WHITE, NULL, NULL);
+    StringBlt(ScreenSurface, &SystemFont,buf,x+83, y+47, cpl.stats.protection[11]?COLOR_WHITE:COLOR_GREY, NULL, NULL);
     
     StringBlt(ScreenSurface, &SystemFont,"B",x+103, y+47, COLOR_HGOLD, NULL, NULL);
     sprintf(buf,"%02d", cpl.stats.protection[12]);
-    StringBlt(ScreenSurface, &SystemFont,buf,x+113, y+47, COLOR_WHITE, NULL, NULL);
+    StringBlt(ScreenSurface, &SystemFont,buf,x+113, y+47, cpl.stats.protection[12]?COLOR_WHITE:COLOR_GREY, NULL, NULL);
     StringBlt(ScreenSurface, &SystemFont,"P",x+133, y+47, COLOR_HGOLD, NULL, NULL);
     sprintf(buf,"%02d", cpl.stats.protection[13]);
-    StringBlt(ScreenSurface, &SystemFont,buf,x+143, y+47, COLOR_WHITE, NULL, NULL);
+    StringBlt(ScreenSurface, &SystemFont,buf,x+143, y+47, cpl.stats.protection[13]?COLOR_WHITE:COLOR_GREY, NULL, NULL);
     StringBlt(ScreenSurface, &SystemFont,"F",x+163, y+47, COLOR_HGOLD, NULL, NULL);
     sprintf(buf,"%02d", cpl.stats.protection[14]);
-    StringBlt(ScreenSurface, &SystemFont,buf,x+173, y+47, COLOR_WHITE, NULL, NULL);
+    StringBlt(ScreenSurface, &SystemFont,buf,x+173, y+47, cpl.stats.protection[14]?COLOR_WHITE:COLOR_GREY, NULL, NULL);
 
     StringBlt(ScreenSurface, &Font6x3Out,"Spherical",x, y+61, COLOR_HGOLD, NULL, NULL);
     StringBlt(ScreenSurface, &SystemFont,"N",x+43, y+62, COLOR_HGOLD, NULL, NULL);
     sprintf(buf,"%02d", cpl.stats.protection[15]);
-    StringBlt(ScreenSurface, &SystemFont,buf,x+53, y+62, COLOR_WHITE, NULL, NULL);
+    StringBlt(ScreenSurface, &SystemFont,buf,x+53, y+62, cpl.stats.protection[15]?COLOR_WHITE:COLOR_GREY, NULL, NULL);
     StringBlt(ScreenSurface, &SystemFont,"Ch",x+69, y+62, COLOR_HGOLD, NULL, NULL);
     sprintf(buf,"%02d", cpl.stats.protection[16]);
-    StringBlt(ScreenSurface, &SystemFont,buf,x+83, y+62, COLOR_WHITE, NULL, NULL);
+    StringBlt(ScreenSurface, &SystemFont,buf,x+83, y+62, cpl.stats.protection[16]?COLOR_WHITE:COLOR_GREY, NULL, NULL);
     
     StringBlt(ScreenSurface, &SystemFont,"D",x+103, y+62, COLOR_HGOLD, NULL, NULL);
     sprintf(buf,"%02d", cpl.stats.protection[17]);
-    StringBlt(ScreenSurface, &SystemFont,buf,x+113, y+62, COLOR_WHITE, NULL, NULL);
+    StringBlt(ScreenSurface, &SystemFont,buf,x+113, y+62, cpl.stats.protection[17]?COLOR_WHITE:COLOR_GREY, NULL, NULL);
     StringBlt(ScreenSurface, &SystemFont,"Sp",x+130, y+62, COLOR_HGOLD, NULL, NULL);
     sprintf(buf,"%02d", cpl.stats.protection[18]);
-    StringBlt(ScreenSurface, &SystemFont,buf,x+143, y+62, COLOR_WHITE, NULL, NULL);
+    StringBlt(ScreenSurface, &SystemFont,buf,x+143, y+62, cpl.stats.protection[18]?COLOR_WHITE:COLOR_GREY, NULL, NULL);
     StringBlt(ScreenSurface, &SystemFont,"Co",x+160, y+62, COLOR_HGOLD, NULL, NULL);
     sprintf(buf,"%02d", cpl.stats.protection[19]);
-    StringBlt(ScreenSurface, &SystemFont,buf,x+173, y+62, COLOR_WHITE, NULL, NULL);
+    StringBlt(ScreenSurface, &SystemFont,buf,x+173, y+62, cpl.stats.protection[19]?COLOR_WHITE:COLOR_GREY, NULL, NULL);
 	
 }
 
@@ -390,6 +475,7 @@ void show_range(int x, int y)
     char buf[256];
 	SDL_Rect rec_range;
 	SDL_Rect rec_item;
+	item *op;
     item *tmp;
     
 	rec_range.w=160;
@@ -529,13 +615,23 @@ void show_range(int x, int y)
                 
                 break;
             case FIRE_MODE_THROW:
-                if(!locate_item_from_item(cpl.ob, fire_mode_tab[FIRE_MODE_THROW].item))
+                if(!(op=locate_item_from_item(cpl.ob, fire_mode_tab[FIRE_MODE_THROW].item)))
                     fire_mode_tab[FIRE_MODE_THROW].item = FIRE_ITEM_NO;
                 if(fire_mode_tab[FIRE_MODE_THROW].item != FIRE_ITEM_NO)
                 {
 
                     sprite_blt(Bitmaps[BITMAP_RANGE_THROW],x+3, y+2, NULL, NULL);
                     blt_inventory_face_from_tag(fire_mode_tab[FIRE_MODE_THROW].item,x+43,y+2);
+					if(op->nrof>1)
+					{
+						if(op->nrof >9999)
+							strcpy(buf,"many");
+						else
+							sprintf(buf,"%d",op->nrof);
+						StringBlt(ScreenSurface, &Font6x3Out,buf,x+43+(ICONDEFLEN/2)-(get_string_pixel_length(buf,&Font6x3Out)/2),
+							y+22,COLOR_WHITE, NULL, NULL); 
+					}
+
                     sprintf(buf,"%s", 
                         get_range_item_name(fire_mode_tab[FIRE_MODE_THROW].item));
                     StringBlt(ScreenSurface, &SystemFont,buf, x+3, y+49, COLOR_WHITE, &rec_item, NULL);                
@@ -673,7 +769,7 @@ void show_keybind(void)
             StringBlt(ScreenSurface, &SystemFont, keymap[i+keybind_startoff].text,
                                           x+150, y+91+i*13,COLOR_WHITE, &rec_macro, NULL);
         }        
-	 	blt_window_slider(Bitmaps[BITMAP_KEYBIND_SCROLL], keymap_count,18,keybind_startoff, x+316, y+103);
+	 	blt_window_slider(Bitmaps[BITMAP_KEYBIND_SCROLL], keymap_count,18, keybind_startoff, -1, x+316, y+103);
 }
 
 void show_status(void)
@@ -751,11 +847,16 @@ int init_media_tag(char *tag)
 }
 
 
-void blt_window_slider(_Sprite *slider, int maxlen, int winlen, int startoff, int x, int y)
+void blt_window_slider(_Sprite *slider, int maxlen, int winlen, int startoff, int len, int x, int y)
 {
     SDL_Rect box;
     double temp;
-    int startpos;
+    int startpos, len_h;
+
+	if(len != -1)
+		len_h = len;
+	else
+		len_h = slider->bitmap->h;
 
     if(maxlen < winlen)
         maxlen=winlen;
@@ -768,11 +869,13 @@ void blt_window_slider(_Sprite *slider, int maxlen, int winlen, int startoff, in
 
     /* now we have 100% = 1.0 to 0% = 0.0 of the length */
     temp = (double)winlen/(double)maxlen; /* between 0.0 <-> 1.0 */
-    startpos = (int)((double)startoff *((double)slider->bitmap->h/(double )maxlen)); /* startpixel */
-    temp = (double)slider->bitmap->h*temp; 
+    startpos = (int)((double)startoff *((double)len_h/(double )maxlen)); /* startpixel */
+    temp = (double)len_h*temp; 
     box.h = (Uint16) temp;
+	if(!box.h)
+		box.h=1;
 
-    if(startoff+winlen >=maxlen && startpos+box.h<slider->bitmap->h)
+    if(startoff+winlen >=maxlen && startpos+box.h<len_h)
 		startpos ++;
 
    sprite_blt(slider,x,y+startpos, &box, NULL);
@@ -1378,7 +1481,7 @@ void read_bmaps(void)
 
 	srv_client_files[SRV_CLIENT_BMAPS].len = 0;
 	srv_client_files[SRV_CLIENT_BMAPS].crc = 0;
-	LOG(LOG_DEBUG,"Loading %s....",FILE_CLIENT_BMAPS);
+	LOG(LOG_DEBUG,"Reading %s....",FILE_CLIENT_BMAPS);
     if( (stream = fopen(FILE_CLIENT_BMAPS, "rb" )) != NULL )
     {
 		/* temp load the file and get the data we need for compare with server */
@@ -1406,6 +1509,62 @@ void read_bmaps(void)
 }
 
 
+void load_settings(void)
+{
+    FILE *stream;
+	char buf[HUGE_BUF];
+	char cmd[HUGE_BUF];
+	char para[HUGE_BUF];
+	int para_count, last_cmd=0;
+	int tmp_level;
+
+	srv_client_files[SRV_CLIENT_SETTINGS].len = 0;
+	srv_client_files[SRV_CLIENT_SETTINGS].crc = 0;
+	LOG(LOG_DEBUG,"Loading %s....\n",FILE_CLIENT_SETTINGS);
+    if( (stream = fopen(FILE_CLIENT_SETTINGS, "rb" )) != NULL )
+    {
+
+		while(fgets(buf, HUGE_BUF-1, stream)!=NULL)
+		{
+			if(buf[0] == '#')
+				continue;
+
+			if(last_cmd == 0)
+			{
+				sscanf(buf,"%s %s", cmd, para);
+				if(!strcmp(cmd, "level") )
+				{
+					tmp_level = atoi(para);
+					if(tmp_level<0 || tmp_level > 450)
+					{
+					    fclose( stream );
+						LOG(LOG_ERROR,"client_settings_: level cmd out of bounds! >%s<\n",buf);
+						return;
+					}
+					server_level.level =tmp_level; 
+					last_cmd = 1; /* cmd 'level' */	
+					para_count = 0;
+				}
+				else /* we close here... better we include later a fallback to login */
+				{
+					fclose(stream);
+					LOG(LOG_ERROR,"Unknown command in client_settings! >%s<\n",buf);
+					return;
+				}
+			}
+			else if(last_cmd == 1)
+			{
+				server_level.exp[para_count++] = strtoul(buf, NULL ,16);
+				if(para_count >tmp_level)
+					last_cmd = 0;
+			}
+
+
+		}
+	    fclose( stream );
+	}
+}
+
 void read_settings(void)
 {
     FILE *stream;
@@ -1415,7 +1574,7 @@ void read_settings(void)
 
 	srv_client_files[SRV_CLIENT_SETTINGS].len = 0;
 	srv_client_files[SRV_CLIENT_SETTINGS].crc = 0;
-	LOG(LOG_DEBUG,"Loading %s....",FILE_CLIENT_SETTINGS);
+	LOG(LOG_DEBUG,"Reading %s....",FILE_CLIENT_SETTINGS);
     if( (stream = fopen(FILE_CLIENT_SETTINGS, "rb" )) != NULL )
     {
 		/* temp load the file and get the data we need for compare with server */
@@ -1457,7 +1616,7 @@ void read_spells(void)
 
 	srv_client_files[SRV_CLIENT_SPELLS].len = 0;
 	srv_client_files[SRV_CLIENT_SPELLS].crc = 0;
-	LOG(LOG_DEBUG,"Loading %s....",FILE_CLIENT_SPELLS);
+	LOG(LOG_DEBUG,"Reading %s....",FILE_CLIENT_SPELLS);
     if( (stream = fopen(FILE_CLIENT_SPELLS, "rb" )) != NULL )
     {
 		/* temp load the file and get the data we need for compare with server */
@@ -1552,7 +1711,7 @@ void read_skills(void)
 	srv_client_files[SRV_CLIENT_SKILLS].len = 0;
 	srv_client_files[SRV_CLIENT_SKILLS].crc = 0;
 	
-	LOG(LOG_DEBUG,"Loading %s....",FILE_CLIENT_SKILLS);
+	LOG(LOG_DEBUG,"Reading %s....",FILE_CLIENT_SKILLS);
     if( (stream = fopen(FILE_CLIENT_SKILLS, "rb" )) != NULL )
     {
 
@@ -1628,6 +1787,22 @@ void read_skills(void)
 }
 
 
+int get_quickslot(int x, int y)
+{
+	int i;
+
+	for(i=0;i<MAX_QUICK_SLOTS;i++)
+	{
+		if(x>=SKIN_POS_QUICKSLOT_X+quickslots_pos[i][0] &&
+					x<=SKIN_POS_QUICKSLOT_X+quickslots_pos[i][0]+32 &&
+					y>=SKIN_POS_QUICKSLOT_Y+quickslots_pos[i][1] &&
+					y<=SKIN_POS_QUICKSLOT_Y+quickslots_pos[i][1]+32)
+			return i;
+		
+	}
+	return -1;
+}
+
 void show_quickslots(int x, int y)
 {
 	int i;
@@ -1638,7 +1813,14 @@ void show_quickslots(int x, int y)
 	for(i=0;i<MAX_QUICK_SLOTS;i++)
 	{
 		if(quick_slots[i] != -1)
-			blt_inventory_face_from_tag(quick_slots[i],x+quickslots_pos[i][0],y+quickslots_pos[i][1]);
+		{
+			item *tmp;
+			tmp = locate_item_from_item(cpl.ob , quick_slots[i]);
+			if(tmp)
+			{
+				blt_inv_item(tmp , x+quickslots_pos[i][0],y+quickslots_pos[i][1]);
+			}
+		}
 		
 	}
 }
@@ -1655,7 +1837,8 @@ void update_quickslots(int del_item)
 			quick_slots[i]=-1;
 		if(quick_slots[i] == -1)
 			continue;
-		if(!locate_item_from_item(cpl.ob , quick_slots[i])) 
+		/* only items in the *main* inventory can used with quickslot! */
+		if(!locate_item_from_inv(cpl.ob->inv , quick_slots[i])) 
 			quick_slots[i]=-1;
 	}
 
@@ -1664,12 +1847,14 @@ void update_quickslots(int del_item)
 
 void show_group(int x, int y)
 {
+	
 	int s;
 	
 	for(s=0;s<MAX_GROUP_MEMBER;s++)
 	{
-		sprite_blt(Bitmaps[BITMAP_GROUP],x+group_pos[s][0]+1, y+group_pos[s][1]+1, NULL, NULL);
+		sprite_blt(Bitmaps[BITMAP_GROUP_CLEAR],x+group_pos[s][0]+1, y+group_pos[s][1]+1, NULL, NULL);
 	}
+	
 	/*
     StringBlt(ScreenSurface, &SystemFont,cpl.name,52, 525,COLOR_DEFAULT, NULL, NULL);
     sprintf(buf, "L %03d",cpl.stats.level);
@@ -1681,8 +1866,21 @@ void show_group(int x, int y)
 void show_target(int x, int y)
 {
 	char *ptr=NULL;
+    SDL_Rect box;
+	double temp;
+	int hp_tmp;
 
 	sprite_blt(Bitmaps[cpl.target_mode?BITMAP_TARGET_ATTACK:BITMAP_TARGET_NORMAL],x, y, NULL, NULL);
+
+	sprite_blt(Bitmaps[BITMAP_TARGET_HP_B],x-1, y+20, NULL, NULL);
+
+	/* redirect target_hp to our hp - server don't send it
+	 * because we should now our hp exactly
+	 */
+	hp_tmp = (int) cpl.target_hp ; 
+	if(cpl.target_code==0)
+		hp_tmp = (int)(((float)cpl.stats.hp / (float)cpl.stats.maxhp)*100.0f);
+
 	if(cpl.target_code==0)
 	{
 		if(cpl.target_mode)
@@ -1704,9 +1902,27 @@ void show_target(int x, int y)
 		else
 			ptr = "target friend";
 	}
-	if(ptr)
+
+	if(options.show_target_self || cpl.target_code!=0)
 	{
-		StringBlt(ScreenSurface, &SystemFont,cpl.target_name ,x+30, y, COLOR_WHITE, NULL, NULL);
-		StringBlt(ScreenSurface, &SystemFont,ptr ,x+30, y+11, COLOR_WHITE, NULL, NULL);
+		if(hp_tmp)
+		{
+			temp = (double)hp_tmp*0.01;
+			box.x =0;
+		    box.y = 0;
+		    box.h = Bitmaps[BITMAP_TARGET_HP]->bitmap->h;
+		    box.w = (int) (Bitmaps[BITMAP_TARGET_HP]->bitmap->w*temp);
+		    if(!box.w)
+				box.w =1;
+		     if(box.w > Bitmaps[BITMAP_TARGET_HP]->bitmap->w)
+				box.w=Bitmaps[BITMAP_TARGET_HP]->bitmap->w;
+			sprite_blt(Bitmaps[BITMAP_TARGET_HP],x, y+21, &box, NULL);
+		}
+
+		if(ptr)
+		{
+			StringBlt(ScreenSurface, &SystemFont,cpl.target_name ,x+30, y, cpl.target_color, NULL, NULL);
+			StringBlt(ScreenSurface, &SystemFont,ptr ,x+30, y+11, cpl.target_color, NULL, NULL);
+		}
 	}
 }

@@ -1193,7 +1193,7 @@ int kill_object(object *op,int dam, object *hitter, int type)
         {
             if(exp) /* only player gets exp - when we have exp */
                 new_draw_info_format(NDI_UNIQUE, 0,hitter, "You got %d exp in skill %s.",
-                    add_exp(hitter,exp,old_hitter->chosen_skill->stats.sp),skills[old_hitter->chosen_skill->stats.sp].name);
+							add_exp(hitter,exp,old_hitter->chosen_skill->stats.sp),skills[old_hitter->chosen_skill->stats.sp].name);
 			else 
                 new_draw_info_format(NDI_UNIQUE, 0,hitter, "Your enemy was to low for exp.");
 	    }

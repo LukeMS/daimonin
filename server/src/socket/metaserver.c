@@ -110,7 +110,7 @@ void metaserver_init()
     }
 
     if (metafd != -1)
-		LOG(llevInfo,"metaserver_init: Connected to %s. Done.\n", settings.meta_host);
+		LOG(llevInfo,"metaserver_init: Connected to %s. Done.\n", settings.meta_server);
 	metaserver_update();
 }
 

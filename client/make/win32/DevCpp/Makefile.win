@@ -1,0 +1,71 @@
+# Project: Client
+# Makefile created by Dev-C++ 4.9.8.4
+
+CPP  = g++.exe
+CC   = gcc.exe
+WINDRES = windres.exe
+RES  = 
+OBJ  = ../../../src/wrapper.o ../../../src/client.o ../../../src/commands.o ../../../src/event.o ../../../src/inventory.o ../../../src/item.o ../../../src/main.o ../../../src/map.o ../../../src/menu.o ../../../src/misc.o ../../../src/player.o ../../../src/socket.o ../../../src/sound.o ../../../src/sprite.o ../../../src/textwin.o $(RES)
+LINKOBJ  = ../../../src/wrapper.o ../../../src/client.o ../../../src/commands.o ../../../src/event.o ../../../src/inventory.o ../../../src/item.o ../../../src/main.o ../../../src/map.o ../../../src/menu.o ../../../src/misc.o ../../../src/player.o ../../../src/socket.o ../../../src/sound.o ../../../src/sprite.o ../../../src/textwin.o $(RES)
+LIBS =  -L"G:/Dev-cpp/lib" -mwindows -lmingw32 -lSDLmain -lSDL -lSDL_mixer -lSDL_image -lwsock32 -lshell32 -lintl -liberty
+INCS =  -I"G:/Dev-cpp/include" 
+CXXINCS =  -I"G:/Dev-cpp/include/c++"  -I"G:/Dev-cpp/include/c++/mingw32"  -I"G:/Dev-cpp/include/c++/backward"  -I"G:/Dev-cpp/include" 
+BIN  = ../../../Daimonin.exe
+CXXFLAGS = $(CXXINCS) 
+CFLAGS = $(INCS)-I"G:\Dev-cpp\\include\SDL" -I"..\..\..\src\include" -Dmain=SDL_main -mms-bitfields 
+
+.PHONY: all all-before all-after clean clean-custom
+
+all: all-before ../../../Daimonin.exe all-after
+
+
+clean: clean-custom
+	rm -f $(OBJ) $(BIN)
+
+$(BIN): $(LINKOBJ)
+	$(CC) $(LINKOBJ) -o "..\..\..\Daimonin.exe" $(LIBS)
+
+../../../src/wrapper.o: ../../../src/wrapper.c
+	$(CC) -c ../../../src/wrapper.c -o ../../../src/wrapper.o $(CFLAGS)
+
+../../../src/client.o: ../../../src/client.c
+	$(CC) -c ../../../src/client.c -o ../../../src/client.o $(CFLAGS)
+
+../../../src/commands.o: ../../../src/commands.c
+	$(CC) -c ../../../src/commands.c -o ../../../src/commands.o $(CFLAGS)
+
+../../../src/event.o: ../../../src/event.c
+	$(CC) -c ../../../src/event.c -o ../../../src/event.o $(CFLAGS)
+
+../../../src/inventory.o: ../../../src/inventory.c
+	$(CC) -c ../../../src/inventory.c -o ../../../src/inventory.o $(CFLAGS)
+
+../../../src/item.o: ../../../src/item.c
+	$(CC) -c ../../../src/item.c -o ../../../src/item.o $(CFLAGS)
+
+../../../src/main.o: ../../../src/main.c
+	$(CC) -c ../../../src/main.c -o ../../../src/main.o $(CFLAGS)
+
+../../../src/map.o: ../../../src/map.c
+	$(CC) -c ../../../src/map.c -o ../../../src/map.o $(CFLAGS)
+
+../../../src/menu.o: ../../../src/menu.c
+	$(CC) -c ../../../src/menu.c -o ../../../src/menu.o $(CFLAGS)
+
+../../../src/misc.o: ../../../src/misc.c
+	$(CC) -c ../../../src/misc.c -o ../../../src/misc.o $(CFLAGS)
+
+../../../src/player.o: ../../../src/player.c
+	$(CC) -c ../../../src/player.c -o ../../../src/player.o $(CFLAGS)
+
+../../../src/socket.o: ../../../src/socket.c
+	$(CC) -c ../../../src/socket.c -o ../../../src/socket.o $(CFLAGS)
+
+../../../src/sound.o: ../../../src/sound.c
+	$(CC) -c ../../../src/sound.c -o ../../../src/sound.o $(CFLAGS)
+
+../../../src/sprite.o: ../../../src/sprite.c
+	$(CC) -c ../../../src/sprite.c -o ../../../src/sprite.o $(CFLAGS)
+
+../../../src/textwin.o: ../../../src/textwin.c
+	$(CC) -c ../../../src/textwin.c -o ../../../src/textwin.o $(CFLAGS)

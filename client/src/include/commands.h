@@ -49,6 +49,7 @@ extern void GoodbyeCmd ( char *data, int len );
 extern void AnimCmd ( unsigned char *data, int len );
 extern void ImageCmd ( unsigned char *data, int len );
 extern void DrawInfoCmd ( char *data, int len );
+extern void DrawInfoCmd2(char *data, int len);
 extern void StatsCmd ( unsigned char *data, int len );
 extern void PreParseInfoStat(char *cmd);
 extern void handle_query ( char *data, int len );

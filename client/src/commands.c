@@ -436,19 +436,38 @@ void DrawInfoCmd(char *data, int len)
         draw_info(buf,color);
 }
 
+/* new draw command */
+void DrawInfoCmd2(char *data, int len)
+{
+        int flags;
+        char buf[2048];
+
+		flags = (int)GetShort_String(data);
+		data +=2;
+
+		len-=2;
+        if (len>=0)
+		{
+			if(len > 2000)
+				len = 2000;
+			strncpy(buf,data,len);
+			buf[len]=0;
+		}
+		else
+			buf[0]=0;
+        draw_info(buf,flags);
+}
+
 void TargetObject(unsigned char *data, int len)
 {
-	int i=0;
-
-/*	char buf[256];*/
-
-	cpl.target_mode=data[i++];
+	cpl.target_mode=*data++;
 	if(cpl.target_mode)
 		sound_play_effect(SOUND_WEAPON_ATTACK,0,0,100);
 	else
 		sound_play_effect(SOUND_WEAPON_HOLD,0,0,100);
-	cpl.target_code=data[i++];
-	strcpy(cpl.target_name,data+2);
+	cpl.target_color=*data++;
+	cpl.target_code=*data++;
+	strcpy(cpl.target_name,data);
     map_udate_flag=2;
 
 /*	sprintf(buf,"TO: %d %d >%s< (len: %d)\n",cpl.target_mode,cpl.target_code,cpl.target_name,len);
@@ -466,26 +485,33 @@ void StatsCmd(unsigned char *data, int len)
         {
                 c=data[i++];
                 
-                /*if (c>=CS_STAT_RESIST_START && c<=CS_STAT_RESIST_END)
-                {
-                    cpl.stats.resists[c-CS_STAT_RESIST_START]=
-                        GetShort_String(data+i);
-                    i+=2;
-                    cpl.stats.resist_change=1;
-                }*/
                 if (c>=CS_STAT_PROT_START && c<=CS_STAT_PROT_END)
                 {
-                    cpl.stats.protection[c-CS_STAT_PROT_START]=
-                        GetShort_String(data+i);
-                    i+=2;
+                    cpl.stats.protection[c-CS_STAT_PROT_START]= (sint16)*(data+i++);
                     cpl.stats.protection_change=1;
                 }
                 else
                 {
                     switch (c)
-                        {
+                    {
+                        case CS_STAT_TARGET_HP:
+							cpl.target_hp=(int)*(data+i++);
+						break;
+						case CS_STAT_REG_HP:
+							cpl.gen_hp =((float)GetShort_String(data+i))/10.0f;
+                            i+=2;
+						break;
+						case CS_STAT_REG_MANA:
+							cpl.gen_sp =((float)GetShort_String(data+i))/10.0f;
+                            i+=2;
+						break;
+						case CS_STAT_REG_GRACE:
+							cpl.gen_grace =((float)GetShort_String(data+i))/10.0f;
+                            i+=2;
+						break;
+
                                case CS_STAT_HP:
-                                        temp=GetShort_String(data+i);
+                                        temp=GetInt_String(data+i);
                                         if(temp < cpl.stats.hp && cpl.stats.food)
                                         {
                                             cpl.warn_hp = 1;
@@ -493,11 +519,11 @@ void StatsCmd(unsigned char *data, int len)
                                                 cpl.warn_hp = 2;
                                         }
                                         cpl.stats.hp=temp;       
-                                        i+=2;
+                                        i+=4;
                                         break;
                                 case CS_STAT_MAXHP:
-                                        cpl.stats.maxhp=GetShort_String(data+i);
-                                        i+=2;
+                                        cpl.stats.maxhp=GetInt_String(data+i);
+                                        i+=4;
                                         break;
                                 case CS_STAT_SP:
                                         cpl.stats.sp=GetShort_String(data+i);
@@ -517,75 +543,69 @@ void StatsCmd(unsigned char *data, int len)
                                         i+=2;
                                         break;
                                 case CS_STAT_STR:
-                                    temp=GetShort_String(data+i);
+                                    temp=(int)*(data+i++);
                                     if(temp>cpl.stats.Str)
                                         cpl.warn_statup=TRUE;
                                     else
                                         cpl.warn_statdown=TRUE;
                                     
                                         cpl.stats.Str=temp;
-                                        i+=2;
                                         break;
                                 case CS_STAT_INT:
-                                    temp=GetShort_String(data+i);
+                                    temp=(int)*(data+i++);
                                     if(temp>cpl.stats.Int)
                                         cpl.warn_statup=TRUE;
                                     else
                                         cpl.warn_statdown=TRUE;
                                     
                                     cpl.stats.Int=temp;
-                                    
-                                        i+=2;
                                         break;
                                 case CS_STAT_POW:
-                                    temp=GetShort_String(data+i);
+                                    temp=(int)*(data+i++);
                                     if(temp>cpl.stats.Pow)
                                         cpl.warn_statup=TRUE;
                                     else
                                         cpl.warn_statdown=TRUE;
                                     
                                     cpl.stats.Pow=temp;
-                                        i+=2;
+                                      
                                         break;
                                 case CS_STAT_WIS:
-                                    temp=GetShort_String(data+i);
+                                    temp=(int)*(data+i++);
                                     if(temp>cpl.stats.Wis)
                                         cpl.warn_statup=TRUE;
                                     else
                                         cpl.warn_statdown=TRUE;
                                     
                                     cpl.stats.Wis=temp;
-                                        i+=2;
+                                      
                                         break;
                                 case CS_STAT_DEX:
-                                    temp=GetShort_String(data+i);
+                                    temp=(int)*(data+i++);
                                     if(temp>cpl.stats.Dex)
                                         cpl.warn_statup=TRUE;
                                     else
                                         cpl.warn_statdown=TRUE;
                                     
                                     cpl.stats.Dex=temp;
-                                        i+=2;
                                         break;
                                 case CS_STAT_CON:
-                                    temp=GetShort_String(data+i);
+                                    temp=(int)*(data+i++);
                                     if(temp>cpl.stats.Con)
                                         cpl.warn_statup=TRUE;
                                     else
                                         cpl.warn_statdown=TRUE;
                                     
                                     cpl.stats.Con=temp;
-                                        i+=2;
                                         break;
                                 case CS_STAT_CHA:
-                                    temp=GetShort_String(data+i);
+                                    temp=(int)*(data+i++);
                                     if(temp>cpl.stats.Cha)
                                         cpl.warn_statup=TRUE;
                                     else
                                         cpl.warn_statdown=TRUE;
                                     
                                     cpl.stats.Cha=temp;
-                                        i+=2;
                                         break;
                                 case CS_STAT_EXP:
 
@@ -596,9 +616,7 @@ void StatsCmd(unsigned char *data, int len)
                                         i+=4;
                                         break;
                                 case CS_STAT_LEVEL:
-                                        cpl.stats.level=
-                                                (char)GetShort_String(data+i);
-                                        i+=2;
+                                        cpl.stats.level=(char)*(data+i++);
                                         break;
                                 case CS_STAT_WC:
                                         cpl.stats.wc=
@@ -623,8 +641,7 @@ void StatsCmd(unsigned char *data, int len)
                                         i+=2;
                                         break;
                                 case CS_STAT_WEAP_SP:
-                                        cpl.stats.weapon_sp=(float)GetShort_String(data+i);
-                                        i+=2;
+                                        cpl.stats.weapon_sp=(int)*(data+i++);
                                         break;
                                 case CS_STAT_FLAGS:
                                         cpl.stats.flags=GetShort_String(data+i);
@@ -650,9 +667,7 @@ void StatsCmd(unsigned char *data, int len)
                                 case CS_STAT_SKILLEXP_PHLEVEL:
                                 case CS_STAT_SKILLEXP_MALEVEL:
                                 case CS_STAT_SKILLEXP_WILEVEL:                                   
-                                        cpl.stats.skill_level[(c-CS_STAT_SKILLEXP_START-1)/2] =
-                                        GetShort_String(data+i);
-                                        i+=2;
+                                        cpl.stats.skill_level[(c-CS_STAT_SKILLEXP_START-1)/2] = (sint16)*(data+i++);
                                         break;
                                 case CS_STAT_RANGE:
                                 {
@@ -679,7 +694,7 @@ void StatsCmd(unsigned char *data, int len)
                                         strcpy(cpl.race, tmp2+1);
                                         tmp2 = strchr(tmp+1,'\n' );
                                         *tmp2=0;
-                                        strcpy(cpl.title, tmp+1);
+                                        strcpy(cpl.title, tmp+1); /* profession title */
                                         tmp = strchr(tmp2+1,'\n' );
                                         *tmp=0;
                                         strcpy(cpl.alignment, tmp2+1);
@@ -694,8 +709,18 @@ void StatsCmd(unsigned char *data, int len)
 											strcpy(cpl.gender,"female");
 										else
 											strcpy(cpl.gender,"neuter");
-
                                         i += rlen;
+
+										/* prepare rank + name for fast access 
+										 * the pname is <name> <title>.
+										 * is there no title, there is still
+										 * always a ' ' at the end - we skip this
+										 * here!
+										 */
+										strcpy(cpl.rankandname, cpl.rank);
+										strcat(cpl.rankandname, cpl.pname);
+										if(strlen(cpl.rankandname)>0)
+											cpl.rankandname[strlen(cpl.rankandname)-1] = 0;
                                     }
                                     break;
                                 case CS_STAT_TITLE:

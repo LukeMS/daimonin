@@ -37,7 +37,6 @@
 /* socket timeout value */
 #define MAX_TIME 0
 
-
 /* Default Screen
  * TODO: allowing different screen sizes.
  * Because i want a fixed map size (gaming issue), bigger screens will give

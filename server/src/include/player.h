@@ -22,12 +22,18 @@
 
     The author can be reached via e-mail to daimonin@nord-com.net
 */
-#define NUM_OUTPUT_BUFS	5
-typedef struct {
-  char *buf;			/* Actual string pointer */
-  uint32 first_update;		/* First time this message was stored  */
-  uint16 count;			/* How many times we got this message */
-} Output_Buf;
+
+typedef struct _level_color {
+	int grey;
+	int green;
+	int blue;
+	int yellow;
+	int orange;
+	int red;
+	int purple;
+}_level_color;
+
+extern _level_color level_color[];
 
 enum { /* fire modes submited from client */
     FIRE_MODE_NONE=-1,
@@ -119,6 +125,7 @@ typedef struct pl_player
 									 * implement the animations. use is_melee_range() instead.
 									 */
 
+	int target_hp;				/* for the client target HP marker - special shadow*/
 	int set_skill_weapon;		/* skill number of used weapon skill for fast access */
 	int set_skill_archery;		/* same for archery */
 	int bed_x;						/* x,y - coordinates of respawn (savebed) */
@@ -140,8 +147,6 @@ typedef struct pl_player
 	uint32 target_map_pos;			/* last target search position */
 	uint32 mode;					/* Mode of player for pickup. */
 
-	float weapon_sp;         /* Penalties to speed when fighting w speed >ws/10*/
-	float last_weapon_sp;    /* Last turn */
 	float last_speed;
 
     sint16 age;		/* the age of our player */
@@ -149,18 +154,39 @@ typedef struct pl_player
     sint16 age_changes; /* permanent changes .... very bad (or good when younger) */
     sint16 age_max;	/* the age of our player */
 	sint16 skill_level[NROFSKILLS];	/* shadow register for updint skill levels to client */
-	sint16 last_protection[NROFPROTECTIONS];	/* shadow register for client update resistance table */
 	sint16 encumbrance;  /*  How much our player is encumbered  */
 	uint16 anim_flags;				/* some anim flags for special player animation handling */
 
 	uint16 nrofknownspells; 	/* Index in the above array */
 	sint16 known_spells[NROFREALSPELLS]; /* Spells known by the player */
 	
+	char target_hp_p;				/* for the client target HP real % value*/
+	char weapon_sp;					/* weapon speed index (mainly used for client) */
+
     signed char digestion;			/* Any bonuses/penalties to digestion */
+	signed char gen_sp_armour;		/* Penalty to sp regen from armour */
+
 	signed char gen_hp;				/* Bonuses to regeneration speed of hp */
 	signed char gen_sp;				/* Bonuses to regeneration speed of sp */
-	signed char gen_sp_armour;		/* Penalty to sp regen from armour */
 	signed char gen_grace;			/* Bonuses to regeneration speed of grace */
+
+	int reg_hp_num;					/* thats how much every reg tick we get */
+	int reg_sp_num;
+	int reg_grace_num;
+
+	sint16 base_hp_reg;				/* our real tick counter for hp regenerations */
+	sint16 base_sp_reg;				/* our real tick counter for sp regenerations */
+	sint16 base_grace_reg;			/* our real tick counter for grace regenerations */
+
+	/* send to client - shadow & prepared gen_xx values */
+	uint16 gen_client_hp;				/* Bonuses to regeneration speed of hp */
+	uint16 gen_client_sp;				/* Bonuses to regeneration speed of sp */
+	uint16 gen_client_grace;			/* Bonuses to regeneration speed of grace */
+	uint16 last_gen_hp;
+	uint16 last_gen_sp;
+	uint16 last_gen_grace;
+
+	char last_weapon_sp;
 
 	char last_skill_level[MAX_EXP_CAT]; /* shadow register client exp group for level */
 	char last_skill_id[MAX_EXP_CAT]; /* Thats the CS_STATS_ id for client STATS cmd*/
@@ -173,6 +199,7 @@ typedef struct pl_player
 	char levhp[MAXLEVEL+1];			/* What the player gained on that level */
 	char levsp[MAXLEVEL+1];
 	char levgrace[MAXLEVEL+1];
+	sint8 last_protection[NROFPROTECTIONS];	/* shadow register for client update resistance table */
 
 	uint32 name_changed:1;			/* If true, the player has set a name. */
 	uint32 do_los:1;				/* If true, update_los() in draw(), and clear */
@@ -252,16 +279,6 @@ typedef struct pl_player
   
   /*object *last_used;*/     /* Pointer to object last picked or applied */
   /*long last_used_id;*/     /* Safety measures to be sure it's the same */
-
-/*
-  This is part of a somewhat complex output buffer system - i really was not
-  able to see the sense or the real use in the short time i watch it. It seems
-  to me a outdated part of crossfire, partly disabled and ignored by the advanced
-  output functions. I disabled it - lets watch was happens. MT-11-2002
-  Output_Buf	outputs[NUM_OUTPUT_BUFS];
-  uint16	outputs_sync;
-  uint16	outputs_count;
-  */
 } player;
 
 

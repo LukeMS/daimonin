@@ -5,7 +5,54 @@
 # Parameter are from 0 (mute) to 100 (full)
 #
 SoundVolume 100
-MusicVolume 80
+MusicVolume 0
+
+# Show Player Names on the Map
+# (over the head of the player sprites)
+# Paramter: 
+# 0: show no names 
+# 1: show all names
+# 2: show only names of other players
+# 3: show only your name
+PlayerNamesOnMap 2
+
+# Text Window Default Settings.
+# NOTE: This settings can be changed ingame and are
+# saved at game end to options.tmp. Settings in that
+# file are loaded over this file and overwrite them.
+#
+# TextWinAlphaFlag: 1= use alpha blending (nice but slow)
+#                   0= no alpha (not transparend window but faster)
+# Note: Change to 0 when you have a very slow computer.
+#
+# TextWinAlpha:  <value>= alpha value (higher = darker)
+TextWinAlphaFlag 1
+TextWinAlpha 172
+
+# The text window can be split to show global and/or channels
+# exclusive in the upper (top) part.
+# TextWinSplit: 0= no split, 1= split window
+TextWinSplit 1
+
+# TextWinSizeDefault: <value> number of rows for unsplitted window
+# TextWinSizeTop:     <value> number of rows for window top part
+# TextWinSizeBody:    <value> number of rows for window body part
+# NOTE: The min. size for default is 10 rows, max. size is 38
+# Body and top part are added: both added must be 10 rows or more
+# as min. size and not higher as 38 as max. size too.
+# The min. size for top/body is 2 rows! So, top = 2, body = 36 possible
+# but *NOT* top=1, body=37 or top=38, body=0
+TextWinSizeDefault 10
+TextWinSizeBody 10
+TextWinSizeTop 5
+
+#
+# MISC Settings
+# 
+# ShowTargetSelf: 1=show yourself targeted, 0=don't show yourself targeted (default)
+# If you target yourself your name is not shown on default in the target area.
+# Setting ShowTargetSelf to 1 will show your own player name in the target area.
+ShowTargetSelf 0
 
 #
 # MaxSpeed

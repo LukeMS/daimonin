@@ -565,6 +565,28 @@ no_pick 1
 walk_on 1
 walk_off 1
 end
+Object floor_dark1a
+name floor
+face floor_dark1a.101
+type 71
+editor_folder floors/dark
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_dark1b
+name floor
+face floor_dark1b.101
+type 71
+editor_folder floors/dark
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
 Object earth_brown1
 name floor
 face earth_brown1.101
@@ -1006,6 +1028,50 @@ name grass
 face grass_stone5.101
 type 71
 editor_folder floors/grass
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_grey1a1
+name floor
+face floor_grey1a1.101
+type 71
+editor_folder floors/grey
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_grey1a2
+name floor
+face floor_grey1a2.101
+type 71
+editor_folder floors/grey
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_grey1b1
+name floor
+face floor_grey1b1.101
+type 71
+editor_folder floors/grey
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
+Object floor_grey1b2
+name floor
+face floor_grey1b2.101
+type 71
+editor_folder floors/grey
 no_teleport 1
 layer 1
 terrain_type 1
@@ -1460,72 +1526,6 @@ terrain_type 1
 no_pick 1
 is_floor 1
 end
-Object floor_dark1a
-name floor
-face floor_dark1a.101
-type 71
-editor_folder floors/dark
-no_teleport 1
-layer 1
-terrain_type 1
-no_pick 1
-is_floor 1
-end
-Object floor_dark1b
-name floor
-face floor_dark1b.101
-type 71
-editor_folder floors/dark
-no_teleport 1
-layer 1
-terrain_type 1
-no_pick 1
-is_floor 1
-end
-Object floor_grey1a1
-name floor
-face floor_grey1a1.101
-type 71
-editor_folder floors/grey
-no_teleport 1
-layer 1
-terrain_type 1
-no_pick 1
-is_floor 1
-end
-Object floor_grey1a2
-name floor
-face floor_grey1a2.101
-type 71
-editor_folder floors/grey
-no_teleport 1
-layer 1
-terrain_type 1
-no_pick 1
-is_floor 1
-end
-Object floor_grey1b1
-name floor
-face floor_grey1b1.101
-type 71
-editor_folder floors/grey
-no_teleport 1
-layer 1
-terrain_type 1
-no_pick 1
-is_floor 1
-end
-Object floor_grey1b2
-name floor
-face floor_grey1b2.101
-type 71
-editor_folder floors/grey
-no_teleport 1
-layer 1
-terrain_type 1
-no_pick 1
-is_floor 1
-end
 Object blocked
 face blocked.111
 type 71
@@ -1549,18 +1549,6 @@ no_teleport 1
 is_floor 1
 no_pick 1
 end
-Object ability_stone_throw
-name rock thrower
-face force.101
-type 14
-editor_folder forces/ability
-race rock
-sys_object 1
-nrof 1
-no_drop 1
-sp 40
-wc 1
-end
 Object ability_cause_lig_wound
 name ability cause light wounds
 face force.101
@@ -1571,6 +1559,17 @@ sys_object 1
 no_drop 1
 no_pick 1
 sp 11
+end
+Object ability_dragon
+name dragonbreath
+face force.101
+type 110
+editor_folder forces/ability
+sys_object 1
+no_drop 1
+hp 3
+sp 58
+maxsp 5
 end
 Object ability_firestorm
 name ability firestorm
@@ -1604,6 +1603,18 @@ is_magical 1
 no_drop 1
 no_pick 1
 sp 13
+end
+Object ability_stone_throw
+name rock thrower
+face force.101
+type 14
+editor_folder forces/ability
+race rock
+sys_object 1
+nrof 1
+no_drop 1
+sp 40
+wc 1
 end
 Object atheletes_foot
 name athelete's foot
@@ -1759,6 +1770,15 @@ layer 0
 sys_object 1
 no_drop 1
 end
+Object event_obj
+name Python
+face event.101
+type 118
+editor_folder forces/forces
+no_pick 1
+no_drop 1
+sys_object 1
+end
 Object force
 name force
 face force.101
@@ -1802,15 +1822,6 @@ speed 0.05
 no_drop 1
 food 5
 is_used_up 1
-end
-Object event_obj
-name Python
-face event.101
-type 118
-editor_folder forces/forces
-no_pick 1
-no_drop 1
-sys_object 1
 end
 Object Eldath
 face eldath.141
@@ -1937,6 +1948,38 @@ name bank
 face bank1.171
 type 79
 editor_folder indoor/banks
+no_pick 1
+layer 4
+end
+Object bed_1a.111
+name bed
+face bed_1a.111
+type 79
+editor_folder indoor/beds
+no_pick 1
+layer 4
+end
+Object bed_1b.111
+name bed
+face bed_1b.111
+type 79
+editor_folder indoor/beds
+no_pick 1
+layer 4
+end
+Object bed_2a.111
+name bed
+face bed_2a.111
+type 79
+editor_folder indoor/beds
+no_pick 1
+layer 4
+end
+Object bed_2b.111
+name bed
+face bed_2b.111
+type 79
+editor_folder indoor/beds
 no_pick 1
 layer 4
 end
@@ -2090,6 +2133,38 @@ editor_folder indoor/chairs
 no_pick 1
 layer 4
 end
+Object anvil_111
+name anvil
+face anvil.111
+type 79
+editor_folder indoor/smithy
+no_pick 1
+layer 4
+end
+Object anvil_131
+name anvil
+face anvil.131
+type 79
+editor_folder indoor/smithy
+no_pick 1
+layer 4
+end
+Object forge_111
+name forge
+face forge.111
+type 79
+editor_folder indoor/smithy
+no_pick 1
+layer 4
+end
+Object forge_171
+name forge
+face forge.171
+type 79
+editor_folder indoor/smithy
+no_pick 1
+layer 4
+end
 Object amphora1.101
 name amphora
 face amphora1.101
@@ -2163,35 +2238,46 @@ no_pick 1
 no_pass 1
 layer 4
 end
-Object anvil_111
-name anvil
-face anvil.111
+Object table_round1
+name table
+face table_round1.101
 type 79
-editor_folder indoor/smithy
+editor_folder indoor/tables
+no_pick 1
+no_pass 1
+layer 4
+end
+Object table_small1
+name table
+face table_small1.101
+type 79
+editor_folder indoor/tables
 no_pick 1
 layer 4
 end
-Object anvil_131
-name anvil
-face anvil.131
+Object table_small1b
+name table
+face table_small1b.101
 type 79
-editor_folder indoor/smithy
+editor_folder indoor/tables
 no_pick 1
 layer 4
 end
-Object forge_111
-name forge
-face forge.111
+Object table_wood1.111
+name table
+face table_wood1.111
 type 79
-editor_folder indoor/smithy
+editor_folder indoor/tables
+no_pass 1
 no_pick 1
 layer 4
 end
-Object forge_171
-name forge
-face forge.171
+Object table_wood1.171
+name table
+face table_wood1.171
 type 79
-editor_folder indoor/smithy
+editor_folder indoor/tables
+no_pass 1
 no_pick 1
 layer 4
 end
@@ -2239,49 +2325,6 @@ editor_folder indoor/masks_floor
 no_teleport 1
 layer 2
 no_pick 1
-end
-Object table_round1
-name table
-face table_round1.101
-type 79
-editor_folder indoor/tables
-no_pick 1
-no_pass 1
-layer 4
-end
-Object table_small1
-name table
-face table_small1.101
-type 79
-editor_folder indoor/tables
-no_pick 1
-layer 4
-end
-Object table_small1b
-name table
-face table_small1b.101
-type 79
-editor_folder indoor/tables
-no_pick 1
-layer 4
-end
-Object table_wood1.111
-name table
-face table_wood1.111
-type 79
-editor_folder indoor/tables
-no_pass 1
-no_pick 1
-layer 4
-end
-Object table_wood1.171
-name table
-face table_wood1.171
-type 79
-editor_folder indoor/tables
-no_pass 1
-no_pick 1
-layer 4
 end
 Object wmask_bflag_fire1_1
 name big flag
@@ -2411,63 +2454,36 @@ editor_folder indoor/masks_wall
 no_pick 1
 layer 7
 end
-Object bed_1a.111
-name bed
-face bed_1a.111
-type 79
-editor_folder indoor/beds
-no_pick 1
-layer 4
-end
-Object bed_1b.111
-name bed
-face bed_1b.111
-type 79
-editor_folder indoor/beds
-no_pick 1
-layer 4
-end
-Object bed_2a.111
-name bed
-face bed_2a.111
-type 79
-editor_folder indoor/beds
-no_pick 1
-layer 4
-end
-Object bed_2b.111
-name bed
-face bed_2b.111
-type 79
-editor_folder indoor/beds
-no_pick 1
-layer 4
-end
-Object straw1.101
-name straw
-face straw1.101
+Object basin1.101
+name basin
+face basin1.101
 type 79
 editor_folder indoor/indoor
 no_pick 1
-no_pass 1
 layer 4
 end
-Object straw2.111
-name straw
-face straw2.111
+Object basin1_full.101
+name basin
+face basin1_full.101
 type 79
 editor_folder indoor/indoor
 no_pick 1
-no_pass 1
 layer 4
 end
-Object straw2.131
-name straw
-face straw2.131
+Object basket1.101
+name basket
+face basket1.101
 type 79
 editor_folder indoor/indoor
 no_pick 1
-no_pass 1
+layer 4
+end
+Object basket2.101
+name basket
+face basket2.101
+type 79
+editor_folder indoor/indoor
+no_pick 1
 layer 4
 end
 Object bath_tube1.101
@@ -2497,38 +2513,6 @@ end
 Object bath_tube_big1.101
 name bath tube
 face bath_tube_big1.101
-type 79
-editor_folder indoor/indoor
-no_pick 1
-layer 4
-end
-Object basin1.101
-name basin
-face basin1.101
-type 79
-editor_folder indoor/indoor
-no_pick 1
-layer 4
-end
-Object basin1_full.101
-name basin
-face basin1_full.101
-type 79
-editor_folder indoor/indoor
-no_pick 1
-layer 4
-end
-Object basket1.101
-name basket
-face basket1.101
-type 79
-editor_folder indoor/indoor
-no_pick 1
-layer 4
-end
-Object basket2.101
-name basket
-face basket2.101
 type 79
 editor_folder indoor/indoor
 no_pick 1
@@ -2676,6 +2660,33 @@ face mirror_big.171
 type 79
 editor_folder indoor/indoor
 no_pick 1
+layer 4
+end
+Object straw1.101
+name straw
+face straw1.101
+type 79
+editor_folder indoor/indoor
+no_pick 1
+no_pass 1
+layer 4
+end
+Object straw2.111
+name straw
+face straw2.111
+type 79
+editor_folder indoor/indoor
+no_pick 1
+no_pass 1
+layer 4
+end
+Object straw2.131
+name straw
+face straw2.131
+type 79
+editor_folder indoor/indoor
+no_pick 1
+no_pass 1
 layer 4
 end
 Object eldath_avatar_info
@@ -2888,6 +2899,26 @@ no_pick 1
 no_drop 1
 identified 1
 end
+Object close_chest_4.111
+name close the chest
+face close_chest_4.111
+type 121
+editor_folder intern/items
+layer 3
+no_pick 1
+no_drop 1
+identified 1
+end
+Object close_chest_4.171
+name close the chest
+face close_chest_4.171
+type 121
+editor_folder intern/items
+layer 3
+no_pick 1
+no_drop 1
+identified 1
+end
 Object close_dbox
 name close the deposit box
 face close_dbox.101
@@ -2986,26 +3017,6 @@ editor_folder intern/items
 layer 3
 no_drop 1
 no_pick 1
-identified 1
-end
-Object close_chest_4.111
-name close the chest
-face close_chest_4.111
-type 121
-editor_folder intern/items
-layer 3
-no_pick 1
-no_drop 1
-identified 1
-end
-Object close_chest_4.171
-name close the chest
-face close_chest_4.171
-type 121
-editor_folder intern/items
-layer 3
-no_pick 1
-no_drop 1
 identified 1
 end
 Object alignment_force
@@ -3840,111 +3851,6 @@ is_dust 1
 weight 100
 value 300
 end
-Object high_boots
-name high boots
-face high_boots.101
-type 99
-editor_folder items/armour
-last_heal 4
-layer 3
-ac 1
-weight 750
-value 125
-protect_impact 8
-protect_slash 8
-protect_pierce 8
-protect_cleave 8
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
-material_real 193
-material 8
-end
-Object low_boots
-name low boots
-face low_boots.101
-type 99
-editor_folder items/armour
-layer 3
-value 40
-weight 450
-protect_pierce 6
-protect_impact 6
-protect_cleave 6
-protect_slash 6
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
-last_heal 1
-material_real 193
-material 8
-end
-Object sandals
-name sandals
-face sandals.101
-type 99
-editor_folder items/armour
-last_heal 1
-layer 3
-value 15
-weight 300
-protect_pierce 4
-protect_impact 4
-protect_cleave 4
-protect_slash 4
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
-material_real 193
-material 8
-end
-Object leggings_leather
-name leggings
-face leggings_leather.101
-type 99
-editor_folder items/armour
-last_heal 4
-layer 3
-ac 2
-item_level 5
-weight 950
-value 150
-protect_impact 6
-protect_slash 8
-protect_pierce 8
-protect_cleave 6
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
-material_real 193
-material 8
-end
-Object fighting_boots
-name fighting boots
-face fighting_boots.101
-type 99
-editor_folder items/armour
-layer 3
-ac 1
-item_level 3
-value 120
-weight 550
-protect_pierce 8
-protect_impact 8
-protect_cleave 10
-protect_slash 8
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
-last_heal 1
-material_real 193
-material 8
-end
 Object combat_boots
 name combat boots
 face combat_boots.101
@@ -3986,6 +3892,49 @@ is_vul_elemental 1
 is_vul_magic 1
 is_vul_sphere 1
 last_heal 1
+material_real 193
+material 8
+end
+Object fighting_boots
+name fighting boots
+face fighting_boots.101
+type 99
+editor_folder items/armour
+layer 3
+ac 1
+item_level 3
+value 120
+weight 550
+protect_pierce 8
+protect_impact 8
+protect_cleave 10
+protect_slash 8
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+last_heal 1
+material_real 193
+material 8
+end
+Object high_boots
+name high boots
+face high_boots.101
+type 99
+editor_folder items/armour
+last_heal 4
+layer 3
+ac 1
+weight 750
+value 125
+protect_impact 8
+protect_slash 8
+protect_pierce 8
+protect_cleave 8
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
 material_real 193
 material 8
 end
@@ -4033,6 +3982,28 @@ is_vul_sphere 1
 material 2
 material_real 65
 end
+Object leggings_leather
+name leggings
+face leggings_leather.101
+type 99
+editor_folder items/armour
+last_heal 4
+layer 3
+ac 2
+item_level 5
+weight 950
+value 150
+protect_impact 6
+protect_slash 8
+protect_pierce 8
+protect_cleave 6
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+material_real 193
+material 8
+end
 Object leggings_plate
 name plate leggings
 face leggings_plate.101
@@ -4055,6 +4026,46 @@ is_vul_sphere 1
 material 2
 material_real 65
 end
+Object low_boots
+name low boots
+face low_boots.101
+type 99
+editor_folder items/armour
+layer 3
+value 40
+weight 450
+protect_pierce 6
+protect_impact 6
+protect_cleave 6
+protect_slash 6
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+last_heal 1
+material_real 193
+material 8
+end
+Object sandals
+name sandals
+face sandals.101
+type 99
+editor_folder items/armour
+last_heal 1
+layer 3
+value 15
+weight 300
+protect_pierce 4
+protect_impact 4
+protect_cleave 4
+protect_slash 4
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+material_real 193
+material 8
+end
 Object bracers_ac
 name bracers
 face bracers_ac.101
@@ -4074,6 +4085,25 @@ value 75
 material_real 65
 material 2
 weight 250
+end
+Object cape
+name cape
+face cape.101
+type 87
+editor_folder items/armour
+layer 3
+weight 350
+value 40
+protect_impact 3
+protect_slash 3
+protect_pierce 3
+protect_cleave 3
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+material_real 449
+material 128
 end
 Object cloak
 name cloak
@@ -4095,25 +4125,6 @@ is_vul_sphere 1
 material_real 193
 material 8
 end
-Object cape
-name cape
-face cape.101
-type 87
-editor_folder items/armour
-layer 3
-weight 350
-value 40
-protect_impact 3
-protect_slash 3
-protect_pierce 3
-protect_cleave 3
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
-material_real 449
-material 128
-end
 Object robe
 name robe
 face robe_lgrey.101
@@ -4132,25 +4143,6 @@ is_vul_magic 1
 is_vul_sphere 1
 material_real 449
 material 128
-end
-Object gloves
-name gloves
-face gloves.101
-type 100
-editor_folder items/armour
-layer 3
-protect_impact 4
-protect_cleave 4
-protect_slash 4
-protect_pierce 4
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
-material_real 193
-material 8
-value 15
-weight 200
 end
 Object gauntlets
 name chain gauntlets
@@ -4172,26 +4164,6 @@ material 2
 value 75
 weight 750
 end
-Object gauntlets_plate
-name plate gauntlets
-face gauntlets_plate.101
-type 100
-editor_folder items/armour
-layer 3
-ac 1
-protect_impact 10
-protect_cleave 10
-protect_slash 10
-protect_pierce 10
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
-material_real 65
-material 2
-value 90
-weight 1250
-end
 Object gauntlets_leather
 name leather gauntlets
 face gauntlets_leather.101
@@ -4212,6 +4184,45 @@ material 8
 value 50
 weight 550
 end
+Object gauntlets_plate
+name plate gauntlets
+face gauntlets_plate.101
+type 100
+editor_folder items/armour
+layer 3
+ac 1
+protect_impact 10
+protect_cleave 10
+protect_slash 10
+protect_pierce 10
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+material_real 65
+material 2
+value 90
+weight 1250
+end
+Object gloves
+name gloves
+face gloves.101
+type 100
+editor_folder items/armour
+layer 3
+protect_impact 4
+protect_cleave 4
+protect_slash 4
+protect_pierce 4
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+material_real 193
+material 8
+value 15
+weight 200
+end
 Object girdle
 name girdle
 face girdle.101
@@ -4230,85 +4241,6 @@ is_vul_magic 1
 is_vul_sphere 1
 material_real 193
 material 8
-end
-Object crown_generic
-name crown
-face crown.101
-type 34
-editor_folder items/armour
-layer 3
-Cha 1
-protect_impact 3
-protect_slash 3
-protect_cleave 3
-protect_pierce 3
-weight 2100
-value 1700
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
-material 1024
-material_real 643
-end
-Object helm_leather
-name  leather cap
-face helm_leather.101
-type 34
-editor_folder items/armour
-layer 3
-last_heal 5
-weight 900
-ac 1
-protect_impact 4
-protect_cleave 4
-protect_slash 4
-protect_pierce 4
-value 15
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
-material_real 193
-material 8
-end
-Object hat_feather
-name  feathered hat
-face hat_feather.101
-type 34
-editor_folder items/armour
-layer 3
-weight 200
-protect_impact 1
-protect_cleave 1
-protect_slash 1
-protect_pierce 1
-value 15
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
-material 128
-material_real 450
-end
-Object hat_blue
-name  blue colored hat
-face hat_wiz.101
-type 34
-editor_folder items/armour
-layer 3
-weight 250
-protect_impact 1
-protect_cleave 1
-protect_slash 1
-protect_pierce 1
-value 25
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
-material 128
-material_real 450
 end
 Object coif_chain
 name chain coif
@@ -4352,6 +4284,85 @@ is_vul_sphere 1
 material_real 65
 material 2
 end
+Object crown_generic
+name crown
+face crown.101
+type 34
+editor_folder items/armour
+layer 3
+Cha 1
+protect_impact 3
+protect_slash 3
+protect_cleave 3
+protect_pierce 3
+weight 2100
+value 1700
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+material 1024
+material_real 643
+end
+Object hat_blue
+name  blue colored hat
+face hat_wiz.101
+type 34
+editor_folder items/armour
+layer 3
+weight 250
+protect_impact 1
+protect_cleave 1
+protect_slash 1
+protect_pierce 1
+value 25
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+material 128
+material_real 450
+end
+Object hat_feather
+name  feathered hat
+face hat_feather.101
+type 34
+editor_folder items/armour
+layer 3
+weight 200
+protect_impact 1
+protect_cleave 1
+protect_slash 1
+protect_pierce 1
+value 15
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+material 128
+material_real 450
+end
+Object helm_field
+name field helm
+face helm_field.101
+type 34
+editor_folder items/armour
+layer 3
+last_heal 7
+ac 2
+protect_impact 10
+protect_cleave 6
+protect_slash 6
+protect_pierce 6
+weight 1000
+value 220
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+material_real 65
+material 2
+end
 Object full_helmet
 name full helmet
 face fullhelmet.101
@@ -4366,27 +4377,6 @@ protect_slash 6
 protect_pierce 6
 weight 1200
 value 750
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
-material_real 65
-material 2
-end
-Object helm_iron
-name metal helm
-face helm_iron.101
-type 34
-editor_folder items/armour
-layer 3
-last_heal 5
-weight 1100
-ac 1
-protect_impact 8
-protect_cleave 5
-protect_slash 8
-protect_pierce 5
-value 30
 is_vul_physical 1
 is_vul_elemental 1
 is_vul_magic 1
@@ -4415,26 +4405,47 @@ is_vul_sphere 1
 material_real 65
 material 2
 end
-Object helm_field
-name field helm
-face helm_field.101
+Object helm_iron
+name metal helm
+face helm_iron.101
 type 34
 editor_folder items/armour
 layer 3
-last_heal 7
-ac 2
-protect_impact 10
-protect_cleave 6
-protect_slash 6
-protect_pierce 6
-weight 1000
-value 220
+last_heal 5
+weight 1100
+ac 1
+protect_impact 8
+protect_cleave 5
+protect_slash 8
+protect_pierce 5
+value 30
 is_vul_physical 1
 is_vul_elemental 1
 is_vul_magic 1
 is_vul_sphere 1
 material_real 65
 material 2
+end
+Object helm_leather
+name  leather cap
+face helm_leather.101
+type 34
+editor_folder items/armour
+layer 3
+last_heal 5
+weight 900
+ac 1
+protect_impact 4
+protect_cleave 4
+protect_slash 4
+protect_pierce 4
+value 15
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+material_real 193
+material 8
 end
 Object helm_plate
 name plate helm
@@ -4478,25 +4489,219 @@ is_vul_sphere 1
 material_real 65
 material 2
 end
-Object coat
-name coat
-face coat.101
+Object banded_mail
+name banded mail
+face banded_mail.101
 type 16
 editor_folder items/armour
 layer 3
-ac 1
-protect_impact 4
-protect_slash 4
-protect_cleave 4
-protect_pierce 4
-weight 900
-value 15
+last_heal 26
+last_sp 7
+material 2
+material_real 65
+ac 7
+item_level 10
+item_skill 4
+protect_impact 35
+protect_slash 17
+protect_cleave 17
+protect_pierce 17
 is_vul_physical 1
 is_vul_elemental 1
 is_vul_magic 1
 is_vul_sphere 1
-material 128
-material_real 450
+weight 20500
+value 2600
+end
+Object bplate_mail
+name plate mail
+face bplate_mail.101
+type 16
+editor_folder items/armour
+layer 3
+last_heal 26
+last_sp 7
+ac 7
+material 1024
+material_real 644
+item_level 13
+item_skill 4
+protect_impact 38
+protect_slash 18
+protect_cleave 18
+protect_pierce 18
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+weight 29500
+value 2600
+end
+Object breastplate
+name breastplate
+face breastplate.101
+type 16
+editor_folder items/armour
+layer 3
+last_heal 30
+item_level 20
+item_skill 4
+last_sp 7
+material 2
+material_real 65
+ac 8
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+protect_impact 20
+protect_slash 20
+protect_cleave 20
+protect_pierce 40
+weight 24000
+value 4150
+end
+Object brigandine
+name brigandine
+face brigandine.101
+type 16
+editor_folder items/armour
+layer 3
+last_heal 18
+last_sp 9
+material 2
+material_real 65
+ac 6
+item_level 7
+item_skill 4
+protect_impact 15
+protect_cleave 15
+protect_slash 15
+protect_pierce 30
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+weight 13500
+value 1420
+end
+Object chain_hauberk
+name chainmail hauberk
+face chain_hauberk.101
+type 16
+editor_folder items/armour
+layer 3
+last_heal 26
+last_sp 7
+material 2
+material_real 65
+ac 7
+item_level 10
+item_skill 4
+protect_impact 17
+protect_slash 35
+protect_cleave 17
+protect_pierce 17
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+weight 21500
+value 2650
+end
+Object leather_cuirass
+name cuirass
+face leather_cuirass.101
+type 16
+editor_folder items/armour
+layer 3
+last_heal 6
+last_sp 18
+ac 6
+item_level 7
+item_skill 4
+protect_impact 15
+protect_cleave 30
+protect_slash 15
+protect_pierce 15
+weight 8450
+value 1400
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+material_real 194
+material 8
+end
+Object chain_mail
+name chain mail
+face chainmail.101
+type 16
+editor_folder items/armour
+layer 3
+last_heal 18
+last_sp 9
+material 2
+material_real 65
+ac 6
+item_level 7
+item_skill 4
+protect_impact 15
+protect_cleave 15
+protect_slash 30
+protect_pierce 15
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+weight 11000
+value 1400
+end
+Object chitin_mail
+name mail
+face chitin_mail.101
+type 16
+editor_folder items/armour
+layer 3
+last_heal 26
+last_sp 7
+ac 7
+item_level 10
+item_skill 4
+protect_impact 10
+protect_slash 33
+protect_cleave 20
+protect_pierce 20
+material 32
+material_real 323
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+weight 18500
+value 2850
+end
+Object crystal_mail
+name crystal mail
+face crystal_mail.101
+type 16
+editor_folder items/armour
+layer 3
+material 256
+material_real 0
+item_quality 99
+item_condition 99
+is_magical 1
+ac 10
+item_level 50
+protect_impact 45
+protect_slash 30
+protect_cleave 30
+protect_pierce 30
+is_vul_physical 1
+is_vul_sphere 1
+weight 34500
+value 252600
 end
 Object padded_armour
 name padded armour
@@ -4520,27 +4725,45 @@ is_vul_sphere 1
 material 8
 material_real 193
 end
-Object leather_armour
-name armour
-face leather_ar.101
+Object dress
+name dress
+face dress.101
 type 16
 editor_folder items/armour
 layer 3
-last_heal 6
-last_sp 18
-ac 3
-protect_impact 10
-protect_cleave 15
-protect_slash 15
-protect_pierce 10
-weight 3450
-value 30
+ac 1
+protect_impact 4
+protect_slash 4
+protect_cleave 4
+protect_pierce 4
+weight 500
+value 20
 is_vul_physical 1
 is_vul_elemental 1
 is_vul_magic 1
 is_vul_sphere 1
-material_real 194
-material 8
+material 128
+material_real 450
+end
+Object coat
+name coat
+face coat.101
+type 16
+editor_folder items/armour
+layer 3
+ac 1
+protect_impact 4
+protect_slash 4
+protect_cleave 4
+protect_pierce 4
+weight 900
+value 15
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+material 128
+material_real 450
 end
 Object leather_spiked
 name spiked armour
@@ -4557,6 +4780,52 @@ protect_slash 12
 protect_pierce 20
 weight 5550
 value 60
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+material_real 194
+material 8
+end
+Object lamellar_mail
+name lamellar mail
+face lamellar_mail.101
+type 16
+editor_folder items/armour
+layer 3
+last_heal 26
+last_sp 7
+material 2
+material_real 65
+ac 6
+item_level 7
+item_skill 4
+protect_impact 30
+protect_slash 15
+protect_cleave 15
+protect_pierce 15
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+weight 14000
+value 1400
+end
+Object leather_armour
+name armour
+face leather_ar.101
+type 16
+editor_folder items/armour
+layer 3
+last_heal 6
+last_sp 18
+ac 3
+protect_impact 10
+protect_cleave 15
+protect_slash 15
+protect_pierce 10
+weight 3450
+value 30
 is_vul_physical 1
 is_vul_elemental 1
 is_vul_magic 1
@@ -4612,245 +4881,65 @@ is_vul_sphere 1
 weight 12000
 value 125
 end
-Object leather_cuirass
-name cuirass
-face leather_cuirass.101
+Object mithril_armour
+name armour
+face mithril_armour.101
 type 16
 editor_folder items/armour
 layer 3
-last_heal 6
-last_sp 18
-ac 6
-item_level 7
-item_skill 4
-protect_impact 15
-protect_cleave 30
-protect_slash 15
-protect_pierce 15
-weight 8450
-value 1400
-is_vul_physical 1
-is_vul_elemental 1
+material 256
+material_real 514
+is_magical 1
+ac 7
+item_level 30
+protect_impact 28
+protect_slash 40
+protect_cleave 28
+protect_pierce 28
 is_vul_magic 1
 is_vul_sphere 1
-material_real 194
-material 8
+weight 5100
+value 152500
 end
-Object lamellar_mail
-name lamellar mail
-face lamellar_mail.101
+Object mithril_coat
+name coat
+face mithril_coat.101
 type 16
 editor_folder items/armour
 layer 3
-last_heal 26
-last_sp 7
-material 2
-material_real 65
-ac 6
-item_level 7
-item_skill 4
+material 256
+material_real 514
+is_magical 1
+ac 10
+item_level 50
 protect_impact 30
-protect_slash 15
-protect_cleave 15
-protect_pierce 15
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
-weight 14000
-value 1400
-end
-Object chain_mail
-name chain mail
-face chainmail.101
-type 16
-editor_folder items/armour
-layer 3
-last_heal 18
-last_sp 9
-material 2
-material_real 65
-ac 6
-item_level 7
-item_skill 4
-protect_impact 15
-protect_cleave 15
-protect_slash 30
-protect_pierce 15
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
-weight 11000
-value 1400
-end
-Object brigandine
-name brigandine
-face brigandine.101
-type 16
-editor_folder items/armour
-layer 3
-last_heal 18
-last_sp 9
-material 2
-material_real 65
-ac 6
-item_level 7
-item_skill 4
-protect_impact 15
-protect_cleave 15
-protect_slash 15
+protect_slash 45
+protect_cleave 30
 protect_pierce 30
-is_vul_physical 1
-is_vul_elemental 1
 is_vul_magic 1
 is_vul_sphere 1
-weight 13500
-value 1420
+weight 7500
+value 252500
 end
-Object banded_mail
-name banded mail
-face banded_mail.101
+Object mithril_ring
+name ringmail
+face mithril_ring.101
 type 16
 editor_folder items/armour
 layer 3
-last_heal 26
-last_sp 7
-material 2
-material_real 65
-ac 7
-item_level 10
-item_skill 4
-protect_impact 35
-protect_slash 17
-protect_cleave 17
-protect_pierce 17
-is_vul_physical 1
-is_vul_elemental 1
+material 256
+material_real 514
+is_magical 1
+ac 6
+item_level 15
+protect_impact 22
+protect_slash 30
+protect_cleave 22
+protect_pierce 22
 is_vul_magic 1
 is_vul_sphere 1
-weight 20500
-value 2600
-end
-Object scale_mail
-name scale mail
-face scale_mail.101
-type 16
-editor_folder items/armour
-layer 3
-last_heal 26
-last_sp 7
-material 2
-material_real 65
-ac 7
-item_level 10
-item_skill 4
-protect_impact 17
-protect_slash 17
-protect_cleave 17
-protect_pierce 35
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
-weight 19500
-value 2550
-end
-Object splint_mail
-name splint mail
-face splint_mail.101
-type 16
-editor_folder items/armour
-layer 3
-last_heal 26
-last_sp 7
-material 2
-material_real 65
-ac 7
-item_level 10
-item_skill 4
-protect_impact 17
-protect_slash 17
-protect_cleave 35
-protect_pierce 17
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
-weight 21500
-value 2650
-end
-Object chain_hauberk
-name chainmail hauberk
-face chain_hauberk.101
-type 16
-editor_folder items/armour
-layer 3
-last_heal 26
-last_sp 7
-material 2
-material_real 65
-ac 7
-item_level 10
-item_skill 4
-protect_impact 17
-protect_slash 35
-protect_cleave 17
-protect_pierce 17
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
-weight 21500
-value 2650
-end
-Object plate_mail
-name plate mail
-face plate_mail.101
-type 16
-editor_folder items/armour
-layer 3
-last_heal 30
-item_level 20
-item_skill 4
-last_sp 7
-material 2
-material_real 65
-ac 8
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
-protect_impact 40
-protect_slash 20
-protect_cleave 20
-protect_pierce 20
-weight 24500
-value 4250
-end
-Object breastplate
-name breastplate
-face breastplate.101
-type 16
-editor_folder items/armour
-layer 3
-last_heal 30
-item_level 20
-item_skill 4
-last_sp 7
-material 2
-material_real 65
-ac 8
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
-protect_impact 20
-protect_slash 20
-protect_cleave 20
-protect_pierce 40
-weight 24000
-value 4150
+weight 6100
+value 12500
 end
 Object plate_field
 name field plate
@@ -4900,6 +4989,30 @@ protect_pierce 20
 weight 25000
 value 4250
 end
+Object plate_mail
+name plate mail
+face plate_mail.101
+type 16
+editor_folder items/armour
+layer 3
+last_heal 30
+item_level 20
+item_skill 4
+last_sp 7
+material 2
+material_real 65
+ac 8
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+protect_impact 40
+protect_slash 20
+protect_cleave 20
+protect_pierce 20
+weight 24500
+value 4250
+end
 Object scale_armour
 name armour
 face scale_armour.101
@@ -4924,195 +5037,53 @@ is_vul_sphere 1
 weight 13000
 value 1800
 end
-Object chitin_mail
-name mail
-face chitin_mail.101
+Object scale_mail
+name scale mail
+face scale_mail.101
 type 16
 editor_folder items/armour
 layer 3
 last_heal 26
 last_sp 7
+material 2
+material_real 65
 ac 7
 item_level 10
 item_skill 4
-protect_impact 10
-protect_slash 33
-protect_cleave 20
-protect_pierce 20
-material 32
-material_real 323
+protect_impact 17
+protect_slash 17
+protect_cleave 17
+protect_pierce 35
 is_vul_physical 1
 is_vul_elemental 1
 is_vul_magic 1
 is_vul_sphere 1
-weight 18500
-value 2850
+weight 19500
+value 2550
 end
-Object bplate_mail
-name plate mail
-face bplate_mail.101
+Object splint_mail
+name splint mail
+face splint_mail.101
 type 16
 editor_folder items/armour
 layer 3
 last_heal 26
 last_sp 7
+material 2
+material_real 65
 ac 7
-material 1024
-material_real 644
-item_level 13
+item_level 10
 item_skill 4
-protect_impact 38
-protect_slash 18
-protect_cleave 18
-protect_pierce 18
+protect_impact 17
+protect_slash 17
+protect_cleave 35
+protect_pierce 17
 is_vul_physical 1
 is_vul_elemental 1
 is_vul_magic 1
 is_vul_sphere 1
-weight 29500
-value 2600
-end
-Object crystal_mail
-name crystal mail
-face crystal_mail.101
-type 16
-editor_folder items/armour
-layer 3
-material 256
-material_real 0
-item_quality 99
-item_condition 99
-is_magical 1
-ac 10
-item_level 50
-protect_impact 45
-protect_slash 30
-protect_cleave 30
-protect_pierce 30
-is_vul_physical 1
-is_vul_sphere 1
-weight 34500
-value 252600
-end
-Object mithril_ring
-name ringmail
-face mithril_ring.101
-type 16
-editor_folder items/armour
-layer 3
-material 256
-material_real 514
-is_magical 1
-ac 6
-item_level 15
-protect_impact 22
-protect_slash 30
-protect_cleave 22
-protect_pierce 22
-is_vul_magic 1
-is_vul_sphere 1
-weight 6100
-value 12500
-end
-Object mithril_armour
-name armour
-face mithril_armour.101
-type 16
-editor_folder items/armour
-layer 3
-material 256
-material_real 514
-is_magical 1
-ac 7
-item_level 30
-protect_impact 28
-protect_slash 40
-protect_cleave 28
-protect_pierce 28
-is_vul_magic 1
-is_vul_sphere 1
-weight 5100
-value 152500
-end
-Object mithril_coat
-name coat
-face mithril_coat.101
-type 16
-editor_folder items/armour
-layer 3
-material 256
-material_real 514
-is_magical 1
-ac 10
-item_level 50
-protect_impact 30
-protect_slash 45
-protect_cleave 30
-protect_pierce 30
-is_vul_magic 1
-is_vul_sphere 1
-weight 7500
-value 252500
-end
-Object dress
-name dress
-face dress.101
-type 16
-editor_folder items/armour
-layer 3
-ac 1
-protect_impact 4
-protect_slash 4
-protect_cleave 4
-protect_pierce 4
-weight 500
-value 20
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
-material 128
-material_real 450
-end
-Object shield
-name shield
-face shield.101
-type 33
-editor_folder items/armour
-layer 3
-ac 1
-protect_impact 10
-protect_cleave 5
-protect_pierce 5
-protect_slash 10
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
-material_real 65
-material 2
-weight 1500
-value 120
-end
-Object small_shield
-name small shield
-face small_shie.101
-type 33
-editor_folder items/armour
-layer 3
-ac 1
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
-material_real 65
-material 2
-protect_impact 6
-protect_slash 6
-protect_cleave 6
-protect_pierce 6
-weight 940
-value 25
+weight 21500
+value 2650
 end
 Object blade_stopper
 name blade stopper
@@ -5155,16 +5126,16 @@ material 2
 weight 1500
 value 20
 end
-Object shield_eye
-name eye shield
-face shield_eye.101
+Object shield
+name shield
+face shield.101
 type 33
 editor_folder items/armour
 layer 3
 ac 1
-protect_impact 5
+protect_impact 10
 protect_cleave 5
-protect_pierce 10
+protect_pierce 5
 protect_slash 10
 is_vul_physical 1
 is_vul_elemental 1
@@ -5173,7 +5144,7 @@ is_vul_sphere 1
 material_real 65
 material 2
 weight 1500
-value 175
+value 120
 end
 Object shield_battle
 name battle shield
@@ -5195,6 +5166,26 @@ material_real 65
 material 2
 weight 1500
 value 310
+end
+Object shield_chitin
+name shield
+face shield_chitin.101
+type 33
+editor_folder items/armour
+layer 3
+ac 1
+protect_impact 4
+protect_cleave 10
+protect_pierce 10
+protect_slash 10
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+material 32
+material_real 323
+weight 1100
+value 130
 end
 Object shield_defender
 name defender
@@ -5238,6 +5229,26 @@ material 2
 weight 1500
 value 110
 end
+Object shield_eye
+name eye shield
+face shield_eye.101
+type 33
+editor_folder items/armour
+layer 3
+ac 1
+protect_impact 5
+protect_cleave 5
+protect_pierce 10
+protect_slash 10
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+material_real 65
+material 2
+weight 1500
+value 175
+end
 Object shield_heater
 name heater shield
 face shield_heater.101
@@ -5257,26 +5268,6 @@ material_real 65
 material 2
 weight 1250
 value 110
-end
-Object shield_kite
-name kite shield
-face shield_kite.101
-type 33
-editor_folder items/armour
-layer 3
-ac 1
-protect_impact 10
-protect_cleave 5
-protect_pierce 10
-protect_slash 5
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
-material_real 65
-material 2
-weight 1350
-value 115
 end
 Object shield_high
 name high shield
@@ -5298,6 +5289,26 @@ material_real 65
 material 2
 weight 1300
 value 150
+end
+Object shield_kite
+name kite shield
+face shield_kite.101
+type 33
+editor_folder items/armour
+layer 3
+ac 1
+protect_impact 10
+protect_cleave 5
+protect_pierce 10
+protect_slash 5
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+material_real 65
+material 2
+weight 1350
+value 115
 end
 Object shield_protector
 name protector
@@ -5340,6 +5351,26 @@ material 2
 weight 1600
 value 115
 end
+Object shield_scale
+name shield
+face shield_scale_white.101
+type 33
+editor_folder items/armour
+layer 3
+ac 1
+protect_impact 10
+protect_cleave 10
+protect_pierce 4
+protect_slash 6
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+material 32
+material_real 324
+weight 1300
+value 100
+end
 Object shield_war
 name war shield
 face shield_war.101
@@ -5360,45 +5391,25 @@ material 2
 weight 1550
 value 100
 end
-Object shield_chitin
-name shield
-face shield_chitin.101
+Object small_shield
+name small shield
+face small_shie.101
 type 33
 editor_folder items/armour
 layer 3
 ac 1
-protect_impact 4
-protect_cleave 10
-protect_pierce 10
-protect_slash 10
 is_vul_physical 1
 is_vul_elemental 1
 is_vul_magic 1
 is_vul_sphere 1
-material 32
-material_real 323
-weight 1100
-value 130
-end
-Object shield_scale
-name shield
-face shield_scale_white.101
-type 33
-editor_folder items/armour
-layer 3
-ac 1
-protect_impact 10
-protect_cleave 10
-protect_pierce 4
+material_real 65
+material 2
+protect_impact 6
 protect_slash 6
-is_vul_physical 1
-is_vul_elemental 1
-is_vul_magic 1
-is_vul_sphere 1
-material 32
-material_real 324
-weight 1300
-value 100
+protect_cleave 6
+protect_pierce 6
+weight 940
+value 25
 end
 Object desk1.111
 name desk
@@ -5537,6 +5548,34 @@ material 18
 no_pick 1
 value 350
 container 15000
+weight 15000
+Str 15
+end
+Object rack.111
+name weapon rack
+face rack.111
+type 122
+editor_folder items/container
+layer 4
+identified 1
+no_pick 1
+material 18
+value 3500
+container 250000
+weight 15000
+Str 15
+end
+Object rack.171
+name weapon rack
+face rack.171
+type 122
+editor_folder items/container
+layer 4
+identified 1
+no_pick 1
+material 18
+value 3500
+container 250000
 weight 15000
 Str 15
 end
@@ -5778,34 +5817,6 @@ container 15000
 weight 15000
 Str 15
 end
-Object rack.111
-name weapon rack
-face rack.111
-type 122
-editor_folder items/container
-layer 4
-identified 1
-no_pick 1
-material 18
-value 3500
-container 250000
-weight 15000
-Str 15
-end
-Object rack.171
-name weapon rack
-face rack.171
-type 122
-editor_folder items/container
-layer 4
-identified 1
-no_pick 1
-material 18
-value 3500
-container 250000
-weight 15000
-Str 15
-end
 Object bag
 name bag
 face bag.101
@@ -5820,6 +5831,69 @@ weight 200
 container 80000
 Str 5
 value 20
+end
+Object mailbox
+name mailbox
+face mailbox.101
+type 122
+editor_folder items/container
+other_arch close_mail
+layer 4
+no_pick 1
+level 1
+material 18
+value 250
+container 1500
+weight 1500
+identified 1
+no_pick 1
+end
+Object cauldron
+name cauldron
+face cauldron.101
+type 122
+editor_folder items/container
+other_arch cauldron_open
+layer 4
+no_pick 1
+material 2
+material_real 65
+weight 30000
+container 250000
+is_cauldron 1
+Str 0
+value 100000
+end
+Object bad_cauldron
+name cracked cauldron
+face cauldron.101
+type 122
+editor_folder items/container
+other_arch cauldron_open
+layer 4
+no_pick 1
+material 2
+material_real 65
+weight 30000
+container 250000
+Str -80
+value 5
+end
+Object pouch
+name pouch
+face pouch.101
+type 122
+editor_folder items/container
+other_arch close_pouch
+race gold and jewels
+layer 3
+level 1
+material 8
+material_real 193
+value 50
+weight 50
+container 50000
+Str 5
 end
 Object quiver
 name arrow quiver
@@ -5855,54 +5929,6 @@ weight 250
 container 50000
 Str 5
 end
-Object quiver_s
-name stone quiver
-face quiver_s.101
-type 122
-editor_folder items/container
-race sling stones
-food 13
-layer 3
-other_arch close_quiver_s
-level 1
-material 8
-material_real 193
-value 35
-weight 250
-container 50000
-Str 5
-end
-Object cauldron
-name cauldron
-face cauldron.101
-type 122
-editor_folder items/container
-other_arch cauldron_open
-layer 4
-no_pick 1
-material 2
-material_real 65
-weight 30000
-container 250000
-is_cauldron 1
-Str 0
-value 100000
-end
-Object bad_cauldron
-name cracked cauldron
-face cauldron.101
-type 122
-editor_folder items/container
-other_arch cauldron_open
-layer 4
-no_pick 1
-material 2
-material_real 65
-weight 30000
-container 250000
-Str -80
-value 5
-end
 Object chest
 name chest
 face chest_1.101
@@ -5935,21 +5961,6 @@ container 500000
 weight 17500
 Str 5
 end
-Object sack
-name sack
-face sack.101
-type 122
-editor_folder items/container
-other_arch close_sack
-layer 3
-level 1
-material 128
-material_real 450
-value 15
-weight 250
-container 150000
-Str 5
-end
 Object chest_w1
 name chest
 face chest_wood_b.101
@@ -5964,6 +5975,70 @@ material_real 258
 value 350
 container 500000
 weight 15000
+Str 5
+end
+Object chest_4.111
+name chest
+face chest_4.111
+type 122
+editor_folder items/container
+other_arch close_chest_4.111
+layer 4
+level 1
+no_pick 1
+material 18
+material_real 258
+value 350
+container 500000
+weight 15000
+Str 5
+end
+Object chest_4.171
+name chest
+face chest_4.171
+type 122
+editor_folder items/container
+other_arch close_chest_4.171
+layer 4
+level 1
+no_pick 1
+material 18
+material_real 258
+value 350
+container 500000
+weight 15000
+Str 5
+end
+Object quiver_s
+name stone quiver
+face quiver_s.101
+type 122
+editor_folder items/container
+race sling stones
+food 13
+layer 3
+other_arch close_quiver_s
+level 1
+material 8
+material_real 193
+value 35
+weight 250
+container 50000
+Str 5
+end
+Object sack
+name sack
+face sack.101
+type 122
+editor_folder items/container
+other_arch close_sack
+layer 3
+level 1
+material 128
+material_real 450
+value 15
+weight 250
+container 150000
 Str 5
 end
 Object r_sack
@@ -6028,70 +6103,6 @@ material_real 65
 value 425
 weight 15000
 container 500000
-Str 5
-end
-Object mailbox
-name mailbox
-face mailbox.101
-type 122
-editor_folder items/container
-other_arch close_mail
-layer 4
-no_pick 1
-level 1
-material 18
-value 250
-container 1500
-weight 1500
-identified 1
-no_pick 1
-end
-Object pouch
-name pouch
-face pouch.101
-type 122
-editor_folder items/container
-other_arch close_pouch
-race gold and jewels
-layer 3
-level 1
-material 8
-material_real 193
-value 50
-weight 50
-container 50000
-Str 5
-end
-Object chest_4.111
-name chest
-face chest_4.111
-type 122
-editor_folder items/container
-other_arch close_chest_4.111
-layer 4
-level 1
-no_pick 1
-material 18
-material_real 258
-value 350
-container 500000
-weight 15000
-Str 5
-end
-Object chest_4.171
-name chest
-face chest_4.171
-type 122
-editor_folder items/container
-other_arch close_chest_4.171
-layer 4
-level 1
-no_pick 1
-material 18
-material_real 258
-value 350
-container 500000
-weight 15000
 Str 5
 end
 Object coppercoin
@@ -6443,6 +6454,21 @@ food 75
 weight 75
 value 10
 end
+Object booze_generic
+name booze
+face booze.101
+type 6
+editor_folder items/organic
+food 175
+item_quality 100
+item_condition 100
+nrof 1
+layer 3
+speed_left 0.002
+material 32
+value 8
+weight 300
+end
 Object drink_generic
 name water
 face water.101
@@ -6492,21 +6518,6 @@ nrof 1
 material 32
 value 10
 weight 400
-end
-Object booze_generic
-name booze
-face booze.101
-type 6
-editor_folder items/organic
-food 175
-item_quality 100
-item_condition 100
-nrof 1
-layer 3
-speed_left 0.002
-material 32
-value 8
-weight 300
 end
 Object book
 name book
@@ -6570,19 +6581,6 @@ material 1
 value 50
 weight 4000
 end
-Object scroll_generic
-name scroll
-face scroll.101
-type 111
-editor_folder items/spells
-sp -1
-inv_face inv_s_generic.101
-layer 3
-nrof 1
-material 1
-weight 20
-value 3
-end
 Object potion_generic
 name potion
 face potion_gen.101
@@ -6597,6 +6595,19 @@ is_thrown 1
 material 512
 weight 200
 value 28
+end
+Object scroll_generic
+name scroll
+face scroll.101
+type 111
+editor_folder items/spells
+sp -1
+inv_face inv_s_generic.101
+layer 3
+nrof 1
+material 1
+weight 20
+value 3
 end
 Object balm_generic
 name balm
@@ -8244,20 +8255,6 @@ flying 1
 glow_radius 3
 no_pick 1
 end
-Object meffect_yellow
-name magic glow
-face effect1_yellow.101
-type 79
-editor_folder magic/spell_effect
-layer 7
-animation meffect_yellow
-is_animated 1
-anim_speed 1
-speed 1
-is_used_up 1
-no_pick 1
-food 5
-end
 Object meffect_blue
 name magic glow
 face effect1_blue.101
@@ -8307,6 +8304,20 @@ type 79
 editor_folder magic/spell_effect
 layer 7
 animation meffect_purple
+is_animated 1
+anim_speed 1
+speed 1
+is_used_up 1
+no_pick 1
+food 5
+end
+Object meffect_yellow
+name magic glow
+face effect1_yellow.101
+type 79
+editor_folder magic/spell_effect
+layer 7
+animation meffect_yellow
 is_animated 1
 anim_speed 1
 speed 1
@@ -8461,136 +8472,6 @@ material 1
 speed 0.01
 blocksview 1
 end
-Object cube_gel
-name gelantinous cube
-face gel_cube.111
-type 80
-editor_folder mobs/amoeboid
-race slime
-randomitems mob_slime
-is_neutral 1
-weight 8250
-exp 150
-speed -0.1
-weapon_speed 0.044
-attack_pierce 100
-ac 5
-wc 2
-dam 4
-hp -1
-maxhp 4
-terrain_flag 1
-Wis 5
-can_see_in_dark 1
-animation cube_gel
-is_animated 1
-anim_speed 4
-layer 6
-direction 5
-corpse 1
-monster 1
-no_pick 1
-alive 1
-level 1
-end
-Object jelly_ochre
-name ochre jelly
-face ochre_jelly.111
-type 80
-editor_folder mobs/amoeboid
-race slime
-randomitems mob_slime
-is_neutral 1
-weight 13250
-exp 150
-speed -0.1
-weapon_speed 0.044
-attack_acid 75
-attack_poison 30
-resist_poison 100
-ac 5
-wc 2
-dam 6
-hp -1
-maxhp 5
-terrain_flag 1
-Wis 6
-can_see_in_dark 1
-animation jelly_ochre
-is_animated 1
-anim_speed 4
-layer 6
-direction 5
-corpse 1
-monster 1
-no_pick 1
-alive 1
-level 1
-end
-Object pudding_red
-name red pudding
-face red_pudding.111
-type 80
-editor_folder mobs/amoeboid
-race slime
-randomitems mob_slime
-is_neutral 1
-weight 16250
-exp 150
-speed -0.1
-weapon_speed 0.044
-attack_fire 100
-ac 6
-wc 2
-dam 5
-hp -1
-maxhp 5
-terrain_flag 1
-Wis 6
-can_see_in_dark 1
-animation pudding_red
-is_animated 1
-anim_speed 4
-layer 6
-direction 5
-corpse 1
-monster 1
-no_pick 1
-alive 1
-level 1
-end
-Object slime
-name slime
-face slime.111
-type 80
-editor_folder mobs/amoeboid
-race slime
-randomitems mob_slime
-is_neutral 1
-weight 12250
-exp 150
-speed -0.1
-weapon_speed 0.044
-attack_impact 100
-ac 6
-wc 2
-dam 4
-hp -1
-maxhp 5
-terrain_flag 1
-Wis 6
-can_see_in_dark 1
-animation slime
-is_animated 1
-anim_speed 4
-layer 6
-direction 5
-corpse 1
-monster 1
-no_pick 1
-alive 1
-level 1
-end
 Object blob_acid
 name acid blob
 face acid_blob.111
@@ -8649,6 +8530,38 @@ terrain_flag 1
 Wis 6
 can_see_in_dark 1
 animation blob_quivering
+is_animated 1
+anim_speed 4
+layer 6
+direction 5
+corpse 1
+monster 1
+no_pick 1
+alive 1
+level 1
+end
+Object cube_gel
+name gelantinous cube
+face gel_cube.111
+type 80
+editor_folder mobs/amoeboid
+race slime
+randomitems mob_slime
+is_neutral 1
+weight 8250
+exp 150
+speed -0.1
+weapon_speed 0.044
+attack_pierce 100
+ac 5
+wc 2
+dam 4
+hp -1
+maxhp 4
+terrain_flag 1
+Wis 5
+can_see_in_dark 1
+animation cube_gel
 is_animated 1
 anim_speed 4
 layer 6
@@ -8728,6 +8641,40 @@ no_pick 1
 alive 1
 level 1
 end
+Object jelly_ochre
+name ochre jelly
+face ochre_jelly.111
+type 80
+editor_folder mobs/amoeboid
+race slime
+randomitems mob_slime
+is_neutral 1
+weight 13250
+exp 150
+speed -0.1
+weapon_speed 0.044
+attack_acid 75
+attack_poison 30
+resist_poison 100
+ac 5
+wc 2
+dam 6
+hp -1
+maxhp 5
+terrain_flag 1
+Wis 6
+can_see_in_dark 1
+animation jelly_ochre
+is_animated 1
+anim_speed 4
+layer 6
+direction 5
+corpse 1
+monster 1
+no_pick 1
+alive 1
+level 1
+end
 Object jelly_spotted
 name spotted jelly
 face spotted_jelly.111
@@ -8753,6 +8700,70 @@ terrain_flag 1
 Wis 6
 can_see_in_dark 1
 animation jelly_spotted
+is_animated 1
+anim_speed 4
+layer 6
+direction 5
+corpse 1
+monster 1
+no_pick 1
+alive 1
+level 1
+end
+Object pudding_red
+name red pudding
+face red_pudding.111
+type 80
+editor_folder mobs/amoeboid
+race slime
+randomitems mob_slime
+is_neutral 1
+weight 16250
+exp 150
+speed -0.1
+weapon_speed 0.044
+attack_fire 100
+ac 6
+wc 2
+dam 5
+hp -1
+maxhp 5
+terrain_flag 1
+Wis 6
+can_see_in_dark 1
+animation pudding_red
+is_animated 1
+anim_speed 4
+layer 6
+direction 5
+corpse 1
+monster 1
+no_pick 1
+alive 1
+level 1
+end
+Object slime
+name slime
+face slime.111
+type 80
+editor_folder mobs/amoeboid
+race slime
+randomitems mob_slime
+is_neutral 1
+weight 12250
+exp 150
+speed -0.1
+weapon_speed 0.044
+attack_impact 100
+ac 6
+wc 2
+dam 4
+hp -1
+maxhp 5
+terrain_flag 1
+Wis 6
+can_see_in_dark 1
+animation slime
 is_animated 1
 anim_speed 4
 layer 6
@@ -9004,6 +9015,51 @@ unaggressive 1
 Str 25
 can_cast_spell 1
 end
+Object monk
+name monk
+face monk.131
+type 80
+editor_folder mobs/human
+race human
+layer 6
+direction 5
+is_male 1
+is_good 1
+terrain_flag 1
+weapon_speed 0.055
+corpse 1
+attack_weaponmagic 100
+animation monk
+is_animated 1
+anim_speed 4
+speed -0.25
+alive 1
+monster 1
+Wis 7
+see_invisible 1
+resist_impact 75
+resist_cleave 75
+resist_pierce 75
+resist_slash 75
+resist_magic 100
+no_pick 1
+reflect_missile 1
+reflect_spell 1
+Con 15
+exp 200
+hp -1
+maxhp 25
+Pow 3
+ac 6
+wc 6
+dam 15
+level 1
+weight 85000
+stand_still 1
+unaggressive 1
+Str 25
+can_cast_spell 1
+end
 Object priest_church
 name church priest
 face priest_church.131
@@ -9109,51 +9165,6 @@ weapon_speed 0.055
 corpse 1
 attack_weaponmagic 100
 animation smith
-is_animated 1
-anim_speed 4
-speed -0.25
-alive 1
-monster 1
-Wis 7
-see_invisible 1
-resist_impact 75
-resist_cleave 75
-resist_pierce 75
-resist_slash 75
-resist_magic 100
-no_pick 1
-reflect_missile 1
-reflect_spell 1
-Con 15
-exp 200
-hp -1
-maxhp 25
-Pow 3
-ac 6
-wc 6
-dam 15
-level 1
-weight 85000
-stand_still 1
-unaggressive 1
-Str 25
-can_cast_spell 1
-end
-Object monk
-name monk
-face monk.131
-type 80
-editor_folder mobs/human
-race human
-layer 6
-direction 5
-is_male 1
-is_good 1
-terrain_flag 1
-weapon_speed 0.055
-corpse 1
-attack_weaponmagic 100
-animation monk
 is_animated 1
 anim_speed 4
 speed -0.25
@@ -9696,6 +9707,42 @@ glow_radius 4
 layer 5
 no_pick 1
 end
+Object pillar_dark_s
+name dark pillar
+face pillar_dark_s.d.101
+type 79
+editor_folder structures/pillars
+layer 5
+no_pass 1
+no_pick 1
+end
+Object pillar_dark2a
+name dark pillar
+face pillar_dark2a.d.101
+type 79
+editor_folder structures/pillars
+layer 5
+no_pass 1
+no_pick 1
+end
+Object pillar_dark2b
+name dark pillar
+face pillar_dark2b.d.101
+type 79
+editor_folder structures/pillars
+layer 5
+no_pass 1
+no_pick 1
+end
+Object pillar_dark2c
+name dark pillar
+face pillar_dark2c.d.101
+type 79
+editor_folder structures/pillars
+layer 5
+no_pass 1
+no_pick 1
+end
 Object fmask_ruin1a.111
 name ruin parts
 face fmask_ruin1a.111
@@ -9904,42 +9951,6 @@ editor_folder structures/statue
 blocksview 1
 no_pass 1
 layer 5
-no_pick 1
-end
-Object pillar_dark_s
-name dark pillar
-face pillar_dark_s.d.101
-type 79
-editor_folder structures/pillars
-layer 5
-no_pass 1
-no_pick 1
-end
-Object pillar_dark2a
-name dark pillar
-face pillar_dark2a.d.101
-type 79
-editor_folder structures/pillars
-layer 5
-no_pass 1
-no_pick 1
-end
-Object pillar_dark2b
-name dark pillar
-face pillar_dark2b.d.101
-type 79
-editor_folder structures/pillars
-layer 5
-no_pass 1
-no_pick 1
-end
-Object pillar_dark2c
-name dark pillar
-face pillar_dark2c.d.101
-type 79
-editor_folder structures/pillars
-layer 5
-no_pass 1
 no_pick 1
 end
 Object rune_fire
@@ -10338,6 +10349,87 @@ layer 5
 no_pick 1
 no_pass 1
 end
+Object wall_dark1a.131
+name dark wall
+face wall_dark1a.d.131
+type 77
+editor_folder walls/dark
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_dark1b.131
+name dark wall
+face wall_dark1b.d.131
+type 77
+editor_folder walls/dark
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_dark1a.111
+name dark wall
+face wall_dark1a.d.111
+type 77
+editor_folder walls/dark
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_dark1b.111
+name dark wall
+face wall_dark1b.d.111
+type 77
+editor_folder walls/dark
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_dark1.141
+name dark wall
+face wall_dark1.d.141
+type 77
+editor_folder walls/dark
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_dark1.181
+name dark wall
+face wall_dark1.d.181
+type 77
+editor_folder walls/dark
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object curtain1
+name red curtain
+face curtain1.111
+type 20
+msg
+You need the special key to open this door.
+endmsg
+editor_folder walls/doors
+layer 5
+sub_type 1
+blocksview 1
+no_pass 1
+sp 5
+pass_thru 1
+no_pick 1
+direction 1
+animation curtain1
+is_animated 0
+anim_speed 1
+is_turnable 1
+end
 Object door1_locked
 name metal door
 face door_lock1.111
@@ -10357,25 +10449,6 @@ animation door1_locked
 is_animated 0
 anim_speed 1
 is_turnable 1
-end
-Object gate1_locked
-name metal gate
-face gate_lock1.111
-type 20
-msg
-You need a special key to open this gate.
-endmsg
-editor_folder walls/doors
-layer 5
-no_pass 1
-pass_thru 1
-sp 5
-animation gate1_locked
-is_animated 0
-anim_speed 1
-is_turnable 1
-direction 1
-no_pick 1
 end
 Object door_wood1
 name wooden door
@@ -10417,26 +10490,24 @@ is_animated 0
 anim_speed 1
 is_turnable 1
 end
-Object curtain1
-name red curtain
-face curtain1.111
+Object gate1_locked
+name metal gate
+face gate_lock1.111
 type 20
 msg
-You need the special key to open this door.
+You need a special key to open this gate.
 endmsg
 editor_folder walls/doors
 layer 5
-sub_type 1
-blocksview 1
 no_pass 1
-sp 5
 pass_thru 1
-no_pick 1
-direction 1
-animation curtain1
+sp 5
+animation gate1_locked
 is_animated 0
 anim_speed 1
 is_turnable 1
+direction 1
+no_pick 1
 end
 Object doorway_wood1_1
 name passage
@@ -11515,66 +11586,6 @@ name stone wall
 face wall_white1.d.181
 type 77
 editor_folder walls/white
-blocksview 1
-layer 5
-no_pick 1
-no_pass 1
-end
-Object wall_dark1a.131
-name dark wall
-face wall_dark1a.d.131
-type 77
-editor_folder walls/dark
-blocksview 1
-layer 5
-no_pick 1
-no_pass 1
-end
-Object wall_dark1b.131
-name dark wall
-face wall_dark1b.d.131
-type 77
-editor_folder walls/dark
-blocksview 1
-layer 5
-no_pick 1
-no_pass 1
-end
-Object wall_dark1a.111
-name dark wall
-face wall_dark1a.d.111
-type 77
-editor_folder walls/dark
-blocksview 1
-layer 5
-no_pick 1
-no_pass 1
-end
-Object wall_dark1b.111
-name dark wall
-face wall_dark1b.d.111
-type 77
-editor_folder walls/dark
-blocksview 1
-layer 5
-no_pick 1
-no_pass 1
-end
-Object wall_dark1.141
-name dark wall
-face wall_dark1.d.141
-type 77
-editor_folder walls/dark
-blocksview 1
-layer 5
-no_pick 1
-no_pass 1
-end
-Object wall_dark1.181
-name dark wall
-face wall_dark1.d.181
-type 77
-editor_folder walls/dark
 blocksview 1
 layer 5
 no_pick 1

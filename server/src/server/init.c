@@ -374,6 +374,7 @@ void init(int argc, char **argv) {
     init_ericserver();
     metaserver_init();
     reset_sleep();
+	init_level_color_table();
     init_done=1;
 }
 
@@ -816,4 +817,70 @@ racelink * get_racelist ( ) {
   list->next=NULL;
 
   return list;
+}
+
+/* generate the color ranges for the target command
+ */
+void init_level_color_table(void)
+{
+	int i,ii, range, tmp;
+
+	for(i=1;i<111;i++)
+	{
+		for(ii=i;ii>1;ii--)
+		{
+			if(calc_level_difference(i,ii)==0)
+				break;
+		}
+		/* thats the easy part */
+		level_color[i].grey=ii;
+		level_color[i].yellow=i-(i/25);
+		level_color[i].blue = level_color[i].yellow-1; /* blue is always yellow -1 */
+		level_color[i].orange = i+(i/25)+1;
+
+		/* now calc green & blue ranges */
+		range = level_color[i].yellow-ii-1;
+		if(range<2)
+		{
+			level_color[i].green = level_color[i].blue-1; /* can be illegal but we never hit this then */
+			level_color[i].red = level_color[i].orange+1;
+			level_color[i].purple = level_color[i].orange+2;
+		}
+		else /* range is 2 or higher */
+		{
+			/* now we must set green, red & purple - and the size
+			 * of blue & orange from which he have only the start point
+			 * set now.
+			 */
+			tmp = (int)((double)range*0.7);
+			if(!tmp)
+				tmp = 1;
+			else if (tmp == range)
+				tmp--;
+			level_color[i].green = level_color[i].blue -(range-tmp);
+
+
+			range = (int)((double)range*0.75);
+			if(!range)
+				range = 0;
+			tmp = (int)((double)range*0.7);
+			if(!tmp)
+				tmp = 1;
+			else if (tmp == range)
+				tmp--;
+
+			if(tmp == range)
+				range++;
+			level_color[i].red = level_color[i].orange+(range-tmp);
+			level_color[i].purple = level_color[i].red+tmp;
+		}
+		/*
+		LOG(llevSystem, "L %d::%d >G%d-%d B%d-%d Y%d-%d O%d-%d R%d-%d P>%d\n", i,ii,
+			ii+1,level_color[i].green,
+			level_color[i].green+1,level_color[i].blue,
+			level_color[i].yellow,level_color[i].orange-1,
+			level_color[i].orange,level_color[i].red-1,
+			level_color[i].red,level_color[i].purple-1,
+			level_color[i].purple);*/
+	}
 }

@@ -204,7 +204,7 @@ void read_client_images()
 
 	/* we don't use more as one face set here!! */
 	LOG(llevInfo,"Creating client_bmap....\n");
-    sprintf(buf,"%s/client_bmaps", settings.datadir);
+    sprintf(buf,"%s/client_bmaps", settings.localdir);
 	if ((fbmap=fopen(buf,"wb")) ==NULL)
 		LOG(llevError,"Unable to open %s\n", buf);
 
@@ -314,31 +314,31 @@ int esrv_send_face(NewSocket *ns,short face_num, int nocache)
     }
 
     if (ns->facecache && !nocache) {
-	if (ns->image2)
-	{
-	SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_FACE2);
-	}
-/*	    strcpy((char*)sl.buf, "face2 ");*/
-	else if (ns->sc_version >= 1026)
-	{
-	SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_FACE1);
-	}
-/*	    strcpy((char*)sl.buf, "face1 ");*/
-	else
-	{
-	SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_FACE);
-	}
-/*	    strcpy((char*)sl.buf, "face ");*/
+		if (ns->image2)
+		{
+			SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_FACE2);
+		}
+		else if (ns->sc_version >= 1026)
+		{
+			SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_FACE1);
+		}
+		else
+		{
+			SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_FACE);
+		}
 
-/*	sl.len=strlen(sl.buf);*/
-	SockList_AddShort(&sl, face_num);
-	if (ns->image2)
-	    SockList_AddChar(&sl, (char) fallback);
-	if (ns->sc_version >= 1026)
-	    SockList_AddInt(&sl, facesets[fallback].faces[face_num].checksum);
-	strcpy((char*)sl.buf + sl.len, new_faces[face_num].name);
-	sl.len += strlen(new_faces[face_num].name);
-	Send_With_Handling(ns, &sl);
+		SockList_AddShort(&sl, face_num);
+		if (ns->image2)
+		{
+			SockList_AddChar(&sl, (char) fallback);
+		}
+		if (ns->sc_version >= 1026)
+		{
+			SockList_AddInt(&sl, facesets[fallback].faces[face_num].checksum);
+		}
+		strcpy((char*)sl.buf + sl.len, new_faces[face_num].name);
+		sl.len += strlen(new_faces[face_num].name);
+		Send_With_Handling(ns, &sl);
     }
     else {
 	if (ns->image2)
@@ -355,7 +355,9 @@ int esrv_send_face(NewSocket *ns,short face_num, int nocache)
 /*	sl.len=strlen((char*)sl.buf);*/
 	SockList_AddInt(&sl, face_num);
 	if (ns->image2)
+	{
 	    SockList_AddChar(&sl, (char) fallback);
+	}
 	SockList_AddInt(&sl, facesets[fallback].faces[face_num].datalen);
 	memcpy(sl.buf+sl.len, facesets[fallback].faces[face_num].data, 
 	       facesets[fallback].faces[face_num].datalen);
@@ -418,12 +420,9 @@ void send_image_sums(NewSocket *ns, char *params)
 
     for (i=start; i<=stop; i++) {
 	SockList_AddShort(&sl, (uint16) i);
-	/*ns->faces_sent[i] = 1;*/
-
 	qq = get_face_fallback(ns->faceset, i);
 	SockList_AddInt(&sl, facesets[qq].faces[i].checksum);
 	SockList_AddChar(&sl, (char) qq);
-
 	qq = strlen(new_faces[i].name);
 	SockList_AddChar(&sl, (char)(qq + 1));
 	strcpy(sl.buf + sl.len, new_faces[i].name);

@@ -72,7 +72,13 @@ extern object *check_inv_recursive(object *op, object *trig);
 extern void check_inv(object *op, object *trig);
 extern void verify_button_links(mapstruct *map);
 /* exp.c */
-extern int has_ability(object *ob);
+extern uint32 level_exp(int level, double expmul);
+extern sint32 add_exp(object *op, int exp, int skill_nr);
+extern void player_lvl_adj(object *who, object *op);
+extern void calc_perm_exp(object *op);
+extern int adjust_exp(object *pl,object *op, int exp);
+extern void apply_death_exp_penalty(object *op);
+extern int calc_level_difference(int who_lvl, int op_lvl);
 /* friend.c */
 extern void add_friendly_object(object *op);
 extern void remove_friendly_object(object *op);
@@ -172,18 +178,12 @@ extern void remove_statbonus(object *op);
 extern void add_statbonus(object *op);
 extern void fix_player(object *op);
 extern int allowed_class(object *op);
-extern uint32 level_exp(int level, double expmul);
-extern sint32 add_exp(object *op, int exp, int skill_nr);
 extern void set_dragon_name(object *pl, object *abil, object *skin);
 extern void dragon_level_gain(object *who);
-extern void player_lvl_adj(object *who, object *op);
-extern void calc_perm_exp(object *op);
-extern int adjust_exp(object *pl,object *op, int exp);
-extern int check_dm_add_exp_to_obj(object *exp_ob, int i);
-extern void apply_death_exp_penalty(object *op);
 extern void fix_monster(object *op);
 extern object *insert_base_info_object(object *op);
 extern object *find_base_info_object(object *op);
+extern void init_exp_color_table(void);
 
 /* loader.c */
 extern int lex_load(object *op, int map_flags);

@@ -204,7 +204,9 @@ static player* get_player(player *p) {
     p->state=ST_ROLL_STAT;
     clear_los(op);
 
-    p->gen_sp_armour=10;
+	p->target_hp = -1;
+	p->target_hp_p = -1;
+    p->gen_sp_armour=0;
     p->last_speed= -1;
     p->shoottype=range_none;
     p->listening=9;
@@ -874,7 +876,7 @@ int key_roll_stat(object *op, char key)
 {
     int keynum = key -'0';
     char buf[MAX_BUF];
-    static sint8 stat_trans[] = {-1, STR, DEX, CON, INT, WIS, POW, CHA};
+    static sint8 stat_trans[] = {-1, STR, DEX, CON, INTELLIGENCE, WIS, POW, CHA};
 
 #ifdef USE_SWAP_STATS
     if (keynum>0 && keynum<=7) {
@@ -2076,193 +2078,158 @@ void remove_unpaid_objects(object *op, object *env)
 }
 
 
-void do_some_living(object *op) {
-  int last_food=op->stats.food;
-  int wis_boni = op->stats.Wis-10;
-  /* default regeneration time in ticks for 1 point */ 
-  int base_hp_reg = 40; 
-  int base_sp_reg = 35;
-  int base_grace_reg = 35;
+void do_some_living(object *op) 
+{
 
-  if(op->contr->state==ST_PLAYING) 
-  {
-
-	/* HP reg */
-	if(op->contr->gen_hp>0)
+	if(op->contr->state==ST_PLAYING) 
 	{
-		int tmp = op->contr->gen_hp;
-		if(op->contr->combat_mode)   /* combat halfes the hp reg! */
-			tmp /=2;
-		if(!tmp && op->contr->gen_hp)
-			tmp =1;
-
-		base_hp_reg =(base_hp_reg-tmp)/tmp;
-	}
-	else
-	{
-		base_hp_reg +=(op->contr->gen_hp*op->contr->gen_hp)+5;
-	}
-
-	if(base_hp_reg<0)
-		base_hp_reg=0;
-	if(op->last_heal >base_hp_reg) /* that can happens when we have changed equipment! */
-		op->last_heal=base_hp_reg;
-
-    if(--op->last_heal<0) 
-	{
-		op->last_heal=base_hp_reg;
-
-		if(op->stats.hp<op->stats.maxhp)
+		/* hp reg */
+		if(op->contr->gen_hp)
 		{
-			op->stats.hp++;
-			op->stats.food--;
-			if(op->contr->digestion<0)
-				op->stats.food+=op->contr->digestion;
-			else if(op->contr->digestion>0 &&
-				random_roll(0, op->contr->digestion, op, PREFER_HIGH))
-			op->stats.food=last_food;
-		}
-	}
-
-	/* sp reg */
-	if(op->contr->gen_sp>0)
-	{
-		int tmp = op->contr->gen_sp;
-
-		base_sp_reg =(base_sp_reg-tmp)/tmp;
-	}
-	else
-	{
-		base_sp_reg +=(op->contr->gen_sp*op->contr->gen_sp)+5;
-	}
-
-	if(base_sp_reg<0)
-		base_sp_reg=0;
-	if(op->last_sp >base_sp_reg) /* that can happens when we have changed equipment! */
-		op->last_sp =base_sp_reg;
-
-    if(--op->last_sp<0) 
-	{
-		op->last_sp=base_sp_reg;
-
-		if(op->stats.sp<op->stats.maxsp)
-			op->stats.sp++;
-	}
-
-    /* Regenerate Grace */
-	if(op->contr->gen_grace>0)
-	{
-		int tmp = op->contr->gen_grace;
-		base_grace_reg =(base_grace_reg-tmp)/tmp;
-	}
-	else
-	{
-		base_grace_reg +=(op->contr->gen_grace*op->contr->gen_grace)+5;
-	}
-
-	if(base_grace_reg<0)
-		base_grace_reg=0;
-	if(op->last_grace >base_grace_reg) /* that can happens when we have changed equipment! */
-		op->last_grace=base_grace_reg;
-
-	/* i added the "stay and pray" mechanism */
-	if(op->contr->praying && !op->contr->was_praying)
-	{
-	    object *god = find_god(determine_god(op));
-		if(god)
-		{
-			if(op->contr->combat_mode)
+		    if(--op->last_heal<0)	
 			{
-				new_draw_info(NDI_UNIQUE, 0,op, "You can't pray when in combat mode!");
+				op->last_heal=op->contr->base_hp_reg;
+				if(op->contr->combat_mode)  
+					op->last_heal += op->last_heal; /* halfed reg speed */
+
+				if(op->stats.hp<op->stats.maxhp)
+				{
+					int last_food=op->stats.food;
+
+					op->stats.hp+=op->contr->reg_hp_num;
+					if(op->stats.hp>op->stats.maxhp)
+						op->stats.hp= op->stats.maxhp;
+
+					/* faster hp reg - faster digestion... evil */
+					op->stats.food--;
+					if(op->contr->digestion<0)
+						op->stats.food+=op->contr->digestion;
+					else if(op->contr->digestion>0 &&
+						random_roll(0, op->contr->digestion, op, PREFER_HIGH))
+					op->stats.food=last_food;
+				}
+			}
+		}
+
+		/* sp reg */
+		if(op->contr->gen_sp)
+		{
+		    if(--op->last_sp<0) 
+			{
+				op->last_sp=op->contr->base_sp_reg;
+				if(op->stats.sp<op->stats.maxsp)
+				{
+					op->stats.sp+=op->contr->reg_sp_num;
+					if(op->stats.sp>op->stats.maxsp)
+						op->stats.sp= op->stats.maxsp;
+				}
+			}
+		}
+
+		/* "stay and pray" mechanism */
+		if(op->contr->praying && !op->contr->was_praying)
+		{
+		    object *god = find_god(determine_god(op));
+			if(god)
+			{
+				if(op->contr->combat_mode)
+				{
+					new_draw_info(NDI_UNIQUE, 0,op, "You can't pray when in combat mode!");
+					op->contr->praying=0;
+				}
+				else
+				{
+					new_draw_info_format(NDI_UNIQUE, 0,op,"You start praying to %s...",god->name);
+					op->contr->was_praying=1;
+				}
+			}
+		else
+			{
+				new_draw_info(NDI_UNIQUE, 0,op, "You worship no living deity to pray to!");
 				op->contr->praying=0;
 			}
-			else
+			op->last_grace=op->contr->base_grace_reg;
+		}
+		else if(!op->contr->praying && op->contr->was_praying)
+		{
+			new_draw_info(NDI_UNIQUE, 0,op,"You stop praying.");
+			op->contr->was_praying=0;
+			op->last_grace=op->contr->base_grace_reg;
+		}
+
+		/* grace reg */
+		if(op->contr->praying && op->contr->gen_grace)
+		{
+		    if(--op->last_grace<0) 
 			{
-				new_draw_info_format(NDI_UNIQUE, 0,op,"You start praying to %s...",god->name);
-				op->contr->was_praying=1;
+				if(op->stats.grace<op->stats.maxgrace)
+				op->stats.grace+=op->contr->reg_grace_num;
+				if(op->stats.grace>op->stats.maxgrace)
+					op->stats.grace= op->stats.maxgrace;
+				op->last_grace=op->contr->base_grace_reg;
 			}
 		}
-		else
+
+		/* Digestion */
+		if(--op->last_eat<0)
 		{
-			new_draw_info(NDI_UNIQUE, 0,op, "You worship no living deity to pray to!");
-			op->contr->praying=0;
+			int bonus=op->contr->digestion>0?op->contr->digestion:0,
+			penalty=op->contr->digestion<0?-op->contr->digestion:0;
+			if(op->contr->gen_hp > 0)
+				op->last_eat=25*(1+bonus)/(op->contr->gen_hp+penalty+1);
+			else
+				op->last_eat=25*(1+bonus)/(penalty +1);
+			op->stats.food--;
 		}
-		op->last_grace=20-wis_boni;
-	}
-	else if(!op->contr->praying && op->contr->was_praying)
-	{
-		new_draw_info(NDI_UNIQUE, 0,op,"You stop praying.");
-		op->contr->was_praying=0;
-		op->last_grace=20-wis_boni;
-	}
 
-	if(op->contr->praying)
-	{
-	    if(--op->last_grace<0) 
+		if(op->stats.food<0&&op->stats.hp>=0) 
 		{
-			if(op->stats.grace<op->stats.maxgrace)
-			op->stats.grace++;
-			op->last_grace=20-wis_boni;
-		}
-	}
-	/*
-    if(--op->last_grace<0) {
-	if(op->stats.grace<op->stats.maxgrace/2)
-	    op->stats.grace++;
-    }
-	*/
+			object *tmp, *flesh=NULL;
 
-    /* Digestion */
-    if(--op->last_eat<0) {
-      int bonus=op->contr->digestion>0?op->contr->digestion:0,
-	penalty=op->contr->digestion<0?-op->contr->digestion:0;
-      if(op->contr->gen_hp > 0)
-	op->last_eat=25*(1+bonus)/(op->contr->gen_hp+penalty+1);
-      else
-	op->last_eat=25*(1+bonus)/(penalty +1);
-      op->stats.food--;
-    }
-  }
+			for(tmp=op->inv;tmp!=NULL;tmp=tmp->below) 
+			{
+				if(!QUERY_FLAG(tmp, FLAG_UNPAID))
+				{
+					if (tmp->type==FOOD || tmp->type==DRINK || tmp->type==POISON) 
+					{
+						new_draw_info(NDI_UNIQUE, 0,op,"You blindly grab for a bite of food.");
+						manual_apply(op,tmp,0);
+						if(op->stats.food>=0||op->stats.hp<0)
+							break;
+					}
+					else if (tmp->type==FLESH)
+						flesh=tmp;
+				} /* End if paid for object */
+			} /* end of for loop */
 
-    if(op->contr->state==ST_PLAYING&&op->stats.food<0&&op->stats.hp>=0) {
-	object *tmp, *flesh=NULL;
+			/* If player is still starving, it means they don't have any food, so
+			* eat flesh instead.
+			*/
+			if (op->stats.food<0 && op->stats.hp>=0 && flesh)
+			{
+			    new_draw_info(NDI_UNIQUE, 0,op,"You blindly grab for a bite of food.");
+			    manual_apply(op,flesh,0);
+			}
+		} /* end if player is starving */
 
-	for(tmp=op->inv;tmp!=NULL;tmp=tmp->below) {
-	    if(!QUERY_FLAG(tmp, FLAG_UNPAID)) {
-		if (tmp->type==FOOD || tmp->type==DRINK || tmp->type==POISON) {
-		    new_draw_info(NDI_UNIQUE, 0,op,"You blindly grab for a bite of food.");
-		    manual_apply(op,tmp,0);
-		    if(op->stats.food>=0||op->stats.hp<0)
-			break;
-		}
-		else if (tmp->type==FLESH) flesh=tmp;
-	    } /* End if paid for object */
-	} /* end of for loop */
-	/* If player is still starving, it means they don't have any food, so
-	 * eat flesh instead.
-	 */
-	if (op->stats.food<0 && op->stats.hp>=0 && flesh) {
-	    new_draw_info(NDI_UNIQUE, 0,op,"You blindly grab for a bite of food.");
-	    manual_apply(op,flesh,0);
-	}
-    } /* end if player is starving */
-
-    while(op->stats.food<0&&op->stats.hp>0)
-	{
-		op->stats.food++;
-		/* new: no dying from food. hp will fall to 1 but not under it.
-		 * we must check here for negative because we don't want ADD here
-		 */
-		if(op->stats.hp)
+		while(op->stats.food<0&&op->stats.hp>0)
 		{
-			op->stats.hp--;
-			if(!op->stats.hp)
-				op->stats.hp=1;
-		}
+			op->stats.food++;
+			/* new: no dying from food. hp will fall to 1 but not under it.
+			 * we must check here for negative because we don't want ADD here
+			 */
+			if(op->stats.hp)
+			{
+				op->stats.hp--;
+				if(!op->stats.hp)
+					op->stats.hp=1;
+			}
+		};
 
-	};
-    if (!op->contr->state&&!QUERY_FLAG(op,FLAG_WIZ)&&(op->stats.hp<=0||op->stats.food<0))
-	kill_player(op);
+		/* we can't die by no food but perhaps by poisoned food? */
+		if ((op->stats.hp<=0||op->stats.food<0) && !QUERY_FLAG(op,FLAG_WIZ))
+			kill_player(op);
+	}
 }
 
 

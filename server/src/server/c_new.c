@@ -195,6 +195,7 @@ void send_target_command(player *pl)
 
 	tmp[0]=BINARY_CMD_TARGET;
 	tmp[1]=pl->combat_mode;
+	tmp[2]=0; /* color mode */
 
 	pl->ob->enemy=NULL;
 	pl->ob->enemy_count=0;
@@ -216,17 +217,17 @@ void send_target_command(player *pl)
 		else
 		{
 			if(pl->target_object->type == PLAYER || QUERY_FLAG(pl->target_object,FLAG_FRIENDLY) )
-				tmp[2]=2; /* friend */
+				tmp[3]=2; /* friend */
 			else
 			{
-				tmp[2]=1; /* enemy */
+				tmp[3]=1; /* enemy */
 				pl->ob->enemy=pl->target_object;
 				pl->ob->enemy_count=pl->target_object_count;
 			}
 			if(pl->target_object->name)
-				strcpy(tmp+3,pl->target_object->name);
+				strcpy(tmp+4,pl->target_object->name);
 			else
-				strcpy(tmp+3,"(null)");
+				strcpy(tmp+4,"(null)");
 		}
 	}
 	else
@@ -235,14 +236,54 @@ void send_target_command(player *pl)
 	/* ok... at last, target self */
 	if(aim_self_flag)
 	{
-		tmp[2]=0; /* self */
-		strcpy(tmp+3,pl->ob->name);
+		tmp[3]=0; /* self */
+		strcpy(tmp+4,pl->ob->name);
 		pl->target_object = pl->ob;
 		pl->target_object_count = 0;
 		pl->target_map_pos =0;
 	}
 
-    Write_String_To_Socket(&pl->socket, BINARY_CMD_TARGET, tmp, strlen(tmp+3)+3);
+	/* now we have a target - lets calculate the color code.
+	 * we can do it easy and send the real level to client and
+	 * let calc it there but this will allow to spoil that
+	 * data on client side.
+	 */
+	if(pl->target_object->level < level_color[pl->ob->level].yellow) /* target is lower */
+	{
+		/* This calc the "grey" mobs - if 0, they are grey and don't give
+		 * exp and items.
+		 */
+		if(!calc_level_difference(pl->ob->level, pl->target_object->level)) /* grey */
+			tmp[2]= NDI_GREY;
+		else /* calc green or blue */
+		{
+			if(pl->target_object->level < level_color[pl->ob->level].blue)
+				tmp[2]= NDI_GREEN;
+			else
+				tmp[2]= NDI_BLUE;
+		}
+
+	}
+	else /* target is higher or as yellow min. range */
+	{
+		if(pl->target_object->level >= level_color[pl->ob->level].purple)
+			tmp[2]= NDI_PURPLE;
+		else if(pl->target_object->level >= level_color[pl->ob->level].red)
+			tmp[2]= NDI_RED;
+		else if(pl->target_object->level >=level_color[pl->ob->level].orange)
+			tmp[2]= NDI_ORANGE;
+		else
+			tmp[2]= NDI_YELLOW;
+	}
+
+	/* some nice extra info for DM's */
+	if(QUERY_FLAG(pl->ob,FLAG_WIZ))
+	{
+		char buf[64];
+		sprintf(buf,"(lvl %d)", pl->target_object->level);
+		strcat(tmp+4, buf);
+	}
+    Write_String_To_Socket(&pl->socket, BINARY_CMD_TARGET, tmp, strlen(tmp+4)+4);
 }
 
 int command_combat(object *op, char *params)
@@ -274,8 +315,62 @@ int command_target(object *op, char *params)
 	if(!op || !op->map || !op->contr || !params || params[0]==0)
 		return 1;
 
-	/* 0: we target enemy */
-	if(params[0]=='0')
+	/* !x y = mouse map target */
+	if(params[0]=='!')
+	{
+		int xstart, ystart;
+		char *ctmp;
+
+		xstart = atoi(params+1);
+		ctmp = strchr(params+1, ' ');
+		if(!ctmp) /* bad format.. skip */
+			return 0;
+		ystart = atoi(ctmp+1);
+
+		for(n=0;n<SIZEOFFREE;n++)
+		{
+			int xx,yy;
+
+			/* thats the trick: we get  op map pos, but we have 2 offsets:
+			 * the offset from the client mouse click - can be 
+			 * +- op->contr->socket.mapx/2 - and the freearr_x/y offset for 
+			 * the search.
+			 */
+			xt=op->x+(xx=freearr_x[n]+xstart);
+			yt=op->y+(yy=freearr_y[n]+ystart);
+
+			if(xx <-(int)(op->contr->socket.mapx/2) || xx > (int)(op->contr->socket.mapx/2) ||
+				yy < -(int)(op->contr->socket.mapy/2) || yy>(int)(op->contr->socket.mapy/2))
+				continue; 
+
+			block = op->contr->blocked_los[xx+op->contr->socket.mapx/2][yy+op->contr->socket.mapy/2];
+			if(block>3 || block<0 ||!(m=out_of_map(op->map,&xt,&yt)))
+				continue;
+
+			/* we can have more as one possible target
+			 * on a square - but i try this first without 
+			 * handle it.
+			 */
+			for(tmp=get_map_ob(m,xt,yt);tmp!=NULL;tmp=tmp->above)
+			{
+				/* this is a possible target */
+				tmp->head!= NULL?(head=tmp->head):(head=tmp); /* ensure we have head */
+				if (QUERY_FLAG(head,FLAG_MONSTER) || QUERY_FLAG(head,FLAG_FRIENDLY) || head->type==PLAYER)
+				{
+					/* this can happen when our old target has moved to next position */
+					if(QUERY_FLAG(head,FLAG_SYS_OBJECT) || 
+								(QUERY_FLAG(head,FLAG_IS_INVISIBLE) && !QUERY_FLAG(op,FLAG_SEE_INVISIBLE)) )
+						continue;
+					op->contr->target_object=head;
+					op->contr->target_object_count=head->count;
+					op->contr->target_map_pos =n;
+					goto found_target;
+				}
+			}
+		}
+
+	}
+	else if(params[0]=='0')
 	{
 		/* if our target before was a non enemy, start new search
 		 * if it was an enemy, use old value.
@@ -418,6 +513,7 @@ int command_target(object *op, char *params)
 	}
 	else /* TODO: ok... try to use params as a name */
 	{
+		/* still not sure we need this.. perhaps for groups? */
 		op->contr->target_object=NULL; /* dummy */
 	}
 
@@ -657,6 +753,6 @@ void generate_ext_title(player *pl)
 		gender = "neuter";
 	strcpy(pl->quick_name, rank);
 	strcat(pl->quick_name, pl->ob->name);
-	strcat(pl->quick_name, title);
+	/*strcat(pl->quick_name, title);*/
     sprintf(pl->ext_title,"%s\n%s %s\n%s\n%s\n%s\n%s\n%c\n", rank, pl->ob->name, title, pl->ob->race, prof, align,determine_god(pl->ob), *gender);
 }

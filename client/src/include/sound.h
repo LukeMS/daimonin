@@ -101,6 +101,7 @@ typedef enum _sound_id {
 	SOUND_WARN_HP2,
 	SOUND_WEAPON_ATTACK,
 	SOUND_WEAPON_HOLD,
+	SOUND_GET,
 	
 	SOUND_MAX
 }_sound_id1;

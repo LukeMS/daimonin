@@ -263,6 +263,7 @@ extern item *map_item (void);
 #define delete_item_inventory(tag) remove_item_inventory(locate_item(tag))
 
 extern void init_item_types ( void );
+extern item *locate_item_from_inv (item *op, sint32 tag);
 extern item *locate_item_from_item (item *op, sint32 tag);
 extern uint8 get_type_from_name ( const char *name );
 extern void update_item_sort ( item *it );

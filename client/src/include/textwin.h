@@ -24,7 +24,20 @@
 #if !defined(__TEXTWIN_H)
 #define __TEXTWIN_H
 
+typedef struct _textwin_set {
+	int split_flag;	/* if FALSE, normal window - if TRUE: splitted */
+	int size;		/* if not split, size of window min:9 max:37 */
+	int split_size; /* if split, main part: size min:9, max 36 */
+	int top_size;   /* top part if split, size: min: 1, max 27 */
+	int use_alpha;	/* true: use alpha - false: no alpha */
+	int alpha;		/* alpha value - from 0 to 255 */
+}_textwin_set;
+
+extern _textwin_set textwin_set;
+
 extern int text_win_soff;
+extern int text_win_soff_split;
+extern int text_win_soff_top;
 
 extern void draw_info ( char *str, int color );
 extern void show_textwin(int x, int y);

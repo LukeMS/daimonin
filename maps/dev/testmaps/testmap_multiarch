@@ -307,10 +307,6 @@ arch floor_ostone1
 x 3
 y 7
 end
-arch pillar_dark2b
-x 3
-y 7
-end
 arch floor_ostone1
 x 3
 y 8
@@ -324,10 +320,6 @@ x 3
 y 10
 end
 arch floor_ostone1
-x 3
-y 11
-end
-arch pillar_dark2a
 x 3
 y 11
 end
@@ -410,11 +402,19 @@ arch floor_ostone1
 x 4
 y 7
 end
+arch bath_tube1.101
+x 4
+y 7
+end
 arch floor_ostone1
 x 4
 y 8
 end
 arch floor_ostone1
+x 4
+y 9
+end
+arch basket2.101
 x 4
 y 9
 end
@@ -435,10 +435,6 @@ x 4
 y 13
 end
 arch floor_ostone1
-x 4
-y 14
-end
-arch wall_dark1.181
 x 4
 y 14
 end
@@ -525,10 +521,6 @@ arch floor_ostone1
 x 5
 y 11
 end
-arch pillar_dark2c
-x 5
-y 11
-end
 arch floor_ostone1
 x 5
 y 12
@@ -550,10 +542,6 @@ x 5
 y 16
 end
 arch floor_ostone1
-x 5
-y 17
-end
-arch wall_dark1b.111
 x 5
 y 17
 end
@@ -612,6 +600,10 @@ arch floor_ostone1
 x 6
 y 7
 end
+arch chair1_drop_171
+x 6
+y 7
+end
 arch floor_ostone1
 x 6
 y 8
@@ -620,7 +612,7 @@ arch floor_ostone1
 x 6
 y 9
 end
-arch pillar_dark_s
+arch chair1_drop_111
 x 6
 y 9
 end
@@ -653,10 +645,6 @@ x 6
 y 16
 end
 arch floor_ostone1
-x 6
-y 17
-end
-arch wall_dark1a.111
 x 6
 y 17
 end
@@ -747,23 +735,11 @@ arch floor_ostone1
 x 7
 y 15
 end
-arch wall_dark1a.131
-x 7
-y 15
-end
 arch floor_ostone1
 x 7
 y 16
 end
-arch wall_dark1b.131
-x 7
-y 16
-end
 arch floor_ostone1
-x 7
-y 17
-end
-arch wall_dark1.141
 x 7
 y 17
 end
@@ -819,6 +795,10 @@ x 8
 y 6
 end
 arch floor_ostone1
+x 8
+y 7
+end
+arch bench2.111
 x 8
 y 7
 end
@@ -917,7 +897,15 @@ arch floor_ostone1
 x 9
 y 7
 end
+arch bench2.111
+x 9
+y 7
+end
 arch floor_ostone1
+x 9
+y 8
+end
+arch chair_small
 x 9
 y 8
 end
@@ -1009,6 +997,10 @@ x 10
 y 6
 end
 arch floor_ostone1
+x 10
+y 7
+end
+arch bench2.111
 x 10
 y 7
 end
@@ -1602,10 +1594,6 @@ arch floor_ostone1
 x 16
 y 12
 end
-arch wall_dungeon1.181
-x 16
-y 12
-end
 arch floor_ostone1
 x 16
 y 13
@@ -1808,10 +1796,6 @@ arch floor_ostone1
 x 18
 y 15
 end
-arch wall_dungeon1.111
-x 18
-y 15
-end
 arch floor_ostone1
 x 18
 y 16
@@ -1903,15 +1887,7 @@ arch floor_ostone1
 x 19
 y 14
 end
-arch wall_dungeon1.131
-x 19
-y 14
-end
 arch floor_ostone1
-x 19
-y 15
-end
-arch wall_dungeon1.141
 x 19
 y 15
 end
@@ -2326,12 +2302,12 @@ end
 arch floor_ostone1
 x 23
 y 23
-end
-arch pillar_ruin1a_a1
-x 9
-y 15
 end
 arch pillar_ruin1a_a
 x 11
 y 11
+end
+arch pillar_ruin1a_a
+x 13
+y 8
 end

@@ -23,6 +23,11 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 
+/* there are some more exp calc funtions in skill_util.c - but thats part
+ * of /server/server and not of crosslib.a - so we can't move then easily 
+ * on this place - another reason to kill the crosslib.a asap.
+ */
+
 #include <stdio.h>
 #include <global.h>
 
@@ -82,63 +87,386 @@ uint32 new_levels[MAXLEVEL+2]={
 1570800000,1570800000	/* 110 */
 };
 
-float exp_att_mult[NROFATTACKS+2] = {
-0.0f,				/* AT_PHYSICAL	*/
-0.0f,				/* AT_MAGIC	*/
-0.0f,				/* AT_FIRE	*/
-0.0f,				/* AT_ELECTRICITY */
-0.0f,				/* AT_COLD	*/
-0.0f,				/* AT_WATER	*/ /*AT_CONFUSION!*/
-0.4f,				/* AT_ACID	*/
-1.5f,				/* AT_DRAIN	*/
-0.0f,				/* AT_WEAPONMAGIC */
-0.1f,				/* AT_GHOSTHIT	*/
-0.3f,				/* AT_POISON	*/
-0.2f,				/* AT_DISEASE	*/
-0.3f,				/* AT_PARALYZE	*/
-0.0f,				/* AT_TIME */
-0.0f,				/* AT_FEAR	*/
-0.0f,				/* AT_CANCELLATION */
-0.0f,				/* AT_DEPLETE */
-0.0f,				/* AT_DEATH */
-0.0f,				/* AT_CHAOS */
-0.0f				/* AT_COUNTERSPELL */
-};
-
-float exp_prot_mult[NROFATTACKS+2] = {
-0.4f,				/* AT_PHYSICAL	*/
-0.5f,				/* AT_MAGIC	*/
-0.1f,				/* AT_FIRE	*/
-0.1f,				/* AT_ELECTRICITY */
-0.1f,				/* AT_COLD	*/
-0.1f,				/* AT_WATER	*/
-0.1f,				/* AT_ACID	*/
-0.1f,				/* AT_DRAIN	*/
-0.1f,				/* AT_WEAPONMAGIC */
-0.1f,				/* AT_GHOSTHIT	*/
-0.1f,				/* AT_POISON	*/
-0.1f,				/* AT_DISEASE	*/
-0.1f,				/* AT_PARALYZE	*/
-0.1f,				/* AT_TIME */
-0.1f,				/* AT_FEAR	*/
-0.0f,				/* AT_CANCELLATION */
-0.0f,				/* AT_DEPLETE */
-0.0f,				/* AT_DEATH */
-0.0f,				/* AT_CHAOS */
-0.0f				/* AT_COUNTERSPELL */
-
-};
+_level_color level_color[MAXLEVEL+1];
 
 /*
- * Returns true if the monster specified has any innate abilities.
+   Since this is nowhere defined ...
+   Both come in handy at least in function add_exp()
+*/
+#define MAX_EXPERIENCE  new_levels[MAXLEVEL]
+
+#define MAX_EXP_IN_OBJ new_levels[MAXLEVEL]/(MAX_EXP_CAT - 1) 
+
+/*
+ * Returns how much experience is needed for a player to become
+ * the given level.
  */
 
-int has_ability(object *ob) {
-  object *tmp;
+uint32 level_exp(int level,double expmul) {
+    static long int bleep=1650000; 
 
-  for(tmp=ob->inv;tmp!=NULL;tmp=tmp->below)
-    if(tmp->type==ABILITY||tmp->type==SPELLBOOK) 
-      return TRUE;
+    if(level<=100)
+	    return (uint32)(expmul * (double)new_levels[level]);
 
-  return FALSE;
+    /*  return required_exp; */
+	return (uint32)(expmul*(double)(new_levels[100]+bleep*(level-100)));
+}
+
+/* add_exp() new algorithm. Revamped experience gain/loss routine. 
+ * Based on the old add_exp() function - but tailored to add experience 
+ * to experience objects. The way this works-- the code checks the 
+ * current skill readied by the player (chosen_skill) and uses that to
+ * identify the appropriate experience object. Then the experience in
+ * the object, and the player's overall score are updated. In the case
+ * of exp loss, all exp categories which have experience are equally
+ * reduced. The total experience score of the player == sum of all 
+ * exp object experience.  - b.t. thomas@astro.psu.edu 
+ */
+/* The old way to determinate the right skill which is used for exp gain
+ * was broken. Best way to show this is, to cast some fire balls in a mob
+ * and then changing the hand weapon some times. You will get some "no
+ * ready skill warnings". 
+ * I reworked the whole system and the both main exp gain and add functions
+ * add_exp() and adjust_exp(). Its now much faster, easier and more accurate. MT
+ * exp lose by dead is handled from apply_death_exp_penalty().
+ */
+sint32 add_exp(object *op, int exp, int skill_nr) {
+    object *exp_ob=NULL;    /* the exp. object into which experience will go */ 
+    object *exp_skill=NULL; /* the real skill object */ 
+    int del_exp=0;
+    int limit=0;
+    
+    /*LOG(llevBug,"ADD: add_exp() called for $d!\n", exp); */
+    /* safety */
+    if(!op) 
+    { 
+    	LOG(llevBug,"BUG: add_exp() called for null object!\n"); 
+	    return 0; 
+    }
+            
+    if(op->type != PLAYER) 
+        return 0; /* no exp gain for mobs */
+
+            
+    /* ok, we have global exp gain or drain - we must grap a skill for it! */
+    if(skill_nr == CHOSEN_SKILL_NO)
+    {
+        /* TODO: select skill */
+        LOG(llevDebug,"TODO: add_exp(): called for %s with exp %d. CHOSEN_SKILL_NO set. TODO: select skill.\n",query_name(op),exp);
+        return 0;
+    }
+            
+    /* now we grap the skill exp. object from the player shortcut ptr array */
+    exp_skill = op->contr->skill_ptr[skill_nr];
+                    
+    if(!exp_skill) /* safety check */
+    {
+        /* our player don't have this skill?
+         * This can happens when group exp is devided.
+         * We must get a useful sub or we skip the exp.
+         */
+         LOG(llevDebug,"TODO: add_exp(): called for %s with skill nr %d / %d exp - object has not this skill.\n",query_name(op),skill_nr, exp);
+         return 0; /* TODO: groups comes later  - now we skip all times */
+    }
+
+    /* if we are full in this skill, then nothing is to do */
+    if(exp_skill->level >= MAXLEVEL)
+        return 0;    
+            
+    op->contr->update_skills=1; /* we will sure change skill exp, mark for update */
+    exp_ob = exp_skill->exp_obj;            
+
+    if(!exp_ob)
+    {
+	LOG(llevBug,"BUG: add_exp() skill:%s - no exp_op found!!\n",query_name(exp_skill));
+	return 0;
+    }
+    
+    /* General adjustments for playbalance */ 
+    /* I set limit to 1/4 of a level - thats enormous much */
+    limit=(new_levels[exp_skill->level+1]-new_levels[exp_skill->level])/4;
+    if (exp > limit) 
+        exp=limit;
+                
+    exp = adjust_exp(op, exp_skill,exp);   /* first we see what we can add to our skill */ 
+            
+    /* adjust_exp has adjust the skill and all exp_obj and player exp */
+    /* now lets check for level up in all categories */
+    player_lvl_adj(op,exp_skill);   
+    player_lvl_adj(op,exp_ob);   
+    player_lvl_adj(op,NULL);   
+ 
+	/* reset the player exp_obj to NULL */
+    /* I let this in but because we use single skill exp and skill nr now,
+     * this broken exp_obj concept can be removed
+     */
+	if(op->exp_obj)
+        op->exp_obj = NULL;
+
+    return (sint32) exp; /* thats the real exp we have added to our skill */
+}
+
+
+/* player_lvl_adj() - for the new exp system. we are concerned with
+ * whether the player gets more hp, sp and new levels.
+ * -b.t.
+ */
+void player_lvl_adj(object *who, object *op) {
+   
+	char buf[MAX_BUF];
+
+    if(!op)        /* when rolling stats */ 
+	op = who;
+
+	if(op->type == SKILL && !op->last_eat) /* no exp gain for indirect skills */
+	{
+		LOG(llevBug,"BUG: player_lvl_adj() called for indirect skill %s (who: %s)\n", 
+												op->name, who==NULL?"<null>":who->name);
+		return;
+	}
+
+    /*LOG(llevDebug,"LEVEL: %s ob:%s l: %d e: %d\n", who==NULL?"<null>":who->name, op->name,op->level, op->stats.exp);*/
+    if(op->level < MAXLEVEL && op->stats.exp >= (sint32)level_exp(op->level+1,1.0)) 
+	{
+		op->level++;
+
+		if (op == who && op->stats.exp > 1 && is_dragon_pl(who))
+			dragon_level_gain(who);
+	
+		
+		if(who && who->type == PLAYER && op->type!=EXPERIENCE && op->type!=SKILL && who->level >1)
+		{ 
+
+			if(who->level > 2)
+				who->contr->levhp[who->level]=(char)((RANDOM()%who->arch->clone.stats.maxhp)+1);
+			else
+				who->contr->levhp[who->level]=(char)who->arch->clone.stats.maxhp;
+		}
+		if(op->level>1 && op->type==EXPERIENCE) 
+		{
+			if(who && who->type == PLAYER)
+			{
+				if(op->stats.Pow) /* mana */
+				{
+					if(op->level > 2)
+						who->contr->levsp[op->level]=(char)((RANDOM()%who->arch->clone.stats.maxsp)+1);
+					else
+						who->contr->levsp[op->level]=(char)who->arch->clone.stats.maxsp;
+				}
+				else if(op->stats.Wis) /* grace */
+				{
+					if(op->level > 2)
+						who->contr->levgrace[op->level]=(char)((RANDOM()%who->arch->clone.stats.maxgrace)+1);
+					else
+						who->contr->levgrace[op->level]=(char)who->arch->clone.stats.maxgrace;
+				}
+			}
+			sprintf(buf,"You are now level %d in %s based skills.",op->level,op->name);
+			if(who) 
+				(*draw_info_func)(NDI_UNIQUE|NDI_RED, 0, who,buf);
+		}
+		else if(op->level>1 && op->type==SKILL) 
+		{
+			sprintf(buf,"You are now level %d in the skill %s.",op->level,op->name);
+			if(who) 
+				(*draw_info_func)(NDI_UNIQUE|NDI_RED, 0, who,buf);
+		}
+		else
+		{
+			sprintf(buf,"You are now level %d.",op->level);
+			if(who) 
+				(*draw_info_func)(NDI_UNIQUE|NDI_RED, 0, who,buf);
+		}	
+
+		if(who) 
+			fix_player(who);
+		player_lvl_adj(who,op); /* To increase more levels */
+    } 
+	else if(op->level>1&&op->stats.exp<(sint32)level_exp(op->level,1.0)) 
+	{
+		op->level--;
+
+		if(who) 
+			fix_player(who);
+
+		if(op->type==EXPERIENCE) 
+		{
+			sprintf(buf,"-You are now level %d in %s based skills.",op->level,op->name);
+			if(who) 
+				(*draw_info_func)(NDI_UNIQUE|NDI_RED, 0, who,buf);
+		}
+		else if(op->type==SKILL) 
+		{
+			sprintf(buf,"-You are now level %d in the skill %s.",op->level,op->name);
+			if(who) 
+				(*draw_info_func)(NDI_UNIQUE|NDI_RED, 0, who,buf);
+		}
+		else
+		{
+			sprintf(buf,"-You are now level %d.",op->level);
+			if(who) 
+				(*draw_info_func)(NDI_UNIQUE|NDI_RED, 0, who,buf);
+		}
+		player_lvl_adj(who,op); /* To decrease more levels */
+    }
+}
+
+/* Ensure that the permanent experience requirements in an exp object are met. */
+/* GD */
+void calc_perm_exp(object *op)
+{
+    int p_exp_min;
+
+    /* Sanity checks. */
+    if (op->type != EXPERIENCE) {
+        LOG(llevBug, "BUG: calc_minimum_perm_exp called on a non-experience object!");
+        return;
+    }
+    if (!(settings.use_permanent_experience)) {
+        LOG(llevBug, "BUG: calc_minimum_perm_exp called whilst permanent experience disabled!");
+        return;
+    }
+
+    /* The following fields are used: */
+    /* stats.exp: Current exp in experience object. */
+    /* last_heal: Permanent experience earnt. */
+    
+    /* Ensure that our permanent experience minimum is met. */
+    p_exp_min = (int)(PERM_EXP_MINIMUM_RATIO * (float)(op->stats.exp));
+    /*LOG(llevBug, "BUG: Experience minimum check: %d p-min %d p-curr %d curr.\n", p_exp_min, op->last_heal, op->stats.exp);*/
+    if (op->last_heal < p_exp_min)
+        op->last_heal = p_exp_min;
+
+    /* Cap permanent experience. */
+    if (op->last_heal < 0)
+        op->last_heal = 0;
+    else if (op->last_heal > (sint32)MAX_EXP_IN_OBJ)
+        op->last_heal = MAX_EXP_IN_OBJ;
+}
+
+/* adjust_exp() - make sure that we don't exceed max or min set on
+ * experience
+ * I use this function now as global experience add and sub routine.
+ * it should only called for the skills object from players.
+ * This function adds or subs the exp and updates all skill objects and
+ * the player global exp.
+ * You need to call player_lvl_adj() after it.
+ * This routine use brute force and goes through the whole inventory. We should
+ * use a kind of skill container for speed this up. MT 
+ */
+int adjust_exp(object *pl, object *op, int exp) {
+    object *tmp;
+    int i,sk_nr;
+    sint32 sk_exp,pl_exp;
+
+
+    /* be sure this is a skill object from a active player */
+    if(op->type != SKILL || !pl || pl->type != PLAYER) 
+    {
+        LOG(llevBug,"BUG: adjust_exp() - called for non player or non skill: skill: %s -> player: %s\n",query_name(op), query_name(pl));
+        return 0;
+    }
+
+    /* add or sub the exp and cap it. it must be >=0 and <= MAX_EXPERIENCE */
+    op->stats.exp += exp;
+    if(op->stats.exp < 0)
+    {
+        exp -= op->stats.exp;
+        op->stats.exp = 0;
+    }
+    
+    if(op->stats.exp>(sint32)MAX_EXPERIENCE) 
+    {
+        exp = exp - (op->stats.exp - MAX_EXPERIENCE);
+        op->stats.exp=MAX_EXPERIENCE;
+    }
+
+    /* now we collect the exp of all skills which are in the same exp. object category */  
+    sk_nr = skills[op->stats.sp].category;
+    sk_exp =0;
+    for(tmp=pl->inv;tmp;tmp=tmp->below)
+    {
+        if(tmp->type==SKILL && skills[tmp->stats.sp].category == sk_nr)
+        {
+            if((sk_exp += tmp->stats.exp) > (sint32)MAX_EXPERIENCE)
+                sk_exp = MAX_EXPERIENCE;
+        }
+    }
+
+    /* set the exp of the exp. object to our skill */
+    op->exp_obj->stats.exp = sk_exp;
+    
+    /* now we collect all exp. objects exp */
+    pl_exp=0;
+    for(i=0;i<MAX_EXP_CAT-1;i++)
+    {
+        if((pl_exp += pl->contr->last_skill_ob[i]->stats.exp) > (sint32)MAX_EXPERIENCE)
+            pl_exp = MAX_EXPERIENCE;
+    }
+
+    /* last action: set our player exp */
+    pl->stats.exp = pl_exp;
+    
+    return exp;	/* return the actual amount changed stats.exp we REALLY have added to our skill */ 
+}
+
+
+/* OLD: Applies a death penalty experience.  20% or 3 levels, whichever is
+   less experience lost. */
+/* NEW: We run through the skills and reduce every skill by 5%-skilllevel/10. 
+   but min 1%. This is only the first try - better will come */
+void apply_death_exp_penalty(object *op)
+{
+    object *tmp;
+    long int del_exp=0;
+    int loss_5p, loss;
+
+    op->contr->update_skills=1; /* we will sure change skill exp, mark for update */
+    for(tmp=op->inv;tmp;tmp=tmp->below)
+    {
+        if(tmp->type==SKILL && tmp->stats.exp)
+        { 
+            loss_5p = 10 -(tmp->level/10);
+            if(loss_5p >10)
+                loss_5p =10;
+            if (loss_5p <=0)
+                loss_5p = 1;
+
+            loss = (int) (((float)tmp->stats.exp/100.0f)*(float)loss_5p);
+            if(loss<=0)
+                loss = 1;
+            if (loss>500000)
+                loss=500000;
+            if(loss >=tmp->stats.exp)
+                loss = tmp->stats.exp;
+            del_exp+=adjust_exp(op, tmp,-loss);
+            
+            player_lvl_adj(op,tmp);
+        }
+    }
+
+    for(tmp=op->inv;tmp;tmp=tmp->below)
+    {
+        if(tmp->type==EXPERIENCE && tmp->stats.exp)
+            player_lvl_adj(op,tmp); /* adjust exp objects levels */
+    }
+    player_lvl_adj(op,NULL);        /* and at last adjust the player level */
+}
+
+/* find exp level difference multiplier.
+ * If the return value is 0, the level gap is to high
+ * for lot drop, exp and/or attacking.
+ * who_ is the "activ" object (attacker, activator)
+ * op_ is the target 
+ */
+int calc_level_difference(int who_lvl, int op_lvl)
+{
+	float tmp;
+
+	tmp = (float)(who_lvl - op_lvl)*2.75f;
+
+	if(tmp > (float)op_lvl*1.6f && (who_lvl - op_lvl)>2)
+		return 0;
+
+	return tmp<1.0f?1:(int)tmp;
 }

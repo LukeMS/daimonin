@@ -1271,12 +1271,15 @@ int main(int argc, char **argv)
   compile_info();       /* its not a bad idea to show at start whats up */    
   memset(&marker, 0, sizeof(struct obj)); /* used from proccess_events() */
 
+
+
   for(;;) 
   {
 	nroferrors = 0;				/* every llevBug will increase this - avoid LOG loops */
     doeric_server();		
     global_round_tag++;			/* global round ticker ! this is real a global */
     process_events(NULL);		/* "do" something with objects with speed */
+	doeric_server_write();
     cftimer_process_timers();	/* Process the crossfire Timers */    
 
 #ifdef PLUGINS_X

@@ -912,6 +912,21 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define PREFER_HIGH	1
 #define PREFER_LOW	0
 
+/* socket defines */
+#define SockList_AddChar(_sl_,_c_)		(_sl_)->buf[(_sl_)->len++]=(_c_)
+#define SockList_AddShort(_sl_, _data_) (_sl_)->buf[(_sl_)->len++]= ((_data_)>>8)&0xff; \
+										(_sl_)->buf[(_sl_)->len++] = (_data_) & 0xff
+#define SockList_AddInt(_sl_, _data_)	(_sl_)->buf[(_sl_)->len++]=((_data_)>>24)&0xff; \
+										(_sl_)->buf[(_sl_)->len++]= ((_data_)>>16)&0xff; \
+										(_sl_)->buf[(_sl_)->len++]= ((_data_)>>8)&0xff; \
+										(_sl_)->buf[(_sl_)->len++] = (_data_) & 0xff
+
+/* Basically does the reverse of SockList_AddInt, but on
+ * strings instead.  Same for the GetShort, but for 16 bits.
+ */
+#define GetInt_String(_data_) (((_data_)[0]<<24) + ((_data_)[1]<<16) + ((_data_)[2]<<8) + (_data_)[3])
+#define GetShort_String(_data_) (((_data_)[0]<<8)+(_data_)[1])
+
 /* Simple function we use below to keep adding to the same string
  * but also make sure we don't overwrite that string.
  */
@@ -921,7 +936,7 @@ static inline void safe_strcat(char *dest, char *orig, int *curlen, int maxlen)
     strncpy(dest+*curlen, orig, maxlen-*curlen-1);
     dest[maxlen-1]=0;
     *curlen += strlen(orig);
-    if (*curlen>(maxlen-1)) *curlen=maxlen=1;
+    if (*curlen>(maxlen-1)) *curlen=maxlen-1;
 }
 
  
@@ -967,7 +982,7 @@ enum apply_flag {
 
   /* Optional flags, for bitwise or with a basic flag */
         AP_NO_MERGE		= 16,
-	AP_IGNORE_CURSE		= 32,
+	AP_IGNORE_CURSE		= 32
 };
 
 /* Cut off point of when an object is put on the active list or not */
