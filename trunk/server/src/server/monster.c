@@ -1026,28 +1026,38 @@ int move_monster(object *op) {
 		        dir=absdir(dir+4);
 	        if(QUERY_FLAG(op,FLAG_CONFUSED))
 		        dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
+		
+			if(op->last_grace)
+				op->last_grace--;
 
 			if(op->stats.Dex && !(RANDOM()%op->stats.Dex))
 			{
-				if(QUERY_FLAG(op,FLAG_CAST_SPELL))
+				if(QUERY_FLAG(op,FLAG_CAST_SPELL) && !op->last_grace)
 				{
 					if(monster_cast_spell(op,part,enemy,dir,&rv1))
+					{
+						op->last_grace += op->magic; /* add also monster casting delay */
 						return 0;
+					}
 				}
-				if(QUERY_FLAG(op,FLAG_READY_RANGE)&&!(RANDOM()%3))
+				if(QUERY_FLAG(op,FLAG_READY_RANGE))
 				{
-				    if(monster_use_wand(op,part,enemy,dir))
-				        return 0;
-				}
-				if(QUERY_FLAG(op,FLAG_READY_RANGE)&&!(RANDOM()%4))
-				{
-					if(monster_use_rod(op,part,enemy,dir))
-				        return 0;
-				}
-				if(QUERY_FLAG(op,FLAG_READY_RANGE)&&!(RANDOM()%5))
-				{
-				    if(monster_use_horn(op,part,enemy,dir))
-				        return 0;
+					
+					if(!(RANDOM()%3))
+					{
+						if(monster_use_wand(op,part,enemy,dir))
+							return 0;
+					}
+					if(!(RANDOM()%4))
+					{
+						if(monster_use_rod(op,part,enemy,dir))
+							return 0;
+					}
+					if(!(RANDOM()%5))
+					{
+						if(monster_use_horn(op,part,enemy,dir))
+							return 0;
+					}
 				}
 				if(QUERY_FLAG(op,FLAG_READY_SKILL)&&!(RANDOM()%3))
 				{	/*
@@ -1255,12 +1265,33 @@ object *find_nearest_living_creature(object *npc) {
 
 
 int move_randomly(object *op) {
-    int i;
+    int i,r,xt,yt;
+	object *base = find_base_info_object(op);
 
-    /* Give up to 15 chances for a monster to move randomly */
-    for(i=0;i<15;i++) {
-	if(move_object(op,RANDOM()%8+1))
-	    return 1;
+    /* Give up to 8 chances for a monster to move randomly */
+    for(i=0;i<8;i++) 
+	{
+		r = RANDOM()%8+1;
+
+		if(op->item_race!=255) /* check x direction of possible move */
+		{
+			if(!op->item_race && freearr_x[r])
+				continue;
+			xt=op->x+freearr_x[r];
+			if(abs(xt-base->x) >op->item_race)
+				continue;
+		}
+		if(op->item_level!=255) /* check x direction of possible move */
+		{
+			if(!op->item_level && freearr_y[r])
+				continue;
+			yt=op->y+freearr_y[r];
+			if(abs(yt-base->y) >op->item_level)
+				continue;
+		}
+
+		if(move_object(op,r))
+			return 1;
     }
     return 0;
 }
@@ -1387,6 +1418,9 @@ int monster_cast_spell(object *head, object *part,object *pl,int dir, rv_vector 
     head->speed_left+=(float)1.0 - (float) spells[sp_typ].time/(float)20.0*(float)FABS(head->speed); 
 
     head->stats.sp-=SP_level_spellpoint_cost(head,head,sp_typ);
+
+	/* add default cast time from spell force to monster */
+	head->last_grace += spell_item->last_grace;
     
 	/*LOG(-1,"CAST2: dir:%d (%d)- target:%s\n", dir, rv->direction, query_name(head->enemy) );*/
     return cast_spell(part,part,dir,sp_typ,ability, spellNormal,NULL);

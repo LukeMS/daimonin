@@ -5,6 +5,8 @@ type 80
 layer 6
 will_apply 8
 direction 5
+item_race 255
+item_level 255
 is_male 1
 is_good 1
 terrain_flag 1

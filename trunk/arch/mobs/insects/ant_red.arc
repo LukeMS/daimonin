@@ -7,6 +7,8 @@ corpse 1
 layer 6
 direction 5
 is_neutral 1
+item_race 255
+item_level 255
 terrain_flag 1
 weapon_speed 0.035
 attack_cleave 75

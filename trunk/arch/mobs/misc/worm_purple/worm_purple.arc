@@ -5,6 +5,8 @@ layer 6
 randomitems mob_worm_purple
 face worm_purple.131
 direction 5
+item_race 255
+item_level 255
 speed -0.06
 corpse 1
 type 80

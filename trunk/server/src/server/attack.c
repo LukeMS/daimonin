@@ -586,7 +586,7 @@ int hit_player(object *op,int dam, object *hitter, int type)
  * "hit on this map tile". If they find some - we are here.
  */
 int hit_map(object *op,int dir,int type) {
-  object *tmp, *next;
+  object *tmp, *next, *tmp_obj, *tmp_head;
   mapstruct *map;
   int x, y;
   int mflags, retflag=0;  /* added this flag..  will return 1 if it hits a monster */
@@ -635,6 +635,12 @@ int hit_map(object *op,int dir,int type) {
   next = get_map_ob (map, x, y);
   if (next)
     next_tag = next->count;
+
+  if(!(tmp_obj = get_owner(op)))
+	tmp_obj = op;
+  if(tmp_obj->head)
+	  tmp_obj = tmp_obj->head;
+  
   while (next)
   {
     if (was_destroyed (next, next_tag)) {
@@ -674,9 +680,28 @@ int hit_map(object *op,int dir,int type) {
 		if (was_destroyed (op, op_tag))
 			break;
     }
-    else if (IS_LIVE(tmp) )
+    else if (IS_LIVE(tmp))
 	{
-	/*LOG(-1,"HM: %s hit %s with dam %d\n",op->name,tmp->name,op->stats.dam);*/
+		tmp_head = tmp->head?tmp->head:tmp;
+		if(tmp_head->type == MONSTER)
+		{
+			if(tmp_obj->type == MONSTER) /* monster vs. monster */
+			{
+				/* lets decide that monster of same kind don't hurt itself */
+				if(QUERY_FLAG(tmp_head,FLAG_FRIENDLY))
+				{
+					if(QUERY_FLAG(tmp_obj,FLAG_FRIENDLY))
+						continue;
+				}
+				else
+				{
+					if(!QUERY_FLAG(tmp_obj,FLAG_FRIENDLY))
+						continue;
+				}
+			}
+			
+		}
+	/*LOG(-1,"HM: %s hit %s (%d)with dam %d\n",op->name,tmp->name,tmp->type,op->stats.dam);*/
 	hit_player(tmp,op->stats.dam,op,type);
       retflag |=1;
       if (was_destroyed (op, op_tag))

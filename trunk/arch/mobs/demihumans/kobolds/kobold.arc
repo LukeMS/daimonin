@@ -6,6 +6,8 @@ is_male 1
 corpse 1
 layer 6
 direction 5
+item_race 255
+item_level 255
 is_neutral 1
 terrain_flag 1
 weapon_speed 0.035

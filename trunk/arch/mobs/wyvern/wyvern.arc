@@ -7,10 +7,13 @@ face wyvern.141
 direction 5
 speed -0.06
 corpse 1
+item_race 255
+item_level 255
 type 80
 is_male 1
 is_neutral 1
 Wis 7
+Dex 13
 terrain_flag 1
 mpart_id 3
 anim

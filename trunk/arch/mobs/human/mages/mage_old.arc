@@ -4,6 +4,8 @@ race human
 type 80
 layer 6
 will_apply 8
+item_race 255
+item_level 255
 direction 5
 is_male 1
 is_good 1

@@ -6,6 +6,8 @@ direction 5
 is_neutral 1
 corpse 1
 will_apply 8
+item_race 255
+item_level 255
 terrain_flag 1
 weapon_speed 0.039
 face golem.131

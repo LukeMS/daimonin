@@ -7,6 +7,8 @@ is_evil 1
 is_male 1
 weight 13250
 exp 165
+item_race 255
+item_level 255
 speed -0.035
 weapon_speed 0.042
 attack_impact 90

@@ -5,6 +5,8 @@ face ant_soldier.131
 layer 6
 race insect
 corpse 1
+item_race 255
+item_level 255
 weapon_speed 0.035
 attack_cleave 80
 is_male 1

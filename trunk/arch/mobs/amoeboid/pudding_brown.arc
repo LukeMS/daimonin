@@ -1,5 +1,5 @@
 Object pudding_brown
-name black pudding
+name brown pudding
 race slime
 randomitems mob_slime
 is_neutral 1
@@ -8,6 +8,8 @@ exp 140
 speed -0.026
 weapon_speed 0.040
 attack_fire 80
+item_race 255
+item_level 255
 ac 10
 wc 3
 dam 5
