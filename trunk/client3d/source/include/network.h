@@ -56,7 +56,7 @@ struct SockList
 class Network
 {
   public:
-    static Network &getSingelton();
+    static Network &getSingleton();
 
     Network();
     // =====================================================================

@@ -5,6 +5,8 @@ To install and compile the Daimonin3D client you need the ogre libs & dlls.
 You will find all what you need in the same folder as this README.txt.
 To run/compile the Daimonin3D client under windows you need to do 
 
+0.) Read the client3d/README.install. 
+
 1.) entpack ogre_inc.zip to this folder (So you see /DevCpp, /VisualC and /ogre_inc as folder)
 2.) entpack ogre_lib.zip to this folder (So you see /ogre_lib next to /ogre_inc, /VisualC and /DevCpp)
 3.) do THE SAME for fmod_inc.zip and fmod_lib.zip

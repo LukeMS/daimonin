@@ -36,7 +36,7 @@ class Sound
   public:
      Sound() {;}
     ~Sound();
-    static Sound &getSingelton()  { static Sound singelton; return singelton; }
+    static Sound &getSingleton()  { static Sound Singleton; return Singleton; }
     bool Init();
 	void PlaySample(unsigned int index);
   private:

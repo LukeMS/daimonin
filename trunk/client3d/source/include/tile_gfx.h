@@ -74,10 +74,10 @@ class TileGfx
     ////////////////////////////////////////////////////////////
 	// Structs.
     ////////////////////////////////////////////////////////////
-    static TileGfx &getSingelton()
+    static TileGfx &getSingleton()
 	{
-       static TileGfx singelton;
-       return singelton;
+       static TileGfx Singleton;
+       return Singleton;
 	}
 	unsigned long hashbmap(char *str, int tablesize);
 	_bmaptype *bmap_table[BMAPTABLE];

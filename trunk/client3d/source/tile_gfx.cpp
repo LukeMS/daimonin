@@ -84,7 +84,7 @@ void TileGfx::add_bmap(_bmaptype *at)
     {
         if (bmap_table[index] && !strcmp(bmap_table[index]->name, at->name))
         {
-            LogFile::getSingelton().Error("ERROR: add_bmap(): double use of bmap name %s\n", at->name);
+            LogFile::getSingleton().Error("ERROR: add_bmap(): double use of bmap name %s\n", at->name);
         }
         if (bmap_table[index] == NULL)
         {
@@ -94,7 +94,7 @@ void TileGfx::add_bmap(_bmaptype *at)
         if (++index == BMAPTABLE)
             index = 0;
         if (index == org_index)
-            LogFile::getSingelton().Error("ERROR: add_bmap(): bmaptable to small\n");
+            LogFile::getSingleton().Error("ERROR: add_bmap(): bmaptable to small\n");
     }
 }
 
@@ -116,7 +116,7 @@ int TileGfx::load_bmaps_p0(void)
     // try to open bmaps_p0 file
     if ((fbmap = fopen(FILE_BMAPS_P0, "rb")) == NULL)
     {
-        LogFile::getSingelton().Error("FATAL: Error loading bmaps.p0!");
+        LogFile::getSingleton().Error("FATAL: Error loading bmaps.p0!");
         unlink(FILE_BMAPS_P0);
 		return -1;
     }
@@ -132,7 +132,7 @@ int TileGfx::load_bmaps_p0(void)
         at->len = len;
         at->pos = pos;
         add_bmap(at);
-        // LogFile::getSingelton().Info("%d %d %d %x >%s<\n", num, pos, len, crc, name);
+        // LogFile::getSingleton().Info("%d %d %d %x >%s<\n", num, pos, len, crc, name);
     }
     fclose(fbmap);
 	return 0;
@@ -152,7 +152,7 @@ int TileGfx::read_bmaps_p0(void)
 
     if ((fpic = fopen(FILE_DAIMONIN_P0, "rb")) == NULL)
     {
-        LogFile::getSingelton().Error("FATAL: Can't find daimonin.p0 file!");
+        LogFile::getSingleton().Error("FATAL: Can't find daimonin.p0 file!");
         unlink(FILE_BMAPS_P0);
 		return -1;
     }
@@ -176,7 +176,7 @@ int TileGfx::read_bmaps_p0(void)
     create_bmaps: // if we are here, then we have to (re)create the bmaps.p0 file
     if ((fbmap = fopen(FILE_BMAPS_P0, "w")) == NULL)
     {
-        LogFile::getSingelton().Error("FATAL: Can't create bmaps.p0 file!");
+        LogFile::getSingleton().Error("FATAL: Can't create bmaps.p0 file!");
         fclose(fbmap);
         unlink(FILE_BMAPS_P0);
 		return -1;
@@ -187,7 +187,7 @@ int TileGfx::read_bmaps_p0(void)
     {
         if (strncmp(buf, "IMAGE ", 6) != 0)
         {
-            LogFile::getSingelton().Error("read_client_images:Bad image line - not IMAGE, instead\n%s", buf);
+            LogFile::getSingleton().Error("read_client_images:Bad image line - not IMAGE, instead\n%s", buf);
             fclose(fbmap);
             fclose(fpic);
             unlink(FILE_BMAPS_P0);
@@ -207,7 +207,7 @@ int TileGfx::read_bmaps_p0(void)
             // we assume that this is nonsense
             if (len > 128 * 1024)
             {
-                LogFile::getSingelton().Error("read_client_images:Size of picture out of bounds!(len:%d)(pos:%d)", len, pos);
+                LogFile::getSingleton().Error("read_client_images:Size of picture out of bounds!(len:%d)(pos:%d)", len, pos);
                 fclose(fbmap);
                 fclose(fpic);
                 unlink(FILE_BMAPS_P0);
@@ -223,7 +223,7 @@ int TileGfx::read_bmaps_p0(void)
         // now we got all we needed!
         sprintf(temp_buf, "%d %d %x %s", num, pos, crc, buf);
         fputs(temp_buf, fbmap);
-        //LogFile::getSingelton().Info("FOUND: %s", temp_buf);
+        //LogFile::getSingleton().Info("FOUND: %s", temp_buf);
     }
     delete[] temp_buf;
     fclose(fbmap);
@@ -260,7 +260,7 @@ int TileGfx::load_bmap_tmp(void)
     delete_bmap_tmp();
     if ((stream = fopen(FILE_BMAPS_TMP, "rt")) == NULL)
     {
-        LogFile::getSingelton().Error("bmaptype_table(): error open file <bmap.tmp>");
+        LogFile::getSingleton().Error("bmaptype_table(): error open file <bmap.tmp>");
 //        SYSTEM_End();
 //        exit(0);
 		return -1;
@@ -375,7 +375,7 @@ int TileGfx::load_picture_from_pack(int num)
 	// Wrap as a stream
 	DataStreamPtr stream(new FileStreamDataStream(FILE_DAIMONIN_P0, &fp, false));
 	stream->seek(bmaptype_table[num].pos);
-//	LogFile::getSingelton().Info("pos: %d\n", bmaptype_table[0].pos);
+//	LogFile::getSingleton().Info("pos: %d\n", bmaptype_table[0].pos);
 //	stream->seek(24);
 	FaceList[num].sprite.load(stream,"png");
     return 0;

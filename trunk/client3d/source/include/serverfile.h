@@ -62,7 +62,7 @@ class ServerFile
 	}
 
     ~ServerFile() { }
-    static ServerFile &getSingelton();
+    static ServerFile &getSingleton();
     bool Init();
 	void checkFiles();
     

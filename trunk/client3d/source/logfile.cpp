@@ -91,10 +91,10 @@ LogFile::~LogFile()
 //=================================================================================================
 // Return the instance.
 //=================================================================================================
-LogFile &LogFile::getSingelton()
+LogFile &LogFile::getSingleton()
 {
-   static LogFile singelton;
-   return singelton;
+   static LogFile Singleton;
+   return Singleton;
 }
 
 //=================================================================================================

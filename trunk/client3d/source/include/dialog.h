@@ -52,7 +52,7 @@ class Dialog
 public:
 	Dialog(){;}
 	~Dialog(){;}
-	static Dialog &getSingelton() { static Dialog singelton; return singelton; }
+	static Dialog &getSingleton() { static Dialog Singleton; return Singleton; }
 
 	bool Init();
 	void visible(bool vis);

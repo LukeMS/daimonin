@@ -16,15 +16,15 @@
 # <polyveg>
 ##################################################################################
 
-MeshName : "ninja.mesh"
+MeshName : "scorpion.mesh"
 
 # Size of the model
 MeshSize : "0.3"
 
 # The pos of the model in the world.
-StartX   : "0"
-StartY   : "15"
-StartZ   : "0"
+StartX   : "30"
+StartY   : "40"
+StartZ   : "80"
 
 # The facing direction in degrees.
 Facing   : "90"
@@ -34,12 +34,12 @@ Facing   : "90"
 FOffset  : "90"
 
 # The animation groups (xyz1 - xyz3) are toggled by F1.
-Idle1    : "Idle1"
+Idle1    : "walk"
 Idle2    : ""
 Idle3    : ""
 
 # Triggered by cursor keys.
-Walk1    : "Walk"
+Walk1    : "walk"
 Walk2    : ""
 Walk3    : ""
 
@@ -50,23 +50,23 @@ Run2     : ""
 Run3     : ""
 
 # Triggered by 'a'key. 
-Attack1  : "Attack1"
-Attack2  : "Attack2"
-Attack3  : "Attack3"
+Attack1  : ""
+Attack2  : ""
+Attack3  : ""
 
 # Triggered by 'b'key.
-Block1   : "Block"
+Block1   : ""
 Block2   : ""
 Block3   : ""
 
 # Triggered by 's' key.
-Slump1   : "Climb"
-Slump2   : "Crouch"
-Slump3   : "HighJump"
+Slump1   : ""
+Slump2   : ""
+Slump3   : ""
 
 # Triggered by 'd' key.
-Death1   : "Death1"
-Death2   : "Death2"
+Death1   : ""
+Death2   : ""
 Death3   : ""
 
 # Triggered by 'h' key.

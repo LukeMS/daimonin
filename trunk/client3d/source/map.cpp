@@ -23,7 +23,10 @@ http://www.gnu.org/copyleft/lesser.txt.
 
 #include "map.h"
 #include "define.h"
+#include "string.h"
 #include "logfile.h"
+
+
 //extern _Sprite         *test_sprite;
 
 //static struct Map       the_map;
@@ -90,7 +93,7 @@ void Map::load_mapdef_dat(void)
 
     if (!(stream = fopen(FILE_ARCHDEF, "r")))
     {
-        LogFile::getSingelton().Error("ERROR: Can't find file %s\n", FILE_ARCHDEF);
+        LogFile::getSingleton().Error("ERROR: Can't find file %s\n", FILE_ARCHDEF);
         return;
     }
     for (i = 0; i < 16; i++)
@@ -306,7 +309,7 @@ void Map::display_map_clearcell(long x, long y)
 //=================================================================================================
 //
 //=================================================================================================
-void Map::set_map_darkness(int x, int y, uint8 darkness)
+void Map::set_map_darkness(int x, int y, unsigned char darkness)
 {
     register MapCell *map;
     int xreal, yreal;
@@ -374,7 +377,7 @@ void Map::map_draw_map(void)
 
                     if (xreal < 0 || yreal < 0 || xreal >= MapData.xlen * 3 || yreal >= MapData.ylen * 3)
                         continue;
-                    //LogFile::getSingelton().Info("MAPCACHE: x:%d y:%d l:%d\n", xreal,yreal,(yreal*MapData.xlen*3)+xreal);
+                    //LogFile::getSingleton().Info("MAPCACHE: x:%d y:%d l:%d\n", xreal,yreal,(yreal*MapData.xlen*3)+xreal);
                     map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
                     if ((index_tmp = map->faces[k]) > 0)
                     {

@@ -24,11 +24,8 @@ http://www.gnu.org/copyleft/lesser.txt.
 #ifndef MAP_H
 #define MAP_H
 
-#include <Ogre.h>
-#include <string>
-#include "define.h"
 
-using namespace Ogre;
+#include "define.h"
 
 ////////////////////////////////////////////////////////////
 // Defines.
@@ -99,10 +96,10 @@ class Map
     ////////////////////////////////////////////////////////////
 	// Structs.
     ////////////////////////////////////////////////////////////
-    static Map &getSingelton()
+    static Map &getSingleton()
 	{
-       static Map singelton;
-       return singelton;
+       static Map Singleton;
+       return Singleton;
 	}
 	_mapdata         MapData;
 	_multi_part_obj  MultiArchs[16];
@@ -127,7 +124,7 @@ class Map
     bool Init() {return true;}
 	void clear_map(void);
 	void display_map_clearcell(long x, long y);
-	void set_map_darkness(int x, int y, uint8 darkness);
+	void set_map_darkness(int x, int y, unsigned char darkness);
 	void set_map_face(int x, int y, int layer, int face, int pos, int ext, char *name);
 	void map_draw_map(void);
 	void display_mapscroll(int dx, int dy);

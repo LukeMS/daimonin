@@ -41,11 +41,11 @@ void ServerFile::getFileAttibutes(int file_enum)
 	setLength(file_enum, SERVER_FILE_STATUS_OK);
 	setCRC   (file_enum, SERVER_FILE_STATUS_OK);
 
-    LogFile::getSingelton().Info("- Reading Attributes from %s...", srv_file[file_enum].filename);
+    LogFile::getSingleton().Info("- Reading Attributes from %s...", srv_file[file_enum].filename);
     ifstream in(srv_file[file_enum].filename, ios::in|ios::binary);
     if (!in)
 	{ 
-        LogFile::getSingelton().Info("File not found.\n");
+        LogFile::getSingleton().Info("File not found.\n");
 		return;
 	} 
 	ostringstream out(ios::binary);
@@ -53,7 +53,7 @@ void ServerFile::getFileAttibutes(int file_enum)
     copy(istream_iterator<char>(in), istream_iterator<char>(), ostream_iterator<char>(out));
     setCRC   (file_enum, crc32(1L, (const unsigned char *)out.str().c_str(),  out.str().size()));
     setLength(file_enum, out.str().size());
-    LogFile::getSingelton().Info("(Size: %d)l\n", out.str().size(), srv_file[file_enum].length);    
+    LogFile::getSingleton().Info("(Size: %d)l\n", out.str().size(), srv_file[file_enum].length);    
 }
 
 //=================================================================================================
@@ -61,19 +61,19 @@ void ServerFile::getFileAttibutes(int file_enum)
 //=================================================================================================
 void ServerFile::checkFiles()
 {
-    LogFile::getSingelton().Info("Checking all files coming from server:\n");
+    LogFile::getSingleton().Info("Checking all files coming from server:\n");
     for (int i=0; i< SERVER_FILE_SUM; i++)
 	{ 
 		getFileAttibutes(i);
 	}
-    LogFile::getSingelton().Info("\n");
+    LogFile::getSingleton().Info("\n");
 }
 
 //=================================================================================================
 // Return the instance.
 //=================================================================================================
-ServerFile &ServerFile::getSingelton()
+ServerFile &ServerFile::getSingleton()
 {
-   static ServerFile singelton;
-   return singelton;
+   static ServerFile Singleton;
+   return Singleton;
 }
