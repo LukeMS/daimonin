@@ -25,6 +25,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "logfile.h"
 #include "sound.h"
 
+
 //=================================================================================================
 // Init all static Elemnts.
 //=================================================================================================
@@ -41,13 +42,14 @@ CTextwindow::CTextwindow(std::string title, Real Xpos, Real height, bool visible
 	std::string name= StringConverter::toString(mInstanceNr)+"_TextWindow/";    
     mOverlay        = OverlayManager::getSingleton().create(name + "Overlay");
     mOverlay->setZOrder(510-mInstanceNr);
+
 	mContainerFrame = static_cast<OverlayContainer*>(OverlayManager::getSingleton().
 		cloneOverlayElementFromTemplate("TextWindow/Frame", name + "Frame"));
 	mOverlay->add2D(mContainerFrame);
     for (int i=0; i < MAX_TEXT_LINES; ++i)
 	{
-         mElementLine[i]= OverlayManager::getSingleton().
-			cloneOverlayElementFromTemplate("TextWindow/TextRow",name+"Line_"+ StringConverter::toString(i));
+         mElementLine[i]= static_cast<TextAreaOverlayElement*>
+    (OverlayManager::getSingleton().cloneOverlayElementFromTemplate("TextWindow/TextRow",name+"Line_"+ StringConverter::toString(i)));
 		 mElementLine[i]->setCaption("");
          mContainerFrame->addChild(mElementLine[i]);
 	}
@@ -64,18 +66,18 @@ CTextwindow::CTextwindow(std::string title, Real Xpos, Real height, bool visible
     mElementTitle ->setWidth(-Xpos-mElementButUp->getWidth()*2);   
     mElementButUp  ->setLeft(-Xpos-mElementButUp->getWidth()*2);
     mElementButDown->setLeft(-Xpos-mElementButUp->getWidth());
-    mElementTitleTxt0= OverlayManager::getSingleton().
-        cloneOverlayElementFromTemplate("TextWindow/TitleText", name+"Title0");
-    mElementTitleTxt0->setCaption(title);
-    mElementTitleTxt0->setTop(3);
-    mElementTitleTxt0->setLeft(5);
-    mElementTitleTxt0->setColour(ColourValue::Black);
-    static_cast<OverlayContainer*>(mElementTitle)->addChild(mElementTitleTxt0);
-
-    mElementTitleTxt1= OverlayManager::getSingleton().
-        cloneOverlayElementFromTemplate("TextWindow/TitleText", name+"Title1");
-    mElementTitleTxt1->setCaption(title);
-    static_cast<OverlayContainer*>(mElementTitle)->addChild(mElementTitleTxt1);
+	// WindowTitle.
+	mElementTitleTxt0= OverlayManager::getSingleton().
+		cloneOverlayElementFromTemplate("TextWindow/TitleText", name+"Title0");
+	mElementTitleTxt0->setCaption(title);
+	mElementTitleTxt0->setTop(3);
+	mElementTitleTxt0->setLeft(5);
+    mElementTitleTxt0->setColour(ColourValue(.4,.4,.4));
+	static_cast<OverlayContainer*>(mElementTitle)->addChild(mElementTitleTxt0);
+	 mElementTitleTxt1= OverlayManager::getSingleton().
+		cloneOverlayElementFromTemplate("TextWindow/TitleText", name+"Title1");
+	mElementTitleTxt1->setCaption(title);
+	static_cast<OverlayContainer*>(mElementTitle)->addChild(mElementTitleTxt1);
  	++mInstanceNr;
 
     ///////////////////////////////////////////////////////////////////////// 
@@ -98,8 +100,9 @@ CTextwindow::CTextwindow(std::string title, Real Xpos, Real height, bool visible
 	mBufferPos		= 0;
 	mPrintPos		= 0;
 	mRowsToScroll	= 0;
-	mScroll				= 0;
+	mScroll			= 0.0f;
 	setVisible(visible);
+
 }
 
 //=================================================================================================
@@ -292,11 +295,11 @@ void CTextwindow::DockChild()
 void CTextwindow::Print(const char *text, ColourValue color)
 {
     row[mBufferPos & (SIZE_STRING_BUFFER-1)].str   = text;
-    row[mBufferPos & (SIZE_STRING_BUFFER-1)].color = color;
+    row[mBufferPos & (SIZE_STRING_BUFFER-1)].colorTop = color;
+    row[mBufferPos & (SIZE_STRING_BUFFER-1)].colorBottom = color-ColourValue(.05,.05,.05);
     ++mBufferPos;
     ++mRowsToScroll;
 }
-
 
 //=================================================================================================
 // Scroll the text.
@@ -307,10 +310,11 @@ void CTextwindow::Scrolling()
     if (!mScroll)
     {
         mElementLine[0]->setCaption(row[(mPrintPos)& (SIZE_STRING_BUFFER-1)].str);
-        mElementLine[0]->setColour (row[(mPrintPos)& (SIZE_STRING_BUFFER-1)].color);
+        mElementLine[0]->setColourTop(row[(mPrintPos)& (SIZE_STRING_BUFFER-1)].colorTop);
+        mElementLine[0]->setColourBottom(row[(mPrintPos)& (SIZE_STRING_BUFFER-1)].colorBottom);
     }
     for (int i = 0; i < MAX_TEXT_LINES; ++i)
-    { 
+    {
         mElementLine[i]->setTop(mFirstYPos - FONT_SIZE*i - mScroll);
     }
     mScroll += SCROLL_SPEED;
@@ -318,16 +322,17 @@ void CTextwindow::Scrolling()
 	if (mScroll >= FONT_SIZE)
 	{ 	
         --mRowsToScroll;
-	    ++mPrintPos;   
+        ++mPrintPos;  
         mScroll =0.0f;
 	    for (int k=0; k < MAX_TEXT_LINES; ++k)
         { 
-            mElementLine[k]->setTop(mFirstYPos - k* FONT_SIZE+SCROLL_SPEED);
+           mElementLine[k]->setTop(mFirstYPos - k*FONT_SIZE + SCROLL_SPEED);
         }
-		for (int j=1; j < MAX_TEXT_LINES; ++j)
+		for (int u=1; u < MAX_TEXT_LINES; ++u)
         {
-            mElementLine[j]->setCaption(row[(mPrintPos-j)& (SIZE_STRING_BUFFER-1)].str);
-            mElementLine[j]->setColour (row[(mPrintPos-j)& (SIZE_STRING_BUFFER-1)].color);
+            mElementLine[u]->setCaption     (row[(mPrintPos-u)&(SIZE_STRING_BUFFER-1)].str);
+	        mElementLine[u]->setColourTop   (row[(mPrintPos-u)&(SIZE_STRING_BUFFER-1)].colorTop);
+    	    mElementLine[u]->setColourBottom(row[(mPrintPos-u)&(SIZE_STRING_BUFFER-1)].colorBottom);
         }
     }
 }

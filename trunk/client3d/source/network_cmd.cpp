@@ -26,7 +26,6 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "logfile.h"
 #include "stdio.h"
 #include "option.h"
-#include "zconf.h"
 #include "zlib.h"
 #include "define.h"
 #include "option.h"
