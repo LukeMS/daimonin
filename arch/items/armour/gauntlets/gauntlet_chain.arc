@@ -1,0 +1,19 @@
+Object gauntlets
+name chain gauntlets
+layer 3
+face gauntlets_chain.101
+type 100
+ac 1
+protect_impact 3
+protect_cleave 3
+protect_slash 3
+protect_pierce 3
+is_vul_acid 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+material_real 65
+material 2
+value 75
+weight 550
+end
