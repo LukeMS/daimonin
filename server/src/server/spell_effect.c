@@ -28,8 +28,6 @@
 #endif
 #include <sounds.h>
 
-extern object *objects;
-
 /* 
  * spell_failure()  handles the various effects for differing degrees
  * of failure badness.

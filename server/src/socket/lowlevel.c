@@ -382,7 +382,6 @@ void Write_String_To_Socket(NewSocket *ns, char cmd, char *buf, int len)
 /* cst_tot is for the life of the server, cst_last is for the last series of
  * stats
  */
-CS_Stats cst_tot, cst_lst;
 
 /* Writes out the gathered stats.  We clear cst_lst.
  */

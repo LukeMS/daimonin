@@ -118,18 +118,10 @@ void metaserver_init()
 void metaserver_update()
 {
     char data[MAX_BUF], num_players=0;
-    player *pl;
 
     if (metafd == -1) return;	/* No valid connection */
 
-    /* We could use socket_info.nconns, but that is not quite as accurate,
-     * as connections in the progress of being established, are listening
-     * but don't have a player, etc.  This operation below should not be that
-     * costly.
-     */
-    for (pl=first_player; pl!=NULL; pl=pl->next) num_players++;
-
-    sprintf(data,"%s|%d|%s|%s|%d|%d|%ld", settings.meta_host, num_players, VERSION, 
+    sprintf(data,"%s|%d|%s|%s|%d|%d|%ld", settings.meta_host, player_active, VERSION, 
 	    settings.meta_comment, cst_tot.ibytes, cst_tot.obytes,
 	    (long)time(NULL) - cst_tot.time_start);
     if (sendto(metafd, data, strlen(data), 0, (struct sockaddr *)&sock, sizeof(sock))<0)

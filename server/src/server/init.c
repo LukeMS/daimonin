@@ -568,11 +568,6 @@ void compile_info() {
   LOG(llevInfo,"Use_calloc:\t<false>\n");
 #endif
 
-#ifdef EXPLORE_MODE
-  LOG(llevInfo,"Explore mode:\t<true>\n");
-#else
-  LOG(llevInfo,"Explore mode:\t<false>\n");
-#endif
 #ifdef SHOP_LISTINGS
   LOG(llevInfo,"Shop listings:\t<true>\n");
 #else

@@ -110,6 +110,7 @@ int command_shout (object *op, char *params)
 
 int command_tell (object *op, char *params)
 {
+	const char *name_hash;	
     char buf[MAX_BUF],*name = NULL ,*msg = NULL;
     char buf2[MAX_BUF];
     player *pl;
@@ -134,30 +135,47 @@ int command_tell (object *op, char *params)
 			msg = NULL;
 	}
 
-    if( name == NULL ){
-	new_draw_info(NDI_UNIQUE, 0,op,"Tell whom what?");
-	return 1;
-    } else if ( msg == NULL){
-	sprintf(buf, "Tell %s what?", name);
-	new_draw_info(NDI_UNIQUE, 0,op,buf);
-	return 1;
-    }
-	/* send to yourself? intelligent... */
-	if(strncasecmp(op->name,name,MAX_NAME)==0)
+    if(!name)
+	{
+		new_draw_info(NDI_UNIQUE, 0,op,"Tell whom what?");
 		return 1;
+    }
+		
+	transform_name_string(name); /* we have a name. be sure its "Xxxxx" */
+	if(!(name_hash = find_string(name))) /* if its not in the hash table there is 100% no player */
+	{
+		new_draw_info(NDI_UNIQUE, 0,op,"No such player.");
+		return 1;
+	}	
 
+	if (!msg)
+	{
+		sprintf(buf, "Tell %s what?", name);
+		new_draw_info(NDI_UNIQUE, 0,op,buf);
+		return 1;
+    }
 
-    sprintf(buf,"%s tells you: ",op->name);
-    strncat(buf, msg, MAX_BUF-strlen(buf)-1);
-    buf[MAX_BUF-1]=0;
+	/* now we can simply compare the name ptr values */
+	if(op->name == name_hash)
+	{
+		new_draw_info(NDI_UNIQUE, 0,op,"You tell yourself the news. Very smart.");
+		return 1;
+	}	
 
+	/* we have a name_hash but still we need to confirm we get the right player.
+	 * No problem with the fast hash pointer check
+	 */
     for(pl=first_player;pl!=NULL;pl=pl->next)
 	{
-		if(!strncasecmp(pl->ob->name,name,MAX_NAME))
+		if(pl->ob->name == name_hash)
 		{
+			sprintf(buf,"%s tells you: ",op->name);
+			strncat(buf, msg, MAX_BUF-strlen(buf)-1);
+			buf[MAX_BUF-1]=0;
+						
 			if(pl->dm_stealth)
 			{
-				sprintf(buf,"%s tells you (you are in dm_stealth): ",op->name);
+				sprintf(buf,"%s tells you (dm_stealth): ",op->name);
 				strncat(buf, msg, MAX_BUF-strlen(buf)-1);
 				buf[MAX_BUF-1]=0;
 		        new_draw_info(NDI_PLAYER |NDI_UNIQUE | NDI_NAVY, 0, pl->ob, buf);
@@ -607,8 +625,10 @@ static int basic_emote(object *op, char *params, int emotion)
    LOG(llevDebug, "EMOTE: %x (%s) (params: >%s<) (t: %s) %d\n", op, query_name(op), STRING_SAFE(params), CONTR(op)?query_name(CONTR(op)->target_object):"NO CTRL!!", emotion);
 
    params = cleanup_chat_string(params);
-   if (params && *params=='\0') /* in this case we have 100% a illegal parameter */
+   if (params && *params=='\0') /* illegal name? */
 	   params = NULL;
+   else /* name is ok but be sure we have something like "Xxxxx" */
+	   transform_name_string(params);
    
    if (!params) {
 
@@ -852,7 +872,7 @@ static int basic_emote(object *op, char *params, int emotion)
 	} 
 	else /* we have params */
 	{
-		if(emotion == EMOTE_ME)
+		if(emotion == EMOTE_ME)		/* catch special case emote /me */			
 		{
 			sprintf(buf, "%s %s", op->name, params);
 			strcpy(buf2, buf);
@@ -862,34 +882,71 @@ static int basic_emote(object *op, char *params, int emotion)
 					new_draw_info(NDI_UNIQUE, 0, op, buf2);
 			return(0);
 		}
-		else if(op->type == PLAYER) /* atm, we only allow "yourself" as parameter for players */
+		else /* here we handle player & npc emotes with parameter */
 		{
-			if(!strcmp(params,"yourself"))
-				emote_self(op, buf, buf2, emotion);
-			else
-				emote_self(op, buf, buf2, -1); /* force neutral default emote */
+			const char *name_hash=find_string(params);
 
-			new_draw_info(NDI_UNIQUE, 0, op, buf);
-			new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, op, op, buf2);
-
-		}
-		else /* here we handle npc emotes with parameter */
-		{
-
-			emote_other(op, NULL, params, buf, buf2, buf3,emotion);				
-
-			/* this is somewhat costly - check every playername! */
-	        for(pl=first_player;pl!=NULL;pl=pl->next)
+			if(op->type == PLAYER && op->name == name_hash) /* targeting ourself */
 			{
-				if(!strncasecmp(pl->ob->name, params, MAX_NAME))
+				emote_self(op, buf, buf2, emotion);
+				new_draw_info(NDI_UNIQUE, 0, op, buf);
+				new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, op, op, buf2);
+				return 0;
+			}
+
+			if(name_hash) /* no hash no player */
+			{
+				for(pl=first_player;pl!=NULL;pl=pl->next)
 				{
-					new_draw_info(NDI_UNIQUE|NDI_YELLOW, 0, pl->ob, buf2);
-					new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, pl->ob, buf3);
-					return 0;
+					if(pl->ob->name == name_hash)
+					{
+						rv_vector rv; /* lets check range */
+						get_rangevector(op,pl->ob, &rv, 0);
+
+						emote_other(op, NULL, params, buf, buf2, buf3,emotion);
+
+						if(rv.distance <= 4)
+						{
+							if(op->type == PLAYER)
+							{
+								emote_other(op, pl->ob, NULL, buf, buf2, buf3,emotion);				
+								new_draw_info(NDI_UNIQUE, 0, op, buf);
+								new_draw_info(NDI_UNIQUE|NDI_YELLOW, 0, pl->ob, buf2);
+								new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, op, pl->ob, buf3);
+							}
+							else /* npc */
+							{
+								new_draw_info(NDI_UNIQUE|NDI_YELLOW, 0, pl->ob, buf2);
+								new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, pl->ob, buf3);
+							}
+						}
+						else if (op->type == PLAYER)
+							new_draw_info(NDI_UNIQUE, 0, op, "The target is not in range for this emote action.");
+
+						return 0;
+					}
 				}
 			}
 
-			new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, NULL, buf3);
+			/* we had a non player name as params!
+			 * Now, we *can* do check for a possible non player target.
+			 * Like a npc or a mob. But for that we need to analyze the
+			 * surrounding area. Bad idea. Also, the name is for a mob not unique.
+			 * There are perhaps several ants or whatever around the player. 
+			 * For emoting mobs and npcs we simply use the target system.
+			 */
+			if(op->type == PLAYER)
+			{
+				emote_self(op, buf, buf2, -1); /* force neutral default emote */
+				new_draw_info(NDI_UNIQUE, 0, op, buf);
+				new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, op, op, buf2);
+			}
+			else
+			{
+				/* our target is perhaps a npc or whatever */
+				emote_other(op, NULL, params, buf, buf2, buf3,emotion);				
+				new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, NULL, buf3);
+			}
 		}
     }
 

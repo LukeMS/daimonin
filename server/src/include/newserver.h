@@ -66,6 +66,7 @@ typedef struct SockList_struct {
 
 typedef struct NewSocket_struct {
     int fd;
+	struct player *pl;			/* if != NULL this socket is part of a player struct */
     struct Map lastmap;			/* Thats the VISIBLE map area of the player, used to send to client */
 	int login_count;			/* if someone is too long idle in the login, we kick him here! */
     int   mapx, mapy;			/* How large a map the client wants */
@@ -109,7 +110,5 @@ typedef struct Socket_Info_struct {
     int	    nconns;		/* Number of connections */
     int	    allocated_sockets;	/* number of allocated in init_sockets */
 } Socket_Info;
-
-extern Socket_Info socket_info;
 	
 #endif

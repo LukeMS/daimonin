@@ -199,3 +199,42 @@ char *get_word_from_string(char *str, int *pos)
 	buf[i]='\0';
 	return buf;
 }
+
+
+/* buf_overflow() - we don't want to exceed the buffer size of 
+ * buf1 by adding on buf2! Returns true if overflow will occur.
+ */
+
+int buf_overflow (const char *buf1, const char *buf2, int bufsize)
+{
+    int     len1 = 0, len2 = 0;
+
+    if (buf1)
+	len1 = strlen (buf1);
+    if (buf2)
+	len2 = strlen (buf2);
+    if ((len1 + len2) >= bufsize)
+	return 1;
+    return 0;
+}
+
+/* we transform a given name string
+ * like "xxXxxX" or "xxxxxx" to "Xxxxxx"!
+ * We change the string chars direct in the given buffer
+ * so be sure not to give hash or constant pointers here.
+ * as a small gimmick we give back the strlen of the name.
+ */
+int transform_name_string(char *name)
+{
+	char *tmp=name;
+
+	if(!tmp || *tmp=='\0')
+		return 0;
+	
+	*tmp = toupper(*tmp);
+
+	while(*(++tmp)!='\0')
+		*tmp = tolower(*tmp);
+
+	return tmp-name; /* i love C */
+}

@@ -95,22 +95,34 @@ int command_setgod(object *op, char *params)
 int command_kick (object *ob, char *params)
 {
 	struct pl_player *pl;
+	const char *name_hash;
 
-	if(ob!= NULL && params == NULL)
+	if(ob && params == NULL)
 	{
 		new_draw_info_format(NDI_UNIQUE, 0, ob,"Use: /kick <name>");
 		return 1;
 	}
 
-		if(ob && ob->name && !strncasecmp(ob->name, params, MAX_NAME))
+	if(ob)
+	{
+		transform_name_string(params);
+		if(!(name_hash = find_string(params)))
+		{
+			new_draw_info(NDI_UNIQUE, 0,ob,"No such player.");
+			return 1;
+		}	
+	}
+	
+	if(ob && ob->name == name_hash)
 	{
 		new_draw_info_format(NDI_UNIQUE, 0, ob,"You can't /kick yourself!");
 		return 1;
 	}
 
+
 	for(pl=first_player;pl!=NULL;pl=pl->next)
 	{
-      if (!ob || (pl->ob!=ob && pl->ob->name && !strncasecmp(pl->ob->name, params, MAX_NAME))) 
+      if (!ob || (pl->ob!=ob && pl->ob->name && pl->ob->name==name_hash)) 
 		{
 			object *op;
 			op=pl->ob;
@@ -120,10 +132,10 @@ int command_kick (object *ob, char *params)
 			if(params)
 				new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, ob,"%s is kicked out of the game.",op->name);
 			LOG(llevInfo,"%s is kicked out of the game.\n",op->name);
-			strcpy(CONTR(op)->killer,"left");
+			CONTR(op)->killer[0]='\0';
 			check_score(op); /* Always check score */
 			container_unlink(CONTR(op),NULL);
-			(void)save_player(op,1);
+			save_player(op,1);
 			CONTR(op)->socket.status=Ns_Dead;
 		#if MAP_MAXTIMEOUT
 			op->map->timeout = MAP_TIMEOUT(op->map);
@@ -147,7 +159,7 @@ int command_shutdown(object *op, char *params)
 	LOG(llevSystem,"SERVER SHUTDOWN STARTED\n");
     command_kick(NULL,NULL);
     cleanup();
-    /* not reached */
+    /* not reached - server will terminate itself before that line */
     return 1;
 }
 
@@ -199,24 +211,26 @@ int command_generate (object *op, char *params)
 
 int command_summon (object *op, char *params)
 {
-      int i;
-      object *dummy;
-  player *pl;
+	int i;
+    object *dummy;
+	player *pl;
 
-  if (!op)
-    return 0;
+	if (!op)
+		return 0;
 
-  if(params==NULL) {
+	if(params==NULL) 
+	{
          new_draw_info(NDI_UNIQUE, 0,op,"Usage: summon <player>.");
          return 1;
-      }
-      for(pl=first_player;pl!=NULL;pl=pl->next) 
-    if(!strncasecmp(pl->ob->name, params, MAX_NAME)) 
-          break;
-      if(pl==NULL) {
+	}
+
+	pl = find_player(params);
+
+	if(pl==NULL) 
+	{
         new_draw_info(NDI_UNIQUE, 0,op,"No such player.");
         return 1;
-      }
+    }
       if (pl->ob == op) {
         new_draw_info(NDI_UNIQUE, 0, op, "You can't summon yourself next to yourself.");
         return 1;
@@ -255,9 +269,8 @@ int command_teleport (object *op, char *params) {
       return 1;
    }
 
-   for (pl = first_player; pl != NULL; pl = pl->next) 
-      if (pl->ob->name && !strncasecmp(pl->ob->name, params, MAX_NAME)) 
-         break;
+   pl = find_player(params);
+
    if (pl == NULL) {
       new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
       return 1;
@@ -372,9 +385,6 @@ int command_create (object *op, char *params)
 	if (set_nrof)
 	    tmp->nrof = nrof;
 	tmp->map=op->map;
-#ifndef REAL_WIZ
-	SET_FLAG(tmp, FLAG_WAS_WIZ);
-#endif
 	if (set_magic)
 	    set_abs_magic(tmp, magic);
 	if (art)
@@ -438,9 +448,6 @@ int command_create (object *op, char *params)
 	object *prev=NULL,*head=NULL;
 	for (atmp=at; atmp!=NULL; atmp=atmp->more) {
 	    tmp=arch_to_object(atmp);
-#ifndef REAL_WIZ
-	    SET_FLAG(tmp, FLAG_WAS_WIZ);
-#endif
 	    if(head==NULL)
 		head=tmp;
 	    tmp->x=op->x+tmp->arch->clone.x;
@@ -595,9 +602,6 @@ int command_patch (object *op, char *params)
     }
     if((arg2=strchr(++arg,' ')))
       arg2++;
-#ifndef REAL_WIZ
-    SET_FLAG(tmp, FLAG_WAS_WIZ); /* To avoid cheating */
-#endif
     if(set_variable(tmp,arg) == -1)
       new_draw_info_format(NDI_UNIQUE, 0,op,"Unknown variable %s", arg);
     else {
@@ -648,11 +652,7 @@ int command_addexp (object *op, char *params)
        return 1;
 	}
 
-	for(pl=first_player;pl!=NULL;pl=pl->next) 
-	{
-		if(!strncasecmp(pl->ob->name,buf,MAX_NAME)) 
-			break;
-	}
+	pl = find_player(params);
 
 	if(pl==NULL)
 	{
@@ -718,94 +718,96 @@ int command_speed (object *op, char *params)
 
 int command_stats (object *op, char *params)
 {
-  char thing[20];
-  player *pl;
-  char buf[MAX_BUF];
+	player *pl;
+	char buf[MAX_BUF];
 
-    thing[0] = '\0';
-  if(params==NULL || !sscanf(params, "%s", thing) || thing == NULL) {
-       new_draw_info(NDI_UNIQUE, 0,op,"Who?");
-       return 1;
-    }
-    for(pl=first_player;pl!=NULL;pl=pl->next) 
-       if(!strcmp(pl->ob->name,thing)) {
-         sprintf(buf,"Str : %-2d      H.P. : %-4d  MAX : %d",
+	if(params==NULL) 
+	{
+		new_draw_info(NDI_UNIQUE, 0,op,"Who?");
+		return 1;
+	}
+	if(!(pl = find_player(params)))
+	{
+		new_draw_info(NDI_UNIQUE, 0,op,"No such player.");
+		return 1;
+	}
+
+    sprintf(buf,"Str : %-2d      H.P. : %-4d  MAX : %d",
                  pl->ob->stats.Str,pl->ob->stats.hp,pl->ob->stats.maxhp);
-         new_draw_info(NDI_UNIQUE, 0,op,buf);
-         sprintf(buf,"Dex : %-2d      S.P. : %-4d  MAX : %d",
+    new_draw_info(NDI_UNIQUE, 0,op,buf);
+    sprintf(buf,"Dex : %-2d      S.P. : %-4d  MAX : %d",
                  pl->ob->stats.Dex,pl->ob->stats.sp,pl->ob->stats.maxsp) ;
-         new_draw_info(NDI_UNIQUE, 0,op,buf);
-         sprintf(buf,"Con : %-2d        AC : %-4d  WC  : %d",
+    new_draw_info(NDI_UNIQUE, 0,op,buf);
+	sprintf(buf,"Con : %-2d        AC : %-4d  WC  : %d",
                  pl->ob->stats.Con,pl->ob->stats.ac,pl->ob->stats.wc) ;
-         new_draw_info(NDI_UNIQUE, 0,op,buf);
-         sprintf(buf,"Wis : %-2d       EXP : %d",
+    new_draw_info(NDI_UNIQUE, 0,op,buf);
+	sprintf(buf,"Wis : %-2d       EXP : %d",
                  pl->ob->stats.Wis,pl->ob->stats.exp);
-         new_draw_info(NDI_UNIQUE, 0,op,buf);
-         sprintf(buf,"Cha : %-2d      Food : %d",
+    new_draw_info(NDI_UNIQUE, 0,op,buf);
+    sprintf(buf,"Cha : %-2d      Food : %d",
                  pl->ob->stats.Cha,pl->ob->stats.food) ;
-         new_draw_info(NDI_UNIQUE, 0,op,buf);
-         sprintf(buf,"Int : %-2d    Damage : %d",
+    new_draw_info(NDI_UNIQUE, 0,op,buf);
+    sprintf(buf,"Int : %-2d    Damage : %d",
                  pl->ob->stats.Int,pl->ob->stats.dam) ;
-         sprintf(buf,"Pow : %-2d    Grace : %d",
+    sprintf(buf,"Pow : %-2d    Grace : %d",
                  pl->ob->stats.Pow,pl->ob->stats.grace) ;
-         new_draw_info(NDI_UNIQUE, 0,op,buf);
-         break;
-       }
-    if(pl==NULL)
-       new_draw_info(NDI_UNIQUE, 0,op,"No such player.");
-    return 1;
-  }
+	new_draw_info(NDI_UNIQUE, 0,op,buf);
+
+	return 1;
+}
 
 int command_abil (object *op, char *params)
 {
-  char thing[20], thing2[20];
-  int iii;
-  player *pl;
-  char buf[MAX_BUF];
+	char thing[20], thing2[20];
+	int iii;
+	player *pl;
+	char buf[MAX_BUF];
 
     iii = 0;
     thing[0] = '\0';
     thing2[0] = '\0';
-  if(params==NULL || !sscanf(params, "%s %s %d", thing, thing2, &iii) ||
-     thing==NULL) {
+	if(params==NULL || !sscanf(params, "%s %s %d", thing, thing2, &iii) || thing==NULL)
+	{
        new_draw_info(NDI_UNIQUE, 0,op,"Who?");
        return 1;
     }
-    if (thing2==NULL){
+    if (thing2==NULL)
+	{
        new_draw_info(NDI_UNIQUE, 0,op,"You can't change that.");
        return 1;
     }
+
+	if(!(pl = find_player(thing)))
+	{
+		new_draw_info(NDI_UNIQUE, 0,op,"No such player.");
+		return 1;
+	}
+	
+
     if (iii<MIN_STAT||iii>MAX_STAT) {
       new_draw_info(NDI_UNIQUE, 0,op,"Illegal range of stat.\n");
       return 1;
     }
-    for(pl=first_player;pl!=NULL;pl=pl->next) 
-       if(!strcmp(pl->ob->name,thing)){ 
-#ifndef REAL_WIZ  
-	  SET_FLAG(pl->ob, FLAG_WAS_WIZ);
-#endif
-          if(!strcmp("str",thing2))
-            pl->ob->stats.Str = iii,pl->orig_stats.Str = iii;
-          if(!strcmp("dex",thing2))   
-            pl->ob->stats.Dex = iii,pl->orig_stats.Dex = iii;
-          if(!strcmp("con",thing2))
-            pl->ob->stats.Con = iii,pl->orig_stats.Con = iii;
-          if(!strcmp("wis",thing2))
-            pl->ob->stats.Wis = iii,pl->orig_stats.Wis = iii;
-          if(!strcmp("cha",thing2))
-            pl->ob->stats.Cha = iii,pl->orig_stats.Cha = iii;
-          if(!strcmp("int",thing2))
-            pl->ob->stats.Int = iii,pl->orig_stats.Int = iii;
-          if(!strcmp("pow",thing2))
-            pl->ob->stats.Pow = iii,pl->orig_stats.Pow = iii;
-          sprintf(buf,"%s has been altered.",pl->ob->name);
-          new_draw_info(NDI_UNIQUE, 0,op,buf);
-          fix_player(pl->ob);
-         return 1;
-       } 
-    new_draw_info(NDI_UNIQUE, 0,op,"No such player.");
+
+	if(!strcmp("str",thing2))
+		pl->ob->stats.Str = iii,pl->orig_stats.Str = iii;
+	if(!strcmp("dex",thing2))   
+		pl->ob->stats.Dex = iii,pl->orig_stats.Dex = iii;
+    if(!strcmp("con",thing2))
+		pl->ob->stats.Con = iii,pl->orig_stats.Con = iii;
+    if(!strcmp("wis",thing2))
+		pl->ob->stats.Wis = iii,pl->orig_stats.Wis = iii;
+    if(!strcmp("cha",thing2))
+		pl->ob->stats.Cha = iii,pl->orig_stats.Cha = iii;
+    if(!strcmp("int",thing2))
+		pl->ob->stats.Int = iii,pl->orig_stats.Int = iii;
+    if(!strcmp("pow",thing2))
+		pl->ob->stats.Pow = iii,pl->orig_stats.Pow = iii;
+    sprintf(buf,"%s has been altered.",pl->ob->name);
+    new_draw_info(NDI_UNIQUE, 0,op,buf);
+    fix_player(pl->ob);
     return 1;
-  }
+}
 
 int command_reset (object *op, char *params)
 {
@@ -912,9 +914,6 @@ int command_nowiz (object *op, char *params) /* 'noadm' is alias */
 	 gbl_active_DM = NULL; /* clear this dm from global dm list. TODO : make a list from it */
      CLEAR_FLAG(op, FLAG_WIZPASS);
      CLEAR_MULTI_FLAG(op, FLAG_FLYING);
-#ifdef REAL_WIZ
-     CLEAR_FLAG(op, FLAG_WAS_WIZ);
-#endif
 	  fix_player(op);
 	  CONTR(op)->socket.update_tile=0;
       esrv_send_inventory(op, op);
@@ -981,7 +980,6 @@ int command_dm (object *op, char *params)
 		(params?params:"*"), CONTR(op)->socket.host)) {
 	  gbl_active_DM = op; /* ad this dm to global dm list. TODO : make a list from it */
       SET_FLAG(op, FLAG_WIZ);
-      SET_FLAG(op, FLAG_WAS_WIZ);
       SET_FLAG(op, FLAG_WIZPASS);
       new_draw_info_format(NDI_UNIQUE, 0,op, "DM mode activated for %s!", op->name);
       /*new_draw_info(NDI_UNIQUE | NDI_ALL, 1, NULL, "The Dungeon Master has arrived!");*/

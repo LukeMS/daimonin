@@ -36,7 +36,6 @@
 /*
  * Global variables:
  */
-long max_time = MAX_TIME;
 
 #define PBUFLEN 100
 long process_utime_save[PBUFLEN];
@@ -44,7 +43,6 @@ long psaveind;
 long process_max_utime = 0;
 long process_min_utime = 999999999;
 long process_tot_mtime;
-long pticks;
 long process_utime_long_count;
 
 const char *season_name[] =

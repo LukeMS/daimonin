@@ -970,9 +970,6 @@ static void send_attack_msg(object *op, object *hitter, int attacknum, int dam, 
 
 	    if (!op_on_battleground(hitter, NULL, NULL)) {
 
-        if(!QUERY_FLAG(op,FLAG_WAS_WIZ))
-		    add_exp(hitter,op->stats.exp/(rate*2),hitter->chosen_skill->stats.sp);
-
         add_exp(op,-op->stats.exp/rate, CHOSEN_SKILL_NO); 
 	    }
 	    dam = 0;
@@ -1183,7 +1180,7 @@ int kill_object(object *op,int dam, object *hitter, int type)
                 battleg? " (duel)":"");
 
 	/* If you didn't kill yourself, and your not the wizard */
-	if(hitter!=op&&!QUERY_FLAG(op, FLAG_WAS_WIZ)) {
+	if(hitter!=op) {
 
 	    /* new exp system in here. Try to insure the right skill is modifying gained exp */
 		/* only calc exp for a player who has not killed a player */

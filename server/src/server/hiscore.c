@@ -248,18 +248,6 @@ void check_score(object *op) {
 	}
 	return;
     }
-    if(QUERY_FLAG(op,FLAG_WAS_WIZ)) {
-	new_draw_info(NDI_UNIQUE, 0,op,"Since you have been in wizard mode,");
-	new_draw_info(NDI_UNIQUE, 0,op,"you can't enter the high-score list.");
-	return;
-    }
-#ifdef EXPLORE_MODE
-    if (op->contr->explore) {
-	new_draw_info(NDI_UNIQUE, 0,op,"Since you were in explore mode,");
-	new_draw_info(NDI_UNIQUE, 0,op,"you can't enter the high-score list.");
-	return;
-    }
-#endif
     strncpy(new_score.name,op->name,BIG_NAME);
 	strncpy(new_score.title,op->contr->title,BIG_NAME);
     strncpy(new_score.killer,op->contr->killer,BIG_NAME);

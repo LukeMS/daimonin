@@ -31,6 +31,8 @@
 #define EXTERN extern
 #endif
 
+#define ESRV_DEBUG
+
 #include "includes.h"
 
 
@@ -120,6 +122,10 @@ typedef unsigned int tag_t;
 #define SET_INV_ANIMATION(ob,newanim) ob->face=&new_faces[animations[ob->inv_animation_id].faces[newanim]]
 #define GET_INV_ANIMATION(ob,anim) (animations[ob->inv_animation_id].faces[anim])
 #define GET_INV_ANIM_ID(ob) (ob->inv_animation_id)
+
+
+#define MAX_PLAYER_NAME 12
+
 /* NUM_ANIMATIONS returns the number of animations allocated.  The last
  * usuable animation will be NUM_ANIMATIONS-1 (for example, if an object
  * has 8 animations, NUM_ANIMATIONS will return 8, but the values will
@@ -199,6 +205,11 @@ typedef unsigned int tag_t;
 
 #define NUM_COLORS		13
 
+#define MAX_DARKNESS 7 /* number of darkness level. Add +1 for "total dark" */
+
+/* define from shstr.h - hash table dump */
+#define SS_DUMP_TOTALS	1
+
 /* global typedefs.
  * which needs defined before header loading.
  */
@@ -211,7 +222,6 @@ typedef struct linked_char {
   const char *name;
   struct linked_char *next;
 } linked_char;
-
 
 #include "face.h"
 #include "attack.h" /* needs to be before material.h */
@@ -256,105 +266,6 @@ typedef struct linked_char {
 
 /* pointer for the glue.c interface between crosslib and server */
 #include "funcpoint.h"
-
-/*****************************************************************************
- * GLOBAL VARIABLES:							     *
- *****************************************************************************/
-/* Special potions are now identifed by the last_eat value.
- * last_eat == 0 is no special potion - means they are used
- * as spell effect carrier. 
- */
-
-/* arch.c - sysinfo for lowlevel */
-extern int arch_cmp;		/* How many strcmp's */
-extern int arch_search;	/* How many searches */
-
-extern char *colorname[NUM_COLORS];
-
-extern New_Face *new_faces;
-
-extern uint32 new_levels[MAXLEVEL+2];
-extern float lev_exp[MAXLEVEL+1];
-
-extern uint32 global_map_tag; /* our global map_tag value for the server (map.c)*/
-
-/*
- * These are the beginnings of linked lists:
- */
-EXTERN player *first_player;
-EXTERN mapstruct *first_map;
-EXTERN treasurelist *first_treasurelist;
-EXTERN artifactlist *first_artifactlist;
-EXTERN objectlink *first_friendly_object;	/* Objects monsters will go after */
-EXTERN godlink *first_god;
-EXTERN racelink *first_race;
-
-#define NROF_COMPRESS_METHODS 4
-EXTERN char *uncomp[NROF_COMPRESS_METHODS][3];
-
-/*
- * Variables set by different flags (see init.c):
- */
-EXTERN long init_done;			/* Ignores signals until init_done is true */
-EXTERN long trying_emergency_save;	/* True when emergency_save() is reached */
-EXTERN long nroferrors;		/* If it exceeds MAX_ERRORS, call fatal() */
-
-extern long pticks;		/* used by various function to determine */
-				/* how often to save the character */
-/*
- * Misc global variables:
- */
-EXTERN FILE *logfile;			/* Used by server/daemon.c */
-EXTERN int exiting;			/* True if the game is about to exit */
-EXTERN long nroftreasures;		/* Only used in malloc_info() */
-EXTERN long nrofartifacts;		/* Only used in malloc_info() */
-EXTERN long nrofallowedstr;		/* Only used in malloc_info() */
-
-EXTERN short nrofexpcat;	/* Current number of experience categories in the game */
-EXTERN object *exp_cat[MAX_EXP_CAT];	/* Array of experience objects in the game */ 
-extern object void_container; /* Container for objects without env or map (e.g. exp_cat[i])*/
-
-EXTERN char first_map_path[MAX_BUF];	/* The start-level */
-
-EXTERN char errmsg[HUGE_BUF];
-EXTERN long ob_count;
-
-EXTERN uint32 global_round_tag; /* global round ticker ! this is real a global */
-#define ROUND_TAG global_round_tag /* put this here because the DIFF */
-
-EXTERN int global_race_counter; /* global race counter */
-
-
-EXTERN struct timeval last_time;        /* Used for main loop timing */
-
-/*
- * Used in treasure.c
- */
-EXTERN const char *undead_name;	/* Used in hit_player() in main.c */
-
-EXTERN Animations *animations;
-EXTERN int num_animations,animations_allocated, bmaps_checksum;
-
-extern int freearr_x[SIZEOFFREE], freearr_y[SIZEOFFREE];
-extern int maxfree[SIZEOFFREE], freedir[SIZEOFFREE];
-
-extern object *gbl_active_DM; /* ony for testing, TODO list of DMs */
-
-
-extern New_Face *blank_face, *next_item_face, *prev_item_face;
-extern MapLook blank_look;
-
-extern long max_time;	/* loop time */
-extern NewSocket *init_sockets;
-
-extern unsigned long todtick; /* time of the day tick counter */
-extern int world_darkness; /* daylight value. 0= totally dark. 7= daylight */
-
-EXTERN archetype *wp_archetype;	/* Nice to have fast access to it */
-EXTERN archetype *empty_archetype;	/* Nice to have fast access to it */
-EXTERN archetype *base_info_archetype;	/* Nice to have fast access to it */
-EXTERN archetype *map_archeytpe;
-EXTERN archetype *level_up_arch; /* a global animation arch we use it in 2 modules, so not static */
 
 typedef struct _money_block {
 	int mode; /* 0, 1, or -1: see get_money_from_string() */
@@ -403,8 +314,126 @@ typedef struct Settings {
     uint16  dynamiclevel;	    /* how dynamic is the world? */
 } Settings;
 
+
+/*****************************************************************************
+ * GLOBAL VARIABLES:														 *
+ *****************************************************************************/
+/* these varaibles are direct initialized in their modules. So we
+ * can't use EXTERN.
+ */
+extern uint32	new_levels[MAXLEVEL+2];
+extern float	lev_exp[MAXLEVEL+1];
+extern int		freearr_x[SIZEOFFREE];
+extern int		freearr_y[SIZEOFFREE];
+extern int		maxfree[SIZEOFFREE];
+extern int		freedir[SIZEOFFREE];
 extern Settings settings;
 
+extern int	global_darkness_table[MAX_DARKNESS+1];
+extern spell spells[NROFREALSPELLS];
+
+/* EXTERN is pre-defined in common/init.c as #define EXTERN - so the
+ * variables are bind in there. In every other module, EXTERN is 
+ * defined as #define EXTERN extern.
+ */
+#ifdef CS_LOGSTATS
+EXTERN CS_Stats cst_tot, cst_lst;
+#endif
+
+EXTERN object *active_objects;	/* List of active objects that need to be processed */
+EXTERN struct mempool_chunk *removed_objects; /* List of objects that have been removed
+											   * during the last server timestep
+											   */
+
+EXTERN _srv_client_files SrvClientFiles[SRV_CLIENT_FILES];
+EXTERN Socket_Info socket_info;
+
+EXTERN uint32 global_map_tag; /* our global map_tag value for the server (map.c)*/
+EXTERN New_Face *new_faces;
+
+/* arch.c - sysinfo for lowlevel */
+EXTERN int arch_init;
+EXTERN int arch_cmp;		/* How many strcmp's */
+EXTERN int arch_search;	/* How many searches */
+						/*
+ * These are the beginnings of linked lists:
+ */
+EXTERN player *first_player;
+EXTERN player *last_player;
+EXTERN int player_active;
+EXTERN mapstruct *first_map;
+EXTERN treasurelist *first_treasurelist;
+EXTERN artifactlist *first_artifactlist;
+EXTERN objectlink *first_friendly_object;	/* Objects monsters will go after */
+EXTERN godlink *first_god;
+EXTERN racelink *first_race;
+
+#define NROF_COMPRESS_METHODS 4
+EXTERN char *uncomp[NROF_COMPRESS_METHODS][3];
+
+/*
+ * Variables set by different flags (see init.c):
+ */
+EXTERN long init_done;			/* Ignores signals until init_done is true */
+EXTERN long trying_emergency_save;	/* True when emergency_save() is reached */
+EXTERN long nroferrors;		/* If it exceeds MAX_ERRORS, call fatal() */
+
+EXTERN long pticks;		/* used by various function to determine */
+						/* how often to save the character */
+/*
+ * Misc global variables:
+ */
+EXTERN FILE *logfile;			/* Used by server/daemon.c */
+EXTERN int exiting;			/* True if the game is about to exit */
+EXTERN long nroftreasures;		/* Only used in malloc_info() */
+EXTERN long nrofartifacts;		/* Only used in malloc_info() */
+EXTERN long nrofallowedstr;		/* Only used in malloc_info() */
+
+EXTERN short nrofexpcat;	/* Current number of experience categories in the game */
+EXTERN object *exp_cat[MAX_EXP_CAT];	/* Array of experience objects in the game */ 
+EXTERN object void_container; /* Container for objects without env or map (e.g. exp_cat[i])*/
+
+EXTERN char first_map_path[MAX_BUF];	/* The start-level */
+
+EXTERN char errmsg[HUGE_BUF];
+EXTERN long ob_count;
+
+EXTERN uint32 global_round_tag; /* global round ticker ! this is real a global */
+#define ROUND_TAG global_round_tag /* put this here because the DIFF */
+
+EXTERN int global_race_counter; /* global race counter */
+
+
+EXTERN struct timeval last_time;        /* Used for main loop timing */
+
+/*
+ * Used in treasure.c
+ */
+EXTERN const char *undead_name;	/* Used in hit_player() in main.c */
+
+EXTERN Animations *animations;
+EXTERN int num_animations,animations_allocated, bmaps_checksum;
+
+EXTERN object *gbl_active_DM; /* ony for testing, TODO list of DMs */
+
+
+/* only used in loader.c, to go from the numeric image id (which is
+ * used throughout the program) backto the standard name.
+ */
+EXTERN MapLook blank_look;
+EXTERN New_Face *blank_face, *next_item_face, *prev_item_face;
+
+EXTERN long max_time;	/* loop time */
+EXTERN NewSocket *init_sockets;
+
+EXTERN unsigned long todtick; /* time of the day tick counter */
+EXTERN int world_darkness; /* daylight value. 0= totally dark. 7= daylight */
+
+EXTERN archetype *wp_archetype;	/* Nice to have fast access to it */
+EXTERN archetype *empty_archetype;	/* Nice to have fast access to it */
+EXTERN archetype *base_info_archetype;	/* Nice to have fast access to it */
+EXTERN archetype *map_archeytpe;
+EXTERN archetype *level_up_arch; /* a global animation arch we use it in 2 modules, so not static */
 
 /* include some global project headers */
 #ifndef __CEXTRACT__

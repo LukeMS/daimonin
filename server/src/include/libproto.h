@@ -344,10 +344,8 @@ extern int query_refcount(const char *str);
 extern const char *find_string(const char *str);
 extern const char *add_refcount(const char *str);
 extern void free_string_shared(const char *str);
-extern void ss_dump_statistics(void);
+extern char *ss_dump_statistics(void);
 extern char *ss_dump_table(int what);
-extern void ss_test_table(void);
-extern int buf_overflow(const char *buf1, const char *buf2, int bufsize);
 /* time.c */
 extern void reset_sleep(void);
 extern void log_time(long process_utime);
@@ -393,3 +391,5 @@ extern int look_up_spell_name(const char *spname);
 extern racelink *find_racelink(const char *name);
 extern char *cleanup_string(char *ustring);
 extern char *get_word_from_string(char *str, int *pos);
+extern int buf_overflow(const char *buf1, const char *buf2, int bufsize);
+extern int transform_name_string(char *name);

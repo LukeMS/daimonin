@@ -33,14 +33,10 @@
 
 int	global_darkness_table[MAX_DARKNESS+1] = {0,20,40,80,160,320,640,1280};
 
-uint32 global_map_tag; /* our global map_tag value for the server */
-
 /* to get the reverse direction for all 8 tiled map index */
 int map_tiled_reverse[TILED_MAPS] = {
 	2,3,0,1,6,7,4,5
 };
-
-extern int nrofallocobjects,nroffreeobjects;
 
 #define DEBUG_OLDFLAGS 1
 

@@ -58,6 +58,8 @@
 #include <dmalloc.h>
 #endif
 
+extern char errmsg[];
+
 #ifdef SS_STATISTICS
 static struct statistics {
     int calls;
@@ -80,8 +82,6 @@ static struct statistics {
 
 /* small hack to insert LOG here to without the whole other externs */
 #include "logger.h"
-extern void LOG(LogLevel logLevel, char *format, ...);
-
 
 static shared_string *hash_table[TABLESIZE];
 
@@ -392,10 +392,6 @@ void free_string_shared(const char *str)
 */
 }
 
-#ifdef SS_STATISTICS
-
-extern char errmsg[];
-
 /*
  * Description:
  *      The routines will gather statistics if SS_STATISTICS is defined.
@@ -404,16 +400,21 @@ extern char errmsg[];
  * Return values:
  *      None
  */
+char *ss_dump_statistics() 
+{
+    char line[126];
+	errmsg[0]='\0';
 
-void
-ss_dump_statistics() {
-    static char line[80];
-
-    sprintf(errmsg, "%-13s %6s %6s %6s %6s %6s\n", 
-	    "", "calls", "hashed", "strcmp", "search", "linked");
+#ifdef SS_STATISTICS
+    sprintf(errmsg, "%-13s   %6s %6s %6s %6s %6s\n", 
+	    "hashtable  :", "calls", "hashed", "strcmp", "search", "linked");
     sprintf(line, "%-13s %6d %6d %6d %6d %6d\n", 
 	    "add_string:", add_stats.calls, add_stats.hashed, 
 	    add_stats.strcmps, add_stats.search, add_stats.linked);
+    strcat(errmsg, line);
+    sprintf(line, "%-13s %6d %6d %6d %6d %6d\n", 
+		"find_string:", find_stats.calls, find_stats.hashed, 
+		find_stats.strcmps, find_stats.search, find_stats.linked);
     strcat(errmsg, line);
     sprintf(line, "%-13s %6d\n",
 	    "add_refcount:", add_ref_stats.calls);
@@ -421,20 +422,17 @@ ss_dump_statistics() {
     sprintf(line, "%-13s %6d\n",
 	    "free_string:", free_stats.calls);
     strcat(errmsg, line);
-    sprintf(line, "%-13s %6d %6d %6d %6d %6d\n", 
-	    "find_string:", find_stats.calls, find_stats.hashed, 
-	    find_stats.strcmps, find_stats.search, find_stats.linked);
-    strcat(errmsg, line);
-    sprintf(line, "%-13s %6d\n",
+    sprintf(line, "%-13s %6d",
 	    "hashstr:", hash_stats.calls);
     strcat(errmsg, line);
+#endif
+	
+	return errmsg;
 }
-#endif /* SS_STATISTICS */
 
 /*
  * Description:
- *      If (what & SS_DUMP_TABLE) dump the contents of the hash table to
- *      stderr. If (what & SS_DUMP_TOTALS) return a string which
+ *      If (what & SS_DUMP_TOTALS) return a string which
  *      says how many entries etc. there are in the table.
  * Return values:
  *      - a string or NULL
@@ -450,33 +448,27 @@ char * ss_dump_table(int what) {
 	if ((ss = hash_table[i])!=NULL) {
 	    ++entries;
 	    refs += (ss->refcount & ~TOPBIT);
-		/* Can't use stderr any longer, need to include global.h and
-	    if (what & SS_DUMP_TABLE)
-       * use logfile. */
-		LOG(llevSystem, "%4d -- %4d refs '%s' %c\n",
-			i, (ss->refcount & ~TOPBIT), ss->string,
-			(ss->refcount & TOPBIT ? ' ' : '#'));
+		if (what & SS_DUMP_TOTALS)
+			LOG(llevSystem, "%4d -- %4d refs '%s' %c\n",
+						i, (ss->refcount & ~TOPBIT), ss->string, (ss->refcount & TOPBIT ? ' ' : '#'));
 	    while (ss->next) {
 		ss = ss->next;
 		++links;
 		refs += (ss->refcount & ~TOPBIT);
-		if (what & SS_DUMP_TABLE)
-		   LOG(llevSystem, "     -- %4d refs '%s' %c\n",
-			    (ss->refcount & ~TOPBIT), ss->string,
-			    (ss->refcount & TOPBIT ? '*' : ' '));
+		if (what & SS_DUMP_TOTALS)
+			LOG(llevSystem, "     -- %4d refs '%s' %c\n",
+					    (ss->refcount & ~TOPBIT), ss->string, (ss->refcount & TOPBIT ? '*' : ' '));
 	    }
 	}
     }
 
-    if (what & SS_DUMP_TOTALS) {
-	sprintf(totals, "\n%d entries, %d refs, %d links.",
-		entries, refs, links);
-        return totals;
-    }
-    return NULL;
+	sprintf(totals, "%d entries, %d refs, %d links.", entries, refs, links);
+        
+	return totals;
 }
 
-/* to find memory leak! */
+/* to find memory leak! 
+ * This is not used atm
 void ss_test_table(void)
 {
 	shared_string *ss;
@@ -492,21 +484,4 @@ void ss_test_table(void)
 		c = ss->string[0];
     }
 }	}
-
-/* buf_overflow() - we don't want to exceed the buffer size of 
- * buf1 by adding on buf2! Returns true if overflow will occur.
- */
-
-int buf_overflow (const char *buf1, const char *buf2, int bufsize)
-{
-    int     len1 = 0, len2 = 0;
-
-    if (buf1)
-	len1 = strlen (buf1);
-    if (buf2)
-	len2 = strlen (buf2);
-    if ((len1 + len2) >= bufsize)
-	return 1;
-    return 0;
-}
-
+*/

@@ -434,14 +434,7 @@ static void remove_ns_dead_player(player *pl)
 		gbl_active_DM = NULL;
 
 	if(gbl_active_DM)
-	{
-		player *pl_tmp;
-		int players;
-
-		for(pl_tmp=first_player,players=0;pl_tmp!=NULL;pl_tmp=pl_tmp->next,players++);
-
-		new_draw_info_format(NDI_UNIQUE, 0,gbl_active_DM,"%s leaves the game (%d still playing).", query_name(pl->ob), players-1);
-	}
+		new_draw_info_format(NDI_UNIQUE, 0,gbl_active_DM,"%s leaves the game (%d still playing).", query_name(pl->ob), player_active-1);
 
 	container_unlink(pl,NULL);
 	save_player(pl->ob, 0);
@@ -548,7 +541,7 @@ void doeric_server(int update_client)
     }
 
 #ifdef BLOCK_UNTIL_CONNECTION
-    if (socket_info.nconns==1 && first_player==NULL) 
+    if (!socket_info.nconns && first_player==NULL) 
 		block_until_new_connection();
 #endif
 
@@ -578,14 +571,19 @@ void doeric_server(int update_client)
 
 		LOG(llevInfo,"CONNECT from... ");
 		/* If this is the case, all sockets currently in used */
-		if (socket_info.allocated_sockets <= socket_info.nconns)
+		if (socket_info.allocated_sockets <= socket_info.nconns+1)
 		{
-			init_sockets = realloc(init_sockets,sizeof(NewSocket)*(socket_info.nconns+1));
+			init_sockets = realloc(init_sockets,sizeof(NewSocket)*(socket_info.nconns+2));
+			LOG(llevDebug,"(new sockets: %d (old# %d)) ",
+				(socket_info.nconns-socket_info.allocated_sockets)+2,socket_info.allocated_sockets);
 			if (!init_sockets)
 				LOG(llevError,"\nERROR: doeric_server(): out of memory\n");
-			newsocknum = socket_info.allocated_sockets;
-			socket_info.allocated_sockets++;
-			init_sockets[newsocknum].status = Ns_Avail;
+
+			do{
+				newsocknum = socket_info.allocated_sockets;
+				socket_info.allocated_sockets++;
+				init_sockets[newsocknum].status = Ns_Avail;
+			} while(socket_info.allocated_sockets <=socket_info.nconns+1);
 		}
 		else 
 		{
@@ -603,12 +601,12 @@ void doeric_server(int update_client)
 		i = ntohl(addr.sin_addr.s_addr);
 		if (init_sockets[newsocknum].fd!=-1)
 		{   
-			LOG(llevDebug," ip %d.%d.%d.%d (add to sock #%d)\n",(i>>24)&255, (i>>16)&255, (i>>8)&255, i&255,newsocknum);
+			LOG(llevDebug," ip %d.%d.%d.%d  (socket %d)(#%d)\n",(i>>24)&255, (i>>16)&255, (i>>8)&255, i&255,
+						init_sockets[newsocknum].fd, newsocknum);
 			InitConnection(&init_sockets[newsocknum],i);
-			socket_info.nconns++;
 		}
 		else
-			LOG(llevDebug,"Error on accept! (S#:%d IP:%d.%d.%d.%d)",newsocknum,(i>>24)&255, (i>>16)&255, (i>>8)&255, i&255);
+			LOG(llevDebug,"Error on accept! (#%d)(%d)\n",newsocknum,i);
 
     }
 
@@ -641,6 +639,7 @@ void doeric_server(int update_client)
 			free_newsocket(&init_sockets[i]);
 			init_sockets[i].status = Ns_Avail;
 			socket_info.nconns--;
+			continue;
 		} 
 
 		if (FD_ISSET(init_sockets[i].fd,&tmp_write))
@@ -697,8 +696,10 @@ void doeric_server(int update_client)
 				{
 					esrv_update_stats(pl);
 					if(pl->update_skills)
+					{
 						esrv_update_skills(pl);
-					pl->update_skills=0;
+						pl->update_skills=0;
+					}
 					draw_client_map(pl->ob);
 
 					if( pl->ob->map && (update_below=GET_MAP_UPDATE_COUNTER(pl->ob->map,pl->ob->x,pl->ob->y)) >= 
@@ -723,7 +724,8 @@ void doeric_server(int update_client)
 void doeric_server_write(void)
 {
     player *pl, *next;
-
+	uint32 update_below;
+	
    /* This does roughly the same thing, but for the players now */
     for (pl=first_player; pl!=NULL; pl=next) 
 	{
@@ -735,7 +737,21 @@ void doeric_server_write(void)
 			remove_ns_dead_player(pl);
 			continue;
 		}
-
+		esrv_update_stats(pl);
+		if(pl->update_skills)
+		{
+			esrv_update_skills(pl);
+			pl->update_skills=0;
+		}
+		draw_client_map(pl->ob);
+		
+		if( pl->ob->map && (update_below=GET_MAP_UPDATE_COUNTER(pl->ob->map,pl->ob->x,pl->ob->y)) >= 
+												pl->socket.update_tile) 
+		{
+			esrv_draw_look(pl->ob);
+			pl->socket.update_tile = update_below+1;
+		}
+		
 		/* and *now* write back to player */
 		if (FD_ISSET(pl->socket.fd,&tmp_write))
 		{

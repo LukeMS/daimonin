@@ -2554,12 +2554,6 @@ static void apply_savebed (object *pl)
     }
 	/* removed some trash here... MT*/
 	/*
-    if(QUERY_FLAG(pl,FLAG_WAS_WIZ)) {
-      new_draw_info(NDI_UNIQUE, 0,pl,"Since you have cheated you can't save.");
-      return;
-    }
-	*/
-	/*
     leave_map(pl);
     pl->direction=0;
 	*/
@@ -2653,12 +2647,12 @@ static void apply_armour_improver (object *op, object *tmp)
        if (!exit->race) return 1;  /*No owner, free for all!*/
        exit_owner=NULL;
        for (pp=first_player;pp;pp=pp->next)
-         {
+       {
          if (!pp->ob) continue;
          if (pp->ob->name!=exit->race) continue;
          exit_owner= pp->ob; /*We found a player which correspond to the player name*/
          break;
-         }
+       }
        if (!exit_owner) return 0;    /* No more owner*/
        if (CONTR(exit_owner)==CONTR(op)) return 1;  /*It is your exit*/
        if  ( exit_owner &&                          /*There is a owner*/
@@ -2967,22 +2961,6 @@ int player_apply (object *pl, object *op, int aflag, int quiet)
             return 0;
         }
     }
-
-    if (QUERY_FLAG (op, FLAG_WAS_WIZ) && ! QUERY_FLAG (pl, FLAG_WAS_WIZ))
-    {
-        play_sound_map (pl->map, pl->x, pl->y, SOUND_OB_EVAPORATE, SOUND_NORMAL);
-        new_draw_info (NDI_UNIQUE, 0, pl, "The object disappears in a puff "
-                       "of smoke!");
-        new_draw_info (NDI_UNIQUE, 0, pl, "It must have been an illusion.");
-		remove_ob(op);
-		check_walk_off (op, NULL, MOVE_APPLY_VANISHED);
-        return 1;
-    }
-
-	/* see last_used in player 
-    CONTR(pl)->last_used = op;
-    CONTR(pl)->last_used_id = op->count;
-	*/
 
     tmp = manual_apply (pl, op, aflag);
     if ( ! quiet) {

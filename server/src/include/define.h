@@ -711,7 +711,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_READY_SKILL	89 /* (Monster or Player) has a skill readied */
 #define FLAG_READY_WEAPON	90 /* (Monster or Player) has a weapon readied */
 #define FLAG_NO_SKILL_IDENT	91 /* If set, item cannot be identified w/ a skill */
-#define FLAG_WAS_WIZ	 	92 /* Player was once a wiz */
+
 #define FLAG_SEE_IN_DARK	93 /* if set ob not effected by darkness */ 
 #define FLAG_IS_CAULDRON	94 /* container can make alchemical stuff */
 #define FLAG_DUST			95 /* item is a 'powder', effects throwing */
@@ -795,6 +795,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_NO_SAVE			134		/* don't save this object - remove it before we save */
 
 /* flag 37 is still free (old FREED flag). Let it free for secure reason for some time */
+/* flag 93 is free (was FLAG_WAS_WIZ ) */
 
 #define NUM_FLAGS		134 /* Should always be equal to the last defined flag */
 #define NUM_FLAGS_32	5	/* the number of uint32 we need to store all flags */

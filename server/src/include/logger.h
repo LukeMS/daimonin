@@ -70,4 +70,10 @@ typedef enum LogLevel {
 	#endif
 #endif
 
+/* WARNING: this extern will also be in ...proto.h 
+ * this will allow to explicit include our LOG() in 
+ * modules.
+ */
+extern void LOG(LogLevel logLevel, char *format, ...);
+
 #endif /* LOGGER_H */

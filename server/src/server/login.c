@@ -28,47 +28,11 @@
 #endif
 #include <loader.h>
 
-extern spell spells[NROFREALSPELLS];
-extern long pticks;
-
 /* If flag is non zero, it means that we want to try and save everyone, but
  * keep the game running.  Thus, we don't want to free any information.
  */
 void emergency_save(int flag) {
-#ifndef NO_EMERGENCY_SAVE
-  trying_emergency_save = 1;
-
-  LOG(llevSystem,"Emergency save:  ");
-  for(pl=first_player;pl!=NULL;pl=pl->next) {
-    if(!pl->ob) {
-      LOG(llevSystem, "No name, ignoring this.\n");
-      continue;
-    }
-    LOG(llevSystem,"%s ",pl->ob->name);
-    new_draw_info(NDI_UNIQUE, 0,pl->ob,"Emergency save...");
-
-/* If we are not exiting the game (ie, this is sort of a backup save), then
- * don't change the location back to the village.  Note that there are other
- * options to have backup saves be done at the starting village
- */
-    if (!flag) {
-	strcpy(pl->maplevel, first_map_path);
-	if(pl->ob->map!=NULL)
-	    pl->ob->map = NULL;
-	pl->ob->x = -1;
-	pl->ob->y = -1;
-    }
-	container_unlink(pl,NULL);
-    if(!save_player(pl->ob,flag)) {
-      LOG(llevSystem, "(failed) ");
-      new_draw_info(NDI_UNIQUE, 0,pl->ob,"Emergency save failed, checking score...");
-    }
-    check_score(pl->ob);
-  }
-  LOG(llevSystem,"\n");
-#else
   LOG(llevSystem,"Emergency saves disabled, no save attempted\n");
-#endif
 }
 
 /* Delete character with name.  if new is set, also delete the new
@@ -135,20 +99,29 @@ int verify_player(char *name, char *password)
  * game, we don't let this person join.  We return 0 if the name is
  * in use, 1 otherwise.
  */
-
-int check_name(player *me,char *name) {
+int check_name(player *me,char *name) 
+{
     player *pl;
+	const char *name_hash;
 
-    for(pl=first_player;pl!=NULL;pl=pl->next)
-	if(pl!=me&&pl->ob->name!=NULL&&!strcmp(pl->ob->name,name)) {
-	    new_draw_info(NDI_UNIQUE, 0,me->ob,"That name is already in use.");
-	    return 0;
-	}
-
-    if(!playername_ok(name)) {
+    if(!playername_ok(name)) 
+	{
 		new_draw_info(NDI_UNIQUE, 0,me->ob,"That name contains illegal characters.");
 		return 0;
     }
+
+	if(!(name_hash = find_string(name)))
+		return 1; /* perfect - no hash name, no player */
+	
+    for(pl=first_player;pl!=NULL;pl=pl->next)
+	{
+		if(pl!=me && pl->ob->name==name_hash) 
+		{
+			new_draw_info(NDI_UNIQUE, 0,me->ob,"That name is already in use.");
+			return 0;
+		}
+	}
+
     return 1;
 }
 
@@ -231,9 +204,6 @@ int save_player(object *op, int flag) {
 
   fprintf(fp,"password %s\n",pl->password);
 
-#ifdef EXPLORE_MODE
-  fprintf(fp,"explore %d\n",pl->explore);
-#endif
   fprintf(fp,"dm_stealth %d\n",pl->dm_stealth);
   fprintf(fp,"gen_hp %d\n",pl->gen_hp);
   fprintf(fp,"gen_sp %d\n",pl->gen_sp);
@@ -554,10 +524,6 @@ void check_login(object *op) {
         if (!strcmp(buf,"endplst"))
           break;
 
-#ifdef EXPLORE_MODE
-	else if (!strcmp(buf,"explore"))
-	    pl->explore = value;
-#endif
 		else if (!strcmp(buf,"dm_stealth"))
 		    pl->dm_stealth = value;
 
@@ -905,13 +871,7 @@ void check_login(object *op) {
 	{
 	    new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, NULL,"%s has entered the game.",query_name(pl->ob));
 		if(gbl_active_DM)
-		{
-			player *pl_tmp;
-			int players;
-
-			for(pl_tmp=first_player,players=0;pl_tmp!=NULL;pl_tmp=pl_tmp->next,players++);
-			new_draw_info_format(NDI_UNIQUE, 0,gbl_active_DM,"DM: %d players now playing.", players);
-		}
+			new_draw_info_format(NDI_UNIQUE, 0,gbl_active_DM,"DM: %d players now playing.", player_active);
 	}
 #ifdef PLUGINS
     /* GROS : Here we handle the LOGIN global event */

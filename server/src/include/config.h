@@ -136,13 +136,11 @@
  * BALANCED_STAT_LOSS - Based death stat depletion on level etc?
  * CS_LOGSTATS - log various new client/server data.
  * DEBUG - more verbose message logging?
- * EXPLORE_MODE - add an explore mode method of play?
  * MAP_CLIENT_X, MAP_CLIENT_Y - determines max size client map will receive
  * MAX_TIME - how long an internal tick is in microseconds
  * MULTIPLE_GODS - adds numerous gods to the game, with different powers
  * NOT_PERMADEATH - should death be the final end or not?
  * PARTY_KILL_LOG - stores party kill information
- * REAL_WIZ - changes wiz stuff to be more mudlike.
  * RECYCLE_TMP_MAPS - use tmp maps across multiple runs?
  * RESURRECTION - lets players bring other dead players back to life.
  * SEARCH_ITEMS - let players search for items on the ground
@@ -225,24 +223,6 @@
 #endif
 #endif
 
-
-/* if EXPLORE_MODE is defined, it allows players to enter explore mode,
- * where they can not die.  Unlike other games (nethack for instance) explore
- * modes, the only thing Crossfire explore mode does is prevent death.
- * Characters in explore mode will not be able to go on the scoreboard.  Also,
- * once explore mode is entered, there is no return.  Explore mode can
- * only be entered if the person doing so is the only player in the
- * game, and once done, that person can not add new players to the
- * game.  To get into explore mode, type 'explore
- * Explore mode code added by Mark Wedel (mark@pyramid.com)
- * It's a good idea to turn off EXPLORE_MODE if you will only be running
- * on server, since it would block new players.
- */
-/*
-#define EXPLORE_MODE
-*/
-
-
 /*
  * This determines the maximum map size the client can request (and
  * thus what the server will send to the client.
@@ -307,18 +287,6 @@
 /*
 #define PARTY_KILL_LOG 20
 */
-
-/* Calling this REAL_WIZ is probably not really good.  Something like
- * MUD_WIZ might be a better name.
- *
- * Basically, if REAL_WIZ is define then the WIZ/WAS_WIZ flags for objects
- * are not set - instead, wizard created/manipulated objects appear as
- * normal objects.  This makes the wizard a little more mudlike, since
- * object manipulations will be usable for other objects.
- */
-
-#define REAL_WIZ
-
 
 /*
  * Set this if you want the temporary maps to be saved and reused across
@@ -653,22 +621,6 @@
 /*#define MAX_OBJECTS_LWM	MAX_OBJECTS/2*/
 
 /*
- * Turning on MEMORY_DEBUG slows down execution, but makes it easier
- * to find memory corruption and leaks.  Currently, the main thing
- * that happens with this activated is that one malloc is done for
- * each object - thus whatever debugging mechanism the malloc library
- * (or other debugging tool provides, like purify), it can track this
- * individual malloc.  Default behaviour when turned off is that 
- * enough memory is malloced for a large group of objects so malloc does
- * not need to be called as often.
- * This should only be turned on if some form of memory debugging tool
- * is being used - otherwise, turning this on will cause some performance
- * hit with no useful advantage.
- */
-
-/*#define MEMORY_DEBUG*/
-
-/*
  * If you want to have a Message Of The Day file, define MOTD to be
  * the file with the message.  If the file doesn't exist or if it
  * is empty, no message will be displayed.
@@ -781,7 +733,6 @@
  */
 /*#define BLOCK_UNTIL_CONNECTION*/
 
-
 #define USE_CHECKSUM
 /* #define ENABLE_CHECKSUM */ /* Will be default in distant future versions */
 
@@ -827,14 +778,6 @@
  */
 
 #define AUTOSAVE 5000
-
-/* Often, emergency save fails because the memory corruption that caused
- * the crash has trashed the characters too. Define NO_EMERGENCY_SAVE
- * to disable emergency saves.  This actually does
- * prevent emergency saves now (Version 0.90.5).
- */
-
-#define NO_EMERGENCY_SAVE
 
 /* By selecting the following, whenever a player does a backup save (with
  * the 'save command), the player will be saved at home (EMERGENCY_MAP_*

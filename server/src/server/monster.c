@@ -41,8 +41,6 @@ typedef struct _msglang {
 } msglang;
 
 
-extern spell spells[NROFREALSPELLS];
-
 /* update (or clear) an npc's enemy. Performs m ost of the housekeeping
  * related to switching enemies. 
  * You should always use this method to set (or clear) a npc's enemy.

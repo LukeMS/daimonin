@@ -34,20 +34,14 @@
 #include <loader.h>
 
 #ifdef MEMPOOL_OBJECT_TRACKING
+	#define MEMPOOL_OBJECT_FLAG_FREE 1
+	#define MEMPOOL_OBJECT_FLAG_USED 2
 	static struct mempool_chunk *used_object_list=NULL; /* for debugging only! */
-
-#define MEMPOOL_OBJECT_FLAG_FREE 1
-#define MEMPOOL_OBJECT_FLAG_USED 2
 #endif
 
-object *active_objects;	/* List of active objects that need to be processed */
-struct mempool_chunk *removed_objects; /* List of objects that have been removed
-                                          during the last server timestep */
 /* The removedlist is not ended by NULL, but by a pointer to the end_marker */
 static struct mempool_chunk end_marker; /* only used as an end marker for the lists */
 static int static_walk_semaphore=FALSE; /* see walk_off/walk_on functions  */
-
-object void_container; /* container for objects without real maps or envs */
 
 /* 
  * The Life Cycle of an Object:
@@ -1946,17 +1940,6 @@ object *find_object_name(char *str) {
 }
 
 void free_all_object_data() {
-#ifdef MEMORY_DEBUG
-    object *op, *next;
-
-    for (op=free_objects; op!=NULL; ) {
-	next=op->next;
-	free(op);
-	nrofallocobjects--;
-	nroffreeobjects--;
-	op=next;
-    }
-#endif
     LOG(llevDebug,"%d allocated objects, %d free objects\n", 
 	mempools[POOL_OBJECT].nrof_used, mempools[POOL_OBJECT].nrof_free);
 }
@@ -2224,7 +2207,6 @@ void update_turn_face(object *op) {
  */
 
 void update_ob_speed(object *op) {
-    extern int arch_init;
 
     /* No reason putting the archetypes objects on the speed list,
      * since they never really need to be updated.
@@ -2237,47 +2219,49 @@ void update_ob_speed(object *op) {
 		LOG(llevBug,"BUG: Object %s is freed but has speed.\n:%s\n", op->name,errmsg);
 		op->speed = 0;
     }
-    if (arch_init) {
-	return;
-    }
+
 	/* these are special case objects - they have speed set, but should not put
 	 * on the active list.
 	 */
-	if(op->type == SPAWN_POINT_MOB)
+    if (arch_init || op->type == SPAWN_POINT_MOB) 
 		return;
 
-    if (FABS(op->speed)>MIN_ACTIVE_SPEED) {
-	/* If already on active list, don't do anything */
-	if (op->active_next || op->active_prev || op==active_objects)
-	    return;
+    if (FABS(op->speed)>MIN_ACTIVE_SPEED) 
+	{
+		/* If already on active list, don't do anything */
+		if (op->active_next || op->active_prev || op==active_objects)
+			return;
 
         /* process_events() expects us to insert the object at the beginning
          * of the list. */
-	/*LOG(-1,"SPEED: add object to speed list: %s (%d,%d)\n",query_name(op),op->x,op->y);*/
-	op->active_next = active_objects;
-	if (op->active_next!=NULL)
-		op->active_next->active_prev = op;
-	active_objects = op;
-        op->active_prev = NULL;
+		/*LOG(-1,"SPEED: add object to speed list: %s (%d,%d)\n",query_name(op),op->x,op->y);*/
+		op->active_next = active_objects;
+		if (op->active_next!=NULL)
+			op->active_next->active_prev = op;
+		active_objects = op;
+		    op->active_prev = NULL;
     }
-    else {
-	/* If not on the active list, nothing needs to be done */
-	if (!op->active_next && !op->active_prev && op!=active_objects)
-	    return;
+    else 
+	{
+		/* If not on the active list, nothing needs to be done */
+		if (!op->active_next && !op->active_prev && op!=active_objects)
+			return;
 
-	/*LOG(-1,"SPEED: remove object from speed list: %s (%d,%d)\n",query_name(op),op->x,op->y);*/
-	if (op->active_prev==NULL) {
-	    active_objects = op->active_next;
-	    if (op->active_next!=NULL)
-		op->active_next->active_prev = NULL;
-	}
-	else {
-	    op->active_prev->active_next = op->active_next;
-	    if (op->active_next)
-		op->active_next->active_prev = op->active_prev;
-	}
-	op->active_next = NULL;
-	op->active_prev = NULL;
+		/*LOG(-1,"SPEED: remove object from speed list: %s (%d,%d)\n",query_name(op),op->x,op->y);*/
+		if (op->active_prev==NULL) 
+		{
+			active_objects = op->active_next;
+			if (op->active_next!=NULL)
+				op->active_next->active_prev = NULL;
+		}
+		else
+		{
+			op->active_prev->active_next = op->active_next;
+			if (op->active_next)
+				op->active_next->active_prev = op->active_prev;
+		}
+		op->active_next = NULL;
+		op->active_prev = NULL;
     }
 }
 
@@ -3918,12 +3902,14 @@ object *present_arch_in_ob(archetype *at, object *op)  {
  * him/her-self and all object carried by a call to this function.
  */
 
-void set_cheat(object *op) {
+void set_cheat(object *op) 
+{
+	/*
   object *tmp;
-  SET_FLAG(op, FLAG_WAS_WIZ);
   if(op->inv)
     for(tmp = op->inv; tmp != NULL; tmp = tmp->below)
       set_cheat(tmp);
+	*/
 }
 
 /*
