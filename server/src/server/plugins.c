@@ -143,7 +143,8 @@ void initPlugins(void)
 
     LOG(llevInfo,"Now initializing plugins\n");
     /* strcpy(buf,DATADIR); dlls should not part of DATADIR or LIBDOR */
-    strcpy(buf,"./plugins/");
+    /* strcpy(buf,"./plugins/"); */
+    strcpy(buf,PLUGINDIR"/");
     LOG(llevInfo,"Plugins directory is %s\n",buf);
 
     plugdir = opendir(buf);
@@ -293,9 +294,10 @@ void initPlugins(void)
         char buf2[MAX_BUF];
 
         LOG(llevInfo,"Initializing plugins :\n");
-        strcpy(buf,DATADIR);
-        strcat(buf,"/../plugins/");
-	LOG(llevInfo,"Plugins directory is %s\n",buf);
+/*        strcpy(buf,DATADIR);
+        strcat(buf,"/../plugins/");*/
+        strcpy(buf, PLUGINDIR"/");
+        LOG(llevInfo,"Plugins directory is %s\n",buf);
         n = scandir(buf, &namelist, 0, alphasort);
         if (n < 0)
 			LOG(llevBug,"BUG: plugins.c: scandir...\n");

@@ -221,12 +221,12 @@ extern int	global_darkness_table[MAX_DARKNESS+1];
 #pragma pack(push,1)
 #endif
 
-typedef struct MapSpace {
+typedef struct MapSpace_s {
 	object  *first;							/* start of the objects in this map tile */
 	object	*layer[MAX_ARCH_LAYERS*2];		/* array of visible layer objects + for invisible (*2)*/
 	object  *last;							/* last object in this list */
-	struct MapSpace *prev_light;			/* used to create chained light source list.*/
-	struct MapSpace *next_light;			
+	struct MapSpace_s *prev_light;			/* used to create chained light source list.*/
+	struct MapSpace_s *next_light;			
 
     uint32  round_tag;						/* tag for last_damage */
 	uint32  update_tile;					/* counter for update tile */
@@ -352,7 +352,7 @@ typedef struct mapdef {
  * monster that is closest.
  * Note: distance should be always >=0. I changed it to UINT. MT
  */
-typedef struct rv_vector {
+typedef struct rv_vector_s {
     unsigned int	    distance;
     int	    distance_x;
     int	    distance_y;

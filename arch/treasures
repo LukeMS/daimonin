@@ -2006,6 +2006,29 @@ treasure mob_demilich
     end
    end
 end
+treasure mob_troll
+ list traps
+   chance 10
+ more
+ list default_wealth
+   chance 75
+ more
+ list default_drop
+   chance 20
+ no
+  list random_equipment
+    material_quality 80
+    material_range 3
+    chance 12
+  no
+     list random_tools
+       material_quality 80
+       material_range 3
+       chance 13
+       difficulty 3
+    end
+   end
+end
 ############# TEST ############################
 treasureone random_test_all
  list random_potion

@@ -78,9 +78,9 @@ typedef struct _material_real_struct {
     int type;                   /* back ref. to material type */
     int def_race;               /* we can assign a default race for this material. */
     /* these race have this material then exclusive */
-}_material_real_struct;
+} material_real_struct;
 
-EXTERN materialtype material[NROFMATERIALS];
-EXTERN _material_real_struct material_real[NROFMATERIALS*NROFMATERIALS_REAL+1];
+extern materialtype material[NROFMATERIALS];
+extern material_real_struct material_real[NROFMATERIALS*NROFMATERIALS_REAL+1];
 
 #endif
