@@ -288,6 +288,9 @@ EXTERN int num_animations,animations_allocated, bmaps_checksum;
 extern int freearr_x[SIZEOFFREE], freearr_y[SIZEOFFREE];
 extern int maxfree[SIZEOFFREE], freedir[SIZEOFFREE];
 
+extern object *gbl_active_DM; /* ony for testing, TODO list of DMs */
+
+
 extern New_Face *blank_face, *next_item_face, *prev_item_face;
 extern MapLook blank_look;
 

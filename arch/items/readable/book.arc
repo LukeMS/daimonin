@@ -6,5 +6,5 @@ face book.101
 type 8
 material 1
 value 45
-weight 1500
+weight 1200
 end

@@ -79,10 +79,10 @@ char *describe_resistance(object *op, int newline)
         {
             if(!flag)
                 strcat(buf,", ");
-    		sprintf(buf1,"%s %+d", resist_plus[tmpvar], op->resist[tmpvar]);
+    		sprintf(buf1,"%s %+d%%", resist_plus[tmpvar], op->resist[tmpvar]);
         }
 	    else
-		sprintf(buf1,"%s %d\n", resist_plus[tmpvar], op->resist[tmpvar]);
+		sprintf(buf1,"%s %d%%\n", resist_plus[tmpvar], op->resist[tmpvar]);
         flag=0;        
 	    strcat(buf, buf1);
        }
@@ -117,10 +117,10 @@ char *describe_attack(object *op, int newline)
         {
             if(!flag)
                 strcat(buf,", ");
-            sprintf(buf1,"%s %+d", attacktype_desc[tmpvar],op->attack[tmpvar]);
+            sprintf(buf1,"%s %+d%%", attacktype_desc[tmpvar],op->attack[tmpvar]);
         }
 	    else
-            sprintf(buf1,"%s %+d\n", attacktype_desc[tmpvar],op->attack[tmpvar]);
+            sprintf(buf1,"%s %+d%%\n", attacktype_desc[tmpvar],op->attack[tmpvar]);
         flag=0;        
 	    strcat(buf, buf1);
        }
@@ -150,10 +150,10 @@ char *describe_protections(object *op, int newline)
         {
             if(!flag)
                 strcat(buf,", ");
-    		sprintf(buf1,"%s %+d", protection_name[tmpvar], op->protection[tmpvar]);
+    		sprintf(buf1,"%s %+d%%", protection_name[tmpvar], op->protection[tmpvar]);
         }
 	    else
-		sprintf(buf1,"%s %d\n", protection_name[tmpvar], op->protection[tmpvar]);
+		sprintf(buf1,"%s %d%%\n", protection_name[tmpvar], op->protection[tmpvar]);
         flag=0;
         
 	    strcat(buf, buf1);

@@ -442,10 +442,13 @@ int command_dm_stealth (object *op, char *params)
 	if(op->contr)
 	{
 		if(op->contr->dm_stealth)
+		{
+			new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, NULL,"%s has entered the game.",query_name(op));
 			op->contr->dm_stealth = 0;
+		}
 		else
 			op->contr->dm_stealth = 1;
-		new_draw_info_format(NDI_UNIQUE, 0,op, "toggle dm_stealth to %d", op->contr->dm_stealth);
+		new_draw_info_format(NDI_UNIQUE, 0,op, "toggled dm_stealth to %d", op->contr->dm_stealth);
 	}
 
 	return 0;
@@ -489,6 +492,26 @@ int command_ssdumptable (object *op, char *params)
 {
       (void) ss_dump_table(1);
   return 0;
+}
+
+int command_start_shutdown (object *op, char *params)
+{
+	char *bp=NULL;
+	int i=-2;
+
+
+	sscanf(params, "%d ", &i);
+	if ((bp = strchr(params, ' ')) != NULL)
+		bp++;
+
+	if(params==NULL || i<-1) 
+	{
+		new_draw_info(NDI_UNIQUE, 0,op, "DM usage: /start_shutdown <-1 ... x>");
+		return 0;
+	}
+
+	shutdown_agent(i, bp);
+	return 0;
 }
 
 int command_setmaplight (object *op, char *params)

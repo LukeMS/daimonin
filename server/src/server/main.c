@@ -49,6 +49,8 @@
 
 uint32 global_round_tag=1; /* global round ticker ! this is real a global */
 
+object *gbl_active_DM=NULL; /* ony for testing, TODO list of DMs */
+
 static object marker; /* object for proccess_obejct(); */
 
 
@@ -1321,10 +1323,12 @@ int main(int argc, char **argv)
   for(;;) 
   {
 	nroferrors = 0;				/* every llevBug will increase this - avoid LOG loops */
-    doeric_server();		
     global_round_tag++;			/* global round ticker ! this is real a global */
+
+	shutdown_agent(-1, NULL);			/* check & run a shutdown count (with messages & shutdown ) */
+
+    doeric_server();		
     process_events(NULL);		/* "do" something with objects with speed */
-	doeric_server_write();
     cftimer_process_timers();	/* Process the crossfire Timers */    
 
 #ifdef PLUGINS_X
@@ -1336,6 +1340,7 @@ int main(int argc, char **argv)
 
     check_active_maps();		/* Removes unused maps after a certain timeout */
     do_specials();				/* Routines called from time to time. */
+	doeric_server_write();
     sleep_delta();				/* Slepp proper amount of time before next tick */
   }
   return 0;

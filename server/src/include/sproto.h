@@ -156,6 +156,7 @@ int command_dm_light(object *op, char *params);
 int command_dumpactivelist(object *op, char *params);
 int command_ssdumptable(object *op, char *params);
 int command_setmaplight (object *op, char *params);
+int command_start_shutdown (object *op, char *params);
 int command_dumpmap(object *op, char *params);
 int command_dumpallmaps(object *op, char *params);
 int command_printlos(object *op, char *params);
@@ -272,6 +273,7 @@ int command_forget_spell(object *op, char *params);
 int command_listplugins(object *op, char *params);
 int command_loadplugin(object *op, char *params);
 int command_unloadplugin(object *op, char *params);
+void shutdown_agent(int timer, char *reason);
 /* commands.c */
 void init_commands(void);
 /* daemon.c */

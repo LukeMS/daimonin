@@ -1127,6 +1127,17 @@ arch floor_ostone1
 x 10
 y 12
 end
+arch ring_adamant
+make_invisible 1
+see_invisible 1
+can_see_in_dark 1
+identified 1
+stealth 1
+reflect_spell 1
+reflect_missile 1
+x 10
+y 12
+end
 arch floor_ostone1
 x 10
 y 13

@@ -1460,8 +1460,11 @@ int process_object(object *op) {
     change_object(op);
     return 1;
   }
+  /* no generator in ATM */
+  /*
   if(QUERY_FLAG(op, FLAG_GENERATOR))
     generate_monster(op);
+  */
   if(QUERY_FLAG(op, FLAG_IS_USED_UP)&&--op->stats.food<=0) 
   {
     if(QUERY_FLAG(op, FLAG_APPLIED) && op->type != CONTAINER)

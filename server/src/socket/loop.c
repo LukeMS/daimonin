@@ -330,7 +330,14 @@ static void block_until_new_connection()
 
 
 static void remove_ns_dead_player(player *pl)
-{			
+{	
+	/* remove DM entry */
+	if(QUERY_FLAG(pl->ob,FLAG_WIZ))
+		gbl_active_DM = NULL;
+
+	if(gbl_active_DM)
+		new_draw_info_format(NDI_UNIQUE, 0,gbl_active_DM,"%s leaves the game.", query_name(pl->ob));
+
 	container_unlink(pl,NULL);
 	save_player(pl->ob, 0);
 			

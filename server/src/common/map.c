@@ -1085,7 +1085,8 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 				/* do some testing... */
 				if(op->type == PLAYER) 
 				{
-					LOG(llevDebug, "BUG: Player on map that is being saved\n");
+					/* well, we catch it here... save the map and leave the op object unsaved... so no bug */
+					/*LOG(llevDebug, "BUG: Player on map that is being saved\n");*/
 					continue;
 				}
 
@@ -2680,8 +2681,7 @@ int get_rangevector_from_mapcoords(mapstruct *map1, int x1, int y1, mapstruct *m
         retval->distance_y = y2;
        
         if(! relative_tile_position(map1, map2, &retval->distance_x, &retval->distance_y)) {
-            LOG(llevDebug,"DBUG: get_rangevector_from_mapcoords: No tileset path between maps '%s' and '%s'\n", 
-                    map1->path, map2->path);
+			/*LOG(llevDebug,"DBUG: get_rangevector_from_mapcoords: No tileset path between maps '%s' and '%s'\n", map1->path, map2->path);*/
             return FALSE;
         }
         
@@ -2689,7 +2689,7 @@ int get_rangevector_from_mapcoords(mapstruct *map1, int x1, int y1, mapstruct *m
         retval->distance_y -= y1;
     } 
     else {
-        LOG(llevDebug,"DBUG: get_rangevector_from_mapcoords: objects not on adjacent maps\n");
+        /*LOG(llevDebug,"DBUG: get_rangevector_from_mapcoords: objects not on adjacent maps\n");*/
         return FALSE;
     }
   

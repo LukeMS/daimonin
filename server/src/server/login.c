@@ -872,8 +872,7 @@ void check_login(object *op) {
 
     new_draw_info(NDI_UNIQUE, 0,op,"Welcome Back!");
 	if(!pl->dm_stealth)
-	    new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, NULL,
-		     "%s has entered the game.",pl->ob->name);
+	    new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, NULL,"%s has entered the game.",query_name(pl->ob));
 #ifdef PLUGINS
     /* GROS : Here we handle the LOGIN global event */
     evtid = EVENT_LOGIN;
