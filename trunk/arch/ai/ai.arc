@@ -18,8 +18,6 @@ move_towards_waypoint
 # move_randomly xlimit=5 ylimit=5
 move_towards_home
 
-reaction_moves:
-
 actions:
 melee_attack_enemy
 bow_attack_enemy
