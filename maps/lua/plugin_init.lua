@@ -40,6 +40,8 @@ end
 -- TODO: possibility to turn on/off either via a script or custom commands
 -- TODO: possibility to register DM's that should get messages even if not involved
 function _error(msg)
+    msg = debug.traceback(msg)
+
     local function msg_wiz_obj(obj)
         if obj and game.IsValid(obj) and obj.f_wiz then
             obj.Write(obj, "LUA: "..tostring(msg))

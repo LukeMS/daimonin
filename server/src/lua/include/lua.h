@@ -196,6 +196,7 @@ LUA_API int lua_dump (lua_State *L, lua_Chunkwriter writer, void *data);
 /*
 ** coroutine functions
 */
+LUA_API int  lua_coroutine(lua_State *L, int nargs, int errfunc);
 LUA_API int  lua_yield (lua_State *L, int nresults);
 LUA_API int  lua_resume (lua_State *L, int narg);
 
@@ -220,7 +221,7 @@ LUA_API void  lua_concat (lua_State *L, int n);
 
 
 
-/* 
+/*
 ** ===============================================================
 ** some useful macros
 ** ===============================================================

@@ -656,6 +656,11 @@ LUA_API void lua_call (lua_State *L, int nargs, int nresults) {
 }
 
 
+LUA_API int lua_coroutine(lua_State *L, int nargs, int errfunc)
+{
+    L->errfunc = (errfunc == 0) ? 0 : savestack(L, luaA_index(L, errfunc));
+    return lua_resume(L, nargs);
+}
 
 /*
 ** Execute a protected call.
