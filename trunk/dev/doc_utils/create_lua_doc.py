@@ -21,7 +21,8 @@ index_items_per_line = 6
 amp_re_obj = re.compile('&')
 attributes_re_obj = re.compile('\{\s*"(.*?)",\s*FIELDTYPE_(.*?),\s*offsetof\(.*?\),\s*(.*?)\s*[\},]')
 block_re_obj = re.compile('FUNCTIONSTART.*?FUNCTIONEND', re.S)
-colon_re_obj = re.compile('\s*:\s*')
+field_start_re_obj = re.compile('(Lua|Info|Status|TODO)\s*:.*')
+colon_re_obj = re.compile('\s+:\s*')
 colon_find_re_obj = re.compile('\s*.+?:')
 colon_prefix_re_obj = re.compile('^\s*:\s*')
 comment_re_obj = re.compile('/\*+/[\n\r]+(.*)[\n\r]+/\*+/', re.S)
@@ -37,7 +38,7 @@ gt_re_obj = re.compile('>')
 lt_re_obj = re.compile('<')
 map_attributes_block_re_obj = re.compile('\s*struct\s+attribute_decl\s+Map_attributes\[\]\s+=[\n\r]+(.*?)[\n\r]+\};', re.S)
 map_flags_block_re_obj = re.compile('\s*static\s+const\s+char\s*\*\s*Map_flags\[\]\s*=[\n\r]+(.*?)[\n\r]+\};', re.S)
-name_prefix_re_obj = re.compile('([A-Za-z_]*)\..+')
+name_prefix_re_obj = re.compile('([A-Za-z_]*):.+')
 name_re_obj = re.compile('[A-Za-z_]*[\.:](.*)\(')
 newline_re_obj = re.compile('\n')
 object_attributes_block_re_obj = re.compile('\s*struct\s+attribute_decl\s+GameObject_attributes\[\]\s+=[\n\r]+(.*?)[\n\r]+\};', re.S)
@@ -98,15 +99,17 @@ for filename in listCFiles(sys.argv[1]):
 				comment = comment_suffix_re_obj.split(comment_prefix_re_obj.sub('', comment))
 				key = None
 				for line in comment:
-					match = colon_find_re_obj.match(line)
+					match = field_start_re_obj.match(line)
 					if match != None:
 						lst = colon_re_obj.split(line)
 						if lst[0] != 'Name':
 							key = lst[0]
+							print lst
 							fields[key] = lst[1]
 					elif key != None and line:
 						fields[key] += "\n" + colon_prefix_re_obj.sub('', line)
 			if 'Lua' in fields:
+				print fields['Lua']
 				prefix = name_prefix_re_obj.findall(fields['Lua'])
 				if prefix:
 					prefix = prefix[0]
@@ -138,6 +141,9 @@ for filename in listCFiles(sys.argv[1]):
 							elif types[i] == 'O':
 								if c != 0 or prefix != 'object':
 									tp = 'object'
+							elif types[i] == 'G':
+								if c != 0 or prefix != 'game':
+									tp = 'game'
 							elif types[i] == 'M':
 								if c != 0 or prefix != 'map':
 									tp = 'map'
