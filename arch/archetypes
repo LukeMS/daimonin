@@ -15,8 +15,6 @@ search_for_lost_enemy
 move_towards_waypoint
 move_towards_home
 
-reaction_moves:
-
 actions:
 melee_attack_enemy
 bow_attack_enemy
@@ -40,8 +38,6 @@ sleep
 move_towards_enemy
 move_towards_home
 
-reaction_moves:
-
 actions:
 melee_attack_enemy
 bow_attack_enemy
@@ -58,7 +54,6 @@ type 126
 msg
 processes:
 moves: 
-reaction_moves:
 actions:
 endmsg
 editor_folder ai/ai
@@ -78,8 +73,6 @@ moves:
 sleep
 move_towards_enemy
 move_towards_home
-
-reaction_moves:
 
 actions:
 melee_attack_enemy
