@@ -1,8 +1,16 @@
 Daimonin CHANGES
-13.05.04	- removed getprotobyname("tcp") calls
+14.05.04	- fixed artifact list -> xxx of less fire to lesser fire
+                - fixed potion value in artifact list (alot to high)
+                - fixed shop. Selling of items with value will get 1 copper
+                  min and worthless items will get deleted too from shop power.
+13.05.04	- fixing clone shop bug (get object direct in open container)
+		- adjusting poison for players - adjust damage
+		- make remove/find traps more useful and transparent
+		- set some mobs on outdoor map to unaggressive
+		- removed getprotobyname("tcp") calls
                   from windows build. Reported problems
                   under XP home edition.
-13.05.04	- fixed some female player pictures
+		- fixed some female player pictures
 
 -------------------------------------
 BETA 1 		- removed old changes

@@ -2206,28 +2206,5 @@ list traps
     name small ant shield
 end
 treasure random_test
- t_style 1
- list traps
-   chance 100
- more
- list default_wealth
-   chance 60
- more
- list default_drop
-   chance 15
- no
-  list random_equipment
-    artifact_chance 25
-    material_quality 80
-    material_range 4
-    chance 8
-  no
-     list random_tools
-      artifact_chance 25
-       material_quality 80
-       material_range 4
-       chance 5
-       difficulty 3
-    end
-   end
+ arch potion_generic
 end

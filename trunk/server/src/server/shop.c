@@ -128,7 +128,13 @@ double query_cost(object *tmp, object *who, int flag)
 	else
 			diff = 0.20+(double)cha_bonus[charisma];  
 
-	return val*diff;
+	diff = val*diff; /* our real value */
+
+	/* we want give at last 1 copper for items which has any value */
+	if(((int)diff)== 0 && (((int)val) > 0 || tmp->value>0 ))
+		diff = 1.0f;
+
+	return diff;
 }
 
 /* Find the coin type that is worth more the 'c'.  Starts at the
@@ -468,12 +474,18 @@ void sell_item(object *op, object *pl) {
     /* Even if the character doesn't get anything for it, it may still be
      * worth something.  If so, make it unpaid
      */
-	/* don't id or mark it unpaid - so we can get it back in clone shops
+
+	 /* don't id or mark it unpaid - so we can get it back in clone shops
     if (op->value)
       SET_FLAG(op, FLAG_UNPAID);
     identify(op);
 	*/
-    return;
+
+	/* if this return is enabled, items with value 0 will don't be put
+	 * in store backroom (aka destroyed) and will stay inside the shop.
+	 * if disabeld, the shop will remove it but you don't get any money.
+	 */
+	/* return; */
   }
   /* i can't say i understand this... MT-2004 */
   for (count=0; coins[count]!=NULL; count++) {

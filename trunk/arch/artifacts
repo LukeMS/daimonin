@@ -695,7 +695,7 @@ t_style 1
 artifact cloak_less_fire
 def_arch cloak
 Object
-title of less fire protection
+title of lesser fire protection
 type 87
 protect_fire 15
 is_magical 1
@@ -708,7 +708,7 @@ t_style 2
 artifact cloak_less_cold
 def_arch cloak
 Object
-title of less cold protection
+title of lesser cold protection
 type 87
 protect_cold 15
 is_magical 1
@@ -721,7 +721,7 @@ t_style 3
 artifact cloak_less_elec
 def_arch cloak
 Object
-title of less electricity protection
+title of lesser electricity protection
 type 87
 protect_electricity 15
 is_magical 1
@@ -734,7 +734,7 @@ t_style 4
 artifact cloak_less_poison
 def_arch cloak
 Object
-title of less poison protection
+title of lesser poison protection
 type 87
 protect_poison 15
 is_magical 1
@@ -747,7 +747,7 @@ t_style 1
 artifact cloak_less_acid
 def_arch cloak
 Object
-title of less acid protection
+title of lesser acid protection
 type 87
 protect_acid 15
 is_magical 1
@@ -938,7 +938,7 @@ t_style 1
 artifact armour_less_fire
 def_arch chain_mail
 Object
-title of less fire protection
+title of lesser fire protection
 type 16
 protect_fire 25
 is_magical 1
@@ -951,7 +951,7 @@ t_style 2
 artifact armour_less_cold
 def_arch chain_mail
 Object
-title of less cold protection
+title of lesser cold protection
 type 16
 protect_cold 25
 is_magical 1
@@ -964,7 +964,7 @@ t_style 3
 artifact armour_less_elec
 def_arch chain_mail
 Object
-title of less electricity protection
+title of lesser electricity protection
 type 16
 protect_electricity 25
 is_magical 1
@@ -977,7 +977,7 @@ t_style 4
 artifact armour_less_poison
 def_arch chain_mail
 Object
-title of less poison protection
+title of lesser poison protection
 type 16
 protect_poison 25
 is_magical 1
@@ -990,7 +990,7 @@ t_style 5
 artifact armour_less_acid
 def_arch chain_mail
 Object
-title of less acid protection
+title of lesser acid protection
 type 16
 protect_acid 25
 is_magical 1
@@ -1020,7 +1020,7 @@ t_style 1
 artifact shield_less_fire
 def_arch shield
 Object
-title of less fire protection
+title of lesser fire protection
 type 33
 is_magical 1
 protect_fire 15
@@ -1033,7 +1033,7 @@ t_style 2
 artifact shield_less_cold
 def_arch shield
 Object
-title of less cold protection
+title of lesser cold protection
 type 33
 is_magical 1
 protect_cold 15
@@ -1046,7 +1046,7 @@ t_style 3
 artifact shield_less_elec
 def_arch shield
 Object
-title of less electricity protection
+title of lesser electricity protection
 type 33
 is_magical 1
 protect_electricity 15
@@ -1059,7 +1059,7 @@ t_style 4
 artifact shield_less_poison
 def_arch shield
 Object
-title of less poison protection
+title of lesser poison protection
 type 33
 is_magical 1
 protect_poison 15
@@ -1072,7 +1072,7 @@ t_style 5
 artifact shield_less_acid
 def_arch shield
 Object
-title of less acid protection
+title of lesser acid protection
 type 33
 is_magical 1
 protect_acid 15
@@ -1442,7 +1442,7 @@ t_style 1
 artifact helm_less_fire
 def_arch helm_iron
 Object
-title of less fire protection
+title of lesser fire protection
 type 34
 is_magical 1
 protect_fire 15
@@ -1456,7 +1456,7 @@ t_style 2
 artifact helm_less_cold
 def_arch helm_iron
 Object
-title of less cold protection
+title of lesser cold protection
 type 34
 is_magical 1
 protect_cold 15
@@ -1470,7 +1470,7 @@ difficulty 2
 artifact helm_less_elec
 def_arch helm_iron
 Object
-title of less electricity protection
+title of lesser electricity protection
 type 34
 is_magical 1
 protect_electricity 15
@@ -1484,7 +1484,7 @@ difficulty 2
 artifact helm_less_poison
 def_arch helm_iron
 Object
-title of less poison protection
+title of lesser poison protection
 type 34
 is_magical 1
 protect_poison 15
@@ -1498,7 +1498,7 @@ difficulty 2
 artifact helm_less_acid
 def_arch helm_iron
 Object
-title of less acid protection
+title of lesser acid protection
 type 34
 is_magical 1
 protect_acid 15
@@ -1649,7 +1649,7 @@ chance 20
 t_style 1
 def_arch low_boots
 Object
-title of less fire protection
+title of lesser fire protection
 type 99
 is_magical 1
 protect_fire 9
@@ -1662,7 +1662,7 @@ chance 20
 t_style 2
 def_arch low_boots
 Object
-title of less cold protection
+title of lesser cold protection
 type 99
 is_magical 1
 protect_cold 9
@@ -1675,7 +1675,7 @@ chance 20
 t_style 3
 def_arch low_boots
 Object
-title of less electricity protection
+title of lesser electricity protection
 type 99
 is_magical 1
 protect_electricity 9
@@ -1688,7 +1688,7 @@ chance 20
 t_style 4
 def_arch low_boots
 Object
-title of less poison protection
+title of lesser poison protection
 type 99
 is_magical 1
 protect_poison 9
@@ -1701,7 +1701,7 @@ chance 20
 t_style 5
 def_arch low_boots
 Object
-title of less acid protection
+title of lesser acid protection
 type 99
 is_magical 1
 protect_acid 9
@@ -1716,7 +1716,7 @@ difficulty 3
 t_style 1
 def_arch leggings_leather
 Object
-title of less fire protection
+title of lesser fire protection
 type 99
 is_magical 1
 protect_fire 15
@@ -1730,7 +1730,7 @@ difficulty 3
 t_style 2
 def_arch leggings_leather
 Object
-title of less cold protection
+title of lesser cold protection
 type 99
 is_magical 1
 protect_cold 15
@@ -1744,7 +1744,7 @@ difficulty 3
 t_style 3
 def_arch leggings_leather
 Object
-title of less electricity protection
+title of lesser electricity protection
 type 99
 is_magical 1
 protect_electricity 15
@@ -1758,7 +1758,7 @@ difficulty 3
 t_style 4
 def_arch leggings_leather
 Object
-title of less poison protection
+title of lesser poison protection
 type 99
 is_magical 1
 protect_poison 15
@@ -1772,7 +1772,7 @@ difficulty 3
 t_style 5
 def_arch leggings_leather
 Object
-title of less acid protection
+title of lesser acid protection
 type 99
 is_magical 1
 protect_acid 15
@@ -1943,7 +1943,7 @@ difficulty 7
 artifact weapon_less_fire
 def_arch sword
 Object
-title of less fire
+title of lesser fire
 attack_fire 10
 type 15
 is_magical 1
@@ -1957,7 +1957,7 @@ difficulty 7
 artifact weapon_less_cold
 def_arch sword
 Object
-title of less cold
+title of lesser cold
 attack_cold 10
 type 15
 is_magical 1
@@ -1971,7 +1971,7 @@ difficulty 7
 artifact weapon_less_elec
 def_arch sword
 Object
-title of less electricity
+title of lesser electricity
 attack_electricity 10
 type 15
 is_magical 1
@@ -2711,7 +2711,7 @@ type 5
 resist_fire 25
 is_magical 1
 last_eat -1
-value 2000
+value 145
 end
 #
 Allowed potion_generic
@@ -2729,7 +2729,7 @@ resist_cold 25
 food 2
 is_magical 1
 last_eat -1
-value 2000
+value 135
 end
 #
 Allowed potion_generic
@@ -2747,7 +2747,7 @@ type 5
 resist_electricity 25
 is_magical 1
 last_eat -1
-value 2000
+value 135
 end
 #
 Allowed potion_generic
@@ -2765,7 +2765,7 @@ type 5
 resist_poison 25
 is_magical 1
 last_eat -1
-value 2000
+value 135
 end
 #
 Allowed potion_generic
@@ -2783,7 +2783,7 @@ food 2
 resist_acid 25
 is_magical 1
 last_eat -1
-value 2000
+value 135
 end
 #
 Allowed potion_generic
@@ -2800,7 +2800,7 @@ type 5
 Str 2
 is_magical 1
 last_eat -1
-value 2000
+value 135
 end
 #
 Allowed potion_generic
@@ -2817,7 +2817,7 @@ type 5
 Dex 2
 is_magical 1
 last_eat -1
-value 2000
+value 135
 end
 #
 Allowed potion_generic
@@ -2833,7 +2833,7 @@ type 5
 Dex 2
 is_magical 1
 last_eat -1
-value 2000
+value 135
 end
 #
 Allowed potion_generic
@@ -2855,7 +2855,7 @@ resist_poison -50
 resist_acid -50
 is_magical 1
 last_eat -1
-value 2000
+value 35
 end
 #
 Allowed potion_generic
@@ -2871,7 +2871,7 @@ level 1
 type 5
 is_magical 1
 last_eat 1
-value 5000
+value 135
 end
 #
 Allowed potion_generic
@@ -2887,7 +2887,7 @@ type 5
 is_magical 1
 one_drop 1
 last_eat 2
-value 9500
+value 1500
 end
 #
 Allowed potion_generic
