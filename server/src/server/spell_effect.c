@@ -575,7 +575,7 @@ int probe(object *op)
 
     for(tmp=get_map_ob(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above)
 	{
-		if(QUERY_FLAG(tmp, FLAG_ALIVE)&&(tmp->type==PLAYER||QUERY_FLAG(tmp, FLAG_MONSTER)))
+		if(IS_LIVE(tmp))
 		{
 			if(op->owner && op->owner->type == PLAYER)
 			{
@@ -2095,7 +2095,7 @@ void cancellation(object *op)
 {
   object *tmp;
 
-  if (QUERY_FLAG (op, FLAG_ALIVE) || op->type == CONTAINER
+  if (IS_LIVE(op) || op->type == CONTAINER
       || op->type == THROWN_OBJ)
   {
     /* Recur through the inventory */
@@ -3046,14 +3046,14 @@ int cast_transfer(object *op,int dir) {
     if ((m=out_of_map(op->map,&xt,&yt))) {
 
 	for(plyr=get_map_ob(m,xt,yt); plyr!=NULL; plyr=plyr->above)
-		if(QUERY_FLAG(plyr, FLAG_ALIVE))
+		if(IS_LIVE(plyr))
 		    break;
     }
      /*  If we did not find a player in the specified direction, transfer
 	to anyone on top of us. */
     if(plyr==NULL)
         for(plyr=get_map_ob(op->map,op->x,op->y); plyr!=NULL; plyr=plyr->above)
-	    if(QUERY_FLAG(plyr,FLAG_ALIVE))
+	    if(IS_LIVE(plyr))
 		break;
 
     if(plyr) {
@@ -3100,7 +3100,7 @@ int drain_magic(object *op,int dir) {
 	yt = op->y+freearr_y[dir];
   if ((m=out_of_map(op->map,&xt,&yt))) {
     for(tmp=get_map_ob(m,xt,yt);tmp!=NULL;tmp=tmp->above)
-      if(QUERY_FLAG(tmp, FLAG_ALIVE))
+      if(IS_LIVE(tmp))
 	break;
      /*  If we did not find a player in the specified direction, transfer
 	to anyone on top of us. */
@@ -3108,7 +3108,7 @@ int drain_magic(object *op,int dir) {
 
   if(tmp==NULL)
     for(tmp=get_map_ob(op->map,op->x,op->y); tmp!=NULL; tmp=tmp->above)
-      if(QUERY_FLAG(tmp, FLAG_ALIVE))
+      if(IS_LIVE(tmp))
         break;
 
   /* DAMN: Percent spell point loss determined by caster level
@@ -3119,7 +3119,7 @@ int drain_magic(object *op,int dir) {
     if(rate > 0.95) rate = 0.95;
     mana = tmp->stats.sp * rate;
     tmp->stats.sp -= (sint16) mana;
-    if(QUERY_FLAG(op, FLAG_ALIVE)) {
+    if(IS_LIVE(op)) {
       rate = (double)(spells[SP_MAGIC_DRAIN].bdam
 	+ 5* SP_level_strength_adjust(op,op,SP_MAGIC_DRAIN)) / 100.0;
       if(rate > 0.95) rate = 0.95;

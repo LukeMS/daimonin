@@ -1372,7 +1372,7 @@ int skill_attack (object *tmp, object *pl, int dir, char *string)
 	/* rewrite this for new "head only" multi arches and battlegrounds. MT. */
     for(tmp=get_map_ob(m,xt,yt);tmp;tmp=tmp->above)
 	{
-        if((QUERY_FLAG(tmp,FLAG_ALIVE) && (tmp->head==NULL?tmp->stats.hp >0:tmp->head->stats.hp>0))
+        if((IS_LIVE(tmp) && (tmp->head==NULL?tmp->stats.hp >0:tmp->head->stats.hp>0))
            || QUERY_FLAG(tmp, FLAG_CAN_ROLL)
            || tmp->type==LOCKED_DOOR )
 		{

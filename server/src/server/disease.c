@@ -142,7 +142,7 @@ these are their own object. */
 /* check if victim is susceptible to disease. */
 static int is_susceptible_to_disease(object *victim, object *disease)
 {
-    if(!QUERY_FLAG(victim,FLAG_ALIVE)) return 0;
+    if(!IS_LIVE(victim)) return 0;
   if(strstr(disease->race, "*") && !QUERY_FLAG(victim, FLAG_UNDEAD))
     return 1;
   if(strstr(disease->race, "undead") && QUERY_FLAG(victim, FLAG_UNDEAD))

@@ -1502,7 +1502,7 @@ void move_apply (object *trap, object *victim, object *originator)
     goto leave;
 
   case MMISSILE:
-    if (QUERY_FLAG (victim, FLAG_ALIVE)) {
+    if (IS_LIVE (victim)) {
       tag_t trap_tag = trap->count;
       hit_player (victim, trap->stats.dam, trap, AT_MAGIC);
       if ( ! was_destroyed (trap, trap_tag)) {
@@ -1523,20 +1523,20 @@ void move_apply (object *trap, object *victim, object *originator)
        * Victim then is his own enemy and will start to kill herself (this is
        * removed) but we have not synced victim and his missile. To avoid senseless
        * action, we avoid hits here */
-      if ((QUERY_FLAG (victim, FLAG_ALIVE) && trap->speed) && trap->owner != victim)
+      if ((IS_LIVE(victim) && trap->speed) && trap->owner != victim)
       hit_with_arrow (trap, victim);
     goto leave;
 
   case CANCELLATION:
   case BALL_LIGHTNING:
-    if (QUERY_FLAG (victim, FLAG_ALIVE))
+    if (IS_LIVE(victim))
       hit_player (victim, trap->stats.dam, trap, trap->attacktype);
     else if (victim->material)
       save_throw_object (victim, trap->attacktype, trap);
     goto leave;
 
   case CONE:
-    if(QUERY_FLAG(victim, FLAG_ALIVE)&&trap->speed) {
+    if(IS_LIVE(victim)&&trap->speed) {
       uint32 attacktype = trap->attacktype & ~AT_COUNTERSPELL;
       if (attacktype)
         hit_player(victim,trap->stats.dam,trap,attacktype);
@@ -1545,8 +1545,7 @@ void move_apply (object *trap, object *victim, object *originator)
 
   case FBULLET:
   case BULLET:
-    if (QUERY_FLAG (victim, FLAG_NO_PASS)
-        || QUERY_FLAG (victim, FLAG_ALIVE))
+    if (QUERY_FLAG (victim, FLAG_NO_PASS) || IS_LIVE(victim))
       check_fired_arch (trap);
     goto leave;
 
@@ -1645,7 +1644,7 @@ void move_apply (object *trap, object *victim, object *originator)
     goto leave;
 
   case RUNE:
-    if (trap->level && QUERY_FLAG (victim, FLAG_ALIVE))
+    if (trap->level && IS_LIVE(victim))
         spring_trap(trap, victim);
     goto leave;
     
@@ -2078,7 +2077,7 @@ static void apply_treasure (object *op, object *tmp)
           fix_monster(treas);
       }
       treas = insert_ob_in_map (treas, op->map, op,0);
-      if (treas && treas->type == RUNE && treas->level && QUERY_FLAG (op, FLAG_ALIVE))
+      if (treas && treas->type == RUNE && treas->level && IS_LIVE(op))
         spring_trap (treas, op);
       if (was_destroyed (op, op_tag) || was_destroyed (tmp, tmp_tag))
         break;

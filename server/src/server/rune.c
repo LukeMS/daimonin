@@ -216,7 +216,7 @@ void spring_trap(object *trap,object *victim)
    * doing direct damage to a non-living object doesn't work anyway.
    * Typical example is an arrow attacking a door.
    */
-  if ( ! QUERY_FLAG (victim, FLAG_ALIVE) && ! trap->stats.sp)
+  if(!IS_LIVE(victim) && ! trap->stats.sp)
     return;
 
   trap->stats.hp--;  /*decrement detcount */

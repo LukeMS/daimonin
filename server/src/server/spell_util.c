@@ -1583,7 +1583,7 @@ int reflwall(mapstruct *m,int x,int y, object *sp_op) {
 	  return 0;
   for(op=get_map_ob(m,x,y);op!=NULL;op=op->above)
   {
-    if(QUERY_FLAG(op, FLAG_REFL_SPELL) && (!QUERY_FLAG(op, FLAG_ALIVE) ||
+    if(QUERY_FLAG(op, FLAG_REFL_SPELL) && (!IS_LIVE(op) ||
 					    sp_op->type==LIGHTNING || (rndm(0, 99)) < 90-sp_op->level/10))
       return 1;
   }
@@ -1726,7 +1726,7 @@ void move_golem(object *op) {
 
 	for(victim=get_map_ob(m,x,y);victim;victim=victim->above) 
 	{
-	    if(QUERY_FLAG(victim,FLAG_ALIVE)) break;
+	    if(IS_LIVE(victim)) break;
 	}
 	/* We used to call will_hit_self to make sure we don't
 	 * hit ourselves, but that didn't work, and I don't really
@@ -1958,7 +1958,7 @@ void check_fired_arch (object *op)
 
     for (tmp = get_map_ob (op->map,op->x,op->y); tmp != NULL; tmp = tmp->above)
     {
-        if (QUERY_FLAG (tmp, FLAG_ALIVE)) {
+        if (IS_LIVE (tmp)) {
             tmp_tag = tmp->count;
             dam = hit_player (tmp, op->stats.dam, op, op->attacktype);
             if (was_destroyed (op, op_tag) || ! was_destroyed (tmp, tmp_tag)

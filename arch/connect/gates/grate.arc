@@ -3,6 +3,8 @@ name grate
 type 91
 layer 5
 no_teleport 1
+attack_impact 100
+level 1
 no_pick 1
 face grate_door1.114
 anim
@@ -95,6 +97,7 @@ name grate
 no_teleport 1
 type 91
 layer 5
+level 1
 no_pick 1
 face grate_door1.111
 anim
@@ -181,6 +184,7 @@ no_pass 1
 wc 7
 maxsp 0
 dam 5
+attack_impact 100
 ac 1
 pass_thru 1
 end

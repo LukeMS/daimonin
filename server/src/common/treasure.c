@@ -1239,7 +1239,7 @@ int fix_generated_item (object *op, object *creator, int difficulty, int a_chanc
 				if(!op->msg&&RANDOM()%10)
 				{ 
 				/* set the book level properly */
-				if(creator->level==0 || QUERY_FLAG(creator,FLAG_ALIVE))
+				if(creator->level==0 || IS_LIVE(creator))
 				{
 					if(op->map&&op->map->difficulty) 
 						op->level=RANDOM()%(op->map->difficulty)+RANDOM()%10+1;
@@ -1561,9 +1561,18 @@ static int legal_artifact_combination(object *op, artifact *art) {
 
 void give_artifact_abilities(object *op, artifact *art)
  { 
+	int tmp_value = op->value;
 			
+	op->value = 0;
 	if (!load_object(art->parse_text, op, NULL, LO_MEMORYMODE, MAP_ARTIFACT))
 		LOG(llevError,"ERROR: give_artifact_abilities(): load_object() error (ob: %s art: %s).\n",op->name,art->name);
+
+	/* this will solve the problem to adjust the value for different items
+	 * of same artification. Also we can safely use negative values.
+	 */
+	op->value += tmp_value;
+	if(op->value<0)
+		op->value=0;
 
 #if 0 /* Bit verbose, but keep it here until next time I need it... */
   {

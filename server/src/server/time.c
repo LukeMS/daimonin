@@ -373,7 +373,7 @@ void execute_wor(object *op) {
 }
 
 void poison_more(object *op) {
-  if(op->env==NULL||!QUERY_FLAG(op->env,FLAG_ALIVE)||op->env->stats.hp<0) {
+  if(op->env==NULL||!IS_LIVE(op->env)||op->env->stats.hp<0) {
     remove_ob(op);
     free_object(op);
     return;
@@ -475,7 +475,7 @@ void move_gate(object *op) { /* 1 = going down, 0 = goind up */
 
 		for (tmp=op->above; tmp!=NULL; tmp=tmp->above) 
 		{
-			if (!QUERY_FLAG(tmp, FLAG_NO_PICK) || QUERY_FLAG(tmp, FLAG_CAN_ROLL) || QUERY_FLAG(tmp, FLAG_ALIVE))
+			if (!QUERY_FLAG(tmp, FLAG_NO_PICK) || QUERY_FLAG(tmp, FLAG_CAN_ROLL) || IS_LIVE(tmp))
 				break;
 		}
 
@@ -512,18 +512,18 @@ void move_gate(object *op) { /* 1 = going down, 0 = goind up */
 	    for(tmp=op->above;tmp!=NULL && tmp->above!=NULL;tmp=tmp->above);
 
 	    if(tmp!=NULL) {
-		if(QUERY_FLAG(tmp, FLAG_ALIVE)) {
-		    hit_player(tmp, random_roll(1, op->stats.dam, tmp, PREFER_LOW), op, AT_PHYSICAL);
+		if(IS_LIVE(tmp)) {
+		    hit_player(tmp, 4, op, AT_PHYSICAL);
 		    if(tmp->type==PLAYER) 
 			new_draw_info_format(NDI_UNIQUE, 0, tmp,
 					     "You are crushed by the %s!",op->name);
-		} else 
+		}
 		    /* If the object is not alive, and the object either can
 		     * be picked up or the object rolls, move the object
 		     * off the gate.
 		     */
-		    if(!QUERY_FLAG(tmp, FLAG_ALIVE)
-			&& (!QUERY_FLAG(tmp, FLAG_NO_PICK)
+			 /* lets try to move linving objects too */
+		    if(IS_LIVE(tmp) || (!QUERY_FLAG(tmp, FLAG_NO_PICK)
 			   ||QUERY_FLAG(tmp,FLAG_CAN_ROLL))) {
 		    /* If it has speed, it should move itself, otherwise: */
 		    int i=find_free_spot(tmp->arch,op->map,op->x,op->y,1,9);
@@ -541,7 +541,7 @@ void move_gate(object *op) { /* 1 = going down, 0 = goind up */
 	    for (tmp=op->above; tmp!=NULL; tmp=tmp->above) 
 		if (!QUERY_FLAG(tmp, FLAG_NO_PICK)
 			|| QUERY_FLAG(tmp, FLAG_CAN_ROLL)
-			|| QUERY_FLAG(tmp, FLAG_ALIVE))
+			|| IS_LIVE(tmp))
 		    break;
 
 	    /* IF there is, start putting the gate down  */
@@ -915,7 +915,7 @@ void move_arrow(object *op) {
     if((m= out_of_map(op->map,&new_x,&new_y)))        
         tmp = get_map_ob (m, new_x, new_y);
 
-    while (tmp && ! QUERY_FLAG (tmp, FLAG_ALIVE))
+    while (tmp && ! IS_LIVE(tmp))
 	tmp = tmp->above;
 
     /* A bad problem was that a monster throw or fire something and then
@@ -931,8 +931,7 @@ void move_arrow(object *op) {
          * as below. (Note that for living creatures there is a small
          * chance that reflect_missile fails.)
          */
-        if (QUERY_FLAG (tmp, FLAG_REFL_MISSILE) && (!QUERY_FLAG(tmp,
-	    FLAG_ALIVE) || (rndm(0, 99)) < 90-op->level/10))
+        if (QUERY_FLAG (tmp, FLAG_REFL_MISSILE) && (!IS_LIVE(tmp) || (rndm(0, 99)) < 90-op->level/10))
         {
             int number = op->face->number;
 	    
@@ -1029,7 +1028,7 @@ void change_object(object *op) { /* Doesn`t handle linked objs yet */
 	int i,j;
 
 	/* In non-living items only change when food value is 0 */
-	if(!QUERY_FLAG(op,FLAG_ALIVE))
+	if(!IS_LIVE(op))
 	{
 		if(op->stats.food-- > 0) 
 			return; 
@@ -1312,8 +1311,7 @@ void move_player_mover(object *op) {
     /* Determine direction now for random movers so we do the right thing */
     if (!dir) dir=rndm(1, 8);
     for(victim=get_map_ob(op->map,op->x,op->y); victim !=NULL; victim=victim->above) {
-	if((QUERY_FLAG(victim, FLAG_ALIVE)||QUERY_FLAG(victim, FLAG_IS_PLAYER))&& 
-							(!(QUERY_FLAG(victim,FLAG_FLYING))||op->stats.maxhp)) {
+	if(IS_LIVE(victim)&& (!(QUERY_FLAG(victim,FLAG_FLYING))||op->stats.maxhp)) {
 
 	    if(QUERY_FLAG(op,FLAG_LIFESAVE)&&op->stats.hp--<0) {
 		remove_ob(op);
@@ -1329,7 +1327,7 @@ void move_player_mover(object *op) {
 	    for(nextmover=get_map_ob(mt,xt,yt); nextmover !=NULL; nextmover=nextmover->above) {
 		if(nextmover->type == PLAYERMOVER) 
 		    nextmover->speed_left=-0.99f;
-		if(QUERY_FLAG(nextmover,FLAG_ALIVE)) {
+		if(IS_LIVE(nextmover)) {
 		    op->speed_left=-1.1f;  /* wait until the next thing gets out of the way */
 		}
 	    }

@@ -379,8 +379,8 @@ object *find_monster_in_room_recursive(char **layout, mapstruct *map, int x, int
   if(GET_MAP_FLAGS(map,x,y) & P_IS_ALIVE) {
     object *the_monster = get_map_ob(map,x,y);
     /* check off this point */
-    for(;the_monster!=NULL&&(!QUERY_FLAG(the_monster,FLAG_ALIVE));the_monster=the_monster->above);
-    if(the_monster && QUERY_FLAG(the_monster,FLAG_ALIVE)) {
+    for(;the_monster!=NULL&&(!QUERY_FLAG(the_monster,FLAG_MONSTER));the_monster=the_monster->above);
+    if(the_monster && QUERY_FLAG(the_monster,FLAG_MONSTER)) {
       theMonsterToFind=the_monster;
       return theMonsterToFind;
     }
@@ -554,7 +554,7 @@ void remove_monsters(int x,int y,mapstruct *map) {
   object *tmp;
 
   for(tmp=get_map_ob(map,x,y);tmp!=NULL;tmp=tmp->above)
-    if(QUERY_FLAG(tmp,FLAG_ALIVE)) {
+    if(QUERY_FLAG(tmp,FLAG_MONSTER)) {
       if(tmp->head) tmp=tmp->head;
       remove_ob(tmp);
       free_object(tmp);

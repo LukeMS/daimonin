@@ -2,6 +2,8 @@ Object grateTrg1_open
 name gate
 type 26
 layer 5
+level 1
+attack_impact 100
 #activate_on_push 1
 #activate_on_release 1
 no_teleport 1
@@ -190,12 +192,14 @@ anim_speed 1
 is_animated 0
 no_pass 1
 pass_thru 1
+level 1
 wc 7
 ac 1
 maxsp 0
 dam 1
 maxhp 20
 hp 20
+attack_impact 100
 speed 0.35
 value 1
 end
