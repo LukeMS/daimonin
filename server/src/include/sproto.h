@@ -475,7 +475,7 @@ int check_pick(object *op);
 object *find_arrow(object *op, const char *type);
 void fire(object *op, int dir);
 int move_player(object *op, int dir);
-int handle_newcs_player(object *op);
+int handle_newcs_player(player *pl);
 int save_life(object *op);
 void remove_unpaid_objects(object *op, object *env);
 void do_some_living(object *op);

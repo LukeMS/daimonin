@@ -1318,8 +1318,9 @@ int move_player(object *op,int dir)
  *
  * Returns true if there are more actions we can do.
  */
-int handle_newcs_player(object *op)
+int handle_newcs_player(player *pl)
 {
+	object *op;
 	/* ouch. here is the invisible counter... MT-11-2002
     if(op->invisible&&!(QUERY_FLAG(op,FLAG_SEE_INVISIBLE))) {
 	op->invisible--;
@@ -1330,7 +1331,8 @@ int handle_newcs_player(object *op)
      * the players time has been increased when doericserver has been
      * called, so we recheck it here.
      */
-    HandleClient(&CONTR(op)->socket, CONTR(op));
+    HandleClient(&pl->socket, pl);
+	op = pl->ob; 
     if (op->speed_left<0) return 0;
 
     CLEAR_FLAG(op,FLAG_PARALYZED); /* if we are here, we never paralyzed anymore */
