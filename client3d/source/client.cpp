@@ -24,6 +24,9 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include <Ogre.h>
 #include <OgreImage.h>
 #include <OgreConfigFile.h>
+#include <OgreTexture.h>
+#include <OgreHardwarePixelBuffer.h>
+#include <OgreTextureManager.h>
 #include <OgreSceneManager.h>
 
 #include "define.h"
@@ -38,6 +41,8 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "option.h"
 #include "sound.h"
 #include "tile_gfx.h"
+#include "tile_map.h"
+
 
 using namespace Ogre;
 
@@ -49,7 +54,7 @@ void DaimoninClient::go(void)
     if (!setup()) { return; }
     mRoot->startRendering();
     // clean up
-    destroyScene();
+	TileMap::getSingleton().freeRecources();
 }
 
 // ========================================================================
@@ -74,12 +79,8 @@ bool DaimoninClient::setup(void)
 	// You can skip this and use root.restoreConfig() to load configuration
 	// settings if you were sure there are valid ones saved in ogre.cfg
 	/////////////////////////////////////////////////////////////////////////
-	if(mRoot->showConfigDialog())
-	{
-		mWindow = mRoot->initialise(true);
-	}
+	if(mRoot->showConfigDialog()) { mWindow = mRoot->initialise(true); }
 	else return false;
-
 
     /////////////////////////////////////////////////////////////////////////
     // Get the SceneManager, in this case a generic one
@@ -90,7 +91,7 @@ bool DaimoninClient::setup(void)
 	/////////////////////////////////////////////////////////////////////////
     mCamera = mSceneMgr->createCamera("Camera");
     mCamera->setProjectionType(PT_ORTHOGRAPHIC);
-	mCamera->setPosition(Vector3(0,CAMERA_ZOOM, CAMERA_ZOOM));
+	mCamera->setPosition(Vector3(0,CAMERA_ZOOM+50, CAMERA_ZOOM+50));
     mCamera->setNearClipDistance(CAMERA_ZOOM);
 //    mCamera->setFarClipDistance(600);
 	mCamera->lookAt(Vector3(0,0,0));
@@ -117,12 +118,12 @@ bool DaimoninClient::setup(void)
     mEvent= new Event(mWindow, mCamera, mMouseMotionListener, mMouseListener);
     mRoot->addFrameListener(mEvent);
     mEvent->setResolutionMember(mVP->getActualWidth(), mVP->getActualHeight());
-    createScene();            // Create the scene
+    createScene();
 	return true;
 }
 
 // ========================================================================
-// Method which will define the source of resources (other than current folder)
+// Define the source of resources (other than current folder)
 // ========================================================================
 void DaimoninClient::setupResources(void)
 {
@@ -149,13 +150,13 @@ void DaimoninClient::setupResources(void)
 }
 
 // ========================================================================
-//
+// Create all Elements of the Scene.
 // ========================================================================
 void DaimoninClient::createScene(void)
 {
 	// Create the world.
 	mEvent->World = mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(0, 0, 0), Quaternion(1.0,0.0,0.0,0.0));
-    mSceneMgr->setAmbientLight(ColourValue(0.1, 0.1, 0.1));
+    mSceneMgr->setAmbientLight(ColourValue(0, 0, 0));
 
     Light *light;
     light = mSceneMgr->createLight("Light_Vol");
@@ -168,31 +169,33 @@ void DaimoninClient::createScene(void)
 
     light = mSceneMgr->createLight("Light_Spot");
     light->setType(Light::LT_SPOTLIGHT);
-	light->setDirection(   0,-80, 0);
-    light->setPosition (-125, 80, 50);
+	light->setDirection(0, -1, 0);
+    light->setPosition (-125, 200, 50);
     light->setDiffuseColour(1.0, 1.0, 1.0);
-	light->setSpotlightRange(Radian(0.8) , Radian(1.2), 5.5);
+//	light->setSpotlightRange(Radian(.2) , Radian(.6), 5.5);
+//	light->setAttenuation(1000,1,0.005,0);
 
-	light->setVisible(false);
 	mEvent->World->attachObject(light);
 	mEvent->setLightMember(light, 1);
+	light->setVisible(false);
 
     // Setup animation default
     Animation::setDefaultInterpolationMode(Animation::IM_LINEAR);
     Animation::setDefaultRotationInterpolationMode(Animation::RIM_LINEAR);
+
     Player::getSingleton().Init(mSceneMgr);
 	NPC_Enemy1->Init(mSceneMgr, mEvent->World);
 
-    Entity* ent;
-    SceneNode* floor_node;
-	const int startX = -190;
-	const int startZ = - 60;
-	
-//	uchar *pImage = new uchar[512*512*4];
-//	mImage.loadDynamicImage(pImage, 100,100,PF_B8G8R8);
+	// Make sure the camera track this node
+	mCamera->setAutoTracking(true, Player::getSingleton().getNode());
+/*
+	// Create the camera node & attach camera
+	SceneNode* camNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+	camNode->attachObject(mCamera);
+*/
 
 /*
-	MaterialPtr mMaterial = MaterialManager::getSingleton().getByName("dynamic");
+	MaterialPtr mMaterial = MaterialManager::getSingleton().getByName("dyn_layer_01");
 	string texName = "testMat";
 	Image mImage;
 	mImage.load("grass.101.png", "General");
@@ -201,73 +204,21 @@ void DaimoninClient::createScene(void)
 	mMaterial->load();
 */
 
-// Lets play a little with this mateial stuff....
+	TileMap::getSingleton().Init(mSceneMgr, mEvent->World);
 
-	int gfxNr =251;
+//	Image img;  img.load ("stone_01.png", "General") ;
+
+/*
+	int gfxNr = 248; //251
 	TileGfx::getSingleton().load_picture_from_pack(gfxNr);
-	MaterialPtr mMaterial = MaterialManager::getSingleton().getByName("dyn_layer_01");
-	string texName = "testMat"+ StringConverter::toString(gfxNr);
-	TexturePtr mTexture = TextureManager::getSingleton().loadImage(texName, "General", TileGfx::getSingleton().getSprite(gfxNr), TEX_TYPE_2D, 3,1.0f);
-	mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(texName);
-	mMaterial->load();
+	Image *img = &TileGfx::getSingleton().getSprite(gfxNr);
 
+	buffer = mTexture->getBuffer(0, 0);
+	buffer->lock(HardwareBuffer::HBL_DISCARD);
+	for (int y = 0; y < SUM_TILES_Y; ++y)
+		for (int x = 0; x < SUM_TILES_X; ++x)
+			drawTile(img, x, y);
+	buffer->unlock();
+*/
 
-	gfxNr =2854;
-	TileGfx::getSingleton().load_picture_from_pack(gfxNr);
-	MaterialPtr mMaterial2 = MaterialManager::getSingleton().getByName("dyn_layer_02");
-	texName = "testMat"+ StringConverter::toString(gfxNr);
-	TexturePtr mTexture2 = TextureManager::getSingleton().loadImage(texName, "General", TileGfx::getSingleton().getSprite(gfxNr), TEX_TYPE_2D, 3,1.0f);
-	mMaterial2->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(texName);
-	mMaterial2->load();
-
-
-	// create floor-tile.
-	string name = "row 1 tile ";
-	for (int x1 =0; x1 < 5; ++x1)
-	{
-		ent = mSceneMgr->createEntity(name+StringConverter::toString(x1), SceneManager::PT_PLANE);
-//		ent->setMaterialName("grass1");
-		ent->setMaterialName(mMaterial->getName());
-		floor_node = mEvent->World->createChildSceneNode(Vector3(startX+x1*50, -20, startZ+25), Quaternion(1.0,0.0,0.0,0.0));
-		floor_node->attachObject(ent);
-		floor_node->setScale(0.25, 0.25, 0.25);
-	}
-
-	name = "row 2 tile ";
-	for (int x2 =0; x2 < 5; ++x2)
-	{
-		ent = mSceneMgr->createEntity(name+StringConverter::toString(x2), SceneManager::PT_PLANE);
-//		ent->setMaterialName("grass2");
-		ent->setMaterialName(mMaterial->getName());
-		floor_node = mEvent->World->createChildSceneNode(Vector3(startX+25+x2*50, -20, startZ+50), Quaternion(1.0,0.0,0.0,0.0));
-		floor_node->attachObject(ent);
-		floor_node->setScale(0.25, 0.25, 0.25);
-	}
-
-	name = "row 3 tile ";
-	for (int x3 =0; x3 < 5; ++x3)
-	{
-		ent = mSceneMgr->createEntity(name+StringConverter::toString(x3), SceneManager::PT_PLANE);
-//		ent->setMaterialName("grass3");
-		ent->setMaterialName(mMaterial->getName());
-		floor_node = mEvent->World->createChildSceneNode(Vector3(startX+x3*50,-20, startZ+75), Quaternion(1.0,0.0,0.0,0.0));
-		floor_node->attachObject(ent);
-		floor_node->setScale(0.25, 0.25, 0.25);
-	}
-
-
-	ent = mSceneMgr->createEntity(name+StringConverter::toString("fhgdo"), SceneManager::PT_PLANE);
-	ent->setMaterialName(mMaterial2->getName());
-	floor_node = mEvent->World->createChildSceneNode(Vector3(startX+70, -20, startZ+55), Quaternion(1.0,0.0,0.0,0.0));
-	floor_node->attachObject(ent);
-	floor_node->setScale(0.10, 0.30, 0.30);
-
-
-}
-
-// ========================================================================
-// 
-// ========================================================================
-void DaimoninClient::destroyScene(void)
-{
 }

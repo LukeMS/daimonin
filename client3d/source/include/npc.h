@@ -25,10 +25,8 @@ http://www.gnu.org/copyleft/lesser.txt.
 #define NPC_H
 
 #include <Ogre.h>
-#include <OgreConfigFile.h>
 #include <OgreSceneManager.h>
 #include "player.h"
-
 
 using namespace Ogre;
 
@@ -52,13 +50,11 @@ class NPC
   public:
 	 NPC() {;}
 	~NPC() {;}
-
 	bool Init(SceneManager *SceneMgr, SceneNode  *Node);
 	void walking(Real walk)  { mWalking = walk; }
 	void turning(Real turn)  { mTurning = turn; }
 	void playAnimation(int type) {if (mAnimType <0) mAnimType = type; }
 	void toggleAnimaGroup(); 
-
 	const Vector3& getPos() { return mTranslateVector; }
     void updateAnim(const FrameEvent& event);
 };

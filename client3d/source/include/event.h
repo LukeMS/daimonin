@@ -87,6 +87,7 @@ class Event: public FrameListener, public KeyListener, public MouseMotionListene
 	/////////////////////////////////////////////////////////////////////////
     bool frameStarted(const FrameEvent& evt);
     bool frameEnded  (const FrameEvent& evt);
+    void drawTile(int gfx_nr, int offX, int offY);
 
     ///////////////////////////////////////////////////////////////////////// 
     // Key Events.

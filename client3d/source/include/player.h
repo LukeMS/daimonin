@@ -70,6 +70,7 @@ class Player
 	 Player() {;}
 	~Player() {;}
 
+	SceneNode *getNode() { return mNode; }
 	bool Init(SceneManager *mSceneMgr);
 	void walking(Real walk)  { mWalking = walk; }
 	void turning(Real turn)  { mTurning = turn; }

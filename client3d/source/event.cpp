@@ -30,6 +30,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "textwindow.h"
 #include "textinput.h"
 #include "network.h"
+#include "tile_map.h"
 
 using namespace Ogre;
 
@@ -139,7 +140,7 @@ bool Event::frameStarted(const FrameEvent& evt)
 		mIdleTime = -120;
 	}
 
-
+	TileMap::getSingleton().draw();
 
 /*
 	if (!mUseBufferedInputKeys)
@@ -366,7 +367,6 @@ void Event::keyPressed(KeyEvent *e)
 
 		case KC_ADD:
 			mCameraZoom -= 10;
-			if (mCameraZoom < 10) mCameraZoom =10;
 			mCamera->setPosition(Vector3(0,mCameraZoom, mCameraZoom));
 		    mCamera->setNearClipDistance(mCameraZoom);
 			break;
