@@ -27,12 +27,6 @@ is_animated 1
 x 1
 y 1
 end
-arch torch_wall_7
-glow_radius 5
-is_animated 1
-x 1
-y 2
-end
 arch grass_leaf1
 x 1
 y 3

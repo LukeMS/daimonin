@@ -30,3 +30,19 @@ no_pick 1
 no_teleport 1
 type 79
 end
+Object water_plant5
+name water plant
+layer 5
+face water_plant5.101
+no_pick 1
+no_teleport 1
+type 79
+end
+Object water_plant6
+name water plant
+layer 5
+face water_plant6.101
+no_pick 1
+no_teleport 1
+type 79
+end

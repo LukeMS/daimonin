@@ -41,3 +41,11 @@ no_pick 1
 type 79
 layer 4
 end
+Object pile_skulls
+name bones
+face pile_skulls.101
+no_pass 1
+no_pick 1
+type 79
+layer 4
+end

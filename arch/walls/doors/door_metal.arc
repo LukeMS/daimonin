@@ -20,14 +20,14 @@ door_lock1.131
 door_lock1.132
 door_lock1.131
 door_lock1.132
-door_lock1.111
-door_lock1.112
-door_lock1.111
-door_lock1.112
-door_lock1.131
-door_lock1.132
-door_lock1.131
-door_lock1.132
+door_lock1.151
+door_lock1.152
+door_lock1.151
+door_lock1.152
+door_lock1.171
+door_lock1.172
+door_lock1.171
+door_lock1.172
 mina
 is_animated 0
 anim_speed 1

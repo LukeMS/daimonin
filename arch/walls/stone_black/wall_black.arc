@@ -124,3 +124,19 @@ layer 5
 no_pick 1
 no_pass 1
 end
+Object wall_black1_w.1
+name stone wall
+face wall_black1_w.111
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_black1_w.3
+name stone wall
+face wall_black1_w.131
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end

@@ -117,3 +117,38 @@ face plant17.101
 no_pick 1
 type 79
 end
+Object plant18
+name plant
+layer 4
+face plant18.101
+no_pick 1
+type 79
+end
+Object plant19
+name plant
+layer 4
+face plant19.101
+no_pick 1
+type 79
+end
+Object plant20
+name plant
+layer 4
+face plant20.101
+no_pick 1
+type 79
+end
+Object plant21
+name plant
+layer 4
+face plant21.101
+no_pick 1
+type 79
+end
+Object plant22
+name plant
+layer 4
+face plant22.101
+no_pick 1
+type 79
+end

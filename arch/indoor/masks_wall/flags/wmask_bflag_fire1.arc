@@ -1,17 +1,17 @@
-Object wmask_bflag_fire1_3
+Object wmask_bflag_fire1_1
 name big flag
-face wmask_bflag_fire1.u.131
+face wmask_bflag_fire1.u.151
 anim
 facings 9
 dummy.111
-wmask_bflag_fire1.u.131
-wmask_bflag_fire1.u.131
-wmask_bflag_fire1.u.131
-wmask_bflag_fire1.u.151
 wmask_bflag_fire1.u.151
 wmask_bflag_fire1.u.151
 wmask_bflag_fire1.u.151
 wmask_bflag_fire1.u.131
+wmask_bflag_fire1.u.131
+wmask_bflag_fire1.u.131
+wmask_bflag_fire1.u.131
+wmask_bflag_fire1.u.151
 mina
 is_animated 0
 anim_speed 0
