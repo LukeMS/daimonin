@@ -240,6 +240,7 @@ static PyObject* CFSetSkillExperience(PyObject* self, PyObject* args)
             /*GCFP.Value[2] = NULL;*/ /* FIX ME */
             (PlugHooks[HOOK_ADDEXP])(&GCFP);
             WHO->chosen_skill = oldchosen;
+
             Py_INCREF(Py_None);
             return Py_None;
         };
@@ -1239,8 +1240,11 @@ static PyObject* CFSetRank(PyObject* self, PyObject* args)
     who = (object *)(obptr);
     
 	if(who->type != PLAYER)
+	{
+	    Py_INCREF(Py_None);
 	    return Py_None;
-		
+	}
+	
     for(walk=who->inv;walk!=NULL;walk=walk->below)
     {
         if (!strcmp(walk->name,"RANK_FORCE") && !strcmp(walk->arch->name,"rank_force"))
@@ -1257,6 +1261,8 @@ static PyObject* CFSetRank(PyObject* self, PyObject* args)
         }            
     }
     printf("Python Warning -> SetRank: Object %s has no rank_force!\n", query_name(who));
+
+    Py_INCREF(Py_None);
     return Py_None;
 };
 
@@ -1288,6 +1294,7 @@ static PyObject* CFSetAlignment(PyObject* self, PyObject* args)
         }            
     }
     printf("Python Warning -> SetAlignment: Object %s has no alignment_force!\n", query_name(who));
+    Py_INCREF(Py_None);
     return Py_None;
 };
 
@@ -1311,6 +1318,7 @@ static PyObject* CFGetAlignmentForce(PyObject* self, PyObject* args)
             return Py_BuildValue("l",(long) (walk));
     }
     printf("Python Warning -> GetAlignmentForce: Object %s has no aligment_force!\n", query_name(WHO));
+    Py_INCREF(Py_None);
     return Py_None;
 };
 
@@ -1349,6 +1357,7 @@ static PyObject* CFSetGuildForce(PyObject* self, PyObject* args)
         }            
     }
     printf("Python Warning -> SetGuild: Object %s has no guild_force!\n", query_name(who));
+    Py_INCREF(Py_None);
     return Py_None;
 }
 
@@ -1372,6 +1381,7 @@ static PyObject* CFGetGuildForce(PyObject* self, PyObject* args)
             return Py_BuildValue("l",(long) (walk));
     }
     printf("Python Warning -> GetGuild: Object %s has no guild_force!\n", query_name(WHO));
+    Py_INCREF(Py_None);
     return Py_None;
 };
 
@@ -2387,6 +2397,7 @@ static PyObject* CFGetPlayerInfo(PyObject* self, PyObject* args)
             return Py_BuildValue("l",(long)(walk));
     }
 
+    Py_INCREF(Py_None);
     return Py_None; /* there was non */
 };
 
@@ -2407,8 +2418,10 @@ static PyObject* CFGetNextPlayerInfo(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"ll",&whereptr,&myob))
         return NULL;
     if(!myob)
+	{
+	    Py_INCREF(Py_None);
         return Py_None; /* there was non left - this should avoided in scrip */
-
+	}
     /* thats our check paramters: arch "force_info", name of this arch */
     strncpy(name, myob->name, 127); /* 127 chars should be enough for all */
     name[63] = '\0';
@@ -2420,6 +2433,7 @@ static PyObject* CFGetNextPlayerInfo(PyObject* self, PyObject* args)
             return Py_BuildValue("l",(long)(walk));
     }
 
+    Py_INCREF(Py_None);
     return Py_None; /* there was non left */
 };
 
@@ -2606,6 +2620,7 @@ static PyObject* CFCheckArchInventory(PyObject* self, PyObject* args)
         tmp = tmp->below;
     };
 
+    Py_INCREF(Py_None);
     return Py_None; /* we don't find a arch with this arch_name in the inventory */
 };
 
@@ -2673,6 +2688,7 @@ static PyObject* CFSetName(PyObject* self, PyObject* args)
         DELETE_STRING(WHO->name);
     if(txt && strcmp(txt,""))
         WHO->name = add_string(txt);
+    Py_INCREF(Py_None);
     return Py_None;
 };
 
@@ -2707,6 +2723,7 @@ static PyObject* CFSetTitle(PyObject* self, PyObject* args)
         DELETE_STRING(WHO->title);
     if(txt && strcmp(txt,""))
         WHO->title = add_string(txt);
+    Py_INCREF(Py_None);
     return Py_None;
 };
 
@@ -2739,6 +2756,7 @@ static PyObject* CFSetSlaying(PyObject* self, PyObject* args)
         DELETE_STRING(WHO->slaying);
     if(txt && strcmp(txt,""))
         WHO->slaying = add_string(txt);
+    Py_INCREF(Py_None);
     return Py_None;
 };
 
@@ -2761,6 +2779,7 @@ static PyObject* CFSetSaveBed(PyObject* self, PyObject* args)
     myob->contr->bed_x = x;
     myob->contr->bed_y = y;
     
+    Py_INCREF(Py_None);
     return Py_None;
 };
 
@@ -4938,8 +4957,8 @@ MODULEAPI int HandleEvent(CFParm* PParm)
     FILE* Scriptfile;
 
 #ifdef PYTHON_DEBUG
-    printf( "PYTHON - HandleEvent:: start script file >%s<\n",(char *)(PParm->Value[9]));
-    printf( "PYTHON - call data:: o1:>%s< o2:>%s< o3:>%s< text:>%s< i1:%d i2:%d i3:%d i4:%d\n",
+    LOG(llevDebug, "PYTHON - HandleEvent:: start script file >%s<\n",(char *)(PParm->Value[9]));
+    LOG(llevDebug, "PYTHON - call data:: o1:>%s< o2:>%s< o3:>%s< text:>%s< i1:%d i2:%d i3:%d i4:%d\n",
 		query_name((object *)(PParm->Value[1])),
 		query_name((object *)(PParm->Value[2])),
 		query_name((object *)(PParm->Value[3])),
@@ -4973,7 +4992,7 @@ MODULEAPI int HandleEvent(CFParm* PParm)
 #endif
     PyRun_SimpleFile(Scriptfile, create_pathname((char *)(PParm->Value[9])));
 #ifdef PYTHON_DEBUG
-    printf( "closing. ");
+    printf( "closing (%d). ",StackPosition);
 #endif
     fclose(Scriptfile);
 
@@ -4996,7 +5015,7 @@ MODULEAPI int HandleEvent(CFParm* PParm)
     };
     StackPosition--;
 #ifdef PYTHON_DEBUG
-    printf( "done!\n");
+    printf( "done (%d)!\n",StackReturn[StackPosition]);
 #endif
     return StackReturn[StackPosition];
 };
