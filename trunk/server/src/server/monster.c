@@ -252,6 +252,16 @@ struct mob_known_obj *register_npc_known_obj(object *npc, object *other,
     struct mob_known_obj *tmp;
     struct mob_known_obj *last = NULL;
 
+    if(npc == NULL) {
+        LOG(llevDebug,"register_npc_known_obj(): Called with NULL npc obj\n");
+        return NULL;
+    }
+    
+    if(other == NULL) {
+        LOG(llevDebug,"register_npc_known_obj(): Called with NULL other obj\n");
+        return NULL;
+    }
+    
     if(npc == other) {
         LOG(llevDebug,"register_npc_known_obj(): Called for itself '%s'\n",
                 STRING_OBJ_NAME(npc));
