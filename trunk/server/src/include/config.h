@@ -140,7 +140,6 @@
 * SPELL_* - various spell related options
 * STAT_LOSS_ON_DEATH - toggle between stat loss or stat depletion
 * USE_LIGHTING - enable light/darkness & light sources
-* USE_PERMANENT_EXPERIENCE - allow players to accumulate permanent experience?
 *
 ***********************************************************************/
 
@@ -343,49 +342,6 @@
  */
 
 #define STAT_LOSS_ON_DEATH FALSE
-
-
-/* Use permanent experience code?
- * This code allows players to build up a small amount of 'permanent
- * experience' which reduces the effect of large experience drains, such as
- * death. This makes multiple frequent deaths less devastating, and also
- * ensures that any character will make some gradual progress even if they
- * die all of the time.
- * A nice option if your keep dying due to massive client/server lags despite
- * playing well... or you like to swim well outside of your depth. :)
- *
- * The PERM_EXP values adjust the behaviour of this option - if
- * USE_PERMAMENT_EXPERIENCE if off, these values have no meaning.  If it
- * is on, the minimum ratio is the minimum amount of permanent exp relative
- * to the total exp in the skill (ie, at a default of .25, if you had 100
- * experience, at least 25 of it would be permanent).  The gain ratio
- * is how much of experienced experience goes to the permanent value.
- * This does not detract from total exp gain (ie, if you gained 100 exp,
- * 100 would go to the skill total and 10 to the permanent value).
- * the loss ratio is the maximum amount of experience that can be lost
- * in any one hit - this is calculated as total exp - perm exp * loss ratio.
- *
- * A few thoughts on these default value (by MSW)
- * gain ratio is pretty much meaningless until exp has been lost, as until
- * that poin, the minimum ratio will be used.
- * It is also impossible for the exp to actually be reduced to the permanent
- * exp ratio - since the loss ratio is .5, it will just get closer and
- * closer.  However, after about half a dozen hits, pretty much all the
- * exp that can be lost has been lost, and after that, only minor loss
- * will occur.
- */
-/* GD */
-
-/* WARNING: I have not recoded this for skill exp code 
- * set perm_exp to TRUE will corrupt your server.
- * I this will fixed in the future, this warning will be removed
- * and using will be ok. MT
- */
-
-#define USE_PERMANENT_EXPERIENCE FALSE
-#define PERM_EXP_MINIMUM_RATIO        0.25f
-#define PERM_EXP_GAIN_RATIO           0.10f
-#define PERM_EXP_MAX_LOSS_RATIO       0.50f
 
 
 /***********************************************************************
