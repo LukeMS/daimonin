@@ -23,6 +23,8 @@ http://www.gnu.org/copyleft/lesser.txt.
 
 #include "event.h"
 #include "dialog.h"
+#include "sound.h"
+#include "npc.h"
 #include "option.h"
 #include "logfile.h"
 #include "textwindow.h"
@@ -47,7 +49,7 @@ Event::Event(RenderWindow* win, Camera* cam, MouseMotionListener *mMMotionListen
     mMouseCursor  = OverlayManager::getSingleton().getByName("CursorOverlay");    
 	mMouseCursor->show();
     mMouseX = mMouseY =0;
-    Dialog::getSingelton().Init();
+    Dialog::getSingleton().Init();
     TextWin = new CTextwindow("Message Window", -280, 300);
     ChatWin = new CTextwindow("Chat Window"   , -280, 300);
     TextWin->setChild(ChatWin);
@@ -59,13 +61,16 @@ Event::Event(RenderWindow* win, Camera* cam, MouseMotionListener *mMMotionListen
 	ChatWin->Print("  Page Up/Down  -> Camera view.");
 	ChatWin->Print("  Print          -> Screenshot.");
 	ChatWin->Print("Player commands (depends on model):", TXT_WHITE);
+	ChatWin->Print("  Cursor-> Movement");
 	ChatWin->Print("  A    -> Attack");
 	ChatWin->Print("  B    -> Block");
 	ChatWin->Print("  S    -> Slump");
 	ChatWin->Print("  D    -> Death.");
 	ChatWin->Print("  H    -> Hit.");
 	ChatWin->Print("  F1   -> Toggle Anim Group.");
-
+	ChatWin->Print("Enemy commands:", TXT_WHITE);
+	ChatWin->Print("  J    -> Turn left");
+	ChatWin->Print("  K    -> Turn right");
 
 	/////////////////////////////////////////////////////////////////////////////////////////
 	// Create unbuffered key & mouse input.
@@ -113,13 +118,15 @@ bool Event::frameStarted(const FrameEvent& evt)
 {
     if(mWindow->isClosed()) { return false; }
 
-    Player::getSingelton().updateAnim(evt);
-    World->translate(Player::getSingelton().getPos());
+    Player::getSingleton().updateAnim(evt);
+    World->translate(Player::getSingleton().getPos());
+
+	NPC_Enemy1->updateAnim(evt);
 
 	mIdleTime += evt.timeSinceLastFrame;
 	if (mIdleTime > 10.0)
 	{ 
-		Sound::getSingelton().PlaySample(SAMPLE_PLAYER_IDLE); 
+		Sound::getSingleton().PlaySample(SAMPLE_PLAYER_IDLE); 
 		mIdleTime = -120;
 	}
 
@@ -149,7 +156,7 @@ bool Event::frameStarted(const FrameEvent& evt)
         if (processUnbufferedKeyInput(evt) == false) { return false; }
 	}
 */
-	if (Option::getSingelton().mStartNetwork) { Network::getSingelton().Update(); }
+	if (Option::getSingleton().mStartNetwork) { Network::getSingleton().Update(); }
 
     if (mQuitGame) { return false; }
 	return true;
@@ -237,7 +244,7 @@ void Event::keyEventDialog(KeyEvent *e)
 void Event::keyPressed(KeyEvent *e) 
 {
 	mIdleTime =0;
-	if (Dialog::getSingelton().isVisible()) 
+	if (Dialog::getSingleton().isVisible()) 
 	{
 		keyEventDialog(e);
 		e->consume();
@@ -249,37 +256,46 @@ void Event::keyPressed(KeyEvent *e)
 		// Player Movemment.
 		/////////////////////////////////////////////////////////////////////////
 		case KC_UP:
-	        Player::getSingelton().walking( PLAYER_WALK_SPEED);
+	        Player::getSingleton().walking( PLAYER_WALK_SPEED);
 			break;
 		case KC_DOWN:
-	        Player::getSingelton().walking(-PLAYER_WALK_SPEED);
+	        Player::getSingleton().walking(-PLAYER_WALK_SPEED);
 			break;
 		case KC_RIGHT:
-	        Player::getSingelton().turning(-PLAYER_TURN_SPEED);
+	        Player::getSingleton().turning(-PLAYER_TURN_SPEED);
 			break;
 		case KC_LEFT:
-	        Player::getSingelton().turning( PLAYER_TURN_SPEED);
+	        Player::getSingleton().turning( PLAYER_TURN_SPEED);
 			break;
 
 
 		case KC_F1:
-             Player::getSingelton().toggleAnimaGroup();
+             Player::getSingleton().toggleAnimaGroup();
 			break;
 		case KC_A:
-	        Player::getSingelton().playAnimation(STATE_ATTACK1);
+	        Player::getSingleton().playAnimation(STATE_ATTACK1);
 			break;
 		case KC_B:
-	        Player::getSingelton().playAnimation(STATE_BLOCK1);
+	        Player::getSingleton().playAnimation(STATE_BLOCK1);
 			break;
 		case KC_S:
-	        Player::getSingelton().playAnimation(STATE_SLUMP1);
+	        Player::getSingleton().playAnimation(STATE_SLUMP1);
 			break;
 		case KC_D:
-	        Player::getSingelton().playAnimation(STATE_DEATH1);
+	        Player::getSingleton().playAnimation(STATE_DEATH1);
 			break;
 		case KC_H:
-	        Player::getSingelton().playAnimation(STATE_HIT1);
+	        Player::getSingleton().playAnimation(STATE_HIT1);
 			break;
+
+		case KC_J:
+	        NPC_Enemy1->turning( PLAYER_TURN_SPEED);
+			break;
+		case KC_K:
+	        NPC_Enemy1->turning(-PLAYER_TURN_SPEED);
+			break;
+
+
 
 		///////////////////////////////////////////////////////////////////////// 
 		// Engine settings.
@@ -315,7 +331,7 @@ void Event::keyPressed(KeyEvent *e)
 			MaterialManager::getSingleton().setDefaultAnisotropy(mAniso);
 			break;
 		case KC_L:
-			Option::getSingelton().mStartNetwork = true;
+			Option::getSingleton().mStartNetwork = true;
 			break;
 		case KC_PGUP:
 		    mCamera->pitch(Degree(-0.13));
@@ -363,12 +379,17 @@ void Event::keyReleased(KeyEvent* e)
 		/////////////////////////////////////////////////////////////////////////
 		case KC_UP:
 	 	case KC_DOWN:
-	        Player::getSingelton().walking(0);
+	        Player::getSingleton().walking(0);
 			break;
 		case KC_RIGHT:
 		case KC_LEFT:
-	        Player::getSingelton().turning(0);
+	        Player::getSingleton().turning(0);
 			break;
+
+		case KC_J:
+		case KC_K:
+			NPC_Enemy1->turning(0);	
+	
 	}
 }
 

@@ -60,7 +60,7 @@ void Network::VersionCmd(char *data, int len)
         else
             sprintf(buf, "Your client is outdated!\nUpdate your client!");
         //draw_info(buf, COLOR_RED);
-        LogFile::getSingelton().Error("%s\n", buf);            
+        LogFile::getSingleton().Error("%s\n", buf);            
         return;
     }
     cp = (char *) (strchr(data, ' '));
@@ -68,7 +68,7 @@ void Network::VersionCmd(char *data, int len)
     {
         sprintf(buf, "Invalid version string: %s", data);
         //draw_info(buf, COLOR_RED);
-        LogFile::getSingelton().Error("%s\n", buf);            
+        LogFile::getSingleton().Error("%s\n", buf);            
         return;
     }
     mCs_version = atoi(cp);
@@ -76,7 +76,7 @@ void Network::VersionCmd(char *data, int len)
     {
         sprintf(buf, "Invalid SC version (%d,%d)", VERSION_SC, mCs_version);
         //draw_info(buf, COLOR_RED);
-        LogFile::getSingelton().Error("%s\n", buf);            
+        LogFile::getSingleton().Error("%s\n", buf);            
         return;
     }
     cp = (char *) (strchr(cp + 1, ' '));
@@ -84,11 +84,11 @@ void Network::VersionCmd(char *data, int len)
     {
         sprintf(buf, "Invalid server name: %s", cp);
         //draw_info(buf, COLOR_RED);
-        LogFile::getSingelton().Error("%s\n", buf);            
+        LogFile::getSingleton().Error("%s\n", buf);            
         return;
     }
 
-    LogFile::getSingelton().Info("Playing on server type %s\n", cp);
+    LogFile::getSingleton().Info("Playing on server type %s\n", cp);
     mGameStatusVersionOKFlag = true;
 }
 
@@ -100,7 +100,7 @@ void Network::SetupCmd(char *buf, int len)
     const int OFFSET = 3;  // 2 byte package len + 1 byte binary cmd.
     int     s, f;
     char   *cmd, *param;
-    LogFile::getSingelton().Info("Get SetupCmd: %s\n", mInbuf.buf + OFFSET); 
+    LogFile::getSingleton().Info("Get SetupCmd: %s\n", mInbuf.buf + OFFSET); 
     for (s = 0; ;)
     {
 		// command.
@@ -138,21 +138,21 @@ void Network::SetupCmd(char *buf, int len)
         }
         for (f=0; f< SERVER_FILE_SUM; f++)
 		{
-            if (!ServerFile::getSingelton().checkID(f, cmd)) { continue; }
+            if (!ServerFile::getSingleton().checkID(f, cmd)) { continue; }
             if (!strcmp(param, "FALSE"))
             {
-                LogFile::getSingelton().Info("Get %s: %s\n", cmd, param);
+                LogFile::getSingleton().Info("Get %s: %s\n", cmd, param);
             }
             else if (strcmp(param, "OK"))
             {
-                ServerFile::getSingelton().setStatus(f, SERVER_FILE_STATUS_UPDATE);
+                ServerFile::getSingleton().setStatus(f, SERVER_FILE_STATUS_UPDATE);
                 for (char *cp = param; *cp != 0; cp++)
                 {
                     if (*cp == '|')
                     {
                         *cp = 0;    
-                        ServerFile::getSingelton().setLength(f, atoi(param));
-                        ServerFile::getSingelton().setCRC   (f, strtoul(cp + 1, NULL, 16));
+                        ServerFile::getSingleton().setLength(f, atoi(param));
+                        ServerFile::getSingleton().setCRC   (f, strtoul(cp + 1, NULL, 16));
                         break;
                     }
                 }
@@ -160,10 +160,10 @@ void Network::SetupCmd(char *buf, int len)
         }
 		if (f == SERVER_FILE_SUM-1)
         {
-            LogFile::getSingelton().Error("Got setup for a command we don't understand: %s %s\n", cmd, param);
+            LogFile::getSingleton().Error("Got setup for a command we don't understand: %s %s\n", cmd, param);
         }
     }
-    Option::getSingelton().GameStatus = GAME_STATUS_REQUEST_FILES;
+    Option::getSingleton().GameStatus = GAME_STATUS_REQUEST_FILES;
 }
 
 // ========================================================================
@@ -179,7 +179,7 @@ void Network::DataCmd(char *data, int len)
 	unsigned char data_cmd  = (data_type &~DATA_PACKED_CMD) -1; 
     if (data_cmd > SERVER_FILE_SUM)
 	{
-        LogFile::getSingelton().Error("data cmd: unknown type %d (len:%d)\n", data_type, len);
+        LogFile::getSingleton().Error("data cmd: unknown type %d (len:%d)\n", data_type, len);
 		return;
 	}
     --len;
@@ -205,11 +205,11 @@ void Network::DataCmd(char *data, int len)
     ///////////////////////////////////////////////////////////////////////// 
     // Save the file.
 	/////////////////////////////////////////////////////////////////////////
-    ofstream out(ServerFile::getSingelton().getFilename(data_cmd), ios::out|ios::binary);
+    ofstream out(ServerFile::getSingleton().getFilename(data_cmd), ios::out|ios::binary);
     if (!out)
 	{
-        LogFile::getSingelton().Error("save data cmd file : write() of %s failed. (len:%d)\n", 
-		    ServerFile::getSingelton().getFilename(data_cmd));
+        LogFile::getSingleton().Error("save data cmd file : write() of %s failed. (len:%d)\n", 
+		    ServerFile::getSingleton().getFilename(data_cmd));
 	}					 
     else
 	{
@@ -234,7 +234,7 @@ void Network::PreParseInfoStat(char *cmd)
     if (strstr(cmd, "What is your name?"))
     {
 /*
-        LogFile::getSingelton().Info("Login: Enter name\n");
+        LogFile::getSingleton().Info("Login: Enter name\n");
         cpl.name[0] = 0;
         cpl.password[0] = 0;
         if (PasswordAlreadyAsked == 1)
@@ -249,20 +249,20 @@ void Network::PreParseInfoStat(char *cmd)
         }
 */
 		TextInput::getSingleton().stop();
-        Option::getSingelton().GameStatus = GAME_STATUS_NAME;
+        Option::getSingleton().GameStatus = GAME_STATUS_NAME;
 		TextInput::getSingleton().startTextInput(MAX_LEN_LOGIN_NAME, false, false); // every start() needs a stop()!
     }
     if (strstr(cmd, "What is your password?"))
     {
 		TextInput::getSingleton().stop();
-        Option::getSingelton().GameStatus = GAME_STATUS_PSWD;
+        Option::getSingleton().GameStatus = GAME_STATUS_PSWD;
 		TextInput::getSingleton().startTextInput(MAX_LEN_LOGIN_NAME); // every start() needs a stop()!
 		mPasswordAlreadyAsked = 1;
     }
     if (strstr(cmd, "Please type your password again."))
     {
 		TextInput::getSingleton().stop();
-        Option::getSingelton().GameStatus = GAME_STATUS_VERIFYPSWD;
+        Option::getSingleton().GameStatus = GAME_STATUS_VERIFYPSWD;
 		TextInput::getSingleton().startTextInput(MAX_LEN_LOGIN_NAME); // every start() needs a stop()!
         mPasswordAlreadyAsked = 2;
     }
@@ -282,7 +282,7 @@ void Network::handle_query(char *data, int len)
         while ((buf = strchr(buf, '\n')) != NULL)
         {
             *buf++ = '\0';
-            LogFile::getSingelton().Info("Received query string: %s\n", cp);
+            LogFile::getSingleton().Info("Received query string: %s\n", cp);
             PreParseInfoStat(cp);
             cp = buf;
         }
@@ -294,7 +294,7 @@ void Network::handle_query(char *data, int len)
 // ========================================================================
 void Network::PlayerCmd(unsigned char *data, int len)
 {
-    Option::getSingelton().GameStatus = GAME_STATUS_PLAY;
+    Option::getSingleton().GameStatus = GAME_STATUS_PLAY;
 
 /*
     char    name[MAX_BUF];

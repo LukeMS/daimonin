@@ -169,6 +169,10 @@ SOURCE=..\..\..\source\main.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\source\map.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\source\network.cpp
 
 !IF  "$(CFG)" == "Daimonin - Win32 Debug"
@@ -195,6 +199,10 @@ SOURCE=..\..\..\source\network_cmd.cpp
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\source\npc.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\source\option.cpp
 
 !IF  "$(CFG)" == "Daimonin - Win32 Debug"
@@ -218,6 +226,10 @@ SOURCE=..\..\..\source\option_init.cpp
 
 !ENDIF 
 
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\player.cpp
 # End Source File
 # Begin Source File
 
@@ -249,6 +261,10 @@ SOURCE=..\..\..\source\textwindow.cpp
 !ENDIF 
 
 # End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\tile_gfx.cpp
+# End Source File
 # End Group
 # Begin Group "Header Files"
 
@@ -275,7 +291,15 @@ SOURCE=..\..\..\source\include\logfile.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\source\include\map.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\source\include\network.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\include\npc.h
 # End Source File
 # Begin Source File
 
@@ -295,11 +319,19 @@ SOURCE=..\..\..\source\include\sound.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\source\include\sprite.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\source\include\textinput.h
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\..\source\include\textwindow.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\include\tile_gfx.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"

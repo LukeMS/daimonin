@@ -97,10 +97,10 @@ typedef enum _game_status
 class Option
 {
   public:
-    static Option &getSingelton()
+    static Option &getSingleton()
 	{
-       static Option singelton;
-       return singelton;
+       static Option Singleton;
+       return Singleton;
 	}
 
     Option()   { GameStatus =  GAME_STATUS_INIT; mLogin = false;}
@@ -122,7 +122,7 @@ class Option
   private:
     Option(const Option&); // disable copy-constructor.
     bool mLogin;
-	ifstream mDescFile;
+	ifstream *mDescFile;
 	string mDescBuffer;
 }; 
 

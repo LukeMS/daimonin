@@ -46,16 +46,16 @@ static FMUSIC_MODULE *mod    = 0;
 // ========================================================================
 bool Sound::Init()
 {
-    LogFile::getSingelton().Headline("Init Soundystem");
-    LogFile::getSingelton().Info("Starting fmod...");
+    LogFile::getSingleton().Headline("Init Soundystem");
+    LogFile::getSingleton().Info("Starting fmod...");
 
     ///////////////////////////////////////////////////////////////////////// 
     // Check Version.
 	/////////////////////////////////////////////////////////////////////////
     if (FSOUND_GetVersion() < FMOD_VERSION)
     {
-		LogFile::getSingelton().Success(false);
-        LogFile::getSingelton().Error("You are using the wrong DLL version! "
+		LogFile::getSingleton().Success(false);
+        LogFile::getSingleton().Error("You are using the wrong DLL version! "
 			"You should be using FMOD %.02f\n", FMOD_VERSION);
         return false;
     }
@@ -65,24 +65,24 @@ bool Sound::Init()
 	/////////////////////////////////////////////////////////////////////////
     if (!FSOUND_Init(32000, 64, 0))
     {
-		LogFile::getSingelton().Success(false);
-        LogFile::getSingelton().Error("FSound init: %s\n", FMOD_ErrorString(FSOUND_GetError()));
+		LogFile::getSingleton().Success(false);
+        LogFile::getSingleton().Error("FSound init: %s\n", FMOD_ErrorString(FSOUND_GetError()));
         return false;
     }
-	LogFile::getSingelton().Success(true);
+	LogFile::getSingleton().Success(true);
 
     ///////////////////////////////////////////////////////////////////////// 
     // Load background music.
 	/////////////////////////////////////////////////////////////////////////
-    LogFile::getSingelton().Info("Loading music...");
+    LogFile::getSingleton().Info("Loading music...");
 	mod = FMUSIC_LoadSong("media/sound/invtro94.s3m");
     if (!mod)
     {
-		LogFile::getSingelton().Success(false);
-        LogFile::getSingelton().Error("Song load: %s\n", FMOD_ErrorString(FSOUND_GetError()));
+		LogFile::getSingleton().Success(false);
+        LogFile::getSingleton().Error("Song load: %s\n", FMOD_ErrorString(FSOUND_GetError()));
         return false;
     }
-	LogFile::getSingelton().Success(true);
+	LogFile::getSingleton().Success(true);
 
 	
 	
@@ -99,16 +99,16 @@ bool Sound::Init()
     ///////////////////////////////////////////////////////////////////////// 
     // Load samples.
 	/////////////////////////////////////////////////////////////////////////
-    LogFile::getSingelton().Info("Loading samples...");
+    LogFile::getSingleton().Info("Loading samples...");
     for (unsigned int i = 0; i< SAMPLE_SUM; ++i)
 	{ 
 		if (!(Sample[i].handle = FSOUND_Sample_Load(i, Sample[i].filename, 0,0,0)))
 		{
-			LogFile::getSingelton().Success(false);
-			LogFile::getSingelton().Error("Sample load: %s\n", FMOD_ErrorString(FSOUND_GetError()));
+			LogFile::getSingleton().Success(false);
+			LogFile::getSingleton().Error("Sample load: %s\n", FMOD_ErrorString(FSOUND_GetError()));
 		}
 	}
-	LogFile::getSingelton().Success(true);
+	LogFile::getSingleton().Success(true);
 	return true;
 }
 

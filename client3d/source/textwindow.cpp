@@ -212,13 +212,13 @@ bool CTextwindow::MouseAction(int action, Real xpos, Real ypos, Real yRelative)
     // Check all buttons.
 	if (mElementButUp  ->contains(xpos, ypos))
 	{ 
-		Sound::getSingelton().PlaySample(SAMPLE_BUTTON_CLICK);
+		Sound::getSingleton().PlaySample(SAMPLE_BUTTON_CLICK);
 		OpenTextWin(); 
 		return true; 
 	}
     if (mElementButDown->contains(xpos, ypos))
 	{
-		Sound::getSingelton().PlaySample(SAMPLE_BUTTON_CLICK);
+		Sound::getSingleton().PlaySample(SAMPLE_BUTTON_CLICK);
 		CloseTextWin(); 
 		return true;
 	}

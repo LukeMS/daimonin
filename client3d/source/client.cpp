@@ -29,6 +29,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "define.h"
 #include "event.h"
 #include "player.h"
+#include "npc.h"
 #include "client.h"
 #include "network.h"
 #include "logfile.h"
@@ -58,13 +59,13 @@ void DaimoninClient::go(void)
 
 bool DaimoninClient::setup(void)
 {
-	LogFile::getSingelton().Init();
-    if (TileGfx::getSingelton().read_bmaps_p0() <0) return false; 
-    TileGfx::getSingelton().read_bmap_tmp(); // only testing.NORMALLY started from netword.cpp.
+	LogFile::getSingleton().Init();
+    if (TileGfx::getSingleton().read_bmaps_p0() <0) return false; 
+    TileGfx::getSingleton().read_bmap_tmp(); // only testing.NORMALLY started from netword.cpp.
 
-	Option ::getSingelton().Init();
-	Sound  ::getSingelton().Init();
-	Network::getSingelton().Init();
+	Option ::getSingleton().Init();
+	Sound  ::getSingleton().Init();
+	Network::getSingleton().Init();
 	mRoot = new Root();
 	setupResources();
 
@@ -158,7 +159,26 @@ void DaimoninClient::createScene(void)
     mSceneMgr->setAmbientLight(ColourValue(0.5, 0.5, 0.5));
 
 	mEvent->World = mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(0, 0, 0));
-    Player::getSingelton().Init(mSceneMgr);
+    Player::getSingleton().Init(mSceneMgr);
+	NPC_Enemy1->Init(mSceneMgr, mEvent->World);
+/*
+	Entity     *mEntity = mSceneMgr->createEntity("enemy", "scorpion.mesh");
+	SceneNode  *mNode;
+	mNode   = mEvent->World->createChildSceneNode(Vector3(0, 10, 0));
+//	mFacing = Degree(0);
+
+//	Real faceing = atof(strTemp.c_str());
+//	mFacingOffset = faceing * RAD;
+    mNode->attachObject(mEntity);
+
+//	Option::getSingleton().getDescStr("MeshSize", strTemp);
+//	Real size = atof(strTemp.c_str());
+	Real size = 0.25f;
+	mNode->setScale(size, size, size);
+//    mNode->yaw(mFacing);
+*/
+
+
 
     Light* l;
     l = mSceneMgr->createLight("BlueLight");
@@ -192,10 +212,10 @@ void DaimoninClient::createScene(void)
 // Lets play a little with this mateial stuff....
 
 	int gfxNr =251;
-	TileGfx::getSingelton().load_picture_from_pack(gfxNr);
+	TileGfx::getSingleton().load_picture_from_pack(gfxNr);
 	MaterialPtr mMaterial = MaterialManager::getSingleton().getByName("dynamic");
 	string texName = "testMat"+ StringConverter::toString(gfxNr);
-	TexturePtr mTexture = TextureManager::getSingleton().loadImage(texName, "Tiles", TileGfx::getSingelton().getSprite(gfxNr), TEX_TYPE_2D, 3,1.0f);
+	TexturePtr mTexture = TextureManager::getSingleton().loadImage(texName, "Tiles", TileGfx::getSingleton().getSprite(gfxNr), TEX_TYPE_2D, 3,1.0f);
 	mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(texName);
 	mMaterial->load();
 

@@ -20,6 +20,7 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/copyleft/lesser.txt.
 -----------------------------------------------------------------------------
 */
+
 #ifndef DEFINE_H
 #define DEFINE_H
 
@@ -41,10 +42,12 @@ const char FILE_ARCHDEF[]			= "./archdef.dat";
 const char FILE_LOGGING[]			= "./client_log.html";
 const char FILE_OPTIONS[]			= "./options.dat";
 
+const char FILE_PLAYER_DESC[]		= "./media/models/player.desc";
+const char FILE_NPC_DESC[]			= "./media/models/npc.desc";
+
 // ========================================================================
 // 
 // ========================================================================
-
 const int HUGE_BUF = 1024;
 
 enum { M_MOVED, M_PRESSED, M_CLICKED, M_DRAGGED, M_ENTERED, M_EXITED, M_RELEASED };

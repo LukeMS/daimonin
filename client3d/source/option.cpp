@@ -51,12 +51,12 @@ struct _option opt[] =
 //=================================================================================================
 bool Option::openDescFile(const char *filename)
 {
-	if (!mDescFile) { mDescFile.close(); }
-	mDescFile.open(filename, ios::in);
+	if (mDescFile) { mDescFile->close(); }
+	mDescFile = new ifstream(filename, ios::in);
     if (!mDescFile) { return false; }
 	mDescBuffer ="";
 	string buf;
-	while (getline(mDescFile, buf)) 
+	while (getline(*mDescFile, buf)) 
 	{   // delete comments.
 		if (buf.find("#")> 5) { mDescBuffer+= buf; }
 	}
@@ -68,7 +68,12 @@ bool Option::openDescFile(const char *filename)
 //=================================================================================================
 void Option::closeDescFile()
 {
-	mDescFile.close();
+	if (mDescFile)
+	{
+		mDescFile->close();
+		delete mDescFile;
+		mDescFile = 0;
+	} 
 }
 
 //=================================================================================================
@@ -88,13 +93,12 @@ void Option::getDescStr(const char *descrEntry, string &strBuffer)
 //=================================================================================================
 bool Option::Init()
 {
-
 	// filename: FILE_OPTIONS
-	LogFile::getSingelton().Headline("Init Options");
+	LogFile::getSingleton().Headline("Init Options");
 
     _options  *ptions = &options; 
 
-
+	mDescFile = 0;
 	mMetaServer ="damn.informatik.uni-bremen.de";
 	mMetaServerPort = 13326;
 	mSelectedMetaServer =0;
@@ -133,7 +137,9 @@ bool Option::Init()
 // Destructor.
 //=================================================================================================
 Option::~Option()
-{/*
+{
+	closeDescFile();
+/*
     for (int i=0; opt[i].name; ++i)
     { 
 		if (opt[i].name[0] == '#') { continue; }

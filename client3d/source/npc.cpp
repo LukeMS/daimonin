@@ -21,42 +21,39 @@ http://www.gnu.org/copyleft/lesser.txt.
 -----------------------------------------------------------------------------
 */
 
-#include "sound.h"
+#include "npc.h"
 #include "player.h"
+#include "sound.h"
 #include "option.h"
 #include "logfile.h"
 #include "textwindow.h"
 
-const char *StateNames[STATE_SUM]=
-{
-	"Idle1",	"Idle2",	"Idle3",
-	"Walk1",	"Walk2",	"Walk3",
-	"Run1",		"Run2",		"Run3",
-	"Attack1",	"Attack2",	"Attack3",
-	"Block1",	"Block2",	"Block3",
-	"Slump1",	"Slump2",	"Slump3",
-	"Death1",	"Death2",	"Death3",
-	"Hit1",		"Hit2",		"Hit3"
-};
+//=================================================================================================
+// Init all static Elemnts.
+//=================================================================================================
+int NPC::mInstanceNr = 0;
+
+extern const char *StateNames[STATE_SUM];
+NPC *NPC_Enemy1 = new NPC;
 
 //=================================================================================================
 // 
 //=================================================================================================
-bool Player::Init(SceneManager *mSceneMgr)
+bool NPC::Init(SceneManager *mSceneMgr, SceneNode  *Node)
 {
-	LogFile::getSingleton().Headline("Init Player");
-	LogFile::getSingleton().Info("Parse description file %s\n", FILE_PLAYER_DESC);
-	if (!(Option::getSingleton().openDescFile(FILE_PLAYER_DESC)))
+	if (!mInstanceNr) { LogFile::getSingleton().Headline("Init NPCs"); }
+	LogFile::getSingleton().Info("Parse description file %s\n", FILE_NPC_DESC);
+	if (!(Option::getSingleton().openDescFile(FILE_NPC_DESC)))
 	{
 		LogFile::getSingleton().Success(false);
-		LogFile::getSingleton().Error("CRITICAL: Player description file was not found!\n");
+		LogFile::getSingleton().Error("CRITICAL: NPC description file was not found!\n");
 		return (false);
 	}
 	LogFile::getSingleton().Success(true);
 
 	string strTemp;
 	Option::getSingleton().getDescStr("MeshName", strTemp);
-	mEntity = mSceneMgr->createEntity("player", strTemp.c_str());
+	mEntity = mSceneMgr->createEntity("NPC_"+StringConverter::toString(mInstanceNr), strTemp.c_str());
 
 	Option::getSingleton().getDescStr("StartX", strTemp);
 	Real posX = atof(strTemp.c_str());
@@ -64,7 +61,7 @@ bool Player::Init(SceneManager *mSceneMgr)
 	Real posY = atof(strTemp.c_str());
 	Option::getSingleton().getDescStr("StartZ", strTemp);
 	Real posZ = atof(strTemp.c_str());
-	mNode   = mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(posX, posY, posZ));
+	mNode   = Node->createChildSceneNode(Vector3(posX, posY, posZ));
 
 	Option::getSingleton().getDescStr("Facing", strTemp);
 	mFacing = Degree(atof(strTemp.c_str()));
@@ -95,13 +92,14 @@ bool Player::Init(SceneManager *mSceneMgr)
 			mAnimStates[state] = mEntity->getAnimationState(strTemp.c_str());
 		}
 	}
+	++mInstanceNr;
 	return true;
 }
 
 //=================================================================================================
 // 
 //=================================================================================================
-void Player::toggleAnimaGroup()
+void NPC::toggleAnimaGroup()
 {
 	if (++mAnimGroup >2) { mAnimGroup =0; }
 	char buf[80];
@@ -112,7 +110,7 @@ void Player::toggleAnimaGroup()
 //=================================================================================================
 // 
 //=================================================================================================
-void Player::updateAnim(const FrameEvent& event)
+void NPC::updateAnim(const FrameEvent& event)
 {
 	if (mAnimType >= STATE_ATTACK1)
 	{

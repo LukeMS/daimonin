@@ -8,26 +8,22 @@ and basic models.
 ** technical demonstration and to find problems under
 ** specific systems.
 
-Notes to version from 27.03.05
-------------------------------
-you need the following files to start:
-(just copy them from the client 2d.)
-- all files in srv_files
-- daimonin.p0
- 
-Install Windows
+INSTALL WINDOWS
 ---------------
+1.) Unzip client3d/make/win32/ogre_debug_dll.zip to client3d/.
+2.) Copy the whole srv_files directory from the 2d client to client3d/.
+3.) Copy the daimonin.p0 from the 2d client to client3d/.
+4.) Install the STLport 4.6.2 from 
+    http://www.ogre3d.org/index.php?option=com_remository&Itemid=74&func=selectcat&cat=1
+5.) start daimonin3d_d.exe
+6.) In the Ogre Engine Rendering setup choose:
+    - a Rendering system.
+    - a 1024x768 Video Mode.
 
-1.) Entpack the file /client3d/make/win32/ogre_debug_dll.zip and
-/client3d/make/win32/fmod_dll.zip to the same folder this README
-and the daimonin3d.exe is in (aka. /client3d ).
+INSTALL GNU/LINUX
+-----------------
 
-2.) start daimonin3d.exe
-
-Install Linux
----------------
-
-There is an Anjuta Project file with howto.
+There is an Anjuta Project file with howto in client3d/make/linux/anjuta.
 
 
 HOW TO EXCHANGE THE MODEL
@@ -35,3 +31,17 @@ HOW TO EXCHANGE THE MODEL
 
 Look in media/models/player.mesh for infos.
 There is also a robot and a ninja demo-file.
+
+
+Q: Why there are a 2 kind of exe and dll?
+A: There is a debug and a release version.
+   The debug version is very slow, but give the coder much more fun :)
+   This version is always uptodate.
+   The debug exe is called daimonin3d_d.
+
+Q: I have done all the thinks you said, but client3d failed to start...
+A: Then perhaps this file is not actual anymore.
+   Don't hestitate to ask in the irc or on the devel-list.
+   http://daimonin.sourceforge.net
+
+last edited on 30.03.05 by polyveg

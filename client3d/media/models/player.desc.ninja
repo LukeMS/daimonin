@@ -6,6 +6,8 @@
 # Every model MUST have an animation-state IDLE1 !!!!!
 # If you don't have IDLE1 ready yet -> fill it with something that exist.
 #
+# The animation states are CASE SENSITIVE!
+#
 # In future there will be fixed names for animation states.
 # Therefore the animation-state should ALWAYS be named like the function.
 # e.g. "Walk1" for Walk1. NOT "Walk" like in the original ogre3d robot-model.
@@ -19,12 +21,17 @@ MeshName : "ninja.mesh"
 # Size of the model
 MeshSize : "0.3"
 
-# The ground-pos of the model in the world.
-SeaLevel : "0"
+# The pos of the model in the world.
+StartX   : "0"
+StartY   : "15"
+StartZ   : "0"
 
 # The facing direction in degrees.
-# If your model walks sideways you can fix this here.
 Facing   : "90"
+
+# The facing offset direction in degrees.
+# If your model walks sideways you can fix this here.
+FOffset  : "90"
 
 # The animation groups (xyz1 - xyz3) are toggled by F1.
 Idle1    : "Idle1"

@@ -35,7 +35,7 @@ class LogFile
   public:
 	LogFile()   {};
     ~LogFile();
-    static LogFile &getSingelton();
+    static LogFile &getSingleton();
 
     void Info    (char *text, ...);
     void Error   (char *text, ...);
