@@ -324,6 +324,7 @@ int save_player(object *op, int flag) {
 #ifdef EXPLORE_MODE
   fprintf(fp,"explore %d\n",pl->explore);
 #endif
+  fprintf(fp,"dm_stealth %d\n",pl->dm_stealth);
   fprintf(fp,"gen_hp %d\n",pl->gen_hp);
   fprintf(fp,"gen_sp %d\n",pl->gen_sp);
   fprintf(fp,"gen_grace %d\n",pl->gen_grace);
@@ -636,7 +637,10 @@ void check_login(object *op) {
 	else if (!strcmp(buf,"explore"))
 	    pl->explore = value;
 #endif
-	else if (!strcmp(buf,"gen_hp"))
+		else if (!strcmp(buf,"dm_stealth"))
+		    pl->dm_stealth = value;
+
+		else if (!strcmp(buf,"gen_hp"))
 	    pl->gen_hp=value;
         else if (!strcmp(buf,"shoottype"))
 	    pl->shoottype=(rangetype)value;
@@ -939,8 +943,9 @@ void check_login(object *op) {
     }
 
     new_draw_info(NDI_UNIQUE, 0,op,"Welcome Back!");
-    new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, NULL,
-	     "%s has entered the game.",pl->ob->name);
+	if(!pl->dm_stealth)
+	    new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, NULL,
+		     "%s has entered the game.",pl->ob->name);
 #ifdef PLUGINS
     /* GROS : Here we handle the LOGIN global event */
     evtid = EVENT_LOGIN;

@@ -159,6 +159,7 @@ CommArray_s CommunicationCommands [] = {
   {"/bleed", command_bleed,		1.0},
   {"/cringe", command_cringe,	1.0},
   {"/think", command_think,		1.0},
+  {"/me", command_me,			1.0},
 };
 
 const int CommunicationCommandSize = sizeof(CommunicationCommands)/ sizeof(CommArray_s);
@@ -185,7 +186,7 @@ CommArray_s WizCommands [] = {
   {"/teleport", command_teleport,0.0},
   {"/goto", command_goto,0.0},
   {"/shutdown", command_shutdown, 0.0},
-  {"/reset", command_reset,0.0},
+  {"/resetmap", command_reset,0.0},
   {"/plugout",command_unloadplugin,0.0},
   {"/create", command_create,0.0},
   {"/addexp", command_addexp,0.0},
@@ -193,6 +194,9 @@ CommArray_s WizCommands [] = {
   {"/malloc", command_malloc,	0.0},
   {"/maps", command_maps,	0.0},
   {"/dump", command_dump,0.0}, /* dump info of object nr. x */
+
+  {"/dm_stealth", command_dm_stealth,0.0},
+  {"/dm_light", command_dm_light,0.0},
 
   {"/d_active", command_dumpactivelist,0.0},
   {"/d_arches", command_dumpallarchetypes,0.0},

@@ -127,6 +127,7 @@ int command_beg(object *op, char *params);
 int command_bleed(object *op, char *params);
 int command_cringe(object *op, char *params);
 int command_think(object *op, char *params);
+int command_me(object *op, char *params);
 /* c_misc.c */
 void map_info(object *op);
 int command_spell_reset(object *op, char *params);
@@ -150,6 +151,8 @@ int command_wizpass(object *op, char *params);
 int command_dumpallobjects(object *op, char *params);
 int command_dumpfriendlyobjects(object *op, char *params);
 int command_dumpallarchetypes(object *op, char *params);
+int command_dm_stealth(object *op, char *params);
+int command_dm_light(object *op, char *params);
 int command_dumpactivelist(object *op, char *params);
 int command_ssdumptable(object *op, char *params);
 int command_setmaplight (object *op, char *params);
@@ -836,5 +839,4 @@ int find_neighbours(path_node *node, path_node **open_list, path_node **closed_l
 path_node *find_path(object *op, mapstruct *map1, int x1, int y1, mapstruct *map2, int x2, int y2);
 /* weather.c */
 void init_word_darkness(void);
-void dawn_to_dusk(timeofday_t *tod);
 void tick_the_clock(void);

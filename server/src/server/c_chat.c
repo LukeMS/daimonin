@@ -149,6 +149,18 @@ int command_tell (object *op, char *params)
     buf[MAX_BUF-1]=0;
 
     for(pl=first_player;pl!=NULL;pl=pl->next)
+	{
+		if(pl->dm_stealth)
+		{
+			sprintf(buf,"%s tells you (dm_stealth): ",op->name);
+			strncat(buf, msg, MAX_BUF-strlen(buf)-1);
+			buf[MAX_BUF-1]=0;
+
+	      if(strncasecmp(pl->ob->name,name,MAX_NAME)==0)
+	        new_draw_info(NDI_PLAYER |NDI_UNIQUE | NDI_NAVY, 0, pl->ob, buf);
+			break;
+		}
+
       if(strncasecmp(pl->ob->name,name,MAX_NAME)==0)
       {
         sprintf(buf2, "You tell %s: %s",name,msg);
@@ -159,6 +171,7 @@ int command_tell (object *op, char *params)
         strcpy(pl->last_tell, op->name);
         return 1;
       }
+	}
     new_draw_info(NDI_UNIQUE, 0,op,"No such player.");
     return 1;
   }
@@ -236,7 +249,8 @@ int command_reply (object *op, char *params) {
     /* Find player object of player to reply to and check if player still exists */
     pl = find_player(op->contr->last_tell);
 
-    if (pl == NULL) {
+    if (pl == NULL || pl->dm_stealth)
+	{
         new_draw_info(NDI_UNIQUE, 0, op, "You can't reply, this player left.");
         return 1;
     }
@@ -629,7 +643,7 @@ static int basic_emote(object *op, char *params, int emotion)
 		    "glee!", op->name);
 	    sprintf(buf2, "You cackle gleefully.");
 	    break;
-        case EMOTE_LAUGH:
+	case EMOTE_LAUGH:
 	    sprintf(buf, "%s falls down laughing.", op->name);
 	    sprintf(buf2, "You fall down laughing.");
 	    break;
@@ -800,6 +814,10 @@ static int basic_emote(object *op, char *params, int emotion)
 	    sprintf(buf2, "Anything in particular that you'd care to think "
 		    "about?");
 	    break;
+	case EMOTE_ME:
+	    sprintf(buf2, "usage: /me <emote to display>");
+		/* do nothing, since we specified nothing to do */
+	    break;
 	default:
 	    sprintf(buf, "%s dances with glee.", op->name);
 	    sprintf(buf2, "You are a nut.");
@@ -813,7 +831,17 @@ static int basic_emote(object *op, char *params, int emotion)
 	} 
 	else /* we have params */
 	{
-		if(op->type == PLAYER) /* atm, we only allow "yourself" as parameter for players */
+		if(emotion == EMOTE_ME)
+		{
+			sprintf(buf, "%s %s", op->name, params);
+			strcpy(buf2, buf);
+			LOG(llevInfo,"ME:: %s\n", buf2); 
+			new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, op, op, buf);
+			if(op->type == PLAYER)
+				new_draw_info(NDI_UNIQUE, 0, op, buf2);
+			return(0);
+		}
+		else if(op->type == PLAYER) /* atm, we only allow "yourself" as parameter for players */
 		{
 			if(!strcmp(params,"yourself"))
 				emote_self(op, buf, buf2, emotion);
@@ -1119,4 +1147,9 @@ int command_cringe(object *op, char *params)
 int command_think(object *op, char *params)
 {
     return(basic_emote(op, params, EMOTE_THINK));
+}
+
+int command_me(object *op, char *params)
+{
+    return(basic_emote(op, params, EMOTE_ME));
 }

@@ -218,6 +218,9 @@ typedef struct pl_player
 	uint32 praying:1;				/* if true, player is praying and gaining fast grace */
 	uint32 was_praying:1;			/* internal used by praying to send pray msg to player */
 
+	/* some dm flags */
+	uint32 dm_stealth:1;			/* 1= no "XX enter the game" and no entry in /who */
+	uint32 dm_light:1;				/* 1= all maps are shown in daylight for the dm */ 
 
 /* all values before this line are tested and proofed */
 

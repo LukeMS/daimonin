@@ -571,7 +571,7 @@ Object
 is_magical 1
 title of minor holding
 type 122
-value 15000
+value 5500
 weapon_speed 0.85
 end
 #
@@ -584,7 +584,7 @@ Object
 is_magical 1
 title of small holding
 type 122
-value 22000
+value 12500
 weapon_speed 0.75
 end
 #
@@ -597,7 +597,7 @@ Object
 is_magical 1
 title of medium holding
 type 122
-value 30000
+value 26000
 weapon_speed 0.65
 end
 #
@@ -610,7 +610,7 @@ Object
 is_magical 1
 title of holding
 type 122
-value 120000
+value 105000
 weapon_speed 0.55
 end
 #

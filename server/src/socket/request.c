@@ -1065,7 +1065,7 @@ void draw_client_map2(object *pl)
     mapstruct *m;
     object *tmp, *tmph, *pname1, *pname2, *pname3, *pname4;
     int x,y,ax, ay, d, nx,ny, probe_tmp;
-	int x_start;
+	int x_start, dm_light=0;
     int dark, flag_tmp, special_vision;
     int quick_pos_1,quick_pos_2,quick_pos_3; 
  	int inv_flag = QUERY_FLAG(pl,FLAG_SEE_INVISIBLE)?0:1;
@@ -1081,6 +1081,9 @@ void draw_client_map2(object *pl)
 	int tile_count=0;
 #endif
 	
+	if(pl->contr->dm_light)
+		dm_light = global_darkness_table[MAX_DARKNESS];
+
 	wdark = darkness_table[world_darkness];
 	special_vision = (QUERY_FLAG(pl,FLAG_XRAYS)?1:0)|(QUERY_FLAG(pl,FLAG_SEE_IN_DARK)?2:0);
 
@@ -1196,11 +1199,11 @@ void draw_client_map2(object *pl)
 		/* lets calc the darkness/light value for this tile.*/
 		if(MAP_OUTDOORS(m))
 		{
-			d = msp->light_value + wdark;
+			d = msp->light_value + wdark +dm_light;
 		}
 		else
 		{
-			d = m->darkness + msp->light_value;
+			d = m->light_value + msp->light_value+dm_light;
 		}
 
 		if(d <= 0) /* tile is not normal visible */

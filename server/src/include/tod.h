@@ -32,8 +32,8 @@
 /* game time */
 #define HOURS_PER_DAY		24
 #define DAYS_PER_WEEK		7
-#define WEEKS_PER_MONTH		5
-#define MONTHS_PER_YEAR		17
+#define WEEKS_PER_MONTH		4
+#define MONTHS_PER_YEAR		12
 
 /* convenience */
 #define WEEKS_PER_YEAR		(WEEKS_PER_MONTH*MONTHS_PER_YEAR)

@@ -31,6 +31,8 @@
 #include <unistd.h>
 #endif /* win32 */
 
+int	global_darkness_table[MAX_DARKNESS+1] = {0,20,40,80,160,320,640,1280};
+
 uint32 global_map_tag; /* our global map_tag value for the server */
 
 /* to get the reverse direction for all 8 tiled map index */
@@ -431,6 +433,7 @@ void dump_map(mapstruct *m) {
 
     LOG(llevSystem,"Difficulty: %d\n",m->difficulty); 
     LOG(llevSystem,"Darkness: %d\n",m->darkness); 
+    LOG(llevSystem,"Light: %d\n",m->light_value); 
     LOG(llevSystem,"Outdoor: %d\n",MAP_OUTDOORS(m)); 
 }
 
@@ -1180,6 +1183,9 @@ mapstruct *get_linked_map() {
     MAP_HEIGHT(map)=16;
     MAP_RESET_TIMEOUT(map)=7200;
     MAP_TIMEOUT(map)=300;
+	/* default light of a map is full daylight */
+	MAP_DARKNESS(map)=-1;
+	map->light_value = global_darkness_table[MAX_DARKNESS];
 
     MAP_ENTER_X(map)=1;
     MAP_ENTER_Y(map)=1;
@@ -1323,9 +1329,15 @@ static int load_map_header(FILE *fp, mapstruct *m)
 	} else if (!strcmp(key, "difficulty")) {
 	    m->difficulty = atoi(value);
 	} else if (!strcmp(key, "darkness")) {
-        m->darkness = atoi(value);
-	/* i assume that the default map_flags settings is 0 - so we don't handle <flagset> 0 */
+        MAP_DARKNESS(m) = atoi(value);
+		if(MAP_DARKNESS(m) == -1)
+	        m->light_value = global_darkness_table[MAX_DARKNESS];
+		else
+		    m->light_value = global_darkness_table[MAP_DARKNESS(m)];
+	} else if (!strcmp(key, "light")) {
+        m->light_value = atoi(value);
 
+	/* i assume that the default map_flags settings is 0 - so we don't handle <flagset> 0 */
 	} else if (!strcmp(key,"no_magic")) {
 		if(atoi(value))
 			m->map_flags |= MAP_FLAG_NOMAGIC;
@@ -1714,6 +1726,7 @@ int new_save_map(mapstruct *m, int flag)
      */
     if (m->difficulty) fprintf(fp,"difficulty %d\n", m->difficulty);
     fprintf(fp,"darkness %d\n", m->darkness);
+    fprintf(fp,"light %d\n", m->light_value);
 	fprintf(fp,"map_tag %d\n", m->map_tag);
     if (m->width) fprintf(fp,"width %d\n", m->width);
     if (m->height) fprintf(fp,"height %d\n", m->height);

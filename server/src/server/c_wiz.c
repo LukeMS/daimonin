@@ -797,21 +797,20 @@ int command_reset (object *op, char *params)
     object *dummy = NULL, *tmp = NULL;
     const char *mapfile_sh;
 
-    if (params == NULL) {
-	new_draw_info(NDI_UNIQUE, 0,op,"Reset what map [name]?");
-	return 1;	
-    }
-    if (strcmp(params, ".") == 0) {
+    if (params == NULL)
         m = has_been_loaded_sh(op->map->path);
-    } else {
+	else 
+	{
         mapfile_sh = add_string(params);
         m = has_been_loaded_sh(mapfile_sh);
         free_string_shared(mapfile_sh);
     }
-    if (m==NULL) {
-	new_draw_info(NDI_UNIQUE, 0,op,"No such map.");
-	return 1;	
-    }
+
+	if (m==NULL)	
+	{
+		new_draw_info(NDI_UNIQUE, 0,op,"No such map.");
+		return 1;	
+	}
 
     if (m->in_memory != MAP_SWAPPED) {
 	if(m->in_memory != MAP_IN_MEMORY) {
