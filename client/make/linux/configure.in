@@ -1,9 +1,9 @@
-AC_INIT([Daimonin SDL Client], [0.96alpha2], [support@daimonin.sourceforge.net]) 
+AC_INIT([Daimonin SDL Client], [BETA2-0.96], [support@daimonin.sourceforge.net]) 
 
 AC_CONFIG_AUX_DIR(make_utils)
 AC_CANONICAL_SYSTEM
 
-AC_PREFIX_DEFAULT(../../../client-0.96alpha2)
+AC_PREFIX_DEFAULT(../../../client-BETA2-0.96)
 
 AC_PROG_CC
 AC_PROG_MAKE_SET

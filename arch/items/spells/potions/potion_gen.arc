@@ -8,6 +8,7 @@ inv_face potion_gen.101
 type 5
 sub_type 128
 is_thrown 1
+wc_range 20
 material 512
 weight 200
 value 28

@@ -123,13 +123,11 @@ static char *skill_tab[SKILL_LIST_MAX]={
  Spell Menue
 ******************************************************************/
 static char *spell_tab[SPELL_LIST_MAX]={ /* form server->include/spellist.h->spellpathnames */
- "Protection", "Fire", "Frost", "Electricity", "Missiles", "Self",
+	"Protection", "Fire", "Frost", "Electricity", "Missiles", "Self",
  "Summoning", "Abjuration", "Restoration", "Detonation",
-/*
- "Mind",
- "Creation", "Teleportation", "Information", "Transmutation",
+ "Mind","Creation", "Teleportation", "Information", "Transmutation",
  "Transferrence", "Turning", "Wounding", "Death", "Light"
-*/
+
 };
 #define SPELL_TAB_SIZE (sizeof(spell_tab)/sizeof(char*))
 

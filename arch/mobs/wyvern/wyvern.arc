@@ -101,7 +101,6 @@ monster 1
 level 1
 Con 2
 Pow 2
-can_cast_spell 1
 exp 165
 ac 11
 wc 7

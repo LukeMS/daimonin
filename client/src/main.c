@@ -633,7 +633,7 @@ Boolean game_status_chain(void)
                     /* false version! */
                     if(!GameStatusVersionOKFlag)
                     {
-                        sprintf(buf,"wrong version!\nselect a different server.");
+                        sprintf(buf,"wrong version! Server is outdated!\nselect a different server.");
                         draw_info(buf, COLOR_GREEN);
                         GameStatus = GAME_STATUS_START;
                     }

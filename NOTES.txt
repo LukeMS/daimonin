@@ -2,10 +2,6 @@ Daimonin TODO
 
 21.09.2003 - rework move_gate() and move_timed_gate() - see notes in move_gate().
              add gate_close/gate_open sound. (sound added to client).
-23.09.2003 - EDITOR TODO: Inserting a mob in the inventory of a spawn point should autochange
-             his base attributes to be a SPAWN_POINT_MOB and set speed_left=speed; speed=0
-23.09.2003 - TODO: merging of items need to be fixed to new attack/resist/protection. For example
-             will arrows (throwing items) merge without take care - good items will get lost.
 25.09.2003 - encumberace is still bound to the REAL speed of the object - and the real speed
              of the player object effects the poll of the socket - thats NOT good and a 
              design flaw. In old cf days, this was senseful - today is not.

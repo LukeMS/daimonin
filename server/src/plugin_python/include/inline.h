@@ -29,8 +29,15 @@ static inline void free_string_hook(const char *stxt)
 
 static inline void fix_player_hook(object *fp1)
 {
-	GCFP.Value[0] = (void *)(fp1);
-    (PlugHooks[HOOK_FIXPLAYER])(&GCFP);
+	if(fp1->type == PLAYER)
+	{
+		GCFP.Value[0] = (void *)(fp1);
+		(PlugHooks[HOOK_FIXPLAYER])(&GCFP);
+	}
+	else if(IS_LIVE(fp1))
+	{
+		/* if needed we should insert here fix monster! */
+	}
 }
 
 static inline object *insert_ob_in_ob_hook(object *ob1, object *ob2)
