@@ -1949,7 +1949,7 @@ void kill_player(object *op)
 	op->x = EMERGENCY_X;
 	op->y = EMERGENCY_Y;
 	container_unlink(op->contr,NULL);
-	save_player(op,0);
+	save_player(op,1);
 	op->map = map;
 	/* please see resurrection.c: peterm */
 	dead_player(op);

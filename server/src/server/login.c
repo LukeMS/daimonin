@@ -197,7 +197,6 @@ void destroy_object (object *op)
 int save_player(object *op, int flag) {
   FILE *fp;
   char filename[MAX_BUF], *tmpfilename,backupfile[MAX_BUF];
-  object *tmp;/* *container=NULL;*/
   player *pl = op->contr;
   int i,wiz=QUERY_FLAG(op,FLAG_WIZ);
   long checksum;
@@ -338,10 +337,6 @@ int save_player(object *op, int flag) {
 
   save_object(fp, op, 3); /* don't check and don't remove */
 #endif
-
-  if(!flag)
-      while ((tmp = op->inv))
-	  destroy_object (tmp);
 
   if (fclose(fp) == EOF) {	/* make sure the write succeeded */
 	new_draw_info(NDI_UNIQUE, 0,op, "Can't save character.");
@@ -872,7 +867,17 @@ void check_login(object *op) {
 
     new_draw_info(NDI_UNIQUE, 0,op,"Welcome Back!");
 	if(!pl->dm_stealth)
+	{
 	    new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, NULL,"%s has entered the game.",query_name(pl->ob));
+		if(gbl_active_DM)
+		{
+			player *pl_tmp;
+			int players;
+
+			for(pl_tmp=first_player,players=0;pl_tmp!=NULL;pl_tmp=pl_tmp->next,players++);
+			new_draw_info_format(NDI_UNIQUE, 0,gbl_active_DM,"DM: %d players now playing.", players);
+		}
+	}
 #ifdef PLUGINS
     /* GROS : Here we handle the LOGIN global event */
     evtid = EVENT_LOGIN;

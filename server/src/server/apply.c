@@ -2563,15 +2563,6 @@ static void apply_savebed (object *pl)
 	}
     new_draw_info(NDI_UNIQUE, 0,pl,"You save and quit the game. Bye!\nleaving...");
 	pl->contr->socket.status=Ns_Dead;
-
-	/* ALL done implicit with NS_DEAD 
-	if(pl->container)
-		esrv_apply_container (pl, pl->container);
-    (void)save_player(pl,0);
-    play_again(pl);
-    pl->speed = 0;
-    update_ob_speed(pl);
-	*/
 }
 
 
