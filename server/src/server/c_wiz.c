@@ -1121,14 +1121,14 @@ void shutdown_agent(int timer, char *reason)
 		int t_sec = timer-(int)(timer/60)*60;
 		sd_timer=timer;
 
-		new_draw_info(NDI_PLAYER |NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "System Message: ** SERVER SHUTDOWN STARTED **");
+		new_draw_info(NDI_PLAYER |NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "[Server]: ** SERVER SHUTDOWN STARTED **");
 		if(reason)
-		new_draw_info_format(NDI_PLAYER |NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "%s", reason);
+		new_draw_info_format(NDI_PLAYER |NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "[Server]: %s", reason);
 
 		if(t_sec)
-			new_draw_info_format(NDI_PLAYER |NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "System Message: SERVER REBOOT in %d minutes and %d seconds",t_min,t_sec);
+			new_draw_info_format(NDI_PLAYER |NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "[Server]: SERVER REBOOT in %d minutes and %d seconds",t_min,t_sec);
 		else
-			new_draw_info_format(NDI_PLAYER |NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "System Message: SERVER REBOOT in %d minutes",t_min);
+			new_draw_info_format(NDI_PLAYER |NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "[Server]: SERVER REBOOT in %d minutes",t_min);
 		GETTIMEOFDAY(&tv1);
 		m_count = timer/60-1;
 		real_count=-1;
@@ -1141,9 +1141,9 @@ void shutdown_agent(int timer, char *reason)
 
 		if((int)(tv2.tv_sec-tv1.tv_sec) >= sd_timer) /* end countdown */
 		{
-			new_draw_info(NDI_PLAYER |NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "System Message: ** SERVER GOES DOWN NOW!!! **");
+			new_draw_info(NDI_PLAYER |NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "[Server]: ** SERVER GOES DOWN NOW!!! **");
 			if(reason)
-				new_draw_info_format(NDI_PLAYER |NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "%s", reason);
+				new_draw_info_format(NDI_PLAYER |NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "[Server]: %s", reason);
 			sd_timer=-1;
 			real_count=30;
 		}
@@ -1157,9 +1157,9 @@ void shutdown_agent(int timer, char *reason)
 		{
 			m_count = t_min-1;
 			if(t_sec)
-				new_draw_info_format(NDI_PLAYER |NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "System Message: SERVER REBOOT in %d minutes and %d seconds",t_min,t_sec);
+				new_draw_info_format(NDI_PLAYER |NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "[Server]: SERVER REBOOT in %d minutes and %d seconds",t_min,t_sec);
 			else
-				new_draw_info_format(NDI_PLAYER |NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "System Message: SERVER REBOOT in %d minutes",t_min);
+				new_draw_info_format(NDI_PLAYER |NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "[Server]: SERVER REBOOT in %d minutes",t_min);
 		}
 
 	}
