@@ -535,6 +535,17 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define QUERY_FLAG(xyz, p) \
 	((xyz)->flags[p/32] & (1U << (p % 32)))
 
+/* this is rarely used but needed for some flags, which are 
+ * used for intern handling like INVISIBLE or WALK_OFF. Because
+ * some core functions like remove_ob() use this, it will be better
+ * we set this ONE time outside instead of every time in remove_ob():
+ * we skip the call for the head in this way.
+ */
+#define SET_MULTI_FLAG(xyz, p) \
+	{object * _tos_;for(_tos_=xyz;_tos_;_tos_=_tos_->more) ((_tos_)->flags[p/32] |= (1U << (p % 32)));}
+#define CLEAR_MULTI_FLAG(xyz, p) \
+	{object * _tos_;for(_tos_=xyz;_tos_;_tos_=_tos_->more) ((_tos_)->flags[p/32] &= ~(1U << (p % 32)));}
+
 /* convenience macros to determine what kind of things we are dealing with */
 
 #define IS_WEAPON(op) \

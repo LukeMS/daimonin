@@ -1446,6 +1446,11 @@ arch floor_ostone1
 x 14
 y 5
 end
+arch sign
+name tiled maps testmap (multi arch)
+x 14
+y 5
+end
 arch floor_ostone1
 x 14
 y 6
@@ -1546,6 +1551,13 @@ x 15
 y 4
 end
 arch floor_ostone1
+x 15
+y 5
+end
+arch stair_down
+slaying testmap_tiled1
+hp 1
+sp 1
 x 15
 y 5
 end

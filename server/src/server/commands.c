@@ -169,7 +169,7 @@ const int CommunicationCommandSize = sizeof(CommunicationCommands)/ sizeof(CommA
 CommArray_s WizCommands [] = {
   /* OVERSEER [OV] commands */
   /* OV's should be able to help player, kick player and (temp) ban players.
-   * Examine some game part (like the inventory of other players),
+   *, Examine some game part (like the inventory of other players),
    * but they should NOT control the game flow. No map reset, no teleport to other
    * player, no goto to maps. 
    * This will allow to give honest players some power but they will still
@@ -188,6 +188,7 @@ CommArray_s WizCommands [] = {
   {"/reset", command_reset,0.0},
   {"/plugout",command_unloadplugin,0.0},
   {"/create", command_create,0.0},
+  {"/addexp", command_addexp,0.0},
 
   {"/malloc", command_malloc,	0.0},
   {"/maps", command_maps,	0.0},
@@ -200,10 +201,14 @@ CommArray_s WizCommands [] = {
   {"/d_objects", command_dumpallobjects,0.0},
   {"/d_below", command_dumpbelow,0.0},
   {"/d_friendly", command_dumpfriendlyobjects,0.0},
+#ifdef DEBUG
+  {"/sstable", command_sstable,	0.0},
+#endif
+  {"/ssdumptable", command_ssdumptable,0.0},
 
+  /*
   {"/archs", command_archs,	0.0},
   {"/abil", command_abil,0.0},
-  {"/addexp", command_addexp,0.0},
   {"/debug", command_debug,0.0},
   {"/fix_me", command_fix_me,	0.0},
   {"/forget_spell", command_forget_spell, 0.0},
@@ -221,16 +226,13 @@ CommArray_s WizCommands [] = {
   {"/set_god", command_setgod, 0.0},
   {"/speed", command_speed,0.0},
   {"/spellreset", command_spell_reset,0.0},
-#ifdef DEBUG
-  {"/sstable", command_sstable,	0.0},
-#endif
-  {"/ssdumptable", command_ssdumptable,0.0},
   {"/stats", command_stats,0.0},
-  {"/style_info", command_style_map_info, 0.0},	/* Costly command, so make it wiz only */
+  {"/style_info", command_style_map_info, 0.0},
   {"/wizpass", command_wizpass,0.0},
 #ifdef DEBUG_MALLOC_LEVEL
   {"/verify", command_malloc_verify,0.0},
 #endif
+  */
 };
 const int WizCommandsSize =sizeof(WizCommands) / sizeof(CommArray_s);
 

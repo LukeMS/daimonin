@@ -111,9 +111,9 @@
 
 
 #define GET_MAP_MOVE_FLAGS(M,X,Y)	( (M)->spaces[(X) + (M)->width * (Y)].move_flags )
-#define SET_MAP_MOVE_FLAGS(M,X,Y,C)	( (M)->spaces[(X) + (M)->width * (Y)].move_flags = (uint16) C )
+#define SET_MAP_MOVE_FLAGS(M,X,Y,C)	( (M)->spaces[(X) + (M)->width * (Y)].move_flags = C )
 #define GET_MAP_FLAGS(M,X,Y)	( (M)->spaces[(X) + (M)->width * (Y)].flags )
-#define SET_MAP_FLAGS(M,X,Y,C)	( (M)->spaces[(X) + (M)->width * (Y)].flags = (uint16) C )
+#define SET_MAP_FLAGS(M,X,Y,C)	( (M)->spaces[(X) + (M)->width * (Y)].flags = C )
 #define GET_MAP_LIGHT(M,X,Y)	( (M)->spaces[(X) + (M)->width * (Y)].light )
 #define SET_MAP_LIGHT(M,X,Y,L)	( (M)->spaces[(X) + (M)->width * (Y)].light = (sint8) L )
 
@@ -163,12 +163,18 @@
 #define P_NO_MAGIC      0x02	/* Spells (some) can't pass this object */
 #define P_NO_PASS       0x04	/* Nothing can pass (wall() is true) */
 #define P_IS_PLAYER		0x08	/* there is one or more player on this tile */
+
 #define P_IS_ALIVE      0x10	/* something alive is on this space */
 #define P_NO_CLERIC     0x20	/* no clerical spells cast here */
-#define P_NEED_UPDATE	0x40	/* this space is out of date */
-#define P_NO_ERROR      0x80	/* Purely temporary - if set, update_position
-                                 * does not complain if the flags are different.
-                                 */
+#define P_PLAYER_ONLY	0x40   /* Only players are allowed to enter this space. This excludes mobs,
+								  * pets and golems but also spell effects and throwed/fired items.
+								  * it works like a no_pass for players only (pass_thru don't work for it).
+								  */
+#define P_DOOR_CLOSED   0x80	 /* a closed door is blocking this space - if we want approach, we must first
+								  * check its possible to open it.
+								  */
+
+								  
 #define P_CHECK_INV		0x100   /* we have something like inventory checker in this tile node.
 								 * if set, me must blocked_tile(), to see what happens to us
 								 */
@@ -179,19 +185,27 @@
 								 * in the node, one with pass_thru and one with real no_pass - then
 								 * no_pass will overrule pass_thru 
 								 */
+
 #define P_MAGIC_EAR		0x1000   /* we have a magic ear in this map tile... later we should add a map
 								  * pointer where we attach as chained list this stuff - no search
 								  * or flags then needed.
 								  */
-#define P_PLAYER_ONLY	0x2000   /* Only players are allowed to enter this space. This excludes mobs,
-								  * pets and golems but also spell effects and throwed/fired items.
-								  * it works like a no_pass for players only (pass_thru don't work for it).
-								  */
-#define P_DOOR_CLOSED   0x4000	 /* a closed door is blocking this space - if we want approach, we must first
-								  * check its possible to open it.
-								  */
+#define P_WALK_ON		0x2000	/* this 4 flags are for moving objects and what happens when they enter */ 
+#define P_WALK_OFF		0x4000  /* or leave a map tile */
+#define P_FLY_OFF		0x8000
 
-#define P_NO_TERRAIN    0x10000 /* DON'T USE THIS WITH SET_MAP_FLAGS... this is just to mark for return
+#define P_FLY_ON		0x10000
+
+/* these are special flags to control how and what the update_position() 
+ * functions updates the map space.
+ */
+#define P_UPDATE_LAYER	0x10000000	/* if set, update the flags by looping the map objects */
+#define P_NEED_UPDATE	0x20000000	/* this space is out of date - update the flags by looping the objects */
+#define P_NO_ERROR      0x40000000	/* Purely temporary - if set, update_position
+									* does not complain if the flags are different.
+									*/
+
+#define P_NO_TERRAIN    0x80000000 /* DON'T USE THIS WITH SET_MAP_FLAGS... this is just to mark for return
 								 * values of blocked...
 								 */
 
@@ -214,13 +228,13 @@
 typedef struct MapSpace {
 	object  *first;							/* start of the objects in this map tile */
 	object	*layer[MAX_ARCH_LAYERS*2];		/* array of visible layer objects + for invisible (*2)*/
-	sint8	client_mlayer[MAP_LAYERS];		/* index for layer[] - this will send to player */
-	sint8	client_mlayer_inv[MAP_LAYERS];	/* same for invisible objects */
 	object  *last;							/* last object in this list */
     uint32  round_tag;						/* tag for last_damage */
+    int		flags;							/* flags about this space (see the P_ values above) */
     uint16  last_damage;					/* last_damage tmp backbuffer */
     uint16  move_flags;						/* terrain type flags (water, underwater,...) */
-    uint16	flags;							/* flags about this space (see the P_ values above) */
+	sint8	client_mlayer[MAP_LAYERS];		/* index for layer[] - this will send to player */
+	sint8	client_mlayer_inv[MAP_LAYERS];	/* same for invisible objects */
     sint8	light;							/* How much light this space provides */
 } MapSpace;
 

@@ -824,6 +824,8 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags)
 	/* Since the loading of the map header does not load an object
 	 * anymore, we need to pass LO_NEWFILE for the first object loaded,
 	 * and then switch to LO_REPEAT for faster loading.
+	 * With the multi arch/tiled map fix, we need to use this static -
+	 * because this function can now be called recursive from insert_ob()!
 	 */
 	while((i=load_object(fp,op,bufstate, mapflags)))
 	{
@@ -894,16 +896,28 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags)
 				/* link the tail object... */
 			    tmp->head=prev,last_more->more=tmp,last_more=tmp;
 
+				/* now some tricky stuff again: 
+				 * to speed up some core functions like moving or remove_ob()/insert_ob
+				 * and because there are some "arch depending and not object depending"
+				 * flags, we init the tails with the head settings.
+				 * So, we don't must care about the head in the core functions.
+				*/
+				QUERY_FLAG(op,FLAG_NO_APPLY) ? SET_FLAG(tmp,FLAG_NO_APPLY) : CLEAR_FLAG(tmp,FLAG_NO_APPLY);
+				QUERY_FLAG(op,FLAG_IS_INVISIBLE) ? SET_FLAG(tmp,FLAG_IS_INVISIBLE) : CLEAR_FLAG(tmp,FLAG_IS_INVISIBLE);
+				QUERY_FLAG(op,FLAG_FLYING) ? SET_FLAG(tmp,FLAG_FLYING) : CLEAR_FLAG(tmp,FLAG_FLYING);
+				QUERY_FLAG(op,FLAG_BLOCKSVIEW) ? SET_FLAG(tmp,FLAG_BLOCKSVIEW) : CLEAR_FLAG(tmp,FLAG_BLOCKSVIEW);
+
 				/* this is the one and only point outside insert_ob we use TAIL_MARKER */
 				insert_ob_in_map(tmp,tmp->map,tmp,INS_NO_MERGE | INS_NO_WALK_ON | INS_TAIL_MARKER);
 			} while((tail=tail->more)); 
+
 		}
 
 		op=get_object();
 	    op->map = m;
     }
 
-	bufstate=LO_NEWFILE;
+	bufstate=LO_NEWFILE; /* don't remove or loader will fail when recursive called */
     free_object(op);
 }
 
@@ -959,6 +973,7 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 							if(!tmp->owner )
 							{
 								LOG(llevBug, "BUG: Spawn mob (%s (%s)) has SPAWN INFO without owner set!\n", op->arch->name, query_name(head));
+								SET_MULTI_FLAG(head, FLAG_NO_APPLY);
 								remove_ob(head);
 								SET_FLAG(head,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
 							    free_object(head);
@@ -975,13 +990,16 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 									tmp->owner->stats.sp = tmp->owner->last_sp; /* force a pre spawn setting */
 									tmp->owner->speed_left +=1.0f; /* we force a active spawn point */
 									tmp->owner->enemy = NULL;
+									SET_MULTI_FLAG(head, FLAG_NO_APPLY);
 									remove_ob(head);
 									SET_FLAG(head,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
 								    free_object(head);
 									break; 
 								}
 
+							    SET_MULTI_FLAG(head, FLAG_NO_APPLY);
 								remove_ob(head);
+								CLEAR_MULTI_FLAG(head, FLAG_NO_APPLY);
 							    for(next = head; next != NULL; next = next->more)
 								{
 									next->x=next->arch->clone.x+tmp->owner->x+freearr_x[t];
@@ -994,6 +1012,7 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 							tmp->owner->stats.sp = tmp->owner->last_sp; /* force a pre spawn setting */
 							tmp->owner->speed_left +=1.0f; /* we force a active spawn point */
 							tmp->owner->enemy = NULL;
+							SET_MULTI_FLAG(head, FLAG_NO_APPLY);
 							remove_ob(head);
 							SET_FLAG(head,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
 							free_object(head);
@@ -1003,6 +1022,7 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 					continue;
 
 					LOG(llevBug, "BUG: Spawn mob (%s %s) without SPAWN INFO.\n", op->arch->name, query_name(head));
+					SET_MULTI_FLAG(head, FLAG_NO_APPLY);
 					remove_ob(head);
 					SET_FLAG(head,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
 				    free_object(head);
@@ -1023,6 +1043,7 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 						{
 							op->stats.sp = op->last_sp; /* force a pre spawn setting */
 							op->speed_left += 1.0f;
+							SET_MULTI_FLAG(op->enemy, FLAG_NO_APPLY);
 							remove_ob(op->enemy);
 							SET_FLAG(op->enemy,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
 							free_object(op->enemy);
@@ -1036,30 +1057,31 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 					LOG(llevDebug, "BUG: Player on map that is being saved\n");
 					continue;
 				}
-				/* hm, why is this so? should we not remove/recall this??? 
-				 * if the point is, that a pet without map is warped back to his owner,
-				 * then we should do it here explicit and ignore all other
+
+				/* this will skip owner objects like fireball or fired arrows
+				 * on a map which is saved. But perhaps we use owner in a 
+				 * different way - so i want log what we do here.
 				 */
 				if (op->owner)
 				{
-					LOG(llevDebug, "BUG? WARNING: object with set owner on map - we *don't* save it. map:%s obj:%s (%s) (%d,%d)\n",m->path, query_name(op),op->arch->name?op->arch->name:"<no arch name>",op->x, op->y);
+					LOG(llevDebug, "WARNING: save_obj(): obj w. owner. map:%s obj:%s (%s) (%d,%d)\n",m->path, query_name(op),op->arch->name?op->arch->name:"<no arch name>",op->x, op->y);
 				    continue;
 				}
 
 				/* here we do the magic! */
-				if(op->head) /* its a tail... magic! */
+				if(op->head) /* its a tail... */
 				{
 					int xt,yt;
 
 					/* the magic is, that we have a tail here, but we 
-					 * get the head now and then we give the head x/y
+					 * save the head now and give it the x/y
 					 * position basing on this tail position and its
 					 * x/y clone arch default multi tile offsets!
 					 * With this trick, we even can generate negative
 					 * map positions - and thats exactly what we want
 					 * when our head is on a different map as this tail!
-					 * insert_ob() and the map loader will readjust and
-					 * load the other map when needed!
+					 * insert_ob() and the map loader will readjust map and
+					 * positions and load the other map when needed!
 					 * we must save x/y or remove_ob() will fail.
 					 */
 					tmp = op->head;
@@ -1073,14 +1095,10 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 					else
 						save_object(fp, tmp, 3);
 
-					/* there is a little possible problem, when we are
-					 * on a map space which invokes a effect on a object
-					 * leaving the space. We need a flag to avoid that
-					 * kind of action at this point:
-					 */
 					tmp->x = xt;
 					tmp->y = yt;
-					remove_ob(tmp); /* we touch every multi arch only one time*/
+					SET_MULTI_FLAG(tmp, FLAG_NO_APPLY);
+					remove_ob(tmp);
 					SET_FLAG(tmp,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
 					free_object(tmp);
 					continue;
@@ -1093,7 +1111,8 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 
 				if(op->more) /* its a head (because we had tails tested before) */
 				{
-					remove_ob(op); /* ensure we don't touch this multi arch again here! */
+					SET_MULTI_FLAG(op, FLAG_NO_APPLY);
+					remove_ob(op);
 					SET_FLAG(op,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
 					free_object(op);
 				}
@@ -1132,7 +1151,7 @@ mapstruct *get_linked_map() {
     MAP_HEIGHT(map)=16;
     MAP_RESET_TIMEOUT(map)=7200;
     MAP_TIMEOUT(map)=300;
-    /* Gah - these should really have a zero default! */
+
     MAP_ENTER_X(map)=1;
     MAP_ENTER_Y(map)=1;
     return map;

@@ -1,14 +1,13 @@
 arch map
-name Testmap - Artifacts2
+name Testmaps  - Artifacts 3
 msg
 Creator: Daimonin Map Editor
-Date:    6/4/2003
+Date:    2/6/2004
 endmsg
 width 24
 height 24
 difficulty 1
-tile_path_1 testmap_artifacts1
-tile_path_3 testmap_artifacts3
+tile_path_1 testmap_artifacts2
 end
 arch floor_ostone1
 end
@@ -199,10 +198,6 @@ arch floor_ostone1
 x 1
 y 11
 end
-arch crystal_light4
-x 1
-y 11
-end
 arch floor_ostone1
 x 1
 y 12
@@ -248,6 +243,10 @@ x 1
 y 22
 end
 arch floor_ostone1
+x 1
+y 23
+end
+arch wall_stone1_1
 x 1
 y 23
 end
@@ -346,6 +345,10 @@ arch floor_ostone1
 x 2
 y 23
 end
+arch wall_stone1_1
+x 2
+y 23
+end
 arch floor_ostone1
 x 3
 end
@@ -353,11 +356,11 @@ arch floor_ostone1
 x 3
 y 1
 end
-arch weapon_fools
-x 3
-y 1
-end
 arch floor_ostone1
+x 3
+y 2
+end
+arch scroll_firestorm
 x 3
 y 2
 end
@@ -373,7 +376,7 @@ arch floor_ostone1
 x 3
 y 5
 end
-arch range_accuracy
+arch potion_minor_res_fire
 x 3
 y 5
 end
@@ -389,7 +392,7 @@ arch floor_ostone1
 x 3
 y 8
 end
-arch missile_slay_dragon
+arch balm_first_aid
 x 3
 y 8
 end
@@ -405,15 +408,11 @@ arch floor_ostone1
 x 3
 y 11
 end
-arch nug_bronze_small
+arch holding_min
 x 3
 y 11
 end
 arch floor_ostone1
-x 3
-y 12
-end
-arch sapphire_small
 x 3
 y 12
 end
@@ -425,15 +424,7 @@ arch floor_ostone1
 x 3
 y 14
 end
-arch ring_normal
-x 3
-y 14
-end
 arch floor_ostone1
-x 3
-y 15
-end
-arch ring_thieves
 x 3
 y 15
 end
@@ -442,10 +433,6 @@ x 3
 y 16
 end
 arch floor_ostone1
-x 3
-y 17
-end
-arch horn_normal
 x 3
 y 17
 end
@@ -461,10 +448,6 @@ arch floor_ostone1
 x 3
 y 20
 end
-arch amulet_shielding
-x 3
-y 20
-end
 arch floor_ostone1
 x 3
 y 21
@@ -477,7 +460,7 @@ arch floor_ostone1
 x 3
 y 23
 end
-arch food_poison
+arch wall_stone1_1
 x 3
 y 23
 end
@@ -488,11 +471,11 @@ arch floor_ostone1
 x 4
 y 1
 end
-arch weapon_defense
-x 4
-y 1
-end
 arch floor_ostone1
+x 4
+y 2
+end
+arch scroll_icestorm
 x 4
 y 2
 end
@@ -508,6 +491,10 @@ arch floor_ostone1
 x 4
 y 5
 end
+arch potion_minor_res_cold
+x 4
+y 5
+end
 arch floor_ostone1
 x 4
 y 6
@@ -517,10 +504,6 @@ x 4
 y 7
 end
 arch floor_ostone1
-x 4
-y 8
-end
-arch missile_ass_troll
 x 4
 y 8
 end
@@ -536,15 +519,11 @@ arch floor_ostone1
 x 4
 y 11
 end
-arch zircon_small
+arch holding_small
 x 4
 y 11
 end
 arch floor_ostone1
-x 4
-y 12
-end
-arch sapphire_great
 x 4
 y 12
 end
@@ -556,15 +535,7 @@ arch floor_ostone1
 x 4
 y 14
 end
-arch ring_brass
-x 4
-y 14
-end
 arch floor_ostone1
-x 4
-y 15
-end
-arch ring_ice
 x 4
 y 15
 end
@@ -573,10 +544,6 @@ x 4
 y 16
 end
 arch floor_ostone1
-x 4
-y 17
-end
-arch horn_fools
 x 4
 y 17
 end
@@ -604,7 +571,7 @@ arch floor_ostone1
 x 4
 y 23
 end
-arch food_poison2
+arch wall_stone1_1
 x 4
 y 23
 end
@@ -615,11 +582,11 @@ arch floor_ostone1
 x 5
 y 1
 end
-arch weapon_accuracy
-x 5
-y 1
-end
 arch floor_ostone1
+x 5
+y 2
+end
+arch scroll_min_heal
 x 5
 y 2
 end
@@ -635,6 +602,10 @@ arch floor_ostone1
 x 5
 y 5
 end
+arch potion_minor_res_elec
+x 5
+y 5
+end
 arch floor_ostone1
 x 5
 y 6
@@ -644,10 +615,6 @@ x 5
 y 7
 end
 arch floor_ostone1
-x 5
-y 8
-end
-arch missile_accuracy
 x 5
 y 8
 end
@@ -663,15 +630,11 @@ arch floor_ostone1
 x 5
 y 11
 end
-arch zircon_medium
+arch holding_med
 x 5
 y 11
 end
 arch floor_ostone1
-x 5
-y 12
-end
-arch sapphire_except
 x 5
 y 12
 end
@@ -683,15 +646,7 @@ arch floor_ostone1
 x 5
 y 14
 end
-arch ring_copper
-x 5
-y 14
-end
 arch floor_ostone1
-x 5
-y 15
-end
-arch ring_fire
 x 5
 y 15
 end
@@ -727,6 +682,10 @@ arch floor_ostone1
 x 5
 y 23
 end
+arch wall_stone1_1
+x 5
+y 23
+end
 arch floor_ostone1
 x 6
 end
@@ -734,11 +693,11 @@ arch floor_ostone1
 x 6
 y 1
 end
-arch weapon_precision
-x 6
-y 1
-end
 arch floor_ostone1
+x 6
+y 2
+end
+arch scroll_str_self
 x 6
 y 2
 end
@@ -754,6 +713,10 @@ arch floor_ostone1
 x 6
 y 5
 end
+arch potion_minor_res_poison
+x 6
+y 5
+end
 arch floor_ostone1
 x 6
 y 6
@@ -763,10 +726,6 @@ x 6
 y 7
 end
 arch floor_ostone1
-x 6
-y 8
-end
-arch missile_inaccuracy
 x 6
 y 8
 end
@@ -782,15 +741,11 @@ arch floor_ostone1
 x 6
 y 11
 end
-arch jasper_small
+arch holding
 x 6
 y 11
 end
 arch floor_ostone1
-x 6
-y 12
-end
-arch sapphire_flawless
 x 6
 y 12
 end
@@ -802,15 +757,7 @@ arch floor_ostone1
 x 6
 y 14
 end
-arch ring_bronze
-x 6
-y 14
-end
 arch floor_ostone1
-x 6
-y 15
-end
-arch ring_storm
 x 6
 y 15
 end
@@ -846,6 +793,10 @@ arch floor_ostone1
 x 6
 y 23
 end
+arch wall_stone1_1
+x 6
+y 23
+end
 arch floor_ostone1
 x 7
 end
@@ -853,11 +804,11 @@ arch floor_ostone1
 x 7
 y 1
 end
-arch weapon_damage
-x 7
-y 1
-end
 arch floor_ostone1
+x 7
+y 2
+end
+arch scroll_identify
 x 7
 y 2
 end
@@ -870,6 +821,10 @@ x 7
 y 4
 end
 arch floor_ostone1
+x 7
+y 5
+end
+arch potion_minor_res_acid
 x 7
 y 5
 end
@@ -897,15 +852,11 @@ arch floor_ostone1
 x 7
 y 11
 end
-arch jasper_medium
+arch holding_fine
 x 7
 y 11
 end
 arch floor_ostone1
-x 7
-y 12
-end
-arch emerald_poor
 x 7
 y 12
 end
@@ -917,15 +868,7 @@ arch floor_ostone1
 x 7
 y 14
 end
-arch ring_silver
-x 7
-y 14
-end
 arch floor_ostone1
-x 7
-y 15
-end
-arch ring_storm_great
 x 7
 y 15
 end
@@ -961,6 +904,10 @@ arch floor_ostone1
 x 7
 y 23
 end
+arch wall_stone1_1
+x 7
+y 23
+end
 arch floor_ostone1
 x 8
 end
@@ -968,11 +915,11 @@ arch floor_ostone1
 x 8
 y 1
 end
-arch weapon_strength
-x 8
-y 1
-end
 arch floor_ostone1
+x 8
+y 2
+end
+arch scroll_dmagic
 x 8
 y 2
 end
@@ -985,6 +932,10 @@ x 8
 y 4
 end
 arch floor_ostone1
+x 8
+y 5
+end
+arch potion_minor_strength
 x 8
 y 5
 end
@@ -1012,15 +963,11 @@ arch floor_ostone1
 x 8
 y 11
 end
-arch jade_small
+arch holding_great
 x 8
 y 11
 end
 arch floor_ostone1
-x 8
-y 12
-end
-arch emerald_small
 x 8
 y 12
 end
@@ -1032,15 +979,7 @@ arch floor_ostone1
 x 8
 y 14
 end
-arch ring_gold
-x 8
-y 14
-end
 arch floor_ostone1
-x 8
-y 15
-end
-arch ring_yordan
 x 8
 y 15
 end
@@ -1076,6 +1015,10 @@ arch floor_ostone1
 x 8
 y 23
 end
+arch wall_stone1_1
+x 8
+y 23
+end
 arch floor_ostone1
 x 9
 end
@@ -1083,11 +1026,11 @@ arch floor_ostone1
 x 9
 y 1
 end
-arch weapon_dexterity
-x 9
-y 1
-end
 arch floor_ostone1
+x 9
+y 2
+end
+arch scroll_dcurse
 x 9
 y 2
 end
@@ -1100,6 +1043,14 @@ x 9
 y 4
 end
 arch floor_ostone1
+x 9
+y 5
+end
+arch potion_minor_dex
+x 9
+y 5
+end
+arch potion_minor_dex
 x 9
 y 5
 end
@@ -1127,15 +1078,11 @@ arch floor_ostone1
 x 9
 y 11
 end
-arch jade_medium
+arch holding_greater
 x 9
 y 11
 end
 arch floor_ostone1
-x 9
-y 12
-end
-arch emerald_great
 x 9
 y 12
 end
@@ -1147,15 +1094,7 @@ arch floor_ostone1
 x 9
 y 14
 end
-arch ring_platinum
-x 9
-y 14
-end
 arch floor_ostone1
-x 9
-y 15
-end
-arch ring_woe
 x 9
 y 15
 end
@@ -1191,6 +1130,10 @@ arch floor_ostone1
 x 9
 y 23
 end
+arch wall_stone1_1
+x 9
+y 23
+end
 arch floor_ostone1
 x 10
 end
@@ -1198,11 +1141,11 @@ arch floor_ostone1
 x 10
 y 1
 end
-arch weapon_const
-x 10
-y 1
-end
 arch floor_ostone1
+x 10
+y 2
+end
+arch scroll_rem_curse
 x 10
 y 2
 end
@@ -1215,6 +1158,10 @@ x 10
 y 4
 end
 arch floor_ostone1
+x 10
+y 5
+end
+arch potion_minor_con
 x 10
 y 5
 end
@@ -1242,15 +1189,11 @@ arch floor_ostone1
 x 10
 y 11
 end
-arch aquamarine_small
+arch holding_weight
 x 10
 y 11
 end
 arch floor_ostone1
-x 10
-y 12
-end
-arch emerald_except
 x 10
 y 12
 end
@@ -1262,15 +1205,7 @@ arch floor_ostone1
 x 10
 y 14
 end
-arch ring_adamant
-x 10
-y 14
-end
 arch floor_ostone1
-x 10
-y 15
-end
-arch ring_woe
 x 10
 y 15
 end
@@ -1306,6 +1241,10 @@ arch floor_ostone1
 x 10
 y 23
 end
+arch wall_stone1_1
+x 10
+y 23
+end
 arch floor_ostone1
 x 11
 end
@@ -1313,11 +1252,11 @@ arch floor_ostone1
 x 11
 y 1
 end
-arch weapon_wisdom
-x 11
-y 1
-end
 arch floor_ostone1
+x 11
+y 2
+end
+arch scroll_rem_damn
 x 11
 y 2
 end
@@ -1330,6 +1269,10 @@ x 11
 y 4
 end
 arch floor_ostone1
+x 11
+y 5
+end
+arch potion_evil_liquid
 x 11
 y 5
 end
@@ -1357,15 +1300,7 @@ arch floor_ostone1
 x 11
 y 11
 end
-arch aquamarine_medium
-x 11
-y 11
-end
 arch floor_ostone1
-x 11
-y 12
-end
-arch emerald_flawless
 x 11
 y 12
 end
@@ -1377,15 +1312,7 @@ arch floor_ostone1
 x 11
 y 14
 end
-arch ring_mithril
-x 11
-y 14
-end
 arch floor_ostone1
-x 11
-y 15
-end
-arch ring_woe
 x 11
 y 15
 end
@@ -1421,6 +1348,10 @@ arch floor_ostone1
 x 11
 y 23
 end
+arch wall_stone1_1
+x 11
+y 23
+end
 arch floor_ostone1
 x 12
 end
@@ -1428,11 +1359,11 @@ arch floor_ostone1
 x 12
 y 1
 end
-arch weapon_int
-x 12
-y 1
-end
 arch floor_ostone1
+x 12
+y 2
+end
+arch scroll_cause_lwound
 x 12
 y 2
 end
@@ -1445,6 +1376,10 @@ x 12
 y 4
 end
 arch floor_ostone1
+x 12
+y 5
+end
+arch potion_minor_res
 x 12
 y 5
 end
@@ -1472,10 +1407,6 @@ arch floor_ostone1
 x 12
 y 11
 end
-arch diamond_poor
-x 12
-y 11
-end
 arch floor_ostone1
 x 12
 y 12
@@ -1489,10 +1420,6 @@ x 12
 y 14
 end
 arch floor_ostone1
-x 12
-y 15
-end
-arch ring_woe
 x 12
 y 15
 end
@@ -1528,14 +1455,14 @@ arch floor_ostone1
 x 12
 y 23
 end
+arch wall_stone1_1
+x 12
+y 23
+end
 arch floor_ostone1
 x 13
 end
 arch floor_ostone1
-x 13
-y 1
-end
-arch weapon_power
 x 13
 y 1
 end
@@ -1553,9 +1480,9 @@ y 4
 end
 arch floor_ostone1
 x 13
-y 4
+y 5
 end
-arch floor_ostone1
+arch potion_improve
 x 13
 y 5
 end
@@ -1580,10 +1507,6 @@ x 13
 y 10
 end
 arch floor_ostone1
-x 13
-y 11
-end
-arch diamond_small
 x 13
 y 11
 end
@@ -1635,14 +1558,14 @@ arch floor_ostone1
 x 13
 y 23
 end
+arch wall_stone1_1
+x 13
+y 23
+end
 arch floor_ostone1
 x 14
 end
 arch floor_ostone1
-x 14
-y 1
-end
-arch weapon_charisma
 x 14
 y 1
 end
@@ -1659,6 +1582,10 @@ x 14
 y 4
 end
 arch floor_ostone1
+x 14
+y 5
+end
+arch potion_firestorm
 x 14
 y 5
 end
@@ -1683,10 +1610,6 @@ x 14
 y 10
 end
 arch floor_ostone1
-x 14
-y 11
-end
-arch diamond_great
 x 14
 y 11
 end
@@ -1738,14 +1661,14 @@ arch floor_ostone1
 x 14
 y 23
 end
+arch wall_stone1_1
+x 14
+y 23
+end
 arch floor_ostone1
 x 15
 end
 arch floor_ostone1
-x 15
-y 1
-end
-arch weapon_less_fire
 x 15
 y 1
 end
@@ -1762,6 +1685,10 @@ x 15
 y 4
 end
 arch floor_ostone1
+x 15
+y 5
+end
+arch potion_freezing
 x 15
 y 5
 end
@@ -1786,10 +1713,6 @@ x 15
 y 10
 end
 arch floor_ostone1
-x 15
-y 11
-end
-arch diamond_except
 x 15
 y 11
 end
@@ -1841,14 +1764,14 @@ arch floor_ostone1
 x 15
 y 23
 end
+arch wall_stone1_1
+x 15
+y 23
+end
 arch floor_ostone1
 x 16
 end
 arch floor_ostone1
-x 16
-y 1
-end
-arch weapon_less_cold
 x 16
 y 1
 end
@@ -1865,6 +1788,10 @@ x 16
 y 4
 end
 arch floor_ostone1
+x 16
+y 5
+end
+arch potion_cure_sickness
 x 16
 y 5
 end
@@ -1889,10 +1816,6 @@ x 16
 y 10
 end
 arch floor_ostone1
-x 16
-y 11
-end
-arch diamond_flawless
 x 16
 y 11
 end
@@ -1944,14 +1867,14 @@ arch floor_ostone1
 x 16
 y 23
 end
+arch wall_stone1_1
+x 16
+y 23
+end
 arch floor_ostone1
 x 17
 end
 arch floor_ostone1
-x 17
-y 1
-end
-arch weapon_less_elec
 x 17
 y 1
 end
@@ -1968,6 +1891,10 @@ x 17
 y 4
 end
 arch floor_ostone1
+x 17
+y 5
+end
+arch potion_cure_illness
 x 17
 y 5
 end
@@ -1992,10 +1919,6 @@ x 17
 y 10
 end
 arch floor_ostone1
-x 17
-y 11
-end
-arch ruby_poor
 x 17
 y 11
 end
@@ -2047,6 +1970,10 @@ arch floor_ostone1
 x 17
 y 23
 end
+arch wall_stone1_1
+x 17
+y 23
+end
 arch floor_ostone1
 x 18
 end
@@ -2091,10 +2018,6 @@ x 18
 y 10
 end
 arch floor_ostone1
-x 18
-y 11
-end
-arch ruby_small
 x 18
 y 11
 end
@@ -2146,6 +2069,10 @@ arch floor_ostone1
 x 18
 y 23
 end
+arch wall_stone1_1
+x 18
+y 23
+end
 arch floor_ostone1
 x 19
 end
@@ -2190,10 +2117,6 @@ x 19
 y 10
 end
 arch floor_ostone1
-x 19
-y 11
-end
-arch ruby_great
 x 19
 y 11
 end
@@ -2245,6 +2168,10 @@ arch floor_ostone1
 x 19
 y 23
 end
+arch wall_stone1_1
+x 19
+y 23
+end
 arch floor_ostone1
 x 20
 end
@@ -2289,10 +2216,6 @@ x 20
 y 10
 end
 arch floor_ostone1
-x 20
-y 11
-end
-arch ruby_except
 x 20
 y 11
 end
@@ -2344,6 +2267,10 @@ arch floor_ostone1
 x 20
 y 23
 end
+arch wall_stone1_1
+x 20
+y 23
+end
 arch floor_ostone1
 x 21
 end
@@ -2388,10 +2315,6 @@ x 21
 y 10
 end
 arch floor_ostone1
-x 21
-y 11
-end
-arch ruby_flawless
 x 21
 y 11
 end
@@ -2443,6 +2366,10 @@ arch floor_ostone1
 x 21
 y 23
 end
+arch wall_stone1_1
+x 21
+y 23
+end
 arch floor_ostone1
 x 22
 end
@@ -2487,10 +2414,6 @@ x 22
 y 10
 end
 arch floor_ostone1
-x 22
-y 11
-end
-arch sapphire_poor
 x 22
 y 11
 end
@@ -2539,6 +2462,10 @@ x 22
 y 22
 end
 arch floor_ostone1
+x 22
+y 23
+end
+arch wall_stone1_1
 x 22
 y 23
 end
@@ -2725,6 +2652,10 @@ x 23
 y 22
 end
 arch floor_ostone1
+x 23
+y 23
+end
+arch wall_stone1_4
 x 23
 y 23
 end
