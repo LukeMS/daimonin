@@ -89,16 +89,17 @@ CTextwindow::CTextwindow(std::string title, Real Xpos, Real height, bool visible
     if (-height < mMaxHeight) height = mMaxHeight;
     if (!mParent)  { mContainerFrame->setTop(-height); }
     else           { mContainerFrame->setTop(-height+mParent->mContainerFrame->getTop() ); }
-    SizeChanged();
+	SizeChanged();
 	mLastHeight   =  mContainerFrame->getHeight();
-    for (int j = 0; j < SIZE_STRING_BUFFER; ++j) { row[j].str = ""; }
-    mIsClosing    = false;
-	mIsOpening    = false;
-    mBufferPos    = 0;
-    mPrintPos     = 0;
-	mRowsToScroll = 0;
-    mScroll       = 0;
-    setVisible(visible);
+	for (int j = 0; j < SIZE_STRING_BUFFER; ++j) { row[j].str = ""; }
+	mIsClosing		= false;
+	mIsOpening		= false;
+	mDragging		= false;
+	mBufferPos		= 0;
+	mPrintPos		= 0;
+	mRowsToScroll	= 0;
+	mScroll				= 0;
+	setVisible(visible);
 }
 
 //=================================================================================================
@@ -302,7 +303,7 @@ void CTextwindow::Print(const char *text, ColourValue color)
 //=================================================================================================
 void CTextwindow::Scrolling()
 {
-    if (!mRowsToScroll || mDragging) { return; }
+    if (mDragging) { return; }
     if (!mScroll)
     {
         mElementLine[0]->setCaption(row[(mPrintPos)& (SIZE_STRING_BUFFER-1)].str);
