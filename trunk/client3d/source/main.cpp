@@ -12,7 +12,15 @@ LGPL like the rest of the engine.
 -----------------------------------------------------------------------------
 */
 
-#include "ortho.h"
+//#include "ortho.h"
+#include "client.h"
+#include "option.h"
+#include "logfile.h"
+#include "dialog.h"
+#include "network.h"
+#include "xyz.h"
+
+
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
 #define WIN32_LEAN_AND_MEAN
@@ -40,7 +48,19 @@ int main(int argc, char **argv)
 #endif
 {
     // Create application object
-    OrthoTestApplication app;
+	DaimoninClient client;
+
+    LogFile::getSingelton().Init("client_log.html");
+	LogFile::getSingelton().Headline("Init Options");
+    Option ::getSingelton().Init("options.dat");
+    read_settings();
+    read_spells();
+    read_skills();
+    read_anims();
+	Dialog ::getSingelton().Init(); 
+	Network::getSingelton().Init(); 
+
+
 
 	// Init & start fmod
     FMUSIC_MODULE *mod = NULL;
@@ -77,7 +97,7 @@ int main(int argc, char **argv)
 	
 	
     try {
-        app.go();
+        client.go();
     } catch( Exception& e ) {
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
         MessageBox( NULL, e.getFullDescription().c_str(), "An exception has occured!", MB_OK | MB_ICONERROR | MB_TASKMODAL);
