@@ -73,8 +73,15 @@ typedef struct liv {	/* Mostly used by "alive" objects */
   sint16	maxgrace;	/* Grace.  Used to invoke clerical prayers. */
   sint16	food;		/* How much food in stomach.  0 = starved. */
   sint16	dam;		/* How much damage this object does when hitting */
-  sint16		wc,ac;		/* Weapon Class and Armour Class */
+  /* We can safe here 2 bytes by setting wc/ac to uint8 -
+   * i had tested it for all uses until now.
+   */
+  sint16	wc,ac;		/* Weapon Class and Armour Class */
 
+  uint8		wc_range;	/* thats the random value range we add to wc value of
+						 * attacker: wc+(random()%wc_range). If its higher as
+						 * defender AC we have hit our enemy.
+						 */
   sint8		Str,Dex,Con,Wis,Cha,Int,Pow; /* the stats */
   sint8		luck;		/* Affects thaco and ac from time to time */
 } living;

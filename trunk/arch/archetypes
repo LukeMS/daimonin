@@ -2876,9 +2876,9 @@ layer 3
 no_pick 1
 no_drop 1
 end
-Object close_chest
-name close the chest
-face closechest.101
+Object close_chest1_111
+name open chest
+face chest_mm_open.111
 type 121
 editor_folder intern/items
 layer 3
@@ -2886,9 +2886,9 @@ no_pick 1
 no_drop 1
 identified 1
 end
-Object close_chest_m1
-name close the chest
-face chest_close_m1.101
+Object close_chest1_171
+name open chest
+face chest_mm_open.171
 type 121
 editor_folder intern/items
 layer 3
@@ -2896,9 +2896,39 @@ no_pick 1
 no_drop 1
 identified 1
 end
-Object close_chest_w1
-name close the chest
-face chest_close_w1.101
+Object close_chest_m1_1
+name open chest
+face chest_lm_open.111
+type 121
+editor_folder intern/items
+layer 3
+no_pick 1
+no_drop 1
+identified 1
+end
+Object close_chest_m1_7
+name open chest
+face chest_lm_open.171
+type 121
+editor_folder intern/items
+layer 3
+no_pick 1
+no_drop 1
+identified 1
+end
+Object close_chest_w1_1
+name open chest
+face chest_lw_open.111
+type 121
+editor_folder intern/items
+layer 3
+no_pick 1
+no_drop 1
+identified 1
+end
+Object close_chest_w1_7
+name open chest
+face chest_lw_open.171
 type 121
 editor_folder intern/items
 layer 3
@@ -2907,8 +2937,8 @@ no_drop 1
 identified 1
 end
 Object close_chest_4.111
-name close the chest
-face close_chest_4.111
+name open chest
+face chest_mw_open.111
 type 121
 editor_folder intern/items
 layer 3
@@ -2917,8 +2947,8 @@ no_drop 1
 identified 1
 end
 Object close_chest_4.171
-name close the chest
-face close_chest_4.171
+name open chest
+face chest_mw_open.171
 type 121
 editor_folder intern/items
 layer 3
@@ -3024,6 +3054,46 @@ editor_folder intern/items
 layer 3
 no_drop 1
 no_pick 1
+identified 1
+end
+Object close_chest_sm_1
+name open chest
+face chest_sm_open.111
+type 121
+editor_folder intern/items
+layer 3
+no_pick 1
+no_drop 1
+identified 1
+end
+Object close_chest_sm_7
+name open chest
+face chest_sm_open.171
+type 121
+editor_folder intern/items
+layer 3
+no_pick 1
+no_drop 1
+identified 1
+end
+Object close_chest_sw_1
+name open chest
+face chest_sw_open.111
+type 121
+editor_folder intern/items
+layer 3
+no_pick 1
+no_drop 1
+identified 1
+end
+Object close_chest_sw_7
+name open chest
+face chest_sw_open.171
+type 121
+editor_folder intern/items
+layer 3
+no_pick 1
+no_drop 1
 identified 1
 end
 Object alignment_force
@@ -4255,6 +4325,26 @@ is_vul_sphere 1
 material_real 193
 material 8
 end
+Object belt
+name belt
+face belt.101
+type 113
+editor_folder items/armour
+layer 3
+protect_pierce 5
+protect_impact 5
+protect_cleave 5
+protect_slash 5
+ac 1
+weight 2000
+value 200
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+material_real 65
+material 2
+end
 Object coif_chain
 name chain coif
 face coif_chain.101
@@ -4419,7 +4509,7 @@ material_real 65
 material 2
 end
 Object helm_iron
-name metal helm
+name helm
 face helm_iron.101
 type 34
 editor_folder items/armour
@@ -4440,7 +4530,7 @@ material_real 65
 material 2
 end
 Object helm_leather
-name  leather cap
+name  cap
 face helm_leather.101
 type 34
 editor_folder items/armour
@@ -4495,6 +4585,48 @@ protect_slash 6
 protect_pierce 10
 weight 1140
 value 800
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+material_real 65
+material 2
+end
+Object helm_guard
+name guard helm
+face helm_guard.101
+type 34
+editor_folder items/armour
+layer 3
+last_heal 8
+ac 2
+protect_impact 8
+protect_cleave 8
+protect_slash 6
+protect_pierce 6
+weight 1000
+value 220
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+material_real 65
+material 2
+end
+Object helm_battle
+name battle helm
+face helm_battle.101
+type 34
+editor_folder items/armour
+layer 3
+last_heal 8
+ac 2
+protect_impact 6
+protect_cleave 6
+protect_slash 8
+protect_pierce 8
+weight 1000
+value 220
 is_vul_physical 1
 is_vul_elemental 1
 is_vul_magic 1
@@ -5096,6 +5228,30 @@ is_vul_sphere 1
 weight 21500
 value 2650
 end
+Object bone_armour
+name bone armour
+face bone_armour.101
+type 16
+editor_folder items/armour
+layer 3
+last_heal 20
+last_sp 8
+ac 6
+material 2048
+material_real 705
+item_level 7
+item_skill 4
+protect_impact 12
+protect_cleave 30
+protect_slash 20
+protect_pierce 16
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+weight 13000
+value 1800
+end
 Object blade_stopper
 name blade stopper
 face blade_stopper.101
@@ -5125,6 +5281,7 @@ type 33
 editor_folder items/armour
 layer 3
 ac 1
+wc 1
 protect_impact 5
 protect_cleave 5
 protect_pierce 5
@@ -5422,7 +5579,7 @@ face small_shie.101
 type 33
 editor_folder items/armour
 layer 3
-ac 1
+ac 2
 is_vul_physical 1
 is_vul_elemental 1
 is_vul_magic 1
@@ -5435,6 +5592,49 @@ protect_cleave 6
 protect_pierce 6
 weight 940
 value 25
+end
+Object ball_and_chain
+name ball and chain
+face ball_and_chain.101
+type 33
+editor_folder items/armour
+layer 3
+ac 2
+wc 1
+last_heal 5
+protect_impact 5
+protect_cleave 10
+protect_pierce 5
+protect_slash 10
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+material_real 65
+material 2
+weight 1500
+value 120
+end
+Object shield_bone
+name bone shield
+face shield_bone.101
+type 33
+editor_folder items/armour
+layer 3
+ac 3
+last_heal 10
+protect_impact 10
+protect_cleave 4
+protect_pierce 10
+protect_slash 10
+is_vul_physical 1
+is_vul_elemental 1
+is_vul_magic 1
+is_vul_sphere 1
+material 2048
+material_real 705
+weight 1100
+value 130
 end
 Object desk1.111
 name desk
@@ -5956,10 +6156,26 @@ Str 5
 end
 Object chest
 name chest
-face chest_1.101
+face chest_mm_closed.111
 type 122
 editor_folder items/container
-other_arch close_chest
+other_arch close_chest1_111
+layer 4
+no_pick 1
+level 1
+material 18
+material_real 65
+value 350
+container 500000
+weight 15000
+Str 5
+end
+Object chest1_171
+name chest
+face chest_mm_closed.171
+type 122
+editor_folder items/container
+other_arch close_chest1_171
 layer 4
 no_pick 1
 level 1
@@ -5972,10 +6188,26 @@ Str 5
 end
 Object chest_m
 name chest
-face chest_metal_b.101
+face chest_lm_closed.111
 type 122
 editor_folder items/container
-other_arch close_chest_m1
+other_arch close_chest_m1_1
+layer 4
+level 1
+no_pick 1
+material 2
+material_real 65
+value 350
+container 500000
+weight 17500
+Str 5
+end
+Object chest_m1_7
+name chest
+face chest_lm_closed.171
+type 122
+editor_folder items/container
+other_arch close_chest_m1_7
 layer 4
 level 1
 no_pick 1
@@ -5988,10 +6220,26 @@ Str 5
 end
 Object chest_w1
 name chest
-face chest_wood_b.101
+face chest_lw_closed.111
 type 122
 editor_folder items/container
-other_arch close_chest_w1
+other_arch close_chest_w1_1
+layer 4
+level 1
+no_pick 1
+material 18
+material_real 258
+value 350
+container 500000
+weight 15000
+Str 5
+end
+Object chest_w1_7
+name chest
+face chest_lw_closed.171
+type 122
+editor_folder items/container
+other_arch close_chest_w1_7
 layer 4
 level 1
 no_pick 1
@@ -6004,7 +6252,7 @@ Str 5
 end
 Object chest_4.111
 name chest
-face chest_4.111
+face chest_mw_closed.111
 type 122
 editor_folder items/container
 other_arch close_chest_4.111
@@ -6020,7 +6268,7 @@ Str 5
 end
 Object chest_4.171
 name chest
-face chest_4.171
+face chest_mw_closed.171
 type 122
 editor_folder items/container
 other_arch close_chest_4.171
@@ -6128,6 +6376,70 @@ material_real 65
 value 425
 weight 15000
 container 500000
+Str 5
+end
+Object chest_sm_1
+name chest
+face chest_sm_closed.111
+type 122
+editor_folder items/container
+other_arch close_chest_sm_1
+layer 4
+level 1
+no_pick 1
+material 18
+material_real 258
+value 350
+container 500000
+weight 15000
+Str 5
+end
+Object chest_sm_7
+name chest
+face chest_sm_closed.171
+type 122
+editor_folder items/container
+other_arch close_chest_sm_7
+layer 4
+level 1
+no_pick 1
+material 18
+material_real 258
+value 350
+container 500000
+weight 15000
+Str 5
+end
+Object chest_sw_1
+name chest
+face chest_sw_closed.111
+type 122
+editor_folder items/container
+other_arch close_chest_sw_1
+layer 4
+level 1
+no_pick 1
+material 18
+material_real 258
+value 350
+container 500000
+weight 15000
+Str 5
+end
+Object chest_sw_7
+name chest
+face chest_sw_closed.171
+type 122
+editor_folder items/container
+other_arch close_chest_sw_7
+layer 4
+level 1
+no_pick 1
+material 18
+material_real 258
+value 350
+container 500000
+weight 15000
 Str 5
 end
 Object coppercoin
@@ -6708,6 +7020,22 @@ weight 20
 material_real 641
 material 1024
 end
+Object axe_great
+name great axe
+face axe_great.101
+type 15
+editor_folder items/weapon
+layer 3
+attack_cleave 100
+weapon_speed 0.0225
+dam 6
+wc 1
+sub_type 3
+material 2
+material_real 65
+weight 1750
+value 350
+end
 Object axe
 name axe
 face axe.101
@@ -6727,6 +7055,38 @@ end
 Object axe_hand
 name hand axe
 face axe_hand.101
+type 15
+editor_folder items/weapon
+layer 3
+attack_cleave 100
+weapon_speed 0.0225
+dam 5
+wc 1
+sub_type 3
+material 2
+material_real 65
+weight 1250
+value 35
+end
+Object cleaver_war
+name war cleaver
+face cleaver_war.101
+type 15
+editor_folder items/weapon
+layer 3
+attack_cleave 100
+weapon_speed 0.0225
+dam 5
+wc 1
+sub_type 3
+material 2
+material_real 65
+weight 1250
+value 35
+end
+Object cleaver_battle
+name battle cleaver
+face cleaver_battle.101
 type 15
 editor_folder items/weapon
 layer 3
@@ -6869,7 +7229,7 @@ weight 1750
 value 350
 end
 Object club
-name club
+name small club
 face club.101
 type 15
 editor_folder items/weapon
@@ -6933,7 +7293,7 @@ weight 1900
 value 350
 end
 Object club_big
-name big club
+name club
 face club_big.101
 type 15
 editor_folder items/weapon
@@ -7140,6 +7500,86 @@ material_real 65
 weight 1900
 value 350
 end
+Object club_rough
+name rough club
+face club_rough.101
+type 15
+editor_folder items/weapon
+layer 3
+weapon_speed 0.0225
+attack_impact 100
+dam 5
+wc 1
+sub_type 0
+material 16
+material_real 258
+weight 3000
+value 50
+end
+Object club_spiked
+name spiked club
+face club_spiked.101
+type 15
+editor_folder items/weapon
+layer 3
+weapon_speed 0.0225
+attack_impact 100
+dam 5
+wc 1
+sub_type 0
+material 16
+material_real 258
+weight 3000
+value 50
+end
+Object hammer
+name hammer
+face hammer.101
+type 15
+editor_folder items/weapon
+layer 3
+weapon_speed 0.0225
+attack_impact 100
+dam 6
+wc 1
+sub_type 0
+material 2
+material_real 65
+weight 1900
+value 350
+end
+Object hammer_small
+name small hammer
+face hammer_small.101
+type 15
+editor_folder items/weapon
+layer 3
+weapon_speed 0.0225
+attack_impact 100
+dam 6
+wc 1
+sub_type 0
+material 2
+material_real 65
+weight 1900
+value 350
+end
+Object shootingstar
+name shootingstar
+face shootingstar.101
+type 15
+editor_folder items/weapon
+layer 3
+weapon_speed 0.0225
+attack_impact 100
+dam 6
+wc 1
+sub_type 0
+material 2
+material_real 65
+weight 1900
+value 350
+end
 Object dagger
 name dagger
 face dagger.101
@@ -7299,6 +7739,38 @@ material 2
 material_real 65
 weight 520
 value 150
+end
+Object flamberge
+name flamberge
+face flamberge.101
+type 15
+editor_folder items/weapon
+layer 3
+weapon_speed 0.0225
+attack_pierce 100
+dam 6
+wc 1
+sub_type 2
+material 2
+material_real 65
+weight 1075
+value 350
+end
+Object shiavona
+name shiavona
+face shiavona.101
+type 15
+editor_folder items/weapon
+layer 3
+weapon_speed 0.0225
+attack_pierce 100
+dam 6
+wc 1
+sub_type 2
+material 2
+material_real 65
+weight 1075
+value 350
 end
 Object sword
 name sword
@@ -7460,6 +7932,22 @@ material_real 65
 weight 1300
 value 350
 end
+Object gladius
+name gladius
+face gladius.101
+type 15
+editor_folder items/weapon
+layer 3
+weapon_speed 0.0225
+attack_slash 100
+dam 6
+wc 1
+sub_type 1
+material 2
+material_real 65
+weight 1300
+value 350
+end
 Object shortsword
 name shortsword
 face shortsword.101
@@ -7495,6 +7983,22 @@ end
 Object wakizashi
 name wakizashi
 face wakizashi.101
+type 15
+editor_folder items/weapon
+layer 3
+weapon_speed 0.0225
+attack_slash 100
+dam 6
+wc 1
+sub_type 1
+material 2
+material_real 65
+weight 1300
+value 350
+end
+Object tulwar
+name tulwar
+face tulwar.101
 type 15
 editor_folder items/weapon
 layer 3
@@ -7559,6 +8063,38 @@ end
 Object mattock
 name mattock
 face mattock.101
+type 15
+editor_folder items/weapon
+layer 3
+attack_cleave 100
+weapon_speed 0.02
+dam 8
+wc 3
+sub_type 7
+material 2
+material_real 65
+weight 2500
+value 750
+end
+Object axe_2h_great
+name 2h great axe
+face axe_2h_great.101
+type 15
+editor_folder items/weapon
+layer 3
+attack_cleave 100
+weapon_speed 0.02
+dam 8
+wc 3
+sub_type 7
+material 2
+material_real 65
+weight 2500
+value 750
+end
+Object axe_2h_war
+name 2h war axe
+face axe_2h_war.101
 type 15
 editor_folder items/weapon
 layer 3
@@ -7684,9 +8220,9 @@ material_real 258
 weight 1750
 value 750
 end
-Object war_staff
-name war staff
-face war_staff.101
+Object quaterstaff
+name quaterstaff
+face quaterstaff.101
 type 15
 editor_folder items/weapon
 layer 3
@@ -7765,7 +8301,7 @@ weight 2250
 value 750
 end
 Object sword2h
-name 2h-sword
+name two-handed sword
 face sword2h.101
 type 15
 editor_folder items/weapon
@@ -7831,6 +8367,38 @@ end
 Object sword_double
 name double sword
 face sword_double.101
+type 15
+editor_folder items/weapon
+layer 3
+weapon_speed 0.02
+attack_slash 100
+sub_type 5
+material 2
+material_real 65
+dam 8
+wc 3
+weight 2150
+value 750
+end
+Object panzerstecher
+name Panzerstecher
+face panzerstecher.101
+type 15
+editor_folder items/weapon
+layer 3
+weapon_speed 0.02
+attack_slash 100
+sub_type 5
+material 2
+material_real 65
+dam 8
+wc 3
+weight 2150
+value 750
+end
+Object sword_great
+name great sword
+face sword_great.101
 type 15
 editor_folder items/weapon
 layer 3
@@ -8000,6 +8568,23 @@ end
 Object ranseur
 name ranseur
 face ranseur.101
+type 15
+editor_folder items/weapon
+layer 3
+weapon_speed 0.0175
+attack_pierce 100
+sub_type 10
+material 2
+material_real 65
+dam 9
+wc 2
+ac 1
+weight 4500
+value 875
+end
+Object pike
+name pike
+face pike.101
 type 15
 editor_folder items/weapon
 layer 3

@@ -37,7 +37,7 @@
  */
 
 /* these are sounds for SOUND_NORMAL type sounds */
-#define SOUND_NEW_PLAYER	0
+#define SOUND_LEVEL_UP		0
 #define SOUND_FIRE_ARROW	1
 #define SOUND_LEARN_SPELL	2
 #define SOUND_FUMBLE_SPELL	3

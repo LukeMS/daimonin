@@ -1426,6 +1426,7 @@ int monster_use_bow(object *head, object *part, object *pl, int dir) {
   arrow->stats.dam+= bow->stats.dam+bow->magic+arrow->magic; /* NO_STRENGTH */
   arrow->stats.dam=FABS((int)((float)(arrow->stats.dam  *lev_damage[head->level])));
   arrow->stats.wc= 10 + (bow->magic +bow->stats.wc + arrow->magic + arrow->stats.wc-head->level);
+  arrow->stats.wc_range = bow->stats.wc_range;
   arrow->map=head->map;
   arrow->last_sp = 12; /* we use fixed value for mobs */
   SET_FLAG(arrow, FLAG_FLYING);
@@ -2525,7 +2526,7 @@ static object *spawn_monster(object *gen, object *orig, int range)
       op->head=head,prev->more=op;
     if (QUERY_FLAG(op, FLAG_FREED)) return NULL;
     if(op->randomitems!=NULL)
-      create_treasure(op->randomitems,op,0,orig->map->difficulty,0);
+      create_treasure(op->randomitems,op,0,orig->map->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0);
     if(head==NULL)
       head=op;
     prev=op;

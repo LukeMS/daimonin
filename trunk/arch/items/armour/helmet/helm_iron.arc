@@ -1,5 +1,5 @@
 Object helm_iron
-name metal helm
+name helm
 type 34
 face helm_iron.101
 layer 3

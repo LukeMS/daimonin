@@ -728,7 +728,7 @@ void god_intervention (object *op, object *god)
             new_draw_info (NDI_UNIQUE, 0, op, "Something appears before your "
                     "eyes.  You catch it before it falls to the ground.");
             create_treasure (tl, op, GT_STARTEQUIP | GT_ONLY_GOOD
-                                      | GT_UPDATE_INV, level, 0);
+                                      | GT_UPDATE_INV, level, T_STYLE_UNSET,ART_CHANCE_UNSET,0);
             return;
         }
 

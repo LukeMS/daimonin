@@ -3031,21 +3031,43 @@ int apply_special (object *who, object *op, int aflags)
 	return 1;
 	}
 
+	/* if we have applied a shield, don't allow apply of polearm or 2hand weapon */
+	if((op->sub_type1>=WEAP_POLE_IMPACT || op->sub_type1>=WEAP_2H_IMPACT) &&
+		who->type == PLAYER && who->contr && who->contr->equipment[PLAYER_EQUIP_SHIELD])
+	{
+		new_draw_info(NDI_UNIQUE, 0, who,	"You can't wield this weapon and a shield.");
+        if(tmp!=NULL)
+          (void) insert_ob_in_ob(tmp,who);
+		return 1;
+	}
+
     if(!check_skill_to_apply(who,op)) 
 	{
         if(tmp!=NULL)
           (void) insert_ob_in_ob(tmp,who);
 		return 1;
 	}
+
     SET_FLAG(op, FLAG_APPLIED);
 	SET_FLAG(who, FLAG_READY_WEAPON);
     (void) change_abil (who,op);
     sprintf(buf,"You wield %s.",query_name(op));
     break;
   }
+  case SHIELD:
+	  	/* don't allow of polearm or 2hand weapon with a shield */
+	if((who->type == PLAYER && who->contr && who->contr->equipment[PLAYER_EQUIP_WEAPON1])
+		&& (who->contr->equipment[PLAYER_EQUIP_WEAPON1]->sub_type1>=WEAP_POLE_IMPACT ||
+		who->contr->equipment[PLAYER_EQUIP_WEAPON1]->sub_type1>=WEAP_2H_IMPACT))
+	{
+		new_draw_info(NDI_UNIQUE, 0, who,	"You can't wield this weapon and a shield.");
+        if(tmp!=NULL)
+          (void) insert_ob_in_ob(tmp,who);
+		return 1;
+	}
+
   case ARMOUR:
   case HELMET:
-  case SHIELD:
   case BOOTS:
   case GLOVES:
   case GIRDLE:
@@ -3190,7 +3212,7 @@ int auto_apply (object *op) {
   case TREASURE:
     while ((op->stats.hp--)>0)
       create_treasure(op->randomitems, op, op->map?GT_ENVIRONMENT:0,
-	    op->map == NULL ?  op->stats.exp: op->map->difficulty,0);
+	    op->map == NULL ?  op->stats.exp: op->map->difficulty,T_STYLE_UNSET, ART_CHANCE_UNSET, 0);
 
     /* If we generated on object and put it in this object inventory,
      * move it to the parent object as the current object is about
@@ -3243,7 +3265,7 @@ void fix_auto_apply(mapstruct *m) {
 						else if(invtmp->type==TREASURE)
 						{
 							while ((invtmp->stats.hp--)>0)
-								create_treasure(invtmp->randomitems, invtmp, 0, m->difficulty,0);
+								create_treasure(invtmp->randomitems, invtmp, 0, m->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0);
 						}
 					}
 				}
@@ -3253,7 +3275,7 @@ void fix_auto_apply(mapstruct *m) {
 				else if((tmp->type==TREASURE || (tmp->type==CONTAINER))&&tmp->randomitems)
 				{
 					while ((tmp->stats.hp--)>0)
-						create_treasure(tmp->randomitems, tmp, 0, m->difficulty,0);
+						create_treasure(tmp->randomitems, tmp, 0, m->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0);
 				}
 				else if(tmp->type==TIMED_GATE)
 				{
@@ -3261,7 +3283,7 @@ void fix_auto_apply(mapstruct *m) {
 					update_ob_speed(tmp);
 				}
 				if(tmp && tmp->arch && tmp->type!=PLAYER && tmp->type!=TREASURE && tmp->randomitems)
-					create_treasure(tmp->randomitems, tmp, GT_APPLY, m->difficulty,0);
+					create_treasure(tmp->randomitems, tmp, GT_APPLY, m->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0);
 			}
 		}
 	}

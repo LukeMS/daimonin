@@ -56,7 +56,7 @@ object *active_objects;	/* List of active objects that need to be processed */
 /* this IS extrem ugly - i will move it ASAP to a data file, which can be used
  * from editor too!
  */
-struct _material_real_struct material_real[] = {
+struct _material_real_struct material_real[833] = {
     /* undefined Material - for stuff we don't need material information about */
     {"", 100,100,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
 
@@ -777,9 +777,8 @@ struct _material_real_struct material_real[] = {
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
-    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     /* Bone */
-    {"animal ",        100,80,       0,0,0,      M_BONE,         RACE_TYPE_NONE}, /* for misc bones*/
+    {"",        100,80,       0,0,0,      M_BONE,         RACE_TYPE_NONE}, /* for misc bones*/
     {"human ",			100,80,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"elven ",			100,80,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"dwarven ",		100,80,       0,0,0,      M_NONE,         RACE_TYPE_NONE},

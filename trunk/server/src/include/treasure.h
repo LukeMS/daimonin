@@ -120,6 +120,7 @@ typedef struct treasurestruct {
 typedef struct treasureliststruct {
   char *name;				/* Usually monster-name/combination */
   int t_style;				/* global style (used from artifacts file) */
+  int artifact_chance;	
   sint16 total_chance;			/* If non-zero, only 1 item on this
 					 * list should be generated.  The
 					 * total_chance contains the sum of

@@ -315,7 +315,7 @@ int calc_skill_exp(object *who, object *op)
 	{
 		LOG(llevDebug,"EXP (lower hitter %d):: target %s (base:%d lvl:%d mul: %f) ",who_lvl, query_name(op),op_exp,op_lvl,lev_exp[op_lvl]);
 		op_exp = (int)((float) op_exp * lev_exp[op_lvl]);
-		tmp=(int)((float)(new_levels[who_lvl+1]-new_levels[who_lvl])*0.08f);
+		tmp=(int)((float)(new_levels[who_lvl+1]-new_levels[who_lvl])*0.07f);
 		if(op_exp > tmp)
 		{
 			LOG(llevDebug,"exp to high(%d)! adjusted to: %d",op_exp, tmp);
@@ -328,11 +328,11 @@ int calc_skill_exp(object *who, object *op)
 		LOG(llevDebug,"EXP (higher hitter %d):: target %s (base:%d lvl:%d mul: %f) tmp:%d ",who_lvl, query_name(op),op_exp,op_lvl,lev_exp[op_lvl],tmp);
 
 		if(tmp > op_lvl*2 && (who_lvl - op_lvl)>2)
-		tmp = calc_level_difference(who_lvl, op_lvl);
-		LOG(llevDebug,"level diff factor: %d ",tmp);
+			tmp = calc_level_difference(who_lvl, op_lvl);
 		if(tmp)
 		{
-			exp_mul = (float)op_lvl / ((float)op_lvl+(float)tmp*1.5f);
+			exp_mul = (float)op_lvl / ((float)op_lvl+(float)tmp*0.75f);
+			LOG(llevDebug,"level diff factor: %d (%4.4f)",tmp, exp_mul);
 			op_exp = (int)(((float)op_exp * lev_exp[op_lvl]) * exp_mul);
 		}
 		else

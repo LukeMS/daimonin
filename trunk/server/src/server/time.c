@@ -224,7 +224,7 @@ void generate_monster(object *gen) {
     if (QUERY_FLAG(op, FLAG_FREED)) return;
     if(op->randomitems!=NULL)
       create_treasure(op->randomitems,op,GT_APPLY,
-                      gen->map->difficulty,0);
+                      gen->map->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0);
     if(head==NULL)
       head=op;
     prev=op;
