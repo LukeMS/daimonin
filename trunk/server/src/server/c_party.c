@@ -22,10 +22,8 @@
 
     The author can be reached via e-mail to daimonin@nord-com.net
 */
+#include <stdarg.h>
 #include <global.h>
-#ifndef __CEXTRACT__
-#include <sproto.h>
-#endif
 
 /* Invite <name> to a group. 
  * Command can only be used from a group leader
