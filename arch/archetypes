@@ -14891,6 +14891,22 @@ material 1
 speed 0.01
 blocksview 1
 end
+Object bone_broken
+name broken bone
+face bone_broken.101
+type 79
+editor_folder misc/bones
+no_pick 1
+layer 4
+end
+Object bone_skull
+name skull
+face bone_skull.101
+type 79
+editor_folder misc/bones
+no_pick 1
+layer 4
+end
 Object blob_acid
 name acid blob
 face blob_acid.111
@@ -15036,7 +15052,7 @@ weight 13250
 exp 150
 speed -0.03
 weapon_speed 0.038
-attack_poison 65
+attack_cleave 65
 attack_acid 10
 resist_poison 100
 resist_paralyze 100
@@ -15072,7 +15088,7 @@ exp 150
 speed -0.032
 weapon_speed 0.0375
 attack_acid 55
-attack_poison 30
+attack_poison 40
 resist_poison 100
 ac 9
 wc 2
@@ -15140,7 +15156,8 @@ weight 16250
 exp 140
 speed -0.026
 weapon_speed 0.040
-attack_fire 80
+attack_fire 40
+attack_acid 40
 ac 10
 wc 3
 dam 5
@@ -15172,7 +15189,7 @@ weight 16250
 exp 140
 speed -0.026
 weapon_speed 0.040
-attack_fire 80
+attack_cold 80
 ac 10
 wc 3
 dam 5
@@ -15236,7 +15253,7 @@ weight 16250
 exp 140
 speed -0.026
 weapon_speed 0.040
-attack_fire 80
+attack_acid 80
 ac 10
 wc 3
 dam 5
@@ -15300,7 +15317,7 @@ weight 16250
 exp 140
 speed -0.026
 weapon_speed 0.040
-attack_fire 80
+attack_poison 80
 ac 10
 wc 3
 dam 5
@@ -15321,7 +15338,7 @@ alive 1
 level 1
 end
 Object blob_poison
-name acid blob
+name poison blob
 face blob_poison.111
 type 80
 editor_folder mobs/amoeboid
@@ -15332,7 +15349,7 @@ weight 13250
 exp 130
 speed -0.025
 weapon_speed 0.0375
-attack_acid 75
+attack_poison 75
 ac 9
 wc 1
 dam 4
@@ -16600,6 +16617,40 @@ attack_slash 80
 Wis 6
 randomitems mob_low
 animation skel_fighter1
+is_animated 1
+anim_speed 4
+monster 1
+no_pick 1
+alive 1
+can_see_in_dark 1
+exp 100
+ac 9
+wc 0
+dam 5
+hp -1
+maxhp 6
+level 1
+speed -0.0275
+weight 22500
+end
+Object lost_soul
+name lost soul
+face lost_soul.131
+type 80
+editor_folder mobs/undead
+race undead
+is_male 1
+corpse 1
+layer 6
+direction 5
+is_evil 1
+terrain_flag 1
+weapon_speed 0.035
+attack_slash 40
+attack_drain 50
+Wis 6
+randomitems mob_med
+animation lost_soul
 is_animated 1
 anim_speed 4
 monster 1
