@@ -1,5 +1,4 @@
-This are the make/config from the 2d client!
+Later the build and install scripts for Linux will be here.
 
-*** This must be prepared for ogre & fmod before use **
-
-*** copy the plugins.cfg to ~/daimonin/client
+But for now, read client3d/README.install and follow the 
+instructions there.
