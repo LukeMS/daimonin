@@ -49,6 +49,7 @@ typedef enum _race_names_enum {
         RACE_NAME_TINY,
         RACE_NAME_DEMONISH,
         RACE_NAME_DRACONISH,
+        RACE_NAME_OGRE,
         
         RACE_NAME_INIT
 }_race_names_enum;

@@ -1876,14 +1876,16 @@ void communicate(object *op, char *txt)
 	/* with target, only player can talk to npc... for npc to npc talk we need so or so a script,
 	 * and there we have then to add the extra interface.
 	 */
+
+	/* thats the whisper code - i will add a /whisper for it */
+	/*
 	if(op->type == PLAYER)
 	{
-		/* valid target and friendly mob */
 		if(op->contr->target_object && op->contr->target_object_count==op->contr->target_object->count)
 		{
 			if(op->contr->target_object->type == PLAYER)
 			{
-				if(op != op->contr->target_object) /* whisper to the other player - only you and he */
+				if(op != op->contr->target_object)
 				{
 				    sprintf(buf, "%s whispers to you: ",query_name(op));
 					strncat(buf, txt, MAX_BUF - strlen(buf)-1);
@@ -1898,7 +1900,7 @@ void communicate(object *op, char *txt)
 					if(op->contr->target_object->map && op->contr->target_object->map != op->map)
 						new_info_map_except2(NDI_WHITE,op->contr->target_object->map, op, op->contr->target_object, buf);
 				}
-				else /* is yourself? then say it loud */
+				else 
 				{
 				    sprintf(buf, "%s says: ",query_name(op));
 					strncat(buf, txt, MAX_BUF - strlen(buf)-1);
@@ -1906,7 +1908,7 @@ void communicate(object *op, char *txt)
 					new_info_map(NDI_WHITE,op->map, buf);
 				}
 			}
-			else /* here we talk to a npc or other non player object */
+			else 
 			{
 			    sprintf(buf, "%s says to %s: ",query_name(op),query_name(op->contr->target_object));
 				strncat(buf, txt, MAX_BUF - strlen(buf)-1);
@@ -1937,7 +1939,12 @@ void communicate(object *op, char *txt)
 		buf[MAX_BUF-1]=0;
 		new_info_map(NDI_WHITE,op->map, buf);
 	}
+	*/
 
+	sprintf(buf, "%s says: ",query_name(op));
+	strncat(buf, txt, MAX_BUF - strlen(buf)-1);
+	buf[MAX_BUF-1]=0;
+	new_info_map(NDI_WHITE,op->map, buf);
 
 	for(i = 0; i <= SIZEOFFREE2; i++)
 	{
@@ -1945,7 +1952,7 @@ void communicate(object *op, char *txt)
 		yt = op->y+freearr_y[i];
 		if ((m=out_of_map(op->map, &xt, &yt)))
 		{
-			if(GET_MAP_FLAGS(m,xt,yt) & P_MAGIC_EAR) /* quick check we have a magic ear */
+			if(GET_MAP_FLAGS(m,xt,yt) & (P_MAGIC_EAR | P_IS_ALIVE)) /* quick check we have a magic ear */
 			{
 				/* ok, browse now only on demand */
 				for(npc = get_map_ob(m,xt,yt);npc != NULL; npc = npc->above) 
@@ -1953,6 +1960,8 @@ void communicate(object *op, char *txt)
 					/* the ear ... don't break because it can be mutiple on a node or more in the area */
 					if (npc->type == MAGIC_EAR)
 						(void) talk_to_wall(npc, txt); /* Maybe exit after 1. success? */
+					else if (QUERY_FLAG(npc,FLAG_ALIVE))
+						talk_to_npc(op, npc,txt);
 				}
 			}
 		}
@@ -2027,7 +2036,7 @@ int talk_to_npc(object *op, object *npc, char *txt) {
 #endif
   if(npc->msg == NULL || *npc->msg != '@')
   {
-	new_draw_info_format(NDI_UNIQUE,0,op, "%s has nothing to say.", query_name(npc));
+	/*new_draw_info_format(NDI_UNIQUE,0,op, "%s has nothing to say.", query_name(npc));*/
     return 0;
   }
   if((msgs = parse_message(npc->msg)) == NULL)

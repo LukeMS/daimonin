@@ -758,43 +758,75 @@ treasure ant
   arch dagger
     magic_chance 45
     magic 1
-    chance 2
+    chance 15
     item_race 7
     material_end 1
   more
-   arch t_dagger
-   nrof 5
-   chance 2
+    arch t_dagger
+    nrof 5
+    chance 25
   more
-  arch food_generic
-  chance 5
-  nrof 1
+    arch food_generic
+    chance 75
+    nrof 1
   more
-  arch small_shield
-  magic_fix 1
-  chance 4
-  name small ant shield
+    arch small_shield
+    magic_fix 1
+    chance 5
+    name small ant shield
+  more
+    arch coppercoin
+    chance 100
+    nrof 6
 end
-treasure ant_queen
+treasure ant_special
   arch dagger
     magic_chance 45
     magic 1
-    chance 2
+    chance 15
+    item_race 7
+    material_end 1
+  more
+    arch food_generic
+    chance 75
+    nrof 1
+  more
+    arch small_shield
+    magic_fix 1
+    chance 20
+    name small ant shield
+  more
+    arch coppercoin
+    chance 100
+    nrof 6
+  more
+    arch ring_generic
+    chance 5
+end
+treasure ant_queen
+   arch dagger
+    magic_chance 45
+    magic 1
+    chance 15
     item_race 7
     material_end 1
   more
    arch t_dagger
    nrof 5
-   chance 2
+   chance 25
   more
   arch food_generic
-  chance 5
+  chance 75
   nrof 1
   more
   arch small_shield
   magic_fix 1
-  chance 4
+  chance 10
   name small ant shield
+  more
+  arch coppercoin
+  chance 100
+  nrof 6
 end
 treasure slime
   arch food_generic
@@ -815,6 +847,9 @@ treasure slime
 end
 treasure ogre
   arch club
+    magic_chance 10
+    magic 1
+   item_race 12
    chance 25
   more
   arch coppercoin
@@ -823,11 +858,21 @@ treasure ogre
 end
 treasure giant_hill
   arch club
+    magic_chance 20
+    magic 1
+   item_race 8
    chance 25
+  more
+  arch ring_generic
+  chance 10
   more
   arch coppercoin
    chance 100
-   nrof 6
+   nrof 50
+  more
+  arch silvercoin
+   chance 100
+   nrof 3
 end
 ############# TEST ############################
 treasureone random_test1

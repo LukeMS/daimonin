@@ -34,6 +34,7 @@
 #define RN_ORCISH       32
 #define RN_GOBLIN       64
 #define RN_KOBOLD       128
+
 #define RN_GIANT        256
 #define RN_TINY         512
 #define RN_GENIE        1024
@@ -52,7 +53,8 @@ _races item_race_table[RACE_NAME_INIT] = {
         "giant ",       RN_GIANT,  /* all demihumans "bigger as humans" */
         "tiny ",        RN_TINY,  /* different small race (sprites, ...) */
         "demonish ",    RN_DEMONISH,  /* this is usable from all sizes */
-        "draconish ",   RN_DRACONISH   /* usable from all sizes */
+        "draconish ",   RN_DRACONISH,   /* usable from all sizes */
+        "ogre ",		RN_GIANT     /* count as giant */
 };
 
 /* when we carry more as this of our weight_limit, we get encumbered. */
