@@ -1252,7 +1252,7 @@ void show_login_server(void)
 	SDL_Rect box;
 	char buf[256];
 	int x, y, i;
-	int mx, my, mb;
+	int mx, my, mb, t;
 
 	mb = SDL_GetMouseState(&mx, &my);
 	/* background */
@@ -1263,6 +1263,7 @@ void show_login_server(void)
 	sprite_blt(Bitmaps[BITMAP_DIALOG_TITLE_LOGIN],x+250-Bitmaps[BITMAP_DIALOG_TITLE_LOGIN]->bitmap->w/2, y+20, NULL, NULL);
 /*	add_close_button(x, y, MENU_LOGIN); */
 
+	t=x+275;
 	x+=170;
 	y+=100;
 	draw_frame(x-3, y-3, 211, 168);
@@ -1271,13 +1272,17 @@ void show_login_server(void)
 	box.w= 210;
 	box.h= 17;
 
-	if(!strcmp(ServerName,"127.0.0.1"))
-		strcpy(buf,"Server local host");
-	else
-		sprintf(buf,"Server %s", ServerName);
+	StringBlt(ScreenSurface, &SystemFont,"Server" , t+1-21, y-35, COLOR_BLACK, NULL, NULL);
+	StringBlt(ScreenSurface, &SystemFont,"Server" , t-21 , y-36, COLOR_WHITE, NULL, NULL);
 
-	StringBlt(ScreenSurface, &BigFont,buf , x+1, y-28, COLOR_BLACK, NULL, NULL);
-	StringBlt(ScreenSurface, &BigFont,buf , x , y-29, COLOR_HGOLD, NULL, NULL);
+	if(!strcmp(ServerName,"127.0.0.1"))
+		strcpy(buf,"local host");
+	else
+		sprintf(buf,"%s", ServerName);
+
+	t -= get_string_pixel_length(buf,&BigFont)/2;
+	StringBlt(ScreenSurface, &BigFont,buf , t+1, y-21, COLOR_BLACK, NULL, NULL);
+	StringBlt(ScreenSurface, &BigFont,buf , t , y-22, COLOR_HGOLD, NULL, NULL);
 
 	SDL_FillRect(ScreenSurface, &box, sdl_gray3);
 	box.y= y+15;
