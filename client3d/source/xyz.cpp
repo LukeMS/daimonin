@@ -24,7 +24,6 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include <stdio.h>
 #include <sys/stat.h> 
 #include "logfile.h"
-#include "logfile.h"
 #include "network.h"
 #include "xyz.h"
 #include "zlib.h"

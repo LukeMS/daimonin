@@ -624,6 +624,7 @@ inline bool Network::OpenSocket(const char *host, int port)
     mCommand_received = 0;
     mCommand_time = 0;
 
+#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
     unsigned long temp = 1; // non-block.
     if (ioctlsocket(mSocket, FIONBIO, &temp) == -1)
     {
@@ -631,19 +632,37 @@ inline bool Network::OpenSocket(const char *host, int port)
         mSocket = SOCKET_NO;
         return false;
     }
+#else
+    long tmp = fcntl(mSocket, F_GETFL, &tmp);
+    if(tmp == -1) 
+    {
+        LogFile::getSingelton().Error("Error in fcntl(mSocket, F_GETFL, &temp)\n");
+        mSocket = SOCKET_NO;
+        return false;
+    }
+    tmp |= O_NONBLOCK;
+    if(fcntl(mSocket, F_SETFL, &tmp) == -1)
+    {
+        LogFile::getSingelton().Error("Error in fcntl(mSocket, F_SETFL, &temp)\n");
+        mSocket = SOCKET_NO;
+        return false;
+    }    
+#endif
 
     int error = 0;
     int retries = 15;
 
     while (connect(mSocket, (struct sockaddr *) &mInsock, sizeof(mInsock)) == SOCKET_ERROR)
-    {
-        Sleep(3);
+    {        
         if (--retries == 0)
         {
             LogFile::getSingelton().Error("Connect Error:  %d\n", mSocketStatusErrorNr);
             mSocket = SOCKET_NO;
             return false;
         }
+        
+#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
+        Sleep(3);
         mSocketStatusErrorNr = WSAGetLastError();
         if (mSocketStatusErrorNr == WSAEISCONN)  // we have a connect!
             break;
@@ -654,11 +673,26 @@ inline bool Network::OpenSocket(const char *host, int port)
         {
             error = 1;
         }
+#else
+        mSocketStatusErrorNr = errno;
+        if (mSocketStatusErrorNr == 0)
+            break;
+
+        if (mSocketStatusErrorNr == EWOULDBLOCK ||
+                mSocketStatusErrorNr == EALREADY || 
+                ( mSocketStatusErrorNr == EINVAL && error))
+        {
+            error = 1;
+        }
+                                
+        sleep(3);
+#endif        
     }
 
     // we got a connect here!
     int oldbufsize;
-    int newbufsize = 65535, buflen = sizeof(int); 
+    int newbufsize = 65535;
+    socklen_t buflen = sizeof(oldbufsize);
     if (getsockopt(mSocket, SOL_SOCKET, SO_RCVBUF, (char *) &oldbufsize, &buflen) == -1)
 	{
         oldbufsize = 0;
@@ -684,8 +718,10 @@ bool Network::CloseSocket()
     // seems differents sockets have different way to shutdown connects??
     // win32 needs this hard way, normally you should wait for a read() == 0...
     shutdown(mSocket, SD_BOTH);
-#endif
     closesocket(mSocket);
+#else
+    close(mSocket);
+#endif
     mSocket = SOCKET_NO; 
     return true;
 }
@@ -704,8 +740,13 @@ void Network::read_metaserver_data()
 		stat = recv(mSocket, ptr, MAX_METASTRING_BUFFER, 0);
 	    if (stat <= 0) 
         {
+#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
             if (WSAGetLastError() != WSAEWOULDBLOCK)
 			   LogFile::getSingelton().Error("Error reading metaserver data!: %d\n", WSAGetLastError());
+#else            
+            if (errno != EWOULDBLOCK)
+			   LogFile::getSingelton().Error("Error reading metaserver data!: %s\n", strerror(errno));
+#endif            
             break;
         }
         else if (stat > 0)
@@ -766,6 +807,7 @@ int Network::write_socket(unsigned char *buf, int len)
     {
         amt = send(mSocket, (char*)pos, len, 0);
 
+#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
         if (amt == -1 && WSAGetLastError() != WSAEWOULDBLOCK)
         {
             LogFile::getSingelton().Error("New socket write failed (wsb) (%d).\n", WSAGetLastError());
@@ -778,6 +820,20 @@ int Network::write_socket(unsigned char *buf, int len)
             //draw_info("SOCKET ERROR: No data written out", COLOR_RED);                
             return -1;
         }
+#else
+        if (amt == -1 && errno != EWOULDBLOCK)
+        {
+            LogFile::getSingelton().Error("New socket write failed (wsb) (%s).\n", strerror(errno));
+            //draw_info("SOCKET ERROR: Server write failed.", COLOR_RED);                
+            return -1;
+        }
+        if (amt == 0)
+        {
+            LogFile::getSingelton().Error("Write_To_Socket: No data written out (%s).\n", strerror(errno));
+            //draw_info("SOCKET ERROR: No data written out", COLOR_RED);                
+            return -1;
+        }
+#endif        
         len -= amt;
         pos += amt;
     }
@@ -1042,12 +1098,21 @@ int Network::read_socket()
         stat = recv(mSocket, (char*)mInbuf.buf + mInbuf.len, 2 - mInbuf.len, 0);
         if (stat < 0)
         {
+#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
             if ((stat == -1) && WSAGetLastError() != WSAEWOULDBLOCK)
             {
                 LogFile::getSingelton().Error("ReadPacket got error %d, returning -1\n", WSAGetLastError());
                 //draw_info("WARNING: Lost or bad server connection.", COLOR_RED);                
                 return -1;
             }
+#else
+            if ((stat == -1) && errno != EWOULDBLOCK)
+            {
+                LogFile::getSingelton().Error("ReadPacket got error %s, returning -1\n", strerror(errno));
+                //draw_info("WARNING: Lost or bad server connection.", COLOR_RED);                
+                return -1;
+            }
+#endif            
             return 0;
         }
         if (stat == 0)
@@ -1076,12 +1141,21 @@ int Network::read_socket()
         stat = recv(mSocket, (char*)mInbuf.buf + mInbuf.len, toread, 0);
         if (stat < 0)
         {
+#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
             if ((stat == -1) && WSAGetLastError() != WSAEWOULDBLOCK)
             {
                 LogFile::getSingelton().Error("ReadPacket got error %d, returning 0", WSAGetLastError());
                 //draw_info("WARNING: Lost or bad server connection.", COLOR_RED);                
                 return -1;
             }
+#else
+            if ((stat == -1) && errno != EWOULDBLOCK)
+            {
+                LogFile::getSingelton().Error("ReadPacket got error %d, returning 0", errno);
+                //draw_info("WARNING: Lost or bad server connection.", COLOR_RED);                
+                return -1;
+            }
+#endif            
             return 0;
         }
         if (stat == 0)

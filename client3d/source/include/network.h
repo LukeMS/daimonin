@@ -24,6 +24,9 @@ http://www.gnu.org/copyleft/lesser.txt.
 #ifndef NETWORK_H
 #define NETWORK_H
 
+// We need this for OGRE_PLATFORM later
+#include <Ogre.h>
+
 // Maximum size of any packet we expect.  Using this makes it so we don't need to
 // allocated and deallocated the same buffer over and over again and the price
 // of using a bit of extra memory. IT also makes the code simpler.
@@ -33,17 +36,25 @@ const int MAXSOCKBUF = 64*1024;
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
  #define STRICT
  #include <winsock2.h>
- 
+ typedef int socklen_t;
 #else
   #include <sys/types.h>
-  #include <netinet/in.h>
   #include <sys/socket.h>
+  #include <netinet/in.h>
   #include <arpa/inet.h>
   #include <netdb.h>
   #include <errno.h>
-  typdef SOCKET int;
+  #include <fcntl.h>
+  #include <unistd.h>
+  typedef int SOCKET;
+  #define SOCKET_ERROR -1
 #endif
 
+#ifndef FALSE
+#   define FALSE 0
+#   define TRUE -1
+#endif /*ifndef FALSE */
+  
 const int SOCKET_NO = -1;
 const int MAX_METASTRING_BUFFER = 128*2013;
 const int STRINGCOMMAND = 0;
@@ -52,6 +63,7 @@ const int BIG_BUF = 1024;
 
 #define VERSION_CS 991017
 #define VERSION_SC 991017
+#undef PACKAGE_NAME
 #define PACKAGE_NAME "Daimonin SDL Client" 
 
 struct SockList
