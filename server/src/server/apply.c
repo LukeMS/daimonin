@@ -902,7 +902,8 @@ int container_link(player *pl, object *sack)
 		{
 			sack->face = sack->other_arch->clone.face;
 			sack->animation_id = sack->other_arch->clone.animation_id;
-			SET_ANIMATION(sack, (NUM_ANIMATIONS(sack)/NUM_FACINGS(sack))*sack->direction);
+			if(sack->animation_id)
+				SET_ANIMATION(sack, (NUM_ANIMATIONS(sack)/NUM_FACINGS(sack))*sack->direction);
 			update_object(sack,UP_OBJ_FACE);
 		}
 		esrv_update_item (UPD_FLAGS|UPD_FACE, pl->ob, sack);
@@ -966,7 +967,8 @@ int container_unlink(player *pl, object *sack)
 			{
 				sack->face = sack->arch->clone.face;
 				sack->animation_id = sack->arch->clone.animation_id;
-				SET_ANIMATION(sack, (NUM_ANIMATIONS(sack)/NUM_FACINGS(sack))*sack->direction);
+				if(sack->animation_id)
+					SET_ANIMATION(sack, (NUM_ANIMATIONS(sack)/NUM_FACINGS(sack))*sack->direction);
 				update_object(sack,UP_OBJ_FACE);
 			}
 			sack->attacked_by = NULL;
@@ -1007,7 +1009,8 @@ int container_unlink(player *pl, object *sack)
 	{
 		sack->face = sack->arch->clone.face;
 		sack->animation_id = sack->arch->clone.animation_id;
-		SET_ANIMATION(sack, (NUM_ANIMATIONS(sack)/NUM_FACINGS(sack))*sack->direction);
+		if(sack->animation_id)
+			SET_ANIMATION(sack, (NUM_ANIMATIONS(sack)/NUM_FACINGS(sack))*sack->direction);
 		update_object(sack,UP_OBJ_FACE);
 	}
 	tmp=sack->attacked_by;
