@@ -423,7 +423,7 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
 
 dirty_jump:
 	/* a last sanity check: are caster and target *really* valid? */
-	if(!OBJECT_ACTIVE(caster) || !OBJECT_ACTIVE(target))
+	if((caster && !OBJECT_ACTIVE(caster)) || (target && !OBJECT_ACTIVE(target)))
 		return 0;
 
   switch((enum spellnrs) type)
