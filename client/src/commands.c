@@ -64,6 +64,7 @@
 
 #include <include.h>
 static int  scrolldx = 0, scrolldy = 0;
+int PasswordAlreadyAsked = 0;
 
 void SoundCmd(unsigned char *data, int len)
 {
@@ -754,17 +755,29 @@ void PreParseInfoStat(char *cmd)
         LOG(LOG_MSG, "Login: Enter name\n");
         cpl.name[0] = 0;
         cpl.password[0] = 0;
+        if (PasswordAlreadyAsked == 1)
+        {
+            dialog_login_warning_level = DIALOG_LOGIN_WARNING_WRONGPASS;
+            PasswordAlreadyAsked = 0;
+        } 
+        else if (PasswordAlreadyAsked == 2)
+        {
+            dialog_login_warning_level = DIALOG_LOGIN_WARNING_VERIFY_FAILED;
+            PasswordAlreadyAsked = 0;
+        }
         GameStatus = GAME_STATUS_NAME;
     }
     if (strstr(cmd, "What is your password?"))
     {
         LOG(LOG_MSG, "Login: Enter password\n");
         GameStatus = GAME_STATUS_PSWD;
+        PasswordAlreadyAsked = 1;
     }
     if (strstr(cmd, "Please type your password again."))
     {
         LOG(LOG_MSG, "Login: Enter verify password\n");
         GameStatus = GAME_STATUS_VERIFYPSWD;
+        PasswordAlreadyAsked = 2;
     }
     if (GameStatus >= GAME_STATUS_NAME && GameStatus <= GAME_STATUS_VERIFYPSWD)
         open_input_mode(12);

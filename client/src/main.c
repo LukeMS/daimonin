@@ -664,11 +664,23 @@ Boolean game_status_chain(void)
             GameStatus = GAME_STATUS_LOGIN;
         else if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
         {
-            strcpy(cpl.name, InputString);
-            LOG(LOG_MSG, "Login: send name %s\n", InputString);
-            send_reply(InputString);
-            GameStatus = GAME_STATUS_LOGIN;
-            /* now wait again for next server question*/
+            int check;
+            check = is_username_valid(InputString);
+            if (check)
+            {
+                strcpy(cpl.name, InputString);
+                dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
+                LOG(LOG_MSG,"Login: send name %s\n", InputString);
+                send_reply(InputString);
+                GameStatus = GAME_STATUS_LOGIN;
+                /* now wait again for next server question*/
+            }
+            else
+            {
+                dialog_login_warning_level = DIALOG_LOGIN_WARNING_WRONGNAME;
+                InputStringFlag=TRUE;
+                InputStringEndFlag=FALSE;
+            }
         }
     }
     else if (GameStatus == GAME_STATUS_PSWD)
@@ -755,6 +767,18 @@ Boolean load_bitmap(int index)
     return(TRUE);
 }
 
+/* Ensures that the username doesn't contain any invalid character */
+int is_username_valid(const char *name)
+{
+    int i;
+    for(i=0; i<strlen(name); i++)
+    {
+        if (!(((name[i] <= 90) && (name[i]>=65))||((name[i] >= 97) && (name[i]<=122))))
+            return 0;
+    }
+    return 1;
+}
+ 
 /* free the skin & standard gfx */
 void free_bitmaps(void)
 {
@@ -1236,8 +1260,11 @@ int main(int argc, char *argv[])
             if (csocket.fd == SOCKET_NO)
             {
                 /* connection closed, so we go back to INIT here*/
-                if (GameStatus == GAME_STATUS_PLAY)
+                if (GameStatus == GAME_STATUS_PLAY) 
+                {
                     GameStatus = GAME_STATUS_INIT;
+                    PasswordAlreadyAsked = 0;
+                }
                 else
                     GameStatus = GAME_STATUS_START;
             }

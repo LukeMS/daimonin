@@ -1214,6 +1214,7 @@ int key_event(SDL_KeyboardEvent *key)
                             {
                                 save_quickslots_entrys();
                                 SOCKET_CloseSocket(csocket.fd);
+                                PasswordAlreadyAsked = 0;
                                 GameStatus = GAME_STATUS_INIT;
                             }
                             sound_play_effect(SOUND_SCROLL, 0, 0, 100);
