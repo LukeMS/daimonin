@@ -669,7 +669,7 @@ void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int
 				/* if t->magic is != 0, thats our value - if not use default setting */
 				int i, value = t->magic?t->magic:t->item->clone.value;
 
-				value *=difficulty;
+				value *=(difficulty/2)+1;
 				/* so we have 80% to 120% of the fixed value */
 				value = (int) ((float) value *0.8f + (float) value * ((float)(RANDOM()%40)/100.0f));
 				for(i=0;i<NUM_COINS;i++)

@@ -68,12 +68,14 @@ Object pillar_ruin1b.101
 name pillar
 layer 5
 type 79
+no_pass 1
 face pillar_ruin1b.101
 no_pick 1
 end
 Object pillar_ruin1c.101
 name pillar
 layer 5
+no_pass 1
 type 79
 face pillar_ruin1c.101
 no_pick 1
@@ -81,6 +83,7 @@ end
 Object pillar_ruin1d.101
 name pillar
 layer 5
+no_pass 1
 type 79
 face pillar_ruin1d.101
 no_pick 1
@@ -88,6 +91,7 @@ end
 Object pillar_ruin1e.101
 name pillar
 layer 5
+no_pass 1
 type 79
 face pillar_ruin1e.101
 no_pick 1

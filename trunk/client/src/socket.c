@@ -197,7 +197,13 @@ Boolean SOCKET_OpenSocket(SOCKET *socket_temp, struct ClientSocket *csock, char 
                 return(FALSE);
         }
 
-        *socket_temp = socket(PF_INET, SOCK_STREAM, protox->p_proto);
+        /* *socket_temp = socket(PF_INET, SOCK_STREAM, protox->p_proto);*/
+
+		/* The way to make the sockets work on XP Home - The 'unix' style socket
+		* seems to fail inder xp home.
+		*/
+		*socket_temp = socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+
         csocket.inbuf.buf=(unsigned char *)malloc(MAXSOCKBUF);
         csocket.inbuf.len=0;
         insock.sin_family = AF_INET;

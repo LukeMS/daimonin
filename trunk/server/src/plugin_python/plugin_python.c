@@ -998,6 +998,18 @@ MODULEAPI CFParm* postinitPlugin(CFParm* PParm)
     /* Registering them as local would be probably useful*/
     /* for extended logging facilities.                  */
 
+    /* this is a extrem silly code part to remove a linker warning
+	 * from VS c++ 6.x build. The optimizer will drop a warning that
+	 * a function (timeGettime() ) is not used inside gettimeofday() and
+	 * so he can remove the whole system .lib where it is in. This also means
+	 * its not needed to load the .dll at runtime and thats what it tell us.
+	 * this force a call and remove the warning from build. Its redundant
+	 * code to give us a warning free build... without using any #ifdef 
+	 * or pragma.
+	 */
+	struct timeval new_time;
+	(void) GETTIMEOFDAY(&new_time);
+
     LOG(llevDebug, "PYTHON - Start postinitPlugin.\n");
     
 /*    GCFP.Value[1] = (void *)(add_string_hook(PLUGIN_NAME));*/

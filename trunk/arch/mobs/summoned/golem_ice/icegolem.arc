@@ -1,5 +1,5 @@
 Object icegolem
-name golem
+name ice golem
 face icegolem.031
 race golem
 corpse 1
@@ -11,7 +11,9 @@ wc_range 20
 direction 5
 terrain_flag 1
 weapon_speed 0.035
-attack_slash 80
+attack_ice 80
+resist_fire -35
+resist_ice 100
 type 80
 Wis 6
 randomitems mob_ice

@@ -145,7 +145,8 @@ int sack_can_hold (object *pl, object *sack, object *op, int nrof) {
 	sprintf (buf, "The %s is not active.", query_name(sack));
     if (sack == op)
 		sprintf (buf, "You can't put the %s into itself.", query_name(sack));
-    if (sack->race && (sack->race != op->race || op->type == CONTAINER
+    if ((sack->race && (sack->sub_type1&1) != ST1_CONTAINER_CORPSE) &&
+				(sack->race != op->race || op->type == CONTAINER
 		       || (sack->stats.food && sack->stats.food != op->type)))
 	sprintf (buf, "You can put only %s into the %s.", sack->race,
 		 query_name(sack));

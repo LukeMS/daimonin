@@ -8361,7 +8361,7 @@ Object wealth
 face wealth.101
 type 125
 editor_folder intern/intern
-value 7
+value 4
 sys_object 1
 no_pick 1
 layer 0
@@ -15755,7 +15755,7 @@ material 32
 weapon_speed 1.0
 container 350000
 weight 50000
-food 25
+food 40
 is_used_up 1
 speed 0.01
 identified 1
@@ -15777,7 +15777,7 @@ container 350000
 weight 60000
 no_pick 1
 invulnerable 1
-food 25
+food 40
 speed 0.01
 is_used_up 1
 end
@@ -15795,7 +15795,7 @@ container 350000
 identified 1
 weight 120000
 no_pick 1
-food 25
+food 40
 speed 0.01
 is_used_up 1
 invulnerable 1
@@ -15813,7 +15813,7 @@ material 32
 weapon_speed 1.0
 container 350000
 weight 60000
-food 25
+food 40
 speed 0.01
 is_used_up 1
 no_pick 1
@@ -15833,7 +15833,7 @@ weapon_speed 1.0
 container 350000
 no_pick 1
 invulnerable 1
-food 25
+food 40
 identified 1
 speed 0.01
 is_used_up 1
@@ -15851,7 +15851,7 @@ material 32
 weapon_speed 1.0
 container 350000
 weight 60000
-food 25
+food 40
 speed 0.01
 is_used_up 1
 no_pick 1
@@ -16593,7 +16593,7 @@ no_pick 1
 weight 120000
 end
 Object icegolem
-name golem
+name ice golem
 face icegolem.031
 type 80
 editor_folder mobs/summoned
@@ -16607,7 +16607,9 @@ wc_range 20
 direction 5
 terrain_flag 1
 weapon_speed 0.035
-attack_slash 80
+attack_ice 80
+resist_fire -35
+resist_ice 100
 Wis 6
 randomitems mob_ice
 animation icegolem
@@ -16618,6 +16620,44 @@ no_pick 1
 alive 1
 can_see_in_dark 1
 exp 135
+ac 9
+wc 0
+dam 5
+hp -1
+maxhp 6
+level 1
+speed -0.0275
+weight 22500
+end
+Object lavagolem
+name lava golem
+face lavagolem.031
+type 80
+editor_folder mobs/summoned
+race golem
+is_male 1
+corpse 1
+layer 6
+will_apply 8
+item_race 255
+item_level 255
+wc_range 20
+direction 5
+terrain_flag 1
+weapon_speed 0.035
+attack_fire 80
+resist_ice -35
+resist_fire 100
+Wis 6
+randomitems mob_fire
+animation lavagolem
+is_animated 1
+anim_speed 4
+monster 1
+no_pick 1
+alive 1
+can_see_in_dark 1
+exp 100
 ac 9
 wc 0
 dam 5
@@ -17383,6 +17423,76 @@ speed -0.0325
 level 1
 weight 25500
 end
+Object treant_evil
+name evil treant
+face treant_evil.131
+type 80
+editor_folder mobs/plants
+layer 6
+race tree
+wc_range 20
+corpse 1
+item_race 255
+item_level 255
+weapon_speed 0.035
+attack_impact 80
+is_evil 1
+direction 5
+terrain_flag 1
+randomitems mob_med
+Wis 6
+animation treant_evil
+is_animated 1
+anim_speed 4
+monster 1
+no_pick 1
+alive 1
+can_see_in_dark 1
+exp 125
+ac 10
+wc 1
+dam 5
+hp -1
+maxhp 7
+speed -0.0325
+level 1
+weight 355000
+end
+Object quickwood
+name quickwood
+face quickwood.131
+type 80
+editor_folder mobs/plants
+layer 6
+race tree
+wc_range 20
+corpse 1
+item_race 255
+item_level 255
+weapon_speed 0.035
+attack_cleave 80
+is_evil 1
+direction 5
+terrain_flag 1
+randomitems mob_med
+Wis 6
+animation quickwood
+is_animated 1
+anim_speed 4
+monster 1
+no_pick 1
+alive 1
+can_see_in_dark 1
+exp 125
+ac 10
+wc 1
+dam 5
+hp -1
+maxhp 7
+speed -0.0325
+level 1
+weight 355000
+end
 Object director
 name director
 face director.111
@@ -17896,6 +18006,7 @@ face pillar_ruin1b.101
 type 79
 editor_folder structures/ruin
 layer 5
+no_pass 1
 no_pick 1
 end
 Object pillar_ruin1c.101
@@ -17904,6 +18015,7 @@ face pillar_ruin1c.101
 type 79
 editor_folder structures/ruin
 layer 5
+no_pass 1
 no_pick 1
 end
 Object pillar_ruin1d.101
@@ -17912,6 +18024,7 @@ face pillar_ruin1d.101
 type 79
 editor_folder structures/ruin
 layer 5
+no_pass 1
 no_pick 1
 end
 Object pillar_ruin1e.101
@@ -17920,6 +18033,7 @@ face pillar_ruin1e.101
 type 79
 editor_folder structures/ruin
 layer 5
+no_pass 1
 no_pick 1
 end
 Object wmask_ruin1a.111

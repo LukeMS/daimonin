@@ -1462,13 +1462,27 @@ int process_object(object *op) {
   }
   if(QUERY_FLAG(op, FLAG_GENERATOR))
     generate_monster(op);
-  if(QUERY_FLAG(op, FLAG_IS_USED_UP)&&--op->stats.food<=0) {
-    if(QUERY_FLAG(op, FLAG_APPLIED))
+  if(QUERY_FLAG(op, FLAG_IS_USED_UP)&&--op->stats.food<=0) 
+  {
+    if(QUERY_FLAG(op, FLAG_APPLIED) && op->type != CONTAINER)
       remove_force(op);
     else {
+			/* we have a decying container on the floor (asuming its only possible here) ! */
+	if (op->type == CONTAINER && (op->sub_type1&1) == ST1_CONTAINER_CORPSE)
+	{
+		if(op->attacked_by) /* this means someone access the corpse */
+		{
+			/* then stop decaying! - we don't want delete this under the hand of the guy! */
+			op->stats.food+=3; /* give him a bit time back */
+			goto process_object_dirty_jump; /* go on */
+		}
+		/* now we are dirty! we remove *all* items inside */
+		clean_object(op);
+	}
+
 	/* IF necessary, delete the item from the players inventory */
 	if (op->env && op->env->type == CONTAINER)
-	    esrv_del_item(NULL, op->count, op->env);
+		esrv_del_item(NULL, op->count, op->env);
 	else
 	{
 		object *pl=is_player_inv(op);
@@ -1481,6 +1495,8 @@ int process_object(object *op) {
     }
     return 1;
   }
+
+process_object_dirty_jump:
 
 /* i don't like this script object here .. 
  * this is *the* core loop.

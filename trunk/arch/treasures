@@ -290,7 +290,7 @@ treasure default_drop
          no
             arch potion_improve
             difficulty 6
-            chance 8
+            chance 9
           end
       end
    end
@@ -1616,14 +1616,17 @@ treasureone random_equipment
    chance 40
 end
 treasureone random_tools
+  list random_food
+   chance 40
+  more
   list random_container
-   chance 50
+   chance 30
   more
   list random_talisman
-   chance 25
+   chance 20
   more
   list random_mtools
-   chance 20
+   chance 10
 end
 ##############################################################
 #
@@ -1634,7 +1637,7 @@ treasure mob_low_no_tools
    chance 10
  more
  list default_wealth
-   chance 90
+   chance 60
  more
  list default_drop
    chance 8
@@ -1642,7 +1645,7 @@ treasure mob_low_no_tools
   list random_equipment
     material_quality 80
     material_range 2
-    chance 15
+    chance 12
    end
 end
 treasure mob_med_no_tools
@@ -1650,7 +1653,7 @@ treasure mob_med_no_tools
    chance 10
  more
  list default_wealth
-   chance 90
+   chance 60
  more
  list default_drop
    chance 8
@@ -1658,7 +1661,7 @@ treasure mob_med_no_tools
   list random_equipment
     material_quality 83
     material_range 6
-    chance 15
+    chance 12
    end
 end
 treasure mob_low
@@ -1666,20 +1669,20 @@ treasure mob_low
    chance 10
  more
  list default_wealth
-   chance 75
+   chance 60
  more
  list default_drop
-   chance 20
+   chance 10
  no
   list random_equipment
     material_quality 80
     material_range 3
-    chance 15
+    chance 8
   no
      list random_tools
        material_quality 80
        material_range 3
-       chance 10
+       chance 4
        difficulty 3
     end
    end
@@ -1689,43 +1692,20 @@ treasure mob_med
    chance 10
  more
  list default_wealth
-   chance 75
+   chance 60
  more
  list default_drop
-   chance 20
- no
-  list random_equipment
-    material_quality 83
-    material_range 6
-    chance 15
-  no
-     list random_tools
-       material_quality 83
-       material_range 6
-       chance 10
-       difficulty 3
-    end
-   end
-end
-treasure mob_ice
- list traps
    chance 10
- more
- list default_wealth
-   chance 75
- more
- list default_drop
-   chance 20
  no
   list random_equipment
     material_quality 83
     material_range 6
-    chance 15
+    chance 8
   no
      list random_tools
        material_quality 83
        material_range 6
-       chance 10
+       chance 4
        difficulty 3
     end
    end
@@ -1735,7 +1715,7 @@ treasure mob_ant
    chance 10
  more
  list default_wealth
-   chance 90
+   chance 70
  more
  list default_drop
    chance 8
@@ -1744,7 +1724,7 @@ treasure mob_ant
     artifact_chance 0
     material_quality 80
     material_range 2
-    chance 15
+    chance 8
    end
   more
     arch small_shield
@@ -1760,20 +1740,20 @@ treasure mob_ant_special
    chance 10
  more
  list default_wealth
-   chance 75
+   chance 50
  more
  list default_drop
-   chance 20
+   chance 10
  no
   list random_equipment
     material_quality 80
     material_range 3
-    chance 15
+    chance 12
   no
      list random_tools
        material_quality 80
        material_range 3
-       chance 10
+       chance 3
        difficulty 3
     end
    end
@@ -1783,20 +1763,20 @@ treasure mob_ant_queen
    chance 10
  more
  list default_wealth
-   chance 75
+   chance 60
  more
  list default_drop
-   chance 20
+   chance 15
  no
   list random_equipment
     material_quality 80
     material_range 3
-    chance 15
+    chance 8
   no
      list random_tools
        material_quality 80
        material_range 3
-       chance 10
+       chance 5
        difficulty 3
     end
    end
@@ -1806,20 +1786,20 @@ treasure mob_insect
    chance 10
  more
  list default_wealth
-   chance 75
+   chance 60
  more
  list default_drop
-   chance 20
+   chance 15
  no
   list random_equipment
     material_quality 80
     material_range 3
-    chance 12
+    chance 14
   no
      list random_tools
        material_quality 80
        material_range 3
-       chance 13
+       chance 1
        difficulty 3
     end
    end
@@ -1829,20 +1809,20 @@ treasure mob_slime
    chance 10
  more
  list default_wealth
-   chance 75
+   chance 60
  more
  list default_drop
-   chance 20
+   chance 15
  no
   list random_equipment
     material_quality 80
     material_range 3
-    chance 12
+    chance 8
   no
      list random_tools
        material_quality 80
        material_range 3
-       chance 13
+       chance 5
        difficulty 3
     end
    end
@@ -1852,20 +1832,20 @@ treasure mob_wyvern
    chance 10
  more
  list default_wealth
-   chance 75
+   chance 60
  more
  list default_drop
-   chance 20
+   chance 15
  no
   list random_equipment
     material_quality 80
     material_range 3
-    chance 15
+    chance 8
   no
      list random_tools
        material_quality 80
        material_range 3
-       chance 10
+       chance 5
        difficulty 3
     end
    end
@@ -1875,21 +1855,21 @@ treasure mob_ogre
    chance 10
  more
  list default_wealth
-   chance 75
+   chance 60
  more
  list default_drop
-   chance 20
+   chance 15
  no
   list random_equipment
     item_race 12
     material_quality 80
     material_range 3
-    chance 12
+    chance 8
   no
      list random_tools
        material_quality 80
        material_range 3
-       chance 13
+       chance 5
        difficulty 3
     end
    end
@@ -1899,21 +1879,21 @@ treasure mob_giant_hill
    chance 10
  more
  list default_wealth
-   chance 75
+   chance 60
  more
  list default_drop
-   chance 20
+   chance 15
  no
   list random_equipment
     item_race 8
     material_quality 80
     material_range 3
-    chance 12
+    chance 8
   no
      list random_tools
        material_quality 80
        material_range 3
-       chance 13
+       chance 5
        difficulty 3
     end
    end
@@ -1923,21 +1903,21 @@ treasure mob_giant_stone
    chance 10
  more
  list default_wealth
-   chance 75
+   chance 60
  more
  list default_drop
-   chance 20
+   chance 15
  no
   list random_equipment
     item_race 8
     material_quality 80
     material_range 3
-    chance 12
+    chance 8
   no
      list random_tools
        material_quality 80
        material_range 3
-       chance 13
+       chance 5
        difficulty 3
     end
    end
@@ -1947,20 +1927,20 @@ treasure mob_dragon_water
    chance 10
  more
  list default_wealth
-   chance 75
+   chance 60
  more
  list default_drop
-   chance 20
+   chance 15
  no
   list random_equipment
     material_quality 80
     material_range 3
-    chance 12
+    chance 8
   no
      list random_tools
        material_quality 80
        material_range 3
-       chance 13
+       chance 5
        difficulty 3
     end
    end
@@ -1970,21 +1950,21 @@ treasure mob_kobold_big
    chance 10
  more
  list default_wealth
-   chance 75
+   chance 60
  more
  list default_drop
-   chance 20
+   chance 15
  no
   list random_equipment
     item_race 7
     material_quality 80
     material_range 3
-    chance 12
+    chance 8
   no
      list random_tools
        material_quality 80
        material_range 3
-       chance 13
+       chance 5
        difficulty 3
     end
    end
@@ -1994,7 +1974,7 @@ treasure mob_kobold
    chance 10
  more
  list default_wealth
-   chance 90
+   chance 45
  more
  list default_drop
    chance 8
@@ -2003,7 +1983,7 @@ treasure mob_kobold
     item_race 7
     material_quality 80
     material_range 2
-    chance 15
+    chance 16
    end
 end
 treasure mob_worm_purple
@@ -2011,20 +1991,20 @@ treasure mob_worm_purple
    chance 10
  more
  list default_wealth
-   chance 75
+   chance 60
  more
  list default_drop
-   chance 20
+   chance 15
  no
   list random_equipment
     material_quality 80
     material_range 3
-    chance 12
+    chance 8
   no
      list random_tools
        material_quality 80
        material_range 3
-       chance 13
+       chance 5
        difficulty 3
     end
    end
@@ -2034,20 +2014,20 @@ treasure mob_demilich
    chance 10
  more
  list default_wealth
-   chance 75
+   chance 60
  more
  list default_drop
-   chance 20
+   chance 15
  no
   list random_equipment
     material_quality 80
     material_range 3
-    chance 12
+    chance 8
   no
      list random_tools
        material_quality 80
        material_range 3
-       chance 13
+       chance 5
        difficulty 3
     end
    end
@@ -2057,20 +2037,70 @@ treasure mob_troll
    chance 10
  more
  list default_wealth
-   chance 75
+   chance 60
  more
  list default_drop
-   chance 20
+   chance 15
  no
   list random_equipment
     material_quality 80
     material_range 3
-    chance 12
+    chance 8
   no
      list random_tools
        material_quality 80
        material_range 3
-       chance 13
+       chance 5
+       difficulty 3
+    end
+   end
+end
+treasure mob_fire
+ t_style 1
+ list traps
+   chance 10
+ more
+ list default_wealth
+   chance 60
+ more
+ list default_drop
+   chance 15
+ no
+  list random_equipment
+    material_quality 80
+    artifact_chance 25
+    material_range 4
+    chance 8
+  no
+     list random_tools
+       material_quality 80
+       material_range 4
+       chance 5
+       difficulty 3
+    end
+   end
+end
+treasure mob_ice
+ t_style 2
+ list traps
+   chance 10
+ more
+ list default_wealth
+   chance 60
+ more
+ list default_drop
+   chance 15
+ no
+  list random_equipment
+    material_quality 80
+    artifact_chance 25
+    material_range 4
+    chance 8
+  no
+     list random_tools
+       material_quality 80
+       material_range 4
+       chance 5
        difficulty 3
     end
    end
@@ -2142,7 +2172,7 @@ treasure random_testx
 # material_quality 90
 # material_range 3
 end
-treasure random_test
+treasure random_test3
 #    arch small_shield
 #    material_quality 85
 #    material_range 2
@@ -2174,4 +2204,30 @@ list traps
     chance 90
     name small ant shield
 
+end
+treasure random_test
+ t_style 1
+ list traps
+   chance 10
+ more
+ list default_wealth
+   chance 60
+ more
+ list default_drop
+   chance 15
+ no
+  list random_equipment
+    artifact_chance 25
+    material_quality 80
+    material_range 4
+    chance 8
+  no
+     list random_tools
+      artifact_chance 25
+       material_quality 80
+       material_range 4
+       chance 5
+       difficulty 3
+    end
+   end
 end

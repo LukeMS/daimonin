@@ -11,7 +11,7 @@ container 350000
 identified 1
 weight 120000
 no_pick 1
-food 25
+food 40
 speed 0.01
 is_used_up 1
 invulnerable 1
