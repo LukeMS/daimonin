@@ -292,12 +292,14 @@ struct mob_behaviourset * generate_behaviourset(object *op)
     else
     {
         last = set->behaviours[BEHAVIOURCLASS_MOVES] = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_SLEEP);
+		
         if (op->run_away)
         {
             last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_RUN_AWAY_FROM_ENEMY);
             last->parameters[AIPARAM_RUN_AWAY_FROM_ENEMY_HP_THRESHOLD].intvalue = op->run_away;   
             last->parameters[AIPARAM_RUN_AWAY_FROM_ENEMY_HP_THRESHOLD].flags |= AI_PARAM_PRESENT;
         }
+		
         if (!QUERY_FLAG(op, FLAG_NO_ATTACK))
         {
             if (QUERY_FLAG(op, FLAG_CAST_SPELL) || QUERY_FLAG(op, FLAG_READY_BOW))
@@ -710,8 +712,12 @@ struct mob_behaviourset * setup_behaviours(object *op)
  */
 int mob_can_see_obj(object *op, object *obj, struct mob_known_obj *known_obj)
 {
-    static int  aggro_range, stealth_range;
-    static int  cached_count    = 0;
+    int  aggro_range, stealth_range;
+
+	/* Cache values */
+	static tag_t cached_op_tag, cached_obj_tag;
+	static uint32 cache_time;
+	static int cached_result;
 
     rv_vector   rv, *rv_p = NULL;
 
@@ -719,41 +725,50 @@ int mob_can_see_obj(object *op, object *obj, struct mob_known_obj *known_obj)
     if (known_obj && known_obj->last_seen == ROUND_TAG)
         return TRUE;
 
+	/* Try using cache */
+	if (cached_op_tag == op->count && cached_obj_tag == obj->count &&
+					cache_time == ROUND_TAG)
+		return cached_result;
+	
+	/* Invisibility */
     if (QUERY_FLAG(obj, FLAG_IS_INVISIBLE) && !QUERY_FLAG(op, FLAG_SEE_INVISIBLE))
         return FALSE;
 
-    /* Avoid recalculating these values multiple times */
-    if (cached_count != (int) op->count)
-    {
-        aggro_range = op->stats.Wis; /* wis is basic sensing range */
+    aggro_range = op->stats.Wis; /* wis is basic sensing range */
 
-        /* Extra range to alerted monsters */
-        if (op->enemy)
-            aggro_range += 3;
+    /* Extra range to alerted monsters */
+    if (op->enemy) {
+        aggro_range += 3;
+		if (op->enemy == obj)
+			aggro_range += 3;
+	}
 
-        /* Much less range if asleep or blind */
-        if (QUERY_FLAG(op, FLAG_SLEEP) || QUERY_FLAG(op, FLAG_BLIND))
-            aggro_range /= 2;
+    /* Much less range if asleep or blind */
+    if (QUERY_FLAG(op, FLAG_SLEEP) || QUERY_FLAG(op, FLAG_BLIND))
+        aggro_range /= 2;
 
-        /* Alternative sensing range for stealthy targets */
-        stealth_range = MAX(MIN_MON_RADIUS, aggro_range - 2);
-        cached_count = op->count;
-    }
+    /* Alternative sensing range for stealthy targets */
+    stealth_range = MAX(MIN_MON_RADIUS, aggro_range - 2);
 
     /* Get the rangevector, trying to use a cached version first */
     if (known_obj)
         rv_p = get_known_obj_rv(op, known_obj, MAX_KNOWN_OBJ_RV_AGE);
     else if (get_rangevector(op, obj, &rv, 0))
         rv_p = &rv;
+	
     if (rv_p == NULL)
-        return FALSE;
+		cached_result = FALSE;
+	else if ((int) rv_p->distance > (QUERY_FLAG(obj, FLAG_STEALTH) ? stealth_range : aggro_range))
+        cached_result = FALSE;
+	else
+		cached_result = TRUE;
 
-    /* Check detection distance */
-    if ((int) rv_p->distance > (QUERY_FLAG(obj, FLAG_STEALTH) ? stealth_range : aggro_range))
-        return FALSE;
+	cached_op_tag = op->count;
+	cached_obj_tag = obj->count;
+	cache_time = ROUND_TAG;
 
     /* TODO also test darkness, stealth detection, LOS etc */
-    return TRUE;
+    return cached_result;
 }
 
 /* TODO: these two new functions are already obsolete and should be replaced 
@@ -885,6 +900,7 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
 {
     struct mob_known_obj   *tmp;
     struct mob_known_obj   *last    = NULL;
+	int i;
 
     if (npc == NULL)
     {
@@ -985,6 +1001,9 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
     tmp->attraction = 0;
     tmp->tmp_friendship = 0;
     tmp->tmp_attraction = 0;
+	
+	for(i=0; i<=NROF_AI_KNOWN_OBJ_FLAGS/32; i++)
+	    tmp->flags[i] = 0;
 
     /* Insert last in list of known objects */
     if (last)
@@ -1219,15 +1238,15 @@ void ai_step_back_after_swing(object *op, struct mob_behaviour_param *params, mo
 
 void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_response *response)
 {
-    /* TODO: not correct for multi-tile mobs, the in_line_of_fire() functions simply don't
-     * work for them. Possible solutions: 1) disable for multi-tile mobs (what do big monsters care
-     * about puny missiles, anyway?  2) fix the line-of-fire functions (can be very expensive) */
-	/* Disabled for multi-tile mobs */
-	if(op->more)
-		return;
-	
     if (OBJECT_VALID(op->enemy, op->enemy_count))
     {
+    	/* TODO: not correct for multi-tile mobs, the in_line_of_fire() functions simply don't
+	     * work for them. Possible solutions: 1) disable for multi-tile mobs (what do big monsters care
+    	 * about puny missiles, anyway?  2) fix the line-of-fire functions (can be very expensive) */
+		/* Disabled for multi-tile mobs */
+		if(op->more)
+			return;
+			
         /* TODO: mobs will not approach enemy through narrow corridors, as they can't 
          * avoid missiles there. It also means they can get stuck in the middle of a corridor as
          * a sitting duck for any distance attacks. Possible fixes: 1) only activate if the enemy if 
@@ -1269,21 +1288,28 @@ void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_
 		if(mob_can_see_obj(op, op->enemy, MOB_DATA(op)->enemy))
 		{
         	rv_vector  *rv  = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE);
+		
         	if (rv->distance > 2 && rv->distance < 8)        
 	        {
-    	        mapstruct *m;
-        	    int x = op->x + freearr_x[rv->direction];
-            	int y = op->y + freearr_y[rv->direction];
-            
-	            /* Avoid moving into line of fire */
-    	        if ((m = out_of_map(op->map, &x, &y))) {
-        	        if(mapcoord_in_line_of_fire(op->enemy, m, x, y, 1))
-            	        response->forbidden |= (1 << rv->direction);
-	            }
+				int i;
 
-    	        /* Avoid staying in line of fire */
-        	    if(can_hit_missile(op->enemy, op, rv, 1))
-            	    response->forbidden |= (1 << 0);
+   	        	/* Avoid staying in line of fire */
+    	    	if(can_hit_missile(op->enemy, op, rv, 1))
+   	    	    	response->forbidden |= (1 << 0);
+
+				for(i=-3; i<=3; i++) {
+	    	        mapstruct *m;
+					int d = absdir(rv->direction + i);
+    	    	    int x = op->x + freearr_x[d];
+	            	int y = op->y + freearr_y[d];
+            
+	    	        /* Avoid moving into line of fire */
+    	    	    if ((m = out_of_map(op->map, &x, &y))) 
+					{
+        	    	    if(mapcoord_in_line_of_fire(op->enemy, m, x, y, 1))
+            	    	    response->forbidden |= (1 << d);
+		            }
+				}
 	        }
 		}
     }
@@ -1314,12 +1340,9 @@ void ai_optimize_line_of_fire(object *op, struct mob_behaviour_param *params, mo
             
             /* Already perfect? */
             if(can_hit_missile(op, op->enemy, rv, 1)) 
-            {
                 good_directions = (1 << 0);
-            } else {
+            else 
                 response->forbidden |= (1 << 0); /* Don't stay in a bad spot */
-                response->data.directions = 0;
-            }
             
             /* Find a nearby good spot */
             /* TODO: can probably be calculated instead of searched for */
