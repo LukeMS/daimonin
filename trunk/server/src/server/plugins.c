@@ -1260,12 +1260,13 @@ CFParm * CFWGetFirstArchetype(CFParm *PParm)
 
 CFParm * CFWDeposit(CFParm *PParm)
 {
-    static CFParm                       CFP;
-    static int                          val;
-    int                                 pos     = 0;
-    char                               *text    = (char *) (PParm->Value[2]);
-    object*who = (object*) (PParm->     Value[0]), *bank = (object *) (PParm->Value[1]);
-    _money_block                        money;
+    static CFParm		CFP;
+    static int			val;
+    int					pos     = 0;
+    char			   *text    = (char *) (PParm->Value[2]);
+    object			   *who = (object*) (PParm->Value[0]),
+					   *bank = (object *) (PParm->Value[1]);
+    _money_block        money;
 
     val = 0;
     get_word_from_string(text, &pos);
@@ -1941,6 +1942,23 @@ CFParm * CFMapDelete(CFParm *PParm)
     else /* just swap it out */
         free_map(map, 1);
 
+    return NULL;
+}
+
+CFParm * CFInterface(CFParm *PParm)
+{
+    object			   *who		= (object*) (PParm->Value[0]);
+    int					mode	= *(int *) (PParm->Value[1]);
+    char			   *text    = (char *) (PParm->Value[2]);
+	
+	SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_INTERFACE);
+
+	SockList_AddChar(&global_sl, (char)mode);
+		
+    strcpy(global_sl.buf+global_sl.len, text);
+    global_sl.len += strlen(text)+1;
+
+	Send_With_Handling(&CONTR(who)->socket, &global_sl);
     return NULL;
 }
 

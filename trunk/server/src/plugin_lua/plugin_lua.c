@@ -888,6 +888,7 @@ MODULEAPI CFParm * triggerEvent(CFParm *PParm)
         case EVENT_DROP:
         case EVENT_PICKUP:
         case EVENT_SAY:
+        case EVENT_TALK:
         case EVENT_STOP:
         case EVENT_TELL:
         case EVENT_TIME:
