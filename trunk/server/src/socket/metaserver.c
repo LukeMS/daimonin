@@ -106,25 +106,25 @@ void metaserver_init()
         if (hostbn == (struct hostent *) NULL)
         {
 #else
-            if (getdomainname(domain, MAX_BUF - 1))
-            {
+        if (getdomainname(domain, MAX_BUF - 1))
+        {
 #endif /* win32 */
-                LOG(llevDebug, "metaserver_init: getdomainname failed - will not report hostname\n");
+            LOG(llevDebug, "metaserver_init: getdomainname failed - will not report hostname\n");
                 return;
-            }
-            /* Potential overrun here but unlikely to occur */
-            sprintf(settings.meta_host, "%s.%s", hostname, domain);
         }
-
-        if (metafd != -1)
-            LOG(llevInfo, "metaserver_init: Connected to %s. Done.\n", settings.meta_server);
-        metaserver_update();
+        /* Potential overrun here but unlikely to occur */
+        sprintf(settings.meta_host, "%s.%s", hostname, domain);
     }
 
+    if (metafd != -1)
+        LOG(llevInfo, "metaserver_init: Connected to %s. Done.\n", settings.meta_server);
+    metaserver_update();
+}
 
-    void    metaserver_update   ()
-    {
-        char data[MAX_BUF], num_players = 0;
+
+void    metaserver_update   ()
+{
+    char data[MAX_BUF];
 
     if (metafd == -1)
         return; /* No valid connection */
