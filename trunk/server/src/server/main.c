@@ -390,7 +390,9 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y, int pos_flag)
 		if (oldmap != newmap && oldmap && !oldmap->player_first && !oldmap->perm_load)
 			set_map_timeout(oldmap);
 
+#ifdef MAX_OBJECTS_LWM
 		swap_below_max (newmap->path);
+#endif
         MapNewmapCmd( op->contr);
 	}
 }

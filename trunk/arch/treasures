@@ -1970,7 +1970,7 @@ treasure mob_giant_stone
  list random_armour
    material_quality 80
    material_range 3
-   chance_fix 42
+   chance_fix 32
  no
    list random_weapon
      material_quality 80
@@ -2190,7 +2190,7 @@ treasure mob_ettin
    list random_weapon
      material_quality 80
      material_range 3
-     chance_fix 48
+     chance_fix 38
  no
    list random_mtools
      chance_fix 182
@@ -2658,12 +2658,12 @@ treasure mob_orc
  list random_armour
    material_quality 80
    material_range 3
-   chance_fix 42
+   chance_fix 38
  no
    list random_weapon
      material_quality 80
      material_range 3
-     chance_fix 48
+     chance_fix 38
  no
    list random_mtools
      chance_fix 182
@@ -2878,7 +2878,7 @@ treasure mob_drow
    list random_weapon
      material_quality 80
      material_range 3
-     chance_fix 48
+     chance_fix 38
  no
    list random_mtools
      chance_fix 82

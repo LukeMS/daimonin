@@ -1015,7 +1015,23 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 							if(op->map != tmp->owner->map && head->map != tmp->owner->map)
 							{
 								/* free spot avaible for our friend here? */
-								t=find_free_spot(head->arch,tmp->owner->map,tmp->owner->x,tmp->owner->y,0,tmp->owner->last_heal);
+
+								/* i had to disable this because this can have a bad bad
+								 * side effect i never thought about... Iam not sure is fixable
+								 * but i leave the orignal code here.
+								 * This is btw the only bug appearing upgrade to beta 3 - it seems to need
+							     * some special map layout to appear.
+								 * The point is this: when we swap out a map, this find_free_spot()
+								 * can trigger out_of_map() and then the complete swap_in() map
+								 * load stuff - but we are here just swaping this map. This really
+								 * kills the server because its filling the map struct we have just
+								 * half cleared here...
+								 * Well, except the random treasure this function still lets reapear the
+								 * spawn mob in the right way.... MT-2004.
+								 */
+								/*t=find_free_spot(head->arch,tmp->owner->map,
+										tmp->owner->x,tmp->owner->y,0,tmp->owner->last_heal);*/
+								t=-1;
 								if (t==-1) /* no place.. but we are fair, give them another chance to reappear */
 								{
 									tmp->owner->stats.sp = tmp->owner->last_sp; /* force a pre spawn setting */
@@ -1395,16 +1411,7 @@ static int load_map_header(FILE *fp, mapstruct *m)
 	    } else {
 		*end = 0;
 		if (m->tile_path[tile-1]) {
-			/* For some odd reason, this error message triggered on a test run as i
-			 * added some maps. The important point is, that the logs showed that the
-			 * map was saved AND IN THE NEXT LINE the temp map was reloaded. That triggered
-			 * this error message. It never happend before and the save/load stuff seems 
-			 * ok - tile_path SHOULD be NULL after a map swap... Because this is not a serious
-			 * bug i changed it from ERROR to BUG - i need more info about it.
-			 * Report, when you encountered this too. MT-2004
-			 */
-			/*LOG(llevError,"ERROR: load_map_header: tile location %d duplicated (%s <-> %s)\n",tile, m->path, m->tile_path[tile-1]);*/				
-			LOG(llevBug,"BUG: REPORT this! -> load_map_header: tile location %d duplicated (%s <-> %s)\n",tile, m->path, m->tile_path[tile-1]);
+			LOG(llevError,"ERROR: load_map_header: tile location %d duplicated (%s <-> %s)\n",tile, m->path, m->tile_path[tile-1]);
 			FREE_AND_CLEAR_HASH(m->tile_path[tile-1]);
 		}
                 
