@@ -4041,31 +4041,31 @@ treasure random_test
  list random_armour
    material_quality 80
    material_range 3
-   chance_fix 62
+   chance_fix 162
  no
    list random_weapon
      material_quality 80
      material_range 3
-     chance_fix 38
+     chance_fix 138
  no
    list random_mtools
-     chance_fix 182
+     chance_fix 62
  no
    list random_talisman
-     chance_fix 366
+     chance_fix 69
   end
   end
   end
  more
  list random_scroll
-   chance_fix 55
+   chance_fix 40
  no
    list random_potion
-     chance_fix 55
+     chance_fix 40
  no
    arch potion_improve
      difficulty 6
-     chance_fix 199
+     chance_fix 101
   end
   end
 end
