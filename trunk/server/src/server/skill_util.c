@@ -301,11 +301,17 @@ int calc_skill_exp(object *who, object *op)
     if(op_lvl<1 || op_exp<1)
 		return 0; /* no exp for no level and no exp ;) */
 
+	if(who_lvl<2)
+		max_mul=0.85f;
 	if(who_lvl<3)
-		max_mul=0.5f;
+		max_mul=0.7f;
+	else if(who_lvl<4)
+		max_mul=0.6f;
 	else if(who_lvl<5)
-		max_mul=0.4f;
-	else if(who_lvl<6)
+		max_mul=0.45f;
+	else if(who_lvl<7)
+		max_mul=0.35f;
+	else if(who_lvl<8)
 		max_mul=0.3f;
 	else
 		max_mul=0.25f;
@@ -350,6 +356,7 @@ int calc_skill_exp(object *who, object *op)
 */
 	LOG(llevDebug,"\nEXP:: %s (lvl %d(%d)) gets %d exp in %s from %s (lvl %d)(%x - %d) (max:%f)\n", query_name(who), who_lvl, who->level, op_exp,
 		who->chosen_skill?query_name(who->chosen_skill):"<BUG: NO SKILL!>",query_name(op), op_lvl, op, op->count,tmp);
+
 	/* old code. I skipped skill[].lexp and bexp - perhaps later back in
 	if(who->chosen_skill==NULL)
 	{
