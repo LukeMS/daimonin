@@ -1159,6 +1159,9 @@ static int calc_direction_towards(object *op, object *target, mapstruct *map, in
     mapstruct *path_map;
     rv_vector target_rv, segment_rv;
 
+	target_rv.direction = -54321;
+	segment_rv.direction = -654321;
+
     pf = MOB_PATHDATA(op);
     
     if(map == NULL) {
