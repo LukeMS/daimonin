@@ -1128,7 +1128,9 @@ int kill_object(object *op,int dam, object *hitter, int type)
 		}
 	    else
             LOG(llevBug, "BUG: hit_player(): Encountered golem (%s - %s) without owner.\n",query_name(op), op->arch->name);
-	    remove_ob(op);
+		op->speed = 0;
+		update_ob_speed (op);
+		remove_ob(op);
 	    return maxdam;
 	}
 
@@ -1272,7 +1274,9 @@ int kill_object(object *op,int dam, object *hitter, int type)
 		}
                 remove_friendly_object(op);
 	    }
-	    remove_ob(op);
+		op->speed = 0;
+		update_ob_speed (op); /* remove from active list (if on) */
+		remove_ob(op);
 
 
 		/* rules: 

@@ -2695,6 +2695,7 @@ int count_used() {
 }
 #endif
 
+
 /* remove_ob(op):
  *   This function removes the object op from the linked list of objects
  *   which it is currently tied to.  When this function is done, the
@@ -2887,6 +2888,21 @@ void remove_ob(object *op) {
     op->env = NULL;
 }
 
+/* delete and remove recursive the inventory of an object.
+ */
+void remove_ob_inv(object *op)
+{
+	object *tmp, *tmp2;
+
+	for(tmp=op->inv;tmp;tmp=tmp2)
+	{
+		tmp2=tmp->below; /* save ptr, gets NULL in remove_ob */
+		if(tmp->inv)
+			remove_ob_inv(tmp);
+		remove_ob(tmp);			
+	}
+}
+	 
 
 /*
  * insert_ob_in_map (op, map, originator, flag):

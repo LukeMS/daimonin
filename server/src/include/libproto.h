@@ -258,6 +258,7 @@ extern int count_free(void);
 extern int count_used(void);
 extern void sub_weight(object *op, sint32 weight);
 extern void remove_ob(object *op);
+extern void remove_ob_inv(object *op);
 extern object *insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag);
 extern void replace_insert_ob_in_map(char *arch_string, object *op);
 extern object *get_split_ob(object *orig_ob, int nr);
