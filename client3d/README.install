@@ -10,7 +10,7 @@ and basic models.
 
 INSTALL WINDOWS
 ---------------
-1.) Unzip client3d/make/win32/ogre_debug_dll.zip to client3d/.
+1.) Unzip client3d/make/win32/dll_debug.zip to client3d/.
 2.) Copy the whole srv_files directory from the 2d client to client3d/.
 3.) Copy the daimonin.p0 from the 2d client to client3d/.
 4.) Install the STLport 4.6.2 from 
