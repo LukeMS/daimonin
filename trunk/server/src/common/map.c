@@ -1016,7 +1016,7 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 										 */
 				if(head->type == PLAYER) /* ok, we will *never* save maps with player on */ 
 				{
-					LOG(llevBug, "BUG: Tried to save map with player on!(%s (%s))\n", query_name(head), m->path);
+					LOG(llevDebug, "SemiBUG: Tried to save map with player on!(%s (%s))\n", query_name(head), m->path);
 					continue;
 				}
 
