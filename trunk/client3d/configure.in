@@ -30,8 +30,8 @@ AC_SUBST(OGRE_CFLAGS)
 AC_SUBST(OGRE_LIBS)
 
 # Find fmod stuff
-AC_SUBST(FMOD_CFLAGS, "-I/home/gecko/src/fmodapi374linux/api/inc")
-AC_SUBST(FMOD_LIBS, "-L/home/gecko/src/fmodapi374linux/api -lfmod-3.74")
+AC_SUBST(FMOD_CFLAGS, "-Iinclude/fmod")
+AC_SUBST(FMOD_LIBS, "-L../make/linux -lfmod-3.74")
 
 AC_PATH_PROG(DEPEND, makedepend)
 AC_PATH_PROG(CP,cp)
@@ -50,4 +50,4 @@ else
 fi
 
 #AC_CONFIG_HEADER(../../src/include/define.h)
-AC_OUTPUT(Makefile source/Makefile source/include/Makefile)
+AC_OUTPUT(Makefile source/Makefile source/include/Makefile source/include/fmod/Makefile)
