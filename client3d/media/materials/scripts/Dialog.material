@@ -45,3 +45,38 @@ material dialog_text_input
      }
    }
 }
+
+material dialog_back_select
+{
+   technique
+   {
+     pass
+     {
+         ambient 0.5 0.5 0.5
+         texture_unit
+         {
+               // scale 2.0 2.0
+               texture dialog_bg_sel.png
+          }
+     }
+   }
+}
+
+material dialog_select
+{
+   technique
+   {
+     pass
+     {
+         ambient 0.5 0.5 0.5
+         scene_blend alpha_blend
+         depth_check off
+         texture_unit
+         {
+               // scale 2.0 2.0
+               texture dialog_select.png
+          }
+     }
+   }
+}
+
