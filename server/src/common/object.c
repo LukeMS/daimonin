@@ -1108,28 +1108,77 @@ object *merge_ob(object *op, object *top) {
  * an object is carrying.  It goes through in figures out how much
  * containers are carrying, and sums it up.
  */
-signed long sum_weight(object *op) {
-  signed long sum;
-  object *inv;
-  for(sum = 0, inv = op->inv; inv != NULL; inv = inv->below) {
-    if (inv->inv)
-	sum_weight(inv);
-    sum += inv->carrying + (inv->nrof ? inv->weight * inv->nrof : inv->weight);
-  }
-  if (op->type == CONTAINER && op->stats.Str)
-    sum = (sum * (100 - op->stats.Str))/100;
-  if(op->carrying != sum)
-    op->carrying = sum;
-  return sum;
+signed long sum_weight(object *op) 
+{
+	sint32 sum;
+	object *inv;
+
+	for(sum = 0, inv = op->inv; inv != NULL; inv = inv->below)
+	{
+		if (inv->inv)
+			sum_weight(inv);
+		sum += inv->carrying + (inv->nrof ? inv->weight * inv->nrof : inv->weight);
+	}
+
+	/* because we avoid calculating for EVERY item in the loop above
+	 * the weight adjustment for magic containers, we can run here in some
+	 * rounding problems... in the worst case, we can remove a item from the
+	 * container but we are not able to put it back because rounding.
+	 * well, a small prize for saving *alot* of muls in player houses for example.
+	 */
+	if (op->type == CONTAINER && op->weapon_speed != 1.0f)
+		sum = (sint32) ((float)sum * op->weapon_speed);
+
+	op->carrying = sum;
+
+	return sum;
 }
 
+/*
+ * add_weight(object, weight) adds the specified weight to an object,
+ * and also updates how much the environment(s) is/are carrying.
+ */
+
+void add_weight (object *op, sint32 weight) 
+{
+
+	while (op!=NULL)
+	{
+		/* only *one* time magic can effect the weight of objects */
+		if (op->type == CONTAINER && op->weapon_speed != 1.0f)
+			weight = (sint32) ((float)weight * op->weapon_speed);
+	    op->carrying+=weight;
+		op=op->env;
+	}
+}
+
+/*
+ * sub_weight() recursively (outwards) subtracts a number from the
+ * weight of an object (and what is carried by it's environment(s)).
+ */
+void sub_weight (object *op, sint32 weight) 
+{
+	while (op != NULL) 
+	{
+		/* only *one* time magic can effect the weight of objects */
+		if (op->type == CONTAINER && op->weapon_speed != 1.0f)
+			weight = (sint32) ((float)weight * op->weapon_speed);
+		op->carrying-=weight;
+		op = op->env;
+  }
+}
 
 /*
  * Eneq(@csd.uu.se): Since we can have items buried in a character we need
  * a better check.  We basically keeping traversing up until we can't
  * or find a player.
  */
-
+/* this function was wrong used in the past. Its only senseful for fix_player() - for
+ * example we remove a active force from a player which was inserted in a special
+ * force container (for example a exp object). For inventory views, we DON'T need
+ * to update the item then! the player only sees his main inventory and *one* container.
+ * is this object in a closed container, the player will never notice any change.
+ */
 object *is_player_inv (object *op) { 
     for (;op!=NULL&&op->type!=PLAYER; op=op->env)
       if (op->env==op)
@@ -2117,20 +2166,6 @@ int count_active() {
   return i;
 }
 
-/*
- * sub_weight() recursively (outwards) subtracts a number from the
- * weight of an object (and what is carried by it's environment(s)).
- */
-
-void sub_weight (object *op, signed long weight) {
-  while (op != NULL) {
-    if (op->type == CONTAINER) {
-      weight=(signed long)(weight*(100-op->stats.Str)/100);
-    }
-    op->carrying-=weight;
-    op = op->env;
-  }
-}
 
 /* remove_ob(op):
  *   This function removes the object op from the linked list of objects
@@ -2142,7 +2177,6 @@ void sub_weight (object *op, signed long weight) {
  *   FLAG_NO_FIX_PLAYER to thje player first and call fix_player()
  *   explicit then.
  */
-
 void remove_ob(object *op) {
 	MapSpace *msp;
     object *tmp,*last=NULL;
@@ -2170,9 +2204,7 @@ void remove_ob(object *op) {
      */
     if(op->env!=NULL)
 	{
-		/* iam not sure this works like it should with magic containers!
-		 * we should test here sum_weight(op->env) instead! MT 06.02.04
-		 */
+
 		if(op->nrof)
 			sub_weight(op->env, op->weight*op->nrof);
 		else
@@ -2796,21 +2828,6 @@ object *decrease_ob_nr (object *op, int i)
 }
 
 /*
- * add_weight(object, weight) adds the specified weight to an object,
- * and also updates how much the environment(s) is/are carrying.
- */
-
-void add_weight (object *op, signed long weight) {
-  while (op!=NULL) {
-    if (op->type == CONTAINER) {
-      weight=(signed long)(weight*(100-op->stats.Str)/100);
-    }
-    op->carrying+=weight;
-    op=op->env;
-  }
-}
-
-/*
  * insert_ob_in_ob(op,environment):
  *   This function inserts the object op in the linked list
  *   inside the object environment.
@@ -2864,7 +2881,7 @@ object *insert_ob_in_ob(object *op,object *where) {
 	break;
       }
 
-    /* I assume combined objects have no inventory
+    /* I assume stackable objects have no inventory
      * We add the weight - this object could have just been removed
      * (if it was possible to merge).  calling remove_ob will subtract
      * the weight, so we need to add it in again, since we actually do

@@ -23,12 +23,29 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 
-#define ARCH_CACHE_SIZE 20
+/*
+ * The archetype structure is a set of rules on how to generate and manipulate
+ * objects which point to archetypes.
+ * This probably belongs in arch.h, but there really doesn't appear to
+ * be much left in the archetype - all it really is is a holder for the
+ * object and pointers.  This structure should get removed, and just replaced
+ * by the object structure
+ */
+typedef struct archt {
+    const char *name;			/* More definite name, like "generate_kobold" */
+    struct archt *next;			/* Next archetype in a linked list */
+    struct archt *head;			/* The main part of a linked object */
+    struct archt *more;			/* Next part of a linked object */
+	object *base_clone;	        /* used by artifacts list: if != NULL,
+								 * this object is the base object and clone is
+								 * the modified artifacts object.
+								 * we use base_clone for unidentified objects 
+								 * (to get unified "non identified" values),
+								 * or it is used to get a base object when we
+								 * remove the artifacts changes (cancellation, dispel...)
+								 */
+    object		 clone;			/* An object from which to do copy_object() */
+} archetype;
 
-typedef struct arch_recent_struct {
-  const char *name; /* Don't use add_ref or similar functions on this (WHAT? See holy.c:244) */
-  archetype *arch;
-} arch_recent;
+EXTERN archetype *first_archetype;
 
-arch_recent arch_cache[ARCH_CACHE_SIZE];
-int last_arch_cache=0;

@@ -112,11 +112,12 @@ void read_map_log()
 void swap_map(mapstruct *map) 
 {
 	int i;
+/*
 #ifdef PLUGINS
     int evtid;
     CFParm CFP;
 #endif
-
+*/
     LOG(llevDebug,"Check map for swapping: %s. (players:%d)\n", map->path,players_on_map(map) );
 
 	/* lets check some legal things... */
@@ -131,10 +132,10 @@ void swap_map(mapstruct *map)
 
     for(i=0; i<TILED_MAPS; i++) 
 	{
-		/* if there is a map, is load AND in memory and players on OR perm_load, then... */
-//        if (map->tile_map[i] && map->tile_map[i]->in_memory==MAP_IN_MEMORY && 
-//							(map->tile_map[i]->player_first || map->tile_map[i]->perm_load))
-//			return; /* no swap */
+		/* if there is a map, is load AND in memory and players on OR perm_load flag set, then... */
+		if (map->tile_map[i] && map->tile_map[i]->in_memory==MAP_IN_MEMORY && 
+							(map->tile_map[i]->player_first || map->tile_map[i]->perm_load))
+			return; /* no swap */
 	}
 
 	/* when we are here, map is save to swap! */
@@ -152,13 +153,23 @@ void swap_map(mapstruct *map)
 		mapstruct *oldmap = map;
 
 		LOG(llevDebug,"Resetting map %s.\n",map->path);
+
+/* GROS : Here we handle the MAPRESET global event */
+/* I really dislike the idea to call for critical engine part
+ * always the plugin system.
+ * we should add a map flag - if set, we do a MAPRESET event
+ * if we want add something like a logger, we can easily add
+ * some internal counters - thats work of 10 minutes and 10 times
+ * faster. MT-2004
+ */
+/*
 #ifdef PLUGINS
-		/* GROS : Here we handle the MAPRESET global event */
 		evtid = EVENT_MAPRESET;
 		CFP.Value[0] = (void *)(&evtid);
 		CFP.Value[1] = (void *)(map->path);
 		GlobalEvent(&CFP);
 #endif
+*/
 		map = map->next;
 		delete_map(oldmap);
 		return;
@@ -180,20 +191,22 @@ void swap_map(mapstruct *map)
 #endif
 }
 
-void check_active_maps() {
+void check_active_maps() 
+{
     mapstruct *map, *next;
 
-    for(map=first_map;map!=NULL;map=next) {
-	next = map->next;
-	if(map->in_memory != MAP_IN_MEMORY)
-	    continue;
-	if(!map->timeout)
-	    continue;
-	if( --(map->timeout) > 0)
-	    continue;
-	/* If LWM is set, we only swap maps out when we run out of objects */
+    for(map=first_map;map!=NULL;map=next) 
+	{
+		next = map->next;
+		if(map->in_memory != MAP_IN_MEMORY)
+			continue;
+		if(!map->timeout)
+			continue;
+		if( --(map->timeout) > 0)
+			continue;
+/* If LWM is set, we only swap maps out when we run out of objects */
 #ifndef MAX_OBJECTS_LWM
-	swap_map(map);
+		swap_map(map);
 #endif
     }
 }
@@ -202,13 +215,16 @@ void check_active_maps() {
  * map_least_timeout() returns the map with the lowest timeout variable (not 0)
  */
 
-mapstruct *map_least_timeout(const char *except_level) {
-  mapstruct *map, *chosen=NULL;
-  int timeout = MAP_MAXTIMEOUT + 1;
-  for(map = first_map;map != NULL; map = map->next)
-    if(map->in_memory == MAP_IN_MEMORY && strcmp (map->path, except_level) &&
-       map->timeout && map->timeout < timeout)
-	chosen = map, timeout = map->timeout;
+mapstruct *map_least_timeout(const char *except_level) 
+{
+	mapstruct *map, *chosen=NULL;
+	int timeout = MAP_MAXTIMEOUT + 1;
+	for(map = first_map;map != NULL; map = map->next)
+	{
+		if(	map->in_memory == MAP_IN_MEMORY && 
+						strcmp (map->path, except_level) && map->timeout && map->timeout < timeout)
+			chosen = map, timeout = map->timeout;
+	}
   return chosen;
 }
 
@@ -262,10 +278,12 @@ void flush_old_maps() {
 
     mapstruct *m, *oldmap;
     long sec;
+/*
 #ifdef PLUGINS
     int evtid;
     CFParm CFP;
 #endif
+*/
     sec = seconds();
 
     m= first_map;
@@ -299,13 +317,16 @@ void flush_old_maps() {
 	}
 	else {
 	    LOG(llevDebug,"Resetting map %s.\n",m->path);
+	    
+/* GROS : Here we handle the MAPRESET global event */
+/*
 #ifdef PLUGINS
-	    /* GROS : Here we handle the MAPRESET global event */
 	    evtid = EVENT_MAPRESET;
 	    CFP.Value[0] = (void *)(&evtid);
 	    CFP.Value[1] = (void *)(m->path);
 	    GlobalEvent(&CFP);
 #endif    
+*/
 	clean_tmp_map(m);
 	oldmap = m;
 	m = m->next;

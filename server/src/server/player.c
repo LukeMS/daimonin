@@ -255,7 +255,7 @@ static void set_first_map(object *op)
     op->x = -1;
     op->y = -1;
 
-	if(!strcmp(first_map_path, "/tutorial"))
+	if(!strcmp(first_map_path, "/tutorialx"))
 	{
 		current=get_object();
 	    FREE_AND_COPY_HASH(EXIT_PATH(current),first_map_path);
@@ -2412,13 +2412,6 @@ void fix_weight() {
     esrv_update_item(UPD_WEIGHT, pl->ob, pl->ob);
     /*LOG(llevDebug,"Fixed inventory in %s (%d -> %d)\n",query_name(pl->ob), old, sum);*/
   }
-}
-
-void fix_luck() {
-  player *pl;
-  for (pl = first_player; pl != NULL; pl = pl->next)
-    if (!pl->ob->contr->state)
-      change_luck(pl->ob, 0);
 }
 
 

@@ -9,7 +9,7 @@ material 18
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object desk1.171
 name desk
@@ -22,5 +22,5 @@ material 18
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end

@@ -480,13 +480,14 @@ void sell_item(object *op, object *pl) {
 	*/
     return;
   }
+  /* i can't say i understand this... MT-2004 */
   for (count=0; coins[count]!=NULL; count++) {
       at = find_archetype(coins[count]);
       if (at==NULL) LOG(llevBug, "BUG: Could not find %s archetype", coins[count]);
       else if ((i/at->clone.value) > 0) {
 	  for ( pouch=pl->inv ; pouch ; pouch=pouch->below ) {
 	      if ( pouch->type==CONTAINER && QUERY_FLAG(pouch, FLAG_APPLIED) && pouch->race && strstr(pouch->race, "gold") ) {
-		  int w = at->clone.weight * (100-pouch->stats.Str)/100;
+		  int w = (int)((float)at->clone.weight * pouch->weapon_speed);
 		  int n = i/at->clone.value;
 
 		  if (w==0) w=1;    /* Prevent divide by zero */

@@ -3528,6 +3528,9 @@ void apply_player_light(object *who, object *op)
 		if(QUERY_FLAG(op, FLAG_PERM_DAMNED))
 			SET_FLAG(op, FLAG_DAMNED);
         new_draw_info_format(NDI_UNIQUE, 0, who, "You unlight the %s.", query_name(op));
+
+		if(!op->env && op->glow_radius)
+			adjust_light_source(op->map, op->x, op->y, -(op->glow_radius));
         op->glow_radius=0;
         CLEAR_FLAG(op, FLAG_APPLIED);
         CLEAR_FLAG(op,FLAG_CHANGING);
@@ -3597,6 +3600,9 @@ void apply_player_light(object *who, object *op)
             new_draw_info_format(NDI_UNIQUE, 0, who,
                 "You prepare %s to light.", query_name(op));
             op->glow_radius = (sint8) op->last_sp;
+			if(!op->env && op->glow_radius)
+				adjust_light_source(op->map, op->x, op->y, op->glow_radius);
+
             if(op->last_eat) /* we have a non permanent source */
                 SET_FLAG(op,FLAG_CHANGING);
             SET_FLAG(op,FLAG_ANIMATE);
@@ -3624,6 +3630,8 @@ void apply_player_light(object *who, object *op)
 					if(QUERY_FLAG(tmp, FLAG_PERM_DAMNED))
 						SET_FLAG(tmp, FLAG_DAMNED);
                     new_draw_info_format(NDI_UNIQUE, 0, who,"You unlight the %s.", query_name(tmp));
+					if(!tmp->env && tmp->glow_radius) /* on map */
+						adjust_light_source(tmp->map, tmp->x, tmp->y, -(tmp->glow_radius));
                     tmp->glow_radius=0;
                     CLEAR_FLAG(tmp, FLAG_APPLIED);
                     CLEAR_FLAG(tmp,FLAG_CHANGING);

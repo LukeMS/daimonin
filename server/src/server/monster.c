@@ -498,16 +498,27 @@ void waypoint_compute_path(object *waypoint) {
         }
     }
     
-    if(waypoint->slaying != NULL && *waypoint->slaying != '\0') {
+    if(waypoint->slaying != NULL) 
+	{
         /* If path not normalized: normalize it */
-        if(*waypoint->slaying != '/') { 
+        if(*waypoint->slaying != '/') 
+		{ 
             char temp_path[HUGE_BUF];
+
+			if(*waypoint->slaying == '\0')
+			{
+		        LOG(llevBug,"BUG: waypoint_compute_path(): invalid destination map '%s'\n", STRING_OBJ_SLAYING(waypoint));
+				return;
+			}
             normalize_path(op->map->path, waypoint->slaying, temp_path);
             FREE_AND_COPY_HASH(waypoint->slaying, temp_path);
         }
         
         /* TODO: handle unique maps? */
-        destmap = ready_map_name(waypoint->slaying, MAP_NAME_SHARED);
+		if(waypoint->slaying == op->map->path)
+			destmap = op->map;
+		else
+	        destmap = ready_map_name(waypoint->slaying, MAP_NAME_SHARED);
     }
 
     if(destmap == NULL) {
@@ -556,7 +567,7 @@ void waypoint_move(object *op, object *waypoint) {
     int dir;
     sint16 new_offset = 0, success = 0;
     
-    if(waypoint == NULL || op == NULL)
+    if(waypoint == NULL || op == NULL || op->map == NULL)
         return;
 
     /* Aggro or static waypoint? */
@@ -578,16 +589,31 @@ void waypoint_move(object *op, object *waypoint) {
         }
     } else {
         /* Find the destination map if specified in waypoint (otherwise use current map) */
-        if(waypoint->slaying != NULL && *waypoint->slaying != '\0') {
+        if(waypoint->slaying != NULL)
+		{
             /* If path not normalized: normalize it */
-            if(*waypoint->slaying != '/') { 
+            if(*waypoint->slaying != '/') /* if there is a '/', its never '\0' */
+			{ 
                 char temp_path[HUGE_BUF];
+
+			    if(*waypoint->slaying == '\0')
+				{
+					LOG(llevBug,"BUG: waypoint_move(): invalid destination map '%s' for '%s' -> '%s'\n", 
+											STRING_OBJ_SLAYING(waypoint),query_name(op), query_name(waypoint));
+					return;
+				}
+
                 normalize_path(op->map->path, waypoint->slaying, temp_path);
                 FREE_AND_COPY_HASH(waypoint->slaying, temp_path);
             }
-            
+
             /* TODO: handle unique maps? */
-            destmap = ready_map_name(waypoint->slaying, MAP_NAME_SHARED);
+			/* check we are on the map */
+
+			if(waypoint->slaying == op->map->path)
+				destmap =op->map;
+			else
+	            destmap = ready_map_name(waypoint->slaying, MAP_NAME_SHARED);
         }
     }
 

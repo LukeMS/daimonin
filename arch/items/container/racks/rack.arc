@@ -9,7 +9,7 @@ material 18
 value 3500
 container 250000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object rack.171
 name weapon rack
@@ -22,5 +22,5 @@ material 18
 value 3500
 container 250000
 weight 15000
-Str 15
+weapon_speed 1.0
 end

@@ -17,7 +17,6 @@ maxhp 500
 food 500
 speed 0.15
 last_eat 1
-nrof 1
 last_sp 3
 end
 Object torch_burnt

@@ -252,30 +252,6 @@ typedef struct oblinkpt { /* Used to link together several object links */
   struct oblinkpt *next;
 } oblinkpt;
 
-/*
- * The archetype structure is a set of rules on how to generate and manipulate
- * objects which point to archetypes.
- * This probably belongs in arch.h, but there really doesn't appear to
- * be much left in the archetype - all it really is is a holder for the
- * object and pointers.  This structure should get removed, and just replaced
- * by the object structure
- */
-
-typedef struct archt {
-    const char *name;			/* More definite name, like "generate_kobold" */
-    struct archt *next;			/* Next archetype in a linked list */
-    struct archt *head;			/* The main part of a linked object */
-    struct archt *more;			/* Next part of a linked object */
-	object		 *base_clone;	/* used by artifacts list: if != NULL,
-								 * this object is the base object and clone is
-								 * the modified artifacts object.
-								 * we use base_clone for unidentified objects 
-								 * (to get unified "non identified" values),
-								 * or it is used to get a base object when we
-								 * remove the artifacts changes (cancellation, dispel...)
-								 */
-    object		 clone;			/* An object from which to do copy_object() */
-} archetype;
 
 extern object *objects;
 extern object *active_objects;

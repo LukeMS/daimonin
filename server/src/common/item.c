@@ -358,6 +358,8 @@ char *query_short_name(object *op)
 		case SKILL:
 		case AMULET:
 		case RING:
+			if (QUERY_FLAG(op,FLAG_IDENTIFIED))
+			{
 			if (!op->title) 
 			{
 				/* If ring has a title, full description isn't so useful */ 
@@ -372,6 +374,7 @@ char *query_short_name(object *op)
 			{
 				safe_strcat(buf, " ", &len, HUGE_BUF);
 				safe_strcat(buf, op->title, &len, HUGE_BUF);
+			}
 			}
 		break;
 

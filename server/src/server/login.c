@@ -29,8 +29,6 @@
 #include <loader.h>
 
 extern spell spells[NROFREALSPELLS];
-extern void sub_weight (object *, signed long);
-extern void add_weight (object *, signed long);
 extern long pticks;
 
 /* If flag is non zero, it means that we want to try and save everyone, but

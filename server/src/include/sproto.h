@@ -488,7 +488,6 @@ void do_some_living(object *op);
 void kill_player(object *op);
 void loot_object(object *op);
 void fix_weight(void);
-void fix_luck(void);
 void cast_dust(object *op, object *throw_ob, int dir);
 void make_visible(object *op);
 int is_true_undead(object *op);
