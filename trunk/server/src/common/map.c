@@ -189,9 +189,7 @@ static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int 
             if (curr->map->tile_path[i] && (curr->map->tile_map[i] == NULL ||
                         curr->map->tile_map[i]->traversed != traversal_id)) {
                 if (!curr->map->tile_map[i] || curr->map->tile_map[i]->in_memory != MAP_IN_MEMORY)
-				{
                     load_and_link_tiled_map(curr->map, i);
-				}
                                
                 /* TODO: avoid this bit of extra work if correct map */
                 node = get_poolchunk(POOL_MAP_BFS);

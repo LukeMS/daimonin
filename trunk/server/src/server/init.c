@@ -584,8 +584,8 @@ void compile_info() {
   LOG(llevInfo,"ObjectSize:\t%d (living: %d)\n",sizeof(object), sizeof(living));
   LOG(llevInfo,"MapStructSize:\t%d\n",sizeof(mapstruct));
   LOG(llevInfo,"MapSpaceSize:\t%d\n",sizeof(MapSpace));
-  LOG(llevInfo,"PlayerSize:\t%d\n",sizeof(player));
-  LOG(llevInfo,"SocketSize:\t%d\n",sizeof(NewSocket));
+  LOG(llevInfo,"PlayerSize:\t%d\n",sizeof(player)+MAXSOCKBUF_IN);
+  LOG(llevInfo,"SocketSize:\t%d\n",sizeof(NewSocket)+MAXSOCKBUF_IN);
   
   LOG(llevInfo,"Setup info: Done.\n"); 
 

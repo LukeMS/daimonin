@@ -795,6 +795,14 @@
  * players don't have access to the save files.
  */
 
+/* The "wait for connection" function which blocks the server
+ * in the middle of the socket function.
+ * OK for local servers and the one where no accurate (object)
+ * timing is needed.
+ */
+/*#define BLOCK_UNTIL_CONNECTION*/
+
+
 #define USE_CHECKSUM
 /* #define ENABLE_CHECKSUM */ /* Will be default in distant future versions */
 

@@ -1,9 +1,4 @@
 /*
- * static char *rcsid_treasure_c =
- *   "$Id$";
- */
-
-/*
     CrossFire, A Multiplayer game for X-windows
 
     Copyright (C) 2001 Mark Wedel & Crossfire Development Team

@@ -197,7 +197,7 @@ int command_run_stop(object *op, char *params);
 void send_target_command(player *pl);
 int command_combat(object *op, char *params);
 int command_target(object *op, char *params);
-void command_face_request(char *params, int len, player *pl);
+void command_face_request(char *params, int len, NewSocket *ns);
 void command_new_char(char *params, int len, player *pl);
 void command_fire(char *params, int len, player *pl);
 void send_mapstats_cmd(object *op, struct mapdef *map);

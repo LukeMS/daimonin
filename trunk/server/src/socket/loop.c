@@ -61,6 +61,7 @@ static fd_set tmp_read, tmp_exceptions, tmp_write;
  * The commands here are protocol commands. 
  ****************************************************************************/
 
+
 /* Either keep this near the start or end of the file so it is
  * at least reasonablye easy to find.
  * There are really 2 commands - those which are sent/received
@@ -68,19 +69,19 @@ static fd_set tmp_read, tmp_exceptions, tmp_write;
  * As such, we have function types that might be called, so
  * we end up having 2 tables.
  */
-
 typedef void (*func_uint8_int_ns) (char*, int, NewSocket *);
-
-struct NsCmdMapping {
-    char *cmdname;
-    func_uint8_int_ns  cmdproc;
-};
-
 typedef void (*func_uint8_int_pl)(char*, int, player *);
-struct PlCmdMapping {
+
+typedef struct NsCmdMapping_struct {
+    char *cmdname;
+    func_uint8_int_ns cmdproc;
+}NsCmdMapping;
+
+typedef struct PlCmdMapping_struct {
     char *cmdname;
     func_uint8_int_pl cmdproc;
-};
+}PlCmdMapping;
+
 
 /*
  * CmdMapping is the dispatch table for the server, used in HandleClient,
@@ -91,41 +92,34 @@ struct PlCmdMapping {
  * of these treat it only as strings, so it makes things easier
  * to cast it here instead of a bunch of times in the function itself.
  */
-/* the goal is to move all 'techical' commands to this position.
- * then we must but all this in a central function - commands.c i think.
- * I let the command to full names for better debugging - later we must think
- * about pack & packing, i think.  
- * Last goal is to reduce the single commands. Adding mapscroll in the mapupdate
- * command for example. MT-11-2002
- */
-static struct PlCmdMapping plcommands[] = {
-    { "ex",	ExamineCmd },
-    { "ap",		ApplyCmd },
-    { "mv",		MoveCmd },
-    { "reply",		ReplyCmd},
-    { "cm",	PlayerCmd},
-    { "ncom",		(func_uint8_int_pl)NewPlayerCmd},
-    { "lt",		LookAt},
-    { "mapredraw",	MapRedrawCmd},	/* Added: phil */
-    { "lock",		(func_uint8_int_pl)LockItem},
-    { "mark",		(func_uint8_int_pl)MarkItem},
-	{"/fire",		command_fire},
-	{"fr",			command_face_request},
-	{"nc",			command_new_char},
+PlCmdMapping plcommands[] = {
+    { "ex",				ExamineCmd },
+    { "ap",				ApplyCmd },
+    { "mv",				MoveCmd },
+    { "reply",			ReplyCmd},
+    { "cm",				PlayerCmd},
+    { "ncom",			NewPlayerCmd},
+    { "lt",				LookAt},
+    { "lock",			LockItem},
+    { "mark",			MarkItem},
+	{"/fire",			command_fire},
+	{"nc",				command_new_char},
     { NULL, NULL}	/* terminator */
 };
 
-static struct NsCmdMapping nscommands[] = {
-    { "addme",		AddMeCmd },
-    { "askface",	SendFaceCmd},	/* Added: phil */
+NsCmdMapping nscommands[] = {
+    { "addme",			AddMeCmd },
+    { "askface",		SendFaceCmd},	/* Added: phil */
     { "requestinfo",	RequestInfo},
     { "setfacemode",	SetFaceMode},
-    { "setsound",	SetSound},
-    { "setup",		SetUp},
-    { "version",	VersionCmd },
-    { "rf",	RequestFileCmd },
+    { "setsound",		SetSound},
+    { "setup",			SetUp},
+    { "version",		VersionCmd },
+    { "rf",				RequestFileCmd },
+	{"fr",				command_face_request},
     { NULL, NULL}	/* terminator */
 };
+
 
 /* RequestInfo is sort of a meta command - there is some specific
  * request of information, but we call other functions to provide
@@ -162,6 +156,60 @@ void RequestInfo(char *buf, int len, NewSocket *ns)
 }
 
 
+/* We have now a buffer we read in from the socket.
+ * In that buffer are 0-x commands (and/or perhaps *one* last, incomplete one).
+ * We read now in fifo way the commands from that buffer.
+ * If its a system command, we just fire it directly.
+ * If its a player command, we put it in the command queue.
+ */
+int fill_command_buffer(NewSocket *ns, int len)
+{
+	unsigned char *data;
+	int i, rr, data_len;
+
+	do
+	{
+		if((rr=socket_read_pp(&ns->inbuf,&ns->readbuf,len)))
+		{
+			/* check its a system command.
+			 * If so, process it. If not, store it.
+			 */
+			ns->inbuf.buf[ns->inbuf.len]='\0';  /* Terminate buffer - useful for string data */
+			for (i=0; nscommands[i].cmdname !=NULL; i++)
+			{
+				if ((int)strlen(nscommands[i].cmdname)<=ns->inbuf.len-2 && !strncmp(ns->inbuf.buf+2,nscommands[i].cmdname,strlen(nscommands[i].cmdname)))
+				{
+					/* pre process the command */
+					data = (unsigned char *)strchr((char*)ns->inbuf.buf +2, ' ');
+					if (data)
+					{
+						*data='\0';
+						data++;
+						data_len = ns->inbuf.len - (data - ns->inbuf.buf);
+					}
+					else 
+						data_len=0;
+					nscommands[i].cmdproc((char*)data,data_len,ns); /* and process cmd */
+						
+					if(ns->addme) /* we have successful added this connect! */
+						ns->addme=0;
+
+					if(ns->status==Ns_Dead)
+						return 0;
+					
+					goto next_fill_command;
+				}
+			}
+			/* ok, we must copy it to the cmdbuf */
+			memcpy(ns->cmdbuf.buf+ns->cmdbuf.len,ns->inbuf.buf,rr);
+			ns->cmdbuf.len +=rr;
+next_fill_command:;
+		}
+	} while (rr);
+
+	return 1;
+}
+
 /* HandleClient is actually not named really well - we only get here once
  * there is input, so we don't do exception or other stuff here.
  * sock is the output socket information.  pl is the player associated
@@ -180,19 +228,14 @@ void HandleClient(NewSocket *ns, player *pl)
 		/* If it is a player, and they don't have any speed left, we
 		* return, and will read in the data when they do have time.
         */
-		if (pl && pl->state==ST_PLAYING && pl->ob != NULL && pl->ob->speed_left < 0) 
+		if (ns->status==Ns_Dead || 
+				(pl && pl->state==ST_PLAYING && pl->ob != NULL && pl->ob->speed_left < 0)) 
 			return;
 	    
-		i=SockList_ReadPacket(ns->fd, &ns->inbuf, MAXSOCKBUF-1);
+/*		i=SockList_ReadPacket(ns->fd, &ns->inbuf,&ns->cmdbuf, MAXSOCKBUF_IN); */
 
-		if (i<0) 
-		{
-			LOG(llevDebug,"Drop Connection: %s (%s)\n", (pl?pl->ob->name:"NONE"),ns->host?ns->host:"NONE");
-			/* Caller will take care of cleaning this up */
-			ns->status =Ns_Dead;
-			return;
-		}
-
+		i=socket_read_pp(&ns->inbuf,&ns->cmdbuf,MAXSOCKBUF_IN-1);
+		
 		/* Still dont have a full packet */
 		if (i==0) 
 			return;
@@ -301,6 +344,15 @@ void watchdog(void)
 }
 #endif
 
+/* i disabled this function on default.
+ * This is just a performance saving function,
+ * putting the server on a kind of "undead" mode
+ * until someone is connecting.
+ * But this will also block & not handle active object,
+ * runtime scripts and others. In a more complex game workd
+ * enviroment, this function will lead in some problem.
+ */
+#ifdef BLOCK_UNTIL_CONNECTION
 static void block_until_new_connection()
 {
 
@@ -335,7 +387,7 @@ static void block_until_new_connection()
 
     reset_sleep(); /* Or the game would go too fast */
 }
-
+#endif
 
 static void remove_ns_dead_player(player *pl)
 {	
@@ -376,7 +428,7 @@ static void remove_ns_dead_player(player *pl)
  */
 void doeric_server()
 {
-    int i, pollret;
+    int i, pollret, rr;
 	uint32 update_below;
     struct sockaddr_in addr;
     int addrlen=sizeof(struct sockaddr);
@@ -435,9 +487,9 @@ void doeric_server()
 		}
 		else 
 		{
-			if(pl->socket.login_count++ == 60*8*(1000000/MAX_TIME) && gbl_active_DM!=pl->ob)
+			if(pl->socket.login_count++ == (60*8*(1000000/MAX_TIME)) && gbl_active_DM!=pl->ob)
 				Write_String_To_Socket(&pl->socket, BINARY_CMD_DRAWINFO, _idle_warn_text, strlen(_idle_warn_text));
-			else if(pl->socket.login_count >= 60*9*(1000000/MAX_TIME) && gbl_active_DM!=pl->ob)
+			else if(pl->socket.login_count >= (60*9*(1000000/MAX_TIME)) && gbl_active_DM!=pl->ob)
 			{
 				player *npl=pl->next;
 				Write_String_To_Socket(&pl->socket, BINARY_CMD_DRAWINFO, _idle_warn_text2, strlen(_idle_warn_text2));
@@ -456,8 +508,10 @@ void doeric_server()
 		}
     }
 
+#ifdef BLOCK_UNTIL_CONNECTION
     if (socket_info.nconns==1 && first_player==NULL) 
 		block_until_new_connection();
+#endif
 
     /* Reset timeout each time, since some OS's will change the values on
      * the return from select.
@@ -532,7 +586,16 @@ void doeric_server()
 			continue;
 		}
 		if (FD_ISSET(init_sockets[i].fd, &tmp_read))
-		    HandleClient(&init_sockets[i], NULL);
+		{
+			rr=SockList_ReadPacket(&init_sockets[i], MAXSOCKBUF_IN-1);
+			if (rr<0) 
+			{
+				LOG(llevDebug,"Drop Connection: host %s\n",init_sockets[i].host?init_sockets[i].host:"NONE");
+				init_sockets[i].status =Ns_Dead;
+			}
+			else
+				fill_command_buffer(&init_sockets[i], MAXSOCKBUF_IN-1);
+		}
 
 		if (init_sockets[i].status == Ns_Dead)
 		{
@@ -560,7 +623,16 @@ void doeric_server()
 			 * something!
 			 */
 			if (FD_ISSET(pl->socket.fd, &tmp_read))
-				HandleClient(&pl->socket, pl);
+			{
+				rr=SockList_ReadPacket(&pl->socket, MAXSOCKBUF_IN-1);
+				if (rr<0) 
+				{
+					LOG(llevDebug,"Drop Connection: %s (%s)\n", (pl?pl->ob->name:"NONE"),pl->socket.host?pl->socket.host:"NONE");
+					pl->socket.status =Ns_Dead;
+				}
+				else
+					fill_command_buffer(&pl->socket, MAXSOCKBUF_IN-1);
+			}
 
 		    if (pl->socket.status==Ns_Dead) /* perhaps something was bad in HandleClient() */
 				remove_ns_dead_player(pl);	/* or player has left game */

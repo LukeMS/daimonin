@@ -1,9 +1,4 @@
 /*
- * static char *rcsid_standalone_c =
- *   "$Id$";
- */
-
-/*
     CrossFire, A Multiplayer game for X-windows
 
     Copyright (C) 2000 Mark Wedel
