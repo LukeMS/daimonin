@@ -2382,8 +2382,9 @@ void communicate(object *op, char *txt)
 		if (cp) 
 		{
 			*(cp++) ='\0';
-			while (*cp==' ') 
-				cp++;
+			cp = cleanup_string(cp);
+			if (cp && *cp=='\0')
+				cp = NULL;
 		}
 
 		csp = find_command_element(buf, CommunicationCommands, CommunicationCommandSize);
@@ -2535,10 +2536,11 @@ int talk_to_npc(object *op, object *npc, char *txt) {
 				if (cp) 
 				{
 					*(cp++) ='\0';
-					while (*cp==' ') 
-					cp++;
+					cp = cleanup_string(cp);
+					if (cp && *cp=='\0')
+						cp = NULL;
 
-					if(*cp == '%')
+					if(cp && *cp == '%')
 						cp = (char *)op->name;
 
 				}
@@ -2572,10 +2574,11 @@ int talk_to_npc(object *op, object *npc, char *txt) {
 				if (cp) 
 				{
 					*(cp++) ='\0';
-					while (*cp==' ') 
-					cp++;
-
-					if(*cp == '%')
+					cp = cleanup_string(cp);
+					if (cp && *cp=='\0')
+						cp = NULL;
+					
+					if(cp && *cp == '%')
 						cp = (char*)op->name;
 				}
 				

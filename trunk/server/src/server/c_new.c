@@ -130,8 +130,9 @@ int execute_newserver_command(object *pl, char *command)
     if (cp) 
 	{
 		*(cp++) ='\0';
-		while (*cp==' ') 
-			cp++;
+		cp = cleanup_string(cp);
+		if (cp && *cp=='\0')
+			cp = NULL;
     }
 
     csp = find_plugin_command(command,pl);
