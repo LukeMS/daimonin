@@ -47,10 +47,10 @@ bool Player::Init(SceneManager *mSceneMgr)
 	if (!(Option::getSingelton().openDescFile("./media/models/player.desc")))
 	{
 		LogFile::getSingelton().Success(false);
-		LogFile::getSingelton().Error("CRITICAL: Player description file was not found!\n");		
+		LogFile::getSingelton().Error("CRITICAL: Player description file was not found!\n");
 		return (false);
 	}
-	LogFile::getSingelton().Success(true);	
+	LogFile::getSingelton().Success(true);
 
 	string strTemp;
 	Option::getSingelton().getDescStr("MeshName", strTemp);
@@ -65,15 +65,14 @@ bool Player::Init(SceneManager *mSceneMgr)
 	mAnimType =-1;
 
 	Option::getSingelton().getDescStr("Facing", strTemp);
-	Real faceing = atof(strTemp.c_str());	
+	Real faceing = atof(strTemp.c_str());
 	mFacingOffset = faceing * RAD;
     mNode->attachObject(mEntity);
 
 	Option::getSingelton().getDescStr("MeshSize", strTemp);
-	Real size = atof(strTemp.c_str());	
+	Real size = atof(strTemp.c_str());
 	mNode->setScale(size, size, size);
-
-    mNode->yaw(Radian(Degree(mFacing)));
+    mNode->yaw(mFacing);
 
 	for (int state = 0; state < STATE_SUM; ++state)
 	{
@@ -96,7 +95,7 @@ void Player::toggleAnimaGroup()
 	if (++mAnimGroup >2) { mAnimGroup =0; }
 	char buf[80];
 	sprintf(buf, "AnimGroup No %d is now active.", mAnimGroup+1);
-	TextWin->Print(buf, ColourValue::White);
+	TextWin->Print(buf, TXT_WHITE);
 }
 
 void Player::updateAnim(const FrameEvent& event)
@@ -112,23 +111,27 @@ void Player::updateAnim(const FrameEvent& event)
 			mAnimState->setTimePosition(0.0f);
 		}
 	}
-	else 
+
+	else
 	{
 		if (mTurning)
 		{
-		    mFacing += Degree(mTurning);
+          	mAnimState->setLoop(true);
+			mAnimState= mAnimStates[STATE_IDLE1];
+  		    mFacing += Degree(mTurning);
 			mNode->yaw(Radian(Degree(mTurning)));
 		}
 		if (mWalking)
 		{
+            mAnimState->setLoop(true);
+			mAnimState= mAnimStates[STATE_WALK1];
 	        mTranslateVector.z =  sin(mFacing.valueRadians()+mFacingOffset)* mWalking;
 		    mTranslateVector.x = -cos(mFacing.valueRadians()+mFacingOffset)* mWalking;
-			mAnimState= mAnimStates[STATE_WALK1];
 			mAnimState->addTime(event.timeSinceLastFrame * mWalking);
 		}
-		else 
+		else
 		{
-			mTranslateVector = Vector3::ZERO;
+			mTranslateVector = Vector3(0,0,0);
 			mAnimState= mAnimStates[STATE_IDLE1];
 			mAnimState->addTime(event.timeSinceLastFrame * PLAYER_ANIM_SPEED);
 		}

@@ -25,6 +25,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 #define TEXTWINDOW_H
 
 #include <Ogre.h>
+#include <OgreTextAreaOverlayElement.h>
 #include <string>
 #include "define.h"
 
@@ -39,7 +40,12 @@ const Real FONT_SIZE          =  16.0f;  // default: 16.0f
 const int  MAX_TEXT_LINES     =  20;
 const int  SIZE_STRING_BUFFER = 128;     // MUST be 2^X.
 
-//enum { COLOR_RED, COLOR_GREEN, COLOR_BLUE}; 
+const ColourValue TXT_RED		= ColourValue(1, 0, 0);
+const ColourValue TXT_YELLOW	= ColourValue(1, 1, 0);
+const ColourValue TXT_GREEN	= ColourValue(0, 1, 0);
+const ColourValue TXT_BLUE		= ColourValue(0, 0, 1);
+const ColourValue TXT_WHITE	= ColourValue(1, 1, 1);
+const ColourValue TXT_GRAY1	= ColourValue(.7, .7, .7);
 
 class CTextwindow
 {
@@ -55,7 +61,7 @@ class CTextwindow
 	void OpenTextWin();
 	void CloseTextWin();
 	bool MouseAction(int action, Real xpos, Real pos, Real yRelative = 0);
-    void Print(const char *newTextLine, ColourValue = ColourValue::Green);
+    void Print(const char *newTextLine, ColourValue = TXT_GREEN);
     void setChild(CTextwindow *Child);
 	void setDimension(Real x, Real y, Real w, Real h);
 
@@ -73,10 +79,11 @@ class CTextwindow
     struct _row
 	{
         std::string str;
-        ColourValue color;
+        ColourValue colorTop;
+        ColourValue colorBottom;
 	}
     row[SIZE_STRING_BUFFER];
-
+    
     ////////////////////////////////////////////////////////////
 	// Variables.
     ////////////////////////////////////////////////////////////
@@ -86,7 +93,7 @@ class CTextwindow
 	OverlayContainer *mContainerFrame; 
 	OverlayElement   *mElementTitle, *mElementTitleTxt0, *mElementTitleTxt1; 
     OverlayElement   *mElementButUp, *mElementButDown;
-	OverlayElement   *mElementLine[MAX_TEXT_LINES]; 
+	TextAreaOverlayElement   *mElementLine[MAX_TEXT_LINES]; 
 	Real mClose;                 // Only Headline visible.
     Real mLastHeight;            // The height before window was closed.
     Real mMinHeight, mMaxHeight;

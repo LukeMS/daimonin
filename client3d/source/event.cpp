@@ -51,14 +51,14 @@ Event::Event(RenderWindow* win, Camera* cam, MouseMotionListener *mMMotionListen
     TextWin = new CTextwindow("Message Window", -280, 300);
     ChatWin = new CTextwindow("Chat Window"   , -280, 300);
     TextWin->setChild(ChatWin);
-	ChatWin->Print("Welcome to Daimonin 3D.  ", ColourValue::Black); 
-	ChatWin->Print("-----------------------------------------  ", ColourValue::Black);
+	ChatWin->Print("Welcome to Daimonin 3D.  ", TXT_YELLOW);
+	ChatWin->Print("-----------------------------------------", TXT_YELLOW);
 	ChatWin->Print("  L            -> Lauch network");
 	ChatWin->Print("  C            -> Camera detail");
 	ChatWin->Print("  F            -> Filtering");
 	ChatWin->Print("  Page Up/Down  -> Camera view.");
 	ChatWin->Print("  Print          -> Screenshot.");
-	ChatWin->Print("Player commands (depends on model):", ColourValue::White);
+	ChatWin->Print("Player commands (depends on model):", TXT_WHITE);
 	ChatWin->Print("  A    -> Attack");
 	ChatWin->Print("  B    -> Block");
 	ChatWin->Print("  S    -> Slump");
@@ -90,7 +90,7 @@ Event::Event(RenderWindow* win, Camera* cam, MouseMotionListener *mMMotionListen
     mRotScale = 0.0f;
     mRotateSpeed = 36;
     mMoveSpeed   = 100;
-    mTranslateVector = Vector3::ZERO;
+    mTranslateVector = Vector3(0,0,0);
     mAniso = 1;
     mFiltering = TFO_BILINEAR;
 	mIdleTime =0;
@@ -145,7 +145,7 @@ bool Event::frameStarted(const FrameEvent& evt)
 			// Take about 10 seconds for full rotation
 			mRotScale = mRotateSpeed * evt.timeSinceLastFrame;
 		}
-	    mTranslateVector = Vector3::ZERO;
+	    mTranslateVector = Vector3(0,0,0);
         if (processUnbufferedKeyInput(evt) == false) { return false; }
 	}
 */
@@ -263,7 +263,7 @@ void Event::keyPressed(KeyEvent *e)
 
 
 		case KC_F1:
-	        Player::getSingelton().toggleAnimaGroup();
+             Player::getSingelton().toggleAnimaGroup();
 			break;
 		case KC_A:
 	        Player::getSingelton().playAnimation(STATE_ATTACK1);
