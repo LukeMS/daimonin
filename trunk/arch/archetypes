@@ -10773,6 +10773,90 @@ container 15000
 weight 15000
 weapon_speed 1.0
 end
+Object shelf3_dem1.111
+name demolished shelf
+face shelf3_dem1.111
+type 122
+editor_folder items/container
+layer 4
+identified 1
+material 18
+no_pick 1
+value 350
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object shelf3_dem1.171
+name demolished shelf
+face shelf3_dem1.171
+type 122
+editor_folder items/container
+layer 4
+identified 1
+material 18
+no_pick 1
+value 350
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object shelf3_dem2.111
+name demolished shelf
+face shelf3_dem2.111
+type 122
+editor_folder items/container
+layer 4
+identified 1
+material 18
+no_pick 1
+value 350
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object shelf3_dem2.171
+name demolished shelf
+face shelf3_dem2.171
+type 122
+editor_folder items/container
+layer 4
+identified 1
+material 18
+no_pick 1
+value 350
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object shelf3_dem3.111
+name demolished shelf
+face shelf3_dem3.111
+type 122
+editor_folder items/container
+layer 4
+identified 1
+material 18
+no_pick 1
+value 350
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object shelf3_dem3.171
+name demolished shelf
+face shelf3_dem3.171
+type 122
+editor_folder items/container
+layer 4
+identified 1
+material 18
+no_pick 1
+value 350
+container 15000
+weight 15000
+weapon_speed 1.0
+end
 Object shelf_wall.111
 name shelf
 face shelf_wall.111
@@ -10881,6 +10965,90 @@ identified 1
 material 18
 no_pick 1
 value 350
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object shelf_wall_dem1.111
+name demolished shelf
+face shelf_wall_dem1.111
+type 122
+editor_folder items/container
+layer 4
+identified 1
+material 18
+no_pick 1
+value 3
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object shelf_wall_dem1.171
+name demolished shelf
+face shelf_wall_dem1.171
+type 122
+editor_folder items/container
+layer 4
+identified 1
+material 18
+no_pick 1
+value 3
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object shelf_wall_dem2.111
+name demolished shelf
+face shelf_wall_dem2.111
+type 122
+editor_folder items/container
+layer 4
+identified 1
+material 18
+no_pick 1
+value 3
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object shelf_wall_dem2.171
+name demolished shelf
+face shelf_wall_dem2.171
+type 122
+editor_folder items/container
+layer 4
+identified 1
+material 18
+no_pick 1
+value 3
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object shelf_wall_dem3.111
+name demolished shelf
+face shelf_wall_dem3.111
+type 122
+editor_folder items/container
+layer 4
+identified 1
+material 18
+no_pick 1
+value 3
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object shelf_wall_dem3.171
+name demolished shelf
+face shelf_wall_dem3.171
+type 122
+editor_folder items/container
+layer 4
+identified 1
+material 18
+no_pick 1
+value 3
 container 15000
 weight 15000
 weapon_speed 1.0
@@ -18281,6 +18449,8 @@ editor_folder mobs/beholder
 race beholder
 layer 6
 randomitems mob_beholder_dread
+can_see_in_dark 1
+can_cast_spell 1
 direction 5
 speed -0.06
 corpse 1
@@ -21061,6 +21231,56 @@ layer 5
 no_pick 1
 no_pass 1
 end
+Object fwall_fstone2
+name wall
+face fwall_fstone2.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_fstone2a
+name wall
+face fwall_fstone2a.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_fstone2b
+name wall
+face fwall_fstone2b.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_fstone2c
+name wall
+face fwall_fstone2c.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
+Object fwall_fstone2d
+name wall
+face fwall_fstone2d.d.101
+type 77
+editor_folder walls/fwalls
+blocksview 1
+layer 5
+no_pick 1
+no_pass 1
+end
 Object grate1_1
 name metal grate
 face grate1.111
@@ -22177,6 +22397,24 @@ end
 Object sewer_plate.101
 name sewer hole plate
 face sewer_plate.101
+type 79
+editor_folder outdoor/sewers
+layer 5
+no_pass 1
+no_pick 1
+end
+Object sewer_plate2.101
+name sewer hole plate
+face sewer_plate2.101
+type 79
+editor_folder outdoor/sewers
+layer 5
+no_pass 1
+no_pick 1
+end
+Object sewer_plate3.101
+name sewer hole plate
+face sewer_plate3.101
 type 79
 editor_folder outdoor/sewers
 layer 5
