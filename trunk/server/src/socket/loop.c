@@ -345,7 +345,7 @@ static void remove_ns_dead_player(player *pl)
 	}
 
 	container_unlink(pl,NULL);
-	save_player(pl->ob, 1);
+	save_player(pl->ob, 0);
 			
 	if(!QUERY_FLAG(pl->ob,FLAG_REMOVED))
 	{

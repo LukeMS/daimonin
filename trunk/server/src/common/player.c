@@ -27,7 +27,9 @@
 #include <funcpoint.h>
 
 
-void free_player(player *pl) {
+void free_player(player *pl) 
+{
+	object *tmp;
 
     if (first_player!=pl) 
 	{
@@ -41,9 +43,17 @@ void free_player(player *pl) {
 	else
 		first_player=pl->next;
 
-    if(pl->ob != NULL) {
-	if (!QUERY_FLAG(pl->ob, FLAG_REMOVED)) remove_ob(pl->ob);
-	free_object(pl->ob);
+	/* the inventory delete was before in save_player()... bad bad bad */
+    if(pl->ob != NULL) 
+	{
+		SET_FLAG(pl->ob, FLAG_NO_FIX_PLAYER);
+		if (!QUERY_FLAG(pl->ob, FLAG_REMOVED)) 
+			remove_ob(pl->ob);
+
+		while ((tmp = pl->ob->inv))
+			destroy_object (tmp); 
+
+		free_object(pl->ob);
     }
 
     CFREE(pl);

@@ -2206,5 +2206,5 @@ list traps
     name small ant shield
 end
 treasure random_test
- arch potion_generic
+ list random_armour_cloak
 end

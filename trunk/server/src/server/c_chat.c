@@ -817,6 +817,9 @@ static int basic_emote(object *op, char *params, int emotion)
 	    break;
 	case EMOTE_ME:
 	    sprintf(buf2, "usage: /me <emote to display>");
+		if(op->type == PLAYER)
+			new_draw_info(NDI_UNIQUE, 0, op, buf2);
+		return(0);
 		/* do nothing, since we specified nothing to do */
 	    break;
 	default:
@@ -832,6 +835,7 @@ static int basic_emote(object *op, char *params, int emotion)
 	} 
 	else /* we have params */
 	{
+		params = cleanup_chat_string(params);
 		if(emotion == EMOTE_ME)
 		{
 			sprintf(buf, "%s %s", op->name, params);
@@ -839,7 +843,7 @@ static int basic_emote(object *op, char *params, int emotion)
 			LOG(llevInfo,"ME:: %s\n", buf2); 
 			new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, op, op, buf);
 			if(op->type == PLAYER)
-				new_draw_info(NDI_UNIQUE, 0, op, buf2);
+					new_draw_info(NDI_UNIQUE, 0, op, buf2);
 			return(0);
 		}
 		else if(op->type == PLAYER) /* atm, we only allow "yourself" as parameter for players */
