@@ -228,6 +228,7 @@ extern int on_same_map(object *op1, object *op2);
 extern void init_mempools();
 extern void setup_poolfunctions(mempool_id pool, chunk_constructor constructor, chunk_destructor destructor);
 extern void *get_poolchunk(mempool_id pool);
+extern void return_poolchunk(void *chunk, mempool_id pool);
 extern void free_empty_puddles(mempool_id pool);
 extern void mark_object_removed(object *ob);
 extern int CAN_MERGE(object *ob1, object *ob2);

@@ -65,6 +65,7 @@ static PyMethodDef ObjectMethods[] =
     {"CreateObjectInside", (PyCFunction)Daimonin_Object_CreateObjectInside,METH_VARARGS},
     {"CheckInventory", (PyCFunction)Daimonin_Object_CheckInventory,METH_VARARGS},
     {"Remove", (PyCFunction)Daimonin_Object_Remove,METH_VARARGS},
+    {"Destruct", (PyCFunction)Daimonin_Object_Destruct,METH_VARARGS},
     {"SetPosition", (PyCFunction)Daimonin_Object_SetPosition,METH_VARARGS},
     {"IdentifyItem", (PyCFunction)Daimonin_Object_IdentifyItem,METH_VARARGS},
 #if 0    
@@ -2129,10 +2130,7 @@ static PyObject* Daimonin_Object_SetSaveBed(Daimonin_Object *whoptr, PyObject* a
 /* Info   : Takes the object out of whatever map or inventory it is in. The  */
 /*          object can then be inserted or teleported somewhere else, or just*/
 /*          left alone for the garbage collection to take care of.           */
-/* Status : Tested                                                           */
-/*****************************************************************************/
-/* Gecko  : This function is DANGEROUS. Added limitations on what can be     */
-/*          removed to avoid some of the problems                            */
+/* Status : Needs more testing                                               */
 /*****************************************************************************/
 static PyObject* Daimonin_Object_Remove(Daimonin_Object *whoptr, PyObject* args)
 {
@@ -2147,12 +2145,12 @@ static PyObject* Daimonin_Object_Remove(Daimonin_Object *whoptr, PyObject* args)
     
     /* TODO: maybe this is no longer necessary? */
     /* Gecko: Don't allow removing any of the involved objects. Messes things up... */
-    if (StackActivator[StackPosition] == myob ||
+/*    if (StackActivator[StackPosition] == myob ||
             StackWho[StackPosition] == myob ||
             StackOther[StackPosition] == myob)
     {
         RAISE("You are not allowed to remove one of the active objects. Workaround using CFTeleport or some other solution.");
-    }
+    }*/
 
     GCFP.Value[0] = (void *)(myob);
     (PlugHooks[HOOK_REMOVEOBJECT])(&GCFP);
@@ -2171,22 +2169,74 @@ static PyObject* Daimonin_Object_Remove(Daimonin_Object *whoptr, PyObject* args)
         (PlugHooks[HOOK_ESRVSENDINVENTORY])(&GCFP);
     }*/
 
-    /* Gecko: we'll try to use the garbage collector instead. This way we can reuse the removed
-     * object, our just drop it into oblivion by ignoring it */
-
-    /*
-    GCFP.Value[0] = (void *)(myob);
-    (PlugHooks[HOOK_FREEOBJECT])(&GCFP);
-    */
     
     /* TODO: maybe this is no longer necessary? */
     /* Gecko: Handle removing any of the active objects (e.g. the activator) */
-    if (StackActivator[StackPosition] == myob)
+/*    if (StackActivator[StackPosition] == myob)
         StackActivator[StackPosition] = NULL;
     if (StackWho[StackPosition] == myob)
         StackWho[StackPosition] = NULL;
     if (StackOther[StackPosition] == myob)
-        StackOther[StackPosition] = NULL;
+        StackOther[StackPosition] = NULL;*/
+    
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
+/*****************************************************************************/
+/* Name   : Daimonin_Object_Destruct                                         */
+/* Python : object.Destruct()                                                */
+/* Info   : Removes the object out of whatever map or inventory it is in and */
+/*          drops all items in object's inventory on the floor or in a       */ 
+/*          corpse                                                           */
+/* Status : Needs more testing                                               */
+/*****************************************************************************/
+static PyObject* Daimonin_Object_Destruct(Daimonin_Object *whoptr, PyObject* args)
+{
+    object* myob;
+    object* obenv;
+
+    if (!PyArg_ParseTuple(args,""))
+        return NULL;
+
+    myob = WHO;
+    obenv = myob->env;
+    
+    /* TODO: maybe this is no longer necessary? */
+    /* Gecko: Don't allow removing any of the involved objects. Messes things up... */
+/*    if (StackActivator[StackPosition] == myob ||
+            StackWho[StackPosition] == myob ||
+            StackOther[StackPosition] == myob)
+    {
+        RAISE("You are not allowed to remove one of the active objects. Workaround using CFTeleport or some other solution.");
+    }*/
+
+    GCFP.Value[0] = (void *)(myob);
+    (PlugHooks[HOOK_DESTRUCTOBJECT])(&GCFP);
+
+    /* Gecko: player inventory can be removed even if the activator is not a player */
+    if(obenv != NULL && obenv->type == PLAYER)
+    {
+        GCFP.Value[0] = (void *)(obenv);
+        GCFP.Value[1] = (void *)(obenv);
+        (PlugHooks[HOOK_ESRVSENDINVENTORY])(&GCFP);
+    }
+    /*    if (StackActivator[StackPosition]->type == PLAYER)
+    {
+        GCFP.Value[0] = (void *)(StackActivator[StackPosition]);
+        GCFP.Value[1] = (void *)(StackActivator[StackPosition]);
+        (PlugHooks[HOOK_ESRVSENDINVENTORY])(&GCFP);
+    }*/
+
+    
+    /* TODO: maybe this is no longer necessary? */
+    /* Gecko: Handle removing any of the active objects (e.g. the activator) */
+/*    if (StackActivator[StackPosition] == myob)
+        StackActivator[StackPosition] = NULL;
+    if (StackWho[StackPosition] == myob)
+        StackWho[StackPosition] = NULL;
+    if (StackOther[StackPosition] == myob)
+        StackOther[StackPosition] = NULL;*/
     
     Py_INCREF(Py_None);
     return Py_None;

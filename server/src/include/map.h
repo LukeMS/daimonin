@@ -332,6 +332,9 @@ typedef struct mapdef {
 									 * arrays will be allocated when the map is loaded */
 
     uint32 traversed;               /* Used by relative_tile_position() to mark visited maps */
+    const char *cached_dist_map;     /* With which other map was relative_tile_position() last used? */
+    int cached_dist_x, cached_dist_y; /* Cached relative_tile_position() */
+    
     int perm_load;					/* This is a counter - used for example from NPC's which have
 	                                 * a global function. If this counter is != 0, map will not swap
 	                                 * and the npc/object with perm_load flag will stay in game.
@@ -373,5 +376,15 @@ typedef struct rv_vector_s {
 
 extern int map_tiled_reverse[TILED_MAPS];
 
+/* Maximum number of tiles to search in relative_tile_position() before giving up */
+/* 8 => 1 level deep, 24 => 2 levels, 48 =>3 levels */
+#define MAX_SEARCH_MAP_TILES 24
+
+/* This is used when we try to find vectors between map tiles in relative_tile_position() */
+struct mapsearch_node {
+    mapstruct *map;
+    int dx, dy;
+    struct mapsearch_node *next;
+};
 
 #endif

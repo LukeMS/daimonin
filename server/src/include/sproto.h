@@ -563,7 +563,6 @@ CFParm *CFWSetAnimation(CFParm *PParm);
 CFParm *CFWCommunicate(CFParm *PParm);
 CFParm *CFWFindBestObjectMatch(CFParm *PParm);
 CFParm *CFWApplyBelow(CFParm *PParm);
-CFParm *CFWFreeObject(CFParm *PParm);
 CFParm *CFWFindMarkedObject(CFParm *PParm);
 CFParm *CFWIdentifyObject(CFParm *PParm);
 CFParm *CFWObjectCreateClone(CFParm *PParm);
@@ -576,6 +575,7 @@ CFParm *CFWCreateObject(CFParm *PParm);
 CFParm* CFTransferMapItems(CFParm* PParm);
 CFParm* CFMapSave(CFParm* PParm);
 CFParm* CFMapDelete(CFParm* PParm);
+CFParm *CFWDestructObject(CFParm *PParm);
 
 /* resurrection.c */
 void dead_player(object *op);

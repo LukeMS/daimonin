@@ -84,7 +84,7 @@ f_plugin HookList[NR_OF_HOOKS] =
     CFWCommunicate,
     CFWFindBestObjectMatch,
     CFWApplyBelow,
-    CFWFreeObject,
+    CFWDestructObject,
     CFWObjectCreateClone,
     CFWTeleportObject,
     CFWDoLearnSkill,

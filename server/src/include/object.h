@@ -365,6 +365,7 @@ typedef enum {
 #endif    
     POOL_OBJECT, 
     POOL_PLAYER, 
+    POOL_MAP_BFS, 
     NROF_MEMPOOLS 
 } mempool_id;
 
