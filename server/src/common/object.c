@@ -1046,6 +1046,34 @@ int CAN_MERGE(object *ob1, object *ob2)
 	return 1; /* can merge! */
 }
 
+/*
+ * merge_ob(op,top):
+ *
+ * This function goes through all objects below and including top, and
+ * merges op to the first matching object.
+ * If top is NULL, it is calculated.
+ * Returns pointer to object if it succeded in the merge, otherwise NULL
+ */
+
+object *merge_ob(object *op, object *top) {
+  if(!op->nrof)
+    return 0;
+  if(top==NULL)
+    for(top=op;top!=NULL&&top->above!=NULL;top=top->above);
+  for(;top!=NULL;top=top->below) {
+    if(top==op)
+      continue;
+    if (CAN_MERGE(op,top))
+    {
+      top->nrof+=op->nrof;
+      op->weight = 0; /* Don't want any adjustements now */
+      remove_ob(op);
+      free_object(op);
+      return top;
+    }
+  }
+  return NULL;
+}
 
 /*
  * sum_weight() is a recursive function which calculates the weight
@@ -2213,35 +2241,6 @@ void remove_ob(object *op) {
 		update_all_los(op->map, op->x, op->y);
 }
 
-/*
- * merge_ob(op,top):
- *
- * This function goes through all objects below and including top, and
- * merges op to the first matching object.
- * If top is NULL, it is calculated.
- * Returns pointer to object if it succeded in the merge, otherwise NULL
- */
-
-object *merge_ob(object *op, object *top) {
-  if(!op->nrof)
-    return 0;
-  if(top==NULL)
-    for(top=op;top!=NULL&&top->above!=NULL;top=top->above);
-  for(;top!=NULL;top=top->below) {
-    if(top==op)
-      continue;
-    if (CAN_MERGE(op,top))
-    {
-      top->nrof+=op->nrof;
-      op->weight = 0; /* Don't want any adjustements now */
-      remove_ob(op);
-      free_object(op);
-      return top;
-    }
-  }
-  return NULL;
-}
-
 
 /*
  * insert_ob_in_map (op, map, originator, flag):
@@ -2270,6 +2269,9 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
 	MapSpace *mc;
     int x,y,lt,layer, layer_inv;
 
+	/* some tests to check all is ok... some cpu ticks
+	 * which tracks we have problems or not
+	 */
     if (QUERY_FLAG (op, FLAG_FREED))
 	{
 		dump_object(op);
@@ -2290,45 +2292,50 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
 		return NULL;
     }
 
-    if(op->more!=NULL)
+	/* tail, but no INS_TAIL_MARKER: we had messed something outside! */
+	if(op->head && !(flag & INS_TAIL_MARKER))
 	{
-		if (insert_ob_in_map(op->more,m,originator,flag) == NULL) 
+		LOG(llevBug, "BUG: insert_ob_in_map(): inserting op->more WITHOUT INS_TAIL_MARKER! OB:%s (ARCH: %s) (MAP: %s (%d,%d))\n",query_name(op),op->arch->name, m->path, op->x, op->y);
+		return NULL;
+	}
+
+
+    if(op->more)
+	{
+		if (insert_ob_in_map(op->more,op->more->map,originator,flag|INS_TAIL_MARKER) == NULL) 
 		{
 			if ( ! op->head)
 				LOG(llevBug, "BUG: insert_ob_in_map(): inserting op->more killed op %s in map %s\n",query_name(op), m->name);
 			return NULL;
 		}
     }
+
     CLEAR_FLAG(op,FLAG_REMOVED);
 
 #ifdef POSITION_DEBUG
-    /* Debugging information so you can see the last coordinates this object had */
     op->ox=op->x;
     op->oy=op->y;
 #endif
+
+	/* this is now a key part of this function, because
+	 * we adjust multi arches here when they cross map boarders!
+	 */
     x = op->x;
     y = op->y;
 	op->map= m;
 
-	/* perhaps this is a overkill - but safty first.
-	 * This *should* be handled in the caller function before!
-	 * We can enable the log msg in the part beyond this -
-	 * that will make it possible to track false calls.
-	 */
     if(!(m=out_of_map(m, &x, &y)))
 	{
-		LOG(llevBug,"BUG: insert_ob_in_map(): Trying to insert object %s outside the map %s (%d,%d).\n\n", query_name(op), op->map->name, op->x, op->y);
+		LOG(llevBug,"BUG: insert_ob_in_map(): Trying to insert object %s outside the map %s (%d,%d).\n\n", query_name(op), op->map->path, op->x, op->y);
 		return NULL;
     }
 
-        /* Ideally, the caller figures this out */
+	/* x and y will only change when we change the map too - so check the map */
     if (op->map != m)
 	{
-		/* player moving don't check tiled maps - perhaps we will change this someone */
-		/*LOG(llevBug, "BUG: insert_ob_in_map(): not checked for object tiled map! %s in map %s\n",query_name(op), m->path);*/
+		op->map = m;
 		op->x = x;
 		op->y = y;
-		op->map = m;
     }
 
 	/* hm, i not checked this, but is it not smarter to remove op instead and return? MT */
@@ -2566,8 +2573,8 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
 
 
     /* if this is not the head or flag has been passed, don't check walk on status */
-
-    if (!(flag & INS_NO_WALK_ON) && !op->head) {
+    if (!(flag & INS_NO_WALK_ON) && !op->head) 
+	{
         if (check_walk_on(op, originator))
 	    return NULL;
 
@@ -2779,7 +2786,6 @@ object *insert_ob_in_ob(object *op,object *where) {
     LOG(llevError, "ERROR: Tried to insert multipart object %s (%d)\n", query_name(op), op->count);
     return op;
   }
-  CLEAR_FLAG(op, FLAG_OBJ_ORIGINAL);
   CLEAR_FLAG(op, FLAG_REMOVED);
   if(op->nrof) {
     for(tmp=where->inv;tmp!=NULL;tmp=tmp->below)

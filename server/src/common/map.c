@@ -101,8 +101,14 @@ static mapstruct *load_and_link_tiled_map(mapstruct *orig_map, int tile_num)
     orig_map->tile_map[tile_num] = ready_map_name(orig_map->tile_path[tile_num], MAP_UNIQUE(orig_map)?1:0);
 
     /* need to do a strcmp here as the orig_map->path is not a shared string */
-    if (!strcmp(orig_map->tile_map[tile_num]->tile_path[dest_tile], orig_map->path))
-	orig_map->tile_map[tile_num]->tile_map[dest_tile] = orig_map;
+	if(orig_map->tile_map[tile_num]->tile_path[dest_tile])
+	{
+	    if (!strcmp(orig_map->tile_map[tile_num]->tile_path[dest_tile], orig_map->path))
+			orig_map->tile_map[tile_num]->tile_map[dest_tile] = orig_map;
+	}
+	else
+		LOG(llevDebug,"load_and_link_tiled_map(): map %s (%d) points to map %s but has no relink\n", orig_map->path, tile_num, orig_map->tile_map[tile_num]->path);
+
 
     return orig_map->tile_map[tile_num];
 }
@@ -250,23 +256,6 @@ char *create_pathname (const char *name) {
       sprintf (buf, "%s%s", settings.mapdir, name);
     else
       sprintf (buf, "%s/%s", settings.mapdir, name);
-    return (buf);
-}
-
-/*
- * same as create_pathname, but for the overlay maps.
- */
-
-char *create_overlay_pathname (const char *name) {
-    static char buf[MAX_BUF];
-
-    /* Why?  having extra / doesn't confuse unix anyplace?  Dependancies
-     * someplace else in the code? msw 2-17-97
-     */
-    if (*name == '/')
-      sprintf (buf, "%s/%s%s", settings.localdir, OVERLAYDIR, name);
-    else
-      sprintf (buf, "%s/%s/%s", settings.localdir, OVERLAYDIR, name);
     return (buf);
 }
 
@@ -811,132 +800,113 @@ int arch_out_of_map(archetype *at,mapstruct *m,int x,int y) {
     return 0;
 }
 
-
-/* link_multipart_objects go through all the objects on the map looking
- * for objects whose arch says they are multipart yet according to the
- * info we have, they only have the head (as would be expected when
- * they are saved).  We do have to look for the old maps that did save
- * the more sections and not re-add sections for them.
- */
-/* This function works not with tiled map. Again, no multi arch on tiled maps or
- * the server will die badly. MT-2002
- */
-static void link_multipart_objects(mapstruct *m)
-{
-    int x,y;
-    object *tmp, *op, *last, *above;
-    archetype	*at;
-
-    for(x=0;x<MAP_WIDTH(m);x++)
-	for(y=0;y<MAP_HEIGHT(m);y++)
-	    for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=above) {
-		above=tmp->above;
-
-		/* already multipart - don't do anything more */
-		if (tmp->head || tmp->more) continue;
-
-		/* If there is nothing more to this object, this for loop
-		 * won't do anything.
-		 */
-		for (at = tmp->arch->more, last=tmp; at != NULL; at=at->more, last=op) {
-		    op = arch_to_object(at);
-
-		    /* update x,y coordinates */
-		    op->x += tmp->x;
-		    op->y += tmp->y;
-		    op->head = tmp;
-		    op->map = m;
-		    last->more = op;
-			/* this is ok - we just overrule name & title for the parts when
-			 * we have changed them in the head!
-			 */
-		    if (tmp->name != op->name)
-				FREE_AND_COPY_HASH(op->name, tmp->name);
-		    if (tmp->title != op->title)
-				FREE_AND_COPY_HASH(op->title, tmp->title);		   
-		    if (tmp->msg != op->msg)
-				FREE_AND_COPY_HASH(op->msg, tmp->msg);
-
-		    /* we could link all the parts onto tmp, and then just
-		     * call insert_ob_in_map once, but the effect is the same,
-		     * as insert_ob_in_map will call itself with each part, and
-		     * the coding is simpler to just to it here with each part.
-		     */
-		    insert_ob_in_map(op, op->map, tmp,INS_NO_MERGE|INS_ABOVE_FLOOR_ONLY|INS_NO_WALK_ON);
-		} /* for at = tmp->arch->more */
-	    } /* for objects on this space */
-}
-		    
-		
-
 /*
  * Loads (ands parses) the objects into a given map from the specified
  * file pointer.
  * mapflags is the same as we get with load_original_map
  */
-
-void load_objects (mapstruct *m, FILE *fp, int mapflags) {
-    int i,bufstate=LO_NEWFILE;
-    int unique;
-    object *op, *prev=NULL,*last_more=NULL, *otmp, *ootmp;;
+/* i optimized this function now - i remove ALOT senseless stuff, 
+ * processing the load & expaning of objects here in one loop.
+ * MT - 05.02.2004
+ */
+void load_objects (mapstruct *m, FILE *fp, int mapflags)
+{
+	static int bufstate=LO_NEWFILE;
+    int i;
+	archetype *tail;
+    object *op, *prev=NULL,*last_more=NULL, *tmp;
 
     op=get_object();
     op->map = m; /* To handle buttons correctly */
+		
+	bufstate=LO_NEWFILE;
 
-    while((i=load_object(fp,op,bufstate, mapflags))) {
 	/* Since the loading of the map header does not load an object
 	 * anymore, we need to pass LO_NEWFILE for the first object loaded,
 	 * and then switch to LO_REPEAT for faster loading.
 	 */
-	bufstate = LO_REPEAT;
+	while((i=load_object(fp,op,bufstate, mapflags)))
+	{
+		bufstate = LO_REPEAT;
+		/* atm, we don't need and handle multi arches saved with tails! */
+		if(i == LL_MORE)
+		{
+			LOG(llevDebug,"BUG: load_objects(%s): object %s - its a tail!.\n",m->path?m->path:">no map<",query_short_name(op));
+			continue;
+		}
+		/* if the archetype for the object is null, means that we
+		 * got an invalid object.  Don't do anythign with it - the game
+		 * or editor will not be able to do anything with it either.
+		 */
+		if (op->arch==NULL)
+		{
+			LOG(llevDebug,"BUG:load_objects(%s): object %s (%d)- invalid archetype. (pos:%d,%d)\n",m->path?m->path:">no map<",query_short_name(op), op->type,op->x, op->y);
+			continue;
+		}
 
-	/* if the archetype for the object is null, means that we
-	 * got an invalid object.  Don't do anythign with it - the game
-	 * or editor will not be able to do anything with it either.
-	 */
-	if (op->arch==NULL) {
-	    if (op->name!=NULL)
-		LOG(llevDebug,"Discarded object %s - invalid archetype.\n",query_name(op));
-	    continue;
-	}
+		/* not sure but should not the editor we able to pre-set this? */
+		if (op->inv && op->type == CONTAINER) 
+			sum_weight(op);
 
-	/* check for unique items, or unique squares */
-	unique = 0;
-	for (otmp = get_map_ob(m, op->x, op->y); otmp; otmp = ootmp) {
-	    ootmp = otmp->above;
-	    if (QUERY_FLAG(otmp, FLAG_UNIQUE))
-		unique = 1;
-	}
-	if (QUERY_FLAG(op, FLAG_UNIQUE) || QUERY_FLAG(op, FLAG_OBJ_SAVE_ON_OVL))
-	    unique = 1;
-	if (!(mapflags & (MAP_OVERLAY|MAP_PLAYER_UNIQUE) || unique))
-	   SET_FLAG(op, FLAG_OBJ_ORIGINAL);
+		if(op->type == MONSTER)
+		    fix_monster(op );
 
-    if(op->type == MONSTER)
-        fix_monster(op );
+		/* important pre set for the animation/face of a object */
+		if(QUERY_FLAG(op, FLAG_IS_TURNABLE) || QUERY_FLAG(op, FLAG_ANIMATE))
+			SET_ANIMATION(op, (NUM_ANIMATIONS(op)/NUM_FACINGS(op))*op->direction+op->state);
 
-	/* important pre set for the animation/face of a object */
-	if(QUERY_FLAG(op, FLAG_IS_TURNABLE) || QUERY_FLAG(op, FLAG_ANIMATE))
-		SET_ANIMATION(op, (NUM_ANIMATIONS(op)/NUM_FACINGS(op))*op->direction+op->state);
 
-	switch(i) {
-	  case LL_NORMAL:
-	    insert_ob_in_map(op,m,op,INS_NO_MERGE | INS_NO_WALK_ON | INS_ON_TOP);
-	    if (op->inv) sum_weight(op);
-	    prev=op,last_more=op;
-	    break;
+		/* thats a single arch object or the head - but insert_ob
+		 * will not know it, because op->more from a possible head
+		 * is not set at this point - thats the reason insert_ob
+		 * will not use its multi arch expand part.
+		 */
+		insert_ob_in_map(op,m,op,INS_NO_MERGE | INS_NO_WALK_ON);
 
-	  case LL_MORE:
-	    insert_ob_in_map(op,m, op, INS_NO_MERGE | INS_NO_WALK_ON | INS_ABOVE_FLOOR_ONLY);
-	    op->head=prev,last_more->more=op,last_more=op;
-	    break;
-	}
-	op=get_object();
-        op->map = m;
+		/* expand a multi arch - we have only the head saved in a map! 
+		 * the *real* fancy point is, that our head/tail don't must fit
+		 * in this map! insert_ob will take about it and load the needed
+		 * map - then this function and the map loader is called rekursive!
+		 */
+		if(op->arch->more) /* we have a multi arch head? */
+		{
+			/* a important note: we have sometimes the head of a multi arch
+			 * object in the inventory of objects - for example mobs
+			 * which changed type in spawn points and in the mob itself
+			 * as TYPE_BASE_INFO. As long as this arches are not on the map,
+			 * we will not come in trouble here because load_object() will them
+			 * load on the fly. This saves us for expanded multi arches in 
+			 * inventories.
+			 */
+			tail = op->arch->more;
+		    prev=op,last_more=op;	
+
+			/* then clone the tail using the default arch */
+			do
+			{
+				tmp = get_object();
+				copy_object(&tail->clone,tmp);
+
+				tmp->x+=op->x;
+				tmp->y+=op->y;
+				tmp->map = op->map;
+
+				/* link the tail object... */
+			    tmp->head=prev,last_more->more=tmp,last_more=tmp;
+
+				/* this is the one and only point outside insert_ob we use TAIL_MARKER */
+				insert_ob_in_map(tmp,tmp->map,tmp,INS_NO_MERGE | INS_NO_WALK_ON | INS_TAIL_MARKER);
+			} while((tail=tail->more)); 
+		}
+
+		op=get_object();
+	    op->map = m;
     }
+
+	bufstate=LO_NEWFILE;
     free_object(op);
-    link_multipart_objects(m);
 }
+
 
 /* This saves all the objects on the map in a non destructive fashion.
  * Except spawn point and mobs - see below.
@@ -950,137 +920,187 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags) {
  * There is ONE and only ONE exception - thats spawn mobs. 
  * we will remove all spawn mobs here - so we can safly save .MT-2002 */
 void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
-    int t, i, j = 0,unique=0;
+    int t, i, j = 0;
     object *head, *op,  *otmp, *tmp, *next;
-    /* first pass - save one-part objects */
-    for(i = 0; i < MAP_WIDTH(m); i++)
-	for (j = 0; j < MAP_HEIGHT(m); j++) {
-	    unique=0;
-	    for(op = get_map_ob (m, i, j); op; op = otmp) {
-		otmp = op->above;
 
-		/* here we handle the mobs of a spawn point - called spawn mobs.
-		 * We don't save spawn mobs - not even if they are on the same map.
-		 * This give us the power to do some "auto reset" of mobs and spawn.
-		 * If reloaded, the spawn point will restore a new mob of same kind on
-		 * the default position.
-		 */
-		if(QUERY_FLAG(op,FLAG_SPAWN_MOB) || (op->head && QUERY_FLAG(op->head,FLAG_SPAWN_MOB)))
+    for(i = 0; i < MAP_WIDTH(m); i++)
+	{
+		for (j = 0; j < MAP_HEIGHT(m); j++) 
 		{
-			/* One special case: If the mob is NOT one the same map as the spawn point,
-			 * we try to move the mob back to the spawn point. 
-			 * If this will not work (no free place for example), then we kick the mob.
-			 * If the mob is on the same map, we kick the mob always. Always we set the pre
-			 * spawn value (stats.sp) to the random number of this spawn - so the spawn
-			 * point will restore this mob when the map is reloaded.
-			 */
-				/* search for the spawn info ... */
-				if(op->head)
-					head = op->head;
-				else 
-					head = op;
-				/* browse the inv for the map spawn info */
-			    for(tmp = head->inv; tmp; tmp = next)
+			for(op = get_map_ob (m, i, j); op; op = otmp)
+			{
+				otmp = op->above;
+
+				/* here we handle the mobs of a spawn point - called spawn mobs.
+				 * We don't save spawn mobs - not even if they are on the same map.
+				 * This give us the power to do some "auto reset" of mobs and spawn.
+				 * If reloaded, the spawn point will restore a new mob of same kind on
+				 * the default position.
+				 */
+				if(QUERY_FLAG(op,FLAG_SPAWN_MOB) || (op->head && QUERY_FLAG(op->head,FLAG_SPAWN_MOB)))
 				{
-					next = tmp->below;
-					if(tmp->type == SPAWN_POINT_INFO)
+					/* One special case: If the mob is NOT one the same map as the spawn point,
+					 * we try to move the mob back to the spawn point. 
+					 * If this will not work (no free place for example), then we kick the mob.
+					 * If the mob is on the same map, we kick the mob always. Always we set the pre
+					 * spawn value (stats.sp) to the random number of this spawn - so the spawn
+					 * point will restore this mob when the map is reloaded.
+					 */
+
+					op->head?(head = op->head):(head = op);
+
+					/* browse the inv for the map spawn info */
+				    for(tmp = head->inv; tmp; tmp = next)
 					{
-						/* perhaps we must warp this back where it comes from? */
-						if(!tmp->owner )
+						next = tmp->below;
+						if(tmp->type == SPAWN_POINT_INFO)
 						{
-							LOG(llevBug, "BUG: Spawn mob (%s (%s)) has SPAWN INFO without owner set!\n", op->arch->name, query_name(head));
-							remove_ob(head);
-							SET_FLAG(head,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
-						    free_object(head);
-							break;
-						}
-						/* op->map not head->map! head can be somewhere else... */
-						if(op->map != tmp->owner->map && head->map != tmp->owner->map)
-						{
-							/* free spot avaible for our friend here? */
-							t=find_free_spot(head->arch,tmp->owner->map,tmp->owner->x,tmp->owner->y,0,tmp->owner->last_heal);
-							if (t==-1) /* no place.. but we are fair, give them another chance to reappear */
+							/* perhaps we must warp this back where it comes from? */
+							if(!tmp->owner )
 							{
-								tmp->owner->stats.sp = tmp->owner->last_sp; /* force a pre spawn setting */
-								tmp->owner->speed_left +=1.0f; /* we force a active spawn point */
-								tmp->owner->enemy = NULL;
+								LOG(llevBug, "BUG: Spawn mob (%s (%s)) has SPAWN INFO without owner set!\n", op->arch->name, query_name(head));
 								remove_ob(head);
 								SET_FLAG(head,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
 							    free_object(head);
-								break; 
+								break;
 							}
 
-							remove_ob(head);
-						    for(next = head; next != NULL; next = next->more)
+							/* op->map not head->map! head can be somewhere else... */
+							if(op->map != tmp->owner->map && head->map != tmp->owner->map)
 							{
-								next->x=next->arch->clone.x+tmp->owner->x+freearr_x[t];
-								next->y=next->arch->clone.y+tmp->owner->y+freearr_y[t];
-							}
-							insert_ob_in_map(head, tmp->owner->map, tmp->owner, 0);
-							break;
+								/* free spot avaible for our friend here? */
+								t=find_free_spot(head->arch,tmp->owner->map,tmp->owner->x,tmp->owner->y,0,tmp->owner->last_heal);
+								if (t==-1) /* no place.. but we are fair, give them another chance to reappear */
+								{
+									tmp->owner->stats.sp = tmp->owner->last_sp; /* force a pre spawn setting */
+									tmp->owner->speed_left +=1.0f; /* we force a active spawn point */
+									tmp->owner->enemy = NULL;
+									remove_ob(head);
+									SET_FLAG(head,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
+								    free_object(head);
+									break; 
+								}
 
+								remove_ob(head);
+							    for(next = head; next != NULL; next = next->more)
+								{
+									next->x=next->arch->clone.x+tmp->owner->x+freearr_x[t];
+									next->y=next->arch->clone.y+tmp->owner->y+freearr_y[t];
+								}
+								insert_ob_in_map(head, tmp->owner->map, tmp->owner, 0);
+								break;
+							}
+							/* skip saving this mob but tell spawn to respawn it when reloaded */
+							tmp->owner->stats.sp = tmp->owner->last_sp; /* force a pre spawn setting */
+							tmp->owner->speed_left +=1.0f; /* we force a active spawn point */
+							tmp->owner->enemy = NULL;
+							remove_ob(head);
+							SET_FLAG(head,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
+							free_object(head);
+							break;
 						}
-						/* skip saving this mob but tell spawn to respawn it when reloaded */
-						tmp->owner->stats.sp = tmp->owner->last_sp; /* force a pre spawn setting */
-						tmp->owner->speed_left +=1.0f; /* we force a active spawn point */
+					}
+					continue;
+
+					LOG(llevBug, "BUG: Spawn mob (%s %s) without SPAWN INFO.\n", op->arch->name, query_name(head));
+					remove_ob(head);
+					SET_FLAG(head,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
+				    free_object(head);
+					if(tmp->owner)
 						tmp->owner->enemy = NULL;
-						remove_ob(head);
-						SET_FLAG(head,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
-						free_object(head);
-						break;
+					continue;
+				}
+				else if(op->type == SPAWN_POINT)
+				{
+					/* Handling of the spawn points is much easier as handling the mob.
+					 * if the spawn point still control some mobs, we delete the mob  - where ever
+					 * it is. Also, set pre spawn value to last mob - so we restore our creature
+					 * when we reload this map.
+					 */
+					if(op->enemy)
+					{
+						if(op->enemy_count == op->enemy->count && !QUERY_FLAG(op,FLAG_REMOVED))
+						{
+							op->stats.sp = op->last_sp; /* force a pre spawn setting */
+							op->speed_left += 1.0f;
+							remove_ob(op->enemy);
+							SET_FLAG(op->enemy,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
+							free_object(op->enemy);
+						}
 					}
 				}
-				continue;
 
-				LOG(llevBug, "BUG: Spawn mob (%s %s) without SPAWN INFO.\n", op->arch->name, query_name(head));
-				remove_ob(head);
-				SET_FLAG(head,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
-			    free_object(head);
-				if(tmp->owner)
-					tmp->owner->enemy = NULL;
-				continue;
-				
-
-		}
-		else if(op->type == SPAWN_POINT)
-		{
-			/* Handling of the spawn points is much easier as handling the mob.
-			 * if the spawn point still control some mobs, we delete the mob  - where ever
-			 * it is. Also, set pre spawn value to last mob - so we restore our creature
-			 * when we reload this map.
-			 */
-			if(op->enemy)
-			{
-				if(op->enemy_count == op->enemy->count && !QUERY_FLAG(op,FLAG_REMOVED))
+				/* do some testing... */
+				if(op->type == PLAYER) 
 				{
-					op->stats.sp = op->last_sp; /* force a pre spawn setting */
-					op->speed_left += 1.0f;
-					remove_ob(op->enemy);
-					SET_FLAG(op->enemy,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
-					free_object(op->enemy);
+					LOG(llevDebug, "BUG: Player on map that is being saved\n");
+					continue;
 				}
-			}
-		}
+				/* hm, why is this so? should we not remove/recall this??? 
+				 * if the point is, that a pet without map is warped back to his owner,
+				 * then we should do it here explicit and ignore all other
+				 */
+				if (op->owner)
+				{
+					LOG(llevDebug, "BUG? WARNING: object with set owner on map - we *don't* save it. map:%s obj:%s (%s) (%d,%d)\n",m->path, query_name(op),op->arch->name?op->arch->name:"<no arch name>",op->x, op->y);
+				    continue;
+				}
 
-		if (QUERY_FLAG(op,FLAG_IS_FLOOR) && QUERY_FLAG(op, FLAG_UNIQUE))
-		    unique=1;
+				/* here we do the magic! */
+				if(op->head) /* its a tail... magic! */
+				{
+					int xt,yt;
 
-		if(op->type == PLAYER) {
-			LOG(llevDebug, "Player on map that is being saved\n");
-			continue;
-		}
+					/* the magic is, that we have a tail here, but we 
+					 * get the head now and then we give the head x/y
+					 * position basing on this tail position and its
+					 * x/y clone arch default multi tile offsets!
+					 * With this trick, we even can generate negative
+					 * map positions - and thats exactly what we want
+					 * when our head is on a different map as this tail!
+					 * insert_ob() and the map loader will readjust and
+					 * load the other map when needed!
+					 * we must save x/y or remove_ob() will fail.
+					 */
+					tmp = op->head;
+					xt = tmp->x; 
+					yt = tmp->y; 
+					tmp->x = op->x - op->arch->clone.x;
+					tmp->y = op->y - op->arch->clone.y;
 
-		if (op->head || op->owner)
-		    continue;
+					if (QUERY_FLAG(tmp, FLAG_UNIQUE))
+						save_object( fp2 , tmp, 3);
+					else
+						save_object(fp, tmp, 3);
 
-		if (unique || QUERY_FLAG(op, FLAG_UNIQUE))
-		    save_object( fp2 , op, 3);
-		else
-		    if (flag == 0 ||
-			(flag == 2 && (!QUERY_FLAG(op, FLAG_OBJ_ORIGINAL) && !QUERY_FLAG(op, FLAG_UNPAID))))
-		    	save_object(fp, op, 3);
-	    } /* for this space */
-	} /* for this j */
+					/* there is a little possible problem, when we are
+					 * on a map space which invokes a effect on a object
+					 * leaving the space. We need a flag to avoid that
+					 * kind of action at this point:
+					 */
+					tmp->x = xt;
+					tmp->y = yt;
+					remove_ob(tmp); /* we touch every multi arch only one time*/
+					SET_FLAG(tmp,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
+					free_object(tmp);
+					continue;
+				}
+
+				if (QUERY_FLAG(op, FLAG_UNIQUE))
+				    save_object( fp2 , op, 3);
+				else
+					save_object(fp, op, 3);
+
+				if(op->more) /* its a head (because we had tails tested before) */
+				{
+					remove_ob(op); /* ensure we don't touch this multi arch again here! */
+					SET_FLAG(op,FLAG_STARTEQUIP); /* flag not to drop the inventory on map */
+					free_object(op);
+				}
+
+		    } /* for this space */
+		} /* for this j */
+	}
 }
 
 /*
@@ -1410,11 +1430,6 @@ mapstruct *load_original_map(const char *filename, int flags) {
         LOG(llevDebug, "load_original_map unique: %s (%x)\n", filename,flags);
         strcpy(pathname, filename);
     }
-    else if (flags & MAP_OVERLAY)
-    {
-        /* LOG(llevDebug, "load_original_map overlay: %s (%x)\n", filename,flags); */
-        strcpy(pathname, create_overlay_pathname(filename));
-    }
     else
     {
         LOG(llevDebug, "load_original_map: %s (%x) ", filename,flags);
@@ -1422,11 +1437,8 @@ mapstruct *load_original_map(const char *filename, int flags) {
     }
 
     if((fp=open_and_uncompress(pathname, 0, &comp))==NULL) {
-    if (!(flags & MAP_OVERLAY))
-    {            
-	    if (!(flags & MAP_PLAYER_UNIQUE))
-		    LOG(llevBug,"BUG: Can't open map file %s\n", pathname);
-    }
+		if (!(flags & MAP_PLAYER_UNIQUE))
+			LOG(llevBug,"BUG: Can't open map file %s\n", pathname);
 	return (NULL);
     }
 
@@ -1526,39 +1538,6 @@ static mapstruct *load_temporary_map(mapstruct *m) {
     return m;
 }
 
-/*
- * Loads a map, which has been loaded earlier, from file.
- * Return the map object we load into (this can change from the passed
- * option if we can't find the original map)
- */
-/*
-mapstruct *load_overlay_map(char *filename, mapstruct *m) {
-    FILE *fp;
-    int comp;
-    char pathname[MAX_BUF];
-
-    strcpy(pathname, create_overlay_pathname(filename));
-
-    if((fp=open_and_uncompress(pathname, 0, &comp))==NULL) {
-	return m;
-    }
-    
-    if (load_map_header(fp, m)) {
-	LOG(llevError,"Error loading map header for overlay %s (%s)\n",
-	    m->path, pathname);
-	delete_map(m);
-        m = load_original_map(m->path, 0);
-	return NULL;
-    }
-    m->compressed = comp;
-
-    m->in_memory=MAP_LOADING;
-    load_objects (m, fp, MAP_OVERLAY);
-    close_and_delete(fp, comp);
-    m->in_memory=MAP_IN_MEMORY;
-    return m;
-}
-*/
 /******************************************************************************
  * This is the start of unique map handling code
  *****************************************************************************/
@@ -1647,14 +1626,7 @@ int new_save_map(mapstruct *m, int flag)
     if (flag || MAP_UNIQUE(m)) 
 	{
 		if (!MAP_UNIQUE(m))  /* flag is set */
-		{
-			/*
-		    if (flag == 2)
-				strcpy(filename, create_overlay_pathname(m->path));
-			else
-			*/
 			strcpy (filename, create_pathname (m->path));
-		} 
 		else 
 			strcpy (filename, m->path);
 
@@ -1749,11 +1721,6 @@ int new_save_map(mapstruct *m, int flag)
 		{
 			LOG(llevBug, "BUG: Can't open unique items file %s\n", buf);
 		}
-		/*
-		if (flag == 2)
-		    save_objects(m, fp, fp2, 2);
-		else
-		*/
 		save_objects (m, fp, fp2, 0);
 		if (fp2 != NULL) 
 		{

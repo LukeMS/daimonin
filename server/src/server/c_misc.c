@@ -396,7 +396,27 @@ int command_dumpallarchetypes (object *op, char *params)
 {
         dump_all_archetypes();
   return 0;
-      }
+}
+
+int command_dumpactivelist (object *op, char *params)
+{
+	char buf[1024];
+	int count=0;
+	object *tmp;
+
+	for(tmp=active_objects;tmp;tmp = tmp->active_next)
+	{
+		count++;
+		sprintf(buf,"%08d %03d %f %s (%s)",tmp->count,tmp->type,tmp->speed,query_short_name(tmp), tmp->arch->name?tmp->arch->name:"<NA>");
+		new_draw_info(NDI_UNIQUE, 0,op, buf);
+		LOG(llevSystem,"%s\n", buf);
+	}
+	sprintf(buf,"active objects: %d", count);
+		new_draw_info(NDI_UNIQUE, 0,op, buf);
+		LOG(llevSystem,"%s\n", buf);
+
+	return 0;
+}
 
 int command_ssdumptable (object *op, char *params)
 {

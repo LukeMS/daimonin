@@ -215,7 +215,6 @@ extern void make_sure_not_seen(object *op);
 /* map.c */
 extern mapstruct *has_been_loaded(const char *name);
 extern char *create_pathname(const char *name);
-extern char *create_overlay_pathname(const char *name);
 extern int check_path(const char *name, int prepend_dir);
 extern void dump_map(mapstruct *m);
 extern void dump_all_maps(void);

@@ -2693,16 +2693,6 @@ static object *spawn_monster(object *gen, object *orig, int range)
 		gen->type = MONSTER;
 		copy_object(gen,op);
 		gen->type = SPAWN_POINT_MOB;
-		/* copy_object normally does this, but we special case object SPAWN_MOB
-		 * for the spawn point inv mobs - so we must reset this by hand.
-		 * also, we want 
-		 */
-		/*
-		 op->type = MONSTER;
-		 if(op->speed<0)
-			op->speed_left=-((float)(RANDOM()%200)/100.0f);
-		update_ob_speed(op);
-		*/
 		ret = op;
 	}
 	else /* but the tails for multi arch from the clones */

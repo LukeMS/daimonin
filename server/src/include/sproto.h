@@ -172,6 +172,7 @@ int command_wizpass(object *op, char *params);
 int command_dumpallobjects(object *op, char *params);
 int command_dumpfriendlyobjects(object *op, char *params);
 int command_dumpallarchetypes(object *op, char *params);
+int command_dumpactivelist(object *op, char *params);
 int command_ssdumptable(object *op, char *params);
 int command_dumpmap(object *op, char *params);
 int command_dumpallmaps(object *op, char *params);
@@ -262,7 +263,6 @@ void change_spell(object *op, char k);
 /* c_wiz.c */
 int command_setgod(object *op, char *params);
 int command_kick(object *op, char *params);
-int command_save_overlay(object *op, char *params);
 int command_shutdown(object *op, char *params);
 int command_goto(object *op, char *params);
 int command_generate(object *op, char *params);

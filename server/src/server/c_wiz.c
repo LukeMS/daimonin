@@ -111,10 +111,6 @@ int command_kick (object *op, char *params)
   return 1;
 }
 
-int command_save_overlay(object *op, char *params)
-{
-    return(1);
-} 
 
 int command_shutdown(object *op, char *params)
 {
@@ -555,8 +551,6 @@ int command_dump (object *op, char *params)
     }
     dump_object(tmp);
     new_draw_info(NDI_UNIQUE, 0, op, errmsg);
-    if (QUERY_FLAG(tmp, FLAG_OBJ_ORIGINAL))
-	new_draw_info(NDI_UNIQUE, 0, op, "Object is marked original");
     return 1;
   }
 

@@ -2927,7 +2927,7 @@ end
 arch wyvern
 unaggressive 1
 attack_movement 176
-x 20
+x 23
 y 5
 arch waypoint
 name waypoint1
