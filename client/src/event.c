@@ -1750,3 +1750,4 @@ static void quickslot_key(SDL_KeyboardEvent *key,int slot)
 	}
 
 }
+

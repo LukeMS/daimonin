@@ -716,7 +716,10 @@ void free_faces(void)
                         FaceList[i].sprite = NULL;
                 }
                 if(FaceList[i].name)
-	                FreeMemory((void **)(&FaceList[i].name));
+				{
+					void *tmp_free=FaceList[i].name;
+					FreeMemory(&tmp_free);
+				}
 				FaceList[i].flags =0;
         }
 }
@@ -725,19 +728,28 @@ void free_faces(void)
 void clear_metaserver_data(void)
 {
         _server *node, *tmp;
+		void *tmp_free;
+
         node = start_server;
 
         for(;node;)
         {
-                FreeMemory((void **)(&node->nameip));
-                FreeMemory((void **)(&node->version));
-                FreeMemory((void **)(&node->desc1));
-                FreeMemory((void **)(&node->desc2));
-                FreeMemory((void **)(&node->desc3));
-                FreeMemory((void **)(&node->desc4));
-                tmp = node->next;
-                FreeMemory((void **)(&node));
-                node = tmp;
+			tmp_free = node->nameip;
+            FreeMemory(&tmp_free);
+			tmp_free = node->version;
+            FreeMemory(&tmp_free);
+			tmp_free = node->desc1;
+            FreeMemory(&tmp_free);
+			tmp_free = node->desc2;
+            FreeMemory(&tmp_free);
+			tmp_free = node->desc3;
+            FreeMemory(&tmp_free);
+			tmp_free = node->desc4;
+            FreeMemory(&tmp_free);
+            tmp = node->next;
+			tmp_free = node;
+            FreeMemory(&tmp_free);
+            node = tmp;
         }
         start_server=NULL;
         end_server=NULL;

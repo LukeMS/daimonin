@@ -192,12 +192,15 @@ static item *alloc_items (int nrof) {
 void free_all_items (item *op)
 {
         item *tmp;
+		void *tmp_free;
+	
         while (op)
         {
                 if (op->inv)
                         free_all_items (op->inv);
                 tmp = op->next;
-                FreeMemory((void **)(&op));
+				tmp_free=op;
+                FreeMemory(&tmp_free);
                 op = tmp;
         }
 }
