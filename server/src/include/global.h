@@ -147,7 +147,8 @@ typedef unsigned int    tag_t;
 #define GET_INV_ANIM_ID(ob) (ob->inv_animation_id)
 
 
-#define MAX_PLAYER_NAME 12
+#define MAX_PLAYER_NAME		12
+#define MAX_PLAYER_PASSWORD	16
 
 /* used for eric_server() */
 #define SOCKET_UPDATE_PLAYER 1

@@ -317,7 +317,7 @@ typedef struct pl_player
 
     char                write_buf[MAX_BUF];
     char                input_buf[MAX_BUF];
-    char                password[16]; /* 2 (seed) + 11 (crypted) + 1 (EOS) + 2 (safety) = 16 */
+    char                password[MAX_PLAYER_PASSWORD]; /* 2 (seed) + 11 (crypted) + 1 (EOS) + 2 (safety) = 16 */
 #ifdef SAVE_INTERVAL
     time_t              last_save_time;
 #endif /* SAVE_INTERVAL */

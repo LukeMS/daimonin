@@ -1260,29 +1260,6 @@ void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_
 }
 
 
-void ai_keep_distance_to_enemy(object *op, struct mob_behaviour_param *params, move_response *response)
-{
-    if (OBJECT_VALID(op->enemy, op->enemy_count) && mob_can_see_obj(op, op->enemy, MOB_DATA(op)->enemy))
-    {
-        rv_vector  *rv  = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE);
-
-        if (rv)
-        {
-            if (rv->distance < (unsigned int) AIPARAM_INT(AIPARAM_KEEP_DISTANCE_TO_ENEMY_MIN_DIST))
-            {
-                response->type = MOVE_RESPONSE_DIR;
-                response->data.direction = absdir(rv->direction + 4);
-                op->anim_enemy_dir = response->data.direction;
-            }
-            else if (rv->distance < (unsigned int) AIPARAM_INT(AIPARAM_KEEP_DISTANCE_TO_ENEMY_MAX_DIST))
-            {
-                response->type = MOVE_RESPONSE_DIR;
-                response->data.direction = 0;
-                op->anim_enemy_dir = rv->direction;
-            }
-        }
-    }
-}
 
 void ai_move_towards_enemy(object *op, struct mob_behaviour_param *params, move_response *response)
 {
@@ -1305,6 +1282,42 @@ void ai_move_towards_enemy(object *op, struct mob_behaviour_param *params, move_
                 /* Stay where we are */
                 response->type = MOVE_RESPONSE_DIR;
                 response->data.direction = 0;
+            }
+        }
+    }
+}
+
+void ai_keep_distance_to_enemy(object *op, struct mob_behaviour_param *params, move_response *response)
+{
+    if (OBJECT_VALID(op->enemy, op->enemy_count) && mob_can_see_obj(op, op->enemy, MOB_DATA(op)->enemy))
+    {
+        rv_vector  *rv  = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE);
+
+        if (rv)
+        {
+			/* keep distance is something different as run away.
+			 * But a endless "keep distance" is or at last looks the same.
+			 * So, we must avoid it.
+			 * With the "action movement delay, this should work very well.
+			 * We should also handle this more tricky in the AI behaviour itself.
+			 */
+			if(rv->distance <= 1)
+			{
+				ai_move_towards_enemy(op, params, response);
+				return;
+			}
+
+            if (rv->distance < (unsigned int) AIPARAM_INT(AIPARAM_KEEP_DISTANCE_TO_ENEMY_MIN_DIST))
+            {
+                response->type = MOVE_RESPONSE_DIR;
+                response->data.direction = absdir(rv->direction + 4);
+                op->anim_enemy_dir = response->data.direction;
+            }
+            else if (rv->distance < (unsigned int) AIPARAM_INT(AIPARAM_KEEP_DISTANCE_TO_ENEMY_MAX_DIST))
+            {
+                response->type = MOVE_RESPONSE_DIR;
+                response->data.direction = 0;
+                op->anim_enemy_dir = rv->direction;
             }
         }
     }
@@ -1712,8 +1725,7 @@ int ai_bow_attack_enemy(object *op, struct mob_behaviour_param *params)
      || QUERY_FLAG(op, FLAG_SCARED)
      || !OBJECT_VALID(op->enemy,
                       op->enemy_count)
-     || op->weapon_speed_left
-      > 0)
+     || op->weapon_speed_left > 0)
         return FALSE;
 
     /* TODO: choose another target if this or next test fails */
@@ -1799,6 +1811,16 @@ int ai_bow_attack_enemy(object *op, struct mob_behaviour_param *params)
 
     op->weapon_speed_left += FABS((int) op->weapon_speed_left) + 1;
 
+	/* hack: without this, a monster with a bow is invinsible by a non range monster
+	 * with same speed. It simply runs away, can't be catched but will range kill
+	 * the other. Thats not what we want.
+	 * To remove this speed thingy, we need a flag for the AI which skips the movement
+	 * phase after a cast/arrow action.
+	 * At last we must skip a action which brings the mob out of range ... so, a movement
+	 * to the enemy should be allowed. This is not a question of reality of not - this will
+	 * destroy not only game play but also every map design and is a critical misbehaviour.
+	 */
+	op->speed_left--;
     return 1;
 }
 
@@ -1848,10 +1870,8 @@ int ai_spell_attack_enemy(object *op, struct mob_behaviour_param *params)
      || !QUERY_FLAG(op, FLAG_CAST_SPELL)
      || !OBJECT_VALID(op->enemy,
                       op->enemy_count)
-     || op->weapon_speed_left
-      > 0
-     || op->last_grace
-      > 0)
+     || op->weapon_speed_left > 0
+     || op->last_grace > 0)
         return FALSE;
 
     /* TODO: choose another target if this or next test fails */
@@ -1919,6 +1939,7 @@ int ai_spell_attack_enemy(object *op, struct mob_behaviour_param *params)
     /* TODO: what does the return value of cast_spell do ? */
     cast_spell(rv->part, rv->part, direction, sp_type, ability, spellNormal, NULL);
 
+	op->speed_left--;/* hack: see bow bahaviour! */	
     return TRUE;
 }
 
