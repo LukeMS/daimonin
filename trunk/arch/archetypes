@@ -1828,17 +1828,18 @@ no_drop 1
 food 5
 is_used_up 1
 end
-Object Eldath
-face eldath.141
+Object Tabernacle
+name the Tabernacle
+face dummy.111
 type 50
 msg
-Lesser Goddess of Waterfalls and Springs, Stillness and Peace
+The Tabernacle of Life
 endmsg
 editor_folder gods/gods_lesser
-randomitems deity_Eldath
+randomitems deity_tabernacle
 layer 6
 race god_lesser
-animation Eldath
+animation Tabernacle
 is_animated 1
 anim_speed 3
 Str 30
@@ -1874,14 +1875,14 @@ can_use_weapon 1
 can_use_armour 1
 weight 1
 end
-Object altar_eldath
-name Altar of Eldath
-face eldath_altar.111
+Object altar_tabernacle
+name Altar of the Tabernacle
+face altar_default.111
 type 56
 editor_folder gods/gods_lesser
-other_arch Eldath
+other_arch Tabernacle
 layer 4
-animation altar_eldath
+animation altar_tabernacle
 is_animated 0
 anim_speed 1
 is_turnable 1
@@ -1889,13 +1890,13 @@ direction 1
 level 100
 no_pick 1
 end
-Object eldath_avatar
-face eldath.141
+Object tabernacle_avatar
+face dummy.111
 type 80
 editor_folder gods/gods_lesser
 race avatar
 layer 6
-animation eldath_avatar
+animation tabernacle_avatar
 is_animated 1
 anim_speed 3
 Str 30
@@ -2696,28 +2697,27 @@ no_pick 1
 no_pass 1
 layer 4
 end
-Object eldath_avatar_info
+Object tabernacle_avatar_info
 name avatar
 face power.101
 type 8
 editor_folder intern/gods
 layer 0
 sys_object 1
-other_arch eldath_avatar
+other_arch tabernacle_avatar
 end
-Object eldath_general_info
+Object tabernacle_general_info
 name message
 face power.101
 type 8
 msg
-You feel a bond with peace and stillness and all springs 
-and pools.
+You feel a bond with the powers of the Tabernacle.
 endmsg
 editor_folder intern/gods
 layer 0
 sys_object 1
 end
-Object eldath_holy_servant_info
+Object tabernacle_holy_servant_info
 name holy servant
 face power.101
 type 8

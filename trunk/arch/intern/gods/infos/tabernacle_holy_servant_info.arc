@@ -1,4 +1,4 @@
-Object eldath_holy_servant_info
+Object tabernacle_holy_servant_info
 type 8
 layer 0
 sys_object 1
