@@ -45,7 +45,42 @@ struct _option opt[] =
     {0} /* End of Options */
 }; 
 
+//=================================================================================================
+// Open a description file.
+//=================================================================================================
+bool Option::openDescFile(const char *filename)
+{
+	if (!mDescFile) { mDescFile.close(); }
+	mDescFile.open(filename, ios::in);
+    if (!mDescFile) { return false; }
+	mDescBuffer ="";
+	string buf;
+	while (getline(mDescFile, buf)) 
+	{   // delete comments.
+		if (buf.find("#")> 5) { mDescBuffer+= buf; }
+	}
+	return true;
+}
 
+//=================================================================================================
+// Close a description file.
+//=================================================================================================
+void Option::closeDescFile()
+{
+	mDescFile.close();
+}
+
+//=================================================================================================
+// Parse a description out of the opened description file.
+//=================================================================================================
+void Option::getDescStr(const char *descrEntry, string &strBuffer)
+{
+	int startPos, stopPos;
+	startPos = mDescBuffer.find(descrEntry);
+	startPos = mDescBuffer.find("\"", startPos)+1;
+	stopPos  = mDescBuffer.find("\"", startPos)-startPos;
+	strBuffer = mDescBuffer.substr(startPos, stopPos);
+}
 
 //=================================================================================================
 // Create/Overwrite the Optionfile.
@@ -95,8 +130,7 @@ bool Option::Init(char *filename)
 // Destructor.
 //=================================================================================================
 Option::~Option()
-{
-/*
+{/*
     for (int i=0; opt[i].name; ++i)
     { 
 		if (opt[i].name[0] == '#') { continue; }

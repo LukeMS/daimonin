@@ -328,8 +328,11 @@ void Network::Update()
 			TextWin->Print("connection failed!", ColourValue::Red);
 			Option::getSingelton().GameStatus = GAME_STATUS_START;
 		}
-		Option::getSingelton().GameStatus = GAME_STATUS_VERSION;
-		TextWin->Print("Connected. exchange version.", ColourValue::Green);
+		else
+		{
+			Option::getSingelton().GameStatus = GAME_STATUS_VERSION;
+			TextWin->Print("Connected. exchange version.", ColourValue::Green);
+		}
 	}
 	else if (Option::getSingelton().GameStatus == GAME_STATUS_VERSION)
 	{   // Send client version.
