@@ -250,7 +250,7 @@ void HandleClient(NewSocket *ns, player *pl)
 		* return, and will read in the data when they do have time.
         */
 		if (ns->status==Ns_Dead || 
-				(pl && pl->state==ST_PLAYING && pl->ob != NULL && pl->ob->speed_left < 0)) 
+				(pl && pl->state==ST_PLAYING && (!pl->ob || pl->ob->speed_left < 0.0f))) 
 			return;
 
 		/* now we need to check what our write buffer does.
