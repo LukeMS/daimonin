@@ -38,12 +38,15 @@ static char *cleanup_chat_string(char *ustring)
 {
 	int i;
 
+	if(!ustring)
+		return NULL;
+
 	/* kill all whitespace */
 	while (*ustring !='\0' && isspace(*ustring)) 
 		ustring++;
 
 	/* this happens when whitespace only string was submited */
-    if (*ustring=='\0') 
+    if (!ustring || *ustring=='\0') 
 		return NULL;
 
 	/* now clear all control chars */
@@ -596,15 +599,13 @@ static int basic_emote(object *op, char *params, int emotion)
     char buf[HUGE_BUF]="", buf2[HUGE_BUF]="", buf3[HUGE_BUF]="";
    player *pl;
 
-   LOG(llevDebug, "EMOTE: obj: %x (%s) (params: %s) (t: %s) %d\n", op, query_name(op), params?params:"NULL", op->contr?query_name(op->contr->target_object):"NO CTRL!!", emotion);
-   if(!op || !op->contr || QUERY_FLAG(op, FLAG_FREED) || QUERY_FLAG(op, FLAG_REMOVED))
-   {
-	   LOG(llevDebug, "EMOTE: BUG: obj: %x (%s)\n", op, query_name(op));
-	   return 0;
-   }
+   LOG(llevDebug, "EMOTE: %x (%s) (params: >%s<) (t: %s) %d\n", op, query_name(op), params?params:"NULL", op->contr?query_name(op->contr->target_object):"NO CTRL!!", emotion);
 
-
-    if (!params) {
+   params = cleanup_chat_string(params);
+   if (params && *params=='\0') /* in this case we have 100% a illegal parameter */
+	   params = NULL;
+   
+   if (!params) {
 
 	/* if we are a player with legal target, use it as target for the emote */
 	if(op->type == PLAYER && op->contr->target_object && op->contr->target_object != op && 
@@ -612,19 +613,19 @@ static int basic_emote(object *op, char *params, int emotion)
 		!QUERY_FLAG(op->contr->target_object, FLAG_REMOVED) && op->contr->target_object->name &&
 		 op->contr->target_object_count == op->contr->target_object->count)
 	{
-		/* target is in distance */
-		if(distance(op,op->contr->target_object) <= POW2(9))
+		rv_vector rv;
+		get_rangevector(op,op->contr->target_object, &rv, 0);
+
+		if(rv.distance <= 4)
 		{
 			emote_other(op, op->contr->target_object, NULL, buf, buf2, buf3,emotion);				
 			new_draw_info(NDI_UNIQUE, 0, op, buf);
 			if(op->contr->target_object->type == PLAYER)
 				new_draw_info(NDI_UNIQUE|NDI_YELLOW, 0, op->contr->target_object, buf2);
 			new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, op, op->contr->target_object, buf3);
-			LOG(llevDebug, "EMOTE: obj: %x (%s)\n", op, query_name(op));
 			return 0;
 		}
 		new_draw_info(NDI_UNIQUE, 0, op, "The target is not in range for this emote action.");
-		LOG(llevDebug, "EMOTE: obj: %x (%s)\n", op, query_name(op));
 		return 0;
 
 	}
@@ -831,7 +832,6 @@ static int basic_emote(object *op, char *params, int emotion)
 	    sprintf(buf2, "usage: /me <emote to display>");
 		if(op->type == PLAYER)
 			new_draw_info(NDI_UNIQUE, 0, op, buf2);
-		LOG(llevDebug, "EMOTE: obj: %x (%s)\n", op, query_name(op));
 		return(0);
 		/* do nothing, since we specified nothing to do */
 	    break;
@@ -843,13 +843,11 @@ static int basic_emote(object *op, char *params, int emotion)
 		new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, op, op, buf);
 		if(op->type == PLAYER)
 			new_draw_info(NDI_UNIQUE, 0, op, buf2);
-		LOG(llevDebug, "EMOTE: obj: %x (%s)\n", op, query_name(op));
 		return(0);
  
 	} 
 	else /* we have params */
 	{
-		params = cleanup_chat_string(params);
 		if(emotion == EMOTE_ME)
 		{
 			sprintf(buf, "%s %s", op->name, params);
@@ -858,7 +856,6 @@ static int basic_emote(object *op, char *params, int emotion)
 			new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, op, op, buf);
 			if(op->type == PLAYER)
 					new_draw_info(NDI_UNIQUE, 0, op, buf2);
-			LOG(llevDebug, "EMOTE: obj: %x (%s)\n", op, query_name(op));
 			return(0);
 		}
 		else if(op->type == PLAYER) /* atm, we only allow "yourself" as parameter for players */
@@ -884,7 +881,6 @@ static int basic_emote(object *op, char *params, int emotion)
 				{
 					new_draw_info(NDI_UNIQUE|NDI_YELLOW, 0, pl->ob, buf2);
 					new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, pl->ob, buf3);
-					LOG(llevDebug, "EMOTE: obj: %x (%s)\n", op, query_name(op));
 					return 0;
 				}
 			}
@@ -893,7 +889,6 @@ static int basic_emote(object *op, char *params, int emotion)
 		}
     }
 
-	LOG(llevDebug, "EMOTE: obj: %x (%s)\n", op, query_name(op));
     return 0;
 }
 

@@ -1308,7 +1308,9 @@ void dump_all_objects() {
  * If it's not a multi-object, it is returned.
  */
 
+/* OUTDATED !!!
 object *get_nearest_part(object *op,object *pl) {
+
   object *tmp,*closest;
   int last_dist,i;
   if(op->more==NULL)
@@ -1318,7 +1320,7 @@ object *get_nearest_part(object *op,object *pl) {
       closest=tmp,last_dist=i;
   return closest;
 }
-
+*/
 /*
  * Returns the object which has the count-variable equal to the argument.
  */
@@ -3352,18 +3354,6 @@ int find_dir(mapstruct *m, int x, int y, object *exclude) {
     }
   }
   return 0;
-}
-
-/*
- * distance(object 1, object 2) will return the square of the
- * distance between the two given objects.
- */
-
-int distance(object *ob1,object *ob2) {
-  int i;
-  i= (ob1->x - ob2->x)*(ob1->x - ob2->x)+
-         (ob1->y - ob2->y)*(ob1->y - ob2->y);
-  return i;
 }
 
 /*

@@ -157,6 +157,25 @@ racelink * find_racelink( const char *name ) {
   return test;
 }
 
+/* this function does 2 things: controlling we have
+ * a legal string - if not, return NULL  - if return string*
+ * - remove all whitespace in front (if all are whitespace
+ *   we return NULL)
+ */
+char *cleanup_string(char *ustring)
+{
+	/* kill all whitespace */
+	while (*ustring !='\0' && isspace(*ustring)) 
+		ustring++;
+
+	/* this happens when whitespace only string was submited */
+    if (!ustring || *ustring=='\0') 
+		return NULL;
+
+	return ustring;
+}
+
+
 /* returns a single word from a string, free from left & right whitespaces.
  * return NULL means that there is word left in str.
  */
