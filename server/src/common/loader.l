@@ -1804,7 +1804,8 @@ void save_object(FILE *fp,object *op, int flag) {
     /* Even if the object does have an owner, it would seem that we should
      * still save it.
      */
-    if(op->owner!=NULL || fp == NULL)
+    /*if(op->owner!=NULL || fp == NULL) this will wreck item we throw - they get player as owner*/
+    if(fp == NULL)
 	return;
 
     /* If it is unpaid and we don't want to save those, just return. */
