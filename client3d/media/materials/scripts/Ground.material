@@ -47,7 +47,24 @@ material grass3
 }
 
 
-material dynamic
+material dyn_layer_01
+{
+   technique
+   {
+     pass
+     {
+         ambient 1.0 1.0 1.0
+         scene_blend alpha_blend
+         depth_write off
+         texture_unit
+         {
+            
+         }
+      }
+   }
+}
+
+material dyn_layer_02
 {
    technique
    {
