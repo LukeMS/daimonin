@@ -1907,14 +1907,13 @@
     dark cave you hear the sound of rustling dragonscales...". Well, my english
     is poor, but you get the point. =)
   </attribute>
-  <attribute arch="unique" editor="unique destination" type="bool">
+  <attribute arch="last_eat" editor="unique destination" type="bool">
     This flag defines the destined map as "personal unique map". If set,
     there will be a seperate version of that map for every player out there.
-    This feature is used for the permanent apartments
-    (in Scorn/Nuernberg/Caterham...). It should not be used for anything else
-    than apartments, since Daimonin is a *multi*player game. In such a permanent
-    apartment don't forget to set the unique-flag for all floor tiles too
-    (see floors).
+    This feature is used for the permanent apartments.
+    It should not be used for anything else than apartments, since Daimonin is a 
+    *multi*player game. In such a permanent apartment don't forget to set the 
+    unique-flag for all floor tiles too (see floors).
     An exit pointing outside of a personal unique map must have the
     "unique destination"-flag unset.
   </attribute>
