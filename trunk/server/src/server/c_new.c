@@ -250,10 +250,8 @@ void send_target_command(player *pl)
 	 */
 	if(pl->target_object->level < level_color[pl->ob->level].yellow) /* target is lower */
 	{
-		/* This calc the "grey" mobs - if 0, they are grey and don't give
-		 * exp and items.
-		 */
-		if(!calc_level_difference(pl->ob->level, pl->target_object->level)) /* grey */
+		/* if < the green border value, the mob is grey */
+		if(pl->target_object->level < level_color[pl->ob->level].green) /* grey */
 			tmp[2]= NDI_GREY;
 		else /* calc green or blue */
 		{

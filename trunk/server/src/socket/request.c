@@ -704,7 +704,6 @@ void MapRedrawCmd(char *buff, int len, player *pl)
     /* Okay, this is MAJOR UGLY. but the only way I know how to
      * clear the "cache"
 	*/
-LOG(-1,"XXXXXXXXXXXXXXXXXXXXXXX redraw map from client?XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXx\n");
     memset(&pl->socket.lastmap, 0, sizeof(struct Map));
     draw_client_map(pl->ob);
 }
@@ -1706,7 +1705,7 @@ void draw_client_map2(object *pl)
 	{
 		Send_With_Handling(&pl->contr->socket, &sl);
 #ifdef DEBUG_CORE
-		LOG(-1,"MAP2: (%d) send tiles (%d): %d \n", sl.len,pl->contr->socket.sent_scroll,tile_count);
+		LOG(llevDebug,"MAP2: (%d) send tiles (%d): %d \n", sl.len,pl->contr->socket.sent_scroll,tile_count);
 #endif
 		pl->contr->socket.sent_scroll = 0;
     }

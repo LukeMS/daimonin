@@ -109,7 +109,7 @@ typedef struct obj
 	uint32 path_denied; 		/* Paths the object is denied access to */
 	sint32 value;				/* How much money it is worth (or contains) */
 	uint32 nrof;				/* How many of the objects */
-	uint32 damage_round_tag;	/* neede for the damage info for client in map2 */
+	uint32 damage_round_tag;	/* needed for the damage info for client in map2 */
 	uint32 update_tag;			/* this is used from map2 update! */ 
 	uint32 flags[NUM_FLAGS_32]; /* various flags */
 

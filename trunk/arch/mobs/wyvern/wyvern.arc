@@ -101,12 +101,12 @@ monster 1
 level 1
 Con 2
 Pow 2
-exp 165
+exp 83
 ac 11
 wc 7
-dam 5
+dam 56
 hp -1
-maxhp 6
+maxhp 66
 sp -1
 maxsp 10
 weapon_speed 0.040

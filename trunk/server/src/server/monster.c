@@ -2820,21 +2820,48 @@ void spawn_point(object *op)
 		op->enemy = NULL; /* spawn point has nothing spawned */
 	}
 
-
-	/* now we get a random value from 0 to 9999. */
+ 	/* a set sp value will override the spawn chance.
+	 * with that "trick" we force for map loading the
+	 * default spawns of the map because sp is 0 as default.
+	 */
+	/*LOG(-1,"SPAWN...(%d,%d)",op->x, op->y);*/
 	if(op->stats.sp == -1)
-		op->stats.sp = (RANDOM() % SPAWN_RANDOM_RANGE);
+	{
+		int gg;
+		/* now lets decide we will have a spawn event */
+		if(op->last_grace<=-1) /* never */
+		{
+			/*LOG(-1," closed (-1)\n");*/
+			return;
+		}
+		if(op->last_grace && (gg=(RANDOM() % (op->last_grace+1)))) /* if >0 and random%x is NOT null ... */
+		{
+			/*LOG(-1," chance: %d (%d)\n",gg,op->last_grace);*/
+			return;
+		}
 
-		/* now we move through the spawn point inventory and
+		op->stats.sp = (RANDOM() % SPAWN_RANDOM_RANGE);
+	}
+	/*LOG(-1," hit!: %d\n",op->stats.sp);*/
+	
+	if(!op->inv) /* spawn point without inventory! */
+	{
+		LOG(llevBug,"BUG: Spawn point without inventory!! --> map %s (%d,%d)\n",op->map?(op->map->path?op->map->path:">no path<"):">no map<", op->x, op->y);
+		/* kill this spawn point - its useless and need to fixed from the map maker/generator */
+		remove_ob(op);
+		free_object(op);
+		return;
+	}
+	/* now we move through the spawn point inventory and
 	 * get the mob with a number under this value AND nearest.
 	 */
-    for(rmt=0,mob=NULL,tmp = op->inv; tmp; tmp = next)
+   for(rmt=0,mob=NULL,tmp = op->inv; tmp; tmp = next)
     {
 		next = tmp->below;
 
 		if(tmp->type != SPAWN_POINT_MOB)
-			LOG(llevBug,"SPAWN: spawn point in map %s (%d,%d) with wrong type object (%d) in inv: %s\n",
-											op->map?op->map->name:"<no map>", op->x, op->y, tmp->type, query_name(tmp));
+			LOG(llevBug,"BUG: spawn point in map %s (%d,%d) with wrong type object (%d) in inv: %s\n",
+											op->map?op->map->path:"<no map>", op->x, op->y, tmp->type, query_name(tmp));
 		else if((int)tmp->enemy_count <= op->stats.sp && (int)tmp->enemy_count >= rmt)
 		{
 			/* we have a possible hit - control special settings now */
@@ -2918,5 +2945,8 @@ void spawn_point(object *op)
 	SET_FLAG(mob, FLAG_SPAWN_MOB); /* FINISH: now mark our mob as a spawn */
 	fix_monster(mob); /* fix all the values and add in possible abilities or forces ... */
     insert_ob_in_map(mob,mob->map,op,0); /* *now* all is done - *now* put it on map */
+	if(QUERY_FLAG(mob,FLAG_FRIENDLY))
+        add_friendly_object(mob);
+	
 }
 

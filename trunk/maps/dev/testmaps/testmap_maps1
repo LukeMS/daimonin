@@ -544,7 +544,7 @@ end
 arch spawn_point
 layer 3
 sys_object 0
-sp 8000
+last_grace 1
 x 6
 y 2
 arch wyvern
@@ -554,7 +554,6 @@ stand_still 0
 unaggressive 0
 hp 0
 maxhp 2
-object_int1 8000
 end
 arch ant_soldier
 type 83

@@ -36,6 +36,7 @@ end
 Object bones4
 name bones
 face bones4.101
+no_pass 1
 no_pick 1
 type 79
 layer 4

@@ -3614,6 +3614,7 @@
 
 <section name="melee">
   <attribute arch="dam" editor="damage" type="int">
+    A value of 50 will be handled as 5.0, a value of 55 = 5.5.
     Among other parameters, &lt;damage&gt; affects how much melee damage
     a monster inflicts. &lt;damage&gt; is used as base value for damage per
     hit. &lt;level&gt;, &lt;speed&gt;, &lt;weapon class&gt; and resistances also
@@ -3647,7 +3648,8 @@
 
     Important: This is a relative value, dependant on level.
     The in-game value is calculated as follows:
-    "real max health" = &lt;max health&gt; * (&lt;level&gt; + 3)
+    A value of 50 will be handled as 5.0, a value of 55 = 5.5.
+    "real max health" = (&lt;max health&gt; * (&lt;level&gt; + 3))/10
   </attribute>
   <attribute arch="ac" editor="armour class" type="int">
     Monsters of low &lt;armour class&gt; are less likely to get hit from
@@ -4093,7 +4095,12 @@
     control himself and/or the mob. If there is no mob, the
     spawn point will try to spawn a mob.
   </attribute>
-  <attribute arch="sp" editor="first spawn chance" type="int">
+  <attribute arch="last_grace" editor="spawn chance" type="int">
+  Defines the base spawn chance. Value 0 means spawn
+  try every actice phase. -1 means no spawn try.
+  Values >0 means spawn chance is 1/value+1.
+  </attribute>
+  <attribute arch="sp" editor="forced spawn" type="int">
     If -1 at start, the spawn point will do a normal spawn.
     If set to 0-9999, the spawn point will be forced to spawn
     the mob with the nearest set chance (lower or same value)
@@ -4254,6 +4261,7 @@
 </section>
 <section name="melee">
   <attribute arch="dam" editor="damage" type="int">
+    A value of 50 will be handled as 5.0, a value of 55 = 5.5.
     Among other parameters, &lt;damage&gt; affects how much melee damage
     a monster inflicts. &lt;damage&gt; is used as base value for damage per
     hit. &lt;level&gt;, &lt;speed&gt;, &lt;weapon class&gt; and resistances also
@@ -4266,6 +4274,13 @@
     Note that the monster's level further improves weapon class:
     "real weapon class" = &lt;weapon class&gt; - &lt;level&gt;
   </attribute>
+  <attribute arch="hp" editor="health points" type="int">
+    The &lt;health points&gt; of a monster define how long it takes to
+    kill it. With every successful hit from an opponent, health points
+    get drained - The monster dies by zero health points.
+    If the value '-1' is set, the monster will start out with full
+    health. How much that is depends on &lt;max health&gt;.
+  </attribute>
   <attribute arch="wc_range" editor="wc hit range" type="int">
     This value is set to 20 from the server when == 0. Its the
     The server will add a random value between 0 ad wc_range to the wc.
@@ -4274,20 +4289,14 @@
     Because the mobile level is added to wc too, a wc_range of 40 will
     let the monster hit VERY often even against the best armours.
   </attribute>
-  <attribute arch="hp" editor="health points" type="int">
-    The &lt;health points&gt; of a monster define how long it takes to
-    kill it. With every successful hit from an opponent, health points
-    get drained - The monster dies by zero health points.
-    If the value '-1' is set, the monster will start out with full
-    health. How much that is depends on &lt;max health&gt;.
-  </attribute>
   <attribute arch="maxhp" editor="max health" type="int">
     &lt;max health&gt; is the maximum amount of &lt;health points&gt; this
     monster can have.
 
-    Important: This is a relative value, dependant on level.
-    The in-game value is calculated as follows:
-    "real max health" = &lt;max health&gt; * (&lt;level&gt; + 3)
+    Important: This is a relative value, dependant on level
+    A value of 50 will be handled as 5.0, a value of 55 = 5.5.
+    The in-game value is (roughly) calculated as follows:
+    "real max health" = &lt;max health&gt; * (&lt;level&gt; + 3)/10
   </attribute>
   <attribute arch="ac" editor="armour class" type="int">
     Monsters of low &lt;armour class&gt; are less likely to get hit from

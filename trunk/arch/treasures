@@ -282,22 +282,27 @@ end
 treasure default_door_100
   list traps
 end
-treasure default_drop
-   list random_food
-   chance 30
-   no
-      list random_scroll
-      chance 30
-      no
-         list random_potion
-         chance 25
-         no
-            arch potion_improve
-            difficulty 6
-            chance 9
-          end
-      end
-   end
+treasureone default_drop
+  list random_food
+   chance 60
+  more
+  list random_container
+   chance 20
+#   list random_food
+#   chance 30
+#   no
+#      list random_scroll
+#      chance 30
+#      no
+#         list random_potion
+#         chance 25
+#         no
+#            arch potion_improve
+#            difficulty 6
+#            chance 9
+#          end
+#      end
+#   end
 end
 ##############################################################
 #
@@ -1619,13 +1624,7 @@ treasureone random_equipment
   list random_armour
    chance 40
 end
-treasureone random_tools
-  list random_food
-   chance 40
-  more
-  list random_container
-   chance 30
-  more
+treasureone random_magics
   list random_talisman
    chance 20
   more
@@ -1636,478 +1635,1494 @@ end
 #
 # MOB TREASURES
 #
-treasure mob_low_no_tools
- list traps
-   chance 10
- more
- list default_wealth
-   chance 60
- more
- list default_drop
-   chance 8
- no
-  list random_equipment
-    material_quality 80
-    material_range 2
-    chance 12
-   end
-end
-treasure mob_med_no_tools
- list traps
-   chance 10
- more
- list default_wealth
-   chance 60
- more
- list default_drop
-   chance 8
- no
-  list random_equipment
-    material_quality 83
-    material_range 6
-    chance 12
-   end
-end
-treasure mob_low
- list traps
-   chance 10
- more
- list default_wealth
-   chance 60
- more
- list default_drop
-   chance 10
- no
-  list random_equipment
-    material_quality 80
-    material_range 3
-    chance 8
-  no
-     list random_tools
-       material_quality 80
-       material_range 3
-       chance 4
-       difficulty 3
-    end
-   end
-end
-treasure mob_med
- list traps
-   chance 10
- more
- list default_wealth
-   chance 60
- more
- list default_drop
-   chance 10
- no
-  list random_equipment
-    material_quality 83
-    material_range 6
-    chance 8
-  no
-     list random_tools
-       material_quality 83
-       material_range 6
-       chance 4
-       difficulty 3
-    end
-   end
-end
 treasure mob_ant
- list traps
-   chance 10
+  list traps
+  chance 8
  more
  list default_wealth
-   chance 70
+  chance 65
  more
  list default_drop
-   chance 8
+   chance_fix 12
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 32
  no
-  list random_equipment
-    artifact_chance 0
-    material_quality 80
-    material_range 2
-    chance 8
-   end
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 38
+ no
+   list random_talisman
+     chance_fix 266
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 65
+ no
+   list random_potion
+     chance_fix 75
+  end
   more
     arch small_shield
+    chance_fix 50
     material_quality 80
     material_range 2
     magic_fix 1
     artifact_chance 0
-    chance 2
     name small ant shield
 end
 treasure mob_ant_special
- list traps
-   chance 10
+  list traps
+  chance 8
  more
  list default_wealth
-   chance 50
+  chance 65
  more
  list default_drop
-   chance 10
+   chance_fix 14
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 32
  no
-  list random_equipment
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 38
+ no
+   list random_talisman
+     chance_fix 126
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 55
+ no
+   list random_potion
+     chance_fix 55
+  end
+  more
+    arch small_shield
+    chance_fix 45
     material_quality 80
-    material_range 3
-    chance 12
-  no
-     list random_tools
-       material_quality 80
-       material_range 3
-       chance 3
-       difficulty 3
-    end
-   end
+    material_range 2
+    magic_fix 1
+    artifact_chance 0
+    name small ant shield
 end
 treasure mob_ant_queen
- list traps
-   chance 10
+  list traps
+  chance 8
  more
  list default_wealth
-   chance 60
+  chance 65
  more
  list default_drop
-   chance 15
+   chance_fix 12
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 32
  no
-  list random_equipment
-    material_quality 80
-    material_range 3
-    chance 8
-  no
-     list random_tools
-       material_quality 80
-       material_range 3
-       chance 5
-       difficulty 3
-    end
-   end
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 38
+ no
+   list random_talisman
+     chance_fix 99
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 55
+ no
+   list random_potion
+     chance_fix 55
+  end
 end
 treasure mob_insect
- list traps
-   chance 10
+  list traps
+  chance 8
  more
  list default_wealth
-   chance 60
+  chance 65
  more
  list default_drop
-   chance 15
+   chance_fix 14
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 32
  no
-  list random_equipment
-    material_quality 80
-    material_range 3
-    chance 14
-  no
-     list random_tools
-       material_quality 80
-       material_range 3
-       chance 1
-       difficulty 3
-    end
-   end
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 38
+ no
+   list random_talisman
+     chance_fix 199
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 55
+ no
+   list random_potion
+     chance_fix 55
+  end
 end
 treasure mob_slime
- list traps
-   chance 10
+  list traps
+  chance 8
  more
  list default_wealth
-   chance 60
+  chance 70
  more
  list default_drop
-   chance 15
+   chance_fix 14
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 42
  no
-  list random_equipment
-    material_quality 80
-    material_range 3
-    chance 8
-  no
-     list random_tools
-       material_quality 80
-       material_range 3
-       chance 5
-       difficulty 3
-    end
-   end
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 32
+ no
+   list random_talisman
+     chance_fix 75
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 75
+ no
+   list random_potion
+     chance_fix 45
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 99
+  end
+  end
 end
 treasure mob_wyvern
  list traps
-   chance 10
+   chance 8
  more
  list default_wealth
-   chance 60
+  chance 65
  more
  list default_drop
-   chance 15
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 42
  no
-  list random_equipment
-    material_quality 80
-    material_range 3
-    chance 8
-  no
-     list random_tools
-       material_quality 80
-       material_range 3
-       chance 5
-       difficulty 3
-    end
-   end
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 48
+ no
+   list random_mtools
+     chance_fix 82
+ no
+   list random_talisman
+     chance_fix 66
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 45
+ no
+   list random_potion
+     chance_fix 45
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 99
+  end
+  end
 end
 treasure mob_ogre
  list traps
-   chance 10
+   chance 8
  more
  list default_wealth
-   chance 60
+  chance 65
  more
  list default_drop
-   chance 15
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 42
  no
-  list random_equipment
-    item_race 12
-    material_quality 80
-    material_range 3
-    chance 8
-  no
-     list random_tools
-       material_quality 80
-       material_range 3
-       chance 5
-       difficulty 3
-    end
-   end
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 48
+ no
+   list random_mtools
+     chance_fix 82
+ no
+   list random_talisman
+     chance_fix 66
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 45
+ no
+   list random_potion
+     chance_fix 45
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 99
+  end
+  end
 end
 treasure mob_giant_hill
  list traps
-   chance 10
+   chance 8
  more
  list default_wealth
-   chance 60
+  chance 65
  more
  list default_drop
-   chance 15
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 42
  no
-  list random_equipment
-    item_race 8
-    material_quality 80
-    material_range 3
-    chance 8
-  no
-     list random_tools
-       material_quality 80
-       material_range 3
-       chance 5
-       difficulty 3
-    end
-   end
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 48
+ no
+   list random_mtools
+     chance_fix 82
+ no
+   list random_talisman
+     chance_fix 66
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 45
+ no
+   list random_potion
+     chance_fix 45
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 99
+  end
+  end
 end
 treasure mob_giant_stone
  list traps
-   chance 10
+   chance 8
  more
  list default_wealth
-   chance 60
+  chance 65
  more
  list default_drop
-   chance 15
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 42
  no
-  list random_equipment
-    item_race 8
-    material_quality 80
-    material_range 3
-    chance 8
-  no
-     list random_tools
-       material_quality 80
-       material_range 3
-       chance 5
-       difficulty 3
-    end
-   end
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 48
+ no
+   list random_mtools
+     chance_fix 82
+ no
+   list random_talisman
+     chance_fix 66
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 45
+ no
+   list random_potion
+     chance_fix 45
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 99
+  end
+  end
 end
 treasure mob_dragon_water
  list traps
-   chance 10
+   chance 8
  more
  list default_wealth
-   chance 60
+  chance 65
  more
  list default_drop
-   chance 15
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 42
  no
-  list random_equipment
-    material_quality 80
-    material_range 3
-    chance 8
-  no
-     list random_tools
-       material_quality 80
-       material_range 3
-       chance 5
-       difficulty 3
-    end
-   end
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 48
+ no
+   list random_mtools
+     chance_fix 82
+ no
+   list random_talisman
+     chance_fix 66
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 45
+ no
+   list random_potion
+     chance_fix 45
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 99
+  end
+  end
 end
 treasure mob_kobold_big
  list traps
-   chance 10
+   chance 8
  more
  list default_wealth
-   chance 60
+  chance 65
  more
  list default_drop
-   chance 15
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 42
  no
-  list random_equipment
-    item_race 7
-    material_quality 80
-    material_range 3
-    chance 8
-  no
-     list random_tools
-       material_quality 80
-       material_range 3
-       chance 5
-       difficulty 3
-    end
-   end
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 48
+ no
+   list random_mtools
+     chance_fix 82
+ no
+   list random_talisman
+     chance_fix 66
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 45
+ no
+   list random_potion
+     chance_fix 45
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 99
+  end
+  end
 end
 treasure mob_kobold
  list traps
-   chance 10
+   chance 8
  more
  list default_wealth
-   chance 45
+  chance 65
  more
  list default_drop
-   chance 8
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 42
  no
-  list random_equipment
-    item_race 7
-    material_quality 80
-    material_range 2
-    chance 16
-   end
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 48
+ no
+   list random_mtools
+     chance_fix 82
+ no
+   list random_talisman
+     chance_fix 66
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 45
+ no
+   list random_potion
+     chance_fix 45
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 99
+  end
+  end
 end
 treasure mob_worm_purple
  list traps
-   chance 10
+   chance 8
  more
  list default_wealth
-   chance 60
+  chance 65
  more
  list default_drop
-   chance 15
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 42
  no
-  list random_equipment
-    material_quality 80
-    material_range 3
-    chance 8
-  no
-     list random_tools
-       material_quality 80
-       material_range 3
-       chance 5
-       difficulty 3
-    end
-   end
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 48
+ no
+   list random_mtools
+     chance_fix 82
+ no
+   list random_talisman
+     chance_fix 66
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 45
+ no
+   list random_potion
+     chance_fix 45
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 99
+  end
+  end
+end
+treasure mob_ettin
+ list traps
+   chance 8
+ more
+ list default_wealth
+  chance 65
+ more
+ list default_drop
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 42
+ no
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 48
+ no
+   list random_mtools
+     chance_fix 82
+ no
+   list random_talisman
+     chance_fix 66
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 45
+ no
+   list random_potion
+     chance_fix 45
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 99
+  end
+  end
+end
+treasure mob_wraith
+ list traps
+   chance 8
+ more
+ list default_wealth
+  chance 65
+ more
+ list default_drop
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 42
+ no
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 48
+ no
+   list random_mtools
+     chance_fix 82
+ no
+   list random_talisman
+     chance_fix 66
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 45
+ no
+   list random_potion
+     chance_fix 45
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 99
+  end
+  end
+end
+treasure mob_lost_soul
+ list traps
+   chance 8
+ more
+ list default_wealth
+  chance 65
+ more
+ list default_drop
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 42
+ no
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 48
+ no
+   list random_mtools
+     chance_fix 82
+ no
+   list random_talisman
+     chance_fix 66
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 45
+ no
+   list random_potion
+     chance_fix 45
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 99
+  end
+  end
+end
+treasure mob_slugs
+ list traps
+   chance 8
+ more
+ list default_wealth
+  chance 65
+ more
+ list default_drop
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 42
+ no
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 48
+ no
+   list random_mtools
+     chance_fix 82
+ no
+   list random_talisman
+     chance_fix 66
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 45
+ no
+   list random_potion
+     chance_fix 45
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 99
+  end
+  end
+end
+treasure mob_dragon_skeletal
+ list traps
+   chance 8
+ more
+ list default_wealth
+  chance 65
+ more
+ list default_drop
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 42
+ no
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 48
+ no
+   list random_mtools
+     chance_fix 82
+ no
+   list random_talisman
+     chance_fix 66
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 45
+ no
+   list random_potion
+     chance_fix 45
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 99
+  end
+  end
+end
+treasure mob_beholder_dread
+ list traps
+   chance 8
+ more
+ list default_wealth
+  chance 65
+ more
+ list default_drop
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 42
+ no
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 48
+ no
+   list random_mtools
+     chance_fix 82
+ no
+   list random_talisman
+     chance_fix 66
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 45
+ no
+   list random_potion
+     chance_fix 45
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 99
+  end
+  end
 end
 treasure mob_demilich
  list traps
-   chance 10
+   chance 8
  more
  list default_wealth
-   chance 60
+  chance 65
  more
  list default_drop
-   chance 15
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 42
  no
-  list random_equipment
-    material_quality 80
-    material_range 3
-    chance 8
-  no
-     list random_tools
-       material_quality 80
-       material_range 3
-       chance 5
-       difficulty 3
-    end
-   end
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 48
+ no
+   list random_mtools
+     chance_fix 82
+ no
+   list random_talisman
+     chance_fix 56
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 45
+ no
+   list random_potion
+     chance_fix 45
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 99
+  end
+  end
 end
 treasure mob_troll
  list traps
-   chance 10
+   chance 8
  more
  list default_wealth
-   chance 60
+  chance 65
  more
  list default_drop
-   chance 15
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 42
  no
-  list random_equipment
-    material_quality 80
-    material_range 3
-    chance 8
-  no
-     list random_tools
-       material_quality 80
-       material_range 3
-       chance 5
-       difficulty 3
-    end
-   end
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 48
+ no
+   list random_mtools
+     chance_fix 82
+ no
+   list random_talisman
+     chance_fix 66
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 45
+ no
+   list random_potion
+     chance_fix 45
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 99
+  end
+  end
+end
+treasure mob_skeleton1
+ list traps
+   chance 8
+ more
+ list default_wealth
+  chance 65
+ more
+ list default_drop
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 32
+ no
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 68
+ no
+   list random_mtools
+     chance_fix 182
+ no
+   list random_talisman
+     chance_fix 166
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 55
+ no
+   list random_potion
+     chance_fix 55
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 99
+  end
+  end
+end
+treasure mob_skeleton2
+ list traps
+   chance 8
+ more
+ list default_wealth
+  chance 65
+ more
+ list default_drop
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 62
+ no
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 38
+ no
+   list random_mtools
+     chance_fix 182
+ no
+   list random_talisman
+     chance_fix 166
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 55
+ no
+   list random_potion
+     chance_fix 55
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 99
+  end
+  end
+end
+treasure mob_skeleton_mage
+ list traps
+   chance 8
+ more
+ list default_wealth
+  chance 65
+ more
+ list default_drop
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 62
+ no
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 38
+ no
+   list random_mtools
+     chance_fix 72
+ no
+   list random_talisman
+     chance_fix 59
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 40
+ no
+   list random_potion
+     chance_fix 40
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 89
+  end
+  end
+end
+treasure mob_orc
+ list traps
+   chance 8
+ more
+ list default_wealth
+  chance 65
+ more
+ list default_drop
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 42
+ no
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 48
+ no
+   list random_mtools
+     chance_fix 82
+ no
+   list random_talisman
+     chance_fix 66
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 45
+ no
+   list random_potion
+     chance_fix 45
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 99
+  end
+  end
+end
+treasure mob_hobgoblin
+ list traps
+   chance 8
+ more
+ list default_wealth
+  chance 65
+ more
+ list default_drop
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 42
+ no
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 48
+ no
+   list random_mtools
+     chance_fix 82
+ no
+   list random_talisman
+     chance_fix 66
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 45
+ no
+   list random_potion
+     chance_fix 45
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 99
+  end
+  end
+end
+treasure mob_goblin
+ list traps
+   chance 8
+ more
+ list default_wealth
+  chance 65
+ more
+ list default_drop
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 42
+ no
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 48
+ no
+   list random_mtools
+     chance_fix 82
+ no
+   list random_talisman
+     chance_fix 66
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 45
+ no
+   list random_potion
+     chance_fix 45
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 99
+  end
+  end
+end
+treasure mob_gnoll
+ list traps
+   chance 8
+ more
+ list default_wealth
+  chance 65
+ more
+ list default_drop
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 42
+ no
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 48
+ no
+   list random_mtools
+     chance_fix 82
+ no
+   list random_talisman
+     chance_fix 66
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 45
+ no
+   list random_potion
+     chance_fix 45
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 99
+  end
+  end
+end
+treasure mob_drow
+ list traps
+   chance 8
+ more
+ list default_wealth
+  chance 65
+ more
+ list default_drop
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 42
+ no
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 48
+ no
+   list random_mtools
+     chance_fix 82
+ no
+   list random_talisman
+     chance_fix 66
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 45
+ no
+   list random_potion
+     chance_fix 45
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 99
+  end
+  end
+end
+treasure mob_ghoul
+ list traps
+   chance 8
+ more
+ list default_wealth
+  chance 65
+ more
+ list default_drop
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 42
+ no
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 48
+ no
+   list random_mtools
+     chance_fix 82
+ no
+   list random_talisman
+     chance_fix 66
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 45
+ no
+   list random_potion
+     chance_fix 45
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 99
+  end
+  end
 end
 treasure mob_fire
- t_style 1
  list traps
-   chance 10
+   chance 8
  more
  list default_wealth
-   chance 60
+  chance 60
  more
  list default_drop
-   chance 15
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   t_style 1
+   artifact_chance 25
+   material_quality 80
+   material_range 3
+   chance_fix 42
  no
-  list random_equipment
-    material_quality 80
-    artifact_chance 25
-    material_range 4
-    chance 12
-  no
-     list random_tools
-       material_quality 80
-       material_range 4
-       chance 2
-       difficulty 3
-    end
-   end
+   list random_weapon
+     t_style 1
+     artifact_chance 25
+     material_quality 80
+     material_range 3
+     chance_fix 48
+ no
+   list random_mtools
+     chance_fix 82
+ no
+   list random_talisman
+     chance_fix 66
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 45
+ no
+   list random_potion
+     chance_fix 45
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 99
+  end
+  end
 end
 treasure mob_ice
- t_style 2
  list traps
-   chance 10
+   chance 8
  more
  list default_wealth
-   chance 60
+  chance 60
  more
  list default_drop
-   chance 15
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   t_style 2
+   artifact_chance 25
+   material_quality 80
+   material_range 3
+   chance_fix 42
  no
-  list random_equipment
-    material_quality 80
-    artifact_chance 25
-    material_range 4
-    chance 12
-  no
-     list random_tools
-       material_quality 80
-       material_range 4
-       chance 2
-       difficulty 3
-    end
-   end
+   list random_weapon
+     t_style 2
+     artifact_chance 25
+     material_quality 80
+     material_range 3
+     chance_fix 48
+ no
+   list random_mtools
+     chance_fix 82
+ no
+   list random_talisman
+     chance_fix 66
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 45
+ no
+   list random_potion
+     chance_fix 45
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 99
+  end
+  end
+end
+treasure mob_mud_hand
+ list traps
+   chance 8
+ more
+ list default_wealth
+  chance 65
+ more
+ list default_drop
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 42
+ no
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 48
+ no
+   list random_mtools
+     chance_fix 82
+ no
+   list random_talisman
+     chance_fix 66
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 45
+ no
+   list random_potion
+     chance_fix 45
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 99
+  end
+  end
+end
+treasure mob_quickwood
+ list traps
+   chance 8
+ more
+ list default_wealth
+  chance 65
+ more
+ list default_drop
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 42
+ no
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 48
+ no
+   list random_mtools
+     chance_fix 82
+ no
+   list random_talisman
+     chance_fix 66
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 45
+ no
+   list random_potion
+     chance_fix 45
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 99
+  end
+  end
+end
+treasure mob_treant
+ list traps
+   chance 8
+ more
+ list default_wealth
+  chance 65
+ more
+ list default_drop
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 42
+ no
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 48
+ no
+   list random_mtools
+     chance_fix 82
+ no
+   list random_talisman
+     chance_fix 66
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 45
+ no
+   list random_potion
+     chance_fix 45
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 99
+  end
+  end
 end
 ############# TEST ############################
 treasureone random_test_all
@@ -2144,70 +3159,49 @@ treasureone random_style1
  artifact_chance 100
  chance 50
 end
-treasure random_testx
- list traps
-   chance 10
- more
- list default_wealth
-   chance 75
- more
- list default_drop
-   chance 20
- no
-  list random_equipment
-    t_style 2
-    item_race 7
-    artifact_chance 90
-    material_quality 90
-    material_range 3
-    chance 15
-  no
-     list random_tools
-       chance 10
-       difficulty 3
-    end
-   end
-#more
-#list random_weapon
-#arch shield_bone
-# chance 95
-# t_style 2
-# artifact_chance 90
-# material_quality 90
-# material_range 3
-end
-treasure random_test3
-#    arch small_shield
-#    material_quality 85
-#    material_range 2
-#    magic_fix 1
-#    artifact_chance 0
-#    chance 90
-#    name small ant shield
-list traps
-   chance 10
- more
- list default_wealth
-   chance 75
- more
- list default_drop
-   chance 5
- no
-  list random_equipment
-    artifact_chance 0
-    material_quality 80
-    material_range 2
-    chance 5
-   end
-  more
-    arch small_shield
-    material_quality 85
-    material_range 2
-    magic_fix 1
-    artifact_chance 0
-    chance 90
-    name small ant shield
-end
+#
+# test for /dev test maps
+#
 treasure random_test
- list random_armour_cloak
+ list traps
+  chance 8
+ more
+ list default_wealth
+  chance 65
+ more
+ list default_drop
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 42
+ no
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 48
+ no
+   list random_mtools
+     chance_fix 82
+ no
+   list random_talisman
+     chance_fix 66
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 45
+ no
+   list random_potion
+     chance_fix 45
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 99
+  end
+  end
 end

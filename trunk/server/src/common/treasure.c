@@ -46,6 +46,7 @@ archetype *coins_arch[NUM_COINS];
 
 /* Give 1 re-roll attempt per artifact */
 #define ARTIFACT_TRIES 2
+#define CHANCE_FIX (-1)
 
 static archetype *ring_arch=NULL,*ring_arch_normal=NULL, *amulet_arch=NULL;
 
@@ -229,6 +230,11 @@ static treasure *load_treasure(FILE *fp, int *t_style, int *a_chance)
         t->change_arch.material_quality = value;
     else if(sscanf(cp,"material_range %d",&value))
         t->change_arch.material_range = value;
+    else if(sscanf(cp,"chance_fix %d",&value))
+	{
+        t->chance_fix=(sint16) value;
+		t->chance = 0; /* important or the chance will stay 100% when not set to 0 in treasure list! */
+	}
     else if(sscanf(cp,"chance %d",&value))
         t->chance=(uint8) value;
     else if(sscanf(cp,"nrof %d",&value))
@@ -498,6 +504,7 @@ static treasurelist *get_empty_treasurelist(void) {
   tl->items=NULL;
   tl->t_style = T_STYLE_UNSET; /* -2 is the "unset" marker and will virtually handled as 0 which can be overruled */
   tl->artifact_chance = ART_CHANCE_UNSET;
+  tl->chance_fix = CHANCE_FIX;
   tl->total_chance=0;
   return tl;
 }
@@ -520,6 +527,7 @@ static treasure *get_empty_treasure(void) {
   t->change_arch.material_range = -1;
   t->change_arch.quality = -1;
   t->change_arch.quality_range = -1;
+  t->chance_fix = CHANCE_FIX;
   t->item=NULL;
   t->name=NULL;
   t->next=NULL;
@@ -629,19 +637,21 @@ void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int
 {
   object *tmp;
 
-/*  LOG(-1,"-CAT-: %s (%d)\n", t->name?t->name:"NULL",change_arch?t->change_arch.material_quality:9999); */
+	/*  LOG(-1,"-CAT-: %s (%d)\n", t->name?t->name:"NULL",change_arch?t->change_arch.material_quality:9999); */
+	/* LOG(-1,"CAT: cs: %d (%d)(%s)\n", t->chance_fix, t->chance, t->name); */
 	if(t->t_style != T_STYLE_UNSET)
 		t_style = t->t_style;
 	if(t->artifact_chance != ART_CHANCE_UNSET)
 		a_chance = t->artifact_chance;
 
-	if((int)t->chance >= 100 || (RANDOM()%100 + 1) < (int) t->chance) {
+	if((t->chance_fix!=CHANCE_FIX && !(RANDOM()%(int)t->chance_fix)) ||  (int)t->chance >= 100 || ((RANDOM()%100 + 1) < (int) t->chance)) {
+			/*LOG(-1,"CAT22: cs: %d (%d)(%s)\n", t->chance_fix, t->chance, t->name);*/
     if (t->name) {
-/*  LOG(-1,"-CAT2: %s (%d)\n", t->name?t->name:"NULL",change_arch?t->change_arch.material_quality:9999); */
+	/*  LOG(-1,"-CAT2: %s (%d)\n", t->name?t->name:"NULL",change_arch?t->change_arch.material_quality:9999); */
 		if (strcmp(t->name,"NONE") && difficulty>=t->difficulty)
 			create_treasure(find_treasurelist(t->name), op, flag, difficulty, t_style, a_chance,tries,change_arch?change_arch:&t->change_arch);
     }
-    else if(difficulty>=t->difficulty)
+	else if(difficulty>=t->difficulty)
 	{
 		if(IS_SYS_INVISIBLE(&t->item->clone) || ! (flag & GT_INVISIBLE)) 
 		{
@@ -703,6 +713,7 @@ void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty,
 	object *tmp;
 
 	/*LOG(-1,"-COT-: %s (%d)\n", tl->name,change_arch?tl->items->change_arch.material_quality:9999); */
+	/*LOG(-1,"COT: cs: %d (%s)\n", tl->chance_fix, tl->name );*/
     if (tries++>100) 
 		return;
 
@@ -714,6 +725,29 @@ void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty,
 
     for (t=tl->items; t!=NULL; t=t->next)
 	{
+		/* chance_fix will overrule the normal chance stuff! */
+		if(t->chance_fix!=CHANCE_FIX)
+		{
+			if(!(RANDOM()%t->chance_fix))
+			{
+				/* LOG(-1,"COT: HIT: cs: %d (%s)\n", t->chance_fix, t->name);*/
+				/* only when allowed, we go on! */
+				if (difficulty>=t->difficulty)
+				{
+					value = 0;
+					break;
+				}
+				
+				/* ok, difficulty is bad lets try again or break! */
+				if (tries++>100) 
+					return;
+				diff_tries++;
+				goto create_one_treasure_again_jmp;
+			}
+			
+			if(!t->chance)
+				continue;
+		}
 		value -= t->chance;
 		if (value<=0) /* we got one! */
 		{

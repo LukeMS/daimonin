@@ -809,11 +809,23 @@ racelink * get_racelist ( ) {
   return list;
 }
 
-/* generate the color ranges for the target command
+/* free race list
+ */
+void free_racelist()
+{
+        racelink *list, *next;
+        for(list=first_race;list;) {
+                next = list->next;
+                free(list);
+                list = next;
+        }
+}
+
+/* this is debug stuff!
  */
 void init_level_color_table(void)
 {
-	int i,ii, range, tmp;
+	/*int i,ii, range, tmp;*/
 
 	/*
 	uint32 vx=0,vc=1000000;
@@ -843,41 +855,34 @@ void init_level_color_table(void)
 	LOG(-1,"MATERIAL %d: >%s<\n", M_START_BONE, material_real[M_START_BONE].name);
 	LOG(-1,"MATERIAL %d: >%s<\n", M_START_ICE, material_real[M_START_ICE].name);
 	*/
-	
-	for(i=1;i<111;i++)
+
+	/*
+	for(i=1;i<201;i++)
 	{
 		for(ii=i;ii>1;ii--)
 		{
-			if(calc_level_difference(i,ii)==0)
+			if(!calc_level_difference(i,ii))
 				break;
 		}
-		/* thats the easy part */
-		level_color[i].grey=ii;
-		level_color[i].yellow=i-(i/25);
-		level_color[i].blue = level_color[i].yellow-1; /* blue is always yellow -1 */
-		level_color[i].orange = i+(i/25)+1;
+		level_color[i].yellow=i-(i/33);
+		level_color[i].blue = level_color[i].yellow-1;
+		level_color[i].orange = i+(i/33)+1;
 
-		/* now calc green & blue ranges */
 		range = level_color[i].yellow-ii-1;
 		if(range<2)
 		{
-			level_color[i].green = level_color[i].blue-1; /* can be illegal but we never hit this then */
+			level_color[i].green = level_color[i].blue-1;
 			level_color[i].red = level_color[i].orange+1;
 			level_color[i].purple = level_color[i].orange+2;
 		}
-		else /* range is 2 or higher */
+		else 
 		{
-			/* now we must set green, red & purple - and the size
-			 * of blue & orange from which he have only the start point
-			 * set now.
-			 */
-			tmp = (int)((double)range*0.7);
+			tmp = (int)((double)range*0.4);
 			if(!tmp)
 				tmp = 1;
 			else if (tmp == range)
 				tmp--;
 			level_color[i].green = level_color[i].blue -(range-tmp);
-
 
 			range = (int)((double)range*0.75);
 			if(!range)
@@ -893,13 +898,8 @@ void init_level_color_table(void)
 			level_color[i].red = level_color[i].orange+(range-tmp);
 			level_color[i].purple = level_color[i].red+tmp;
 		}
-		/*
-		LOG(llevSystem, "L %d::%d >G%d-%d B%d-%d Y%d-%d O%d-%d R%d-%d P>%d\n", i,ii,
-			ii+1,level_color[i].green,
-			level_color[i].green+1,level_color[i].blue,
-			level_color[i].yellow,level_color[i].orange-1,
-			level_color[i].orange,level_color[i].red-1,
-			level_color[i].red,level_color[i].purple-1,
-			level_color[i].purple);*/
+		LOG(llevSystem,"{ %d, %d, %d, %d, %d, %d},  lvl %d \n", ii+1,level_color[i].green+1,
+			level_color[i].yellow,level_color[i].orange,level_color[i].red,level_color[i].purple,i);
 	}
+	*/
 }

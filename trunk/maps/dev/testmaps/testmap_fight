@@ -4595,7 +4595,7 @@ y 3
 end
 arch wyvern
 dam 0
-maxhp 5
+maxhp 50
 x 17
 y 10
 end

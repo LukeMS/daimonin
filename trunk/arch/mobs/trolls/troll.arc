@@ -12,7 +12,7 @@ item_race 255
 item_level 255
 type 80
 is_male 1
-is_neutral 1
+is_evil 1
 Wis 7
 terrain_flag 1
 mpart_id 3
@@ -76,14 +76,12 @@ level 1
 Con 2
 Pow 2
 can_cast_spell 1
-exp 165
+exp 102
 ac 11
 wc 9
-dam 6
+dam 61
 hp -1
-maxhp 6
-sp -1
-maxsp 10
+maxhp 66
 weapon_speed 0.040
 resist_cold 75
 resist_pierce 25

@@ -113,3 +113,30 @@ layer 5
 no_pick 1
 no_pass 1
 end
+Object wall_fstone.100
+name stone wall
+face wall_fstone.100
+blocksview 1
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_fstone_corner.101
+name stone wall
+face wall_fstone_corner.101
+blocksview 1
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end
+Object wall_fstone_half.101
+name stone wall
+face wall_fstone_half.101
+blocksview 1
+type 77
+layer 5
+no_pick 1
+no_pass 1
+end

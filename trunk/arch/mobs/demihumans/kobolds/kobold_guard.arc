@@ -7,7 +7,7 @@ wc_range 20
 corpse 1
 layer 6
 direction 5
-is_neutral 1
+is_evil 1
 terrain_flag 1
 item_race 255
 item_level 255
@@ -100,13 +100,13 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-exp 100
+exp 80
 ac 9
 wc 0
-dam 5
+dam 52
 hp -1
-maxhp 6
+maxhp 55
 level 1
 speed -0.041
-weight 22500
+weight 45500
 end

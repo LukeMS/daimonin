@@ -1375,14 +1375,12 @@ y 1
 end
 arch spawn_point
 layer 3
-sys_object 0
-sp 8000
-speed 0.1
+last_grace 0
+speed -1
 x 8
 y 1
 arch ant_soldier
 type 83
-object_int1 1
 dam 1
 hp 1
 maxhp 1

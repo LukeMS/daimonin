@@ -23,8 +23,8 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 
-typedef struct _level_color {
-	int grey;
+typedef struct _level_color 
+{
 	int green;
 	int blue;
 	int yellow;
@@ -33,7 +33,7 @@ typedef struct _level_color {
 	int purple;
 }_level_color;
 
-extern _level_color level_color[];
+extern _level_color level_color[201];
 
 enum { /* fire modes submited from client */
     FIRE_MODE_NONE=-1,
