@@ -32,6 +32,7 @@ enum PlayerState
 
 class Player
 {
+	Entity* entity;
     Real                                   _anim_speed;
     AnimationState*                        _anim_state;
     std::map<PlayerState, AnimationState*> _anim_states;
@@ -44,7 +45,7 @@ class Player
     Player(SceneManager* scene_manager):
         _anim_speed(1), _node(scene_manager->getRootSceneNode()->createChildSceneNode(Vector3(0, 0, 0)))
     {
-        Entity* entity = scene_manager->createEntity("player", "robot.mesh");
+        entity = scene_manager->createEntity("player", "robot.mesh");
         this->_node->attachObject(entity);
         this->_node->yaw(Radian(Degree(230)));
         this->_anim_states[IDLE] = this->_anim_state = entity->getAnimationState("Idle");
@@ -54,6 +55,11 @@ class Player
         this->_turn_speed = 2;
         this->_walk_speed = this->_anim_speed * 48;
     }
+
+	Entity* returnEntitiy(void)
+	{
+		return entity;
+	}
 
 	void turnPlayer(int deg)
 	{
@@ -174,7 +180,7 @@ public:
         if (mInputDevice->isKeyDown(KC_RIGHT))
         {
             proceed = false;
-//            center->yaw(Radian(player->getTurnSpeed() * evt.timeSinceLastFrame));
+			// center->yaw(Radian(player->getTurnSpeed() * evt.timeSinceLastFrame));
 			player->turnPlayer(-1);
         }
 
@@ -236,7 +242,7 @@ protected:
         world->attachObject(l);
 
         // Report whether hardware skinning is enabled or not
-        Technique* t = ent->getSubEntity(0)->getMaterial()->getBestTechnique();
+        Technique* t =  player->returnEntitiy()->getSubEntity(0)->getMaterial()->getBestTechnique();
         Pass* p = t->getPass(0);
         if (p->hasVertexProgram() &&
             p->getVertexProgram()->isSkeletalAnimationIncluded())

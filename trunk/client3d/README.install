@@ -1,0 +1,42 @@
+HOW TO INSTALL & RUN
+---------------------
+
+This test application is for teating a setup of dlls
+and basic models.
+
+** You can't play this, you can't use it - its for
+** technical demonstration and to find problems under
+** specific systems.
+
+Install Windows
+---------------
+
+1.) Entpack the file /client3d/make/win32/ogre_debug_dll.zip and
+/client3d/make/win32/fmod_dll.zip to the same folder this README
+and the daimonin3d.exe is in (aka. /client3d ).
+
+2.) start daimonin3d.exe
+
+Install Linux
+---------------
+
+** We have to write makefiles first - no compile/run test atm **
+
+
+HOW TO EXCHANGE THE MODEL
+-------------------------
+
+The robot shown is the same robot as from the standard skeletal animation demo
+(demo_SkeletalAnimation) from OGRE3d (we used that as template).
+
+You will find the "robot.mesh" and the "robot.skeleton" file in 
+/client3d/media/models folder.
+
+The model use the the texture "r2skin.jpg" which can be found in
+/client3d/media/materials/textures folder.
+
+The hardware skinning of the demo is enabled by the file "Examples.program"
+in /client3d/media/materials/scripts folder.
+
+Please examine the ogre home page & documentation site about infos how
+to import/change models: http://www.ogre3d.org/
