@@ -161,7 +161,7 @@ void DoClient(ClientSocket *csocket)
 					LOG(LOG_ERROR,"Bad command from server (%d)\n",cmd_id);
 				else
 				{
-	                /*LOG(LOG_MSG,"(%s) >%s<\n",commands[cmd_id-1].cmdname,data);*/
+/*	                LOG(LOG_MSG,"(%s) >%s<\n",commands[cmd_id-1].cmdname,data);*/
 					commands[cmd_id-1].cmdproc(data,len);
 				}
                csocket->inbuf.len=0;
@@ -306,7 +306,7 @@ void finish_face_cmd(int pnum, uint32 checksum, char *face)
 				}
 			}
         }
-        /* LOG(LOG_MSG,"FACE: call server for %s\n", face); */
+        /*LOG(LOG_MSG,"FACE: call server for %s (%d)\n", face, pnum);*/
 		face_flag_extension(pnum, buf);
         sprintf(buf,"askface %d",pnum);
         cs_write_string(csocket.fd, buf, strlen(buf)); /* face command los*/

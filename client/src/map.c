@@ -436,6 +436,8 @@ void map_draw_map(void)
 							xml = MAP_TILE_POS_XOFF;
                             yl =(ypos+MAP_TILE_POS_YOFF)-face_sprite->bitmap->h;
                             xmpos = xl = xpos;
+							if(face_sprite->bitmap->w > MAP_TILE_POS_XOFF)
+								xl-=(face_sprite->bitmap->w -MAP_TILE_POS_XOFF)/2;
                         }
                         /* blt the face in the darkness level, the tile pos has */
                         temp = map->darkness;
