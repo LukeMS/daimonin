@@ -72,11 +72,12 @@ void pray_at_altar(object *pl, object *altar) {
 #ifdef PLUGINS
     int return_pray_script; /* GROS : This is for return value of script */
     /* GROS: Handle for plugin altar-parying (apply) event */
-    if(altar->event_hook[EVENT_APPLY] != NULL)
+    if(altar->event_flags&EVENT_FLAG_APPLY)
     {
         CFParm CFP;
         CFParm* CFR;
         int k, l, m;
+		object *event_obj = get_event_object(altar, EVENT_APPLY);
         k = EVENT_APPLY;
         l = SCRIPT_FIX_ALL;
         m = 0;
@@ -89,11 +90,11 @@ void pray_at_altar(object *pl, object *altar) {
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
-        CFP.Value[9] = altar->event_hook[k];
-        CFP.Value[10]= altar->event_options[k];
-        if (findPlugin(altar->event_plugin[k])>=0)
+        CFP.Value[9] = event_obj->race;
+        CFP.Value[10]= event_obj->slaying;
+        if (findPlugin(event_obj->name)>=0)
         {
-            CFR = (PlugList[findPlugin(altar->event_plugin[k])].eventfunc) (&CFP);
+            CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
             return_pray_script = *(int *)(CFR->Value[0]);
             free(CFR);
             if (return_pray_script) return;
@@ -125,8 +126,8 @@ void pray_at_altar(object *pl, object *altar) {
 	/* I think there was a bug here in that this was nested
 	 * in the if immediately above
 	 */
-	if(pl->stats.grace>(2*pl->stats.maxgrace)) {
-	    pl->stats.grace=(2*pl->stats.maxgrace);
+	if(pl->stats.grace>pl->stats.maxgrace) {
+	    pl->stats.grace=pl->stats.maxgrace;
 	}
 
 	/* Every once in a while, the god decides to checkup on their
@@ -311,11 +312,11 @@ void become_follower (object *op, object *new_god) {
 	       "%s's blessing is withdrawn from you.",exp_obj->title);
        CLEAR_FLAG(exp_obj,FLAG_APPLIED); 
        (void) change_abil(op,exp_obj);
-       free_string(exp_obj->title);
+       FREE_AND_CLEAR_HASH2(exp_obj->title);
     }
 
    /* now change to the new gods attributes to exp_obj */
-    exp_obj->title = add_string(new_god->name);
+    FREE_AND_COPY_HASH(exp_obj->title, new_god->name);
     exp_obj->path_attuned=new_god->path_attuned;
     exp_obj->path_repelled=new_god->path_repelled;
     exp_obj->path_denied=new_god->path_denied;
@@ -455,7 +456,7 @@ char *determine_god(object *op) {
 		if(gl->id==godnr) break;
 		gl=gl->next;
 	    }
-	    op->title = add_string(gl->name);
+	    FREE_AND_COPY_HASH(op->title, gl->name);
 	}
 	return op->title;
     }
@@ -560,7 +561,7 @@ static int god_enchants_weapon (object *op, object *god, object *tr)
     /* First give it a title, so other gods won't touch it */
     if ( ! weapon->title) {
         sprintf (buf, "of %s", god->name);
-        weapon->title = add_string (buf);
+        FREE_AND_COPY_HASH(weapon->title, buf);
         if (op->type == PLAYER) 
 	    esrv_update_item (UPD_NAME, op, weapon);
         new_draw_info (NDI_UNIQUE, 0, op, "Your weapon quivers as if struck!");
@@ -568,7 +569,7 @@ static int god_enchants_weapon (object *op, object *god, object *tr)
 
     /* Allow the weapon to slay enemies */
     if ( ! weapon->slaying && god->slaying) {
-        weapon->slaying = add_string (god->slaying);
+        FREE_AND_COPY_HASH(weapon->slaying, god->slaying);
         new_draw_info_format (NDI_UNIQUE, 0, op,
                 "Your %s now hungers to slay enemies of your god!",
                 weapon->name);
@@ -794,7 +795,7 @@ void god_intervention (object *op, object *god)
         if (item->type == BOOK && IS_SYS_INVISIBLE(item)
             && strcmp (item->name, "heal spell") == 0)
         {
-            if (cast_heal (op, op, get_spell_number (item)))
+            if (cast_heal (op, 1,op, get_spell_number (item)))
                 return;
             else
                 continue;
@@ -1001,14 +1002,14 @@ int tailor_god_spell(object *spellop, object *caster) {
 
     /* either holy word or godpower attacks will set the slaying field */
     if(spellop->attacktype&AT_HOLYWORD||spellop->attacktype&AT_GODPOWER) { 
-         if (spellop->slaying) {
-             free_string(spellop->slaying);
-             spellop->slaying = NULL;
-         }
+
+		FREE_AND_CLEAR_HASH2(spellop->slaying);		
          if(!caster_is_spell)
-            spellop->slaying = add_string(god->slaying);
+		 {
+            FREE_AND_COPY_HASH(spellop->slaying, god->slaying);
+		 }
 	 else if(caster->slaying) 
-	    spellop->slaying = add_string(caster->slaying);
+	    FREE_AND_COPY_HASH(spellop->slaying, caster->slaying);
     }
 
     /* only the godpower attacktype adds the god's attack onto the spell */
@@ -1017,22 +1018,21 @@ int tailor_god_spell(object *spellop, object *caster) {
 
     /* tack on the god's name to the spell */
     if(spellop->attacktype&AT_HOLYWORD||spellop->attacktype&AT_GODPOWER) { 
-         if(spellop->title) 
-	   free_string(spellop->title);
-         spellop->title=add_string(god->name);
+         FREE_AND_COPY_HASH(spellop->title, god->name);
          if(spellop->title){
 	   char buf[MAX_BUF]; 
 	   sprintf(buf,"%s of %s",spellop->name,spellop->title);
-	   if (spellop->name) free_string(spellop->name);
-	   spellop->name=add_string(buf);
+	   FREE_AND_COPY_HASH(spellop->name, buf);
 	}
     } 
 
     return 1;
 }
 
-void lose_priest_exp(object *pl, int loss) {
-
+/* we need a skill for this, not the skill group! */
+void lose_priest_exp(object *pl, int loss) 
+{
+/*
   if(!pl||pl->type!=PLAYER||!pl->chosen_skill
      ||!pl->chosen_skill->exp_obj) 
   {
@@ -1041,4 +1041,5 @@ void lose_priest_exp(object *pl, int loss) {
   }
   if((loss = check_dm_add_exp_to_obj(pl->chosen_skill->exp_obj,loss)))
     add_exp(pl,-loss,pl->chosen_skill->stats.sp);
+*/
 }

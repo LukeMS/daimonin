@@ -71,18 +71,43 @@ void dump_spells()
     }
 }
 
-void spell_effect (int spell_type, int x, int y, mapstruct *map,
-	object *originator)
+/* this must be adjusted if we ever include multi tile effects! */
+int insert_spell_effect(char *archname, mapstruct *m, int x, int y)
 {
+	archetype *effect_arch;
+	object *effect_ob;
 
-  if (spellarch[spell_type] != (archetype *) NULL) {
-    object *effect = arch_to_object(spellarch[spell_type]);
+	if(!archname || !m)
+	{
+		LOG(llevBug, "BUG: insert_spell_effect: archname or map NULL.\n");
+		return 1;
+    }
 
-    effect->x = x;
-    effect->y = y;
+    if (!(effect_arch = find_archetype(archname))) 
+	{
+		LOG(llevBug, "BUG: insert_spell_effect: Couldn't find effect arch (%s).\n", archname);
+		return 1;
+    }
 
-    insert_ob_in_map(effect, map, originator,0);
-  }
+	/* prepare effect */
+	effect_ob = arch_to_object(effect_arch);
+	effect_ob->map = m;
+	effect_ob->x = x;
+	effect_ob->y = y;
+
+	if(!insert_ob_in_map(effect_ob, m, NULL,0))
+	{
+		LOG(llevBug, "BUG: insert_spell_effect: effect arch (%s) out of map (%s) (%d,%d) or failed insertion.\n", 
+														archname, effect_ob->map->name, x, y);
+		/* something is wrong - kill object */
+		if(!QUERY_FLAG(effect_ob,FLAG_REMOVED))
+			remove_ob(effect_ob);
+		free_object(effect_ob);
+		return 1;
+    }
+
+
+	return 0;
 }
 
 spell *find_spell(int spelltype) {
@@ -441,7 +466,7 @@ dirty_jump:
 		case SP_MINOR_HEAL:
 		case SP_CURE_POISON:
 		case SP_CURE_DISEASE:
-			success = cast_heal(op,target,type);
+			success = cast_heal(op,SK_level(caster),target,type);
 		break;
 
 		case SP_REMOVE_DEPLETION:
@@ -798,7 +823,7 @@ dirty_jump:
 	break;
       }
       dummy = get_object();
-      dummy->name = add_string(stringarg);
+      FREE_AND_COPY_HASH(dummy->name, stringarg);
       success = cast_raise_dead_spell(op,dir,type, dummy);
       free_object(dummy);
     }
@@ -1006,7 +1031,7 @@ int summon_monster(object *op,object *caster,int dir,archetype *at,int spellnum)
     tmp->speed += 0.02f * (int)SP_level_dam_adjust(op,caster,spellnum);
     tmp->speed = MIN(tmp->speed, 1.0f);
   }
-    tmp->stats.wc -= SP_level_dam_adjust(op,caster,spellnum);
+    tmp->stats.wc += SP_level_dam_adjust(op,caster,spellnum);
 
   /* limit the speed to 0.3 for non-players, 1 for players. */
 
@@ -1036,55 +1061,35 @@ int summon_monster(object *op,object *caster,int dir,archetype *at,int spellnum)
  * function doing so.
  */
 
-static int ok_to_put_more(mapstruct *m,int x,int y,object *op,int immune_stop) {
+static inline int ok_to_put_more(mapstruct *m,int x,int y,object *op,int immune_stop) 
+{
     object *tmp;
 
-    /* No check for out of map was here before - probably caught when the
-     * calling function tries to insert the object.  But a check here
-     * should only be a minor performance hit, and is a good thing.
-     */
-
+	/* we must check map here or we will go in trouble some line down */
 	if(!(m = out_of_map(m,&x,&y)))
 		return 0;
 
-    /* if there is a wall, certainly can't put the spell there.  The blocks
-     * view check is historic from the old calling functions - my personal
-     * view is that blocks view should not affect spells in any way, but
-     * I will leave it in for now.
-     */
-    if(wall(m,x,y) || blocks_view(m,x,y)) return 0;
+	/* nasty ... only REAL walls will block this - except player only tiles */
+    if(wall(m,x,y)) 
+		return 0;
 
-    for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=tmp->above) {
-	/* If there is a counterspell on the space, and this
-	 * object is using magic, don't progess.  I believe we could
-	 * leave this out and let in progress, and other areas of the code
-	 * will then remove it, but that would seem to to use more
-	 * resources, and may not work as well if a player is standing
-	 * on top of a counterwall spell (may hit the player before being
-	 * removed.)  On the other hand, it may be more dramatic for the
-	 * spell to actually hit the counterwall and be sucked up.
-	 *
-	 * We should probably check the type of the object, just in case
-	 * a player somehow gets a counterspell attacktype.
-	 */
-	if ((tmp->attacktype & AT_COUNTERSPELL) &&
-	    (tmp->type != PLAYER) && !QUERY_FLAG(tmp,FLAG_MONSTER) &&
-	    (tmp->type != WEAPON) && (tmp->type != BOW) &&
-	    (tmp->type != ARROW) && (tmp->type != GOLEM) &&
-	    (immune_stop & AT_MAGIC)) return 0;
+    for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=tmp->above) 
+	{
+		/* this *should* be enough! but for merging, we REALLY should
+		 * compare the owners too!
+		 */
+		if(op->type == tmp->type && op->weight_limit == tmp->weight_limit) 
+			return 0; /* only one part for cone/explosion per tile! */
 
-	/* This is to prevent 'out of control' spells.  Basically, this
-	 * limits one spell effect per space per spell.  This is definately
-	 * needed for performance reasons, and just for playability I believe.
-	 * there are no such things as multispaced spells right now, so
-	 * we don't need to worry about the head.
-	 */
-	if ((tmp->stats.maxhp == op->stats.maxhp) && (tmp->type == op->type))
-	    return 0;
+	
+		/* old code for counterspell
+		if ((tmp->attacktype & AT_COUNTERSPELL) &&
+		    (tmp->type != PLAYER) && !QUERY_FLAG(tmp,FLAG_MONSTER) &&
+		    (tmp->type != WEAPON) && (tmp->type != BOW) &&
+		    (tmp->type != ARROW) && (tmp->type != GOLEM) &&
+		    (immune_stop & AT_MAGIC)) return 0;
+		*/
 
-	/* Perhaps we should also put checks in for no magic and unholy
-	 * ground to prevent it from moving along?
-	 */
     }
     /* If it passes the above tests, it must be OK */
     return 1;
@@ -1206,57 +1211,74 @@ int fire_arch_from_position (object *op, object *caster, sint16 x, sint16 y,
   return 1;
 }
 
-int
-cast_cone(object *op, object *caster,int dir, int strength, int spell_type,archetype *spell_arch, int magic)
+int cast_cone(object *op, object *caster,int dir, int strength, int spell_type,archetype *spell_arch, int magic)
 {
-  object *tmp;
-  int i,success=0,range_min= -1,range_max=1;
+	object *tmp;
+	int i,success=0,range_min= -1,range_max=1;
+	uint32 count_ref;
 
-  if(!dir)
-    range_min= -3,range_max=4,strength/=2;
+	if(!dir)
+		range_min= -3,range_max=4,strength/=2;
 
-  for(i=range_min;i<=range_max;i++) {
-    int x=op->x+freearr_x[absdir(dir+i)],
-        y=op->y+freearr_y[absdir(dir+i)];
+	tmp=arch_to_object(spell_arch); /* thats our initial spell object */
+	if(!tmp)
+	{
+		LOG(llevBug,"cast_cone(): arch_to_object() failed!? (%s)\n", spell_arch->name);
+		return 0;
+	}
+	count_ref = tmp->count;
+	for(i=range_min;i<=range_max;i++)
+	{
+		int x=op->x+freearr_x[absdir(dir+i)],
+			y=op->y+freearr_y[absdir(dir+i)];
+
     if(wall(op->map,x,y))
       continue;
+
     success=1;
-    tmp=arch_to_object(spell_arch);
+	if(!tmp)
+	    tmp=arch_to_object(spell_arch);
     set_owner(tmp,op);
     copy_owner(tmp,op);
+	tmp->weight_limit = count_ref; /* *very* important - miss this and the spells go really wild! */
+
     tmp->level = casting_level (caster, spell_type);
     tmp->x=x,tmp->y=y;
 
-    /* holy word stuff */                
+	/* old stuff - outdated!
     if((tmp->attacktype&AT_HOLYWORD)||(tmp->attacktype&AT_GODPOWER)) {
             if(!tailor_god_spell(tmp,op)) return 0;  
-    } else /* god/holy word isnt really 'magic' */
-
+    } else 
     if(magic)
-      tmp->attacktype|=AT_MAGIC;  /* JWI cone attacks should be considered
-                                     magical in nature ;) */
+      tmp->attacktype|=AT_MAGIC; 
+	 */
+
     if(dir)
       tmp->stats.sp=dir;
     else
       tmp->stats.sp=i;
-    tmp->stats.hp=strength+SP_level_strength_adjust(op,caster,spell_type);
+    tmp->stats.hp=strength+(SP_level_strength_adjust(op,caster,spell_type)/2);
     tmp->stats.dam = (sint16) SP_lvl_dam_adjust2(caster,spell_type,tmp->stats.dam);
 
-	/*
-    tmp->stats.dam=spells[spell_type].bdam +
-                  SP_level_dam_adjust(op,caster,spell_type); 
-	*/
     tmp->stats.maxhp=tmp->count;
     if ( ! QUERY_FLAG (tmp, FLAG_FLYING))
-      LOG(llevDebug, "cast_cone(): arch %s doesn't have flying 1\n",
-           spell_arch->name);
-    if (( ! QUERY_FLAG (tmp, FLAG_WALK_ON) || ! QUERY_FLAG (tmp, FLAG_FLY_ON))
-        && tmp->stats.dam)
-      LOG(llevDebug, "cast_cone(): arch %s doesn't have walk_on 1 and "
-           "fly_on 1\n", spell_arch->name);
+      LOG(llevDebug, "cast_cone(): arch %s doesn't have flying 1\n", spell_arch->name);
+    if (( ! QUERY_FLAG (tmp, FLAG_WALK_ON) || ! QUERY_FLAG (tmp, FLAG_FLY_ON)) && tmp->stats.dam)
+      LOG(llevDebug, "cast_cone(): arch %s doesn't have walk_on 1 and fly_on 1\n", spell_arch->name);
+
     insert_ob_in_map(tmp,op->map,op,0);
-    if(tmp->other_arch) cone_drop(tmp);
+    if(tmp->other_arch) 
+		cone_drop(tmp);
+	tmp = NULL;
   }
+
+  if(tmp) /* can happens when we can't drop anything */
+  {
+	  if(QUERY_FLAG(tmp,FLAG_REMOVED))
+		  remove_ob(tmp);
+	  free_object(tmp);
+  }
+
   return success;
 }
 
@@ -1346,11 +1368,12 @@ void move_cone(object *op) {
     tag_t tag;
 
     /* if no map then hit_map will crash so just ignore object */
-    if (! op->map) {
-	LOG(llevBug,"BUG: Tried to move_cone object %s without a map.\n", query_name(op));
-        op->speed = 0;
-        update_ob_speed (op);
-	return;
+    if (! op->map) 
+	{
+		LOG(llevBug,"BUG: Tried to move_cone object %s without a map.\n", query_name(op));
+		remove_ob(op);
+		free_object(op);
+		return;
     }
 
     /* lava saves it's life, but not yours  :) */
@@ -1395,29 +1418,39 @@ void move_cone(object *op) {
 
     op->stats.food=1;
 
-    for(i= -1;i<2;i++) {
-	int x=op->x+freearr_x[absdir(op->stats.sp+i)],
-	    y=op->y+freearr_y[absdir(op->stats.sp+i)];
+    for(i= -1;i<2;i++) 
+	{
+		int x=op->x+freearr_x[absdir(op->stats.sp+i)],
+			y=op->y+freearr_y[absdir(op->stats.sp+i)];
 
-	if(ok_to_put_more(op->map,x,y,op,op->attacktype)) {
-	    object *tmp=arch_to_object(op->arch);
-            copy_owner (tmp, op);
-	    tmp->x=x, tmp->y=y;
+		if(ok_to_put_more(op->map,x,y,op,op->attacktype))
+		{
+			object *tmp=arch_to_object(op->arch);
+            
+			copy_owner (tmp, op);
+			/* *very* important - this is the count value of the 
+			 * *first* object we created with this cone spell.
+			 * we use it for identify this spell. Miss this 
+			 * and ok_to_put_more will allow to create 1000th
+			 * in a single tile!
+			 */
+			tmp->weight_limit = op->weight_limit;
+			tmp->x=x, tmp->y=y;
 
-	    /* added to make face of death work,and counterspell */
-	    tmp->level = op->level;
-
-	    /* holy word stuff */
-	    if(tmp->attacktype&AT_HOLYWORD||tmp->attacktype&AT_GODPOWER) 
-		if(!tailor_god_spell(tmp,op)) return;
-
-	    tmp->stats.sp=op->stats.sp,tmp->stats.hp=op->stats.hp+1;
-	    tmp->stats.maxhp=op->stats.maxhp;
-	    tmp->stats.dam = op->stats.dam;
-	    tmp->attacktype=op->attacktype;
-	    insert_ob_in_map(tmp,op->map,op,0);
-	    if(tmp->other_arch) { cone_drop(tmp);}
-	}
+		    /* holy word stuff */
+			/*
+		    if(tmp->attacktype&AT_HOLYWORD||tmp->attacktype&AT_GODPOWER) 
+			if(!tailor_god_spell(tmp,op)) return;
+			*/
+		    tmp->level = op->level;
+		    tmp->stats.sp=op->stats.sp,tmp->stats.hp=op->stats.hp+1;
+			tmp->stats.maxhp=op->stats.maxhp;
+			tmp->stats.dam = op->stats.dam;
+			tmp->attacktype=op->attacktype;
+			insert_ob_in_map(tmp,op->map,op,0);
+			if(tmp->other_arch)
+				cone_drop(tmp);
+		}
     }
 }
 
@@ -1908,7 +1941,7 @@ void check_fired_arch (object *op)
         return;
     }
 
-	if(op->type == BULLET && op->stats.sp == SP_PROBE)
+	if(op->stats.sp == SP_PROBE && op->type == BULLET)
 	{
 		probe(op);
 		remove_ob (op);

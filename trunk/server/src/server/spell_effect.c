@@ -29,7 +29,6 @@
 #include <sounds.h>
 
 extern object *objects;
-static void insert_spell_effect(char *archname, mapstruct *m, int x, int y);
 
 /* 
  * spell_failure()  handles the various effects for differing degrees
@@ -182,7 +181,6 @@ int recharge(object *op) {
     new_draw_info_format(NDI_UNIQUE, 0, op,
 	"The %s vibrates violently, then explodes!",query_name(wand));
     play_sound_map(op->map, op->x, op->y, SOUND_OB_EXPLODE, SOUND_NORMAL);
-    spell_effect(SP_DESTRUCTION, op->x, op->y, op->map, op);
     remove_ob(wand);
     free_object(wand);
     return 1;
@@ -687,7 +685,7 @@ int cast_wor(object *op, object *caster) {
   /* If we could take advantage of enter_player_savebed() here, it would be
    * nice, but until the map load fails, we can't.
    */
-  EXIT_PATH(dummy) = add_string(op->contr->savebed_map);
+  FREE_AND_COPY_HASH(EXIT_PATH(dummy), op->contr->savebed_map);
   EXIT_X(dummy) = op->contr->bed_x;
   EXIT_Y(dummy) = op->contr->bed_y;
   
@@ -799,10 +797,9 @@ int perceive_self(object *op) {
      LOG(llevBug,"BUG: cast_create_town_portal(): get_object failed (force for %s!)\n",op->name);
      return 0;
    }
-   free_string (dummy->name);
-   dummy->name = add_string (PORTAL_DESTINATION_NAME);
+   FREE_AND_COPY_HASH(dummy->name, PORTAL_DESTINATION_NAME);
    dummy->stats.hp=0;
-   dummy->slaying = add_string (PORTAL_DESTINATION_NAME);
+   FREE_AND_COPY_HASH(dummy->slaying, PORTAL_DESTINATION_NAME);
    force=check_inv_recursive (op,dummy);
    if (force==NULL)
      /* Here we know there is no destination marked up.
@@ -811,8 +808,7 @@ int perceive_self(object *op) {
       * 2. Let the player know it worked.
       */
      {
-     free_string (dummy->name);
-     dummy->name = add_string (op->map->path);
+     FREE_AND_COPY_HASH(dummy->name, op->map->path);
      EXIT_X(dummy)= op->x;
      EXIT_Y(dummy)= op->y;
      dummy->speed=0.0;
@@ -844,10 +840,9 @@ int perceive_self(object *op) {
      LOG(llevBug,"BUG: get_object failed (force) in cast_create_town_portal for %s!\n",query_name(op));
      return 0;
    }
-   free_string (dummy->name);
-   dummy->name = add_string (portal_name);   /*Usefull for string comparaison later (add_string)*/
+   FREE_AND_COPY_HASH(dummy->name, portal_name);   /*Usefull for string comparaison later*/
    dummy->stats.hp=0;
-   dummy->slaying = add_string (PORTAL_ACTIVE_NAME);
+   FREE_AND_COPY_HASH(dummy->slaying, PORTAL_ACTIVE_NAME);
    perm_portal = find_archetype ("perm_magic_portal");
    while ( (old_force=check_inv_recursive (op,dummy)))
      /* To kill a town portal, we go trough the player's inventory,
@@ -858,7 +853,7 @@ int perceive_self(object *op) {
       *   -We destruct the force indicating that portal.
       */
      {
-     exitpath=add_string (old_force->race);
+     FREE_AND_COPY_HASH(exitpath,old_force->race);
      exitx=EXIT_X(old_force);
      exity=EXIT_Y(old_force);
      LOG(llevDebug,"Trying to kill a portal in %s (%d,%d)\n",exitpath,exitx,exity);
@@ -881,7 +876,7 @@ int perceive_self(object *op) {
        }
      remove_ob (old_force);
      free_object (old_force);
-     free_string (exitpath);
+     FREE_AND_CLEAR_HASH2(exitpath);
      }
    free_object (dummy);
    /* Creating the portals.
@@ -899,7 +894,9 @@ int perceive_self(object *op) {
    else if (op_level<60)
          snprintf (portal_message,1024,"\nA sort of door opens in the air in front of you,\nshowing you the path to somewhere else.\n");
    else snprintf (portal_message,1024,"\nAs you walk on %s's portal, flowers comes\nfrom the ground around you.\nYou feel quiet.\n",op->name);
-   exitpath=add_string (force->name);
+   exitpath = NULL;
+   /* we want ensure that the force->name is still in hash table */
+   FREE_AND_ADD_REF_HASH(exitpath, force->name);
    exitx=EXIT_X(force);
    exity=EXIT_Y(force);
    remove_ob(force); /*Delete the force inside the player*/
@@ -911,7 +908,7 @@ int perceive_self(object *op) {
    if (exitmap==NULL) /*If we were unable to load (ex. random map deleted), warn player*/
      {
      new_draw_info(NDI_UNIQUE | NDI_NAVY, 0,op,"Something strange happens.\nYou can't remember where to go!?");
-     free_string (exitpath);
+     FREE_AND_CLEAR_HASH(exitpath);
      return 1;
      }
    /* Create a portal in front of player
@@ -923,32 +920,30 @@ int perceive_self(object *op) {
    if(dummy == NULL)
      {
      LOG(llevBug,"BUG: get_object failed (perm_magic_portal) in cast_create_town_portal for %s!\n",query_name(op));
-     free_string (exitpath);
+     FREE_AND_CLEAR_HASH( exitpath);
      return 0;
      }
    dummy->speed = 0.0;
    update_ob_speed (dummy);
-   free_string (EXIT_PATH(dummy));
-   EXIT_PATH(dummy) = add_string (exitpath);
+   FREE_AND_COPY_HASH(EXIT_PATH(dummy),exitpath);
    EXIT_X(dummy)=exitx;
    EXIT_Y(dummy)=exity;
-   free_string (dummy->name);
-   dummy->name=add_string (portal_name);
-   dummy->msg=add_string (portal_message);
+   FREE_AND_COPY_HASH(dummy->name, portal_name);
+   FREE_AND_COPY_HASH(dummy->msg, portal_message);
    CLEAR_FLAG (dummy,FLAG_WALK_ON);
    CLEAR_FLAG (dummy,FLAG_FLY_ON);
    dummy->stats.exp=1; /*Set as a 2 ways exit (see manual_apply & is_legal_2ways_exit funcs)*/
-   dummy->race=add_string (op->name);  /*Save the owner of the portal*/
+   FREE_AND_COPY_HASH(dummy->race, op->name);  /*Save the owner of the portal*/
    cast_create_obj (op, caster, dummy, 0);
    force=get_archetype("force");              /*The force*/
    if(force == NULL){
      LOG(llevBug,"BUG: get_object failed (force) in cast_create_town_portal for %s!\n",query_name(op));
-     free_string (exitpath);
+     FREE_AND_CLEAR_HASH( exitpath);
      return 0;
    }
-   force->slaying= add_string (PORTAL_ACTIVE_NAME);
-   force->race=add_string (op->map->path);
-   force->name=add_string (portal_name);
+   FREE_AND_COPY_HASH(force->slaying, PORTAL_ACTIVE_NAME);
+   FREE_AND_COPY_HASH(force->race, op->map->path);
+   FREE_AND_COPY_HASH(force->name, portal_name);
    EXIT_X(force)=dummy->x;
    EXIT_Y(force)=dummy->y;
    force->speed=0.0;
@@ -963,34 +958,32 @@ int perceive_self(object *op) {
    if(dummy == NULL)
      {
      LOG(llevBug,"BUG: get_object failed (perm_magic_portal) in cast_create_town_portal for %s!\n",query_name(op));
-     free_string (exitpath);
+     FREE_AND_CLEAR_HASH( exitpath);
      return 0;
      }
    dummy->speed = 0.0;
    update_ob_speed (dummy);
-   free_string (EXIT_PATH(dummy));
-   EXIT_PATH(dummy) = add_string (op->map->path);
+   FREE_AND_COPY_HASH(EXIT_PATH(dummy), op->map->path);
    EXIT_X(dummy)=op->x;
    EXIT_Y(dummy)=op->y;
-   free_string (dummy->name);
-   dummy->name=add_string (portal_name);
-   dummy->msg=add_string (portal_message);
+   FREE_AND_COPY_HASH(dummy->name, portal_name);
+   FREE_AND_COPY_HASH(dummy->msg, portal_message);
    CLEAR_FLAG (dummy,FLAG_WALK_ON);
    CLEAR_FLAG (dummy,FLAG_FLY_ON);
    dummy->x=exitx;
    dummy->y=exity;
    dummy->stats.exp=1; /*Set as a 2 ways exit (see manual_apply & is_legal_2ways_exit funcs)*/
-   dummy->race=add_string (op->name);  /*Save the owner of the portal*/
+   FREE_AND_COPY_HASH(dummy->race, op->name);  /*Save the owner of the portal*/
    insert_ob_in_map(dummy,exitmap,op,0);
    force=get_archetype("force");              /*The force*/
    if(force == NULL){
      LOG(llevBug,"BUG: get_object failed (force) in cast_create_town_portal for %s!\n",query_name(op));
-     free_string (exitpath);
+     FREE_AND_CLEAR_HASH(exitpath);
      return 0;
    }
-   force->slaying= add_string (PORTAL_ACTIVE_NAME);
-   force->race=add_string (exitpath);
-   force->name=add_string (portal_name);
+   FREE_AND_COPY_HASH(force->slaying,PORTAL_ACTIVE_NAME);
+   FREE_AND_COPY_HASH(force->race,exitpath);
+   FREE_AND_COPY_HASH(force->name,portal_name);
    EXIT_X(force)=dummy->x;
    EXIT_Y(force)=dummy->y;
    force->speed=0.0;
@@ -999,7 +992,7 @@ int perceive_self(object *op) {
    /* Describe the player what happened
     */
    new_draw_info(NDI_UNIQUE | NDI_NAVY, 0,op,"You see air moving and showing you the way home.");
-   free_string (exitpath);
+   FREE_AND_CLEAR_HASH(exitpath);
    return 1;
    #undef PORTAL_DESTINATION_NAME
    #undef PORTAL_ACTIVE_NAME
@@ -1317,38 +1310,7 @@ int dimension_door(object *op,int dir) {
     return 1;
 }
 
-static void insert_spell_effect(char *archname, mapstruct *m, int x, int y)
-{
-	archetype *effect_arch;
-	object *effect_ob;
-
-	if(!archname || !m)
-		return;
-
-    effect_arch = find_archetype(archname);
-    if (effect_arch == (archetype *) NULL) 
-	{
-		LOG(llevBug, "BUG: insert_spell_effect: Couldn't find effect arch (%s).\n", archname);
-		return;
-    }
-
-	effect_ob = arch_to_object(effect_arch);
-	effect_ob->map = m;
-	/* out of map? */
-	if(!(m=out_of_map(m, &x, &y)))
-	{
-		LOG(llevBug, "BUG: insert_spell_effect: effect arch (%s) out of map (%s) (%d,%d).\n", 
-														archname, effect_ob->map->name, x, y);
-		return;
-    }
-
-	effect_ob->x = x;
-	effect_ob->y = y;
-	insert_ob_in_map(effect_ob, m, NULL,0);
-}
-
-
-int cast_heal(object *op,object *target,int spell_type) 
+int cast_heal(object *op,int level, object *target,int spell_type) 
 {
 	archetype *at;
 	object *temp;
@@ -1470,7 +1432,7 @@ int cast_heal(object *op,object *target,int spell_type)
 
 		case SP_MINOR_HEAL:
 			success = 1;
-			heal=random_roll(2, 5, op, PREFER_HIGH)+6;
+			heal=random_roll(2, 5+level, op, PREFER_HIGH)+6;
 			if(op->type == PLAYER)
 				new_draw_info_format(NDI_UNIQUE, 0,op, "The prayer heals %s for %d hp!", op==target?"you":(target?target->name:"NULL"), heal);
 
@@ -1538,7 +1500,8 @@ int cast_heal(object *op,object *target,int spell_type)
 		op->speed_left = -FABS(op->speed)*3;
 	}
 
-	insert_spell_effect(spells[spell_type].archname,target->map,target->x,target->y);
+	if(insert_spell_effect(spells[spell_type].archname,target->map,target->x,target->y))
+		LOG(llevDebug,"insert_spell_effect() failed: spell:%d, obj:%s target:%s\n", spell_type, query_name(op), query_name(target));
 	return success;
 }
 
@@ -1623,7 +1586,9 @@ int cast_change_attr(object *op,object *caster,object *target, int dir,int spell
 					new_draw_info_format(NDI_UNIQUE, 0,op,"%s don't grow stronger but the spell is refreshed.", tmp->name?tmp->name:"someone"); 
 			}
 
-		insert_spell_effect(spells[SP_STRENGTH].archname,target->map,target->x,target->y);
+		if(insert_spell_effect(spells[SP_STRENGTH].archname,target->map,target->x,target->y))
+			LOG(llevDebug,"insert_spell_effect() failed: spell:%d, obj:%s caster:%s target:%s\n", spell_type, query_name(op), query_name(caster), query_name(target));
+
 	    break;
 
 
@@ -1642,6 +1607,7 @@ int cast_change_attr(object *op,object *caster,object *target, int dir,int spell
       /* regeneration */
       cast_change_attr(op,caster,target,dir,SP_REGENERATION);
       /* weapon class */
+	  /* ADD POSITIVE WC ADD HERE */
       force->stats.wc += SP_level_dam_adjust(op,caster,SP_BLESS);
 
       break;
@@ -1679,6 +1645,7 @@ int cast_change_attr(object *op,object *caster,object *target, int dir,int spell
     force->value = 0;
     /* With PR code, I wonder if this could get merged in with the other protection spells */
     /* peterm, modified so that it uses level-depend functions */
+	/* change this to POSITIVE AC!! */
     force->stats.ac=2+SP_level_dam_adjust(op,caster,spell_type);
     if((tmp->stats.ac-force->stats.ac)<-20) 
 	force->stats.ac=tmp->stats.ac+20;
@@ -1708,7 +1675,7 @@ int cast_change_attr(object *op,object *caster,object *target, int dir,int spell
 
     if(god) {
 	force->attacktype|=god->attacktype | AT_PHYSICAL;
-	if(god->slaying) force->slaying = add_string(god->slaying);
+	if(god->slaying) FREE_AND_COPY_HASH(force->slaying, god->slaying);
 
 	/* Only give out good benefits, not bad */
 	for (i=0; i<NROFATTACKS; i++) {
@@ -1730,6 +1697,7 @@ int cast_change_attr(object *op,object *caster,object *target, int dir,int spell
       new_draw_info_format(NDI_UNIQUE, 0, tmp,
 			   "%s blessed you mightily!", op->name);
     }
+	  /* ADD POSITIVE WC ADD HERE */
     force->stats.wc += SP_level_dam_adjust(op, caster,SP_HOLY_POSSESSION); 
     force->stats.ac += SP_level_dam_adjust(op, caster,SP_HOLY_POSSESSION); 
     break; } 
@@ -1748,6 +1716,8 @@ int cast_change_attr(object *op,object *caster,object *target, int dir,int spell
 
     if(tmp!=op && caster->type==PLAYER)
       new_draw_info_format(NDI_UNIQUE, 0, caster, "You curse %s!",tmp->name);
+	/* change this to negative ! */
+	  /* ADD POSITIVE WC ADD HERE */
     force->stats.ac -= SP_level_dam_adjust(op, caster,SP_CURSE); 
     force->stats.wc -= SP_level_dam_adjust(op, caster,SP_CURSE);
     break; } 
@@ -1774,6 +1744,7 @@ int cast_change_attr(object *op,object *caster,object *target, int dir,int spell
       new_draw_info_format(NDI_UNIQUE, 0, op, "You bless %s.", tmp->name);
       new_draw_info_format(NDI_UNIQUE, 0, tmp, "%s blessed you.", op->name);
     }
+	  /* ADD POSITIVE WC ADD HERE */
     force->stats.wc += SP_level_dam_adjust(op, caster,SP_BLESS);
     force->stats.ac += SP_level_dam_adjust(op, caster,SP_BLESS);
     break; } 
@@ -2745,7 +2716,9 @@ int cast_detection(object *op, object *target,int type)
 
 	}
 
-	insert_spell_effect(spells[type].archname,target->map,target->x,target->y);
+	if(insert_spell_effect(spells[type].archname,target->map,target->x,target->y))
+		LOG(llevDebug,"insert_spell_effect() failed: spell:%d, obj:%s target:%s\n", type, query_name(op), query_name(target));
+
 	return 1;
 }
 
@@ -3534,12 +3507,11 @@ int summon_cult_monsters(object *op, int old_dir) {
 	    for(otmp=head;otmp;otmp=otmp->more) {
 		if(otmp->name) {
 		    if(summon_level>30+head->level) 
-		    sprintf(buf,"Arch %s of %s",head->name,god->name);
+			    sprintf(buf,"Arch %s of %s",head->name,god->name);
 		    else
-			sprintf(buf,"%s of %s",head->name,god->name);
+				sprintf(buf,"%s of %s",head->name,god->name);
 
-		    free_string(otmp->name);
-		    otmp->name=add_string(buf);
+		    FREE_AND_COPY_HASH(otmp->name, buf);
 		}
 	    }
 	} /* if monster level is much less than character level */
@@ -3608,8 +3580,8 @@ int summon_avatar(object *op,object *caster,int dir, archetype *at, int spellnum
   }
 
   /*  This sets the level dependencies on dam, wc and hp */
+	  /* ADD POSITIVE WC ADD HERE */
   tmp->stats.wc -= SP_level_strength_adjust(op,caster,spellnum);
-  if(tmp->stats.wc<-127) tmp->stats.wc = -127;
   tmp->stats.hp += spells[spellnum].bdur +
                          12 * SP_level_strength_adjust(op,caster,spellnum);
   tmp->stats.dam += spells[spellnum].bdam +(2*SP_level_dam_adjust(op,caster,spellnum));
@@ -3621,22 +3593,15 @@ int summon_avatar(object *op,object *caster,int dir, archetype *at, int spellnum
     object *tmp2;
     for(tmp2=tmp;tmp2;tmp2=tmp2->more) { 
       sprintf(buf,"%s of %s",spellnum==SP_SUMMON_AVATAR?"Avatar":"Servant",god->name);
-      if(tmp2->name) free_string(tmp2->name);
-      tmp2->name = add_string(buf);
+      FREE_AND_COPY_HASH(tmp2->name, buf);
     }
   }
   tmp->attacktype|=god->attacktype;
   memcpy(tmp->resist, god->resist, sizeof(tmp->resist));
-  if (tmp->race) {
-    free_string (tmp->race);
-    tmp->race = NULL;
-  }
-  if (tmp->slaying) {
-    free_string (tmp->slaying);
-    tmp->slaying = NULL;
-  }
-  if(god->race) tmp->race = add_string(god->race);
-  if(god->slaying) tmp->slaying = add_string(god->slaying);
+  FREE_AND_CLEAR_HASH2(tmp->race);
+  FREE_AND_CLEAR_HASH2(tmp->slaying);
+  if(god->race) FREE_AND_COPY_HASH(tmp->race, god->race);
+  if(god->slaying) FREE_AND_COPY_HASH(tmp->slaying, god->slaying);
   /* safety, we must allow a god's servants some reasonable attack */
   if(!(tmp->attacktype&AT_PHYSICAL)) tmp->attacktype|=AT_PHYSICAL;
 
@@ -3746,9 +3711,8 @@ int cast_consecrate(object *op) {
 		return 0;
 	    } else {
 	    /* If we got here, we are consecrating an altar */
-		if(tmp->name)	free_string(tmp->name);
 		sprintf(buf,"%s of %s",tmp->arch->clone.name,god->name);
-		tmp->name = add_string(buf);
+		FREE_AND_COPY_HASH(tmp->name,buf);
 		tmp->level = SK_level(op);
 		tmp->other_arch = god->arch;
 		if(op->type==PLAYER) esrv_update_item(UPD_NAME, op, tmp);
@@ -3919,6 +3883,7 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
   }
 
   /* modify weapon's animated wc */
+	  /* ADD POSITIVE WC ADD HERE */
   tmp->stats.wc = tmp->stats.wc
     - SP_level_dam_adjust(op,caster,spellnum)
     - 5 * weapon->stats.Dex
@@ -3937,7 +3902,7 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
     + 2 * SP_level_dam_adjust(op,caster,spellnum)
     + 5 * weapon->stats.Str;
   /* sanity checks */
-  if(tmp->stats.wc<-127) tmp->stats.wc = -127;
+	  /* ADD POSITIVE WC ADD HERE */
   if(tmp->stats.maxhp<0) tmp->stats.maxhp=10;
   tmp->stats.hp = tmp->stats.maxhp;
   if(tmp->stats.dam<0) tmp->stats.dam=127;
@@ -4008,8 +3973,7 @@ int animate_weapon(object *op,object *caster,int dir, archetype *at, int spellnu
   case SP_ANIMATE_WEAPON:
     new_draw_info_format(NDI_UNIQUE, 0,op,"Your %s flies from your hand and hovers in mid-air!", weapon->name);
     sprintf(buf, "animated %s", weapon->name);
-    if(tmp->name) free_string(tmp->name);
-    tmp->name = add_string(buf);
+    FREE_AND_COPY_HASH(tmp->name, buf);
 
     tmp->face = weapon->face;
     tmp->animation_id = weapon->animation_id;

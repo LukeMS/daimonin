@@ -645,7 +645,8 @@ init_msgfile (void)
 			    LOG(llevDebug, "Warning: this string exceeded max book buf size:");
 			    LOG(llevDebug, "  %s", msgbuf);
 			}
-		      tmp->name = add_string (msgbuf);
+			  tmp->name = NULL;
+			  FREE_AND_COPY_HASH(tmp->name, msgbuf);
 		      tmp->next = first_msg;
 		      first_msg = tmp;
 		      nrofmsg++;
@@ -713,18 +714,18 @@ init_book_archive (void)
 		if (!strncmp (cp, "title", 4))
 		  {
 		      book = get_empty_book ();		/* init new book entry */
-		      book->name = add_string (strchr (cp, ' ') + 1);
+			  FREE_AND_COPY_HASH(book->name, strchr (cp, ' ') + 1);
 		      type = -1;
 		      nroftitle++;
 		      continue;
 		  }
 		if (!strncmp (cp, "authour", 4))
 		  {
-		      book->authour = add_string (strchr (cp, ' ') + 1);
+			  FREE_AND_COPY_HASH(book->authour, strchr (cp, ' ') + 1);
 		  }
 		if (!strncmp (cp, "arch", 4))
 		  {
-		      book->archname = add_string (strchr (cp, ' ') + 1);
+			FREE_AND_COPY_HASH(book->archname, strchr (cp, ' ') + 1);
 		  }
 		else if (sscanf (cp, "level %d", &value))
 		  {
@@ -920,9 +921,7 @@ new_text_name (object *book, int msgtype)
 	    }
 	  break;
       }
-	if(book->name)
-	    free_string (book->name);
-    book->name = add_string (name);
+	FREE_AND_COPY_HASH(book->name, name);
 }
 
 /* add_book_author() 
@@ -967,7 +966,7 @@ add_author (object *op, int msgtype)
       }
 
     sprintf (title, "of %s", name);
-    op->title = add_string (title);
+	FREE_AND_COPY_HASH(op->title, title);
 }
 
 /* unique_book() - check to see if the book title/msg is unique. We 
@@ -1008,11 +1007,11 @@ add_book_to_list (object *book, int msgtype)
       }
 
     t = get_empty_book ();
-    t->name = add_string (book->name);
-    t->authour = add_string (book->title);
+	FREE_AND_COPY_HASH(t->name, book->name);
+	FREE_AND_COPY_HASH(t->authour, book->title);
     t->size = strlen (book->msg);
     t->msg_index = strtoint (book->msg);
-    t->archname = add_string (book->arch->name);
+	FREE_AND_COPY_HASH(t->archname, book->arch->name);
     t->level = book->level;
 
     t->next = tl->first_book;
@@ -1066,17 +1065,13 @@ change_book (object *book, int msgtype)
 		    /* alter book properties */
 		    if ((tmpbook = get_archetype (t->archname)) != NULL)
 		      {
-			  if (tmpbook->msg)
-			      free_string (book->msg);
-			  tmpbook->msg = add_string (book->msg);
+			  FREE_AND_COPY_HASH(tmpbook->msg, book->msg);
 			  copy_object (tmpbook, book);
 			  free_object (tmpbook);
 		      }
 
-		    book->title = add_string (t->authour);
-			if(book->name)
-		    free_string (book->name);
-		    book->name = add_string (t->name);
+			FREE_AND_COPY_HASH(book->title, t->authour);
+			FREE_AND_COPY_HASH(book->name, t->name);
 		    book->level = t->level;
 		}
 	      /* Don't have any default title, so lets make up a new one */
@@ -1136,14 +1131,14 @@ change_book (object *book, int msgtype)
 			       book->name, book->title, numb, maxnames);
 #endif
 			  /* restore old book properties here */
-			  free_string (book->name);
-			  free_string (book->title);
+			  FREE_AND_CLEAR_HASH(book->name);
+			  FREE_AND_CLEAR_HASH(book->title);
 			  if (old_title!=NULL)
-			      book->title = add_string (old_title);
+				  FREE_AND_COPY_HASH(book->title, old_title);
 			  /* Lets give the book a description to individualize it some */
 			  if (RANDOM () % 4)
 			      sprintf (old_name, "%s %s", book_descrpt[RANDOM () % nbr], old_name);
-			  book->name = add_string (old_name);
+			  FREE_AND_COPY_HASH(book->name, old_name);
 		      }
 		    else if (book->title && strlen (book->msg) > 5)	/* archive if long msg texts */
 			add_book_to_list (book, msgtype);
@@ -1169,9 +1164,7 @@ change_book (object *book, int msgtype)
 		if (level>(nbr-1)) level=nbr-1;
 		strcpy (name, mage_book_name[level]);
 	    }
-	  if (book->name)
-	      free_string (book->name);
-	  book->name = add_string (name);
+	  FREE_AND_COPY_HASH(book->name, name);
 	  break;
       default:
 	  LOG(llevBug, "BUG: change_book_name() called w/ illegal obj type.\n");
@@ -1587,7 +1580,7 @@ void make_formula_book(object *book, int level) {
 
     if (fl->total_chance == 0)
       {
-	book->msg = add_string(" <indescipherable text>\n");
+	FREE_AND_COPY_HASH(book->msg, " <indescipherable text>\n");
 	new_text_name(book, 4);
 	add_author(book,4);
 	return;
@@ -1605,7 +1598,7 @@ void make_formula_book(object *book, int level) {
     strcpy (retbuf, "Herein is described an alchemical proceedure: \n");
 
     if (!formula) {
-	book->msg = add_string(" <indescipherable text>\n");
+	FREE_AND_COPY_HASH(book->msg, " <indescipherable text>\n");
 	new_text_name(book, 4);
 	add_author(book,4);
 	
@@ -1664,12 +1657,8 @@ void make_formula_book(object *book, int level) {
 	    }
 	}
 	/* Lets name the book something meaningful ! */
-	if (book->name) free_string(book->name);
-	book->name = add_string(title);
-	if (book->title) {
-	    free_string(book->title);
-	    book->title = NULL;
-	}
+	FREE_AND_COPY_HASH(book->name, title);
+	FREE_AND_CLEAR_HASH(book->title);
 
 	/* ingredients to make it */
 	if (formula->ingred != NULL)
@@ -1684,9 +1673,9 @@ void make_formula_book(object *book, int level) {
 	}
 	else
 	    LOG(llevBug, "BUG: formula_msg() no ingredient list for object %s of %s", op_name, formula->title);
-	if (retbuf[strlen(retbuf)-1]!= '\n') strcat(retbuf, "\n");
-	if (book->msg) free_string(book->msg);
-	book->msg = add_string(retbuf);
+	if (retbuf[strlen(retbuf)-1]!= '\n') 
+		strcat(retbuf, "\n");
+	  FREE_AND_COPY_HASH(book->msg,retbuf);
     }
 }
 #endif
@@ -1999,9 +1988,7 @@ tailor_readable_ob (object *book, int msg_type)
     strcat (msgbuf, "\n");	/* safety -- we get ugly map saves/crashes w/o this */
     if (strlen (msgbuf) > 1)
       {
-	  if (book->msg)
-	      free_string (book->msg);
-	  book->msg = add_string (msgbuf);
+	    FREE_AND_COPY_HASH(book->msg,msgbuf);
 	  /* lets give the "book" a new name, which may be a compound word */
 	  change_book (book, msg_type);
       }
@@ -2031,12 +2018,9 @@ free_all_readable ()
 	  for (title1 = tlist->first_book; title1; title1 = titlenext)
 	    {
 		titlenext = title1->next;
-		if (title1->name)
-		    free_string (title1->name);
-		if (title1->authour)
-		    free_string (title1->authour);
-		if (title1->archname)
-		    free_string (title1->archname);
+		FREE_AND_CLEAR_HASH2(title1->name);
+		FREE_AND_CLEAR_HASH2(title1->authour);
+		FREE_AND_CLEAR_HASH2(title1->archname);
 		free (title1);
 	    }
 	  free (tlist);
@@ -2044,8 +2028,7 @@ free_all_readable ()
     for (lmsg = first_msg; lmsg; lmsg = nextmsg)
       {
 	  nextmsg = lmsg->next;
-	  if (lmsg->name)
-	      free_string (lmsg->name);
+	  FREE_AND_CLEAR_HASH2(lmsg->name);
 	  free (lmsg);
       }
     for (monlink = first_mon_info; monlink; monlink = nextmon)

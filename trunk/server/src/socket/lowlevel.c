@@ -160,12 +160,6 @@ int SockList_ReadPacket(int fd, SockList *sl, int len)
 	LOG(llevDebug,"SockList_ReadPacket: Want to read more bytes than will fit in buffer (%d>=%d).\n",
 	     toread + sl->len, len);
 
-#ifdef WIN32 /* ***win32 SockList_ReadPacket: change read() to recv() */
-	/*recv(fd, sl->buf+2, 100, 0);*/
-#else
-	/*read(fd, sl->buf+2, 100);*/
-#endif /* end win32 */
-
 	/* return error so the socket is closed */
 	return -1;
     }
@@ -227,11 +221,11 @@ static void add_to_buffer(NewSocket *ns, unsigned char *buf, int len)
 {
     int avail, end;
 
-    if ((len+ns->outputbuffer.len)>SOCKETBUFSIZE) {
-	LOG(llevDebug,"Socket on fd %d has overrun internal buffer - marking as dead\n",
-	    ns->fd);
-	ns->status = Ns_Dead;
-	return;
+    if ((len+ns->outputbuffer.len)>SOCKETBUFSIZE) 
+	{
+		LOG(llevDebug,"Socket on fd %d has overrun internal buffer - marking as dead\n", ns->fd);
+		ns->status = Ns_Dead;
+		return;
     }
 
     /* data + end is where we start putting the new data.  The last byte
@@ -265,11 +259,8 @@ void write_socket_buffer(NewSocket *ns)
 {
     int amt, max;
 
-    if (ns->outputbuffer.len==0) {
-	LOG(llevDebug,"write_socket_buffer called when there is no data, fd=%d\n",
-	    ns->fd);
-	return;
-    }
+    if (ns->outputbuffer.len==0) 
+		return;
 
     do {
 	max = SOCKETBUFSIZE - ns->outputbuffer.start;

@@ -22,7 +22,6 @@
 
     The author can be reached via e-mail to daimonin@nord-com.net
 */
-
 #include <global.h>
 #ifndef WIN32 /* ---win32 exclude headers */
 #include <stdio.h>
@@ -54,6 +53,9 @@ object *active_objects;	/* List of active objects that need to be processed */
    a table section. Unique materials should start from above the 64 block down.
    The M_RANDOM_xx value will always counted from down. */
     
+/* this IS extrem ugly - i will move it ASAP to a data file, which can be used
+ * from editor too!
+ */
 struct _material_real_struct material_real[] = {
     /* undefined Material - for stuff we don't need material information about */
     {"", 100,100,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
@@ -196,9 +198,9 @@ struct _material_real_struct material_real[] = {
     {"sapphire ",    50,92,       0,0,0,    M_GLASS, RACE_TYPE_NONE}, /* 133 */
     {"ruby ",        30,93,       0,0,0,    M_GLASS, RACE_TYPE_NONE}, /* 134 */
     {"diamond ",     10,95,       0,0,0,    M_GLASS, RACE_TYPE_NONE}, /* 135 */
-    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
-    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
-    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"jasper ", 75,80,       0,0,0,      M_GLASS,         RACE_TYPE_NONE}, /* 136 */
+    {"jade ", 75,80,       0,0,0,      M_GLASS,         RACE_TYPE_NONE}, /* 137 */
+    {"aquamarine ", 80,80,       0,0,0,      M_GLASS,         RACE_TYPE_NONE}, /* 138 */
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
@@ -319,7 +321,7 @@ struct _material_real_struct material_real[] = {
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     /* WOOD */
-    {"polished ",        100,80,       0,0,0,         M_WOOD,         RACE_TYPE_NONE},
+    {"pine ",        100,80,       0,0,0,         M_WOOD,         RACE_TYPE_NONE},
     {"oak ",             80,90,       0,0,0,          M_WOOD,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
@@ -384,18 +386,18 @@ struct _material_real_struct material_real[] = {
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     /* ORGANIC */
-    {"animal ",       100,80,       0,0,0,      M_ORGANIC,       RACE_TYPE_NONE}, /* used for misc organics */
-    {"dragon ",      50,96,       0,0,0,      M_ORGANIC,         RACE_TYPE_NONE},
-    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
-    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
-    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
-    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
-    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
-    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
-    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
-    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
-    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
-    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"animal ",       100,80,       0,0,0,      M_ORGANIC,       RACE_TYPE_NONE}, /* 321 used for misc organics */
+    {"dragon ",      50,96,       0,0,0,      M_ORGANIC,         RACE_TYPE_NONE}, /* 322 */
+    {"chitin "				, 50,82,       0,0,0,      M_ORGANIC,         RACE_TYPE_NONE}, /* 323 */
+    {"scale "				, 50,80,       0,0,0,      M_ORGANIC,         RACE_TYPE_NONE},/* 324 */
+    {"white dragonscale "	, 10,100,       0,0,0,      M_ORGANIC,         RACE_TYPE_NONE},/* 325 */
+    {"blue dragonscale "	, 10,100,       0,0,0,      M_ORGANIC,         RACE_TYPE_NONE},/* 326 */
+    {"red dragonscale "		, 10,100,       0,0,0,      M_ORGANIC,         RACE_TYPE_NONE},/* 327 */
+    {"yellow dragonscale "	, 10,100,       0,0,0,      M_ORGANIC,         RACE_TYPE_NONE},/* 328 */
+    {"grey dragonscale "	, 10,100,       0,0,0,      M_ORGANIC,         RACE_TYPE_NONE},/* 329 */
+    {"black dragonscale "	, 10,100,       0,0,0,      M_ORGANIC,         RACE_TYPE_NONE},/* 330 */
+    {"orange dragonscale "	, 10,100,       0,0,0,      M_ORGANIC,         RACE_TYPE_NONE},/* 331 */
+    {"green dragonscale "	, 10,100,       0,0,0,      M_ORGANIC,         RACE_TYPE_NONE},/* 332 */
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
@@ -1220,12 +1222,23 @@ object *find_object(int i) {
  */
 
 object *find_object_name(char *str) {
-  char *name=add_string(str);
+  char *name=find_string(str);
   object *op;
+
+  /* if find_string() can't find the string -
+   * then its impossible that op->name will match.
+   * if we get a string - its the hash table
+   * ptr for this string.
+   */
+  if(name==NULL)
+	  return NULL;
+
   for(op=objects;op!=NULL;op=op->next)
-    if(op->name==name)
-      break;
-  free_string(name);
+  {
+	if(op->name==name)
+		break;
+  }
+
   return op;
 }
 
@@ -1368,41 +1381,20 @@ void copy_owner (object *op, object *clone)
 }
 
 /*
- * Resets vital variables in an object
- */
-
-void reset_object(object *op) {
-  int i;
-
-  clear_object(op);
-  for(i=0;i<NR_LOCAL_EVENTS;i++)
-  {
-    op->event_hook[i] = NULL;
-    op->event_plugin[i] = NULL;
-    op->event_options[i] = NULL;
-  }  
-  op->current_weapon_script = NULL;
-}
-/*
  * clear_object() frees everything allocated by an object, and also
  * clears all variables and flags to default settings.
  */
 
 void clear_object(object *op) {
-
     /* the memset will clear all these values for us, but we need
      * to reduce the refcount on them.
      */
-    if(op->name!=NULL)
-	free_string(op->name);
-    if(op->title != NULL)
-	free_string(op->title);
-    if(op->race!=NULL)
-	free_string(op->race);
-    if(op->slaying!=NULL)
-	free_string(op->slaying);
-    if(op->msg!=NULL)
-	free_string(op->msg);
+    FREE_ONLY_HASH(op->name);
+    FREE_ONLY_HASH(op->title);
+    FREE_ONLY_HASH(op->race);
+    FREE_ONLY_HASH(op->slaying);
+    FREE_ONLY_HASH(op->msg);
+
 
     /* Using this memset is a lot easier (and probably faster)
      * than explicitly clearing the fields.
@@ -1412,7 +1404,6 @@ void clear_object(object *op) {
      /* Below here, we clear things that are not done by the memset,
      * or set default values that are not zero.
      */
-
     /* This is more or less true */
     SET_FLAG(op, FLAG_REMOVED);
 
@@ -1451,16 +1442,12 @@ void copy_object(object *op2, object *op)
 {
 	int is_freed=QUERY_FLAG(op,FLAG_FREED),is_removed=QUERY_FLAG(op,FLAG_REMOVED); 
 
-  if(op->name!=NULL)
-    free_string(op->name);
-  if(op->title!=NULL)
-    free_string(op->title);
-  if(op->race!=NULL)
-    free_string(op->race);
-  if(op->slaying!=NULL)
-    free_string(op->slaying);
-  if(op->msg!=NULL)
-    free_string(op->msg);
+  FREE_ONLY_HASH(op->name);
+  FREE_ONLY_HASH(op->title);
+  FREE_ONLY_HASH(op->race);
+  FREE_ONLY_HASH(op->slaying);
+  FREE_ONLY_HASH(op->msg);
+
   (void) memcpy((void *)((char *) op +offsetof(object,name)),
                 (void *)((char *) op2+offsetof(object,name)),
                 sizeof(object)-offsetof(object, name));
@@ -1468,16 +1455,11 @@ void copy_object(object *op2, object *op)
     SET_FLAG(op,FLAG_FREED);
   if(is_removed)
     SET_FLAG(op,FLAG_REMOVED);
-  if(op->name!=NULL)
-    add_refcount(op->name);
-  if(op->title!=NULL)
-    add_refcount(op->title);
-  if(op->race!=NULL)
-    add_refcount(op->race);
-  if(op->slaying!=NULL)
-    add_refcount(op->slaying);
-  if(op->msg!=NULL)
-    add_refcount(op->msg);
+  ADD_REF_NOT_NULL_HASH(op->name);
+  ADD_REF_NOT_NULL_HASH(op->title);
+  ADD_REF_NOT_NULL_HASH(op->race);
+  ADD_REF_NOT_NULL_HASH(op->slaying);
+  ADD_REF_NOT_NULL_HASH(op->msg);
 
  	if(QUERY_FLAG(op,FLAG_IDENTIFIED))
 	{
@@ -1494,16 +1476,13 @@ void copy_object_data(object *op2, object *op)
 {
 	int is_freed=QUERY_FLAG(op,FLAG_FREED),is_removed=QUERY_FLAG(op,FLAG_REMOVED); 
 
-  if(op->name!=NULL)
-    free_string(op->name);
-  if(op->title!=NULL)
-    free_string(op->title);
-  if(op->race!=NULL)
-    free_string(op->race);
-  if(op->slaying!=NULL)
-    free_string(op->slaying);
-  if(op->msg!=NULL)
-    free_string(op->msg);
+  FREE_ONLY_HASH(op->name);
+  FREE_ONLY_HASH(op->title);
+  FREE_ONLY_HASH(op->race);
+  FREE_ONLY_HASH(op->slaying);
+  FREE_ONLY_HASH(op->msg);
+
+
   (void) memcpy((void *)((char *) op +offsetof(object,name)),
                 (void *)((char *) op2+offsetof(object,name)),
                 sizeof(object)-offsetof(object, name));
@@ -1511,16 +1490,12 @@ void copy_object_data(object *op2, object *op)
     SET_FLAG(op,FLAG_FREED);
   if(is_removed)
     SET_FLAG(op,FLAG_REMOVED);
-  if(op->name!=NULL)
-    add_refcount(op->name);
-  if(op->title!=NULL)
-    add_refcount(op->title);
-  if(op->race!=NULL)
-    add_refcount(op->race);
-  if(op->slaying!=NULL)
-    add_refcount(op->slaying);
-  if(op->msg!=NULL)
-    add_refcount(op->msg);
+  ADD_REF_NOT_NULL_HASH(op->name);
+  ADD_REF_NOT_NULL_HASH(op->title);
+  ADD_REF_NOT_NULL_HASH(op->race);
+  ADD_REF_NOT_NULL_HASH(op->slaying);
+  ADD_REF_NOT_NULL_HASH(op->msg);
+
 
 	if(QUERY_FLAG(op,FLAG_IDENTIFIED))
 	{
@@ -1818,7 +1793,7 @@ void update_object(object *op, int action) {
  */
 
 void free_object(object *ob) {
-  object *tmp,*tmp_op,*tmp0=NULL,*tmp1=NULL, *tmp2=NULL, *tmp3=NULL, *tmp4=NULL,*tmp5=NULL,*tmp6=NULL,*tmp7=NULL;
+  object *tmp,*tmp_op;
 
     if (!QUERY_FLAG(ob,FLAG_REMOVED)) {
 	dump_object(ob);
@@ -1837,7 +1812,6 @@ void free_object(object *ob) {
     LOG(llevBug,"BUG: Trying to free freed object.\n%s\n",errmsg);
     return;
   }
-  tmp0=ob;
   if(ob->more!=NULL) {
     free_object(ob->more);
     ob->more=NULL;
@@ -1905,6 +1879,10 @@ void free_object(object *ob) {
 			if(corpse)
 			{
 				/* drop the corpse when something is in OR corpse_forced is set */
+				/* i changed this to drop corpse always even they have no items
+				 * inside (player get confused when corpse don't drop. To avoid
+				 * clear corpses, change below "||corpse " to "|| corpse->inv"
+				 */
 				if(QUERY_FLAG(ob,FLAG_CORPSE_FORCED) || corpse)
 				{
 					/* ok... we have a corpse AND we insert it.
@@ -1914,9 +1892,8 @@ void free_object(object *ob) {
 					 * - and looter will be stopped.
 					 */
 
-					/* carefull, we assume that this virgin slaying field is NULL */
 					if(ob->enemy && ob->enemy->type == PLAYER && ob->enemy->count == ob->enemy_count)
-						corpse->slaying = add_refcount(ob->enemy->name);
+						FREE_AND_ADD_REF_HASH(corpse->slaying,ob->enemy->name);
 
 					/* later, we add here other sub type or slaying names for killing groups, clans, etc */
 					if(corpse->slaying) /* change sub_type to mark this corpse */
@@ -1937,55 +1914,29 @@ void free_object(object *ob) {
     }
   }
   /* Remove object from the active list */
-tmp1=ob;
   ob->speed = 0;
   update_ob_speed(ob);
-tmp2=ob;
-
+ /*LOG(llevDebug,"FO: a:%s %x >%s< (#%d)\n", ob->arch?(ob->arch->name?ob->arch->name:""):"", ob->name, ob->name?ob->name:"",ob->name?query_refcount(ob->name):0);*/
+  /* First free the object from the used objects list: */
+ 
   SET_FLAG(ob, FLAG_FREED);
   ob->count = 0;
-  /* First free the object from the used objects list: */
   if(ob->prev==NULL) {
- tmp3=ob->next;
     objects=ob->next;
     if(objects!=NULL)
-    {
-      tmp4=objects;
       objects->prev=NULL;
-    }
   }
   else {
-    tmp5=ob->next;
     ob->prev->next=ob->next;
     if(ob->next!=NULL)
-    {
-    tmp6=ob->prev;
       ob->next->prev=ob->prev;
-      }
   }
-   tmp7=ob;
-  /*LOG(llevDebug,"FO: a:%s %x >%s< (#%d)\n", ob->arch?(ob->arch->name?ob->arch->name:""):"", ob->name, ob->name?ob->name:"",ob->name?query_refcount(ob->name):0);*/
-  if(ob->name!=NULL) {
-    free_string(ob->name);
-    ob->name=NULL;
-  }
-
-  if(ob->title!=NULL) {
-    free_string(ob->title);
-    ob->title=NULL;
-  }
-  if(ob->race!=NULL) {
-    free_string(ob->race);
-    ob->race=NULL;
-  }
-  if(ob->slaying!=NULL) {
-    free_string(ob->slaying);
-    ob->slaying=NULL;
-  }
-  if(ob->msg!=NULL) {
-    free_string(ob->msg);
-    ob->msg=NULL;
-  }
+ 
+	FREE_AND_CLEAR_HASH2(ob->name);
+	FREE_AND_CLEAR_HASH2(ob->title);  
+	FREE_AND_CLEAR_HASH2(ob->race);
+	FREE_AND_CLEAR_HASH2(ob->slaying);
+	FREE_AND_CLEAR_HASH2(ob->msg);
 
   /* Now link it with the free_objects list: */
   ob->prev=NULL;
@@ -2069,7 +2020,7 @@ void remove_ob(object *op) {
     if(QUERY_FLAG(op,FLAG_REMOVED)) 
 	{
 		/*dump_object(op)*/;
-		LOG(llevBug,"BUG: Trying to remove removed object.\n:%s map:%s (%d,%d)\n", query_name(op), 
+		LOG(llevBug,"BUG: Trying to remove removed object.:%s map:%s (%d,%d)\n", query_name(op), 
 			op->map?(op->map->path?op->map->path:"op->map->path == NULL"):"op->map==NULL",op->x,op->y);
 		return;
     }
@@ -2248,7 +2199,6 @@ object *merge_ob(object *op, object *top) {
     if (CAN_MERGE(op,top))
     {
       top->nrof+=op->nrof;
-/*      CLEAR_FLAG(top,FLAG_STARTEQUIP);*/
       op->weight = 0; /* Don't want any adjustements now */
       remove_ob(op);
       free_object(op);
@@ -2289,21 +2239,21 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
     if (QUERY_FLAG (op, FLAG_FREED))
 	{
 		dump_object(op);
-		LOG(llevBug, "BUG: Trying to insert freed object %s in map %s!\n:%s\n", op->name, m->name,errmsg);
+		LOG(llevBug, "BUG: insert_ob_in_map(): Trying to insert freed object %s in map %s!\n:%s\n", query_name(op), m->name,errmsg);
 		return NULL;
     }
     if(m==NULL)
 	{
 		dump_object(op);
-		LOG(llevBug,"BUG: Trying to insert object %s in null-map!\n%s\n",op->name, errmsg);
-		return op;
+		LOG(llevBug,"BUG: insert_ob_in_map(): Trying to insert object %s in null-map!\n%s\n",query_name(op), errmsg);
+		return NULL;
     }
 		
 	if(!QUERY_FLAG(op,FLAG_REMOVED))
 	{
 		dump_object(op);
-		LOG(llevBug,"BUG: Trying to insert non removed object %s in map %s.\n%s\n", op->name, m->name, errmsg);
-		return op;
+		LOG(llevBug,"BUG: insert_ob_in_map(): Trying to insert non removed object %s in map %s.\n%s\n", query_name(op), m->name, errmsg);
+		return NULL;
     }
 
     if(op->more!=NULL)
@@ -2311,7 +2261,7 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
 		if (insert_ob_in_map(op->more,m,originator,flag) == NULL) 
 		{
 			if ( ! op->head)
-				LOG(llevBug, "BUG: insert_ob_in_map(): inserting op->more killed op %s in map %s\n",op->name, m->name);
+				LOG(llevBug, "BUG: insert_ob_in_map(): inserting op->more killed op %s in map %s\n",query_name(op), m->name);
 			return NULL;
 		}
     }
@@ -2324,24 +2274,27 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
 #endif
     x = op->x;
     y = op->y;
+	op->map= m;
 
+	/* perhaps this is a overkill - but safty first.
+	 * This *should* be handled in the caller function before!
+	 * We can enable the log msg in the part beyond this -
+	 * that will make it possible to track false calls.
+	 */
     if(!(m=out_of_map(m, &x, &y)))
 	{
-		dump_object(op);
-		LOG(llevBug,"BUG: Trying to insert object outside the map.\n%s\n", errmsg);
-		return op;
+		LOG(llevBug,"BUG: insert_ob_in_map(): Trying to insert object %s outside the map %s (%d,%d).\n\n", query_name(op), op->map->name, op->x, op->y);
+		return NULL;
     }
 
         /* Ideally, the caller figures this out */
-    if (op->map != m) {
-	/* coordinates should not change unless map also changes */
-	op->x = x;
-	op->y = y;
-	op->map = m;
-#if 0
-	LOG(llevDebug,"insert_ob_in_map not called with proper tiled map: %s != %s, orig coord = %d, %d\n",
-	    op->map->path, m->path, op->ox, op->oy);
-#endif
+    if (op->map != m)
+	{
+		/* player moving don't check tiled maps - perhaps we will change this someone */
+		/*LOG(llevBug, "BUG: insert_ob_in_map(): not checked for object tiled map! %s in map %s\n",query_name(op), m->path);*/
+		op->x = x;
+		op->y = y;
+		op->map = m;
     }
 
 	/* hm, i not checked this, but is it not smarter to remove op instead and return? MT */
@@ -2789,7 +2742,7 @@ object *insert_ob_in_ob(object *op,object *where) {
 	/* Weight handling gets pretty funky.  Since we are adding to
 	 * tmp->nrof, we need to increase the weight.
 	 */
-	add_weight (where, op->weight*op->nrof);
+		add_weight (where, op->weight*op->nrof);
         SET_FLAG(op, FLAG_REMOVED);
         free_object(op); /* free the inserted object */
         op = tmp;
@@ -2807,12 +2760,6 @@ object *insert_ob_in_ob(object *op,object *where) {
     add_weight (where, op->weight*op->nrof);
   } else
     add_weight (where, (op->weight+op->carrying));
-
-  otmp=is_player_inv(where);
-  if (otmp&&otmp->contr!=NULL) {
-    if (!QUERY_FLAG(otmp,FLAG_NO_FIX_PLAYER))
-      fix_player(otmp);
-  }
 
   op->map=NULL;
   op->env=where;
@@ -2841,7 +2788,26 @@ object *insert_ob_in_ob(object *op,object *where) {
       op->below->above = op;
       where->inv = op;
   }
-  return op;
+
+	/* check for event object and set the owner object
+	 * event flags.
+	 */
+	if(op->type == TYPE_EVENT_OBJECT && op->sub_type1)
+		where->event_flags |= (1U<<(op->sub_type1-1));
+
+	/* if player, adjust one drop items and fix player if not 
+	 * marked as no fix.
+	 */
+	otmp=is_player_inv(where);
+	if (otmp&&otmp->contr!=NULL) 
+	{
+		if (QUERY_FLAG(op,FLAG_ONE_DROP))
+			SET_FLAG(op,FLAG_STARTEQUIP);
+
+		if (!QUERY_FLAG(otmp,FLAG_NO_FIX_PLAYER))
+		fix_player(otmp);
+	}
+	return op;
 }
 
 /*

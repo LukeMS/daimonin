@@ -31,9 +31,17 @@
 int command_say (object *op, char *params)
 {
     if (!params) 
-	return 0;
+		return 0;
 
-LOG(llevInfo,"CHAT SAY:%s >%s<\n", query_name(op), params);
+	LOG(llevInfo,"CLOG SAY:%s >%s<\n", query_name(op), params);
+	/* strip whitespaces */
+	while (*params !='\0' && isspace(*params)) 
+		params++;
+
+	/* this happens when whitespace only string was submited */
+    if (*params=='\0') 
+		return 0;
+
     communicate(op, params);
   
     return 0;
@@ -47,9 +55,17 @@ int command_shout (object *op, char *params)
     CFParm CFP;
 #endif
     if (!params) 
-		return 1;
+		return 0;
 
-	LOG(llevInfo,"CHAT SHOUT:%s >%s<\n", query_name(op), params);
+	LOG(llevInfo,"CLOG SHOUT:%s >%s<\n", query_name(op), params);
+	/* strip whitespaces */
+	while (*params !='\0' && isspace(*params)) 
+		params++;
+
+	/* this happens when whitespace only string was submited */
+    if (*params=='\0') 
+		return 0;
+
     strcpy(buf,op->name);
     strcat(buf," shouts: ");
     strncat(buf, params, MAX_BUF-30);
@@ -74,9 +90,16 @@ int command_tell (object *op, char *params)
 
 
 	if (!params) 
-		return 1;
+		return 0;
 
-	LOG(llevInfo,"CHAT TELL:%s >%s<\n", query_name(op), params);
+	LOG(llevInfo,"CLOG TELL:%s >%s<\n", query_name(op), params);
+	/* strip whitespaces */
+	while (*params !='\0' && isspace(*params)) 
+		params++;
+
+	/* this happens when whitespace only string was submited */
+    if (*params=='\0') 
+		return 0;
 
 	name = params;
 	msg = strchr(name, ' ');

@@ -631,14 +631,16 @@ static void link_multipart_objects(mapstruct *m)
 		    op->head = tmp;
 		    op->map = m;
 		    last->more = op;
-		    if (tmp->name != op->name) {
-			if (op->name) free_string(op->name);
-			op->name = add_string(tmp->name);
-		    }
-		    if (tmp->title != op->title) {
-			if (op->title) free_string(op->title);
-			op->title = add_string(tmp->title);
-		    }
+			/* this is ok - we just overrule name & title for the parts when
+			 * we have changed them in the head!
+			 */
+		    if (tmp->name != op->name)
+				FREE_AND_COPY_HASH(op->name, tmp->name);
+		    if (tmp->title != op->title)
+				FREE_AND_COPY_HASH(op->title, tmp->title);		   
+		    if (tmp->msg != op->msg)
+				FREE_AND_COPY_HASH(op->msg, tmp->msg);
+
 		    /* we could link all the parts onto tmp, and then just
 		     * call insert_ob_in_map once, but the effect is the same,
 		     * as insert_ob_in_map will call itself with each part, and
@@ -1629,16 +1631,14 @@ void free_map(mapstruct *m,int flag) {
     }
     if (flag && m->spaces) 
 		free_all_objects(m);
-    if (m->name) FREE_AND_CLEAR(m->name);
-    if (m->spaces) FREE_AND_CLEAR(m->spaces);
-    if (m->msg) FREE_AND_CLEAR(m->msg);
+    FREE_AND_NULL_PTR(m->name);
+    FREE_AND_NULL_PTR(m->spaces);
+    FREE_AND_NULL_PTR(m->msg);
     if (m->buttons)
 		free_objectlinkpt(m->buttons);
     m->buttons = NULL;
-    for (i=0; i<TILED_MAPS; i++) {
-	if (m->tile_path[i]) FREE_AND_CLEAR(m->tile_path[i]);
-	m->tile_map[i] = NULL;
-    }
+    for (i=0; i<TILED_MAPS; i++)
+		FREE_AND_NULL_PTR(m->tile_path[i]);
     m->in_memory = MAP_SWAPPED;
 }
 
@@ -1665,7 +1665,7 @@ void delete_map(mapstruct *m) {
     /* move this out of free_map, since tmpname can still be needed if
      * the map is swapped out.
      */
-    if (m->tmpname) FREE_AND_CLEAR(m->tmpname);
+    FREE_AND_NULL_PTR(m->tmpname);
     last = NULL;
     /* We need to look through all the maps and see if any maps
      * are pointing at this one for tiling information.  Since
@@ -1775,8 +1775,7 @@ mapstruct *ready_map_name(char *name, int flags)
 		* temporary map, and so has reloaded a new map.  If that
 		* is the case, tmpname is now null
 		*/
-		if (m->tmpname) 
-			FREE_AND_CLEAR(m->tmpname);
+		FREE_AND_NULL_PTR(m->tmpname);
 		/* It's going to be saved anew anyway */
 	} 
 

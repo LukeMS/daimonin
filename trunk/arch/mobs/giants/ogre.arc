@@ -1,7 +1,7 @@
 Object ogre
 name ogre
 race giant
-randomitems ogre
+randomitems mob_ogre
 is_evil 1
 is_male 1
 weight 13250
@@ -11,8 +11,8 @@ weapon_speed 0.045
 attack_impact 100
 protect_poison 25
 protect_acid 25
-ac 15
-wc 16
+ac 5
+wc 3
 dam 5
 hp -1
 maxhp 7

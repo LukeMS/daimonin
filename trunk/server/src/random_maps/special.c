@@ -168,7 +168,7 @@ void place_fountain_with_specials(mapstruct *map) {
   potion->face=fountain->face;
   SET_FLAG(potion,FLAG_NO_PICK);
   SET_FLAG(potion,FLAG_IDENTIFIED);
-  potion->name=add_string("fountain");
+  FREE_AND_COPY_HASH(potion->name, "fountain");
   potion->x = ix;
   potion->y = iy;
   potion->material=M_ADAMANT;
@@ -212,8 +212,8 @@ void place_special_exit(mapstruct * map, int hole_type,RMParms *RP) {
                                  "none","onion","wealth2","none",RP->exitstyle,0,0,
                                  OPT_WALLS_ONLY,0,0,1,RP->dungeon_level,RP->dungeon_level,
                                  RP->difficulty,RP->difficulty,-1,1,0,0,0,0);
-      the_exit->slaying = add_string("/!");
-      the_exit->msg = add_string(buf);
+      FREE_AND_COPY_HASH(the_exit->slaying, "/!");
+      FREE_AND_COPY_HASH(the_exit->msg, buf);
       break;
     }
   case ORC_ZONE:  /* hole with orcs in it. */
@@ -225,8 +225,8 @@ void place_special_exit(mapstruct * map, int hole_type,RMParms *RP) {
                                  "none","onion","wealth2","none",RP->exitstyle,0,0,
                                  OPT_WALLS_ONLY,0,0,1,RP->dungeon_level,RP->dungeon_level,
                                  RP->difficulty,RP->difficulty,-1,1,0,0,0,0);
-      the_exit->slaying = add_string("/!");
-      the_exit->msg = add_string(buf);
+      FREE_AND_COPY_HASH(the_exit->slaying, "/!");
+      FREE_AND_COPY_HASH(the_exit->msg, buf);
       break;
     }
   case MINING_ZONE:  /* hole with orcs in it. */
@@ -238,8 +238,8 @@ void place_special_exit(mapstruct * map, int hole_type,RMParms *RP) {
                                  "none","maze","minerals2","none",RP->exitstyle,0,0,
                                  OPT_WALLS_ONLY,0,0,1,RP->dungeon_level,RP->dungeon_level,
                                  RP->difficulty,RP->difficulty,-1,1,0,0,0,0);
-      the_exit->slaying = add_string("/!");
-      the_exit->msg = add_string(buf);
+      FREE_AND_COPY_HASH(the_exit->slaying, "/!");
+      FREE_AND_COPY_HASH(the_exit->msg, buf);
       break;
     }
 

@@ -88,9 +88,36 @@
 #define EVENT_TRIGGER  10 /* Button pushed, lever pulled, etc.               */
 #define EVENT_CLOSE    11 /* Container closed.                               */
 #define EVENT_TIMER    12 /* Timer connected triggered it.                   */
+
+#define NR_LOCAL_EVENTS 13
+#define NR_EVENTS 26
+
+#define EVENT_FLAG_NONE     0x0000
+#define EVENT_FLAG_APPLY    0x0001
+#define EVENT_FLAG_ATTACK   0x0002
+#define EVENT_FLAG_DEATH    0x0004
+#define EVENT_FLAG_DROP     0x0008
+#define EVENT_FLAG_PICKUP   0x0010
+#define EVENT_FLAG_SAY      0x0020
+#define EVENT_FLAG_STOP     0x0030
+#define EVENT_FLAG_TIME     0x0080
+#define EVENT_FLAG_THROW    0x0100
+#define EVENT_FLAG_TRIGGER  0x0200
+#define EVENT_FLAG_CLOSE    0x0400
+#define EVENT_FLAG_TIMER    0x0800
+
+
 /*****************************************************************************/
 /* Global events. Those are never linked to a specific object.               */
 /*****************************************************************************/
+/* i really dislike this system - scripts/events attached to object is
+ * something complete different as attaching a script or event global.
+ * The events above are attached to the object - the events below are
+ * attached to THE ENGINE. There is no reason to add and bulk the objects
+ * with it.
+ */
+/* dont use this events until this line gets removed!! */
+
 #define EVENT_BORN     13 /* A new character has been created.               */
 #define EVENT_CLOCK    14 /* Global time event.                              */
 #define EVENT_CRASH    15 /* Triggered when the server crashes. Not recursive*/
@@ -105,10 +132,6 @@
 #define EVENT_SHOUT    24 /* A player 'shout' something.                     */
 #define EVENT_TELL     25 /* A player 'tell' something.                      */
 
-/* Moved to global.h - change there
-#define NR_EVENTS 26
-#define NR_LOCAL_EVENTS 13
-*/
 /*****************************************************************************/
 /* Hook codes. A hook is a function pointer passed from the server to the    */
 /* plugin, so the plugin can call a server/crosslib functionality. Some may  */

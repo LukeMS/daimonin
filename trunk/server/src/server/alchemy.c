@@ -392,9 +392,8 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
         tmp->weight=weight;
         tmp->value=0;
 	tmp->material=material;
-	free_string(tmp->name);
-	tmp->name=add_string("slag");
-        item=insert_ob_in_ob(tmp,cauldron);
+	FREE_AND_COPY_HASH(tmp->name, "slag");
+    item=insert_ob_in_ob(tmp,cauldron);
 	CLEAR_FLAG(tmp,FLAG_CAN_ROLL);
 	CLEAR_FLAG(tmp,FLAG_NO_PICK);
 	CLEAR_FLAG(tmp,FLAG_NO_PASS);

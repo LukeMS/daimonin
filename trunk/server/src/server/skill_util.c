@@ -339,8 +339,8 @@ int calc_skill_exp(object *who, object *op)
 			op_exp = 0;
 	}
 
-	LOG(llevDebug,"\nEXP:: %s (lvl %d(%d)) gets %d exp in %s from %s (lvl %d)\n", query_name(who), who_lvl, who->level, op_exp,
-		who->chosen_skill?query_name(who->chosen_skill):"<BUG: NO SKILL!>",query_name(op), op_lvl);
+	LOG(llevDebug,"\nEXP:: %s (lvl %d(%d)) gets %d exp in %s from %s (lvl %d)(%x - %d)\n", query_name(who), who_lvl, who->level, op_exp,
+		who->chosen_skill?query_name(who->chosen_skill):"<BUG: NO SKILL!>",query_name(op), op_lvl, op, op->count);
 	/* old code. I skipped skill[].lexp and bexp - perhaps later back in
 	if(who->chosen_skill==NULL)
 	{
@@ -382,7 +382,6 @@ int calc_level_difference(int who_lvl, int op_lvl)
 
 	return tmp<1.0f?1:(int)tmp;
 }
-
 
 /* find relevant stats or a skill then return their weighted sum. 
  * I admit the calculation is done in a retarded way.
@@ -811,7 +810,10 @@ int check_skill_to_apply(object *who, object *item)
  * experience objects. If things aren't cool then we change them here.
  *  -b.t.
  */
-
+/* there is a alot old cf code in here... it will not harm but for clean
+ * and performance reason we should clean this whole section by time.
+ * MT-2003
+ */
 int init_player_exp(object *pl) {
   int i,j,exp_index=0;
   object *tmp,*exp_ob[MAX_EXP_CAT];
@@ -827,6 +829,10 @@ int init_player_exp(object *pl) {
    for(tmp=pl->inv;tmp;tmp=tmp->below)
       if(tmp->type==EXPERIENCE) {
 	    exp_ob[exp_index] = tmp;
+		if (tmp->stats.Pow)
+			pl->contr->sp_exp_ptr = tmp;
+		if (tmp->stats.Wis)
+			pl->contr->grace_exp_ptr = tmp;
 	    find_skill_exp_name(pl, tmp, pl->contr->last_skill_index);
 	    exp_index++;
       } else if (exp_index == MAX_EXP_CAT)
@@ -845,6 +851,10 @@ int init_player_exp(object *pl) {
            insert_ob_in_ob(tmp,pl);
 	   tmp->stats.exp = pl->stats.exp/nrofexpcat;
            exp_ob[j] = tmp;
+			if (tmp->stats.Pow)
+				pl->contr->sp_exp_ptr = tmp;
+			if (tmp->stats.Wis)
+				pl->contr->grace_exp_ptr = tmp;
            esrv_send_item(pl, tmp);
            exp_index++;
         }
@@ -862,6 +872,10 @@ int init_player_exp(object *pl) {
               copy_object(exp_cat[j],tmp);
               insert_ob_in_ob(tmp,pl);
 	      exp_ob[i] = tmp; 
+			if (tmp->stats.Pow)
+				pl->contr->sp_exp_ptr = tmp;
+			if (tmp->stats.Wis)
+				pl->contr->grace_exp_ptr = tmp;
               esrv_send_item(pl, tmp);
               exp_index++;
            }

@@ -163,7 +163,7 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
   /* set up the up exit */
   the_exit_up->stats.hp = RP->origin_x;
   the_exit_up->stats.sp = RP->origin_y;
-  the_exit_up->slaying = add_string(RP->origin_map);
+  FREE_AND_COPY_HASH(the_exit_up->slaying, RP->origin_map);
 
   /* figure out where to put the entrance */
   /* begin a logical block */
@@ -205,7 +205,7 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
         random_sign->x = the_exit_up->x+freearr_x[j];
         random_sign->y = the_exit_up->y+freearr_y[j];
 
-        random_sign->msg = add_string("This is a random map.\n");
+        FREE_AND_COPY_HASH(random_sign->msg, "This is a random map.\n");
         insert_ob_in_map(random_sign,map,NULL,0);
       }
     }
@@ -250,7 +250,7 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
       RP->origin_x = the_exit_down->x;
       RP->origin_y = the_exit_down->y;
       write_map_parameters_to_string(buf,RP);
-      the_exit_down->msg = add_string(buf);
+      FREE_AND_COPY_HASH(the_exit_down->msg, buf);
       /* the identifier for making a random map. */
       if(RP->dungeon_level >= RP->dungeon_depth && RP->final_map[0]!=0) {
         mapstruct *new_map;
@@ -271,7 +271,7 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
         if((new_map=ready_map_name(RP->final_map,MAP_UNIQUE(map)?1:0)) == NULL) 
 	    return;
 
-        the_exit_down->slaying = add_string(RP->final_map);
+        FREE_AND_COPY_HASH(the_exit_down->slaying, RP->final_map);
         strcpy(new_map->path,RP->final_map);
 
 	for (tmp=GET_MAP_OB(new_map,  MAP_ENTER_X(new_map), MAP_ENTER_Y(new_map)); tmp; tmp=tmp->above)
@@ -287,17 +287,17 @@ void place_exits(mapstruct *map, char **maze,char *exitstyle,int orientation,RMP
 	    }
 
         /* setup the exit back */
-        the_exit_back->slaying = add_string(map->path);
+        FREE_AND_COPY_HASH(the_exit_back->slaying, map->path);
         the_exit_back->stats.hp = the_exit_down->x;
         the_exit_back->stats.sp = the_exit_down->y;
         the_exit_back->x = MAP_ENTER_X(new_map);
         the_exit_back->y = MAP_ENTER_Y(new_map);
 
         insert_ob_in_map(the_exit_back,new_map,NULL,0);
-	set_map_timeout(new_map);   /* So it gets swapped out */
+		set_map_timeout(new_map);   /* So it gets swapped out */
       }
       else 
-        the_exit_down->slaying = add_string("/!");
+        FREE_AND_COPY_HASH(the_exit_down->slaying, "/!");
       /* Block the exit so things don't get dumped on top of it. */
       SET_FLAG(the_exit_down,FLAG_NO_PASS);
       insert_ob_in_map(the_exit_down,map,NULL,0);

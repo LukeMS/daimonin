@@ -6,7 +6,7 @@ type 122
 sub_type 1
 material 32
 weight 50000
-food 20
+food 25
 is_used_up 1
 speed 0.01
 identified 1

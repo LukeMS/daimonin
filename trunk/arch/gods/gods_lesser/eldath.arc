@@ -1,6 +1,6 @@
 # Eldath, lesser goddess
 Object Eldath
-randomitems Eldath
+randomitems deity_Eldath
 type 50
 layer 6
 face eldath.141

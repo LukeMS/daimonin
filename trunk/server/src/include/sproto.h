@@ -520,6 +520,7 @@ int pvp_area(object *attacker, object* victim);
 int op_on_battleground(object *op, int *x, int *y);
 void dragon_ability_gain(object *who, int atnr, int level);
 /* plugins.c */
+object *get_event_object(object *op, int event_nr);
 CommArray_s *find_plugin_command(char *cmd, object *op);
 void displayPluginsList(object *op);
 int findPlugin(char *id);
@@ -714,7 +715,7 @@ int cast_destruction(object *op, object *caster, int dam, int attacktype);
 int magic_wall(object *op, object *caster, int dir, int spell_type);
 int cast_light(object *op, object *caster, int dir);
 int dimension_door(object *op, int dir);
-int cast_heal(object *op, object *target, int spell_type);
+int cast_heal(object *op, int caster_level, object *target, int spell_type);
 int cast_regenerate_spellpoints(object *op);
 int cast_change_attr(object *op, object *caster, object *target, int dir, int spell_type);
 int summon_pet(object *op, int dir, SpellTypeFrom item);
@@ -756,7 +757,7 @@ int cast_cause_conflict(object *op, object *caster, archetype *spellarch, int ty
 /* spell_util.c */
 void init_spells(void);
 void dump_spells(void);
-void spell_effect(int spell_type, int x, int y, mapstruct *map, object *originator);
+int insert_spell_effect(char *archname, mapstruct *m, int x, int y);
 spell *find_spell(int spelltype);
 int path_level_mod(object *caster, int base_level, int spell_type);
 int casting_level(object *caster, int spell_type);
@@ -850,5 +851,3 @@ int cftimer_find_free_id(void);
 void init_word_darkness(void);
 void dawn_to_dusk(timeofday_t *tod);
 void tick_the_clock(void);
-void init_weather(void);
-void perform_weather(void);

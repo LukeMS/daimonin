@@ -65,11 +65,11 @@ extern void	(*info_map_func)		(int, mapstruct *, char *);
 extern void	(*move_teleporter_func)		(object *);
 extern void	(*move_firewall_func)		(object *);
 extern void	(*move_creator_func)		(object *);
-extern void     (*trap_adjust_func)		(object *, int);
+extern void (*trap_adjust_func)		(object *, int);
 extern void	(*esrv_send_item_func)		(object *, object *);
 extern void	(*esrv_del_item_func)		(player *, int);
 extern void	(*esrv_update_item_func)	(int, object *, object *);
-extern void     (*dragon_gain_func)             (object *, int, int);
+extern void (*dragon_gain_func)             (object *, int, int);
 extern void	(*send_golem_control_func) (object *, int);
 
 #endif

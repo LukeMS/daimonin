@@ -53,26 +53,23 @@ typedef enum usekeytype {
     containers=2,
 } usekeytype;
 
-
-
+/* used for item damage system */
 enum {
-		PLAYER_EQUIP_WEAPON1,
-		PLAYER_EQUIP_SHIELD,
-		PLAYER_EQUIP_HEAD,
 		PLAYER_EQUIP_MAIL,
-		PLAYER_EQUIP_BOOTS,
 		PLAYER_EQUIP_GAUNTLET,
         PLAYER_EQUIP_BRACER,
-        PLAYER_EQUIP_ROBE,
+		PLAYER_EQUIP_HELM,
+		PLAYER_EQUIP_BOOTS,
+        PLAYER_EQUIP_CLOAK,
         PLAYER_EQUIP_GIRDLE,
-        PLAYER_EQUIP_BOW,
-        PLAYER_EQUIP_AMULET,
-        PLAYER_EQUIP_WAND,
-        PLAYER_EQUIP_RRING,
+		PLAYER_EQUIP_SHIELD,
+        PLAYER_EQUIP_RRING, /* this must 1 entry before LRING! */
         PLAYER_EQUIP_LRING,
-        PLAYER_EQUIP_SKILL,
-        PLAYER_EQUIP_LIGHT,
-		PLAYER_EQUIP_MAX, /* last index */
+        PLAYER_EQUIP_AMULET,
+		PLAYER_EQUIP_WEAPON1,
+        PLAYER_EQUIP_BOW,
+		PLAYER_EQUIP_MAX 
+		/* last index */
 };
 
 /* we can include more flags here... */
@@ -95,26 +92,87 @@ typedef struct pl_player
 	/* this is not cleared with memset - seek for offsetof((....,maplevel) */
 	struct pl_player *next;				/* Pointer to next player, NULL if this is last */
 	NewSocket socket;				/* Socket information for this player */
-	char maplevel[MAX_BUF];			/* Name of the map the player is on */
 
 	/* all this is set to 0 with memset */
+	char maplevel[MAX_BUF];			/* Name of the map the player is on */
+	struct mapdef *last_update;		/* when moving on tiled maps, player can change 
+									 * map without triggering mapevents and new_map_cmd.
+									 * This will break client cache and script events.
+									 * This value will used as control value.*/
+
 	object *ob;						/* The object representing the player */
-	int bed_x;						/* x,y - coordinates of respawn (savebed) */
-	int bed_y;
 	object *golem;					/* Which golem is controlled */
-	uint32 golem_count;				/* Which golem is controlled - the id count */
 	object *anim_enemy;				/* which enemy we hack. needed to skip extra swing animation */
+
+    object *selected_weapon;   /* thats the weapon in our hand */
+	object *skill_weapon;   /* thats the hth skill we use when we not use a weapon (like karate) */
+	object *target_object;			/* our target */
+	object *sp_exp_ptr;		/* exp object pointer to sp (mana) defining exp object */
+	object *grace_exp_ptr;	/* exp object pointer to grace (mana) defining exp object */
+	object *equipment[PLAYER_EQUIP_MAX]; /* pointers to applied items in the players inventory */
+	object *skill_ptr[NROFSKILLS];	/* quick jump table to skill objects in the players inv. */
+	object *last_skill_ob[MAX_EXP_CAT];  /* the exp object table */
+	object *mark;		/* marked object */
+	object *age_force;	/* quick jump to our age force */
+
 	uint32 anim_enemy_count;		/* hm, this can be kicked now - i do it for a quick hack to
 									 * implement the animations. use is_melee_range() instead.
 									 */
 
-	object *target_object;			/* our target */
+	int set_skill_weapon;		/* skill number of used weapon skill for fast access */
+	int set_skill_archery;		/* same for archery */
+	int bed_x;						/* x,y - coordinates of respawn (savebed) */
+	int bed_y;
+	uint32 golem_count;				/* Which golem is controlled - the id count */
+
+	int firemode_type;        /* firemode_xxx are set from command_fire() */
+	int firemode_tag1;
+	int firemode_tag2;
+
+	uint32	mark_count;				/* count or mark object */
+	sint32 last_skill_exp[MAX_EXP_CAT]; /* shadow register. if != exp. obj update client */
+	sint32 skill_exp[NROFSKILLS];	 /* shadow register for updating skill values to client */
 	uint32 target_object_count;     /* count of target - NOTE: if we target ourself, this count it 0
 	                                 * this will kick us out of enemy target routines - all functions
 	                                 * who handle self target know it and use only target_object - 
 	                                 * for our own player object the pointer will never change for us.
 	                                 */
 	uint32 target_map_pos;			/* last target search position */
+	uint32 mode;					/* Mode of player for pickup. */
+
+	float weapon_sp;         /* Penalties to speed when fighting w speed >ws/10*/
+	float last_weapon_sp;    /* Last turn */
+	float last_speed;
+
+    sint16 age;		/* the age of our player */
+    sint16 age_add;	/* unnatural changes to our age - can be removed by restoration */
+    sint16 age_changes; /* permanent changes .... very bad (or good when younger) */
+    sint16 age_max;	/* the age of our player */
+	sint16 skill_level[NROFSKILLS];	/* shadow register for updint skill levels to client */
+	sint16 last_protection[NROFPROTECTIONS];	/* shadow register for client update resistance table */
+	sint16 encumbrance;  /*  How much our player is encumbered  */
+	uint16 anim_flags;				/* some anim flags for special player animation handling */
+
+	uint16 nrofknownspells; 	/* Index in the above array */
+	sint16 known_spells[NROFREALSPELLS]; /* Spells known by the player */
+	
+    signed char digestion;			/* Any bonuses/penalties to digestion */
+	signed char gen_hp;				/* Bonuses to regeneration speed of hp */
+	signed char gen_sp;				/* Bonuses to regeneration speed of sp */
+	signed char gen_sp_armour;		/* Penalty to sp regen from armour */
+	signed char gen_grace;			/* Bonuses to regeneration speed of grace */
+
+	char last_skill_level[MAX_EXP_CAT]; /* shadow register client exp group for level */
+	char last_skill_id[MAX_EXP_CAT]; /* Thats the CS_STATS_ id for client STATS cmd*/
+	char firemode_name[BIG_NAME*2];
+	char quick_name[BIG_NAME*3];	/* thats rank + name +" the xxxx" */
+	char savebed_map[MAX_BUF];  /* map where player will respawn after death */
+	/* for smaller map sizes, only the the first elements are used (ie, upper left) */
+	sint8 blocked_los[MAP_CLIENT_X][MAP_CLIENT_Y];
+	char ext_title[MAX_EXT_TITLE];	/* for client: <Rank> <Name>\n<Gender> <Race> <Profession> */
+	char levhp[MAXLEVEL+1];			/* What the player gained on that level */
+	char levsp[MAXLEVEL+1];
+	char levgrace[MAXLEVEL+1];
 
 	uint32 name_changed:1;			/* If true, the player has set a name. */
 	uint32 do_los:1;				/* If true, update_los() in draw(), and clear */
@@ -122,117 +180,46 @@ typedef struct pl_player
 	uint32 praying:1;				/* if true, player is praying and gaining fast grace */
 	uint32 was_praying:1;			/* internal used by praying to send pray msg to player */
 
-	struct mapdef *last_update;		/* when moving on tiled maps, player can change 
-									 * map without triggering mapevents and new_map_cmd.
-									 * This will break client cache and script events.
-									 * This value will used as control value.*/
-
-	uint16 anim_flags;				/* some anim flags for special player animation handling */
-
-	char quick_name[BIG_NAME*3];	/* thats rank + name +" the xxxx" */
 
 /* all values before this line are tested and proofed */
 
-	uint32 mode;					/* Mode of player for pickup. */
   
-  char savebed_map[MAX_BUF];  /* map where player will respawn after death */
-  int removed;                /* Flag telling if ob is to be inserted */
-  sint16 known_spells[NROFREALSPELLS]; /* Spells known by the player */
-  uint16 nrofknownspells; 	/* Index in the above array */
-
-  unsigned known_spell:1;     /* True if you know the spell of the wand */
-  unsigned last_known_spell:1;/* What was last updated with draw_stats() */
+  uint32 known_spell:1;     /* True if you know the spell of the wand */
+  uint32 last_known_spell:1;/* What was last updated with draw_stats() */
   uint32 tmp_invis:1;       /* Will invis go away when we attack ? */
   uint32 update_skills:1;   /* update skill list when set */
+#ifdef EXPLORE_MODE
+  uint32 explore:1;         /* if True, player is in explore mode */
+#endif
 
   rangetype shoottype;	      /* Which range-attack is being used by player */
   rangetype last_shoot;	      /* What was last updated with draw_stats() */
   usekeytype usekeys;	      /* Method for finding keys for doors */
   sint16 chosen_spell;		/* Type of readied spell */
-  sint16 last_spell;		/* What spell draw_stats() last displayed */
   sint16 chosen_item_spell;	/* Type of spell that the item fires */
+  uint16 last_flags;	    /* fire/run on flags for last tick */
   uint32 count;       /* Any numbers typed before a command */
-  unsigned char prev_cmd;     /* Previous command executed */
-  unsigned char prev_fire_on;
-  unsigned char prev_keycode; /* Previous command executed */
-  unsigned char key_down;     /* Last move-key still held down */
-  signed char digestion;	/* Any bonuses/penalties to digestion */
-  signed char gen_hp;		/* Bonuses to regeneration speed of hp */
-  signed char gen_sp;		/* Bonuses to regeneration speed of sp */
-  signed char gen_sp_armour;	/* Penalty to sp regen from armour */
-  signed char gen_grace;	/* Bonuses to regeneration speed of grace */
-#ifdef EXPLORE_MODE
-  uint32 explore:1;         /* if True, player is in explore mode */
-#endif
-  int maxhp_malus;			/* every level, the player gets x hp from xmax hp. the diff accumulate here */
-  int maxsp_malus;			/* same of sp */
-  int maxgrace_malus;		/* same for grace */
 
   int  last_skill_index;	       /* this is init from init_player_exp() */
-  object *last_skill_ob[MAX_EXP_CAT];  /* the exp object */
-  sint32  last_skill_exp[MAX_EXP_CAT]; /* shadow register. if != exp. obj update client */
-  char  last_skill_level[MAX_EXP_CAT]; /* same for level */
-  char  last_skill_id[MAX_EXP_CAT]; /* Thats the CS_STATS_ id for client STATS cmd*/
 
-  object *equipment[PLAYER_EQUIP_MAX];
   unsigned char state;
   unsigned char listening; /* Which priority will be used in info_all */
 
   unsigned char fire_on;
-  char firemode_name[64];
-  int firemode_type;        /* firemode_xxx are set from command_fire() */
-  int firemode_tag1;
-  int firemode_tag2;
   unsigned char run_on;
   unsigned char idle;      /* How long this player has been idle */
-  unsigned char has_hit;   /* If set, weapon_sp instead of speed will count */
-  float weapon_sp;         /* Penalties to speed when fighting w speed >ws/10*/
-  float last_weapon_sp;    /* Last turn */
-  uint16 last_flags;	    /* fire/run on flags for last tick */
-  sint32  last_weight_limit;	/* Last weight limit transmitted to client */
+  uint32  last_weight_limit;	/* Last weight limit transmitted to client */
   living orig_stats;       /* Can be less in case of poisoning */
   living last_stats;       /* Last stats drawn with draw_stats() */
-  float last_speed;
   signed long last_value;  /* Same usage as last_stats */
   long last_weight;
-  sint16	last_protection[NROFPROTECTIONS];	 /* Resistance against attacks (this goes now to players) */
-  object *skill_ptr[NROFSKILLS];
-  sint32 skill_exp[NROFSKILLS];          /* shadow register for updating skill values to client */
-  signed short skill_level[NROFSKILLS];
-  int set_skill_weapon;
-  int set_skill_archery;
-  object *selected_weapon;   /* thats the weapon in our hand */
-  object *skill_weapon;   /* thats the hth skill we use when we not use a weapon (like karate) */
 #ifdef USE_SWAP_STATS
   int Swap_First;
 #endif
 
   
-  /* i disabled this now - search for last_used in the code.
-   * perhaps we need this in the future.
-   */
-  
-  /*object *last_used;*/     /* Pointer to object last picked or applied */
-  /*long last_used_id;*/     /* Safety measures to be sure it's the same */
+  char title[BIG_NAME]; /* we use ext. title now - we should remove this now! */
 
-
-  /* for smaller map sizes, only the the first elements are used (ie, upper left) */
-  sint8	    blocked_los[MAP_CLIENT_X][MAP_CLIENT_Y];
-  
-  char title[BIG_NAME];
-
-  sint16	age;		/* the age of our player */
-  sint16	age_add;	/* unnatural changes to our age - can be removed by restoration */
-  sint16	age_changes; /* permanent changes .... very bad (or good when younger) */
-  sint16	age_max;	/* the age of our player */
-  object   *age_force;	/* quick jump to our age force */
-
-  char ext_title[MAX_EXT_TITLE]; /* for client: <Rank> <Name>\n<Gender> <Race> <Profession> */
-
-
-  signed char levhp[11]; /* What the player gained on that level */
-  signed char levsp[11];
-  signed char levgrace[11];
   unsigned char last_level;
 
   char killer[BIG_NAME];  /* Who killed this player. */
@@ -259,7 +246,13 @@ typedef struct pl_player
   char search_str[MAX_BUF];
 #endif /* SEARCH_ITEMS */
 
-  short encumbrance;  /*  How much our player is encumbered  */
+  /* i disabled this now - search for last_used in the code.
+   * perhaps we need this in the future.
+   */
+  
+  /*object *last_used;*/     /* Pointer to object last picked or applied */
+  /*long last_used_id;*/     /* Safety measures to be sure it's the same */
+
 /*
   This is part of a somewhat complex output buffer system - i really was not
   able to see the sense or the real use in the short time i watch it. It seems
@@ -269,8 +262,6 @@ typedef struct pl_player
   uint16	outputs_sync;
   uint16	outputs_count;
   */
-  object	*mark;		/* marked object */
-  uint32	mark_count;	/* count or mark object */
 } player;
 
 

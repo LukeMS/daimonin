@@ -69,8 +69,8 @@ alive 1
 attack_impact 100
 can_see_in_dark 1
 exp 120
-ac 15
-wc 16
+ac 4
+wc 3
 dam 4
 hp -1
 maxhp 7

@@ -82,9 +82,14 @@ CFParm* PlugProps;
 f_plugin PlugHooks[1024];
 
 /* Some practical stuff, often used in the plugin                            */
-#define WHO ((object *)(whoptr))
-#define WHAT ((object *)(whatptr))
-#define WHERE ((object *)(whereptr))
+#define WHO (whoptr->obj)
+#define WHAT (whatptr->obj)
+#define WHERE (whereptr->obj)
+
+/* A generic exception that we use for error messages */
+static PyObject* CFPythonError;
+/* Quick access to the exception. Use only in functions supposed to return pointers */
+#define RAISE(msg) { PyErr_SetString(CFPythonError, (msg)); return NULL; }
 
 /* The declarations for the plugin interface. Every plugin should have those.*/
 MODULEAPI CFParm* registerHook(CFParm* PParm);
@@ -577,6 +582,147 @@ static PyMethodDef CFPythonMethods[] =
         {"SendCustomCommand",CFSendCustomCommand,METH_VARARGS},
         {NULL, NULL}
 };
+
+/*****************************************************************************/
+/* Crossfire object type part.                                               */
+/* Using a custom type for CF Objects allows us to handle more errors, and   */
+/* avoid server crashes due to buggy scripts                                 */
+/* In the future even add methods to it?                                     */
+/*****************************************************************************/
+
+/* Object data */
+typedef struct {
+    PyObject_HEAD
+    object *obj; /* Pointer to the Daimonin object we wrap */
+} CFPython_Object;
+
+/* Internal method used to create a wrapper object for an object */    
+static PyObject *
+wrap_object(object *what);
+
+/* Object creator (not really needed, since the generic creator does the same thing...) */
+static PyObject *
+CFPython_Object_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
+
+/* str() function to get a string representation of this object */
+static PyObject *
+CFPython_Object_str(CFPython_Object *self);
+   
+/* Object deallocator (needed) */
+static void
+CFPython_Object_dealloc(CFPython_Object* self);
+
+static PyTypeObject CFPython_ObjectType = {
+    PyObject_HEAD_INIT(NULL)
+    0,                         /* ob_size*/
+    "CFPython.Object",         /* tp_name*/
+    sizeof(CFPython_Object),   /* tp_basicsize*/
+    0,                         /* tp_itemsize*/
+    (destructor)CFPython_Object_dealloc, /* tp_dealloc*/
+    0,                         /* tp_print*/
+    0,                         /* tp_getattr*/
+    0,                         /* tp_setattr*/
+    0,                         /* tp_compare*/
+    0,                         /* tp_repr*/
+    0,                         /* tp_as_number*/
+    0,                         /* tp_as_sequence*/
+    0,                         /* tp_as_mapping*/
+    0,                         /* tp_hash */
+    0,                         /* tp_call*/
+    (reprfunc)CFPython_Object_str,/* tp_str*/
+    0,                         /* tp_getattro*/
+    0,                         /* tp_setattro*/
+    0,                         /* tp_as_buffer*/
+    Py_TPFLAGS_DEFAULT,        /* tp_flags*/
+    "CFPython objects",        /* tp_doc */
+    0,		                   /* tp_traverse */
+    0,		                   /* tp_clear */
+    0,		                   /* tp_richcompare */
+    0,		                   /* tp_weaklistoffset */
+    0,		                   /* tp_iter */
+    0,		                   /* tp_iternext */
+    0,                         /* tp_methods */
+    0,                         /* tp_members */
+    0,                         /* tp_getset */
+    0,                         /* tp_base */
+    0,                         /* tp_dict */
+    0,                         /* tp_descr_get */
+    0,                         /* tp_descr_set */
+    0,                         /* tp_dictoffset */
+    0,                         /* tp_init */
+    0,                         /* tp_alloc */
+    CFPython_Object_new,       /* tp_new */
+};
+
+/*****************************************************************************/
+/* Crossfire map type.                                                       */
+/* This is another datatype, but used for map references. Reuses much of the */
+/* code from CFPython_Object                                                 */
+/*****************************************************************************/
+
+typedef struct {
+    PyObject_HEAD
+    mapstruct *map;  /* Pointer to the Daimonin map we wrap */
+} CFPython_Map;
+
+/* Internal method used to create a wrapper object for a map */    
+static PyObject *
+wrap_map(mapstruct *what);
+
+/* Object creator (not really needed, since the generic creator does the same thing...) */
+static PyObject *
+CFPython_Map_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
+
+/* str() function to get a string representation of this object */
+static PyObject *
+CFPython_Map_str(CFPython_Map *self);
+   
+/* Object deallocator (needed) */
+static void
+CFPython_Map_dealloc(CFPython_Map* self);
+
+static PyTypeObject CFPython_MapType = {
+    PyObject_HEAD_INIT(NULL)
+    0,                         /* ob_size*/
+    "CFPython.Map",         /* tp_name*/
+    sizeof(CFPython_Map),   /* tp_basicsize*/
+    0,                         /* tp_itemsize*/
+    (destructor)CFPython_Map_dealloc, /* tp_dealloc*/
+    0,                         /* tp_print*/
+    0,                         /* tp_getattr*/
+    0,                         /* tp_setattr*/
+    0,                         /* tp_compare*/
+    0,                         /* tp_repr*/
+    0,                         /* tp_as_number*/
+    0,                         /* tp_as_sequence*/
+    0,                         /* tp_as_mapping*/
+    0,                         /* tp_hash */
+    0,                         /* tp_call*/
+    (reprfunc)CFPython_Map_str,/* tp_str*/
+    0,                         /* tp_getattro*/
+    0,                         /* tp_setattro*/
+    0,                         /* tp_as_buffer*/
+    Py_TPFLAGS_DEFAULT,        /* tp_flags*/
+    "CFPython maps",           /* tp_doc */
+    0,		                   /* tp_traverse */
+    0,		                   /* tp_clear */
+    0,		                   /* tp_richcompare */
+    0,		                   /* tp_weaklistoffset */
+    0,		                   /* tp_iter */
+    0,		                   /* tp_iternext */
+    0,                         /* tp_methods */
+    0,                         /* tp_members */
+    0,                         /* tp_getset */
+    0,                         /* tp_base */
+    0,                         /* tp_dict */
+    0,                         /* tp_descr_get */
+    0,                         /* tp_descr_set */
+    0,                         /* tp_dictoffset */
+    0,                         /* tp_init */
+    0,                         /* tp_alloc */
+    CFPython_Map_new,       /* tp_new */
+};
+
 
 /*****************************************************************************/
 /* Commands management part.                                                 */

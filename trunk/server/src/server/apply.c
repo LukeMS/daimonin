@@ -108,8 +108,17 @@ static int apply_id_altar (object *money, object *altar, object *pl)
 
 int apply_potion(object *op, object *tmp)
 {
-    int got_one=0,i;
-    object *force;
+	int got_one=0,i;
+
+	/* some sanity checks */
+	if(!op || !tmp || (op->type == PLAYER && (!op->contr || !op->contr->sp_exp_ptr ||!op->contr->grace_exp_ptr) ) )
+	{
+		LOG(llevBug,"apply_potion() called with invalid objects! obj: %s (%s - %s) tmp:%s\n", query_name(op),
+			op->contr?query_name(op->contr->sp_exp_ptr):"<no contr>",
+			op->contr?query_name(op->contr->grace_exp_ptr):"<no contr>",query_name(tmp));
+		return 0;
+	}
+
 
     if(op->type==PLAYER) 
 	{ 
@@ -119,99 +128,291 @@ int apply_potion(object *op, object *tmp)
 
 		if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED))
 			identify(tmp);
+
+		/* special potions. Only players get this */
+		if (tmp->last_eat == -1) /* create a force and copy the effects in */
+		{
+		    object *force = get_archetype("force");
+
+			if(!force)
+			{
+			    LOG(llevBug,"apply_potion: can't create force object!?\n");
+				return 0;
+			}
+			
+		    force->type=POTION_EFFECT;
+			SET_FLAG(force,FLAG_IS_USED_UP); /* or it will auto destroyed with first tick */
+			force->stats.food += tmp->stats.food; /* how long this force will stay */
+			if(force->stats.food <= 0)
+			force->stats.food =1;
+
+			/* negative effects because cursed or damned */
+			if(QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) 
+			{
+				/* now we have a bit work because we change (multiply,...) the
+				 * base values of the potion - that can invoke out of bounce 
+				 * values we must catch here.
+				 */
+
+				force->stats.food *=3; /* effects stays 3 times longer */
+				for (i=0; i<NROFATTACKS; i++)
+				{
+					int tmp_r, tmp_a;
+
+					tmp_r = tmp->resist[i]>0?-tmp->resist[i]:tmp->resist[i];
+					tmp_a = tmp->attack[i]>0?-tmp->attack[i]:tmp->attack[i];
+
+					/* double bad effect when damned */
+					if (QUERY_FLAG(tmp, FLAG_DAMNED))
+					{
+						tmp_r*=2;
+						tmp_a*=2;
+					}
+
+					/* we don't want out of bound values ... */
+					if((int)force->resist[i]+tmp_r>100)
+						force->resist[i]=100;
+					else if((int)force->resist[i]+tmp_r<-100)
+						force->resist[i]=-100;
+					else
+						force->resist[i]+=(sint8) tmp_r;
+
+					if((int)force->attack[i]+tmp_a>100)
+						force->attack[i]=100;
+					else if((int)force->attack[i]+tmp_a<0)
+						force->attack[i]=0;
+					else
+						force->attack[i]+=tmp_a;
+				}
+
+				insert_spell_effect("meffect_purple",op->map,op->x,op->y);
+				play_sound_map(op->map, op->x, op->y, SOUND_DRINK_POISON , SOUND_NORMAL);
+			}
+			else /* all positive (when not on default negative) */
+			{
+				/* we don't must do the hard way like cursed/damned (no multiplication or
+				 * sign change).
+				 */
+			    memcpy(force->resist, tmp->resist, sizeof(tmp->resist));
+			    memcpy(force->attack, tmp->attack, sizeof(tmp->attack));
+				insert_spell_effect("meffect_green",op->map,op->x,op->y);
+				play_sound_map(op->map, op->x, op->y, SOUND_MAGIC_DEFAULT , SOUND_SPELL);
+			}
+
+			/* now copy stats values */
+			force->stats.Str = QUERY_FLAG(tmp, FLAG_CURSED)?(tmp->stats.Str>0?-tmp->stats.Str:tmp->stats.Str):(QUERY_FLAG(tmp, FLAG_DAMNED)?(tmp->stats.Str>0?(-tmp->stats.Str)*2:tmp->stats.Str*2):tmp->stats.Str);
+			force->stats.Con = QUERY_FLAG(tmp, FLAG_CURSED)?(tmp->stats.Con>0?-tmp->stats.Con:tmp->stats.Con):(QUERY_FLAG(tmp, FLAG_DAMNED)?(tmp->stats.Con>0?(-tmp->stats.Con)*2:tmp->stats.Con*2):tmp->stats.Con);
+			force->stats.Dex = QUERY_FLAG(tmp, FLAG_CURSED)?(tmp->stats.Dex>0?-tmp->stats.Dex:tmp->stats.Dex):(QUERY_FLAG(tmp, FLAG_DAMNED)?(tmp->stats.Dex>0?(-tmp->stats.Dex)*2:tmp->stats.Dex*2):tmp->stats.Dex);
+			force->stats.Int = QUERY_FLAG(tmp, FLAG_CURSED)?(tmp->stats.Int>0?-tmp->stats.Int:tmp->stats.Int):(QUERY_FLAG(tmp, FLAG_DAMNED)?(tmp->stats.Int>0?(-tmp->stats.Int)*2:tmp->stats.Int*2):tmp->stats.Int);
+			force->stats.Wis = QUERY_FLAG(tmp, FLAG_CURSED)?(tmp->stats.Wis>0?-tmp->stats.Wis:tmp->stats.Wis):(QUERY_FLAG(tmp, FLAG_DAMNED)?(tmp->stats.Wis>0?(-tmp->stats.Wis)*2:tmp->stats.Wis*2):tmp->stats.Wis);
+			force->stats.Pow = QUERY_FLAG(tmp, FLAG_CURSED)?(tmp->stats.Pow>0?-tmp->stats.Pow:tmp->stats.Pow):(QUERY_FLAG(tmp, FLAG_DAMNED)?(tmp->stats.Pow>0?(-tmp->stats.Pow)*2:tmp->stats.Pow*2):tmp->stats.Pow);
+			force->stats.Cha = QUERY_FLAG(tmp, FLAG_CURSED)?(tmp->stats.Cha>0?-tmp->stats.Cha:tmp->stats.Cha):(QUERY_FLAG(tmp, FLAG_DAMNED)?(tmp->stats.Cha>0?(-tmp->stats.Cha)*2:tmp->stats.Cha*2):tmp->stats.Cha);
+
+			/* kick the force in, and apply it to player */
+			force->speed_left= -1;
+			force = insert_ob_in_ob(force,op);
+			CLEAR_FLAG(tmp, FLAG_APPLIED);
+			SET_FLAG(force,FLAG_APPLIED);
+			if(!change_abil(op,force)) /* implicit fix_player() here */
+		        new_draw_info(NDI_UNIQUE,0,op,"Nothing happened.");
+			decrease_ob(tmp);
+			return 1;
+		}
+
+		if (tmp->last_eat == 1) /* Potion of minor restoration */
+		{ 
+			object *depl;
+			archetype *at;
+			if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))
+			{
+				if(QUERY_FLAG(tmp, FLAG_DAMNED))
+				{
+					drain_stat(op);
+					drain_stat(op);
+					drain_stat(op);
+					drain_stat(op);
+				}
+				else
+				{
+					drain_stat(op);
+					drain_stat(op);
+				}
+				fix_player(op);
+				decrease_ob(tmp);
+				insert_spell_effect("meffect_purple",op->map,op->x,op->y);
+				play_sound_map(op->map, op->x, op->y, SOUND_DRINK_POISON , SOUND_NORMAL);
+				return 1;
+			}
+			if ((at = find_archetype("depletion"))==NULL)
+			{
+				LOG(llevBug,"BUG: Could not find archetype depletion");
+				return 0;
+			}
+			depl = present_arch_in_ob(at, op);
+			if (depl!=NULL) 
+			{
+				for (i = 0; i < 7; i++)
+				{
+					if (get_attr_value(&depl->stats, i)) 
+						new_draw_info(NDI_UNIQUE,0,op, restore_msg[i]);
+				}
+				remove_ob(depl);
+				free_object(depl);
+				fix_player(op);
+			}
+			else
+				new_draw_info(NDI_UNIQUE,0,op, "You feel a great loss...");	
+			decrease_ob(tmp);
+			insert_spell_effect("meffect_green",op->map,op->x,op->y);
+			play_sound_map(op->map, op->x, op->y, SOUND_MAGIC_DEFAULT , SOUND_SPELL);
+			return 1;
+		}
+	    else if(tmp->last_eat==2)    /* improvement potion */
+		{
+			int success_flag=0,hp_flag=0, sp_flag=0,grace_flag=0;
+
+			if (QUERY_FLAG(tmp,FLAG_CURSED) || QUERY_FLAG(tmp,FLAG_DAMNED))
+			{
+				/* jump in by random - goto power */
+				if(RANDOM()%2)
+					goto hp_jump;
+				else  if(RANDOM()%2)
+					goto sp_jump;
+				else
+					goto grace_jump;
+
+				while(!hp_flag || !sp_flag || !grace_flag)
+				{
+					hp_jump:
+					hp_flag = 1; /* mark we have checked hp chain */
+					for(i=2;i<=op->level;i++)
+					{
+						/* move one value to max */
+						if (op->contr->levhp[i]!=1)
+						{
+							op->contr->levhp[i]=1;
+							success_flag=2;
+							goto improve_done;
+						}
+
+					}
+					sp_jump:
+					sp_flag = 1; /* mark we have checked sp chain */
+					for(i=2;i<=op->contr->sp_exp_ptr->level;i++)
+					{
+						/* move one value to max */
+						if (op->contr->levsp[i]!=1)
+						{
+							op->contr->levsp[i]=1;
+							success_flag=2;
+							goto improve_done;
+						}
+
+					}
+					grace_jump:
+					grace_flag = 1; /* mark we have checked grace chain */
+					for(i=2;i<=op->contr->grace_exp_ptr->level;i++)
+					{
+						/* move one value to max */
+						if (op->contr->levgrace[i]!=1)
+						{
+							op->contr->levgrace[i]=1;
+							success_flag=2;
+							goto improve_done;
+						}
+
+					}
+				};
+				success_flag=3;
+			}
+			else
+			{
+				/* jump in by random - goto power */
+				if(RANDOM()%2)
+					goto hp_jump2;
+				else  if(RANDOM()%2)
+					goto sp_jump2;
+				else
+					goto grace_jump2;
+
+				while(!hp_flag || !sp_flag || !grace_flag)
+				{
+					hp_jump2:
+					hp_flag = 1; /* mark we have checked hp chain */
+					for(i=1;i<=op->level;i++)
+					{
+						/* move one value to max */
+						if (op->contr->levhp[i]!=(char)op->arch->clone.stats.maxhp)
+						{
+							op->contr->levhp[i]=(char)op->arch->clone.stats.maxhp;
+							success_flag=1;
+							goto improve_done;
+						}
+
+					}
+					sp_jump2:
+					sp_flag = 1; /* mark we have checked sp chain */
+					for(i=1;i<=op->contr->sp_exp_ptr->level;i++)
+					{
+						/* move one value to max */
+						if (op->contr->levsp[i]!=(char)op->arch->clone.stats.maxsp)
+						{
+							op->contr->levsp[i]=(char)op->arch->clone.stats.maxsp;
+							success_flag=1;
+							goto improve_done;
+						}
+
+					}
+					grace_jump2:
+					grace_flag = 1; /* mark we have checked grace chain */
+					for(i=1;i<=op->contr->grace_exp_ptr->level;i++)
+					{
+						/* move one value to max */
+						if (op->contr->levgrace[i]!=(char)op->arch->clone.stats.maxgrace)
+						{
+							op->contr->levgrace[i]=(char)op->arch->clone.stats.maxgrace;
+							success_flag=1;
+							goto improve_done;
+						}
+
+					}
+				};
+			}
+
+			improve_done:
+			CLEAR_FLAG(tmp, FLAG_APPLIED);
+			if(!success_flag)
+			{
+				new_draw_info(NDI_UNIQUE,0,op,"The potion had no effect - you are already perfect.");
+				play_sound_map(op->map, op->x, op->y, SOUND_MAGIC_DEFAULT , SOUND_SPELL);
+			}
+			else if(success_flag==1)
+			{
+				fix_player(op);
+				insert_spell_effect("meffect_yellow",op->map,op->x,op->y);
+				play_sound_map(op->map, op->x, op->y, SOUND_MAGIC_DEFAULT , SOUND_SPELL);
+        		new_draw_info(NDI_UNIQUE,0,op,"You feel a little more perfect!");
+			}
+			else if(success_flag==2)
+			{
+				fix_player(op);
+	 			insert_spell_effect("meffect_purple",op->map,op->x,op->y);
+				play_sound_map(op->map, op->x, op->y, SOUND_DRINK_POISON , SOUND_NORMAL);
+	    		new_draw_info(NDI_UNIQUE,0,op,"The foul potion burns like fire in you!");
+			}
+			else /* bad potion but all values of this player are 1! poor poor guy.... */
+			{
+	 			insert_spell_effect("meffect_purple",op->map,op->x,op->y);
+				play_sound_map(op->map, op->x, op->y, SOUND_DRINK_POISON , SOUND_NORMAL);
+        		new_draw_info(NDI_UNIQUE,0,op,"The potion was foul but had no effect on your tortured body.");
+			}
+			decrease_ob(tmp);
+			return 1;
+		}
     }
 
-	/* thats old code! i will change it asap! */
-    /* only players get this */
-    if (op->type==PLAYER&&(tmp->attacktype & AT_DEPLETE)) { /* Potion of restoration */
-      object *depl;
-      archetype *at;
 
-      if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
-	drain_stat(op);
-        fix_player(op);
-        decrease_ob(tmp);
-        return 1;
-      }
-      if ((at = find_archetype("depletion"))==NULL) {
-	LOG(llevBug,"BUG: Could not find archetype depletion");
-	return 0;
-      }
-      depl = present_arch_in_ob(at, op);
-      if (depl!=NULL) {
-        for (i = 0; i < 7; i++)
-          if (get_attr_value(&depl->stats, i)) {
-            new_draw_info(NDI_UNIQUE,0,op, restore_msg[i]);
-          }
-	remove_ob(depl);
-	free_object(depl);
-        fix_player(op);
-      }
-      else
-        new_draw_info(NDI_UNIQUE,0,op, "You feel a great loss...");
-
-      decrease_ob(tmp);
-      return 1;
-    }
-    /* only players get this */
-    if(op->type==PLAYER&&tmp->attacktype&AT_GODPOWER) {    /* improvement potion */
-
-	for(i=1;i<MIN(11,op->level);i++) {
-	    if (QUERY_FLAG(tmp,FLAG_CURSED) || QUERY_FLAG(tmp,FLAG_DAMNED)) {
-		if (op->contr->levhp[i]!=1) {
-		    op->contr->levhp[i]=1;
-		    break;
-		}
-		if (op->contr->levsp[i]!=1) {
-		    op->contr->levsp[i]=1;
-		    break;
-		}
-		if (op->contr->levgrace[i]!=1) {
-		    op->contr->levgrace[i]=1;
-		    break;
-		}
-	    }
-	    else {
-			 if(op->contr->levhp[i]<9) { 
-				 op->contr->levhp[i]=9;
-				 break;
-			 }
-			 if(op->contr->levsp[i]<6) { 
-				 op->contr->levsp[i]=6;
-				 break;
-			 }
-			 if(op->contr->levgrace[i]<3) {
-				 op->contr->levgrace[i]=3;
-				 break;
-			 }
-		 }
-	 }
-	/* Just makes checking easier */
-	if (i<MIN(11, op->level)) got_one=1;
-	if (!QUERY_FLAG(tmp,FLAG_CURSED) && !QUERY_FLAG(tmp,FLAG_DAMNED)) {
-	    if (got_one) {
-		fix_player(op);
-		new_draw_info(NDI_UNIQUE,0,op,"The Gods smile upon you and remake you");
-		new_draw_info(NDI_UNIQUE,0,op,"a little more in their image.");
-        	new_draw_info(NDI_UNIQUE,0,op,"You feel a little more perfect.");
-	    }
-	    else
-		new_draw_info(NDI_UNIQUE,0,op,"The potion had no effect - you are already perfect");
-	}
-	else {	/* cursed potion */
-	    if (got_one) {
-		fix_player(op);
-		new_draw_info(NDI_UNIQUE,0,op,"The Gods are angry and punish you.");
-	    }
-	    else 
-		new_draw_info(NDI_UNIQUE,0,op,"You are fortunate that you are so pathetic.");
-	}
-	decrease_ob(tmp);
-	return 1;
-    }
-
-
-	 if (tmp->stats.sp== SP_NO_SPELL)
+	 if (tmp->stats.sp==SP_NO_SPELL)
 	 {
 		new_draw_info(NDI_UNIQUE,0,op, "Nothing happens as you apply it.");
         decrease_ob(tmp);
@@ -222,58 +423,15 @@ int apply_potion(object *op, object *tmp)
     /* A potion that casts a spell.  Healing, restore spellpoint (power potion)
      * and heroism all fit into this category.
      */
-    if (tmp->stats.sp!= SP_NO_SPELL) {
-		/* we want take care of cursed/damned potion effects INSIDE the cast function 
-      if(QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
-        new_draw_info(NDI_UNIQUE,0,op, "Yech!  Your lungs are on fire!");
-        cast_spell(op,tmp, 0, 3, 1, spellPotion,NULL);
-      } else
-	  */
+    if (tmp->stats.sp!= SP_NO_SPELL) 
+	{
         cast_spell(op,tmp, 0, tmp->stats.sp, 1, spellPotion,NULL); /* apply potion ALWAYS fire on the spot the applier stands - good for healing - bad for firestorm */
-      decrease_ob(tmp);
-      /* if youre dead, no point in doing this... */
-      if(!QUERY_FLAG(op,FLAG_REMOVED)) fix_player(op);
-      return 1;
+		decrease_ob(tmp);
+		/* if youre dead, no point in doing this... */
+		if(!QUERY_FLAG(op,FLAG_REMOVED)) 
+			fix_player(op);
+		return 1;
     }
-
-    /* Deal with protection potions */
-    force=NULL;
-    for (i=0; i<NROFATTACKS; i++) {
-	if (tmp->resist[i]) {
-	    if (!force) force=get_archetype("force");
-	    memcpy(force->resist, tmp->resist, sizeof(tmp->resist));
-	    force->type=POTION_EFFECT;
-	    break;  /* Only need to find one protection since we copy entire batch */
-	}
-    }
-    /* This is a protection potion */
-    if (force) {
-	/* cursed items last longer */
-	if(QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) {
-	  force->stats.food*=10;
-	  for (i=0; i<NROFATTACKS; i++)
-	    if (force->resist[i] > 0)
-	      force->resist[i] = -force->resist[i];  /* prot => vuln */ 
-	}
-	force->speed_left= -1;
-	force = insert_ob_in_ob(force,op);
-	CLEAR_FLAG(tmp, FLAG_APPLIED);
-	SET_FLAG(force,FLAG_APPLIED);
-	change_abil(op,force);
-	decrease_ob(tmp);
-	return 1;
-    }
-
-    /* Only thing left are the stat potions */
-    if(op->type==PLAYER) { /* only for players */
-      if((QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED)) 
-	  && tmp->value!=0)
-	CLEAR_FLAG(tmp, FLAG_APPLIED);
-      else
-	SET_FLAG(tmp, FLAG_APPLIED);
-      if(!change_abil(op,tmp))
-        new_draw_info(NDI_UNIQUE,0,op,"Nothing happened.");
-     }
 
     /* CLEAR_FLAG is so that if the character has other potions
      * that were grouped with the one consumed, his
@@ -450,8 +608,7 @@ int prepare_weapon(object *op, object *improver, object *weapon)
 	    weapon->name,sacrifice_count);
 
     sprintf(buf,"%s's %s",op->name,weapon->name);
-	free_string(weapon->name);
-    FREE_AND_COPY(weapon->name, buf);
+    FREE_AND_COPY_HASH(weapon->name, buf);
 
     weapon->nrof=0;  /*  prevents preparing n weapons in the same
 			 slot at once! */
@@ -738,12 +895,13 @@ int esrv_apply_container (object *op, object *sack)
 	}
 #ifdef PLUGINS
 	/* GROS: Handle for plugin close event */
-	if(tmp->event_hook[EVENT_CLOSE] != NULL)
+	if(tmp->event_flags & EVENT_FLAG_CLOSE)
 	{
 		CFParm CFP;
 		CFParm* CFR;
 		int k, l, m;
 		int rtn_script = 0;
+		object *event_obj = get_event_object(tmp, EVENT_CLOSE);
 		m = 0;
 		k = EVENT_CLOSE;
 		l = SCRIPT_FIX_ALL;
@@ -756,11 +914,11 @@ int esrv_apply_container (object *op, object *sack)
 		CFP.Value[6] = &m;
 		CFP.Value[7] = &m;
 		CFP.Value[8] = &l;
-		CFP.Value[9] = tmp->event_hook[k];
-		CFP.Value[10]= tmp->event_options[k];
-		if (findPlugin(tmp->event_plugin[k])>=0)
+		CFP.Value[9] = event_obj->race;
+		CFP.Value[10]= event_obj->slaying;
+		if (findPlugin(event_obj->name)>=0)
 		{
-			CFR = (PlugList[findPlugin(tmp->event_plugin[k])].eventfunc) (&CFP);
+			CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
 			rtn_script = *(int *)(CFR->Value[0]);
 			if (rtn_script!=0) return 1;
 		}
@@ -1100,12 +1258,13 @@ void move_apply (object *trap, object *victim, object *originator)
   if (trap->head) trap=trap->head;
 #ifdef PLUGINS
   /* GROS: Handle for plugin close event */
-  if(trap->event_hook[EVENT_TRIGGER] != NULL)
+  if(trap->event_flags&EVENT_FLAG_TRIGGER)
   {
     CFParm CFP;
     CFParm* CFR;
     int k, l, m;
     int rtn_script = 0;
+	object *event_obj = get_event_object(trap, EVENT_TRIGGER);
     m = 0;
 	
     k = EVENT_TRIGGER;
@@ -1119,11 +1278,11 @@ void move_apply (object *trap, object *victim, object *originator)
     CFP.Value[6] = &m;
     CFP.Value[7] = &m;
     CFP.Value[8] = &l;
-    CFP.Value[9] = trap->event_hook[k];
-    CFP.Value[10]= trap->event_options[k];
-    if (findPlugin(trap->event_plugin[k])>=0)
+    CFP.Value[9] = event_obj->race;
+    CFP.Value[10]= event_obj->slaying;
+    if (findPlugin(event_obj->name)>=0)
     {
-      CFR = (PlugList[findPlugin(trap->event_plugin[k])].eventfunc) (&CFP);
+      CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
       rtn_script = *(int *)(CFR->Value[0]);
       if (rtn_script!=0) return;
     }
@@ -1374,10 +1533,11 @@ static void apply_book (object *op, object *tmp)
                           "You open the %s and start reading.", tmp->name);
 #ifdef PLUGINS
     /* GROS: Handle for plugin trigger event */
-    if(tmp->event_hook[EVENT_APPLY] != NULL)
+    if(tmp->event_flags&EVENT_FLAG_APPLY)
     {
         CFParm CFP;
         int k, l, m;
+		object *event_obj = get_event_object(tmp, EVENT_APPLY);
         k = EVENT_APPLY;
         l = SCRIPT_FIX_ALL;
         m = 0;
@@ -1390,10 +1550,10 @@ static void apply_book (object *op, object *tmp)
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
-        CFP.Value[9] = tmp->event_hook[k];
-        CFP.Value[10]= tmp->event_options[k];
-        if (findPlugin(tmp->event_plugin[k])>=0)
-            ((PlugList[findPlugin(tmp->event_plugin[k])].eventfunc) (&CFP));
+        CFP.Value[9] = event_obj->race;
+        CFP.Value[10]= event_obj->slaying;
+        if (findPlugin(event_obj->name)>=0)
+            ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
     }
     else
 #endif
@@ -1465,7 +1625,7 @@ static void insert_special_prayer_mark (object *op, int spell)
     object *force = get_archetype ("force");
     force->speed = 0;
     update_ob_speed (force);
-    force->slaying = add_string ("special prayer");
+    FREE_AND_COPY_HASH(force->slaying, "special prayer");
     force->stats.sp = spell;
     insert_ob_in_ob (force, op);
 }
@@ -1570,8 +1730,7 @@ static void apply_spellbook (object *op, object *tmp)
 	  return;
        }
        /* now clear tmp->slaying since we no longer need it */
-       free_string(tmp->slaying);
-       tmp->slaying=NULL;
+       FREE_AND_CLEAR_HASH2(tmp->slaying);
     }
 
     /* need a literacy skill to learn spells. Also, having a literacy level
@@ -2364,11 +2523,12 @@ int manual_apply (object *op, object *tmp, int aflag)
   
 #ifdef PLUGINS
   /* GROS: Handle for plugin trigger event */
-  if(tmp->event_hook[EVENT_APPLY] != NULL)
+  if(tmp->event_flags&EVENT_FLAG_APPLY)
   {
     CFParm CFP;
     CFParm* CFR;
     int k, l, m;
+	object *event_obj = get_event_object(tmp, EVENT_APPLY);
     m = 0;
     k = EVENT_APPLY;
     l = SCRIPT_FIX_ACTIVATOR; /* change this from FIX_ALL. Perhaps we must
@@ -2384,11 +2544,11 @@ int manual_apply (object *op, object *tmp, int aflag)
     CFP.Value[6] = &m;
     CFP.Value[7] = &m;
     CFP.Value[8] = &l;
-    CFP.Value[9] = tmp->event_hook[k];
-    CFP.Value[10]= tmp->event_options[k];
-    if (findPlugin(tmp->event_plugin[k])>=0)
+    CFP.Value[9] = event_obj->race;
+    CFP.Value[10]= event_obj->slaying;
+    if (findPlugin(event_obj->name)>=0)
     {
-        CFR = (PlugList[findPlugin(tmp->event_plugin[k])].eventfunc) (&CFP);
+        CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
         rtn_script = *(int *)(CFR->Value[0]);
         if (rtn_script!=0) return 1;
     }
@@ -2741,9 +2901,6 @@ int apply_special (object *who, object *op, int aflags)
     case WEAPON:
       (void) change_abil (who,op);
 	  CLEAR_FLAG(who,FLAG_READY_WEAPON);
-      /* GROS: update the current_weapon_script field (used with script_attack for weapons) */
-      who->current_weapon_script = NULL;
-      who->current_weapon = NULL;
       sprintf(buf,"You unwield %s.",query_name(op));
       break;
 
@@ -2883,18 +3040,6 @@ int apply_special (object *who, object *op, int aflags)
     SET_FLAG(op, FLAG_APPLIED);
 	SET_FLAG(who, FLAG_READY_WEAPON);
     (void) change_abil (who,op);
-#ifdef PLUGINS
-    /* GROS: update the current_weapon_script field (used with EVENT_ATTACK for weapons) */
-	/* ouch... this should NOT set here ... this is fix_player()/fix_monster() stuff ! */
-    if (op->event_hook[EVENT_ATTACK] != NULL)
-    {
-        LOG(llevDebug, "Scripting Weapon wielded\n");
-        if (who->current_weapon_script) free_string(who->current_weapon_script);
-        who->current_weapon_script=add_string(query_name(op));
-        who->current_weapon = op;
-    };
-#endif
-    who->current_weapon = op;
     sprintf(buf,"You wield %s.",query_name(op));
     break;
   }

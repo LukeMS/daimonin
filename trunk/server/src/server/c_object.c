@@ -151,7 +151,7 @@ int sack_can_hold (object *pl, object *sack, object *op, int nrof) {
 	/*LOG(-1,"SACK: wl:%d carry:%d op->weight:%d Str:%d nrof:%d\n",sack->weight_limit,sack->carrying,op->weight,sack->stats.Str,nrof);*/
     if (sack->weight_limit && sack->carrying+
 			((((nrof?nrof:1)*op->weight)+(op->type==CONTAINER?op->carrying:0))
-			*(100 - sack->stats.Str) / 100) > sack->weight_limit)
+			*(100 - sack->stats.Str) / 100) > (sint32)sack->weight_limit)
 		sprintf (buf, "That won't fit in the %s!", query_name(sack));
     if (buf[0]) {
 	if (pl)
@@ -530,11 +530,12 @@ void drop_object (object *op, object *tmp, long nrof)
       remove_ob (tmp);
 #ifdef PLUGINS
       /* GROS: Handle for plugin drop event */
-      if(tmp->event_hook[EVENT_DROP] != NULL)
+      if(tmp->event_flags&EVENT_FLAG_DROP)
       {
         CFParm CFP;
         CFParm *CFR;
         int k, l, m, rtn_script;
+		object *event_obj = get_event_object(tmp, EVENT_DROP);
         m = 0;
         k = EVENT_DROP;
         l = SCRIPT_FIX_ALL;
@@ -547,11 +548,11 @@ void drop_object (object *op, object *tmp, long nrof)
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
-        CFP.Value[9] = tmp->event_hook[k];
-        CFP.Value[10]= tmp->event_options[k];
-        if (findPlugin(tmp->event_plugin[k])>=0)
+        CFP.Value[9] = event_obj->race;
+        CFP.Value[10]= event_obj->slaying;
+        if (findPlugin(event_obj->name)>=0)
         {
-          CFR = ((PlugList[findPlugin(tmp->event_plugin[k])].eventfunc) (&CFP));
+          CFR = ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
           rtn_script = *(int *)(CFR->Value[0]);
           if (rtn_script!=0) return;
         }
@@ -1168,21 +1169,21 @@ void examine(object *op, object *tmp) {
 				new_draw_info(NDI_UNIQUE, 0,op,buf);
 
 				if(QUERY_FLAG(tmp, FLAG_PROOF_ELEMENTAL) || QUERY_FLAG(tmp, FLAG_PROOF_MAGIC)||
-					QUERY_FLAG(tmp, FLAG_PROOF_SPHERE)||QUERY_FLAG(tmp, FLAG_PROOF_ACID))
+					QUERY_FLAG(tmp, FLAG_PROOF_SPHERE)||QUERY_FLAG(tmp, FLAG_PROOF_PHYSICAL))
 				{
 					int ft=0;
 
 					strcpy(buf,"It is ");
-					if(QUERY_FLAG(tmp, FLAG_PROOF_ELEMENTAL))
+					if(QUERY_FLAG(tmp, FLAG_PROOF_PHYSICAL))
 					{
-						strcpy(tmp_buf,"elemental-proof");
+						strcpy(tmp_buf,"acid-proof");
 						ft=1;
 					}
-					if(QUERY_FLAG(tmp, FLAG_PROOF_ACID))
+					if(QUERY_FLAG(tmp, FLAG_PROOF_ELEMENTAL))
 					{
 						if(ft)
 							strcat(buf,tmp_buf);
-						strcpy(tmp_buf,"acid-proof");
+						strcpy(tmp_buf,"elemental-proof");
 						ft+=1;
 					}
 					if(QUERY_FLAG(tmp, FLAG_PROOF_MAGIC))
@@ -1219,21 +1220,21 @@ void examine(object *op, object *tmp) {
 				if((QUERY_FLAG(tmp, FLAG_VUL_ELEMENTAL) && !QUERY_FLAG(tmp, FLAG_PROOF_ELEMENTAL)) ||
 					(QUERY_FLAG(tmp, FLAG_VUL_MAGIC) && !QUERY_FLAG(tmp, FLAG_PROOF_MAGIC)) ||
 					(QUERY_FLAG(tmp, FLAG_VUL_SPHERE) && !QUERY_FLAG(tmp, FLAG_PROOF_SPHERE)) ||
-					(QUERY_FLAG(tmp, FLAG_VUL_ACID) && !QUERY_FLAG(tmp, FLAG_PROOF_ACID)))
+					(QUERY_FLAG(tmp, FLAG_VUL_PHYSICAL) && !QUERY_FLAG(tmp, FLAG_PROOF_PHYSICAL)))
 				{
 					int ft=0;
 
 					strcpy(buf,"It is vulnerable from ");
-					if(QUERY_FLAG(tmp, FLAG_VUL_ELEMENTAL) && !QUERY_FLAG(tmp, FLAG_PROOF_ELEMENTAL))
+					if(QUERY_FLAG(tmp, FLAG_VUL_PHYSICAL) && !QUERY_FLAG(tmp, FLAG_PROOF_PHYSICAL))
 					{
-						strcpy(tmp_buf,"elemental");
+						strcpy(tmp_buf,"physical");
 						ft=1;
 					}
-					if(QUERY_FLAG(tmp, FLAG_VUL_ACID) && !QUERY_FLAG(tmp, FLAG_PROOF_ACID))
+					if(QUERY_FLAG(tmp, FLAG_VUL_ELEMENTAL) && !QUERY_FLAG(tmp, FLAG_PROOF_ELEMENTAL))
 					{
 						if(ft)
 							strcat(buf,tmp_buf);
-						strcpy(tmp_buf,"acid");
+						strcpy(tmp_buf,"elemental");
 						ft+=1;
 					}
 					if(QUERY_FLAG(tmp, FLAG_VUL_MAGIC) && !QUERY_FLAG(tmp, FLAG_PROOF_MAGIC))
@@ -1329,7 +1330,7 @@ void examine(object *op, object *tmp) {
 	new_draw_info(NDI_UNIQUE, 0,op,buf);
     }
 
-	if(QUERY_FLAG(tmp, FLAG_STARTEQUIP)) 
+	if(QUERY_FLAG(tmp, FLAG_STARTEQUIP) || QUERY_FLAG(tmp, FLAG_ONE_DROP)) 
 	{
 		if(QUERY_FLAG(tmp, FLAG_UNPAID)) /* thats a unpaid clone shop item */
 		{

@@ -279,8 +279,8 @@
  * The length of a tick is MAX_TIME microseconds.  During a tick,
  * players, monsters, or items with speed 1 can do one thing.
  */
-
-#define MAX_TIME	120000
+/* thats 8 ticks per second now - 100.000 are 10 ticks */
+#define MAX_TIME	125000
 
 
 /* Polymorph as it currently stands is unbalancing, so by default
@@ -691,7 +691,6 @@
 
 /*#define MEMORY_DEBUG*/
 
-
 /*
  * If you want to have a Message Of The Day file, define MOTD to be
  * the file with the message.  If the file doesn't exist or if it
@@ -783,6 +782,7 @@
 
 #define HIGHSCORE_LENGTH 10	/* How many entries there are room for */
 
+/* this value must be a prime number! */
 #define ARCHTABLE 5003		/* Used when hashing archetypes */
 #define MAXSTRING 20
 

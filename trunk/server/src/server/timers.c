@@ -80,8 +80,10 @@ int cftimer_create(int id, long delay, object* ob, int mode)
         return TIMER_ERR_MODE;
     if (ob == NULL)
         return TIMER_ERR_OBJ;
+	/* this must be redone!
     if (ob->event_hook[EVENT_TIMER] == NULL)
         return TIMER_ERR_OBJ;
+	*/
     timers_table[id].mode = mode;
     timers_table[id].ob   = ob;
     if (mode == TIMER_MODE_CYCLES)

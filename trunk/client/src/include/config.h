@@ -51,7 +51,7 @@
 #define INSTALL_SOUND 
 
 /* socket timeout value */
-#define MAX_TIME 100
+#define MAX_TIME 0
 
 
 /* Default Screen

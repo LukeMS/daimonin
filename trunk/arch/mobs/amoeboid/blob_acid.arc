@@ -1,15 +1,15 @@
 Object blob_acid
 name acid blob
 race slime
-randomitems slime
+randomitems mob_slime
 is_neutral 1
 weight 13250
 exp 150
 speed -0.1
 weapon_speed 0.044
 attack_acid 100
-ac 16
-wc 15
+ac 5
+wc 1
 dam 4
 hp -1
 maxhp 5

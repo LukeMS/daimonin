@@ -39,6 +39,28 @@
 CFPlugin PlugList[32];
 int PlugNR = 0;
 
+/* get_event_object()
+ * browse through the event_obj chain of the given object the
+ * get a inserted script object from it.
+ * 1: object
+ * 2: EVENT_NR
+ * return: script object matching EVENT_NR
+ */
+object *get_event_object(object *op, int event_nr)
+{
+	register object *tmp;
+	/* for this first implementation we simply browse
+	 * through the inventory of object op and stop
+	 * when we find a script object from type event_nr.
+	 */
+	for(tmp=op->inv;tmp !=NULL; tmp=tmp->below)
+    {
+        if(tmp->type == TYPE_EVENT_OBJECT && tmp->sub_type1==event_nr)
+			return tmp;
+    }
+	return tmp;
+}
+
 /*****************************************************************************/
 /* Tries to find if a given command is handled by a plugin.                  */
 /* Note that find_plugin_command is called *before* the internal commands are*/
@@ -1118,25 +1140,25 @@ CFParm* CFWAddString(CFParm* PParm)
     char* val;
     /*CFP = (CFParm*)(malloc(sizeof(CFParm)));*/
     val = (char *)(PParm->Value[0]);
-    CFP.Value[0] = (void*) add_string (val);
+	CFP.Value[0]=NULL;
+	FREE_AND_COPY_HASH((char*)CFP.Value[0], val);
     return &CFP;
 }
 
-/* not really need, add_string() will look for this too */
 CFParm* CFWAddRefcount(CFParm* PParm)
 {
-    CFParm* CFP;
+    static CFParm CFP;
     char* val;
-    CFP = (CFParm*)(malloc(sizeof(CFParm)));
     val = (char *)(PParm->Value[0]);
-    CFP->Value[0] = (void*) add_refcount (val);
-    return CFP;
+    CFP.Value[0] = NULL;
+	FREE_AND_ADD_REF_HASH((char*)CFP.Value[0], val);
+    return &CFP;
 }
 CFParm* CFWFreeString(CFParm* PParm)
 {
     char* val;
     val = (char *)(PParm->Value[0]);
-    free_string (val);
+	FREE_AND_CLEAR_HASH(val);
     return NULL;
 }
 
@@ -1294,6 +1316,7 @@ CFParm* CFWSendCustomCommand(CFParm* PParm)
     return NULL;
 }
 
+/* not used atm! */
 CFParm* CFWCFTimerCreate(CFParm* PParm)
 {
 /*int cftimer_create(int id, long delay, object* ob, int mode) */
@@ -1308,6 +1331,7 @@ CFParm* CFWCFTimerCreate(CFParm* PParm)
     return CFP;
 }
 
+/* not used atm! */
 CFParm* CFWCFTimerDestroy(CFParm* PParm)
 {
 /*int cftimer_destroy(int id) */
@@ -1482,12 +1506,12 @@ CFParm* CFWTeleportObject (CFParm* PParm)
     int mapy;
     int unique; not used */
     current=get_object();
-	clear_object(current);
-    EXIT_PATH(current)=add_string ((char*)PParm->Value[1]);
+    FREE_AND_COPY_HASH(EXIT_PATH(current),(char*)PParm->Value[1]);
     EXIT_X(current)=*(int*)PParm->Value[2];
     EXIT_Y(current)=*(int*)PParm->Value[3];
     if (*(int*)PParm->Value[4]) current->last_eat = MAP_PLAYER_MAP;
-    if (PParm->Value[5]) current->msg=add_string ((char*)PParm->Value[5]);
+    if (PParm->Value[5])
+		FREE_AND_COPY_HASH(current->msg,(char*)PParm->Value[5]);
     enter_exit ((object*) PParm->Value[0],current);
 	if(((object*) PParm->Value[0])->map)
 		play_sound_map(((object*) PParm->Value[0])->map, ((object*) PParm->Value[0])->x, ((object*) PParm->Value[0])->y, SOUND_TELEPORT, SOUND_NORMAL);
@@ -1541,7 +1565,6 @@ void GlobalEvent(CFParm *PParm)
     {
         if (PlugList[i].gevent[*(int *)(PParm->Value[0])] != 0)
         {
-        /* That plugin registered the event ! Then we pass it the event */
             (PlugList[i].eventfunc)(PParm);
         }
     }

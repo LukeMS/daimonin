@@ -934,9 +934,7 @@ void receive_player_name(object *op,char k) {
       get_name(op);
       return;
   }
-  if(op->name!=NULL)
-    free_string(op->name);
-  op->name=add_string(op->contr->write_buf+1);
+  FREE_AND_COPY_HASH(op->name, op->contr->write_buf+1);
 /*  new_draw_info(NDI_UNIQUE, 0,op,op->contr->write_buf);*/
   /*op->contr->last_value= -1;*/ /* Flag: redraw all stats */
   op->contr->name_changed=1;

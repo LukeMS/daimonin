@@ -234,7 +234,7 @@ object * place_chest(int treasureoptions,int x, int y,mapstruct *map, mapstruct 
   if((treasureoptions & KEYREQUIRED)&&n_treasures>1) {
     char keybuf[256];
     sprintf(keybuf,"%d",(int)RANDOM());
-    the_chest->slaying = add_string(keybuf);
+    FREE_AND_COPY_HASH(the_chest->slaying, keybuf);
     keyplace(map,x,y,keybuf,PASS_DOORS,1,RP);
   }
 
@@ -294,7 +294,7 @@ int keyplace(mapstruct *map,int x,int y,char *keycode,int door_flag,int n_keys,R
 
   /* get a key and set its keycode */
   the_key = get_archetype("key2");
-  the_key->slaying = add_string(keycode); 
+  FREE_AND_COPY_HASH(the_key->slaying, keycode); 
 
 
   if(door_flag==PASS_DOORS) {
@@ -700,7 +700,7 @@ void lock_and_hide_doors(object **doorlist,mapstruct *map,int opts,RMParms *RP) 
       doorlist[i]=new_door;
       insert_ob_in_map(new_door,map,NULL,0);
       sprintf(keybuf,"%d",(int)RANDOM());
-      new_door->slaying = add_string(keybuf);
+      FREE_AND_COPY_HASH(new_door->slaying, keybuf);
       keyplace(map,new_door->x,new_door->y,keybuf,NO_PASS_DOORS,2,RP);
     }
   }

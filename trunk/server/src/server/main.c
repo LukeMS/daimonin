@@ -157,7 +157,7 @@ void enter_player_savebed(object *op)
 
     tmp=get_object();
 
-    FREE_AND_COPY(EXIT_PATH(tmp),op->contr->savebed_map);
+    FREE_AND_COPY_HASH(EXIT_PATH(tmp),op->contr->savebed_map);
     EXIT_X(tmp) = op->contr->bed_x;
     EXIT_Y(tmp) = op->contr->bed_y;
     enter_exit(op,tmp);
@@ -172,7 +172,7 @@ void enter_player_savebed(object *op)
 	strcpy(op->contr->savebed_map, EMERGENCY_MAPPATH);
 	op->contr->bed_x = EMERGENCY_X;
 	op->contr->bed_y = EMERGENCY_Y;
-    FREE_AND_COPY(EXIT_PATH(tmp),op->contr->savebed_map);
+    FREE_AND_COPY_HASH(EXIT_PATH(tmp),op->contr->savebed_map);
 	EXIT_X(tmp) = op->contr->bed_x;
 	EXIT_Y(tmp) = op->contr->bed_y;
 	enter_exit(op,tmp);
@@ -515,7 +515,7 @@ static void enter_random_map(object *pl, object *exit_ob)
 	int x, y;
 	x=EXIT_X(exit_ob) = MAP_ENTER_X(new_map);
 	y=EXIT_Y(exit_ob) = MAP_ENTER_Y(new_map);
-	EXIT_PATH(exit_ob) = add_string(newmap_name);
+	FREE_AND_COPY_HASH(EXIT_PATH(exit_ob), newmap_name);
 	strcpy(new_map->path, newmap_name);
 	enter_map(pl, new_map, 	x, y,QUERY_FLAG(exit_ob,FLAG_USE_FIX_POS));
     }
@@ -607,8 +607,6 @@ void enter_exit(object *op, object *exit_ob)
 {
 	object *tmp;
 
-
-	LOG(llevDebug,"EE: enter...\n");
 	if(op->head)
 		op=op->head;
 
@@ -769,7 +767,6 @@ void enter_exit(object *op, object *exit_ob)
 		}
 		enter_map(op, newmap, op->x, op->y,1);
 	}
-	LOG(llevDebug,"EE: leave...\n");
 }
 
 /*

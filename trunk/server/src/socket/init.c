@@ -188,9 +188,10 @@ void init_ericserver()
     socket_info.allocated_sockets=1;
 
     protox = getprotobyname("tcp");
-    if (protox==NULL) {
-	LOG(llevDebug,"init_ericserver: Error getting protox\n");
-	return;
+    if (protox==NULL) 
+	{
+		LOG(llevBug,"BUG: init_ericserver: Error getting protox\n");
+		return;
     }
     init_sockets[0].fd = socket(PF_INET, SOCK_STREAM, protox->p_proto);
     if (init_sockets[0].fd == -1)
@@ -201,9 +202,9 @@ void init_ericserver()
 
     linger_opt.l_onoff = 0;
     linger_opt.l_linger = 0;
-    if(setsockopt(init_sockets[0].fd,SOL_SOCKET,SO_LINGER,(char *) &linger_opt,
-       sizeof(struct linger))) {
-	LOG(llevDebug, "Error on setsockopt LINGER\n");
+    if(setsockopt(init_sockets[0].fd,SOL_SOCKET,SO_LINGER,(char *) &linger_opt,sizeof(struct linger)))
+	{
+		LOG(llevBug, "BUG: Error on setsockopt LINGER\n");
     }
 /* Would be nice to have an autoconf check for this.  It appears that
  * these functions are both using the same calling syntax, just one

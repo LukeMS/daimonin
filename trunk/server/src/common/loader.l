@@ -66,8 +66,8 @@
 	"berserk",		"sub_type",		"terrain_flag",	"terrain_type", "item_quality",
 	"item_condition","item_race",	"item_skill",	"item_level",	"material_real",
 	 "mpart_id",	"mpart_nr",		"weapon_speed",	"editor_folder","is_magical",
-	"is_vul_elemental","is_proof_elemental","is_vul_magic","is_proof_magic","is_vul_acid", 
-	"is_proof_acid","is_vul_sphere","is_proof_sphere","is_indestructible","is_male",
+	"is_vul_elemental","is_proof_elemental","is_vul_magic","is_proof_magic","is_vul_physical", 
+	"is_proof_physical","is_vul_sphere","is_proof_sphere","is_indestructible","is_male",
 	"is_female","is_evil", "is_good","is_neutral","is_invisible",
 	"layer","is_aged","make_invisible", "make_ethereal","is_player",
 	"use_fix_pos", "inv_face", "inv_animation", "is_ethereal", "is_named",
@@ -77,25 +77,9 @@
 	"no_teleport", "corpse", "corpse_forced"
     "player_only" <-- only player can enter flag
 	"no_cleric" 
-	
-  "event_apply",    "event_apply_plugin",   "event_apply_options",
-  "event_attack",   "event_attack_plugin",  "event_attack_options",
-  "event_born",     "event_born_plugin",    "event_born_options",
-  "event_crash",    "event_crash_plugin",   "event_crash_options",
-  "event_death",    "event_death_plugin",   "event_death_options",
-  "event_drop",     "event_drop_plugin",    "event_drop_options",
-  "event_login",    "event_login_plugin",   "event_login_options",
-  "event_logout",   "event_logout_plugin",  "event_logout_options",
-  "event_pickup",   "event_pickup_plugin",  "event_pickup_options",
-  "event_remove",   "event_remove_plugin",  "event_remove_options",
-  "event_say",      "event_say_plugin",     "event_say_options",
-  "event_shout",    "event_shout_plugin",   "event_shout_options",
-  "event_tell",     "event_tell_plugin",    "event_tell_options",
-  "event_time",     "event_time_plugin",    "event_time_options",
-  "event_throw",    "event_throw_plugin",   "event_throw_options",
-  "event_trigger",  "event_trigger_plugin", "event_trigger_options",
-  "event_close", "event_close_plugin", "event_close_options",
-  "event_timer",    "event_timer_plugin",   "event_timer_options",
+	"one_drop"
+	"perm_cursed" 
+	"perm_damned"
 */
 
 #define YY_DECL int lex_load(object *op, int map_flags)
@@ -223,14 +207,15 @@ WS	[ \t]*
 			    LOG(llevError,"Object lacks name.\n");
 			    return LL_IGNORED;
 			}
-			if (op->arch!=NULL) op->arch->name=add_string(yv);
-			op->name = add_string(yv);
+			if (op->arch!=NULL) 
+				FREE_AND_COPY_HASH(op->arch->name, yv);
+			FREE_AND_COPY_HASH(op->name, yv);
 			object_load_flag = 1; /* ok - now we know the pre speed values are valid */
 		    }
 
 ^msg{WS}$	    {	BEGIN( MESSAGE ); msgbuf[0]='\0'; msg_flag=0;}
 <MESSAGE>^endmsg{WS}$ {	BEGIN( INITIAL );
-			op->msg=add_string(msgbuf);
+			FREE_AND_COPY_HASH(op->msg, msgbuf);
 			/* Just print a warning so we can be reasonably safe
 			 * about not overflowing the buffer.
 			 */
@@ -242,10 +227,10 @@ WS	[ \t]*
 ^name{S}	    {	char *yv=yval();
 
 			if (*yv=='\0') LOG(llevError,"Name without val\n");
-			else FREE_AND_COPY(op->name, yv);
+			else FREE_AND_COPY_HASH(op->name, yv);
 		    }
-^race{S}	    FREE_AND_COPY(op->race,yval());
-^slaying{S}	    FREE_AND_COPY(op->slaying, yval());
+^race{S}	    FREE_AND_COPY_HASH(op->race,yval());
+^slaying{S}	    FREE_AND_COPY_HASH(op->slaying, yval());
 
 ^other_arch{S}        op->other_arch=find_archetype(yval());
 ^animation{S}	    {
@@ -346,6 +331,9 @@ op->oy= op->y;
 ^state{S}					op->state = IVAL;
 ^hidden{S}					op->hide = IVAL;
 ^layer{S}					op->layer = IVAL;
+^perm_cursed{S}				SET_OR_CLEAR_FLAG(op, FLAG_PERM_CURSED, IVAL);
+^perm_damned{S}				SET_OR_CLEAR_FLAG(op, FLAG_PERM_DAMNED, IVAL);
+^one_drop{S}				SET_OR_CLEAR_FLAG(op, FLAG_ONE_DROP, IVAL);
 ^player_only{S}				SET_OR_CLEAR_FLAG(op, FLAG_PLAYER_ONLY, IVAL);
 ^is_named{S}				SET_OR_CLEAR_FLAG(op, FLAG_IS_NAMED, IVAL);
 ^is_player{S}				SET_OR_CLEAR_FLAG(op, FLAG_IS_PLAYER, IVAL);
@@ -571,7 +559,7 @@ op->oy= op->y;
 ^been_applied{S}    SET_OR_CLEAR_FLAG(op, FLAG_BEEN_APPLIED, IVAL);
 ^title{S}	    {	char *y=yval();
 			if (*y=='\0') LOG(llevBug,"BUG: loader(): Title without value.\n");
-			else FREE_AND_COPY(op->title, y);
+			else FREE_AND_COPY_HASH(op->title, y);
 		    }
 ^unique{S}		SET_OR_CLEAR_FLAG(op, FLAG_UNIQUE, IVAL);
 ^inv_locked{S}		SET_OR_CLEAR_FLAG(op, FLAG_INV_LOCKED, IVAL);
@@ -593,8 +581,8 @@ op->oy= op->y;
 ^is_proof_elemental{S}	SET_OR_CLEAR_FLAG(op, FLAG_PROOF_ELEMENTAL, IVAL);
 ^is_vul_magic{S}	SET_OR_CLEAR_FLAG(op, FLAG_VUL_MAGIC, IVAL);
 ^is_proof_magic{S}	SET_OR_CLEAR_FLAG(op, FLAG_PROOF_MAGIC, IVAL);
-^is_vul_acid{S}	    	SET_OR_CLEAR_FLAG(op, FLAG_VUL_ACID, IVAL);
-^is_proof_acid{S}	SET_OR_CLEAR_FLAG(op, FLAG_PROOF_ACID, IVAL);
+^is_vul_physical{S}	    	SET_OR_CLEAR_FLAG(op, FLAG_VUL_PHYSICAL, IVAL);
+^is_proof_physical{S}	SET_OR_CLEAR_FLAG(op, FLAG_PROOF_PHYSICAL, IVAL);
 ^is_vul_sphere{S}	SET_OR_CLEAR_FLAG(op, FLAG_VUL_SPHERE, IVAL);
 ^is_proof_sphere{S}	SET_OR_CLEAR_FLAG(op, FLAG_PROOF_SPHERE, IVAL);
 ^is_indestructible{S}	SET_OR_CLEAR_FLAG(op, FLAG_INDESTRUCTIBLE, IVAL);
@@ -618,443 +606,6 @@ op->oy= op->y;
 						op->weapon_speed_add = op->weapon_speed;
 					}
 
-^event_apply{S}		{
-						char *yv=yval();
-						if (*yv=='\0') 
-							LOG(llevError,"Event (apply) without val\n");
-						else
-							FREE_AND_COPY(op->event_hook[EVENT_APPLY],(yv));
-					}
-^event_apply_plugin{S}	{	
-						char *yv=yval();
-						if (*yv=='\0') 
-							LOG(llevError,"Event (apply) without plugin\n");
-						else
-							FREE_AND_COPY(op->event_plugin[EVENT_APPLY], yv);
-						}
-
-^event_apply_options{S}   {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (apply) without options\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_options[EVENT_APPLY], yv);
-                                                };
-		    }
-^event_attack{S}	    {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (attack) without val\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_hook[EVENT_ATTACK],(yv));
-                                                };
-		    }
-^event_attack_plugin{S}	    {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (attack) without plugin\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_plugin[EVENT_ATTACK], yv);
-                                                };
-		    }
-^event_attack_options{S}   {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (attack) without options\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_options[EVENT_ATTACK], yv);
-                                                };
-		    }
-^event_born{S}	    {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (born) without val\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_hook[EVENT_BORN],(yv));
-                                                };
-		    }
-^event_born_plugin{S}	    {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (born) without plugin\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_plugin[EVENT_BORN], yv);
-                                                };
-		    }
-^event_born_options{S}   {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (born) without options\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_options[EVENT_BORN], yv);
-                                                };
-		    }
-^event_crash{S}	    {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (crash) without val\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_hook[EVENT_CRASH],(yv));
-                                                };
-		    }
-^event_crash_plugin{S}	    {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (crash) without plugin\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_plugin[EVENT_CRASH], yv);
-                                                };
-		    }
-^event_crash_options{S}   {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (crash) without options\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_options[EVENT_CRASH], yv);
-                                                };
-		    }
-^event_death{S}	    {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (death) without val\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_hook[EVENT_DEATH],(yv));
-                                                };
-		    }
-^event_death_plugin{S}	    {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (death) without plugin\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_plugin[EVENT_DEATH], yv);
-                                                };
-		    }
-^event_death_options{S}   {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (death) without options\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_options[EVENT_DEATH], yv);
-                                                };
-		    }
-^event_drop{S}	    {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (drop) without val\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_hook[EVENT_DROP],(yv));
-                                                };
-		    }
-^event_drop_plugin{S}	    {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (drop) without plugin\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_plugin[EVENT_DROP], yv);
-                                                };
-		    }
-^event_drop_options{S}   {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (drop) without options\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_options[EVENT_DROP], yv);
-                                                };
-		    }
-^event_login{S}	    {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (login) without val\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_hook[EVENT_LOGIN],(yv));
-                                                };
-		    }
-^event_login_plugin{S}	    {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (login) without plugin\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_plugin[EVENT_LOGIN], yv);
-                                                };
-		    }
-^event_login_options{S}   {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (login) without options\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_options[EVENT_LOGIN], yv);
-                                                };
-		    }
-^event_logout{S}	    {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (logout) without val\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_hook[EVENT_LOGOUT],(yv));
-                                                };
-		    }
-^event_logout_plugin{S}	    {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (logout) without plugin\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_plugin[EVENT_LOGOUT], yv);
-                                                };
-		    }
-^event_logout_options{S}   {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (logout) without options\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_options[EVENT_LOGOUT], yv);
-                                                };
-		    }
-^event_pickup{S}	    {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (pickup) without val\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_hook[EVENT_PICKUP],(yv));
-                                                };
-		    }
-^event_pickup_plugin{S}	    {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (pickup) without plugin\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_plugin[EVENT_PICKUP], yv);
-                                                };
-		    }
-^event_pickup_options{S}   {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (pickup) without options\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_options[EVENT_PICKUP], yv);
-                                                };
-		    }
-^event_remove{S}	    {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (remove) without val\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_hook[EVENT_REMOVE],(yv));
-                                                };
-		    }
-^event_remove_plugin{S}	    {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (remove) without plugin\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_plugin[EVENT_REMOVE], yv);
-                                                };
-		    }
-^event_remove_options{S}   {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (remove) without options\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_options[EVENT_REMOVE], yv);
-                                                };
-		    }
-^event_say{S}	    {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (say) without val\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_hook[EVENT_SAY],(yv));
-                                                };
-		    }
-^event_say_plugin{S}	    {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (say) without plugin\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_plugin[EVENT_SAY], yv);
-                                                };
-		    }
-^event_say_options{S}   {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (say) without options\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_options[EVENT_SAY], yv);
-                                                };
-		    }
-^event_shout{S}	    {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (shout) without val\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_hook[EVENT_SHOUT],(yv));
-                                                };
-		    }
-^event_shout_plugin{S}	    {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (shout) without plugin\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_plugin[EVENT_SHOUT], yv);
-                                                };
-		    }
-^event_shout_options{S}   {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (shout) without options\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_options[EVENT_SHOUT], yv);
-                                                };
-		    }
-^event_tell{S}	    {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (tell) without val\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_hook[EVENT_TELL],(yv));
-                                                };
-		    }
-^event_tell_plugin{S}	    {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (tell) without plugin\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_plugin[EVENT_TELL], yv);
-                                                };
-		    }
-^event_tell_options{S}   {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (tell) without options\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_options[EVENT_TELL], yv);
-                                                };
-		    }
-^event_time{S}	    {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (time) without val\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_hook[EVENT_TIME],(yv));
-                                                };
-		    }
-^event_time_plugin{S}	    {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (time) without plugin\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_plugin[EVENT_TIME], yv);
-                                                };
-		    }
-^event_time_options{S}   {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (time) without options\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_options[EVENT_TIME], yv);
-                                                };
-		    }
-^event_timer{S}          {	char *yv=yval();
-			if (*yv=='\0') LOG(llevError,"Event (timer) without val\n");
-			else
-			{
-				FREE_AND_COPY(op->event_hook[EVENT_TIMER],(yv));
-			};
-		}
-^event_timer_plugin{S}  {	char *yv=yval();
-			if (*yv=='\0') LOG(llevError,"Event (timer) without plugin\n");
-			else
-			{
-				FREE_AND_COPY(op->event_plugin[EVENT_TIMER], yv);
-			};
-		}
-^event_timer_options{S} {	char *yv=yval();
-			if (*yv=='\0') LOG(llevError,"Event (timer) without options\n");
-			else
-			{
-				FREE_AND_COPY(op->event_options[EVENT_TIMER], yv);
-			};
-		}
-
-^event_throw{S}	    {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (throw) without val\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_hook[EVENT_THROW],(yv));
-                                                };
-		    }
-^event_throw_plugin{S}	    {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (throw) without plugin\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_plugin[EVENT_THROW], yv);
-                                                };
-		    }
-^event_throw_options{S}   {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (throw) without options\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_options[EVENT_THROW], yv);
-                                                };
-		    }
-^event_trigger{S}	    {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (trigger) without val\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_hook[EVENT_TRIGGER],(yv));
-                                                };
-		    }
-^event_trigger_plugin{S}	    {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (trigger) without plugin\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_plugin[EVENT_TRIGGER], yv);
-                                                };
-		    }
-^event_trigger_options{S}   {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (trigger) without options\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_options[EVENT_TRIGGER], yv);
-                                                };
-		    }
-^event_close{S}	    {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (close) without val\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_hook[EVENT_CLOSE],(yv));
-                                                };
-		    }
-^event_close_plugin{S}	    {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (close) without plugin\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_plugin[EVENT_CLOSE], yv);
-                                                };
-		    }
-^event_close_options{S}   {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Event (close) without options\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->event_options[EVENT_CLOSE], yv);
-                                                };
-		    }
-^current_weapon_script{S} {	char *yv=yval();
-
-			if (*yv=='\0') LOG(llevError,"Script (current weapon) without val\n");
-			else
-                                                {
-                                                        FREE_AND_COPY(op->current_weapon_script, yv);
-                                                };
-		    }
 
 <*>(^{WS}$)|\n		{/* ignore empty lines, newlines we don't do above */}
 #.*\n			{}
@@ -1182,12 +733,6 @@ int load_object(void *fp, object *op, int bufstate, int map_flags) {
     }
 	else
 	    retval=lex_load(op, map_flags);
-
-    if (op->current_weapon_script != NULL)
-    {
-        op->current_weapon = find_best_weapon_used_match(op, op->current_weapon_script);
-        LOG(llevDebug, "CurrentWeapon Loaded !\n");
-    }
 	
 	if(QUERY_FLAG(op,FLAG_IDENTIFIED))
 	{
@@ -1295,10 +840,10 @@ NULL /*is_removed*/,"been_applied", "auto_apply", "treasure", "is_neutral",	/* 2
 "no_skill_ident","was_wiz", "can_see_in_dark", "is_cauldron", 
 "is_dust", "no_steal", "one_hit", NULL, "berserk", "no_attack",	/* 100 */
 "invulnerable", NULL, NULL, "is_vul_elemental",  "is_proof_elemental", /* 105 */
-"is_vul_magic", "is_proof_magic", "is_vul_acid", "is_proof_acid", "sys_object", /* 110 */
+"is_vul_magic", "is_proof_magic", "is_vul_physical", "is_proof_physical", "sys_object", /* 110 */
 "use_fix_pos","unpaid","is_aged","make_invisible" , "make_ethereal","is_player",
 "is_named",NULL /* spawn mob flag */, "no_teleport", "corpse", "corpse_forced",
-"player_only", "no_cleric"
+"player_only", "no_cleric", "one_drop", "perm_cursed", "perm_damned"
 };
 
  
@@ -1330,7 +875,6 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
   static char buf2[HUGE_BUF];
   static char buf[HUGE_BUF];
   int tmp;
-  int i;
   
   buf[0]='\0';
   if(op->name && op->name!=op2->name) {
@@ -1367,189 +911,6 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
   if(op->inv_face!=op2->inv_face) {
       sprintf(buf2,"inv_face %s\n", op->inv_face->name);
       strcat(buf,buf2);
-  }
-  for(i=1;i<NR_LOCAL_EVENTS;i++)
-  {
-    if(op->event_hook[i] && op->event_hook[i]!=op2->event_hook[i]) {
-        switch(i)
-        {
-            case EVENT_APPLY:
-                sprintf(buf2,"event_apply %s\n",op->event_hook[i]);
-                break;
-            case EVENT_ATTACK:
-                sprintf(buf2,"event_attack %s\n",op->event_hook[i]);
-                break;
-            case EVENT_BORN:
-                sprintf(buf2,"event_born %s\n",op->event_hook[i]);
-                break;
-            case EVENT_CRASH:
-                sprintf(buf2,"event_crash %s\n",op->event_hook[i]);
-                break;
-            case EVENT_DEATH:
-                sprintf(buf2,"event_death %s\n",op->event_hook[i]);
-                break;
-            case EVENT_DROP:
-                sprintf(buf2,"event_drop %s\n",op->event_hook[i]);
-                break;
-            case EVENT_LOGIN:
-                sprintf(buf2,"event_login %s\n",op->event_hook[i]);
-                break;
-            case EVENT_LOGOUT:
-                sprintf(buf2,"event_logout %s\n",op->event_hook[i]);
-                break;
-            case EVENT_PICKUP:
-                sprintf(buf2,"event_pickup %s\n",op->event_hook[i]);
-                break;
-            case EVENT_REMOVE:
-                sprintf(buf2,"event_remove %s\n",op->event_hook[i]);
-                break;
-            case EVENT_SAY:
-                sprintf(buf2,"event_say %s\n",op->event_hook[i]);
-                break;
-            case EVENT_SHOUT:
-                sprintf(buf2,"event_shout %s\n",op->event_hook[i]);
-                break;
-            case EVENT_TELL:
-                sprintf(buf2,"event_tell %s\n",op->event_hook[i]);
-                break;
-            case EVENT_TIME:
-                sprintf(buf2,"event_time %s\n",op->event_hook[i]);
-                break;
-            case EVENT_THROW:
-                sprintf(buf2,"event_throw %s\n",op->event_hook[i]);
-                break;
-            case EVENT_TRIGGER:
-                sprintf(buf2,"event_trigger %s\n",op->event_hook[i]);
-                break;
-            case EVENT_CLOSE:
-                sprintf(buf2,"event_close %s\n",op->event_hook[i]);
-                break;
-            case EVENT_TIMER:
-                sprintf(buf2,"event_timer %s\n",op->event_hook[i]);
-                break;
-        };
-        strcat(buf,buf2);
-    }
-    if(op->event_plugin[i] && op->event_plugin[i]!=op2->event_plugin[i]) {
-        switch(i)
-        {
-            case EVENT_APPLY:
-                sprintf(buf2,"event_apply_plugin %s\n",op->event_plugin[i]);
-                break;
-            case EVENT_ATTACK:
-                sprintf(buf2,"event_attack_plugin %s\n",op->event_plugin[i]);
-                break;
-            case EVENT_BORN:
-                sprintf(buf2,"event_born_plugin %s\n",op->event_plugin[i]);
-                break;
-            case EVENT_CRASH:
-                sprintf(buf2,"event_crash_plugin %s\n",op->event_plugin[i]);
-                break;
-            case EVENT_DEATH:
-                sprintf(buf2,"event_death_plugin %s\n",op->event_plugin[i]);
-                break;
-            case EVENT_DROP:
-                sprintf(buf2,"event_drop_plugin %s\n",op->event_plugin[i]);
-                break;
-            case EVENT_LOGIN:
-                sprintf(buf2,"event_login_plugin %s\n",op->event_plugin[i]);
-                break;
-            case EVENT_LOGOUT:
-                sprintf(buf2,"event_logout_plugin %s\n",op->event_plugin[i]);
-                break;
-            case EVENT_PICKUP:
-                sprintf(buf2,"event_pickup_plugin %s\n",op->event_plugin[i]);
-                break;
-            case EVENT_REMOVE:
-                sprintf(buf2,"event_remove_plugin %s\n",op->event_plugin[i]);
-                break;
-            case EVENT_SAY:
-                sprintf(buf2,"event_say_plugin %s\n",op->event_plugin[i]);
-                break;
-            case EVENT_SHOUT:
-                sprintf(buf2,"event_shout_plugin %s\n",op->event_plugin[i]);
-                break;
-            case EVENT_TELL:
-                sprintf(buf2,"event_tell_plugin %s\n",op->event_plugin[i]);
-                break;
-            case EVENT_TIME:
-                sprintf(buf2,"event_time_plugin %s\n",op->event_plugin[i]);
-                break;
-            case EVENT_THROW:
-                sprintf(buf2,"event_throw_plugin %s\n",op->event_plugin[i]);
-                break;
-            case EVENT_TRIGGER:
-                sprintf(buf2,"event_trigger_plugin %s\n",op->event_plugin[i]);
-                break;
-            case EVENT_CLOSE:
-                sprintf(buf2,"event_close_plugin %s\n",op->event_plugin[i]);
-                break;
-            case EVENT_TIMER:
-                sprintf(buf2,"event_timer_plugin %s\n",op->event_plugin[i]);
-                break;
-        };
-        strcat(buf,buf2);
-    }
-    if(op->event_options[i] && op->event_options[i]!=op2->event_options[i]) {
-        switch(i)
-        {
-            case EVENT_APPLY:
-                sprintf(buf2,"event_apply_options %s\n",op->event_options[i]);
-                break;
-            case EVENT_ATTACK:
-                sprintf(buf2,"event_attack_options %s\n",op->event_options[i]);
-                break;
-            case EVENT_BORN:
-                sprintf(buf2,"event_born_options %s\n",op->event_options[i]);
-                break;
-            case EVENT_CRASH:
-                sprintf(buf2,"event_crash_options %s\n",op->event_options[i]);
-                break;
-            case EVENT_DEATH:
-                sprintf(buf2,"event_death_options %s\n",op->event_options[i]);
-                break;
-            case EVENT_DROP:
-                sprintf(buf2,"event_drop_options %s\n",op->event_options[i]);
-                break;
-            case EVENT_LOGIN:
-                sprintf(buf2,"event_login_options %s\n",op->event_options[i]);
-                break;
-            case EVENT_LOGOUT:
-                sprintf(buf2,"event_logout_options %s\n",op->event_options[i]);
-                break;
-            case EVENT_PICKUP:
-                sprintf(buf2,"event_pickup_options %s\n",op->event_options[i]);
-                break;
-            case EVENT_REMOVE:
-                sprintf(buf2,"event_remove_options %s\n",op->event_options[i]);
-                break;
-            case EVENT_SAY:
-                sprintf(buf2,"event_say_options %s\n",op->event_options[i]);
-                break;
-            case EVENT_SHOUT:
-                sprintf(buf2,"event_shout_options %s\n",op->event_options[i]);
-                break;
-            case EVENT_TELL:
-                sprintf(buf2,"event_tell_options %s\n",op->event_options[i]);
-                break;
-            case EVENT_TIME:
-                sprintf(buf2,"event_time_options %s\n",op->event_options[i]);
-                break;
-            case EVENT_THROW:
-                sprintf(buf2,"event_throw_options %s\n",op->event_options[i]);
-                break;
-            case EVENT_TRIGGER:
-                sprintf(buf2,"event_trigger_options %s\n",op->event_options[i]);
-                break;
-            case EVENT_CLOSE:
-                sprintf(buf2,"event_close_options %s\n",op->event_options[i]);
-                break;
-            case EVENT_TIMER:
-                sprintf(buf2,"event_timer_options %s\n",op->event_options[i]);
-                break;
-        };
-        strcat(buf,buf2);
-    }
   }
   if (op->animation_id != op2->animation_id) {
     if (op->animation_id)
@@ -1760,11 +1121,6 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
   if (op->will_apply!=op2->will_apply)
     save_long(buf, "will_apply", op->will_apply); 
 
-
-  if (op->current_weapon_script!=op2->current_weapon_script){
-    sprintf(buf2,"current_weapon_script %s\n",(op->current_weapon_script));
-    strcat(buf,buf2);
-  };
 
   for (tmp=0; tmp <= NUM_FLAGS; tmp++) {
     if (flag_names[tmp] && (QUERY_FLAG(op, tmp) != QUERY_FLAG(op2, tmp)))

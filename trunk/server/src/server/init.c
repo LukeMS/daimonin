@@ -353,7 +353,6 @@ void init(int argc, char **argv) {
     init_library();	/* Must be called early */
     load_settings();	/* Load the settings file */
     init_word_darkness();
-/*    init_weather();*/
     parse_args(argc, argv, 2);
 
     SRANDOM(time(NULL));
@@ -795,7 +794,7 @@ void add_to_racelist (char *race_name, object *op) {
     race = get_racelist();
     race->next = first_race;
     first_race = race;
-    race->name=add_string(race_name);
+    FREE_AND_COPY_HASH(race->name, race_name);
   }
  
   if(race->member->ob) {

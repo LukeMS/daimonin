@@ -69,7 +69,7 @@ void add_god_to_list (archetype *god_arch) {
   god = init_godslist();
   
   god->arch = god_arch;
-  god->name=add_string(god_arch->clone.name);
+  FREE_AND_COPY_HASH(god->name,god_arch->clone.name);
   if(!first_god)
     god->id = 1;
   else {
@@ -101,10 +101,9 @@ int baptize_altar(object *op) {
      /* if the object name hasnt' been changed, we tack on the gods name */
      if(!strcmp(op->name,op->arch->clone.name)) {
         sprintf(buf,"%s of %s",op->name,god->name);
-        if(op->name!=NULL) free_string(op->name);
-        op->name = add_string(buf);
+		FREE_AND_COPY_HASH(op->name,buf);
      }
-     op->title=add_string(god->name);
+	 FREE_AND_COPY_HASH(op->title,god->name);
      return 1;
    }
    return 0;
@@ -141,7 +140,7 @@ void free_all_god() {
     LOG(llevDebug,"Freeing god information\n");
     for (god=first_god; god; god=godnext) {
 	godnext=god->next;
-	if (god->name) free_string(god->name);
+	FREE_AND_CLEAR_HASH(god->name);
 	free(god);
     }
 }
