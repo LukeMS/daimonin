@@ -1,5 +1,17 @@
 Daimonin CHANGES
+13.07.04	- fixed exp gain for low level
+                - fixed exp mali for dying
+10.07.04	- BETA 3 release.
+                - fixed a LOS bug.
+                - fixed a target bug.
 
+09.07.04        - several works since 10.06. Include new maps and
+                  alot bug fixes. I had not the time to comment all that.
+
+10.06.04	- fixed spawn of friendly objects bug (friendly list)
+09.06.04	- reworked exp/levle calculation
+09.06.04	- reworked spawn points - added spawn base chance value
+08.06.04	- reworked levle table
 06.06.04	- socket patch to avoid server crashes
                 - finished login control
 		- fixed crash problem in emotes

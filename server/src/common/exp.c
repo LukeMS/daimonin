@@ -693,11 +693,28 @@ void apply_death_exp_penalty(object *op)
 			if(!level_exp)
 				continue;
 
-			loss_p = 0.9f - (((float)tmp->level/10.0f)*0.1f);
-			loss_exp = level_exp - (int)((float)level_exp * loss_p);
+			if(tmp->level<2)
+			{
+				loss_exp = level_exp - (int) ((float)level_exp * 0.9);
+			}
+			else if(tmp->level<3)
+			{
+				loss_exp = level_exp - (int) ((float)level_exp * 0.85);
+			}
+			else
+			{
+				loss_p = 0.927f - (((float)tmp->level/5.0f)*0.00337f);
+				loss_exp = (new_levels[tmp->level+1]-new_levels[tmp->level])-(int)((float)(new_levels[tmp->level+1]-new_levels[tmp->level]) * loss_p);
+
+			}
+
+			if(loss_exp<0)
+				loss_exp =0;
+			if(loss_exp > level_exp)
+				loss_exp = level_exp;
 
 			/* again some sanity checks */
-			if(loss_exp>0 && loss_exp <= level_exp)
+			if(loss_exp>0)
 			{
 				adjust_exp(op, tmp,-loss_exp);            
 				player_lvl_adj(op,tmp);
@@ -793,6 +810,5 @@ float calc_level_difference(int who_lvl, int op_lvl)
 		}
 	}
 
-	LOG(llevDebug,"V: %f (%d %f)\n", tmp,r,v);
 	return tmp;
 }

@@ -121,6 +121,9 @@ void version(object *op) {
   new_draw_info(NDI_UNIQUE, 0,op,"future wave shaper(sounds) [http://www.futurewaveshaper.com/]");
   new_draw_info(NDI_UNIQUE, 0,op,"Zero Sum Software [http://www.zero-sum.com/]");
   new_draw_info(NDI_UNIQUE, 0,op,"Reiner Prokein [[reiner.prokein@t-online.de]]");
+  new_draw_info(NDI_UNIQUE, 0,op,"Dungeon Craft Community [http://uaf.sourceforge.net/]");
+  new_draw_info(NDI_UNIQUE, 0,op,"Marc [http://www.angelfire.com/dragon/kaltusara_dc/index.html]");
+  new_draw_info(NDI_UNIQUE, 0,op,"Iron Works DC art [http://www.tgeweb.com/ironworks/dungeoncraft/index.shtml]");
   new_draw_info(NDI_UNIQUE, 0,op,"The mighty Dink.");
   new_draw_info(NDI_UNIQUE, 0,op,"And many more!");
  }
