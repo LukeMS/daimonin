@@ -1886,8 +1886,9 @@ void free_object(object *ob) {
 					* any use... when we do it, a disease needle for example
 					* is dropping his disease force and so on.
 					*/
-					if(tmp_op->type != RUNE && (QUERY_FLAG(tmp_op,FLAG_SYS_OBJECT)|| QUERY_FLAG(ob,FLAG_STARTEQUIP) 
-						||QUERY_FLAG(tmp_op,FLAG_STARTEQUIP) ||QUERY_FLAG(tmp_op,FLAG_NO_DROP)))
+					if(QUERY_FLAG(ob,FLAG_STARTEQUIP) || 
+						(tmp_op->type != RUNE && (QUERY_FLAG(tmp_op,FLAG_SYS_OBJECT)||
+								QUERY_FLAG(tmp_op,FLAG_STARTEQUIP) ||QUERY_FLAG(tmp_op,FLAG_NO_DROP))))
 						free_object(tmp_op);
 					else 
 					{
@@ -1905,7 +1906,7 @@ void free_object(object *ob) {
 			if(corpse)
 			{
 				/* drop the corpse when something is in OR corpse_forced is set */
-				if(QUERY_FLAG(ob,FLAG_CORPSE_FORCED) || corpse->inv)
+				if(QUERY_FLAG(ob,FLAG_CORPSE_FORCED) || corpse)
 				{
 					/* ok... we have a corpse AND we insert it.
 					 * now check enemy and/or attacker to find a player.

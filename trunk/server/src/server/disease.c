@@ -253,6 +253,10 @@ int infect_object(object *victim, object *disease, int force) {
   object *tmp;
   object *new_disease;
 
+  /* only use the head */
+  if(victim->head) 
+	  victim = victim->head;
+
   /* don't infect inanimate objects */
   if(!QUERY_FLAG(victim,FLAG_MONSTER) && victim->type!=PLAYER) return 0;
 
@@ -264,11 +268,7 @@ int infect_object(object *victim, object *disease, int force) {
   if(!force && (random_roll(0, 126, victim, PREFER_HIGH) >= disease->stats.wc))
     return 0;
 
-  /* do an immunity check */
-  if(victim->head) tmp = victim->head->inv;
-  else tmp = victim->inv;
-
-  for(/* tmp initialized in if, above */;tmp;tmp=tmp->below) {
+  for(tmp = victim->inv;tmp;tmp=tmp->below) {
     if(tmp->type == SIGN || tmp->type==DISEASE)  /* possibly an immunity, or diseased*/
       if(!strcmp(tmp->name,disease->name) && tmp->level >= disease->level)
 	return 0;  /*Immune! */
@@ -294,12 +294,11 @@ int infect_object(object *victim, object *disease, int force) {
     if(disease->env && disease->env->type==PLAYER) {
       object *player = disease->env;
 
+	  /* hm, we should for hit use the weapon? or the skill attached to this
+	   * specific disease? hmmm
+	   */
       new_disease->chosen_skill = find_skill(player,SK_PRAYING);
 
-      /* Not all players have praying.  A side effect here is that
-       * players can infect others with diseases they get from traps,
-       * but that is not likely a big deal.
-       */
       if (new_disease->chosen_skill) {
 	set_owner(new_disease,player);
 	new_disease->exp_obj = new_disease->chosen_skill->exp_obj;
@@ -356,6 +355,7 @@ int do_symptoms(object *disease) {
       /* check for an actual immunity */
 
       /* do an immunity check */
+	  /* hm, disease should be NEVER in a tail of a multi part object */
       if(victim->head) tmp = victim->head->inv;
       else tmp = victim->inv;
 
@@ -503,7 +503,8 @@ int move_symptom(object *symptom) {
       insert_ob_in_map(new_ob,victim->map,victim,0);
     }
   }
-  new_draw_info(NDI_UNIQUE | NDI_RED,0,victim,symptom->msg);
+  if(victim->type == PLAYER)
+	  new_draw_info(NDI_UNIQUE | NDI_RED,0,victim,symptom->msg);
   
   return 1;
 }

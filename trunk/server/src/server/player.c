@@ -2312,7 +2312,7 @@ void kill_player(object *op)
       
         /* restore player */
         cast_heal(op, op, SP_CURE_POISON);
-        cast_heal(op, op, SP_CURE_CONFUSION);
+        /* cast_heal(op, op, SP_CURE_CONFUSION);*/
         cure_disease(op,op);  /* remove any disease */
         op->stats.hp=op->stats.maxhp;
         if (op->stats.food<=0) op->stats.food=999;
@@ -2556,7 +2556,7 @@ void kill_player(object *op)
 
     /* remove any poisoning and confusion the character may be suffering. */
     cast_heal(op, op, SP_CURE_POISON);
-    cast_heal(op, op, SP_CURE_CONFUSION);
+    /*cast_heal(op, op, SP_CURE_CONFUSION);*/
     cure_disease(op,op);  /* remove any disease */
 	
     apply_death_exp_penalty(op);
