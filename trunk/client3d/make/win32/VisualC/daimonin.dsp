@@ -234,20 +234,11 @@ SOURCE=..\..\..\source\serverfile.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\source\textwindow.cpp
-
-!IF  "$(CFG)" == "Daimonin - Win32 Debug"
-
-# ADD CPP /YX"daimonin.pch"
-
-!ELSEIF  "$(CFG)" == "Daimonin - Win32 Release"
-
-!ENDIF 
-
+SOURCE=..\..\..\source\sound.cpp
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\source\xyz.cpp
+SOURCE=..\..\..\source\textwindow.cpp
 
 !IF  "$(CFG)" == "Daimonin - Win32 Debug"
 
@@ -268,15 +259,15 @@ SOURCE=..\..\..\source\include\client.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\source\include\define.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\source\include\dialog.h
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\..\source\include\event.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\source\include\frame_Listener.h
 # End Source File
 # Begin Source File
 
@@ -300,11 +291,15 @@ SOURCE=..\..\..\source\include\serverfile.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\source\include\textwindow.h
+SOURCE=..\..\..\source\include\sound.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\source\include\xyz.h
+SOURCE=..\..\..\source\include\textinput.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\include\textwindow.h
 # End Source File
 # End Group
 # Begin Group "Resource Files"
