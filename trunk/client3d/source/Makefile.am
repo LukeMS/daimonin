@@ -4,7 +4,7 @@ INCLUDES = $(FMOD_CFLAGS) $(OGRE_CFLAGS) -I include
           
 bin_PROGRAMS = daimonin3d
 daimonin3d_SOURCES = \
-	adler32.c   inffast.c    map.cpp          option_init.cpp  tile_gfx.cpp \
+	adler32.c   inffast.c    tile_map.cpp     option_init.cpp  tile_gfx.cpp \
 	client.cpp  inflate.c    network_cmd.cpp  player.cpp       uncompr.c \
 	crc32.c     inftrees.c   network.cpp      serverfile.cpp   zutil.c \
 	dialog.cpp  logfile.cpp  npc.cpp          sound.cpp \
