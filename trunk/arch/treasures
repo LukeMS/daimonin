@@ -1759,6 +1759,13 @@ treasure mob_troll
   list default_drop
   chance 50
 end
+treasure mob_dragon_water
+  list traps
+  chance 10
+  more
+  list default_drop
+  chance 50
+end
 ############# TEST ############################
 treasureone random_test_all
  list random_potion
