@@ -77,7 +77,8 @@ BehaviourClass(MOVES,
         Parameter(RUN_AWAY_FROM_ENEMY, HP_THRESHOLD, INTEGER, OPTIONAL, 10)
     )
 
-    /** Recently reworked by mt */
+    /** Try to stay at a certain distance from the enemy, 
+     * good for mobs with distance attacks */
     Behaviour(KEEP_DISTANCE_TO_ENEMY, ai_keep_distance_to_enemy, 
         Parameter(KEEP_DISTANCE_TO_ENEMY, MIN_DIST, INTEGER, OPTIONAL, 4)
         Parameter(KEEP_DISTANCE_TO_ENEMY, MAX_DIST, INTEGER, OPTIONAL, 6)
@@ -91,6 +92,10 @@ BehaviourClass(MOVES,
     /** Try to stay out of the line of fire as much as possible
 	 * if we belive our enemy uses distance attacks */
     Behaviour(AVOID_LINE_OF_FIRE, ai_avoid_line_of_fire, NIL)
+
+    /** Try to move to a position with free line of fire towards
+     * enemy. A good archer's answer to AVOID_LINE_OF_FIRE */
+    Behaviour(OPTIMIZE_LINE_OF_FIRE, ai_optimize_line_of_fire, NIL)
 ) 
 
 /** Actions are misc actions that takes time, but aren't movement.
