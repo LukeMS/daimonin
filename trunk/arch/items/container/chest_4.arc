@@ -1,7 +1,7 @@
 Object chest_4.111
 name chest
 other_arch close_chest_4.111
-face chest_4.111
+face chest_mw_closed.111
 layer 4
 level 1
 no_pick 1
@@ -16,7 +16,7 @@ end
 Object chest_4.171
 name chest
 other_arch close_chest_4.171
-face chest_4.171
+face chest_mw_closed.171
 layer 4
 level 1
 no_pick 1

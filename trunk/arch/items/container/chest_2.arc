@@ -1,7 +1,22 @@
 Object chest_m
 name chest
-other_arch close_chest_m1
-face chest_metal_b.101
+other_arch close_chest_m1_1
+face chest_lm_closed.111
+layer 4
+level 1
+no_pick 1
+type 122
+material 2
+material_real 65
+value 350
+container 500000
+weight 17500
+Str 5
+end
+Object chest_m1_7
+name chest
+other_arch close_chest_m1_7
+face chest_lm_closed.171
 layer 4
 level 1
 no_pick 1
