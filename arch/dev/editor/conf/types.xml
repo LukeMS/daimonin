@@ -183,18 +183,6 @@
 
 <!--###################### list definitions ######################-->
 
-<list name="direction">
-  <entry value="0" name="&lt;none&gt;" />
-  <entry value="1" name="north" />
-  <entry value="2" name="northeast" />
-  <entry value="3" name="east" />
-  <entry value="4" name="southeast" />
-  <entry value="5" name="south" />
-  <entry value="6" name="southwest" />
-  <entry value="7" name="west" />
-  <entry value="8" name="northwest" />
-</list>
-
 <list name="event">
   <entry value="0" name="no event" />
   <entry value="1" name="apply" />
@@ -422,14 +410,23 @@
     The image-name defines what image is displayed for this object
     in-game.
   </attribute>
-  <attribute arch="direction" editor="anim facing" type="list_direction">
-    Sets the point of the compass the object animation is facing.
-    Facing 0 is "not facing in a directon" like a spear in a hand which
-    points high in the air. Facings 1-8 are the 8 points of a compass.
-    1= north,2=northeast;3=east;4=southeast;5=south;6=southwest;7=west;8=northwest .
-    Note: direction is used to set the whole object in a direction - internal is used 
-    "facing" for handling animation facings. But because animations are bound to the
-    object direction, the whole object is set to the direction.
+  <attribute arch="animation" editor="animation" type="string">
+    The animation-name defines what animation is displayed for this object
+    in-game. Note that a set animation will overrule the face.
+    Changing animation is easy - adding or deleting a animation is more
+    difficult and should be done in the text parse window and not in this
+    dialog.
+  </attribute>
+  <attribute arch="anim_speed" editor="anim speed" type="int">
+  How fast to play this animation.
+  </attribute>
+  <attribute arch="is_animated" editor="is animated" type="bool">
+  If set, the object is animated and animation is used.
+  Note: Some special objects will use a animation NOT as animation but
+  as frame list. Examples are buttons (which frames are changed by the
+  object status of the button). IS_TURNABLE will enable direction turning
+  for some object types. These flags are all "system" related. Be VERY
+  careful to change them.
   </attribute>
   <attribute arch="speed_left" editor="start speed" type="float">
     NOTE: without speed != 0, this value is not used. Only use
@@ -570,6 +567,9 @@
     a shop mat, paying the demanded price. Setting this flag makes sense
     only for pickable items inside shops.
   </attribute>
+  <attribute arch="is_turnable" editor="is turnable" type="bool">
+  System flag. Object can be turned to the directions.
+  </attribute>
 </default_type>
 
 <!-- This ignorelist is for all system objects which are non pickable
@@ -604,8 +604,20 @@
   <attribute arch="identified" />
 </ignore_list>
 
+<!-- This ignorelist is for all objects. We handle here some very
+     special stuff. Note: This values has the same meaning for *ALL*
+     object type - they are handled always in the same way.
+     NOTE: "direction" is hard coded excluded from syntax check
+     in the ArchObject.java module  -->
+<ignore_list name="default_setting">
+  <attribute arch="xxxx" />
+</ignore_list>
+
 <!--####################################################################-->
 <type number="79" name="Misc Object">
+  <ignore>
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     MISC_OBJECT are objects without special features, using the base setting of
     the game engine. This includes many decorative objects like statues or rocks. ]]>
@@ -639,6 +651,7 @@
 <type number="78" name="Light Source">
   <ignore>
     <attribute arch="speed_left" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
 	Light Sources are system objects which used as a light/darkness set point. ]]>
@@ -650,6 +663,7 @@
   <ignore>
     <attribute arch="speed_left" />
     <attribute arch="glow_radius" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
 	A applyable light source for a player or monster. It has a 3 way apply chain:
@@ -697,6 +711,7 @@
 <type number="82" name="Light Refill Object">
   <ignore>
     <attribute arch="speed_left" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
 	Light Sources are system objects which u]]>
@@ -722,6 +737,9 @@
          other types like "monster & npc" which also have type number 0. -->
     <attribute arch="misc" value="x" />
   </required>
+  <ignore>
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
 	WARNING: Type 0 is a invalid type setting in Daimonin and 
       will cause a warning for the server. ]]>
@@ -753,9 +771,9 @@
     <attribute arch="speed_left" />
     <attribute arch="cursed" />
     <attribute arch="damned" />
-    <attribute arch="direction" />
     <attribute arch="is_magical" />
     <ignore_list name="system_object" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Abilities are to be put in a monster's inventory. They grant monsters the
@@ -826,6 +844,7 @@
 <type number="18" name="Altar">
   <ignore>
     <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     When a player puts a defined number of certain items on the altar,
@@ -887,6 +906,7 @@
 <type number="31" name="Altar Trigger">
   <ignore>
     <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Altar_triggers work pretty much like normal altars
@@ -958,6 +978,9 @@
 
 <!--####################################################################-->
 <type number="39" name="Amulet">
+  <ignore>
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Wearing an amulet, the object's stats will directly be inherited to
     the player. Amulets are usually meant for protection and defense. ]]>
@@ -1292,6 +1315,9 @@
 <!--####################################################################-->
 <type number="104" name="Bracers">
   <import_type name="Amulet" />
+  <ignore>
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Bracers are armour-plates worn around the wrists.
     Wearing bracer, the object's stats will directly be inherited to
@@ -1311,6 +1337,9 @@
 <!--####################################################################-->
 <type number="16" name="Brestplate Armour">
   <import_type name="Amulet" />
+  <ignore>
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Wearing an armour, the object's stats will directly be inherited to
     the player. Usually enhancing his defense. ]]>
@@ -1336,6 +1365,9 @@
 
 <!--####################################################################-->
 <type number="8" name="Book">
+  <ignore>
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Applying a book, the containing message is displayed to the player. ]]>
   </description>
@@ -1364,6 +1396,9 @@
 <!--####################################################################-->
 <type number="99" name="Boots">
   <import_type name="Amulet" />
+  <ignore>
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Wearing boots, the object's stats will directly be inherited to
     the player. Usually enhancing his speed, or granting some minor
@@ -1403,6 +1438,7 @@
 <type number="92" name="Button">
   <ignore>
     <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     When a predefined amount of weigh is placed on a button, the
@@ -1436,6 +1472,7 @@
 <type number="30" name="Trigger Button">
   <ignore>
     <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     When a predefined amount of weigh is placed on a trigger button, the
@@ -1473,6 +1510,9 @@
 <!--####################################################################-->
 <type number="87" name="Cloak">
   <import_type name="Amulet" />
+  <ignore>
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Wearing a cloak, the object's stats will directly be inherited to
     the player. Cloaks usually add minor &lt;armour class&gt; and
@@ -1494,6 +1534,9 @@
 
 <!--####################################################################-->
 <type number="9" name="Clock">
+  <ignore>
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Applying a clock, the time is displayed to the player. ]]>
   </description>
@@ -1504,6 +1547,9 @@
 
 <!--####################################################################-->
 <type number="122" name="Container">
+  <ignore>
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     A player can put (certain kinds of) items in the container.
     The overall weight of items is reduced when put inside a
@@ -1576,6 +1622,7 @@
 <type number="103" name="Converter">
   <ignore>
     <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Converters are like "exchange tables". When the player drops a
@@ -1621,6 +1668,7 @@
 <type number="42" name="Creator">
   <ignore>
     <ignore_list name="system_object" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     A creator is an object which creates another object when it
@@ -1663,6 +1711,7 @@
 <type number="51" name="Detector">
   <ignore>
     <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Detectors work quite much like inv. checkers/pedestals: If the detector
@@ -1705,6 +1754,7 @@
 <type number="112" name="Director">
   <ignore>
     <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Directors change the direction of spell objects and other projectiles
@@ -1745,6 +1795,7 @@
 <type number="158" name="Disease">
   <ignore>
     <ignore_list name="system_object" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Diseases are an intersting form of spellcraft in Daimonin.
@@ -1980,6 +2031,7 @@
 <type number="66" name="Exit">
   <ignore>
     <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     When the player applies an exit, he is transferred to a different location.
@@ -2052,6 +2104,9 @@
 
 <!--####################################################################-->
 <type number="72" name="Flesh">
+  <ignore>
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     By eating/drinking food-objects, the player can fill his
     stomache and gain a little health. ]]>
@@ -2145,6 +2200,7 @@
   <ignore>
     <attribute arch="damned" />
     <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Floors are the base ground objects, which "defines" the tile.
@@ -2210,6 +2266,7 @@
     <attribute arch="no_magic" />
     <attribute arch="damned" />
     <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Walls are like floor basic objects for maps.
@@ -2244,6 +2301,7 @@
     <attribute arch="cursed" />
     <attribute arch="damned" />
     <attribute arch="speed_left" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     By eating/drinking food-objects, the player can fill his
@@ -2380,6 +2438,7 @@
     <attribute arch="cursed" />
     <attribute arch="damned" />
     <attribute arch="speed_left" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     DRINK Objects are like food objects - just liquids instead
@@ -2519,6 +2578,7 @@
     <attribute arch="no_magic" />
     <attribute arch="damned" />
     <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Gates play an important role in Daimonin. Gates can be opened
@@ -2564,6 +2624,7 @@
     <attribute arch="no_magic" />
     <attribute arch="damned" />
     <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Timed Gates are like normal gates except they close automatically after
@@ -2610,6 +2671,9 @@
 <!--####################################################################-->
 <type number="113" name="Girdle">
   <import_type name="Amulet" />
+  <ignore>
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Wearing a girdle, the object's stats will directly be inherited to
     the player. Girdles usually provide stats- or damage bonuses and no
@@ -2633,6 +2697,9 @@
 <!--####################################################################-->
 <type number="100" name="Gloves">
   <import_type name="Amulet" />
+  <ignore>
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Wearing gloves, the object's stats will directly be inherited to
     the player. Gloves can add defense or damage bonuses. ]]>
@@ -2652,6 +2719,7 @@
 <type number="93" name="Handle">
   <ignore>
     <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     A handle can be applied by players and (certain) monsters.
@@ -2684,6 +2752,7 @@
   <import_type name="Handle" />
   <ignore>
     <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Handle triggers are handles which reset after a short period
@@ -2705,6 +2774,7 @@
   <ignore>
     <attribute arch="damned" />
     <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     The best example for Hazard Floor is lava. It works like standard
@@ -2846,6 +2916,9 @@
 <!--####################################################################-->
 <type number="34" name="Helmet">
   <import_type name="Amulet" />
+  <ignore>
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Wearing a helmet, the object's stats will directly be inherited to
     the player. Normal helmets usually increase defense, while crowns
@@ -2879,6 +2952,7 @@
 <type number="56" name="Holy Altar">
   <ignore>
     <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Holy_altars are altars for the various religions. Praying
@@ -2909,6 +2983,7 @@
 <type number="35" name="Horn">
   <ignore>
     <attribute arch="title" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Horns are very similar to rods. The difference is that horns regenerate
@@ -2968,6 +3043,9 @@
 
 <!--####################################################################-->
 <type number="73" name="Inorganic">
+  <ignore>
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Inorganic materials are generally used as ingredients for
     alchemical receipes. By themselves, they have no special
@@ -2975,7 +3053,7 @@
   </description>
   <attribute arch="is_dust" editor="is dust" type="bool">
   </attribute>
-<section name="resistance">
+  <section name="resistance">
   <attribute arch="resist_impact" editor="resist impact %" length="15" type="int">
   </attribute>
   <attribute arch="resist_slash" editor="resist slash %" length="15" type="int">
@@ -3041,6 +3119,7 @@
 <type number="64" name="Inventory Checker">
   <ignore>
     <ignore_list name="system_object" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Inventory checkers passively check the players inventory for a
@@ -3122,6 +3201,9 @@
 
 <!--####################################################################-->
 <type number="60" name="Gems">
+  <ignore>
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Items of the type Gems are handled like a currency.
     Unlike for any other type of item, in shops, the buy- and selling
@@ -3134,6 +3216,9 @@
 </type>
 <!--####################################################################-->
 <type number="116" name="Jewels">
+  <ignore>
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Items of the type Jewels are handled like a currency.
     Unlike for any other type of item, in shops, the buy- and selling
@@ -3146,6 +3231,9 @@
 </type>
 <!--####################################################################-->
 <type number="117" name="Nuggets">
+  <ignore>
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Items of the type Nuggets are handled like a currency.
     Unlike for any other type of item, in shops, the buy- and selling
@@ -3163,6 +3251,7 @@
     <attribute arch="no_magic" />
     <attribute arch="damned" />
     <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     A locked door can be opened only when car
@@ -3225,6 +3314,7 @@
 <type number="29" name="Magic Ear">
   <ignore>
     <ignore_list name="system_object" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Magic_ears trigger a connected value
@@ -3264,6 +3354,7 @@
 <type number="62" name="Magic Wall">
   <ignore>
     <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Magic walls fire spells in a given direction, in regular intervals.
@@ -3306,11 +3397,6 @@
   <attribute arch="speed" editor="casting speed" type="float">
     The &lt;casting speed&gt; defines the spellcasting speed of the wall.
     You can fine-tune how long the duration between two casts shall be. 
-  </attribute>
-  <attribute arch="direction" editor="fire direction" type="list_direction">
-    The magic wall will cast it's spells always in the specified
-    &lt;direction&gt;. A magic wall with direction set to &lt;none&gt; will
-    always fire in a random direction.
   </attribute>
   <attribute arch="connected" editor="connection" type="int">
     Every time the &lt;connection&gt; value is triggered, the wall will cast
@@ -3415,6 +3501,7 @@
 <type number="55" name="Marker">
   <ignore>
     <ignore_list name="system_object" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     A marker is an object that inserts an invisible force (a mark) into a
@@ -3479,6 +3566,7 @@
 <type number="36" name="Money">
   <ignore>
     <attribute arch="unpaid" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Items of the type Money are handled as currency.
@@ -3503,6 +3591,7 @@
     <attribute arch="value" />
     <attribute arch="unpaid" />
     <attribute arch="identified" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Monsters can behave in various kinds of ways.
@@ -4092,6 +4181,7 @@
     <attribute arch="value" />
     <attribute arch="unpaid" />
     <attribute arch="identified" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Spawn points are used to spawn monsters.
@@ -4143,6 +4233,7 @@
     <attribute arch="value" />
     <attribute arch="unpaid" />
     <attribute arch="identified" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Spawn Point Mobs are Monsters, put in the inventory
@@ -4721,6 +4812,7 @@
   <ignore>
     <attribute arch="damned" />
     <ignore_list name="system_object" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     As the name implies, mood floors can change the "mood" of
@@ -4775,8 +4867,8 @@
 <!--####################################################################-->
 <type number="40" name="Mover">
   <ignore>
-    <attribute arch="direction" />
     <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Movers move the objects above them. However, only living objects
@@ -4822,11 +4914,6 @@
     The movement speed value determines how fast a chain of
     these movers will push a player along (default is -0.2).
   </attribute>
-  <attribute arch="direction" editor="push direction" type="list_direction">
-    The mover will push creatures in the specified &lt;direction&gt;.
-    A mover with direction set to &lt;none&gt; will spin clockwise,
-    thus pushing creatures in unpredictable directions.
-  </attribute>
   <attribute arch="lifesave" editor="gets used up" type="bool">
     If enabled, the mover gets "used up" after a certain number of moves
     (specified by &lt;number of uses&gt;). If disabled, the mover works infinitly.
@@ -4866,7 +4953,8 @@
 <type number="17" name="Pedestal">
   <ignore>
     <ignore_list name="non_pickable" />
-  </ignore>
+    <ignore_list name="default_setting" />
+ </ignore>
   <description><![CDATA[
     Pedestals are designed to detect certain types of living objects or keys.
     When a predefined type of living creature steps on the pedestal, the
@@ -4911,6 +4999,7 @@
 <type number="32" name="Trigger Pedestal">
   <ignore>
     <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Trigger Pedestals are like normal Pedestal but they reset after they got triggered
@@ -4959,6 +5048,7 @@
 <type number="94" name="Pit">
   <ignore>
     <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Pits are holes, transporting the player when he walks (and falls) into them.
@@ -5036,6 +5126,7 @@
     <attribute arch="cursed" />
     <attribute arch="damned" />
     <attribute arch="speed_left" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     When eating, the player's stomache is drained by 1/4 of food
@@ -5163,6 +5254,7 @@
 <type number="86" name="Organic">
   <ignore>
     <attribute arch="speed_left" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     These are body parts which can't be eaten (dragon scales, hair...).]]>
@@ -5171,6 +5263,9 @@
 </type>
 <!--####################################################################-->
 <type number="5" name="Potion">
+  <ignore>
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     The player can drink these and gain various kinds of benefits
     (/penalties) by doing so. ]]>
@@ -5380,6 +5475,9 @@
 
 <!--####################################################################-->
 <type number="156" name="Power Crystal">
+  <ignore>
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Power crystals can store a player's mana:
     When the player applies the crystal with full mana, half of
@@ -5402,6 +5500,7 @@
 <type number="13" name="Projectile">
   <ignore>
     <attribute arch="sub_type" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Projectiles like arrows/crossbow bolts are used as ammunition
@@ -5568,6 +5667,9 @@
 <!--####################################################################-->
 <type number="70" name="Ring">
   <import_type name="Amulet" />
+  <ignore>
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Rings are worn on the hands - one ring each.
     Wearing rings, the object's stats will directly be inherited to
@@ -5588,6 +5690,7 @@
 <type number="3" name="Rod">
   <ignore>
     <attribute arch="title" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     A rod contains a spell. The player can use this spell by applying and
@@ -5647,6 +5750,7 @@
 <type number="154" name="Rune &amp; Trap">
   <ignore>
     <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     A rune is a magical enscription on the dungeon floor. Traps are just
@@ -5807,6 +5911,7 @@
 <type number="106" name="Savebed">
   <ignore>
     <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     When the player applies a savebed, he is not only saved. Both his
@@ -5836,6 +5941,7 @@
 <type number="14" name="Shooting Weapon">
   <ignore>
     <attribute arch="sub_type" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Schooting weapons like bows/crossbows are used to shoot projectiles
@@ -5989,6 +6095,7 @@
 <type number="111" name="Scroll">
   <ignore>
     <attribute arch="title" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Scrolls contain spells (similar to spell-potions). Unlike potions,
@@ -6019,6 +6126,9 @@
 <!--####################################################################-->
 <type number="33" name="Shield">
   <import_type name="Amulet" />
+  <ignore>
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Wearing a shield, the object's stats will directly be inherited to
     the player. Shields usually provide good defense, only surpassed
@@ -6039,6 +6149,7 @@
 <type number="68" name="Shop Floor">
   <ignore>
     <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Shop floor is used for shops. It acts like a combination of the
@@ -6085,6 +6196,7 @@
 <type number="69" name="Shop Mat">
   <ignore>
     <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Shop mats are used for entering/leaving shops. You should always
@@ -6115,6 +6227,7 @@
 <type number="98" name="Sign &amp; MagicMouth">
   <ignore>
     <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     The purpose of a sign or magic_mouth is to display a certain message to
@@ -6168,6 +6281,7 @@
 <type number="21" name="Special Key">
   <ignore>
     <attribute arch="material" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     When carrying the appropriate special key, a locked door can
@@ -6221,6 +6335,9 @@
 
 <!--####################################################################-->
 <type number="85" name="Spellbook">
+  <ignore>
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     By reading a spellbook, the player has a chance of learning the
     contained spell. Once learned from a book, the spell is available
@@ -6257,14 +6374,17 @@
 <!--####################################################################-->
 <type number="90" name="Spinner">
   <ignore>
-    <attribute arch="direction" />
     <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Spinners change the direction of spell objects and other projectiles
     that fly past. Unlike directors, it does make a difference from what
     angle you shoot into the spinner. The direction of objects flying past
-    is always changed by a certain degree. ]]>
+    is always changed by a certain degree.
+    The spinner will change the direction of flying objects by
+    45 degrees per &lt;direction number&gt;.
+    Example: &lt;direction number&gt; 2 means spin 90 degrees clockwise.]]>
   </description>
   <use><![CDATA[
     Spinners are very rarely used. One use of them is in mazes or building
@@ -6274,12 +6394,6 @@
     When placing spinners on a map with magic walls, make sure the spell-
     projectiles from magic walls don't get to fly in loops. ]]>
   </use>
-  <attribute arch="direction" editor="direction number" type="int">
-    The spinner will change the direction of flying objects by
-    45 degrees per &lt;direction number&gt;.
-
-    Example: &lt;direction number&gt; 2 means spin 90 degrees clockwise.
-  </attribute>
   <attribute arch="walk_on" value="1" type="fixed" />
   <attribute arch="fly_on" value="1" type="fixed" />
 </type>
@@ -6288,6 +6402,7 @@
 <type number="138" name="Swamp">
   <ignore>
     <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Swamp areas show a special behaviour:
@@ -6320,6 +6435,7 @@
 <type number="41" name="Teleporter">
   <ignore>
     <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     When the player walks into a teleporter, he is transferred to a
@@ -6405,6 +6521,7 @@
 <type number="95" name="Trapdoor">
   <ignore>
     <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Trapdoors are very similar to pits. The difference is that they
@@ -6468,6 +6585,7 @@
     <attribute arch="weight" />
     <attribute arch="material" />
     <attribute arch="material_real" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     A treasure-object turns into certain randomitems when the map is loaded
@@ -6508,6 +6626,7 @@
 <type number="15" name="Weapon">
   <ignore>
     <attribute arch="sub_type" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Wielding a weapon, the object's stats will directly be inherited to the
@@ -6808,6 +6927,7 @@
   <ignore>
     <attribute arch="damned" />
     <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     Random drop container are used from spawn points.
@@ -6828,6 +6948,9 @@
 </type>
 <!--####################################################################-->
 <type number="109" name="Wand &amp; Staff">
+  <ignore>
+    <ignore_list name="default_setting" />
+  </ignore>
   <description><![CDATA[
     Wands contain a certain spell. The player can apply (ready) and
     fire the wand. After a defined number of casts, the wand is
@@ -6882,6 +7005,7 @@
     <attribute arch="sub_type" />
     <attribute arch="damned" />
     <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     The event object can hold script or other events triggered
@@ -6910,6 +7034,7 @@
     <attribute arch="sub_type" />
     <attribute arch="damned" />
     <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
     The waypoint object can hold a position that a mob is to reach.

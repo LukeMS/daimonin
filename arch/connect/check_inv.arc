@@ -5,7 +5,6 @@ layer 3
 face pedestal.111
 anim
 facings 9
-facings 9
 dummy.111
 pedestal.111
 pedestal.111
