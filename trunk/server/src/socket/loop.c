@@ -53,8 +53,8 @@
 #include <newserver.h>
 
 
-static char *_idle_warn_text = "X4 3 minutes idle warning!";					
-static char *_idle_warn_text2 = "X3 You was to long idle! Server closed connection.";					
+char _idle_warn_text[64] = "X4 8 minutes idle warning!";					
+char _idle_warn_text2[64] = "X3 You was to long idle! Server closed connection.";					
 static fd_set tmp_read, tmp_exceptions, tmp_write;
 
 /*****************************************************************************
@@ -256,7 +256,7 @@ void HandleClient(NewSocket *ns, player *pl)
 		return;
 
 		next_command:
-		if(cmd_count++<20 && ns->status!=Ns_Dead)
+		if(cmd_count++<=8 && ns->status!=Ns_Dead)
 		{
 			/* LOG(llevDebug,"MultiCmd: #%d /%s)\n", cmd_count, (char*)ns->inbuf.buf+2); */
 			continue;
@@ -405,7 +405,7 @@ void doeric_server()
 			if(init_sockets[i].status > Ns_Wait) /* exclude socket #0 which listens for new connects */
 			{
 				/* kill this after 3 minutes idle... */
-				if(init_sockets[i].login_count++ == 60*3*(1000000/MAX_TIME))
+				if(init_sockets[i].login_count++ == 60*4*(1000000/MAX_TIME))
 				{
 					free_newsocket(&init_sockets[i]);
 					init_sockets[i].status = Ns_Avail;
@@ -433,9 +433,9 @@ void doeric_server()
 		}
 		else 
 		{
-			if(pl->socket.login_count++ == 60*3*(1000000/MAX_TIME))
+			if(pl->socket.login_count++ == 60*8*(1000000/MAX_TIME) && gbl_active_DM!=pl->ob)
 				Write_String_To_Socket(&pl->socket, BINARY_CMD_DRAWINFO, _idle_warn_text, strlen(_idle_warn_text));
-			else if(pl->socket.login_count >= 60*4*(1000000/MAX_TIME))
+			else if(pl->socket.login_count >= 60*9*(1000000/MAX_TIME) && gbl_active_DM!=pl->ob)
 			{
 				player *npl=pl->next;
 				Write_String_To_Socket(&pl->socket, BINARY_CMD_DRAWINFO, _idle_warn_text2, strlen(_idle_warn_text2));
