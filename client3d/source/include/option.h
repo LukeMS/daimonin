@@ -69,19 +69,19 @@ extern enum
 
 typedef enum _game_status
 {
-    GAME_STATUS_INIT,          // cal this add start to autoinit.
-    GAME_STATUS_META,          // to to connect to meta server 
-    GAME_STATUS_START,         // start all up without full reset or meta calling
-    GAME_STATUS_WAITLOOP,      // we are NOT connected to anything
-    GAME_STATUS_STARTCONNECT,  // we have a server+port, init and start
-    GAME_STATUS_CONNECT,       // if this is set, we start connecting
-    GAME_STATUS_VERSION,       // now the steps: Connect, we send version
-    GAME_STATUS_WAITVERSION,   // wait for response... add up in version cmd
-    GAME_STATUS_SETUP,         // we ready to send setup commands
-    GAME_STATUS_WAITSETUP,     // we wait for server response
-    GAME_STATUS_REQUEST_FILES, // after we get response from setup, we request files if needed 
+    GAME_STATUS_INIT,          // start to autoinit.
+    GAME_STATUS_META,          // connect to meta server.
+    GAME_STATUS_START,         // start all up (without full reset or meta calling).
+    GAME_STATUS_WAITLOOP,      // we are NOT connected to anything.
+    GAME_STATUS_STARTCONNECT,  // we have a server+port, init and start.
+    GAME_STATUS_CONNECT,       // if this is set, we start connecting.
+    GAME_STATUS_VERSION,       // now the steps: Connect, we send version.
+    GAME_STATUS_WAITVERSION,   // wait for response... add up in version cmd.
+    GAME_STATUS_SETUP,         // we ready to send setup commands.
+    GAME_STATUS_WAITSETUP,     // we wait for server response.
+    GAME_STATUS_REQUEST_FILES, // after we get response from setup, we request files if needed.
     GAME_STATUS_ADDME,         // all setup is done, now try to enter game!
-    GAME_STATUS_LOGIN,         // now we wait for LOGIN request of the server
+    GAME_STATUS_LOGIN,         // now we wait for LOGIN request of the server.
     GAME_STATUS_NAME,          // all this here is tricky
     GAME_STATUS_PSWD,          // server will trigger this when asking for
     GAME_STATUS_VERIFYPSWD,    // client will then show input panel or so
@@ -118,7 +118,7 @@ class Option
     void closeDescFile();
 	void getDescStr(const char *descrEntry, string &strBuffer);
 
-    bool Init(char *);
+    bool Init();
   private:
     Option(const Option&); // disable copy-constructor.
     bool mLogin;

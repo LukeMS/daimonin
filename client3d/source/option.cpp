@@ -21,6 +21,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 -----------------------------------------------------------------------------
 */
 
+#include "define.h"
 #include "option.h"
 #include "logfile.h"
 
@@ -85,8 +86,10 @@ void Option::getDescStr(const char *descrEntry, string &strBuffer)
 //=================================================================================================
 // Create/Overwrite the Optionfile.
 //=================================================================================================
-bool Option::Init(char *filename)
+bool Option::Init()
 {
+
+	// filename: FILE_OPTIONS
 	LogFile::getSingelton().Headline("Init Options");
 
     _options  *ptions = &options; 

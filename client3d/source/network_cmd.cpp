@@ -292,7 +292,6 @@ void Network::handle_query(char *data, int len)
 // ========================================================================
 // 
 // ========================================================================
-
 void Network::PlayerCmd(unsigned char *data, int len)
 {
     Option::getSingelton().GameStatus = GAME_STATUS_PLAY;

@@ -41,11 +41,13 @@ material grass3
          texture_unit
          {
                texture grass_thick1.101.png
-          }
-     }
+         }
+      }
    }
 }
-material stone1
+
+
+material dynamic
 {
    technique
    {
@@ -53,14 +55,11 @@ material stone1
      {
          ambient 1.0 1.0 1.0
          scene_blend alpha_blend
-         depth_check off
-
+         depth_write off
          texture_unit
          {
-               texture stone_01.png
-          }
-     }
+            
+         }
+      }
    }
 }
-
-
