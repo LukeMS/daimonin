@@ -2,7 +2,7 @@
     Daimonin, the Massive Multiuser Online Role Playing Game
     Server Applicatiom
 
-    Copyright (C) 2001 Michael Toennies
+    Copyright (C) 2001-2005 Michael Toennies
 
     A split from Crossfire, a Multiplayer game for X-windows.
 
@@ -20,8 +20,9 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to daimonin@nord-com.net
+    The author can be reached via e-mail to info@daimonin.net
 */
+
 #ifndef RANDOM_MAP_H
 #define RANDOM_MAP_H
 

@@ -1270,44 +1270,43 @@ void save_object(FILE *fp,object *op, int flag) {
      * still save it.
      */
     /*if(op->owner!=NULL || fp == NULL) this will wreck item we throw - they get player as owner*/
-    if(fp == NULL)
-	return;
 
     /* If it is unpaid and we don't want to save those, just return. */
-    if(!(flag&1)&&(QUERY_FLAG(op, FLAG_UNPAID))) {
-	return;
-    }
+    if(!fp || !(flag&1)&&(QUERY_FLAG(op, FLAG_UNPAID)))
+		return;
 
     if((at=op->arch)==NULL) at=empty_archetype;
-    fprintf(fp,"arch %s\n",at->name);
+		fprintf(fp,"arch %s\n",at->name);
 
-    if((cp=get_ob_diff(op,&at->clone))!=NULL)
+    if((cp=get_ob_diff(op,&at->clone)))
 	fputs(cp,fp);	/* We really should do some status checking on this */
-
-    /* Eneq(@csd.uu.se): Added this to allow containers being saved with contents*/
 
     old=NULL;
 
     if (flag & 2 )
-	for(tmp=op->inv;tmp!=NULL;tmp=tmp->below)
-	    save_object(fp,tmp,flag);
+	{
+		for(tmp=op->inv;tmp;tmp=tmp->below)
+			save_object(fp,tmp,flag);
 
-    /* Slightly different logic because tmp/op will be removed by
-     * the save_object we call.  So we just keep looking at op->inv
-     * until there is nothing left.  In theory, the variable old
-     * should not be needed, as recursive loops shouldn't happen.
-     */
-    else while ((tmp=op->inv)!=NULL) {
-	if(old==tmp) {
-	    LOG(llevError," Recursive loop in inventory\n");
-	    break;
+	    /* Slightly different logic because tmp/op will be removed by
+		* the save_object we call.  So we just keep looking at op->inv
+		* until there is nothing left.  In theory, the variable old
+		* should not be needed, as recursive loops shouldn't happen.
+		*/
 	}
-	save_object(fp,tmp,flag); 
-	old=tmp;
+    else while ((tmp=op->inv))
+	{
+		if(old==tmp)
+		{
+			LOG(llevError," Recursive loop in inventory\n");
+			break;
+		}
+		save_object(fp,tmp,flag); 
+		old=tmp;
     }
    
     if (!(flag&2)) 
-	remove_ob(op);
+		remove_ob(op);
 
     fprintf(fp,"end\n");
 }

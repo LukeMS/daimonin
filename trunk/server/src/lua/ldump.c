@@ -1,5 +1,4 @@
 /*
-** $Id$
 ** save bytecodes
 ** See Copyright Notice in lua.h
 */
