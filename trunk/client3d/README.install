@@ -16,7 +16,8 @@ INSTALL WINDOWS
 4.) Install the STLport 4.6.2 from 
     http://www.ogre3d.org/index.php?option=com_remository&Itemid=74&func=selectcat&cat=1
 5.) start daimonin3d_d.exe
-6.) In the Ogre Engine Rendering setup choose:
+6.) if some dlls are missing look here: http://support.microsoft.com/kb/259403/EN-US/
+7.) In the Ogre Engine Rendering setup choose:
     - a Rendering system.
     - a 1024x768 Video Mode.
 
