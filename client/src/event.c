@@ -441,33 +441,43 @@ draw_info(tz, COLOR_BLUE);
 */
 
 				/* size change of splitted textWindow */
-				if (event.button.button ==SDL_BUTTON_LEFT && cursor_type && cpl.menustatus == MENU_NO)
-						active_scrollbar = cursor_type+10;
-				else cursor_type = 0;				
+				if (x > 538 && x < 790 && cpl.menustatus == MENU_NO && 
+					(textwin_set.split_flag && y > 564-(textwin_set.split_size+textwin_set.top_size)*10))
+					cpl.resize_twin_marker=TRUE;
+				else
+					cpl.resize_twin_marker=FALSE;
+				if(cpl.resize_twin == TRUE)
+				{
 
-				if (textwin_set.split_flag && x > 538 && x < 790 && cpl.menustatus == MENU_NO){
-					if (active_scrollbar ==11 
-  	  		|| (y > 577-textwin_set.split_size*10 && y < 581-textwin_set.split_size*10 && !active_scrollbar))
+					if (event.button.button ==SDL_BUTTON_LEFT && cursor_type && cpl.menustatus == MENU_NO)
+							active_scrollbar = cursor_type+10;
+					else cursor_type = 0;				
+
+					if (textwin_set.split_flag && x > 538 && x < 790 && cpl.menustatus == MENU_NO)
+					{
+						if (active_scrollbar ==11 || (y > 577-textwin_set.split_size*10 
+										&& y < 581-textwin_set.split_size*10 && !active_scrollbar))
 							cursor_type = 1;
-					else if (active_scrollbar ==12 || (y > 564-(textwin_set.split_size+textwin_set.top_size)*10 
-	      	&&  y < 568-(textwin_set.split_size+textwin_set.top_size)*10 && !active_scrollbar))
+						else if (active_scrollbar ==12 || (y > 564-(textwin_set.split_size+textwin_set.top_size)*10 
+	      							&&  y < 568-(textwin_set.split_size+textwin_set.top_size)*10 && !active_scrollbar))
 							cursor_type = 2;
-				}
-				if (old_mouse_y != y){
-					if (active_scrollbar ==11){
-						textwin_set.split_size = (580-y)/10;
-   					if (textwin_set.split_size <  9) textwin_set.split_size = 9;
-     				if (textwin_set.split_size > 39) textwin_set.split_size =39;       					
 					}
-					else if (active_scrollbar ==12){
-						textwin_set.top_size = (580-y)/10-textwin_set.split_size;
-   					if (textwin_set.top_size <  1) textwin_set.top_size = 1;
-     				if (textwin_set.top_size > 39) textwin_set.top_size =39;       					
+					if (old_mouse_y != y)
+					{
+						if (active_scrollbar ==11){
+							textwin_set.split_size = (580-y)/10;
+   						if (textwin_set.split_size <  9) textwin_set.split_size = 9;
+     					if (textwin_set.split_size > 39) textwin_set.split_size =39;       					
+						}
+						else if (active_scrollbar ==12){
+							textwin_set.top_size = (580-y)/10-textwin_set.split_size;
+   						if (textwin_set.top_size <  1) textwin_set.top_size = 1;
+     					if (textwin_set.top_size > 39) textwin_set.top_size =39;       					
+						}
+						if (textwin_set.split_size+textwin_set.top_size > 56)
+							textwin_set.top_size = 56 -textwin_set.split_size;
 					}
-					if (textwin_set.split_size+textwin_set.top_size > 56)
-						textwin_set.top_size = 56 -textwin_set.split_size;
 				}
-
 				/* scrollbar-sliders */	
 				/* TODO: make it better */
 				if (event.button.button ==SDL_BUTTON_LEFT && !draggingInvItem(-1)){
@@ -675,7 +685,7 @@ draw_info(tz, COLOR_BLUE);
     			}
 
 					/* talk button */
-					if ((cpl.inventory_win == IWIN_BELOW) && y > 498 && y < 521 && x > 200 && x < 240){
+					if ((cpl.inventory_win == IWIN_BELOW) && y > 498+27 && y < 521+27 && x > 200+70 && x < 240+70){
 							if (cpl.target_code) send_command("/t_tell hello", -1, SC_NORMAL);								
 						break;
     			}
@@ -791,7 +801,7 @@ draw_info(tz, COLOR_BLUE);
 
 
 			case SDL_KEYDOWN:
-      case SDL_KEYUP:
+			case SDL_KEYUP:
 				if(!InputStringFlag || cpl.input_mode != INPUT_MODE_NUMBER)
 				{
 					if(event.key.keysym.mod & KMOD_RSHIFT || 
@@ -1149,6 +1159,7 @@ int key_event(SDL_KeyboardEvent *key )
 					send_command("/run_stop", -1, SC_FIRERUN);
 					/*draw_info("run_stop",COLOR_DGOLD);*/
 					cpl.run_on = FALSE;
+					cpl.resize_twin =FALSE;
 				break;
 				case SDLK_RCTRL:
 				case SDLK_LCTRL:
@@ -1227,6 +1238,17 @@ int key_event(SDL_KeyboardEvent *key )
 				case SDLK_LALT:
 
                     /*draw_info("run",COLOR_DGOLD);*/
+					/* thats the tricky part!
+					 * only WHEN we have the mouse cursor 
+					 * inside the textwin BEFORE we hit ALT
+					 * - only then set resize_twin.
+					 * This avoid the problem we hit ALT
+					 * for running on the map and then moving the
+					 * mouse inside the textwin - thas action
+					 * has a different context.
+					 */
+					if(cpl.resize_twin_marker)
+						cpl.resize_twin =TRUE;
 					cpl.run_on = TRUE;
 					break;
 				case SDLK_RCTRL:

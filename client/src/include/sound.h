@@ -80,6 +80,7 @@ typedef enum _sound_id {
 	SOUND_ARROW_HIT,
 	SOUND_DOOR_CLOSE,
 	SOUND_TELEPORT,
+	SOUND_SCROLL,
 
 	/* here we have client side sounds - add server
 	 * sounds BEFORE this.
@@ -90,7 +91,6 @@ typedef enum _sound_id {
 	SOUND_CONSOLE,
 	SOUND_CLICKFAIL,
 	SOUND_CHANGE1,
-	SOUND_SCROLL,
 	SOUND_WARN_FOOD,
 	SOUND_WARN_DRAIN,
 	SOUND_WARN_STATUP,

@@ -1777,7 +1777,7 @@ int main(int argc, char *argv[])
 
 		if(esc_menu_flag == TRUE)
 			show_option(esc_menu_index, 400, 130);
-		if (cursor_type)
+		if (cursor_type && cpl.resize_twin_marker==TRUE && cpl.resize_twin==TRUE)
   	{
 			SDL_Rect rec;
 			SDL_GetMouseState(&x, &y);

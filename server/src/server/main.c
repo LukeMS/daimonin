@@ -960,8 +960,16 @@ void process_events (mapstruct *map)
       continue;
 
 
+	/* as we can see here, the swing speed not effected by
+	 * object speed BUT the swing hit itself!
+	 * This will invoke a kind of delay of the ready swing
+	 * until the monster can move again. Note, that a higher
+	 * move speed as swing speed will not invoke a faster swing
+	 * speed!
+	 */
     if(op->weapon_speed_left>0) /* as long we are >0, we are not ready to swing */
         op->weapon_speed_left-=op->weapon_speed_add;
+
     if (op->speed_left > 0)
 	{
         --op->speed_left;
@@ -1006,8 +1014,9 @@ void process_events (mapstruct *map)
     if (op->casting > 0)
       op->casting--;
 #endif
+
     if (op->speed_left <= 0)
-      op->speed_left += FABS (op->speed);
+			op->speed_left += FABS (op->speed);
   }
 
   /* Remove marker object from active list */

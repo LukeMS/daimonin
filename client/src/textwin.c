@@ -422,18 +422,19 @@ void show_textwin(int x, int y)
 		show_window_top(x, y-2,textwin_set.top_size);
 		tmp = textwin_set.top_size*10+12;
 		show_window_split(x, y+tmp,textwin_set.split_size);
-		sprite_blt(Bitmaps[BITMAP_TEXTWIN_SPLIT],x-1, y+(tmp+1), NULL, NULL); 
-		/*
-		box.x = x-1;
-		box.h =1;		
-		box.y = y+tmp+1;
-		SDL_FillRect(ScreenSurface, &box, -1);
-		box.y = y-1;
-		SDL_FillRect(ScreenSurface, &box, -1);
-		box.w =1;
-		box.h = 599- y;
-		*/
-/*		SDL_FillRect(ScreenSurface, &box, -1);	*/
+		if(cpl.resize_twin_marker && cpl.resize_twin)
+		{
+			box.x = x-1;
+			box.h =1;		
+			box.y = y+tmp+1;
+			SDL_FillRect(ScreenSurface, &box, -1);
+			box.y = y-1;
+			SDL_FillRect(ScreenSurface, &box, -1);
+			box.w =1;
+			box.h = 599- y;
+		}
+		else
+			sprite_blt(Bitmaps[BITMAP_TEXTWIN_SPLIT],x-1, y+(tmp+1), NULL, NULL); 
 	}
 	else
 	{

@@ -1940,7 +1940,7 @@ void show_target(int x, int y)
 			ptr = "target friend";
 	}
 	if(cpl.target_code)
-		sprite_blt(Bitmaps[BITMAP_TARGET_TALK],x+200, y, NULL, NULL);	
+		sprite_blt(Bitmaps[BITMAP_TARGET_TALK],x+270, y+27, NULL, NULL);	
 
 	if(options.show_target_self || cpl.target_code!=0)
 	{
