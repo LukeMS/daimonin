@@ -22,9 +22,11 @@ http://www.gnu.org/copyleft/lesser.txt.
 */
 
 #include <Ogre.h>
+#include <OgreImage.h>
 #include <OgreConfigFile.h>
 #include <OgreSceneManager.h>
 
+#include "define.h"
 #include "event.h"
 #include "player.h"
 #include "client.h"
@@ -34,6 +36,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "dialog.h"
 #include "option.h"
 #include "sound.h"
+#include "tile_gfx.h"
 
 using namespace Ogre;
 
@@ -55,8 +58,11 @@ void DaimoninClient::go(void)
 
 bool DaimoninClient::setup(void)
 {
-	LogFile::getSingelton().Init("client_log.html");
-	Option ::getSingelton().Init("options.dat");
+	LogFile::getSingelton().Init();
+    if (TileGfx::getSingelton().read_bmaps_p0() <0) return false; 
+    TileGfx::getSingelton().read_bmap_tmp(); // only testing.NORMALLY started from netword.cpp.
+
+	Option ::getSingelton().Init();
 	Sound  ::getSingelton().Init();
 	Network::getSingelton().Init();
 	mRoot = new Root();
@@ -169,15 +175,40 @@ void DaimoninClient::createScene(void)
     Entity* ent;
     SceneNode* floor_node;
 
-    // create floor-tile.
+
+//	uchar *pImage = new uchar[512*512*4];
+//	mImage.loadDynamicImage(pImage, 100,100,PF_B8G8R8);
+
+/*
+	MaterialPtr mMaterial = MaterialManager::getSingleton().getByName("dynamic");
+	string texName = "testMat";
+	Image mImage;
+	mImage.load("grass.101.png", "General");
+	TexturePtr mTexture = TextureManager::getSingleton().loadImage(texName, "Tiles", mImage, TEX_TYPE_2D, 3,1.0f);
+	mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(texName);
+	mMaterial->load();
+*/
+
+// Lets play a little with this mateial stuff....
+
+	int gfxNr =251;
+	TileGfx::getSingelton().load_picture_from_pack(gfxNr);
+	MaterialPtr mMaterial = MaterialManager::getSingleton().getByName("dynamic");
+	string texName = "testMat"+ StringConverter::toString(gfxNr);
+	TexturePtr mTexture = TextureManager::getSingleton().loadImage(texName, "Tiles", TileGfx::getSingelton().getSprite(gfxNr), TEX_TYPE_2D, 3,1.0f);
+	mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(texName);
+	mMaterial->load();
+
+
+	// create floor-tile.
 	string name = "row 1 tile ";
 	for (int x1 =0; x1 < 5; ++x1)
 	{
 		ent = mSceneMgr->createEntity(name+StringConverter::toString(x1), SceneManager::PT_PLANE);
-		ent->setMaterialName("grass1");
-		floor_node = mEvent->World->createChildSceneNode(Vector3(x1*50, 0, 0));
+//		ent->setMaterialName("grass1");
+		ent->setMaterialName(mMaterial->getName());
+		floor_node = mEvent->World->createChildSceneNode(Vector3(x1*50, 0, 25));
 		floor_node->attachObject(ent);
-		floor_node->pitch(Radian(Degree(-90)));
 		floor_node->setScale(0.25, 0.25, 0.25);
 	}
 
@@ -185,10 +216,10 @@ void DaimoninClient::createScene(void)
 	for (int x2 =0; x2 < 5; ++x2)
 	{
 		ent = mSceneMgr->createEntity(name+StringConverter::toString(x2), SceneManager::PT_PLANE);
-		ent->setMaterialName("grass2");
-		floor_node = mEvent->World->createChildSceneNode(Vector3(25+x2*50, 1, 25));
+//		ent->setMaterialName("grass2");
+		ent->setMaterialName(mMaterial->getName());
+		floor_node = mEvent->World->createChildSceneNode(Vector3(25+x2*50, 0, 50));
 		floor_node->attachObject(ent);
-		floor_node->pitch(Radian(Degree(-90)));
 		floor_node->setScale(0.25, 0.25, 0.25);
 	}
 
@@ -196,10 +227,10 @@ void DaimoninClient::createScene(void)
 	for (int x3 =0; x3 < 5; ++x3)
 	{
 		ent = mSceneMgr->createEntity(name+StringConverter::toString(x3), SceneManager::PT_PLANE);
-		ent->setMaterialName("grass3");
-		floor_node = mEvent->World->createChildSceneNode(Vector3(x3*50, 2, 50));
+//		ent->setMaterialName("grass3");
+		ent->setMaterialName(mMaterial->getName());
+		floor_node = mEvent->World->createChildSceneNode(Vector3(x3*50, 0, 75));
 		floor_node->attachObject(ent);
-		floor_node->pitch(Radian(Degree(-90)));
 		floor_node->setScale(0.25, 0.25, 0.25);
 	}
 

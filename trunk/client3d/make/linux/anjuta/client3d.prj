@@ -88,7 +88,9 @@ module.include.files=\
 	zutil.h\
 	define.h\
 	sound.h\
-	textinput.h
+	textinput.h\
+	tile_gfx.h\
+	sprite.h
 
 module.source.name=source
 module.source.type=
@@ -112,7 +114,8 @@ module.source.files=\
 	uncompr.c\
 	zutil.c\
 	sound.cpp\
-	player.cpp
+	player.cpp\
+	tile_gfx.cpp
 
 module.pixmap.name=pixmaps
 module.pixmap.type=

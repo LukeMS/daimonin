@@ -44,6 +44,8 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "serverfile.h"
 #include "textinput.h"
 #include "textwindow.h"
+#include "map.h"
+#include "tile_gfx.h"
 
 #define DEBUG_ON
 
@@ -65,9 +67,6 @@ typedef struct mStructServer
 list<mStructServer*> mServerList;
 
 int SoundStatus=1;
-int MAP_MAX_SIZE  =  17;
-int MapStatusX =MAP_MAX_SIZE;
-int MapStatusY =MAP_MAX_SIZE;
 
 // ========================================================================
 // Clear the MeatServer list.
@@ -368,7 +367,7 @@ void Network::Update()
 		ServerFile::getSingelton().checkFiles();  
 		sprintf(buf, "setup sound %d map2cmd 1 mapsize %dx%d darkness 1 facecache 1"
 			" skf %d|%x spf %d|%x bpf %d|%x stf %d|%x amf %d|%x", 
-			SoundStatus, MapStatusX, MapStatusY, 
+			SoundStatus, Map::getSingelton().MapStatusX, Map::getSingelton().MapStatusY, 
 			ServerFile::getSingelton().getLength(SERVER_FILE_SKILLS),
 			ServerFile::getSingelton().getCRC   (SERVER_FILE_SKILLS),
 			ServerFile::getSingelton().getLength(SERVER_FILE_SPELLS),
@@ -447,8 +446,8 @@ void Network::Update()
         {
             // ok... now we check for bmap & anims processing...
 
-//            read_bmap_tmp();
-//            read_anim_tmp();
+//            TileGfx::getSingelton().read_bmap_tmp();
+//            TileGfx::getSingelton().read_anim_tmp();
 //            load_settings();
 
             mRequest_file_chain++;

@@ -23,7 +23,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 
 // This was imported from one of my older projects - so forgive me the c-functions (polyveg)
 
-
+#include "define.h"
 #include "logfile.h"
 
 #define PRG_NAME "Daimonin Ogre Client"
@@ -31,10 +31,9 @@ http://www.gnu.org/copyleft/lesser.txt.
 //=================================================================================================
 // Create/Overwrite the Logfile.
 //=================================================================================================
-bool LogFile::Init(char *filename)
+bool LogFile::Init()
 {
-  m_filename = filename;
-  m_stream   = fopen(m_filename, "w");
+  m_stream   = fopen(FILE_LOGGING, "w");
   if (!m_stream) { return false; }
   time(&m_time);
   m_localtime = localtime(&m_time);
@@ -71,7 +70,7 @@ bool LogFile::Init(char *filename)
 //=================================================================================================
 LogFile::~LogFile()
 {
-  m_stream = fopen(m_filename, "a");
+  m_stream = fopen(FILE_LOGGING, "a");
   if (!m_stream)
     return;
   time(&m_time);
@@ -103,7 +102,7 @@ LogFile &LogFile::getSingelton()
 //=================================================================================================
 void LogFile::write(const char *color)
 {
-  m_stream = fopen(m_filename, "a");
+  m_stream = fopen(FILE_LOGGING, "a");
   if (!m_stream)
     return;
 
@@ -158,7 +157,7 @@ void LogFile::Error(char *error, ...)
 //=================================================================================================
 void LogFile::Success(bool status)
 {
-  m_stream = fopen(m_filename, "r+" );
+  m_stream = fopen(FILE_LOGGING, "r+" );
   if (!m_stream)
     return;
   fseek( m_stream, 0, SEEK_END);
@@ -172,7 +171,7 @@ void LogFile::Success(bool status)
 //=================================================================================================
 void LogFile::Headline(const char *text)
 {
-  m_stream = fopen(m_filename, "a" );
+  m_stream = fopen(FILE_LOGGING, "a" );
   if (!m_stream)
     return;
   fputs  ("<hr>\n<h2>", m_stream);

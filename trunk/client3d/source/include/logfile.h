@@ -41,13 +41,12 @@ class LogFile
     void Error   (char *text, ...);
     void Success (bool status);
     void Headline(const char *text);
-    bool Init    (char *);
+    bool Init    ();
   private:
     time_t m_time;
     tm *m_localtime;
     char  m_buffer[LOG_BUFFER_SIZE+1];
     FILE *m_stream;
-    char *m_filename;
 
     void write(const char *color);
     LogFile(const LogFile&); // disable copy-constructor.
