@@ -255,7 +255,7 @@ int command_party_remove ( object *pl, char *params)
 		
 	target = find_player(params);
 	/* player unknown or not in our group? */
-	if(!target || target->group_mode != GROUP_STATUS_GROUP || activator->group_id != target->group_id )
+	if(!target || target->group_status != GROUP_STATUS_GROUP || activator->group_id != target->group_id )
 	{
 		new_draw_info_format(NDI_YELLOW, 0, pl, "/remove: %s is not in your group.", STRING_SAFE(params));
 		return 0;
