@@ -928,19 +928,9 @@ int command_nowiz (object *op, char *params)
 int command_check_fd(object *op, char *params) 
 {
 	struct _stat buf;
-	int handle_max=socket_info.max_filedescriptor, fh;
+	int handle_max=socket_info.max_filedescriptor<100?100:socket_info.max_filedescriptor, fh;
 
 	/* remember, max_filedescriptor don't works under windows */
-	if(handle_max <10) /* well, then we have to do some magic */
-	{
-		player *pp;
-		/* collect some senseless handle numbers... */
-		for (pp=first_player;pp;pp=pp->next) 
-		{
-			if(pp->socket.fd > handle_max)
-				handle_max = pp->socket.fd;
-		}
-	}
 	new_draw_info_format(NDI_UNIQUE, 0, op, "check file handles from 0 to %d.", handle_max);
 	LOG(llevSystem,"check file handles from 0 to %d.", handle_max);
 	for(fh=0;fh<=handle_max;fh++)
@@ -954,8 +944,19 @@ int command_check_fd(object *op, char *params)
 #ifdef WIN32
 		LOG(llevSystem,"FH %d ::(%d) size     : %ld\n", fh, _isatty(fh), buf.st_size );
 #else
-		char *name;
-		LOG(llevSystem,"FH %d ::(%s) size     : %ld\n", fh, _isatty(fh)?((name=ttyname(fh))?name:">!<"):"><", buf.st_size );
+		player *pp;
+		char *name1=NULL;
+
+		/* collect some senseless handle numbers... */
+		for (pp=first_player;pp;pp=pp->next) 
+		{
+			if(pp->socket.fd == fh)
+				break;
+		}
+		name1=ttyname(_isatty(fh));
+
+		LOG(llevSystem,"FH %d ::(%s) (%s) size: %ld\n", fh, 
+			name1?name1:"><", pp?(pp->ob?query_name(pp->ob):">player<"):"",buf.st_size );
 #endif
 		}
 	}
