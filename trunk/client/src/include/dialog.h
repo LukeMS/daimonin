@@ -28,6 +28,8 @@
 #define OPTWIN_MAX_OPT 26
 #define OPTWIN_MAX_KEYS 100
 
+extern int dialog_new_char_warn;
+
 extern void show_optwin(void);
 extern void show_newplayer_server(void);
 extern void show_login_server(void);

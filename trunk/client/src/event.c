@@ -1965,7 +1965,7 @@ void check_menu_keys(int menu, int key)
 	        reset_keys();
  		      sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);
 	        break;
-				case SDLK_m:
+				case SDLK_RETURN:
 	        sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);
 	        keybind_status = KEYBIND_STATUS_EDIT;
 	        reset_keys();
@@ -1991,15 +1991,11 @@ void check_menu_keys(int menu, int key)
 				case SDLK_c:
 					if(new_character.stat_points)
 					{
+						dialog_new_char_warn = TRUE;
 						sound_play_effect(SOUND_CLICKFAIL,0,0,100);
 						break;
 					}
-					LOG(-1,"/nc %s %d %d %d %d %d %d %d\n", 
-						new_character.char_arch[new_character.gender_selected],
-						new_character.stats[0],new_character.stats[1],new_character.stats[2],
-						new_character.stats[3],new_character.stats[4],new_character.stats[5],
-						new_character.stats[6]);
-				
+					dialog_new_char_warn = FALSE;
 					new_char(&new_character);
 					GameStatus = GAME_STATUS_WAITFORPLAY;
 					cpl.menustatus = MENU_NO;

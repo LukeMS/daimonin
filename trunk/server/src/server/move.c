@@ -148,6 +148,7 @@ int move_ob (object *op, int dir, object *originator)
 		esrv_map_scroll(&op->contr->socket, freearr_x[dir],freearr_y[dir]);
 		op->contr->socket.look_position=0;
 	}
+
 	return 1;
 }
 

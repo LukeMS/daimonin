@@ -105,24 +105,24 @@ distclean:: clean
 	$(RM) -f Makefile
 	$(RM) -rf $(prefix)
 
-install::
-	$(MKDIR) $(prefix)
-	$(MKDIR) $(prefix)/sfx
-	$(MKDIR) $(prefix)/media
-	$(MKDIR) $(prefix)/cache
-	$(MKDIR) $(prefix)/bitmaps
-	$(MKDIR) $(prefix)/srv_files
-	$(MKDIR) $(prefix)/icons
-	$(CP) ../../sfx/* $(prefix)/sfx
-	$(CP) ../../media/* $(prefix)/media
-	$(CP) ../../cache/* $(prefix)/cache
-	$(CP) ../../icons/* $(prefix)/icons
-	$(CP) ../../srv_files/* $(prefix)/srv_files
-	$(CP) ../../bitmaps/* $(prefix)/bitmaps
+install:: all
+	$(MKDIR) -p $(prefix)
+	$(MKDIR) -p $(prefix)/sfx
+	$(MKDIR) -p $(prefix)/media
+	$(MKDIR) -p $(prefix)/cache
+	$(MKDIR) -p $(prefix)/bitmaps
+	$(MKDIR) -p $(prefix)/srv_files
+	$(MKDIR) -p $(prefix)/icons
+	$(CP) ../../sfx/*.* $(prefix)/sfx
+	$(CP) ../../media/*.* $(prefix)/media
+	$(CP) ../../cache/*.* $(prefix)/cache
+	$(CP) ../../icons/*.* $(prefix)/icons
+	$(CP) ../../srv_files/README $(prefix)/srv_files
+	$(CP) ../../bitmaps/*.* $(prefix)/bitmaps
 	$(CP) ../../options.dat $(prefix)
 	$(CP) ../../keys.dat $(prefix)
 	$(CP) ../../daimonin.p0 $(prefix)
-	$(CP) ../../readme.txt $(prefix)
+	$(CP) ../../README.txt $(prefix)
 	$(CP) ../../License $(prefix)
 	$(CP) ../../archdef.dat $(prefix)
 	$(CP) ../../src/daimonin $(prefix)

@@ -135,14 +135,15 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam, int base_
         rv_vector dir;
         get_rangevector(hitter, op, &dir, RV_MANHATTAN_DISTANCE);
 
-        if(dir.direction != hitter->direction) {
+        if(hitter->direction != dir.direction || hitter->facing != dir.direction) {
             if(hitter->head) {
                 hitter->head->anim_moving_dir = dir.direction;
             } else {
                 hitter->anim_moving_dir = dir.direction;    
             }
             hitter->direction = dir.direction;
-            update_object(hitter,UP_OBJ_FACE);
+            hitter->facing = dir.direction;
+            update_object(hitter,UP_OBJ_FACE); 
         }
     }
 

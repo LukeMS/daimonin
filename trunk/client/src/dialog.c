@@ -30,6 +30,8 @@
 #define X_COL2 290
 #define X_COL3 430
 
+int dialog_new_char_warn = FALSE;
+
 int add_rangebox(int x, int y, int id, int text_x, int text_, char *text, int text_color);
 
 enum {SEL_BUTTON, SEL_CHECKBOX, SEL_RANGE, SEL_TEXT}; /* selection types */
@@ -831,6 +833,7 @@ void show_optwin()
 void show_keybind()
 {
 	SDL_Rect box;
+	char buf[256];
 	int x, x2, y, y2, i;
 	int mx, my, mb;
 	int numButton =0;
@@ -842,6 +845,10 @@ void show_keybind()
 	sprite_blt(Bitmaps[BITMAP_DIALOG_BG],x, y, NULL, NULL);
 	sprite_blt(Bitmaps[BITMAP_DIALOG_TITLE_KEYBIND],x+250-Bitmaps[BITMAP_DIALOG_TITLE_KEYBIND]->bitmap->w/2, y+20, NULL, NULL);
 	add_close_button(x, y, MENU_KEYBIND);
+
+	sprintf(buf,"~SHIFT~ + ~%c%c~ to select group         ~%c%c~ to select macro          ~RETURN~ to change/create",ASCII_UP, ASCII_DOWN,ASCII_UP, ASCII_DOWN);
+	StringBlt(ScreenSurface,&SystemFont, buf, x+125, y+410, COLOR_WHITE,NULL, NULL);
+
 
 	/* draw group tabs */
 	i=0;
@@ -870,15 +877,15 @@ void show_keybind()
 	sprite_blt(Bitmaps[BITMAP_DIALOG_TAB_STOP],x2, y2, NULL, NULL);
 
 	/* Headline */
-	StringBlt(ScreenSurface, &SystemFont, "Macro-name", x+X_COL1+1, y+TXT_Y_START-1, COLOR_BLACK, NULL, NULL);
-	StringBlt(ScreenSurface, &SystemFont, "°M°acro-name", x+X_COL1,   y+TXT_Y_START-2, COLOR_WHITE, NULL, NULL);
+	StringBlt(ScreenSurface, &SystemFont, "Macro", x+X_COL1+1, y+TXT_Y_START-1, COLOR_BLACK, NULL, NULL);
+	StringBlt(ScreenSurface, &SystemFont, "Macro", x+X_COL1,   y+TXT_Y_START-2, COLOR_WHITE, NULL, NULL);
 	StringBlt(ScreenSurface, &SystemFont, "Key",    x+X_COL2+1, y+TXT_Y_START-1, COLOR_BLACK, NULL, NULL);
 	StringBlt(ScreenSurface, &SystemFont, "Key",    x+X_COL2, y+TXT_Y_START-2, COLOR_WHITE, NULL, NULL);
 	StringBlt(ScreenSurface, &SystemFont, "Repeat", x+X_COL3+1, y+TXT_Y_START-1, COLOR_BLACK, NULL, NULL);
-	StringBlt(ScreenSurface, &SystemFont, "°R°epeat", x+X_COL3, y+TXT_Y_START-2, COLOR_WHITE, NULL, NULL);
+	StringBlt(ScreenSurface, &SystemFont, "~R~epeat", x+X_COL3, y+TXT_Y_START-2, COLOR_WHITE, NULL, NULL);
 
 	/* save button */
-	if (add_button(x+25, y+454, numButton++, BITMAP_DIALOG_BUTTON_UP, "Done", "°D°one"))
+	if (add_button(x+25, y+454, numButton++, BITMAP_DIALOG_BUTTON_UP, "Done", "~D~one"))
 		check_menu_keys(MENU_KEYBIND, SDLK_d);
 
 
@@ -904,7 +911,7 @@ void show_keybind()
  			bindkey_list_set.entry_nr = i;
 			if ((mb & SDL_BUTTON(SDL_BUTTON_RIGHT)) && mb_clicked && mx > x+X_COL1){
 				if  (mx < x+X_COL3) /* macro name + key value */
-			 		check_menu_keys(MENU_KEYBIND, SDLK_m);
+			 		check_menu_keys(MENU_KEYBIND, SDLK_RETURN);
 				else  /* key repeat */
 			 		check_menu_keys(MENU_KEYBIND, SDLK_r);
 				mb_clicked =0;
@@ -997,9 +1004,18 @@ void show_newplayer_server(void)
   StringBlt(ScreenSurface, &SystemFont, "Press ~C~ to create your new character", x+131, y+101, COLOR_BLACK, NULL, NULL);
   StringBlt(ScreenSurface, &SystemFont, "Press ~C~ to create your new character.", x+130, y+100, COLOR_WHITE, NULL, NULL);
 
+
 	/* create button */
-	if (add_button(x+30, y+397, id++, BITMAP_DIALOG_BUTTON_UP, "Create", "°C°reate"))
+	if (add_button(x+30, y+397, id++, BITMAP_DIALOG_BUTTON_UP, "Create", "~C~reate"))
 		check_menu_keys(MENU_CREATE, SDLK_c);
+
+	if(dialog_new_char_warn == TRUE)
+	{
+		StringBlt(ScreenSurface, &SystemFont, "  ** ASSIGN ALL **", x+21, y+368, COLOR_BLACK, NULL, NULL);
+		StringBlt(ScreenSurface, &SystemFont, "  ** ASSIGN ALL **", x+20, y+367, COLOR_HGOLD, NULL, NULL);
+		StringBlt(ScreenSurface, &SystemFont, "** POINTS FIRST **", x+21, y+380, COLOR_BLACK, NULL, NULL);
+		StringBlt(ScreenSurface, &SystemFont, "** POINTS FIRST **", x+20, y+379, COLOR_HGOLD, NULL, NULL);
+	}
 
 	/* draw attributes */
 	StringBlt(ScreenSurface, &SystemFont, "Points:", x+130, y+CREATE_Y0+3*17, COLOR_WHITE, NULL, NULL);
@@ -1007,7 +1023,7 @@ void show_newplayer_server(void)
 		sprintf(buf, "%.2d  LEFT", new_character.stat_points);
 	else
 		sprintf(buf, "%.2d", new_character.stat_points);
-	StringBlt(ScreenSurface, &SystemFont, buf , x+171, y+CREATE_Y0+3*17, COLOR_BLACK, NULL, NULL);
+	StringBlt(ScreenSurface, &SystemFont, buf , x+171, y+CREATE_Y0+3*17+1, COLOR_BLACK, NULL, NULL);
 	StringBlt(ScreenSurface, &SystemFont, buf , x+170, y+CREATE_Y0+3*17, COLOR_HGOLD, NULL, NULL);
 	
 	if(create_list_set.entry_nr > 8)
@@ -1038,6 +1054,7 @@ void show_newplayer_server(void)
 
 		if(delta)
 		{
+			dialog_new_char_warn = FALSE;
 			if(delta>0)
 			{
 				if(new_character.stats[i]+1 <= new_character.stats_max[i] && new_character.stat_points)

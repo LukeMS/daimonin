@@ -1659,6 +1659,7 @@ static void save_data_cmd_file(char *path, char*data, int len)
 /* server tells us to go to the new char creation */
 void NewCharCmd(char *data, int len)
 {
+	dialog_new_char_warn = FALSE;
 	GameStatus =GAME_STATUS_NEW_CHAR;
 }
 
