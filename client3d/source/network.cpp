@@ -21,26 +21,39 @@ http://www.gnu.org/copyleft/lesser.txt.
 -----------------------------------------------------------------------------
 */
 
+#ifdef WIN32
+  #define STRICT
+  #include <winsock2.h>
+#else
+  #include <sys/types.h>
+  #include <netinet/in.h>
+  #include <sys/socket.h>
+  #include <arpa/inet.h>
+  #include <netdb.h>
+  #include <errno.h>
+  #include <fcntl.h>
+  const int SOCKET_ERROR =-1;
+#endif
+
 #include "network.h"
 #include "logfile.h"
 #include "option.h"
-#include "xyz.h"
+#include "define.h"
+#include "dialog.h"
 #include "serverfile.h"
+#include "textinput.h"
+#include "textwindow.h"
 
 #define DEBUG_ON
 
+// testing:
 char *ServerName = "127.0.0.1";
 int ServerPort = 13327;
-
 int SoundStatus=1;
-
-#define MAP_MAX_SIZE    17 
+int MAP_MAX_SIZE  =  17;
 int MapStatusX =MAP_MAX_SIZE;
 int MapStatusY =MAP_MAX_SIZE;
 
-
-
-#define MAXMETAWINDOW 14        /* count max. shown server in meta window*/ 
 
 // ========================================================================
 // Return the instance.
@@ -56,10 +69,10 @@ Network &Network::getSingelton()
 // ========================================================================
 Network::Network()
 {
- mSocket = SOCKET_NO;
+    mSocket = SOCKET_NO;
     mInbuf.buf = new unsigned char[MAXSOCKBUF+1];
- mInbuf.buf[0] =0;
- mInbuf.buf[1] =0;
+    mInbuf.buf[0] =0;
+    mInbuf.buf[1] =0;
     mGameStatusVersionFlag  = false; 
     mGameStatusVersionOKFlag= true;
 }
@@ -73,31 +86,16 @@ Network::~Network()
 }
 
 
-
-// Ensures that the username doesn't contain any invalid character
-static inline int is_username_valid(const char *name)
-{
-    for(int i=0; i< (int)strlen(name); i++)
-    {
-        if (!(((name[i] <= 90) && (name[i]>=65))||((name[i] >= 97) && (name[i]<=122))))
-            return 0;
-    }
-    return 1;
-} 
-
-
-
-// Sends a reply to the server.  text contains the null terminated
-// string of text to send.  This function basically just packs
-// the stuff up.
+// ========================================================================
+// Sends a reply to the server.  text contains the null terminated string 
+// of text to send.  This function basically just packs the stuff up.
+// ========================================================================
 void Network::send_reply(char *text)
 {
     char    buf[MAXSOCKBUF];
     sprintf(buf, "reply %s", text);
     cs_write_string(buf, strlen(buf));
 }
-
- 
 
 
 // ========================================================================
@@ -134,6 +132,8 @@ void Network::Update()
     ///////////////////////////////////////////////////////////////////////// 
     // Not connected: walk through connection chain and/or wait for action
 	/////////////////////////////////////////////////////////////////////////
+
+
     if (Option::getSingelton().GameStatus != GAME_STATUS_PLAY)
     {
          // autoinit or reset prg data
@@ -180,32 +180,25 @@ void Network::Update()
     }
     else if (Option::getSingelton().GameStatus == GAME_STATUS_START)
     {
-        if (mSocket != SOCKET_NO) CloseSocket();
+        if (mSocket != SOCKET_NO) { CloseSocket(); }
         Option::getSingelton().GameStatus = GAME_STATUS_WAITLOOP;
-
-
-        Option::getSingelton().GameStatus = GAME_STATUS_STARTCONNECT; // only for Testing. emulates Pressed Enter for login !!!!!!!!!!!!!
-
     }
     else if (Option::getSingelton().GameStatus == GAME_STATUS_STARTCONNECT)
     {
+		Dialog::getSingelton().visible(true);
         Option::getSingelton().GameStatus = GAME_STATUS_CONNECT;
     }
     else if (Option::getSingelton().GameStatus == GAME_STATUS_CONNECT)
     {
-  mGameStatusVersionFlag = false; 
+		mGameStatusVersionFlag = false; 
         if (!OpenSocket(ServerName, ServerPort))
         {
-            //sprintf(buf, "connection failed!");
-            //draw_info(buf, COLOR_RED);
+            TextWin->Print("connection failed!", ColourValue::Red);
             Option::getSingelton().GameStatus = GAME_STATUS_START;
         }
         Option::getSingelton().GameStatus = GAME_STATUS_VERSION;
-
-
-//        sprintf(buf, "connected. exchange version.");
-//        draw_info(buf, COLOR_GREEN); 
- }
+        TextWin->Print("Connected. exchange version.", ColourValue::Green);
+	}
     else if (Option::getSingelton().GameStatus == GAME_STATUS_VERSION)
     {   // Send client version.
         LogFile::getSingelton().Info("Send Version\n");
@@ -347,100 +340,67 @@ void Network::Update()
 	}
     else if (Option::getSingelton().GameStatus == GAME_STATUS_LOGIN)
     {
-		/*
-        map_transfer_flag = 0;
-        if (InputStringEscFlag)
+        // map_transfer_flag = 0;
+		TextInput::getSingleton().start(1); // every start() needs a stop()!
+        if (TextInput::getSingleton().isCanceled())
         {
-            sprintf(buf, "Break Login.");
-            draw_info(buf, COLOR_RED);
+            TextWin->Print("Break Login.", ColourValue::Red);
+			TextInput::getSingleton().stop();
+			Dialog::getSingelton().visible(false);
             Option::getSingelton().GameStatus = GAME_STATUS_START;
         }
-        reset_input_mode();
-		*/
-//        Option::getSingelton().GameStatus = GAME_STATUS_NAME;  ///!!!!! only testing !!!!
     }
     else if (Option::getSingelton().GameStatus == GAME_STATUS_NAME)
     {
-
-{
-send_reply("myNameLang");
-Option::getSingelton().GameStatus = GAME_STATUS_LOGIN;  
-}	
-	
-/*
-        map_transfer_flag = 0;
-        // we have a fininshed console input
-        if (InputStringEscFlag)
-            Option::getSingelton().GameStatus = GAME_STATUS_LOGIN;
-        else if (InputStringFlag == false && InputStringEndFlag == true)
+        // map_transfer_flag = 0;
+		Dialog::getSingelton().UpdateLogin(DIALOG_STAGE_LOGIN_GET_NAME);
+		if (TextInput::getSingleton().isCanceled())
+		{
+			Option::getSingelton().GameStatus = GAME_STATUS_LOGIN;
+		}
+        else if (TextInput::getSingleton().isFinished())
         {
-            int check;
-            check = is_username_valid(InputString);
-            if (check)
-            {
-                strcpy(cpl.name, InputString);
-                dialog_login_warning_level = DIALOG_LOGIN_WARNING_NONE;
-                LOG(LOG_MSG,"Login: send name %s\n", InputString);
-                send_reply(InputString);
-                Option::getSingelton().GameStatus = GAME_STATUS_LOGIN;
-                // now wait again for next server question
-            }
-            else
-            {
-                dialog_login_warning_level = DIALOG_LOGIN_WARNING_WRONGNAME;
-                InputStringFlag=TRUE;
-                InputStringEndFlag=FALSE;
-            }
+            //strcpy(cpl.name, InputString);
+			TextWin->Print("Login: send name:");
+			TextWin->Print(TextInput::getSingleton().getString());
+            send_reply((char*)TextInput::getSingleton().getString());
+            Dialog::getSingelton().setWarning(DIALOG_WARNING_NONE);
+			Option::getSingelton().GameStatus = GAME_STATUS_LOGIN;
         }
-*/
 	}
     else if (Option::getSingelton().GameStatus == GAME_STATUS_PSWD)
     {
-
-/*	  
-		map_transfer_flag = 0;
-        // we have a fininshed console input
-        textwin_clearhistory();
-        if (InputStringEscFlag)
-            Option::getSingelton().GameStatus = GAME_STATUS_LOGIN;
-        else if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
+		// map_transfer_flag = 0;
+        // textwin_clearhistory();
+		Dialog::getSingelton().UpdateLogin(DIALOG_STAGE_LOGIN_GET_PASSWD);
+		if (TextInput::getSingleton().isCanceled())
+		{
+			Option::getSingelton().GameStatus = GAME_STATUS_LOGIN;
+		}
+        else if (TextInput::getSingleton().isFinished())
         {
-            strncpy(cpl.password, InputString, 39);
-            cpl.password[39] = 0;   // insanity 0
-            LOG(LOG_MSG, "Login: send password <*****>\n");
-            send_reply(cpl.password);
+            // strncpy(cpl.password, InputString, 39);
+			TextWin->Print("Login: send password:");
+			TextWin->Print("<*****>");
+            send_reply((char*)TextInput::getSingleton().getString());
+            Dialog::getSingelton().setWarning(DIALOG_WARNING_NONE);
             Option::getSingelton().GameStatus = GAME_STATUS_LOGIN;
-            // now wait again for next server question
         }
-*/
-{
-send_reply("myNameLang");
-Option::getSingelton().GameStatus = GAME_STATUS_LOGIN;
-}	
-  
-
 	}
     else if (Option::getSingelton().GameStatus == GAME_STATUS_VERIFYPSWD)
     {
-
-/*
-        map_transfer_flag = 0;
-        // we have a fininshed console input
-        if (InputStringEscFlag)
-            Option::getSingelton().GameStatus = GAME_STATUS_LOGIN;
-        else if (InputStringFlag == FALSE && InputStringEndFlag == TRUE)
+		// map_transfer_flag = 0;
+		Dialog::getSingelton().UpdateLogin(DIALOG_STAGE_LOGIN_GET_PASSWD_AGAIN);
+		if (TextInput::getSingleton().isCanceled())
+		{
+			Option::getSingelton().GameStatus = GAME_STATUS_LOGIN;
+		}
+        else if (TextInput::getSingleton().isFinished())
         {
-            LOG(LOG_MSG, "Login: send verify password %s\n", InputString);
-            send_reply(InputString);
+            send_reply((char*)TextInput::getSingleton().getString());
+            Dialog::getSingelton().setWarning(DIALOG_WARNING_NONE);
             Option::getSingelton().GameStatus = GAME_STATUS_LOGIN;
-            // now wait again for next server question
-        }
-*/    
-{
-send_reply("myNameLang");
-Option::getSingelton().GameStatus = GAME_STATUS_LOGIN;
-}	
-
+		}		
 	}
     else if (Option::getSingelton().GameStatus == GAME_STATUS_WAITFORPLAY)
     {
@@ -591,7 +551,8 @@ inline bool Network::GetServerData()
 inline bool Network::OpenSocket(const char *host, int port)
 {
     mInbuf.len = 0;
-    mInsock.sin_family = AF_INET;
+    sockaddr_in mInsock;
+	mInsock.sin_family = AF_INET;
     mInsock.sin_port = htons((unsigned short) port);
     if (isdigit(*host))
     {
@@ -599,7 +560,7 @@ inline bool Network::OpenSocket(const char *host, int port)
     }
     else
     {
-        mHostbn = gethostbyname(host);
+        struct hostent *mHostbn = gethostbyname(host);
         if (mHostbn == (struct hostent *) NULL)
         {
             LogFile::getSingelton().Error("Unknown host: %s\n", host);
@@ -959,6 +920,7 @@ void Network::DoClient()
             #ifdef DEBUG_ON
 			LogFile::getSingelton().Info("command: BINARY_CMD_PLAYER (%d)\n", mInbuf.buf[2]); 
             #endif
+			Dialog::getSingelton().visible(false);
             PlayerCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case 17: // BINARY_CMD_MAPSTATS

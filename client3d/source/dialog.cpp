@@ -22,7 +22,10 @@ http://www.gnu.org/copyleft/lesser.txt.
 */
 
 #include "dialog.h"
+#include "textwindow.h"
+#include "textinput.h"
 
+static std::string mStrPlayerName;
 //=================================================================================================
 // Constructor.
 //=================================================================================================
@@ -51,7 +54,16 @@ Dialog &Dialog::getSingelton()
 //=================================================================================================
 bool Dialog::Init()
 {
-    mLoginOverlay = OverlayManager::getSingleton().getByName("LoginOverlay");
+    mLoginOverlay   = OverlayManager::getSingleton().getByName("DialogOverlay");
+	mPlayerName     = OverlayManager::getSingleton().getOverlayElement("Dialog/Login/Playername/Text");
+	mPlayerPasswd   = OverlayManager::getSingleton().getOverlayElement("Dialog/Login/Password/Text");
+	mPlayerRePasswd = OverlayManager::getSingleton().getOverlayElement("Dialog/Login/RePassword/Text");
+
+	mPanelPlayerName     = OverlayManager::getSingleton().getOverlayElement("Dialog/Login/Playername");
+	mPanelPlayerPasswd   = OverlayManager::getSingleton().getOverlayElement("Dialog/Login/Password");
+	mPanelPlayerRePasswd = OverlayManager::getSingleton().getOverlayElement("Dialog/Login/RePassword");
+
+
 	mVisible = false;
     return true;
 }
@@ -62,15 +74,70 @@ bool Dialog::Init()
 void Dialog::visible(bool vis)
 {
 	if (vis == true)
-		if (mVisible == false)
-		{
-			mVisible = true;
-			mLoginOverlay->show();
-		}
+	{
+		mVisible = true;
+		mPanelPlayerName    ->hide();
+		mPanelPlayerPasswd  ->hide();
+		mPanelPlayerRePasswd->hide();
+		mLoginOverlay->show();
+	}
     else
-		if (mVisible == true)
-		{
-			mVisible = false;
-			mLoginOverlay->hide();
-		}
+	{
+		mVisible = false;
+		mLoginOverlay->hide();
+	}
+}
+
+//=================================================================================================
+// Show a warning.
+//=================================================================================================
+void  Dialog::setWarning(int warning)
+{
+	switch(warning)
+	{
+		case DIALOG_WARNING_NONE:
+			break;
+		case DIALOG_WARNING_LOGIN_WRONG_NAME:
+			break;
+		default:
+			return;
+	}
+}
+
+static std::string mStrPassword;
+static std::string mStrRePasswd;
+//=================================================================================================
+// Login Overlay.
+//=================================================================================================
+void Dialog::UpdateLogin(unsigned int stage)
+{
+
+	switch(stage)
+	{
+		case DIALOG_STAGE_LOGIN_GET_NAME:
+			mPanelPlayerName    ->show();
+			mPanelPlayerPasswd  ->hide();
+			mPanelPlayerRePasswd->hide();
+			mStrPlayerName = TextInput::getSingleton().getString();
+			mPlayerName->setCaption(mStrPlayerName);
+			break;
+		case DIALOG_STAGE_LOGIN_GET_PASSWD:
+			mPanelPlayerPasswd->show();
+			{
+			   mStrPassword ="**********************************";
+			   mStrPassword.resize(TextInput::getSingleton().size());
+			}
+			mPlayerPasswd->setCaption(mStrPassword.c_str());
+			break;
+		case DIALOG_STAGE_LOGIN_GET_PASSWD_AGAIN:
+			mPanelPlayerRePasswd->show();
+			{
+			   mStrRePasswd ="**********************************";
+			   mStrRePasswd.resize(TextInput::getSingleton().size());
+			}
+			mPlayerRePasswd->setCaption(mStrRePasswd.c_str());
+			break;
+		default:
+			return;
+	}
 }

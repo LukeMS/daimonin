@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 #define SERVERFILES_H
 
 #include <string>
-#include "xyz.h"
+#include "define.h"
 
 enum
 {

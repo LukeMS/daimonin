@@ -27,7 +27,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include <iomanip>
 #include "serverfile.h"
 #include "logfile.h"
-#include "xyz.h"
+#include "define.h"
 #include "zlib.h"
 
 using namespace std;

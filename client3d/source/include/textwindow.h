@@ -26,20 +26,20 @@ http://www.gnu.org/copyleft/lesser.txt.
 
 #include <Ogre.h>
 #include <string>
-#include "xyz.h"
+#include "define.h"
 
 using namespace Ogre;
 
 ////////////////////////////////////////////////////////////
 // Defines.
 ////////////////////////////////////////////////////////////
-const Real CLOSING_SPEED      =   10.0f;  // default: 10.0f  
-const Real SCROLL_SPEED       =    1.0f;  // default:  1.0f
-const Real FONT_SIZE          =   16.0f;  // default: 16.0f
-const int  MAX_TEXT_LINES     =   20;
-const int  SIZE_STRING_BUFFER =  128;     // MUST be 2^X.
+const Real CLOSING_SPEED      =  10.0f;  // default: 10.0f  
+const Real SCROLL_SPEED       =   1.0f;  // default:  1.0f
+const Real FONT_SIZE          =  16.0f;  // default: 16.0f
+const int  MAX_TEXT_LINES     =  20;
+const int  SIZE_STRING_BUFFER = 128;     // MUST be 2^X.
 
-enum { COLOR_RED, COLOR_GREEN, COLOR_BLUE}; 
+//enum { COLOR_RED, COLOR_GREEN, COLOR_BLUE}; 
 
 class CTextwindow
 {

@@ -25,8 +25,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "option.h"
 #include "logfile.h"
 #include "network.h"
-#include "xyz.h"
-
+#include "define.h"
 
 
 #if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
@@ -39,10 +38,6 @@ http://www.gnu.org/copyleft/lesser.txt.
 #else
 #include "wincompat.h"
 #endif
-
-#include "fmod.h"
-#include "fmod_errors.h"    /* optional */
-
 
 #ifdef __cplusplus
 extern "C" {
@@ -57,53 +52,6 @@ int main(int argc, char **argv)
 {
     // Create application object
 	DaimoninClient client;
-
-	// Init & start fmod
-    FMUSIC_MODULE *mod = NULL;
-	char buf[256];
-	
-    if (FSOUND_GetVersion() < FMOD_VERSION)
-    {
-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-        sprintf(buf,"Error : You are using the wrong DLL version!  You should be using FMOD %.02f\n", FMOD_VERSION);
-        MessageBox( NULL, buf, "Fmod: Wrong DLL", MB_OK | MB_ICONERROR | MB_TASKMODAL);
-#else
-        std::cerr << "FMOD: Wrong version. You need " << FMOD_VERSION << std::endl;
-#endif
-        return 1;
-    }
-    
-    /*
-	INITIALIZE FMOD
-    */
-    if (!FSOUND_Init(32000, 64, 0))
-    {
-        sprintf(buf,"%s\n", FMOD_ErrorString(FSOUND_GetError()));
-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-        MessageBox( NULL, buf, "FMOD INIT ERROR", MB_OK | MB_ICONERROR | MB_TASKMODAL);
-#else
-        std::cerr << "FMOD: INIT ERROR " << buf;
-#endif
-        return 1;
-    }
-	/*
-	LOAD SONG
-	A s3m for fun... fmod of course plays nearly all, including .ogg and .wav
-	*/
-	mod = FMUSIC_LoadSong("media/sound/invtro94.s3m");
-    if (!mod)
-    {
-        sprintf(buf,"%s\n", FMOD_ErrorString(FSOUND_GetError()));
-#if OGRE_PLATFORM == OGRE_PLATFORM_WIN32
-        MessageBox( NULL, buf, "FMOD: Can't find sound file", MB_OK | MB_ICONERROR | MB_TASKMODAL);
-#else
-        std::cerr << "FMOD: Can't find sound file: " << buf;
-#endif
-        return 1;
-    }
-    FMUSIC_PlaySong(mod);   
-	
-	
     try {
         client.go();
     } catch( Exception& e ) {
@@ -113,12 +61,6 @@ int main(int argc, char **argv)
         std::cerr << "An exception has occured: " << e.getFullDescription();
 #endif
     }
-
-    /*
-	FREE SONG AND SHUT DOWN
-    */
-    FMUSIC_FreeSong(mod);
-    FSOUND_Close();
     return 0;
 }
 

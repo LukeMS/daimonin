@@ -22,7 +22,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 */
 
 #include "option.h"
-
+#include "logfile.h"
 
 enum
 {
@@ -52,7 +52,7 @@ struct _option opt[] =
 //=================================================================================================
 bool Option::Init(char *filename)
 {
-
+	LogFile::getSingelton().Headline("Init Options");
 
     _options  *ptions = &options; 
 

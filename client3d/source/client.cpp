@@ -1,4 +1,3 @@
-
 /*
 -----------------------------------------------------------------------------
 This source file is part of Daimonin (http://daimonin.sourceforge.net)
@@ -27,17 +26,16 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include <OgreSceneManager.h>
 
 #include "event.h"
-#include "client.h"
 #include "player.h"
+#include "client.h"
 #include "network.h"
 #include "logfile.h"
 #include "textwindow.h"
 #include "dialog.h"
 #include "option.h"
+#include "sound.h"
 
 using namespace Ogre;
-
-Player    *player;
 
 // ========================================================================
 // Start the example
@@ -58,9 +56,9 @@ void DaimoninClient::go(void)
 bool DaimoninClient::setup(void)
 {
 	LogFile::getSingelton().Init("client_log.html");
-	LogFile::getSingelton().Headline("Init Options");
-	Network::getSingelton().Init();
 	Option ::getSingelton().Init("options.dat");
+	Sound  ::getSingelton().Init();	
+	Network::getSingelton().Init();
 	mRoot = new Root();
 	setupResources();
 
@@ -153,10 +151,12 @@ void DaimoninClient::createScene(void)
 
     mSceneMgr->setAmbientLight(ColourValue(0.5, 0.5, 0.5));
 
-    player = new Player(mSceneMgr);
-
 	mEvent->World = mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(0, 0, 0));
- 
+    Player::getSingelton().Init(
+		mSceneMgr->createEntity("player", "robot.mesh"),
+		mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(0, 0, 0))
+		);
+
 
     Light* l;
     l = mSceneMgr->createLight("BlueLight");
@@ -232,5 +232,4 @@ void DaimoninClient::createScene(void)
 // ========================================================================
 void DaimoninClient::destroyScene(void)
 {
-    if (player) { delete player; }
 }

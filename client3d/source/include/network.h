@@ -24,33 +24,24 @@ http://www.gnu.org/copyleft/lesser.txt.
 #ifndef NETWORK_H
 #define NETWORK_H
 
-#ifdef WIN32
-  #define STRICT
-  #include <winsock2.h>
-#else
-  #include <sys/types.h>
-  #include <netinet/in.h>
-  #include <sys/socket.h>
-  #include <arpa/inet.h>
-  #include <netdb.h>
-  #include <errno.h>
-  #include <fcntl.h>
-  typedef int SOCKET;
-  const int SOCKET_ERROR =-1;
-#endif
-
 // Maximum size of any packet we expect.  Using this makes it so we don't need to
 // allocated and deallocated the same buffer over and over again and the price
 // of using a bit of extra memory. IT also makes the code simpler.
-const int  MAXSOCKBUF = 64*1024;
-const int  SOCKET_NO = -1;
+const int  MAXSOCKBUF            =  64*1024;
 const int  MAX_METASTRING_BUFFER = 128*2013;
-const int  STRINGCOMMAND = 0;
-const int  MAX_BUF = 256;
+const int  SOCKET_NO = -1;
+const int  MAX_BUF =  256;
 const int  BIG_BUF = 1024; 
+const int  STRINGCOMMAND = 0;
+const int  DATA_PACKED_CMD = 0x80;
+const int  SRV_CLIENT_FLAG_BMAP    = 1;
+const int  SRV_CLIENT_FLAG_ANIM    = 2;
+const int  SRV_CLIENT_FLAG_SETTING = 4;
+const int  SRV_CLIENT_FLAG_SKILL   = 8;
+const int  SRV_CLIENT_FLAG_SPELL   =16;
+const int  MAXMETAWINDOW           =14; // max. shown server in meta window.
 const int  VERSION_CS = 991017;
 const int  VERSION_SC = 991017;
-const int  DATA_PACKED_CMD = 0x80;
 const char VERSION_NAME[] = "Daimonin SDL Client";
 
 struct SockList
@@ -58,13 +49,6 @@ struct SockList
     int            len;
     unsigned char *buf;
 };
-
-#define SRV_CLIENT_FLAG_BMAP 1
-#define SRV_CLIENT_FLAG_ANIM 2
-#define SRV_CLIENT_FLAG_SETTING 4
-#define SRV_CLIENT_FLAG_SKILL 8
-#define SRV_CLIENT_FLAG_SPELL 16
-
 
 //*************************************************************************
 // Network class (Singleton)
@@ -123,36 +107,32 @@ class Network
     void handle_query(char *data, int len);
     void PreParseInfoStat(char *cmd);
     void PlayerCmd(unsigned char *data, int len);
-
-
-	int mRequest_file_chain;
-    int mRequest_file_flags;
-
-
     void RequestFile(int index);
 
+	int  mRequest_file_chain;
+	int  mRequest_file_flags;
+    int  mPasswordAlreadyAsked;
     bool mGameStatusVersionOKFlag;
     bool mGameStatusVersionFlag;
-    int  mPasswordAlreadyAsked;
 
   private:
     // Contains the base information we use to make up a packet we want to send.
-    SOCKET mSocket;
-    SockList  mInbuf;
     int  mCs_version, mSc_version; // Server versions of these
     // These are used for the newer 'windowing' method of commands -
     // number of last command sent, number of received confirmation
     int mCommand_sent, mCommand_received;
     int mCommand_time; // Time (in ms) players commands currently take to execute
     int mSocketStatusErrorNr;
+    SockList  mInbuf;
 
-	sockaddr_in   mInsock;
-	struct hostent *mHostbn; 
-
+	#ifdef WIN32
+    unsigned int mSocket;
+    #else
+	int mSocket
+	#endif
+	
     Network(const Network&);  // disable copy-constructor.
-
     bool InitSocket();
-
 };
 
 
