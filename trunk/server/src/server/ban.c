@@ -70,7 +70,7 @@ int checkbanned(char *login, char *host)
     while (fgets(line_buf, 160, bannedfile) != NULL)
     {
         /* Split line up */
-        if ((*line_buf == '#') || (line_buf == '\n' || line_buf == '\r'))
+        if ((*line_buf == '#') || (*line_buf == '\n' || *line_buf == '\r'))
             continue;
         if ((indexpos = (char *) strrchr(line_buf, '@')) == 0)
         {
