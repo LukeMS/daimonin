@@ -2,9 +2,9 @@ Object sword_curved
 name curved sword
 layer 3
 face sword_curved.101
-weapon_speed 0.0225
+weapon_speed 0.02
 attack_slash 100
-dam 6
+dam 5
 wc 1
 type 15
 sub_type 1

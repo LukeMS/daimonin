@@ -573,6 +573,10 @@ SOURCE=..\..\..\src\server\move.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\src\server\pathfinder.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\src\server\pets.c
 
 !IF  "$(CFG)" == "daimonin_server - Win32 ReleaseLog"
@@ -1613,6 +1617,10 @@ SOURCE=..\..\..\src\include\newserver.h
 # Begin Source File
 
 SOURCE=..\..\..\src\include\object.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\include\pathfinder.h
 # End Source File
 # Begin Source File
 

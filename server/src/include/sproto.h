@@ -458,6 +458,7 @@ int stand_in_light(object *op);
 int monster_use_scroll(object *head, object *part,object *pl,int dir, rv_vector *rv);
 int can_see_enemy(object *op, object *enemy);
 void spawn_point(object *op);
+void waypoint_compute_path(object *waypoint);
 /* move.c */
 int move_ob(object *op, int dir, object *originator);
 int transfer_ob(object *op, int x, int y, int randomly, object *originator, object *trap);
@@ -466,6 +467,14 @@ void recursive_roll(object *op, int dir, object *pusher);
 int try_fit(object *op, int x, int y);
 int roll_ob(object *op, int dir, object *pusher);
 int push_ob(object *who, int dir, object *pusher);
+/* pathfinder.h */
+path_node *find_path(object *op, mapstruct *map1, int x1, int y1, mapstruct *map2, int x2, int y2);
+void free_node_list(path_node **first);
+int get_path_next(char *buf, sint16 *off, mapstruct **map, int *x, int *y);
+char *encode_path(path_node *path);
+path_node *compress_path(path_node *path);
+void request_new_path(object *waypoint);
+object *get_next_requested_path();
 /* pets.c */
 object *get_pet_enemy(object *pet, rv_vector *rv);
 void terminate_all_pets(object *owner);

@@ -39,7 +39,7 @@ int protection_tab[NROFATTACKS] = {
     1,2,3,15,14,19,13  /* internal to holy... just a joke, we never use this entry */
 };    
 
-#define ATTACK_HIT_DAMAGE(_op, _anum)       dam=dam*((double)_op->attack[_anum]*(double)0.01);damage=(int)dam
+#define ATTACK_HIT_DAMAGE(_op, _anum)       dam=dam*((double)_op->attack[_anum]*(double)0.01);dam>=1.0f?(damage=(int)dam):(damage=1)
 #define ATTACK_RESIST_DAMAGE(_op, _anum)    dam=dam*((double)(100-_op->resist[_anum])*(double)0.01)
 #define ATTACK_PROTECT_DAMAGE(_op, _anum)    dam=dam*((double)(100-_op->protection[protection_tab[_anum]])*(double)0.01)
 

@@ -317,7 +317,7 @@ int cast_spell(object *op,object *caster,int dir,int type,int ability,SpellTypeF
 	/* if valid target is not in range for selected spell, skip here casting */
 	if(target) 
 	{
-		get_rangevector_from_mapcoord(op->map, op->x, op->y, target, &rv, 0);
+		get_rangevector_from_mapcoords(op->map, op->x, op->y, target->map, target->x, target->y, &rv, 0);
 		if( (abs(rv.distance_x)>abs(rv.distance_y)?abs(rv.distance_x):abs(rv.distance_y)) >spells[type].range)
 		{
 			new_draw_info(NDI_UNIQUE, 0,op, "Your target is out of range!");

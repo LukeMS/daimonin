@@ -6,7 +6,7 @@ attack_slash 100
 type 15
 sub_type 9
 face glaive.101
-material 2
+material 18
 material_real 65
 dam 9
 wc 2

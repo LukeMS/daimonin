@@ -84,7 +84,8 @@ all::
 	@for dir in $(SUBDIRS); \
 	do \
 	    echo "making all in $$dir..."; \
-	   (cd $$dir;  $(MAKE) $(MFLAGS) 'MFLAGS=$(MFLAGS)' 'EXTRA_CFLAGS=$(XX_EXTRA_CFLAGS)' 'EXTRA_INCLUDES=$(EXTRA_INCLUDES)' 'EXTRA_LIBS=$(EXTRA_LIBS)' 'CC=$(CC)' all; ) \
+	    cd $$dir; \
+		$(MAKE) $(MFLAGS) 'MFLAGS=$(MFLAGS)' 'EXTRA_CFLAGS=$(XX_EXTRA_CFLAGS)' 'EXTRA_INCLUDES=$(EXTRA_INCLUDES)' 'EXTRA_LIBS=$(EXTRA_LIBS)' 'CC=$(CC)' all || exit 5; \
 	done;
 
 depend::
@@ -113,7 +114,7 @@ distclean:: clean
 	$(RM) -f  ../../daimonin_server
 	$(RM) -f  ../../lib/*
 
-install::
+install:: all
 	sh ../../install/linux/install.sh
 proto:
 	(cd common; make proto)

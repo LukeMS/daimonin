@@ -2,7 +2,7 @@ Object broadsword
 name broadsword
 layer 3
 face broadsword.101
-weapon_speed 0.0225
+weapon_speed 0.02
 attack_slash 100
 dam 6
 wc 1

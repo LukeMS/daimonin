@@ -181,52 +181,6 @@ void enter_player_savebed(object *op)
 }
 
 
-static char *normalize_path (char *src, char *dst) {
-    char *p, *q;
-    char buf[HUGE_BUF];
-    static char path[HUGE_BUF];
-
-    /*LOG(llevDebug,"path before normalization >%s<>%s<\n", src, dst);*/
-
-    if (*dst == '/') {
-	strcpy (buf, dst);
-
-    } else {
-	strcpy (buf, src);
-	if ((p = strrchr (buf, '/')))
-	    p[1] = '\0';
-	else
-	    strcpy (buf, "/");
-	strcat (buf, dst);
-    }
-
-    q = p = buf;
-    while ((q = strstr (q, "//")))
-	p = ++q;
-
-    *path = '\0';
-    q = path;
-    p = strtok (p, "/");
-    while (p) {
-	if (!strcmp (p, "..")) {
-	    q = strrchr (path, '/');
-	    if (q)
-		*q = '\0';
-	    else {
-		*path = '\0';
-		LOG(llevBug, "BUG: Illegal path.\n");
-	    }
-	} else {
-	    strcat (path, "/");
-	    strcat (path, p);
-	}
-	p = strtok (NULL, "/");
-    }
-    /*LOG(llevDebug,"path after normalization >%s<\n", path);*/
-
-    return (path);
-}
-
 /* All this really is is a glorified remove_object that also updates
  * the counts on the map if needed.
  */
@@ -538,7 +492,7 @@ static void enter_unique_map(object *op, object *exit_ob)
 	    if (newmap) fix_auto_apply(newmap);
 	}
     } else { /* relative directory */
-	char reldir[HUGE_BUF], tmpc[HUGE_BUF], *cp;
+	char reldir[HUGE_BUF], tmpc[HUGE_BUF], tmp_path[HUGE_BUF], *cp;
 
 	if (MAP_UNIQUE(exit_ob->map)) {
 
@@ -555,7 +509,7 @@ static void enter_unique_map(object *op, object *exit_ob)
 
 	    newmap = ready_map_name(apartment, MAP_PLAYER_UNIQUE);
 	    if (!newmap) {
-		newmap = load_original_map(create_pathname(normalize_path(reldir, EXIT_PATH(exit_ob))), MAP_PLAYER_UNIQUE);
+		newmap = load_original_map(create_pathname(normalize_path(reldir, EXIT_PATH(exit_ob), tmp_path)), MAP_PLAYER_UNIQUE);
 		if (newmap) fix_auto_apply(newmap);
 	    }
 	}
@@ -565,10 +519,10 @@ static void enter_unique_map(object *op, object *exit_ob)
 	     */
 	    sprintf(apartment, "%s/%s/%s/%s", settings.localdir,
 		    settings.playerdir, op->name, 
-		    clean_path(normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob))));
+		    clean_path(normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob), tmp_path)));
 	    newmap = ready_map_name(apartment, MAP_PLAYER_UNIQUE);
 	    if (!newmap) {
-		newmap = ready_map_name(normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob)), 0);
+		newmap = ready_map_name(normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob), tmp_path), 0);
 		if (newmap) fix_auto_apply(newmap);
 	    }
 	}
@@ -634,6 +588,7 @@ void enter_exit(object *op, object *exit_ob)
 		else 
 		{
 			int x=EXIT_X(exit_ob), y=EXIT_Y(exit_ob);
+                        char tmp_path[HUGE_BUF];
 			/* 'Normal' exits that do not do anything special
 			* Simple enough we don't need another routine for it.
 			*/
@@ -646,9 +601,9 @@ void enter_exit(object *op, object *exit_ob)
 				 * ready_map_name in a more clever way!
 				 */
 				if (strncmp(exit_ob->map->path, settings.localdir, strlen(settings.localdir)))
-					newmap = ready_map_name(normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob)), 0);
+					newmap = ready_map_name(normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob), tmp_path), 0);
 				else
-					newmap = ready_map_name(normalize_path("",EXIT_PATH(exit_ob)), 0);
+					newmap = ready_map_name(normalize_path("",EXIT_PATH(exit_ob), tmp_path), 0);
 				/* Random map was previously generated, but is no longer about.  Lets generate a new
 				* map.
 				*/
@@ -710,7 +665,7 @@ void enter_exit(object *op, object *exit_ob)
 					remove_ob(tmp);
 					free_object(tmp);
 				}
-				strcpy(op->contr->savebed_map, normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob)));
+				strcpy(op->contr->savebed_map, normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob), tmp_path));
 				op->contr->bed_x = EXIT_X(exit_ob), op->contr->bed_y = EXIT_Y(exit_ob);
 				save_player(op, 1);
 			/* LOG(llevDebug,"enter_exit: Taking damned exit %s to (%d,%d) on map %s\n",
@@ -1220,6 +1175,13 @@ int forbid_play()
  */
 
 void do_specials() {
+    if(!(pticks % 2)) 
+    {
+        object *wp = get_next_requested_path();
+        if(wp) {
+            waypoint_compute_path(wp);
+        }
+    }
 
 #ifdef WATCHDOG
     if (!(pticks % 503))

@@ -526,6 +526,25 @@ int can_see_enemy (object *op, object *enemy) {
   return 1;
 }
 
+/* Waypoint fields:
+ * slaying - destination map
+ * title   - name of next wp in chain
+ * msg     - precomputed path
+ * owner   - object that carries wp
+ * ownercount - count of owner
+ * stats:
+ *   hp, sp  - destination x and y
+ *   ac      - wait timer (<= wc)
+ *   wc      - wait time
+ *   grace   - acceptable distance
+ *   food    - current waypoint index in precomputed path
+ *   dam     - closest distance to the (local) target
+ *      
+ * flags:
+ *   cursed - active (only one active wp per mob!)
+ *   paralyzed - path computation requested
+ */
+
 /* Find a monster's currently active waypoint, if any */
 object *get_active_waypoint(object *op) {
   object *wp = NULL;
@@ -551,117 +570,229 @@ object *find_waypoint(object *op, char *name) {
   return wp;
 }
 
+/* perform a path computation for the waypoint object */
+void waypoint_compute_path(object *waypoint) {
+    object *op = waypoint->env;
+    mapstruct *destmap = op->map;
+    path_node *path;
+    
+    if(waypoint->slaying != NULL && *waypoint->slaying != '\0') {
+        char temp_path[HUGE_BUF];
+        /* TODO: handle unique maps? */
+        destmap = ready_map_name(normalize_path(op->map->path, waypoint->slaying, temp_path), 0);
+    }
 
+    if(destmap == NULL) {
+        LOG(llevBug,"BUG: waypoint_compute_path(): invalid destination map '%s'\n", waypoint->slaying);
+        return;
+    }
+    
+    path = compress_path(find_path(op, op->map, op->x, op->y, destmap, waypoint->stats.hp, waypoint->stats.sp));
+
+    if(path) {
+        
+        /* Check that path is at least of length 2 (the first element is always the starting position) */
+        if(! path->next) {
+            free_node_list(&path);
+            return;
+        }
+        
+        {
+            path_node *tmp;
+            LOG(llevDebug,"move_waypoint(): '%s' new path -> '%s': ", op->name, waypoint->name);
+            for(tmp = path->next; tmp; tmp = tmp->next) 
+                LOG(llevDebug,"(%d,%d) ", tmp->x, tmp->y);
+            LOG(llevDebug,"\n");
+        }
+
+        if(waypoint->msg)
+            FREE_AND_CLEAR_HASH(waypoint->msg);
+
+        waypoint->msg = encode_path(path->next);
+        waypoint->stats.food = 0; /* path offset */
+
+        free_node_list(&path);
+
+        waypoint->stats.Str = 0;  /* number of fails */
+        waypoint->stats.dam = 30000; /* best distance */
+    } else 
+        LOG(llevBug,"BUG: waypoint_compute_path(): no path to destination ('%s' -> '%s')\n", op->name, waypoint->name);
+}
+
+/* Move towards waypoint target */
 void waypoint_move(object *op) {
-    object *destination, *part, *waypoint;
-    rv_vector	rv;
+    object *waypoint;
+    mapstruct *destmap = op->map;
+    rv_vector local_rv, global_rv, *dest_rv;
     int dir;
+    sint16 new_offset = 0, success = 0;
     
     /* Find the active waypoint (if any) */
     waypoint = get_active_waypoint(op);
     
     if(waypoint == NULL)
         return;
-    
-    /* Find a destination object so that we can use get_rangevector() */
-    /* TODO: map string from slaying field */
-    destination = get_map_ob(op->map, waypoint->stats.hp, waypoint->stats.sp);
+ 
+    /* Find the destination map if specified in waypoint (otherwise use current map) */
+    if(waypoint->slaying != NULL && *waypoint->slaying != '\0') {
+        char temp_path[HUGE_BUF];
+        /* TODO: handle unique maps? */
+        destmap = ready_map_name(normalize_path(op->map->path, waypoint->slaying, temp_path), 0);
+    }
 
-    if(destination == NULL)
-    {
-        LOG(llevBug,"BUG: move_waypoint(): no object at destination\n");
+    if(destmap == NULL) {
+        LOG(llevBug,"BUG: move_waypoint(): invalid destination map '%s' for '%s' -> '%s'\n", waypoint->slaying,
+                op->name, waypoint->name);
         return;
     }
     
-    get_rangevector(op, destination, &rv, 0);
-    part = rv.part;
-    dir = rv.direction;
-
-    /* Reached the waypoint? */
-    if((int)rv.distance <= waypoint->stats.grace) {
+    if(! get_rangevector_from_mapcoords(op->map, op->x, op->y, destmap, waypoint->stats.hp, waypoint->stats.sp, &global_rv, 2|8)) 
+        return;
+    dest_rv = &global_rv;
+  
+    /* Reached the final dstination? */
+    if((int)global_rv.distance <= waypoint->stats.grace) {
         object *nextwp = NULL;            
 
         /* Just arrived? */
         if(waypoint->stats.ac == 0) {
-            LOG(llevDebug,"move_waypoint(): reached destination\n");
+            LOG(llevDebug,"move_waypoint(): '%s' reached destination '%s'\n", op->name, waypoint->name);
             
 #ifdef PLUGINS
-  /* GROS: Handle for plugin trigger event */
-  if(waypoint->event_flags&EVENT_FLAG_TRIGGER)
-  {
-    CFParm CFP;
-    CFParm* CFR;
-    int k, l, m;
-    int rtn_script = 0;
-	object *event_obj = get_event_object(waypoint, EVENT_TRIGGER);
-    m = 0;
-	
-    k = EVENT_TRIGGER;
-    l = SCRIPT_FIX_NOTHING;
-    CFP.Value[0] = &k;
-    CFP.Value[1] = op;
-    CFP.Value[2] = waypoint;
-    CFP.Value[3] = NULL;
-    CFP.Value[4] = NULL;
-    CFP.Value[5] = &m;
-    CFP.Value[6] = &m;
-    CFP.Value[7] = &m;
-    CFP.Value[8] = &l;
-    CFP.Value[9] = event_obj->race;
-    CFP.Value[10]= event_obj->slaying;
-    if (findPlugin(event_obj->name)>=0)
-    {
-      CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
-      rtn_script = *(int *)(CFR->Value[0]);
-      if (rtn_script!=0) return;
-    }
-  }
+            /* GROS: Handle for plugin trigger event */
+            if(waypoint->event_flags&EVENT_FLAG_TRIGGER)
+            {
+                CFParm CFP;
+                CFParm* CFR;
+                int k, l, m;
+                int rtn_script = 0;
+                object *event_obj = get_event_object(waypoint, EVENT_TRIGGER);
+                m = 0;
+
+                k = EVENT_TRIGGER;
+                l = SCRIPT_FIX_NOTHING;
+                CFP.Value[0] = &k;
+                CFP.Value[1] = op;
+                CFP.Value[2] = waypoint;
+                CFP.Value[3] = NULL;
+                CFP.Value[4] = NULL;
+                CFP.Value[5] = &m;
+                CFP.Value[6] = &m;
+                CFP.Value[7] = &m;
+                CFP.Value[8] = &l;
+                CFP.Value[9] = event_obj->race;
+                CFP.Value[10]= event_obj->slaying;
+                if (findPlugin(event_obj->name)>=0)
+                {
+                    CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
+                    rtn_script = *(int *)(CFR->Value[0]);
+                    if (rtn_script!=0) return;
+                }
+            }
 #endif
         } /* Just arrived */
         
         /* Waiting at this WP? */
+        /* TODO: use timers instead? */
         if(waypoint->stats.ac < waypoint->stats.wc) {
             waypoint->stats.ac++;
             return;
         }
-        waypoint->stats.ac = 0; /* clear timer */
         
-        CLEAR_FLAG(waypoint, FLAG_CURSED);
+        waypoint->stats.ac = 0;               /* clear timer */
+        CLEAR_FLAG(waypoint, FLAG_CURSED);    /* set inactive */
+        FREE_AND_CLEAR_HASH(waypoint->msg);   /* remove precomputed path */
 
+        /* Start over with the new waypoint, if any*/
         nextwp = find_waypoint(op, waypoint->title);
         if(nextwp) {
-            LOG(llevDebug,"move_waypoint(): Next WP: %s\n", waypoint->title);
+            LOG(llevDebug,"move_waypoint(): '%s' next WP: '%s'\n", op->name, waypoint->title);
             SET_FLAG(nextwp, FLAG_CURSED);
+            waypoint_move(op);
         } else {
-            LOG(llevDebug,"move_waypoint(): No next WP\n");
+            LOG(llevDebug,"move_waypoint(): '%s' no next WP\n", op->name);
         }
 
         return;
+    } /* If we reached the waypoint destination */
+ 
+    /*
+     * Handle precomputed paths
+     */
+
+    /* If we finished our current path. Clear it so that we can get a new one. */
+    if(waypoint->msg != NULL && (waypoint->msg[waypoint->stats.food] == '\0' || global_rv.distance <= 0)) 
+        FREE_AND_CLEAR_HASH(waypoint->msg);
+
+    /* Are we far enough from the target to require a path? */
+    if(global_rv.distance > 1) {
+        if(waypoint->msg == NULL) {
+            /* Request a path if we don't have one */
+            request_new_path(waypoint);
+        } else {
+            /* If we have precalculated path, take direction to next subwaypoint */
+            int destx = waypoint->stats.hp, desty = waypoint->stats.sp;        
+            new_offset = waypoint->stats.food;
+        
+            if(get_path_next(waypoint->msg, &new_offset, &destmap, &destx, &desty)) {
+                get_rangevector_from_mapcoords(op->map, op->x, op->y, destmap, destx, desty, &local_rv, 2 | 8);
+                dest_rv = &local_rv;
+            } else {
+                /* We seem to have an invalid path string. */
+                LOG(llevDebug,"move_waypoint(): invalid path string '%s' in '%s' -> '%s'\n", 
+                        waypoint->msg, op->name, waypoint->name);
+                FREE_AND_CLEAR_HASH(waypoint->msg);
+                request_new_path(waypoint);
+            }
+        }
+    } 
+    
+    /* Did we get closer to our goal last time? */
+    if((int)dest_rv->distance < waypoint->stats.dam)  {
+        waypoint->stats.dam = dest_rv->distance;
+        waypoint->stats.Str = 0; /* Number of times we failed getting closer to (sub)goal */
+    } else if(waypoint->stats.Str++ > 5) {
+        /* Discard the current path, so that we can get a new one */
+        FREE_AND_CLEAR_HASH(waypoint->msg);
     }
     
+    /*
+     * Perform the actual move 
+     */
+    
+    dir = dest_rv->direction;    
+   
     if(QUERY_FLAG(op,FLAG_CONFUSED))
         dir = absdir(dir + RANDOM()%3 + RANDOM()%3 - 2);
 
-    if (!dir)
-    	return;
-
-    if (!QUERY_FLAG(op,FLAG_STAND_STILL)) {
-	
-    if(move_object(op,dir)) /* Can the monster move directly toward waypoint? */
-	    return;
-
-    /* Try move around corners if !close */
-    {
-        int diff;
-	    for(diff = 1; diff <= 2; diff++) {
-		/* try different detours */
-            int m = 1-(RANDOM()&2);          /* Try left or right first? */
-            if(move_object(op,absdir(dir + diff*m)) ||
-                    move_object(op,absdir(dir - diff*m)))
-                return;
+    if (dir && !QUERY_FLAG(op,FLAG_STAND_STILL)) {
+        if(move_object(op,dir)) /* Can the monster move directly toward waypoint? */
+            success = 1;
+        else {
+            int diff;
+            /* Try move around corners otherwise */
+            for(diff = 1; diff <= 2; diff++) {
+                /* try different detours */
+                int m = 1-(RANDOM()&2);          /* Try left or right first? */
+                if(move_object(op,absdir(dir + diff*m)) ||
+                        move_object(op,absdir(dir - diff*m))) {
+                    success = 1;
+                    break;
+                }
+            }
         }
-    }
-    } /* if monster is not standing still */
+
+        /* If we had a local destination and we got close enough to it, accept it... 
+         * (re distance check: dest_rv->distance is distance before the step. 
+         *  if the move was succesful, we got closer to the dest, otherwise
+         *  we can accept a small distance from it)
+         */
+        if(dest_rv == &local_rv && dest_rv->distance == 1) {
+            waypoint->stats.food = new_offset;
+            waypoint->stats.Str = 0;  /* number of fails */
+            waypoint->stats.dam = 30000; /* best distance */
+        }
+    } /* if monster is not standing still */    
 }
     
 /*
@@ -845,11 +976,16 @@ int move_monster(object *op) {
    
     /* doppleganger code to change monster facing to that of the nearest 
 	player */
+    /* Disabled this since 
+     * 1) we don't have dopplegangers and 
+     * 2) the strcmp() is a waste of CPU cycles. We should use a flag or something instead.
+     * Gecko 2004-01-13    
     if ( (op->race != NULL)&& strcmp(op->race,"doppleganger") == 0)
     {
 	    op->face = enemy->face; 
 	    strcpy(op->name,enemy->name);
     }
+    */
 
     /* Move the check for scared up here - if the monster was scared,
      * we were not doing any of the logic below, so might as well save

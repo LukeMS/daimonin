@@ -950,6 +950,9 @@ object *find_marked_object(object *op)
      * player hasn't dropped the item.  We use count on the off chance that
      * an item got reincarnated at some point.
      */
+    /*
+     * FIXME: For completeness, this search should recurse into containers
+     */
     for (tmp=op->inv; tmp; tmp=tmp->below) 
 	{
 		if (IS_SYS_INVISIBLE(tmp))

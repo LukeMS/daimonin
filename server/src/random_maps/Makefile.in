@@ -113,7 +113,7 @@ reader.c: reader.l
 	$(FLEX) -Prmap -i -t reader.l > reader.c
 #	sed -e s/yy/YY/g /tmp/reader.c > reader.c
 
-all: random_map random_map.a
+all: random_map.a # random_map
 
 patchlist::
 	@echo $(SRCS) > .patchlist

@@ -8,8 +8,8 @@ dam 6
 wc 1
 type 15
 sub_type 3
-material 2
-material_real 65
+material 8
+material_real 194
 weight 1750
 value 350
 end

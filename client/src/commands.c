@@ -1279,7 +1279,7 @@ void Map2Cmd(unsigned char *data, int len)
         if (mask & 0x8)
         {
             face = GetShort_String(data+pos); pos +=2;
-			request_face(face,0);
+            request_face(face,0);
             xdata=0;
             set_map_face(x,y,0, face, xdata,-1,pname1);
         }

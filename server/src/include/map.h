@@ -326,6 +326,7 @@ typedef struct mapdef {
 									 * level. When we save, we save darkness_def (tmp maps!).
 									 */
     uint8 compressed;				/* Compression method used */ 
+    uint8 traversed;                            /* Used to mark visited maps when searching through tiled maps */
 
     sint8 humid;					/* humitidy of this tile */
     sint8 windspeed;				/* windspeed of this tile */

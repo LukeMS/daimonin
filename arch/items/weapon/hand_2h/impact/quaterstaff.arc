@@ -2,7 +2,7 @@ Object quaterstaff
 layer 3
 name quaterstaff
 face quaterstaff.101
-weapon_speed 0.02
+weapon_speed 0.0175
 attack_impact 100
 dam 8
 wc 3

@@ -82,6 +82,107 @@ extern int nrofallocobjects,nroffreeobjects;
 #endif
 
 
+/* this updates the orig_map->tile_map[tile_num] value after loading
+ * the map.  It also takes care of linking back the freshly loaded
+ * maps tile_map values if it tiles back to this one.  It returns
+ * the value of orig_map->tile_map[tile_num].  It really only does this
+ * so that it is easier for calling functions to verify success.
+ */
+
+static mapstruct *load_and_link_tiled_map(mapstruct *orig_map, int tile_num)
+{
+    int dest_tile = (tile_num +2) % TILED_MAPS;
+
+	
+    orig_map->tile_map[tile_num] = ready_map_name(orig_map->tile_path[tile_num], MAP_UNIQUE(orig_map)?1:0);
+
+    /* need to do a strcmp here as the orig_map->path is not a shared string */
+    if (!strcmp(orig_map->tile_map[tile_num]->tile_path[dest_tile], orig_map->path))
+	orig_map->tile_map[tile_num]->tile_map[dest_tile] = orig_map;
+
+    return orig_map->tile_map[tile_num];
+}
+
+/* 
+ * The recursive part of the function above.
+ */
+static int relative_tile_position_rec(mapstruct *map1, mapstruct *map2, int *x, int *y) {    
+    int i;
+    
+    if(map1 == map2)
+        return TRUE;
+    
+    map1->traversed = 1;
+    
+    /* TODO: A bidirectional breadth-first search would be more efficient */
+    /* Depth-first search for the destination map */
+    for(i=0; i<4; i++) {
+        if (map1->tile_path[i]) {
+            if (!map1->tile_map[i] || map1->tile_map[i]->in_memory != MAP_IN_MEMORY)
+                load_and_link_tiled_map(map1, i);
+          
+            if (!map1->tile_map[i]->traversed && relative_tile_position_rec(map1->tile_map[i], map2, x, y)) {
+                switch(i) {
+                    case 0: *y -= MAP_HEIGHT(map1->tile_map[i]); return TRUE;  /* North */
+                    case 1: *x += MAP_WIDTH(map1);    return TRUE;  /* East */
+                    case 2: *y += MAP_HEIGHT(map1);   return TRUE;  /* South */
+                    case 3: *x -= MAP_WIDTH(map1->tile_map[i]);  return TRUE;  /* West */
+                }
+            }
+        }
+    }
+    return FALSE;
+}
+
+/* Find the distance between two map tiles on a tiled map.
+ * Returns true if the two tiles are part of the same map.
+ * the distance from the topleft (0,0) corner of map1 to the topleft corner of map2
+ * will be added to x and y. 
+ *
+ * This function does not work well with assymetrically tiled maps.
+ * It will also (naturally) perform bad on very large tilesets such as the world map
+ * as it may need to load all tiles into memory before finding a path between two tiles.
+ * We probably want to handle the world map as a special case, considering that
+ * all tiles are of equal size, and that we might be able to parse their coordinates from
+ * their names...
+ */
+static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int *y)
+{    
+    int i;
+    mapstruct *m;
+
+    /* Save some time in the simplest cases ( very similar to on_same_map() )*/
+    if(map1 == NULL || map2 == NULL)
+        return FALSE;
+    
+    if(map1 == map2)
+        return TRUE;
+
+    for(i=0; i<4; i++) {
+        if (map1->tile_path[i]) {
+            if (!map1->tile_map[i] || map1->tile_map[i]->in_memory != MAP_IN_MEMORY)
+                load_and_link_tiled_map(map1, i);
+            
+            if (map1->tile_map[i] == map2) {
+                switch(i) {
+                    case 0: *y -= MAP_HEIGHT(map1->tile_map[i]); return TRUE;  /* North */
+                    case 1: *x += MAP_WIDTH(map1);    return TRUE;  /* East */
+                    case 2: *y += MAP_HEIGHT(map1);   return TRUE;  /* South */
+                    case 3: *x -= MAP_WIDTH(map1->tile_map[i]);  return TRUE;  /* West */
+                }
+            }
+        }
+    }
+    
+    /* Clear the traversed flag from all maps in memory */
+    for(m = first_map; m != NULL; m=m->next) 
+        m->traversed = 0;
+
+    /* recursive search */
+    return relative_tile_position_rec(map1, map2, x, y);
+}
+
+
 /*
  * Returns the mapstruct which has a name matching the given argument.
  * return NULL if no match is found.
@@ -240,6 +341,53 @@ int check_path (char *name, int prepend_dir)
     
     return (mode);
 #endif
+}
+
+/* Moved from main.c */
+char *normalize_path (char *src, char *dst, char *path) {
+    char *p, *q;
+    char buf[HUGE_BUF];
+/*    static char path[HUGE_BUF]; */
+
+    /*LOG(llevDebug,"path before normalization >%s<>%s<\n", src, dst);*/
+
+    if (*dst == '/') {
+	strcpy (buf, dst);
+
+    } else {
+	strcpy (buf, src);
+	if ((p = strrchr (buf, '/')))
+	    p[1] = '\0';
+	else
+	    strcpy (buf, "/");
+	strcat (buf, dst);
+    }
+
+    q = p = buf;
+    while ((q = strstr (q, "//")))
+	p = ++q;
+
+    *path = '\0';
+    q = path;
+    p = strtok (p, "/");
+    while (p) {
+	if (!strcmp (p, "..")) {
+	    q = strrchr (path, '/');
+	    if (q)
+		*q = '\0';
+	    else {
+		*path = '\0';
+		LOG(llevBug, "BUG: Illegal path.\n");
+	    }
+	} else {
+	    strcat (path, "/");
+	    strcat (path, p);
+	}
+	p = strtok (NULL, "/");
+    }
+    /*LOG(llevDebug,"path after normalization >%s<\n", path);*/
+
+    return (path);
 }
 
 /*
@@ -401,8 +549,8 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
 		 * a.) the tile IS blocked by a player (we still in IS_PLAYER area)
 		 * b.) we are not in any pvp area
 		 * c.) we have a op pointer to check.
-                 *
-		/* we can handle here more exclusive stuff now... Like we can pass spells
+         *
+		 * we can handle here more exclusive stuff now... Like we can pass spells
 		 * through player by checking owner or something... Just insert it here.
 		 */
 
@@ -1105,10 +1253,12 @@ static int load_map_header(FILE *fp, mapstruct *m)
 		}
 		if (!editor) {
 		    if (check_path(value, 1)==-1) {
-			int i;
-			/* Need to try and normalize the path.  msgbuf is safe to use,
+                        /* Gecko: replaced with call to normalize_path */
+                        /*
+                        int i;
+			 * Need to try and normalize the path.  msgbuf is safe to use,
 			 * as that is all read in at one time.
-			 */
+			 *
 			strcpy(msgbuf, m->path);
 			for (i=0; msgbuf[i]!=0; i++)
 			    if (msgbuf[i] == '/') end = msgbuf + i;
@@ -1125,6 +1275,25 @@ static int load_map_header(FILE *fp, mapstruct *m)
 			    } else
 				value = msgbuf;
 			}
+                        */
+                        normalize_path(m->path, value, msgbuf);
+                        if (check_path(msgbuf,1)==-1) {
+                            LOG(llevBug,"BUG: get_map_header: Can not normalize tile path %s %s %s\n",
+                                    m->path, value, msgbuf);
+                            value = NULL;
+                        } else {
+                            mapstruct *neighbour;
+                            int dest_tile = (tile + 1) % TILED_MAPS;                            
+                            value = msgbuf;
+                            
+                            /* If the neighbouring map tile has been loaded, set up the map pointers */
+                            neighbour = has_been_loaded(value);
+                            if(neighbour) {
+                                m->tile_map[tile-1] = neighbour;
+                                if (!strcmp(neighbour->tile_path[dest_tile], m->path))
+                                    neighbour->tile_map[dest_tile] = m;
+                            }
+                        }
 		    } /* if unable to load path as given */
 		} /* if not editor */
 		if (value)
@@ -2033,27 +2202,6 @@ void set_map_reset_time(mapstruct *map) {
 #endif
 }
 
-/* this updates the orig_map->tile_map[tile_num] value after loading
- * the map.  It also takes care of linking back the freshly loaded
- * maps tile_map values if it tiles back to this one.  It returns
- * the value of orig_map->tile_map[tile_num].  It really only does this
- * so that it is easier for calling functions to verify success.
- */
-
-static mapstruct *load_and_link_tiled_map(mapstruct *orig_map, int tile_num)
-{
-    int dest_tile = (tile_num +2) % TILED_MAPS;
-
-	
-    orig_map->tile_map[tile_num] = ready_map_name(orig_map->tile_path[tile_num], MAP_UNIQUE(orig_map)?1:0);
-
-    /* need to do a strcmp here as the orig_map->path is not a shared string */
-    if (!strcmp(orig_map->tile_map[tile_num]->tile_path[dest_tile], orig_map->path))
-	orig_map->tile_map[tile_num]->tile_map[dest_tile] = orig_map;
-
-    return orig_map->tile_map[tile_num];
-}
-
 
 /* This is basically the same as out_of_map above, but
  * instead we return NULL if no map is valid (coordinates
@@ -2114,7 +2262,7 @@ y_test2:
  * This is used by get_player to determine where the other
  * creature is.  get_rangevector takes into account map tiling,
  * so you just can not look the the map coordinates and get the
- * righte value.  distance_x/y are distance away, which
+ * right value.  distance_x/y are distance away, which
  * can be negativbe.  direction is the crossfire direction scheme
  * that the creature should head.  part is the part of the
  * monster that is closest.
@@ -2127,37 +2275,23 @@ y_test2:
  * if the objects are not on maps, results are also likely to
  * be unexpected
  *
- * currently, the only flag supported (0x1) is don't translate for
- * closest body part.
+ * Flags: 0x1 is don't translate for closest body part.
+ *        0x2 is do recursive search on adjacent tiles.
+ * + any flags accepted by get_rangevector_from_mapcoords() below.
+ *
+ * Returns TRUE if successful, or FALSE otherwise.
  */
 
-void get_rangevector(object *op1, object *op2, rv_vector *retval, int flags)
+int get_rangevector(object *op1, object *op2, rv_vector *retval, int flags)
 {
     object	*best;
 
-    if (op1->map->tile_map[0] == op2->map) {
-	retval->distance_x = op2->x - op1->x;
-	retval->distance_y = -(op1->y +(MAP_HEIGHT(op2->map)- op2->y));
-
-    }
-    else if (op1->map->tile_map[1] == op2->map) {
-	retval->distance_y = op2->y - op1->y;
-	retval->distance_x = (MAP_WIDTH(op1->map) - op1->x) + op2->x;
-    }
-    else if (op1->map->tile_map[2] == op2->map) {
-	retval->distance_x = op2->x - op1->x;
-	retval->distance_y = (MAP_HEIGHT(op1->map) - op1->y) +op2->y;
-
-    }
-    else if (op1->map->tile_map[3] == op2->map) {
-	retval->distance_y = op2->y - op1->y;
-	retval->distance_x = -(op1->x +(MAP_WIDTH(op2->map)- op2->y));
-    }
-    else if (op1->map == op2->map) {
-	retval->distance_x = op2->x - op1->x;
-	retval->distance_y = op2->y - op1->y;
-
-    }
+    if(! get_rangevector_from_mapcoords(
+                op1->map, op1->x, op1->y, 
+                op2->map, op2->x, op2->y, 
+                retval, flags | 0x04 | 0x08))
+        return FALSE;
+    
     best = op1;
     /* If this is multipart, find the closest part now */
     if (!(flags & 0x1) && op1->more) {
@@ -2187,51 +2321,85 @@ void get_rangevector(object *op1, object *op2, rv_vector *retval, int flags)
     retval->part = best;
     retval->distance = isqrt(retval->distance_x*retval->distance_x + retval->distance_y*retval->distance_y);
     retval->direction = find_dir_2(-retval->distance_x, -retval->distance_y);
+
+    return TRUE;
 }
 
-/* this is basically the same as get_rangevector above, but instead of 
- * the first parameter being an object, it instead is the map
- * and x,y coordinates - this is used for path to player - 
- * since the object is not infact moving but we are trying to traverse
- * the path, we need this.
- * flags has no meaning for this function at this time - I kept it in to
- * be more consistant with the above function and also in case they are needed
- * for something in the future.  Also, since no object is pasted, the best
- * field of the rv_vector is set to NULL.
+/*
+ * this is the base for get_rangevector above, but can more generally compute the
+ * rangvector between any two points on any maps. 
+ * 
+ * The part field of the rangevector is always set to NULL by this function.
+ * (Since we don't actually know about any objects)
+ *
+ * If the function fails (because of the maps being separate), it will return FALSE and
+ * the vector is not otherwise touched. Otherwise it will return TRUE.
+ * 
+ * Calculates manhattan distance (dx+dy) per default. (fast)
+ * - Flags: 
+ *   0x4 - calculate euclidian (straight line) distance (slow)
+ *   0x8 - calculate diagonal  (max(dx + dy)) distance   (fast)
+ *   0x8|0x04 - don't calculate distance (or direction) (fastest)
+ *
  */
-
-void get_rangevector_from_mapcoord(mapstruct  *m, int x, int y, object *op2, rv_vector *retval,int flags)
-{
-    if (m->tile_map[0] == op2->map) {
-	retval->distance_x = op2->x - x;
-	retval->distance_y = -(y +(MAP_HEIGHT(op2->map)- op2->y));
-
-    }
-    else if (m->tile_map[1] == op2->map) {
-	retval->distance_y = op2->y - y;
-	retval->distance_x = (MAP_WIDTH(m) - x) + op2->x;
-    }
-    else if (m->tile_map[2] == op2->map) {
-	retval->distance_x = op2->x - x;
-	retval->distance_y = (MAP_HEIGHT(m) - y) +op2->y;
-
-    }
-    else if (m->tile_map[3] == op2->map) {
-	retval->distance_y = op2->y - y;
-	retval->distance_x = -(x +(MAP_WIDTH(op2->map)- op2->y));
-    }
-    else if (m == op2->map) {
-	retval->distance_x = op2->x - x;
-	retval->distance_y = op2->y - y;
-
-    }
+int get_rangevector_from_mapcoords(mapstruct *map1, int x1, int y1, mapstruct *map2, int x2, int y2,
+        rv_vector *retval, int flags)
+{    
     retval->part = NULL;
-	/* this distance calc is only slighlty less accurate as the 2nd,
-	 * but we avoid 2 muls and a square root .
-	 */
-	retval->distance =  abs(retval->distance_x)+abs(retval->distance_y);
-/*	retval->distance = isqrt(retval->distance_x*retval->distance_x + retval->distance_y*retval->distance_y);*/
+
+    if (map1 == map2) {
+	retval->distance_x = x2 - x1;
+	retval->distance_y = y2 - y1;
+    }
+    else if (map1->tile_map[0] == map2) {
+	retval->distance_x = x2 - x1;
+	retval->distance_y = -(y1 +(MAP_HEIGHT(map2)- y2));
+    }
+    else if (map1->tile_map[1] == map2) {
+	retval->distance_y = y2 - y1;
+	retval->distance_x = (MAP_WIDTH(map1) - x1) + x2;
+    }
+    else if (map1->tile_map[2] == map2) {
+	retval->distance_x = x2 - x1;
+	retval->distance_y = (MAP_HEIGHT(map1) - y1) + y2;
+    }
+    else if (map1->tile_map[3] == map2) {
+	retval->distance_y = y2 - y1;
+	retval->distance_x = -(x1 +(MAP_WIDTH(map2)- x2));
+    } 
+    else if (flags & 0x02) {
+        retval->distance_x = x2;
+        retval->distance_y = y2;
+        
+        if(! relative_tile_position(map1, map2, &retval->distance_x, &retval->distance_y)) {
+            LOG(llevDebug,"DBUG: get_rangevector: No tileset path between maps '%s' and '%s'\n", 
+                    map1->path, map2->path);
+            return FALSE;
+        }
+        
+        retval->distance_x -= x1;
+        retval->distance_y -= y1;
+    } 
+    else {
+        LOG(llevDebug,"DBUG: get_rangevector: objects not on adjacent maps\n");
+        return FALSE;
+    }
+  
+    switch(flags & (0x04 | 0x08)) {
+        case 0x00:            
+            retval->distance =  abs(retval->distance_x)+abs(retval->distance_y);
+            break;
+        case 0x04:
+            retval->distance = isqrt(retval->distance_x*retval->distance_x + retval->distance_y*retval->distance_y);
+            break;
+        case 0x08:
+            retval->distance =  MAX(abs(retval->distance_x),abs(retval->distance_y));
+            break;
+        case (0x04 | 0x08):
+            return TRUE;
+    }
     retval->direction = find_dir_2(-retval->distance_x, -retval->distance_y);
+    return TRUE;
 }
 
 /* Returns true of op1 and op2 are effectively on the same map
@@ -2260,3 +2428,5 @@ int on_same_map(object *op1, object *op2)
 	 */
     return FALSE;
 }
+
+

@@ -325,12 +325,12 @@ treasureone random_weapons_missile
   more
   arch bow
     chance 10
-    difficulty 10
+    difficulty 7
     magic 1
   more
   arch bow_long
     chance 5
-    difficulty 25
+    difficulty 19
     magic 1
   more
   arch sling_small
@@ -339,12 +339,12 @@ treasureone random_weapons_missile
   more
   arch sling
     chance 10
-    difficulty 10
+    difficulty 7
     magic 1
   more
   arch sling_heavy
     chance 5
-    difficulty 25
+    difficulty 19
     magic 1
   more
   arch crossbow_small
@@ -353,12 +353,12 @@ treasureone random_weapons_missile
   more
   arch crossbow
     chance 10
-    difficulty 10
+    difficulty 7
     magic 1
   more
   arch crossbow_large
     chance 5
-    difficulty 25
+    difficulty 19
     magic 1
   end
 treasureone random_weapons_melee
@@ -389,28 +389,36 @@ treasureone random_weapons_1h
   end
 treasureone random_weapons_2h
   list random_weapons_cleave_2h
+    difficulty 11
     chance 25
   more
   list random_weapons_slash_2h
+    difficulty 11
     chance 25
   more
   list random_weapons_impact_2h
+    difficulty 11
     chance 25
   more
   list random_weapons_pierce_2h
+    difficulty 11
     chance 25
   end
 treasureone random_weapons_pole
   list random_weapons_cleave_pole
+    difficulty 11
     chance 25
   more
   list random_weapons_slash_pole
+    difficulty 11
     chance 25
   more
   list random_weapons_impact_pole
+    difficulty 11
     chance 25
   more
   list random_weapons_pierce_pole
+    difficulty 11
     chance 25
   end
 treasureone random_weapons_cleave
@@ -418,33 +426,41 @@ treasureone random_weapons_cleave
    chance 60
   more
   list random_weapons_cleave_2h
+    difficulty 11
    chance 25
   more
   list random_weapons_cleave_pole
+    difficulty 11
    chance 15
 end
 treasureone random_weapons_cleave_1h
   arch axe
+  difficulty 3
   magic 1
   chance 15
   more
   arch axe_battle
+  difficulty 7
   magic 1
   chance 10
   more
   arch axe_broad
+  difficulty 7
   magic 1
   chance 10
   more
   arch axe_double
+  difficulty 7
   magic 1
   chance 10
   more
   arch axe_great
+  difficulty 7
   magic 1
   chance 10
   more
   arch axe_hand
+  difficulty 3
   magic 1
   chance 15
   more
@@ -453,14 +469,17 @@ treasureone random_weapons_cleave_1h
   chance 15
   more
   arch axe_war
+  difficulty 3
   magic 1
   chance 10
   more
   arch cleaver_battle
+  difficulty 7
   magic 1
   chance 10
   more
   arch cleaver_war
+  difficulty 3
   magic 1
   chance 15
   more
@@ -473,6 +492,7 @@ treasureone random_weapons_cleave_1h
   chance 10
   more
   arch whip_war
+  difficulty 7
   magic 1
   chance 10
 end
@@ -519,9 +539,11 @@ treasureone random_weapons_slash
    chance 60
   more
   list random_weapons_slash_2h
+    difficulty 11
    chance 25
   more
   list random_weapons_slash_pole
+    difficulty 11
    chance 15
 end
 treasureone random_weapons_slash_1h
@@ -530,38 +552,47 @@ treasureone random_weapons_slash_1h
   chance 20
   more
   arch bastardsword
+  difficulty 7
   magic 1
   chance 20
   more
   arch broadsword
+  difficulty 7
   magic 1
   chance 20
   more
   arch falchion
+  difficulty 7
   magic 1
   chance 20
   more
   arch gladius
+  difficulty 3
   magic 1
   chance 20
   more
   arch katana
+  difficulty 7
   magic 1
   chance 20
   more
   arch longsword
+  difficulty 7
   magic 1
   chance 20
   more
   arch ninjato
+  difficulty 3
   magic 1
   chance 20
   more
   arch scimitar
+  difficulty 7
   magic 1
   chance 20
   more
   arch scythe_military
+  difficulty 7
   magic 1
   chance 20
   more
@@ -570,14 +601,17 @@ treasureone random_weapons_slash_1h
   chance 20
   more
   arch sword
+  difficulty 3
   magic 1
   chance 20
   more
   arch sword_curved
+  difficulty 3
   magic 1
   chance 20
   more
   arch tsurugi
+  difficulty 7
   magic 1
   chance 20
   more
@@ -586,6 +620,7 @@ treasureone random_weapons_slash_1h
   chance 20
   more
   arch wakizashi
+  difficulty 3
   magic 1
   chance 20
 end
@@ -636,13 +671,16 @@ treasureone random_weapons_impact
    chance 60
   more
   list random_weapons_impact_2h
+    difficulty 11
    chance 25
   more
   list random_weapons_impact_pole
+    difficulty 11
    chance 15
 end
 treasureone random_weapons_impact_1h
   arch ancus
+  difficulty 7
   magic 1
   chance 20
   more
@@ -651,6 +689,7 @@ treasureone random_weapons_impact_1h
   chance 20
   more
   arch club_big
+  difficulty 3
   magic 1
   chance 20
   more
@@ -659,22 +698,27 @@ treasureone random_weapons_impact_1h
   chance 20
   more
   arch club_spiked
+  difficulty 3
   magic 1
   chance 20
   more
   arch flail_war
+  difficulty 7
   magic 1
   chance 20
   more
   arch hammer
+  difficulty 3
   magic 1
   chance 20
   more
   arch hammer_battle
+  difficulty 7
   magic 1
   chance 20
   more
   arch hammer_military
+  difficulty 3
   magic 1
   chance 20
   more
@@ -683,34 +727,42 @@ treasureone random_weapons_impact_1h
   chance 20
   more
   arch hammer_war
+  difficulty 7
   magic 1
   chance 20
   more
   arch mace
+  difficulty 3
   magic 1
   chance 20
   more
   arch mace_battle
+  difficulty 7
   magic 1
   chance 20
   more
   arch mace_spiked
+  difficulty 3
   magic 1
   chance 20
   more
   arch mace_spiked_war
+  difficulty 7
   magic 1
   chance 20
   more
   arch mace_war
+  difficulty 7
   magic 1
   chance 20
   more
   arch mstar
+  difficulty 3
   magic 1
   chance 20
   more
   arch mstar_large
+  difficulty 7
   magic 1
   chance 20
   more
@@ -723,10 +775,12 @@ treasureone random_weapons_impact_1h
   chance 20
   more
   arch nunchacu_war
+  difficulty 3
   magic 1
   chance 20
   more
   arch shootingstar
+  difficulty 7
   magic 1
   chance 20
 end
@@ -777,17 +831,21 @@ treasureone random_weapons_pierce
    chance 60
   more
   list random_weapons_pierce_2h
+    difficulty 11
    chance 25
   more
   list random_weapons_pierce_pole
+    difficulty 11
    chance 15
 end
 treasureone random_weapons_pierce_1h
   arch athame
+  difficulty 3
   magic 1
   chance 14
   more
   arch cutlass
+  difficulty 3
   magic 1
   chance 20
   more
@@ -804,30 +862,37 @@ treasureone random_weapons_pierce_1h
   chance 8
   more
   arch degen
+  difficulty 7
   magic 1
   chance 20
   more
   arch flamberge
+  difficulty 7
   magic 1
   chance 20
   more
   arch pallasch
+  difficulty 7
   magic 1
   chance 20
   more
   arch rapier
+  difficulty 7
   magic 1
   chance 20
   more
   arch saber
+  difficulty 7
   magic 1
   chance 20
   more
   arch shiavona
+  difficulty 7
   magic 1
   chance 20
   more
   arch tanto
+  difficulty 3
   magic 1
   chance 14
 end
@@ -1631,5 +1696,6 @@ treasureone random_style1
  chance 50
 end
 treasureone random_test
-list random_weapons_melee
+list random_weapons_slash
+ artifact_chance 100
 end

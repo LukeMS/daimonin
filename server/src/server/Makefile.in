@@ -65,6 +65,7 @@ SRCS = \
 	swap.c\
 	time.c\
 	timers.c\
+	pathfinder.c\
 	weather.c
 
 ALLFILES = $(SRCS) Makefile.in
@@ -128,7 +129,7 @@ distclean:: clean
 	$(RM) -f Makefile
 
 .c.o:
-	$(CC) $(CFLAGS) $(INCLUDES) -c $*.c
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 all: daimonin_server
 

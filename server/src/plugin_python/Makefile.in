@@ -34,6 +34,8 @@ INCLUDE   = -I./include -I../include -I$(INCLUDEROOT)/python$(PYTHONVER)
 
 CFLAGS    = -g -O2 -fPIC
 
+DEPEND = @DEPEND@
+
 LIBPYTHON = $(LIBROOT)/python$(PYTHONVER)/config/libpython$(PYTHONVER).a
 
 LDFLAGS=	-export-dynamic -rdynamic -Xlinker -Bsymbolic
@@ -56,3 +58,7 @@ plugin_python : $(OBJECTS)
 
 plugin_python.o : plugin_python.c
 	$(CC) $(CFLAGS) $(INCLUDE) -c plugin_python.c
+
+depend:
+	$(DEPEND) $(DEPENDFLAGS) -- $(CFLAGS) $(INCLUDE) 
+

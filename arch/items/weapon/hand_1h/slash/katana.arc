@@ -2,7 +2,7 @@ Object katana
 name katana
 layer 3
 face katana.101
-weapon_speed 0.0225
+weapon_speed 0.025
 attack_slash 100
 dam 6
 wc 1
