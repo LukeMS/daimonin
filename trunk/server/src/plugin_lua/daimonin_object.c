@@ -266,11 +266,19 @@ static int GameObject_GetSkill(lua_State *L)
     /* Browse the inventory of object to find a matching skill or exp_obj. */
     for (tmp = WHO->inv; tmp; tmp = tmp->below)
     {
-        if (tmp->type == SKILL && tmp->stats.sp == type)
-            return push_object(L, &GameObject, tmp);
-
-        if (tmp->type == EXPERIENCE && tmp->sub_type1 == id)
-            return push_object(L, &GameObject, tmp);
+        if (tmp->type == type)
+        {
+            if (tmp->type == SKILL)
+            {
+                if (tmp->stats.sp == id)
+                    return push_object(L, &GameObject, tmp);
+            }
+            else if (tmp->type == EXPERIENCE)
+            {
+                if (tmp->sub_type1 == id)
+                    return push_object(L, &GameObject, tmp);
+            }
+        }
     }
 
     return 0;

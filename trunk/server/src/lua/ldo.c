@@ -274,7 +274,7 @@ static StkId callrethooks (lua_State *L, StkId firstResult) {
 }
 
 
-void luaD_poscall (lua_State *L, int wanted, StkId firstResult) { 
+void luaD_poscall (lua_State *L, int wanted, StkId firstResult) {
   StkId res;
   if (L->hookmask & LUA_MASKRET)
     firstResult = callrethooks(L, firstResult);
@@ -297,7 +297,7 @@ void luaD_poscall (lua_State *L, int wanted, StkId firstResult) {
 ** The arguments are on the stack, right after the function.
 ** When returns, all the results are on the stack, starting at the original
 ** function position.
-*/ 
+*/
 void luaD_call (lua_State *L, StkId func, int nResults) {
   StkId firstResult;
   lua_assert(!(L->ci->state & CI_CALLING));
@@ -366,7 +366,7 @@ LUA_API int lua_resume (lua_State *L, int nargs) {
   else if (!(L->ci->state & CI_YIELD))  /* not inside a yield? */
     return resume_error(L, "cannot resume non-suspended coroutine");
   old_allowhooks = L->allowhook;
-  lua_assert(L->errfunc == 0 && L->nCcalls == 0);
+  lua_assert(L->nCcalls == 0);
   status = luaD_rawrunprotected(L, resume, &nargs);
   if (status != 0) {  /* error? */
     L->ci = L->base_ci;  /* go back to initial level */

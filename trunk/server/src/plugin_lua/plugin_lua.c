@@ -494,14 +494,16 @@ static int Game_IsValid(lua_State *L)
 /* Our error handler. Tries to call a lua error handler called "_error" */
 static int luaError(lua_State *L)
 {
-    if(error_handler_ref != LUA_NOREF) {
+    if (error_handler_ref != LUA_NOREF)
+    {
         lua_rawgeti(L, LUA_REGISTRYINDEX, error_handler_ref);
         lua_pushvalue(L, LUA_GLOBALSINDEX);
         lua_setfenv(L, -2); /* Make sure it runs in the thread environment */
         lua_pushvalue(L, 1);
         lua_call(L,1,1);
         return 1;
-    } else
+    }
+    else
         return 1;
 }
 
@@ -777,9 +779,6 @@ void resume_detached_contexts()
             } else
             {
                 const char *error;
-                lua_pushcclosure(L,luaError,0);
-                lua_pushvalue(L, -2);
-                lua_pcall(L, 1, 1, 0);
 
                 if ((error = lua_tostring(L, -1)))
                     LOG(llevDebug, "LUA - %s\n", error);
@@ -1016,8 +1015,12 @@ static int RunLuaScript(struct lua_context *context)
         lua_pushvalue(L, LUA_GLOBALSINDEX);
         lua_setfenv(L, -2);
 
+        lua_pushcfunction(L, luaError);
+        lua_pushvalue(L, -2);
+        lua_remove(L, -3);
+
         /* Call the function as a coroutine */
-        res = lua_resume(L, 0);
+        res = lua_coroutine(L, 0, -2);
 
         if (res == 0)
         {
@@ -1028,12 +1031,6 @@ static int RunLuaScript(struct lua_context *context)
             return 0;
         }
     }
-
-    /* Call our error function. */
-    /* TODO: set it up as a error handler so we can get a stack traceback */
-    lua_pushcclosure(L,luaError,0);
-    lua_pushvalue(L, -2);
-    lua_pcall(L, 1, 1, 0);
 
     if ((error = lua_tostring(L, -1)))
         LOG(llevDebug, "LUA - %s\n", error);
