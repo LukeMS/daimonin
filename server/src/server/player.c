@@ -299,6 +299,7 @@ archetype *get_player_archetype(archetype* at)
 }
 
 
+#if 0
 /* ARGH. this friendly list is a GLOBAL list. assuming 100 players on 75 map ... and every
  * mob on every map (perhaps some hundreds) will move through ALL of object of the
  * friendly list every time they try to target... 
@@ -378,6 +379,7 @@ object *get_nearest_player(object *mon) {
 #endif
     return op;
 }
+#endif
 
 /* I believe this can safely go to 2, 3 is questionable, 4 will likely
  * result in a monster paths backtracking.  It basically determines how large a 

@@ -142,12 +142,11 @@ static struct {
     
     /* TODO: make enemy & owner settable (requires HOOKS for set_npc_enemy() and set_owner()) */
     {"enemy",        FIELDTYPE_OBJECTREF, offsetof(object, enemy), FIELDFLAG_READONLY, offsetof(object, enemy_count)},
-    {"attacked_by",  FIELDTYPE_OBJECTREF, offsetof(object, attacked_by), FIELDFLAG_READONLY, offsetof(object, attacked_by_count)},
+// TODO: remove    {"attacked_by",  FIELDTYPE_OBJECTREF, offsetof(object, attacked_by), FIELDFLAG_READONLY, offsetof(object, attacked_by_count)},
     {"owner",        FIELDTYPE_OBJECTREF, offsetof(object, owner), FIELDFLAG_READONLY, offsetof(object, ownercount)},
     
     {"x",            FIELDTYPE_SINT16, offsetof(object, x), FIELDFLAG_READONLY},
     {"y",            FIELDTYPE_SINT16, offsetof(object, y), FIELDFLAG_READONLY},
-    {"attacked_by_distance", FIELDTYPE_SINT16, offsetof(object, attacked_by_distance), 0},
     {"last_damage",  FIELDTYPE_UINT16, offsetof(object, last_damage), 0},
     {"terrain_type", FIELDTYPE_UINT16, offsetof(object, terrain_type), 0},
     {"terrain_flag", FIELDTYPE_UINT16, offsetof(object, terrain_flag), 0},

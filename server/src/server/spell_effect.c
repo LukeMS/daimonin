@@ -158,7 +158,7 @@ void aggravate_monsters(object *op) {
 	  CLEAR_FLAG(tmp, FLAG_SLEEP);
           if (!QUERY_FLAG(tmp, FLAG_FRIENDLY))
           {
-            set_npc_enemy(tmp, op, NULL);
+            register_npc_enemy(tmp, op, NULL);
           }
         }
     }
@@ -582,7 +582,7 @@ int probe(object *op)
 }
 
 int cast_invisible(object *op, object *caster, int spell_type) {
-  object *tmp;
+  /* object *tmp; */
 
   /*
   if(op->invisible>1000) {
@@ -615,10 +615,11 @@ int cast_invisible(object *op, object *caster, int spell_type) {
   new_draw_info(NDI_UNIQUE, 0,op,"You can't see your hands!");
   update_object(op,UP_OBJ_FACE);
 
+  /* Gecko: removed entirely. This is instead handled in mob AI core */
   /* Gecko: fixed to only go through active objects. Nasty loop anyway... */
-  for (tmp = active_objects; tmp != NULL; tmp = tmp->active_next)
+/*  for (tmp = active_objects; tmp != NULL; tmp = tmp->active_next)
     if (tmp->enemy == op)
-        set_npc_enemy(tmp, NULL, NULL);
+        register_npc_enemy(tmp, NULL);*/
   return 1;
 }
 
@@ -1952,7 +1953,7 @@ int summon_pet(object *op, int dir, SpellTypeFrom item) {
 	    }
 	}
         tmp->speed_left = -1;
-        set_npc_enemy(tmp, op->enemy, NULL);
+        register_npc_known_obj(tmp, op->enemy, FRIENDSHIP_ATTACK);
         tmp->type = 0;
       }
       if(head == NULL)
@@ -3612,7 +3613,7 @@ object *fix_summon_pet(archetype *at, object *op, int dir, int type ) {
 	  tmp->move_type = PETMOVE;
           tmp->speed_left = -1;
           tmp->type = 0;
-          set_npc_enemy(tmp->enemy, op->enemy, NULL);
+          register_npc_known_obj(tmp->enemy, op->enemy, FRIENDSHIP_ATTACK);
         } else
 	  tmp->type = GOLEM;
        

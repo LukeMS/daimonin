@@ -41,6 +41,23 @@ typedef struct astar_node
     float heuristic;            /* Estimated cost of reaching the goal from this node */
 } path_node;
 
+struct path_segment {
+    struct path_segment *next;
+    int x, y;
+    const char *map;
+};
+
+extern void return_poolchunk(void *, mempool_id);
+extern void free_string_shared(const char *str);
+static inline void free_path(struct path_segment *p) 
+{ 
+    for(; p; p=p->next) {
+        free_string_shared(p->map);
+        return_poolchunk(p, POOL_PATHSEGMENT);
+        /* assumes poolchunk is still valid */
+    }
+}
+
 /* Psuedo-flag used to mark waypoints as "has requested path" */
 /* Reuses a non-saved flag                                    */
 #define FLAG_WP_PATH_REQUESTED FLAG_PARALYZED

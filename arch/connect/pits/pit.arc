@@ -17,7 +17,7 @@ hole.106
 hole.107
 hole.108
 mina
-anim_speed 1
+anim_speed 0
 is_animated 0
 wc 7
 maxsp 0
@@ -41,7 +41,7 @@ hole.106
 hole.107
 hole.108
 mina
-anim_speed 1
+anim_speed 0
 is_animated 0
 walk_on 1
 wc 0

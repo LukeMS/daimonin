@@ -1,23 +1,28 @@
-GetSkillExperience
+GetSkill
 ------------------------------------------------------------
-  object.GetSkillExperience(skill)
-    FIXME: What do we expect in return here?
+  object.GetSkill(type, id)
+    This function will fetch a skill or exp_skill object
   Parameter types:
-    integer skill
+    integer type
+    integer id
   Possible return types:
-    integer
+    object
+    None
   Status:
-    Stable
+    Tested
 
-SetSkillExperience
+SetSkill
 ------------------------------------------------------------
-  object.SetSkillExperience(skillid,value)
+  object.SetSkill(type, skillid, level, value)
     Sets objects's experience in the skill skillid as close to value
     as permitted. There is currently a limit of 1/4 of a level.
     There's no limit on exp reduction.
     FIXME overall experience is not changed (should it be?)
+    FIXME need updated documentation
   Parameter types:
+    integer type
     integer skillid
+    integer level
     integer value
   Possible return types:
     None
@@ -143,6 +148,35 @@ Take
   Status:
     Temporary disabled (see commands.c)
 
+Deposit
+------------------------------------------------------------
+  object.Deposit(deposit_object, string)
+    deposit value or string money from object in deposit_object.
+    Control first object has that amount of money, then remove it
+    from object and add it in ->value of deposit_object.
+  Parameter types:
+    object deposit_object
+    string string
+  Possible return types:
+    integer
+  Status:
+    Tested
+
+Withdraw
+------------------------------------------------------------
+  object.Withdraw(deposit_object, string)
+    withdraw value or string money from object in deposit_object.
+    Control first object has that amount of money, then remove it
+    from object and add it in ->value of deposit_object.
+    FIXME Needs updated documentation
+  Parameter types:
+    object deposit_object
+    string string
+  Possible return types:
+    integer
+  Status:
+    Tested
+
 Communicate
 ------------------------------------------------------------
   object.Communicate(message)
@@ -153,30 +187,34 @@ Communicate
   Possible return types:
     None
   Status:
-    Stable
+    Tested
 
 Say
 ------------------------------------------------------------
-  object.Say(message)
+  object.Say(message, mode)
     object says message to everybody on its map
+    FIXME needs documentation of mode
   Parameter types:
     string message
+    (optional) integer mode
   Possible return types:
     None
   Status:
-    Stable
+    Tested
 
 SayTo
 ------------------------------------------------------------
-  object.SayTo(target, message)
+  object.SayTo(target, message, mode)
     NPC talks only to player but map get a "xx talks to" msg too.
+    FIXME needs documentation of mode parameter
   Parameter types:
     object target
     string message
+    (optional) integer mode
   Possible return types:
     None
   Status:
-    Stable
+    Tested
 
 Write
 ------------------------------------------------------------
@@ -201,7 +239,7 @@ SetGender
   Possible return types:
     None
   Status:
-    Stable
+    Tested
 
 SetRank
 ------------------------------------------------------------
@@ -214,7 +252,7 @@ SetRank
     object
     None
   Status:
-    Stable
+    Tested
 
 SetAlignment
 ------------------------------------------------------------
@@ -225,7 +263,7 @@ SetAlignment
     object
     None
   Status:
-    Stable
+    Tested
 
 GetAlignmentForce
 ------------------------------------------------------------
@@ -417,6 +455,33 @@ CreatePlayerForce
   Status:
     Stable.
 
+CheckQuestObject
+------------------------------------------------------------
+  object.CheckQuestObject(archetype, name)
+    We get and check the player has a misc'ed quest object
+    : If so, the player has usally solved this quest before.
+  Parameter types:
+    string archetype
+    string name
+  Possible return types:
+    object
+    None
+  Status:
+    Stable
+
+AddQuestObject
+------------------------------------------------------------
+  object.AddQuestObject(archetype, name)
+    Add the misc'ed quest object to players quest container.
+    : create the quest container if needed
+  Parameter types:
+    string archetype
+    string name
+  Possible return types:
+    None
+  Status:
+    Stable
+
 CreatePlayerInfo
 ------------------------------------------------------------
   object.CreatePlayerInfo(name)
@@ -468,7 +533,7 @@ CreateInvisibleInside
 
 CreateObjectInside
 ------------------------------------------------------------
-  object.CreateObjectInside(archname, identified, value)
+  object.CreateObjectInside(archname, identified, number, value)
     Creates an object from archname and inserts into object.
     identified is either Daimonin.IDENTIFIED or Daimonin.UNIDENTIFIED
     If value is >= 0 it will be used as the new object's value,
@@ -476,32 +541,28 @@ CreateObjectInside
   Parameter types:
     string archname
     integer identified
-    integer value
+    integer number
+    (optional) integer value
   Possible return types:
     object
   Status:
     Stable
     i must change this a bit - only REAL arch names - not object names
 
-CheckArchInventory
-------------------------------------------------------------
-  object.CheckArchInventory(arch_name)
-    Search for an arch_name in object's inventory
-  Parameter types:
-    string arch_name
-  Possible return types:
-    object
-    None
-  Status:
-    Stable
-
 CheckInventory
 ------------------------------------------------------------
-  object.CheckInventory(name)
+  object.CheckInventory(mode, arch, name, title, type)
     returns the first found object with the specified name if found
     in object's inventory, or None if it wasn't found.
+    title, arch or object == None will be ignored for search
+    also type == -1
+    mode: 0=only inventory, 1: inventory and container, 2: all inv.
   Parameter types:
-    string name
+    integer mode
+    string or None arch
+    (optional) string or None name
+    (optional) string or None title
+    (optional) integer type
   Possible return types:
     object
     None
@@ -525,7 +586,9 @@ SetSaveBed
 Remove
 ------------------------------------------------------------
   object.Remove()
-    Permanently removes object from the game.
+    Takes the object out of whatever map or inventory it is in. The
+    object can then be inserted or teleported somewhere else, or just
+    left alone for the garbage collection to take care of.
   Parameter types:
   Possible return types:
     None
@@ -533,7 +596,6 @@ Remove
     Tested
     Gecko  : This function is DANGEROUS. Added limitations on what can be
     removed to avoid some of the problems
-    hm, this should be named delete or free object...
 
 SetPosition
 ------------------------------------------------------------
@@ -606,6 +668,19 @@ GetArchName
   Status:
     Tested
 
+ShowCost
+------------------------------------------------------------
+  buyer.ShowCost(value)
+    Returns a string describing value as x gold, x silver, x copper
+    : cost string comes from shop.c and is temporary STATIC
+    : note: whoptr is not used - perhaps we use this in future with it
+  Parameter types:
+    integer value
+  Possible return types:
+    string
+  Status:
+    Tested
+
 GetItemCost
 ------------------------------------------------------------
   buyer.GetItemCost(object,type)
@@ -621,11 +696,12 @@ GetItemCost
 GetMoney
 ------------------------------------------------------------
   buyer.GetMoney()
+    returns the amount of money the object carries in copper
   Parameter types:
   Possible return types:
     integer
   Status:
-    Untested
+    Tested
 
 PayForItem
 ------------------------------------------------------------
@@ -647,7 +723,7 @@ PayAmount
   Possible return types:
     integer
   Status:
-    Stable
+    Tested
 
 SendCustomCommand
 ------------------------------------------------------------
@@ -664,8 +740,8 @@ Clone
   object.Clone(mode)
     mode = Daimonin.CLONE_WITH_INVENTORY (default) or
     Daimonin.CLONE_WITHOUT_INVENTORY
-    You _MUST_ do something with the clone (TeleportTo() or
-    InsertInside() are useful functions for this)
+    You should do something with the clone. TeleportTo() or
+    InsertInside() are useful functions for this.
   Parameter types:
     (optional) integer mode
   Possible return types:

@@ -1616,6 +1616,10 @@ SOURCE=..\..\..\src\include\material.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\src\include\monster.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\src\include\newclient.h
 # End Source File
 # Begin Source File

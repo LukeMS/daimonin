@@ -26,7 +26,7 @@ lever.131
 lever.132
 mina
 is_animated 0
-anim_speed 1
+anim_speed 0
 is_turnable 1
 direction 1
 end

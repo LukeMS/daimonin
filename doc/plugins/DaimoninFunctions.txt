@@ -50,7 +50,7 @@ CheckMap
   Possible return types:
     object
   Status:
-    Untested
+    Unfinished. DO NOT USE!
 
 FindPlayer
 ------------------------------------------------------------
@@ -96,6 +96,16 @@ WhatIsMessage
 ------------------------------------------------------------
   Daimonin.WhatIsMessage()
     Gets the actual message in SAY events.
+  Parameter types:
+  Possible return types:
+    string
+  Status:
+    Stable
+
+GetOptions
+------------------------------------------------------------
+  Daimonin.GetOptions()
+    Gets the script options (as passed in the event's slaying field)
   Parameter types:
   Possible return types:
     string

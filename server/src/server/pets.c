@@ -44,12 +44,13 @@ object *get_pet_enemy(object * pet, rv_vector *rv){
 	/* If the owner has turned on the pet, make the pet
 	 * unfriendly.
 	 */
-	if ((check_enemy(owner,rv)) == pet) {
+        /* TODO deactivated while cleaning up AI code */
+/*	if ((check_enemy(owner,rv)) == pet) {
 	    CLEAR_FLAG(pet, FLAG_FRIENDLY);
 	    remove_friendly_object(pet);
 	    pet->move_type &=~PETMOVE;
 	    return owner;
-	}
+	}*/
     } else {
 	/* else the owner is no longer around, so the
 	 * pet no longer needs to be friendly.
@@ -227,9 +228,8 @@ void pet_move(object * ob)
 		    && !QUERY_FLAG(new_ob,FLAG_UNAGGRESSIVE) &&
 		    !QUERY_FLAG(new_ob,FLAG_FRIENDLY)) {
     
-            set_npc_enemy(ob, new_ob, NULL);
-            if(new_ob->enemy == NULL)
-                set_npc_enemy(new_ob, ob, NULL);
+            register_npc_known_obj(ob, new_ob, FRIENDSHIP_PUSH);
+            register_npc_known_obj(new_ob, ob, FRIENDSHIP_PUSH);
 			return;
 		} else if (new_ob->type == PLAYER) {
 		    new_draw_info(NDI_UNIQUE, 0,new_ob, "You stand in the way of someones pet.");

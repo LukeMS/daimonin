@@ -178,6 +178,8 @@ int check_spell_known (object *op, int spell_type)
  *    cast in no magic areas.
  * item is the type of object that is casting the spell.
  * stringarg is any options that are being used.
+ *
+ * returns true for successful casting
  */
 
 /* Oct 95 - added cosmetic touches for MULTIPLE_GODS hack -b.t. */

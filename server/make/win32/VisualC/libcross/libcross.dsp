@@ -344,6 +344,10 @@ SOURCE=..\..\..\..\src\include\material.h
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\..\src\include\monster.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\..\src\include\newclient.h
 # End Source File
 # Begin Source File
@@ -353,6 +357,10 @@ SOURCE=..\..\..\..\src\include\newserver.h
 # Begin Source File
 
 SOURCE=..\..\..\..\src\include\object.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\src\include\pathfinder.h
 # End Source File
 # Begin Source File
 

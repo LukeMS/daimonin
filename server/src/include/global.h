@@ -107,23 +107,23 @@ typedef unsigned int tag_t;
  * Some standard c libaries don't check for NULL in that functions - most times
  * the retail versions.
  */
-#define STRING_SAFE(__string__) ((__string__)?(__string__):">NULL<")
+#define STRING_SAFE(__string__) ((__string__)?(__string__):">NULL STR<")
+#define PTR_STRING_SAFE(__ptr__, __field__) ((__ptr__)?STRING_SAFE((__ptr__)->__field__):">NULL PTR<")
 
-#define STRING_ARCH_NAME(__arch__) ((__arch__)->name?(__arch__)->name:">NULL<")
+#define STRING_ARCH_NAME(__arch__) PTR_STRING_SAFE((__arch__), name)
 
-#define STRING_OBJ_NAME(__ob__) ((__ob__)->name?(__ob__)->name:">NULL<")
-#define STRING_OBJ_ARCH_NAME(__ob__) ((__ob__)->arch?((__ob__)->arch->name?(__ob__)->arch->name:">NULL<"):">NULL<")
-#define STRING_OBJ_TITLE(__ob__) ((__ob__)->title?(__ob__)->title:">NULL<")
-#define STRING_OBJ_RACE(__ob__) ((__ob__)->race?(__ob__)->race:">NULL<")
-#define STRING_OBJ_SLAYING(__ob__) ((__ob__)->slaying?(__ob__)->slaying:">NULL<")
-#define STRING_OBJ_MSG(__ob__) ((__ob__)->msg?(__ob__)->msg:">NULL<")
+#define STRING_OBJ_NAME(__ob__) PTR_STRING_SAFE((__ob__), name)
+#define STRING_OBJ_ARCH_NAME(__ob__) ((__ob__)?PTR_STRING_SAFE((__ob__)->arch, name):">NULL OBJ<")
+#define STRING_OBJ_TITLE(__ob__) PTR_STRING_SAFE((__ob__), title)
+#define STRING_OBJ_RACE(__ob__) PTR_STRING_SAFE((__ob__), race)
+#define STRING_OBJ_SLAYING(__ob__) PTR_STRING_SAFE((__ob__), slaying)
+#define STRING_OBJ_MSG(__ob__) PTR_STRING_SAFE((__ob__), msg)
 
-#define STRING_MAP_PATH(__map__) ((__map__)->path?(__map__)->path:">NULL<")
-#define STRING_MAP_TILE_PATH(__map__, __id__) ((__map__)->tile_path[__id__]?(__map__)->tile_path[__id__]:">NULL<")
-#define STRING_MAP_NAME(__map__) ((__map__)->name?(__map__)->name:">NULL<")
-#define STRING_MAP_TMPNAME(__map__) ((__map__)->tmpname?(__map__)->tmpname:">NULL<")
-#define STRING_MAP_MSG(__map__) ((__map__)->msg?(__map__)->msg:">NULL<")
-
+#define STRING_MAP_PATH(__map__) PTR_STRING_SAFE((__map__), path)
+#define STRING_MAP_TILE_PATH(__map__, __id__) ((__map__)?PTR_STRING_SAFE((__map__), tile_path[(__id__)]):">NULL MAP<")
+#define STRING_MAP_NAME(__map__) PTR_STRING_SAFE((__map__), name)
+#define STRING_MAP_TMPNAME(__map__) PTR_STRING_SAFE((__map__), tmpname)
+#define STRING_MAP_MSG(__map__) PTR_STRING_SAFE((__map__), msg)
 
 /* Rotate right from bsd sum. This is used in various places for checksumming */
 #define ROTATE_RIGHT(c) if ((c) & 01) (c) = ((c) >>1) + 0x80000000; else (c) >>= 1;
@@ -280,6 +280,9 @@ typedef struct linked_char {
 
 /* pointer for the glue.c interface between crosslib and server */
 #include "funcpoint.h"
+
+/* Monster AI and mobdata structs */
+#include "monster.h"
 
 typedef struct _money_block {
 	int mode; /* 0, 1, or -1: see get_money_from_string() */

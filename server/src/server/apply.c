@@ -899,8 +899,12 @@ int container_link(player *pl, object *sack)
 	{
 		SET_FLAG (sack, FLAG_APPLIED);
 		if(sack->other_arch) /* faking open container face */
+		{
 			sack->face = sack->other_arch->clone.face;
-        update_object(sack,UP_OBJ_FACE);
+			sack->animation_id = sack->other_arch->clone.animation_id;
+			SET_ANIMATION(sack, (NUM_ANIMATIONS(sack)/NUM_FACINGS(sack))*sack->direction);
+			update_object(sack,UP_OBJ_FACE);
+		}
 		esrv_update_item (UPD_FLAGS|UPD_FACE, pl->ob, sack);
 		container_trap(pl->ob,sack);	/* search & explode a rune in the container */
 		ret = 1;
@@ -958,7 +962,13 @@ int container_unlink(player *pl, object *sack)
 			pl->container_count = 0;
 
 			CLEAR_FLAG(sack, FLAG_APPLIED);
-			sack->face = sack->arch->clone.face;
+			if(sack->other_arch)
+			{
+				sack->face = sack->arch->clone.face;
+				sack->animation_id = sack->arch->clone.animation_id;
+				SET_ANIMATION(sack, (NUM_ANIMATIONS(sack)/NUM_FACINGS(sack))*sack->direction);
+				update_object(sack,UP_OBJ_FACE);
+			}
 			sack->attacked_by = NULL;
 			sack->attacked_by_count = 0;
 			esrv_update_item (UPD_FLAGS|UPD_FACE, pl->ob, sack);
@@ -993,11 +1003,17 @@ int container_unlink(player *pl, object *sack)
 	}
 
 	CLEAR_FLAG(sack, FLAG_APPLIED);
-	sack->face = sack->arch->clone.face;
+	if(sack->other_arch)
+	{
+		sack->face = sack->arch->clone.face;
+		sack->animation_id = sack->arch->clone.animation_id;
+		SET_ANIMATION(sack, (NUM_ANIMATIONS(sack)/NUM_FACINGS(sack))*sack->direction);
+		update_object(sack,UP_OBJ_FACE);
+	}
 	tmp=sack->attacked_by;
 	sack->attacked_by = NULL;
 	sack->attacked_by_count = 0;
-
+	
 	/* if we are here, we are called with (NULL,sack) */
 	while(tmp)
 	{

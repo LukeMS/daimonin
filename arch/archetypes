@@ -9,7 +9,7 @@ sp -1
 animation altar
 level 1
 is_animated 0
-anim_speed 1
+anim_speed 0
 is_turnable 1
 direction 1
 no_pick 1
@@ -51,7 +51,7 @@ layer 3
 face pedestal.111
 animation check_inv
 is_animated 0
-anim_speed 1
+anim_speed 0
 is_turnable 1
 direction 1
 no_pick 1
@@ -68,7 +68,7 @@ layer 3
 face pedestal.111
 animation detector
 is_animated 0
-anim_speed 1
+anim_speed 0
 is_turnable 1
 direction 1
 speed 0.5
@@ -129,6 +129,38 @@ sp -1
 layer 5
 no_pick 1
 end
+Object ladder_down2
+name ladder going down
+type 66
+editor_folder connect/exists
+face ladder_down_01.101
+animation ladder_down2
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_teleport 1
+hp -1
+sp -1
+layer 5
+no_pick 1
+end
+Object ladder_down3
+name ladder going down
+type 66
+editor_folder connect/exists
+face ladder_round_down_01.101
+animation ladder_down3
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+no_teleport 1
+hp -1
+sp -1
+layer 5
+no_pick 1
+end
 Object ladder_up
 name ladder going up
 type 66
@@ -181,20 +213,15 @@ name stairs going down
 type 66
 editor_folder connect/exists
 face stairs_down.101
+animation stair_down
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_teleport 1
 layer 5
 hp -1
 sp -1
-no_pick 1
-end
-Object stair_gs_down_r
-name stairs going down
-type 66
-editor_folder connect/exists
-hp -1
-sp -1
-face stairs_down.107
-layer 5
 no_pick 1
 end
 Object stair_up
@@ -202,20 +229,15 @@ name stairs going up
 type 66
 editor_folder connect/exists
 face stairs_up.101
+animation stair_up
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_teleport 1
 layer 5
 hp -1
 sp -1
-no_pick 1
-end
-Object stair_gs_up_r
-name stairs going up
-type 66
-editor_folder connect/exists
-hp -1
-sp -1
-face stairs_up.107
-layer 5
 no_pick 1
 end
 Object stairw_up_1
@@ -223,6 +245,11 @@ name stairs going up
 type 66
 editor_folder connect/exists
 face stairs_wood.151
+animation stairw_up_1
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_teleport 1
 layer 5
 hp -1
@@ -267,7 +294,7 @@ pass_thru 1
 face gate_door1.114
 animation gate_open
 is_turnable 1
-anim_speed 1
+anim_speed 0
 is_animated 0
 direction 1
 wc 0
@@ -284,7 +311,7 @@ level 1
 no_pick 1
 face gate_door1.111
 animation gate_closed
-anim_speed 1
+anim_speed 0
 is_turnable 1
 is_animated 0
 no_pass 1
@@ -311,7 +338,7 @@ animation gateTrg1
 direction 1
 state 7
 is_turnable 1
-anim_speed 1
+anim_speed 0
 is_animated 0
 no_pass 1
 pass_thru 1
@@ -335,11 +362,11 @@ face gate_door1.114
 level 1
 animation gateTrg1_open
 direction 1
-anim_speed 1
+anim_speed 0
+is_animated 0
 is_turnable 1
 pass_thru 1
 state 7
-is_animated 0
 last_heal 1
 wc 7
 maxsp 0
@@ -364,7 +391,7 @@ animation grate_open
 direction 1
 is_turnable 1
 pass_thru 1
-anim_speed 1
+anim_speed 0
 is_animated 0
 wc 0
 dam 5
@@ -381,7 +408,7 @@ level 1
 no_pick 1
 face grate_door1.111
 animation grate_closed
-anim_speed 1
+anim_speed 0
 direction 1
 state 7
 is_turnable 1
@@ -409,7 +436,7 @@ animation grateTrg1_open
 is_turnable 1
 direction 1
 state 7
-anim_speed 1
+anim_speed 0
 is_animated 0
 last_heal 1
 wc 7
@@ -434,7 +461,7 @@ animation grateTrg1
 is_turnable 1
 direction 1
 state 7
-anim_speed 1
+anim_speed 0
 is_animated 0
 no_pass 1
 pass_thru 1
@@ -458,7 +485,7 @@ no_pick 1
 face lever.111
 animation handle_lever
 is_animated 0
-anim_speed 1
+anim_speed 0
 is_turnable 1
 direction 1
 end
@@ -483,7 +510,7 @@ slaying player
 face pedestal.111
 animation pedestal
 is_animated 0
-anim_speed 1
+anim_speed 0
 is_turnable 1
 direction 1
 no_pick 1
@@ -501,7 +528,7 @@ sp -1
 layer 4
 face hole.108
 animation pit_closed
-anim_speed 1
+anim_speed 0
 is_animated 0
 wc 7
 maxsp 0
@@ -517,7 +544,7 @@ no_teleport 1
 no_pick 1
 face hole.101
 animation pit_open
-anim_speed 1
+anim_speed 0
 is_animated 0
 walk_on 1
 wc 0
@@ -551,7 +578,7 @@ exp 30
 face altar.111
 animation altar_trigger
 is_animated 0
-anim_speed 1
+anim_speed 0
 is_turnable 1
 direction 1
 no_pick 1
@@ -581,7 +608,7 @@ no_pick 1
 face lever.111
 animation trigger_lever
 is_animated 0
-anim_speed 1
+anim_speed 0
 is_turnable 1
 direction 1
 exp 30
@@ -595,7 +622,7 @@ layer 3
 face pedestal.111
 animation pedestal_trigger
 is_animated 0
-anim_speed 1
+anim_speed 0
 is_turnable 1
 direction 1
 exp 30
@@ -6169,14 +6196,11 @@ name shrine
 type 79
 editor_folder gods/gods
 face shrine1.111
-no_pick 1
-layer 4
-end
-Object shrine1.171
-name shrine
-type 79
-editor_folder gods/gods
-face shrine1.171
+animation shrine1.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 4
 end
@@ -6185,14 +6209,11 @@ name bank
 type 79
 editor_folder indoor/banks
 face bank1.111
-no_pick 1
-layer 4
-end
-Object bank1.171
-name bank
-type 79
-editor_folder indoor/banks
-face bank1.171
+animation bank1.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 4
 end
@@ -6233,6 +6254,11 @@ name bed
 type 79
 editor_folder indoor/beds
 face bed_1a.111
+animation bed_1a.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 4
 end
@@ -6241,6 +6267,11 @@ name bed
 type 79
 editor_folder indoor/beds
 face bed_1b.111
+animation bed_1b.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 4
 end
@@ -6249,6 +6280,11 @@ name bed
 type 79
 editor_folder indoor/beds
 face bed_2a.111
+animation bed_2a.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 4
 end
@@ -6257,6 +6293,11 @@ name bed
 type 79
 editor_folder indoor/beds
 face bed_2b.111
+animation bed_2b.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 4
 end
@@ -6265,6 +6306,11 @@ name bench
 type 79
 editor_folder indoor/benchs
 face bench1a.111
+animation bench1a.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 no_pass 1
 layer 4
@@ -6274,24 +6320,11 @@ name bench
 type 79
 editor_folder indoor/benchs
 face bench1b.111
-no_pass 1
-no_pick 1
-layer 4
-end
-Object bench1a.171
-name bench
-type 79
-editor_folder indoor/benchs
-face bench1a.171
-no_pick 1
-no_pass 1
-layer 4
-end
-Object bench1b.171
-name bench
-type 79
-editor_folder indoor/benchs
-face bench1b.171
+animation bench1b.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pass 1
 no_pick 1
 layer 4
@@ -6301,15 +6334,11 @@ name bench
 type 79
 editor_folder indoor/benchs
 face bench2.111
-no_pick 1
-no_pass 1
-layer 4
-end
-Object bench2.171
-name bench
-type 79
-editor_folder indoor/benchs
-face bench2.171
+animation bench2.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 no_pass 1
 layer 4
@@ -6343,14 +6372,11 @@ name broom
 type 79
 editor_folder indoor/indoor
 face broom.111
-no_pick 1
-layer 4
-end
-Object broom.171
-name broom
-type 79
-editor_folder indoor/indoor
-face broom.171
+animation broom.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 4
 end
@@ -6394,43 +6420,29 @@ face candlelight4.101
 no_pick 1
 layer 4
 end
-Object chair_small
-name chair
-type 79
-editor_folder indoor/chairs
-face chair_small.101
-no_pick 1
-layer 4
-end
 Object chair1_111
 name chair
 type 79
 editor_folder indoor/chairs
 face chair1.111
+animation chair1_111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 4
 end
-Object chair1_131
+Object chair2_111
 name chair
 type 79
 editor_folder indoor/chairs
-face chair1.131
-no_pick 1
-layer 4
-end
-Object chair1_151
-name chair
-type 79
-editor_folder indoor/chairs
-face chair1.151
-no_pick 1
-layer 4
-end
-Object chair1_171
-name chair
-type 79
-editor_folder indoor/chairs
-face chair1.171
+face chair2.111
+animation chair2_111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 4
 end
@@ -6450,38 +6462,6 @@ face chair1_drop.171
 no_pick 1
 layer 4
 end
-Object chair2_111
-name chair
-type 79
-editor_folder indoor/chairs
-face chair2.111
-no_pick 1
-layer 4
-end
-Object chair2_131
-name chair
-type 79
-editor_folder indoor/chairs
-face chair2.131
-no_pick 1
-layer 4
-end
-Object chair2_151
-name chair
-type 79
-editor_folder indoor/chairs
-face chair2.151
-no_pick 1
-layer 4
-end
-Object chair2_171
-name chair
-type 79
-editor_folder indoor/chairs
-face chair2.171
-no_pick 1
-layer 4
-end
 Object chair_small2
 name chair
 type 79
@@ -6490,19 +6470,24 @@ face chair_small2.101
 no_pick 1
 layer 4
 end
+Object chair_small
+name chair
+type 79
+editor_folder indoor/chairs
+face chair_small.101
+no_pick 1
+layer 4
+end
 Object throne.111
 name throne
 type 79
 editor_folder indoor/chairs
 face throne.111
-no_pick 1
-layer 4
-end
-Object throne.131
-name throne
-type 79
-editor_folder indoor/chairs
-face throne.131
+animation throne.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 4
 end
@@ -6698,14 +6683,11 @@ name bed
 type 79
 editor_folder indoor/jail
 face prison_deco1.131
-no_pick 1
-layer 4
-end
-Object prison_deco1.151
-name bed
-type 79
-editor_folder indoor/jail
-face prison_deco1.151
+animation prison_deco1.131
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 4
 end
@@ -6714,14 +6696,11 @@ name bed
 type 79
 editor_folder indoor/jail
 face prison_deco2.131
-no_pick 1
-layer 4
-end
-Object prison_deco2.151
-name bed
-type 79
-editor_folder indoor/jail
-face prison_deco2.151
+animation prison_deco2.131
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 4
 end
@@ -6730,14 +6709,11 @@ name bed
 type 79
 editor_folder indoor/jail
 face prison_deco3.131
-no_pick 1
-layer 4
-end
-Object prison_deco3.151
-name bed
-type 79
-editor_folder indoor/jail
-face prison_deco3.151
+animation prison_deco3.131
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 4
 end
@@ -6746,14 +6722,11 @@ name small cauldron
 type 79
 editor_folder indoor/lab
 face fire_cauld.131
-no_pick 1
-layer 4
-end
-Object fire_cauld.151
-name small cauldron
-type 79
-editor_folder indoor/lab
-face fire_cauld.151
+animation fire_cauld.131
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 4
 end
@@ -6900,27 +6873,16 @@ no_teleport 1
 layer 2
 no_pick 1
 end
-Object wmask_bflag_brown_1
-name big flag
-type 77
-editor_folder indoor/masks_wall
-face wmask_bflag_brown.u.151
-no_pick 1
-layer 7
-end
 Object wmask_bflag_brown_3
 name big flag
 type 77
 editor_folder indoor/masks_wall
 face wmask_bflag_brown.u.131
-no_pick 1
-layer 7
-end
-Object wmask_bflag_fire1_1
-name big flag
-type 77
-editor_folder indoor/masks_wall
-face wmask_bflag_fire1.u.151
+animation wmask_bflag_brown_3
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 7
 end
@@ -6929,14 +6891,11 @@ name big flag
 type 77
 editor_folder indoor/masks_wall
 face wmask_bflag_fire1.u.131
-no_pick 1
-layer 7
-end
-Object wmask_fire_on_1
-name big flag
-type 77
-editor_folder indoor/masks_wall
-face wmask_fire_on.151
+animation wmask_bflag_fire1_3
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 7
 end
@@ -6945,14 +6904,11 @@ name big flag
 type 77
 editor_folder indoor/masks_wall
 face wmask_fire_on.131
-no_pick 1
-layer 7
-end
-Object wmask_fire_off_1
-name big flag
-type 77
-editor_folder indoor/masks_wall
-face wmask_fire_off.151
+animation wmask_fire_on_3
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 7
 end
@@ -6961,6 +6917,11 @@ name big flag
 type 77
 editor_folder indoor/masks_wall
 face wmask_fire_off.131
+animation wmask_fire_off_3
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 7
 end
@@ -6969,14 +6930,11 @@ name chains
 type 77
 editor_folder indoor/masks_wall
 face chains1.u.131
-no_pick 1
-layer 7
-end
-Object chains1.151
-name chains
-type 77
-editor_folder indoor/masks_wall
-face chains1.u.151
+animation chains1.131
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 7
 end
@@ -6985,14 +6943,11 @@ name chains
 type 77
 editor_folder indoor/masks_wall
 face chains2.u.131
-no_pick 1
-layer 7
-end
-Object chains2.151
-name chains
-type 77
-editor_folder indoor/masks_wall
-face chains2.u.151
+animation chains2.131
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 7
 end
@@ -7001,14 +6956,11 @@ name chains
 type 77
 editor_folder indoor/masks_wall
 face chains3.u.131
-no_pick 1
-layer 7
-end
-Object chains3.151
-name chains
-type 77
-editor_folder indoor/masks_wall
-face chains3.u.151
+animation chains3.131
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 7
 end
@@ -7017,22 +6969,11 @@ name big flag
 type 77
 editor_folder indoor/masks_wall
 face wmask_wanted.u.131
-no_pick 1
-layer 7
-end
-Object wmask_wanted.151
-name big flag
-type 77
-editor_folder indoor/masks_wall
-face wmask_wanted.u.151
-no_pick 1
-layer 7
-end
-Object pot_wall.131
-name chains
-type 77
-editor_folder indoor/masks_wall
-face pot_wall.u.131
+animation wmask_wanted.131
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 7
 end
@@ -7040,15 +6981,12 @@ Object pot_wall.151
 name chains
 type 77
 editor_folder indoor/masks_wall
-face pot_wall.u.151
-no_pick 1
-layer 7
-end
-Object picture1.151
-name picture
-type 77
-editor_folder indoor/masks_wall
-face picture1.u.151
+face pot_wall.u.131
+animation pot_wall.151
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 7
 end
@@ -7057,14 +6995,11 @@ name picture
 type 77
 editor_folder indoor/masks_wall
 face picture1.u.131
-no_pick 1
-layer 7
-end
-Object picture2.151
-name picture
-type 77
-editor_folder indoor/masks_wall
-face picture2.u.151
+animation picture1.131
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 7
 end
@@ -7073,22 +7008,37 @@ name picture
 type 77
 editor_folder indoor/masks_wall
 face picture2.u.131
+animation picture2.131
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 7
 end
-Object picture3.151
+Object picture3.131
 name picture
 type 77
 editor_folder indoor/masks_wall
-face picture3.u.151
+face picture3.u.131
+animation picture3.131
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 7
 end
-Object picture4.151
+Object picture4.131
 name picture
 type 77
 editor_folder indoor/masks_wall
-face picture4.u.151
+face picture4.u.131
+animation picture4.131
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 7
 end
@@ -7097,6 +7047,11 @@ name picture
 type 77
 editor_folder indoor/masks_wall
 face picture5.u.131
+animation picture5.131
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 7
 end
@@ -7105,6 +7060,11 @@ name picture
 type 77
 editor_folder indoor/masks_wall
 face picture6.u.131
+animation picture6.131
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 7
 end
@@ -7113,14 +7073,11 @@ name plants
 type 77
 editor_folder indoor/masks_wall
 face plant1_wall.131
-no_pick 1
-layer 7
-end
-Object plant1_wall.151
-name plants
-type 77
-editor_folder indoor/masks_wall
-face plant1_wall.151
+animation plant1_wall.131
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 7
 end
@@ -7129,14 +7086,11 @@ name plants
 type 77
 editor_folder indoor/masks_wall
 face plant2_wall.131
-no_pick 1
-layer 7
-end
-Object plant2_wall.151
-name plants
-type 77
-editor_folder indoor/masks_wall
-face plant2_wall.151
+animation plant2_wall.131
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 7
 end
@@ -7145,14 +7099,11 @@ name big iron ring
 type 77
 editor_folder indoor/masks_wall
 face ring_wall.131
-no_pick 1
-layer 7
-end
-Object ring_wall.151
-name big iron ring
-type 77
-editor_folder indoor/masks_wall
-face ring_wall.151
+animation ring_wall.131
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 7
 end
@@ -7161,14 +7112,11 @@ name mirror
 type 79
 editor_folder indoor/indoor
 face mirror_big.111
-no_pick 1
-layer 4
-end
-Object mirror_big.171
-name mirror
-type 79
-editor_folder indoor/indoor
-face mirror_big.171
+animation mirror_big.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 4
 end
@@ -7177,14 +7125,11 @@ name anvil
 type 79
 editor_folder indoor/smithy
 face anvil.111
-no_pick 1
-layer 4
-end
-Object anvil_131
-name anvil
-type 79
-editor_folder indoor/smithy
-face anvil.131
+animation anvil_111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 4
 end
@@ -7193,6 +7138,11 @@ name big anvil
 type 79
 editor_folder indoor/smithy
 face anvil_big.111
+animation anvil_big_111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 4
 end
@@ -7201,24 +7151,12 @@ name forge
 type 79
 editor_folder indoor/smithy
 face forge.111
+animation forge_111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
-layer 4
-end
-Object forge_171
-name forge
-type 79
-editor_folder indoor/smithy
-face forge.171
-no_pick 1
-layer 4
-end
-Object straw1.101
-name straw
-type 79
-editor_folder indoor/indoor
-face straw1.101
-no_pick 1
-no_pass 1
 layer 4
 end
 Object straw2.111
@@ -7226,15 +7164,11 @@ name straw
 type 79
 editor_folder indoor/indoor
 face straw2.111
-no_pick 1
-no_pass 1
-layer 4
-end
-Object straw2.131
-name straw
-type 79
-editor_folder indoor/indoor
-face straw2.131
+animation straw2.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 no_pass 1
 layer 4
@@ -7264,38 +7198,16 @@ face table_small1b.101
 no_pick 1
 layer 4
 end
-Object table_wood1.111
-name table
-type 79
-editor_folder indoor/tables
-face table_wood1.111
-no_pass 1
-no_pick 1
-layer 4
-end
-Object table_wood1.171
-name table
-type 79
-editor_folder indoor/tables
-face table_wood1.171
-no_pass 1
-no_pick 1
-layer 4
-end
 Object table_lab1.111
 name table
 type 79
 editor_folder indoor/tables
 face table_lab1.111
-no_pick 1
-no_pass 1
-layer 4
-end
-Object table_lab1.171
-name table
-type 79
-editor_folder indoor/tables
-face table_lab1.171
+animation table_lab1.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 no_pass 1
 layer 4
@@ -7305,15 +7217,11 @@ name table
 type 79
 editor_folder indoor/tables
 face table_lab2.111
-no_pick 1
-no_pass 1
-layer 4
-end
-Object table_lab2.171
-name table
-type 79
-editor_folder indoor/tables
-face table_lab2.171
+animation table_lab2.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 no_pass 1
 layer 4
@@ -7323,17 +7231,27 @@ name table
 type 79
 editor_folder indoor/tables
 face table_lab3.111
+animation table_lab3.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 no_pass 1
 layer 4
 end
-Object table_lab3.171
+Object table_wood1.111
 name table
 type 79
 editor_folder indoor/tables
-face table_lab3.171
-no_pick 1
+face table_wood1.111
+animation table_wood1.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pass 1
+no_pick 1
 layer 4
 end
 Object bath_tube1.101
@@ -7606,16 +7524,11 @@ name open chest
 type 121
 editor_folder intern/items
 face chest_mm_open.111
-layer 3
-no_pick 1
-no_drop 1
-identified 1
-end
-Object close_chest1_171
-name open chest
-type 121
-editor_folder intern/items
-face chest_mm_open.171
+animation close_chest1_111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 3
 no_pick 1
 no_drop 1
@@ -7626,16 +7539,11 @@ name open chest
 type 121
 editor_folder intern/items
 face chest_lm_open.111
-layer 3
-no_pick 1
-no_drop 1
-identified 1
-end
-Object close_chest_m1_7
-name open chest
-type 121
-editor_folder intern/items
-face chest_lm_open.171
+animation close_chest_m1_1
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 3
 no_pick 1
 no_drop 1
@@ -7646,16 +7554,11 @@ name open chest
 type 121
 editor_folder intern/items
 face chest_lw_open.111
-layer 3
-no_pick 1
-no_drop 1
-identified 1
-end
-Object close_chest_w1_7
-name open chest
-type 121
-editor_folder intern/items
-face chest_lw_open.171
+animation close_chest_w1_1
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 3
 no_pick 1
 no_drop 1
@@ -7666,16 +7569,11 @@ name open chest
 type 121
 editor_folder intern/items
 face chest_mw_open.111
-layer 3
-no_pick 1
-no_drop 1
-identified 1
-end
-Object close_chest_4.171
-name open chest
-type 121
-editor_folder intern/items
-face chest_mw_open.171
+animation close_chest_4.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 3
 no_pick 1
 no_drop 1
@@ -7686,16 +7584,11 @@ name open chest
 type 121
 editor_folder intern/items
 face chest_sm_open.111
-layer 3
-no_pick 1
-no_drop 1
-identified 1
-end
-Object close_chest_sm_7
-name open chest
-type 121
-editor_folder intern/items
-face chest_sm_open.171
+animation close_chest_sm_1
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 3
 no_pick 1
 no_drop 1
@@ -7706,16 +7599,11 @@ name open chest
 type 121
 editor_folder intern/items
 face chest_sw_open.111
-layer 3
-no_pick 1
-no_drop 1
-identified 1
-end
-Object close_chest_sw_7
-name open chest
-type 121
-editor_folder intern/items
-face chest_sw_open.171
+animation close_chest_sw_1
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 3
 no_pick 1
 no_drop 1
@@ -7726,16 +7614,11 @@ name open chest
 type 121
 editor_folder intern/items
 face chest_mm2_open.111
-layer 3
-no_pick 1
-no_drop 1
-identified 1
-end
-Object close_chest7_171
-name open chest
-type 121
-editor_folder intern/items
-face chest_mm2_open.171
+animation close_chest7_111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 3
 no_pick 1
 no_drop 1
@@ -7840,6 +7723,949 @@ layer 3
 no_drop 1
 no_pick 1
 identified 1
+end
+Object anvil_131
+name anvil
+type 79
+editor_folder intern/outdated
+face anvil.131
+no_pick 1
+layer 4
+end
+Object bank1.171
+name bank
+type 79
+editor_folder intern/outdated
+face bank1.171
+no_pick 1
+layer 4
+end
+Object bench1a.171
+name bench
+type 79
+editor_folder intern/outdated
+face bench1a.171
+no_pick 1
+no_pass 1
+layer 4
+end
+Object bench1b.171
+name bench
+type 79
+editor_folder intern/outdated
+face bench1b.171
+no_pass 1
+no_pick 1
+layer 4
+end
+Object bench2.171
+name bench
+type 79
+editor_folder intern/outdated
+face bench2.171
+no_pick 1
+no_pass 1
+layer 4
+end
+Object broom.171
+name broom
+type 79
+editor_folder intern/outdated
+face broom.171
+no_pick 1
+layer 4
+end
+Object chains1.151
+name chains
+type 77
+editor_folder intern/outdated
+face chains1.u.151
+no_pick 1
+layer 7
+end
+Object chains2.151
+name chains
+type 77
+editor_folder intern/outdated
+face chains2.u.151
+no_pick 1
+layer 7
+end
+Object chains3.151
+name chains
+type 77
+editor_folder intern/outdated
+face chains3.u.151
+no_pick 1
+layer 7
+end
+Object chair1_131
+name chair
+type 79
+editor_folder intern/outdated
+face chair1.131
+no_pick 1
+layer 4
+end
+Object chair1_151
+name chair
+type 79
+editor_folder intern/outdated
+face chair1.151
+no_pick 1
+layer 4
+end
+Object chair1_171
+name chair
+type 79
+editor_folder intern/outdated
+face chair1.171
+no_pick 1
+layer 4
+end
+Object chair2_131
+name chair
+type 79
+editor_folder intern/outdated
+face chair2.131
+no_pick 1
+layer 4
+end
+Object chair2_151
+name chair
+type 79
+editor_folder intern/outdated
+face chair2.151
+no_pick 1
+layer 4
+end
+Object chair2_171
+name chair
+type 79
+editor_folder intern/outdated
+face chair2.171
+no_pick 1
+layer 4
+end
+Object chest1_171
+name chest
+type 122
+editor_folder intern/outdated
+other_arch close_chest1_111
+face chest_mm_closed.171
+animation chest1_171
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 5
+layer 4
+no_pick 1
+identified 1
+level 1
+material 18
+material_real 65
+value 350
+container 225000
+weight 15000
+weapon_speed 1.0
+end
+Object chest_m1_7
+name chest
+type 122
+editor_folder intern/outdated
+other_arch close_chest_m1_1
+face chest_lm_closed.171
+animation chest_m1_7
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 5
+layer 4
+level 1
+identified 1
+no_pick 1
+material 2
+material_real 65
+value 350
+container 350000
+weight 22500
+weapon_speed 1.0
+end
+Object chest_w1_7
+name chest
+type 122
+editor_folder intern/outdated
+other_arch close_chest_w1_1
+face chest_lw_closed.171
+animation chest_w1_7
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 5
+layer 4
+level 1
+no_pick 1
+identified 1
+material 18
+material_real 258
+value 350
+container 350000
+weight 22000
+weapon_speed 1.0
+end
+Object chest_4.171
+name chest
+type 122
+editor_folder intern/outdated
+other_arch close_chest_4.111
+face chest_mw_closed.171
+animation chest_4.171
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 5
+layer 4
+level 1
+identified 1
+no_pick 1
+material 18
+material_real 258
+value 350
+container 225000
+weight 15000
+weapon_speed 1.0
+end
+Object chest_sm_7
+name chest
+type 122
+editor_folder intern/outdated
+other_arch close_chest_sm_1
+face chest_sm_closed.171
+animation chest_sm_7
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 5
+layer 4
+level 1
+no_pick 1
+identified 1
+material 2
+material_real 65
+value 350
+container 125000
+weight 8000
+weapon_speed 1.0
+end
+Object chest_sw_7
+name chest
+type 122
+editor_folder intern/outdated
+other_arch close_chest_sw_1
+face chest_sw_closed.111
+animation chest_sw_7
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 5
+layer 4
+level 1
+identified 1
+no_pick 1
+material 18
+material_real 258
+value 350
+container 125000
+weight 8000
+weapon_speed 1.0
+end
+Object chest7_171
+name chest
+type 122
+editor_folder intern/outdated
+other_arch close_chest7_111
+face chest_mm2_closed.171
+animation chest7_171
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 5
+layer 4
+no_pick 1
+identified 1
+level 1
+material 18
+material_real 65
+value 350
+container 225000
+weight 15000
+weapon_speed 1.0
+end
+Object coffin_wood.131
+name wooden coffin
+type 79
+editor_folder intern/outdated
+layer 5
+face coffin_wood.131
+no_pass 1
+no_pick 1
+end
+Object coffin_stone.131
+name stone coffin
+type 79
+editor_folder intern/outdated
+layer 5
+face coffin_stone.131
+no_pass 1
+no_pick 1
+end
+Object desk1.171
+name desk
+type 122
+editor_folder intern/outdated
+face desk1.171
+layer 4
+identified 1
+no_pick 1
+material 18
+value 350
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object drawers1.171
+name drawer
+type 122
+editor_folder intern/outdated
+face drawers1.171
+layer 4
+identified 1
+material 18
+no_pick 1
+value 350
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object fmask_ruin1a.131
+name ruin parts
+type 79
+editor_folder intern/outdated
+layer 2
+face fmask_ruin1a.131
+no_pick 1
+end
+Object forge_171
+name forge
+type 79
+editor_folder intern/outdated
+face forge.171
+no_pick 1
+layer 4
+end
+Object grave1.131
+name grave
+type 79
+editor_folder intern/outdated
+layer 5
+face grave1.131
+no_pass 1
+no_pick 1
+end
+Object grave2.131
+name grave
+type 79
+editor_folder intern/outdated
+layer 5
+face grave2.131
+no_pass 1
+no_pick 1
+end
+Object grave_open.131
+name open grave
+type 79
+editor_folder intern/outdated
+layer 5
+face grave_open.131
+no_pass 1
+no_pick 1
+end
+Object grave_cross1.131
+name grave
+type 79
+editor_folder intern/outdated
+layer 5
+face grave_cross1.131
+no_pass 1
+no_pick 1
+end
+Object grave_cross2.131
+name grave
+type 79
+editor_folder intern/outdated
+layer 5
+face grave_cross2.131
+no_pass 1
+no_pick 1
+end
+Object fire_cauld.151
+name small cauldron
+type 79
+editor_folder intern/outdated
+face fire_cauld.151
+no_pick 1
+layer 4
+end
+Object lantern_magic.151
+name magic lantern
+type 79
+editor_folder intern/outdated
+no_pass 1
+face lantern_magic.151
+layer 5
+no_pick 1
+end
+Object lantern2_magic.151
+name magic lantern
+type 79
+editor_folder intern/outdated
+face lantern2_magic.151
+layer 5
+no_pick 1
+end
+Object locker1.171
+name locker
+type 122
+editor_folder intern/outdated
+face locker1.171
+layer 4
+identified 1
+no_pick 1
+material 18
+value 350
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object locker2.171
+name locker
+type 122
+editor_folder intern/outdated
+face locker2.171
+layer 4
+identified 1
+material 18
+no_pick 1
+value 350
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object locker3.171
+name locker
+type 122
+editor_folder intern/outdated
+face locker3.171
+layer 4
+identified 1
+material 18
+no_pick 1
+value 350
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object mirror_big.171
+name mirror
+type 79
+editor_folder intern/outdated
+face mirror_big.171
+no_pick 1
+layer 4
+end
+Object picture1.151
+name picture
+type 77
+editor_folder intern/outdated
+face picture1.u.151
+no_pick 1
+layer 7
+end
+Object picture2.151
+name picture
+type 77
+editor_folder intern/outdated
+face picture2.u.151
+no_pick 1
+layer 7
+end
+Object picture3.151
+name picture
+type 77
+editor_folder intern/outdated
+face picture3.u.151
+no_pick 1
+layer 7
+end
+Object picture4.151
+name picture
+type 77
+editor_folder intern/outdated
+face picture4.u.151
+no_pick 1
+layer 7
+end
+Object plant1_wall.151
+name plants
+type 77
+editor_folder intern/outdated
+face plant1_wall.151
+no_pick 1
+layer 7
+end
+Object plant2_wall.151
+name plants
+type 77
+editor_folder intern/outdated
+face plant2_wall.151
+no_pick 1
+layer 7
+end
+Object pot_wall.131
+name chains
+type 77
+editor_folder intern/outdated
+face pot_wall.u.151
+no_pick 1
+layer 7
+end
+Object prison_deco1.151
+name bed
+type 79
+editor_folder intern/outdated
+face prison_deco1.151
+no_pick 1
+layer 4
+end
+Object prison_deco2.151
+name bed
+type 79
+editor_folder intern/outdated
+face prison_deco2.151
+no_pick 1
+layer 4
+end
+Object prison_deco3.151
+name bed
+type 79
+editor_folder intern/outdated
+face prison_deco3.151
+no_pick 1
+layer 4
+end
+Object rack.171
+name weapon rack
+type 122
+editor_folder intern/outdated
+face rack.171
+layer 4
+identified 1
+no_pick 1
+material 18
+value 3500
+container 250000
+weight 15000
+weapon_speed 1.0
+end
+Object ring_wall.151
+name big iron ring
+type 77
+editor_folder intern/outdated
+face ring_wall.151
+no_pick 1
+layer 7
+end
+Object scarecrow.131
+name scarecrow
+type 79
+editor_folder intern/outdated
+layer 5
+face scarecrow.131
+no_pass 1
+no_pick 1
+end
+Object shelf2.171
+name shelf
+type 122
+editor_folder intern/outdated
+face shelf2.171
+layer 4
+identified 1
+material 18
+no_pick 1
+value 350
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object shelf3.171
+name shelf
+type 122
+editor_folder intern/outdated
+face shelf3.171
+layer 4
+identified 1
+material 18
+no_pick 1
+value 350
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object shelf3a.171
+name shelf
+type 122
+editor_folder intern/outdated
+face shelf3a.171
+layer 4
+identified 1
+material 18
+no_pick 1
+value 350
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object shelf3b.171
+name shelf
+type 122
+editor_folder intern/outdated
+face shelf3b.171
+layer 4
+identified 1
+material 18
+no_pick 1
+value 350
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object shelf3_dem1.171
+name demolished shelf
+type 122
+editor_folder intern/outdated
+face shelf3_dem1.171
+layer 4
+identified 1
+material 18
+no_pick 1
+value 350
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object shelf3_dem2.171
+name demolished shelf
+type 122
+editor_folder intern/outdated
+face shelf3_dem2.171
+layer 4
+identified 1
+material 18
+no_pick 1
+value 350
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object shelf3_dem3.171
+name demolished shelf
+type 122
+editor_folder intern/outdated
+face shelf3_dem3.171
+layer 4
+identified 1
+material 18
+no_pick 1
+value 350
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object shelf_wall.171
+name shelf
+type 122
+editor_folder intern/outdated
+face shelf_wall.171
+layer 4
+identified 1
+material 18
+no_pick 1
+value 350
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object shelf1_wall.171
+name shelf
+type 122
+editor_folder intern/outdated
+face shelf1_wall.171
+layer 4
+identified 1
+material 18
+no_pick 1
+value 350
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object shelf2_wall.171
+name shelf
+type 122
+editor_folder intern/outdated
+face shelf2_wall.171
+layer 4
+identified 1
+material 18
+no_pick 1
+value 350
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object shelf3_wall.171
+name shelf
+type 122
+editor_folder intern/outdated
+face shelf3_wall.171
+layer 4
+identified 1
+material 18
+no_pick 1
+value 350
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object shelf_wall_dem1.171
+name demolished shelf
+type 122
+editor_folder intern/outdated
+face shelf_wall_dem1.171
+layer 4
+identified 1
+material 18
+no_pick 1
+value 3
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object shelf_wall_dem2.171
+name demolished shelf
+type 122
+editor_folder intern/outdated
+face shelf_wall_dem2.171
+layer 4
+identified 1
+material 18
+no_pick 1
+value 3
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object shelf_wall_dem3.171
+name demolished shelf
+type 122
+editor_folder intern/outdated
+face shelf_wall_dem3.171
+layer 4
+identified 1
+material 18
+no_pick 1
+value 3
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object shrine1.171
+name shrine
+type 79
+editor_folder intern/outdated
+face shrine1.171
+no_pick 1
+layer 4
+end
+Object stair_gs_down_r
+name stairs going down
+type 66
+editor_folder intern/outdated
+hp -1
+sp -1
+face stairs_down.107
+layer 5
+no_pick 1
+end
+Object stair_gs_up_r
+name stairs going up
+type 66
+editor_folder intern/outdated
+hp -1
+sp -1
+face stairs_up.107
+layer 5
+no_pick 1
+end
+Object straw2.131
+name straw
+type 79
+editor_folder intern/outdated
+face straw2.131
+no_pick 1
+no_pass 1
+layer 4
+end
+Object table_lab1.171
+name table
+type 79
+editor_folder intern/outdated
+face table_lab1.171
+no_pick 1
+no_pass 1
+layer 4
+end
+Object table_lab2.171
+name table
+type 79
+editor_folder intern/outdated
+face table_lab2.171
+no_pick 1
+no_pass 1
+layer 4
+end
+Object table_lab3.171
+name table
+type 79
+editor_folder intern/outdated
+face table_lab3.171
+no_pick 1
+no_pass 1
+layer 4
+end
+Object table_wood1.171
+name table
+type 79
+editor_folder intern/outdated
+face table_wood1.171
+no_pass 1
+no_pick 1
+layer 4
+end
+Object target.131
+name target
+type 79
+editor_folder intern/outdated
+layer 5
+face target.131
+no_pass 1
+no_pick 1
+end
+Object throne.131
+name throne
+type 79
+editor_folder intern/outdated
+face throne.131
+no_pick 1
+layer 4
+end
+Object torch_wall_7
+name attached torch
+type 74
+editor_folder intern/outdated
+layer 5
+face torch_wall.170
+animation torch_wall_7
+speed -0.02
+is_animated 0
+anim_speed 4
+no_teleport 1
+no_pick 1
+last_sp 5
+weight 1250
+material 144
+food 1
+end
+Object wagon_small.131
+name small wagon
+type 122
+editor_folder intern/outdated
+face wagon_small.131
+layer 4
+identified 1
+no_pick 1
+material 18
+value 350
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object wmask_bflag_brown_1
+name big flag
+type 77
+editor_folder intern/outdated
+face wmask_bflag_brown.u.151
+no_pick 1
+layer 7
+end
+Object wmask_bflag_fire1_1
+name big flag
+type 77
+editor_folder intern/outdated
+face wmask_bflag_fire1.u.151
+no_pick 1
+layer 7
+end
+Object wmask_fire_on_1
+name big flag
+type 77
+editor_folder intern/outdated
+face wmask_fire_on.151
+no_pick 1
+layer 7
+end
+Object wmask_fire_off_1
+name big flag
+type 77
+editor_folder intern/outdated
+face wmask_fire_off.151
+no_pick 1
+layer 7
+end
+Object wmask_ruin1a.131
+name runes
+type 77
+editor_folder intern/outdated
+face wmask_ruin1a.131
+no_pick 1
+layer 7
+end
+Object wmask_ruin1b.131
+name runes
+type 77
+editor_folder intern/outdated
+face wmask_ruin1b.131
+no_pick 1
+layer 7
+end
+Object wmask_wanted.151
+name big flag
+type 77
+editor_folder intern/outdated
+face wmask_wanted.u.151
+no_pick 1
+layer 7
 end
 Object age_force
 name age force
@@ -10533,23 +11359,11 @@ type 122
 editor_folder items/container
 other_arch close_chest1_111
 face chest_mm_closed.111
-layer 4
-no_pick 1
-identified 1
-level 1
-material 18
-material_real 65
-value 350
-container 225000
-weight 15000
-weapon_speed 1.0
-end
-Object chest1_171
-name chest
-type 122
-editor_folder items/container
-other_arch close_chest1_171
-face chest_mm_closed.171
+animation chest
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 4
 no_pick 1
 identified 1
@@ -10567,27 +11381,15 @@ type 122
 editor_folder items/container
 other_arch close_chest_m1_1
 face chest_lm_closed.111
+animation chest_m
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 4
 level 1
 no_pick 1
 identified 1
-material 2
-material_real 65
-value 350
-container 350000
-weight 22500
-weapon_speed 1.0
-end
-Object chest_m1_7
-name chest
-type 122
-editor_folder items/container
-other_arch close_chest_m1_7
-face chest_lm_closed.171
-layer 4
-level 1
-identified 1
-no_pick 1
 material 2
 material_real 65
 value 350
@@ -10601,27 +11403,15 @@ type 122
 editor_folder items/container
 other_arch close_chest_w1_1
 face chest_lw_closed.111
+animation chest_w1
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 4
 level 1
 identified 1
 no_pick 1
-material 18
-material_real 258
-value 350
-container 350000
-weight 22000
-weapon_speed 1.0
-end
-Object chest_w1_7
-name chest
-type 122
-editor_folder items/container
-other_arch close_chest_w1_7
-face chest_lw_closed.171
-layer 4
-level 1
-no_pick 1
-identified 1
 material 18
 material_real 258
 value 350
@@ -10635,23 +11425,11 @@ type 122
 editor_folder items/container
 other_arch close_chest_4.111
 face chest_mw_closed.111
-layer 4
-level 1
-identified 1
-no_pick 1
-material 18
-material_real 258
-value 350
-container 225000
-weight 15000
-weapon_speed 1.0
-end
-Object chest_4.171
-name chest
-type 122
-editor_folder items/container
-other_arch close_chest_4.171
-face chest_mw_closed.171
+animation chest_4.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 4
 level 1
 identified 1
@@ -10669,27 +11447,15 @@ type 122
 editor_folder items/container
 other_arch close_chest_sm_1
 face chest_sm_closed.111
+animation chest_sm_1
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 4
 level 1
 identified 1
 no_pick 1
-material 2
-material_real 65
-value 350
-container 125000
-weight 8000
-weapon_speed 1.0
-end
-Object chest_sm_7
-name chest
-type 122
-editor_folder items/container
-other_arch close_chest_sm_7
-face chest_sm_closed.171
-layer 4
-level 1
-no_pick 1
-identified 1
 material 2
 material_real 65
 value 350
@@ -10703,27 +11469,15 @@ type 122
 editor_folder items/container
 other_arch close_chest_sw_1
 face chest_sw_closed.111
+animation chest_sw_1
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 4
 level 1
 no_pick 1
 identified 1
-material 18
-material_real 258
-value 350
-container 125000
-weight 8000
-weapon_speed 1.0
-end
-Object chest_sw_7
-name chest
-type 122
-editor_folder items/container
-other_arch close_chest_sw_7
-face chest_sw_closed.171
-layer 4
-level 1
-identified 1
-no_pick 1
 material 18
 material_real 258
 value 350
@@ -10737,23 +11491,11 @@ type 122
 editor_folder items/container
 other_arch close_chest7_111
 face chest_mm2_closed.111
-layer 4
-no_pick 1
-identified 1
-level 1
-material 18
-material_real 65
-value 350
-container 225000
-weight 15000
-weapon_speed 1.0
-end
-Object chest7_171
-name chest
-type 122
-editor_folder items/container
-other_arch close_chest7_171
-face chest_mm2_closed.171
+animation chest7_111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 4
 no_pick 1
 identified 1
@@ -10788,20 +11530,11 @@ name desk
 type 122
 editor_folder items/container
 face desk1.111
-layer 4
-identified 1
-no_pick 1
-material 18
-value 350
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object desk1.171
-name desk
-type 122
-editor_folder items/container
-face desk1.171
+animation desk1.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 4
 identified 1
 no_pick 1
@@ -10816,24 +11549,15 @@ name drawer
 type 122
 editor_folder items/container
 face drawers1.111
+animation drawers1.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 4
 identified 1
 no_pick 1
 material 18
-value 350
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object drawers1.171
-name drawer
-type 122
-editor_folder items/container
-face drawers1.171
-layer 4
-identified 1
-material 18
-no_pick 1
 value 350
 container 15000
 weight 15000
@@ -10860,20 +11584,11 @@ name locker
 type 122
 editor_folder items/container
 face locker1.111
-layer 4
-identified 1
-no_pick 1
-material 18
-value 350
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object locker1.171
-name locker
-type 122
-editor_folder items/container
-face locker1.171
+animation locker1.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 4
 identified 1
 no_pick 1
@@ -10888,24 +11603,15 @@ name locker
 type 122
 editor_folder items/container
 face locker2.111
+animation locker2.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 4
 identified 1
 no_pick 1
 material 18
-value 350
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object locker2.171
-name locker
-type 122
-editor_folder items/container
-face locker2.171
-layer 4
-identified 1
-material 18
-no_pick 1
 value 350
 container 15000
 weight 15000
@@ -10916,20 +11622,11 @@ name locker
 type 122
 editor_folder items/container
 face locker3.111
-layer 4
-identified 1
-material 18
-no_pick 1
-value 350
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object locker3.171
-name locker
-type 122
-editor_folder items/container
-face locker3.171
+animation locker3.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 4
 identified 1
 material 18
@@ -11046,20 +11743,11 @@ name weapon rack
 type 122
 editor_folder items/container
 face rack.111
-layer 4
-identified 1
-no_pick 1
-material 18
-value 3500
-container 250000
-weight 15000
-weapon_speed 1.0
-end
-Object rack.171
-name weapon rack
-type 122
-editor_folder items/container
-face rack.171
+animation rack.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 4
 identified 1
 no_pick 1
@@ -11104,6 +11792,11 @@ name shelf
 type 122
 editor_folder items/container
 face shelf1.111
+animation shelf1.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 4
 identified 1
 no_pick 1
@@ -11113,15 +11806,20 @@ container 15000
 weight 15000
 weapon_speed 1.0
 end
-Object shelf2.171
+Object shelf2.111
 name shelf
 type 122
 editor_folder items/container
-face shelf2.171
+face shelf2.111
+animation shelf2.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 4
 identified 1
-material 18
 no_pick 1
+material 18
 value 350
 container 15000
 weight 15000
@@ -11132,20 +11830,11 @@ name shelf
 type 122
 editor_folder items/container
 face shelf3.111
-layer 4
-identified 1
-material 18
-no_pick 1
-value 350
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object shelf3.171
-name shelf
-type 122
-editor_folder items/container
-face shelf3.171
+animation shelf3.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 4
 identified 1
 material 18
@@ -11160,20 +11849,11 @@ name shelf
 type 122
 editor_folder items/container
 face shelf3a.111
-layer 4
-identified 1
-material 18
-no_pick 1
-value 350
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object shelf3a.171
-name shelf
-type 122
-editor_folder items/container
-face shelf3a.171
+animation shelf3a.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 4
 identified 1
 material 18
@@ -11188,20 +11868,11 @@ name shelf
 type 122
 editor_folder items/container
 face shelf3b.111
-layer 4
-identified 1
-material 18
-no_pick 1
-value 350
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object shelf3b.171
-name shelf
-type 122
-editor_folder items/container
-face shelf3b.171
+animation shelf3b.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 4
 identified 1
 material 18
@@ -11216,6 +11887,11 @@ name shelf
 type 122
 editor_folder items/container
 face shelf3c.111
+animation shelf3c.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 4
 identified 1
 material 18
@@ -11230,20 +11906,11 @@ name demolished shelf
 type 122
 editor_folder items/container
 face shelf3_dem1.111
-layer 4
-identified 1
-material 18
-no_pick 1
-value 350
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object shelf3_dem1.171
-name demolished shelf
-type 122
-editor_folder items/container
-face shelf3_dem1.171
+animation shelf3_dem1.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 4
 identified 1
 material 18
@@ -11258,20 +11925,11 @@ name demolished shelf
 type 122
 editor_folder items/container
 face shelf3_dem2.111
-layer 4
-identified 1
-material 18
-no_pick 1
-value 350
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object shelf3_dem2.171
-name demolished shelf
-type 122
-editor_folder items/container
-face shelf3_dem2.171
+animation shelf3_dem2.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 4
 identified 1
 material 18
@@ -11286,20 +11944,11 @@ name demolished shelf
 type 122
 editor_folder items/container
 face shelf3_dem3.111
-layer 4
-identified 1
-material 18
-no_pick 1
-value 350
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object shelf3_dem3.171
-name demolished shelf
-type 122
-editor_folder items/container
-face shelf3_dem3.171
+animation shelf3_dem3.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 4
 identified 1
 material 18
@@ -11314,20 +11963,11 @@ name shelf
 type 122
 editor_folder items/container
 face shelf_wall.111
-layer 4
-identified 1
-material 18
-no_pick 1
-value 350
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object shelf_wall.171
-name shelf
-type 122
-editor_folder items/container
-face shelf_wall.171
+animation shelf_wall.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 4
 identified 1
 material 18
@@ -11342,20 +11982,11 @@ name shelf
 type 122
 editor_folder items/container
 face shelf1_wall.111
-layer 4
-identified 1
-material 18
-no_pick 1
-value 350
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object shelf1_wall.171
-name shelf
-type 122
-editor_folder items/container
-face shelf1_wall.171
+animation shelf1_wall.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 4
 identified 1
 material 18
@@ -11370,20 +12001,11 @@ name shelf
 type 122
 editor_folder items/container
 face shelf2_wall.111
-layer 4
-identified 1
-material 18
-no_pick 1
-value 350
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object shelf2_wall.171
-name shelf
-type 122
-editor_folder items/container
-face shelf2_wall.171
+animation shelf2_wall.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 4
 identified 1
 material 18
@@ -11398,6 +12020,11 @@ name shelf
 type 122
 editor_folder items/container
 face shelf3_wall.111
+animation shelf3_wall.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 4
 identified 1
 material 18
@@ -11407,11 +12034,54 @@ container 15000
 weight 15000
 weapon_speed 1.0
 end
-Object shelf3_wall.171
+Object shelf4_wall.111
 name shelf
 type 122
 editor_folder items/container
-face shelf3_wall.171
+face shelf4_wall.111
+animation shelf4_wall.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+layer 4
+identified 1
+material 18
+no_pick 1
+value 350
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object shelf5_wall.111
+name shelf
+type 122
+editor_folder items/container
+face shelf5_wall.111
+animation shelf5_wall.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
+layer 4
+identified 1
+material 18
+no_pick 1
+value 350
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object shelf6_wall.111
+name shelf
+type 122
+editor_folder items/container
+face shelf6_wall.111
+animation shelf6_wall.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 4
 identified 1
 material 18
@@ -11426,20 +12096,11 @@ name demolished shelf
 type 122
 editor_folder items/container
 face shelf_wall_dem1.111
-layer 4
-identified 1
-material 18
-no_pick 1
-value 3
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object shelf_wall_dem1.171
-name demolished shelf
-type 122
-editor_folder items/container
-face shelf_wall_dem1.171
+animation shelf_wall_dem1.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 4
 identified 1
 material 18
@@ -11454,20 +12115,11 @@ name demolished shelf
 type 122
 editor_folder items/container
 face shelf_wall_dem2.111
-layer 4
-identified 1
-material 18
-no_pick 1
-value 3
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object shelf_wall_dem2.171
-name demolished shelf
-type 122
-editor_folder items/container
-face shelf_wall_dem2.171
+animation shelf_wall_dem2.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 4
 identified 1
 material 18
@@ -11482,20 +12134,11 @@ name demolished shelf
 type 122
 editor_folder items/container
 face shelf_wall_dem3.111
-layer 4
-identified 1
-material 18
-no_pick 1
-value 3
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object shelf_wall_dem3.171
-name demolished shelf
-type 122
-editor_folder items/container
-face shelf_wall_dem3.171
+animation shelf_wall_dem3.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 4
 identified 1
 material 18
@@ -11510,20 +12153,11 @@ name small wagon
 type 122
 editor_folder items/container
 face wagon_small.111
-layer 4
-identified 1
-no_pick 1
-material 18
-value 350
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object wagon_small.131
-name small wagon
-type 122
-editor_folder items/container
-face wagon_small.131
+animation wagon_small.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 4
 identified 1
 no_pick 1
@@ -11754,7 +12388,7 @@ other_arch torch_burnt
 face torch_unlit.101
 layer 3
 animation torch
-is_animated 0
+is_animated 1
 anim_speed 4
 material 144
 value 10
@@ -11787,25 +12421,9 @@ layer 5
 face torch_wall.110
 animation torch_wall_1
 speed -0.02
-is_animated 0
-anim_speed 6
-no_teleport 1
-no_pick 1
-last_sp 5
-weight 1250
-material 144
-food 1
-end
-Object torch_wall_7
-name attached torch
-type 74
-editor_folder items/light
-layer 5
-face torch_wall.170
-animation torch_wall_7
-speed -0.02
-is_animated 0
-anim_speed 6
+is_animated 1
+is_turnable 1
+anim_speed 4
 no_teleport 1
 no_pick 1
 last_sp 5
@@ -12017,6 +12635,11 @@ Touching the treasure chest it crumbles to dust.
 endmsg
 editor_folder items/items
 face chest_wood_s.111
+animation random_chest_wood
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 nrof 0
 layer 4
 level 1
@@ -12034,6 +12657,11 @@ Touching the treasure chest it crumbles to dust.
 endmsg
 editor_folder items/items
 face chest_black_s.111
+animation random_chest_black
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 nrof 0
 level 1
 no_pick 1
@@ -12051,6 +12679,11 @@ Touching the treasure chest it crumbles to dust.
 endmsg
 editor_folder items/items
 face chest_metal_s.111
+animation random_chest_metal
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 nrof 0
 level 1
 no_pick 1
@@ -19110,15 +19743,11 @@ type 79
 editor_folder outdoor/scarecrow
 layer 5
 face scarecrow.111
-no_pass 1
-no_pick 1
-end
-Object scarecrow.131
-name scarecrow
-type 79
-editor_folder outdoor/scarecrow
-layer 5
-face scarecrow.131
+animation scarecrow.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pass 1
 no_pick 1
 end
@@ -19164,15 +19793,11 @@ type 79
 editor_folder outdoor/target
 layer 5
 face target.111
-no_pass 1
-no_pick 1
-end
-Object target.131
-name target
-type 79
-editor_folder outdoor/target
-layer 5
-face target.131
+animation target.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pass 1
 no_pick 1
 end
@@ -19502,15 +20127,11 @@ type 79
 editor_folder structures/grave
 layer 5
 face coffin_wood.111
-no_pass 1
-no_pick 1
-end
-Object coffin_wood.131
-name wooden coffin
-type 79
-editor_folder structures/grave
-layer 5
-face coffin_wood.131
+animation coffin_wood.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pass 1
 no_pick 1
 end
@@ -19520,15 +20141,11 @@ type 79
 editor_folder structures/grave
 layer 5
 face coffin_stone.111
-no_pass 1
-no_pick 1
-end
-Object coffin_stone.131
-name stone coffin
-type 79
-editor_folder structures/grave
-layer 5
-face coffin_stone.131
+animation coffin_stone.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pass 1
 no_pick 1
 end
@@ -19538,15 +20155,11 @@ type 79
 editor_folder structures/grave
 layer 5
 face grave1.111
-no_pass 1
-no_pick 1
-end
-Object grave1.131
-name grave
-type 79
-editor_folder structures/grave
-layer 5
-face grave1.131
+animation grave1.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pass 1
 no_pick 1
 end
@@ -19556,15 +20169,11 @@ type 79
 editor_folder structures/grave
 layer 5
 face grave2.111
-no_pass 1
-no_pick 1
-end
-Object grave2.131
-name grave
-type 79
-editor_folder structures/grave
-layer 5
-face grave2.131
+animation grave2.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pass 1
 no_pick 1
 end
@@ -19574,15 +20183,11 @@ type 79
 editor_folder structures/grave
 layer 5
 face grave_open.111
-no_pass 1
-no_pick 1
-end
-Object grave_open.131
-name open grave
-type 79
-editor_folder structures/grave
-layer 5
-face grave_open.131
+animation grave_open.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pass 1
 no_pick 1
 end
@@ -19592,15 +20197,11 @@ type 79
 editor_folder structures/grave
 layer 5
 face grave_cross1.111
-no_pass 1
-no_pick 1
-end
-Object grave_cross1.131
-name grave
-type 79
-editor_folder structures/grave
-layer 5
-face grave_cross1.131
+animation grave_cross1.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pass 1
 no_pick 1
 end
@@ -19610,15 +20211,11 @@ type 79
 editor_folder structures/grave
 layer 5
 face grave_cross2.111
-no_pass 1
-no_pick 1
-end
-Object grave_cross2.131
-name grave
-type 79
-editor_folder structures/grave
-layer 5
-face grave_cross2.131
+animation grave_cross2.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pass 1
 no_pick 1
 end
@@ -19637,15 +20234,11 @@ type 79
 editor_folder structures/lanterns
 no_pass 1
 face lantern_magic.131
-layer 5
-no_pick 1
-end
-Object lantern_magic.151
-name magic lantern
-type 79
-editor_folder structures/lanterns
-no_pass 1
-face lantern_magic.151
+animation lantern_magic.131
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 5
 no_pick 1
 end
@@ -19654,14 +20247,11 @@ name magic lantern
 type 79
 editor_folder structures/lanterns
 face lantern2_magic.131
-layer 5
-no_pick 1
-end
-Object lantern2_magic.151
-name magic lantern
-type 79
-editor_folder structures/lanterns
-face lantern2_magic.151
+animation lantern2_magic.131
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 layer 5
 no_pick 1
 end
@@ -19724,14 +20314,11 @@ type 79
 editor_folder structures/ruin
 layer 2
 face fmask_ruin1a.111
-no_pick 1
-end
-Object fmask_ruin1a.131
-name ruin parts
-type 79
-editor_folder structures/ruin
-layer 2
-face fmask_ruin1a.131
+animation fmask_ruin1a.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 end
 Object fmask_ruin1_s1.101
@@ -19875,14 +20462,11 @@ name runes
 type 77
 editor_folder structures/ruin
 face wmask_ruin1a.111
-no_pick 1
-layer 7
-end
-Object wmask_ruin1a.131
-name runes
-type 77
-editor_folder structures/ruin
-face wmask_ruin1a.131
+animation wmask_ruin1a.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 7
 end
@@ -19891,14 +20475,11 @@ name runes
 type 77
 editor_folder structures/ruin
 face wmask_ruin1b.111
-no_pick 1
-layer 7
-end
-Object wmask_ruin1b.131
-name runes
-type 77
-editor_folder structures/ruin
-face wmask_ruin1b.131
+animation wmask_ruin1b.111
+is_animated 0
+anim_speed 0
+is_turnable 1
+direction 1
 no_pick 1
 layer 7
 end

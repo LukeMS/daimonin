@@ -240,7 +240,7 @@ static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int 
             break;
         }
         
-        /* dequeue next tile to check */
+        /* dequeue next tile to check */        
         curr = first;
 		if(curr)
 			first = curr->next;

@@ -450,7 +450,8 @@ void alchemy_failure_effect(object *op,object *cauldron,recipe *rp,int danger) {
        /* this is kind of kludgy I know...*/
       cauldron->enemy=op;
       cauldron->enemy_count=op->count;  
-      npc_call_help(cauldron);
+      /* TODO disabled while cleaning up monster.c */
+      /* npc_call_help(cauldron); */
       cauldron->enemy=NULL;
 
       alchemy_failure_effect(op,cauldron,rp,level-5);

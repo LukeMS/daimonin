@@ -1920,9 +1920,13 @@ object *insert_base_info_object(object *op)
     
     /* Store position (for returning home after aggro is lost...) */
     /* Has to be done after insert_ob_in_ob() */
-    tmp->x = op->x;
-    tmp->y = op->y;
-    FREE_AND_ADD_REF_HASH(tmp->slaying, op->map->path);
+    if(op->map) {
+        tmp->x = op->x;
+        tmp->y = op->y;
+        FREE_AND_ADD_REF_HASH(tmp->slaying, op->map->path); 
+    } else {
+        FREE_AND_CLEAR_HASH(tmp->slaying);
+    }
 
 	return tmp;
 }

@@ -855,13 +855,7 @@ void process_players1(mapstruct *map)
                 else if(is_melee_range(pl->ob, pl->ob->enemy))
 				{
 					/* tell our enemy we swing at him now */
-					if (!OBJECT_VALID(pl->ob->enemy->enemy, pl->ob->enemy->enemy_count))
-                        set_npc_enemy(pl->ob->enemy, pl->ob, NULL);
-					else /* our target has already a enemy - then note we had attacked */
-					{
-						pl->ob->enemy->attacked_by=pl->ob;
-						pl->ob->enemy->attacked_by_distance = 1; /* melee... there is no way nearer */
-					}
+                    register_npc_known_obj(pl->ob->enemy, pl->ob, FRIENDSHIP_TRY_ATTACK);
 					pl->praying=0;
                     skill_attack(pl->ob->enemy, pl->ob, 0, NULL);
 					/* we want only *one* swing - not several swings per tick */
@@ -1213,10 +1207,10 @@ void dequeue_path_requests()
 #ifdef LEFTOVER_CPU_FOR_PATHFINDING
     static struct timeval new_time;
     long leftover_sec, leftover_usec;
-    object *wp;
+    object *op;
 
-    while ((wp = get_next_requested_path())) {
-        waypoint_compute_path(wp);
+    while ((op = get_next_requested_path())) {
+        object_accept_path(op);
         
         /* TODO: only compute time if there is something more in the queue, something
          * like if(path_request_queue_empty()) break; */
@@ -1242,9 +1236,9 @@ void dequeue_path_requests()
             break;
     }
 #else
-    object *wp = get_next_requested_path();
+    object *op = get_next_requested_path();
     if(wp) 
-        waypoint_compute_path(wp);
+        object_accept_path(op);
 #endif /* LEFTOVER_CPU_FOR_PATHFINDING */
 }
 
