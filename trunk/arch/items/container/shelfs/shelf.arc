@@ -9,7 +9,7 @@ material 18
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object shelf2.171
 name shelf
@@ -22,7 +22,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object shelf3.111
 name shelf
@@ -35,7 +35,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object shelf3.171
 name shelf
@@ -48,7 +48,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object shelf3a.111
 name shelf
@@ -61,7 +61,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object shelf3a.171
 name shelf
@@ -74,7 +74,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object shelf3b.111
 name shelf
@@ -87,7 +87,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object shelf3b.171
 name shelf
@@ -100,7 +100,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object shelf3c.111
 name shelf
@@ -113,5 +113,5 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end

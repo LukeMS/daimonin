@@ -1,5 +1,5 @@
 
 **** The online /help command ****
-For a list of all help topics type &/help &list.
-For a list of emotes type &/help &emotes.
+For a list of all help topics type ^/help list^.
+For a list of emotes type ^/help emotes^.
 Usage: /help <topic>

@@ -344,7 +344,10 @@ int get_path_next(const char *buf, sint16 *off, const char **mappath, mapstruct 
     /* Select the map we are aiming at */
     /* TODO: handle unique maps? */
     if(*mappath)
-        *map = ready_map_name(*mappath, MAP_NAME_SHARED); /* We assume map name is already normalized */
+	{
+		if(!*map || (*map)->path != *mappath)
+	        *map = ready_map_name(*mappath, MAP_NAME_SHARED); /* We assume map name is already normalized */
+	}
 
     if(*map == NULL) {
         LOG(llevBug,"get_path_next: Couldn't load map from description '%s' off %d\n", buf, *off);

@@ -836,6 +836,12 @@ void esrv_send_item(object *pl, object*op)
 			esrv_send_item_send(tmp,op);
 		return;
 	}
+
+	if(pl->type != PLAYER)
+	{
+		LOG(llevBug,"esrv_send_item(): called for non PLAYER/CONTAINER object! (%s) (%s)\n", query_name(pl), query_name(op));
+		return;
+	}
 			
 	esrv_send_item_send(pl,op);
 }

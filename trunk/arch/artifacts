@@ -572,7 +572,7 @@ is_magical 1
 title of minor holding
 type 122
 value 15000
-Str 15
+weapon_speed 0.85
 end
 #
 Allowed quiver,quiver_s,quiver_b,bag,sack,r_sack,pouch
@@ -585,7 +585,7 @@ is_magical 1
 title of small holding
 type 122
 value 22000
-Str 25
+weapon_speed 0.75
 end
 #
 Allowed quiver,quiver_s,quiver_b,bag,sack,r_sack,pouch
@@ -598,7 +598,7 @@ is_magical 1
 title of medium holding
 type 122
 value 30000
-Str 35
+weapon_speed 0.65
 end
 #
 Allowed quiver,quiver_s,quiver_b,bag,sack,key_ring,r_sack,pouch
@@ -611,7 +611,7 @@ is_magical 1
 title of holding
 type 122
 value 120000
-Str 50
+weapon_speed 0.55
 end
 #
 Allowed quiver,quiver_s,quiver_b,bag,sack,r_sack,pouch
@@ -624,7 +624,7 @@ is_magical 1
 title of fine holding
 type 122
 value 500000
-Str 60
+weapon_speed 0.45
 end
 #
 Allowed quiver,quiver_s,quiver_b,bag,sack,r_sack,pouch
@@ -637,7 +637,7 @@ is_magical 1
 title of great holding
 type 122
 value 1250000
-Str 70
+weapon_speed 0.40
 end
 #
 Allowed quiver,quiver_s,quiver_b,bag,sack,r_sack,pouch
@@ -650,7 +650,7 @@ is_magical 1
 title of greater holding
 type 122
 value 1500000
-Str 75
+weapon_speed 0.30
 end
 #
 Allowed quiver,quiver_s,quiver_b,bag,sack,r_sack,pouch
@@ -663,7 +663,7 @@ is_magical 1
 title of weightless holding
 type 122
 value 1900000
-Str 85
+weapon_speed 0.25
 end
 #
 # Cloaks

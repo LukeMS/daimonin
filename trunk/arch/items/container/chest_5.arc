@@ -4,14 +4,15 @@ other_arch close_chest_sm_1
 face chest_sm_closed.111
 layer 4
 level 1
+identified 1
 no_pick 1
 type 122
-material 18
-material_real 258
+material 2
+material_real 65
 value 350
-container 500000
-weight 15000
-Str 5
+container 125000
+weight 8000
+weapon_speed 1.0
 end
 Object chest_sm_7
 name chest
@@ -21,10 +22,11 @@ layer 4
 level 1
 no_pick 1
 type 122
-material 18
-material_real 258
+identified 1
+material 2
+material_real 65
 value 350
-container 500000
-weight 15000
-Str 5
+container 125000
+weight 8000
+weapon_speed 1.0
 end

@@ -5,6 +5,8 @@ face corpse_default.101
 type 122
 sub_type 1
 material 32
+weapon_speed 1.0
+container 350000
 weight 50000
 food 25
 is_used_up 1

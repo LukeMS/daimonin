@@ -1480,11 +1480,12 @@ void fix_player(object *op)
 	op->weapon_speed_add = op->weapon_speed;
 
 
+	op->glow_radius = light;
+
 	/* we must do -old_gow + light */
 	if(op->map && old_glow != light)
 		adjust_light_source(op->map, op->x, op->y, light-old_glow);
 
-	op->glow_radius = light;
 
 	/* for player, max hp depend on general level, sp on magic exp, grace on wisdom exp level
 	 * NOTE: all values are adjusted from clone at function start.

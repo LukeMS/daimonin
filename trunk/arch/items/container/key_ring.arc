@@ -11,5 +11,5 @@ material_real 65
 value 10
 weight 50
 container 2500
-Str 5
+weapon_speed 1.0
 end

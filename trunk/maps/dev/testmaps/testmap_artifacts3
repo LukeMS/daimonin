@@ -5,9 +5,9 @@ Creator: Daimonin Map Editor
 Date:    2/6/2004
 endmsg
 width 24
-darkness 700
 height 24
 difficulty 1
+darkness 700
 tile_path_1 testmap_artifacts2
 end
 arch floor_ostone1
@@ -199,7 +199,17 @@ arch floor_ostone1
 x 1
 y 11
 end
+arch sack
+weapon_speed 1.4
+x 1
+y 11
+end
 arch floor_ostone1
+x 1
+y 12
+end
+arch sack
+weapon_speed 0.5
 x 1
 y 12
 end
@@ -410,6 +420,7 @@ x 3
 y 11
 end
 arch holding_min
+identified 1
 x 3
 y 11
 end
@@ -521,6 +532,7 @@ x 4
 y 11
 end
 arch holding_small
+identified 1
 x 4
 y 11
 end
@@ -632,6 +644,7 @@ x 5
 y 11
 end
 arch holding_med
+identified 1
 x 5
 y 11
 end
@@ -743,6 +756,7 @@ x 6
 y 11
 end
 arch holding
+identified 1
 x 6
 y 11
 end
@@ -965,6 +979,7 @@ x 8
 y 11
 end
 arch holding_great
+identified 1
 x 8
 y 11
 end
@@ -1080,6 +1095,7 @@ x 9
 y 11
 end
 arch holding_greater
+identified 1
 x 9
 y 11
 end

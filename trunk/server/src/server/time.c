@@ -1024,75 +1024,109 @@ void move_arrow(object *op) {
  * Modified this routine to allow held objects. b.t. */
 
 void change_object(object *op) { /* Doesn`t handle linked objs yet */
-  object *tmp,*env,*pl;
-  int i,j;
+  
+	object *tmp,*env ;
+	int i,j;
 
-  /* In non-living items only change when food value is 0 */
-  if(!QUERY_FLAG(op,FLAG_ALIVE)) {
-	if(op->stats.food-- > 0) return; 
-	else
-    {
-        if(op->type == TYPE_LIGHT_APPLY)
-        {
-            CLEAR_FLAG(op,FLAG_CHANGING);
-            op->glow_radius=0;
-            
-            if ((tmp=is_player_inv(op))!=NULL)
-            {
-                new_draw_info_format(NDI_UNIQUE, 0, tmp,
-                    "The %s burnt out.", query_name(op));
-                fix_player(tmp);
-            }
-            else            
-                tmp = op;
+	/* In non-living items only change when food value is 0 */
+	if(!QUERY_FLAG(op,FLAG_ALIVE))
+	{
+		if(op->stats.food-- > 0) 
+			return; 
+		else
+		{
+			/* we had hooked applyable light object here - handle them special */
+			if(op->type == TYPE_LIGHT_APPLY)
+			{
+				CLEAR_FLAG(op,FLAG_CHANGING);
 
-			update_object(tmp,UP_OBJ_FACE);
-            if(op->other_arch == NULL)
-            {
-                op->stats.food=0; /* other_arch == NULL means it can be refilled */
-                CLEAR_FLAG(op,FLAG_ANIMATE);
-                op->face = op->arch->clone.face;                
-                update_object(op,UP_OBJ_FACE);
-                if((pl=is_player_inv(op))!=NULL)
-                    esrv_send_item(pl, op);
-                return;
-            }
-        }
-        op->stats.food=1; /* so 1 other_arch is made */
-    }
-  }
+				/* thats special lights like lamp which can be refilled */
+				if(op->other_arch == NULL)
+	            {
+					op->stats.food=0;
+			        CLEAR_FLAG(op,FLAG_ANIMATE);
+					op->face = op->arch->clone.face;
+	
+					if(op->env) /* not on map? */
+					{
 
-  if(op->other_arch==NULL) {
-      LOG(llevBug,"BUG: Change object (%s) without other_arch error.\n", op->name);
-      return;
-  }
-  env=op->env;
-  remove_ob(op);
-  for(i=0;i<NROFNEWOBJS(op);i++) {
-    tmp=arch_to_object(op->other_arch);
-    tmp->stats.hp=op->stats.hp; /* The only variable it keeps. */
-    if(env) {
-        tmp->x=env->x,tmp->y=env->y;
-	tmp=insert_ob_in_ob(tmp,env);
-	/* If this object is the players inventory, we need to tell the
-	 * client of the change.  Insert_ob_in_map takes care of the
-	 * updating the client, so we don't need to do that below.
-	 */
-	if ((pl=is_player_inv(env))!=NULL) {
-	    esrv_del_item(pl->contr, op->count, op->env);
-	    esrv_send_item(pl, tmp);
+						if(op->env->type == PLAYER) /* inside player char? */
+						{
+							new_draw_info_format(NDI_UNIQUE, 0, op->env, "The %s burnt out.", query_name(op));
+							op->glow_radius=0;
+							esrv_send_item(op->env, op);
+							fix_player(op->env); /* fix player will take care about adjust light masks */
+						}
+						else /* atm, lights inside other inv as players don't set light masks */
+						{
+							/* but we need to update container which are possible watched by players */
+							op->glow_radius=0;
+							if(op->env->type == CONTAINER)
+								esrv_send_item(NULL, op);
+						}
+					}
+					else /* object is on map */
+					{
+						/* remove light mask from map */
+						adjust_light_source(op->map, op->x, op->y, -(op->glow_radius));
+						update_object(op,UP_OBJ_FACE); /* tell map update we have something changed */
+						op->glow_radius=0;
+					}
+					return;
+				}
+				else /* this object will be deleted and exchanged with other_arch */
+				{
+					/* but give the player a note about it too */
+					if(op->env && op->env->type == PLAYER)
+						new_draw_info_format(NDI_UNIQUE, 0, op->env, "The %s burnt out.", query_name(op));
+				}
+				
+			}
+		}
+	} /* end non living objects */
+
+	if(op->other_arch==NULL) 
+	{
+		LOG(llevBug,"BUG: Change object (%s) without other_arch error.\n", op->name);
+		return;
 	}
-    } else {
-        j=find_first_free_spot(tmp->arch,op->map,op->x,op->y);
-	if (j==-1)  /* No free spot */
-	    free_object(tmp);
-	else {
-	    tmp->x=op->x+freearr_x[j],tmp->y=op->y+freearr_y[j];
-	    insert_ob_in_map(tmp,op->map,op,0);
+
+	env=op->env;
+	remove_ob(op);
+	for(i=0;i<1;i++) /* atm we only generate per change tick *ONE* object */ 
+	{
+		tmp=arch_to_object(op->other_arch);
+		tmp->stats.hp=op->stats.hp; /* The only variable it keeps. */
+		if(env) 
+		{
+			tmp->x=env->x,tmp->y=env->y;
+			tmp=insert_ob_in_ob(tmp,env);
+
+			/* this should handle in future insert_ob_in_ob() */
+			if(env->type == PLAYER) 
+			{
+				esrv_del_item(env->contr, op->count, NULL);
+				esrv_send_item(env, tmp);
+			}
+			else if(env->type == CONTAINER) 
+			{
+				esrv_del_item(NULL, op->count, env);
+				esrv_send_item(env, tmp);
+			}
+		} 
+		else 
+		{
+			j=find_first_free_spot(tmp->arch,op->map,op->x,op->y);
+			if (j==-1)  /* No free spot */
+				free_object(tmp);
+			else 
+			{
+				tmp->x=op->x+freearr_x[j],tmp->y=op->y+freearr_y[j];
+				insert_ob_in_map(tmp,op->map,op,0);
+			}
+		}
 	}
-    }
-  }
-  free_object(op);
+	free_object(op);
 }
 
 

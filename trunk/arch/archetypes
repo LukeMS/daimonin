@@ -4289,6 +4289,8 @@ sub_type 1
 identified 1
 sub_type 2
 material 32
+weapon_speed 1.0
+container 500000
 weight 60000
 no_pick 1
 invulnerable 1
@@ -4334,7 +4336,7 @@ can_use_armour 1
 can_use_weapon 1
 is_player 1
 weight 55000
-food 999
+food 750
 Str 0
 Dex 0
 Con 0
@@ -4383,7 +4385,7 @@ can_use_armour 1
 can_use_weapon 1
 is_player 1
 weight 70000
-food 999
+food 750
 Str 0
 Dex 0
 Con 0
@@ -6790,7 +6792,7 @@ material 18
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object desk1.171
 name desk
@@ -6804,7 +6806,7 @@ material 18
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object drawers1.111
 name drawer
@@ -6818,7 +6820,7 @@ material 18
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object drawers1.171
 name drawer
@@ -6832,7 +6834,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object locker1.111
 name locker
@@ -6846,7 +6848,7 @@ material 18
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object locker1.171
 name locker
@@ -6860,7 +6862,7 @@ material 18
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object locker2.111
 name locker
@@ -6874,7 +6876,7 @@ material 18
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object locker2.171
 name locker
@@ -6888,7 +6890,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object locker3.111
 name locker
@@ -6902,7 +6904,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object locker3.171
 name locker
@@ -6916,7 +6918,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object rack.111
 name weapon rack
@@ -6930,7 +6932,7 @@ material 18
 value 3500
 container 250000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object rack.171
 name weapon rack
@@ -6944,7 +6946,7 @@ material 18
 value 3500
 container 250000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object shelf1.111
 name shelf
@@ -6958,7 +6960,7 @@ material 18
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object shelf2.171
 name shelf
@@ -6972,7 +6974,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object shelf3.111
 name shelf
@@ -6986,7 +6988,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object shelf3.171
 name shelf
@@ -7000,7 +7002,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object shelf3a.111
 name shelf
@@ -7014,7 +7016,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object shelf3a.171
 name shelf
@@ -7028,7 +7030,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object shelf3b.111
 name shelf
@@ -7042,7 +7044,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object shelf3b.171
 name shelf
@@ -7056,7 +7058,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object shelf3c.111
 name shelf
@@ -7070,7 +7072,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object shelf_wall.111
 name shelf
@@ -7084,7 +7086,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object shelf_wall.171
 name shelf
@@ -7098,7 +7100,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object shelf1_wall.111
 name shelf
@@ -7112,7 +7114,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object shelf1_wall.171
 name shelf
@@ -7126,7 +7128,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object shelf2_wall.111
 name shelf
@@ -7140,7 +7142,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object shelf2_wall.171
 name shelf
@@ -7154,7 +7156,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object shelf3_wall.111
 name shelf
@@ -7168,7 +7170,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object shelf3_wall.171
 name shelf
@@ -7182,7 +7184,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object bag
 name bag
@@ -7195,8 +7197,8 @@ level 1
 material 128
 material_real 450
 weight 200
-container 80000
-Str 5
+container 50000
+weapon_speed 1.0
 value 20
 end
 Object cauldron
@@ -7206,13 +7208,14 @@ type 122
 editor_folder items/container
 other_arch cauldron_open
 layer 4
+identified 1
 no_pick 1
 material 2
 material_real 65
 weight 30000
 container 250000
 is_cauldron 1
-Str 0
+weapon_speed 1.0
 value 100000
 end
 Object bad_cauldron
@@ -7222,12 +7225,13 @@ type 122
 editor_folder items/container
 other_arch cauldron_open
 layer 4
+identified 1
 no_pick 1
 material 2
 material_real 65
 weight 30000
 container 250000
-Str -80
+weapon_speed 1.5
 value 5
 end
 Object chest
@@ -7238,13 +7242,14 @@ editor_folder items/container
 other_arch close_chest1_111
 layer 4
 no_pick 1
+identified 1
 level 1
 material 18
 material_real 65
 value 350
-container 500000
+container 225000
 weight 15000
-Str 5
+weapon_speed 1.0
 end
 Object chest1_171
 name chest
@@ -7254,13 +7259,14 @@ editor_folder items/container
 other_arch close_chest1_171
 layer 4
 no_pick 1
+identified 1
 level 1
 material 18
 material_real 65
 value 350
-container 500000
+container 225000
 weight 15000
-Str 5
+weapon_speed 1.0
 end
 Object chest_m
 name chest
@@ -7271,12 +7277,13 @@ other_arch close_chest_m1_1
 layer 4
 level 1
 no_pick 1
+identified 1
 material 2
 material_real 65
 value 350
-container 500000
-weight 17500
-Str 5
+container 350000
+weight 22500
+weapon_speed 1.0
 end
 Object chest_m1_7
 name chest
@@ -7286,13 +7293,14 @@ editor_folder items/container
 other_arch close_chest_m1_7
 layer 4
 level 1
+identified 1
 no_pick 1
 material 2
 material_real 65
 value 350
-container 500000
-weight 17500
-Str 5
+container 350000
+weight 22500
+weapon_speed 1.0
 end
 Object chest_w1
 name chest
@@ -7302,13 +7310,14 @@ editor_folder items/container
 other_arch close_chest_w1_1
 layer 4
 level 1
+identified 1
 no_pick 1
 material 18
 material_real 258
 value 350
-container 500000
-weight 15000
-Str 5
+container 350000
+weight 22000
+weapon_speed 1.0
 end
 Object chest_w1_7
 name chest
@@ -7319,12 +7328,13 @@ other_arch close_chest_w1_7
 layer 4
 level 1
 no_pick 1
+identified 1
 material 18
 material_real 258
 value 350
-container 500000
-weight 15000
-Str 5
+container 350000
+weight 22000
+weapon_speed 1.0
 end
 Object chest_4.111
 name chest
@@ -7334,13 +7344,14 @@ editor_folder items/container
 other_arch close_chest_4.111
 layer 4
 level 1
+identified 1
 no_pick 1
 material 18
 material_real 258
 value 350
-container 500000
+container 225000
 weight 15000
-Str 5
+weapon_speed 1.0
 end
 Object chest_4.171
 name chest
@@ -7350,13 +7361,14 @@ editor_folder items/container
 other_arch close_chest_4.171
 layer 4
 level 1
+identified 1
 no_pick 1
 material 18
 material_real 258
 value 350
-container 500000
+container 225000
 weight 15000
-Str 5
+weapon_speed 1.0
 end
 Object chest_sm_1
 name chest
@@ -7366,13 +7378,14 @@ editor_folder items/container
 other_arch close_chest_sm_1
 layer 4
 level 1
+identified 1
 no_pick 1
-material 18
-material_real 258
+material 2
+material_real 65
 value 350
-container 500000
-weight 15000
-Str 5
+container 125000
+weight 8000
+weapon_speed 1.0
 end
 Object chest_sm_7
 name chest
@@ -7383,12 +7396,13 @@ other_arch close_chest_sm_7
 layer 4
 level 1
 no_pick 1
-material 18
-material_real 258
+identified 1
+material 2
+material_real 65
 value 350
-container 500000
-weight 15000
-Str 5
+container 125000
+weight 8000
+weapon_speed 1.0
 end
 Object chest_sw_1
 name chest
@@ -7399,12 +7413,13 @@ other_arch close_chest_sw_1
 layer 4
 level 1
 no_pick 1
+identified 1
 material 18
 material_real 258
 value 350
-container 500000
-weight 15000
-Str 5
+container 125000
+weight 8000
+weapon_speed 1.0
 end
 Object chest_sw_7
 name chest
@@ -7414,13 +7429,14 @@ editor_folder items/container
 other_arch close_chest_sw_7
 layer 4
 level 1
+identified 1
 no_pick 1
 material 18
 material_real 258
 value 350
-container 500000
-weight 15000
-Str 5
+container 125000
+weight 8000
+weapon_speed 1.0
 end
 Object depositbox
 name deposit box
@@ -7430,14 +7446,15 @@ editor_folder items/container
 other_arch close_dbox
 race gold and jewels
 no_pick 1
+identified 1
 level 1
 layer 4
 material 66
 material_real 65
 weight 525
 value 4000
-container 150000
-Str 5
+container 40000
+weapon_speed 1.0
 end
 Object key_ring
 name key ring
@@ -7453,7 +7470,7 @@ material_real 65
 value 10
 weight 50
 container 2500
-Str 5
+weapon_speed 1.0
 end
 Object luggage
 name luggage
@@ -7463,13 +7480,14 @@ editor_folder items/container
 other_arch close_luggage
 layer 4
 no_pick 1
+identified 1
 level 1
 material 2
 material_real 65
 value 425
 weight 15000
-container 500000
-Str 5
+container 300000
+weapon_speed 1.0
 end
 Object mailbox
 name mailbox
@@ -7479,9 +7497,11 @@ editor_folder items/container
 other_arch close_mail
 layer 4
 no_pick 1
+identified 1
 level 1
 material 18
 value 250
+weapon_speed 1.0
 container 1500
 weight 1500
 identified 1
@@ -7500,8 +7520,8 @@ material 8
 material_real 193
 value 50
 weight 50
-container 50000
-Str 5
+container 5000
+weapon_speed 1.0
 end
 Object quiver
 name arrow quiver
@@ -7517,8 +7537,8 @@ material 8
 material_real 193
 value 35
 weight 250
-container 50000
-Str 5
+container 20000
+weapon_speed 1.0
 end
 Object quiver_b
 name bolt quiver
@@ -7534,8 +7554,8 @@ material 8
 material_real 193
 value 35
 weight 250
-container 50000
-Str 5
+container 20000
+weapon_speed 1.0
 end
 Object quiver_s
 name stone quiver
@@ -7551,8 +7571,8 @@ material 8
 material_real 193
 value 35
 weight 250
-container 50000
-Str 5
+container 20000
+weapon_speed 1.0
 end
 Object r_sack
 name rucksack
@@ -7566,8 +7586,8 @@ material 8
 material_real 193
 value 35
 weight 300
-container 95000
-Str 7
+container 85000
+weapon_speed 1.0
 end
 Object sack
 name sack
@@ -7581,8 +7601,8 @@ material 128
 material_real 450
 value 15
 weight 250
-container 150000
-Str 5
+container 75000
+weapon_speed 1.0
 end
 Object coppercoin
 name coin
@@ -7799,7 +7819,6 @@ maxhp 500
 food 500
 speed 0.15
 last_eat 1
-nrof 1
 last_sp 3
 end
 Object torch_burnt
@@ -11963,6 +11982,8 @@ editor_folder mobs/corpse
 layer 3
 sub_type 1
 material 32
+weapon_speed 1.0
+container 350000
 weight 50000
 food 25
 is_used_up 1
@@ -11981,6 +12002,8 @@ layer 3
 identified 1
 sub_type 1
 material 32
+weapon_speed 1.0
+container 350000
 weight 60000
 no_pick 1
 invulnerable 1
@@ -11997,6 +12020,8 @@ race golem
 layer 3
 sub_type 1
 material 32
+weapon_speed 1.0
+container 350000
 identified 1
 weight 120000
 no_pick 1
@@ -12015,6 +12040,8 @@ layer 3
 identified 1
 sub_type 1
 material 32
+weapon_speed 1.0
+container 350000
 weight 60000
 food 25
 speed 0.01
@@ -12032,6 +12059,8 @@ layer 3
 sub_type 1
 material 32
 weight 20000
+weapon_speed 1.0
+container 350000
 no_pick 1
 invulnerable 1
 food 25

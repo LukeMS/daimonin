@@ -151,15 +151,15 @@ int sack_can_hold (object *pl, object *sack, object *op, int nrof) {
 		 query_name(sack));
     if (op->type == SPECIAL_KEY && sack->slaying && op->slaying)
 		sprintf (buf, "You don't want put the key into %s.", query_name(sack));
-	/*LOG(-1,"SACK: wl:%d carry:%d op->weight:%d Str:%d nrof:%d\n",sack->weight_limit,sack->carrying,op->weight,sack->stats.Str,nrof);*/
-    if (sack->weight_limit && sack->carrying+
-			((((nrof?nrof:1)*op->weight)+(op->type==CONTAINER?op->carrying:0))
-			*(100 - sack->stats.Str) / 100) > (sint32)sack->weight_limit)
+
+    if (sack->weight_limit && sack->carrying+ 
+		(sint32)((float)(((nrof?nrof:1)*op->weight)+op->carrying)*sack->weapon_speed) > (sint32)sack->weight_limit)
 		sprintf (buf, "That won't fit in the %s!", query_name(sack));
-    if (buf[0]) {
-	if (pl)
-	    new_draw_info(NDI_UNIQUE, 0,pl, buf);
-	return 0;
+    if (buf[0])
+	{
+		if (pl)
+		    new_draw_info(NDI_UNIQUE, 0,pl, buf);
+		return 0;
     }
     return 1;
 }
@@ -209,7 +209,7 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
 	nrof = tmp_nrof;
     /* Figure out how much weight this object will add to the player */
     weight = tmp->weight * nrof;
-    if (tmp->inv) weight += tmp->carrying * (100 - tmp->stats.Str) / 100;
+    if (tmp->inv) weight += tmp->carrying;
     if (pl->stats.Str <= MAX_STAT)
         effective_weight_limit = weight_limit[pl->stats.Str];
     else
@@ -1170,7 +1170,7 @@ void examine(object *op, object *tmp) {
 	    CLEAR_FLAG(tmp, FLAG_SEE_INVISIBLE);
 
 	/* only add this for usable items, not for objects like walls or floors for example */
-	if(!QUERY_FLAG(tmp, FLAG_IDENTIFIED) && !QUERY_FLAG(tmp, FLAG_NO_PICK))
+	if(!QUERY_FLAG(tmp, FLAG_IDENTIFIED) && need_identify(tmp))
 		strncat(buf, " (unidentified)", VERY_BIG_BUF-strlen(buf)-1);
 	buf[VERY_BIG_BUF-1]=0;
 
@@ -1343,17 +1343,46 @@ void examine(object *op, object *tmp) {
 	break;
 
 	case CONTAINER:
-	    if(tmp->race!=NULL) {
-		if(tmp->weight_limit && tmp->stats.Str<100)
-		    sprintf (buf,"It can hold only %s and its weight limit is %.1f kg.", 
-			 tmp->race, (float)tmp->weight_limit/(10.0f * (float)(100 - tmp->stats.Str)));
+		if(QUERY_FLAG(tmp, FLAG_IDENTIFIED))
+		{
+	    if(tmp->race!=NULL) 
+		{
+			if(tmp->weight_limit)
+				sprintf (buf,"It can hold only %s and its weight limit is %.1f kg.", 
+											tmp->race, (float)tmp->weight_limit/1000.0f );
+			else
+				sprintf (buf,"It can hold only %s.", tmp->race);
+
+			if(tmp->weapon_speed != 1.0f) /* has magic modifier? */
+			{
+				new_draw_info(NDI_UNIQUE, 0,op,buf);
+				if(tmp->weapon_speed > 1.0f) /* bad */
+					sprintf (buf,"It increase the weight of items inside by %.1f%%.",tmp->weapon_speed*100.0f);
+				else /* good */
+					sprintf (buf,"It decrease the weight of items inside by %.1f%%.",
+												100.0f-(tmp->weapon_speed*100.0f));
+			}
+
+	    } 
 		else
-		    sprintf (buf,"It can hold only %s and its weight limit is %.1f kg.", tmp->race,
-				(float)tmp->weight_limit/(10.0f * (float)(100 - tmp->stats.Str)));
-	    } else
-		if(tmp->weight_limit && tmp->stats.Str<100)
-		    sprintf (buf,"Its weight limit is %.1f kg.", 
-			     (float)tmp->weight_limit/(10.0f * (float)(100 - tmp->stats.Str)));
+		{
+			if(tmp->weight_limit)
+			{
+				sprintf (buf,"Its weight limit is %.1f kg.", (float)tmp->weight_limit/1000.0f);
+			}
+
+			if(tmp->weapon_speed != 1.0f) /* has magic modifier? */
+			{
+				new_draw_info(NDI_UNIQUE, 0,op,buf);
+
+				if(tmp->weapon_speed > 1.0f) /* bad */
+					sprintf (buf,"It increase the weight of items inside by %.1f%%.",tmp->weapon_speed*100.0f);
+				else /* good */
+					sprintf (buf,"It decrease the weight of items inside by %.1f%%.",
+																	100.0f-(tmp->weapon_speed*100.0f));
+			}
+		}
+		}
 	    break;
 
 	case WAND:
@@ -1365,15 +1394,18 @@ void examine(object *op, object *tmp) {
     if(buf[0]!='\0')
 	new_draw_info(NDI_UNIQUE, 0,op,buf);
 
-    if(tmp->material) {
-	strcpy(buf,"It is made of: ");
-	for(i=0; i < NROFMATERIALS; i++) {
-	  if(tmp->material & (1<<i)) {
-	    strcat(buf, material[i].name);
-	    strcat(buf, " ");
-	  }
-	}
-	new_draw_info(NDI_UNIQUE, 0,op,buf);
+    if(tmp->material && (need_identify(tmp) && QUERY_FLAG(tmp, FLAG_IDENTIFIED)))
+	{
+		strcpy(buf,"It is made of: ");
+		for(i=0; i < NROFMATERIALS; i++) 
+		{
+			if(tmp->material & (1<<i))
+			{
+				strcat(buf, material[i].name);
+				strcat(buf, " ");
+			}
+		}
+		new_draw_info(NDI_UNIQUE, 0,op,buf);
     }
 
     if(tmp->weight) {
@@ -1456,15 +1488,17 @@ void examine(object *op, object *tmp) {
      */
     if(tmp->msg && tmp->type != EXIT && tmp->type != BOOK && 
        tmp->type != CORPSE && !QUERY_FLAG(tmp, FLAG_WALK_ON) && 
-       strncasecmp(tmp->msg, "@match",7)) {
+       strncasecmp(tmp->msg, "@match",7))
+	{
 
-	/* This is just a hack so when identifying hte items, we print
-	 * out the extra message
-	 */
-	if (need_identify(tmp) && QUERY_FLAG(tmp, FLAG_IDENTIFIED))
-	    new_draw_info(NDI_UNIQUE, 0,op, "The object has a story:");
-
-	new_draw_info(NDI_UNIQUE, 0,op,tmp->msg);
+		/* This is just a hack so when identifying hte items, we print
+		 * out the extra message
+		 */
+		if (need_identify(tmp) && QUERY_FLAG(tmp, FLAG_IDENTIFIED))
+		{
+			new_draw_info(NDI_UNIQUE, 0,op, "The object has a story:");
+			new_draw_info(NDI_UNIQUE, 0,op,tmp->msg);
+		}
     }
     new_draw_info(NDI_UNIQUE, 0,op," "); /* Blank line */
 	

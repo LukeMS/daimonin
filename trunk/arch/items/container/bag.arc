@@ -8,7 +8,7 @@ type 122
 material 128
 material_real 450
 weight 200
-container 80000
-Str 5
+container 50000
+weapon_speed 1.0
 value 20
 end

@@ -132,6 +132,7 @@ typedef struct linked_char {
 #include "material.h"
 #include "living.h"
 #include "object.h"
+#include "arch.h"
 #include "map.h"
 #include "tod.h"
 #include "pathfinder.h"
@@ -200,7 +201,6 @@ EXTERN player *first_player;
 EXTERN mapstruct *first_map;
 EXTERN treasurelist *first_treasurelist;
 EXTERN artifactlist *first_artifactlist;
-EXTERN archetype *first_archetype;
 EXTERN objectlink *first_friendly_object;	/* Objects monsters will go after */
 EXTERN godlink *first_god;
 EXTERN racelink *first_race;
@@ -229,10 +229,6 @@ EXTERN long nrofallowedstr;		/* Only used in malloc_info() */
 EXTERN short nrofexpcat;	/* Current number of experience categories in the game */
 EXTERN object *exp_cat[MAX_EXP_CAT];	/* Array of experience objects in the game */ 
 
-EXTERN archetype *wp_archetype;	/* Nice to have fast access to it */
-EXTERN archetype *empty_archetype;	/* Nice to have fast access to it */
-EXTERN archetype *base_info_archetype;	/* Nice to have fast access to it */
-EXTERN archetype *map_archeytpe;
 EXTERN char first_map_path[MAX_BUF];	/* The start-level */
 
 EXTERN char errmsg[HUGE_BUF];
@@ -247,6 +243,29 @@ EXTERN const char *undead_name;	/* Used in hit_player() in main.c */
 
 EXTERN Animations *animations;
 EXTERN int num_animations,animations_allocated, bmaps_checksum;
+
+/* to access strings from objects, maps, arches or other system objects,
+ * for printf() or others use only this macros to avoid NULL pointer exceptions.
+ * Some standard c libaries don't check for NULL in that functions - most times
+ * the retail versions.
+ */
+#define STRING_SAFE(__string__) (__string__?__string__:">NULL<")
+
+#define STRING_ARCH_NAME(__arch__) ((__arch__)->name?(__arch__)->name:">NULL<")
+
+#define STRING_OBJ_NAME(__ob__) ((__ob__)->name?(__ob__)->name:">NULL<")
+#define STRING_OBJ_ARCH_NAME(__ob__) ((__ob__)->arch?((__ob__)->arch->name?(__ob__)->arch->name:">NULL<"):">NULL<")
+#define STRING_OBJ_TITLE(__ob__) ((__ob__)->title?(__ob__)->title:">NULL<")
+#define STRING_OBJ_RACE(__ob__) ((__ob__)->race?(__ob__)->race:">NULL<")
+#define STRING_OBJ_SLAYING(__ob__) ((__ob__)->slaying?(__ob__)->slaying:">NULL<")
+#define STRING_OBJ_MSG(__ob__) ((__ob__)->msg?(__ob__)->msg:">NULL<")
+
+#define STRING_MAP_PATH(__map__) ((__map__)->path?(__map__)->path:">NULL<")
+#define STRING_MAP_TILE_PATH(__map__, __id__) ((__map__)->tile_path[__id__]?(__map__)->tile_path[__id__]:">NULL<")
+#define STRING_MAP_NAME(__map__) ((__map__)->name?(__map__)->name:">NULL<")
+#define STRING_MAP_TMPNAME(__map__) ((__map__)->tmpname?(__map__)->tmpname:">NULL<")
+#define STRING_MAP_MSG(__map__) ((__map__)->msg?(__map__)->msg:">NULL<")
+
 
 /* Rotate right from bsd sum. This is used in various places for checksumming */
 #define ROTATE_RIGHT(c) if ((c) & 01) (c) = ((c) >>1) + 0x80000000; else (c) >>= 1;
@@ -278,7 +297,12 @@ extern NewSocket *init_sockets;
 
 extern unsigned long todtick; /* time of the day tick counter */
 extern int world_darkness; /* daylight value. 0= totally dark. 7= daylight */
-extern archetype *level_up_arch; /* a global animation arch we use it in 2 modules, so not static */
+
+EXTERN archetype *wp_archetype;	/* Nice to have fast access to it */
+EXTERN archetype *empty_archetype;	/* Nice to have fast access to it */
+EXTERN archetype *base_info_archetype;	/* Nice to have fast access to it */
+EXTERN archetype *map_archeytpe;
+EXTERN archetype *level_up_arch; /* a global animation arch we use it in 2 modules, so not static */
 
 #define decrease_ob(xyz) decrease_ob_nr(xyz,1)
 

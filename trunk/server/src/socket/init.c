@@ -383,7 +383,7 @@ static void create_client_settings(void)
     /* open default */
 	sprintf(buf,"%s/client_settings", settings.datadir);
     if ((fset_default=fopen(buf,"rb")) ==NULL)
-		LOG(llevError,"\nERROR: Can not open file %s\n", buf);
+		LOG(llevError,"\nERROR: Can not open file %s\n", STRING_SAFE(buf));
 
 	/* delete our target - we create it new now */
     sprintf(buf,"%s/client_settings", settings.localdir);
@@ -393,7 +393,7 @@ static void create_client_settings(void)
     if ((fset_create=fopen(buf,"wb")) ==NULL)
 	{
 		fclose(fset_default);
-		LOG(llevError,"\nERROR: Can not open file %s\n", buf);
+		LOG(llevError,"\nERROR: Can not open file %s\n", STRING_SAFE(buf));
 	}
 
 	/* copy default to target */

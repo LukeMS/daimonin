@@ -233,12 +233,15 @@ mapstruct *has_been_loaded_sh (const char *name) {
         strcat(namebuf, name);
         name = add_string(namebuf);
         
-        LOG(llevDebug,"DEBUG: has_been_loaded_sh: found map name without starting '/': fixed! %s\n", name);
+        LOG(llevDebug,"DEBUG: has_been_loaded_sh: found map name without starting '/': fixed! %s\n", STRING_SAFE(name));
     }
     
     for (map = first_map; map; map = map->next)
+	{
+		/*LOG(-1,"check map: >%s< find: >%s<\n", name, map->path);*/
         if (name == map->path)
             break;
+	}
 
     if(namebug)
         free_string_shared(name);
@@ -859,7 +862,7 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags)
 		/* do some safety for containers */
 		if (op->type == CONTAINER)
 		{
-			op->attacked_by = NULL;
+			op->attacked_by = NULL; /* used for containers as link to players viewing it */
 			op->attacked_by_count = 0;
 			sum_weight(op);
 		}

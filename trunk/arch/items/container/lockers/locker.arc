@@ -9,7 +9,7 @@ material 18
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object locker1.171
 name locker
@@ -22,7 +22,7 @@ material 18
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object locker2.111
 name locker
@@ -35,7 +35,7 @@ material 18
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object locker2.171
 name locker
@@ -48,7 +48,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object locker3.111
 name locker
@@ -61,7 +61,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object locker3.171
 name locker
@@ -74,5 +74,5 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end

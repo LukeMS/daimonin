@@ -9,6 +9,6 @@ material 128
 material_real 450
 value 15
 weight 250
-container 150000
-Str 5
+container 75000
+weapon_speed 1.0
 end

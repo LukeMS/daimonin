@@ -24,7 +24,6 @@
 */
 
 #include <global.h>
-#include <arch.h>
 #include <funcpoint.h>
 #include <loader.h>
 
@@ -259,7 +258,7 @@ void dump_all_archetypes() {
 
   for(at=first_archetype;at!=NULL;at=(at->more==NULL)?at->next:at->more) {
     dump_arch(at);
-    LOG(llevInfo, "%s\n", errmsg);
+    LOG(llevInfo, "%s\n", STRING_SAFE(errmsg));
   }
 
   LOG(llevInfo, "Artifacts fake arch list:\n");
@@ -269,7 +268,7 @@ void dump_all_archetypes() {
 	    do 
 		{
 		    dump_arch(&art->def_at);
-			LOG(llevInfo, "%s\n", errmsg);
+			LOG(llevInfo, "%s\n", STRING_SAFE(errmsg));
 			art = art->next;
 	    } while (art!=NULL);
   }
@@ -351,9 +350,9 @@ void first_arch_pass(FILE *fp) {
 	 */
 
 	if(!op->layer && !QUERY_FLAG(op,FLAG_SYS_OBJECT) )
-		LOG(llevDebug," WARNING: Archetype %s has layer 0 without be sys_object!\n", op->arch->name);
+		LOG(llevDebug," WARNING: Archetype %s has layer 0 without be sys_object!\n", STRING_OBJ_ARCH_NAME(op));
 	if(op->layer && QUERY_FLAG(op,FLAG_SYS_OBJECT) )
-		LOG(llevDebug," WARNING: Archetype %s has layer %d (!=0) and is sys_object\n", op->arch->name, op->layer);
+		LOG(llevDebug," WARNING: Archetype %s has layer %d (!=0) and is sys_object\n", STRING_OBJ_ARCH_NAME(op), op->layer);
 
 	  switch(i) {
     case LL_NORMAL: /* A new archetype, just link it with the previous */
@@ -364,11 +363,11 @@ void first_arch_pass(FILE *fp) {
       prev=last_more=at;
 
 	  if(op->animation_id && !op->anim_speed)
-		LOG(llevDebug," WARNING: Archetype %s has animation but no anim_speed!\n", op->arch->name);
+		LOG(llevDebug," WARNING: Archetype %s has animation but no anim_speed!\n", STRING_OBJ_ARCH_NAME(op));
 	  if(op->animation_id && !QUERY_FLAG(op,FLAG_CLIENT_SENT))
-		LOG(llevDebug," WARNING: Archetype %s has animation but no explicit set is_animated!\n", op->arch->name);
+		LOG(llevDebug," WARNING: Archetype %s has animation but no explicit set is_animated!\n", STRING_OBJ_ARCH_NAME(op));
       if(!op->type)
-          LOG(llevDebug," WARNING: Archetype %s has no type info!\n", op->arch->name);      
+          LOG(llevDebug," WARNING: Archetype %s has no type info!\n", STRING_OBJ_ARCH_NAME(op));      
       break;
 
     case LL_MORE: /* Another part of the previous archetype, link it correctly */
@@ -418,11 +417,11 @@ void second_arch_pass(FILE *fp_start) {
 
     if(!strcmp("Object",variable)) {
       if((at=find_archetype(argument))==NULL)
-        LOG(llevBug,"BUG: failed to find arch %s\n",argument);
+        LOG(llevBug,"BUG: failed to find arch %s\n",STRING_SAFE(argument));
     } else if(!strcmp("other_arch",variable)) {
       if(at!=NULL&&at->clone.other_arch==NULL) {
         if((other=find_archetype(argument))==NULL)
-          LOG(llevBug,"BUG: failed to find other_arch %s\n",argument);
+          LOG(llevBug,"BUG: failed to find other_arch %s\n",STRING_SAFE(argument));
         else if(at!=NULL)
           at->clone.other_arch=other;
       }
@@ -430,7 +429,8 @@ void second_arch_pass(FILE *fp_start) {
       if(at!=NULL) {
         treasurelist *tl=find_treasurelist(argument);
         if(tl==NULL)
-          LOG(llevBug,"BUG: Failed to link treasure to arch. (arch: %s ->%s\n",at->clone.name, argument);
+          LOG(llevBug,"BUG: Failed to link treasure to arch. (arch: %s ->%s\n",
+									STRING_OBJ_NAME(&at->clone), STRING_SAFE(argument));
         else
           at->clone.randomitems=tl;
       }
@@ -443,7 +443,7 @@ void second_arch_pass(FILE *fp_start) {
 	sprintf(filename, "%s/artifacts", settings.datadir);
 	if ((fp = open_and_uncompress(filename, 0, &comp)) == NULL)
 	{
-		LOG(llevError, "ERROR: Can't open %s.\n", filename);
+		LOG(llevError, "ERROR: Can't open %s.\n", STRING_SAFE(filename));
 		return;
 	}
 
@@ -469,12 +469,12 @@ void second_arch_pass(FILE *fp_start) {
 		if(!strcmp("artifact",variable)) 
 		{
 			if((at=find_archetype(argument))==NULL)
-		        LOG(llevBug,"BUG: second artifacts pass: failed to find artifact %s\n",argument);
+		        LOG(llevBug,"BUG: second artifacts pass: failed to find artifact %s\n",STRING_SAFE(argument));
 		} 
 		else if(!strcmp("def_arch",variable)) 
 		{
 			if((other=find_archetype(argument))==NULL)
-		        LOG(llevBug,"BUG: second artifacts pass: failed to find def_arch %s from artifact %s\n",argument, at->name);
+		        LOG(llevBug,"BUG: second artifacts pass: failed to find def_arch %s from artifact %s\n",STRING_SAFE(argument), STRING_ARCH_NAME(at));
 
 			/* now copy from real arch the stuff from above to our "fake" arches */
 			at->clone.other_arch = other->clone.other_arch;
@@ -483,7 +483,7 @@ void second_arch_pass(FILE *fp_start) {
 		else if(!strcmp("other_arch",variable)) 
 		{	
 			if((other=find_archetype(argument))==NULL)
-				LOG(llevBug,"BUG: second artifacts pass: failed to find other_arch %s\n",argument);
+				LOG(llevBug,"BUG: second artifacts pass: failed to find other_arch %s\n",STRING_SAFE(argument));
 			else if(at!=NULL)
 				at->clone.other_arch=other;
 		}
@@ -491,7 +491,7 @@ void second_arch_pass(FILE *fp_start) {
 		{
 			treasurelist *tl=find_treasurelist(argument);
 			if(tl==NULL)
-				LOG(llevBug,"BUG: second artifacts pass: Failed to link treasure to arch. (arch: %s ->%s)\n",at->clone.name, argument);
+				LOG(llevBug,"BUG: second artifacts pass: Failed to link treasure to arch. (arch: %s ->%s)\n",STRING_OBJ_NAME(&at->clone), STRING_SAFE(argument));
 			else if(at!=NULL)
 				at->clone.randomitems=tl;
 		}
@@ -506,7 +506,7 @@ void check_generators() {
   archetype *at;
   for(at=first_archetype;at!=NULL;at=at->next)
     if(QUERY_FLAG(&at->clone,FLAG_GENERATOR)&&at->clone.other_arch==NULL)
-      LOG(llevBug,"BUG: %s is generator but lacks other_arch.\n",at->name);
+      LOG(llevBug,"BUG: %s is generator but lacks other_arch.\n",STRING_ARCH_NAME(at));
 }
 #endif
 
@@ -526,7 +526,7 @@ void load_archetypes() {
 #endif
 
     sprintf(filename,"%s/%s",settings.datadir,settings.archetypes);
-    LOG(llevDebug,"Reading archetypes from %s...\n",filename);
+    LOG(llevDebug,"Reading archetypes from %s...\n",STRING_SAFE(filename));
     if((fp=open_and_uncompress(filename,0,&comp))==NULL) {
 	LOG(llevError,"ERROR: Can't open archetype file.\n");
 	return;
@@ -678,7 +678,7 @@ void add_arch(archetype *at) {
 
   if(arch_table[index] && !strcmp(arch_table[index]->name,at->name))
   {
-	  LOG(llevError,"ERROR: add_arch(): double use of arch name %s\n",at->name); 
+	  LOG(llevError,"ERROR: add_arch(): double use of arch name %s\n",STRING_ARCH_NAME(at)); 
   }
   if(arch_table[index]==NULL) {
       arch_table[index]=at;

@@ -1508,11 +1508,11 @@
     in gram. Note that this weight limit is calculated *after* the
     weight reduction (&lt;reduce weight&gt;) has been applied.
   </attribute>
-  <attribute arch="Str" editor="reduce weight %" type="int">
+  <attribute arch="weapon_speed" editor="reduce weight %" type="float">
     This value determines how much the weight of items is reduced in
-    percent, when put inside the container. &lt;reduce weight %&gt; 0 means no
-    reduction, &lt;reduce weight %&gt; 100 means items are weightless inside.
-    Most default values are in the range of ten.
+    percent, when put inside the container. &lt;reduce weight %&gt; 1.0 means no
+    reduction, &lt;reduce weight %&gt; 0 means items are weightless inside.
+    0.5 means weight is halfed.
   </attribute>
   <attribute arch="is_cauldron" editor="alchemy cauldron" type="bool">
     If set, the container can be used as alchemy-cauldron.

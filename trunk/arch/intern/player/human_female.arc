@@ -140,7 +140,7 @@ can_use_armour 1
 can_use_weapon 1
 is_player 1
 weight 55000
-food 999
+food 750
 Str 0
 Dex 0
 Con 0

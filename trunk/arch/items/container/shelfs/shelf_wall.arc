@@ -9,7 +9,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object shelf_wall.171
 name shelf
@@ -22,7 +22,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object shelf1_wall.111
 name shelf
@@ -35,7 +35,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object shelf1_wall.171
 name shelf
@@ -48,7 +48,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object shelf2_wall.111
 name shelf
@@ -61,7 +61,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object shelf2_wall.171
 name shelf
@@ -74,7 +74,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object shelf3_wall.111
 name shelf
@@ -87,7 +87,7 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end
 Object shelf3_wall.171
 name shelf
@@ -100,5 +100,5 @@ no_pick 1
 value 350
 container 15000
 weight 15000
-Str 15
+weapon_speed 1.0
 end

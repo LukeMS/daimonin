@@ -1234,21 +1234,16 @@ void do_specials() {
     if (!(pticks % 509))
 	flush_old_maps();    /* Clears the tmp-files of maps which have reset */
 
+	/*
     if (!(pticks % 2503))
-	fix_weight();        /* Hack to fix weightproblems caused by bugs */
+	fix_weight();*/
 
     if (!(pticks % 2521))
 	metaserver_update();    /* 2500 ticks is about 5 minutes */
 
     if (!(pticks % 5003))
 	write_book_archive();
-
-    if (!(pticks % 5009))
-	clean_friendly_list();
-    
-    if (!(pticks % 12503))
-      fix_luck();
-    
+        
 }
 
 int main(int argc, char **argv)
