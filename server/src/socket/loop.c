@@ -169,6 +169,27 @@ int fill_command_buffer(NewSocket *ns, int len)
 
 	do
 	{
+		/* now we need to check what our write buffer does.
+		 * We have not many choices, if its to full.
+		 * In badest case, we get a overflow - then we kick the
+		 * user. So, we try here to "freeze" the socket until we 
+		 * the output buffers are balanced again.
+		 */
+		if (ns->outputbuffer.len >= (int)(MAXSOCKBUF*0.75))
+		{
+			if(!ns->write_overflow)
+			{
+				ns->write_overflow=1;
+				LOG(llevDebug,"DEBUG: socket write overflow protection on! host (%s) (%d)\n", STRING_SAFE(ns->host), ns->outputbuffer.len);
+			}
+			return 1; /* all is ok - we just do nothing */
+		}
+		else if(ns->write_overflow)
+		{
+			ns->write_overflow=0;
+			LOG(llevDebug,"DEBUG: socket write overflow protection off! host (%s) (%d)\n", STRING_SAFE(ns->host), ns->outputbuffer.len);
+		}
+
 		if((rr=socket_read_pp(&ns->inbuf,&ns->readbuf,len)))
 		{
 			/* check its a system command.
@@ -231,13 +252,30 @@ void HandleClient(NewSocket *ns, player *pl)
 		if (ns->status==Ns_Dead || 
 				(pl && pl->state==ST_PLAYING && pl->ob != NULL && pl->ob->speed_left < 0)) 
 			return;
-	    
-/*		i=SockList_ReadPacket(ns->fd, &ns->inbuf,&ns->cmdbuf, MAXSOCKBUF_IN); */
 
-		i=socket_read_pp(&ns->inbuf,&ns->cmdbuf,MAXSOCKBUF_IN-1);
+		/* now we need to check what our write buffer does.
+		 * We have not many choices, if its to full.
+		 * In badest case, we get a overflow - then we kick the
+		 * user. So, we try here to "freeze" the socket until we 
+		 * the output buffers are balanced again.
+		 */
+		if (ns->outputbuffer.len >= (int)(MAXSOCKBUF*0.85))
+		{
+			if(!ns->write_overflow)
+			{
+				ns->write_overflow=1;
+				LOG(llevDebug,"DEBUG: socket write overflow protection on!  (%s) (%d)\n", STRING_SAFE(ns->host), ns->outputbuffer.len);
+			}
+			return;
+		}
+		else if(ns->write_overflow)
+		{
+			ns->write_overflow=0;
+			LOG(llevDebug,"DEBUG: socket write overflow protection off! host (%s) (%d)\n", STRING_SAFE(ns->host), ns->outputbuffer.len);
+		}
 		
-		/* Still dont have a full packet */
-		if (i==0) 
+
+		if(!(i=socket_read_pp(&ns->inbuf,&ns->cmdbuf,MAXSOCKBUF_IN-1)))
 			return;
 
 		/* reset idle counter */
@@ -495,6 +533,7 @@ void doeric_server(int update_client)
 				Write_String_To_Socket(&pl->socket, BINARY_CMD_DRAWINFO, _idle_warn_text2, strlen(_idle_warn_text2));
 				pl->socket.can_write=1;
 				write_socket_buffer(&pl->socket);
+				pl->socket.can_write=0;
 				pl->socket.status = Ns_Dead;
 				remove_ns_dead_player(pl);
 				pl=npl;
@@ -603,9 +642,20 @@ void doeric_server(int update_client)
 			init_sockets[i].status = Ns_Avail;
 			socket_info.nconns--;
 		} 
-		
-		if (FD_ISSET(init_sockets[i].fd, &tmp_write))
-		    init_sockets[i].can_write=1;
+
+		if (FD_ISSET(init_sockets[i].fd,&tmp_write))
+		{
+			init_sockets[i].can_write=1;
+			write_socket_buffer(&init_sockets[i]);
+			init_sockets[i].can_write=0;
+		}
+
+		if (init_sockets[i].status == Ns_Dead)
+		{
+			free_newsocket(&init_sockets[i]);
+			init_sockets[i].status = Ns_Avail;
+			socket_info.nconns--;
+		} 
     }
 
     /* This does roughly the same thing, but for the players now */
@@ -661,14 +711,10 @@ void doeric_server(int update_client)
 				/* and do a quick write ... */
 				if (FD_ISSET(pl->socket.fd,&tmp_write))
 				{
-					if (!pl->socket.can_write)
-					{
-						pl->socket.can_write=1;
-						write_socket_buffer(&pl->socket);
-					}
-				}
-				else 
+					pl->socket.can_write=1;
+					write_socket_buffer(&pl->socket);
 					pl->socket.can_write=0;
+				}
 			}
 		}
     } /* for() end */
@@ -693,18 +739,8 @@ void doeric_server_write(void)
 		/* and *now* write back to player */
 		if (FD_ISSET(pl->socket.fd,&tmp_write))
 		{
-			/* i see no really sense here... can_write is REALLY
-			* only set if socket() marks the write channel as free.
-			* and can_write is in loop flow only set here.
-			* i think this was added as a "there is something in a buffer"
-			* and then changed in context.
-			*/
-			if (!pl->socket.can_write)
-			{
-					pl->socket.can_write=1;
-					write_socket_buffer(&pl->socket);
-			}
-			else 
+				pl->socket.can_write=1;
+				write_socket_buffer(&pl->socket);
 				pl->socket.can_write=0;
 		}
     } /* for() end */

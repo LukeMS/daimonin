@@ -508,8 +508,6 @@
  * MOTD - message of the day - printed each time someone joins the game
  * PERM_FILE - limit play times
  * SHUTDOWN - used when shutting down the server
- * SOCKETBUFSIZE - size of buffer used internally by the server for storing
- *    backlogged messages.
  * USE_CALLOC for some memory requests
  ***********************************************************************
  */
@@ -699,25 +697,6 @@
 #define SHUTDOWN_FILE "shutdown"
 #endif
 
-
-/*
- * SOCKETBUFSIZE is the size of the buffer used internally by the server for
- * storing backlogged messages for the client.  This is not operating system
- * buffers or the like.  This amount is used per connection (client).
- * This buffer is in addition to OS buffers, so it may not need to be very
- * large.  When the OS buffer and this buffer is exhausted, the server
- * will drop the client connection for falling too far behind.  So if
- * you have very slow client connections, a larger value may be 
- * warranted.
- */
-/* I used this buffer now for the socket size too (see InitConnection in init.c).
- * Playing around with this value should give us a good hint how many memory we 
- * need for a useful socket & command buffer.
- * I *think* using this value for both buffer is a good idea - but i am not 100%
- * sure. I prefer to use first somewhat low values. Increasing this when problems
- * happens is easier as decreasing to search the problems. MT-2003
- */
-#define SOCKETBUFSIZE 36*1024
 
 /*
  * If undefined, malloc is always used.
