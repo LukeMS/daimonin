@@ -74,12 +74,12 @@ attack_impact 100
 can_see_in_dark 1
 exp 120
 ac 9
-wc 4
+wc 6
 dam 4
 hp -1
 maxhp 7
 level 1
-speed -0.03
+speed -0.035
 no_pick 1
 weight 120000
 end

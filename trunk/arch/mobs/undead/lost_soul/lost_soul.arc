@@ -102,12 +102,12 @@ no_pick 1
 alive 1
 can_see_in_dark 1
 exp 100
-ac 9
-wc 0
+ac 7
+wc 3
 dam 5
 hp -1
 maxhp 6
 level 1
-speed -0.0275
+speed -0.04
 weight 22500
 end
