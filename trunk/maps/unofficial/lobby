@@ -105,7 +105,8 @@ end
 arch wall_stone1_3
 y 15
 end
-arch wmask_bflag_fire1_3
+arch wmask_bflag_fire1_1
+direction 5
 y 15
 end
 arch floor_ostone1
@@ -222,7 +223,8 @@ arch floor_ostone1
 x 1
 y 13
 end
-arch shelf1_wall.171
+arch shelf1_wall.111
+direction 5
 x 1
 y 13
 end
@@ -234,7 +236,8 @@ arch floor_ostone1
 x 1
 y 15
 end
-arch stair_gs_down_r
+arch stair_down
+direction 5
 slaying /dev/testmaps/testmap_main
 hp 1
 sp 15
@@ -253,7 +256,8 @@ arch floor_ostone1
 x 1
 y 18
 end
-arch shelf1_wall.171
+arch shelf1_wall.111
+direction 5
 x 1
 y 18
 end
@@ -261,7 +265,8 @@ arch floor_ostone1
 x 1
 y 19
 end
-arch shelf3a.171
+arch shelf3a.111
+direction 5
 x 1
 y 19
 end
@@ -273,7 +278,8 @@ arch floor_ostone1
 x 1
 y 21
 end
-arch bank1.171
+arch bank1.111
+direction 5
 x 1
 y 21
 end
@@ -403,7 +409,8 @@ arch floor_ostone1
 x 2
 y 22
 end
-arch chair1_151
+arch chair1_111
+direction 5
 x 2
 y 22
 end
@@ -512,7 +519,8 @@ arch floor_ostone1
 x 3
 y 21
 end
-arch chair1_131
+arch chair1_111
+direction 3
 x 3
 y 21
 end
