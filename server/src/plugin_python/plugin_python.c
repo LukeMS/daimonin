@@ -4938,7 +4938,13 @@ MODULEAPI int HandleEvent(CFParm* PParm)
     FILE* Scriptfile;
 
 #ifdef PYTHON_DEBUG
-    printf( "PYTHON - HandleEvent:: got script file >%s<\n",(char *)(PParm->Value[9]));
+    printf( "PYTHON - HandleEvent:: start script file >%s<\n",(char *)(PParm->Value[9]));
+    printf( "PYTHON - call data:: o1:>%s< o2:>%s< o3:>%s< text:>%s< i1:%d i2:%d i3:%d i4:%d\n",
+		query_name((object *)(PParm->Value[1])),
+		query_name((object *)(PParm->Value[2])),
+		query_name((object *)(PParm->Value[3])),
+		(char *)(PParm->Value[4])!= NULL?(char *)(PParm->Value[4]):"<null>",
+		(int *)(PParm->Value[5]),(int *)(PParm->Value[6]),(char *)(PParm->Value[7]),(char *)(PParm->Value[8]));
 #endif
     if (StackPosition == MAX_RECURSIVE_CALL)
     {
@@ -4962,12 +4968,19 @@ MODULEAPI int HandleEvent(CFParm* PParm)
         printf( "PYTHON - The Script file %s can't be opened\n",(char *)(PParm->Value[9]));
         return 0;
     };
+#ifdef PYTHON_DEBUG
+    printf( "PYTHON:: PyRun_SimpleFile! ");
+#endif
     PyRun_SimpleFile(Scriptfile, create_pathname((char *)(PParm->Value[9])));
+#ifdef PYTHON_DEBUG
+    printf( "closing. ");
+#endif
     fclose(Scriptfile);
 
 #ifdef PYTHON_DEBUG
-    printf( "PYTHON - HandleEvent:: script loaded! (%s)\n",(char *)(PParm->Value[9]));
+    printf( "fixing. ");
 #endif
+
     if (StackParm4[StackPosition] == SCRIPT_FIX_ALL)
     {
         if (StackOther[StackPosition] != NULL)
@@ -4982,6 +4995,9 @@ MODULEAPI int HandleEvent(CFParm* PParm)
         fix_player(StackActivator[StackPosition]);
     };
     StackPosition--;
+#ifdef PYTHON_DEBUG
+    printf( "done!\n");
+#endif
     return StackReturn[StackPosition];
 };
 

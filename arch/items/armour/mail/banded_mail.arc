@@ -8,11 +8,11 @@ last_sp 7
 material 2
 material_real 65
 ac 7
-item_level 3
-protect_impact 35
+item_level 7
+protect_impact 30
 protect_slash 35
 protect_cleave 30
-protect_pierce 40
+protect_pierce 37
 is_vul_acid 1
 is_vul_elemental 1
 is_vul_magic 1

@@ -99,9 +99,9 @@ Con 2
 Pow 2
 can_cast_spell 1
 exp 240
-ac 13
-wc 13
-dam 9
+ac 14
+wc 14
+dam 8
 hp -1
 maxhp 10
 sp -1

@@ -115,7 +115,7 @@ spell spells[NROFREALSPELLS]={
 								SPELL_DESC_DIRECTION,
 								PATH_MIND,NULL /*"confuse"*/,SPELL_DEACTIVE
 },
-{"magic bullet",				SPELL_TYPE_WIZARD, 1, 5, 8.0f, 3, 6,0,1.0,
+{"magic bullet",				SPELL_TYPE_WIZARD, 1, 4, 8.0f, 3, 6,0,1.0,
 								4,      5,      4,      4, 9,	SOUND_MAGIC_BULLET1,
 								SPELL_USE_CAST|SPELL_USE_SCROLL|SPELL_USE_HORN|
 								SPELL_USE_WAND| SPELL_USE_ROD|SPELL_USE_BOOK,

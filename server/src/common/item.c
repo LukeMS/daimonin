@@ -410,7 +410,7 @@ char *query_name(object *op) {
     use_buf++;
     use_buf %=5;
 
-	if(!op)
+	if(!op || !op->name)
 	{
 		buf[use_buf][0]=0;
 		return buf[use_buf];

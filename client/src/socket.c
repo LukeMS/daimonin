@@ -370,8 +370,7 @@ port)
                 *socket_temp = SOCKET_NO;
                 return FALSE;
         }
-        csocket.inbuf.buf=(unsigned char *)_malloc(MAXSOCKBUF,"SOCKET_OpenSocket(): 
-MAXSOCKBUF");
+        csocket.inbuf.buf=(unsigned char *)_malloc(MAXSOCKBUF,"SOCKET_OpenSocket(): MAXSOCKBUF");
         csocket.inbuf.len=0;
         insock.sin_family = AF_INET;
         insock.sin_port = htons((unsigned short)port);
@@ -407,13 +406,10 @@ MAXSOCKBUF");
 
         if (oldbufsize<newbufsize)
         {
-                if(setsockopt(*socket_temp,SOL_SOCKET,SO_RCVBUF, (char*)&newbufsize, 
-sizeof(&newbufsize)))
+                if(setsockopt(*socket_temp,SOL_SOCKET,SO_RCVBUF, (char*)&newbufsize, sizeof(&newbufsize)))
                 {
-                        LOG(1,"InitConnection: setsockopt unable to set output buf size to 
-%d\n", newbufsize);
-                        setsockopt(*socket_temp,SOL_SOCKET,SO_RCVBUF, (char*)&oldbufsize, 
-sizeof(&oldbufsize));
+                        LOG(1,"InitConnection: setsockopt unable to set output buf size to %d\n", newbufsize);
+                        setsockopt(*socket_temp,SOL_SOCKET,SO_RCVBUF, (char*)&oldbufsize, sizeof(&oldbufsize));
                 }
         }
         return TRUE;
@@ -447,10 +443,8 @@ void read_metaserver_data(void)
         int stat,temp;
         char *ptr, *buf;
 
-        ptr = (char*)_malloc(MAX_METASTRING_BUFFER,"read_metaserver_data(): metastring 
-buffer1");
-        buf = (char*)_malloc(MAX_METASTRING_BUFFER,"read_metaserver_data(): metastring 
-buffer2");
+        ptr = (char*)_malloc(MAX_METASTRING_BUFFER,"read_metaserver_data(): metastring buffer1");
+        buf = (char*)_malloc(MAX_METASTRING_BUFFER,"read_metaserver_data(): metastring buffer2");
         temp=0;
         for(;;)
         {
@@ -603,4 +597,5 @@ int write_socket(int fd, unsigned char *buf, int len)
         }
         return 0;
 }
+
 #endif
