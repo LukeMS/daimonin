@@ -6495,12 +6495,6 @@
     That way, the player has to apply the object (the chest), then the
     treasure is generated.
   </attribute>
-  <attribute arch="hp" editor="create number" type="int">
-    "Create number" specifies how many pieces of the given treasurelist
-    will appear. Note that for every piece there is a chance that nothing is
-    generated. Also, sometimes there can be stacks of items generated, like
-    for gems/money.
-  </attribute>
   <attribute arch="exp" editor="quality level" type="int">
     The &lt;quality level&gt; will be used for the quality of the generated
     treasure instead of the map difficulty (as was done with shops).

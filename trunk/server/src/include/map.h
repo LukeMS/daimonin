@@ -86,7 +86,7 @@ extern int	global_darkness_table[MAX_DARKNESS+1];
 #define MAP_STYLE	    0x8
 #define MAP_ARTIFACT	0x20
 #define MAP_NAME_SHARED	0x40 /* indicates that the name string is a shared string */
-
+#define MAP_ORIGINAL	0x80 /* original map. generate treasures */
 /* Values for in_memory below.  Should probably be an enumerations */
 #define MAP_IN_MEMORY 1
 #define MAP_SWAPPED 2

@@ -80,7 +80,7 @@ void put_decor(mapstruct *map,char **maze,char *decorstyle,int decor_option,RMPa
 				this_object->y = y;
 				/* it screws things up if decor can stop people */
 				CLEAR_FLAG(this_object,FLAG_NO_PASS);
-				insert_ob_in_map(this_object,map,NULL,0);
+				insert_ob_in_map(this_object,map,NULL,INS_NO_MERGE | INS_NO_WALK_ON);
 				number_to_place--;
 			 }
 		  else failures++;
@@ -100,7 +100,7 @@ void put_decor(mapstruct *map,char **maze,char *decorstyle,int decor_option,RMPa
 				this_object->y = j;
 				/* it screws things up if decor can stop people */
 				CLEAR_FLAG(this_object,FLAG_NO_PASS);
-				insert_ob_in_map(this_object,map,NULL,0);
+				insert_ob_in_map(this_object,map,NULL,INS_NO_MERGE | INS_NO_WALK_ON);
 			 }
 		  }
 		  

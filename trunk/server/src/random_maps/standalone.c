@@ -108,7 +108,6 @@ int auto_apply (object *op) {
     break;
 
   case TREASURE:
-    while ((op->stats.hp--)>0)
       create_treasure(op->randomitems, op, GT_ENVIRONMENT,
 	op->map == NULL ?  op->stats.exp: op->map->difficulty,T_STYLE_UNSET, ART_CHANCE_UNSET, 0,NULL);
     remove_ob(op);
@@ -118,43 +117,3 @@ int auto_apply (object *op) {
   return tmp ? 1 : 0;
 }
 
-/* fix_auto_apply goes through the entire map (only the first time
- * when an original map is loaded) and performs special actions for
- * certain objects (most initialization of chests and creation of
- * treasures and stuff).  Calls auto_apply if appropriate.
- */
-
-void fix_auto_apply(mapstruct *m) {
-  object *tmp,*above=NULL;
-  int x,y;
-
-  for(x=0;x<MAP_WIDTH(m);x++)
-    for(y=0;y<MAP_HEIGHT(m);y++)
-      for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=above) {
-        above=tmp->above;
-
-	if(QUERY_FLAG(tmp,FLAG_AUTO_APPLY))
-          auto_apply(tmp);
-        else if(tmp->type==TREASURE) {
-	  while ((tmp->stats.hp--)>0)
-            create_treasure(tmp->randomitems, tmp, 0,
-                            m->difficulty,T_STYLE_UNSET, ART_CHANCE_UNSET,0, NULL);
-	}
-        if(tmp && tmp->arch && tmp->type!=PLAYER && tmp->type!=TREASURE &&
-	   tmp->randomitems){
-	  if(tmp->type==CONTAINER) {
-	    while ((tmp->stats.hp--)>0)
-	      create_treasure(tmp->randomitems, tmp, 0,
-			      m->difficulty,T_STYLE_UNSET, ART_CHANCE_UNSET,0,NULL);
-	  }
-	  else create_treasure(tmp->randomitems, tmp, GT_APPLY,
-			      m->difficulty,T_STYLE_UNSET, ART_CHANCE_UNSET,0,NULL);
-	}
-      }
-  for(x=0;x<MAP_WIDTH(m);x++)
-    for(y=0;y<MAP_HEIGHT(m);y++)
-      for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=tmp->above)
-	if (tmp->above
-            && (tmp->type == TRIGGER_BUTTON || tmp->type == TRIGGER_PEDESTAL))
-	  check_trigger(tmp,tmp->above);
-}

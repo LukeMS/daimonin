@@ -2,6 +2,7 @@ Object meffect_blue
 name magic glow
 face effect1_blue.101
 layer 7
+no_save 1
 type 79
 anim
 effect1_blue.101

@@ -1,6 +1,7 @@
 Object fire_trail
 name burningtrail
 face burnout.101
+no_save 1
 layer 4
 anim
 burnout.101

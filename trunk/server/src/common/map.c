@@ -842,8 +842,8 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags)
     object *op, *prev=NULL,*last_more=NULL, *tmp;
 
     op=get_object();
-    op->map = m; /* To handle buttons correctly */
 
+    op->map = m; /* To handle buttons correctly */
 	mybuffer = create_loader_buffer(fp);
 	while((i=load_object(fp,op,mybuffer,LO_REPEAT, mapflags)))
 	{
@@ -878,14 +878,6 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags)
 		if(QUERY_FLAG(op, FLAG_IS_TURNABLE) || QUERY_FLAG(op, FLAG_ANIMATE))
 			SET_ANIMATION(op, (NUM_ANIMATIONS(op)/NUM_FACINGS(op))*op->direction+op->state);
 
-
-		/* thats a single arch object or the head - but insert_ob
-		 * will not know it, because op->more from a possible head
-		 * is not set at this point - thats the reason insert_ob
-		 * will not use its multi arch expand part.
-		 */
-		insert_ob_in_map(op,m,op,INS_NO_MERGE | INS_NO_WALK_ON);
-
 		/* expand a multi arch - we have only the head saved in a map! 
 		 * the *real* fancy point is, that our head/tail don't must fit
 		 * in this map! insert_ob will take about it and load the needed
@@ -899,7 +891,8 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags)
 			 * as TYPE_BASE_INFO. As long as this arches are not on the map,
 			 * we will not come in trouble here because load_object() will them
 			 * load on the fly. That means too, that multi arches in inventories
-			 * are always NOT expanded - means no tail.
+			 * are always NOT expanded - means no tail. For inventory objects,
+			 * we never hit this breakpoint here.
 			 */
 			tail = op->arch->more;
 		    prev=op,last_more=op;	
@@ -914,27 +907,46 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags)
 				tmp->y+=op->y;
 				tmp->map = op->map;
 
+				/* adjust the single object specific data except flags. */
+				tmp->type = op->type;
+				tmp->layer = op->layer;
+				
 				/* link the tail object... */
 			    tmp->head=prev,last_more->more=tmp,last_more=tmp;
+
+			} while((tail=tail->more)); 
 
 				/* now some tricky stuff again: 
 				 * to speed up some core functions like moving or remove_ob()/insert_ob
 				 * and because there are some "arch depending and not object depending"
 				 * flags, we init the tails with some of the head settings.
 				*/
-				QUERY_FLAG(op,FLAG_NO_APPLY)		? SET_FLAG(tmp,FLAG_NO_APPLY) : CLEAR_FLAG(tmp,FLAG_NO_APPLY);
-				QUERY_FLAG(op,FLAG_IS_INVISIBLE)	? SET_FLAG(tmp,FLAG_IS_INVISIBLE) : CLEAR_FLAG(tmp,FLAG_IS_INVISIBLE);
-				QUERY_FLAG(op,FLAG_IS_ETHEREAL)		? SET_FLAG(tmp,FLAG_IS_ETHEREAL) : CLEAR_FLAG(tmp,FLAG_IS_ETHEREAL);
-				QUERY_FLAG(op,FLAG_CAN_PASS_THRU)	? SET_FLAG(tmp,FLAG_CAN_PASS_THRU) : CLEAR_FLAG(tmp,FLAG_CAN_PASS_THRU);
-				QUERY_FLAG(op,FLAG_FLYING)			? SET_FLAG(tmp,FLAG_FLYING) : CLEAR_FLAG(tmp,FLAG_FLYING);
-				QUERY_FLAG(op,FLAG_BLOCKSVIEW)		? SET_FLAG(tmp,FLAG_BLOCKSVIEW) : CLEAR_FLAG(tmp,FLAG_BLOCKSVIEW);
-
-				/* this is the one and only point outside insert_ob we use TAIL_MARKER */
-				insert_ob_in_map(tmp,tmp->map,tmp,INS_NO_MERGE | INS_NO_WALK_ON | INS_TAIL_MARKER);
-			} while((tail=tail->more)); 
-
+				if (QUERY_FLAG(op,FLAG_SYS_OBJECT))		SET_MULTI_FLAG(op->more,FLAG_SYS_OBJECT)	else CLEAR_MULTI_FLAG(tmp->more,FLAG_SYS_OBJECT);
+				if (QUERY_FLAG(op,FLAG_NO_APPLY))		SET_MULTI_FLAG(op->more,FLAG_NO_APPLY)		else CLEAR_MULTI_FLAG(tmp->more,FLAG_NO_APPLY);
+				if (QUERY_FLAG(op,FLAG_IS_INVISIBLE))	SET_MULTI_FLAG(op->more,FLAG_IS_INVISIBLE)	else CLEAR_MULTI_FLAG(tmp->more,FLAG_IS_INVISIBLE);
+				if (QUERY_FLAG(op,FLAG_IS_ETHEREAL))	SET_MULTI_FLAG(op->more,FLAG_IS_ETHEREAL)	else CLEAR_MULTI_FLAG(tmp->more,FLAG_IS_ETHEREAL);
+				if (QUERY_FLAG(op,FLAG_CAN_PASS_THRU))	SET_MULTI_FLAG(op->more,FLAG_CAN_PASS_THRU)	else CLEAR_MULTI_FLAG(tmp->more,FLAG_CAN_PASS_THRU);
+				if (QUERY_FLAG(op,FLAG_FLYING))			SET_MULTI_FLAG(op->more,FLAG_FLYING)		else CLEAR_MULTI_FLAG(tmp->more,FLAG_FLYING);
+				if (QUERY_FLAG(op,FLAG_BLOCKSVIEW))		SET_MULTI_FLAG(op->more,FLAG_BLOCKSVIEW)	else CLEAR_MULTI_FLAG(tmp->more,FLAG_BLOCKSVIEW);
 		}
 
+		insert_ob_in_map(op,m,op,INS_NO_MERGE | INS_NO_WALK_ON);
+
+		/* this is from fix_auto_apply() which is removed now */
+		if(QUERY_FLAG(op,FLAG_AUTO_APPLY))
+			auto_apply(op); /* auto_apply() will remove the flag_auto_apply after first use */
+		else if((mapflags & MAP_ORIGINAL) && op->randomitems) /* for fresh maps, create treasures */ 
+			create_treasure(op->randomitems, op, op->type!=TREASURE?GT_APPLY:0, op->level?op->level:m->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
+
+		/* iam not sure this is senseful.
+		 * it was part of fix_auto_apply() but it should
+		 * redundant 
+		else if(op->type==TIMED_GATE)
+		{
+			op->speed = 0;
+			update_ob_speed(op);
+		}*/
+		
 		op=get_object();
 	    op->map = m;
     }
@@ -954,7 +966,6 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags)
 	check_light_source_list(m);
 }
 
-
 /* This saves all the objects on the map in a (most times) non destructive fashion.
  * Except spawn point/mobs and multi arches - see below.
  * Modified by MSW 2001-07-01 to do in a single pass - reduces code,
@@ -964,9 +975,35 @@ void load_objects (mapstruct *m, FILE *fp, int mapflags)
  * map what you like. MT-07.02.04
  */
 void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
-    int t, i, j = 0;
-    object *head, *op,  *otmp, *tmp, *next, *last_valid;
+    int i, j = 0;
+    object *head, *op,  *otmp, *tmp, *last_valid;
 
+	/* first, we have to remove all dynamic objects from this map.
+	 * from spell effects with owners (because the owner can't
+	 * be restored after a save) or from spawn points generated mobs.
+	 * We need to remove them in a right way - perhaps our spawn mob
+	 * was sitting on a button and we need to save then the unpressed
+	 * button - when not removed right our map get messed up when reloaded.
+	 *
+	 * We need to be a bit careful here.
+	 *
+	 * We will give the move_apply() code (which handles object changes when
+	 * something is removed) the MOVE_APPLY_VANISHED flag - we MUST
+	 * take care in all called function about it. 
+	 *
+	 * a example: A button which is pressed will call a spawn point "remove object x"
+	 * and unpressed "spawn onject x".
+	 * This is ok in the way, the button only set a flag/value in the spawn point
+	 * so in the next game tick the spawn point can do action. Because we will save
+	 * now, that action will be called when the map is reloaded. All ok.
+	 * NOT ok is, that the button then (or any other from move apply called object)
+	 * does a action IMMIDIALTY except it is a static effect (like we put a wall
+	 * in somewhere). 
+	 * Absolut forbidden are dynamic effect like instant spawns of mobs on other maps
+	 * point - then our map will get messed up again. Teleporters are a bit critical here
+	 * and i fear the code and callings in move_apply() will need some more carefully 
+	 * examination.
+	 */
     for(i = 0; i < MAP_WIDTH(m); i++)
 	{
 		for (j = 0; j < MAP_HEIGHT(m); j++) 
@@ -977,107 +1014,25 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 				last_valid = op->below; /* thats NULL OR a valid ptr - it CAN'T be a non valid
 										 * or we had remove it before AND reseted the ptr then right.
 										 */
-				/* here we handle the mobs of a spawn point - called spawn mobs.
-				 * We don't save spawn mobs - not even if they are on the same map.
-				 * This give us the power to do some "auto reset" of mobs and spawn.
-				 * If reloaded, the spawn point will restore a new mob of same kind on
-				 * the default position.
-				 */
-				if(QUERY_FLAG(op,FLAG_SPAWN_MOB) || (op->head && QUERY_FLAG(op->head,FLAG_SPAWN_MOB)))
+				if(head->type == PLAYER) /* ok, we will *never* save maps with player on */ 
 				{
-					/* One special case: If the mob is NOT one the same map as the spawn point,
-					 * we try to move the mob back to the spawn point. 
-					 * If this will not work (no free place for example), then we kick the mob.
-					 * If the mob is on the same map, we kick the mob always. Always we set the pre
-					 * spawn value (stats.sp) to the random number of this spawn - so the spawn
-					 * point will restore this mob when the map is reloaded.
-					 */
+					LOG(llevBug, "BUG: Tried to save map with player on!(%s (%s))\n", query_name(head), m->path);
+					continue;
+				}
 
-					op->head?(head = op->head):(head = op);
-
-					/* browse the inv for the map spawn info */
-				    for(tmp = head->inv; tmp; tmp = next)
-					{
-						next = tmp->below;
-						if(tmp->type == SPAWN_POINT_INFO)
-						{
-							/* perhaps we must warp this back where it comes from? */
-							if(!tmp->owner )
-							{
-								LOG(llevBug, "BUG: Spawn mob (%s (%s)) has SPAWN INFO without owner set!\n", op->arch->name, query_name(head));
-								SET_MULTI_FLAG(head, FLAG_NO_APPLY);
-								remove_ob(head);
-							}
-
-							/* op->map not head->map! head can be somewhere else... */
-							if(op->map != tmp->owner->map && head->map != tmp->owner->map)
-							{
-								/* free spot avaible for our friend here? */
-
-								/* i had to disable this because this can have a bad bad
-								 * side effect i never thought about... Iam not sure is fixable
-								 * but i leave the orignal code here.
-								 * This is btw the only bug appearing upgrade to beta 3 - it seems to need
-							     * some special map layout to appear.
-								 * The point is this: when we swap out a map, this find_free_spot()
-								 * can trigger out_of_map() and then the complete swap_in() map
-								 * load stuff - but we are here just swaping this map. This really
-								 * kills the server because its filling the map struct we have just
-								 * half cleared here...
-								 * Well, except the random treasure this function still lets reapear the
-								 * spawn mob in the right way.... MT-2004.
-								 */
-								/*t=find_free_spot(head->arch,tmp->owner->map,
-										tmp->owner->x,tmp->owner->y,0,tmp->owner->last_heal);*/
-								t=-1;
-								if (t==-1) /* no place.. but we are fair, give them another chance to reappear */
-								{
-									tmp->owner->stats.sp = tmp->owner->last_sp; /* force a pre spawn setting */
-									tmp->owner->speed_left +=1.0f; /* we force a active spawn point */
-									tmp->owner->enemy = NULL;
-									SET_MULTI_FLAG(head, FLAG_NO_APPLY);
-									remove_ob(head);
-									break; 
-								}
-
-							    SET_MULTI_FLAG(head, FLAG_NO_APPLY);
-								remove_ob(head);
-								CLEAR_MULTI_FLAG(head, FLAG_NO_APPLY);
-							    for(next = head; next != NULL; next = next->more)
-								{
-									next->x=next->arch->clone.x+tmp->owner->x+freearr_x[t];
-									next->y=next->arch->clone.y+tmp->owner->y+freearr_y[t];
-								}
-								insert_ob_in_map(head, tmp->owner->map, tmp->owner, 0);
-								break;
-							}
-							/* skip saving this mob but tell spawn to respawn it when reloaded */
-							tmp->owner->stats.sp = tmp->owner->last_sp; /* force a pre spawn setting */
-							tmp->owner->speed_left +=1.0f; /* we force a active spawn point */
-							tmp->owner->enemy = NULL;
-							SET_MULTI_FLAG(head, FLAG_NO_APPLY);
-							remove_ob(head);
-							break;
-						}
-					}
-					/* at this point, it can happen we have
-					 * removed our next link object otmp.
-					 * If otmp is invalid, try to restore it from our op ptr.
-					 * remove_ob() should had reset that ptr with valid data.
-					 * BUT perhaps op was removed to! Fallback to last_valid->above then.
-					 * If last_valid is NULL (there was no valid save_object() before), 
-					 * get otmp with get_map_ob (m, i, j) new,
-					 * that MUST then a valid ptr or NULL!
-					 * is otmp == NULL, we go on because we don't insert here anything.
-					 * This is a really scary side effect i needed ages to find out...
-					 * MT-2004
-					 */
+				head = op->head?op->head:op;
+				/* here we remove all "dynamic" content which are around on the map.
+				 * ATM i remove some spell effects with it.
+				 * For things like permanent counterspell walls or something we should
+				 * use and create special objects.
+				 */
+				if( QUERY_FLAG(head,FLAG_NO_SAVE) )
+				{
+					remove_ob(head);
+					check_walk_off (head, NULL, MOVE_APPLY_VANISHED|MOVE_APPLY_SAVING);
+					
 					if(otmp && (QUERY_FLAG(otmp, FLAG_REMOVED) || OBJECT_FREE(otmp))) /* invalid next ptr! */
 					{
-						/* remember: if we have remove for example 2 or more objects above, the
-						 * op->above WILL be still valid - remove_ob() will handle it right.
-						 * IF we get here a valid ptr, ->above WILL be valid too. Always.
-						 */
 						if(!QUERY_FLAG(op, FLAG_REMOVED) && !OBJECT_FREE(op)) 
 							otmp=op->above;
 						else if(last_valid)
@@ -1085,21 +1040,49 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 						else
 							otmp = get_map_ob (m, i, j); /* should be really rare */
 					}
-
 					continue;
+				}
+				/* here we handle the mobs of a spawn point - called spawn mobs.
+				 * We *never* save spawn mobs - not even if they are on the same map.
+				 * We remove them and tell the spawn point to generate them new in the next tick.
+				 * (In case of the saved map it is the reloading).
+				 * If reloaded, the spawn point will restore a new mob of same kind on
+				 * the default position.
+				 */
+				else if( QUERY_FLAG(op,FLAG_SPAWN_MOB) )
+				{
+					/* browse the inv for the map spawn info */
+				    for(tmp = head->inv; tmp; tmp = tmp->below)
+					{
+						if(tmp->type == SPAWN_POINT_INFO)
+						{
+							if(tmp->owner && tmp->owner->type == SPAWN_POINT) /* thats the spawn point... */
+							{
+								/* tell the source spawn point to respawn this deleted object. 
+								 * It can be here OR on a different map.
+								 */
+								tmp->owner->stats.sp = tmp->owner->last_sp; /* force a pre spawn setting */
+								tmp->owner->speed_left +=1.0f; /* we force a active spawn point */
+								tmp->owner->enemy = NULL;
+							}
+							else
+								LOG(llevBug, "BUG: Spawn mob (%s (%s)) has SPAWN INFO without or illegal owner set (%s)!\n", op->arch->name, query_name(head), query_name(tmp->owner));
+							
+							remove_ob(head);
+							check_walk_off (head, NULL, MOVE_APPLY_VANISHED|MOVE_APPLY_SAVING);
+							goto save_objects_jump1; /* sometimes goto's are VERY useful */
+						}
+					}
 
-					LOG(llevBug, "BUG: Spawn mob (%s %s) without SPAWN INFO.\n", op->arch->name, query_name(head));
-					SET_MULTI_FLAG(head, FLAG_NO_APPLY);
+					LOG(llevBug, "BUG: Spawn mob (%s %s) without SPAWN INFO.\n", head->arch->name, query_name(head));
 					remove_ob(head);
-					if(tmp->owner)
+					check_walk_off (head, NULL, MOVE_APPLY_VANISHED|MOVE_APPLY_SAVING);
+					if(!OBJECT_FREE(tmp) && tmp->owner && tmp->owner->type == SPAWN_POINT)
 						tmp->owner->enemy = NULL;
 
+				save_objects_jump1:
 					if(otmp && (QUERY_FLAG(otmp, FLAG_REMOVED) || OBJECT_FREE(otmp))) /* invalid next ptr! */
 					{
-						/* remember: if we have remove for example 2 or more objects above, the
-						 * op->above WILL be still valid - remove_ob() will handle it right.
-						 * IF we get here a valid ptr, ->above WILL be valid too. Always.
-						 */
 						if(!QUERY_FLAG(op, FLAG_REMOVED) && !OBJECT_FREE(op)) 
 							otmp=op->above;
 						else if(last_valid)
@@ -1118,19 +1101,18 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 					 */
 					if(op->enemy)
 					{
-						if(op->enemy_count == op->enemy->count && !QUERY_FLAG(op,FLAG_REMOVED))
+						if(op->enemy_count == op->enemy->count && /* we have a legal spawn? */
+							!QUERY_FLAG(op->enemy,FLAG_REMOVED) && !OBJECT_FREE(op->enemy))
 						{
 							op->stats.sp = op->last_sp; /* force a pre spawn setting */
 							op->speed_left += 1.0f;
-							SET_MULTI_FLAG(op->enemy, FLAG_NO_APPLY);
+							/* and delete the spawn */
 							remove_ob(op->enemy);
+							check_walk_off (op->enemy, NULL, MOVE_APPLY_VANISHED|MOVE_APPLY_SAVING);
+							op->enemy = NULL;
 
 							if(otmp && (QUERY_FLAG(otmp, FLAG_REMOVED) || OBJECT_FREE(otmp))) /* invalid next ptr! */
 							{
-								/* remember: if we have remove for example 2 or more objects above, the
-								 * op->above WILL be still valid - remove_ob() will handle it right.
-								 *IF we get here a valid ptr, ->above WILL be valid too. Always.
-								 */
 								if(!QUERY_FLAG(op, FLAG_REMOVED) && !OBJECT_FREE(op)) 
 									otmp=op->above;
 								else if(last_valid)
@@ -1142,23 +1124,77 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 					}
 				}
 
-				/* do some testing... */
-				if(op->type == PLAYER) 
+				/* we will delete here all temporary owner objects.
+				* We talk here about spell effects, pets, golems and
+				* other "dynamic" objects.
+				* What NOT should be deleted are throw objects and other
+				* permanent items which has a owner setting! (if they have)
+				*/
+				if (head->owner)
 				{
-					/* well, we catch it here... save the map and leave the op object unsaved... so no bug */
-					/*LOG(llevDebug, "BUG: Player on map that is being saved\n");*/
-					continue;
-				}
+					/* perhaps we should add here a flag for pets...
+					 * But the pet code needs a rework so or so.
+					 * ATM we simply delete GOLEMS and clearing
+					 * from all other spells/stuff the owner tags.
+					 * SPAWN MOBS are not here so we only speak about
+					 * spell effects
+					 * we *can* delete them here too - but then i would
+					 * prefer a no_save flag. Only reason to save them is
+					 * to reset for example buttons or avoiding side effects
+					 * like a fireball saved with neutral owner which does then
+					 * something evil - but that CAN always catched in the code
+					 * and scripts so lets go the easy way here - as less we
+					 * manipulate the map here as more secure we are!
+					 */
+					if(head->type == GOLEM) /* a golem needs a valid release from the player... */
+					{
+						(*send_golem_control_func)(head, GOLEM_CTR_RELEASE);
+						remove_friendly_object(head);
+						remove_ob(head);
+						check_walk_off (head, NULL, MOVE_APPLY_VANISHED|MOVE_APPLY_SAVING);
+						
+						if(otmp && (QUERY_FLAG(otmp, FLAG_REMOVED) || OBJECT_FREE(otmp))) /* invalid next ptr! */
+						{
+							if(!QUERY_FLAG(op, FLAG_REMOVED) && !OBJECT_FREE(op)) 
+								otmp=op->above;
+							else if(last_valid)
+								otmp=last_valid->above;
+							else
+								otmp = get_map_ob (m, i, j); /* should be really rare */
+						}
+						continue;
+					}
 
-				/* this will skip owner objects like fireball or fired arrows
-				 * on a map which is saved. But perhaps we use owner in a 
-				 * different way - so i want log what we do here.
-				 */
-				if (op->owner)
-				{
-					LOG(llevDebug, "WARNING (ignore for spells): save_obj(): obj w. owner. map:%s obj:%s (%s) (%d,%d)\n",m->path, query_name(op),op->arch->name?op->arch->name:"<no arch name>",op->x, op->y);
+					LOG(llevDebug, "WARNING (only debug): save_obj(): obj w. owner. map:%s obj:%s (%s) (%d,%d)\n",m->path, query_name(op),op->arch->name?op->arch->name:"<no arch name>",op->x, op->y);
+					head->owner=NULL;
 				    continue;
 				}
+
+		    } /* for this space */
+		} /* for this j */
+	}
+
+
+	/* The map is now cleared from non static objects on this or other maps 
+	 * (when the source was from this map). Now all can be saved as a legal
+	 * snapshot of the map state mashine.
+	 * That means all button/mashine relations are correct.
+	 */
+	
+	for(i = 0; i < MAP_WIDTH(m); i++)
+	{
+		for (j = 0; j < MAP_HEIGHT(m); j++) 
+		{
+			for(op = get_map_ob (m, i, j); op; op = otmp)
+			{
+				otmp = op->above;
+				last_valid = op->below; /* thats NULL OR a valid ptr - it CAN'T be a non valid
+										 * or we had remove it before AND reseted the ptr then right.
+										 */
+
+				/* do some testing... */
+				if(op->type == PLAYER) /* ok, we will *never* save maps with player on */ 
+					continue; /* warning was given before */
 
 				/* here we do the magic! */
 				if(op->head) /* its a tail... */
@@ -1189,8 +1225,7 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 
 					tmp->x = xt;
 					tmp->y = yt;
-					SET_MULTI_FLAG(tmp, FLAG_NO_APPLY);
-					remove_ob(tmp);
+					remove_ob(tmp); /* this is only a "trick" remove - no walk off check */
 
 					if(otmp && (QUERY_FLAG(otmp, FLAG_REMOVED) || OBJECT_FREE(otmp))) /* invalid next ptr! */
 					{
@@ -1215,15 +1250,10 @@ void save_objects (mapstruct *m, FILE *fp, FILE *fp2, int flag) {
 
 				if(op->more) /* its a head (because we had tails tested before) */
 				{
-					SET_MULTI_FLAG(op, FLAG_NO_APPLY);
-					remove_ob(op);
+					remove_ob(op); /* only a "trick" remove - no move_apply() changes or something */
 
 					if(otmp && (QUERY_FLAG(otmp, FLAG_REMOVED) || OBJECT_FREE(otmp))) /* invalid next ptr! */
 					{
-						/* remember: if we have remove for example 2 or more objects above, the
-						 * op->above WILL be still valid - remove_ob() will handle it right.
-						 * IF we get here a valid ptr, ->above WILL be valid too. Always.
-						 */
 						if(!QUERY_FLAG(op, FLAG_REMOVED) && !OBJECT_FREE(op)) 
 							otmp=op->above;
 						else if(last_valid)
@@ -1605,7 +1635,7 @@ mapstruct *load_original_map(const char *filename, int flags) {
 
     m->in_memory=MAP_LOADING;
     LOG(llevDebug, "load objs:");
-    load_objects (m, fp, flags & (MAP_BLOCK|MAP_STYLE));
+    load_objects (m, fp, (flags & (MAP_BLOCK|MAP_STYLE)) | MAP_ORIGINAL);
     LOG(llevDebug, "close. ");
     close_and_delete(fp, comp);
     LOG(llevDebug, "post set. ");
@@ -1638,7 +1668,6 @@ static mapstruct *load_temporary_map(mapstruct *m) {
 		m = load_original_map(buf, 0);
 		if(m==NULL) 
 			return NULL;
-		(*fix_auto_apply_func)(m); /* Chests which open as default */
 		return m;
     }
 
@@ -1651,7 +1680,6 @@ static mapstruct *load_temporary_map(mapstruct *m) {
 		m = load_original_map(buf, 0);
 		if(m==NULL) 
 			return NULL;
-			(*fix_auto_apply_func)(m); /* Chests which open as default */
 		return m;
     }
     
@@ -1663,7 +1691,6 @@ static mapstruct *load_temporary_map(mapstruct *m) {
         m = load_original_map(m->path, 0);
 		if(m==NULL) 
 			return NULL;
-			(*fix_auto_apply_func)(m); /* Chests which open as default */
 		return m;
     }
     LOG(llevDebug, "alloc. ");
@@ -1698,8 +1725,10 @@ static void delete_unique_items(mapstruct *m)
 		    unique=1;
 		if(op->head == NULL && (QUERY_FLAG(op, FLAG_UNIQUE) || unique)) {
 		    if (QUERY_FLAG(op, FLAG_IS_LINKED))
-			remove_button_link(op);
-		    remove_ob(op);
+				remove_button_link(op);
+			remove_ob(op);
+			/* check off should be right here ... */
+			check_walk_off (op, NULL, MOVE_APPLY_VANISHED);
 		}
 	    }
 	}
@@ -1922,7 +1951,7 @@ void free_all_objects(mapstruct *m) {
 		if(op->head!=NULL)
 		    op = op->head;
 
-		remove_ob(op);
+		remove_ob(op); /* technical remove - no check off */
 	    }
 	}
 	/*LOG(llevDebug,"FAO-end: map:%s ->%d\n", m->name?m->name:(m->tmpname?m->tmpname:""),m->in_memory);*/
@@ -1947,13 +1976,20 @@ void free_map(mapstruct *m,int flag) {
 	 */
 	remove_light_source_list(m);
 
+	/* I put this before free_all_objects() - 
+	 * because the link flag is now tested in destroy_object()
+	 * to have a clean handling of temporary/dynamic buttons on
+	 * a map. Because we delete now the FLAG_LINKED from the object
+	 * in free_objectlinkpt() we don't trigger it inside destroy_object()
+	 */
+    if (m->buttons)
+		free_objectlinkpt(m->buttons);
+
     if (flag && m->spaces) 
 		free_all_objects(m);
     FREE_AND_NULL_PTR(m->name);
     FREE_AND_NULL_PTR(m->spaces);
     FREE_AND_NULL_PTR(m->msg);
-    if (m->buttons)
-		free_objectlinkpt(m->buttons);
     m->buttons = NULL;
 	m->first_light = NULL;
     for (i=0; i<TILED_MAPS; i++)
@@ -2091,8 +2127,6 @@ mapstruct *ready_map_name(const char *name, int flags)
 		if (!(m = load_original_map(name, (flags & MAP_PLAYER_UNIQUE))))
 			return NULL;
 
-		(*fix_auto_apply_func)(m); /* Chests which open as default */
-
 		/* If a player unique map, no extra unique object file to load.
 		* if from the editor, likewise.
 		*/
@@ -2127,7 +2161,12 @@ mapstruct *ready_map_name(const char *name, int flags)
      * temp maps.
      */
 
-    /* In case other objects press some buttons down */
+    /* In case other objects press some buttons down.
+	 * We handle here all kind of "triggers" which are triggered
+	 * permanent by objects like buttons or inventory checkers.
+	 * We don't check here instant stuff like sacrificing altars.
+	 * Because this should be handled on map making side.
+	 */
 	LOG(llevDebug,"buttons. ");
     update_buttons(m);
 	LOG(llevDebug,"end ready_map_name(%s)\n",m->path?m->path:"<nopath>");

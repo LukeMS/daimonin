@@ -230,7 +230,8 @@ void leave_map(object *op)
     mapstruct *oldmap = op->map;
 
     remove_ob(op); /* TODO: hmm... never drop inv here? */
-
+	check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
+		
 	if (oldmap && !oldmap->player_first && !oldmap->perm_load)
 	    set_map_timeout(oldmap);
 }
@@ -298,7 +299,11 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y, int pos_flag)
      * otherwise, we need to deal with removing the playe here.
      */
     if(!QUERY_FLAG(op, FLAG_REMOVED))
+	{
 		remove_ob(op);
+		if(check_walk_off (op, NULL,MOVE_APPLY_DEFAULT) != CHECK_WALK_OK)
+			return;
+	}
 
 	/* i don't like this system... First, i want attach leave/enter
 	 * scripts perhaps to a map more often, as to a single object.
@@ -325,8 +330,8 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y, int pos_flag)
     /*  Gecko: this is done also by insert_ob_in_map 
 	tmp->map = newmap;*/
   }
-  insert_ob_in_map(op, newmap, NULL,0);
-
+  if(!insert_ob_in_map(op, newmap, NULL,0))
+	return;
 
 /* GROS : Here we handle the MAPENTER global event */
 /* i disabled this ... Don't like this as "global event"
@@ -361,6 +366,8 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y, int pos_flag)
 			int i = find_free_spot(CONTR(op)->golem->arch,newmap, x, y, 1, SIZEOFFREE+1);
 
 			remove_ob(CONTR(op)->golem);
+			if(check_walk_off (CONTR(op)->golem, NULL,MOVE_APPLY_VANISHED) != CHECK_WALK_OK)
+				return;
 			if (i==-1)
 			{
 				send_golem_control(CONTR(op)->golem, GOLEM_CTR_RELEASE);
@@ -376,7 +383,8 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y, int pos_flag)
 					tmp->y = y + freearr_y[i]+ (tmp->arch==NULL?0:tmp->arch->clone.y);
 					tmp->map = newmap;
 				}
-				insert_ob_in_map(CONTR(op)->golem, newmap, NULL,0);
+				if(!insert_ob_in_map(CONTR(op)->golem, newmap, NULL,0))
+					return;
 				CONTR(op)->golem->direction = find_dir_2(op->x - CONTR(op)->golem->x, op->y - CONTR(op)->golem->y);
 			}
 		}
@@ -521,10 +529,8 @@ static void enter_unique_map(object *op, object *exit_ob)
 	sprintf(apartment, "%s/%s/%s/%s", settings.localdir,
 	    settings.playerdir, op->name, clean_path(EXIT_PATH(exit_ob)));
 	newmap = ready_map_name(apartment, MAP_PLAYER_UNIQUE);
-	if (!newmap) {
+	if (!newmap)
 	    newmap = load_original_map(create_pathname(EXIT_PATH(exit_ob)), MAP_PLAYER_UNIQUE);
-	    if (newmap) fix_auto_apply(newmap);
-	}
     } else { /* relative directory */
 	char reldir[HUGE_BUF], tmpc[HUGE_BUF], tmp_path[HUGE_BUF], *cp;
 
@@ -542,10 +548,8 @@ static void enter_unique_map(object *op, object *exit_ob)
 		    clean_path(EXIT_PATH(exit_ob)));
 
 	    newmap = ready_map_name(apartment, MAP_PLAYER_UNIQUE);
-	    if (!newmap) {
+	    if (!newmap)
 		newmap = load_original_map(create_pathname(normalize_path(reldir, EXIT_PATH(exit_ob), tmp_path)), MAP_PLAYER_UNIQUE);
-		if (newmap) fix_auto_apply(newmap);
-	    }
 	}
 	else {
 	    /* The exit is unique, but the map we are coming from is not unique.  So
@@ -555,10 +559,8 @@ static void enter_unique_map(object *op, object *exit_ob)
 		    settings.playerdir, op->name, 
 		    clean_path(normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob), tmp_path)));
 	    newmap = ready_map_name(apartment, MAP_PLAYER_UNIQUE);
-	    if (!newmap) {
+	    if (!newmap)
 		newmap = ready_map_name(normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob), tmp_path), 0);
-		if (newmap) fix_auto_apply(newmap);
-	    }
 	}
     }
 
@@ -695,7 +697,7 @@ void enter_exit(object *op, object *exit_ob)
 						break;
 				}
 				if(tmp)
-					remove_ob(tmp);
+					remove_ob(tmp); /* is a inv. item */
 				strcpy(CONTR(op)->savebed_map, normalize_path(exit_ob->map->path, EXIT_PATH(exit_ob), tmp_path));
 				CONTR(op)->bed_x = EXIT_X(exit_ob), CONTR(op)->bed_y = EXIT_Y(exit_ob);
 				save_player(op, 1);

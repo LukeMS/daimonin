@@ -2732,7 +2732,7 @@ def_arch bow
 Object Accuracy
 title of accuracy
 type 14
-value 5
+value 5500
 is_magical 1
 weight 80
 wc 4

@@ -773,6 +773,7 @@ x 6
 y 5
 end
 arch button_small
+name small button test
 connected 101
 x 6
 y 5

@@ -45,6 +45,7 @@ struct mempool_chunk *removed_objects; /* List of objects that have been removed
                                           during the last server timestep */
 /* The removedlist is not ended by NULL, but by a pointer to the end_marker */
 static struct mempool_chunk end_marker; /* only used as an end marker for the lists */
+static int static_walk_semaphore=FALSE; /* see walk_off/walk_on functions  */
 
 object void_container; /* container for objects without real maps or envs */
 
@@ -1084,45 +1085,45 @@ static void expand_mempool(mempool_id pool) {
 /* Get a chunk from the selected pool. The pool will be expanded if necessary. */
 void *get_poolchunk(mempool_id pool)
 {
-    struct mempool_chunk *new;
+    struct mempool_chunk *new_obj;
 
     if(pool >= NROF_MEMPOOLS)
         LOG(llevBug, "BUG: get_poolchunk for illegal memory pool %d\n", pool); 
 
     if(mempools[pool].flags & MEMPOOL_BYPASS_POOLS) {
-        new = calloc(1, sizeof(struct mempool_chunk) + mempools[pool].chunksize);        
+        new_obj = calloc(1, sizeof(struct mempool_chunk) + mempools[pool].chunksize);        
     } else {
         if(mempools[pool].nrof_free == 0) 
             expand_mempool(pool);
-        new = mempools[pool].first_free;
-        mempools[pool].first_free = new->next;
+        new_obj = mempools[pool].first_free;
+        mempools[pool].first_free = new_obj->next;
         mempools[pool].nrof_free--;
     }
 
     mempools[pool].nrof_used++;
-    new->next = NULL;
-
+    new_obj->next = NULL;
+	
     if(mempools[pool].constructor)
-        mempools[pool].constructor(MEM_USERDATA(new));
+        mempools[pool].constructor(MEM_USERDATA(new_obj));
 
 #ifdef MEMPOOL_OBJECT_TRACKING
 	
 	/* that should never happens! */
-	if(new->obj_prev || new->obj_next)
+	if(new_obj->obj_prev || new_obj->obj_next)
 	{
-		LOG(llevDebug,"WARNING:DEBUG_OBJ::get_poolchunk() object >%d< is in used_object list!!\n",  new->id);
+		LOG(llevDebug,"WARNING:DEBUG_OBJ::get_poolchunk() object >%d< is in used_object list!!\n",  new_obj->id);
 	}
 	
 	/* put it in front of the used object list */
-	new->obj_next = used_object_list;
-	if(new->obj_next)
-		new->obj_next->obj_prev = new;
-	used_object_list = new;
-	new->flags &=~MEMPOOL_OBJECT_FLAG_FREE;
-	new->flags |=MEMPOOL_OBJECT_FLAG_USED;
+	new_obj->obj_next = used_object_list;
+	if(new_obj->obj_next)
+		new_obj->obj_next->obj_prev = new_obj;
+	used_object_list = new_obj;
+	new_obj->flags &=~MEMPOOL_OBJECT_FLAG_FREE;
+	new_obj->flags |=MEMPOOL_OBJECT_FLAG_USED;
 #endif
 
-    return MEM_USERDATA(new);
+    return MEM_USERDATA(new_obj);
 }
 
 /* Return a chunk to the selected pool. Don't return memory to the wrong pool!
@@ -1678,7 +1679,7 @@ object *merge_ob(object *op, object *top) {
     {
       top->nrof+=op->nrof;
       op->weight = 0; /* Don't want any adjustements now */
-      remove_ob(op);
+      remove_ob(op); /* this is right: no check off */
       return top;
     }
   }
@@ -2195,10 +2196,10 @@ void copy_object_data(object *op2, object *op)
  */
 
 object *get_object() {
-    object *new = (object *)get_poolchunk(POOL_OBJECT);
+    object *new_obj = (object *)get_poolchunk(POOL_OBJECT);
 
-	mark_object_removed(new);
-    return new;
+	mark_object_removed(new_obj);
+    return new_obj;
 }
 
 /*
@@ -2616,7 +2617,7 @@ void drop_ob_inv(object *ob) {
     while(tmp_op!=NULL)
     {
         tmp=tmp_op->below;
-        remove_ob(tmp_op); /* This will be destroyed in next loop of object_gc() */
+        remove_ob(tmp_op); /* Inv-no check off / This will be destroyed in next loop of object_gc() */
         /* if we recall spawn mobs, we don't want drop their items as free.
          * So, marking the mob itself with "FLAG_STARTEQUIP" will kill
          * all inventory and not dropping it on the map.
@@ -2689,7 +2690,7 @@ void drop_ob_inv(object *ob) {
 							(*esrv_send_item_func)(ob->env, tmp_op);
 					}
 					else
-	                    insert_ob_in_map(tmp_op,ob->map,NULL,0); /* Insert in same map as the envir */
+	                    insert_ob_in_map(tmp_op,ob->map,NULL,0); /* Insert in same map as the env*/
 				}
             }
         }
@@ -2747,7 +2748,7 @@ void drop_ob_inv(object *ob) {
         {
             /* if we are here, our corpse mob had something in inv but its nothing to drop */
             if(!QUERY_FLAG(corpse, FLAG_REMOVED))
-                remove_ob(corpse);
+                remove_ob(corpse); /* no check off - not put in the map here */
         }
     }
 }
@@ -2762,17 +2763,21 @@ void drop_ob_inv(object *ob) {
  */
 void destroy_object(object *ob) {
 
+	if(OBJECT_FREE(ob)) {
+		dump_object(ob);
+		LOG(llevBug,"BUG: Trying to destroy freed object.\n%s\n",errmsg);
+		return;
+	}
+
     if (!QUERY_FLAG(ob, FLAG_REMOVED)) {
 	dump_object(ob);
 	LOG(llevBug,"BUG: Destroy object called with non removed object\n:%s\n",errmsg);
     }
 
-  if(OBJECT_FREE(ob)) {
-    dump_object(ob);
-    LOG(llevBug,"BUG: Trying to destroy freed object.\n%s\n",errmsg);
-    return;
-  }
-
+  /* This should be very rare... */
+  if (QUERY_FLAG(ob, FLAG_IS_LINKED))
+	  remove_button_link(ob);
+  
   if(QUERY_FLAG(ob,FLAG_FRIENDLY))
 	  remove_friendly_object(ob);
  
@@ -2848,6 +2853,7 @@ void destruct_ob(object *op) {
 	if(op->inv) 
 	    drop_ob_inv(op);
     remove_ob(op);
+	check_walk_off (op, NULL, MOVE_APPLY_DEFAULT);
 }
 
 /* remove_ob(op):
@@ -2862,10 +2868,7 @@ void destruct_ob(object *op) {
  */
 void remove_ob(object *op) {
 	MapSpace *msp;
-    object *tmp,*last=NULL;
     object *otmp;
-    tag_t tag;
-    int check_walk_off;
 		
     if(QUERY_FLAG(op, FLAG_REMOVED)) 
 	{
@@ -2876,9 +2879,10 @@ void remove_ob(object *op) {
     }
 
     if(op->more!=NULL)
-		remove_ob(op->more);
+		remove_ob(op->more); /* check off is handled outside here */
 
     mark_object_removed(op);
+	SET_FLAG(op, FLAG_OBJECT_WAS_MOVED);
     
     /* 
      * In this case, the object to be removed is in someones
@@ -3005,42 +3009,6 @@ void remove_ob(object *op) {
 			container_unlink_func (pltemp,NULL);
 	}
 
-	/* it should not be hard to remove this object loop too -
-	 * we do 2 things here:
-	 * closing a container when the player moves away
-	 * and checking FLY_OFF, WALK_OFF. 
-	 */
-    tag = op->count;
-    check_walk_off = ! QUERY_FLAG (op, FLAG_NO_APPLY);
-    for(tmp=GET_MAP_OB(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above)
-	{			
-		if (check_walk_off && (QUERY_FLAG (op, FLAG_FLYING) ?
-			QUERY_FLAG (tmp, FLAG_FLY_OFF) : QUERY_FLAG (tmp, FLAG_WALK_OFF)))
-		{
-	    
-			move_apply_func (tmp, op, NULL);
-			/* WARNING: was_destroyed() works not anymore here because it checks
-			 * REMOVE_OBJ() - but we ARE here removed here!
-			 * I really must rework the walk_on/off stuff..
-			 */
-			if (was_destroyed (op, tag))
-			{
-					/* hmm... why is this a bug??.. this is like a trap
-				 * which instant kills you when you move away... not fair
-				 * but really not a bug. Of course not smart to handle this
-				 * AFTER the remove.
-				 */
-				/*LOG(llevBug, "SEMIBUG: (walk off stuff - is on TODO)remove_ob(): name %s, archname %s destroyed leaving object\n", tmp->name, tmp->arch->name);*/
-			}
-		}
-
-		/* Eneq(@csd.uu.se): Fixed this to skip tmp->above=tmp */
-
-		if(tmp->above == tmp)
-			tmp->above = NULL;
-		last=tmp;
-    }
-
     update_object(op, UP_OBJ_REMOVE);		
 
     op->env = NULL;
@@ -3057,7 +3025,7 @@ void remove_ob_inv(object *op)
 		tmp2=tmp->below; /* save ptr, gets NULL in remove_ob */
 		if(tmp->inv)
 			remove_ob_inv(tmp);
-		remove_ob(tmp);			
+		remove_ob(tmp);	 /* no map, no check off */		
 	}
 }
 	 
@@ -3078,9 +3046,14 @@ void remove_ob_inv(object *op)
  * to be set if special handling is needed.
  *
  * Return value:
- *   new object if 'op' was merged with other object
  *   NULL if 'op' was destroyed
  *   just 'op' otherwise
+ *   When a trap (like a trapdoor) has moved us here, op will returned true.
+ *   The caller function must handle it and controlling ->map, ->x and ->y of op
+ *
+ * I reworked the FLY/MOVE_ON system - it should now very solid and faster. MT-2004.
+ * Notice that the FLY/WALK_OFF stuff is removed from remove_ob() and must be called
+ * explicit when we want make a "move/step" for a object which can trigger it.
  */
 
 object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag)
@@ -3165,15 +3138,19 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
 			if (CAN_MERGE(op,tmp)) 
 			{
 				op->nrof+=tmp->nrof;
+				/* a bit tricky remove_ob() without check off.
+				 * technically, this happens: arrow x/y is falling on the stack
+				 * of perhaps 10 arrows. IF a teleporter is called, the whole 10
+				 * arrows are teleported.Thats a right effect.
+				 */
 				remove_ob(tmp);
 			}
 		}
     }
 
-    CLEAR_FLAG(op,FLAG_APPLIED); /* hack for fixing F_APPLIED in items of dead people */
-    CLEAR_FLAG(op, FLAG_INV_LOCKED);
-    if (!IS_LIVE(op))
-	CLEAR_FLAG(op, FLAG_NO_STEAL);
+	SET_FLAG(op, FLAG_OBJECT_WAS_MOVED); /* we need this for FLY/MOVE_ON/OFF */
+    CLEAR_FLAG(op,FLAG_APPLIED);		/* nothing on the floor can be applied */
+    CLEAR_FLAG(op, FLAG_INV_LOCKED);	/* or locked */
 
 	/* map layer system */
 	/* we don't test for sys object because we ALWAYS set the layer of a sys object
@@ -3352,18 +3329,64 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
     /* updates flags (blocked, alive, no magic, etc) for this map space */
     update_object(op,UP_OBJ_INSERT);
 
-    /* if this is not the head or flag has been passed, don't check walk on status */
-    if (!(flag & INS_NO_WALK_ON) && !op->head) 
-	{
-        if (check_walk_on(op, originator))
-	    return NULL;
 
-        /* If we are a multi part object, lets work our way through the check
-         * walk on's.
-         */
-        for (tmp=op->more; tmp!=NULL; tmp=tmp->more)
-            if (check_walk_on (tmp, originator))
-		return NULL;
+	/* check walk on/fly on flag if not canceld AND there is some to move on.
+	 * Note: We are first inserting the WHOLE object/multi arch - then we check all
+	 * part for traps. This ensures we don't must do nasty hacks with half inserted/removed
+	 * objects - for example when we hit a teleporter trap.
+	 * Check only for single tiles || or head but ALWAYS for heads.
+	*/
+	if (!(flag & INS_NO_WALK_ON) && (mc->flags&(P_WALK_ON|P_FLY_ON)||op->more) && !op->head)
+	{
+		int event;
+
+		/* we want reuse mc here... bad enough we need to check it double for multi arch */
+		if(QUERY_FLAG(op,FLAG_FLY_ON)) 
+		{
+			if(!(mc->flags & P_FLY_ON)) /* we are flying but no fly event here */
+				goto check_walk_loop;
+		}
+		else /* we are not flying - check walking only */
+		{
+			if(!(mc->flags & P_WALK_ON)) 
+				goto check_walk_loop;
+		}
+		
+		if((event=check_walk_on(op, originator,MOVE_APPLY_MOVE)))
+		{
+			if(event == CHECK_WALK_MOVED)
+				return op; /* don't return NULL - we are valid but we was moved */
+			else
+				return NULL; /* CHECK_WALK_DESTROYED */
+		}
+
+		/* TODO: check event */
+		
+	check_walk_loop:
+        for (tmp=op->more; tmp!=NULL; tmp=tmp->more) 
+		{
+			mc = GET_MAP_SPACE_PTR(tmp->map,tmp->x,tmp->y);
+
+			/* object is flying/levitating */
+			if(QUERY_FLAG(op,FLAG_FLY_ON))  /* trick: op is single tile OR always head! */
+			{
+				if(!(mc->flags & P_FLY_ON)) /* we are flying but no fly event here */
+					continue;
+			}
+			else /* we are not flying - check walking only */
+			{
+				if(!(mc->flags & P_WALK_ON)) 
+					continue;
+			}
+
+			if((event=check_walk_on(tmp, originator,MOVE_APPLY_MOVE)))
+			{
+				if(event == CHECK_WALK_MOVED)
+					return op; /* don't return NULL - we are valid but we was moved */
+				else
+					return NULL; /* CHECK_WALK_DESTROYED */
+			}
+		}
     }
     return op;
 }
@@ -3380,7 +3403,7 @@ void replace_insert_ob_in_map(char *arch_string, object *op) {
 
     for(tmp=GET_MAP_OB(op->map,op->x,op->y); tmp!=NULL; tmp=tmp->above) {
 	if(!strcmp(tmp->arch->name,arch_string)) /* same archetype */ {
-	    remove_ob(tmp);
+	    remove_ob(tmp); /* no move off here... should be ok, this is a technical function */
 	}
     }
 
@@ -3420,9 +3443,9 @@ object *get_split_ob(object *orig_ob,int nr) {
             insert_ob_in_ob(event, newob);
         }
     }
-//    if(QUERY_FLAG(orig_ob, FLAG_UNPAID) && QUERY_FLAG(orig_ob, FLAG_NO_PICK))
-//	; /* clone objects .... */
-//	else
+/*    if(QUERY_FLAG(orig_ob, FLAG_UNPAID) && QUERY_FLAG(orig_ob, FLAG_NO_PICK))*/
+/*		;*/ /* clone objects .... */
+/*	else*/
 		orig_ob->nrof-=nr;
 
     if(orig_ob->nrof<1) 
@@ -3430,6 +3453,7 @@ object *get_split_ob(object *orig_ob,int nr) {
 		
 		if (! is_removed)
 		        remove_ob(orig_ob);
+		check_walk_off (orig_ob, NULL, MOVE_APPLY_VANISHED);
     }
     else if (! is_removed) 
 	{
@@ -3504,6 +3528,7 @@ object *decrease_ob_nr (object *op, int i)
             }
         } else {
             remove_ob(op);
+			check_walk_off (op, NULL, MOVE_APPLY_VANISHED);
             op->nrof = 0;
             if (tmp) {
                 (*esrv_del_item_func) (CONTR(tmp), op->count,op->env);
@@ -3519,6 +3544,7 @@ object *decrease_ob_nr (object *op, int i)
             op->nrof -= i;
         } else {
             remove_ob(op);
+			check_walk_off (op, NULL, MOVE_APPLY_VANISHED);
             op->nrof = 0;
         }
 	/* Since we just removed op, op->above is null */
@@ -3608,6 +3634,7 @@ object *insert_ob_in_ob(object *op,object *where) {
   } else
     add_weight (where, (op->weight+op->carrying));
 
+  SET_FLAG(op, FLAG_OBJECT_WAS_MOVED);
   op->map=NULL;
   op->env=where;
   op->above=NULL;
@@ -3669,60 +3696,158 @@ object *insert_ob_in_ob(object *op,object *where) {
  * on top.
  */
 
-int check_walk_on (object *op, object *originator)
+int check_walk_on (object *op, object *originator, int flags)
 {
-    object *tmp;
+    object *tmp /*, *head=op->head?op->head:op*/;
+	int local_walk_semaphore=FALSE; /* when TRUE, this function is root call for static_walk_semaphore setting */
     tag_t tag;
     mapstruct *m=op->map;
-    int x=op->x, y=op->y;
+    int x=op->x, y=op->y, fly;
 
     if(QUERY_FLAG(op,FLAG_NO_APPLY))
-	return 0;
+		return 0;
 
+	fly = QUERY_FLAG(op,FLAG_FLYING);
+	if(fly)
+		flags|=MOVE_APPLY_FLY_ON;
+	else
+		flags|=MOVE_APPLY_WALK_ON;
     tag = op->count;
 
-    /* The objects have to be checked from top to bottom.
-     * Hence, we first go to the top: */
-    for (tmp=GET_MAP_OB(op->map, op->x, op->y); tmp!=NULL &&
-	 tmp->above!=NULL; tmp=tmp->above) {
-	/* Trim the search when we find the first other spell effect 
-	 * this helps performance so that if a space has 50 spell objects,
-	 * we don't need to check all of them.
+	/* This flags ensures we notice when a moving event has appeared!
+	 * Because the functions who set/clear the flag can be called recursive
+	 * from this function and walk_off() we need a static, global semaphor
+	 * like flag to ensure we don't clear the flag except in the mother call.
 	 */
-	if (QUERY_FLAG(tmp, FLAG_FLYING) && QUERY_FLAG(tmp, FLAG_NO_PICK)) break;
-    }
-    
-    for(;tmp!=NULL; tmp=tmp->below) {
-	if (tmp == op) continue;    /* Can't apply yourself */
+	if(!static_walk_semaphore)
+	{
+		local_walk_semaphore = TRUE;
+		static_walk_semaphore = TRUE;
+		CLEAR_FLAG(op, FLAG_OBJECT_WAS_MOVED);
+	}
 
-	/* Slow down creatures moving over rough terrain */
-	if(QUERY_FLAG(tmp,FLAG_SLOW_MOVE)&&!QUERY_FLAG(op,FLAG_FLYING)) {
-	    float diff;
+    for(tmp=GET_MAP_OB(op->map, op->x, op->y);tmp!=NULL; tmp=tmp->above) 
+	{
+		if (tmp == op) 
+			continue;    /* Can't apply yourself */
 
-	    diff=(float) (SLOW_PENALTY(tmp)*FABS(op->speed));
-	    if (op->type==PLAYER) {
-		/* ARGH - we need quick flags for this... this is insane skill check every move */
-		if ((QUERY_FLAG(tmp,FLAG_IS_HILLY) && find_skill(op,SK_CLIMBING)) ||
-		    (QUERY_FLAG(tmp,FLAG_IS_WOODED) && find_skill(op,SK_WOODSMAN)))  {
-			diff=diff/4.0f;
+		if(fly?QUERY_FLAG(tmp,FLAG_FLY_ON):QUERY_FLAG(tmp,FLAG_WALK_ON))
+		{
+			move_apply_func (tmp, op, originator,flags); /* apply_func must handle multi arch parts....
+														  * NOTE: move_apply() can be heavy recursive and recall
+			                                              * this function too.*/
+
+			if (was_destroyed (op, tag)) /* this means we got killed, removed or whatever! */
+			{
+				if(local_walk_semaphore)
+					static_walk_semaphore = FALSE;
+				return CHECK_WALK_DESTROYED;
+			}
+
+			/* and here a remove_ob() or insert_xx() was triggered - we MUST stop now */
+			if(QUERY_FLAG(op, FLAG_OBJECT_WAS_MOVED))
+			{
+				if(local_walk_semaphore)
+					static_walk_semaphore = FALSE;
+				return CHECK_WALK_MOVED;
+			}
+
 		}
-	    }
-	    op->speed_left -= diff;
-	}
-	if(QUERY_FLAG(op,FLAG_FLYING)?QUERY_FLAG(tmp,FLAG_FLY_ON):
-	   QUERY_FLAG(tmp,FLAG_WALK_ON)) {
-	    move_apply_func (tmp, op, originator);
-            if (was_destroyed (op, tag))
-              return 1;
-	    /* what the person/creature stepped onto has moved the object
-	     * someplace new.  Don't process any further - if we did,
-	     * have a feeling strange problems would result.
-	     */
-	    if (op->map != m || op->x != x || op->y != y) return 0;
-	}
     }
-    return 0;
+	if(local_walk_semaphore)
+		static_walk_semaphore = FALSE;
+	return CHECK_WALK_OK;
 }
+
+/* Different to check_walk_on() this must be called explicit and its
+ * handles muti arches at once.
+ * There are some flags notifiying move_apply() about the kind of event
+ * we have.
+ */
+int check_walk_off (object *op, object *originator, int flags)
+{
+	MapSpace *mc;
+	object *tmp, *part;
+	int local_walk_semaphore=FALSE; /* when TRUE, this function is root call for static_walk_semaphore setting */
+	int fly;
+	tag_t tag;
+
+
+	if(!op || !op->map) /* no map, no walk off - item can be in inventory and/or ... */
+		return CHECK_WALK_OK; /* means "nothing happens here" */
+	
+	if(!QUERY_FLAG (op, FLAG_REMOVED))
+	{
+		LOG(llevBug,"BUG: check_walk_off: object %s is not removed when called\n", query_name(op));
+		return CHECK_WALK_OK;
+	}
+
+	if(QUERY_FLAG (op, FLAG_NO_APPLY))
+		return CHECK_WALK_OK;
+
+    tag = op->count;
+	fly = QUERY_FLAG (op, FLAG_FLYING);
+	if(fly)
+		flags|=MOVE_APPLY_FLY_OFF;
+	else
+		flags|=MOVE_APPLY_WALK_OFF;
+	
+	for (part=op; part; part=part->more) /* check single and multi arches */
+	{
+		mc = GET_MAP_SPACE_PTR(part->map,part->x,part->y);
+		if(!(mc->flags&(P_WALK_OFF|P_FLY_OFF))) /* no event on this tile */
+			continue;
+
+		/* This flags ensures we notice when a moving event has appeared!
+		 * Because the functions who set/clear the flag can be called recursive
+		 * from this function and walk_off() we need a static, global semaphor
+		 * like flag to ensure we don't clear the flag except in the mother call.
+		 */
+		if(!static_walk_semaphore)
+		{
+			local_walk_semaphore = TRUE;
+			static_walk_semaphore = TRUE;
+			CLEAR_FLAG(op, FLAG_OBJECT_WAS_MOVED);
+		}
+	
+	    for(tmp=mc->first;tmp!=NULL;tmp=tmp->above) /* ok, check objects here... */
+		{				
+			if(tmp == part) /* its the ob part in this space... better not >1 part in same space of same arch */
+				continue;
+
+			if (fly? QUERY_FLAG (tmp, FLAG_FLY_OFF) : QUERY_FLAG (tmp, FLAG_WALK_OFF)) /* event */
+			{
+				move_apply_func (tmp, part, originator,flags);
+
+				if (OBJECT_FREE(part) || tag != op->count)
+				{
+					if(local_walk_semaphore)
+						static_walk_semaphore = FALSE;
+					return CHECK_WALK_DESTROYED;
+				}
+				
+				/* and here a insert_xx() was triggered - we MUST stop now */
+				if(!QUERY_FLAG(part,FLAG_REMOVED) || QUERY_FLAG(part, FLAG_OBJECT_WAS_MOVED))
+				{
+					if(local_walk_semaphore)
+						static_walk_semaphore = FALSE;
+					return CHECK_WALK_MOVED;
+				}
+			}
+		}
+		if(local_walk_semaphore)
+		{
+			local_walk_semaphore = FALSE;
+			static_walk_semaphore = FALSE;
+		}
+		
+	}
+
+	if(local_walk_semaphore)
+		static_walk_semaphore = FALSE;
+    return CHECK_WALK_OK;	
+}
+
 
 /*
  * present_arch(arch, map, x, y) searches for any objects with
@@ -4048,4 +4173,84 @@ object* load_object_str(char *obstr)
     return op;
 }
 
+
+int auto_apply (object *op) {
+  object *tmp = NULL, *tmp2;
+  int i, level;
+
+  /* because auto_apply will be done only *one* time 
+   * when a new, base map is loaded, we always clear
+   * the flag now.
+   */
+  CLEAR_FLAG(op,FLAG_AUTO_APPLY); 
+  switch(op->type) {
+  case SHOP_FLOOR:
+    if (op->randomitems==NULL) return 0;
+    do {
+      i=10; /* let's give it 10 tries */
+	  level = get_enviroment_level(op);
+      while((tmp=generate_treasure(op->randomitems, level )) ==NULL&&--i);
+      if(tmp==NULL)
+	  return 0;
+      
+      if(QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))
+      {
+        tmp = NULL;
+      }
+      
+    } while(!tmp);
+
+    tmp->x=op->x,tmp->y=op->y;
+    SET_FLAG(tmp,FLAG_UNPAID);
+	SET_FLAG(tmp,FLAG_NO_PICK);	/* our new shop code: applying a nopick/unpaid object generate a new object of this in the players inventory */
+    insert_ob_in_map(tmp,op->map,NULL,INS_NO_MERGE | INS_NO_WALK_ON);
+    identify(tmp);
+    break;
+
+  case TREASURE:
+	  level = get_enviroment_level(op);
+      create_treasure(op->randomitems, op, op->map?GT_ENVIRONMENT:0,level,T_STYLE_UNSET, ART_CHANCE_UNSET, 0,NULL);
+
+    /* If we generated on object and put it in this object inventory,
+     * move it to the parent object as the current object is about
+     * to disappear.  An example of this item is the random_* stuff
+     * that is put inside other objects.
+	 * i fixed this - old part only copied one object instead all.
+     */
+		for(tmp = op->inv;tmp;tmp = tmp2)
+		{
+			tmp2=tmp->below;
+			remove_ob(tmp);
+			if (op->env) 
+				insert_ob_in_ob(tmp, op->env);
+		}
+		remove_ob(op); /* no move off needed */
+    break;
+  }
+
+  return tmp ? 1 : 0;
+}
+
+
 /*** end of object.c ***/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -115,6 +115,7 @@ int command_kick (object *ob, char *params)
 			object *op;
 			op=pl->ob;
 			remove_ob(op);
+			check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
 			op->direction=0;
 			if(params)
 				new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, ob,"%s is kicked out of the game.",op->name);
@@ -505,12 +506,12 @@ int command_create (object *op, char *params)
 	    prev=tmp;
 	}
         if (IS_LIVE(head))
-	    insert_ob_in_map(head, op->map, op, 0);
+		    insert_ob_in_map(head, op->map, op, INS_NO_MERGE | INS_NO_WALK_ON);
         else
 	    head = insert_ob_in_ob(head, op);
         if (at->clone.randomitems!=NULL)
 	    create_treasure(at->clone.randomitems, head, GT_APPLY,
-		op->level?op->level:op->map->difficulty, T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
+		get_enviroment_level(head), T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
 	    esrv_send_item(op, head);
     }
     return 1;
@@ -616,7 +617,8 @@ int command_remove (object *op, char *params)
       return 1;
     }
     remove_ob(tmp);
-    return 1;
+	check_walk_off (tmp, NULL,MOVE_APPLY_VANISHED);
+	return 1;
   }
 
 int command_free (object *op, char *params)
@@ -850,7 +852,7 @@ int command_reset (object *op, char *params)
 			if (pl->ob->map == m ) 
 			{
 				count++;
-				remove_ob(pl->ob);
+				remove_ob(pl->ob); /* no walk off check */
 				pl->dm_removed_from_map=1;
 			/*tmp=op;*/
 			}
@@ -896,7 +898,7 @@ int command_reset (object *op, char *params)
 		for (pl = first_player; pl != NULL; pl = pl->next)
 		{
 			if(pl->dm_removed_from_map)
-				insert_ob_in_map(pl->ob, m, NULL,0);
+				insert_ob_in_map(pl->ob, m, NULL,INS_NO_MERGE | INS_NO_WALK_ON);
 	    }
 		new_draw_info(NDI_UNIQUE, 0,op,"Reset failed, couldn't swap map!");
 	}

@@ -256,7 +256,7 @@ int apply_potion(object *op, object *tmp)
 					if (get_attr_value(&depl->stats, i)) 
 						new_draw_info(NDI_UNIQUE,0,op, restore_msg[i]);
 				}
-				remove_ob(depl);
+				remove_ob(depl); /* in inventory of ... */
 				fix_player(op);
 			}
 			else
@@ -836,6 +836,7 @@ int convert_item(object *item, object *converter) {
       decrease_ob_nr(item,nr*CONV_NEED(converter));
     } else {
       remove_ob(item);
+	  check_walk_off (item, NULL, MOVE_APPLY_VANISHED);
     }
   }
   item=arch_to_object(converter->other_arch);
@@ -1175,7 +1176,7 @@ void free_container_monster(object *monster, object *op)
     if(container == NULL)
         return;
 
-    remove_ob(monster);
+    remove_ob(monster); /* in container, no walk off check */
     monster->x=container->x;
     monster->y=container->y;
     i=find_free_spot(monster->arch, op->map, monster->x, monster->y,0, 9); 
@@ -1184,8 +1185,8 @@ void free_container_monster(object *monster, object *op)
         monster->y += freearr_y[i];
     }
     fix_monster(monster);
-    insert_ob_in_map (monster, op->map, monster, 0);
-    new_draw_info_format(NDI_UNIQUE, 0, op, "A %s jumps out of the %s.", query_name(monster), query_name(container));
+    if(insert_ob_in_map (monster, op->map, monster, 0))
+	    new_draw_info_format(NDI_UNIQUE, 0, op, "A %s jumps out of the %s.", query_name(monster), query_name(container));
 }
 
 /* examine the items in a container which gets readied or opened by player .
@@ -1344,8 +1345,9 @@ static int apply_shop_mat (object *shop_mat, object *op)
 			LOG(llevBug, "BUG: Internal shop-mat problem (map:%s object:%s pos: %d,%d).\n",op->map->name,op->name,op->x,op->y);
 		} 
 		else 
-		{
+		{				
 			remove_ob(op);
+			check_walk_off (op, NULL, MOVE_APPLY_DEFAULT);
 			op->x += freearr_x[i];
 			op->y += freearr_y[i];
 			rv = (insert_ob_in_map (op, op->map, shop_mat,0) == NULL);
@@ -1404,10 +1406,18 @@ static void apply_sign (object *op, object *sign)
  * originator: Player, monster or other object that caused 'victim' to move
  * onto 'trap'.  Will receive messages caused by this action.  May be NULL.
  * However, some types of traps require an originator to function.
+ *
+ * I added the flags parameter to give the single events more information
+ * about whats going on:
+ * Most important is the "MOVE_APPLY_VANISHED" flag.
+ * If set, a object has leaved a tile but "vanished" and not moved (perhaps
+ * its exploded or whatever). This means that some events are not triggered
+ * like trapdoors or teleporter traps for example which have a "FLY/MOVE_OFF"
+ * set. This will avoid that they touch invalid objects.
  */
-void move_apply (object *trap, object *victim, object *originator)
+void move_apply (object *trap, object *victim, object *originator, int flags)
 {
-  static int recursion_depth = 0;
+	static int recursion_depth = 0;
 
   /* move_apply() is the most likely candidate for causing unwanted and
    * possibly unlimited recursion. */
@@ -1458,23 +1468,50 @@ void move_apply (object *trap, object *victim, object *originator)
 #endif
   switch (trap->type)
   {
+
+  /* these objects can trigger other objects connected to them.
+   * We need to check them at map loading time and other special
+   * events to be sure to have a 100% working map state.
+   */
+  case BUTTON:
+  case PEDESTAL:
+	  update_button(trap);
+	  goto leave;
+	  
+  case TRIGGER_BUTTON:
+  case TRIGGER_PEDESTAL:
+  case TRIGGER_ALTAR:
+	  check_trigger (trap, victim);
+	  goto leave;
+	  
+  case CHECK_INV:
+	    check_inv (victim, trap);
+	  goto leave;
+	  
+  /* these objects trigger to but they are "instant".
+   * We don't need to check them when loading.
+   */
+  case ALTAR:
+	  /* sacrifice victim on trap */
+	  apply_altar (trap, victim, originator);
+	  goto leave;
+
+  case CONVERTER:
+	  if(!(flags&MOVE_APPLY_VANISHED))
+		  convert_item (victim, trap);
+	  goto leave;
+
   case PLAYERMOVER:
+	  /*
     if (trap->attacktype && (trap->level || victim->type!=PLAYER)) {
 	if (!trap->stats.maxsp) trap->stats.maxsp=2;
-	/* Is this correct?  From the docs, it doesn't look like it
-	 * should be divided by trap->speed
-	 */
 	victim->speed_left = -FABS(trap->stats.maxsp*victim->speed/trap->speed);
-	/* Just put in some sanity check.  I think there is a bug in the
-	 * above with some objects have zero speed, and thus the player
-	 * getting permanently paralyzed.
-	 */
 	if (victim->speed_left<-50.0) victim->speed_left=-50.0;
-/*	LOG(llevDebug,"apply, playermove, player speed_left=%f\n", victim->speed_left);*/
     }
+	*/
     goto leave;
 
-  case SPINNER:
+  case SPINNER: /* should be walk_on/fly_on only */
     if(victim->direction) {
       if( (victim->direction=victim->direction+trap->direction) > 8)
 		victim->direction = (victim->direction%8)+1;
@@ -1497,27 +1534,19 @@ void move_apply (object *trap, object *victim, object *originator)
     }
     goto leave;
 
-  case BUTTON:
-  case PEDESTAL:
-    update_button(trap);
-    goto leave;
 
-  case ALTAR:
-    /* sacrifice victim on trap */
-    apply_altar (trap, victim, originator);
-    goto leave;
-
-  case MMISSILE:
-    if (IS_LIVE (victim)) {
+  case MMISSILE: /* no need to hit anything */
+    if (IS_LIVE (victim) && !(flags&MOVE_APPLY_VANISHED)) {
       tag_t trap_tag = trap->count;
       hit_player (victim, trap->stats.dam, trap, AT_MAGIC);
       if ( ! was_destroyed (trap, trap_tag)) 
           remove_ob(trap);
+	  check_walk_off (trap, NULL, MOVE_APPLY_VANISHED);
     }
     goto leave;
 
   case THROWN_OBJ:
-    if (trap->inv == NULL)
+    if (trap->inv == NULL || (flags&MOVE_APPLY_VANISHED))
       goto leave;
     /* fallthrough */
   case ARROW:
@@ -1533,23 +1562,25 @@ void move_apply (object *trap, object *victim, object *originator)
 
   case CANCELLATION:
   case BALL_LIGHTNING:
-    if (IS_LIVE(victim))
+    if (IS_LIVE(victim) && !(flags&MOVE_APPLY_VANISHED))
       hit_player (victim, trap->stats.dam, trap, trap->attacktype);
-    else if (victim->material)
+    else if (victim->material && !(flags&MOVE_APPLY_VANISHED))
       save_throw_object (victim, trap->attacktype, trap);
     goto leave;
 
   case CONE:
+	  /*
     if(IS_LIVE(victim)&&trap->speed) {
       uint32 attacktype = trap->attacktype & ~AT_COUNTERSPELL;
       if (attacktype)
         hit_player(victim,trap->stats.dam,trap,attacktype);
     }
+	*/
     goto leave;
 
   case FBULLET:
   case BULLET:
-    if (QUERY_FLAG (victim, FLAG_NO_PASS) || IS_LIVE(victim))
+    if ((QUERY_FLAG (victim, FLAG_NO_PASS) || IS_LIVE(victim)) && !(flags&MOVE_APPLY_VANISHED))
       check_fired_arch (trap);
     goto leave;
 
@@ -1557,6 +1588,9 @@ void move_apply (object *trap, object *victim, object *originator)
     {
       int max, sound_was_played;
       object *ab;
+
+	  if((flags&MOVE_APPLY_VANISHED))
+		  goto leave;
 
       if(!trap->value) {
         sint32 tot;
@@ -1584,57 +1618,36 @@ void move_apply (object *trap, object *victim, object *originator)
       goto leave;
     }
 
-  case CONVERTER:
-    convert_item (victim, trap);
-    goto leave;
-
-  case TRIGGER_BUTTON:
-  case TRIGGER_PEDESTAL:
-  case TRIGGER_ALTAR:
-        check_trigger (trap, victim);
-    goto leave;
-
-  case DEEP_SWAMP:
-    walk_on_deep_swamp (trap, victim);
-    goto leave;
-
-  case CHECK_INV:
-        check_inv (victim, trap);
-    goto leave;
 
   case PIT:
     /* Pit not open? */
-    if(trap->stats.wc > 0)
-      goto leave;
-    /* Is this a multipart monster and not the head?  If so, return.
-     * Processing will happen if the head runs into the pit
-     */
-    if (victim->head)
+	if( (flags&MOVE_APPLY_VANISHED) || trap->stats.wc > 0)
       goto leave;
 	play_sound_map (victim->map, victim->x, victim->y, SOUND_FALL_HOLE, SOUND_NORMAL);
 	if(victim->type == PLAYER)
 		new_draw_info (NDI_UNIQUE, 0, victim, "You fall through the hole!\n");
-    transfer_ob (victim, EXIT_X (trap), EXIT_Y (trap), trap->last_sp, victim, trap);
+    transfer_ob (victim->head?victim->head:victim, EXIT_X (trap), EXIT_Y (trap), trap->last_sp, victim, trap);
     goto leave;
 
   case EXIT:
-    if (victim->type == PLAYER && EXIT_PATH (trap)) {
-	/* Basically, don't show exits leading to random maps the
-	 * players output.
-	 */
-	if (trap->msg && strncmp(EXIT_PATH(trap),"/!",2) && strncmp(EXIT_PATH(trap), "/random/", 8))
-	    new_draw_info (NDI_NAVY, 0, victim, trap->msg);
-      enter_exit (victim, trap);
+	  if (!(flags&MOVE_APPLY_VANISHED) && victim->type == PLAYER && EXIT_PATH (trap)) {
+		/* Basically, don't show exits leading to random maps the players output.
+		 */
+		if (trap->msg && strncmp(EXIT_PATH(trap),"/!",2) && strncmp(EXIT_PATH(trap), "/random/", 8))
+		    new_draw_info (NDI_NAVY, 0, victim, trap->msg);
+		enter_exit (victim, trap);
     }
     goto leave;
 
   case SHOP_MAT:
-    apply_shop_mat (trap, victim);
+	  if(!(flags&MOVE_APPLY_VANISHED))
+		  apply_shop_mat (trap, victim);
     goto leave;
 
   /* Drop a certain amount of gold, and have one item identified */
   case IDENTIFY_ALTAR:
-    apply_id_altar (victim, trap, originator);
+	  if(!(flags&MOVE_APPLY_VANISHED))
+		  apply_id_altar (victim, trap, originator);
     goto leave;
 
   case SIGN:
@@ -1646,12 +1659,18 @@ void move_apply (object *trap, object *victim, object *originator)
     if (victim->type==PLAYER)
       (void) esrv_apply_container (victim, trap);
     goto leave;
-
+ 
   case RUNE:
-    if (trap->level && IS_LIVE(victim))
+	  if(!(flags&MOVE_APPLY_VANISHED) && trap->level && IS_LIVE(victim))
         spring_trap(trap, victim);
     goto leave;
     
+  /* we don't have this atm.
+  case DEEP_SWAMP:
+	  if(!(flags&MOVE_APPLY_VANISHED))
+		  walk_on_deep_swamp (trap, victim);
+    goto leave;
+  */ 
   default:
     LOG(llevDebug, "name %s, arch %s, type %d with fly/walk on/off not "
          "handled in move_apply()\n", trap->name, trap->arch->name,
@@ -2066,6 +2085,7 @@ static void apply_treasure (object *op, object *tmp)
     }
     do {
       remove_ob(treas);
+	  check_walk_off (treas, NULL, MOVE_APPLY_VANISHED);
       draw_find(op,treas);
       treas->x=op->x,treas->y=op->y;
       if(treas->type == MONSTER) { /* Monsters can be trapped in treasure chests */
@@ -2095,6 +2115,7 @@ static void apply_treasure (object *op, object *tmp)
       /* Done to re-stack map with player on top? */
       SET_FLAG (op, FLAG_NO_APPLY);
       remove_ob (op);
+	  check_walk_off (op, NULL, MOVE_APPLY_DEFAULT);
       insert_ob_in_map (op, op->map, NULL,0);
       CLEAR_FLAG (op, FLAG_NO_APPLY);
     }
@@ -2553,15 +2574,7 @@ static void apply_savebed (object *pl)
     
     strcpy(CONTR(pl)->killer,"left");
     check_score(pl); /* Always check score */
-	/* if we are in our appartment - save this too! */			
-	/* i really hate this localdir hack... must remove it and use senseful map flags for it! MT 2003 */
-	if(pl->map && !strncmp(oldmap->path, settings.localdir, strlen(settings.localdir)))
-	{
-	    new_draw_info(NDI_UNIQUE, 0,pl,"You appartment is saved.");
-		new_save_map(oldmap,0);
-		oldmap->in_memory=MAP_IN_MEMORY; /* new_save_map() sets status to SAVED */
-		
-	}
+
     new_draw_info(NDI_UNIQUE, 0,pl,"You save and quit the game. Bye!\nleaving...");
 	CONTR(pl)->socket.status=Ns_Dead;
 }
@@ -2961,7 +2974,8 @@ int player_apply (object *pl, object *op, int aflag, int quiet)
         new_draw_info (NDI_UNIQUE, 0, pl, "The object disappears in a puff "
                        "of smoke!");
         new_draw_info (NDI_UNIQUE, 0, pl, "It must have been an illusion.");
-        remove_ob(op);
+		remove_ob(op);
+		check_walk_off (op, NULL, MOVE_APPLY_VANISHED);
         return 1;
     }
 
@@ -3368,124 +3382,6 @@ int monster_apply_special (object *who, object *op, int aflags)
 }
 
 
-int auto_apply (object *op) {
-  object *tmp = NULL;
-  int i;
-
-  switch(op->type) {
-  case SHOP_FLOOR:
-    if (op->randomitems==NULL) return 0;
-    do {
-      i=10; /* let's give it 10 tries */
-      while((tmp=generate_treasure(op->randomitems, op->level ?  op->level: op->map->difficulty )) ==NULL&&--i);
-      if(tmp==NULL)
-	  return 0;
-      
-      if(QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))
-      {
-        tmp = NULL;
-      }
-      
-    } while(!tmp);
-
-    tmp->x=op->x,tmp->y=op->y;
-    SET_FLAG(tmp,FLAG_UNPAID);
-	SET_FLAG(tmp,FLAG_NO_PICK);	/* our new shop code: applying a nopick/unpaid object generate a new object of this in the players inventory */
-    insert_ob_in_map(tmp,op->map,NULL,0);
-    CLEAR_FLAG(op,FLAG_AUTO_APPLY);
-    identify(tmp);
-    break;
-
-  case TREASURE:
-    while ((op->stats.hp--)>0)
-      create_treasure(op->randomitems, op, op->map?GT_ENVIRONMENT:0,
-	    op->level ?  op->level: op->map->difficulty,T_STYLE_UNSET, ART_CHANCE_UNSET, 0,NULL);
-
-    /* If we generated on object and put it in this object inventory,
-     * move it to the parent object as the current object is about
-     * to disappear.  An example of this item is the random_* stuff
-     * that is put inside other objects.
-     */
-    if (op->inv) {
-	tmp=op->inv;
-	remove_ob(tmp);
-	if (op->env) insert_ob_in_ob(tmp, op->env);
-    }
-    remove_ob(op);
-    break;
-  }
-
-  return tmp ? 1 : 0;
-}
-
-/* fix_auto_apply goes through the entire map (only the first time
- * when an original map is loaded) and performs special actions for
- * certain objects (most initialization of chests and creation of
- * treasures and stuff).  Calls auto_apply if appropriate.
- */
-/* this whole function looks broken.
- * The check_trigger() stuff definitly only works for *some*
- * cases and tmp->inv stuff don't handle deeper inventory 
- * recursion when iam right... it should be possible to
- * integrate this in the load_objects() function. Another
- * problem is can see are multi tile saved above map borders.
- * They don't trigger right here.
- */
-void fix_auto_apply(mapstruct *m) {
-	object *tmp,*above=NULL;
-	int x,y;
-
-	if(m==NULL) 
-		return;
-
-	for(x=0;x<MAP_WIDTH(m);x++)
-	{	
-		for(y=0;y<MAP_HEIGHT(m);y++)
-		{
-			for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=above)
-			{
-				above=tmp->above;
-
-				if (tmp->inv)
-				{
-					object *invtmp, *invnext;
-					for (invtmp=tmp->inv; invtmp != NULL; invtmp = invnext)
-					{
-						invnext = invtmp->below;
-						if(QUERY_FLAG(invtmp,FLAG_AUTO_APPLY))
-							auto_apply(invtmp);
-						else if(invtmp->type==TREASURE)
-						{
-							while ((invtmp->stats.hp--)>0)
-								create_treasure(invtmp->randomitems, invtmp, 0, tmp->level ? tmp->level:m->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
-						}
-					}
-				}
-
-				if(QUERY_FLAG(tmp,FLAG_AUTO_APPLY))
-					auto_apply(tmp);
-				else if((tmp->type==TREASURE || (tmp->type==CONTAINER))&&tmp->randomitems)
-				{
-					while ((tmp->stats.hp--)>0)
-						create_treasure(tmp->randomitems, tmp, 0, tmp->level?tmp->level:m->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
-				}
-				else if(tmp->type==TIMED_GATE)
-				{
-					tmp->speed = 0;
-					update_ob_speed(tmp);
-				}
-				if(tmp && tmp->arch && tmp->type!=PLAYER && tmp->type!=TREASURE && tmp->randomitems)
-					create_treasure(tmp->randomitems, tmp, GT_APPLY, tmp->level?tmp->level:m->difficulty,T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
-			}
-		}
-	}
-	
-	for(x=0;x<MAP_WIDTH(m);x++)
-		for(y=0;y<MAP_HEIGHT(m);y++)
-			for(tmp=get_map_ob(m,x,y);tmp!=NULL;tmp=tmp->above)
-				if (tmp->above && (tmp->type == TRIGGER_BUTTON || tmp->type == TRIGGER_PEDESTAL))
-					check_trigger (tmp, tmp->above);
-}
 
 
 /* apply_player_light_refill() - refill lamps and all refill type light sources
@@ -3677,7 +3573,8 @@ void apply_player_light(object *who, object *op)
 				if(tricky_flag)
 				{
 					if(!op_old->env)
-						insert_ob_in_map(op,op_old->map,op_old,0);
+						/* the item WAS before this on this spot - we only turn it on but we don't moved it */
+						insert_ob_in_map(op,op_old->map,op_old,INS_NO_WALK_ON);
 					else
 					    op=insert_ob_in_ob(op, op_old->env);
 				}

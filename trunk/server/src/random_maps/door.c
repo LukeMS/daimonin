@@ -69,7 +69,7 @@ void put_doors(mapstruct *the_map,char **maze , char *doorstyle, RMParms *RP) {
 		  copy_object(this_door,new_door);
 		  new_door->x = i;
 		  new_door->y = j;
-		  insert_ob_in_map(new_door,the_map,NULL,0);
+		  insert_ob_in_map(new_door,the_map,NULL,INS_NO_MERGE | INS_NO_WALK_ON);
       }
     }
 }

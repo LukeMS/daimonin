@@ -1,6 +1,7 @@
 Object burnout
 name open flame
 face burnout.104
+no_save 1
 layer 4
 type 79
 anim

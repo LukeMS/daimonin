@@ -1356,7 +1356,7 @@ end
 arch magic_wall
 dam 0
 connected 102
-speed 0.02
+speed 1
 x 13
 y 13
 end

@@ -1181,13 +1181,14 @@ int command_save (object *op, char *params)
 	else
 	    new_draw_info(NDI_UNIQUE, 0,op,"SAVE FAILED!");
 
-	/* if we are in our appartment - save this too! */			
-	/* i really hate this localdir hack... must remove it and use senseful map flags for it! MT 2003 */
+	/* with the new code we should NOT save "active" maps.
+	 * we do a kind of neutralizing when we save now that can have
+	 * strange effects when saving!
 	if(op->map && !strncmp(op->map->path, settings.localdir, strlen(settings.localdir)))
 	{
 		new_save_map(op->map,0);
-		op->map->in_memory=MAP_IN_MEMORY; /* new_save_map() sets status to SAVED */
-	}
+		op->map->in_memory=MAP_IN_MEMORY;
+	}*/
 
     }
     return 1;

@@ -154,6 +154,7 @@ void remove_door(object *op) {
   if(op->sub_type1 == ST1_DOOR_NORMAL)
 	  play_sound_map(op->map, op->x, op->y, SOUND_OPEN_DOOR, SOUND_NORMAL);
   remove_ob(op);
+  check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
 }
 
 void remove_door2(object *op, object *opener) {
@@ -188,12 +189,14 @@ void remove_door2(object *op, object *opener) {
 		if(op->sub_type1 == ST1_DOOR_NORMAL)
 		  play_sound_map(op->map, op->x, op->y, SOUND_OPEN_DOOR, SOUND_NORMAL);
 		remove_ob(op);
-  }
+		check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
+	}
   else if(!op->last_eat) /* if set, we are have opened a closed door - now handle autoclose */
   {
 	  remove_ob(op); /* to trigger all the updates/changes on map and for player, we
 					  * remove and reinsert it. a bit overhead but its secure and simple
 					  */
+	  check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
 		for(tmp2= op->inv;tmp2;tmp2=tmp2->below)
 		{
 			if (tmp2 && tmp2->type == RUNE && tmp2->level)
@@ -235,6 +238,7 @@ void remove_door3(object *op)
 	  LOG(llevBug,"BUG: door with speed but no map?! killing object...done. (%s - (%d,%d))\n",
 									query_name(op), op->x, op->y);
 	  remove_ob(op);
+	  check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
 	  return;
   }
 
@@ -259,6 +263,7 @@ void remove_door3(object *op)
 	  remove_ob(op); /* to trigger all the updates/changes on map and for player, we
 					  * remove and reinsert it. a bit overhead but its secure and simple
 					  */
+	  check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
 	  op->last_eat = 0; /* mark this door as "its closed" */
       op->speed = 0.0f;	/* remove from active list */
       op->speed_left= 0.0f;
@@ -295,8 +300,8 @@ void generate_monster(object *gen) {
     if(head!=NULL)
       op->head=head,prev->more=op;
     if (rndm(0, 9)) generate_artifact(op, gen->map->difficulty,0,99);
-    insert_ob_in_map(op,gen->map,gen,0);
-    if (OBJECT_FREE(op)) return;
+    if(!insert_ob_in_map(op,gen->map,gen,0))
+		return;
     if(op->randomitems!=NULL)
       create_treasure(op->randomitems,op,GT_APPLY,
 	  (op->level ? op->level:gen->map->difficulty),T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
@@ -322,12 +327,14 @@ void regenerate_rod(object *rod) {
 void remove_force(object *op) {
   if(op->env==NULL) {
     remove_ob(op);
-    return;
+	check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
+	return;
   }
   CLEAR_FLAG(op, FLAG_APPLIED);
   change_abil(op->env,op);
   fix_player(op->env);
   remove_ob(op);
+  check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
 }
 
 void remove_blindness(object *op) {
@@ -339,6 +346,7 @@ void remove_blindness(object *op) {
      fix_player(op->env);
   }
   remove_ob(op);
+  check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
 }
 
 void remove_confusion(object *op) {
@@ -349,6 +357,7 @@ void remove_confusion(object *op) {
     new_draw_info(NDI_UNIQUE, 0,op->env, "You regain your senses.\n");
   }
   remove_ob(op);
+  check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
 }
 
 void execute_wor(object *op) {
@@ -362,12 +371,14 @@ void execute_wor(object *op) {
       enter_exit(op,wor);
   }
   remove_ob(wor);
+  check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
 }
 
 void poison_more(object *op) {
   if(op->env==NULL||!IS_LIVE(op->env)||op->env->stats.hp<0) {
     remove_ob(op);
-    return;
+	check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
+	return;
   }
   if(!op->stats.food) {
     /* need to remove the object before fix_player is called, else fix_player
@@ -379,7 +390,8 @@ void poison_more(object *op) {
       new_draw_info(NDI_UNIQUE, 0,op->env,"You feel much better now.");
     }
     remove_ob(op);
-    return;
+	check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
+	return;
   }
   if(op->env->type==PLAYER) {
     op->env->stats.food--;
@@ -521,6 +533,7 @@ void move_gate(object *op) { /* 1 = going down, 0 = goind up */
 		    /* If there is a free spot, move the object someplace */
 		    if (i!=-1) {
 			remove_ob(tmp);
+			check_walk_off (tmp, NULL,MOVE_APPLY_VANISHED);
 			tmp->x+=freearr_x[i],tmp->y+=freearr_y[i];
 			insert_ob_in_map(tmp,op->map,op,0);
 		    }
@@ -671,7 +684,7 @@ void move_pit(object *op) {
 			for (tmp=op->above; tmp!=NULL; tmp=next)
 			{
 				next=tmp->above;
-				move_apply(op,tmp,tmp);
+				move_apply(op,tmp,tmp,0);
 			}
 		}
 		op->state = (uint8) op->stats.wc;
@@ -720,8 +733,10 @@ object *stop_item (object *op)
             if (payload == NULL)
                 return NULL;
             remove_ob(payload);
-            remove_ob(op);
-            return payload;
+			check_walk_off (payload, NULL,MOVE_APPLY_VANISHED);
+			remove_ob(op);
+			check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
+			return payload;
         }
 
     case ARROW:
@@ -824,7 +839,8 @@ void stop_arrow (object *op)
 		object *payload = op->inv;
 
 		remove_ob(payload);
-        
+		check_walk_off (payload, NULL,MOVE_APPLY_VANISHED);
+			
 #ifdef PLUGINS
 		/* GROS: Handle for plugin stop event */
 		if(payload->event_flags&EVENT_FLAG_STOP)
@@ -869,6 +885,7 @@ void stop_arrow (object *op)
                 insert_ob_in_map (payload, op->map, payload,0);
 		}
         remove_ob(op);
+		check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
     } 
 	else 
 	{
@@ -891,6 +908,7 @@ void move_arrow(object *op) {
     if(op->map==NULL) {
 	LOG(llevBug, "BUG: Arrow %s had no map.\n", query_name(op));
 	remove_ob(op);
+	check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
 	return;
     }
 
@@ -1044,9 +1062,12 @@ void move_arrow(object *op) {
 
     /* Move the arrow. */
     remove_ob(op);
-    op->x = new_x;
-    op->y = new_y;
-    insert_ob_in_map (op, m, op,0);
+	if(check_walk_off (op, NULL,MOVE_APPLY_VANISHED) == CHECK_WALK_OK)
+	{
+		op->x = new_x;
+		op->y = new_y;
+		insert_ob_in_map (op, m, op,0);
+	}
 }
 
 /* This routine doesnt seem to work for "inanimate" objects that
@@ -1123,6 +1144,7 @@ void change_object(object *op) { /* Doesn`t handle linked objs yet */
 
 	env=op->env;
 	remove_ob(op);
+	check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
 	for(i=0;i<1;i++) /* atm we only generate per change tick *ONE* object */ 
 	{
 		tmp=arch_to_object(op->other_arch);
@@ -1223,6 +1245,7 @@ void move_teleporter(object *op) {
 				LOG(llevBug, "BUG: Removed illegal teleporter (map: %s (%d,%d)) -> (%d,%d)\n",
 											op->map->name, op->x, op->y, EXIT_X(op), EXIT_Y(op));
 				remove_ob(op);
+				check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
 				return;
 			}
 #ifdef PLUGINS
@@ -1508,11 +1531,10 @@ int process_object(object *op) {
 			FREE_AND_CLEAR_HASH2(op->slaying);
 			op->stats.food = op->arch->clone.stats.food;
 			remove_ob(op);						 /* another lame way to update view of players... */
-			insert_ob_in_map(op,op->map,NULL,0);
+			insert_ob_in_map(op,op->map,NULL,INS_NO_WALK_ON);
 			return 1;
 		}
 
-                /* Special handling for corpses to not have them drop inv */
 		if (op->env && op->env->type == CONTAINER)
 			esrv_del_item(NULL, op->count, op->env);
 		else
@@ -1523,6 +1545,7 @@ int process_object(object *op) {
 		}
 
 		remove_ob(op);
+		check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
 		return 1;
 	}
 	

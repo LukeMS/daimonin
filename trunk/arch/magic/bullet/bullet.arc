@@ -4,6 +4,7 @@ type 2
 layer 7
 face bullet.101
 level 1
+no_save 1
 attack_weaponmagic 100
 anim
 facings 9

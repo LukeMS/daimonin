@@ -34,6 +34,8 @@
  * returns 0 if the object is not able to move to the
  * desired space, 1 otherwise (in which case we also 
  * move the object accordingly
+ * Return -1 if the object is destroyed in the move process (most likely
+ * when hit a deadly trap or something).
  */
 int move_ob (object *op, int dir, object *originator)
 {
@@ -50,7 +52,7 @@ int move_ob (object *op, int dir, object *originator)
     if (QUERY_FLAG(op, FLAG_REMOVED)) 
 	{
 		LOG(llevBug,"BUG: move_ob: monster has been removed - will not process further\n");
-		return 1;
+		return 0;
     }
 
     /* this function should now only be used on the head - it won't call itself
@@ -89,7 +91,7 @@ int move_ob (object *op, int dir, object *originator)
 	*/
 
 	/* multi arch objects... */
-    if (op->more || op->head)
+    if (op->more)
 	{
 		/* insert new blocked_link() here which can hit ALL earthwalls */
 		/* but as long monster don't destroy walls and no mult arch player 
@@ -101,15 +103,20 @@ int move_ob (object *op, int dir, object *originator)
 		 */
 		if(blocked_link(op,freearr_x[dir],freearr_y[dir]) )
 			return 0;
+
 		remove_ob(op);
+		if(check_walk_off (op, originator, MOVE_APPLY_MOVE) & (CHECK_WALK_DESTROYED|CHECK_WALK_MOVED))
+			return 1;
+
 		for(tmp = op; tmp != NULL; tmp = tmp->more)
 			tmp->x+=freearr_x[dir], tmp->y+=freearr_y[dir];
-		insert_ob_in_map(op, op->map, op,0);
 		if (op->type==PLAYER)
 		{
 			esrv_map_scroll(&CONTR(op)->socket, freearr_x[dir],freearr_y[dir]);
 			CONTR(op)->socket.look_position=0;
 		}
+		insert_ob_in_map(op, op->map, op,0);
+
 		return 1;
 	} 
 
@@ -139,15 +146,17 @@ int move_ob (object *op, int dir, object *originator)
 	}
 
 	remove_ob(op);
+	if(check_walk_off (op, originator, MOVE_APPLY_MOVE) & (CHECK_WALK_DESTROYED|CHECK_WALK_MOVED))
+		return 1;
+
 	op->x+=freearr_x[dir];
 	op->y+=freearr_y[dir];
-	insert_ob_in_map(op,op->map,originator,0);
-
 	if (op->type==PLAYER)
 	{
 		esrv_map_scroll(&CONTR(op)->socket, freearr_x[dir],freearr_y[dir]);
 		CONTR(op)->socket.look_position=0;
 	}
+	insert_ob_in_map(op,op->map,originator,0);
 
 	return 1;
 }
@@ -189,6 +198,8 @@ int transfer_ob (object *op, int x, int y, int randomly, object *originator, obj
 	if(op->head!=NULL)
 		op=op->head;
 	remove_ob(op);
+	if(check_walk_off (op, NULL,MOVE_APPLY_DEFAULT) != CHECK_WALK_OK)
+		return 1;
 	for(tmp=op;tmp!=NULL;tmp=tmp->more)
 	{
 		tmp->x=x+freearr_x[i]+(tmp->arch==NULL?0:tmp->arch->clone.x);
@@ -261,7 +272,9 @@ int teleport (object *teleporter, uint8 tele_type, object *user)
 		return 0;
 
     remove_ob(user);
-
+	if(check_walk_off (user, NULL,MOVE_APPLY_VANISHED) != CHECK_WALK_OK)
+		return 1;
+		
     /* Update location for the object */
     for(tmp=user;tmp!=NULL;tmp=tmp->more) {
 	tmp->x=other_teleporter->x+freearr_x[k]+
@@ -356,7 +369,10 @@ int roll_ob(object *op,int dir, object *pusher) {
 		return 0;
 
     remove_ob(op);
-    for(tmp=op; tmp!=NULL; tmp=tmp->more)
+	if(check_walk_off (op, NULL,MOVE_APPLY_VANISHED) != CHECK_WALK_OK)
+		return 0;
+
+	for(tmp=op; tmp!=NULL; tmp=tmp->more)
 		tmp->x+=freearr_x[dir],tmp->y+=freearr_y[dir];
     insert_ob_in_map(op,op->map,pusher,0);
     return 1;
@@ -379,17 +395,23 @@ int push_ob(object *who, int dir, object *pusher) {
     /* TODO: allow multi arch pushing. Can't be very difficult */
     if (who->more == NULL && owner == pusher) {
 	int temp;
-	remove_ob(who);
-	remove_ob(pusher);
 	temp = pusher->x;
-	pusher->x = who->x;
-	who->x = temp;
 	temp = pusher->y;
+	remove_ob(who);
+	if(check_walk_off (who, NULL,MOVE_APPLY_DEFAULT) != CHECK_WALK_OK)
+		return 0;
+
+	remove_ob(pusher);
+	if(check_walk_off (pusher, NULL,MOVE_APPLY_DEFAULT) != CHECK_WALK_OK)
+	{
+		/* something is wrong, put who back */
+		insert_ob_in_map (who,who->map,NULL,0); 
+		return 0;
+	}
+	pusher->x = who->x;
+	who->x = temp;	
 	pusher->y = who->y;
 	who->y = temp;
-	insert_ob_in_map (who,who->map,pusher,0);
-	insert_ob_in_map (pusher,pusher->map,pusher,0);
-
 	/* we presume that if the player is pushing his put, he moved in
 	 * direction 'dir'.  I can' think of any case where this would not be
 	 * the case.  Putting the map_scroll should also improve performance some.
@@ -398,6 +420,9 @@ int push_ob(object *who, int dir, object *pusher) {
 	    esrv_map_scroll(&CONTR(pusher)->socket, freearr_x[dir],freearr_y[dir]);
 	    CONTR(pusher)->socket.look_position=0;
 	}
+	insert_ob_in_map (who,who->map,pusher,0);
+	insert_ob_in_map (pusher,pusher->map,pusher,0);
+
 	return 0;
   }
 

@@ -204,7 +204,10 @@ void free_player(player *pl)
 	{
 		SET_FLAG(pl->ob, FLAG_NO_FIX_PLAYER);
         if (!QUERY_FLAG(pl->ob, FLAG_REMOVED)) 
+		{
 			remove_ob(pl->ob);
+			check_walk_off (pl->ob, NULL,MOVE_APPLY_VANISHED);
+		}
     }
 
     free_newsocket(&pl->socket);
@@ -524,7 +527,7 @@ void give_initial_items(object *pl,treasurelist *items) {
 	       op->type == SHIELD || op->type == GLOVES ||
 	       op->type == BRACERS || op->type == GIRDLE)) ||
 	      (!QUERY_FLAG(pl, FLAG_USE_WEAPON) && op->type == WEAPON)) {
-	    remove_ob(op);
+	    remove_ob(op); /* inventory action */
 	    continue;
 	  }
 	}
@@ -1015,8 +1018,8 @@ static void fire_bow(object *op, int dir)
   arrow->stats.grace = arrow->last_sp; /* temp. buffer for "tiles to fly" */
   arrow->stats.maxgrace = 60+(RANDOM()%12); /* reflection timer */
   play_sound_map(op->map, op->x, op->y, SOUND_FIRE_ARROW, SOUND_NORMAL);
-  insert_ob_in_map(arrow,op->map,op,0);
-  move_arrow(arrow);
+  if(insert_ob_in_map(arrow,op->map,op,0))
+	  move_arrow(arrow);
   if (was_destroyed (left, left_tag))
       esrv_del_item(CONTR(op), left_tag, left_cont);
   else
@@ -1333,14 +1336,14 @@ int handle_newcs_player(player *pl)
      */
     HandleClient(&pl->socket, pl);
 	op = pl->ob; 
-    if (op->speed_left<0) return 0;
+    if (op->speed_left<0.0f) return 0;
 
     CLEAR_FLAG(op,FLAG_PARALYZED); /* if we are here, we never paralyzed anymore */
     
     if(op->direction && (CONTR(op)->run_on || CONTR(op)->fire_on)) {
-	/* All move commands take 1 tick, at least for now */
-	op->speed_left--;
-	/* Instead of all the stuff below, let move_player take care
+		/* All move commands take 1 tick, at least for now */
+		op->speed_left--;
+		/* Instead of all the stuff below, let move_player take care
 	 * of it.  Also, some of the skill stuff is only put in
 	 * there, as well as the confusion stuff.
 	 */
@@ -1397,8 +1400,8 @@ void remove_unpaid_objects(object *op, object *env)
 	    op->x = env->x;
 	    op->y = env->y;
 	    insert_ob_in_map(op, env->map, NULL,0);
-	}
-	else if (op->inv) remove_unpaid_objects(op->inv, env);
+	} else if (op->inv) 
+		remove_unpaid_objects(op->inv, env);
 	op=next;
     }
 }
@@ -1908,7 +1911,8 @@ void kill_player(object *op)
     }
     loot_object(op); /* Remove some of the items for good */
     remove_ob(op);
-    op->direction=0;
+	check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
+	op->direction=0;
     if(!QUERY_FLAG(op,FLAG_WAS_WIZ)&&op->stats.exp) {
       delete_character(op->name,0);
 #ifndef NOT_PERMADEATH

@@ -163,22 +163,6 @@ WS	[ \t]*{NL}
 				old_sleft = tmp->speed_left;
 				old_speed = tmp->speed;
 			    lex_load(tmp, map_flags);
-				if (!(map_flags & MAP_STYLE))
-				{
-					/* ok - ONLY change something when we
-					 * a.) don't have fix set speed_left in the loading
-					* b.) we have negative speed
-					*/
-					if(old_sleft==tmp->speed_left && tmp->speed<0.0f)
-					{
-						/* if we have now a negative speed - use default arch
-						* speed left for new random set
-						*/
-						if(tmp->speed<0.0f) 
-							tmp->speed_left=tmp->arch->clone.speed_left+(float)(RANDOM()%90)/100.0f;
-					}
-					update_ob_speed(tmp); /* kick it now on active list*/
-				}
 				  /* we set here AND in load_object the material real values.
 				   * we do: If item_quality == 0 AND material defines a base
 				   * material, then use material_real to set quality & condition.
@@ -197,6 +181,47 @@ WS	[ \t]*{NL}
 					SET_FLAG(tmp,FLAG_KNOWN_CURSED);
 				}
 			    insert_ob_in_ob(tmp,op);
+
+				if (!(map_flags & MAP_STYLE))
+				{
+					/* first adjust speed */
+					/* ok - ONLY change something when we
+					 * a.) don't have fix set speed_left in the loading
+					* b.) we have negative speed
+					*/
+					if(old_sleft==tmp->speed_left && tmp->speed<0.0f)
+					{
+						/* if we have now a negative speed - use default arch
+						* speed left for new random set
+						*/
+						if(tmp->speed<0.0f) 
+							tmp->speed_left=tmp->arch->clone.speed_left+(float)(RANDOM()%90)/100.0f;
+					}
+					if(tmp->speed)
+						update_ob_speed(tmp); /* kick it now on active list*/
+
+				/* we must do this after the insert_ob_in_ob().
+				 * now we look we have a treasure or something else.
+				 * If so, we transform it now to real items.
+				 * also we adjust here auto_apply.
+				 * This was moved from fix_auto_apply.
+				 * This here only handles inventory items, the "base"
+				 * items are handled in load_objects() .
+				 */
+					if(QUERY_FLAG(tmp,FLAG_AUTO_APPLY)) /* remember: auto_apply will remove FLAG_AUTO_APPLY */
+						auto_apply(tmp);
+					/* here we can have a interesting problem when we have kind of
+					 * creators (like spawn points) which use the inv object as a clone
+					 * kind object. Then we don't want substitute the treasure here or the
+					 * generator will clone objects with same treasures over and over.
+					 */
+					 /* i excluded here only objects inside spawn_points. Add here more
+					  * what you need to exclude at object/map loading time.
+					  */
+					else if(tmp->randomitems && (map_flags & MAP_ORIGINAL) &&(op->type != SPAWN_POINT ))
+						create_treasure(tmp->randomitems, tmp, 0, get_enviroment_level(tmp),T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
+
+				}
 			}
 			/* This is the actual archetype definition then */
 			else {
@@ -451,6 +476,7 @@ op->oy= op->y;
 ^has_ready_range{S}	    SET_OR_CLEAR_FLAG(op, FLAG_READY_RANGE, IVAL);
 ^has_ready_bow{S}   SET_OR_CLEAR_FLAG(op, FLAG_READY_BOW, IVAL);
 ^xrays{S}	    SET_OR_CLEAR_FLAG(op, FLAG_XRAYS, IVAL);
+^no_save{S}			SET_OR_CLEAR_FLAG(op, FLAG_NO_SAVE, IVAL);
 ^is_floor{S}	    SET_OR_CLEAR_FLAG(op, FLAG_IS_FLOOR, IVAL);
 ^is_male{S}		   SET_OR_CLEAR_FLAG(op, FLAG_IS_MALE, IVAL);
 ^is_female{S}	   SET_OR_CLEAR_FLAG(op, FLAG_IS_FEMALE, IVAL);
@@ -693,6 +719,7 @@ void delete_loader_buffer(void *buffer)
 		yy_delete_buffer(buffer);
 	else
 		yy_delete_buffer(YY_CURRENT_BUFFER);
+	cur_buffer = NULL;
 }
 
 void *create_loader_buffer(void *fp)
@@ -765,6 +792,8 @@ int load_object(void *fp, object *op, void *mybuffer, int bufstate, int map_flag
 			if (retval==LL_NORMAL)
 				break;
 		}
+		if(cur_buffer) /* be sure we work on the right buffer */
+			yy_switch_to_buffer(cur_buffer);
     }
     else /* if (bufstate==LO_LINEMODE) */
 	{
@@ -774,9 +803,16 @@ int load_object(void *fp, object *op, void *mybuffer, int bufstate, int map_flag
 			yybufstate=yy_scan_string(inbuf);
 			retval=lex_load(op, map_flags);
 			yy_delete_buffer(yybufstate);
-			if (retval==LL_NORMAL) return retval;
+			if (retval==LL_NORMAL)
+			{ 
+				if(cur_buffer) /* be sure we work on the right buffer */
+					yy_switch_to_buffer(cur_buffer);
+				return retval;
+			}
 		}
 		LOG(llevDebug,"Got eof while scanning strings (%d)\n",retval);
+		if(cur_buffer) /* be sure we work on the right buffer */
+			yy_switch_to_buffer(cur_buffer);
 		return LL_EOF;
     }
 	
@@ -890,7 +926,8 @@ NULL /*is_removed*/,"been_applied", "auto_apply", "treasure", "is_neutral",	/* 2
 "use_fix_pos","unpaid","is_aged","make_invisible" , "make_ethereal","is_player",
 "is_named",NULL /* spawn mob flag */, "no_teleport", "corpse", "corpse_forced",
 "player_only", "no_cleric", "one_drop", "cursed_perm", "damned_perm", "door_closed",
-"was_reflected", "is_missile","can_reflect_missile","can_reflect_spell","is_assassin"
+"was_reflected", "is_missile","can_reflect_missile","can_reflect_spell","is_assassin",
+NULL /* internal flag: HAS_MOVED */, "no_save"
 };
 
  

@@ -960,7 +960,7 @@ int perceive_self(object *op) {
    dummy->y=exity;
    dummy->stats.exp=1; /*Set as a 2 ways exit (see manual_apply & is_legal_2ways_exit funcs)*/
    FREE_AND_COPY_HASH(dummy->race, op->name);  /*Save the owner of the portal*/
-   insert_ob_in_map(dummy,exitmap,op,0);
+   insert_ob_in_map(dummy,exitmap,op,INS_NO_MERGE | INS_NO_WALK_ON);
    force=get_archetype("force");              /*The force*/
    if(force == NULL){
      LOG(llevBug,"BUG: get_object failed (force) in cast_create_town_portal for %s!\n",query_name(op));
@@ -1140,14 +1140,16 @@ int magic_wall(object *op,object *caster,int dir,int spell_type) {
 		tmp2 = get_object();
 		copy_object(tmp,tmp2);
 		tmp2->x = x; tmp2->y = y;
-		insert_ob_in_map(tmp2,op->map,op,0);
+		if(!insert_ob_in_map(tmp2,op->map,op,0))
+			continue;
 	 } else posblocked=1;
 	 x = tmp->x-i*freearr_x[dir2]; y = tmp->y-i*freearr_y[dir2];
 	 if(!blocked(NULL,op->map,x,y,op->terrain_flag)&&!negblocked) {
 		tmp2 = get_object();
 		copy_object(tmp,tmp2);
 		tmp2->x = x; tmp2->y = y;
-		insert_ob_in_map(tmp2,op->map,op,0);
+		if(!insert_ob_in_map(tmp2,op->map,op,0))
+			continue;
 	 } else negblocked=1;
     }
 
@@ -1250,7 +1252,7 @@ int dimension_door(object *op,int dir) {
 
 	    remove_ob(op);
 	    op->x=x,op->y=y;
-	    if(insert_ob_in_map(op,op->map,op,0) != NULL)
+	    if(insert_ob_in_map(op,op->map,op,0))
 		{
 			if( op->type == PLAYER)
 			    MapNewmapCmd(CONTR(op));
@@ -3169,14 +3171,20 @@ void counterspell(object *op,int dir)
 	    case 1: {
 	    /* { if(op->level > tmp->level) { */ 
 	        if(SK_level(op) > tmp->level) 
-		    remove_ob(tmp);
+			{
+			    remove_ob(tmp);
+				check_walk_off (tmp, NULL,MOVE_APPLY_VANISHED);
+			}
 		break;
 	    }
 	    case 2: {
 		if(rndm(0, 149) == 0) {
 		    tmp->stats.hp--;  /* weaken the rune */
 		    if(!tmp->stats.hp) 
-			remove_ob(tmp);
+			{
+				remove_ob(tmp);
+				check_walk_off (tmp, NULL,MOVE_APPLY_VANISHED);
+			}
 		}
 		break;
 	    }
@@ -3469,6 +3477,7 @@ int summon_cult_monsters(object *op, int old_dir) {
 	} /* if monster level is much less than character level */
 
 	head = insert_ob_in_map (head, op->map, op,0);
+	
 	if (head != NULL && head->randomitems != NULL) {
 	    object *tmp;
 	    create_treasure(head->randomitems,head,GT_APPLY,6,T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
@@ -4174,8 +4183,9 @@ void move_aura(object *aura) {
 
     /* we need to jump out of the inventory for a bit
        in order to hit the map conveniently. */
-  insert_ob_in_map(aura,env->map,aura,0);
-  for(i=1;i<9;i++) { 
+  if(!insert_ob_in_map(aura,env->map,aura,0))
+		return;
+	for(i=1;i<9;i++) { 
     hit_map(aura,i,aura->attacktype);
     if(aura->other_arch) {
       nx = aura->x + freearr_x[i];

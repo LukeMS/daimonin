@@ -459,7 +459,9 @@ static int attempt_jump (object *pl, int dir, int spaces) {
      */ 
 
     remove_ob(pl);
-    SET_MULTI_FLAG(pl,FLAG_FLYING);
+	if(check_walk_off (pl, NULL,MOVE_APPLY_VANISHED) != CHECK_WALK_OK)
+		return 0;
+	SET_MULTI_FLAG(pl,FLAG_FLYING);
     for(i=0;i<=spaces;i++) { 
 		xt = pl->x+dx;
 		yt = pl->y+dy;
@@ -1632,7 +1634,8 @@ void do_throw(object *op, object *toss_item, int dir) {
 	LOG(llevDebug," get_splt_ob faild to split throw ob %s\n",left->name);
 #endif
 	throw_ob = left;
-	remove_ob(left);
+	remove_ob(left); 
+	check_walk_off (left, NULL,MOVE_APPLY_VANISHED);
 	if (op->type==PLAYER)
 	    esrv_del_item(CONTR(op), left->count, left->env);
     }
@@ -1676,9 +1679,14 @@ void do_throw(object *op, object *toss_item, int dir) {
 
 	/* bounces off 'wall', and drops to feet */
 	if(!QUERY_FLAG(throw_ob,FLAG_REMOVED))
+	{
 		 remove_ob(throw_ob);
+		 if(check_walk_off (throw_ob, NULL,MOVE_APPLY_MOVE) != CHECK_WALK_OK)
+			 return;
+	}
 	 throw_ob->x = op->x; throw_ob->y = op->y;
-	 insert_ob_in_map(throw_ob,op->map,op,0);
+	 if(!insert_ob_in_map(throw_ob,op->map,op,0))
+		 return;
 	if(op->type==PLAYER) {
 	    if(eff_str<=1) {
 		new_draw_info_format(NDI_UNIQUE, 0,op,
@@ -1920,7 +1928,7 @@ void do_throw(object *op, object *toss_item, int dir) {
         throw_ob->last_sp,throw_ob->speed,throw_ob->stats.food);
     LOG(llevDebug,"inserting tossitem (%d) into map\n",throw_ob->count);
 #endif
-    insert_ob_in_map(throw_ob,op->map,op,0);
-    move_arrow(throw_ob);
+    if(insert_ob_in_map(throw_ob,op->map,op,0))
+	    move_arrow(throw_ob);
 }
 

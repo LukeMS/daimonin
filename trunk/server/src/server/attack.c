@@ -511,10 +511,11 @@ int hit_player(object *op,int dam, object *hitter, int type)
      * remained - that is no longer the case.
      */
     if(QUERY_FLAG(hitter, FLAG_ONE_HIT)) {
-	if(QUERY_FLAG(hitter,FLAG_FRIENDLY))
-	    remove_friendly_object(hitter);
-	remove_ob(hitter); /* Remove, but don't drop inventory */
-    } 
+		if(QUERY_FLAG(hitter,FLAG_FRIENDLY))
+			remove_friendly_object(hitter);
+		remove_ob(hitter); /* Remove, but don't drop inventory */
+		check_walk_off (hitter, NULL, MOVE_APPLY_VANISHED);
+    }
     /* Lets handle creatures that are splitting now */
     else if(type&AT_PHYSICAL&&!OBJECT_FREE(op)&&QUERY_FLAG(op,FLAG_SPLITTING)) {
 	int i;
@@ -526,32 +527,37 @@ int hit_player(object *op,int dam, object *hitter, int type)
 	    LOG(llevBug,"BUG: SPLITTING without other_arch error.\n");
 	    return maxdam;
 	}
-	remove_ob(op); 
-	for(i=0;i<NROFNEWOBJS(op);i++) { /* This doesn't handle op->more yet */
-	    object *tmp=arch_to_object(op->other_arch);
-	    int j;
-
-	    tmp->stats.hp=op->stats.hp;
-	    if (friendly) {
-		SET_FLAG(tmp, FLAG_FRIENDLY);
-		add_friendly_object(tmp);
-		tmp->move_type = PETMOVE;
-		if (owner!=NULL)
-		    set_owner(tmp,owner);
-	    }
-	    if (unaggressive)
-		SET_FLAG(tmp, FLAG_UNAGGRESSIVE);
-	    j=find_first_free_spot(tmp->arch,op->map,op->x,op->y);
-	    if (j>=0) {/* Found spot to put this monster */
-		tmp->x=op->x+freearr_x[j],tmp->y=op->y+freearr_y[j];
-		insert_ob_in_map(tmp,op->map,NULL,0);
-	    }
-	}
 	if(friendly)
-	    remove_friendly_object(op);
+		remove_friendly_object(op);
+
+	remove_ob(op); 
+	if(check_walk_off (op, NULL,MOVE_APPLY_VANISHED) == CHECK_WALK_OK)
+	{
+		for(i=0;i<NROFNEWOBJS(op);i++) { /* This doesn't handle op->more yet */
+		    object *tmp=arch_to_object(op->other_arch);	
+		    int j;
+
+		    tmp->stats.hp=op->stats.hp;
+		    if (friendly) {
+			SET_FLAG(tmp, FLAG_FRIENDLY);
+			add_friendly_object(tmp);
+			tmp->move_type = PETMOVE;
+			if (owner!=NULL)
+			    set_owner(tmp,owner);
+		    }
+		    if (unaggressive)
+			SET_FLAG(tmp, FLAG_UNAGGRESSIVE);
+		    j=find_first_free_spot(tmp->arch,op->map,op->x,op->y);
+		 if (j>=0) {/* Found spot to put this monster */
+			tmp->x=op->x+freearr_x[j],tmp->y=op->y+freearr_y[j];
+			insert_ob_in_map(tmp,op->map,NULL,0);
+		    }
+		}
+	}
     }
     else if(type & AT_DRAIN &&  hitter->type==GRIMREAPER&&hitter->value++>10) {
-	remove_ob(hitter);
+		remove_ob(hitter);
+		check_walk_off (hitter, NULL,MOVE_APPLY_VANISHED);
     }
     return maxdam;
 }
@@ -1275,8 +1281,6 @@ int kill_object(object *op,int dam, object *hitter, int type)
 	    }
 		op->speed = 0;
 		update_ob_speed (op); /* remove from active list (if on) */
-	    destruct_ob(op);
-
 
 		/* rules: 
 		 * a.) mob will drop corpse for his target, not for kill hit giving player.
@@ -1295,6 +1299,8 @@ int kill_object(object *op,int dam, object *hitter, int type)
 		/* harder drop rules: if exp== 0 or not a player or not a player invoked hitter: no drop */
 		if(!exp || hitter->type != PLAYER || (get_owner(hitter) && hitter->owner->type != PLAYER))
 			SET_FLAG(op,FLAG_STARTEQUIP); 
+
+		destruct_ob(op);
 	}
 	/* Player has been killed! */
 	else {
@@ -1369,7 +1375,8 @@ static int stick_arrow (object *op, object *tmp)
 	if(tmp->head != NULL)
 	    tmp = tmp->head;
         remove_ob(op);
-	op = insert_ob_in_ob(op,tmp);
+		check_walk_off (op, NULL,MOVE_APPLY_VANISHED);
+		op = insert_ob_in_ob(op,tmp);
 	if (tmp->type== PLAYER)
 	    esrv_send_item (tmp, op);
 
@@ -1477,9 +1484,13 @@ object *hit_with_arrow (object *op, object *victim)
      * attack_ob_simple() returns, and we've got an arrow that still exists
      * but is no longer on the map. Ugh. (Beware: Such things can happen at
      * other places as well!) */
+	/* hopefully the walk_off event was triggered somewhere there */
     if (was_destroyed (hitter, hitter_tag) || hitter->env != NULL) {
         if (container) 
+		{
             remove_ob(container);
+			check_walk_off (container, NULL,MOVE_APPLY_VANISHED);
+		}
         return NULL;
     }
 
@@ -1492,8 +1503,10 @@ object *hit_with_arrow (object *op, object *victim)
             if (hitter == NULL)
                 return NULL;
         } else 
+		{
             remove_ob(container);
-
+			check_walk_off (container, NULL,MOVE_APPLY_VANISHED);
+		}
         /* Try to stick arrow into victim */
 		/* disabled - this will not work very well now with
 		 * the loot system of corpses.. if several people shot
@@ -1505,50 +1518,54 @@ object *hit_with_arrow (object *op, object *victim)
             return NULL;
 		*/
 
+#ifdef PLUGINS
+		/* GROS: Handle for plugin stop event */
+		if(op->event_flags&EVENT_FLAG_STOP)
+		{
+			CFParm CFP;
+			int k, l, m;
+			object *event_obj = get_event_object(hitter, EVENT_STOP);
+			k = EVENT_STOP;
+			l = SCRIPT_FIX_NOTHING;
+			m = 0;
+			CFP.Value[0] = &k;
+			CFP.Value[1] = victim; /* Activator = whatever we hit */
+			CFP.Value[2] = hitter;
+			CFP.Value[3] = NULL;
+			CFP.Value[4] = NULL;
+			CFP.Value[5] = &m;
+			CFP.Value[6] = &m;
+			CFP.Value[7] = &m;
+			CFP.Value[8] = &l;
+			CFP.Value[9] = (char *)event_obj->race;
+			CFP.Value[10]= (char *)event_obj->slaying;
+			if (findPlugin(event_obj->name)>=0)
+				((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
+		}
+#endif
+
         /* Else try to put arrow on victim's map square */
         if ((victim_x != hitter->x || victim_y != hitter->y)
             && ! wall (hitter->map, victim_x, victim_y))
         {
             remove_ob(hitter);
-            hitter->x = victim_x;
-            hitter->y = victim_y;
-            insert_ob_in_map (hitter, victim->map, hitter,0);
-        } else {
+			if(check_walk_off (hitter, NULL,MOVE_APPLY_DEFAULT) == CHECK_WALK_OK)
+			{
+				hitter->x = victim_x;
+				hitter->y = victim_y;
+				insert_ob_in_map (hitter, victim->map, hitter,0);
+			}
+	} else {
             /* Else leave arrow where it is */
             hitter = merge_ob (hitter, NULL);
         }
         
-#ifdef PLUGINS
-    /* GROS: Handle for plugin stop event */
-    if(op->event_flags&EVENT_FLAG_STOP)
-    {
-        CFParm CFP;
-        int k, l, m;
-        object *event_obj = get_event_object(hitter, EVENT_STOP);
-        k = EVENT_STOP;
-        l = SCRIPT_FIX_NOTHING;
-        m = 0;
-        CFP.Value[0] = &k;
-        CFP.Value[1] = victim; /* Activator = whatever we hit */
-        CFP.Value[2] = hitter;
-        CFP.Value[3] = NULL;
-        CFP.Value[4] = NULL;
-        CFP.Value[5] = &m;
-        CFP.Value[6] = &m;
-        CFP.Value[7] = &m;
-        CFP.Value[8] = &l;
-        CFP.Value[9] = (char *)event_obj->race;
-        CFP.Value[10]= (char *)event_obj->slaying;
-        if (findPlugin(event_obj->name)>=0)
-            ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
-    }
-#endif
         return NULL;
     }
 
     /* Missile missed victim - reassemble missile */
     if (container) {
-        remove_ob(hitter);
+        remove_ob(hitter); /* technical remove, no walk check */
         insert_ob_in_ob (hitter, container);
     }
     return op;

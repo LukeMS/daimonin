@@ -451,11 +451,11 @@ void player_lvl_adj(object *who, object *op) {
 				effect_ob->x = who->x;
 				effect_ob->y = who->y;
 
-				if(!insert_ob_in_map(effect_ob, effect_ob->map, NULL,0))
+				if(!insert_ob_in_map(effect_ob, effect_ob->map, NULL,INS_NO_MERGE | INS_NO_WALK_ON))
 				{
 					/* something is wrong - kill object */
 					if(!QUERY_FLAG(effect_ob,FLAG_REMOVED))
-						remove_ob(effect_ob);
+						remove_ob(effect_ob); /* check off not needed */
 				}
 			}
 		}
