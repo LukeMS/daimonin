@@ -1257,11 +1257,11 @@ int write_scroll (object *pl, object *scroll) {
  * implemented.
  */
 
-int find_traps (object *pl)
+int find_traps (object *pl, int level)
 {  
    object *tmp,*tmp2;
    mapstruct *m;
-   int xt,yt,i;
+   int xt,yt,i, suc=0;
   /*First we search all around us for runes and traps, which are
     all type RUNE */
    for(i=0;i<9;i++)
@@ -1281,20 +1281,53 @@ int find_traps (object *pl)
 
             for(tmp2=tmp->inv;tmp2!=NULL;tmp2=tmp2->below)
 			{
-				if(tmp2->type==RUNE && trap_see(pl,tmp2))
+				if(tmp2->type==RUNE)
 				{ 
-					trap_show(tmp2,tmp);
-					tmp2->stats.Cha = 1;
+					if(trap_see(pl,tmp2, level))
+					{
+						trap_show(tmp2,tmp);
+						tmp2->stats.Cha = 1;
+						if(!suc)
+							suc=1;
+					}
+					else
+					{
+						/* give out a "we have found signs of traps" 
+						 * if the traps level is not 1.5 times higher.
+						 */
+						if(tmp2->level<=(level*1.8f))
+							suc=2;
+
+
+					}
 				}
 			}
 
-            if(tmp->type==RUNE && trap_see(pl,tmp))  
+            if(tmp->type==RUNE)
 			{
-				trap_show(tmp,tmp); 
-				tmp->stats.Cha = 1;
+				if(trap_see(pl,tmp,level))
+				{
+					trap_show(tmp,tmp); 
+					tmp->stats.Cha = 1;
+					if(!suc)
+						suc=1;
+				}
+				else
+				{
+					/* give out a "we have found signs of traps" 
+					 * if the traps level is not 1.5 times higher.
+					 */
+					if(tmp->level<=(level*1.8f))
+						suc=2;
+				}
 			}
 	   }
    }
+   if(!suc)
+        new_draw_info(NDI_UNIQUE, 0,pl,"You can't detect any trap here.");
+   else if(suc==2)
+        new_draw_info(NDI_UNIQUE, 0,pl,"You detect trap signs...!");
+
    return 0;
 }  
 
@@ -1302,7 +1335,7 @@ int find_traps (object *pl)
  * the algorithm is based (almost totally) on the old command_disarm() - b.t. 
  */ 
 
-int remove_trap (object *op, int dir) 
+int remove_trap (object *op, int dir, int level) 
 {
 	object *tmp,*tmp2;
 	mapstruct *m;
@@ -1329,6 +1362,7 @@ int remove_trap (object *op, int dir)
 					if(QUERY_FLAG(tmp2, FLAG_SYS_OBJECT) || QUERY_FLAG(tmp2,FLAG_IS_INVISIBLE))
 						trap_show(tmp2,tmp);
 					trap_disarm(op,tmp2,1);
+					return 0;
 				}
 			}
 			if(tmp->type==RUNE&&tmp->stats.Cha<=1)
@@ -1336,10 +1370,12 @@ int remove_trap (object *op, int dir)
 				if(QUERY_FLAG(tmp, FLAG_SYS_OBJECT) || QUERY_FLAG(tmp,FLAG_IS_INVISIBLE))
 					trap_show(tmp,tmp);
 				trap_disarm(op,tmp,1);
+				return 0;
 			}  
 		}
 	}
-   return 0;
+	new_draw_info(NDI_UNIQUE, 0,op,"Here is no trap to remove nearby.");
+    return 0;
 }
 
 int skill_throw (object *op, int dir, char *params) {

@@ -242,6 +242,7 @@ treasureone traps_physical
     chance 33
   more
   arch trap_needle
+    difficulty 4
     chance 33
   more
   arch trap_bear_trap
@@ -2070,12 +2071,12 @@ treasure mob_fire
     material_quality 80
     artifact_chance 25
     material_range 4
-    chance 8
+    chance 12
   no
      list random_tools
        material_quality 80
        material_range 4
-       chance 5
+       chance 2
        difficulty 3
     end
    end
@@ -2095,12 +2096,12 @@ treasure mob_ice
     material_quality 80
     artifact_chance 25
     material_range 4
-    chance 8
+    chance 12
   no
      list random_tools
        material_quality 80
        material_range 4
-       chance 5
+       chance 2
        difficulty 3
     end
    end
@@ -2203,12 +2204,11 @@ list traps
     artifact_chance 0
     chance 90
     name small ant shield
-
 end
 treasure random_test
  t_style 1
  list traps
-   chance 10
+   chance 100
  more
  list default_wealth
    chance 60

@@ -1628,8 +1628,9 @@ void tear_down_wall(object *op)
  */
 void poison_player(object *op, object *hitter, float dam)
 {
+	float pmul;
 	archetype *at = find_archetype("poisoning");
-	object *tmp=present_arch_in_ob(at,op); 
+	object *tmp=present_arch_in_ob(at,op);
 
 	/* this is to avoid stacking poison forces... Like we get hit 10 times
 	 * by a spell and sword and get 10 poison force in us
@@ -1651,11 +1652,18 @@ void poison_player(object *op, object *hitter, float dam)
 		}
 		else
 		{
-
 			if(hitter->type==POISON)
-				tmp->stats.dam = (int) (dam*lev_damage[hitter->level]);
+			{
+				tmp->stats.dam = (int) (((dam/2+RANDOM()%((int)(dam/2)))*lev_damage[hitter->level])*0.9f);
+				if(tmp->stats.dam > op->stats.maxhp/3)
+					tmp->stats.dam = op->stats.maxhp/3;
+			}
 			else /* spell or weapon will be handled different! */
-				tmp->stats.dam = (int)dam;
+			{
+				tmp->stats.dam = (int)(dam/2+RANDOM()%(int)(dam/2));
+				if(tmp->stats.dam > op->stats.maxhp/3)
+					tmp->stats.dam = op->stats.maxhp/3;
+			}
 
 			tmp->level = hitter->level;
 			copy_owner(tmp,hitter);   /*  so we get credit for poisoning kills */
@@ -1678,12 +1686,66 @@ void poison_player(object *op, object *hitter, float dam)
 				}
 				else /* and here we have hit with weapon or something */
 				{
-					/* player looses stats, maximum is -10 of each */
-					tmp->stats.Con= MAX(-((RANDOM()%(2+(int)dam))+1), -10);
-					tmp->stats.Str= MAX(-((RANDOM()%(4+(int)dam))+1), -10);
-					tmp->stats.Dex= MAX(-((RANDOM()%(3+(int)dam))+1), -10);
-					tmp->stats.Int= MAX(-((RANDOM()%(2+(int)dam))+1), -10);
-					tmp->stats.Cha= MAX(-((RANDOM()%(2+(int)dam))+1), -10);
+
+					if(op->stats.Con > 1 && !(RANDOM()%2))
+					{
+						pmul=(hitter->level+(RANDOM()%(hitter->level/4+1))/2)*0.01f+0.2f;
+						tmp->stats.Con = 1+(sint8)(pmul*(op->stats.Con-1));
+						if(tmp->stats.Con >= op->stats.Con)
+							tmp->stats.Con = op->stats.Con-1;
+						tmp->stats.Con*=-1;
+
+					}
+
+					if(op->stats.Str > 1 && !(RANDOM()%2))
+					{
+						pmul=(hitter->level+(RANDOM()%(hitter->level/4+1))/2)*0.01f+0.2f;
+						tmp->stats.Str = 1+(sint8)(pmul*(op->stats.Str-1));
+						if(tmp->stats.Str >= op->stats.Str)
+							tmp->stats.Str = op->stats.Str-1;
+						tmp->stats.Str*=-1;
+					}
+
+					if(op->stats.Dex > 1 && !(RANDOM()%2))
+					{
+						pmul=(hitter->level+(RANDOM()%(hitter->level/4+1))/2)*0.01f+0.2f;
+						tmp->stats.Dex = 1+(sint8)(pmul*(op->stats.Dex-1));
+						if(tmp->stats.Dex >= op->stats.Dex)
+							tmp->stats.Dex = op->stats.Dex-1;
+						tmp->stats.Dex*=-1;
+					}
+					if(op->stats.Int > 1 && !(RANDOM()%3))
+					{
+						pmul=(hitter->level+(RANDOM()%(hitter->level/4+1))/2)*0.01f+0.2f;
+						tmp->stats.Int = 1+(sint8)(pmul*(op->stats.Int-1));
+						if(tmp->stats.Int >= op->stats.Int)
+							tmp->stats.Int = op->stats.Int-1;
+						tmp->stats.Int*=-1;
+					}
+					if(op->stats.Cha > 1 && !(RANDOM()%3))
+					{
+						pmul=(hitter->level+(RANDOM()%(hitter->level/4+1))/2)*0.01f+0.2f;
+						tmp->stats.Cha = 1+(sint8)(pmul*(op->stats.Cha-1));
+						if(tmp->stats.Cha >= op->stats.Cha)
+							tmp->stats.Cha = op->stats.Cha-1;
+						tmp->stats.Cha*=-1;
+					}
+					if(op->stats.Pow > 1 && !(RANDOM()%4))
+					{
+						pmul=(hitter->level+(RANDOM()%(hitter->level/4+1))/2)*0.01f+0.2f;
+						tmp->stats.Pow = 1+(sint8)(pmul*(op->stats.Pow-1));
+						if(tmp->stats.Pow >= op->stats.Pow)
+							tmp->stats.Pow = op->stats.Pow-1;
+						tmp->stats.Pow*=-1;
+					}
+					if(op->stats.Wis > 1 && !(RANDOM()%4))
+					{
+						pmul=(hitter->level+(RANDOM()%(hitter->level/4+1))/2)*0.01f+0.2f;
+						tmp->stats.Wis = 1+(sint8)(pmul*(op->stats.Wis-1));
+						if(tmp->stats.Wis >= op->stats.Wis)
+							tmp->stats.Wis = op->stats.Wis-1;
+						tmp->stats.Wis*=-1;
+					}
 
 					new_draw_info_format(NDI_UNIQUE, 0,op,"%s has poisoned you!", query_name(hitter));
 					insert_ob_in_ob(tmp,op);

@@ -161,7 +161,7 @@ y 7
 end
 arch chest
 randomitems traps
-level 3
+level 11
 x 1
 y 7
 end

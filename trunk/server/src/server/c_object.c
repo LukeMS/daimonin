@@ -512,8 +512,11 @@ void put_object_in_sack (object *op, object *sack, object *tmp, long nrof)
 	      esrv_del_item (op->contr, tmp2_tag, tmp2_cont);
 	else	/* this can proably be replaced with an update */
 	      esrv_send_item (op, tmp2);
-    } else
-	remove_ob(tmp);
+    } 
+	else if(!QUERY_FLAG(tmp, FLAG_UNPAID) || !QUERY_FLAG(tmp, FLAG_NO_PICK))
+		remove_ob(tmp);
+	else /* don't delete clone shop objects - clone them!*/
+		tmp = ObjectCreateClone(tmp);
 
     if(QUERY_FLAG(tmp, FLAG_UNPAID))
 	{
