@@ -1,0 +1,1159 @@
+# Artifacts file for Daimonin
+#
+# The Artifacts file looks very similiar to CF
+# list file but its used in an advanced way.
+# Instead of creating dummy items and compare the values
+# of this item to the base objects we parse the 
+# values in the copy of the base arch at runtime.
+# This allows to use EVERY feature a normal arch command
+# has excluding the anim/mina command - this is handled
+# in the editor and in the server we use <animation xxx>.
+#
+# The string after the <Object> keyword is not used anymore
+# - to define a title string we had to add "title yyyy" in
+# the command list. When a name command is given, the name
+# will overrule the base item name.
+#
+# The Artifacts file has 2 uses in Daimonin:
+# 
+# A.) Using the <name> of a artifact definition, the single
+# artifacts are used as a kind generic arches. They
+# are listed in the arch list and can be called and
+# used as normal arches. To do this, the server/Editor
+# are loading the <def_arch> given in every artifacts
+# definition, overwrite the old commands with the new
+# commands and store it under <name> in the arch list. 
+# 
+# B.) The artifacts are used as masks from random item
+# generator or the treasure list. After these functions 
+# generate a (normal) item, the look in the artifacts 
+# list and using the <type>, <allowed>, <difficulty> 
+# and <chance> to alter the old arch. In this case,
+# the items are still from old arch type.
+# The artifact list is sorted by types - from types info 
+# are build the lists for every arch type.
+#
+# By using <Allowed none> setting the item is excluded from
+# masking by random items or treasure list but can still
+# be forced by hand. This is useful for unique items like
+# Stormbringer. 
+#
+# For every fake arch, the def_arch is stored in the arch list
+# entry. Functions like disenchant can access it. This will allow
+# to 'disenchant' these items. For normal masked items, the def_item
+# entry is null in the arch list - we simple reset them to default.
+# For fake arch, we use def_arch and have so also a 'unmagical' base
+# items. This would be not possible when we define Stormbringer as 
+# a normal arch.
+#
+# In Daimonin, only the def arch is pre parsed - for a "normal" artifactr
+# we parse the used object with the commands on the fly at creation time.
+# With the map flag MAP_ARTIFACT in the loader.c module, we use some
+# values special. In some cases a positive value will overwrite the old
+# and a negative value is used a ABS() floating point value and used
+# as multiplier.
+#
+# SKILLS: If skills ever defined here, get_skill_archetype() in arch.c 
+# must be extended to search this arches too.
+#
+# Special uses:
+#
+# Lights
+#
+Allowed crystal_light
+chance 40
+difficulty 50
+artifact crystal_light4
+def_arch crystal_light
+Object
+title of light
+is_magical 1
+type 74
+value 254500
+speed 0.15
+glow_radius -4
+end
+#
+#Artifact gems!
+#
+Allowed gem_generic
+chance 40
+difficulty 1
+artifact zircon_small
+def_arch gem_generic
+Object
+title of small size
+item_quality 100
+item_condition 100
+value 110
+material_real 130
+end
+#
+Allowed jewel_generic
+chance 40
+difficulty 5
+artifact diamond_little
+def_arch jewel_generic
+Object
+title of very small size
+face jewel_clear.101
+item_quality 100
+item_condition 100
+material_real 135
+value 8000
+type 60
+end
+#
+Allowed jewel_generic
+chance 30
+difficulty 20
+artifact diamond_great
+def_arch jewel_generic
+Object
+title of great value
+face jewel_clear.101
+material_real 135
+item_quality 100
+item_condition 100
+value 150000
+type 60
+end
+#
+Allowed jewel_generic
+chance 20
+difficulty 30
+artifact diamond_except
+def_arch jewel_generic
+Object
+title of exceptional beauty
+face jewel_clear.101
+item_quality 100
+item_condition 100
+material_real 135
+value 250000
+type 60
+end
+#
+Allowed jewel_generic
+chance 5
+difficulty 50
+artifact diamond_flawless
+def_arch jewel_generic
+Object
+title of flawless beauty
+face jewel_clear.101
+material_real 135
+item_quality 100
+item_condition 100
+value 400000
+type 60
+end
+#
+Allowed jewel_generic
+chance 40
+difficulty 3
+artifact ruby_little
+def_arch jewel_generic
+Object
+title of very small size
+item_quality 100
+item_condition 100
+face jewel_red.101
+material_real 134
+value 6000
+type 60
+end
+#
+Allowed jewel_generic
+chance 30
+difficulty 20
+artifact ruby_great
+def_arch jewel_generic
+Object
+title of great value
+face jewel_red.101
+item_quality 100
+item_condition 100
+material_real 134
+value 120000
+type 60
+end
+#
+Allowed jewel_generic
+chance 20
+difficulty 30
+artifact ruby_except
+def_arch jewel_generic
+Object
+title of exceptional beauty
+item_quality 100
+item_condition 100
+face jewel_red.101
+material_real 134
+value 220000
+type 60
+end
+#
+Allowed jewel_generic
+chance 5
+difficulty 50
+artifact ruby_flawless
+def_arch jewel_generic
+Object
+title of flawless beauty
+item_quality 100
+item_condition 100
+face jewel_red.101
+material_real 134
+value 380000
+type 60
+end
+#
+Allowed jewel_generic
+chance 40
+difficulty 3
+artifact sapphire_great
+def_arch jewel_generic
+Object
+title of very small size
+face jewel_blue.101
+item_quality 100
+item_condition 100
+material_real 133
+value 5000
+type 60
+end
+# 
+Allowed jewel_generic
+chance 30
+difficulty 20
+artifact sapphire_great
+def_arch jewel_generic
+Object
+title of great value
+face jewel_blue.101
+item_quality 100
+item_condition 100
+material_real 133
+value 90000
+type 60
+end
+# 
+Allowed jewel_generic
+chance 20
+difficulty 30
+artifact sapphire_except
+def_arch jewel_generic
+Object
+title of exceptional beauty
+item_quality 100
+item_condition 100
+face jewel_blue.101
+value 190000
+material_real 133
+type 60
+end
+#
+Allowed jewel_generic
+chance 5
+difficulty 50
+artifact sapphire_flawless
+def_arch jewel_generic
+Object
+title of flawless beauty
+face jewel_blue.101
+item_quality 100
+item_condition 100
+material_real 133
+value 350000
+type 60
+end
+#
+Allowed jewel_generic
+chance 40
+difficulty 3
+artifact emerald_great
+def_arch jewel_generic
+Object
+title of very small size
+item_quality 100
+item_condition 100
+face jewel_green.101
+material_real 132
+value 3000
+type 60
+end
+# 
+Allowed jewel_generic
+chance 30
+difficulty 20
+artifact emerald_great
+def_arch jewel_generic
+Object
+item_quality 100
+item_condition 100
+title of great value
+face jewel_green.101
+material_real 132
+value 75000
+type 60
+end
+# 
+Allowed jewel_generic
+chance 20
+difficulty 30
+artifact emerald_except
+def_arch jewel_generic
+Object
+title of exceptional beauty
+face jewel_green.101
+item_quality 100
+item_condition 100
+material_real 132
+value 150000
+type 60
+end
+#
+Allowed jewel_generic
+chance 5
+difficulty 50
+artifact emerald_flawless
+def_arch jewel_generic
+Object
+item_quality 100
+item_condition 100
+title of flawless beauty
+face jewel_green.101
+material_real 132
+value 310000
+type 60
+end
+#
+# Containers
+#
+Allowed quiver,quiver_s,quiver_b,bag,sack,r_sack,pouch
+chance 20
+difficulty 3
+artifact holding_min
+def_arch bag
+Object
+is_magical 1
+title of minor holding
+type 122
+value 15000
+Str 15
+end
+#
+Allowed quiver,quiver_s,quiver_b,bag,sack,r_sack,pouch
+chance 20
+difficulty 8
+artifact holding_med
+def_arch bag
+Object
+is_magical 1
+title of medium holding
+type 122
+value 30000
+Str 35
+end
+#
+Allowed quiver,quiver_s,quiver_b,bag,sack,key_ring,r_sack,pouch
+chance 20
+difficulty 20
+artifact holding
+def_arch bag
+Object
+is_magical 1
+title of holding
+type 122
+value 120000
+Str 50
+end
+#
+Allowed quiver,quiver_s,quiver_b,bag,sack,r_sack,pouch
+chance 10
+difficulty 40
+artifact holding_great
+def_arch bag
+Object
+is_magical 1
+title of great holding
+type 122
+value 1250000
+Str 70
+end
+#
+Allowed quiver,quiver_s,quiver_b,bag,sack,r_sack,pouch
+chance 10
+difficulty 65
+artifact holding_weight
+def_arch bag
+Object
+is_magical 1
+title of weightless holding
+type 122
+value 1900000
+Str 85
+end
+#
+# Cloaks
+#
+Allowed all
+chance 49
+artifact cloak_woe1
+def_arch cloak
+Object
+title of Woe
+type 87
+cursed 1
+is_magical 1
+Str -1
+Con -1
+Dex -1
+Wis -1
+Int -1
+Pow -1
+Cha -1
+luck -1
+value 50
+end
+#
+Allowed all
+chance 50
+artifact cloak_woe2
+def_arch cloak
+Object
+title of Woe
+type 87
+is_magical 1
+cursed 1
+Str -1
+Con -1
+Dex -1
+Wis -1
+Int -1
+Pow -1
+Cha -1
+luck -1
+value 50
+face cloak_black.101
+end
+#
+# Shields
+#
+Allowed all
+chance 20
+artifact shield_mass
+def_arch shield
+Object
+title of mass
+type 33
+is_magical 1
+value 5
+cursed 1
+weight 25000
+end
+#
+#
+#Artifact boots!
+#
+Allowed !sandals, high_boots, fighting_boots, combat_boots, kicking_boots
+chance 20
+artifact boots_granite
+def_arch high_boots
+difficulty 4
+Object
+title of granite
+type 99
+is_magical 1
+protect_impact 10
+protect_slash 10
+protect_pierce 10
+protect_cleave 10
+protect_fire 6
+protect_cold 6
+protect_acid 6
+protect_electricity 6
+protect_poison 6
+value 13400
+weight 35000
+ac 5
+msg
+  What strange boots, they look very 
+  protective, but amazingly heavy.
+  There also doesn't appear to be
+  any laces, you wonder how you're ever
+  going to take them off.
+endmsg
+cursed 1
+end
+#
+# Rings
+#
+# Rings are handled special. 
+# Default arch ring is ring_generic... Normal
+# artifact ring generation use this ring to get
+# for example a "ring of ice".
+# Is no special ring generated, we call the dummy ring
+# ring_normal from this file (its a Allowed none) and
+# grap us one fo the generic generated rings.
+# this will change "tin ring_generic" to a other material
+# value and/or face. We use this file to get use the difficulty
+# and all power of the artifact generation instead of copy it
+# hardcoded in treasure.c.
+# After we got a altered ring, we use the set_magic functions to insert
+# special powers.
+#
+# dummy ring - read above.
+# 
+Allowed none
+chance 100
+artifact ring_normal
+def_arch ring_generic
+Object
+value 4250
+type 70
+end
+# generic rings
+#
+Allowed ring_normal
+chance 100
+difficulty 1
+artifact ring_brass
+def_arch ring_generic
+Object
+value 4500
+type 70
+item_quality 0
+material_real 642
+face ring_tin.101
+end
+#
+Allowed ring_normal
+chance 90
+difficulty 1
+artifact ring_copper
+def_arch ring_generic
+Object
+value 4650
+type 70
+item_quality 0
+material_real 643
+face ring_copper.101
+end
+#
+Allowed ring_normal
+chance 80
+difficulty 1
+artifact ring_bronze
+def_arch ring_generic
+Object
+value 4750
+type 70
+item_quality 0
+material_real 644
+face ring_bronze.101
+end
+#
+Allowed ring_normal
+chance 70
+difficulty 3
+artifact ring_silver
+def_arch ring_generic
+Object
+value 4950
+type 70
+item_quality 0
+material_real 645
+face ring_silver.101
+end
+#
+Allowed ring_normal
+chance 50
+difficulty 8
+artifact ring_gold
+def_arch ring_generic
+Object
+value 5150
+type 70
+item_quality 0
+material_real 646
+face ring_gold.101
+end
+#
+Allowed ring_normal
+chance 40
+difficulty 20
+artifact ring_platinum
+def_arch ring_generic
+Object
+value 5250
+type 70
+item_quality 0
+material_real 647
+face ring_platinum.101
+end
+#
+Allowed ring_normal
+chance 30
+difficulty 25
+artifact ring_adamant
+def_arch ring_generic
+Object
+value 5550
+type 70
+item_quality 0
+material 256
+material_real 515
+face ring_adamant.101
+end
+#
+Allowed ring_normal
+chance 20
+difficulty 50
+artifact ring_mithril
+def_arch ring_generic
+Object
+value 5750
+type 70
+item_quality 0
+material 256
+material_real 514
+face ring_mithril.101
+end
+#
+# Here are the real artifact rings
+#
+# Ring of Thieves
+#
+Allowed ring_generic
+chance 25
+difficulty 15
+artifact ring_thieves
+def_arch ring_generic
+Object
+title of Thieves
+value 250000
+type 70
+material 256
+item_quality 100
+item_condition 100
+material_real 0
+face ring_silver_black.101
+exp 5
+is_magical 1
+Dex 3
+stealth 1
+can_see_in_dark 1
+end
+#
+#Ring of Ice
+#
+Allowed ring_generic
+chance 40
+difficulty 10
+artifact ring_ice
+def_arch ring_generic
+Object
+is_magical 1
+title of Ice
+item_quality 100
+item_condition 100
+material 256
+material_real 0
+face ring_silver_white.101
+type 70
+value 225000
+protect_cold 30
+resist_cold 20
+path_attuned 4
+msg
+  This elemental ring is one of those made at 
+  the Guild of Magicks by the powerful wizards 
+  who survived the ancient war of the elementals.
+  The wielder is surrounded by a thin, almost 
+  invisible, globe of warmth; which protects 
+  against cold.  It also grants its holder 
+  greater control of cold spells.
+endmsg
+end
+#
+Allowed ring_generic
+chance 40
+difficulty 10
+artifact ring_fire
+def_arch ring_generic
+Object
+title of Fire
+item_quality 100
+item_condition 100
+material 256
+material_real 0
+face ring_silver_red.101
+is_magical 1
+type 70
+value 225000
+resist_fire 20
+protect_fire 30
+path_attuned 2
+msg
+  This elemental ring is one of those 
+  made at the Guild of Magicks by the 
+  powerful wizards who survived the 
+  ancient war of the elementals.
+  The wielder is surrounded by a thin, 
+  almost invisible, globe of coolness; 
+  which protects against heat.  It also
+  grants the holder greater facility 
+  with fire spells.
+endmsg
+end
+#
+Allowed ring_generic
+chance 40
+difficulty 10
+artifact ring_storm
+def_arch ring_generic
+Object
+title of Storm
+material 256
+item_quality 100
+item_condition 100
+material_real 0
+face ring_silver_blue.101
+type 70
+is_magical 1
+value 225000
+resist_electricity 20
+protect_electricity 30
+path_attuned 8
+msg
+  This elemental ring is one of those made 
+  at the Guild of Magicks by the powerful 
+  wizards who survived the ancient war 
+  of the elementals.  The wielder is 
+  surrounded by a thin, almost invisible, 
+  grid of force; which protects against 
+  electricity.  It also gives facility
+  with electricity spells.
+endmsg
+end
+#
+#
+Allowed ring_generic
+chance 40
+difficulty 35
+artifact ring_storm_great
+def_arch ring_generic
+Object
+title of Greater Storm
+material 256
+item_quality 100
+item_condition 100
+material_real 0
+face ring_silver_blue.101
+type 70
+is_magical 1
+value 325000
+attack_electricity 20
+resist_electricity 20
+protect_electricity 30
+path_attuned 8
+msg
+  This elemental ring is one of those more
+  rare ones made at the Guild of Magicks by 
+  the powerful  wizards who survived the 
+  ancient war of the elementals.  The wielder
+  is  surrounded by a thin, almost invisible, 
+  grid of force; which protects against 
+  electricity and allows electric attacks.
+  It also gives facility with electricity 
+  spells and resists.
+endmsg
+end
+#
+#
+Allowed ring_generic
+chance 30
+difficulty 18
+artifact ring_yordan
+def_arch ring_generic
+Object
+title of Yordan
+face ring_gold_white.101
+item_quality 100
+item_condition 100
+material 256
+material_real 0
+type 70
+value 225000
+wc 2
+is_magical 1
+Dex 2
+dam 2
+end
+#
+#
+Allowed ring_generic
+chance 15
+artifact ring_woe
+def_arch ring_generic
+Object
+title of Woe
+type 70
+cursed 1
+is_magical 1
+Str -1
+Con -1
+Dex -1
+Wis -1
+Int -1
+Pow -1
+Cha -1
+luck -1
+value 50
+end
+#
+Allowed ring_generic
+chance 15
+artifact ring_woe
+def_arch ring_generic
+Object
+title of Woe
+type 70
+material 256
+material_real 0
+face ring_silver_red.101
+cursed 1
+is_magical 1
+Str -1
+Con -1
+Dex -1
+Wis -1
+Int -1
+Pow -1
+Cha -1
+luck -1
+value 50
+end
+#
+Allowed ring_generic
+chance 15
+artifact ring_woe
+def_arch ring_generic
+Object
+title of Woe
+type 70
+face ring_silver_blue.101
+cursed 1
+material 256
+material_real 0
+is_magical 1
+Str -1
+Con -1
+Dex -1
+Wis -1
+Int -1
+Pow -1
+Cha -1
+luck -1
+value 50
+end
+#
+Allowed ring_generic
+chance 20
+artifact ring_woe
+def_arch ring_generic
+Object
+title of Woe
+type 70
+face ring_silver_black.101
+cursed 1
+material 256
+material_real 0
+is_magical 1
+Str -1
+Con -1
+Dex -1
+Wis -1
+Int -1
+Pow -1
+Cha -1
+luck -1
+value 50
+end
+#
+# horns
+#
+Allowed all
+chance 80
+artifact horn_normal
+def_arch horn
+Object
+type 35
+end
+Allowed all
+chance 20
+artifact horn_fools
+def_arch horn
+Object
+title of fools
+type 35
+sp -81
+hp -10
+maxhp -10
+is_magical 1
+level 1
+value 50
+luck -2
+Int -2
+damned 1
+end
+#
+#
+#Amulets!
+#
+Allowed all
+chance 15
+difficulty 10
+artifact amulet_shielding
+def_arch amulet_generic
+Object
+title of minor shielding
+face amulet_lif.101
+is_magical 1
+protect_impact 20
+protect_slash 20
+protect_pierce 20
+protect_cleave 20
+type 39
+value 60000
+end
+#
+#
+# Arrows/Missiles
+#
+Allowed all
+chance 250
+artifact missile_inaccuracy
+def_arch arrow
+Object
+title of inaccuracy
+type 13
+is_magical 1
+wc -7
+cursed 1
+end
+#
+Allowed all
+chance 100
+difficulty 5
+artifact missile_accuracy
+def_arch arrow
+Object
+title of accuracy
+type 13
+is_magical 1
+value 50
+wc 7
+dam -8
+food 50
+end
+#
+#
+Allowed all
+chance 20
+artifact missile_ass_troll
+def_arch arrow
+Object
+title of assassinating trolls
+slaying troll
+attacktype 131072
+msg
+  These missiles are inscribed with 
+  powerful runes for the bane of 
+  trolls.  A scratch from one of
+  these arrows could smite one dead.
+endmsg
+type 13
+value 500
+wc 7
+is_magical 1
+dam -20
+food 100
+nrof 10
+level 40
+end
+#
+#
+Allowed arrow
+chance 100
+difficulty 5
+artifact missile_slay_dragon
+def_arch arrow
+Object
+title of slay dragon
+type 13
+value 5
+is_magical 1
+slaying dragon
+dam -12
+food 10
+end
+#
+
+#
+# Bows
+#
+Allowed all
+chance 10
+artifact range_accuracy
+def_arch bow
+Object Accuracy
+title of accuracy
+type 14
+value 5
+is_magical 1
+weight 80
+wc 4
+end
+#
+#
+# FOOD. Types of food which can effect player status
+#
+# Note: an item is cursed, the effect is generally reversed!
+#
+Allowed all
+chance 200
+artifact food_poison
+def_arch food_generic
+Object
+title of poison
+type 6
+food 10
+hp -5
+resist_magic -10
+Str -1
+Con -1
+value 5
+cursed 1
+end
+#
+Allowed all
+chance 20
+artifact food_poison2
+def_arch food_generic
+Object
+title of hideous poison
+type 6
+food 10
+hp -25
+resist_magic -25
+Str -1
+Con -1
+Dex -1
+Cha -1
+value 5
+cursed 1
+end
+# Potions (incl. dusts and balms)  
+#
+#
+Allowed potion_generic
+chance 1
+artifact potion_firestorm
+def_arch potion_generic
+Object
+title of firestorm
+face potionfir.101
+level 1
+is_magical 1
+sub_type 138
+type 5
+value 170
+sp 0
+end
+#
+Allowed potion_generic
+chance 1
+artifact potion_freezing
+def_arch potion_generic
+Object
+title of freezing
+face potioncol.101
+level 1
+type 5
+is_magical 1
+sub_type 138
+sp 1
+value 170
+end
+#
+Allowed potion_generic
+chance 1
+artifact potion_cure_sickness
+def_arch potion_generic
+Object
+title of cure sickness
+stand_still 1
+face potionhea.101
+is_magical 1
+level 1
+type 5
+sp 3
+value 170
+end
+#
+Allowed potion_generic
+chance 1
+artifact potion_cure_illness
+def_arch potion_generic
+Object
+title of cure illness
+level 1
+stand_still 1
+type 5
+is_magical 1
+sp 4
+value 170
+end
+#
+# - balms
+#
+Allowed balm_generic
+chance 1
+artifact balm_first_aid
+def_arch balm_generic
+Object
+title of first aid
+is_magical 1
+level 1
+type 5
+value 170
+sp 2
+end
+#
+#
+# SPECIAL AREA 
+# All items with <Allowed none> are excluded from masking
+# Define here unique items
+#
+# age force setting for player classes
+#
+Allowed none
+chance 1
+artifact age_force_human
+def_arch age_force
+Object
+title human age force (artifacts generic)
+# we start at age 21
+hp 21
+# this is our max age 
+# we count as "aged" if we are older as 60% of the max age
+maxhp 80
+# we are not unnatural aged by default
+sp   0
+# our permanent (real) age was changed by 0 years by magic or higher forces
+grace  0
+end
+#

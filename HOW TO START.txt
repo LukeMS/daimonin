@@ -1,0 +1,39 @@
+Welcome to Daimonin
+
+Read first FOLDER.txt - it will give you a overview about this package.
+
+In every main folder is usually a README.txt file - read it!
+It will guide you through the specific folders and their content.
+
+CLIENT:
+To start a client, you need under win32 (Windows 98, NT, XP...) nothing
+but the binary package. Download it and run the installer.
+You can start it out of the box. 
+
+For linux or a source package, you need some libraries too. Read the
+README.txt in /client/make and follow what it tells. 
+
+A note to *unix users:
+The Daimonins SDL client runs under linux for example with the same speed,
+features and quality as under DirectX - but you have to install a low
+level sound and graphic driver system first (like openGL for example)!
+
+The SDL client is a "real" game application and will take heavy advantage
+from it because the SDL library will use always the "best" installed 
+drivers it can be found. If there are no one, the SDL library will fall down
+to normal X-GUI functions - and thats pretty slow. Note that i have run the 
+client on my system with openGL and Slackware linux with >100 fps.
+Graphic Card manufactors like Nvidia will provide native drivers for linux 
+and some other OS. And don't forget the sound! Daimonin has a great
+sound interface and use it as integrated engine part. You will miss alot
+of gaming experience without sound.
+
+
+SERVER:
+To start a Daimon server, you need a installed PYTHON script engine.
+You can download the python script engine from the python homepage:
+http://www.python.org/
+
+For help ask the dev team:
+
+http://daimonin.sourceforge.net

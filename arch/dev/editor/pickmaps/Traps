@@ -1,0 +1,132 @@
+arch map
+name Some Traps
+msg
+Creator: Daimonin Map Editor
+Date:    6/26/2003
+endmsg
+width 7
+height 7
+end
+arch trap_blades
+end
+arch floor_ostone1
+y 1
+end
+arch floor_ostone2
+y 2
+end
+arch trap_rocks
+x 1
+end
+arch floor_ostone3
+x 1
+y 1
+end
+arch floor_ostone1
+x 1
+y 2
+end
+arch floor_ostone2
+x 1
+y 3
+end
+arch random_treasure
+randomitems random_test
+identified 1
+x 2
+end
+arch floor_ostone14
+x 2
+y 1
+end
+arch trap_needle
+x 2
+y 2
+end
+arch floor_ostone1
+x 2
+y 3
+end
+arch floor_ostone2
+x 2
+y 4
+end
+arch floor_ostone1
+x 3
+end
+arch floor_ostone1
+x 3
+y 1
+end
+arch trap_diseased_needle
+x 3
+y 2
+end
+arch floor_ostone3
+x 3
+y 3
+end
+arch floor_ostone1
+x 3
+y 4
+end
+arch floor_ostone2
+x 3
+y 5
+end
+arch floor_ostone1
+x 4
+y 1
+end
+arch floor_ostone1
+x 4
+y 2
+end
+arch floor_ostone14
+x 4
+y 3
+end
+arch floor_ostone3
+x 4
+y 4
+end
+arch floor_ostone1
+x 4
+y 5
+end
+arch rod_heavy
+x 4
+y 6
+end
+arch floor_ostone1
+x 5
+y 2
+end
+arch floor_ostone1
+x 5
+y 3
+end
+arch floor_ostone14
+x 5
+y 4
+end
+arch floor_ostone3
+x 5
+y 5
+end
+arch dust_generic
+x 5
+y 6
+end
+arch balm_generic
+x 6
+y 4
+end
+arch potion_generic
+x 6
+y 5
+end
+arch scroll_generic
+x 6
+y 6
+end
