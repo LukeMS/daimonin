@@ -13,8 +13,6 @@ sleep
 move_towards_enemy
 move_towards_home
 
-reaction_moves:
-
 actions:
 melee_attack_enemy
 bow_attack_enemy
