@@ -1,0 +1,84 @@
+#
+#  Daimonin MacOSX Readme
+#
+
+******* WARNING: This macosx make is not tested with the latest source ******
+******* We have no access to a mac to test it                          ******
+******* However, using the linux make as template it should easy to    ******
+******* adjust this make files. If you fix it, please send it to us!!  ******
+
+Before you can compile the client, you need 3 SDL libraries.
+
+These libs are called SDL, SDL_mixer, SDL_image.
+
+The best way to get these libraries, is through the fink project.  The fink
+project  is a package management system, that enables popular unix programs
+and libraries work on Darwin and MacOS X. 
+
+You will almost certaintly need to install the Apple Developer Tools before 
+attempting to install fink.  The developer tools should have shipped with 
+OSX, however you should be able to download them, after registration, from
+http://developer.apple.com/.
+
+Please note that if you use Virex version 7.2, then you should not attempt to
+install fink, due to an incompatibility.  Indications are that Virex 7.2.1 
+fixes this problem. 
+
+
+Download and Install the Fink Application
+
+   see:  http://fink.sourceforge.net/ for installation instructions
+
+I would recommend that you also download and install "Fink Commander". This 
+provides a GUI to the fink tools, and makes it much easier to select packages
+to install.
+
+   see:  http://finkcommander.sourceforge.net/  to download and install
+
+Install the SDL libs.
+
+  Using Fink Commander: 
+
+    1)  If this is the first use of fink commander, you should probably ensure
+        that fink is fully up-to-date. Select Selfupdate from the Source menu.
+
+    2)  After the selfupdate completes, type "sdl" into the search box. You 
+        should see several packages containing the name SDL. 
+
+    3)  Select the following packages : sdl, sdl-image, and sdl-mixer. 
+
+    4)  Select Install from the Source menu. Fink will fetch and install sdl. 
+
+After you have installed these SDL libs, you can compile the source.
+
+Follow this steps:
+
+1)  cd daimonin/client/make/macosx
+
+2.) make distclean
+	Type 'make distclean' to be sure you have a clean source.
+	This will uninstall old installations too!
+
+3.) configure
+	Type './configure' to generate your makefiles. This will
+	set the installation folder to 'client_VERSION'. To force
+	a different folder type './configure --prefix="<path>/<folder>".
+
+4.) make all
+	Type 'make all'. The source will be compiled and linked.
+
+5.) make install
+	Type 'make install'. This will install 
+	
+Thats all.
+
+You can compile the client without SDL_mixer (wave and ogg support). Follow
+the comments in the Makefile to remove the libs from linking.
+
+Note, that even with linked SDL_mixer the client will run fine on systems
+without soundcard. The client will disable the sound automatically. Compiling 
+it native without sound on a system without sound is just a clean option.
+
+You have ALWAYS to install the SDL and SDL_image libs on your system. 
+The client can't run without it!
+

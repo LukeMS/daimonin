@@ -18,7 +18,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to daimonin@nord-com.net
+    The author can be reached via e-mail to info@daimonin.net
 */
 
 #include <include.h>
@@ -40,6 +40,8 @@ Uint32              sdl_dgreen, sdl_gray1, sdl_gray2, sdl_gray3, sdl_gray4, sdl_
 int                 music_global_fade   = FALSE;
 int                 show_help_screen;
 int                 mb_clicked          = 0;
+
+int					interface_mode;
 
 int                 debug_layer[MAXFACES];
 int                 bmaptype_table_size;
@@ -68,6 +70,8 @@ uint32              tmpGameTick;            /* used from several functions, just
 
 int                 esc_menu_flag;
 int                 esc_menu_index;
+
+struct gui_interface_struct *gui_interface_npc;
 
 _bmaptype          *bmap_table[BMAPTABLE];
 
@@ -174,7 +178,12 @@ static _bitmap_name bitmap_name[BITMAP_INIT]    =
     {"button_small_up.png", PIC_TYPE_DEFAULT},{"button_small_down.png", PIC_TYPE_DEFAULT},
     {"group_mana.png", PIC_TYPE_DEFAULT},{"group_grace.png", PIC_TYPE_DEFAULT},
     {"group_hp.png", PIC_TYPE_DEFAULT},
-
+	{"npc_interface.png", PIC_TYPE_TRANS},
+	{"coin_copper.png", PIC_TYPE_TRANS},
+	{"coin_silver.png", PIC_TYPE_TRANS},
+	{"coin_gold.png", PIC_TYPE_TRANS},
+	{"coin_mithril.png", PIC_TYPE_TRANS},
+	{"npc_int_slider.png", PIC_TYPE_DEFAULT}
 };
 
 #define BITMAP_MAX (sizeof(bitmap_name)/sizeof(struct _bitmap_name))
@@ -273,6 +282,7 @@ void init_game_data(void)
     start_anim = NULL; /* anim queue of current active map */
 
     clear_group();
+	interface_mode = INTERFACE_MODE_NO;
     map_transfer_flag = 0;
     start_server = NULL;
     ServerName[0] = 0;
@@ -291,6 +301,7 @@ void init_game_data(void)
     InputStringEscFlag = FALSE;
     csocket.fd = SOCKET_NO;
     RangeFireMode = 0;
+	gui_interface_npc = NULL;
 
     memset(media_file, 0, sizeof(_media_file) * MEDIA_MAX);
     media_count = 0;    /* buffered media files*/
@@ -299,6 +310,7 @@ void init_game_data(void)
     textwin_clearhistory();
     delete_player_lists();
     load_options_dat(); /* now load options, allowing the user to override the presetings */
+	server_level.exp[1]=2500; /* dummy value for startup */
 }
 
 /******************************************************************
@@ -310,7 +322,7 @@ void save_options_dat(void)
     int     i = -1, j = -1;
     FILE   *stream;
 
-    if (!(stream = fopen(OPTION_FILE, "w")))
+    if (!(stream = fopen_wrapper(OPTION_FILE, "w")))
         return;
     fputs("###############################################\n", stream);
     fputs("# This is the Daimonin SDL client option file #\n", stream);
@@ -376,7 +388,7 @@ void load_options_dat(void)
     }
 
     /* Read the options from file */
-    if (!(stream = fopen(OPTION_FILE, "r")))
+    if (!(stream = fopen_wrapper(OPTION_FILE, "r")))
     {
         LOG(LOG_MSG, "Can't find file %s. Using defaults.\n", OPTION_FILE);
         return;
@@ -441,6 +453,7 @@ Boolean game_status_chain(void)
     /* autoinit or reset prg data */
     if (GameStatus == GAME_STATUS_INIT)
     {
+		interface_mode = INTERFACE_MODE_NO;
         clear_group();
         map_udate_flag = 2;
         delete_player_lists();
@@ -455,6 +468,7 @@ Boolean game_status_chain(void)
     /* connect to meta and get server data */
     else if (GameStatus == GAME_STATUS_META)
     {
+		interface_mode = INTERFACE_MODE_NO;
         clear_group();
         map_udate_flag = 2;
         if (argServerName[0] != 0)
@@ -489,6 +503,7 @@ Boolean game_status_chain(void)
     }
     else if (GameStatus == GAME_STATUS_START)
     {
+		interface_mode = INTERFACE_MODE_NO;
         clear_group();
         map_udate_flag = 2;
         if (csocket.fd != SOCKET_NO)
@@ -1417,6 +1432,8 @@ int main(int argc, char *argv[])
                     do_number(100, 505);
                 else if (cpl.input_mode == INPUT_MODE_GETKEY)
                     do_keybind_input();
+                else if (cpl.input_mode == INPUT_MODE_NPCDIALOG)
+					do_npcdialog_input();
             }
             else
             {

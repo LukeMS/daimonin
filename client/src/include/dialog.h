@@ -18,7 +18,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to daimonin@nord-com.net
+    The author can be reached via e-mail to info@daimonin.net
 */
 
 #if !defined(__DIALOG_H)
@@ -66,5 +66,9 @@ extern void show_newplayer_server(void);
 extern void show_login_server(void);
 extern void show_meta_server(_server *node, int metaserver_start, int metaserver_sel);
 extern void accept_char();
+extern int get_interface_line(int *element, int *index, char **keyword, int x, int y, int mx, int my);
+extern int precalc_interface_npc(void);
+extern void show_interface_npc(int mark);
+extern void gui_interface_mouse(SDL_Event *e);
 #endif
 

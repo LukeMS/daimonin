@@ -18,7 +18,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to daimonin@nord-com.net
+    The author can be reached via e-mail to info@daimonin.net
 */
 #if !defined(__MAIN_H)
 #define __MAIN_H
@@ -55,6 +55,9 @@ extern _server_char     new_character; /* if we login as new char, thats the val
 #define SDL_DEFAULT_REPEAT_INTERVAL     30
 
 #define MAXHASHSTRING 20 /* for hash table (bmap, ...) */
+
+#define INTERFACE_MODE_NO 0
+#define INTERFACE_MODE_NPC	1
 
 #define BMAPTABLE 5003 /* prime nubmer for hash table */
 /* struct for out bmap data */
@@ -106,16 +109,18 @@ _bmaptype_table bmaptype_table[MAX_BMAPTYPE_TABLE];
 
 extern int              bmaptype_table_size;
 
-#define FILE_DAIMONIN_P0 "./daimonin.p0"
-#define FILE_BMAPS_P0 "./bmaps.p0"
-#define FILE_BMAPS_TMP "./srv_files/bmaps.tmp"
-#define FILE_ANIMS_TMP "./srv_files/anims.tmp"
+#define SYSPATH "./"
 
-#define FILE_CLIENT_SPELLS "./srv_files/client_spells"
-#define FILE_CLIENT_SKILLS "./srv_files/client_skills"
-#define FILE_CLIENT_SETTINGS "./srv_files/client_settings"
-#define FILE_CLIENT_BMAPS "./srv_files/client_bmap"
-#define FILE_CLIENT_ANIMS "./srv_files/client_anims"
+#define FILE_DAIMONIN_P0 "daimonin.p0"
+#define FILE_BMAPS_P0 "bmaps.p0"
+#define FILE_BMAPS_TMP "srv_files/bmaps.tmp"
+#define FILE_ANIMS_TMP "srv_files/anims.tmp"
+
+#define FILE_CLIENT_SPELLS "srv_files/client_spells"
+#define FILE_CLIENT_SKILLS "srv_files/client_skills"
+#define FILE_CLIENT_SETTINGS "srv_files/client_settings"
+#define FILE_CLIENT_BMAPS "srv_files/client_bmap"
+#define FILE_CLIENT_ANIMS "srv_files/client_anims"
 
 enum
 {
@@ -571,6 +576,12 @@ typedef enum _bitmap_index
     BITMAP_GROUP_MANA,
     BITMAP_GROUP_GRACE,
     BITMAP_GROUP_HP,
+	BITMAP_NPC_INTERFACE,
+    BITMAP_COIN_COPPER,
+    BITMAP_COIN_SILVER,
+    BITMAP_COIN_GOLD,
+    BITMAP_COIN_MITHRIL,
+    BITMAP_NPC_INT_SLIDER,
     BITMAP_INIT
 }                           _bitmap_index;
 
@@ -589,7 +600,10 @@ extern int                  RangeFireMode;
 
 extern int                  ToggleScreenFlag;
 
+extern int					interface_mode;
+
 extern struct _Sprite      *Bitmaps[];
+extern struct gui_interface_struct *gui_interface_npc;
 
 extern _face_struct         FaceList[MAX_FACE_TILES];   /* face data */
 

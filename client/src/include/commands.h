@@ -18,7 +18,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to daimonin@nord-com.net
+    The author can be reached via e-mail to info@daimonin.net
 */
 
 #if !defined(__COMMANDS_H)
@@ -83,6 +83,7 @@ extern void ItemYCmd(unsigned char *data, int len);
 extern void GroupCmd(unsigned char *data, int len);
 extern void GroupInviteCmd(unsigned char *data, int len);
 extern void GroupUpdateCmd(unsigned char *data, int len);
+extern void InterfaceCmd(unsigned char *data, int len);
 extern void TargetObject(unsigned char *data, int len);
 extern void DataCmd(char *data, int len);
 extern void NewCharCmd(char *data, int len);

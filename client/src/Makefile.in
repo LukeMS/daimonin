@@ -28,6 +28,7 @@ SRCS = \
 	commands.c\
 	event.c\
 	group.c\
+	interface.c\
 	inventory.c\
 	item.c\
 	main.c\
@@ -47,7 +48,8 @@ SRCS = \
 	inffast.c\
 	inftrees.c\
 	uncompr.c\
-	zutil.c
+	zutil.c\
+	filewrap.c
 
 ALLFILES = $(SRCS) Makefile.in
 

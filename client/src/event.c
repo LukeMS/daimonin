@@ -18,7 +18,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to daimonin@nord-com.net
+    The author can be reached via e-mail to info@daimonin.net
 */
 
 #include "include.h"
@@ -479,7 +479,17 @@ int Event_PollInputDevice(void)
               if (GameStatus < GAME_STATUS_PLAY)
                   break;
 
-              textwin_event(TW_CHECK_BUT_DOWN, &event);
+			  if (cpl.menustatus == MENU_NPC)
+			  {
+				if (event.button.button ==4 || event.button.button ==5 || event.button.button == SDL_BUTTON_LEFT)
+				{
+					gui_interface_mouse(&event);
+						break;
+				}
+
+			  }
+			  
+			  textwin_event(TW_CHECK_BUT_DOWN, &event);
 
               /* close number input */
               if (InputStringFlag && cpl.input_mode == INPUT_MODE_NUMBER)
@@ -579,7 +589,7 @@ int Event_PollInputDevice(void)
               if ((cpl.inventory_win == IWIN_BELOW) && y > 498 + 27 && y <521 + 27 && x> 200 + 70 && x < 240 + 70)
               {
                   if (cpl.target_code)
-                      send_command("/t_tell hello", -1, SC_NORMAL);
+                      send_command("/talk hello", -1, SC_NORMAL);
                   break;
               }
 
@@ -2110,7 +2120,7 @@ void read_keybind_file(char *fname)
     char    line[255];
     int     i, pos;
 
-    if ((stream = fopen(fname, "r")))
+    if ((stream = fopen_wrapper(fname, "r")))
     {
         bindkey_list_set.group_nr = -1;
         bindkey_list_set.entry_nr = 0;
@@ -2175,7 +2185,7 @@ void save_keybind_file(char *fname)
     int     entry, group;
     char    buf[256];
 
-    if (!(stream = fopen(fname, "w+")))
+    if (!(stream = fopen_wrapper(fname, "w+")))
         return;
     for (group = 0; group < BINDKEY_LIST_MAX; group++)
     {
@@ -2237,10 +2247,95 @@ void check_menu_keys(int menu, int key)
 
     switch (menu)
     {
-        case MENU_OPTION:
+		case MENU_NPC:
+
+			if(gui_interface_npc->status == GUI_INTERFACE_STATUS_WAIT)
+				return;
+
+			switch (key)
+			{
+			case SDLK_RETURN:
+                reset_keys();
+                open_input_mode(240);
+                textwin_putstring("");
+                cpl.input_mode = INPUT_MODE_NPCDIALOG;
+				gui_interface_npc->input_flag = TRUE;
+                sound_play_effect(SOUND_SCROLL, 0, 0, MENU_SOUND_VOL);
+                break;
+
+			case SDLK_d:
+				reset_gui_interface();	
+				sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+				break;
+
+			case SDLK_n:
+				if(gui_interface_npc->accept.title[0]!='N')
+					return;
+				draw_info("You listen...", COLOR_WHITE);
+				gui_interface_npc->status = GUI_INTERFACE_STATUS_WAIT;
+				goto menu_npc_jump1;
+			case SDLK_a:
+				if(gui_interface_npc->accept.title[0]!='A')
+					return;
+				draw_info("You accept.", COLOR_WHITE);
+				gui_interface_npc->status = GUI_INTERFACE_STATUS_WAIT;
+				goto menu_npc_jump1;
+			case SDLK_o:
+				if(gui_interface_npc->accept.title[0]!=0 && gui_interface_npc->accept.title[0]!='O')
+					return;
+				draw_info("Ok and bye.", COLOR_WHITE);
+				menu_npc_jump1:
+				sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+				if(gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.command[0]!='\0')
+					gui_interface_send_command(1, gui_interface_npc->accept.command);
+//					send_command(gui_interface_npc->accept.command, -1, SC_NORMAL);
+				else
+					reset_gui_interface();	
+			break;
+			case SDLK_PAGEUP:
+				gui_interface_npc->yoff +=12;
+				if(gui_interface_npc->yoff >0)
+				{
+					gui_interface_npc->yoff=0;
+					if(menuRepeatKey != SDLK_PAGEUP)
+						sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+				}
+                menuRepeatKey = SDLK_PAGEUP;
+				if(gui_interface_npc->yoff < INTERFACE_WINLEN_NPC-gui_interface_npc->win_length)
+				{
+					gui_interface_npc->yoff = INTERFACE_WINLEN_NPC-gui_interface_npc->win_length;
+				}
+				if(gui_interface_npc->yoff >0)
+				{
+					gui_interface_npc->yoff=0;
+				}
+				break;
+			case SDLK_PAGEDOWN:
+				gui_interface_npc->yoff -= 12;
+
+				if(gui_interface_npc->yoff < INTERFACE_WINLEN_NPC-gui_interface_npc->win_length)
+				{
+					gui_interface_npc->yoff = INTERFACE_WINLEN_NPC-gui_interface_npc->win_length;
+					if(menuRepeatKey != SDLK_PAGEDOWN)
+						sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+				}
+				menuRepeatKey = SDLK_PAGEDOWN;
+				if(gui_interface_npc->yoff < INTERFACE_WINLEN_NPC-gui_interface_npc->win_length)
+				{
+					gui_interface_npc->yoff = INTERFACE_WINLEN_NPC-gui_interface_npc->win_length;
+				}
+				if(gui_interface_npc->yoff >0)
+				{
+					gui_interface_npc->yoff=0;
+				}
+				break;
+			}
+			
+		break;
+		case MENU_OPTION:
           switch (key)
           {
-              case SDLK_LEFT:
+		  case SDLK_LEFT:
                 option_list_set.key_change = -1;
                 /*sound_play_effect(SOUND_SCROLL,0,0,MENU_SOUND_VOL);*/
                 menuRepeatKey = SDLK_LEFT;

@@ -18,7 +18,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to daimonin@nord-com.net
+    The author can be reached via e-mail to info@daimonin.net
 */
 #include <include.h>
 
@@ -311,14 +311,15 @@ void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col
     register int i,tmp, line_clip = -1,line_count = 0;
     register Boolean gflag;
     int         colorToggle = 0;
-    SDL_Rect    src, dst;
+    SDL_Rect    src, dst, dst_tmp;
     SDL_Color   color, color_g;
 
     if (area)
         line_clip = area->w;
+	
+    dst_tmp.x = x; /* .w/h are not used from BlitSurface to draw*/
+    dst_tmp.y = y;
 
-    dst.x = x; /* .w/h are not used from BlitSurface to draw*/
-    dst.y = y;
 
 
     color_g.r = 96;
@@ -333,6 +334,8 @@ void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col
     gflag = FALSE;
     for (i = 0; text[i] != '\0'; i++)
     {
+		dst.x=dst_tmp.x;
+		dst.y=dst_tmp.y;
         if (text[i] == '°' || text[i] == '~') /* change text color */
         {
             if (col == COLOR_BLACK)
@@ -390,7 +393,7 @@ void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col
             SDL_BlitSurface(font->sprite->bitmap, &src, surf, &dst);
         }
 
-        dst.x += tmp;
+        dst_tmp.x += tmp;
     }
 }
 

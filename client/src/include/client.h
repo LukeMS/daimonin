@@ -18,7 +18,7 @@
     along with this program; if not, write to the Free Software
     Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
-    The author can be reached via e-mail to daimonin@nord-com.net
+    The author can be reached via e-mail to info@daimonin.net
 */
 #include "include.h"
 
@@ -45,6 +45,7 @@
 #define INPUT_MODE_CONSOLE 1
 #define INPUT_MODE_NUMBER  4
 #define INPUT_MODE_GETKEY  8
+#define INPUT_MODE_NPCDIALOG  16
 
 #define NUM_MODE_GET  1
 #define NUM_MODE_DROP 2
