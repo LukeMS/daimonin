@@ -861,7 +861,7 @@ treasure wyvern
   nrof 1
   more
   arch amulet_generic
-  chance 100
+  chance 2
   difficulty 7
   nrof 1
   more
