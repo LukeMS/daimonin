@@ -4044,29 +4044,6 @@ terrain_type 1
 no_pick 1
 is_floor 1
 end
-Object blocked
-face blocked.111
-type 71
-editor_folder floors/floors
-layer 1
-no_teleport 1
-is_floor 1
-blocksview 1
-terrain_type 1
-no_pick 1
-no_pass 1
-end
-Object floor_inv
-name floor
-face trans.101
-type 71
-editor_folder floors/floors
-layer 1
-terrain_type 1
-no_teleport 1
-is_floor 1
-no_pick 1
-end
 Object knot-0a
 name knot
 face knot_0a.111
@@ -5584,6 +5561,29 @@ no_teleport 1
 layer 2
 no_pick 1
 end
+Object blocked
+face blocked.111
+type 71
+editor_folder floors/floors
+layer 1
+no_teleport 1
+is_floor 1
+blocksview 1
+terrain_type 1
+no_pick 1
+no_pass 1
+end
+Object floor_inv
+name floor
+face trans.101
+type 71
+editor_folder floors/floors
+layer 1
+terrain_type 1
+no_teleport 1
+is_floor 1
+no_pick 1
+end
 Object ability_cause_lig_wound
 name ability cause light wounds
 face force.101
@@ -6313,6 +6313,15 @@ no_pick 1
 no_pass 1
 layer 4
 end
+Object box_big.101
+name big box
+face box_big.101
+type 79
+editor_folder indoor/containers
+no_pick 1
+no_pass 1
+layer 4
+end
 Object urn.101
 name urn
 face urn.101
@@ -6370,6 +6379,15 @@ editor_folder indoor/containers
 no_pick 1
 layer 4
 end
+Object keg_big.101
+name big keg
+face keg_big.101
+type 79
+editor_folder indoor/containers
+no_pick 1
+no_pass 1
+layer 4
+end
 Object table_round1
 name table
 face table_round1.101
@@ -6411,6 +6429,60 @@ type 79
 editor_folder indoor/tables
 no_pass 1
 no_pick 1
+layer 4
+end
+Object table_lab1.111
+name table
+face table_lab1.111
+type 79
+editor_folder indoor/tables
+no_pick 1
+no_pass 1
+layer 4
+end
+Object table_lab1.171
+name table
+face table_lab1.171
+type 79
+editor_folder indoor/tables
+no_pick 1
+no_pass 1
+layer 4
+end
+Object table_lab2.111
+name table
+face table_lab2.111
+type 79
+editor_folder indoor/tables
+no_pick 1
+no_pass 1
+layer 4
+end
+Object table_lab2.171
+name table
+face table_lab2.171
+type 79
+editor_folder indoor/tables
+no_pick 1
+no_pass 1
+layer 4
+end
+Object table_lab3.111
+name table
+face table_lab3.111
+type 79
+editor_folder indoor/tables
+no_pick 1
+no_pass 1
+layer 4
+end
+Object table_lab3.171
+name table
+face table_lab3.171
+type 79
+editor_folder indoor/tables
+no_pick 1
+no_pass 1
 layer 4
 end
 Object carpet1
@@ -6804,6 +6876,78 @@ editor_folder indoor/masks_wall
 no_pick 1
 layer 7
 end
+Object prison_deco1.131
+name bed
+face prison_deco1.131
+type 79
+editor_folder indoor/jail
+no_pick 1
+layer 4
+end
+Object prison_deco1.151
+name bed
+face prison_deco1.151
+type 79
+editor_folder indoor/jail
+no_pick 1
+layer 4
+end
+Object prison_deco2.131
+name bed
+face prison_deco2.131
+type 79
+editor_folder indoor/jail
+no_pick 1
+layer 4
+end
+Object prison_deco2.151
+name bed
+face prison_deco2.151
+type 79
+editor_folder indoor/jail
+no_pick 1
+layer 4
+end
+Object prison_deco3.131
+name bed
+face prison_deco3.131
+type 79
+editor_folder indoor/jail
+no_pick 1
+layer 4
+end
+Object prison_deco3.151
+name bed
+face prison_deco3.151
+type 79
+editor_folder indoor/jail
+no_pick 1
+layer 4
+end
+Object fire_cauld.131
+name small cauldron
+face fire_cauld.131
+type 79
+editor_folder indoor/lab
+no_pick 1
+layer 4
+end
+Object fire_cauld.151
+name small cauldron
+face fire_cauld.151
+type 79
+editor_folder indoor/lab
+no_pick 1
+layer 4
+end
+Object lab_cauld_brk
+name small broken cauldron
+face lab_cauld_brk.101
+type 79
+editor_folder indoor/lab
+no_pick 1
+layer 4
+end
 Object basin1.101
 name basin
 face basin1.101
@@ -6991,6 +7135,30 @@ end
 Object grain2.101
 name grain
 face grain2.101
+type 79
+editor_folder indoor/indoor
+no_pick 1
+layer 4
+end
+Object grain3.101
+name grain
+face grain3.101
+type 79
+editor_folder indoor/indoor
+no_pick 1
+layer 4
+end
+Object grain4.101
+name grain
+face grain4.101
+type 79
+editor_folder indoor/indoor
+no_pick 1
+layer 4
+end
+Object grain5.101
+name grain
+face grain5.101
 type 79
 editor_folder indoor/indoor
 no_pick 1
@@ -10532,6 +10700,34 @@ container 15000
 weight 15000
 weapon_speed 1.0
 end
+Object wagon_small.111
+name small wagon
+face wagon_small.111
+type 122
+editor_folder items/container
+layer 4
+identified 1
+no_pick 1
+material 18
+value 350
+container 15000
+weight 15000
+weapon_speed 1.0
+end
+Object wagon_small.131
+name small wagon
+face wagon_small.131
+type 122
+editor_folder items/container
+layer 4
+identified 1
+no_pick 1
+material 18
+value 350
+container 15000
+weight 15000
+weapon_speed 1.0
+end
 Object bag
 name bag
 face bag.101
@@ -10948,34 +11144,6 @@ material_real 450
 value 15
 weight 250
 container 75000
-weapon_speed 1.0
-end
-Object wagon_small.111
-name small wagon
-face wagon_small.111
-type 122
-editor_folder items/container
-layer 4
-identified 1
-no_pick 1
-material 18
-value 350
-container 15000
-weight 15000
-weapon_speed 1.0
-end
-Object wagon_small.131
-name small wagon
-face wagon_small.131
-type 122
-editor_folder items/container
-layer 4
-identified 1
-no_pick 1
-material 18
-value 350
-container 15000
-weight 15000
 weapon_speed 1.0
 end
 Object chest7_111
@@ -11549,6 +11717,7 @@ sp -1
 inv_face potion_gen.101
 sub_type 128
 is_thrown 1
+wc_range 20
 material 512
 weight 200
 value 28
@@ -11613,6 +11782,7 @@ nrof 1
 layer 3
 sp -1
 sub_type 129
+wc_range 20
 material 4
 is_dust 1
 weight 15
@@ -15060,6 +15230,54 @@ is_used_up 1
 no_pick 1
 food 9
 end
+Object bone_broken
+name broken bone
+face bone_broken.101
+type 79
+editor_folder misc/bones
+no_pick 1
+layer 4
+end
+Object bone_skull
+name skull
+face bone_skull.101
+type 79
+editor_folder misc/bones
+no_pick 1
+layer 4
+end
+Object bones1
+name bones
+face bones1.101
+type 79
+editor_folder misc/bones
+no_pick 1
+layer 4
+end
+Object bones2
+name bones
+face bones2.101
+type 79
+editor_folder misc/bones
+no_pick 1
+layer 4
+end
+Object bones3
+name bones
+face bones3.101
+type 79
+editor_folder misc/bones
+no_pick 1
+layer 4
+end
+Object bones4
+name bones
+face bones4.101
+type 79
+editor_folder misc/bones
+no_pick 1
+layer 4
+end
 Object fog
 face fog.111
 type 79
@@ -15150,22 +15368,6 @@ invulnerable 1
 material 1
 speed 0.01
 blocksview 1
-end
-Object bone_broken
-name broken bone
-face bone_broken.101
-type 79
-editor_folder misc/bones
-no_pick 1
-layer 4
-end
-Object bone_skull
-name skull
-face bone_skull.101
-type 79
-editor_folder misc/bones
-no_pick 1
-layer 4
 end
 Object blob_acid
 name acid blob
@@ -16558,40 +16760,6 @@ level 1
 speed -0.0275
 weight 22500
 end
-Object golem
-face golem.131
-type 80
-editor_folder mobs/summoned
-race golem
-layer 6
-direction 5
-is_neutral 1
-corpse 1
-will_apply 8
-item_race 255
-wc_range 20
-item_level 255
-terrain_flag 1
-weapon_speed 0.039
-Wis 6
-animation golem
-is_animated 1
-anim_speed 4
-monster 1
-alive 1
-attack_impact 100
-can_see_in_dark 1
-exp 120
-ac 9
-wc 6
-dam 4
-hp -1
-maxhp 7
-level 1
-speed -0.035
-no_pick 1
-weight 120000
-end
 Object icegolem
 name ice golem
 face icegolem.031
@@ -16667,6 +16835,40 @@ level 1
 speed -0.032
 weight 22500
 end
+Object golem
+face golem.131
+type 80
+editor_folder mobs/summoned
+race golem
+layer 6
+direction 5
+is_neutral 1
+corpse 1
+will_apply 8
+item_race 255
+wc_range 20
+item_level 255
+terrain_flag 1
+weapon_speed 0.039
+Wis 6
+animation golem
+is_animated 1
+anim_speed 4
+monster 1
+alive 1
+attack_impact 100
+can_see_in_dark 1
+exp 120
+ac 9
+wc 6
+dam 4
+hp -1
+maxhp 7
+level 1
+speed -0.035
+no_pick 1
+weight 120000
+end
 Object wyvern
 name wyvern
 face wyvern.141
@@ -16694,7 +16896,6 @@ monster 1
 level 1
 Con 2
 Pow 2
-can_cast_spell 1
 exp 165
 ac 11
 wc 7
@@ -16753,20 +16954,6 @@ alive 1
 no_pick 1
 x 1
 y 1
-end
-Object spawn_point
-face spawn_point.101
-type 81
-editor_folder mobs/mobs
-other_arch spawn_info
-speed -0.0011
-no_teleport 1
-last_sp -1
-sp -1
-last_heal 9
-sys_object 1
-layer 0
-no_pick 1
 end
 Object troll
 name troll
@@ -17492,6 +17679,20 @@ maxhp 7
 speed -0.0325
 level 1
 weight 355000
+end
+Object spawn_point
+face spawn_point.101
+type 81
+editor_folder mobs/mobs
+other_arch spawn_info
+speed -0.0011
+no_teleport 1
+last_sp -1
+sp -1
+last_heal 9
+sys_object 1
+layer 0
+no_pick 1
 end
 Object director
 name director

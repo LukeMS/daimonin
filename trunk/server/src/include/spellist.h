@@ -93,13 +93,13 @@ spell spells[NROFREALSPELLS]={
 								0,       0,     0,      0,0, SOUND_MAGIC_DEFAULT,
 								SPELL_USE_CAST|SPELL_USE_SCROLL|SPELL_USE_BOOK,		/* scroll */
 								SPELL_DESC_SELF|SPELL_DESC_TOWN|SPELL_DESC_FRIENDLY|SPELL_DESC_WIS,
-								PATH_RESTORE, "meffect_blue",SPELL_ACTIVE
+								PATH_TURNING, "meffect_blue",SPELL_ACTIVE
 },
 {"remove damnation",			SPELL_TYPE_PRIEST, 1, 5, 8.0f, 3, 6,2,1.0,
 								0,       0,     0,      0,0,	SOUND_MAGIC_DEFAULT,
 								SPELL_USE_CAST|SPELL_USE_SCROLL|SPELL_USE_BOOK, /* scroll*/
 								SPELL_DESC_SELF|SPELL_DESC_TOWN|SPELL_DESC_FRIENDLY|SPELL_DESC_WIS,
-								PATH_RESTORE, "meffect_blue",SPELL_ACTIVE
+								PATH_TURNING, "meffect_blue",SPELL_ACTIVE
 },
 {"cause light wounds",			SPELL_TYPE_PRIEST, 1, 4, 8.0f, 3, 6,0,	1.0,/* scroll*/
 								4,      5,      4,      4,	9,	SOUND_MAGIC_WOUND,

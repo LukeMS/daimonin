@@ -12,3 +12,31 @@ no_pick 1
 type 79
 layer 4
 end
+Object bones1
+name bones
+face bones1.101
+no_pick 1
+type 79
+layer 4
+end
+Object bones2
+name bones
+face bones2.101
+no_pick 1
+type 79
+layer 4
+end
+Object bones3
+name bones
+face bones3.101
+no_pick 1
+type 79
+layer 4
+end
+Object bones4
+name bones
+face bones4.101
+no_pick 1
+type 79
+layer 4
+end
