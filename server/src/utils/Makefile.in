@@ -1,0 +1,45 @@
+FILES = Makefile.in update_rp mktable.script \
+	flushlocks daimonin-loop.c dmomloop.in
+
+prefix = @prefix@
+exec_prefix = @exec_prefix@
+bindir = @bindir@
+
+INSTALL = @INSTALL@
+
+MKDIR = @MKDIR@
+SHELL = @BOURNE_SHELL@
+RM = @RM@
+
+all::
+	chmod 755 dmonloop
+
+depend::
+	$(DEPEND) $(DEPENDFLAGS) -- $(ALLDEFINES) $(DEPEND_DEFINES) -- $(SRCS)
+
+install:
+	@if [ ! -d $(bindir) ]; then \
+		$(MKDIR) -p $(bindir); \
+	fi
+	rm -f $(bindir)/flushlocks
+	sed s%xxxx%$(libdir)%g <flushlocks > $(bindir)/flushlocks
+	chmod 755 $(bindir)/flushlocks
+	rm -f $(bindir)/dmonloop
+	sed s%BINDIR%$(bindir)%g <dmonloop >$(bindir)/dmonloop
+	chmod 755 $(bindir)/dmonloop
+	$(INSTALL) $(INSTALLFLAGS) mktable.script $(bindir)/mktable
+
+depend::
+
+archive::
+	@if [ -d $(ARCHIVE)/utils ]; then set +x; \
+	else (set -x; $(MKDIR) $(ARCHIVE)/utils); fi
+	$(CP) $(FILES) $(ARCHIVE)/utils
+
+patchlist::
+	@echo $(FILES) > .patchlist
+
+clean::
+
+distclean:: clean
+	$(RM) -f Makefile $(bindir)/dmonloop $(bindir)/flushlocks $(bindir)/mktable
