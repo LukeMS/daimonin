@@ -1460,7 +1460,7 @@ int main(int argc, char *argv[])
             /*  else Item = locate_item(cpl.win_quick_tag); */
             SDL_GetMouseState(&x, &y);
             if (drag == DRAG_QUICKSLOT_SPELL)
-                sprite_blt(spell_list[quick_slots.spell.[cpl.win_quick_tag].groupNr].entry[quick_slots.spell.[cpl.win_quick_tag].classNr][quick_slots.spell.[cpl.win_quick_tag].spellNr].icon,
+                sprite_blt(spell_list[quick_slots[cpl.win_quick_tag].spell.groupNr].entry[quick_slots[cpl.win_quick_tag].spell.classNr][quick_slots[cpl.win_quick_tag].spell.spellNr].icon,
                            x, y, NULL, NULL);
             else
                 blt_inv_item_centered(Item, x, y);
