@@ -19,7 +19,7 @@ local dy = {
 	[5] =  1, [6] =  1, [7] = 0, [8] = -1 }
 
 function getPushDirection()
-	obj = me.map:GetFirstObjectOnSquare(me.x, me.y)
+	local obj = me.map:GetFirstObjectOnSquare(me.x, me.y)
 	while obj ~= nil do
 		if obj.type == game.TYPE_PLAYER then
 			return obj.direction
@@ -36,7 +36,7 @@ function absDirection(dir)
 end
 
 function getBounceItem(map,x,y)
-	obj = map:GetFirstObjectOnSquare(x, y)
+	local obj = map:GetFirstObjectOnSquare(x, y)
 	while obj ~= nil do
 		if obj ~= me then
 			return obj.direction
@@ -47,13 +47,12 @@ function getBounceItem(map,x,y)
 end
 
 function run()
-	local direction = getPushDirection()
+	local direction = 0
 	local speed = max_speed -- squares per second
-	local nx, ny
 	
-	me.map:Message(me.x, me.y , 2, event.activator.name .. " kicks off!")
+	me.map:Message(me.x, me.y, 2, event.activator.name .. " kicks off!")
 	me.terrain_flag = 255 -- lets us move anywhere
-	event.returnvalue = 1 -- tell engine that apply was successful
+	me.grace = 1
 
 	function bounce(dir)
 		speed = speed - (1 / speed) * deceleration * 1
@@ -67,23 +66,26 @@ function run()
 			direction = pushdir 
 			-- TODO: Change visible item direction too
 			speed = max_speed
-		else
-			nx = me.x + dx[direction]
-			ny = me.y + dy[direction]
-
-			if me.map:IsWallOnSquare(nx, ny) then direction = bounce(direction) end
+		elseif me.map:IsWallOnSquare(me.x + dx[direction], me.y + dy[direction]) then 
+			direction = bounce(direction) 
 		end
 		
 		if me:Move(direction) == 0 then direction = bounce(direction) end
 
-		coroutine.yield(1/speed)
-		speed = speed - (1 / speed) * deceleration		
+		if(speed > 0) then
+			coroutine.yield(1/speed)
+			speed = speed - (1 / speed) * deceleration		
+		end
 	end
+	if game.IsValid(me) then me.grace = 0 end
 end
 
--- TODO: store playing state somehow
-playing = false
+-- State is stored in me.grace
+-- 0 - means stopped
+-- 1 - means rolling
 
-if not playing then
+event.returnvalue = 1 -- tell Daimonin the apply was successful
+if me.grace == 0 then
+	-- Initial kickoff
 	run()
 end
