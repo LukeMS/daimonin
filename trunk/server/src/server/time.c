@@ -971,18 +971,19 @@ void move_arrow(object *op) {
 		/* search for a vulnerable object */
 		for(tmp=GET_MAP_OB_LAYER(m, new_x, new_y,5);tmp!=NULL;tmp=tmp->above)
 		{
-			/* lets fire mobs through mobs! */
-			if(tmp->type!=PLAYER && hitter->type != PLAYER)
-				continue;
-
 			if(IS_LIVE(tmp) && (!QUERY_FLAG (tmp, FLAG_CAN_REFL_MISSILE) || (rndm(0, 99)) < 90-op->level/10))
 			{
+                /* Now, let friends fire through friends */
+                /* TODO: shouldn't do this if on pvp map, but that
+                 * also requires smarter mob/npc archers */
+                if(is_friend_of(hitter, tmp) || tmp == hitter)
+                    continue;
+
 				/* Attack the object. */
 				op = hit_with_arrow (op, tmp);
 				if (op == NULL) /* the arrow has hit and is destroyed! */
 					return;
-			}
-			
+			} 
 		}
 	}
 

@@ -389,6 +389,7 @@ void dequeue_path_requests(void);
 void do_specials(void);
 int main(int argc, char **argv);
 /* monster.c */
+int is_friend_of(object *op, object *obj);
 void initialize_mob_data(struct mobdata *data);
 void cleanup_mob_data(struct mobdata *data);
 void cleanup_mob_known_obj(struct mob_known_obj *data);
