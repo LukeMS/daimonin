@@ -76,6 +76,10 @@ Event::Event(RenderWindow* win, Camera* cam, MouseMotionListener *mMMotionListen
 	TextWin->Print("Its getting late!");
 	TextWin->Print("Press 'W' for details...");
 
+	TextWin->Print(" ");
+	TextWin->Print("Press +/- on numpad for zoom.");
+
+
 	/////////////////////////////////////////////////////////////////////////////////////////
 	// Create unbuffered key & mouse input.
 	/////////////////////////////////////////////////////////////////////////////////////////
@@ -103,6 +107,7 @@ Event::Event(RenderWindow* win, Camera* cam, MouseMotionListener *mMMotionListen
     mFiltering = TFO_BILINEAR;
 	mIdleTime =0;
 	mDayTime = 15;
+	mCameraZoom = CAMERA_ZOOM;
 }
 
 //=================================================================================================
@@ -204,8 +209,8 @@ bool Event::frameEnded(const FrameEvent& evt)
 		///////////////////////////////////////////////////////////////////////// 
 	    // Print camera details
 	    /////////////////////////////////////////////////////////////////////////
-		mWindow->setDebugText("Camera: P: " + StringConverter::toString(mCamera->getDerivedPosition()) 
-			+ " O: " + StringConverter::toString(mCamera->getDerivedOrientation()));
+		mWindow->setDebugText("Camera zoom: " + StringConverter::toString(mCameraZoom)+ " pos: " + StringConverter::toString(mCamera->getDerivedPosition())
+			+ " orientation: " + StringConverter::toString(mCamera->getDerivedOrientation()));
 	}
 	catch(...)
 	{
@@ -357,6 +362,18 @@ void Event::keyPressed(KeyEvent *e)
 			break;
 		case KC_PGDOWN:
 		    mCamera->pitch(Radian(+0.1));
+			break;
+
+		case KC_ADD:
+			mCameraZoom -= 10;
+			mCamera->setPosition(Vector3(0,mCameraZoom, mCameraZoom));
+		    mCamera->setNearClipDistance(mCameraZoom);
+			break;
+            
+		case KC_SUBTRACT:
+			mCameraZoom += 10;
+			mCamera->setPosition(Vector3(0,mCameraZoom, mCameraZoom));
+		    mCamera->setNearClipDistance(mCameraZoom);
 			break;
 
 		///////////////////////////////////////////////////////////////////////// 

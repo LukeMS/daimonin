@@ -36,6 +36,8 @@ using namespace Ogre;
 
 enum { LIGHT_VOL, LIGHT_SPOT };
 
+const Real CAMERA_ZOOM = 500.0;
+
 class Event: public FrameListener, public KeyListener, public MouseMotionListener, public MouseListener
 {
   public:
@@ -78,6 +80,7 @@ class Event: public FrameListener, public KeyListener, public MouseMotionListene
     bool mQuitGame;
     Light *mLight[2];
     int mDayTime;
+    Real mCameraZoom;
 
 	/////////////////////////////////////////////////////////////////////////
     // Frame Events.

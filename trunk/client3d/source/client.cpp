@@ -90,10 +90,10 @@ bool DaimoninClient::setup(void)
 	/////////////////////////////////////////////////////////////////////////
     mCamera = mSceneMgr->createCamera("Camera");
     mCamera->setProjectionType(PT_ORTHOGRAPHIC);
-	mCamera->setPosition(Vector3(0,350, 350));
-	mCamera->lookAt(Vector3(0,0,0));
-    mCamera->setNearClipDistance(350);
+	mCamera->setPosition(Vector3(0,CAMERA_ZOOM, CAMERA_ZOOM));
+    mCamera->setNearClipDistance(CAMERA_ZOOM);
 //    mCamera->setFarClipDistance(600);
+	mCamera->lookAt(Vector3(0,0,0));
 
 	/////////////////////////////////////////////////////////////////////////
     // Create one viewport, entire window
