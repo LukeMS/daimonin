@@ -813,7 +813,7 @@ void process_players1(mapstruct *map)
                    but it seems to anyway :( */
                 flag = 1;
             } else if(pl->ob->speed_left>0) {
-		if (handle_newcs_player(pl->ob))
+		if (handle_newcs_player(pl))
 		    flag=1;
 /*        if(pl->ob->enemy) */
         pl->ob->weapon_speed_left-=pl->ob->weapon_speed_add;
