@@ -239,12 +239,17 @@ int command_reply (object *op, char *params) {
     char buf2[MAX_BUF];
     player *pl;
 
-    if (params == NULL) {
+
+    if (params) 
+		params = cleanup_chat_string(params);
+
+	/* this happens when whitespace only string was submited */
+    if (!params || *params=='\0') 
+	{
         new_draw_info(NDI_UNIQUE, 0, op, "Reply what?");
         return 1;
     }
-
-
+	
     if (op->contr->last_tell[0] == '\0') {
         new_draw_info(NDI_UNIQUE, 0, op, "You can't reply to nobody.");
         return 1;
