@@ -35,6 +35,8 @@ http://www.gnu.org/copyleft/lesser.txt.
   const int SOCKET_ERROR =-1;
 #endif
 
+#include <list>
+#include <string>
 #include "network.h"
 #include "logfile.h"
 #include "option.h"
@@ -46,14 +48,95 @@ http://www.gnu.org/copyleft/lesser.txt.
 
 #define DEBUG_ON
 
+using namespace std;
+
 // testing:
-char *ServerName = "127.0.0.1";
+typedef struct mStructServer
+{
+	string nameip;
+	string version;
+	string desc1;
+	string desc2;
+	string desc3;
+	string desc4;
+	int player;
+	int port;
+}mStructServer;
+
+list<mStructServer*> mServerList;
+const char mMetaServer[] ="damn.informatik.uni-bremen.de";
+int mMetaServerPort = 13326;
+
+
+// this comes from the selection on dialog panel...
+//char *ServerName ="damn.informatik.uni-bremen.de";
+//int ServerPort = 13326;
+char *ServerName ="127.0.0.1";
 int ServerPort = 13327;
+
+
+
+
 int SoundStatus=1;
 int MAP_MAX_SIZE  =  17;
 int MapStatusX =MAP_MAX_SIZE;
 int MapStatusY =MAP_MAX_SIZE;
+int metaserver_count; // please replace me with mServerList.size();
 
+
+// ========================================================================
+// Clear the MeatServer list.
+// ========================================================================
+void clear_metaserver_data(void)
+{
+	while (mServerList.size() > 0)
+	{
+		mStructServer *node = mServerList.front();
+		if (node) { delete node; }
+		mServerList.pop_front();
+	}
+	metaserver_count=0;
+}
+
+// ========================================================================
+// Add a MetaServer to the list.
+// ========================================================================
+void add_metaserver_data(char *server, int port, int player, char *ver, char *desc1, char *desc2, char *desc3, char *desc4)
+{
+	mStructServer *node = new mStructServer;
+	mServerList.push_back (node);
+	node->player	= player;
+	node->port		= port;
+	node->nameip	= server;
+	node->version	= ver;
+	node->desc1	= desc1;
+	node->desc2	= desc2;
+	node->desc3	= desc3;
+	node->desc4	= desc4;
+}
+
+// ========================================================================
+// REPLACE ME
+// ========================================================================
+static void count_meta_server(void)
+{
+	metaserver_count = mServerList.size();
+}
+
+// ========================================================================
+// Get ServerName and ServerPort.
+// ========================================================================
+void get_meta_server_data(int num, char *server, int *port)
+{
+	list<mStructServer*>::const_iterator iter;
+	for (iter=mServerList.begin(); num > 0; iter++)
+	{
+		if (iter != mServerList.end())  { return; }
+		--num;
+	}
+	strcpy(server, (*iter)->nameip.c_str());
+	*port = (*iter)->port;
+}
 
 // ========================================================================
 // Return the instance.
@@ -82,7 +165,7 @@ Network::Network()
 // ========================================================================
 Network::~Network()
 {
-    delete[] mInbuf.buf;
+	delete[] mInbuf.buf;
 }
 
 
@@ -92,9 +175,9 @@ Network::~Network()
 // ========================================================================
 void Network::send_reply(char *text)
 {
-    char    buf[MAXSOCKBUF];
-    sprintf(buf, "reply %s", text);
-    cs_write_string(buf, strlen(buf));
+	char buf[MAXSOCKBUF];
+	sprintf(buf, "reply %s", text);
+	cs_write_string(buf, strlen(buf));
 }
 
 
@@ -129,53 +212,52 @@ void Network::Update()
         }
     }
 
-    ///////////////////////////////////////////////////////////////////////// 
-    // Not connected: walk through connection chain and/or wait for action
+	///////////////////////////////////////////////////////////////////////// 
+	// Not connected: walk through connection chain and/or wait for action
 	/////////////////////////////////////////////////////////////////////////
-
-
-    if (Option::getSingelton().GameStatus != GAME_STATUS_PLAY)
-    {
-         // autoinit or reset prg data
-        if (Option::getSingelton().GameStatus == GAME_STATUS_INIT)
+	if (Option::getSingelton().GameStatus != GAME_STATUS_PLAY)
+	{
+		// autoinit or reset prg data
+		if (Option::getSingelton().GameStatus == GAME_STATUS_INIT)
 		{
-//           clear_metaserver_data();
-             Option::getSingelton().GameStatus = GAME_STATUS_META;
+			clear_metaserver_data();
+			Option::getSingelton().GameStatus = GAME_STATUS_META;
 		}
-        // connect to meta and get server data
-        else if (Option::getSingelton().GameStatus == GAME_STATUS_META)
+		// connect to meta and get server data
+		else if (Option::getSingelton().GameStatus == GAME_STATUS_META)
 		{
-		/*
-             LogFile::getSingelton().Info("GAME_STATUS_META\n");
+			LogFile::getSingelton().Info("GAME_STATUS_META\n");
+/*
              if (argServerName[0] != 0)
             add_metaserver_data(argServerName, argServerPort, -1, "user server",
                                 "Server from -server '...' command line.", "", "", "");
-
-        // skip of -nometa in command line or no metaserver set in options 
-        if (options.no_meta || !options.metaserver[0])
+*/
+/*
+			// skip of -nometa in command line or no metaserver set in options 
+			if (options.no_meta || !options.metaserver[0])
         {
-            draw_info("Option '-nometa'.metaserver ignored.", COLOR_GREEN);
+            draw_info("Option '-nometa'.metaserver ignored.", ColourValue::Green);
         }
         else
+*/
         {
-            draw_info("query metaserver...", COLOR_GREEN);
-            sprintf(buf, "trying %s:%d", options.metaserver, options.metaserver_port);
-            draw_info(buf, COLOR_GREEN);
-            if (SOCKET_OpenSocket(&csocket.fd, &csocket, options.metaserver, options.metaserver_port))
+			LogFile::getSingelton().Info("Query MetaServer %s on port %d\n", mMetaServer, mMetaServerPort);
+            TextWin->Print("query metaserver...", ColourValue::Green);
+            sprintf(buf, "trying %s:%d", mMetaServer, mMetaServerPort);
+            TextWin->Print(buf, ColourValue::Green);
+            if (OpenSocket(mMetaServer,mMetaServerPort))
             {
                 read_metaserver_data();
-                SOCKET_CloseSocket(csocket.fd);
-                draw_info("done.", COLOR_GREEN);
+                CloseSocket();
+                TextWin->Print("done.", ColourValue::Green);
             }
             else
-                draw_info("metaserver failed! using default list.", COLOR_GREEN);
+                TextWin->Print("metaserver failed! using default list.", ColourValue::Green);
         }
 
-        add_metaserver_data("127.0.0.1", 13327, -1, "local", "localhost. Start server before you try to connect.", "",
-                            "", "");
+        add_metaserver_data("127.0.0.1", 13327, -1, "local", "localhost. Start server before you try to connect.", "", "", "");
         count_meta_server();
-        draw_info("select a server.", COLOR_GREEN);
-  */
+        TextWin->Print("select a server.", ColourValue::Green);
         Option::getSingelton().GameStatus = GAME_STATUS_START;
     }
     else if (Option::getSingelton().GameStatus == GAME_STATUS_START)
@@ -224,7 +306,7 @@ void Network::Update()
             else
             {
                // sprintf(buf, "version confirmed.\nstarting login procedure...");
-               // draw_info(buf, COLOR_GREEN);
+               // draw_info(buf, ColourValue::Green);
                 Option::getSingelton().GameStatus = GAME_STATUS_SETUP;
     LogFile::getSingelton().Info("GAME_STATUS_SETUP\n");
             }
@@ -467,7 +549,7 @@ inline bool Network::InitSocket()
 {
 #ifdef WIN32
     int error;
-    mSocket     = SOCKET_NO;
+    mSocket = SOCKET_NO;
     mCs_version = 0;
     mSocketStatusErrorNr = 0;
     WSADATA w;
@@ -501,25 +583,25 @@ inline bool Network::GetServerData()
     // skip of -nometa in command line or no metaserver set in options.
     if (options.no_meta || !options.metaserver[0])
 	{
-        draw_info("Option '-nometa'.metaserver ignored.", COLOR_GREEN);
+        draw_info("Option '-nometa'.metaserver ignored.", ColourValue::Green);
 	}
     else
 	{
-        draw_info("query metaserver...", COLOR_GREEN);
+        draw_info("query metaserver...", ColourValue::Green);
         sprintf(buf, "trying %s:%d", options.metaserver, options.metaserver_port);
-        draw_info(buf, COLOR_GREEN);
+        draw_info(buf, ColourValue::Green);
         if (SOCKET_OpenSocket(&csocket.fd, &csocket, options.metaserver, options.metaserver_port))
 		{
             read_metaserver_data();
             SOCKET_CloseSocket(csocket.fd);
-            draw_info("done.", COLOR_GREEN);
+            draw_info("done.", ColourValue::Green);
 		}
-        else { draw_info("metaserver failed! using default list.", COLOR_GREEN); }
+        else { draw_info("metaserver failed! using default list.", ColourValue::Green); }
 	}
     add_metaserver_data("127.0.0.1", 13327, -1, "local", 
 		"localhost. Start server before you try to connect.", "", "", "");
     count_meta_server();
-    draw_info("select a server.", COLOR_GREEN);
+    draw_info("select a server.", ColourValue::Green);
 */
    
   if (OpenSocket(ServerName, ServerPort))  // only testing..
@@ -537,7 +619,7 @@ inline bool Network::GetServerData()
      }
      //   Option::getSingelton().GameStatus = GAME_STATUS_VERSION;
      //   sprintf(buf, "connected. exchange version.");
-     //   draw_info(buf, COLOR_GREEN);
+     //   draw_info(buf, ColourValue::Green);
     
     
    return true;
@@ -724,21 +806,19 @@ void Network::read_metaserver_data()
 // ========================================================================
 int Network::cs_write_string(char *buf, int len)
 {
-    static SockList sl;
-
-    sl.len = len;
-    sl.buf = (unsigned char *) buf;
-    return send_socklist(sl);
+	static SockList sl;
+	sl.len = len;
+	sl.buf = (unsigned char *) buf;
+	return send_socklist(sl);
 } 
 
 int Network::send_socklist(SockList &msg)
 {
-    unsigned char sbuf[2];
-
-    sbuf[0] = ((unsigned int) (msg.len) >> 8) & 0xFF;
-    sbuf[1] = ((unsigned int) (msg.len)     ) & 0xFF;
-    write_socket(sbuf, 2);
-    return write_socket(msg.buf, msg.len);
+	unsigned char sbuf[2];
+	sbuf[0] = ((unsigned int) (msg.len) >> 8) & 0xFF;
+	sbuf[1] = ((unsigned int) (msg.len)     ) & 0xFF;
+	write_socket(sbuf, 2);
+	return write_socket(msg.buf, msg.len);
 }
 
 
@@ -747,33 +827,35 @@ int Network::send_socklist(SockList &msg)
 // ========================================================================
 int Network::write_socket(unsigned char *buf, int len)
 {
-    int amt = 0;
-    unsigned char *pos = buf;
+	int amt = 0;
+	unsigned char *pos = buf;
 
-    // If we manage to write more than we wanted, take it as a bonus
-    while (len > 0)
-    {
-  #ifdef WIN32
-        amt = send(mSocket, (char*)pos, len, 0);
-        if (amt == -1 && WSAGetLastError() != WSAEWOULDBLOCK)
-        {
-            LogFile::getSingelton().Error("New socket write failed (wsb) (%d).\n", WSAGetLastError());
-            //draw_info("SOCKET ERROR: Server write failed.", COLOR_RED);
-            return -1;
-        }
-        if (amt == 0)
-        {
-            LogFile::getSingelton().Error("Write_To_Socket: No data written out (%d).\n", WSAGetLastError());
-            //draw_info("SOCKET ERROR: No data written out", COLOR_RED);
-            return -1;
-        }
+	LogFile::getSingelton().Error("write socket befehl: %s %d\n",  buf, len);
+	
+	// If we manage to write more than we wanted, take it as a bonus
+	while (len > 0)
+	{
+		#ifdef WIN32
+		amt = send(mSocket, (char*)pos, len, 0);
+		if (amt == -1 && WSAGetLastError() != WSAEWOULDBLOCK)
+		{
+			LogFile::getSingelton().Error("New socket write failed (wsb) (%d).\n", WSAGetLastError());
+			TextWin->Print("SOCKET ERROR: Server write failed.", ColourValue::Red);
+			return -1;
+		}
+		if (amt == 0)
+		{
+			LogFile::getSingelton().Error("Write_To_Socket: No data written out (%d).\n", WSAGetLastError());
+			TextWin->Print("SOCKET ERROR: No data written out", ColourValue::Red);
+			return -1;
+		}
 		#else
 		amt = write(mSocket, pos, len);
 		if (amt < 0)
 		{
 			if (errno==EINTR) { continue; }
 			 LogFile::getSingelton().Error("New socket (fd=%d) write failed.\n", mSocket);
-			//draw_info("SOCKET ERROR: Server write failed.",COLOR_RED);
+			TextWin->Print("SOCKET ERROR: Server write failed.", ColourValue::Red);
 			return -1;
 		}
 		#endif
@@ -1032,90 +1114,102 @@ void Network::DoClient()
 // ========================================================================
 int Network::read_socket()
 {
-    int stat, toread, readsome = 0;
-    // We already have a partial packet
-    if (mInbuf.len < 2)
-    {
-        stat = recv(mSocket, (char*)mInbuf.buf + mInbuf.len, 2 - mInbuf.len, 0);
-        if (stat < 0)
-        {
-			#ifdef WIN32
-            if ((stat == -1) && WSAGetLastError() != WSAEWOULDBLOCK)
-            {
-                LogFile::getSingelton().Error("ReadPacket got error %d, returning -1\n", WSAGetLastError());
-                //draw_info("WARNING: Lost or bad server connection.", COLOR_RED);
-                return -1;
-            }
-            return 0;
-			#else
-			LogFile::getSingelton().Error("ReadPacket got error.\n");
+	int stat, toread, readsome = 0;
+	// We already have a partial packet
+	if (mInbuf.len < 2)
+	{
+		#ifdef WIN32
+		stat=recv(mSocket, (char*)mInbuf.buf + mInbuf.len, 2 - mInbuf.len, 0);
+		if (stat<0) 
+		{
+			if ((stat==-1) && WSAGetLastError() !=WSAEWOULDBLOCK)
+			{
+				LogFile::getSingelton().Error("ReadPacket got error %d, returning -1\n",WSAGetLastError());
+				TextWin->Print("WARNING: Lost or bad server connection.",ColourValue::Red);              
+				return -1;
+			}
+			return 0;
+		}
+		#else
+		do { stat=recv(mSocket, (char*)mInbuf.buf + mInbuf.len, 2 - mInbuf.len, 0); }
+		while ((stat==-1) && (errno==EINTR));
+		if (stat<0)
+		{
+			// In non blocking mode, EAGAIN is set when there is no data available.
+			if (errno!=EAGAIN && errno!=EWOULDBLOCK)
+			{
+				LogFile::getSingelton().Error("ReadPacket got error %d, returning 0",errno);
+				TextWin->Print("WARNING: Lost or bad server connection.", ColourValue::Red);
+			}
+			return 0;
+		}
+		#endif
+		if (stat==0) 
+		{
+			TextWin->Print("WARNING: Server read package error.", ColourValue::Red);
 			return -1;
-			#endif
-        }
-        if (stat == 0)
-        {
-            //draw_info("WARNING: Server read package error.", COLOR_RED);                
-            return -1;
-        }
-        mInbuf.len += stat;
-        if (stat < 2)
-            return 0;   // Still don't have a full packet
-        readsome = 1;
-    }
-
-    // Figure out how much more data we need to read.  Add 2 from the
-    // end of this - size header information is not included.
-    toread = 2 + (mInbuf.buf[0] << 8) + mInbuf.buf[1] - mInbuf.len;
-    if ((toread + mInbuf.len) > MAXSOCKBUF)
-    {
-        //draw_info("WARNING: Server read package error.", COLOR_RED);                
-        LogFile::getSingelton().Error("SockList_ReadPacket: Want to read more bytes than will fit in buffer.\n");
-        // return error so the socket is closed
-        return -1;
-    }
-    do
-    {
-        stat = recv(mSocket, (char*)mInbuf.buf + mInbuf.len, toread, 0);
-        if (stat < 0)
-        {
-   #ifdef WIN32
-            if ((stat == -1) && WSAGetLastError() != WSAEWOULDBLOCK)
-            {
-                LogFile::getSingelton().Error("ReadPacket got error %d, returning 0", WSAGetLastError());
-                //draw_info("WARNING: Lost or bad server connection.", COLOR_RED);                
-                return -1;
-            }
-            return 0;
-   #else
-   LogFile::getSingelton().Error("ReadPacket got error\n");
-   return -1;
-   #endif
-        }
-        if (stat == 0)
-        {
-            //draw_info("WARNING: Server read package error.", COLOR_RED);                
-            return -1;
-        }
-        mInbuf.len += stat;
-        toread -= stat;
-        if (toread == 0) { return 1; }
-        if (toread < 0)
-        {
-            LogFile::getSingelton().Error("SockList_ReadPacket: Read more bytes than desired.\n");
-            //draw_info("WARNING: Server read package error.", COLOR_RED);                
-            return -1;
-        }
-    }
-    while (toread > 0);
-    return 0;
-} 
+		}
+		mInbuf.len += stat;
+		if (stat < 2) {return 0; } // Still don't have a full packet
+		readsome = 1;
+	}
+	// Figure out how much more data we need to read.  Add 2 from the
+	// end of this - size header information is not included.
+	toread = 2 + (mInbuf.buf[0] << 8) + mInbuf.buf[1] - mInbuf.len;
+	if ((toread + mInbuf.len) > MAXSOCKBUF)
+	{
+		TextWin->Print("WARNING: Server read package error.", ColourValue::Red);
+		LogFile::getSingelton().Error("SockList_ReadPacket: Want to read more bytes than will fit in buffer.\n");
+		// return error so the socket is closed
+		return -1;
+	}
+	 do
+	{
+		#ifdef WIN32
+		stat = recv(mSocket, (char*)mInbuf.buf + mInbuf.len, toread, 0);
+		if (stat<0) 
+		{
+			if ((stat==-1) && WSAGetLastError() !=WSAEWOULDBLOCK)
+			{
+		#else
+		do { stat = recv(mSocket, (char*)mInbuf.buf + mInbuf.len, toread, 0); }
+		while ((stat<0) && (errno==EINTR));
+		if (stat<0)
+		{
+			if (errno!=EAGAIN && errno!=EWOULDBLOCK)
+			{
+		#endif
+				LogFile::getSingelton().Error("ReadPacket got error %d, returning 0",errno);
+				TextWin->Print("WARNING: Lost or bad server connection.", ColourValue::Red);
+				return -1;
+			}
+			return 0;
+		}
+		if (stat==0)
+		{
+			TextWin->Print("WARNING: Server read package error.", ColourValue::Red);
+			return -1;
+		}
+		mInbuf.len += stat;
+		toread -= stat;
+		if (toread == 0) { return 1; }
+		if (toread < 0)
+		{
+			LogFile::getSingelton().Error("SockList_ReadPacket: Read more bytes than desired.\n");
+			TextWin->Print("WARNING: Server read package error.", ColourValue::Red);
+			return -1;
+		}
+	}
+	while (toread > 0);
+	return 0;
+}
 
 // ========================================================================
 // Request a file from server.
 // ========================================================================
 void Network::RequestFile(int index)
 {
- char buf[MAX_BUF];
- sprintf(buf, "rf %d", index);
- cs_write_string(buf, strlen(buf));
+	char buf[MAX_BUF];
+	sprintf(buf, "rf %d", index);
+	cs_write_string(buf, strlen(buf));
 }
