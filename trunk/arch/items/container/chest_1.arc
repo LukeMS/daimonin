@@ -3,6 +3,7 @@ name chest
 other_arch close_chest
 face chest_1.101
 layer 4
+no_pick 1
 level 1
 type 122
 material 18

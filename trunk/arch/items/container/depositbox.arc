@@ -4,6 +4,7 @@ other_arch close_dbox
 race gold and jewels
 face depositbox.101
 type 122
+no_pick 1
 level 1
 layer 4
 material 66

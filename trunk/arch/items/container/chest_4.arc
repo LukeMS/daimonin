@@ -4,6 +4,7 @@ other_arch close_chest_4.111
 face chest_4.111
 layer 4
 level 1
+no_pick 1
 type 122
 material 18
 material_real 258
@@ -18,6 +19,7 @@ other_arch close_chest_4.171
 face chest_4.171
 layer 4
 level 1
+no_pick 1
 type 122
 material 18
 material_real 258

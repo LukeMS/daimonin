@@ -4,6 +4,7 @@ other_arch close_chest_m1
 face chest_metal_b.101
 layer 4
 level 1
+no_pick 1
 type 122
 material 2
 material_real 65
