@@ -50,7 +50,7 @@ typedef struct _BLTFX {
     UINT32 flags;           /* used from BLTFX_FLAG_xxxx */
 	SDL_Surface *surface;	/* if != null, overrule default screen */
     int dark_level;         /* use dark_level[i] surface */
-    int alpha;
+    uint8 alpha;
 }_BLTFX;
 
 /* the structure */
@@ -111,6 +111,7 @@ extern Boolean sprite_deinit_system(void);
 extern _Sprite *sprite_load_file(char *fname, UINT32 flags);
 extern _Sprite *sprite_tryload_file(char *fname, UINT32 flags,SDL_RWops *rwob);
 extern void sprite_free_sprite(_Sprite *sprite);
+extern int get_string_pixel_length(char *text, struct _Font *font);
 extern void sprite_blt(_Sprite *sprite, int x, int y, SDL_Rect *box, _BLTFX *bltfx);
 
 extern Uint32 GetSurfacePixel(SDL_Surface *Surface, Sint32 X, Sint32 Y);

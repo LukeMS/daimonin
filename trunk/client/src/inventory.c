@@ -101,6 +101,47 @@ int get_inventory_data(item *op, int *ctag, int *slot, int *start, int *count, i
         return(ret);
 }
 
+static show_inventory_item_stats(item *tmp, int x, int y)
+{
+	char buf[256];
+	SDL_Rect tmp_rect;
+	tmp_rect.w=222;
+	               
+	if(tmp->nrof>1)
+		sprintf(buf,"%d %s",tmp->nrof, tmp->s_name );
+    else
+		sprintf(buf,"%s", tmp->s_name);
+	StringBlt(ScreenSurface, &SystemFont,buf,x+3, y-26,COLOR_HGOLD, &tmp_rect, NULL);
+    
+	sprintf(buf,"weight: %4.3f",tmp->weight*(float)tmp->nrof);
+	StringBlt(ScreenSurface, &SystemFont,buf,x+160, y-14,COLOR_HGOLD, NULL, NULL);
+
+
+	if(tmp->item_qua == 255) /* this comes from server when not identified */
+		StringBlt(ScreenSurface, &SystemFont,"not identified",x+3, y-14,COLOR_RED, NULL, NULL);                
+
+	else
+	{
+		StringBlt(ScreenSurface, &SystemFont,"con: ",x+3, y-14,COLOR_HGOLD, NULL, NULL);
+		sprintf(buf,"%d", tmp->item_qua);
+		StringBlt(ScreenSurface, &SystemFont,buf,x+37-get_string_pixel_length(buf,&SystemFont), y-14,COLOR_HGOLD, NULL, NULL);
+		sprintf(buf,"(%d)", tmp->item_con);
+        StringBlt(ScreenSurface, &SystemFont,buf,x+40, y-14,COLOR_HGOLD, NULL, NULL);
+
+		if(tmp->item_level)
+        {
+			sprintf(buf,"allowed: lvl %d %s", tmp->item_level, skill_level_name[tmp->item_skill]);
+			if((!tmp->item_skill && tmp->item_level < cpl.stats.level) ||
+									(tmp->item_skill && tmp->item_level <cpl.stats.skill_level[tmp->item_skill-1] ) )
+				StringBlt(ScreenSurface, &SystemFont,buf,x+82, y-14,COLOR_HGOLD, NULL, NULL);
+			else
+				StringBlt(ScreenSurface, &SystemFont,buf,x+82, y-14,COLOR_RED, NULL, NULL);
+		}           
+		else
+				StringBlt(ScreenSurface, &SystemFont,"allowed: all",x+82, y-14,COLOR_HGOLD, NULL, NULL);
+			
+	}
+}
 
 void show_inventory_window(int x, int y)
 {
@@ -108,9 +149,6 @@ void show_inventory_window(int x, int y)
         int invxlen, invylen;
         item *op,*tmp, *tmpx=NULL;
         item *tmpc;
-        char buf[256];
-		SDL_Rect tmp_rect;
-		tmp_rect.w=222;
 
 		if(cpl.inventory_win != IWIN_INV)
 			return;
@@ -123,7 +161,7 @@ void show_inventory_window(int x, int y)
 
 	 y+=26;
  	 blt_window_slider(Bitmaps[BITMAP_INV_SCROLL], ((cpl.win_inv_count-1)/invxlen)+1,
-           invylen, cpl.win_inv_start/invxlen, x+226, y+11);
+           invylen, cpl.win_inv_start/invxlen, -1, x+226, y+11);
         
         if(!cpl.ob)
             return;
@@ -154,39 +192,11 @@ void show_inventory_window(int x, int y)
         {        
             blt_inv_item(tmp, x+(i%invxlen)*32+1, y+(i/invxlen)*32+1);
 
-            if(cpl.inventory_win != IWIN_BELOW && 
-                                        i+cpl.win_inv_start == cpl.win_inv_slot)
+            if(cpl.inventory_win != IWIN_BELOW && i+cpl.win_inv_start == cpl.win_inv_slot)
             {
-                sprite_blt(Bitmaps[BITMAP_INVSLOT],
-                       x+(i%invxlen)*32, y+(i/invxlen)*32, NULL, NULL);
-                if(tmp->nrof>1)
-                    sprintf(buf,"%d %s",tmp->nrof, tmp->s_name );
-                else
-                    sprintf(buf,"%s", tmp->s_name);
+                sprite_blt(Bitmaps[BITMAP_INVSLOT], x+(i%invxlen)*32, y+(i/invxlen)*32, NULL, NULL);
+				show_inventory_item_stats(tmp, x, y);
 
-                StringBlt(ScreenSurface, &SystemFont,buf,x+3, y-26,COLOR_HGOLD, &tmp_rect, NULL);
-                sprintf(buf,"weight: %4.3f",tmp->weight*(float)tmp->nrof);
-                StringBlt(ScreenSurface, &SystemFont,buf,x+154, y-14,COLOR_HGOLD, NULL, NULL);
-
-                if(tmp->item_qua == 255) /* this comes from server when not identified */
-                    StringBlt(ScreenSurface, &SystemFont,"not identified",x+3, y-14,COLOR_HGOLD, NULL, NULL);                
-                else
-                {
-                    StringBlt(ScreenSurface, &SystemFont,"Qua:                Con:",x+3, y-14,COLOR_HGOLD, NULL, NULL);                
-                    sprintf(buf,"%d", tmp->item_qua);
-                    StringBlt(ScreenSurface, &SystemFont,buf,x+29, y-14,COLOR_HGOLD, NULL, NULL);
-                    sprintf(buf,"%d", tmp->item_con);
-                    StringBlt(ScreenSurface, &SystemFont,buf,x+80, y-14,COLOR_HGOLD, NULL, NULL);
-                    if(tmp->item_level)
-                    {
-                        sprintf(buf,"%d %s", tmp->item_level, skill_level_name[tmp->item_skill]);
-                        if((!tmp->item_skill && tmp->item_level < cpl.stats.level) ||
-                            (tmp->item_skill && tmp->item_level <cpl.stats.skill_level[tmp->item_skill-1] ) )
-                            StringBlt(ScreenSurface, &SystemFont,buf,x+112, y-14,COLOR_HGOLD, NULL, NULL);
-                        else
-                            StringBlt(ScreenSurface, &SystemFont,buf,x+112, y-14,COLOR_RED, NULL, NULL);
-                    }
-                }
             }
             i++;
 
@@ -204,13 +214,8 @@ void show_inventory_window(int x, int y)
                     {
                         sprite_blt(Bitmaps[BITMAP_INVSLOT],
                               x+(i%invxlen)*32, y+(i/invxlen)*32, NULL, NULL);
-                        if(tmpc->nrof>1)
-                            sprintf(buf,"%d %s",tmpc->nrof, tmpc->s_name );
-                        else
-                            sprintf(buf,"%s", tmpc->s_name);
-                        StringBlt(ScreenSurface, &SystemFont,buf,x+3, y-26,COLOR_HGOLD, &tmp_rect, NULL);
-                        sprintf(buf,"Qua: 100     Con: 80                 weight: %4.2f",tmpc->weight*(float)tmp->nrof);
-                        StringBlt(ScreenSurface, &SystemFont,buf,x+3, y-14,COLOR_HGOLD, NULL, NULL);
+
+						show_inventory_item_stats(tmpc, x,y);
                     }
                         sprite_blt(Bitmaps[BITMAP_CMARK_MIDDLE],
                                 x+(i%invxlen)*32+1, y+(i/invxlen)*32+1, NULL, NULL);
@@ -234,7 +239,7 @@ void show_below_window(item *op, int x, int y)
 		tmp_rect.w=265;
         
          blt_window_slider(Bitmaps[BITMAP_BELOW_SCROLL], ((cpl.win_below_count-1)/INVITEMBELOWXLEN)+1,
-           INVITEMBELOWYLEN, cpl.win_below_start/INVITEMBELOWXLEN, x+259, y+12);
+           INVITEMBELOWYLEN, cpl.win_below_start/INVITEMBELOWXLEN, -1,x+259, y+12);
     
         if(!op)
             return;
@@ -451,38 +456,37 @@ Boolean blt_inv_item_centered(item *tmp, int x, int y)
     
 void blt_inv_item(item *tmp, int x, int y)
 {            
-        
     blt_inv_item_centered(tmp, x, y);
 
-        if(tmp->locked)
-                sprite_blt(Bitmaps[BITMAP_LOCK],x+1,
-                y+ICONDEFLEN-Bitmaps[BITMAP_LOCK]->bitmap->w ,NULL,NULL);
-        if(tmp->nrof>1)
-        {
-            char buf[64];
-            if(tmp->nrof >9999)
-                strcpy(buf,"many");
-            else
-		sprintf(buf,"%d",tmp->nrof);
-            StringBlt(ScreenSurface, &Font6x3Out,buf,x+22-(4*strlen(buf)),
-                y+ICONDEFLEN-Bitmaps[BITMAP_LOCK]->bitmap->w-4,COLOR_WHITE, NULL, NULL); 
-        }
-        if(tmp->applied)
-                sprite_blt(Bitmaps[BITMAP_APPLY],x+1,y+1,NULL,NULL);
-        if(tmp->magical)
-                sprite_blt(Bitmaps[BITMAP_MAGIC],
-                x+ICONDEFLEN-Bitmaps[BITMAP_MAGIC]->bitmap->w,
-                y+ICONDEFLEN-Bitmaps[BITMAP_MAGIC]->bitmap->h,NULL,NULL);
-        if(tmp->unpaid)
-                sprite_blt(Bitmaps[BITMAP_UNPAID],
-                x+ICONDEFLEN-Bitmaps[BITMAP_UNPAID]->bitmap->w,
-                y+ICONDEFLEN-Bitmaps[BITMAP_UNPAID]->bitmap->h,NULL,NULL);
-        if(tmp->cursed)
-                sprite_blt(Bitmaps[BITMAP_CURSED],
-                x+ICONDEFLEN-Bitmaps[BITMAP_CURSED]->bitmap->w, y+1,NULL,NULL);
-        if(tmp->damned)
-                sprite_blt(Bitmaps[BITMAP_DAMNED],
-                x+ICONDEFLEN-Bitmaps[BITMAP_DAMNED]->bitmap->w, y+1,NULL,NULL);
+	if(tmp->nrof>1)
+	{
+		char buf[64];
+        if(tmp->nrof >9999)
+			strcpy(buf,"many");
+		else
+			sprintf(buf,"%d",tmp->nrof);
+		StringBlt(ScreenSurface, &Font6x3Out,buf,x+(ICONDEFLEN/2)-(get_string_pixel_length(buf,&Font6x3Out)/2),
+                y+18,COLOR_WHITE, NULL, NULL); 
+	}
+		
+	if(tmp->locked)        
+		sprite_blt(Bitmaps[BITMAP_LOCK],x,
+                y+ICONDEFLEN-Bitmaps[BITMAP_LOCK]->bitmap->w-2 ,NULL,NULL);
+	/* applied and unpaid some spot - can't apply unpaid items */
+    if(tmp->applied)
+		sprite_blt(Bitmaps[BITMAP_APPLY],x,y,NULL,NULL);
+    if(tmp->unpaid)
+		sprite_blt(Bitmaps[BITMAP_UNPAID],x,y,NULL,NULL);
+    if(tmp->magical)
+		sprite_blt(Bitmaps[BITMAP_MAGIC],
+                x+ICONDEFLEN-Bitmaps[BITMAP_MAGIC]->bitmap->w-2,
+                y+ICONDEFLEN-Bitmaps[BITMAP_MAGIC]->bitmap->h-2,NULL,NULL);
+	if(tmp->cursed)
+		sprite_blt(Bitmaps[BITMAP_CURSED],
+                x+ICONDEFLEN-Bitmaps[BITMAP_CURSED]->bitmap->w-2, y,NULL,NULL);
+	if(tmp->damned)
+		sprite_blt(Bitmaps[BITMAP_DAMNED],
+                x+ICONDEFLEN-Bitmaps[BITMAP_DAMNED]->bitmap->w-2, y,NULL,NULL);
 }
 
 void examine_range_inv(void)

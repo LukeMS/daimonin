@@ -22,6 +22,10 @@
 */
 
 #include "include.h"
+#include "textwin.h"
+
+extern char d_ServerName[2048];
+extern int  d_ServerPort;
 
 static int get_action_keycode,drop_action_keycode; /* thats the key for G'et command from keybind */
 
@@ -64,7 +68,10 @@ enum {
         KEYFUNC_SPELL_G0,KEYFUNC_FIREREADY,KEYFUNC_SPELL_RETURN,
         KEYFUNC_SKILL_RETURN,
 		KEYFUNC_LAYER0,		KEYFUNC_LAYER1,		KEYFUNC_LAYER2,		KEYFUNC_LAYER3,
-		KEYFUNC_HELP
+		KEYFUNC_HELP,
+        KEYFUNC_PAGEUP_TOP, KEYFUNC_PAGEDOWN_TOP,
+        KEYFUNC_TARGET_ENEMY, KEYFUNC_TARGET_FRIEND, KEYFUNC_TARGET_SELF,
+		KEYFUNC_COMBAT,
 
 };
 
@@ -93,7 +100,7 @@ _key_macro defkey_macro[] =
         {"?M_GET",		"get <tag>",       KEYFUNC_GET,0, SC_NORMAL, MENU_NO},
         {"?M_LOCK",		"lock <tag>",      KEYFUNC_LOCK,0, SC_NORMAL, MENU_NO},
         {"?M_MARK",		"mark<tag>",       KEYFUNC_MARK,0, SC_NORMAL, MENU_NO},
-        {"?M_SLIST",		"spell list",  KEYFUNC_SLIST,0, SC_NORMAL, MENU_NO&MENU_KEYBIND&MENU_SLIST&MENU_STATUS},
+        {"?M_SPELL_LIST",	"spell list",  KEYFUNC_SLIST,0, SC_NORMAL, MENU_NO&MENU_KEYBIND&MENU_SLIST&MENU_STATUS},
         {"?M_KEYBIND",		"key bind",    KEYFUNC_KEYBIND,0, SC_NORMAL, MENU_NO&MENU_KEYBIND&MENU_SLIST&MENU_STATUS},
         {"?M_STATUS",		"status",      KEYFUNC_STATUS,0, SC_NORMAL, MENU_NO&MENU_KEYBIND&MENU_SLIST&MENU_STATUS},
         {"?M_SKILL_LIST",   "skill list",  KEYFUNC_SKILL,0, SC_NORMAL, MENU_NO&MENU_KEYBIND&MENU_SLIST&MENU_STATUS},
@@ -105,6 +112,12 @@ _key_macro defkey_macro[] =
         {"?M_LAYER2",		"l2", KEYFUNC_LAYER2,0, SC_NORMAL, MENU_NO},
         {"?M_LAYER3",		"l3", KEYFUNC_LAYER3,0, SC_NORMAL, MENU_NO},
         {"?M_HELP",			"show help", KEYFUNC_HELP,0, SC_NORMAL, MENU_NO},
+        {"?M_PAGEUP_TOP",		"scroll up",   KEYFUNC_PAGEUP_TOP,0, SC_NORMAL, MENU_NO},
+        {"?M_PAGEDOWN_TOP",		"scroll down", KEYFUNC_PAGEDOWN_TOP,0, SC_NORMAL, MENU_NO},
+        {"?M_TARGET_ENEMY",		"/target enemy", KEYFUNC_TARGET_ENEMY,0, SC_NORMAL, MENU_NO},
+        {"?M_TARGET_FRIEND",	"/target friend", KEYFUNC_TARGET_FRIEND,0, SC_NORMAL, MENU_NO},
+        {"?M_TARGET_SELF",		"/target self", KEYFUNC_TARGET_SELF,0, SC_NORMAL, MENU_NO},
+        {"?M_COMBAT_TOGGLE",	"/combat", KEYFUNC_COMBAT,0, SC_NORMAL, MENU_NO},
 };
 
 #define DEFAULT_KEYMAP_MACROS (sizeof(defkey_macro)/sizeof(struct _key_macro))
@@ -243,26 +256,379 @@ void reset_keys(void)
 	InputStringFlag=FALSE;
 	InputStringEndFlag=FALSE;
 	InputStringEscFlag=FALSE;
-    
+
 	for(i=0;i<MAX_KEYS;i++)
 		keys[i].pressed = FALSE;
 }
 
+
+/******************************************************************
+* x: mouse x-pos ; y: mouse y-pos
+* ret: 0  if mousepointer is in the game-field.
+*     -1 if mousepointer is in a menue-field.
+******************************************************************/
+int mouseInPlayfield(x, y)
+{
+	x+=  45;
+	y-= 127;
+	if (x < 445){
+		if ((y <  200) && (y+y+x > 400)) return -1; /* upper left */
+		if ((y >= 200) && (y+y-x < 400)) return -1; /* lower left */
+	}else{
+  	x-=445;
+		if ((y <  200) && (y+y > x))     return -1; /* upper right */
+		if ((y >= 200) && (y+y+x < 845)) return -1; /* lower right */
+	}
+	return 0;
+}
+
+/******************************************************************
+* val: -1 dont change.   0 dragging off.   1 dragging on.
+* ret: 0 no dragging  1 still dragging
+******************************************************************/
+int draggingInvItem(int value){
+	static int dragInvItem = 0;
+	if (value > -1) dragInvItem =value;
+	return dragInvItem;
+}
+
+/******************************************************************
+* wait for user to input a numer.
+******************************************************************/
+static void mouseInputNumber(){
+	static int delta = 0;
+	static int timeVal =1;
+	int x,y;
+
+	if (!(SDL_GetMouseState(&x, &y) & SDL_BUTTON(SDL_BUTTON_LEFT))){
+		timeVal = 1;
+		delta =0;
+		return;
+	}
+	if (x <330 || x > 337 || y < 510 || delta++ & 15) return;
+	if ( y > 518){ /* + */
+		x = atoi(InputString)+ timeVal;
+		if (x > cpl.nrof) x = cpl.nrof;
+	}else{ /* - */
+		x = atoi(InputString)- timeVal;
+		if (x< 1) x =1;
+	}
+	sprintf(InputString, "%d", x);
+	InputCount = strlen(InputString);
+	timeVal+= (timeVal/8)+1;
+}
+
+/******************************************************************
+* val: -1 dont change.   0 dragging off.   1 dragging on.
+* ret: 0 no dragging  1 still dragging
+******************************************************************/
+/* TODO: convert this into short and clean code :) */
+static void mouseMoving(){
+	int x,y, field_x, field_y;
+	static int delta = 0;
+	if (delta++ & 7) return;
+
+	if (draggingInvItem(-1)) return;
+	if (!(SDL_GetMouseState(&x, &y) & SDL_BUTTON(SDL_BUTTON_LEFT))){
+		delta =0;
+		return;
+	}
+	if (!mouseInPlayfield(x, y)) return;
+	x -= 352;
+	y -= 321;
+	field_x=  x/MAP_TILE_POS_XOFF;
+	field_y= (y/MAP_TILE_POS_YOFF)*2-1;
+	x=  x%MAP_TILE_POS_XOFF;
+	y= (y%MAP_TILE_POS_YOFF)*2;
+
+	if (x< MAP_TILE_POS_XOFF/2){
+	if (y+x < MAP_TILE_POS_XOFF/2)	{ field_x--; field_y--; }
+	else if (y-x >MAP_TILE_POS_YOFF){ field_x--; field_y++; }
+	}else {
+		x-= MAP_TILE_POS_XOFF/2;
+		if (x-y >0)                         field_y--;
+			else if (y+x > MAP_TILE_POS_YOFF*2) field_y++;
+	}
+	if (!field_x && !field_y) process_macro_keys(KEYFUNC_MOVE, 5);
+	if ( !field_x &&  field_y<-1) process_macro_keys(KEYFUNC_MOVE, 7);
+	if ( !field_x && field_y > 0) process_macro_keys(KEYFUNC_MOVE, 3);
+	if ((!field_x && field_y ==-1)||(field_x <0 && field_y <0)) process_macro_keys(KEYFUNC_MOVE, 4);
+	if ((!field_x && field_y == 1)||(field_x <0 && field_y >1)) process_macro_keys(KEYFUNC_MOVE, 2);
+	if ( !field_y && field_x < 0) process_macro_keys(KEYFUNC_MOVE, 1);
+	if ( !field_y && field_x > 0) process_macro_keys(KEYFUNC_MOVE, 9);
+	if (field_x >0 && field_y <0) process_macro_keys(KEYFUNC_MOVE, 8);
+	if (field_x >0 && field_y >0) process_macro_keys(KEYFUNC_MOVE, 6);
+}
+
+
 int Event_PollInputDevice(void)
 {
 	SDL_Event event;
-    int done = 0;
+	int x, y, done = 0;
+	static int itemExamined  = 0; /* only print text once per dnd */
+	static Uint32 Ticks= 0;
+
+	if ((SDL_GetTicks() - Ticks > 10) || !Ticks){
+		Ticks = SDL_GetTicks();
+		if (GameStatus >= GAME_STATUS_PLAY){
+			if (InputStringFlag && cpl.input_mode == INPUT_MODE_NUMBER)
+				mouseInputNumber();
+			else
+				mouseMoving();
+		}
+	}
 
 	while ( SDL_PollEvent(&event) )
-    {
+	{
+		x = event.motion.x;
+		y = event.motion.y;
 		switch (event.type)
-        {
+		{
+
+			case SDL_MOUSEBUTTONUP:
+				if (GameStatus < GAME_STATUS_PLAY) break;
+				if (InputStringFlag && cpl.input_mode == INPUT_MODE_NUMBER) break;
+				if (draggingInvItem(-1) ==1 || draggingInvItem(-1) ==3){ /* drag form IWIN_INV */
+					if (draggingInvItem(-1) ==1)
+					{
+						if (mouseInPlayfield(x, y) || (y > 565 && x >265 && x < 529))	
+						{
+					     sound_play_effect(SOUND_DROP,0,0,100);
+							process_macro_keys(KEYFUNC_DROP, 0);
+						}
+						else if (x < 223 && y < 300)
+							process_macro_keys(KEYFUNC_APPLY, 0);
+					}
+					/* quickslots... */
+					if (x >= SKIN_POS_QUICKSLOT_X && x < SKIN_POS_QUICKSLOT_X+282 &&
+						y >= SKIN_POS_QUICKSLOT_Y && y<SKIN_POS_QUICKSLOT_Y+42)
+					{
+						int ind = get_quickslot(x,y);
+						if(ind != -1) /* valid slot */
+						{
+							if (draggingInvItem(-1) ==1)
+								cpl.win_quick_tag = cpl.win_inv_tag;
+							quick_slots[ind]=cpl.win_quick_tag;
+							/* now we do some tests... first, ensure this item can fit */
+							update_quickslots(-1);
+							/* now: if this is null, item is *not* in the main inventory
+							 * of the player - then we can't put it in quickbar!
+							 * Server will not allow apply of items in containers!
+							 */
+							if(!locate_item_from_inv(cpl.ob->inv , cpl.win_quick_tag))
+							{
+								sound_play_effect(SOUND_CLICKFAIL,0,0,100);
+								draw_info("Only items from main inventory allowed in quickbar!", COLOR_WHITE);
+							}
+							else
+								sound_play_effect(SOUND_GET,0,0,100); /* no bug - we 'get' it in quickslots */
+						}
+					}
+				}else if (draggingInvItem(-1) ==2){ /* drag form IWIN_BELOW */
+					if (!mouseInPlayfield(x, y) && y <550){
+			            sound_play_effect(SOUND_GET,0,0,100);
+						process_macro_keys(KEYFUNC_GET, 0);
+					}
+				}
+				draggingInvItem(0);
+				itemExamined  = 0; /* ready for next item */
+			break;
+
+			case SDL_MOUSEMOTION:
+				if (GameStatus < GAME_STATUS_PLAY) break;
+
+				/*{ for testing the map position
+					int tx, ty;
+					get_tile_position( x, y, &tx, &ty );
+					sprintf(myteststring,"x:%d y:%d", tx ,ty);
+				}*/
+				/* examine an item */
+				/*
+				if ((cpl.inventory_win == IWIN_INV) && y > 85 && y < 120 && x < 140){
+						if (!itemExamined){
+							check_keys(SDLK_e);
+							itemExamined = 1;
+			      }
+						break;
+    			}*/
+			break;
+
 			case SDL_MOUSEBUTTONDOWN:
-            break;
-                        
+				if (GameStatus < GAME_STATUS_PLAY) break;
+
+				/* close number input */
+				if (InputStringFlag && cpl.input_mode == INPUT_MODE_NUMBER){
+					if (x >339 && x < 349 && y > 510 && y < 522){
+						SDL_EnableKeyRepeat(0 , SDL_DEFAULT_REPEAT_INTERVAL);
+						InputStringFlag = FALSE;
+						InputStringEndFlag = TRUE;
+					}
+					break;
+				}
+				/* possible buttons */
+				if(x >=748 && x<=790)
+				{
+					if(show_help_screen)
+					{
+
+						if(y>=1 && y<= 49) /* spell list */
+						{
+							process_macro_keys(KEYFUNC_HELP, 0);
+						}
+						else if(y>=51 && y<= 74) /* online help */
+						{
+							sound_play_effect(SOUND_SCROLL,0,0,100);
+							show_help_screen=0;
+						}
+					}
+					else if(y>=1 && y<= 24) /* spell list */
+						check_menu_macros("?M_SPELL_LIST");
+					else if(y>=26 && y<= 49) /* skill list */
+						check_menu_macros("?M_SKILL_LIST");
+					else if(y>=51 && y<= 74) /* online help */
+						process_macro_keys(KEYFUNC_HELP, 0);
+				}
+		
+				/***********************
+				* mouse in Menue-field *
+				************************/
+				if (!mouseInPlayfield(event.motion.x, event.motion.y)){
+
+					/* textwin - disabled! textwin stuff was reworked. */
+					if (y > 488 && x > 538){
+						/*
+						if (x < 788){
+	       				static char cmdBuf[256] ={"/say "};
+							int pos =0, pos2;
+							char *text = get_textWinRow((y -488) / 10);
+							x-= 538;
+							while (x >0){
+								if (text[pos] =='&') pos++;
+								x -= SystemFont.c[(int)text[pos++]].w+ SystemFont.char_offset;
+							}
+							for (pos2=pos; --pos2 >=0;) if (text[pos2]== '&') pos = pos2;
+							if (text[pos]!='&') break;
+							for(pos2=5; text[pos++];){
+								if (text[pos]==' ' && text[pos+1]!= '&') break;
+								if (text[pos]!='&') cmdBuf[pos2++] = text[pos];
+							}
+							cmdBuf[pos2] =0;
+							send_command(cmdBuf, -1, SC_NORMAL);
+							break;
+						}
+						*/
+						if (y < 500) process_macro_keys(KEYFUNC_PAGEUP, 0);
+						else if (y < 590)   ; /* slider */
+						else 
+							process_macro_keys(KEYFUNC_PAGEDOWN, 0);
+						break;
+					}
+
+
+					/* combat modus */
+					if ((cpl.inventory_win == IWIN_BELOW) && y > 498 && y < 521 && x < 27){
+						check_keys(SDLK_c);
+						break;
+    			}
+
+					/* inventory (open / close) */
+					if (x < 480 && y > 466 && y <496){
+						if (cpl.inventory_win == IWIN_INV)
+							cpl.inventory_win = IWIN_BELOW;
+						else 
+							cpl.inventory_win = IWIN_INV;
+						break;
+					}
+
+					else if (x >= SKIN_POS_QUICKSLOT_X && x < SKIN_POS_QUICKSLOT_X+282 &&
+						y >= SKIN_POS_QUICKSLOT_Y && y<SKIN_POS_QUICKSLOT_Y+42)
+					{
+						int ind = get_quickslot(x,y);
+						if(ind != -1 && quick_slots[ind]!=-1) /* valid slot */
+						{
+							cpl.win_quick_tag= quick_slots[ind];
+							if ((SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)))
+							{
+								quick_slots[ind]=-1;
+								draggingInvItem(3);
+							}
+							else
+							{
+								int stemp = cpl.inventory_win, itemp = cpl.win_inv_tag;
+								cpl.inventory_win = IWIN_INV;
+								cpl.win_inv_tag= quick_slots[ind];
+								process_macro_keys(KEYFUNC_APPLY, 0);
+								cpl.inventory_win = stemp;
+								cpl.win_inv_tag= itemp;
+							}
+						}
+						break;
+					}
+
+					/* inventory ( IWIN_INV )  */
+					if (y > 497 && y < 593 && x >8 && x < 238){
+						if (cpl.inventory_win != IWIN_INV) break;
+						if (x > 230)/* scrollbar */
+						{
+							if (y < 506 && cpl.win_inv_slot >= INVITEMXLEN) cpl.win_inv_slot-= INVITEMXLEN;
+							else if (y < 583)       ; /* slider */
+       				else{
+								cpl.win_inv_slot+= INVITEMXLEN;
+								if  (cpl.win_inv_slot > cpl.win_inv_count) cpl.win_inv_slot = cpl.win_inv_count;
+							}
+						}else{  /* stuff */
+							cpl.win_inv_slot = (y - 497)/32 *INVITEMXLEN +  (x-8) /32 + cpl.win_inv_start ;
+							cpl.win_inv_tag = get_inventory_data(cpl.ob, &cpl.win_inv_ctag,&cpl.win_inv_slot,
+											&cpl.win_inv_start, &cpl.win_inv_count, INVITEMXLEN, INVITEMYLEN);
+							if ((SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)))
+								draggingInvItem(1);
+							else
+								process_macro_keys(KEYFUNC_APPLY, 0);
+						}
+						break;
+     			}
+
+
+					/* ground ( IWIN_BELOW )  */
+					if (y > 565 && x >265 && x < 529){
+						item *Item;
+						if (cpl.inventory_win == IWIN_INV) cpl.inventory_win =IWIN_BELOW;
+						cpl.win_below_slot = (x-265)/32;
+						cpl.win_below_tag = get_inventory_data(cpl.below, &cpl.win_below_ctag,&cpl.win_below_slot,
+							&cpl.win_below_start, &cpl.win_below_count,	INVITEMBELOWXLEN, INVITEMBELOWYLEN);
+						Item = locate_item (cpl.win_below_tag);
+						
+						if ((SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)))
+							draggingInvItem(2);
+						else 
+							process_macro_keys(KEYFUNC_APPLY, 0);
+						break;
+					}
+
+				}
+				/***********************
+				* mouse in Play-field *
+				************************/
+				else
+				{
+
+					/* Targetting */
+						if ((SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_RIGHT)))
+						{
+							int tx, ty;
+							char tbuf[32];
+
+							cpl.inventory_win = IWIN_BELOW;
+							get_tile_position( x, y, &tx, &ty );
+							sprintf(tbuf,"/target !%d %d", tx-MAP_MAX_SIZE/2, ty-MAP_MAX_SIZE/2);
+							send_command(tbuf, -1, SC_NORMAL);
+						}
+				}
+	    	break;
+
+
 			case SDL_KEYDOWN:
-            case SDL_KEYUP:
-                            
+      case SDL_KEYUP:
 				if(!InputStringFlag || cpl.input_mode != INPUT_MODE_NUMBER)
 				{
 					if(event.key.keysym.mod & KMOD_RSHIFT || 
@@ -286,13 +652,13 @@ int Event_PollInputDevice(void)
                 {
 					if(GameStatus <= GAME_STATUS_WAITLOOP)
 						done =key_meta_menu(&event.key);
-                    else if(GameStatus == GAME_STATUS_PLAY)
+          else if(GameStatus == GAME_STATUS_PLAY)
 						done = key_event(&event.key);
-                    else if(GameStatus == GAME_STATUS_SETSTATS)
+          else if(GameStatus == GAME_STATUS_SETSTATS)
 						key_setstats_event(&event.key);
-                    else if(GameStatus == GAME_STATUS_SETRACE)
+          else if(GameStatus == GAME_STATUS_SETRACE)
 						key_setrace_event(&event.key);
-                    else
+          else
 						key_connection_event(&event.key);
 				}
                                 
@@ -329,7 +695,7 @@ void key_setrace_event(SDL_KeyboardEvent *key )
 		switch(key->keysym.sym)
 		{
 		case SDLK_ESCAPE:
-			sprintf(buf,"Break Connection & Login.");
+			sprintf(buf,"connection closed. select new server.");
 			draw_info(buf, COLOR_RED);
 			GameStatus = GAME_STATUS_START;
 			break;
@@ -359,7 +725,7 @@ void key_setstats_event(SDL_KeyboardEvent *key )
 		switch(key->keysym.sym)
 		{
 		case SDLK_ESCAPE:
-			sprintf(buf,"Break Connection & Login.");
+			sprintf(buf,"connection closed. select new server.");
 			draw_info(buf, COLOR_RED);
 			GameStatus = GAME_STATUS_START;
 			break;
@@ -423,7 +789,7 @@ void key_connection_event(SDL_KeyboardEvent *key )
 		switch(key->keysym.sym)
 		{
 			case SDLK_ESCAPE:
-				sprintf(buf,"Break Connection & Login.");
+				sprintf(buf,"connection closed. select new server.");
 				draw_info(buf, COLOR_RED);
 				GameStatus = GAME_STATUS_START;
 			break;
@@ -502,6 +868,7 @@ static void key_string_event(SDL_KeyboardEvent *key )
 
 			default:
 				
+
 				/* if we are in number console mode, use GET as quick enter
 				 * mode - this is a very handy shortcut
 				 */
@@ -614,7 +981,7 @@ int key_event(SDL_KeyboardEvent *key )
 				case SDLK_LALT:
 				case SDLK_RALT:
 					send_command("/run_stop", -1, SC_FIRERUN);
-					draw_info("run_stop",COLOR_DGOLD);
+					/*draw_info("run_stop",COLOR_DGOLD);*/
 					cpl.run_on = FALSE;
 				break;
 				case SDLK_RCTRL:
@@ -651,10 +1018,12 @@ int key_event(SDL_KeyboardEvent *key )
 		}
 		else
 		{
-			keys[key->keysym.sym].pressed = TRUE;
-			keys[key->keysym.sym].time = LastTick+key_repeat_time_init;
-            check_keys(key->keysym.sym);
-
+			if(esc_menu_flag != TRUE)
+			{
+				keys[key->keysym.sym].pressed = TRUE;
+				keys[key->keysym.sym].time = LastTick+key_repeat_time_init;
+	            		check_keys(key->keysym.sym);
+			}
 			switch(key->keysym.sym)
 			{
 				case SDLK_F1:
@@ -688,7 +1057,7 @@ int key_event(SDL_KeyboardEvent *key )
 				case SDLK_RALT:
 				case SDLK_LALT:
 
-                    draw_info("run",COLOR_DGOLD);
+                    /*draw_info("run",COLOR_DGOLD);*/
 					cpl.run_on = TRUE;
 					break;
 				case SDLK_RCTRL:
@@ -702,12 +1071,51 @@ int key_event(SDL_KeyboardEvent *key )
 						show_help_screen=0;
 						break;
 					}
-					SOCKET_CloseSocket(csocket.fd);
-					GameStatus = GAME_STATUS_INIT;
+					if(esc_menu_flag == FALSE)
+					{
+						map_udate_flag=1;
+						esc_menu_flag = TRUE;
+						esc_menu_index = ESC_MENU_BACK;
+					}
+					else
+						esc_menu_flag = FALSE;
+				        sound_play_effect(SOUND_SCROLL,0,0,100);
 				break;
                                 
-                default:
-                break;
+		                default:
+					if(esc_menu_flag == TRUE)
+					{
+						switch(key->keysym.sym)
+						{
+							case SDLK_RETURN:
+								if(esc_menu_index == ESC_MENU_KEYS)
+								{
+									show_help_screen=0;
+									keybind_status = KEYBIND_STATUS_NO;
+									cpl.menustatus = MENU_KEYBIND;
+								}
+								else if(esc_menu_index == ESC_MENU_LOGOUT)
+								{
+									SOCKET_CloseSocket(csocket.fd);
+									GameStatus = GAME_STATUS_INIT;
+								}
+						        sound_play_effect(SOUND_SCROLL,0,0,100);
+								esc_menu_flag = FALSE;
+							break;
+
+							case SDLK_UP:
+								esc_menu_index--;
+								if(esc_menu_index<0)
+									esc_menu_index=ESC_MENU_INDEX-1;
+							break;
+							case SDLK_DOWN:
+								esc_menu_index++;
+								if(esc_menu_index>=ESC_MENU_INDEX)
+									esc_menu_index=0;
+							break;
+						};
+					}
+
 			};
 		}
 	}
@@ -778,7 +1186,7 @@ static Boolean check_menu_macro_keys(char *text)
 /* here we look in the user defined keymap and try to get same useful macros */
 static Boolean check_menu_macros(char *text)
 {
-    if(!strcmp("?M_SLIST",text) )
+    if(!strcmp("?M_SPELL_LIST",text) )
     {
         
         map_udate_flag=2;
@@ -899,11 +1307,43 @@ static Boolean process_macro_keys(int id, int value)
             examine_range_marks(tag);
         break;
         case KEYFUNC_PAGEUP:
-            text_win_soff++;
+		if(textwin_set.split_flag == TRUE)
+	        	text_win_soff_split++;
+		else
+            		text_win_soff++;
         break;
         case KEYFUNC_PAGEDOWN:
-            if(text_win_soff--<0)
-                text_win_soff=0;
+		if(textwin_set.split_flag == TRUE)
+		{
+			if(text_win_soff_split--<0)
+				text_win_soff_split=0;
+		}
+		else
+		{
+			if(text_win_soff--<0)
+			    text_win_soff=0;
+		}
+            break;
+        case KEYFUNC_TARGET_ENEMY:
+			send_command("/target 0", -1, SC_NORMAL);
+        break;
+        case KEYFUNC_TARGET_FRIEND:
+			send_command("/target 1", -1, SC_NORMAL);
+        break;
+        case KEYFUNC_TARGET_SELF:
+			send_command("/target 2", -1, SC_NORMAL);
+        break;
+        case KEYFUNC_COMBAT:
+			send_command("/combat", -1, SC_NORMAL);
+        break;
+        case KEYFUNC_PAGEUP_TOP:
+	            text_win_soff_top++;
+        break;
+
+        case KEYFUNC_PAGEDOWN_TOP:
+				if(text_win_soff_top--<0)
+				    text_win_soff_top=0;
+
             break;
         case KEYFUNC_SLIST:
             map_udate_flag=2;
@@ -965,7 +1405,7 @@ static Boolean process_macro_keys(int id, int value)
 			if(!(cpl.runkey_on=cpl.runkey_on?FALSE:TRUE))
 				send_command("/run_stop", -1, SC_FIRERUN);
 			sprintf(buf,"runmode %s", cpl.runkey_on?"on":"off");
-			draw_info(buf,COLOR_DGOLD);
+			/*draw_info(buf,COLOR_DGOLD);*/
 			break;
 		case KEYFUNC_MOVE:
 			move_keys(value);
@@ -1026,34 +1466,26 @@ static Boolean process_macro_keys(int id, int value)
 			if(tag == -1)
 				return FALSE;
 			toggle_locked ((it=locate_item (tag)));
-			sprintf(buf,"lock %s", it->s_name);
+			if(it->locked)
+				sprintf(buf,"unlock %s", it->s_name);
+			else
+				sprintf(buf,"lock %s", it->s_name);
 			draw_info(buf,COLOR_DGOLD);
             return FALSE;
 		break;
 		case KEYFUNC_GET:
-			nrof = 1;
+			nrof = 1; /* number of Items */
 			if(cpl.inventory_win == IWIN_BELOW) /* from below to inv*/
 			{
-                if(cpl.container)
-                {
-                    /* container, aber nicht der gleiche */
-                    if(cpl.container->tag != cpl.win_below_ctag)
-                    {
-                        tag = cpl.win_below_tag;
-                        loc = cpl.container->tag;
-                    }
-                    else
-                    {
-                        tag = cpl.win_below_tag;
-                        loc = cpl.ob->tag;
-                    }
-                }
-                else
-                {
-                    tag = cpl.win_below_tag;
-                    loc = cpl.ob->tag;
-                }
-            }
+        tag = cpl.win_below_tag;
+				if (cpl.container)
+        {
+					/* container, aber nicht der gleiche */
+          if(cpl.container->tag != cpl.win_below_ctag) loc = cpl.container->tag;
+          else loc = cpl.ob->tag;
+        }
+       	else loc = cpl.ob->tag;
+			}
 			else /* inventory */
 			{
                 if(cpl.container)
@@ -1095,29 +1527,33 @@ static Boolean process_macro_keys(int id, int value)
                 }
 
 			}
+
 			if(tag == -1)
 				return FALSE;
 			if((it = locate_item (tag)))
 				nrof = it->nrof;
             else
                 return FALSE;
-            if(nrof == 1)
+           if(nrof == 1)
 				nrof = 0;
             else
             {
+								
                 reset_keys();
                 cpl.input_mode = INPUT_MODE_NUMBER;
                 open_input_mode(22);
                 cpl.loc = loc;
                 cpl.tag =tag;
-                cpl.nrof = nrof;
-				cpl.nummode = NUM_MODE_GET;
-				sprintf(InputString,"%d",nrof);
-                InputCount =strlen(InputString);   
-				strncpy(cpl.num_text,it->s_name,250);
-				cpl.num_text[250]=0;
+		cpl.nrof = nrof;
+		cpl.nummode = NUM_MODE_GET;
+		sprintf(InputString,"%d",nrof);
+                InputCount =strlen(InputString);
+		strncpy(cpl.num_text,it->s_name,250);
+		cpl.num_text[250]=0;
                 return FALSE;
+
             }
+			sound_play_effect(SOUND_GET,0,0,100);
             sprintf(buf,"get %s", it->s_name);
 			draw_info(buf,COLOR_DGOLD);
 			client_send_move (loc, tag, nrof);
@@ -1162,6 +1598,8 @@ static Boolean process_macro_keys(int id, int value)
 			return FALSE;	
 		break;
 		case KEYFUNC_HELP:
+			cpl.menustatus = MENU_NO;       
+			sound_play_effect(SOUND_SCROLL,0,0,100);
 			if(show_help_screen)
 			{
 				if(++show_help_screen>MAX_HELP_SCREEN)
@@ -1216,8 +1654,16 @@ static Boolean process_macro_keys(int id, int value)
 				nrof = it->nrof;
             else
                 return FALSE;
-			if(nrof == 1)
-				nrof = 0;
+                
+           if(it->locked)
+	   {
+           	sound_play_effect(SOUND_CLICKFAIL,0,0,100);
+	   	draw_info("unlock item first!",COLOR_DGOLD);
+		return FALSE;
+	   }
+
+	    if(nrof == 1)
+		nrof = 0;
             else
             {
                 reset_keys();
@@ -1232,7 +1678,12 @@ static Boolean process_macro_keys(int id, int value)
                 strncpy(cpl.num_text,it->s_name,250);
 				cpl.num_text[250]=0;
                 return FALSE;
+
+
+
+
             }
+			sound_play_effect(SOUND_DROP,0,0,100);
 			sprintf(buf,"drop %s", it->s_name);
    			draw_info(buf,COLOR_DGOLD);
 			client_send_move (loc, tag, nrof);
@@ -1405,7 +1856,7 @@ static void move_keys(int num)
 		}
 
 		fire_command (buf);
-		draw_info(msg,COLOR_DGOLD);
+		/*draw_info(msg,COLOR_DGOLD);*/
 		return;	
 	}
 	else
@@ -1414,7 +1865,7 @@ static void move_keys(int num)
 		buf[0]=0;
 	}
 	strcat(buf, directions_name[num]);
-	draw_info(buf,COLOR_DGOLD);
+	/*draw_info(buf,COLOR_DGOLD);*/
 }
 
 
@@ -1507,7 +1958,6 @@ void add_keybind_macro(struct _keybind_key *macro)
 
 void read_keybind_file(char *fname)
 {
-
 	FILE *stream;
 	int key, rep, len,len2;
 	char *tmp, *tmp2,*tmp_e, *tmp2_e;

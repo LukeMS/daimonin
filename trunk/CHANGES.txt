@@ -1,13 +1,47 @@
 Daimonin CHANGES
+
+02.12.2004	- adding player names on map configuration
+                  to options.dat
+		- added user_gfx folder - artist can drop there
+                  for quick test their own graphics
+
+01.12.2004	- adding configure to client linux make
+                - --prefix for configure now allowed
+                - added some stuff to client/server make
+
+30.11.2004	- submited 0.96alpha1 (BETA 2 alpha) to CVS
+		- adding zlib compression to client & server		
+                - spell list, skill list and setting list moved
+                  to server and transmited packed with checksum
+                  to client
+...             - added bmaps & animation files transmited to client
+                  to with checksum
+                - client is autoupdating all this files from server
+                - adding packed picture file to client
+                - client check and get only files from server which
+                - are not in paced picture file and cache
+                - files are only downloaded *one* time from server
+                  and the picture name/checksum and animation name
+                  and checksum are never called with this system.
+...             - alot more speed and not 'load' tile anymore
+                - changed server->client protocol to binary
+		- added small speedup to core socket loop of server
+                - changed script system from static to dynamic using 
+                  normal objects. Main object size dropped from 550+
+                  to under 400 bytes.
+25.11.2003	- dozens other small fixes
+
+24.11.2003      - reworked server hash table and macros
+
 23.11.2003	- preparing BETA 2.
+
 22.11.2003	- Added several hundred new objects to the 
 ...             - changed script system
                 - changed player stat system
                 - changed player reg system
                 - fixed tons of bugs & glitches
                 - added player patches
-                - reworked fix_player()
-12.11.2003
+12.11.2003      - reworked fix_player()
 
 11.11.2003	- fixed a wild spell cast when player dies
                 - fixed cone spells - now only one spell object

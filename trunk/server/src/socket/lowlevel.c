@@ -43,17 +43,13 @@
  *
  **********************************************************************/
 
-void SockList_Init(SockList *sl)
-{
-    sl->len=0;
-    sl->buf=NULL;
-}
+/* changed to macros in define.h */
+/*
+#define SockList_AddChar(_sl_,_c_)    _sl_->buf[_sl_->len++]=_c_;
 
-void SockList_AddChar(SockList *sl, char c)
-{
-    sl->buf[sl->len]=c;
-    sl->len++;
-}
+#define GetInt_String(_data_) ((_data_[0]<<24) + (_data_[1]<<16) + (_data_[2]<<8) + _data_[3])
+#define GetShort_String(_data_) ((_data_[0]<<8)+_data_[1])
+*/
 
 /* add a 0 terminated string */
 void SockList_AddString(SockList *sl, char *data)
@@ -67,33 +63,6 @@ void SockList_AddString(SockList *sl, char *data)
 	};
 	sl->buf[sl->len]=c;
 	sl->len++;
-}
-
-void SockList_AddShort(SockList *sl, uint16 data)
-{
-    sl->buf[sl->len++]= (data>>8)&0xff;
-    sl->buf[sl->len++] = data & 0xff;
-}
-
-
-void SockList_AddInt(SockList *sl, uint32 data)
-{
-    sl->buf[sl->len++]= (data>>24)&0xff;
-    sl->buf[sl->len++]= (data>>16)&0xff;
-    sl->buf[sl->len++]= (data>>8)&0xff;
-    sl->buf[sl->len++] = data & 0xff;
-}
-
-/* Basically does the reverse of SockList_AddInt, but on
- * strings instead.  Same for the GetShort, but for 16 bits.
- */
-int GetInt_String(unsigned char *data)
-{
-    return ((data[0]<<24) + (data[1]<<16) + (data[2]<<8) + data[3]);
-}
-
-short GetShort_String(unsigned char *data) {
-    return ((data[0]<<8)+data[1]);
 }
 
 /******************************************************************************

@@ -97,6 +97,12 @@
 #define CS_STAT_WEIGHT_LIM	26
 #define CS_STAT_EXT_TITLE 27
 
+/* 0.96 */
+#define CS_STAT_REG_HP 28
+#define CS_STAT_REG_MANA 29
+#define CS_STAT_REG_GRACE 30
+#define CS_STAT_TARGET_HP 31
+
 /* Start & end of resistances, inclusive. */
 #define CS_STAT_RESIST_START	100
 #define CS_STAT_RESIST_END	117
@@ -193,13 +199,21 @@
 #define NDI_DK_NAVY  11
 
 #define NDI_MAX_COLOR	11	/* Last value in */
-#define NDI_COLOR_MASK	0xff	/* Gives lots of room for expansion - we are */
-				/* using an int anyways, so we have the space */
-				/* to still do all the flags */
+#define NDI_COLOR_MASK	0xff   /* colors are first 8 bit - o bit digit */	
+#define NDI_FLAG_MASK	0xffff	/* 2nd 8 bit are flags to define draw_info string */
+
+/* implicit rule: if not NDI_PLAYER or NDI_SYSTEM is defined, 
+ * message comes from NPC.
+ */
+#define NDI_SAY		0x0100	/* its a say command */
+#define NDI_SHOUT	0x0200  
+#define NDI_TELL	0x0400
+#define NDI_PLAYER	0x0800 /* this comes from a player */
+#define NDI_SYSTEM	0x01000 /* if this is set, its a "system" message */
 
 
-#define NDI_UNIQUE	0x100	/* Print this out immediately, don't buffer */
-#define NDI_ALL		0x200	/* Inform all players of this message */
+#define NDI_UNIQUE	0x10000	/* Print this out immediately, don't buffer */
+#define NDI_ALL		0x20000	/* Inform all players of this message */
 
 /* Flags for the item command */
 enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
@@ -290,6 +304,7 @@ enum {
 	BINARY_CMD_COMC=1,
 	BINARY_CMD_MAP2,
 	BINARY_CMD_DRAWINFO,
+	BINARY_CMD_DRAWINFO2,
 	BINARY_CMD_MAP_SCROLL,
 	BINARY_CMD_ITEMX,
 	BINARY_CMD_SOUND,

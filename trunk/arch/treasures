@@ -909,5 +909,5 @@ treasureone random_style1
  chance 50
 end
 treasureone random_test
- list random_talisman
+ list random_test_all
 end

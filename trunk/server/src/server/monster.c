@@ -754,14 +754,21 @@ int move_monster(object *op) {
 				        return 0;
 				}
 				if(QUERY_FLAG(op,FLAG_READY_SKILL)&&!(RANDOM()%3))
-				{
+				{	/*
 				    if(monster_use_skill(op,part,enemy,dir))
 				        return 0;
+					*/
+					/* allow skill use AND melee attack! */
+					monster_use_skill(op,part,enemy,dir);
 				}
 				if(QUERY_FLAG(op,FLAG_READY_BOW)&&!(RANDOM()%2))
 				{
+					/*
 				    if(monster_use_bow(op,part,enemy,dir))
 				        return 0;
+					*/
+					/* allow firing/throwing AND melee attack */
+				    monster_use_bow(op,part,enemy,dir);
 				}
 			}
 	    } /* for processing of all parts */        

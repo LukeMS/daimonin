@@ -56,6 +56,9 @@
 
 #define _malloc(__d,__s) malloc(__d)
 
+#define HAVE_STRICMP
+#define HAVE_STRNICMP
+
 /* Define to the address where bug reports for this package should be sent. */
 #define PACKAGE_BUGREPORT "support@daimonin.sourceforge.net"
 

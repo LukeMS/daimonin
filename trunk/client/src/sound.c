@@ -105,6 +105,7 @@ static char* sound_files[SOUND_MAX] = {
 	,"warning_hp2.wav"
 	,"weapon_attack.wav"
 	,"weapon_hold.wav"
+	,"get.wav"
 };
 
 static char* spell_sound_files[SPELL_SOUND_MAX] = {

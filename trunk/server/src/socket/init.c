@@ -365,6 +365,53 @@ static load_srv_files(char *fname, int id, int cmd)
     fclose(fp);
 }
 
+/* get the /lib/settings default file and create the
+ * /data/client_settings with it.
+ */
+static void create_client_settings(void)
+{
+    char buf[MAX_BUF*4];
+	int i;
+	FILE *fset_default,*fset_create;
+
+	LOG(llevDebug,"Creating %s/client_settings...\n", settings.localdir);
+
+    /* open default */
+	sprintf(buf,"%s/client_settings", settings.datadir);
+    if ((fset_default=fopen(buf,"rb")) ==NULL)
+		LOG(llevError,"\nERROR: Can not open file %s\n", buf);
+
+	/* delete our target - we create it new now */
+    sprintf(buf,"%s/client_settings", settings.localdir);
+	unlink(buf);
+
+	/* open target client_settings */
+    if ((fset_create=fopen(buf,"wb")) ==NULL)
+	{
+		fclose(fset_default);
+		LOG(llevError,"\nERROR: Can not open file %s\n", buf);
+	}
+
+	/* copy default to target */
+	while(fgets(buf,MAX_BUF,fset_default)!=NULL) 
+		fputs(buf,fset_create);
+	fclose(fset_default);
+	
+	/* now we add the server specific date 
+	/* first: the exp levels! 
+	*/
+	sprintf(buf,"level %d\n", MAXLEVEL); /* param: number of levels we have */
+	fputs(buf,fset_create);
+
+	for(i=0;i<=MAXLEVEL;i++)
+	{
+		sprintf(buf, "%x\n", new_levels[i]);
+		fputs(buf,fset_create);
+	}
+
+	fclose(fset_create);
+}
+
 /* load all src_files we can send to client... client_bmaps is generated from 
  * the server at startup out of the daimonin png file.
  */
@@ -377,7 +424,7 @@ void init_srv_files(void)
     sprintf(buf,"%s/animations", settings.datadir);
 	load_srv_files(buf, SRV_CLIENT_ANIMS,DATA_CMD_ANIM_LIST);
 
-    sprintf(buf,"%s/client_bmaps", settings.datadir);
+    sprintf(buf,"%s/client_bmaps", settings.localdir);
 	load_srv_files(buf, SRV_CLIENT_BMAPS,DATA_CMD_BMAP_LIST);
 
     sprintf(buf,"%s/client_skills", settings.datadir);
@@ -386,7 +433,8 @@ void init_srv_files(void)
     sprintf(buf,"%s/client_spells", settings.datadir);
 	load_srv_files(buf, SRV_CLIENT_SPELLS,DATA_CMD_SPELL_LIST);
 
-    sprintf(buf,"%s/client_settings", settings.datadir);
+	create_client_settings();
+    sprintf(buf,"%s/client_settings", settings.localdir);
 	load_srv_files(buf, SRV_CLIENT_SETTINGS,DATA_CMD_SETTINGS_LIST);
 }
 

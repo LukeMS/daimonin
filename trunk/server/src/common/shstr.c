@@ -63,7 +63,7 @@
  * some testings (no bug messages from this module)
  * then this define should be disabled
  */
-#define SECURE_SHSTR_HASH
+/*#define SECURE_SHSTR_HASH*/
 
 /* small hack to insert LOG here to without the whole other externs */
 #include "logger.h"
@@ -350,21 +350,21 @@ void free_string_shared(char *str)
 			 */
 			if (ss->next)
 			{
-				LOG(llevDebug,"SS: >%s< #%d remove_a!\n", str,ss->refcount& ~TOPBIT);
+				/*LOG(llevDebug,"SS: >%s< #%d remove_a!\n", str,ss->refcount& ~TOPBIT);*/
 				*(ss->u.array) = ss->next;
 				ss->next->u.array = ss->u.array;
 				ss->next->refcount |= TOPBIT;
 			} 
 			else 
 			{
-				LOG(llevDebug,"SS: >%s< #%d remove_b!\n", str,ss->refcount& ~TOPBIT);
+				/*LOG(llevDebug,"SS: >%s< #%d remove_b!\n", str,ss->refcount& ~TOPBIT);*/
 				*(ss->u.array) = NULL;
 			}
 			free(ss);
 		} 
 		else 
 		{
-			LOG(llevDebug,"SS: >%s< #%d remove_c!\n", str,ss->refcount& ~TOPBIT);
+			/*LOG(llevDebug,"SS: >%s< #%d remove_c!\n", str,ss->refcount& ~TOPBIT);*/
 			/* Relink and free this struct.
 			 */
 			if (ss->next)

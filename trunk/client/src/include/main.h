@@ -23,6 +23,9 @@
 #if !defined(__MAIN_H)
 #define __MAIN_H
 
+#define SKIN_POS_QUICKSLOT_X 518
+#define SKIN_POS_QUICKSLOT_Y 109
+
 #define HUGE_BUF 1024
 
 #define SDL_DEFAULT_REPEAT_DELAY        500
@@ -109,6 +112,8 @@ typedef struct _options {
     char metaserver[256];
 	int no_meta;
 	uint32 sleep;
+	int player_names;
+	int show_target_self;
     int metaserver_port;
     int music_volume;
     int sound_volume;
@@ -301,6 +306,16 @@ extern int GameStatusVersionOKFlag;
 extern int request_file_chain;
 extern int request_file_flags;
 
+extern int esc_menu_flag;
+extern int esc_menu_index;
+
+enum {
+	ESC_MENU_KEYS,
+	ESC_MENU_LOGOUT,
+	ESC_MENU_BACK,
+
+	ESC_MENU_INDEX /* last index */
+};
 
 /* with this, we overrule bitmap loading params*/
 /* for example, we need for fonts a attached palette, and not the native vid mode*/
@@ -417,6 +432,22 @@ typedef enum _bitmap_index {
         BITMAP_HELP2,
         BITMAP_HELP3,
 		
+        BITMAP_TARGET_HP,
+        BITMAP_TARGET_HP_B,
+        BITMAP_TEXTWIN_MASK,
+        BITMAP_TEXTWIN_BLANK,
+        BITMAP_TEXTWIN_SPLIT,
+		BITMAP_SLIDER_UP,
+		BITMAP_SLIDER_DOWN,
+		BITMAP_SLIDER,
+		BITMAP_GROUP_CLEAR,
+		BITMAP_OPTIONS_HEAD,
+		BITMAP_OPTIONS_KEYS,
+		BITMAP_OPTIONS_LOGOUT,
+		BITMAP_OPTIONS_BACK,
+		BITMAP_OPTIONS_MARK_LEFT,
+		BITMAP_OPTIONS_MARK_RIGHT,
+		BITMAP_OPTIONS_ALPHA,
         BITMAP_INIT
 }_bitmap_index;
 

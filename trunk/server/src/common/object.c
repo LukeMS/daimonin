@@ -1395,8 +1395,7 @@ void clear_object(object *op) {
     FREE_ONLY_HASH(op->slaying);
     FREE_ONLY_HASH(op->msg);
 
-
-    /* Using this memset is a lot easier (and probably faster)
+	/* Using this memset is a lot easier (and probably faster)
      * than explicitly clearing the fields.
      */
     memset((void*)((char*)op + offsetof(object, name)),

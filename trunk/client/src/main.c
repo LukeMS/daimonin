@@ -60,6 +60,8 @@ uint32 LastTick;			/* system time counter in ms since prg start */
 uint32 GameTicksSec;		/* ticks since this second frame in ms */
 uint32 tmpGameTick;			/* used from several functions, just to store real ticks */
 
+int esc_menu_flag;
+int esc_menu_index;
 
 _bmaptype *bmap_table[BMAPTABLE];
 
@@ -227,6 +229,25 @@ static _bitmap_name  bitmap_name[BITMAP_INIT] =
         {"loading.png", PIC_TYPE_TRANS},
         {"help2.png", PIC_TYPE_DEFAULT},
         {"help3.png", PIC_TYPE_DEFAULT},
+
+        {"target_hp.png", PIC_TYPE_DEFAULT},
+        {"target_hp_b.png", PIC_TYPE_DEFAULT},
+        {"textwin_mask.png", PIC_TYPE_DEFAULT},
+        {"textwin_blank.png", PIC_TYPE_DEFAULT},
+        {"textwin_split.png", PIC_TYPE_DEFAULT},
+
+        {"slider_up.png", PIC_TYPE_TRANS},
+        {"slider_down.png", PIC_TYPE_TRANS},
+        {"slider.png", PIC_TYPE_TRANS},
+        {"group_clear.png", PIC_TYPE_DEFAULT},
+        {"options_head.png", PIC_TYPE_TRANS},
+        {"options_keys.png", PIC_TYPE_TRANS},
+        {"options_logout.png", PIC_TYPE_TRANS},
+        {"options_back.png", PIC_TYPE_TRANS},
+        {"options_mark_left.png", PIC_TYPE_TRANS},
+        {"options_mark_right.png", PIC_TYPE_TRANS},
+        {"options_alpha.png", PIC_TYPE_DEFAULT},
+
 };
 
 #define BITMAP_MAX (sizeof(bitmap_name)/sizeof(struct _bitmap_name))
@@ -282,6 +303,15 @@ void init_game_data(void)
 {
     int i;
     
+		textwin_set.split_flag = TRUE;
+		textwin_set.size = 9;
+		textwin_set.split_size = 9;
+		textwin_set.top_size = 4;
+		textwin_set.use_alpha = TRUE;
+		textwin_set.alpha = 156;
+
+		esc_menu_flag = FALSE;
+
 		memset(anim_table, 0 , sizeof(anim_table));
 		memset(animations, 0 , sizeof(animations));
 		memset(bmaptype_table, 0 , sizeof(bmaptype_table));
@@ -407,7 +437,6 @@ void load_options_dat(void)
                 strcpy(options.metaserver, parameter);
             else if(!strcmp(keyword,"meta_server_port"))
                 options.metaserver_port = atoi(parameter);
-
             else if(!strcmp(keyword,"BitPerPixel"))
                 options.video_bpp = (Uint8) atoi(parameter);
             else if(!strcmp(keyword,"AutomaticBPP"))
@@ -420,10 +449,55 @@ void load_options_dat(void)
                 options.use_rect = atoi(parameter);
             else if(!strcmp(keyword,"MaxSpeed"))
                 options.max_speed = atoi(parameter);
+            else if(!strcmp(keyword,"PlayerNamesOnMap"))
+                options.player_names = atoi(parameter);
+            else if(!strcmp(keyword,"ShowTargetSelf"))
+                options.show_target_self = atoi(parameter);
+			/* text windows settings */
+			else if(!strcmp(keyword,"TextWinSplit"))
+                textwin_set.split_flag = atoi(parameter);
+			else if(!strcmp(keyword,"TextWinAlphaFlag"))
+                textwin_set.use_alpha = atoi(parameter);
+			else if(!strcmp(keyword,"TextWinAlpha"))
+                textwin_set.alpha = atoi(parameter);
+			else if(!strcmp(keyword,"TextWinSizeDefault"))
+			{
+                textwin_set.size = atoi(parameter)-1;
+				if(textwin_set.size<9)
+					textwin_set.size = 9;
+				else if(textwin_set.size>37)
+					textwin_set.size = 37;
+			}
+			else if(!strcmp(keyword,"TextWinSizeBody"))
+			{
+                textwin_set.split_size = atoi(parameter)-1;
+				if(textwin_set.split_size <1)
+					textwin_set.split_size=1;
+				else if(textwin_set.split_size >37)
+					textwin_set.split_size  = 37;
+			}
+			else if(!strcmp(keyword,"TextWinSizeTop"))
+			{
+                textwin_set.top_size = atoi(parameter)-1;
+				if(textwin_set.top_size <1)
+					textwin_set.top_size=1;
+				else if(textwin_set.top_size >37)
+					textwin_set.top_size  = 37;
+			}
             else
                 LOG(LOG_MSG, "WARNING: Unknown setting in %s: %s\n", OPTION_FILE,line);                
         }
-	fclose(stream);
+		fclose(stream);
+		if((textwin_set.top_size+textwin_set.split_size)>36)
+		{
+			textwin_set.top_size=16;
+			textwin_set.split_size=16;
+		}
+		else if((textwin_set.top_size+textwin_set.split_size)<8)
+		{
+			textwin_set.top_size=3;
+			textwin_set.split_size=5;
+		}
     }
     else
         LOG(LOG_ERROR, "ERROR: Can't find file %s\n",OPTION_FILE);
@@ -458,25 +532,27 @@ Boolean game_status_chain(void)
 				/* skip of -nometa in command line or no metaserver set in options */
 				if(options.no_meta || !options.metaserver[0])
 				{
-					draw_info("Option '-nometa'. Skipped metaserver.", COLOR_GREEN);
+					draw_info("Option '-nometa'.metaserver ignored.", COLOR_GREEN);
 				}
 				else
 				{
-					draw_info("Search metaserver.", COLOR_GREEN);
-					sprintf(buf,"Try %s:%d", options.metaserver, options.metaserver_port); 
+					draw_info("query metaserver...", COLOR_GREEN);
+					sprintf(buf,"trying %s:%d", options.metaserver, options.metaserver_port); 
 					draw_info(buf, COLOR_GREEN);
 					if(SOCKET_OpenSocket(&csocket.fd,&csocket, options.metaserver,options.metaserver_port))
 					{
 						read_metaserver_data();
 						SOCKET_CloseSocket(csocket.fd);
+		                draw_info("done.", COLOR_GREEN);
 					}
-	                draw_info("Done.", COLOR_GREEN);
+					else
+		                draw_info("metaserver failed! using default list.", COLOR_GREEN);
 				}
 
 				add_metaserver_data("127.0.0.1", 13327, -1,"local",
                         "localhost. Start server before you try to connect.","","","");
                 count_meta_server();
-                draw_info("Select a server.", COLOR_GREEN);
+                draw_info("select a server.", COLOR_GREEN);
                 GameStatus = GAME_STATUS_START;
         }
         else if(GameStatus == GAME_STATUS_START)
@@ -497,7 +573,7 @@ Boolean game_status_chain(void)
 			    FaceList[MAX_FACE_TILES-1].sprite=sprite_tryload_file(sbuf,0,NULL);
 
 	            map_udate_flag=2;
-                sprintf(buf,"Try server %s:%d", ServerName,
+                sprintf(buf,"trying server %s:%d ...", ServerName,
                         ServerPort);
                 draw_info(buf, COLOR_GREEN);
                 GameStatus = GAME_STATUS_CONNECT;
@@ -508,7 +584,7 @@ Boolean game_status_chain(void)
                 if(!SOCKET_OpenSocket(&csocket.fd,&csocket, ServerName,
                         ServerPort))
                 {
-                        sprintf(buf,"Connection failed!");
+                        sprintf(buf,"connection failed!");
                         draw_info(buf, COLOR_RED);
                         GameStatus = GAME_STATUS_START;
                 }
@@ -517,7 +593,7 @@ Boolean game_status_chain(void)
         }
         else if(GameStatus == GAME_STATUS_VERSION)
         {
-                sprintf(buf,"Connected. Exchange version.");
+                sprintf(buf,"connected. exchange version.");
                 draw_info(buf, COLOR_GREEN);
                 SendVersion(csocket);
                 GameStatus = GAME_STATUS_WAITVERSION;
@@ -536,13 +612,13 @@ Boolean game_status_chain(void)
                     /* false version! */
                     if(!GameStatusVersionOKFlag)
                     {
-                        sprintf(buf,"Drop Connection.\nSelect new server.");
+                        sprintf(buf,"wrong version!\nselect a different server.");
                         draw_info(buf, COLOR_GREEN);
                         GameStatus = GAME_STATUS_START;
                     }
                     else
                     {
-                        sprintf(buf,"Done.\nWait for Login.");
+                        sprintf(buf,"version confirmed.\nstarting login procedure...");
                         draw_info(buf, COLOR_GREEN);
                         GameStatus = GAME_STATUS_SETUP;
                     }
@@ -635,6 +711,7 @@ Boolean game_status_chain(void)
 				/* ok... now we check for bmap & anims processing... */
 				read_bmap_tmp();
 				read_anim_tmp();
+				load_settings();
 				request_file_chain++; 
 			}
 			else if(request_file_chain == 12) 
@@ -902,7 +979,7 @@ void show_meta_server(void)
         x= SCREEN_XLEN/2-Bitmaps[BITMAP_META]->bitmap->w/2+7;
         y=108;
         sprite_blt(Bitmaps[BITMAP_META],x, y, NULL, NULL);
-	 	blt_window_slider(Bitmaps[BITMAP_META_SCROLL], metaserver_count,14,metaserver_start, x+339, y+120);
+	 	blt_window_slider(Bitmaps[BITMAP_META_SCROLL], metaserver_count,14, metaserver_start, -1,x+339, y+120);
 
         node = start_server;
         StringBlt(ScreenSurface,&SystemFont, "Select Server", x+17, y+92,
@@ -999,9 +1076,9 @@ void show_newplayer_server(void)
 		StringBlt(ScreenSurface, &SystemFont,buf , x+80, y+230, COLOR_GREEN, NULL, NULL);
 		sprintf(buf, "%d", cpl.stats.Int);
 		StringBlt(ScreenSurface, &SystemFont,buf , x+80, y+242, COLOR_GREEN, NULL, NULL);
-		sprintf(buf, "%d", cpl.stats.Pow);
-		StringBlt(ScreenSurface, &SystemFont,buf , x+80, y+254, COLOR_GREEN, NULL, NULL);
 		sprintf(buf, "%d", cpl.stats.Wis);
+		StringBlt(ScreenSurface, &SystemFont,buf , x+80, y+254, COLOR_GREEN, NULL, NULL);
+		sprintf(buf, "%d", cpl.stats.Pow);
 		StringBlt(ScreenSurface, &SystemFont,buf , x+80, y+266, COLOR_GREEN, NULL, NULL);
 		sprintf(buf, "%d", cpl.stats.Cha);
 		StringBlt(ScreenSurface, &SystemFont,buf , x+80, y+278, COLOR_GREEN, NULL, NULL);
@@ -1190,9 +1267,47 @@ void list_vid_modes(void)
         LOG(LOG_MSG, "VideoInfo: video memory: %dKB\n",vinfo->video_mem); 
 }
 
+static void show_option(int mark, int x, int y)
+{
+	int index, x1,y1,x2,y2;
+    _BLTFX bltfx;
+
+    bltfx.alpha=128;
+	bltfx.flags = BLTFX_FLAG_SRCALPHA;
+	sprite_blt(Bitmaps[BITMAP_OPTIONS_ALPHA],x-Bitmaps[BITMAP_OPTIONS_ALPHA]->bitmap->w/2, y-20, NULL, &bltfx);
+
+	sprite_blt(Bitmaps[BITMAP_OPTIONS_HEAD],x-Bitmaps[BITMAP_OPTIONS_HEAD]->bitmap->w/2, y, NULL, NULL);
+	sprite_blt(Bitmaps[BITMAP_OPTIONS_KEYS],x-Bitmaps[BITMAP_OPTIONS_KEYS]->bitmap->w/2, y+110, NULL, NULL);
+	sprite_blt(Bitmaps[BITMAP_OPTIONS_LOGOUT],x-Bitmaps[BITMAP_OPTIONS_LOGOUT]->bitmap->w/2, y+180, NULL, NULL);
+	sprite_blt(Bitmaps[BITMAP_OPTIONS_BACK],x-Bitmaps[BITMAP_OPTIONS_BACK]->bitmap->w/2, y+250, NULL, NULL);
+
+	if(esc_menu_index== ESC_MENU_KEYS)
+	{
+		index = BITMAP_OPTIONS_KEYS;
+		y1=y2=y+115;
+	}
+	if(esc_menu_index== ESC_MENU_LOGOUT)
+	{
+		index = BITMAP_OPTIONS_LOGOUT;
+		y1=y2=y+185;
+	}
+	if(esc_menu_index== ESC_MENU_BACK)
+	{
+		index = BITMAP_OPTIONS_BACK;
+		y1=y2=y+255;
+	}
+
+	x1=x-Bitmaps[index]->bitmap->w/2-6;
+	x2=x+Bitmaps[index]->bitmap->w/2+6;
+
+	sprite_blt(Bitmaps[BITMAP_OPTIONS_MARK_LEFT],x1-Bitmaps[BITMAP_OPTIONS_MARK_LEFT]->bitmap->w, y1, NULL, NULL);
+	sprite_blt(Bitmaps[BITMAP_OPTIONS_MARK_RIGHT],x2, y2, NULL, NULL);
+}
+
 int main(int argc, char *argv[])
 {
 	char buf[256];
+	int x,y;
 	uint32 anim_tick;
     Uint32 videoflags;
     int i,done=0,FrameCount=0;
@@ -1336,9 +1451,9 @@ int main(int argc, char *argv[])
 		SDL_Delay(25);		/* force the thread to sleep */
 	}; /* wait for keypress */
 
-	sprintf(buf, "Welcome to %s (%d)", PACKAGE_NAME,VERSION_CS); 
+	sprintf(buf, "Welcome to Daimonin v%s", PACKAGE_VERSION); 
     draw_info(buf, COLOR_HGOLD);
-    draw_info("Start socket.", COLOR_GREEN);
+    draw_info("init network...", COLOR_GREEN);
     if(!SOCKET_InitSocket()) /* log in function*/
 		exit(1);
         
@@ -1468,7 +1583,7 @@ int main(int argc, char *argv[])
 	        		play_anims(0,0); /* over the map */
 				}
 				show_player_doll(0, 0);
-				show_quickslots(518, 109);
+				show_quickslots(SKIN_POS_QUICKSLOT_X, SKIN_POS_QUICKSLOT_Y);
 				sprite_blt(Bitmaps[BITMAP_BORDER1],0, 351, NULL, NULL);
 				sprite_blt(Bitmaps[BITMAP_BORDER2],144, 423, NULL, NULL);
 				sprite_blt(Bitmaps[BITMAP_BORDER3],264, 483, NULL, NULL);
@@ -1478,6 +1593,7 @@ int main(int argc, char *argv[])
 				sprite_blt(Bitmaps[BITMAP_PANEL_P1],686, 408, NULL, NULL);
 				sprite_blt(Bitmaps[BITMAP_TARGET_SPOT],0, 423, NULL, NULL);
 				sprite_blt(Bitmaps[BITMAP_GROUP_SPOT],0, 482, NULL, NULL);
+			    StringBlt(ScreenSurface, &Font6x3Out,"Group",5, 525,COLOR_HGOLD, NULL, NULL);
 				sprite_blt(Bitmaps[BITMAP_FLINE],1, 306, NULL, NULL);
 				sprite_blt(Bitmaps[BITMAP_BELOW],264, 550, NULL, NULL);
 				cpl.container=NULL; /* this will be set right on the fly in get_inventory_data() */	
@@ -1504,10 +1620,27 @@ int main(int argc, char *argv[])
 					show_inventory_window(6,472);
 					show_media(798,171);
 				}
-
 				show_range(3, 403);
 
-				if(!options.force_redraw)
+				if ((y=draggingInvItem(-1)))
+				{
+			      	item *Item;
+					if (y ==1) 
+						Item = locate_item (cpl.win_inv_tag);
+					else if (y ==2) 
+						Item = locate_item (cpl.win_below_tag);
+					else 
+						Item = locate_item (cpl.win_quick_tag);
+
+					SDL_GetMouseState(&x, &y);
+					if (Item->weight >=0)
+						blt_inv_item_centered(Item, x, y);
+				}
+
+				if(esc_menu_flag == TRUE ||
+					(textwin_set.use_alpha == TRUE &&(textwin_set.split_size+textwin_set.top_size)>9))
+					map_udate_flag=1;
+				else if(!options.force_redraw)
 				{
 					if(options.doublebuf_flag)
 						map_udate_flag--;
@@ -1602,6 +1735,8 @@ int main(int argc, char *argv[])
 		if(map_transfer_flag)
 			StringBlt(ScreenSurface, &SystemFont,"Transfer Character to Map...",300, 300,COLOR_DEFAULT, NULL, NULL);
 
+		if(esc_menu_flag == TRUE)
+			show_option(esc_menu_index, 400, 130);
 		flip_screen();
 
         if(!options.max_speed)

@@ -52,6 +52,9 @@
 
 #include <newserver.h>
 
+
+static fd_set tmp_read, tmp_exceptions, tmp_write;
+
 /*****************************************************************************
  * Start of command dispatch area.
  * The commands here are protocol commands. 
@@ -352,7 +355,6 @@ static void remove_ns_dead_player(player *pl)
 void doeric_server()
 {
     int i, pollret;
-    fd_set tmp_read, tmp_exceptions, tmp_write;
     struct sockaddr_in addr;
     int addrlen=sizeof(struct sockaddr);
     player *pl, *next;
@@ -522,14 +524,9 @@ void doeric_server()
 					esrv_draw_look(pl->ob);
 
 				/* and *now* write back to player */
+				/*
 				if (FD_ISSET(pl->socket.fd,&tmp_write))
 				{
-					/* i see no really sense here... can_write is REALLY
-					* only set if socket() marks the write channel as free.
-					* and can_write is in loop flow only set here.
-					* i think this was added as a "there is something in a buffer"
-					* and then changed in context.
-					*/
 					if (!pl->socket.can_write)
 					{
 						pl->socket.can_write=1;
@@ -538,8 +535,41 @@ void doeric_server()
 				}
 				else 
 					pl->socket.can_write=0;
+				*/
 			}
 		}
     } /* for() end */
 }
 
+void doeric_server_write(void)
+{
+    player *pl, *next;
+
+   /* This does roughly the same thing, but for the players now */
+    for (pl=first_player; pl!=NULL; pl=next) 
+	{
+		next=pl->next;
+
+		/* we don't care about problems here... let remove player at start of next loop! */
+		if (pl->socket.status==Ns_Dead || FD_ISSET(pl->socket.fd,&tmp_exceptions))
+			continue;
+
+		/* and *now* write back to player */
+		if (FD_ISSET(pl->socket.fd,&tmp_write))
+		{
+			/* i see no really sense here... can_write is REALLY
+			* only set if socket() marks the write channel as free.
+			* and can_write is in loop flow only set here.
+			* i think this was added as a "there is something in a buffer"
+			* and then changed in context.
+			*/
+			if (!pl->socket.can_write)
+			{
+					pl->socket.can_write=1;
+					write_socket_buffer(&pl->socket);
+			}
+			else 
+				pl->socket.can_write=0;
+		}
+    } /* for() end */
+}

@@ -377,6 +377,7 @@ void init_races(void);
 void dump_races(void);
 void add_to_racelist(char *race_name, object *op);
 racelink *get_racelist(void);
+void init_level_color_table(void);
 /* login.c */
 void emergency_save(int flag);
 void delete_character(char *name, int new);
@@ -657,7 +658,6 @@ void find_skill_exp_name(object *pl, object *exp, int index);
 int find_skill_exp_level(object *pl, int item_skill);
 char *find_skill_exp_skillname(object *pl, int item_skill);
 int do_skill(object *op, int dir, char *string);
-int calc_level_difference(int who_lvl, int op_lvl);
 int calc_skill_exp(object *who, object *op);
 int get_weighted_skill_stat_sum(object *who, int sk);
 void init_new_exp_system(void);

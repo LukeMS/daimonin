@@ -131,7 +131,7 @@ typedef struct Stat_struct {
     sint16 food;	    /* How much food in stomach.  0 = starved. */
     sint16 dam;		    /* How much damage this object does when hitting */
     sint32 speed;	    /* Gets converted to a float for display*/
-    float weapon_sp;	    /* Gets converted to a float for display */
+    int weapon_sp;	    /* Gets converted to a float for display */
     uint16 flags;	    /* contains fire on/run on flags */
     sint16 protection[20];	    /* Resistant values */
     uint32 protection_change:1; /* Resistant value has changed */
@@ -148,55 +148,26 @@ typedef struct Player_Struct {
     item	*ob;		/* Player object */
     item	*below;		/* Items below the player (pl.below->inv) */
     item	*container;	/* open container */
-    uint16	count_left;	/* count for commands */
-    Input_State input_state;	/* What the input state is */
-    char	last_command[MAX_BUF];	/* Last command entered */
-    uint32	no_echo:1;	/* If TRUE, don't echo keystrokes */
-    char	input_text[MAX_BUF];	/* keys typed (for long commands) */
-    char	name[40];	/* name and password.  Only used while */
-    char	password[40];	/* logging in. */
-    rangetype	shoottype;	/* What type of range attack player has */
     item	*ranges[range_size];	/* Object that is used for that */
-				/* range type */
-    uint8	ready_spell;	/* Index to spell that is readied */
-    char	spells[255][40];	/* List of all the spells the */
-				/* player knows */
-    uint8	map_x, map_y;	/* These are offset values.  See object.c */
-				/* for more details */
-    Stats	stats;		/* Player stats */
-	int		nummode;
-    char	pname[MAX_BUF];	/* Rank & Name of char*/
-    char	title[MAX_BUF];	/* Race & Profession of character */
-    char	rank[MAX_BUF];	/* rank */
-    char	race[MAX_BUF];	/* alignment */
-    char	godname[MAX_BUF];	/* alignment */
-    char	alignment[MAX_BUF];	/* alignment */
-    char	gender[MAX_BUF];	/* Gender */
-    char	range[MAX_BUF];	/* Range attack chosen */
-    uint32	fire_on:1;	/* True if fire key is pressed = action key (ALT;CTRL)*/
-    uint32	run_on:1;	/* True if run key is on = action key (ALT;CTRL)*/
-	uint32	firekey_on:1;	/* True if fire key is pressed = permanent mode*/
-	uint32	runkey_on:1;	/* sic! */
+
+    uint32 weight_limit;
+    uint32	count;		/* Repeat count on command */
+	int		target_mode;
+	int		target_code;
+	int		target_color;
 	int inventory_win;  /* inventory windows */
 	int menustatus;
     int loc;
     int tag;
     int nrof;
-    char num_text[300];
-    char skill_name[128];
     int skill_g;            /* skill group and entry of ready skill */
     int skill_e;
     
-    Boolean warn_statdown;
-    Boolean warn_statup;
-    Boolean warn_drain;
     int warn_hp;
     
-    uint32 weight_limit;
-	float window_weight;
-	float real_weight;
 	int win_inv_slot;
 	int win_inv_tag;
+	int win_quick_tag;
 	int win_inv_start;
 	int win_inv_count;
     int win_inv_ctag;
@@ -208,22 +179,63 @@ typedef struct Player_Struct {
     int win_below_ctag;
 		
 	int  input_mode;	/* mode: no, console(textstring), numinput */
+	int		nummode;
 
+	float gen_hp;			/* hp, mana and grace reg. */
+	float gen_sp;
+	float gen_grace;
+
+    uint32	no_echo:1;	/* If TRUE, don't echo keystrokes */
+    uint32	fire_on:1;	/* True if fire key is pressed = action key (ALT;CTRL)*/
+    uint32	run_on:1;	/* True if run key is on = action key (ALT;CTRL)*/
+	uint32	firekey_on:1;	/* True if fire key is pressed = permanent mode*/
+	uint32	runkey_on:1;	/* sic! */
     uint32	echo_bindings:1;/* If true, echo the command that the key */
-				/* is bound to */
-    uint32	count;		/* Repeat count on command */
+
+	float window_weight;
+	float real_weight;
+
+
+    uint16	count_left;	/* count for commands */
     uint16	mmapx, mmapy;	/* size of magic map */
     uint16	pmapx, pmapy;	/* Where the player is on the magic map */
+    uint16	mapxres,mapyres;/* resolution to draw on the magic map */
+
+    Boolean warn_statdown;
+    Boolean warn_statup;
+    Boolean warn_drain;
+    Stats	stats;		/* Player stats */
+    Input_State input_state;	/* What the input state is */
+    rangetype	shoottype;	/* What type of range attack player has */
+
     uint8	*magicmap;	/* Magic map data */
     uint8	showmagic;	/* If 0, show normal map, otherwise, show
 				 * magic map.
 				 */
     uint8	command_window;	/* How many outstanding commands to allow */
-    uint16	mapxres,mapyres;/* resolution to draw on the magic map */
+    uint8	ready_spell;	/* Index to spell that is readied */
+				/* player knows */
+    uint8	map_x, map_y;	/* These are offset values.  See object.c */
 
+
+	char	target_hp;	/* hp of our target in % */
+    char	last_command[MAX_BUF];	/* Last command entered */
+    char	input_text[MAX_BUF];	/* keys typed (for long commands) */
+    char	name[40];	/* name and password.  Only used while */
+    char	password[40];	/* logging in. */
+    char	spells[255][40];	/* List of all the spells the */
     char	target_name[MAX_BUF];	/* Rank & Name of char*/
-	int		target_mode;
-	int		target_code;
+    char	num_text[300];
+    char	skill_name[128];
+	char    rankandname[MAX_BUF];
+    char	pname[MAX_BUF];	/* Name of char*/
+    char	title[MAX_BUF];	/* Race & Profession of character */
+    char	rank[MAX_BUF];	/* rank */
+    char	race[MAX_BUF];	/* alignment */
+    char	godname[MAX_BUF];	/* alignment */
+    char	alignment[MAX_BUF];	/* alignment */
+    char	gender[MAX_BUF];	/* Gender */
+    char	range[MAX_BUF];	/* Range attack chosen */
 
 
 } Client_Player;
@@ -310,6 +322,11 @@ extern char *resists_name[NUM_RESISTS];
 #define CS_STAT_WEIGHT_LIM	26
 #define CS_STAT_EXT_TITLE 27
 
+#define CS_STAT_REG_HP 28
+#define CS_STAT_REG_MANA 29
+#define CS_STAT_REG_GRACE 30
+#define CS_STAT_TARGET_HP 31
+
 /* Start & end of resistances, inclusive. */
 #define CS_STAT_RESIST_START	100
 #define CS_STAT_RESIST_END	117
@@ -384,8 +401,14 @@ extern char *resists_name[NUM_RESISTS];
 #define SF_XRAYS            8
 #define SF_INFRAVISION      16
 
-#define NDI_UNIQUE	0x100	/* Print this out immediately, don't buffer */
-#define NDI_ALL		0x200	/* Inform all players of this message */
+#define NDI_SAY		0x0100	/* its a say command */
+#define NDI_SHOUT	0x0200  
+#define NDI_TELL	0x0400
+#define NDI_PLAYER	0x0800 /* this comes from a player */
+#define NDI_SYSTEM	0x01000 /* if this is set, its a "system" message */
+
+#define NDI_UNIQUE	0x10000	/* Print this out immediately, don't buffer */
+#define NDI_ALL		0x20000	/* Inform all players of this message */
 
 /* Flags for the item command */
 enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
@@ -435,7 +458,7 @@ enum {a_none, a_readied, a_wielded, a_worn, a_active, a_applied};
 #define COLOR_RED	3
 #define COLOR_GREEN 4
 #define COLOR_BLUE  5
-#define COLOR_FLESH  6
+#define COLOR_GREY  6
 #define COLOR_YELLOW  7
 #define COLOR_DK_NAVY  8
 

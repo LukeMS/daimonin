@@ -519,8 +519,15 @@ void map_draw_map(void)
 						}
                         
 						/* have we a playername? then print it! */
-						if(map->pname[k][0])
+						if(options.player_names && map->pname[k][0])
 						{
+							/* we must take care here later for rank! - 
+							 * then we must trick a bit here! (use rank + name 
+							 * and strncmp() 
+							*/
+							if(options.player_names == 1 || /* all names */ 
+								(options.player_names == 2 && strnicmp(map->pname[k],cpl.rankandname, strlen(cpl.rankandname))) || /* names from other players only */
+								(options.player_names == 3 && !strnicmp(map->pname[k],cpl.rankandname, strlen(cpl.rankandname))) ) /* only you */
 							StringBlt(ScreenSurface, &Font6x3Out,map->pname[k],xpos-(strlen(map->pname[k])*2)+22, ypos-48,COLOR_DEFAULT, NULL, NULL);
 						}
 
@@ -578,3 +585,73 @@ void map_draw_map(void)
         }       
     }
 }
+
+
+#define TILE_ISO_XLEN 48
+/* this +1 is the trick to catch the one pixel line between
+ * 2 y rows - the tiles don't touch there!
+ */
+#define TILE_ISO_YLEN (23+1)
+
+static char tile_mask[TILE_ISO_YLEN][TILE_ISO_XLEN+1] ={
+"000000000000000000000011112222222222222222222222",
+"000000000000000000001111111122222222222222222222",
+"000000000000000000111111111111222222222222222222",
+"000000000000000011111111111111112222222222222222",
+"000000000000001111111111111111111122222222222222",
+"000000000000111111111111111111111111222222222222",
+"000000000011111111111111111111111111112222222222",
+"000000001111111111111111111111111111111122222222",
+"000000111111111111111111111111111111111111222222",
+"000011111111111111111111111111111111111111112222",
+"001111111111111111111111111111111111111111111122",
+"111111111111111111111111111111111111111111111111",
+"331111111111111111111111111111111111111111111144",
+"333311111111111111111111111111111111111111114444",
+"333333111111111111111111111111111111111111444444",
+"333333331111111111111111111111111111111144444444",
+"333333333311111111111111111111111111114444444444",
+"333333333333111111111111111111111111444444444444",
+"333333333333331111111111111111111144444444444444",
+"333333333333333311111111111111114444444444444444",
+"333333333333333333111111111111444444444444444444",
+"333333333333333333331111111144444444444444444444",
+"333333333333333333333311114444444444444444444444", 
+"333333333333333333333333444444444444444444444444" 
+};
+
+
+/* brute force at is best... */
+void get_tile_position( int mx, int my, int *tx, int *ty ) 
+{
+	int y,x,xpos, ypos;
+
+	mx -=MAP_START_XOFF;
+	my-=MAP_START_YOFF;
+
+	*tx=-1;
+	*ty=-1;
+
+	for (y = 0; y < MAP_MAX_SIZE; y++ )
+	{
+		for (x = 0; x < MAP_MAX_SIZE; x++ ) 
+		{
+			xpos = x*MAP_TILE_YOFF-y*MAP_TILE_YOFF;
+			ypos = x*MAP_TILE_XOFF+y*MAP_TILE_XOFF;
+			if(mx>= xpos && mx<xpos+TILE_ISO_XLEN && my>=ypos && my<ypos+TILE_ISO_YLEN)
+			{
+				/* ok, we have the box we are in... 
+				 * but perhaps we have not x,y but one of the
+				 * border tiles... lets check with the mask.
+				 */
+				if(tile_mask[my-ypos][mx-xpos] == '1') /* now we have it! */
+				{
+					*tx = x;
+					*ty = y;
+					return;
+				}
+			}
+		}
+	}
+}
+

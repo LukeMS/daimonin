@@ -365,23 +365,6 @@ int calc_skill_exp(object *who, object *op)
     return op_exp; 
 }
 
-/* find exp level difference multiplier.
- * If the return value is 0, the level gap is to high
- * for lot drop, exp and/or attacking.
- * who_ is the "activ" object (attacker, activator)
- * op_ is the target 
- */
-int calc_level_difference(int who_lvl, int op_lvl)
-{
-	float tmp;
-
-	tmp = (float)(who_lvl - op_lvl)*2.75f;
-
-	if(tmp > (float)op_lvl*1.5f && (who_lvl - op_lvl)>3)
-		return 0;
-
-	return tmp<1.0f?1:(int)tmp;
-}
 
 /* find relevant stats or a skill then return their weighted sum. 
  * I admit the calculation is done in a retarded way.
@@ -547,7 +530,7 @@ int check_link (int stat, object *exp) {
             case DEX:
                 if(exp->stats.Dex) return 1;
                 break;
-            case INT:
+            case INTELLIGENCE:
                 if(exp->stats.Int) return 1;
                 break;
             case WIS:
@@ -1698,3 +1681,4 @@ object *get_skill_from_inventory(object *op, const char *skname) {
   }
   return NULL;
 }
+

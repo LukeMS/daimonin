@@ -801,6 +801,12 @@ void send_query(NewSocket *ns, uint8 flags, char *text)
 			SockList_AddShort(&sl, (uint16)(New)); \
 		       }
 
+#define AddIfChar(Old,New,Type) if (Old != New) {\
+			Old = New; \
+			SockList_AddChar(&sl, (char)(Type)); \
+			SockList_AddChar(&sl, (char)(New)); \
+		       }
+
 #define AddIfFloat(Old,New,Type) if (Old != New) {\
 			Old = New; \
 			SockList_AddChar(&sl, (char)Type); \
@@ -863,47 +869,62 @@ void esrv_update_stats(player *pl)
 
     sl.buf=sock_buf;
 	SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_STATS);
-	/*
-    strcpy((char*)sl.buf,"stats ");
-    sl.len=strlen((char*)sl.buf);
-	*/
+
+	/* small trick: we want send the hp bar of our target to the player.
+	 * We want send a char with x% the target has of full hp. 
+	 * To avoid EVERY time the % calculation, we store the real HP
+	 * - if it has changed, we calc the % and use them normal.
+	 * this simple compare will not deal in speed but we safe 
+	 * some unneeded calculations.
+	 */
+	if(pl->target_object != pl->ob) /* never send our own status - client will sort this out */
+	{
+		/* we don't care about count - target function will readjust itself */
+		if(pl->target_object && pl->target_object->stats.hp != pl->target_hp) /* just for secure...*/
+		{
+			char hp =(char)(((float)pl->target_object->stats.hp/(float)pl->target_object->stats.maxhp)*100.0f);
+			pl->target_hp = pl->target_object->stats.hp;
+			AddIfChar(pl->target_hp_p, hp, CS_STAT_TARGET_HP);			
+		}
+	}
+
+	AddIfShort(pl->last_gen_hp, pl->gen_client_hp, CS_STAT_REG_HP);
+	AddIfShort(pl->last_gen_sp, pl->gen_client_sp, CS_STAT_REG_MANA);
+	AddIfShort(pl->last_gen_grace,pl->gen_client_grace, CS_STAT_REG_GRACE);
+	AddIfChar(pl->last_level, pl->ob->level, CS_STAT_LEVEL);
+	AddIfFloat(pl->last_speed, pl->ob->speed, CS_STAT_SPEED);
+	AddIfInt(pl->last_weight_limit, weight_limit[pl->ob->stats.Str], CS_STAT_WEIGHT_LIM);
+	AddIfChar(pl->last_weapon_sp, pl->weapon_sp, CS_STAT_WEAP_SP);
 
     if(pl->ob != NULL)
     {
-        AddIfShort(pl->last_stats.hp, pl->ob->stats.hp, CS_STAT_HP);
-        AddIfShort(pl->last_stats.maxhp, pl->ob->stats.maxhp, CS_STAT_MAXHP);
+        AddIfInt(pl->last_stats.hp, pl->ob->stats.hp, CS_STAT_HP);
+        AddIfInt(pl->last_stats.maxhp, pl->ob->stats.maxhp, CS_STAT_MAXHP);
         AddIfShort(pl->last_stats.sp, pl->ob->stats.sp, CS_STAT_SP);
         AddIfShort(pl->last_stats.maxsp, pl->ob->stats.maxsp, CS_STAT_MAXSP);
         AddIfShort(pl->last_stats.grace, pl->ob->stats.grace, CS_STAT_GRACE);
         AddIfShort(pl->last_stats.maxgrace, pl->ob->stats.maxgrace, CS_STAT_MAXGRACE);
-        AddIfShort(pl->last_stats.Str, pl->ob->stats.Str, CS_STAT_STR);
-        AddIfShort(pl->last_stats.Int, pl->ob->stats.Int, CS_STAT_INT);
-        AddIfShort(pl->last_stats.Pow, pl->ob->stats.Pow, CS_STAT_POW);
-        AddIfShort(pl->last_stats.Wis, pl->ob->stats.Wis, CS_STAT_WIS);
-        AddIfShort(pl->last_stats.Dex, pl->ob->stats.Dex, CS_STAT_DEX);
-        AddIfShort(pl->last_stats.Con, pl->ob->stats.Con, CS_STAT_CON);
-        AddIfShort(pl->last_stats.Cha, pl->ob->stats.Cha, CS_STAT_CHA);
-    }
-    if(pl->last_stats.exp != pl->ob->stats.exp) 
-    {
-	int s;
-	for(s=0;s<pl->last_skill_index;s++)
-        {
-        AddIfInt(pl->last_skill_exp[s],pl->last_skill_ob[s]->stats.exp , pl->last_skill_id[s]);
-        AddIfShort(pl->last_skill_level[s], (pl->last_skill_ob[s]->level), pl->last_skill_id[s]+1);
-    }
-    }
+        AddIfChar(pl->last_stats.Str, pl->ob->stats.Str, CS_STAT_STR);
+        AddIfChar(pl->last_stats.Int, pl->ob->stats.Int, CS_STAT_INT);
+        AddIfChar(pl->last_stats.Pow, pl->ob->stats.Pow, CS_STAT_POW);
+        AddIfChar(pl->last_stats.Wis, pl->ob->stats.Wis, CS_STAT_WIS);
+        AddIfChar(pl->last_stats.Dex, pl->ob->stats.Dex, CS_STAT_DEX);
+        AddIfChar(pl->last_stats.Con, pl->ob->stats.Con, CS_STAT_CON);
+        AddIfChar(pl->last_stats.Cha, pl->ob->stats.Cha, CS_STAT_CHA);
 
-    AddIfInt(pl->last_stats.exp, pl->ob->stats.exp, CS_STAT_EXP);
-    AddIfShort(pl->last_level, pl->ob->level, CS_STAT_LEVEL);
-    AddIfShort(pl->last_stats.wc, pl->ob->stats.wc, CS_STAT_WC);
-    AddIfShort(pl->last_stats.ac, pl->ob->stats.ac, CS_STAT_AC);
-    AddIfShort(pl->last_stats.dam, pl->ob->stats.dam, CS_STAT_DAM);
-    AddIfFloat(pl->last_speed, pl->ob->speed, CS_STAT_SPEED);
-    AddIfShort(pl->last_stats.food, pl->ob->stats.food, CS_STAT_FOOD);
-	/* dirty little trick - but we need the 100% true value on the client side */
-    AddIfShort(pl->last_weapon_sp, (pl->weapon_sp/0.0025f), CS_STAT_WEAP_SP);
-    AddIfInt(pl->last_weight_limit, weight_limit[pl->ob->stats.Str], CS_STAT_WEIGHT_LIM);
+		AddIfInt(pl->last_stats.exp, pl->ob->stats.exp, CS_STAT_EXP);	
+		AddIfShort(pl->last_stats.wc, pl->ob->stats.wc, CS_STAT_WC);
+		AddIfShort(pl->last_stats.ac, pl->ob->stats.ac, CS_STAT_AC);
+		AddIfShort(pl->last_stats.dam, pl->ob->stats.dam, CS_STAT_DAM);
+		AddIfShort(pl->last_stats.food, pl->ob->stats.food, CS_STAT_FOOD);
+
+    }
+		
+	for(i=0;i<pl->last_skill_index;i++)
+    {
+		AddIfInt(pl->last_skill_exp[i],pl->last_skill_ob[i]->stats.exp , pl->last_skill_id[i]);
+		AddIfChar(pl->last_skill_level[i], (pl->last_skill_ob[i]->level), pl->last_skill_id[i]+1);
+	}
 
     flags=0;
     if (pl->fire_on) flags |=SF_FIREON; /* TODO: remove fire and run server sided mode */
@@ -923,34 +944,19 @@ void esrv_update_stats(player *pl)
     AddIfShort(pl->last_flags, flags, CS_STAT_FLAGS);
 
     for (i=0; i<NROFPROTECTIONS; i++)
-        AddIfShort(pl->last_protection[i], pl->ob->protection[i], atnr_prot_stats[i]);
-    
-	/* this was a ext2 part */
-    if(pl->socket.ext_title_flag)
-    {
-            generate_ext_title(pl);
-            AddIfString(pl->socket.stats.ext_title , pl->ext_title, CS_STAT_EXT_TITLE);
-            
-            /* ugly little sucker, but so we got the arch name in class select of the
-             * client and we don't must change above anything */
-			/* this can be changed for daimonin now - i removed the own_title stuff. MT*/
-	/*
-            if(pl->socket.ext_title_flag==2)
-            {
-				sprintf(buf,"Player: %s the %s",pl->ob->name,pl->title);
-                AddIfString(pl->socket.stats.title, buf, CS_STAT_TITLE);
-            }
-	*/
-            pl->socket.ext_title_flag = 0;
-    }
+        AddIfChar(pl->last_protection[i], pl->ob->protection[i], atnr_prot_stats[i]);
+
+    /* uh, now tis time to remove this generate_ext_title here - every time we change
+	 * some in the title we should add a dirty flag - if set, fix_player should do this
+	 * *one* time
+	 */
+	generate_ext_title(pl);
+    AddIfString(pl->socket.stats.ext_title , pl->ext_title, CS_STAT_EXT_TITLE);
+    pl->socket.ext_title_flag = 0;
 
     /* Only send it away if we have some actual data */
-    if (sl.len>6) {
-#ifdef ESRV_DEBUG
-	LOG(llevDebug,"Sending stats command, %d bytes long.\n", sl.len);
-#endif
-	Send_With_Handling(&pl->socket, &sl);
-    }
+    if (sl.len>1)
+		Send_With_Handling(&pl->socket, &sl);
 }
 
 
@@ -964,10 +970,6 @@ void esrv_new_player(player *pl, uint32 weight)
     sl.buf=malloc(MAXSOCKBUF);
 
 	SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_PLAYER);
-	/*
-    strcpy((char*)sl.buf,"player ");
-    sl.len=strlen((char*)sl.buf);
-	*/
     SockList_AddInt(&sl, pl->ob->count);
     SockList_AddInt(&sl, weight);
     SockList_AddInt(&sl, pl->ob->face->number);
@@ -1010,7 +1012,9 @@ void esrv_send_animation(NewSocket *ns, short anim_num)
     SockList_AddChar(&sl, animations[anim_num].facings);  
 
     for (i=0; i<animations[anim_num].num_animations; i++)
+	{
 		SockList_AddShort(&sl, animations[anim_num].faces[i]);
+	}
     Send_With_Handling(ns, &sl);
     free(sl.buf);
     ns->anims_sent[anim_num] = 1;
@@ -1544,7 +1548,9 @@ void draw_client_map2(object *pl)
             SockList_AddChar(&sl, (char)ext_flag); /* push the ext_flagbyte */
 		}
 		else
+		{
 			SockList_AddShort(&sl, mask); /* mask only */
+		}
 
         if(pname_flag)
 		{
@@ -1570,13 +1576,21 @@ void draw_client_map2(object *pl)
              * we are here at run time, the object is dead since some ticks and
              * perhaps some else is moved on this spot and/or the old object deleted */
             if(dmg_flag&0x08)
+			{
                 SockList_AddShort(&sl, (sint16)GET_MAP_DAMAGE(m, nx,ny));
+			}
             if(dmg_flag&0x04)
+			{
                 SockList_AddShort(&sl, (sint16)dmg_layer2);
+			}
             if(dmg_flag&0x02)
+			{
                 SockList_AddShort(&sl, (sint16)dmg_layer1);
+			}
             if(dmg_flag&0x01)
+			{
                 SockList_AddShort(&sl, (sint16)dmg_layer0);
+			}
         }
 
         
@@ -1587,45 +1601,60 @@ void draw_client_map2(object *pl)
             {
                 SockList_AddChar(&sl, (char)mp->fflag[0]);
                 if(mp->fflag[0] & FFLAG_PROBE)
+				{
                     SockList_AddChar(&sl, mp->ff_probe[0]);
+				}
                 
             }
             if(ext_flag&0x10)
             {
                 SockList_AddChar(&sl, (char)mp->fflag[1]);
                 if(mp->fflag[1] & FFLAG_PROBE)
+				{
                     SockList_AddChar(&sl, mp->ff_probe[1]);
+				}
             }
             if(ext_flag&0x08)
             {
                 SockList_AddChar(&sl, (char)mp->fflag[2]); /* and all the face flags if there */
                 if(mp->fflag[2] & FFLAG_PROBE)
+				{
                     SockList_AddChar(&sl, mp->ff_probe[2]);
+				}
             }
         }
 
         if(dark != NO_FACE_SEND)
+		{
             SockList_AddChar(&sl, (char)dark);
+		}
         if(mask & 0x08)
+		{
             SockList_AddShort(&sl, face_num0);
-
+		}
         if(mask & 0x04)
         {
             SockList_AddShort(&sl, face_num1m);
             if(ext_flag & 0x4)
+			{
                 SockList_AddChar(&sl, (char)quick_pos_1);
+			}
         }
         if(mask & 0x02)
         {
             SockList_AddShort(&sl, face_num2m);
             if(ext_flag & 0x2)
+			{
                 SockList_AddChar(&sl, (char) quick_pos_2);
+			}
         }
         if(mask & 0x01)
         {
             SockList_AddShort(&sl, face_num3m);
             if(ext_flag & 0x1)
+			{
                 SockList_AddChar(&sl, (char)quick_pos_3);
+			}
         }
 
        if (!(mask & 0x3f)) /* check all bits except the position */
