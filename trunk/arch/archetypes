@@ -2971,6 +2971,7 @@ The Tabernacle of Life
 endmsg
 editor_folder gods/gods_lesser
 randomitems deity_tabernacle
+no_pick 1
 layer 6
 race god_lesser
 animation Tabernacle
@@ -3030,6 +3031,7 @@ type 80
 editor_folder gods/gods_lesser
 race avatar
 layer 6
+no_pick 1
 animation tabernacle_avatar
 is_animated 1
 anim_speed 3
@@ -4329,11 +4331,11 @@ race human
 randomitems player_human_female
 layer 6
 will_apply 8
+no_pick 1
 is_female 1
 is_neutral 1
 identified 1
 direction 4
-alive 1
 terrain_flag 1
 weapon_speed 0.0125
 speed 0.85
@@ -4379,9 +4381,9 @@ randomitems player_human_male
 layer 6
 will_apply 8
 is_male 1
+no_pick 1
 direction 4
 identified 1
-alive 1
 is_neutral 1
 weapon_speed 0.0125
 speed 0.85

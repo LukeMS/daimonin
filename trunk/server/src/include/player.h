@@ -123,10 +123,17 @@ typedef struct pl_player
 
 	object *map_below;	/* ptr used from local map player chain */
 	object *map_above;
+	object *container;			/* Current container being used. */
+	uint32 container_count;		/* the count of the container */
+	object *container_above;	/* that points to a PLAYER ob, accessing this container too! 
+	                             * if this is NULL, we are the "last" one looking in ->container.
+	                             */
+	object *container_below;    /* same as above - if this is NULl, we are "last" looking the container */
 
-	uint32 anim_enemy_count;		/* hm, this can be kicked now - i do it for a quick hack to
-									 * implement the animations. use is_melee_range() instead.
-									 */
+
+	uint32 anim_enemy_count;	/* hm, this can be kicked now - i do it for a quick hack to
+								 * implement the animations. use is_melee_range() instead.
+								 */
 
 	int target_hp;				/* for the client target HP marker - special shadow*/
 	int set_skill_weapon;		/* skill number of used weapon skill for fast access */
@@ -198,7 +205,7 @@ typedef struct pl_player
 	char quick_name[BIG_NAME*3];	/* thats rank + name +" the xxxx" */
 	char savebed_map[MAX_BUF];  /* map where player will respawn after death */
 	/* for smaller map sizes, only the the first elements are used (ie, upper left) */
-	sint8 blocked_los[MAP_CLIENT_X][MAP_CLIENT_Y];
+	int blocked_los[MAP_CLIENT_X][MAP_CLIENT_Y]; /* in fact we only need char size, but use int for faster access */
 	char ext_title[MAX_EXT_TITLE];	/* for client: <Rank> <Name>\n<Gender> <Race> <Profession> */
 	char levhp[MAXLEVEL+1];			/* What the player gained on that level */
 	char levsp[MAXLEVEL+1];
@@ -206,7 +213,7 @@ typedef struct pl_player
 	sint8 last_protection[NROFPROTECTIONS];	/* shadow register for client update resistance table */
 
 	uint32 name_changed:1;			/* If true, the player has set a name. */
-	uint32 do_los:1;				/* If true, update_los() in draw(), and clear */
+	uint32 update_los:1;				/* If true, update_los() in draw(), and clear */
 	uint32 combat_mode:1;		    /* if true, player is in combat mode, attacking with weapon */
 	uint32 praying:1;				/* if true, player is praying and gaining fast grace */
 	uint32 was_praying:1;			/* internal used by praying to send pray msg to player */

@@ -26,7 +26,6 @@
 #include <global.h>
 #include <sproto.h>
 #include <sounds.h>
-// #include <define.h>
 #include <sockproto.h>
 
 #define POW2(x) ((x) * (x))

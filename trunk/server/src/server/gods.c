@@ -279,7 +279,7 @@ void become_follower (object *op, object *new_god) {
 	}
     }*/
     
-    // remove any godgiven items from the old god */
+    /* remove any godgiven items from the old god */
 	/*
     if (old_god) {
         for(tr=old_god->randomitems->items; tr!=NULL; tr = tr->next) {
@@ -666,7 +666,7 @@ static void follower_remove_similar_item (object *op, object *item)
 		      "The %s crumbles to dust!", query_short_name(tmp));
 	        
 	        remove_ob(tmp);    /* remove obj from players inv. */
-		esrv_del_item(op->contr, tmp->count); /* notify client */
+		esrv_del_item(op->contr, tmp->count, tmp->env); /* notify client */
 		free_object(tmp);  /* free object */
 	    }
 	    if (tmp->inv)

@@ -138,12 +138,32 @@ PostBuild_Cmds=copy ReleaseDebug\*.dll ..\..\..\..\plugins\*.dll
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=..\..\..\..\src\plugin_python\daimonin_map.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\src\plugin_python\daimonin_object.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\..\src\plugin_python\plugin_python.c
 # End Source File
 # End Group
 # Begin Group "Header-Dateien"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=..\..\..\..\src\plugin_python\include\daimonin_map.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\src\plugin_python\include\daimonin_object.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\src\plugin_python\include\inline.h
+# End Source File
 # Begin Source File
 
 SOURCE=..\..\..\..\src\plugin_python\include\plugin_python.h

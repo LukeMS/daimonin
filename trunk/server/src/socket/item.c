@@ -107,8 +107,7 @@ unsigned int query_flags (object *op)
 	}
     }
 
-    if (op->type == CONTAINER && ((op->env && op->env->container == op) || 
-	(!op->env && QUERY_FLAG(op,FLAG_APPLIED))))
+    if (op->type == CONTAINER && (op->attacked_by || (!op->env && QUERY_FLAG(op,FLAG_APPLIED))))
 		flags |= F_OPEN;
    
     if (QUERY_FLAG(op,FLAG_KNOWN_CURSED)) {
@@ -145,32 +144,22 @@ void esrv_draw_look(object *pl)
     SockList sl;
     char buf[MAX_BUF];
 
-    if (!pl->contr->socket.update_look)
-	{
-		LOG(llevDebug,"esrv_draw_look called when update_look was not set\n");
-		return;
-    } 
-	else
-		pl->contr->socket.update_look=0;
-
 	/* change out_of_map to OUT_OF_REAL_MAP(). we don't even think here about map crossing */
     if(QUERY_FLAG(pl, FLAG_REMOVED) || pl->map == NULL || pl->map->in_memory != MAP_IN_MEMORY 
 													|| OUT_OF_REAL_MAP(pl->map,pl->x,pl->y))
 	    return;
 
+	/*LOG(-1,"send look of: %s\n", query_name(pl));*/
 	/* another layer feature: grap last (top) object without browsing the objects */
 	tmp = GET_MAP_OB_LAST(pl->map,pl->x,pl->y);
 
     sl.buf=malloc(MAXSOCKBUF);
 
 	SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_ITEMX);
-	/*
-    strcpy((char*)sl.buf,"itemx ");
-    sl.len=strlen((char*)sl.buf);
-	*/
-    SockList_AddInt(&sl, 0); /* delinv 0 */
-    SockList_AddInt(&sl, 0);
 
+		SockList_AddInt(&sl, 0);
+	    SockList_AddInt(&sl, 0);
+	
     if (pl->contr->socket.look_position)
 	{
 		SockList_AddInt(&sl, 0x80000000 | (pl->contr->socket.look_position- NUM_LOOK_OBJECTS));
@@ -332,6 +321,7 @@ void esrv_draw_look(object *pl)
     free(sl.buf);
 }
 
+
 /* used for a active DM - implicit sending the inventory of all
  * items we see in inventory & in below. For controling & debug.
  * Do a examine cmd over the item and you will see a dump.
@@ -454,6 +444,22 @@ int esrv_draw_DM_inv(object *pl, SockList *sl, object *op)
 	return got_one;
 }
 
+void esrv_close_container(object *op)
+{
+    SockList sl;
+    sl.buf=malloc(256);
+
+	/*LOG(-1,"close container of: %s\n", query_name(op));*/
+	SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_ITEMX);
+	SockList_AddInt(&sl, -1); /* container mode flag */
+	SockList_AddInt(&sl, -1);
+
+	Send_With_Handling(&op->contr->socket, &sl);
+    free(sl.buf);
+
+}
+
+
 /* send_inventory send the inventory for the player BUT also the inventory for
  * items. When the player obens a chest on the ground, this function is called to
  * send the inventory for the chest - and the items are shown in below. The client
@@ -473,13 +479,18 @@ void esrv_send_inventory(object *pl, object *op)
     
     sl.buf=malloc(MAXSOCKBUF);
 
+	/*LOG(llevDebug,"send inventory of: %s\n", query_name(op));*/
 	SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_ITEMX);
-	/*
-     strcpy((char*)sl.buf,"itemx ");
-    sl.len=strlen((char*)sl.buf);
-	*/
-	/* yep this is strange - i merged delinv & itemx - not perfect but it works */
-    SockList_AddInt(&sl, op->count); /* do delinv */
+
+	if(pl != op) /* in this case we send a container inventory! */
+	{
+	    SockList_AddInt(&sl, -1); /* container mode flag */
+	}
+	else
+	{
+	    SockList_AddInt(&sl, op->count);
+	}
+
     SockList_AddInt(&sl, op->count);
     
     for (tmp=op->inv; tmp; tmp=tmp->below) {
@@ -585,45 +596,27 @@ void esrv_send_inventory(object *pl, object *op)
 	    }
 	}
     }
-    if (got_one)
+    if (got_one || pl != op) /* container can be empty... */
 	Send_With_Handling(&pl->contr->socket, &sl);
     free(sl.buf);
 }
 
-/* Updates object *op for player *pl.  flags is a list of values to update
- * to the client (as defined in newclient.h - might as well use the
- * same value both places.
- */
 
-void esrv_update_item(int flags, object *pl, object *op)
+static void esrv_update_item_send(int flags, object *pl, object *op)
 {
     SockList sl;
+
+	/*LOG(llevDebug,"update item: %s\n", query_name(op));*/
 
     /* If we have a request to send the player item, skip a few checks. */
     if (op!=pl) 
 	{
 		if (!LOOK_OBJ(op) && !QUERY_FLAG(pl,FLAG_WIZ)) 
 			return;
-		/* we remove the check for op->env, because in theory, the object
-		 * is hopefully in the same place, so the client should preserve
-		 * order.
-		 */
     }
-
-	/* FLAG_CLIENT_SENT is debug only.  We are using it to see where
-	 * this is happening - we can set a breakpoint here in the debugger
-	 * and track back the call.
-	    if (!QUERY_FLAG(op, FLAG_CLIENT_SENT))
-			LOG(llevDebug,"We have not sent item %s (%d)\n", op->name, op->count);
-	 */
-
     sl.buf=malloc(MAXSOCKBUF);
 
 	SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_UPITEM);
-	/*
-    strcpy((char*)sl.buf,"upditem ");
-    sl.len=strlen((char*)sl.buf);
-	*/
     SockList_AddShort(&sl, (uint16) flags);
     SockList_AddInt(&sl, op->count);
 
@@ -703,7 +696,30 @@ void esrv_update_item(int flags, object *pl, object *op)
     free(sl.buf);
 }
 
-void esrv_send_item(object *pl, object*op)
+/* Updates object *op for player *pl.  flags is a list of values to update
+ * to the client (as defined in newclient.h - might as well use the
+ * same value both places.
+ */
+void esrv_update_item(int flags, object *pl, object *op)
+{
+	object * tmp;
+
+	/* special case: update something in a container.
+	 * we don't care about where the container is,
+	 * because always is the container link list valid!
+	 */
+	if(op->env && op->env->type == CONTAINER)
+	{
+		for(tmp=op->env->attacked_by;tmp;tmp=tmp->contr->container_above)
+			esrv_update_item_send(flags, tmp, op);
+		return;
+	}
+			
+	esrv_update_item_send(flags, pl, op);
+}
+
+
+static void esrv_send_item_send(object *pl, object*op)
 {
     int anim_speed;
     SockList sl;
@@ -711,18 +727,12 @@ void esrv_send_item(object *pl, object*op)
     
     /* If this is not the player object, do some more checks */
     if (op!=pl) {
-	/* We only send 'visibile' objects to the client */
-	if (! LOOK_OBJ(op)) 
-	    return;
-	/* if the item is on the ground, mark that the look needs to
-	 * be updated.
-	 */
-	if (!op->env) {
-	    pl->contr->socket.update_look=1;
-	    return;
-	}
+		/* We only send 'visibile' objects to the client */
+		if (! LOOK_OBJ(op)) 
+		    return;
     }
 
+	/*LOG(-1,"send item: %s\n", query_name(op));*/
     sl.buf=malloc(MAXSOCKBUF);
 
 	SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_ITEMX);
@@ -812,11 +822,26 @@ void esrv_send_item(object *pl, object*op)
     free(sl.buf);
 }
 
-/* Tells the client to delete an item.  Uses the item
- * command with a -1 location.
- */
+void esrv_send_item(object *pl, object*op)
+{
+	object * tmp;
 
-void esrv_del_item(player *pl, int tag)
+	/* special case: update something in a container.
+	 * we don't care about where the container is,
+	 * because always is the container link list valid!
+	 */
+	if(op->env && op->env->type == CONTAINER)
+	{
+		for(tmp=op->env->attacked_by;tmp;tmp=tmp->contr->container_above)
+			esrv_send_item_send(tmp,op);
+		return;
+	}
+			
+	esrv_send_item_send(pl,op);
+}
+
+
+static void esrv_del_item_send(player *pl, int tag)
 {
     SockList sl;
 
@@ -827,6 +852,26 @@ void esrv_del_item(player *pl, int tag)
 
     Send_With_Handling(&pl->socket, &sl);
     free(sl.buf);
+}
+
+/* Tells the client to delete an item.
+ * cont is the container - it must be seperated
+ * from tag because the "tag" object can be destroyed
+ * at this point on the server - we need to notify it
+ * to the clients now.
+ */
+void esrv_del_item(player *pl, int tag, object *cont)
+{
+	object * tmp;
+
+	if(cont && cont->type == CONTAINER)
+	{
+		for(tmp=cont->attacked_by;tmp;tmp=tmp->contr->container_above)
+			esrv_del_item_send(tmp->contr,tag);
+		return;
+	}
+
+	esrv_del_item_send(pl,tag);
 }
 
 
@@ -882,7 +927,7 @@ object *esrv_get_ob_from_count(object *pl, tag_t count)
     for(op = pl->inv; op; op = op->below)
 	if (op->count == count)
 	    return op;
-	else if (op->type == CONTAINER && pl->container == op)
+	else if (op->type == CONTAINER && pl->contr->container == op)
 	    for(tmp = op->inv; tmp; tmp = tmp->below)
 		if (tmp->count == count)
 		    return tmp;
@@ -890,7 +935,7 @@ object *esrv_get_ob_from_count(object *pl, tag_t count)
     for(op = get_map_ob (pl->map, pl->x, pl->y); op; op = op->above)
 	if (op->count == count)
 	    return op;
-	else if (op->type == CONTAINER && pl->container == op)
+	else if (op->type == CONTAINER && pl->contr->container == op)
 	    for(tmp = op->inv; tmp; tmp = tmp->below)
 		if (tmp->count == count)
 		    return tmp;
@@ -944,7 +989,7 @@ void ApplyCmd(char *buf, int len,player *pl)
     /* If the high bit is set, player applied a pseudo object. */
     if (tag & 0x80000000) {
 	pl->socket.look_position = tag & 0x7fffffff;
-	pl->socket.update_look = 1;
+	pl->socket.update_tile = 0;
 	return;
     }
 
@@ -1070,7 +1115,7 @@ void LookAt(char *buf, int len,player *pl)
     if (FABS(dx)>MAP_CLIENT_X/2 || FABS(dy)>MAP_CLIENT_Y/2)
           return;
 
-    if(pl->blocked_los[dx+(pl->socket.mapx_2)][dy+(pl->socket.mapy_2)])
+    if(pl->blocked_los[dx+(pl->socket.mapx_2)][dy+(pl->socket.mapy_2)]<=BLOCKED_LOS_BLOCKSVIEW)
           return;
     look_at(pl->ob, dx, dy);
 }
@@ -1094,32 +1139,12 @@ void esrv_move_object (object *pl, tag_t to, tag_t tag, long nrof)
 		if (op->map && !op->env) 
 			return;
 
-		/* If it is an active container, then we should drop all objects
-		* in the container and not the container itself.
-		*/
-		/* i removed this. This has as some good ideas more bad
-		* effects as good. Following Murphy we hit this function
-		* most time in a situation we don't want it. MT
-		*/
-	
-		/*if (op->inv && QUERY_FLAG(op, FLAG_APPLIED)) {
-	    object *current, *next;
-	    for (current=op->inv; current!=NULL; current=next) {
-		next=current->below;
-		drop_object(pl, current, 0);
-	    }
-	    esrv_update_item(UPD_WEIGHT, pl, op);
-		}
-		else {
-		drop_object (pl, op, nrof);
-		}*/
-
-		if(pl->container == op)
-			esrv_apply_container (pl, pl->container);
-		/*LOG(-1,"drop it... (%d)\n",check_container(pl,op));*/
-	
+		/*LOG(-1,"drop it... (%d)\n",check_container(pl,op));*/	
+		CLEAR_FLAG(pl,FLAG_INV_LOCKED); /* funny trickm see check container */
 		if((tmp=check_container(pl,op)))
 			new_draw_info(NDI_UNIQUE, 0,pl,"Remove first all one-drop items from this container!");
+		else if (QUERY_FLAG(pl,FLAG_INV_LOCKED))
+			new_draw_info(NDI_UNIQUE, 0,pl,"You can't drop a container with locked items inside!");
 		else
 			drop_object (pl, op, nrof);
 		return;
@@ -1130,11 +1155,7 @@ void esrv_move_object (object *pl, tag_t to, tag_t tag, long nrof)
 		/* return if player has already picked it up */
 		if (op->env == pl) 
 			return;
-		if(to == op->count)
-		{
-			if(pl->container == op)
-				esrv_apply_container (pl, pl->container);
-		}
+
 		pl->contr->count = nrof;
 		/*LOG(-1,"pick up...\n");*/
 		pick_up(pl, op);
@@ -1153,9 +1174,11 @@ void esrv_move_object (object *pl, tag_t to, tag_t tag, long nrof)
     if (env->type == CONTAINER && can_pick(pl, op) && sack_can_hold(pl, env, op, nrof)) 
 	{
 		/*LOG(-1,"put in sack...\n");*/
-		if(pl->container == op)
-			esrv_apply_container (pl, pl->container);
-		if((tmp=check_container(pl,op)) && env->env != pl)
+		CLEAR_FLAG(pl,FLAG_INV_LOCKED); /* funny trickm see check container */
+		tmp=check_container(pl,op);
+		if(QUERY_FLAG(pl,FLAG_INV_LOCKED) && env->env != pl)
+			new_draw_info(NDI_UNIQUE, 0,pl,"You can't drop a container with locked items inside!");
+		else if(tmp && env->env != pl)
 			new_draw_info(NDI_UNIQUE, 0,pl,"Remove first all one-drop items from this container!");
 		else if(QUERY_FLAG(op,FLAG_STARTEQUIP) && env->env != pl)
 			new_draw_info(NDI_UNIQUE, 0,pl,"You can't store one-drop items outside your inventory!");
@@ -1186,6 +1209,8 @@ static int check_container(object *pl, object *con)
 
 		if(QUERY_FLAG(current, FLAG_STARTEQUIP))
 			ret +=1;
+		if(QUERY_FLAG(current, FLAG_INV_LOCKED))
+			SET_FLAG(pl,FLAG_INV_LOCKED);
 	}
 	return ret;
 }

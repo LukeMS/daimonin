@@ -420,10 +420,14 @@ char *query_name(object *op) {
 
     if (QUERY_FLAG(op,FLAG_INV_LOCKED))
 	safe_strcat(buf[use_buf], " *", &len, HUGE_BUF);
-    if (op->type == CONTAINER && ((op->env && op->env->container == op) || 
-	(!op->env && QUERY_FLAG(op,FLAG_APPLIED))))
-	safe_strcat(buf[use_buf]," (open)", &len, HUGE_BUF);
+    if (op->type == CONTAINER && QUERY_FLAG(op,FLAG_APPLIED))
+	{
+		if(op->attacked_by && op->attacked_by->type == PLAYER)
+			safe_strcat(buf[use_buf]," (open)", &len, HUGE_BUF);
+		else
+			safe_strcat(buf[use_buf]," (ready)", &len, HUGE_BUF);
 
+	}
     if (QUERY_FLAG(op,FLAG_KNOWN_CURSED)||QUERY_FLAG(op,FLAG_IDENTIFIED)) {
 	if(QUERY_FLAG(op,FLAG_PERM_DAMNED))
 	    safe_strcat(buf[use_buf], " (perm. damned)", &len, HUGE_BUF);

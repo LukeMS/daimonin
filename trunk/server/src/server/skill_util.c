@@ -250,7 +250,7 @@ int do_skill (object *op, int dir, char *string) {
     if(op->type==PLAYER)
 	{
 		op->speed_left -= get_skill_time(op,skill);
-		LOG(-1,"SKILL TIME: skill %s ->%d\n", op->chosen_skill->name, get_skill_time(op,skill));
+		/*LOG(-1,"SKILL TIME: skill %s ->%d\n", op->chosen_skill->name, get_skill_time(op,skill));*/
 	}
 
    /* this is a good place to add experience for successfull use of skills.

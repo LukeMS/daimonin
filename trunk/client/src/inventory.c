@@ -60,11 +60,11 @@ int get_inventory_data(item *op, int *ctag, int *slot, int *start, int *count, i
                 (*count)++;
 
 				cpl.window_weight += tmp->weight*(float)tmp->nrof;
-				if(tmp->open)
+				if(tmp->tag == cpl.container_tag)
 					cpl.container=tmp;	
                 if(cpl.container&& cpl.container->tag == tmp->tag)
                 {
-                    tmpc = cpl.container->inv;
+                    tmpc = cpl.sack->inv;
                     for (; tmpc; tmpc=tmpc->next)
                         (*count)++;                    
                 }
@@ -81,7 +81,7 @@ int get_inventory_data(item *op, int *ctag, int *slot, int *start, int *count, i
                 i++;
                 if(cpl.container&& cpl.container->tag == tmp->tag)
                 {
-                    tmpc = cpl.container->inv;
+                    tmpc = cpl.sack->inv;
                     for (; tmpc; tmpc=tmpc->next)
                     {
                         if(*slot == i)
@@ -172,7 +172,7 @@ void show_inventory_window(int x, int y)
             if(cpl.container&& cpl.container->tag == tmp->tag)
             {
                 tmpx=tmp;
-                tmpc = cpl.container->inv;
+                tmpc = cpl.sack->inv;
                 for (; tmpc && i< cpl.win_inv_start; tmpc=tmpc->next,i++)
                     ;
                 if(tmpc)
@@ -205,7 +205,7 @@ void show_inventory_window(int x, int y)
             {
                 sprite_blt(Bitmaps[BITMAP_CMARK_START],
                        x+((i-1)%invxlen)*32+1, y+((i-1)/invxlen)*32+1, NULL, NULL);
-                tmpc = cpl.container->inv;
+                tmpc = cpl.sack->inv;
             jump_in_container1:
                 for (; tmpc && i< invxlen*invylen; tmpc=tmpc->next)
                 {
@@ -232,7 +232,7 @@ void show_inventory_window(int x, int y)
 
 void show_below_window(item *op, int x, int y)
 {
-        register int i, slot;
+        register int i, slot,at;
         item *tmp, *tmpc, *tmpx=NULL;
         char buf[256];
 		SDL_Rect tmp_rect;
@@ -249,7 +249,7 @@ void show_below_window(item *op, int x, int y)
             tmpx=tmp;
             if(cpl.container&& cpl.container->tag == tmp->tag)
             {
-                tmpc = cpl.container->inv;
+                tmpc = cpl.sack->inv;
                 for (; tmpc && i< cpl.win_below_start; tmpc=tmpc->next,i++)
                     ;
                 if(tmpc)
@@ -266,7 +266,11 @@ void show_below_window(item *op, int x, int y)
         
         for (; tmp && i< INVITEMBELOWXLEN*INVITEMBELOWYLEN; tmp=tmp->next)
         {
+				at = tmp->applied;
+				if(tmp->tag != cpl.container_tag)
+					tmp->applied = 0;
                 blt_inv_item(tmp, x+(i%INVITEMBELOWXLEN)*32+1, y+(i/INVITEMBELOWXLEN)*32+1);
+				tmp->applied = at;
                 if(i+cpl.win_below_start == cpl.win_below_slot)
                 {
                     if(cpl.inventory_win == IWIN_BELOW)                        
@@ -287,7 +291,7 @@ void show_below_window(item *op, int x, int y)
                 {
                     sprite_blt(Bitmaps[BITMAP_CMARK_START],
                         x+((i-1)%INVITEMBELOWXLEN)*32+1, y+((i-1)/INVITEMBELOWXLEN)*32+1, NULL, NULL);
-                    tmpc = cpl.container->inv;
+                    tmpc = cpl.sack->inv;
                 jump_in_container2:
                     for (; tmpc && i< INVITEMBELOWXLEN*INVITEMBELOWYLEN; tmpc=tmpc->next)
                     {

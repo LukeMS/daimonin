@@ -1437,7 +1437,6 @@ void clear_object(object *op) {
     op->below=NULL;
     op->above=NULL;
     op->inv=NULL;
-    op->container=NULL;
     op->env=NULL;
     op->more=NULL;
     op->head=NULL;
@@ -1688,7 +1687,7 @@ void update_ob_speed(object *op) {
 }
 
 
-/*
+/* OLD NOTES
  * update_object() updates the array which represents the map.
  * It takes into account invisible objects (and represent squares covered
  * by invisible objects by whatever is below them (unless it's another
@@ -1709,9 +1708,14 @@ void update_ob_speed(object *op) {
  *  as that is easier than trying to look at what may have changed.
  * UP_OBJ_FACE: only the objects face has changed.
  */
-
-void update_object(object *op, int action) {
-    int update_now=0, flags;
+/* i want use this function as one and only way to decide what we update in a tile
+ * and how - and what not. As smarter this function is, as better. This function MUST
+ * be called now from everything what does a noticable change to a object. We can 
+ * pre-decide its needed to call but normally we must call this.
+ */
+void update_object(object *op, int action) 
+{
+    int flags, newflags;
     
 	/*LOG(-1, "update_object: %s (%d,%d) - action %x\n", op->name, op->x, op->y,action);*/
     if (op == NULL)
@@ -1721,99 +1725,149 @@ void update_object(object *op, int action) {
 		return;
     }
     
-    if(op->env!=NULL) {
-	/* Animation is currently handled by client, so nothing
-	 * to do in this case.
-	 */
-	return;
-    }
-
-    /* If the map is saving, don't do anything as everything is
-     * going to get freed anyways.
-     */
-    if (!op->map || op->map->in_memory == MAP_SAVING) return;
+    if (op->env!=NULL || !op->map || op->map->in_memory == MAP_SAVING)
+		return;
     
     /* make sure the object is within map boundaries */
-#ifdef DEBUG
+	/*
     if (op->x < 0 || op->x >= MAP_WIDTH(op->map) || op->y < 0 || op->y >= MAP_HEIGHT(op->map)) 
 	{
         LOG(llevError,"ERROR: update_object() called for object out of map!\n");
 		return;
     }
-#endif 
+	*/
 	
-    flags = GET_MAP_FLAGS(op->map, op->x, op->y);
+	if (action == UP_OBJ_FACE) /* no need to change anything except the map update counter */
+	{
+#ifdef DEBUG_CORE
+		LOG(llevDebug,"UO_FACE - %s\n", query_name(op));
+#endif
+	 	INC_MAP_UPDATE_COUNTER(op->map, op->x, op->y);
+		return;
+    } 
+	
+    newflags = GET_MAP_FLAGS(op->map, op->x, op->y);
+	flags = newflags&~P_NEED_UPDATE;
 
-    SET_MAP_FLAGS(op->map, op->x, op->y, flags | P_NEED_UPDATE);
+    if (action == UP_OBJ_INSERT) /* always resort layer - but not always flags */
+	{
+#ifdef DEBUG_CORE
+		LOG(llevDebug,"UO_INS - %s\n", query_name(op));
+#endif
+		newflags|=P_NEED_UPDATE; /* force layer rebuild */
+	 	INC_MAP_UPDATE_COUNTER(op->map, op->x, op->y);
 
-    if (action == UP_OBJ_INSERT) {
-		
-		if(flags & P_SET_INV) /* we touch the inv/non inv layer system - force update */
-			update_now=1;
-        else if (QUERY_FLAG(op, FLAG_ALIVE) && !(flags & P_IS_ALIVE))
-            update_now=1;
-        else if (QUERY_FLAG(op, FLAG_IS_PLAYER) && !(flags & P_IS_PLAYER))
-            update_now=1;
-        else if (QUERY_FLAG(op, FLAG_NO_PASS) && !(flags & P_NO_PASS))
-            update_now=1;
-        else if (QUERY_FLAG(op, FLAG_BLOCKSVIEW) && !(flags & P_BLOCKSVIEW))
-            update_now=1;
-        else if (QUERY_FLAG(op, FLAG_NO_MAGIC) && !(flags & P_NO_MAGIC))
-            update_now=1;
-        else if (QUERY_FLAG(op, FLAG_NO_CLERIC) && !(flags & P_NO_CLERIC))
-            update_now=1;
-        else if (QUERY_FLAG(op, FLAG_PLAYER_ONLY) && !(flags & P_PLAYER_ONLY))
-            update_now=1;
-        else if (QUERY_FLAG(op, FLAG_DOOR_CLOSED) && !(flags & P_DOOR_CLOSED))
-            update_now=1;
-		else if(op->type == CHECK_INV && !(flags & P_CHECK_INV))
-            update_now=1;
-		else if(op->type == MAGIC_EAR && !(flags & P_MAGIC_EAR))
-            update_now=1;
+		/* this is handled a bit more complex, we must always loop the flags! */
+		/* floor is used to set terrain - we can do it here too but it works so */
+        if (QUERY_FLAG(op, FLAG_NO_PASS) || QUERY_FLAG(op, FLAG_PASS_THRU) || QUERY_FLAG(op,FLAG_IS_FLOOR))
+			newflags|=P_FLAGS_UPDATE;
+		else /* ok, we don't must use flag loop - we can set it by hand! */
+		{
+			if(op->type == CHECK_INV)
+				newflags|=P_CHECK_INV;
+			else if(op->type == MAGIC_EAR)
+				newflags|=P_MAGIC_EAR;
 
-    } else if (action == UP_OBJ_REMOVE) {
-		if(flags & P_SET_INV) /* we touch the inv/non inv layer system - force update */
-			update_now=1;
-        else if (QUERY_FLAG(op, FLAG_ALIVE) && (flags & P_IS_ALIVE))
-            update_now=1;
-        else if (QUERY_FLAG(op, FLAG_IS_PLAYER) && (flags & P_IS_PLAYER))
-            update_now=1;
-        else if (QUERY_FLAG(op, FLAG_NO_PASS) && (flags & P_NO_PASS))
-            update_now=1;
-        else if (QUERY_FLAG(op, FLAG_BLOCKSVIEW) && (flags & P_BLOCKSVIEW))
-            update_now=1;
-        else if (QUERY_FLAG(op, FLAG_NO_MAGIC) && (flags & P_NO_MAGIC))
-            update_now=1;
-        else if (QUERY_FLAG(op, FLAG_NO_CLERIC) && (flags & P_NO_CLERIC))
-            update_now=1;
-        else if (QUERY_FLAG(op, FLAG_PLAYER_ONLY) && (flags & P_PLAYER_ONLY))
-            update_now=1;
-        else if (QUERY_FLAG(op, FLAG_DOOR_CLOSED) && (flags & P_DOOR_CLOSED))
-            update_now=1;
-		else if(op->type == CHECK_INV && (flags & P_CHECK_INV))
-            update_now=1;
-		else if(op->type == MAGIC_EAR && (flags & P_MAGIC_EAR))
-            update_now=1;
+			if (QUERY_FLAG(op, FLAG_ALIVE))
+				newflags|=P_IS_ALIVE;
+	        if (QUERY_FLAG(op, FLAG_IS_PLAYER))
+				newflags|=P_IS_PLAYER;
+	        if (QUERY_FLAG(op, FLAG_PLAYER_ONLY))
+				newflags|=P_PLAYER_ONLY;
+	        if (QUERY_FLAG(op, FLAG_BLOCKSVIEW))
+				newflags|=P_BLOCKSVIEW;
+			if (QUERY_FLAG(op, FLAG_NO_MAGIC))
+				newflags|=P_NO_MAGIC;
+			if (QUERY_FLAG(op, FLAG_NO_CLERIC))
+				newflags|=P_NO_CLERIC;
+			if (QUERY_FLAG(op, FLAG_WALK_ON))
+				newflags|=P_WALK_ON;
+			if (QUERY_FLAG(op, FLAG_FLY_ON))
+				newflags|=P_FLY_ON;
+			if (QUERY_FLAG(op, FLAG_WALK_OFF))
+				newflags|=P_WALK_OFF;
+			if (QUERY_FLAG(op, FLAG_FLY_OFF))
+				newflags|=P_FLY_OFF;
+			if (QUERY_FLAG(op, FLAG_DOOR_CLOSED))
+				newflags|=P_DOOR_CLOSED;
+		}
+    } 
+	else if (action == UP_OBJ_REMOVE) 
+	{
+#ifdef DEBUG_CORE
+		LOG(llevDebug,"UO_REM - %s\n", query_name(op));
+#endif
+		newflags|=P_NEED_UPDATE; /* force layer rebuild */
+	 	INC_MAP_UPDATE_COUNTER(op->map, op->x, op->y);
 
-    } else if (action == UP_OBJ_CHANGE) {
-	update_now=1;
-    } else if (action == UP_OBJ_FACE) {
-		if(flags & P_SET_INV) /* we touch the inv/non inv layer system - force update */
-			update_now=1;
-    } else if (action == UP_OBJ_INV) {
-		if(op->head)	/* we autoupdate the tails of a multi tile object */
-			SET_FLAG(op,QUERY_FLAG(op->head,FLAG_IS_INVISIBLE));
-		remove_ob(op);
-		insert_ob_in_map(op,op->map,NULL,0);
-		update_now=1;
+		/* we must rebuild the flags when one of this flags is touched from our object */
+		if(	QUERY_FLAG(op, FLAG_ALIVE) ||
+			QUERY_FLAG(op, FLAG_IS_PLAYER) ||
+			QUERY_FLAG(op, FLAG_BLOCKSVIEW) ||
+			QUERY_FLAG(op, FLAG_DOOR_CLOSED) || 
+			QUERY_FLAG(op, FLAG_PASS_THRU) || 
+			QUERY_FLAG(op, FLAG_NO_PASS) ||
+			QUERY_FLAG(op, FLAG_PLAYER_ONLY) ||
+			QUERY_FLAG(op, FLAG_NO_MAGIC) ||
+			QUERY_FLAG(op, FLAG_NO_CLERIC) ||
+			QUERY_FLAG(op, FLAG_WALK_ON) ||
+			QUERY_FLAG(op, FLAG_FLY_ON) ||
+			QUERY_FLAG(op, FLAG_WALK_OFF) ||
+			QUERY_FLAG(op, FLAG_FLY_OFF) ||
+			QUERY_FLAG(op,	FLAG_IS_FLOOR) ||
+			op->type == CHECK_INV ||
+			op->type == MAGIC_EAR
+		)
+			newflags|=P_FLAGS_UPDATE; /* force flags rebuild */
+
+
+    } 
+	else if (action == UP_OBJ_FLAGS) 
+	{
+#ifdef DEBUG_CORE
+		LOG(llevDebug,"UO_FLAGS - %s\n", query_name(op));
+#endif
+		newflags|=P_FLAGS_UPDATE; /* force flags rebuild but no tile counter*/
+    }
+	else if (action == UP_OBJ_FLAGFACE) 
+	{
+#ifdef DEBUG_CORE
+		LOG(llevDebug,"UO_FLAGFACE - %s\n", query_name(op));
+#endif
+		newflags|=P_FLAGS_UPDATE; /* force flags rebuild */
+		INC_MAP_UPDATE_COUNTER(op->map, op->x, op->y); /* and tile counter */
+    }
+	else if (action == UP_OBJ_LAYER) 
+	{
+#ifdef DEBUG_CORE
+		LOG(llevDebug,"UO_LAYER - %s\n", query_name(op));
+#endif
+		newflags|=P_NEED_UPDATE; /* rebuild layers - most common when we change visibility of the object */
+		INC_MAP_UPDATE_COUNTER(op->map, op->x, op->y); /* and tile counter */
+    }
+	else if (action == UP_OBJ_ALL)
+	{
+#ifdef DEBUG_CORE
+		LOG(llevDebug,"UO_ALL - %s\n", query_name(op));
+#endif
+		newflags|=(P_FLAGS_UPDATE|P_NEED_UPDATE); /* force full tile update */
+		INC_MAP_UPDATE_COUNTER(op->map, op->x, op->y);
 	}
-    else {
-	LOG(llevError,"ERROR: update_object called with invalid action: %d\n", action);
+    else
+	{
+		LOG(llevError,"ERROR: update_object called with invalid action: %d\n", action);
+		return;
     }
 
-    if (update_now) {
-        SET_MAP_FLAGS(op->map, op->x, op->y, (flags | P_NO_ERROR | P_NEED_UPDATE));
-        update_position(op->map, op->x, op->y);
+    if (flags != newflags)
+	{
+		if(newflags&(P_FLAGS_UPDATE))  /* rebuild flags */
+		{
+	        SET_MAP_FLAGS(op->map, op->x, op->y, (newflags|P_NO_ERROR|P_FLAGS_ONLY));
+			update_position(op->map, op->x, op->y);
+		}
+		else
+	        SET_MAP_FLAGS(op->map, op->x, op->y, newflags);
     }
 
     if(op->more!=NULL)
@@ -1836,19 +1890,18 @@ void free_object(object *ob) {
 	dump_object(ob);
 	LOG(llevBug,"BUG: Free object called with non removed object\n:%s\n",errmsg);
     }
-  if(QUERY_FLAG(ob,FLAG_FRIENDLY)) {
-	/* This is not a bug - if we not want add/remove it in remove_:ob() (we don't want)
-	 * this here is the right place
-	dump_object(ob);
-    LOG(llevBug,"BUG: tried to free friendly object %s\n:%s\n",ob->name,errmsg);
-	*/
-    remove_friendly_object(ob);
-  }
   if(QUERY_FLAG(ob,FLAG_FREED)) {
     dump_object(ob);
     LOG(llevBug,"BUG: Trying to free freed object.\n%s\n",errmsg);
     return;
   }
+
+  if(QUERY_FLAG(ob,FLAG_FRIENDLY))
+	  remove_friendly_object(ob);
+ 
+  if(ob->type == CONTAINER && ob->attacked_by) 
+	  container_unlink_func(NULL, ob);
+
   if(ob->more!=NULL) {
     free_object(ob->more);
     ob->more=NULL;
@@ -2123,8 +2176,6 @@ void remove_ob(object *op) {
 
 	/* if this is the base layer object, we assign the next object to be it if it is from same layer type */
 	msp=GET_MAP_SPACE_PTR(op->map,op->x,op->y);
-	if(QUERY_FLAG(op,FLAG_IS_INVISIBLE) )		
-		msp->flags|=P_SET_INV;	/* we play around with invisible objects - tell it update */
 
 	if(op->layer)
 	{
@@ -2164,6 +2215,8 @@ void remove_ob(object *op) {
 	if (op->map->in_memory == MAP_SAVING)
 		return;
 
+	msp->update_tile++; /* we updated something here - mark this tile as changed! */
+
 	/* some player only stuff.
 	 * we adjust the ->player map variable and the local map player chain.
 	 */
@@ -2182,6 +2235,11 @@ void remove_ob(object *op) {
 
 		pltemp->map_below = pltemp->map_above = NULL;
 
+		pltemp->update_los=1; /* thats always true when touching the players map pos. */
+
+		/* a open container NOT in our player inventory = unlink (close) when we move */
+		if(pltemp->container && pltemp->container->env != op) 
+			container_unlink_func (pltemp,NULL);
 	}
 
 	/* it should not be hard to remove this object loop too -
@@ -2192,25 +2250,7 @@ void remove_ob(object *op) {
     tag = op->count;
     check_walk_off = ! QUERY_FLAG (op, FLAG_NO_APPLY);
     for(tmp=GET_MAP_OB(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above)
-	{
-		/* No point updating the players look faces if he is the object
-		* being removed.
-		*/
-
-		if(tmp->type==PLAYER && tmp!=op) 
-		{
-			/* If a container that the player is currently using somehow gets
-			* removed (most likely destroyed), update the player view
-			* appropriately.
-			*/
-			if (tmp->container==op)
-			{
-				CLEAR_FLAG(op, FLAG_APPLIED);
-				tmp->container=NULL;
-			}
-			tmp->contr->socket.update_look=1;
-		}
-
+	{			
 		if (check_walk_off && (QUERY_FLAG (op, FLAG_FLYING) ?
 			QUERY_FLAG (tmp, FLAG_FLY_OFF) : QUERY_FLAG (tmp, FLAG_WALK_OFF)))
 		{
@@ -2236,9 +2276,6 @@ void remove_ob(object *op) {
 
 	update_object(op, UP_OBJ_REMOVE);		
 
-	/* this can be optimized too - check for blocksview on this map square before */
-    if(QUERY_FLAG(op,FLAG_BLOCKSVIEW)|| (op->glow_radius>0)) 
-		update_all_los(op->map, op->x, op->y);
 }
 
 
@@ -2415,7 +2452,6 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
 		else /* invisible object */
 		{
 			int tmp_flag;
-			mc->flags|=P_SET_INV;	/* we play around with invisible objects - tell it update */
 
 			/* check the layers */
 			if((top=GET_MAP_SPACE_LAYER(mc, layer_inv))!=NULL)
@@ -2518,7 +2554,8 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
 	 */
 	if(op->type == PLAYER)
 	{
-		op->contr->do_los=1;
+		op->contr->socket.update_tile = 0;
+		op->contr->update_los=1; /* thats always true when touching the players map pos. */
 
 		if(op->map->player_first) 
 		{
@@ -2530,47 +2567,9 @@ object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag
 
 	}
 
-    /* If we have a floor, we know the player, if any, will be above
-     * it, so save a few ticks and start from there.
-     */
-	/* all players are layer 6 this can not be changed - so we can skip objects of different layer type */
-	/* wizs can be layer 0, but we will autoforce a wizs look */
-    for(tmp=GET_MAP_OB_LAYER(op->map,op->x,op->y,5);tmp!=NULL;tmp=tmp->above)
-	{
-		if (tmp->type == PLAYER)
-		    tmp->contr->socket.update_look=1;
-    }
-	/* and the same for invisible players ... */
-    for(tmp=GET_MAP_OB_LAYER(op->map,op->x,op->y,5+MAX_ARCH_LAYERS);tmp!=NULL;tmp=tmp->above)
-	{
-		if (tmp->type == PLAYER)
-		    tmp->contr->socket.update_look=1;
-    }
-
-    /* Don't know if moving this to the end will break anything.  However,
-     * we want to have update_look set above before calling this.
-     *
-     * check_walk_on() must be after this because code called from
-     * check_walk_on() depends on correct map flags (so functions like
-     * blocked() and wall() work properly), and these flags are updated by
-     * update_object().
-     */
-
+	mc->update_tile++; /* we updated something here - mark this tile as changed! */
     /* updates flags (blocked, alive, no magic, etc) for this map space */
     update_object(op,UP_OBJ_INSERT);
-
-    /* If this object glows, it may affect lighting conditions that are
-     * visible to others on this map.  But update_all_los is really
-     * an inefficient way to do this, as it means los for all players
-     * on the map will get recalculated.  The players could very well
-     * be far away from this change and not affected in any way -
-     * this should get redone to only look for players within range,
-     * or just updating the P_NEED_UPDATE for spaces within this area
-     * of effect may be sufficient.
-     */
-    if(MAP_DARKNESS(op->map) && op->glow_radius>0) 
-		update_all_los(op->map, op->x, op->y);
-
 
     /* if this is not the head or flag has been passed, don't check walk on status */
     if (!(flag & INS_NO_WALK_ON) && !op->head) 
@@ -2684,10 +2683,15 @@ object *decrease_ob_nr (object *op, int i)
 	 * IMO, searching through all the players will mostly
 	 * likely be quicker than following op->env to the map,
 	 * and then searching the map for a player.
+		*/
+	/* this is another nasty "search all players"...
+	 * i skip this to rework as i do the container patch -
+	 * but we can do this now much smarter ! TODO
+	 * MT -08.02.04 
 	 */
 	if (!tmp) {
 	    for (pl=first_player; pl; pl=pl->next)
-		if (pl->ob->container == op->env) break;
+		if (pl->container == op->env) break;
 	    if (pl) tmp=pl->ob;
 	    else tmp=NULL;
 	}
@@ -2703,7 +2707,7 @@ object *decrease_ob_nr (object *op, int i)
             remove_ob (op);
             op->nrof = 0;
             if (tmp) {
-                (*esrv_del_item_func) (tmp->contr, op->count);
+                (*esrv_del_item_func) (tmp->contr, op->count,op->env);
                 (*esrv_update_item_func) (UPD_WEIGHT, tmp, tmp);
             }
         }
@@ -2724,7 +2728,7 @@ object *decrease_ob_nr (object *op, int i)
                 if (op->nrof)
                     (*esrv_send_item_func) (tmp, op);
                 else
-                    (*esrv_del_item_func) (tmp->contr, op->count);
+                    (*esrv_del_item_func) (tmp->contr, op->count, op->env);
             }
     }
 
@@ -2829,7 +2833,6 @@ object *insert_ob_in_ob(object *op,object *where) {
 #ifdef DEBUG_LIGHTS
       LOG(llevDebug, " insert_ob_in_ob(): got %s to insert in map/op\n",query_name(op));
 #endif /* DEBUG_LIGHTS */ 
-      if (MAP_DARKNESS(where->map)) update_all_los(where->map, where->x, where->y);
   }
 
   /* Client has no idea of ordering so lets not bother ordering it here.
@@ -3184,9 +3187,12 @@ int dirdiff(int dir1, int dir2) {
  */
 
 int can_pick(object *who,object *item) {
-  return ((who->type==PLAYER && QUERY_FLAG(item,FLAG_NO_PICK) && QUERY_FLAG(item,FLAG_UNPAID)) || /* clone shop - we assume that items are never invisible here*/
-	  (item->weight>0&&!QUERY_FLAG(item,FLAG_NO_PICK)&& !IS_INVISIBLE(item,who) && 
-	  !QUERY_FLAG(item,FLAG_ALIVE)&& (who->type==PLAYER||item->weight<who->weight/3)));
+  return (
+	  (who->type==PLAYER && QUERY_FLAG(item,FLAG_NO_PICK) && QUERY_FLAG(item,FLAG_UNPAID))
+	  || /* iam not sure about that weight >0... */
+	  (item->weight>0 && !QUERY_FLAG(item,FLAG_NO_PICK) && 
+	  (!IS_INVISIBLE(item,who) || QUERY_FLAG(who,FLAG_SEE_INVISIBLE)) && 
+	  (who->type==PLAYER||item->weight<who->weight/3)));
 }
 
 

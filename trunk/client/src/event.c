@@ -1850,7 +1850,7 @@ static Boolean process_macro_keys(int id, int value)
            if(it->locked)
 	   {
            	sound_play_effect(SOUND_CLICKFAIL,0,0,100);
-	   	draw_info("unlock item first!",COLOR_DGOLD);
+	   	draw_info("unlock item first!",COLOR_WHITE);
 		return FALSE;
 	   }
 

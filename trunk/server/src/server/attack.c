@@ -1057,9 +1057,6 @@ int kill_object(object *op,int dam, object *hitter, int type)
 
 	maxdam=op->stats.hp-1;
 
-	if(QUERY_FLAG(op,FLAG_BLOCKSVIEW))
-	    update_all_los(op->map,op->x, op->y); /* makes sure los will be recalculated */
-
 	if(op->type==DOOR) {
 	    op->speed = 0.1f;
 	    update_ob_speed(op);
@@ -1482,8 +1479,6 @@ void tear_down_wall(object *op)
 	if(op->stats.hp<0) {
 	    remove_ob(op); /* Should update LOS */
 	    free_object(op);
-	    /* Don't know why this is here - remove_ob should do it for us */
-	    /*update_position(m, x, y);*/
 	}
 	return;	/* no animations, so nothing more to do */
     }
@@ -1501,12 +1496,8 @@ void tear_down_wall(object *op)
 	    remove_ob(op); /* Should update LOS */
 	    free_object(op);
 
-	    /* remove_ob should call update_position for us */
-	    /*update_position(m, x, y);*/
-
 	} else { /* The last face was not blank, leave an image */
 	    CLEAR_FLAG(op, FLAG_BLOCKSVIEW);
-	    update_all_los(op->map, op->x, op->y);
 	    CLEAR_FLAG(op, FLAG_NO_PASS);
 	    CLEAR_FLAG(op, FLAG_ALIVE);
 	}
@@ -2020,7 +2011,7 @@ void save_throw_object (object *op, int type, object *originator)
 		object *tmp= is_player_inv(op->env);
 
 		if (tmp) {
-		    esrv_del_item(tmp->contr, op->count);
+		    esrv_del_item(tmp->contr, op->count,op->env);
 		    esrv_update_item(UPD_WEIGHT, tmp, tmp);
 		}
 	    }

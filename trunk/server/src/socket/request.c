@@ -1017,56 +1017,39 @@ void esrv_send_animation(NewSocket *ns, short anim_num)
  * Start of map related commands.
  *
  ******************************************************************************/
-
-/* This adds face_num to a map cell at x,y.  If the client doesn't have
- * the face yet, we will also send it.
- */
-/* not used */
-/*
-static void esrv_map_setbelow(NewSocket *ns, int x,int y,
-			      short face_num, struct Map *newmap)
-{
-
-    if (x<0 || x>ns->mapx-1 || y<0 || y>ns->mapy-1 || face_num < 0 || face_num > MAXFACENUM)
-		LOG(llevError,"ERROR: bad user x/y/facenum not in 0..10,0..10,0..%d\n", MAXFACENUM-1);
-    if(newmap->cells[x][y].count >= MAP_LAYERS)
-		LOG(llevError,"ERROR: Too many faces in map cell %d %d\n",x,y);
-    newmap->cells[x][y].faces[newmap->cells[x][y].count] = face_num;
-    newmap->cells[x][y].count ++;
-}
-*/
-struct LayerCell {
-  uint16 xy;
-  short face;
-};
-
-struct MapLayer {
-  int count;
-  struct LayerCell lcells[MAP_CLIENT_X * MAP_CLIENT_Y];
-};
-/*
-static int mapcellchanged(NewSocket *ns,int i,int j, struct Map *newmap)
-{
-  int k;
-
-  if (ns->lastmap.cells[i][j].count != newmap->cells[i][j].count)
-    return 1;
-  for(k=0;k<newmap->cells[i][j].count;k++) {
-    if (ns->lastmap.cells[i][j].faces[k] !=
-	newmap->cells[i][j].faces[k]) {
-      return 1;
-    }
-  }
-  return 0;
-}
-*/
-
 /* Clears a map cell */
-static void map_clearcell(struct MapCell *cell)
+#define map_clearcell(_cell_) memset((_cell_), 0, sizeof(MapCell));(_cell_)->count=-1
+
+/* do some checks, map name and LOS and then draw the map */
+void draw_client_map(object *pl)
 {
-	memset(cell, 0, sizeof(MapCell));
-    cell->count=-1;
+    if (pl->type != PLAYER)
+	{
+		LOG(llevBug,"BUG: draw_client_map called with non player/non eric-server (%s)\n",pl->name);
+		return;
+    }
+
+    /* IF player is just joining the game, he isn't on a map,
+	 * If so, don't try to send them a map.  All will
+     * be OK once they really log in.
+     */
+    if (!pl->map || pl->map->in_memory!=MAP_IN_MEMORY) 
+		return;
+
+	/* if we has changed somewhere the map - tell it the client now */
+	if(pl->contr->last_update != pl->map)
+		MapNewmapCmd( pl->contr);
+
+    /* do LOS after calls to update_position */
+    if(!QUERY_FLAG(pl,FLAG_WIZ) && pl->contr->update_los) 
+	{
+        update_los(pl);
+        pl->contr->update_los = 0;
+    }
+    
+	draw_client_map2(pl);
 }
+
 
 /* The problem to "personalize" a map view is that we have to access here the objects
  * we want to draw. This means alot of memory access in different areas. Iam not
@@ -1082,24 +1065,25 @@ void draw_client_map2(object *pl)
 {
 	static uint32 map2_count=0;
     struct MapCell *mp;
-    New_Face	*face;
+	MapSpace *msp;
+	New_Face	*face;
     mapstruct *m;
     object *tmp, *tmph, *pname1, *pname2, *pname3, *pname4;
     int x,y,ax, ay, d, nx,ny, probe_tmp;
+	int x_start;
     int dark, flag_tmp;
     int quick_pos_1,quick_pos_2,quick_pos_3; 
  	int inv_flag = QUERY_FLAG(pl,FLAG_SEE_INVISIBLE)?0:1;
     uint16 face_num0,face_num1,face_num2,face_num3,face_num1m,face_num2m,face_num3m;
     uint16  mask;
     SockList sl;
+	unsigned char sock_buf[MAXSOCKBUF];
     
     map2_count++;      /* we need this to decide quickly we have updated a object before here */
-    sl.buf=malloc(MAXSOCKBUF);
-	SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_MAP2);
-	/*
-	strcpy((char*)sl.buf,"map2 ");
-    sl.len=strlen((char*)sl.buf);
-	*/
+
+	sl.buf = sock_buf;
+	SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_MAP2); /* sets sl.len too */
+
     /* control player map - if not as last_update, we have changed map.
      * Because this value will be set from normal map changing, but not from
      * border crossing from tiled maps - so we have done a step from a linked
@@ -1116,44 +1100,93 @@ void draw_client_map2(object *pl)
     /* x,y are the real map locations.  ax, ay are viewport relative
      * locations.
      */    
-    ay=pl->contr->socket.mapy-1;
-    for(y=(pl->y+(pl->contr->socket.mapy+1)/2)-1; y>=pl->y-pl->contr->socket.mapy_2;y--,ay--) {
-	ax=pl->contr->socket.mapx-1;
-	for(x=(pl->x+(pl->contr->socket.mapx+1)/2)-1;x>=pl->x-pl->contr->socket.mapx_2;x--,ax--) {
-	    d =  pl->contr->blocked_los[ax][ay];
-	    mask = (ax & 0x1f) << 11 | (ay & 0x1f) << 6;
 
-	    /* If the coordinates are not valid, or it is too dark to see,
-	     * we tell the client as such
-	     */
-	    nx=x;
-	    ny=y;
-		m = out_of_map(pl->map, &nx, &ny);
-	    if (!m) 
+	/* i don't trust all compilers to optimize it in this BIG loop */
+	x_start =(pl->x+(pl->contr->socket.mapx+1)/2)-1; 
+
+    for(ay=pl->contr->socket.mapy-1,y=(pl->y+(pl->contr->socket.mapy+1)/2)-1;y>=pl->y-pl->contr->socket.mapy_2;y--,ay--) {
+	ax=pl->contr->socket.mapx-1;
+	for(x=x_start;x>=pl->x-pl->contr->socket.mapx_2;x--,ax--) {
+
+		d =  pl->contr->blocked_los[ax][ay];
+		mask = (ax & 0x1f) << 11 | (ay & 0x1f) << 6;
+
+		/* space is out of map OR blocked.  Update space and clear values if needed */
+		if ( d&(BLOCKED_LOS_OUT_OF_MAP|BLOCKED_LOS_BLOCKED)) 
 		{
-			/* space is out of map.  Update space and clear values
-			 * if this hasn't already been done.
+			if (pl->contr->socket.lastmap.cells[ax][ay].count != -1) 
+			{
+				SockList_AddShort(&sl, mask); /* a position mask without any flags = clear cell */
+				map_clearcell(&pl->contr->socket.lastmap.cells[ax][ay]);
+			}
+			continue;
+	    }
+
+		/* it IS a valid map -but which? */
+	    nx=x;ny=y;
+	    if (!(m = out_of_map(pl->map, &nx, &ny))) 
+		{
+			/* this should be catched in LOS function... so its a glitch,
+			 * except we are in DM mode - there we skip all this LOS stuff.
 			 */
+			if(!QUERY_FLAG(pl,FLAG_WIZ))
+				LOG(llevDebug,"BUG: draw_client_map2() out_of_map for player <%s> map:%s (%,%d)\n",
+										query_name(pl), pl->map->path?pl->map->path:"<no path?>",x,y);
+
 			if (pl->contr->socket.lastmap.cells[ax][ay].count != -1) 
 			{
 				SockList_AddShort(&sl, mask);
 				map_clearcell(&pl->contr->socket.lastmap.cells[ax][ay]);
 			}
+			continue;
 	    }
-		else if ( d > 3 )
+
+		msp = GET_MAP_SPACE_PTR(m, nx,ny);
+
+		/* we need to rebuild the layer first? */
+		if(msp->flags&P_NEED_UPDATE)
 		{
-			/* space is 'blocked' by darkness */
+#ifdef DEBUG_CORE
+			LOG(llevDebug,"P_NEED_UPDATE (%s) pos:(%d,%d)\n",query_name(pl), nx,ny);
+#endif
+			msp->flags&=~P_FLAGS_ONLY;
+			update_position(m,nx,ny);
+		}
+
+		/* lets check for changed blocksview - but only tile which have 
+		 * an impact to our LOS.
+		 */
+		if(!(d&BLOCKED_LOS_IGNORE)) /* border tile, we can ignore every LOS change */
+		{
+			if(msp->flags&P_BLOCKSVIEW) /* tile has blocksview set? */
+			{
+				if(!d) /* now its visible? */ 
+				{
+					/*LOG(-1,"SET_BV(%d,%d): was bv is now %d\n", nx,ny,d);*/
+					pl->contr->update_los=1;
+				}
+			}
+			else
+			{
+				if(d&BLOCKED_LOS_BLOCKSVIEW)
+				{
+					/*LOG(-1,"SET_BV(%d,%d): was visible is now %d\n", nx,ny,d);*/
+					pl->contr->update_los=1;
+				}
+			}
+		}
+
+		/* outdated stuff...*/
+		if ( 0 )
+		{
+			/*
 			if (d==4 && pl->contr->socket.darkness)
 			{
-				/* this is the first spot where darkness becomes too dark to see.
-				 * only need to update this if it is different from what we 
-				 * last sent
-				 */
 				if (pl->contr->socket.lastmap.cells[ax][ay].count != d) 
 				{
 					map_clearcell(&pl->contr->socket.lastmap.cells[ax][ay]);
 					SockList_AddShort(&sl, mask);
-					mask |= 0x10;  /* add darkness */
+					mask |= 0x10;  
 					SockList_AddShort(&sl, mask);
 					SockList_AddChar(&sl, 0);
 					pl->contr->socket.lastmap.cells[ax][ay].count = d;
@@ -1164,39 +1197,29 @@ void draw_client_map2(object *pl)
 				SockList_AddShort(&sl, mask);
 				map_clearcell(&pl->contr->socket.lastmap.cells[ax][ay]);
 			}
+			*/
 	    }
 	    else 
 		{ /* this space is viewable */
-		MapSpace *msp;
         int pname_flag=0,ext_flag = 0, dmg_flag=0, oldlen = sl.len;
         int dmg_layer2=0,dmg_layer1=0,dmg_layer0=0;
 
         dark = NO_FACE_SEND;
-	    mask = (ax & 0x1f) << 11 | (ay & 0x1f) << 6;
 
 		/* Darkness changed */
+		d=0;
 		if (pl->contr->socket.lastmap.cells[ax][ay].count != d && pl->contr->socket.darkness) {
 		    pl->contr->socket.lastmap.cells[ax][ay].count = d;
 		    mask |= 0x10;    /* darkness bit */
-
-		    /* Protocol defines 255 full bright, 0 full dark.
-		     * We currently don't have that many darkness ranges,
-		     * so we current what limited values we do have.
-		     */
             if (d==0) dark = 255;
             else if (d==1) dark = 191;
             else if (d==2) dark = 127;
             else if (d==3) dark = 63;
         }
 		else
-		    /* need to reset from -1 so that if it does become blocked again,
-		     * the code that deals with that can detect that it needs to tell
-		     * the client that this space is now blocked.
-		     */
 		    pl->contr->socket.lastmap.cells[ax][ay].count = d;
 
         mp = &(pl->contr->socket.lastmap.cells[ax][ay]);
-		msp = GET_MAP_SPACE_PTR(m, nx,ny);
 
 		/* floor layer */
 		face_num0 = 0;
@@ -1657,54 +1680,6 @@ void draw_client_map2(object *pl)
 	Send_With_Handling(&pl->contr->socket, &sl);
 	pl->contr->socket.sent_scroll = 0;
     }
-    free(sl.buf);
-}
-
-
-void draw_client_map(object *pl)
-{
-    mapstruct	*m;
-    int i,j,ax,ay; /* ax and ay goes from 0 to max-size of arrays */
-    struct Map	newmap;
-
-    if (pl->type != PLAYER) {
-	LOG(llevBug,"BUG: draw_client_map called with non player/non eric-server (%s)\n",pl->name);
-	return;
-    }
-
-    /* IF player is just joining the game, he isn't on a map,
-	 * If so, don't try to send them a map.  All will
-     * be OK once they really log in.
-     */
-    if (!pl->map || pl->map->in_memory!=MAP_IN_MEMORY) return;
-
-	/* if we has changed somewhere the map - tell it the client now */
-	if(pl->contr->last_update != pl->map)
-		MapNewmapCmd( pl->contr);
-
-    memset(&newmap, 0, sizeof(struct Map));
-
-    for(j=(pl->y-pl->contr->socket.mapy_2); j<(pl->y+(pl->contr->socket.mapy+1)/2); j++)
-	{
-        for(i=(pl->x-pl->contr->socket.mapx_2) ; i<(pl->x+(pl->contr->socket.mapx+1)/2); i++)
-		{
-			ax=i;
-			ay=j;
-			m = out_of_map(pl->map, &ax, &ay);
-			if (m && (GET_MAP_FLAGS(m,ax,ay) & P_NEED_UPDATE))
-				update_position(m, ax, ay);
-		}
-    }
-
-    /* do LOS after calls to update_position */
-    if(pl->contr->do_los) 
-	{
-        update_los(pl);
-        pl->contr->do_los = 0;
-    }
-    
-	/* if (pl->contr->socket.map2cmd) */ /* its default now */        
-	draw_client_map2(pl);
 }
 
 
@@ -1716,6 +1691,7 @@ void esrv_map_scroll(NewSocket *ns,int dx,int dy)
 
     sprintf(buf,"X%d %d", dx, dy);
     Write_String_To_Socket(ns, BINARY_CMD_MAP_SCROLL, buf, strlen(buf));
+
     /* the x and y here are coordinates for the new map, i.e. if we moved
      (dx,dy), newmap[x][y] = oldmap[x-dx][y-dy] */
     for(x=0;x<ns->mapx;x++) {

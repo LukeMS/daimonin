@@ -29,6 +29,8 @@ install:
 	chmod 755 $(bindir)/dmonloop
 	$(INSTALL) $(INSTALLFLAGS) mktable.script $(bindir)/mktable
 
+proto::
+	
 depend::
 
 archive::

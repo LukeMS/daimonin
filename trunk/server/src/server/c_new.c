@@ -345,7 +345,7 @@ int command_target(object *op, char *params)
 				continue; 
 
 			block = op->contr->blocked_los[xx+op->contr->socket.mapx_2][yy+op->contr->socket.mapy_2];
-			if(block>3 || block<0 ||!(m=out_of_map(op->map,&xt,&yt)))
+			if(block>BLOCKED_LOS_BLOCKSVIEW ||!(m=out_of_map(op->map,&xt,&yt)))
 				continue;
 
 			/* we can have more as one possible target
@@ -400,7 +400,7 @@ int command_target(object *op, char *params)
 			xt=op->x+(xx=map_pos_array[n][MAP_POS_X]);
 			yt=op->y+(yy=map_pos_array[n][MAP_POS_Y]);
 			block = op->contr->blocked_los[xx+op->contr->socket.mapx_2][yy+op->contr->socket.mapy_2];
-			if(block>3 || block<0 ||!(m=out_of_map(op->map,&xt,&yt)))
+			if(block>BLOCKED_LOS_BLOCKSVIEW ||!(m=out_of_map(op->map,&xt,&yt)))
 			{
 				if((n+1)==NROF_MAP_NODE)
 					n=-1;
@@ -471,7 +471,7 @@ int command_target(object *op, char *params)
 				xt=op->x+(xx=map_pos_array[n][MAP_POS_X]);
 				yt=op->y+(yy=map_pos_array[n][MAP_POS_Y]);
 				block = op->contr->blocked_los[xx+op->contr->socket.mapx_2][yy+op->contr->socket.mapy_2];
-				if(block>3 || block<0|| !(m=out_of_map(op->map,&xt,&yt)))
+				if(block>BLOCKED_LOS_BLOCKSVIEW || !(m=out_of_map(op->map,&xt,&yt)))
 				{
 					if((n+1)==NROF_MAP_NODE)
 						n=-1;
@@ -747,7 +747,7 @@ void generate_ext_title(player *pl)
     }
 
 	if(QUERY_FLAG(pl->ob, FLAG_IS_MALE))
-		gender = "male";
+ 		gender = QUERY_FLAG(pl->ob, FLAG_IS_FEMALE) ? "hermaphrodite" : "male";
 	else if(QUERY_FLAG(pl->ob, FLAG_IS_FEMALE))
 		gender = "female";
 	else

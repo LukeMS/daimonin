@@ -28,6 +28,7 @@
 /*
  * Some function types
  */
+typedef int  (*type_container_unlink_func) (player *, object *);
 typedef void (*type_move_apply_func) (object *, object *, object *);
 typedef void (*type_func_int)(int);
 typedef void (*type_func_int_int)(int,int);
@@ -44,21 +45,20 @@ typedef void (*type_func_ob_int)(object *, int);
 typedef int (*type_int_func_ob_ob)(object *, object *);
 typedef void (*type_func_char_int)(char *, int);
 typedef void (*type_func_int_ob_ob)(int, object *, object *);
-typedef void (*type_func_player_int)(player *, int);
+typedef void (*type_func_player_int_ob)(player *, int, object *);
 typedef void (*type_func_dragon_gain)(object *who, int atnr, int level);
 
 /*
  * These function-pointers are defined in common/glue.c
  * The functions used to set and initialise them are also there.
  */
-
+extern int	(*container_unlink_func)		(player *, object *);
 extern void	(*move_apply_func)		(object *, object *, object *);
 extern void	(*draw_info_func)		(int, int, object *, const char *);
 extern void	(*emergency_save_func)		(int);
 extern void	(*fix_auto_apply_func)		(mapstruct *);
 extern void	(*init_blocksview_players_func)	();
 extern void	(*monster_check_apply_func)	(object *, object *);
-/*extern void	(*process_active_maps_func)	();*/
 extern void	(*remove_friendly_object_func)	(object *);
 extern void	(*update_buttons_func)		(mapstruct *);
 extern void	(*info_map_func)		(int, mapstruct *, const char *);
@@ -67,7 +67,7 @@ extern void	(*move_firewall_func)		(object *);
 extern void	(*move_creator_func)		(object *);
 extern void (*trap_adjust_func)		(object *, int);
 extern void	(*esrv_send_item_func)		(object *, object *);
-extern void	(*esrv_del_item_func)		(player *, int);
+extern void	(*esrv_del_item_func)		(player *, int, object *);
 extern void	(*esrv_update_item_func)	(int, object *, object *);
 extern void (*dragon_gain_func)             (object *, int, int);
 extern void	(*send_golem_control_func) (object *, int);

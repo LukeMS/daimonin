@@ -323,7 +323,7 @@ void unblock_exits(mapstruct *map, char **maze, RMParms *RP) {
         for(walk=get_map_ob(map,i,j);walk!=NULL;walk=walk->above) {
           if(QUERY_FLAG(walk,FLAG_NO_PASS) && walk->type != LOCKED_DOOR) {
             CLEAR_FLAG(walk,FLAG_NO_PASS);
-            update_object(walk,UP_OBJ_CHANGE);
+            update_object(walk,UP_OBJ_FLAGS);
           }
         }
       }

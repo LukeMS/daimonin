@@ -3,6 +3,7 @@ Object Tabernacle
 name the Tabernacle
 randomitems deity_tabernacle
 type 50
+no_pick 1
 layer 6
 face dummy.111
 race god_lesser

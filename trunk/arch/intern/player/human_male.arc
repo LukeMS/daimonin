@@ -5,9 +5,9 @@ randomitems player_human_male
 layer 6
 will_apply 8
 is_male 1
+no_pick 1
 direction 4
 identified 1
-alive 1
 is_neutral 1
 weapon_speed 0.0125
 speed 0.85

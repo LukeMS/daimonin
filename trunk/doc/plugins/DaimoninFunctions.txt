@@ -1,0 +1,158 @@
+LoadObject
+------------------------------------------------------------
+  Daimonin.LoadObject(string)
+  Parameter types:
+    string string
+  Possible return types:
+    object
+  Status:
+    Untested
+
+MatchString
+------------------------------------------------------------
+  Daimonin.MatchString(firststr,secondstr)
+    Case insensitive string comparision. Returns 1 if the two
+    strings are the same, or 0 if they differ.
+    secondstring can contain regular expressions.
+  Parameter types:
+    string firststr
+    string secondstr
+  Possible return types:
+    integer
+  Status:
+    Stable
+
+ReadyMap
+------------------------------------------------------------
+  Daimonin.ReadyMap(name, unique)
+    Make sure the named map is loaded into memory. unique _must_ be
+    1 if the map is unique (f_unique = 1).
+    Default value for unique is 0
+  Parameter types:
+    string name
+    (optional) integer unique
+  Possible return types:
+    map
+  Status:
+    Stable
+  TODO:
+    Don't crash if unique is wrong
+
+CheckMap
+------------------------------------------------------------
+  Daimonin.CheckMap(arch, map_path, x, y)
+    
+  Parameter types:
+    string arch
+    string map_path
+    integer x
+    integer y
+  Possible return types:
+    object
+  Status:
+    Untested
+
+FindPlayer
+------------------------------------------------------------
+  Daimonin.FindPlayer(name)
+  Parameter types:
+    string name
+  Possible return types:
+    object
+  Status:
+    Tested
+
+WhoAmI
+------------------------------------------------------------
+  Daimonin.WhoAmI()
+    Get the owner of the active script (the object that has the
+    event handler)
+  Parameter types:
+  Possible return types:
+    object
+  Status:
+    Stable
+
+WhoIsActivator
+------------------------------------------------------------
+  Daimonin.WhoIsActivator()
+    Gets the object that activated the current event
+  Parameter types:
+  Possible return types:
+    object
+  Status:
+    Stable
+
+WhoIsOther
+------------------------------------------------------------
+  Daimonin.WhoIsOther()
+  Parameter types:
+  Possible return types:
+    object
+  Status:
+    Untested
+
+WhatIsMessage
+------------------------------------------------------------
+  Daimonin.WhatIsMessage()
+    Gets the actual message in SAY events.
+  Parameter types:
+  Possible return types:
+    string
+  Status:
+    Stable
+
+GetReturnValue
+------------------------------------------------------------
+  Daimonin.GetReturnValue()
+  Parameter types:
+  Possible return types:
+    integer
+  Status:
+    Untested
+
+SetReturnValue
+------------------------------------------------------------
+  Daimonin.SetReturnValue(value)
+  Parameter types:
+    integer value
+  Possible return types:
+    None
+  Status:
+    Untested
+
+GetSpellNr
+------------------------------------------------------------
+  Daimonin.GetSpellNr(name)
+    Gets the number of the named spell. -1 if no such spell exists
+  Parameter types:
+    string name
+  Possible return types:
+    integer
+  Status:
+    Tested
+
+GetSkillNr
+------------------------------------------------------------
+  Daimonin.GetSkillNr(name)
+    Gets the number of the named skill. -1 if no such skill exists
+  Parameter types:
+    string name
+  Possible return types:
+    integer
+  Status:
+    Tested
+
+RegisterCommand
+------------------------------------------------------------
+  Daimonin.RegisterCommand(cmdname,scriptname,speed)
+  Parameter types:
+    string cmdname
+    string scriptname
+    integer speed
+  Possible return types:
+    None
+  Status:
+    Untested
+    pretty untested...
+

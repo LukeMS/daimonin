@@ -683,9 +683,9 @@ void setup_library() {
   set_clean_tmp_files(clean_tmp_files);
   set_fix_auto_apply(fix_auto_apply);
   set_remove_friendly_object(remove_friendly_object);
-/*  set_process_active_maps(process_active_maps);*/
   set_update_buttons(update_buttons);
   set_draw_info(new_draw_info);
+  set_container_unlink(container_unlink);
   set_move_apply(move_apply);
   set_monster_check_apply(monster_check_apply);
   set_move_teleporter(move_teleporter);
@@ -695,7 +695,6 @@ void setup_library() {
   set_esrv_send_item(esrv_send_item);
   set_esrv_del_item(esrv_del_item);
   set_esrv_update_item(esrv_update_item);
-/*  set_init_blocksview_players(init_blocksview_players); */
   set_info_map(new_info_map);
   set_dragon_gain_func(dragon_ability_gain);
 }

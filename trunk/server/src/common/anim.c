@@ -355,6 +355,12 @@ void animate_object(object *op, int count) {
 	/*LOG(-1, "B: %s(%d)::dir:%d face:%d (%d) ->%d (%d)\n", op->name,count,op->direction, op->facing,op->anim_last_facing, base_state, op->state);*/
             
     SET_ANIMATION(op, op->state + base_state);
-    update_object(op, UP_OBJ_FACE);
+	/* this will force a "below windows update" - NOT a map face update.
+	 * map faces are updated in the map send command checking the object itself.
+	 * disabling this, will remove animations in the below windows, but also not
+	 * forcing an update of it every turn, But in one of the next steps, we will
+	 * add animation playing to the client and remove it from server.
+	 */
+   /* update_object(op, UP_OBJ_FACE); */
 }
 

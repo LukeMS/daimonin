@@ -114,9 +114,10 @@ depend:
 	$(DEPEND) $(DEPENDFLAGS) -- $(CFLAGS) $(INCLUDES) -I../include -- $(SRCS)
 
 proto:
-	cproto -D__CEXTRACT__ $(INCLUDES)  \
-		$(SRCS)  >../include/sproto.h
+	cproto -D__CEXTRACT__ $(INCLUDES) $(SRCS) >../include/sproto.h.bak
+	$(SED) -e "s/ = {0}//g" -e "s/#if __STDC__/#ifdef __STDC__/" -e "s/__signed/signed/g" -e "/__inline/d" -e "/YY_BUFFER/d" < ../include/sproto.h.bak >../include/sproto.h
 	chmod 644 ../include/sproto.h
+	$(RM) -f ../include/sproto.h.bak
 
 archive:
 	@if [ ! -d $(ARCHIVE)/server ]; then $(MKDIR) $(ARCHIVE)/server; fi

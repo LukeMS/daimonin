@@ -512,7 +512,7 @@ int change_abil(object *op, object *tmp) {
         (*draw_info_func)(NDI_UNIQUE|NDI_GREY, 0, op,"You are blinded.");
         SET_FLAG(op,FLAG_BLIND);
         if(op->type==PLAYER)
-          op->contr->do_los=1;
+          op->contr->update_los=1;
       }  
     } else {
       if(QUERY_FLAG(op,FLAG_WIZ))
@@ -521,7 +521,7 @@ int change_abil(object *op, object *tmp) {
         (*draw_info_func)(NDI_UNIQUE|NDI_WHITE, 0, op,"Your vision returns.");
         CLEAR_FLAG(op,FLAG_BLIND);
         if(op->type==PLAYER)
-          op->contr->do_los=1;
+          op->contr->update_los=1;
       }  
     }  
   }
@@ -531,11 +531,11 @@ int change_abil(object *op, object *tmp) {
     if(flag>0) {
         (*draw_info_func)(NDI_UNIQUE|NDI_WHITE, 0, op,"Your vision is better in the dark.");
         if(op->type==PLAYER)
-          op->contr->do_los=1;
+          op->contr->update_los=1;
     } else {
         (*draw_info_func)(NDI_UNIQUE|NDI_GREY, 0, op,"You see less well in the dark.");
         if(op->type==PLAYER)
-          op->contr->do_los=1;
+          op->contr->update_los=1;
     }  
   }  
 
@@ -547,7 +547,7 @@ int change_abil(object *op, object *tmp) {
       else {
         (*draw_info_func)(NDI_UNIQUE|NDI_GREY, 0, op,"Everything becomes transparent.");
         if(op->type==PLAYER)
-          op->contr->do_los=1;
+          op->contr->update_los=1;
       }
     } else {
       if(QUERY_FLAG(op,FLAG_WIZ))
@@ -555,7 +555,7 @@ int change_abil(object *op, object *tmp) {
       else {
         (*draw_info_func)(NDI_UNIQUE|NDI_GREY, 0, op,"Everything suddenly looks very solid.");
         if(op->type==PLAYER)
-          op->contr->do_los=1;
+          op->contr->update_los=1;
       }
     }
   }
@@ -1670,18 +1670,18 @@ void fix_player(object *op)
 	if(QUERY_FLAG(op,FLAG_IS_INVISIBLE) )
 	{
 		if(!inv_flag)
-			update_object(op, UP_OBJ_INV);
+			update_object(op, UP_OBJ_LAYER); /* we must reinsert us in the invisible chain */
 	}
 	else if(inv_flag) /* and !FLAG_IS_INVISIBLE */
-		update_object(op, UP_OBJ_INV);
+		update_object(op, UP_OBJ_LAYER);
 
 	if(QUERY_FLAG(op,FLAG_SEE_INVISIBLE) )
 	{
 		if(!inv_see_flag)
-			pl->socket.update_look=1;
+			pl->socket.update_tile = 0;
 	}
 	else if(inv_see_flag) /* and !FLAG_SEE_INVISIBLE */
-		pl->socket.update_look=1;
+		pl->socket.update_tile = 0;
 }
 
 /*
@@ -1968,6 +1968,6 @@ void set_mobile_speed(object *op, int index)
 	}
 /*	LOG(-1,"SET SPEED: %s ->%f (%f) b:%f s:%f t:%f\n", query_name(op), op->speed, base->speed_left, speed, tmp);*/
 	/* update speed if needed */
-	if(tmp && !op->speed || !tmp && op->speed)
+	if((tmp && !op->speed) || (!tmp && op->speed))
 		update_ob_speed(op);
 }

@@ -329,11 +329,8 @@ static void block_until_new_connection()
 
 
 static void remove_ns_dead_player(player *pl)
-{
-				
-	if(pl->ob && pl->ob->container) /* close container */
-		esrv_apply_container (pl->ob, pl->ob->container);
-			
+{			
+	container_unlink(pl,NULL);
 	save_player(pl->ob, 0);
 			
 	if(!QUERY_FLAG(pl->ob,FLAG_REMOVED))
@@ -355,6 +352,7 @@ static void remove_ns_dead_player(player *pl)
 void doeric_server()
 {
     int i, pollret;
+	uint32 update_below;
     struct sockaddr_in addr;
     int addrlen=sizeof(struct sockaddr);
     player *pl, *next;
@@ -520,11 +518,15 @@ void doeric_server()
 					esrv_update_skills(pl);
 				pl->update_skills=0;
 				draw_client_map(pl->ob);
-				if (pl->socket.update_look) 
-					esrv_draw_look(pl->ob);
 
-				/* and *now* write back to player */
-				/*
+				if( pl->ob->map && (update_below=GET_MAP_UPDATE_COUNTER(pl->ob->map,pl->ob->x,pl->ob->y)) >= 
+												pl->socket.update_tile) 
+				{
+					esrv_draw_look(pl->ob);
+					pl->socket.update_tile = update_below+1;
+				}
+
+				/* and do a quick write ... */
 				if (FD_ISSET(pl->socket.fd,&tmp_write))
 				{
 					if (!pl->socket.can_write)
@@ -535,7 +537,6 @@ void doeric_server()
 				}
 				else 
 					pl->socket.can_write=0;
-				*/
 			}
 		}
     } /* for() end */

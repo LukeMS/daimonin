@@ -18,6 +18,8 @@ depend::
 
 clean::
 
+proto::
+
 distclean:: clean
 	$(RM) -f autoconf.h
 	$(RM) -f Makefile
@@ -28,7 +30,7 @@ archive::
 	$(CP) $(ALL_FILES) $(ARCHIVE)/include
 
 patchlist::
-	@echo $(ALL_FILES) > .patchlist
+	@echo $(ALL_FILES) > .patchlist	
 
 
 install::

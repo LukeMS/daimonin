@@ -858,84 +858,243 @@ int convert_item(object *item, object *converter) {
   insert_ob_in_map(item,converter->map,converter,0);
   return 1;
 }
+
+
+/* a player has opened a container - link him to the 
+ * list of player which have (perhaps) it opened too.
+ */
+int container_link(player *pl, object *sack)
+{
+	int ret=0;
+
+	/* for safety reasons, lets check this is valid */
+	if(sack->attacked_by)
+	{
+		if (sack->attacked_by->type != PLAYER || !sack->attacked_by->contr || sack->attacked_by->contr->container != sack)
+		{
+			LOG(llevBug,"BUG: container_link() - invalid player linked: <%s>\n", query_name(sack->attacked_by));
+			sack->attacked_by = NULL;
+		}
+
+	}
+
+	/* the open/close logic should be handled elsewhere.
+	 * for that reason, this function should only be called
+	 * when valid - broken open/close logic elsewhere is bad.
+	 * so, give a bug warning out!
+	 */
+	if(pl->container)
+	{
+		LOG(llevBug,"BUG: container_link() - called from player with open container!: <%s> sack:<%s>\n", query_name(sack->attacked_by), query_name(sack));
+		container_unlink(pl,sack);
+	}
+
+	pl->container = sack;
+	pl->container_count = sack->count;
+
+	pl->container_above = sack->attacked_by; 
+
+	if(sack->attacked_by)
+		sack->attacked_by->contr->container_below = pl->ob;
+	else /* we are the first one opening this container */
+	{
+		SET_FLAG (sack, FLAG_APPLIED);
+		if(sack->other_arch) /* faking open container face */
+			sack->face = sack->other_arch->clone.face;
+        update_object(sack,UP_OBJ_FACE);
+		esrv_update_item (UPD_FLAGS|UPD_FACE, pl->ob, sack);
+		container_trap(pl->ob,sack);	/* search & explode a rune in the container */
+		ret = 1;
+
+	}
+
+	esrv_send_inventory (pl->ob, sack);
+	pl->container_below = NULL; /* we are first element */
+	sack->attacked_by = pl->ob;
+	sack->attacked_by_count = pl->ob->count;
+
+	return ret;
+}
+
+/* remove a player from the container list.
+ * unlink is a bit more tricky - pl OR sack can be NULL.
+ * if pl == NULL, we unlink ALL players from sack.
+ * if sack == NULL, we unlink the current container from pl.
+ */
+int container_unlink(player *pl, object *sack)
+{
+	object *tmp, *tmp2;
+
+	if(pl == NULL && sack == NULL)
+	{
+		LOG(llevBug,"BUG: container_unlink() - *pl AND *sack == NULL!\n");
+		return 0;
+	}
+
+	if(pl)
+	{
+		if(!pl->container)
+			return 0;
+			
+		if(pl->container->count != pl->container_count)
+		{
+			pl->container = NULL;
+			pl->container_count = 0;
+			return 0;
+		}
+
+		sack = pl->container;
+	    update_object(sack,UP_OBJ_FACE);
+		esrv_close_container(pl->ob);
+		/* ok, there is a valid container - unlink the player now */
+		if(!pl->container_below && !pl->container_above) /* we are only applier */
+		{
+			if(pl->container->attacked_by != pl->ob) /* we should be that object... */
+			{
+				LOG(llevBug,"BUG: container_unlink() - container link don't match player!: <%s> sack:<%s> (%s)\n", query_name(pl->ob),query_name(sack->attacked_by), query_name(sack));
+				return 0;
+			}
+
+			pl->container = NULL;
+			pl->container_count = 0;
+
+			CLEAR_FLAG(sack, FLAG_APPLIED);
+			sack->face = sack->arch->clone.face;
+			sack->attacked_by = NULL;
+			sack->attacked_by_count = 0;
+			esrv_update_item (UPD_FLAGS|UPD_FACE, pl->ob, sack);
+			return 1;
+		}
+
+		/* because there is another player applying that container, we don't close it */
+		
+		if(!pl->container_below) /* we are first player in list */
+		{
+			/* mark above as first player applying this container */
+			sack->attacked_by = pl->container_above;
+			sack->attacked_by_count = pl->container_above->count;
+			pl->container_above->contr->container_below = NULL;
+
+			pl->container_above=NULL;
+			pl->container = NULL;
+			pl->container_count = 0;
+			return 0;
+		}
+
+		/* we are somehwere in the middle or last one - it don't matter */
+		pl->container_below->contr->container_above=pl->container_above;
+		if(pl->container_above)
+			pl->container_above->contr->container_below = pl->container_below;
+
+		pl->container_below=NULL;
+		pl->container_above=NULL;
+		pl->container = NULL;
+		pl->container_count = 0;
+		return 0;
+	}
+
+	CLEAR_FLAG(sack, FLAG_APPLIED);
+	sack->face = sack->arch->clone.face;
+	tmp=sack->attacked_by;
+	sack->attacked_by = NULL;
+	sack->attacked_by_count = 0;
+
+	/* if we are here, we are called with (NULL,sack) */
+	while(tmp)
+	{
+		if(!tmp->contr || tmp->contr->container != sack) /* valid player in list? */
+		{
+			LOG(llevBug,"BUG: container_unlink() - container link list mismatch!: player?:<%s> sack:<%s> (%s)\n", query_name(tmp),query_name(sack),query_name(sack->attacked_by));
+			return 1;
+		}
+
+		tmp2 = tmp->contr->container_above;
+		tmp->contr->container = NULL;
+		tmp->contr->container_count = 0;
+		tmp->contr->container_below = NULL;
+		tmp->contr->container_above = NULL;
+		esrv_update_item (UPD_FLAGS|UPD_FACE, tmp, sack);
+		esrv_close_container(tmp);
+		tmp = tmp2;
+	}
+	return 1;
+}
   
 /*
  * Eneq(@csd.uu.se): Handle apply on containers.
- * Moved to own function and added many features [Tero.Haatanen@lut.fi]
- * This version is for client/server mode.
  * op is the player, sack is the container the player is opening or closing.
  * return 1 if an object is apllied somehow or another, 0 if error/no apply
  *
  * Reminder - there are three states for any container - closed (non applied),
  * applied (not open, but objects that match get tossed into it), and open
  * (applied flag set, and op->container points to the open container)
+ * I added mutiple apply of one container with a player list. MT 07.02.2004
  */
 
 int esrv_apply_container (object *op, object *sack)
 {
-    object *tmp=op->container;
+    object *cont, *tmp;
 
     if(op->type!=PLAYER)
-	return 0; /* This might change */
-
-    if (sack==NULL || sack->type != CONTAINER) {
-	LOG(llevBug, "BUG: esrv_apply_container: %s is not container!\n",query_name(sack));
-	return 0;
-    }
-
-    /* If we have a currently open container, then it needs to be closed in all cases
-     * if we are opening this one up.  We then fall through if appropriate for
-     * openening the new container.
-     */
-
-    if (op->container && (QUERY_FLAG(sack, FLAG_APPLIED) || sack->env != op)) {
-	if (op->container->env != op) { /* if container is on the ground */
-	    CLEAR_FLAG (op->container, FLAG_WALK_OFF);
-	    CLEAR_FLAG (op->container, FLAG_FLY_OFF);
-	}
-#ifdef PLUGINS
-	/* GROS: Handle for plugin close event */
-	if(tmp->event_flags & EVENT_FLAG_CLOSE)
 	{
-		CFParm CFP;
-		CFParm* CFR;
-		int k, l, m;
-		int rtn_script = 0;
-		object *event_obj = get_event_object(tmp, EVENT_CLOSE);
-		m = 0;
-		k = EVENT_CLOSE;
-		l = SCRIPT_FIX_ALL;
-		CFP.Value[0] = &k;
-		CFP.Value[1] = op;
-		CFP.Value[2] = tmp;
-		CFP.Value[3] = NULL;
-		CFP.Value[4] = NULL;
-		CFP.Value[5] = &m;
-		CFP.Value[6] = &m;
-		CFP.Value[7] = &m;
-		CFP.Value[8] = &l;
-		CFP.Value[9] = (char *)event_obj->race;
-		CFP.Value[10]= (char *)event_obj->slaying;
-		if (findPlugin(event_obj->name)>=0)
-		{
-			CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
-			rtn_script = *(int *)(CFR->Value[0]);
-			if (rtn_script!=0) return 1;
-		}
+		LOG(llevBug, "BUG: esrv_apply_container: called from non player: <%s>!\n",query_name(op));
+		return 0;
 	}
-#endif
-	new_draw_info_format(NDI_UNIQUE, 0, op, "You close %s.",
-		      query_name(op->container));
-	CLEAR_FLAG(op->container, FLAG_APPLIED);
 
-    tmp->face = tmp->arch->clone.face; /* fake open container face, using old close arches */
-    op->container=NULL;  
-    esrv_update_item (UPD_FLAGS|UPD_FACE, op, tmp);
-    
+	cont =op->contr->container; /* cont is NULL or the container player already has opened */
 
-	if (tmp == sack) return 1;
+    if (sack==NULL || sack->type != CONTAINER || (cont && cont->type != CONTAINER)) 
+	{
+		LOG(llevBug, "BUG: esrv_apply_container: object *sack = %s is not container (cont:<%s>)!\n",query_name(sack),query_name(cont));
+		return 0;
     }
 
+
+	/* close container? */
+	if(cont) /* if cont != sack || cont == sack - in both cases we close cont */
+	{
+#ifdef PLUGINS
+		/* GROS: Handle for plugin close event */
+		if(cont->event_flags & EVENT_FLAG_CLOSE)
+		{
+			CFParm CFP;
+			CFParm* CFR;
+			int k, l, m;
+			int rtn_script = 0;
+			object *event_obj = get_event_object(cont, EVENT_CLOSE);
+			m = 0;
+			k = EVENT_CLOSE;
+			l = SCRIPT_FIX_ALL;
+			CFP.Value[0] = &k;
+			CFP.Value[1] = op;
+			CFP.Value[2] = cont;
+			CFP.Value[3] = NULL;
+			CFP.Value[4] = NULL;
+			CFP.Value[5] = &m;
+			CFP.Value[6] = &m;
+			CFP.Value[7] = &m;
+			CFP.Value[8] = &l;
+			CFP.Value[9] = (char *)event_obj->race;
+			CFP.Value[10]= (char *)event_obj->slaying;
+			if (findPlugin(event_obj->name)>=0)
+			{
+				CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
+				rtn_script = *(int *)(CFR->Value[0]);
+				if (rtn_script!=0) return 1;
+			}
+		}
+#endif
+		if(container_unlink(op->contr, cont))
+			new_draw_info_format(NDI_UNIQUE, 0, op, "You close %s.", query_name(cont));
+		else
+			new_draw_info_format(NDI_UNIQUE, 0, op, "You leave %s.", query_name(cont));
+
+
+		if (cont == sack) /* we closing the one we applied */
+			return 1;
+    }
+
+	/* at this point we ready a container OR we open it! */
 
     /* If the player is trying to open it (which he must be doing if we got here),
      * and it is locked, check to see if player has the equipment to open it.
@@ -973,54 +1132,37 @@ int esrv_apply_container (object *op, object *sack)
     /* There are really two cases - the sack is either on the ground, or the sack is
      * part of the players inventory.  If on the ground, we assume that the player is
      * opening it, since if it was being closed, that would have been taken care of above.
+	 * If it in the players inventory, we can READY the container.
      */
+    if (sack->env != op) /* container is NOT in players inventory */
+	{
+		/* this is not possible - opening a container inside another container or a another player */
+		if (sack->env) 
+		{
+			new_draw_info_format(NDI_UNIQUE, 0, op, "You can't open %s", query_name(sack));
+			return 0;
+		}
 
+		new_draw_info_format(NDI_UNIQUE, 0, op, "You open %s.", query_name(sack));
+		container_link(op->contr, sack);
 
-    if (sack->env != op) {
-	/* Hypothetical case - the player is trying to open a sack that belong to someone
-	 * else.  This normally should not happen, but a misbehaving client/player could
-	 * try to do it, so lets handle it gracefully.
-	 */
-	if (sack->env) {
-	    new_draw_info_format(NDI_UNIQUE, 0, op, "You can't open %s", query_name(sack));
-	    return 0;
-	}
-	/* set these so when the player walks off, we can unapply the sack */
-	SET_FLAG (sack, FLAG_WALK_OFF); /* trying force closing it */
-	SET_FLAG (sack, FLAG_FLY_OFF);
-
-	CLEAR_FLAG (sack, FLAG_APPLIED);
-	/* huch- mt-2003*/
-
-	new_draw_info_format(NDI_UNIQUE, 0, op, "You open %s.", query_name(sack));
-	SET_FLAG (sack, FLAG_APPLIED);
-
-    if(sack->other_arch) /* faking open container face */
-        sack->face = sack->other_arch->clone.face;
-    op->container = sack;
-    esrv_update_item (UPD_FLAGS|UPD_FACE, op, sack);
-    container_trap(op,sack);	/* search & explode a rune in the container */
-	esrv_send_inventory (op, sack);
-
-    } else { /* sack is in players inventory */
-	if (QUERY_FLAG (sack, FLAG_APPLIED)) { /* readied sack becoming open */
-	    CLEAR_FLAG (sack, FLAG_APPLIED);
-	    new_draw_info_format(NDI_UNIQUE, 0, op, "You open %s.", query_name(sack));
-	    SET_FLAG (sack, FLAG_APPLIED);
-        if(sack->other_arch) /* faking open container face */
-            sack->face = sack->other_arch->clone.face;
-        op->container = sack;
-        esrv_update_item (UPD_FLAGS|UPD_FACE, op, sack);
-	    container_trap(op,sack);	/* search & explode a rune in the container */
-	    esrv_send_inventory (op, sack);
-	}
-	else {
-	    CLEAR_FLAG (sack, FLAG_APPLIED);
-	    new_draw_info_format(NDI_UNIQUE, 0, op, "You readied %s.", query_name(sack));
-	    SET_FLAG (sack, FLAG_APPLIED);
-	    esrv_update_item (UPD_FLAGS, op, sack);
-	    container_trap(op,sack);	/* search & explode a rune in the container */
-	}
+    } 
+	else/* sack is in players inventory */
+	{ 	
+		if (QUERY_FLAG (sack, FLAG_APPLIED)) /* readied sack becoming open */
+		{
+			new_draw_info_format(NDI_UNIQUE, 0, op, "You open %s.", query_name(sack));
+			container_link(op->contr, sack);
+		}
+		else 
+		{
+			CLEAR_FLAG (sack, FLAG_APPLIED);
+			new_draw_info_format(NDI_UNIQUE, 0, op, "You readied %s.", query_name(sack));
+			SET_FLAG (sack, FLAG_APPLIED);
+	        update_object(sack,UP_OBJ_FACE);
+			esrv_update_item (UPD_FLAGS, op, sack);
+			container_trap(op,sack);	/* search & explode a rune in the container */
+		}
     }
     return 1;
 }
@@ -1184,7 +1326,7 @@ static int apply_shop_mat (object *shop_mat, object *op)
 			if (op->type==PLAYER) 
 			{
 				esrv_map_scroll(&op->contr->socket, freearr_x[i],freearr_y[i]); /* shop */
-				op->contr->socket.update_look=1;
+				op->contr->socket.update_tile=0;
 				op->contr->socket.look_position=0;
 			}
 		}
@@ -1567,7 +1709,7 @@ static void apply_book (object *op, object *tmp)
         SET_FLAG(tmp,FLAG_IDENTIFIED);
         /* If in a container, update how it looks */
         if(tmp->env) esrv_update_item(UPD_FLAGS|UPD_NAME, op,tmp);
-        else op->contr->socket.update_look=1;
+        else op->contr->socket.update_tile=0;
       }
       /*add_exp(op,exp_gain,op->chosen_skill->stats.sp);*/
       SET_FLAG(tmp,FLAG_NO_SKILL_IDENT); /* so no more xp gained from this book */
@@ -1755,7 +1897,7 @@ static void apply_spellbook (object *op, object *tmp)
 	if (tmp->env)
 	    esrv_update_item(UPD_FLAGS|UPD_NAME,op,tmp);
 	else
-	    op->contr->socket.update_look=1;
+	    op->contr->socket.update_tile=0;
     }
 
     if (check_spell_known (op, tmp->stats.sp) && (tmp->stats.Wis ||
@@ -2825,10 +2967,15 @@ void player_apply_below (object *pl)
     object *tmp, *next;
     int floors;
 
+	if(pl->type != PLAYER)
+	{
+		LOG(llevBug,"BUG: player_apply_below() called for non player object >%s<\n", query_name(pl));
+		return;
+	}
     /* If using a container, set the starting item to be the top
      * item in the container.  Otherwise, use the map.
      */
-    tmp = (pl->container != NULL) ? pl->container->inv : pl->below;
+    tmp = (pl->contr->container != NULL) ? pl->contr->container->inv : pl->below;
 
     /* This is perhaps more complicated.  However, I want to make sure that
      * we don't use a corrupt pointer for the next object, so we get the
@@ -2970,10 +3117,11 @@ int apply_special (object *who, object *op, int aflags)
 
     if ( ! (aflags & AP_NO_MERGE)) {
         tag_t del_tag = op->count;
+		object *cont = op->env;
         tmp = merge_ob (op, NULL);
         if (who->type == PLAYER) {
             if (tmp) {  /* it was merged */
-                esrv_del_item (who->contr, del_tag);
+                esrv_del_item (who->contr, del_tag, cont);
                 op = tmp;
             }
             esrv_send_item (who, op);
@@ -3389,8 +3537,6 @@ void apply_player_light(object *who, object *op)
         op->face = op->arch->clone.face;
         update_object(who, UP_OBJ_FACE);
         fix_player(who);
-		update_object(who,UP_OBJ_CHANGE);
-        update_all_map_los(who->map);
         esrv_send_item(who, op);
     }
     else
@@ -3492,8 +3638,7 @@ void apply_player_light(object *who, object *op)
                 "You apply %s as light.", query_name(op));
             SET_FLAG(op, FLAG_APPLIED);
             fix_player(who);
-			update_object(who,UP_OBJ_CHANGE);
-            update_all_map_los(who->map);
+			update_object(who,UP_OBJ_FACE);
         }
     }
     if(who->type==PLAYER)

@@ -1165,10 +1165,6 @@ int magic_wall(object *op,object *caster,int dir,int spell_type) {
 	 } else negblocked=1;
     }
 
-
-    if(QUERY_FLAG(tmp, FLAG_BLOCKSVIEW))
-	update_all_los(op->map, op->x, op->y);
-
 	/*
     if(op->type==PLAYER)
 	draw_client_map(op);
@@ -2043,7 +2039,7 @@ void animate_bomb(object *op) {
             return;
 
 	if (env->type == PLAYER)
-	    esrv_del_item(env->contr, op->count);
+	    esrv_del_item(env->contr, op->count, op->env);
 
 	remove_ob(op);
 	op->x = env->x;
@@ -2609,7 +2605,7 @@ int cast_identify(object *op, int level, object *single_ob, int mode)
  */
 int cast_detection(object *op, object *target,int type) 
 {
-	int nx,ny, suc=FALSE;
+	int nx,ny, suc=FALSE, sucmap = FALSE;
     object *tmp;
     mapstruct *m;
 
@@ -2647,13 +2643,12 @@ int cast_detection(object *op, object *target,int type)
 					
 			for(tmp=GET_MAP_OB(m, nx, ny);tmp!=NULL;tmp=tmp->above)
 			{
-				if(tmp->type == PLAYER) /* nasty, but easiest way */
-					tmp->contr->socket.update_look=1;
 				if (!QUERY_FLAG(tmp,FLAG_SYS_OBJECT) && 
 					(!QUERY_FLAG(tmp,FLAG_KNOWN_MAGICAL) && !QUERY_FLAG(tmp, FLAG_IDENTIFIED) && is_magical(tmp)))
 				{
 				    SET_FLAG(tmp,FLAG_KNOWN_MAGICAL);
 					suc = TRUE;
+					sucmap = TRUE;
 				}
 			}
 		break;
@@ -2687,18 +2682,21 @@ int cast_detection(object *op, object *target,int type)
 					
 			for(tmp=GET_MAP_OB(m, nx, ny);tmp!=NULL;tmp=tmp->above)
 			{
-				if(tmp->type == PLAYER) /* nasty, but easiest way */
-					tmp->contr->socket.update_look=1;
 				if (!QUERY_FLAG(tmp,FLAG_SYS_OBJECT) && 
 					(!QUERY_FLAG(tmp, FLAG_KNOWN_CURSED) && (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))))
 				{
 					suc = TRUE;
+					sucmap = TRUE;
 					SET_FLAG(tmp, FLAG_KNOWN_CURSED);
 				}
 			}
 
 		break;
 	}
+
+	if(sucmap) /* we have something changed in this tile */
+		INC_MAP_UPDATE_COUNTER(m, nx, ny);
+
 	if(suc)
 	{
 		if(op->type == PLAYER)
@@ -3030,16 +3028,8 @@ int create_the_feature(object *op, object *caster,int dir, int spell_effect)
     }
     if ((tmp = insert_ob_in_map (tmp, m, op,0)) == NULL)
         return 1;
-    if(QUERY_FLAG(tmp, FLAG_BLOCKSVIEW))
-		update_all_los(op->map, op->x, op->y);
-	/* No, we DON'T want a forced map draw! and we don't need it, or? */
-	/*
-    if(op->type==PLAYER)
-		draw_client_map(op);
-    else
-	*/
     if(!op->type==PLAYER)
-	SET_FLAG(op, FLAG_SCARED); /* We don't want them to walk through the wall! */
+		SET_FLAG(op, FLAG_SCARED); /* We don't want them to walk through the wall! */
     return 1;
 }
 

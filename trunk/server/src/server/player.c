@@ -204,7 +204,6 @@ static player* get_player(player *p) {
 
     roll_stats(op);
     p->state=ST_ROLL_STAT;
-    clear_los(op);
 
 	p->target_hp = -1;
 	p->target_hp_p = -1;
@@ -213,7 +212,7 @@ static player* get_player(player *p) {
     p->shoottype=range_none;
     p->listening=9;
     p->last_weapon_sp= -1;
-    p->do_los=1;
+    p->update_los=1;
 #ifdef EXPLORE_MODE
     p->explore=0;
 #endif
@@ -301,7 +300,7 @@ int add_player(NewSocket *ns) {
      * Note that this can result in a client reset if there is partial data
      * on the uncoming socket.
      */
-    p->socket.update_look=0;
+    p->socket.update_tile=0;
     p->socket.look_position=0;
     p->socket.inbuf.len = 0;
 
@@ -608,7 +607,7 @@ void give_initial_items(object *pl,treasurelist *items) {
 	 * if needed we must insert here a flag. MT-11-2002
 	 */
   	if(op->type==FORCE)
-	  { SET_FLAG(op,FLAG_APPLIED);};
+		SET_FLAG(op,FLAG_APPLIED);
 	
 	/* we never give weapons/armour if these cannot be used
            by this player due to race restrictions */
@@ -970,7 +969,7 @@ int key_change_class(object *op, char key)
     set_first_map(op);
     SET_FLAG(op, FLAG_FRIENDLY);
     add_friendly_object(op);
-	op->contr->socket.update_look=1;
+	op->contr->socket.update_tile=0;
     op->contr->socket.look_position=0;
     op->contr->socket.ext_title_flag = 1;
     esrv_new_player(op->contr,op->weight+op->carrying);
@@ -1370,7 +1369,7 @@ object *find_arrow(object *op, const char *type)
  */
 static void fire_bow(object *op, int dir)
 {
-  object *bow, *arrow = NULL, *left, *tmp_op;
+  object *left_cont, *bow, *arrow = NULL, *left, *tmp_op;
   tag_t left_tag;
 
   if (!dir) {
@@ -1405,6 +1404,7 @@ static void fire_bow(object *op, int dir)
   }
   left = arrow; /* these are arrows left to the player */
   left_tag = left->count;
+  left_cont = left->env;
   arrow = get_split_ob(arrow, 1);
   set_owner(arrow,op);
   arrow->direction=dir;
@@ -1458,7 +1458,7 @@ static void fire_bow(object *op, int dir)
   insert_ob_in_map(arrow,op->map,op,0);
   move_arrow(arrow);
   if (was_destroyed (left, left_tag))
-      esrv_del_item(op->contr, left_tag);
+      esrv_del_item(op->contr, left_tag, left_cont);
   else
       esrv_send_item(op, left);
 }
@@ -1694,6 +1694,8 @@ int move_player(object *op,int dir)
             op->anim_moving_dir = dir;
     }
 
+    /* But I need pushing for the Fluffy quest! -- Gecko :-( */
+    /* Thats what the /push command will be for... ;-) */
 	/* the old push & roll code - will be transfered to /push
 		if (get_owner(tmp)==op ||
 			((QUERY_FLAG(tmp,FLAG_UNAGGRESSIVE) || tmp->type==PLAYER || 
@@ -1718,7 +1720,7 @@ int move_player(object *op,int dir)
 	 * we really DON'T want that people run around picking automatically
 	 * all up - because we don't want junk items they will then always pickup
 	 * valuable things.
-	
+	 */
     /*pick = check_pick(op);*/
 
 	/* running/firing is now handled different.
@@ -1787,7 +1789,7 @@ int save_life(object *op) {
 	      query_name(tmp));
       new_draw_info(NDI_UNIQUE, 0,op,buf);
       if (op->contr)
-	esrv_del_item(op->contr, tmp->count);
+	esrv_del_item(op->contr, tmp->count,tmp->env);
       remove_ob(tmp);
       free_object(tmp);
       CLEAR_FLAG(op, FLAG_LIFESAVE);
@@ -2353,8 +2355,7 @@ void kill_player(object *op)
 	    op->map = NULL;
 	op->x = EMERGENCY_X;
 	op->y = EMERGENCY_Y;
-	if(op->container)
-		esrv_apply_container (op, op->container);
+	container_unlink(op->contr,NULL);
 	save_player(op,0);
 	op->map = map;
 	/* please see resurrection.c: peterm */
@@ -2392,8 +2393,8 @@ void kill_player(object *op)
 void loot_object(object *op) { /* Grab and destroy some treasure */
   object *tmp,*tmp2,*next;
 
-  if (op->container) { /* close open sack first */
-      esrv_apply_container (op, op->container);
+  if (op->type == PLAYER && op->contr->container) { /* close open sack first */
+      esrv_apply_container (op, op->contr->container);
   }
 
   for(tmp=op->inv;tmp!=NULL;tmp=next) {
@@ -2637,7 +2638,7 @@ int player_can_view (object *pl,object *op) {
 	 */
 	if (FABS(dx) <= (pl->contr->socket.mapx_2) &&
 	    FABS(dy) <= (pl->contr->socket.mapy_2) &&
-	    !pl->contr->blocked_los[dx + (pl->contr->socket.mapx_2)][dy+(pl->contr->socket.mapy_2)] ) 
+	    pl->contr->blocked_los[dx + (pl->contr->socket.mapx_2)][dy+(pl->contr->socket.mapy_2)]<=BLOCKED_LOS_BLOCKSVIEW ) 
 	    return 1;
 	op = op->more;
     }

@@ -97,6 +97,7 @@ static float weapon_speed_table[19]={	20.0f, 18.0f, 10.0f, 8.0f, 5.5f, 4.25f, 3.
 void clear_player(void)
 {
         memset(quick_slots,-1,sizeof(quick_slots ));	
+        free_all_items (cpl.sack);
         free_all_items (cpl.below);
         free_all_items (cpl.ob);
         cpl.ob = player_item();
@@ -249,6 +250,7 @@ void init_player_data(void)
         cpl.inventory_win =IWIN_BELOW;
 
         cpl.count_left = 0;
+		cpl.container_tag = -996;
         cpl.container = NULL;
         memset(&cpl.stats,0, sizeof(Stats));
         cpl.stats.maxsp=1;
@@ -296,6 +298,7 @@ void init_player_data(void)
             cpl.ranges[i]=NULL;
         cpl.map_x=0;
         cpl.map_y=0;
+		cpl.container_tag = -997;
         cpl.container = NULL;
         cpl.magicmap=NULL;
 

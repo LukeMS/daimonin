@@ -707,6 +707,8 @@ void StatsCmd(unsigned char *data, int len)
 											strcpy(cpl.gender,"male");
 										else if(cpl.gender[0]== 'f')
 											strcpy(cpl.gender,"female");
+										else if(cpl.gender[0]== 'h')
+ 											strcpy(cpl.gender,"hermaphrodite");
 										else
 											strcpy(cpl.gender,"neuter");
                                         i += rlen;
@@ -919,32 +921,61 @@ void Item1Cmd(unsigned char *data, int len)
 }
 
 /* no item command, including the delinv... */
+/* this is a bit hacked now - perhaps we should consider
+ * in the future a new designed item command.
+ */
 void ItemXCmd(unsigned char *data, int len)
 {
-        int weight, loc, tag, face, flags,pos=0,nlen,anim,nrof;
+        int weight, loc, tag, face, flags,pos=0,nlen,anim,nrof,dmode;
         uint8 itype,stype,item_qua,item_con,item_skill,item_level;
         uint8 animspeed, direction=0;
         char name[MAX_BUF];
         
         map_udate_flag=2;
         itype=stype=item_qua=item_con=item_skill=item_level=0;
-		/* first int is out delinv. if -1, we skip it */
-        loc = GetInt_String(data);
+
+        dmode = GetInt_String(data);
         pos+=4;
-		if(loc >=0)
-	        remove_item_inventory(locate_item(loc));
-        loc = GetInt_String(data+pos);
+			
+		/*LOG(-1,"ITEMX:(%d) %s\n", dmode, locate_item(dmode)?(locate_item(dmode)->d_name?locate_item(dmode)->s_name:"no name"):"no LOC");*/
+
+		loc = GetInt_String(data+pos);
+
+		if(dmode >=0)
+		{
+			/*LOG(-1,"clear inv! (tag: %d)\n", loc);*/
+		    remove_item_inventory(locate_item(loc));
+		}
+
+		if(dmode==-4) /* send item flag */
+		{
+			/*LOG(-1,"ITEM-S! (loc: %d) (cont: %d}\n", loc);*/
+			if(loc == cpl.container_tag)
+				loc = -1; /* and redirect it to our invisible sack */	
+		}
+		else if(dmode==-1)	/* container flag! */
+		{
+			/*LOG(-1,"WE GOT CONTAINER! (tag: %d)\n", loc);*/
+			cpl.container_tag = loc; /* we catch the REAL container tag */
+			remove_item_inventory(locate_item(-1));
+
+			if(loc==-1) /* if this happens, we want close the container */
+			{
+				/*LOG(-1,"CLOSE CON!\n");*/
+				cpl.container_tag = -998;
+				return;
+			}
+			
+			loc = -1; /* and redirect it to our invisible sack */	
+
+		}
+
+
         pos+=4;
 
-        if (pos == len)
+        if (pos == len && loc != -1)
         {
                 LOG(LOG_ERROR,"ItemCmd: Got location with no other data\n");
-        }
-        else if (loc < 0)
-        {
-                LOG(LOG_ERROR,
-                "ItemCmd: got location with negative value (%d)\n", loc);
-                return;
         }
         else
         {
@@ -1002,10 +1033,14 @@ void UpdateItemCmd(unsigned char *data, int len)
         ip = locate_item(tag);
         if (!ip)
         {
-                return;
+			return;
         }
         *name='\0';
-        loc=ip->env?ip->env->tag:0;
+/*		if(cpl.container_tag == tag)
+			loc = -1;
+		else*/
+	        loc=ip->env?ip->env->tag:0;
+LOG(-1,"UPDATE: loc:%d tag:%d\n",loc, tag); 
         weight=(int)(ip->weight * 1000);
         face = ip->face;
 		request_face(face,0);

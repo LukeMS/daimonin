@@ -22,6 +22,20 @@
 
     The author can be reached via e-mail to daimonin@nord-com.net
 */
+
+/*****************************************************************************/
+/* This is a remake of CFPython module from Crossfire. The big changes done  */
+/* are the addition of real object and map objects with methods and attribs. */
+/* The attributes made it possible to remove almost all Set and Get          */
+/* and the separation of functions into class methods led to the split into  */
+/* three c files for better overview.                                        */
+/* Below is the original blurb from CFPython.                                */
+/*****************************************************************************/
+/* Daimonin Python Plugin 1.0 beta 2 - feb 2004                              */
+/* Björn Axelsson                                                            */
+/* Contact: gecko-at-acc.umu.se                                              */
+/*****************************************************************************/
+
 /*****************************************************************************/
 /* CFPython - A Python module for Daimonin (Crossfire) RPG.                  */
 /*****************************************************************************/
@@ -59,14 +73,15 @@
 #define MODULEAPI __declspec(dllexport)
 #else
 #define MODULEAPI __declspec(dllimport)
-#endif
-
+#endif /* ifdef PYTHON_PLUGIN_EXPORTS */
 #else
 #define MODULEAPI
-#endif
+#endif /* ifdef WIN32 */
+
+#define PYTHON_DEBUG   /* give us some general infos out */
 
 #define PLUGIN_NAME    "Python"
-#define PLUGIN_VERSION "CFPython Plugin 0.2"
+#define PLUGIN_VERSION "Daimonin Python Plugin 1.0b2"
 
 /* The plugin properties and hook functions. A hook function is a pointer to */
 /* a CF function wrapper. Basically, most CF functions that could be of any  */
@@ -78,8 +93,8 @@
 /* need to be passed back and forth in a CFParm structure, but the difference*/
 /* is not a problem, unless for time-critical code sections. Using such hooks*/
 /* may of course sound complicated, but it allows much greater flexibility.  */
-CFParm* PlugProps;
-f_plugin PlugHooks[1024];
+extern CFParm* PlugProps;
+extern f_plugin PlugHooks[1024];
 
 /* Some practical stuff, often used in the plugin                            */
 #define WHO (whoptr->obj)
@@ -87,262 +102,33 @@ f_plugin PlugHooks[1024];
 #define WHERE (whereptr->obj)
 
 /* A generic exception that we use for error messages */
-static PyObject* CFPythonError;
+extern PyObject* DaimoninError;
+
 /* Quick access to the exception. Use only in functions supposed to return pointers */
-#define RAISE(msg) { PyErr_SetString(CFPythonError, (msg)); return NULL; }
+#define RAISE(msg) { PyErr_SetString(DaimoninError, (msg)); return NULL; }
+#define INTRAISE(msg) { PyErr_SetString(PyExc_TypeError, (msg)); return -1; }
 
 /* The declarations for the plugin interface. Every plugin should have those.*/
-MODULEAPI CFParm* registerHook(CFParm* PParm);
-MODULEAPI CFParm* triggerEvent(CFParm* PParm);
-MODULEAPI CFParm* initPlugin(CFParm* PParm);
-MODULEAPI CFParm* postinitPlugin(CFParm* PParm);
-MODULEAPI CFParm* removePlugin(CFParm* PParm);
-MODULEAPI CFParm* getPluginProperty(CFParm* PParm);
+extern MODULEAPI CFParm* registerHook(CFParm* PParm);
+extern MODULEAPI CFParm* triggerEvent(CFParm* PParm);
+extern MODULEAPI CFParm* initPlugin(CFParm* PParm);
+extern MODULEAPI CFParm* postinitPlugin(CFParm* PParm);
+extern MODULEAPI CFParm* removePlugin(CFParm* PParm);
+extern MODULEAPI CFParm* getPluginProperty(CFParm* PParm);
 
 /* This one is used to cleanly pass args to the CF core */
-static CFParm GCFP;
-static CFParm GCFP0;
-static CFParm GCFP1;
-static CFParm GCFP2;
-
-/* Those are the new Python instructions, as implemented in C.               */
-static PyObject* CFCheckArchInventory(PyObject* self, PyObject* args);
-
-static PyObject* CFGetName(PyObject* self, PyObject* args);
-static PyObject* CFSetName(PyObject* self, PyObject* args);
-static PyObject* CFGetTitle(PyObject* self, PyObject* args);
-static PyObject* CFSetTitle(PyObject* self, PyObject* args);
-static PyObject* CFGetSlaying(PyObject* self, PyObject* args);
-static PyObject* CFSetSlaying(PyObject* self, PyObject* args);
-static PyObject* CFSetMessage(PyObject* self, PyObject* args);
-
-static PyObject* CFSetSaveBed(PyObject* self, PyObject* args);
-
-static PyObject* CFSetSkillExperience(PyObject* self, PyObject* args);
-static PyObject* CFGetSkillExperience(PyObject* self, PyObject* args);
-static PyObject* CFMatchString(PyObject* self, PyObject* args);
-static PyObject* CFActivateRune(PyObject* self, PyObject* args);
-static PyObject* CFCheckTrigger(PyObject* self, PyObject* args);
-static PyObject* CFCastAbility(PyObject* self, PyObject* args);
-static PyObject* CFGetMapPath(PyObject* self, PyObject* args);
-static PyObject* CFGetMessage(PyObject* self, PyObject* args);
-static PyObject* CFGetGod(PyObject* self, PyObject* args);
-static PyObject* CFSetGod(PyObject* self, PyObject* args);
-static PyObject* CFSetWeight(PyObject* self, PyObject* args);
-static PyObject* CFReadyMap(PyObject* self, PyObject* args);
-static PyObject* CFTeleport(PyObject* self, PyObject* args);
-static PyObject* CFIsOutOfMap(PyObject* self, PyObject* args);
-static PyObject* CFPickUp(PyObject* self, PyObject* args);
-static PyObject* CFGetWeight(PyObject* self, PyObject* args);
-static PyObject* CFIsCanBePicked(PyObject* self, PyObject* args);
-static PyObject* CFGetMap(PyObject* self, PyObject* args);
-static PyObject* CFGetNextObject(PyObject* self, PyObject* args);
-static PyObject* CFGetPreviousObject(PyObject* self, PyObject* args);
-static PyObject* CFGetFirstObjectOnSquare(PyObject* self, PyObject* args);
-static PyObject* CFSetQuantity(PyObject* self, PyObject* args);
-static PyObject* CFGetQuantity(PyObject* self, PyObject* args);
-static PyObject* CFInsertObjectInside(PyObject* self, PyObject* args);
-static PyObject* CFFindPlayer(PyObject* self, PyObject* args);
-static PyObject* CFApply(PyObject* self, PyObject* args);
-static PyObject* CFDrop(PyObject* self, PyObject* args);
-static PyObject* CFTake(PyObject* self, PyObject* args);
-static PyObject* CFIsInvisible(PyObject* self, PyObject* args);
-static PyObject* CFWhoAmI(PyObject* self, PyObject* args);
-static PyObject* CFWhoIsActivator(PyObject* self, PyObject* args);
-static PyObject* CFWhatIsMessage(PyObject* self, PyObject* args);
-static PyObject* CFCommunicate(PyObject* self, PyObject* args);
-static PyObject* CFSay(PyObject* self, PyObject* args);
-static PyObject* CFSayTo(PyObject* self, PyObject* args);
-static PyObject* CFSetGender(PyObject* self, PyObject* args);
-static PyObject* CFSetRank(PyObject* self, PyObject* args);
-static PyObject* CFSetAlignment(PyObject* self, PyObject* args);
-static PyObject* CFGetAlignmentForce(PyObject* self, PyObject* args);
-static PyObject* CFSetGuildForce(PyObject* self, PyObject* args);
-static PyObject* CFGetGuildForce(PyObject* self, PyObject* args);
-static PyObject* CFGetExperience(PyObject* self, PyObject* args);
-static PyObject* CFGetLevel(PyObject* self, PyObject* args);
-static PyObject* CFGetSpeed(PyObject* self, PyObject* args);
-static PyObject* CFSetSpeed(PyObject* self, PyObject* args);
-static PyObject* CFGetFood(PyObject* self, PyObject* args);
-static PyObject* CFSetFood(PyObject* self, PyObject* args);
-static PyObject* CFGetGrace(PyObject* self, PyObject* args);
-static PyObject* CFSetGrace(PyObject* self, PyObject* args);
-static PyObject* CFGetReturnValue(PyObject* self, PyObject* args);
-static PyObject* CFSetReturnValue(PyObject* self, PyObject* args);
-static PyObject* CFGetDirection(PyObject* self, PyObject* args);
-static PyObject* CFSetDirection(PyObject* self, PyObject* args);
-static PyObject* CFGetLastSP(PyObject* self, PyObject* args);
-static PyObject* CFSetLastSP(PyObject* self, PyObject* args);
-static PyObject* CFGetLastGrace(PyObject* self, PyObject* args);
-static PyObject* CFSetLastGrace(PyObject* self, PyObject* args);
-static PyObject* CFFixObject(PyObject* self, PyObject* args);
-static PyObject* CFSetFace(PyObject* self, PyObject* args);
-static PyObject* CFGetAttackType(PyObject* self, PyObject* args);
-static PyObject* CFSetAttackType(PyObject* self, PyObject* args);
-static PyObject* CFSetDamage(PyObject* self, PyObject* args);
-static PyObject* CFGetDamage(PyObject* self, PyObject* args);
-static PyObject* CFKillObject(PyObject* self, PyObject* args);
-static PyObject* CFWhoIsOther(PyObject* self, PyObject* args);
-static PyObject* CFDirectionN(PyObject* self, PyObject* args);
-static PyObject* CFDirectionNE(PyObject* self, PyObject* args);
-static PyObject* CFDirectionE(PyObject* self, PyObject* args);
-static PyObject* CFDirectionSE(PyObject* self, PyObject* args);
-static PyObject* CFDirectionS(PyObject* self, PyObject* args);
-static PyObject* CFDirectionSW(PyObject* self, PyObject* args);
-static PyObject* CFDirectionW(PyObject* self, PyObject* args);
-static PyObject* CFDirectionNW(PyObject* self, PyObject* args);
-static PyObject* CFCastSpell(PyObject* self, PyObject* args);
-static PyObject* CFDoKnowSpell(PyObject* self, PyObject* args);
-static PyObject* CFGetSpellNr(PyObject* self, PyObject* args);
-static PyObject* CFAcquireSpell(PyObject* self, PyObject* args);
-static PyObject* CFDoKnowSkill(PyObject* self, PyObject* args);
-static PyObject* CFGetSkillNr(PyObject* self, PyObject* args);
-static PyObject* CFAcquireSkill(PyObject* self, PyObject* args);
-static PyObject* CFFindMarkedObject(PyObject* self, PyObject* args);
-
-static PyObject* CFCreatePlayerForce(PyObject* self, PyObject* args);
-static PyObject* CFCreatePlayerInfo(PyObject* self, PyObject* args);
-static PyObject* CFGetPlayerInfo(PyObject* self, PyObject* args);
-static PyObject* CFGetNextPlayerInfo(PyObject* self, PyObject* args);
-
-static PyObject* CFCheckInvisibleInside(PyObject* self, PyObject* args);
-static PyObject* CFCreateInvisibleInside(PyObject* self, PyObject* args);
-static PyObject* CFCreateObjectInside(PyObject* self, PyObject* args);
-static PyObject* CFCheckMap(PyObject* self, PyObject* args);
-static PyObject* CFCheckInventory(PyObject* self, PyObject* args);
-static PyObject* CFGetName(PyObject* self, PyObject* args);
-static PyObject* CFCreateObject(PyObject* self, PyObject* args);
-static PyObject* CFRemoveObject(PyObject* self, PyObject* args);
-static PyObject* CFIsAlive(PyObject* self, PyObject* args);
-static PyObject* CFIsWiz(PyObject* self, PyObject* args);
-static PyObject* CFWasWiz(PyObject* self, PyObject* args);
-static PyObject* CFIsApplied(PyObject* self, PyObject* args);
-static PyObject* CFIsUnpaid(PyObject* self, PyObject* args);
-static PyObject* CFIsFlying(PyObject* self, PyObject* args);
-static PyObject* CFIsMonster(PyObject* self, PyObject* args);
-static PyObject* CFIsFriendly(PyObject* self, PyObject* args);
-static PyObject* CFIsGenerator(PyObject* self, PyObject* args);
-static PyObject* CFIsThrown(PyObject* self, PyObject* args);
-static PyObject* CFCanSeeInvisible(PyObject* self, PyObject* args);
-static PyObject* CFCanRoll(PyObject* self, PyObject* args);
-static PyObject* CFIsTurnable(PyObject* self, PyObject* args);
-static PyObject* CFIsUsedUp(PyObject* self, PyObject* args);
-static PyObject* CFIsIdentified(PyObject* self, PyObject* args);
-static PyObject* CFIsSplitting(PyObject* self, PyObject* args);
-static PyObject* CFHitBack(PyObject* self, PyObject* args);
-static PyObject* CFBlocksView(PyObject* self, PyObject* args);
-static PyObject* CFIsUndead(PyObject* self, PyObject* args);
-static PyObject* CFIsScared(PyObject* self, PyObject* args);
-static PyObject* CFIsUnaggressive(PyObject* self, PyObject* args);
-static PyObject* CFReflectMissiles(PyObject* self, PyObject* args);
-static PyObject* CFReflectSpells(PyObject* self, PyObject* args);
-static PyObject* CFIsRunningAway(PyObject* self, PyObject* args);
-static PyObject* CFCanPassThru(PyObject* self, PyObject* args);
-static PyObject* CFCanPickUp(PyObject* self, PyObject* args);
-static PyObject* CFIsUnique(PyObject* self, PyObject* args);
-static PyObject* CFCanCastSpell(PyObject* self, PyObject* args);
-static PyObject* CFCanUseScroll(PyObject* self, PyObject* args);
-static PyObject* CFCanUseWand(PyObject* self, PyObject* args);
-static PyObject* CFCanUseBow(PyObject* self, PyObject* args);
-static PyObject* CFCanUseArmour(PyObject* self, PyObject* args);
-static PyObject* CFCanUseWeapon(PyObject* self, PyObject* args);
-static PyObject* CFCanUseRing(PyObject* self, PyObject* args);
-static PyObject* CFHasXRays(PyObject* self, PyObject* args);
-static PyObject* CFIsFloor(PyObject* self, PyObject* args);
-static PyObject* CFIsLifeSaver(PyObject* self, PyObject* args);
-static PyObject* CFIsSleeping(PyObject* self, PyObject* args);
-static PyObject* CFStandStill(PyObject* self, PyObject* args);
-static PyObject* CFOnlyAttack(PyObject* self, PyObject* args);
-static PyObject* CFIsConfused(PyObject* self, PyObject* args);
-static PyObject* CFHasStealth(PyObject* self, PyObject* args);
-static PyObject* CFIsCursed(PyObject* self, PyObject* args);
-static PyObject* CFIsDamned(PyObject* self, PyObject* args);
-static PyObject* CFIsKnownMagical(PyObject* self, PyObject* args);
-static PyObject* CFIsKnownCursed(PyObject* self, PyObject* args);
-static PyObject* CFCanUseSkill(PyObject* self, PyObject* args);
-static PyObject* CFHasBeenApplied(PyObject* self, PyObject* args);
-static PyObject* CFCanUseRod(PyObject* self, PyObject* args);
-static PyObject* CFCanUseHorn(PyObject* self, PyObject* args);
-static PyObject* CFMakeInvisible(PyObject* self, PyObject* args);
-static PyObject* CFIsBlind(PyObject* self, PyObject* args);
-static PyObject* CFCanSeeInDark(PyObject* self, PyObject* args);
-static PyObject* CFGetAC(PyObject* self, PyObject* args);
-static PyObject* CFGetWC(PyObject* self, PyObject* args);
-static PyObject* CFGetLuck(PyObject* self, PyObject* args);
-static PyObject* CFGetCha(PyObject* self, PyObject* args);
-static PyObject* CFGetCon(PyObject* self, PyObject* args);
-static PyObject* CFGetDex(PyObject* self, PyObject* args);
-static PyObject* CFGetHP(PyObject* self, PyObject* args);
-static PyObject* CFGetInt(PyObject* self, PyObject* args);
-static PyObject* CFGetPow(PyObject* self, PyObject* args);
-static PyObject* CFGetSP(PyObject* self, PyObject* args);
-static PyObject* CFGetStr(PyObject* self, PyObject* args);
-static PyObject* CFGetWis(PyObject* self, PyObject* args);
-static PyObject* CFGetMaxHP(PyObject* self, PyObject* args);
-static PyObject* CFGetMaxGrace(PyObject* self, PyObject* args);
-static PyObject* CFGetMaxSP(PyObject* self, PyObject* args);
-static PyObject* CFGetXPos(PyObject* self, PyObject* args);
-static PyObject* CFGetYPos(PyObject* self, PyObject* args);
-static PyObject* CFSetPosition(PyObject* self, PyObject* args);
-static PyObject* CFSetAC(PyObject* self, PyObject* args);
-static PyObject* CFSetWC(PyObject* self, PyObject* args);
-static PyObject* CFSetLuck(PyObject* self, PyObject* args);
-static PyObject* CFSetCha(PyObject* self, PyObject* args);
-static PyObject* CFSetCon(PyObject* self, PyObject* args);
-static PyObject* CFSetDex(PyObject* self, PyObject* args);
-static PyObject* CFSetHP(PyObject* self, PyObject* args);
-static PyObject* CFSetInt(PyObject* self, PyObject* args);
-static PyObject* CFSetMaxHP(PyObject* self, PyObject* args);
-static PyObject* CFSetMaxSP(PyObject* self, PyObject* args);
-static PyObject* CFSetMaxGrace(PyObject* self, PyObject* args);
-static PyObject* CFSetPow(PyObject* self, PyObject* args);
-static PyObject* CFSetSP(PyObject* self, PyObject* args);
-static PyObject* CFSetStr(PyObject* self, PyObject* args);
-static PyObject* CFSetWis(PyObject* self, PyObject* args);
-static PyObject* CFIdentifyObject(PyObject* self, PyObject* args);
-static PyObject* CFMessage(PyObject* self, PyObject* args);
-static PyObject* CFWrite(PyObject* self, PyObject* args);
-static PyObject* CFIsOfType(PyObject* self, PyObject* args);
-static PyObject* CFGetType(PyObject* self, PyObject* args);
-static PyObject* CFGetEventHandler(PyObject* self, PyObject* args);
-static PyObject* CFSetEventHandler(PyObject* self, PyObject* args);
-static PyObject* CFGetEventPlugin(PyObject* self, PyObject* args);
-static PyObject* CFSetEventPlugin(PyObject* self, PyObject* args);
-static PyObject* CFGetEventOptions(PyObject* self, PyObject* args);
-static PyObject* CFSetEventOptions(PyObject* self, PyObject* args);
-static PyObject* CFGetIP(PyObject* self, PyObject* args);
-static PyObject* CFGetInventory(PyObject* self, PyObject* args);
-static PyObject* CFGetArchName(PyObject* self, PyObject* args);
-
-static PyObject* CFLoadObject(PyObject* self, PyObject* args);
-static PyObject* CFSaveObject(PyObject* self, PyObject* args);
-static PyObject* CFRegisterCommand(PyObject* self, PyObject* args);
-static PyObject* CFGetValue(PyObject* self, PyObject* args);
-static PyObject* CFSetValue(PyObject* self, PyObject* args);
-static PyObject* CFGetMapWidth(PyObject* self, PyObject* args);
-static PyObject* CFGetMapHeight(PyObject* self, PyObject* args);
-static PyObject* CFGetObjectAt(PyObject* self, PyObject* args);
-static PyObject* CFSetPreviousObject(PyObject* self, PyObject* args);
-static PyObject* CFSetNextObject(PyObject* self, PyObject* args);
-static PyObject* CFCostFlagFTrue(PyObject* self, PyObject* args);
-static PyObject* CFCostFlagFBuy(PyObject* self, PyObject* args);
-static PyObject* CFCostFlagFSell(PyObject* self, PyObject* args);
-static PyObject* CFGetObjectCost(PyObject* self, PyObject* args);
-static PyObject* CFGetObjectMoney(PyObject* self, PyObject* args);
-static PyObject* CFPayForItem(PyObject* self, PyObject* args);
-static PyObject* CFPayAmount(PyObject* self, PyObject* args);
-static PyObject* CFSendCustomCommand(PyObject* self, PyObject* args);
-static PyObject* CFPlayMapSound(PyObject* self, PyObject* args);
-static PyObject* CFSetFlag(PyObject* self, PyObject* args);
-static PyObject* CFGetFlag(PyObject* self, PyObject* args);
+extern CFParm GCFP;
+extern CFParm GCFP0;
+extern CFParm GCFP1;
+extern CFParm GCFP2;
 
 /* Those are used to handle the events. The first one is used when a player  */
 /* attacks with a "scripted" weapon. HandleEvent is used for all other events*/
-MODULEAPI int HandleUseWeaponEvent(CFParm* CFP);
-MODULEAPI int HandleEvent(CFParm* CFP);
-MODULEAPI int HandleGlobalEvent(CFParm* CFP);
+extern MODULEAPI int HandleUseWeaponEvent(CFParm* CFP);
+extern MODULEAPI int HandleEvent(CFParm* CFP);
+extern MODULEAPI int HandleGlobalEvent(CFParm* CFP);
 /* Called to start the Python Interpreter.                                   */
-MODULEAPI void initCFPython();
+extern MODULEAPI void init_Daimonin_Python();
 
 /* The execution stack. Altough it is quite rare, a script can actually      */
 /* trigger another script. The stack is used to keep track of those multiple */
@@ -350,388 +136,62 @@ MODULEAPI void initCFPython();
 /* If for some reason you think it is not enough, simply increase its size.  */
 /* The code will still work, but the plugin will eat more memory.            */
 #define MAX_RECURSIVE_CALL 100
-static int StackPosition=0;
-object* StackActivator[MAX_RECURSIVE_CALL];
-object* StackWho[MAX_RECURSIVE_CALL];
-object* StackOther[MAX_RECURSIVE_CALL];
-char* StackText[MAX_RECURSIVE_CALL];
-int StackParm1[MAX_RECURSIVE_CALL];
-int StackParm2[MAX_RECURSIVE_CALL];
-int StackParm3[MAX_RECURSIVE_CALL];
-int StackParm4[MAX_RECURSIVE_CALL];
-int StackReturn[MAX_RECURSIVE_CALL];
+extern int StackPosition;
+extern object* StackActivator[MAX_RECURSIVE_CALL];
+extern object* StackWho[MAX_RECURSIVE_CALL];
+extern object* StackOther[MAX_RECURSIVE_CALL];
+extern char* StackText[MAX_RECURSIVE_CALL];
+extern int StackParm1[MAX_RECURSIVE_CALL];
+extern int StackParm2[MAX_RECURSIVE_CALL];
+extern int StackParm3[MAX_RECURSIVE_CALL];
+extern int StackParm4[MAX_RECURSIVE_CALL];
+extern int StackReturn[MAX_RECURSIVE_CALL];
 
-/* Here are the Python Declaration Table, used by the interpreter to make    */
-/* an interface with the C code                                              */
-static PyMethodDef CFPythonMethods[] =
-{
-        {"SetSaveBed", CFSetSaveBed, METH_VARARGS},
-        {"SetMessage", CFSetMessage, METH_VARARGS},
-        {"GetName",CFGetName,METH_VARARGS},
-        {"SetName", CFSetName, METH_VARARGS},
-        {"GetTitle",CFGetTitle,METH_VARARGS},
-        {"SetTitle", CFSetTitle, METH_VARARGS},
-        {"GetSlaying",CFGetSlaying,METH_VARARGS},
-        {"SetSlaying", CFSetSlaying, METH_VARARGS},
-        {"SetSkillExperience", CFSetSkillExperience, METH_VARARGS},
-        {"GetSkillExperience", CFGetSkillExperience, METH_VARARGS},
-        {"MatchString", CFMatchString, METH_VARARGS},
-        {"ActivateRune", CFActivateRune, METH_VARARGS},
-        {"CheckTrigger", CFCheckTrigger, METH_VARARGS},
-        {"CastAbility", CFCastAbility, METH_VARARGS},
-        {"GetMapPath", CFGetMapPath, METH_VARARGS},
-        {"GetMessage", CFGetMessage, METH_VARARGS},
-        {"GetGod", CFGetGod, METH_VARARGS},
-        {"SetGod", CFSetGod, METH_VARARGS},
-        {"SetWeight", CFSetWeight, METH_VARARGS},
-        {"ReadyMap", CFReadyMap, METH_VARARGS},
-        {"Teleport", CFTeleport, METH_VARARGS},
-        {"IsOutOfMap", CFIsOutOfMap, METH_VARARGS},
-        {"PickUp", CFPickUp, METH_VARARGS},
-        {"GetWeight", CFGetWeight, METH_VARARGS},
-        {"IsCanBePicked", CFIsCanBePicked, METH_VARARGS},
-        {"GetMap", CFGetMap, METH_VARARGS},
-        {"GetNextObject", CFGetNextObject, METH_VARARGS},
-        {"GetPreviousObject", CFGetPreviousObject, METH_VARARGS},
-        {"GetFirstObjectOnSquare", CFGetFirstObjectOnSquare, METH_VARARGS},
-        {"SetQuantity", CFSetQuantity, METH_VARARGS},
-        {"GetQuantity", CFGetQuantity, METH_VARARGS},
-        {"InsertObjectInside", CFInsertObjectInside, METH_VARARGS},
-        {"FindPlayer", CFFindPlayer, METH_VARARGS},
-        {"Apply", CFApply, METH_VARARGS},
-        {"Drop", CFDrop, METH_VARARGS},
-        {"Take", CFTake, METH_VARARGS},
-        {"IsInvisible", CFIsInvisible, METH_VARARGS},
-        {"GetExperience",CFGetExperience,METH_VARARGS},
-        {"GetLevel",CFGetLevel,METH_VARARGS},
-        {"GetSpeed",CFGetSpeed,METH_VARARGS},
-        {"SetSpeed",CFSetSpeed,METH_VARARGS},
-        {"GetFood",CFGetFood,METH_VARARGS},
-        {"SetFood",CFSetFood,METH_VARARGS},
-        {"GetGrace",CFGetGrace,METH_VARARGS},
-        {"SetGrace",CFSetGrace,METH_VARARGS},
-        {"GetReturnValue",CFGetReturnValue,METH_VARARGS},
-        {"SetReturnValue",CFSetReturnValue,METH_VARARGS},
-        {"GetDirection",CFGetDirection,METH_VARARGS},
-        {"SetDirection",CFSetDirection,METH_VARARGS},
-        {"GetLastSP",CFGetLastSP,METH_VARARGS},
-        {"SetLastSP",CFSetLastSP,METH_VARARGS},
-        {"GetLastGrace",CFGetLastGrace,METH_VARARGS},
-        {"SetLastGrace",CFSetLastGrace,METH_VARARGS},
-        {"FixObject",CFFixObject,METH_VARARGS},
-        {"SetFace",CFSetFace,METH_VARARGS},
-        {"GetAttackType",CFGetAttackType,METH_VARARGS},
-        {"SetAttackType",CFSetAttackType,METH_VARARGS},
-        {"SetDamage",CFSetDamage,METH_VARARGS},
-        {"GetDamage",CFGetDamage,METH_VARARGS},
-        {"KillObject",CFKillObject,METH_VARARGS},
-        {"WhoIsOther",CFWhoIsOther,METH_VARARGS},
-        {"DirectionN",CFDirectionN,METH_VARARGS},
-        {"DirectionNE",CFDirectionNE,METH_VARARGS},
-        {"DirectionE",CFDirectionE,METH_VARARGS},
-        {"DirectionSE",CFDirectionSE,METH_VARARGS},
-        {"DirectionS",CFDirectionS,METH_VARARGS},
-        {"DirectionSW",CFDirectionSW,METH_VARARGS},
-        {"DirectionW",CFDirectionW,METH_VARARGS},
-        {"DirectionNW",CFDirectionNW,METH_VARARGS},
-        {"CastSpell",CFCastSpell,METH_VARARGS},
-        {"GetSpellNr",CFGetSpellNr,METH_VARARGS},
-        {"DoKnowSpell",CFDoKnowSpell,METH_VARARGS},
-        {"AcquireSpell",CFAcquireSpell,METH_VARARGS},
-        {"GetSkillNr",CFGetSkillNr,METH_VARARGS},
-        {"DoKnowSkill",CFDoKnowSkill,METH_VARARGS},
-        {"AcquireSkill",CFAcquireSkill,METH_VARARGS},
-        {"FindMarkedObject",CFFindMarkedObject,METH_VARARGS},
+/* Type used for numeric constants */
+typedef struct {
+    char *name;
+    int value;
+} Daimonin_Constant;
 
-        {"CreatePlayerForce",CFCreatePlayerForce,METH_VARARGS},
-        {"CreatePlayerInfo",CFCreatePlayerInfo,METH_VARARGS},
-        {"GetPlayerInfo",CFGetPlayerInfo,METH_VARARGS},
-        {"GetNextPlayerInfo",CFGetNextPlayerInfo,METH_VARARGS},
-        
-        {"CheckInvisibleObjectInside",CFCheckInvisibleInside,METH_VARARGS},
-        {"CreateInvisibleObjectInside",CFCreateInvisibleInside,METH_VARARGS},
-        {"CreateObjectInside",CFCreateObjectInside,METH_VARARGS},
-        {"CheckMap",CFCheckMap,METH_VARARGS},
-        {"CheckArchInventory",CFCheckArchInventory,METH_VARARGS},
-        {"CheckInventory",CFCheckInventory,METH_VARARGS},
-        {"CreateObject",CFCreateObject,METH_VARARGS},
-        {"RemoveObject",CFRemoveObject,METH_VARARGS},
-        {"IsAlive",CFIsAlive,METH_VARARGS},
-        {"IsDungeonMaster",CFIsWiz,METH_VARARGS},
-        {"WasDungeonMaster",CFWasWiz,METH_VARARGS},
-        {"IsApplied",CFIsApplied,METH_VARARGS},
-        {"IsUnpaid",CFIsUnpaid,METH_VARARGS},
-        {"IsFlying",CFIsFlying,METH_VARARGS},
-        {"IsMonster",CFIsMonster,METH_VARARGS},
-        {"IsFriendly",CFIsFriendly,METH_VARARGS},
-        {"IsGenerator",CFIsGenerator,METH_VARARGS},
-        {"IsThrown",CFIsThrown,METH_VARARGS},
-        {"CanSeeInvisible",CFCanSeeInvisible,METH_VARARGS},
-        {"CanRoll",CFCanRoll,METH_VARARGS},
-        {"IsTurnable",CFIsTurnable,METH_VARARGS},
-        {"IsUsedUp",CFIsUsedUp,METH_VARARGS},
-        {"IsIdentified",CFIsIdentified,METH_VARARGS},
-        {"IsSplitting",CFIsSplitting,METH_VARARGS},
-        {"HitBack",CFHitBack,METH_VARARGS},
-        {"BlocksView",CFBlocksView,METH_VARARGS},
-        {"IsUndead",CFIsUndead,METH_VARARGS},
-        {"IsScared",CFIsScared,METH_VARARGS},
-        {"IsUnaggressive",CFIsUnaggressive,METH_VARARGS},
-        {"ReflectMissiles",CFReflectMissiles,METH_VARARGS},
-        {"ReflectSpells",CFReflectSpells,METH_VARARGS},
-        {"IsRunningAway",CFIsRunningAway,METH_VARARGS},
-        {"CanPassThru",CFCanPassThru,METH_VARARGS},
-        {"CanPickUp",CFCanPickUp,METH_VARARGS},
-        {"IsUnique",CFIsUnique,METH_VARARGS},
-        {"CanCastSpell",CFCanCastSpell,METH_VARARGS},
-        {"CanUseScroll",CFCanUseScroll,METH_VARARGS},
-        {"CanUseWand",CFCanUseWand,METH_VARARGS},
-        {"CanUseBow",CFCanUseBow,METH_VARARGS},
-        {"CanUseArmour",CFCanUseArmour,METH_VARARGS},
-        {"CanUseWeapon",CFCanUseWeapon,METH_VARARGS},
-        {"CanUseRing",CFCanUseRing,METH_VARARGS},
-        {"HasXRays",CFHasXRays,METH_VARARGS},
-        {"IsFloor",CFIsFloor,METH_VARARGS},
-        {"IsLifesaver",CFIsLifeSaver,METH_VARARGS},
-        {"IsSleeping",CFIsSleeping,METH_VARARGS},
-        {"StandStill",CFStandStill,METH_VARARGS},
-        {"OnlyAttack",CFOnlyAttack,METH_VARARGS},
-        {"IsConfused",CFIsConfused,METH_VARARGS},
-        {"HasStealth",CFHasStealth,METH_VARARGS},
-        {"IsCursed",CFIsCursed,METH_VARARGS},
-        {"IsDamned",CFIsDamned,METH_VARARGS},
-        {"IsKnownMagical",CFIsKnownMagical,METH_VARARGS},
-        {"IsKnownCursed",CFIsKnownCursed,METH_VARARGS},
-        {"CanUseSkill",CFCanUseSkill,METH_VARARGS},
-        {"HasBeenApplied",CFHasBeenApplied,METH_VARARGS},
-        {"CanUseRod",CFCanUseRod,METH_VARARGS},
-        {"CanUseHorn",CFCanUseHorn,METH_VARARGS},
-        {"MakeInvisible",CFMakeInvisible,METH_VARARGS},
-        {"IsBlind",CFIsBlind,METH_VARARGS},
-        {"CanSeeInDark",CFCanSeeInDark,METH_VARARGS},
-        {"GetAC",CFGetAC,METH_VARARGS},
-        {"GetWC",CFGetWC,METH_VARARGS},
-        {"GetLuck",CFGetLuck,METH_VARARGS},
-        {"GetCharisma",CFGetCha,METH_VARARGS},
-        {"GetConstitution",CFGetCon,METH_VARARGS},
-        {"GetDexterity",CFGetDex,METH_VARARGS},
-        {"GetHP",CFGetHP,METH_VARARGS},
-        {"GetIntelligence",CFGetInt,METH_VARARGS},
-        {"GetPower",CFGetPow,METH_VARARGS},
-        {"GetSP",CFGetSP,METH_VARARGS},
-        {"GetStrength",CFGetStr,METH_VARARGS},
-        {"GetWisdom",CFGetWis,METH_VARARGS},
-        {"GetMaxHP",CFGetMaxHP,METH_VARARGS},
-        {"GetMaxSP",CFGetMaxSP,METH_VARARGS},
-        {"GetMaxGrace",CFGetMaxGrace,METH_VARARGS},
-        {"GetXPosition",CFGetXPos,METH_VARARGS},
-        {"GetYPosition",CFGetYPos,METH_VARARGS},
-        {"SetPosition",CFSetPosition,METH_VARARGS},
-        {"SetAC",CFSetAC,METH_VARARGS},
-        {"SetWC",CFSetWC,METH_VARARGS},
-        {"SetLuck",CFSetLuck,METH_VARARGS},
-        {"SetCharisma",CFSetCha,METH_VARARGS},
-        {"SetConstitution",CFSetCon,METH_VARARGS},
-        {"SetDexterity",CFSetDex,METH_VARARGS},
-        {"SetHP",CFSetHP,METH_VARARGS},
-        {"SetIntelligence",CFSetInt,METH_VARARGS},
-        {"SetMaxHP",CFSetMaxHP,METH_VARARGS},
-        {"SetMaxSP",CFSetMaxSP,METH_VARARGS},
-        {"SetMaxGrace",CFSetMaxGrace,METH_VARARGS},
-        {"SetPower",CFSetPow,METH_VARARGS},
-        {"SetSP",CFSetSP,METH_VARARGS},
-        {"SetStrength",CFSetStr,METH_VARARGS},
-        {"SetWisdom",CFSetWis,METH_VARARGS},
-        {"IdentifyObject",CFIdentifyObject,METH_VARARGS},
-        {"Message",CFMessage,METH_VARARGS},
-        {"Write",CFWrite,METH_VARARGS},
-        {"IsOfType",CFIsOfType,METH_VARARGS},
-        {"GetType",CFGetType,METH_VARARGS},
-        {"GetEventHandler",CFGetEventHandler,METH_VARARGS},
-        {"SetEventHandler",CFSetEventHandler,METH_VARARGS},
-        {"GetEventPlugin",CFGetEventPlugin,METH_VARARGS},
-        {"SetEventPlugin",CFSetEventPlugin,METH_VARARGS},
-        {"GetEventOptions",CFGetEventOptions,METH_VARARGS},
-        {"SetEventOptions",CFSetEventOptions,METH_VARARGS},
-        {"Communicate", CFCommunicate, METH_VARARGS},
-        {"Say", CFSay, METH_VARARGS},
-        {"SayTo", CFSayTo, METH_VARARGS},
-        {"SetGender", CFSetGender, METH_VARARGS},
-        {"SetRank", CFSetRank, METH_VARARGS},
-        {"SetAlignment", CFSetAlignment, METH_VARARGS},
-        {"GetAlignmentForce", CFGetAlignmentForce, METH_VARARGS},
-        {"SetGuildForce", CFSetGuildForce, METH_VARARGS},
-        {"GetGuildForce", CFGetGuildForce, METH_VARARGS},
-        {"WhoAmI", CFWhoAmI, METH_VARARGS},
-        {"WhoIsActivator", CFWhoIsActivator, METH_VARARGS},
-        {"WhatIsMessage", CFWhatIsMessage, METH_VARARGS},
-        {"SaveObject",CFSaveObject,METH_VARARGS},
-        {"LoadObject",CFLoadObject,METH_VARARGS},
-        {"GetIP",CFGetIP,METH_VARARGS},
-        {"GetInventory",CFGetInventory,METH_VARARGS},
-        {"GetArchName",CFGetArchName,METH_VARARGS},
-        {"RegisterCommand",CFRegisterCommand,METH_VARARGS},
-        {"GetValue",CFGetValue,METH_VARARGS},
-        {"SetValue",CFSetValue,METH_VARARGS},
-        {"GetMapWidth",CFGetMapWidth,METH_VARARGS},
-        {"GetMapHeight",CFGetMapHeight,METH_VARARGS},
-        {"GetObjectAt",CFGetObjectAt,METH_VARARGS},
-        {"SetNextObject",CFSetNextObject,METH_VARARGS},
-        {"SetPreviousObject",CFSetPreviousObject,METH_VARARGS},
-        {"CostFlagFTrue",CFCostFlagFTrue,METH_VARARGS},
-        {"CostFlagFBuy",CFCostFlagFBuy,METH_VARARGS},
-        {"CostFlagFSell",CFCostFlagFSell,METH_VARARGS},
-        {"GetObjectCost", CFGetObjectCost,METH_VARARGS},
-        {"GetObjectMoney", CFGetObjectMoney,METH_VARARGS},
-        {"PayForItem",CFPayForItem,METH_VARARGS},
-        {"PayAmount",CFPayAmount,METH_VARARGS},
-        {"SendCustomCommand",CFSendCustomCommand,METH_VARARGS},
-        {"PlayMapSound",CFPlayMapSound,METH_VARARGS},
-        {"GetFlag",CFGetFlag,METH_VARARGS},
-        {"SetFlag",CFSetFlag,METH_VARARGS},
-        {NULL, NULL}
-};
+/* Types used in objects and maps structs */
+typedef enum {
+    FIELDTYPE_SHSTR, /* Pointer to shared string */
+    FIELDTYPE_CSTR,  /* Pointer to C string */
+    FIELDTYPE_CARY,  /* C string (array directly in struct) */
+    FIELDTYPE_UINT8, FIELDTYPE_SINT8, 
+    FIELDTYPE_UINT16, FIELDTYPE_SINT16, 
+    FIELDTYPE_UINT32, FIELDTYPE_SINT32,
+    FIELDTYPE_FLOAT,
+    FIELDTYPE_OBJECT, FIELDTYPE_MAP,
+    FIELDTYPE_OBJECTREF /* object pointer + tag */
+} field_type;
 
-/*****************************************************************************/
-/* Crossfire object type part.                                               */
-/* Using a custom type for CF Objects allows us to handle more errors, and   */
-/* avoid server crashes due to buggy scripts                                 */
-/* In the future even add methods to it?                                     */
-/*****************************************************************************/
+/* Special flags for object attribute access */
+#define FIELDFLAG_READONLY        1 /* changing value not allowed */
+#define FIELDFLAG_PLAYER_READONLY 2 /* changing value is not allowed if object is a player */
+#define FIELDFLAG_PLAYER_FIX      4 /* fix player or monster after change */
 
-/* Object data */
+/* Public DaimoninObject related functions and types */
+extern PyTypeObject Daimonin_ObjectType;
+
+extern PyObject *wrap_object(object *what);
+extern int Daimonin_Object_init(PyObject *module);
+
 typedef struct {
     PyObject_HEAD
     object *obj; /* Pointer to the Daimonin object we wrap */
-} CFPython_Object;
+} Daimonin_Object;
 
-/* Internal method used to create a wrapper object for an object */    
-static PyObject *
-wrap_object(object *what);
+/* Public DaimoninMap related functions and types */
+extern PyTypeObject Daimonin_MapType;
 
-/* Object creator (not really needed, since the generic creator does the same thing...) */
-static PyObject *
-CFPython_Object_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
-
-/* str() function to get a string representation of this object */
-static PyObject *
-CFPython_Object_str(CFPython_Object *self);
-   
-/* Object deallocator (needed) */
-static void
-CFPython_Object_dealloc(CFPython_Object* self);
-
-static PyTypeObject CFPython_ObjectType = {
-    PyObject_HEAD_INIT(NULL)
-    0,                         /* ob_size*/
-    "CFPython.Object",         /* tp_name*/
-    sizeof(CFPython_Object),   /* tp_basicsize*/
-    0,                         /* tp_itemsize*/
-    (destructor)CFPython_Object_dealloc, /* tp_dealloc*/
-    0,                         /* tp_print*/
-    0,                         /* tp_getattr*/
-    0,                         /* tp_setattr*/
-    0,                         /* tp_compare*/
-    0,                         /* tp_repr*/
-    0,                         /* tp_as_number*/
-    0,                         /* tp_as_sequence*/
-    0,                         /* tp_as_mapping*/
-    0,                         /* tp_hash */
-    0,                         /* tp_call*/
-    (reprfunc)CFPython_Object_str,/* tp_str*/
-    0,                         /* tp_getattro*/
-    0,                         /* tp_setattro*/
-    0,                         /* tp_as_buffer*/
-    Py_TPFLAGS_DEFAULT,        /* tp_flags*/
-    "CFPython objects",        /* tp_doc */
-    0,		                   /* tp_traverse */
-    0,		                   /* tp_clear */
-    0,		                   /* tp_richcompare */
-    0,		                   /* tp_weaklistoffset */
-    0,		                   /* tp_iter */
-    0,		                   /* tp_iternext */
-    0,                         /* tp_methods */
-    0,                         /* tp_members */
-    0,                         /* tp_getset */
-    0,                         /* tp_base */
-    0,                         /* tp_dict */
-    0,                         /* tp_descr_get */
-    0,                         /* tp_descr_set */
-    0,                         /* tp_dictoffset */
-    0,                         /* tp_init */
-    0,                         /* tp_alloc */
-    CFPython_Object_new,       /* tp_new */
-};
-
-/*****************************************************************************/
-/* Crossfire map type.                                                       */
-/* This is another datatype, but used for map references. Reuses much of the */
-/* code from CFPython_Object                                                 */
-/*****************************************************************************/
+extern PyObject *wrap_map(mapstruct *map);
+extern int Daimonin_Map_init(PyObject *module);
 
 typedef struct {
     PyObject_HEAD
     mapstruct *map;  /* Pointer to the Daimonin map we wrap */
-} CFPython_Map;
-
-/* Internal method used to create a wrapper object for a map */    
-static PyObject *
-wrap_map(mapstruct *what);
-
-/* Object creator (not really needed, since the generic creator does the same thing...) */
-static PyObject *
-CFPython_Map_new(PyTypeObject *type, PyObject *args, PyObject *kwds);
-
-/* str() function to get a string representation of this object */
-static PyObject *
-CFPython_Map_str(CFPython_Map *self);
-   
-/* Object deallocator (needed) */
-static void
-CFPython_Map_dealloc(CFPython_Map* self);
-
-static PyTypeObject CFPython_MapType = {
-    PyObject_HEAD_INIT(NULL)
-    0,                         /* ob_size*/
-    "CFPython.Map",         /* tp_name*/
-    sizeof(CFPython_Map),   /* tp_basicsize*/
-    0,                         /* tp_itemsize*/
-    (destructor)CFPython_Map_dealloc, /* tp_dealloc*/
-    0,                         /* tp_print*/
-    0,                         /* tp_getattr*/
-    0,                         /* tp_setattr*/
-    0,                         /* tp_compare*/
-    0,                         /* tp_repr*/
-    0,                         /* tp_as_number*/
-    0,                         /* tp_as_sequence*/
-    0,                         /* tp_as_mapping*/
-    0,                         /* tp_hash */
-    0,                         /* tp_call*/
-    (reprfunc)CFPython_Map_str,/* tp_str*/
-    0,                         /* tp_getattro*/
-    0,                         /* tp_setattro*/
-    0,                         /* tp_as_buffer*/
-    Py_TPFLAGS_DEFAULT,        /* tp_flags*/
-    "CFPython maps",           /* tp_doc */
-    0,		                   /* tp_traverse */
-    0,		                   /* tp_clear */
-    0,		                   /* tp_richcompare */
-    0,		                   /* tp_weaklistoffset */
-    0,		                   /* tp_iter */
-    0,		                   /* tp_iternext */
-    0,                         /* tp_methods */
-    0,                         /* tp_members */
-    0,                         /* tp_getset */
-    0,                         /* tp_base */
-    0,                         /* tp_dict */
-    0,                         /* tp_descr_get */
-    0,                         /* tp_descr_set */
-    0,                         /* tp_dictoffset */
-    0,                         /* tp_init */
-    0,                         /* tp_alloc */
-    CFPython_Map_new,       /* tp_new */
-};
-
+} Daimonin_Map;
 
 /*****************************************************************************/
 /* Commands management part.                                                 */
@@ -740,9 +200,9 @@ static PyTypeObject CFPython_MapType = {
 /*****************************************************************************/
 
 /* The "About Python" stuff. Bound to "python" command.                      */
-MODULEAPI int cmd_aboutPython(object *op, char *params);
+extern MODULEAPI int cmd_aboutPython(object *op, char *params);
 /* The following one handles all custom Python command calls.                */
-MODULEAPI int cmd_customPython(object *op, char *params);
+extern MODULEAPI int cmd_customPython(object *op, char *params);
 
 /* This structure is used to define one python-implemented crossfire command.*/
 typedef struct PythonCmdStruct
@@ -754,9 +214,9 @@ typedef struct PythonCmdStruct
 
 /* This plugin allows up to 1024 custom commands.                            */
 #define NR_CUSTOM_CMD 1024
-PythonCmd CustomCommand[NR_CUSTOM_CMD];
+extern PythonCmd CustomCommand[NR_CUSTOM_CMD];
 /* This one contains the index of the next command that needs to be run. I do*/
 /* not like the use of such a global variable, but it is the most convenient */
 /* way I found to pass the command index to cmd_customPython.                */
-int NextCustomCommand;
+extern int NextCustomCommand;
 #endif /*PLUGIN_PYTHON_H*/

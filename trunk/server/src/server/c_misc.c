@@ -248,11 +248,13 @@ int command_who (object *op, char *params)
 	    continue;
 	}
 	ip++;
-	if (pl->state==ST_PLAYING || pl->state==ST_GET_PARTY_PASSWORD) {
-
-	    /* Any reason one sprintf can't be used?  The are displaying all
-	     * the same informaitn, except one display pl->ob->count.
-	     */
+	if (pl->state==ST_PLAYING || pl->state==ST_GET_PARTY_PASSWORD) 
+	{
+         char *sex = "neuter";
+         if(QUERY_FLAG(pl->ob, FLAG_IS_MALE)) 
+             sex = QUERY_FLAG(pl->ob, FLAG_IS_FEMALE) ? "hermaphrodite" : "male";
+         else if(QUERY_FLAG(pl->ob, FLAG_IS_FEMALE)) 
+             sex = "female";
 
 	    if(op == NULL || QUERY_FLAG(op, FLAG_WIZ))
 		(void) sprintf(buf,"%s the %s (@%s) [%s]%s%s%s (%d)",pl->ob->name, pl->title,
@@ -260,8 +262,7 @@ int command_who (object *op, char *params)
 						QUERY_FLAG(pl->ob,FLAG_WIZ)?" [WIZ]":"",
 						pl->idle?" I":"", "<remove>",pl->ob->count);
 	    else
-			sprintf(buf,"%s the %s %s (lvl %d) %s",pl->ob->name, 
-			QUERY_FLAG(pl->ob, FLAG_IS_MALE)?"male":(QUERY_FLAG(pl->ob, FLAG_IS_FEMALE)?"female":"neuter"),
+			sprintf(buf,"%s the %s %s (lvl %d) %s",pl->ob->name, sex,
 			pl->ob->race,pl->ob->level,
 						QUERY_FLAG(pl->ob,FLAG_WIZ)?" [WIZ]":"");
 	    new_draw_info(NDI_UNIQUE, 0,op,buf);
@@ -349,12 +350,41 @@ int command_debug (object *op, char *params)
  * Those dumps should be just one dump with good parser
  */
 
+int command_dumpbelowfull (object *op, char *params)
+{
+	object *tmp;
+	   
+	new_draw_info(NDI_UNIQUE, 0,op,"DUMP OBJECTS OF THIS TILE");
+	new_draw_info(NDI_UNIQUE, 0,op,"-------------------");
+	for (tmp = get_map_ob (op->map, op->x, op->y); tmp; tmp = tmp->above) 
+	{
+		if(tmp == op) /* exclude the DM player object */
+			continue;
+		dump_object(tmp);
+		new_draw_info(NDI_UNIQUE, 0,op,errmsg);
+		if(tmp->above && tmp->above != op)
+			new_draw_info(NDI_UNIQUE, 0,op,">next object<");
+    }
+	new_draw_info(NDI_UNIQUE, 0,op,"------------------");
+  return 0;
+}
+
 int command_dumpbelow (object *op, char *params)
 {
-  if (op && op->below) {
-	  dump_object(op->below);
-	  new_draw_info(NDI_UNIQUE, 0,op,errmsg);
-      }
+	object *tmp;
+	char buf[5*1024];
+	int i=0;
+	   
+	new_draw_info(NDI_UNIQUE, 0,op,"DUMP OBJECTS OF THIS TILE");
+	new_draw_info(NDI_UNIQUE, 0,op,"-------------------");
+	for (tmp = get_map_ob (op->map, op->x, op->y); tmp; tmp = tmp->above, i++) 
+	{
+		if(tmp == op) /* exclude the DM player object */
+			continue;
+		sprintf(buf,"#%d  >%s<  >%s<  >%s<", i,query_name(tmp), tmp->arch?(tmp->arch->name?tmp->arch->name:"no arch name"):"NO ARCH",tmp->env?query_name(tmp->env):""); 
+		new_draw_info(NDI_UNIQUE, 0,op,buf);
+    }
+	new_draw_info(NDI_UNIQUE, 0,op,"------------------");
   return 0;
 }
 

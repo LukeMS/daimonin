@@ -132,7 +132,7 @@ int attempt_steal(object* op, object* who)
 	    return 0;
 	else if (roll < chance ) {
 	    if (op->type == PLAYER)
-		esrv_del_item(op->contr, tmp->count);
+		esrv_del_item(op->contr, tmp->count,tmp->env);
 	    pick_up(who, tmp);
 	    if(can_pick(who,tmp)) {
 		/* for players, play_sound: steals item */
@@ -828,7 +828,7 @@ int singing(object *pl, int dir) {
 	    if(QUERY_FLAG(tmp,FLAG_SPLITTING)	/* have no ears! */ 
 	       || QUERY_FLAG(tmp,FLAG_HITBACK)) break;	
 
-/*	    if(tmp->stats.Int>0) break;	*//* is too smart */
+		/*if(tmp->stats.Int>0) break;	*/ /* is too smart */
 	    if(tmp->level>SK_level(pl)) break;	/* too powerfull */
 	    if(QUERY_FLAG(tmp,FLAG_UNDEAD)) break; /* undead dont listen! */ 
 
@@ -1523,7 +1523,7 @@ object *make_throw_ob (object *orig) {
  * has passed some testing, we will rewrite this
  */
 void do_throw(object *op, object *toss_item, int dir) {
-    object *throw_ob=toss_item, *left=NULL, *tmp_op;
+    object *left_cont, *throw_ob=toss_item, *left=NULL, *tmp_op;
     tag_t left_tag;
     int eff_str = 0,str=op->stats.Str,dam=0;
     int pause_f,weight_f=0;
@@ -1583,6 +1583,7 @@ void do_throw(object *op, object *toss_item, int dir) {
 #endif
  
     left = throw_ob; /* these are throwing objects left to the player */
+	left_cont = left->env;
     left_tag = left->count;
 
   /* sometimes get_split_ob can't split an object (because op->nrof==0?)
@@ -1596,11 +1597,11 @@ void do_throw(object *op, object *toss_item, int dir) {
 	throw_ob = left;
 	remove_ob(left);
 	if (op->type==PLAYER)
-	    esrv_del_item(op->contr, left->count);
+	    esrv_del_item(op->contr, left->count, left->env);
     }
     else if (op->type==PLAYER) {
 	if (was_destroyed (left, left_tag))
-	    esrv_del_item(op->contr, left_tag);
+	    esrv_del_item(op->contr, left_tag, left_cont);
 	else 
 	    esrv_update_item(UPD_NROF, op, left);
     }

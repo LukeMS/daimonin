@@ -51,7 +51,8 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FONTNAME ""
 
 /* Decstations have trouble with fabs()... */
-#define FABS(x) (x<0?-x:x)
+#define FABS(x) ((x)<0?-(x):(x))
+#define abs(x) ((x)<0?-(x):(x))
 
 #ifdef __NetBSD__
 #include <sys/param.h>
@@ -98,6 +99,12 @@ error - Your ANSI C compiler should be defining __STDC__;
 
 #define PORTAL_DESTINATION_NAME "Town portal destination"
 
+/* LOS (loc.c) defines */
+#define BLOCKED_LOS_VISIBLE		0x00	/* its visible */
+#define BLOCKED_LOS_IGNORE		0x01	/* ignore this tile for blocksview/visible changes! */
+#define BLOCKED_LOS_BLOCKSVIEW	0x02	/* visible but will block all behind */
+#define BLOCKED_LOS_BLOCKED		0x04	/* sight is blocked */
+#define BLOCKED_LOS_OUT_OF_MAP	0x08	/* tile is not visible because not part of legal map */
 
 /* TYPE DEFINES */
 /* Only add new values to this list if somewhere in the program code,
@@ -919,6 +926,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define SockList_AddChar(_sl_,_c_)		(_sl_)->buf[(_sl_)->len++]=(_c_)
 #define SockList_AddShort(_sl_, _data_) (_sl_)->buf[(_sl_)->len++]= ((_data_)>>8)&0xff; \
 										(_sl_)->buf[(_sl_)->len++] = (_data_) & 0xff
+
 #define SockList_AddInt(_sl_, _data_)	(_sl_)->buf[(_sl_)->len++]=((_data_)>>24)&0xff; \
 										(_sl_)->buf[(_sl_)->len++]= ((_data_)>>16)&0xff; \
 										(_sl_)->buf[(_sl_)->len++]= ((_data_)>>8)&0xff; \
