@@ -3624,7 +3624,6 @@ y 6
 end
 arch door_wood1
 direction 3
-slaying
 x 23
 y 6
 end
