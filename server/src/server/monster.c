@@ -214,7 +214,8 @@ rv_vector *get_known_obj_rv(object *op, struct mob_known_obj *known_obj, int max
     if(op == NULL || known_obj == NULL)
         return NULL;    
     
-    if(global_round_tag - known_obj->rv_time >= (uint32) maxage || known_obj->rv_time == 0 || maxage == 0) 
+    if(global_round_tag-known_obj->rv_time >= (uint32)maxage || 
+            known_obj->rv_time == 0 || maxage == 0)
     {        
         /*
         if(!mob_can_see_obj(op, known_obj->obj, NULL)) {
@@ -357,8 +358,7 @@ struct mob_known_obj *register_npc_known_obj(object *npc, object *other,
     tmp->last_y = other->y;
  
     tmp->last_seen = global_round_tag;
-    tmp->rv_time = global_round_tag;
-    get_rangevector(npc, tmp->obj, &tmp->rv, 0);
+    tmp->rv_time = 0; /* Makes cached rv invalid */
 
     tmp->friendship = friendship;
     tmp->attraction = 0;
