@@ -788,7 +788,7 @@ object *fix_stopped_arrow (object *op)
     CLEAR_MULTI_FLAG(op, FLAG_FLYING);
 
 	/* food is a self destruct marker - that long the item will need to be destruct! */
-	if(!((tmp=get_owner(op)) ||tmp->type != PLAYER) &&  op->stats.food && op->type == ARROW)
+	if((!(tmp=get_owner(op)) ||tmp->type != PLAYER) &&  op->stats.food && op->type == ARROW)
 	{
 		SET_FLAG(op,FLAG_IS_USED_UP);
 		SET_FLAG(op,FLAG_NO_PICK);

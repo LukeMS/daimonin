@@ -1840,7 +1840,7 @@ void show_quickslots(int x, int y)
 	update_quickslots(-1);
     sprite_blt(Bitmaps[BITMAP_QUICKSLOTS],x, y, NULL, NULL);
 
-	for(i=MAX_QUICK_SLOTS;i>=0;i--)
+	for(i=MAX_QUICK_SLOTS-1;i>=0;i--)
 	{
 		if(quick_slots[i] != -1)
 		{

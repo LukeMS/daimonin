@@ -92,7 +92,8 @@ int attempt_steal(object* op, object* who)
      * have much chance of success. 
      */
     if(op->type!=PLAYER && QUERY_FLAG(op,FLAG_NO_STEAL)) {
-		if(1) { /* add here a distance/can see function!! */
+        if(1) { /* add here a distance/can see function!! */
+            /* TODO: should probaly call set_npc_enemy() here instead */
 	    npc_call_help(op);
 	    CLEAR_FLAG(op, FLAG_UNAGGRESSIVE);
 	    new_draw_info(NDI_UNIQUE, 0,who,"Your attempt is prevented!");
@@ -157,6 +158,7 @@ int attempt_steal(object* op, object* who)
 
 	    /* The unaggressives look after themselves 8) */
 	    if(who->type==PLAYER) {
+                /* TODO: should probaly call set_npc_enemy() here instead */
 		npc_call_help(op);
 		new_draw_info_format(NDI_UNIQUE, 0,who,
 		  "%s notices your attempted pilfering!",query_name(op));
@@ -770,7 +772,8 @@ int use_oratory(object *pl, int dir) {
        	else if((SK_level(pl)+((stat1-10)/2)) <
 		random_roll(1, 2*tmp->level, pl, PREFER_LOW)) {
 	    new_draw_info_format(NDI_UNIQUE, 0,pl, 
-		  "Your speach angers the %s!\n",query_name(tmp)); 
+		  "Your speech angers the %s!\n",query_name(tmp)); 
+            /* TODO: should probaly call set_npc_enemy() here instead/also */
 	    if(QUERY_FLAG(tmp,FLAG_FRIENDLY)) {
 		CLEAR_FLAG(tmp,FLAG_FRIENDLY);
 		remove_friendly_object(tmp);

@@ -360,7 +360,7 @@ object *get_nearest_player(object *mon) {
 			/* Can't do much more other than log the fact, because the object
 			* itself will have been cleared.
 			*/
-			LOG(llevDebug,"get_nearest_player: Found free/non friendly object on friendly list (%s)\n", tmp->name);
+			LOG(llevDebug,"get_nearest_player: Found free/non friendly object on friendly list (%s)\n", STRING_OBJ_NAME(tmp));
 			ol = ol->next;
 			remove_friendly_object(tmp);
 			if (!ol) return op;

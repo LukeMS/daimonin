@@ -485,11 +485,14 @@ int hit_player(object *op,int dam, object *hitter, int type)
     } 
     /* TODO: also handle op->attacked_by here */
 
+    /* Gecko: moved this to set_npc_enemy to cover more cases 
     if(QUERY_FLAG(op,FLAG_UNAGGRESSIVE) && op->type != PLAYER) {
-	/* The unaggressives look after themselves 8) */
+	* The unaggressives look after themselves 8) *
+    LOG(llevDebug, "DEBUG: cleared unaggressive flag for %s\n", STRING_OBJ_NAME(op));
 	CLEAR_FLAG(op, FLAG_UNAGGRESSIVE);
 	npc_call_help(op);
     }
+    */
 
     /* this is needed to send the hit number animations to the clients */
     if(op->damage_round_tag != ROUND_TAG)
