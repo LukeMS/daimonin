@@ -402,17 +402,28 @@ static void block_until_new_connection()
 
 void remove_ns_dead_player(player *pl)
 {
-    /* remove DM entry */
-    if (QUERY_FLAG(pl->ob, FLAG_WIZ))
-        gbl_active_DM = NULL;
 
-    if (gbl_active_DM)
-        new_draw_info_format(NDI_UNIQUE, 0, gbl_active_DM, "%s leaves the game (%d still playing).", query_name(pl->ob),
-                             player_active - 1);
+	/* remove the player from global gmaster lists */
+	if(pl->gmaster_mode != GMASTER_MODE_NO)
+		remove_gmaster_list(pl);
 
-    /* remove us from party */
+    /* remove player from party */
     if(pl->group_status & GROUP_STATUS_GROUP)
         party_remove_member(pl, TRUE);
+
+	if(gmaster_list_DM || gmaster_list_GM)
+	{
+		objectlink *ol;
+		char buf_dm[128];
+		
+		sprintf(buf_dm,"%s leaves the game (%d still playing).", query_name(pl->ob), player_active - 1);
+		
+		for(ol = gmaster_list_DM;ol;ol=ol->next)
+			new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
+		
+		for(ol = gmaster_list_GM;ol;ol=ol->next)
+			new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
+	}
 
     container_unlink(pl, NULL);
     save_player(pl->ob, 0);
@@ -439,6 +450,11 @@ static int check_ip_ban(int num, uint32 ip)
 {
     int         count, i;
     player     *pl, *ptmp = NULL;
+
+
+	/* we first check our ban list. Perhaps this IP is on it */
+	if(check_banned(NULL, ip))
+		return TRUE;
 
     /*return FALSE;*/ /* this will disable the IP check */
     /* lets first check sensless connected sockets
@@ -650,13 +666,19 @@ void doeric_server(int update, struct timeval *timeout)
         init_sockets[newsocknum].fd = accept(init_sockets[0].fd, (struct sockaddr *) &addr, &addrlen);
         if (init_sockets[newsocknum].fd != -1)
         {
-            i = ntohl(addr.sin_addr.s_addr);
-            LOG(llevDebug, " ip %d.%d.%d.%d  (socket %d)(#%d)\n", (i >> 24) & 255, (i >> 16) & 255, (i >> 8) & 255,
-                i & 255, init_sockets[newsocknum].fd, newsocknum);
-            if (check_ip_ban(newsocknum, i))
+			i = ntohl(addr.sin_addr.s_addr);
+            if (check_ip_ban(newsocknum, addr.sin_addr.s_addr))
+			{
+				LOG(llevDebug, "Banned:: ip %d.%d.%d.%d  (socket %d)\n", 
+						(i >> 24) & 255, (i >> 16) & 255, (i >> 8) & 255,i & 255, init_sockets[newsocknum].fd);
                 close_newsocket(&init_sockets[newsocknum]);
+			}
             else
+			{
+				LOG(llevDebug, " ip %d.%d.%d.%d  (socket %d)(#%d)\n", (i >> 24) & 255, (i >> 16) & 255, (i >> 8) & 255,
+					i & 255, init_sockets[newsocknum].fd, newsocknum);
                 InitConnection(&init_sockets[newsocknum], i);
+			}
         }
         else
             LOG(llevDebug, "Error on accept! (#%d)\n", newsocknum);

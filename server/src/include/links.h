@@ -40,6 +40,8 @@ typedef struct oblnk
         struct oblnk               *link;
         object                     *ob;
         struct treasureliststruct  *tl;
+		struct _gmaster_struct	   *gm;
+		struct ban_struct		   *ban;
     } objlink;
 
     struct oblnk               *prev;
@@ -55,6 +57,8 @@ typedef struct oblnk
 #define OBJLNK_FLAG_OB      0x1
 #define OBJLNK_FLAG_LINK    0x2
 #define OBJLNK_FLAG_TL      0x4
+#define OBJLNK_FLAG_GM      0x8
+#define OBJLNK_FLAG_BAN     0x16
 
 /* The use of _STATIC and _REF defines how we handle instancing & freeing.
  * Example: When we loading the base arches, we

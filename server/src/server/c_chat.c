@@ -220,12 +220,30 @@ int command_tell(object *op, char *params)
             strncat(buf, msg, MAX_BUF - strlen(buf) - 1);
             buf[MAX_BUF - 1] = 0;
 
-            if (gbl_active_DM && pl->ob != gbl_active_DM && op != gbl_active_DM)
-            {
+			/* lets listen the GMs and DMs to the tells if they want 
+			 * Only way to find out/control abuse of this commands
+			 * or we have to give many people access to the server logs (not a option)
+			 */
+			if(gmaster_list_DM || gmaster_list_GM)
+			{
+				objectlink *ol;
+
                 sprintf(buf2, "%s tells %s: ", op->name, pl->ob->name);
                 strncat(buf2, msg, MAX_BUF - strlen(buf) - 1);
-                new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, gbl_active_DM, buf2);
-            }
+				
+				for(ol = gmaster_list_DM;ol;ol=ol->next)
+				{
+					if (pl->ob != ol->objlink.ob && op != ol->objlink.ob)						
+						new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf2);
+				}	
+
+				for(ol = gmaster_list_GM;ol;ol=ol->next)
+				{
+					if (pl->ob != ol->objlink.ob && op != ol->objlink.ob)						
+						new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf2);
+				}	
+			}
+
             if (pl->dm_stealth)
             {
                 sprintf(buf, "%s tells you (dm_stealth): ", op->name);
@@ -332,17 +350,39 @@ int command_reply(object *op, char *params)
 
     if (pl == NULL || pl->dm_stealth)
     {
+		if(pl->dm_stealth)
+		{
+			sprintf(buf, "%s replies you: ", op->name);
+			strncat(buf, params, MAX_BUF - strlen(buf) - 1);
+			buf[MAX_BUF - 1] = 0;
+			new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_NAVY, 0, pl->ob, buf);
+			LOG(llevInfo, buf);
+		}
         new_draw_info(NDI_UNIQUE, 0, op, "You can't reply, this player left.");
         return 1;
     }
 
-    sprintf(buf2, "%s replies %s: ", op->name, pl->ob->name);
+    sprintf(buf2, "%s replied %s: ", op->name, pl->ob->name);
     strncat(buf2, params, MAX_BUF - strlen(buf) - 1);
     LOG(llevInfo, buf2);
+	
+	if(gmaster_list_DM || gmaster_list_GM)
+	{
+		objectlink *ol;
+		
+		for(ol = gmaster_list_DM;ol;ol=ol->next)
+		{
+			if (pl->ob != ol->objlink.ob && op != ol->objlink.ob)						
+				new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf2);
+		}	
+		
+		for(ol = gmaster_list_GM;ol;ol=ol->next)
+		{
+			if (pl->ob != ol->objlink.ob && op != ol->objlink.ob)						
+				new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf2);
+		}	
+	}
     
-    if (gbl_active_DM && pl->ob != gbl_active_DM && op != gbl_active_DM)
-        new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, gbl_active_DM, buf2);
-
     sprintf(buf, "%s replies you: ", op->name);
     strncat(buf, params, MAX_BUF - strlen(buf) - 1);
     buf[MAX_BUF - 1] = 0;

@@ -169,6 +169,9 @@ typedef struct pl_player
     int                 firemode_tag1;
     int                 firemode_tag2;
 
+	int					gmaster_mode;
+	struct oblnk	    *gmaster_node;
+
     /* "skill action timers" - used for action delays like cast time */
     uint32              action_casting;
     uint32              action_range;
@@ -247,7 +250,6 @@ typedef struct pl_player
                                                                * of this player.
                                                                */
 
-    char                player_name[MAX_PLAYER_NAME + 1];
     char                last_weapon_sp;
 
     char                last_shout[MAX_BUF];
@@ -312,22 +314,13 @@ typedef struct pl_player
     char                killer[BIG_NAME];  /* Who killed this player. */
     char                last_cmd;
     char                last_tell[MAX_NAME];   /* last player that told you something [mids 01/14/2002] */
-    /* this is a typcial client part - no need to use the server
-                       * to store or handle this! */
 
-    char                write_buf[MAX_BUF];
-    char                input_buf[MAX_BUF];
     char                password[MAX_PLAYER_PASSWORD]; /* 2 (seed) + 11 (crypted) + 1 (EOS) + 2 (safety) = 16 */
-#ifdef SAVE_INTERVAL
-    time_t              last_save_time;
-#endif /* SAVE_INTERVAL */
+
 #ifdef AUTOSAVE
     uint32              last_save_tick;
 #endif
 
-#ifdef SEARCH_ITEMS
-    char                search_str[MAX_BUF];
-#endif /* SEARCH_ITEMS */
 
     /* i disabled this now - search for last_used in the code.
      * perhaps we need this in the future.

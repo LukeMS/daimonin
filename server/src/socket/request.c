@@ -472,6 +472,8 @@ void NewPlayerCmd(char *buf, int len, player *pl)
 /* This is a reply to a previous query. */
 void ReplyCmd(char *buf, int len, player *pl)
 {
+	char                write_buf[MAX_BUF];
+	
     /* This is to synthesize how the data would be stored if it
      * was normally entered.  A bit of a hack, and should be cleaned up
      * once all the X11 code is removed from the server.
@@ -484,9 +486,9 @@ void ReplyCmd(char *buf, int len, player *pl)
     if (pl->socket.status == Ns_Dead) /* why ever... */
         return;
 
-    strcpy(pl->write_buf, ":");
-    strncat(pl->write_buf, buf, 250);
-    pl->write_buf[250] = 0;
+    strcpy(write_buf, ":");
+    strncat(write_buf, buf, 250);
+    write_buf[250] = 0;
     pl->socket.ext_title_flag = 1;
 
     switch (pl->state)
@@ -497,12 +499,12 @@ void ReplyCmd(char *buf, int len, player *pl)
           break;
 
         case ST_GET_NAME:
-          receive_player_name(pl->ob, MAX_PLAYER_NAME);
+          receive_player_name(pl->ob, MAX_PLAYER_NAME, write_buf);
           break;
 
         case ST_GET_PASSWORD:
         case ST_CONFIRM_PASSWORD:
-          receive_player_password(pl->ob, MAX_PLAYER_NAME);
+          receive_player_password(pl->ob, MAX_PLAYER_NAME, write_buf);
           break;
 
         default:

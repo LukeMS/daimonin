@@ -1082,7 +1082,8 @@ void cleanup(int ret)
     clean_tmp_files();
     write_book_archive();
     write_todclock();   /* lets just write the clock here */
-
+	save_ban_file();
+		
     FREE_AND_CLEAR_HASH2(global_string_none);
     free(global_sl.buf);
 

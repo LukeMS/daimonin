@@ -65,7 +65,11 @@ int                         is_melee_range(object *hitter, object *enemy);
 int                         did_make_save_item(object *op, int type, object *originator);
 void                        save_throw_object(object *op, int type, object *originator);
 /* ban.c */
-int                         checkbanned(char *login, char *host);
+void						load_ban_file(void);
+void						save_ban_file(void);
+struct objectlink			*add_ban_entry(char *banned, int ticks, int ticks_left, int mode);
+void						remove_ban_entry(struct oblnk *entry);
+int							check_banned(char *name, uint32 ip);
 /* c_chat.c */
 int                         command_say(object *op, char *params);
 int                         command_gsay(object *op, char *params);
@@ -172,8 +176,8 @@ int                         command_help(object *op, char *params);
 int                         onoff_value(char *line);
 int                         command_quit(object *op, char *params);
 int                         command_sound(object *op, char *params);
-void                        receive_player_name(object *op, char k);
-void                        receive_player_password(object *op, char k);
+void                        receive_player_name(object *op, char k, char *str);
+void                        receive_player_password(object *op, char k, char *str);
 int                         command_save(object *op, char *params);
 int                         command_style_map_info(object *op, char *params);
 /* c_move.c */
@@ -224,7 +228,6 @@ void                        examine(object *op, object *tmp);
 void                        inventory(object *op, object *inv);
 int                         command_pickup(object *op, char *params);
 void                        set_pickup_mode(object *op, int i);
-int                         command_search_items(object *op, char *params);
 /* c_party.c */
 int                         command_party_invite ( object *pl, char *params);
 int                         command_party_join ( object *pl, char *params);
@@ -244,6 +247,7 @@ int                         legal_range(object *op, int r);
 void                        change_spell(object *op, char k);
 /* c_wiz.c */
 int                         command_setgod(object *op, char *params);
+int                         command_kickcmd(object *op, char *params);
 int                         command_kick(object *op, char *params);
 int                         command_shutdown(object *op, char *params);
 int                         command_goto(object *op, char *params);
@@ -261,9 +265,15 @@ int                         command_speed(object *op, char *params);
 int                         command_stats(object *op, char *params);
 int                         command_abil(object *op, char *params);
 int                         command_reset(object *op, char *params);
-int                         command_nowiz(object *op, char *params);
 int                         command_check_fd(object *op, char *params);
+int                         command_mute(object *op, char *params);
+int                         command_silence(object *op, char *params);
+int                         command_ban(object *op, char *params);
+int                         command_vol(object *op, char *params);
+int                         command_gm(object *op, char *params);
 int                         command_dm(object *op, char *params);
+int                         command_dm_list(object *op, char *params);
+int                         command_dm_set(object *op, char *params);
 int                         command_invisible(object *op, char *params);
 int                         command_learn_spell(object *op, char *params);
 int                         command_learn_special_prayer(object *op, char *params);
@@ -291,6 +301,17 @@ int                         reduce_symptoms(object *sufferer, int reduction);
 /* egoitem.c */
 object                     *create_artifact(object *op, char *artifactname);
 int                         apply_power_crystal(object *op, object *crystal);
+/* gmaster.c */
+void						remove_gmaster_list(player *pl);
+int							check_gmaster_file_entry(char *name, char *passwd, char *host, char *mode);
+int							load_gmaster_file(void);
+void						add_gmaster_file_entry(char *name, char *passwd, char *host, int mode_id);
+void						remove_gmaster_file_entry(objectlink *ol);
+int							check_gmaster_list(player *pl, int mode);
+void						set_gmaster_mode(player *pl, int mode);
+void						remove_gmaster_mode(player *pl);
+void						write_gmaster_file(void);
+void						update_gmaster_file(void);
 /* hiscore.c */
 char                       *spool(char *bp, char *error);
 void                        check_score(object *op);

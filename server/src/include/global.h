@@ -300,6 +300,7 @@ typedef struct linked_char
 #include "map.h"
 #include "tod.h"
 #include "pathfinder.h"
+#include "gmaster.h"
 
 /* Pull in the socket structure - used in the player structure */
 #include "newserver.h"
@@ -343,6 +344,19 @@ typedef struct _money_block
     long    silver;
     long    copper;
 }_money_block;
+
+#define BAN_STRUCT_TAG 64
+
+/* ban node - see ban.c */
+typedef struct ban_struct
+{
+	int mode;
+	int ticks_init; /* how long is the ban */
+	int ticks_left; /* how long left */
+	uint32 ticks;		/* (starting) pticks + ticks_left */ 
+	uint32 ip;
+	char tag[BAN_STRUCT_TAG];
+} _ban_struct;
 
 typedef struct Settings
 {
@@ -408,6 +422,16 @@ extern spell                    spells[NROFREALSPELLS];
 #ifdef CS_LOGSTATS
 EXTERN CS_Stats                 cst_tot, cst_lst;
 #endif
+
+/* lists of the active ingame gmasters */
+EXTERN objectlink			   *gmaster_list;
+EXTERN objectlink			   *gmaster_list_VOL;
+EXTERN objectlink			   *gmaster_list_GM;
+EXTERN objectlink			   *gmaster_list_DM;
+
+EXTERN objectlink			   *ban_list_player; /* see ban.c */
+EXTERN objectlink			   *ban_list_ip;	/* see ban.c */
+
 
 EXTERN SockList                 global_sl;
 EXTERN archetype               *global_aggro_history_arch; 
@@ -485,9 +509,6 @@ EXTERN const char              *undead_name;    /* Used in hit_player() in main.
 
 EXTERN Animations              *animations;
 EXTERN int                      num_animations, animations_allocated, bmaps_checksum;
-
-EXTERN object                  *gbl_active_DM; /* ony for testing, TODO list of DMs */
-
 
 /* only used in loader.c, to go from the numeric image id (which is
  * used throughout the program) backto the standard name.

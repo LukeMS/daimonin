@@ -32,6 +32,7 @@
 
 #include <global.h>
 
+
 /* Gecko: since we no longer maintain a complete list of all objects,
  * all functions using find_object are a lot less useful...
  */
@@ -93,6 +94,31 @@ int command_setgod(object *op, char *params)
     return 1;
 }
 
+/* command_kickcmd is called when a gmaster triggers the command.
+ * command_kick is also used internal to force a player logout.
+ */
+int command_kickcmd(object *ob, char *params)
+{
+	int ticks;
+
+	if(ob && CONTR(ob)->gmaster_mode < GMASTER_MODE_VOL)
+		return 0;
+	
+	if(!command_kick(ob, params))
+		return 0;
+
+	/* we kicked player params succesfull. 
+	 * Now we give him a 1min temp ban, so he can
+	 * think about it.
+	 * If its a "technical" kick, the 1min is a protection.
+	 * Perhaps we want reset a map or whatever.
+	 */
+	ticks = (int) (pticks_second*10.0f);
+	add_ban_entry(params, ticks, ticks, 'p');
+
+	return 1;			
+}
+	
 /* called command_kick(NULL,NULL) or command_kick(op,<player name>.
  * NULl,NULL will global kick *all* players, the 2nd format only <player name>.
  * op,NULL is invalid
@@ -101,11 +127,15 @@ int command_kick(object *ob, char *params)
 {
     struct pl_player   *pl;
     const char         *name_hash;
+	int					ret=0;
+
+	if(ob && CONTR(ob)->gmaster_mode < GMASTER_MODE_VOL)
+		return 0;
 
     if (ob && params == NULL)
     {
         new_draw_info_format(NDI_UNIQUE, 0, ob, "Use: /kick <name>");
-        return 1;
+        return 0;
     }
 
     if (ob)
@@ -114,14 +144,14 @@ int command_kick(object *ob, char *params)
         if (!(name_hash = find_string(params)))
         {
             new_draw_info(NDI_UNIQUE, 0, ob, "No such player.");
-            return 1;
+            return 0;
         }
     }
 
     if (ob && ob->name == name_hash)
     {
         new_draw_info_format(NDI_UNIQUE, 0, ob, "You can't /kick yourself!");
-        return 1;
+        return 0;
     }
 
 
@@ -131,6 +161,7 @@ int command_kick(object *ob, char *params)
         {
             object *op;
             op = pl->ob;
+			ret=1;
             remove_ob(op);
             check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
             op->direction = 0;
@@ -149,7 +180,7 @@ int command_kick(object *ob, char *params)
     }
 
     /* not reached for NULL, NULL calling */
-    return 1;
+    return ret;
 }
 
 
@@ -222,7 +253,11 @@ int command_summon(object *op, char *params)
     object *dummy;
     player *pl;
 
-    if (!op)
+	/* allowed for GM and DM only */
+	if(CONTR(op)->gmaster_mode < GMASTER_MODE_GM)
+		return 0;
+
+	if (!op)
         return 0;
 
     if (params == NULL)
@@ -271,6 +306,10 @@ int command_teleport(object *op, char *params)
     int     i;
     object *dummy;
     player *pl;
+
+	/* allowed for GM and DM only */
+	if(CONTR(op)->gmaster_mode < GMASTER_MODE_GM)
+		return 0;
 
     if (!op)
         return 0;
@@ -584,6 +623,10 @@ int command_inventory(object *op, char *params)
 {
     object *tmp;
     int     i;
+
+	/* allowed for GM and DM only */
+	if(CONTR(op)->gmaster_mode < GMASTER_MODE_GM)
+		return 0;
 
     if (!params)
     {
@@ -954,20 +997,6 @@ int command_reset(object *op, char *params)
     return 1;
 }
 
-int command_nowiz(object *op, char *params)
-{
-    CLEAR_FLAG(op, FLAG_WIZ);
-    gbl_active_DM = NULL; /* clear this dm from global dm list. TODO : make a list from it */
-    CLEAR_FLAG(op, FLAG_WIZPASS);
-    CLEAR_MULTI_FLAG(op, FLAG_FLYING);
-    fix_player(op);
-    CONTR(op)->socket.update_tile = 0;
-    esrv_send_inventory(op, op);
-    CONTR(op)->update_los = 1;
-    new_draw_info(NDI_UNIQUE, 0, op, "DM mode deactivated.");
-    return 1;
-}
-
 /* warning: these function is for heavy debugging.
  * Its somewhat useless under windows.
  */
@@ -1009,49 +1038,174 @@ int command_check_fd(object *op, char *params)
     return 1;
 }
 
-
-/*
- * object *op is trying to become dm.
- * pl_name is name supplied by player.  Restrictive DM will make it harder
- * for socket users to become DM - in that case, it will check for the players
- * character name.
+/* a muted player can't shout/say/tell/reply for the
+ * amount of time.
+ * we have 2 kinds of mute: shout/say & tell/gsay/reply.
+ * a player can be muted through this command and/or 
+ * automatic by the spam agent.
  */
-#define RESTRICTIVE_DM
-
-static int checkdm(object *op, const char *pl_name, char *pl_passwd, char *pl_host)
+int command_mute(object *op, char *params)
 {
-    FILE   *dmfile;
-    char    buf[MAX_BUF];
-    char    line_buf[160], name[160], passwd[160], host[160], dummy[10];
 
-#ifdef RESTRICTIVE_DM
-    pl_name = op->name ? op->name : "*";
-#endif
+	return 1;
+}
 
-    sprintf(buf, "%s/%s", settings.localdir, DMFILE);
-    if ((dmfile = fopen(buf, "r")) == NULL)
-    {
-        LOG(llevDebug, "Could not find DM file.\n");
-        return(0);
-    }
-    while (fgets(line_buf, 160, dmfile) != NULL)
-    {
-        if (line_buf[0] == '#')
-            continue;
-        if (sscanf(line_buf, "%[^:]:%[^:]:%s%[\n\r]", name, passwd, host, dummy) < 3)
-        {
-            LOG(llevBug, "BUG: malformed dm file entry: %s", line_buf);
-        }
-        else if ((!strcmp(name, "*") || (pl_name && !strcmp(pl_name, name)))
-              && (!strcmp(passwd, "*") || !strcmp(passwd, pl_passwd))
-              && (!strcmp(host, "*") || !strcmp(host, pl_host)))
-        {
-            fclose(dmfile);
-            return (1);
-        }
-    }
-    fclose(dmfile);
-    return (0);
+/* a silenced player can't shout or tell or say
+ * but the he don't know it. A own shout will be shown
+ * to him as normal but not to others. 
+ */
+int command_silence(object *op, char *params)
+{
+	
+	return 1;
+}
+
+/* a player can be banned forever or for a time.
+ * We can ban a player or a IP/host.
+ * Format is /ban player <name> <time> or
+ * /ban ip <host> <time>.
+ * <time> can be 1m, 1h, 3d or *. m= minutes, h=hours, d= days
+ * and '*' = permanent.
+ * This is something we should move later to the login server.
+ */
+int command_ban(object *op, char *params)
+{
+	objectlink *ol;
+	char *str;
+	
+	if(CONTR(op)->gmaster_mode == GMASTER_MODE_NO)
+		return 0;
+	
+	if (!params)
+		goto bane_usage;		
+
+	/* list all entries of gmaster_file
+	 */
+	if(!strcmp(params,"list"))
+	{	
+	
+		new_draw_info(NDI_UNIQUE, 0, op, "ban list");
+		new_draw_info(NDI_UNIQUE, 0, op, "--- --- ---");
+		for(ol = ban_list_player;ol;ol=ol->next)
+			new_draw_info_format(NDI_UNIQUE, 0, op, "P: %s (%d)", ol->objlink.ban->tag ,ol->objlink.ban->ticks);
+
+		for(ol = ban_list_ip;ol;ol=ol->next)
+			new_draw_info_format(NDI_UNIQUE, 0, op, "IP:%s (%d)", ol->objlink.ban->tag ,ol->objlink.ban->ticks);
+
+		return 1;
+	}
+    if (!(str = strchr(params, ' ')))
+		goto bane_usage;		
+	
+    /* kill the space, and set string to the next param */
+    *str++ = '\0';
+	if(!strcmp(params,"add"))
+	{
+		int ticks=-1;
+		char mode=0, name[MAX_BUF]="";
+		
+        if (sscanf(str, "%s %c %d", name, &mode, &ticks) == 3)
+		{
+			if(name && name[0]!='\0' && (mode == 'i' || mode =='p'))
+			{
+				objectlink *ol, *ol_tmp;
+				int flag=FALSE;
+
+				for(ol = ban_list_player;ol;ol=ol_tmp)
+				{
+					ol_tmp = ol->next;
+					if(!stricmp(ol->objlink.ban->tag,name))
+					{
+						flag=TRUE;
+						remove_ban_entry(ol);
+					}
+					break;
+				}
+				if(!flag)
+				{
+					for(ol = ban_list_player;ol;ol=ol_tmp)
+					{
+						ol_tmp = ol->next;
+						if(!stricmp(ol->objlink.ban->tag,name))
+						{
+							flag=TRUE;
+							remove_ban_entry(ol);
+						}
+						break;
+					}
+				}
+				
+				if(flag) 
+				{
+					new_draw_info_format(NDI_UNIQUE, 0, op, "You updated the ban entry %s (%d ticks banned)", str, ticks);
+					LOG(llevSystem,"/ban: %s updated the ban entry %s (%c - %d)\n", query_name(op), str, mode, ticks);
+				}
+				else
+				{
+					new_draw_info_format(NDI_UNIQUE, 0, op, "You added the ban entry %s (%d ticks banned)", str, ticks);
+					LOG(llevSystem,"/ban: %s added the ban entry %s (%c - %d)\n", query_name(op), str, mode, ticks);
+				}
+				add_ban_entry(name, ticks, ticks, mode);
+				return 1;
+			}
+		}
+	}
+	else if(!strcmp(params,"remove"))
+	{
+		/* we assume that a host/ip entry has not the same name
+		 * as a player name... so we don't care and compare just all
+		 * against the same string.
+		 */
+		for(ol = ban_list_player;ol;ol=ol->next)
+		{
+			if(!strcmp(ol->objlink.ban->tag,str))
+			{
+				LOG(llevSystem,"/ban: %s removed the ban entry %s\n", query_name(op), str);
+				new_draw_info_format(NDI_UNIQUE, 0, op, "You removed the ban entry %s", str);
+				remove_ban_entry(ol);
+				return 1;
+			}
+		}
+		for(ol = ban_list_ip;ol;ol=ol->next)
+		{
+			if(!strcmp(ol->objlink.ban->tag,str))
+			{
+				LOG(llevSystem,"/ban: %s removed the ban entry %s\n", query_name(op), str);
+				new_draw_info_format(NDI_UNIQUE, 0, op, "You removed the ban entry %s", str);
+				remove_ban_entry(ol);
+				return 1;
+			}
+		}
+			
+	}
+		
+bane_usage:
+    new_draw_info(NDI_UNIQUE, 0, op, "Usage: /bane  list | add | remove <entry>");
+	return 1;
+}
+	
+/* become a VOL
+ */
+int command_vol(object *op, char *params)
+{
+	if(CONTR(op)->gmaster_mode == GMASTER_MODE_VOL) /* turn off ? */
+		remove_gmaster_mode(CONTR(op)); 
+	else if(check_gmaster_list(CONTR(op), GMASTER_MODE_VOL))
+		set_gmaster_mode(CONTR(op), GMASTER_MODE_VOL);
+	
+    return 1;
+}
+
+/* become a GM
+ */
+int command_gm(object *op, char *params)
+{
+	if(CONTR(op)->gmaster_mode == GMASTER_MODE_GM) /* turn off ? */
+		remove_gmaster_mode(CONTR(op)); 
+	else if(check_gmaster_list(CONTR(op), GMASTER_MODE_GM))
+		set_gmaster_mode(CONTR(op), GMASTER_MODE_GM);
+
+    return 1;	
 }
 
 /* Actual command to perhaps become dm.  Changed aroun a bit in version 0.92.2
@@ -1060,44 +1214,133 @@ static int checkdm(object *op, const char *pl_name, char *pl_passwd, char *pl_ho
 
 int command_dm(object *op, char *params)
 {
-    /* IF we are DM, then turn mode off */
-    if (QUERY_FLAG(op, FLAG_WIZ) && op->type == PLAYER)
-    {
-        command_nowiz(op, params);
-        return 1;
-    }
+	if(CONTR(op)->gmaster_mode == GMASTER_MODE_DM) /* turn off ? */
+		remove_gmaster_mode(CONTR(op)); 
+	else if(check_gmaster_list(CONTR(op), GMASTER_MODE_DM))
+		set_gmaster_mode(CONTR(op), GMASTER_MODE_DM);
 
-    if (op->type != PLAYER || !CONTR(op))
-        return 0;
-    else
-    {
-        if (checkdm(op, op->name, (params ? params : "*"), CONTR(op)->socket.host))
-        {
-            gbl_active_DM = op; /* ad this dm to global dm list. TODO : make a list from it */
-            SET_FLAG(op, FLAG_WIZ);
-            SET_FLAG(op, FLAG_WIZPASS);
-            new_draw_info_format(NDI_UNIQUE, 0, op, "DM mode activated for %s!", op->name);
-            /*new_draw_info(NDI_UNIQUE | NDI_ALL, 1, NULL, "The Dungeon Master has arrived!");*/
-            SET_MULTI_FLAG(op, FLAG_FLYING);
-            esrv_send_inventory(op, op);
-            clear_los(op);
-            CONTR(op)->socket.update_tile = 0; /* force a draw_look() */
-            CONTR(op)->update_los = 1;
-            CONTR(op)->write_buf[0] = '\0';
-            return 1;
-        }
-        else
-        {
-            /* don't give our player even something to think about it when
-                 * they are not allowed to be DM
-                 */
-            /*new_draw_info(NDI_UNIQUE, 0,op, "Sorry Pal, I don't think so.");*/
-            CONTR(op)->write_buf[0] = '\0';
-            return 1;
-        }
-    }
+	return 1;
 }
 
+/* list all active GM/VOL/DM 
+ * gmaster actives only
+ */
+int command_dm_list(object *op, char *params)
+{
+	objectlink *ol;
+
+	if(CONTR(op)->gmaster_mode == GMASTER_MODE_NO)
+		return 0;
+	
+	new_draw_info(NDI_UNIQUE, 0, op, "DM/GM/VOL online");
+	new_draw_info(NDI_UNIQUE, 0, op, "--- --- ---");
+	for(ol = gmaster_list_VOL;ol;ol=ol->next)
+		new_draw_info_format(NDI_UNIQUE, 0, op, "%s (%d)", CONTR(ol->objlink.ob)->quick_name, ol->objlink.ob->level);
+	
+	for(ol = gmaster_list_GM;ol;ol=ol->next)
+		new_draw_info_format(NDI_UNIQUE, 0, op, "%s (%d)", CONTR(ol->objlink.ob)->quick_name, ol->objlink.ob->level);
+	
+	for(ol = gmaster_list_DM;ol;ol=ol->next)
+	{
+		if(!CONTR(ol->objlink.ob)->dm_stealth)
+			new_draw_info_format(NDI_UNIQUE, 0, op, "%s (%d)", CONTR(ol->objlink.ob)->quick_name, ol->objlink.ob->level);
+	}
+	return 1;
+	
+}
+
+/* /dm_set command
+ */
+int command_dm_set(object *op, char *params)
+{
+	char *str;
+
+
+	if(CONTR(op)->gmaster_mode != GMASTER_MODE_DM)
+		return 0;
+
+	if (!params)
+		goto d_set_usage;		
+
+	/* list all entries of gmaster_file
+	 */
+	if(!strcmp(params,"list"))
+	{	
+		objectlink *ol;
+
+		new_draw_info(NDI_UNIQUE, 0, op, "gmaster_file");
+		new_draw_info(NDI_UNIQUE, 0, op, "--- --- ---");
+		for(ol = gmaster_list;ol;ol=ol->next)
+			new_draw_info_format(NDI_UNIQUE, 0, op, "%s", ol->objlink.gm->entry);
+			
+		return 1;
+	}
+
+    if (!(str = strchr(params, ' ')))
+		goto d_set_usage;		
+
+
+    /* kill the space, and set string to the next param */
+    *str++ = '\0';
+
+	if(!strcmp(params,"add"))
+	{
+		char name[MAX_BUF], passwd[MAX_BUF], host[MAX_BUF], mode[MAX_BUF], dummy[MAX_BUF];
+
+        if (sscanf(str, "%[^:]:%[^:]:%[^:]:%s%[\n\r]", name, passwd, host, mode, dummy) < 3)
+			new_draw_info(NDI_UNIQUE, 0, op, "/dm_set: invalid parameter.");
+		else
+		{	
+			int mode_id = check_gmaster_file_entry(name, passwd, host, mode);
+			
+			if(mode_id == GMASTER_MODE_NO)
+			{
+				new_draw_info(NDI_UNIQUE, 0, op, "/dm_set: invalid parameter.");
+				return 1;
+			}
+			
+			/* all ok, setup the gmaster node and add it to our list */
+			LOG(llevSystem, "GMASTER:: /dm_set add %s invoked by %s\n", str, query_name(op));
+			new_draw_info_format(NDI_UNIQUE, 0, op, "/dm_set: add entry %s", str);
+			add_gmaster_file_entry(name, passwd, host, mode_id);			
+			new_draw_info(NDI_UNIQUE, 0, op, "write back gmaster_file...");
+			write_gmaster_file(); /* create a new file */
+		}
+		return 1;
+	}
+	else if(!strcmp(params,"remove"))
+	{
+		objectlink *ol;
+
+		for(ol = gmaster_list;ol;ol=ol->next)
+		{
+			if(!strcmp(str,ol->objlink.gm->entry)) /* found a entry */
+			{
+				/* delete the entry... */
+				LOG(llevSystem, "GMASTER:: /dm_set remove %s invoked by %s\n", str, query_name(op));
+
+				new_draw_info_format(NDI_UNIQUE, 0, op, "/dm_set: remove entry %s", str);
+				remove_gmaster_file_entry(ol);
+				new_draw_info(NDI_UNIQUE, 0, op, "write back gmaster_file...");
+				write_gmaster_file(); /* create a new file */
+				new_draw_info(NDI_UNIQUE, 0, op, "update gmaster rights...");
+				update_gmaster_file(); /* control rights of all active VOL/GM/DM */
+				new_draw_info(NDI_UNIQUE, 0, op, "done.");
+				
+				return 1;
+			}
+		}
+
+		return 1;
+	}
+
+d_set_usage:
+    new_draw_info(NDI_UNIQUE, 0, op, "Usage: /dm_set  list | add | remove <entry>");
+	
+	return 1;
+}
+
+	
 int command_invisible(object *op, char *params)
 {
     if (!op)
@@ -1162,6 +1405,7 @@ int command_forget_spell(object *op, char *params)
     do_forget_spell(op, spell);
     return 1;
 }
+
 /* GROS */
 /* Lists all plugins currently loaded with their IDs and full names.         */
 int command_listplugins(object *op, char *params)
@@ -1169,6 +1413,7 @@ int command_listplugins(object *op, char *params)
     displayPluginsList(op);
     return 1;
 }
+
 /* GROS */
 /* Loads the given plugin. The DM specifies the name of the library to load  */
 /* (no pathname is needed). Do not ever attempt to load the same plugin more */

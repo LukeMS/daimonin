@@ -80,7 +80,7 @@ struct mempool *pool_puddle;
 struct mempool *pool_object, *pool_player, *pool_map_bfs,
     *pool_path_segment, *pool_mob_data, *pool_mob_knownobj,
     *pool_mob_behaviourset, *pool_mob_behaviour, *pool_mob_behaviourparam,
-    *pool_objectlink;
+    *pool_objectlink, *pool_gmasters, *pool_bannode;
 
 /* Return the exponent exp needed to round n up to the nearest power of two, so that
  * (1 << exp) >= n and (1 << (exp -1)) < n */
@@ -160,7 +160,7 @@ void init_mempools()
 #endif        
     pool_object = create_mempool("objects", OBJECT_EXPAND, sizeof(object), 0,
             (chunk_constructor) initialize_object, (chunk_destructor) destroy_object);
-    pool_player = create_mempool("players", 5, sizeof(player), MEMPOOL_BYPASS_POOLS, NULL, NULL);
+    pool_player = create_mempool("players", 25, sizeof(player), MEMPOOL_BYPASS_POOLS, NULL, NULL);
     pool_map_bfs= create_mempool("map BFS nodes", 16, sizeof(struct mapsearch_node), 0, NULL, NULL);
     pool_path_segment= create_mempool("path segments", 500, sizeof(struct path_segment), 0, NULL, NULL);
     pool_mob_data= create_mempool("mob brains", 100, sizeof(struct mobdata), 0, NULL, NULL);
@@ -169,6 +169,9 @@ void init_mempools()
     pool_mob_behaviour = create_mempool("mob behaviours", 100, sizeof(struct mob_behaviour), 0, NULL, NULL);
     pool_mob_behaviourparam = create_mempool("mob behaviour parameter", 100, sizeof(struct mob_behaviour_param), 0, NULL, NULL);
     pool_objectlink = create_mempool("object links", 500, sizeof(objectlink), 0, NULL, NULL);
+
+    pool_gmasters = create_mempool("gmaster entries", 10, sizeof(gmaster_struct), 0, NULL, NULL);
+    pool_bannode = create_mempool("ban node entries", 25, sizeof(struct ban_struct), 0, NULL, NULL);
     
     /* Initialize end-of-list pointers and a few other values*/
     removed_objects = &end_marker;    

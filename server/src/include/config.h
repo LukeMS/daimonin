@@ -135,7 +135,6 @@
 * NOT_PERMADEATH - should death be the final end or not?
 * RECYCLE_TMP_MAPS - use tmp maps across multiple runs?
 * RESURRECTION - lets players bring other dead players back to life.
-* SEARCH_ITEMS - let players search for items on the ground
 * SECURE - Allow overriding values with run time flags?
 * SPELL_* - various spell related options
 * STAT_LOSS_ON_DEATH - toggle between stat loss or stat depletion
@@ -293,17 +292,6 @@
 
 
 /*
- * Enables the 'search-item command; a method to find equipment
- * in shops. 
- * Seems like it now works, and doesn't cause the game to hang.
- * 0.94.2 - I think this really should be a client issue - after all, the
- * client has all the info the player does.
- */
-
-#define SEARCH_ITEMS
-
-
-/*
  * If SECURE is defined, crossfire will not accept enviromental variables
  * as changes to the LIBDIR and other defines pointing to specific
  * directories.  The only time this should really be an issue if you are
@@ -393,6 +381,7 @@
  * BANFILE - ban certain users/hosts.
  * CSPORT - port to use for new client/server
  * DMFILE - file with dm/wizard access lists
+ * GMASTER_FILE - file with dm/wizard access lists
  * DUMP_SWITCHES - enable -m? flags for spoiler generation
  * LIBDIR - location of archetypes & other data.
  * LOGFILE - where to log if using -daemon option
@@ -439,6 +428,16 @@
 
 #ifndef DMFILE
 #define DMFILE "dm_file"
+#endif
+
+/*
+ * GMASTER_FILE
+ * A file containing valid names that can be dm, one on each line.  See
+ * example dm_file for syntax help.
+ */
+
+#ifndef GMASTER_FILE
+#define GMASTER_FILE "gmaster_file"
 #endif
 
 /*
@@ -665,24 +664,6 @@
  * (Note: something should probably be done with lock-file permission)
  */
 #define SAVE_MODE   0660
-
-/* NOTE ON SAVE_INTERVAL and AUTOSAVE:  Only one of these two really
- * needs to be selected.  You can set both, and things will work fine,
- * however, it just means that a lot more saving will be done, which
- * can slow things down some.
- */
-
-/* How often (in seconds) the player is saved if he drops things.  If it is
- * set to 0, the player will be saved for every item he drops.  Otherwise,
- * if the player drops and item, and the last time he was saved
- * due to item drop is longer
- * the SAVE_INTERVAL seconds, he is then saved.  Depending on your playing
- * environment, you may want to set this to a higher value, so that
- * you are not spending too much time saving the characters.
- * This option should now work (Crossfire 0.90.5)
- */
-
-/*#define SAVE_INTERVAL 300*/
 
 /*
  * AUTOSAVE saves the player every AUTOSAVE ticks.  A value of

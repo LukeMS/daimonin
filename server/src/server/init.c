@@ -95,6 +95,14 @@ static void init_globals()
 
     set_pticks_time(MAX_TIME);
 
+	gmaster_list=NULL;
+	gmaster_list_VOL=NULL;
+	gmaster_list_GM=NULL;
+	gmaster_list_DM=NULL;
+
+	ban_list_player=NULL;
+	ban_list_ip=NULL;
+
     exiting = 0;
     player_active = 0;
     first_god = NULL;
@@ -935,6 +943,7 @@ void fatal_signal(int make_core, int close_sockets)
         clean_tmp_files();
         write_book_archive();
         write_todclock();   /* lets just write the clock here */
+		save_ban_file();
     }
     if (make_core)
         abort();
@@ -1125,6 +1134,8 @@ void init(int argc, char **argv)
     init_ericserver();
     metaserver_init();
     init_arch_default_behaviours();
+	load_ban_file();
+	load_gmaster_file();
     init_done = 1;
 }
 
@@ -1146,7 +1157,7 @@ void init_library()
     init_archetypes();  /* Reads all archetypes from file */
     init_dynamic();
     init_clocks();
-
+		
     /* init some often used default archetypes */
     if (level_up_arch == NULL)
         level_up_arch = find_archetype("level_up");

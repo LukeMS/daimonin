@@ -53,7 +53,11 @@ void show_group(int x, int y)
     */
 
     if(global_group_status < GROUP_INVITE)
-        return;
+	{
+		StringBlt(ScreenSurface, &Font6x3Out, "type '/help group' for info", 40, 585, COLOR_WHITE, NULL, NULL);
+		return;
+	}
+
 
     mb = SDL_GetMouseState(&mx, &my);
     if(global_group_status == GROUP_INVITE || global_group_status == GROUP_WAIT)
