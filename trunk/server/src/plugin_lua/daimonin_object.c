@@ -41,8 +41,7 @@ static struct method_decl   GameObject_methods[]            =
     {"Drop",  (lua_CFunction) GameObject_Drop}, {"Take",  (lua_CFunction) GameObject_Take},
     {"Fix", (lua_CFunction) GameObject_Fix}, {"Kill", (lua_CFunction) GameObject_Kill},
     {"CastSpell", (lua_CFunction) GameObject_CastSpell}, {"DoKnowSpell", (lua_CFunction) GameObject_DoKnowSpell},
-    {"AcquireSpell", (lua_CFunction) GameObject_AcquireSpell}, 
-    {"FindSkill", (lua_CFunction) GameObject_FindSkill},
+    {"AcquireSpell", (lua_CFunction) GameObject_AcquireSpell}, {"DoKnowSkill", (lua_CFunction) GameObject_DoKnowSkill},
     {"AcquireSkill", (lua_CFunction) GameObject_AcquireSkill},
     {"FindMarkedObject", (lua_CFunction) GameObject_FindMarkedObject},
     {"CheckQuestObject", (lua_CFunction) GameObject_CheckQuestObject},
@@ -92,6 +91,7 @@ struct attribute_decl       GameObject_attributes[]         =
     {"above", FIELDTYPE_OBJECT, offsetof(object, above), FIELDFLAG_READONLY},
     {"inventory", FIELDTYPE_OBJECT, offsetof(object, inv), FIELDFLAG_READONLY},
     {"map", FIELDTYPE_MAP, offsetof(object, map), FIELDFLAG_READONLY},
+    {"count", FIELDTYPE_UINT32, offsetof(object, count), FIELDFLAG_READONLY},
     {"name", FIELDTYPE_SHSTR, offsetof(object, name), FIELDFLAG_PLAYER_READONLY},
     {"title", FIELDTYPE_SHSTR, offsetof(object, title), 0}, {"race", FIELDTYPE_SHSTR, offsetof(object, race), 0},
     {"slaying", FIELDTYPE_SHSTR, offsetof(object, slaying), 0},
@@ -230,7 +230,7 @@ static const char          *GameObject_flags[NUM_FLAGS + 1 + 1] =
     "f_can_use_skill", "f_is_thrown",               /* 80 */
     "f_is_vul_sphere", "f_is_proof_sphere", "f_is_male", "f_is_female", "f_applied", "f_inv_locked", "f_is_wooded",
     "f_is_hilly", "f_has_ready_skill", "f_has_ready_weapon",        /* 90 */
-    "f_no_skill_ident","f_use_dmg_info", "f_can_see_in_dark", "f_is_cauldron", "f_is_dust", "f_no_steal",
+    "f_no_skill_ident", NULL /* flag 92 */, "f_can_see_in_dark", "f_is_cauldron", "f_is_dust", "f_no_steal",
     "f_one_hit", NULL, "f_berserk", "f_no_attack",   /* 100 */
     "f_invulnerable", "f_quest_item", "f_is_traped", "f_is_vul_elemental", "f_is_proof_elemental", /* 105 */
     "f_is_vul_magic", "f_is_proof_magic", "f_is_vul_physical", "f_is_proof_physical", "f_sys_object", /* 110 */
@@ -850,7 +850,7 @@ static int GameObject_SetRank(lua_State *L)
             if (strcmp(rank, "Mr") == 0) /* Mr = keyword to clear title and not add it as rank */
             {
                 FREE_AND_CLEAR_HASH(walk->title);
-            } 
+            }
             else
             {
                 FREE_AND_COPY_HASH(walk->title, rank);
@@ -1214,30 +1214,28 @@ static int GameObject_AcquireSpell(lua_State *L)
 }
 
 /*****************************************************************************/
-/* Name   : GameObject_FindSkill                                             */
-/* Lua    : object.FindSkill(skill)                                          */
-/* Info   : skill ptr if the skill is known by object, NULL if it isn't      */
+/* Name   : GameObject_DoKnowSkill                                           */
+/* Lua    : object.DoKnowSkill(skill)                                        */
+/* Info   : true if the skill is known by object, false if it isn't          */
 /* Status : Tested                                                           */
 /*****************************************************************************/
-static int GameObject_FindSkill(lua_State *L)
+static int GameObject_DoKnowSkill(lua_State *L)
 {
     int         skill;
     CFParm     *CFR;
-    object     *myob;
+    int         value;
     lua_object *self;
 
     get_lua_args(L, "Oi", &self, &skill);
 
     GCFP.Value[0] = (void *) (WHO);
     GCFP.Value[1] = (void *) (&skill);
-    CFR = (PlugHooks[HOOK_FINDSKILL]) (&GCFP);
+    CFR = (PlugHooks[HOOK_CHECKFORSKILLKNOWN]) (&GCFP);
+    value = *(int *) (CFR->Value[0]);
+    free(CFR);
 
-    myob = (object *) (CFR->Value[0]);
-    if (!myob)
-        return 0;
-    return push_object(L, &GameObject, myob);
-
-
+    lua_pushboolean(L, value);
+    return 1;
 }
 
 /*****************************************************************************/
