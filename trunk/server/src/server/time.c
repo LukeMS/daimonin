@@ -1092,11 +1092,19 @@ void change_object(object *op) { /* Doesn`t handle linked objs yet */
 				CLEAR_FLAG(op,FLAG_CHANGING);
 
 				/* thats special lights like lamp which can be refilled */
-				if(op->other_arch == NULL)
+				if(op->other_arch == NULL || (op->other_arch  && !(op->other_arch->clone.sub_type1&2)))
 	            {
 					op->stats.food=0;
-			        CLEAR_FLAG(op,FLAG_ANIMATE);
-					op->face = op->arch->clone.face;
+					if(op->other_arch && op->other_arch->clone.sub_type1 & 1)
+					{
+						op->animation_id = op->other_arch->clone.animation_id;
+						SET_ANIMATION(op, (NUM_ANIMATIONS(op)/NUM_FACINGS(op))*op->direction);
+					}
+					else
+					{
+						CLEAR_FLAG(op,FLAG_ANIMATE);
+						op->face = op->arch->clone.face;
+					}
 	
 					if(op->env) /* not on map? */
 					{
