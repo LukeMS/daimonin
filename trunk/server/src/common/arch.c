@@ -30,6 +30,7 @@
 /* IF set, does a little timing on the archetype load. */
 #define TIME_ARCH_LOAD 0
 
+#define ARCHTABLE 10007	/* Used when hashing archetypes */
 static archetype *arch_table[ARCHTABLE];
 int arch_cmp=0;		/* How many strcmp's */
 int arch_search=0;	/* How many searches */
@@ -306,21 +307,7 @@ archetype *get_archetype_struct() {
   new=(archetype *)CALLOC(1,sizeof(archetype));
   if(new==NULL)
     LOG(llevError,"get_archetype_struct() - out of memory\n");
-  
-  /* These values are actually cleared with calloc (one would hope) */
-  /*new->next=NULL;
-  new->name=NULL;
-  new->head=NULL;
-  new->more=NULL;
-  new->base_clone=NULL;
-  
-  new->clone.other_arch=NULL;
-  new->clone.name=NULL;
-  new->clone.title=NULL;
-  new->clone.race=NULL;
-  new->clone.slaying=NULL;
-  new->clone.msg=NULL; */
-  
+    
   initialize_object(&new->clone);  /* to initial state other also */
   
   return new;
@@ -343,10 +330,7 @@ void first_arch_pass(FILE *fp) {
   {
 	/* use copy_object_data() - we don't want adjust any speed_left here! */
     copy_object_data(op,&at->clone); 
-	/*
-	if(!op->speed_left)
-		at->clone.speed_left=0.0f;
-	*/
+
 	/* ok... now we have the right speed_left value for out object.
 	 * copy_object() now will track down negative speed values, to
 	 * alter speed_left to garantie a random & senseful start value.
@@ -504,15 +488,6 @@ void second_arch_pass(FILE *fp_start) {
 
 }
 
-#ifdef DEBUG
-void check_generators() {
-  archetype *at;
-  for(at=first_archetype;at!=NULL;at=at->next)
-    if(QUERY_FLAG(&at->clone,FLAG_GENERATOR)&&at->clone.other_arch==NULL)
-      LOG(llevBug,"BUG: %s is generator but lacks other_arch.\n",STRING_ARCH_NAME(at));
-}
-#endif
-
 /*
  * First initialises the archtype hash-table (init_archetable()).
  * Reads and parses the archetype file (with the first and second-pass
@@ -566,14 +541,12 @@ void load_archetypes() {
    * randomitems (= treasurelists) to the arches.
    */
   init_artifacts();  /* If not called before, reads all artifacts from file */
+  add_artifact_archtype();
   LOG(llevDebug," loading treasure...\n");
   load_treasures();
   LOG(llevDebug," done\n arch-pass 2...\n");
   second_arch_pass(fp);
   LOG(llevDebug," done.\n");
-#ifdef DEBUG
-  check_generators();
-#endif
   close_and_delete(fp, comp);
   LOG(llevDebug,"Reading archetypes done.\n");
 }
@@ -661,8 +634,8 @@ archetype *find_archetype(const char *name) {
   arch_search++;
   for(;;) {
     at = arch_table[index];
-    if (at==NULL) /* not in archetype list  - lets try the artifact file */
-		return find_artifact_archtype(name); /* returns NULL or default artifact archetype */
+    if (at==NULL)
+		return NULL;
     arch_cmp++;
     if (!strcmp(at->name,name))
       return at;
@@ -724,28 +697,6 @@ object *clone_arch(int type) {
   }
   copy_object(&at->clone,op);
   return op;
-}
-
-/*
- * member: make instance from class
- */
-
-object *ObjectCreateArch (archetype * at)
-{
-    object *op, *prev = NULL, *head = NULL;
-
-    while (at) {
-        op = arch_to_object (at);
-        op->x = at->clone.x;
-        op->y = at->clone.y;
-        if (head)
-            op->head = head, prev->more = op;
-        if (!head)
-            head = op;
-        prev = op;
-        at = at->more;
-    }
-    return (head);
 }
 
 /*** end of arch.c ***/

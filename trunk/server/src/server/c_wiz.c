@@ -842,7 +842,7 @@ int command_reset (object *op, char *params)
 			return 0;
 		}
 
-		new_draw_info_format(NDI_UNIQUE, 0,op,"Start reseting map %s.", m->path?m->path:">NULL<");
+		new_draw_info_format(NDI_UNIQUE, 0,op,"Start reseting map %s.", STRING_SAFE(m->path));
 		/* remove now all players from this map - flag them so we can
 		 * put them back later.
 		 */

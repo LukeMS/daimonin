@@ -1418,7 +1418,7 @@ int cast_heal(object *op,int level, object *target,int spell_type)
 			if(op->type == PLAYER)
 			{
 				if(heal>0)
-					new_draw_info_format(NDI_UNIQUE, 0,op, "The prayer heals %s for %d hp!", op==target?"you":(target?target->name:"NULL"), heal);
+					new_draw_info_format(NDI_UNIQUE, 0,op, "The prayer heals %s for %d hp!", op==target?"you":query_name(target), heal);
 				else
 					new_draw_info(NDI_UNIQUE, 0,op, "The healing prayer fails!");
 			}

@@ -203,7 +203,7 @@ void update_buttons(mapstruct *m) {
 	  if (!ol->ob || ol->ob->count != ol->id) 
 	  {
 		  LOG(llevBug, "BUG: Internal error in update_button (%s (%dx%d):%d, connected %d ).\n",
-	    ol->ob?ol->ob->name:"null",
+	    ol->ob?STRING_SAFE(ol->ob->name):"null",
 	    ol->ob?ol->ob->x:-1,
 	    ol->ob?ol->ob->y:-1,
 	    ol->id,

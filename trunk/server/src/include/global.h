@@ -1,3 +1,4 @@
+
 /*
     Daimonin, the Massive Multiuser Online Role Playing Game
     Server Applicatiom
@@ -57,26 +58,77 @@ typedef signed char	sint8;
 typedef unsigned short Fontindex;
 typedef unsigned int tag_t;
 
-typedef struct _money_block {
-	int mode; /* 0, 1, or -1: see get_money_from_string() */
-	long mithril;
-	long gold;
-	long silver;
-	long copper;
-}_money_block;
+#ifdef CALLOC
+#undef CALLOC
+#endif
 
-#define MONEYSTRING_NOTHING 0
-#define MONEYSTRING_AMOUNT 1
-#define MONEYSTRING_ALL -1
+#ifdef USE_CALLOC
+# define CALLOC(x,y)	calloc(x,y)
+# define CFREE(x)	free(x)
+#else
+# define CALLOC(x,y)	malloc(x*y)
+# define CFREE(x)	free(x)
+#endif
 
+/* 0.94.1 - change to GETTIMEOFDAY macro - SNI systems only one one option.
+ * rather than have complex #ifdefs throughout the file, lets just figure
+ * it out once, here at the top.
+ * Have no idea if that is the right symbol to check on for NetBSD,
+ * but NetBSD does use 2 params.
+ * Move this to global.h from time.c since its also used in arch.c
+ */
+
+#ifdef GETTIMEOFDAY_TWO_ARGS
+#define GETTIMEOFDAY(last_time) gettimeofday(last_time, (struct timezone *) NULL);
+#else
+#define GETTIMEOFDAY(last_time) gettimeofday(last_time);
+#endif
 
 #define POW2(x) ((x) * (x))
 
-/* map distance values for draw_info_map functions 
- * This value is in tiles
+/* to access strings from objects, maps, arches or other system objects,
+ * for printf() or others use only this macros to avoid NULL pointer exceptions.
+ * Some standard c libaries don't check for NULL in that functions - most times
+ * the retail versions.
  */
-#define MAP_INFO_NORMAL 12
-#define MAP_INFO_ALL 9999
+#define STRING_SAFE(__string__) ((__string__)?(__string__):">NULL<")
+
+#define STRING_ARCH_NAME(__arch__) ((__arch__)->name?(__arch__)->name:">NULL<")
+
+#define STRING_OBJ_NAME(__ob__) ((__ob__)->name?(__ob__)->name:">NULL<")
+#define STRING_OBJ_ARCH_NAME(__ob__) ((__ob__)->arch?((__ob__)->arch->name?(__ob__)->arch->name:">NULL<"):">NULL<")
+#define STRING_OBJ_TITLE(__ob__) ((__ob__)->title?(__ob__)->title:">NULL<")
+#define STRING_OBJ_RACE(__ob__) ((__ob__)->race?(__ob__)->race:">NULL<")
+#define STRING_OBJ_SLAYING(__ob__) ((__ob__)->slaying?(__ob__)->slaying:">NULL<")
+#define STRING_OBJ_MSG(__ob__) ((__ob__)->msg?(__ob__)->msg:">NULL<")
+
+#define STRING_MAP_PATH(__map__) ((__map__)->path?(__map__)->path:">NULL<")
+#define STRING_MAP_TILE_PATH(__map__, __id__) ((__map__)->tile_path[__id__]?(__map__)->tile_path[__id__]:">NULL<")
+#define STRING_MAP_NAME(__map__) ((__map__)->name?(__map__)->name:">NULL<")
+#define STRING_MAP_TMPNAME(__map__) ((__map__)->tmpname?(__map__)->tmpname:">NULL<")
+#define STRING_MAP_MSG(__map__) ((__map__)->msg?(__map__)->msg:">NULL<")
+
+
+/* Rotate right from bsd sum. This is used in various places for checksumming */
+#define ROTATE_RIGHT(c) if ((c) & 01) (c) = ((c) >>1) + 0x80000000; else (c) >>= 1;
+
+
+#define SET_ANIMATION(ob,newanim) ob->face=&new_faces[animations[ob->animation_id].faces[newanim]]
+#define GET_ANIMATION(ob,anim) (animations[ob->animation_id].faces[anim])
+#define GET_ANIM_ID(ob) (ob->animation_id)
+
+#define SET_INV_ANIMATION(ob,newanim) ob->face=&new_faces[animations[ob->inv_animation_id].faces[newanim]]
+#define GET_INV_ANIMATION(ob,anim) (animations[ob->inv_animation_id].faces[anim])
+#define GET_INV_ANIM_ID(ob) (ob->inv_animation_id)
+/* NUM_ANIMATIONS returns the number of animations allocated.  The last
+ * usuable animation will be NUM_ANIMATIONS-1 (for example, if an object
+ * has 8 animations, NUM_ANIMATIONS will return 8, but the values will
+ * range from 0 through 7.
+ */
+#define NUM_ANIMATIONS(ob) (animations[ob->animation_id].num_animations)
+#define NUM_FACINGS(ob) (animations[ob->animation_id].facings)
+
+#define FREE_AND_NULL_PTR(_xyz_) {if(_xyz_){free(_xyz_); _xyz_=NULL; }}
 
 /* use *only* these macros to access the global hash table!
  * Note: there is a 2nd hash table for the arch list - thats a static
@@ -110,6 +162,12 @@ typedef struct _money_block {
 #define SEND_FACE_OUT_OF_BOUNDS 1
 #define SEND_FACE_NO_DATA 2
 
+/* map distance values for draw_info_map functions 
+ * This value is in tiles
+ */
+#define MAP_INFO_NORMAL 12
+#define MAP_INFO_ALL 9999
+
 /* number of connected maps from a tiled map */
 #define TILED_MAPS 8
 
@@ -124,10 +182,26 @@ typedef struct _money_block {
 				     * experience obj always.*/ 
 
 #define MAXLEVEL      110
-extern uint32 new_levels[MAXLEVEL+2];
-extern float lev_exp[MAXLEVEL+1];
 
-extern uint32 global_map_tag; /* our global map_tag value for the server (map.c)*/
+#define MONEYSTRING_NOTHING 0
+#define MONEYSTRING_AMOUNT 1
+#define MONEYSTRING_ALL -1
+
+/* GROS: Those are used by plugin events (argument fixthem) */
+#define SCRIPT_FIX_ACTIVATOR 2
+#define SCRIPT_FIX_ALL 1
+#define SCRIPT_FIX_NOTHING 0
+
+#define special_potion(__op_sp) (__op_sp)->last_eat
+#define move_object(__op, __dir) move_ob(__op,__dir,__op)
+
+#define is_magical(__op_) QUERY_FLAG(__op_,FLAG_IS_MAGICAL)
+
+#define NUM_COLORS		13
+
+/* global typedefs.
+ * which needs defined before header loading.
+ */
 
 /*
  * So far only used when dealing with artifacts.
@@ -137,6 +211,7 @@ typedef struct linked_char {
   const char *name;
   struct linked_char *next;
 } linked_char;
+
 
 #include "face.h"
 #include "attack.h" /* needs to be before material.h */
@@ -189,21 +264,19 @@ typedef struct linked_char {
  * last_eat == 0 is no special potion - means they are used
  * as spell effect carrier. 
  */
-#define special_potion(__op_sp) (__op_sp)->last_eat
 
 /* arch.c - sysinfo for lowlevel */
 extern int arch_cmp;		/* How many strcmp's */
 extern int arch_search;	/* How many searches */
 
-#define move_object(__op, __dir) move_ob(__op,__dir,__op)
-
-#define is_magical(__op_) QUERY_FLAG(__op_,FLAG_IS_MAGICAL)
-
-#define NUM_COLORS		13
-
 extern char *colorname[NUM_COLORS];
 
 extern New_Face *new_faces;
+
+extern uint32 new_levels[MAXLEVEL+2];
+extern float lev_exp[MAXLEVEL+1];
+
+extern uint32 global_map_tag; /* our global map_tag value for the server (map.c)*/
 
 /*
  * These are the beginnings of linked lists:
@@ -262,48 +335,6 @@ EXTERN const char *undead_name;	/* Used in hit_player() in main.c */
 EXTERN Animations *animations;
 EXTERN int num_animations,animations_allocated, bmaps_checksum;
 
-/* to access strings from objects, maps, arches or other system objects,
- * for printf() or others use only this macros to avoid NULL pointer exceptions.
- * Some standard c libaries don't check for NULL in that functions - most times
- * the retail versions.
- */
-#define STRING_SAFE(__string__) (__string__?__string__:">NULL<")
-
-#define STRING_ARCH_NAME(__arch__) ((__arch__)->name?(__arch__)->name:">NULL<")
-
-#define STRING_OBJ_NAME(__ob__) ((__ob__)->name?(__ob__)->name:">NULL<")
-#define STRING_OBJ_ARCH_NAME(__ob__) ((__ob__)->arch?((__ob__)->arch->name?(__ob__)->arch->name:">NULL<"):">NULL<")
-#define STRING_OBJ_TITLE(__ob__) ((__ob__)->title?(__ob__)->title:">NULL<")
-#define STRING_OBJ_RACE(__ob__) ((__ob__)->race?(__ob__)->race:">NULL<")
-#define STRING_OBJ_SLAYING(__ob__) ((__ob__)->slaying?(__ob__)->slaying:">NULL<")
-#define STRING_OBJ_MSG(__ob__) ((__ob__)->msg?(__ob__)->msg:">NULL<")
-
-#define STRING_MAP_PATH(__map__) ((__map__)->path?(__map__)->path:">NULL<")
-#define STRING_MAP_TILE_PATH(__map__, __id__) ((__map__)->tile_path[__id__]?(__map__)->tile_path[__id__]:">NULL<")
-#define STRING_MAP_NAME(__map__) ((__map__)->name?(__map__)->name:">NULL<")
-#define STRING_MAP_TMPNAME(__map__) ((__map__)->tmpname?(__map__)->tmpname:">NULL<")
-#define STRING_MAP_MSG(__map__) ((__map__)->msg?(__map__)->msg:">NULL<")
-
-
-/* Rotate right from bsd sum. This is used in various places for checksumming */
-#define ROTATE_RIGHT(c) if ((c) & 01) (c) = ((c) >>1) + 0x80000000; else (c) >>= 1;
-
-
-#define SET_ANIMATION(ob,newanim) ob->face=&new_faces[animations[ob->animation_id].faces[newanim]]
-#define GET_ANIMATION(ob,anim) (animations[ob->animation_id].faces[anim])
-#define GET_ANIM_ID(ob) (ob->animation_id)
-
-#define SET_INV_ANIMATION(ob,newanim) ob->face=&new_faces[animations[ob->inv_animation_id].faces[newanim]]
-#define GET_INV_ANIMATION(ob,anim) (animations[ob->inv_animation_id].faces[anim])
-#define GET_INV_ANIM_ID(ob) (ob->inv_animation_id)
-/* NUM_ANIMATIONS returns the number of animations allocated.  The last
- * usuable animation will be NUM_ANIMATIONS-1 (for example, if an object
- * has 8 animations, NUM_ANIMATIONS will return 8, but the values will
- * range from 0 through 7.
- */
-#define NUM_ANIMATIONS(ob) (animations[ob->animation_id].num_animations)
-#define NUM_FACINGS(ob) (animations[ob->animation_id].facings)
-
 extern int freearr_x[SIZEOFFREE], freearr_y[SIZEOFFREE];
 extern int maxfree[SIZEOFFREE], freedir[SIZEOFFREE];
 
@@ -325,22 +356,13 @@ EXTERN archetype *base_info_archetype;	/* Nice to have fast access to it */
 EXTERN archetype *map_archeytpe;
 EXTERN archetype *level_up_arch; /* a global animation arch we use it in 2 modules, so not static */
 
-#define decrease_ob(xyz) decrease_ob_nr(xyz,1)
-
-#define FREE_AND_NULL_PTR(_xyz_) {if(_xyz_){free(_xyz_); _xyz_=NULL; }}
-
-#ifdef CALLOC
-#undef CALLOC
-#endif
-
-#ifdef USE_CALLOC
-# define CALLOC(x,y)	calloc(x,y)
-# define CFREE(x)	free(x)
-#else
-# define CALLOC(x,y)	malloc(x*y)
-# define CFREE(x)	free(x)
-#endif
-
+typedef struct _money_block {
+	int mode; /* 0, 1, or -1: see get_money_from_string() */
+	long mithril;
+	long gold;
+	long silver;
+	long copper;
+}_money_block;
 
 typedef struct Settings {
     char    *logfilename;   /* logfile to use */
@@ -383,24 +405,6 @@ typedef struct Settings {
 
 extern Settings settings;
 
-/* 0.94.1 - change to GETTIMEOFDAY macro - SNI systems only one one option.
- * rather than have complex #ifdefs throughout the file, lets just figure
- * it out once, here at the top.
- * Have no idea if that is the right symbol to check on for NetBSD,
- * but NetBSD does use 2 params.
- * Move this to global.h from time.c since its also used in arch.c
- */
-
-#ifdef GETTIMEOFDAY_TWO_ARGS
-#define GETTIMEOFDAY(last_time) gettimeofday(last_time, (struct timezone *) NULL);
-#else
-#define GETTIMEOFDAY(last_time) gettimeofday(last_time);
-#endif
-
-/* GROS: Those are used by plugin events (argument fixthem) */
-#define SCRIPT_FIX_ACTIVATOR 2
-#define SCRIPT_FIX_ALL 1
-#define SCRIPT_FIX_NOTHING 0
 
 /* include some global project headers */
 #ifndef __CEXTRACT__

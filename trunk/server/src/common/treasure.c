@@ -285,9 +285,9 @@ static treasure *load_treasure(FILE *fp, int *t_style, int *a_chance)
 		  t->next->t_style = t_style2;
       return t;
     } else
-      LOG(llevBug,"BUG: Unknown treasure-command: '%s', last entry %s\n",cp,t->name?t->name:"null");
+      LOG(llevBug,"BUG: Unknown treasure-command: '%s', last entry %s\n",STRING_SAFE(cp),STRING_SAFE(t->name));
   }
-  LOG(llevBug,"BUG: treasure %s lacks 'end'.>%s<\n",t->name?t->name:"NULL",cp?cp:"NULL");
+  LOG(llevBug,"BUG: treasure %s lacks 'end'.>%s<\n",STRING_SAFE(t->name),STRING_SAFE(cp));
   return t;
 }
 
@@ -641,7 +641,7 @@ void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int
 {
   object *tmp;
 
-	/*  LOG(-1,"-CAT-: %s (%d)\n", t->name?t->name:"NULL",change_arch?t->change_arch.material_quality:9999); */
+	/*  LOG(-1,"-CAT-: %s (%d)\n", STRING_SAFE(t->name),change_arch?t->change_arch.material_quality:9999); */
 	/* LOG(-1,"CAT: cs: %d (%d)(%s)\n", t->chance_fix, t->chance, t->name); */
 	if(t->t_style != T_STYLE_UNSET)
 		t_style = t->t_style;
@@ -651,7 +651,7 @@ void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int
 	if((t->chance_fix!=CHANCE_FIX && !(RANDOM()%(int)t->chance_fix)) ||  (int)t->chance >= 100 || ((RANDOM()%100 + 1) < (int) t->chance)) {
 			/*LOG(-1,"CAT22: cs: %d (%d)(%s)\n", t->chance_fix, t->chance, t->name);*/
     if (t->name) {
-	/*  LOG(-1,"-CAT2: %s (%d)\n", t->name?t->name:"NULL",change_arch?t->change_arch.material_quality:9999); */
+	/*  LOG(-1,"-CAT2: %s (%d)\n", STRING_SAFE(t->name),change_arch?t->change_arch.material_quality:9999); */
 		if (strcmp(t->name,"NONE") && difficulty>=t->difficulty)
 			create_treasure(find_treasurelist(t->name), op, flag, difficulty, t_style, a_chance,tries,change_arch?change_arch:&t->change_arch);
     }
@@ -1738,13 +1738,12 @@ artifactlist *find_artifactlist(int type) {
 }
 
 /* not used ATM - MT 2003 */
+/*
 artifact *find_artifact(const char *name)
 {
 	artifactlist *al;
 	artifact *art=NULL;
 
-  /* this is the brute force way. We should use in the next release a hash table for it. MT
-   */
   for (al=first_artifactlist; al!=NULL; al=al->next)
   {
 		art = al->items;
@@ -1757,26 +1756,26 @@ artifact *find_artifact(const char *name)
   }
 	return NULL;
 }
+*/
 
-/* find the default archetype from artifact by intern artifactlist name */
-archetype *find_artifact_archtype(const char *name)
+void add_artifact_archtype(void)
 {
 	artifactlist *al;
 	artifact *art=NULL;
 
-  /* this is the brute force way. We should use in the next release a hash table for it. MT
-   */
   for (al=first_artifactlist; al!=NULL; al=al->next)
   {
 		art = al->items;
 	    do 
 		{
-			if (art->name && !strcmp(art->name, name))
-				return &art->def_at;
+			if (art->name)
+			{
+				/*LOG(llevDebug,"add_art: %s (%s)\n", art->def_at.name, art->name);*/
+				add_arch(&art->def_at);
+			}
 			art = art->next;
 	    } while (art!=NULL);
   }
-	return NULL;
 }
 
 

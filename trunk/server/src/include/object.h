@@ -30,6 +30,8 @@
 #pragma pack(push,1)
 #endif
 
+#define decrease_ob(xyz) decrease_ob_nr(xyz,1)
+
 /* move_apply() function call flags */
 #define MOVE_APPLY_DEFAULT	0
 #define MOVE_APPLY_WALK_ON	1

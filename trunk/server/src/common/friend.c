@@ -176,7 +176,7 @@ void dump_friendly_objects() {
 void clean_friendly_list() {
     objectlink *this_link, *prev=NULL, *next;
 
-    for (this_link=first_friendly_object; this_link!=NULL; this_link=next) {
+    for (this_link=first_friendly_object; this_link; this_link=next) {
 	next=this_link->next;
 	if (!OBJECT_VALID(this_link->ob, this_link->id) || 
 	    (!QUERY_FLAG(this_link->ob, FLAG_FRIENDLY) && this_link->ob->type != PLAYER)) {
@@ -186,7 +186,7 @@ void clean_friendly_list() {
 	    else {
 		first_friendly_object = this_link->next;
 	    }
-        LOG(llevDebug,"clean_friendly_list: Removed bogus link: %s\n", this_link->ob==NULL?"<NULL>":query_name(this_link->ob));
+        LOG(llevDebug,"clean_friendly_list: Removed bogus link: %s\n", query_name(this_link->ob));
 	    free(this_link);
 	}
 	/* If we removed the object, then prev is still valid.  */
