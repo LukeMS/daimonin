@@ -65,32 +65,22 @@ struct mempool_chunk            end_marker; /* only used as an end marker for th
 
 /** Basic pooling memory management system **/
 
-/* TODO: move out into mempool.c & mempool.h files.
- * TODO: poolify objlinks
- */
-
 /*
  * A pool definition in the mempools[] array and an entry in the mempool id enum 
  * is needed for each type of struct we want to use the pooling memory management for. 
  */
 
-struct mempool                  mempools[NROF_MEMPOOLS] =
-{
+int nrof_mempools = 0;
+struct mempool *mempools[MAX_NROF_MEMPOOLS];
+
 #ifdef MEMPOOL_TRACKING
-    { "puddles",             10, sizeof(struct puddle_info),      MEMPOOL_ALLOW_FREEING, NULL, NULL},
+struct mempool *pool_puddle;
 #endif    
-    { "objects", OBJECT_EXPAND,  sizeof(object),                  0,
-    (chunk_constructor) initialize_object, (chunk_destructor) destroy_object },
-    { "players",              5, sizeof(player),                  MEMPOOL_BYPASS_POOLS, NULL, NULL },
-    { "map BFS nodes",       16, sizeof(struct mapsearch_node),   0, NULL, NULL },
-    { "path segments",      500, sizeof(struct path_segment),     0, NULL, NULL },
-    { "mob brains",         100, sizeof(struct mobdata),          0, NULL, NULL },
-    { "mob known objects",  100, sizeof(struct mob_known_obj),    0, NULL, NULL },
-    { "mob behaviour sets", 100, sizeof(struct mob_behaviourset), 0, NULL, NULL },
-    { "mob behaviours",     100, sizeof(struct mob_behaviour),    0, NULL, NULL },
-    { "mob behaviour parameter", 100, sizeof(struct mob_behaviour_param), 0, NULL, NULL },
-    { "object links",      500, sizeof(objectlink),     0, NULL, NULL }
-};
+    
+struct mempool *pool_object, *pool_player, *pool_map_bfs,
+    *pool_path_segment, *pool_mob_data, *pool_mob_knownobj,
+    *pool_mob_behaviourset, *pool_mob_behaviour, *pool_mob_behaviourparam,
+    *pool_objectlink;
 
 /* Return the exponent exp needed to round n up to the nearest power of two, so that
  * (1 << exp) >= n and (1 << (exp -1)) < n */
@@ -121,40 +111,71 @@ uint32 nearest_pow_two_exp(uint32 n)
  * format might change in the future.
  */
 
+/* TODO: implement =) */
+void free_mempool(struct mempool *pool)
+{
+}
+
+struct mempool *create_mempool(const char *description, uint32 expand, uint32 size, 
+        uint32 flags, chunk_constructor constructor, chunk_destructor destructor)
+{
+    int i;    
+    struct mempool *pool;
+
+    if(nrof_mempools >= MAX_NROF_MEMPOOLS) 
+        LOG(llevError, "Too many memory pools registered. Please increase the MAX_NROF_MEMPOOLS constant in mempools.h\n");
+    
+    pool = calloc(1, sizeof(struct mempool));
+    
+    mempools[nrof_mempools] = pool;
+    
+    pool->chunk_description = description;
+    pool->expand_size = expand;
+    pool->chunksize = size;
+    pool->flags = flags;
+    pool->constructor = constructor;
+    pool->destructor = destructor;
+
+    for (i = 0; i < MEMPOOL_NROF_FREELISTS; i++)
+    {
+        pool->freelist[i] = &end_marker;
+        pool->nrof_free[i] = 0;
+        pool->nrof_allocated[i] = 0;
+    }
+
+#ifdef MEMPOOL_TRACKING
+    pool->first_puddle_info = NULL;
+#endif        
+    
+    nrof_mempools++;
+
+    return pool;
+}
+
 /* Initialize the mempools lists and related data structures */
 void init_mempools()
 {
-    int i, j;
-
-    /* Initialize end-of-list pointers and a few other values*/
-    for (i = 0; i < NROF_MEMPOOLS; i++)
-    {
-        for (j = 0; j < MEMPOOL_NROF_FREELISTS; j++)
-        {
-            mempools[i].freelist[j] = &end_marker;
-            mempools[i].nrof_free[j] = 0;
-            mempools[i].nrof_allocated[j] = 0;
-        }
 #ifdef MEMPOOL_TRACKING
-        mempools[i].first_puddle_info = NULL;
+    pool_puddle = create_mempool("puddles", 10, sizeof(struct puddle_info), MEMPOOL_ALLOW_FREEING, NULL, NULL);
 #endif        
-    }
+    pool_object = create_mempool("objects", OBJECT_EXPAND, sizeof(object), 0,
+            (chunk_constructor) initialize_object, (chunk_destructor) destroy_object);
+    pool_player = create_mempool("players", 5, sizeof(player), MEMPOOL_BYPASS_POOLS, NULL, NULL);
+    pool_map_bfs= create_mempool("map BFS nodes", 16, sizeof(struct mapsearch_node), 0, NULL, NULL);
+    pool_path_segment= create_mempool("path segments", 500, sizeof(struct path_segment), 0, NULL, NULL);
+    pool_mob_data= create_mempool("mob brains", 100, sizeof(struct mobdata), 0, NULL, NULL);
+    pool_mob_knownobj=  create_mempool("mob known objects", 100, sizeof(struct mob_known_obj), 0, NULL, NULL);
+    pool_mob_behaviourset = create_mempool("mob behaviour sets", 100, sizeof(struct mob_behaviourset), 0, NULL, NULL);
+    pool_mob_behaviour = create_mempool("mob behaviours", 100, sizeof(struct mob_behaviour), 0, NULL, NULL);
+    pool_mob_behaviourparam = create_mempool("mob behaviour parameter", 100, sizeof(struct mob_behaviour_param), 0, NULL, NULL);
+    pool_objectlink = create_mempool("object links", 500, sizeof(objectlink), 0, NULL, NULL);
+    
+    /* Initialize end-of-list pointers and a few other values*/
     removed_objects = &end_marker;    
 
     /* Set up container for "loose" objects */
     initialize_object(&void_container);
     void_container.type = TYPE_VOID_CONTAINER;
-}
-
-/* A tiny little function to set up the constructors/destructors to functions that may
- * reside outside the library */
-void setup_poolfunctions(mempool_id pool, chunk_constructor constructor, chunk_destructor destructor)
-{
-    if (pool >= NROF_MEMPOOLS)
-        LOG(llevBug, "BUG: setup_poolfunctions for illegal memory pool %d\n", pool); 
-
-    mempools[pool].constructor = constructor;
-    mempools[pool].destructor = destructor;
 }
 
 /*
@@ -165,17 +186,17 @@ void setup_poolfunctions(mempool_id pool, chunk_constructor constructor, chunk_d
  * arraysize_exp is the exponent for the array size, for example 3 for 
  * arrays of length 8 (2^3 = 8)
  */
-static void expand_mempool(mempool_id pool, uint32 arraysize_exp)
+static void expand_mempool(struct mempool *pool, uint32 arraysize_exp)
 {
     uint32                  i;
     struct mempool_chunk   *first, *ptr;
     int                     chunksize_real;
     int                     nrof_arrays;
 
-    if (mempools[pool].nrof_free[arraysize_exp] > 0)
+    if (pool->nrof_free[arraysize_exp] > 0)
         LOG(llevBug, "BUG: expand_mempool called with chunks still available in pool\n"); 
 
-    nrof_arrays = mempools[pool].expand_size >> arraysize_exp;
+    nrof_arrays = pool->expand_size >> arraysize_exp;
 
     if (nrof_arrays == 0)
     {
@@ -183,15 +204,15 @@ static void expand_mempool(mempool_id pool, uint32 arraysize_exp)
         nrof_arrays = 1;
     }
 
-    chunksize_real = sizeof(struct mempool_chunk) + (mempools[pool].chunksize << arraysize_exp);
+    chunksize_real = sizeof(struct mempool_chunk) + (pool->chunksize << arraysize_exp);
     first = (struct mempool_chunk *) malloc(nrof_arrays * chunksize_real);
 
     if (first == NULL)
         LOG(llevError, "ERROR: expand_mempool(): Out Of Memory.\n");
 
-    mempools[pool].freelist[arraysize_exp] = first;
-    mempools[pool].nrof_allocated[arraysize_exp] += nrof_arrays;
-    mempools[pool].nrof_free[arraysize_exp] = nrof_arrays;
+    pool->freelist[arraysize_exp] = first;
+    pool->nrof_allocated[arraysize_exp] += nrof_arrays;
+    pool->nrof_free[arraysize_exp] = nrof_arrays;
 
     /* Set up the linked list */
     ptr = first;
@@ -199,7 +220,7 @@ static void expand_mempool(mempool_id pool, uint32 arraysize_exp)
     {
 #ifdef MEMPOOL_OBJECT_TRACKING
         ptr->obj_next = ptr->obj_prev = 0; /* secure */
-        ptr->pool_id = pool;
+        ptr->pool = pool;
         ptr->id = chunk_tracking_id++; /* this is a real, unique object id  allows tracking beyond get/free objects */
         ptr->flags |= MEMPOOL_OBJECT_FLAG_FREE;
 #endif
@@ -210,7 +231,7 @@ static void expand_mempool(mempool_id pool, uint32 arraysize_exp)
     ptr->next = &end_marker;
 #ifdef MEMPOOL_OBJECT_TRACKING
     ptr->obj_next = ptr->obj_prev = 0; /* secure */
-    ptr->pool_id = pool;
+    ptr->pool = pool;
     ptr->id = chunk_tracking_id++; /* this is a real, unique object id  allows tracking beyond get/free objects */
     ptr->flags |= MEMPOOL_OBJECT_FLAG_FREE;
 #endif
@@ -218,40 +239,37 @@ static void expand_mempool(mempool_id pool, uint32 arraysize_exp)
 #ifdef MEMPOOL_TRACKING
     /* Track the allocation of puddles? */
     {
-        struct puddle_info *p   = get_poolchunk(POOL_PUDDLE);
+        struct puddle_info *p   = get_poolchunk(pool_puddle);
         p->first_chunk = first;
-        p->next = mempools[pool].first_puddle_info;
-        mempools[pool].first_puddle_info = p;
+        p->next = pool->first_puddle_info;
+        pool->first_puddle_info = p;
     }
 #endif
 }
 
 /* Get a chunk from the selected pool. The pool will be expanded if necessary. */
-void * get_poolchunk_array_real(mempool_id pool, uint32 arraysize_exp)
+void * get_poolchunk_array_real(struct mempool *pool, uint32 arraysize_exp)
 {
     struct mempool_chunk   *new_obj;
 
-    if (pool >= NROF_MEMPOOLS)
-        LOG(llevBug, "BUG: get_poolchunk for illegal memory pool %d\n", pool); 
-
-    if (mempools[pool].flags & MEMPOOL_BYPASS_POOLS)
+    if (pool->flags & MEMPOOL_BYPASS_POOLS)
     {
-        new_obj = malloc(sizeof(struct mempool_chunk) + (mempools[pool].chunksize << arraysize_exp));
-        mempools[pool].nrof_allocated[arraysize_exp]++;
+        new_obj = malloc(sizeof(struct mempool_chunk) + (pool->chunksize << arraysize_exp));
+        pool->nrof_allocated[arraysize_exp]++;
     }
     else
     {
-        if (mempools[pool].nrof_free[arraysize_exp] == 0)
+        if (pool->nrof_free[arraysize_exp] == 0)
             expand_mempool(pool, arraysize_exp);
-        new_obj = mempools[pool].freelist[arraysize_exp];
-        mempools[pool].freelist[arraysize_exp] = new_obj->next;
-        mempools[pool].nrof_free[arraysize_exp]--;
+        new_obj = pool->freelist[arraysize_exp];
+        pool->freelist[arraysize_exp] = new_obj->next;
+        pool->nrof_free[arraysize_exp]--;
     }
 
     new_obj->next = NULL;
 
-    if (mempools[pool].constructor)
-        mempools[pool].constructor(MEM_USERDATA(new_obj));
+    if (pool->constructor)
+        pool->constructor(MEM_USERDATA(new_obj));
 
 #ifdef MEMPOOL_OBJECT_TRACKING
     /* that should never happens! */
@@ -274,16 +292,13 @@ void * get_poolchunk_array_real(mempool_id pool, uint32 arraysize_exp)
 
 /* Return a chunk to the selected pool. Don't return memory to the wrong pool!
  * Returned memory will be reused, so be careful about those stale pointers */
-void return_poolchunk_array_real(void *data, uint32 arraysize_exp, mempool_id pool)
+void return_poolchunk_array_real(void *data, uint32 arraysize_exp, struct mempool *pool)
 {
     struct mempool_chunk   *old = MEM_POOLDATA(data);
 
     if (CHUNK_FREE(data))
-        LOG(llevBug, "BUG: return_poolchunk on already free chunk (pool %d \"%s\")\n", pool,
-            mempools[pool].chunk_description); 
-
-    if (pool >= NROF_MEMPOOLS)
-        LOG(llevBug, "BUG: return_poolchunk for illegal memory pool %d\n", pool); 
+        LOG(llevBug, "BUG: return_poolchunk on already free chunk (pool \"%s\")\n", 
+            pool->chunk_description); 
 
 #ifdef MEMPOOL_OBJECT_TRACKING
     if (old->obj_next)
@@ -298,19 +313,19 @@ void return_poolchunk_array_real(void *data, uint32 arraysize_exp, mempool_id po
     old->flags |= MEMPOOL_OBJECT_FLAG_FREE;
 #endif
 
-    if (mempools[pool].destructor)
-        mempools[pool].destructor(data);
+    if (pool->destructor)
+        pool->destructor(data);
 
-    if (mempools[pool].flags & MEMPOOL_BYPASS_POOLS)
+    if (pool->flags & MEMPOOL_BYPASS_POOLS)
     {
         free(old);        
-        mempools[pool].nrof_allocated[arraysize_exp]--;
+        pool->nrof_allocated[arraysize_exp]--;
     }
     else
     {
-        old->next = mempools[pool].freelist[arraysize_exp];
-        mempools[pool].freelist[arraysize_exp] = old;
-        mempools[pool].nrof_free[arraysize_exp]++;
+        old->next = pool->freelist[arraysize_exp];
+        pool->freelist[arraysize_exp] = old;
+        pool->nrof_free[arraysize_exp]++;
     }
 }
 
@@ -329,12 +344,12 @@ void check_use_object_list(void)
     for (chunk = used_object_list; chunk; chunk = chunk->obj_next)
     {
 #ifdef MEMPOOL_TRACKING
-        if (chunk->pool_id == POOL_PUDDLE) /* ignore for now */
+        if (chunk->pool == pool_puddle) /* ignore for now */
         {
         }
         else
         #endif
-        if (chunk->pool_id == POOL_OBJECT)
+        if (chunk->pool == pool_object)
         {
             object *tmp2, *tmp = MEM_USERDATA(chunk);
 
@@ -377,7 +392,7 @@ void check_use_object_list(void)
                 LOG(llevDebug, "BUG:DEBUG_OBJ:: object >%s< (%d) has no env/map\n", query_name(tmp), chunk->id);
             }
         }
-        else if (chunk->pool_id == POOL_PLAYER)
+        else if (chunk->pool == pool_player)
         {
             player *tmp = MEM_USERDATA(chunk);
 
@@ -385,7 +400,7 @@ void check_use_object_list(void)
         }
         else
         {
-            LOG(llevDebug, "BUG:DEBUG_OBJ: wrong pool ID! (%d - %d)", chunk->pool_id, chunk->id);
+            LOG(llevDebug, "BUG:DEBUG_OBJ: wrong pool ID! (%s - %d)", chunk->pool->chunk_description, chunk->id);
         }
         goto_object_found:;
     }
@@ -543,7 +558,7 @@ static int sort_puddle_by_nrof_free(void *a, void *b, void *args)
  * Complexity of this function is O(N (M log M)) where
  * N is number of pools and M is number of puddles in pool 
  */
-void free_empty_puddles(mempool_id pool)
+void free_empty_puddles(struct mempool *pool)
 {
     /* TODO: Gecko: there's no support for arrays here... I might add it later */
 #if 0

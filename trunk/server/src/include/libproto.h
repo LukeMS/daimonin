@@ -179,10 +179,13 @@ extern int              on_same_map(object *op1, object *op2);
 /* mempool.c */
 extern uint32           nearest_pow_two_exp(uint32 n); 
 extern void             init_mempools();
-extern void             setup_poolfunctions(mempool_id pool, chunk_constructor constructor, chunk_destructor destructor);
-extern void             free_empty_puddles(mempool_id pool);
-void                    return_poolchunk_array_real(void *data, uint32 arraysize_exp, mempool_id pool); 
-void                   *get_poolchunk_array_real(mempool_id pool, uint32 arraysize_exp);
+extern void             free_mempool(struct mempool *pool); 
+extern struct mempool  *create_mempool(const char *description, uint32 expand, uint32 size, 
+                                       uint32 flags, chunk_constructor constructor, 
+                                       chunk_destructor destructor);
+extern void             free_empty_puddles(struct mempool *pool);
+extern void             return_poolchunk_array_real(void *data, uint32 arraysize_exp, struct mempool *pool); 
+extern void            *get_poolchunk_array_real(struct mempool *pool, uint32 arraysize_exp);
 /* object.c */
 extern void             mark_object_removed(object *ob);
 extern int              CAN_MERGE(object *ob1, object *ob2);

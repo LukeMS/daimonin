@@ -181,7 +181,7 @@ static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int 
 
     /* initial queue and node values */
     first = last = NULL;
-    curr = get_poolchunk(POOL_MAP_BFS);    
+    curr = get_poolchunk(pool_map_bfs);    
     curr->map = map1;
     curr->dx = curr->dy = 0;
 
@@ -197,7 +197,7 @@ static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int 
                     load_and_link_tiled_map(curr->map, i);
 
                 /* TODO: avoid this bit of extra work if correct map */
-                node = get_poolchunk(POOL_MAP_BFS);
+                node = get_poolchunk(pool_map_bfs);
                 node->dx = curr->dx;
                 node->dy = curr->dy;
                 node->map = curr->map->tile_map[i];
@@ -235,8 +235,8 @@ static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int 
                     *x += node->dx;
                     *y += node->dy;
                     success = TRUE;
-                    return_poolchunk(node, POOL_MAP_BFS);
-                    return_poolchunk(curr, POOL_MAP_BFS);
+                    return_poolchunk(node, pool_map_bfs);
+                    return_poolchunk(curr, pool_map_bfs);
                     goto out;
                 }
 
@@ -253,7 +253,7 @@ static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int 
             }
         }
 
-        return_poolchunk(curr, POOL_MAP_BFS);
+        return_poolchunk(curr, pool_map_bfs);
 
         /* Depth-limitation */
         if (++searched_tiles >= MAX_SEARCH_MAP_TILES)
@@ -272,7 +272,7 @@ static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int 
 
     out:
     for (node = first; node; node = node->next)
-        return_poolchunk(node, POOL_MAP_BFS);
+        return_poolchunk(node, pool_map_bfs);
 
     return success;
 }

@@ -269,7 +269,7 @@ struct path_segment * encode_path(path_node *path, struct path_segment **last_se
 
     for (tmp = path; tmp ; tmp = tmp->next)
     {
-        curr = get_poolchunk(POOL_PATHSEGMENT);
+        curr = get_poolchunk(pool_path_segment);
         curr->next = NULL;
         curr->x = tmp->x;
         curr->y = tmp->y;

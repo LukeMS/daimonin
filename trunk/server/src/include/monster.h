@@ -150,6 +150,7 @@ typedef enum
 typedef struct behaviour_move_response
 {
     move_response_type  type;
+    uint16              forbidden; /* bitmap of forbidden directions */
     union
     {
         int direction;

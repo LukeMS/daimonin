@@ -890,9 +890,9 @@ void compile_info()
 #else
     LOG(llevInfo, "Map reset:\t<false>\n");
 #endif
-    LOG(llevInfo, "Max objects:\t%d (allocated:%d free:%d)\n", MAX_OBJECTS, mempools[POOL_OBJECT].nrof_allocated,
-        mempools[POOL_OBJECT].nrof_free);
-
+    LOG(llevInfo, "Max objects:\t%d (allocated:%d free:%d)\n", MAX_OBJECTS, pool_object->nrof_allocated,
+        pool_object->nrof_free);
+ 
 
 #ifdef USE_CALLOC
     LOG(llevInfo, "Use_calloc:\t<true>\n");
@@ -1035,12 +1035,11 @@ static void parse_args(int argc, char *argv[], int pass)
 
 static void init_beforeplay()
 {
-    setup_poolfunctions(POOL_PLAYER, NULL, NULL);
-    setup_poolfunctions(POOL_MOBDATA, (chunk_constructor) initialize_mob_data, (chunk_destructor) cleanup_mob_data);
-    setup_poolfunctions(POOL_MOB_KNOWN_OBJ, NULL, (chunk_destructor) cleanup_mob_known_obj);
-    setup_poolfunctions(POOL_BEHAVIOURSET, NULL, (chunk_destructor) cleanup_behaviourset);
-    setup_poolfunctions(POOL_OBJECT_LINK, NULL, NULL);
-    
+    pool_mob_data->constructor = (chunk_constructor) initialize_mob_data;
+    pool_mob_data->destructor = (chunk_destructor) cleanup_mob_data;
+    pool_mob_knownobj->destructor = (chunk_destructor) cleanup_mob_known_obj;
+    pool_mob_behaviourset->destructor = (chunk_destructor) cleanup_behaviourset; 
+
     init_archetypes(); /* If not called before, reads all archetypes from file */
     init_spells();     /* If not called before, links archtypes used by spells */
     init_races();      /* overwrite race designations using entries in lib/races file */ 

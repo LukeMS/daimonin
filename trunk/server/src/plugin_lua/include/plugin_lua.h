@@ -76,6 +76,34 @@ extern CFParm          *PlugProps;
 extern f_plugin         PlugHooks[1024];
 extern int              cache_ref;
 
+/* Hooks-based hashed string macros */
+#undef FREE_AND_COPY_HASH
+#undef FREE_AND_ADD_REF_HASH
+#undef FREE_AND_CLEAR_HASH
+#undef FREE_ONLY_HASH
+#undef ADD_REF_NOT_NULL_HASH
+
+#define FREE_AND_COPY_HASH(_sv_,_nv_) { if (_sv_) hooks->free_string_shared(_sv_); _sv_=hooks->add_string(_nv_); }
+#define FREE_AND_ADD_REF_HASH(_sv_,_nv_) { if (_sv_) hooks->free_string_shared(_sv_); _sv_=hooks->add_refcount(_nv_); }
+#define FREE_AND_CLEAR_HASH(_nv_) {if(_nv_){hooks->free_string_shared(_nv_);_nv_ =NULL;}}
+#define FREE_ONLY_HASH(_nv_) if(_nv_)hooks->free_string_shared(_nv_);
+
+#define ADD_REF_NOT_NULL(_nv_) if(_nv_!=NULL)add_refcount(_nv_);
+
+#undef get_poolchunk
+#undef get_poolarray
+#undef return_poolchunk
+#undef return_poolarray
+
+#define get_poolchunk(_pool_) hooks->get_poolchunk_array_real((_pool_), 0)
+#define get_poolarray(_pool_, _arraysize_) hooks->get_poolchunk_array_real((_pool_), nearest_pow_two_exp(_arraysize_))
+
+#define return_poolchunk(_data_, _pool_) \
+    hooks->return_poolchunk_array_real((_data_), 0, (_pool_))
+#define return_poolarray(_data_, _arraysize_, _pool_) \
+    hooks->return_poolchunk_array_real((_data_), nearest_pow_two_exp(_arraysize_), (_pool_))
+
+
 /* Some practical stuff, often used in the plugin */
 #define WHO (self->data.object)
 #define WHAT (whatptr->data.object)

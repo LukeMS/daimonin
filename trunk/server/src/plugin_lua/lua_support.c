@@ -31,7 +31,6 @@
 
 #include <global.h>
 #include <plugin_lua.h>
-#include <inline.h>
 
 /* Index to the lua table we use for script caching */
 int                 cache_ref   = LUA_NOREF;
@@ -316,9 +315,9 @@ static int set_attribute(lua_State *L, lua_object *obj, struct attribute_decl *a
         case FIELDTYPE_SHSTR:
           str = lua_tostring(L, -1);
           if (*(char * *) field_ptr != NULL)
-              FREE_STRING_HOOK(*(char * *) field_ptr);
+              FREE_AND_CLEAR_HASH(*(char * *) field_ptr);
           if (str && strcmp(str, ""))
-              *(const char * *) field_ptr = add_string_hook(str);
+              FREE_AND_COPY_HASH(*(const char * *) field_ptr, str);
           break;
 
         case FIELDTYPE_UINT8:
@@ -673,9 +672,6 @@ int load_file_cache(struct lua_State *L, const char *file)
 #ifdef LUA_DEBUG            
             LOG(llevDebug, "LUA - Using cached version of '%s'\n", file);
 #endif   
-//            res = luaL_loadbuffer(L, lua_tostring(L, -1), lua_strlen(L, -1), file);
-            // TODO: error handling
-//            lua_remove(L, -2); /* pop function dump */
             load = 0;
         }
     }

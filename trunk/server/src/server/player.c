@@ -134,7 +134,7 @@ static player * get_player(player *p)
 
     if (!p)
     {
-        p = (player *) get_poolchunk(POOL_PLAYER);
+        p = (player *) get_poolchunk(pool_player);
         memset(p, 0, sizeof(player));
         if (p == NULL)
             LOG(llevError, "ERROR: get_player(): out of memory\n");

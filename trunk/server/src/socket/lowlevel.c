@@ -405,8 +405,8 @@ void write_cs_stats()
         ctime(&now), cst_tot.ibytes, cst_tot.obytes, cst_tot.max_conn, now - cst_tot.time_start, cst_lst.ibytes,
         cst_lst.obytes, cst_lst.max_conn, now - cst_lst.time_start);
 
-    LOG(llevInfo, "SYSINFO: objs: %d allocated, %d free, arch-srh:%d (%d cmp)\n", mempools[POOL_OBJECT].nrof_allocated,
-        mempools[POOL_OBJECT].nrof_free, arch_search, arch_cmp);
+    LOG(llevInfo, "SYSINFO: objs: %d allocated, %d free, arch-srh:%d (%d cmp)\n", pool_object->nrof_allocated,
+        pool_object->nrof_free, arch_search, arch_cmp);
 
     cst_lst.ibytes = 0;
     cst_lst.obytes = 0;

@@ -27,7 +27,6 @@
 
 #include <global.h>
 #include <plugin_lua.h>
-#include <inline.h>
 
 #include <lualib.h>
 
@@ -77,6 +76,9 @@ struct lua_State               *global_state;
 /* possibly reference to error handler function */
 static int error_handler_ref = LUA_NOREF;
 static int globals_metatable_ref = LUA_NOREF;
+
+/* Memory pool for our contexts */
+struct mempool *pool_luacontext;
 
 /*
  * Declarations for the two utility classes
@@ -211,7 +213,7 @@ lua_class                       Game                =
 
 #if 0
 /* Commands management part */
-PythonCmd CustomCommand[NR_CUSTOM_CMD];
+Lua   Cmd CustomCommand[NR_CUSTOM_CMD];
 int NextCustomCommand;
 #endif
 
@@ -406,16 +408,10 @@ static int Game_FindPlayer(lua_State *L)
 static int Game_GetSpellNr(lua_State *L)
 {
     char   *spell;
-    CFParm *CFR;
-    int     value;
 
     get_lua_args(L, "s", &spell);
 
-    GCFP.Value[0] = (void *) (spell);
-    CFR = (PlugHooks[HOOK_CHECKFORSPELLNAME]) (&GCFP);
-    value = *(int *) (CFR->Value[0]);
-
-    lua_pushnumber(L, value);
+    lua_pushnumber(L, hooks->look_up_spell_name(spell));
     return 1;
 }
 
@@ -428,20 +424,18 @@ static int Game_GetSpellNr(lua_State *L)
 static int Game_GetSkillNr(lua_State *L)
 {
     char   *skill;
-    CFParm *CFR;
-    int     value;
 
     get_lua_args(L, "s", &skill);
 
-    GCFP.Value[0] = (void *) (skill);
-    CFR = (PlugHooks[HOOK_CHECKFORSKILLNAME]) (&GCFP);
-    value = *(int *) (CFR->Value[0]);
-
-    lua_pushnumber(L, value);
+    lua_pushnumber(L, hooks->lookup_skill_by_name(skill));
     return 1;
 }
 
 /* FUNCTIONEND -- End of the Lua plugin functions. */
+
+/*****************************************************************************/
+/* Some lua runtime functions                                                */
+/*****************************************************************************/
 
 /* Our error handler. Tries to call a lua error handler called "_error" */
 static int luaError(lua_State *L)
@@ -455,103 +449,6 @@ static int luaError(lua_State *L)
         return 1;
     } else
         return 1;
-}
-
-/* Compiles the Lua script 'file' */
-static int luaCompile(lua_State *L, const char **file)
-{
-    static char buf[MAX_BUF];
-    FILE       *fp;
-    int         res;
-    size_t      size;
-    char       *suffix;
-    struct stat s1, s2;
-
-    size = strlen(*file);
-
-    if(size > MAX_BUF - 4)
-    {
-        lua_pushfstring(L, "the filename '%s' is longer than %d bytes", *file, MAX_BUF - 4);
-        return LUA_ERRMEM;
-    }
-
-    strncpy(buf, *file, size + 1);
-
-    if (stat(*file, &s1))
-    {
-        lua_pushfstring(L, "couldn't find script file %s", *file);
-        return LUA_ERRFILE;
-    }
-
-    if ((suffix = strrchr(buf, '.')) == NULL || (strrchr(buf, '/')) > suffix)
-        memset(suffix = buf + (size + 1), 0, 4);
-    else if ((strncmp(suffix, ".lc", 4)) == 0)
-    {
-        strncpy(suffix, ".lua", 5);
-
-        if (stat(buf, &s2) || s2.st_mtime <= s1.st_mtime)
-            return 0;
-
-        if ((res = luaL_loadfile(L, buf)))
-            return res;
-
-        strncpy(suffix, ".lc", 4);
-    }
-    else
-    {
-        if ((strncmp(suffix, ".lua", 5)) == 0)
-            memset(suffix, 0, 4);
-        else
-            suffix = buf + size + 1;
-
-        strncpy(suffix, ".lc", 4);
-
-        if (!stat(buf, &s2) && s2.st_mtime >= s1.st_mtime)
-        {
-            *file = buf;
-            return 0;
-        }
-
-        if ((res = luaL_loadfile(L, *file)))
-            return res;
-    }
-
-#ifdef LUA_DEBUG
-    LOG(llevDebug, "LUA - Compiling file '%s' -> '%s'\n", *file, buf);
-#endif
-
-    lua_pushliteral(L, "string");
-    lua_gettable(L, LUA_GLOBALSINDEX);
-    lua_pushliteral(L, "dump");
-    lua_rawget(L, -2);
-    lua_remove(L, -2);
-    lua_pushvalue(L, -2);
-
-    lua_call(L, 1, 1);
-
-    errno = 0;
-    if((fp = fopen(buf, "wb")) == NULL)
-    {
-        lua_pop(L, 2);
-        lua_pushfstring(L, "Couldn't create or open file %s\n%s\n", buf, errno ? strerror(errno) : "Unkown error");
-        errno = 0;
-        return LUA_ERRFILE;
-    }
-
-    fwrite(lua_tostring(L, -1), lua_strlen(L, -1), sizeof(char), fp);
-    lua_pop(L, 2);
-
-    if(ferror(fp))
-    {
-        lua_pushfstring(L, "An error occured while writing to file %s\n%s\n", buf, errno ? strerror(errno) : "Unkown error");
-        errno = 0;
-        return LUA_ERRFILE;
-    }
-    fclose(fp);
-
-    *file = buf;
-
-    return 0;
 }
 
 /* Try to find the file 'file' with the help of the
@@ -758,7 +655,7 @@ MODULEAPI CFParm * registerHook(CFParm *PParm)
 }
 
 /*****************************************************************************/
-/* Called to send the hooks struct to the plugin.                             */
+/* Called to send the hooks struct to the plugin.                            */
 /*****************************************************************************/
 MODULEAPI void registerHooks(struct plugin_hooklist *hooklist)
 {
@@ -848,7 +745,7 @@ MODULEAPI int HandleGlobalEvent(CFParm *PParm)
         case EVENT_BORN:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
             /*LOG(llevDebug, "Event BORN generated by %s\n",STRING_OBJ_NAME(StackActivator[StackPosition])); */
-            RunPythonScript("python/python_born.py");
+            RunLua   Script("python/python_born.py");
             break;
         case EVENT_LOGIN:
             StackActivator[StackPosition] = ((player *)(PParm->Value[1]))->ob;
@@ -856,20 +753,20 @@ MODULEAPI int HandleGlobalEvent(CFParm *PParm)
             StackText[StackPosition] = (char *)(PParm->Value[2]);
             /*LOG(llevDebug, "Event LOGIN generated by %s\n",STRING_OBJ_NAME(StackActivator[StackPosition])); */
             /*LOG(llevDebug, "IP is %s\n", (char *)(PParm->Value[2])); */
-            RunPythonScript("python/python_login.py");
+            RunLua   Script("python/python_login.py");
             break;
         case EVENT_LOGOUT:
             StackActivator[StackPosition] = ((player *)(PParm->Value[1]))->ob;
             StackWho[StackPosition] = ((player *)(PParm->Value[1]))->ob;
             StackText[StackPosition] = (char *)(PParm->Value[2]);
             /*LOG(llevDebug, "Event LOGOUT generated by %s\n",STRING_OBJ_NAME(StackActivator[StackPosition])); */
-            RunPythonScript("python/python_logout.py");
+            RunLua   Script("python/python_logout.py");
             break;
         case EVENT_REMOVE:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
             /*LOG(llevDebug, "Event REMOVE generated by %s\n",STRING_OBJ_NAME(StackActivator[StackPosition])); */
 
-            RunPythonScript("python/python_remove.py");
+            RunLua   Script("python/python_remove.py");
             break;
         case EVENT_SHOUT:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
@@ -877,29 +774,29 @@ MODULEAPI int HandleGlobalEvent(CFParm *PParm)
             /*LOG(llevDebug, "Event SHOUT generated by %s\n",STRING_OBJ_NAME(StackActivator[StackPosition])); */
 
             /*LOG(llevDebug, "Message shout is %s\n",StackText[StackPosition]); */
-            RunPythonScript("python/python_shout.py");
+            RunLua   Script("python/python_shout.py");
             break;
         case EVENT_MAPENTER:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
             /*LOG(llevDebug, "Event MAPENTER generated by %s\n",STRING_OBJ_NAME(StackActivator[StackPosition])); */
 
-            RunPythonScript("python/python_mapenter.py");
+            RunLua   Script("python/python_mapenter.py");
             break;
         case EVENT_MAPLEAVE:
             StackActivator[StackPosition] = (object *)(PParm->Value[1]);
             /*LOG(llevDebug, "Event MAPLEAVE generated by %s\n",STRING_OBJ_NAME(StackActivator[StackPosition])); */
 
-            RunPythonScript("python/python_mapleave.py");
+            RunLua   Script("python/python_mapleave.py");
             break;
         case EVENT_CLOCK:
             /* LOG(llevDebug, "Event CLOCK generated\n"); */
-            RunPythonScript("python/python_clock.py");
+            RunLua   Script("python/python_clock.py");
             break;
         case EVENT_MAPRESET:
             StackText[StackPosition] = (char *)(PParm->Value[1]);/* Map name/path */
             LOG(llevDebug, "Event MAPRESET generated by %s\n", StackText[StackPosition]);
 
-            RunPythonScript("python/python_mapreset.py");
+            RunLua   Script("python/python_mapreset.py");
             break;
     }
     StackPosition--;
@@ -924,7 +821,7 @@ static int RunLuaScript(struct lua_context *context)
     lua_setmetatable(L, -2);
     lua_replace(L, LUA_GLOBALSINDEX);
 
-    /* "next" and "ipairs" need to be in the local env */
+    /* "next" and "ipairs" _must_ be available in the local env */
     lua_pushliteral(global_state, "next");
     lua_pushvalue(global_state, -1);
     lua_rawget(global_state, LUA_GLOBALSINDEX);
@@ -966,8 +863,7 @@ static int RunLuaScript(struct lua_context *context)
         }
     }
 
-    error = lua_tostring(L, -1);
-    if (error)
+    if ((error = lua_tostring(L, -1)))
         LOG(llevDebug, "LUA - %s\n", error);
     else
         LOG(llevDebug, "LUA - unknown error %d type %s\n", res,
@@ -992,7 +888,7 @@ MODULEAPI int HandleEvent(CFParm *PParm)
         *(int *) (PParm->Value[5]), *(int *) (PParm->Value[6]), *(int *) (PParm->Value[7]), *(int *) (PParm->Value[8]));
 #endif
 
-    context = malloc(sizeof(struct lua_context));
+    context = get_poolchunk(pool_luacontext);
 
     context->next = context->prev = NULL;
     context->state = lua_newthread(global_state);
@@ -1030,20 +926,20 @@ MODULEAPI int HandleEvent(CFParm *PParm)
 
     if (context->parm4 == SCRIPT_FIX_ALL)
     {
-        if (context->other != NULL)
-            fix_player_hook(context->other);
-        if (context->self != NULL)
-            fix_player_hook(context->self);
-        if (context->activator != NULL)
-            fix_player_hook(context->activator);
+        if (context->other && context->other->type == PLAYER)
+            hooks->fix_player(context->other);
+        if (context->self && context->self->type == PLAYER)
+            hooks->fix_player(context->self);
+        if (context->activator && context->activator->type == PLAYER)
+            hooks->fix_player(context->activator);
     }
-    else if (context->parm4 == SCRIPT_FIX_ACTIVATOR)
+    else if (context->parm4 == SCRIPT_FIX_ACTIVATOR && context->activator->type == PLAYER)
     {
-        fix_player_hook(context->activator);
+        hooks->fix_player(context->activator);
     }
 
     ret = context->returnvalue;
-    free(context);
+    return_poolchunk(context, pool_luacontext);
 
 #ifdef LUA_DEBUG
     LOG(llevDebug, "done (returned: %d)!\n", ret);
@@ -1077,7 +973,11 @@ MODULEAPI CFParm * initPlugin(CFParm *PParm)
 /*****************************************************************************/
 MODULEAPI CFParm * removePlugin(CFParm *PParm)
 {
+    LOG(llevDebug, "    Daimonin Lua Plugin unloading.....\n");
+    
     lua_close(global_state);
+
+    hooks->free_mempool(pool_luacontext);
 
     return NULL;
 }
@@ -1111,7 +1011,7 @@ MODULEAPI CFParm * getPluginProperty(CFParm *PParm)
                         {
                             LOG(llevDebug, "LUA - Running command %s\n",CustomCommand[i].name);
                             GCFP.Value[0] = PParm->Value[1];
-                            GCFP.Value[1] = cmd_customPython;
+                            GCFP.Value[1] = cmd_customLua   ;
                             GCFP.Value[2] = &(CustomCommand[i].speed);
                             NextCustomCommand = i;
                             return &GCFP;
@@ -1130,10 +1030,10 @@ MODULEAPI CFParm * getPluginProperty(CFParm *PParm)
 }
 
 #if 0
-MODULEAPI int cmd_customPython(object *op, char *params)
+MODULEAPI int cmd_customLua   (object *op, char *params)
 {
 #ifdef PYTHON_DEBUG
-    LOG(llevDebug, "PYTHON - cmd_customPython called:: script file: %s\n",CustomCommand[NextCustomCommand].script);
+    LOG(llevDebug, "PYTHON - cmd_customLua    called:: script file: %s\n",CustomCommand[NextCustomCommand].script);
 #endif
     if (StackPosition == MAX_RECURSIVE_CALL)
     {
@@ -1147,7 +1047,7 @@ MODULEAPI int cmd_customPython(object *op, char *params)
     StackText[StackPosition]        = params;
     StackReturn[StackPosition]      = 0;
 
-    RunPythonScript(CustomCommand[NextCustomCommand].script);
+    RunLua   Script(CustomCommand[NextCustomCommand].script);
 
     return StackReturn[StackPosition--];
 }
@@ -1181,7 +1081,7 @@ MODULEAPI CFParm * postinitPlugin(CFParm *PParm)
     /* The events APPLY, ATTACK, DEATH, DROP, PICKUP, SAY*/
     /* STOP, TELL, TIME, THROW and TRIGGER are already   */
     /* handled on a per-object basis and I simply don't  */
-    /* see how useful they could be for the Python stuff.*/
+    /* see how useful they could be for the Lua    stuff.*/
     /* Registering them as local would be probably useful*/
     /* for extended logging facilities.                  */
 
@@ -1239,7 +1139,7 @@ MODULEAPI CFParm * postinitPlugin(CFParm *PParm)
 }
 
 /*****************************************************************************/
-/* Initializes the Python Interpreter.                                       */
+/* Initializes the Lua interpreter.                                          */
 /*****************************************************************************/
 MODULEAPI void init_Daimonin_Lua()
 {
@@ -1250,6 +1150,8 @@ MODULEAPI void init_Daimonin_Lua()
     strcpy(lua_path, hooks->create_pathname(LUA_PATH));
     map_path = hooks->create_pathname("");
 
+    pool_luacontext = hooks->create_mempool("lua contexts", 5, sizeof(struct lua_context), 0, NULL, NULL);
+    
     global_state = lua_open();
 
     /* Initialize the libs */
