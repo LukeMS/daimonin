@@ -1114,7 +1114,7 @@ int command_ban(object *op, char *params)
 				for(ol = ban_list_player;ol;ol=ol_tmp)
 				{
 					ol_tmp = ol->next;
-					if(!stricmp(ol->objlink.ban->tag,name))
+					if(!strcasecmp(ol->objlink.ban->tag,name))
 					{
 						flag=TRUE;
 						remove_ban_entry(ol);
@@ -1126,7 +1126,7 @@ int command_ban(object *op, char *params)
 					for(ol = ban_list_player;ol;ol=ol_tmp)
 					{
 						ol_tmp = ol->next;
-						if(!stricmp(ol->objlink.ban->tag,name))
+						if(!strcasecmp(ol->objlink.ban->tag,name))
 						{
 							flag=TRUE;
 							remove_ban_entry(ol);
