@@ -456,11 +456,16 @@ int hit_player(object *op,int dam, object *hitter, int type)
     {
         op->enemy=hitter->owner;
         op->enemy_count=hitter->owner->count;
+		if(op->type != PLAYER)
+			set_mobile_speed(op, 0);
     }
     else if (QUERY_FLAG(hitter,FLAG_MONSTER) && !op->enemy) /* or normal mob */
     {
 		if(op->type != PLAYER)
+		{
 			op->last_eat = 0;	/* important: thats our "we lose aggro count" - reset to zero here of course */
+			set_mobile_speed(op, 0);
+		}
         op->enemy=hitter;
         op->enemy_count=hitter->count;
     }

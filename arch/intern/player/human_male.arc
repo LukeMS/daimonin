@@ -3,6 +3,7 @@ race human
 face human_m.isw.111
 randomitems player_human_male
 layer 6
+will_apply 8
 is_male 1
 direction 4
 identified 1

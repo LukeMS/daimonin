@@ -33,6 +33,82 @@
 #include <sproto.h>
 #endif
 
+/* search op for the needed key to open door.
+ * This function does really not more give back a useable key ptr
+ * or NULL - it don't open, delete or doing any other action.
+ */
+object *find_key(object *op, object *door)
+{
+	object *tmp,*key;
+
+    /* First, lets try to find a key in the top level inventory */
+    for (tmp=op->inv; tmp!=NULL; tmp=tmp->below) 
+	{
+		if (tmp->type==SPECIAL_KEY && tmp->slaying==door->slaying)
+			return tmp;
+		
+		/* we brute force us through every CONTAINER inventory.*/
+		if (tmp->type==CONTAINER && tmp->inv)
+		{
+			if ((key=find_key(tmp, door))!=NULL) 
+				return key;
+		}
+
+    }
+	return NULL;
+}
+
+/* this is our main open_door() function. It is used for doors 
+ * which will auto open/close and/or need a special key. It is
+ * used from npc, mobs and players and use the remove_doorX()
+ * functions below.
+ * 0:door is NOT opened and not possible to open from op. 1: door was opened.
+ * op: object which will open a door on map m, position x,y
+ * mode: 0 - check but don't open the door. 1: check and open the door when possible
+ */
+int open_door(object *op, mapstruct *m, int x, int y, int mode)
+{
+	object *tmp, *key=NULL;
+
+	/* Ok, this trick will save us *some* search time - because we
+	 * assume that a door is always on layer 5. But *careful* - 
+	 * if we assign in a map a different layer to a door this will
+	 * fail badly!
+	 */
+    for(tmp=GET_MAP_OB_LAYER(m,x,y,4);tmp!=NULL && tmp->layer == 5;tmp=tmp->above)
+	{
+		if(tmp->type == LOCKED_DOOR)
+		{
+			if(tmp->slaying) /* door needs a key? */
+			{
+				if(!(key = find_key(op, tmp)))
+				{
+					if(op->type == PLAYER && mode)
+						new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, tmp->msg);
+					return 0; /* we can't open it! */
+				}
+			}
+			
+			/* are we here, the door can be opened 100% */
+			if(mode) /* really opening the door? */
+			{
+			    remove_door2(tmp, op);
+				if(op->type == PLAYER && key)
+				    new_draw_info_format(NDI_UNIQUE, NDI_BROWN, op, 
+					     "You open the door with the %s.", query_short_name(key));
+			}
+
+			return 1;
+		}
+	}
+
+	/* we should not be here... We have a misplaced door_closed flag 
+	 * or a door on a wrong layer... both is not good, so drop a bug msg.
+	 */
+	LOG(llevSystem, "BUG: open_door() - door on wrong layer or misplaced P_DOOR_CLOSED flag - map:%s (%d,%d) (op: %s)\n", m->path, x,y,query_name(op));
+	return 0;
+}
+
 /* The following removes doors.  The functions check to see if similar 
  * doors are next to the one that is being removed, and if so, set it
  * so those will be removed shortly (in a cascade like fashion.)
@@ -131,9 +207,9 @@ void remove_door2(object *op, object *opener) {
 	  op->last_sp = op->stats.sp; /* init "open" counter */
 	  /* save and clear blocksview and no_pass */
 	  QUERY_FLAG(op,FLAG_BLOCKSVIEW) ?(op->stats.grace=1):(op->stats.grace=0);
-	  QUERY_FLAG(op,FLAG_NO_PASS) ?(op->last_grace=1):(op->last_grace=0);
+	  QUERY_FLAG(op,FLAG_DOOR_CLOSED) ?(op->last_grace=1):(op->last_grace=0);
 	  CLEAR_FLAG(op,FLAG_BLOCKSVIEW);
-	  CLEAR_FLAG(op,FLAG_NO_PASS);
+	  CLEAR_FLAG(op,FLAG_DOOR_CLOSED);
 	  if(QUERY_FLAG(op, FLAG_IS_TURNABLE) || QUERY_FLAG(op, FLAG_ANIMATE))
 		SET_ANIMATION(op, (NUM_ANIMATIONS(op)/NUM_FACINGS(op))*op->direction+op->state);
 	  if(op->sub_type1 == ST1_DOOR_NORMAL)
@@ -188,7 +264,7 @@ void remove_door3(object *op)
       update_ob_speed(op);
 	  op->state = 0; /* change to "close door" faces */
 	  op->stats.grace=1?SET_FLAG(op,FLAG_BLOCKSVIEW):CLEAR_FLAG(op,FLAG_BLOCKSVIEW);
-	  op->last_grace=1?SET_FLAG(op,FLAG_NO_PASS):CLEAR_FLAG(op,FLAG_NO_PASS);
+	  op->last_grace=1?SET_FLAG(op,FLAG_DOOR_CLOSED):CLEAR_FLAG(op,FLAG_DOOR_CLOSED);
 	  op->stats.grace =0;op->last_grace=0;
 	  if(QUERY_FLAG(op, FLAG_IS_TURNABLE) || QUERY_FLAG(op, FLAG_ANIMATE))
 		SET_ANIMATION(op, (NUM_ANIMATIONS(op)/NUM_FACINGS(op))*op->direction+op->state);

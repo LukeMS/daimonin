@@ -3129,7 +3129,6 @@
     items. To get your hands on the artifacts, you need to bring up the
     appropriate quest items (key objects). ]]>
   </use>
-  <attribute arch="no_pass" value="1" type="fixed" />
   <attribute arch="no_pick" value="1" type="fixed" />
   <attribute arch="pass_thru" editor="ethereal can pass" type="bool">
     If no_pass (blocking passage) is set, no one can pass. If this

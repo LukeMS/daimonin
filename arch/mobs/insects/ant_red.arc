@@ -77,7 +77,7 @@ can_see_in_dark 1
 exp 100
 ac 9
 wc 0
-dam 4
+dam 5
 hp -1
 maxhp 6
 level 1

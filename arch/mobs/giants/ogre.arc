@@ -4,6 +4,7 @@ race giant
 randomitems mob_ogre
 is_evil 1
 is_male 1
+will_apply 8
 weight 13250
 exp 150
 speed -0.0275

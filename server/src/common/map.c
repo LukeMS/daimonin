@@ -506,6 +506,13 @@ int blocks_cleric(mapstruct *m, int x, int y) {
  * the block AND/OR which was not tested. (for outside check).
  * MT-2003
  */
+/* i added the door flag now. The trick is, that we want mark the door as possible
+ * to open here and sometimes not. If the object spot is in forbidden terrain, we 
+ * don't want its possible to open it, even we stand near to it. But for example if
+ * it blocked by alive object, we want open it. If the spot marked as pass_thru and
+ * we can pass_thru, then we want skip the door (means not open it).
+ * MT-29.01.2004 
+ */
 int blocked(object *op, mapstruct *m, int x, int y, int terrain) 
 {
 	register int flags;
@@ -525,7 +532,7 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
 	 * and/or the passer has no CAN_PASS_THRU.
 	 */
 	if(flags & P_IS_ALIVE)
-		return (flags & (P_NO_PASS | P_IS_ALIVE|P_IS_PLAYER|P_CHECK_INV|P_PASS_THRU));
+		return (flags & (P_DOOR_CLOSED |P_NO_PASS | P_IS_ALIVE|P_IS_PLAYER|P_CHECK_INV|P_PASS_THRU));
 
 	/* still one flag to check: perhaps P_PASS_THRU overrules NO_PASS? */
 	if(flags & P_NO_PASS) /* i seperated it from below - perhaps we add here more tests */
@@ -536,8 +543,8 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
 		 * - PASS_THRU set and object has no CAN_PASS_THRU
 		 */
 		if(!(flags&P_PASS_THRU) || !op || !QUERY_FLAG(op,FLAG_CAN_PASS_THRU))
-			return (flags & (P_NO_PASS |P_IS_PLAYER|P_CHECK_INV|P_PASS_THRU));
-
+			return (flags & (P_DOOR_CLOSED |P_NO_PASS |P_IS_PLAYER|P_CHECK_INV|P_PASS_THRU));
+ 
 		/* ok, NO_PASS is overruled... we go on... */
 	}
 
@@ -552,7 +559,7 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
 		 * b.) P_IS_PVP or MAP_FLAG_PVP
 		 */
 		if(!op || flags & P_IS_PVP || m->map_flags&MAP_FLAG_PVP)
-			return (flags & (P_IS_PLAYER|P_CHECK_INV));
+			return (flags & (P_DOOR_CLOSED |P_IS_PLAYER|P_CHECK_INV));
 		
 		/* when we are here: no player pvp stuff was triggered. But:
 		 * a.) the tile IS blocked by a player (we still in IS_PLAYER area)
@@ -567,14 +574,14 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
 		 * else "solid" object) - then no pass
 		 */
 		if(op->type != PLAYER)
-			return (flags & (P_IS_PLAYER|P_CHECK_INV));
+			return (flags & (P_DOOR_CLOSED |P_IS_PLAYER|P_CHECK_INV));
 	}
 
     if(op) /* we have a object ptr - do some last checks */
 	{
 
 		if(flags&P_PLAYER_ONLY && op->type != PLAYER) /* player only space and not a player... */
-			return (P_NO_PASS|P_CHECK_INV); /* tell them: no pass and possible checker here */
+			return (flags & (P_DOOR_CLOSED |P_NO_PASS|P_CHECK_INV)); /* tell them: no pass and possible checker here */
 
 		/* and here is our CHECK_INV ... 
 		 * blocked_tile() is now only and exclusive called from here.
@@ -587,10 +594,10 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
 			 * how it should be.
 			 */
 			if(blocked_tile(op,m,x,y))
-				return (P_NO_PASS|P_CHECK_INV); /* tell them: no pass and checker here */
+				return (flags & (P_DOOR_CLOSED |P_NO_PASS|P_CHECK_INV)); /* tell them: no pass and checker here */
 		}
 	}
-	return 0; /* ah... 0 is what we want.... 0 == we can pass */
+	return (flags & (P_DOOR_CLOSED)); /* ah... 0 is what we want.... 0 == we can pass */
 }
 
 
@@ -640,6 +647,9 @@ int blocked_link(object *op, int xoff, int yoff)
 			if (!(m=out_of_map(tmp->map,&xtemp,&ytemp))) 
 				return -1;
 			/* tricky: we use always head for tests - no need to copy any flags to the tail */
+			/* we should kick in here the door test - but we need to diff we are
+			 * just testing here or we doing a real step!
+			 */
 			if( (xtemp = blocked(op,m,xtemp,ytemp,op->terrain_flag)) )
 				return xtemp;
 		}
@@ -2104,6 +2114,8 @@ void update_position (mapstruct *m, int x, int y) {
 			flags |= P_MAGIC_EAR;
 		if (QUERY_FLAG(tmp,FLAG_IS_PLAYER))
 			flags |= P_IS_PLAYER;
+		if (QUERY_FLAG(tmp,FLAG_DOOR_CLOSED))
+			flags |= P_DOOR_CLOSED;
 		else if (QUERY_FLAG(tmp,FLAG_ALIVE))
 			flags |= P_IS_ALIVE;
 		if (QUERY_FLAG(tmp,FLAG_NO_PASS))

@@ -152,6 +152,7 @@ static PyObject* CFIsInvisible(PyObject* self, PyObject* args);
 static PyObject* CFWhoAmI(PyObject* self, PyObject* args);
 static PyObject* CFWhoIsActivator(PyObject* self, PyObject* args);
 static PyObject* CFWhatIsMessage(PyObject* self, PyObject* args);
+static PyObject* CFCommunicate(PyObject* self, PyObject* args);
 static PyObject* CFSay(PyObject* self, PyObject* args);
 static PyObject* CFSayTo(PyObject* self, PyObject* args);
 static PyObject* CFSetGender(PyObject* self, PyObject* args);
@@ -549,6 +550,7 @@ static PyMethodDef CFPythonMethods[] =
         {"SetEventPlugin",CFSetEventPlugin,METH_VARARGS},
         {"GetEventOptions",CFGetEventOptions,METH_VARARGS},
         {"SetEventOptions",CFSetEventOptions,METH_VARARGS},
+        {"Communicate", CFCommunicate, METH_VARARGS},
         {"Say", CFSay, METH_VARARGS},
         {"SayTo", CFSayTo, METH_VARARGS},
         {"SetGender", CFSetGender, METH_VARARGS},

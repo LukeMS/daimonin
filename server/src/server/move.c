@@ -39,7 +39,7 @@ int move_ob (object *op, int dir, object *originator)
 {
     object *tmp;
 	mapstruct *m;
-	int xt,yt;
+	int xt,yt, flags;
 
     if(op==NULL)
 	{
@@ -47,7 +47,7 @@ int move_ob (object *op, int dir, object *originator)
 		return 0;
     }
     /* this function should now only be used on the head - it won't call itself
-     * recursively, and people calling us should pass the right part.
+     * recursively, and functions calling us should pass the right part.
      */
 	/*
     if (op->head)
@@ -57,6 +57,7 @@ int move_ob (object *op, int dir, object *originator)
 		op = op->head;
     }
 	*/
+
 	/* animation stuff */
     if(op->head)
         op->head->anim_moving_dir = dir;
@@ -66,11 +67,6 @@ int move_ob (object *op, int dir, object *originator)
 
 	xt=op->x+freearr_x[dir];
 	yt=op->y+freearr_y[dir];
-
-    if(op->will_apply&4)
-		check_earthwalls(op,xt, yt);
-    if(op->will_apply&8)
-		check_doors(op,xt,yt);
 
     if (QUERY_FLAG(op, FLAG_REMOVED)) {
 		LOG(llevBug,"BUG: move_ob: monster has been removed - will not process further\n");
@@ -99,6 +95,10 @@ int move_ob (object *op, int dir, object *originator)
 		/* but as long monster don't destroy walls and no mult arch player 
 		 * are ingame - we can stay with this
 		 */
+		/* look in single tile move to see how we handle doors.
+		 * This needs to be done before we allow multi tile mobs to do 
+		 * more fancy things.
+		 */
 		if(blocked_link(op,freearr_x[dir],freearr_y[dir]) )
 			return 0;
 		remove_ob(op);
@@ -117,8 +117,26 @@ int move_ob (object *op, int dir, object *originator)
     /* single arch */
 	if (!QUERY_FLAG(op,FLAG_WIZPASS))
 	{
-		if( blocked(op,m,xt,yt,op->terrain_flag) ) 
+		/* is the spot blocked from something? */
+		if(( flags=blocked(op,m,xt,yt,op->terrain_flag)) )
+		{
+			/* blocked!... BUT perhaps we have a door here to open.
+			 * If P_DOOR_CLOSED returned by blocked() then we have a door here.
+			 * If there is a door but not touchable from op, then blocked()
+			 * will hide the flag! So, if the flag is set, we can try our
+			 * luck - but only if op can open doors!
+			 */
+			if ((flags&P_DOOR_CLOSED) && (op->will_apply&8)) /* a (closed) door which we can open? */
+			{
+				if(open_door(op, m, xt,yt,1)) /* yes, we can open this door */
+				return 1;
+			}
+
+			/* in any case we don't move - door or not. This will avoid we open the door
+			 * and do the move in one turn.
+			 */
 			return 0;
+		}
 	}
 
 	remove_ob(op);

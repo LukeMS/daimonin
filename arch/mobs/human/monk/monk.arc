@@ -3,6 +3,7 @@ name monk
 race human
 type 80
 layer 6
+will_apply 8
 direction 5
 is_male 1
 is_good 1
