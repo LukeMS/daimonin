@@ -1,27 +1,3 @@
-/*
-    Daimonin, the Massive Multiuser Online Role Playing Game
-    Server Applicatiom
-
-    Copyright (C) 2001 Michael Toennies
-
-	A split from Crossfire, a Multiplayer game for X-windows.
-
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
-
-    The author can be reached via e-mail to daimonin@nord-com.net
-*/
 /* The size of the shared strings hashtable. This must be smaller than
  * 32767, but 947 ought to be plenty enough.
  */
@@ -40,7 +16,7 @@
  * (The top bit of "refcount" is used to signify that "u.array" points
  * at the array entry.)
  */
-#define REFCOUNT_TYPE unsigned int
+#define REFCOUNT_TYPE long
 
 /* The offsetof macro is part of ANSI C, but many compilers lack it, for
  * example "gcc -ansi"
@@ -74,7 +50,7 @@ static struct statistics {
 
 #define TOPBIT	(1 << (sizeof(REFCOUNT_TYPE) * CHAR_BIT - 1))
 
-#define PADDING	((2 * sizeof(long) - sizeof(REFCOUNT_TYPE)) % sizeof(long))
+#define PADDING	((2 * sizeof(long) - sizeof(REFCOUNT_TYPE)) % sizeof(long)) + 1
 
 typedef struct _shared_string {
     union {
@@ -85,7 +61,7 @@ typedef struct _shared_string {
     /* The top bit of "refcount" is used to signify that "u.array" points
      * at the array entry.
      */
-    REFCOUNT_TYPE refcount;
+    unsigned REFCOUNT_TYPE refcount;
     /* Padding will be unused memory, since we can't know how large 
      * the padding when allocating memory. We assume here that
      * sizeof(long) is a good boundary.

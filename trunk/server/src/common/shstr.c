@@ -58,6 +58,13 @@
 #include <dmalloc.h>
 #endif
 
+/* define this will make the hash table more secure but
+ * also somewhat slower - if no problems happens after
+ * some testings (no bug messages from this module)
+ * then this define should be disabled
+ */
+#define SECURE_SHSTR_HASH
+
 /* small hack to insert LOG here to without the whole other externs */
 #include "logger.h"
 extern void LOG(LogLevel logLevel, char *format, ...);
@@ -217,26 +224,6 @@ add_string(const char *str) {
 
 /*
  * Description:
- *      This will increase the refcount of the string str, which *must*
- *      have been returned from a previous add_string().
- * Return values:
- *      - str
- */
-
-char *
-add_refcount(char *str) {
-    GATHER(add_ref_stats.calls);
-    ++(SS(str)->refcount);
-	/*LOG(llevDebug,"SS: >%s< #%d addref\n", str,SS(str)->refcount& ~TOPBIT);*/
-    /* This function should be declared 
-     *    const char *add_refcount(const char *)
-     * Unfortunately, that would require changing a lot of structs
-     */
-    return str;
-}
-
-/*
- * Description:
  *      This will return the refcount of the string str, which *must*
  *      have been returned from a previous add_string().
  * Return values:
@@ -255,8 +242,8 @@ int query_refcount(const char *str) {
  *      - pointer to identical string or NULL
  */
 
-char *
-find_string(const char *str) {
+char * find_string(const char *str) 
+{
     shared_string *ss;
     int ind;
 
@@ -293,6 +280,35 @@ find_string(const char *str) {
     return NULL;
 }
 
+/* This function should be declared 
+ * const char *add_refcount(const char *)
+ * Unfortunately, that would require changing a lot of structs
+ */
+
+/*
+ * Description:
+ *      This will increase the refcount of the string str, which *must*
+ *      have been returned from a previous add_string().
+ * Return values:
+ *      - str
+ */
+char * add_refcount(char *str) 
+{
+	#ifdef SECURE_SHSTR_HASH
+	char *tmp_str = find_string(str);
+	if(!str || str != tmp_str)
+	{
+		LOG(llevBug,"BUG: add_refcount(shared_string)(): tried to free a invalid string! >%s<\n", str?str:">NULL<");
+		return NULL;
+	}
+#endif
+
+    GATHER(add_ref_stats.calls);
+    ++(SS(str)->refcount);
+	/*LOG(llevDebug,"SS: >%s< #%d addref\n", str,SS(str)->refcount& ~TOPBIT);*/
+    return str;
+}
+
 /*
  * Description:
  *     This will reduce the refcount, and if it has reached 0, str will
@@ -301,36 +317,59 @@ find_string(const char *str) {
  *     None
  */
 
-void free_string_shared(char *str) {
+void free_string_shared(char *str) 
+{
     shared_string *ss;
+
+/* we check str is in the hash table - if not, something
+ * is VERY wrong here. We can also be sure, that SS(str) is
+ * a safe operation - except we really messed something 
+ * strange up inside the hash table. This will check for
+ * free, wrong or non SS() objects.
+ */
+#ifdef SECURE_SHSTR_HASH
+	char *tmp_str = find_string(str);
+	if(!str || str != tmp_str)
+	{
+		LOG(llevBug,"BUG: free_string_shared(): tried to free a invalid string! >%s<\n", str?str:">NULL<");
+		return;
+	}
+#endif
 
     GATHER(free_stats.calls);
 
     ss = SS(str);
 
-    if ((--ss->refcount & ~TOPBIT) == 0) {
-	/*LOG(llevDebug,"SS: >%s< #%d remove!\n", str,ss->refcount& ~TOPBIT);*/
-	/* Remove this entry.
-	 */
-	if (ss->refcount & TOPBIT) {
-	    /* We must put a new value into the hash_table[].
-	     */
-	    if (ss->next) {
-		*(ss->u.array) = ss->next;
-		ss->next->u.array = ss->u.array;
-		ss->next->refcount |= TOPBIT;
-	    } else {
-		*(ss->u.array) = NULL;
-	    }
-	    free(ss);
-	} else {
-	    /* Relink and free this struct.
-	     */
-	    if (ss->next)
-		ss->next->u.previous = ss->u.previous;
-	    ss->u.previous->next = ss->next;
-	    free(ss);
-	}
+    if (--ss->refcount & ~TOPBIT == 0)
+	{
+		/*LOG(llevDebug,"SS: >%s< #%d remove!\n", str,ss->refcount& ~TOPBIT);*/
+		/* Remove this entry.
+		 */
+		if (ss->refcount & TOPBIT)
+		{
+			/* We must put a new value into the hash_table[].
+			 */
+			if (ss->next)
+			{
+				*(ss->u.array) = ss->next;
+				ss->next->u.array = ss->u.array;
+				ss->next->refcount |= TOPBIT;
+			} 
+			else 
+			{
+				*(ss->u.array) = NULL;
+			}
+			free(ss);
+		} 
+		else 
+		{
+			/* Relink and free this struct.
+			 */
+			if (ss->next)
+				ss->next->u.previous = ss->u.previous;
+			ss->u.previous->next = ss->next;
+			free(ss);
+		}
     }
 	/*
 	else
@@ -384,9 +423,7 @@ ss_dump_statistics() {
  * Return values:
  *      - a string or NULL
  */
-
-char *
-ss_dump_table(int what) {
+char * ss_dump_table(int what) {
     static char totals[80];
     int entries = 0, refs = 0, links = 0;
     int i;
@@ -397,23 +434,20 @@ ss_dump_table(int what) {
 	if ((ss = hash_table[i])!=NULL) {
 	    ++entries;
 	    refs += (ss->refcount & ~TOPBIT);
-#if 1 /* Can't use stderr any longer, need to include global.h and
+		/* Can't use stderr any longer, need to include global.h and
 	    if (what & SS_DUMP_TABLE)
        * use logfile. */
-		fprintf(stderr, "%4d -- %4d refs '%s' %c\n",
+		LOG(llevSystem, "%4d -- %4d refs '%s' %c\n",
 			i, (ss->refcount & ~TOPBIT), ss->string,
 			(ss->refcount & TOPBIT ? ' ' : '#'));
-#endif
 	    while (ss->next) {
 		ss = ss->next;
 		++links;
 		refs += (ss->refcount & ~TOPBIT);
-#if 1
 		if (what & SS_DUMP_TABLE)
-		    fprintf(stderr, "     -- %4d refs '%s' %c\n",
+		   LOG(llevSystem, "     -- %4d refs '%s' %c\n",
 			    (ss->refcount & ~TOPBIT), ss->string,
 			    (ss->refcount & TOPBIT ? '*' : ' '));
-#endif
 	    }
 	}
     }
@@ -426,12 +460,28 @@ ss_dump_table(int what) {
     return NULL;
 }
 
+/* to find memory leak! */
+void ss_test_table(void)
+{
+	shared_string *ss;
+    int entries = 0;
+    int i;
+	char c;
+
+    for (i = 0; i < TABLESIZE; i++) {
+	
+	if ((ss = hash_table[i])!=NULL) 
+	{
+	    ++entries;
+		c = ss->string[0];
+    }
+}	}
+
 /* buf_overflow() - we don't want to exceed the buffer size of 
  * buf1 by adding on buf2! Returns true if overflow will occur.
  */
 
-int 
-buf_overflow (char *buf1, char *buf2, int bufsize)
+int buf_overflow (char *buf1, char *buf2, int bufsize)
 {
     int     len1 = 0, len2 = 0;
 
