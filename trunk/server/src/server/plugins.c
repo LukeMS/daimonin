@@ -277,7 +277,9 @@ void removeOnePlugin(const char *id)
 {
     int plid;
     int j;
-    LOG(llevDebug, "Warning - removeOnePlugin non-canon under Win32\n");
+
+	/* what that warning means MT-2005 */
+    /* LOG(llevDebug, "Warning - removeOnePlugin non-canon under Win32\n"); */
     plid = findPlugin(id);
     if (plid < 0)
         return;
