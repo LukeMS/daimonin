@@ -255,7 +255,7 @@ static void insert_priority_node(path_node *node, path_node **list)
  *              (harder to read and write, more compact)
  *              Approx: 1000 steps in one 4096 bytes msg field
  */
-char *encode_path(path_node *path)
+const char *encode_path(path_node *path)
 {
     char buf[HUGE_BUF];
     char *bufptr = buf;
@@ -284,9 +284,9 @@ char *encode_path(path_node *path)
  * Otherwise FALSE will be returned and the values of map, x and y will be undefined and off 
  * will not be touched.
  */
-int get_path_next(char *buf, sint16 *off, mapstruct **map, int *x, int *y)
+int get_path_next(const char *buf, sint16 *off, mapstruct **map, int *x, int *y)
 {
-    char *coord_start = buf + *off, *coord_end, *map_def = coord_start;
+    const char *coord_start = buf + *off, *coord_end, *map_def = coord_start;
     
     if(buf == NULL || *map == NULL || *off >= (int)strlen(buf)) {
         LOG(llevBug,"get_path_next: Illegal parameters: %s %p %d\n", buf, *map, *off);
@@ -302,7 +302,7 @@ int get_path_next(char *buf, sint16 *off, mapstruct **map, int *x, int *y)
     /* Extract map name if any */
     if(! isdigit(*map_def)) {
         char tmp_buf[HUGE_BUF], map_name[HUGE_BUF];
-        char *mapend = strchr(map_def, ' ');
+        const char *mapend = strchr(map_def, ' ');
 
         if(mapend == NULL) {
             LOG(llevBug,"get_path_next: No delimeter after map name in path description '%s' off %d\n", buf, *off);

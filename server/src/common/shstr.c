@@ -137,7 +137,7 @@ new_shared_string(const char *str) {
  *      - pointer to string identical to str
  */
 
-char *
+const char *
 add_string(const char *str) {
     shared_string *ss;
     int ind;
@@ -242,7 +242,7 @@ int query_refcount(const char *str) {
  *      - pointer to identical string or NULL
  */
 
-char * find_string(const char *str) 
+const char * find_string(const char *str) 
 {
     shared_string *ss;
     int ind;
@@ -292,7 +292,7 @@ char * find_string(const char *str)
  * Return values:
  *      - str
  */
-char * add_refcount(char *str) 
+const char * add_refcount(const char *str) 
 {
 	#ifdef SECURE_SHSTR_HASH
 	char *tmp_str = find_string(str);
@@ -317,7 +317,7 @@ char * add_refcount(char *str)
  *     None
  */
 
-void free_string_shared(char *str) 
+void free_string_shared(const char *str) 
 {
     shared_string *ss;
 
@@ -328,7 +328,7 @@ void free_string_shared(char *str)
  * free, wrong or non SS() objects.
  */
 #ifdef SECURE_SHSTR_HASH
-	char *tmp_str = find_string(str);
+	const char *tmp_str = find_string(str);
 	if(!str || str != tmp_str)
 	{
 		LOG(llevBug,"BUG: free_string_shared(): tried to free a invalid string! >%s<\n", str?str:">NULL<");
@@ -484,7 +484,7 @@ void ss_test_table(void)
  * buf1 by adding on buf2! Returns true if overflow will occur.
  */
 
-int buf_overflow (char *buf1, char *buf2, int bufsize)
+int buf_overflow (const char *buf1, const char *buf2, int bufsize)
 {
     int     len1 = 0, len2 = 0;
 

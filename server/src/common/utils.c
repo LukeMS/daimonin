@@ -138,7 +138,7 @@ int rndm(int min, int max)
  *  Return the number of the spell that whose name passes the pasesed string
  *  argument.   Return -1 if no such spell name match is found.
  */
-int look_up_spell_name( char * spname ){
+int look_up_spell_name( const char * spname ){
    register int i;
    for(i=0;i< NROFREALSPELLS;i++){
       if( strcmp(spname, spells[i].name) == 0) return i;
@@ -147,7 +147,7 @@ int look_up_spell_name( char * spname ){
 }
 
 
-racelink * find_racelink( char *name ) {
+racelink * find_racelink( const char *name ) {
   racelink *test=NULL;
  
   if(name&&first_race)

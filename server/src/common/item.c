@@ -623,7 +623,7 @@ char *query_base_name(object *op) {
 /* describe terrain flags 
  * we use strcat only - prepare the retbuf before call.
  */
-static describe_terrain(object *op, char *retbuf)
+static void describe_terrain(object *op, char *retbuf)
 {
 	if(op->terrain_flag & TERRAIN_AIRBREATH)
 		strcat(retbuf,"(air breathing)");
@@ -988,7 +988,6 @@ char *describe_item(object *op)
 		}
     
       /* for dragon players display the attacks from clawing skill */
-      /*
       /* must convert this for AV dragons later... */
 		/*
 		if (is_dragon_pl(op)) {

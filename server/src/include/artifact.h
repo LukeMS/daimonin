@@ -24,8 +24,8 @@
 */
 typedef struct artifactstruct {
 	char					*parse_text; /* memory block with artifacts parse commands for loader.c */
-	char					*name; /* thats the fake arch name when chained to arch list */
-	char					*def_at_name; /* we use it as marker for def_at is valid and quick name access */
+	const char				*name; /* thats the fake arch name when chained to arch list */
+	const char				*def_at_name; /* we use it as marker for def_at is valid and quick name access */
 	struct artifactstruct	*next;
 	linked_char				*allowed;
 	archetype				def_at; /* thats the base archtype object - this is chained to arch list */

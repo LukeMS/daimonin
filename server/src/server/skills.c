@@ -369,7 +369,7 @@ int attempt_pick_lock ( object *door, object *pl)
 
 int hide(object *op) {
   char buf[MAX_BUF];
-  int level= SK_level(op);
+ /* int level= SK_level(op);*/
 
 /* the preliminaries -- Can we really hide now? */
 /* this keeps monsters from using invisibilty spells and hiding */
@@ -1137,8 +1137,8 @@ int write_note(object *pl, object *item, char *msg) {
     CFP.Value[6] = &m;
     CFP.Value[7] = &m;
     CFP.Value[8] = &l;
-    CFP.Value[9] = event_obj->race;
-    CFP.Value[10]= event_obj->slaying;
+    CFP.Value[9] = (char *)event_obj->race;
+    CFP.Value[10]= (char *)event_obj->slaying;
     if (findPlugin(event_obj->name)>=0)
     {
         ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
@@ -1805,8 +1805,8 @@ void do_throw(object *op, object *toss_item, int dir) {
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
-        CFP.Value[9] = event_obj->race;
-        CFP.Value[10]= event_obj->slaying;
+        CFP.Value[9] = (char *)event_obj->race;
+        CFP.Value[10]= (char *)event_obj->slaying;
         if (findPlugin(event_obj->name)>=0)
             ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
     }

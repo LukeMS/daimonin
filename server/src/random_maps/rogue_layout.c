@@ -37,7 +37,7 @@ int surround_check(char **layout,int i,int j,int Xsize, int Ysize){
    first we make everything a well, then we remove areas to make rooms */
 
 char **roguelike_layout_gen(int xsize, int ysize, int options) {
-  int i,j;
+  int i,j=0;
   Room * Rooms = 0;
   Room *walk;
   int nrooms=0;
@@ -188,7 +188,7 @@ static int roguelike_place_room(Room *Rooms,int xsize, int ysize,int nrooms) {
 static void roguelike_make_rooms(Room *Rooms,char **maze, int options) {
   int making_circle=0;
   int i,j;
-  int R;
+  int R=0;
   Room *walk;
 
   for(walk=Rooms;walk->x!=0;walk++) {

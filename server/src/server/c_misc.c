@@ -960,9 +960,9 @@ void receive_player_password(object *op,char k) {
       return;
     }
     new_draw_info(NDI_UNIQUE, 0,op,"Welcome, Brave New Warrior!");
-    new_draw_info(NDI_UNIQUE, 0,op,"Press &N 'ew for new stats,");
-    new_draw_info(NDI_UNIQUE, 0,op,"&1 - &7 for exchange stats");
-    new_draw_info(NDI_UNIQUE, 0,op,"and &G 'et this setting.");
+    new_draw_info(NDI_UNIQUE, 0,op,"Press ^N^ew for new stats,");
+    new_draw_info(NDI_UNIQUE, 0,op,"^1^ - ^7^ for exchange stats");
+    new_draw_info(NDI_UNIQUE, 0,op,"and ^G^et this setting.");
     new_draw_info(NDI_UNIQUE, 0,op," ");
     Roll_Again(op);
     op->contr->state=ST_ROLL_STAT;

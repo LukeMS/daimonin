@@ -415,8 +415,8 @@ int command_target(object *op, char *params)
 			{
 				/* this is a possible target */
 				tmp->head!= NULL?(head=tmp->head):(head=tmp); /* ensure we have head */
-				if (QUERY_FLAG(head,FLAG_MONSTER) && !QUERY_FLAG(head,FLAG_FRIENDLY) ||
-				  (pvp_flag && (head->type==PLAYER && (GET_MAP_FLAGS(m,xt,yt)&P_IS_PVP||m->map_flags&MAP_FLAG_PVP))))
+				if ((QUERY_FLAG(head,FLAG_MONSTER) && !QUERY_FLAG(head,FLAG_FRIENDLY)) ||
+				  (pvp_flag && (head->type==PLAYER && ((GET_MAP_FLAGS(m,xt,yt)&P_IS_PVP)||(m->map_flags&MAP_FLAG_PVP)))))
 				{
 					/* this can happen when our old target has moved to next position */
 					if(head == op->contr->target_object || head == op || QUERY_FLAG(head,FLAG_SYS_OBJECT) || 

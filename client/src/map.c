@@ -81,35 +81,35 @@ void adjust_map_cache(int xpos, int ypos)
 /* load the multi arch offsets */
 void load_mapdef_dat(void)
 {
-    FILE *stream;
-    int i,ii,x,y,d[32];
-    char line[256];
+	FILE *stream;
+	int i,ii,x,y,d[32];
+	char line[256];
     
-    if( (stream = fopen(ARCHDEF_FILE, "r" )) != NULL )
-    {
-        for(i=0;i<16;i++)
-        {
-            if( fgets( line, 255, stream ) == NULL)
-                break;
+	if(!(stream = fopen(ARCHDEF_FILE, "r" )))
+	{
+		LOG(LOG_ERROR, "ERROR: Can't find file %s\n",ARCHDEF_FILE);
+		return;
+	}
+	for(i=0;i<16;i++)
+	{
+		if( fgets( line, 255, stream ) == NULL)
+			break;
             
-            sscanf(line, "%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d", 
-                &x, &y, &d[0],&d[1], &d[2], &d[3], &d[4], &d[5], &d[6]
-                    , &d[7], &d[8], &d[9], &d[10], &d[11], &d[12], &d[13], &d[14], &d[15], &d[16], &d[17], &d[18]
-                    , &d[19], &d[20], &d[21], &d[22], &d[23], &d[24], &d[25], &d[26], &d[27], &d[28], &d[29], &d[30]
-                    , &d[31]);
-            MultiArchs[i].xlen=x;
-            MultiArchs[i].ylen=y;
+		sscanf(line, "%d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d", 
+				&x, &y, &d[0],&d[1], &d[2], &d[3], &d[4], &d[5], &d[6],
+				&d[7], &d[8], &d[9], &d[10], &d[11], &d[12], &d[13], &d[14], &d[15], &d[16], &d[17], &d[18],
+				&d[19], &d[20], &d[21], &d[22], &d[23], &d[24], &d[25], &d[26], &d[27], &d[28], &d[29], &d[30],
+				&d[31]);
+		MultiArchs[i].xlen=x;
+		MultiArchs[i].ylen=y;
             
-            for(ii=0;ii<16;ii++)
-            {
-                MultiArchs[i].part[ii].xoff=d[ii*2];
-                MultiArchs[i].part[ii].yoff=d[ii*2+1];
-            }
-        }
-    }
-    else
-        LOG(LOG_ERROR, "ERROR: Can't find file %s\n",ARCHDEF_FILE);
-    fclose(stream);
+		for(ii=0;ii<16;ii++)
+		{
+			MultiArchs[i].part[ii].xoff=d[ii*2];
+			MultiArchs[i].part[ii].yoff=d[ii*2+1];
+		}
+	}
+	fclose(stream);
 }
                            
 
@@ -593,6 +593,7 @@ void map_draw_map(void)
  */
 #define TILE_ISO_YLEN (23+1)
 
+/*
 static char tile_mask[TILE_ISO_YLEN][TILE_ISO_XLEN+1] ={
 "000000000000000000000011112222222222222222222222",
 "000000000000000000001111111122222222222222222222",
@@ -619,39 +620,36 @@ static char tile_mask[TILE_ISO_YLEN][TILE_ISO_XLEN+1] ={
 "333333333333333333333311114444444444444444444444", 
 "333333333333333333333333444444444444444444444444" 
 };
+*/
 
-
-/* brute force at is best... */
-void get_tile_position( int mx, int my, int *tx, int *ty ) 
+/******************************************************************
+* clac the tile-pos(tx,ty) from mouse-pos(x,y).
+* ret: 0 ok  ;  <0 not a valid position.
+******************************************************************/
+int get_tile_position( int x, int y, int *tx, int *ty ) 
 {
-	int y,x,xpos, ypos;
+	if (x<MAP_START_XOFF) x-=MAP_TILE_POS_XOFF;
+	x-= MAP_START_XOFF;
+	y-= MAP_START_YOFF;
+	*tx = x/MAP_TILE_POS_XOFF + y/MAP_TILE_YOFF;
+	*ty = y/MAP_TILE_YOFF - x/MAP_TILE_POS_XOFF;
 
-	mx -=MAP_START_XOFF;
-	my-=MAP_START_YOFF;
+	if (x<0) x+= MAP_TILE_POS_XOFF<<3;
+	x%= MAP_TILE_POS_XOFF;
+	y%= MAP_TILE_YOFF;
 
-	*tx=-1;
-	*ty=-1;
-
-	for (y = 0; y < MAP_MAX_SIZE; y++ )
+	if (x< MAP_TILE_POS_XOFF2)
 	{
-		for (x = 0; x < MAP_MAX_SIZE; x++ ) 
-		{
-			xpos = x*MAP_TILE_YOFF-y*MAP_TILE_YOFF;
-			ypos = x*MAP_TILE_XOFF+y*MAP_TILE_XOFF;
-			if(mx>= xpos && mx<xpos+TILE_ISO_XLEN && my>=ypos && my<ypos+TILE_ISO_YLEN)
-			{
-				/* ok, we have the box we are in... 
-				 * but perhaps we have not x,y but one of the
-				 * border tiles... lets check with the mask.
-				 */
-				if(tile_mask[my-ypos][mx-xpos] == '1') /* now we have it! */
-				{
-					*tx = x;
-					*ty = y;
-					return;
-				}
-			}
-		}
+		if (x+y+y < MAP_TILE_POS_XOFF2) --(*tx);
+		else if (y-x >0)	++(*ty);
 	}
+	else
+	{
+		x-= MAP_TILE_POS_XOFF2;
+		if (x-y-y >0)	--(*ty);
+		else if (x+y+y > MAP_TILE_POS_XOFF)	++(*tx);
+	}
+	if (*tx <0 || *tx >16 || *ty <0 || *ty >16) return -1;
+ return 0; 
 }
 

@@ -385,7 +385,6 @@ int request_face(int pnum, int mode)
 	FILE *stream;
 	struct stat statbuf;
     int len;
-    static uint32 newsum=0;
     unsigned char *data;
 	static int count=0;
 	static char fr_buf[REQUEST_FACE_MAX*sizeof(uint16)+4];
@@ -435,7 +434,7 @@ int request_face(int pnum, int mode)
 			if(FaceList[num].sprite) /* NOW we have a valid png with right name ...*/
 			{
 				face_flag_extension(num, buf);
-				sprintf(buf,"%s.png", GetGfxUserDirectory(), bmaptype_table[num].name);
+				sprintf(buf,"%s%s.png", GetGfxUserDirectory(), bmaptype_table[num].name);
 				FaceList[num].name = (char*) malloc(strlen(buf)+1);
 				strcpy(FaceList[num].name,buf);
 				FaceList[num].checksum =adler32(len, data,len);

@@ -292,7 +292,7 @@ typedef struct wmapdef {
  */
 typedef struct mapdef {
     struct mapdef *next;			/* Next map, linked list */
-    char *name;						/* Name of map as given by its creator */
+    char *name;     				/* Name of map as given by its creator */
     char *tmpname;					/* Name of temporary file */
     char *msg;						/* Message map creator may have left */
 
@@ -303,7 +303,7 @@ typedef struct mapdef {
     MapSpace *spaces;				/* Array of spaces on this map */
     oblinkpt *buttons;				/* Linked list of linked lists of buttons */
 
-    char *tile_path[TILED_MAPS];				/* path to adjoining maps */
+    const char *tile_path[TILED_MAPS];			/* path to adjoining maps */
     struct mapdef *tile_map[TILED_MAPS];		/* Next map, linked list */
 
 

@@ -922,7 +922,6 @@ void unlink_skill(object *skillop) {
  */
 
 int link_player_skills(object *pl) {
-  archetype *at=NULL;
   int i,j,cat=0,sk_index=0,exp_index=0;
   object *tmp,*sk_ob[NROFSKILLS],*exp_ob[MAX_EXP_CAT];
 
@@ -1134,7 +1133,7 @@ void show_skills(object *op) {
 			    sprintf(Special,"You can handle %d weapon improvements.",tmp_exp->level/5+5);
 			}
 			if (strcmp(tmp_exp->name,"wisdom")==0) {
-			    char *cp = determine_god(op);
+			    const char *cp = determine_god(op);
 			    sprintf(Special,"You worship %s.", cp?cp:"no god at current time");
 			}
 		    } else if(i==EXP_NONE) { 
@@ -1402,11 +1401,13 @@ int skill_attack (object *tmp, object *pl, int dir, char *string)
  
 int do_skill_attack(object *tmp, object *op, char *string) {
     int success; 
-    object *pskill = op->chosen_skill;
     char buf[MAX_BUF], *name = query_name(tmp);
+	/*
+    object *pskill = op->chosen_skill;
     static char *attack_hth_skill[] = {"skill_karate",	"skill_clawing",
 	"skill_flame_touch", "skill_punching", NULL };
-    
+    */
+
    /* For Players only: if there is no ready weapon, and no "attack" skill
     * is readied either then check if op has a hand-to-hand "attack skill" 
     * to use instead. We define this an "attack" skill as any skill 
@@ -1598,7 +1599,7 @@ float get_skill_time(object *op, int skillnr) {
   if(!time || op->type!=PLAYER) 
      return 0;
   else {
-    int sum = get_weighted_skill_stat_sum (op,skillnr);
+    /*int sum = get_weighted_skill_stat_sum (op,skillnr);*/
     int level = SK_level(op)/10; 
 
 	/*time *= 1/(1+(sum/15)+level);*/

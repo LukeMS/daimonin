@@ -66,7 +66,7 @@ object *get_event_object(object *op, int event_nr)
 /* Note that find_plugin_command is called *before* the internal commands are*/
 /* checked, meaning that you can "overwrite" them.                           */
 /*****************************************************************************/
-CommArray_s *find_plugin_command(char *cmd, object *op)
+CommArray_s *find_plugin_command(const char *cmd, object *op)
 {
     CFParm CmdParm;
     CFParm* RTNValue;
@@ -76,7 +76,7 @@ CommArray_s *find_plugin_command(char *cmd, object *op)
 
     strcpy(cmdchar,"command?");
     CmdParm.Value[0] = cmdchar;
-    CmdParm.Value[1] = cmd;
+    CmdParm.Value[1] = (char *)cmd;
     CmdParm.Value[2] = op;
 
     for(i=0;i<PlugNR;i++)
@@ -119,7 +119,7 @@ void displayPluginsList(object *op)
 /* Returns the position of the plugin in the list if a matching one was found*/
 /* or -1 if no correct plugin was detected.                                  */
 /*****************************************************************************/
-int findPlugin(char* id)
+int findPlugin(const char* id)
 {
     int i;
     for(i=0; i<PlugNR; i++)
@@ -174,7 +174,7 @@ void initPlugins(void)
 /* - CF-Plugin specific initialization tasks (call to initPlugin());         */
 /* - Hook bindings;                                                          */
 /*****************************************************************************/
-void initOnePlugin(char* pluginfile)
+void initOnePlugin(const char* pluginfile)
 {
     int i=0;
     HMODULE DLLInstance;
@@ -255,7 +255,7 @@ void initOnePlugin(char* pluginfile)
 /*****************************************************************************/
 /* Removes one plugin from memory. The plugin is identified by its keyname.  */
 /*****************************************************************************/
-void removeOnePlugin(char *id)
+void removeOnePlugin(const char *id)
 {
     int plid;
     int j;
@@ -320,7 +320,7 @@ void initPlugins(void)
 /*****************************************************************************/
 /* Removes one plugin from memory. The plugin is identified by its keyname.  */
 /*****************************************************************************/
-void removeOnePlugin(char *id)
+void removeOnePlugin(const char *id)
 {
     int plid;
     int j;
@@ -347,7 +347,7 @@ void removeOnePlugin(char *id)
 /* - CF-Plugin specific initialization tasks (call to initPlugin());         */
 /* - Hook bindings;                                                          */
 /*****************************************************************************/
-void initOnePlugin(char* pluginfile)
+void initOnePlugin(const char* pluginfile)
 {
         int i=0;
         void *ptr = NULL;
@@ -1064,7 +1064,7 @@ CFParm* CFWAddExp(CFParm* PParm)
 CFParm* CFWDetermineGod(CFParm* PParm)
 {
     CFParm* CFP;
-    char* val;
+    const char* val;
     CFP = (CFParm*)(malloc(sizeof(CFParm)));
     val = determine_god(
         (object *)(PParm->Value[0])
@@ -1141,7 +1141,7 @@ CFParm* CFWAddString(CFParm* PParm)
     /*CFP = (CFParm*)(malloc(sizeof(CFParm)));*/
     val = (char *)(PParm->Value[0]);
 	CFP.Value[0]=NULL;
-	FREE_AND_COPY_HASH((char*)CFP.Value[0], val);
+	FREE_AND_COPY_HASH((const char*)CFP.Value[0], val);
     return &CFP;
 }
 
@@ -1151,7 +1151,7 @@ CFParm* CFWAddRefcount(CFParm* PParm)
     char* val;
     val = (char *)(PParm->Value[0]);
     CFP.Value[0] = NULL;
-	FREE_AND_ADD_REF_HASH((char*)CFP.Value[0], val);
+	FREE_AND_ADD_REF_HASH((const char*)CFP.Value[0], val);
     return &CFP;
 }
 CFParm* CFWFreeString(CFParm* PParm)

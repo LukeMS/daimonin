@@ -738,7 +738,7 @@
  * sure. I prefer to use first somewhat low values. Increasing this when problems
  * happens is easier as decreasing to search the problems. MT-2003
  */
-#define SOCKETBUFSIZE 28*1024
+#define SOCKETBUFSIZE 36*1024
 
 /*
  * If undefined, malloc is always used.

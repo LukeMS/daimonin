@@ -88,14 +88,15 @@ typedef struct _anim {
     struct _anim *next;         /* pointer to next anim in que */
     struct _anim *before;       /* pointer to anim before */
     int type;
-    uint32 last_ticks;
-    int value;
-    int x;
-    int y;
-    int xoff;
-    int yoff;
-    int mapx;
-    int mapy;    
+    uint32 start_tick;          /* The time we started this anim */
+    uint32 last_tick;           /* This is the end-tick */
+    int value;                  /* this is the number to display */
+    int x;                      /* where we are X */
+    int y;                      /* where we are Y */
+    int xoff;                   /* movement in X per tick */
+    float yoff;                   /* movement in y per tick */
+    int mapx;                   /* map position X */
+    int mapy;                   /* map position Y */
 }_anim;
 
 extern struct _anim *start_anim; /* anim queue of current active map */

@@ -108,7 +108,7 @@ static int apply_id_altar (object *money, object *altar, object *pl)
 
 int apply_potion(object *op, object *tmp)
 {
-	int got_one=0,i;
+	int i;
 
 	/* some sanity checks */
 	if(!op || !tmp || (op->type == PLAYER && (!op->contr || !op->contr->sp_exp_ptr ||!op->contr->grace_exp_ptr) ) )
@@ -448,7 +448,7 @@ int apply_potion(object *op, object *tmp)
  * Weapon improvement code follows
  ****************************************************************************/
 
-int check_item(object *op,char *item)
+int check_item(object *op, const char *item)
 {
   int count=0;
 
@@ -471,7 +471,7 @@ int check_item(object *op,char *item)
   return count;
 }
 
-void eat_item(object *op,char *item)
+void eat_item(object *op,const char *item)
 {
   object *prev;
 
@@ -914,8 +914,8 @@ int esrv_apply_container (object *op, object *sack)
 		CFP.Value[6] = &m;
 		CFP.Value[7] = &m;
 		CFP.Value[8] = &l;
-		CFP.Value[9] = event_obj->race;
-		CFP.Value[10]= event_obj->slaying;
+		CFP.Value[9] = (char *)event_obj->race;
+		CFP.Value[10]= (char *)event_obj->slaying;
 		if (findPlugin(event_obj->name)>=0)
 		{
 			CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
@@ -1278,8 +1278,8 @@ void move_apply (object *trap, object *victim, object *originator)
     CFP.Value[6] = &m;
     CFP.Value[7] = &m;
     CFP.Value[8] = &l;
-    CFP.Value[9] = event_obj->race;
-    CFP.Value[10]= event_obj->slaying;
+    CFP.Value[9] = (char *)event_obj->race;
+    CFP.Value[10]= (char *)event_obj->slaying;
     if (findPlugin(event_obj->name)>=0)
     {
       CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
@@ -1550,8 +1550,8 @@ static void apply_book (object *op, object *tmp)
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
-        CFP.Value[9] = event_obj->race;
-        CFP.Value[10]= event_obj->slaying;
+        CFP.Value[9] = (char *)event_obj->race;
+        CFP.Value[10]= (char *)event_obj->slaying;
         if (findPlugin(event_obj->name)>=0)
             ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
     }
@@ -1561,7 +1561,7 @@ static void apply_book (object *op, object *tmp)
 
     /* gain xp from reading */
     if(!QUERY_FLAG(tmp,FLAG_NO_SKILL_IDENT)) { /* only if not read before */
-      int exp_gain=calc_skill_exp(op,tmp);
+      /*int exp_gain=calc_skill_exp(op,tmp);*/
       if(!QUERY_FLAG(tmp,FLAG_IDENTIFIED)) {
         /*exp_gain *= 2; because they just identified it too */
         SET_FLAG(tmp,FLAG_IDENTIFIED);
@@ -2130,7 +2130,6 @@ void create_food_force(object* who, object *food, object *force)
  */
 void eat_special_food(object *who, object *food) 
 {
-	object * force=NULL;
 
   /* if there is any stat or resist value - create force for the object! */
   if(food->stats.Pow ||food->stats.Str || food->stats.Dex || food->stats.Con 
@@ -2544,8 +2543,8 @@ int manual_apply (object *op, object *tmp, int aflag)
     CFP.Value[6] = &m;
     CFP.Value[7] = &m;
     CFP.Value[8] = &l;
-    CFP.Value[9] = event_obj->race;
-    CFP.Value[10]= event_obj->slaying;
+    CFP.Value[9] = (char *)event_obj->race;
+    CFP.Value[10]= (char *)event_obj->slaying;
     if (findPlugin(event_obj->name)>=0)
     {
         CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);

@@ -50,7 +50,7 @@ partylist * form_party(object *op, char *params, partylist * firstparty, partyli
 
     newparty->passwd[0] = '\0';
     newparty->next = NULL;
-    newparty->partyleader = strdup_local(op->name);
+    newparty->partyleader = add_string(op->name);
     if(firstparty != NULL)
         lastparty->next = newparty;
     new_draw_info_format(NDI_UNIQUE, 0, op,

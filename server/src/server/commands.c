@@ -55,19 +55,19 @@ CommArray_s Commands[] = {
   {"/combat",		command_combat,			0.25f}, /* toggle attack mode of player */
   {"/pray",		command_praying,		1.0},
 
-  {"/help",			command_help,			1.0},
-  {"/save",			command_save,			1.0},
-  {"/sound",		command_sound,			1.0},
-  {"/who",			command_who,			5.0},
-  {"/mapinfo",		command_mapinfo,		5.0},
-  {"/motd",			command_motd,			5.0},
-  {"/dm",			command_dm,				1.0},
+  {"/run",			command_run,			1.0},
+  {"/run_stop",		command_run_stop,		0.0},
   {"/cast",			command_cast_spell,		0.0},	/* use time comes from spells! */ 
   {"/use_skill",	command_uskill,			0.2f},
   {"/ready_skill",	command_rskill,			0.2f},
   {"/say",			command_say,			1.0},
   {"/shout",		command_shout,			1.0},
   {"/tell",			command_tell,			1.0},
+  {"/t_tell",		command_t_tell,			1.0},
+  {"/who",			command_who,			5.0},
+  {"/mapinfo",		command_mapinfo,		5.0},
+  {"/motd",			command_motd,			5.0},
+  {"/dm",			command_dm,				1.0},
   {"/reply",		command_reply,			1.0},
   {"/usekeys",		command_usekeys,		1.0},
   {"/dropall",		command_dropall,		1.0},
@@ -75,9 +75,10 @@ CommArray_s Commands[] = {
   {"/version",		command_version,		1.0},
   {"/pickup",		command_pickup,			1.0},
   {"/mark",			command_mark,			1.0},
-  {"/delete",		command_quit,			1.0},
-  {"/run",			command_run,			1.0},
-  {"/run_stop",		command_run_stop,		0.0},
+  {"/help",			command_help,			1.0},
+  {"/save",			command_save,			1.0},
+/*  {"/sound",		command_sound,			1.0},*/
+/*  {"/delete",		command_quit,			1.0},*/
 
  
 #ifdef SEARCH_ITEMS

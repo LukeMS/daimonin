@@ -33,6 +33,8 @@
 #include <sounds.h>
 #include <newclient.h>
 
+/* experimental softscrolling stuff */
+/*
 static char tile_grid[27][52] = {
 	{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,7,7,7,7,7,7,7,7,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
 	{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,0,0,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
@@ -62,8 +64,7 @@ static char tile_grid[27][52] = {
 	{3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,8,8,8,8,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4},
 	{3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,3,8,8,8,8,8,8,8,8,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4},
 };
-
-static tile_toff[9][2] =
+static int tile_toff[9][2] =
 {
 	{0,0},
 	{24,12},
@@ -75,7 +76,7 @@ static tile_toff[9][2] =
 	{0,23},
 	{0,-23},
 };
-static tile_grid_offset[9][2] =
+static int tile_grid_offset[9][2] =
 {
 	{0,0},
 	{1,0},
@@ -87,11 +88,12 @@ static tile_grid_offset[9][2] =
 	{1,1},
 	{-1,-1}
 };
+*/
 
 
 /* i left find_arrow - find_arrow() and find_arrow()_ext should merge 
    when the server sided range mode is removed at last from source */ 
-static object *find_arrow_ext(object *op, char *type,int tag);
+static object *find_arrow_ext(object *op, const char *type,int tag);
 
 player *find_player(char *plname)
 {
@@ -247,10 +249,27 @@ static player* get_player(player *p) {
 /* This loads the first map an puts the player on it. */
 static void set_first_map(object *op)
 {
+
+    object* current;
+
     strcpy(op->contr->maplevel, first_map_path);
     op->x = -1;
     op->y = -1;
-    enter_exit(op, NULL);
+
+	if(!strcmp(first_map_path, "/tutorial"))
+	{
+		current=get_object();
+	    FREE_AND_COPY_HASH(EXIT_PATH(current),first_map_path);
+		EXIT_X(current)=1;
+		EXIT_Y(current)=1;
+		current->last_eat = MAP_PLAYER_MAP;
+	    enter_exit(op, current);
+	}
+	else
+	{
+	    enter_exit(op, NULL);
+	}
+
 }
 
 /* Tries to add player on the connection passwd in ns.
@@ -335,7 +354,6 @@ archetype *get_player_archetype(archetype* at)
  */
 object *get_nearest_player(object *mon) {
     object *op = NULL;
-    player *pl = NULL;
     objectlink *ol;
     unsigned int lastdist, aggro_range, aggro_stealth;
     rv_vector	rv;
@@ -689,7 +707,7 @@ int receive_play_again(object *op, char key)
     }
     else if(key=='a'||key=='A') {
 	player *pl = op->contr;
-	char *name = NULL;
+	const char *name = NULL;
 	
 	FREE_AND_ADD_REF_HASH(name, op->name);
 	remove_friendly_object(op);
@@ -1020,7 +1038,7 @@ int key_change_class(object *op, char key)
 
     tmp_loop = 0;
     while(!tmp_loop) {
-      char *name = NULL;
+      const char *name = NULL;
       int x = op->x, y = op->y;
 
 	  FREE_AND_ADD_REF_HASH(name,op->name);
@@ -1386,7 +1404,7 @@ int check_pick(object *op) {
  *  in the right type container (quiver). Pointer to the 
  *  found object is returned.
  */
-object *find_arrow(object *op, char *type)
+object *find_arrow(object *op, const char *type)
 {
   object *tmp = NULL;
 
@@ -2329,8 +2347,8 @@ void kill_player(object *op)
     CFP.Value[6] = &m;
     CFP.Value[7] = &m;
     CFP.Value[8] = &l;
-    CFP.Value[9] = event_obj->race;
-    CFP.Value[10]= event_obj->slaying;
+    CFP.Value[9] = (char *)event_obj->race;
+    CFP.Value[10]= (char *)event_obj->slaying;
     if (findPlugin(event_obj->name)>=0)
     {
         CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
@@ -2497,7 +2515,7 @@ void kill_player(object *op)
     {
         /* determine_god() seems to not work sometimes... why is this?
            Should I be using something else? GD */
-        char *god = determine_god(op);
+        const char *god = determine_god(op);
         if (god && (strcmp(god, "none")))
             new_draw_info_format(NDI_UNIQUE, 0, op, "For a brief moment you feel the holy presence of\n%s protecting you.", god);
         else
@@ -2698,7 +2716,7 @@ void fix_luck() {
 /* cast_dust() - handles op throwing objects of type 'DUST' */
 /* WARNING: FUNCTION NEED TO BE REWRITTEN. works for ae spells only now! */ 
 void cast_dust (object *op, object *throw_ob, int dir) {
-  archetype *arch;
+  archetype *arch=NULL;
 
   if(!(spells[throw_ob->stats.sp].flags&SPELL_DESC_DIRECTION))
   {
@@ -3106,7 +3124,7 @@ void dragon_ability_gain(object *who, int atnr, int level) {
  *  in the right type container (quiver). Pointer to the 
  *  found object is returned.
  */
-static object *find_arrow_ext(object *op, char *type,int tag)
+static object *find_arrow_ext(object *op, const char *type,int tag)
 {
   object *tmp = NULL;
 

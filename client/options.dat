@@ -16,6 +16,15 @@ MusicVolume 85
 # 3: show only your name
 PlayerNamesOnMap 2
 
+# Show Warning Icons in the map
+# (over the head of the player sprites)
+# WarningFood, WarningHp: 
+# 0    : never show warning icon
+# 1-100: % value we start showing icon
+WarningHP 0
+WarningFood 5
+
+
 # Text Window Default Settings.
 # NOTE: This settings can be changed ingame and are
 # saved at game end to options.tmp. Settings in that

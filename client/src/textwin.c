@@ -43,17 +43,39 @@ typedef struct _text_buf {
 _text_buf text_win_buf[TEXT_WIN_MAX]; /* here we copy in *all* msg */
 uint32 win_start=0,win_lenbuf=0;
 int win_len = 0;
+int text_win_firstOutputLine;
 int text_win_soff;
 
 _text_buf text_win_buf_top[TEXT_WIN_MAX]; /* here we copy in only stuff releated to top windows */
 uint32 win_start_top=0,win_lenbuf_top=0;
 int win_len_top = 0;
+int text_win_top_firstOutputLine;
 int text_win_soff_top;
 
 _text_buf text_win_buf_split[TEXT_WIN_MAX]; /* and the same for the 2nd part */
 uint32 win_start_split=0,win_lenbuf_split=0;
 int win_len_split = 0;
+int text_win_split_firstOutputLine;
 int text_win_soff_split;
+
+/******************************************************************
+ returns a pointer to the textLine[pos] of the lower textwin.
+******************************************************************/
+char *get_textWinRow(int mouseY){
+	if(textwin_set.split_flag == FALSE){
+		int pos = (mouseY -488) / 10; /* clicked row */
+		pos = (text_win_firstOutputLine+pos)%TEXT_WIN_MAX - text_win_soff;
+    if (pos <0)
+      pos+=TEXT_WIN_MAX;
+		return text_win_buf[pos].buf;
+	}else{
+		int pos = (mouseY-588)/10+textwin_set.split_size; /* clicked row */
+		pos = (text_win_split_firstOutputLine+pos)%TEXT_WIN_MAX - text_win_soff_split;
+    if (pos <0)
+      pos+=TEXT_WIN_MAX;
+		return text_win_buf_split[pos].buf;
+	}
+} 
 
 void clear_textwin(void)
 {
@@ -205,13 +227,13 @@ void draw_info (char *str, int flags )
 
 static void show_window_top(int x, int y, int lines)
 {
-        int i, index,temp;
+        int i, temp;
 
-        index = win_start_top-(lines+1);
-        if(index <0 && win_lenbuf_top == TEXT_WIN_MAX)
-                index=TEXT_WIN_MAX+index;
-        else if(index <0)
-            index = 0;
+        text_win_top_firstOutputLine = win_start_top-(lines+1);
+        if(text_win_top_firstOutputLine <0 && win_lenbuf_top == TEXT_WIN_MAX)
+                text_win_top_firstOutputLine+=TEXT_WIN_MAX;
+        else if(text_win_top_firstOutputLine <0)
+            text_win_top_firstOutputLine = 0;
 
         if((int)win_lenbuf_top>lines)
         {
@@ -226,7 +248,7 @@ static void show_window_top(int x, int y, int lines)
 
         for(i=0;i<=lines && i <(int)win_lenbuf_top;i++)
         {
-            temp = (index+i)%TEXT_WIN_MAX;
+            temp = (text_win_top_firstOutputLine+i)%TEXT_WIN_MAX;
             if((int)win_lenbuf_top>lines) /* only use scroll offset, when there is some */
             {
                 temp-=text_win_soff_top;
@@ -262,13 +284,13 @@ static void show_window_top(int x, int y, int lines)
 
 static void show_window_split(int x, int y, int lines)
 {
-        int i, index,temp;
+        int i, temp;
 
-        index = win_start_split-(lines+1);
-        if(index <0 && win_lenbuf_split == TEXT_WIN_MAX)
-                index=TEXT_WIN_MAX+index;
-        else if(index <0)
-            index = 0;
+        text_win_split_firstOutputLine = win_start_split-(lines+1);
+        if(text_win_split_firstOutputLine <0 && win_lenbuf_split == TEXT_WIN_MAX)
+                text_win_split_firstOutputLine+=TEXT_WIN_MAX;
+        else if(text_win_split_firstOutputLine <0)
+            text_win_split_firstOutputLine = 0;
 
         if((int)win_lenbuf_split>lines)
         {
@@ -283,7 +305,7 @@ static void show_window_split(int x, int y, int lines)
 
         for(i=0;i<=lines && i <(int)win_lenbuf_split;i++)
         {
-            temp = (index+i)%TEXT_WIN_MAX;
+            temp = (text_win_split_firstOutputLine+i)%TEXT_WIN_MAX;
             if((int)win_lenbuf_split>lines) /* only use scroll offset, when there is some */
             {
                 temp-=text_win_soff_split;
@@ -318,13 +340,13 @@ static void show_window_split(int x, int y, int lines)
 
 static void show_window(int x, int y, int lines)
 {
-	int i, index,temp;
+	int i, temp;
         
-	index = win_start-(lines+1);
-	if(index <0 && win_lenbuf == TEXT_WIN_MAX)
-		index=TEXT_WIN_MAX+index;
-	else if(index <0)
-		index = 0;
+	text_win_firstOutputLine = win_start-(lines+1);
+	if(text_win_firstOutputLine <0 && win_lenbuf == TEXT_WIN_MAX)
+		text_win_firstOutputLine+=TEXT_WIN_MAX;
+	else if(text_win_firstOutputLine <0)
+		text_win_firstOutputLine = 0;
 
 	if((int)win_lenbuf>lines)
     {
@@ -339,7 +361,7 @@ static void show_window(int x, int y, int lines)
 
 	for(i=0;i<=lines && i <(int)win_lenbuf;i++)
 	{
-		temp = (index+i)%TEXT_WIN_MAX;
+		temp = (text_win_firstOutputLine+i)%TEXT_WIN_MAX;
 		if((int)win_lenbuf>lines)
         {
 			temp-=text_win_soff;
@@ -376,46 +398,53 @@ static void show_window(int x, int y, int lines)
 void show_textwin(int x, int y)
 {
 	int len, tmp;
-    SDL_Rect box;
-	
-	sprite_blt(Bitmaps[BITMAP_TEXTWIN_BLANK],x, y+2, NULL, NULL);
+	SDL_Rect box;
+	_BLTFX bltfx;
+
+	bltfx.alpha = textwin_set.alpha;
+	bltfx.flags = BLTFX_FLAG_SRCALPHA;
+	box.x =	box.y = 0;
+	box.w = Bitmaps[BITMAP_TEXTWIN]->bitmap->w;
+	sprite_blt(Bitmaps[BITMAP_TEXTWIN_BLANK],x-1, y+2, NULL, NULL);
 	y=599; /* to lazy to work with correct calcs */
 	
 	if(textwin_set.split_flag == TRUE)
 	{
-		len=((textwin_set.split_size+1)*10)+((textwin_set.top_size+1)*10)+16;
-	}
-	else
-	{
-		len=((textwin_set.size+1)*10)+13;
-	}
-
-	y-=len;
-	box.x =0;
-    box.y = 0;
-    box.w = Bitmaps[BITMAP_TEXTWIN]->bitmap->w;
-    box.h = len;
-		
-	if(textwin_set.use_alpha == TRUE)
-	{
-		_BLTFX bltfx;
-		bltfx.alpha=textwin_set.alpha;
-		bltfx.flags = BLTFX_FLAG_SRCALPHA;
-		sprite_blt(Bitmaps[BITMAP_TEXTWIN_MASK],x-1, y, &box, &bltfx);
-	}
-	else
-		sprite_blt(Bitmaps[BITMAP_TEXTWIN],x-1, y, &box,NULL);
-
-	if(textwin_set.split_flag == TRUE)
-	{
+		box.h = len =(textwin_set.split_size+textwin_set.top_size)*5+18;
+		y-=len*2;
+		if(textwin_set.use_alpha == TRUE){
+			sprite_blt(Bitmaps[BITMAP_TEXTWIN_MASK],x-1, y,     &box, &bltfx);
+			sprite_blt(Bitmaps[BITMAP_TEXTWIN_MASK],x-1, y+len, &box, &bltfx);
+		}else{
+			sprite_blt(Bitmaps[BITMAP_TEXTWIN],x-1, y,     &box,NULL);
+			sprite_blt(Bitmaps[BITMAP_TEXTWIN],x-1, y+len, &box, NULL);			
+		}
 		show_window_top(x, y-2,textwin_set.top_size);
-		tmp = (textwin_set.top_size+1)*10+2;
-		sprite_blt(Bitmaps[BITMAP_TEXTWIN_SPLIT],x-1, y+(tmp+1), NULL, NULL);
+		tmp = textwin_set.top_size*10+12;
 		show_window_split(x, y+tmp,textwin_set.split_size);
+		sprite_blt(Bitmaps[BITMAP_TEXTWIN_SPLIT],x-1, y+(tmp+1), NULL, NULL); 
+		/*
+		box.x = x-1;
+		box.h =1;		
+		box.y = y+tmp+1;
+		SDL_FillRect(ScreenSurface, &box, -1);
+		box.y = y-1;
+		SDL_FillRect(ScreenSurface, &box, -1);
+		box.w =1;
+		box.h = 599- y;
+		*/
+/*		SDL_FillRect(ScreenSurface, &box, -1);	*/
 	}
 	else
+	{
+		box.h =len= textwin_set.size*10 +23;
+		y-=len;
+		if(textwin_set.use_alpha == TRUE)
+			sprite_blt(Bitmaps[BITMAP_TEXTWIN_MASK],x-1, y, &box, &bltfx);
+		else
+			sprite_blt(Bitmaps[BITMAP_TEXTWIN],x-1, y, &box,NULL);
 		show_window(x, y-1,textwin_set.size);
-
-        StringBlt(ScreenSurface, &SystemFont, ">", x+2, y+len-13, 1,NULL, NULL);
+	}
+	StringBlt(ScreenSurface, &SystemFont, ">", x+2, 586, 1,NULL, NULL);
 }
 

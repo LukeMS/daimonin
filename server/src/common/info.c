@@ -37,7 +37,7 @@
 void dump_abilities() {
   archetype *at;
   for(at = first_archetype; at; at=at->next) {
-    char *ch, *gen_name = "";
+    const char *ch, *gen_name = "";
     archetype *gen;
 
     if(!QUERY_FLAG(&at->clone,FLAG_MONSTER))

@@ -48,8 +48,7 @@
  * allocated and deallocated teh same buffer over and over again and the price
  * of using a bit of extra memory.  IT also makes the code simpler.
  */
-#define MAXSOCKBUF 20480
-/*#define MAXSOCKBUF 10240 */
+#define MAXSOCKBUF (36*1024)
 
 
 #define CS_QUERY_YESNO	0x1	/* Yes/no question */

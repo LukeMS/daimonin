@@ -106,8 +106,8 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam, int base_
         CFP.Value[6] = &base_dam;
         CFP.Value[7] = &base_wc;
         CFP.Value[8] = &l;
-        CFP.Value[9] = event_obj->race;
-        CFP.Value[10]= event_obj->slaying;
+        CFP.Value[9] = (char *)event_obj->race;
+        CFP.Value[10]= (char *)event_obj->slaying;
         if (findPlugin(event_obj->name)>=0)
             ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
     }
@@ -311,7 +311,7 @@ static int attack_ob_simple (object *op, object *hitter, int base_dam, int base_
 int hit_player(object *op,int dam, object *hitter, int type) 
 {
 	object *hit_obj, *target_obj;
-	int maxdam=0, attacktype=1;
+	int maxdam=0;
     int attacknum, hit_level;
     int simple_attack;
     tag_t op_tag, hitter_tag;
@@ -1042,8 +1042,8 @@ int kill_object(object *op,int dam, object *hitter, int type)
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
-        CFP.Value[9] = event_obj->race;
-        CFP.Value[10]= event_obj->slaying;
+        CFP.Value[9] = (char *)event_obj->race;
+        CFP.Value[10]= (char *)event_obj->slaying;
         if (findPlugin(event_obj->name)>=0)
         {
             CFR =(PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
@@ -1361,7 +1361,7 @@ static int stick_arrow (object *op, object *tmp)
 object *hit_with_arrow (object *op, object *victim)
 {
     object *container, *hitter;
-    int hit_something;
+    int hit_something=0;
     int sretval = 0; /* GROS - Needed for script return value */
     tag_t victim_tag, hitter_tag;
     sint16 victim_x, victim_y;
@@ -1406,8 +1406,8 @@ object *hit_with_arrow (object *op, object *victim)
         CFP.Value[6] = &(op->stats.dam);
         CFP.Value[7] = &(op->stats.wc);
         CFP.Value[8] = &l;
-        CFP.Value[9] = event_obj->race;
-        CFP.Value[10]= event_obj->slaying;
+        CFP.Value[9] = (char *)event_obj->race;
+        CFP.Value[10]= (char *)event_obj->slaying;
         if (findPlugin(event_obj->name)>=0)
         {
             CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
@@ -1993,7 +1993,7 @@ void save_throw_object (object *op, int type, object *originator)
 	 */ 
 	if(type&(AT_FIRE|AT_ELECTRICITY)
            &&op->other_arch&&op->glow_radius) { 
-		char *arch=op->other_arch->name; /* this should be refcount! */
+		const char *arch=op->other_arch->name; /* this should be refcount! */
 
 		op = decrease_ob_nr (op, 1);
                 if (op)

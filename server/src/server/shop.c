@@ -545,26 +545,28 @@ typedef struct shopinv {
  * The format of the strings we get is type:name.  So we first want to
  * sort by type (numerical) - if the same type, then sort by name.
  */
+    /* the type is the same (what atoi gets), so do a strcasecmp to sort
+     * via alphabetical order
+	 */
+/*
 static int shop_sort(const void *a1, const void *a2)
 {
     shopinv *s1 = (shopinv*)a1, *s2= (shopinv*)a2;
 
     if (s1->type<s2->type) return -1;
     if (s1->type>s2->type) return 1;
-    /* the type is the same (what atoi gets), so do a strcasecmp to sort
-     * via alphabetical order
-     */
     return strcasecmp(s1->item_sort, s2->item_sort);
 }
-
-static void add_shop_item(object *tmp, shopinv *items, int *numitems, int *numallocated)
-{
-    char buf[MAX_BUF];
-
+*/
     /* clear unpaid flag so that doesn't come up in query
      * string.  We clear nrof so that we can better sort
      * the object names.
      */
+/*
+static void add_shop_item(object *tmp, shopinv *items, int *numitems, int *numallocated)
+{
+    char buf[MAX_BUF];
+
 
     CLEAR_FLAG(tmp, FLAG_UNPAID);
     items[*numitems].nrof=tmp->nrof;
@@ -592,6 +594,7 @@ static void add_shop_item(object *tmp, shopinv *items, int *numitems, int *numal
     }
     SET_FLAG(tmp, FLAG_UNPAID);
 }
+*/
 
 /* This listing generator need really performance.
  * He collect, sort and generate full names for every item in the shop and

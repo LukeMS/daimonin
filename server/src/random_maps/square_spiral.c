@@ -76,7 +76,7 @@ void find_top_left_corner(char **maze,int *cx, int *cy) {
 
 char **make_square_spiral_layout(int xsize, int ysize,int options) {
   int i,j;
-  int cx,cy;
+  int cx=0,cy=0;
   int tx,ty;
 
   /* generate and allocate a doorless, centered onion */

@@ -197,7 +197,7 @@ static int relative_tile_position(mapstruct *map1, mapstruct *map2, int *x, int 
  * return NULL if no match is found.
  */
 
-mapstruct *has_been_loaded (char *name) {
+mapstruct *has_been_loaded (const char *name) {
     mapstruct *map;
 	int moff=0;
 
@@ -226,7 +226,7 @@ mapstruct *has_been_loaded (char *name) {
  * it really should be called create_mapname
  */
 
-char *create_pathname (char *name) {
+char *create_pathname (const char *name) {
     static char buf[MAX_BUF];
 
     /* Why?  having extra / doesn't confuse unix anyplace?  Dependancies
@@ -243,7 +243,7 @@ char *create_pathname (char *name) {
  * same as create_pathname, but for the overlay maps.
  */
 
-char *create_overlay_pathname (char *name) {
+char *create_overlay_pathname (const char *name) {
     static char buf[MAX_BUF];
 
     /* Why?  having extra / doesn't confuse unix anyplace?  Dependancies
@@ -262,7 +262,7 @@ char *create_overlay_pathname (char *name) {
  * files than full directory structure, but if this is problem it can 
  * be changed.
  */
-static char *create_items_path (char *s) {
+static char *create_items_path (const char *s) {
     static char buf[MAX_BUF];
     char *t;
     
@@ -297,7 +297,7 @@ static char *create_items_path (char *s) {
  * that seems to be missing the prepend_dir processing
  */
 
-int check_path (char *name, int prepend_dir)
+int check_path (const char *name, int prepend_dir)
 {
 #ifdef WIN32 /* ***win32: check this sucker in windows style. */
     char buf[MAX_BUF];
@@ -353,7 +353,7 @@ int check_path (char *name, int prepend_dir)
 }
 
 /* Moved from main.c */
-char *normalize_path (char *src, char *dst, char *path) {
+char *normalize_path (const char *src, const char *dst, char *path) {
     char *p, *q;
     char buf[HUGE_BUF];
 /*    static char path[HUGE_BUF]; */
@@ -1299,7 +1299,7 @@ static int load_map_header(FILE *fp, mapstruct *m)
 		if (m->tile_path[tile-1]) {
 		    LOG(llevError,"ERROR: load_map_header: tile location %d duplicated (%s)\n",
 			tile, m->path);
-		    free(m->tile_path[tile-1]);
+		    FREE_AND_CLEAR_HASH(m->tile_path[tile-1]);
 		}
 		if (!editor) {
 		    if (check_path(value, 1)==-1) {
@@ -1349,7 +1349,7 @@ static int load_map_header(FILE *fp, mapstruct *m)
 		} /* if not editor */
 		if (value)
         {
-		    m->tile_path[tile-1] = strdup_local(value);
+		    m->tile_path[tile-1] = add_string(value);
             LOG(llevDebug,"add t_map %s (%d). ",value, tile-1);
         }
 	    }
@@ -1383,7 +1383,7 @@ static int load_map_header(FILE *fp, mapstruct *m)
  *		managed map list.
  */
 
-mapstruct *load_original_map(char *filename, int flags) {
+mapstruct *load_original_map(const char *filename, int flags) {
 	FILE *fp;
     mapstruct *m;
     int comp;
@@ -1858,7 +1858,7 @@ void free_map(mapstruct *m,int flag) {
 		free_objectlinkpt(m->buttons);
     m->buttons = NULL;
     for (i=0; i<TILED_MAPS; i++)
-		FREE_AND_NULL_PTR(m->tile_path[i]);
+		FREE_AND_CLEAR_HASH(m->tile_path[i]);
     if(m->bitmap) {
         free(m->bitmap);
         m->bitmap = NULL;
@@ -1935,7 +1935,7 @@ void delete_map(mapstruct *m) {
  * Returns a pointer to the given map.
  */
 
-mapstruct *ready_map_name(char *name, int flags) 
+mapstruct *ready_map_name(const char *name, int flags) 
 {
 	mapstruct *m;
 

@@ -70,9 +70,9 @@ enum {
  */
 
 typedef struct _change_arch {
-    char *name;              /* is != NULL, copy this over the original arch name */
-    char *title;             /* is != NULL, copy this over the original arch name */
-    char *slaying;           /* is != NULL, copy this over the original arch name */
+    const char *name;              /* is != NULL, copy this over the original arch name */
+    const char *title;             /* is != NULL, copy this over the original arch name */
+    const char *slaying;           /* is != NULL, copy this over the original arch name */
     int item_race;
     sint8 material_start;     /* if -1, we set material_real to 0 */
     sint8 material_end;       /* if -1 and material_start not, we use material_start
@@ -90,7 +90,7 @@ typedef struct _change_arch {
 
 typedef struct treasurestruct {
   struct archt *item;		    /* Which item this link can be */
-  char *name;			    /* If non null, name of list to use
+  const char *name;			    /* If non null, name of list to use
 				       instead */
   struct treasurestruct *next;	    /* Next treasure-item in a linked list */
   struct treasurestruct *next_yes;  /* If this item was generated, use */
@@ -118,7 +118,7 @@ typedef struct treasurestruct {
 
 
 typedef struct treasureliststruct {
-  char *name;				/* Usually monster-name/combination */
+  const char *name;				/* Usually monster-name/combination */
   int t_style;				/* global style (used from artifacts file) */
   int artifact_chance;	
   sint16 total_chance;			/* If non-zero, only 1 item on this

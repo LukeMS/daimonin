@@ -99,18 +99,18 @@
  * reference from crosslib.a
  */
 
-static inline char *add_string_hook(char *stxt)
+static inline const char *add_string_hook(char *stxt)
 {
     CFParm* CFR;
 
 	GCFP.Value[0] = (void *)(stxt);
     CFR=(PlugHooks[HOOK_ADDSTRING])(&GCFP);
 	
-	return (char *)CFR->Value[0];
+	return (const char *)CFR->Value[0];
 }
 
 #define FREE_STRING_HOOK(_txt_) free_string_hook(_txt_);_txt_=NULL; 
-static inline void free_string_hook(char *stxt)
+static inline void free_string_hook(const char *stxt)
 {
 	GCFP.Value[0] = (void *)(stxt);
     (PlugHooks[HOOK_FREESTRING])(&GCFP);
@@ -593,7 +593,7 @@ static PyObject* CFSetGod(PyObject* self, PyObject* args)
 {
     CFPython_Object *whoptr;
     char* txt;
-    char* prayname;
+    const char* prayname;
     object* tmp;
     CFParm* CFR0;
     CFParm* CFR;

@@ -72,7 +72,7 @@ char *spool(char *bp,char *error) {
  * Does what it says, copies the contents of the first score structure
  * to the second one.
  */
-
+/*
 static void copy_score(score *sc1,score *sc2) {
     strncpy(sc2->name, sc1->name, BIG_NAME);
     sc2->name[BIG_NAME - 1] = '\0';
@@ -86,19 +86,19 @@ static void copy_score(score *sc1,score *sc2) {
     sc2->maxsp = sc1->maxsp;
     sc2->maxgrace = sc1->maxgrace;
 }
-
+*/
 /*
  * Writes the given score structure to a static buffer, and returns
  * a pointer to it.
  */
-
+/*
 static char *put_score(score *sc) {
   static char buf[MAX_BUF];
   sprintf(buf,"%s:%s:%ld:%s:%s:%d:%d:%d",sc->name,sc->title,sc->exp,sc->killer,sc->maplevel,
           sc->maxhp,sc->maxsp,sc->maxgrace);
   return buf;
 }
-
+*/
 /*
  * The oposite of put_score, get_score reads from the given buffer into
  * a static score structure, and returns a pointer to it.
@@ -171,8 +171,8 @@ static char * draw_one_high_score(score *sc) {
  * only if it was good enough to deserve a place.
  */
 
+/*
 static score *add_score(score *new_score) {
-	/*
   FILE *fp;
   static score old_score;
   score *tmp_score,pscore[HIGHSCORE_LENGTH];
@@ -228,9 +228,9 @@ static score *add_score(score *new_score) {
     return &old_score;
   }
   LOG(llevBug,"BUG: Highscore error.\n");
-  */
   return NULL;
 }
+  */
 
 void check_score(object *op) {
 	/*

@@ -37,6 +37,13 @@
 #define TRUE 1
 #endif
 
+/* This is for the DevCpp IDE */
+#ifndef __WIN_32
+ #ifdef WIN32
+  #define __WIN_32
+ #endif
+#endif 
+
 typedef unsigned int    uint32;
 typedef signed int      sint32;
 typedef unsigned short  uint16;

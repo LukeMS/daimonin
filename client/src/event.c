@@ -67,12 +67,11 @@ enum {
         KEYFUNC_SPELL_G7,        KEYFUNC_SPELL_G8,        KEYFUNC_SPELL_G9,
         KEYFUNC_SPELL_G0,KEYFUNC_FIREREADY,KEYFUNC_SPELL_RETURN,
         KEYFUNC_SKILL_RETURN,
-		KEYFUNC_LAYER0,		KEYFUNC_LAYER1,		KEYFUNC_LAYER2,		KEYFUNC_LAYER3,
-		KEYFUNC_HELP,
+        KEYFUNC_LAYER0,		KEYFUNC_LAYER1,		KEYFUNC_LAYER2,		KEYFUNC_LAYER3,
+        KEYFUNC_HELP,
         KEYFUNC_PAGEUP_TOP, KEYFUNC_PAGEDOWN_TOP,
         KEYFUNC_TARGET_ENEMY, KEYFUNC_TARGET_FRIEND, KEYFUNC_TARGET_SELF,
-		KEYFUNC_COMBAT,
-
+        KEYFUNC_COMBAT,
 };
 
 
@@ -205,6 +204,7 @@ _keymap menu_keymap[] =
 int KeyScanFlag; /* for debug/alpha , remove later */
 
 int keymap_count=0;	/* how much keys we have in the the keymap...*/
+int cursor_type = 0; 
 uint32 key_repeat_time=35;
 uint32 key_repeat_time_init=175;
 
@@ -263,9 +263,9 @@ void reset_keys(void)
 
 
 /******************************************************************
-* x: mouse x-pos ; y: mouse y-pos
-* ret: 0  if mousepointer is in the game-field.
-*     -1 if mousepointer is in a menue-field.
+ x: mouse x-pos ; y: mouse y-pos
+ ret: 0  if mousepointer is in the game-field.
+     -1 if mousepointer is in a menue-field.
 ******************************************************************/
 int mouseInPlayfield(x, y)
 {
@@ -283,8 +283,8 @@ int mouseInPlayfield(x, y)
 }
 
 /******************************************************************
-* val: -1 dont change.   0 dragging off.   1 dragging on.
-* ret: 0 no dragging  1 still dragging
+ val: -1 dont change.   0 dragging off.   1 dragging on.
+ ret: 0 no dragging  1 still dragging
 ******************************************************************/
 int draggingInvItem(int value){
 	static int dragInvItem = 0;
@@ -293,9 +293,9 @@ int draggingInvItem(int value){
 }
 
 /******************************************************************
-* wait for user to input a numer.
+ wait for user to input a numer.
 ******************************************************************/
-static void mouseInputNumber(){
+static void mouse_InputNumber(){
 	static int delta = 0;
 	static int timeVal =1;
 	int x,y;
@@ -319,52 +319,45 @@ static void mouseInputNumber(){
 }
 
 /******************************************************************
-* val: -1 dont change.   0 dragging off.   1 dragging on.
-* ret: 0 no dragging  1 still dragging
+ move our hero with mouse.
 ******************************************************************/
-/* TODO: convert this into short and clean code :) */
-static void mouseMoving(){
-	int x,y, field_x, field_y;
+static void mouse_moveHero(){
+	#define my_pos 8
+	int x,y, tx, ty;
 	static int delta = 0;
-	if (delta++ & 7) return;
-
-	if (draggingInvItem(-1)) return;
+	if (delta++ & 7) return; /* dont move to fast */
+	if (draggingInvItem(-1)) return; /* still dragging an item */
+	if (cpl.menustatus != MENU_NO) return;
 	if (!(SDL_GetMouseState(&x, &y) & SDL_BUTTON(SDL_BUTTON_LEFT))){
 		delta =0;
 		return;
 	}
-	if (!mouseInPlayfield(x, y)) return;
-	x -= 352;
-	y -= 321;
-	field_x=  x/MAP_TILE_POS_XOFF;
-	field_y= (y/MAP_TILE_POS_YOFF)*2-1;
-	x=  x%MAP_TILE_POS_XOFF;
-	y= (y%MAP_TILE_POS_YOFF)*2;
+	/* textwin has high priority, so dont move if playfield is overlapping */
+ 	if (textwin_set.split_flag == TRUE && x > 538 
+ 	&&  y > 560-(textwin_set.split_size+textwin_set.top_size)*10 ) return;
 
-	if (x< MAP_TILE_POS_XOFF/2){
-	if (y+x < MAP_TILE_POS_XOFF/2)	{ field_x--; field_y--; }
-	else if (y-x >MAP_TILE_POS_YOFF){ field_x--; field_y++; }
-	}else {
-		x-= MAP_TILE_POS_XOFF/2;
-		if (x-y >0)                         field_y--;
-			else if (y+x > MAP_TILE_POS_YOFF*2) field_y++;
+	if (get_tile_position(x, y, &tx, &ty)) return;
+	if (tx == my_pos){
+		     if (ty == my_pos) process_macro_keys(KEYFUNC_MOVE, 5);
+		else if (ty >  my_pos) process_macro_keys(KEYFUNC_MOVE, 2);
+		else if (ty <  my_pos) process_macro_keys(KEYFUNC_MOVE, 8);
+	}else  if (tx <  my_pos){
+				 if (ty == my_pos) process_macro_keys(KEYFUNC_MOVE, 4);
+		else if (ty >  my_pos) process_macro_keys(KEYFUNC_MOVE, 1);
+		else if (ty <  my_pos) process_macro_keys(KEYFUNC_MOVE, 7);
+	}else{ /* (x > my_pos) */
+		     if (ty == my_pos) process_macro_keys(KEYFUNC_MOVE, 6);
+		     if (ty <  my_pos) process_macro_keys(KEYFUNC_MOVE, 9);
+		     if (ty >  my_pos) process_macro_keys(KEYFUNC_MOVE, 3);
 	}
-	if (!field_x && !field_y) process_macro_keys(KEYFUNC_MOVE, 5);
-	if ( !field_x &&  field_y<-1) process_macro_keys(KEYFUNC_MOVE, 7);
-	if ( !field_x && field_y > 0) process_macro_keys(KEYFUNC_MOVE, 3);
-	if ((!field_x && field_y ==-1)||(field_x <0 && field_y <0)) process_macro_keys(KEYFUNC_MOVE, 4);
-	if ((!field_x && field_y == 1)||(field_x <0 && field_y >1)) process_macro_keys(KEYFUNC_MOVE, 2);
-	if ( !field_y && field_x < 0) process_macro_keys(KEYFUNC_MOVE, 1);
-	if ( !field_y && field_x > 0) process_macro_keys(KEYFUNC_MOVE, 9);
-	if (field_x >0 && field_y <0) process_macro_keys(KEYFUNC_MOVE, 8);
-	if (field_x >0 && field_y >0) process_macro_keys(KEYFUNC_MOVE, 6);
+	#undef my_pos 
 }
-
 
 int Event_PollInputDevice(void)
 {
 	SDL_Event event;
 	int x, y, done = 0;
+	static int active_scrollbar = 0;	
 	static int itemExamined  = 0; /* only print text once per dnd */
 	static Uint32 Ticks= 0;
 
@@ -372,21 +365,23 @@ int Event_PollInputDevice(void)
 		Ticks = SDL_GetTicks();
 		if (GameStatus >= GAME_STATUS_PLAY){
 			if (InputStringFlag && cpl.input_mode == INPUT_MODE_NUMBER)
-				mouseInputNumber();
+				mouse_InputNumber();
 			else
-				mouseMoving();
+				if (!active_scrollbar && !cursor_type) mouse_moveHero();
 		}
 	}
 
 	while ( SDL_PollEvent(&event) )
 	{
+		static int old_mouse_y =0;	
 		x = event.motion.x;
 		y = event.motion.y;
 		switch (event.type)
 		{
-
 			case SDL_MOUSEBUTTONUP:
 				if (GameStatus < GAME_STATUS_PLAY) break;
+				active_scrollbar = 0; 
+				cursor_type = 0;    				
 				if (InputStringFlag && cpl.input_mode == INPUT_MODE_NUMBER) break;
 				if (draggingInvItem(-1) ==1 || draggingInvItem(-1) ==3){ /* drag form IWIN_INV */
 					if (draggingInvItem(-1) ==1)
@@ -436,12 +431,74 @@ int Event_PollInputDevice(void)
 
 			case SDL_MOUSEMOTION:
 				if (GameStatus < GAME_STATUS_PLAY) break;
+/*
+{
+char tz[40];
+sprintf(tz,"x: %d , y: %d", x, y);
+draw_info(tz, COLOR_BLUE |NDI_PLAYER);
+draw_info(tz, COLOR_BLUE);
+}
+*/
 
-				/*{ for testing the map position
-					int tx, ty;
-					get_tile_position( x, y, &tx, &ty );
-					sprintf(myteststring,"x:%d y:%d", tx ,ty);
-				}*/
+				/* size change of splitted textWindow */
+				if (event.button.button ==SDL_BUTTON_LEFT && cursor_type && cpl.menustatus == MENU_NO)
+						active_scrollbar = cursor_type+10;
+				else cursor_type = 0;				
+
+				if (textwin_set.split_flag && x > 538 && x < 790 && cpl.menustatus == MENU_NO){
+					if (active_scrollbar ==11 
+  	  		|| (y > 577-textwin_set.split_size*10 && y < 581-textwin_set.split_size*10 && !active_scrollbar))
+							cursor_type = 1;
+					else if (active_scrollbar ==12 || (y > 564-(textwin_set.split_size+textwin_set.top_size)*10 
+	      	&&  y < 568-(textwin_set.split_size+textwin_set.top_size)*10 && !active_scrollbar))
+							cursor_type = 2;
+				}
+				if (old_mouse_y != y){
+					if (active_scrollbar ==11){
+						textwin_set.split_size = (580-y)/10;
+   					if (textwin_set.split_size <  9) textwin_set.split_size = 9;
+     				if (textwin_set.split_size > 39) textwin_set.split_size =39;       					
+					}
+					else if (active_scrollbar ==12){
+						textwin_set.top_size = (580-y)/10-textwin_set.split_size;
+   					if (textwin_set.top_size <  1) textwin_set.top_size = 1;
+     				if (textwin_set.top_size > 39) textwin_set.top_size =39;       					
+					}
+					if (textwin_set.split_size+textwin_set.top_size > 56)
+						textwin_set.top_size = 56 -textwin_set.split_size;
+				}
+
+				/* scrollbar-sliders */	
+				/* TODO: make it better */
+				if (event.button.button ==SDL_BUTTON_LEFT && !draggingInvItem(-1)){
+					/* TextWin Slider */
+					if (active_scrollbar == 2 || (x > 790 && (
+						(y > 488 && textwin_set.split_flag == FALSE)||
+      			(y > 579-textwin_set.split_size*10 && textwin_set.split_flag == TRUE))))
+         	{     
+     				int repeat = win_lenbuf;
+						active_scrollbar = 2;
+						repeat = win_lenbuf/textwin_set.size/10 +2;
+						if      (old_mouse_y - y > 0)
+							while (repeat--) process_macro_keys(KEYFUNC_PAGEUP, 0);
+						else if (old_mouse_y - y < 0)
+							while (repeat--) process_macro_keys(KEYFUNC_PAGEDOWN, 0);
+						break;
+					}
+					/* IWIN_INV Slider */
+					if (active_scrollbar == 1 || (cpl.inventory_win == IWIN_INV && y > 506 && y < 583 && x >230 && x < 238))
+   				{
+						active_scrollbar = 1;
+						if      (old_mouse_y - y > 0)
+      				cpl.win_inv_slot-= INVITEMXLEN;
+						else if (old_mouse_y - y < 0)
+      				cpl.win_inv_slot+= INVITEMXLEN;
+						if  (cpl.win_inv_slot > cpl.win_inv_count)
+      				cpl.win_inv_slot = cpl.win_inv_count;
+    				break;
+        	}
+				} /* END scrollbar-sliders */
+
 				/* examine an item */
 				/*
 				if ((cpl.inventory_win == IWIN_INV) && y > 85 && y < 120 && x < 140){
@@ -451,6 +508,7 @@ int Event_PollInputDevice(void)
 			      }
 						break;
     			}*/
+				old_mouse_y = y;
 			break;
 
 			case SDL_MOUSEBUTTONDOWN:
@@ -465,6 +523,13 @@ int Event_PollInputDevice(void)
 					}
 					break;
 				}
+				/* Toggle textwin */
+				if(x >=488 && x< 528 &&y < 536 && y > 521){
+					textwin_set.split_flag = !textwin_set.split_flag; 
+					sound_play_effect(SOUND_SCROLL,0,0,100);
+					break;
+				}
+
 				/* possible buttons */
 				if(x >=748 && x<=790)
 				{
@@ -488,51 +553,137 @@ int Event_PollInputDevice(void)
 					else if(y>=51 && y<= 74) /* online help */
 						process_macro_keys(KEYFUNC_HELP, 0);
 				}
-		
+
+				/* spell menu */
+				if (cpl.menustatus == MENU_SLIST){ 
+					if (y> 100 && y< 115 && x > 240 && x < 555){ /* group 0-9 */
+						int nr = (int)((float)(x-240)/16.5f);
+						if (!(nr &1))
+          		spell_list_set.group_nr= nr/2;
+					}
+     			else if (y> 62 && y< 75 && x > 650 && x < 661) /* exit */
+						cpl.menustatus = MENU_NO;
+     			else if (y> 126 && y< 463){
+        		if (x > 151 && x < 394){ /* a-z */
+	            spell_list_set.class_nr=0;
+            	spell_list_set.entry_nr= (y -126)/13;
+        		}
+        		else if (x > 402 && x < 654){ /* A-Z */
+	            spell_list_set.class_nr=1;
+            	spell_list_set.entry_nr= (y -126)/13;
+        		}
+					}
+       		else if (x > 146 && x < 175 && y > 479 && y < 507)
+						process_menu_macro_keys(KEYFUNC_SPELL_RETURN, 0);
+					break;
+				}
+
+				/* skill menu */
+				if (cpl.menustatus == MENU_SKILL){ 
+					if (y> 104 && y< 118 && x > 193 && x < 602){ /* groups */
+						int nr = (x-193)/60;
+						if (nr*60 -x > -243)							
+          		skill_list_set.group_nr= nr;
+					}
+     			else if (y> 62 && y< 75 && x > 608 && x < 621) /* exit */
+						cpl.menustatus = MENU_NO;
+     			else if (y> 126 && y< 463 && x > 190 && x < 605){ /* a-z */
+            	skill_list_set.entry_nr= (y -126)/13;
+					}
+       		else if (x > 186 && x < 216 && y > 479 && y < 507)
+						process_menu_macro_keys(KEYFUNC_SKILL_RETURN, 0);
+					break;
+				}
+
+				/* key binding */
+				if (cpl.menustatus == MENU_KEYBIND){ 
+					if (y> 198 && y< 206 && x > 490 && x < 500) /* repeat */
+						process_menu_macro_keys(KEYFUNC_KB_REPEAT, 0);
+		 			else if (y> 452 && y< 468){
+						if (x > 248 && x < 314) /* new */
+							process_menu_macro_keys(KEYFUNC_KB_NEW, 0);
+						else if (x > 322 && x < 388) /* edit */
+							process_menu_macro_keys(KEYFUNC_KB_EDIT, 0);
+						else if (x > 473 && x < 539) /* done */
+							process_menu_macro_keys(KEYFUNC_KB_DONE, 0);
+					}
+		 			else if (y> 127 && y< 139 && x > 551 && x < 563) /* exit */
+						cpl.menustatus = MENU_NO;
+     			else if (y> 214 && y< 445 && x > 246 && x < 543){ /* keys */
+						if (event.button.button ==4)
+         			process_menu_macro_keys(KEYFUNC_MENU_UP,0);					
+						else if (event.button.button ==5)
+      				process_menu_macro_keys(KEYFUNC_MENU_DOWN,0);
+    				else if (event.button.button == SDL_BUTTON_LEFT)
+							keybind_entry = (y -214) /13 + keybind_startoff;
+					}
+					break;
+				}
+
 				/***********************
 				* mouse in Menue-field *
 				************************/
-				if (!mouseInPlayfield(event.motion.x, event.motion.y)){
+				/* lower textwin */
+				if (x > 538 && ((y > 488 && textwin_set.split_flag == FALSE)
+				||((y > 579-textwin_set.split_size*10) && textwin_set.split_flag == TRUE))){
+					/* mousewheel || scrollbar-button_down? */
+					if (event.button.button ==4	|| (event.button.button == SDL_BUTTON_LEFT && 
+     				((textwin_set.split_flag == FALSE && y < 497)
+         	||(textwin_set.split_flag == TRUE  && y < 588-textwin_set.split_size*10))))
+      			process_macro_keys(KEYFUNC_PAGEUP,0);
+					/* mousewheel || scrollbar-button_down? */      			
+					else if (event.button.button ==5 || (event.button.button == SDL_BUTTON_LEFT && y > 590)) 
+      			process_macro_keys(KEYFUNC_PAGEDOWN,0); 
+					/* clicked on keyword in textwin? */
+					else if (x < 788 && y < 588){
+						char cmdBuf[256] ={"/say "};
+						int pos =0, pos2;
+						int x2 = 538;
+						char *text = get_textWinRow(y);
 
-					/* textwin - disabled! textwin stuff was reworked. */
-					if (y > 488 && x > 538){
-						/*
-						if (x < 788){
-	       				static char cmdBuf[256] ={"/say "};
-							int pos =0, pos2;
-							char *text = get_textWinRow((y -488) / 10);
-							x-= 538;
-							while (x >0){
-								if (text[pos] =='&') pos++;
-								x -= SystemFont.c[(int)text[pos++]].w+ SystemFont.char_offset;
+						while (text[pos]){
+ 							if (text[pos++] !='^'){
+	 							x2 += SystemFont.c[(int)text[pos]].w+ SystemFont.char_offset;
+								continue;
 							}
-							for (pos2=pos; --pos2 >=0;) if (text[pos2]== '&') pos = pos2;
-							if (text[pos]!='&') break;
-							for(pos2=5; text[pos++];){
-								if (text[pos]==' ' && text[pos+1]!= '&') break;
-								if (text[pos]!='&') cmdBuf[pos2++] = text[pos];
-							}
-							cmdBuf[pos2] =0;
-							send_command(cmdBuf, -1, SC_NORMAL);
+							pos2 =4;
+							while (text[pos] && text[pos] != '^'){
+       					cmdBuf[++pos2]= text[pos];
+	 							x2 += SystemFont.c[(int)text[pos++]].w+ SystemFont.char_offset;         						
+     					}
+							cmdBuf[++pos2] =0;
+							if (x2 <x) continue;
+ 							if (cmdBuf[5] && cmdBuf[6]) /* dont say nothing to server */
+ 							{
+								send_command(cmdBuf, -1, SC_NORMAL);
+							/*	draw_info(cmdBuf, NDI_PLAYER); */
+							}	
 							break;
 						}
-						*/
-						if (y < 500) process_macro_keys(KEYFUNC_PAGEUP, 0);
-						else if (y < 590)   ; /* slider */
-						else 
-							process_macro_keys(KEYFUNC_PAGEDOWN, 0);
-						break;
 					}
+					break;
+				}
+				/* upper textwin*/
+	    			/* todo */
 
-
+	
+				if (!mouseInPlayfield(event.motion.x, event.motion.y)){
 					/* combat modus */
 					if ((cpl.inventory_win == IWIN_BELOW) && y > 498 && y < 521 && x < 27){
 						check_keys(SDLK_c);
 						break;
     			}
 
+					/* talk button */
+					if ((cpl.inventory_win == IWIN_BELOW) && y > 498 && y < 521 && x > 200 && x < 240){
+							if (cpl.target_code) send_command("/t_tell hello", -1, SC_NORMAL);								
+						break;
+    			}
+
+
+
 					/* inventory (open / close) */
-					if (x < 480 && y > 466 && y <496){
+					if (x < 112 && y > 466 && y <496){
 						if (cpl.inventory_win == IWIN_INV)
 							cpl.inventory_win = IWIN_BELOW;
 						else 
@@ -570,20 +721,33 @@ int Event_PollInputDevice(void)
 						if (cpl.inventory_win != IWIN_INV) break;
 						if (x > 230)/* scrollbar */
 						{
-							if (y < 506 && cpl.win_inv_slot >= INVITEMXLEN) cpl.win_inv_slot-= INVITEMXLEN;
-							else if (y < 583)       ; /* slider */
-       				else{
+							if (y < 506 && cpl.win_inv_slot >= INVITEMXLEN)
+       					cpl.win_inv_slot-= INVITEMXLEN;
+							else if (y > 583)
+       				{
 								cpl.win_inv_slot+= INVITEMXLEN;
-								if  (cpl.win_inv_slot > cpl.win_inv_count) cpl.win_inv_slot = cpl.win_inv_count;
+								if  (cpl.win_inv_slot > cpl.win_inv_count)
+        					cpl.win_inv_slot = cpl.win_inv_count;
 							}
 						}else{  /* stuff */
-							cpl.win_inv_slot = (y - 497)/32 *INVITEMXLEN +  (x-8) /32 + cpl.win_inv_start ;
-							cpl.win_inv_tag = get_inventory_data(cpl.ob, &cpl.win_inv_ctag,&cpl.win_inv_slot,
-											&cpl.win_inv_start, &cpl.win_inv_count, INVITEMXLEN, INVITEMYLEN);
-							if ((SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)))
-								draggingInvItem(1);
+							if (event.button.button ==4 && cpl.win_inv_slot >= INVITEMXLEN)
+								cpl.win_inv_slot-= INVITEMXLEN;
+							else if (event.button.button ==5)
+							{
+								cpl.win_inv_slot+= INVITEMXLEN;
+								if  (cpl.win_inv_slot > cpl.win_inv_count)
+        					cpl.win_inv_slot = cpl.win_inv_count;
+							}
 							else
-								process_macro_keys(KEYFUNC_APPLY, 0);
+       				{
+								cpl.win_inv_slot = (y - 497)/32 *INVITEMXLEN +  (x-8) /32 + cpl.win_inv_start ;
+								cpl.win_inv_tag = get_inventory_data(cpl.ob, &cpl.win_inv_ctag,&cpl.win_inv_slot,
+											&cpl.win_inv_start, &cpl.win_inv_count, INVITEMXLEN, INVITEMYLEN);
+								if (event.button.button ==SDL_BUTTON_LEFT)
+									draggingInvItem(1);
+								else if (event.button.button ==SDL_BUTTON_RIGHT)
+									process_macro_keys(KEYFUNC_APPLY, 0);
+							}	
 						}
 						break;
      			}
@@ -607,11 +771,10 @@ int Event_PollInputDevice(void)
 
 				}
 				/***********************
-				* mouse in Play-field *
+				 mouse in Play-field 
 				************************/
 				else
 				{
-
 					/* Targetting */
 						if ((SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_RIGHT)))
 						{
@@ -855,10 +1018,13 @@ static void key_string_event(SDL_KeyboardEvent *key )
 				break;
 			case SDLK_KP_ENTER:
 			case SDLK_RETURN:
-
-				SDL_EnableKeyRepeat(0 , SDL_DEFAULT_REPEAT_INTERVAL);
-				InputStringFlag=FALSE;
-				InputStringEndFlag = TRUE;/* mark that we got some here*/
+			case SDLK_TAB:
+				if (key->keysym.sym != SDLK_TAB || GameStatus < GAME_STATUS_WAITFORPLAY)
+				{
+					SDL_EnableKeyRepeat(0 , SDL_DEFAULT_REPEAT_INTERVAL);
+					InputStringFlag=FALSE;
+					InputStringEndFlag = TRUE;/* mark that we got some here*/
+				}
 			break;
 
 			case SDLK_BACKSPACE:
@@ -1003,12 +1169,15 @@ int key_event(SDL_KeyboardEvent *key )
             {
                 if(keybind_status == KEYBIND_STATUS_EDITKEY || keybind_status == KEYBIND_STATUS_NEWKEY)
                 {
-                    sound_play_effect(SOUND_SCROLL,0,0,100);
-                    strcpy(keybind_key.keyname, SDL_GetKeyName(key->keysym.sym));
-                    keybind_key.key = key->keysym.sym;
-                    add_keybind_macro(&keybind_key);
-                    keybind_status = KEYBIND_STATUS_NO;
-                    return(0);
+										if (key->keysym.sym != SDLK_ESCAPE)
+										{
+	                    sound_play_effect(SOUND_SCROLL,0,0,100);
+  	                  strcpy(keybind_key.keyname, SDL_GetKeyName(key->keysym.sym));
+    	                keybind_key.key = key->keysym.sym;
+      	              add_keybind_macro(&keybind_key);
+										}
+        	          keybind_status = KEYBIND_STATUS_NO;
+          	        return(0);
                 }
             }
 
@@ -1024,7 +1193,7 @@ int key_event(SDL_KeyboardEvent *key )
 				keys[key->keysym.sym].time = LastTick+key_repeat_time_init;
 	            		check_keys(key->keysym.sym);
 			}
-			switch(key->keysym.sym)
+			switch((int)key->keysym.sym)
 			{
 				case SDLK_F1:
 					quickslot_key(key,0);
@@ -1085,7 +1254,7 @@ int key_event(SDL_KeyboardEvent *key )
 		                default:
 					if(esc_menu_flag == TRUE)
 					{
-						switch(key->keysym.sym)
+						switch((int)key->keysym.sym)
 						{
 							case SDLK_RETURN:
 								if(esc_menu_index == ESC_MENU_KEYS)
@@ -1115,6 +1284,7 @@ int key_event(SDL_KeyboardEvent *key )
 							break;
 						};
 					}
+				break;
 
 			};
 		}

@@ -88,7 +88,7 @@ void spell_failure(object *op, int failure,int power)
 
 void prayer_failure(object *op, int failure,int power)
 {  
-    char *godname;
+    const char *godname;
 
     if(!strcmp((godname=determine_god(op)),"none")) godname="Your spirit";
 
@@ -778,7 +778,7 @@ int perceive_self(object *op) {
    archetype *perm_portal;
    char portal_name [1024];
    char portal_message [1024];
-   char *exitpath=NULL;
+   const char *exitpath=NULL;
    sint16 exitx=15;
    sint16 exity=15;
    mapstruct *exitmap=NULL;
@@ -2225,12 +2225,7 @@ int cast_create_missile(object *op, object *caster,int dir, char *stringarg)
  * when the spell is cast, and these are freed when the spell
  * is finished.
  */
-static object *small, *large;
-
-static void alchemy_object(object *obj, int *small_nuggets,
-	 int *large_nuggets, int *weight)
-{
-	int	value=(int)query_cost(obj, NULL, F_TRUE);
+/*static object *small, *large;*/
 
 	/* Give half price when we alchemy money (This should hopefully
 	 * make it so that it isn't worth it to alchemy money, sell
@@ -2239,6 +2234,12 @@ static void alchemy_object(object *obj, int *small_nuggets,
 	 * so that it would still be more affordable to haul
 	 * the stuff back to town.
 	 */
+/*
+static void alchemy_object(object *obj, int *small_nuggets,
+	 int *large_nuggets, int *weight)
+{
+	int	value=(int)query_cost(obj, NULL, F_TRUE);
+
     if (QUERY_FLAG(obj, FLAG_UNPAID))
 	value=0;
     else if (obj->type==MONEY || obj->type==GEM || obj->type==TYPE_JEWEL || obj->type==TYPE_NUGGET)
@@ -2264,14 +2265,9 @@ static void alchemy_object(object *obj, int *small_nuggets,
 	count = value_store / small->value;
 	*small_nuggets += count;
 	value_store -= count * small->value;
-	/* LOG(llevDebug, "alchemize value %d, remainder %d\n", value, value_store); */
 #endif
     }
 
-    /* Turn 25 small nuggets into 1 large nugget.  If the value
-     * of large nuggets is not evenly divisable my the small nugget
-     * value, take off an extra small_nugget (Assuming small_nuggets!=0)
-     */
     if (*small_nuggets * small->value >= large->value) {
 	(*large_nuggets)++;
 	*small_nuggets -= large->value / small->value;
@@ -2282,7 +2278,9 @@ static void alchemy_object(object *obj, int *small_nuggets,
     remove_ob(obj);
     free_object(obj);
 }
+*/
 
+/*
 static void update_map(object *op, int small_nuggets, int large_nuggets,
 	int x, int y)
 {
@@ -2305,6 +2303,7 @@ static void update_map(object *op, int small_nuggets, int large_nuggets,
 		insert_ob_in_map(tmp, op->map, op,0);
 	}
 }
+*/
 
 /* i will changing alchemy. MT */
  /* weight_max = 100000 + 50000*op->level; */
@@ -2724,6 +2723,12 @@ int cast_detection(object *op, object *target,int type)
 	return 1;
 }
 
+    /* this size should really be based on level or spell parameter -
+     * even if out of the view, the setting of these values can be useful
+     * simply so that when you come across them they have already been
+     * set for you.
+     */
+/*
 static int cast_detection_old(object *op, object *target,int type) {
     object *tmp, *last=NULL;
     int x,y,done_one,nx,ny;
@@ -2737,11 +2742,6 @@ static int cast_detection_old(object *op, object *target,int type) {
 		return 0;
     }
 
-    /* this size should really be based on level or spell parameter -
-     * even if out of the view, the setting of these values can be useful
-     * simply so that when you come across them they have already been
-     * set for you.
-     */
     for (x = op->x - MAP_CLIENT_X/2; x <= op->x + MAP_CLIENT_X/2; x++)
 	for (y = op->y - MAP_CLIENT_Y/2; y <= op->y + MAP_CLIENT_Y/2; y++) {
 
@@ -2750,11 +2750,6 @@ static int cast_detection_old(object *op, object *target,int type) {
 	    ny=y;
 	    if(!(m = out_of_map(op->map, &nx, &ny)))
 			continue;
-
-	    /* Add some logic here to only examine objects above the floor.
-	     * This should not be done for show invis (may want to show
-	     * invisible floor objects) - may be others also.
-	     */
 
 	    if (type==SP_SHOW_INVIS) 
 			last = get_map_ob(m, nx, ny);
@@ -2769,10 +2764,6 @@ static int cast_detection_old(object *op, object *target,int type) {
 		if (tmp) last=tmp->above;
 	    }
 	    
-	    /* detect magic and detect curse need to set flags on all the items.  for
-	     * the other detect spells, we only care if there is one of the matching object
-	     * on that face.
-	     */
 	    for (tmp = last; 
 		tmp && (!done_one || type==SP_DETECT_MAGIC || type==SP_DETECT_CURSE); 
 		tmp=tmp->above) {
@@ -2784,7 +2775,6 @@ static int cast_detection_old(object *op, object *target,int type) {
 			    is_magical(tmp)) {
 
 			    SET_FLAG(tmp,FLAG_KNOWN_MAGICAL);
-			    /* peterm:  make magical runes more visible*/
 			    if(tmp->type==RUNE && tmp->attacktype&AT_MAGIC)
 				tmp->stats.Cha/=4;
 			    done_one = 1;
@@ -2792,9 +2782,6 @@ static int cast_detection_old(object *op, object *target,int type) {
 			break;
 
 		    case SP_DETECT_MONSTER:
-			/* lets not care about who is casting the spell - everyone on the
-			 * map sees the results anyways,
-			 */
 			if ((QUERY_FLAG(tmp, FLAG_MONSTER) || tmp->type==PLAYER)) {
 			    done_one = 2;
 			    last=tmp;
@@ -2822,27 +2809,24 @@ static int cast_detection_old(object *op, object *target,int type) {
 		    }
 		    break;
 
-		} /* end of switch statement */
-	     } /* Done all the object on this square */
+		} 
+	     } 
 
 	    if (done_one) {
 		object *detect_ob = arch_to_object(detect_arch);
 		detect_ob->x = x;
 		detect_ob->y = y;
-		/* if this is set, we want to copy the face */
 		if (done_one == 2 && last) {
 		    detect_ob->face = last->face;
 		    detect_ob->animation_id = last->animation_id;
 		    detect_ob->anim_speed = last->anim_speed;
 		    detect_ob->last_anim=0;
-		    /* by default, the detect_ob is already animated */
 		    if (!QUERY_FLAG(last, FLAG_ANIMATE)) CLEAR_FLAG(detect_ob, FLAG_ANIMATE);
 		}
 		insert_ob_in_map(detect_ob, op->map, op,0);
 	    }
-	} /* for processing the surrounding spaces */
+	}
 
-    /* Now process objects in the players inventory if detect curse or magic */
     if ((type == SP_DETECT_MAGIC || type == SP_DETECT_CURSE) && op->type == PLAYER) {
 	done_one = 0;
 	for (tmp = op->inv; tmp; tmp = tmp->below) {
@@ -2866,12 +2850,12 @@ static int cast_detection_old(object *op, object *target,int type) {
 			done_one = 1;
 		    }
 		    break;
-		} /* end of switch */
-	} /* for the players inventory */
-    } /* if detect magic/curse and object is a player */
+		} 
+	} 
+    }
     return 1;
 }
-
+*/
 /* Shamelessly hacked from PeterM's cast_charm and destruction code 
  *  - b.t. thomas@nomad.astro.psu.edu		 
  */ 
@@ -3239,7 +3223,7 @@ void counterspell(object *op,int dir)
 /*  peterm:  function which summons hostile monsters and
   places them in nearby squares.  */
     
-int summon_hostile_monsters(object *op,int n,char *monstername){
+int summon_hostile_monsters(object *op,int n,const char *monstername){
   int i;
   for(i=0;i<n;i++)
     put_a_monster(op,monstername);
@@ -3366,7 +3350,7 @@ object *choose_cult_monster(object *pl, object *god, int summon_level) {
         for(i=0;i<racenr;i++) 
 	     race = strtok(NULL,",");
     } else 
-        race = god->race;
+        race = (char *)god->race;
 
 
     /* see if a we can match a race list of monsters.  This should not
@@ -4202,7 +4186,7 @@ int cast_cause_disease(object *op, object *caster, int dir, archetype *disease_a
 		 /* no more infecting through walls - 
 		  * we will use PASS_THRU but P_NO_PASS only will stop us
 		  */
-		if(wall(m,xt,yt)&~(P_NO_PASS|P_PASS_THRU) == P_NO_PASS  ) return 0;
+		if((wall(m,xt,yt)&(~(P_NO_PASS|P_PASS_THRU))) == P_NO_PASS  ) return 0;
   }
   new_draw_info(NDI_UNIQUE,0,op,"No one caught anything!");
   return 0;

@@ -1221,7 +1221,7 @@ object *find_object(int i) {
  */
 
 object *find_object_name(char *str) {
-  char *name=find_string(str);
+  const char *name=find_string(str);
   object *op;
 
   /* if find_string() can't find the string -
@@ -2230,7 +2230,7 @@ object *merge_ob(object *op, object *top) {
 
 object *insert_ob_in_map (object *op, mapstruct *m, object *originator, int flag)
 {
-    object *tmp, *top, *floor=NULL;
+    object *tmp=NULL, *top;
 	MapSpace *mc;
     int x,y,lt,layer, layer_inv;
 

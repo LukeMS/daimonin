@@ -291,8 +291,8 @@ static void pick_up_object (object *pl, object *op, object *tmp, int nrof)
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
-        CFP.Value[9] = event_obj->race;
-        CFP.Value[10]= event_obj->slaying;
+        CFP.Value[9] = (char *)event_obj->race;
+        CFP.Value[10]= (char *)event_obj->slaying;
         if (findPlugin(event_obj->name)>=0)
         {
           CFR = ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
@@ -596,8 +596,8 @@ void drop_object (object *op, object *tmp, long nrof)
         CFP.Value[6] = &m;
         CFP.Value[7] = &m;
         CFP.Value[8] = &l;
-        CFP.Value[9] = event_obj->race;
-        CFP.Value[10]= event_obj->slaying;
+        CFP.Value[9] = (char *)event_obj->race;
+        CFP.Value[10]= (char *)event_obj->slaying;
         if (findPlugin(event_obj->name)>=0)
         {
           CFR = ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
@@ -1351,13 +1351,14 @@ void examine(object *op, object *tmp) {
 	    if(tmp->race!=NULL) {
 		if(tmp->weight_limit && tmp->stats.Str<100)
 		    sprintf (buf,"It can hold only %s and its weight limit is %.1f kg.", 
-			 tmp->race, tmp->weight_limit/(10.0 * (100 - tmp->stats.Str)));
+			 tmp->race, (float)tmp->weight_limit/(10.0f * (float)(100 - tmp->stats.Str)));
 		else
-		    sprintf (buf,"It can hold only %s and its weight limit is %.1f kg.", tmp->race,tmp->weight_limit);
+		    sprintf (buf,"It can hold only %s and its weight limit is %.1f kg.", tmp->race,
+				(float)tmp->weight_limit/(10.0f * (float)(100 - tmp->stats.Str)));
 	    } else
 		if(tmp->weight_limit && tmp->stats.Str<100)
 		    sprintf (buf,"Its weight limit is %.1f kg.", 
-			     tmp->weight_limit/(10.0 * (100 - tmp->stats.Str)));
+			     (float)tmp->weight_limit/(10.0f * (float)(100 - tmp->stats.Str)));
 	    break;
 
 	case WAND:
@@ -1382,7 +1383,7 @@ void examine(object *op, object *tmp) {
 
     if(tmp->weight) {
 	sprintf(buf,tmp->nrof>1?"They weigh %3.3f kg.":"It weighs %3.3f kg.",
-            (tmp->nrof?tmp->weight*tmp->nrof:tmp->weight)/1000.0);
+            (float)(tmp->nrof?tmp->weight*tmp->nrof:tmp->weight)/1000.0f);
 	new_draw_info(NDI_UNIQUE, 0,op,buf);
     }
 

@@ -76,9 +76,9 @@
 
 /* 'title' and 'titlelist' are used by the readable code */
 typedef struct titlestruct {
-        char *name;     /* the name of the book */
-        char *authour;  /* the name of the book authour */
-        char *archname;  /* the archetype name of the book */
+        const char *name;     /* the name of the book */
+        const char *authour;  /* the name of the book authour */
+        const char *archname;  /* the archetype name of the book */
         int level;       /* level of difficulty of this message */ 
         int size;       /* size of the book message */ 
         int msg_index;  /* an index value derived from book message */
@@ -539,7 +539,7 @@ get_titlelist (int i)
  */
 
 int 
-nstrtok (char *buf1, char *buf2)
+nstrtok (const char *buf1, const char *buf2)
 {
     char   *tbuf, sbuf[12], buf[MAX_BUF];
     int     number = 0;
@@ -563,7 +563,7 @@ nstrtok (char *buf1, char *buf2)
  */
 
 char   *
-strtoktolin (char *buf1, char *buf2)
+strtoktolin (const char *buf1, const char *buf2)
 {
     int     maxi, i = nstrtok (buf1, buf2);
     char   *tbuf, buf[MAX_BUF], sbuf[12];
@@ -590,7 +590,7 @@ strtoktolin (char *buf1, char *buf2)
 }
 
 int 
-book_overflow (char *buf1, char *buf2, int booksize)
+book_overflow (const char *buf1, const char *buf2, int booksize)
 {
 
     if (buf_overflow (buf1, buf2, BOOK_BUF - 2)		/* 2 less so always room for trailing \n */
@@ -1607,15 +1607,18 @@ void make_formula_book(object *book, int level) {
 	 * of information on the booklevel and the spellevel
 	 * of the formula. */
 
-	char   *op_name = NULL;
+	const char   *op_name = NULL;
 	archetype *at;
 	int     nindex = nstrtok (formula->arch_name, ",");
 
 	/* construct name of object to be made */
 	if (nindex > 1)
 	{
+        char tmpbuf[MAX_BUF];
 	    int     rnum = RANDOM () % nindex;
-	    op_name = strtok (formula->arch_name, ",");
+        strncpy(tmpbuf, formula->arch_name, MAX_BUF - 1);
+        tmpbuf[MAX_BUF-1] = 0;
+	    op_name = strtok (tmpbuf, ",");
 	    while (rnum)
 	    {
 		op_name = strtok (NULL, ",");
@@ -1724,7 +1727,8 @@ char   *
 god_info_msg (int level, int booksize)
 {
     static char retbuf[BOOK_BUF];
-    char   *name = NULL, buf[BOOK_BUF];
+    const char  *name = NULL;
+    char buf[BOOK_BUF];
     int     i, introlen;
     object *god = pntr_to_god_obj (get_rand_god ());
 
@@ -1758,14 +1762,14 @@ god_info_msg (int level, int booksize)
 	  sprintf (buf, " ");
 	  if (level == 2 && RANDOM () % 2)
 	    {			/* enemy god */
-		char   *enemy = god->title;
+		const char   *enemy = god->title;
 		if (enemy)
 		    sprintf (buf, "The gods %s and %s are enemies.\n ---\n",
 			     name, enemy);
 	    }
 	  if (level == 3 && RANDOM () % 2)
 	    {			/* enemy race, what the god's holy word effects */
-		char   *enemy = god->slaying;
+		const char   *enemy = god->slaying;
 		if (enemy && !(god->path_denied & PATH_TURNING))
 		    if ((i = nstrtok (enemy, ",")) > 0)
 		      {
@@ -1799,7 +1803,7 @@ god_info_msg (int level, int booksize)
 	    }
 	  if (level == 5 && RANDOM () % 2)
 	    {			/* aligned race, summoning  */
-		char   *race = god->race;	/* aligned race */
+		const char   *race = god->race;	/* aligned race */
 		if (race && !(god->path_denied & PATH_SUMMON))
 		    if ((i = nstrtok (race, ",")) > 0)
 		      {

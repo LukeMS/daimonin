@@ -64,7 +64,7 @@ int command_say (object *op, char *params)
 
 	params = cleanup_chat_string(params);
 	/* this happens when whitespace only string was submited */
-    if (*params=='\0') 
+    if (!params || *params=='\0') 
 		return 0;
 
     communicate(op, params);
@@ -86,7 +86,7 @@ int command_shout (object *op, char *params)
 
 	params = cleanup_chat_string(params);
 	/* this happens when whitespace only string was submited */
-    if (*params=='\0') 
+    if (!params || *params=='\0') 
 		return 0;
 
     strcpy(buf,op->name);
@@ -119,7 +119,7 @@ int command_tell (object *op, char *params)
 
 	params = cleanup_chat_string(params);
 	/* this happens when whitespace only string was submited */
-    if (*params=='\0') 
+    if (!params || *params=='\0') 
 		return 0;
 
 	name = params;
@@ -162,6 +162,58 @@ int command_tell (object *op, char *params)
     new_draw_info(NDI_UNIQUE, 0,op,"No such player.");
     return 1;
   }
+
+
+int command_t_tell (object *op, char *params)
+{
+	char buf[256*2];
+	object *t_obj;
+	int i, xt, yt;
+	mapstruct *m;
+
+	if (!params) 
+		return 0;
+
+	params = cleanup_chat_string(params);
+	/* this happens when whitespace only string was submited */
+    if (!params || *params=='\0') 
+		return 0;
+
+	if(op->type == PLAYER)
+	{
+		t_obj = op->contr->target_object;
+		if(t_obj && op->contr->target_object_count==t_obj->count)
+		{
+
+			/* why i do this and not direct distance calculation?
+			 * because the player perhaps has leaved the mapset with the
+			 * target which will invoke some nasty searchings.
+			 */
+			for(i = 0; i <= SIZEOFFREE; i++)
+			{
+				xt = op->x+freearr_x[i];
+				yt = op->y+freearr_y[i];
+				if(!(m=out_of_map(op->map, &xt, &yt)))
+					continue;
+
+				if(m == t_obj->map && xt == t_obj->x && yt == t_obj->y)
+				{
+					LOG(llevInfo,"CLOG T_TELL:%s >%s<\n", query_name(op), params);
+					sprintf(buf, "you say to %s: ",query_name(t_obj));
+					strncat(buf, params, MAX_BUF - strlen(buf)-1);
+					buf[MAX_BUF-1]=0;
+					new_draw_info(NDI_WHITE,0, op, buf);
+					talk_to_npc(op, t_obj,params);
+					return 1;
+				}
+			}
+		}
+	}
+	
+	play_sound_player_only(op->contr, SOUND_WAND_POOF,SOUND_NORMAL,0,0);
+    return 1;
+}
+
 
 /* Reply to last person who told you something [mids 01/14/2002] */
 int command_reply (object *op, char *params) {
@@ -423,7 +475,7 @@ static int basic_emote(object *op, char *params, int emotion)
 	    sprintf(buf2, "You are a nut.");
 	    break;
 	} /*case*/
-	new_info_map_except(NDI_WHITE, op->map, op, buf);
+	new_info_map_except(NDI_YELLOW, op->map, op, buf);
 	new_draw_info(NDI_UNIQUE, 0, op, buf2);
 	return(0);
     } else {

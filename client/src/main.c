@@ -225,16 +225,20 @@ static _bitmap_name  bitmap_name[BITMAP_INIT] =
         {"meta_scroll.png", PIC_TYPE_DEFAULT},
         {"help1.png", PIC_TYPE_DEFAULT},
         {"target_attack.png", PIC_TYPE_TRANS},
+        {"target_talk.png", PIC_TYPE_TRANS},
         {"target_normal.png", PIC_TYPE_TRANS},
         {"loading.png", PIC_TYPE_TRANS},
         {"help2.png", PIC_TYPE_DEFAULT},
         {"help3.png", PIC_TYPE_DEFAULT},
 
+        {"warn_hp.png", PIC_TYPE_DEFAULT},
+        {"warn_food.png", PIC_TYPE_DEFAULT},
+
         {"target_hp.png", PIC_TYPE_DEFAULT},
         {"target_hp_b.png", PIC_TYPE_DEFAULT},
         {"textwin_mask.png", PIC_TYPE_DEFAULT},
         {"textwin_blank.png", PIC_TYPE_DEFAULT},
-        {"textwin_split.png", PIC_TYPE_DEFAULT},
+        {"textwin_split.png", PIC_TYPE_DEFAULT}, 
 
         {"slider_up.png", PIC_TYPE_TRANS},
         {"slider_down.png", PIC_TYPE_TRANS},
@@ -250,7 +254,7 @@ static _bitmap_name  bitmap_name[BITMAP_INIT] =
 
         {"exp_skill_border.png", PIC_TYPE_DEFAULT},
         {"exp_skill_line.png", PIC_TYPE_DEFAULT},
-        {"exp_skill_bubble.png", PIC_TYPE_TRANS},
+        {"exp_skill_bubble.png", PIC_TYPE_TRANS}, 
 };
 
 #define BITMAP_MAX (sizeof(bitmap_name)/sizeof(struct _bitmap_name))
@@ -486,6 +490,26 @@ void load_options_dat(void)
 					textwin_set.top_size=1;
 				else if(textwin_set.top_size >37)
 					textwin_set.top_size  = 37;
+			}
+            else if(!strcmp(keyword,"WarningFood"))
+			{
+				int tmp = atoi(parameter);
+
+				if(tmp <0)
+					tmp = 0;
+				else if(tmp>100)
+					tmp = 100;
+                options.warning_food = ((float)tmp)/100.0f;
+			}
+            else if(!strcmp(keyword,"WarningHP"))
+			{
+				int tmp = atoi(parameter);
+
+				if(tmp <0)
+					tmp = 0;
+				else if(tmp>100)
+					tmp = 100;
+                options.warning_hp = ((float)tmp)/100.0f;
 			}
             else
                 LOG(LOG_MSG, "WARNING: Unknown setting in %s: %s\n", OPTION_FILE,line);                
@@ -1272,7 +1296,7 @@ void list_vid_modes(void)
 
 static void show_option(int mark, int x, int y)
 {
-	int index, x1,y1,x2,y2;
+	int index=0, x1,y1=0,x2,y2=0;
     _BLTFX bltfx;
 
     bltfx.alpha=128;
@@ -1563,7 +1587,7 @@ int main(int argc, char *argv[])
 		{
 			if(GameStatus == GAME_STATUS_PLAY)
 			{
-				if(LastTick-anim_tick>110)
+				if(LastTick-anim_tick >110)
 				{
 					anim_tick = LastTick;
 					animate_objects();
@@ -1582,10 +1606,22 @@ int main(int argc, char *argv[])
 				sprite_blt(Bitmaps[BITMAP_CLEAR_SPOT],0, 306, NULL, NULL);
 				if(GameStatus == GAME_STATUS_PLAY)
 				{
+					static int gfx_toggle=0;
 					map_draw_map();
-	        		play_anims(0,0); /* over the map */
+			   		play_anims(0,0); /* over the map */
+
+					/* draw warning-icons above player */
+					if ((gfx_toggle++ & 63) < 25)
+					{	
+						if (options.warning_hp && ((float)cpl.stats.hp / (float)cpl.stats.maxhp) <= options.warning_hp) 
+							sprite_blt(Bitmaps[BITMAP_WARN_HP],393, 298, NULL, NULL);	 
+					}
+					else
+					{
+						if (options.warning_food &&  ((float)cpl.stats.food/1000.0f) <= options.warning_food) /* low food */
+							sprite_blt(Bitmaps[BITMAP_WARN_FOOD],390, 294, NULL, NULL);
+					}
 				}
-				show_player_doll(0, 0);
 				show_quickslots(SKIN_POS_QUICKSLOT_X, SKIN_POS_QUICKSLOT_Y);
 				sprite_blt(Bitmaps[BITMAP_BORDER1],0, 351, NULL, NULL);
 				sprite_blt(Bitmaps[BITMAP_BORDER2],144, 423, NULL, NULL);
@@ -1602,7 +1638,6 @@ int main(int argc, char *argv[])
 				cpl.container=NULL; /* this will be set right on the fly in get_inventory_data() */	
 				if(GameStatus  == GAME_STATUS_PLAY)
 				{
-		            show_player_data(0,0);
 					cpl.win_inv_tag = get_inventory_data(cpl.ob, &cpl.win_inv_ctag,
 		                                    &cpl.win_inv_slot,&cpl.win_inv_start, 
                                             &cpl.win_inv_count, INVITEMXLEN, INVITEMYLEN);
@@ -1659,8 +1694,8 @@ int main(int argc, char *argv[])
 			show_textwin(539,485);
 			if(GameStatus  == GAME_STATUS_PLAY)
 			{
-				 SDL_Rect tmp_rect;
-				 tmp_rect.w=275;
+				SDL_Rect tmp_rect;
+				tmp_rect.w=275;
 				StringBlt(ScreenSurface, &SystemFont,MapData.name,229, 109,COLOR_DEFAULT, &tmp_rect, NULL);
 				if(cpl.input_mode == INPUT_MODE_CONSOLE)
 					do_console(546,586);
@@ -1730,16 +1765,30 @@ int main(int argc, char *argv[])
 	             rec.w = 225;    
 		         SDL_FillRect(ScreenSurface, &rec, 0);             
 	             StringBlt(ScreenSurface, &SystemFont,buf,rec.x, rec.y,COLOR_DEFAULT, NULL, NULL);
+
 			 }
          }
-                
+         show_player_doll(0, 0);
+			   show_player_data(0,0);		
          show_menu();
-        
+
 		if(map_transfer_flag)
 			StringBlt(ScreenSurface, &SystemFont,"Transfer Character to Map...",300, 300,COLOR_DEFAULT, NULL, NULL);
 
 		if(esc_menu_flag == TRUE)
 			show_option(esc_menu_index, 400, 130);
+		if (cursor_type)
+  	{
+			SDL_Rect rec;
+			SDL_GetMouseState(&x, &y);
+			rec.w = 14;
+			rec.h = 1;
+			rec.x = x-7;
+			rec.y = y-2;
+			SDL_FillRect(ScreenSurface, &rec, -1);
+			rec.y = y-5;			
+			SDL_FillRect(ScreenSurface, &rec, -1);
+		} 
 		flip_screen();
 
         if(!options.max_speed)

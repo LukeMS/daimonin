@@ -393,7 +393,7 @@ void set_map_timeout(mapstruct *oldmap)
 /* clean_path takes a path and replaces all / with _
  * We do a strcpy so that we do not change the original string.
  */
-char *clean_path(char *file)
+char *clean_path(const char *file)
 {
     static char newpath[MAX_BUF],*cp;
 
@@ -1205,9 +1205,10 @@ void do_specials() {
 
     if (!(pticks % 5009))
 	clean_friendly_list();
-
+    
     if (!(pticks % 12503))
       fix_luck();
+    
 }
 
 int main(int argc, char **argv)

@@ -92,8 +92,6 @@ static char* sound_files[SOUND_MAX] = {
 	,"step2.wav"
 	,"pray.wav"
 	,"console.wav"
-	,"intro.wav"
-	,"click_ok.wav"
 	,"click_fail.wav"
 	,"change1.wav"
 	,"scroll.wav"
@@ -190,8 +188,9 @@ void sound_init(void)
             LOG(LOG_MSG,"Warning: Couldn't set sound device. Reason: %s\n", SDL_GetError());
 			return;
 	}
-	SoundSystem = SOUND_SYSTEM_ON;
+
 #endif
+	SoundSystem = SOUND_SYSTEM_ON;
 }
 
 void sound_deinit(void)
@@ -216,12 +215,18 @@ void sound_loadall(void)
         for(i=0;i<SOUND_MAX;i++)
         {
             sprintf(buf,"%s%s", GetSfxDirectory(), sound_files[i]);
+			Sounds[i].sound = NULL;
             Sounds[i].sound = Mix_LoadWAV(buf);
+			if(!Sounds[i].sound)
+				LOG(LOG_ERROR,"sound_loadall: missing sound file %s\n", buf);
         }
         for(ii=0;ii<SPELL_SOUND_MAX;ii++)
         {
             sprintf(buf,"%s%s", GetSfxDirectory(), spell_sound_files[ii]);
+            Sounds[i+ii].sound = NULL;
             Sounds[i+ii].sound = Mix_LoadWAV(buf);
+			if(!Sounds[i+ii].sound)
+				LOG(LOG_ERROR,"sound_loadall: missing sound file %s\n", buf);
         }
 #endif
 }
