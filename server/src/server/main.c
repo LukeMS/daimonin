@@ -1323,11 +1323,11 @@ int main(int argc, char **argv)
   for(;;) 
   {
 	nroferrors = 0;				/* every llevBug will increase this - avoid LOG loops */
-    global_round_tag++;			/* global round ticker ! this is real a global */
 
 	shutdown_agent(-1, NULL);			/* check & run a shutdown count (with messages & shutdown ) */
 
     doeric_server();		
+    global_round_tag++;			/* global round ticker ! this is real a global */
     process_events(NULL);		/* "do" something with objects with speed */
     cftimer_process_timers();	/* Process the crossfire Timers */    
 
