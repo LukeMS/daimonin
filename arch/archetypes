@@ -16464,7 +16464,7 @@ material 32
 weapon_speed 1.0
 container 350000
 weight 50000
-food 40
+food 20
 is_used_up 1
 speed 0.01
 identified 1
@@ -16486,7 +16486,7 @@ container 350000
 weight 60000
 no_pick 1
 invulnerable 1
-food 40
+food 20
 speed 0.01
 is_used_up 1
 end
@@ -16504,7 +16504,7 @@ container 350000
 identified 1
 weight 120000
 no_pick 1
-food 40
+food 20
 speed 0.01
 is_used_up 1
 invulnerable 1
@@ -16522,7 +16522,7 @@ material 32
 weapon_speed 1.0
 container 350000
 weight 60000
-food 40
+food 20
 speed 0.01
 is_used_up 1
 no_pick 1
@@ -16541,7 +16541,7 @@ material 32
 weapon_speed 1.0
 container 350000
 weight 60000
-food 40
+food 20
 speed 0.01
 is_used_up 1
 no_pick 1
@@ -16561,7 +16561,7 @@ weapon_speed 1.0
 container 350000
 no_pick 1
 invulnerable 1
-food 40
+food 20
 identified 1
 speed 0.01
 is_used_up 1
