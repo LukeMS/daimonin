@@ -3,7 +3,7 @@ name field helm
 type 34
 layer 3
 face helm_field.101
-last_heal 7
+last_heal 8
 ac 2
 protect_impact 10
 protect_cleave 6

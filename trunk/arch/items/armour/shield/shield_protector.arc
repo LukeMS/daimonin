@@ -3,7 +3,8 @@ name protector
 type 33
 layer 3
 face shield_protector.101
-ac 2
+ac 4
+last_heal 15
 item_level 10
 protect_impact 6
 protect_cleave 12

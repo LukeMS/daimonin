@@ -1,9 +1,9 @@
 Object leggings_leather
 name leggings
 face leggings_leather.101
-last_heal 4
 layer 3
 ac 2
+last_heal 7
 item_level 5
 weight 950
 value 150

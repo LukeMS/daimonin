@@ -204,7 +204,6 @@ static PyObject* CFGetObjectAt(PyObject* self, PyObject* args)
 /* Python : CFPython.SetValue(object,value)                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 
 static PyObject* CFSetValue(PyObject* self, PyObject* args)
 {
@@ -224,7 +223,6 @@ static PyObject* CFSetValue(PyObject* self, PyObject* args)
 /* Python : CFPython.GetValue(object)                                        */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 
 static PyObject* CFGetValue(PyObject* self, PyObject* args)
 {
@@ -287,9 +285,12 @@ static PyObject* CFSetSkillExperience(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetSkillExperience                                             */
 /* Python : CFPython.GetSkillExperience(object, skill)                       */
+/* Info   : FIXME: what does it really return? Does this function need       */
+/*          to be adjusted for Daimonin's skill system ?                     */
+/*          (It seems to currently return the experience of the skill        */
+/*           category, not the skill itself)                                 */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 
 static PyObject* CFGetSkillExperience(PyObject* self, PyObject* args)
 {
@@ -316,9 +317,10 @@ static PyObject* CFGetSkillExperience(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFMatchString                                                    */
 /* Python : CFPython.MatchString(firststr,secondstr)                         */
+/* Info   : Case insensitive string comparision. Returns 1 if the two        */
+/*          strings are the same, or 0 if they differ.                       */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 
 static PyObject* CFMatchString(PyObject* self, PyObject* args)
 {
@@ -339,9 +341,9 @@ static PyObject* CFMatchString(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetCursed                                                      */
 /* Python : CFPython.SetCursed(object,value)                                 */
+/* Info   : If value is 0, object is uncursed. Otherwise object is cursed.   */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 
 static PyObject* CFSetCursed(PyObject* self, PyObject* args)
 {
@@ -351,13 +353,22 @@ static PyObject* CFSetCursed(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
-  if (value!=0)
+    if (value!=0)
         SET_FLAG(WHO, FLAG_CURSED);
-  else
-		CLEAR_FLAG(WHO, FLAG_CURSED);
+    else     
+        CLEAR_FLAG(WHO, FLAG_CURSED);
+
+    /* Gecko: Make sure the inventory icon is updated */
+    /* FIXME: what if object was not carried by player, or in a container ? */
+    if (WHO->env != NULL && WHO->env->type == PLAYER)
+    {
+        GCFP.Value[0] = (void *)(WHO->env);
+        GCFP.Value[1] = (void *)(WHO->env);
+        (PlugHooks[HOOK_ESRVSENDINVENTORY])(&GCFP);
+    }
  
-  Py_INCREF(Py_None);
-  return Py_None;
+    Py_INCREF(Py_None);
+    return Py_None;
 }
 
 /*****************************************************************************/
@@ -407,9 +418,10 @@ static PyObject* CFCheckTrigger(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetUnaggressive                                                */
 /* Python : CFPython.SetUnaggressive(who,value)                              */
+/* Info   : FIXME: Gecko: find out when this works and not (doesn't seem to  */
+/*          work on friendly mobs)                                           */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 
 static PyObject* CFSetUnaggressive(PyObject* self, PyObject* args)
 {
@@ -496,7 +508,6 @@ static PyObject* CFGetMapPath(PyObject* self, PyObject* args)
 /* Python : CFPython.GetMessage(object)                                      */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 
 static PyObject* CFGetMessage(PyObject* self, PyObject* args)
 {
@@ -519,7 +530,7 @@ static PyObject* CFGetMessage(PyObject* self, PyObject* args)
         else
         {
             strncpy(buf, WHO->msg,strlen(WHO->msg));
-            buf[strlen(WHO->msg)+1]=0x0;
+            buf[strlen(WHO->msg)]=0x0;
         }
     }
     else
@@ -530,9 +541,9 @@ static PyObject* CFGetMessage(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetMessage                                                     */
 /* Python : CFPython.SetMessage(object,message)                              */
+/* Info   : FIXME Gecko: Need check for "endmsg" ?                           */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 static PyObject* CFSetMessage(PyObject* self, PyObject* args)
 {
     char *txt;
@@ -552,7 +563,6 @@ static PyObject* CFSetMessage(PyObject* self, PyObject* args)
 /* Python : CFPython.GetGod(object)                                          */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 
 static PyObject* CFGetGod(PyObject* self, PyObject* args)
 {
@@ -613,9 +623,9 @@ static PyObject* CFSetGod(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetWeight                                                      */
 /* Python : CFPython.SetWeight(object,value)                                 */
+/* Info   : FIXME: classic inventory problem (needs to update info)          */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 
 static PyObject* CFSetWeight(PyObject* self, PyObject* args)
 {
@@ -626,10 +636,8 @@ static PyObject* CFSetWeight(PyObject* self, PyObject* args)
         return NULL;
 
     if (value < 0)
-    {
-        LOG(llevDebug, "(set-weight): Value must be greater than 0\n");
-        value = 0;
-    }
+        RAISE("Weight must be greater than 0");
+
     WHO->weight = value;
 
     Py_INCREF(Py_None);
@@ -638,23 +646,25 @@ static PyObject* CFSetWeight(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFReadyMap                                                       */
-/* Python : CFPython.ReadyMap(name)                                          */
+/* Python : CFPython.ReadyMap(name, unique)                                  */
+/* Info   : Make sure the named map is loaded into memory. unique _must_ be  */
+/*          1 if the map is unique. (unique is optional with default = 0)    */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 
 static PyObject* CFReadyMap(PyObject* self, PyObject* args)
 {
     char *mapname;
     mapstruct *mymap;
-    int val;
+    int flags = 0, unique = 0;
     CFParm* CFR;
-    if (!PyArg_ParseTuple(args,"s",&mapname))
+    if (!PyArg_ParseTuple(args,"s|i",&mapname, &unique))
         return NULL;
 
-    val = 0;
+    if(unique)
+        flags = MAP_PLAYER_UNIQUE;
     GCFP.Value[0] = (void *)(mapname);
-    GCFP.Value[1] = (void *)(&val);
+    GCFP.Value[1] = (void *)(&flags);
 
     LOG(llevDebug, "Ready to call readymapname with %s %i\n",
         (char *)(GCFP.Value[0]),
@@ -663,7 +673,8 @@ static PyObject* CFReadyMap(PyObject* self, PyObject* args)
     /* mymap = ready_map_name(mapname,0); */
     CFR = (PlugHooks[HOOK_READYMAPNAME])(&GCFP);
     mymap = (mapstruct *)(CFR->Value[0]);
-    LOG(llevDebug, "Map file is %s\n",mymap->path);
+    if(mymap != NULL)
+        LOG(llevDebug, "Map file is %s\n",mymap->path);
     free(CFR);
     return wrap_map(mymap);
 }
@@ -673,7 +684,7 @@ static PyObject* CFReadyMap(PyObject* self, PyObject* args)
 /* Python : CFPython.Teleport(object,mapname,x,y, unique)                    */
 /* Info   : Teleports object to the given position of the named map. If      */
 /*          unique is set to 1, the map will be a unique map.                */
-/* Status : Tested (for non-unique)                                          */
+/* Status : Tested                                                           */
 /*****************************************************************************/
 static PyObject* CFTeleport(PyObject* self, PyObject* args)
 {
@@ -717,9 +728,8 @@ static PyObject* CFIsOutOfMap(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFPickUp                                                         */
 /* Python : CFPython.PickUp(object,whatob)                                   */
-/* Status : Untested                                                         */
+/* Status : Tested                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 
 static PyObject* CFPickUp(PyObject* self, PyObject* args)
 {
@@ -742,7 +752,6 @@ static PyObject* CFPickUp(PyObject* self, PyObject* args)
 /* Python : CFPython.GetWeight(object)                                       */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 
 static PyObject* CFGetWeight(PyObject* self, PyObject* args)
 {
@@ -817,7 +826,9 @@ static PyObject* CFSetPreviousObject(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"O!O!", &CFPython_ObjectType, &whoptr, &CFPython_ObjectType, &whatptr))
         return NULL;
 
-    if (WHO==NULL) return NULL;
+    /* Gecko: this test is unecessary with object wrappers
+     * if (WHO==NULL) return NULL;
+     */
 
     WHO->above = WHAT;
     Py_INCREF(Py_None);
@@ -882,9 +893,10 @@ static PyObject* CFGetFirstObjectOnSquare(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetQuantity                                                    */
 /* Python : CFPython.SetQuantity(object,nrof)                                */
-/* Status : Untested                                                         */
+/* Info   : FIXME: classic inventory problem (needs to update info)          */
+/*          FIXME: Quantities are 0 by default... Why?                       */
+/* Status : Tested                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 
 static PyObject* CFSetQuantity(PyObject* self, PyObject* args)
 {
@@ -895,16 +907,9 @@ static PyObject* CFSetQuantity(PyObject* self, PyObject* args)
         return NULL;
 
     /* I used an arbitrary bound of 100k here */
-    if (value > 100000)
-    {
-        LOG(llevDebug, "(set-quantity): Value for %s must be lower than 100000\n",query_name(WHAT));
-        value = 100000;
-    }
-    else if (value < 0)
-    {
-        LOG(llevDebug, "(set-quantity): Value for %s must be higher 0\n",query_name(WHAT));
-        value = 0;
-    }
+    if (value < 0 || value > 100000 )
+        RAISE("Quantity must be between 0 and 100000");
+
     WHAT->nrof = value;
     Py_INCREF(Py_None);
     return Py_None;
@@ -913,9 +918,9 @@ static PyObject* CFSetQuantity(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetQuantity                                                    */
 /* Python : CFPython.GetQuantity(object)                                     */
-/* Status : Untested                                                         */
+/*          FIXME: Quantities are 0 by default... Why?                       */
+/* Status : Tested                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 
 static PyObject* CFGetQuantity(PyObject* self, PyObject* args)
 {
@@ -954,13 +959,17 @@ static PyObject* CFInsertObjectInside(PyObject* self, PyObject* args)
     
     myob = insert_ob_in_ob_hook(myob, WHERE);
 
+    /* If we're inserting into player's inventory: notify client  */
+    /* FIXME: what if inserting into player's container? (classic inventory prob.) */
     if (WHERE->type == PLAYER)
     {
         GCFP.Value[0] = (void *)(WHERE);
         GCFP.Value[1] = (void *)(myob);
         (PlugHooks[HOOK_ESRVSENDITEM])(&GCFP);
     } 
-    /* Gecko: myob was carried by player */
+    /* If we're taking from player. */
+    /* FIXME: what if myob was in a container on the same spot as the player? 
+     * (Works fine if object is _put_ in a container on the same spot)   */
     else if (obenv != NULL && obenv->type == PLAYER)
     {
         GCFP.Value[0] = (void *)(obenv);
@@ -974,9 +983,8 @@ static PyObject* CFInsertObjectInside(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFFindPlayer                                                     */
 /* Python : CFPython.FindPlayer(name)                                        */
-/* Status : Untested                                                         */
+/* Status : Tested                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 
 static PyObject* CFFindPlayer(PyObject* self, PyObject* args)
 {
@@ -1003,7 +1011,7 @@ static PyObject* CFFindPlayer(PyObject* self, PyObject* args)
 /* Name   : CFApply                                                          */
 /* Python : CFPython.Apply(object, whatobj, flags)                           */
 /* Info   : forces object to apply whatobj.                                  */
-/*          flags: ? (Gecko: TODO)                                           */
+/*          flags: ? (FIXME: document this function better)                  */
 /*          returns ? (probably 1 for success and 0 for failure)             */
 /* Status : Tested                                                           */
 /*****************************************************************************/
@@ -1029,16 +1037,18 @@ static PyObject* CFApply(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFDrop                                                           */
-/* Python : CFPython.Drop(object, name)                                      */
-/* Status : Untested                                                         */
+/* Python : CFPython.Drop(player, name)                                      */
+/* Info   : Equivalent to the player command "drop" (name is an object name, */
+/*          "all", "unpaid", "cursed", "unlocked" or a count + object name : */
+/*          "<nnn> <object name>", or a base name, or a short name...)       */
+/* Status : Tested                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 
 static PyObject* CFDrop(PyObject* self, PyObject* args)
 {
     CFPython_Object *whoptr;
     char* name;
-    CFParm* CFR;
+    CFParm* CFR; 
 
     if (!PyArg_ParseTuple(args,"O!s", &CFPython_ObjectType, &whoptr,&name))
         return NULL;
@@ -1047,7 +1057,7 @@ static PyObject* CFDrop(PyObject* self, PyObject* args)
     GCFP.Value[1] = (void *)(name);
     CFR = (PlugHooks[HOOK_CMDDROP])(&GCFP);
 /*    command_drop(WHO,name); */
-    free(CFR);
+    free(CFR); 
     Py_INCREF(Py_None);
     return Py_None;
 }
@@ -1055,7 +1065,7 @@ static PyObject* CFDrop(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFTake                                                           */
 /* Python : CFPython.Take(object,name)                                       */
-/* Status : Untested                                                         */
+/* Status : Temporary disabled (see commands.c)                              */
 /*****************************************************************************/
 /* GeckoStatus: untested */
 
@@ -1213,9 +1223,12 @@ static PyObject* CFSayTo(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetGender                                                      */
 /* Python : CFPython.SetGender(object,gender_string)                         */
+/* Info   : Changes the gender of object. gender_string should be one of     */
+/*          "male", "female" or "neuter"                                     */
+/*          FIXME: So what about bi-sexed creatures (snails etc?)            */
+/*          FIXME: We also need a GetGender function...                      */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 static PyObject* CFSetGender(PyObject* self, PyObject* args)
 {
     CFPython_Object *whoptr;
@@ -1228,16 +1241,10 @@ static PyObject* CFSetGender(PyObject* self, PyObject* args)
 	CLEAR_FLAG(WHO,FLAG_IS_MALE);
 	CLEAR_FLAG(WHO,FLAG_IS_FEMALE);
 
-	if(!gender)
-	{
-	    Py_INCREF(Py_None);
-		return Py_None;
-	}
-
 	/* reset to male or female */
-	if(strcmp(gender,"male"))
+	if(strcmp(gender,"male") == 0)
 		SET_FLAG(WHO,FLAG_IS_MALE);
-	else if(strcmp(gender,"female"))
+	else if(strcmp(gender,"female") == 0)
 		SET_FLAG(WHO,FLAG_IS_FEMALE);
 
 	/* update the players client of object was a player */
@@ -1252,7 +1259,7 @@ static PyObject* CFSetGender(PyObject* self, PyObject* args)
 /* Name   : CFSetRank                                                        */
 /* Python : CFPython.SetRank(object,rank_string)                             */
 /* Info   : Set the rank of an object to rank_string                         */
-/*        : Rank string 'Mr' is special for no rank                          */
+/*          Rank string 'Mr' is special for no rank                          */
 /* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFSetRank(PyObject* self, PyObject* args)
@@ -1264,7 +1271,7 @@ static PyObject* CFSetRank(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"O!s", &CFPython_ObjectType, &whoptr, &rank))
         return NULL;
 
-	if(WHO->type != PLAYER || !rank)
+	if(WHO->type != PLAYER)
 	{
 	    Py_INCREF(Py_None);
 	    return Py_None;
@@ -1296,7 +1303,6 @@ static PyObject* CFSetRank(PyObject* self, PyObject* args)
 /* Python : CFPython.SetAlignment(object,alignment_string)                   */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 static PyObject* CFSetAlignment(PyObject* self, PyObject* args)
 {
     object *walk;
@@ -1336,7 +1342,6 @@ static PyObject* CFSetAlignment(PyObject* self, PyObject* args)
 /* Status : Stable                                                           */
 /* Info   : This gets the aligment_force from a inventory (should be player?)*/
 /*****************************************************************************/
-/* GeckoStatus: untested */
 static PyObject* CFGetAlignmentForce(PyObject* self, PyObject* args)
 {
     object *walk;
@@ -1368,9 +1373,9 @@ static PyObject* CFGetAlignmentForce(PyObject* self, PyObject* args)
 /*          the guild_force object that was modified.                        */
 /* Status : Stable                                                           */
 /* Warning: This set only the title. The guild tag is in <slaying>           */
-/*        : For test of a special guild, you must use GetGuild()             */
-/*        : For settings inside a guild script, you can use this function    */
-/*        : Because it returns the guild_force obj after setting the title   */
+/*          For test of a special guild, you must use GetGuild()             */
+/*          For settings inside a guild script, you can use this function    */
+/*          Because it returns the guild_force obj after setting the title   */
 /*****************************************************************************/
 static PyObject* CFSetGuildForce(PyObject* self, PyObject* args)
 {
@@ -1409,7 +1414,7 @@ static PyObject* CFSetGuildForce(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFGetGuildForce                                                  */
-/* Python : object CFPython.GetGuildForce(who)                               */
+/* Python : CFPython.GetGuildForce(who)                                      */
 /* Info   : This gets the guild_force from a inventory (should be player?)   */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -1466,8 +1471,6 @@ static PyObject* CFSetInvisible(PyObject* self, PyObject* args)
 /* Python : CFPython.GetExperience(object)                                   */
 /* Status : Untested                                                         */
 /*****************************************************************************/
-/* GeckoStatus: untested */
-
 static PyObject* CFGetExperience(PyObject* self, PyObject* args)
 {
     CFPython_Object *whoptr;
@@ -1528,8 +1531,8 @@ static PyObject* CFSetSpeed(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFGetFood                                                        */
-/* Python : Int CFPython.GetFood(object)                                     */
-/* Status : Untested (Gecko: Tested on player)                               */
+/* Python : CFPython.GetFood(object)                                         */
+/* Status : Tested                                                           */
 /*****************************************************************************/
 static PyObject* CFGetFood(PyObject* self, PyObject* args)
 {
@@ -1543,8 +1546,8 @@ static PyObject* CFGetFood(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFSetFood                                                        */
-/* Python : None CFPython.SetFood(object, value)                             */
-/* Status : Untested (Gecko: tested on player)                               */
+/* Python : CFPython.SetFood(object, value)                                  */
+/* Status : Tested                                                           */
 /*****************************************************************************/
 static PyObject* CFSetFood(PyObject* self, PyObject* args)
 {
@@ -1566,7 +1569,7 @@ static PyObject* CFSetFood(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetGrace                                                       */
 /* Python : CFPython.GetGrace(object)                                        */
-/* Status : Untested                                                         */
+/* Status : Tested                                                           */
 /*****************************************************************************/
 static PyObject* CFGetGrace(PyObject* self, PyObject* args)
 {
@@ -1581,7 +1584,7 @@ static PyObject* CFGetGrace(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetGrace                                                       */
 /* Python : CFPython.SetGrace(object, value)                                 */
-/* Status : Untested                                                         */
+/* Status : Tested                                                           */
 /*****************************************************************************/
 static PyObject* CFSetGrace(PyObject* self, PyObject* args)
 {
@@ -1632,6 +1635,7 @@ static PyObject* CFSetReturnValue(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetDirection                                                   */
 /* Python : CFPython.GetDirection(object)                                    */
+/* Info   : So what is "direction" anyway?                                   */
 /* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetDirection(PyObject* self, PyObject* args)
@@ -1671,8 +1675,6 @@ static PyObject* CFSetDirection(PyObject* self, PyObject* args)
 /* Python : CFPython.GetLastSP(object)                                       */
 /* Status : Untested                                                         */
 /*****************************************************************************/
-/* GeckoStatus: untested */
-
 static PyObject* CFGetLastSP(PyObject* self, PyObject* args)
 {
     CFPython_Object *whoptr;
@@ -1685,7 +1687,7 @@ static PyObject* CFGetLastSP(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFSetLastSP                                                      */
-/* Python : CFPython.SetLastSP(object, value)                                */
+/* Python : CFPython.SetLastSP(object, sp)                                   */
 /* Status : Untested                                                         */
 /*****************************************************************************/
 /* GeckoStatus: untested */
@@ -1698,8 +1700,8 @@ static PyObject* CFSetLastSP(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
-    if (value<0) return NULL;
-    if (value>16000) return NULL;
+    if (value<0 || value > 16000)
+        RAISE("Last SP must be between 0 and 16000");
 
     WHO->last_sp = value;
 
@@ -1723,7 +1725,7 @@ static PyObject* CFGetLastGrace(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFSetLastGrace                                                   */
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
@@ -1737,8 +1739,8 @@ static PyObject* CFSetLastGrace(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
-    if (value<0) return NULL;
-    if (value>16000) return NULL;
+    if (value<0 || value > 16000)
+        RAISE("Grace must be between 0 and 16000");
 
     WHO->last_grace = value;
 
@@ -1747,7 +1749,7 @@ static PyObject* CFSetLastGrace(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFFixObject                                                      */
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
@@ -1764,7 +1766,7 @@ static PyObject* CFFixObject(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFSetFace                                                        */
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
@@ -1796,7 +1798,7 @@ static PyObject* CFSetFace(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFGetAttackType                                                  */
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
@@ -1811,7 +1813,7 @@ static PyObject* CFGetAttackType(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFSetAttackType                                                  */
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
@@ -1832,9 +1834,9 @@ static PyObject* CFSetAttackType(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFSetDamage                                                      */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 /* GeckoStatus: untested */
 
@@ -1846,8 +1848,8 @@ static PyObject* CFSetDamage(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
-    if (value<0) return NULL;
-    if (value>120) return NULL;
+    if (value<0 || value > 120)
+        RAISE("Damage must be between 0 and 120");
 
     WHO->stats.dam = value;
 
@@ -1856,9 +1858,9 @@ static PyObject* CFSetDamage(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFGetDamage                                                      */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetDamage(PyObject* self, PyObject* args)
 {
@@ -1871,9 +1873,9 @@ static PyObject* CFGetDamage(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFSetBeenApplied                                                 */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 /* GeckoStatus: untested */
 
@@ -1895,9 +1897,9 @@ static PyObject* CFSetBeenApplied(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFSetIdentified                                                  */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 /* GeckoStatus: untested */
 
@@ -1919,9 +1921,9 @@ static PyObject* CFSetIdentified(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFKillObject                                                     */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 /* GeckoStatus: untested */
 /* add hooks before use! */
@@ -1944,7 +1946,7 @@ static PyObject* CFKillObject(PyObject* self, PyObject* args)
     if(QUERY_FLAG(WHAT,FLAG_REMOVED))
     {
         LOG(llevDebug, "Warning (from KillObject): Trying to remove removed object\n");
-        return NULL;
+        RAISE("Trying to remove removed object");
     }
     else
     {
@@ -1972,7 +1974,7 @@ static PyObject* CFKillObject(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFWhoIsOther                                                     */
 /* Python :                                                                  */
 /* Status : Untested                                                         */
 /*****************************************************************************/
@@ -1984,7 +1986,7 @@ static PyObject* CFWhoIsOther(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFDirectionN                                                     */
 /* Python :                                                                  */
 /* Status : Untested                                                         */
 /*****************************************************************************/
@@ -1998,7 +2000,7 @@ static PyObject* CFDirectionN(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFDirectionNE                                                    */
 /* Python :                                                                  */
 /* Status : Untested                                                         */
 /*****************************************************************************/
@@ -2012,9 +2014,9 @@ static PyObject* CFDirectionNE(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFDirectionE                                                     */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 
 static PyObject* CFDirectionE(PyObject* self, PyObject* args)
@@ -2026,9 +2028,9 @@ static PyObject* CFDirectionE(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFDirectionSE                                                    */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 
 static PyObject* CFDirectionSE(PyObject* self, PyObject* args)
@@ -2040,9 +2042,9 @@ static PyObject* CFDirectionSE(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFDirectionS                                                     */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 
 static PyObject* CFDirectionS(PyObject* self, PyObject* args)
@@ -2054,9 +2056,9 @@ static PyObject* CFDirectionS(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFDirectionSW                                                    */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 
 static PyObject* CFDirectionSW(PyObject* self, PyObject* args)
@@ -2068,9 +2070,9 @@ static PyObject* CFDirectionSW(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFDirectionW                                                     */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 
 static PyObject* CFDirectionW(PyObject* self, PyObject* args)
@@ -2082,9 +2084,9 @@ static PyObject* CFDirectionW(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFDirectionNW                                                    */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 
 static PyObject* CFDirectionNW(PyObject* self, PyObject* args)
@@ -2141,7 +2143,7 @@ static PyObject* CFCastSpell(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFGetSpellNr                                                     */
-/* Python : int CFGetSpellNr(name)                                           */
+/* Python : CFGetSpellNr(name)                                               */
 /* Info   : get the number of the named spell. -1 if no such spell exists    */
 /* Status : Tested                                                           */
 /*****************************************************************************/
@@ -2162,7 +2164,7 @@ static PyObject* CFGetSpellNr(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFDoKnowSpell                                                    */
-/* Python : int CFDoKnowSpell(object, spell)                                 */
+/* Python : CFDoKnowSpell(object, spell)                                     */
 /* Info   : 1 if the spell is known by object, 0 if it isn't                 */
 /* Status : Tested                                                           */
 /*****************************************************************************/
@@ -2185,8 +2187,9 @@ static PyObject* CFDoKnowSpell(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   : CFAquireSpell(object, spell, mode)                               */
-/* Python : object will learn or unlearn spell. mode: 0=learn, 1=unlearn     */
+/* Name   : CFAcquireSpell                                                   */
+/* Python : CFPython.AcquireSpell(object, spell, mode)                       */
+/* Info   : object will learn or unlearn spell. mode: 0=learn, 1=unlearn     */
 /*          (remove)                                                         */
 /* Status : Tested                                                           */
 /*****************************************************************************/
@@ -2211,7 +2214,8 @@ static PyObject* CFAcquireSpell(PyObject* self, PyObject* args)
 
 
 /*****************************************************************************/
-/* Python : int CFGetSkillNr(name)                                           */
+/* Name   : CFGetSkillNr                                                     */
+/* Python : CFPython.GetSkillNr(name)                                        */
 /* Info   : get the number of the named skill. -1 if no such skill exists    */
 /* Status : Tested                                                           */
 /*****************************************************************************/
@@ -2232,7 +2236,7 @@ static PyObject* CFGetSkillNr(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFDoKnowSkill                                                    */
-/* Python : int CFDoKnowSkill(object, spell)                                 */
+/* Python : CFDoKnowSkill(object, spell)                                     */
 /* Info   : 1 if the skill is known by object, 0 if it isn't                 */
 /* Status : Tested                                                           */
 /*****************************************************************************/
@@ -2283,6 +2287,8 @@ static PyObject* CFAcquireSkill(PyObject* self, PyObject* args)
 /* Python : CFPython.FindMarkedObject(who)                                   */
 /* Info   : Returns the marked object in who's inventory, or None if no      */
 /*          object is marked.                                                */
+/*          FIXME: also search inside containers (or don't allow marking     */
+/*          stuff in containers)                                             */
 /* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFFindMarkedObject(PyObject* self, PyObject* args)
@@ -2303,9 +2309,9 @@ static PyObject* CFFindMarkedObject(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFCheckInvisibleInside                                           */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 /* GeckoStatus: untested */
 
@@ -2328,7 +2334,7 @@ static PyObject* CFCheckInvisibleInside(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFCreatePlayerForce                                              */
 /* Python :                                                                  */
 /* Status : Stable.                                                          */
 /* Info   : The Values of a player force will effect the player.             */
@@ -2357,7 +2363,7 @@ static PyObject* CFCreatePlayerForce(PyObject* self, PyObject* args)
     if(!myob)
     {
         LOG(llevDebug,"Python WARNING:: CreatePlayerForce: Can't find archtype 'player_force'\n");
-        return NULL;
+        RAISE("Can't find archtype 'player_force'");
     }
     
     /* setup the force and put it in activator */
@@ -2376,7 +2382,7 @@ static PyObject* CFCreatePlayerForce(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFCreatePlayerInfo                                               */
-/* Python : object CFCreatePlayerInfo(who, name)                             */
+/* Python : CFCreatePlayerInfo(who, name)                                    */
 /* Status : Stable                                                           */
 /* Info   : Creates a player_info object of specified name in who's inventory*/
 /*          The Values of a player_info object will NOT effect the player.   */
@@ -2405,7 +2411,7 @@ static PyObject* CFCreatePlayerInfo(PyObject* self, PyObject* args)
     if(!myob)
     {
         LOG(llevDebug,"Python WARNING:: CreatePlayerInfo: Cant't find archtype 'player_info'\n");
-        return NULL;
+        RAISE("Cant't find archtype 'player_info'");
     }
     
     /* setup the info and put it in activator */
@@ -2482,9 +2488,9 @@ static PyObject* CFGetNextPlayerInfo(PyObject* self, PyObject* args)
 
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFCreateInvisibleInside                                          */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 /* GeckoStatus: untested */
 static PyObject* CFCreateInvisibleInside(PyObject* self, PyObject* args)
@@ -2510,7 +2516,7 @@ static PyObject* CFCreateInvisibleInside(PyObject* self, PyObject* args)
     if(!myob)
     {
         LOG(llevDebug,"Python WARNING:: CFCreateInvisibleInside: Can't find archtype 'force'\n");
-        return NULL;
+        RAISE("Cant't find archtype 'force'");
     }
     myob->speed = 0.0;
     GCFP.Value[0] = (void *)(myob);
@@ -2530,13 +2536,17 @@ static PyObject* CFCreateInvisibleInside(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
-/* Python :                                                                  */
+/* Name   : CFCreateObjectInside                                             */
+/* Python : CFPython.CreateObjectInside(archname, where, identified, value)  */
+/* Info   : Creates an object from archname and inserts intp where. If       */
+/*          identified is 1, the object will be identified. If value is >= 0 */
+/*          it will be used as the new object's value, otherwise the value   */
+/*          will be taken from the arch.                                     */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
-
 /* i must change this a bit - only REAL arch names - not object names */
+/* Gecko: I would rather raise an exception than creating singularities... */
+
 static PyObject* CFCreateObjectInside(PyObject* self, PyObject* args)
 {
     object *myob;
@@ -2598,9 +2608,10 @@ static PyObject* CFCreateObjectInside(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFCheckMap                                                       */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Info   :                                                                  */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 /* GeckoStatus: untested */
 
@@ -2611,7 +2622,8 @@ static PyObject* CFCheckMap(PyObject* self, PyObject* args)
     int x, y;
     object* foundob;
 
-    if (!PyArg_ParseTuple(args,"ss(ii)",&what,&mapstr,&x,&y))
+    /* Gecko: replaced coordinate tuple with separate x and y coordinates */
+    if (!PyArg_ParseTuple(args,"ssii",&what,&mapstr,&x,&y))
         return NULL;
     
     foundob = present_arch(
@@ -2699,9 +2711,9 @@ static PyObject* CFGetName(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFSetName                                                        */
 /* Python : CFPython.SetName(object, name)                                   */
+/* Info   : FIXME: classic inventory problem (needs to update info)          */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 static PyObject* CFSetName(PyObject* self, PyObject* args)
 {
     CFPython_Object *whoptr;
@@ -2718,11 +2730,11 @@ static PyObject* CFSetName(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
-/* Python :                                                                  */
+/* Name   : CFGetTitle                                                       */
+/* Python : CFPython.GetTitle(object)                                        */
+/* Info   : If object has no title, this function will return None           */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 
 static PyObject* CFGetTitle(PyObject* self, PyObject* args)
 {
@@ -2737,6 +2749,7 @@ static PyObject* CFGetTitle(PyObject* self, PyObject* args)
 /* Name   : CFSetTitle                                                       */
 /* Python : CFPython.SetTitle(object, name)                                  */
 /* Info   : Sets the title of object to name.                                */
+/*          FIXME: classic inventory problem (needs to update info)          */
 /* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFSetTitle(PyObject* self, PyObject* args)
@@ -2758,6 +2771,7 @@ static PyObject* CFSetTitle(PyObject* self, PyObject* args)
 /* Name   : CFGetSlaying                                                     */
 /* Python : string CFPython.GetSlaying(object)                               */
 /* Info   : gets the slaying string of object                                */
+/*          If object has no slaying, this function will return None         */
 /* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFGetSlaying(PyObject* self, PyObject* args)
@@ -2772,6 +2786,7 @@ static PyObject* CFGetSlaying(PyObject* self, PyObject* args)
 /* Name   : CFSetSlaying                                                     */
 /* Python : CFPython.SetSlaying(object, name)                                */
 /* Info   : sets the slaying string of object to name                        */
+/*          FIXME: classic inventory problem (needs to update info)          */
 /* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFSetSlaying(PyObject* self, PyObject* args)
@@ -2792,27 +2807,25 @@ static PyObject* CFSetSlaying(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFSetSaveBed                                                     */
-/* Python : CFPython.SetSaveBed(object, mapname, x, y)                       */
-/* Info   : Sets the current savebed position for object to the specified    */
-/*          coordinates on the map mapname                                   */
+/* Python : CFPython.SetSaveBed(player, mapname, x, y)                       */
+/* Info   : Sets the current savebed position for player to the specified    */
+/*          coordinates on the map mapname.                                  */
 /* Status : Stable                                                           */
-/* Comment: Gecko: seems it might crash if a non-player object is given. TODO*/
 /*****************************************************************************/
 static PyObject* CFSetSaveBed(PyObject* self, PyObject* args)
 {
     CFPython_Object *whoptr;
-	object *myob;
     char *txt;
     int x,y;
     
     if (!PyArg_ParseTuple(args,"O!sii", &CFPython_ObjectType, &whoptr,&txt,&x, &y))
         return NULL;
-	myob=WHO;
-	if(WHO->type == PLAYER)
+	
+    if(WHO->type == PLAYER)
 	{	
-		strcpy(myob->contr->savebed_map, txt);
-		myob->contr->bed_x = x;
-		myob->contr->bed_y = y;
+		strcpy(WHO->contr->savebed_map, txt);
+		WHO->contr->bed_x = x;
+		WHO->contr->bed_y = y;
     }
     Py_INCREF(Py_None);
     return Py_None;
@@ -2820,8 +2833,9 @@ static PyObject* CFSetSaveBed(PyObject* self, PyObject* args)
 
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFCreateObject                                                   */
 /* Python :                                                                  */
+/* Info   :                                                                  */
 /* Status : Unfinished                                                       */
 /*****************************************************************************/
 /* GeckoStatus: untested */
@@ -2832,7 +2846,8 @@ static PyObject* CFCreateObject(PyObject* self, PyObject* args)
     int x,y;
     CFPython_Map *map = (CFPython_Map *)wrap_map(StackWho[StackPosition]->map);
     
-    if (!PyArg_ParseTuple(args,"s(ii)|O!",&txt, &x,&y, &CFPython_MapType, &map))
+    /* Gecko: replaced coordinate tuple with separate x and y coordinates */
+    if (!PyArg_ParseTuple(args,"sii|O!",&txt, &x,&y, &CFPython_MapType, &map))
         return NULL;
 
     Py_INCREF(Py_None);
@@ -2867,7 +2882,6 @@ static PyObject* CFRemoveObject(PyObject* self, PyObject* args)
             StackOther[StackPosition] == myob)
     {
         RAISE("You are not allowed to remove one of the active objects. Workaround using CFTeleport or some other solution.");
-        return NULL;
     }
     
     GCFP.Value[0] = (void *)(myob);
@@ -2889,7 +2903,7 @@ static PyObject* CFRemoveObject(PyObject* self, PyObject* args)
     GCFP.Value[0] = (void *)(myob);
     (PlugHooks[HOOK_FREEOBJECT])(&GCFP);
     
-    /* Gecko: Handle removing any of the active objects (i.e. the activator) */
+    /* Gecko: Handle removing any of the active objects (e.g. the activator) */
     if (StackActivator[StackPosition] == myob)
         StackActivator[StackPosition] = NULL;
     if (StackWho[StackPosition] == myob)
@@ -2902,11 +2916,10 @@ static PyObject* CFRemoveObject(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFIsAlive                                                        */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 
 static PyObject* CFIsAlive(PyObject* self, PyObject* args)
 {
@@ -2917,11 +2930,10 @@ static PyObject* CFIsAlive(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFIsWiz                                                          */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 
 static PyObject* CFIsWiz(PyObject* self, PyObject* args)
 {
@@ -2932,11 +2944,10 @@ static PyObject* CFIsWiz(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFWasWiz                                                         */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 
 static PyObject* CFWasWiz(PyObject* self, PyObject* args)
 {
@@ -2947,11 +2958,10 @@ static PyObject* CFWasWiz(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFIsApplied                                                      */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 
 static PyObject* CFIsApplied(PyObject* self, PyObject* args)
 {
@@ -2962,11 +2972,10 @@ static PyObject* CFIsApplied(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFIsUnpaid                                                       */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 
 static PyObject* CFIsUnpaid(PyObject* self, PyObject* args)
 {
@@ -2977,11 +2986,10 @@ static PyObject* CFIsUnpaid(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFIsFlying                                                       */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 
 static PyObject* CFIsFlying(PyObject* self, PyObject* args)
 {
@@ -2992,11 +3000,10 @@ static PyObject* CFIsFlying(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
-/* Python : We check for monster flag, not the type..                        */
+/* Name   : CFIsMonster                                                      */
+/* Info   : We check for monster flag, not the type..                        */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 
 static PyObject* CFIsMonster(PyObject* self, PyObject* args)
 {
@@ -3007,11 +3014,10 @@ static PyObject* CFIsMonster(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFIsFriendly                                                     */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 
 static PyObject* CFIsFriendly(PyObject* self, PyObject* args)
 {
@@ -3022,11 +3028,10 @@ static PyObject* CFIsFriendly(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFIsGenerator                                                    */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 
 static PyObject* CFIsGenerator(PyObject* self, PyObject* args)
 {
@@ -3037,11 +3042,10 @@ static PyObject* CFIsGenerator(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFIsThrown                                                       */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 
 static PyObject* CFIsThrown(PyObject* self, PyObject* args)
 {
@@ -3052,11 +3056,10 @@ static PyObject* CFIsThrown(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFCanSeeInvisible                                                */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 
 static PyObject* CFCanSeeInvisible(PyObject* self, PyObject* args)
 {
@@ -3067,11 +3070,10 @@ static PyObject* CFCanSeeInvisible(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFCanRoll                                                        */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 
 static PyObject* CFCanRoll(PyObject* self, PyObject* args)
 {
@@ -3082,11 +3084,10 @@ static PyObject* CFCanRoll(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFIsTurnable                                                     */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 
 static PyObject* CFIsTurnable(PyObject* self, PyObject* args)
 {
@@ -3097,11 +3098,10 @@ static PyObject* CFIsTurnable(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFIsUsedUp                                                       */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 
 static PyObject* CFIsUsedUp(PyObject* self, PyObject* args)
 {
@@ -3112,28 +3112,25 @@ static PyObject* CFIsUsedUp(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
-/* Python :                                                                  */
+/* Name   : CFIsIdentified                                                   */
+/* Python : CFPython.IsIdentified(object)                                    */
+/* Info   : Returns 1 if object is identified, or 0 otherwise.               */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 
 static PyObject* CFIsIdentified(PyObject* self, PyObject* args)
 {
     CFPython_Object *whoptr;
-    int retval;
     if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
         return NULL;
-    retval = QUERY_FLAG(WHO,FLAG_IDENTIFIED);
-    return Py_BuildValue("i",retval);
+    return Py_BuildValue("i", QUERY_FLAG(WHO,FLAG_IDENTIFIED));
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFIsSplitting                                                    */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 
 static PyObject* CFIsSplitting(PyObject* self, PyObject* args)
 {
@@ -3144,7 +3141,7 @@ static PyObject* CFIsSplitting(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFHitBack                                                        */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3157,7 +3154,7 @@ static PyObject* CFHitBack(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFBlocksView                                                     */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3170,7 +3167,7 @@ static PyObject* CFBlocksView(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFIsUndead                                                       */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3183,7 +3180,7 @@ static PyObject* CFIsUndead(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFIsScared                                                       */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3196,7 +3193,7 @@ static PyObject* CFIsScared(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFIsUnaggressive                                                 */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3209,7 +3206,7 @@ static PyObject* CFIsUnaggressive(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFReflectMissiles                                                */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3222,7 +3219,7 @@ static PyObject* CFReflectMissiles(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFReflectSpells                                                  */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3235,7 +3232,7 @@ static PyObject* CFReflectSpells(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFIsRunningAway                                                  */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3248,7 +3245,7 @@ static PyObject* CFIsRunningAway(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFCanPassThru                                                    */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3261,7 +3258,7 @@ static PyObject* CFCanPassThru(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFCanPickUp                                                      */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3274,20 +3271,27 @@ static PyObject* CFCanPickUp(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFIsUnique                                                       */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
 static PyObject* CFIsUnique(PyObject* self, PyObject* args)
 {
-    CFPython_Object *whoptr;
-    if (!PyArg_ParseTuple(args,"O!", &CFPython_ObjectType, &whoptr))
+    PyObject *ob;
+    
+    if (!PyArg_ParseTuple(args,"O", &ob))
         return NULL;
-    return Py_BuildValue("i",QUERY_FLAG(WHO,FLAG_UNIQUE));
+    
+    if(PyObject_TypeCheck(ob, &CFPython_ObjectType)) {
+        return Py_BuildValue("i",QUERY_FLAG(((CFPython_Object *)ob)->obj,FLAG_UNIQUE));
+    } else if(PyObject_TypeCheck(ob, &CFPython_MapType))  {
+        return Py_BuildValue("i",MAP_UNIQUE(((CFPython_Map *)ob)->map));
+    } else
+        RAISE("Parameter 1 must be a map or an object");
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFCanCastSpell                                                   */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3300,7 +3304,7 @@ static PyObject* CFCanCastSpell(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFCanUseScroll                                                   */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3313,7 +3317,7 @@ static PyObject* CFCanUseScroll(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFCanUseWand                                                     */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3326,7 +3330,7 @@ static PyObject* CFCanUseWand(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFCanUseBow                                                      */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3339,7 +3343,7 @@ static PyObject* CFCanUseBow(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFCanUseArmour                                                   */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3352,7 +3356,7 @@ static PyObject* CFCanUseArmour(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFCanUseWeapon                                                   */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3365,7 +3369,7 @@ static PyObject* CFCanUseWeapon(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFCanUseRing                                                     */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3378,7 +3382,7 @@ static PyObject* CFCanUseRing(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFHasXRays                                                       */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3391,7 +3395,7 @@ static PyObject* CFHasXRays(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFIsFloor                                                        */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3404,7 +3408,7 @@ static PyObject* CFIsFloor(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFIsLifeSaver                                                    */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3417,7 +3421,7 @@ static PyObject* CFIsLifeSaver(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFIsSleeping                                                     */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3430,7 +3434,7 @@ static PyObject* CFIsSleeping(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFStandStill                                                     */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3443,7 +3447,7 @@ static PyObject* CFStandStill(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFOnlyAttack                                                     */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3456,7 +3460,7 @@ static PyObject* CFOnlyAttack(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFIsConfused                                                     */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3469,7 +3473,7 @@ static PyObject* CFIsConfused(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFHasStealth                                                     */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3482,7 +3486,7 @@ static PyObject* CFHasStealth(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFIsCursed                                                       */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3495,7 +3499,7 @@ static PyObject* CFIsCursed(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFIsDamned                                                       */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3508,7 +3512,7 @@ static PyObject* CFIsDamned(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFIsKnownMagical                                                 */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3521,7 +3525,7 @@ static PyObject* CFIsKnownMagical(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFIsKnownCursed                                                  */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3534,7 +3538,7 @@ static PyObject* CFIsKnownCursed(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFCanUseSkill                                                    */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3547,7 +3551,7 @@ static PyObject* CFCanUseSkill(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFHasBeenApplied                                                 */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3560,7 +3564,7 @@ static PyObject* CFHasBeenApplied(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFCanUseRod                                                      */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3573,7 +3577,7 @@ static PyObject* CFCanUseRod(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFCanUseHorn                                                     */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3586,7 +3590,7 @@ static PyObject* CFCanUseHorn(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFMakeInvisible                                                  */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3599,7 +3603,7 @@ static PyObject* CFMakeInvisible(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFIsBlind                                                        */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3612,7 +3616,7 @@ static PyObject* CFIsBlind(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFCanSeeInDark                                                   */
 /* Python :                                                                  */
 /* Status : Stable                                                           */
 /*****************************************************************************/
@@ -3625,7 +3629,7 @@ static PyObject* CFCanSeeInDark(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFGetAC                                                          */
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
@@ -3638,7 +3642,7 @@ static PyObject* CFGetAC(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFGetCha                                                         */
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
@@ -3651,7 +3655,7 @@ static PyObject* CFGetCha(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFGetCon                                                         */
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
@@ -3664,7 +3668,7 @@ static PyObject* CFGetCon(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFGetDex                                                         */
 /* Python :                                                                  */
 /* Status : Untested                                                                */
 /*****************************************************************************/
@@ -3679,7 +3683,7 @@ static PyObject* CFGetDex(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetHP                                                          */
 /* Python : CFPython.GetHP(object)                                           */
-/* Info   : Gets the HPs of object. TODO; max or current?                    */
+/* Info   : Gets the HPs of object.                                          */
 /* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetHP(PyObject* self, PyObject* args)
@@ -3692,9 +3696,9 @@ static PyObject* CFGetHP(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFGetInt                                                         */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetInt(PyObject* self, PyObject* args)
 {
@@ -3705,9 +3709,9 @@ static PyObject* CFGetInt(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFGetPow                                                         */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetPow(PyObject* self, PyObject* args)
 {
@@ -3718,9 +3722,9 @@ static PyObject* CFGetPow(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFGetSP                                                          */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetSP(PyObject* self, PyObject* args)
 {
@@ -3731,9 +3735,9 @@ static PyObject* CFGetSP(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFGetStr                                                         */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetStr(PyObject* self, PyObject* args)
 {
@@ -3744,9 +3748,9 @@ static PyObject* CFGetStr(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFGetWis                                                         */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetWis(PyObject* self, PyObject* args)
 {
@@ -3757,9 +3761,9 @@ static PyObject* CFGetWis(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFGetMaxHP                                                       */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetMaxHP(PyObject* self, PyObject* args)
 {
@@ -3770,9 +3774,9 @@ static PyObject* CFGetMaxHP(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFGetMaxSP                                                       */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetMaxSP(PyObject* self, PyObject* args)
 {
@@ -3811,11 +3815,15 @@ static PyObject* CFGetYPos(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
-/* Python :                                                                  */
-/* Status : Untested                                                         */
+/* Name   : CFSetPosition                                                    */
+/* Python : CFPython.SetPosition(object, x, y)                               */
+/* Info   : Cannot be used to move objects out of containers. (Use Drop() or */
+/*          Teleport() for that)                                             */
+/* Status : Tested                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
+
+/* FIXME: if the object moved was triggered by SAY event and it is moved to a tile
+ * within the listening radius, it will be triggered again, and again... */
 
 static PyObject* CFSetPosition(PyObject* self, PyObject* args)
 {
@@ -3824,7 +3832,7 @@ static PyObject* CFSetPosition(PyObject* self, PyObject* args)
     CFParm* CFR;
     k = 0;
 
-    if (!PyArg_ParseTuple(args,"O!(ii)", &CFPython_ObjectType, &whoptr,&x,&y))
+    if (!PyArg_ParseTuple(args,"O!ii", &CFPython_ObjectType, &whoptr,&x,&y))
         return NULL;
 
     GCFP.Value[0] = (void *)(WHO);
@@ -3834,19 +3842,19 @@ static PyObject* CFSetPosition(PyObject* self, PyObject* args)
     GCFP.Value[4] = (void *)(NULL);
     GCFP.Value[5] = (void *)(NULL);
 
-    (PlugHooks[HOOK_TRANSFEROBJECT])(&GCFP);
+    CFR = (PlugHooks[HOOK_TRANSFEROBJECT])(&GCFP);
 
 /*  transfer_ob(WHO, gh_scm2int(X), gh_scm2int(Y), 0, NULL, NULL); */
 
-    free(&CFR);
+    free(CFR);
     Py_INCREF(Py_None);
     return Py_None;
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFSetAC                                                          */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 /* GeckoStatus: untested */
 
@@ -3858,8 +3866,8 @@ static PyObject* CFSetAC(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
-    if (value>120) return NULL;
-    if (value<-120) return NULL;
+    if (value>120 || value < -120)
+        RAISE("New AC must be between -120 and 120");
 
     WHO->stats.ac = value;
     Py_INCREF(Py_None);
@@ -3867,9 +3875,9 @@ static PyObject* CFSetAC(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFSetCha                                                         */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 /* GeckoStatus: untested */
 
@@ -3881,8 +3889,8 @@ static PyObject* CFSetCha(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
-    if (value>30) return NULL;
-    if (value<-30) return NULL;
+    if (value<-30 || value > 30)
+        RAISE("New charisma must be between -30 and 30");
 
     WHO->stats.Cha = value;
     if (WHO->type == PLAYER)
@@ -3895,9 +3903,9 @@ static PyObject* CFSetCha(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFSetCon                                                         */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 /* GeckoStatus: untested */
 
@@ -3909,8 +3917,8 @@ static PyObject* CFSetCon(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
-    if (value>30) return NULL;
-    if (value<-30) return NULL;
+    if (value<-30 || value > 30)
+        RAISE("New constitution must be between -30 and 30");
 
     WHO->stats.Con = value;
     if (WHO->type == PLAYER)
@@ -3923,9 +3931,9 @@ static PyObject* CFSetCon(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFSetDex                                                         */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 /* GeckoStatus: untested */
 
@@ -3937,8 +3945,8 @@ static PyObject* CFSetDex(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
-    if (value>30) return NULL;
-    if (value<-30) return NULL;
+    if (value<-30 || value > 30)
+        RAISE("New dexterity must be between -30 and 30");
 
     WHO->stats.Dex = value;
     if (WHO->type == PLAYER)
@@ -3964,7 +3972,8 @@ static PyObject* CFSetHP(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
-    if (value<0) return NULL;
+    if (value<0)
+        RAISE("New HP must be >= 0");
 
     WHO->stats.hp = value;
     Py_INCREF(Py_None);
@@ -3972,9 +3981,9 @@ static PyObject* CFSetHP(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFSetInt                                                         */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 /* GeckoStatus: untested */
 
@@ -3986,8 +3995,8 @@ static PyObject* CFSetInt(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
-    if (value>30) return NULL;
-    if (value<-30) return NULL;
+    if (value<-30 || value > 30)
+        RAISE("New intelligence must be between -30 and 30");
 
     WHO->stats.Int = value;
     if (WHO->type == PLAYER)
@@ -4000,9 +4009,9 @@ static PyObject* CFSetInt(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFSetMaxHP                                                       */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 /* GeckoStatus: untested */
 
@@ -4014,8 +4023,8 @@ static PyObject* CFSetMaxHP(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
-    if (value>16000) return NULL;
-    if (value<0) return NULL;
+    if (value<0 || value > 16000)
+        RAISE("New max HP must be between 0 and 16000");
 
     WHO->stats.maxhp = value;
     Py_INCREF(Py_None);
@@ -4023,9 +4032,9 @@ static PyObject* CFSetMaxHP(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFSetMaxSP                                                       */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 /* GeckoStatus: untested */
 
@@ -4037,8 +4046,8 @@ static PyObject* CFSetMaxSP(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
-    if (value>16000) return NULL;
-    if (value<0) return NULL;
+    if (value<0 || value > 16000)
+        RAISE("New max SP must be between 0 and 16000");
 
     WHO->stats.maxsp = value;
     Py_INCREF(Py_None);
@@ -4046,9 +4055,9 @@ static PyObject* CFSetMaxSP(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFSetPow                                                         */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 /* GeckoStatus: untested */
 
@@ -4060,8 +4069,8 @@ static PyObject* CFSetPow(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
-    if (value>30) return NULL;
-    if (value<-30) return NULL;
+    if (value<-30 || value > 30)
+        RAISE("New power must be between -30 and 30");
 
     WHO->stats.Pow = value;
     if (WHO->type == PLAYER)
@@ -4087,8 +4096,8 @@ static PyObject* CFSetSP(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
-    if (value>16000) return NULL;
-    if (value<0) return NULL;
+    if (value<0 || value > 16000)
+        RAISE("New SP must be between 0 and 16000");
 
     WHO->stats.sp = value;
     Py_INCREF(Py_None);
@@ -4096,9 +4105,9 @@ static PyObject* CFSetSP(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFSetStr                                                         */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Untested                                                         */
 /*****************************************************************************/
 /* GeckoStatus: untested */
 
@@ -4110,8 +4119,8 @@ static PyObject* CFSetStr(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
-    if (value>30) return NULL;
-    if (value<-30) return NULL;
+    if (value<-30 || value > 30)
+        RAISE("New strength must be between -30 and 30");
 
     WHO->stats.Str = value;
     if (WHO->type == PLAYER)
@@ -4124,7 +4133,7 @@ static PyObject* CFSetStr(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFSetWis                                                         */
 /* Python :                                                                  */
 /* Status : Untested                                                         */
 /*****************************************************************************/
@@ -4137,8 +4146,8 @@ static PyObject* CFSetWis(PyObject* self, PyObject* args)
     if (!PyArg_ParseTuple(args,"O!i", &CFPython_ObjectType, &whoptr,&value))
         return NULL;
 
-    if (value>30) return NULL;
-    if (value<-30) return NULL;
+    if (value<-30 || value > 30)
+        RAISE("New wisdom must be between -30 and 30");
 
     WHO->stats.Wis = value;
     if (WHO->type == PLAYER)
@@ -4154,7 +4163,7 @@ static PyObject* CFSetWis(PyObject* self, PyObject* args)
 /* Name   : CFIdentifyObject                                                 */
 /* Python : CFPython.IdentifyObject(caster, target, object, mode)            */
 /* Info   : caster identifies object in target's inventory.                  */
-/*        : mode: 0 = normal, 1 = all, 2 = marked                            */
+/*          mode: 0 = normal, 1 = all, 2 = marked                            */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static PyObject* CFIdentifyObject(PyObject* self, PyObject* args)
@@ -4192,12 +4201,13 @@ static PyObject* CFIdentifyObject(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   : Message(who, message,[color])                                    */
-/* Python : Writes a message to a map (given by who in this map).            */
-/* Python : Swaped who/message pos. MT-26-10-2002                            */
-/* Status : Untested                                                         */
+/* Name   : CFMessage                                                        */
+/* Python : CFPython.Message(who, message, color)                            */
+/* Info   : Writes a message to a map (given by who in this map).            */
+/*          Swapped who/message pos. MT-26-10-2002                           */
+/*          color is an optional parameter (default = NDI_BLUE|NDI_UNIQUE)   */
+/* Status : Tested                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 
 static PyObject* CFMessage(PyObject* self, PyObject* args)
 {
@@ -4219,9 +4229,9 @@ static PyObject* CFMessage(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :	CFWrite()                                                        */
-/* Python : CFPython.Write(who, message [, color])                           */
-/* info   : Writes a message to a specific player. Color is optional.        */
+/* Name   :	CFWrite                                                          */
+/* Python : CFPython.Write(who, message , color)                             */
+/* Info   : Writes a message to a specific player. Color is optional.        */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static PyObject* CFWrite(PyObject* self, PyObject* args)
@@ -4249,7 +4259,7 @@ static PyObject* CFWrite(PyObject* self, PyObject* args)
 /* Name   : CFIsOfType                                                       */
 /* Python : CFPython.IsOfType(object, type)                                  */
 /* Info   : returns 1 if object is of the specified type, or 0 otherwise.    */
-/*          (i.e. type = 80 for monster/NPC, or 1 for players)               */
+/*          (e.g. type = 80 for monster/NPC, or 1 for players)               */
 /* Status : Tested                                                           */
 /*****************************************************************************/
 static PyObject* CFIsOfType(PyObject* self, PyObject* args)
@@ -4268,9 +4278,11 @@ static PyObject* CFIsOfType(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
-/* Python :                                                                  */
-/* Status : Untested                                                         */
+/* Name   : CFGetType                                                        */
+/* Python : CFPython.GetType(object)                                         */
+/* Info   : returns the type of the specified object                         */
+/*          (e.g. type = 80 for monster/NPC, or 1 for players)               */
+/* Status : Tested                                                           */
 /*****************************************************************************/
 static PyObject* CFGetType(PyObject* self, PyObject* args)
 {
@@ -4282,9 +4294,9 @@ static PyObject* CFGetType(PyObject* self, PyObject* args)
 
 /* Those replace the old get-script... and set-script... system */
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFGetEventHandler                                                */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Unfinished / Deprecated                                          */
 /*****************************************************************************/
 static PyObject* CFGetEventHandler(PyObject* self, PyObject* args)
 {
@@ -4297,9 +4309,9 @@ static PyObject* CFGetEventHandler(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFSetEventHandler                                                */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Unfinished / Deprecated                                          */
 /*****************************************************************************/
 /* GeckoStatus: untested */
 
@@ -4318,9 +4330,9 @@ static PyObject* CFSetEventHandler(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFGetEventPlugin                                                 */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Unfinished / Deprecated                                          */
 /*****************************************************************************/
 /* GeckoStatus: untested */
 
@@ -4335,9 +4347,9 @@ static PyObject* CFGetEventPlugin(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFSetEventPlugin                                                 */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Unfinished / Deprecated                                          */
 /*****************************************************************************/
 /* GeckoStatus: untested */
 
@@ -4356,9 +4368,9 @@ static PyObject* CFSetEventPlugin(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFGetEventOptions                                                */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Unfinished / Deprecated                                          */
 /*****************************************************************************/
 /* GeckoStatus: untested */
 
@@ -4380,9 +4392,9 @@ static PyObject* CFGetEventOptions(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   :                                                                  */
+/* Name   : CFSetEventOptions                                                */
 /* Python :                                                                  */
-/* Status : Untested                                                                */
+/* Status : Unfinished / Deprecated                                          */
 /*****************************************************************************/
 /* GeckoStatus: untested */
 
@@ -4427,7 +4439,7 @@ static PyObject* CFLoadObject(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFSaveObject                                                     */
-/* Python : SaveObject(what)                                                 */
+/* Python : CFPython.SaveObject(what)                                        */
 /* Status : Untested                                                         */
 /*****************************************************************************/
 /* GeckoStatus: untested */
@@ -4450,10 +4462,9 @@ static PyObject* CFSaveObject(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFGetIP                                                          */
-/* Python : GetIP(object)                                                    */
-/* Status : Untested                                                         */
+/* Python : CFPython.GetIP(object)                                           */
+/* Status : Tested                                                           */
 /*****************************************************************************/
-/* GeckoStatus: untested */
 static PyObject* CFGetIP(PyObject* self, PyObject* args)
 {
     CFPython_Object *whoptr;
@@ -4482,9 +4493,9 @@ static PyObject* CFGetIP(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFGetInventory                                                   */
-/* Python : GetInventory(who)                                                */ 
+/* Python : CFPython.GetInventory(who)                                       */
 /* Info   : get the first object in object's inventory                       */
-/* Status : Untested                                                         */
+/* Status : Tested                                                           */
 /*****************************************************************************/
 static PyObject* CFGetInventory(PyObject* self, PyObject* args)
 {
@@ -4497,8 +4508,9 @@ static PyObject* CFGetInventory(PyObject* self, PyObject* args)
 }
 
 /*****************************************************************************/
-/* Name   : CFGetInternalName                                                */
-/* Python : GetInternalName                                                  */
+/* Name   : CFGetArchName                                                    */
+/* Python : CFPython.GetArchName (object)                                    */
+/* Info   : FIXME: seems to return object name instead of arch name ?        */
 /* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFGetArchName(PyObject* self, PyObject* args)
@@ -4511,7 +4523,7 @@ static PyObject* CFGetArchName(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFCostFlagFTrue                                                  */
-/* Python : CostFlagFTrue ()                                                 */
+/* Python : CFPython.CostFlagFTrue ()                                        */
 /* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFCostFlagFTrue(PyObject* self, PyObject* args)
@@ -4524,7 +4536,7 @@ static PyObject* CFCostFlagFTrue(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFCostFlagFBuy                                                   */
-/* Python : CostFlagFBuy ()                                                  */
+/* Python : CFPython.CostFlagFBuy ()                                         */
 /* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFCostFlagFBuy(PyObject* self, PyObject* args)
@@ -4537,7 +4549,7 @@ static PyObject* CFCostFlagFBuy(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFCostFlagFSell                                                  */
-/* Python : CostFlagFSell ()                                                 */
+/* Python : CFPython.CostFlagFSell ()                                        */
 /* Status : Untested                                                         */
 /*****************************************************************************/
 static PyObject* CFCostFlagFSell(PyObject* self, PyObject* args)
@@ -4550,7 +4562,7 @@ static PyObject* CFCostFlagFSell(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFGetObjectCost                                                  */
-/* Python : GetObjectCost (buyer,object,type)                                */
+/* Python : CFPython.GetObjectCost (buyer,object,type)                       */
 /* Status : Stable                                                           */
 /*****************************************************************************/
 /* GeckoStatus: untested */
@@ -4577,7 +4589,7 @@ static PyObject* CFGetObjectCost(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFGetObjectMoney                                                 */
-/* Python : GetObjectMoney (buyer)                                           */
+/* Python : CFPython.GetObjectMoney (buyer)                                  */
 /* Status : Untested                                                         */
 /*****************************************************************************/
 /* GeckoStatus: untested */
@@ -4599,7 +4611,7 @@ static PyObject* CFGetObjectMoney(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFPayForItem                                                     */
-/* Python : PayForItem (buyer,object)                                        */
+/* Python : CFPython.PayForItem (buyer,object)                               */
 /* Status : Untested                                                         */
 /*****************************************************************************/
 /* GeckoStatus: untested */
@@ -4624,7 +4636,7 @@ static PyObject* CFPayForItem(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFPayAmount                                                      */
-/* Python : success = CFPython.PayAmount (buyer,value)                       */
+/* Python : CFPython.PayAmount (buyer,value)                                 */
 /* Info   : If buyer has enough money, value copper will be deducted from    */
 /*          buyer, and 1 will be returned. Otherwise returns 0               */
 /* Status : Stable                                                           */
@@ -4648,7 +4660,7 @@ static PyObject* CFPayAmount(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFRegisterCommand                                                */
-/* Python : RegisterCommand(cmdname,scriptname,speed)                        */
+/* Python : CFPython.RegisterCommand(cmdname,scriptname,speed)               */
 /* Status : Untested                                                         */
 /*****************************************************************************/
 /* pretty untested... */
@@ -4669,7 +4681,7 @@ static PyObject* CFRegisterCommand(PyObject* self, PyObject* args)
             if (!strcmp(CustomCommand[i].name,cmdname))
             {
                 LOG(llevDebug, "PYTHON - This command is already registered !\n");
-                return NULL;
+                RAISE("This command is already registered");
             }
         }
     }
@@ -4693,7 +4705,7 @@ static PyObject* CFRegisterCommand(PyObject* self, PyObject* args)
 
 /*****************************************************************************/
 /* Name   : CFSendCustomCommand                                              */
-/* Python : SendCustomCommand(who, 'customcommand')                          */
+/* Python : CFPython.SendCustomCommand(who, customcommand)                   */
 /* Status : Untested                                                         */
 /*****************************************************************************/
 /* GeckoStatus: untested */
@@ -4710,6 +4722,30 @@ static PyObject* CFSendCustomCommand(PyObject* self, PyObject* args)
     Py_INCREF(Py_None);
     return Py_None;
 }
+
+/*****************************************************************************/
+/* Name   : CFPlayMapSound                                                   */
+/* Python : CFPython.PlayMapSound(map, x, y, soundnumber, soundtype)         */
+/* Status : Tested                                                           */
+/*****************************************************************************/
+static PyObject* CFPlayMapSound(PyObject* self, PyObject* args)
+{
+    CFPython_Map *whereptr;
+    int x, y, soundnumber, soundtype;
+
+    if (!PyArg_ParseTuple(args,"O!iiii", &CFPython_MapType, &whereptr, &x, &y, &soundnumber, &soundtype))
+        return NULL;
+    
+    GCFP.Value[0] = (void *)(whereptr->map);
+    GCFP.Value[1] = (void *)(&x);
+    GCFP.Value[2] = (void *)(&y);
+    GCFP.Value[3] = (void *)(&soundnumber);
+    GCFP.Value[4] = (void *)(&soundtype);
+    (PlugHooks[HOOK_PLAYSOUNDMAP])(&GCFP);
+    Py_INCREF(Py_None);
+    return Py_None;
+}
+
 
 /* FUNCTIONEND -- End of the Python plugin functions. */
 
@@ -5300,6 +5336,8 @@ CFPython_Map_dealloc(CFPython_Map* self)
 static PyObject *
 CFPython_Map_str(CFPython_Map *self)
 {
+    /* FIXME: strange happens when the map name is printed in the ingame message box
+     *        (because of the special char "§" added to the map name) */
     return PyString_FromFormat("[%s \"%s\"]", self->map->path, self->map->name);
 }
 

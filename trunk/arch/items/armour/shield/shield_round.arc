@@ -3,7 +3,8 @@ name round shield
 type 33
 layer 3
 face shield_round.101
-ac 1
+ac 2
+last_heal 5
 protect_impact 5
 protect_cleave 5
 protect_pierce 10

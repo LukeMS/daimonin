@@ -3,7 +3,8 @@ name high shield
 type 33
 layer 3
 face shield_high.101
-ac 2
+ac 3
+last_heal 10
 item_level 10
 protect_impact 12
 protect_cleave 12

@@ -3,7 +3,8 @@ name war shield
 type 33
 layer 3
 face shield_war.101
-ac 1
+ac 4
+last_heal 15
 protect_impact 5
 protect_cleave 10
 protect_pierce 10

@@ -3859,6 +3859,7 @@ editor_folder items/armour
 layer 3
 value 120
 ac 1
+last_heal 4
 weight 550
 item_level 3
 protect_pierce 8
@@ -3869,7 +3870,6 @@ is_vul_physical 1
 is_vul_elemental 1
 is_vul_magic 1
 is_vul_sphere 1
-last_heal 1
 material_real 193
 material 8
 end
@@ -3891,7 +3891,7 @@ is_vul_physical 1
 is_vul_elemental 1
 is_vul_magic 1
 is_vul_sphere 1
-last_heal 1
+last_heal 4
 material_real 193
 material 8
 end
@@ -3913,7 +3913,7 @@ is_vul_physical 1
 is_vul_elemental 1
 is_vul_magic 1
 is_vul_sphere 1
-last_heal 1
+last_heal 4
 material_real 193
 material 8
 end
@@ -3927,6 +3927,7 @@ layer 3
 ac 1
 weight 750
 value 125
+last_heal 4
 protect_impact 8
 protect_slash 8
 protect_pierce 8
@@ -3956,7 +3957,7 @@ is_vul_physical 1
 is_vul_elemental 1
 is_vul_magic 1
 is_vul_sphere 1
-last_heal 1
+last_heal 4
 material_real 193
 material 8
 end
@@ -3965,9 +3966,9 @@ name chain leggings
 face leggings_chain.101
 type 99
 editor_folder items/armour
-last_heal 4
 layer 3
 ac 2
+last_heal 10
 item_level 10
 weight 1300
 value 250
@@ -3987,9 +3988,9 @@ name leggings
 face leggings_leather.101
 type 99
 editor_folder items/armour
-last_heal 4
 layer 3
 ac 2
+last_heal 7
 item_level 5
 weight 950
 value 150
@@ -4009,9 +4010,9 @@ name plate leggings
 face leggings_plate.101
 type 99
 editor_folder items/armour
-last_heal 4
 layer 3
 ac 2
+last_heal 10
 item_level 20
 weight 1500
 value 325
@@ -4073,6 +4074,7 @@ type 104
 editor_folder items/armour
 layer 3
 ac 1
+last_heal 4
 protect_impact 6
 protect_slash 6
 protect_pierce 6
@@ -4151,6 +4153,7 @@ type 100
 editor_folder items/armour
 layer 3
 ac 1
+last_heal 3
 protect_impact 8
 protect_cleave 8
 protect_slash 8
@@ -4191,6 +4194,7 @@ type 100
 editor_folder items/armour
 layer 3
 ac 1
+last_heal 5
 protect_impact 10
 protect_cleave 10
 protect_slash 10
@@ -4348,7 +4352,7 @@ face helm_field.101
 type 34
 editor_folder items/armour
 layer 3
-last_heal 7
+last_heal 8
 ac 2
 protect_impact 10
 protect_cleave 6
@@ -4495,7 +4499,7 @@ face banded_mail.101
 type 16
 editor_folder items/armour
 layer 3
-last_heal 26
+last_heal 25
 last_sp 7
 material 2
 material_real 65
@@ -4519,8 +4523,8 @@ face bplate_mail.101
 type 16
 editor_folder items/armour
 layer 3
-last_heal 26
-last_sp 7
+last_heal 27
+last_sp 8
 ac 7
 material 1024
 material_real 644
@@ -4546,7 +4550,7 @@ layer 3
 last_heal 30
 item_level 20
 item_skill 4
-last_sp 7
+last_sp 6
 material 2
 material_real 65
 ac 8
@@ -4567,8 +4571,8 @@ face brigandine.101
 type 16
 editor_folder items/armour
 layer 3
-last_heal 18
-last_sp 9
+last_heal 20
+last_sp 8
 material 2
 material_real 65
 ac 6
@@ -4591,7 +4595,7 @@ face chain_hauberk.101
 type 16
 editor_folder items/armour
 layer 3
-last_heal 26
+last_heal 25
 last_sp 7
 material 2
 material_real 65
@@ -4615,8 +4619,8 @@ face leather_cuirass.101
 type 16
 editor_folder items/armour
 layer 3
-last_heal 6
-last_sp 18
+last_heal 18
+last_sp 8
 ac 6
 item_level 7
 item_skill 4
@@ -4639,8 +4643,8 @@ face chainmail.101
 type 16
 editor_folder items/armour
 layer 3
-last_heal 18
-last_sp 9
+last_heal 20
+last_sp 8
 material 2
 material_real 65
 ac 6
@@ -4663,7 +4667,7 @@ face chitin_mail.101
 type 16
 editor_folder items/armour
 layer 3
-last_heal 26
+last_heal 25
 last_sp 7
 ac 7
 item_level 10
@@ -4710,7 +4714,6 @@ type 16
 editor_folder items/armour
 layer 3
 last_heal 5
-last_sp 22
 ac 2
 protect_impact 8
 protect_slash 10
@@ -4771,8 +4774,8 @@ face leather_spiked.101
 type 16
 editor_folder items/armour
 layer 3
-last_heal 6
-last_sp 18
+last_heal 8
+last_sp 10
 ac 4
 protect_impact 12
 protect_cleave 20
@@ -4793,8 +4796,8 @@ face lamellar_mail.101
 type 16
 editor_folder items/armour
 layer 3
-last_heal 26
-last_sp 7
+last_heal 20
+last_sp 8
 material 2
 material_real 65
 ac 6
@@ -4818,7 +4821,6 @@ type 16
 editor_folder items/armour
 layer 3
 last_heal 6
-last_sp 18
 ac 3
 protect_impact 10
 protect_cleave 15
@@ -4839,8 +4841,8 @@ face leather_studded.101
 type 16
 editor_folder items/armour
 layer 3
-last_heal 6
-last_sp 18
+last_heal 12
+last_sp 9
 ac 5
 item_level 3
 item_skill 4
@@ -4863,8 +4865,8 @@ face ring_mail.101
 type 16
 editor_folder items/armour
 layer 3
-last_heal 18
-last_sp 8
+last_heal 15
+last_sp 9
 material 2
 material_real 65
 ac 5
@@ -4950,7 +4952,7 @@ layer 3
 last_heal 30
 item_level 20
 item_skill 4
-last_sp 7
+last_sp 6
 material 2
 material_real 65
 ac 8
@@ -4974,7 +4976,7 @@ layer 3
 last_heal 30
 item_level 20
 item_skill 4
-last_sp 7
+last_sp 6
 material 2
 material_real 65
 ac 8
@@ -4998,7 +5000,7 @@ layer 3
 last_heal 30
 item_level 20
 item_skill 4
-last_sp 7
+last_sp 6
 material 2
 material_real 65
 ac 8
@@ -5019,8 +5021,8 @@ face scale_armour.101
 type 16
 editor_folder items/armour
 layer 3
-last_heal 18
-last_sp 9
+last_heal 20
+last_sp 8
 ac 6
 material 32
 material_real 324
@@ -5043,7 +5045,7 @@ face scale_mail.101
 type 16
 editor_folder items/armour
 layer 3
-last_heal 26
+last_heal 25
 last_sp 7
 material 2
 material_real 65
@@ -5067,7 +5069,7 @@ face splint_mail.101
 type 16
 editor_folder items/armour
 layer 3
-last_heal 26
+last_heal 25
 last_sp 7
 material 2
 material_real 65
@@ -5091,8 +5093,9 @@ face blade_stopper.101
 type 33
 editor_folder items/armour
 layer 3
-ac 2
+ac 4
 item_level 10
+last_heal 15
 protect_impact 12
 protect_cleave 6
 protect_pierce 12
@@ -5132,7 +5135,8 @@ face shield.101
 type 33
 editor_folder items/armour
 layer 3
-ac 1
+ac 2
+last_heal 5
 protect_impact 10
 protect_cleave 5
 protect_pierce 5
@@ -5152,7 +5156,8 @@ face shield_battle.101
 type 33
 editor_folder items/armour
 layer 3
-ac 2
+ac 4
+last_heal 15
 item_level 10
 protect_impact 6
 protect_cleave 12
@@ -5173,7 +5178,8 @@ face shield_chitin.101
 type 33
 editor_folder items/armour
 layer 3
-ac 1
+ac 3
+last_heal 10
 protect_impact 4
 protect_cleave 10
 protect_pierce 10
@@ -5193,7 +5199,8 @@ face shield_defender.101
 type 33
 editor_folder items/armour
 layer 3
-ac 2
+ac 4
+last_heal 15
 item_level 10
 protect_impact 12
 protect_cleave 6
@@ -5214,7 +5221,8 @@ face shield_demon.101
 type 33
 editor_folder items/armour
 layer 3
-ac 1
+ac 4
+last_heal 15
 protect_impact 5
 protect_cleave 10
 protect_pierce 10
@@ -5235,7 +5243,8 @@ face shield_eye.101
 type 33
 editor_folder items/armour
 layer 3
-ac 1
+ac 3
+last_heal 10
 protect_impact 5
 protect_cleave 5
 protect_pierce 10
@@ -5255,7 +5264,8 @@ face shield_heater.101
 type 33
 editor_folder items/armour
 layer 3
-ac 1
+ac 3
+last_heal 10
 protect_impact 5
 protect_cleave 10
 protect_pierce 10
@@ -5275,7 +5285,8 @@ face shield_high.101
 type 33
 editor_folder items/armour
 layer 3
-ac 2
+ac 3
+last_heal 10
 item_level 10
 protect_impact 12
 protect_cleave 12
@@ -5296,7 +5307,8 @@ face shield_kite.101
 type 33
 editor_folder items/armour
 layer 3
-ac 1
+ac 2
+last_heal 5
 protect_impact 10
 protect_cleave 5
 protect_pierce 10
@@ -5316,7 +5328,8 @@ face shield_protector.101
 type 33
 editor_folder items/armour
 layer 3
-ac 2
+ac 4
+last_heal 15
 item_level 10
 protect_impact 6
 protect_cleave 12
@@ -5337,7 +5350,8 @@ face shield_round.101
 type 33
 editor_folder items/armour
 layer 3
-ac 1
+ac 2
+last_heal 5
 protect_impact 5
 protect_cleave 5
 protect_pierce 10
@@ -5357,7 +5371,8 @@ face shield_scale_white.101
 type 33
 editor_folder items/armour
 layer 3
-ac 1
+ac 3
+last_heal 10
 protect_impact 10
 protect_cleave 10
 protect_pierce 4
@@ -5377,7 +5392,8 @@ face shield_war.101
 type 33
 editor_folder items/armour
 layer 3
-ac 1
+ac 4
+last_heal 15
 protect_impact 5
 protect_cleave 10
 protect_pierce 10
@@ -9623,6 +9639,17 @@ sys_object 1
 no_teleport 1
 no_pick 1
 no_drop 1
+end
+Object waypoint
+face waypoint.101
+type 119
+editor_folder special/special
+sp 0
+exp 0
+wc 0
+ac 0
+cursed 0
+sys_object 1
 end
 Object cave_pillar1
 name cave pillar

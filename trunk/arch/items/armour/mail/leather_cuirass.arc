@@ -3,8 +3,8 @@ name cuirass
 type 16
 layer 3
 face leather_cuirass.101
-last_heal 6
-last_sp 18
+last_heal 18
+last_sp 8
 ac 6
 item_level 7
 item_skill 4

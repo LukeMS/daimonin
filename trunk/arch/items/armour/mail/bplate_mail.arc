@@ -3,8 +3,8 @@ name plate mail
 face bplate_mail.101
 type 16
 layer 3
-last_heal 26
-last_sp 7
+last_heal 27
+last_sp 8
 ac 7
 material 1024
 material_real 644

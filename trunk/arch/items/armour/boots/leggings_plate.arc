@@ -1,9 +1,9 @@
 Object leggings_plate
 name plate leggings
 face leggings_plate.101
-last_heal 4
 layer 3
 ac 2
+last_heal 10
 item_level 20
 weight 1500
 value 325

@@ -3,7 +3,8 @@ name heater shield
 type 33
 layer 3
 face shield_heater.101
-ac 1
+ac 3
+last_heal 10
 protect_impact 5
 protect_cleave 10
 protect_pierce 10

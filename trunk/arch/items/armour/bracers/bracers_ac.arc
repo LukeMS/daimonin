@@ -4,6 +4,7 @@ layer 3
 type 104
 face bracers_ac.101
 ac 1
+last_heal 4
 protect_impact 6
 protect_slash 6
 protect_pierce 6

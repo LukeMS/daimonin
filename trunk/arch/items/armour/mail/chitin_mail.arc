@@ -3,7 +3,7 @@ name mail
 face chitin_mail.101
 type 16
 layer 3
-last_heal 26
+last_heal 25
 last_sp 7
 ac 7
 item_level 10

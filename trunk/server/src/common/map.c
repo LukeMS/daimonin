@@ -2071,7 +2071,7 @@ mapstruct *out_of_map(mapstruct *m, int *x, int *y)
      */
 	if(!m)
 		return NULL;
-    if (*x>=0 && *x<MAP_WIDTH(m) && *y>=0 && *y < MAP_HEIGHT(m))
+    if (((*x)>=0) && ((*x)<MAP_WIDTH(m)) && ((*y)>=0) && ((*y) < MAP_HEIGHT(m)))
 	return m;
 
     if (*x<0) {

@@ -1570,3 +1570,22 @@ void GlobalEvent(CFParm *PParm)
     }
 }
 
+/*
+ * See sounds.h for sound numbers
+ */
+/*****************************************************************************/
+/* play_sound_map wrapper.                                                   */
+/*****************************************************************************/
+/* 0 - map;                                                                  */
+/* 1 - x;                                                                    */
+/* 2 - y;                                                                    */
+/* 3 - sound number                                                          */
+/* 4 - type of sound (0=normal, 1=spell);                                    */
+/*****************************************************************************/
+CFParm* CFWPlaySoundMap(CFParm* PParm)
+{
+    play_sound_map((mapstruct *)(PParm->Value[0]),*(int *)(PParm->Value[1]),
+        *(int *)(PParm->Value[2]),*(int *)(PParm->Value[3]),
+        *(int *)(PParm->Value[4]));
+    return NULL;
+}

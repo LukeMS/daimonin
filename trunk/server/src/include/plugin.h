@@ -209,8 +209,9 @@
 #define HOOK_NEWINFOMAPEXCEPT    65
 #define HOOK_INSERTOBJECTINOB    66
 #define HOOK_FIXPLAYER           67
+#define HOOK_PLAYSOUNDMAP        68
 
-#define NR_OF_HOOKS              68
+#define NR_OF_HOOKS              69
 
 /*****************************************************************************/
 /* CFParm is the data type used to pass informations between the server and  */
