@@ -75,6 +75,10 @@ typedef unsigned int tag_t;
 #define SPAWN_RANDOM_RANGE 10000
 #define RANDOM_DROP_RAND_RANGE 1000000
 
+/* for creating treasures (treasure.c) */
+#define T_STYLE_UNSET (-2)
+#define ART_CHANCE_UNSET (-1)
+
 /* mob defines */
 #define MIN_MON_RADIUS 2  /* minimum monster detection radius */
 #define MAX_AGGRO_RANGE 9 /* if target of mob is out of this range (or stats.Wis if higher)*/
@@ -266,6 +270,7 @@ extern NewSocket *init_sockets;
 
 extern unsigned long todtick;
 extern int world_darkness;
+extern archetype *level_up_arch;
 
 
 EXTERN char *font_graphic;

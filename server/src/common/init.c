@@ -58,6 +58,7 @@ RESET_LOCATION_TIME,
 /* daytime & daytime (world) darkness */
 unsigned long todtick;
 int world_darkness;
+archetype *level_up_arch=NULL;
 
 
 /*
@@ -84,6 +85,13 @@ void init_library() {
     init_archetypes();	/* Reads all archetypes from file */
     init_dynamic ();
     init_clocks();
+
+	/* init some often used default archetypes */
+	if (level_up_arch == NULL)
+		level_up_arch = find_archetype("level_up");
+	if (!level_up_arch)
+		LOG(llevBug,"BUG: Cant'find 'level_up' arch\n");
+
 }
 
 /* init_environ initializes values from the environmental variables.

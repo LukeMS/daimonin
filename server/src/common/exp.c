@@ -31,61 +31,69 @@
 #include <stdio.h>
 #include <global.h>
 
-/* real exp of a mob: base_exp * lev_exp[mob->level] */
+
 float lev_exp[MAXLEVEL+1]= {
 0.0f,
-1.0f, 1.11f, 1.75f,3.2f,							/* normal needed mobs zo level (exp 100): 20,20.22.8 */
-5.3f,	9.6f, 17.0f, 31.25f,58.1f,			/* 25, 30, 33 , 36, 40 */
-88.8f, 104.1f, 120.0f,120.1f,140.0f,		/* 43 45 - 50 */
-160.0f, 160.1f, 160.2f, 160.3f, 180.0f,
-180.0f,180.0f,180.0f, 200.0f, 200.0f,
-200.0f, 200.0f, 220.0f, 220.0f, 220.0f,
-220.0f, 220.0f,220.0f, 240.0f, 240.0f,
-240.0f,240.0f,240.0f,240.0f,240.0f,
-240.0f, 260.0f,260.0f,260.0f,260.0f,
-260.0f,260.0f,260.0f,260.0f,260.0f,
-280.0f,280.0f,280.0f,280.0f,280.0f,
-280.0f,280.0f,280.0f,280.0f,280.0f,
-280.0f,280.0f,280.0f,280.0f,280.0f,
-300.0f,300.0f,300.0f,300.0f,300.0f,
-300.0f,300.0f,300.0f,300.0f,300.0f,
-300.0f,300.0f,300.0f,300.0f,300.0f,
-300.0f,300.0f, 320.0f, 320.0f, 320.f,
-320.0f, 320.0f, 320.f,320.0f, 320.0f,
-320.0f, 320.0f, 320.f,320.0f, 320.0f,
-320.0f, 320.0f, 320.f,320.0f, 320.0f,
-320.0f, 320.0f, 320.f,320.0f, 320.0f,
-320.0f, 320.0f, 320.f,320.0f, 320.0f,
-320.0f
+1.0f, 1.11f, 1.75f,3.2f,	
+5.5f, 10.0f, 20.0f, 35.25f, 66.1f,
+137.0f, 231.58f, 240.00f, 247.62f, 254.55f,
+260.87f, 266.67f, 272.00f, 276.92f, 281.48f,
+285.71f, 289.66f, 293.33f, 296.77f, 300.00f,
+303.03f, 305.88f, 308.57f, 311.11f, 313.51f,
+315.79f, 317.95f, 320.00f, 321.95f, 323.81f,
+325.58f, 327.27f, 328.89f, 330.43f, 331.91f,
+333.33f, 334.69f, 336.00f, 337.25f, 338.46f,
+339.62f, 340.74f, 341.82f, 342.86f, 343.86f,
+344.83f, 345.76f, 346.67f, 347.54f, 348.39f,
+349.21f, 350.00f, 350.77f, 351.52f, 352.24f,
+352.94f, 353.62f, 354.29f, 354.93f, 355.56f,
+356.16f, 356.76f, 357.33f, 357.89f, 358.44f,
+358.97f, 359.49f, 360.00f, 360.49f, 360.98f,
+361.45f, 361.90f, 362.35f, 362.79f, 363.22f,
+363.64f, 364.04f, 364.44f, 364.84f, 365.22f,
+365.59f, 365.96f, 366.32f, 366.67f, 367.01f,
+367.35f, 367.68f, 368.00f, 368.32f, 368.63f,
+368.93f, 369.23f, 369.52f, 369.81f, 370.09f,
+370.37f, 370.64f, 370.91f, 371.17f, 371.43f, 
+371.68f, 371.93f, 372.17f, 372.41f, 372.65f,
+372.88f
 };
 
-
+/* around level 11 you need 38+(2*(your_level-11)) yellow
+ * mobs with a base exp of 125 to level up. 
+ * Every level >11 needs 100.000 exp more as the one before but
+ * also one mob more to kill.
+ * This avoid things like: "you geht 342.731.123 exp from this mob,
+ * you have now 1.345.535.545.667 exp." 
+ * even here we have around 500.000.000 max exp - thats a pretty big
+ * number.
+ */
 uint32 new_levels[MAXLEVEL+2]={
 0,
-0,2000,4000, 8000,
+0,1500,4000, 8000,
 16000,32000,64000,125000,250000,		/* 9 */
-500000,900000,1400000,2000000,2600000,
-3300000,4100000,4900000,5700000,6600000,	/* 19 */
-7500000,8400000,9300000,10300000,11300000,
-12300000,13300000,14400000,15500000,16600000,	/* 29 */
-17700000,18800000,19900000,21100000,22300000,	
-23500000,24700000,25900000,27100000,28300000,	/* 39 */
-29500000,30800000,32100000,33400000,34700000,
-36000000,37300000,38600000,39900000,41200000,	/* 49 */
-42600000,44000000,45400000,46800000,48200000,
-49600000,51000000,52400000,53800000,55200000,	/* 59 */
-56600000,58000000,59400000,60800000,62200000,
-63700000,65200000,66700000,68200000,69700000,	/* 69 */
-71200000,72700000,74200000,75700000,77200000,
-78700000,80200000,81700000,83200000,84700000,	/* 79 */
-86200000,87700000,89300000,90900000,92500000,
-94100000,95700000,97300000,98900000,100500000,	/* 89 */
-102100000,103700000,105300000,106900000,108500000,
-110100000,111700000,113300000,114900000,116500000,	/* 99 */
-118100000,119700000,121300000,122900000,124500000, 	
-126100000,127700000,129300000,130900000,785400000,
-1570800000,1570800000	/* 110 */
-};
+500000,1100000, 2300000, 3600000, 5000000,
+6500000, 8100000, 9800000, 11600000, 13500000, /* 19 */
+15500000, 17600000, 19800000, 22100000, 24500000,
+27000000,29600000, 32300000, 35100000, 38000000, /* 29 */
+ 41000000, 44100000, 47300000, 50600000, 54000000,
+ 57500000, 61100000, 64800000, 68600000, 72500000, /* 39 */
+ 76500000,80600000, 84800000, 89100000, 93500000,
+ 98000000,102600000, 107300000, 112100000, 117000000, /* 49 */
+ 122000000,127100000, 132300000, 137600000, 143000000, 
+ 148500000, 154100000, 159800000, 165600000, 171500000, /*59 */
+ 177500000, 183600000, 189800000, 196100000, 202500000,
+ 209000000,215600000, 222300000, 229100000, 236000000, /* 69 */
+ 243000000,250100000, 257300000, 264600000, 272000000, 
+ 279500000, 287100000, 294800000, 302600000, 310500000, /* 79 */
+ 318500000,326600000, 334800000, 343100000, 351500000, 
+ 360000000,368600000, 377300000, 386100000, 395000000, /* 89 */
+ 404000000, 413100000, 422300000, 431600000, 441000000, 
+ 450500000, 460100000, 469800000, 479600000, 489500000, /* 99 */
+ 499500000,509600000, 519800000, 530100000, 540500000, 
+ 551000000, 561600000, 572300000, 583100000, 594000000, /* 109 */
+ 605000000, 700000000 /* 111 is only a dummy */
+}; 
 
 _level_color level_color[MAXLEVEL+1];
 
@@ -102,14 +110,9 @@ _level_color level_color[MAXLEVEL+1];
  * the given level.
  */
 
-uint32 level_exp(int level,double expmul) {
-    static long int bleep=1650000; 
-
-    if(level<=100)
-	    return (uint32)(expmul * (double)new_levels[level]);
-
-    /*  return required_exp; */
-	return (uint32)(expmul*(double)(new_levels[100]+bleep*(level-100)));
+uint32 level_exp(int level,double expmul) 
+{
+	return (uint32)(expmul * (double)new_levels[level]);
 }
 
 /* add_exp() new algorithm. Revamped experience gain/loss routine. 
@@ -230,6 +233,31 @@ void player_lvl_adj(object *who, object *op) {
 	{
 		op->level++;
 
+		/* show the player some effects... */
+		if(op->type == SKILL && who && who->type == PLAYER && who->map)
+		{
+			object *effect_ob;
+
+			play_sound_player_only (who->contr, SOUND_LEVEL_UP, SOUND_NORMAL, 0, 0);
+
+			if(level_up_arch)
+			{
+				/* prepare effect */
+				effect_ob = arch_to_object(level_up_arch);
+				effect_ob->map = who->map;
+				effect_ob->x = who->x;
+				effect_ob->y = who->y;
+
+				if(!insert_ob_in_map(effect_ob, effect_ob->map, NULL,0))
+				{
+					/* something is wrong - kill object */
+					if(!QUERY_FLAG(effect_ob,FLAG_REMOVED))
+						remove_ob(effect_ob);
+					free_object(effect_ob);
+				}
+			}
+		}
+
 		if (op == who && op->stats.exp > 1 && is_dragon_pl(who))
 			dragon_level_gain(who);
 	
@@ -237,8 +265,10 @@ void player_lvl_adj(object *who, object *op) {
 		if(who && who->type == PLAYER && op->type!=EXPERIENCE && op->type!=SKILL && who->level >1)
 		{ 
 
-			if(who->level > 2)
+			if(who->level > 4)
 				who->contr->levhp[who->level]=(char)((RANDOM()%who->arch->clone.stats.maxhp)+1);
+			else if(who->level > 2)
+				who->contr->levhp[who->level]=(char)((RANDOM()%(who->arch->clone.stats.maxhp/2))+1)+(who->arch->clone.stats.maxhp/2);
 			else
 				who->contr->levhp[who->level]=(char)who->arch->clone.stats.maxhp;
 		}
@@ -248,14 +278,14 @@ void player_lvl_adj(object *who, object *op) {
 			{
 				if(op->stats.Pow) /* mana */
 				{
-					if(op->level > 2)
+					if(op->level > 4)
 						who->contr->levsp[op->level]=(char)((RANDOM()%who->arch->clone.stats.maxsp)+1);
 					else
 						who->contr->levsp[op->level]=(char)who->arch->clone.stats.maxsp;
 				}
 				else if(op->stats.Wis) /* grace */
 				{
-					if(op->level > 2)
+					if(op->level > 4)
 						who->contr->levgrace[op->level]=(char)((RANDOM()%who->arch->clone.stats.maxgrace)+1);
 					else
 						who->contr->levgrace[op->level]=(char)who->arch->clone.stats.maxgrace;
@@ -384,6 +414,10 @@ int adjust_exp(object *pl, object *op, int exp) {
     /* now we collect the exp of all skills which are in the same exp. object category */  
     sk_nr = skills[op->stats.sp].category;
     sk_exp =0;
+	/* this is the old collection system  - all skills of a exp group add
+	 * we changed that to "best skill count"
+	 */
+	/*
     for(tmp=pl->inv;tmp;tmp=tmp->below)
     {
         if(tmp->type==SKILL && skills[tmp->stats.sp].category == sk_nr)
@@ -392,19 +426,34 @@ int adjust_exp(object *pl, object *op, int exp) {
                 sk_exp = MAX_EXPERIENCE;
         }
     }
-
-    /* set the exp of the exp. object to our skill */
+	*/
+    for(tmp=pl->inv;tmp;tmp=tmp->below)
+    {
+        if(tmp->type==SKILL && skills[tmp->stats.sp].category == sk_nr)
+        {
+			if(tmp->stats.exp > sk_exp)
+				sk_exp = tmp->stats.exp;
+        }
+    }
+    /* set the exp of the exp. object to our best skill of this group */
     op->exp_obj->stats.exp = sk_exp;
     
     /* now we collect all exp. objects exp */
     pl_exp=0;
+	/* this is old adding function - we use now the best group 
     for(i=0;i<MAX_EXP_CAT-1;i++)
     {
         if((pl_exp += pl->contr->last_skill_ob[i]->stats.exp) > (sint32)MAX_EXPERIENCE)
             pl_exp = MAX_EXPERIENCE;
     }
+	*/
+    for(i=0;i<MAX_EXP_CAT-1;i++)
+    {
+		if(pl->contr->last_skill_ob[i]->stats.exp > pl_exp)
+			pl_exp = pl->contr->last_skill_ob[i]->stats.exp;
+    }
 
-    /* last action: set our player exp */
+    /* last action: set our player exp to highest group */
     pl->stats.exp = pl_exp;
     
     return exp;	/* return the actual amount changed stats.exp we REALLY have added to our skill */ 

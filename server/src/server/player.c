@@ -578,7 +578,7 @@ void give_initial_items(object *pl,treasurelist *items) {
 
 
     if(pl->randomitems!=NULL)
-	create_treasure(items,pl,GT_ONLY_GOOD|GT_NO_VALUE,1,0);
+	create_treasure(items,pl,GT_ONLY_GOOD|GT_NO_VALUE,1,T_STYLE_UNSET,ART_CHANCE_UNSET,0);
 
     for (op=pl->inv; op; op=next) {
 	next = op->below;
@@ -1466,6 +1466,9 @@ static void fire_bow(object *op, int dir)
 
 	/* add in all our wc boni */
 	arrow->stats.wc += (bow->magic + arrow->magic+SK_level(op)+thaco_bonus[op->stats.Dex] + bow->stats.wc);
+
+	/* i really like the idea to use here the bow wc_range! */
+	arrow->stats.wc_range = bow->stats.wc_range;
 
 	/* monster.c 970 holds the arrow code for monsters */
 	arrow->stats.dam += dam_bonus[op->stats.Str]/2 + bow->stats.dam + bow->magic + arrow->magic; 

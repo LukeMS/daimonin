@@ -825,6 +825,35 @@ void init_level_color_table(void)
 {
 	int i,ii, range, tmp;
 
+	/*
+	uint32 vx=0,vc=1000000;
+	float xc = 38;
+	for(i=0;i<100;i++)
+	{
+		vc +=100000;
+		vx += vc;
+		LOG(-1,"%4.2f, ", (((float)vc)/xc)/125.0f);
+		xc+=2;
+	}
+	*/
+
+	/*
+	LOG(-1,"MATERIAL %d: >%s<\n", MATERIAL_MISC, material_real[MATERIAL_MISC].name);
+	LOG(-1,"MATERIAL %d: >%s<\n", M_START_PAPER, material_real[M_START_PAPER].name);
+	LOG(-1,"MATERIAL %d: >%s<\n", M_START_IRON, material_real[M_START_IRON].name);
+	LOG(-1,"MATERIAL %d: >%s<\n", M_START_GLASS, material_real[M_START_GLASS].name);
+	LOG(-1,"MATERIAL %d: >%s<\n", M_START_LEATHER, material_real[M_START_LEATHER].name);
+	LOG(-1,"MATERIAL %d: >%s<\n", M_START_WOOD, material_real[M_START_WOOD].name);
+	LOG(-1,"MATERIAL %d: >%s<\n", M_START_ORGANIC, material_real[M_START_ORGANIC].name);
+	LOG(-1,"MATERIAL %d: >%s<\n", M_START_STONE, material_real[M_START_STONE].name);
+	LOG(-1,"MATERIAL %d: >%s<\n", M_START_CLOTH, material_real[M_START_CLOTH].name);
+	LOG(-1,"MATERIAL %d: >%s<\n", M_START_ADAMANT, material_real[M_START_ADAMANT].name);
+	LOG(-1,"MATERIAL %d: >%s<\n", M_START_LIQUID, material_real[M_START_LIQUID].name);
+	LOG(-1,"MATERIAL %d: >%s<\n", M_START_SOFT_METAL, material_real[M_START_SOFT_METAL].name);
+	LOG(-1,"MATERIAL %d: >%s<\n", M_START_BONE, material_real[M_START_BONE].name);
+	LOG(-1,"MATERIAL %d: >%s<\n", M_START_ICE, material_real[M_START_ICE].name);
+	*/
+	
 	for(i=1;i<111;i++)
 	{
 		for(ii=i;ii>1;ii--)

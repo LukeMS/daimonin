@@ -821,7 +821,6 @@ void fix_player(object *op)
     for(i=0;i<7;i++) 
       set_attr_value(&(op->stats),i,get_attr_value(&(pl->orig_stats),i));
 
-
 	pl->selected_weapon =pl->skill_weapon = NULL;
 	pl->digestion = 3;
 	pl->gen_hp = 1;
@@ -848,6 +847,8 @@ void fix_player(object *op)
 	pl->levsp[1]=(char)op->stats.maxsp;
 	pl->levgrace[1]=(char)op->stats.maxgrace;
 	
+	op->stats.wc_range = op->arch->clone.stats.wc_range;
+
 	op->stats.luck=op->arch->clone.stats.luck;
 	op->speed = op->arch->clone.speed;
 	op->weapon_speed = op->arch->clone.weapon_speed;
@@ -945,6 +946,8 @@ void fix_player(object *op)
 		/* all skills, not only the applied ones */
 		if(tmp->type == SKILL)
 		{
+			/* TODO: no "crafting/trade" skills here */
+			/* get highest single skill - thats our "main" skill */
 			if(tmp->level > skill_level_max)
 				skill_level_max=tmp->level;
 			/* lets remember the best bare hand skill */
@@ -1485,12 +1488,11 @@ void fix_player(object *op)
 		for(i=1;i<=grace_obj->level;i++)
 			op->stats.maxgrace +=pl->levgrace[i];
 	}
-	/*
-	op->stats.maxhp += op->arch->clone.stats.maxhp*(op->level)+op->arch->clone.stats.maxhp*2;
-	op->stats.maxsp += (op->arch->clone.stats.maxsp * (mana_obj!=NULL?mana_obj->level:op->level));
-	op->stats.maxgrace += (op->arch->clone.stats.maxgrace * (grace_obj!=NULL?grace_obj->level:op->level));
-	*/
-	/* now adjust with the % of the stats mali/boni */
+
+	/* now adjust with the % of the stats mali/boni.
+	 * con_bonus is used for all 3 as a kind of % boni - perhaps we use different
+	 * % boni for sp/hp/grace in future.
+	 */
 	op->stats.maxhp += (int)((float)op->stats.maxhp*con_bonus[op->stats.Con]);
 	op->stats.maxsp += (int)((float)op->stats.maxsp*con_bonus[op->stats.Pow]);
 	op->stats.maxgrace += (int)((float)op->stats.maxgrace*con_bonus[op->stats.Wis]);
@@ -1520,6 +1522,10 @@ void fix_player(object *op)
 
 
 	/* highest skill will be the "real" power level for ac! */
+	/* i let this in BUT: in current system exp_obj level is always
+	 * highest level in group and player level is highest exp_obj.
+	 * means, op->level is always == skill_level_max!
+	 */
 	op->stats.ac = ac + skill_level_max;
 
 	 /* Now we have all collected - the best bare hand skill and/or the applied weapon.
@@ -1559,14 +1565,14 @@ void fix_player(object *op)
 		 }
 	 }
 
-
 	 /* now the last adds - stat boni to dam and wc! */
 	 op->stats.dam +=dam_bonus[op->stats.Str];
 	 if(op->stats.dam<0)
 		op->stats.dam=0;
 
 	 op->stats.wc +=thaco_bonus[op->stats.Dex];
-	
+
+	 /* thats for the client ... */
 	pl->weapon_sp = (char)(op->weapon_speed/0.0025f);
 	
     /* Regenerate HP */
@@ -1855,8 +1861,12 @@ void fix_monster(object *op)
 	op->stats.wc = base->stats.wc + op->level +(op->level/5);  
 	op->stats.dam =  base->stats.dam;
 
-	/* post adjust */
+	if(base->stats.wc_range)
+		op->stats.wc_range = base->stats.wc_range; 
+	else
+		op->stats.wc_range = 20; /* default value if not set in arch */ 
 
+	/* post adjust */
 	if((tmp_add = lev_damage[op->level/3]-0.75f) <0)
 		tmp_add =0;
 	op->stats.dam = (sint16) ((float)op->stats.dam * (lev_damage[op->level]+tmp_add));

@@ -19,10 +19,9 @@
 # value (item will then be set to cursed automatically).
 #
 # magic_chance:
-# This value can be between 0 to 1000. If there is no magic_chance
-# value, chance for magic item is 0. 1000 means a 100% chance to 
-# generate a magic item. The map difficulty will add to the base
-# chance if the value is >0 with (difficulty or level)*8.
+# This value can be between 0 to 100. If there is no magic_chance
+# value, chance for magic item is server internal default drop value.
+# 100 means a 100% chance to generate a magic item.
 #
 # magic:
 # If magic_fix is 0 and magic_chance gives a magic item, magic
@@ -257,109 +256,125 @@ treasureone chest_items
 # General lists - one of this group
 #
 treasureone random_weapon
-  list random_missile_weapons
+  list random_weapons_missile
     chance 5
   more
-  list random_melee_weapons_slash
+  list random_weapons_slash
     chance 20
   more
-  list random_melee_weapons_cleave
+  list random_weapons_cleave
     chance 20
   more
-  list random_melee_weapons_pierce
+  list random_weapons_pierce
     chance 20
   more
-  list random_melee_weapons_impact
+  list random_weapons_impact
     chance 20
   more
-  list random_throw_weapons
+  list random_weapons_throw
     chance 5
   end
-treasureone random_missile_amun
+treasureone random_weapons_amun
   arch arrow
-    magic_chance 45
+    magic_chance 25
     magic 2
     chance 35
-    nrof 30
+    nrof 20
   more
   arch sstone
-    magic_chance 45
+    magic_chance 25
     magic 2
     chance 35
-    nrof 30
+    nrof 20
   more
   arch bolt
     chance 35
-    magic_chance 45
+    magic_chance 25
     magic 2
-    nrof 25
+    nrof 20
   end
-treasureone random_missile_weapons
+treasureone random_weapons_throw
+  arch t_dagger
+    magic_chance 20
+    magic 2
+    nrof 10
+    chance 30
+  more
+  arch t_axe
+    magic_chance 20
+    magic 2
+    nrof 10
+    chance 30
+  more
+  arch t_star
+    magic_chance 20
+    magic 2
+    nrof 10
+    chance 30
+  more
+  arch t_hammer
+    magic_chance 20
+    magic 2
+    nrof 10
+    chance 30
+  end
+treasureone random_weapons_missile
   arch bow_short
-    magic_chance 45
     chance 12
+    magic 1
   more
   arch bow
-    magic_chance 45
     chance 10
+    difficulty 10
+    magic 1
   more
   arch bow_long
-    magic_chance 45
     chance 5
+    difficulty 25
+    magic 1
   more
   arch sling_small
-    magic_chance 45
     chance 12
+    magic 1
   more
   arch sling
-    magic_chance 45
     chance 10
+    difficulty 10
+    magic 1
   more
   arch sling_heavy
-    magic_chance 45
     chance 5
+    difficulty 25
+    magic 1
   more
   arch crossbow_small
     chance 12
-    magic_chance 45
     magic 1
   more
   arch crossbow
     chance 10
-    magic_chance 45
+    difficulty 10
     magic 1
   more
   arch crossbow_large
     chance 5
-    magic_chance 45
+    difficulty 25
     magic 1
   end
-treasureone random_throw_weapons
-  arch t_dagger
-    magic_chance 45
-    magic 2
-    nrof 8
-    chance 30
+treasureone random_weapons_melee
+  list random_weapons_cleave
+    chance 25
   more
-  arch t_axe
-    magic_chance 45
-    magic 2
-    nrof 8
-    chance 30
+  list random_weapons_slash
+    chance 25
   more
-  arch t_star
-    magic_chance 45
-    magic 2
-    nrof 8
-    chance 30
+  list random_weapons_impact
+    chance 25
   more
-  arch t_hammer
-    magic_chance 45
-    magic 2
-    nrof 4
-    chance 15
+  list random_weapons_pierce
+    chance 25
   end
-treasureone random_1h_weapons
+treasureone random_weapons_1h
   list random_weapons_cleave_1h
     chance 25
   more
@@ -372,7 +387,7 @@ treasureone random_1h_weapons
   list random_weapons_pierce_1h
     chance 25
   end
-treasureone random_2h_weapons
+treasureone random_weapons_2h
   list random_weapons_cleave_2h
     chance 25
   more
@@ -385,7 +400,7 @@ treasureone random_2h_weapons
   list random_weapons_pierce_2h
     chance 25
   end
-treasureone random_pole_weapons
+treasureone random_weapons_pole
   list random_weapons_cleave_pole
     chance 25
   more
@@ -398,234 +413,814 @@ treasureone random_pole_weapons
   list random_weapons_pierce_pole
     chance 25
   end
-treasureone random_melee_weapons_cleave
+treasureone random_weapons_cleave
   list random_weapons_cleave_1h
-   chance 55
+   chance 60
   more
   list random_weapons_cleave_2h
-   chance 35
+   chance 25
   more
   list random_weapons_cleave_pole
-   chance 10
+   chance 15
 end
 treasureone random_weapons_cleave_1h
-  arch trident
+  arch axe
+  magic 1
+  chance 15
+  more
+  arch axe_battle
+  magic 1
+  chance 10
+  more
+  arch axe_broad
+  magic 1
+  chance 10
+  more
+  arch axe_double
+  magic 1
+  chance 10
+  more
+  arch axe_great
+  magic 1
+  chance 10
+  more
+  arch axe_hand
+  magic 1
+  chance 15
+  more
+  arch axe_small
+  magic 1
+  chance 15
+  more
+  arch axe_war
+  magic 1
+  chance 10
+  more
+  arch cleaver_battle
+  magic 1
+  chance 10
+  more
+  arch cleaver_war
+  magic 1
+  chance 15
+  more
+  arch pick_axe
+  magic 1
+  chance 15
+  more
+  arch whip
+  magic 1
+  chance 10
+  more
+  arch whip_war
+  magic 1
+  chance 10
 end
 treasureone random_weapons_cleave_2h
-  arch trident
+  arch axe_2h
+  magic 1
+  chance 30
+  more
+  arch axe_2h_battle
+  magic 1
+  chance 20
+  more
+  arch axe_2h_great
+  magic 1
+  chance 20
+  more
+  arch axe_2h_war
+  magic 1
+  chance 20
+  more
+  arch mattock
+  magic 1
+  chance 10
 end
 treasureone random_weapons_cleave_pole
-  arch trident
+  arch bardiche
+  magic 1
+  chance 20
+  more
+  arch halberd
+  magic 1
+  chance 20
+  more
+  arch spetum
+  magic 1
+  chance 20
+  more
+  arch voulge
+  magic 1
+  chance 20
 end
-treasureone random_melee_weapons_slash
+treasureone random_weapons_slash
   list random_weapons_slash_1h
-   chance 55
+   chance 60
   more
   list random_weapons_slash_2h
-   chance 35
+   chance 25
   more
   list random_weapons_slash_pole
-   chance 10
+   chance 15
 end
 treasureone random_weapons_slash_1h
-  arch trident
+  arch baselard
+  magic 1
+  chance 20
+  more
+  arch bastardsword
+  magic 1
+  chance 20
+  more
+  arch broadsword
+  magic 1
+  chance 20
+  more
+  arch falchion
+  magic 1
+  chance 20
+  more
+  arch gladius
+  magic 1
+  chance 20
+  more
+  arch katana
+  magic 1
+  chance 20
+  more
+  arch longsword
+  magic 1
+  chance 20
+  more
+  arch ninjato
+  magic 1
+  chance 20
+  more
+  arch scimitar
+  magic 1
+  chance 20
+  more
+  arch scythe_military
+  magic 1
+  chance 20
+  more
+  arch shortsword
+  magic 1
+  chance 20
+  more
+  arch sword
+  magic 1
+  chance 20
+  more
+  arch sword_curved
+  magic 1
+  chance 20
+  more
+  arch tsurugi
+  magic 1
+  chance 20
+  more
+  arch tulwar
+  magic 1
+  chance 20
+  more
+  arch wakizashi
+  magic 1
+  chance 20
 end
 treasureone random_weapons_slash_2h
-  arch trident
+  arch claymore
+  magic 1
+  chance 20
+  more
+  arch no_dachi
+  magic 1
+  chance 20
+  more
+  arch panzerstecher
+  magic 1
+  chance 20
+  more
+  arch scythe_war
+  magic 1
+  chance 20
+  more
+  arch sword_double
+  magic 1
+  chance 20
+  more
+  arch sword_great
+  magic 1
+  chance 20
+  more
+  arch sword2h
+  magic 1
+  chance 20
 end
 treasureone random_weapons_slash_pole
-  arch trident
+  arch fauchard
+  magic 1
+  chance 20
+  more
+  arch glaive
+  magic 1
+  chance 20
+  more
+  arch naginata
+  magic 1
+  chance 20
 end
-treasureone random_melee_weapons_impact
+treasureone random_weapons_impact
   list random_weapons_impact_1h
-   chance 55
+   chance 60
   more
   list random_weapons_impact_2h
-   chance 35
+   chance 25
   more
   list random_weapons_impact_pole
-   chance 10
+   chance 15
 end
 treasureone random_weapons_impact_1h
-  arch trident
+  arch ancus
+  magic 1
+  chance 20
+  more
+  arch club
+  magic 1
+  chance 20
+  more
+  arch club_big
+  magic 1
+  chance 20
+  more
+  arch club_rough
+  magic 1
+  chance 20
+  more
+  arch club_spiked
+  magic 1
+  chance 20
+  more
+  arch flail_war
+  magic 1
+  chance 20
+  more
+  arch hammer
+  magic 1
+  chance 20
+  more
+  arch hammer_battle
+  magic 1
+  chance 20
+  more
+  arch hammer_military
+  magic 1
+  chance 20
+  more
+  arch hammer_small
+  magic 1
+  chance 20
+  more
+  arch hammer_war
+  magic 1
+  chance 20
+  more
+  arch mace
+  magic 1
+  chance 20
+  more
+  arch mace_battle
+  magic 1
+  chance 20
+  more
+  arch mace_spiked
+  magic 1
+  chance 20
+  more
+  arch mace_spiked_war
+  magic 1
+  chance 20
+  more
+  arch mace_war
+  magic 1
+  chance 20
+  more
+  arch mstar
+  magic 1
+  chance 20
+  more
+  arch mstar_large
+  magic 1
+  chance 20
+  more
+  arch mstar_small
+  magic 1
+  chance 20
+  more
+  arch nunchacu
+  magic 1
+  chance 20
+  more
+  arch nunchacu_war
+  magic 1
+  chance 20
+  more
+  arch shootingstar
+  magic 1
+  chance 20
 end
 treasureone random_weapons_impact_2h
-  arch trident
+  arch bo
+  magic 1
+  chance 20
+  more
+  arch club_giant
+  magic 1
+  chance 20
+  more
+  arch club_giant_spiked
+  magic 1
+  chance 20
+  more
+  arch hammer_giant
+  magic 1
+  chance 20
+  more
+  arch hammer_swar_giant
+  magic 1
+  chance 20
+  more
+  arch hammer_war_giant
+  magic 1
+  chance 20
+  more
+  arch mstar_2h
+  magic 1
+  chance 20
+  more
+  arch quaterstaff
+  magic 1
+  chance 20
 end
 treasureone random_weapons_impact_pole
-  arch trident
+  arch bec_de_corbin
+  magic 1
+  chance 20
+  more
+  arch lucern_hammer
+  magic 1
+  chance 20
 end
-treasureone random_melee_weapons_pierce
+treasureone random_weapons_pierce
   list random_weapons_pierce_1h
-   chance 55
+   chance 60
   more
   list random_weapons_pierce_2h
-   chance 35
+   chance 25
   more
   list random_weapons_pierce_pole
-   chance 10
+   chance 15
 end
 treasureone random_weapons_pierce_1h
-  arch trident
+  arch athame
+  magic 1
+  chance 14
+  more
+  arch cutlass
+  magic 1
+  chance 20
+  more
+  arch dagger
+  magic 1
+  chance 10
+  more
+  arch dagger_large
+  magic 1
+  chance 12
+  more
+  arch dagger_small
+  magic 1
+  chance 8
+  more
+  arch degen
+  magic 1
+  chance 20
+  more
+  arch flamberge
+  magic 1
+  chance 20
+  more
+  arch pallasch
+  magic 1
+  chance 20
+  more
+  arch rapier
+  magic 1
+  chance 20
+  more
+  arch saber
+  magic 1
+  chance 20
+  more
+  arch shiavona
+  magic 1
+  chance 20
+  more
+  arch tanto
+  magic 1
+  chance 14
 end
 treasureone random_weapons_pierce_2h
+  arch forc
+  magic 1
+  chance 20
+  more
+  arch forc_military
+  magic 1
+  chance 20
+  more
+  arch spear
+  magic 1
+  chance 20
+  more
   arch trident
+  magic 1
+  chance 20
 end
 treasureone random_weapons_pierce_pole
-  arch trident
+  arch bill_guisarme
+  magic 1
+  chance 10
+  more
+  arch guisarme
+  magic 1
+  chance 20
+  more
+  arch partisan
+  magic 1
+  chance 20
+  more
+  arch pike
+  magic 1
+  chance 20
+  more
+  arch ranseur
+  magic 1
+  chance 20
 end
 treasureone random_armour
-  list random_bracers
+  list random_armour_boots
+    chance 20
+  more
+  list random_armour_helm
+    chance 20
+  more
+  list random_armour_shield
+    chance 15
+  more
+  list random_armour_mail
+    chance 15
+  more
+  list random_armour_cloak
     chance 10
   more
-  list random_boots
+  list random_armour_gauntlet
+    chance 5
+  more
+  list random_armour_girdle
+    chance 5
+  more
+  list random_armour_bracers
     chance 5
   end
-treasureone random_bracers
+treasureone random_armour_mail
+  arch banded_mail
+  magic 1
+  chance 20
+ more
+  arch bone_armour
+  magic 1
+  chance 30
+ more
+  arch bplate_mail
+  magic 1
+  chance 30
+ more
+  arch breastplate
+  magic 1
+  chance 15
+ more
+  arch brigandine
+  magic 1
+  chance 25
+ more
+  arch chain_hauberk
+  magic 1
+  chance 20
+ more
+  arch chain_mail
+  magic 1
+  chance 25
+ more
+  arch chitin_mail
+  magic 1
+  chance 25
+ more
+  arch crystal_mail
+  magic 1
+  chance 4
+ more
+  arch lamellar_mail
+  magic 1
+  chance 20
+ more
+  arch leather_armour
+  magic 1
+  chance 30
+ more
+  arch leather_cuirass
+  magic 1
+  chance 20
+ more
+  arch padded_armour
+  magic 1
+  chance 25
+ more
+  arch leather_spiked
+  magic 1
+  chance 25
+ more
+  arch leather_studded
+  magic 1
+  chance 20
+ more
+  arch ring_mail
+  magic 1
+  chance 25
+ more
+  arch mithril_armour
+  magic 1
+  chance 4
+ more
+  arch mithril_coat
+  magic 1
+  chance 4
+ more
+  arch mithril_ring
+  magic 1
+  chance 4
+ more
+  arch plate_field
+  magic 1
+  chance 15
+ more
+  arch plate_full
+  magic 1
+  chance 15
+ more
+  arch plate_mail
+  magic 1
+  chance 15
+ more
+  arch scale_armour
+  magic 1
+  chance 20
+ more
+  arch scale_mail
+  magic 1
+  chance 25
+ more
+  arch splint_mail
+  magic 1
+  chance 20
+end
+treasureone random_armour_bracers
   arch bracers_ac
+  magic 1
   chance 35
 end
-treasureone random_boots
+treasureone random_armour_boots
  arch sandals
  chance 20
+ magic 1
  more
  arch low_boots
  chance 25
+ magic 1
  more
  arch high_boots
  chance 20
+ magic 1
  difficulty 2
  more
  arch fencing_boots
  chance 15
+ magic 1
  difficulty 3
  more
  arch combat_boots
  chance 15
+ magic 1
  difficulty 3
  more
  arch kicking_boots
  chance 15
+ magic 1
  difficulty 3
  more
  arch fighting_boots
  chance 15
+ magic 1
  difficulty 3
  more
  arch leggings_leather
  chance 15
- difficulty 4
+ magic 1
+ difficulty 6
  more
  arch leggings_chain
  chance 10
- difficulty 7
+ magic 1
+ difficulty 12
  more
  arch leggings_plate
- difficulty 16
+ difficulty 25
+ magic 1
  chance 8
 end
-treasureone random_shield
+treasureone random_armour_shield
 arch buckler
+ magic 1
 chance 20
 more
 arch small_shield
+ magic 1
 chance 20
 more
 arch shield
+ magic 1
 chance 20
 more
 arch shield_battle
+ magic 1
+ difficulty 6
 chance 15
 more
 arch shield_defender
+ magic 1
+ difficulty 6
 chance 15
 more
 arch shield_heater
+ magic 1
 chance 15
 more
 arch shield_high
+ magic 1
 chance 15
 more
 arch shield_kite
+ magic 1
 chance 15
 more
 arch shield_protector
+ magic 1
+ difficulty 6
 chance 15
 more
 arch shield_round
+ magic 1
 chance 15
 more
 arch shield_war
+ magic 1
+ difficulty 6
 chance 15
 more
 arch blade_stopper
+ magic 1
+ difficulty 12
 chance 10
 more
 arch shield_chitin
+ magic 1
+chance 10
+more
+arch shield_bone
+ magic 1
 chance 10
 more
 arch shield_scale
+ magic 1
 chance 10
+more
+arch ball_and_chain
+ magic 1
+chance 10
+more
+arch shield_demon
+ magic 1
+chance 5
+more
+arch shield_eye
+ magic 1
+chance 5
 end
-treasureone random_cloak
+treasureone random_armour_cloak
  arch cloak
+ magic 1
  chance 30
  more
  arch cape
+ magic 1
  chance 25
  more
  arch robe
+ magic 1
  chance 25
 end
-treasureone random_gauntlet
+treasureone random_armour_gauntlet
 arch gloves
-chance 60
+ magic 1
+chance 40
 more
 arch gauntlets
+ magic 1
+chance 25
+more
+arch gauntlets_leather
+ magic 1
 chance 25
 more
 arch gauntlets_plate
+ magic 1
+chance 10
+end
+treasureone random_armour_girdle
+arch girdle
+chance 15
+ more
+arch belt
+ difficulty 10
+ magic 1
 chance 15
 end
-treasureone random_girdle
-arch girdle
-chance 100
-end
-treasureone random_helm
+treasureone random_armour_helm
  arch helm_field
+ magic 1
  chance 12
  more
  arch helm_plate
+ magic 1
  chance 10
  more
  arch helm_war
+ magic 1
  chance 12
  more
  arch full_helmet
+ magic 1
+ chance 10
+ more
+ arch helm_battle
+ magic 1
+ chance 10
+ more
+ arch helm_guard
+ magic 1
  chance 10
  more
  arch coif_scale
+ magic 1
  chance 15
  more
  arch coif_chain
+ magic 1
  chance 15
  more
  arch helm_iron
+ magic 1
  chance 15
  more
  arch helm_leather
+ magic 1
  chance 20
  more
  arch helm_horn
+ magic 1
  chance 15
  more
  arch crown_generic
+ magic 1
  chance 5
  more
  arch hat_feather
+ magic 1
  chance 5
  more
  arch hat_blue
+ magic 1
  chance 5
 end
 #
@@ -990,7 +1585,11 @@ end
 treasureone random_test_all
  list random_potion
  more
- list random_missile_amun
+ list random_weapon
+ more
+ list random_armour
+ more
+ list random_weapons_amun
  more
  list random_scroll
  more
@@ -1003,25 +1602,16 @@ treasureone random_test_all
  list random_mtools
  more
  list random_food
- more
- list random_boots
- more
- list random_bracers
- more
- list random_cloak
- more
- list random_gauntlet
- more
- list random_girdle
- more
- list random_helm
- more
- list random_shield
 end
 # t_style 1 = fire
 treasureone random_style1
  t_style 1
  arch jewel_generic
+ t_style 2
+ artifact_chance 100
+ chance 50
+ more
+ list random_armour_mail
  t_style 2
  artifact_chance 100
  chance 50
@@ -1041,5 +1631,5 @@ treasureone random_style1
  chance 50
 end
 treasureone random_test
- list random_test_all
+list random_weapons_melee
 end

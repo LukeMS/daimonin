@@ -174,7 +174,15 @@ arch floor_ostone1
 x 1
 y 3
 end
+arch chest_sw_7
+x 1
+y 3
+end
 arch floor_ostone1
+x 1
+y 4
+end
+arch chest_sw_1
 x 1
 y 4
 end
@@ -182,7 +190,15 @@ arch floor_ostone1
 x 1
 y 5
 end
+arch chest_sm_7
+x 1
+y 5
+end
 arch floor_ostone1
+x 1
+y 6
+end
+arch chest_sm_1
 x 1
 y 6
 end
@@ -190,7 +206,15 @@ arch floor_ostone1
 x 1
 y 7
 end
+arch chest_4.171
+x 1
+y 7
+end
 arch floor_ostone1
+x 1
+y 8
+end
+arch chest_4.111
 x 1
 y 8
 end
@@ -198,7 +222,15 @@ arch floor_ostone1
 x 1
 y 9
 end
+arch chest_w1_7
+x 1
+y 9
+end
 arch floor_ostone1
+x 1
+y 10
+end
+arch chest_w1
 x 1
 y 10
 end
@@ -206,7 +238,15 @@ arch floor_ostone1
 x 1
 y 11
 end
+arch chest_m1_7
+x 1
+y 11
+end
 arch floor_ostone1
+x 1
+y 12
+end
+arch chest_m
 x 1
 y 12
 end
@@ -214,7 +254,15 @@ arch floor_ostone1
 x 1
 y 13
 end
+arch chest1_171
+x 1
+y 13
+end
 arch floor_ostone1
+x 1
+y 14
+end
+arch chest
 x 1
 y 14
 end
@@ -230,11 +278,23 @@ arch floor_ostone1
 x 1
 y 17
 end
+arch sstone
+x 1
+y 17
+end
 arch floor_ostone1
 x 1
 y 18
 end
+arch bolt
+x 1
+y 18
+end
 arch floor_ostone1
+x 1
+y 19
+end
+arch arrow
 x 1
 y 19
 end
@@ -475,8 +535,7 @@ arch floor_ostone1
 x 3
 y 12
 end
-arch club
-identified 1
+arch axe_2h
 x 3
 y 12
 end
@@ -484,8 +543,7 @@ arch floor_ostone1
 x 3
 y 13
 end
-arch dagger
-identified 1
+arch club
 x 3
 y 13
 end
@@ -493,8 +551,7 @@ arch floor_ostone1
 x 3
 y 14
 end
-arch sword
-identified 1
+arch bo
 x 3
 y 14
 end
@@ -502,8 +559,7 @@ arch floor_ostone1
 x 3
 y 15
 end
-arch bo
-identified 1
+arch dagger_small
 x 3
 y 15
 end
@@ -512,7 +568,6 @@ x 3
 y 16
 end
 arch trident
-identified 1
 x 3
 y 16
 end
@@ -520,8 +575,7 @@ arch floor_ostone1
 x 3
 y 17
 end
-arch sword2h
-identified 1
+arch sword
 x 3
 y 17
 end
@@ -529,8 +583,7 @@ arch floor_ostone1
 x 3
 y 18
 end
-arch axe_2h
-identified 1
+arch sword2h
 x 3
 y 18
 end
@@ -542,7 +595,15 @@ arch floor_ostone1
 x 3
 y 20
 end
+arch bow
+x 3
+y 20
+end
 arch floor_ostone1
+x 3
+y 21
+end
+arch t_axe
 x 3
 y 21
 end
@@ -643,21 +704,23 @@ arch floor_ostone1
 x 4
 y 11
 end
+arch axe_hand
+x 4
+y 11
+end
 arch floor_ostone1
 x 4
 y 12
+end
+arch axe_2h_battle
+x 4
+y 12
+end
+arch floor_ostone1
+x 4
+y 13
 end
 arch mstar_small
-identified 1
-x 4
-y 12
-end
-arch floor_ostone1
-x 4
-y 13
-end
-arch rapier
-identified 1
 x 4
 y 13
 end
@@ -665,8 +728,7 @@ arch floor_ostone1
 x 4
 y 14
 end
-arch glaive
-identified 1
+arch club_giant
 x 4
 y 14
 end
@@ -674,8 +736,7 @@ arch floor_ostone1
 x 4
 y 15
 end
-arch guisarme
-identified 1
+arch dagger
 x 4
 y 15
 end
@@ -683,8 +744,7 @@ arch floor_ostone1
 x 4
 y 16
 end
-arch halberd
-identified 1
+arch forc
 x 4
 y 16
 end
@@ -692,12 +752,15 @@ arch floor_ostone1
 x 4
 y 17
 end
-arch lucern_hammer
-identified 1
+arch scythe_military
 x 4
 y 17
 end
 arch floor_ostone1
+x 4
+y 18
+end
+arch claymore
 x 4
 y 18
 end
@@ -709,7 +772,15 @@ arch floor_ostone1
 x 4
 y 20
 end
+arch bow_long
+x 4
+y 20
+end
 arch floor_ostone1
+x 4
+y 21
+end
+arch t_hammer
 x 4
 y 21
 end
@@ -809,7 +880,15 @@ arch floor_ostone1
 x 5
 y 11
 end
+arch axe_battle
+x 5
+y 11
+end
 arch floor_ostone1
+x 5
+y 12
+end
+arch mattock
 x 5
 y 12
 end
@@ -817,7 +896,15 @@ arch floor_ostone1
 x 5
 y 13
 end
+arch hammer_military
+x 5
+y 13
+end
 arch floor_ostone1
+x 5
+y 14
+end
+arch club_giant_spiked
 x 5
 y 14
 end
@@ -825,7 +912,15 @@ arch floor_ostone1
 x 5
 y 15
 end
+arch dagger_large
+x 5
+y 15
+end
 arch floor_ostone1
+x 5
+y 16
+end
+arch forc_military
 x 5
 y 16
 end
@@ -833,7 +928,15 @@ arch floor_ostone1
 x 5
 y 17
 end
+arch bastardsword
+x 5
+y 17
+end
 arch floor_ostone1
+x 5
+y 18
+end
+arch no_dachi
 x 5
 y 18
 end
@@ -845,7 +948,15 @@ arch floor_ostone1
 x 5
 y 20
 end
+arch bow_short
+x 5
+y 20
+end
 arch floor_ostone1
+x 5
+y 21
+end
+arch t_dagger
 x 5
 y 21
 end
@@ -941,7 +1052,15 @@ arch floor_ostone1
 x 6
 y 11
 end
+arch axe_broad
+x 6
+y 11
+end
 arch floor_ostone1
+x 6
+y 12
+end
+arch halberd
 x 6
 y 12
 end
@@ -949,7 +1068,15 @@ arch floor_ostone1
 x 6
 y 13
 end
+arch ancus
+x 6
+y 13
+end
 arch floor_ostone1
+x 6
+y 14
+end
+arch hammer_giant
 x 6
 y 14
 end
@@ -957,7 +1084,15 @@ arch floor_ostone1
 x 6
 y 15
 end
+arch athame
+x 6
+y 15
+end
 arch floor_ostone1
+x 6
+y 16
+end
+arch spear
 x 6
 y 16
 end
@@ -965,7 +1100,15 @@ arch floor_ostone1
 x 6
 y 17
 end
+arch falchion
+x 6
+y 17
+end
 arch floor_ostone1
+x 6
+y 18
+end
+arch scythe_war
 x 6
 y 18
 end
@@ -977,7 +1120,15 @@ arch floor_ostone1
 x 6
 y 20
 end
+arch crossbow
+x 6
+y 20
+end
 arch floor_ostone1
+x 6
+y 21
+end
+arch t_star
 x 6
 y 21
 end
@@ -1072,7 +1223,15 @@ arch floor_ostone1
 x 7
 y 11
 end
+arch axe_double
+x 7
+y 11
+end
 arch floor_ostone1
+x 7
+y 12
+end
+arch bardiche
 x 7
 y 12
 end
@@ -1080,7 +1239,15 @@ arch floor_ostone1
 x 7
 y 13
 end
+arch club_big
+x 7
+y 13
+end
 arch floor_ostone1
+x 7
+y 14
+end
+arch hammer_swar_giant
 x 7
 y 14
 end
@@ -1088,16 +1255,15 @@ arch floor_ostone1
 x 7
 y 15
 end
+arch tanto
+x 7
+y 15
+end
 arch floor_ostone1
 x 7
 y 16
 end
-arch power_crystal
-identified 1
-x 7
-y 16
-end
-arch power_crystal
+arch ranseur
 x 7
 y 16
 end
@@ -1105,7 +1271,15 @@ arch floor_ostone1
 x 7
 y 17
 end
+arch katana
+x 7
+y 17
+end
 arch floor_ostone1
+x 7
+y 18
+end
+arch sword_double
 x 7
 y 18
 end
@@ -1117,16 +1291,19 @@ arch floor_ostone1
 x 7
 y 20
 end
+arch crossbow_large
+x 7
+y 20
+end
 arch floor_ostone1
 x 7
 y 21
 end
-arch floor_ostone1
+arch t_boulder
 x 7
-y 22
+y 21
 end
-arch chest_w1
-identified 1
+arch floor_ostone1
 x 7
 y 22
 end
@@ -1212,12 +1389,7 @@ arch floor_ostone1
 x 8
 y 11
 end
-arch wand
-identified 1
-x 8
-y 11
-end
-arch wand
+arch axe_small
 x 8
 y 11
 end
@@ -1225,16 +1397,15 @@ arch floor_ostone1
 x 8
 y 12
 end
+arch spetum
+x 8
+y 12
+end
 arch floor_ostone1
 x 8
 y 13
 end
-arch rod_light
-identified 1
-x 8
-y 13
-end
-arch rod_light
+arch flail_war
 x 8
 y 13
 end
@@ -1242,16 +1413,15 @@ arch floor_ostone1
 x 8
 y 14
 end
+arch hammer_war_giant
+x 8
+y 14
+end
 arch floor_ostone1
 x 8
 y 15
 end
-arch rod_heavy
-identified 1
-x 8
-y 15
-end
-arch rod_heavy
+arch rapier
 x 8
 y 15
 end
@@ -1259,12 +1429,7 @@ arch floor_ostone1
 x 8
 y 16
 end
-arch horn
-x 8
-y 16
-end
-arch horn
-identified 1
+arch partisan
 x 8
 y 16
 end
@@ -1272,16 +1437,15 @@ arch floor_ostone1
 x 8
 y 17
 end
-arch amulet_generic
-x 8
-y 17
-end
-arch amulet_generic
-identified 1
+arch broadsword
 x 8
 y 17
 end
 arch floor_ostone1
+x 8
+y 18
+end
+arch glaive
 x 8
 y 18
 end
@@ -1293,16 +1457,19 @@ arch floor_ostone1
 x 8
 y 20
 end
+arch crossbow_small
+x 8
+y 20
+end
 arch floor_ostone1
 x 8
 y 21
 end
-arch floor_ostone1
+arch t_lboulder
 x 8
-y 22
+y 21
 end
-arch chest
-identified 1
+arch floor_ostone1
 x 8
 y 22
 end
@@ -1388,7 +1555,15 @@ arch floor_ostone1
 x 9
 y 11
 end
+arch axe_war
+x 9
+y 11
+end
 arch floor_ostone1
+x 9
+y 12
+end
+arch voulge
 x 9
 y 12
 end
@@ -1396,12 +1571,7 @@ arch floor_ostone1
 x 9
 y 13
 end
-arch scroll_generic
-x 9
-y 13
-end
-arch scroll_generic
-identified 1
+arch mace
 x 9
 y 13
 end
@@ -1409,12 +1579,7 @@ arch floor_ostone1
 x 9
 y 14
 end
-arch potion_generic
-identified 1
-x 9
-y 14
-end
-arch potion_generic
+arch mstar_2h
 x 9
 y 14
 end
@@ -1422,12 +1587,7 @@ arch floor_ostone1
 x 9
 y 15
 end
-arch dust_generic
-identified 1
-x 9
-y 15
-end
-arch dust_generic
+arch cutlass
 x 9
 y 15
 end
@@ -1435,12 +1595,7 @@ arch floor_ostone1
 x 9
 y 16
 end
-arch balm_generic
-x 9
-y 16
-end
-arch balm_generic
-identified 1
+arch bill_guisarme
 x 9
 y 16
 end
@@ -1448,16 +1603,15 @@ arch floor_ostone1
 x 9
 y 17
 end
-arch ring_generic
-x 9
-y 17
-end
-arch ring_generic
-identified 1
+arch longsword
 x 9
 y 17
 end
 arch floor_ostone1
+x 9
+y 18
+end
+arch fauchard
 x 9
 y 18
 end
@@ -1469,16 +1623,19 @@ arch floor_ostone1
 x 9
 y 20
 end
+arch sling
+x 9
+y 20
+end
 arch floor_ostone1
 x 9
 y 21
 end
-arch floor_ostone1
+arch t_rock
 x 9
-y 22
+y 21
 end
-arch chest_m
-identified 1
+arch floor_ostone1
 x 9
 y 22
 end
@@ -1551,11 +1708,20 @@ arch floor_ostone1
 x 10
 y 9
 end
+arch bone_armour
+identified 1
+x 10
+y 9
+end
 arch floor_ostone1
 x 10
 y 10
 end
 arch floor_ostone1
+x 10
+y 11
+end
+arch pick_axe
 x 10
 y 11
 end
@@ -1567,6 +1733,10 @@ arch floor_ostone1
 x 10
 y 13
 end
+arch hammer_war
+x 10
+y 13
+end
 arch floor_ostone1
 x 10
 y 14
@@ -1575,12 +1745,7 @@ arch floor_ostone1
 x 10
 y 15
 end
-arch cleric_book
-x 10
-y 15
-end
-arch cleric_book
-identified 1
+arch degen
 x 10
 y 15
 end
@@ -1588,12 +1753,7 @@ arch floor_ostone1
 x 10
 y 16
 end
-arch book_spell
-x 10
-y 16
-end
-arch book_spell
-identified 1
+arch guisarme
 x 10
 y 16
 end
@@ -1601,7 +1761,15 @@ arch floor_ostone1
 x 10
 y 17
 end
+arch ninjato
+x 10
+y 17
+end
 arch floor_ostone1
+x 10
+y 18
+end
+arch naginata
 x 10
 y 18
 end
@@ -1610,6 +1778,10 @@ x 10
 y 19
 end
 arch floor_ostone1
+x 10
+y 20
+end
+arch sling_heavy
 x 10
 y 20
 end
@@ -1703,6 +1875,10 @@ arch floor_ostone1
 x 11
 y 11
 end
+arch whip
+x 11
+y 11
+end
 arch floor_ostone1
 x 11
 y 12
@@ -1711,11 +1887,23 @@ arch floor_ostone1
 x 11
 y 13
 end
+arch hammer_battle
+x 11
+y 13
+end
 arch floor_ostone1
 x 11
 y 14
 end
+arch lucern_hammer
+x 11
+y 14
+end
 arch floor_ostone1
+x 11
+y 15
+end
+arch pallasch
 x 11
 y 15
 end
@@ -1724,6 +1912,10 @@ x 11
 y 16
 end
 arch floor_ostone1
+x 11
+y 17
+end
+arch scimitar
 x 11
 y 17
 end
@@ -1736,6 +1928,10 @@ x 11
 y 19
 end
 arch floor_ostone1
+x 11
+y 20
+end
+arch sling_small
 x 11
 y 20
 end
@@ -1829,6 +2025,10 @@ arch floor_ostone1
 x 12
 y 11
 end
+arch whip_war
+x 12
+y 11
+end
 arch floor_ostone1
 x 12
 y 12
@@ -1837,11 +2037,23 @@ arch floor_ostone1
 x 12
 y 13
 end
+arch mace_war
+x 12
+y 13
+end
 arch floor_ostone1
 x 12
 y 14
 end
+arch bec_de_corbin
+x 12
+y 14
+end
 arch floor_ostone1
+x 12
+y 15
+end
+arch saber
 x 12
 y 15
 end
@@ -1850,6 +2062,10 @@ x 12
 y 16
 end
 arch floor_ostone1
+x 12
+y 17
+end
+arch tsurugi
 x 12
 y 17
 end
@@ -1950,11 +2166,19 @@ arch floor_ostone1
 x 13
 y 11
 end
+arch axe_great
+x 13
+y 11
+end
 arch floor_ostone1
 x 13
 y 12
 end
 arch floor_ostone1
+x 13
+y 13
+end
+arch mace_battle
 x 13
 y 13
 end
@@ -1974,16 +2198,15 @@ arch floor_ostone1
 x 13
 y 17
 end
+arch shortsword
+x 13
+y 17
+end
 arch floor_ostone1
 x 13
 y 18
 end
 arch floor_ostone1
-x 13
-y 19
-end
-arch t_axe
-identified 1
 x 13
 y 19
 end
@@ -2076,6 +2299,10 @@ arch floor_ostone1
 x 14
 y 11
 end
+arch cleaver_war
+x 14
+y 11
+end
 arch floor_ostone1
 x 14
 y 12
@@ -2084,12 +2311,11 @@ arch floor_ostone1
 x 14
 y 13
 end
-arch floor_ostone1
+arch mace_spiked
 x 14
-y 14
+y 13
 end
-arch arrow
-identified 1
+arch floor_ostone1
 x 14
 y 14
 end
@@ -2097,17 +2323,7 @@ arch floor_ostone1
 x 14
 y 15
 end
-arch bolt
-identified 1
-x 14
-y 15
-end
 arch floor_ostone1
-x 14
-y 16
-end
-arch sstone
-identified 1
 x 14
 y 16
 end
@@ -2115,21 +2331,15 @@ arch floor_ostone1
 x 14
 y 17
 end
+arch sword_curved
+x 14
+y 17
+end
 arch floor_ostone1
 x 14
 y 18
 end
-arch t_rock
-identified 1
-x 14
-y 18
-end
 arch floor_ostone1
-x 14
-y 19
-end
-arch t_hammer
-identified 1
 x 14
 y 19
 end
@@ -2222,11 +2432,19 @@ arch floor_ostone1
 x 15
 y 11
 end
+arch cleaver_battle
+x 15
+y 11
+end
 arch floor_ostone1
 x 15
 y 12
 end
 arch floor_ostone1
+x 15
+y 13
+end
+arch mstar
 x 15
 y 13
 end
@@ -2246,21 +2464,15 @@ arch floor_ostone1
 x 15
 y 17
 end
+arch wakizashi
+x 15
+y 17
+end
 arch floor_ostone1
 x 15
 y 18
 end
-arch t_boulder
-identified 1
-x 15
-y 18
-end
 arch floor_ostone1
-x 15
-y 19
-end
-arch t_star
-identified 1
 x 15
 y 19
 end
@@ -2357,12 +2569,11 @@ arch floor_ostone1
 x 16
 y 13
 end
-arch floor_ostone1
+arch nunchacu
 x 16
-y 14
+y 13
 end
-arch bow
-identified 1
+arch floor_ostone1
 x 16
 y 14
 end
@@ -2370,17 +2581,7 @@ arch floor_ostone1
 x 16
 y 15
 end
-arch crossbow
-identified 1
-x 16
-y 15
-end
 arch floor_ostone1
-x 16
-y 16
-end
-arch sling
-identified 1
 x 16
 y 16
 end
@@ -2388,21 +2589,15 @@ arch floor_ostone1
 x 16
 y 17
 end
+arch baselard
+x 16
+y 17
+end
 arch floor_ostone1
 x 16
 y 18
 end
-arch t_lboulder
-identified 1
-x 16
-y 18
-end
 arch floor_ostone1
-x 16
-y 19
-end
-arch t_dagger
-identified 1
 x 16
 y 19
 end
@@ -2496,6 +2691,10 @@ x 17
 y 12
 end
 arch floor_ostone1
+x 17
+y 13
+end
+arch mace_spiked_war
 x 17
 y 13
 end
@@ -2616,6 +2815,10 @@ arch floor_ostone1
 x 18
 y 13
 end
+arch mstar_large
+x 18
+y 13
+end
 arch floor_ostone1
 x 18
 y 14
@@ -2715,6 +2918,11 @@ arch floor_ostone1
 x 19
 y 7
 end
+arch shield_bone
+identified 1
+x 19
+y 7
+end
 arch floor_ostone1
 x 19
 y 8
@@ -2740,15 +2948,11 @@ arch floor_ostone1
 x 19
 y 12
 end
-arch coppercoin
-x 19
-y 12
-end
 arch floor_ostone1
 x 19
 y 13
 end
-arch silvercoin
+arch nunchacu_war
 x 19
 y 13
 end
@@ -2756,15 +2960,7 @@ arch floor_ostone1
 x 19
 y 14
 end
-arch goldcoin
-x 19
-y 14
-end
 arch floor_ostone1
-x 19
-y 15
-end
-arch mitcoin
 x 19
 y 15
 end

@@ -80,6 +80,7 @@
 	"one_drop"
 	"perm_cursed" 
 	"perm_damned"
+	"wc_range"
 */
 
 #define YY_DECL int lex_load(object *op, int map_flags)
@@ -283,25 +284,25 @@ WS	[ \t]*
 							op->arch?(op->arch->name?op->arch->name:"<no arch name>"):"<no ->arch>",yval());
 				}
 
-^str{S}		op->stats.Str = IVAL;
-
-^dex{S}		op->stats.Dex = IVAL;
-^con{S}		op->stats.Con = IVAL;
-^wis{S}		op->stats.Wis = IVAL;
-^cha{S}		op->stats.Cha = IVAL;
-^int{S}		op->stats.Int = IVAL;
-^pow{S}		op->stats.Pow = IVAL;
-^hp{S}		op->stats.hp = IVAL;
-^maxhp{S}	op->stats.maxhp = IVAL;
-^sp{S}		op->stats.sp = IVAL;
-^maxsp{S}	op->stats.maxsp = IVAL;
-^grace{S}	op->stats.grace = IVAL;
+^wc_range{S}	op->stats.wc_range = IVAL;
+^str{S}			op->stats.Str = IVAL;
+^dex{S}			op->stats.Dex = IVAL;
+^con{S}			op->stats.Con = IVAL;
+^wis{S}			op->stats.Wis = IVAL;
+^cha{S}			op->stats.Cha = IVAL;
+^int{S}			op->stats.Int = IVAL;
+^pow{S}			op->stats.Pow = IVAL;
+^hp{S}			op->stats.hp = IVAL;
+^maxhp{S}		op->stats.maxhp = IVAL;
+^sp{S}			op->stats.sp = IVAL;
+^maxsp{S}		op->stats.maxsp = IVAL;
+^grace{S}		op->stats.grace = IVAL;
 ^maxgrace{S}	op->stats.maxgrace = IVAL;
-^exp{S}		op->stats.exp = atol(yval());
-^food{S}	op->stats.food = IVAL;
-^dam{S}		op->stats.dam = IVAL;
-^wc{S}		op->stats.wc = IVAL;
-^ac{S}		op->stats.ac = IVAL;
+^exp{S}			op->stats.exp = atol(yval());
+^food{S}		op->stats.food = IVAL;
+^dam{S}			op->stats.dam = IVAL;
+^wc{S}			op->stats.wc = IVAL;
+^ac{S}			op->stats.ac = IVAL;
 ^x{S}		{op->x = IVAL; 
 #ifdef POSITION_DEBUG 
 op->ox= op->x;
@@ -930,6 +931,8 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
   }
 
 
+  if(op->stats.wc_range!=op2->stats.wc_range)
+    save_long(buf, "wc_range", op->stats.wc_range);
   if(op->stats.Str!=op2->stats.Str)
     save_long(buf, "Str", op->stats.Str);
   if(op->stats.Dex!=op2->stats.Dex)
@@ -1210,10 +1213,3 @@ void save_object(FILE *fp,object *op, int flag) {
 
     fprintf(fp,"end\n");
 }
-
-
-
-
-
-
-

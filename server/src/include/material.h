@@ -82,6 +82,6 @@ typedef struct _material_real_struct {
 }_material_real_struct;
 
 EXTERN materialtype material[NROFMATERIALS];
-EXTERN _material_real_struct material_real[834];
+EXTERN _material_real_struct material_real[833];
 
 #endif

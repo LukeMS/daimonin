@@ -1,5 +1,5 @@
 Object helm_leather
-name  leather cap
+name  cap
 type 34
 layer 3
 face helm_leather.101
