@@ -1,7 +1,6 @@
 Object rand_drop
 face creator.111
 type 102
-carrying 0
 layer 0
 sys_object 1
 no_teleport 1

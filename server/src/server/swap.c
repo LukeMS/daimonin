@@ -112,7 +112,7 @@ void read_map_log()
  * flag set, we can safely swap them out!
  * thats rewritten for beta 2.
  */
-void swap_map(mapstruct *map) 
+void swap_map(mapstruct *map, int force_flag) 
 {
 	int i;
 /*
@@ -130,15 +130,18 @@ void swap_map(mapstruct *map)
 		return;
     }
 
-	if(map->player_first || map->perm_load) /* player nor perm_loaded marked */
-		return;
-
-    for(i=0; i<TILED_MAPS; i++) 
+	if(!force_flag) /* test for players! */
 	{
-		/* if there is a map, is load AND in memory and players on OR perm_load flag set, then... */
-		if (map->tile_map[i] && map->tile_map[i]->in_memory==MAP_IN_MEMORY && 
-							(map->tile_map[i]->player_first || map->tile_map[i]->perm_load))
-			return; /* no swap */
+		if(map->player_first || map->perm_load) /* player nor perm_loaded marked */
+			return;
+
+		for(i=0; i<TILED_MAPS; i++) 
+		{
+			/* if there is a map, is load AND in memory and players on OR perm_load flag set, then... */
+			if (map->tile_map[i] && map->tile_map[i]->in_memory==MAP_IN_MEMORY && 
+									(map->tile_map[i]->player_first || map->tile_map[i]->perm_load))
+				return; /* no swap */
+		}
 	}
 
 	/* when we are here, map is save to swap! */
@@ -209,7 +212,7 @@ void check_active_maps()
 			continue;
 /* If LWM is set, we only swap maps out when we run out of objects */
 #ifndef MAX_OBJECTS_LWM
-		swap_map(map);
+		swap_map(map,0);
 #endif
     }
 }
@@ -254,7 +257,7 @@ void swap_below_max(const char *except_level) {
 	    return;
 	LOG(llevDebug,"Trying to swap out %s before its time.\n", map->path);
 	map->timeout=0;
-	swap_map(map);
+	swap_map(map,0);
     }
 }
 
