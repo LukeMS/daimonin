@@ -199,8 +199,8 @@ void free_all_items (item *op)
                 if (op->inv)
                         free_all_items (op->inv);
                 tmp = op->next;
-				tmp_free=op;
-                FreeMemory(&tmp_free);
+				tmp_free=&op;
+                FreeMemory(tmp_free);
                 op = tmp;
         }
 }

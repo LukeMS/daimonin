@@ -1105,7 +1105,7 @@ static int load_map_header(FILE *fp, mapstruct *m)
 		if (value)
         {
 		    m->tile_path[tile-1] = strdup_local(value);
-            LOG(llevDebug,"get_map_header: map %s: Add tiled map %s on pos %d\n",m->path, value, tile-1);
+            LOG(llevDebug,"add t_map %s (%d). ",value, tile-1);
         }
 	    }
 	}
@@ -1157,7 +1157,7 @@ mapstruct *load_original_map(char *filename, int flags) {
     }
     else
     {
-        LOG(llevDebug, "load_original_map: %s (%x)\n", filename,flags);
+        LOG(llevDebug, "load_original_map: %s (%x) ", filename,flags);
         strcpy(pathname, create_pathname(filename));
     }
 
@@ -1169,22 +1169,30 @@ mapstruct *load_original_map(char *filename, int flags) {
 	return (NULL);
     }
 
+
+    LOG(llevDebug, "link map. ");
     m = get_linked_map();
 
+    LOG(llevDebug, "header: ");
     strcpy (m->path, filename);
 	m->map_tag = global_map_tag;	/* pre init the map tag */
-    if (load_map_header(fp, m)) {
-	LOG(llevBug,"BUG: Failure loading map header for %s, flags=%d\n", filename, flags);
-	delete_map(m);
-	return NULL;
+    if (load_map_header(fp, m))
+	{
+		LOG(llevBug,"BUG: Failure loading map header for %s, flags=%d\n", filename, flags);
+		delete_map(m);
+		return NULL;
     }
 
+    LOG(llevDebug, "alloc. ");
     allocate_map(m);
     m->compressed = comp;
 
     m->in_memory=MAP_LOADING;
+    LOG(llevDebug, "load objs:\n");
     load_objects (m, fp, flags & (MAP_BLOCK|MAP_STYLE));
+    LOG(llevDebug, "close. ");
     close_and_delete(fp, comp);
+    LOG(llevDebug, "post set. ");
     m->in_memory=MAP_IN_MEMORY;
     if (!MAP_DIFFICULTY(m)) 
     {
@@ -1193,6 +1201,7 @@ mapstruct *load_original_map(char *filename, int flags) {
     }
     /* MAP_DIFFICULTY(m)=calculate_difficulty(m); */
     set_map_reset_time(m);
+    LOG(llevDebug, "done!\n");
     return (m);
 }
 
@@ -1208,41 +1217,51 @@ static mapstruct *load_temporary_map(mapstruct *m) {
     char buf[MAX_BUF];
     
     if (!m->tmpname) {
-	LOG(llevBug, "BUG: No temporary filename for map %s\n", m->path);
-	strcpy(buf, m->path);
-	delete_map(m);
-        m = load_original_map(buf, 0);
-	if(m==NULL) return NULL;
-	(*fix_auto_apply_func)(m); /* Chests which open as default */
-	return m;
+		LOG(llevBug, "BUG: No temporary filename for map %s! fallback to original!\n", m->path);
+		strcpy(buf, m->path);
+		delete_map(m);
+		m = load_original_map(buf, 0);
+		if(m==NULL) 
+			return NULL;
+		(*fix_auto_apply_func)(m); /* Chests which open as default */
+		return m;
     }
 
+    LOG(llevDebug, "load_temporary_map: %s (%s) ", m->tmpname, m->path);
     if((fp=open_and_uncompress(m->tmpname,0, &comp))==NULL) {
-	LOG(llevBug,"BUG: Can't open temporary map %s\n",m->tmpname);
-	perror("Can't read map file");
-	strcpy(buf, m->path);
-	delete_map(m);
-        m = load_original_map(buf, 0);
-	if(m==NULL) return NULL;
-	(*fix_auto_apply_func)(m); /* Chests which open as default */
-	return m;
+		LOG(llevBug,"BUG: Can't open temporary map %s! fallback to original!\n",m->tmpname);
+		/*perror("Can't read map file");*/
+		strcpy(buf, m->path);
+		delete_map(m);
+		m = load_original_map(buf, 0);
+		if(m==NULL) 
+			return NULL;
+			(*fix_auto_apply_func)(m); /* Chests which open as default */
+		return m;
     }
     
 
+    LOG(llevDebug, "header: ");
     if (load_map_header(fp, m)) {
-	LOG(llevBug,"BUG: Error loading map header for %s (%s)\n",
-	    m->path, m->tmpname);
-	delete_map(m);
+		LOG(llevBug,"BUG: Error loading map header for %s (%s)! fallback to original!\n", m->path, m->tmpname);
+		delete_map(m);
         m = load_original_map(m->path, 0);
-	return NULL;
+		if(m==NULL) 
+			return NULL;
+			(*fix_auto_apply_func)(m); /* Chests which open as default */
+		return m;
     }
+    LOG(llevDebug, "alloc. ");
     m->compressed = comp;
     allocate_map(m);
 
     m->in_memory=MAP_LOADING;
+    LOG(llevDebug, "load objs:\n");
     load_objects (m, fp, 0);
+    LOG(llevDebug, "close. ");
     close_and_delete(fp, comp);
     m->in_memory=MAP_IN_MEMORY;
+    LOG(llevDebug, "done!\n");
     return m;
 }
 
@@ -1324,6 +1343,7 @@ static void load_unique_objects(mapstruct *m) {
     /* If we get here, we did not find any map */
     if (count==10) return;
 
+	LOG(llevDebug, "open unique items file for %s\n", create_items_path(m->path));
     if ((fp=open_and_uncompress(firstname, 0, &comp))==NULL) {
 	/* There is no expectation that every map will have unique items, but this
 	 * is debug output, so leave it in.
@@ -1397,9 +1417,10 @@ int new_save_map(mapstruct *m, int flag) {
     } else
 	    fp = fopen(filename, "w");
 
-    if(fp == NULL) {
-	perror("Can't open file for saving");
-	return -1;
+    if(fp == NULL) 
+	{
+	    LOG(llevError,"ERROR: Can't open file %s for saving.\n",filename);
+		return -1;
     }
     
     /* legacy */
@@ -1548,7 +1569,7 @@ void free_map(mapstruct *m,int flag) {
     if (m->buttons)
 	free_objectlinkpt(m->buttons);
     m->buttons = NULL;
-    for (i=0; i<4; i++) {
+    for (i=0; i<TILED_MAPS; i++) {
 	if (m->tile_path[i]) FREE_AND_CLEAR(m->tile_path[i]);
 	m->tile_map[i] = NULL;
     }
@@ -1592,7 +1613,7 @@ void delete_map(mapstruct *m) {
 	if (tmp->next == m) last = tmp;
 
 	/* This should hopefully get unrolled on a decent compiler */
-	for (i=0; i<4; i++)
+	for (i=0; i<TILED_MAPS; i++)
 	    if (tmp->tile_map[i] == m) tmp->tile_map[i]=NULL;
     }
 
@@ -1657,10 +1678,12 @@ mapstruct *ready_map_name(char *name, int flags) {
 	}
 
 	/* create and load a map */
+	/*
 	if (flags & MAP_PLAYER_UNIQUE)
 	    LOG(llevDebug, "Trying to load unique map %s.\n", name);
 	else
 	    LOG(llevDebug, "Trying to load map %s.\n", create_pathname(name));
+	*/
 
 	if (!(m = load_original_map(name, (flags & MAP_PLAYER_UNIQUE))))
 	    return (NULL);
@@ -1958,7 +1981,7 @@ void set_map_reset_time(mapstruct *map) {
 
 static mapstruct *load_and_link_tiled_map(mapstruct *orig_map, int tile_num)
 {
-    int dest_tile = (tile_num +2) % 4;
+    int dest_tile = (tile_num +2) % TILED_MAPS;
 
     orig_map->tile_map[tile_num] = ready_map_name(orig_map->tile_path[tile_num], 0);
 

@@ -1427,7 +1427,7 @@ static PyObject* CFGetExperience(PyObject* self, PyObject* args)
 /*****************************************************************************/
 /* Name   : CFGetLevel                                                       */
 /* Python : CFPython.GetLevel(object)                                        */
-/* Status : Untested                                                         */
+/* Status : Stable                                                           */
 /*****************************************************************************/
 
 static PyObject* CFGetLevel(PyObject* self, PyObject* args)

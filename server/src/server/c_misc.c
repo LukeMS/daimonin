@@ -424,6 +424,7 @@ int command_version (object *op, char *params)
 
 
 void bug_report(char * reportstring){
+	/*
   FILE * fp;
   if((fp = fopen( BUG_LOG , "a")) != NULL){
       fprintf(fp,"%s\n", reportstring);
@@ -431,6 +432,7 @@ void bug_report(char * reportstring){
   } else {
       perror(BUG_LOG);
   }
+  */
 }
 
 int command_output_sync(object *op, char *params)
@@ -739,7 +741,7 @@ int command_help (object *op, char *params)
     sprintf(filename, "%s/def_help", HELPDIR);
     if ((fp=fopen(filename, "r")) == NULL) {
       LOG(llevBug, "BUG: Can't open %s\n", filename);
-      perror("Can't read default help");
+      /*perror("Can't read default help");*/
       return 0;
     }
     while (fgets(line, MAX_BUF, fp)) {
@@ -806,7 +808,7 @@ int command_help (object *op, char *params)
    */
   if ((fp=fopen(filename, "r")) == NULL) {
     LOG(llevBug, "BUG: Can't open %s\n", filename);
-    perror("Can't read helpfile");
+    /*perror("Can't read helpfile");*/
     return 0;
       }
   while (fgets(line, MAX_BUF, fp)) {

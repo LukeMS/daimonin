@@ -124,9 +124,7 @@ void unlock_player(char *name) {
 
     sprintf(buf,"%s/%s/%s.lock",settings.localdir,settings.playerdir,name);
     if(!rmdir(buf)) {
-#ifdef DEBUG
-	perror("Couldn't remove lockfile(dir)");
-#endif
+		LOG(llevBug,"BUG: Couldn't remove lockfile(dir): %s\n", buf);
     }
 }
 
@@ -142,7 +140,7 @@ static int lock_player(char *name) {
     if(!mkdir(buf,0770))
 	return 0;
     if(errno != EEXIST) {
-	perror("Couldn't create lockfile(dir)");
+		LOG(llevBug,"BUG: Couldn't create lockfile(dir): %s\n", buf);
 	return 1;
     }
     return 1;
@@ -233,7 +231,7 @@ int create_savedir_if_needed(char *savedir)
   struct stat *buf;
 
   if ((buf = (struct stat *) malloc(sizeof(struct stat))) == NULL) {
-    perror("Unable to save playerfile... out of memory.");
+	LOG(llevError,"ERROR: Unable to save playerfile... out of memory!! %s\n", savedir);
     return 0;
   } else {
     stat(savedir, buf);
@@ -244,9 +242,8 @@ int create_savedir_if_needed(char *savedir)
       if (mkdir(savedir, S_ISUID|S_ISGID|S_IREAD|S_IWRITE|S_IEXEC))
 #endif
 	{
-	perror("Unable to create player savedir,");
-	perror(savedir);
-	return 0;
+		LOG(llevBug,"BAD BUG: Unable to create player savedir: %s\n", savedir);
+		return 0;
       }
     free(buf);
   }
@@ -694,6 +691,7 @@ void check_login(object *op) {
 	/* Remove confkeys, pushkey support - very old */
     } /* End of loop loading the character file */
     /*leave_map(op);*/
+	LOG(llevDebug,"load obj for player: %s\n", op->name);
     reset_object(op);
     op->contr = pl;
     pl->ob = op;

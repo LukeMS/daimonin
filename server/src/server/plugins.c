@@ -276,7 +276,7 @@ void initPlugins(void)
 	LOG(llevInfo,"Plugins directory is %s\n",buf);
         n = scandir(buf, &namelist, 0, alphasort);
         if (n < 0)
-            perror("scandir");
+			LOG(llevBug,"BUG: plugins.c: scandir...\n");
         else
             while(n--)
             {

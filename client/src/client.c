@@ -235,8 +235,8 @@ void finish_face_cmd(int pnum, uint32 checksum, char *face)
                  * no big work, clear face data and lets go on
                  *  all this check for invalid ptr, so fire it up
                 */
-				tmp_free = FaceList[pnum].name;
-                FreeMemory(&tmp_free);
+				tmp_free = &FaceList[pnum].name;
+                FreeMemory(tmp_free);
                 sprite_free_sprite(FaceList[pnum].sprite);
         }
 

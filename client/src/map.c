@@ -201,8 +201,8 @@ void InitMapData(char *name, int xl, int yl, int px, int py)
         clear_map();
         if(TheMapCache)
 		{
-			tmp_free = TheMapCache;
-			FreeMemory(&tmp_free);
+			tmp_free = &TheMapCache;
+			FreeMemory(tmp_free);
 		}
         /* we allocate 9 times the map... in tiled maps, we can have 8 connected
 		 * maps to our map - we want cache a map except its 2 maps aways-
