@@ -222,20 +222,17 @@ void init_ericserver()
  * these functions are both using the same calling syntax, just one
  * of them needs extra valus passed.
  */
-#if defined(__osf__) || defined(hpux) || defined(sgi) || defined(NeXT) || \
-        defined(__sun__) || defined(linux) || defined(SVR4) || defined(__FreeBSD__) || \
-	defined(__OpenBSD__) || defined(WIN32) /* ---win32 add this here */
+#if !defined(_WEIRD_OS_) /* means is true for most (win32, linux, etc. ) */
     {
-        int tmp =1;
+		int tmp =1;
 
-	if(setsockopt(init_sockets[0].fd,SOL_SOCKET,SO_REUSEADDR, (char *)&tmp, sizeof(tmp))) {
-	    LOG(llevDebug,"error on setsockopt REUSEADDR\n");
-	}
+		if(setsockopt(init_sockets[0].fd,SOL_SOCKET,SO_REUSEADDR, (char *)&tmp, sizeof(tmp)))
+			LOG(llevDebug,"error on setsockopt REUSEADDR\n");
     }
 #else
-    if(setsockopt(init_sockets[0].fd,SOL_SOCKET,SO_REUSEADDR,(char *)NULL,0)) {
-	LOG(llevDebug,"error on setsockopt REUSEADDR\n");
-    }
+    if(setsockopt(init_sockets[0].fd,SOL_SOCKET,SO_REUSEADDR,(char *)NULL,0))
+		LOG(llevDebug,"error on setsockopt REUSEADDR\n");
+    
 #endif
 
     if (bind(init_sockets[0].fd,(struct sockaddr *)&insock,sizeof(insock)) == (-1)) {
