@@ -1654,15 +1654,21 @@ void poison_player(object *op, object *hitter, float dam)
 		{
 			if(hitter->type==POISON)
 			{
-				tmp->stats.dam = (int) (((dam/2+RANDOM()%((int)(dam/2)))*lev_damage[hitter->level])*0.9f);
+				dam /=2.0f;
+				tmp->stats.dam = (int) (((dam+RANDOM()%((int)dam+1))*lev_damage[hitter->level])*0.9f);
 				if(tmp->stats.dam > op->stats.maxhp/3)
 					tmp->stats.dam = op->stats.maxhp/3;
+				if(tmp->stats.dam<1)
+					tmp->stats.dam=1;
 			}
 			else /* spell or weapon will be handled different! */
 			{
-				tmp->stats.dam = (int)(dam/2+RANDOM()%(int)(dam/2));
+				dam /= 2.0f;
+				tmp->stats.dam = (int)((int)dam+RANDOM()%(int)(dam+1));
 				if(tmp->stats.dam > op->stats.maxhp/3)
 					tmp->stats.dam = op->stats.maxhp/3;
+				if(tmp->stats.dam<1)
+					tmp->stats.dam=1;
 			}
 
 			tmp->level = hitter->level;

@@ -185,7 +185,8 @@ CommArray_s WizCommands [] = {
   /* DM/WIZ commands */
   {"/teleport", command_teleport,0.0},
   {"/goto", command_goto,0.0},
-  {"/shutdown", command_shutdown, 0.0},
+  {"/shutdown", command_start_shutdown,0.0},
+  {"/shutdown_now", command_shutdown, 0.0},
   {"/resetmap", command_reset,0.0},
   {"/plugout",command_unloadplugin,0.0},
   {"/create", command_create,0.0},

@@ -11653,7 +11653,7 @@ identified 1
 layer 3
 material 1
 value 45
-weight 1500
+weight 1200
 end
 Object card
 face card.101
@@ -11663,7 +11663,7 @@ layer 3
 identified 1
 material 1
 value 8
-weight 2
+weight 20
 end
 Object diploma
 face diploma.101
@@ -11673,7 +11673,7 @@ layer 3
 identified 1
 material 1
 value 25
-weight 500
+weight 50
 end
 Object letter
 face letter.101
@@ -11683,7 +11683,7 @@ layer 3
 identified 1
 material 1
 value 2
-weight 200
+weight 60
 end
 Object note
 face note.101
@@ -11704,7 +11704,7 @@ layer 3
 identified 1
 material 1
 value 50
-weight 4000
+weight 1250
 end
 Object potion_generic
 name potion

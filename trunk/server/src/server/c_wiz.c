@@ -862,6 +862,7 @@ int command_reset (object *op, char *params)
 int command_nowiz (object *op, char *params) /* 'noadm' is alias */
 {
      CLEAR_FLAG(op, FLAG_WIZ);
+	 gbl_active_DM = NULL; /* clear this dm from global dm list. TODO : make a list from it */
      CLEAR_FLAG(op, FLAG_WIZPASS);
      CLEAR_MULTI_FLAG(op, FLAG_FLYING);
 #ifdef REAL_WIZ
@@ -931,6 +932,7 @@ int command_dm (object *op, char *params)
   else {
     if (checkdm(op, op->name,
 		(params?params:"*"), op->contr->socket.host)) {
+	  gbl_active_DM = op; /* ad this dm to global dm list. TODO : make a list from it */
       SET_FLAG(op, FLAG_WIZ);
       SET_FLAG(op, FLAG_WAS_WIZ);
       SET_FLAG(op, FLAG_WIZPASS);
@@ -1047,4 +1049,72 @@ int command_unloadplugin(object *op, char *params)
 {
     removeOnePlugin(params);
     return 1;
+}
+
+void shutdown_agent(int timer, char *reason)
+{
+	static int sd_timer=-1, m_count, real_count=-1;
+    static struct timeval tv1,tv2;
+
+	if(timer == -1 && sd_timer == -1)
+	{
+		if(real_count>0)
+		{
+			if(--real_count <= 0)
+			{
+			    command_kick(NULL,NULL);
+			    cleanup();
+			}
+		}
+		return; /* nothing to do */
+	}
+
+	if(timer!=-1) /* reset shutdown count */
+	{
+		int t_min = timer/60;
+		int t_sec = timer-(int)(timer/60)*60;
+		sd_timer=timer;
+
+		new_draw_info(NDI_PLAYER |NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "System Message: ** SERVER SHUTDOWN STARTED **");
+		if(reason)
+		new_draw_info_format(NDI_PLAYER |NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "System Message: %s", reason);
+
+		if(t_sec)
+			new_draw_info_format(NDI_PLAYER |NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "System Message: SERVER SHUTDOWN in %d minutes and %d seconds",t_min,t_sec);
+		else
+			new_draw_info_format(NDI_PLAYER |NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "System Message: SERVER SHUTDOWN in %d minutes",t_min);
+		GETTIMEOFDAY(&tv1);
+		m_count = timer/60-1;
+		real_count=-1;
+	}
+	else /* count the shutdown tango */
+	{
+		int t_min;
+		int t_sec=0;
+		GETTIMEOFDAY(&tv2);
+
+		if((int)(tv2.tv_sec-tv1.tv_sec) >= sd_timer) /* end countdown */
+		{
+			new_draw_info(NDI_PLAYER |NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "System Message: ** SERVER SHUTDOWN NOW!!! **");
+			sd_timer=-1;
+			real_count=30;
+		}
+
+		t_min = (sd_timer-(int)(tv2.tv_sec-tv1.tv_sec))/60;
+		t_sec = (sd_timer-(int)(tv2.tv_sec-tv1.tv_sec))-(int)((sd_timer-(int)(tv2.tv_sec-tv1.tv_sec))/60)*60;
+
+		/*LOG(-1,"SEC: %d (%d - %d)\n", tv2.tv_sec-tv1.tv_sec,t_min,t_sec);*/
+
+		if((t_min == m_count && !t_sec))
+		{
+			m_count = t_min-1;
+			if(t_sec)
+				new_draw_info_format(NDI_PLAYER |NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "System Message: SERVER SHUTDOWN in %d minutes and %d seconds",t_min,t_sec);
+			else
+				new_draw_info_format(NDI_PLAYER |NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL, "System Message: SERVER SHUTDOWN in %d minutes",t_min);
+		}
+
+	}
+
+
 }

@@ -46,10 +46,10 @@ static char *cleanup_chat_string(char *ustring)
     if (*ustring=='\0') 
 		return NULL;
 
-	/* now process all control chars */
+	/* now clear all control chars */
 	for(i=0;*(ustring+i) != '\0';i++)
 	{
-		if(*(ustring+i) == '^' || *(ustring+i) == '§')
+		if(*(ustring+i) == '°' || *(ustring+i) == '~' || *(ustring+i) == '^' || *(ustring+i) == '§')
 			*(ustring+i) = ' ';
 	}
 	return ustring;
@@ -150,27 +150,28 @@ int command_tell (object *op, char *params)
 
     for(pl=first_player;pl!=NULL;pl=pl->next)
 	{
-		if(pl->dm_stealth)
+		if(!strncasecmp(pl->ob->name,name,MAX_NAME))
 		{
-			sprintf(buf,"%s tells you (dm_stealth): ",op->name);
-			strncat(buf, msg, MAX_BUF-strlen(buf)-1);
-			buf[MAX_BUF-1]=0;
-
-	      if(strncasecmp(pl->ob->name,name,MAX_NAME)==0)
-	        new_draw_info(NDI_PLAYER |NDI_UNIQUE | NDI_NAVY, 0, pl->ob, buf);
-			break;
+			if(pl->dm_stealth)
+			{
+				sprintf(buf,"%s tells you (you are in dm_stealth): ",op->name);
+				strncat(buf, msg, MAX_BUF-strlen(buf)-1);
+				buf[MAX_BUF-1]=0;
+		        new_draw_info(NDI_PLAYER |NDI_UNIQUE | NDI_NAVY, 0, pl->ob, buf);
+		        /* Update last_tell value [mids 01/14/2002] */
+				strcpy(pl->last_tell, op->name);
+				break; /* we send it but we kick the "no such player" on */
+			}
+			else
+			{
+			    sprintf(buf2, "You tell %s: %s",name,msg);
+				new_draw_info(NDI_PLAYER |NDI_UNIQUE, 0, op, buf2);
+				new_draw_info(NDI_PLAYER |NDI_UNIQUE | NDI_NAVY, 0, pl->ob, buf);
+		        /* Update last_tell value [mids 01/14/2002] */
+				strcpy(pl->last_tell, op->name);
+			    return 1;
+			}
 		}
-
-      if(strncasecmp(pl->ob->name,name,MAX_NAME)==0)
-      {
-        sprintf(buf2, "You tell %s: %s",name,msg);
-        new_draw_info(NDI_PLAYER |NDI_UNIQUE, 0, op, buf2);
-        new_draw_info(NDI_PLAYER |NDI_UNIQUE | NDI_NAVY, 0, pl->ob, buf);
-
-        /* Update last_tell value [mids 01/14/2002] */
-        strcpy(pl->last_tell, op->name);
-        return 1;
-      }
 	}
     new_draw_info(NDI_UNIQUE, 0,op,"No such player.");
     return 1;
@@ -255,16 +256,16 @@ int command_reply (object *op, char *params) {
         return 1;
     }
 
-    sprintf(buf, "%s tells you: ", op->name);
+    sprintf(buf, "%s replies you: ", op->name);
     strncat(buf, params, MAX_BUF-strlen(buf)-1);
     buf[MAX_BUF-1] = 0;
 
     /* Update last_tell value */
     strcpy(pl->last_tell, op->name);
 
-    new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, pl->ob, buf);
-    sprintf(buf2, "You tell to %s: %s", pl->ob->name, params);
-    new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, op, buf2);
+    new_draw_info(NDI_PLAYER |NDI_UNIQUE| NDI_NAVY, 0, pl->ob, buf);
+    sprintf(buf2, "You reply %s: %s", pl->ob->name, params);
+    new_draw_info(NDI_PLAYER |NDI_UNIQUE , 0, op, buf2);
 
     return 1;
 }

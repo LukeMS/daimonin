@@ -36,7 +36,7 @@ WarningFood 5
 #
 # TextWinAlpha:  <value>= alpha value (higher = darker)
 TextWinAlphaFlag 1
-TextWinAlpha 172
+TextWinAlpha 110
 
 # The text window can be split to show global and/or channels
 # exclusive in the upper (top) part.

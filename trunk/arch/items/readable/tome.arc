@@ -6,5 +6,5 @@ identified 1
 type 8
 material 1
 value 50
-weight 4000
+weight 1250
 end

@@ -5,5 +5,5 @@ identified 1
 type 8
 material 1
 value 2
-weight 200
+weight 60
 end

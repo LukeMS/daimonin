@@ -762,8 +762,11 @@ void waypoint_move(object *op, object *waypoint) {
                 dest_rv = &local_rv;
             } else {
                 /* We seem to have an invalid path string or offset. */
-                LOG(llevBug,"BUG: waypoint_move(): invalid path string or offset '%s':%d in '%s' -> '%s'\n", 
-                        waypoint->msg, new_offset, op->name, waypoint->name);
+				/* this bug message was spaming when the target has moved to a 
+				 * swaped out map i think
+				 */
+                /* LOG(llevBug,"BUG: waypoint_move(): invalid path string or offset '%s':%d in '%s' -> '%s'\n", 
+                        waypoint->msg, new_offset, op->name, waypoint->name); */
                 FREE_AND_CLEAR_HASH(waypoint->msg);
                 request_new_path(waypoint);
             }
@@ -2873,7 +2876,7 @@ void spawn_point(object *op)
 		next = tmp->below;
 		if(tmp->type == TYPE_RANDOM_DROP)
 		{
-			if((RANDOM() %RANDOM_DROP_RAND_RANGE) >= tmp->carrying) /* skip this container - drop the ->inv */
+			if(!tmp->weight_limit || !(RANDOM() % (tmp->weight_limit+1))) /* skip this container - drop the ->inv */
 			{
 			    for(tmp2=tmp->inv; tmp2; tmp2 = next2)
 				{

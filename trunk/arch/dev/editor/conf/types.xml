@@ -6783,7 +6783,7 @@
     Random drop container are used from spawn points.
     Put in the inventory of a spawn mobs (the "copy" inside
     the spawn point) there will be a random check against
-    this object. This check will be from 0-999999. If the check
+    this object. This check will be from 0-x. If the check
     is higher the the value of "drop chance" of this object,
     the items INSIDE this object (set in the map editor) are
     given the mob. This is checked every time a mob is spawned.
@@ -6791,9 +6791,9 @@
     more as one random drop container. Only stacking of random
     drop containers is not allowed. ]]>
   </description>
-  <attribute arch="carrying" editor="drop chance" type="int">
-    Set to a range from 0 to 999999. 0 means droped always.
-    999999 means a chance from 1/1000000 to drop.
+  <attribute arch="container" editor="drop chance" type="int">
+    Set to a range from 0 to x. 0 means droped always.
+    999999 means a chance from 1/999999 to drop.
   </attribute>
 </type>
 <!--####################################################################-->
