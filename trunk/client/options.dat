@@ -5,7 +5,7 @@
 # Parameter are from 0 (mute) to 100 (full)
 #
 SoundVolume 100
-MusicVolume 0
+MusicVolume 85
 
 # Show Player Names on the Map
 # (over the head of the player sprites)
