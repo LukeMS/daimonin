@@ -770,6 +770,8 @@ void fix_stopped_item (object *op, mapstruct *map, object *originator)
 
 object *fix_stopped_arrow (object *op)
 {
+	object *tmp;
+	
 	if(op->type != ARROW)
 		return op;
 	/* Small chance of breaking */
@@ -786,7 +788,7 @@ object *fix_stopped_arrow (object *op)
     CLEAR_MULTI_FLAG(op, FLAG_FLYING);
 
 	/* food is a self destruct marker - that long the item will need to be destruct! */
-	if(op->stats.food && op->type == ARROW)
+	if(!((tmp=get_owner(op)) ||tmp->type != PLAYER) &&  op->stats.food && op->type == ARROW)
 	{
 		SET_FLAG(op,FLAG_IS_USED_UP);
 		SET_FLAG(op,FLAG_NO_PICK);
@@ -795,7 +797,13 @@ object *fix_stopped_arrow (object *op)
 		op->speed_left = 0.0f;
 	}
 	else
+	{
+		op->stats.wc_range = op->arch->clone.stats.wc_range;
+		op->last_sp = op->arch->clone.last_sp;
+		op->level = op->arch->clone.level;
+		op->stats.food = op->arch->clone.stats.food;
 		op->speed = 0;
+	}
     update_ob_speed(op);
     op->stats.wc = op->last_heal;
     op->stats.dam= op->stats.hp;
@@ -812,42 +820,41 @@ object *fix_stopped_arrow (object *op)
  * has to stop. Sept 96 - I added in thrown object code in
  * here too. -b.t.
  *
- * Returns a pointer to the stopped object (which will have been removed
- * from maps or inventories), or NULL if was destroyed.
  */
 
 void stop_arrow (object *op)
 {
 	play_sound_map(op->map, op->x, op->y, SOUND_DROP_THROW, SOUND_NORMAL);
-    if (op->inv) {
+    if (op->inv) 
+	{
 		object *payload = op->inv;
 
 		remove_ob (payload);
         
 #ifdef PLUGINS
-    /* GROS: Handle for plugin stop event */
-    if(payload->event_flags&EVENT_FLAG_STOP)
-    {
-        CFParm CFP;
-        int k, l, m;
-        object *event_obj = get_event_object(payload, EVENT_STOP);
-        k = EVENT_STOP;
-        l = SCRIPT_FIX_NOTHING;
-        m = 0;
-        CFP.Value[0] = &k;
-        CFP.Value[1] = NULL;
-        CFP.Value[2] = payload;
-        CFP.Value[3] = op;
-        CFP.Value[4] = NULL;
-        CFP.Value[5] = &m;
-        CFP.Value[6] = &m;
-        CFP.Value[7] = &m;
-        CFP.Value[8] = &l;
-        CFP.Value[9] = (char *)event_obj->race;
-        CFP.Value[10]= (char *)event_obj->slaying;
-        if (findPlugin(event_obj->name)>=0)
-            ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
-    }
+		/* GROS: Handle for plugin stop event */
+		if(payload->event_flags&EVENT_FLAG_STOP)
+		{
+		    CFParm CFP;
+		    int k, l, m;
+		    object *event_obj = get_event_object(payload, EVENT_STOP);
+			k = EVENT_STOP;
+			l = SCRIPT_FIX_NOTHING;
+			m = 0;
+			CFP.Value[0] = &k;
+			CFP.Value[1] = NULL;
+			CFP.Value[2] = payload;
+			CFP.Value[3] = op;
+			CFP.Value[4] = NULL;
+			CFP.Value[5] = &m;
+			CFP.Value[6] = &m;
+			CFP.Value[7] = &m;
+			CFP.Value[8] = &l;
+			CFP.Value[9] = (char *)event_obj->race;
+			CFP.Value[10]= (char *)event_obj->slaying;
+			if (findPlugin(event_obj->name)>=0)
+			    ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
+		}
 #endif
 		/* we have a thrown potion here.
 		 * This potion has NOT hit a target.
@@ -870,7 +877,9 @@ void stop_arrow (object *op)
 		}
         remove_ob (op);
 		free_object (op);
-    } else {
+    } 
+	else 
+	{
         op = fix_stopped_arrow (op);
         if (op)
             merge_ob (op, NULL);
@@ -937,13 +946,9 @@ void move_arrow(object *op) {
 	    
             op->direction = absdir (op->direction + 4);
             op->state = 0;
-            if (GET_ANIM_ID (op)) {
-                number += 4;
-                if (number > GET_ANIMATION (op, 8))
-                    number -= 8;
-                op->face = &new_faces[number];
-            }
-            if (wall (m, new_x, new_y)) {
+            if (GET_ANIM_ID (op)) 
+				SET_ANIMATION(op, (NUM_ANIMATIONS(op)/NUM_FACINGS(op))*op->direction);			
+			if (wall (m, new_x, new_y)) {
                 /* Target is standing on a wall.  Let arrow turn around before
                  * the wall. */
                 new_x = op->x;
@@ -1007,7 +1012,7 @@ void move_arrow(object *op) {
 	    /* update object image for new facing */
 	    /* many thrown objects *don't* have more than one face */
 	    if(GET_ANIM_ID(op))
-		SET_ANIMATION(op, (NUM_ANIMATIONS(op)/NUM_FACINGS(op))*op->direction);
+			SET_ANIMATION(op, (NUM_ANIMATIONS(op)/NUM_FACINGS(op))*op->direction);
 	} /* object is reflected */
     } /* object ran into a wall */
 

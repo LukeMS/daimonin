@@ -5403,12 +5403,6 @@
     but it seems to have rather little effect.
     High values are good here, low values bad.
   </attribute>
-  <attribute arch="food" editor="chance to break" type="int">
-    The &lt;chance to break&gt; defines the breaking probability when this
-    projectile hits an obstacle, e.g. wall or monster.
-    The value is the %-chance to break, ranging from 0 (never breaking)
-    to 100 (breaking at first shot).
-  </attribute>
   <attribute arch="magic" editor="magic bonus" type="int">
     Magic bonus increases chance to hit and damage a little bit.
   </attribute>
@@ -5424,8 +5418,7 @@
     When a monster carries a projectile with &lt;don't drop&gt;,
     this item will never drop to the ground but
     vanish instead. If this object is shot, it can still drop
-    after hitting an obstacle. You can prevent this by
-    setting &lt;chance to break&gt; 100.
+    after hitting an obstacle.
   </attribute>
 <section name="attack">
   <attribute arch="attack_impact" editor="impact attack %" length="15" type="int">

@@ -30,5 +30,4 @@ weight 75
 value 20
 material 16
 material_real 257
-food 20
 end

@@ -1133,7 +1133,7 @@ int fire_bolt(object *op,object *caster,int dir,int type,int magic) {
   tmp->level = SK_level (caster);
   tmp->x+=DIRX(tmp),tmp->y+=DIRY(tmp);
   if(wall(op->map,tmp->x,tmp->y)) {
-    if(!QUERY_FLAG(tmp, FLAG_REFLECTING)) {
+     if(!QUERY_FLAG(tmp, FLAG_REFLECTING)) {
       free_object(tmp);
       return 0;
     }

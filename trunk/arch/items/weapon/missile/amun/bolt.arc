@@ -30,5 +30,4 @@ weight 95
 value 20
 material 2
 material_real 65
-food 10
 end

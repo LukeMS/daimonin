@@ -365,11 +365,17 @@ int hit_player(object *op,int dam, object *hitter, int type)
 										query_name(hitter), query_name(get_owner(hitter)), hit_level,
 										query_name(op), target_obj->arch->name, query_name(get_owner(op)), target_obj->level);
 
-	if(hit_level > target_obj->level && hit_obj->type != MONSTER) /* i turned it now off for players! */
+	/* this is hard cut - perhaps we do something more smart later.
+	 * no friendly object take damage from player now.
+	 */
+	if(hit_obj->type == PLAYER && QUERY_FLAG(target_obj,FLAG_FRIENDLY))
+		return 0;
+
+	if(hit_level > target_obj->level && hit_obj->type == MONSTER) /* i turned it now off for players! */
 	{
 		dam += (int)((float)(dam/2)*((float)(hit_level-target_obj->level)/
 									(target_obj->level>25?25.0f:(float)target_obj->level)));
-		/*LOG(llevDebug,"DMG-ADD: hl:%d tl_%d -> d:%d + %d\n", hit_level,target_obj->level, dam,tmp_d);*/
+		/*LOG(llevDebug,"DMG-ADD: hl:%d tl_%d -> d:%d \n", hit_level,target_obj->level, dam);*/
 	}
 	/* something hit player (can be disease or poison too - break praying! */
 	if(op->type == PLAYER && op->contr->was_praying)
@@ -378,6 +384,8 @@ int hit_player(object *op,int dam, object *hitter, int type)
 		op->contr->praying=0;
 		op->contr->was_praying=0;
 	}
+
+
 
 	/* Check for pvp! Only when at THIS moment both possible player are in pvp area - then we do damage.
 	 * This avoid this kind of heros, standing on pvp border, firing in and running back to save.
@@ -393,6 +401,7 @@ int hit_player(object *op,int dam, object *hitter, int type)
 				return 0;
 		}
 	}
+
 
     /* this checks objects are valid, on same map and set them to head when needed! */
     /* also, simple_attack is set to 1, when one of the parts hav ->env != null 
