@@ -1888,25 +1888,25 @@ void show_quickslots(int x, int y)
 
     for (i = MAX_QUICK_SLOTS - 1; i >= 0; i--)
     {
-        if (quick_slots[i].tag != -1)
+        if (quick_slots[i].shared.tag != -1)
         {
             /* spell in quickslot */
-            if (quick_slots[i].spell == TRUE)
+            if (quick_slots[i].shared.is_spell == TRUE)
             {
-                sprite_blt(spell_list[quick_slots[i].groupNr].entry[quick_slots[i].classNr][quick_slots[i].tag].icon,
+                sprite_blt(spell_list[quick_slots[i].spell.groupNr].entry[quick_slots[i].spell.classNr][quick_slots[i].shared.tag].icon,
                            x + quickslots_pos[i][0], y + quickslots_pos[i][1], NULL, NULL);
                 if (mx >= x + quickslots_pos[i][0]
                  && mx < x + quickslots_pos[i][0] + 33
                  && my >= y + quickslots_pos[i][1]
                  && my < y + quickslots_pos[i][1] + 33)
                     show_tooltip(mx, my,
-                                 spell_list[quick_slots[i].groupNr].entry[quick_slots[i].classNr][quick_slots[i].tag].name);
+                                 spell_list[quick_slots[i].spell.groupNr].entry[quick_slots[i].spell.classNr][quick_slots[i].shared.tag].name);
             }
             /* item in quickslot */
             else
             {
                 item   *tmp;
-                tmp = locate_item_from_item(cpl.ob, quick_slots[i].tag);
+                tmp = locate_item_from_item(cpl.ob, quick_slots[i].shared.tag);
                 if (tmp)
                 {
                     blt_inv_item(tmp, x + quickslots_pos[i][0], y + quickslots_pos[i][1]);
@@ -1931,23 +1931,37 @@ void update_quickslots(int del_item)
 
     for (i = 0; i < MAX_QUICK_SLOTS; i++)
     {
-        if (quick_slots[i].tag == del_item)
-            quick_slots[i].tag = -1;
-        if (quick_slots[i].tag == -1)
+        if (quick_slots[i].shared.tag == del_item)
+            quick_slots[i].shared.tag = -1;
+        if (quick_slots[i].shared.tag == -1)
             continue;
         /* only items in the *main* inventory can used with quickslot! */
-        if (quick_slots[i].spell == FALSE && !locate_item_from_inv(cpl.ob->inv, quick_slots[i].tag))
-            quick_slots[i].tag = -1;
-        if (quick_slots[i].tag != -1)
-            quick_slots[i].nr = locate_item_nr_from_tag(cpl.ob->inv, quick_slots[i].tag);
+        if (quick_slots[i].shared.is_spell == FALSE)
+        {
+            if (!locate_item_from_inv(cpl.ob->inv, quick_slots[i].shared.tag))
+                quick_slots[i].shared.tag = -1;
+            if (quick_slots[i].shared.tag != -1)
+                quick_slots[i].item.nr = locate_item_nr_from_tag(cpl.ob->inv, quick_slots[i].shared.tag);
+        }
     }
 }
 
-static int readNextQuickSlots(FILE *fp, char *server, char *name, _quickslot *quickslots)
+static void freeQuickSlots(_quickslot *quickslots, int size)
 {
-    int     ch = 1, i = 0;
+    int i;
 
-    while (ch)
+    for (i = 0; i != size; ++i)
+    {
+        if (quickslots[i].shared.is_spell == FALSE)
+            free(quickslots[i].name.name);
+    }
+}
+
+static int readNextQuickSlots(FILE *fp, char *server, int *port, char *name, _quickslot *quickslots)
+{
+    int     ch, i, r;
+
+    for (ch = 1, i = 0; ch;)
     {
         if (i == 2048)
             return 0;
@@ -1956,9 +1970,9 @@ static int readNextQuickSlots(FILE *fp, char *server, char *name, _quickslot *qu
             return 0;
         server[i++] = ch;
     }
-    ch = 1;
-    i = 0;
-    while (ch)
+    if(!fread(port, sizeof(int), 1, fp))
+        return 0;
+    for (ch = 1, i = 0; ch;)
     {
         if (i == 40)
             return 0;
@@ -1967,13 +1981,62 @@ static int readNextQuickSlots(FILE *fp, char *server, char *name, _quickslot *qu
             return 0;
         name[i++] = ch;
     }
-    for (i = 0; i != MAX_QUICK_SLOTS; ++i)
+    for (i = r = 0; i != MAX_QUICK_SLOTS; ++i)
     {
-        fread(&quickslots[i], 1, sizeof(_quickslot), fp);
-        if (feof(fp))
+        if (!fread(&quickslots[i].shared.is_spell, sizeof(Boolean), 1, fp))
+        {
+            freeQuickSlots(quickslots, i);
             return 0;
+        }
+        r += sizeof(Boolean);
+        if (quickslots[i].shared.is_spell == FALSE)
+        {
+            int j;
+
+            if (!fread(&quickslots[i].item.nr, sizeof(int), 1, fp))
+            {
+                freeQuickSlots(quickslots, i);
+                return 0;
+            }
+            r += sizeof(int);
+            quickslots[i].name.name = (char *)malloc(sizeof(char) * 128);
+            for (ch = 1, j = 0; ch; ++r)
+            {
+                if (j == 128)
+                {
+                    freeQuickSlots(quickslots, i + 1);
+                    return 0;
+                }
+                ch = fgetc(fp);
+                if (ch == EOF)
+                {
+                    freeQuickSlots(quickslots, i + 1);
+                    return 0;
+                }
+                quickslots[i].name.name[j++] = ch;
+            }
+        }
+        else
+        {
+            if (!fread(&quickslots[i].shared.tag, sizeof(int), 1, fp))
+            {
+                freeQuickSlots(quickslots, i);
+                return 0;
+            }
+            if (!fread(&quickslots[i].spell.groupNr, sizeof(int), 1, fp))
+            {
+                freeQuickSlots(quickslots, i);
+                return 0;
+            }
+            if (!fread(&quickslots[i].spell.classNr, sizeof(int), 1, fp))
+            {
+                freeQuickSlots(quickslots, i);
+                return 0;
+            }
+            r += sizeof(int) * 3;
+        }
     }
-    return 1;
+    return r;
 }
 
 /******************************************************************
@@ -1982,25 +2045,81 @@ static int readNextQuickSlots(FILE *fp, char *server, char *name, _quickslot *qu
 #define QUICKSLOT_FILE "quick.dat"
 void load_quickslots_entrys()
 {
-    int         i;
+    int         i, port;
     char        name[40], server[2048];
     _quickslot  quickslots[MAX_QUICK_SLOTS];
     FILE       *stream;
 
     if (!(stream = fopen(QUICKSLOT_FILE, "rb")))
         return;
-    while (readNextQuickSlots(stream, server, name, quickslots))
+    while (readNextQuickSlots(stream, server, &port, name, quickslots))
     {
-        if (!strcmp(ServerName, server) && !strcmp(cpl.name, name))
+        if (!strcmp(ServerName, server) && ServerPort == port)
         {
-            memcpy(quick_slots, quickslots, sizeof(_quickslot) * MAX_QUICK_SLOTS);
+            Boolean cont = FALSE;
+
+            port = strlen(cpl.name) + 1;
+            for (i = 0; i != port; ++i)
+            {
+                if (tolower(cpl.name[i]) != tolower(name[i]))
+                {
+                    cont = TRUE;
+                    break;
+                }
+            }
+
+            if (cont == TRUE)
+                continue;
+
             for (i = 0; i != MAX_QUICK_SLOTS; ++i)
             {
-                if (quick_slots[i].tag == -1)
+                if (quick_slots[i].shared.is_spell == FALSE)
+                {
+                    int      j;
+                    Boolean  match = FALSE;
+                    item    *ob = cpl.ob->inv;
+
+                    for (j = 0; ob != NULL; ++j, ob = ob->next)
+                    {
+                        if (j == quick_slots[i].item.nr)
+                        {
+                            if (strcmp(ob->s_name, quick_slots[i].name.name))
+                            {
+                                for (ob = cpl.ob->inv; ob; ob = ob->next)
+                                {
+                                    if (!strcmp(ob->s_name, quick_slots[i].name.name))
+                                    {
+                                        quick_slots[i].item.tag = ob->tag;
+                                        match = TRUE;
+                                        break;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                quick_slots[i].item.tag = ob->tag;
+                                match = TRUE;
+                            }
+                            break;
+                        }
+                    }
+                    free(quick_slots[i].name.name);
+                    if (match == FALSE)
+                    {
+                        cont = TRUE;
+                        quick_slots[i].item.tag = -1;
+                    }
+                }
+                else
+                {
+                    memcpy(&quick_slots[i], &quickslots[i], sizeof(_quickslot));
+                    if (quick_slots[i].shared.tag == -1)
+                        cont = TRUE;
+                }
+                if (cont == TRUE)
                     continue;
-                cpl.win_inv_slot = quick_slots[i].invSlot;
-                if (quick_slots[i].spell == FALSE)
-                    quick_slots[i].tag = locate_item_tag_from_nr(cpl.ob->inv, quick_slots[i].nr);
+                if (quick_slots[i].shared.is_spell == FALSE)
+                    cpl.win_inv_slot = quick_slots[i].item.invSlot;
             }
             break;
         }
@@ -2015,6 +2134,7 @@ void load_quickslots_entrys()
 void save_quickslots_entrys()
 {
     char        name[40], server[2048];
+    int         n, size, w;
     _quickslot  quickslots[MAX_QUICK_SLOTS];
     FILE       *stream;
 
@@ -2023,20 +2143,97 @@ void save_quickslots_entrys()
         if (!(stream = fopen(QUICKSLOT_FILE, "wb+")))
             return;
     }
-    while (readNextQuickSlots(stream, server, name, quickslots))
+    for (n = w = 0; n != MAX_QUICK_SLOTS; ++n)
     {
-        if (!strcmp(ServerName, server) && !strcmp(cpl.name, name))
+        w += sizeof(Boolean);
+        if (quick_slots[n].shared.is_spell == FALSE)
         {
-            fseek(stream, -(sizeof(_quickslot) * MAX_QUICK_SLOTS), SEEK_CUR);
-            fwrite(&quick_slots, sizeof(_quickslot), MAX_QUICK_SLOTS, stream);
+            item *ob = locate_item_from_inv(cpl.ob->inv, quick_slots[n].item.tag);
+
+            w += sizeof(int);
+            quick_slots[n].name.name = (char *)malloc(sizeof(char) * 128);
+            if (ob != NULL)
+            {
+                int i = strlen(ob->s_name) + 1;
+
+                strncpy(quick_slots[n].name.name, ob->s_name, i);
+                w += i;
+            }
+            else
+                w += sizeof(char);
+        }
+        else
+            w += sizeof(int) * 3;
+    }
+    while ((size = readNextQuickSlots(stream, server, &n, name, quickslots)) != 0)
+    {
+        if (!strcmp(ServerName, server) && n == ServerPort && !strcmp(cpl.name, name))
+        {
+            if ((n = w - size) != 0)
+            {
+                char *buf;
+                long  pos = ftell(stream);
+
+                fseek(stream, 0, SEEK_END);
+                w = ftell(stream) - pos;
+                buf = (char *)malloc(w);
+                fseek(stream, pos, SEEK_SET);
+                fread(buf, 1, w, stream);
+                fseek(stream, pos + n, SEEK_SET);
+                fwrite(buf, 1, w, stream);
+                if (n < 0)
+                {
+                    w = ftell(stream);
+                    rewind(stream);
+                    buf = (char *)realloc(buf, w);
+                    fread(buf, 1, w, stream);
+                    freopen(QUICKSLOT_FILE, "wb+", stream);
+                    fwrite(buf, 1, w, stream);
+                }
+                free(buf);
+                fseek(stream, pos, SEEK_SET);
+            }
+            fseek(stream, -size, SEEK_CUR);
+            for (n = 0; n != MAX_QUICK_SLOTS; ++n)
+            {
+                fwrite(&quick_slots[n].shared.is_spell, sizeof(Boolean), 1, stream);
+                if (quick_slots[n].shared.is_spell == FALSE)
+                {
+                    fwrite(&quick_slots[n].item.nr, sizeof(int), 1, stream);
+                    fwrite(quick_slots[n].name.name, sizeof(char), strlen(quick_slots[n].name.name) + 1, stream);
+                }
+                else
+                {
+                    fwrite(&quick_slots[n].shared.tag, sizeof(int), 1, stream);
+                    fwrite(&quick_slots[n].spell.groupNr, sizeof(int), 1, stream);
+                    fwrite(&quick_slots[n].spell.classNr, sizeof(int), 1, stream);
+                }
+            }
             fclose(stream);
+            freeQuickSlots(quick_slots, MAX_QUICK_SLOTS);
             return;
         }
     }
     fwrite(&ServerName, sizeof(char), strlen(ServerName) + 1, stream);
+    fwrite(&ServerPort, sizeof(int), 1, stream);
     fwrite(&cpl.name, sizeof(char), strlen(cpl.name) + 1, stream);
-    fwrite(&quick_slots, sizeof(_quickslot), MAX_QUICK_SLOTS, stream);
+    for (n = 0; n != MAX_QUICK_SLOTS; ++n)
+    {
+        fwrite(&quick_slots[n].shared.is_spell, sizeof(Boolean), 1, stream);
+        if (quick_slots[n].shared.is_spell == FALSE)
+        {
+            fwrite(&quick_slots[n].item.nr, sizeof(int), 1, stream);
+            fwrite(quick_slots[n].name.name, sizeof(char), strlen(quick_slots[n].name.name) + 1, stream);
+        }
+        else
+        {
+            fwrite(&quick_slots[n].shared.tag, sizeof(int), 1, stream);
+            fwrite(&quick_slots[n].spell.groupNr, sizeof(int), 1, stream);
+            fwrite(&quick_slots[n].spell.classNr, sizeof(int), 1, stream);
+        }
+    }
     fclose(stream);
+    freeQuickSlots(quick_slots, MAX_QUICK_SLOTS);
 }
 
 

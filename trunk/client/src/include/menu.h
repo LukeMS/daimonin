@@ -49,15 +49,34 @@ extern _dialog_list_set create_list_set;
 extern int              keybind_status;
 
 #define MAX_QUICK_SLOTS 8
-typedef struct _quickslot
+typedef union _quickslot
 {
-    Boolean             spell; /* do we have an item or a spell in quickslot */
-    int                 invSlot;
-    int                 nr;
-    int                 tag;     /* what item/spellNr in quickslot */
-    int                 spellNr;     /* */
-    int                 groupNr; /* spellgroup */
-    int                 classNr; /* spellclass */
+    struct
+    {
+        Boolean         is_spell; /* do we have an item or a spell in quickslot */
+        int             tag;
+    }                   shared;
+    struct
+    {
+        Boolean         is_spell;
+        int             tag;     /* what item/spellNr in quickslot */
+        int             invSlot;
+        int             nr;
+    }                   item;
+    struct
+    {
+        Boolean         is_spell;
+        int             tag;
+        int             spellNr;     /* */
+        int             groupNr; /* spellgroup */
+        int             classNr; /* spellclass */
+    }                   spell;
+    struct
+    {
+        Boolean         is_spell;
+        int             tag;
+        char           *name;
+    }                   name;
 }_quickslot;
 extern _quickslot   quick_slots[MAX_QUICK_SLOTS];
 

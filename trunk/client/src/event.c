@@ -77,7 +77,7 @@ _key_macro      defkey_macro[]          =
     {"?M_TARGET_ENEMY", "/target enemy",    KEYFUNC_TARGET_ENEMY, 0, SC_NORMAL, MENU_NO},
     {"?M_TARGET_FRIEND","/target friend",   KEYFUNC_TARGET_FRIEND,0, SC_NORMAL, MENU_NO},
     {"?M_TARGET_SELF",  "/target self",     KEYFUNC_TARGET_SELF,  0, SC_NORMAL, MENU_NO},
-    {"?M_COMBAT_TOGGLE","/combat",          KEYFUNC_COMBAT,       0, SC_NORMAL, MENU_NO}, 
+    {"?M_COMBAT_TOGGLE","/combat",          KEYFUNC_COMBAT,       0, SC_NORMAL, MENU_NO},
 };
 #define DEFAULT_KEYMAP_MACROS (sizeof(defkey_macro)/sizeof(struct _key_macro))
 
@@ -287,7 +287,7 @@ int Event_PollInputDevice(void)
 {
     SDL_Event       event;
     int             x, y, done = 0;
-    static int      active_scrollbar    = 0;    
+    static int      active_scrollbar    = 0;
     static int      itemExamined        = 0; /* only print text once per dnd */
     static Uint32   Ticks               = 0;
 
@@ -348,7 +348,7 @@ int Event_PollInputDevice(void)
                   /* range field */
                   if (draggingInvItem(DRAG_GET_STATUS) == DRAG_IWIN_INV && x <90 && y> 400 && y < 440)
                   {
-                      RangeFireMode = 4; 
+                      RangeFireMode = 4;
                       process_macro_keys(KEYFUNC_FIREREADY, 0); /* drop to player-doll */
                   }
 
@@ -372,10 +372,10 @@ int Event_PollInputDevice(void)
                       {
                           if (draggingInvItem(DRAG_GET_STATUS) == DRAG_QUICKSLOT_SPELL)
                           {
-                              quick_slots[ind].spell = TRUE;
-                              quick_slots[ind].groupNr = quick_slots[cpl.win_quick_tag].groupNr;
-                              quick_slots[ind].classNr = quick_slots[cpl.win_quick_tag].classNr;
-                              quick_slots[ind].tag = quick_slots[cpl.win_quick_tag].spellNr;                        
+                              quick_slots[ind].shared.is_spell = TRUE;
+                              quick_slots[ind].spell.groupNr = quick_slots[cpl.win_quick_tag].spell.groupNr;
+                              quick_slots[ind].spell.classNr = quick_slots[cpl.win_quick_tag].spell.classNr;
+                              quick_slots[ind].shared.tag = quick_slots[cpl.win_quick_tag].spell.spellNr;
                               cpl.win_quick_tag = -1;
                           }
                           else
@@ -383,9 +383,9 @@ int Event_PollInputDevice(void)
                               if (draggingInvItem(DRAG_GET_STATUS) == DRAG_IWIN_INV
                                || draggingInvItem(DRAG_GET_STATUS) == DRAG_PDOLL)
                                   cpl.win_quick_tag = cpl.win_inv_tag;
-                              quick_slots[ind].tag = cpl.win_quick_tag;
-                              quick_slots[ind].invSlot = ind;
-                              quick_slots[ind].spell = FALSE;
+                              quick_slots[ind].shared.tag = cpl.win_quick_tag;
+                              quick_slots[ind].item.invSlot = ind;
+                              quick_slots[ind].shared.is_spell = FALSE;
                               /* now we do some tests... first, ensure this item can fit */
                               update_quickslots(-1);
                               /* now: if this is null, item is *not* in the main inventory
@@ -446,7 +446,7 @@ int Event_PollInputDevice(void)
               /* textWindow: slider/resize event */
               textwin_event(TW_CHECK_MOVE, &event);
 
-              /* scrollbar-sliders */   
+              /* scrollbar-sliders */
               if (event.button.button == SDL_BUTTON_LEFT && !draggingInvItem(DRAG_GET_STATUS))
               {
                   /* IWIN_INV Slider */
@@ -461,7 +461,7 @@ int Event_PollInputDevice(void)
                           cpl.win_inv_slot = cpl.win_inv_count;
                       break;
                   }
-              } 
+              }
 
               /* examine an item */
               /*
@@ -579,7 +579,7 @@ int Event_PollInputDevice(void)
               if ((cpl.inventory_win == IWIN_BELOW) && y > 498 + 27 && y <521 + 27 && x> 200 + 70 && x < 240 + 70)
               {
                   if (cpl.target_code)
-                      send_command("/t_tell hello", -1, SC_NORMAL);                             
+                      send_command("/t_tell hello", -1, SC_NORMAL);
                   break;
               }
 
@@ -601,28 +601,28 @@ int Event_PollInputDevice(void)
                     && y < SKIN_POS_QUICKSLOT_Y + 42)
               {
                   int   ind = get_quickslot(x, y);
-                  if (ind != -1 && quick_slots[ind].tag != -1) /* valid slot */
+                  if (ind != -1 && quick_slots[ind].shared.tag != -1) /* valid slot */
                   {
-                      cpl.win_quick_tag = quick_slots[ind].tag;
+                      cpl.win_quick_tag = quick_slots[ind].shared.tag;
                       if ((SDL_GetMouseState(NULL, NULL) & SDL_BUTTON(SDL_BUTTON_LEFT)))
                       {
-                          if (quick_slots[ind].spell == TRUE)
+                          if (quick_slots[ind].shared.is_spell == TRUE)
                           {
                               draggingInvItem(DRAG_QUICKSLOT_SPELL);
-                              quick_slots[ind].spellNr = quick_slots[ind].tag;
+                              quick_slots[ind].spell.spellNr = quick_slots[ind].shared.tag;
                               cpl.win_quick_tag = ind;
                           }
                           else
                           {
                               draggingInvItem(DRAG_QUICKSLOT);
                           }
-                          quick_slots[ind].tag = -1;
+                          quick_slots[ind].shared.tag = -1;
                       }
                       else
                       {
                           int stemp = cpl.      inventory_win, itemp = cpl.win_inv_tag;
                           cpl.inventory_win = IWIN_INV;
-                          cpl.win_inv_tag = quick_slots[ind].tag;
+                          cpl.win_inv_tag = quick_slots[ind].shared.tag;
                           process_macro_keys(KEYFUNC_APPLY, 0);
                           cpl.inventory_win = stemp;
                           cpl.win_inv_tag = itemp;
@@ -746,7 +746,7 @@ int Event_PollInputDevice(void)
        and is the time this is pressed <= keybind press value + repeat value,
        we assume a repeat if repeat flag is true.
        Sadly, SDL don't has a tick count inside the event messages, means the
-       tick value when the event really was triggered. So, the client can't simulate 
+       tick value when the event really was triggered. So, the client can't simulate
           the buffered "rythm" of the key pressings when the client lags. */
     key_repeat();
 
@@ -1092,7 +1092,7 @@ int key_event(SDL_KeyboardEvent *key)
                   break;
                 case SDLK_RCTRL:
                 case SDLK_LCTRL:
-                  cpl.fire_on = FALSE;                    
+                  cpl.fire_on = FALSE;
                   break;
 
                 default:
@@ -1255,7 +1255,7 @@ static Boolean check_menu_macros(char *text)
             cpl.menustatus = MENU_SPELL;
         }
         else
-            cpl.menustatus = MENU_NO;       
+            cpl.menustatus = MENU_NO;
 
         sound_play_effect(SOUND_SCROLL, 0, 0, 100);
         reset_keys();
@@ -1273,7 +1273,7 @@ static Boolean check_menu_macros(char *text)
             cpl.menustatus = MENU_SKILL;
         }
         else
-            cpl.menustatus = MENU_NO;            
+            cpl.menustatus = MENU_NO;
         sound_play_effect(SOUND_SCROLL, 0, 0, 100);
         reset_keys();
         return TRUE;
@@ -1308,7 +1308,7 @@ static Boolean check_menu_macros(char *text)
             cpl.menustatus = MENU_STATUS;
         }
         else
-            cpl.menustatus = MENU_NO;            
+            cpl.menustatus = MENU_NO;
         sound_play_effect(SOUND_SCROLL, 0, 0, 100);
         reset_keys();
         return TRUE;
@@ -1448,7 +1448,7 @@ Boolean process_macro_keys(int id, int value)
           if (cpl.menustatus != MENU_SPELL)
               cpl.menustatus = MENU_SPELL;
           else
-              cpl.menustatus = MENU_NO;            
+              cpl.menustatus = MENU_NO;
           reset_keys();
           break;
         case KEYFUNC_SKILL:
@@ -1460,7 +1460,7 @@ Boolean process_macro_keys(int id, int value)
           if (cpl.menustatus != MENU_SKILL)
               cpl.menustatus = MENU_SKILL;
           else
-              cpl.menustatus = MENU_NO;            
+              cpl.menustatus = MENU_NO;
           reset_keys();
           break;
         case KEYFUNC_STATUS:
@@ -1471,7 +1471,7 @@ Boolean process_macro_keys(int id, int value)
           if (cpl.menustatus != MENU_STATUS)
               cpl.menustatus = MENU_STATUS;
           else
-              cpl.menustatus = MENU_NO;            
+              cpl.menustatus = MENU_NO;
           sound_play_effect(SOUND_SCROLL, 0, 0, 0);
           reset_keys();
           break;
@@ -1520,7 +1520,7 @@ Boolean process_macro_keys(int id, int value)
 
         case KEYFUNC_RANGE:
           if (RangeFireMode++ == FIRE_MODE_INIT - 1)
-              RangeFireMode = 0; 
+              RangeFireMode = 0;
           map_udate_flag = 2;
           return FALSE;
           break;
@@ -1554,7 +1554,7 @@ Boolean process_macro_keys(int id, int value)
           if (cpl.inventory_win == IWIN_BELOW)
               tag = cpl.win_below_tag;
           else
-              tag = cpl.win_inv_tag;                
+              tag = cpl.win_inv_tag;
           if (tag == -1 || !locate_item(tag))
               return FALSE;
           send_mark_obj((it = locate_item(tag)));
@@ -1645,7 +1645,7 @@ Boolean process_macro_keys(int id, int value)
               nrof = 0;
           else
           {
-              /* seems be problems with this option 
+              /* seems be problems with this option
                        if( options.collectAll==1)
                          {
                           nrof = cpl.nrof;
@@ -1683,7 +1683,7 @@ Boolean process_macro_keys(int id, int value)
               debug_layer[0] = TRUE;
           sprintf(buf, "debug: map layer 0 %s.\n", debug_layer[0] ? "activated" : "deactivated");
           draw_info(buf, COLOR_DGOLD);
-          return FALSE; 
+          return FALSE;
           break;
         case KEYFUNC_LAYER1:
           if (debug_layer[1])
@@ -1692,7 +1692,7 @@ Boolean process_macro_keys(int id, int value)
               debug_layer[1] = TRUE;
           sprintf(buf, "debug: map layer 1 %s.\n", debug_layer[1] ? "activated" : "deactivated");
           draw_info(buf, COLOR_DGOLD);
-          return FALSE; 
+          return FALSE;
           break;
         case KEYFUNC_LAYER2:
           if (debug_layer[2])
@@ -1701,7 +1701,7 @@ Boolean process_macro_keys(int id, int value)
               debug_layer[2] = TRUE;
           sprintf(buf, "debug: map layer 2 %s.\n", debug_layer[2] ? "activated" : "deactivated");
           draw_info(buf, COLOR_DGOLD);
-          return FALSE; 
+          return FALSE;
           break;
         case KEYFUNC_LAYER3:
           if (debug_layer[3])
@@ -1710,13 +1710,13 @@ Boolean process_macro_keys(int id, int value)
               debug_layer[3] = TRUE;
           sprintf(buf, "debug: map layer 3 %s.\n", debug_layer[3] ? "activated" : "deactivated");
           draw_info(buf, COLOR_DGOLD);
-          return FALSE; 
+          return FALSE;
           break;
         case KEYFUNC_HELP:
           if (cpl.menustatus == MENU_KEYBIND)
               save_keybind_file(KEYBIND_FILE);
 
-          cpl.menustatus = MENU_NO;       
+          cpl.menustatus = MENU_NO;
           sound_play_effect(SOUND_SCROLL, 0, 0, 100);
           if (show_help_screen)
           {
@@ -1726,7 +1726,7 @@ Boolean process_macro_keys(int id, int value)
           else
               show_help_screen = 1;
 
-          return FALSE; 
+          return FALSE;
           break;
 
         case KEYFUNC_DROP:
@@ -1742,7 +1742,7 @@ Boolean process_macro_keys(int id, int value)
                       if (tmp->tag == cpl.container->tag)
                       {
                           tag = cpl.win_inv_tag;
-                          loc = cpl.container->tag;                   
+                          loc = cpl.container->tag;
                           break;
                       }
                   }
@@ -1887,19 +1887,19 @@ static void quickslot_key(SDL_KeyboardEvent *key, int slot)
         if (spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][spell_list_set.entry_nr].flag
          == LIST_ENTRY_KNOWN)
         {
-            if (quick_slots[slot].spell == TRUE && quick_slots[slot].tag == spell_list_set.entry_nr)
+            if (quick_slots[slot].shared.is_spell == TRUE && quick_slots[slot].shared.tag == spell_list_set.entry_nr)
             {
-                quick_slots[slot].spell = FALSE;
-                quick_slots[slot].tag = -1;
+                quick_slots[slot].shared.is_spell = FALSE;
+                quick_slots[slot].shared.tag = -1;
                 sprintf(buf, "unset F%d.", slot + 1);
                 draw_info(buf, COLOR_DGOLD);
             }
             else
             {
-                quick_slots[slot].spell = TRUE;
-                quick_slots[slot].groupNr = spell_list_set.group_nr;
-                quick_slots[slot].classNr = spell_list_set.class_nr;
-                quick_slots[slot].tag = spell_list_set.entry_nr;
+                quick_slots[slot].shared.is_spell = TRUE;
+                quick_slots[slot].spell.groupNr = spell_list_set.group_nr;
+                quick_slots[slot].spell.classNr = spell_list_set.class_nr;
+                quick_slots[slot].shared.tag = spell_list_set.entry_nr;
                 sprintf(buf, "set F%d to %s", slot + 1,
                         spell_list[spell_list_set.group_nr].entry[spell_list_set.class_nr][spell_list_set.entry_nr].name);
                 draw_info(buf, COLOR_DGOLD);
@@ -1915,13 +1915,13 @@ static void quickslot_key(SDL_KeyboardEvent *key, int slot)
 
         if (tag == -1 || !locate_item(tag))
             return;
-        quick_slots[slot].spell = FALSE;
-        if (quick_slots[slot].tag == tag)
-            quick_slots[slot].tag = -1;
+        quick_slots[slot].shared.is_spell = FALSE;
+        if (quick_slots[slot].shared.tag == tag)
+            quick_slots[slot].shared.tag = -1;
         else
         {
-            quick_slots[slot].tag = tag;
-            quick_slots[slot].invSlot = cpl.win_inv_slot;
+            quick_slots[slot].shared.tag = tag;
+            quick_slots[slot].item.invSlot = cpl.win_inv_slot;
             sprintf(buf, "set F%d to %s", slot + 1, locate_item(tag)->s_name);
             draw_info(buf, COLOR_DGOLD);
         }
@@ -1929,22 +1929,22 @@ static void quickslot_key(SDL_KeyboardEvent *key, int slot)
     /* apply item or ready spell */
     else if (key)
     {
-        if (quick_slots[slot].tag != -1)
+        if (quick_slots[slot].shared.tag != -1)
         {
-            if (quick_slots[slot].spell == TRUE)
+            if (quick_slots[slot].shared.is_spell == TRUE)
             {
-                fire_mode_tab[FIRE_MODE_SPELL].spell = &spell_list[quick_slots[slot].groupNr].entry[quick_slots[slot].classNr][quick_slots[slot].tag];
+                fire_mode_tab[FIRE_MODE_SPELL].spell = &spell_list[quick_slots[slot].spell.groupNr].entry[quick_slots[slot].spell.classNr][quick_slots[slot].shared.tag];
                 RangeFireMode = 1;
-                spell_list_set.group_nr = quick_slots[slot].groupNr;
-                spell_list_set.class_nr = quick_slots[slot].classNr;
-                spell_list_set.entry_nr = quick_slots[slot].tag;
+                spell_list_set.group_nr = quick_slots[slot].spell.groupNr;
+                spell_list_set.class_nr = quick_slots[slot].spell.classNr;
+                spell_list_set.entry_nr = quick_slots[slot].shared.tag;
                 return;
             }
-            if (locate_item(quick_slots[slot].tag))
+            if (locate_item(quick_slots[slot].shared.tag))
             {
-                sprintf(buf, "F%d quick apply %s", slot + 1, locate_item(quick_slots[slot].tag)->s_name);
+                sprintf(buf, "F%d quick apply %s", slot + 1, locate_item(quick_slots[slot].shared.tag)->s_name);
                 draw_info(buf, COLOR_DGOLD);
-                client_send_apply(quick_slots[slot].tag);
+                client_send_apply(quick_slots[slot].shared.tag);
                 return;
             }
         }
@@ -2289,7 +2289,7 @@ void check_menu_keys(int menu, int key)
                 if (cpl.menustatus == MENU_KEYBIND)
                     save_keybind_file(KEYBIND_FILE);
                 if (cpl.menustatus == MENU_OPTION)
-                    save_options_dat();             
+                    save_options_dat();
                 cpl.menustatus = MENU_NO;
                 reset_keys();
                 break;
