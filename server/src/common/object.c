@@ -3322,8 +3322,7 @@ int check_walk_on(object *op, object *originator, int flags)
     object     *tmp /*, *head=op->head?op->head:op*/;
     int         local_walk_semaphore    = FALSE; /* when TRUE, this function is root call for static_walk_semaphore setting */
     tag_t       tag;
-    mapstruct  *m                       = op->map;
-    int x = op->x, y = op->y, fly;
+    int fly;
 
     if (QUERY_FLAG(op, FLAG_NO_APPLY))
         return 0;
