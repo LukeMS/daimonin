@@ -8,6 +8,13 @@ and basic models.
 ** technical demonstration and to find problems under
 ** specific systems.
 
+Notes to version from 27.03.05
+------------------------------
+you need the following files to start:
+(just copy them from the client 2d.)
+- all files in srv_files
+- daimonin.p0
+ 
 Install Windows
 ---------------
 
@@ -26,17 +33,5 @@ There is an Anjuta Project file with howto.
 HOW TO EXCHANGE THE MODEL
 -------------------------
 
-The robot shown is the same robot as from the standard skeletal animation demo
-(demo_SkeletalAnimation) from OGRE3d (we used that as template).
-
-You will find the "robot.mesh" and the "robot.skeleton" file in 
-/client3d/media/models folder.
-
-The model use the the texture "r2skin.jpg" which can be found in
-/client3d/media/materials/textures folder.
-
-The hardware skinning of the demo is enabled by the file "Examples.program"
-in /client3d/media/materials/scripts folder.
-
-Please examine the ogre home page & documentation site about infos how
-to import/change models: http://www.ogre3d.org/
+Look in media/models/player.mesh for infos.
+There is also a robot and a ninja demo-file.
