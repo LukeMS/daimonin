@@ -2271,7 +2271,7 @@ void check_menu_keys(int menu, int key)
 			case SDLK_n:
 				if(gui_interface_npc->accept.title[0]!='N')
 					return;
-				draw_info("You listen...", COLOR_WHITE);
+				/*draw_info("You listen...", COLOR_WHITE);*/
 				gui_interface_npc->status = GUI_INTERFACE_STATUS_WAIT;
 				goto menu_npc_jump1;
 			case SDLK_a:
@@ -2287,8 +2287,15 @@ void check_menu_keys(int menu, int key)
 				menu_npc_jump1:
 				sound_play_effect(SOUND_SCROLL, 0, 0, 100);
 				if(gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT && gui_interface_npc->accept.command[0]!='\0')
-					gui_interface_send_command(1, gui_interface_npc->accept.command);
-//					send_command(gui_interface_npc->accept.command, -1, SC_NORMAL);
+				{
+					char cmd[1024];
+
+					if(gui_interface_npc->icon_select)
+						sprintf(cmd,"%s #%d", gui_interface_npc->accept.command,gui_interface_npc->selected);
+					else
+						strcpy(cmd, gui_interface_npc->accept.command);
+					gui_interface_send_command(1, cmd);
+				}
 				else
 					reset_gui_interface();	
 			break;
