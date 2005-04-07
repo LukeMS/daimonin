@@ -63,7 +63,7 @@ struct mob_known_obj
 {
     struct mob_known_obj   *next, *prev;
     object                 *obj;
-    tag_t                   obj_count;
+    tag_t                   obj_count; /* Tag for object */
 
     uint32                  last_seen; /* tick that this thing was last seen. Used for timeout */
     const char             *last_map;   /* Last known position */

@@ -310,6 +310,7 @@ struct plugin_hooklist
     void*(*get_poolchunk_array_real)(struct mempool *pool, uint32 arraysize_exp);
 	object * (*arch_to_object)(archetype *at);
 	archetype * (*find_archetype)(const char *name);
+    struct mob_known_obj * (*register_npc_known_obj)(object *npc, object *enemy, int friendship);
 };
 
 /*****************************************************************************/

@@ -1061,7 +1061,6 @@ int kill_object(object *op, int dam, object *hitter, int type)
     object     *corpse_owner, *owner, *old_hitter; /* this is used in case of servant monsters */
     int         evtid;
     int         maxdam              = 0;
-    int         exp                 = 0;
     int         battleg             = 0;    /* true if op standing on battleground */
     int         killed_script_rtn   = 0;
     mapstruct  *map;
