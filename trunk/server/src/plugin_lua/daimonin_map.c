@@ -276,10 +276,18 @@ static int Map_toString(lua_State *L)
     return 1;
 }
 
+/* Tests if a Map object is valid */
+static int Map_isValid(lua_State *L, lua_object *obj)
+{
+    /* TODO: also check map tag */
+    return obj->data.map->in_memory == MAP_IN_MEMORY;
+}
+
 /* Declare the map class */
 lua_class   Map =
 {
-    LUATYPE_MAP, "Map", 0, Map_toString, Map_attributes, Map_methods, NULL, Map_flags, Map_getFlag, NULL
+    LUATYPE_MAP, "Map", 0, Map_toString, Map_attributes, Map_methods, 
+    NULL, Map_flags, Map_getFlag, NULL, NULL, Map_isValid
 };
 
 /* Initialize the map class */
