@@ -505,7 +505,6 @@ CFParm                     *CFWGetSkillNr(CFParm *PParm);
 CFParm                     *CFWDoLearnSkill(CFParm *PParm);
 CFParm                     *CFWESRVSendInventory(CFParm *PParm);
 CFParm                     *CFWCreateArtifact(CFParm *PParm);
-CFParm                     *CFWGetArchetype(CFParm *PParm);
 CFParm                     *CFWUpdateSpeed(CFParm *PParm);
 CFParm                     *CFWUpdateObject(CFParm *PParm);
 CFParm                     *CFWFindAnimation(CFParm *PParm);

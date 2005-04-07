@@ -45,6 +45,8 @@ struct plugin_hooklist  hooklist    =
     return_poolchunk_array_real, get_poolchunk_array_real,
 	arch_to_object, find_archetype,
     register_npc_known_obj,
+	 get_archetype,
+	play_sound_player_only	
 };
 
 CFPlugin                PlugList[34];
@@ -949,23 +951,6 @@ CFParm * CFWCreateArtifact(CFParm *PParm)
     return CFP;
 }
 
-/*****************************************************************************/
-/* get_archetype wrapper.                                                    */
-/*****************************************************************************/
-/* 0 - Name of the archetype to search for.                                  */
-/*****************************************************************************/
-CFParm * CFWGetArchetype(CFParm *PParm)
-{
-    /*object* get_archetype(char* name); */
-    CFParm *CFP;
-    object *val;
-
-    CFP = (CFParm *) (malloc(sizeof(CFParm)));
-    val = get_archetype((char *) (PParm->Value[0]));
-
-    CFP->Value[0] = (void *) (val);
-    return CFP;
-}
 
 /*****************************************************************************/
 /* update_ob_speed wrapper.                                                  */

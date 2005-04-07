@@ -103,6 +103,14 @@ PostBuild_Cmds=copy Debug\*.dll ..\..\..\..\plugins\*.dll
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=..\..\..\..\src\plugin_lua\ai_object.c
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\src\plugin_lua\daimonin_game.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\..\src\plugin_lua\daimonin_map.c
 # End Source File
 # Begin Source File
@@ -127,15 +135,19 @@ SOURCE=..\..\..\..\src\common\win32.c
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
 # Begin Source File
 
+SOURCE=..\..\..\..\src\plugin_lua\include\ai_object.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\..\src\plugin_lua\include\daimonin_game.h
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\..\src\plugin_lua\include\daimonin_map.h
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\..\..\src\plugin_lua\include\daimonin_object.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\..\src\plugin_lua\include\inline.h
 # End Source File
 # Begin Source File
 

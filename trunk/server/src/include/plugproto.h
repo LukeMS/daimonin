@@ -30,7 +30,7 @@ f_plugin    HookList[NR_OF_HOOKS]   =
     NULL, CFWLog, CFWNewInfoMap, CFWSpringTrap, CFWCastSpell, CFWCmdRSkill, CFWBecomeFollower, CFWPickup,
     CFWGetMapObject, CFWESRVSendItem, CFWFindPlayer, CFWManualApply, CFWCmdDrop, CFWCmdTake, CFWCmdTitle,
     CFWTransferObject, CFWKillObject, CFWDoLearnSpell, CFWGetSpellNr, CFWCheckSpellKnown, CFWESRVSendInventory,
-    CFWCreateArtifact, CFWGetArchetype, CFWUpdateSpeed, CFWUpdateObject, CFWFindAnimation, CFWGetArchetypeByObjectName,
+    CFWCreateArtifact, CFInterface, CFWUpdateSpeed, CFWUpdateObject, CFWFindAnimation, CFWGetArchetypeByObjectName,
     CFWInsertObjectInMap, CFWReadyMapName, CFWAddExp, CFWDetermineGod, CFWFindGod, RegisterGlobalEvent,
     UnregisterGlobalEvent, CFWDumpObject, CFWLoadObject, CFWRemoveObject, CFWAddString, CFWFreeString, CFWAddRefcount,
     CFWGetFirstMap, CFWGetFirstPlayer, CFWGetFirstArchetype, CFWQueryCost, CFWQueryMoney, CFWPayForItem,
@@ -38,8 +38,7 @@ f_plugin    HookList[NR_OF_HOOKS]   =
     CFWMoveObject, CFWSetAnimation, CFWCommunicate, CFWFindBestObjectMatch, CFWApplyBelow, CFWDestructObject,
     CFWObjectCreateClone, CFWTeleportObject, CFWDoLearnSkill, CFWFindMarkedObject, CFWIdentifyObject, CFWGetSkillNr,
     CFWFindSkill, CFWNewInfoMapExcept, CFWInsertObjectInObject, CFWFixPlayer, CFWPlaySoundMap, CFWOutOfMap,
-    CFWCreateObject, CFWShowCost, CFWDeposit, CFWWithdraw, CFTransferMapItems, CFMapSave, CFMapDelete,
-	CFInterface
+    CFWCreateObject, CFWShowCost, CFWDeposit, CFWWithdraw, CFTransferMapItems, CFMapSave, CFMapDelete
 	
 };
 

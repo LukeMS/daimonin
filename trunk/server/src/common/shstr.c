@@ -183,7 +183,7 @@ const char * add_lstring(const char *str, int n)
         if (str != ss->string)
         {
             GATHER(add_stats.strcmps);
-            if (strncmp(ss->string, str, n) || strlen(ss->string) != n)
+            if (strncmp(ss->string, str, n) || (int)strlen(ss->string) != n)
             {
                 /* Apparantly, a string with the same hash value has this 
                      * slot. We must see in the list if "str" has been 
@@ -196,7 +196,7 @@ const char * add_lstring(const char *str, int n)
                     if (ss->string != str)
                     {
                         GATHER(add_stats.strcmps);
-                        if (strncmp(ss->string, str, n) || strlen(ss->string) != n)
+                        if (strncmp(ss->string, str, n) || (int)strlen(ss->string) != n)
                         {
                             /* This wasn't the right string...
                                      */
