@@ -2416,10 +2416,18 @@ static int GameObject_toString(lua_State *L)
     return 1;
 }
 
+/* Tests if an object is valid */
+static int GameObject_isValid(lua_State *L, lua_object *obj)
+{
+    return obj->data.object->count == obj->tag;
+}
+
 lua_class   GameObject  =
 {
     LUATYPE_OBJECT, "GameObject", 0, GameObject_toString, GameObject_attributes, GameObject_methods, NULL,
-    GameObject_flags, GameObject_getFlag, GameObject_setFlag, GameObject_setAttribute
+    GameObject_flags, 
+    GameObject_getFlag, GameObject_setFlag, GameObject_setAttribute,
+    GameObject_isValid
 };
 
 int GameObject_init(lua_State *L)

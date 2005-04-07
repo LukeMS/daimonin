@@ -55,6 +55,13 @@ struct attribute_decl       AI_attributes[]         =
 
 /* FUNCTIONSTART -- Here all the Lua plugin functions come */
 
+/*****************************************************************************/
+/* Name   : AI_ForbidMoveDirection                                           */
+/* Lua    : ai:ForbidMoveDirection(dir)                                      */
+/* Info   : In a movement behaviour, add dir to the list of forbidden        */
+/*          directions, but don't select a specific movement.                */
+/* Status : Tested                                                           */
+/*****************************************************************************/
 static int AI_ForbidMoveDirection(lua_State *L)
 {
     lua_object *self, *event;
@@ -74,6 +81,14 @@ static int AI_ForbidMoveDirection(lua_State *L)
     return 0;
 }
 
+/*****************************************************************************/
+/* Name   : AI_IsMoveDirectionAllowed                                        */
+/* Lua    : ai:IsMoveDirectionAllowed(dir)                                   */
+/* Info   : In a movement behaviour, see if dir is in the list of forbidden  */
+/*          directions. It can have been added by an earlier behaviour or by */
+/*          yourself.                                                        */
+/* Status : Tested                                                           */
+/*****************************************************************************/
 static int AI_IsMoveDirectionAllowed(lua_State *L)
 {
     lua_object *self, *event;
@@ -95,6 +110,12 @@ static int AI_IsMoveDirectionAllowed(lua_State *L)
     return 0;
 }
 
+/*****************************************************************************/
+/* Name   : AI_MoveRespondDirection                                          */
+/* Lua    : ai:MoveRespondDirection(dir)                                     */
+/* Info   : In a movement behaviour, set the reponse direction to dir        */
+/* Status : Untested                                                         */
+/*****************************************************************************/
 static int AI_MoveRespondDirection(lua_State *L)
 {
     lua_object *self, *event;
@@ -116,6 +137,14 @@ static int AI_MoveRespondDirection(lua_State *L)
     return 0;
 }
 
+/*****************************************************************************/
+/* Name   : AI_MoveRespondDirections                                         */
+/* Lua    : ai:MoveRespondDirections(dir)                                    */
+/* Info   : In a movement behaviour, add dir as a reponse direction          */
+/*          (It is possible to add multiple possible directions, and then a  */
+/*           random one is chosen from the ones in the list).                */
+/* Status : Untested                                                         */
+/*****************************************************************************/
 static int AI_MoveRespondDirections(lua_State *L)
 {
     lua_object *self, *event;
@@ -141,6 +170,14 @@ static int AI_MoveRespondDirections(lua_State *L)
     return 0;
 }
 
+/*****************************************************************************/
+/* Name   : AI_MoveRespondCoordinate                                         */
+/* Lua    : ai:MoveRespondCoordinate(map, x, y)                              */
+/* Info   : In a movement behaviour, set the reponse to the specified map    */
+/*          coordinate. The pathfinding system will then take over to find   */
+/*          the best way of getting there                                    */
+/* Status : Untested                                                         */
+/*****************************************************************************/
 static int AI_MoveRespondCoordinate(lua_State *L)
 {
     lua_object *self, *event, *map;
@@ -164,6 +201,13 @@ static int AI_MoveRespondCoordinate(lua_State *L)
     return 0;
 }
 
+/*****************************************************************************/
+/* Name   : AI_MoveRespondObject                                             */
+/* Lua    : ai:MoveRespondObject(obj)                                        */
+/* Info   : In a movement behaviour, set the reponse to the specified object */
+/*          The pathfinding system will then take over to find the best way  */
+/* Status : Tested                                                           */
+/*****************************************************************************/
 static int AI_MoveRespondObject(lua_State *L)
 {
     lua_object *self, *event, *obj;
@@ -203,10 +247,17 @@ static int AI_toString(lua_State *L)
     return 1;
 }
 
+/* Tests if an AI object is valid */
+static int AI_isValid(lua_State *L, lua_object *obj)
+{
+    return obj->data.object->count == obj->tag;
+}
+
+
 lua_class   AI  =
 {
     LUATYPE_AI, "AI", 0, AI_toString, AI_attributes, AI_methods, 
-    NULL, NULL, NULL, NULL, NULL
+    NULL, NULL, NULL, NULL, NULL, AI_isValid
 };
 
 int AI_init(lua_State *L)

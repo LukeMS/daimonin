@@ -117,28 +117,8 @@ static int getObjectMember(lua_State *L)
 
             if ((member = lua_touserdata(L, -1)))
             {
-                switch(obj->class->type)
-                {
-                    case LUATYPE_OBJECT:
-                        if(obj->data.object->count != obj->tag )
-                            luaL_error(L, "Invalid object");
-                        break;
-                    case LUATYPE_AI:
-                        if(obj->data.object->count != obj->tag )
-                            luaL_error(L, "Invalid AI");
-                        break;
-                    case LUATYPE_MAP:
-                        /* TODO: also check tag! */
-                        if(obj->data.map->in_memory != MAP_IN_MEMORY )
-                            luaL_error(L, "Invalid map");
-                        break;
-                    case LUATYPE_EVENT:
-                        if(obj->data.context->tag != obj->tag )
-                            luaL_error(L, "Invalid event context");
-                        break;
-                    default:
-                        break;
-                } 
+                if(! obj->class->isValid(L, obj))
+                    luaL_error(L, "Invalid %s object", obj->class->name);
 
                 switch (member->class->type)
                 {
@@ -197,28 +177,8 @@ static int setObjectMember(lua_State *L)
 
             if ((member = lua_touserdata(L, -1)))
             {
-		/* TODO: replace with a validate class method */
-                switch(obj->class->type)		
-                {
-                    case LUATYPE_OBJECT:
-                        if(obj->data.object->count != obj->tag )
-                            luaL_error(L, "Invalid object");
-                        break;
-                    case LUATYPE_AI:
-                        if(obj->data.object->count != obj->tag )
-                            luaL_error(L, "Invalid AI");
-                        break;
-                    case LUATYPE_MAP:
-                        if(obj->data.map->in_memory != MAP_IN_MEMORY )
-                            luaL_error(L, "Invalid map");
-                        break;
-                    case LUATYPE_EVENT:
-                        if(obj->data.context->tag != obj->tag )
-                            luaL_error(L, "Invalid event context");
-                        break;
-                    default:
-                        break;
-                } 
+                if(! obj->class->isValid(L, obj))
+                    luaL_error(L, "Invalid %s object", obj->class->name);
                 
                 switch (member->class->type)
                 {
@@ -415,27 +375,8 @@ static inline lua_object * get_object_arg(lua_State *L, int pos, lua_class *clas
 
     if ((obj = lua_touserdata(L, pos))) 
     {
-        switch(obj->class->type)
-        {
-            case LUATYPE_OBJECT:
-                if(obj->data.object->count != obj->tag )
-                    param_type_err(L, pos, "an invalid object");
-                break;
-            case LUATYPE_AI:
-                if(obj->data.object->count != obj->tag )
-                    param_type_err(L, pos, "an invalid AI");
-                break;
-            case LUATYPE_MAP:
-                if(obj->data.map->in_memory != MAP_IN_MEMORY )
-                    param_type_err(L, pos, "an invalid map");
-                break;
-            case LUATYPE_EVENT:
-                if(obj->data.context->tag != obj->tag )
-                    param_type_err(L, pos, "an invalid event");
-                break;
-            default:
-                break;
-        }
+        if(! obj->class->isValid(L, obj))
+            luaL_error(L, "Invalid %s object", obj->class->name);
         
         return obj;
     }
@@ -523,7 +464,7 @@ void get_lua_args(lua_State *L, const char *fmt, ...)
               *va_arg(ap, lua_object * *) = get_object_arg(L, pos, &Event);
               break;
             
-	    case 'A':
+            case 'A':
               /* AI */
               *va_arg(ap, lua_object * *) = get_object_arg(L, pos, &AI);
               break;
@@ -627,6 +568,7 @@ static void add_class_member(struct lua_State *L, const char *key, lua_class *cl
     lua_settable(L, -3);
 }
 
+/* Gc metamethod for debugging memory leaks */
 int gc(struct lua_State *L)
 {
     lua_object *obj = lua_touserdata(L, 1);
@@ -640,6 +582,12 @@ int gc(struct lua_State *L)
         luaL_error(L, "gc on wierd obj");
     }
     return 0;
+}
+
+/* Default object validator, always returns true */
+static int default_object_validator(struct lua_State *L, lua_object *obj)
+{
+    return TRUE;
 }
 
 /* Set up new class data in the registry */
@@ -702,6 +650,9 @@ int init_class(struct lua_State *L, lua_class *class)
     }
 
     class-> meta    = luaL_ref(L, LUA_REGISTRYINDEX); /* store class metatable in registry */
+
+    if(class->isValid == NULL)
+        class->isValid = default_object_validator;
 
     return 0;
 }
