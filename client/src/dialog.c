@@ -2299,14 +2299,17 @@ void gui_interface_mouse(SDL_Event *e)
 			LOG(-1,"%s\n",keyword);
 			if(element == GUI_INTERFACE_ICON)
 			{
+				sound_play_effect(SOUND_GET, 0, 0, 100);
 				gui_interface_npc->selected = index;
 			}
 			else if(element == GUI_INTERFACE_MESSAGE)
 			{
+				sound_play_effect(SOUND_GET, 0, 0, 100);
 				gui_interface_send_command(0, keyword);
 			}
 			else if(element == GUI_INTERFACE_LINK)
 			{
+				sound_play_effect(SOUND_GET, 0, 0, 100);
 				if(keyword[0]!='/')
 					gui_interface_send_command(0, keyword);
 				else

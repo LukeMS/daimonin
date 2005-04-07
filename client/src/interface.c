@@ -730,21 +730,16 @@ _gui_interface_struct *load_gui_interface(int mode, char *data, int len, int pos
  * if mode is 1, its a real command.
  * mode 0 means to add /talk first.
  */
-gui_interface_send_command(int mode, char *txt)
+gui_interface_send_command(int mode, char *cmd)
 {
-	char msg[1024], cmd[1024];
+	char msg[1024];
 
-	if(gui_interface_npc->icon_select)
-		sprintf(cmd,"%s #%d", txt,gui_interface_npc->selected);
-	else
-		strcpy(cmd, txt);
-
-	draw_info(cmd,COLOR_WHITE);
 	if(mode)
 	{
 		send_command(cmd, -1, SC_NORMAL);
+		/*
 		sprintf(msg,"You talk to %s", cpl.target_name?cpl.target_name:"");
-		draw_info(msg,COLOR_WHITE);
+		draw_info(msg,COLOR_WHITE);*/
 	}
 	else
 	{
