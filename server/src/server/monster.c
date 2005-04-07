@@ -1097,10 +1097,14 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
         return NULL;
     }
 
-    /* this is really needed. 
+    /* 
+     * this is really needed. 
     * a hitter object can be a "system object" ...even a object
     * in the inventory of npc (like a disease). These objects have
     * usually no map.
+    *
+    * Gecko: Hmm... I have to fix this to be able to handle non-mob objects
+    * TODO: I also have to fix the "crash if no map" problem.
     */
     if (other->type != PLAYER && !QUERY_FLAG(other, FLAG_ALIVE))
     {
@@ -1109,6 +1113,7 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
 #endif
         return NULL;
     }
+    
     if (npc->type != MONSTER)
     {
 #ifdef AI_DEBUG

@@ -37,5 +37,13 @@ static int AI_MoveRespondDirections(lua_State *L);
 static int AI_MoveRespondCoordinate(lua_State *L);
 static int AI_MoveRespondObject(lua_State *L);
 
+static int AI_Knows(lua_State *L);
+static int AI_Register(lua_State *L);
+static int AI_UsesDistanceAttack(lua_State *L);
+static int AI_GetFriendship(lua_State *L);
+static int AI_GetAttraction(lua_State *L);
+static int AI_LastSeen(lua_State *L);
+static int AI_GetKnownMobs(lua_State *L);
+
 
 #endif /*AI_OBJECT_H*/

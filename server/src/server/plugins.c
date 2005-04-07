@@ -44,6 +44,7 @@ struct plugin_hooklist  hooklist    =
     free_mempool, create_mempool, nearest_pow_two_exp,
     return_poolchunk_array_real, get_poolchunk_array_real,
 	arch_to_object, find_archetype,
+    register_npc_known_obj,
 };
 
 CFPlugin                PlugList[34];
