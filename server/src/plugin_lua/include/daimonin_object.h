@@ -30,6 +30,7 @@
 #include <plugin_lua.h>
 
 /* GameObject methods  */
+static int  GameObject_Sound(lua_State *L);
 static int  GameObject_Interface(lua_State *L);
 static int  GameObject_CheckTrigger(lua_State *L);
 static int  GameObject_SetSaveBed(lua_State *L);
@@ -65,8 +66,10 @@ static int  GameObject_FindSkill(lua_State *L);
 static int  GameObject_AcquireSkill(lua_State *L);
 static int  GameObject_FindMarkedObject(lua_State *L);
 static int  GameObject_CreatePlayerForce(lua_State *L);
-static int  GameObject_CheckQuestObject(lua_State *L);
-static int  GameObject_AddQuestObject(lua_State *L);
+static int  GameObject_CheckQuest(lua_State *L);
+static int  GameObject_AddQuest(lua_State *L);
+static int  GameObject_CheckQuestItem(lua_State *L);
+static int  GameObject_AddQuestItem(lua_State *L);
 static int  GameObject_CreatePlayerInfo(lua_State *L);
 static int  GameObject_GetPlayerInfo(lua_State *L);
 static int  GameObject_GetNextPlayerInfo(lua_State *L);

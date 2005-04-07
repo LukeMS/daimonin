@@ -165,7 +165,7 @@
 #define HOOK_CHECKFORSPELL      19
 #define HOOK_ESRVSENDINVENTORY  20
 #define HOOK_CREATEARTIFACT     21
-#define HOOK_GETARCHETYPE       22
+#define HOOK_INTERFACE          22
 #define HOOK_UPDATESPEED        23
 #define HOOK_UPDATEOBJECT       24
 #define HOOK_FINDANIMATION      25
@@ -220,9 +220,8 @@
 #define HOOK_MAPTRANSERITEMS     74
 #define HOOK_MAPSAVE             75
 #define HOOK_MAPDELETE           76
-#define HOOK_INTERFACE           77
 
-#define NR_OF_HOOKS              78
+#define NR_OF_HOOKS              77
 
 /*****************************************************************************/
 /* CFParm is the data type used to pass informations between the server and  */
@@ -311,6 +310,8 @@ struct plugin_hooklist
 	object * (*arch_to_object)(archetype *at);
 	archetype * (*find_archetype)(const char *name);
     struct mob_known_obj * (*register_npc_known_obj)(object *npc, object *enemy, int friendship);
+	object * (*get_archetype)(const char *name);
+	void (*play_sound_player_only)(player *pl, int soundnum, int soundtype, int x, int y);
 };
 
 /*****************************************************************************/

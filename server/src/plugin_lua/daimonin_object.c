@@ -32,6 +32,7 @@
 /* Available python methods for the GameObject object */
 static struct method_decl   GameObject_methods[]            =
 {
+    {"Sound",  (lua_CFunction) GameObject_Sound},
     {"Interface",  (lua_CFunction) GameObject_Interface},
     {"SetSaveBed",  (lua_CFunction) GameObject_SetSaveBed},
     {"GetSkill",  (lua_CFunction) GameObject_GetSkill},
@@ -47,8 +48,10 @@ static struct method_decl   GameObject_methods[]            =
     {"FindSkill", (lua_CFunction) GameObject_FindSkill},
     {"AcquireSkill", (lua_CFunction) GameObject_AcquireSkill},
     {"FindMarkedObject", (lua_CFunction) GameObject_FindMarkedObject},
-    {"CheckQuestObject", (lua_CFunction) GameObject_CheckQuestObject},
-    {"AddQuestObject", (lua_CFunction) GameObject_AddQuestObject},
+    {"CheckQuest", (lua_CFunction) GameObject_CheckQuest},
+    {"AddQuest", (lua_CFunction) GameObject_AddQuest},
+    {"CheckQuestItem", (lua_CFunction) GameObject_CheckQuestItem},
+    {"AddQuestItem", (lua_CFunction) GameObject_AddQuestItem},
     {"CreatePlayerForce", (lua_CFunction) GameObject_CreatePlayerForce},
     {"CreatePlayerInfo", (lua_CFunction) GameObject_CreatePlayerInfo},
     {"GetPlayerInfo", (lua_CFunction) GameObject_GetPlayerInfo},
@@ -253,7 +256,31 @@ static const char          *GameObject_flags[NUM_FLAGS + 1 + 1] =
 /* FUNCTIONSTART -- Here all the Lua plugin functions come */
 
 /*****************************************************************************/
-/*                                                                           */
+/* Name   : GameObject_Sound                                                 */
+/* Lua    : object:Sound(x, y, soundnumber, soundtype)                       */
+/* Info   : Play a "player only" sound                                       */
+/* Status : Tested                                                           */
+/*****************************************************************************/
+
+static int GameObject_Sound(lua_State *L)
+{
+    int         x, y, soundnumber, soundtype;
+    lua_object *self;
+	
+    get_lua_args(L, "Oiiii", &self, &x, &y, &soundnumber, &soundtype);
+
+	hooks->play_sound_player_only(CONTR(WHO),soundnumber,soundtype, x, y);
+	
+    return 0;
+}
+
+
+/*****************************************************************************/
+/* Name   : GameObject_Interface                                             */
+/* Lua    : object:Interface(mode, message)                                  */
+/* Info   : This function opens a NPC gui interface on the client            */
+/*        : A mode of -1 means to close explicit a open interface at client  */
+/* Status : Tested                                                           */
 /*****************************************************************************/
 
 static int GameObject_Interface(lua_State *L)
@@ -994,7 +1021,7 @@ static int GameObject_SetGuildForce(lua_State *L)
     }
     LOG(llevDebug, "Lua Warning -> SetGuild: Object %s has no guild_force! Adding it.\n", STRING_OBJ_NAME(WHO));
 
-    walk = hooks->arch_to_object(hooks->find_archetype("guild_force"));
+    walk = hooks->get_archetype("guild_force");
     walk= hooks->insert_ob_in_ob(walk, WHO);
     if (guild && strcmp(guild, "")) {
         FREE_AND_COPY_HASH(walk->title, guild);
@@ -1028,7 +1055,7 @@ static int GameObject_GetGuildForce(lua_State *L)
     }
 
     LOG(llevDebug, "Lua Warning -> GetGuild: Object %s has no guild_force! Adding it.\n", STRING_OBJ_NAME(WHO));
-    walk = hooks->arch_to_object(hooks->find_archetype("guild_force"));
+    walk = hooks->get_archetype("guild_force");
     walk= hooks->insert_ob_in_ob(walk, WHO);
     
     return push_object(L, &GameObject, walk);
@@ -1366,17 +1393,12 @@ static int GameObject_CreatePlayerForce(lua_State *L)
 {
     char       *txt;
     object     *myob;
-    CFParm     *CFR;
     int         time        = 0;
     lua_object *whereptr;
 
     get_lua_args(L, "Os|i", &whereptr, &txt, &time);
 
-    GCFP.Value[0] = (void *) "player_force";
-    CFR = (PlugHooks[HOOK_GETARCHETYPE]) (&GCFP);
-    /*myob = get_archetype("player_force"); */
-    myob = (object *) (CFR->Value[0]);
-    free(CFR);
+    myob = hooks->get_archetype("player_force");
 
     if (!myob || strncmp(STRING_OBJ_NAME(myob), "singularity", 11) == 0)
     {
@@ -1404,13 +1426,97 @@ static int GameObject_CreatePlayerForce(lua_State *L)
 }
 
 /*****************************************************************************/
-/* Name   : GameObject_CheckQuestObject                                      */
-/* Lua    : object:CheckQuestObject(archetype, name)                         */
+/* Name   : GameObject_CheckQuest                                            */
+/* Lua    : object:CheckQuest(archetype, name)                               */
 /* Status : Stable                                                           */
-/* Info   : We get and check the player has a misc'ed quest object           */
-/*        : If so, the player has usally solved this quest before.           */
+/* Info   : We browse the quest object container for a quest_object object   */
 /*****************************************************************************/
-static int GameObject_CheckQuestObject(lua_State *L)
+static int GameObject_CheckQuest(lua_State *L)
+{
+    char       *name;
+    object     *walk;
+    lua_object *self;
+
+    get_lua_args(L, "Os", &self, &name);
+
+    /* lets first check the inventory for the quest_container object */
+    for (walk = WHO->inv; walk != NULL; walk = walk->below)
+    {
+		/* subtype 1 = quest_object container for quest descriptions & triggers */
+        if (walk->type == TYPE_QUEST_CONTAINER && walk->sub_type1 == 1)
+        {
+			/* now fetch the quest_object */
+            for (walk = walk->inv; walk != NULL; walk = walk->below)
+            {
+                if (walk->name && !strcmp(walk->name, name))
+                    return push_object(L, &GameObject, walk);
+            }
+            break;
+        }
+    }
+
+    return 0;
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_AddQuest                                              */
+/* Lua    : object:AddQuest(archetype, name)                                 */
+/* Status : Stable                                                           */
+/* Info   : Add a quest_object to a quest_container = give player a quest    */
+/*****************************************************************************/
+static int GameObject_AddQuest(lua_State *L)
+{
+    char       *name, *msg;
+	int			mode;
+    object     *walk, *myob;
+    lua_object *self;
+	
+    get_lua_args(L, "Osis", &self, &name, &mode, &msg);
+	
+    /* lets first check the inventory for the quest_container object */
+    for (walk = WHO->inv; walk != NULL; walk = walk->below)
+    {
+        if (walk->type == TYPE_QUEST_CONTAINER && walk->sub_type1 == 1)
+            break;
+    }
+	
+    if (!walk) /* no quest container, create it */
+    {
+		walk = hooks->get_archetype("quest_container");
+        if (!walk || strncmp(STRING_OBJ_NAME(walk), "singularity", 11) == 0)
+        {
+            LOG(llevDebug, "Lua WARNING:: AddQuest: Cant't find archtype 'quest_container'\n");
+            luaL_error(L, "Can't find archtype 'quest_container'");
+        }
+		walk->sub_type1 = 1; /* default sub is 0 for quest item container */
+        hooks->insert_ob_in_ob(walk, WHO);
+    }
+
+	myob = hooks->get_archetype("quest_object");
+	
+    if (!myob || strncmp(STRING_OBJ_NAME(myob), "singularity", 11) == 0)
+    {
+        LOG(llevDebug, "Lua WARNING:: AddQuest: Cant't find archtype 'quest_object'\n");
+        luaL_error(L, "Can't find archtype 'quest_object'");
+    }
+	
+    /* store name & arch name of the quest obj. so we can id it later */
+    FREE_AND_COPY_HASH(myob->name, name);
+    FREE_AND_COPY_HASH(myob->msg, msg);
+	myob->last_heal = (sint16)mode;
+
+    myob = hooks->insert_ob_in_ob(myob, walk);
+	
+    return push_object(L, &GameObject, myob);
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_CheckQuestItem                                        */
+/* Lua    : object:CheckQuestItem(archetype, name)                           */
+/* Status : Stable                                                           */
+/* Info   : Check the one drop and single quest item container for an item   */
+/*****************************************************************************/
+static int GameObject_CheckQuestItem(lua_State *L)
 {
     char       *arch_name;
     char       *name;
@@ -1422,7 +1528,7 @@ static int GameObject_CheckQuestObject(lua_State *L)
     /* lets first check the inventory for the quest_container object */
     for (walk = WHO->inv; walk != NULL; walk = walk->below)
     {
-        if (walk->type == TYPE_QUEST_CONTAINER)
+        if (walk->type == TYPE_QUEST_CONTAINER && !walk->sub_type1)
         {
             /* now lets check our quest item is inside.
                      * we use arch name and object name as id, if needed we
@@ -1442,18 +1548,17 @@ static int GameObject_CheckQuestObject(lua_State *L)
 }
 
 /*****************************************************************************/
-/* Name   : GameObject_AddQuestObject                                        */
-/* Lua    : object:AddQuestObject(archetype, name)                           */
+/* Name   : GameObject_AddQuestItem                                          */
+/* Lua    : object:AddQuestItem(archetype, name)                             */
 /* Status : Stable                                                           */
 /* Info   : Add the misc'ed quest object to players quest container.         */
 /*        : create the quest container if needed                             */
 /*****************************************************************************/
-static int GameObject_AddQuestObject(lua_State *L)
+static int GameObject_AddQuestItem(lua_State *L)
 {
     char       *arch_name;
     char       *name;
     object     *walk, *myob;
-    CFParm     *CFR;
     lua_object *self;
 
     get_lua_args(L, "Oss", &self, &arch_name, &name);
@@ -1461,31 +1566,23 @@ static int GameObject_AddQuestObject(lua_State *L)
     /* lets first check the inventory for the quest_container object */
     for (walk = WHO->inv; walk != NULL; walk = walk->below)
     {
-        if (walk->type == TYPE_QUEST_CONTAINER)
+        if (walk->type == TYPE_QUEST_CONTAINER && !walk->sub_type1)
             break;
     }
 
     if (!walk) /* no quest container, create it */
     {
-        GCFP.Value[0] = (void *) "quest_container";
-        CFR = (PlugHooks[HOOK_GETARCHETYPE]) (&GCFP);
-        walk = (object *) (CFR->Value[0]);
-        free(CFR);
-
+		walk = hooks->get_archetype("quest_container");
         if (!walk || strncmp(STRING_OBJ_NAME(walk), "singularity", 11) == 0)
         {
-            LOG(llevDebug, "Lua WARNING:: AddQuestObject: Cant't find archtype 'quest_container'\n");
+            LOG(llevDebug, "Lua WARNING:: AddQuestItem: Cant't find archtype 'quest_container'\n");
             luaL_error(L, "Can't find archtype 'quest_container'");
         }
 
         hooks->insert_ob_in_ob(walk, WHO);
     }
 
-    GCFP.Value[0] = (void *) "player_info";
-    CFR = (PlugHooks[HOOK_GETARCHETYPE]) (&GCFP);
-    myob = (object *) (CFR->Value[0]);
-    free(CFR);
-
+	myob = hooks->get_archetype("player_info");
     if (!myob || strncmp(STRING_OBJ_NAME(myob), "singularity", 11) == 0)
     {
         LOG(llevDebug, "Lua WARNING:: AddQuestObject: Cant't find archtype 'player_info'\n");
@@ -1515,16 +1612,11 @@ static int GameObject_CreatePlayerInfo(lua_State *L)
     char       *txt;
     char        txt2[16]    = "player_info";
     object     *myob;
-    CFParm     *CFR;
     lua_object *whereptr;
 
     get_lua_args(L, "Os", &whereptr, &txt);
 
-    GCFP.Value[0] = (void *) (txt2);
-    CFR = (PlugHooks[HOOK_GETARCHETYPE]) (&GCFP);
-    myob = (object *) (CFR->Value[0]);
-    free(CFR);
-
+    myob = hooks->get_archetype(txt2);
     if (!myob || strncmp(STRING_OBJ_NAME(myob), "singularity", 11) == 0)
     {
         LOG(llevDebug, "Lua WARNING:: CreatePlayerInfo: Cant't find archtype 'player_info'\n");
@@ -1606,17 +1698,11 @@ static int GameObject_CreateInvisibleInside(lua_State *L)
     char       *txt;
     char        txt2[6] = "force";
     object     *myob;
-    CFParm     *CFR;
     lua_object *whereptr;
 
     get_lua_args(L, "Os", &whereptr, &txt);
 
-    GCFP.Value[0] = (void *) (txt2);
-    CFR = (PlugHooks[HOOK_GETARCHETYPE]) (&GCFP);
-
-    /*myob = get_archetype("force"); */
-    myob = (object *) (CFR->Value[0]);
-    free(CFR);
+    myob = hooks->get_archetype(txt2);
 
     if (!myob || strncmp(STRING_OBJ_NAME(myob), "singularity", 11) == 0)
     {
@@ -1652,10 +1738,6 @@ static int GameObject_CreateObjectInside(lua_State *L)
     object     *myob, *tmp;
     int         value = -1, id, nrof = 1;
     char       *txt;
-    /*    char *tmpname;
-        object *test;
-        int i;*/
-    CFParm     *CFR;
     lua_object *whereptr;
 
     /* 0: name
@@ -1667,11 +1749,7 @@ static int GameObject_CreateObjectInside(lua_State *L)
 
     get_lua_args(L, "Osii|i", &whereptr, &txt, &id, &nrof, &value);
 
-    GCFP.Value[0] = (void *) (txt);
-    CFR = (PlugHooks[HOOK_GETARCHETYPE]) (&GCFP);
-    myob = (object *) (CFR->Value[0]);
-    free(CFR);
-
+    myob = hooks->get_archetype(txt);
     if (!myob || strncmp(STRING_OBJ_NAME(myob), "singularity", 11) == 0)
     {
         LOG(llevDebug, "BUG GameObject_CreateObjectInside(): ob:>%s< = NULL!\n", STRING_OBJ_NAME(myob));

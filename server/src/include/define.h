@@ -300,7 +300,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define TYPE_AGGRO_HISTORY		127		/* aggro history - core base object for aggro handling. */
 #define TYPE_DAMAGE_INFO		128		/* info object for aggro, group damage, exp sharing and DOT handling */
 
-/* unused: 129 */
+#define TYPE_QUEST_OBJECT		129		/* a quest object describes & interact with quests & other quest_objects */
 #define SKILLSCROLL             130 /* can add a skill to player's inventory -bt.*/
 #define DEEP_SWAMP              138
 #define IDENTIFY_ALTAR          139

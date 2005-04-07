@@ -133,6 +133,7 @@ static struct constant_decl     Game_constants[]    =
     {"TYPE_SWARM_SPELL"             ,SWARM_SPELL}, {"TYPE_RUNE"                   ,RUNE},
     {"TYPE_POWER_CRYSTAL"           ,POWER_CRYSTAL,}, {"TYPE_CORPSE"                 ,CORPSE},
     {"TYPE_DISEASE"                 ,DISEASE}, {"TYPE_SYMPTOM"                ,SYMPTOM},
+	{"TYPE_QUEST_OBJECT"                ,TYPE_QUEST_OBJECT},
     {NULL, 0}
 };
 
