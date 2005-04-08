@@ -61,7 +61,7 @@ bool NPC::Init(SceneManager *mSceneMgr, SceneNode  *Node)
 	Real posY = atof(strTemp.c_str());
 	Option::getSingleton().getDescStr("StartZ", strTemp);
 	Real posZ = atof(strTemp.c_str());
-	mNode   = Node->createChildSceneNode(Vector3(posX, posY, posZ), Quaternion(1.0,0.0,0.0,0.0));
+	mNode = Node->createChildSceneNode(Vector3(posX, posY, posZ), Quaternion(1.0,0.0,0.0,0.0));
 
 	Option::getSingleton().getDescStr("MeshSize", strTemp);
 	Real size = atof(strTemp.c_str());
@@ -96,6 +96,21 @@ bool NPC::Init(SceneManager *mSceneMgr, SceneNode  *Node)
 	}
 	++mInstanceNr;
 	return true;
+}
+
+//=================================================================================================
+//
+//=================================================================================================
+void NPC::updateTexture(int textureNr)
+{
+	string strTemp;
+	Option::getSingleton().getDescStr("Material", strTemp);
+	MaterialPtr mMaterial = MaterialManager::getSingleton().getByName(strTemp);
+	if (!textureNr) Option::getSingleton().getDescStr("Tex_001", strTemp);
+	else            Option::getSingleton().getDescStr("Tex_000", strTemp);
+	mMaterial->unload();
+	mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(strTemp);
+	mMaterial->reload();
 }
 
 //=================================================================================================

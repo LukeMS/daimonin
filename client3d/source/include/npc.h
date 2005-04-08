@@ -57,6 +57,7 @@ class NPC
 	void toggleAnimaGroup(); 
 	const Vector3& getPos() { return mTranslateVector; }
     void updateAnim(const FrameEvent& event);
+    void updateTexture(int textureNr);
 };
 
 extern NPC *NPC_Enemy1;

@@ -58,7 +58,6 @@ Event::Event(RenderWindow* win, Camera* cam, MouseMotionListener *mMMotionListen
 	ChatWin->Print("-----------------------------------------", TXT_YELLOW);
 	ChatWin->Print("  L            -> Lauch network");
 	ChatWin->Print("  C            -> Camera detail");
-	ChatWin->Print("  F            -> Filtering");
 	ChatWin->Print("  Page Up/Down  -> Camera view.");
 	ChatWin->Print("  Print          -> Screenshot.");
 	ChatWin->Print("Player commands (depends on model):", TXT_WHITE);
@@ -69,17 +68,16 @@ Event::Event(RenderWindow* win, Camera* cam, MouseMotionListener *mMMotionListen
 	ChatWin->Print("  D    -> Death.");
 	ChatWin->Print("  H    -> Hit.");
 	ChatWin->Print("  F1   -> Toggle Anim Group.");
-	ChatWin->Print("Enemy commands:", TXT_WHITE);
-	ChatWin->Print("  J    -> Turn left");
-	ChatWin->Print("  K    -> Turn right");
-	TextWin->Print("OOPS...", TXT_YELLOW);
-	TextWin->Print("---------------------", TXT_YELLOW);
-	TextWin->Print("Its getting late!");
-	TextWin->Print("Press 'W' for details...");
-
-	TextWin->Print(" ");
+	TextWin->Print("Enemy commands:", TXT_WHITE);
+	TextWin->Print("  J    -> Turn left");
+	TextWin->Print("  K    -> Turn right");
+	TextWin->Print("  P    -> Eat rotten food");
+	TextWin->Print("  Q    -> Eat anti-poison");
+	TextWin->Print("Extras:", TXT_WHITE);
+	TextWin->Print("  W    -> TimeWarp");
 	TextWin->Print("Press +/- on numpad for zoom.");
-
+	TextWin->Print(" ");
+	TextWin->Print(" ");
 
 	/////////////////////////////////////////////////////////////////////////////////////////
 	// Create unbuffered key & mouse input.
@@ -90,7 +88,7 @@ Event::Event(RenderWindow* win, Camera* cam, MouseMotionListener *mMMotionListen
 	mEventProcessor->addKeyListener(this);
 	mEventProcessor->addMouseMotionListener(this);
 	mEventProcessor->addMouseListener(this);			
-	mInputDevice =   mEventProcessor->getInputReader();
+	mInputDevice =  mEventProcessor->getInputReader();
     mMouseMotionListener = mMMotionListener;
     mMouseListener = mMListener;
 
@@ -304,8 +302,12 @@ void Event::keyPressed(KeyEvent *e)
 		case KC_K:
 	        NPC_Enemy1->turning(-PLAYER_TURN_SPEED);
 			break;
-
-
+		case KC_P:
+	        NPC_Enemy1->updateTexture(0);
+			break;
+		case KC_Q:
+	        NPC_Enemy1->updateTexture(1);
+			break;
 
 		///////////////////////////////////////////////////////////////////////// 
 		// Engine settings.
