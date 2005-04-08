@@ -307,11 +307,13 @@ struct plugin_hooklist
     uint32 (*nearest_pow_two_exp)(uint32 n);
     void (*return_poolchunk_array_real)(void *data, uint32 arraysize_exp, struct mempool *pool);
     void*(*get_poolchunk_array_real)(struct mempool *pool, uint32 arraysize_exp);
-	object * (*arch_to_object)(archetype *at);
-	archetype * (*find_archetype)(const char *name);
+    object * (*arch_to_object)(archetype *at);
+    archetype * (*find_archetype)(const char *name);
     struct mob_known_obj * (*register_npc_known_obj)(object *npc, object *enemy, int friendship);
-	object * (*get_archetype)(const char *name);
-	void (*play_sound_player_only)(player *pl, int soundnum, int soundtype, int x, int y);
+    int (*get_rangevector)(object *op1, object *op2, rv_vector *retval, int flags);
+    int (*get_rangevector_from_mapcoords)(mapstruct *map1, int x1, int y1, mapstruct *map2, int x2, int y2, rv_vector *retval, int flags);
+    object * (*get_archetype)(const char *name);
+    void (*play_sound_player_only)(player *pl, int soundnum, int soundtype, int x, int y);
 };
 
 /*****************************************************************************/
