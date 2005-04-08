@@ -584,6 +584,7 @@ x 5
 y 4
 end
 arch stair_down
+name stairs to waypoint testmap
 slaying testmap_waypoints
 hp 1
 sp 1
@@ -688,7 +689,8 @@ y 4
 end
 arch sign
 msg
-Waypoint testmap
+Left: waypoints
+Right: ai
 endmsg
 x 6
 y 4
@@ -790,7 +792,11 @@ arch floor_ostone1
 x 7
 y 3
 end
-arch floor_ostone1
+arch stair_down
+name stairs to ai testmap
+slaying testmap_ai
+hp 1
+sp 1
 x 7
 y 4
 end
