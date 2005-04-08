@@ -33,6 +33,13 @@ Facing   : "90"
 # If your model walks sideways you can fix this here.
 FOffset  : "90"
 
+# The material name of the model.
+Material : "Material_#22/Texture"
+
+# The textures of the model.
+Tex_000  : "scorpion.jpg"
+Tex_001  : "scorpion2.jpg"
+
 # The animation groups (xyz1 - xyz3) are toggled by F1.
 Idle1    : "walk"
 Idle2    : ""
