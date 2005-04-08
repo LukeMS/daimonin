@@ -86,6 +86,7 @@ static struct method_decl   GameObject_methods[]            =
     {"CheckTrigger", (lua_CFunction) GameObject_CheckTrigger}, {"Clone", (lua_CFunction) GameObject_Clone},
     {"Move", (lua_CFunction) GameObject_Move},
     {"GetAI", (lua_CFunction) GameObject_GetAI},
+    {"GetVector", (lua_CFunction) GameObject_GetVector},
 
     // {"GetUnmodifiedAttribute", (lua_CFunction)GameObject_GetUnmodifiedAttribute},
     {NULL, NULL}
@@ -2353,6 +2354,38 @@ static int GameObject_GetAI(lua_State *L)
         return 0;
 
     return push_object(L, &AI, self->data.object);
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_GetVector                                             */
+/* Lua    : object:GetVector(other)                                          */
+/* Info   : Get the distance and direction from object to other              */
+/*          Returns NIL if it couldn't be calculated (either object wasn't   */
+/*          on a map, they were in separate mapsets or too far away from     */
+/*          eachother)                                                       */
+/*          On success, returns the following 4 values:                      */
+/*          - distance (absolute euclidian distance)                         */
+/*          - direction (0-8), corresponds to game.NORTH, game.EAST etc      */
+/*          - x distance (can be negative)                                   */
+/*          - y distance (can be negative)                                   */
+/* Status : Tested                                                           */
+/*****************************************************************************/
+static int GameObject_GetVector(lua_State *L)
+{
+    lua_object *self, *other;
+    rv_vector rv;
+
+    get_lua_args(L, "OO", &self, &other);
+
+    if(! hooks->get_rangevector(self->data.object, other->data.object, &rv, RV_DIAGONAL_DISTANCE))
+        return 0;
+
+    lua_pushnumber(L, rv.distance);
+    lua_pushnumber(L, rv.direction);
+    lua_pushnumber(L, rv.distance_x);
+    lua_pushnumber(L, rv.distance_y);
+    
+    return 4;
 }
 
 /* FUNCTIONEND -- End of the GameObject methods. */

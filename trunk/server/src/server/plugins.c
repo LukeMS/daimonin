@@ -43,10 +43,11 @@ struct plugin_hooklist  hooklist    =
     insert_ob_in_ob, insert_ob_in_map, move_ob,
     free_mempool, create_mempool, nearest_pow_two_exp,
     return_poolchunk_array_real, get_poolchunk_array_real,
-	arch_to_object, find_archetype,
-    register_npc_known_obj,
-	 get_archetype,
-	play_sound_player_only	
+    arch_to_object, find_archetype,
+    register_npc_known_obj, 
+    get_rangevector, get_rangevector_from_mapcoords, 
+    get_archetype,
+    play_sound_player_only    
 };
 
 CFPlugin                PlugList[34];
@@ -282,7 +283,7 @@ void removeOnePlugin(const char *id)
     int plid;
     int j;
 
-	/* what that warning means MT-2005 */
+    /* what that warning means MT-2005 */
     /* LOG(llevDebug, "Warning - removeOnePlugin non-canon under Win32\n"); */
     plid = findPlugin(id);
     if (plid < 0)
@@ -1247,12 +1248,12 @@ CFParm * CFWGetFirstArchetype(CFParm *PParm)
 
 CFParm * CFWDeposit(CFParm *PParm)
 {
-    static CFParm		CFP;
-    static int			val;
-    int					pos     = 0;
-    char			   *text    = (char *) (PParm->Value[2]);
-    object			   *who = (object*) (PParm->Value[0]),
-					   *bank = (object *) (PParm->Value[1]);
+    static CFParm        CFP;
+    static int            val;
+    int                    pos     = 0;
+    char               *text    = (char *) (PParm->Value[2]);
+    object               *who = (object*) (PParm->Value[0]),
+                       *bank = (object *) (PParm->Value[1]);
     _money_block        money;
 
     val = 0;
@@ -1934,21 +1935,21 @@ CFParm * CFMapDelete(CFParm *PParm)
 
 CFParm * CFInterface(CFParm *PParm)
 {
-    object			   *who		= (object*) (PParm->Value[0]);
-    int					mode	= *(int *) (PParm->Value[1]);
-    char			   *text    = (char *) (PParm->Value[2]);
-	
-	SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_INTERFACE);
+    object               *who        = (object*) (PParm->Value[0]);
+    int                    mode    = *(int *) (PParm->Value[1]);
+    char               *text    = (char *) (PParm->Value[2]);
+    
+    SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_INTERFACE);
 
-	/* NPC_INTERFACE_MODE_NO will send a clear body = remove interface to the client */
-	if(mode != NPC_INTERFACE_MODE_NO)
-	{
-		SockList_AddChar(&global_sl, (char)mode);	
-		strcpy(global_sl.buf+global_sl.len, text);
-		global_sl.len += strlen(text)+1;
-	}
+    /* NPC_INTERFACE_MODE_NO will send a clear body = remove interface to the client */
+    if(mode != NPC_INTERFACE_MODE_NO)
+    {
+        SockList_AddChar(&global_sl, (char)mode);    
+        strcpy(global_sl.buf+global_sl.len, text);
+        global_sl.len += strlen(text)+1;
+    }
 
-	Send_With_Handling(&CONTR(who)->socket, &global_sl);
+    Send_With_Handling(&CONTR(who)->socket, &global_sl);
     return NULL;
 }
 

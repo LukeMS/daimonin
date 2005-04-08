@@ -95,6 +95,7 @@ static int  GameObject_PayAmount(lua_State *L);
 static int  GameObject_SendCustomCommand(lua_State *L);
 static int  GameObject_Clone(lua_State *L);
 static int  GameObject_GetAI(lua_State *L);
+static int  GameObject_GetVector(lua_State *L);
 
 #if 0
 /* Hmmm... Still requires constants... */

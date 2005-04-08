@@ -2909,6 +2909,8 @@ mapstruct * out_of_map2(mapstruct *m, int *x, int *y)
  * that the creature should head.  part is the part of the
  * monster that is closest.
  *
+ * retval.distance is always euclidian distance with this function.
+ *
  * get_rangevector looks at op1 and op2, and fills in the
  * structure for op1 to get to op2.
  * We already trust that the caller has verified that the
@@ -2917,8 +2919,9 @@ mapstruct * out_of_map2(mapstruct *m, int *x, int *y)
  * if the objects are not on maps, results are also likely to
  * be unexpected
  *
- * Flags: 0x1 is don't translate for closest body part.
- *        0x2 is do recursive search on adjacent tiles.
+ * Flags: 
+ *   RV_IGNORE_MULTIPART (0x1) - don't translate for closest body part.
+ *   RV_RECURSIVE_SEARCH (0x2) - do recursive search on adjacent tiles.
  * + any flags accepted by get_rangevector_from_mapcoords() below.
  *
  * Returns TRUE if successful, or FALSE otherwise.
@@ -2979,12 +2982,13 @@ int get_rangevector(object *op1, object *op2, rv_vector *retval, int flags)
  * If the function fails (because of the maps being separate), it will return FALSE and
  * the vector is not otherwise touched. Otherwise it will return TRUE.
  *
- * Calculates manhattan distance (dx+dy) per default. (fast)
- * - Flags:
- *   0x4 - calculate euclidian (straight line) distance (slow)
- *   0x8 - calculate diagonal  (max(dx + dy)) distance   (fast)
- *   0x8|0x04 - don't calculate distance (or direction) (fastest)
- *
+ * Flags:
+ *  RV_MANHATTAN_DISTANCE (0x0) - Calculate manhattan distance (dx+dy) (default) (fast)
+ *  RV_EUCLIDIAN_DISTANCE (0x4) - (straight line) distance (slow)
+ *  RV_DIAGONAL_DISTANCE  (0x8) - diagonal (max(dx + dy)) distance   (fast)
+ *  RV_NO_DISTANCE   (0x8|0x04) - don't calculate distance (or direction) (fastest)
+ *  RV_RECURSIVE_SEARCH   (0x2) - handle separate maps better (slow and does still not 
+ *                                search the whole mapset).
  */
 int get_rangevector_from_mapcoords(mapstruct *map1, int x1, int y1, mapstruct *map2, int x2, int y2, rv_vector *retval,
                                    int flags)
