@@ -176,6 +176,9 @@ typedef struct pl_player
     uint32              action_casting;
     uint32              action_range;
 
+	object			   *quest_cont_one_drop;
+	object			   *quest_cont_quests;
+
     uint32              exp_calc_tag;               /* used from aggro.c/exp.c */
     object             *exp_calc_obj;
     uint32              mark_count;                 /* count or mark object */

@@ -300,8 +300,11 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define TYPE_AGGRO_HISTORY		127		/* aggro history - core base object for aggro handling. */
 #define TYPE_DAMAGE_INFO		128		/* info object for aggro, group damage, exp sharing and DOT handling */
 
-#define TYPE_QUEST_OBJECT		129		/* a quest object describes & interact with quests & other quest_objects */
-#define SKILLSCROLL             130 /* can add a skill to player's inventory -bt.*/
+#define TYPE_QUEST_TRIGGER		129		/* a quest trigger describes & interact with quests & other quest things */
+#define SKILLSCROLL             130		/* can add a skill to player's inventory -bt.*/
+#define TYPE_QUEST_OBJECT		131		/* a quest object - it will be set to what we need. Its better & cleaner to
+                                         * use a own type for it instead of marking "real" object with fancy flags 
+                                         */
 #define DEEP_SWAMP              138
 #define IDENTIFY_ALTAR          139
 #define CANCELLATION            141

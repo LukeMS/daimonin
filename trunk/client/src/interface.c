@@ -733,7 +733,7 @@ _gui_interface_struct *load_gui_interface(int mode, char *data, int len, int pos
 gui_interface_send_command(int mode, char *cmd)
 {
 	char msg[1024];
-
+	
 	if(mode)
 	{
 		send_command(cmd, -1, SC_NORMAL);

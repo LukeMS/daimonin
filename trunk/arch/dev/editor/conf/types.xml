@@ -7066,6 +7066,74 @@
   </attribute>
 </type>
 <!--####################################################################-->
+<type number="129" name="Quest Trigger">
+  <ignore>
+    <attribute arch="sub_type" />
+    <attribute arch="damned" />
+    <attribute arch="one_drop" />
+    <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
+  </ignore>
+  <description><![CDATA[ The Quest trigger is used to syncronize and
+drive quests. If the player/trigger has a quest trigger with same
+settings, the item is triggered. Inside a mob inventory the quest
+trigger works as a container for the real quest objects.]]>
+  </description>
+  <attribute arch="name" editor="quest id string" type="string">
+    ID string which identifies the quest.
+  </attribute>
+  <attribute arch="magic" editor="quest id number" type="int">
+    A quest can have different steps. Only when the quest id string AND number
+    are equal, the quest event is triggered.
+  </attribute>
+  <attribute arch="last_heal" editor="quest id step" type="int">
+    If triggered, the quest trigger sets the trigger quest object to this value.
+  </attribute>
+  <attribute arch="one_drop" editor="one drop quest" type="bool">
+    If set, the trigger don't is connected to a quest but its a one drop quest.
+    The object(s) inside are checked against the one drop quest container.
+    If the item is not in and the trigger level is lower or equal to the
+    players level, the one drop item is given the player.
+  </attribute>
+  <attribute arch="level" editor="one drop quest level" type="int">
+    If set, the player only gets the one drop item when his level is higher or
+    equal this setting.
+  </attribute>
+</type>
+<!--####################################################################-->
+<type number="131" name="Quest Object">
+  <ignore>
+    <ignore_list name="default_setting" />
+  </ignore>
+  <description><![CDATA[A Quest Object is a generic object which fakes a real
+object. Its used as a dummy object when we send someone to get that sword or 
+that food.]]>
+  </description>
+  <attribute arch="no_pass" editor="blocking passage" type="bool">
+    If set, the object cannot be passed by players nor monsters.
+  </attribute>
+  <attribute arch="pass_thru" editor="ethereal can pass" type="bool">
+    If no_pass (blocking passage) is set, no one can pass. If this
+    flag is set too, ethereal objects with the CAN_PASS_THRU flag can
+    pass. This is used for example from ghosts who moves through doors.
+  </attribute>
+  <attribute arch="can_roll" editor="moveable" type="bool">
+    If set, the object is able to "roll", so it can be pushed around.
+    This setting is used for boulders and barrels.
+  </attribute>
+  <attribute arch="unique" editor="unique item" type="bool">
+    Unique items exist only one time on a server. If the item
+    is taken, lost or destroyed - it's gone for good.
+  </attribute>
+  <attribute arch="startequip" editor="godgiven item" type="bool">
+    A godgiven item vanishes as soon as the player
+    drops it to the ground.
+  </attribute>
+  <attribute arch_begin="msg" arch_end="endmsg" editor="description" type="text">
+    This text may describe the object.
+  </attribute>
+</type>
+<!--####################################################################-->
 <type number="119" name="Waypoint Object">
   <ignore>
     <attribute arch="ac" />

@@ -1430,7 +1430,7 @@ static int GameObject_CreatePlayerForce(lua_State *L)
 /* Name   : GameObject_CheckQuest                                            */
 /* Lua    : object:CheckQuest(archetype, name)                               */
 /* Status : Stable                                                           */
-/* Info   : We browse the quest object container for a quest_object object   */
+/* Info   : We browse the quest object container for a quest_trigger object  */
 /*****************************************************************************/
 static int GameObject_CheckQuest(lua_State *L)
 {
@@ -1443,10 +1443,10 @@ static int GameObject_CheckQuest(lua_State *L)
     /* lets first check the inventory for the quest_container object */
     for (walk = WHO->inv; walk != NULL; walk = walk->below)
     {
-		/* subtype 1 = quest_object container for quest descriptions & triggers */
+		/* subtype 1 = quest_trigger container for quest descriptions & triggers */
         if (walk->type == TYPE_QUEST_CONTAINER && walk->sub_type1 == 1)
         {
-			/* now fetch the quest_object */
+			/* now fetch the quest_trigger */
             for (walk = walk->inv; walk != NULL; walk = walk->below)
             {
                 if (walk->name && !strcmp(walk->name, name))
@@ -1463,7 +1463,7 @@ static int GameObject_CheckQuest(lua_State *L)
 /* Name   : GameObject_AddQuest                                              */
 /* Lua    : object:AddQuest(archetype, name)                                 */
 /* Status : Stable                                                           */
-/* Info   : Add a quest_object to a quest_container = give player a quest    */
+/* Info   : Add a quest_trigger to a quest_container = give player a quest   */
 /*****************************************************************************/
 static int GameObject_AddQuest(lua_State *L)
 {
@@ -1491,14 +1491,15 @@ static int GameObject_AddQuest(lua_State *L)
         }
 		walk->sub_type1 = 1; /* default sub is 0 for quest item container */
         hooks->insert_ob_in_ob(walk, WHO);
+		CONTR(WHO)->quest_cont_one_drop=walk;
     }
 
-	myob = hooks->get_archetype("quest_object");
+	myob = hooks->get_archetype("quest_trigger");
 	
     if (!myob || strncmp(STRING_OBJ_NAME(myob), "singularity", 11) == 0)
     {
-        LOG(llevDebug, "Lua WARNING:: AddQuest: Cant't find archtype 'quest_object'\n");
-        luaL_error(L, "Can't find archtype 'quest_object'");
+        LOG(llevDebug, "Lua WARNING:: AddQuest: Cant't find archtype 'quest_trigger'\n");
+        luaL_error(L, "Can't find archtype 'quest_trigger'");
     }
 	
     /* store name & arch name of the quest obj. so we can id it later */
@@ -1581,6 +1582,7 @@ static int GameObject_AddQuestItem(lua_State *L)
         }
 
         hooks->insert_ob_in_ob(walk, WHO);
+		CONTR(WHO)->quest_cont_one_drop=walk;
     }
 
 	myob = hooks->get_archetype("player_info");

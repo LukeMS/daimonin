@@ -917,6 +917,9 @@ void fix_player(object *op)
     op->path_denied = op->arch->clone.path_denied;
     op->terrain_flag = op->arch->clone.terrain_flag;        /* reset terrain moving abilities */
 
+	pl->quest_cont_one_drop = NULL;
+	pl->quest_cont_quests = NULL;
+
     /* only adjust skills which has no own level/exp values */
     if (op->chosen_skill && !op->chosen_skill->last_eat && op->chosen_skill->exp_obj)
         op->chosen_skill->level = op->chosen_skill->exp_obj->level;
@@ -1002,6 +1005,15 @@ void fix_player(object *op)
          || tmp->type == ROD
          || tmp->type == HORN)
             continue;
+
+		if(tmp->type == TYPE_QUEST_CONTAINER)
+		{
+			if(tmp->sub_type1)
+				pl->quest_cont_quests = tmp;
+			else
+				pl->quest_cont_one_drop = tmp;
+			continue;
+		}
 
         /* this is needed, because our applied light can be overruled by a light giving
              * object like holy glowing aura force or something 
