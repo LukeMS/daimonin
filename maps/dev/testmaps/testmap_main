@@ -130,8 +130,8 @@ y 1
 end
 arch exit
 slaying ../../stoneglow/stoneglow_0000
-hp 8
-sp 10
+hp 23
+sp 14
 x 1
 y 1
 end

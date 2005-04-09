@@ -142,8 +142,11 @@
   <type number="124" name="WEAPON_IMPROVER" />
   <type number="125" name="TYPE_WEALTH" />
   <type number="126" name="TYPE_MOB_AI" />
-
+  <type number="127" name="TYPE_AGGRO_HISTORY" />
+  <type number="128" name="TYPE_DAMAGE_INFO" />
+  <type number="129" name="TYPE_QUEST_TRIGGER" />
   <type number="130" name="SKILLSCROLL" />
+  <type number="131" name="TYPE_QUEST_OBJECT" />
   
   <type number="138" name="DEEP_SWAMP" />
   <type number="139" name="IDENTIFY_ALTAR" />

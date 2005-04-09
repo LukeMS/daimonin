@@ -21573,6 +21573,25 @@ maxsp 1
 walk_on 1
 fly_on 1
 end
+Object quest_object
+type 131
+editor_folder special/special
+material_real 0
+quest_item 1
+one_drop 1
+item_quality 100
+item_condition 100
+layer 3
+end
+Object quest_trigger
+type 129
+editor_folder special/special
+sys_object 1
+applied 0
+no_drop 1
+layer 0
+face quest.101
+end
 Object rand_drop
 type 102
 editor_folder special/special

@@ -2007,76 +2007,57 @@ void update_object(object *op, int action)
         update_object(op->more, action);
 }
 
-/* search a player inventory for quest item placeholder.
- * this function is NOT called very often - even it takes some
- * cycles when we examine a group.
- */
-static int find_quest_item_inv(object *target, object *obj)
+
+
+static inline int find_one_drop_quest_item(object *target, object *obj)
 {
-    object *tmp;
+	object *tmp;
+	
+    if ((tmp=CONTR(target)->quest_cont_one_drop) )
+	{
+		for (tmp = tmp->inv; tmp; tmp = tmp->below)
+		{
+			if (tmp->name == obj->name && tmp->race == obj->arch->name && tmp->title == obj->title)
+				return 1;
+		}
+	}
 
-    for (tmp = target->inv; tmp; tmp = tmp->below)
-    {
-        if (tmp->inv)
-        {
-            if (find_quest_item_inv(tmp->inv, obj))
-                return 1;
-        }
-
-        if (tmp->type == obj->type && tmp->name == obj->name && tmp->arch->name == obj->arch->name)
-            return 1;
-    }
-
-    return 0;
+	return 0;
 }
 
-/* Inside the QUEST_CONTAINER we have 2 things: a INFO object which tells us
- * we have "finished" the quest (if we kill the quest mob again it don't drop
- * the quest item again) or a "quest status" info. 
- * Whats the difference? We can do 2 kinds of quests - we killing a quest mob
- * but we have not get any quest and don't know about the quest. We get the
- * quest item as "quest start" and the player must search for that quest.
- * Thats a "open" quest.
- * A "closed" quest mob will never drop the item until we have before unlocked
- * it by getting the quest of doing other action which give us the status to
- * do the quest. Thats needed for "secret" quests and/or for quests with different
- * steps.
- * The FLAG_INV_LOCKED flag is used as marker here for closed quests.
- */
-static inline int find_quest_item(object *target, object *obj, int drop_lock)
+
+static inline object *find_quest_trigger(object *target, object *obj)
 {
-    object *tmp;
+	object *tmp;
+	
+    if ((tmp=CONTR(target)->quest_cont_quests) )
+	{	
+		for (tmp = tmp->inv; tmp; tmp = tmp->below)
+		{
+			if (tmp->name == obj->name && (tmp->magic == obj->magic || tmp->magic == obj->last_heal))
+				return tmp;
+		}
+	}
 
-    if (!target || target->type != PLAYER)
-        return 0;
+	return NULL;
+}
 
-    tmp = present_in_ob(TYPE_QUEST_CONTAINER, target);
-    if (tmp)
-    {
-        for (tmp = tmp->inv; tmp; tmp = tmp->below)
-        {
-            if (tmp->name == obj->name && !strcmp(tmp->race, obj->arch->name))
-            {
-                if (!drop_lock)
-                    return 1; /* return we have it - don't drop */
-                else
-                {
-                    if (QUERY_FLAG(tmp, FLAG_INV_LOCKED)) /* we have it and its allowed to drop */
-                    {
-                        /* but don't drop if we had found it previous */
-                        return find_quest_item_inv(target, obj);
-                    }
-                    else
-                        return 1; /* always don't drop */
-                }
-            }
-        }
-    }
-    /* its locked and a closed quest - don't drop because we have no trigger */
-    if (drop_lock)
-        return 1;
-
-    return find_quest_item_inv(target, obj);
+static int find_quest_item(object *target, object *obj)
+{
+	object *tmp;
+	
+	for (tmp = target->inv; tmp; tmp = tmp->below)
+	{
+		if(tmp->type == CONTAINER)
+		{
+			if(find_quest_item(tmp, obj))
+				return 1;
+		}
+		else if (tmp->type == obj->type && tmp->name == obj->name && tmp->title == obj->title)
+			return 1;
+	}
+	
+	return 0;
 }
 
 /* we give a player a one drop item. This also 
@@ -2088,15 +2069,12 @@ static inline int add_one_drop_quest_item(object *target, object *obj)
 {
     object *tmp, *q_tmp;
 
-    if (!target || target->type != PLAYER)
-        return 0;
-
-    if (!(tmp = present_in_ob(TYPE_QUEST_CONTAINER, target)))
+    if (!(tmp = CONTR(target)->quest_cont_one_drop) )
     {
-        /* create and insert a quest container in player */
         tmp = get_object();
         copy_object(get_archetype("quest_container"), tmp);
         insert_ob_in_ob(tmp, target);
+		CONTR(target)->quest_cont_one_drop=tmp;
     }
 
     q_tmp = get_object();
@@ -2110,53 +2088,93 @@ static inline int add_one_drop_quest_item(object *target, object *obj)
 
     insert_ob_in_ob(q_tmp, tmp); /* dummy copy in quest container */
     SET_FLAG(obj, FLAG_IDENTIFIED);
-    CLEAR_FLAG(obj, FLAG_QUEST_ITEM); /* now the player can use this item normal,
-                                         * even trade and sell it
-                                        */
+    
+	/*CLEAR_FLAG(obj, FLAG_QUEST_ITEM);*/
+	
     q_tmp = get_object();
     copy_object(obj, q_tmp);
-    CLEAR_FLAG(q_tmp, FLAG_SYS_OBJECT);
+    /*CLEAR_FLAG(q_tmp, FLAG_SYS_OBJECT);*/
     insert_ob_in_ob(q_tmp, target); /* real object to player */
     esrv_send_item(target, q_tmp);
     
     return 1;
 }
 
-/* this is the new quest item & one drop quest item code!
- * Dropping quest items to the ground in a corpse can invoke
- * alot of problems and glitches. The only way to avoid it is,
- * to move the quest item HERE in the inventory of the player or
- * group. For one drop quests it is the really only usable way.
- */
-static inline void insert_quest_item(object *item, object *target)
+static inline int add_quest_item(object *target, object *obj)
 {
-    /* first: if the player has this item (normally from killing the
-     * quest mob before) we free the quest item here and stop.
-     * otherwise, move the item in the players inventory!
-     */
-    if (!find_quest_item(target, item, QUERY_FLAG(item, FLAG_INV_LOCKED)))
+    object *tmp, *q_tmp;
+		
+    if (!(tmp = CONTR(target)->quest_cont_quests) )
     {
-        char    auto_buf[MAX_BUF];
+        tmp = get_object();
+        copy_object(get_archetype("quest_container"), tmp);
+        insert_ob_in_ob(tmp, target);
+		tmp->sub_type1 = 1;
+		CONTR(target)->quest_cont_one_drop=tmp;
 
-        /* first, lets check what we have: quest or one drop quest */
-        if (QUERY_FLAG(item, FLAG_SYS_OBJECT)) /* marks one drop quest items */
-        {
-            add_one_drop_quest_item(target, item);
-            sprintf(auto_buf, "You solved the one drop quest %s!\n", query_name(item));
-            new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, target, auto_buf);
-        }
-        else
-        {
-            object *q_tmp;
-            q_tmp = get_object();
-            copy_object(item, q_tmp);
-            CLEAR_FLAG(q_tmp, FLAG_INV_LOCKED);
-            insert_ob_in_ob(q_tmp, target); 
-            sprintf(auto_buf, "You found the quest item %s!\n", query_name(q_tmp));
-            new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, target, auto_buf);
-            esrv_send_item(target, q_tmp);
-        }
     }
+		
+    q_tmp = get_object();
+    copy_object(obj, q_tmp);
+    insert_ob_in_ob(q_tmp, target); /* real object to player */
+    esrv_send_item(target, q_tmp);
+    
+    return 1;
+}
+
+static inline void insert_quest_item(object *quest_trigger, object *target)
+{
+	char    auto_buf[MAX_BUF];
+	int flag = FALSE;
+
+    if (!target || target->type != PLAYER)
+        return;
+
+	if (QUERY_FLAG(quest_trigger, FLAG_ONE_DROP)) /* marks one drop quest items */
+	{
+		if(quest_trigger->level <= target->level)
+		{
+			object *tmp;
+			
+			for (tmp = quest_trigger->inv; tmp; tmp = tmp->below)
+			{
+				if(!find_one_drop_quest_item(target, tmp))
+				{
+					flag = TRUE;
+					add_one_drop_quest_item(target, tmp);
+					sprintf(auto_buf, "You solved the one drop quest %s!", query_name(tmp));
+					new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, target, auto_buf);
+				}
+			}
+		}
+	}
+	else /* check the real quest stuff */
+	{
+		object *tmp, *quest;
+
+		if((quest = find_quest_trigger(target, quest_trigger)))
+		{
+			for (tmp = quest_trigger->inv; tmp; tmp = tmp->below)
+			{
+				if(!find_quest_item(target, tmp))
+				{
+					
+					flag = TRUE;
+					add_quest_item(target, tmp);
+					sprintf(auto_buf, "You found the quest item %s!", query_name(tmp));
+					new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, target, auto_buf);
+				}
+			}
+
+			if(quest->magic != (sint8) quest_trigger->last_heal)
+				quest->magic = (sint8) quest_trigger->last_heal;
+			if(quest_trigger->msg && flag)
+				new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, target, quest_trigger->msg);
+		}
+	}
+
+	if(flag)
+		play_sound_player_only(CONTR(target), SOUND_LEVEL_UP, SOUND_NORMAL, 0, 0);
 }
 
 /* Drops the inventory of ob into ob's current environment. */
@@ -2213,7 +2231,7 @@ void drop_ob_inv(object *ob)
          * is dropping his disease force and so on.
          */
 
-        if (QUERY_FLAG(tmp_op, FLAG_QUEST_ITEM))
+        if(tmp_op->type==TYPE_QUEST_TRIGGER)
         {
             /* legal, non freed enemy */
             if (pl)
