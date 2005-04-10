@@ -168,7 +168,6 @@ void initialize_mob_data(struct mobdata *data)
     data->enemy = NULL;
 
     data->behaviours = NULL;
-    data->attitudes = NULL;
 }
 
 /*
@@ -273,6 +272,7 @@ struct mob_behaviourset * generate_behaviourset(object *op)
     set->definition = NULL;
     set->bghash = hash;
     set->next = set->prev = NULL;
+    set->attitudes = NULL;
 
     /* Insert in list */
     set->next = generated_behavioursets;
@@ -624,11 +624,6 @@ static struct mob_behaviour *setup_behaviour(
         }
     }
 
-    /* Special handling for some behaviours */
-    if(class == BEHAVIOURCLASS_PROCESSES && 
-            behaviour_id == AIBEHAVIOUR_ATTITUDE)
-        MOB_DATA(op)->attitudes = new_behaviour->parameters;
-
     return new_behaviour;
 }
 
@@ -667,6 +662,7 @@ struct mob_behaviourset * parse_behaviourconfig(const char *conf_text, object *o
     behaviourset->refcount = 1;
     behaviourset->definition = add_refcount(conf_text);
     behaviourset->bghash = 0;
+    behaviourset->attitudes = NULL;
 
     /* Insert in list */
     behaviourset->next = parsed_behavioursets;
@@ -760,8 +756,13 @@ struct mob_behaviourset * parse_behaviourconfig(const char *conf_text, object *o
 
             if(colonpos)
                 new_behaviour = setup_plugin_behaviour(class, buf, colonpos, tok_end, conf_text);
-            else
+            else {
                 new_behaviour = setup_behaviour(op, class, buf, tok_end, conf_text);
+                /* Special handling for some behaviours */
+                if(new_behaviour && class == BEHAVIOURCLASS_PROCESSES && 
+                        new_behaviour->declaration->id == AIBEHAVIOUR_ATTITUDE)
+                    behaviourset->attitudes = new_behaviour->parameters;
+            }
 
             if(new_behaviour == NULL) 
             {
@@ -1021,7 +1022,7 @@ void npc_call_for_help(object *op) {
 int calc_friendship_from_attitude(object *op, object *other)    
 {
     int friendship = 0;
-    struct mob_behaviour_param *attitudes = MOB_DATA(op)->attitudes;
+    struct mob_behaviour_param *attitudes = MOB_DATA(op)->behaviours->attitudes;
     struct mob_behaviour_param *tmp;
 
     if(attitudes == NULL)

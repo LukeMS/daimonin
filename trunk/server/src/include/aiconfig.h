@@ -37,8 +37,9 @@ struct behaviour_decl
 {
     const char                 *name;
     void                       *func;
-    int                         nrof_params;
+    unsigned int                nrof_params;
     struct behaviourparam_decl *params;
+    unsigned int                id;
 };
 
 struct behaviourclass_decl

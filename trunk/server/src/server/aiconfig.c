@@ -57,7 +57,7 @@
 #define BehaviourClass(name, behaviours) \
     static struct behaviour_decl class_decl_ ## name [] = { behaviours {NULL}};
 #define Behaviour(name, func, params) \
-    { #name, func, NROF_AIPARAMS_ ## name, param_decl_ ## name}, 
+    { #name, func, NROF_AIPARAMS_ ## name, param_decl_ ## name, AIBEHAVIOUR_ ## name}, 
 
 #include BEHAVIOUR_DECLARATION_FILE
 
