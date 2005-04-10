@@ -113,6 +113,8 @@ struct mob_behaviourset
     uint32                      bghash;                        /* Hash for generated behaviours */
 
     struct mob_behaviour       *behaviours[NROF_BEHAVIOURCLASSES];
+
+    struct mob_behaviour_param *attitudes;  /* Quicklink to behaviours["ATTITUDE"]->parameters */
 };
 
 struct mobdata
@@ -125,8 +127,6 @@ struct mobdata
     struct mob_known_obj       *leader, *enemy;
 
     struct mob_behaviourset    *behaviours;
-
-    struct mob_behaviour_param *attitudes;  /* Quicklink to behaviours["ATTITUDE"]->parameters */
 };
 
 #define MOB_DATA(ob) ((struct mobdata *)((ob)->custom_attrset))
