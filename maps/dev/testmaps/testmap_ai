@@ -174,6 +174,7 @@ y 2
 end
 arch ring_yordan
 name ring of invisibility
+item_level 1
 make_invisible 1
 see_invisible 1
 x 1
@@ -1332,10 +1333,10 @@ msg
 processes:
 look_for_other_mobs
 friendship
+# lua:ai/test_behaviour.lua
 lua:ai/befriend_player.lua
 choose_enemy
-
-moves: 
+moves:
 sleep
 move_towards_enemy
 move_towards_enemy_last_known_pos
@@ -1343,9 +1344,8 @@ search_for_lost_enemy
 lua:ai/move_towards_friend.lua
 move_towards_waypoint
 move_towards_home
-
 actions:
-lua:ai/whine.lua
+# lua:ai/whine.lua
 melee_attack_enemy
 bow_attack_enemy
 spell_attack_enemy
@@ -2037,6 +2037,34 @@ arch floor_ostone1
 x 16
 y 16
 end
+arch wasp_giant
+x 16
+y 16
+arch ai_generic
+msg
+processes:
+look_for_other_mobs
+attitude race=wasp:100 name=wasp_leader:400
+friendship
+choose_enemy
+
+moves: 
+sleep
+move_towards_enemy
+lua:ai/keep_distance_to_friends.lua
+move_towards_enemy_last_known_pos
+search_for_lost_enemy
+lua:ai/move_towards_friends.lua
+move_towards_waypoint
+move_towards_home
+
+actions:
+melee_attack_enemy
+bow_attack_enemy
+spell_attack_enemy
+endmsg
+end
+end
 arch floor_ostone1
 x 16
 y 17
@@ -2159,6 +2187,36 @@ arch floor_ostone1
 x 17
 y 19
 end
+arch wasp_giant
+name wasp_leader
+face bee_killer.131
+animation bee_killer
+x 17
+y 19
+arch ai_generic
+msg
+processes:
+look_for_other_mobs
+attitude race=wasp:100
+friendship
+choose_enemy
+
+moves: 
+sleep
+move_towards_enemy
+move_towards_enemy_last_known_pos
+search_for_lost_enemy
+move_randomly
+move_towards_waypoint
+move_towards_home
+
+actions:
+melee_attack_enemy
+bow_attack_enemy
+spell_attack_enemy
+endmsg
+end
+end
 arch floor_ostone1
 x 17
 y 20
@@ -2260,6 +2318,34 @@ end
 arch floor_ostone1
 x 18
 y 17
+end
+arch wasp_giant
+x 18
+y 17
+arch ai_generic
+msg
+processes:
+look_for_other_mobs
+attitude race=wasp:100 name=wasp_leader:400
+friendship
+choose_enemy
+
+moves: 
+sleep
+move_towards_enemy
+lua:ai/keep_distance_to_friends.lua
+move_towards_enemy_last_known_pos
+search_for_lost_enemy
+lua:ai/move_towards_friends.lua
+move_towards_waypoint
+move_towards_home
+
+actions:
+melee_attack_enemy
+bow_attack_enemy
+spell_attack_enemy
+endmsg
+end
 end
 arch floor_ostone1
 x 18
@@ -2485,6 +2571,34 @@ arch floor_ostone1
 x 20
 y 18
 end
+arch wasp_giant
+x 20
+y 18
+arch ai_generic
+msg
+processes:
+look_for_other_mobs
+attitude race=wasp:100 name=wasp_leader:400
+friendship
+choose_enemy
+
+moves: 
+sleep
+move_towards_enemy
+lua:ai/keep_distance_to_friends.lua
+move_towards_enemy_last_known_pos
+search_for_lost_enemy
+lua:ai/move_towards_friends.lua
+move_towards_waypoint
+move_towards_home
+
+actions:
+melee_attack_enemy
+bow_attack_enemy
+spell_attack_enemy
+endmsg
+end
+end
 arch floor_ostone1
 x 20
 y 19
@@ -2606,6 +2720,34 @@ end
 arch floor_ostone1
 x 21
 y 21
+end
+arch wasp_giant
+x 21
+y 21
+arch ai_generic
+msg
+processes:
+look_for_other_mobs
+attitude race=wasp:100 name=wasp_leader:400
+friendship
+choose_enemy
+
+moves: 
+sleep
+move_towards_enemy
+lua:ai/keep_distance_to_friends.lua
+move_towards_enemy_last_known_pos
+search_for_lost_enemy
+lua:ai/move_towards_friends.lua
+move_towards_waypoint
+move_towards_home
+
+actions:
+melee_attack_enemy
+bow_attack_enemy
+spell_attack_enemy
+endmsg
+end
 end
 arch floor_ostone1
 x 21
