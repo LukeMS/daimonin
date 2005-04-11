@@ -1868,11 +1868,24 @@ int get_interface_line(int *element, int *index, char **keyword, int x, int y, i
 		
 	if(gui_interface_npc->icon_count)
 	{
+		int flag_s=FALSE;
 		yoff+=25;
 		for(i=0;i<gui_interface_npc->icon_count;i++)
 		{
-			if(gui_interface_npc->icon[i].mode == 'G' )
+			if(gui_interface_npc->icon[i].mode == 's' )
+				flag_s=TRUE;
+			else if(gui_interface_npc->icon[i].mode == 'G' )
 				yoff+=44;
+		}
+		
+		if(flag_s)
+		{
+			yoff+=20;
+			for(i=0;i<gui_interface_npc->icon_count;i++)
+			{				
+				if(gui_interface_npc->icon[i].mode == 's' )
+					yoff+=44;
+			}			
 		}
 	}
 	
@@ -1944,11 +1957,24 @@ int precalc_interface_npc(void)
 
 	if(gui_interface_npc->icon_count)
 	{
+		int flag_s=FALSE;
 		yoff+=25;
 		for(i=0;i<gui_interface_npc->icon_count;i++)
 		{
-			if(gui_interface_npc->icon[i].mode == 'G' )
+			if(gui_interface_npc->icon[i].mode == 's' )
+				flag_s=TRUE;
+			else if(gui_interface_npc->icon[i].mode == 'G' )
 				yoff+=44;
+		}
+
+		if(flag_s)
+		{
+			yoff+=20;
+			for(i=0;i<gui_interface_npc->icon_count;i++)
+			{				
+				if(gui_interface_npc->icon[i].mode == 's' )
+					yoff+=44;
+			}			
 		}
 	}
 
@@ -1978,7 +2004,7 @@ void show_interface_npc(int mark)
 		
     sprite_blt(Bitmaps[BITMAP_NPC_INTERFACE], x, y, NULL, NULL);
 	
-	if(gui_interface_npc->used_flag&GUI_INTERFACE_REWARD)
+	if(gui_interface_npc->used_flag&GUI_INTERFACE_HEAD)
 	{
 		/* print head */
 		/*sprintf(xxbuf, "%s (%d,%d)", keyword?keyword:"--", mx, my);
@@ -2100,9 +2126,18 @@ void show_interface_npc(int mark)
 	/* present now the icons for rewards or whats searched */
 	if(gui_interface_npc->icon_count)
 	{
+		int flag_s = FALSE;
+
 		yoff+=25;
 		for(i=0;i<gui_interface_npc->icon_count;i++)
 		{
+			/* we have a 's' to announce a 'S' selection for real rewards? */
+			if(gui_interface_npc->icon[i].mode == 's' )
+			{
+				flag_s = TRUE;
+				continue;
+			}
+
 			if(gui_interface_npc->icon[i].mode == 'G' )
 			{
 				sprite_blt(Bitmaps[BITMAP_INVSLOT], x + 40, y + yoff, NULL, NULL);
@@ -2115,6 +2150,27 @@ void show_interface_npc(int mark)
 				StringBlt(ScreenSurface, &SystemFont, gui_interface_npc->icon[i].title, x+80, y+yoff, COLOR_WHITE, NULL, NULL);
 				yoff+=44;
 			}
+		}
+
+		if(flag_s)
+		{
+			StringBlt(ScreenSurface, &SystemFont, "And one of these:", x+40, y+yoff, COLOR_WHITE, NULL, NULL);
+			yoff+=20;
+			for(i=0;i<gui_interface_npc->icon_count;i++)
+			{				
+				if(gui_interface_npc->icon[i].mode == 's' )
+				{
+					sprite_blt(Bitmaps[BITMAP_INVSLOT], x + 40, y + yoff, NULL, NULL);
+					
+					if(gui_interface_npc->icon[i].element.face>0)
+						blt_inv_item_centered(&gui_interface_npc->icon[i].element, x + 40, y + yoff);
+					else if(gui_interface_npc->icon[i].picture)
+						sprite_blt(gui_interface_npc->icon[i].picture, x + 40, y + yoff, NULL, NULL);
+					
+					StringBlt(ScreenSurface, &SystemFont, gui_interface_npc->icon[i].title, x+80, y+yoff, COLOR_WHITE, NULL, NULL);
+					yoff+=44;
+				}
+			}			
 		}
 
 		if(gui_interface_npc->icon_select)

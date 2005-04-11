@@ -811,6 +811,20 @@ int remove_money_type(object *who, object *op, int value, uint32 amount)
     return amount;
 }
 
+/* add number of money coins to a player */
+void add_money_to_player(object *pl, int c, int s, int g, int m)
+{
+	/* we don't handle decrease/remove of coins (<0) atm */
+	if(m>0)
+		insert_money_in_player(pl, &coins_arch[0]->clone, m);
+	if(g>0)
+		insert_money_in_player(pl, &coins_arch[1]->clone, g);
+	if(s>0)
+		insert_money_in_player(pl, &coins_arch[2]->clone, s);
+	if(c>0)
+		insert_money_in_player(pl, &coins_arch[3]->clone, c);
+}
+
 void insert_money_in_player(object *pl, object *money, uint32 nrof)
 {
     object *tmp;

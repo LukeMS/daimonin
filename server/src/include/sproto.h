@@ -587,6 +587,7 @@ void                        shop_listing(object *op);
 int                         get_money_from_string(char *text, struct _money_block *money);
 int                         query_money_type(object *op, int value);
 int                         remove_money_type(object *who, object *op, int value, uint32 amount);
+void						add_money_to_player(object *pl, int c, int s, int g, int m);
 void                        insert_money_in_player(object *pl, object *money, uint32 nrof);
 /* skills.c */
 int                         attempt_steal(object *op, object *who);

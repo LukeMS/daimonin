@@ -220,6 +220,12 @@
   <entry value="4" name="charm" />
 </list>
 
+<list name="q_trigger">
+  <entry value="0" name="normal" />
+  <entry value="1" name="kill quest" />
+  <entry value="2" name="container quest" />
+</list>
+
 <list name="potion_effect">
   <entry value="0" name="&lt;none&gt;" />
   <entry value="65536" name="life restoration" />
@@ -7071,14 +7077,18 @@
     <attribute arch="sub_type" />
     <attribute arch="damned" />
     <attribute arch="one_drop" />
-    <ignore_list name="non_pickable" />
-    <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[ The Quest trigger is used to syncronize and
 drive quests. If the player/trigger has a quest trigger with same
 settings, the item is triggered. Inside a mob inventory the quest
 trigger works as a container for the real quest objects.]]>
   </description>
+  <attribute arch="last_grace" editor="quest trigger" type="list_q_trigger">
+    Type of the quest trigger event. Default normal setting works is for
+    'normal' quests which are controled by scripts.
+    Kill events are quests like 'kill 10 goblins and come back'.
+    Container events need a trigger object inside the container.
+  </attribute>
   <attribute arch="name" editor="quest id string" type="string">
     ID string which identifies the quest.
   </attribute>
@@ -7095,7 +7105,7 @@ trigger works as a container for the real quest objects.]]>
     If the item is not in and the trigger level is lower or equal to the
     players level, the one drop item is given the player.
   </attribute>
-  <attribute arch="level" editor="one drop quest level" type="int">
+  <attribute arch="level" editor="one drop level" type="int">
     If set, the player only gets the one drop item when his level is higher or
     equal this setting.
   </attribute>

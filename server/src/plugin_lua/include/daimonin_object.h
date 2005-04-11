@@ -33,6 +33,7 @@
 static int  GameObject_Sound(lua_State *L);
 static int  GameObject_Interface(lua_State *L);
 static int  GameObject_CheckTrigger(lua_State *L);
+static int  GameObject_DecObject(lua_State *L);
 static int  GameObject_SetSaveBed(lua_State *L);
 static int  GameObject_SetSkill(lua_State *L);
 static int  GameObject_GetSkill(lua_State *L);
@@ -88,6 +89,7 @@ static int  GameObject_GetIP(lua_State *L);
 static int  GameObject_GetArchName(lua_State *L);
 static int  GameObject_ShowCost(lua_State *L);
 static int  GameObject_GetItemCost(lua_State *L);
+static int  GameObject_AddMoney(lua_State *L);
 static int  GameObject_GetMoney(lua_State *L);
 static int  GameObject_Save(lua_State *L);
 static int  GameObject_PayForItem(lua_State *L);

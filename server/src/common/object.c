@@ -2166,10 +2166,10 @@ static inline void insert_quest_item(object *quest_trigger, object *target)
 				}
 			}
 
+			if((quest->magic != (sint8) quest_trigger->last_heal || flag) && quest_trigger->msg)
+				new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, target, quest_trigger->msg);
 			if(quest->magic != (sint8) quest_trigger->last_heal)
 				quest->magic = (sint8) quest_trigger->last_heal;
-			if(quest_trigger->msg && flag)
-				new_draw_info(NDI_UNIQUE | NDI_ORANGE, 0, target, quest_trigger->msg);
 		}
 	}
 

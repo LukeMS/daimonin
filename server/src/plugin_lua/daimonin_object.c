@@ -35,6 +35,7 @@ static struct method_decl   GameObject_methods[]            =
     {"Sound",  (lua_CFunction) GameObject_Sound},
     {"Interface",  (lua_CFunction) GameObject_Interface},
     {"SetSaveBed",  (lua_CFunction) GameObject_SetSaveBed},
+    {"DecObject",  (lua_CFunction) GameObject_DecObject},
     {"GetSkill",  (lua_CFunction) GameObject_GetSkill},
     {"SetSkill",  (lua_CFunction) GameObject_SetSkill}, {"ActivateRune",  (lua_CFunction) GameObject_ActivateRune},
     {"CastAbility",  (lua_CFunction) GameObject_CastAbility},
@@ -80,7 +81,9 @@ static struct method_decl   GameObject_methods[]            =
     {"GetGuildForce",  (lua_CFunction) GameObject_GetGuildForce}, {"IsOfType", (lua_CFunction) GameObject_IsOfType},
     {"Save", (lua_CFunction) GameObject_Save}, {"GetIP", (lua_CFunction) GameObject_GetIP},
     {"GetArchName", (lua_CFunction) GameObject_GetArchName}, {"ShowCost",  (lua_CFunction) GameObject_ShowCost},
-    {"GetItemCost",  (lua_CFunction) GameObject_GetItemCost}, {"GetMoney",  (lua_CFunction) GameObject_GetMoney},
+    {"GetItemCost",  (lua_CFunction) GameObject_GetItemCost},
+	{"AddMoney",  (lua_CFunction) GameObject_AddMoney},
+	{"GetMoney",  (lua_CFunction) GameObject_GetMoney},
     {"PayForItem", (lua_CFunction) GameObject_PayForItem}, {"PayAmount", (lua_CFunction) GameObject_PayAmount},
     {"SendCustomCommand",(lua_CFunction) GameObject_SendCustomCommand},
     {"CheckTrigger", (lua_CFunction) GameObject_CheckTrigger}, {"Clone", (lua_CFunction) GameObject_Clone},
@@ -290,7 +293,7 @@ static int GameObject_Interface(lua_State *L)
     char       *txt;
     int            mode;
     
-    get_lua_args(L, "Ois", &self, &mode, &txt);
+    get_lua_args(L, "Oi|s", &self, &mode, &txt);
     
     GCFP.Value[0] = (void *) (WHO);
     GCFP.Value[1] = (void *) (&mode);
@@ -1873,6 +1876,32 @@ static int GameObject_SetSaveBed(lua_State *L)
 
     return 0;
 }
+/*****************************************************************************/
+/* Name   : GameObject_DecObject                                             */
+/* Lua    : object:DecObject(map, x, y)                                      */
+/* Info   : Dec(rease) object is a superior remove/delete function using     */
+/*          decrease_ob_nr. This function can delete objects or parts of     */
+/*          a stack. It can also drop the inv or not                         */
+/* Status : Stable                                                           */
+/*****************************************************************************/
+static int GameObject_DecObject(lua_State *L)
+{
+    lua_object *self, *op;
+    int         nrof, flag=0;
+	
+    get_lua_args(L, "OOi|i", &self, &op, &nrof, &flag);
+
+	if(flag && op->data.object->inv)
+		hooks->drop_ob_inv(op->data.object);
+	
+	/* -1 means "delete all" */
+	if(nrof==-1)
+		nrof = op->data.object->nrof;
+
+	hooks->decrease_ob_nr(op->data.object, nrof);
+
+    return 0;
+}
 
 /*****************************************************************************/
 /* Name   : GameObject_Remove                                                */
@@ -1880,7 +1909,7 @@ static int GameObject_SetSaveBed(lua_State *L)
 /* Info   : Takes the object out of whatever map or inventory it is in. The  */
 /*          object can then be inserted or teleported somewhere else, or just*/
 /*          left alone for the garbage collection to take care of.           */
-/* Status : Needs more testing                                               */
+/* Status : Outdated - use DecObject                                         */
 /*****************************************************************************/
 static int GameObject_Remove(lua_State *L)
 {
@@ -1929,7 +1958,7 @@ static int GameObject_Remove(lua_State *L)
 /* Info   : Removes the object out of whatever map or inventory it is in and */
 /*          drops all items in object's inventory on the floor or in a       */
 /*          corpse                                                           */
-/* Status : Needs more testing                                               */
+/* Status : Outdated - use DecObject                                         */
 /*****************************************************************************/
 static int GameObject_Destruct(lua_State *L)
 {
@@ -2208,6 +2237,26 @@ static int GameObject_GetItemCost(lua_State *L)
 
     lua_pushnumber(L, cost);
     return 1;
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_AddMoney                                              */
+/* Lua    : object:AddMoney()                                                */
+/* Info   : adds to inventory of caller coin object = money                  */
+/*        : format: AddMoney(copper, silver, gold, mithirl)                  */
+/* Status : Tested                                                           */
+/*****************************************************************************/
+
+static int GameObject_AddMoney(lua_State *L)
+{
+    lua_object *self;
+	int			c, s, g, m;
+	
+    get_lua_args(L, "Oiiii", &self, &c, &s, &g, &m);
+	
+	hooks->add_money_to_player(WHO, c, s, g, m);
+	
+    return 0;
 }
 
 /*****************************************************************************/
