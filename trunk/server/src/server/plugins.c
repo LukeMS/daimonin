@@ -47,7 +47,10 @@ struct plugin_hooklist  hooklist    =
     register_npc_known_obj, 
     get_rangevector, get_rangevector_from_mapcoords, 
     get_archetype,
-    play_sound_player_only    
+    play_sound_player_only,
+	add_money_to_player,
+	drop_ob_inv,	
+	decrease_ob_nr	
 };
 
 CFPlugin                PlugList[34];

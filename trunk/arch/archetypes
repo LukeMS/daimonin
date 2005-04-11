@@ -9004,7 +9004,7 @@ exp 0
 Int 1
 end
 Object experience_misc
-name msic
+name misc
 type 44
 editor_folder intern/skills
 sub_type 6
@@ -9013,7 +9013,6 @@ face exp.101
 no_drop 1
 level 1
 exp 0
-Wis 1
 end
 Object experience_physical
 name physique

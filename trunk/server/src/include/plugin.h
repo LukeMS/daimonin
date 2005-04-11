@@ -314,6 +314,9 @@ struct plugin_hooklist
     int (*get_rangevector_from_mapcoords)(mapstruct *map1, int x1, int y1, mapstruct *map2, int x2, int y2, rv_vector *retval, int flags);
     object * (*get_archetype)(const char *name);
     void (*play_sound_player_only)(player *pl, int soundnum, int soundtype, int x, int y);
+	void (*add_money_to_player)(object *pl, int c, int s, int g, int m);
+	void (*drop_ob_inv)(object *ob);
+	object * (*decrease_ob_nr)(object *op, int i);		
 };
 
 /*****************************************************************************/
