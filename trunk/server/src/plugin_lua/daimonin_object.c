@@ -51,6 +51,8 @@ static struct method_decl   GameObject_methods[]            =
     {"FindMarkedObject", (lua_CFunction) GameObject_FindMarkedObject},
     {"CheckQuest", (lua_CFunction) GameObject_CheckQuest},
     {"AddQuest", (lua_CFunction) GameObject_AddQuest},
+    {"SetQuest", (lua_CFunction) GameObject_SetQuest},
+    {"SetQuestStatus", (lua_CFunction) GameObject_SetQuestStatus},
     {"CheckQuestItem", (lua_CFunction) GameObject_CheckQuestItem},
     {"AddQuestItem", (lua_CFunction) GameObject_AddQuestItem},
     {"CreatePlayerForce", (lua_CFunction) GameObject_CreatePlayerForce},
@@ -105,7 +107,8 @@ struct attribute_decl       GameObject_attributes[]         =
     {"map", FIELDTYPE_MAP, offsetof(object, map), FIELDFLAG_READONLY},
     {"count", FIELDTYPE_UINT32, offsetof(object, count), FIELDFLAG_READONLY},
     {"name", FIELDTYPE_SHSTR, offsetof(object, name), FIELDFLAG_PLAYER_READONLY},
-    {"title", FIELDTYPE_SHSTR, offsetof(object, title), 0}, {"race", FIELDTYPE_SHSTR, offsetof(object, race), 0},
+    {"title", FIELDTYPE_SHSTR, offsetof(object, title), 0}, 
+	{"race", FIELDTYPE_SHSTR, offsetof(object, race), 0},
     {"slaying", FIELDTYPE_SHSTR, offsetof(object, slaying), 0},
     /* TODO: need special handling (check for endmsg, limit to 4096 chars?) ?*/
     {"message", FIELDTYPE_SHSTR, offsetof(object, msg), 0},
@@ -1443,60 +1446,66 @@ static int GameObject_CheckQuest(lua_State *L)
 
     get_lua_args(L, "Os", &self, &name);
 
-    /* lets first check the inventory for the quest_container object */
-    for (walk = WHO->inv; walk != NULL; walk = walk->below)
-    {
-		/* subtype 1 = quest_trigger container for quest descriptions & triggers */
-        if (walk->type == TYPE_QUEST_CONTAINER && walk->sub_type1 == 1)
-        {
-			/* now fetch the quest_trigger */
-            for (walk = walk->inv; walk != NULL; walk = walk->below)
-            {
-                if (walk->name && !strcmp(walk->name, name))
-                    return push_object(L, &GameObject, walk);
-            }
-            break;
-        }
-    }
+		
+	if(CONTR(WHO)->quests_type_normal) 
+		
+	{
+		for (walk = CONTR(WHO)->quests_type_normal->inv; walk != NULL; walk = walk->below)
+		{
+			if (walk->name && !strcmp(walk->name, name))
+				return push_object(L, &GameObject, walk);
+		}
+	}
+		
+	if(CONTR(WHO)->quests_type_kill) 
+	{
+		for (walk = CONTR(WHO)->quests_type_kill->inv; walk != NULL; walk = walk->below)
+		{
+			if (walk->name && !strcmp(walk->name, name))
+				return push_object(L, &GameObject, walk);
+		}
+	}
+	
+	if(CONTR(WHO)->quests_type_cont) 
+	{
+		for (walk = CONTR(WHO)->quests_type_cont->inv; walk != NULL; walk = walk->below)
+		{
+			if (walk->name && !strcmp(walk->name, name))
+				return push_object(L, &GameObject, walk);
+		}
+	}
+	
+	if(CONTR(WHO)->quests_done) 
+	{
+		for (walk = CONTR(WHO)->quests_done->inv; walk != NULL; walk = walk->below)
+		{
+			if (walk->name && !strcmp(walk->name, name))
+				return push_object(L, &GameObject, walk);
+		}
+	}
 
     return 0;
 }
 
 /*****************************************************************************/
 /* Name   : GameObject_AddQuest                                              */
-/* Lua    : object:AddQuest(archetype, name)                                 */
-/* Status : Stable                                                           */
+/* Lua    : object:AddQuest(quest_name, mode, id_nr, msg)                    */
 /* Info   : Add a quest_trigger to a quest_container = give player a quest   */
+/* Status : Stable                                                           */
 /*****************************************************************************/
 static int GameObject_AddQuest(lua_State *L)
 {
     char       *name, *msg;
-	int			mode;
-    object     *walk, *myob;
+	int			mode, nr;
+    object     *myob;
     lua_object *self;
 	
-    get_lua_args(L, "Osis", &self, &name, &mode, &msg);
+    get_lua_args(L, "Osii|s", &self, &name, &mode, &nr, &msg);
 	
-    /* lets first check the inventory for the quest_container object */
-    for (walk = WHO->inv; walk != NULL; walk = walk->below)
-    {
-        if (walk->type == TYPE_QUEST_CONTAINER && walk->sub_type1 == 1)
-            break;
-    }
-	
-    if (!walk) /* no quest container, create it */
-    {
-		walk = hooks->get_archetype("quest_container");
-        if (!walk || strncmp(STRING_OBJ_NAME(walk), "singularity", 11) == 0)
-        {
-            LOG(llevDebug, "Lua WARNING:: AddQuest: Cant't find archtype 'quest_container'\n");
-            luaL_error(L, "Can't find archtype 'quest_container'");
-        }
-		walk->sub_type1 = 1; /* default sub is 0 for quest item container */
-        hooks->insert_ob_in_ob(walk, WHO);
-		CONTR(WHO)->quest_cont_one_drop=walk;
-    }
 
+	if (WHO->type != PLAYER)
+		return 0;
+	
 	myob = hooks->get_archetype("quest_trigger");
 	
     if (!myob || strncmp(STRING_OBJ_NAME(myob), "singularity", 11) == 0)
@@ -1507,12 +1516,80 @@ static int GameObject_AddQuest(lua_State *L)
 	
     /* store name & arch name of the quest obj. so we can id it later */
     FREE_AND_COPY_HASH(myob->name, name);
-    FREE_AND_COPY_HASH(myob->msg, msg);
-	myob->last_heal = (sint16)mode;
-
-    myob = hooks->insert_ob_in_ob(myob, walk);
+	if(msg)
+		FREE_AND_COPY_HASH(myob->msg, msg);
+	myob->last_grace = (sint16)mode;
+	myob->last_heal = (sint16)nr;
+	
+	hooks->add_quest_trigger(WHO, myob);
 	
     return push_object(L, &GameObject, myob);
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_SetQuest                                              */
+/* Lua    : object:SetQuest(nrof_kills, k_arch, k_name, k_title, msg)        */
+/* Info   : We need this to set hash strings & arch objects                  */
+/* Status : Stable                                                           */
+/*****************************************************************************/
+static int GameObject_SetQuest(lua_State *L)
+{
+    char       *msg = NULL, *kill_arch, *kill_name, *kill_title;
+	int			kill_nr;
+    object     *myob;
+    lua_object *self;
+	
+    get_lua_args(L, "Oisss|s", &self, &kill_nr, &kill_arch, &kill_name, &kill_title, &msg);
+
+	myob = self->data.object;
+
+	if(kill_nr != -1)
+	{
+		myob->last_sp = kill_nr;
+		myob->level = 0; /* reset counter. if you want hold him, back it up in the script */
+
+		myob->other_arch = hooks->find_archetype(kill_arch);
+		if(*kill_name!='\0')
+			FREE_AND_COPY_HASH(myob->slaying, kill_name);
+		if(*kill_title!='\0')
+			FREE_AND_COPY_HASH(myob->title, kill_title);
+	}
+
+	if(msg)
+	{
+		if(*msg!='\0')
+		{
+			FREE_AND_CLEAR_HASH(myob->msg);
+		}
+		else
+			FREE_AND_COPY_HASH(myob->msg, msg);
+	}
+
+    return 0; /* there was non */
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_SetQuestStatus                                        */
+/* Lua    : object:SetQuest(status. step-id)                                 */
+/* Info   : We need this function because quest_trigger must be moved        */
+/* Status : Stable                                                           */
+/*****************************************************************************/
+static int GameObject_SetQuestStatus(lua_State *L)
+{
+	int			q_status, q_type = -1;
+    object     *myob;
+    lua_object *self;
+	
+    get_lua_args(L, "Oi|i", &self, &q_status, &q_type);
+	
+	myob = self->data.object;
+
+	if(q_type == -1)
+		q_type = myob->last_grace;
+
+	hooks->set_quest_status(myob, q_status, q_type);
+		
+    return 0; /* there was non */
 }
 
 /*****************************************************************************/
@@ -1530,22 +1607,13 @@ static int GameObject_CheckQuestItem(lua_State *L)
 
     get_lua_args(L, "Oss", &self, &arch_name, &name);
 
-    /* lets first check the inventory for the quest_container object */
-    for (walk = WHO->inv; walk != NULL; walk = walk->below)
-    {
-        if (walk->type == TYPE_QUEST_CONTAINER && !walk->sub_type1)
-        {
-            /* now lets check our quest item is inside.
-                     * we use arch name and object name as id, if needed we
-                     * arch name is stored in the race field of the quest dummies.
-                     * can add more here
-                     */
-            for (walk = walk->inv; walk != NULL; walk = walk->below)
-            {
-                if (walk->race && !strcmp(walk->race, arch_name) && walk->name && !strcmp(walk->name, name))
-                    return push_object(L, &GameObject, walk);
-            }
-            break;
+	if (WHO->type == PLAYER && CONTR(WHO)->quest_one_drop )
+	{				
+				
+		for (walk = CONTR(WHO)->quest_one_drop->inv; walk != NULL; walk = walk->below)
+		{
+			if (walk->race && !strcmp(walk->race, arch_name) && walk->name && !strcmp(walk->name, name))
+				return push_object(L, &GameObject, walk);
         }
     }
 
@@ -1561,32 +1629,11 @@ static int GameObject_CheckQuestItem(lua_State *L)
 /*****************************************************************************/
 static int GameObject_AddQuestItem(lua_State *L)
 {
-    char       *arch_name;
-    char       *name;
-    object     *walk, *myob;
+    char       *arch_name, *name, *title=NULL;
+    object     *myob;
     lua_object *self;
 
-    get_lua_args(L, "Oss", &self, &arch_name, &name);
-
-    /* lets first check the inventory for the quest_container object */
-    for (walk = WHO->inv; walk != NULL; walk = walk->below)
-    {
-        if (walk->type == TYPE_QUEST_CONTAINER && !walk->sub_type1)
-            break;
-    }
-
-    if (!walk) /* no quest container, create it */
-    {
-		walk = hooks->get_archetype("quest_container");
-        if (!walk || strncmp(STRING_OBJ_NAME(walk), "singularity", 11) == 0)
-        {
-            LOG(llevDebug, "Lua WARNING:: AddQuestItem: Cant't find archtype 'quest_container'\n");
-            luaL_error(L, "Can't find archtype 'quest_container'");
-        }
-
-        hooks->insert_ob_in_ob(walk, WHO);
-		CONTR(WHO)->quest_cont_one_drop=walk;
-    }
+    get_lua_args(L, "Oss|s", &self, &arch_name, &name, &title);
 
 	myob = hooks->get_archetype("player_info");
     if (!myob || strncmp(STRING_OBJ_NAME(myob), "singularity", 11) == 0)
@@ -1598,8 +1645,11 @@ static int GameObject_AddQuestItem(lua_State *L)
     /* store name & arch name of the quest obj. so we can id it later */
     FREE_AND_COPY_HASH(myob->name, name);
     FREE_AND_COPY_HASH(myob->race, arch_name);
+	if(title)
+	    FREE_AND_COPY_HASH(myob->title, title);
 
-    myob = hooks->insert_ob_in_ob(myob, walk);
+	hooks->add_quest_containers(WHO);
+	hooks->insert_ob_in_ob(myob, CONTR(WHO)->quest_one_drop);
 
     return push_object(L, &GameObject, myob);
 }

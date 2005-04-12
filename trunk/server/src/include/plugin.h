@@ -317,6 +317,9 @@ struct plugin_hooklist
 	void (*add_money_to_player)(object *pl, int c, int s, int g, int m);
 	void (*drop_ob_inv)(object *ob);
 	object * (*decrease_ob_nr)(object *op, int i);		
+	void (*add_quest_containers)(object *op);
+	void (*add_quest_trigger)(object *who, object *trigger);
+	void (*set_quest_status)(struct obj *trigger, int q_status, int q_type);
 };
 
 /*****************************************************************************/

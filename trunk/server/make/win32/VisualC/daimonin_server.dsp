@@ -1295,6 +1295,10 @@ SOURCE=..\..\..\src\common\porting.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\src\common\quest.c
+# End Source File
+# Begin Source File
+
 SOURCE="..\..\..\src\common\re-cmp.c"
 # End Source File
 # Begin Source File
@@ -1453,6 +1457,10 @@ SOURCE=..\..\..\src\include\plugin.h
 # Begin Source File
 
 SOURCE=..\..\..\src\include\plugproto.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\src\include\quest.h
 # End Source File
 # Begin Source File
 

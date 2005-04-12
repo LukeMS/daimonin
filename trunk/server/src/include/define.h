@@ -436,6 +436,13 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define ST1_DOOR_NORMAL 0
 #define ST1_DOOR_CURTAIN 1 /* make different sound */
 
+/* subtypes for TYPE_QUEST_CONTAINER objects */
+#define ST1_QUEST_ONE_DROP		0
+#define ST1_QUESTS_TYPE_DONE	1
+#define ST1_QUESTS_TYPE_NORMAL	2
+#define ST1_QUESTS_TYPE_KILL	3
+#define ST1_QUESTS_TYPE_CONT	4
+
 /* END SUB TYPE 1 DEFINE */
 
 /* definitions for detailed pickup descriptions.

@@ -69,6 +69,8 @@ static int  GameObject_FindMarkedObject(lua_State *L);
 static int  GameObject_CreatePlayerForce(lua_State *L);
 static int  GameObject_CheckQuest(lua_State *L);
 static int  GameObject_AddQuest(lua_State *L);
+static int  GameObject_SetQuest(lua_State *L);
+static int  GameObject_SetQuestStatus(lua_State *L);
 static int  GameObject_CheckQuestItem(lua_State *L);
 static int  GameObject_AddQuestItem(lua_State *L);
 static int  GameObject_CreatePlayerInfo(lua_State *L);
