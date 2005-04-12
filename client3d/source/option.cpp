@@ -81,9 +81,14 @@ void Option::closeDescFile()
 //=================================================================================================
 void Option::getDescStr(const char *descrEntry, string &strBuffer)
 {
-	int startPos, stopPos;
-	startPos = mDescBuffer.find(descrEntry);
+	int startPos=0, stopPos, entryTest;
+checkForKeyword:
+	startPos = mDescBuffer.find(descrEntry, startPos);
+	entryTest= mDescBuffer.find(":",  startPos)+1;
 	startPos = mDescBuffer.find("\"", startPos)+1;
+	// keyword and value can have the same name. If ':' comes before '"' in the description-text
+	// we have a keyword, else we have the value and search again.
+	if (entryTest>startPos) { goto checkForKeyword; }
 	stopPos  = mDescBuffer.find("\"", startPos)-startPos;
 	strBuffer = mDescBuffer.substr(startPos, stopPos);
 }
