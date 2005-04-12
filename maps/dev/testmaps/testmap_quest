@@ -1,0 +1,1493 @@
+arch map
+name Testmaps - Quest
+msg
+Creator: Daimonin Map Editor
+Date:    4/13/2003
+endmsg
+width 17
+height 17
+enter_x 1
+enter_y 1
+difficulty 1
+end
+arch floor_ostone1
+end
+arch fwall_brown1
+end
+arch floor_ostone1
+y 1
+end
+arch fwall_brown1
+y 1
+end
+arch floor_ostone1
+y 2
+end
+arch fwall_brown1
+y 2
+end
+arch floor_ostone1
+y 3
+end
+arch fwall_brown1
+y 3
+end
+arch floor_ostone1
+y 4
+end
+arch fwall_brown1
+y 4
+end
+arch floor_ostone1
+y 5
+end
+arch fwall_brown1
+y 5
+end
+arch floor_ostone1
+y 6
+end
+arch fwall_brown1
+y 6
+end
+arch floor_ostone1
+y 7
+end
+arch fwall_brown1
+y 7
+end
+arch floor_ostone1
+y 8
+end
+arch fwall_brown1
+y 8
+end
+arch floor_ostone1
+y 9
+end
+arch fwall_brown1
+y 9
+end
+arch floor_ostone1
+y 10
+end
+arch fwall_brown1
+y 10
+end
+arch floor_ostone1
+y 11
+end
+arch fwall_brown1
+y 11
+end
+arch floor_ostone1
+y 12
+end
+arch fwall_brown1
+y 12
+end
+arch floor_ostone1
+y 13
+end
+arch fwall_brown1
+y 13
+end
+arch floor_ostone1
+y 14
+end
+arch fwall_brown1
+y 14
+end
+arch floor_ostone1
+y 15
+end
+arch fwall_brown1
+y 15
+end
+arch floor_ostone1
+y 16
+end
+arch fwall_brown1
+y 16
+end
+arch floor_ostone1
+x 1
+end
+arch fwall_brown1
+x 1
+end
+arch floor_ostone1
+x 1
+y 1
+end
+arch stairw_up_1
+slaying testmap_main
+hp 1
+sp 13
+direction 5
+x 1
+y 1
+end
+arch floor_ostone1
+x 1
+y 2
+end
+arch floor_ostone1
+x 1
+y 3
+end
+arch floor_ostone1
+x 1
+y 4
+end
+arch floor_ostone1
+x 1
+y 5
+end
+arch floor_ostone1
+x 1
+y 6
+end
+arch sign
+name One Drop Quest Test
+msg
+Kill the green slime to get a one drop quest item.
+endmsg
+x 1
+y 6
+end
+arch floor_ostone1
+x 1
+y 7
+end
+arch blob_poison
+x 1
+y 7
+arch quest_trigger
+one_drop 1
+arch fighting_boots
+quest_item 1
+end
+end
+end
+arch floor_ostone1
+x 1
+y 8
+end
+arch floor_ostone1
+x 1
+y 9
+end
+arch spawn_point
+speed 1.0
+last_grace 0
+x 1
+y 9
+arch ant_red
+type 83
+random_move 0
+stand_still 1
+direction 0
+end
+end
+arch floor_ostone1
+x 1
+y 10
+end
+arch floor_ostone1
+x 1
+y 11
+end
+arch sign
+msg
+Quest mob for quest "questtest1"
+endmsg
+x 1
+y 11
+end
+arch floor_ostone1
+x 1
+y 12
+end
+arch blob_acid
+x 1
+y 12
+arch quest_trigger
+name test quest1
+msg
+You can now finish the Test Quest1.
+This text is the msg part of the quest_trigger
+object inside the slime. It can be used to give
+advises or something.
+endmsg
+last_heal 1
+arch quest_object
+name test quest1 item
+face helm_leather.101
+end
+end
+end
+arch floor_ostone1
+x 1
+y 13
+end
+arch floor_ostone1
+x 1
+y 14
+end
+arch floor_ostone1
+x 1
+y 15
+end
+arch floor_ostone1
+x 1
+y 16
+end
+arch fwall_brown1
+x 1
+y 16
+end
+arch floor_ostone1
+x 2
+end
+arch fwall_brown1
+x 2
+end
+arch floor_ostone1
+x 2
+y 1
+end
+arch sign
+msg
+testing GUI & quests.
+endmsg
+x 2
+y 1
+end
+arch floor_ostone1
+x 2
+y 2
+end
+arch floor_ostone1
+x 2
+y 3
+end
+arch floor_ostone1
+x 2
+y 4
+end
+arch floor_ostone1
+x 2
+y 5
+end
+arch floor_ostone1
+x 2
+y 6
+end
+arch floor_ostone1
+x 2
+y 7
+end
+arch floor_ostone1
+x 2
+y 8
+end
+arch floor_ostone1
+x 2
+y 9
+end
+arch floor_ostone1
+x 2
+y 10
+end
+arch floor_ostone1
+x 2
+y 11
+end
+arch floor_ostone1
+x 2
+y 12
+end
+arch floor_ostone1
+x 2
+y 13
+end
+arch floor_ostone1
+x 2
+y 14
+end
+arch floor_ostone1
+x 2
+y 15
+end
+arch floor_ostone1
+x 2
+y 16
+end
+arch fwall_brown1
+x 2
+y 16
+end
+arch floor_ostone1
+x 3
+end
+arch fwall_brown1
+x 3
+end
+arch floor_ostone1
+x 3
+y 1
+end
+arch floor_ostone1
+x 3
+y 2
+end
+arch floor_ostone1
+x 3
+y 3
+end
+arch floor_ostone1
+x 3
+y 4
+end
+arch floor_ostone1
+x 3
+y 5
+end
+arch floor_ostone1
+x 3
+y 6
+end
+arch floor_ostone1
+x 3
+y 7
+end
+arch floor_ostone1
+x 3
+y 8
+end
+arch floor_ostone1
+x 3
+y 9
+end
+arch floor_ostone1
+x 3
+y 10
+end
+arch floor_ostone1
+x 3
+y 11
+end
+arch floor_ostone1
+x 3
+y 12
+end
+arch floor_ostone1
+x 3
+y 13
+end
+arch floor_ostone1
+x 3
+y 14
+end
+arch floor_ostone1
+x 3
+y 15
+end
+arch floor_ostone1
+x 3
+y 16
+end
+arch fwall_brown1
+x 3
+y 16
+end
+arch floor_ostone1
+x 4
+end
+arch fwall_brown1
+x 4
+end
+arch floor_ostone1
+x 4
+y 1
+end
+arch sign
+name Quest Test
+msg
+Here we test a "normal" quest.
+Talk with the quest NPC and kill the blue slime.
+endmsg
+x 4
+y 1
+end
+arch floor_ostone1
+x 4
+y 2
+end
+arch floor_ostone1
+x 4
+y 3
+end
+arch floor_ostone1
+x 4
+y 4
+end
+arch floor_ostone1
+x 4
+y 5
+end
+arch floor_ostone1
+x 4
+y 6
+end
+arch floor_ostone1
+x 4
+y 7
+end
+arch floor_ostone1
+x 4
+y 8
+end
+arch floor_ostone1
+x 4
+y 9
+end
+arch floor_ostone1
+x 4
+y 10
+end
+arch floor_ostone1
+x 4
+y 11
+end
+arch floor_ostone1
+x 4
+y 12
+end
+arch floor_ostone1
+x 4
+y 13
+end
+arch floor_ostone1
+x 4
+y 14
+end
+arch floor_ostone1
+x 4
+y 15
+end
+arch floor_ostone1
+x 4
+y 16
+end
+arch fwall_brown1
+x 4
+y 16
+end
+arch floor_ostone1
+x 5
+end
+arch fwall_brown1
+x 5
+end
+arch floor_ostone1
+x 5
+y 1
+end
+arch monk
+name Quest & GUI Tester
+invulnerable 1
+no_attack 1
+unaggressive 0
+friendly 1
+x 5
+y 1
+arch event_obj
+name Lua
+race /dev/testmaps/TestInterface1.lua
+sub_type 13
+end
+end
+arch floor_ostone1
+x 5
+y 2
+end
+arch floor_ostone1
+x 5
+y 3
+end
+arch floor_ostone1
+x 5
+y 4
+end
+arch floor_ostone1
+x 5
+y 5
+end
+arch floor_ostone1
+x 5
+y 6
+end
+arch floor_ostone1
+x 5
+y 7
+end
+arch floor_ostone1
+x 5
+y 8
+end
+arch floor_ostone1
+x 5
+y 9
+end
+arch floor_ostone1
+x 5
+y 10
+end
+arch floor_ostone1
+x 5
+y 11
+end
+arch floor_ostone1
+x 5
+y 12
+end
+arch floor_ostone1
+x 5
+y 13
+end
+arch floor_ostone1
+x 5
+y 14
+end
+arch floor_ostone1
+x 5
+y 15
+end
+arch floor_ostone1
+x 5
+y 16
+end
+arch fwall_brown1
+x 5
+y 16
+end
+arch floor_ostone1
+x 6
+end
+arch fwall_brown1
+x 6
+end
+arch floor_ostone1
+x 6
+y 1
+end
+arch floor_ostone1
+x 6
+y 2
+end
+arch floor_ostone1
+x 6
+y 3
+end
+arch floor_ostone1
+x 6
+y 4
+end
+arch floor_ostone1
+x 6
+y 5
+end
+arch floor_ostone1
+x 6
+y 6
+end
+arch floor_ostone1
+x 6
+y 7
+end
+arch floor_ostone1
+x 6
+y 8
+end
+arch floor_ostone1
+x 6
+y 9
+end
+arch floor_ostone1
+x 6
+y 10
+end
+arch floor_ostone1
+x 6
+y 11
+end
+arch floor_ostone1
+x 6
+y 12
+end
+arch floor_ostone1
+x 6
+y 13
+end
+arch floor_ostone1
+x 6
+y 14
+end
+arch floor_ostone1
+x 6
+y 15
+end
+arch floor_ostone1
+x 6
+y 16
+end
+arch fwall_brown1
+x 6
+y 16
+end
+arch floor_ostone1
+x 7
+end
+arch fwall_brown1
+x 7
+end
+arch floor_ostone1
+x 7
+y 1
+end
+arch floor_ostone1
+x 7
+y 2
+end
+arch floor_ostone1
+x 7
+y 3
+end
+arch floor_ostone1
+x 7
+y 4
+end
+arch floor_ostone1
+x 7
+y 5
+end
+arch floor_ostone1
+x 7
+y 6
+end
+arch floor_ostone1
+x 7
+y 7
+end
+arch floor_ostone1
+x 7
+y 8
+end
+arch floor_ostone1
+x 7
+y 9
+end
+arch floor_ostone1
+x 7
+y 10
+end
+arch floor_ostone1
+x 7
+y 11
+end
+arch floor_ostone1
+x 7
+y 12
+end
+arch floor_ostone1
+x 7
+y 13
+end
+arch floor_ostone1
+x 7
+y 14
+end
+arch floor_ostone1
+x 7
+y 15
+end
+arch floor_ostone1
+x 7
+y 16
+end
+arch fwall_brown1
+x 7
+y 16
+end
+arch floor_ostone1
+x 8
+end
+arch fwall_brown1
+x 8
+end
+arch floor_ostone1
+x 8
+y 1
+end
+arch sign
+name Kill Quest Test
+msg
+Here we test a "kill quest". Kill the 3 ants.
+endmsg
+x 8
+y 1
+end
+arch floor_ostone1
+x 8
+y 2
+end
+arch floor_ostone1
+x 8
+y 3
+end
+arch floor_ostone1
+x 8
+y 4
+end
+arch floor_ostone1
+x 8
+y 5
+end
+arch floor_ostone1
+x 8
+y 6
+end
+arch floor_ostone1
+x 8
+y 7
+end
+arch floor_ostone1
+x 8
+y 8
+end
+arch floor_ostone1
+x 8
+y 9
+end
+arch floor_ostone1
+x 8
+y 10
+end
+arch floor_ostone1
+x 8
+y 11
+end
+arch floor_ostone1
+x 8
+y 12
+end
+arch floor_ostone1
+x 8
+y 13
+end
+arch floor_ostone1
+x 8
+y 14
+end
+arch floor_ostone1
+x 8
+y 15
+end
+arch floor_ostone1
+x 8
+y 16
+end
+arch fwall_brown1
+x 8
+y 16
+end
+arch floor_ostone1
+x 9
+end
+arch fwall_brown1
+x 9
+end
+arch floor_ostone1
+x 9
+y 1
+end
+arch monk
+name Kill Quest Tester
+invulnerable 1
+no_attack 1
+unaggressive 0
+friendly 1
+x 9
+y 1
+arch event_obj
+name Lua
+race /dev/testmaps/TestKillQuest.lua
+sub_type 13
+end
+end
+arch floor_ostone1
+x 9
+y 2
+end
+arch floor_ostone1
+x 9
+y 3
+end
+arch floor_ostone1
+x 9
+y 4
+end
+arch floor_ostone1
+x 9
+y 5
+end
+arch floor_ostone1
+x 9
+y 6
+end
+arch floor_ostone1
+x 9
+y 7
+end
+arch floor_ostone1
+x 9
+y 8
+end
+arch floor_ostone1
+x 9
+y 9
+end
+arch floor_ostone1
+x 9
+y 10
+end
+arch floor_ostone1
+x 9
+y 11
+end
+arch floor_ostone1
+x 9
+y 12
+end
+arch floor_ostone1
+x 9
+y 13
+end
+arch floor_ostone1
+x 9
+y 14
+end
+arch floor_ostone1
+x 9
+y 15
+end
+arch floor_ostone1
+x 9
+y 16
+end
+arch fwall_brown1
+x 9
+y 16
+end
+arch floor_ostone1
+x 10
+end
+arch fwall_brown1
+x 10
+end
+arch floor_ostone1
+x 10
+y 1
+end
+arch floor_ostone1
+x 10
+y 2
+end
+arch floor_ostone1
+x 10
+y 3
+end
+arch floor_ostone1
+x 10
+y 4
+end
+arch floor_ostone1
+x 10
+y 5
+end
+arch floor_ostone1
+x 10
+y 6
+end
+arch floor_ostone1
+x 10
+y 7
+end
+arch floor_ostone1
+x 10
+y 8
+end
+arch floor_ostone1
+x 10
+y 9
+end
+arch floor_ostone1
+x 10
+y 10
+end
+arch floor_ostone1
+x 10
+y 11
+end
+arch floor_ostone1
+x 10
+y 12
+end
+arch floor_ostone1
+x 10
+y 13
+end
+arch floor_ostone1
+x 10
+y 14
+end
+arch floor_ostone1
+x 10
+y 15
+end
+arch floor_ostone1
+x 10
+y 16
+end
+arch fwall_brown1
+x 10
+y 16
+end
+arch floor_ostone1
+x 11
+end
+arch fwall_brown1
+x 11
+end
+arch floor_ostone1
+x 11
+y 1
+end
+arch sign
+name Container Test Quest
+msg
+Container Quest Test. Oben the chest to solve it.
+endmsg
+x 11
+y 1
+end
+arch floor_ostone1
+x 11
+y 2
+end
+arch floor_ostone1
+x 11
+y 3
+end
+arch floor_ostone1
+x 11
+y 4
+end
+arch floor_ostone1
+x 11
+y 5
+end
+arch floor_ostone1
+x 11
+y 6
+end
+arch floor_ostone1
+x 11
+y 7
+end
+arch floor_ostone1
+x 11
+y 8
+end
+arch floor_ostone1
+x 11
+y 9
+end
+arch floor_ostone1
+x 11
+y 10
+end
+arch floor_ostone1
+x 11
+y 11
+end
+arch floor_ostone1
+x 11
+y 12
+end
+arch floor_ostone1
+x 11
+y 13
+end
+arch floor_ostone1
+x 11
+y 14
+end
+arch floor_ostone1
+x 11
+y 15
+end
+arch floor_ostone1
+x 11
+y 16
+end
+arch fwall_brown1
+x 11
+y 16
+end
+arch floor_ostone1
+x 12
+end
+arch fwall_brown1
+x 12
+end
+arch floor_ostone1
+x 12
+y 1
+end
+arch monk
+name Container Quest Tester
+invulnerable 1
+no_attack 1
+unaggressive 0
+friendly 1
+x 12
+y 1
+arch event_obj
+name Lua
+race /dev/testmaps/TestContQuest.lua
+sub_type 13
+end
+end
+arch floor_ostone1
+x 12
+y 2
+end
+arch floor_ostone1
+x 12
+y 3
+end
+arch floor_ostone1
+x 12
+y 4
+end
+arch floor_ostone1
+x 12
+y 5
+end
+arch floor_ostone1
+x 12
+y 6
+end
+arch floor_ostone1
+x 12
+y 7
+end
+arch floor_ostone1
+x 12
+y 8
+end
+arch floor_ostone1
+x 12
+y 9
+end
+arch floor_ostone1
+x 12
+y 10
+end
+arch floor_ostone1
+x 12
+y 11
+end
+arch floor_ostone1
+x 12
+y 12
+end
+arch floor_ostone1
+x 12
+y 13
+end
+arch floor_ostone1
+x 12
+y 14
+end
+arch floor_ostone1
+x 12
+y 15
+end
+arch floor_ostone1
+x 12
+y 16
+end
+arch fwall_brown1
+x 12
+y 16
+end
+arch floor_ostone1
+x 13
+end
+arch fwall_brown1
+x 13
+end
+arch floor_ostone1
+x 13
+y 1
+end
+arch floor_ostone1
+x 13
+y 2
+end
+arch floor_ostone1
+x 13
+y 3
+end
+arch floor_ostone1
+x 13
+y 4
+end
+arch floor_ostone1
+x 13
+y 5
+end
+arch floor_ostone1
+x 13
+y 6
+end
+arch floor_ostone1
+x 13
+y 7
+end
+arch floor_ostone1
+x 13
+y 8
+end
+arch floor_ostone1
+x 13
+y 9
+end
+arch floor_ostone1
+x 13
+y 10
+end
+arch floor_ostone1
+x 13
+y 11
+end
+arch floor_ostone1
+x 13
+y 12
+end
+arch floor_ostone1
+x 13
+y 13
+end
+arch floor_ostone1
+x 13
+y 14
+end
+arch floor_ostone1
+x 13
+y 15
+end
+arch floor_ostone1
+x 13
+y 16
+end
+arch fwall_brown1
+x 13
+y 16
+end
+arch floor_ostone1
+x 14
+end
+arch fwall_brown1
+x 14
+end
+arch floor_ostone1
+x 14
+y 1
+end
+arch floor_ostone1
+x 14
+y 2
+end
+arch floor_ostone1
+x 14
+y 3
+end
+arch floor_ostone1
+x 14
+y 4
+end
+arch floor_ostone1
+x 14
+y 5
+end
+arch floor_ostone1
+x 14
+y 6
+end
+arch floor_ostone1
+x 14
+y 7
+end
+arch floor_ostone1
+x 14
+y 8
+end
+arch floor_ostone1
+x 14
+y 9
+end
+arch floor_ostone1
+x 14
+y 10
+end
+arch floor_ostone1
+x 14
+y 11
+end
+arch floor_ostone1
+x 14
+y 12
+end
+arch floor_ostone1
+x 14
+y 13
+end
+arch floor_ostone1
+x 14
+y 14
+end
+arch floor_ostone1
+x 14
+y 15
+end
+arch floor_ostone1
+x 14
+y 16
+end
+arch fwall_brown1
+x 14
+y 16
+end
+arch floor_ostone1
+x 15
+end
+arch fwall_brown1
+x 15
+end
+arch floor_ostone1
+x 15
+y 1
+end
+arch floor_ostone1
+x 15
+y 2
+end
+arch floor_ostone1
+x 15
+y 3
+end
+arch floor_ostone1
+x 15
+y 4
+end
+arch floor_ostone1
+x 15
+y 5
+end
+arch floor_ostone1
+x 15
+y 6
+end
+arch floor_ostone1
+x 15
+y 7
+end
+arch floor_ostone1
+x 15
+y 8
+end
+arch floor_ostone1
+x 15
+y 9
+end
+arch floor_ostone1
+x 15
+y 10
+end
+arch floor_ostone1
+x 15
+y 11
+end
+arch floor_ostone1
+x 15
+y 12
+end
+arch floor_ostone1
+x 15
+y 13
+end
+arch floor_ostone1
+x 15
+y 14
+end
+arch floor_ostone1
+x 15
+y 15
+end
+arch floor_ostone1
+x 15
+y 16
+end
+arch fwall_brown1
+x 15
+y 16
+end
+arch floor_ostone1
+x 16
+end
+arch fwall_brown1
+x 16
+end
+arch floor_ostone1
+x 16
+y 1
+end
+arch fwall_brown1
+x 16
+y 1
+end
+arch floor_ostone1
+x 16
+y 2
+end
+arch fwall_brown1
+x 16
+y 2
+end
+arch floor_ostone1
+x 16
+y 3
+end
+arch fwall_brown1
+x 16
+y 3
+end
+arch floor_ostone1
+x 16
+y 4
+end
+arch fwall_brown1
+x 16
+y 4
+end
+arch floor_ostone1
+x 16
+y 5
+end
+arch fwall_brown1
+x 16
+y 5
+end
+arch floor_ostone1
+x 16
+y 6
+end
+arch fwall_brown1
+x 16
+y 6
+end
+arch floor_ostone1
+x 16
+y 7
+end
+arch fwall_brown1
+x 16
+y 7
+end
+arch floor_ostone1
+x 16
+y 8
+end
+arch fwall_brown1
+x 16
+y 8
+end
+arch floor_ostone1
+x 16
+y 9
+end
+arch fwall_brown1
+x 16
+y 9
+end
+arch floor_ostone1
+x 16
+y 10
+end
+arch fwall_brown1
+x 16
+y 10
+end
+arch floor_ostone1
+x 16
+y 11
+end
+arch fwall_brown1
+x 16
+y 11
+end
+arch floor_ostone1
+x 16
+y 12
+end
+arch fwall_brown1
+x 16
+y 12
+end
+arch floor_ostone1
+x 16
+y 13
+end
+arch fwall_brown1
+x 16
+y 13
+end
+arch floor_ostone1
+x 16
+y 14
+end
+arch fwall_brown1
+x 16
+y 14
+end
+arch floor_ostone1
+x 16
+y 15
+end
+arch fwall_brown1
+x 16
+y 15
+end
+arch floor_ostone1
+x 16
+y 16
+end
+arch fwall_brown1
+x 16
+y 16
+end
