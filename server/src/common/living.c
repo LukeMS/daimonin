@@ -840,7 +840,7 @@ void fix_player(object *op)
     int                 resists_boni[NROFATTACKS], resists_mali[NROFATTACKS];
     int                 protect_boni[NROFPROTECTIONS], protect_mali[NROFPROTECTIONS];
     int                 potion_resist_boni[NROFATTACKS], potion_resist_mali[NROFATTACKS], potion_attack[NROFATTACKS];
-    object             *tmp, *skill_weapon = NULL;
+    object             *tmp, *tmp_ptr, *skill_weapon = NULL;
     player             *pl;
     float               f, max = 9, added_speed = 0, bonus_speed = 0, speed_reduce_from_disease = 1, tmp_con, reg_sec;
     
@@ -917,8 +917,11 @@ void fix_player(object *op)
     op->path_denied = op->arch->clone.path_denied;
     op->terrain_flag = op->arch->clone.terrain_flag;        /* reset terrain moving abilities */
 
-	pl->quest_cont_one_drop = NULL;
-	pl->quest_cont_quests = NULL;
+	pl->quest_one_drop = NULL;
+	pl->quests_done = NULL;
+	pl->quests_type_kill = NULL;
+	pl->quests_type_normal = NULL;
+	pl->quests_type_cont = NULL;
 
     /* only adjust skills which has no own level/exp values */
     if (op->chosen_skill && !op->chosen_skill->last_eat && op->chosen_skill->exp_obj)
@@ -991,8 +994,9 @@ void fix_player(object *op)
     /* ok, now we browse the inventory... there is not only our equipment - there
      * are all our skills, forces and hidden system objects.
      */
-    for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
+    for (tmp = op->inv; tmp != NULL; tmp = tmp_ptr)
     {
+		tmp_ptr = tmp->below;
         /* 
              * add here more types we can and must skip.
              */
@@ -1005,13 +1009,42 @@ void fix_player(object *op)
          || tmp->type == ROD
          || tmp->type == HORN)
             continue;
-
+		
 		if(tmp->type == TYPE_QUEST_CONTAINER)
 		{
-			if(tmp->sub_type1)
-				pl->quest_cont_quests = tmp;
-			else
-				pl->quest_cont_one_drop = tmp;
+			/* one drop container */
+			if(tmp->sub_type1 == ST1_QUEST_ONE_DROP)
+			{
+				pl->quest_one_drop = tmp;
+				pl->quest_one_drop_count = tmp->count;
+			}
+			else if(tmp->sub_type1 == ST1_QUESTS_TYPE_DONE)
+			{
+				pl->quests_done = tmp;
+				pl->quests_done_count = tmp->count;
+			}
+			else if(tmp->sub_type1 == ST1_QUESTS_TYPE_NORMAL)
+			{
+				pl->quests_type_normal = tmp;
+				pl->quests_type_normal_count = tmp->count;
+			}
+			else if(tmp->sub_type1 == ST1_QUESTS_TYPE_KILL)
+			{
+				pl->quests_type_kill = tmp;
+				pl->quests_type_kill_count = tmp->count;
+			}
+			else if(tmp->sub_type1 == ST1_QUESTS_TYPE_CONT)
+			{
+				pl->quests_type_cont = tmp;
+				pl->quests_type_cont_count = tmp->count;
+			}
+			else /* this really should not happens... */
+			{
+				LOG(llevBug,"BUG: fix_player(): found illegal quest container (st: %d) in player %s\n", 
+					tmp->sub_type1, query_name(op));
+				/* we *can* remove it - but lets keep it for further investigations for now */
+				/*remove_ob(tmp);*/
+			}
 			continue;
 		}
 

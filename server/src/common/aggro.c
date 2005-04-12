@@ -333,7 +333,11 @@ static inline int aggro_exp_single(object *victim, object *aggro, int base)
     /* calc active dmg */
     calc_active_skill_dmg(aggro, &s1, &s2, &s3);
 
-    /* thats important. EXP gain is related to the level of our highest used skill.
+	/* check kill quests */
+	if(pl->quests_type_kill && pl->quests_type_kill->inv)
+		check_kill_quest_event(hitter, victim);
+
+		/* thats important. EXP gain is related to the level of our highest used skill.
      * that exp is parted to the used skills. That *can* right used give alot more
      * exp as in the old style. Because the exp is counted BEFORE we calc the exp
      * max. cap. Killing higher mobs will give alot more total exp.
@@ -504,6 +508,10 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
     /* first thing: we get the highest member */
     for(tmp=leader;tmp;tmp=CONTR(tmp)->group_next)
     {
+		/* check kill quests */
+		if(CONTR(tmp)->quests_type_kill && CONTR(tmp)->quests_type_kill->inv)
+			check_kill_quest_event(tmp, victim);
+
         if(high->level < tmp->level)
             high = tmp;
     }
@@ -533,7 +541,7 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
         exp =4; /* to have something senseful to part */
     /* at last ... part the exp to the group members */
     for(tmp=leader;tmp;tmp=CONTR(tmp)->group_next)
-    {
+    {		
         /* skip exp when we are not in range to victim/hitter. 
          * mark group_status as NO_EXP - thats important and used
          * from the quest item function (= no quest item for leecher)
@@ -727,7 +735,7 @@ object *aggro_calculate_exp(struct obj *victim, struct obj *slayer, char *kill_m
 
 	/* be sure not to drop items */
     if(ret == FALSE)
-	SET_FLAG(victim, FLAG_STARTEQUIP);
+		SET_FLAG(victim, FLAG_STARTEQUIP);
     
     return highest_hitter->enemy; /* used to create the corpse bounty */
 }

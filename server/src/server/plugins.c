@@ -50,7 +50,9 @@ struct plugin_hooklist  hooklist    =
     play_sound_player_only,
 	add_money_to_player,
 	drop_ob_inv,	
-	decrease_ob_nr	
+	decrease_ob_nr,	
+	add_quest_containers, add_quest_trigger,
+	set_quest_status
 };
 
 CFPlugin                PlugList[34];

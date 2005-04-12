@@ -44,6 +44,7 @@ SRCS = \
 	mempool.c\
 	object.c\
 	porting.c\
+	quest.c\
 	re-cmp.c\
 	readable.c\
 	recipe.c\

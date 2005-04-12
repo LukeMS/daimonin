@@ -72,7 +72,7 @@ void cleanup_mob_known_obj(struct mob_known_obj *data)
 
 static inline void cleanup_behaviour_parameters(struct mob_behaviour *behaviour)
 {
-    int                         i;
+    unsigned int                i;
     struct mob_behaviour_param *param;
 
     if (behaviour->parameters)
@@ -226,7 +226,7 @@ struct mob_behaviour * init_behaviour(behaviourclass_t classid, int behaviourid)
     behaviour->next = NULL;
     if (behaviour->declaration->nrof_params > 0)
     {
-        int i;
+		unsigned int i;
         behaviour->parameters = get_poolarray(pool_mob_behaviourparam, behaviour->declaration->nrof_params);
         for (i = 0; i < behaviour->declaration->nrof_params; i++)
         {
@@ -392,7 +392,7 @@ static int parse_behaviour_parameters(const char *start, const char *end, struct
     char                        namebuf[256], valuebuf[256], *ptr;
     struct mob_behaviour_param *param;
     struct behaviourparam_decl *paramdecl;
-    int                         i;
+    unsigned int                i;
 
     while (start < end)
     {
