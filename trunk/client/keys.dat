@@ -42,6 +42,7 @@
 120 0 "x" "?M_TARGET_ENEMY"
 115 0 "s" "?M_TARGET_FRIEND"
 112 0 "p" "/pray"
+116 0 "t" "/talk hello"
 
 +"Debug"
 
