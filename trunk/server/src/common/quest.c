@@ -325,7 +325,7 @@ void check_kill_quest_event(struct obj *pl, struct obj *op)
  * Its automatically given and/or looking for a quest_trigger of
  * the player
  */
-void check_cont_quest_event(struct pl_player *pl, struct obj *sack)
+void check_cont_quest_event(struct obj *pl, struct obj *sack)
 {
 	object *tmp;
 
@@ -333,6 +333,6 @@ void check_cont_quest_event(struct pl_player *pl, struct obj *sack)
 	for(tmp=sack->inv;tmp;tmp=tmp->below)
 	{
 		if(tmp->type ==TYPE_QUEST_TRIGGER && tmp->sub_type1 == ST1_QUEST_TRIGGER_CONT)
-			insert_quest_item(tmp, pl->ob);
+			insert_quest_item(tmp, pl);
 	}
 }

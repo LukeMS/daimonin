@@ -931,7 +931,7 @@ int container_link(player *pl, object *sack)
 	 * = container (apply) event.
 	 */
 	if(sack->event_flags & EVENT_FLAG_SPECIAL_QUEST && pl->quests_type_cont)
-		check_cont_quest_event(pl, sack);
+		check_cont_quest_event(pl->ob, sack);
 
     pl->container = sack;
     pl->container_count = sack->count;
