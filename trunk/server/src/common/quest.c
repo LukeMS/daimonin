@@ -143,6 +143,8 @@ void insert_quest_item(struct obj *quest_trigger, struct obj *target)
 			{
 				if(!find_one_drop_quest_item(target, tmp))
 				{
+					if(quest_trigger->sub_type1 == ST1_QUEST_TRIGGER_CONT && !flag)
+						new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, target, "You find something inside!");
 					flag = TRUE;
 					add_one_drop_quest_item(target, tmp);
 					sprintf(auto_buf, "You solved the one drop quest %s!", query_name(tmp));
@@ -162,6 +164,8 @@ void insert_quest_item(struct obj *quest_trigger, struct obj *target)
 				if(!find_quest_item(target, tmp))
 				{
 					
+					if(quest_trigger->sub_type1 == ST1_QUEST_TRIGGER_CONT && !flag)
+						new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, target, "You find something inside!");
 					flag = TRUE;
 					add_quest_item(target, tmp);
 					sprintf(auto_buf, "You found the quest item %s!", query_name(tmp));
@@ -250,15 +254,15 @@ void add_quest_trigger(struct obj *who, struct obj *trigger)
 
 	add_quest_containers(who);
 
-	if(trigger->last_grace == 0) /* normal */
+	if(trigger->sub_type1 == ST1_QUEST_TRIGGER_NORMAL) /* normal */
 		insert_ob_in_ob(trigger, CONTR(who)->quests_type_normal);
-	else if(trigger->last_grace == 1) /* kill */
+	else if(trigger->sub_type1 == ST1_QUEST_TRIGGER_KILL) /* kill */
 		insert_ob_in_ob(trigger, CONTR(who)->quests_type_kill);
-	else if(trigger->last_grace == 2) /* cont */
+	else if(trigger->sub_type1 == ST1_QUEST_TRIGGER_CONT) /* cont */
 		insert_ob_in_ob(trigger, CONTR(who)->quests_type_cont);
 	else
 	{
-		LOG(llevBug, "BUG: add_quest_trigger(): wrong quest type %d\n", trigger->last_grace);
+		LOG(llevBug, "BUG: add_quest_trigger(): wrong quest type %d\n", trigger->sub_type1);
 		return;
 	}
 }
@@ -278,7 +282,7 @@ void set_quest_status(struct obj *trigger, int q_status, int q_type)
 
 	remove_ob(trigger);
 
-	trigger->last_grace = q_type;
+	trigger->sub_type1 = q_type;
 	trigger->last_eat = q_status;
 
 	if(q_status == -1) /* move it to quests_done */
@@ -314,5 +318,21 @@ void check_kill_quest_event(struct obj *pl, struct obj *op)
 	            new_draw_info(NDI_NAVY, 0, pl, buf);
 			}
 		}
+	}
+}
+
+/* We have a container with a quest_trigger type container in it.
+ * Its automatically given and/or looking for a quest_trigger of
+ * the player
+ */
+void check_cont_quest_event(struct pl_player *pl, struct obj *sack)
+{
+	object *tmp;
+
+	/* lets browse the inventory of the container for quest_trigger object */
+	for(tmp=sack->inv;tmp;tmp=tmp->below)
+	{
+		if(tmp->type ==TYPE_QUEST_TRIGGER && tmp->sub_type1 == ST1_QUEST_TRIGGER_CONT)
+			insert_quest_item(tmp, pl->ob);
 	}
 }

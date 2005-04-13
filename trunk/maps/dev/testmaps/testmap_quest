@@ -533,6 +533,14 @@ arch floor_ostone1
 x 5
 y 7
 end
+arch sign
+name quest container test
+msg
+Quest item for container quest test NPC
+endmsg
+x 5
+y 7
+end
 arch floor_ostone1
 x 5
 y 8
@@ -542,6 +550,16 @@ x 5
 y 9
 end
 arch floor_ostone1
+x 5
+y 10
+end
+arch sign
+name one drop quest container test
+msg
+one drop quest container test
+We don't need a trigger inside the player
+as for any other one drop quest!
+endmsg
 x 5
 y 10
 end
@@ -607,6 +625,23 @@ arch floor_ostone1
 x 6
 y 7
 end
+arch chest
+direction 5
+x 6
+y 7
+arch quest_trigger
+name cont test quest1
+msg
+iam a the msg body of the quest_trigger in the chest!
+endmsg
+sub_type 2
+last_heal 1
+arch quest_object
+name cont quest1 item
+face ball_and_chain.101
+end
+end
+end
 arch floor_ostone1
 x 6
 y 8
@@ -618,6 +653,17 @@ end
 arch floor_ostone1
 x 6
 y 10
+end
+arch chest_sm_1
+direction 5
+x 6
+y 10
+arch quest_trigger
+sub_type 2
+one_drop 1
+arch cape
+end
+end
 end
 arch floor_ostone1
 x 6

@@ -7075,7 +7075,6 @@
 <type number="129" name="Quest Trigger">
   <ignore>
     <attribute arch="sub_type" />
-    <attribute arch="damned" />
     <attribute arch="one_drop" />
   </ignore>
   <description><![CDATA[ The Quest trigger is used to syncronize and
@@ -7083,7 +7082,7 @@ drive quests. If the player/trigger has a quest trigger with same
 settings, the item is triggered. Inside a mob inventory the quest
 trigger works as a container for the real quest objects.]]>
   </description>
-  <attribute arch="last_grace" editor="quest trigger" type="list_q_trigger">
+  <attribute arch="sub_type" editor="quest trigger" type="list_q_trigger">
     Type of the quest trigger event. Default normal setting works is for
     'normal' quests which are controled by scripts.
     Kill events are quests like 'kill 10 goblins and come back'.

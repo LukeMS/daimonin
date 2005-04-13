@@ -109,10 +109,6 @@ typedef struct obj
     struct obj     *chosen_skill;   /* the skill chosen to use */
     struct obj     *exp_obj;        /* the exp. obj (category) assoc. w/ this object */
     uint32          event_flags;    /* flags matching events of event objects inside object ->inv */
-    /*struct obj *event_ptr;*/ /* needed when we want chain script direct without browsing
-                               * the objects inventory (this is needed when we want mutiple
-                               * scripts of same kind in one object).
-                               */
 
     /* now "real" object releated data */
     struct archt   *other_arch; /* Pointer used for various things */

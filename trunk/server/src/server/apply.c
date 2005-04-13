@@ -926,6 +926,13 @@ int container_link(player *pl, object *sack)
         container_unlink(pl, sack);
     }
 
+	/* ok, at this point we are SURE a player opens this container.
+	 * here we kick in the check for quest item given for container access-
+	 * = container (apply) event.
+	 */
+	if(sack->event_flags & EVENT_FLAG_SPECIAL_QUEST && pl->quests_type_cont)
+		check_cont_quest_event(pl, sack);
+
     pl->container = sack;
     pl->container_count = sack->count;
 

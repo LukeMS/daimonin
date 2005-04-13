@@ -107,6 +107,8 @@
 #define EVENT_FLAG_TIMER    0x0800
 #define EVENT_FLAG_TALK     0x1000
 
+/* special flag for quest_triggers - internal use */
+#define EVENT_FLAG_SPECIAL_QUEST	0x8000
 
 /*****************************************************************************/
 /* Global events. Those are never linked to a specific object.               */
