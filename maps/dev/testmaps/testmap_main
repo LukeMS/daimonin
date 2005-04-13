@@ -851,17 +851,6 @@ arch floor_ostone1
 x 7
 y 9
 end
-arch guard
-name TestGuild master
-friendly 1
-x 7
-y 9
-arch event_obj
-name Lua
-race /dev/testmaps/TestGuild.lua
-sub_type 6
-end
-end
 arch floor_ostone1
 x 7
 y 10

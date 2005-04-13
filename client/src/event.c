@@ -2264,8 +2264,11 @@ void check_menu_keys(int menu, int key)
                 break;
 
 			case SDLK_d:
-				reset_gui_interface();	
 				sound_play_effect(SOUND_SCROLL, 0, 0, 100);
+				if(gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.command[0]!='\0')
+					gui_interface_send_command(1, gui_interface_npc->decline.command);
+				else
+					reset_gui_interface();	
 				break;
 
 			case SDLK_n:
