@@ -1518,7 +1518,7 @@ static int GameObject_AddQuest(lua_State *L)
     FREE_AND_COPY_HASH(myob->name, name);
 	if(msg)
 		FREE_AND_COPY_HASH(myob->msg, msg);
-	myob->last_grace = (sint16)mode;
+	myob->sub_type1 = (uint8)mode;
 	myob->last_heal = (sint16)nr;
 	
 	hooks->add_quest_trigger(WHO, myob);
@@ -1585,7 +1585,7 @@ static int GameObject_SetQuestStatus(lua_State *L)
 	myob = self->data.object;
 
 	if(q_type == -1)
-		q_type = myob->last_grace;
+		q_type = myob->sub_type1;
 
 	hooks->set_quest_status(myob, q_status, q_type);
 		

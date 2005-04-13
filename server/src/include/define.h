@@ -443,6 +443,11 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define ST1_QUESTS_TYPE_KILL	3
 #define ST1_QUESTS_TYPE_CONT	4
 
+/* subtypes for QUEST_TRIGGER */
+#define ST1_QUEST_TRIGGER_NORMAL	0
+#define ST1_QUEST_TRIGGER_KILL		1
+#define ST1_QUEST_TRIGGER_CONT		2
+
 /* END SUB TYPE 1 DEFINE */
 
 /* definitions for detailed pickup descriptions.

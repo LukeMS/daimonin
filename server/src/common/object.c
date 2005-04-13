@@ -3131,7 +3131,9 @@ object * insert_ob_in_ob(object *op, object *where)
      */
     if (op->type == TYPE_EVENT_OBJECT && op->sub_type1)
         where->event_flags |= (1U << (op->sub_type1 - 1));
-
+	else if(op->type == TYPE_QUEST_TRIGGER && op->sub_type1 == ST1_QUEST_TRIGGER_CONT && where->type == CONTAINER)
+		where->event_flags |= EVENT_FLAG_SPECIAL_QUEST;
+		
     /* if player, adjust one drop items and fix player if not 
      * marked as no fix.
      */
