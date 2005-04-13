@@ -106,7 +106,7 @@ struct attribute_decl       GameObject_attributes[]         =
     {"inventory", FIELDTYPE_OBJECT, offsetof(object, inv), FIELDFLAG_READONLY},
     {"map", FIELDTYPE_MAP, offsetof(object, map), FIELDFLAG_READONLY},
     {"count", FIELDTYPE_UINT32, offsetof(object, count), FIELDFLAG_READONLY},
-    {"name", FIELDTYPE_SHSTR, offsetof(object, name), FIELDFLAG_PLAYER_READONLY},
+    {"name", FIELDTYPE_SHSTR, offsetof(object, name), 0},
     {"title", FIELDTYPE_SHSTR, offsetof(object, title), 0}, 
 	{"race", FIELDTYPE_SHSTR, offsetof(object, race), 0},
     {"slaying", FIELDTYPE_SHSTR, offsetof(object, slaying), 0},
@@ -1876,7 +1876,7 @@ static int GameObject_CheckInventory(lua_State *L)
 {
     lua_object     *self;
     int             type = -1, mode = 0;
-    char*name =     NULL, *title = NULL, *arch_name = NULL;
+    char		   *name = NULL, *title = NULL, *arch_name = NULL;
     object         *tmp, *tmp2;
 
     get_lua_args(L, "Oi?s|?s?si", &self, &mode, &arch_name, &name, &title, &type);

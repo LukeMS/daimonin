@@ -3474,14 +3474,61 @@ static inline int spawn_point_darkness(object *spoint, int darkness)
 }
 
 
+/* we have a mob - now insert a copy of all items the spawn point mob has.
+ * take care about RANDOM DROP objects.
+ * usually these items are put from the map maker inside the spawn mob inv.
+ * remember that these are additional items to the treasures list ones.
+ */
+static void insert_spawn_mob_loot(object *op, object *mob, object *tmp)
+{
+	object *tmp2, *next, *next2, *item;
+
+    for (; tmp; tmp = next)
+    {
+        next = tmp->below;
+        if (tmp->type == TYPE_RANDOM_DROP)
+        {
+            if (!tmp->weight_limit || !(RANDOM() % (tmp->weight_limit + 1))) /* skip this container - drop the ->inv */
+            {
+                for (tmp2 = tmp->inv; tmp2; tmp2 = next2)
+                {
+                    next2 = tmp2->below;
+                    if (tmp2->type == TYPE_RANDOM_DROP)
+                        LOG(llevDebug,
+                            "DEBUG:: Spawn:: RANDOM_DROP (102) not allowed inside RANDOM_DROP.mob:>%s< map:%s (%d,%d)\n",
+                            query_name(mob), op->map
+                          ? op->map->path
+                          : "BUG: S-Point without map!", op->x, op->y);
+                    else
+                    {
+                        item = get_object();
+                        copy_object(tmp2, item);
+                        insert_ob_in_ob(item, mob);      /* and put it in the mob */
+						if(tmp2->inv)
+							insert_spawn_mob_loot(op, item, tmp2->inv);
+                    }
+                }
+            }
+        }
+        else /* remember this can be sys_objects too! */
+        {
+            item = get_object();
+            copy_object(tmp, item);
+            insert_ob_in_ob(item, mob);      /* and put it in the mob */
+			if(tmp->inv)
+				insert_spawn_mob_loot(op, item, tmp->inv);
+        }
+    }
+}
+
+
 /* central spawn point function.
  * Control, generate or remove the generated object.
  */
 void spawn_point(object *op)
 {
     int     rmt;
-    object *tmp, *mob, *next, *item;
-    object *tmp2, *next2;
+    object *tmp, *mob, *next;
 
     if (op->enemy)
     {
@@ -3579,44 +3626,8 @@ void spawn_point(object *op)
         mob->last_eat = 0;
     }
 
-    /* we have a mob - now insert a copy of all items the spawn point mob has.
-     * take care about RANDOM DROP objects.
-     * usually these items are put from the map maker inside the spawn mob inv.
-     * remember that these are additional items to the treasures list ones.
-     */
-    for (; tmp; tmp = next)
-    {
-        next = tmp->below;
-        if (tmp->type == TYPE_RANDOM_DROP)
-        {
-            if (!tmp->weight_limit || !(RANDOM() % (tmp->weight_limit + 1))) /* skip this container - drop the ->inv */
-            {
-                for (tmp2 = tmp->inv; tmp2; tmp2 = next2)
-                {
-                    next2 = tmp2->below;
-                    if (tmp2->type == TYPE_RANDOM_DROP)
-                        LOG(llevDebug,
-                            "DEBUG:: Spawn:: RANDOM_DROP (102) not allowed inside RANDOM_DROP.mob:>%s< map:%s (%d,%d)\n",
-                            query_name(mob), op->map
-                          ? op->map->path
-                          : "BUG: S-Point without map!", op->x, op->y);
-                    else
-                    {
-                        item = get_object();
-                        copy_object(tmp2, item);
-                        insert_ob_in_ob(item, mob);      /* and put it in the mob */
-                    }
-                }
-            }
-        }
-        else /* remember this can be sys_objects too! */
-        {
-            item = get_object();
-            copy_object(tmp, item);
-            insert_ob_in_ob(item, mob);      /* and put it in the mob */
-        }
-    }
-
+	insert_spawn_mob_loot(op, mob, tmp);
+		
     op->last_sp = rmt; /* this is the last rand() for what we have spawned! */
 
     op->enemy = mob; /* chain the mob to our spawn point */
@@ -3635,3 +3646,4 @@ void spawn_point(object *op)
     if (QUERY_FLAG(mob, FLAG_FRIENDLY))
         add_friendly_object(mob);
 }
+
