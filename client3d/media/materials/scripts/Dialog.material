@@ -1,0 +1,82 @@
+material dialog_panel
+{
+   technique
+   {
+     pass
+     {
+         ambient 0.5 0.5 0.5
+         texture_unit
+         {
+               // scale 2.0 2.0
+               texture dialog_bg.png
+          }
+     }
+   }
+}
+material dialog_title_login
+{
+   technique
+   {
+     pass
+     {
+         ambient 0.5 0.5 0.5
+         scene_blend alpha_blend
+         texture_unit
+         {
+               // scale 2.0 2.0
+               texture dialog_title_login.png
+          }
+     }
+   }
+}
+
+material dialog_text_input
+{
+   technique
+   {
+     pass
+     {
+         ambient 0.5 0.5 0.5
+         texture_unit
+         {
+               // scale 2.0 2.0
+               texture login_inp.png
+          }
+     }
+   }
+}
+
+material dialog_back_select
+{
+   technique
+   {
+     pass
+     {
+         ambient 0.5 0.5 0.5
+         texture_unit
+         {
+               // scale 2.0 2.0
+               texture dialog_bg_sel.png
+          }
+     }
+   }
+}
+
+material dialog_select
+{
+   technique
+   {
+     pass
+     {
+         ambient 0.5 0.5 0.5
+         scene_blend alpha_blend
+         depth_check off
+         texture_unit
+         {
+               // scale 2.0 2.0
+               texture dialog_select.png
+          }
+     }
+   }
+}
+

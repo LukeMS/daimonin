@@ -1,0 +1,37 @@
+##################################################################################
+# This is a client3d description file for Weapon and Shields.
+# This file is part of Daimonin (http://daimonin.sourceforge.net)
+##################################################################################
+# Post all comments to the daimonin devel-list.
+# <polyveg>
+##################################################################################
+
+# This is only for testing. Will be removed soon.
+# Look in the wiki for valid bone names!
+Bone_Right_Hand: "R_Hand"
+Bone_Left_Hand : "L_Hand"
+
+
+# Weapons
+M_Name_Weapon: "Sword1.mesh"
+StartX_Weapon: "4.0"
+StartY_Weapon: "0.0"
+StartZ_Weapon: "10.0"
+
+
+M_Name_Weapon: "Sword2.mesh"
+StartX_Weapon: "4.0"
+StartY_Weapon: "0.0"
+StartZ_Weapon: "10.0"
+
+# Shields
+M_Name_Shield: "Shield1.mesh"
+StartX_Shield: "3.0"
+StartY_Shield: "2.0"
+StartZ_Shield: "-1.0"
+
+
+M_Name_Shield: "Shield2.mesh"
+StartX_Shield: "3.0"
+StartY_Shield: "2.0"
+StartZ_Shield: "-1.0"
