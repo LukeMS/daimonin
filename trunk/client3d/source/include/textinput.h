@@ -111,7 +111,7 @@ class TextInput
 		else
 		{
 			unsigned int change = mActValue;
-			if			(key == 0xC8) { if (mActValue > mMinValue) --mActValue; } // cursor up.
+			if		(key == 0xC8) { if (mActValue > mMinValue) --mActValue; } // cursor up.
 			else if	(key == 0xD0) { if (mActValue < mMaxValue) ++mActValue; } // cursor down.
 			if (change != mActValue) mChange =true;
 		}

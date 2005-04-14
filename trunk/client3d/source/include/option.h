@@ -116,14 +116,14 @@ class Option
     bool mStartNetwork;
 	bool openDescFile(const char *filename);
     void closeDescFile();
-	void getDescStr(const char *descrEntry, string &strBuffer);
-
+	bool getDescStr(const char *descrEntry, string &strBuffer, int nr=0);
     bool Init();
   private:
     Option(const Option&); // disable copy-constructor.
     bool mLogin;
 	ifstream *mDescFile;
 	string mDescBuffer;
+	string mFilename;
 }; 
 
 #endif

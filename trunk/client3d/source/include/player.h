@@ -42,29 +42,44 @@ enum AnimState
     STATE_HIT1,		STATE_HIT2,		STATE_HIT3,
 	STATE_SUM
 };
+/*
+enum Weapon
+{
+	WEAPON_NONE,
+	WEAPON_01, WEAPON_02,
+	WEAPON_SUM
+};
 
-
+enum Shield
+{
+	SHIELD_NONE,
+	SHIELD_01, SHIELD_02,
+	SHIELD_SUM
+};
+*/
 const Real PLAYER_ANIM_SPEED = 0.5f;
 const Real PLAYER_TURN_SPEED = 2.0f;
 const Real PLAYER_WALK_SPEED = 2.0f;
 const Real RAD = 3.14159265/180.0;
+const int WEAPON_HAND = 0, SHIELD_HAND = 1;
 
 class Player
 {
   private:
-	Real mWalking, mTurning;
 	int mAnimType;
-    Real _anim_speed;
-	Radian mFacing;
-	Real mFacingOffset;
 	int mAnimGroup;
+	Real mWalking, mTurning;
+    Real _anim_speed;
+	Real mFacingOffset;
+	Radian mFacing;
     SceneNode  *mNode;
-    Entity     *mEntity;
-    Vector3 mTranslateVector;    
+    SceneManager *mSceneMgr;
+    Entity     *mEntityPlayer, *mEntityWeapon, *mEntityShield;
+    Vector3 mTranslateVector;
 	AnimationState *mAnimState;    
 	AnimationState *mAnimStates[STATE_SUM];
+	std::string mStrTemp;
     Player(const Player&); // disable copy-constructor.
-		  
   public:
     static Player &getSingleton() { static Player Singleton; return Singleton; }
 	 Player() {;}
@@ -74,11 +89,11 @@ class Player
 	bool Init(SceneManager *mSceneMgr);
 	void walking(Real walk)  { mWalking = walk; }
 	void turning(Real turn)  { mTurning = turn; }
-	void playAnimation(int type) {if (mAnimType <0) mAnimType = type; }
-	void toggleAnimaGroup(); 
-
+	void toggleAnimGroup();
+	void toggleWeapon(int Hand, int Weapon);
 	const Vector3& getPos() { return mTranslateVector; }
     void updateAnim(const FrameEvent& event);
+	void toggleAnimation(int animationNr);
 };
 
 #endif

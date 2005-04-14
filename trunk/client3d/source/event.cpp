@@ -30,6 +30,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "textwindow.h"
 #include "textinput.h"
 #include "network.h"
+#include "player.h"
 #include "tile_map.h"
 
 using namespace Ogre;
@@ -62,6 +63,8 @@ Event::Event(RenderWindow* win, Camera* cam, MouseMotionListener *mMMotionListen
 	ChatWin->Print("  Print          -> Screenshot.");
 	ChatWin->Print("Player commands (depends on model):", TXT_WHITE);
 	ChatWin->Print("  Cursor-> Movement");
+	ChatWin->Print("  1    -> Toggle Weapon");
+	ChatWin->Print("  2    -> Toggle Shield");
 	ChatWin->Print("  A    -> Attack");
 	ChatWin->Print("  B    -> Block");
 	ChatWin->Print("  S    -> Slump");
@@ -71,8 +74,8 @@ Event::Event(RenderWindow* win, Camera* cam, MouseMotionListener *mMMotionListen
 	TextWin->Print("Enemy commands:", TXT_WHITE);
 	TextWin->Print("  J    -> Turn left");
 	TextWin->Print("  K    -> Turn right");
-	TextWin->Print("  P    -> Eat rotten food");
-	TextWin->Print("  Q    -> Eat anti-poison");
+	TextWin->Print("  P    -> wound");
+	TextWin->Print("  Q    -> heal");
 	TextWin->Print("Extras:", TXT_WHITE);
 	TextWin->Print("  W    -> TimeWarp");
 	TextWin->Print("Press +/- on numpad for zoom.");
@@ -278,22 +281,28 @@ void Event::keyPressed(KeyEvent *e)
 
 
 		case KC_F1:
-             Player::getSingleton().toggleAnimaGroup();
+             Player::getSingleton().toggleAnimGroup();
 			break;
 		case KC_A:
-	        Player::getSingleton().playAnimation(STATE_ATTACK1);
+	        Player::getSingleton().toggleAnimation(STATE_ATTACK1);
 			break;
 		case KC_B:
-	        Player::getSingleton().playAnimation(STATE_BLOCK1);
+	        Player::getSingleton().toggleAnimation(STATE_BLOCK1);
 			break;
 		case KC_S:
-	        Player::getSingleton().playAnimation(STATE_SLUMP1);
+	        Player::getSingleton().toggleAnimation(STATE_SLUMP1);
 			break;
 		case KC_D:
-	        Player::getSingleton().playAnimation(STATE_DEATH1);
+	        Player::getSingleton().toggleAnimation(STATE_DEATH1);
 			break;
 		case KC_H:
-	        Player::getSingleton().playAnimation(STATE_HIT1);
+	        Player::getSingleton().toggleAnimation(STATE_HIT1);
+			break;
+		case KC_1:
+	        Player::getSingleton().toggleWeapon(WEAPON_HAND, 1);
+			break;
+		case KC_2:
+	        Player::getSingleton().toggleWeapon(SHIELD_HAND, 1);
 			break;
 
 		case KC_J:

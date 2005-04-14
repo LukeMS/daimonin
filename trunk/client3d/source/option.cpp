@@ -54,6 +54,7 @@ bool Option::openDescFile(const char *filename)
 	if (mDescFile) { mDescFile->close(); }
 	mDescFile = new ifstream(filename, ios::in);
     if (!mDescFile) { return false; }
+    mFilename = filename;
 	mDescBuffer ="";
 	string buf;
 	while (getline(*mDescFile, buf)) 
@@ -77,13 +78,15 @@ void Option::closeDescFile()
 }
 
 //=================================================================================================
-// Parse a description out of the opened description file.
+// Get the value of the nth (=posNr) incidence of a keyword.
+// If keyword is not found on posNr, return the first incidence.
 //=================================================================================================
-void Option::getDescStr(const char *descrEntry, string &strBuffer)
+bool Option::getDescStr(const char *strKeyword, string &strBuffer, int posNr)
 {
-	int startPos=0, stopPos, entryTest;
+	int pos=0, startPos=0, stopPos, entryTest;
 checkForKeyword:
-	startPos = mDescBuffer.find(descrEntry, startPos);
+	startPos = mDescBuffer.find(strKeyword, startPos);
+	if (startPos <0) { return false; }
 	entryTest= mDescBuffer.find(":",  startPos)+1;
 	startPos = mDescBuffer.find("\"", startPos)+1;
 	// keyword and value can have the same name. If ':' comes before '"' in the description-text
@@ -91,6 +94,9 @@ checkForKeyword:
 	if (entryTest>startPos) { goto checkForKeyword; }
 	stopPos  = mDescBuffer.find("\"", startPos)-startPos;
 	strBuffer = mDescBuffer.substr(startPos, stopPos);
+	if (++pos < posNr)  { goto checkForKeyword; }
+	if (strBuffer.size() == 0) { return false; }
+	return true;
 }
 
 //=================================================================================================
