@@ -42,7 +42,7 @@ const char *StateNames[STATE_SUM]=
 //=================================================================================================
 // 
 //=================================================================================================
-bool Player::Init(SceneManager *mSceneMgr)
+bool Player::Init(SceneManager *SceneMgr)
 {
 	LogFile::getSingleton().Headline("Init Player");
 	LogFile::getSingleton().Info("Parse description file %s\n", FILE_PLAYER_DESC);
@@ -53,62 +53,144 @@ bool Player::Init(SceneManager *mSceneMgr)
 		return (false);
 	}
 	LogFile::getSingleton().Success(true);
+	mSceneMgr = SceneMgr;
 
-	string strTemp;
-	Option::getSingleton().getDescStr("MeshName", strTemp);
-	mEntity = mSceneMgr->createEntity("player", strTemp.c_str());
+	Option::getSingleton().getDescStr("MeshName", mStrTemp);
+	mEntityPlayer = mSceneMgr->createEntity("player", mStrTemp.c_str());
 
-	Option::getSingleton().getDescStr("StartX", strTemp);
-	Real posX = atof(strTemp.c_str());
-	Option::getSingleton().getDescStr("StartY", strTemp);
-	Real posY = atof(strTemp.c_str());
-	Option::getSingleton().getDescStr("StartZ", strTemp);
-	Real posZ = atof(strTemp.c_str());
+	Option::getSingleton().getDescStr("StartX", mStrTemp);
+	Real posX = atof(mStrTemp.c_str());
+	Option::getSingleton().getDescStr("StartY", mStrTemp);
+	Real posY = atof(mStrTemp.c_str());
+	Option::getSingleton().getDescStr("StartZ", mStrTemp);
+	Real posZ = atof(mStrTemp.c_str());
 	mNode   = mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(posX, posY, posZ), Quaternion(1.0,0.0,0.0,0.0));
 
-	Option::getSingleton().getDescStr("MeshSize", strTemp);
-	Real size = atof(strTemp.c_str());
+	Option::getSingleton().getDescStr("MeshSize", mStrTemp);
+	Real size = atof(mStrTemp.c_str());
 	mNode->setScale(size, size, size);
 
-	Option::getSingleton().getDescStr("Facing", strTemp);
-	mFacing = Radian(atof(strTemp.c_str()));
+	Option::getSingleton().getDescStr("Facing", mStrTemp);
+	mFacing = Radian(atof(mStrTemp.c_str()));
     mNode->yaw(mFacing);
 
-	Option::getSingleton().getDescStr("FOffset", strTemp);
-	Real faceing = atof(strTemp.c_str());
+	Option::getSingleton().getDescStr("FOffset", mStrTemp);
+	Real faceing = atof(mStrTemp.c_str());
 	mFacingOffset = faceing * RAD;
-    mNode->attachObject(mEntity);
+    mNode->attachObject(mEntityPlayer);
 
-	mAnimGroup =0;
-	mAnimType =-1;
 	mTurning =0;
 	mWalking =0;
 
+	// fill the animation states.
 	for (int state = 0; state < STATE_SUM; ++state)
 	{
-		Option::getSingleton().getDescStr(StateNames[state], strTemp);
-		if (strTemp.size())
+		Option::getSingleton().getDescStr(StateNames[state], mStrTemp);
+		if (mStrTemp.size())
 		{
-			mAnimStates[state] = mEntity->getAnimationState(strTemp.c_str());
+			mAnimStates[state] = mEntityPlayer->getAnimationState(mStrTemp.c_str());
 		}
-		else
+		else // not found animation-name in description file -> use the standard one (IDLE1).
 		{
-			Option::getSingleton().getDescStr(StateNames[STATE_IDLE1], strTemp);
-			mAnimStates[state] = mEntity->getAnimationState(strTemp.c_str());
+			Option::getSingleton().getDescStr(StateNames[STATE_IDLE1], mStrTemp);
+			mAnimStates[state] = mEntityPlayer->getAnimationState(mStrTemp.c_str());
 		}
 	}
+	mEntityWeapon =0;
+	mEntityShield =0;
+	mAnimGroup = 0;
+	mAnimType  =-1;
+	mAnimState = mAnimStates[STATE_IDLE1];
+	mAnimState->setEnabled(true);
+	mAnimState->setLoop(false);
 	return true;
+}
+
+
+//=================================================================================================
+//
+//=================================================================================================
+void Player::toggleWeapon(int Hand, int WeaponNr)
+{
+	if (!(Option::getSingleton().openDescFile(FILE_PLAYER_EQUIPMENT_DESC)))
+	{
+		LogFile::getSingleton().Error("CRITICAL: Player-Equipment description file was not found!\n");
+		return;
+	}
+	static int mWeapon=0, mShield=0; // testing -> delete me!
+
+	if (Hand == WEAPON_HAND)
+	{
+		WeaponNr = ++mWeapon; // testing -> delete me!
+		if (mEntityWeapon)
+		{
+			mEntityPlayer->detachObjectFromBone("weapon");
+			mSceneMgr->removeEntity(mEntityWeapon);
+			mEntityWeapon =0;
+		}
+		if (Option::getSingleton().getDescStr("M_Name_Weapon", mStrTemp, WeaponNr))
+		{
+			mEntityWeapon = mSceneMgr->createEntity("weapon", mStrTemp);           //    oben  links  vorne
+			Option::getSingleton().getDescStr("StartX_Weapon", mStrTemp, WeaponNr);
+			Real posX = atof(mStrTemp.c_str());
+			Option::getSingleton().getDescStr("StartY_Weapon", mStrTemp, WeaponNr);
+			Real posY = atof(mStrTemp.c_str());
+			Option::getSingleton().getDescStr("StartZ_Weapon", mStrTemp, WeaponNr);
+			Real posZ = atof(mStrTemp.c_str());
+			Option::getSingleton().getDescStr("Bone_Right_Hand", mStrTemp);
+		    mEntityPlayer->attachObjectToBone(mStrTemp, mEntityWeapon, Quaternion(1.0, 0.0, 0.0, 0.0), Vector3(posX, posY, posZ));
+		}
+		else mWeapon =0;  // testing -> delete me!
+	}
+	else
+	{
+		WeaponNr = ++mShield; // testing -> delete me!
+		if (mEntityShield)
+		{
+			mEntityPlayer->detachObjectFromBone("shield");
+			mSceneMgr->removeEntity(mEntityShield);
+			mEntityShield =0;
+		}
+		if (Option::getSingleton().getDescStr("M_Name_Shield", mStrTemp, WeaponNr))
+		{
+			mEntityShield = mSceneMgr->createEntity("shield", mStrTemp);           //    oben  links  vorne
+			Option::getSingleton().getDescStr("StartX_Shield", mStrTemp, WeaponNr);
+			Real posX = atof(mStrTemp.c_str());
+			Option::getSingleton().getDescStr("StartY_Shield", mStrTemp, WeaponNr);
+			Real posY = atof(mStrTemp.c_str());
+			Option::getSingleton().getDescStr("StartZ_Shield", mStrTemp, WeaponNr);
+			Real posZ = atof(mStrTemp.c_str());
+			Option::getSingleton().getDescStr("Bone_Left_Hand", mStrTemp);
+		    mEntityPlayer->attachObjectToBone(mStrTemp, mEntityShield, Quaternion(1.0, 0.0, 0.0, 0.0), Vector3(posX, posY, posZ));
+		}
+		else mShield =0;  // testing -> delete me!
+	}
 }
 
 //=================================================================================================
 // 
 //=================================================================================================
-void Player::toggleAnimaGroup()
+void Player::toggleAnimGroup()
 {
 	if (++mAnimGroup >2) { mAnimGroup =0; }
+	toggleAnimation(mAnimType);
 	char buf[80];
 	sprintf(buf, "AnimGroup No %d is now active.", mAnimGroup+1);
 	TextWin->Print(buf, TXT_WHITE);
+}
+
+//=================================================================================================
+//
+//=================================================================================================
+void Player::toggleAnimation(int animationNr)
+{
+	if (mAnimType >= STATE_ATTACK1 && animationNr >= STATE_ATTACK1) { return; }
+	mAnimType = animationNr;
+	mAnimState->setEnabled(false);
+	mAnimState = mAnimStates[mAnimType + mAnimGroup];
+	mAnimState->setEnabled(true);
+	mAnimState->setTimePosition(0);
+	mAnimState->setLoop(false);
 }
 
 //=================================================================================================
@@ -116,40 +198,31 @@ void Player::toggleAnimaGroup()
 //=================================================================================================
 void Player::updateAnim(const FrameEvent& event)
 {
-	if (mAnimType >= STATE_ATTACK1)
+	mAnimState = mAnimStates[mAnimType + mAnimGroup];
+	mAnimState->addTime(event.timeSinceLastFrame * PLAYER_ANIM_SPEED);
+	if (mAnimState->getTimePosition() >= mAnimState->getLength())
 	{
-		mAnimState->setLoop(false);
-		mAnimState= mAnimStates[mAnimType+mAnimGroup];
-		mAnimState->addTime(event.timeSinceLastFrame * PLAYER_ANIM_SPEED);
-		if (mAnimState->getTimePosition() >= mAnimState->getLength())
-		{
-			mAnimType =-1;
-			mAnimState->setTimePosition(0.0f);
-		}
+		toggleAnimation(STATE_IDLE1);
+		mAnimState->setTimePosition(0);
 	}
-	else
+	mAnimState->setEnabled(true);
+	mTranslateVector = Vector3(0,0,0);
+	if (mAnimType < STATE_ATTACK1)
 	{
 		if (mTurning)
 		{
-			mAnimState= mAnimStates[STATE_IDLE1];
-          	mAnimState->setLoop(true);
-  		    mFacing += Radian(event.timeSinceLastFrame *mTurning);
+		    mFacing += Radian(event.timeSinceLastFrame *mTurning);
 			mNode->yaw(Radian(event.timeSinceLastFrame *mTurning));
 		}
 		if (mWalking)
 		{
-			mAnimState= mAnimStates[STATE_WALK1];
-            mAnimState->setLoop(true);
+			if (mAnimType != STATE_WALK1) { toggleAnimation(STATE_WALK1); }
 	        mTranslateVector.z =  sin(mFacing.valueRadians()+mFacingOffset)* mWalking;
 		    mTranslateVector.x = -cos(mFacing.valueRadians()+mFacingOffset)* mWalking;
-			mAnimState->addTime(event.timeSinceLastFrame * mWalking);
 		}
 		else
 		{
-			mTranslateVector = Vector3(0,0,0);
-			mAnimState= mAnimStates[STATE_IDLE1];
-			mAnimState->addTime(event.timeSinceLastFrame * PLAYER_ANIM_SPEED);
+			if (mAnimType != STATE_IDLE1) { toggleAnimation(STATE_IDLE1); }
 		}
 	}
-	mAnimState->setEnabled(true);
 }

@@ -53,11 +53,11 @@ class NPC
 	bool Init(SceneManager *SceneMgr, SceneNode  *Node);
 	void walking(Real walk)  { mWalking = walk; }
 	void turning(Real turn)  { mTurning = turn; }
-	void playAnimation(int type) {if (mAnimType <0) mAnimType = type; }
-	void toggleAnimaGroup(); 
 	const Vector3& getPos() { return mTranslateVector; }
     void updateAnim(const FrameEvent& event);
     void updateTexture(int textureNr);
+	void toggleAnimaGroup();
+    void toggleAnimation(int animationNr);
 };
 
 extern NPC *NPC_Enemy1;

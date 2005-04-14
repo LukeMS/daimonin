@@ -691,7 +691,7 @@ bool TileMap::Init(SceneManager *SceneMgr, SceneNode  *Node)
 	std::string texName = "mat_dyn_layer_01";
 	MaterialPtr mMaterial = MaterialManager::getSingleton().getByName("dyn_layer_01");
 	mTexture = TextureManager::getSingleton().loadImage(texName, "General", mLayerImage, TEX_TYPE_2D, 3,1.0f);
-	mHardwareBuffer = mTexture->getBuffer(0, 0); 
+	mHardwareBuffer = mTexture->getBuffer(0, 0);
 	mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(texName);
 	mMaterial->load();
 

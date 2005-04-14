@@ -77,7 +77,6 @@ bool NPC::Init(SceneManager *mSceneMgr, SceneNode  *Node)
     mNode->attachObject(mEntity);
 
 	mAnimGroup =0;
-	mAnimType =-1;
 	mTurning =0;
 	mWalking =0;
 
@@ -95,6 +94,10 @@ bool NPC::Init(SceneManager *mSceneMgr, SceneNode  *Node)
 		}
 	}
 	++mInstanceNr;
+	mAnimType  =-1;
+	mAnimState = mAnimStates[STATE_IDLE1];
+	mAnimState->setEnabled(true);
+	mAnimState->setLoop(false);
 	return true;
 }
 
@@ -125,45 +128,49 @@ void NPC::toggleAnimaGroup()
 }
 
 //=================================================================================================
-// 
+//
+//=================================================================================================
+void NPC::toggleAnimation(int animationNr)
+{
+	if (mAnimType >= STATE_ATTACK1 && animationNr >= STATE_ATTACK1) { return; }
+	mAnimType = animationNr;
+	mAnimState->setEnabled(false);
+	mAnimState = mAnimStates[mAnimType + mAnimGroup];
+	mAnimState->setEnabled(true);
+	mAnimState->setTimePosition(0);
+	mAnimState->setLoop(false);
+}
+
+//=================================================================================================
+//
 //=================================================================================================
 void NPC::updateAnim(const FrameEvent& event)
 {
-	if (mAnimType >= STATE_ATTACK1)
+	mAnimState = mAnimStates[mAnimType + mAnimGroup];
+	mAnimState->addTime(event.timeSinceLastFrame * PLAYER_ANIM_SPEED);
+	if (mAnimState->getTimePosition() >= mAnimState->getLength())
 	{
-		mAnimState->setLoop(false);
-		mAnimState= mAnimStates[mAnimType+mAnimGroup];
-		mAnimState->addTime(event.timeSinceLastFrame * PLAYER_ANIM_SPEED);
-		if (mAnimState->getTimePosition() >= mAnimState->getLength())
-		{
-			mAnimType =-1;
-			mAnimState->setTimePosition(0.0f);
-		}
+		toggleAnimation(STATE_IDLE1);
+		mAnimState->setTimePosition(0);
 	}
-	else
+	mAnimState->setEnabled(true);
+	mTranslateVector = Vector3(0,0,0);
+	if (mAnimType < STATE_ATTACK1)
 	{
 		if (mTurning)
 		{
-			mAnimState= mAnimStates[STATE_IDLE1];
-          	mAnimState->setLoop(true);
-  		    mFacing += Radian(event.timeSinceLastFrame *mTurning);
+		    mFacing += Radian(event.timeSinceLastFrame *mTurning);
 			mNode->yaw(Radian(event.timeSinceLastFrame *mTurning));
 		}
 		if (mWalking)
 		{
-			mAnimState= mAnimStates[STATE_WALK1];
-			mAnimState->setLoop(true);
+			if (mAnimType != STATE_WALK1) { toggleAnimation(STATE_WALK1); }
 	        mTranslateVector.z =  sin(mFacing.valueRadians()+mFacingOffset)* mWalking;
 		    mTranslateVector.x = -cos(mFacing.valueRadians()+mFacingOffset)* mWalking;
-			mAnimState->addTime(event.timeSinceLastFrame * mWalking);
 		}
 		else
 		{
-			mTranslateVector = Vector3(0,0,0);
-			mAnimState= mAnimStates[STATE_IDLE1];
-			mAnimState->setLoop(true);
-			mAnimState->addTime(event.timeSinceLastFrame * PLAYER_ANIM_SPEED);
+			if (mAnimType != STATE_IDLE1) { toggleAnimation(STATE_IDLE1); }
 		}
 	}
-	mAnimState->setEnabled(true);
 }
