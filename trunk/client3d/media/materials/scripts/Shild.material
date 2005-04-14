@@ -1,0 +1,35 @@
+material Material_#36/Shild1_outside
+{
+    technique
+    {
+        pass
+        {
+            ambient 0.588 0.588 0.588
+            diffuse 0.588 0.588 0.588
+            specular 0.9 0.9 0.9 0.0
+            emissive 0.0 0.0 0.0
+            texture_unit
+            {
+                texture Shild1_side.jpg 
+            }
+        }
+    }
+}
+
+material Material_#36/Shild1_inside
+{
+    technique
+    {
+        pass
+        {
+            ambient 0.588 0.588 0.588
+            diffuse 0.588 0.588 0.588
+            specular 0.9 0.9 0.9 0.0
+            emissive 0.0 0.0 0.0
+            texture_unit
+            {
+                texture Shild1_inside.jpg 
+            }
+        }
+    }
+}
