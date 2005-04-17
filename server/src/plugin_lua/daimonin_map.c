@@ -45,7 +45,8 @@ static struct attribute_decl    Map_attributes[]    =
     { "height", FIELDTYPE_UINT16, offsetof(mapstruct, height), FIELDFLAG_READONLY },
     { "width", FIELDTYPE_UINT16, offsetof(mapstruct, width), FIELDFLAG_READONLY },
     { "darkness", FIELDTYPE_UINT8, offsetof(mapstruct, darkness), FIELDFLAG_READONLY },
-    { "path", FIELDTYPE_SHSTR, offsetof(mapstruct, path), FIELDFLAG_READONLY }
+    { "path", FIELDTYPE_SHSTR, offsetof(mapstruct, path), FIELDFLAG_READONLY },
+    {NULL}
 };
 
 static const char              *Map_flags[]         =
