@@ -21,14 +21,6 @@ http://www.gnu.org/copyleft/lesser.txt.
 -----------------------------------------------------------------------------
 */
 
-#include <Ogre.h>
-#include <OgreImage.h>
-#include <OgreConfigFile.h>
-#include <OgreTexture.h>
-#include <OgreHardwarePixelBuffer.h>
-#include <OgreTextureManager.h>
-#include <OgreSceneManager.h>
-
 #include "define.h"
 #include "event.h"
 #include "player.h"
@@ -43,8 +35,26 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "tile_gfx.h"
 #include "tile_map.h"
 
-
 using namespace Ogre;
+
+// ========================================================================
+// Start the example
+// ========================================================================
+DaimoninClient::DaimoninClient()
+{
+	mRoot  = 0;
+}
+
+// ========================================================================
+// Start the example
+// ========================================================================
+DaimoninClient::~DaimoninClient()
+{
+	if (Event)       { delete Event; }
+	if (mRoot)       { delete mRoot;  }
+	if (NPC_Enemy1)  { delete NPC_Enemy1; }
+}
+
 
 // ========================================================================
 // Start the example
@@ -52,16 +62,16 @@ using namespace Ogre;
 void DaimoninClient::go(void)
 {
     if (!setup()) { return; }
+ 	Sound::getSingleton().playSong(FILE_MUSIC_001);
     mRoot->startRendering();
-    // clean up
-	TileMap::getSingleton().freeRecources();
+    // Clean up all Ogre-Ptr.
+	TileMap::getSingleton().freeRecources();     
 }
 
 // ========================================================================
 // These internal methods package up the stages in the startup process
 // Sets up the application - returns false if user abandon configuration.
 // ========================================================================
-
 bool DaimoninClient::setup(void)
 {
 	LogFile::getSingleton().Init();
@@ -71,9 +81,11 @@ bool DaimoninClient::setup(void)
 	Option ::getSingleton().Init();
 	Sound  ::getSingleton().Init();
 	Network::getSingleton().Init();
-	mRoot = new Root();
-	setupResources();
 
+	mRoot = new Root();
+
+	setupResources();
+		
 	/////////////////////////////////////////////////////////////////////////
 	// Show the configuration dialog and initialise the system
 	// You can skip this and use root.restoreConfig() to load configuration
@@ -81,7 +93,6 @@ bool DaimoninClient::setup(void)
 	/////////////////////////////////////////////////////////////////////////
 	if(mRoot->showConfigDialog()) { mWindow = mRoot->initialise(true); }
 	else return false;
-
     /////////////////////////////////////////////////////////////////////////
     // Get the SceneManager, in this case a generic one
 	/////////////////////////////////////////////////////////////////////////
@@ -91,10 +102,6 @@ bool DaimoninClient::setup(void)
 	/////////////////////////////////////////////////////////////////////////
     mCamera = mSceneMgr->createCamera("Camera");
     mCamera->setProjectionType(PT_ORTHOGRAPHIC);
-	mCamera->setPosition(Vector3(0,CAMERA_ZOOM+50, CAMERA_ZOOM+50));
-    mCamera->setNearClipDistance(CAMERA_ZOOM);
-//    mCamera->setFarClipDistance(600);
-	mCamera->lookAt(Vector3(0,0,0));
 
 	/////////////////////////////////////////////////////////////////////////
     // Create one viewport, entire window
@@ -103,21 +110,20 @@ bool DaimoninClient::setup(void)
     mVP->setBackgroundColour(ColourValue(0,0,0));
     // Alter the camera aspect ratio to match the viewport
     mCamera->setAspectRatio(Real(mVP->getActualWidth()) / Real(mVP->getActualHeight()));
-
     /////////////////////////////////////////////////////////////////////////
     // Set default mipmap level (NB some APIs ignore this)
     /////////////////////////////////////////////////////////////////////////
-    TextureManager::getSingleton().setDefaultNumMipmaps(5);
-
+    TextureManager::getSingleton().setDefaultNumMipmaps(3);
     /////////////////////////////////////////////////////////////////////////
     // Optional override method where you can perform resource group loading
     // Must at least do ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
     // Initialise, parse scripts etc
     /////////////////////////////////////////////////////////////////////////
     ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
-    mEvent= new Event(mWindow, mCamera, mMouseMotionListener, mMouseListener);
-    mRoot->addFrameListener(mEvent);
-    mEvent->setResolutionMember(mVP->getActualWidth(), mVP->getActualHeight());
+    Event= new CEvent(mWindow, mCamera, mMouseMotionListener, mMouseListener);
+    mRoot->addFrameListener(Event);
+    Event->setResolutionMember(mVP->getActualWidth(), mVP->getActualHeight());
+
     createScene();
 	return true;
 }
@@ -155,28 +161,30 @@ void DaimoninClient::setupResources(void)
 void DaimoninClient::createScene(void)
 {
 	// Create the world.
-	mEvent->World = mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(0, 0, 0), Quaternion(1.0,0.0,0.0,0.0));
+	Event->World = mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(0, 0, 0), Quaternion(1.0,0.0,0.0,0.0));
+//	Event->World->setPosition(0,0,0);
     mSceneMgr->setAmbientLight(ColourValue(0, 0, 0));
+//    mSceneMgr->setAmbientLight(ColourValue(1.0, 1.0, 1.0));
 
     Light *light;
     light = mSceneMgr->createLight("Light_Vol");
     light->setType(Light::LT_POINT );
-    light->setPosition(-100, 100, 100);
-    light->setDiffuseColour(1.0, 1.0, 1.0);
- //   light->setSpecularColour(1.0, 1.0, 1.0);
-    mEvent->World->attachObject(light);
-	mEvent->setLightMember(light, 0);
+    light->setPosition(-100, 100, 500);
+//    light->setDiffuseColour(1.0, 1.0, 1.0);
+	light->setSpecularColour(1.0, 1.0, 1.0);
+    Event->World->attachObject(light);
+	Event->setLightMember(light, 0);
 
     light = mSceneMgr->createLight("Light_Spot");
     light->setType(Light::LT_SPOTLIGHT);
-	light->setDirection(0, -1, 0);
-    light->setPosition (-125, 200, 50);
+	light->setDirection(0, -1, -1);
+    light->setPosition (-125, 200, 100);
     light->setDiffuseColour(1.0, 1.0, 1.0);
 //	light->setSpotlightRange(Radian(.2) , Radian(.6), 5.5);
 //	light->setAttenuation(1000,1,0.005,0);
 
-	mEvent->World->attachObject(light);
-	mEvent->setLightMember(light, 1);
+	Event->World->attachObject(light);
+	Event->setLightMember(light, 1);
 	light->setVisible(false);
 
     // Setup animation default
@@ -184,41 +192,32 @@ void DaimoninClient::createScene(void)
     Animation::setDefaultRotationInterpolationMode(Animation::RIM_LINEAR);
 
     Player::getSingleton().Init(mSceneMgr);
-	NPC_Enemy1->Init(mSceneMgr, mEvent->World);
-
+	NPC_Enemy1->Init(mSceneMgr, Event->World);
+	TileMap::getSingleton().Init(mSceneMgr, mSceneMgr->getRootSceneNode());
+	
 	// Make sure the camera track this node
-	mCamera->setAutoTracking(true, Player::getSingleton().getNode());
+
 /*
 	// Create the camera node & attach camera
-	SceneNode* camNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-	camNode->attachObject(mCamera);
+//	SceneNode* camNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+//	camNode->attachObject(mCamera);
+//	mCamera->setAutoTracking(true, Player::getSingleton().getNode());
+	mCamera->setPosition(Vector3(0,CAMERA_ZOOM+50, CAMERA_ZOOM+50));
+    mCamera->setNearClipDistance(CAMERA_ZOOM);
+//    mCamera->setFarClipDistance(600);
+	mCamera->lookAt(Vector3(0,0,0));
 */
-
 /*
-	MaterialPtr mMaterial = MaterialManager::getSingleton().getByName("dyn_layer_01");
-	string texName = "testMat";
-	Image mImage;
-	mImage.load("grass.101.png", "General");
-	TexturePtr mTexture = TextureManager::getSingleton().loadImage(texName, "Tiles", mImage, TEX_TYPE_2D, 3,1.0f);
-	mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(texName);
-	mMaterial->load();
+	// Create the camera node & attach camera
+    mCamera->setPosition(Vector3(0, 0, 500));
+    // Look back along -Z
+    mCamera->lookAt(Vector3(0,0,0));
+    mCamera->setNearClipDistance(500);
+//    mCamera->setAutoTracking(true, Event->World);
+//    SceneNode* camNode = Player::getSingleton().getNode()->createChildSceneNode();
+//    camNode->attachObject(mCamera);
 */
-
-	TileMap::getSingleton().Init(mSceneMgr, mEvent->World);
-
-//	Image img;  img.load ("stone_01.png", "General") ;
-
-/*
-	int gfxNr = 248; //251
-	TileGfx::getSingleton().load_picture_from_pack(gfxNr);
-	Image *img = &TileGfx::getSingleton().getSprite(gfxNr);
-
-	buffer = mTexture->getBuffer(0, 0);
-	buffer->lock(HardwareBuffer::HBL_DISCARD);
-	for (int y = 0; y < SUM_TILES_Y; ++y)
-		for (int x = 0; x < SUM_TILES_X; ++x)
-			drawTile(img, x, y);
-	buffer->unlock();
-*/
-
+	mCamera->setPosition(Vector3(0,CAMERA_ZOOM+50, CAMERA_ZOOM+50));
+    mCamera->setNearClipDistance(CAMERA_ZOOM);
+	mCamera->lookAt(Vector3(0,0,0));
 }

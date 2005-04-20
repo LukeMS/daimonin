@@ -28,23 +28,27 @@ http://www.gnu.org/copyleft/lesser.txt.
 
 using namespace std;
 
+////////////////////////////////////////////////////////////
+// Defines.
+////////////////////////////////////////////////////////////
 enum { INPUT_MODE_TEXT, INPUT_MODE_CURSOR_SELECTION, INPUT_MODE_SUM };
 
+////////////////////////////////////////////////////////////
+// Singleton class.
+////////////////////////////////////////////////////////////
 class TextInput
 {
   public:
+    ////////////////////////////////////////////////////////////
+	// Functions.
+    ////////////////////////////////////////////////////////////
 	 TextInput() { stop(); };
 	~TextInput() {};
-    static TextInput &getSingleton()
-	{
-		static TextInput singleton;
-		return singleton;
-	}
+    static TextInput &getSingleton() {	static TextInput singleton; return singleton; }
 
 	void addString(string &addString) { mStrTextInput+= addString; }
 	void setString(string &newString) { mStrTextInput = newString; }
 	void clearText() { mStrTextInput = ""; }
-
 	void finished()   { mFinished = true; };
 	void canceled()   { mCanceled = true; };
 	bool isFinished() { return mFinished; };
@@ -138,6 +142,9 @@ class TextInput
 
 
   private:
+    ////////////////////////////////////////////////////////////
+	// Variables.
+    ////////////////////////////////////////////////////////////
 	bool mChange;
 	unsigned int mMinValue, mActValue, mMaxValue;
 	bool mFinished, mCanceled, mInProgress;
@@ -146,8 +153,12 @@ class TextInput
 	bool mUseNumbers;
 	int mInputMode;
 	bool mUseWhitespaces;
-    TextInput(const TextInput&); // disable copy-constructor.
 	string mStrTextInput;
+	
+    ////////////////////////////////////////////////////////////
+	// Functions.
+    ////////////////////////////////////////////////////////////
+    TextInput(const TextInput&); // disable copy-constructor.
 };
 
 #endif

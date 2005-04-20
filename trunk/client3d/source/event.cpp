@@ -21,6 +21,9 @@ http://www.gnu.org/copyleft/lesser.txt.
 -----------------------------------------------------------------------------
 */
 
+
+#include <OgreKeyEvent.h>
+
 #include "event.h"
 #include "dialog.h"
 #include "sound.h"
@@ -33,14 +36,26 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "player.h"
 #include "tile_map.h"
 
+#define SHOW_FREE_MEM 1
+
+#ifdef SHOW_FREE_MEM
+  #ifdef WIN32
+    #include "windows.h"
+    #include "winbase.h"
+  #else
+  
+  #endif
+#endif
+
 using namespace Ogre;
 
-CTextwindow *ChatWin=0, *TextWin=0;
-
+OverlayElement* mRowText;
+Overlay *mRowOverlay;
+CEvent *Event=0;
 //=================================================================================================
 // Constructor.
 //=================================================================================================
-Event::Event(RenderWindow* win, Camera* cam, MouseMotionListener *mMMotionListener, 
+CEvent::CEvent(RenderWindow* win, Camera* cam, MouseMotionListener *mMotionListener, 
 		MouseListener *mMListener, bool useBufferedInputKeys, bool)
 {
     /////////////////////////////////////////////////////////////////////////////////////////
@@ -48,6 +63,8 @@ Event::Event(RenderWindow* win, Camera* cam, MouseMotionListener *mMMotionListen
 	/////////////////////////////////////////////////////////////////////////////////////////
     mDebugOverlay = OverlayManager::getSingleton().getByName("Core/DebugOverlay");
     mDebugOverlay->show();
+	mRowOverlay= OverlayManager::getSingleton().getByName("RowOverlay");
+	mRowText = OverlayManager::getSingleton().getOverlayElement("RowOverlayText");
     mMouseCursor  = OverlayManager::getSingleton().getByName("CursorOverlay");    
 	mMouseCursor->show();
     mMouseX = mMouseY =0;
@@ -92,15 +109,16 @@ Event::Event(RenderWindow* win, Camera* cam, MouseMotionListener *mMMotionListen
 	mEventProcessor->addMouseMotionListener(this);
 	mEventProcessor->addMouseListener(this);			
 	mInputDevice =  mEventProcessor->getInputReader();
-    mMouseMotionListener = mMMotionListener;
+    mMouseMotionListener = mMotionListener;
     mMouseListener = mMListener;
 
+	NPC_Enemy1 = new NPC;
 	mQuitGame = false;
-    mCamera = cam;
-    mWindow = win;
+	mCamera = cam;
+	mWindow = win;
 	mTimeUntilNextToggle = 0;
-    mSceneDetailIndex = 0;
-    mMoveScale = 0.0f;
+	mSceneDetailIndex = 0;
+	mMoveScale = 0.0f;
     mRotScale = 0.0f;
     mRotateSpeed = 36;
     mMoveSpeed   = 100;
@@ -115,17 +133,18 @@ Event::Event(RenderWindow* win, Camera* cam, MouseMotionListener *mMMotionListen
 //=================================================================================================
 // Destructor.
 //=================================================================================================
-Event::~Event()
+CEvent::~CEvent()
 {
 	if (mEventProcessor) { delete mEventProcessor; }
-    if (TextWin)         { delete TextWin;         }
-    if (ChatWin)         { delete ChatWin;         }
+    if (TextWin)         { delete TextWin; }
+    if (ChatWin)         { delete ChatWin; }
+    if (NPC_Enemy1)      { delete NPC_Enemy1; }
 }
 
 //=================================================================================================
 // Frame Start event.
 //=================================================================================================
-bool Event::frameStarted(const FrameEvent& evt)
+bool CEvent::frameStarted(const FrameEvent& evt)
 {
     if(mWindow->isClosed()) { return false; }
 
@@ -135,10 +154,10 @@ bool Event::frameStarted(const FrameEvent& evt)
 	NPC_Enemy1->updateAnim(evt);
 
 	mIdleTime += evt.timeSinceLastFrame;
-	if (mIdleTime > 10.0)
+	if (mIdleTime > 15.0)
 	{ 
-		Sound::getSingleton().PlaySample(SAMPLE_PLAYER_IDLE); 
-		mIdleTime = -120;
+		Sound::getSingleton().playSample(SAMPLE_PLAYER_IDLE);
+		mIdleTime = -240;
 	}
 
 	TileMap::getSingleton().draw();
@@ -176,7 +195,7 @@ bool Event::frameStarted(const FrameEvent& evt)
 //=================================================================================================
 // Frame End event.
 //=================================================================================================
-bool Event::frameEnded(const FrameEvent& evt)
+bool CEvent::frameEnded(const FrameEvent& evt)
 {
     static String currFps  = "Current FPS: ";
     static String avgFps   = "Average FPS: ";
@@ -195,11 +214,24 @@ bool Event::frameEnded(const FrameEvent& evt)
 
         guiAvg->setCaption(avgFps + StringConverter::toString(stats.avgFPS));
         guiCurr->setCaption(currFps + StringConverter::toString(stats.lastFPS));
-        guiBest->setCaption(bestFps + StringConverter::toString(stats.bestFPS)
-            +" "+StringConverter::toString(stats.bestFrameTime)+" ms");
-        guiWorst->setCaption(worstFps + StringConverter::toString(stats.worstFPS)
-            +" "+StringConverter::toString(stats.worstFrameTime)+" ms");
+#ifdef SHOW_FREE_MEM
+  #ifdef WIN32
+		MEMORYSTATUS ms;
+		ms.dwLength = sizeof(ms);
+		GlobalMemoryStatus(&ms);
+		if((long)ms.dwAvailPageFile<0) { ms.dwAvailPageFile = 0; }
+		if((long)ms.dwAvailPhys    <0) { ms.dwAvailPhys     = 0; }
+		long usedPhys = ((long)ms.dwTotalPhys     - (long)ms.dwAvailPhys) / 1024;
+		long usedPage = ((long)ms.dwTotalPageFile - (long)ms.dwAvailPageFile)/ 1024;
+  #else
 
+  #endif
+        guiBest ->setCaption("Phys Mem used:" + StringConverter::toString(usedPhys)+ " kb");
+        guiWorst->setCaption("Page Mem used:" + StringConverter::toString(usedPage)+ " kb");
+#else 
+        guiBest->setCaption(bestFps + StringConverter::toString(stats.bestFPS)+" "+StringConverter::toString(stats.bestFrameTime)+" ms");
+        guiWorst->setCaption(worstFps + StringConverter::toString(stats.worstFPS) +" "+StringConverter::toString(stats.worstFrameTime)+" ms");
+#endif  
         OverlayElement* guiTris = OverlayManager::getSingleton().getOverlayElement("Core/NumTris");
         guiTris->setCaption(tris + StringConverter::toString(stats.triangleCount));
 
@@ -211,8 +243,15 @@ bool Event::frameEnded(const FrameEvent& evt)
 		///////////////////////////////////////////////////////////////////////// 
 	    // Print camera details
 	    /////////////////////////////////////////////////////////////////////////
-		mWindow->setDebugText("Camera zoom: " + StringConverter::toString(mCameraZoom)+ " pos: " + StringConverter::toString(mCamera->getDerivedPosition())
+		mWindow->setDebugText("Camera zoom: " + StringConverter::toString(mCameraZoom)+ " pos: " 
+            + StringConverter::toString(mCamera->getDerivedPosition())
 			+ " orientation: " + StringConverter::toString(mCamera->getDerivedOrientation()));
+
+		Vector3 pPos = World->getPosition();
+		mWindow->setDebugText(  " x: "+ StringConverter::toString(pPos.x)+
+                                " y: "+ StringConverter::toString(pPos.y)+
+                                " z: "+ StringConverter::toString(pPos.z));
+
 	}
 	catch(...)
 	{
@@ -224,7 +263,7 @@ bool Event::frameEnded(const FrameEvent& evt)
 //=================================================================================================
 // Buffered Key Events - Dialog.
 //=================================================================================================
-void Event::keyEventDialog(KeyEvent *e)
+void CEvent::keyEventDialog(KeyEvent *e)
 {
 	switch (e->getKey())
 	{
@@ -252,7 +291,7 @@ void Event::keyEventDialog(KeyEvent *e)
 //=================================================================================================
 // Buffered Key Events.
 //=================================================================================================
-void Event::keyPressed(KeyEvent *e) 
+void CEvent::keyPressed(KeyEvent *e) 
 {
 	mIdleTime =0;
 	if (Dialog::getSingleton().isVisible()) 
@@ -414,11 +453,11 @@ void Event::keyPressed(KeyEvent *e)
 //	e->consume();
 }
 
-void Event::keyClicked(KeyEvent* e) 
+void CEvent::keyClicked(KeyEvent* e) 
 {
 }
 
-void Event::keyReleased(KeyEvent* e) 
+void CEvent::keyReleased(KeyEvent* e) 
 {
 	switch (e->getKey())
 	{
@@ -447,7 +486,7 @@ void Event::keyReleased(KeyEvent* e)
 //=================================================================================================
 // Buffered Mouse Events.
 //=================================================================================================
-void Event::mouseMoved (MouseEvent *e)
+void CEvent::mouseMoved (MouseEvent *e)
 {
 	mMouseX += e->getRelX();
 	mMouseY += e->getRelY();
@@ -459,7 +498,7 @@ void Event::mouseMoved (MouseEvent *e)
 	e->consume();
 }
 
-void Event::mouseDragged(MouseEvent *e)
+void CEvent::mouseDragged(MouseEvent *e)
 {
 	if (!TextWin->MouseAction(M_DRAGGED, mMouseX, mMouseY, e->getRelY()*mSreenHeight)) { return; }
 	if (!ChatWin->MouseAction(M_DRAGGED, mMouseX, mMouseY, e->getRelY()*mSreenHeight)) { return; }
@@ -467,7 +506,7 @@ void Event::mouseDragged(MouseEvent *e)
 	e->consume();
 }
 
-void Event::mouseClicked (MouseEvent *e)
+void CEvent::mouseClicked (MouseEvent *e)
 {
 	if (!TextWin->MouseAction(M_CLICKED, mMouseX, mMouseY)) { return; }
 	if (!ChatWin->MouseAction(M_CLICKED, mMouseX, mMouseY)) { return; }
@@ -475,7 +514,7 @@ void Event::mouseClicked (MouseEvent *e)
 	e->consume();
 }
 
-void Event::mouseEntered (MouseEvent *e)
+void CEvent::mouseEntered (MouseEvent *e)
 {
 	TextWin->MouseAction(M_ENTERED, mMouseX, mMouseY);
 	ChatWin->MouseAction(M_ENTERED, mMouseX, mMouseY);
@@ -483,7 +522,7 @@ void Event::mouseEntered (MouseEvent *e)
 	e->consume();
 }
 
-void Event::mouseExited  (MouseEvent *e)
+void CEvent::mouseExited  (MouseEvent *e)
 {
 	TextWin->MouseAction(M_EXITED,mMouseX, mMouseY);
 	ChatWin->MouseAction(M_EXITED,mMouseX, mMouseY);
@@ -491,7 +530,7 @@ void Event::mouseExited  (MouseEvent *e)
 	e->consume();
 }
 
-void Event::mousePressed (MouseEvent *e)
+void CEvent::mousePressed (MouseEvent *e)
 {
 	TextWin->MouseAction(M_PRESSED, mMouseX, mMouseY);
 	ChatWin->MouseAction(M_PRESSED, mMouseX, mMouseY);
@@ -499,7 +538,7 @@ void Event::mousePressed (MouseEvent *e)
 	e->consume();
 }
 
-void Event::mouseReleased(MouseEvent *e)
+void CEvent::mouseReleased(MouseEvent *e)
 {
 	TextWin->MouseAction(M_RELEASED, mMouseX, mMouseY);
 	ChatWin->MouseAction(M_RELEASED, mMouseX, mMouseY);

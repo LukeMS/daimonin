@@ -1,13 +1,30 @@
-// -----------------------------------------------------------------------------
-// This file was altered by The Daimonin Team in 2005.
-// -----------------------------------------------------------------------------
+/*
+    Daimonin SDL client, a client program for the Daimonin MMORPG.
+
+
+  Copyright (C) 2003 Michael Toennies
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+    The author can be reached via e-mail to info@daimonin.net
+*/
 
 /* zutil.c -- target dependent utility functions for the compression library
  * Copyright (C) 1995-2003 Jean-loup Gailly.
  * For conditions of distribution and use, see copyright notice in zlib.h
  */
-
-/* @(#) $Id$ */
 
 #include "zutil.h"
 
@@ -163,7 +180,8 @@ char   *m;
 /* exported to allow conversion of error code to string for compress() and
  * uncompress()
  */
-const char * ZEXPORT zError(int err)
+const char * ZEXPORT    zError(err)
+int err;
 {
     return ERR_MSG(err);
 }
@@ -347,14 +365,19 @@ extern voidp  calloc    OF((uInt items, uInt size));
 extern void   free      OF((voidpf ptr));
 #endif
 
-voidpf zcalloc(voidpf opaque, unsigned items,unsigned size)
+voidpf                  zcalloc(opaque, items, size)
+voidpf      opaque;
+unsigned    items;
+unsigned    size;
 {
     if (opaque)
         items += size - size; /* make compiler happy */
     return sizeof(uInt) > 2 ? (voidpf) malloc(items * size) : (voidpf) calloc(items, size);
 }
 
-void    zcfree(voidpf opaque, voidpf ptr)
+void    zcfree(opaque, ptr)
+voidpf  opaque;
+voidpf  ptr;
 {
     free(ptr);
     if (opaque)

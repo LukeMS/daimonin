@@ -25,7 +25,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 #define DEFINE_H
 
 // ========================================================================
-// ALL Pathes MUST be placed here.
+// All pathes MUST be placed here!
 // ========================================================================
 const char FILE_CLIENT_SPELLS[]			= "./srv_files/client_spells";
 const char FILE_CLIENT_SKILLS[]			= "./srv_files/client_skills";
@@ -45,6 +45,11 @@ const char FILE_OPTIONS[]				= "./options.dat";
 const char FILE_PLAYER_DESC[]			= "./media/models/player.desc";
 const char FILE_NPC_DESC[]				= "./media/models/npc.desc";
 const char FILE_PLAYER_EQUIPMENT_DESC[] = "./media/models/equipment.desc";
+
+const char FILE_MUSIC_001[]             = "./media/sound/invtro94.s3m";
+const char FILE_SAMPLE_MOUSE_CLICK[]    = "./media/sound/console.wav";
+const char FILE_SAMPLE_PLAYER_IDLE[]    = "./media/sound/Idle.ogg";
+
 // ========================================================================
 // 
 // ========================================================================

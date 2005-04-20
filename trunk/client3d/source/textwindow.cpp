@@ -25,6 +25,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "logfile.h"
 #include "sound.h"
 
+CTextwindow *ChatWin=0, *TextWin=0;
 
 //=================================================================================================
 // Init all static Elemnts.
@@ -212,13 +213,13 @@ bool CTextwindow::MouseAction(int action, Real xpos, Real ypos, Real yRelative)
     // Check all buttons.
 	if (mElementButUp  ->contains(xpos, ypos))
 	{ 
-		Sound::getSingleton().PlaySample(SAMPLE_BUTTON_CLICK);
+		Sound::getSingleton().playSample(SAMPLE_BUTTON_CLICK);
 		OpenTextWin(); 
 		return true; 
 	}
     if (mElementButDown->contains(xpos, ypos))
 	{
-		Sound::getSingleton().PlaySample(SAMPLE_BUTTON_CLICK);
+		Sound::getSingleton().playSample(SAMPLE_BUTTON_CLICK);
 		CloseTextWin(); 
 		return true;
 	}

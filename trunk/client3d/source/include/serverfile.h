@@ -27,6 +27,9 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include <string>
 #include "define.h"
 
+////////////////////////////////////////////////////////////
+// Defines.
+////////////////////////////////////////////////////////////
 enum
 {
     SERVER_FILE_SKILLS,
@@ -43,10 +46,25 @@ enum
     SERVER_FILE_STATUS_UPDATE,
 };
 
+////////////////////////////////////////////////////////////
+// Singleton class.
+////////////////////////////////////////////////////////////
 class ServerFile
 {
   public:
+    ////////////////////////////////////////////////////////////
+	// Variables.
+    ////////////////////////////////////////////////////////////
+    int          getStatus   (int file_enum) { return srv_file[file_enum].status;     }
+    int          getLength   (int file_enum) { return srv_file[file_enum].length;     }
+    int          getSrvLength(int file_enum) { return srv_file[file_enum].server_len; }
+    unsigned int getSrvCRC   (int file_enum) { return srv_file[file_enum].server_crc; }
+    unsigned int getCRC      (int file_enum) { return srv_file[file_enum].crc;        }
+	const char*  getFilename (int file_enum) { return srv_file[file_enum].filename;   }
 
+    ////////////////////////////////////////////////////////////
+	// Functions.
+    ////////////////////////////////////////////////////////////
     ServerFile()
     {
         srv_file[SERVER_FILE_SKILLS  ].filename = FILE_CLIENT_SKILLS;
@@ -63,26 +81,21 @@ class ServerFile
 
     ~ServerFile() { }
     static ServerFile &getSingleton();
+
     bool Init();
 	void checkFiles();
-    
-    int          getStatus   (int file_enum) { return srv_file[file_enum].status;     }
-    int          getLength   (int file_enum) { return srv_file[file_enum].length;     }
-    int          getSrvLength(int file_enum) { return srv_file[file_enum].server_len; }
-    unsigned int getSrvCRC   (int file_enum) { return srv_file[file_enum].server_crc; }
-    unsigned int getCRC      (int file_enum) { return srv_file[file_enum].crc;        }
-	const char*  getFilename (int file_enum) { return srv_file[file_enum].filename;   }
-    
 	void  setStatus   (int file_enum, int value)          { srv_file[file_enum].status     = value; }
     void  setLength   (int file_enum, int value)          { srv_file[file_enum].length     = value; }
     void  setSrvLength(int file_enum, int value)          { srv_file[file_enum].server_len = value; }
     void  setSrvCRC   (int file_enum, unsigned int value) { srv_file[file_enum].server_crc = value; }
     void  setCRC      (int file_enum, unsigned int value) { srv_file[file_enum].crc        = value; }
-
 	bool checkID(int file_enum, const char* id) { return (srv_file[file_enum].strID == id); }
 
 
   private:
+    ////////////////////////////////////////////////////////////
+	// Variables.
+    ////////////////////////////////////////////////////////////
     struct _srv_file
 	{
         int          status;
@@ -94,9 +107,12 @@ class ServerFile
 		std::string strID;
 	} srv_file[SERVER_FILE_SUM];
 
-    void getFileAttibutes(int file_enum);
-
+    ////////////////////////////////////////////////////////////
+	// Functions.
+    ////////////////////////////////////////////////////////////
     ServerFile(const ServerFile&); // disable copy-constructor.
+
+    void getFileAttibutes(int file_enum);
 }; 
 
 #endif

@@ -1,39 +1,29 @@
-// -----------------------------------------------------------------------------
-// This file was altered by The Daimonin Team in 2005.
-// -----------------------------------------------------------------------------
-
-/* zlib.h -- interface of the 'zlib' general purpose compression library
-  version 1.2.1, November 17th, 2003
-
-  Copyright (C) 1995-2003 Jean-loup Gailly and Mark Adler
-
-  This software is provided 'as-is', without any express or implied
-  warranty.  In no event will the authors be held liable for any damages
-  arising from the use of this software.
-
-  Permission is granted to anyone to use this software for any purpose,
-  including commercial applications, and to alter it and redistribute it
-  freely, subject to the following restrictions:
-
-  1. The origin of this software must not be misrepresented; you must not
-     claim that you wrote the original software. If you use this software
-     in a product, an acknowledgment in the product documentation would be
-     appreciated but is not required.
-  2. Altered source versions must be plainly marked as such, and must not be
-     misrepresented as being the original software.
-  3. This notice may not be removed or altered from any source distribution.
-
-  Jean-loup Gailly        Mark Adler
-  jloup@gzip.org          madler@alumni.caltech.edu
+/*
+    Daimonin SDL client, a client program for the Daimonin MMORPG.
 
 
-  The data format used by the zlib library is described by RFCs (Request for
-  Comments) 1950 to 1952 in the files http://www.ietf.org/rfc/rfc1950.txt
-  (zlib format), rfc1951.txt (deflate format) and rfc1952.txt (gzip format).
+  Copyright (C) 2003 Michael Toennies
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+    The author can be reached via e-mail to info@daimonin.net
 */
-
-
-
+/* uncompr.c -- decompress a memory buffer
+ * Copyright (C) 1995-2003 Jean-loup Gailly.
+ * For conditions of distribution and use, see copyright notice in zlib.h
+ */
 
 #define ZLIB_INTERNAL
 #include "zlib.h"
@@ -53,7 +43,11 @@
    enough memory, Z_BUF_ERROR if there was not enough room in the output
    buffer, or Z_DATA_ERROR if the input data was corrupted.
 */
-int uncompress(Bytef *dest, uLongf *destLen, const Bytef *source, uLong sourceLen)
+int ZEXPORT uncompress(dest, destLen, source, sourceLen)
+Bytef          *dest;
+uLongf         *destLen;
+const Bytef    *source;
+uLong           sourceLen;
 {
     z_stream    stream;
     int         err;

@@ -47,6 +47,9 @@ const ColourValue TXT_BLUE		= ColourValue(0, 0, 1);
 const ColourValue TXT_WHITE	= ColourValue(1, 1, 1);
 const ColourValue TXT_GRAY1	= ColourValue(.7, .7, .7);
 
+////////////////////////////////////////////////////////////
+// Class.
+////////////////////////////////////////////////////////////
 class CTextwindow
 {
   public:
@@ -74,7 +77,7 @@ class CTextwindow
     void SizeChanged();
 
     ////////////////////////////////////////////////////////////
-	// Structs.
+	// Variables.
     ////////////////////////////////////////////////////////////
     struct _row
 	{
@@ -83,10 +86,6 @@ class CTextwindow
         ColourValue colorBottom;
 	}
     row[SIZE_STRING_BUFFER];
-    
-    ////////////////////////////////////////////////////////////
-	// Variables.
-    ////////////////////////////////////////////////////////////
 	static int mInstanceNr;
     CTextwindow *mChild, *mParent;
     Overlay *mOverlay;

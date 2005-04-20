@@ -4,6 +4,7 @@ material Cursor/Normal
    {
       pass
       {
+         depth_check off
          scene_blend alpha_blend
          texture_unit
          {

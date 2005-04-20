@@ -264,7 +264,7 @@ void Network::Update()
 	///////////////////////////////////////////////////////////////////////// 
 	else if (Option::getSingleton().GameStatus == GAME_STATUS_WAITLOOP)
 	{
-		Dialog::getSingleton().visible(true);
+		Dialog::getSingleton().setVisible(true);
 		if ((TextInput::getSingleton().startCursorSelection(0, mServerList.size())))
 		{
 			list<mStructServer*>::const_iterator iter = mServerList.begin();
@@ -283,7 +283,7 @@ void Network::Update()
 		if (TextInput::getSingleton().isCanceled())
 		{
 			TextInput::getSingleton().stop();
-			Dialog::getSingleton().visible(false);
+			Dialog::getSingleton().setVisible(false);
 			Option::getSingleton().mStartNetwork = false;
 			Option::getSingleton().GameStatus = GAME_STATUS_INIT;
 		}
@@ -478,7 +478,7 @@ void Network::Update()
 		{
 			TextWin->Print("Break Login.", TXT_RED);
 			TextInput::getSingleton().stop();
-			Dialog::getSingleton().visible(false);
+			Dialog::getSingleton().setVisible(false);
 			Option::getSingleton().GameStatus = GAME_STATUS_START;
 		}
 	}
@@ -996,7 +996,7 @@ void Network::DoClient()
             #ifdef DEBUG_ON
 			LogFile::getSingleton().Info("command: BINARY_CMD_PLAYER (%d)\n", mInbuf.buf[2]); 
             #endif
-			Dialog::getSingleton().visible(false);
+			Dialog::getSingleton().setVisible(false);
             PlayerCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case 17: // BINARY_CMD_MAPSTATS
