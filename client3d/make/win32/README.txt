@@ -6,12 +6,14 @@ To run/compile the Daimonin3D client under windows you need to do this:
 Code::Blocks Project
 --------------------
 
-1.) Read the client3d/README.install.
-2.) Install Code::Blocks like you was told in the Ogre3d Wiki.
-3.) Copy the plugins.cfg from client3d/make/win32/CodeBlocks to client3d/
-4.) Unpack all *.dll from client3d/make/win32/dll_gcc to      client3d/make/win32/CodeBlocks/
-5.) Unpack all *.a   from client3d/make/win32/ogre_lib_gcc to client3d/make/win32/CodeBlocks/
-6.) start Code::Blocks by doubleclick the project-file in     client3d/make/win32/CodeBlocks/
+1.) Install Code::Blocks like you was told in the Ogre3d Wiki.
+2.) Copy the plugins.cfg from client3d/make/win32/CodeBlocks to client3d/
+3.) Unpack all fmod*.dll from client3d/make/win32/dll_release.zip to client3d
+4.) Unpack all     *.dll from client3d/make/win32/dll_gcc to client3d/
+5.) Unpack all     *.lib from client3d/make/win32/fmod_lib to client3d/make/win32/fmod_lib
+6.) Unpack all     *.h   from client3d/make/win32/fmod_inc to client3d/make/win32/fmod_inc
+7.) Unpack all     *.a   from client3d/make/win32/ogre_lib_gcc to client3d/make/win32/ogre_lib_gcc/
+8.) start Code::Blocks by doubleclick the project-file in client3d/make/win32/CodeBlocks/
 
 
 VC6 Project
