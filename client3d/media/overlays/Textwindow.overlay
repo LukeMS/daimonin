@@ -9,9 +9,7 @@ template container Panel(TextWindow/Frame)
     height   150
     material Color/TextwindowColor
 //    transparent true 
-
-
-}    
+}
 
 template container Panel(TextWindow/Headline)
 {

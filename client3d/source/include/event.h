@@ -24,25 +24,40 @@ http://www.gnu.org/copyleft/lesser.txt.
 #ifndef EVENT_H
 #define EVENT_H
 
-#include <Ogre.h>
-#include <OgreKeyEvent.h>
 #include <OgreEventListeners.h>
-#include <OgreStringConverter.h>
-#include <OgreException.h>
 
 #include "player.h"
 
 using namespace Ogre;
 
+////////////////////////////////////////////////////////////
+// Defines.
+////////////////////////////////////////////////////////////
+
 enum { LIGHT_VOL, LIGHT_SPOT };
 
 const Real CAMERA_ZOOM = 500.0;
 
-class Event: public FrameListener, public KeyListener, public MouseMotionListener, public MouseListener
+////////////////////////////////////////////////////////////
+// Class.
+////////////////////////////////////////////////////////////
+class CEvent: public FrameListener, public KeyListener, public MouseMotionListener, public MouseListener
 {
   public:
+    ////////////////////////////////////////////////////////////
+	// Variables.
+    ////////////////////////////////////////////////////////////
     SceneNode *World;
 
+    ////////////////////////////////////////////////////////////
+	// Functions.
+    ////////////////////////////////////////////////////////////
+	// Constructor takes a RenderWindow because it uses that to determine input context
+     CEvent(RenderWindow* win, Camera* cam, MouseMotionListener *mMMotionListener,
+          MouseListener *mMListener, bool useBufferedInputKeys = false, bool useBufferedInputMouse = true);
+    ~CEvent() ;
+    
+    const Vector3 &getWorldPos()  {  return World->getPosition(); }
 	void setLightMember(Light *light, int nr) { mLight[nr] = light;}
 	void setResolutionMember(int SreenWidth, int SreenHeight)
 	{ 
@@ -50,12 +65,11 @@ class Event: public FrameListener, public KeyListener, public MouseMotionListene
 		mSreenWidth  = SreenWidth;
 	}
 
-	// Constructor takes a RenderWindow because it uses that to determine input context
-    Event(RenderWindow* win, Camera* cam, MouseMotionListener *mMMotionListener, 
-		MouseListener *mMListener, bool useBufferedInputKeys = false, bool useBufferedInputMouse = true);
-    ~Event();
-
   private:
+    ////////////////////////////////////////////////////////////
+	// Variables.
+    ////////////////////////////////////////////////////////////
+    bool mQuitGame;
 	int mSceneDetailIndex;
     Real mMoveSpeed;
     Real mMoveScale;
@@ -77,29 +91,20 @@ class Event: public FrameListener, public KeyListener, public MouseMotionListene
     Real mTimeUntilNextToggle; // just to stop toggles flipping too fast
     TextureFilterOptions mFiltering;
     int mAniso;
-    bool mQuitGame;
     Light *mLight[2];
     int mDayTime;
     Real mCameraZoom;
 
-	/////////////////////////////////////////////////////////////////////////
-    // Frame Events.
-	/////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////
+	// Functions.
+    ////////////////////////////////////////////////////////////
     bool frameStarted(const FrameEvent& evt);
     bool frameEnded  (const FrameEvent& evt);
     void drawTile(int gfx_nr, int offX, int offY);
-
-    ///////////////////////////////////////////////////////////////////////// 
-    // Key Events.
-	/////////////////////////////////////////////////////////////////////////
 	void keyClicked (KeyEvent *e);
 	void keyPressed (KeyEvent *e);
 	void keyReleased(KeyEvent *e);
 	void keyEventDialog(KeyEvent *e);
-
-    ///////////////////////////////////////////////////////////////////////// 
-    // Mouse Events.
-	/////////////////////////////////////////////////////////////////////////
     void mouseMoved   (MouseEvent *e);
     void mouseDragged (MouseEvent *e);
     void mouseClicked (MouseEvent *e);
@@ -108,6 +113,6 @@ class Event: public FrameListener, public KeyListener, public MouseMotionListene
 	void mousePressed (MouseEvent *e);
 	void mouseReleased(MouseEvent *e);
 };
+extern  CEvent *Event;
 
 #endif
-

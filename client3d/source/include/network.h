@@ -24,6 +24,10 @@ http://www.gnu.org/copyleft/lesser.txt.
 #ifndef NETWORK_H
 #define NETWORK_H
 
+////////////////////////////////////////////////////////////
+// Defines.
+////////////////////////////////////////////////////////////
+
 // Maximum size of any packet we expect.  Using this makes it so we don't need to
 // allocated and deallocated the same buffer over and over again and the price
 // of using a bit of extra memory. IT also makes the code simpler.
@@ -50,57 +54,44 @@ struct SockList
     unsigned char *buf;
 };
 
-//*************************************************************************
-// Network class (Singleton)
-//*************************************************************************
+////////////////////////////////////////////////////////////
+// Singleton class.
+////////////////////////////////////////////////////////////
 class Network
 {
   public:
-    static Network &getSingleton();
+    ////////////////////////////////////////////////////////////
+	// Variables.
+    ////////////////////////////////////////////////////////////
+	int  mRequest_file_chain;
+	int  mRequest_file_flags;
+    int  mPasswordAlreadyAsked;
+    bool mGameStatusVersionOKFlag;
+    bool mGameStatusVersionFlag;
 
-    Network();
-    // =====================================================================
-    // Destructor
-    // =====================================================================
+    ////////////////////////////////////////////////////////////
+	// Functions.
+    ////////////////////////////////////////////////////////////
+     Network();
     ~Network();
-
-    // =====================================================================
-    // Initialise the Network. 
-    // =====================================================================
+    static Network &getSingleton();
+    
     bool Init();
-
-    // =====================================================================
-    // Request that the Network exits.
-    // Handeld by the main-game loop. 
-    // =====================================================================
     void RequestShutdown();
-
-    // =====================================================================
-    // Cleanup and prepare for exit.
-    // =====================================================================
     void Shutdown();
-
-    // =====================================================================
-    // Do all updates.
-    // =====================================================================
-
     bool GetServerData();
 	bool OpenSocket(const char *host, int port);
     bool CloseSocket();
 	void Update();
 	void send_reply(char *text);
-
 	void read_metaserver_data();
     int  cs_write_string(char *buf, int len);
     int  send_socklist(SockList &msg);
     int  read_socket();
 	int  write_socket(unsigned char *buf, int len);
-
 	void DoClient();
 
-    // =====================================================================
     // Server commands..
-    // =====================================================================
     void VersionCmd(char *data, int len);
 	void SetupCmd  (char *buf,  int len);
     void DataCmd   (char *data, int len);
@@ -109,13 +100,10 @@ class Network
     void PlayerCmd(unsigned char *data, int len);
     void RequestFile(int index);
 
-	int  mRequest_file_chain;
-	int  mRequest_file_flags;
-    int  mPasswordAlreadyAsked;
-    bool mGameStatusVersionOKFlag;
-    bool mGameStatusVersionFlag;
-
   private:
+    ////////////////////////////////////////////////////////////
+	// Variables.
+    ////////////////////////////////////////////////////////////
     // Contains the base information we use to make up a packet we want to send.
     int  mCs_version, mSc_version; // Server versions of these
     // These are used for the newer 'windowing' method of commands -
@@ -125,10 +113,12 @@ class Network
     int mSocketStatusErrorNr;
     SockList  mInbuf;
 	int mSocket;
+
+    ////////////////////////////////////////////////////////////
+	// Functions.
+    ////////////////////////////////////////////////////////////
     Network(const Network&);  // disable copy-constructor.
     bool InitSocket();
 };
-
-
 
 #endif

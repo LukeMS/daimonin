@@ -34,7 +34,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 int NPC::mInstanceNr = 0;
 
 extern const char *StateNames[STATE_SUM];
-NPC *NPC_Enemy1 = new NPC;
+NPC *NPC_Enemy1 = 0;
 
 //=================================================================================================
 // 

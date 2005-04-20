@@ -30,18 +30,19 @@ http://www.gnu.org/copyleft/lesser.txt.
 
 using namespace std;
 
-
+////////////////////////////////////////////////////////////
+// Defines.
+////////////////////////////////////////////////////////////
 typedef struct _options
 {
-    // Sound
-    int  sound_volume;
-    int  music_volume;
-
-    // Server
-    char  metaserver[256];
-    int   metaserver_port;
+	// Sound
+	int  sound_volume;
+	int  music_volume;
+	// Server
+	char  metaserver[256];
+	int   metaserver_port;
 }_options; 
-extern _options  options; 
+extern _options options; 
 
 typedef struct _option
 {
@@ -55,7 +56,7 @@ typedef struct _option
     void *value;
     int  value_type;
 }_option;
-extern _option  opt[];
+extern _option opt[];
 
 
 extern enum
@@ -93,37 +94,47 @@ typedef enum _game_status
 
 
  
-
+////////////////////////////////////////////////////////////
+// Singleton class.
+////////////////////////////////////////////////////////////
 class Option
 {
   public:
-    static Option &getSingleton()
-	{
-       static Option Singleton;
-       return Singleton;
-	}
-
-    Option()   { GameStatus =  GAME_STATUS_INIT; mLogin = false;}
-    ~Option();
-
+    ////////////////////////////////////////////////////////////
+	// Variables.
+    ////////////////////////////////////////////////////////////
     _options  *my_options; 
-
     int GameStatus;
-
 	std::string mMetaServer;
 	unsigned int  mMetaServerPort;
 	unsigned int  mSelectedMetaServer;
     bool mStartNetwork;
+
+    ////////////////////////////////////////////////////////////
+	// Functions.
+    ////////////////////////////////////////////////////////////
+     Option();
+    ~Option();
+    static Option &getSingleton() { static Option Singleton; return Singleton; }
+
 	bool openDescFile(const char *filename);
     void closeDescFile();
 	bool getDescStr(const char *descrEntry, string &strBuffer, int nr=0);
     bool Init();
+
   private:
-    Option(const Option&); // disable copy-constructor.
+    ////////////////////////////////////////////////////////////
+	// Variables.
+    ////////////////////////////////////////////////////////////
     bool mLogin;
 	ifstream *mDescFile;
 	string mDescBuffer;
 	string mFilename;
+
+    ////////////////////////////////////////////////////////////
+	// Functions.
+    ////////////////////////////////////////////////////////////
+    Option(const Option&); // disable copy-constructor.
 }; 
 
 #endif

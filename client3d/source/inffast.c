@@ -1,7 +1,25 @@
-// -----------------------------------------------------------------------------
-// This file was altered by The Daimonin Team in 2005.
-// -----------------------------------------------------------------------------
+/*
+    Daimonin SDL client, a client program for the Daimonin MMORPG.
 
+
+  Copyright (C) 2003 Michael Toennies
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+    The author can be reached via e-mail to info@daimonin.net
+*/
 /* inffast.c -- fast decoding
  * Copyright (C) 1995-2003 Mark Adler
  * For conditions of distribution and use, see copyright notice in zlib.h
@@ -68,7 +86,9 @@
       requires strm->avail_out >= 258 for each loop to avoid checking for
       output space.
  */
-void    inflate_fast(z_streamp strm, unsigned start)
+void    inflate_fast(strm, start)
+z_streamp   strm;
+unsigned    start;         /* inflate()'s starting value for strm->avail_out */
 {
     struct inflate_state FAR   *state;
     unsigned char FAR * in;      /* local strm->next_in */
@@ -86,7 +106,7 @@ void    inflate_fast(z_streamp strm, unsigned start)
     code const FAR * dcode;      /* local strm->distcode */
     unsigned lmask;             /* mask for first level of length codes */
     unsigned dmask;             /* mask for first level of distance codes */
-    code this_;                  /* retrieved table entry */
+    code this;                  /* retrieved table entry */
     unsigned op;                /* code bits, operation, extra bits, or */
     /*  window position, window bytes to copy */
     unsigned len;               /* match length, unused bytes */
@@ -122,24 +142,24 @@ void    inflate_fast(z_streamp strm, unsigned start)
             hold += (unsigned long) (PUP(in)) << bits;
             bits += 8;
         }
-        this_ = lcode[hold & lmask];
-        dolen : op = (unsigned) (this_.bits);
+        this = lcode[hold & lmask];
+        dolen : op = (unsigned) (this.bits);
         hold >>= op;
         bits -= op;
-        op = (unsigned) (this_.op);
+        op = (unsigned) (this.op);
         if (op == 0)
         {
             /* literal */
             Tracevv((stderr,
-                     this_.val >= 0x20
-                  && this_.val < 0x7f ? "inflate:         literal '%c'\n" : "inflate:         literal 0x%02x\n",
-                     this_.val));
-            PUP(out) = (unsigned char) (this_.val);
+                     this.val >= 0x20
+                  && this.val < 0x7f ? "inflate:         literal '%c'\n" : "inflate:         literal 0x%02x\n",
+                     this.val));
+            PUP(out) = (unsigned char) (this.val);
         }
         else if (op & 16)
         {
             /* length base */
-            len = (unsigned) (this_.val);
+            len = (unsigned) (this.val);
             op &= 15;                           /* number of extra bits */
             if (op)
             {
@@ -160,16 +180,16 @@ void    inflate_fast(z_streamp strm, unsigned start)
                 hold += (unsigned long) (PUP(in)) << bits;
                 bits += 8;
             }
-            this_ = dcode[hold & dmask];
+            this = dcode[hold & dmask];
             dodist:
-            op = (unsigned) (this_.bits);
+            op = (unsigned) (this.bits);
             hold >>= op;
             bits -= op;
-            op = (unsigned) (this_.op);
+            op = (unsigned) (this.op);
             if (op & 16)
             {
                 /* distance base */
-                dist = (unsigned) (this_.val);
+                dist = (unsigned) (this.val);
                 op &= 15;                       /* number of extra bits */
                 if (bits < op)
                 {
@@ -295,7 +315,7 @@ void    inflate_fast(z_streamp strm, unsigned start)
             else if ((op & 64) == 0)
             {
                 /* 2nd level distance code */
-                this_ = dcode[this_.val + (hold & ((1U << op) - 1))];
+                this = dcode[this.val + (hold & ((1U << op) - 1))];
                 goto dodist;
             }
             else
@@ -308,7 +328,7 @@ void    inflate_fast(z_streamp strm, unsigned start)
         else if ((op & 64) == 0)
         {
             /* 2nd level length code */
-            this_ = lcode[this_.val + (hold & ((1U << op) - 1))];
+            this = lcode[this.val + (hold & ((1U << op) - 1))];
             goto dolen;
         }
         else if (op & 32)

@@ -24,43 +24,49 @@ http://www.gnu.org/copyleft/lesser.txt.
 #ifndef CLIENT_H
 #define CLIENT_H
 
-#include <Ogre.h>
-#include <OgreSceneManager.h>
 #include "event.h"
 
 using namespace Ogre;
 
+////////////////////////////////////////////////////////////
+// Defines.
+////////////////////////////////////////////////////////////
+
+////////////////////////////////////////////////////////////
+// None Singleton class.
+////////////////////////////////////////////////////////////
 class DaimoninClient
 {
   public:
+    ////////////////////////////////////////////////////////////
+	// Variables.
+    ////////////////////////////////////////////////////////////
     SceneNode *MouseCursor;
     SceneNode *World;
 
-    DaimoninClient()
-    {
-        mEvent = 0;
-        mRoot = 0;
-    }
-
-    ~DaimoninClient()
-    {
-        if (mEvent) { delete mEvent; }
-        if (mRoot)  { delete mRoot;  }
-    }
-
-    /// Start the example
+    ////////////////////////////////////////////////////////////
+	// Functions.
+    ////////////////////////////////////////////////////////////
+	 DaimoninClient();
+	~DaimoninClient();
     void go(void);
 
   private:
+    ////////////////////////////////////////////////////////////
+	// Variables.
+    ////////////////////////////////////////////////////////////
 	Viewport            *mVP;
     Root                *mRoot;
     Camera              *mCamera;
     MouseMotionListener *mMouseMotionListener;
 	MouseListener       *mMouseListener;
     SceneManager        *mSceneMgr;
-    Event               *mEvent;
 	InputReader         *mInputReader;
     RenderWindow        *mWindow;
+
+    ////////////////////////////////////////////////////////////
+	// Functions.
+    ////////////////////////////////////////////////////////////
     // These internal methods package up the stages in the startup process
     // Sets up the application - returns false if the user chooses to abandon configuration.
     bool setup(void);

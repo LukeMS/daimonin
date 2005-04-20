@@ -4,10 +4,10 @@ material Material_#10/Torso_front
     {
         pass
         {
-            ambient 0.705882 0.588235 0.886275
-            diffuse 0.705882 0.588235 0.886275
-            specular 0.9 0.9 0.9 0.0
-            emissive 0.0 0.0 0.0
+//            ambient 0.705882 0.588235 0.886275
+//            diffuse 0.705882 0.588235 0.886275
+//            specular 0.9 0.9 0.9 0.0
+//            emissive 0.0 0.0 0.0
             texture_unit
             {
                 texture body.jpg 
@@ -22,10 +22,10 @@ material Material_#10/Hair
     {
         pass
         {
-            ambient 0.760784 0.678431 0.592157
-            diffuse 0.760784 0.678431 0.592157
-            specular 0.9 0.9 0.9 0.0
-            emissive 0.0 0.0 0.0
+//            ambient 0.760784 0.678431 0.592157
+//            diffuse 0.760784 0.678431 0.592157
+//            specular 0.9 0.9 0.9 0.0
+//            emissive 0.0 0.0 0.0
             texture_unit
             {
                 texture Hair.jpg 
@@ -40,9 +40,9 @@ material Material_#10/Face
     {
         pass
         {
-diffuse 1.0 1.0 1.0
-            specular 0.9 0.9 0.9 0.0
-            emissive 0.0 0.0 0.0
+//diffuse 1.0 1.0 1.0
+//            specular 0.9 0.9 0.9 0.0
+//            emissive 0.0 0.0 0.0
 
 
             texture_unit
@@ -59,9 +59,9 @@ material Material_#10/Neck(lace)
     {
         pass
         {
-diffuse 1.0 1.0 1.0
-            specular 0.9 0.9 0.9 0.0
-            emissive 0.0 0.0 0.0
+//diffuse 1.0 1.0 1.0
+//            specular 0.9 0.9 0.9 0.0
+//            emissive 0.0 0.0 0.0
 
 
 
@@ -79,9 +79,9 @@ material Material_#10/Hands
     {
         pass
         {
-diffuse 1.0 1.0 1.0
-            specular 0.9 0.9 0.9 0.0
-            emissive 0.0 0.0 0.0
+//diffuse 1.0 1.0 1.0
+//            specular 0.9 0.9 0.9 0.0
+//            emissive 0.0 0.0 0.0
 
 
 
@@ -100,9 +100,9 @@ material Material_#10/arms
     {
         pass
         {
-diffuse 1.0 1.0 1.0
-            specular 0.9 0.9 0.9 0.0
-            emissive 0.0 0.0 0.0
+//diffuse 1.0 1.0 1.0
+//            specular 0.9 0.9 0.9 0.0
+//            emissive 0.0 0.0 0.0
 
 
             texture_unit
@@ -119,9 +119,9 @@ material Material_#10/Legs
     {
         pass
         {
-diffuse 1.0 1.0 1.0
-            specular 0.9 0.9 0.9 0.0
-            emissive 0.0 0.0 0.0
+//diffuse 1.0 1.0 1.0
+//            specular 0.9 0.9 0.9 0.0
+//            emissive 0.0 0.0 0.0
 
 
             texture_unit
@@ -138,9 +138,9 @@ material Material_#10/Shoe_R
     {
         pass
         {
-diffuse 1.0 1.0 1.0
-            specular 0.9 0.9 0.9 0.0
-            emissive 0.0 0.0 0.0
+//diffuse 1.0 1.0 1.0
+//            specular 0.9 0.9 0.9 0.0
+//            emissive 0.0 0.0 0.0
 
 
             texture_unit
@@ -157,9 +157,9 @@ material Material_#10/Shoe_L
     {
         pass
         {
-diffuse 1.0 1.0 1.0
-            specular 0.9 0.9 0.9 0.0
-            emissive 0.0 0.0 0.0
+//diffuse 1.0 1.0 1.0
+//            specular 0.9 0.9 0.9 0.0
+//            emissive 0.0 0.0 0.0
 
 
             texture_unit

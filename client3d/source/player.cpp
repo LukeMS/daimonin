@@ -217,7 +217,7 @@ void Player::updateAnim(const FrameEvent& event)
 		if (mWalking)
 		{
 			if (mAnimType != STATE_WALK1) { toggleAnimation(STATE_WALK1); }
-	        mTranslateVector.z =  sin(mFacing.valueRadians()+mFacingOffset)* mWalking;
+	        mTranslateVector.y = -sin(mFacing.valueRadians()+mFacingOffset)* mWalking;
 		    mTranslateVector.x = -cos(mFacing.valueRadians()+mFacingOffset)* mWalking;
 		}
 		else

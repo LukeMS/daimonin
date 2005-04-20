@@ -1,0 +1,47 @@
+material Tiles/Grass1
+{
+   technique
+   {
+     pass
+     {
+         ambient 0.5 0.5 0.5
+         scene_blend alpha_blend
+         texture_unit
+         {
+               texture grass.101.png
+               tex_address_mode clamp
+          }
+     }
+   }
+}
+
+material Tiles/Layer0
+{
+   technique
+   {
+     pass
+     {
+         texture_unit
+         {
+               texture tiles.png
+         }
+      }
+   }
+}
+
+material dyn_layer_02
+{
+   technique
+   {
+     pass
+     {
+         ambient 1.0 1.0 1.0
+         scene_blend alpha_blend
+         depth_write off
+         texture_unit
+         {
+            
+         }
+      }
+   }
+}

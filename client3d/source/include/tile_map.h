@@ -49,9 +49,6 @@ const int MAP_TILE_YOFF		=  24;
 const int MAP_MAX_SIZE		=  17;
 const int MAXFACES			=   4;
 
-const int TILE_WIDTH = 48;
-const int TILE_HEIGHT= 23;
-
 // Table of pre definded multi arch objects. 
 // mpart_id and mpart_nr in the arches are commited from server 
 // to analyze the exaclty tile position inside a mpart object.
@@ -98,12 +95,14 @@ typedef struct
     int y;
 } MapPos;
 
-
+////////////////////////////////////////////////////////////
+// Singleton class.
+////////////////////////////////////////////////////////////
 class TileMap
 {
   public:
     ////////////////////////////////////////////////////////////
-	// Structs.
+	// Variables.
     ////////////////////////////////////////////////////////////
 	_mapdata         MapData;
 	_multi_part_obj  MultiArchs[16];
@@ -115,39 +114,43 @@ class TileMap
 	// Functions.
 	////////////////////////////////////////////////////////////
      TileMap() {;}
-    ~TileMap() {;}
+    ~TileMap();
     static TileMap &getSingleton() { static TileMap Singleton; return Singleton; }
-    bool Init() {return true;}
+
 	void clear_map(void);
 	void display_map_clearcell(long x, long y);
 	void set_map_darkness(int x, int y, unsigned char darkness);
 	void set_map_face(int x, int y, int layer, int face, int pos, int ext, char *name);
+	void clear(void);
 	void draw(void);
 	void display_mapscroll(int dx, int dy);
 	void InitMapData(char *name, int xl, int yl, int px, int py);
 	void set_map_ext(int x, int y, int layer, int ext, int probe);
-	void clear(void);
 	void load_mapdef_dat(void);
 	void adjust_map_cache(int x, int y);
 	int  get_tile_position(int mx, int my, int *tx, int *ty);
-	bool Init(SceneManager *SceneMgr, SceneNode  *Node);
+	void Init(SceneManager *SceneMgr, SceneNode  *Node);
+    void updatePlayerPos(const Vector3 &playerOffset) { mTileOffset += playerOffset; }
+    void scrollTileMap(int x, int y);
 	void freeRecources()
 	{
-		// Cannot be done by the destuctor!
-		mHardwareBuffer.setNull();
-		mTexture.setNull();
+        mpMeshTiles.setNull();		
+		mpVertexBuf.setNull(); // Cannot be done by destuctor!
 	}
 
   private:
+    ////////////////////////////////////////////////////////////
+	// Variables.
+    ////////////////////////////////////////////////////////////
+    SceneNode  *mNode;
 	MapCell *TheMapCache;
-	TexturePtr mTexture;
-	HardwarePixelBufferSharedPtr mHardwareBuffer;
-
+	MeshPtr mpMeshTiles;
+	HardwareVertexBufferSharedPtr mpVertexBuf;
+    Vector3 mTileOffset;
     ////////////////////////////////////////////////////////////
 	// Functions.
     ////////////////////////////////////////////////////////////
     TileMap(const TileMap&); // disable copy-constructor.
-	void drawTile(Image *img, int offX, int offY);
 };
 
 #endif

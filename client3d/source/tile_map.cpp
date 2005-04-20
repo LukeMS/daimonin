@@ -20,34 +20,47 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/copyleft/lesser.txt.
 -----------------------------------------------------------------------------
 */
-#include <Ogre.h>
-#include <OgreImage.h>
-#include <OgreTexture.h>
-#include <OgreHardwarePixelBuffer.h>
-#include <OgreTextureManager.h>
-#include <OgreSceneManager.h>
 
 #include "tile_map.h"
 #include "tile_gfx.h"
 #include "define.h"
 #include "string.h"
 #include "logfile.h"
+#include "player.h"
+#include "event.h"
 
 using namespace Ogre;
 
-const int LAYER_SIZE_X = 1024;
-const int LAYER_SIZE_Y =  768;
+const int myMAP_SIZE = 8; // MUST be 2^X.
+const int _MAP_[myMAP_SIZE][myMAP_SIZE] =
+{
+{3,3,3,3,3,3,3,3},
+{3,2,2,2,2,2,2,3},
+{3,1,1,1,1,1,1,3},
+{3,4,4,4,4,4,4,3},
+{3,2,2,2,2,2,2,3},
+{3,1,1,1,1,1,1,3},
+{3,4,4,4,4,4,4,3},
+{3,3,3,3,3,3,3,3}
+};
 
-const int SUM_TILES_X = LAYER_SIZE_X / TILE_WIDTH-1;
-const int SUM_TILES_Y = (LAYER_SIZE_Y / TILE_HEIGHT)*2;
 
 
+
+
+////////////////////////////////////////////////////////////
+// Defines.
+////////////////////////////////////////////////////////////
+const Real TEX_FILE_SIZE= 1024.0; // Texture-file format: 1024*1024 pixel (32bit).
+const Real TILES_HEIGHT =   64.0; // Tiles format: 64*64 pixel.
+const Real TILES_WIDTH  = TILES_HEIGHT * 3/4; // 768/1024
+const Real TEXTURE_SIZE = TILES_HEIGHT / TEX_FILE_SIZE;
+const int  TILES_SUM_X  =  1 + 16 + 1;
+const int  TILES_SUM_Y  =  1 + 16 + 1;
 
 //extern _Sprite         *test_sprite;
-
 //static struct Map       the_map;
-
-_mapdata                MapData; // Current shown map: mapname, length, etc
+_mapdata MapData; // Current shown map: mapname, length, etc
 
 // we need this to parse the map and sort the multi tile monsters
 typedef struct _map_object_parse
@@ -202,7 +215,7 @@ void TileMap::InitMapData(char *name, int xl, int yl, int px, int py)
 */
     }
 
-    int     music_fade = 0;
+    int music_fade = 0;
     if (!music_fade) // there was no music tag or playon tag in this map - fade out
     {
         // now a interesting problem - when we have some seconds before a fadeout
@@ -339,82 +352,73 @@ void TileMap::set_map_darkness(int x, int y, unsigned char darkness)
     if (darkness != map->darkness) { map->darkness = darkness; }
 }
 
+
+const int SKIP_FRAMES = 5000;
+static HardwareVertexBufferSharedPtr vbuf;
+static MaterialPtr mpMaterial;
+
+const int VERTEX_PER_TRIANGLE = 3;
+const int VERTEX_PER_QUAD = 32;
+const int X_TILES = 18;
+const int Y_TILES = 14;
+const int SUM_TILES  = X_TILES * Y_TILES;
+const int SUM_FACES  = VERTEX_PER_TRIANGLE *2; // 2 Triangles  = 1 quad.
+const int SUM_VINDEX = SUM_FACES * SUM_TILES;
+const int SUM_VERTEX = SUM_TILES * VERTEX_PER_QUAD;
+
+
 //=================================================================================================
-//
+// Player walked off a tile. Scroll to next tile.
 //=================================================================================================
-void TileMap::drawTile(Image *img, int offX, int offY)
+void TileMap::scrollTileMap(int x, int y)
 {
-	const PixelBox &pb = mHardwareBuffer->getCurrentLock();
-    uint32 *dest= static_cast<uint32*>(pb.data) + pb.rowPitch * offY * (TILE_HEIGHT/2);
-	dest += offX * TILE_WIDTH;
-	uint32 *src  = (uint32*) (img->getData() + img->getSize());
-	if (offY &1) { dest += TILE_WIDTH/2; }
-	for(unsigned int y=0; y< img->getHeight(); ++y)
-	{
-		for(unsigned int x=0; x< img->getWidth(); ++x)
-		{
-			if (*src >0x00ffffff) *dest = *src;
-			++dest;
-			--src;
-		}
-		dest += pb.rowPitch-img->getWidth();
-	}
 }
 
-const int SKIP_FRAMES = 500;
+
 //=================================================================================================
-//
+// Draw all Tiles.
 //=================================================================================================
 void TileMap::draw(void)
 {
 //    if (!TheMapCache) { return; }
+    static int posMap =1;
+	static int rotate =0;
+	static Real textureStartX =0.0;
+	static Real textureStartY =0.0;
+    static unsigned int offsetX =0;
+	static unsigned int offsetY =0;
 
-	static int frame =SKIP_FRAMES;
-	static Image *img = 0;
-	static Image *img2;
-	if (!img)
+    mTileOffset = Event->getWorldPos();
+    Real xPos = mTileOffset.x;
+    Real yPos = mTileOffset.y;
+
+    offsetX = (unsigned int)(xPos/ TILES_WIDTH);  
+    offsetY = (unsigned int)(yPos/ TILES_HEIGHT); 
+
+    xPos-= ((int)(xPos/ TILES_WIDTH )) * TILES_WIDTH;  
+    yPos-= ((int)(yPos/ TILES_HEIGHT)) * TILES_HEIGHT; 
+    mNode->setPosition(xPos, yPos, 0);
+
+	Real *pVertex = static_cast<Real*>(mpVertexBuf->lock(HardwareBuffer::HBL_DISCARD));
+	for (int y = 0; y < Y_TILES; ++y)
 	{
-		TileGfx::getSingleton().load_picture_from_pack(405);
-		img = &TileGfx::getSingleton().getSprite(405);
-		TileGfx::getSingleton().load_picture_from_pack(2856);
-		img2 = &TileGfx::getSingleton().getSprite(2856);
-
+		for (int x = 0; x < X_TILES; ++x)
+		{
+            int tile  = _MAP_[(x+offsetX)&7][(y+offsetY)&7];
+            pVertex[ 6] = textureStartX + tile*TEXTURE_SIZE;
+            pVertex[ 7] = textureStartY + TEXTURE_SIZE;
+            pVertex[14] = textureStartX + tile*TEXTURE_SIZE + TEXTURE_SIZE;
+            pVertex[15] = textureStartY + TEXTURE_SIZE;
+            pVertex[22] = textureStartX + tile*TEXTURE_SIZE + TEXTURE_SIZE;
+            pVertex[23] = textureStartY ;
+            pVertex[30] = textureStartX + tile*TEXTURE_SIZE;
+            pVertex[31] = textureStartY ;
+            pVertex+=32;
+		}
 	}
-
-if (++frame > SKIP_FRAMES)
-{
-  	mHardwareBuffer->lock(HardwareBuffer::HBL_DISCARD);
-	int y,gfxNr;
-	for (y = 0; y < SUM_TILES_Y; ++y)
-	{
-		for (int x = 0; x < SUM_TILES_X; ++x) drawTile(img, x, y);
-		gfxNr--;
-	}
-	drawTile(img2, 35, 8);
-	mHardwareBuffer->unlock();
-	frame =1;
-}
+	mpVertexBuf->unlock();
 
 
-/*
-  	mHardwareBuffer->lock(HardwareBuffer::HBL_DISCARD);
-	int y,gfxNr;
-	Image *img;
-	gfxNr = 405;
-	for (y = 0; y < SUM_TILES_Y; ++y)
-	{
-		TileGfx::getSingleton().load_picture_from_pack(gfxNr);
-		img = &TileGfx::getSingleton().getSprite(gfxNr);
-		for (int x = 0; x < SUM_TILES_X; ++x) drawTile(img, x, y);
-		gfxNr--;
-	}
-	// lantern
-	gfxNr =2856;
-	TileGfx::getSingleton().load_picture_from_pack(gfxNr);
-	img = &TileGfx::getSingleton().getSprite(gfxNr);
-	drawTile(img, 35, 8);
-	mHardwareBuffer->unlock();
-*/
 
 
 /*
@@ -677,34 +681,149 @@ if (++frame > SKIP_FRAMES)
 }
 
 //=================================================================================================
-//
+// Destructor.
 //=================================================================================================
-bool TileMap::Init(SceneManager *SceneMgr, SceneNode  *Node)
+TileMap::~TileMap()
 {
-	MapStatusX = MAP_MAX_SIZE;
-	MapStatusY = MAP_MAX_SIZE;
-	TheMapCache = 0;
+	if (TheMapCache) { delete[] TheMapCache; }
+}
 
-	unsigned char *mImgBuffer = new uchar[LAYER_SIZE_X * LAYER_SIZE_Y*4];
-	Image mLayerImage;
-	mLayerImage.loadDynamicImage(mImgBuffer,LAYER_SIZE_X, LAYER_SIZE_Y, PF_A8B8G8R8 );
-	std::string texName = "mat_dyn_layer_01";
-	MaterialPtr mMaterial = MaterialManager::getSingleton().getByName("dyn_layer_01");
-	mTexture = TextureManager::getSingleton().loadImage(texName, "General", mLayerImage, TEX_TYPE_2D, 3,1.0f);
-	mHardwareBuffer = mTexture->getBuffer(0, 0);
-	mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(texName);
-	mMaterial->load();
 
-	// Define a floor plane mesh
-	Plane p;
-	p.normal = Vector3(0, 1, 0);
-	p.d = 10;
-	MeshManager::getSingleton().createPlane("Layer0", "General", p, 900, 900, SUM_TILES_X, SUM_TILES_Y, true, 1, 1, 1, Vector3( 0, 0, 1 ));
-	// Create an entity (the floor)
-	Entity *ent = SceneMgr->createEntity("floor", "Layer0");
-	ent->setMaterialName(mMaterial->getName());
-    SceneNode *floor_node = Node->createChildSceneNode(Vector3(0, 0, 0), Quaternion(1.0,0.0,0.0,0.0));
-	floor_node->attachObject(ent);
-	floor_node->translate(0,0,-300);
-	return true;
+//=================================================================================================
+// Init the TileMap.
+//=================================================================================================
+void TileMap::Init(SceneManager *SceneMgr, SceneNode *Node)
+{
+    /////////////////////////////////////////////////////////////////////////
+    // Create a mesh containing 1 submesh.
+	/////////////////////////////////////////////////////////////////////////
+	// Here we have an example for the mingw/devcpp crew - try this (doesn't work here):
+	// Change "General" to ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME
+	mpMeshTiles = MeshManager::getSingleton().createManual("TilesMesh", "General");
+	mpMeshTiles->sharedVertexData = new VertexData();
+	VertexData *vertexData    = mpMeshTiles->sharedVertexData;
+	SubMesh *pMeshTilesVertex = mpMeshTiles->createSubMesh();
+
+	/////////////////////////////////////////////////////////////////////////
+	// Define the vertex format.
+	/////////////////////////////////////////////////////////////////////////
+	size_t currOffset = 0;
+	VertexDeclaration *vertexDecl = vertexData->vertexDeclaration;
+	// positions
+	vertexDecl->addElement(0, currOffset, VET_FLOAT3, VES_POSITION);
+	currOffset += VertexElement::getTypeSize(VET_FLOAT3);
+	// normals
+	vertexDecl->addElement(0, currOffset, VET_FLOAT3, VES_NORMAL);
+	currOffset += VertexElement::getTypeSize(VET_FLOAT3);
+	// two dimensional texture coordinates
+	vertexDecl->addElement(0, currOffset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 0);
+	currOffset += VertexElement::getTypeSize(VET_FLOAT2);
+
+	/////////////////////////////////////////////////////////////////////////
+	// Create vertex-buffer.
+	/////////////////////////////////////////////////////////////////////////
+	vertexData->vertexCount = SUM_VERTEX;
+	mpVertexBuf = HardwareBufferManager::getSingleton().createVertexBuffer(vertexDecl->getVertexSize(0), vertexData->vertexCount, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
+	VertexBufferBinding *binding = vertexData->vertexBufferBinding;
+	binding->setBinding(0, mpVertexBuf);
+	Real *pVertex = static_cast<Real*>(mpVertexBuf->lock(HardwareBuffer::HBL_DISCARD));
+	const Real startX =  314;
+	const Real startY =  143;
+	const Real startZ = -100;
+	Real posX = startX;
+	Real posY = startY-startZ;
+	Real posZ = startZ;
+
+	for (int y = 0; y < Y_TILES; ++y)
+	{
+		for (int x = 0; x < X_TILES; ++x)
+		{
+            // Position
+            *pVertex++ = posX-TILES_WIDTH;
+            *pVertex++ = posY-TILES_HEIGHT;
+            *pVertex++ = posZ;
+            // Normals
+            *pVertex++ = 0.0;
+            *pVertex++ = 0.0;
+            *pVertex++ = 1.0;
+            // Texture
+            *pVertex++ = 0.0;
+            *pVertex++ = 1.0;
+
+            // Position
+            *pVertex++ = posX;
+            *pVertex++ = posY-TILES_HEIGHT;
+            *pVertex++ = posZ;
+            // Normals
+            *pVertex++ = 0.0;
+            *pVertex++ = 0.0;
+            *pVertex++ = 1.0;
+            // Texture
+            *pVertex++ = 1.0;
+            *pVertex++ = 1.0;
+
+            // Position
+            *pVertex++ = posX;
+            *pVertex++ = posY;
+            *pVertex++ = posZ;
+            // Normals
+            *pVertex++ = 0.0;
+            *pVertex++ = 0.0;
+            *pVertex++ = 1.0;
+            // Texture
+            *pVertex++ = 1.0;
+            *pVertex++ = 0.0;
+
+            // Position
+            *pVertex++ = posX-TILES_WIDTH;
+            *pVertex++ = posY;
+            *pVertex++ = posZ;
+            // Normals
+            *pVertex++ = 0.0;
+            *pVertex++ = 0.0;
+            *pVertex++ = 1.0;
+            // Texture
+            *pVertex++ = 0.0;
+            *pVertex++ = 0.0;
+
+            posX -= TILES_WIDTH;
+		}
+		posY -= TILES_HEIGHT;
+		posX = startX;
+//		posZ +=20; posY +=20; //
+	}
+	mpVertexBuf->unlock();
+
+    /////////////////////////////////////////////////////////////////////////
+    // Create index-buffer.
+	/////////////////////////////////////////////////////////////////////////
+    unsigned short faces[SUM_FACES] = { 0,1,2  ,  0,2,3 }; // first, second triangle.
+	pMeshTilesVertex->indexData->indexCount = SUM_VINDEX;
+	pMeshTilesVertex->indexData->indexBuffer = HardwareBufferManager::getSingleton().createIndexBuffer(HardwareIndexBuffer::IT_16BIT, pMeshTilesVertex->indexData->indexCount, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
+	pMeshTilesVertex->useSharedVertices = true;
+	HardwareIndexBufferSharedPtr iBuf = pMeshTilesVertex->indexData->indexBuffer;
+	unsigned short* pIndices = static_cast<unsigned short*>(iBuf->lock(HardwareBuffer::HBL_DISCARD));
+	for (int i=0, posIndex =0; i < SUM_TILES; ++i)
+	{
+		for (int u= 0; u < SUM_FACES; ++u)  { *pIndices++ = posIndex + faces[u]; }
+		posIndex += 4;
+	}
+	iBuf->unlock();
+
+    /////////////////////////////////////////////////////////////////////////
+	// Set bounding information (for culling)
+    /////////////////////////////////////////////////////////////////////////
+	mpMeshTiles->_setBounds(AxisAlignedBox(-100,-100,-100,100,100,100));
+	mpMeshTiles->_setBoundingSphereRadius(Math::Sqrt(100*100+100*100));
+
+    /////////////////////////////////////////////////////////////////////////
+    // Create the entity.
+	/////////////////////////////////////////////////////////////////////////
+	mpMeshTiles->load();
+	Entity* mEntity = SceneMgr->createEntity("mTiles", "TilesMesh");
+	mNode = Node->createChildSceneNode(Vector3(0, 0, 0), Quaternion(0.0,0.0,0.0,0.0));
+	mEntity->setMaterialName("Tiles/Layer0");
+	mNode->attachObject(mEntity);
+	
+	mTileOffset = Vector3::ZERO;
 }

@@ -51,7 +51,7 @@ struct _option opt[] =
 //=================================================================================================
 bool Option::openDescFile(const char *filename)
 {
-	if (mDescFile) { mDescFile->close(); }
+	closeDescFile();
 	mDescFile = new ifstream(filename, ios::in);
     if (!mDescFile) { return false; }
     mFilename = filename;
@@ -69,12 +69,10 @@ bool Option::openDescFile(const char *filename)
 //=================================================================================================
 void Option::closeDescFile()
 {
-	if (mDescFile)
-	{
-		mDescFile->close();
-		delete mDescFile;
-		mDescFile = 0;
-	} 
+	if (!mDescFile) { return; }
+	mDescFile->close();
+	delete mDescFile;
+	mDescFile = 0;
 }
 
 //=================================================================================================
@@ -84,7 +82,7 @@ void Option::closeDescFile()
 bool Option::getDescStr(const char *strKeyword, string &strBuffer, int posNr)
 {
 	int pos=0, startPos=0, stopPos, entryTest;
-checkForKeyword:
+  checkForKeyword:
 	startPos = mDescBuffer.find(strKeyword, startPos);
 	if (startPos <0) { return false; }
 	entryTest= mDescBuffer.find(":",  startPos)+1;
@@ -145,6 +143,16 @@ bool Option::Init()
  }
 
 //=================================================================================================
+// Constructor.
+//=================================================================================================
+Option::Option()
+{
+	GameStatus =  GAME_STATUS_INIT;
+	mLogin = false;
+	mDescFile =0;
+}
+
+//=================================================================================================
 // Destructor.
 //=================================================================================================
 Option::~Option()
@@ -158,7 +166,3 @@ Option::~Option()
 	}	
 */
 }
-
-//=================================================================================================
-// Returns the option as string.
-//=================================================================================================
