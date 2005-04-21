@@ -223,11 +223,11 @@ bool CEvent::frameEnded(const FrameEvent& evt)
 		if((long)ms.dwAvailPhys    <0) { ms.dwAvailPhys     = 0; }
 		long usedPhys = ((long)ms.dwTotalPhys     - (long)ms.dwAvailPhys) / 1024;
 		long usedPage = ((long)ms.dwTotalPageFile - (long)ms.dwAvailPageFile)/ 1024;
+        guiBest ->setCaption("Phys Mem used:" + StringConverter::toString(usedPhys)+ " kb");
+        guiWorst->setCaption("Page Mem used:" + StringConverter::toString(usedPage)+ " kb");
   #else
 
   #endif
-        guiBest ->setCaption("Phys Mem used:" + StringConverter::toString(usedPhys)+ " kb");
-        guiWorst->setCaption("Page Mem used:" + StringConverter::toString(usedPage)+ " kb");
 #else 
         guiBest->setCaption(bestFps + StringConverter::toString(stats.bestFPS)+" "+StringConverter::toString(stats.bestFrameTime)+" ms");
         guiWorst->setCaption(worstFps + StringConverter::toString(stats.worstFPS) +" "+StringConverter::toString(stats.worstFrameTime)+" ms");
