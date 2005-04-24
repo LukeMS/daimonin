@@ -36,7 +36,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "player.h"
 #include "tile_map.h"
 
-#define SHOW_FREE_MEM 1
+//#define SHOW_FREE_MEM
 
 #ifdef SHOW_FREE_MEM
   #ifdef WIN32
@@ -217,8 +217,9 @@ bool CEvent::frameEnded(const FrameEvent& evt)
 
         guiAvg->setCaption(avgFps + StringConverter::toString(stats.avgFPS));
         guiCurr->setCaption(currFps + StringConverter::toString(stats.lastFPS));
-#ifdef SHOW_FREE_MEM
-  #ifdef WIN32
+
+	#ifdef SHOW_FREE_MEM
+		#ifdef WIN32
 		MEMORYSTATUS ms;
 		ms.dwLength = sizeof(ms);
 		GlobalMemoryStatus(&ms);
@@ -226,15 +227,14 @@ bool CEvent::frameEnded(const FrameEvent& evt)
 		if((long)ms.dwAvailPhys    <0) { ms.dwAvailPhys     = 0; }
 		long usedPhys = ((long)ms.dwTotalPhys     - (long)ms.dwAvailPhys) / 1024;
 		long usedPage = ((long)ms.dwTotalPageFile - (long)ms.dwAvailPageFile)/ 1024;
-  #else
-
-  #endif
-        guiBest ->setCaption("Phys Mem used:" + StringConverter::toString(usedPhys)+ " kb");
-        guiWorst->setCaption("Page Mem used:" + StringConverter::toString(usedPage)+ " kb");
-#else 
-        guiBest->setCaption(bestFps + StringConverter::toString(stats.bestFPS)+" "+StringConverter::toString(stats.bestFrameTime)+" ms");
-        guiWorst->setCaption(worstFps + StringConverter::toString(stats.worstFPS) +" "+StringConverter::toString(stats.worstFrameTime)+" ms");
-#endif  
+		#else
+		#endif // WIN32
+		guiBest ->setCaption("Phys Mem used:" + StringConverter::toString(usedPhys)+ " kb");
+		guiWorst->setCaption("Page Mem used:" + StringConverter::toString(usedPage)+ " kb");
+	#else
+		guiBest->setCaption(bestFps + StringConverter::toString(stats.bestFPS)+" "+StringConverter::toString(stats.bestFrameTime)+" ms");
+		guiWorst->setCaption(worstFps + StringConverter::toString(stats.worstFPS) +" "+StringConverter::toString(stats.worstFrameTime)+" ms");
+	#endif
         OverlayElement* guiTris = OverlayManager::getSingleton().getOverlayElement("Core/NumTris");
         guiTris->setCaption(tris + StringConverter::toString(stats.triangleCount));
 
