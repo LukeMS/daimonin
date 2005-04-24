@@ -42,7 +42,7 @@ NPC *NPC_Enemy1 = 0;
 bool NPC::Init(SceneManager *mSceneMgr, SceneNode  *Node)
 {
 	if (!mInstanceNr) { LogFile::getSingleton().Headline("Init NPCs"); }
-	LogFile::getSingleton().Info("Parse description file %s\n", FILE_NPC_DESC);
+	LogFile::getSingleton().Info("Parse description file %s...", FILE_NPC_DESC);
 	if (!(Option::getSingleton().openDescFile(FILE_NPC_DESC)))
 	{
 		LogFile::getSingleton().Success(false);

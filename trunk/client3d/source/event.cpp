@@ -75,9 +75,9 @@ CEvent::CEvent(RenderWindow* win, Camera* cam, MouseMotionListener *mMotionListe
 	ChatWin->Print("Welcome to Daimonin 3D.  ", TXT_YELLOW);
 	ChatWin->Print("-----------------------------------------", TXT_YELLOW);
 	ChatWin->Print("  L            -> Lauch network");
-	ChatWin->Print("  C            -> Camera detail");
-	ChatWin->Print("  Page Up/Down  -> Camera view.");
-	ChatWin->Print("  Print          -> Screenshot.");
+//	ChatWin->Print("  C            -> Camera detail");
+//	ChatWin->Print("  Page Up/Down  -> Camera view.");
+	ChatWin->Print("  Print         -> Screenshot.");
 	ChatWin->Print("Player commands (depends on model):", TXT_WHITE);
 	ChatWin->Print("  Cursor-> Movement");
 	ChatWin->Print("  1    -> Toggle Weapon");
@@ -88,6 +88,9 @@ CEvent::CEvent(RenderWindow* win, Camera* cam, MouseMotionListener *mMotionListe
 	ChatWin->Print("  D    -> Death.");
 	ChatWin->Print("  H    -> Hit.");
 	ChatWin->Print("  F1   -> Toggle Anim Group.");
+    ChatWin->Print(" ");
+    ChatWin->Print("You have to wait for animation end,", TXT_WHITE);
+    ChatWin->Print("before you can select the next one.", TXT_WHITE);
 	TextWin->Print("Enemy commands:", TXT_WHITE);
 	TextWin->Print("  J    -> Turn left");
 	TextWin->Print("  K    -> Turn right");
@@ -154,10 +157,10 @@ bool CEvent::frameStarted(const FrameEvent& evt)
 	NPC_Enemy1->updateAnim(evt);
 
 	mIdleTime += evt.timeSinceLastFrame;
-	if (mIdleTime > 15.0)
+	if (mIdleTime > 30.0)
 	{ 
 		Sound::getSingleton().playSample(SAMPLE_PLAYER_IDLE);
-		mIdleTime = -240;
+		mIdleTime = 0;
 	}
 
 	TileMap::getSingleton().draw();
@@ -223,11 +226,11 @@ bool CEvent::frameEnded(const FrameEvent& evt)
 		if((long)ms.dwAvailPhys    <0) { ms.dwAvailPhys     = 0; }
 		long usedPhys = ((long)ms.dwTotalPhys     - (long)ms.dwAvailPhys) / 1024;
 		long usedPage = ((long)ms.dwTotalPageFile - (long)ms.dwAvailPageFile)/ 1024;
-        guiBest ->setCaption("Phys Mem used:" + StringConverter::toString(usedPhys)+ " kb");
-        guiWorst->setCaption("Page Mem used:" + StringConverter::toString(usedPage)+ " kb");
   #else
 
   #endif
+        guiBest ->setCaption("Phys Mem used:" + StringConverter::toString(usedPhys)+ " kb");
+        guiWorst->setCaption("Page Mem used:" + StringConverter::toString(usedPage)+ " kb");
 #else 
         guiBest->setCaption(bestFps + StringConverter::toString(stats.bestFPS)+" "+StringConverter::toString(stats.bestFrameTime)+" ms");
         guiWorst->setCaption(worstFps + StringConverter::toString(stats.worstFPS) +" "+StringConverter::toString(stats.worstFrameTime)+" ms");

@@ -37,6 +37,8 @@ http://www.gnu.org/copyleft/lesser.txt.
 
 using namespace Ogre;
 
+const int SUM_MIPMAPS = 0;
+
 // ========================================================================
 // Start the example
 // ========================================================================
@@ -113,7 +115,7 @@ bool DaimoninClient::setup(void)
     /////////////////////////////////////////////////////////////////////////
     // Set default mipmap level (NB some APIs ignore this)
     /////////////////////////////////////////////////////////////////////////
-    TextureManager::getSingleton().setDefaultNumMipmaps(3);
+    TextureManager::getSingleton().setDefaultNumMipmaps(SUM_MIPMAPS);
     /////////////////////////////////////////////////////////////////////////
     // Optional override method where you can perform resource group loading
     // Must at least do ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
