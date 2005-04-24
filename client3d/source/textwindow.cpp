@@ -297,7 +297,7 @@ void CTextwindow::Print(const char *text, ColourValue color)
 {
     row[mBufferPos & (SIZE_STRING_BUFFER-1)].str   = text;
     row[mBufferPos & (SIZE_STRING_BUFFER-1)].colorTop = color;
-    row[mBufferPos & (SIZE_STRING_BUFFER-1)].colorBottom = color-ColourValue(.05,.05,.05);
+    row[mBufferPos & (SIZE_STRING_BUFFER-1)].colorBottom = color/1.5;
     ++mBufferPos;
     ++mRowsToScroll;
 }

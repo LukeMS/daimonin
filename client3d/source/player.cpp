@@ -39,13 +39,17 @@ const char *StateNames[STATE_SUM]=
 	"Hit1",		"Hit2",		"Hit3"
 };
 
+const std::string sndPreFix  = "Sound_";
+const std::string animPreFix = "Anim_";
+int sound_handle[STATE_SUM];
+
 //=================================================================================================
 // 
 //=================================================================================================
 bool Player::Init(SceneManager *SceneMgr)
 {
 	LogFile::getSingleton().Headline("Init Player");
-	LogFile::getSingleton().Info("Parse description file %s\n", FILE_PLAYER_DESC);
+	LogFile::getSingleton().Info("Parse description file %s...", FILE_PLAYER_DESC);
 	if (!(Option::getSingleton().openDescFile(FILE_PLAYER_DESC)))
 	{
 		LogFile::getSingleton().Success(false);
@@ -66,10 +70,11 @@ bool Player::Init(SceneManager *SceneMgr)
 	Real posZ = atof(mStrTemp.c_str());
 	mNode   = mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(posX, posY, posZ), Quaternion(1.0,0.0,0.0,0.0));
 
+/*
 	Option::getSingleton().getDescStr("MeshSize", mStrTemp);
 	Real size = atof(mStrTemp.c_str());
 	mNode->setScale(size, size, size);
-
+*/
 	Option::getSingleton().getDescStr("Facing", mStrTemp);
 	mFacing = Radian(atof(mStrTemp.c_str()));
     mNode->yaw(mFacing);
@@ -82,20 +87,37 @@ bool Player::Init(SceneManager *SceneMgr)
 	mTurning =0;
 	mWalking =0;
 
+    std::string animName, soundName;
 	// fill the animation states.
 	for (int state = 0; state < STATE_SUM; ++state)
 	{
-		Option::getSingleton().getDescStr(StateNames[state], mStrTemp);
+        animName = animPreFix + StateNames[state];
+		Option::getSingleton().getDescStr(animName.c_str(), mStrTemp);
 		if (mStrTemp.size())
 		{
 			mAnimStates[state] = mEntityPlayer->getAnimationState(mStrTemp.c_str());
 		}
 		else // not found animation-name in description file -> use the standard one (IDLE1).
 		{
+            LogFile::getSingleton().Info("- Animation: %s has no animation defined\n", animName.c_str());
 			Option::getSingleton().getDescStr(StateNames[STATE_IDLE1], mStrTemp);
 			mAnimStates[state] = mEntityPlayer->getAnimationState(mStrTemp.c_str());
 		}
+        // load the sound for this animation.
+        soundName = sndPreFix + StateNames[state];
+		Option::getSingleton().getDescStr(soundName.c_str(), mStrTemp);
+        if (mStrTemp == "" )
+        {
+            LogFile::getSingleton().Info("- Animation: %s has no sound defined\n", soundName.c_str());
+            sound_handle[state] = Sound::getSingleton().loadSample(FILE_SAMPLE_DUMMY);
+        }
+        else
+        {
+            mStrTemp = DIR_SAMPLES + mStrTemp;
+            sound_handle[state] = Sound::getSingleton().loadSample(mStrTemp.c_str());
+        }
 	}
+	
 	mEntityWeapon =0;
 	mEntityShield =0;
 	mAnimGroup = 0;
@@ -105,7 +127,6 @@ bool Player::Init(SceneManager *SceneMgr)
 	mAnimState->setLoop(false);
 	return true;
 }
-
 
 //=================================================================================================
 //
@@ -130,7 +151,7 @@ void Player::toggleWeapon(int Hand, int WeaponNr)
 		}
 		if (Option::getSingleton().getDescStr("M_Name_Weapon", mStrTemp, WeaponNr))
 		{
-			mEntityWeapon = mSceneMgr->createEntity("weapon", mStrTemp);           //    oben  links  vorne
+			mEntityWeapon = mSceneMgr->createEntity("weapon", mStrTemp);
 			Option::getSingleton().getDescStr("StartX_Weapon", mStrTemp, WeaponNr);
 			Real posX = atof(mStrTemp.c_str());
 			Option::getSingleton().getDescStr("StartY_Weapon", mStrTemp, WeaponNr);
@@ -191,6 +212,7 @@ void Player::toggleAnimation(int animationNr)
 	mAnimState->setEnabled(true);
 	mAnimState->setTimePosition(0);
 	mAnimState->setLoop(false);
+    if (mAnimType >= STATE_RUN3) Sound::getSingleton().playSample(sound_handle[animationNr -1 + mAnimGroup]);
 }
 
 //=================================================================================================
@@ -202,10 +224,10 @@ void Player::updateAnim(const FrameEvent& event)
 	mAnimState->addTime(event.timeSinceLastFrame * PLAYER_ANIM_SPEED);
 	if (mAnimState->getTimePosition() >= mAnimState->getLength())
 	{
+        
 		toggleAnimation(STATE_IDLE1);
-		mAnimState->setTimePosition(0);
 	}
-	mAnimState->setEnabled(true);
+//	mAnimState->setEnabled(true);
 	mTranslateVector = Vector3(0,0,0);
 	if (mAnimType < STATE_ATTACK1)
 	{

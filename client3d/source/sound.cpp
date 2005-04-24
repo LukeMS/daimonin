@@ -20,27 +20,19 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/copyleft/lesser.txt.
 -----------------------------------------------------------------------------
 */
-
+#include <vector>
+#include <fstream> 
 #include "fmod.h"
 #include "fmod_errors.h"  //optional.
 #include "define.h"
 #include "sound.h"
 #include "logfile.h"
 
-struct _sample
-{
-	FSOUND_SAMPLE *handle;
-	const char *filename;
-};
-
-_sample Sample[SAMPLE_SUM]=
-{
-	{ 0, FILE_SAMPLE_MOUSE_CLICK }, // SAMPLE_BUTTON_CLICK
-	{ 0, FILE_SAMPLE_PLAYER_IDLE }  // SAMPLE_PLAYER_IDLE
-};
+using namespace std;
 
 static FMUSIC_MODULE *mpSong   =0;
 static FSOUND_STREAM *mpStream =0;
+static vector<FSOUND_SAMPLE*> vecHandle;
 
 // ========================================================================
 // Init the sound-system.
@@ -75,17 +67,14 @@ bool Sound::Init()
     /////////////////////////////////////////////////////////////////////////
     // Load all samples.
 	/////////////////////////////////////////////////////////////////////////
+    createSampleDummy();
     LogFile::getSingleton().Info("Loading samples...");
-    for (unsigned int i = 0; i< SAMPLE_SUM; ++i)
-	{
-		if (!(Sample[i].handle = FSOUND_Sample_Load(i, Sample[i].filename, 0,0,0)))
-		{
-			LogFile::getSingleton().Success(false);
-			LogFile::getSingleton().Error("Sample load: %s\n", FMOD_ErrorString(FSOUND_GetError()));
-		}
-	}
-	LogFile::getSingleton().Success(true);
-
+    mSuccess = true;
+    // if you change something here - you must change it in enum SampleName, too.
+    loadSample(FILE_SAMPLE_MOUSE_CLICK);
+    loadSample(FILE_SAMPLE_PLAYER_IDLE);
+	if (mSuccess) { LogFile::getSingleton().Success(true); }
+    else          { LogFile::getSingleton().Success(false); }        
 	mWeight = 1.0;
 	mMusicVolume  = 50;
 	mSampleVolume =255;
@@ -93,9 +82,85 @@ bool Sound::Init()
 }
 
 // ========================================================================
+// Sets the 3D-pos of the sample.
+// ========================================================================
+void Sound::createSampleDummy()
+{
+    char dummy[] =
+    { 0x52,0x49,0x46,0x46,0xC0,0x00,0x00,0x00,0x57,0x41,0x56,0x45,0x66,0x6D,0x74,0x20,
+      0x12,0x00,0x00,0x00,0x01,0x00,0x01,0x00,0x11,0x2B,0x00,0x00,0x11,0x2B,0x00,0x00,
+      0x01,0x00,0x08,0x00,0x00,0x00,0x66,0x61,0x63,0x74,0x04,0x00,0x00,0x00,0x8E,0x00,
+      0x00,0x00,0x64,0x61,0x74,0x61,0x8E,0x00,0x00,0x00,0x80,0x80,0x80,0x80,0x80,0x80
+    };
+    ofstream out(FILE_SAMPLE_DUMMY, ios::binary);
+    if (!out)
+    { 
+        LogFile::getSingleton().Error("Critical: Cound not create the dummy wavefile\n");
+        return;
+    } 
+    out.write(dummy, sizeof(dummy));
+}
+
+// ========================================================================
+// Sets the 3D-pos of the sample.
+// ========================================================================
+int Sound::loadSample(const char *filename)
+{
+    FSOUND_SAMPLE *handle = FSOUND_Sample_Load(vecHandle.size() , filename, 0,0,0);
+    if (!handle)
+    { 
+        LogFile::getSingleton().Error("* Error on Sample '%s': %s \n-> using dummy.wav instead\n", 
+            filename, FMOD_ErrorString(FSOUND_GetError()));
+        mSuccess = false;
+        handle = FSOUND_Sample_Load(vecHandle.size() , FILE_SAMPLE_DUMMY, 0,0,0);
+        if (!handle)
+        { 
+            LogFile::getSingleton().Error("Critical: Cound not load the dummy wavefile\n");       
+            return -1;
+        }
+    }
+    vecHandle.push_back(handle);
+    return vecHandle.size();
+}
+
+// ========================================================================
+// Sets the 3D-pos of the sample.
+// ========================================================================
+void Sound::setSamplePos3D(unsigned int channel, float &posX, float &posY, float &posZ)
+{
+	//if (channel > ) { return; }
+	float pos[3];
+	pos[0] =  posX * mWeight;
+	pos[1] =  posY * mWeight;
+	pos[2] = -posZ * mWeight;
+	FSOUND_3D_SetAttributes(channel, &pos[0], 0);
+}
+
+// ========================================================================
+// Plays a sample.
+// ========================================================================
+int Sound::playSample(unsigned int id, float posX, float posY, float posZ)
+{
+	if (id > vecHandle.size()) { return -1; }
+	mChannel = FSOUND_PlaySound(FSOUND_FREE, vecHandle[id]);
+	setSamplePos3D(mChannel, posX, posY, posZ);
+	setVolume(mChannel, mSampleVolume);
+	return mChannel;
+}
+
+// ========================================================================
+// Stops a sample.
+// ========================================================================
+void Sound::stopSample(unsigned int channel)
+{
+	if (channel <= vecHandle.size())  { FSOUND_StopSound(channel); }
+}
+
+
+// ========================================================================
 // Set the volume.
 // ========================================================================
-void Sound::setVolume(int channel, int volume)
+void Sound::setVolume(unsigned int channel, int volume)
 {
 	FSOUND_SetVolume(channel, volume);
 }
@@ -158,48 +223,12 @@ void Sound::stopStream()
 }
 
 // ========================================================================
-// Plays a sample.
-// ========================================================================
-void Sound::setSamplePos3D(int channel, float &posX, float &posY, float &posZ)
-{
-	if (channel < 0) { return; }
-	float pos[3];
-	pos[0] =  posX * mWeight;
-	pos[1] =  posY * mWeight;
-	pos[2] = -posZ * mWeight;
-	FSOUND_3D_SetAttributes(channel, &pos[0], 0);
-}
-
-// ========================================================================
-// Plays a sample.
-// ========================================================================
-int Sound::playSample(int id, float posX, float posY, float posZ)
-{
-	if (id >= SAMPLE_SUM) { return -1; }
-	mChannel = FSOUND_PlaySound(FSOUND_FREE, Sample[id].handle);
-	setSamplePos3D(mChannel, posX, posY, posZ);
-	setVolume(mChannel, mSampleVolume);
-	return mChannel;
-}
-
-// ========================================================================
-// Stops a sample.
-// ========================================================================
-void Sound::stopSample(int channel)
-{
-	if (channel >= 0)  { FSOUND_StopSound(channel); }
-}
-
-// ========================================================================
 // Destructor.
 // ========================================================================
 Sound::~Sound()
 {
 	stopStream();
     FMUSIC_FreeSong(mpSong);
-    for (unsigned int i = 0; i< SAMPLE_SUM; ++i)
-	{ 
-		if (Sample[i].handle) { FSOUND_Sample_Free(Sample[i].handle); }
-	}
+    for (unsigned int i = 0; i< vecHandle.size(); ++i) { FSOUND_Sample_Free(vecHandle[i]); }
     FSOUND_Close();
 }
