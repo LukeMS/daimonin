@@ -55,20 +55,22 @@ class Sound
 	void playSong(const char *filename);
 	void stopSong();
 	// Samples.
-	void setSamplePos3D(int channel,  float &posX, float &posY, float &posZ);
-	int  playSample(int id, float posX = 1.0, float posY = 1.0 , float posZ = 1.0);
-	void stopSample(int channel);
-
-	void setVolume(int channel, int volume);
+	void setSamplePos3D(unsigned int channel,  float &posX, float &posY, float &posZ);
+    int  loadSample(const char *filename);	
+	int  playSample(unsigned int id, float posX = 1.0, float posY = 1.0 , float posZ = 1.0);
+	void stopSample(unsigned int channel);
+    void createSampleDummy();
+	void setVolume(unsigned int channel, int volume);
 
   private:
     ////////////////////////////////////////////////////////////
 	// Variables.
     ////////////////////////////////////////////////////////////
 	float mWeight;
-	bool mSound3D;
-	int mMusicVolume, mSampleVolume;
-	int mChannel;
+	bool  mSound3D;
+    bool  mSuccess;
+	int   mMusicVolume, mSampleVolume;
+	int   mChannel;
 
     ////////////////////////////////////////////////////////////
 	// Functions.
