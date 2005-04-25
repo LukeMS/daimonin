@@ -32,8 +32,6 @@ FOffset  : "270"
 # and again:
 # Whole file is CASE SENSITIVE !!!
 #####################################################################################
-# Don't define a sound without an animation or the sound will loop!
-#####################################################################################
 Anim_Idle1    : "Idle1" # Model MUST have animation-state "Anim_Idle1"!!!
 Anim_Idle2    : "Idle2"
 Anim_Idle3    : "Idle3"
@@ -64,7 +62,7 @@ Anim_Attack2  : ""
 Anim_Attack3  : ""
 Sound_Attack1 : "Player_Attack1.wav"
 Sound_Attack2 : "Player_Attack1.wav"
-Sound_Attack3 : ""
+Sound_Attack3 : "Player_Attack1.wav"
 
 # Triggered by 'b'key.
 Anim_Block1   : ""
