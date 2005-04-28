@@ -36,7 +36,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 #if defined(WIN32) || defined(_WIN64) || defined(__WATCOMC__)
 #include <conio.h>
 #else
-#include "wincompat.h"
+//#include "wincompat.h"
 #endif
 
 #ifdef __cplusplus

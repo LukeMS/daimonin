@@ -5,10 +5,11 @@
 ## 	Please disable it in the Anjuta project configuration
 
 INCLUDES =\
-	 -I/home/andreas/daimonin/client3d/source/include
+	 -Iinclude \
+	 -Iinclude/fmod
 
 AM_CXXFLAGS =\
-	${ogre_CFLAGS}\
+	${OGRE_CFLAGS}\
 	 -Wall\
 	 -g
 
@@ -40,7 +41,8 @@ client3d_SOURCES = \
 	tile_map.cpp
 
 client3d_LDFLAGS = \
-	${ogre_LIBS}
+	-L../make/linux \
+	${OGRE_LIBS}
 
 client3d_LDADD = \
 	 -lfmod-3.74
