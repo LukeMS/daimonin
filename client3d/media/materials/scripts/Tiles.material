@@ -2,26 +2,59 @@ material Tiles/Layers
 {
    technique
    {
+ 
      pass
      {
-         texture_unit
-         {
-               filtering none
-               texture tiles_layer0.png
-         }
+         scene_blend alpha_blend
+         texture_unit 
+         { 
+            filtering none
+            texture tiles_layer0.png
+            tex_coord_set 0 
+         } 
       }
      pass
      {
          scene_blend alpha_blend
-         texture_unit
-         {
-               filtering none
-               texture tiles_layer1.png
-         }
+         texture_unit 
+         { 
+            filtering none
+            texture tiles_layer1.png
+            tex_coord_set 1 
+         } 
       }
-
    }
 }
+
+
+material Tiles/Layers_
+{
+   technique
+   {
+ 
+     pass
+     {
+         scene_blend alpha_blend
+         texture_unit 
+         { 
+            filtering none
+            texture tiles_layer0.png
+            tex_coord_set 0 
+         } 
+
+         texture_unit 
+         { 
+            filtering none
+            texture tiles_layer1.png
+            tex_coord_set 1 
+         } 
+      }
+   }
+}
+
+
+
+
 
 material dyn_layer
 {
