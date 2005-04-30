@@ -104,124 +104,55 @@ PostBuild_Cmds=copy Release\*.exe ..\..\..\*.exe
 # PROP Default_Filter "cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 # Begin Source File
 
+SOURCE=..\..\..\source\animate.cpp
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\source\client.cpp
-
-!IF  "$(CFG)" == "Daimonin - Win32 Debug"
-
-# ADD CPP /YX"daimonin.pch"
-
-!ELSEIF  "$(CFG)" == "Daimonin - Win32 Release"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\..\source\dialog.cpp
-
-!IF  "$(CFG)" == "Daimonin - Win32 Debug"
-
-# ADD CPP /YX"daimonin.pch"
-
-!ELSEIF  "$(CFG)" == "Daimonin - Win32 Release"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\..\source\event.cpp
-
-!IF  "$(CFG)" == "Daimonin - Win32 Debug"
-
-# ADD CPP /YX"daimonin.pch"
-
-!ELSEIF  "$(CFG)" == "Daimonin - Win32 Release"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\..\source\logfile.cpp
-
-!IF  "$(CFG)" == "Daimonin - Win32 Debug"
-
-# ADD CPP /YX"daimonin.pch"
-
-!ELSEIF  "$(CFG)" == "Daimonin - Win32 Release"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\..\source\main.cpp
-
-!IF  "$(CFG)" == "Daimonin - Win32 Debug"
-
-# ADD CPP /YX"daimonin.pch"
-
-!ELSEIF  "$(CFG)" == "Daimonin - Win32 Release"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\..\source\network.cpp
-
-!IF  "$(CFG)" == "Daimonin - Win32 Debug"
-
-# ADD CPP /YX"daimonin.pch"
-
-!ELSEIF  "$(CFG)" == "Daimonin - Win32 Release"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\..\source\network_cmd.cpp
-
-!IF  "$(CFG)" == "Daimonin - Win32 Debug"
-
-# ADD CPP /YX"daimonin.pch"
-
-!ELSEIF  "$(CFG)" == "Daimonin - Win32 Release"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\source\npc.cpp
+SOURCE=..\..\..\source\object_manager.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\object_npc.cpp
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\object_static.cpp
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\..\source\option.cpp
-
-!IF  "$(CFG)" == "Daimonin - Win32 Debug"
-
-# ADD CPP /YX"daimonin.pch"
-
-!ELSEIF  "$(CFG)" == "Daimonin - Win32 Release"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
 SOURCE=..\..\..\source\option_init.cpp
-
-!IF  "$(CFG)" == "Daimonin - Win32 Debug"
-
-# ADD CPP /YX"daimonin.pch"
-
-!ELSEIF  "$(CFG)" == "Daimonin - Win32 Release"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -230,15 +161,6 @@ SOURCE=..\..\..\source\player.cpp
 # Begin Source File
 
 SOURCE=..\..\..\source\serverfile.cpp
-
-!IF  "$(CFG)" == "Daimonin - Win32 Debug"
-
-# ADD CPP /YX"daimonin.pch"
-
-!ELSEIF  "$(CFG)" == "Daimonin - Win32 Release"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -247,15 +169,6 @@ SOURCE=..\..\..\source\sound.cpp
 # Begin Source File
 
 SOURCE=..\..\..\source\textwindow.cpp
-
-!IF  "$(CFG)" == "Daimonin - Win32 Debug"
-
-# ADD CPP /YX"daimonin.pch"
-
-!ELSEIF  "$(CFG)" == "Daimonin - Win32 Release"
-
-!ENDIF 
-
 # End Source File
 # Begin Source File
 
@@ -269,6 +182,10 @@ SOURCE=..\..\..\source\tile_map.cpp
 # Begin Group "Header Files"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=..\..\..\source\include\animate.h
+# End Source File
 # Begin Source File
 
 SOURCE=..\..\..\source\include\client.h
@@ -295,7 +212,15 @@ SOURCE=..\..\..\source\include\network.h
 # End Source File
 # Begin Source File
 
-SOURCE=..\..\..\source\include\npc.h
+SOURCE=..\..\..\source\include\object_manager.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\include\object_npc.h
+# End Source File
+# Begin Source File
+
+SOURCE=..\..\..\source\include\object_static.h
 # End Source File
 # Begin Source File
 
@@ -333,10 +258,6 @@ SOURCE=..\..\..\source\include\tile_gfx.h
 
 SOURCE=..\..\..\source\include\tile_map.h
 # End Source File
-# End Group
-# Begin Group "Resource Files"
-
-# PROP Default_Filter "ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 # End Group
 # Begin Group "3rd Party"
 
@@ -396,6 +317,14 @@ SOURCE=..\..\..\source\zutil.c
 # Begin Source File
 
 SOURCE=..\..\..\source\include\zutil.h
+# End Source File
+# End Group
+# Begin Group "Readme"
+
+# PROP Default_Filter ".txt"
+# Begin Source File
+
+SOURCE=..\README.txt
 # End Source File
 # End Group
 # End Target
