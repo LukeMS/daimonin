@@ -188,13 +188,6 @@
 			<Option target="Debug"/>
 			<Option target="Release"/>
 		</Unit>
-		<Unit filename="..\..\..\source\include\npc.h">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Debug"/>
-			<Option target="Release"/>
-		</Unit>
 		<Unit filename="..\..\..\source\include\object_manager.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
@@ -202,14 +195,21 @@
 			<Option target="Debug"/>
 			<Option target="Release"/>
 		</Unit>
-		<Unit filename="..\..\..\source\include\option.h">
+		<Unit filename="..\..\..\source\include\object_npc.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
 			<Option target="Debug"/>
 			<Option target="Release"/>
 		</Unit>
-		<Unit filename="..\..\..\source\include\plant.h">
+		<Unit filename="..\..\..\source\include\object_static.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
+		<Unit filename="..\..\..\source\include\option.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -328,12 +328,17 @@
 			<Option target="Debug"/>
 			<Option target="Release"/>
 		</Unit>
-		<Unit filename="..\..\..\source\npc.cpp">
+		<Unit filename="..\..\..\source\object_manager.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="Debug"/>
 			<Option target="Release"/>
 		</Unit>
-		<Unit filename="..\..\..\source\object_manager.cpp">
+		<Unit filename="..\..\..\source\object_npc.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
+		<Unit filename="..\..\..\source\object_static.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="Debug"/>
 			<Option target="Release"/>
@@ -344,11 +349,6 @@
 			<Option target="Release"/>
 		</Unit>
 		<Unit filename="..\..\..\source\option_init.cpp">
-			<Option compilerVar="CPP"/>
-			<Option target="Debug"/>
-			<Option target="Release"/>
-		</Unit>
-		<Unit filename="..\..\..\source\plant.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="Debug"/>
 			<Option target="Release"/>

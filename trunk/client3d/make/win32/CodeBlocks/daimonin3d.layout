@@ -1,22 +1,25 @@
 <?xml version="1.0"?>
 <!DOCTYPE Code::Blocks_layout_file>
 <Code::Blocks_layout_file>
-	<File name="..\..\..\source\animate.cpp" open="1" top="0">
+	<File name="..\README.txt" open="1" top="0">
+		<Cursor position="0" topLine="0"/>
+	</File>
+	<File name="..\..\..\source\animate.cpp" open="0" top="0">
 		<Cursor position="3122" topLine="0"/>
 	</File>
-	<File name="..\..\..\source\client.cpp" open="1" top="0">
+	<File name="..\..\..\source\client.cpp" open="0" top="0">
 		<Cursor position="2121" topLine="0"/>
 	</File>
 	<File name="..\..\..\source\dialog.cpp" open="0" top="0">
 		<Cursor position="3543" topLine="0"/>
 	</File>
-	<File name="..\..\..\source\event.cpp" open="1" top="0">
+	<File name="..\..\..\source\event.cpp" open="0" top="0">
 		<Cursor position="1307" topLine="44"/>
 	</File>
-	<File name="..\..\..\source\include\animate.h" open="1" top="0">
+	<File name="..\..\..\source\include\animate.h" open="0" top="0">
 		<Cursor position="2299" topLine="46"/>
 	</File>
-	<File name="..\..\..\source\include\client.h" open="1" top="0">
+	<File name="..\..\..\source\include\client.h" open="0" top="0">
 		<Cursor position="2361" topLine="39"/>
 	</File>
 	<File name="..\..\..\source\include\define.h" open="0" top="0">
@@ -25,7 +28,7 @@
 	<File name="..\..\..\source\include\dialog.h" open="0" top="0">
 		<Cursor position="2134" topLine="52"/>
 	</File>
-	<File name="..\..\..\source\include\event.h" open="1" top="0">
+	<File name="..\..\..\source\include\event.h" open="0" top="0">
 		<Cursor position="2689" topLine="22"/>
 	</File>
 	<File name="..\..\..\source\include\logfile.h" open="0" top="0">
@@ -33,9 +36,6 @@
 	</File>
 	<File name="..\..\..\source\include\network.h" open="0" top="0">
 		<Cursor position="4565" topLine="82"/>
-	</File>
-	<File name="..\..\..\source\include\npc.h" open="1" top="0">
-		<Cursor position="1611" topLine="35"/>
 	</File>
 	<File name="..\..\..\source\include\option.h" open="0" top="0">
 		<Cursor position="1516" topLine="85"/>
@@ -58,8 +58,8 @@
 	<File name="..\..\..\source\include\tile_gfx.h" open="0" top="0">
 		<Cursor position="3951" topLine="85"/>
 	</File>
-	<File name="..\..\..\source\include\tile_map.h" open="1" top="0">
-		<Cursor position="4162" topLine="115"/>
+	<File name="..\..\..\source\include\tile_map.h" open="0" top="0">
+		<Cursor position="4162" topLine="113"/>
 	</File>
 	<File name="..\..\..\source\main.cpp" open="0" top="0">
 		<Cursor position="0" topLine="27"/>
@@ -67,20 +67,20 @@
 	<File name="..\..\..\source\network.cpp" open="0" top="0">
 		<Cursor position="35418" topLine="967"/>
 	</File>
-	<File name="..\..\..\source\npc.cpp" open="1" top="0">
-		<Cursor position="1940" topLine="86"/>
+	<File name="..\..\..\source\object_manager.cpp" open="0" top="0">
+		<Cursor position="0" topLine="6"/>
 	</File>
 	<File name="..\..\..\source\option.cpp" open="0" top="0">
-		<Cursor position="1293" topLine="33"/>
+		<Cursor position="1633" topLine="46"/>
 	</File>
 	<File name="..\..\..\source\player.cpp" open="0" top="0">
 		<Cursor position="1872" topLine="0"/>
 	</File>
-	<File name="..\..\..\source\sound.cpp" open="1" top="0">
+	<File name="..\..\..\source\sound.cpp" open="0" top="0">
 		<Cursor position="4313" topLine="17"/>
 	</File>
-	<File name="..\..\..\source\tile_map.cpp" open="1" top="1">
+	<File name="..\..\..\source\tile_map.cpp" open="0" top="0">
 		<Cursor position="2010" topLine="19"/>
 	</File>
-	<Expand folder="/Sources"/>
+	<Expand folder="/Others"/>
 </Code::Blocks_layout_file>
