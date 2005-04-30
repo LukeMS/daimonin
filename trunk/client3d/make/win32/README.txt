@@ -8,26 +8,25 @@ Code::Blocks Project
 
 1.) Install Code::Blocks like you was told in the Ogre3d Wiki.
 2.) Copy the plugins.cfg from client3d/make/win32/CodeBlocks to client3d/
-3.) Unpack all     *.dll from client3d/make/win32/dll_gcc.tgz      to client3d/
-4.) Unpack all     *.lib from client3d/make/win32/fmod_lib.zip     to client3d/make/win32/fmod_lib
-5.) Unpack all     *.h   from client3d/make/win32/fmod_inc.zip     to client3d/make/win32/fmod_inc
-6.) Unpack all     *.a   from client3d/make/win32/ogre_lib_gcc.tgz to client3d/make/win32/ogre_lib_gcc/
-7.) Unpack all     *.h   from client3d/make/win32/ogre_inc.zip     to client3d/make/win32/ogre_inc/
+3.) Unpack all  *.dll from client3d/make/win32/dll_gcc.tgz       to  client3d/
+4.) Unpack all  *.a   from client3d/make/win32/fmod_lib.zip      to  client3d/make/win32/fmod_lib/
+5.) Unpack all  *.a   from client3d/make/win32/ogre_lib_gcc.tgz  to  client3d/make/win32/ogre_lib_gcc/
+6.) Unpack all  *.h   from client3d/make/win32/fmod_inc.zip      to  client3d/make/win32/fmod_inc/
+7.) Unpack all  *.h   from client3d/make/win32/ogre_inc.zip      to  client3d/make/win32/ogre_inc/
 8.) start Code::Blocks by doubleclick the project-file in client3d/make/win32/CodeBlocks/
 
 
 VC6 Project
 -----------
 
-TODO: we must update all VC6 ogre files. They still have version 1.0.0
-
 1.) Read the client3d/README.install.
-2.) Unpack ogre_inc.zip to this folder (So you see /DevCpp, /VisualC and /ogre_inc as folder)
-3.) Unpack ogre_lib.zip to this folder (So you see /ogre_lib next to /ogre_inc, /VisualC and /DevCpp)
-4.) do THE SAME for fmod_inc.zip and fmod_lib.zip
-    You should see now next to /VisualC:  /fmod_inc, /fmod_lib, /ogre_inc and /ogre_lib
-5a.) FOR DEBUG COMPILE: Unpack dll_debug.zip to the main folder /client3d
-5b.) FOR RELEASE COMPILE: Unpack dll_release.zip to the main folder /client3d
-6.) compile
-7.) The daimonin3d.exe will appear in /client3d folder next to the dlls of ogre & fmod
-8.) start it
+2.) Unpack client3d/make/win32/fmod_lib.zip     to  client3d/make/win32/fmod_lib/
+3.) Unpack client3d/make/win32/ogre_lib.zip     to  client3d/make/win32/ogre_lib/
+4.) Unpack client3d/make/win32/fmod_inc.zip     to  client3d/make/win32/fmod_inc/
+5.) Unpack client3d/make/win32/ogre_inc.zip     to  client3d/make/win32/ogre_inc/
+choose one of the following:
+6.) Unpack client3d/make/win32/dll_release.zip  to  client3d/
+6.) Unpack client3d/make/win32/dll_debug.zip    to  client3d/
+compile and start client3d/daimonin3d.exe
+
+last updated: 30.april-05 <polyveg>

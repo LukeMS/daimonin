@@ -94,8 +94,10 @@ void ObjectManger::update(int obj_type, const FrameEvent& evt)
         case OBJECT_STATIC:
             break;
         case OBJECT_NPC:
-            for (unsigned int i = 0; i < mvObject_npc.size(); ++i) { mvObject_npc[i]->update(evt); }
+			{
+			for (unsigned int i = 0; i < mvObject_npc.size(); ++i) { mvObject_npc[i]->update(evt); }
             break;
+			}
         default:
             break;
     }
@@ -111,6 +113,7 @@ void ObjectManger::keyEvent(int obj_type, int action, int val1, int val2)
         case OBJECT_STATIC:
         break;
         case OBJECT_NPC:
+			{
             for(unsigned int i = 0; i < mvObject_npc.size(); ++i)
             {
                 if (action == OBJ_WALK     ) mvObject_npc[i]->walking(val1);
@@ -118,6 +121,7 @@ void ObjectManger::keyEvent(int obj_type, int action, int val1, int val2)
                 if (action == OBJ_TEXTURE  ) mvObject_npc[i]->toggleTexture(val1, val2);
                 if (action == OBJ_ANIMATION) mvObject_npc[i]->toggleAnimation(val1);                                                
             }
+			}
         break;
         default:
         break;
