@@ -1,4 +1,4 @@
-material Material_#37/Material_#25
+material Shield_Round/Wood
 {
     technique
     {
@@ -6,13 +6,13 @@ material Material_#37/Material_#25
         {
             texture_unit
             {
-                texture Sword1_blade.jpg 
+                texture Shild_Round1_Side_01.jpg
             }
         }
     }
 }
 
-material Material_#37/Material_#26
+material Shield_Round/Metall
 {
     technique
     {
@@ -20,7 +20,7 @@ material Material_#37/Material_#26
         {
             texture_unit
             {
-                texture Sword1_grip.jpg 
+                texture Shild_Round1_Inside_01.jpg
             }
         }
     }
