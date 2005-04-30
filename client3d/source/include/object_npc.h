@@ -21,59 +21,58 @@ http://www.gnu.org/copyleft/lesser.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef PLAYER_H
-#define PLAYER_H
+#ifndef NPC_H
+#define NPC_H
 
-#include <Ogre.h>
-#include <OgreSceneManager.h>
 #include "animate.h"
-#include "object_npc.h"
 
 using namespace Ogre;
 
 ////////////////////////////////////////////////////////////
 // Defines.
 ////////////////////////////////////////////////////////////
-
-/*
-enum Weapon
-{
-	WEAPON_NONE,
-	WEAPON_01, WEAPON_02,
-	WEAPON_SUM
-};
-
-enum Shield
-{
-	SHIELD_NONE,
-	SHIELD_01, SHIELD_02,
-	SHIELD_SUM
-};
-*/
+const int WEAPON_HAND = 0, SHIELD_HAND = 1;
 
 ////////////////////////////////////////////////////////////
-// Singleton class.
+// Class.
 ////////////////////////////////////////////////////////////
-class Player : public NPC
+class NPC
 {
-  private:
+  protected:
     ////////////////////////////////////////////////////////////
 	// Variables.
     ////////////////////////////////////////////////////////////
-
+	static int mInstanceNr;
+	Real mWalking, mTurning;
+	Radian mFacing;
+	Real mFacingOffset;
+    SceneNode  *mNode;
+    Entity *mEntityNPC, *mEntityWeapon, *mEntityShield;
+    Vector3 mTranslateVector;    
+    Animate *mAnim;
+    std::string mDescFile;
+    SceneManager *mSceneMgr;
+    Real animOffset; // every npc gets a random animation offset. preventing of  synchronous "dancing"
+    
     ////////////////////////////////////////////////////////////
 	// Functions.
     ////////////////////////////////////////////////////////////
+    NPC(const NPC&); // disable copy-constructor.
 
   public:
     ////////////////////////////////////////////////////////////
 	// Functions.
     ////////////////////////////////////////////////////////////
-	 Player(SceneManager *SceneMgr, SceneNode  *Node, const char *filename);
-    ~Player() {;}
-	void update(const FrameEvent& event);
+	 NPC(SceneManager *SceneMgr, SceneNode  *Node, const char *filename);
+	~NPC() {;}
+	void walking(Real walk)  { mWalking = walk; }
+	void turning(Real turn)  { mTurning = turn; }
+	const Vector3& getPos() { return mTranslateVector; }
+    void update(const FrameEvent& event);
+    void toggleTexture(int pos, int textureNr);
+    void toggleWeapon(int Hand, int WeaponNr);
+    void toggleAnimGroup() { mAnim->toggleAnimGroup(); }
+	void toggleAnimation(int animationNr) {mAnim->toggleAnimation(animationNr); }
 };
-
-extern Player *player;
 
 #endif

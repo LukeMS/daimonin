@@ -74,8 +74,7 @@ class Network
     ////////////////////////////////////////////////////////////
      Network();
     ~Network();
-    static Network &getSingleton();
-    
+    static Network &getSingleton() { static Network Singleton; return Singleton; } 
     bool Init();
     void RequestShutdown();
     void Shutdown();

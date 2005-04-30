@@ -24,7 +24,8 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "define.h"
 #include "event.h"
 #include "player.h"
-#include "npc.h"
+#include "object_npc.h"
+#include "object_static.h"
 #include "client.h"
 #include "network.h"
 #include "logfile.h"
@@ -32,6 +33,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "dialog.h"
 #include "option.h"
 #include "sound.h"
+#include "object_manager.h"
 #include "tile_gfx.h"
 #include "tile_map.h"
 
@@ -52,11 +54,10 @@ DaimoninClient::DaimoninClient()
 // ========================================================================
 DaimoninClient::~DaimoninClient()
 {
+	if (player)      { delete player; }
 	if (Event)       { delete Event; }
 	if (mRoot)       { delete mRoot;  }
-	if (NPC_Enemy1)  { delete NPC_Enemy1; }
 }
-
 
 // ========================================================================
 // Start the example
@@ -79,11 +80,9 @@ bool DaimoninClient::setup(void)
 	LogFile::getSingleton().Init();
     if (TileGfx::getSingleton().read_bmaps_p0() <0) return false; 
     TileGfx::getSingleton().read_bmap_tmp(); // only testing.NORMALLY started from netword.cpp.
-
 	Option ::getSingleton().Init();
 	Sound  ::getSingleton().Init();
 	Network::getSingleton().Init();
-
 	mRoot = new Root();
 
 	setupResources();
@@ -185,40 +184,25 @@ void DaimoninClient::createScene(void)
 //	light->setSpotlightRange(Radian(.2) , Radian(.6), 5.5);
 //	light->setAttenuation(1000,1,0.005,0);
 
-	Event->World->attachObject(light);
-	Event->setLightMember(light, 1);
-	light->setVisible(false);
-
     // Setup animation default
     Animation::setDefaultInterpolationMode(Animation::IM_LINEAR);
     Animation::setDefaultRotationInterpolationMode(Animation::RIM_LINEAR);
 
-    Player::getSingleton().Init(mSceneMgr);
-	NPC_Enemy1->Init(mSceneMgr, Event->World);
+	Event->World->attachObject(light);
+	Event->setLightMember(light, 1);
+	light->setVisible(false);
+
+    player = new Player(mSceneMgr, mSceneMgr->getRootSceneNode(), "player.desc");
+	ObjectManger::getSingleton().init(mSceneMgr, Event->World);
+    ObjectManger::getSingleton().addObject(OBJECT_NPC   , "Animal_N_Scorpion.desc", Vector3(0,0,0));
+    ObjectManger::getSingleton().addObject(OBJECT_NPC   , "Animal_M_Deer.desc", Vector3(0,0,0));    
+    ObjectManger::getSingleton().addObject(OBJECT_STATIC, "tree01.mesh", Vector3(  40,  -8, 7));
+    ObjectManger::getSingleton().addObject(OBJECT_STATIC, "tree01.mesh", Vector3( 140,  -8, 6));
+    ObjectManger::getSingleton().addObject(OBJECT_STATIC, "tree01.mesh", Vector3( -40, -88, 9));
+    ObjectManger::getSingleton().addObject(OBJECT_STATIC, "tree01.mesh", Vector3(-140,-208, 8));
+    ObjectManger::getSingleton().addObject(OBJECT_STATIC, "tree02.mesh", Vector3( 180,-108, 11));    
 	TileMap::getSingleton().Init(mSceneMgr, mSceneMgr->getRootSceneNode());
 	
-	// Make sure the camera track this node
-
-/*
-	// Create the camera node & attach camera
-//	SceneNode* camNode = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-//	camNode->attachObject(mCamera);
-//	mCamera->setAutoTracking(true, Player::getSingleton().getNode());
-	mCamera->setPosition(Vector3(0,CAMERA_ZOOM+50, CAMERA_ZOOM+50));
-    mCamera->setNearClipDistance(CAMERA_ZOOM);
-//    mCamera->setFarClipDistance(600);
-	mCamera->lookAt(Vector3(0,0,0));
-*/
-/*
-	// Create the camera node & attach camera
-    mCamera->setPosition(Vector3(0, 0, 500));
-    // Look back along -Z
-    mCamera->lookAt(Vector3(0,0,0));
-    mCamera->setNearClipDistance(500);
-//    mCamera->setAutoTracking(true, Event->World);
-//    SceneNode* camNode = Player::getSingleton().getNode()->createChildSceneNode();
-//    camNode->attachObject(mCamera);
-*/
 	mCamera->setPosition(Vector3(0,CAMERA_ZOOM+50, CAMERA_ZOOM+50));
     mCamera->setNearClipDistance(CAMERA_ZOOM);
 	mCamera->lookAt(Vector3(0,0,0));

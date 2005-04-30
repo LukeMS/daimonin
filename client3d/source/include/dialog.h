@@ -24,13 +24,10 @@ http://www.gnu.org/copyleft/lesser.txt.
 #ifndef DIALOG_H
 #define DIALOG_H
 
-#include "textwindow.h" // TXT_COLOR
+#include <Ogre.h>
+#include "textwindow.h"
 
 using namespace Ogre;
-
-////////////////////////////////////////////////////////////
-// Defines.
-////////////////////////////////////////////////////////////
 
 const unsigned int DIALOG_TXT_LINES = 12;
 const unsigned int DIALOG_INFO_LINES = 4;
@@ -51,32 +48,24 @@ enum _dialog_warning
 	DIALOG_WARNING_SUM
 };
 
-////////////////////////////////////////////////////////////
-// Singleton class.
-////////////////////////////////////////////////////////////
 class Dialog
 {
 public:
-    ////////////////////////////////////////////////////////////
-	// Functions.
-    ////////////////////////////////////////////////////////////
-	 Dialog(){;}
+	Dialog(){;}
 	~Dialog(){;}
 	static Dialog &getSingleton() { static Dialog Singleton; return Singleton; }
 
 	bool Init();
+	void setVisible(bool vis);
 	bool isVisible() { return mVisible; }
 	void UpdateLogin(unsigned int stage);
-	void setVisible(bool vis);
 	void setWarning(int warning);
 	void setSelText (unsigned int pos, const char *text, ColourValue = TXT_WHITE);
 	void setInfoText(unsigned int pos, const char *text, ColourValue = TXT_WHITE);
 	void clearInfoText();
 
 private:
-    ////////////////////////////////////////////////////////////
-	// Variables.
-    ////////////////////////////////////////////////////////////
+	Dialog(const Dialog&); // disable copy-constructor.
 	bool mVisible;
 	std::string mStrPlayerName, mStrPassword, mStrRePasswd;
 	Overlay *mLoginOverlay;
@@ -85,12 +74,6 @@ private:
 	OverlayElement *mPanelPlayerName, *mPanelPlayerPasswd, *mPanelPlayerRePasswd;
 	OverlayElement *mElementLine[DIALOG_TXT_LINES], *mElementSelectionBar;
 	OverlayElement *mElementInfo[DIALOG_INFO_LINES];
-
-    ////////////////////////////////////////////////////////////
-	// Functions.
-    ////////////////////////////////////////////////////////////
-	Dialog(const Dialog&); // disable copy-constructor.
-
 };
 
 #endif

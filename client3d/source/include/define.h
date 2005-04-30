@@ -42,9 +42,8 @@ const char FILE_ARCHDEF[]				= "./archdef.dat";
 const char FILE_LOGGING[]				= "./client_log.html";
 const char FILE_OPTIONS[]				= "./options.dat";
 
+const char DIR_MODEL_DESCRIPTION[]   	= "./media/models/";
 const char FILE_PLAYER_DESC[]			= "./media/models/player.desc";
-const char FILE_NPC_DESC[]				= "./media/models/npc.desc";
-const char FILE_PLAYER_EQUIPMENT_DESC[] = "./media/models/equipment.desc";
 
 const char DIR_SAMPLES[]                = "./media/sound/";
 const char FILE_MUSIC_001[]             = "./media/sound/invtro94.s3m";
