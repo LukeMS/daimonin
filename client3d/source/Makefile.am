@@ -16,28 +16,24 @@ AM_CXXFLAGS =\
 bin_PROGRAMS = client3d
 
 client3d_SOURCES = \
-	adler32.c\
-	client.cpp\
-	crc32.c\
-	dialog.cpp\
-	event.cpp\
-	inffast.c\
-	inflate.c\
-	inftrees.c\
-	logfile.cpp\
-	main.cpp\
-	network.cpp\
-	network_cmd.cpp\
-	option.cpp\
-	option_init.cpp\
-	serverfile.cpp\
-	textwindow.cpp\
-	uncompr.c\
-	zutil.c\
-	sound.cpp\
-	player.cpp\
-	tile_gfx.cpp\
-	npc.cpp\
+	animate.cpp \
+	client.cpp \
+	dialog.cpp \
+	event.cpp \
+	logfile.cpp \
+	main.cpp \
+	network_cmd.cpp \
+	network.cpp \
+	object_manager.cpp \
+	object_npc.cpp \
+	object_static.cpp \
+	option.cpp \
+	option_init.cpp \
+	player.cpp \
+	serverfile.cpp \
+	sound.cpp \
+	textwindow.cpp \
+	tile_gfx.cpp \
 	tile_map.cpp
 
 client3d_LDFLAGS = \
