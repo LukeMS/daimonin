@@ -25,11 +25,6 @@ http://www.gnu.org/copyleft/lesser.txt.
 #define TILE_MAP_H
 
 #include <Ogre.h>
-#include <OgreImage.h>
-#include <OgreTexture.h>
-#include <OgreHardwarePixelBuffer.h>
-#include <OgreTextureManager.h>
-#include <OgreSceneManager.h>
 
 #include "define.h"
 

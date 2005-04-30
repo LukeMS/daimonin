@@ -27,7 +27,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "event.h"
 #include "dialog.h"
 #include "sound.h"
-#include "npc.h"
+#include "object_manager.h"
 #include "option.h"
 #include "logfile.h"
 #include "textwindow.h"
@@ -74,7 +74,7 @@ CEvent::CEvent(RenderWindow* win, Camera* cam, MouseMotionListener *mMotionListe
     TextWin->setChild(ChatWin);
 	ChatWin->Print("Welcome to Daimonin 3D.  ", TXT_YELLOW);
 	ChatWin->Print("-----------------------------------------", TXT_YELLOW);
-	ChatWin->Print("  L            -> Lauch network");
+//	ChatWin->Print("  L            -> Lauch network");
 //	ChatWin->Print("  C            -> Camera detail");
 //	ChatWin->Print("  Page Up/Down  -> Camera view.");
 	ChatWin->Print("  Print         -> Screenshot.");
@@ -82,6 +82,8 @@ CEvent::CEvent(RenderWindow* win, Camera* cam, MouseMotionListener *mMotionListe
 	ChatWin->Print("  Cursor-> Movement");
 	ChatWin->Print("  1    -> Toggle Weapon");
 	ChatWin->Print("  2    -> Toggle Shield");
+	ChatWin->Print("  3-9  -> Toggle Material_XX_Texture");
+	ChatWin->Print("        (if defined in player.desc)");
 	ChatWin->Print("  A    -> Attack");
 	ChatWin->Print("  B    -> Block");
 	ChatWin->Print("  S    -> Slump");
@@ -94,8 +96,10 @@ CEvent::CEvent(RenderWindow* win, Camera* cam, MouseMotionListener *mMotionListe
 	TextWin->Print("Enemy commands:", TXT_WHITE);
 	TextWin->Print("  J    -> Turn left");
 	TextWin->Print("  K    -> Turn right");
-	TextWin->Print("  P    -> wound");
-	TextWin->Print("  Q    -> heal");
+	TextWin->Print("  I    -> Attack");	
+	TextWin->Print("  P    -> Wound");
+    TextWin->Print("  G    -> Move in circle");	
+	TextWin->Print("  Q    -> Heal");
 	TextWin->Print("Extras:", TXT_WHITE);
 	TextWin->Print("  W    -> TimeWarp");
 	TextWin->Print("Press +/- on numpad for zoom.");
@@ -115,7 +119,6 @@ CEvent::CEvent(RenderWindow* win, Camera* cam, MouseMotionListener *mMotionListe
     mMouseMotionListener = mMotionListener;
     mMouseListener = mMListener;
 
-	NPC_Enemy1 = new NPC;
 	mQuitGame = false;
 	mCamera = cam;
 	mWindow = win;
@@ -141,7 +144,6 @@ CEvent::~CEvent()
 	if (mEventProcessor) { delete mEventProcessor; }
     if (TextWin)         { delete TextWin; }
     if (ChatWin)         { delete ChatWin; }
-    if (NPC_Enemy1)      { delete NPC_Enemy1; }
 }
 
 //=================================================================================================
@@ -151,10 +153,9 @@ bool CEvent::frameStarted(const FrameEvent& evt)
 {
     if(mWindow->isClosed()) { return false; }
 
-    Player::getSingleton().updateAnim(evt);
-    World->translate(Player::getSingleton().getPos());
-
-	NPC_Enemy1->updateAnim(evt);
+    player->update(evt);
+    World->translate(player->getPos());
+    ObjectManger::getSingleton().update(OBJECT_NPC, evt);
 
 	mIdleTime += evt.timeSinceLastFrame;
 	if (mIdleTime > 30.0)
@@ -190,7 +191,6 @@ bool CEvent::frameStarted(const FrameEvent& evt)
 	}
 */
 	if (Option::getSingleton().mStartNetwork) { Network::getSingleton().Update(); }
-
     if (mQuitGame) { return false; }
 	return true;
 }
@@ -309,55 +309,82 @@ void CEvent::keyPressed(KeyEvent *e)
 		// Player Movemment.
 		/////////////////////////////////////////////////////////////////////////
 		case KC_UP:
-	        Player::getSingleton().walking( PLAYER_WALK_SPEED);
+	        player->walking( 1);
 			break;
 		case KC_DOWN:
-	        Player::getSingleton().walking(-PLAYER_WALK_SPEED);
+	        player->walking(-1);
 			break;
 		case KC_RIGHT:
-	        Player::getSingleton().turning(-PLAYER_TURN_SPEED);
+	        player->turning(-1);
 			break;
 		case KC_LEFT:
-	        Player::getSingleton().turning( PLAYER_TURN_SPEED);
+	        player->turning( 1);
 			break;
 
 
 		case KC_F1:
-             Player::getSingleton().toggleAnimGroup();
+             player->toggleAnimGroup();
 			break;
 		case KC_A:
-	        Player::getSingleton().toggleAnimation(STATE_ATTACK1);
+	        player->toggleAnimation(STATE_ATTACK1);
 			break;
 		case KC_B:
-	        Player::getSingleton().toggleAnimation(STATE_BLOCK1);
+	        player->toggleAnimation(STATE_BLOCK1);
 			break;
 		case KC_S:
-	        Player::getSingleton().toggleAnimation(STATE_SLUMP1);
+	        player->toggleAnimation(STATE_SLUMP1);
 			break;
 		case KC_D:
-	        Player::getSingleton().toggleAnimation(STATE_DEATH1);
+	        player->toggleAnimation(STATE_DEATH1);
 			break;
 		case KC_H:
-	        Player::getSingleton().toggleAnimation(STATE_HIT1);
+	        player->toggleAnimation(STATE_HIT1);
 			break;
 		case KC_1:
-	        Player::getSingleton().toggleWeapon(WEAPON_HAND, 1);
+	        player->toggleWeapon(WEAPON_HAND, 1);
 			break;
 		case KC_2:
-	        Player::getSingleton().toggleWeapon(SHIELD_HAND, 1);
+	        player->toggleWeapon(SHIELD_HAND, 1);
+			break;
+		case KC_3:
+	        player->toggleTexture(0, -1);
+			break;
+		case KC_4:
+	        player->toggleTexture(1, -1);
+			break;
+		case KC_5:
+	        player->toggleTexture(2, -1);
+			break;
+		case KC_6:
+	        player->toggleTexture(3, -1);
+			break;
+		case KC_7:
+	        player->toggleTexture(4, -1);
+			break;
+		case KC_8:
+	        player->toggleTexture(5, -1);
+			break;
+		case KC_9:
+	        player->toggleTexture(6, -1);
 			break;
 
 		case KC_J:
-	        NPC_Enemy1->turning( PLAYER_TURN_SPEED);
+            ObjectManger::getSingleton().keyEvent(OBJECT_NPC, OBJ_TURN,  1);
 			break;
 		case KC_K:
-	        NPC_Enemy1->turning(-PLAYER_TURN_SPEED);
+            ObjectManger::getSingleton().keyEvent(OBJECT_NPC, OBJ_TURN, -1);
+			break;
+		case KC_G:
+            ObjectManger::getSingleton().keyEvent(OBJECT_NPC, OBJ_WALK, -1);		
+			break;
+		case KC_I:
+            ObjectManger::getSingleton().keyEvent(OBJECT_NPC, OBJ_ANIMATION, STATE_ATTACK1);			
 			break;
 		case KC_P:
-	        NPC_Enemy1->updateTexture(0);
+            ObjectManger::getSingleton().keyEvent(OBJECT_NPC, OBJ_TEXTURE, 0, 0);	
 			break;
 		case KC_Q:
-	        NPC_Enemy1->updateTexture(1);
+            ObjectManger::getSingleton().keyEvent(OBJECT_NPC, OBJ_TEXTURE, 0, 1);
 			break;
 
 		///////////////////////////////////////////////////////////////////////// 
@@ -394,7 +421,12 @@ void CEvent::keyPressed(KeyEvent *e)
 			MaterialManager::getSingleton().setDefaultAnisotropy(mAniso);
 			break;
 		case KC_L:
-			Option::getSingleton().mStartNetwork = true;
+            ///////////////////////////////
+            // DISABLED: 
+            // cause it crashed when compiled with codeblockes, but not with VC6 ???? 
+            // don't spend any time on this, cause had this problems on other parts with devcpp (older mingw)
+            // so perhaps, after a mingw update there is no more problem !?
+			//Option::getSingleton().mStartNetwork = true;
 			break;
 		case KC_W:
 			if (mDayTime)
@@ -469,22 +501,26 @@ void CEvent::keyReleased(KeyEvent* e)
 		/////////////////////////////////////////////////////////////////////////
 		case KC_UP:
 	 	case KC_DOWN:
-	        Player::getSingleton().walking(0);
+	        player->walking(0);
 			break;
 		case KC_RIGHT:
 		case KC_LEFT:
-	        Player::getSingleton().turning(0);
+	        player->turning(0);
 			break;
 
 		case KC_J:
 		case KC_K:
-			NPC_Enemy1->turning(0);	
+            ObjectManger::getSingleton().keyEvent(OBJECT_NPC, OBJ_TURN,  0);
 	        break;
 		default:
 			break;
+			
+
+		case KC_G:
+            ObjectManger::getSingleton().keyEvent(OBJECT_NPC, OBJ_WALK,  0);
+			break;
 	}
 }
-
 
 //=================================================================================================
 // Buffered Mouse Events.

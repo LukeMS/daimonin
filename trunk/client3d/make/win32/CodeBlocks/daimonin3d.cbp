@@ -72,7 +72,7 @@
 		<Linker>
 			<Add option="-Wl,--enable-runtime-pseudo-reloc"/>
 			<Add library="ws2_32"/>
-			<Add library="fmodvc"/>
+			<Add library="fmod"/>
 		</Linker>
 		<Unit filename="..\README.txt">
 			<Option compilerVar=""/>
@@ -83,6 +83,11 @@
 		</Unit>
 		<Unit filename="..\..\..\source\adler32.c">
 			<Option compilerVar="CC"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
+		<Unit filename="..\..\..\source\animate.cpp">
+			<Option compilerVar="CPP"/>
 			<Option target="Debug"/>
 			<Option target="Release"/>
 		</Unit>
@@ -103,6 +108,13 @@
 		</Unit>
 		<Unit filename="..\..\..\source\event.cpp">
 			<Option compilerVar="CPP"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
+		<Unit filename="..\..\..\source\include\animate.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
 			<Option target="Debug"/>
 			<Option target="Release"/>
 		</Unit>
@@ -183,7 +195,21 @@
 			<Option target="Debug"/>
 			<Option target="Release"/>
 		</Unit>
+		<Unit filename="..\..\..\source\include\object_manager.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
 		<Unit filename="..\..\..\source\include\option.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
+		<Unit filename="..\..\..\source\include\plant.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -307,12 +333,22 @@
 			<Option target="Debug"/>
 			<Option target="Release"/>
 		</Unit>
+		<Unit filename="..\..\..\source\object_manager.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
 		<Unit filename="..\..\..\source\option.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="Debug"/>
 			<Option target="Release"/>
 		</Unit>
 		<Unit filename="..\..\..\source\option_init.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
+		<Unit filename="..\..\..\source\plant.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="Debug"/>
 			<Option target="Release"/>

@@ -34,38 +34,45 @@ using namespace Ogre;
 ////////////////////////////////////////////////////////////
 // Defines.
 ////////////////////////////////////////////////////////////
-const int TEX_FILE_SIZE= 1024; // Texture-file format: 1024*1024 pixel (32bit).
-const int TILES_HEIGHT =   48;
-const int TILES_WIDTH  = TILES_HEIGHT * 3/4; // 768/1024
-const Real TEXTURE_SIZE= 0.0625; //((Real)TILES_HEIGHT) / TEX_FILE_SIZE;
+const int  TEX_FILE_SIZE= 1024; // Texture-file format: 1024*1024 pixel (32bit).
+const int  TILES_WIDTH  = 80;
+const int  TILES_HEIGHT = 40;
+const Real TEXTURE_SIZE =   64.0 / TEX_FILE_SIZE;  // 64 pixel per tile.
+const int  TILES_SUM_X  = 1024   / TILES_WIDTH;
+const int  TILES_SUM_Y  =  768   / TILES_HEIGHT*2;
+const int  SUM_TILES    = TILES_SUM_X * TILES_SUM_Y;
+const Real TILES_DEEP   = 20; // z-pos 
 
-const int VERTEX_PER_TRIANGLE = 3;
-const int VERTEX_PER_QUAD = 40 ;
-const int TILES_SUM_X  =  1 + 16 + 1;
-const int TILES_SUM_Y  =  1 + 16 + 1;
-const int SUM_TILES  = TILES_SUM_X * TILES_SUM_Y;
-const int SUM_FACES  = VERTEX_PER_TRIANGLE *2; // 2 Triangles  = 1 quad.
-const int SUM_VINDEX = SUM_FACES * SUM_TILES;
-const int SUM_VERTEX = SUM_TILES * VERTEX_PER_QUAD;
-
-
+const int  VERTEX_PER_TRIANGLE = 3;
+const int  VERTEX_PER_QUAD = 10 * 4;
+const int  SUM_FACES  = VERTEX_PER_TRIANGLE *2; // 2 Triangles  = 1 quad.
+const int  SUM_VINDEX = SUM_FACES * SUM_TILES;
+const int  SUM_VERTEX = SUM_TILES * VERTEX_PER_QUAD;
 
 const int myMAP_SIZE = 8; // MUST be 2^X.
-const int _MAP_[myMAP_SIZE][myMAP_SIZE] =
+const int Layer0[myMAP_SIZE][myMAP_SIZE] =
 {
-{0,0,0,0,0,0,0,0},
-{3,2,2,2,2,2,2,3},
+{0,1,2,3,4,3,2,1},
+{0,2,2,2,2,2,2,0},
 {3,1,1,1,1,1,1,3},
-{3,4,4,4,4,4,4,3},
-{3,2,2,2,2,2,2,3},
-{3,1,1,1,1,1,1,3},
-{3,4,4,4,4,4,4,3},
-{3,3,3,3,3,3,3,3}
+{2,4,4,0,0,4,4,2},
+{3,2,2,0,0,2,2,3},
+{1,1,1,2,1,1,1,1},
+{4,4,4,2,4,4,4,2},
+{3,3,3,2,3,3,3,3}
 };
 
-
-
-
+const int Layer1[myMAP_SIZE][myMAP_SIZE] =
+{
+{0,1,1,1,0,1,1,1},
+{1,1,1,0,1,1,1,0},
+{0,1,1,1,0,1,1,1},
+{1,1,1,0,1,1,1,0},
+{0,1,1,1,0,1,1,1},
+{1,1,1,0,1,1,1,0},
+{0,1,1,1,0,1,1,1},
+{1,1,1,0,1,1,1,0},
+};
 
 
 //extern _Sprite         *test_sprite;
@@ -106,7 +113,6 @@ void TileMap::adjust_map_cache(int xpos, int ypos)
                 continue;
 
             map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
-
             map->fog_of_war = false;
             map->darkness = cells[x][y].darkness;
 
@@ -379,9 +385,7 @@ void TileMap::scrollTileMap(int x, int y)
 //=================================================================================================
 void TileMap::draw(void)
 {
-
 //    if (!TheMapCache) { return; }
-	static int rotate =0;
     static unsigned int offsetX =0;
 	static unsigned int offsetY =0;
 
@@ -389,20 +393,24 @@ void TileMap::draw(void)
     Real xPos = mTileOffset.x;
     Real yPos = mTileOffset.y;
 
-    offsetX = (unsigned int)(xPos/ TILES_WIDTH);  
-    offsetY = (unsigned int)(yPos/ TILES_HEIGHT); 
+    offsetX = (unsigned int)(xPos/ TILES_WIDTH); 
+    offsetY = (unsigned int)(yPos/ TILES_HEIGHT)*2;
 
     xPos-= ((int)(xPos/ TILES_WIDTH )) * TILES_WIDTH;  
-    yPos-= ((int)(yPos/ TILES_HEIGHT)) * TILES_HEIGHT; 
+    yPos-= ((int)(yPos/ TILES_HEIGHT)) * TILES_HEIGHT;
     mNode->setPosition(xPos, yPos, 0);
 
-    Real texPosX, texPosY =0;
+
+
+
+
+    int texPosX;
 	Real *pVertex = static_cast<Real*>(mpVertexBuf->lock(HardwareBuffer::HBL_DISCARD));
 	for (int y = 0; y < TILES_SUM_Y; ++y)
 	{
 		for (int x = 0; x < TILES_SUM_X; ++x)
 		{
-            int texPosX  = _MAP_[(y+offsetY)&7][(x+offsetX)&7];
+            texPosX  = Layer0[(y+offsetY)&7][(x+offsetX)&7];		
             // Layer 0
             pVertex[ 6] = texPosX * TEXTURE_SIZE;
             pVertex[ 7] = TEXTURE_SIZE;
@@ -413,6 +421,7 @@ void TileMap::draw(void)
             pVertex[36] = texPosX * TEXTURE_SIZE;
             pVertex[37] = 0.0;
             // Layer 1
+            texPosX  = Layer1[(y+offsetY)&7][(x+offsetX)&7];		            
             pVertex[ 8] = texPosX * TEXTURE_SIZE;
             pVertex[ 9] = TEXTURE_SIZE;
             pVertex[18] = texPosX * TEXTURE_SIZE + TEXTURE_SIZE;
@@ -426,7 +435,6 @@ void TileMap::draw(void)
 		}
 	}
 	mpVertexBuf->unlock();
-
 
 /*
     register MapCell *map;
@@ -706,7 +714,8 @@ void TileMap::Init(SceneManager *SceneMgr, SceneNode *Node)
 	/////////////////////////////////////////////////////////////////////////
 	// Here we have an example for the mingw/devcpp crew - try this (doesn't work here):
 	// Change "General" to ResourceGroupManager::DEFAULT_RESOURCE_GROUP_NAME
-	mpMeshTiles = MeshManager::getSingleton().createManual("TilesMesh", "General");
+
+	mpMeshTiles = MeshManager::getSingleton().createManual("TilesMesh", "General",0);
 	SubMesh *pMeshTilesVertex = mpMeshTiles->createSubMesh();
 
 	mpMeshTiles->sharedVertexData = new VertexData();
@@ -717,17 +726,17 @@ void TileMap::Init(SceneManager *SceneMgr, SceneNode *Node)
 	/////////////////////////////////////////////////////////////////////////
 	size_t currOffset = 0;
 	VertexDeclaration *vertexDecl = vertexData->vertexDeclaration;
-	// positions
+    // Position.
 	vertexDecl->addElement(0, currOffset, VET_FLOAT3, VES_POSITION);
 	currOffset += VertexElement::getTypeSize(VET_FLOAT3);
-	// normals
+	// Normals.
 	vertexDecl->addElement(0, currOffset, VET_FLOAT3, VES_NORMAL);
 	currOffset += VertexElement::getTypeSize(VET_FLOAT3);
-	// two dimensional texture coordinates
+	// Texture Layer 0.
 	vertexDecl->addElement(0, currOffset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 0);
 	currOffset += VertexElement::getTypeSize(VET_FLOAT2);
-	// two dimensional texture coordinates
-	vertexDecl->addElement(0, currOffset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 0);
+	// Texture Layer 1.
+	vertexDecl->addElement(0, currOffset, VET_FLOAT2, VES_TEXTURE_COORDINATES, 1);
 	currOffset += VertexElement::getTypeSize(VET_FLOAT2);
 
 	/////////////////////////////////////////////////////////////////////////
@@ -738,82 +747,62 @@ void TileMap::Init(SceneManager *SceneMgr, SceneNode *Node)
 	VertexBufferBinding *binding = vertexData->vertexBufferBinding;
 	binding->setBinding(0, mpVertexBuf);
 	Real *pVertex = static_cast<Real*>(mpVertexBuf->lock(HardwareBuffer::HBL_DISCARD));
-	const Real startX =  314;
-	const Real startY =  143;
-	const Real startZ = -100;
-	Real posX = startX;
-	Real posY = startY-startZ;
-	Real posZ = startZ;
+	
+    const  Real startX =  350;//TILES_WIDTH*4;
+	static Real posX   =  startX;
+	static Real posY   =  320;//240 + TILES_HEIGHT;
+	static Real posZ   = -100;
 
+    // Tiles rotated 45°
 	for (int y = 0; y < TILES_SUM_Y; ++y)
 	{
 		for (int x = 0; x < TILES_SUM_X; ++x)
 		{
-            // Position
-            *pVertex++ = posX-TILES_WIDTH;
-            *pVertex++ = posY-TILES_HEIGHT;
+            // Position bottom.
+            *pVertex++ = posX-TILES_WIDTH/2;
+            *pVertex++ = posY-TILES_HEIGHT*2;
             *pVertex++ = posZ;
-            // Normals
-            *pVertex++ = 0.0;
-            *pVertex++ = 0.0;
-            *pVertex++ = 1.0;
-            // Texture
-            *pVertex++ = 0.0;
-            *pVertex++ = 0.0;
-            // Texture
-            *pVertex++ = 0.0;
-            *pVertex++ = 0.0;
+            // Normals.
+            *pVertex++ = 0.0; *pVertex++ = 0.0; *pVertex++ = 1.0;
+            // Textures Layer 0...n. 
+            *pVertex++ = 0.0; *pVertex++ = 0.0;
+            *pVertex++ = 0.0; *pVertex++ = 0.0;
 
-            // Position
+            // Position right.
             *pVertex++ = posX;
             *pVertex++ = posY-TILES_HEIGHT;
-            *pVertex++ = posZ;
-            // Normals
-            *pVertex++ = 0.0;
-            *pVertex++ = 0.0;
-            *pVertex++ = 1.0;
-            // Texture
-            *pVertex++ = 0.0;
-            *pVertex++ = 0.0;
-            // Texture
-            *pVertex++ = 0.0;
-            *pVertex++ = 0.0;
+            *pVertex++ = posZ+TILES_DEEP;
+            // Normals.
+            *pVertex++ = 0.0; *pVertex++ = 0.0; *pVertex++ = 1.0;
+            // Textures Layer 0...n. 
+            *pVertex++ = 0.0; *pVertex++ = 0.0; 
+            *pVertex++ = 0.0; *pVertex++ = 0.0;
 
-            // Position
-            *pVertex++ = posX;
+            // Position top.
+            *pVertex++ = posX-TILES_WIDTH/2;
             *pVertex++ = posY;
-            *pVertex++ = posZ;
-            // Normals
-            *pVertex++ = 0.0;
-            *pVertex++ = 0.0;
-            *pVertex++ = 1.0;
-            // Texture
-            *pVertex++ = 0.0;
-            *pVertex++ = 0.0;
-            // Texture
-            *pVertex++ = 0.0;
-            *pVertex++ = 0.0;
+            *pVertex++ = posZ+TILES_DEEP*2;
+            // Normals.
+            *pVertex++ = 0.0; *pVertex++ = 0.0; *pVertex++ = 1.0;
+            // Textures Layer 0...n. 
+            *pVertex++ = 0.0; *pVertex++ = 0.0; 
+            *pVertex++ = 0.0; *pVertex++ = 0.0;
 
-            // Position
+            // Position left.
             *pVertex++ = posX-TILES_WIDTH;
-            *pVertex++ = posY;
-            *pVertex++ = posZ;
-            // Normals
-            *pVertex++ = 0.0;
-            *pVertex++ = 0.0;
-            *pVertex++ = 1.0;
-            // Texture
-            *pVertex++ = 0.0;
-            *pVertex++ = 0.0;
-            // Texture
-            *pVertex++ = 0.0;
-            *pVertex++ = 0.0;
+            *pVertex++ = posY-TILES_HEIGHT;
+            *pVertex++ = posZ+TILES_DEEP;
+            // Normals.
+            *pVertex++ = 0.0; *pVertex++ = 0.0; *pVertex++ = 1.0;
+            // Textures Layer 0...n. 
+            *pVertex++ = 0.0; *pVertex++ = 0.0;
+            *pVertex++ = 0.0; *pVertex++ = 0.0;
 
             posX -= TILES_WIDTH;
 		}
-		posY -= TILES_HEIGHT;
+        posY-= TILES_HEIGHT-TILES_DEEP;
 		posX = startX;
-//		posZ +=20; posY +=20; //
+		if (!(y&1)) posX+= TILES_WIDTH/2;
 	}
 	mpVertexBuf->unlock();
 
@@ -835,7 +824,7 @@ void TileMap::Init(SceneManager *SceneMgr, SceneNode *Node)
     /////////////////////////////////////////////////////////////////////////
 	// Set bounding information (for culling)
     /////////////////////////////////////////////////////////////////////////
-	int t = 50;
+	int t = 5;
 	mpMeshTiles->_setBounds(AxisAlignedBox(-t,-t, 0, t, t, 0));
 	mpMeshTiles->_setBoundingSphereRadius(Math::Sqrt(t*t+t*t));
 
@@ -847,6 +836,5 @@ void TileMap::Init(SceneManager *SceneMgr, SceneNode *Node)
 	mNode = Node->createChildSceneNode();
 	mEntity->setMaterialName("Tiles/Layers");
 	mNode->attachObject(mEntity);
-	
 	mTileOffset = Vector3::ZERO;
 }

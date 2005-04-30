@@ -21,13 +21,10 @@ http://www.gnu.org/copyleft/lesser.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef PLAYER_H
-#define PLAYER_H
+#ifndef PLANT_H
+#define PLANT_H
 
 #include <Ogre.h>
-#include <OgreSceneManager.h>
-#include "animate.h"
-#include "object_npc.h"
 
 using namespace Ogre;
 
@@ -35,32 +32,17 @@ using namespace Ogre;
 // Defines.
 ////////////////////////////////////////////////////////////
 
-/*
-enum Weapon
-{
-	WEAPON_NONE,
-	WEAPON_01, WEAPON_02,
-	WEAPON_SUM
-};
-
-enum Shield
-{
-	SHIELD_NONE,
-	SHIELD_01, SHIELD_02,
-	SHIELD_SUM
-};
-*/
 
 ////////////////////////////////////////////////////////////
-// Singleton class.
+// Class.
 ////////////////////////////////////////////////////////////
-class Player : public NPC
+class Plant
 {
   private:
     ////////////////////////////////////////////////////////////
 	// Variables.
     ////////////////////////////////////////////////////////////
-
+    
     ////////////////////////////////////////////////////////////
 	// Functions.
     ////////////////////////////////////////////////////////////
@@ -69,11 +51,8 @@ class Player : public NPC
     ////////////////////////////////////////////////////////////
 	// Functions.
     ////////////////////////////////////////////////////////////
-	 Player(SceneManager *SceneMgr, SceneNode  *Node, const char *filename);
-    ~Player() {;}
-	void update(const FrameEvent& event);
 };
 
-extern Player *player;
+
 
 #endif
