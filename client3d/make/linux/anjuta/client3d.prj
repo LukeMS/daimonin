@@ -91,8 +91,11 @@ module.include.files=\
 	textinput.h\
 	tile_gfx.h\
 	sprite.h\
-	npc.h\
-	tile_map.h
+	tile_map.h\
+	object_manager.h\
+	object_npc.h\
+	object_static.h\
+	animate.h
 
 module.source.name=source
 module.source.type=
@@ -118,8 +121,11 @@ module.source.files=\
 	sound.cpp\
 	player.cpp\
 	tile_gfx.cpp\
-	npc.cpp\
-	tile_map.cpp
+	tile_map.cpp\
+	object_manager.cpp\
+	object_npc.cpp\
+	object_static.cpp\
+	animate.cpp
 
 module.pixmap.name=pixmaps
 module.pixmap.type=
