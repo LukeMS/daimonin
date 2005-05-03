@@ -284,6 +284,33 @@ static int          max_titles[6]               =
     (sizeof(gods_book_name) / sizeof(char *)) * (sizeof(gods_author) / sizeof(char *))
 };
 
+
+/* we add different languages to all written stuff.
+ * we store the language flags in the literacy skill
+ * and in the book using the weight_limit.
+ * If all flags of book match the one in leteracy skill, the
+ * player can read this book.
+ */
+static char *written_language[]=
+{
+	"common",
+	"dwarvish",
+	"ancient dwarvish",
+	"elvish",
+	"high elvish",
+	"drow",
+	"gnomish",
+	"old council",
+	"elder pictograms",
+	"chaotic",
+	"evil runic",
+	"runic",
+	"dragonish",
+	"jotun",
+	"high planar",
+	"orc runes"
+};
+
 /******************************************************************************
  *
  * Start of misc. readable functions used by others functions in this file
@@ -1901,3 +1928,22 @@ void write_book_archive(void)
     }
 }
 
+
+/* return the name of the language.
+ * lang is a bit array of 32
+ */
+const char *get_language(uint32 lang)
+{
+	int i, l=lang;
+
+	if(!l)
+		return written_language[0];
+
+	for(i=1;i<=32;i++,l>>=1)
+	{
+		if(l&0x01)
+			return written_language[i];
+	}
+
+	return written_language[0];
+}

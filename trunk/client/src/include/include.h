@@ -74,6 +74,7 @@ typedef signed char     sint8;
 #include <map.h>
 #include <sprite.h>
 #include <interface.h>
+#include <book.h>
 #include <textwin.h>
 #include <inventory.h>
 #include <menu.h>

@@ -23,20 +23,21 @@
 #if !defined(__MENU_H)
 #define __MENU_H
 
-#define MENU_NO       1
-#define MENU_KEYBIND  2
-#define MENU_STATUS   4
-#define MENU_SPELL    8
-#define MENU_SKILL   16
-#define MENU_OPTION  32
-#define MENU_CREATE  64
+#define MENU_NO       0x01
+#define MENU_KEYBIND  0x02
+#define MENU_STATUS   0x03
+#define MENU_SPELL    0x08
+#define MENU_SKILL    0x10
+#define MENU_OPTION   0x20
+#define MENU_CREATE   0x40
 /* in future, we need a different system - with up to 2 open
  * interfaces... menus like keybind & stuff should be a layer above that. MT-2005
  */
-#define MENU_NPC	 128
-#define MENU_QUEST   256
+#define MENU_NPC	 0x80
+#define MENU_BOOK    0x100
+#define MENU_QUEST   0x200
 
-#define MENU_ALL (MENU_NO & MENU_KEYBIND & MENU_SPELL & MENU_STATUS & MENU_OPTION & MENU_NPC & MENU_QUEST)
+#define MENU_ALL (MENU_NO & MENU_KEYBIND & MENU_SPELL & MENU_STATUS & MENU_OPTION & MENU_NPC & MENU_BOOK & MENU_QUEST)
 
 #define MENU_SOUND_VOL 40
 struct _skill_list      skill_list[SKILL_LIST_MAX];
@@ -152,5 +153,6 @@ extern int      client_command_check(char *cmd);
 extern void     show_target(int x, int y);
 
 extern int get_bmap_id(char *name);
+extern void reset_menu_status(void);
 
 #endif

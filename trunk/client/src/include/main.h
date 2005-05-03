@@ -582,6 +582,7 @@ typedef enum _bitmap_index
     BITMAP_COIN_GOLD,
     BITMAP_COIN_MITHRIL,
     BITMAP_NPC_INT_SLIDER,
+    BITMAP_JOURNAL,
     BITMAP_INIT
 }                           _bitmap_index;
 
@@ -603,6 +604,8 @@ extern int                  ToggleScreenFlag;
 extern int					interface_mode;
 
 extern struct _Sprite      *Bitmaps[];
+
+extern struct gui_book_struct	*gui_interface_book;
 extern struct gui_interface_struct *gui_interface_npc;
 
 extern _face_struct         FaceList[MAX_FACE_TILES];   /* face data */

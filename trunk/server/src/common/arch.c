@@ -221,10 +221,24 @@ void init_archetypes()
     arch_init = 1;
     load_archetypes();
     arch_init = 0;
-    empty_archetype = find_archetype("empty_archetype");
-    base_info_archetype = find_archetype("base_info");
-    wp_archetype = find_archetype("waypoint");
-    /*  init_blocksview();*/
+    
+	if(!(empty_archetype = find_archetype("empty_archetype")))
+        LOG(llevError, "FATAL: no empty_archetype arch. Check the arch set!\n");
+	
+    if(!(base_info_archetype = find_archetype("base_info")))
+        LOG(llevError, "FATAL: no base_info arch. Check the arch set!\n");
+	
+    if(!(wp_archetype = find_archetype("waypoint")))
+        LOG(llevError, "FATAL: no waypoint arch. Check the arch set!\n");
+	
+    if (!(level_up_arch = find_archetype("level_up")))
+        LOG(llevError, "FATAL: no level_up arch. Check the arch set!\n");
+
+	if (!(global_aggro_history_arch = find_archetype("aggro_history")))
+        LOG(llevError, "FATAL: no aggro_history arch. Check the arch set!\n");
+
+    if (!(global_dmg_info_arch = find_archetype("dmg_info")))
+        LOG(llevError, "FATAL: no dmg_info arch. Check the arch set!\n");
 }
 
 /*

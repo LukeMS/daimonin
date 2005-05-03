@@ -4,6 +4,12 @@ weapon_speed 0.015
 face skill.101
 attack_impact 100
 dam 1
+item_quality 100
+item_condition 100
+nrof 1
+identified 1
+known_magical 1
+known_cursed 1
 wc 5
 type 43
 sub_type 0

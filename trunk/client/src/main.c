@@ -71,6 +71,7 @@ uint32              tmpGameTick;            /* used from several functions, just
 int                 esc_menu_flag;
 int                 esc_menu_index;
 
+struct gui_book_struct	*gui_interface_book;
 struct gui_interface_struct *gui_interface_npc;
 
 _bmaptype          *bmap_table[BMAPTABLE];
@@ -183,7 +184,8 @@ static _bitmap_name bitmap_name[BITMAP_INIT]    =
 	{"coin_silver.png", PIC_TYPE_TRANS},
 	{"coin_gold.png", PIC_TYPE_TRANS},
 	{"coin_mithril.png", PIC_TYPE_TRANS},
-	{"npc_int_slider.png", PIC_TYPE_DEFAULT}
+	{"npc_int_slider.png", PIC_TYPE_DEFAULT},
+	{"journal.png", PIC_TYPE_TRANS}
 };
 
 #define BITMAP_MAX (sizeof(bitmap_name)/sizeof(struct _bitmap_name))
@@ -302,6 +304,7 @@ void init_game_data(void)
     csocket.fd = SOCKET_NO;
     RangeFireMode = 0;
 	gui_interface_npc = NULL;
+	gui_interface_book = NULL;
 
     memset(media_file, 0, sizeof(_media_file) * MEDIA_MAX);
     media_count = 0;    /* buffered media files*/
@@ -1426,6 +1429,7 @@ int main(int argc, char *argv[])
                 SDL_Rect    tmp_rect;
                 tmp_rect.w = 275;
                 StringBlt(ScreenSurface, &SystemFont, MapData.name, 229, 109, COLOR_DEFAULT, &tmp_rect, NULL);
+
                 if (cpl.input_mode == INPUT_MODE_CONSOLE)
                     do_console(546, 586);
                 else if (cpl.input_mode == INPUT_MODE_NUMBER)
@@ -1535,6 +1539,7 @@ int main(int argc, char *argv[])
                 StringBlt(ScreenSurface, &SystemFont, buf, rec.x, rec.y, COLOR_DEFAULT, NULL, NULL);
             }
         }
+		
         flip_screen();
         if (!options.max_speed)
             SDL_Delay(options.sleep);       /* force the thread to sleep */

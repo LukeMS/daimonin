@@ -1050,12 +1050,17 @@ static void parse_args(int argc, char *argv[], int pass)
 
 static void init_beforeplay()
 {
+	/* several SockList stuff is not dynamic nor must it threadsafe.
+     * lets safe some malloc by using this global buffer.
+     */
+    global_sl.buf = malloc(MAXSOCKBUF);
+    global_sl.len = 0;
+
     pool_mob_data->constructor = (chunk_constructor) initialize_mob_data;
     pool_mob_data->destructor = (chunk_destructor) cleanup_mob_data;
     pool_mob_knownobj->destructor = (chunk_destructor) cleanup_mob_known_obj;
     pool_mob_behaviourset->destructor = (chunk_destructor) cleanup_behaviourset;
 
-    init_archetypes(); /* If not called before, reads all archetypes from file */
     init_spells();     /* If not called before, links archtypes used by spells */
     init_races();      /* overwrite race designations using entries in lib/races file */
     init_gods();        /* init linked list of gods from archs*/
@@ -1157,23 +1162,5 @@ void init_library()
     init_archetypes();  /* Reads all archetypes from file */
     init_dynamic();
     init_clocks();
-		
-    /* init some often used default archetypes */
-    if (level_up_arch == NULL)
-        level_up_arch = find_archetype("level_up");
-    if (!level_up_arch)
-        LOG(llevBug, "BUG: Cant'find 'level_up' arch\n");
-
-    if (!(global_aggro_history_arch = find_archetype("aggro_history")))
-        LOG(llevError, "FATAL: no aggro_history arch. Check the arch set!\n");
-
-    if (!(global_dmg_info_arch = find_archetype("dmg_info")))
-        LOG(llevError, "FATAL: no dmg_info arch. Check the arch set!\n");
-
-        /* several SockList stuff is not dynamic nor must it threadsafe.
-        * lets safe some malloc by using this global buffer.
-    */
-    global_sl.buf = malloc(MAXSOCKBUF);
-    global_sl.len = 0;
 }
 

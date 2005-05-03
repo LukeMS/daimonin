@@ -38,7 +38,6 @@ static int              group_pos[GROUP_MAX_MEMBER][2]      =
 void show_group(int x, int y)
 {
     int         s, len, mb, mx, my;
-    int         numButton   = 0;
     SDL_Rect    box;    
     char        buf[256];
 
@@ -70,21 +69,24 @@ void show_group(int x, int y)
         
         if(global_group_status == GROUP_INVITE)
         {
-            if(add_button(x + group_pos[0][0] + 40, y + group_pos[0][1] + 48, 11, 2, numButton++, BITMAP_BUTTON_BLACK_UP, "   join", "   join"))
+            if(add_button(x + group_pos[0][0] + 40, y + group_pos[0][1] + 48, 11, 2, 101, BITMAP_BUTTON_BLACK_UP, "   join", "   join"))
             {
                 global_group_status = GROUP_WAIT;
                 send_command("/join", -1, SC_NORMAL);
             }
-            if(add_button(x + group_pos[0][0] + 120, y + group_pos[0][1] + 48, 11, 2, numButton++, BITMAP_BUTTON_BLACK_UP, "   deny", "   deny"))
+            if(add_button(x + group_pos[0][0] + 120, y + group_pos[0][1] + 48, 11, 2, 102, BITMAP_BUTTON_BLACK_UP, "   deny", "   deny"))
             {
                 global_group_status = GROUP_NO;
                 send_command("/deny", -1, SC_NORMAL);
             }
+
+			if (!mb)
+				active_button = -1;
         }
     }
     else /* status: GROUP_MEMBER */
     {
-        if(add_button(x, y + 56,  6, 2, numButton++, BITMAP_SMALL_UP, "leave", "leave"))
+        if(add_button(x, y + 56,  6, 2, 103, BITMAP_SMALL_UP, "leave", "leave"))
         {
             if(global_group_status != GROUP_LEAVE)
             {
@@ -93,6 +95,9 @@ void show_group(int x, int y)
             }
         }
 
+		if (!mb)
+			active_button = -1;
+		
         for (s = 0; s < GROUP_MAX_MEMBER; s++)
         {
             /* sprite_blt(Bitmaps[BITMAP_GROUP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 1, NULL, NULL); */
@@ -160,8 +165,6 @@ void show_group(int x, int y)
             }
         }
     }
-    if (!mb)
-        active_button = -1;
 }
 
 void clear_group(void)

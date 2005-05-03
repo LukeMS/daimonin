@@ -744,6 +744,8 @@ void show_menu(void)
         return;
     if (cpl.menustatus == MENU_KEYBIND)
         show_keybind();
+    else if (cpl.menustatus == MENU_BOOK)
+		show_book(400-Bitmaps[BITMAP_JOURNAL]->bitmap->w/2,300-Bitmaps[BITMAP_JOURNAL]->bitmap->h/2);
     else if (cpl.menustatus == MENU_NPC)
 		show_interface_npc(esc_menu_index);
     else if (cpl.menustatus == MENU_STATUS)
@@ -860,35 +862,6 @@ int init_media_tag(char *tag)
     return ret;
 }
 
-/*
-int blt_window_slider(_Sprite *slider, int maxlen, int winlen, int startoff, int len_h, int x, int y)
-{
-    SDL_Rect box;
-    int startpos;
-
-    if (len_h < 0)
-        len_h = slider->bitmap->h;
-
-    if(maxlen < winlen)
-        maxlen=winlen;
-    if(startoff+winlen >maxlen)
-        maxlen=startoff+winlen;
-
-    box.x=0;
-    box.y=0;
-    box.w=slider->bitmap->w;
-
-    box.h = (len_h*winlen)/maxlen;
-    startpos = (startoff *len_h)/maxlen;
-    if(box.h < 1)
-        box.h=1;
-
-    if(startoff+winlen >=maxlen && startpos+box.h<len_h)
-        startpos ++;
-
-    sprite_blt(slider,x,y+startpos, &box, NULL);
-}
-*/
 int blt_window_slider(_Sprite *slider, int maxlen, int winlen, int startoff, int len, int x, int y)
 {
     SDL_Rect    box;
@@ -2343,4 +2316,11 @@ void show_target(int x, int y)
 }
 
 
-
+void reset_menu_status(void)
+{
+	if(cpl.menustatus != MENU_NO)
+	{
+		cpl.menustatus = MENU_NO;
+	}
+	
+}

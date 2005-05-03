@@ -70,5 +70,6 @@ extern int get_interface_line(int *element, int *index, char **keyword, int x, i
 extern int precalc_interface_npc(void);
 extern void show_interface_npc(int mark);
 extern void gui_interface_mouse(SDL_Event *e);
+
 #endif
 

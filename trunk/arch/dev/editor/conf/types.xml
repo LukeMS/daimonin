@@ -183,6 +183,25 @@
 
 <!--###################### list definitions ######################-->
 
+<list name="language">
+  <entry value="0"  name="common" />
+  <entry value="1"  name="dwarvish" />
+  <entry value="2"  name="ancient dwarvish" />
+  <entry value="4"  name="elvish" />
+  <entry value="8"  name="high elvish" />
+  <entry value="16"  name="drow" />
+  <entry value="32"  name="gnomish" />
+  <entry value="64"  name="old council" />
+  <entry value="128"  name="elder pictograms" />
+  <entry value="256"  name="chaotic" />
+  <entry value="512" name="evil runic" />
+  <entry value="1024" name="runic" />
+  <entry value="2048" name="dragonish" />
+  <entry value="4096" name="jotun" />
+  <entry value="8192" name="high planar" />
+  <entry value="16384" name="orc runes" />
+</list>
+
 <list name="event">
   <entry value="0" name="no event" />
   <entry value="1" name="apply" />
@@ -218,6 +237,22 @@
   <entry value="2" name="calm" />
   <entry value="3" name="sleep" />
   <entry value="4" name="charm" />
+</list>
+
+<list name="item_race">
+  <entry value="0" name="&lt;none&gt;" />
+  <entry value="1" name="dwarven" />
+  <entry value="2" name="elven" />
+  <entry value="3" name="gnomish" />
+  <entry value="4" name="drow" />
+  <entry value="5" name="orcish" />
+  <entry value="6" name="goblin" />
+  <entry value="7" name="kobold" />
+  <entry value="8" name="giant" />
+  <entry value="9" name="tiny" />
+  <entry value="10" name="genie" />
+  <entry value="11" name="demonish" />
+  <entry value="12" name="dragon" />
 </list>
 
 <list name="q_trigger">
@@ -275,22 +310,6 @@
   <entry value="130" name="throwing pierce weapons" />
   <entry value="131" name="throwing cleave weapons" />
   <entry value="132" name="throwing boulders" />
-</list>
-
-<list name="item_race">
-  <entry value="0" name="&lt;none&gt;" />
-  <entry value="1" name="dwarven" />
-  <entry value="2" name="elven" />
-  <entry value="3" name="gnomish" />
-  <entry value="4" name="drow" />
-  <entry value="5" name="orcish" />
-  <entry value="6" name="goblin" />
-  <entry value="7" name="kobold" />
-  <entry value="8" name="giant" />
-  <entry value="9" name="tiny" />
-  <entry value="10" name="genie" />
-  <entry value="11" name="demonish" />
-  <entry value="12" name="dragon" />
 </list>
 
 <list name="material_real">
@@ -1415,14 +1434,9 @@
   <description><![CDATA[
     Applying a book, the containing message is displayed to the player. ]]>
   </description>
-  <attribute arch="level" editor="literacy level" type="int">
-    If this value is set to be greater than zero, the player needs a
-    certain literacy level to succeed reading the book. The book can be
-    read if: mental_level greater &lt;literacy level&gt; - 5. Adding level to a
-    book can be a nice idea, personally I like it when a player needs
-    more than his fighting skills to solve a quest. However, keep the
-    booklevel at least below 15 because it is quite hard to gain high
-    mental levels.
+  <attribute arch="container" editor="language" type="list_language">
+    The language the book is written in. Only when it matches the languages
+    the player knows, the book can be written.
   </attribute>
   <attribute arch="startequip" editor="godgiven item" type="bool">
     A godgiven item vanishes as soon as the player
@@ -6285,6 +6299,10 @@
     hints about hidden secrets/dangers. Place signs to provide the player
     with all kinds of useful information for getting along in your maps. ]]>
   </use>
+  <attribute arch="container" editor="language" type="list_language">
+    The language the sign is written in. Only when it matches the languages
+    the player knows, the book can be written.
+  </attribute>
   <attribute arch="connected" editor="connection" type="int">
     When a connection value is set, the message will be printed whenever
     the connection is triggered. This should be used in combination with
