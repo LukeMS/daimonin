@@ -1093,6 +1093,24 @@ void GroupUpdateCmd(unsigned char *data, int len)
     }
 }
 
+void BookCmd(unsigned char *data, int len)
+{
+	int mode;
+
+	sound_play_effect(SOUND_BOOK, 0, 0, 100);
+	cpl.menustatus = MENU_BOOK;
+
+	mode = *((int*)data);
+	data+=4;
+
+	/*LOG(-1,"BOOK (%d): %s\n", mode, data);
+	draw_info(data,COLOR_YELLOW);*/
+
+	//gui_book_interface = 
+	gui_interface_book = load_book_interface(mode, data, len-4);
+	
+}
+
 void InterfaceCmd(unsigned char *data, int len)
 {
 
@@ -1122,6 +1140,7 @@ void InterfaceCmd(unsigned char *data, int len)
 		gui_interface_npc->startx = 400-(Bitmaps[BITMAP_NPC_INTERFACE]->bitmap->w / 2);
 		gui_interface_npc->starty = 50;
 		active_button = -1;
+		mb_clicked=0;
 	}
 	}
 }
@@ -1253,7 +1272,12 @@ void Map2Cmd(unsigned char *data, int len)
     uint16  face;
 
     if (scrolldx || scrolldy)
+	{
+		if(cpl.menustatus != MENU_NO)
+			reset_menu_status();
         display_mapscroll(scrolldx, scrolldy);
+	}
+
     scrolldy = scrolldx = 0;
     map_transfer_flag = 0;
     xpos = (uint8) (data[pos++]);
@@ -1467,6 +1491,9 @@ void map_scrollCmd(char *data, int len)
 {
     static int  step    = 0;
     char       *buf;
+
+	if(cpl.menustatus != MENU_NO)
+		reset_menu_status();
 
     scrolldx += atoi(data);
     buf = strchr(data, ' ');
@@ -1868,3 +1895,24 @@ void DataCmd(char *data, int len)
     }
     free(dest);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

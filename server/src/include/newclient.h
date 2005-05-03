@@ -336,6 +336,7 @@ enum
     BINARY_CMD_INVITE,
     BINARY_CMD_GROUP_UPDATE,
     BINARY_CMD_INTERFACE,
+    BINARY_CMD_BOOK,
     
     /* old, unused or outdated crossfire cmds! */
     BINARY_CMD_MAGICMAP,

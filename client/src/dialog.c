@@ -279,7 +279,10 @@ int add_button(int x, int y, int xoff, int yoff, int id, int gfxNr, char *text, 
     sprite_blt(Bitmaps[gfxNr], x, y, NULL, NULL);
     if (mx > x && my > y && mx < x + Bitmaps[gfxNr]->bitmap->w && my < y + Bitmaps[gfxNr]->bitmap->h)
     {
-        if (mb && mb_clicked && active_button < 0)
+		char buf[256], buf2[256];
+		sprintf(buf,"mb:%d mc:%d ab:%d ID:%d", mb, mb_clicked, active_button, id);
+        //if (mb && mb_clicked && active_button < 0)
+		if (mb_clicked && active_button < 0)
             active_button = id;
         if (active_button == id)
         {
@@ -287,6 +290,8 @@ int add_button(int x, int y, int xoff, int yoff, int id, int gfxNr, char *text, 
             if (!mb)
                 ret = 1;
         }
+		sprintf(buf2, "%s ->AC:%d (%d)\n",buf, active_button, ret);
+		draw_info(buf2, COLOR_WHITE);
         StringBlt(ScreenSurface, &SystemFont, text, x + xoff, y + yoff, COLOR_BLACK, NULL, NULL);
         StringBlt(ScreenSurface, &SystemFont, text_sel, x + (xoff-1), y + (yoff-1), COLOR_HGOLD, NULL, NULL);
     }
@@ -2374,3 +2379,4 @@ void gui_interface_mouse(SDL_Event *e)
 		}
 	}
 }
+

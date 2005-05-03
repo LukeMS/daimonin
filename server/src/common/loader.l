@@ -254,9 +254,10 @@ WS	[ \t]*{NL}?
 			    LOG(llevDebug, "\n\tDebug: Warning message length > %d (max allowed=%d): %d\n>%.80s<\n",
 				HUGE_BUF/2, HUGE_BUF, strlen(op->msg),op->msg);
 		    }
-<MESSAGE>.*	    {if(msg_flag)strcat(msgbuf,"\n");msg_flag=1;strcat(msgbuf, yytext); }
-^name{S}	    {	char *yv=yval();
+			/*<MESSAGE>.*	    {if(msg_flag)strcat(msgbuf,"\n");msg_flag=1;strcat(msgbuf, yytext); }*/
+<MESSAGE>.*{WS}	strcat(msgbuf, yytext);
 
+^name{S}	    {	char *yv=yval();
 			if (*yv=='\0') LOG(llevError,"Name without val\n");
 			else FREE_AND_COPY_HASH(op->name, yv);
 		    }
@@ -416,7 +417,8 @@ op->oy= op->y;
 							if (IVAL)
 							{
 								SET_FLAG(op, FLAG_FRIENDLY);
-								add_friendly_object(op);
+								if(!arch_init)
+									add_friendly_object(op);
 							}
 							else
 								CLEAR_FLAG(op, FLAG_FRIENDLY);

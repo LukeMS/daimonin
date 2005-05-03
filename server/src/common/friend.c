@@ -55,7 +55,7 @@
  * parts of our world (= content = objects).
  */
 
-static int  friendly_list_count = 0;
+/*static int  friendly_list_count = 0;*/
 /*
  * Add a new friendly object to the linked list of friendly objects.
  * No checking to see if the object is already in the linked list is done.
@@ -88,14 +88,12 @@ void add_friendly_object(object *op)
     {
         if (ol->objlink.ob == op)
         {
-            LOG(llevBug, "BUG: (bad bug!) add_friendly_object: Trying to add object already on list (%s)\n",
-                query_name(op));
+            LOG(llevBug, "BUG: (bad bug!) add_friendly_object: Trying to add object already on list (%s)\n",query_name(op));
             return;
         }
     }
 
-    friendly_list_count++;
-    /*  LOG(llevDebug,"add f_obj %s (c:%d).\n",query_name(op), friendly_list_count);*/
+    /*  LOG(llevDebug,"add f_obj %s (c:%d).\n",query_name(op), ++friendly_list_count);*/
 
     ol = first_friendly_object;
     first_friendly_object = get_objectlink(OBJLNK_FLAG_OB);
@@ -169,8 +167,7 @@ void remove_friendly_object(object *op)
         }
     }
 
-    friendly_list_count--;
-    /*  LOG(llevDebug,"remove f_obj %s (c:%d).\n",query_name(op), friendly_list_count);*/
+    /*  LOG(llevDebug,"remove f_obj %s (c:%d).\n",query_name(op), --friendly_list_count);*/
 }
 
 /*

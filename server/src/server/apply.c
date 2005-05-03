@@ -1468,17 +1468,30 @@ static void apply_sign(object *op, object *sign)
      * for FLAG_INVISIBLE instead of FLAG_WALK_ON/FLAG_FLY_ON would fail
      * for magic mouths that have been made visible.
      */
-    if (QUERY_FLAG(op, FLAG_BLIND)
-     && !QUERY_FLAG(op, FLAG_WIZ)
-     && !QUERY_FLAG(sign, FLAG_WALK_ON)
-     && !QUERY_FLAG(sign,
-                    FLAG_FLY_ON))
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "You are unable to read while blind.");
-        return;
-    }
+    if(!QUERY_FLAG(op, FLAG_WIZ) && !QUERY_FLAG(sign, FLAG_WALK_ON) && !QUERY_FLAG(sign,FLAG_FLY_ON))
+	{
+		if (QUERY_FLAG(op, FLAG_BLIND))
+		{
+			new_draw_info(NDI_UNIQUE, 0, op, "You are unable to read while blind.");
+			return;
+		}
 
-    new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, sign->msg);
+		/* you has the right skill & language knowledge to read it? */
+		else if (!change_skill(op, SK_LITERACY))
+		{
+			new_draw_info(NDI_UNIQUE, 0, op, "You are unable to decipher the strange symbols.");
+			return;
+		}
+		else if((op->chosen_skill->weight_limit & sign->weight_limit) != sign->weight_limit)
+		{
+			new_draw_info_format(	NDI_UNIQUE, 0, op, "You are unable to decipher the %s.\nIts written in %s.",
+									query_name(sign), get_language(sign->weight_limit));
+			return;
+		}		
+	}
+
+    new_draw_info_format(NDI_UNIQUE, 0, op, "You start reading the %s.", sign->name);
+	new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, sign->msg);
 }
 
 
@@ -1776,44 +1789,35 @@ void move_apply(object *trap, object *victim, object *originator, int flags)
 
 static void apply_book(object *op, object *tmp)
 {
-    int lev_diff;
-
     if (QUERY_FLAG(op, FLAG_BLIND) && !QUERY_FLAG(op, FLAG_WIZ))
     {
         new_draw_info(NDI_UNIQUE, 0, op, "You are unable to read while blind.");
         return;
     }
+
     if (tmp->msg == NULL)
     {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "You open the %s and find it empty.", tmp->name);
+        new_draw_info_format(NDI_UNIQUE, 0, op, "You open the %s and find it empty.", query_name(tmp));
         return;
     }
 
-    /* need a literacy skill to read stuff! */
-    if (!change_skill(op, SK_LITERACY))
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "You are unable to decipher the strange symbols.");
-        return;
-    }
-    lev_diff = tmp->level - (SK_level(op) + 5);
-    if (!QUERY_FLAG(op, FLAG_WIZ) && lev_diff > 0)
-    {
-        if (lev_diff < 2)
-            new_draw_info(NDI_UNIQUE, 0, op, "This book is just barely beyond your comprehension.");
-        else if (lev_diff < 3)
-            new_draw_info(NDI_UNIQUE, 0, op, "This book is slightly beyond your comprehension.");
-        else if (lev_diff < 5)
-            new_draw_info(NDI_UNIQUE, 0, op, "This book is beyond your comprehension.");
-        else if (lev_diff < 8)
-            new_draw_info(NDI_UNIQUE, 0, op, "This book is quite a bit beyond your comprehension.");
-        else if (lev_diff < 15)
-            new_draw_info(NDI_UNIQUE, 0, op, "This book is way beyond your comprehension.");
-        else
-            new_draw_info(NDI_UNIQUE, 0, op, "This book is totally beyond your comprehension.");
-        return;
-    }
+    /* you has the right skill & language knowledge to read it? */
+    if (!QUERY_FLAG(op, FLAG_WIZ))
+	{
+		if (!change_skill(op, SK_LITERACY))
+		{
+			new_draw_info(NDI_UNIQUE, 0, op, "You are unable to decipher the strange symbols.");
+			return;
+		}
+		else if((op->chosen_skill->weight_limit & tmp->weight_limit)!=tmp->weight_limit)
+		{
+			new_draw_info_format(NDI_UNIQUE, 0, op, "You are unable to decipher the %s.\nIts written in %s.",
+								 query_name(tmp), get_language(tmp->weight_limit));
+			return;
+		}
+	}
 
-    new_draw_info_format(NDI_UNIQUE, 0, op, "You open the %s and start reading.", tmp->name);
+    new_draw_info_format(NDI_UNIQUE, 0, op, "You open the %s and start reading.", query_name(tmp));
 #ifdef PLUGINS
     /* GROS: Handle for plugin trigger event */
     if (tmp->event_flags & EVENT_FLAG_APPLY)
@@ -1839,17 +1843,27 @@ static void apply_book(object *op, object *tmp)
             ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
     }
     else
-    #endif
-        new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, tmp->msg);
+	{
+#endif
 
-    /* gain xp from reading */
+		/* invoke the new client sided book interface */
+		SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_BOOK);
+		
+		SockList_AddInt(&global_sl, tmp->weight_limit);
+		strcpy(global_sl.buf+global_sl.len, tmp->msg);
+		global_sl.len += strlen(tmp->msg)+1;
+		Send_With_Handling(&CONTR(op)->socket, &global_sl);
+
+		/*new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, tmp->msg);*/
+
+#ifdef PLUGINS
+	}
+#endif		
+	/* identify the book - successful reading will do it always */
     if (!QUERY_FLAG(tmp, FLAG_NO_SKILL_IDENT))
     {
-        /* only if not read before */
-        /*int exp_gain=calc_skill_exp(op,tmp);*/
         if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED))
         {
-            /*exp_gain *= 2; because they just identified it too */
             SET_FLAG(tmp, FLAG_IDENTIFIED);
             /* If in a container, update how it looks */
             if (tmp->env)
@@ -2935,8 +2949,15 @@ int manual_apply(object *op, object *tmp, int aflag)
           return 1;
 
         case SIGN:
-          apply_sign(op, tmp);
-          return 1;
+			if (op->type == PLAYER)
+			{
+				apply_sign(op, tmp);
+				return 1;
+			}
+			else
+			{
+				return 0;
+			}
 
         case BOOK:
           if (op->type == PLAYER)

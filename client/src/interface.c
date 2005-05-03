@@ -31,32 +31,6 @@
 #define INTERFACE_CMD_DECLINE 32
 #define INTERFACE_CMD_LINK 64
 
-/* this function gets a ="xxxxxxx" string from a
- * line. It removes the =" and the last " and returns 
- * the string in a static buffer.
- */
-static char *get_parameter_string(char *data, int *pos)
-{
-	char *start_ptr, *end_ptr;
-	static char buf[4024];
-
-	/* we assume a " after the =... don't be to shy, we search for a '"' */
-	start_ptr = strchr(data+*pos,'"');
-	if(!start_ptr)
-		return NULL; /* error */
-
-	end_ptr = strchr(++start_ptr,'"');
-	if(!end_ptr)
-		return NULL; /* error */
-	
-	strncpy(buf, start_ptr, end_ptr-start_ptr);
-	buf[end_ptr-start_ptr]=0;
-
-	/* ahh... ptr arithmetic... eat that, high level language fans ;) */
-	*pos += ++end_ptr-(data+*pos);
-
-	return buf;
-}
 
 static _gui_interface_head *interface_cmd_head(char *data, int *pos)
 {

@@ -309,14 +309,15 @@ int Event_PollInputDevice(void)
         x = event.motion.x;
         y = event.motion.y;
 
+		mb_clicked = 0;
         switch (event.type)
         {
             case SDL_MOUSEBUTTONUP:
               if (GameStatus < GAME_STATUS_PLAY)
                   break;
+              mb_clicked = 0;
               if (InputStringFlag && cpl.input_mode == INPUT_MODE_NUMBER)
                   break;
-              mb_clicked = 0;
               cursor_type = 0;
               active_scrollbar = 0;
 
@@ -1968,6 +1969,9 @@ static void move_keys(int num)
     char    buf[256];
     char    msg[256];
 
+	if(cpl.menustatus != MENU_NO)
+		reset_menu_status();
+
     /* move will overruled from fire */
     /* because real toggle mode don't work, this works a bit different */
     /* pressing alt will not set move mode until unpressed when firemode is on */
@@ -2247,6 +2251,38 @@ void check_menu_keys(int menu, int key)
 
     switch (menu)
     {
+		case MENU_BOOK:
+			if(!gui_interface_book || gui_interface_book->pages == 0)
+				return;
+			switch (key)
+			{
+				case SDLK_LEFT:
+					gui_interface_book->page_show-=2;
+					if(gui_interface_book->page_show<0)
+					{
+						gui_interface_book->page_show=0;
+						sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+					}
+					else
+					{
+						sound_play_effect(SOUND_PAGE, 0, 0, MENU_SOUND_VOL);
+					}
+				break;
+				case SDLK_RIGHT:
+					gui_interface_book->page_show+=2;
+					if(gui_interface_book->page_show>(gui_interface_book->pages-1))
+					{
+						gui_interface_book->page_show=(gui_interface_book->pages-1)&~1;
+						sound_play_effect(SOUND_CLICKFAIL, 0, 0, MENU_SOUND_VOL);
+					}
+					else
+					{
+						sound_play_effect(SOUND_PAGE, 0, 0, MENU_SOUND_VOL);
+					}
+					break;
+			}
+			break;
+
 		case MENU_NPC:
 
 			if(gui_interface_npc->status == GUI_INTERFACE_STATUS_WAIT)

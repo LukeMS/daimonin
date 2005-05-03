@@ -21,20 +21,35 @@
     The author can be reached via e-mail to info@daimonin.net
 */
 
-#if !defined(__MISC_H)
-#define __MISC_H
+#if !defined(__BOOK_H)
+#define __BOOK_H
 
-#define MAX_INPUT_STR 256
+#define BOOK_PAGE_LINES 28
+#define BOOK_LINES_CHAR 64
 
-void                    FreeMemory(void **p);
-char                   *show_input_string(char *text, struct _Font *font, int wlen);
-int                     read_substr_char(char *srcstr, char *desstr, int *sz, char ct);
-char				   *get_parameter_string(char *data, int *pos);
-int                     isqrt(int n);
+typedef struct gui_book_line
+{
+	int mode;
+	int color;
+	char line[BOOK_LINES_CHAR+1];
+} _gui_book_line;
 
-void                   *_my_malloc(size_t blen, char *info);
-extern unsigned long    hasharch(char *str, int tablesize);
-extern _bmaptype       *find_bmap(char *name);
-extern void             add_bmap(_bmaptype *at);
+typedef struct gui_book_struct
+{
+	int mode;
+	int pages;
+	int page_show;
+	struct gui_book_page *start;
+} _gui_book_struct;
+	
+
+typedef struct gui_book_page
+{
+	struct gui_book_page *next;
+	_gui_book_line *line[BOOK_PAGE_LINES];
+} _gui_book_page;
+
+extern _gui_book_struct *load_book_interface(int mode, char *data, int len);
+extern void show_book(int x, int y);
 
 #endif

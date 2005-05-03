@@ -1403,9 +1403,10 @@ void examine(object *op, object *tmp)
           }
           break;
 
+        case SIGN:
         case BOOK:
           if (tmp->msg != NULL)
-              strcpy(buf, "Something is written in it.");
+			 sprintf(buf, "Its written in %s.",get_language(tmp->weight_limit));
           break;
 
         case CONTAINER:

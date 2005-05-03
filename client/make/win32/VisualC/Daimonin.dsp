@@ -108,6 +108,10 @@ SOURCE=..\..\..\src\adler32.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\src\book.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\src\client.c
 # End Source File
 # Begin Source File
@@ -210,6 +214,10 @@ SOURCE=..\..\..\src\zutil.c
 # Begin Group "Header-Dateien"
 
 # PROP Default_Filter "h;hpp;hxx;hm;inl"
+# Begin Source File
+
+SOURCE=..\..\..\src\include\book.h
+# End Source File
 # Begin Source File
 
 SOURCE=..\..\..\src\include\cflinux.h

@@ -24,6 +24,7 @@ VPATH = @srcdir@
 srcdir = @srcdir@
 
 SRCS = \
+	book.c\
 	client.c\
 	commands.c\
 	event.c\
