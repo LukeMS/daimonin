@@ -56,8 +56,6 @@ typedef struct _msglang
     char           ***keywords; /* For each message, an array of strings to match */
 } msglang;
 
-extern spell    spells[NROFREALSPELLS];
-
 rv_vector      *get_known_obj_rv(object *op, struct mob_known_obj *known_obj, int maxage);
 
 /*

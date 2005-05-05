@@ -603,7 +603,7 @@ static inline int aggro_exp_group(object *victim, object *aggro, char *kill_msg)
  */
 object *aggro_calculate_exp(struct obj *victim, struct obj *slayer, char *kill_msg)
 {
-	object *tmp, *tmp2, *tmp3, *history, *highest_hitter;
+	object *tmp, *tmp2, *tmp3, *history, *highest_hitter=NULL;
 	int ret, total_dmg=0,total_dmg_all=0, highest_dmg;
 	
 	/* slayer is not a player (if the kill hitter was a pet, slayer was set to owner) */
@@ -707,14 +707,12 @@ object *aggro_calculate_exp(struct obj *victim, struct obj *slayer, char *kill_m
             remove_ob(tmp);                
         }
 	}
+    if(!highest_hitter) /* funny situation: A shot arrow to C, B killed A, arrow killed C - slayer A is dead = no highest_hitter */
+        return NULL;
+
 #ifdef DEBUG_AGGRO    
     LOG(-1," -> highest_hitter: %s ", query_name(highest_hitter->enemy));
 #endif
-    if(!highest_hitter) /* interesting... */
-    {
-        LOG(llevDebug,"DEBUG: aggro_calculate_exp(): slayer %s but highest_hitter == NULL \n", query_name(highest_hitter));
-        return NULL;
-    }
 
     /* we have a winner... highest_hitter is now a non player, single player or a group */
     if(!highest_hitter->enemy || highest_hitter->enemy->type!=PLAYER) /* NPC kill - no exp, no loot */

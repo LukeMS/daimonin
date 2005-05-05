@@ -4005,4 +4005,3 @@ void scroll_failure(object *op, int failure, int power)
     }
 #endif
 }
-
