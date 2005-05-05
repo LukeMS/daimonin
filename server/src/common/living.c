@@ -1386,10 +1386,7 @@ void fix_player(object *op)
             if (QUERY_FLAG(tmp, FLAG_CAN_PASS_THRU))
                 SET_MULTI_FLAG(op, FLAG_CAN_PASS_THRU); 
             if (QUERY_FLAG(tmp, FLAG_MAKE_ETHEREAL))
-            {
-                SET_MULTI_FLAG(op, FLAG_CAN_PASS_THRU); 
                 SET_MULTI_FLAG(op, FLAG_IS_ETHEREAL);
-            }
             if (QUERY_FLAG(tmp, FLAG_FLYING))
             {
                 SET_MULTI_FLAG(op, FLAG_FLYING);

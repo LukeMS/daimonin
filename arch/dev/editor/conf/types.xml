@@ -529,6 +529,38 @@
   <attribute arch="player_only" editor="player only" type="bool">
     If set, only players can enter the tile the object with this flag is in too.
   </attribute>
+  <attribute arch="is_ethereal" editor="ethereal (pass thru)" type="bool">
+    If no_pass (blocking passage) is set for a object, no one can pass
+    the tile is it in (true for walls or closed doors). But if this
+    flag is set, the monster can pass through all no_pass objects
+    which has pass_thru set. 
+    This is used for example from ghosts who moves through doors.
+    Be careful! This is a extrem powerful ability! Use it in context!
+    Orcs who moves without reason through walls are not senseful.
+    NOTE: ethereal has special abilities. It has the same effect
+    like can_pass_thru flag but its special. Its like the difference
+    between a being make out of dust (which is still kind of matter)
+    and a real ghost which is pure energy.
+  </attribute>
+  <attribute arch="pass_ethereal" editor="etheral can pass" type="bool">
+    If no_pass (blocking passage) is set, no one can pass. If this
+    flag is set too, etheral flaged objects and CAN_PASS_THRU flag can pass.
+  </attribute>
+  <attribute arch="can_pass_thru" editor="pass thru blocked" type="bool">
+    If no_pass (blocking passage) is set for a object, no one can pass
+    the tile is it in (true for walls or closed doors). But if this
+    flag is set, the monster can pass through all no_pass objects
+    which has pass_thru set. 
+    This is used for example from ghosts who moves through doors.
+    Be careful! This is a extrem powerful ability! Use it in context!
+    Orcs who moves without reason through walls are not senseful.
+    NOTE: can_pass_thru is a sub-effect from ethereality. See below.
+  </attribute>
+  <attribute arch="pass_thru" editor="can pass (no ethereal)" type="bool">
+    If no_pass (blocking passage) is set, no one can pass. If this
+    flag is set too, objects with the CAN_PASS_THRU flag can pass.
+    Ethereal can't pass this as long pass_ethereal is not set!
+  </attribute>
   <attribute arch="is_invisible" editor="invisible" type="bool">
     Generally makes the object invisible. Invisible objects will be shown
     if the player has "see invisible" (from spell or item). To hide objects
@@ -688,11 +720,6 @@
   <attribute arch="no_pass" editor="blocking passage" type="bool">
     If set, the object cannot be passed by players nor monsters.
   </attribute>
-  <attribute arch="pass_thru" editor="ethereal can pass" type="bool">
-    If no_pass (blocking passage) is set, no one can pass. If this
-    flag is set too, ethereal objects with the CAN_PASS_THRU flag can
-    pass. This is used for example from ghosts who moves through doors.
-  </attribute>
   <attribute arch="can_roll" editor="moveable" type="bool">
     If set, the object is able to "roll", so it can be pushed around.
     This setting is used for boulders and barrels.
@@ -809,11 +836,6 @@
   </description>
   <attribute arch="no_pass" editor="blocking passage" type="bool">
     If set, the object cannot be passed by players nor monsters.
-  </attribute>
-  <attribute arch="pass_thru" editor="ethereal can pass" type="bool">
-    If no_pass (blocking passage) is set, no one can pass. If this
-    flag is set too, ethereal objects with the CAN_PASS_THRU flag can
-    pass. This is used for example from ghosts who moves through doors.
   </attribute>
   <attribute arch="unique" editor="unique item" type="bool">
     Unique items exist only one time on a server. If the item
@@ -2272,11 +2294,6 @@
   <attribute arch="no_pass" editor="blocking passage" type="bool">
     If set, the object cannot be passed by players nor monsters.
   </attribute>
-  <attribute arch="pass_thru" editor="ethereal can pass" type="bool">
-    If no_pass (blocking passage) is set, no one can pass. If this
-    flag is set too, ethereal objects with the CAN_PASS_THRU flag can
-    pass. This is used for example from ghosts who moves through doors.
-  </attribute>
   <attribute arch="last_sp" editor="luminousness" type="int">
   This value sets the basic light/darkness value of tile space. This is
   how much this space is naturally glowing (luminousness). This is NOT
@@ -2333,11 +2350,6 @@
   </description>
   <attribute arch="no_pass" editor="blocking passage" type="bool">
     If set, the object cannot be passed by players nor monsters.
-  </attribute>
-  <attribute arch="pass_thru" editor="ethereal can pass" type="bool">
-    If no_pass (blocking passage) is set, no one can pass. If this
-    flag is set too, ethereal objects with the CAN_PASS_THRU flag can
-    pass. This is used for example from ghosts who moves through doors.
   </attribute>
   <attribute arch="can_roll" editor="moveable" type="bool">
     If set, the object is able to "roll", so it can be pushed around.
@@ -2662,11 +2674,6 @@
     about 6 or 7) means completely closed/up state. I suggest you don't
     mess with this value - Leave the default in place.
   </attribute>
-  <attribute arch="pass_thru" editor="ethereal can pass" type="bool">
-    If no_pass (blocking passage) is set, no one can pass. If this
-    flag is set too, ethereal objects with the CAN_PASS_THRU flag can
-    pass. This is used for example from ghosts who moves through doors.
-  </attribute>
   <attribute arch="no_magic" editor="restrict spells" type="bool">
     Restricting the use of spells to pass this gate. This has
     an effect only if &lt;block view&gt; is disabled.
@@ -2710,11 +2717,6 @@
     When triggered, this time the timed gate will stay in the new condition, until
     it reset itself. When opened, it stays this time open, then it close. 10 ticks
     are around 5 seconds.
-  </attribute>
-  <attribute arch="pass_thru" editor="ethereal can pass" type="bool">
-    If no_pass (blocking passage) is set, no one can pass. If this
-    flag is set too, ethereal objects with the CAN_PASS_THRU flag can
-    pass. This is used for example from ghosts who moves through doors.
   </attribute>
   <attribute arch="no_magic" editor="restrict spells" type="bool">
     Restricting the use of spells to pass this gate. This has
@@ -3328,11 +3330,6 @@
     appropriate quest items (key objects). ]]>
   </use>
   <attribute arch="no_pick" value="1" type="fixed" />
-  <attribute arch="pass_thru" editor="ethereal can pass" type="bool">
-    If no_pass (blocking passage) is set, no one can pass. If this
-    flag is set too, ethereal objects with the CAN_PASS_THRU flag can
-    pass. This is used for example from ghosts who moves through doors.
-  </attribute>
   <attribute arch="slaying" editor="key string" type="string">
     The &lt;key string&gt; in the door must be identical with the
     &lt;key string&gt; in the special key, then the door is unlocked.
@@ -3467,11 +3464,6 @@
   </attribute>
   <attribute arch="no_pass" editor="blocking passage" type="bool">
     If set, the object cannot be passed by players nor monsters.
-  </attribute>
-  <attribute arch="pass_thru" editor="ethereal can pass" type="bool">
-    If no_pass (blocking passage) is set, no one can pass. If this
-    flag is set too, ethereal objects with the CAN_PASS_THRU flag can
-    pass. This is used for example from ghosts who moves through doors.
   </attribute>
 <section name="destroyable">
   <attribute arch="alive" editor="is destroyable" type="bool">
@@ -4002,15 +3994,6 @@
     hidden/invisible creatures. Higher values make for better
     detection-skills. Enabling &lt;see invisible&gt; makes this value
     obsolete.
-  </attribute>
-  <attribute arch="can_pass_thru" editor="pass blocked tiles" type="bool">
-    If no_pass (blocking passage) is set for a object, no one can pass
-    the tile is it in (true for walls or closed doors). But if this
-    flag is set, the monster can pass through all no_pass objects
-    which has pass_thru set. 
-    This is used for example from ghosts who moves through doors.
-    Be careful! This is a extrem powerful ability! Use it in context!
-    Orcs who moves without reason through walls are not senseful.
   </attribute>
   <attribute arch="see_invisible" editor="see invisible" type="bool">
     A monster with the ability to &lt;see invisible&gt; cannot be fooled
@@ -4639,15 +4622,6 @@
     hidden/invisible creatures. Higher values make for better
     detection-skills. Enabling &lt;see invisible&gt; makes this value
     obsolete.
-  </attribute>
-  <attribute arch="can_pass_thru" editor="pass blocked tiles" type="bool">
-    If no_pass (blocking passage) is set for a object, no one can pass
-    the tile is it in (true for walls or closed doors). But if this
-    flag is set, the monster can pass through all no_pass objects
-    which has pass_thru set. 
-    This is used for example from ghosts who moves through doors.
-    Be careful! This is a extrem powerful ability! Use it in context!
-    Orcs who moves without reason through walls are not senseful.
   </attribute>
   <attribute arch="see_invisible" editor="see invisible" type="bool">
     A monster with the ability to &lt;see invisible&gt; cannot be fooled
@@ -7138,11 +7112,6 @@ that food.]]>
   </description>
   <attribute arch="no_pass" editor="blocking passage" type="bool">
     If set, the object cannot be passed by players nor monsters.
-  </attribute>
-  <attribute arch="pass_thru" editor="ethereal can pass" type="bool">
-    If no_pass (blocking passage) is set, no one can pass. If this
-    flag is set too, ethereal objects with the CAN_PASS_THRU flag can
-    pass. This is used for example from ghosts who moves through doors.
   </attribute>
   <attribute arch="can_roll" editor="moveable" type="bool">
     If set, the object is able to "roll", so it can be pushed around.

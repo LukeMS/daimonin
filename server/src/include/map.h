@@ -184,11 +184,8 @@
                                      * in the node, one with pass_thru and one with real no_pass - then
                                      * no_pass will overrule pass_thru 
                                      */
+#define P_PASS_ETHEREAL 0x800   /* same as PASS_THRU - but for ethereal objects. This is pass_thru light */
 
-#define P_MAGIC_EAR     0x800   /* we have a magic ear in this map tile... later we should add a map
-                                  * pointer where we attach as chained list this stuff - no search
-                                  * or flags then needed.
-                                  */
 #define P_WALK_ON       0x1000  /* this 4 flags are for moving objects and what happens when they enter */ 
 #define P_WALK_OFF      0x2000  /* or leave a map tile */
 #define P_FLY_OFF       0x4000
@@ -197,6 +194,10 @@
 #define P_REFL_SPELLS   0x10000  /* something on the tile reflect spells */
 #define P_REFL_MISSILE  0x20000 /* something on the tile reflect missiles */
 
+#define P_MAGIC_EAR     0x40000   /* we have a magic ear in this map tile... later we should add a map
+                                  * pointer where we attach as chained list this stuff - no search
+                                  * or flags then needed.
+                                  */
 
 #define P_OUT_OF_MAP    0x4000000 /* of course not set for map tiles but from blocked_xx()
                                      * function where the out_of_map() fails to grap a valid

@@ -813,10 +813,11 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_IS_ASSASSINATION   132     /* If a attacking force and slaying is set, this is 3 times damage */
 #define FLAG_OBJECT_WAS_MOVED   133     /* internal used from remove_ob() und insert_xx() */
 #define FLAG_NO_SAVE            134     /* don't save this object - remove it before we save */
+#define FLAG_PASS_ETHEREAL      135     /* can_pass light for ethereal */
 
 /* flag 37 is still free (old FREED flag). Let it free for secure reason for some time */
 
-#define NUM_FLAGS       134 /* Should always be equal to the last defined flag */
+#define NUM_FLAGS       135 /* Should always be equal to the last defined flag */
 #define NUM_FLAGS_32    5   /* the number of uint32 we need to store all flags */
 
 /* macros for invisible test. the first tests only system objects */

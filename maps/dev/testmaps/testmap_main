@@ -437,6 +437,15 @@ arch floor_ostone1
 x 3
 y 7
 end
+arch stair_down
+name Test Effects (Invisibility, Infravision,...)
+direction 5
+slaying testmap_effects2
+hp 1
+sp 1
+x 3
+y 7
+end
 arch floor_ostone1
 x 3
 y 8

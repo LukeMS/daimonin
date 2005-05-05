@@ -52,7 +52,7 @@ int wall_blocked(mapstruct *m, int x, int y)
     int r;
     if (!(m = out_of_map(m, &x, &y)))
         return 1;
-    r = GET_MAP_FLAGS(m, x, y) & (P_NO_PASS | P_PASS_THRU);
+    r = GET_MAP_FLAGS(m, x, y) & (P_NO_PASS | P_PASS_THRU | P_PASS_ETHEREAL);
     return r;
 }
 

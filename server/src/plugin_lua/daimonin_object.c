@@ -254,6 +254,7 @@ static const char          *GameObject_flags[NUM_FLAGS + 1 + 1] =
     NULL /* spawn mob flag */, "f_no_teleport", "f_corpse", "f_corpse_forced", "f_player_only", "f_no_cleric",
     "f_one_drop", "f_cursed_perm", "f_damned_perm", "f_door_closed", "f_was_reflected", "f_is_missile",
     "f_can_reflect_missile", "f_can_reflect_spell", "f_is_assassin", NULL /* internal flag: HAS_MOVED */, "f_no_save",
+	"f_pass_ethereal",
     FLAGLIST_END_MARKER /* Marks the end of the list */
 };
 

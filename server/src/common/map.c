@@ -541,7 +541,7 @@ int wall(mapstruct *m, int x, int y)
 {
     if (!(m = out_of_map(m, &x, &y)))
         return (P_BLOCKSVIEW | P_NO_PASS | P_OUT_OF_MAP);
-    return (GET_MAP_FLAGS(m, x, y) & (P_DOOR_CLOSED | P_PLAYER_ONLY | P_NO_PASS | P_PASS_THRU));
+    return (GET_MAP_FLAGS(m, x, y) & (P_DOOR_CLOSED | P_PLAYER_ONLY | P_NO_PASS | P_PASS_THRU | P_PASS_ETHEREAL));
 }
 
 /*
@@ -621,7 +621,8 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
      * a valid terrain flag, this is forbidden to enter.
      */
     if (msp->move_flags & ~terrain)
-        return ((flags & (P_NO_PASS | P_IS_ALIVE | P_IS_PLAYER | P_CHECK_INV | P_PASS_THRU)) | P_NO_TERRAIN);
+        return ((flags & 
+				(P_NO_PASS | P_IS_ALIVE | P_IS_PLAYER | P_CHECK_INV | P_PASS_THRU | P_PASS_ETHEREAL) | P_NO_TERRAIN));
 
     /* the terrain is ok... whats first?
      * A.) P_IS_ALIVE - we leave without question
@@ -630,19 +631,21 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
      * and/or the passer has no CAN_PASS_THRU.
      */
     if (flags & P_IS_ALIVE)
-        return (flags & (P_DOOR_CLOSED | P_NO_PASS | P_IS_ALIVE | P_IS_PLAYER | P_CHECK_INV | P_PASS_THRU));
+        return (flags & (P_DOOR_CLOSED | P_NO_PASS | P_IS_ALIVE | P_IS_PLAYER | P_CHECK_INV | P_PASS_THRU| P_PASS_ETHEREAL));
 
-    /* still one flag to check: perhaps P_PASS_THRU overrules NO_PASS? */
+    /* still one flag to check: perhaps P_PASS_THRU overrules NO_PASS? Or PASS_ETHEREAL? */
     if (flags & P_NO_PASS) /* i seperated it from below - perhaps we add here more tests */
     {
         /* logic is: no_pass when..
              * - no PASS_THRU... or
              * - PASS_THRU set but op==NULL (no PASS_THRU check possible)
              * - PASS_THRU set and object has no CAN_PASS_THRU
+			 * - the same for PASS_ETHEREAL and IS_ETHEREAL
              */
-        if (!(flags & P_PASS_THRU) || !op || !QUERY_FLAG(op, FLAG_CAN_PASS_THRU))
-            return (flags & (P_DOOR_CLOSED | P_NO_PASS | P_IS_PLAYER | P_CHECK_INV | P_PASS_THRU));
-
+        if (!op || ( (!(flags & P_PASS_THRU) || !QUERY_FLAG(op, FLAG_CAN_PASS_THRU)) && 
+				     (!(flags & P_PASS_ETHEREAL) || !QUERY_FLAG(op, FLAG_IS_ETHEREAL)) ))
+            return (flags & (P_DOOR_CLOSED | P_NO_PASS | P_IS_PLAYER | P_CHECK_INV | P_PASS_THRU| P_PASS_ETHEREAL));
+		
         /* ok, NO_PASS is overruled... we go on... */
     }
 
@@ -2523,12 +2526,16 @@ void update_position(mapstruct *m, int x, int y)
                 {
                     if (!QUERY_FLAG(tmp, FLAG_PASS_THRU))
                         flags &= ~P_PASS_THRU; /* just fire it... always true */
+                    if (!QUERY_FLAG(tmp, FLAG_PASS_ETHEREAL))
+                        flags &= ~P_PASS_ETHEREAL; /* just fire it... always true */
                 }
                 else
                 {
                     flags |= P_NO_PASS;
                     if (QUERY_FLAG(tmp, FLAG_PASS_THRU))
                         flags |= P_PASS_THRU;
+                    if (QUERY_FLAG(tmp, FLAG_PASS_ETHEREAL))
+                        flags |= P_PASS_ETHEREAL;
                 }
             }
 
