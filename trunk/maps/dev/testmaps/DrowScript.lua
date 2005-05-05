@@ -2,11 +2,10 @@ require("topic_list")
 
 string.split("")
 
-function topicData()
+function topicData(msg)
 	-- Tests the storage of global data
 
 	local ds = DataStore("data_store_test")
-	local msg = table.concat(string.split(event.message), " ", 2)
 	ds:Set("activator", event.activator)
 	ds:Set("message", msg)
 	local msg2 = ds:Get("message")
@@ -17,16 +16,13 @@ function topicData()
 	end
 end
 
-function topicData2()
+function topicData2(player, msg)
 	-- Tests the storage of data for a player
-
-	local msg = string.split(event.message)
-	if table.getn(msg) < 3 then
+	if player == nil or message == nil then
 		event.me:SayTo(event.activator, "Say '^data2^ <player> <message>'")
 		return
 	end
-	local ds = DataStore("data_store_test", msg[2])
-	msg = table.concat(msg, " ", 3)
+	local ds = DataStore("data_store_test", player)
 	ds:Set("activator", event.activator)
 	ds:Set("message", msg)
 	local msg2 = ds:Get("message")
@@ -37,10 +33,27 @@ function topicData2()
 	end
 end
 
+function topicData3()
+	-- Tests the storage of a function
+	local ds = DataStore("data_store_test")
+    local function testfunc(event)
+        -- The global event won't be the same when we are called
+        event.me:Say("Hello world!")       
+    end
+    
+	ds:Set("function", testfunc)
+	local f2 = ds:Get("function")
+	if f2 == testfunc then
+		event.me:SayTo(event.activator, "Function saved.\n Talk to the lost soul to run it.")
+	else
+		event.me:SayTo(event.activator, "Error: Function wasn't saved!")
+	end
+end
+
 function topicInfo()
 	local msg = "\nContents of data_store:\nGlobal:"
-	for k1, v1 in pairs(_data_store) do
-		if k1 ~= "n" and k1 ~= "_players" and k1 ~= "_serialize" and k1 ~= "_unserialize" and k1 ~= "_ignore" and k1 ~= "_save" and k1 ~= "_ignore_player" and k1 ~= "_load" and k1 ~= "save" then
+	for k1, v1 in pairs(_data_store._global) do
+		if k1 ~= "n" then
 			msg = msg .. "\n'" .. tostring(k1) .. "' => DataStore:\nLast change: " .. os.date("!%Y-%m-%d %H:%M:%S %Z", v1._changed) .. "\nContents:\n---"
 			for k2, v2 in pairs(v1) do
 				if k2 ~= "_changed" then
@@ -130,20 +143,23 @@ Available tests/topics:
 ^recursive2^
 ^data^ <message>
 ^data2^ <player> <message>
+^data3^
 ^info^
 ^save^
 
 ^recursive^ and ^recursive2^ tests recursive scripts.
 ^data^ tests the storage of global data.
 ^data2^ tests the storage of data for a player.
+^data3^ tests the storage of functions.
 ^info^ dumps the contents of '_data_store'.
 ^save^ saves '_data_store'.]])
 
 tl:AddTopics("recursive", topicRecursive)
 tl:AddTopics("recursive2", topicRecursive2)
 tl:AddTopics("recursive3", topicRecursive3)
-tl:AddTopics("data2.*", topicData2)
-tl:AddTopics("data.*", topicData)
+tl:AddTopics("data3", topicData3)
+tl:AddTopics("data2 ([^ ]*) (.*)", topicData2)
+tl:AddTopics("data (.*)", topicData)
 tl:AddTopics("info", topicInfo)
 tl:AddTopics("save", topicSave)
 
