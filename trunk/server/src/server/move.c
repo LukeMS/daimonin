@@ -329,7 +329,8 @@ int try_fit(object *op, int x, int y)
                 return 1;
 
             if (QUERY_FLAG(tmp, FLAG_NO_PASS)
-             && (!QUERY_FLAG(tmp, FLAG_PASS_THRU) || !QUERY_FLAG(more, FLAG_CAN_PASS_THRU)))
+				&& (!QUERY_FLAG(tmp, FLAG_PASS_THRU) || !QUERY_FLAG(op, FLAG_CAN_PASS_THRU))
+				&& (!QUERY_FLAG(tmp, FLAG_PASS_ETHEREAL) || !QUERY_FLAG(op, FLAG_IS_ETHEREAL)))
                 return 1;
         }
     }

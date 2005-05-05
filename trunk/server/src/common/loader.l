@@ -459,6 +459,7 @@ op->oy= op->y;
 ^luck{S}  	    op->stats.luck = IVAL;
 ^run_away{S}	    op->run_away = IVAL;
 ^pass_thru{S}	    SET_OR_CLEAR_FLAG(op, FLAG_PASS_THRU, IVAL);
+^pass_ethereal{S}	    SET_OR_CLEAR_FLAG(op, FLAG_PASS_ETHEREAL, IVAL);
 ^can_pass_thru{S}   SET_OR_CLEAR_FLAG(op, FLAG_CAN_PASS_THRU, IVAL);
 ^pick_up{S}	    op->pick_up = IVAL;
 ^anim_speed{S}	    op->anim_speed = IVAL;
@@ -929,7 +930,7 @@ NULL /*is_removed*/,"been_applied", "auto_apply", "treasure", "is_neutral",	/* 2
 "is_named",NULL /* spawn mob flag */, "no_teleport", "corpse", "corpse_forced",
 "player_only", "no_cleric", "one_drop", "cursed_perm", "damned_perm", "door_closed",
 "was_reflected", "is_missile","can_reflect_missile","can_reflect_spell","is_assassin",
-NULL /* internal flag: HAS_MOVED */, "no_save"
+NULL /* internal flag: HAS_MOVED */, "no_save", "pass_ethereal"
 };
 
 

@@ -1860,7 +1860,7 @@ void update_object(object *op, int action)
             adjust_light_source(op->map, op->x, op->y, op->glow_radius);
 
         /* this is handled a bit more complex, we must always loop the flags! */
-        if (QUERY_FLAG(op, FLAG_NO_PASS) || QUERY_FLAG(op, FLAG_PASS_THRU))
+        if (QUERY_FLAG(op, FLAG_NO_PASS) || QUERY_FLAG(op, FLAG_PASS_THRU) || QUERY_FLAG(op, FLAG_PASS_ETHEREAL))
             newflags |= P_FLAGS_UPDATE;
         else if (QUERY_FLAG(op, FLAG_IS_FLOOR)) /* floors define our node - force a update */
         {
@@ -1923,36 +1923,22 @@ void update_object(object *op, int action)
         if (QUERY_FLAG(op, FLAG_ALIVE)
          || QUERY_FLAG(op, FLAG_IS_PLAYER)
          || QUERY_FLAG(op, FLAG_BLOCKSVIEW)
-         || QUERY_FLAG(op,
-                       FLAG_DOOR_CLOSED)
-         || QUERY_FLAG(op,
-                       FLAG_PASS_THRU)
-         || QUERY_FLAG(op,
-                       FLAG_NO_PASS)
-         || QUERY_FLAG(op,
-                       FLAG_PLAYER_ONLY)
-         || QUERY_FLAG(op,
-                       FLAG_NO_MAGIC)
-         || QUERY_FLAG(op,
-                       FLAG_NO_CLERIC)
-         || QUERY_FLAG(op,
-                       FLAG_WALK_ON)
-         || QUERY_FLAG(op,
-                       FLAG_FLY_ON)
-         || QUERY_FLAG(op,
-                       FLAG_WALK_OFF)
-         || QUERY_FLAG(op,
-                       FLAG_FLY_OFF)
-         || QUERY_FLAG(op,
-                       FLAG_CAN_REFL_SPELL)
-         || QUERY_FLAG(op,
-                       FLAG_CAN_REFL_MISSILE)
-         || QUERY_FLAG(op,
-                       FLAG_IS_FLOOR)
-         || op->type
-         == CHECK_INV
-         || op->type
-         == MAGIC_EAR)
+         || QUERY_FLAG(op, FLAG_DOOR_CLOSED)
+         || QUERY_FLAG(op, FLAG_PASS_THRU)
+         || QUERY_FLAG(op, FLAG_PASS_ETHEREAL)
+         || QUERY_FLAG(op, FLAG_NO_PASS)
+         || QUERY_FLAG(op, FLAG_PLAYER_ONLY)
+         || QUERY_FLAG(op, FLAG_NO_MAGIC)
+         || QUERY_FLAG(op, FLAG_NO_CLERIC)
+         || QUERY_FLAG(op, FLAG_WALK_ON)
+         || QUERY_FLAG(op, FLAG_FLY_ON)
+         || QUERY_FLAG(op, FLAG_WALK_OFF)
+         || QUERY_FLAG(op, FLAG_FLY_OFF)
+         || QUERY_FLAG(op, FLAG_CAN_REFL_SPELL)
+         || QUERY_FLAG(op, FLAG_CAN_REFL_MISSILE)
+         || QUERY_FLAG(op, FLAG_IS_FLOOR)
+         || op->type == CHECK_INV
+         || op->type == MAGIC_EAR)
             newflags |= P_FLAGS_UPDATE; /* force flags rebuild */
     }
     else if (action == UP_OBJ_FLAGS)
