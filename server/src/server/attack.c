@@ -406,15 +406,12 @@ int hit_player(object *op, int dam, object *hitter, int type)
 	 * Only a few kind of damage dealing objects need it.
 	 * AoE spells are one of it.
 	 */
-//	LOG(-1,"hitter: %s (%x) -> %x\n", query_name(hitter),QUERY_FLAG(hitter, FLAG_USE_DMG_INFO), hitter->weight_limit);
 	if(QUERY_FLAG(hitter, FLAG_USE_DMG_INFO) )
 	{
-//		LOG(-1,"search op: %s\n", query_name(op));
 		dmg_obj = aggro_get_damage(op, hitter);
 		/* be sure we do damage only all hitter->last_heal ticks */
 		if(dmg_obj)
 		{
-//			LOG(-1,"found!: %d --> %d\n", dmg_obj->damage_round_tag, global_round_tag);
 			if(dmg_obj->damage_round_tag+hitter->last_heal >= ROUND_TAG)
 				return 0;
 			dmg_obj->damage_round_tag = ROUND_TAG;
@@ -1186,16 +1183,11 @@ int kill_object(object *op, int dam, object *hitter, int type)
             {
                 sprintf(buf, "You killed %s with %s.", query_name(op), query_name(hitter));
                 sprintf(buf2, "%s killed %s with %s.", query_name(owner), query_name(op), query_name(hitter));
-                //if(CONTR(owner)->group_id != GROUP_NO) /* broadcast to group members */
-                //    party_message(PMSG_MODE_NOE XP, NDI_YELLOW, 0, CONTR(owner)->group_leader, owner, "%s %s", query_name(owner),buf2);
                 old_hitter = hitter;
                 owner->exp_obj = hitter->exp_obj;
             }
             else
             {
-                //if(CONTR(owner)->group_id != GROUP_NO) /* broadcast to group members */
-                   // party_message(PMSG_MODE_NOEXP,NDI_YELLOW, 0, CONTR(owner)->group_leader, owner, "%s killed %s.", 
-                    //               query_name(owner), query_name(op));
                 sprintf(buf2, "%s killed %s.",  query_name(owner), query_name(op));
                 sprintf(buf, "You killed %s.", query_name(op));
             }
