@@ -62,3 +62,5 @@ end
 function _shutdown()
 	_data_store.save(true)
 end
+
+print "    plugin_init.lua loaded successfully"
