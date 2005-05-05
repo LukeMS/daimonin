@@ -1,137 +1,77 @@
-_data_store = {_ignore = {"_ignore", "_ignore_player", "_load", "_players", "_save", "_serialize", "_unserialize", "n", "save"}, _ignore_player = {"n"}, _players = {}, n = 0}
+_data_store = { _global = {}, _players = {}}
 
-function _data_store._serialize(v, ignore)
-	local t = type(v)
-	if t == "number" then
-		return "n" .. v .. "\0"
-	elseif t == "string" then
-		return "s" .. v .. "\0"
-	elseif t == "table" then
-		if v.type == game.TYPE_PLAYER and v.type_id then
-			return "p" .. v.type_id .. "\0"
-		else
-			local b_proceed, ret = true, "t"
-			for k, val in pairs(v) do
-				if ignore then
-					for k2, val2 in pairs(ignore) do
-						if val2 == k then
-							b_proceed = false
-							break
-						end
-					end
-				end
-				if b_proceed then
-					ret = ret .. _data_store._serialize(k) .. _data_store._serialize(val)
-				end
-			end
-			return ret .. "\0"
-		end
-	end
+function _data_store._object(objtype, id)
+    return { ['type'] = objtype, ['type_id'] = id }
 end
 
-function _data_store._unserialize(s)
-	local data, t = "", string.sub(s, 1, 1)
-	if t == "s" or t == "p" or  t == "n" then
-		local a, b
-		a, b, data = string.find(s, "([^%z]*)", 2)
-	elseif t ~= "t" then
-		error("Unknown type '" .. t .. "'")
-	end
-	if t == "n" then
-		return tonumber(data)
-	elseif t == "s" then
-		return tostring(data)
-	elseif t == "p" then
-		return {object = nil, ["type"] = game.TYPE_PLAYER, type_id = tostring(data)}
-	elseif t == "t" then
-		local b_new, k, len, n, ret = true, nil, string.len(s), 0, {}
-		for i = 2, len do
-			local c = string.sub(s, i, i)
-			data = data .. c
-			if b_new then
-				b_new = false
-				if c == "\0" then
-					if n == 0 then
-						break
-					else
-						n = n - 1
-						if n == 0 then
-							if k then
-								ret[k], k = _data_store._unserialize(data), nil
-							else
-								k = _data_store._unserialize(data)
-							end
-							data = ""
-						end
-					end
-				elseif c == "t" then
-					b_new = true
-					n = n + 1
-				elseif c ~= "n" and c ~= "p" and c ~= "s" then
-					error("Unkown type '" .. c .. "'")
-				end
-			elseif c == "\0" then
-				if n == 0 then
-					if k then
-						ret[k], k = _data_store._unserialize(data), nil
-					else
-						k = _data_store._unserialize(data)
-					end
-					data = ""
-				end
-				b_new = true
-			end
-		end
-		return ret
-	end
+function _data_store._serialize(name, value, depth)
+    local prefix
+    if depth == nil then 
+        depth = '' 
+        prefix = 'return '
+    else
+        prefix = depth .. '[' .. string.format("%q", name) .. '] = '
+    end
+
+    local t = type(value)
+    if t == 'string' then
+        return prefix .. string.format("%q", value) 
+    elseif t == 'function' then
+        return prefix .. 'loadstring('.. string.format("%q", string.dump(value)) ..')'
+    elseif t == 'number' or t == 'boolean' then
+        return prefix .. tostring(value)
+    elseif t == 'table' then
+        if value.type == game.TYPE_PLAYER and value.type_id then
+			return prefix .. '_data_store._object(game.TYPE_PLAYER, ' .. string.format("%q", value.type_id) .. ')'
+        else            
+            local ret = ""
+            for k,v in value do
+                ret = ret .. _data_store._serialize(k, v, depth .. '  ') .. ",\n"
+            end
+            return prefix .. "{\n" .. 
+                    ret .. 
+                   depth .. '}'
+        end
+    end
 end
 
 function _data_store._load(id, player)
-	local dir, t
+	local path, t
 	if player then
-		dir = "players/" .. player
+		path = "players/" .. player
 		t = _data_store._players[player]
 		if not t then
 			_data_store[player] = {n = 0}
 			t = _data_store[player]
 		end
 	else
-		dir = "global"
-		t = _data_store
+		path = "global"
+		t = _data_store._global
 	end
+    path = "data/" .. path .. "/" .. id .. ".dsl"
+    
 	if not t[id] then
-		local f = io.open("data/" .. dir .. "/" .. id .. ".dst", "rb")
-		if not f then
-			return false
-		end
-		t[id] = _data_store._unserialize(f:read("*a"))
-		f:close()
-		if t[id] then
-			setmetatable(t[id], _DataStore_mt)
-			return true
-		end
+        local f = loadfile(path)
+        if f == nil then
+            return false
+        end
+        t[id] = f()
+        assert(t[id], "Empty datastore file: "..path)
+        setmetatable(t[id], _DataStore_mt)
 	end
-	return false
+       
+    return t[id] 
 end
 
 function _data_store._save(time, player, b_force)
-	local ignore, t
+	local t
 	if player then
-		ignore = _data_store._ignore_player
 		t = _data_store._players[player]
 	else
-		ignore = _data_store._ignore
-		t = _data_store
+		t = _data_store._global
 	end
 	for k, v in pairs(t) do
-		local b_proceed = true
-		for k2, v2 in pairs(ignore) do
-			if k == v2 then
-				b_proceed = false
-				break
-			end
-		end
-		if b_proceed then
+		if k ~= 'n' then
 			local b_save = false
 			if not b_force then
 				local changed = t._changed
@@ -148,12 +88,10 @@ function _data_store._save(time, player, b_force)
 				else
 					dir = "global"
 				end
-				local filename = "data/" .. dir .. "/" .. k .. ".dst"
+				local filename = "data/" .. dir .. "/" .. k .. ".dsl"
 				local f = io.open(filename, "wb")
-				if f == nil then
-					error("Couldn't open " .. filename)
-				end
-				f:write(_data_store._serialize(v))
+				assert(f, "Couldn't open " .. filename)
+                f:write(_data_store._serialize(k, v))
 				f:close()
 			end
 		end
@@ -161,17 +99,10 @@ function _data_store._save(time, player, b_force)
 end
 
 function _data_store.save(b_force)
-	local ignore, players, time = _data_store._ignore, _data_store._players, os.time()
+	local players, time = _data_store._players, os.time()
 	_data_store._save(time)
 	for player in players do
-		local b_proceed = true
-		for k, v in pairs(ignore) do
-			if player == v then
-				b_proceed = false
-				break
-			end
-		end
-		if b_proceed then
+		if player ~= 'n' then
 			_data_store._save(time, player, b_force)
 		end
 	end
@@ -199,10 +130,8 @@ function DataStore:Get(key)
 end
 
 function DataStore:Set(key, value)
-	if key == "_changed" then
-		error("You can't change '_changed'")
-	end
-	if value ~= nil and type(value) == "userdata" and value.count then
+    assert(key ~= "_changed", "You can't change '_changed'")
+	if type(value) == "userdata" and value.count then
 		local ref = {id = value.count, object = value}
 		local t = value.type
 		if t == game.TYPE_PLAYER then
@@ -224,7 +153,7 @@ _DataStore_mt = {__index = DataStore, __newindex = function() error("Use Set() t
 function DataStore:New(id, player)
 	local t
 	if player == nil then
-		t = _data_store
+		t = _data_store._global
 	else
 		if type(player) == "userdata" then
 			player = player.name
