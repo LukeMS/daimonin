@@ -749,6 +749,7 @@ void *create_loader_buffer(void *fp)
  * arch is expanded after loading in a map and out_of_map() triggers a map loading for
  * parts in a different map. Because we don't need any order of objects when we load a map,
  * this will work fine.
+ * Note: load_object can be called with fp = FILE * and fp = char * - so we have here void used 
  */
 int load_object(void *fp, object *op, void *mybuffer, int bufstate, int map_flags) {
     int retval;
@@ -781,14 +782,15 @@ int load_object(void *fp, object *op, void *mybuffer, int bufstate, int map_flag
 	}
     else if (bufstate==LO_MEMORYMODE)
 	{
+		char *strptr = (char*)fp;
 		YY_BUFFER_STATE  yybufstate;
 		int lcount=0;
 		object_load_flag = 1; /* we are object load but object is not called */
 		while (1) /* we can be sure this will work - InitArtifact has tested this before */
 		{
-			((char *)fp) +=lcount;
-			lcount = strlen((char *)fp)+1; /*we can even put this value at string start to save the strlen */
-			yybufstate=yy_scan_string((char *)fp);
+			strptr +=lcount;
+			lcount = strlen(strptr)+1; /*we can even put this value at string start to save the strlen */
+			yybufstate=yy_scan_string(strptr);
 			retval=lex_load(op, map_flags); /* hopefully we have here a "end" - or we stay in this while a bit */
 			yy_delete_buffer(yybufstate);
 			if (retval==LL_NORMAL)

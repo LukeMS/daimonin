@@ -38,7 +38,6 @@ static int  GameObject_SetSaveBed(lua_State *L);
 static int  GameObject_SetSkill(lua_State *L);
 static int  GameObject_GetSkill(lua_State *L);
 static int  GameObject_ActivateRune(lua_State *L);
-static int  GameObject_CastAbility(lua_State *L);
 static int  GameObject_GetGod(lua_State *L);
 static int  GameObject_SetGod(lua_State *L);
 static int  GameObject_TeleportTo(lua_State *L);

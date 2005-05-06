@@ -179,12 +179,7 @@ static int Map_PlaySound(lua_State *L)
 
     get_lua_args(L, "Miiii", &map, &x, &y, &soundnumber, &soundtype);
 
-    GCFP.Value[0] = (void *) (map->data.map);
-    GCFP.Value[1] = (void *) (&x);
-    GCFP.Value[2] = (void *) (&y);
-    GCFP.Value[3] = (void *) (&soundnumber);
-    GCFP.Value[4] = (void *) (&soundtype);
-    (PlugHooks[HOOK_PLAYSOUNDMAP]) (&GCFP);
+    hooks->play_sound_map(map->data.map, x, y, soundnumber, soundtype);
 
     return 0;
 }
@@ -200,20 +195,13 @@ static int Map_PlaySound(lua_State *L)
 
 static int Map_Message(lua_State *L)
 {
-    int   color = NDI_BLUE |NDI_UNIQUE, x, y, d;
-    char                   *message;
-    lua_object             *map;
+    int			 color = NDI_BLUE |NDI_UNIQUE, x, y, d;
+    char		*message;
+    lua_object	*map;
 
     get_lua_args(L, "Miiis|i", &map, &x, &y, &d, &message, &color);
 
-    GCFP.Value[0] = (void *) (&color);
-    GCFP.Value[1] = (void *) (map->data.map);
-    GCFP.Value[2] = (void *) (&x);
-    GCFP.Value[3] = (void *) (&y);
-    GCFP.Value[4] = (void *) (&d);
-    GCFP.Value[5] = (void *) (message);
-
-    (PlugHooks[HOOK_NEWINFOMAP]) (&GCFP);
+    hooks->new_info_map(color, map->data.map, x, y, d, message);
 
     return 0;
 }

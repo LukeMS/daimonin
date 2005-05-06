@@ -872,16 +872,6 @@ MODULEAPI int cmd_customLua   (object *op, char *params)
 
 MODULEAPI int cmd_aboutLua(object *op, char *params)
 {
-    /* ehm... a map info version msg??? should be drawinfo, or missed i something? MT-18.02.04*/
-    /*
-       int color = NDI_BLUE|NDI_UNIQUE;
-       char message[1024];
-       sprintf(message,"%s (Pegasus)\n(C)2001 by Gros. The Plugin code is under GPL.",PLUGIN_VERSION);
-       GCFP.Value[0] = (void *)(&color);
-       GCFP.Value[1] = (void *)(op->map);
-       GCFP.Value[2] = (void *)(message);
-       (PlugHooks[HOOK_NEWINFOMAP])(&GCFP);
-    */
     return 0;
 }
 

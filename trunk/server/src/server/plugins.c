@@ -52,10 +52,11 @@ struct plugin_hooklist  hooklist    =
 	drop_ob_inv,	
 	decrease_ob_nr,	
 	add_quest_containers, add_quest_trigger,
-	set_quest_status
+	set_quest_status, spring_trap,cast_spell,play_sound_map,
+	find_skill
 };
 
-CFPlugin                PlugList[34];
+CFPlugin                PlugList[PLUGINS_MAX_NROF];
 int                     PlugNR      = 0;
 
 /* get_event_object()
@@ -483,121 +484,6 @@ void removePlugins(void)
     }
 }
 
-/*****************************************************************************/
-/* Hook functions. Those are wrappers to crosslib functions, used by plugins.*/
-/* Remember : NEVER call crosslib functions directly from a plugin if a hook */
-/* exists.                                                                   */
-/*****************************************************************************/
-
-/*****************************************************************************/
-/* LOG wrapper                                                               */
-/*****************************************************************************/
-/* 0 - Level of logging;                                                     */
-/* 1 - Message string                                                        */
-/*****************************************************************************/
-CFParm * CFWLog(CFParm *PParm)
-{
-    LOG(*(int *) (PParm->Value[0]), "%s", (char *) (PParm->Value[1]));
-    return NULL;
-}
-
-/*****************************************************************************/
-/* fix_player wrapper                                                        */
-/*****************************************************************************/
-/* 0 - (player) object                                                       */
-/*****************************************************************************/
-CFParm * CFWFixPlayer(CFParm *PParm)
-{
-    fix_player((object *) (PParm->Value[0]));
-    return NULL;
-}
-
-/*****************************************************************************/
-/* new_info_map wrapper.                                                     */
-/*****************************************************************************/
-/* 0 - Color information;                                                    */
-/* 1 - Map where the message should be heard;                                */
-/* 2 - x position                                                            */
-/* 3 - y position                                                            */
-/* 4 - distance message can be "heared"                                      */
-/* 5 - Message.                                                              */
-/*****************************************************************************/
-CFParm * CFWNewInfoMap(CFParm *PParm)
-{
-    new_info_map(*(int *) (PParm->Value[0]), (struct mapdef *) (PParm->Value[1]), *(int *) (PParm->Value[2]),
-                 *(int *) (PParm->Value[3]), *(int *) (PParm->Value[4]), (char *) (PParm->Value[5]));
-    return NULL;
-}
-
-/*****************************************************************************/
-/* new_info_map wrapper.                                                     */
-/*****************************************************************************/
-/* 0 - Color information;                                                    */
-/* 1 - Map where the message should be heard;                                */
-/* 2 - x position                                                            */
-/* 3 - y position                                                            */
-/* 4 - distance message can be "heared"                                      */
-/* 5 - object 1 which should not hear this                                   */
-/* 6 - object 2 which should not hear this (van be NULL or same as other)    */
-/* 7 - Message.                                                              */
-/*****************************************************************************/
-CFParm * CFWNewInfoMapExcept(CFParm *PParm)
-{
-    new_info_map_except(*(int *) (PParm->Value[0]), (struct mapdef *) (PParm->Value[1]), *(int *) (PParm->Value[2]),
-                        *(int *) (PParm->Value[3]), *(int *) (PParm->Value[4]), (object *) (PParm->Value[5]),
-                        (object *) (PParm->Value[6]), (char *) (PParm->Value[7]));
-    return NULL;
-}
-
-/*****************************************************************************/
-/* spring_trap wrapper.                                                      */
-/*****************************************************************************/
-/* 0 - Trap;                                                                 */
-/* 1 - Victim.                                                               */
-/*****************************************************************************/
-CFParm * CFWSpringTrap(CFParm *PParm)
-{
-    spring_trap((object *) (PParm->Value[0]), (object *) (PParm->Value[1]));
-    return NULL;
-}
-
-/*
- * type of firing express how the dir parameter was parsed
- *  if type is FIRE_DIRECTIONAL, it is a value from 0 to 8 corresponding to a direction
- *  if type is FIRE_POSITIONAL, the 16bits dir parameters is separated into 2 signed shorts
- *       8 lower bits : signed, relative x value from caster
- *       8 higher bits: signed, relative y value from caster
- *   use the following macros defined in <define.h> with FIRE_POSITIONAL:
- *       GET_X_FROM_DIR(dir)  extract the x value
- *       GET_Y_FROM_DIR(dir)  extract they value
- *       SET_DIR_FROM_XY(X,Y) get dir from x,y values
- */
-/*****************************************************************************/
-/* cast_spell wrapper.                                                       */
-/*****************************************************************************/
-/* 0 - op;                                                                   */
-/* 1 - caster;                                                               */
-/* 2 - direction;                                                            */
-/* 3 - type of casting;                                                      */
-/* 4 - is it an ability or a wizard spell ?                                  */
-/* 5 - spelltype;                                                            */
-/* 6 - optional args;                                                        */
-/* 7 - type of firing;                                                       */
-/*                                                                           */
-/*****************************************************************************/
-CFParm * CFWCastSpell(CFParm *PParm)
-{
-    static int  val;
-    CFParm     *CFP;
-    CFP = (CFParm *) (malloc(sizeof(CFParm)));
-    /*int cast_spell(object *op, object *caster, int dir, int type, int ability, */
-    /*SpellTypeFrom item, char *stringarg); */
-    val = cast_spell((object *) (PParm->Value[0]), (object *) (PParm->Value[1]), *(int *) (PParm->Value[2]),
-                     *(int *) (PParm->Value[3]), *(int *) (PParm->Value[4]), *(SpellTypeFrom *) (PParm->Value[5]),
-                     (char *) (PParm->Value[6])/*,*(int *) (PParm->Value[7])*/);
-    CFP->Value[0] = (void *) (&val);
-    return CFP;
-}
 
 /*****************************************************************************/
 /* command_rskill wrapper.                                                   */
@@ -684,17 +570,6 @@ CFParm * CFWOutOfMap(CFParm *PParm)
     return &CFP;
 }
 
-/*****************************************************************************/
-/* esrv_send_item wrapper.                                                   */
-/*****************************************************************************/
-/* 0 - Player object;                                                        */
-/* 1 - Object to update.                                                     */
-/*****************************************************************************/
-CFParm * CFWESRVSendItem(CFParm *PParm)
-{
-    esrv_send_item((object *) (PParm->Value[0]), (object *) (PParm->Value[1]));
-    return(PParm);
-}
 
 /*****************************************************************************/
 /* find_player wrapper.                                                      */
@@ -781,21 +656,6 @@ CFParm * CFWTransferObject(CFParm *PParm)
 }
 
 /*****************************************************************************/
-/* command_title wrapper.                                                    */
-/*****************************************************************************/
-/* 0 - object;                                                               */
-/* 1 - params string.                                                        */
-/*****************************************************************************/
-CFParm * CFWCmdTitle(CFParm *PParm)
-{
-    CFParm     *CFP;
-    static int  val;
-    CFP = (CFParm *) (malloc(sizeof(CFParm)));
-    CFP->Value[0] = &val;
-    return CFP;
-}
-
-/*****************************************************************************/
 /* kill_object wrapper.                                                      */
 /*****************************************************************************/
 /* 0 - killed object;                                                        */
@@ -833,23 +693,6 @@ CFParm * CFWCheckSpellKnown(CFParm *PParm)
 }
 
 /*****************************************************************************/
-/* check_spell_known wrapper.                                                */
-/*****************************************************************************/
-/* 0 - object to check;                                                      */
-/* 1 - spell index to search.                                                */
-/*****************************************************************************/
-CFParm * CFWGetSpellNr(CFParm *PParm)
-{
-    static CFParm   CFP;
-    static int      val;
-
-    val = look_up_spell_name((char *) PParm->Value[0]);
-
-    CFP.Value[0] = &val;
-    return &CFP;
-}
-
-/*****************************************************************************/
 /* do_learn_spell wrapper.                                                   */
 /*****************************************************************************/
 /* 0 - object to affect;                                                     */
@@ -874,40 +717,6 @@ CFParm * CFWDoLearnSpell(CFParm *PParm)
 }
 
 
-/*****************************************************************************/
-/* find_skill wrapper.                                                       */
-/*****************************************************************************/
-/* 0 - object to check;                                                      */
-/* 1 - skill index to search.                                                */
-/*****************************************************************************/
-CFParm * CFWFindSkill(CFParm *PParm)
-{
-    static CFParm   CFP;
-    object  *ptr;
-
-    ptr = find_skill((object *) (PParm->Value[0]), *(int *) (PParm->Value[1]));
-
-    CFP.Value[0] = ptr;
-    return &CFP;
-}
-
-/*****************************************************************************/
-/* lookup skill by name wrapper.                                             */
-/*****************************************************************************/
-/* 0 - object to check;                                                      */
-/* 1 - skill index to search.                                                */
-/*****************************************************************************/
-CFParm * CFWGetSkillNr(CFParm *PParm)
-{
-    static CFParm   CFP;
-    static int      val;
-
-    val = lookup_skill_by_name((char *) PParm->Value[0]);
-
-    CFP.Value[0] = &val;
-    return &CFP;
-}
-
 
 /*****************************************************************************/
 /* do_learn_skill wrapper.                                                   */
@@ -927,34 +736,6 @@ CFParm * CFWDoLearnSkill(CFParm *PParm)
         learn_skill((object *) (PParm->Value[0]), NULL, NULL, *(int *) (PParm->Value[1]), 0);
     }
     return NULL;
-}
-
-/*****************************************************************************/
-/* esrv_send_inventory wrapper.                                              */
-/*****************************************************************************/
-/* 0 - player object.                                                        */
-/* 1 - updated object.                                                       */
-/*****************************************************************************/
-CFParm * CFWESRVSendInventory(CFParm *PParm)
-{
-    esrv_send_inventory((object *) (PParm->Value[0]), (object *) (PParm->Value[1]));
-    return NULL;
-}
-
-/*****************************************************************************/
-/* create_artifact wrapper.                                                  */
-/*****************************************************************************/
-/* 0 - op;                                                                   */
-/* 1 - name of the artifact to create.                                       */
-/*****************************************************************************/
-CFParm * CFWCreateArtifact(CFParm *PParm)
-{
-    CFParm *CFP;
-    object *val;
-    CFP = (CFParm *) (malloc(sizeof(CFParm)));
-    val = create_artifact((object *) (PParm->Value[0]), (char *) (PParm->Value[1]));
-    CFP->Value[0] = (void *) (val);
-    return CFP;
 }
 
 
@@ -997,53 +778,6 @@ CFParm * CFWFindAnimation(CFParm *PParm)
     return CFP;
 }
 
-/*****************************************************************************/
-/* get_archetype_by_object_name wrapper                                      */
-/*****************************************************************************/
-/* 0 - name to search for.                                                   */
-/*****************************************************************************/
-CFParm * CFWGetArchetypeByObjectName(CFParm *PParm)
-{
-    CFParm *CFP;
-    object *val;
-    CFP = (CFParm *) (malloc(sizeof(CFParm)));
-    val = get_archetype_by_object_name((char *) (PParm->Value[0]));
-    CFP->Value[0] = (void *) (val);
-    return CFP;
-}
-
-/*****************************************************************************/
-/* insert_ob_in_ob wrapper.                                                 */
-/*****************************************************************************/
-/* 0 - object to insert;                                                     */
-/* 1 - target object;                                                        */
-/*****************************************************************************/
-CFParm * CFWInsertObjectInObject(CFParm *PParm)
-{
-    static CFParm   CFP; /* do it static */
-
-    CFP.Value[0] = (void *) insert_ob_in_ob((object *) (PParm->Value[0]), (object *) (PParm->Value[1]));
-    return &CFP;
-}
-
-/*****************************************************************************/
-/* insert_ob_in_map wrapper.                                                 */
-/*****************************************************************************/
-/* 0 - object to insert;                                                     */
-/* 1 - map;                                                                  */
-/* 2 - originator of the insertion;                                          */
-/* 3 - integer flags.                                                        */
-/*****************************************************************************/
-CFParm * CFWInsertObjectInMap(CFParm *PParm)
-{
-    CFParm *CFP;
-    object *val;
-    CFP = (CFParm *) (malloc(sizeof(CFParm)));
-    val = insert_ob_in_map((object *) (PParm->Value[0]), (mapstruct *) (PParm->Value[1]), (object *) (PParm->Value[2]),
-                           *(int *) (PParm->Value[3]));
-    CFP->Value[0] = (void *) (val);
-    return CFP;
-}
 
 
 /*****************************************************************************/
@@ -1196,58 +930,6 @@ CFParm * CFWDestructObject(CFParm *PParm)
 {
     destruct_ob((object *) (PParm->Value[0]));
     return NULL;
-}
-
-CFParm * CFWAddString(CFParm *PParm)
-{
-    static CFParm   CFP;
-    char           *val;
-    /*CFP = (CFParm*)(malloc(sizeof(CFParm)));*/
-    val = (char *) (PParm->Value[0]);
-    CFP.Value[0] = NULL;
-    FREE_AND_COPY_HASH((const char *) CFP.Value[0], val);
-    return &CFP;
-}
-
-CFParm * CFWAddRefcount(CFParm *PParm)
-{
-    static CFParm   CFP;
-    char           *val;
-    val = (char *) (PParm->Value[0]);
-    CFP.Value[0] = NULL;
-    FREE_AND_ADD_REF_HASH((const char *) CFP.Value[0], val);
-    return &CFP;
-}
-CFParm * CFWFreeString(CFParm *PParm)
-{
-    char   *val;
-    val = (char *) (PParm->Value[0]);
-    FREE_AND_CLEAR_HASH(val);
-    return NULL;
-}
-
-CFParm * CFWGetFirstMap(CFParm *PParm)
-{
-    CFParm *CFP;
-    CFP = (CFParm *) (malloc(sizeof(CFParm)));
-    CFP->Value[0] = (void *) (first_map) ;
-    return CFP;
-}
-
-CFParm * CFWGetFirstPlayer(CFParm *PParm)
-{
-    CFParm *CFP;
-    CFP = (CFParm *) (malloc(sizeof(CFParm)));
-    CFP->Value[0] = (void *) (first_player) ;
-    return CFP;
-}
-
-CFParm * CFWGetFirstArchetype(CFParm *PParm)
-{
-    CFParm *CFP;
-    CFP = (CFParm *) (malloc(sizeof(CFParm)));
-    CFP->Value[0] = (void *) (first_archetype) ;
-    return CFP;
 }
 
 
@@ -1501,38 +1183,7 @@ CFParm * CFWNewDrawInfo(CFParm *PParm)
                   (char *) (PParm->Value[3]));
     return NULL;
 }
-/*****************************************************************************/
-/* move_player wrapper.                                                      */
-/*****************************************************************************/
-/* 0 - player to move                                                        */
-/* 1 - direction of move                                                     */
-/*****************************************************************************/
-CFParm * CFWMovePlayer(CFParm *PParm)
-{
-    CFParm     *CFP;
-    static int  val;
-    val = move_player((object *) PParm->Value[0], *(int *) PParm->Value[1]);
-    CFP = (CFParm *) (malloc(sizeof(CFParm)));
-    CFP->Value[0] = (void *) &val;
-    return(CFP);
-}
-/*****************************************************************************/
-/* move_object wrapper.                                                      */
-/*****************************************************************************/
-/* 0 - object to move                                                        */
-/* 1 - direction of move                                                     */
-/* 2 - originator                                                            */
-/*****************************************************************************/
-CFParm * CFWMoveObject(CFParm *PParm)
-{
-    CFParm     *CFP;
-    static int  val;
-    val = move_ob((object *) PParm->Value[0], *(int *) PParm->Value[1], (object *) PParm->Value[2]);
-    CFP = (CFParm *) (malloc(sizeof(CFParm)));
-    CFP->Value[0] = (void *) &val;
 
-    return(CFP);
-}
 
 CFParm * CFWSendCustomCommand(CFParm *PParm)
 {
@@ -1540,47 +1191,7 @@ CFParm * CFWSendCustomCommand(CFParm *PParm)
     return NULL;
 }
 
-/* not used atm! */
-CFParm * CFWCFTimerCreate(CFParm *PParm)
-{
-    /*int cftimer_create(int id, long delay, object* ob, int mode) */
-    CFParm     *CFP;
-    static int  val;
-    CFP = (CFParm *) (malloc(sizeof(CFParm)));
-    val = cftimer_create(*(int *) (PParm->Value[0]), *(long *) (PParm->Value[1]), (object *) (PParm->Value[2]),
-                         *(int *) (PParm->Value[3]));
-    CFP->Value[0] = (void *) (&val);
-    return CFP;
-}
 
-/* not used atm! */
-CFParm * CFWCFTimerDestroy(CFParm *PParm)
-{
-    /*int cftimer_destroy(int id) */
-    CFParm     *CFP;
-    static int  val;
-    CFP = (CFParm *) (malloc(sizeof(CFParm)));
-    val = cftimer_destroy(*(int *) (PParm->Value[0]));
-    CFP->Value[0] = (void *) (&val);
-    return CFP;
-}
-/*****************************************************************************/
-/* SET_ANIMATION wrapper.                                                    */
-/*****************************************************************************/
-/* 0 - object                                                                */
-/* 1 - face                                                                  */
-/*****************************************************************************/
-CFParm * CFWSetAnimation(CFParm *PParm)
-{
-    object *op      = (object *) PParm->Value[0];
-    int     face    = *(int *) PParm->Value[1];
-    if (face != -1)
-    {
-        SET_ANIMATION(op, face);
-    }
-    update_object(op, UP_OBJ_FACE);
-    return(PParm);
-}
 /*****************************************************************************/
 /* communicate wrapper.                                                      */
 /*****************************************************************************/
@@ -1596,37 +1207,6 @@ CFParm * CFWCommunicate(CFParm *PParm)
         return NULL;
 
     communicate(op, string);
-    return NULL;
-}
-/*****************************************************************************/
-/* find_best_object_match wrapper.                                           */
-/*****************************************************************************/
-/* 0 - object to find object in inventory                                    */
-/* 1 - name                                                                  */
-/*****************************************************************************/
-CFParm * CFWFindBestObjectMatch(CFParm *PParm)
-{
-    CFParm *CFP;
-    object *op      = (object *) PParm->Value[0];
-    char   *param   = (char *) PParm->Value[1];
-    object *result;
-    result = (object *) find_best_object_match(op, param);
-    CFP = (CFParm *) (malloc(sizeof(CFParm)));
-    CFP->Value[0] = (void *) result;
-
-    return(CFP);
-}
-/*****************************************************************************/
-/* player_apply_below wrapper.                                               */
-/*****************************************************************************/
-/* 0 - object player                                                         */
-/*****************************************************************************/
-CFParm * CFWApplyBelow(CFParm *PParm)
-{
-    object *op  = (object *) PParm->Value[0];
-    if (!op)
-        return NULL;
-    player_apply_below(op);
     return NULL;
 }
 
@@ -1781,24 +1361,6 @@ void GlobalEvent(CFParm *PParm)
     }
 }
 
-/*
- * See sounds.h for sound numbers
- */
-/*****************************************************************************/
-/* play_sound_map wrapper.                                                   */
-/*****************************************************************************/
-/* 0 - map;                                                                  */
-/* 1 - x;                                                                    */
-/* 2 - y;                                                                    */
-/* 3 - sound number                                                          */
-/* 4 - type of sound (0=normal, 1=spell);                                    */
-/*****************************************************************************/
-CFParm * CFWPlaySoundMap(CFParm *PParm)
-{
-    play_sound_map((mapstruct *) (PParm->Value[0]), *(int *) (PParm->Value[1]), *(int *) (PParm->Value[2]),
-                   *(int *) (PParm->Value[3]), *(int *) (PParm->Value[4]));
-    return NULL;
-}
 
 /*****************************************************************************/
 /* create_object wrapper.                                                    */
