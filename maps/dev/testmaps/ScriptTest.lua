@@ -10,7 +10,7 @@ tl:AddTopics('detect curse',
 		if activator:PayAmount(200) then
 			whoami:SayTo(activator,"\nOk, i will cast a 'detect curse' for 2s on you.")
 			activator:Write("You pay the money.", 0)
-			whoami:CastAbility(activator,game:GetSpellNr("detect curse"), 1,0,"")
+			whoami:CastSpell(activator,game:GetSpellNr("detect curse"), 1,0,"")
 		else
 			whoami:SayTo(activator,"\nSorry, you have not enough money.")
 		end
@@ -22,7 +22,7 @@ tl:AddTopics('remove curse',
 		if activator:PayAmount(300) then
 			whoami:SayTo(activator,"\nOk, i will cast a 'remove curse' for 3s on you.")
 			activator:Write("You pay the money.", 0)
-			whoami:CastAbility(activator,game:GetSpellNr("remove curse"), 1,0,"")
+			whoami:CastSpell(activator,game:GetSpellNr("remove curse"), 1,0,"")
 		else
 			whoami:SayTo(activator,"\nSorry, you have not enough money.")
 		end
@@ -34,7 +34,7 @@ tl:AddTopics('remove damnation',
 		if activator:PayAmount(200) then
 			whoami:SayTo(activator,"\nOk, i will cast a 'remove damnation' for 30s on you.")
 			activator:Write("You pay the money.", 0)
-			whoami:CastAbility(activator,game:GetSpellNr("remove damnation"), 1,0,"")
+			whoami:CastSpell(activator,game:GetSpellNr("remove damnation"), 1,0,"")
 		else
 			whoami:SayTo(activator,"\nSorry, you have not enough money.")
 		end
@@ -46,7 +46,7 @@ tl:AddTopics('detect magic',
 		if activator:PayAmount(200) then
 			whoami:SayTo(activator,"\nOk, i will cast a 'detect magic' for 2s on you.")
 			activator:Write("You pay the money.", 0)
-			whoami:CastAbility(activator,game:GetSpellNr("detect magic"), 1,0,"")
+			whoami:CastSpell(activator,game:GetSpellNr("detect magic"), 1,0,"")
 		else
 			whoami:SayTo(activator,"\nSorry, you have not enough money.")
 		end
@@ -58,7 +58,7 @@ tl:AddTopics('remove depletion',
 		if activator:PayAmount(200) then
 			whoami:SayTo(activator,"\nOk, i will cast a 'remove depletion' for 35s on you.")
 			activator:Write("You pay the money.", 0)
-			whoami:CastAbility(activator,game:GetSpellNr("remove depletion"), 1,0,"")
+			whoami:CastSpell(activator,game:GetSpellNr("remove depletion"), 1,0,"")
 		else
 			whoami:SayTo(activator,"\nSorry, you have not enough money.")
 		end
