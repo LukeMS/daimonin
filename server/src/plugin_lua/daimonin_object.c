@@ -38,13 +38,13 @@ static struct method_decl   GameObject_methods[]            =
     {"DecObject",  (lua_CFunction) GameObject_DecObject},
     {"GetSkill",  (lua_CFunction) GameObject_GetSkill},
     {"SetSkill",  (lua_CFunction) GameObject_SetSkill}, {"ActivateRune",  (lua_CFunction) GameObject_ActivateRune},
-    {"CastAbility",  (lua_CFunction) GameObject_CastAbility},
     {"InsertInside",  (lua_CFunction) GameObject_InsertInside}, {"GetGod",  (lua_CFunction) GameObject_GetGod},
     {"SetGod",  (lua_CFunction) GameObject_SetGod}, {"TeleportTo",  (lua_CFunction) GameObject_TeleportTo},
     {"Apply",  (lua_CFunction) GameObject_Apply}, {"PickUp",  (lua_CFunction) GameObject_PickUp},
     {"Drop",  (lua_CFunction) GameObject_Drop}, {"Take",  (lua_CFunction) GameObject_Take},
     {"Fix", (lua_CFunction) GameObject_Fix}, {"Kill", (lua_CFunction) GameObject_Kill},
-    {"CastSpell", (lua_CFunction) GameObject_CastSpell}, {"DoKnowSpell", (lua_CFunction) GameObject_DoKnowSpell},
+    {"CastSpell", (lua_CFunction) GameObject_CastSpell}, 
+	{"DoKnowSpell", (lua_CFunction) GameObject_DoKnowSpell},
     {"AcquireSpell", (lua_CFunction) GameObject_AcquireSpell},
     {"FindSkill", (lua_CFunction) GameObject_FindSkill},
     {"AcquireSkill", (lua_CFunction) GameObject_AcquireSkill},
@@ -417,9 +417,7 @@ static int GameObject_ActivateRune(lua_State *L)
 
     get_lua_args(L, "OO", &self, &whatptr);
 
-    GCFP.Value[0] = (void *) (WHAT);
-    GCFP.Value[1] = (void *) (WHO);
-    (PlugHooks[HOOK_SPRINGTRAP]) (&GCFP);
+    hooks->spring_trap(WHAT, WHO);
 
     return 0;
 }
@@ -769,37 +767,19 @@ static int GameObject_Communicate(lua_State *L)
 /*****************************************************************************/
 static int GameObject_Say(lua_State *L)
 {
-    char       *message;
-    static char buf[HUGE_BUF];
-    int         val, d = MAP_INFO_NORMAL, x, y, mode = 0;
+    char       *message, buf[HUGE_BUF];
+    int         mode = 0;
     lua_object *self;
 
     get_lua_args(L, "Os|i", &self, &message, &mode);
 
-    /* old dynamic buffer */
-    /*buf = (char *)(malloc(sizeof(char)*(strlen(message)+strlen(STRING_OBJ_NAME(who))+20)));*/
-
-    val = NDI_NAVY | NDI_UNIQUE;
-    x = WHO->x;
-    y = WHO->y;
-
-    if (mode)
-        GCFP.Value[5] = (void *) (message);
-    else
+    if (!mode)
     {
         snprintf(buf, sizeof(buf), "%s says: %s", STRING_OBJ_NAME(WHO), message);
-        GCFP.Value[5] = (void *) (buf);
+        message = buf;
     }
-
-    GCFP.Value[0] = (void *) (&val);
-    GCFP.Value[1] = (void *) (WHO->map);
-    GCFP.Value[2] = (void *) (&x);
-    GCFP.Value[3] = (void *) (&y);
-    GCFP.Value[4] = (void *) (&d);
-
-    (PlugHooks[HOOK_NEWINFOMAP]) (&GCFP);
-
-    /*free(buf);*/
+    hooks->new_info_map(NDI_NAVY|NDI_UNIQUE, WHO->map, WHO->x, WHO->y, MAP_INFO_NORMAL, message);
+	
     return 0;
 }
 
@@ -1143,58 +1123,6 @@ static int GameObject_Kill(lua_State *L)
 }
 
 /*****************************************************************************/
-/* Name   : GameObject_CastAbility                                           */
-/* Lua    : object:CastAbility(target, spellno, mode, direction, option)     */
-/* Info   : object casts the ability numbered spellno on target.             */
-/*          mode = Daimonin.CAST_NORMAL or Daimonin.CAST_POTION              */
-/*          direction is the direction to cast the ability in                */
-/*          option is additional string option(s)                            */
-/*          FIXME: only allows for directional abilities?                    */
-/*          Abilities are can be cast in magic-blocking areas, and do not    */
-/*          use magicattack.                                                 */
-/* Status : Stable                                                           */
-/*****************************************************************************/
-static int GameObject_CastAbility(lua_State *L)
-{
-    lua_object *target;
-    int         spell;
-    int         dir;
-    int         mode;
-    char       *op;
-    CFParm     *CFR;
-    int         parm        = 1;
-    int         parm2;
-    int         typeoffire  = FIRE_DIRECTIONAL;
-    lua_object *self;
-
-    get_lua_args(L, "OOiiis", &self, &target, &spell, &mode, &dir, &op);
-
-    if (WHO->type != PLAYER)
-        parm2 = spellNPC;
-    else
-    {
-        if (!mode)
-            parm2 = spellNormal;
-        else
-            parm2 = spellPotion;
-    }
-
-    GCFP.Value[0] = (void *) (target->data.object);
-    GCFP.Value[1] = (void *) (WHO);
-    GCFP.Value[2] = (void *) (&dir);
-    GCFP.Value[3] = (void *) (&spell);
-    GCFP.Value[4] = (void *) (&parm);
-    GCFP.Value[5] = (void *) (&parm2);
-    GCFP.Value[6] = (void *) (op);
-    GCFP.Value[7] = (void *) (&typeoffire);
-    CFR = (PlugHooks[HOOK_CASTSPELL]) (&GCFP);
-
-    free(CFR);
-
-    return 0;
-}
-
-/*****************************************************************************/
 /* Name   : GameObject_CastSpell                                             */
 /* Lua    : object:CastSpell(target, spell, mode, direction, option)         */
 /* Info   : object casts the spell numbered spellno on target.               */
@@ -1204,9 +1132,8 @@ static int GameObject_CastAbility(lua_State *L)
 /*          NPCs can cast spells even in no-spell areas.                     */
 /*          FIXME: only allows for directional spells                        */
 /*          FIXME: is direction/position relative to target? (0 = self)      */
-/* Status : Untested                                                         */
+/* Status : Stable                                                           */
 /*****************************************************************************/
-
 static int GameObject_CastSpell(lua_State *L)
 {
     lua_object *target;
@@ -1214,10 +1141,7 @@ static int GameObject_CastSpell(lua_State *L)
     int         dir;
     int         mode;
     char       *op;
-    CFParm     *CFR;
-    int         parm        = 0;
-    int         parm2;
-    int         typeoffire  = FIRE_DIRECTIONAL;
+    int         val, parm2, parm        = 1;
     lua_object *self;
 
     get_lua_args(L, "OOiiis", &self, &target, &spell, &mode, &dir, &op);
@@ -1232,18 +1156,10 @@ static int GameObject_CastSpell(lua_State *L)
             parm2 = spellPotion;
     }
 
-    GCFP.Value[0] = (void *) (target->data.object);
-    GCFP.Value[1] = (void *) (WHO);
-    GCFP.Value[2] = (void *) (&dir);
-    GCFP.Value[3] = (void *) (&spell);
-    GCFP.Value[4] = (void *) (&parm);
-    GCFP.Value[5] = (void *) (&parm2);
-    GCFP.Value[6] = (void *) (op);
-    GCFP.Value[7] = (void *) (&typeoffire);
-    CFR = (PlugHooks[HOOK_CASTSPELL]) (&GCFP);
-    free(CFR);
+    val = hooks->cast_spell(target->data.object, WHO, dir, spell, parm, parm2, op);
 
-    return 0;
+	lua_pushboolean(L, val);
+    return 1;
 }
 
 /*****************************************************************************/
@@ -1303,17 +1219,13 @@ static int GameObject_AcquireSpell(lua_State *L)
 static int GameObject_FindSkill(lua_State *L)
 {
     int         skill;
-    CFParm     *CFR;
     object     *myob;
     lua_object *self;
 
     get_lua_args(L, "Oi", &self, &skill);
 
-    GCFP.Value[0] = (void *) (WHO);
-    GCFP.Value[1] = (void *) (&skill);
-    CFR = (PlugHooks[HOOK_FINDSKILL]) (&GCFP);
-
-    myob = (object *) (CFR->Value[0]);
+	myob = hooks->find_skill(WHO, skill);
+	
     if (!myob)
         return 0;
 

@@ -27,19 +27,26 @@
 
 f_plugin    HookList[NR_OF_HOOKS]   =
 {
-    NULL, CFWLog, CFWNewInfoMap, CFWSpringTrap, CFWCastSpell, CFWCmdRSkill, CFWBecomeFollower, CFWPickup,
-    CFWGetMapObject, CFWESRVSendItem, CFWFindPlayer, CFWManualApply, CFWCmdDrop, CFWCmdTake, CFWCmdTitle,
-    CFWTransferObject, CFWKillObject, CFWDoLearnSpell, CFWGetSpellNr, CFWCheckSpellKnown, CFWESRVSendInventory,
-    CFWCreateArtifact, CFInterface, CFWUpdateSpeed, CFWUpdateObject, CFWFindAnimation, CFWGetArchetypeByObjectName,
-    CFWInsertObjectInMap, CFWReadyMapName, CFWAddExp, CFWDetermineGod, CFWFindGod, RegisterGlobalEvent,
-    UnregisterGlobalEvent, CFWDumpObject, CFWLoadObject, CFWRemoveObject, CFWAddString, CFWFreeString, CFWAddRefcount,
-    CFWGetFirstMap, CFWGetFirstPlayer, CFWGetFirstArchetype, CFWQueryCost, CFWQueryMoney, CFWPayForItem,
-    CFWPayForAmount, CFWNewDrawInfo, CFWSendCustomCommand, CFWCFTimerCreate, CFWCFTimerDestroy, CFWMovePlayer,
-    CFWMoveObject, CFWSetAnimation, CFWCommunicate, CFWFindBestObjectMatch, CFWApplyBelow, CFWDestructObject,
-    CFWObjectCreateClone, CFWTeleportObject, CFWDoLearnSkill, CFWFindMarkedObject, CFWIdentifyObject, CFWGetSkillNr,
-    CFWFindSkill, CFWNewInfoMapExcept, CFWInsertObjectInObject, CFWFixPlayer, CFWPlaySoundMap, CFWOutOfMap,
-    CFWCreateObject, CFWShowCost, CFWDeposit, CFWWithdraw, CFTransferMapItems, CFMapSave, CFMapDelete
+    NULL,
+	CFWShowCost, CFWDeposit,
+    CFWCreateObject, CFWOutOfMap,
+	CFWCmdRSkill, CFWBecomeFollower, CFWPickup,
+    CFWGetMapObject, CFWCommunicate,  
+		
+	CFWFindPlayer, CFWManualApply, CFWCmdDrop, CFWCmdTake, CFWFindMarkedObject,
+    CFWTransferObject, CFWKillObject, CFWDoLearnSpell,
+	CFWIdentifyObject, CFWCheckSpellKnown, 
+	CFWDestructObject, CFWObjectCreateClone, 
+	CFInterface, CFWUpdateSpeed, CFWUpdateObject, CFWFindAnimation, 
+	CFWTeleportObject, CFWDoLearnSkill, 
+	CFWReadyMapName, CFWAddExp, CFWDetermineGod, CFWFindGod, RegisterGlobalEvent,
+    UnregisterGlobalEvent, CFWDumpObject, CFWLoadObject, CFWRemoveObject,CFTransferMapItems, CFMapSave, CFMapDelete,
 	
+	CFWQueryCost, CFWQueryMoney, CFWPayForItem,
+    CFWPayForAmount, CFWNewDrawInfo, CFWSendCustomCommand, 
+	 
+	CFWWithdraw
+     
 };
 
 #endif /*PLUGPROTO_H_*/

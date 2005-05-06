@@ -146,33 +146,40 @@
 /* source file in the server subdirectory to see the hook "wrappers".        */
 /*****************************************************************************/
 #define HOOK_NONE               0
-#define HOOK_LOG                1
-#define HOOK_NEWINFOMAP         2
-#define HOOK_SPRINGTRAP         3
-#define HOOK_CASTSPELL          4
+      
+#define HOOK_SHOWCOST            1
+#define HOOK_DEPOSIT             2
+#define HOOK_CREATEOBJECT        3
+
+#define HOOK_OUTOFMAP            4
+
 #define HOOK_CMDRSKILL          5
 #define HOOK_BECOMEFOLLOWER     6
 #define HOOK_PICKUP             7
 #define HOOK_GETMAPOBJECT       8
-#define HOOK_ESRVSENDITEM       9
+
+#define HOOK_COMMUNICATE        9
 #define HOOK_FINDPLAYER         10
 #define HOOK_MANUALAPPLY        11
 #define HOOK_CMDDROP            12
 #define HOOK_CMDTAKE            13
-#define HOOK_CMDTITLE           14
+
+#define HOOK_FINDMARKEDOBJECT   14
 #define HOOK_TRANSFEROBJECT     15
 #define HOOK_KILLOBJECT         16
 #define HOOK_LEARNSPELL         17
-#define HOOK_CHECKFORSPELLNAME  18
+
+#define HOOK_IDENTIFYOBJECT     18
 #define HOOK_CHECKFORSPELL      19
-#define HOOK_ESRVSENDINVENTORY  20
-#define HOOK_CREATEARTIFACT     21
+#define HOOK_DESTRUCTOBJECT     20
+#define HOOK_CLONEOBJECT        21
 #define HOOK_INTERFACE          22
 #define HOOK_UPDATESPEED        23
 #define HOOK_UPDATEOBJECT       24
 #define HOOK_FINDANIMATION      25
-#define HOOK_GETARCHBYOBJNAME   26
-#define HOOK_INSERTOBJECTINMAP  27
+#define HOOK_TELEPORTOBJECT      26
+#define HOOK_LEARNSKILL          27
+
 #define HOOK_READYMAPNAME       28
 #define HOOK_ADDEXP             29
 #define HOOK_DETERMINEGOD       30
@@ -182,48 +189,21 @@
 #define HOOK_DUMPOBJECT         34
 #define HOOK_LOADOBJECT         35
 #define HOOK_REMOVEOBJECT       36
-#define HOOK_ADDSTRING          37
-#define HOOK_FREESTRING         38
-#define HOOK_ADDREFCOUNT        39
-#define HOOK_GETFIRSTMAP        40
-#define HOOK_GETFIRSTPLAYER     41
-#define HOOK_GETFIRSTARCHETYPE  42
-#define HOOK_QUERYCOST          43
-#define HOOK_QUERYMONEY         44
-#define HOOK_PAYFORITEM         45
-#define HOOK_PAYFORAMOUNT       46
-#define HOOK_NEWDRAWINFO        47
-#define HOOK_SENDCUSTOMCOMMAND  48
-#define HOOK_CFTIMERCREATE      49
-#define HOOK_CFTIMERDESTROY     50
-#define HOOK_MOVEPLAYER         51
-#define HOOK_MOVEOBJECT         52
-#define HOOK_SETANIMATION        53
-#define HOOK_COMMUNICATE         54
-#define HOOK_FINDBESTOBJECTMATCH 55
-#define HOOK_APPLYBELOW          56
-#define HOOK_DESTRUCTOBJECT      57
-#define HOOK_CLONEOBJECT         58
-#define HOOK_TELEPORTOBJECT      59
-#define HOOK_LEARNSKILL          60
-#define HOOK_FINDMARKEDOBJECT    61
-#define HOOK_IDENTIFYOBJECT      62
-#define HOOK_CHECKFORSKILLNAME   63
-#define HOOK_FINDSKILL           64
-#define HOOK_NEWINFOMAPEXCEPT    65
-#define HOOK_INSERTOBJECTINOB    66
-#define HOOK_FIXPLAYER           67
-#define HOOK_PLAYSOUNDMAP        68
-#define HOOK_OUTOFMAP            69
-#define HOOK_CREATEOBJECT        70
-#define HOOK_SHOWCOST            71
-#define HOOK_DEPOSIT             72
-#define HOOK_WITHDRAW            73
-#define HOOK_MAPTRANSERITEMS     74
-#define HOOK_MAPSAVE             75
-#define HOOK_MAPDELETE           76
+#define HOOK_MAPTRANSERITEMS     37
+#define HOOK_MAPSAVE             38
+#define HOOK_MAPDELETE           39
 
-#define NR_OF_HOOKS              77
+#define HOOK_QUERYCOST          40
+#define HOOK_QUERYMONEY         41
+#define HOOK_PAYFORITEM         42
+#define HOOK_PAYFORAMOUNT       43
+#define HOOK_NEWDRAWINFO        44
+#define HOOK_SENDCUSTOMCOMMAND  45
+
+#define HOOK_WITHDRAW            46
+  
+#define NR_OF_HOOKS              47
+  
 
 /*****************************************************************************/
 /* CFParm is the data type used to pass informations between the server and  */
@@ -322,6 +302,10 @@ struct plugin_hooklist
 	void (*add_quest_containers)(object *op);
 	void (*add_quest_trigger)(object *who, object *trigger);
 	void (*set_quest_status)(struct obj *trigger, int q_status, int q_type);
+	void (*spring_trap)(object *trap, object *victim);
+	int  (*cast_spell)(object *op, object *caster, int dir, int type, int ability, SpellTypeFrom item, char *stringarg);
+	void (*play_sound_map)(mapstruct *map, int x, int y, int sound_num, int sound_type);
+	object * (*find_skill)(object *op, int skillnr);
 };
 
 /*****************************************************************************/
@@ -340,7 +324,9 @@ extern MODULEAPI CFParm    *triggerEvent(CFParm *PParm);
 
 
 /* Table of all loaded plugins */
-extern CFPlugin             PlugList[34];
+#define	PLUGINS_MAX_NROF 32
+
+extern CFPlugin             PlugList[PLUGINS_MAX_NROF];
 extern int                  PlugNR;
 
 #endif /*PLUGIN_H_*/
