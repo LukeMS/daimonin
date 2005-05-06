@@ -4,13 +4,17 @@ function _data_store._object(objtype, id)
     return { ['type'] = objtype, ['type_id'] = id }
 end
 
-function _data_store._serialize(name, value, depth)
+function _data_store._serialize(key, value, depth)
     local prefix
     if depth == nil then 
         depth = '' 
         prefix = 'return '
     else
-        prefix = depth .. '[' .. string.format("%q", name) .. '] = '
+        if type(key)=="string" then
+            prefix = depth .. '[' .. string.format("%q", key) .. '] = '
+        else
+            prefix = depth .. '[' .. tostring(key) .. '] = '
+        end
     end
 
     local t = type(value)
