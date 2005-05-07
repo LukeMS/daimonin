@@ -1611,6 +1611,124 @@ void move_timer(object *op)
     }
 }
 
+void move_environment_sensor(object *op)
+{
+    int trig_tod = 0, trig_dow = 0, trig_bright = 0;
+    timeofday_t tod;
+    
+    if(op->slaying || op->will_apply)
+        get_tod(&tod);
+    
+    /* Time of day triggered? */
+    if(op->slaying == NULL)
+        trig_tod = 1;
+    else
+    {
+        int hh1,mm1,hh2,mm2;
+        if(sscanf(op->slaying, "%2d:%2d-%2d:%2d", &hh1, &mm1, &hh2, &mm2) == 4)
+        {
+            hh1 = CLAMP(hh1, 0, 23);
+            mm1 = CLAMP(mm1, 0, 59);
+            hh2 = CLAMP(hh2, 0, 23);
+            mm2 = CLAMP(mm2, 0, 59);
+
+            if(tod.hour >= hh1 && tod.minute >= mm1 &&
+                    tod.hour <= hh2 && tod.minute <= mm2)
+                trig_tod = 1;
+//            LOG(llevDebug, "tod: %02d:%02d, trig (%s): %d\n", tod.hour, tod.minute, op->slaying, trig_tod);
+        } else
+        {
+            /* Interval is obviously invalid, drop it */
+            FREE_AND_CLEAR_HASH(op->slaying);
+        }
+    }
+
+    /* Day of Week triggered? */
+    if(op->will_apply == 0)
+        trig_dow = 1;
+    else
+    {
+        if(op->will_apply & (1 << tod.dayofweek))
+            trig_dow = 1;
+        
+        // LOG(llevDebug, "Weekday %d, trig (%d): %d\n", tod.dayofweek, op->will_apply, trig_dow);
+    }
+    
+    /* Brightness triggered? */
+    if(op->last_grace == 0)
+        trig_bright = 1;
+    else
+    {
+        object *tmp;
+        
+        op->last_grace = CLAMP(op->last_grace, -MAX_DARKNESS, MAX_DARKNESS);
+        
+        /* if sensor is inside container, see whats it like outside */
+        for(tmp = op; tmp && tmp->env && tmp->map == NULL; tmp = tmp->env)
+            ;
+            
+        /* If sensor can't see through closed containers */
+        if(!QUERY_FLAG(op, FLAG_SEE_INVISIBLE) && op->env) {
+            if((op->type != TYPE_QUEST_CONTAINER && op->type != CONTAINER) ||
+                    !QUERY_FLAG(op, FLAG_APPLIED)) 
+                tmp = NULL;
+        }
+
+        if(tmp)
+        {
+            int light_level = GET_MAP_LIGHT_VALUE(tmp->map,tmp->x,tmp->y) + global_darkness_table[CLAMP(MAP_DARKNESS(tmp->map), 0, MAX_DARKNESS)];
+            if ((op->last_grace < 0 && light_level < global_darkness_table[ABS(op->last_grace)]) ||
+                    (op->last_grace > 0 && light_level > global_darkness_table[ABS(op->last_grace)]))
+                trig_bright = 1;
+//            LOG(llevDebug, "env_sensor: trig_lvl = %d, real=%d, trig: %d\n", global_darkness_table[ABS(op->last_grace)], light_level, trig_bright);
+        }
+    }
+
+    /* Trigger if sensor status changes */
+    if(
+            ( (trig_tod && trig_dow && trig_bright) && op->value == 0) ||
+            (!(trig_tod && trig_dow && trig_bright) && op->value == 1))
+    {
+//        LOG(llevDebug, "env_sensor toggled from %d to %d\n", op->value, !op->value);
+        
+        /* TODO trigger a plugin event here or in push_button()? */
+        op->value = (trig_tod && trig_dow && trig_bright) ? 1 : 0;
+#ifdef PLUGINS
+        /* GROS: Handle for plugin TRIGGER event */
+        if (op->event_flags & EVENT_FLAG_TRIGGER)
+        {
+            CFParm  CFP;
+            CFParm *CFR;
+            int     k, l, m;
+            int     rtn_script  = 0;
+            object *event_obj   = get_event_object(op, EVENT_TRIGGER);
+            m = 0;
+            k = EVENT_TRIGGER;
+            l = SCRIPT_FIX_NOTHING;
+            CFP.Value[0] = &k;
+            CFP.Value[1] = op; /* activator first */
+            CFP.Value[2] = op; /* thats whoisme */
+            CFP.Value[3] = NULL;
+            CFP.Value[4] = NULL;
+            CFP.Value[5] = &m;
+            CFP.Value[6] = &m;
+            CFP.Value[7] = &m;
+            CFP.Value[8] = &l;
+            CFP.Value[9] = (char *) event_obj->race;
+            CFP.Value[10] = (char *) event_obj->slaying;
+            if (findPlugin(event_obj->name) >= 0)
+            {
+                CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
+                rtn_script = *(int *) (CFR->Value[0]);
+            }
+            if (rtn_script != 0)
+                return;
+        }
+#endif
+        push_button(op);
+    }
+}
+
 /* move_marker --peterm@soda.csua.berkeley.edu
    when moved, a marker will search for a player sitting above
    it, and insert an invisible, weightless force into him
@@ -1914,6 +2032,9 @@ int process_object(object *op)
           return 0;
         case TYPE_TIMER:
           move_timer(op);
+          return 0;
+        case TYPE_ENV_SENSOR:
+          move_environment_sensor(op);
           return 0;
     }
 

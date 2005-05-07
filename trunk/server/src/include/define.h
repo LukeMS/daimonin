@@ -66,6 +66,12 @@ error - Your ANSI C compiler should be defining __STDC__;
 #ifndef SGN
 #define SGN(x) ((x)>0?1:((x)<0?-1:0))
 #endif
+#ifndef CLAMP
+#define CLAMP(x, lo, hi) ((x)>(hi)?(hi):((x)<(lo)?(lo):(x)))
+#endif
+#ifndef ABS
+#define ABS(x) ((x)<0?-(x):(x))
+#endif
 
 #define MAX_STAT        30  /* The maximum legal value of any stat */
 #define MIN_STAT        1   /* The minimum legal value of any stat */
@@ -306,7 +312,7 @@ error - Your ANSI C compiler should be defining __STDC__;
                                          * use a own type for it instead of marking "real" object with fancy flags 
                                          */
 #define TYPE_TIMER              132     /* Trigger a connection after a time period */
-#define TYPE_ENV_DETECTOR       133     /* Triggers depending on environment (TOD, brightness etc) */
+#define TYPE_ENV_SENSOR         133     /* Triggers depending on environment (TOD, brightness etc) */
 /* Some free type values here! */
 #define DEEP_SWAMP              138
 #define IDENTIFY_ALTAR          139
