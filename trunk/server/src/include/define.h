@@ -129,7 +129,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FOOD                    6
 #define POISON                  7
 #define BOOK                    8
-#define CLOCK                   9
+#define CLOCK                   9  /* Shows the time of day when applied */
 #define FBULLET                 10
 #define FBALL                   11
 #define LIGHTNING               12
@@ -147,7 +147,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define KEY                     24
 #define MMISSILE                25
 #define TIMED_GATE              26
-#define TRIGGER                 27
+#define TRIGGER                 27 /* Only triggered when applied */
 #define GRIMREAPER              28
 #define MAGIC_EAR               29
 #define TRIGGER_BUTTON          30
@@ -251,7 +251,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define SPINNER                 90
 #define GATE                    91
 #define BUTTON                  92
-#define CF_HANDLE               93
+#define CF_HANDLE               93 /* Only triggered when applied */
 #define PIT                     94 /* PIT are called HOLE in crossfire) - normal hole is type EXIT */
 #define TRAPDOOR                95
 #define WORD_OF_RECALL          96
@@ -305,9 +305,13 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define TYPE_QUEST_OBJECT		131		/* a quest object - it will be set to what we need. Its better & cleaner to
                                          * use a own type for it instead of marking "real" object with fancy flags 
                                          */
+#define TYPE_TIMER              132     /* Trigger a connection after a time period */
+#define TYPE_ENV_DETECTOR       133     /* Triggers depending on environment (TOD, brightness etc) */
+/* Some free type values here! */
 #define DEEP_SWAMP              138
 #define IDENTIFY_ALTAR          139
 #define CANCELLATION            141
+/* More free type values here =) */
 #define MENU                    150 /* Mark Wedel (mark@pyramid.com) Shop inventories */
 #define BALL_LIGHTNING          151 /* peterm:  ball lightning and color spray */
 #define SWARM_SPELL             153

@@ -1554,6 +1554,63 @@ void move_creator(object *op)
     insert_ob_in_map(tmp, op->map, op, 0);
 }
 
+/* hp = time left
+ * maxhp = time to reset to
+ * FLAG_CURSED - reset when triggered
+ * value = connection state
+ */
+void move_timer(object *op)
+{
+    if(op->stats.hp >= 0)
+    {
+        op->stats.hp--;
+        if(op->stats.hp < 0)
+        {
+            /* TODO trigger a plugin event here or in use_trigger()? */
+#ifdef PLUGINS
+            /* GROS: Handle for plugin TRIGGER event */
+            if (op->event_flags & EVENT_FLAG_TRIGGER)
+            {
+                CFParm  CFP;
+                CFParm *CFR;
+                int     k, l, m;
+                int     rtn_script  = 0;
+                object *event_obj   = get_event_object(op, EVENT_TRIGGER);
+                m = 0;
+                k = EVENT_TRIGGER;
+                l = SCRIPT_FIX_NOTHING;
+                CFP.Value[0] = &k;
+                CFP.Value[1] = op; /* activator first */
+                CFP.Value[2] = op; /* thats whoisme */
+                CFP.Value[3] = NULL;
+                CFP.Value[4] = NULL;
+                CFP.Value[5] = &m;
+                CFP.Value[6] = &m;
+                CFP.Value[7] = &m;
+                CFP.Value[8] = &l;
+                CFP.Value[9] = (char *) event_obj->race;
+                CFP.Value[10] = (char *) event_obj->slaying;
+                if (findPlugin(event_obj->name) >= 0)
+                {
+                    CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
+                    rtn_script = *(int *) (CFR->Value[0]);
+                }
+                if (rtn_script != 0)
+                    return;
+            }
+#endif
+            use_trigger(op);
+
+            if(QUERY_FLAG(op, FLAG_CURSED))
+                op->stats.hp = op->stats.maxhp;
+        }
+    } else {
+        /* Disable this timer */
+        op->speed = 0;
+        update_ob_speed(op);
+    }
+}
+
 /* move_marker --peterm@soda.csua.berkeley.edu
    when moved, a marker will search for a player sitting above
    it, and insert an invisible, weightless force into him
@@ -1854,6 +1911,9 @@ int process_object(object *op)
           return 0;
         case PEACEMAKER:
           move_peacemaker(op);
+          return 0;
+        case TYPE_TIMER:
+          move_timer(op);
           return 0;
     }
 

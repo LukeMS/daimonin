@@ -41,6 +41,8 @@ void push_button(object *op)
     object     *tmp;
     objectlink *ol;
 
+    /* TODO: possibly all effects here should cause a TRIGGER plugin event */
+    
     /*LOG(llevDebug, "push_button: %s (%d)\n", op->name, op->count);*/
     for (ol = get_button_links(op); ol; ol = ol->next)
     {
@@ -134,6 +136,15 @@ void push_button(object *op)
               break;
             case CREATOR:
               move_creator(tmp);
+              break;
+            case TYPE_TIMER:
+              /* a signal to a stopped timer means for it to start */
+              if(tmp->speed == 0) 
+              {
+                tmp->speed = 0.125; /* once per second */
+                tmp->stats.hp = tmp->stats.maxhp;
+                update_ob_speed(tmp);
+              }
               break;
         }
     }
@@ -256,6 +267,7 @@ void use_trigger(object *op)
 {
     /* Toggle value */
     op->value = !op->value;
+    /* TODO: trigger a TRIGGER plugin event here? */
     push_button(op);
 }
 
