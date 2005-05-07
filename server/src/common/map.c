@@ -621,8 +621,8 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
      * a valid terrain flag, this is forbidden to enter.
      */
     if (msp->move_flags & ~terrain)
-        return ((flags & 
-				(P_NO_PASS | P_IS_ALIVE | P_IS_PLAYER | P_CHECK_INV | P_PASS_THRU | P_PASS_ETHEREAL) | P_NO_TERRAIN));
+        return (flags & 
+				(P_NO_PASS | P_IS_ALIVE | P_IS_PLAYER | P_CHECK_INV | P_PASS_THRU | P_PASS_ETHEREAL | P_NO_TERRAIN));
 
     /* the terrain is ok... whats first?
      * A.) P_IS_ALIVE - we leave without question

@@ -43,9 +43,9 @@ mmkdir $basedir/$datadir/unique-items
 mmkdir $basedir/$datadir/global
 
 echo "Copy server data"
-cp -u $basedir/install/* $basedir/$datadir
+cp $basedir/install/* $basedir/$datadir
 
 mmkdir $basedir/lib
 echo "Copy arch and lib files"
-cp -u ./../../../arch/* $basedir/lib
+cp ./../../../arch/* $basedir/lib
 echo "done."

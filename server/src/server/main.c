@@ -1352,8 +1352,6 @@ int main(int argc, char **argv)
         timeout.tv_sec=0;timeout.tv_usec=0;
         doeric_server(SOCKET_UPDATE_PLAYER|SOCKET_UPDATE_CLIENT, &timeout);
 
-        cftimer_process_timers();   /* Process the crossfire Timers */
-
 #ifdef PLUGINS
         /* GROS : Here we handle the CLOCK global event */
         evtid = EVENT_CLOCK;

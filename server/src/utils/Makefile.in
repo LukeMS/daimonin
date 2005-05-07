@@ -1,5 +1,5 @@
 FILES = Makefile.in update_rp mktable.script \
-	flushlocks dmomloop.in
+	flushlocks dmonloop.in
 
 prefix = @prefix@
 exec_prefix = @exec_prefix@

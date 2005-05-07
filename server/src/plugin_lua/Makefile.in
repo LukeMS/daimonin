@@ -2,7 +2,7 @@
 # Configuration part. Edit those variables to fit your own system setup.
 # *****************************************************************************
 
-LIBS		= -ldl -llua -llualib
+LIBS		= -llua -llualib
 
 # We are using embedded lua sources. Change these if you want to link against
 # another lua library
