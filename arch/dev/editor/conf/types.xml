@@ -181,6 +181,17 @@
   <entry bit="5" name="Cloud Surface" />
 </bitmask>
 
+<!-- From time.c -->
+<bitmask name="day_of_week">
+  <entry bit="0" name="Day of the Moon" />
+  <entry bit="1" name="Day of the Bull" />
+  <entry bit="2" name="Day of the Deception" />
+  <entry bit="3" name="Day of Thunder" />
+  <entry bit="4" name="Day of Freedom" />
+  <entry bit="5" name="Day of the Great Gods" />
+  <entry bit="6" name="Day of the Sun" />
+</bitmask>
+
 <!--###################### list definitions ######################-->
 
 <list name="language">
@@ -259,6 +270,12 @@
   <entry value="0" name="normal" />
   <entry value="1" name="kill quest" />
   <entry value="2" name="container quest" />
+</list>
+
+<list name="env_trigger">
+  <entry value="0" name="Time of Day" />
+  <entry value="1" name="Day of Week" />
+  <entry value="2" name="Brightness" />
 </list>
 
 <list name="potion_effect">
@@ -367,51 +384,28 @@
 </list>
 
 <list name="attack_type">
-
   <entry value="0" name="&lt;standard&gt;" />
-
   <entry value="1" name="Distance attack" />
-
   <entry value="2" name="Run away" />
-
   <entry value="3" name="Hit and run" />
-
   <entry value="4" name="Wait and hit" />
-
   <entry value="5" name="Always run" />
-
   <entry value="6" name="Wait and hit from distance" />
-
   <entry value="7" name="Keep distance" />
-
 </list>
 
-
-
 <list name="move_type">
-
   <entry value="0" name="&lt;standard&gt;" />
-
   <entry value="16" name="Pet movement" />
-
   <entry value="32" name="Small circle" />
-
   <entry value="48" name="Large circle" />
-
   <entry value="64" name="Short horiz pace" />
-
   <entry value="80" name="Long horiz pace" />
-
   <entry value="96" name="Random direction" />
-
   <entry value="112" name="Random walk" />
-
   <entry value="128" name="Short vert pace" />
-
   <entry value="144" name="Long vert pace" />
-
   <entry value="176" name="Use waypoints" />
-
 </list> 
 
 <!--###################### default attributes ######################-->
@@ -1521,7 +1515,7 @@
     <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
-    When a predefined amount of weigh is placed on a button, the
+    When a predefined amount of weight is placed on a button, the
     &lt;connection&gt; value is triggered. In most cases this happens when a
     player or monster steps on it. When the button is "released", the
     &lt;connection&gt; value get's triggered a second time. ]]>
@@ -7141,10 +7135,10 @@ that food.]]>
   <description><![CDATA[
     The waypoint object can hold a position that a mob is to reach.
 	
-	Mobs will only use waypoints if their attack_movement attribute is between 176 and
-	191.
+	Mobs will only use waypoints if their attack_movement attribute is between 176 and 
+    191 or if they have a behaviour list with move_towards_waypoint in the moves class.
 	
-	When the mob reaches the destination, it will either continue to
+	When the mob reaches the destination it will either continue to
 	the next waypoint, or stop. Waypoints can be used to set up patrol 
 	routes or make more dynamic script behaviours.  
 	When a waypoint is reached, a TRIGGER event will be executed.
@@ -7181,5 +7175,116 @@ that food.]]>
 	not have more than one active waypoint.
   </attribute>
 </type>
+
+<!--####################################################################-->
+<type number="132" name="Timer">
+  <ignore>
+    <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
+  </ignore>
+  <description><![CDATA[
+    Timers are used to trigger connections at specific time intervals. 
+    A timer that is stored as running will start countdown as soon as the
+    map loads, otherwise it will wait for activation through its connection.
+    If the timer is set to reset after having been triggered, it will
+    go on and on forever.
+    ]]>
+  </description>
+  <use><![CDATA[
+    You can for example use timers connected to creators to repeatedly
+    create new resources of some kind. 
+    Don't use timers for quick and repeated script triggering. The Lua plugin
+    has a "coroutine" system that can handle that much more efficiently. For longer trigger intervals, timers work well together with scripts.
+    ]]>
+  </use>
+  <attribute arch="no_pick" value="1" type="fixed" />
+  <attribute arch="sys_object" value="1" type="fixed" />
+  <attribute arch="connected" editor="connection" type="int">
+    When the timer runs out, all objects with the same connection value 
+    are toggled. Also, if the connection is activated while the timer is
+    stopped - the timer will be started.
+  </attribute>
+  <attribute arch="last_eat" editor="connection flag1" type="bool">
+    Depending on the target object, setting this flag or not
+    can have different effects. See the object you are connecting
+    to this.
+  </attribute>
+  <attribute arch="cursed" editor="restarts when triggered" type="bool">
+    Restarted the timer when it has run out. 
+  </attribute>
+  <attribute arch="maxhp" editor="timer interval" type="int">
+    Timer interval in seconds.
+  </attribute>
+  <attribute arch="hp" editor="time left" type="int">
+    Time left before triggering in seconds.
+    -1 means that the timer is inactive and can only be started by a script or a signal on its connection.
+  </attribute>
+</type>
+
+<!--####################################################################-->
+<type number="133" name="Environment Detector">
+  <ignore>
+    <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
+  </ignore>
+  <description><![CDATA[
+    Environment detectors periodically watch their environment for specific
+    conditions. Currently they can check for time of day (ToD), day of week (DoW) and brightness, all at the same time.
+    ]]>
+  </description>
+  <use><![CDATA[
+    ToD and DoW detectors work even underground and are best used to control the behaviours of sentient beings (guard schedules, workers etc).
+    DoW detectors will trigger during specified weekdays.
+    Brightness detectors will detect the sun if put outdoors, and of course also nearby light sources if indoors/underground and at night.
+
+    The detector will not trigger unless all configured conditions are satisifed. This means you can basically set it to trigger at 11 am on very bright Thursdays.
+     ]]>
+  </use>
+  <attribute arch="no_pick" value="1" type="fixed" />
+  <attribute arch="sys_object" value="1" type="fixed" />
+  <attribute arch="slaying" editor="trigger time" type="string">
+    The time interval this detector should trigger. This should be in the form "hh:mm-hh:mm", for example "12:00-23:59" to trigger during the afternoon.
+    An empty (or malformed) value means don't care about time of day.
+  </attribute>  
+  <attribute arch="last_grace" editor="trigger brightness" type="int">
+    The detector will trigger (and stay triggered) when its environmental 
+    brightness crosses this setting.
+    
+    A positive brightness value means "if higher".
+    A negative brightness value means "if lower" from absolute value.
+    A value of 4 means it will trigger when brightness is 4 or higher.
+    A value of -4 means it will trigger when brightness drops to 4 or lower.
+
+    A value of 0 means don't care about brightness.
+  </attribute>
+  <attribute arch="will_apply" editor="trigger weekday" type="bitmask_day_of_week">
+    Which days to trigger the connection.
+  </attribute>
+  <attribute arch="see_invisible" editor="work through container" type="bool">
+    If this flag is set, a brightness detector will still work in a container
+    as if it was outside the container. This can be used to create pickable 
+    light detectors by putting it inside another object.
+
+    Without this flag, a brightness detector in a container will only see 
+    darkness when the container is closed. But if the container is opened 
+    it will detect the environment brightness.
+  </attribute>
+  <attribute arch="connected" editor="connection" type="int">
+    When the detector is triggered, all objects with the same
+    connection value get activated.
+  </attribute>
+  <attribute arch="last_eat" editor="connection flag1" type="bool">
+    Depending on the target object, setting this flag or not
+    can have different effects. See the object you are connecting
+    to this.
+  </attribute>
+  <attribute arch="speed" editor="detection speed" type="float">
+    This value defines the time between two detector-checks.
+    If you want the detector to behave almost like pedestals/buttons,
+    set speed rather high, like &lt;detection speed&gt; 1.0.
+    Normally you can use a very low value here...
+  </attribute>
+</type>
+
 
 </types>
