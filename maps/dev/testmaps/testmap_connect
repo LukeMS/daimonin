@@ -4,9 +4,10 @@ msg
 Creator: Daimonin Map Editor
 Date:    4/13/2003
 endmsg
-width 17
+width 24
 height 17
 difficulty 1
+darkness 5
 end
 arch floor_ostone2
 end
@@ -1634,7 +1635,7 @@ y 10
 end
 arch sign
 msg
-This gate is controlled by an invisible timer. 
+This gate is controlled by an invisible timer.
 It opens and closes every 10 seconds
 endmsg
 x 13
@@ -1934,15 +1935,7 @@ arch floor_ostone2
 x 16
 y 8
 end
-arch fwall_brown1
-x 16
-y 8
-end
 arch floor_ostone2
-x 16
-y 9
-end
-arch fwall_brown1
 x 16
 y 9
 end
@@ -1950,15 +1943,7 @@ arch floor_ostone2
 x 16
 y 10
 end
-arch fwall_brown1
-x 16
-y 10
-end
 arch floor_ostone2
-x 16
-y 11
-end
-arch fwall_brown1
 x 16
 y 11
 end
@@ -2000,5 +1985,650 @@ y 16
 end
 arch fwall_brown1
 x 16
+y 16
+end
+arch floor_ostone2
+x 17
+end
+arch fwall_brown1
+x 17
+end
+arch floor_ostone2
+x 17
+y 1
+end
+arch gate_open
+connected 201
+x 17
+y 1
+end
+arch floor_ostone9
+x 17
+y 2
+end
+arch environment_sensor
+name Light sensor
+last_grace 5
+connected 201
+x 17
+y 2
+end
+arch floor_ostone2
+x 17
+y 3
+end
+arch sign
+msg
+This sensor senses light
+endmsg
+x 17
+y 3
+end
+arch floor_ostone2
+x 17
+y 4
+end
+arch floor_ostone2
+x 17
+y 5
+end
+arch floor_ostone2
+x 17
+y 6
+end
+arch ring_generic
+name wristwatch
+type 9
+x 17
+y 6
+end
+arch floor_ostone2
+x 17
+y 7
+end
+arch crystal_light4
+x 17
+y 7
+end
+arch floor_ostone2
+x 17
+y 8
+end
+arch floor_ostone2
+x 17
+y 9
+end
+arch floor_ostone2
+x 17
+y 10
+end
+arch floor_ostone2
+x 17
+y 11
+end
+arch floor_ostone2
+x 17
+y 12
+end
+arch floor_ostone2
+x 17
+y 13
+end
+arch floor_ostone2
+x 17
+y 14
+end
+arch floor_ostone2
+x 17
+y 15
+end
+arch floor_ostone2
+x 17
+y 16
+end
+arch fwall_brown1
+x 17
+y 16
+end
+arch floor_ostone2
+x 18
+end
+arch fwall_brown1
+x 18
+end
+arch floor_ostone2
+x 18
+y 1
+end
+arch floor_ostone2
+x 18
+y 2
+end
+arch floor_ostone2
+x 18
+y 3
+end
+arch floor_ostone2
+x 18
+y 4
+end
+arch floor_ostone2
+x 18
+y 5
+end
+arch floor_ostone2
+x 18
+y 6
+end
+arch floor_ostone2
+x 18
+y 7
+end
+arch floor_ostone2
+x 18
+y 8
+end
+arch floor_ostone2
+x 18
+y 9
+end
+arch floor_ostone2
+x 18
+y 10
+end
+arch floor_ostone2
+x 18
+y 11
+end
+arch floor_ostone2
+x 18
+y 12
+end
+arch floor_ostone2
+x 18
+y 13
+end
+arch floor_ostone2
+x 18
+y 14
+end
+arch floor_ostone2
+x 18
+y 15
+end
+arch floor_ostone2
+x 18
+y 16
+end
+arch fwall_brown1
+x 18
+y 16
+end
+arch floor_ostone2
+x 19
+end
+arch fwall_brown1
+x 19
+end
+arch floor_ostone2
+x 19
+y 1
+end
+arch gate_open
+connected 202
+x 19
+y 1
+end
+arch floor_ostone9
+x 19
+y 2
+end
+arch environment_sensor
+name Afternoon sensor
+slaying 10:10-23:59
+connected 202
+x 19
+y 2
+end
+arch floor_ostone2
+x 19
+y 3
+end
+arch sign
+msg
+This sensor closes the door on afternoons
+endmsg
+x 19
+y 3
+end
+arch floor_ostone2
+x 19
+y 4
+end
+arch floor_ostone2
+x 19
+y 5
+end
+arch floor_ostone2
+x 19
+y 6
+end
+arch floor_ostone2
+x 19
+y 7
+end
+arch floor_ostone2
+x 19
+y 8
+end
+arch floor_ostone2
+x 19
+y 9
+end
+arch floor_ostone2
+x 19
+y 10
+end
+arch floor_ostone2
+x 19
+y 11
+end
+arch floor_ostone2
+x 19
+y 12
+end
+arch floor_ostone2
+x 19
+y 13
+end
+arch floor_ostone2
+x 19
+y 14
+end
+arch floor_ostone2
+x 19
+y 15
+end
+arch floor_ostone2
+x 19
+y 16
+end
+arch fwall_brown1
+x 19
+y 16
+end
+arch floor_ostone2
+x 20
+end
+arch fwall_brown1
+x 20
+end
+arch floor_ostone2
+x 20
+y 1
+end
+arch floor_ostone2
+x 20
+y 2
+end
+arch floor_ostone2
+x 20
+y 3
+end
+arch floor_ostone2
+x 20
+y 4
+end
+arch floor_ostone2
+x 20
+y 5
+end
+arch floor_ostone2
+x 20
+y 6
+end
+arch floor_ostone2
+x 20
+y 7
+end
+arch floor_ostone2
+x 20
+y 8
+end
+arch floor_ostone2
+x 20
+y 9
+end
+arch floor_ostone2
+x 20
+y 10
+end
+arch floor_ostone2
+x 20
+y 11
+end
+arch floor_ostone2
+x 20
+y 12
+end
+arch floor_ostone2
+x 20
+y 13
+end
+arch floor_ostone2
+x 20
+y 14
+end
+arch floor_ostone2
+x 20
+y 15
+end
+arch floor_ostone2
+x 20
+y 16
+end
+arch fwall_brown1
+x 20
+y 16
+end
+arch floor_ostone2
+x 21
+end
+arch fwall_brown1
+x 21
+end
+arch floor_ostone2
+x 21
+y 1
+end
+arch gate_open
+connected 203
+x 21
+y 1
+end
+arch floor_ostone9
+x 21
+y 2
+end
+arch environment_sensor
+name Monday sensor
+will_apply 1
+connected 203
+x 21
+y 2
+end
+arch floor_ostone2
+x 21
+y 3
+end
+arch sign
+msg
+This sensor closes the door on mondays
+endmsg
+x 21
+y 3
+end
+arch floor_ostone2
+x 21
+y 4
+end
+arch floor_ostone2
+x 21
+y 5
+end
+arch floor_ostone2
+x 21
+y 6
+end
+arch floor_ostone2
+x 21
+y 7
+end
+arch floor_ostone2
+x 21
+y 8
+end
+arch floor_ostone2
+x 21
+y 9
+end
+arch floor_ostone2
+x 21
+y 10
+end
+arch floor_ostone2
+x 21
+y 11
+end
+arch floor_ostone2
+x 21
+y 12
+end
+arch floor_ostone2
+x 21
+y 13
+end
+arch floor_ostone2
+x 21
+y 14
+end
+arch floor_ostone2
+x 21
+y 15
+end
+arch floor_ostone2
+x 21
+y 16
+end
+arch fwall_brown1
+x 21
+y 16
+end
+arch floor_ostone2
+x 22
+end
+arch fwall_brown1
+x 22
+end
+arch floor_ostone2
+x 22
+y 1
+end
+arch floor_ostone2
+x 22
+y 2
+end
+arch floor_ostone2
+x 22
+y 3
+end
+arch floor_ostone2
+x 22
+y 4
+end
+arch floor_ostone2
+x 22
+y 5
+end
+arch floor_ostone2
+x 22
+y 6
+end
+arch floor_ostone2
+x 22
+y 7
+end
+arch floor_ostone2
+x 22
+y 8
+end
+arch floor_ostone2
+x 22
+y 9
+end
+arch floor_ostone2
+x 22
+y 10
+end
+arch floor_ostone2
+x 22
+y 11
+end
+arch floor_ostone2
+x 22
+y 12
+end
+arch floor_ostone2
+x 22
+y 13
+end
+arch floor_ostone2
+x 22
+y 14
+end
+arch floor_ostone2
+x 22
+y 15
+end
+arch floor_ostone2
+x 22
+y 16
+end
+arch fwall_brown1
+x 22
+y 16
+end
+arch floor_ostone2
+x 23
+end
+arch fwall_brown1
+x 23
+end
+arch floor_ostone2
+x 23
+y 1
+end
+arch fwall_brown1
+x 23
+y 1
+end
+arch floor_ostone2
+x 23
+y 2
+end
+arch fwall_brown1
+x 23
+y 2
+end
+arch floor_ostone2
+x 23
+y 3
+end
+arch fwall_brown1
+x 23
+y 3
+end
+arch floor_ostone2
+x 23
+y 4
+end
+arch fwall_brown1
+x 23
+y 4
+end
+arch floor_ostone2
+x 23
+y 5
+end
+arch fwall_brown1
+x 23
+y 5
+end
+arch floor_ostone2
+x 23
+y 6
+end
+arch fwall_brown1
+x 23
+y 6
+end
+arch floor_ostone2
+x 23
+y 7
+end
+arch fwall_brown1
+x 23
+y 7
+end
+arch floor_ostone2
+x 23
+y 8
+end
+arch fwall_brown1
+x 23
+y 8
+end
+arch floor_ostone2
+x 23
+y 9
+end
+arch fwall_brown1
+x 23
+y 9
+end
+arch floor_ostone2
+x 23
+y 10
+end
+arch fwall_brown1
+x 23
+y 10
+end
+arch floor_ostone2
+x 23
+y 11
+end
+arch fwall_brown1
+x 23
+y 11
+end
+arch floor_ostone2
+x 23
+y 12
+end
+arch fwall_brown1
+x 23
+y 12
+end
+arch floor_ostone2
+x 23
+y 13
+end
+arch fwall_brown1
+x 23
+y 13
+end
+arch floor_ostone2
+x 23
+y 14
+end
+arch fwall_brown1
+x 23
+y 14
+end
+arch floor_ostone2
+x 23
+y 15
+end
+arch fwall_brown1
+x 23
+y 15
+end
+arch floor_ostone2
+x 23
+y 16
+end
+arch fwall_brown1
+x 23
 y 16
 end
