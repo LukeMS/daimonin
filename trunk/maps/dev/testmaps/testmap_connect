@@ -1627,6 +1627,19 @@ arch floor_ostone2
 x 13
 y 10
 end
+arch timer
+connected 200
+x 13
+y 10
+end
+arch sign
+msg
+This gate is controlled by an invisible timer. 
+It opens and closes every 10 seconds
+endmsg
+x 13
+y 10
+end
 arch floor_ostone2
 x 13
 y 11
@@ -1737,6 +1750,11 @@ x 14
 y 9
 end
 arch floor_ostone2
+x 14
+y 10
+end
+arch gate_closed
+connected 200
 x 14
 y 10
 end
