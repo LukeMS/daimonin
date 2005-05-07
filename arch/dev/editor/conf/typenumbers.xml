@@ -148,7 +148,7 @@
   <type number="130" name="SKILLSCROLL" />
   <type number="131" name="TYPE_QUEST_OBJECT" />
   <type number="132" name="TYPE_TIMER" />
-  <type number="133" name="TYPE_ENV_DETECTOR" />
+  <type number="133" name="TYPE_ENV_SENSOR" />
   
   <type number="138" name="DEEP_SWAMP" />
   <type number="139" name="IDENTIFY_ALTAR" />

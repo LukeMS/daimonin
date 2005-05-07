@@ -7222,55 +7222,56 @@ that food.]]>
 </type>
 
 <!--####################################################################-->
-<type number="133" name="Environment Detector">
+<type number="133" name="Environment Sensor">
   <ignore>
     <ignore_list name="non_pickable" />
     <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
-    Environment detectors periodically watch their environment for specific
+    Environment sensors periodically watch their environment for specific
     conditions. Currently they can check for time of day (ToD), day of week (DoW) and brightness, all at the same time.
     ]]>
   </description>
   <use><![CDATA[
-    ToD and DoW detectors work even underground and are best used to control the behaviours of sentient beings (guard schedules, workers etc).
-    DoW detectors will trigger during specified weekdays.
-    Brightness detectors will detect the sun if put outdoors, and of course also nearby light sources if indoors/underground and at night.
+    ToD and DoW sensors work even underground and are best used to control the behaviours of sentient beings (guard schedules, workers etc).
+    DoW sensors will trigger during specified weekdays.
+    Brightness sensors will detect the sun if put outdoors, and of course also nearby light sources if indoors/underground and at night.
 
-    The detector will not trigger unless all configured conditions are satisifed. This means you can basically set it to trigger at 11 am on very bright Thursdays.
+    The sensors will not trigger unless all configured conditions are satisifed. This means you can basically set it to trigger at 11 am on very bright Thursdays.
      ]]>
   </use>
   <attribute arch="no_pick" value="1" type="fixed" />
   <attribute arch="sys_object" value="1" type="fixed" />
   <attribute arch="slaying" editor="trigger time" type="string">
-    The time interval this detector should trigger. This should be in the form "hh:mm-hh:mm", for example "12:00-23:59" to trigger during the afternoon.
+    The time interval this sensors should trigger. This should be in the form "hh:mm-hh:mm", for example "12:00-23:59" to trigger during the afternoon.
     An empty (or malformed) value means don't care about time of day.
   </attribute>  
+  <attribute arch="will_apply" editor="trigger weekday" type="bitmask_day_of_week">
+    Which days to trigger the connection.
+    No selected days means don't care about weekdays.
+  </attribute>
   <attribute arch="last_grace" editor="trigger brightness" type="int">
-    The detector will trigger (and stay triggered) when its environmental 
+    The sensors will trigger (and stay triggered) when its environmental 
     brightness crosses this setting.
     
     A positive brightness value means "if higher".
     A negative brightness value means "if lower" from absolute value.
-    A value of 4 means it will trigger when brightness is 4 or higher.
-    A value of -4 means it will trigger when brightness drops to 4 or lower.
+    A value of 4 means it will trigger when brightness is higher than 4.
+    A value of -4 means it will trigger when brightness drops to lower than 4.
 
     A value of 0 means don't care about brightness.
   </attribute>
-  <attribute arch="will_apply" editor="trigger weekday" type="bitmask_day_of_week">
-    Which days to trigger the connection.
-  </attribute>
   <attribute arch="see_invisible" editor="work through container" type="bool">
-    If this flag is set, a brightness detector will still work in a container
+    If this flag is set, a brightness sensors will still work in a container
     as if it was outside the container. This can be used to create pickable 
-    light detectors by putting it inside another object.
+    light sensors by putting it inside another object.
 
-    Without this flag, a brightness detector in a container will only see 
+    Without this flag, a brightness sensor in a container will only see 
     darkness when the container is closed. But if the container is opened 
     it will detect the environment brightness.
   </attribute>
   <attribute arch="connected" editor="connection" type="int">
-    When the detector is triggered, all objects with the same
+    When the sensor is triggered, all objects with the same
     connection value get activated.
   </attribute>
   <attribute arch="last_eat" editor="connection flag1" type="bool">
@@ -7279,10 +7280,11 @@ that food.]]>
     to this.
   </attribute>
   <attribute arch="speed" editor="detection speed" type="float">
-    This value defines the time between two detector-checks.
-    If you want the detector to behave almost like pedestals/buttons,
+    This value defines the time between two sensor-checks.
+    If you want the sensor to behave almost like pedestals/buttons,
     set speed rather high, like &lt;detection speed&gt; 1.0.
-    Normally you can use a very low value here...
+    Normally you can use a very low value here. A value of 0.125 means 
+    to check about once every second.
   </attribute>
 </type>
 
