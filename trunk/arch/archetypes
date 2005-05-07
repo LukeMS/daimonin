@@ -2,17 +2,21 @@ Object ai_generic
 name Generic AI
 type 126
 msg
+# This is a generic AI that can be used for most mobs
 processes:
 look_for_other_mobs
 friendship
 choose_enemy
 
 moves: 
+# stand_still
 sleep
+# run_away_from_enemy hp_threshold=6
 move_towards_enemy
 move_towards_enemy_last_known_pos
 search_for_lost_enemy
 move_towards_waypoint
+# move_randomly xlimit=5 ylimit=5
 move_towards_home
 
 actions:
@@ -28,6 +32,7 @@ Object guard_arch_ai
 name Guard arch AI
 type 126
 msg
+# A typical guard never leaves his favourite spot
 processes:
 look_for_other_mobs
 friendship
@@ -52,6 +57,7 @@ Object empty_ai
 name Empty AI
 type 126
 msg
+# A braindead but efficient AI declaration
 processes:
 moves: 
 actions:
@@ -64,6 +70,7 @@ Object slime_race_ai
 name Slime race AI
 type 126
 msg
+# Slimes aren't supposed to be very smart
 processes:
 look_for_other_mobs
 friendship
@@ -8053,6 +8060,33 @@ name table
 type 79
 editor_folder indoor/tables
 face table_round1.101
+no_pick 1
+no_pass 1
+layer 4
+end
+Object table_poker1
+name table
+type 79
+editor_folder indoor/tables
+face table_poker1.101
+no_pick 1
+no_pass 1
+layer 4
+end
+Object table_round2
+name table
+type 79
+editor_folder indoor/tables
+face table_round2.101
+no_pick 1
+no_pass 1
+layer 4
+end
+Object table_poker2
+name table
+type 79
+editor_folder indoor/tables
+face table_poker2.101
 no_pick 1
 no_pass 1
 layer 4
