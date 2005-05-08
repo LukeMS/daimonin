@@ -54,11 +54,11 @@ typedef struct oblnk
 } objectlink;
 
 /* oblink union is used as */
-#define OBJLNK_FLAG_OB      0x1
-#define OBJLNK_FLAG_LINK    0x2
-#define OBJLNK_FLAG_TL      0x4
-#define OBJLNK_FLAG_GM      0x8
-#define OBJLNK_FLAG_BAN     0x16
+#define OBJLNK_FLAG_OB      0x01
+#define OBJLNK_FLAG_LINK    0x02
+#define OBJLNK_FLAG_TL      0x04
+#define OBJLNK_FLAG_GM      0x08
+#define OBJLNK_FLAG_BAN     0x10
 
 /* The use of _STATIC and _REF defines how we handle instancing & freeing.
  * Example: When we loading the base arches, we

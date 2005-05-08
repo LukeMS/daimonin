@@ -216,6 +216,7 @@ void update_button(object *op)
 
 /*
  * Updates every button on the map (by calling update_button() for them).
+ * This is only done when a map loads.
  */
 
 void update_buttons(mapstruct *m)

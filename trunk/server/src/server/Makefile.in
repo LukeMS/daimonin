@@ -53,6 +53,7 @@ SRCS = \
 	main.c\
 	monster.c\
 	move.c\
+	npc_communicate.c\
 	pets.c\
 	player.c\
 	plugins.c\
@@ -61,6 +62,7 @@ SRCS = \
 	shop.c\
 	skills.c\
 	skill_util.c\
+	spawn_point.c\
 	spell_effect.c\
 	spell_util.c\
 	swamp.c\
