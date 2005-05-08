@@ -8,6 +8,6 @@ value 0
 speed 0.125
 maxhp 10
 hp 10
-layer 3
+layer 0
 type 132
 end
