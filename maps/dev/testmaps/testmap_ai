@@ -950,6 +950,13 @@ arch floor_ostone1
 x 8
 y 4
 end
+arch sign
+msg
+The ant here can be picked up and used as a little pocket monster.
+endmsg
+x 8
+y 4
+end
 arch floor_ostone1
 x 8
 y 5
@@ -1121,6 +1128,14 @@ x 9
 y 3
 end
 arch floor_ostone1
+x 9
+y 4
+end
+arch ant_red
+name pocket ant
+no_pick 0
+speed 0.0001
+weight 225
 x 9
 y 4
 end
@@ -2047,8 +2062,7 @@ look_for_other_mobs
 attitude race=wasp:100 name=wasp_leader:400
 friendship
 choose_enemy
-
-moves: 
+moves:
 sleep
 move_towards_enemy
 lua:ai/keep_distance_to_friends.lua
@@ -2057,7 +2071,6 @@ search_for_lost_enemy
 lua:ai/move_towards_friends.lua
 move_towards_waypoint
 move_towards_home
-
 actions:
 melee_attack_enemy
 bow_attack_enemy
@@ -2200,8 +2213,7 @@ look_for_other_mobs
 attitude race=wasp:100
 friendship
 choose_enemy
-
-moves: 
+moves:
 sleep
 move_towards_enemy
 move_towards_enemy_last_known_pos
@@ -2209,7 +2221,6 @@ search_for_lost_enemy
 move_randomly
 move_towards_waypoint
 move_towards_home
-
 actions:
 melee_attack_enemy
 bow_attack_enemy
@@ -2329,8 +2340,7 @@ look_for_other_mobs
 attitude race=wasp:100 name=wasp_leader:400
 friendship
 choose_enemy
-
-moves: 
+moves:
 sleep
 move_towards_enemy
 lua:ai/keep_distance_to_friends.lua
@@ -2339,7 +2349,6 @@ search_for_lost_enemy
 lua:ai/move_towards_friends.lua
 move_towards_waypoint
 move_towards_home
-
 actions:
 melee_attack_enemy
 bow_attack_enemy
@@ -2581,8 +2590,7 @@ look_for_other_mobs
 attitude race=wasp:100 name=wasp_leader:400
 friendship
 choose_enemy
-
-moves: 
+moves:
 sleep
 move_towards_enemy
 lua:ai/keep_distance_to_friends.lua
@@ -2591,7 +2599,6 @@ search_for_lost_enemy
 lua:ai/move_towards_friends.lua
 move_towards_waypoint
 move_towards_home
-
 actions:
 melee_attack_enemy
 bow_attack_enemy
@@ -2731,8 +2738,7 @@ look_for_other_mobs
 attitude race=wasp:100 name=wasp_leader:400
 friendship
 choose_enemy
-
-moves: 
+moves:
 sleep
 move_towards_enemy
 lua:ai/keep_distance_to_friends.lua
@@ -2741,7 +2747,6 @@ search_for_lost_enemy
 lua:ai/move_towards_friends.lua
 move_towards_waypoint
 move_towards_home
-
 actions:
 melee_attack_enemy
 bow_attack_enemy
