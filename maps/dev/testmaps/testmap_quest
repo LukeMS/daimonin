@@ -840,12 +840,17 @@ arch book
 name book in common
 msg
 <t t="Welcome to the Book GUI">1
+
 2
+
 3
+
 Test, Test
 <p><t t="This is a title 2nd page">And some more text 2nd page.
+
 aaaaa
 bbbbbb
+
 cccccccc
 ddddddd
 <p>And here we are on the 3rd page.
@@ -861,6 +866,7 @@ ddddddd
 9
 10
 11
+
 12
 13
 14
