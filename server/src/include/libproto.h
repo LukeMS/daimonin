@@ -37,6 +37,7 @@ extern int              check_altar_sacrifice(object *altar, object *sacrifice);
 extern int              operate_altar(object *altar, object **sacrifice);
 extern void             trigger_move(object *op, int state);
 extern int              check_trigger(object *op, object *cause);
+extern void             add_button_links(object *button, mapstruct *map, char *connected);
 extern void             add_button_link(object *button, mapstruct *map, int connected);
 extern void             remove_button_link(object *op);
 extern objectlink      *get_button_links(object *button);

@@ -25,26 +25,16 @@
 
 #include <global.h>
 
-/*
- * This code is no longer highly inefficient 8)
- */
-
-/*
- * Push the specified object.  This can affect other buttons/gates/handles
- * altars/pedestals/holes in the whole map.
- * Changed the routine to loop through _all_ objects.
- * Better hurry with that linked list...
- */
-
-void push_button(object *op)
+/* Send signal from op to connection ol */
+void signal_connection(object *op, oblinkpt *olp)
 {
     object     *tmp;
     objectlink *ol;
 
-    /* TODO: possibly all effects here should cause a TRIGGER plugin event */
-    
+    /* TODO: possibly all effects here should cause a CONNECTION or TRIGGER plugin event? */
+
     /*LOG(llevDebug, "push_button: %s (%d)\n", op->name, op->count);*/
-    for (ol = get_button_links(op); ol; ol = ol->next)
+    for (ol = olp; ol; ol = ol->next)
     {
         if (!ol->objlink.ob || ol->objlink.ob->count != ol->id)
         {
@@ -145,6 +135,20 @@ void push_button(object *op)
                 tmp->stats.hp = tmp->stats.maxhp;
                 update_ob_speed(tmp);
               }
+              break;
+              
+            case TYPE_CONN_SENSOR:
+              /* Connection sensors don't listen to themselves */
+              if(op != tmp)
+                  move_conn_sensor(tmp);
+              break;
+              
+            case TYPE_LIGHT_APPLY:
+            case LIGHT_SOURCE: /* Dunno if this really works for LIGHT_SOURCE */
+              if(op->value == 0 && tmp->glow_radius > 0)
+                  turn_off_light(tmp);
+              else if(op->value != 0 && tmp->glow_radius == 0)
+                  turn_on_light(tmp);
               break;
         }
     }
@@ -260,15 +264,32 @@ void update_buttons(mapstruct *m)
                            */
                      check_trigger(ol->objlink.ob, ol->objlink.ob);
             }
+            else if (ol->objlink.ob->type == TYPE_CONN_SENSOR)
+            {
+                move_conn_sensor(ol->objlink.ob);
+            }
+            else if (ol->objlink.ob->type == CF_HANDLE || ol->objlink.ob->type == TRIGGER)
+            {
+                push_button(ol->objlink.ob);
+            }
         }
     }
+}
+
+/*
+ * Push the specified object.  This can affect other buttons/gates/handles
+ * altars/pedestals/holes in the whole map.
+ */
+void push_button(object *op)
+{
+    /* TODO: trigger a TRIGGER plugin event here? */
+    signal_connection(op, get_button_links(op));
 }
 
 void use_trigger(object *op)
 {
     /* Toggle value */
     op->value = !op->value;
-    /* TODO: trigger a TRIGGER plugin event here? */
     push_button(op);
 }
 
@@ -530,6 +551,27 @@ int check_trigger(object *op, object *cause)
     }
 }
 
+/* Parse a comma-separated list of connections and add the button to each of them */
+void add_button_links(object *button, mapstruct *map, char *connected)
+{
+    char *pos = connected;
+    
+    do {
+        int connection = atoi(pos);
+        if(connection)
+            add_button_link(button, map, connection);
+
+        /* Actually, we only allow multiple connections for the connection sensor */
+        /* TODO: this check isn 100% ok since we aren't 100% sure about the objects type when this is called */
+        if(button->type != TYPE_CONN_SENSOR)
+            break;
+        
+        if((pos = strchr(pos, ',')))
+            pos++;
+    } while (pos);
+}
+
+/* Add a button to a single connection */
 void add_button_link(object *button, mapstruct *map, int connected)
 {
     oblinkpt   *obp;
@@ -577,6 +619,7 @@ void remove_button_link(object *op)
 {
     oblinkpt   *obp;
     objectlink **olp, *ol;
+    int foundone = 0;
 
     if (op->map == NULL)
     {
@@ -597,14 +640,17 @@ void remove_button_link(object *op)
                 */
                 *olp = ol->next;
                 free_objectlink_simple(ol);
-                return;
+                foundone = 1;
             }
-    LOG(llevError, "remove_button_linked(): couldn't find object.\n");
-    CLEAR_FLAG(op, FLAG_IS_LINKED);
+    if(! foundone) {
+        LOG(llevError, "remove_button_linked(): couldn't find object.\n");
+        CLEAR_FLAG(op, FLAG_IS_LINKED);
+    }
 }
 
 /*
  * Return the first objectlink in the objects linked to this one
+ * In the case of CONN_SENSORS, make sure it is the output link
  */
 
 objectlink * get_button_links(object *button)
@@ -615,9 +661,13 @@ objectlink * get_button_links(object *button)
     if (!button->map)
         return NULL;
     for (obp = button->map->buttons; obp; obp = obp->next)
+    {
+        if(button->type == TYPE_CONN_SENSOR && button->last_grace != obp->value)
+            continue;
         for (ol = obp->objlink.link; ol; ol = ol->next)
-            if (ol->objlink.ob == button && ol->id == button->count)
+            if (ol->objlink.ob == button && ol->id == button->count) 
                 return obp->objlink.link;
+    }
     return NULL;
 }
 
@@ -625,6 +675,7 @@ objectlink * get_button_links(object *button)
  * Made as a separate function to increase efficiency
  */
 
+/* Get the "connection id" for a button */
 int get_button_value(object *button)
 {
     oblinkpt   *obp;
