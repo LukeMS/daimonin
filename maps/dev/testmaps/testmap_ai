@@ -1531,6 +1531,13 @@ arch floor_ostone1
 x 12
 y 16
 end
+arch sign
+msg
+Experimental swarm movement. The bees will swarm around the wasp
+endmsg
+x 12
+y 16
+end
 arch floor_ostone1
 x 12
 y 17

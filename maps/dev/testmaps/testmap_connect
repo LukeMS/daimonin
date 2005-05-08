@@ -2066,7 +2066,20 @@ arch floor_ostone2
 x 17
 y 11
 end
+arch sign
+msg
+NAND combination
+endmsg
+x 17
+y 11
+end
 arch floor_ostone2
+connected 300
+x 17
+y 12
+end
+arch handle_lever
+connected 300
 x 17
 y 12
 end
@@ -2074,7 +2087,24 @@ arch floor_ostone2
 x 17
 y 13
 end
+arch handle_lever
+connected 301
+x 17
+y 13
+end
 arch floor_ostone2
+x 17
+y 14
+end
+arch connection_sensor
+last_grace 302
+connected 300,301,302
+sub_type 0
+x 17
+y 14
+end
+arch grave_fire.101
+connected 302
 x 17
 y 14
 end
@@ -2140,7 +2170,19 @@ arch floor_ostone2
 x 18
 y 11
 end
+arch sign
+msg
+AND combination
+endmsg
+x 18
+y 11
+end
 arch floor_ostone2
+x 18
+y 12
+end
+arch handle_lever
+connected 310
 x 18
 y 12
 end
@@ -2148,7 +2190,23 @@ arch floor_ostone2
 x 18
 y 13
 end
+arch handle_lever
+connected 311
+x 18
+y 13
+end
 arch floor_ostone2
+x 18
+y 14
+end
+arch connection_sensor
+last_grace 312
+connected 310,311,312
+x 18
+y 14
+end
+arch grave_fire.101
+connected 312
 x 18
 y 14
 end
@@ -2233,7 +2291,19 @@ arch floor_ostone2
 x 19
 y 11
 end
+arch sign
+msg
+OR combination
+endmsg
+x 19
+y 11
+end
 arch floor_ostone2
+x 19
+y 12
+end
+arch handle_lever
+connected 320
 x 19
 y 12
 end
@@ -2241,7 +2311,24 @@ arch floor_ostone2
 x 19
 y 13
 end
+arch handle_lever
+connected 321
+x 19
+y 13
+end
 arch floor_ostone2
+x 19
+y 14
+end
+arch connection_sensor
+last_grace 322
+connected 320,321,322
+sub_type 2
+x 19
+y 14
+end
+arch grave_fire.101
+connected 322
 x 19
 y 14
 end
@@ -2307,7 +2394,19 @@ arch floor_ostone2
 x 20
 y 11
 end
+arch sign
+msg
+XOR combination
+endmsg
+x 20
+y 11
+end
 arch floor_ostone2
+x 20
+y 12
+end
+arch handle_lever
+connected 330
 x 20
 y 12
 end
@@ -2315,7 +2414,24 @@ arch floor_ostone2
 x 20
 y 13
 end
+arch handle_lever
+connected 331
+x 20
+y 13
+end
 arch floor_ostone2
+x 20
+y 14
+end
+arch connection_sensor
+last_grace 332
+connected 330,331,332
+sub_type 3
+x 20
+y 14
+end
+arch grave_fire.101
+connected 332
 x 20
 y 14
 end
@@ -2400,6 +2516,13 @@ arch floor_ostone2
 x 21
 y 11
 end
+arch sign
+msg
+No combination, just a lever controlling an invisible light source.
+endmsg
+x 21
+y 11
+end
 arch floor_ostone2
 x 21
 y 12
@@ -2408,7 +2531,17 @@ arch floor_ostone2
 x 21
 y 13
 end
+arch handle_lever
+connected 399
+x 21
+y 13
+end
 arch floor_ostone2
+x 21
+y 14
+end
+arch light2
+connected 399
 x 21
 y 14
 end
