@@ -439,6 +439,10 @@ SOURCE=..\..\..\src\server\move.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\src\server\npc_communicate.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\src\server\pathfinder.c
 # End Source File
 # Begin Source File
@@ -563,6 +567,10 @@ SOURCE=..\..\..\src\server\skills.c
 # End Source File
 # Begin Source File
 
+SOURCE=..\..\..\src\server\spawn_point.c
+# End Source File
+# Begin Source File
+
 SOURCE=..\..\..\src\server\spell_effect.c
 
 !IF  "$(CFG)" == "daimonin_server - Win32 ReleaseLog"
@@ -624,21 +632,6 @@ SOURCE=..\..\..\src\server\swap.c
 # Begin Source File
 
 SOURCE=..\..\..\src\server\time.c
-
-!IF  "$(CFG)" == "daimonin_server - Win32 ReleaseLog"
-
-# PROP Intermediate_Dir "ReleaseLog\server"
-
-!ELSEIF  "$(CFG)" == "daimonin_server - Win32 Debug"
-
-# PROP Intermediate_Dir "Debug\server"
-
-!ENDIF 
-
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\src\server\timers.c
 
 !IF  "$(CFG)" == "daimonin_server - Win32 ReleaseLog"
 
@@ -1505,10 +1498,6 @@ SOURCE=..\..\..\src\include\spells.h
 # Begin Source File
 
 SOURCE=..\..\..\src\include\sproto.h
-# End Source File
-# Begin Source File
-
-SOURCE=..\..\..\src\include\timers.h
 # End Source File
 # Begin Source File
 

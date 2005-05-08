@@ -990,7 +990,7 @@ char *get_ob_diff(object *op,object *op2) {
   if(op->msg && op->msg!=op2->msg) {
     strcat(buf,"msg\n");
     strcat(buf,op->msg);
-    strcat(buf,"\n"); /* we skipped last \n when we read the map, to avoid clear line in client */
+    /*strcat(buf,"\n");*/ /* we skipped last \n when we read the map, to avoid clear line in client */
     strcat(buf,"endmsg\n");
   }
   if(op->other_arch!=op2->other_arch&&op->other_arch!=NULL &&
