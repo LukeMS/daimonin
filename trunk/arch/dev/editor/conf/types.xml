@@ -272,10 +272,11 @@
   <entry value="2" name="container quest" />
 </list>
 
-<list name="env_trigger">
-  <entry value="0" name="Time of Day" />
-  <entry value="1" name="Day of Week" />
-  <entry value="2" name="Brightness" />
+<list name="conn_sensor">
+  <entry value="0" name="NAND (no inputs active)" />
+  <entry value="1" name="AND (all inputs active)" />
+  <entry value="2" name="OR (any inputs active)" />
+  <entry value="3" name="XOR (exactly on active input)" />
 </list>
 
 <list name="potion_effect">
@@ -504,7 +505,7 @@
   <attribute arch="glow_radius" editor="glow radius" type="int">
     If &lt;glow radius&gt; is set to a value greater zero, the object
     appears lit up on dark maps. &lt;glow radius&gt; can be a value
-    between 0 and 4, the higher, the more light does the object emmit.
+    between 0 and 9, the higher, the more light does the object emmit.
   </attribute>
   <attribute arch="material_real" editor="material" type="list_material_real">
     The material defines the exact material of which the object
@@ -740,6 +741,9 @@
   <description><![CDATA[
 	Light Sources are system objects which used as a light/darkness set point. ]]>
   </description>
+  <attribute arch="connected" editor="connection" type="int">
+  If set, the light can be controlled via the specified connection.
+  </attribute>
 </type>
 
 <!--####################################################################-->
@@ -788,6 +792,9 @@
   <attribute arch="last_eat" editor="wear out flag" type="bool">
   If set this light will wear out. If not set, it is permanent light and
   'Ticks of Light' counter is ignored.
+  </attribute>
+  <attribute arch="connected" editor="connection" type="int">
+  If set, the light can be controlled via the specified connection.
   </attribute>
 </type>
 
@@ -7183,7 +7190,7 @@ that food.]]>
     <ignore_list name="default_setting" />
   </ignore>
   <description><![CDATA[
-    Timers are used to trigger connections at specific time intervals. 
+    Timers are used to trigger connections at specific time intervals. <br>
     A timer that is stored as running will start countdown as soon as the
     map loads, otherwise it will wait for activation through its connection.
     If the timer is set to reset after having been triggered, it will
@@ -7192,7 +7199,7 @@ that food.]]>
   </description>
   <use><![CDATA[
     You can for example use timers connected to creators to repeatedly
-    create new resources of some kind. 
+    create new resources of some kind. <br>
     Don't use timers for quick and repeated script triggering. The Lua plugin
     has a "coroutine" system that can handle that much more efficiently. For longer trigger intervals, timers work well together with scripts.
     ]]>
@@ -7233,9 +7240,9 @@ that food.]]>
     ]]>
   </description>
   <use><![CDATA[
-    ToD and DoW sensors work even underground and are best used to control the behaviours of sentient beings (guard schedules, workers etc).
-    DoW sensors will trigger during specified weekdays.
-    Brightness sensors will detect the sun if put outdoors, and of course also nearby light sources if indoors/underground and at night.
+    ToD and DoW sensors work even underground and are best used to control the behaviours of sentient beings (guard schedules, workers etc).<br>
+    DoW sensors will trigger during specified weekdays.<br>
+    Brightness sensors will detect the sun if put outdoors, and of course also nearby light sources if indoors/underground and at night.<br><br>
 
     The sensors will not trigger unless all configured conditions are satisifed. This means you can basically set it to trigger at 11 am on very bright Thursdays.
      ]]>
@@ -7288,5 +7295,44 @@ that food.]]>
   </attribute>
 </type>
 
-
+<!--####################################################################-->
+<type number="134" name="Connection Sensor">
+  <ignore>
+    <ignore_list name="non_pickable" />
+    <ignore_list name="default_setting" />
+  </ignore>
+  <description><![CDATA[
+    Connection sensors are trigger objects that take one or more other connections as input.
+    The inputs can be combined according to a logical rule, and generate a script event or
+    trigger a plugin event.
+    ]]>
+  </description>
+  <use><![CDATA[
+    The output value is derived from the input connections according to one of the following rules:
+    <br>
+    NAND - the output value is set only if no input values are set.<br>
+    AND - the output value is set only if all input values are set.<br>
+    OR - the output value is set if any input values are set.<br>
+    XOR (exclusive OR) - the output value is set if exactly one input value is set.<br>
+    <br>
+    For example you can use it to set up a complex combination of switches that are 
+    required to open a door. Simpler usages are to have a single point for scripted events
+    listening on connections, or just for negating a connection value (using NAND mode).
+     ]]>
+  </use>
+  <attribute arch="no_pick" value="1" type="fixed" />
+  <attribute arch="sys_object" value="1" type="fixed" />
+  <attribute arch="connected" editor="connections" type="string">
+    Comma-separated list of input connections.
+  </attribute>
+  <attribute arch="last_grace" editor="output connection" type="int">
+    If this flag is set, the connection here (which must be one of the ones in "connections")
+    is used as output instead of input.
+  </attribute>
+  <attribute arch="last_eat" editor="connection flag1" type="bool">
+    Depending on the target object, setting this flag or not
+    can have different effects. See the object you are connecting
+    to this.
+  </attribute>
+</type>
 </types>
