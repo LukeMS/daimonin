@@ -941,7 +941,12 @@ int is_friend_of(object *op, object *obj)
  */
 rv_vector * get_known_obj_rv(object *op, struct mob_known_obj *known_obj, int maxage)
 {
-    if (op == NULL || known_obj == NULL)
+    /* TODO: added checks for NULL maps here (happens if monster is picked up, for example).
+     * Actually, it would be slightly more interesting if we could get the coordinates for the
+     * container of the mob, so that mobs can for example hide in containers until the enemy
+     * is far enough away. Or reversly, hide in container and later jump out and attack enemy. *
+     * Gecko 2005-05-08 */
+    if (op == NULL || known_obj == NULL || op->map == NULL || known_obj->obj->map == NULL)
         return NULL;    
 
     if (ROUND_TAG - known_obj->rv_time >= (uint32) maxage || known_obj->rv_time == 0 || maxage == 0)
@@ -1090,7 +1095,6 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
     * usually no map.
     *
     * Gecko: Hmm... I have to fix this to be able to handle non-mob objects
-    * TODO: I also have to fix the "crash if no map" problem.
     */
     if (other->type != PLAYER && !QUERY_FLAG(other, FLAG_ALIVE))
     {
