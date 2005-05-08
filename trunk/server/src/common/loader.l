@@ -592,7 +592,7 @@ op->oy= op->y;
 ^move_state{S}	    op->move_status = IVAL;
 ^confused{S}	    SET_OR_CLEAR_FLAG(op, FLAG_CONFUSED, IVAL);
 ^stealth{S}			SET_OR_CLEAR_FLAG(op, FLAG_STEALTH, IVAL);
-^connected{S}	    add_button_link(op, op->map, IVAL);
+^connected{S}	    add_button_links(op, op->map, yval());
 ^cursed{S}	    SET_OR_CLEAR_FLAG(op, FLAG_CURSED, IVAL);
 ^damned{S}	    SET_OR_CLEAR_FLAG(op, FLAG_DAMNED, IVAL);
 ^see_anywhere{S}    SET_OR_CLEAR_FLAG(op, FLAG_SEE_ANYWHERE, IVAL);
@@ -960,7 +960,12 @@ void init_vars() {
  * (op2 is the objects original archetype)
  */
 
-char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
+char *get_ob_diff(object *op,object *op2) {
+    /* I plan to optimize this heavily */
+    /* TODO: One good optimization would be to keep track of the end of buf
+     * instead of using strcat() which must find the end at every call 
+     * /Gecko
+     */
   static char buf2[HUGE_BUF];
   static char buf[HUGE_BUF];
   int tmp;
@@ -1192,8 +1197,25 @@ char *get_ob_diff(object *op,object *op2) {/* I plan to optimize this heavily */
     save_long(buf, "last_grace", op->last_grace);
   if(op->last_eat!=op2->last_eat)
     save_long(buf, "last_eat", op->last_eat);
-  if(QUERY_FLAG(op,FLAG_IS_LINKED) && (tmp = get_button_value(op)))
-    save_long(buf, "connected", tmp);
+  if(QUERY_FLAG(op,FLAG_IS_LINKED) && op->map) 
+  {
+      /* Generate comma separated list of links */
+      oblinkpt   *obp;
+      objectlink *ol;
+      int foundone = 0;
+
+      strcpy(buf2, "connected ");
+      for (obp = op->map->buttons; obp; obp = obp->next)
+          for (ol = obp->objlink.link; ol; ol = ol->next)
+              if (ol->objlink.ob == op && ol->id == op->count) 
+              {
+                  sprintf(buf2 + strlen(buf2), "%s%d", foundone?",":"", obp->value);
+                  foundone = 1;
+              }
+      
+      strcat(buf,buf2);
+      strcat(buf,"\n");
+  }
   if(op->glow_radius!=op2->glow_radius)
     save_long(buf, "glow_radius", op->glow_radius);
 

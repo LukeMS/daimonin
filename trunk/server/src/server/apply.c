@@ -3650,6 +3650,122 @@ void apply_player_light_refill(object *who, object *op)
     esrv_send_item(who, item);
     fix_player(who);
 }
+
+void turn_on_light(object *op)
+{
+    object *op_old;
+    int     tricky_flag = FALSE; /* to delay insertion of object - or it simple remerge! */
+
+    /* simple case for map light sources */
+    if(op->type == LIGHT_SOURCE)
+    {
+        op->glow_radius = (sint8) op->last_sp;
+        if (!op->env && op->glow_radius)
+            adjust_light_source(op->map, op->x, op->y, op->glow_radius);
+        return;
+    }
+    
+    /* now we have a filled or permanent, unlight light source 
+     * lets light it - BUT we still have light_radius not active 
+     * when we not drop or apply the source.
+     */
+
+    /* the old split code has some side effects -
+     * i force now first a split of #1 per hand
+     */
+    op_old = op;
+    if (op->nrof > 1)
+    {
+        object *one = get_object();
+        copy_object(op, one);
+        op->nrof -= 1;
+        one->nrof = 1;
+        if (op->env && (op->env->type == PLAYER || op->env->type == CONTAINER))
+            esrv_update_item(UPD_NROF, op->env, op);
+        else if (!op->env)
+            update_object(op, UP_OBJ_FACE);
+
+        tricky_flag = TRUE;
+        op = one;
+    }
+
+    /* light is applied in player inventory - so we 
+     * start the 3 apply chain - because it can be taken
+     * in hand.
+     */
+    if (op_old->env && op_old->env->type == PLAYER)
+    {
+        if (op->last_eat) /* we have a non permanent source */
+            SET_FLAG(op, FLAG_CHANGING);
+        SET_FLAG(op, FLAG_ANIMATE);
+        op->animation_id = op->arch->clone.animation_id; /* be sure to get the right anim */
+        SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction);
+        if (tricky_flag)
+            op = insert_ob_in_ob(op, op_old->env);
+        op->glow_radius = (sint8) op->last_sp;
+    }
+    else /* we are not in a player inventory - so simple turn it on */
+    {
+        if (op->last_eat) /* we have a non permanent source */
+            SET_FLAG(op, FLAG_CHANGING);
+        SET_FLAG(op, FLAG_ANIMATE);
+        op->animation_id = op->arch->clone.animation_id;
+        SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction);
+
+        if (QUERY_FLAG(op, FLAG_PERM_CURSED))
+            SET_FLAG(op, FLAG_CURSED);
+        if (QUERY_FLAG(op, FLAG_PERM_DAMNED))
+            SET_FLAG(op, FLAG_DAMNED);
+
+        if (tricky_flag)
+        {
+            if (!op_old->env)
+                /* the item WAS before this on this spot - we only turn it on but we don't moved it */
+                insert_ob_in_map(op, op_old->map, op_old, INS_NO_WALK_ON);
+            else
+                op = insert_ob_in_ob(op, op_old->env);
+        }
+
+        op->glow_radius = (sint8) op->last_sp;
+        if (!op->env && op->glow_radius)
+            adjust_light_source(op->map, op->x, op->y, op->glow_radius);
+
+        update_object(op, UP_OBJ_FACE);
+    }
+}
+
+void turn_off_light(object *op)
+{
+    if (!op->env && op->glow_radius) /* on map */
+        adjust_light_source(op->map, op->x, op->y, -(op->glow_radius));
+
+    /* Simple case for map light sources (non-appliable) */
+    if(op->type == LIGHT_SOURCE)
+    {
+        op->last_sp = op->glow_radius;
+        op->glow_radius = 0;
+        return;
+    }
+
+    CLEAR_FLAG(op, FLAG_APPLIED);
+    CLEAR_FLAG(op, FLAG_CHANGING);
+    if (op->other_arch && op->other_arch->clone.sub_type1 & 1)
+    {
+        op->animation_id = op->other_arch->clone.animation_id;
+        SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction);
+    }
+    else
+    {
+        CLEAR_FLAG(op, FLAG_ANIMATE);
+        op->face = op->arch->clone.face;
+    }
+    /* CLEAR_FLAG(op,FLAG_ANIMATE);
+       op->face = op->arch->clone.face;
+       */              
+    update_object(op, UP_OBJ_FACE);
+    op->glow_radius = 0;
+}
+
 /* apply_player_light() - the new player light. old style torches will be
  * removed from arches but still in game.
  */
@@ -3670,21 +3786,8 @@ void apply_player_light(object *who, object *op)
             SET_FLAG(op, FLAG_DAMNED);
         new_draw_info_format(NDI_UNIQUE, 0, who, "You unlight the %s.", query_name(op));
 
-        if (!op->env && op->glow_radius)
-            adjust_light_source(op->map, op->x, op->y, -(op->glow_radius));
-        op->glow_radius = 0;
-        CLEAR_FLAG(op, FLAG_APPLIED);
-        CLEAR_FLAG(op, FLAG_CHANGING);
-        if (op->other_arch && op->other_arch->clone.sub_type1 & 1)
-        {
-            op->animation_id = op->other_arch->clone.animation_id;
-            SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction);
-        }
-        else
-        {
-            CLEAR_FLAG(op, FLAG_ANIMATE);
-            op->face = op->arch->clone.face;
-        }
+        turn_off_light(op);
+
         update_object(who, UP_OBJ_FACE);
         fix_player(who);
     }
@@ -3713,9 +3816,6 @@ void apply_player_light(object *who, object *op)
         */
         if (!op->glow_radius)
         {
-            object *op_old;
-            int     tricky_flag = FALSE; /* to delay insertion of object - or it simple remerge! */
-
             if (op->last_eat) /* we have a non permanent source */
             {
                 if (!op->stats.food) /* if not permanent, this is "filled" counter */
@@ -3730,77 +3830,9 @@ void apply_player_light(object *who, object *op)
                 }
             }
 
-            /* now we have a filled or permanent, unlight light source 
-             * lets light it - BUT we still have light_radius not active 
-             * when we not drop or apply the source.
-             */
-
-            /* the old split code has some side effects -
-                     * i force now first a split of #1 per hand
-                     */
-            op_old = op;
-            if (op->nrof > 1)
-            {
-                object *one = get_object();
-                copy_object(op, one);
-                op->nrof -= 1;
-                one->nrof = 1;
-                if (op->env && (op->env->type == PLAYER || op->env->type == CONTAINER))
-                    esrv_update_item(UPD_NROF, op->env, op);
-                else if (!op->env)
-                    update_object(op, UP_OBJ_FACE);
-
-                tricky_flag = TRUE;
-                op = one;
-            }
-
-            /* light is applied in player inventory - so we 
-                     * start the 3 apply chain - because it can be taken
-                     * in hand.
-                     */
-            if (op_old->env && op_old->env->type == PLAYER)
-            {
-                new_draw_info_format(NDI_UNIQUE, 0, who, "You prepare %s to light.", query_name(op));
-
-                if (op->last_eat) /* we have a non permanent source */
-                    SET_FLAG(op, FLAG_CHANGING);
-                SET_FLAG(op, FLAG_ANIMATE);
-                op->animation_id = op->arch->clone.animation_id; /* be sure to get the right anim */
-                SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction);
-                if (tricky_flag)
-                    op = insert_ob_in_ob(op, op_old->env);
-                op->glow_radius = (sint8) op->last_sp;
-                fix_player(who);
-            }
-            else /* we are not in a player inventory - so simple turn it on */
-            {
-                new_draw_info_format(NDI_UNIQUE, 0, who, "You prepare %s to light.", query_name(op));
-                if (op->last_eat) /* we have a non permanent source */
-                    SET_FLAG(op, FLAG_CHANGING);
-                SET_FLAG(op, FLAG_ANIMATE);
-                op->animation_id = op->arch->clone.animation_id;
-                SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction);
-
-                if (QUERY_FLAG(op, FLAG_PERM_CURSED))
-                    SET_FLAG(op, FLAG_CURSED);
-                if (QUERY_FLAG(op, FLAG_PERM_DAMNED))
-                    SET_FLAG(op, FLAG_DAMNED);
-
-                if (tricky_flag)
-                {
-                    if (!op_old->env)
-                        /* the item WAS before this on this spot - we only turn it on but we don't moved it */
-                        insert_ob_in_map(op, op_old->map, op_old, INS_NO_WALK_ON);
-                    else
-                        op = insert_ob_in_ob(op, op_old->env);
-                }
-
-                op->glow_radius = (sint8) op->last_sp;
-                if (!op->env && op->glow_radius)
-                    adjust_light_source(op->map, op->x, op->y, op->glow_radius);
-
-                update_object(op, UP_OBJ_FACE);
-            }
+            new_draw_info_format(NDI_UNIQUE, 0, who, "You prepare %s to light.", query_name(op));
+            turn_on_light(op);
+            fix_player(who);
         }
         else
         {
@@ -3822,24 +3854,9 @@ void apply_player_light(object *who, object *op)
                         if (QUERY_FLAG(tmp, FLAG_PERM_DAMNED))
                             SET_FLAG(tmp, FLAG_DAMNED);
                         new_draw_info_format(NDI_UNIQUE, 0, who, "You unlight the %s.", query_name(tmp));
-                        if (!tmp->env && tmp->glow_radius) /* on map */
-                            adjust_light_source(tmp->map, tmp->x, tmp->y, -(tmp->glow_radius));
-                        tmp->glow_radius = 0;
                         CLEAR_FLAG(tmp, FLAG_APPLIED);
-                        CLEAR_FLAG(tmp, FLAG_CHANGING);
-                        if (tmp->other_arch && tmp->other_arch->clone.sub_type1 & 1)
-                        {
-                            tmp->animation_id = tmp->other_arch->clone.animation_id;
-                            SET_ANIMATION(tmp, (NUM_ANIMATIONS(tmp) / NUM_FACINGS(tmp)) * tmp->direction);
-                        }
-                        else
-                        {
-                            CLEAR_FLAG(tmp, FLAG_ANIMATE);
-                            tmp->face = tmp->arch->clone.face;
-                        }
-                        /*                      CLEAR_FLAG(tmp,FLAG_ANIMATE);
-                                                tmp->face = tmp->arch->clone.face;
-                        */                      update_object(tmp, UP_OBJ_FACE);
+
+                        turn_off_light(tmp);
                         esrv_send_item(who, tmp);
                     }
                 }
@@ -3856,26 +3873,8 @@ void apply_player_light(object *who, object *op)
                 if (QUERY_FLAG(op, FLAG_PERM_DAMNED))
                     SET_FLAG(op, FLAG_DAMNED);
                 new_draw_info_format(NDI_UNIQUE, 0, who, "You unlight the %s.", query_name(op));
-                if (!op->env && op->glow_radius) /* on map */
-                    adjust_light_source(op->map, op->x, op->y, -(op->glow_radius));
-
-                op->glow_radius = 0;
-                CLEAR_FLAG(op, FLAG_APPLIED);
-                CLEAR_FLAG(op, FLAG_CHANGING);
-                if (op->other_arch && op->other_arch->clone.sub_type1 & 1)
-                {
-                    op->animation_id = op->other_arch->clone.animation_id;
-                    SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction);
-                }
-                else
-                {
-                    CLEAR_FLAG(op, FLAG_ANIMATE);
-                    op->face = op->arch->clone.face;
-                }
-                /*              CLEAR_FLAG(op,FLAG_ANIMATE);
-                                op->face = op->arch->clone.face;
-                */              update_object(op, UP_OBJ_FACE);
-            }
+                turn_off_light(op);
+            }            
         }
     }
     if (op->env && (op->env->type == PLAYER || op->env->type == CONTAINER))

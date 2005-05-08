@@ -1729,6 +1729,120 @@ void move_environment_sensor(object *op)
     }
 }
 
+/* 
+ * last_grace = output connection
+ * subtype = logical function
+ */
+/* TODO: I want to add forwarding of connections to other maps to this
+ * type too. */
+void move_conn_sensor(object *op)
+{
+    int newvalue = 0;
+    int numinputs = 0, numactive = 0;
+
+    oblinkpt   *obp;
+    objectlink *ol;
+
+    if(op->map == NULL)
+        return;
+    
+    /* Count number of active inputs. Lets define an input
+     * as active if the majority of the connection objects
+     * on that connection has value > 0 */
+    for (obp = op->map->buttons; obp; obp = obp->next)
+    {
+        int myinput = 0;
+        int numzeroes = 0, numones = 0;
+        
+        /* Don't count our own output */
+        if(op->last_grace == obp->value)
+            continue;
+
+        /* Combined searhing for connections this sensor is part of 
+         * and checking value of connection */
+        for (ol = obp->objlink.link; ol; ol = ol->next)
+        {
+            if (ol->objlink.ob == op && ol->id == op->count) 
+                myinput = 1;
+            else 
+            {
+                if(ol->objlink.ob->value > 0)
+                    numones++;
+                else
+                    numzeroes++;
+            }
+        }
+
+        /* Count it as an active input? */
+        if(myinput)
+        {
+            numinputs++;
+            if(numones >= numzeroes)
+                numactive++;
+        }
+    }
+    
+   
+    /* Perform the logic filtering */
+    switch(op->sub_type1)
+    {
+        case ST1_CONN_SENSOR_NAND: /* Require _no_ active inputs */
+            newvalue = (numactive == 0);
+            break;
+        case ST1_CONN_SENSOR_AND:  /* Require _all_ active inputs */
+            newvalue = (numactive == numinputs);
+            break;
+        case ST1_CONN_SENSOR_OR:   /* Require _any_ active inputs */
+            newvalue = (numactive > 0);
+            break;
+        case ST1_CONN_SENSOR_XOR:  /* Require _exactly one_ active input */
+            newvalue = (numactive == 1);
+            break;
+    }
+    
+//    LOG(llevDebug, "move_conn_sensor: type=%d, numactive=%d, numinputs=%d, value=%d -> %d\n", op->sub_type1, numactive, numinputs, op->value, newvalue);
+   
+    /* Trigger only on state change */
+    if(op->value != newvalue)
+    {
+        op->value = newvalue;
+        /* TODO trigger a plugin event here or in use_trigger()? */
+#ifdef PLUGINS
+        /* GROS: Handle for plugin TRIGGER event */
+        if (op->event_flags & EVENT_FLAG_TRIGGER)
+        {
+            CFParm  CFP;
+            CFParm *CFR;
+            int     k, l, m;
+            int     rtn_script  = 0;
+            object *event_obj   = get_event_object(op, EVENT_TRIGGER);
+            m = 0;
+            k = EVENT_TRIGGER;
+            l = SCRIPT_FIX_NOTHING;
+            CFP.Value[0] = &k;
+            CFP.Value[1] = op; /* activator first */
+            CFP.Value[2] = op; /* thats whoisme */
+            CFP.Value[3] = NULL;
+            CFP.Value[4] = NULL;
+            CFP.Value[5] = &m;
+            CFP.Value[6] = &m;
+            CFP.Value[7] = &m;
+            CFP.Value[8] = &l;
+            CFP.Value[9] = (char *) event_obj->race;
+            CFP.Value[10] = (char *) event_obj->slaying;
+            if (findPlugin(event_obj->name) >= 0)
+            {
+                CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
+                rtn_script = *(int *) (CFR->Value[0]);
+            }
+            if (rtn_script != 0)
+                return;
+        }
+#endif
+        push_button(op);
+    }
+}
+
 /* move_marker --peterm@soda.csua.berkeley.edu
    when moved, a marker will search for a player sitting above
    it, and insert an invisible, weightless force into him

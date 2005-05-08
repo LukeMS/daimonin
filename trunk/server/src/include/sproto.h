@@ -41,6 +41,8 @@ int                         player_apply(object *pl, object *op, int aflag, int 
 void                        player_apply_below(object *pl);
 int                         apply_special(object *who, object *op, int aflags);
 int                         monster_apply_special(object *who, object *op, int aflags);
+void                        turn_on_light(object *op);
+void                        turn_off_light(object *op);
 void                        apply_player_light_refill(object *who, object *op);
 void                        apply_player_light(object *who, object *op);
 void                        apply_lighter(object *who, object *lighter);
@@ -756,6 +758,7 @@ void                        poison_more(object *op);
 void                        move_gate(object *op);
 void                        move_timed_gate(object *op);
 void                        move_detector(object *op);
+void                        move_conn_sensor(object *op);
 void                        animate_trigger(object *op);
 void                        move_pit(object *op);
 object                     *stop_item(object *op);

@@ -153,7 +153,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define KEY                     24
 #define MMISSILE                25
 #define TIMED_GATE              26
-#define TRIGGER                 27 /* Only triggered when applied */
+#define TRIGGER                 27 /* Only triggered when applied, resets after interval */
 #define GRIMREAPER              28
 #define MAGIC_EAR               29
 #define TRIGGER_BUTTON          30
@@ -313,6 +313,7 @@ error - Your ANSI C compiler should be defining __STDC__;
                                          */
 #define TYPE_TIMER              132     /* Trigger a connection after a time period */
 #define TYPE_ENV_SENSOR         133     /* Triggers depending on environment (TOD, brightness etc) */
+#define TYPE_CONN_SENSOR        134     /* Triggers on other connections */
 /* Some free type values here! */
 #define DEEP_SWAMP              138
 #define IDENTIFY_ALTAR          139
@@ -458,6 +459,12 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define ST1_QUEST_TRIGGER_KILL		1
 #define ST1_QUEST_TRIGGER_CONT		2
 
+/* subtypes for TYPE_CONN_SENSOR */
+#define ST1_CONN_SENSOR_NAND        0 /* NAND / NOT */
+#define ST1_CONN_SENSOR_AND         1 /* AND */
+#define ST1_CONN_SENSOR_OR          2 /* OR */
+#define ST1_CONN_SENSOR_XOR         3 /* XOR */
+                            
 /* END SUB TYPE 1 DEFINE */
 
 /* definitions for detailed pickup descriptions.
