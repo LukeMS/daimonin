@@ -992,6 +992,10 @@ char *get_ob_diff(object *op,object *op2) {
   if(op->msg && op->msg!=op2->msg) {
     strcat(buf,"msg\n");
     strcat(buf,op->msg);
+    /* Mantis bug #000050 */
+    /* Ensure there's a newline before endmsg */
+    if(op->msg[0] == '\0' || op->msg[strlen(op->msg)-1] != '\n')
+        strcat(buf, "\n");
     /*strcat(buf,"\n");*/ /* we skipped last \n when we read the map, to avoid clear line in client */
     strcat(buf,"endmsg\n");
   }
