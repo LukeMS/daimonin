@@ -35,7 +35,7 @@ static struct method_decl   GameObject_methods[]            =
     {"Sound",  (lua_CFunction) GameObject_Sound},
     {"Interface",  (lua_CFunction) GameObject_Interface},
     {"SetSaveBed",  (lua_CFunction) GameObject_SetSaveBed},
-    {"DecObject",  (lua_CFunction) GameObject_DecObject},
+    {"DecreaseNrOf",  (lua_CFunction) GameObject_DecreaseNrOf},
     {"GetSkill",  (lua_CFunction) GameObject_GetSkill},
     {"SetSkill",  (lua_CFunction) GameObject_SetSkill}, {"ActivateRune",  (lua_CFunction) GameObject_ActivateRune},
     {"InsertInside",  (lua_CFunction) GameObject_InsertInside}, {"GetGod",  (lua_CFunction) GameObject_GetGod},
@@ -1840,29 +1840,28 @@ static int GameObject_SetSaveBed(lua_State *L)
 
     return 0;
 }
-/*****************************************************************************/
-/* Name   : GameObject_DecObject                                             */
-/* Lua    : object:DecObject(map, x, y)                                      */
-/* Info   : Dec(rease) object is a superior remove/delete function using     */
-/*          decrease_ob_nr. This function can delete objects or parts of     */
-/*          a stack. It can also drop the inv or not                         */
-/* Status : Stable                                                           */
-/*****************************************************************************/
-static int GameObject_DecObject(lua_State *L)
-{
-    lua_object *self, *op;
-    int         nrof, flag=0;
-	
-    get_lua_args(L, "OOi|i", &self, &op, &nrof, &flag);
 
-	if(flag && op->data.object->inv)
-		hooks->drop_ob_inv(op->data.object);
+/*****************************************************************************/
+/* Name   : GameObject_DecreaseNrOf                                          */
+/* Lua    : object:DecreaseNrOf(decrease)                                    */
+/* Info   : Reduces the number of objects in a stack, removing the stack if  */
+/*          the last object is removed.                                      */
+/*          decrease is the number of objects to remove from the stack. 1    */
+/*          is default, -1 means to remove the whole stack.                  */
+/* Status : New and slightly unstable (feature-wise - not as in crashy)      */
+/*****************************************************************************/
+static int GameObject_DecreaseNrOf(lua_State *L)
+{
+    lua_object *self;
+    int         nrof = 1;
 	
+    get_lua_args(L, "O|i", &self, &nrof);
+
 	/* -1 means "delete all" */
 	if(nrof==-1)
-		nrof = op->data.object->nrof;
+		nrof = MIN(self->data.object->nrof, 1);
 
-	hooks->decrease_ob_nr(op->data.object, nrof);
+	hooks->decrease_ob_nr(self->data.object, nrof);
 
     return 0;
 }
@@ -1873,7 +1872,9 @@ static int GameObject_DecObject(lua_State *L)
 /* Info   : Takes the object out of whatever map or inventory it is in. The  */
 /*          object can then be inserted or teleported somewhere else, or just*/
 /*          left alone for the garbage collection to take care of.           */
-/* Status : Outdated - use DecObject                                         */
+/*          If you just want to remove a part of a stack, have a look at     */
+/*          object:DecreaseNrOf(). If you actually want to represent the     */
+/*          destruction of an object, use object:Destruct()                  */
 /*****************************************************************************/
 static int GameObject_Remove(lua_State *L)
 {
@@ -1900,6 +1901,8 @@ static int GameObject_Remove(lua_State *L)
 
     /* Update player's inventory if object was removed from player
      * TODO: see how well this works with things in containers */
+    /*`TODO: this is broken. See reduce_ob_nrof for the correct implementation (and possibly
+     * something that can be broken out and reused */
     for (tmp = obenv; tmp != NULL; tmp = tmp->env)
         if (tmp->type == PLAYER)
             hooks->esrv_send_inventory(tmp, tmp);
@@ -1919,19 +1922,25 @@ static int GameObject_Remove(lua_State *L)
 /*****************************************************************************/
 /* Name   : GameObject_Destruct                                              */
 /* Lua    : object:Destruct()                                                */
-/* Info   : Removes the object out of whatever map or inventory it is in and */
-/*          drops all items in object's inventory on the floor or in a       */
-/*          corpse                                                           */
-/* Status : Outdated - use DecObject                                         */
+/* Info   : Removes the object from the game and drops all items in object's */
+/*          inventory on the floor or in a corpse                            */
+/* Status : Recently reimplemented. Untested                                 */
 /*****************************************************************************/
 static int GameObject_Destruct(lua_State *L)
 {
     lua_object *self;
-    object     *myob;
-    object     *obenv, *tmp;
 
     get_lua_args(L, "O", &self);
 
+	if(WHO->inv)
+		hooks->drop_ob_inv(WHO);
+	
+	hooks->decrease_ob_nr(WHO, MIN(WHO->nrof, 1));
+    
+    return 0;
+
+    /* Old implementation */
+#if 0    
     myob = WHO;
     obenv = myob->env;
 
@@ -1961,8 +1970,7 @@ static int GameObject_Destruct(lua_State *L)
             StackWho[StackPosition] = NULL;
         if (StackOther[StackPosition] == myob)
             StackOther[StackPosition] = NULL;*/
-
-    return 0;
+#endif
 }
 
 /*****************************************************************************/
