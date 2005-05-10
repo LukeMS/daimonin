@@ -5,6 +5,7 @@ import htmlentitydefs, os, os.path, re, sys, urllib
 length = len(sys.argv)
 if length != 2 and length != 3:
 	print 'Usage: create_lua_doc.py <source_directory> [destination]'
+	print 'Example: ./create_lua_doc.py ../../server/src/plugin_lua /tmp'
 	sys.exit(0)
 
 if length is 3:
@@ -45,7 +46,7 @@ newline_re_obj = re.compile('\n')
 object_attributes_block_re_obj = re.compile('\s*struct\s+attribute_decl\s+GameObject_attributes\[\]\s+=[\n\r]+(.*?)[\n\r]+\};', re.S)
 object_flags_block_re_obj = re.compile('\s*static\s+const\s+char\s*\*\s*GameObject_flags\[.*?\]\s*=[\n\r]+(.*?)[\n\r]+\};', re.S)
 parameter_names_re_obj = re.compile('.*\((.*)\)')
-parameter_types_re_obj = re.compile('get_lua_args\(L,\s*"([MOdfis\|?]+)"')
+parameter_types_re_obj = re.compile('get_lua_args\(L,\s*"([GMAOdfis\|?]+)"')
 quot_re_obj = re.compile('"')
 return_boolean_re_obj = re.compile('.*lua_pushboolean\(.*?[\n\r]+\s*return\s*1;', re.S)
 return_number_re_obj = re.compile('.*lua_pushnumber\(.*?[\n\r]+\s*return\s*1;', re.S)
@@ -53,6 +54,9 @@ return_map_re_obj = re.compile('.*return\s*push_object\(L,\s*&Map,', re.S)
 return_nothing_re_obj = re.compile('.*return\s*0', re.S)
 return_string_re_obj = re.compile('.*lua_pushstring\(.*?[\n\r]+\s*return\s*1;', re.S)
 return_object_re_obj = re.compile('.*return\s*push_object\(L,\s*&GameObject,', re.S)
+return_ai_re_obj = re.compile('.*return\s*push_object\(L,\s*&AI,', re.S)
+#return_array_re_obj = re.compile('.*return\s*push_object\(L,\s*&GameObject,', re.S)
+return_array_re_obj = re.compile('.*lua_newtable\(L\).*lua_rawseti\(L.*.*return\s+1', re.S)
 
 def end(f):
 	f.write('</body></html>')
@@ -108,6 +112,8 @@ for filename in listCFiles(sys.argv[1]):
 							fields[key] = match[1]
 					elif key != None and line:
 						fields[key] += "\n" + colon_prefix_re_obj.sub('', line)
+
+                        
 			if 'Lua' in fields:
 				prefix = name_prefix_re_obj.findall(fields['Lua'])
 				if prefix:
@@ -115,7 +121,7 @@ for filename in listCFiles(sys.argv[1]):
 					body = func_body_re_obj.findall(function)
 					if body:
 						body = body[0]
-						if prefix == 'map' or prefix == 'object':
+						if prefix == 'map' or prefix == 'object' or prefix == 'ai':
 							fields['Lua'] = dot_re_obj.sub(':', fields['Lua'], 1)
 						c = 0
 						optional = 0
@@ -127,6 +133,8 @@ for filename in listCFiles(sys.argv[1]):
 						types = parameter_types_re_obj.findall(body)
 						if len(types) > 0:
 							types = types[0]
+						else:
+							parameters[0].append((names[0], 'unknown'))
 						for i in range(len(types)):
 							tp = ''
 							if types[i] == 's':
@@ -146,6 +154,9 @@ for filename in listCFiles(sys.argv[1]):
 							elif types[i] == 'M':
 								if c != 0 or prefix != 'map':
 									tp = 'map'
+							elif types[i] == 'A':
+								if c != 0 or prefix != 'ai':
+									tp = 'ai'
 							elif types[i] == '|':
 								optional = 1
 							elif types[i] == '?':
@@ -160,6 +171,7 @@ for filename in listCFiles(sys.argv[1]):
 									tp += ' or nil'
 								parameters[optional].append((key, tp))
 								c += 1
+        
 						fields['parameters'] = parameters
 						return_types = []
 						match = return_boolean_re_obj.match(body)
@@ -179,8 +191,21 @@ for filename in listCFiles(sys.argv[1]):
 							return_types.append('map')
 						match = return_nothing_re_obj.match(body)
 						if match != None:
-							return_types.append('nil')
-						last = return_types[-1]
+							return_types.append('nil')							
+						match = return_ai_re_obj.match(body)
+						if match != None:
+							return_types.append('ai')
+
+						# Try to figure out arrays
+						# (lua_newtable(), push_object(), lua_rawseti()) combo
+						match = return_array_re_obj.match(body)
+						if match != None:
+							return_types.append('array of something')
+							
+						try:
+							last = return_types[-1]
+						except:
+							print body
 						return_types = return_types[:-1]
 						if return_types:
 							fields['return'] = ', '.join(return_types) + ' or ' + last
@@ -193,6 +218,7 @@ for filename in listCFiles(sys.argv[1]):
 					key = name_re_obj.findall(fields['Lua'])
 					key = key[0]
 					doc[prefix]['functions'][key] = fields
+
 	if not 'game' in doc:
 		doc['game'] = {'attributes': {}, 'constants': [], 'flags': [], 'functions': {}}
 	block = game_constants_block_re_obj.findall(code)
@@ -201,13 +227,13 @@ for filename in listCFiles(sys.argv[1]):
 		if constants:
 			for constant in constants:
 				doc['game']['constants'].append(constant)
+                
 	if not 'event' in doc:
-		doc['event'] = {'attributes': {}, 'constants': [], 'flags': [], 'functions': {}}		
+		doc['event'] = {'attributes': {}, 'constants': [], 'flags': [], 'functions': {}}	
 	block = event_attributes_block_re_obj.findall(code)
 	if block:
 		attributes = attributes_re_obj.findall(code)
 		if attributes:
-			print attributes
 			for attribute in attributes:
 				special = ''
 				tp = ''
@@ -226,6 +252,7 @@ for filename in listCFiles(sys.argv[1]):
 					special = 'fix the player or mob after change'
 				if tp:
 					doc['event']['attributes'][attribute[0]] = (tp, special)
+                    
 	if not 'map' in doc:
 		doc['map'] = {'attributes': {}, 'constants': [], 'flags': [], 'functions': {}}		
 	block = map_attributes_block_re_obj.findall(code)
@@ -251,12 +278,14 @@ for filename in listCFiles(sys.argv[1]):
 					special = 'fix the player or mob after change'
 				if tp:
 					doc['map']['attributes'][attribute[0]] = (tp, special)
+                    
 	block = map_flags_block_re_obj.findall(code)
 	if block:
 		flags = flags_re_obj.findall(block[0])
 		if flags:
 			for flag in flags:
 				doc['map']['flags'].append(flag)
+                
 	if not 'object' in doc:
 		doc['object'] = {'attributes': {}, 'constants': [], 'flags': [], 'functions': {}}
 	block = object_attributes_block_re_obj.findall(code)
@@ -282,12 +311,16 @@ for filename in listCFiles(sys.argv[1]):
 					special = 'fix the player or mob after change'
 				if tp:
 					doc['object']['attributes'][attribute[0]] = (tp, special)
+                    
 	block = object_flags_block_re_obj.findall(code)
 	if block:
 		flags = flags_re_obj.findall(block[0])
 		if flags:
 			for flag in flags:
 				doc['object']['flags'].append(flag)
+	
+	if not 'ai' in doc:
+		doc['ai'] = {'attributes': {}, 'constants': [], 'flags': [], 'functions': {}}
 
 index = start('index', 'Index')
 doc_keys = doc.keys()
