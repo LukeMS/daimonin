@@ -250,9 +250,11 @@ WS	[ \t]*{NL}?
 			/* Just print a warning so we can be reasonably safe
 			 * about not overflowing the buffer.
 			 */
+			 /*
 			if (strlen(op->msg) > (HUGE_BUF/2))
 			    LOG(llevDebug, "\n\tDebug: Warning message length > %d (max allowed=%d): %d\n>%.80s<\n",
 				HUGE_BUF/2, HUGE_BUF, strlen(op->msg),op->msg);
+				*/
 		    }
 			/*<MESSAGE>.*	    {if(msg_flag)strcat(msgbuf,"\n");msg_flag=1;strcat(msgbuf, yytext); }*/
 <MESSAGE>.*{WS}	strcat(msgbuf, yytext);

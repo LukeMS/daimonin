@@ -621,9 +621,8 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
      * a valid terrain flag, this is forbidden to enter.
      */
     if (msp->move_flags & ~terrain)
-        return (flags & 
-				(P_NO_PASS | P_IS_ALIVE | P_IS_PLAYER | P_CHECK_INV | P_PASS_THRU | P_PASS_ETHEREAL | P_NO_TERRAIN));
-
+        return (flags & (P_NO_PASS | P_IS_ALIVE | P_IS_PLAYER | P_CHECK_INV | P_PASS_THRU | P_PASS_ETHEREAL) | P_NO_TERRAIN);
+	
     /* the terrain is ok... whats first?
      * A.) P_IS_ALIVE - we leave without question
      * (NOTE: player objects has NO is_alive set!)
@@ -660,7 +659,7 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
              * b.) P_IS_PVP or MAP_FLAG_PVP
              */
         if (!op || flags & P_IS_PVP || m->map_flags & MAP_FLAG_PVP)
-            return (flags & (P_DOOR_CLOSED | P_IS_PLAYER | P_CHECK_INV));
+            return ((flags & (P_DOOR_CLOSED | P_IS_PLAYER | P_CHECK_INV))|P_IS_PVP);
 
         /* when we are here: no player pvp stuff was triggered. But:
              * a.) the tile IS blocked by a player (we still in IS_PLAYER area)
@@ -680,8 +679,9 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
 
     if (op) /* we have a object ptr - do some last checks */
     {
+
         if (flags & P_PLAYER_ONLY && op->type != PLAYER) /* player only space and not a player... */
-            return (flags & (P_DOOR_CLOSED | P_NO_PASS | P_CHECK_INV)); /* tell them: no pass and possible checker here */
+            return (flags & (P_DOOR_CLOSED | P_NO_PASS | P_CHECK_INV|P_PLAYER_ONLY)); /* tell them: no pass and possible checker here */
 
         /* and here is our CHECK_INV ...
              * blocked_tile() is now only and exclusive called from here.
