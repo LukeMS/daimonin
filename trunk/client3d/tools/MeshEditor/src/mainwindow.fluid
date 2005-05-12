@@ -1,0 +1,144 @@
+# data file for the Fltk User Interface Designer (fluid)
+version 1.0106 
+header_name {.h} 
+code_name {.cpp}
+decl {\#include "editor.h"} {} 
+
+decl {\#include "mesh.h"} {} 
+
+decl {\#include "skeleton.h"} {} 
+
+class MainWindow {open
+} {
+  Function {~MainWindow()} {} {}
+  Function {MainWindow()} {open
+  } {
+    Fl_Window MWindow {
+      label {Daimonin (Ogre3d Mesh Editor) - Powered by FLTK} open
+      xywh {539 135 562 631} type Double box THIN_UP_BOX align 0 visible
+    } {
+      Fl_Group MeshNamePanel {
+        label Files open
+        xywh {10 15 540 230} box SHADOW_BOX labeltype EMBOSSED_LABEL align 17
+      } {
+        Fl_Button LoadMesh {
+          label {Mesh File:}
+          callback {Editor::getSingleton().loadModel();}
+          xywh {20 40 80 25} labeltype EMBOSSED_LABEL align 24
+        }
+        Fl_Output MeshName {
+          xywh {100 40 440 25} align 0
+          code0 {o->value("<- Click here to load a new mesh");}
+        }
+        Fl_Output SkeletonName {
+          label {Skeleton:}
+          xywh {100 70 440 25} labeltype EMBOSSED_LABEL
+        }
+        Fl_Box {} {
+          label {Rename Mesh Name}
+          xywh {25 125 515 25} labeltype EMBOSSED_LABEL
+        }
+        Fl_Output txtMeshNameStatus {
+          label {Status:}
+          xywh {100 100 440 25} color 48 labeltype EMBOSSED_LABEL
+        }
+        Fl_Choice selMeshSpecies {
+          label {Species:}
+          callback {Mesh::getSingleton().selectSpecies(o->value());} open
+          xywh {100 150 280 25} down_box BORDER_BOX labeltype EMBOSSED_LABEL
+        } {}
+        Fl_Choice selMeshGender {
+          label {Gender:} open
+          xywh {100 180 280 25} down_box BORDER_BOX labeltype EMBOSSED_LABEL
+        } {}
+        Fl_Choice selMeshProfession {
+          label {Profession:} open
+          xywh {100 210 280 25} down_box BORDER_BOX labeltype EMBOSSED_LABEL
+        } {}
+        Fl_Button butRenameMesh {
+          label {Save Mesh}
+          callback {Mesh::getSingleton().renameMesh();}
+          xywh {390 150 145 85} labeltype EMBOSSED_LABEL
+        }
+      }
+      Fl_Group panelNewAnimName {
+        label Animation
+        xywh {10 255 540 175} box SHADOW_BOX labeltype EMBOSSED_LABEL align 17
+      } {
+        Fl_Choice selAnimName {
+          label {Name:}
+          callback {Skeleton::getSingleton().selAnimation(o->value());}
+          xywh {70 280 465 25} down_box BORDER_BOX labeltype EMBOSSED_LABEL
+        } {}
+        Fl_Counter countAnimLength {
+          callback {Skeleton::getSingleton().updateAnimLength();}
+          xywh {125 310 135 25} labeltype EMBOSSED_LABEL align 4 minimum 0.1 maximum 100 step 0.01 value 1
+        }
+        Fl_Output txtAnimNameStatus {
+          label {Status:}
+          xywh {70 340 465 25} color 48 labeltype EMBOSSED_LABEL
+        }
+        Fl_Output outAnimLen {
+          label {Length:}
+          xywh {70 310 50 25} color 48 labeltype EMBOSSED_LABEL
+        }
+        Fl_Output outAnimNewLen {
+          xywh {265 310 50 25} color 48 labeltype EMBOSSED_LABEL
+        }
+        Fl_Choice selRenameAnim {
+          xywh {165 395 370 25} down_box BORDER_BOX labeltype EMBOSSED_LABEL
+        } {}
+        Fl_Button {} {
+          label {Save New Length}
+          callback {Skeleton::getSingleton().changeAnimLength();}
+          xywh {320 310 215 25} labeltype EMBOSSED_LABEL
+        }
+        Fl_Button butRenameAnim {
+          label {Rename Animation}
+          callback {Skeleton::getSingleton().renameAnim();}
+          xywh {20 395 145 25} labeltype EMBOSSED_LABEL
+        }
+        Fl_Box {} {
+          label {Rename Animation Name}
+          xywh {20 370 515 25} labeltype EMBOSSED_LABEL
+        }
+      }
+      Fl_Group panelMaterial {
+        label Material open selected
+        xywh {10 440 540 145} box SHADOW_BOX labeltype EMBOSSED_LABEL align 17 deactivate
+      } {
+        Fl_Choice selMaterialName {
+          label {Name:}
+          callback {Skeleton::getSingleton().selAnimation(o->value());}
+          xywh {70 465 465 25} down_box BORDER_BOX labeltype EMBOSSED_LABEL
+        } {}
+        Fl_Output txtMaterialNameStatus {
+          label {Status:}
+          xywh {70 495 465 25} color 48 labeltype EMBOSSED_LABEL
+        }
+        Fl_Choice selRenameMaterial {
+          xywh {165 550 370 25} down_box BORDER_BOX labeltype EMBOSSED_LABEL
+        } {}
+        Fl_Button butRenameMaterial {
+          label {Rename Material}
+          xywh {20 550 145 25} labeltype EMBOSSED_LABEL
+        }
+        Fl_Box {} {
+          label {Rename Material Name}
+          xywh {20 525 515 25} labeltype EMBOSSED_LABEL
+        }
+      }
+      Fl_Group {} {open
+        xywh {10 595 540 30} box SHADOW_BOX labeltype NO_LABEL align 17
+      } {
+        Fl_Box {} {
+          label {(c) 2005 The Daimonin Team (http://daimonin.sourceforge.net)}
+          xywh {15 600 530 20} labeltype ENGRAVED_LABEL
+        }
+      }
+    }
+  }
+} 
+
+decl {extern MainWindow *gpMainWin;} {public
+} 

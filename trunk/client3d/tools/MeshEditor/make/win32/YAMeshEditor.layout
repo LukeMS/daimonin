@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<!DOCTYPE Code::Blocks_layout_file>
+<Code::Blocks_layout_file>
+	<File name="..\..\src\define.h" open="1" top="0">
+		<Cursor position="0" topLine="0"/>
+	</File>
+	<File name="..\..\src\logfile.cpp" open="1" top="0">
+		<Cursor position="0" topLine="0"/>
+	</File>
+	<File name="..\..\src\logfile.h" open="1" top="0">
+		<Cursor position="2441" topLine="33"/>
+	</File>
+	<File name="..\..\src\main.cpp" open="1" top="0">
+		<Cursor position="2034" topLine="15"/>
+	</File>
+	<File name="..\..\src\mainwindow.cpp" open="1" top="1">
+		<Cursor position="414" topLine="13"/>
+	</File>
+	<File name="..\..\src\mainwindow.h" open="0" top="0">
+		<Cursor position="411" topLine="0"/>
+	</File>
+	<File name="..\..\src\mesh.cpp" open="1" top="0">
+		<Cursor position="205" topLine="0"/>
+	</File>
+	<File name="..\..\src\mesh.h" open="1" top="0">
+		<Cursor position="1734" topLine="21"/>
+	</File>
+	<File name="..\..\src\skeleton.cpp" open="1" top="0">
+		<Cursor position="592" topLine="0"/>
+	</File>
+	<File name="..\..\src\skeleton.h" open="1" top="0">
+		<Cursor position="1119" topLine="23"/>
+	</File>
+	<Expand folder="/Sources"/>
+	<Expand folder="/Headers"/>
+	<Expand folder="/Fluid"/>
+	<Expand folder="/Others"/>
+</Code::Blocks_layout_file>
