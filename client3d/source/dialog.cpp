@@ -31,14 +31,15 @@ http://www.gnu.org/copyleft/lesser.txt.
 //=================================================================================================
 bool Dialog::Init()
 {
-	mLoginOverlay					= OverlayManager::getSingleton().getByName			("DialogOverlay");
-	mPanelPlayerName			= OverlayManager::getSingleton().getOverlayElement	("Dialog/Login/Playername");
-	mPlayerName					= OverlayManager::getSingleton().getOverlayElement	("Dialog/Login/Playername/Text");
-	mPanelPlayerPasswd		= OverlayManager::getSingleton().getOverlayElement	("Dialog/Login/Password");
-	mPlayerPasswd				= OverlayManager::getSingleton().getOverlayElement	("Dialog/Login/Password/Text");
-	mPlayerRePasswd			= OverlayManager::getSingleton().getOverlayElement	("Dialog/Login/RePassword/Text");
-	mPanelPlayerRePasswd	= OverlayManager::getSingleton().getOverlayElement	("Dialog/Login/RePassword");
-	mElementSelectionBar		= OverlayManager::getSingleton().getOverlayElement	("Dialog/MetaSelect/select");
+    LogFile::getSingleton().Headline("Init Dialog-System");
+	mLoginOverlay       = OverlayManager::getSingleton().getByName("DialogOverlay");
+	mPanelPlayerName    = OverlayManager::getSingleton().getOverlayElement("Dialog/Login/Playername");
+	mPlayerName         = OverlayManager::getSingleton().getOverlayElement("Dialog/Login/Playername/Text");
+	mPanelPlayerPasswd  = OverlayManager::getSingleton().getOverlayElement("Dialog/Login/Password");
+	mPlayerPasswd       = OverlayManager::getSingleton().getOverlayElement("Dialog/Login/Password/Text");
+	mPlayerRePasswd     = OverlayManager::getSingleton().getOverlayElement("Dialog/Login/RePassword/Text");
+	mPanelPlayerRePasswd= OverlayManager::getSingleton().getOverlayElement("Dialog/Login/RePassword");
+	mElementSelectionBar= OverlayManager::getSingleton().getOverlayElement("Dialog/MetaSelect/select");
 	mDialogSelPanel= static_cast<OverlayContainer*>(OverlayManager::getSingleton().getOverlayElement("Dialog/MetaSelect/Back"));
 	mDialogInfoPanel=static_cast<OverlayContainer*>(OverlayManager::getSingleton().getOverlayElement("Dialog/Info/Panel"));
 	// Selection textareas.
@@ -60,8 +61,7 @@ bool Dialog::Init()
 		mElementInfo[j]->setCaption(name+"Line_"+ StringConverter::toString(j));
 		mDialogInfoPanel->addChild(mElementInfo[j]);
 	}
-
-	mVisible = false;
+	setVisible(false);
 	return true;
 }
 
@@ -70,9 +70,9 @@ bool Dialog::Init()
 //=================================================================================================
 void Dialog::setVisible(bool vis)
 {
+    if (vis == mVisible) { return; }
 	if (vis == true)
 	{
-		mVisible = true;
 		mPanelPlayerName	->hide();
 		mPanelPlayerPasswd	->hide();
 		mPanelPlayerRePasswd->hide();
@@ -80,9 +80,9 @@ void Dialog::setVisible(bool vis)
 	}
     else
 	{
-		mVisible = false;
 		mLoginOverlay->hide();
 	}
+    mVisible = vis;
 }
 
 //=================================================================================================
@@ -112,12 +112,6 @@ void Dialog::setSelText(unsigned int pos, const char *text, ColourValue color)
 }
 
 //=================================================================================================
-// Clear all selectable text.
-//=================================================================================================
-
-
-
-//=================================================================================================
 // Fill the textarea of Info text.
 //=================================================================================================
 void Dialog::setInfoText(unsigned int pos, const char *text, ColourValue color)
@@ -126,6 +120,11 @@ void Dialog::setInfoText(unsigned int pos, const char *text, ColourValue color)
 	mElementInfo[pos]->setCaption(text);
 	mElementInfo[pos]->setColour(color);
 }
+
+//=================================================================================================
+// Clear all selectable text.
+//=================================================================================================
+
 
 //=================================================================================================
 // Clear all Info text.
@@ -140,6 +139,7 @@ void Dialog::clearInfoText()
 //=================================================================================================
 void Dialog::UpdateLogin(unsigned int stage)
 {
+	static std::string mStrPlayerName, mStrPassword, mStrRePasswd;
 	switch(stage)
 	{
 		case DIALOG_STAGE_LOGIN_GET_NAME:

@@ -24,6 +24,10 @@ http://www.gnu.org/copyleft/lesser.txt.
 #ifndef NETWORK_H
 #define NETWORK_H
 
+#include <list>
+
+using namespace std;
+
 ////////////////////////////////////////////////////////////
 // Defines.
 ////////////////////////////////////////////////////////////
@@ -53,6 +57,18 @@ struct SockList
     int            len;
     unsigned char *buf;
 };
+
+typedef struct mStructServer
+{
+    string nameip;
+    string version;
+    string desc1;
+    string desc2;
+    string desc3;
+    string desc4;
+    int player;
+    int port;
+}mStructServer;	
 
 ////////////////////////////////////////////////////////////
 // Singleton class.
@@ -112,12 +128,17 @@ class Network
     int mSocketStatusErrorNr;
     SockList  mInbuf;
 	int mSocket;
-
+    list<mStructServer*> mServerList;
+    
     ////////////////////////////////////////////////////////////
 	// Functions.
     ////////////////////////////////////////////////////////////
     Network(const Network&);  // disable copy-constructor.
     bool InitSocket();
+    void clear_metaserver_data(void);
+    void get_meta_server_data(int num, char *server, int *port);   
+    void add_metaserver_data(const char *server, int port, int player, const char *ver, 
+        const char *desc1, const char *desc2, const char *desc3, const char *desc4);
 };
 
 #endif

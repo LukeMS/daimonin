@@ -40,10 +40,10 @@ const Real FONT_SIZE          =  16.0f;  // default: 16.0f
 const int  MAX_TEXT_LINES     =  20;
 const int  SIZE_STRING_BUFFER = 128;     // MUST be 2^X.
 
-const ColourValue TXT_RED		= ColourValue(1, 0, 0);
-const ColourValue TXT_YELLOW	= ColourValue(1, 1, 0);
+const ColourValue TXT_RED	= ColourValue(1, 0, 0);
+const ColourValue TXT_YELLOW= ColourValue(1, 1, 0);
 const ColourValue TXT_GREEN	= ColourValue(0, 1, 0);
-const ColourValue TXT_BLUE		= ColourValue(0, 0, 1);
+const ColourValue TXT_BLUE	= ColourValue(0, 0, 1);
 const ColourValue TXT_WHITE	= ColourValue(1, 1, 1);
 const ColourValue TXT_GRAY1	= ColourValue(.7, .7, .7);
 

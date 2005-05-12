@@ -24,8 +24,6 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "define.h"
 #include "event.h"
 #include "player.h"
-#include "object_npc.h"
-#include "object_static.h"
 #include "client.h"
 #include "network.h"
 #include "logfile.h"
@@ -44,31 +42,30 @@ const int SUM_MIPMAPS = 0;
 // ========================================================================
 // Start the example
 // ========================================================================
-DaimoninClient::DaimoninClient()
-{
-	mRoot  = 0;
-}
-
-// ========================================================================
-// Start the example
-// ========================================================================
-DaimoninClient::~DaimoninClient()
-{
-	if (player)      { delete player; }
-	if (Event)       { delete Event; }
-	if (mRoot)       { delete mRoot;  }
-}
-
-// ========================================================================
-// Start the example
-// ========================================================================
 void DaimoninClient::go(void)
 {
+	mRoot = 0;
+    if (!(LogFile::getSingleton().Init())) { return; }
     if (!setup()) { return; }
+	if (!(Option ::getSingleton().Init())) { return; }
+	if (!(Sound  ::getSingleton().Init())) { return; }
+	if (!(Network::getSingleton().Init())) { return; }
+//    if (!(TileGfx::getSingleton().Init())) { return; }
  	Sound::getSingleton().playSong(FILE_MUSIC_001);
+    createScene();
     mRoot->startRendering();
-    // Clean up all Ogre-Ptr.
-	TileMap::getSingleton().freeRecources();     
+
+    /////////////////////////////////////////////////////////////////////////
+    // Clean up.
+    /////////////////////////////////////////////////////////////////////////
+	TileMap::getSingleton().freeRecources();
+	if (player) { delete player; }
+	if (Event)  { delete Event;  }
+	if (mRoot)  { delete mRoot;  }
+//    Network::getSingleton().freeRecources();
+    Sound  ::getSingleton().freeRecources();
+//    Option ::getSingleton().freeRecources();
+//    LogFile::getSingleton().freeRecources();
 }
 
 // ========================================================================
@@ -77,14 +74,7 @@ void DaimoninClient::go(void)
 // ========================================================================
 bool DaimoninClient::setup(void)
 {
-	LogFile::getSingleton().Init();
-    if (TileGfx::getSingleton().read_bmaps_p0() <0) return false; 
-    TileGfx::getSingleton().read_bmap_tmp(); // only testing.NORMALLY started from netword.cpp.
-	Option ::getSingleton().Init();
-	Sound  ::getSingleton().Init();
-	Network::getSingleton().Init();
 	mRoot = new Root();
-
 	setupResources();
 		
 	/////////////////////////////////////////////////////////////////////////
@@ -103,6 +93,9 @@ bool DaimoninClient::setup(void)
 	/////////////////////////////////////////////////////////////////////////
     mCamera = mSceneMgr->createCamera("Camera");
     mCamera->setProjectionType(PT_ORTHOGRAPHIC);
+	mCamera->setPosition(Vector3(0,CAMERA_ZOOM+50, CAMERA_ZOOM+50));
+    mCamera->setNearClipDistance(CAMERA_ZOOM);
+	mCamera->lookAt(Vector3(0,0,0));
 
 	/////////////////////////////////////////////////////////////////////////
     // Create one viewport, entire window
@@ -111,10 +104,12 @@ bool DaimoninClient::setup(void)
     mVP->setBackgroundColour(ColourValue(0,0,0));
     // Alter the camera aspect ratio to match the viewport
     mCamera->setAspectRatio(Real(mVP->getActualWidth()) / Real(mVP->getActualHeight()));
+
     /////////////////////////////////////////////////////////////////////////
     // Set default mipmap level (NB some APIs ignore this)
     /////////////////////////////////////////////////////////////////////////
     TextureManager::getSingleton().setDefaultNumMipmaps(SUM_MIPMAPS);
+
     /////////////////////////////////////////////////////////////////////////
     // Optional override method where you can perform resource group loading
     // Must at least do ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
@@ -124,8 +119,6 @@ bool DaimoninClient::setup(void)
     Event= new CEvent(mWindow, mCamera, mMouseMotionListener, mMouseListener);
     mRoot->addFrameListener(Event);
     Event->setResolutionMember(mVP->getActualWidth(), mVP->getActualHeight());
-
-    createScene();
 	return true;
 }
 
@@ -193,17 +186,13 @@ void DaimoninClient::createScene(void)
 	light->setVisible(false);
 
     player = new Player(mSceneMgr, mSceneMgr->getRootSceneNode(), "player.desc");
-	ObjectManger::getSingleton().init(mSceneMgr, Event->World);
-    ObjectManger::getSingleton().addObject(OBJECT_NPC   , "Animal_N_Scorpion.desc", Vector3(0,0,0));
-    ObjectManger::getSingleton().addObject(OBJECT_NPC   , "Animal_M_Deer.desc", Vector3(0,0,0));    
-    ObjectManger::getSingleton().addObject(OBJECT_STATIC, "tree01.mesh", Vector3(  40,  -8, 7));
-    ObjectManger::getSingleton().addObject(OBJECT_STATIC, "tree01.mesh", Vector3( 140,  -8, 6));
-    ObjectManger::getSingleton().addObject(OBJECT_STATIC, "tree01.mesh", Vector3( -40, -88, 9));
-    ObjectManger::getSingleton().addObject(OBJECT_STATIC, "tree01.mesh", Vector3(-140,-208, 8));
-    ObjectManger::getSingleton().addObject(OBJECT_STATIC, "tree02.mesh", Vector3( 180,-108, 11));    
+	ObjectManager::getSingleton().init(mSceneMgr, Event->World);
+    ObjectManager::getSingleton().addObject(OBJECT_NPC   , "Animal_N_Scorpion.desc", Vector3(0,0,0));
+    ObjectManager::getSingleton().addObject(OBJECT_NPC   , "Animal_M_Deer.desc", Vector3(0,0,0));    
+    ObjectManager::getSingleton().addObject(OBJECT_STATIC, "tree01.mesh", Vector3(  40,  -8, 7));
+    ObjectManager::getSingleton().addObject(OBJECT_STATIC, "tree01.mesh", Vector3( 140,  -8, 6));
+    ObjectManager::getSingleton().addObject(OBJECT_STATIC, "tree01.mesh", Vector3( -40, -88, 9));
+    ObjectManager::getSingleton().addObject(OBJECT_STATIC, "tree01.mesh", Vector3(-140,-208, 8));
+    ObjectManager::getSingleton().addObject(OBJECT_STATIC, "tree02.mesh", Vector3( 180,-108, 11));    
 	TileMap::getSingleton().Init(mSceneMgr, mSceneMgr->getRootSceneNode());
-	
-	mCamera->setPosition(Vector3(0,CAMERA_ZOOM+50, CAMERA_ZOOM+50));
-    mCamera->setNearClipDistance(CAMERA_ZOOM);
-	mCamera->lookAt(Vector3(0,0,0));
 }

@@ -129,9 +129,10 @@ class TileMap
     void scrollTileMap(int x, int y);
 	void freeRecources()
 	{
-        mpMeshTiles.setNull();		
+        mpIndexBuf.setNull();
 		mpVertexBuf.setNull(); // Cannot be done by destuctor!
-	}
+        mpMeshTiles.setNull();
+    }
 
   private:
     ////////////////////////////////////////////////////////////
@@ -141,6 +142,7 @@ class TileMap
 	MapCell *TheMapCache;
 	MeshPtr mpMeshTiles;
 	HardwareVertexBufferSharedPtr mpVertexBuf;
+    HardwareIndexBufferSharedPtr mpIndexBuf;
     Vector3 mTileOffset;
     ////////////////////////////////////////////////////////////
 	// Functions.

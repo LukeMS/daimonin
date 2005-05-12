@@ -44,10 +44,11 @@ class Sound
 	// Functions.
     ////////////////////////////////////////////////////////////
      Sound() {;}
-    ~Sound();
+    ~Sound() {;}
     static Sound &getSingleton()  { static Sound Singleton; return Singleton; }
 
     bool Init();
+    void freeRecources();
 	// Streams.
 	void playStream(const char *filename);
 	void stopStream();

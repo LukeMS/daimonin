@@ -21,17 +21,16 @@ http://www.gnu.org/copyleft/lesser.txt.
 -----------------------------------------------------------------------------
 */
 
-#ifndef OBJECT_MANAGER_H
-#define OBJECT_MANAGER_H
+#ifndef LIGHT_MANAGER_H
+#define LIGHT_MANAGER_H
 
 #include <vector>
 #include "Ogre.h"
-#include "object_npc.h"
 
 using namespace Ogre;
 
-enum { OBJECT_STATIC, OBJECT_NPC,  OBJECT_SUM };
-enum { OBJ_WALK, OBJ_TURN, OBJ_TEXTURE, OBJ_ANIMATION, OBJ_SUM };
+
+enum { LIGHT_SPOT, LIGHT_SUM };
 
 ////////////////////////////////////////////////////////////
 // Defines.
@@ -40,7 +39,7 @@ enum { OBJ_WALK, OBJ_TURN, OBJ_TEXTURE, OBJ_ANIMATION, OBJ_SUM };
 ////////////////////////////////////////////////////////////
 // Class.
 ////////////////////////////////////////////////////////////
-class ObjectManager
+class LightManager
 {
   private:
     ////////////////////////////////////////////////////////////
@@ -49,22 +48,21 @@ class ObjectManager
     SceneManager *mSceneMgr;
     SceneNode  *mNode;
     std::string mDescFile;
-    std::vector<Entity*>mvObject_static;
-    std::vector<NPC*   >mvObject_npc;
+    std::vector<Light*>mvLightObject;
    
     
     ////////////////////////////////////////////////////////////
 	// Functions.
     ////////////////////////////////////////////////////////////
-    ObjectManager(const ObjectManager&); // disable copy-constructor.
+    LightManager(const LightManager&); // disable copy-constructor.
 	    
   public:
     ////////////////////////////////////////////////////////////
 	// Functions.
     ////////////////////////////////////////////////////////////
-     ObjectManager() {;}
-	~ObjectManager();
-    static ObjectManager &getSingleton() { static ObjectManager Singleton; return Singleton; }
+     LightManager() {;}
+	~LightManager();
+    static LightManager &getSingleton() { static LightManager Singleton; return Singleton; }
 	bool init(SceneManager *SceneMgr, SceneNode  *Node);
     bool addObject(unsigned int type, const char *desc_filename, Vector3 pos);
     void delObject(int number);

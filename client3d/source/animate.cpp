@@ -95,7 +95,7 @@ Animate::Animate(Entity *entity)
 void Animate::toggleAnimGroup()
 {
 	if (++mAnimGroup >2) { mAnimGroup =0; }
-	toggleAnimation(mAnimType);
+	toggleAnimation(mAnimType, true);
 	char buf[80];
 	sprintf(buf, "AnimGroup No %d is now active.", mAnimGroup+1);
 	TextWin->Print(buf, TXT_WHITE);

@@ -400,10 +400,6 @@ void TileMap::draw(void)
     yPos-= ((int)(yPos/ TILES_HEIGHT)) * TILES_HEIGHT;
     mNode->setPosition(xPos, yPos, 0);
 
-
-
-
-
     int texPosX;
 	Real *pVertex = static_cast<Real*>(mpVertexBuf->lock(HardwareBuffer::HBL_DISCARD));
 	for (int y = 0; y < TILES_SUM_Y; ++y)
@@ -813,13 +809,13 @@ void TileMap::Init(SceneManager *SceneMgr, SceneNode *Node)
 	pMeshTilesVertex->indexData->indexCount = SUM_VINDEX;
 	pMeshTilesVertex->indexData->indexBuffer = HardwareBufferManager::getSingleton().createIndexBuffer(HardwareIndexBuffer::IT_16BIT, pMeshTilesVertex->indexData->indexCount, HardwareBuffer::HBU_STATIC_WRITE_ONLY, false);
 	pMeshTilesVertex->useSharedVertices = true;
-	HardwareIndexBufferSharedPtr iBuf = pMeshTilesVertex->indexData->indexBuffer;
-	unsigned short* pIndices = static_cast<unsigned short*>(iBuf->lock(HardwareBuffer::HBL_DISCARD));
+    mpIndexBuf = pMeshTilesVertex->indexData->indexBuffer;
+	unsigned short* pIndices = static_cast<unsigned short*>(mpIndexBuf->lock(HardwareBuffer::HBL_DISCARD));
 	for (int i=0; i < SUM_TILES; ++i)
 	{
 		for (int u= 0; u < SUM_FACES; ++u)  { *pIndices++ = i*4 + faces[u]; }
 	}
-	iBuf->unlock();
+	mpIndexBuf->unlock();
 
     /////////////////////////////////////////////////////////////////////////
 	// Set bounding information (for culling)
@@ -836,5 +832,5 @@ void TileMap::Init(SceneManager *SceneMgr, SceneNode *Node)
 	mNode = Node->createChildSceneNode();
 	mEntity->setMaterialName("Tiles/Layers");
 	mNode->attachObject(mEntity);
-	mTileOffset = Vector3::ZERO;
+	mTileOffset = Vector3(0,0,0);
 }

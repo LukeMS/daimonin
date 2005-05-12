@@ -39,7 +39,7 @@ static vector<FSOUND_SAMPLE*> vecHandle;
 // ========================================================================
 bool Sound::Init()
 {
-    LogFile::getSingleton().Headline("Init Soundystem");
+    LogFile::getSingleton().Headline("Init Sound-System");
     LogFile::getSingleton().Info("Starting fmod...");
 
     ///////////////////////////////////////////////////////////////////////// 
@@ -223,9 +223,9 @@ void Sound::stopStream()
 }
 
 // ========================================================================
-// Destructor.
+// Free all stuff.
 // ========================================================================
-Sound::~Sound()
+void Sound::freeRecources()
 {
 	stopStream();
     FMUSIC_FreeSong(mpSong);

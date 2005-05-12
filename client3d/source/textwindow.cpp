@@ -47,6 +47,13 @@ CTextwindow::CTextwindow(std::string title, Real Xpos, Real height, bool visible
 	mContainerFrame = static_cast<OverlayContainer*>(OverlayManager::getSingleton().
 		cloneOverlayElementFromTemplate("TextWindow/Frame", name + "Frame"));
 	mOverlay->add2D(mContainerFrame);
+	mElementTitle   = OverlayManager::getSingleton().cloneOverlayElementFromTemplate("TextWindow/Headline",name + "Title");
+    mElementButUp   = OverlayManager::getSingleton().cloneOverlayElementFromTemplate("TextWindow/ButtonUp",name + "ButtopUp");
+	mElementButDown = OverlayManager::getSingleton().cloneOverlayElementFromTemplate("TextWindow/ButtonDown",name + "ButtopDown");
+    mContainerFrame->addChild(mElementTitle);
+    mContainerFrame->addChild(mElementButUp);
+    mContainerFrame->addChild(mElementButDown);
+
     for (int i=0; i < MAX_TEXT_LINES; ++i)
 	{
          mElementLine[i]= static_cast<TextAreaOverlayElement*>
@@ -54,29 +61,18 @@ CTextwindow::CTextwindow(std::string title, Real Xpos, Real height, bool visible
 		 mElementLine[i]->setCaption("");
          mContainerFrame->addChild(mElementLine[i]);
 	}
-	mElementTitle   = OverlayManager::getSingleton().
-		cloneOverlayElementFromTemplate("TextWindow/Headline",name + "Title");
-    mElementButUp   = OverlayManager::getSingleton().
-		cloneOverlayElementFromTemplate("TextWindow/ButtonUp",name + "ButtopUp");
-	mElementButDown = OverlayManager::getSingleton().
-		cloneOverlayElementFromTemplate("TextWindow/ButtonDown",name + "ButtopDown");
-    mContainerFrame->addChild(mElementTitle);
-    mContainerFrame->addChild(mElementButUp);
-    mContainerFrame->addChild(mElementButDown);
     mContainerFrame->setLeft(Xpos);
     mElementTitle ->setWidth(-Xpos-mElementButUp->getWidth()*2);   
     mElementButUp  ->setLeft(-Xpos-mElementButUp->getWidth()*2);
     mElementButDown->setLeft(-Xpos-mElementButUp->getWidth());
 	// WindowTitle.
-	mElementTitleTxt0= OverlayManager::getSingleton().
-		cloneOverlayElementFromTemplate("TextWindow/TitleText", name+"Title0");
+	mElementTitleTxt0= OverlayManager::getSingleton().cloneOverlayElementFromTemplate("TextWindow/TitleText", name+"Title0");
 	mElementTitleTxt0->setCaption(title);
 	mElementTitleTxt0->setTop(3);
 	mElementTitleTxt0->setLeft(5);
     mElementTitleTxt0->setColour(ColourValue(.4,.4,.4));
 	static_cast<OverlayContainer*>(mElementTitle)->addChild(mElementTitleTxt0);
-	 mElementTitleTxt1= OverlayManager::getSingleton().
-		cloneOverlayElementFromTemplate("TextWindow/TitleText", name+"Title1");
+	mElementTitleTxt1= OverlayManager::getSingleton().	cloneOverlayElementFromTemplate("TextWindow/TitleText", name+"Title1");
 	mElementTitleTxt1->setCaption(title);
 	static_cast<OverlayContainer*>(mElementTitle)->addChild(mElementTitleTxt1);
  	++mInstanceNr;
@@ -103,7 +99,6 @@ CTextwindow::CTextwindow(std::string title, Real Xpos, Real height, bool visible
 	mRowsToScroll	= 0;
 	mScroll			= 0.0f;
 	setVisible(visible);
-
 }
 
 //=================================================================================================

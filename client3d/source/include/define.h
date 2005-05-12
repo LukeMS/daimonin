@@ -24,6 +24,8 @@ http://www.gnu.org/copyleft/lesser.txt.
 #ifndef DEFINE_H
 #define DEFINE_H
 
+const char PRG_NAME[] =  "Daimonin Ogre3d Client";
+
 // ========================================================================
 // All pathes MUST be placed here!
 // ========================================================================

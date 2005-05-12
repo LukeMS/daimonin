@@ -47,8 +47,8 @@ class DaimoninClient
     ////////////////////////////////////////////////////////////
 	// Functions.
     ////////////////////////////////////////////////////////////
-	 DaimoninClient();
-	~DaimoninClient();
+	 DaimoninClient() {;}
+	~DaimoninClient() {;}
     void go(void);
 
   private:
