@@ -96,7 +96,7 @@ void NPC::toggleTexture(int pos, int texture)
 	// Get material.
 	strKeyword = "Material_" + StringConverter::toString(pos, 2, '0') + "_Name";
 	if (!(Option::getSingleton().getDescStr(strKeyword.c_str(), strValue))) { return; }
-	MaterialPtr mMaterial = MaterialManager::getSingleton().getByName(strValue);
+    MaterialPtr mpMaterial = MaterialManager::getSingleton().getByName(strValue);
     // Get texture.
     if (texture >=0) // select a texture by value.
     {
@@ -116,9 +116,10 @@ void NPC::toggleTexture(int pos, int texture)
         ++actTexture[pos];
     }
     // set new texture.
-	mMaterial->unload();
-	mMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(strValue);
-	mMaterial->reload();
+	mpMaterial->unload();
+	mpMaterial->getTechnique(0)->getPass(0)->getTextureUnitState(0)->setTextureName(strValue);
+	mpMaterial->reload();
+    mpMaterial.setNull();
 }
 
 //=================================================================================================

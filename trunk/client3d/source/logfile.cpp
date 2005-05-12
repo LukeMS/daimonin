@@ -26,8 +26,6 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "define.h"
 #include "logfile.h"
 
-#define PRG_NAME "Daimonin Ogre Client"
-
 //=================================================================================================
 // Create/Overwrite the Logfile.
 //=================================================================================================
@@ -39,9 +37,9 @@ bool LogFile::Init()
   m_localtime = localtime(&m_time);
   fputs("<html>\n", m_stream);
   // Head.
-  fputs("<head>\n", m_stream);
-  fputs("<title>"PRG_NAME" - Logfile</title>\n", m_stream);
-  fputs("</head>\n", m_stream);
+  fputs("<head>\n<title>", m_stream);
+  fputs(PRG_NAME, m_stream);
+  fputs(" - Logfile</title>\n</head>\n", m_stream);
   // Style.
   fputs("<style>\n", m_stream);
   fputs("body, p { font-family:arial, helvetica, sans-serif; color:Black;}\n", m_stream);
@@ -51,9 +49,9 @@ bool LogFile::Init()
   fputs("p  { font-size:10pt; }\n", m_stream);
   fputs("</style>\n", m_stream);
   // Body.
-  fputs("<body>\n", m_stream);
-  fputs("<h1>"PRG_NAME" - Logfile</h1>\n", m_stream);
-  fputs("<h2>Started: ", m_stream);
+  fputs("<body>\n<h1>", m_stream);
+  fputs(PRG_NAME, m_stream);
+  fputs(" - Logfile</h1>\n<h2>Started: ", m_stream);
   sprintf(m_buffer,"%.2d.%.2d.%4d - ",
     m_localtime->tm_mday, m_localtime->tm_mon+1, m_localtime->tm_year+1900);
   fputs(m_buffer, m_stream);

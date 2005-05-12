@@ -42,6 +42,14 @@ using namespace std;
 //=================================================================================================
 //
 //=================================================================================================
+bool TileGfx::Init()
+{
+    return (read_bmaps_p0());
+}
+
+//=================================================================================================
+//
+//=================================================================================================
 unsigned long TileGfx::hashbmap(char *str, int tablesize)
 {
     unsigned long hash = 0;
@@ -108,7 +116,7 @@ void TileGfx::add_bmap(_bmaptype *at)
 //=================================================================================================
 // after we tested and/or created bmaps.p0 - load the data from it.
 //=================================================================================================
-int TileGfx::load_bmaps_p0(void)
+bool TileGfx::load_bmaps_p0()
 {
     char    buf[HUGE_BUF];
     char    name[HUGE_BUF];
@@ -148,7 +156,7 @@ int TileGfx::load_bmaps_p0(void)
 //=================================================================================================
 // read and/or create the bmaps.p0 file out of the daimonin.p0 file
 //=================================================================================================
-int TileGfx::read_bmaps_p0(void)
+bool TileGfx::read_bmaps_p0()
 {
     FILE   *fbmap, *fpic;
     char   *temp_buf, *cp;
@@ -157,18 +165,17 @@ int TileGfx::read_bmaps_p0(void)
     char        buf[HUGE_BUF];
     struct stat bmap_stat, pic_stat;
 
-    if ((fpic = fopen(FILE_DAIMONIN_P0, "rb")) == NULL)
+    if (!(fpic = fopen(FILE_DAIMONIN_P0, "rb")))
     {
         LogFile::getSingleton().Error("FATAL: Can't find daimonin.p0 file!");
         unlink(FILE_BMAPS_P0);
-		return -1;
+		return false;
     }
     // get time stamp of the file daimonin.p0
     fstat(fileno(fpic), &pic_stat);
 
     // try to open bmaps_p0 file
-    if ((fbmap = fopen(FILE_BMAPS_P0, "r")) == NULL)
-        goto create_bmaps;
+    if (!(fbmap = fopen(FILE_BMAPS_P0, "r"))) { goto create_bmaps; }
 
     // get time stamp of the file
     fstat(fileno(fbmap), &bmap_stat);
@@ -186,7 +193,7 @@ int TileGfx::read_bmaps_p0(void)
         LogFile::getSingleton().Error("FATAL: Can't create bmaps.p0 file!");
         fclose(fbmap);
         unlink(FILE_BMAPS_P0);
-		return -1;
+		return false;
     }
     temp_buf = new char[bufsize = 24 * 1024];
 
@@ -198,7 +205,7 @@ int TileGfx::read_bmaps_p0(void)
             fclose(fbmap);
             fclose(fpic);
             unlink(FILE_BMAPS_P0);
-			return -1;
+			return false;
         }
 
         num = atoi(buf + 6);
@@ -218,7 +225,7 @@ int TileGfx::read_bmaps_p0(void)
                 fclose(fbmap);
                 fclose(fpic);
                 unlink(FILE_BMAPS_P0);
-				return -1;
+				return false;
             }
             bufsize = len;
             temp_buf = new char[bufsize];
@@ -257,7 +264,7 @@ void TileGfx::delete_bmap_tmp(void)
 //=================================================================================================
 // 
 //=================================================================================================
-int TileGfx::load_bmap_tmp(void)
+bool TileGfx::load_bmap_tmp(void)
 {
     FILE   *stream;
     char    buf[HUGE_BUF], name[HUGE_BUF];
@@ -270,7 +277,7 @@ int TileGfx::load_bmap_tmp(void)
         LogFile::getSingleton().Error("bmaptype_table(): error open file <bmap.tmp>");
 //        SYSTEM_End();
 //        exit(0);
-		return -1;
+		return false;
     }
     while (fgets(buf, HUGE_BUF - 1, stream) != NULL)
     {
@@ -284,7 +291,7 @@ int TileGfx::load_bmap_tmp(void)
     }
     bmaptype_table_size = i;
     fclose(stream);
-    return 0;
+    return true;
 }
 
  
@@ -292,7 +299,7 @@ int TileGfx::load_bmap_tmp(void)
 //=================================================================================================
 // 
 //=================================================================================================
-int TileGfx::read_bmap_tmp(void)
+bool TileGfx::read_bmap_tmp(void)
 {
     FILE       *stream, *fbmap0;
     char        buf[HUGE_BUF], name[HUGE_BUF];
@@ -305,7 +312,7 @@ int TileGfx::read_bmap_tmp(void)
     {
         // we can't make bmaps.tmp without this file
         unlink(FILE_BMAPS_TMP);
-        return 1;
+        return false;
     }
     fstat(fileno(stream), &stat_bmap);
     fclose(stream);
@@ -314,7 +321,7 @@ int TileGfx::read_bmap_tmp(void)
     {
         // we can't make bmaps.tmp without this file
         unlink(FILE_BMAPS_TMP);
-        return 1;
+        return false;
     }
     fstat(fileno(stream), &stat_bp0);
     fclose(stream);
@@ -385,6 +392,7 @@ int TileGfx::load_picture_from_pack(int num)
 //	LogFile::getSingleton().Info("pos: %d\n", bmaptype_table[0].pos);
 //	stream->seek(24);
 	FaceList[num].sprite.load(stream,"png");
+    stream.setNull();
     return 0;
 } 
 

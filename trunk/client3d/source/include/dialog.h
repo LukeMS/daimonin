@@ -51,7 +51,7 @@ enum _dialog_warning
 class Dialog
 {
 public:
-	Dialog(){;}
+	 Dialog(){;}
 	~Dialog(){;}
 	static Dialog &getSingleton() { static Dialog Singleton; return Singleton; }
 
@@ -66,14 +66,13 @@ public:
 
 private:
 	Dialog(const Dialog&); // disable copy-constructor.
-	bool mVisible;
-	std::string mStrPlayerName, mStrPassword, mStrRePasswd;
 	Overlay *mLoginOverlay;
 	OverlayContainer *mDialogSelPanel, *mDialogInfoPanel;
 	OverlayElement *mPlayerName, *mPlayerPasswd, *mPlayerRePasswd;
 	OverlayElement *mPanelPlayerName, *mPanelPlayerPasswd, *mPanelPlayerRePasswd;
 	OverlayElement *mElementLine[DIALOG_TXT_LINES], *mElementSelectionBar;
 	OverlayElement *mElementInfo[DIALOG_INFO_LINES];
+	bool mVisible;
 };
 
 #endif

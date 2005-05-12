@@ -21,7 +21,6 @@ http://www.gnu.org/copyleft/lesser.txt.
 -----------------------------------------------------------------------------
 */
 
-
 #include <OgreKeyEvent.h>
 
 #include "event.h"
@@ -49,8 +48,8 @@ http://www.gnu.org/copyleft/lesser.txt.
 
 using namespace Ogre;
 
-OverlayElement* mRowText;
-Overlay *mRowOverlay;
+//OverlayElement* mRowText;
+//Overlay *mRowOverlay;
 CEvent *Event=0;
 //=================================================================================================
 // Constructor.
@@ -63,18 +62,18 @@ CEvent::CEvent(RenderWindow* win, Camera* cam, MouseMotionListener *mMotionListe
 	/////////////////////////////////////////////////////////////////////////////////////////
     mDebugOverlay = OverlayManager::getSingleton().getByName("Core/DebugOverlay");
     mDebugOverlay->show();
-	mRowOverlay= OverlayManager::getSingleton().getByName("RowOverlay");
-	mRowText = OverlayManager::getSingleton().getOverlayElement("RowOverlayText");
+//	mRowOverlay= OverlayManager::getSingleton().getByName("RowOverlay");
+//	mRowText = OverlayManager::getSingleton().getOverlayElement("RowOverlayText");
     mMouseCursor  = OverlayManager::getSingleton().getByName("CursorOverlay");    
 	mMouseCursor->show();
     mMouseX = mMouseY =0;
-    Dialog::getSingleton().Init();
+	Dialog ::getSingleton().Init();
     TextWin = new CTextwindow("Message Window", -280, 300);
     ChatWin = new CTextwindow("Chat Window"   , -280, 300);
     TextWin->setChild(ChatWin);
 	ChatWin->Print("Welcome to Daimonin 3D.  ", TXT_YELLOW);
 	ChatWin->Print("-----------------------------------------", TXT_YELLOW);
-//	ChatWin->Print("  L            -> Lauch network");
+	ChatWin->Print("  L            -> Lauch network");
 //	ChatWin->Print("  C            -> Camera detail");
 //	ChatWin->Print("  Page Up/Down  -> Camera view.");
 	ChatWin->Print("  Print         -> Screenshot.");
@@ -155,7 +154,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
 
     player->update(evt);
     World->translate(player->getPos());
-    ObjectManger::getSingleton().update(OBJECT_NPC, evt);
+    ObjectManager::getSingleton().update(OBJECT_NPC, evt);
 
 	mIdleTime += evt.timeSinceLastFrame;
 	if (mIdleTime > 30.0)
@@ -303,6 +302,7 @@ void CEvent::keyPressed(KeyEvent *e)
 		e->consume();
 		return;
 	}
+
 	switch (e->getKey())
 	{
 		///////////////////////////////////////////////////////////////////////// 
@@ -369,22 +369,22 @@ void CEvent::keyPressed(KeyEvent *e)
 			break;
 
 		case KC_J:
-            ObjectManger::getSingleton().keyEvent(OBJECT_NPC, OBJ_TURN,  1);
+            ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_TURN,  1);
 			break;
 		case KC_K:
-            ObjectManger::getSingleton().keyEvent(OBJECT_NPC, OBJ_TURN, -1);
+            ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_TURN, -1);
 			break;
 		case KC_G:
-            ObjectManger::getSingleton().keyEvent(OBJECT_NPC, OBJ_WALK, -1);		
+            ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_WALK, -1);		
 			break;
 		case KC_I:
-            ObjectManger::getSingleton().keyEvent(OBJECT_NPC, OBJ_ANIMATION, STATE_ATTACK1);			
+            ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_ANIMATION, STATE_ATTACK1);			
 			break;
 		case KC_P:
-            ObjectManger::getSingleton().keyEvent(OBJECT_NPC, OBJ_TEXTURE, 0, 0);	
+            ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_TEXTURE, 0, 0);	
 			break;
 		case KC_Q:
-            ObjectManger::getSingleton().keyEvent(OBJECT_NPC, OBJ_TEXTURE, 0, 1);
+            ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_TEXTURE, 0, 1);
 			break;
 
 		///////////////////////////////////////////////////////////////////////// 
@@ -421,12 +421,7 @@ void CEvent::keyPressed(KeyEvent *e)
 			MaterialManager::getSingleton().setDefaultAnisotropy(mAniso);
 			break;
 		case KC_L:
-            ///////////////////////////////
-            // DISABLED: 
-            // cause it crashed when compiled with codeblockes, but not with VC6 ???? 
-            // don't spend any time on this, cause had this problems on other parts with devcpp (older mingw)
-            // so perhaps, after a mingw update there is no more problem !?
-			//Option::getSingleton().mStartNetwork = true;
+			Option::getSingleton().mStartNetwork = true;
 			break;
 		case KC_W:
 			if (mDayTime)
@@ -510,14 +505,13 @@ void CEvent::keyReleased(KeyEvent* e)
 
 		case KC_J:
 		case KC_K:
-            ObjectManger::getSingleton().keyEvent(OBJECT_NPC, OBJ_TURN,  0);
+            ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_TURN,  0);
 	        break;
 		default:
 			break;
 			
-
 		case KC_G:
-            ObjectManger::getSingleton().keyEvent(OBJECT_NPC, OBJ_WALK,  0);
+            ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_WALK,  0);
 			break;
 	}
 }

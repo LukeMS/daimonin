@@ -34,7 +34,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 //=================================================================================================
 // Init the model from the description file.
 //=================================================================================================
-bool ObjectManger::init(SceneManager *SceneMgr, SceneNode *Node)
+bool ObjectManager::init(SceneManager *SceneMgr, SceneNode *Node)
 {
 	mSceneMgr = SceneMgr; 
 	mNode = Node;
@@ -44,7 +44,7 @@ bool ObjectManger::init(SceneManager *SceneMgr, SceneNode *Node)
 //=================================================================================================
 // 
 //=================================================================================================
-bool ObjectManger::addObject(unsigned int type, const char *desc_filename, Vector3 pos)
+bool ObjectManager::addObject(unsigned int type, const char *desc_filename, Vector3 pos)
 {
     static int id= -1;
     mDescFile = DIR_MODEL_DESCRIPTION;
@@ -70,6 +70,7 @@ bool ObjectManger::addObject(unsigned int type, const char *desc_filename, Vecto
             SceneNode *node = mNode->createChildSceneNode(Vector3(pos.x, pos.y, pos.z), Quaternion(1.0,0.0,0.0,0.0));
             node->attachObject(entity);
             mvObject_static.push_back(entity);
+//            node->setScale(12, 20, 3);
             break;
         }
         case OBJECT_NPC:
@@ -87,7 +88,7 @@ bool ObjectManger::addObject(unsigned int type, const char *desc_filename, Vecto
 //=================================================================================================
 // 
 //=================================================================================================
-void ObjectManger::update(int obj_type, const FrameEvent& evt)
+void ObjectManager::update(int obj_type, const FrameEvent& evt)
 {
     switch (obj_type)
     {
@@ -106,7 +107,7 @@ void ObjectManger::update(int obj_type, const FrameEvent& evt)
 //=================================================================================================
 // JUST FOR TESTING.
 //=================================================================================================
-void ObjectManger::keyEvent(int obj_type, int action, int val1, int val2)
+void ObjectManager::keyEvent(int obj_type, int action, int val1, int val2)
 {
     switch (obj_type)
     {
@@ -131,11 +132,14 @@ void ObjectManger::keyEvent(int obj_type, int action, int val1, int val2)
 //=================================================================================================
 // 
 //=================================================================================================
-void ObjectManger::delObject(int number)
+void ObjectManager::delObject(int number)
 {
 }
 
-ObjectManger::~ObjectManger()
+ObjectManager::~ObjectManager()
 {
-    for (unsigned int i = 0; i < mvObject_npc.size(); ++i) { delete mvObject_npc[i]; }
+    for (unsigned int i = 0; i < mvObject_npc.size(); ++i)
+    { 
+        delete mvObject_npc[i];
+    }
 }

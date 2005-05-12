@@ -56,7 +56,7 @@ typedef struct _option
     void *value;
     int  value_type;
 }_option;
-extern _option opt[];
+//extern _option opt[];
 
 
 extern enum

@@ -80,11 +80,7 @@ class TileGfx
     ////////////////////////////////////////////////////////////
 	// Variables.
     ////////////////////////////////////////////////////////////
-    static TileGfx &getSingleton()
-	{
-       static TileGfx Singleton;
-       return Singleton;
-	}
+    static TileGfx &getSingleton() { static TileGfx Singleton; return Singleton; }
 	unsigned long hashbmap(char *str, int tablesize);
 	_bmaptype *bmap_table[BMAPTABLE];
 	_bmaptype_table bmaptype_table[MAX_BMAPTYPE_TABLE];
@@ -93,18 +89,15 @@ class TileGfx
     ////////////////////////////////////////////////////////////
 	// Functions.
 	////////////////////////////////////////////////////////////
-     TileGfx()  
-	 {
+     TileGfx() {;}
+    ~TileGfx() {;}
 
-	 }
-    ~TileGfx()	{;}
-
-    bool Init() {return true;}
+    bool Init();
+	bool load_bmaps_p0(void);
+	bool read_bmaps_p0(void);
+	bool read_bmap_tmp(void);
+	bool load_bmap_tmp(void);
 	void add_bmap(_bmaptype *at);
-	int load_bmaps_p0(void);
-	int read_bmaps_p0(void);
-	int read_bmap_tmp(void);
-	int load_bmap_tmp(void);
 	void delete_bmap_tmp(void);
 	void face_flag_extension(int pnum, char *buf);
 	_bmaptype *find_bmap(char *name);

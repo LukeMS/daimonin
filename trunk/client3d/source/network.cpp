@@ -34,7 +34,6 @@ http://www.gnu.org/copyleft/lesser.txt.
 	#include <fcntl.h>
 	const int SOCKET_ERROR =-1;
 #endif
-#include <list>
 #include <string>
 #include "network.h"
 #include "logfile.h"
@@ -49,31 +48,14 @@ http://www.gnu.org/copyleft/lesser.txt.
 
 #define DEBUG_ON
 
-using namespace std;
-
-// testing:
-typedef struct mStructServer
-{
-	string nameip;
-	string version;
-	string desc1;
-	string desc2;
-	string desc3;
-	string desc4;
-	int player;
-	int port;
-}mStructServer;
-
-list<mStructServer*> mServerList;
-
 int SoundStatus=1;
 
 // ========================================================================
 // Clear the MeatServer list.
 // ========================================================================
-void clear_metaserver_data(void)
+void Network::clear_metaserver_data(void)
 {
-	while (mServerList.size() > 0)
+	while (mServerList.size())
 	{
 		mStructServer *node = mServerList.front();
 		if (node) { delete node; }
@@ -84,7 +66,7 @@ void clear_metaserver_data(void)
 // ========================================================================
 // Add a MetaServer to the list.
 // ========================================================================
-void add_metaserver_data(const char *server, int port, int player, const char *ver, 
+void Network::add_metaserver_data(const char *server, int port, int player, const char *ver, 
 	const char *desc1, const char *desc2, const char *desc3, const char *desc4)
 {
 	mStructServer *node = new mStructServer;
@@ -102,7 +84,7 @@ void add_metaserver_data(const char *server, int port, int player, const char *v
 // ========================================================================
 // Get ServerName and ServerPort.
 // ========================================================================
-void get_meta_server_data(int num, char *server, int *port)
+void Network::get_meta_server_data(int num, char *server, int *port)
 {
 	list<mStructServer*>::const_iterator iter;
 	for (iter=mServerList.begin(); num > 0; iter++)
@@ -135,7 +117,6 @@ Network::~Network()
 	delete[] mInbuf.buf;
 }
 
-
 // ========================================================================
 // Sends a reply to the server.  text contains the null terminated string 
 // of text to send.  This function basically just packs the stuff up.
@@ -146,7 +127,6 @@ void Network::send_reply(char *text)
 	sprintf(buf, "reply %s", text);
 	cs_write_string(buf, strlen(buf));
 }
-
 
 // ========================================================================
 // Return the instance.
@@ -255,7 +235,7 @@ void Network::Update()
 	///////////////////////////////////////////////////////////////////////// 
 	else if (Option::getSingleton().GameStatus == GAME_STATUS_WAITLOOP)
 	{
-		Dialog::getSingleton().setVisible(true);
+        Dialog::getSingleton().setVisible(true);
 		if ((TextInput::getSingleton().startCursorSelection(0, mServerList.size())))
 		{
 			list<mStructServer*>::const_iterator iter = mServerList.begin();
@@ -436,8 +416,7 @@ void Network::Update()
         else if (mRequest_file_chain == 11)
         {
             // ok... now we check for bmap & anims processing...
-
-//            TileGfx::getSingleton().read_bmap_tmp();
+            TileGfx::getSingleton().read_bmap_tmp();
 //            TileGfx::getSingleton().read_anim_tmp();
 //            load_settings();
 
@@ -566,12 +545,10 @@ bool Network::Init()
 inline bool Network::InitSocket()
 {
 	#ifdef WIN32
-    int error;
-    mSocket = SOCKET_NO;
     mCs_version = 0;
     mSocketStatusErrorNr = 0;
     WSADATA w;
-    error = WSAStartup(0x0101, &w);
+    int error = WSAStartup(0x0101, &w);
     if (error)
     {
         LogFile::getSingleton().Error("Init Winsock failed: %d\n", error);
@@ -737,8 +714,8 @@ void Network::read_metaserver_data()
 		do {stat = recv (mSocket, buffer, MAX_METASTRING_BUFFER, 0); }
 		while (stat == -1);
 		#endif
-		if(stat == 0)	{ break; } // connect closed by meta
-		if(stat > 0)		{ strMetaData += buffer; }
+		if(stat == 0) { break; } // connect closed by meta
+		if(stat >  0) { strMetaData += buffer; }
 	}
 
 	/////////////////////////////////////////////////////////////////////////////////////////
