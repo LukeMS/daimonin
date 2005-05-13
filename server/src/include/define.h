@@ -669,7 +669,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_FLY_ON         26 /* As WALK_ON, but only with FLAG_FLYING */
 #define FLAG_FLY_OFF        27 /* As WALK_OFF, but only with FLAG_FLYING */
 #define FLAG_IS_USED_UP     28 /* When (--food<0) the object will exit */
-#define FLAG_IDENTIFIED     29 /* Not implemented yet */
+#define FLAG_IDENTIFIED     29 /* item is identified */
 #define FLAG_REFLECTING     30 /* Object reflects from walls (lightning) */
 #define FLAG_CHANGING       31 /* Changes to other_arch when anim is done*/
 

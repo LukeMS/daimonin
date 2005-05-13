@@ -359,7 +359,7 @@ typedef struct mapdef
     int             width;
     int             enter_x;                    /* enter_x and enter_y are default entrance location */
     int             enter_y;                    /* on the map if none are set in the exit */
-    int             compressed;                 /* Compression method used */
+	int             has_unique;					/* this original map has unique items! */
 } mapstruct;
 
 /* This is used by get_rangevector to determine where the other

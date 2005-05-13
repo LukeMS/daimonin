@@ -114,13 +114,6 @@
 #define S_IRUSR 0000004
 #endif
 
-#define COMPRESS "/usr/bin/compress"
-#define UNCOMPRESS "/usr/bin/uncompress"
-#define GZIP "/bin/gzip"
-#define GUNZIP "/bin/gunzip"
-#define BZIP "/usr/bin/bzip2"
-#define BUNZIP "/usr/bin/bunzip2"
-
 #define YY_NEVER_INTERACTIVE 1
 
 /* struct dirent - same as Unix */

@@ -417,7 +417,7 @@ void check_login(object *op)
     void       *mybuffer;
     char        filename[MAX_BUF];
     char        buf[MAX_BUF], bufall[MAX_BUF];
-    int         i, value, comp;
+    int         i, value;
     int         lev_array_flag;
     long        checksum            = 0;
     player     *pl                  = CONTR(op);
@@ -469,7 +469,7 @@ void check_login(object *op)
      * the password.  Return control to the higher level dispatch,
      * since the rest of this just deals with loading of the file.
      */
-    if ((fp = open_and_uncompress(filename, 1, &comp)) == NULL)
+    if ((fp = fopen(filename, "r")) == NULL)
     {
         player *ptmp;
         /* this is a virgin player name.
@@ -542,7 +542,7 @@ void check_login(object *op)
                         pl->state = ST_PLAYING;
                         new_draw_info(NDI_UNIQUE, 0, pl->ob, "Double login! Kicking older instance!");
                         pl->state = state_tmp;
-                        close_and_delete(fp, comp);
+                        fclose(fp);
                         remove_ns_dead_player(ptmp);/* super hard kick! */                      
                         kick_loop++;                            
                         goto kick_loop_jump;
@@ -556,7 +556,7 @@ void check_login(object *op)
     {
         LOG(llevInfo, "wrong pswd!\n");
         new_draw_info(NDI_RED, 0, op, " ** wrong password ***");
-        close_and_delete(fp, comp);
+        fclose(fp);
         FREE_AND_COPY_HASH(op->name, "noname");
         pl->last_value = -1;
         get_name(op);
@@ -738,7 +738,7 @@ void check_login(object *op)
     mybuffer = create_loader_buffer(fp);
     load_object(fp, op, mybuffer, LO_REPEAT, 0);
     delete_loader_buffer(mybuffer);
-    close_and_delete(fp, comp);
+    fclose(fp);
 
     /* at this moment, the inventory is reverse loaded.
      * Lets exchange it here.

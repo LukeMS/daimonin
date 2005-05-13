@@ -160,7 +160,7 @@ extern int              blocked_link_2(object *op, mapstruct *map, int x, int y)
 extern int              blocked_tile(object *op, mapstruct *m, int x, int y);
 extern int              arch_blocked(archetype *at, object *op, mapstruct *m, int x, int y);
 extern int              arch_out_of_map(archetype *at, mapstruct *m, int x, int y);
-extern void             load_objects(mapstruct *m, FILE *fp, int mapflags);
+extern int              load_objects(mapstruct *m, FILE *fp, int mapflags);
 extern void             save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag);
 extern mapstruct       *get_linked_map(void);
 extern void             allocate_map(mapstruct *m);
@@ -258,8 +258,6 @@ extern char            *strerror_local(int errnum);
 extern int              isqrt(int n);
 extern char            *ltostr10(signed long n);
 extern void             save_long(char *buf, char *name, long n);
-extern FILE            *open_and_uncompress(char *name, int flag, int *compressed);
-extern void             close_and_delete(FILE *fp, int compressed);
 extern void             make_path_to_file(char *filename);
 /* re-cmp.c */
 extern char            *re_cmp(char *str, char *regexp);

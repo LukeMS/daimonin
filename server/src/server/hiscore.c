@@ -185,7 +185,7 @@ static score *add_score(score *new_score) {
   new_score->position=HIGHSCORE_LENGTH+1;
   old_score.position= -1;
   sprintf(filename,"%s/%s",settings.localdir,HIGHSCORE);
-  if((fp=open_and_uncompress(filename,1,&comp))!=NULL) {
+  if((fp=fopen(filename,"r"))!=NULL) {
     while(fgets(buf,MAX_BUF,fp)!=NULL&&nrofscores<HIGHSCORE_LENGTH) {
       if((tmp_score=get_score(buf))==NULL) break;
       if(!flag&&new_score->exp>=tmp_score->exp) {
@@ -203,7 +203,7 @@ static score *add_score(score *new_score) {
       }
       copy_score(tmp_score,&pscore[nrofscores++]);
     }
-    close_and_delete(fp, comp);
+    fclose(fp);
   }
   if(old_score.position!=-1&&old_score.exp>=new_score->exp)
     return &old_score;
@@ -305,11 +305,11 @@ void display_high_score(object *op, int max, char *match)
 {
     FILE   *fp;
     char    buf[MAX_BUF], *scorebuf, *bp, *cp;
-    int     i = 0, j = 0, maxchar = 80, comp;
+    int     i = 0, j = 0, maxchar = 80;
     score  *sc;
 
     sprintf(buf, "%s/%s", settings.localdir, HIGHSCORE);
-    if ((fp = open_and_uncompress(buf, 0, &comp)) == NULL)
+    if ((fp = fopen(buf, "r")) == NULL)
     {
         LOG(llevBug, "BUG: Can't open highscore file");
         if (op != NULL)
@@ -369,5 +369,5 @@ void display_high_score(object *op, int max, char *match)
         else
             new_draw_info(NDI_UNIQUE, 0, op, buf);
     }
-    close_and_delete(fp, comp);
+    fclose(fp);
 }
