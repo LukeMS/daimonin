@@ -163,11 +163,11 @@ void read_client_images()
     char    buf[HUGE_BUF];
     char   *cp, *cps[7];
     FILE   *infile, *fbmap;
-    int     num, len, compressed, fileno, i, badline;
+    int     num, len, fileno, i, badline;
 
     memset(facesets, 0, sizeof(facesets));
     sprintf(filename, "%s/image_info", settings.datadir);
-    if ((infile = open_and_uncompress(filename, 0, &compressed)) == NULL)
+    if ((infile = fopen(filename, "r")) == NULL)
         LOG(llevError, "Unable to open %s\n", filename);
     while (fgets(buf, HUGE_BUF - 1, infile) != NULL)
     {
@@ -202,7 +202,7 @@ void read_client_images()
             facesets[len].comment = strdup_local(cps[6]);
         }
     }
-    close_and_delete(infile, compressed);
+    fclose(infile);
     for (i = 0; i < MAX_FACE_SETS; i++)
     {
         if (facesets[i].prefix)
@@ -228,7 +228,7 @@ void read_client_images()
         if ((fbmap = fopen(buf, "wb")) == NULL)
             LOG(llevError, "Unable to open %s\n", buf);
 
-        if ((infile = open_and_uncompress(filename, 0, &compressed)) == NULL)
+        if ((infile = fopen(filename, "r")) == NULL)
             LOG(llevError, "Unable to open %s\n", filename);
 
         while (fgets(buf, HUGE_BUF - 1, infile) != NULL)
@@ -257,7 +257,7 @@ void read_client_images()
             sprintf(buf, "%x %x %s\n", len, facesets[fileno].faces[num].checksum, new_faces[num].name);
             fputs(buf, fbmap);
         }
-        close_and_delete(infile, compressed);
+        fclose(infile);
         fclose(fbmap);
     } /* For fileno < MAX_FACE_SETS */
 }

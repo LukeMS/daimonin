@@ -130,7 +130,7 @@ void init_formulae()
     recipe         *formula         = NULL;
     recipelist     *fl              = init_recipelist();
     linked_char    *tmp;
-    int             value, comp;
+    int             value;
 
     if (!formulalist)
         formulalist = fl;
@@ -142,7 +142,7 @@ void init_formulae()
 
     sprintf(filename, "%s/formulae", settings.datadir);
     LOG(llevDebug, "Reading alchemical formulae from %s...", filename);
-    if ((fp = open_and_uncompress(filename, 0, &comp)) == NULL)
+    if ((fp = fopen(filename,"r")) == NULL)
     {
         LOG(llevBug, "BUG: Can't open %s.\n", filename);
         return;
@@ -226,7 +226,7 @@ void init_formulae()
             LOG(llevBug, "BUG: Unknown input in file %s: %s\n", filename, buf);
     }
     LOG(llevDebug, "done.\n");
-    close_and_delete(fp, comp);
+    fclose(fp);
     /* Lastly, lets check for problems in formula we got */
     check_formulae();
 }

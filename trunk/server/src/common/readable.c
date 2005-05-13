@@ -444,7 +444,6 @@ static void init_msgfile(void)
 {
     FILE       *fp;
     char        buf[MAX_BUF], msgbuf[HUGE_BUF], fname[MAX_BUF], *cp;
-    int         comp;
     static int  did_init_msgfile;
 
     if (did_init_msgfile)
@@ -454,7 +453,7 @@ static void init_msgfile(void)
     sprintf(fname, "%s/messages", settings.datadir);
     LOG(llevDebug, "Reading messages from %s...", fname);
 
-    if ((fp = open_and_uncompress(fname, 0, &comp)) != NULL)
+    if ((fp = fopen(fname, "r")) != NULL)
     {
         linked_char    *tmp = NULL;
         while (fgets(buf, MAX_BUF, fp) != NULL)
@@ -494,7 +493,7 @@ static void init_msgfile(void)
                 strcat(msgbuf, "\n");
             }
         }
-        close_and_delete(fp, comp);
+        fclose(fp);
     }
 
 #ifdef BOOK_MSG_DEBUG
@@ -512,7 +511,7 @@ static void init_msgfile(void)
 static void init_book_archive(void)
 {
     FILE       *fp;
-    int         comp, nroftitle = 0;
+    int         nroftitle = 0;
     char        buf[MAX_BUF], fname[MAX_BUF], *cp;
     title      *book    = NULL;
     titlelist  *bl      = get_empty_booklist();
@@ -528,7 +527,7 @@ static void init_book_archive(void)
     sprintf(fname, "%s/bookarch", settings.localdir);
     LOG(llevDebug, " Reading bookarch from %s...\n", fname);
 
-    if ((fp = open_and_uncompress(fname, 0, &comp)) != NULL)
+    if ((fp = fopen(fname, "r")) != NULL)
     {
         int i = 0, value, type = 0;
         while (fgets(buf, MAX_BUF, fp) != NULL)
@@ -590,7 +589,7 @@ static void init_book_archive(void)
             i++;
         }
         LOG(llevDebug, "\n");
-        close_and_delete(fp, comp);
+        fclose(fp);
     }
 
 #ifdef BOOK_MSG_DEBUG

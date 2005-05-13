@@ -382,7 +382,6 @@ static char * create_items_path(const char *s)
 
 int check_path(const char *name, int prepend_dir)
 {
-#ifdef WIN32 /* ***win32: check this sucker in windows style. */
     char    buf[MAX_BUF];
 
     if (prepend_dir)
@@ -390,50 +389,7 @@ int check_path(const char *name, int prepend_dir)
     else
         strcpy(buf, name);
 
-    return(_access(buf, 0));
-#else
-    char        buf[MAX_BUF], *endbuf;
-    struct stat statbuf;
-    int         mode = 0, i;
-
-    if (prepend_dir)
-        strcpy(buf, create_pathname(name));
-    else
-        strcpy(buf, name);
-
-    /* old method (strchr(buf, '\0')) seemd very odd to me -
-     * this method should be equivalant and is clearer.
-     * Can not use strcat because we need to cycle through
-     * all the names.
-     */
-    endbuf = buf + strlen(buf);
-
-    for (i = 0; i < NROF_COMPRESS_METHODS; i++)
-    {
-        if (uncomp[i][0])
-            strcpy(endbuf, uncomp[i][0]);
-        else
-            *endbuf = '\0';
-        if (!stat(buf, &statbuf))
-            break;
-    }
-    if (i == NROF_COMPRESS_METHODS)
-        return (-1);
-    if (!S_ISREG(statbuf.st_mode))
-        return (-1);
-
-    if (((statbuf.st_mode & S_IRGRP) && getegid() == statbuf.st_gid)
-     || ((statbuf.st_mode & S_IRUSR) && geteuid() == statbuf.st_uid)
-     || (statbuf.st_mode & S_IROTH))
-        mode |= 4;
-
-    if ((statbuf.st_mode & S_IWGRP && getegid() == statbuf.st_gid)
-     || (statbuf.st_mode & S_IWUSR && geteuid() == statbuf.st_uid)
-     || (statbuf.st_mode & S_IWOTH))
-        mode |= 2;
-
-    return (mode);
-#endif
+    return(access(buf, 0));
 }
 
 /* Moved from main.c */
@@ -919,9 +875,9 @@ int arch_out_of_map(archetype *at, mapstruct *m, int x, int y)
  * in this recursive structure was the hard part but it will work now
  * without problems. MT-25.02.2004
  */
-void load_objects(mapstruct *m, FILE *fp, int mapflags)
+int load_objects(mapstruct *m, FILE *fp, int mapflags)
 {
-    int         i;
+    int         i, unique = FALSE;
     archetype  *tail;
     void       *mybuffer;
     object     *op, *prev = NULL, *last_more = NULL, *tmp;
@@ -960,6 +916,11 @@ void load_objects(mapstruct *m, FILE *fp, int mapflags)
 
         if (op->type == MONSTER)
             fix_monster(op);
+
+        if (QUERY_FLAG(op, FLAG_UNIQUE))
+			unique = TRUE;					/* we CAN avoid this check by check the map in the editor first 
+											 * and set the map data direct in the original map
+											 */
 
         /* important pre set for the animation/face of a object */
         if (QUERY_FLAG(op, FLAG_IS_TURNABLE) || QUERY_FLAG(op, FLAG_ANIMATE))
@@ -1008,7 +969,7 @@ void load_objects(mapstruct *m, FILE *fp, int mapflags)
                      * and because there are some "arch depending and not object depending"
                      * flags, we init the tails with some of the head settings.
                     */
-            if (QUERY_FLAG(op, FLAG_SYS_OBJECT))
+			if (QUERY_FLAG(op, FLAG_SYS_OBJECT))
                 SET_MULTI_FLAG(op->more, FLAG_SYS_OBJECT)
             else
                 CLEAR_MULTI_FLAG(tmp->more, FLAG_SYS_OBJECT);
@@ -1073,6 +1034,8 @@ void load_objects(mapstruct *m, FILE *fp, int mapflags)
      * recursive nature of load_objects().
      */
     check_light_source_list(m);
+
+	return unique;
 }
 
 /* This saves all the objects on the map in a (most times) non destructive fashion.
@@ -1087,7 +1050,8 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
 {
     int     i, j = 0;
     object *head, *op, *otmp, *tmp, *last_valid;
-
+	char   *bptr=NULL;
+	
     /* first, we have to remove all dynamic objects from this map.
      * from spell effects with owners (because the owner can't
      * be restored after a save) or from spawn points generated mobs.
@@ -1331,13 +1295,25 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
                     tmp->y = op->y - op->arch->clone.y;
 
                     if (QUERY_FLAG(tmp, FLAG_UNIQUE))
+					{
+						if(!fp2)
+						{
+							if ((fp2 = fopen((bptr = create_items_path(m->path)), "w")) == NULL)
+								/* we give an error here... thats really a awful bug */
+								LOG(llevError, "ERROR: Can't open for save unique items file %s\n", bptr);
+
+							LOG(llevDebug, "Saving unique items map to %s\n", bptr);
+						}
                         save_object(fp2, tmp, 3);
+					}
                     else
                         save_object(fp, tmp, 3);
 
                     tmp->x = xt;
                     tmp->y = yt;
-                    remove_ob(tmp); /* this is only a "trick" remove - no walk off check */
+                    remove_ob(tmp); /* this is only a "trick" remove - no walk off check.
+					                 * Remember: don't put important triggers near tiled map borders! 
+					                 */
 
                     if (otmp && (QUERY_FLAG(otmp, FLAG_REMOVED) || OBJECT_FREE(otmp))) /* invalid next ptr! */
                     {
@@ -1356,7 +1332,17 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
                 }
 
                 if (QUERY_FLAG(op, FLAG_UNIQUE))
+				{
+					if(!fp2)
+					{
+						if ((fp2 = fopen((bptr = create_items_path(m->path)), "w")) == NULL)
+							/* we give an error here... thats really a awful bug */
+							LOG(llevError, "ERROR: Can't open for save unique items file %s\n", bptr);
+						
+						LOG(llevDebug, "Saving unique items map to %s\n", bptr);
+					}
                     save_object(fp2, op, 3);
+				}
                 else
                     save_object(fp, op, 3);
 
@@ -1377,6 +1363,13 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
             } /* for this space */
         } /* for this j */
     }
+
+	if(fp2 && fp2 != fp) /* if so, we have created fp2 here! */
+	{
+		fclose(fp2);
+		if(bptr)
+			chmod(bptr, SAVE_MODE);
+	}
 }
 
 /*
@@ -1405,6 +1398,7 @@ mapstruct * get_linked_map()
     map->first_light = NULL;
     map->bitmap = NULL;
     map->in_memory = MAP_SWAPPED;
+	map->has_unique = FALSE;
     /* The maps used to pick up default x and y values from the
      * map archetype.  Mimic that behaviour.
      */
@@ -1598,6 +1592,10 @@ static int load_map_header(FILE *fp, mapstruct *m)
         {
             m->difficulty = atoi(value);
         }
+        else if (!strcmp(key, "has_unique"))
+        {
+			m->has_unique = atoi(value);
+        }
         else if (!strcmp(key, "darkness"))
         {
             MAP_DARKNESS(m) = atoi(value);
@@ -1781,7 +1779,7 @@ mapstruct * load_original_map(const char *filename, int flags)
 {
     FILE       *fp;
     mapstruct  *m;
-    int         comp;
+	int         uni;
     char        pathname[MAX_BUF];
     char        tmp_fname[MAX_BUF];
 
@@ -1809,7 +1807,7 @@ mapstruct * load_original_map(const char *filename, int flags)
         strcpy(pathname, create_pathname(filename));
     }
 
-    if ((fp = open_and_uncompress(pathname, 0, &comp)) == NULL)
+    if ((fp = fopen(pathname, "r")) == NULL)
     {
         if (!(flags & MAP_PLAYER_UNIQUE))
             LOG(llevBug, "BUG: Can't open map file %s\n", pathname);
@@ -1827,19 +1825,22 @@ mapstruct * load_original_map(const char *filename, int flags)
     {
         LOG(llevBug, "BUG: Failure loading map header for %s, flags=%d\n", filename, flags);
         delete_map(m);
-        close_and_delete(fp, comp);
+        fclose(fp);
         return NULL;
     }
 
     LOG(llevDebug, "alloc. ");
     allocate_map(m);
-    m->compressed = comp;
 
     m->in_memory = MAP_LOADING;
+
     LOG(llevDebug, "load objs:");
-    load_objects(m, fp, (flags & (MAP_BLOCK | MAP_STYLE)) | MAP_ORIGINAL);
-    LOG(llevDebug, "close. ");
-    close_and_delete(fp, comp);
+    uni = load_objects(m, fp, (flags & (MAP_BLOCK | MAP_STYLE)) | MAP_ORIGINAL);
+    if (!(flags & MAP_PLAYER_UNIQUE))
+		m->has_unique = uni;
+
+	LOG(llevDebug, "close. ");
+    fclose(fp);
     LOG(llevDebug, "post set. ");
     if (!MAP_DIFFICULTY(m))
     {
@@ -1861,7 +1862,6 @@ mapstruct * load_original_map(const char *filename, int flags)
 static mapstruct * load_temporary_map(mapstruct *m)
 {
     FILE   *fp;
-    int     comp;
     char    buf[MAX_BUF];
 
     if (!m->tmpname)
@@ -1876,7 +1876,7 @@ static mapstruct * load_temporary_map(mapstruct *m)
     }
 
     LOG(llevDebug, "load_temporary_map: %s (%s) ", m->tmpname, m->path);
-    if ((fp = open_and_uncompress(m->tmpname, 0, &comp)) == NULL)
+    if ((fp = fopen(m->tmpname,"r")) == NULL)
     {
         LOG(llevBug, "BUG: Can't open temporary map %s! fallback to original!\n", m->tmpname);
         /*perror("Can't read map file");*/
@@ -1893,7 +1893,7 @@ static mapstruct * load_temporary_map(mapstruct *m)
     if (load_map_header(fp, m))
     {
         LOG(llevBug, "BUG: Error loading map header for %s (%s)! fallback to original!\n", m->path, m->tmpname);
-        close_and_delete(fp, comp);
+        fclose(fp);
         delete_map(m);
         m = load_original_map(m->path, 0);
         if (m == NULL)
@@ -1901,14 +1901,13 @@ static mapstruct * load_temporary_map(mapstruct *m)
         return m;
     }
     LOG(llevDebug, "alloc. ");
-    m->compressed = comp;
     allocate_map(m);
 
     m->in_memory = MAP_LOADING;
     LOG(llevDebug, "load objs:");
     load_objects(m, fp, 0);
     LOG(llevDebug, "close. ");
-    close_and_delete(fp, comp);
+    fclose(fp);
     LOG(llevDebug, "done!\n");
     return m;
 }
@@ -1952,34 +1951,19 @@ static void delete_unique_items(mapstruct *m)
 static void load_unique_objects(mapstruct *m)
 {
     FILE   *fp;
-    int     comp, count;
-    char    firstname[MAX_BUF];
+	char   *fptr;
 
-    for (count = 0; count < 10; count++)
+    if ((fp = fopen((fptr=create_items_path(m->path)), "r")))
     {
-        sprintf(firstname, "%s.v%02d", create_items_path(m->path), count);
-        if (!access(firstname, R_OK))
-            break;
-    }
-    /* If we get here, we did not find any map */
-    if (count == 10)
-        return;
-
-    LOG(llevDebug, "open unique items file for %s\n", create_items_path(m->path));
-    if ((fp = open_and_uncompress(firstname, 0, &comp)) == NULL)
-    {
-        /* There is no expectation that every map will have unique items, but this
-         * is debug output, so leave it in.
-         */
-        LOG(llevDebug, "Can't open unique items file for %s\n", create_items_path(m->path));
-        return;
-    }
-
-    m->in_memory = MAP_LOADING;
-    if (m->tmpname == NULL)    /* if we have loaded unique items from */
-        delete_unique_items(m); /* original map before, don't duplicate them */
-    load_objects(m, fp, 0);
-    close_and_delete(fp, comp);
+		LOG(llevDebug, "open unique items file for %s\n", fptr);
+	
+		m->in_memory = MAP_LOADING;
+		if (m->tmpname == NULL)    /* if we have loaded unique items from */
+	        delete_unique_items(m); /* original map before, don't duplicate them */
+	    load_objects(m, fp, 0);
+	    fclose(fp);
+		unlink(fptr);
+	}
 }
 
 
@@ -1994,8 +1978,8 @@ static void load_unique_objects(mapstruct *m)
 
 int new_save_map(mapstruct *m, int flag)
 {
-    FILE   *fp, *fp2;
-    char    filename[MAX_BUF], buf[MAX_BUF];
+    FILE   *fp;
+    char    filename[MAX_BUF];
     int     i;
 
     if (flag && !*m->path)
@@ -2019,17 +2003,6 @@ int new_save_map(mapstruct *m, int flag)
             strcpy(filename, m->path);
         }
 
-        /* If the compression suffix already exists on the filename, don't
-            * put it on again.  This nasty looking strcmp checks to see if the
-            * compression suffix is at the end of the filename already.
-            * i don't checked them - perhaps weneed compression in the future
-            * even i can't see it - the if is harmless because self terminating
-            * after the m->compressed fails.
-            */
-        if (m->compressed && strcmp((filename + strlen(filename) - strlen(uncomp[m->compressed][0])),
-                                    uncomp[m->compressed][0]))
-            strcat(filename, uncomp[m->compressed][0]);
-
         make_path_to_file(filename);
     }
     else
@@ -2043,19 +2016,7 @@ int new_save_map(mapstruct *m, int flag)
 
     m->in_memory = MAP_SAVING;
 
-    /* Compress if it isn't a temporary save.  Do compress if unique */
-    if (m->compressed && (MAP_UNIQUE(m) || flag))
-    {
-        char    buf[MAX_BUF];
-        strcpy(buf, uncomp[m->compressed][2]);
-        strcat(buf, " > ");
-        strcat(buf, filename);
-        fp = popen(buf, "w");
-    }
-    else
-        fp = fopen(filename, "w");
-
-    if (fp == NULL)
+    if (!(fp = fopen(filename, "w")))
     {
         LOG(llevError, "ERROR: Can't open file %s for saving.\n", filename);
         return -1;
@@ -2087,13 +2048,14 @@ int new_save_map(mapstruct *m, int flag)
         fprintf(fp, "enter_x %d\n", m->enter_x);
     if (m->enter_y)
         fprintf(fp, "enter_y %d\n", m->enter_y);
+    if (m->has_unique)
+        fprintf(fp, "has_unique %d\n", m->has_unique);
     if (m->msg)
         fprintf(fp, "msg\n%sendmsg\n", m->msg);
     if (MAP_UNIQUE(m))
         fprintf(fp, "unique %d\n", MAP_UNIQUE(m) ? 1 : 0);
     if (MAP_OUTDOORS(m))
         fprintf(fp, "outdoor %d\n", MAP_OUTDOORS(m) ? 1 : 0);
-
     if (MAP_NOSAVE(m))
         fprintf(fp, "no_save %d\n", MAP_NOSAVE(m) ? 1 : 0);
     if (MAP_NOMAGIC(m))
@@ -2128,40 +2090,33 @@ int new_save_map(mapstruct *m, int flag)
      * If unique map, save files in the proper destination (set by
      * player)
      */
-    fp2 = fp; /* save unique items into fp2 */
     if ((flag == 0 || flag == 2) && !MAP_UNIQUE(m))
-    {
-        sprintf(buf, "%s.v00", create_items_path(m->path));
-        if ((fp2 = fopen(buf, "w")) == NULL)
-        {
-            LOG(llevBug, "BUG: Can't open unique items file %s\n", buf);
-        }
-        save_objects(m, fp, fp2, 0);
-        if (fp2 != NULL)
-        {
-            if (ftell(fp2) == 0)
-            {
-                fclose(fp2);
-                unlink(buf);
-            }
-            else
-            {
-                LOG(llevDebug, "Saving unique items map to %s\n", buf);
-                fclose(fp2);
-                chmod(buf, SAVE_MODE);
-            }
-        }
-    }
+	{
+		if(m->has_unique) /* this original map has default unique items stored.
+						   * to ensure we always have them right set, we must force
+						   * a even clear unique file to make it consistent over server
+						   * resets.
+						   */
+		{
+			FILE *fp2;
+			char *bptr;
+			if ((fp2 = fopen((bptr = create_items_path(m->path)), "w")) == NULL)
+				/* we give an error here... thats really a awful bug */
+				LOG(llevError, "ERROR: Can't open for save unique items file %s\n", bptr);
+			
+			LOG(llevDebug, "Saving unique items map to %s\n", bptr);
+
+			save_objects(m, fp, fp2, 0);
+			/* flcose() is called in save_objects */
+			chmod(bptr, SAVE_MODE);
+		}
+		else
+			save_objects(m, fp, NULL, 0);
+	}
     else /* save same file when not playing, like in editor */
-    {
         save_objects(m, fp, fp, 0);
-    }
 
-    if (m->compressed && !flag)
-        pclose(fp);
-    else
-        fclose(fp);
-
+    fclose(fp);
     chmod(filename, SAVE_MODE);
     return 0;
 }
@@ -2427,7 +2382,7 @@ void clean_tmp_map(mapstruct *m)
 {
     if (m->tmpname == NULL)
         return;
-    (void) unlink(m->tmpname);
+    unlink(m->tmpname);
 }
 
 void free_all_maps()

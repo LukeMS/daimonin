@@ -13,4 +13,3 @@
 # username.  Also, with the new client, numeric host id is
 # used (ie, 192.15.4.6).  So to ban sites, you need to find out their
 # numeric IP address - not hard, 'who reports this
-

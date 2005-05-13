@@ -80,10 +80,9 @@ void display_motd(object *op)
 #ifdef MOTD
     char    buf[MAX_BUF];
     FILE   *fp;
-    int     comp;
 
     sprintf(buf, "%s/%s", settings.localdir, MOTD);
-    if ((fp = open_and_uncompress(buf, 0, &comp)) == NULL)
+    if ((fp = fopen(buf,"r")) == NULL)
     {
         return;
     }
@@ -97,7 +96,7 @@ void display_motd(object *op)
             *cp = '\0';
         new_draw_info(NDI_UNIQUE, 0, op, buf);
     }
-    close_and_delete(fp, comp);
+    fclose(fp);
     new_draw_info(NDI_UNIQUE, 0, op, " ");
 #endif
 }

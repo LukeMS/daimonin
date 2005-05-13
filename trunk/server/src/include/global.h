@@ -472,9 +472,6 @@ EXTERN objectlink              *first_friendly_object;  /* Objects monsters will
 EXTERN godlink                 *first_god;
 EXTERN racelink                *first_race;
 
-#define NROF_COMPRESS_METHODS 4
-EXTERN char                    *uncomp[NROF_COMPRESS_METHODS][3];
-
 /*
  * Variables set by different flags (see init.c):
  */

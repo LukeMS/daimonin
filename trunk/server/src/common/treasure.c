@@ -73,12 +73,12 @@ void load_treasures()
     char                    filename[MAX_BUF], buf[MAX_BUF], name[MAX_BUF];
     treasurelist*previous = NULL, *tl_tmp;
     treasure               *t;
-    int                     comp, t_style, a_chance;
+    int                     t_style, a_chance;
     char                    dummy[10];
 
     sprintf(filename, "%s/%s", settings.datadir, settings.treasures);
 
-    if ((fp = open_and_uncompress(filename, 0, &comp)) == NULL)
+    if ((fp = fopen(filename,"r")) == NULL)
     {
         LOG(llevError, "ERROR: Can't open treasure file.\n");
         return;
@@ -142,7 +142,7 @@ void load_treasures()
         else
             LOG(llevError, "ERROR: Treasure-list didn't understand: %s\n", buf);
     }
-    close_and_delete(fp, comp);
+    fclose(fp);
 
 
     LOG(llevInfo, " link treasure lists pass 2...\n");
@@ -353,7 +353,7 @@ void init_artifacts()
     char            filename[MAX_BUF], buf[MAX_BUF], *cp, *next;
     artifact       *art             = NULL;
     linked_char    *tmp;
-    int             lcount, value, comp, none_flag = 0;
+    int             lcount, value, none_flag = 0;
     artifactlist   *al;
     char            buf_text[10 * 1024]; /* ok, 10k arch text... if we bug here, we have a design problem */
 
@@ -363,7 +363,7 @@ void init_artifacts()
 
     sprintf(filename, "%s/artifacts", settings.datadir);
     LOG(llevDebug, " reading artifacts from %s...", filename);
-    if ((fp = open_and_uncompress(filename, 0, &comp)) == NULL)
+    if ((fp = fopen(filename, "r")) == NULL)
     {
         LOG(llevError, "ERROR: Can't open %s.\n", filename);
         return;
@@ -503,7 +503,7 @@ void init_artifacts()
         else
             LOG(llevBug, "BUG: Unknown input in artifact file: %s\n", buf);
     }
-    close_and_delete(fp, comp);
+    fclose(fp);
 
     for (al = first_artifactlist; al != NULL; al = al->next)
     {

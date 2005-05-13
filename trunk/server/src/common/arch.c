@@ -436,7 +436,6 @@ void first_arch_pass(FILE *fp)
 void second_arch_pass(FILE *fp_start)
 {
     FILE           *fp  = fp_start;
-    int             comp;
     char            filename[MAX_BUF];
     char            buf[MAX_BUF], *variable = buf, *argument, *cp;
     archetype*at =  NULL, *other;
@@ -482,7 +481,7 @@ void second_arch_pass(FILE *fp_start)
     /* now reparse the artifacts file too! */
 
     sprintf(filename, "%s/artifacts", settings.datadir);
-    if ((fp = open_and_uncompress(filename, 0, &comp)) == NULL)
+    if ((fp = fopen(filename, "r")) == NULL)
     {
         LOG(llevError, "ERROR: Can't open %s.\n", STRING_SAFE(filename));
         return;
@@ -542,7 +541,7 @@ void second_arch_pass(FILE *fp_start)
         }
     }
 
-    close_and_delete(fp, comp);
+    fclose(fp);
 }
 
 /*
@@ -556,14 +555,13 @@ void load_archetypes()
 {
     FILE           *fp;
     char            filename[MAX_BUF];
-    int             comp;
 #if TIME_ARCH_LOAD
     struct timeval  tv1, tv2;
 #endif
 
     sprintf(filename, "%s/%s", settings.datadir, settings.archetypes);
     LOG(llevDebug, "Reading archetypes from %s...\n", STRING_SAFE(filename));
-    if ((fp = open_and_uncompress(filename, 0, &comp)) == NULL)
+    if ((fp = fopen(filename, "r")) == NULL)
     {
         LOG(llevError, "ERROR: Can't open archetype file.\n");
         return;
@@ -594,8 +592,8 @@ void load_archetypes()
     /* do a close and reopen instead of a rewind - necessary in case the
      * file has been compressed.
      */
-    close_and_delete(fp, comp);
-    fp = open_and_uncompress(filename, 0, &comp);
+    fclose(fp);
+    fp = fopen(filename, "r");
 
     /* I moved the artifacts loading to this position because it must be done
      * BEFORE we load the trasure file - remember we have now fake arches in the
@@ -610,7 +608,7 @@ void load_archetypes()
     LOG(llevDebug, " done\n arch-pass 2...\n");
     second_arch_pass(fp);
     LOG(llevDebug, " done.\n");
-    close_and_delete(fp, comp);
+    fclose(fp);
     LOG(llevDebug, "Reading archetypes done.\n");
 }
 
