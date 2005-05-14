@@ -312,6 +312,9 @@ struct plugin_hooklist
 	void (*play_sound_map)(mapstruct *map, int x, int y, int sound_num, int sound_type);
 	object * (*find_skill)(object *op, int skillnr);
     void (*get_tod)(struct _timeofday *tod);
+
+    /* Global variables */
+    int *num_animations;
 };
 
 /*****************************************************************************/

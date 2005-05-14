@@ -2467,6 +2467,14 @@ static int GameObject_setAttribute(lua_State *L, lua_object *obj, struct attribu
     {
         if (who->type == PLAYER && attrib->flags & FIELDFLAG_PLAYER_READONLY)
             luaL_error(L, "attribute %s is readonly on players", attrib->name);
+        else if(attrib->offset == offsetof(object, animation_id) ||
+                attrib->offset == offsetof(object, inv_animation_id))
+        {
+            /* Check validity of animation_id */
+            uint16 new_id = (uint16) lua_tonumber(L, -1);
+            if(new_id > *hooks->num_animations)
+                luaL_error(L, "max animation id is %d", *hooks->num_animations);
+        }
         return 0;
     }
 
