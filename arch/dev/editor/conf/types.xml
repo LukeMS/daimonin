@@ -222,11 +222,11 @@
   <entry value="5" name="pickup" />
   <entry value="6" name="say" />
   <entry value="7" name="stop" />
-  <entry value="8" name="time" />
+  <entry value="8" name="time (don't use)" />
   <entry value="9" name="throw" />
   <entry value="10" name="trigger" />
   <entry value="11" name="close" />
-  <entry value="12" name="timer" />
+  <entry value="12" name="examine" />
   <entry value="13" name="talk" />
 </list>
 
