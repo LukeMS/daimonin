@@ -81,6 +81,57 @@ object * get_event_object(object *op, int event_nr)
     return tmp;
 }
 
+int trigger_object_plugin_event(
+        int event_type, 
+        object *me, object *activator, object *other,
+        const char *msg,
+        int *parm1, int *parm2, int *parm3,
+        int flags)
+{
+    CFParm  CFP;
+    CFParm *CFR;
+    object *event_obj;
+    int plugin;
+
+    if(me == NULL || !me->event_flags & (1 << event_type))
+        return 0;
+
+    if((event_obj = get_event_object(me, event_type)) == NULL)
+    {
+        LOG(llevBug, "BUG: object with event flag and no event object: %s\n", STRING_OBJ_NAME(me));
+        me->event_flags &= ~(1 << event_type);
+        return 0;
+    }
+
+    CFP.Value[0] = &event_type;
+    CFP.Value[1] = activator;
+    CFP.Value[2] = me; 
+    CFP.Value[3] = other;
+    CFP.Value[4] = (void *)msg;
+    CFP.Value[5] = parm1;
+    CFP.Value[6] = parm2;
+    CFP.Value[7] = parm3;
+    CFP.Value[8] = &flags;
+    CFP.Value[9] = (char *) event_obj->race;
+    CFP.Value[10] = (char *) event_obj->slaying;
+    CFP.Value[11] = NULL;
+
+    if (event_obj->name && (plugin = findPlugin(event_obj->name)) >= 0)
+    {
+        /* TODO: we could really use a more efficient event interface */
+        CFR = ((PlugList[plugin].eventfunc) (&CFP));
+        if(CFR && CFR->Value[0])
+            return *(int *) (CFR->Value[0]);
+    } 
+    else 
+    {
+        LOG(llevBug, "BUG: event object with unknown plugin: %s, plugin %s\n", STRING_OBJ_NAME(me), STRING_OBJ_NAME(event_obj));
+        me->event_flags &= ~(1 << event_type);
+    }
+
+    return 0;
+}
+
 /*****************************************************************************/
 /* Tries to find if a given command is handled by a plugin.                  */
 /* Note that find_plugin_command is called *before* the internal commands are*/

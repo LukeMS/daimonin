@@ -501,6 +501,7 @@ MODULEAPI CFParm * triggerEvent(CFParm *PParm)
         case EVENT_THROW:
         case EVENT_TRIGGER:
         case EVENT_CLOSE:
+        case EVENT_EXAMINE:
         case EVENT_AI_BEHAVIOUR:
 #ifdef LUA_DEBUG
     LOG(llevDebug, "LUA - triggerEvent:: eventcode %d\n", eventcode);
@@ -686,7 +687,10 @@ MODULEAPI int HandleEvent(CFParm *PParm)
     LOG(llevDebug, "LUA - call data:: o1:>%s< o2:>%s< o3:>%s< text:>%s< i1:%d i2:%d i3:%d i4:%d\n",
         STRING_OBJ_NAME((object *) (PParm->Value[1])), STRING_OBJ_NAME((object *) (PParm->Value[2])),
         STRING_OBJ_NAME((object *) (PParm->Value[3])), STRING_SAFE((char *) (PParm->Value[4])),
-        *(int *) (PParm->Value[5]), *(int *) (PParm->Value[6]), *(int *) (PParm->Value[7]), *(int *) (PParm->Value[8]));
+        PParm->Value[5] ? *(int *) (PParm->Value[5]) : 0, 
+        PParm->Value[6] ? *(int *) (PParm->Value[6]) : 0, 
+        PParm->Value[7] ? *(int *) (PParm->Value[7]) : 0,
+        PParm->Value[8] ? *(int *) (PParm->Value[8]) : 0);
 #endif
 
     context = get_poolchunk(pool_luacontext);
@@ -705,10 +709,10 @@ MODULEAPI int HandleEvent(CFParm *PParm)
     context->other = (object *) (PParm->Value[3]);
     context->other_tag = context->other ? context->other->count : 0;
     context->text = (const char *) (PParm->Value[4]);
-    context->parm1 = *(int *) (PParm->Value[5]);
-    context->parm2 = *(int *) (PParm->Value[6]);
-    context->parm3 = *(int *) (PParm->Value[7]);
-    context->parm4 = *(int *) (PParm->Value[8]);
+    context->parm1 = PParm->Value[5] ? *(int *) (PParm->Value[5]) : 0;
+    context->parm2 = PParm->Value[6] ? *(int *) (PParm->Value[6]) : 0;
+    context->parm3 = PParm->Value[7] ? *(int *) (PParm->Value[7]) : 0;
+    context->parm4 = PParm->Value[8] ? *(int *) (PParm->Value[8]) : 0;
     context->file = (const char *) (PParm->Value[9]);
     context->options = (const char *) (PParm->Value[10]);
     context->returnvalue = 0;
