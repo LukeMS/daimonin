@@ -196,6 +196,7 @@ int save_player(object *op, int flag)
 			fprintf(fp, "dm_DM\n");
 	}	
 	fprintf(fp, "dm_stealth %d\n", pl->dm_stealth);
+    fprintf(fp, "silent_login %d\n", pl->silent_login);
     fprintf(fp, "gen_hp %d\n", pl->gen_hp);
     fprintf(fp, "gen_sp %d\n", pl->gen_sp);
     fprintf(fp, "gen_grace %d\n", pl->gen_grace);
@@ -599,6 +600,8 @@ void check_login(object *op)
 			pl->gmaster_mode = GMASTER_MODE_DM;
         else if (!strcmp(buf, "dm_stealth"))
             pl->dm_stealth = value;
+        else if (!strcmp(buf, "silent_login"))
+            pl->silent_login = value;
         else if (!strcmp(buf, "gen_hp"))
             pl->gen_hp = value;
         else if (!strcmp(buf, "shoottype"))
@@ -939,7 +942,22 @@ void check_login(object *op)
     new_draw_info(NDI_UNIQUE, 0, op, "Welcome Back!");
     if (!pl->dm_stealth)
     {
-        new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, NULL, "%s has entered the game.", query_name(pl->ob));
+        if (!pl->silent_login) /* Inform all players of the login */
+            new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, NULL, "%s has entered the game.", query_name(pl->ob));
+        else    /* Inform only the DMs, GMs and VOLs that the player logged in */
+        {
+            char buf[MAX_BUF];
+            objectlink *ol;
+            
+            sprintf(buf, "%s has entered the game.", query_name(pl->ob));
+
+            for (ol = gmaster_list_DM; ol; ol = ol->next)
+                new_draw_info(NDI_UNIQUE, 5, ol->objlink.ob, buf);
+            for (ol = gmaster_list_GM; ol; ol = ol->next)
+                new_draw_info(NDI_UNIQUE, 5, ol->objlink.ob, buf);
+            for (ol = gmaster_list_VOL; ol; ol = ol->next)
+                new_draw_info(NDI_UNIQUE, 5, ol->objlink.ob, buf);
+        }
 		if(gmaster_list_DM || gmaster_list_GM)
 		{
 			objectlink *ol;

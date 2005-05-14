@@ -1230,3 +1230,16 @@ int command_style_map_info(object *op, char *params)
     new_draw_info_format(NDI_UNIQUE, 0, op, "Mem for objects:      %d", objects_used * sizeof(object));
     return 0;
 }
+
+int command_silent_login(object *op, char *params)
+{
+    int new_status = !CONTR(op)->silent_login;
+
+    CONTR(op)->silent_login = new_status;
+
+    if (new_status)
+        new_draw_info(NDI_UNIQUE, 0, op, "Silent login enabled.");
+    else
+        new_draw_info(NDI_UNIQUE, 0, op, "Silent login disabled.");
+    return 1;
+}
