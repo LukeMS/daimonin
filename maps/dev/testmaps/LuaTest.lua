@@ -128,6 +128,11 @@ elseif (words[1] == 'setgender') then
 elseif (msg == 'sound') then
     me:SayTo(activator, "I can imitate a teleporter");
     me.map:PlaySound(me.x, me.y, 32, 0);
+elseif (msg == 'tod') then
+    tod = game:GetTime()
+    for k,v in tod do
+        me:SayTo(activator, k .. ": " .. v);
+    end
 
 -- Setting/Getting of stats
 -- TODO: this part is completely outdated...
@@ -465,7 +470,7 @@ else
 		"^value^ ^cursed^ ^quantity^ ^weight^\n" ..
         "^name^ ^title^ ^slaying^ ^archname^\n" ..
         "^skill^ ^matchstring^ ^god^\n" ..
-        "^findplayer^ ^setgender^ ^sound^\n" ..
+        "^findplayer^ ^setgender^ ^sound^ ^tod^\n" ..
         "^player_force^ ^flags^\n" ..
         "^setposition1^ ^setposition2^ ^setposition3^\n" ..
         "^drop1^ ^pickup1^ ^drop2^ ^pickup2^\n" ..
