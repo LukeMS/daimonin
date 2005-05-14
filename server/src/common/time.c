@@ -32,10 +32,10 @@
 #include <sys/time.h>
 #endif /* win32 */
 
-const char *season_name[]               =
+const char *season_name[SEASONS_PER_YEAR]               =
 {
     "The Season of New Year", "The Season of Growth", "The Season of Harvest", "The Season of Decay",
-    "The Season of the Blizzard", "\n"
+    "The Season of the Blizzard"
 };
 
 const char *weekdays[DAYS_PER_WEEK]     =
@@ -187,6 +187,9 @@ void get_tod(timeofday_t *tod)
     else
         tod->season = 4;
     
+    tod->dayofweek_name = weekdays[tod->dayofweek];
+    tod->month_name = month_name[tod->dayofweek];
+    tod->season_name = season_name[tod->dayofweek];
 }
 
 void print_tod(object *op)

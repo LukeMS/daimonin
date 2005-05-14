@@ -41,5 +41,6 @@ static int  Game_CheckMap(lua_State *L);
 // static int Game_RegisterCommand(lua_State *L);
 static int  Game_LoadObject(lua_State *L);
 static int  Game_IsValid(lua_State *L);
+static int  Game_GetTime(lua_State *L);
 
 #endif /* DAIMONIN_GANE_H */
