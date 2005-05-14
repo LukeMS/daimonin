@@ -54,7 +54,9 @@ struct plugin_hooklist  hooklist    =
 	add_quest_containers, add_quest_trigger,
 	set_quest_status, spring_trap,cast_spell,play_sound_map,
 	find_skill,
-    get_tod
+    get_tod,
+    /* global variables */
+    &num_animations
 };
 
 CFPlugin                PlugList[PLUGINS_MAX_NROF];
