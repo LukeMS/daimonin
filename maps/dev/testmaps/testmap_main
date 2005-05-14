@@ -1277,20 +1277,6 @@ arch floor_ostone1
 x 11
 y 12
 end
-arch monk
-name LuaTester
-invulnerable 1
-no_attack 1
-unaggressive 0
-friendly 1
-x 11
-y 12
-arch event_obj
-name Lua
-race /dev/testmaps/LuaTest.lua
-sub_type 6
-end
-end
 arch floor_ostone1
 x 11
 y 13
@@ -1298,21 +1284,6 @@ end
 arch floor_ostone1
 x 11
 y 14
-end
-arch drow_sorcerer
-invulnerable 1
-no_attack 1
-unaggressive 1
-friendly 1
-stand_still 1
-direction 7
-x 11
-y 14
-arch event_obj
-name Lua
-race /dev/testmaps/DrowScript.lua
-sub_type 6
-end
 end
 arch floor_ostone1
 x 11
@@ -1388,7 +1359,22 @@ arch floor_ostone1
 x 12
 y 14
 end
+arch sign
+name plugin testmap
+msg
+Plugin (Lua) testmap
+endmsg
+x 12
+y 14
+end
 arch floor_ostone1
+x 12
+y 15
+end
+arch stair_down
+slaying testmap_plugin
+hp 1
+sp 1
 x 12
 y 15
 end
@@ -1561,21 +1547,6 @@ end
 arch floor_ostone1
 x 14
 y 13
-end
-arch lost_soul
-invulnerable 1
-no_attack 1
-unaggressive 1
-friendly 1
-stand_still 1
-direction 7
-x 14
-y 13
-arch event_obj
-name Lua
-race /dev/testmaps/lost_soul.lua
-sub_type 6
-end
 end
 arch floor_ostone1
 x 14
