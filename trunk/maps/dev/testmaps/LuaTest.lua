@@ -356,7 +356,14 @@ elseif (msg == 'setface') then
     -- FIXME: then  Sets animation, not face
     me:SayTo(activator, "Changing appearance")
     me:SetFace("giant_hill")
-
+elseif (words[1] == 'anim') then
+    if (words[2] == nil) then
+        me:SayTo(activator, "Say ^anim <id>^ to make me switch animation");
+    else
+        me.animation_id = words[2]
+    end
+    me:SayTo(activator, "I've got animation number " .. me.animation_id)
+        
 elseif (msg == 'invisible') then
     -- FIXME: Seems to have some problems if the player is made invisible (UP_INV_XXX flag ????)
 	if (activator.f_is_invisible) then
@@ -475,6 +482,7 @@ else
         "^setposition1^ ^setposition2^ ^setposition3^\n" ..
         "^drop1^ ^pickup1^ ^drop2^ ^pickup2^\n" ..
         "^alignment^ ^experience^ ^direction^\n" ..
+        "^anim^\n" ..
         "^stat {str|dex|con|pow|wis|cha|hp|sp|grace|maxhp|maxsp|maxgrace|ac|wc|luck}^\n" ..
         "^setface^ ^getattribute^ ^setattribute^");
 end
