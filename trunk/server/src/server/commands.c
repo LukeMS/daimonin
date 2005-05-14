@@ -74,6 +74,7 @@ CommArray_s Commands[]                  =
     {"/save",         command_save,           1.0f},
     {"/use_skill",    command_uskill,         0.1f},
     {"/ready_skill",  command_rskill,         0.1f},
+    {"/silent_login", command_silent_login,   0.0f},
 
 	/* group commands */
     {"/invite",		command_party_invite,	4.0f},

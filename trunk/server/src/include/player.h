@@ -299,6 +299,8 @@ typedef struct pl_player
     uint32              last_known_spell    : 1;/* What was last updated with draw_stats() */
     uint32              update_skills       : 1;   /* update skill list when set */
 
+    uint32              silent_login        : 1;
+
     rangetype           shoottype;        /* Which range-attack is being used by player */
     rangetype           last_shoot;       /* What was last updated with draw_stats() */
     usekeytype          usekeys;          /* Method for finding keys for doors */

@@ -182,6 +182,7 @@ void                        receive_player_name(object *op, char k, char *str);
 void                        receive_player_password(object *op, char k, char *str);
 int                         command_save(object *op, char *params);
 int                         command_style_map_info(object *op, char *params);
+int                         command_silent_login(object *op, char *params);
 /* c_move.c */
 int                         command_east(object *op, char *params);
 int                         command_north(object *op, char *params);
