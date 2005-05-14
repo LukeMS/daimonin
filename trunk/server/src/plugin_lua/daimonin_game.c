@@ -44,6 +44,7 @@ static struct method_decl       Game_methods[]      =
     {"GetSpellNr", Game_GetSpellNr},
     {"GetSkillNr", Game_GetSkillNr}, 
     {"IsValid", Game_IsValid},
+    {"GetTime", Game_GetTime},
     //    {"RegisterCommand", Game_RegisterCommand},
     {NULL, NULL}
 };
@@ -396,6 +397,73 @@ static int Game_IsValid(lua_State *L)
        lua_pushboolean(L, obj->class->isValid(L, obj));
     }
 
+    return 1;
+}
+
+/*****************************************************************************/
+/* Name   : Game_GetTime                                                     */
+/* Lua    : game:GetTime()                                                   */
+/* Info   : Return a table with values on the current game time.             */
+/*          The table will have the following fields:                        */
+/*          year - year number                                               */
+/*          month - month number                                             */
+/*          day - day number in month                                        */
+/*          dayofweek - day number in week                                   */
+/*          hour - current time                                              */
+/*          minute - current time                                            */
+/*          weekofmonth - week in month                                      */
+/*          season - season number                                           */
+/*          dayofweek_name - weekday as string                               */
+/*          month_name - month as string                                     */
+/*          season_name - season as string                                   */
+/* Status : Untested                                                         */
+/*****************************************************************************/
+static int Game_GetTime(lua_State *L)
+{
+    timeofday_t tod;
+    lua_object *self;
+
+    get_lua_args(L, "G", &self);
+
+    hooks->get_tod(&tod);
+
+    lua_newtable(L);
+    
+    lua_pushliteral(L, "year");
+    lua_pushnumber(L, (lua_Number) tod.year);
+    lua_rawset(L, -3);
+    lua_pushliteral(L, "month");
+    lua_pushnumber(L, (lua_Number) tod.month);
+    lua_rawset(L, -3);
+    lua_pushliteral(L, "day");
+    lua_pushnumber(L, (lua_Number) tod.day);
+    lua_rawset(L, -3);
+    lua_pushliteral(L, "dayofweek");
+    lua_pushnumber(L, (lua_Number) tod.dayofweek);
+    lua_rawset(L, -3);
+    lua_pushliteral(L, "hour");
+    lua_pushnumber(L, (lua_Number) tod.hour);
+    lua_rawset(L, -3);
+    lua_pushliteral(L, "minute");
+    lua_pushnumber(L, (lua_Number) tod.minute);
+    lua_rawset(L, -3);
+    lua_pushliteral(L, "weekofmonth");
+    lua_pushnumber(L, (lua_Number) tod.weekofmonth);
+    lua_rawset(L, -3);
+    lua_pushliteral(L, "season");
+    lua_pushnumber(L, (lua_Number) tod.season);
+    lua_rawset(L, -3);
+    
+    lua_pushliteral(L, "dayofweek_name");
+    lua_pushstring(L, tod.dayofweek_name);
+    lua_rawset(L, -3);
+    lua_pushliteral(L, "month_name");
+    lua_pushstring(L, tod.month_name);
+    lua_rawset(L, -3);
+    lua_pushliteral(L, "season_name");
+    lua_pushstring(L, tod.season_name);
+    lua_rawset(L, -3);
+    
     return 1;
 }
 

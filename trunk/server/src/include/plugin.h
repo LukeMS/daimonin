@@ -311,6 +311,7 @@ struct plugin_hooklist
 	int  (*cast_spell)(object *op, object *caster, int dir, int type, int ability, SpellTypeFrom item, char *stringarg);
 	void (*play_sound_map)(mapstruct *map, int x, int y, int sound_num, int sound_type);
 	object * (*find_skill)(object *op, int skillnr);
+    void (*get_tod)(struct _timeofday *tod);
 };
 
 /*****************************************************************************/
