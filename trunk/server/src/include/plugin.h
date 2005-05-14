@@ -83,32 +83,34 @@
 #define EVENT_THROW    9  /* Object is thrown.                               */
 #define EVENT_TRIGGER  10 /* Button pushed, lever pulled, etc.               */
 #define EVENT_CLOSE    11 /* Container closed.                               */
-#define EVENT_TIMER    12 /* Timer connected triggered it.                   */
+#define EVENT_EXAMINE  12 /* Object was examined                             */
 #define EVENT_TALK     13  /* Talk event for npc interface system            */
 
-/* AI events are slightly different, but still linked to a specific object */
+/* AI events don't use event objects, but are still linked to a mob object */
 #define EVENT_AI_BEHAVIOUR 14 /* Behaviour event for the AI system           */
 
 #define NR_LOCAL_EVENTS 15
 #define NR_EVENTS 28
 
-#define EVENT_FLAG_NONE     0x0000
-#define EVENT_FLAG_APPLY    0x0001
-#define EVENT_FLAG_ATTACK   0x0002
-#define EVENT_FLAG_DEATH    0x0004
-#define EVENT_FLAG_DROP     0x0008
-#define EVENT_FLAG_PICKUP   0x0010
-#define EVENT_FLAG_SAY      0x0020
-#define EVENT_FLAG_STOP     0x0040
-#define EVENT_FLAG_TIME     0x0080
-#define EVENT_FLAG_THROW    0x0100
-#define EVENT_FLAG_TRIGGER  0x0200
-#define EVENT_FLAG_CLOSE    0x0400
-#define EVENT_FLAG_TIMER    0x0800
-#define EVENT_FLAG_TALK     0x1000
+#define EVENT_FLAG(x) (1 << (x - 1))
+
+#define EVENT_FLAG_NONE     0
+#define EVENT_FLAG_APPLY    EVENT_FLAG(EVENT_APPLY)
+#define EVENT_FLAG_ATTACK   EVENT_FLAG(EVENT_ATTACK)
+#define EVENT_FLAG_DEATH    EVENT_FLAG(EVENT_DEATH)
+#define EVENT_FLAG_DROP     EVENT_FLAG(EVENT_DROP)
+#define EVENT_FLAG_PICKUP   EVENT_FLAG(EVENT_PICKUP)
+#define EVENT_FLAG_SAY      EVENT_FLAG(EVENT_SAY)
+#define EVENT_FLAG_STOP     EVENT_FLAG(EVENT_STOP)
+#define EVENT_FLAG_TIME     EVENT_FLAG(EVENT_TIME)
+#define EVENT_FLAG_THROW    EVENT_FLAG(EVENT_THROW)
+#define EVENT_FLAG_TRIGGER  EVENT_FLAG(EVENT_TRIGGER)
+#define EVENT_FLAG_CLOSE    EVENT_FLAG(EVENT_CLOSE)
+#define EVENT_FLAG_EXAMIN   EVENT_FLAG(EVENT_EXAMINE)
+#define EVENT_FLAG_TALK     EVENT_FLAG(EVENT_TALK)
 
 /* special flag for quest_triggers - internal use */
-#define EVENT_FLAG_SPECIAL_QUEST	0x8000
+#define EVENT_FLAG_SPECIAL_QUEST	EVENT_FLAG(NR_LOCAL_EVENTS)
 
 /*****************************************************************************/
 /* Global events. Those are never linked to a specific object.               */
@@ -145,6 +147,9 @@
 /* find out to what function they are pointing at. Also consult the plugins.c*/
 /* source file in the server subdirectory to see the hook "wrappers".        */
 /*****************************************************************************/
+
+/* Gecko 2005-05-14: This old hook system is being phased out, use the
+ * plugin_hooklist struct below instead */
 #define HOOK_NONE               0
       
 #define HOOK_SHOWCOST            1

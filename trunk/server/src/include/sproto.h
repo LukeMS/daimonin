@@ -473,6 +473,7 @@ int                         atnr_is_dragon_enabled(int attacknr);
 int                         is_dragon_pl(object *op);
 /* plugins.c */
 object                     *get_event_object(object *op, int event_nr);
+int                         trigger_object_plugin_event(int event_type, object *me, object *activator, object *other, const char *msg, int *parm1, int *parm2, int *parm3, int flags);
 CommArray_s                *find_plugin_command(const char *cmd, object *op);
 void                        displayPluginsList(object *op);
 int                         findPlugin(const char *id);
