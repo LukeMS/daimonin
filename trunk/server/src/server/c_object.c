@@ -206,6 +206,11 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof)
         return;
     }
 
+    /* As usual, try to run the plugin _after_ tests, but _before_ side effects */
+    /* Non-zero return value means to abort the pickup */
+    if(trigger_object_plugin_event(EVENT_PICKUP, tmp, pl, op, NULL, 
+                &tmp_nrof, NULL, NULL, SCRIPT_FIX_ALL))
+        return;
 
     if (tmp->type == CONTAINER)
         container_unlink(NULL, tmp);
@@ -224,8 +229,7 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof)
         else /* this is a unique shop item */
             sprintf(buf, "%s will cost you %s.", query_name(tmp), query_cost_string(tmp, pl, F_BUY));
     }
-    else
-	if (nrof < tmp_nrof)
+    else if (nrof < tmp_nrof)
 	    sprintf(buf,"You pick up %d out of the %s.", nrof, query_name(tmp));
 	else
 	    sprintf(buf,"You pick up the %s.", query_name(tmp));
@@ -265,11 +269,6 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof)
 
     new_draw_info(NDI_UNIQUE, 0, pl, buf);
     tmp = insert_ob_in_ob(tmp, op);
-
-    /* TODO: having the event this late means we can't really let the script
-     * decide pickability. Maybe it should be called earlier (just before 
-     * container_unlink above). */
-    trigger_object_plugin_event(EVENT_PICKUP, tmp, pl, op, NULL, &tmp_nrof, NULL, NULL, SCRIPT_FIX_ALL);
 
     /* All the stuff below deals with client/server code, and is only
      * usable by players
@@ -352,16 +351,11 @@ void pick_up(object *op, object *alt)
     {
         /* non container pickup */
         for (alt = op->inv; alt; alt = alt->below)
-            if (alt->type
-             == CONTAINER
+            if (alt->type == CONTAINER
              && QUERY_FLAG(alt, FLAG_APPLIED)
              && alt->race
-             && alt->race
-             == tmp->race
-             && sack_can_hold(NULL,
-                              alt,
-                              tmp,
-                              count))
+             && alt->race == tmp->race
+             && sack_can_hold(NULL, alt, tmp, count))
                 break;  /* perfect match */
 
         if (!alt)
@@ -905,6 +899,11 @@ static object * find_marked_object_rec(object *op, object **marked, uint32 *mark
 {
     object *tmp, *tmp2;
 
+    /* TODO: wouldn't it be more efficient to search the other way? That is:
+     * start with the marked item, and search outwards through its env
+     * until we find the player? Isn't env always cleared when an object
+     * is removed from its container? */
+    
     /* This may seem like overkill, but we need to make sure that they
      * player hasn't dropped the item.  We use count on the off chance that
      * an item got reincarnated at some point.
@@ -966,7 +965,7 @@ int command_mark(object *op, char *params)
         {
             CONTR(op)->mark = mark1;
             CONTR(op)->mark_count = mark1->count;
-            new_draw_info_format(NDI_UNIQUE, 0, op, "MarkedY item %s", query_name(mark1));
+            new_draw_info_format(NDI_UNIQUE, 0, op, "Marked item %s", query_name(mark1));
             return 0;
         }
     }

@@ -96,7 +96,7 @@ int trigger_object_plugin_event(
     object *event_obj;
     int plugin;
 
-    if(me == NULL || !me->event_flags & (1 << event_type))
+    if(me == NULL || !(me->event_flags & EVENT_FLAG(event_type)))
         return 0;
 
     if((event_obj = get_event_object(me, event_type)) == NULL)
