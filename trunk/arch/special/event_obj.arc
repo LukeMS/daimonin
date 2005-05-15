@@ -1,5 +1,5 @@
 Object event_obj
-name Python
+name Lua
 face event.101
 no_pick 1
 no_drop 1
