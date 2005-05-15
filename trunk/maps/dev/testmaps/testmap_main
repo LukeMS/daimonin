@@ -1265,10 +1265,6 @@ arch floor_ostone1
 x 11
 y 10
 end
-arch potion_minor_con
-x 11
-y 10
-end
 arch floor_ostone1
 x 11
 y 11
@@ -1552,7 +1548,24 @@ arch floor_ostone1
 x 14
 y 14
 end
+arch sign
+name bug testmap
+msg
+Here are test cases for some reported bugs.
+Warning - might crash server on entry!
+endmsg
+x 14
+y 14
+end
 arch floor_ostone1
+x 14
+y 15
+end
+arch stair_down
+name WARNING! Read sign!!!
+slaying testmap_bugs
+hp 1
+sp 1
 x 14
 y 15
 end
