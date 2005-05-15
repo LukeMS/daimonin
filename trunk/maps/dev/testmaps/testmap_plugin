@@ -245,13 +245,14 @@ x 1
 y 10
 end
 arch gem_generic
+name gem (can't be picked up)
 x 1
 y 10
 arch event_obj
 name Lua
-sub_type 5
 race /dev/testmaps/Event_Pickup.lua
 slaying override
+sub_type 5
 end
 end
 arch floor_ostone1
@@ -272,13 +273,14 @@ x 1
 y 12
 end
 arch cleaver_war
+name war cleaver (unwieldable)
 x 1
 y 12
 arch event_obj
 name Lua
-sub_type 1
 race /dev/testmaps/Event_Apply.lua
 slaying override
+sub_type 1
 end
 end
 arch floor_ostone1
@@ -290,8 +292,8 @@ x 1
 y 13
 arch event_obj
 name Lua
-sub_type 1
 race /dev/testmaps/Event_Apply.lua
+sub_type 1
 end
 end
 arch floor_ostone1
@@ -301,6 +303,22 @@ end
 arch floor_ostone1
 x 1
 y 15
+end
+arch teddy
+x 1
+y 15
+arch event_obj
+name Lua
+sub_type 6
+race /dev/testmaps/Event_Talk_Say.lua
+slaying SAY
+end
+arch event_obj
+name Lua
+race /dev/testmaps/Event_Talk_Say.lua
+slaying TALK
+sub_type 13
+end
 end
 arch floor_ostone1
 x 1
@@ -402,7 +420,7 @@ y 12
 end
 arch sign
 msg
-APPLY event. The axe on the right can't be picked up
+APPLY event. The axe on the right can't be wielded
 endmsg
 x 2
 y 12
@@ -416,6 +434,13 @@ x 2
 y 14
 end
 arch floor_ostone1
+x 2
+y 15
+end
+arch sign
+msg
+This is an item you can talk to. First m'ark it, then say or talk to it.
+endmsg
 x 2
 y 15
 end
