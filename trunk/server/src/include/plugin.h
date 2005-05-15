@@ -311,10 +311,13 @@ struct plugin_hooklist
 	int  (*cast_spell)(object *op, object *caster, int dir, int type, int ability, SpellTypeFrom item, char *stringarg);
 	void (*play_sound_map)(mapstruct *map, int x, int y, int sound_num, int sound_type);
 	object * (*find_skill)(object *op, int skillnr);
+    int  (*find_animation)(char *name);
+    int  (*find_face)(const char *name, int error);
     void (*get_tod)(struct _timeofday *tod);
 
     /* Global variables */
-    int *num_animations;
+    Animations **animations;
+    New_Face **new_faces;
 };
 
 /*****************************************************************************/
