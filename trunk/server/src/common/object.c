@@ -2756,15 +2756,26 @@ object * insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag
      */
     if (op->type == PLAYER)
     {
-        CONTR(op)->socket.update_tile = 0;
-        CONTR(op)->update_los = 1; /* thats always true when touching the players map pos. */
-
-        if (op->map->player_first)
+        /* Bug #000120, Make sure we have a valid player object here */
+        if(!CONTR(op))
         {
-            CONTR(op->map->player_first)->map_below = op;
-            CONTR(op)->map_above = op->map->player_first;
+            LOG(llevBug, "BUG: Player object %s without controller in map %s\n",
+                    STRING_OBJ_NAME(op), STRING_MAP_PATH(op->map));
+            CLEAR_FLAG(op, FLAG_IS_PLAYER);
+            op->type = MISC_OBJECT;
         }
-        op->map->player_first = op;
+        else
+        {
+            CONTR(op)->socket.update_tile = 0;
+            CONTR(op)->update_los = 1; /* thats always true when touching the players map pos. */
+
+            if (op->map->player_first)
+            {
+                CONTR(op->map->player_first)->map_below = op;
+                CONTR(op)->map_above = op->map->player_first;
+            }
+            op->map->player_first = op;
+        }
     }
 
     mc->update_tile++; /* we updated something here - mark this tile as changed! */
