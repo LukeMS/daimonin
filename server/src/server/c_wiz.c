@@ -777,6 +777,14 @@ int command_addexp(object *op, char *params)
         return 1;
     }
 
+    /* Bug 0000100: /addexp Cher 101 100000 crashes server */
+    /* Safety check */
+    if (snr < 0 || snr >= NROFSKILLS)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "No such skill.");
+        return 1;
+    }
+    
     exp_skill = pl->skill_ptr[snr];
 
     if (!exp_skill) /* safety check */
