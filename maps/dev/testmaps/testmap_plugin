@@ -244,17 +244,55 @@ arch floor_ostone1
 x 1
 y 10
 end
+arch gem_generic
+x 1
+y 10
+arch event_obj
+name Lua
+sub_type 5
+race /dev/testmaps/Event_Pickup.lua
+slaying override
+end
+end
 arch floor_ostone1
 x 1
 y 11
+end
+arch gem_generic
+x 1
+y 11
+arch event_obj
+name Lua
+race /dev/testmaps/Event_Pickup.lua
+sub_type 5
+end
 end
 arch floor_ostone1
 x 1
 y 12
 end
+arch cleaver_war
+x 1
+y 12
+arch event_obj
+name Lua
+sub_type 1
+race /dev/testmaps/Event_Apply.lua
+slaying override
+end
+end
 arch floor_ostone1
 x 1
 y 13
+end
+arch cleaver_war
+x 1
+y 13
+arch event_obj
+name Lua
+sub_type 1
+race /dev/testmaps/Event_Apply.lua
+end
 end
 arch floor_ostone1
 x 1
@@ -346,11 +384,26 @@ arch floor_ostone1
 x 2
 y 10
 end
+arch sign
+msg
+PICKUP event.
+The gem on the right can't be picked up.
+endmsg
+x 2
+y 10
+end
 arch floor_ostone1
 x 2
 y 11
 end
 arch floor_ostone1
+x 2
+y 12
+end
+arch sign
+msg
+APPLY event. The axe on the right can't be picked up
+endmsg
 x 2
 y 12
 end
