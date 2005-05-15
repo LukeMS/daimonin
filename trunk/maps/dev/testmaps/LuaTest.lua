@@ -351,18 +351,30 @@ elseif (msg == 'enemy') then
 		end
 	end
 
--- Test SetFace (TODO: deprecated)
-elseif (msg == 'setface') then
-    -- FIXME: then  Sets animation, not face
-    me:SayTo(activator, "Changing appearance")
-    me:SetFace("giant_hill")
-elseif (words[1] == 'anim') then
-    if (words[2] == nil) then
-        me:SayTo(activator, "Say ^anim <id>^ to make me switch animation");
+-- Test {Set|Get}{Face|Animation}
+elseif words[1] == 'anim' then
+    if words[2] == nil then
+        me:SayTo(activator, "Say ^anim <name>^ to make me switch animation")
+        if me:GetAnimation() ~= "monk" then
+            me:SayTo(activator, "Switching back to monk animation")
+            me:SetAnimation("monk")
+            me.f_is_animated = true
+        end
     else
-        me.animation_id = words[2]
+        me:SayTo(activator, "Switching to animation " .. words[2])
+        me:SetAnimation(words[2])
+            me.f_is_animated = true
     end
-    me:SayTo(activator, "I've got animation number " .. me.animation_id)
+elseif words[1] == 'face' then
+    if words[2] == nil then
+        me:SayTo(activator, "Say ^face <name>^ to make me switch face")
+        me:SayTo(activator, "My current face is " .. tostring(me:GetFace()))
+        me:SayTo(activator, "My current inventory face is " .. tostring(me:GetFace(1)))
+    else
+        me:SayTo(activator, "Switching to face " .. words[2]);
+        me:SetFace(words[2])
+        me.f_is_animated = false
+    end
         
 elseif (msg == 'invisible') then
     -- FIXME: Seems to have some problems if the player is made invisible (UP_INV_XXX flag ????)
@@ -482,7 +494,7 @@ else
         "^setposition1^ ^setposition2^ ^setposition3^\n" ..
         "^drop1^ ^pickup1^ ^drop2^ ^pickup2^\n" ..
         "^alignment^ ^experience^ ^direction^\n" ..
-        "^anim^\n" ..
+        "^anim^ ^anim2^\n" ..
         "^stat {str|dex|con|pow|wis|cha|hp|sp|grace|maxhp|maxsp|maxgrace|ac|wc|luck}^\n" ..
-        "^setface^ ^getattribute^ ^setattribute^");
+        "^setface^ ^getattribute^ ^setattribute^")
 end

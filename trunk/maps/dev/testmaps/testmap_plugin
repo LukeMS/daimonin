@@ -223,6 +223,19 @@ arch floor_ostone1
 x 1
 y 8
 end
+arch sign
+msg
+This sign has the same 'say' script as LuaTester, but is used to test some functions on non-living objects
+endmsg
+alive 1
+x 1
+y 8
+arch event_obj
+name Lua
+race /dev/testmaps/LuaTest.lua
+sub_type 6
+end
+end
 arch floor_ostone1
 x 1
 y 9
