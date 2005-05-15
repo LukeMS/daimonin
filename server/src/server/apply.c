@@ -116,6 +116,9 @@ int apply_potion(object *op, object *tmp)
         return 0;
     }
 
+    if(trigger_object_plugin_event(EVENT_APPLY, tmp, op, NULL, 
+                NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+        return 0;
 
     if (op->type == PLAYER)
     {
@@ -774,6 +777,12 @@ int check_improve_weapon(object *op, object *tmp)
         new_draw_info(NDI_UNIQUE, 0, op, "Marked item is not a weapon");
         return 0;
     }
+    
+    if(trigger_object_plugin_event(
+                EVENT_APPLY, tmp, op, NULL, 
+                NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+        return 1;
+
     new_draw_info(NDI_UNIQUE, 0, op, "Applied weapon builder.");
     improve_weapon(op, tmp, otmp);
     esrv_send_item(op, otmp);
@@ -1444,12 +1453,6 @@ static int apply_shop_mat(object *shop_mat, object *op)
 
 static void apply_sign(object *op, object *sign)
 {
-    if (sign->msg == NULL)
-    {
-        new_draw_info(NDI_UNIQUE, 0, op, "Nothing is written on it.");
-        return;
-    }
-
     if (sign->stats.food)
     {
         if (sign->last_eat >= sign->stats.food)
@@ -1489,6 +1492,17 @@ static void apply_sign(object *op, object *sign)
 			return;
 		}		
 	}
+    
+    if(trigger_object_plugin_event(
+                EVENT_APPLY, sign, op, NULL, 
+                NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+        return;
+    
+    if (sign->msg == NULL)
+    {
+        new_draw_info(NDI_UNIQUE, 0, op, "Nothing is written on it.");
+        return;
+    }
 
     new_draw_info_format(NDI_UNIQUE, 0, op, "You start reading the %s.", sign->name);
 	new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, sign->msg);
@@ -1795,12 +1809,6 @@ static void apply_book(object *op, object *tmp)
         return;
     }
 
-    if (tmp->msg == NULL)
-    {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "You open the %s and find it empty.", query_name(tmp));
-        return;
-    }
-
     /* you has the right skill & language knowledge to read it? */
     if (!QUERY_FLAG(op, FLAG_WIZ))
 	{
@@ -1818,47 +1826,29 @@ static void apply_book(object *op, object *tmp)
 	}
 
     new_draw_info_format(NDI_UNIQUE, 0, op, "You open the %s and start reading.", query_name(tmp));
-#ifdef PLUGINS
-    /* GROS: Handle for plugin trigger event */
-    if (tmp->event_flags & EVENT_FLAG_APPLY)
+    
+    /* Non-zero return value from script means stop here */
+    if(trigger_object_plugin_event(
+                EVENT_APPLY, tmp, op, NULL, 
+                NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL))
+        return;
+    
+    if (tmp->msg == NULL)
     {
-        CFParm  CFP;
-        int     k, l, m;
-        object *event_obj   = get_event_object(tmp, EVENT_APPLY);
-        k = EVENT_APPLY;
-        l = SCRIPT_FIX_ALL;
-        m = 0;
-        CFP.Value[0] = &k;
-        CFP.Value[1] = op;
-        CFP.Value[2] = tmp;
-        CFP.Value[3] = NULL;
-        CFP.Value[4] = NULL;
-        CFP.Value[5] = &m;
-        CFP.Value[6] = &m;
-        CFP.Value[7] = &m;
-        CFP.Value[8] = &l;
-        CFP.Value[9] = (char *) event_obj->race;
-        CFP.Value[10] = (char *) event_obj->slaying;
-        if (findPlugin(event_obj->name) >= 0)
-            ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
+        new_draw_info_format(NDI_UNIQUE, 0, op, "You open the %s and find it empty.", query_name(tmp));
+        return;
     }
-    else
-	{
-#endif
 
-		/* invoke the new client sided book interface */
-		SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_BOOK);
-		
-		SockList_AddInt(&global_sl, tmp->weight_limit);
-		strcpy(global_sl.buf+global_sl.len, tmp->msg);
-		global_sl.len += strlen(tmp->msg)+1;
-		Send_With_Handling(&CONTR(op)->socket, &global_sl);
+    /* invoke the new client sided book interface */
+    SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_BOOK);
 
-		/*new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, tmp->msg);*/
+    SockList_AddInt(&global_sl, tmp->weight_limit);
+    strcpy(global_sl.buf+global_sl.len, tmp->msg);
+    global_sl.len += strlen(tmp->msg)+1;
+    Send_With_Handling(&CONTR(op)->socket, &global_sl);
 
-#ifdef PLUGINS
-	}
-#endif		
+    /*new_draw_info(NDI_UNIQUE | NDI_NAVY, 0, op, tmp->msg);*/
+
 	/* identify the book - successful reading will do it always */
     if (!QUERY_FLAG(tmp, FLAG_NO_SKILL_IDENT))
     {
@@ -1879,6 +1869,9 @@ static void apply_book(object *op, object *tmp)
 
 static void apply_skillscroll(object *op, object *tmp)
 {
+    if(trigger_object_plugin_event( EVENT_APPLY, tmp, op, NULL, 
+                NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+        return;
     switch ((int) learn_skill(op, tmp, NULL, -1, 1))
     {
         case 0:
@@ -2043,6 +2036,10 @@ static void apply_spellbook(object *op, object *tmp)
         return;
     } 
 
+    if(trigger_object_plugin_event(EVENT_APPLY, tmp, op, NULL, 
+                NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+        return;
+                
     new_draw_info_format(NDI_UNIQUE, 0, op, "The spellbook contains the %s level spell %s.",
                          get_levelnumber(spells[tmp->stats.sp].level), spells[tmp->stats.sp].name);
 
@@ -2152,6 +2149,10 @@ static void apply_scroll(object *op, object *tmp)
         CONTR(op)->shoottype = range_scroll;
         CONTR(op)->chosen_spell = scroll_spell;
     }
+    
+    if(trigger_object_plugin_event(EVENT_APPLY, tmp, op, NULL, 
+                NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+        return;
 
     new_draw_info_format(NDI_WHITE, 0, op, "The scroll of %s turns to dust.", spells[tmp->stats.sp].name);
     /*    {
@@ -2181,6 +2182,10 @@ static void apply_treasure(object *op, object *tmp)
     object                 *treas;
     tag_t tmp_tag = tmp->   count, op_tag = op->count;
 
+    if(trigger_object_plugin_event(
+                EVENT_APPLY, tmp, op, NULL, 
+                NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+        return;
     /*  Nice side effect of new treasure creation method is that the treasure
         for the chest is done when the chest is created, and put into the chest
         inventory.  So that when the chest burns up, the items still exist.  Also
@@ -2247,6 +2252,11 @@ static void apply_treasure(object *op, object *tmp)
 
 void apply_poison(object *op, object *tmp)
 {
+    if(trigger_object_plugin_event(
+                EVENT_APPLY, tmp, op, NULL, 
+                NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+        return;
+
     if (op->type == PLAYER)
     {
         play_sound_player_only(CONTR(op), SOUND_DRINK_POISON, SOUND_NORMAL, 0, 0);
@@ -2265,8 +2275,14 @@ void apply_poison(object *op, object *tmp)
 
 static void apply_food(object *op, object *tmp)
 {
-    if (op->type != PLAYER)
+    if (op->type != PLAYER) 
+    {
+        if(trigger_object_plugin_event(
+                    EVENT_APPLY, tmp, op, NULL, 
+                    NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+            return;
         op->stats.hp = op->stats.maxhp;
+    }
     else
     {
         char    buf[MAX_BUF];
@@ -2288,6 +2304,15 @@ static void apply_food(object *op, object *tmp)
                     new_draw_info(NDI_UNIQUE, 0, op, "You are to full to eat this right now!");
                     return;
                 }
+            }
+        
+            if(trigger_object_plugin_event(
+                        EVENT_APPLY, tmp, op, NULL, 
+                        NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+                return;
+
+            if (op->stats.food + tmp->stats.food > 999)
+            {
                 if (tmp->type == FOOD || tmp->type == FLESH)
                     new_draw_info(NDI_UNIQUE, 0, op, "You feel full, but what a waste of food!");
                 else
@@ -2695,6 +2720,14 @@ static void apply_savebed(object *pl)
        new_draw_info_format(NDI_UNIQUE | NDI_ALL, 5, pl,
     "%s leaves the game.",pl->name);
        */
+
+    /* TODO: event triggers 
+    if(trigger_object_plugin_event(
+                EVENT_APPLY, tmp, op, NULL, 
+                NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+        return;
+    */
+    
     /* update respawn position */
     strcpy(CONTR(pl)->savebed_map, pl->map->path);
     CONTR(pl)->bed_x = pl->x;
@@ -2734,6 +2767,11 @@ static void apply_armour_improver(object *op, object *tmp)
         new_draw_info(NDI_UNIQUE, 0, op, "Your marked item is not armour!\n");
         return;
     }
+              
+    if(trigger_object_plugin_event(
+                EVENT_APPLY, tmp, op, NULL, 
+                NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+        return;
 
     new_draw_info(NDI_UNIQUE, 0, op, "Applying armour enchantment.");
     improve_armour(op, tmp, armor);
@@ -2827,7 +2865,6 @@ int is_legal_2ways_exit(object *op, object *exit)
 
 int manual_apply(object *op, object *tmp, int aflag)
 {
-    int rtn_script;
     if (tmp->head)
         tmp = tmp->head;
 
@@ -2847,43 +2884,7 @@ int manual_apply(object *op, object *tmp, int aflag)
     /* monsters mustn't apply random chests, nor magic_mouths with a counter */
     if (op->type != PLAYER && tmp->type == TREASURE)
         return 0;
-
-#ifdef PLUGINS
-    /* GROS: Handle for plugin trigger event */
-    if (tmp->event_flags & EVENT_FLAG_APPLY)
-    {
-        CFParm  CFP;
-        CFParm *CFR;
-        int     k, l, m;
-        object *event_obj   = get_event_object(tmp, EVENT_APPLY);
-        m = 0;
-        k = EVENT_APPLY;
-        l = SCRIPT_FIX_ACTIVATOR; /* change this from FIX_ALL. Perhaps we must
-                                     look which object types we have.
-                                     Applying a exit with FIX_ALL will break
-                                     the exit object */
-        CFP.Value[0] = &k;
-        CFP.Value[1] = op;
-        CFP.Value[2] = tmp;
-        CFP.Value[3] = NULL;
-        CFP.Value[4] = NULL;
-        CFP.Value[5] = &aflag;
-        CFP.Value[6] = &m;
-        CFP.Value[7] = &m;
-        CFP.Value[8] = &l;
-        CFP.Value[9] = (char *) event_obj->race;
-        CFP.Value[10] = (char *) event_obj->slaying;
-        if (findPlugin(event_obj->name) >= 0)
-        {
-            CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
-            /* Non-zero return value means successful apply */
-            rtn_script = *(int *) (CFR->Value[0]);
-            if (rtn_script != 0)
-                return 1;
-        }
-    }
-#endif
-
+    
     /* control apply by controling a set exp object level or player exp level*/
     if (tmp->item_level)
     {
@@ -2900,18 +2901,32 @@ int manual_apply(object *op, object *tmp, int aflag)
             return 1;
         }
     }
-
+    
+    /* Since we want to defer the event triggers until all tests have been 
+     * passed, but not until after any side effects, we must handle each
+     * object type differently (yuck!) when it comes to apply events. */
+    
     switch (tmp->type)
     {
         case HOLY_ALTAR:
           new_draw_info_format(NDI_UNIQUE, 0, op, "You touch the %s.", tmp->name);
           if (change_skill(op, SK_PRAYING))
+          {
+              if(trigger_object_plugin_event(EVENT_APPLY, tmp, op, NULL, 
+                          NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+                  return 1; /* 1 = do not write an error message to the player */
+              /* TODO: maybe plugin event should be in pray_at_altar() */
               pray_at_altar(op, tmp);
+          }
           else
               new_draw_info(NDI_UNIQUE, 0, op, "Nothing happens. It seems you miss the right skill.");
           return 1;
-          break;
+
         case CF_HANDLE:
+          if(trigger_object_plugin_event(
+                      EVENT_APPLY, tmp, op, NULL, 
+                      NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+              return 1; /* 1 = do not write an error message to the player */
           new_draw_info(NDI_UNIQUE, 0, op, "You turn the handle.");
           play_sound_map(op->map, op->x, op->y, SOUND_TURN_HANDLE, SOUND_NORMAL);
           tmp->value = tmp->value ? 0 : 1;
@@ -2923,6 +2938,11 @@ int manual_apply(object *op, object *tmp, int aflag)
         case TRIGGER:
           if (check_trigger(tmp, op))
           {
+              /* TODO: maybe plugin event should be in check_trigger() */
+              if(trigger_object_plugin_event(
+                          EVENT_APPLY, tmp, op, NULL, 
+                          NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+                  return 1; /* 1 = do not write an error message to the player */
               new_draw_info(NDI_UNIQUE, 0, op, "You turn the handle.");
               play_sound_map(tmp->map, tmp->x, tmp->y, SOUND_TURN_HANDLE, SOUND_NORMAL);
           }
@@ -2941,6 +2961,10 @@ int manual_apply(object *op, object *tmp, int aflag)
           }
           else
           {
+              if(trigger_object_plugin_event(
+                          EVENT_APPLY, tmp, op, NULL, 
+                          NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+                  return 1; /* 1 = do not write an error message to the player */
               /* Don't display messages for random maps. */
               if (tmp->msg && strncmp(EXIT_PATH(tmp), "/!", 2) && strncmp(EXIT_PATH(tmp), "/random/", 8))
                   new_draw_info(NDI_NAVY, 0, op, tmp->msg);
@@ -2954,10 +2978,7 @@ int manual_apply(object *op, object *tmp, int aflag)
 				apply_sign(op, tmp);
 				return 1;
 			}
-			else
-			{
-				return 0;
-			}
+            return 0;
 
         case BOOK:
           if (op->type == PLAYER)
@@ -2965,10 +2986,7 @@ int manual_apply(object *op, object *tmp, int aflag)
               apply_book(op, tmp);
               return 1;
           }
-          else
-          {
-              return 0;
-          }
+          return 0;
 
         case SKILLSCROLL:
           if (op->type == PLAYER)
@@ -2991,6 +3009,10 @@ int manual_apply(object *op, object *tmp, int aflag)
           return 1;
 
         case POTION:
+          if(trigger_object_plugin_event(
+                      EVENT_APPLY, tmp, op, NULL, 
+                      NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+              return 1; /* 1 = do not write an error message to the player */
           (void) apply_potion(op, tmp);
           return 1;
 
@@ -3005,12 +3027,24 @@ int manual_apply(object *op, object *tmp, int aflag)
           /* Eneq(@csd.uu.se): Handle apply on containers. */
         case CLOSE_CON:
           if (op->type == PLAYER)
+          {
+              if(trigger_object_plugin_event(
+                          EVENT_APPLY, tmp, op, NULL, 
+                          NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+                  return 1; /* 1 = do not write an error message to the player */
               (void) esrv_apply_container(op, tmp->env);
+          }
           return 1;
 
         case CONTAINER:
           if (op->type == PLAYER)
+          {
+              if(trigger_object_plugin_event(
+                          EVENT_APPLY, tmp, op, NULL, 
+                          NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+                  return 1; /* 1 = do not write an error message to the player */
               (void) esrv_apply_container(op, tmp);
+          }
           return 1;
 
         case TREASURE:
@@ -3054,10 +3088,7 @@ int manual_apply(object *op, object *tmp, int aflag)
               apply_savebed(op);
               return 1;
           }
-          else
-          {
-              return 0;
-          }
+          return 0;
 
         case ARMOUR_IMPROVER:
           if (op->type == PLAYER)
@@ -3065,10 +3096,7 @@ int manual_apply(object *op, object *tmp, int aflag)
               apply_armour_improver(op, tmp);
               return 1;
           }
-          else
-          {
-              return 0;
-          }
+          return 0;
 
         case WEAPON_IMPROVER:
           (void) check_improve_weapon(op, tmp);
@@ -3079,6 +3107,11 @@ int manual_apply(object *op, object *tmp, int aflag)
           {
               char          buf[MAX_BUF];
               timeofday_t   tod;
+          
+              if(trigger_object_plugin_event(
+                          EVENT_APPLY, tmp, op, NULL, 
+                          NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+                  return 1; /* 1 = do not write an error message to the player */
 
               get_tod(&tod);
               sprintf(buf, "It is %d minute%s past %d o'clock %s", tod.minute + 1, ((tod.minute + 1 < 2) ? "" : "s"),
@@ -3087,43 +3120,39 @@ int manual_apply(object *op, object *tmp, int aflag)
               new_draw_info(NDI_UNIQUE, 0, op, buf);
               return 1;
           }
-          else
-          {
-              return 0;
-          }
+          return 0;
 
         case MENU:
           if (op->type == PLAYER)
           {
+              if(trigger_object_plugin_event(
+                          EVENT_APPLY, tmp, op, NULL, 
+                          NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+                  return 1; /* 1 = do not write an error message to the player */
               shop_listing(op);
               return 1;
           }
-          else
-          {
-              return 0;
-          }
+          return 0;
 
         case POWER_CRYSTAL:
+          /* TODO: plugin events */
           apply_power_crystal(op, tmp);  /*  see egoitem.c */
           return 1;
 
         case LIGHTER:
           /* for lighting torches/lanterns/etc */ 
+          /* TODO: plugin events */
           if (op->type == PLAYER)
           {
               apply_lighter(op, tmp);
               return 1;
           }
-          else
-          {
-              return 0;
-          }
+          return 0;
 
         default:
           return 0;
     }
 }
-
 
 /* quiet suppresses the "don't know how to apply" and "you must get it first"
  * messages as needed by player_apply_below().  But there can still be
@@ -3253,6 +3282,13 @@ int apply_special(object *who, object *op, int aflags)
         if (QUERY_FLAG(op, FLAG_PERM_DAMNED))
             SET_FLAG(op, FLAG_DAMNED);
 
+        /* This is actually an (UN)APPLY event. Scripters should check
+         * the applied flag */
+        if(trigger_object_plugin_event(
+                    EVENT_APPLY, op, who, NULL, 
+                    NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+            return 1;
+
         CLEAR_FLAG(op, FLAG_APPLIED);
         switch (op->type)
         {
@@ -3373,76 +3409,54 @@ int apply_special(object *who, object *op, int aflags)
                 return 1;
         }
     }
-    if (op->nrof > 1)
-        tmp = get_split_ob(op, op->nrof - 1);
-    else
-        tmp = NULL;
+    
+    /* For clarity and ease of event handling I split this into 
+     * two parts, first a check and then the modifications */
     switch (op->type)
     {
         case WEAPON:
-          {
-              if (!QUERY_FLAG(who, FLAG_USE_WEAPON))
-              {
-                  sprintf(buf, "You can't use %s.", query_name(op));
-                  if (tmp != NULL)
-                      (void) insert_ob_in_ob(tmp, who);
-                  new_draw_info(NDI_UNIQUE, 0, who, buf);
-                  return 1;
-              }
-              if (!check_weapon_power(who, op->last_eat))
-              {
-                  new_draw_info(NDI_UNIQUE, 0, who, "That weapon is too powerful for you to use.");
-                  new_draw_info(NDI_UNIQUE, 0, who, "It would consume your soul!.");
-                  if (tmp != NULL)
-                      (void) insert_ob_in_ob(tmp, who);
-                  return 1;
-              }
-              if (op->level && (strncmp(op->name, who->name, strlen(who->name))))
-              {
-                  /* if the weapon does not have the name as the character, can't use it. */
-                  /*        (Ragnarok's sword attempted to be used by Foo: won't work) */
-                  new_draw_info(NDI_UNIQUE, 0, who, "The weapon does not recognize you as its owner.");
-                  if (tmp != NULL)
-                      (void) insert_ob_in_ob(tmp, who);
-                  return 1;
-              }
+            if (!QUERY_FLAG(who, FLAG_USE_WEAPON))
+            {
+                sprintf(buf, "You can't use %s.", query_name(op));
+                new_draw_info(NDI_UNIQUE, 0, who, buf);
+                return 1;
+            }
+            if (!check_weapon_power(who, op->last_eat))
+            {
+                new_draw_info(NDI_UNIQUE, 0, who, "That weapon is too powerful for you to use.");
+                new_draw_info(NDI_UNIQUE, 0, who, "It would consume your soul!.");
+                return 1;
+            }
+            if (op->level && (strncmp(op->name, who->name, strlen(who->name))))
+            {
+                /* if the weapon does not have the name as the character, can't use it. */
+                /*        (Ragnarok's sword attempted to be used by Foo: won't work) */
+                new_draw_info(NDI_UNIQUE, 0, who, "The weapon does not recognize you as its owner.");
+                return 1;
+            }
 
-              /* if we have applied a shield, don't allow apply of polearm or 2hand weapon */
-              if ((op->sub_type1 >= WEAP_POLE_IMPACT || op->sub_type1 >= WEAP_2H_IMPACT)
-               && who->type == PLAYER
-               && CONTR(who)
-               && CONTR(who)->equipment[PLAYER_EQUIP_SHIELD])
-              {
-                  new_draw_info(NDI_UNIQUE, 0, who, "You can't wield this weapon and a shield.");
-                  if (tmp != NULL)
-                      (void) insert_ob_in_ob(tmp, who);
-                  return 1;
-              }
+            /* if we have applied a shield, don't allow apply of polearm or 2hand weapon */
+            if ((op->sub_type1 >= WEAP_POLE_IMPACT || op->sub_type1 >= WEAP_2H_IMPACT)
+                    && who->type == PLAYER
+                    && CONTR(who)
+                    && CONTR(who)->equipment[PLAYER_EQUIP_SHIELD])
+            {
+                new_draw_info(NDI_UNIQUE, 0, who, "You can't wield this weapon and a shield.");
+                return 1;
+            }
 
-              if (!check_skill_to_apply(who, op))
-              {
-                  if (tmp != NULL)
-                      (void) insert_ob_in_ob(tmp, who);
-                  return 1;
-              }
-
-              SET_FLAG(op, FLAG_APPLIED);
-              SET_FLAG(who, FLAG_READY_WEAPON);
-              (void) change_abil(who, op);
-              sprintf(buf, "You wield %s.", query_name(op));
-              break;
-          }
+            if (!check_skill_to_apply(who, op))
+                return 1;
+            break;
         case SHIELD:
-          /* don't allow of polearm or 2hand weapon with a shield */
-          if ((who->type == PLAYER && CONTR(who) && CONTR(who)->equipment[PLAYER_EQUIP_WEAPON1])
-           && (CONTR(who)->equipment[PLAYER_EQUIP_WEAPON1]->sub_type1 >= WEAP_POLE_IMPACT
-            || CONTR(who)->equipment[PLAYER_EQUIP_WEAPON1]->sub_type1 >= WEAP_2H_IMPACT))
-          {
-              new_draw_info(NDI_UNIQUE, 0, who, "You can't wield this weapon and a shield.");
-              if (tmp != NULL)
-                  (void) insert_ob_in_ob(tmp, who);
+            /* don't allow of polearm or 2hand weapon with a shield */
+            if ((who->type == PLAYER && CONTR(who) && CONTR(who)->equipment[PLAYER_EQUIP_WEAPON1])
+                    && (CONTR(who)->equipment[PLAYER_EQUIP_WEAPON1]->sub_type1 >= WEAP_POLE_IMPACT
+                        || CONTR(who)->equipment[PLAYER_EQUIP_WEAPON1]->sub_type1 >= WEAP_2H_IMPACT))
+            {
+                new_draw_info(NDI_UNIQUE, 0, who, "You can't wield this shield and a weapon.");
               return 1;
-          }
+            }
 
         case ARMOUR:
         case HELMET:
@@ -3455,10 +3469,46 @@ int apply_special(object *who, object *op, int aflags)
           {
               sprintf(buf, "You can't use %s.", query_name(op));
               new_draw_info(NDI_UNIQUE, 0, who, buf);
-              if (tmp != NULL)
-                  (void) insert_ob_in_ob(tmp, who);
               return 1;
           }
+
+          /* this part is needed for skill-tools */ 
+        case SKILL:
+          if (who->chosen_skill)
+          {
+              LOG(llevBug, "BUG: apply_special(): can't apply two skills\n");
+              return 1;
+          }
+    }
+
+    /* Now we should be done with 99% of all tests. Generate the event
+     * and then go on with side effects */
+    if(trigger_object_plugin_event(
+                EVENT_APPLY, op, who, NULL, 
+                NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+        return 1; /* 1 = do not write an error message to the player */
+    
+    if (op->nrof > 1)
+        tmp = get_split_ob(op, op->nrof - 1);
+    else
+        tmp = NULL;
+   
+    switch (op->type)
+    {
+        case WEAPON:
+            SET_FLAG(op, FLAG_APPLIED);
+            SET_FLAG(who, FLAG_READY_WEAPON);
+            (void) change_abil(who, op);
+            sprintf(buf, "You wield %s.", query_name(op));
+            break;
+        case SHIELD:
+        case ARMOUR:
+        case HELMET:
+        case BOOTS:
+        case GLOVES:
+        case GIRDLE:
+        case BRACERS:
+        case CLOAK:
         case RING:
         case AMULET:
           SET_FLAG(op, FLAG_APPLIED);
@@ -3468,11 +3518,6 @@ int apply_special(object *who, object *op, int aflags)
 
           /* this part is needed for skill-tools */ 
         case SKILL:
-          if (who->chosen_skill)
-          {
-              LOG(llevBug, "BUG: apply_special(): can't apply two skills\n");
-              return 1;
-          }
           if (who->type == PLAYER)
           {
               CONTR(who)->shoottype = range_skill;
@@ -3602,6 +3647,10 @@ void apply_player_light_refill(object *who, object *op)
                              query_name(op));
         return;
     }
+
+    if(trigger_object_plugin_event(EVENT_APPLY, op, who, NULL, 
+                NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+        return;
 
     /* ok, all is legal - now we refill the light source = settings item->food
      * = op-food. Then delete op or if its a stack, decrease nrof.
@@ -3784,6 +3833,11 @@ void apply_player_light(object *who, object *op)
             SET_FLAG(op, FLAG_CURSED);
         if (QUERY_FLAG(op, FLAG_PERM_DAMNED))
             SET_FLAG(op, FLAG_DAMNED);
+    
+        if(trigger_object_plugin_event(EVENT_APPLY, who, op, NULL, 
+                    NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+            return;
+
         new_draw_info_format(NDI_UNIQUE, 0, who, "You unlight the %s.", query_name(op));
 
         turn_off_light(op);
@@ -3830,6 +3884,10 @@ void apply_player_light(object *who, object *op)
                 }
             }
 
+            if(trigger_object_plugin_event(EVENT_APPLY, who, op, NULL, 
+                        NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+                return;
+
             new_draw_info_format(NDI_UNIQUE, 0, who, "You prepare %s to light.", query_name(op));
             turn_on_light(op);
             fix_player(who);
@@ -3853,6 +3911,11 @@ void apply_player_light(object *who, object *op)
                             SET_FLAG(tmp, FLAG_CURSED);
                         if (QUERY_FLAG(tmp, FLAG_PERM_DAMNED))
                             SET_FLAG(tmp, FLAG_DAMNED);
+            
+                        if(trigger_object_plugin_event(EVENT_APPLY, who, op, NULL, 
+                                    NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+                            return;
+
                         new_draw_info_format(NDI_UNIQUE, 0, who, "You unlight the %s.", query_name(tmp));
                         CLEAR_FLAG(tmp, FLAG_APPLIED);
 
@@ -3872,6 +3935,11 @@ void apply_player_light(object *who, object *op)
                     SET_FLAG(op, FLAG_CURSED);
                 if (QUERY_FLAG(op, FLAG_PERM_DAMNED))
                     SET_FLAG(op, FLAG_DAMNED);
+            
+                if(trigger_object_plugin_event(EVENT_APPLY, who, op, NULL, 
+                            NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+                    return;
+
                 new_draw_info_format(NDI_UNIQUE, 0, who, "You unlight the %s.", query_name(op));
                 turn_off_light(op);
             }            
@@ -3887,6 +3955,7 @@ void apply_player_light(object *who, object *op)
  * the selected object to "burn". -b.t.
  */
 /* i have this item type not include in daimonin atm - MT-2004 */
+/* Currently doesn not generate APPLY events - Gecko 2005-05-15 */
 void apply_lighter(object *who, object *lighter)
 {
     object *item;

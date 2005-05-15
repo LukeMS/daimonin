@@ -280,11 +280,11 @@ int command_t_tell(object *op, char *params)
     if (op->type != PLAYER)
 		return 0;
 
-		if (!params)
-		{
-			send_clear_interface(CONTR(op));
-	        return 0;
-		}
+    if (!params)
+    {
+        send_clear_interface(CONTR(op));
+        return 0;
+    }
 		
     params = cleanup_chat_string(params);
     /* this happens when whitespace only string was submited */
@@ -294,6 +294,13 @@ int command_t_tell(object *op, char *params)
         return 0;
 	}
 
+    /* Players can chat with a marked object in their inventory */
+    if(op->type == PLAYER && (t_obj = find_marked_object(op)) && (t_obj->event_flags & EVENT_FLAG_TALK))
+    {
+        trigger_object_plugin_event(EVENT_TALK, t_obj, op, NULL, 
+                params, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR);
+        return 0;
+    }
  
 	t_obj = CONTR(op)->target_object;
     if (t_obj && CONTR(op)->target_object_count == t_obj->count)
@@ -319,32 +326,9 @@ int command_t_tell(object *op, char *params)
                 new_draw_info(NDI_WHITE, 0, op, buf);
 				*/
 					
-				if (t_obj->event_flags & EVENT_FLAG_TALK)
-				{
-					CFParm  CFP;
-					int     k, l, m;
-					object *event_obj   = get_event_object(t_obj, EVENT_TALK);
-					k = EVENT_TALK;
-					l = SCRIPT_FIX_ACTIVATOR;
-					m = 0;
-					CFP.Value[0] = &k;
-					CFP.Value[1] = op;
-					CFP.Value[2] = t_obj;
-					CFP.Value[3] = NULL;
-					CFP.Value[4] = params;
-					CFP.Value[5] = &m;
-					CFP.Value[6] = &m;
-					CFP.Value[7] = &m;
-					CFP.Value[8] = &l;
-					CFP.Value[9] = (char *) STRING_OBJ_RACE(event_obj);
-					CFP.Value[10] = (char *) STRING_OBJ_SLAYING(event_obj);
-	
-					if (findPlugin(event_obj->name) >= 0)
-					{
-						((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
-						return 0;
-					}
-				}
+                if (t_obj->event_flags & EVENT_FLAG_TALK)
+                    trigger_object_plugin_event(EVENT_TALK, t_obj, op, NULL, 
+                            params, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR);
 				else
 					send_clear_interface(CONTR(op));
                 

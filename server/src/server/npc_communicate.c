@@ -328,6 +328,11 @@ void communicate(object *op, char *txt)
     buf[MAX_BUF - 1] = 0;
     new_info_map(NDI_WHITE, op->map, op->x, op->y, MAP_INFO_NORMAL, buf);
 
+    /* Players can chat with a marked object in their inventory */
+    if(op->type == PLAYER && (npc = find_marked_object(op)))
+        trigger_object_plugin_event(EVENT_SAY, npc, op, NULL, 
+                txt, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR);
+    
     for (i = 0; i <= SIZEOFFREE2; i++)
     {
         xt = op->x + freearr_x[i];
@@ -362,9 +367,8 @@ int talk_to_npc(object *op, object *npc, char *txt)
 {
     msglang    *msgs;
     int         i, j;
-    object     *cobj;
+    
 #ifdef PLUGINS
-
     /* GROS: Handle for plugin say event */
     if (npc->event_flags & EVENT_FLAG_SAY)
     {
@@ -406,10 +410,16 @@ int talk_to_npc(object *op, object *npc, char *txt)
 #else    
             ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
 #endif    
-            return 0;
         }
+        return 0;
     }
+#endif    
 
+/* Gecko 2005-05-15: I disabled this because it makes little sense. Talking to
+ * objects in your own inventory is now handled by first marking the object, 
+ * which is a much better compromise with performance 
+ * This also seemed very much broken. */
+#if 0
     /* GROS - Here we let the objects inside inventories hear and answer, too. */
     /* This allows the existence of "intelligent" weapons you can discuss with */
     for (cobj = npc->inv; cobj != NULL;)
@@ -445,8 +455,8 @@ int talk_to_npc(object *op, object *npc, char *txt)
         }
         cobj = cobj->below;
     }
-
 #endif
+
     if (npc->msg == NULL || *npc->msg != '@')
     {
         /*new_draw_info_format(NDI_UNIQUE,0,op, "%s has nothing to say.", query_name(npc));*/
