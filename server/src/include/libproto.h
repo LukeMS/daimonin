@@ -74,7 +74,7 @@ extern void             print_monsters(void);
 extern void             bitstostring(long bits, int num, char *str);
 /* image.c */
 extern int              ReadBmapNames(void);
-extern int              FindFace(char *name, int error);
+extern int              FindFace(const char *name, int error);
 extern void             free_all_images(void);
 /* item.c */
 extern char            *describe_resistance(object *op, int newline);

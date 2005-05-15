@@ -53,10 +53,10 @@ struct plugin_hooklist  hooklist    =
 	decrease_ob_nr,	
 	add_quest_containers, add_quest_trigger,
 	set_quest_status, spring_trap,cast_spell,play_sound_map,
-	find_skill,
-    get_tod,
+	find_skill, find_animation, FindFace,
+    get_tod, 
     /* global variables */
-    &num_animations
+    &animations, &new_faces
 };
 
 CFPlugin                PlugList[PLUGINS_MAX_NROF];

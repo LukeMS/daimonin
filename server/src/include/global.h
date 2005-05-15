@@ -512,6 +512,15 @@ EXTERN const char              *undead_name;    /* Used in hit_player() in main.
 EXTERN Animations              *animations;
 EXTERN int                      num_animations, animations_allocated, bmaps_checksum;
 
+/* Used in image.c */
+/* nroffiles is the actual number of bitmaps defined.
+ * nrofpixmaps is the higest numbers bitmap that is loaded.  With
+ * the automatic generation of the bmaps file, this is now equal
+ * to nroffiles.
+ *
+ */
+EXTERN int                     nroffiles, nrofpixmaps;
+
 /* only used in loader.c, to go from the numeric image id (which is
  * used throughout the program) backto the standard name.
  */

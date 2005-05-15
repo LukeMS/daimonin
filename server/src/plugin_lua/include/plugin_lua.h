@@ -242,7 +242,7 @@ typedef enum
     FIELDTYPE_FLOAT,
     FIELDTYPE_OBJECT,
     FIELDTYPE_MAP,
-    FIELDTYPE_OBJECTREF /* object pointer + tag */
+    FIELDTYPE_OBJECTREF,  /* object pointer + tag */
 }    field_type;
 
 /* Type used for numeric constants */

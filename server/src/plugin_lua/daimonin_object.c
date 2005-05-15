@@ -65,14 +65,6 @@ static struct method_decl   GameObject_methods[]            =
     {"CheckInventory", (lua_CFunction) GameObject_CheckInventory}, {"Remove", (lua_CFunction) GameObject_Remove},
     {"Destruct", (lua_CFunction) GameObject_Destruct}, {"SetPosition", (lua_CFunction) GameObject_SetPosition},
     {"IdentifyItem", (lua_CFunction) GameObject_IdentifyItem},
-#if 0
-    {"GetEventHandler", (lua_CFunction) GameObject_GetEventHandler},
-    {"SetEventHandler", (lua_CFunction) GameObject_SetEventHandler},
-    {"GetEventPlugin", (lua_CFunction) GameObject_GetEventPlugin},
-    {"SetEventPlugin", (lua_CFunction) GameObject_SetEventPlugin},
-    {"GetEventOptions", (lua_CFunction) GameObject_GetEventOptions},
-    {"SetEventOptions", (lua_CFunction) GameObject_SetEventOptions},
-#endif
     {"Deposit",  (lua_CFunction) GameObject_Deposit}, {"Withdraw",  (lua_CFunction) GameObject_Withdraw},
     {"Communicate",  (lua_CFunction) GameObject_Communicate}, {"Say",  (lua_CFunction) GameObject_Say},
     {"SayTo",  (lua_CFunction) GameObject_SayTo}, {"Write", (lua_CFunction) GameObject_Write},
@@ -92,6 +84,10 @@ static struct method_decl   GameObject_methods[]            =
     {"Move", (lua_CFunction) GameObject_Move},
     {"GetAI", (lua_CFunction) GameObject_GetAI},
     {"GetVector", (lua_CFunction) GameObject_GetVector},
+    {"GetFace", (lua_CFunction) GameObject_GetFace},
+    {"GetAnimation", (lua_CFunction) GameObject_GetAnimation},
+    {"SetFace", (lua_CFunction) GameObject_SetFace},
+    {"SetAnimation", (lua_CFunction) GameObject_SetAnimation},
 
     // {"GetUnmodifiedAttribute", (lua_CFunction)GameObject_GetUnmodifiedAttribute},
     {NULL, NULL}
@@ -145,8 +141,6 @@ struct attribute_decl       GameObject_attributes[]         =
     {"last_grace",   FIELDTYPE_SINT16, offsetof(object, last_grace), 0},
     {"last_eat",     FIELDTYPE_SINT16, offsetof(object, last_eat), 0},
     /* TODO: will require animation lookup function. How about face, is that a special anim? */
-    {"animation_id", FIELDTYPE_UINT16, offsetof(object, animation_id), 0},
-    {"inv_animation_id", FIELDTYPE_UINT16, offsetof(object, inv_animation_id), 0},
     {"magic",        FIELDTYPE_SINT8 , offsetof(object, magic), 0},
     {"state",        FIELDTYPE_UINT8 , offsetof(object, state), 0},
     {"level",        FIELDTYPE_SINT8 , offsetof(object, level), FIELDFLAG_PLAYER_READONLY},
@@ -2411,6 +2405,108 @@ static int GameObject_GetVector(lua_State *L)
     return 4;
 }
 
+/*****************************************************************************/
+/* Name   : GameObject_GetAnimation                                          */
+/* Lua    : object:GetAnimation(inv)                                         */
+/* Info   : Returns the name of object's animation, if any.                  */
+/*          If inv is true, it returns the name of the inventory animation   */
+/* Status : Tested                                                           */
+/*****************************************************************************/
+static int GameObject_GetAnimation(lua_State *L)
+{
+    lua_object *self;
+    int inv = 0;
+
+    get_lua_args(L, "O|i", &self, &inv);
+
+    lua_pushstring(L, (* hooks->animations)[inv ? WHO->inv_animation_id : WHO->animation_id].name);
+    return 1;   
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_GetFace                                               */
+/* Lua    : object:GetFace(inv)                                              */
+/* Info   : Returns the name of object's face, if any.                       */
+/*          If inv is true, it returns the name of the inventory face        */
+/* Status : Tested                                                           */
+/*****************************************************************************/
+static int GameObject_GetFace(lua_State *L)
+{
+    lua_object *self;
+    int inv = 0;
+    New_Face *face;
+
+    get_lua_args(L, "O|i", &self, &inv);
+
+    face = inv ? WHO->inv_face : WHO->face;
+    if(face) 
+        lua_pushstring(L, face->name);
+    else
+        lua_pushnil(L);
+    return 1;   
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_SetAnimation                                          */
+/* Lua    : object:GetAnimation(anim, inv)                                   */
+/* Info   : Sets object's animation.                                         */
+/*          If inv is true, it sets the inventory animation                  */
+/*          Note that an object will only be animated if object.f_is_animated*/
+/*          is true                                                          */
+/* Status : Tested                                                           */
+/*****************************************************************************/
+static int GameObject_SetAnimation(lua_State *L)
+{
+    lua_object *self;
+    int inv = 0;
+    char *animation;
+    int id;
+    
+    get_lua_args(L, "Os|i", &self, &animation, &inv);
+
+    id = hooks->find_animation(animation);
+    if(id == 0)
+        luaL_error(L, "no such animation exists: %s", animation);
+
+    if(inv)
+        WHO->inv_animation_id = id;
+    else
+        WHO->animation_id = id;
+            
+    return 0;   
+}
+
+/*****************************************************************************/
+/* Name   : GameObject_SetFace                                               */
+/* Lua    : object:GetFace(face, inv)                                        */
+/* Info   : Sets object's face.                                              */
+/*          If inv is true, it sets the inventory face                       */
+/*          If the object is animated (object.f_is_animated == true), then   */
+/*          this value will likely be replaced at the next animation step    */
+/* Status : Tested                                                           */
+/*****************************************************************************/
+static int GameObject_SetFace(lua_State *L)
+{
+    lua_object *self;
+    int inv = 0;
+    char *face;
+    int id;
+    
+    get_lua_args(L, "Os|i", &self, &face, &inv);
+
+    id = hooks->find_face(face, -1);
+    if(id == -1)
+        luaL_error(L, "no such face exists: %s", face);     
+
+    if(inv)
+        WHO->inv_face = &(*hooks->new_faces)[id];
+    else
+        WHO->face = &(*hooks->new_faces)[id];
+            
+    return 0;   
+}
+
+
 /* FUNCTIONEND -- End of the GameObject methods. */
 
 #if 0
@@ -2467,14 +2563,6 @@ static int GameObject_setAttribute(lua_State *L, lua_object *obj, struct attribu
     {
         if (who->type == PLAYER && attrib->flags & FIELDFLAG_PLAYER_READONLY)
             luaL_error(L, "attribute %s is readonly on players", attrib->name);
-        else if(attrib->offset == offsetof(object, animation_id) ||
-                attrib->offset == offsetof(object, inv_animation_id))
-        {
-            /* Check validity of animation_id */
-            uint16 new_id = (uint16) lua_tonumber(L, -1);
-            if(new_id > *hooks->num_animations)
-                luaL_error(L, "max animation id is %d", *hooks->num_animations);
-        }
         return 0;
     }
 
@@ -2584,8 +2672,6 @@ int GameObject_init(lua_State *L)
  */
 
 #if 0
-/* TODO: Create a FindAnimation() thingie */
-
 /*****************************************************************************/
 /* Name   : GameObject_SetFace                                          */
 /* Lua    :                                                                  */
@@ -2612,123 +2698,6 @@ static int GameObject_SetFace(lua_State *L)
     GCFP.Value[0] = (void *)(WHO);
     GCFP.Value[1] = (void *)(&val);
     (PlugHooks[HOOK_UPDATEOBJECT])(&GCFP);
-
-    Py_INCREF(Py_None);
-    return 0;
-}
-#endif
-
-#if 0
-/* Those replace the old get-script... and set-script... system */
-/*****************************************************************************/
-/* Name   : GameObject_GetEventHandler                                  */
-/* Lua    :                                                                  */
-/* Status : Unfinished / Deprecated                                          */
-/*****************************************************************************/
-static int GameObject_GetEventHandler(lua_State *L)
-{
-    int eventnr;
-
-    get_lua_args(L, "OOi", &self, &whoptr,&eventnr))
-        return NULL;
-    return Py_BuildValue("s","" /*WHO->event_hook[eventnr]*/);
-}
-
-/*****************************************************************************/
-/* Name   : GameObject_SetEventHandler                                  */
-/* Lua    :                                                                  */
-/* Status : Unfinished / Deprecated                                          */
-/*****************************************************************************/
-
-static int GameObject_SetEventHandler(lua_State *L)
-{
-    lua_object *whoptr;
-    int eventnr;
-    char* scriptname;
-
-    get_lua_args(L, "OOis", &whoptr, &eventnr, &scriptname))
-        return NULL;
-
-    /*WHO->event_hook[eventnr] = add_string_hook(scriptname);*/
-    Py_INCREF(Py_None);
-    return 0;
-}
-
-/*****************************************************************************/
-/* Name   : GameObject_GetEventPlugin                                   */
-/* Lua    :                                                                  */
-/* Status : Unfinished / Deprecated                                          */
-/*****************************************************************************/
-
-static int GameObject_GetEventPlugin(lua_State *L)
-{
-    lua_object *whoptr;
-    int eventnr;
-
-    get_lua_args(L, "OOi", , &whoptr, &eventnr))
-        return NULL;
-    return Py_BuildValue("s", ""/*WHO->event_plugin[eventnr]*/);
-}
-
-/*****************************************************************************/
-/* Name   : GameObject_SetEventPlugin                                   */
-/* Lua    :                                                                  */
-/* Status : Unfinished / Deprecated                                          */
-/*****************************************************************************/
-
-static int GameObject_SetEventPlugin(lua_State *L)
-{
-    lua_object *whoptr;
-    int eventnr;
-    char* scriptname;
-
-    get_lua_args(L, "OOis", &whoptr,&eventnr,&scriptname))
-        return NULL;
-
-    /*WHO->event_plugin[eventnr] = add_string_hook(scriptname);*/
-    Py_INCREF(Py_None);
-    return 0;
-}
-
-/*****************************************************************************/
-/* Name   : GameObject_GetEventOptions                                  */
-/* Lua    :                                                                  */
-/* Status : Unfinished / Deprecated                                          */
-/*****************************************************************************/
-
-static int GameObject_GetEventOptions(lua_State *L)
-{
-    lua_object *whoptr;
-    int eventnr;
-    /*static char estr[4];*/
-    get_lua_args(L, "OO!i", &GameObjectType, &whoptr,&eventnr))
-        return NULL;
-    /*
-    if (WHO->event_options[eventnr] == NULL)
-    {
-        strcpy(estr,"");
-        return Py_BuildValue("s", estr);
-    }
-    */
-    return Py_BuildValue("s",""/* WHO->event_options[eventnr]*/);
-}
-
-/*****************************************************************************/
-/* Name   : GameObject_SetEventOptions                                  */
-/* Lua    :                                                                  */
-/* Status : Unfinished / Deprecated                                          */
-/*****************************************************************************/
-
-static int GameObject_SetEventOptions(lua_State *L)
-{
-    lua_object *whoptr;
-    int eventnr;
-    char* scriptname;
-
-    get_lua_args(L, "OO!is", &GameObjectType, &whoptr,&eventnr,&scriptname))
-        return NULL;
-
-    /*    WHO->event_options[eventnr] = add_string_hook(scriptname);*/
 
     Py_INCREF(Py_None);
     return 0;

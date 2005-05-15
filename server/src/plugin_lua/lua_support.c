@@ -394,6 +394,9 @@ static inline lua_object * get_object_arg(lua_State *L, int pos, lua_class *clas
  *  d - double 
  *  O - GameObject
  *  M - Map
+ *  G - the "game" singleton object
+ *  E - event object
+ *  A - AI object
  *  | - the following arguments are optional
  *  ? - the next argument may be nil
  */

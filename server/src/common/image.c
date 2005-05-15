@@ -55,14 +55,6 @@ struct bmappair
 
 static struct bmappair *xbm = NULL;
 
-/* nroffiles is the actual number of bitmaps defined.
- * nrofpixmaps is the higest numbers bitmap that is loaded.  With
- * the automatic generation of the bmaps file, this is now equal
- * to nroffiles.
- *
- */
-int                     nroffiles = 0, nrofpixmaps = 0;
-
 static int compar(struct bmappair *a, struct bmappair *b)
 {
     return strcmp(a->name, b->name);
@@ -191,8 +183,11 @@ int ReadBmapNames()
  * so that it will be known that the face could not be found
  * (needed in client, so that it will know to request that image
  * from the server)
+ *
+ * name is const since we won't modify it. It does not have to
+ * be a shared string.
  */
-int FindFace(char *name, int error)
+int FindFace(const char *name, int error)
 {
     int                 i;
     struct bmappair    *bp, tmp;
@@ -207,12 +202,7 @@ int FindFace(char *name, int error)
         return i;
     }
 
-    /* Kill the newline */
-    i = strlen(name) - 1;
-    while(isspace(name[i]) && i >= 0)
-        name[i--] = '\0';
-
-    tmp.name = name;
+    tmp.name = (char *)name;
     bp = (struct bmappair *) bsearch(&tmp, xbm, nroffiles, sizeof(struct bmappair), (void *) (int (*) ()) compar);
 
     return bp ? bp->number : error;
