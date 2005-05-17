@@ -3457,6 +3457,7 @@ int apply_special(object *who, object *op, int aflags)
                 new_draw_info(NDI_UNIQUE, 0, who, "You can't wield this shield and a weapon.");
               return 1;
             }
+            /* Fall through to next test... */
 
         case ARMOUR:
         case HELMET:
@@ -3471,6 +3472,7 @@ int apply_special(object *who, object *op, int aflags)
               new_draw_info(NDI_UNIQUE, 0, who, buf);
               return 1;
           }
+          break;
 
           /* this part is needed for skill-tools */ 
         case SKILL:
@@ -3479,6 +3481,7 @@ int apply_special(object *who, object *op, int aflags)
               LOG(llevBug, "BUG: apply_special(): can't apply two skills\n");
               return 1;
           }
+          break;
     }
 
     /* Now we should be done with 99% of all tests. Generate the event
@@ -3501,6 +3504,7 @@ int apply_special(object *who, object *op, int aflags)
             (void) change_abil(who, op);
             sprintf(buf, "You wield %s.", query_name(op));
             break;
+
         case SHIELD:
         case ARMOUR:
         case HELMET:

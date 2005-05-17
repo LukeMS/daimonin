@@ -115,6 +115,7 @@ struct mob_behaviourset
     struct mob_behaviour       *behaviours[NROF_BEHAVIOURCLASSES];
 
     struct mob_behaviour_param *attitudes;  /* Quicklink to behaviours["ATTITUDE"]->parameters */
+    struct mob_behaviour_param *groups;     /* Quicklink to behaviours["GROUPS"]->parameters */
 };
 
 struct mobdata

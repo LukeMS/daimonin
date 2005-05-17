@@ -258,6 +258,7 @@ struct mob_behaviourset * generate_behaviourset(object *op)
     set->bghash = hash;
     set->next = set->prev = NULL;
     set->attitudes = NULL;
+    set->groups = NULL;
 
     /* Insert in list */
     set->next = generated_behavioursets;
@@ -744,9 +745,13 @@ struct mob_behaviourset * parse_behaviourconfig(const char *conf_text, object *o
             else {
                 new_behaviour = setup_behaviour(op, class, buf, tok_end, conf_text);
                 /* Special handling for some behaviours */
-                if(new_behaviour && class == BEHAVIOURCLASS_PROCESSES && 
-                        new_behaviour->declaration->id == AIBEHAVIOUR_ATTITUDE)
-                    behaviourset->attitudes = new_behaviour->parameters;
+                if(new_behaviour && class == BEHAVIOURCLASS_PROCESSES)
+                {
+                    if(new_behaviour->declaration->id == AIBEHAVIOUR_ATTITUDE)
+                        behaviourset->attitudes = new_behaviour->parameters;
+                    else if(new_behaviour->declaration->id == AIBEHAVIOUR_GROUPS)
+                        behaviourset->groups = new_behaviour->parameters;
+                }
             }
 
             if(new_behaviour == NULL) 
@@ -1050,9 +1055,38 @@ int calc_friendship_from_attitude(object *op, object *other)
                 friendship += tmp->intvalue;
         }
     }
+    
+    /* Named group attitude */
+    if(attitudes[AIPARAM_ATTITUDE_GROUP].flags & AI_PARAM_PRESENT)
+    {
+        /* Make sure other is a monster that belongs to one or more groups */
+        if(other->type == MONSTER && MOB_DATA(other) && 
+                MOB_DATA(other)->behaviours->groups &&
+                MOB_DATA(other)->behaviours->groups[AIPARAM_GROUPS_NAME].flags & AI_PARAM_PRESENT)
+        {
+            /* Match my group attitudes to the other's group memberships */
+            for(tmp = &attitudes[AIPARAM_ATTITUDE_ARCH]; tmp != NULL;
+                    tmp = tmp->next)
+            {
+                struct mob_behaviour_param *group;
+                for(group = &MOB_DATA(op)->behaviours->groups[AIPARAM_GROUPS_NAME]; 
+                        group != NULL; group = group->next)
+                {
+                    if(tmp->stringvalue == group->stringvalue)
+                        friendship += tmp->intvalue;
+                }
+            }
+        }
+    }
+    
+    /* Player attitude */
+    if(attitudes[AIPARAM_ATTITUDE_PLAYER].flags & AI_PARAM_PRESENT)
+    {
+        if(other->type == PLAYER)
+            friendship += attitudes[AIPARAM_ATTITUDE_PLAYER].intvalue;
+    }
 
     LOG(llevDebug, "Attitude friendship modifier: %d (%s->%s)\n", friendship, STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
-
 
     return friendship;
 }
