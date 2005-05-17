@@ -50,6 +50,19 @@ BehaviourClass(PROCESSES,
         Parameter(ATTITUDE, ARCH, STRINGINT, MULTI | OPTIONAL, "X:0")
         /** Attitude against a named object/mob/player */
         Parameter(ATTITUDE, NAME, STRINGINT, MULTI | OPTIONAL, "X:0")
+        /** Attitude against any player */
+        Parameter(ATTITUDE, PLAYER, INTEGER, OPTIONAL, 0)
+        /** Attitude against a named AI group, see the "groups" behaviour */
+        Parameter(ATTITUDE, GROUP, STRINGINT, MULTI | OPTIONAL, "X:0")
+    )
+    
+    /** Configures the group membership of the mob, not a real behaviour.
+     * This can be used to set up one or more groups for the attitude 
+     * behaviour's "group" parameter to match against.
+     */
+    Behaviour(GROUPS, ai_fake_process, 
+        /** Membership in one or more named AI groups */
+        Parameter(GROUPS, NAME, STRING, MULTI | MANDATORY, NULL)
     )
         
     /** Simply look around for other mobs nearby */
