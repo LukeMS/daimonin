@@ -25,13 +25,14 @@ http://www.gnu.org/copyleft/lesser.txt.
 #define NPC_H
 
 #include "animate.h"
+#include "logfile.h"
 
 using namespace Ogre;
 
 ////////////////////////////////////////////////////////////
 // Defines.
 ////////////////////////////////////////////////////////////
-const int WEAPON_HAND = 0, SHIELD_HAND = 1;
+const int BONE_WEAPON_HAND = 0, BONE_SHIELD_HAND = 1, BONE_HEAD = 2, BONE_BODY = 3;
 
 ////////////////////////////////////////////////////////////
 // Class.
@@ -42,12 +43,13 @@ class NPC
     ////////////////////////////////////////////////////////////
 	// Variables.
     ////////////////////////////////////////////////////////////
-	static int mInstanceNr;
+	static unsigned int mInstanceNr; // mInstanceNr = Player's Hero
+	unsigned int thisNPC;
 	Real mWalking, mTurning;
 	Radian mFacing;
 	Real mFacingOffset;
     SceneNode  *mNode;
-    Entity *mEntityNPC, *mEntityWeapon, *mEntityShield;
+    Entity *mEntityNPC, *mEntityWeapon, *mEntityShield, *mEntityHelmet, *mEntityArmor;
     Vector3 mTranslateVector;    
     Animate *mAnim;
     std::string mDescFile;
@@ -66,12 +68,14 @@ class NPC
     ////////////////////////////////////////////////////////////
 	 NPC(SceneManager *SceneMgr, SceneNode  *Node, const char *filename);
 	~NPC() {;}
-	void walking(Real walk)  { mWalking = walk; }
-	void turning(Real turn)  { mTurning = turn; }
-	const Vector3& getPos() { return mTranslateVector; }
+	void walking(Real walk) { mWalking = walk; }
+	void turning(Real turn) { mTurning = turn; }
+	const Vector3 &getPos() { return mNode->getPosition(); }
+    const Vector3 &getWorldPos() { return mTranslateVector; }	
     void update(const FrameEvent& event);
+    void castSpell(int spell);
     void toggleTexture(int pos, int textureNr);
-    void toggleWeapon(int Hand, int WeaponNr);
+    void toggleMesh   (int pos, int WeaponNr);
     void toggleAnimGroup() { mAnim->toggleAnimGroup(); }
 	void toggleAnimation(int animationNr) {mAnim->toggleAnimation(animationNr); }
 };

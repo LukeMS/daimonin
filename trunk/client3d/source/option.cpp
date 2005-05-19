@@ -79,20 +79,21 @@ void Option::closeDescFile()
 // Get the value of the nth (=posNr) incidence of a keyword.
 // If keyword is not found on posNr, return the first incidence.
 //=================================================================================================
-bool Option::getDescStr(const char *strKeyword, string &strBuffer, int posNr)
+bool Option::getDescStr(const char *strKeyword, string &strBuffer, unsigned int posNr)
 {
-	int pos=0, startPos=0, stopPos, entryTest;
+	unsigned int pos=0, startPos=0, stopPos, entryTest;
   checkForKeyword:
 	startPos = mDescBuffer.find(strKeyword, startPos);
-	if (startPos <0) { return false; }
+	if (startPos == string::npos) { return false; }
 	entryTest= mDescBuffer.find(":",  startPos)+1;
 	startPos = mDescBuffer.find("\"", startPos)+1;
 	// keyword and value can have the same name. If ':' comes before '"' in the description-text
 	// we have a keyword, else we have the value and search again.
-	if (entryTest>startPos) { goto checkForKeyword; }
-	stopPos  = mDescBuffer.find("\"", startPos)-startPos;
-	strBuffer = mDescBuffer.substr(startPos, stopPos);
+	if (entryTest > startPos) { goto checkForKeyword; }
+	stopPos   = mDescBuffer.find("\"", startPos)-startPos;
+    strBuffer = mDescBuffer.substr(startPos, stopPos);
 	if (++pos < posNr)  { goto checkForKeyword; }
+//if (posNr) LogFile::getSingleton().Error("string: %s\n", strBuffer.c_str());
 	if (strBuffer.size() == 0) { return false; }
 	return true;
 }

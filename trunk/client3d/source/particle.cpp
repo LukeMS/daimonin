@@ -21,44 +21,38 @@ http://www.gnu.org/copyleft/lesser.txt.
 -----------------------------------------------------------------------------
 */
 
+#include "particle.h"
 #include "sound.h"
-#include "player.h"
 #include "option.h"
 #include "logfile.h"
-#include "textwindow.h"
 
-Player *player = 0;
 
 //=================================================================================================
-// Init stuff.
+// Init all static Elemnts.
 //=================================================================================================
-Player::Player(SceneManager *SceneMgr, SceneNode  *Node, const char *filename):NPC(SceneMgr, Node, filename)
+
+
+//=================================================================================================
+//
+//=================================================================================================
+ParticleFX::ParticleFX(SceneNode *parent, const string &name, const string &particleFX)
+{
+    mName      = name;
+    mPfxName   = particleFX;  
+    mParent    = parent;
+    mParticleFX= ParticleSystemManager::getSingleton().createSystem(mName, mPfxName);
+}
+
+//=================================================================================================
+//
+//=================================================================================================
+void ParticleFX::attach()
 {
 }
 
 //=================================================================================================
-// Update player.
+//
 //=================================================================================================
-void Player::update(const FrameEvent& event)
+void ParticleFX::detach()
 {
-    mAnim->update(event);
-	mTranslateVector = Vector3(0,0,0);
-	if (mAnim->isMovement())
-	{
-		if (mTurning)
-		{
-		    mFacing += Radian(event.timeSinceLastFrame * mAnim->getTurnSpeed() * mTurning);
-			mNode->yaw(Radian(event.timeSinceLastFrame * mAnim->getTurnSpeed() * mTurning));
-		}
-		if (mWalking)
-		{
-			mAnim->toggleAnimation(STATE_WALK1);
-	        mTranslateVector.y = -sin(mFacing.valueRadians()+mFacingOffset)* mAnim->getAnimSpeed() * mWalking;
-		    mTranslateVector.x = -cos(mFacing.valueRadians()+mFacingOffset)* mAnim->getAnimSpeed() * mWalking;
-		}
-		else 
-		{
-            mAnim->toggleAnimation(STATE_IDLE1);
-        }
-	}
 }

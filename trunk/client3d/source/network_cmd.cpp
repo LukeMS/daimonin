@@ -31,10 +31,18 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "option.h"
 #include "textinput.h"
 #include "serverfile.h"
+#include "tile_map.h"
+#include "tile_gfx.h"
 
 using namespace std;
 
+const int  REQUEST_FACE_MAX = 250;
 const char MAX_LEN_LOGIN_NAME = 15;
+
+inline short GetShort_String(unsigned char *data)
+{
+    return ((data[0] << 8) + data[1]);
+}
 
 // ========================================================================
 // Compare server and client version number.
@@ -324,4 +332,297 @@ void Network::PlayerCmd(unsigned char *data, int len)
     map_udate_flag = 2;        
     load_quickslots_entrys();
 */
+}
+
+static int scrolldx, scrolldy;
+
+// ========================================================================
+// 
+// ========================================================================
+void Network::Map2Cmd(unsigned char *data, int len)
+{
+    int mask, x, y, pos = 0, ext_flag, xdata;
+    int ext1, ext2, ext3, probe;
+    int map_new_flag = false;
+    int ff0, ff1, ff2, ff3, ff_flag, xpos, ypos;
+    char pname1[64], pname2[64], pname3[64], pname4[64];
+    int face;
+
+    if (scrolldx || scrolldy) { TileMap::getSingleton().display_mapscroll(scrolldx, scrolldy); }
+    scrolldy = scrolldx = 0;
+    TileMap::getSingleton().map_transfer_flag = 0;
+    xpos = (unsigned char) data[pos++];
+    if (xpos == 255) // its not xpos, its the changed map marker
+    {
+        map_new_flag = true;
+        xpos = (unsigned char) (data[pos++]);
+    }
+
+    ypos = (unsigned char) (data[pos++]);
+    if (map_new_flag) { TileMap::getSingleton().adjust_map_cache(xpos, ypos); }
+
+    TileMap::getSingleton().MapData.posx = xpos; // map windows is from range to +MAPWINSIZE_X
+    TileMap::getSingleton().MapData.posy = ypos;
+   
+	while (pos < len)
+    {
+        ext_flag = 0;
+        ext1 = ext2 = ext3 = 0;
+        // first, we get the mask flag - it decribes what we now get 
+        mask = GetShort_String(data + pos); 
+        pos += 2;
+        x = (mask >> 11) & 0x1f;
+        y = (mask >>  6) & 0x1f;
+        //LogFile::getSingleton().Info("MAPPOS: x:%.2d y:%.2d (nflag:%x)\n", x, y, map_new_flag);
+
+        // these are the "damage tags" - shows damage an object got from somewhere.
+        // ff_flag hold the layer info and how much we got here.
+        // 0x08 means a damage comes from unknown or vanished source.
+        // this means the object is destroyed.
+        // the other flags are assigned to map layer.
+        if ((mask & 0x3f) == 0) { TileMap::getSingleton().display_map_clearcell(x, y); }
+        ext3 = ext2 = ext1 = -1;
+        pname1[0] = 0; 
+        pname2[0] = 0;
+        pname3[0] = 0;
+        pname4[0] = 0;
+        // the ext flag defines special layer object assigned infos.
+        // Like the Zzz for sleep, paralyze msg, etc.
+        if (mask & 0x20) // catch the ext. flag... 
+        {
+            ext_flag = (unsigned int) (data[pos++]);
+            if (ext_flag & 0x80) // we have player names.... 
+            {
+                char c;
+                int  i, pname_flag = (unsigned int) (data[pos++]);
+
+                if (pname_flag & 0x08) // floor .... 
+                {
+                    i = 0;
+                    while ((c = (char) (data[pos++]))) { pname1[i++] = c; }
+                    pname1[i] = 0;
+                }
+                if (pname_flag & 0x04) // fm.... 
+                {
+                    i = 0;
+                    while ((c = (char) (data[pos++]))) { pname2[i++] = c; }
+                    pname2[i] = 0;
+                }
+                if (pname_flag & 0x02) // l1 ....
+                {
+                    i = 0;
+                    while ((c = (char) (data[pos++]))) { pname3[i++] = c; }
+                    pname3[i] = 0;
+                }
+                if (pname_flag & 0x01) // l2 .... 
+                {
+                    i = 0;
+                    while ((c = (char) (data[pos++]))) { pname4[i++] = c; }
+                    pname4[i] = 0;
+                }
+            }
+            if (ext_flag & 0x40) // damage add on the map 
+            {
+                ff0 = ff1 = ff2 = ff3 = -1;
+                ff_flag = (unsigned int) (data[pos++]);
+                if (ff_flag & 0x8)
+                {
+                    ff0 = GetShort_String(data + pos); pos += 2;
+//                    add_anim(ANIM_KILL, 0, 0, xpos + x, ypos + y, ff0);
+                }
+                if (ff_flag & 0x4)
+                {
+                    ff1 = GetShort_String(data + pos); pos += 2;
+//                    add_anim(ANIM_DAMAGE, 0, 0, xpos + x, ypos + y, ff1);
+                }
+                if (ff_flag & 0x2)
+                {
+                    ff2 = GetShort_String(data + pos); pos += 2;
+//                    add_anim(ANIM_DAMAGE, 0, 0, xpos + x, ypos + y, ff2);
+                }
+                if (ff_flag & 0x1)
+                {
+                    ff3 = GetShort_String(data + pos); pos += 2;
+//                    add_anim(ANIM_DAMAGE, 0, 0, xpos + x, ypos + y, ff3);
+                }
+            } 
+            if (ext_flag & 0x08)
+            {
+                probe = 0;
+                ext3 = (int) (data[pos++]);
+                if (ext3 & FFLAG_PROBE) { probe = (int) (data[pos++]); }
+//                TileMap::getSingleton().set_map_ext(x, y, 3, ext3, probe);
+            }
+            if (ext_flag & 0x10)
+            {
+                probe = 0;
+                ext2 = (int) (data[pos++]);
+                if (ext2 & FFLAG_PROBE) { probe = (int) (data[pos++]); }
+//                TileMap::getSingleton().set_map_ext(x, y, 2, ext2, probe);
+            }
+            if (ext_flag & 0x20)
+            {
+                probe = 0;
+                ext1 = (int) (data[pos++]);
+                if (ext1 & FFLAG_PROBE) { probe = (int) (data[pos++]); }
+//                TileMap::getSingleton().set_map_ext(x, y, 1, ext1, probe);
+            }
+        }
+        if (mask & 0x10)
+        {
+//            TileMap::getSingleton().set_map_darkness(x, y, (unsigned int) (data[pos]));
+            pos++;
+        }
+        // at last, we get the layer faces. A set ext_flag here marks this entry as face from 
+        // a multi tile arch. We got another byte then which all information we need to display 
+        // this face in the right way (position and shift offsets)
+        if (mask & 0x8)
+        {
+            face = GetShort_String(data + pos); pos += 2;
+//            request_face(face, 0);
+            xdata = 0;
+            TileMap::getSingleton().set_map_face(x, y, 0, face, xdata, -1, pname1);
+LogFile::getSingleton().Info("MAPPOS: x:%.2d y:%.2d faxe: %d\n", x, y, face);            
+        }
+        if (mask & 0x4)
+        {
+            face = GetShort_String(data + pos); pos += 2;
+//            request_face(face, 0);
+            xdata = 0;
+            if (ext_flag & 0x04) // we have here a multi arch, fetch head offset 
+            {
+                xdata = (unsigned int) (data[pos]);
+                pos++;
+            }
+            TileMap::getSingleton().set_map_face(x, y, 1, face, xdata, ext1, pname2);
+        }
+        if (mask & 0x2)
+        {
+            face = GetShort_String(data + pos); pos += 2;
+//            request_face(face, 0);
+            xdata = 0;
+            if (ext_flag & 0x02) // we have here a multi arch, fetch head offset 
+            {
+                xdata = (unsigned int) (data[pos]);
+                pos++;
+            }
+            TileMap::getSingleton().set_map_face(x, y, 2, face, xdata, ext2, pname3);
+        }
+        if (mask & 0x1)
+        {
+            face = GetShort_String(data + pos); pos += 2;
+//            request_face(face, 0);
+//  CRASH!     LogFile::getSingleton().Info("we got face: %x (%x) ->%s\n", face, face&~0x8000,TileGfx::getSingleton().FaceList[face&~0x8000].name?TileGfx::getSingleton().FaceList[face&~0x8000].name:"(null)" );
+            xdata = 0;
+            if (ext_flag & 0x01) // we have here a multi arch, fetch head offset
+            {
+                xdata = (unsigned int) (data[pos]);
+                pos++;
+            }
+            TileMap::getSingleton().set_map_face(x, y, 3, face, xdata, ext3, pname4);
+        }
+    } // more tiles
+    TileMap::getSingleton().map_udate_flag = 2;
+} 
+
+// ========================================================================
+// we got a face - test we have it loaded. If not, say server "send us face cmd "
+// Return: 0 - face not there, requested.  1: face requested or loaded
+// This command collect all new faces and then flush it at once. 
+// I insert the flush command after the socket call.
+// ========================================================================
+int Network::request_face(int pnum, int mode)
+{
+    char        buf[256 * 2];
+    FILE       *stream;
+    struct stat statbuf;
+    int         len;
+    unsigned char *data;
+    static int  count = 0;
+    static char fr_buf[REQUEST_FACE_MAX*sizeof(uint16) + 4];
+    unsigned short num = (unsigned short) (pnum&~0x8000);
+
+    if (mode) // forced flush buffer & command
+    {
+        if (count)
+        {
+            fr_buf[0] = 'f';
+            fr_buf[1] = 'r';
+            fr_buf[2] = ' ';
+            cs_write_string(fr_buf, 4 + count * sizeof(unsigned short));
+            count = 0;
+        }
+        return 1;
+    }
+
+    // loaded OR requested..
+    if (TileGfx::getSingleton().FaceList[num].name || TileGfx::getSingleton().FaceList[num].flags & FACE_REQUESTED)
+        return 1;
+
+    if (num >= TileGfx::getSingleton().bmaptype_table_size)
+    {
+        LogFile::getSingleton().Error("REQUEST_FILE(): server sent picture id to big (%d %d)\n", num, TileGfx::getSingleton().bmaptype_table_size);
+        return 0;
+    }
+
+    // now lets check BEFORE we do any other test for this name in /gfx_user.
+    // Perhaps we have a customized picture here.
+/*
+    sprintf(buf, "%s%s.png", GetGfxUserDirectory(), bmaptype_table[num].name);
+    if ((stream = fopen(buf, "rb")) != NULL)
+    {
+        // yes we have a picture with this name in /gfx_user! 
+        // lets try to load.
+        fstat(fileno(stream), &statbuf);
+        len = (int) statbuf.st_size;
+        data = new char[len];
+        len = fread(data, 1, len, stream);
+        fclose(stream);
+        if (len > 0)
+        {
+            // lets try to load first...
+            TileGfx::getSingleton().FaceList[num].sprite = sprite_tryload_file(buf, 0, NULL);
+            if (TileGfx::getSingleton().FaceList[num].sprite) // NOW we have a valid png with right name ...
+            {
+                TileGfx::getSingleton().face_flag_extension(num, buf);
+                sprintf(buf, "%s%s.png", GetGfxUserDirectory(), bmaptype_table[num].name);
+                TileGfx::getSingleton().FaceList[num].name = (char *) malloc(strlen(buf) + 1);
+                strcpy(TileGfx::getSingleton().FaceList[num].name, buf);
+                TileGfx::getSingleton().FaceList[num].checksum = crc32(1L, data, len);
+                free(data);
+                return 1;
+            }
+        }
+        // if we are here something was wrong with the gfx_user file.
+        delete data[];
+    }
+*/
+    // ok - at this point we hook in our client stored png lib.
+    if (TileGfx::getSingleton().bmaptype_table[num].pos != -1) // best case - we have it in daimonin.p0!
+    {
+        sprintf(buf, "%s.png", TileGfx::getSingleton().bmaptype_table[num].name);
+        TileGfx::getSingleton().FaceList[num].name = new char[strlen(buf) + 1];
+        strcpy(TileGfx::getSingleton().FaceList[num].name, buf);
+        TileGfx::getSingleton().FaceList[num].checksum = TileGfx::getSingleton().bmaptype_table[num].crc;
+        TileGfx::getSingleton().load_picture_from_pack(num);
+    }
+    else // 2nd best case  - lets check the cache for it...  or request it
+    {
+        TileGfx::getSingleton().FaceList[num].flags |= FACE_REQUESTED;
+//        finish_face_cmd(num, TileGfx::getSingleton().bmaptype_table[num].crc, TileGfx::getSingleton().bmaptype_table[num].name);
+    } 
+
+    /*
+    *((uint16 *)(fr_buf+4+count*sizeof(uint16)))=num;
+    *((uint8 *)(fr_buf+3))=(uint8)++count;
+    if(count == REQUEST_FACE_MAX)
+    {
+        fr_buf[0]='f';
+        fr_buf[1]='r';
+        fr_buf[2]=' ';
+        cs_write_string(csocket.fd, fr_buf, 4+count*sizeof(uint16));
+        count = 0;
+    }
+    */
+    return 1;
 }

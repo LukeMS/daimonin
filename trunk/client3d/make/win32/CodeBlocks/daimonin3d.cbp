@@ -216,7 +216,7 @@
 			<Option target="Debug"/>
 			<Option target="Release"/>
 		</Unit>
-		<Unit filename="..\..\..\source\include\player.h">
+		<Unit filename="..\..\..\source\include\particle.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -231,6 +231,20 @@
 			<Option target="Release"/>
 		</Unit>
 		<Unit filename="..\..\..\source\include\sound.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
+		<Unit filename="..\..\..\source\include\spell_manager.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
+		<Unit filename="..\..\..\source\include\spell_range.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -353,7 +367,7 @@
 			<Option target="Debug"/>
 			<Option target="Release"/>
 		</Unit>
-		<Unit filename="..\..\..\source\player.cpp">
+		<Unit filename="..\..\..\source\particle.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="Debug"/>
 			<Option target="Release"/>
@@ -364,6 +378,16 @@
 			<Option target="Release"/>
 		</Unit>
 		<Unit filename="..\..\..\source\sound.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
+		<Unit filename="..\..\..\source\spell_manager.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
+		<Unit filename="..\..\..\source\spell_range.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="Debug"/>
 			<Option target="Release"/>

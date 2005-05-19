@@ -1,0 +1,61 @@
+#####################################################################################
+# This is a client3d description file for the world description.
+# This file is part of Daimonin (http://daimonin.sourceforge.net)
+#####################################################################################
+# IMPORTANT:
+# Whole file is CASE SENSITIVE !!!
+#
+# Post all comments to the daimonin devel-list.
+# <polyveg>
+#####################################################################################
+
+TileBlending : "0" # blending offset isn't used for movement atm (=very ugly walking)
+
+# First "NPC" is our Hero
+Type     : "npc"
+MeshName : "Human_F_Fighter.desc"
+StartX   : "0" # will be overwritten by model.desc file.
+StartY   : "0" # will be overwritten by model.desc file.
+StartZ   : "0" # will be overwritten by model.desc file.
+
+Type     : "npc"
+MeshName : "Animal_N_Scorpion.desc"
+StartX   : "0" # will be overwritten by model.desc file.
+StartY   : "0" # will be overwritten by model.desc file.
+StartZ   : "0" # will be overwritten by model.desc file.
+
+Type     : "npc"
+MeshName : "1.desc"
+StartX   : "0" # will be overwritten by model.desc file.
+StartY   : "0" # will be overwritten by model.desc file.
+StartZ   : "0" # will be overwritten by model.desc file.
+
+Type     : "npc"
+MeshName : "2.desc"
+StartX   : "0" # will be overwritten by model.desc file.
+StartY   : "0" # will be overwritten by model.desc file.
+StartZ   : "0" # will be overwritten by model.desc file.
+
+Type     : "static"
+MeshName : "tree01.mesh"
+StartX   : "40"
+StartY   : "-8"
+StartZ   : "7"
+
+Type     : "static"
+MeshName : "tree01.mesh"
+StartX   : "140"
+StartY   : "-8"
+StartZ   : "6"
+
+Type     : "static"
+MeshName : "tree01.mesh"
+StartX   : "-40"
+StartY   : "-88"
+StartZ   : "9"
+
+Type     : "static"
+MeshName : "church.mesh"
+StartX   : "179"
+StartY   : "-108"
+StartZ   : "11"

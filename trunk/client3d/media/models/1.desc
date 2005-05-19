@@ -1,0 +1,214 @@
+#####################################################################################
+# This is a client3d description file for an ogre3d model.
+# This file is part of Daimonin (http://daimonin.sourceforge.net)
+#####################################################################################
+# IMPORTANT:
+# Whole file is CASE SENSITIVE !!!
+#
+# Post all comments to the daimonin devel-list.
+# <polyveg>
+#####################################################################################
+
+#####################################################################################
+# Mesh     (MUST be defined as followed)
+#####################################################################################
+# Mesh filename:
+#################
+# Filename => species+ "_" + gender + "_" + profession + ".mesh"
+# gender   => (M)ale , (F)emale , (N)eutrum
+# examples => Human_M_Fighter.mesh , Orc_F_Child.mesh , Daemon_N_Hellhound.mesh
+#
+# ALL is case sensitive!
+#####################################################################################
+
+MeshName : "Mobs_Ghost.mesh"
+
+# The pos of the model in the world.
+StartX   : "10"
+StartY   : "10"
+StartZ   : "0"
+
+# The facing direction in degrees.
+Facing   : "90"
+
+# The facing offset direction in degrees.
+# If your model walks sideways you can fix this here.
+FOffset  : "270"
+
+
+
+#####################################################################################
+# Materials     (MUST be defined as followed)
+# ALL is case sensitive!
+#####################################################################################
+# Material filenames:
+#####################
+# Filename => "species" from MeshName +".material"
+# examples => Ogre.material , Human.material , Daemon.material
+# (Only one material-file per species will be used)
+#
+#####################
+# Material names:
+#####################
+# Material => MeshName + "/" + texture-pos.
+# examples => Ogre_M_Chief/Chest , Daemon_N_Hellhound/Back
+#
+#####################################
+# value range for XX: 00 ... 99
+# => Material_XX_Name
+# => Material_XX_Texture_XX
+#####################################
+#
+# ALL is case sensitive!
+#####################################################################################
+
+Material_00_Name      : "Human_M_Fighter/Head_back"
+Material_00_Texture_00: "Human_M_Fighter_Hair.jpg"
+Material_00_Texture_01: "Human_F_Fighter_Hair_01.jpg"
+Material_00_Texture_02: "Human_F_Fighter_Hair_02.jpg"
+
+
+#####################################################################################
+# Animations     (MUST be defined as followed)
+# ALL is case sensitive!
+#####################################################################################
+# Animation names:
+#####################
+# Animation  => Keyword without "Anim_"
+# examples   => Idle1 , Run1 , Dead1
+# Anim-Sound => 
+# examples   => 
+#
+# ALL is case sensitive!
+#####################################################################################
+
+Speed_Anim    : "200"
+Speed_Turn    : "200"
+
+Anim_Idle1    : "Idle1" # Model MUST have animation-state "Anim_Idle1"!!!
+Anim_Idle2    : ""
+Anim_Idle3    : ""
+Sound_Idle1   : ""
+Sound_Idle2   : ""
+Sound_Idle3   : ""
+
+Anim_Walk1    : "Walk1"
+Anim_Walk2    : ""
+Anim_Walk3    : ""
+Sound_Walk1   : ""
+Sound_Walk2   : ""
+Sound_Walk3   : ""
+
+Anim_Run1     : ""
+Anim_Run2     : ""
+Anim_Run3     : ""
+Sound_Run1    : ""
+Sound_Run2    : ""
+Sound_Run3    : ""
+
+Anim_Attack1  : "Attack1"
+Anim_Attack2  : ""
+Anim_Attack3  : ""
+Sound_Attack1 : "Player_Attack1.wav"
+Sound_Attack2 : "Player_Attack1.wav"
+Sound_Attack3 : "Player_Attack1.wav"
+
+Anim_Block1   : ""
+Anim_Block2   : ""
+Anim_Block3   : ""
+Sound_Block1  : ""
+Sound_Block2  : ""
+Sound_Block3  : ""
+
+Anim_Slump1   : ""
+Anim_Slump2   : ""
+Anim_Slump3   : ""
+Sound_Slump1  : ""
+Sound_Slump2  : ""
+Sound_Slump3  : ""
+
+Anim_Death1   : ""
+Anim_Death2   : ""
+Anim_Death3   : ""
+Sound_Death1  : ""
+Sound_Death2  : ""
+Sound_Death3  : ""
+
+Anim_Hit1     : ""
+Anim_Hit2     : ""
+Anim_Hit3     : ""
+Sound_Hit1    : "Player_Hit1.wav"
+Sound_Hit2    : "Player_Hit2.wav"
+Sound_Hit3    : "Player_Hit3.wav"
+
+#####################################################################################
+# Equipment bones
+#####################################################################################
+# This is only for testing. Will be removed soon.
+# Look in the wiki for valid bone names!
+#####################################################################################
+Bone_Right_Hand: "R_Hand"
+Bone_Left_Hand : "L_Hand"
+Bone_Head      : "Head"
+Bone_Body      : "Spline1"
+
+#####################################################################################
+# Weapons
+#####################################################################################
+# Mesh filenames:
+#####################
+# Filename => category + "_" + subcategory + "_" [+Category if needed] + counter 
+# examples => Sword_Short_01.mesh , Dagger_Long_Magic01.mesh , Sword_Bi_Broken.mesh
+#
+#####################
+# Material filenames:
+#####################
+# Filename => category +".material"
+# (Only one material-file per category will be used)
+#
+#####################
+# Material names:
+#####################
+# Material => MeshName + "/" + texture-pos.
+# examples => Sword_Short_01/Blade , Staff_Long_01/bar
+#
+# ALL is case sensitive!
+#####################################################################################
+
+M_Name_Weapon: "Sword_Short_01.mesh"
+StartX_Weapon: "4.0"
+StartY_Weapon: "0.0"
+StartZ_Weapon: "11.0"
+
+M_Name_Weapon: "Mace_Small_01.mesh"
+StartX_Weapon: "4.0"
+StartY_Weapon: "0.0"
+StartZ_Weapon: "11.0"
+
+#####################################################################################
+# Armor
+#####################################################################################
+#
+# Same as weapons.
+#####################################################################################
+
+M_Name_Shield: "Shield_Round_01.mesh"
+StartX_Shield: "3.0"
+StartY_Shield: "5.0"
+StartZ_Shield: "-1.0"
+
+
+M_Name_Shield: "Shield_Round_02.mesh"
+StartX_Shield: "3.0"
+StartY_Shield: "5.0"
+StartZ_Shield: "-1.0"
+
+M_Name_Armor : "Armor_body.mesh"
+StartX_Armor : "-8.0"
+StartY_Armor : "-44.0"
+StartZ_Armor : "0.0"
+
+M_Name_Helmet : "Armor_helmet.mesh"
+StartX_Helmet : "3.0"
+StartY_Helmet : "-67.5"
+StartZ_Helmet : "0.0"

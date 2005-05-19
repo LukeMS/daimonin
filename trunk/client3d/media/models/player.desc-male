@@ -62,10 +62,10 @@ FOffset  : "270"
 # ALL is case sensitive!
 #####################################################################################
 
-Material_00_Name      : "Human_M_Fighter/HeadB"
-Material_00_Texture_00: "Human_M_Fighter_Hair_00.jpg"
-Material_00_Texture_01: "Human_M_Fighter_Hair_01.jpg"
-Material_00_Texture_02: "Human_M_Fighter_Hair_02.jpg"
+Material_00_Name      : "Human_M_Fighter/Head_back"
+Material_00_Texture_00: "Human_M_Fighter_Hair.jpg"
+Material_00_Texture_01: "Human_F_Fighter_Hair_01.jpg"
+Material_00_Texture_02: "Human_F_Fighter_Hair_02.jpg"
 
 
 #####################################################################################
@@ -92,8 +92,8 @@ Sound_Idle1   : ""
 Sound_Idle2   : ""
 Sound_Idle3   : ""
 
-Anim_Walk1    : "Walk" # this should be named Walk1
-Anim_Walk2    : "Run"  # this should be named Run1
+Anim_Walk1    : "Walk1"
+Anim_Walk2    : "Run1"
 Anim_Walk3    : ""
 Sound_Walk1   : ""
 Sound_Walk2   : ""

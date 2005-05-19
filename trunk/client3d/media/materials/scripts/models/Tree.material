@@ -24,10 +24,13 @@ material Plant/Tree2
             alpha_rejection greater_equal 128
             texture_unit
             {
-                texture tree_002.png 
+//                texture tree_002.png 
+//			texture test1_dim.png
+			texture test1_iso.png
+
             }
-        }
-    }
+      }
+   }
 }
 
 material Plant/Tree3
@@ -58,6 +61,6 @@ material Plant/Tree4
             {
                 texture tree_004.png 
             }
-        }
-    }
+      }
+   }
 }

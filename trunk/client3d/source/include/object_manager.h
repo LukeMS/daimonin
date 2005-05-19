@@ -30,7 +30,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 
 using namespace Ogre;
 
-enum { OBJECT_STATIC, OBJECT_NPC,  OBJECT_SUM };
+enum { OBJECT_PLAYER, OBJECT_NPC, OBJECT_STATIC, OBJECT_SUM };
 enum { OBJ_WALK, OBJ_TURN, OBJ_TEXTURE, OBJ_ANIMATION, OBJ_SUM };
 
 ////////////////////////////////////////////////////////////
@@ -47,7 +47,7 @@ class ObjectManager
 	// Variables.
     ////////////////////////////////////////////////////////////
     SceneManager *mSceneMgr;
-    SceneNode  *mNode;
+    SceneNode *mParentNode, *mNode;
     std::string mDescFile;
     std::vector<Entity*>mvObject_static;
     std::vector<NPC*   >mvObject_npc;
@@ -70,6 +70,11 @@ class ObjectManager
     void delObject(int number);
     void update(int type, const FrameEvent& evt);
     void keyEvent(int obj_type, int action, int val1=0, int val2=0);
+    const Vector3& getPos(int npc) { return mvObject_npc[npc]->getPos(); }
+    const Vector3& getWorldPos()  { return mvObject_npc[0]->getWorldPos(); } 
+    void castSpell(int npc, int spell) { mvObject_npc[npc]->castSpell(spell); }  
+    void toggleAnimGroup(int npc) { mvObject_npc[npc]->toggleAnimGroup(); }      
+    void toggleMesh(int npc, int pos, int WeaponNr) { mvObject_npc[npc]->toggleMesh(pos, WeaponNr); }      
 };
 
 #endif

@@ -98,6 +98,7 @@ class Network
 	bool OpenSocket(const char *host, int port);
     bool CloseSocket();
 	void Update();
+    int  request_face(int pnum, int mode);
 	void send_reply(char *text);
 	void read_metaserver_data();
     int  cs_write_string(char *buf, int len);
@@ -114,6 +115,7 @@ class Network
     void PreParseInfoStat(char *cmd);
     void PlayerCmd(unsigned char *data, int len);
     void RequestFile(int index);
+    void Map2Cmd(unsigned char *data, int len);     
 
   private:
     ////////////////////////////////////////////////////////////
