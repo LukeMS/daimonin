@@ -4,7 +4,7 @@ race human
 type 80
 layer 6
 direction 5
-will_apply 8
+can_open_door 1
 wc_range 20
 is_male 1
 is_good 1
@@ -13,6 +13,7 @@ item_race 255
 item_level 255
 weapon_speed 0.040
 corpse 1
+can_use_bow 1
 attack_weaponmagic 100
 face smith.141
 anim
@@ -96,5 +97,4 @@ weight 85000
 stand_still 1
 unaggressive 1
 Str 25
-can_cast_spell 1
 end

@@ -3331,3 +3331,83 @@ slaying dragon
 dam_add 1
 end
 #
+Allowed none
+chance 1
+artifact arrow_sys
+def_arch arrow
+Object
+identified 1
+sys_object 1
+end
+Allowed none
+chance 1
+artifact bolt_sys
+def_arch bolt
+Object
+identified 1
+sys_object 1
+end
+Allowed none
+chance 1
+artifact sstone_sys
+def_arch sstone
+Object
+identified 1
+sys_object 1
+end
+Allowed none
+chance 1
+artifact t_axe_sys
+def_arch t_axe
+Object
+identified 1
+sys_object 1
+end
+Allowed none
+chance 1
+artifact t_hammer_sys
+def_arch t_hammer
+Object
+identified 1
+sys_object 1
+end
+Allowed none
+chance 1
+artifact t_dagger_sys
+def_arch t_dagger
+Object
+identified 1
+sys_object 1
+end
+Allowed none
+chance 1
+artifact t_star_sys
+def_arch t_star
+Object
+identified 1
+sys_object 1
+end
+Allowed none
+chance 1
+artifact t_rock_sys
+def_arch t_rock
+Object
+identified 1
+sys_object 1
+end
+Allowed none
+chance 1
+artifact t_boulder_sys
+def_arch t_boulder
+Object
+identified 1
+sys_object 1
+end
+Allowed none
+chance 1
+artifact t_lboulder_sys
+def_arch t_lboulder
+Object
+identified 1
+sys_object 1
+end

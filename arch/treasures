@@ -4018,6 +4018,89 @@ treasure random_testx
   end
 end
 treasure random_test
-arch ring_generic
- chance 100
+arch bolt
+end
+##############################################################
+#
+# Mobile & NPC treasure lists
+# AI & Behaviour
+#
+##############################################################
+##############################################################
+#
+# AI & Behaviour
+#
+# A mob without AI treasure will set to ai_generic by default
+#
+#treasure ai_default
+#   arch ai_generic
+#end
+#
+treasure ai_guard
+   arch guard_arch_ai 
+end
+treasure ai_slime
+   arch slime_race_ai
+end
+##############################################################
+#
+# Skills & Abilites
+#
+# A mob has melee skills & some specials by default arch settings
+#
+treasure skill_bow
+   arch ability_bow
+ more
+   arch arrow_sys
+end
+treasure skill_xbow
+   arch ability_bow
+   race crossbow bolts
+ more
+   arch bolt_sys
+end
+treasure skill_sling
+   arch ability_bow
+   race sling stones
+ more
+   arch sstone_sys
+end
+treasure skill_t_axe
+   arch ability_bow
+   race t_axe
+ more
+   arch t_axe_sys
+end
+treasure skill_t_hammer
+   arch ability_bow
+   race t_hammer
+ more
+   arch t_hammer_sys
+end
+treasure skill_t_dagger
+   arch ability_bow
+   race t_dagger
+ more
+   arch t_dagger_sys
+end
+treasure skill_t_star
+   arch ability_bow
+   race t_star
+ more
+   arch t_star_sys
+end
+treasure skill_t_rock
+   arch ability_stone_throw
+ more
+   arch t_rock_sys
+end
+treasure skill_t_boulder
+   arch ability_stone_throw
+ more
+   arch t_boulder_sys
+end
+treasure skill_t_lboulder
+   arch ability_stone_throw
+ more
+   arch t_lboulder_sys
 end

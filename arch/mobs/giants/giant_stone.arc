@@ -2,7 +2,7 @@ Object giant_stone
 name stone giant
 race giants
 randomitems mob_giant_stone
-will_apply 8
+can_open_door 1
 is_evil 1
 is_male 1
 wc_range 20

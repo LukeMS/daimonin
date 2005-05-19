@@ -3,7 +3,8 @@ name ranger
 race human
 type 80
 layer 6
-will_apply 8
+friendly 1
+can_open_door 1
 wc_range 20
 direction 5
 is_male 1
@@ -13,6 +14,8 @@ is_good 1
 terrain_flag 1
 weapon_speed 0.045
 corpse 1
+can_use_bow 1
+randomitems skill_bow
 attack_weaponmagic 100
 face ranger.131
 anim

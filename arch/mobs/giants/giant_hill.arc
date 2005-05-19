@@ -2,7 +2,7 @@ Object giant_hill
 name hill giant
 race giants
 randomitems mob_giant_hill
-will_apply 8
+can_open_door 1
 is_evil 1
 wc_range 20
 is_male 1

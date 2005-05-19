@@ -1,5 +1,5 @@
 Object pot_wall.131
-name chains
+name pot
 face pot_wall.u.151
 anim
 facings 9

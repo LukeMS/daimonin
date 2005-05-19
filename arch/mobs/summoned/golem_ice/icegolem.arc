@@ -5,7 +5,7 @@ race golem
 corpse 1
 layer 6
 is_neutral 1
-will_apply 8
+can_open_door 1
 item_race 255
 item_level 255
 wc_range 20

@@ -1,5 +1,6 @@
 Object t_dagger
 name throwing dagger
+race t_dagger
 layer 3
 face t_dagger.101
 weapon_speed 0.027

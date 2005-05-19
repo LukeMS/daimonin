@@ -5,12 +5,11 @@ layer 6
 randomitems mob_beholder_dread
 face beholder_dread.131
 can_see_in_dark 1
-can_cast_spell 1
 direction 5
 speed -0.06
 corpse 1
 wc_range 20
-will_apply 8
+can_open_door 1
 item_race 255
 item_level 255
 type 80

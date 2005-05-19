@@ -1,5 +1,6 @@
 Object t_star
 name throwing star
+race t_star
 face t_star.101
 layer 3
 weapon_speed 0.027

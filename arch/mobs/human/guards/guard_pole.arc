@@ -5,14 +5,16 @@ type 80
 layer 6
 item_race 255
 item_level 255
-will_apply 8
+can_open_door 1
 direction 5
 is_male 1
 wc_range 20
 is_good 1
 terrain_flag 1
+can_use_bow 1
 weapon_speed 0.045
 corpse 1
+randomitems ai_guard
 attack_weaponmagic 100
 face guard_pole.131
 anim

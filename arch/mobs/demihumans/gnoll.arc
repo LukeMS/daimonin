@@ -5,7 +5,7 @@ race gnoll
 is_male 1
 wc_range 20
 corpse 1
-will_apply 8
+can_open_door 1
 layer 6
 direction 5
 is_evil 1
