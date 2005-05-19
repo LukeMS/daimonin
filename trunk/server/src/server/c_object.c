@@ -291,7 +291,6 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof)
 
 
 void pick_up(object *op, object *alt) 
-/* modified slightly to allow monsters use this -b.t. 5-31-95 */
 {
     int         need_fix_tmp    = 0;
     object     *tmp             = NULL;

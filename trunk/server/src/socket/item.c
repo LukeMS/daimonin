@@ -150,9 +150,7 @@ void esrv_draw_look(object *pl)
     if (QUERY_FLAG(pl, FLAG_REMOVED)
      || pl->map == NULL
      || pl->map->in_memory != MAP_IN_MEMORY
-     || OUT_OF_REAL_MAP(pl->map,
-                                                                                                                  pl->x,
-                                                                                                                  pl->y))
+     || OUT_OF_REAL_MAP(pl->map,pl->x,pl->y))
         return;
 
     /*LOG(-1,"send look of: %s\n", query_name(pl));*/

@@ -261,6 +261,10 @@ static treasure * load_treasure(FILE *fp, int *t_style, int *a_chance)
         {
             FREE_AND_COPY_HASH(t->change_arch.name, cp + 5);
         }
+        else if (sscanf(cp, "race %s", variable))
+        {
+            FREE_AND_COPY_HASH(t->change_arch.race, cp + 5);
+        }
         else if (sscanf(cp, "title %s", variable))
         {
             FREE_AND_COPY_HASH(t->change_arch.title, cp + 6);
@@ -575,6 +579,7 @@ static treasure * get_empty_treasure(void)
         LOG(llevError, "ERROR: get_empty_treasure(): OOM.\n");
     t->change_arch.item_race = -1;
     t->change_arch.name = NULL;
+    t->change_arch.race = NULL;
     t->tlist = NULL;
     t->change_arch.slaying = NULL;
     t->change_arch.title = NULL;
@@ -865,9 +870,8 @@ void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int
                         tmp->nrof = RANDOM() % ((int) t->nrof) + 1;
                     /* ret 1 = artifact is generated - don't overwrite anything here */
                     set_material_real(tmp, change_arch ? change_arch : &t->change_arch);
-                    if (!fix_generated_item(&tmp, op, difficulty, a_chance, t_style, t->magic, t->magic_fix,
-                                            t->magic_chance, flag))
-                        change_treasure(change_arch ? change_arch : &t->change_arch, tmp);
+					change_treasure(change_arch ? change_arch : &t->change_arch, tmp);
+                    fix_generated_item(&tmp, op, difficulty, a_chance, t_style, t->magic, t->magic_fix, t->magic_chance, flag);
                     put_treasure(tmp, op, flag);
                     /* if treasure is "identified", created items are too */
                     if (op->type == TREASURE && QUERY_FLAG(op, FLAG_IDENTIFIED))
@@ -1003,10 +1007,10 @@ void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty,
             if (t->nrof && tmp->nrof <= 1)
                 tmp->nrof = RANDOM() % ((int) t->nrof) + 1;
             set_material_real(tmp, change_arch ? change_arch : &t->change_arch);
-            if (!fix_generated_item(&tmp, op, difficulty, a_chance,
+			change_treasure(change_arch ? change_arch : &t->change_arch, tmp);
+            fix_generated_item(&tmp, op, difficulty, a_chance,
                                     (t->t_style == T_STYLE_UNSET) ? t_style : t->t_style, t->magic, t->magic_fix,
-                                    t->magic_chance, flag))
-                change_treasure(change_arch ? change_arch : &t->change_arch, tmp);
+                                    t->magic_chance, flag);
             put_treasure(tmp, op, flag);
             /* if trasure is "identified", created items are too */
             if (op->type == TREASURE && QUERY_FLAG(op, FLAG_IDENTIFIED))
@@ -1070,6 +1074,9 @@ static void change_treasure(struct _change_arch *ca, object *op)
 {
     if (ca->name)
         FREE_AND_COPY_HASH(op->name, ca->name);
+
+    if (ca->race)
+        FREE_AND_COPY_HASH(op->race, ca->race);
 
     if (ca->title)
         FREE_AND_COPY_HASH(op->title, ca->title);
@@ -2312,6 +2319,7 @@ void free_treasurestruct(treasure *t)
         free_treasurestruct(t->next_no);
     FREE_AND_CLEAR_HASH2(t->name);
     FREE_AND_CLEAR_HASH2(t->change_arch.name);
+    FREE_AND_CLEAR_HASH2(t->change_arch.race);
     FREE_AND_CLEAR_HASH2(t->change_arch.slaying);
     FREE_AND_CLEAR_HASH2(t->change_arch.title);
     free(t);

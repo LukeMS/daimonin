@@ -202,7 +202,6 @@ static player * get_player(player *p)
         p->known_spells[i] = -1;
 
     p->chosen_spell = -1;
-    CLEAR_FLAG(op, FLAG_READY_SKILL); 
 
     /* we need to clear these to -1 and not zero - otherwise,
      * if a player quits and starts a new character, we wont

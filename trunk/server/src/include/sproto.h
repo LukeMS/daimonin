@@ -395,7 +395,6 @@ void                        object_accept_path(object *op);
 object                     *find_nearest_living_creature(object *npc);
 int                         move_randomly(object *op);
 int                         can_hit(object *ob1, object *ob2, rv_vector *rv);
-int                         can_apply(object *who, object *item);
 object                     *monster_choose_random_spell(object *monster);
 void                        monster_check_pickup(object *monster);
 void                        monster_check_apply(object *mon, object *item);

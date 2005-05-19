@@ -914,9 +914,6 @@ int load_objects(mapstruct *m, FILE *fp, int mapflags)
             sum_weight(op);
         }
 
-        if (op->type == MONSTER)
-            fix_monster(op);
-
         if (QUERY_FLAG(op, FLAG_UNIQUE))
 			unique = TRUE;					/* we CAN avoid this check by check the map in the editor first 
 											 * and set the map data direct in the original map
@@ -1005,10 +1002,19 @@ int load_objects(mapstruct *m, FILE *fp, int mapflags)
         if (QUERY_FLAG(op, FLAG_AUTO_APPLY))
             auto_apply(op); /* auto_apply() will remove the flag_auto_apply after first use */
         else if ((mapflags & MAP_ORIGINAL) && op->randomitems) /* for fresh maps, create treasures */
-            create_treasure_list(op->randomitems, op, op->type != TREASURE ? GT_APPLY : 0,
+		{
+			if (op->type == MONSTER)
+				create_treasure_list(op->randomitems, op, op->type != TREASURE ? GT_APPLY : 0,
                                  op->level ? op->level : m->difficulty, T_STYLE_UNSET, ART_CHANCE_UNSET, 0, NULL);
+			else
+				create_treasure_list(op->randomitems, op, op->type != TREASURE ? GT_APPLY : 0,
+				op->level ? op->level : m->difficulty, T_STYLE_UNSET, ART_CHANCE_UNSET, 0, NULL);
+		}
+		
+        if (op->type == MONSTER)
+            fix_monster(op);
 
-        /* iam not sure this is senseful.
+			/* iam not sure this is senseful.
              * it was part of fix_auto_apply() but it should
              * redundant
             else if(op->type==TIMED_GATE)

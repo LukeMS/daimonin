@@ -172,7 +172,7 @@ uint32 bghash(object *op)
         hash |= 4;
     if (QUERY_FLAG(op, FLAG_RANDOM_MOVE))
         hash |= 8;
-    if (QUERY_FLAG(op, FLAG_CAST_SPELL))
+    if (QUERY_FLAG(op, FLAG_READY_SPELL))
         hash |= 16;
     if (QUERY_FLAG(op, FLAG_READY_BOW))
         hash |= 32;
@@ -289,7 +289,7 @@ struct mob_behaviourset * generate_behaviourset(object *op)
 
         if (!QUERY_FLAG(op, FLAG_NO_ATTACK))
         {
-            if (QUERY_FLAG(op, FLAG_CAST_SPELL) || QUERY_FLAG(op, FLAG_READY_BOW))
+            if (QUERY_FLAG(op, FLAG_READY_SPELL) || QUERY_FLAG(op, FLAG_READY_BOW))
             {
                 /* Behaviours for archers/mages only */
                 last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_KEEP_DISTANCE_TO_ENEMY);
@@ -341,7 +341,7 @@ struct mob_behaviourset * generate_behaviourset(object *op)
     {
         last = set->behaviours[BEHAVIOURCLASS_ACTIONS] = init_behaviour(BEHAVIOURCLASS_ACTIONS,
                                                                         AIBEHAVIOUR_MELEE_ATTACK_ENEMY);
-        if (QUERY_FLAG(op, FLAG_CAST_SPELL))
+        if (QUERY_FLAG(op, FLAG_READY_SPELL))
             last = last->next = init_behaviour(BEHAVIOURCLASS_ACTIONS, AIBEHAVIOUR_SPELL_ATTACK_ENEMY);
         if (QUERY_FLAG(op, FLAG_READY_BOW))
             last = last->next = init_behaviour(BEHAVIOURCLASS_ACTIONS, AIBEHAVIOUR_BOW_ATTACK_ENEMY);
@@ -1477,7 +1477,7 @@ void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_
             } 
             else if (op->enemy->type == MONSTER) 
             {
-                if(! QUERY_FLAG(op->enemy, FLAG_CAST_SPELL) &&
+                if(! QUERY_FLAG(op->enemy, FLAG_READY_SPELL) &&
                         ! QUERY_FLAG(op->enemy, FLAG_READY_BOW)) 
                     return;
                 SET_FLAG(MOB_DATA(op)->enemy, AI_OBJFLAG_USES_DISTANCE_ATTACK);
@@ -2125,21 +2125,23 @@ int ai_bow_attack_enemy(object *op, struct mob_behaviour_param *params)
 
     /* Find the applied bow */
     for (bow = op->inv; bow != NULL; bow = bow->below)
-        if (bow->type == BOW && QUERY_FLAG(bow, FLAG_APPLIED))
-            break;
-
+	{
+       if (bow->type == BOW && QUERY_FLAG(bow, FLAG_APPLIED))
+	   {
+		   /* Select suitable arrows */
+		   if ((arrow = find_arrow(op, bow->race)) == NULL)
+		   {
+			   /* Out of arrows , unapply bow */
+			   manual_apply(op, bow, 0);
+			   continue;
+		   }		   
+		   break; /* found bow and amun */
+	   }
+	}
+		   
     if (bow == NULL)
     {
-        LOG(llevBug, "BUG: Monster %s (%d) has READY_BOW without bow.\n", STRING_OBJ_NAME(op), op->count);
-        CLEAR_FLAG(op, FLAG_READY_BOW);
-        return 0;
-    }
-
-    /* Select suitable arrows */
-    if ((arrow = find_arrow(op, bow->race)) == NULL)
-    {
-        /* Out of arrows */
-        manual_apply(op, bow, 0);
+        /*LOG(llevBug, "BUG: Monster %s (%d) has READY_BOW without bow.\n", STRING_OBJ_NAME(op), op->count);*/
         CLEAR_FLAG(op, FLAG_READY_BOW);
         return 0;
     }
@@ -2248,7 +2250,7 @@ int ai_spell_attack_enemy(object *op, struct mob_behaviour_param *params)
 
     if (QUERY_FLAG(op, FLAG_UNAGGRESSIVE)
      || QUERY_FLAG(op, FLAG_SCARED)
-     || !QUERY_FLAG(op, FLAG_CAST_SPELL)
+     || !QUERY_FLAG(op, FLAG_READY_SPELL)
      || !OBJECT_VALID(op->enemy,
                       op->enemy_count)
      || op->weapon_speed_left > 0
@@ -2275,7 +2277,7 @@ int ai_spell_attack_enemy(object *op, struct mob_behaviour_param *params)
     {
         LOG(llevDebug, "ai_spell_attack_enemy() No spell found! Turned off spells in %s (%s) (%d,%d)\n",
             STRING_OBJ_NAME(op), STRING_MAP_NAME(op->map), op->x, op->y);
-        CLEAR_FLAG(op, FLAG_CAST_SPELL); /* Will be turned on when picking up book */
+        CLEAR_FLAG(op, FLAG_READY_SPELL); /* Will be turned on when picking up book */
         return 0;
     }
 

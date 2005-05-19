@@ -165,9 +165,7 @@ struct attribute_decl       GameObject_attributes[]         =
     {"anim_last_facing_last", FIELDTYPE_SINT8 , offsetof(object, anim_last_facing_last), 0},
     {"anim_speed",   FIELDTYPE_UINT8 , offsetof(object, anim_speed), 0},
     {"last_anim",    FIELDTYPE_UINT8 , offsetof(object, last_anim), 0},
-    {"will_apply",   FIELDTYPE_UINT8 , offsetof(object, will_apply), 0},
     {"run_away",     FIELDTYPE_UINT8 , offsetof(object, run_away), 0},
-    {"pick_up",      FIELDTYPE_UINT8 , offsetof(object, pick_up), 0},
     {"hide",         FIELDTYPE_UINT8 , offsetof(object, hide), 0},
     {"layer",        FIELDTYPE_UINT8 , offsetof(object, layer), 0},
 
@@ -231,15 +229,15 @@ static const char          *GameObject_flags[NUM_FLAGS + 1 + 1] =
     "f_changing", "f_splitting", "f_hitback", "f_startequip", "f_blocksview", "f_undead", NULL, "f_unaggressive",
     "f_reflect_missile", "f_reflect_spell",             /* 40 */
     "f_no_magic", "f_no_fix_player", "f_is_evil", "f_tear_down", "f_run_away", "f_pass_thru", "f_can_pass_thru",
-    "f_pick_up", "f_unique", "f_no_drop", /* 50 */
-    "f_is_indestructible", "f_can_cast_spell", "f_can_use_scroll", "f_can_use_range", "f_can_use_bow",
-    "f_can_use_armour", "f_can_use_weapon", "f_can_use_ring", "f_has_ready_range", "f_has_ready_bow",       /* 60 */
+    NULL, "f_unique", "f_no_drop", /* 50 */
+    "f_is_indestructible", "f_has_ready_spell", NULL, NULL, "f_can_use_bow",
+    "f_can_use_armour", "f_can_use_weapon", "f_can_use_ring", NULL, "f_has_ready_bow",       /* 60 */
     "f_xrays", NULL, "f_is_floor", "f_lifesave", "f_is_magical", "f_alive", "f_stand_still", "f_random_move",
     "f_only_attack", "f_wiz", /* 70 */
     "f_stealth", NULL, NULL, "f_cursed", "f_damned", "f_see_anywhere", "f_known_magical", "f_known_cursed",
-    "f_can_use_skill", "f_is_thrown",               /* 80 */
+    "f_can_open_door", "f_is_thrown",               /* 80 */
     "f_is_vul_sphere", "f_is_proof_sphere", "f_is_male", "f_is_female", "f_applied", "f_inv_locked", "f_is_wooded",
-    "f_is_hilly", "f_has_ready_skill", "f_has_ready_weapon",        /* 90 */
+    "f_is_hilly", NULL, "f_has_ready_weapon",        /* 90 */
     "f_no_skill_ident", "f_use_dmg_info", "f_can_see_in_dark", "f_is_cauldron", "f_is_dust", "f_no_steal",
     "f_one_hit", NULL, "f_berserk", "f_no_attack",   /* 100 */
     "f_invulnerable", "f_quest_item", "f_is_traped", "f_is_vul_elemental", "f_is_proof_elemental", /* 105 */

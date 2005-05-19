@@ -53,14 +53,14 @@
 	"blocksview",	"undead",		"scared",		"unaggressive",	"reflect_missile",
 	"reflect_spell","no_magic",		"wiz",			NULL,		"no_fix_player",
 	"tear_down",	"luck",			"run_away",		"pass_thru",	"can_pass_thru",
-	"pick_up",		"anim_speed",	"container",	"no_drop",		"will_apply",
-	"can_cast_spell","can_use_scroll","can_use_range","can_use_bow","can_use_armour",
-	"can_use_weapon","can_use_ring","has_ready_range","has_ready_bow","xrays",
+	"anim_speed",	"container",	"no_drop",
+	"has_ready_spell","can_use_bow",
+	"can_use_weapon","can_use_ring","has_ready_bow","xrays",
 	"is_floor",		"lifesave",		"sleep",		"stand_still",	"random_move",
 	"only_attack",	"attack_movement","move_state",	"confused",		"stealth",
 	"connected",	"cursed",		"damned",		"see_anywhere",	"known_magical",
-	"known_cursed",	"can_use_skill","been_applied",	"title"			"unique",
-	"inv_locked",	"is_wooded",	"is_hilly",		"has_ready_skill",
+	"known_cursed","been_applied",	"title"			"unique",
+	"inv_locked",	"is_wooded",	"is_hilly",
 	"has_ready_weapon","no_skill_ident","glow_radius","is_blind",	"can_see_in_dark",
 	"is_cauldron",	"randomitems",	"is_dust",		"no_steal",		"one_hit",
 	"berserk",		"sub_type",		"terrain_flag",	"terrain_type", "item_quality",
@@ -463,22 +463,18 @@ op->oy= op->y;
 ^pass_thru{S}	    SET_OR_CLEAR_FLAG(op, FLAG_PASS_THRU, IVAL);
 ^pass_ethereal{S}	    SET_OR_CLEAR_FLAG(op, FLAG_PASS_ETHEREAL, IVAL);
 ^can_pass_thru{S}   SET_OR_CLEAR_FLAG(op, FLAG_CAN_PASS_THRU, IVAL);
-^pick_up{S}	    op->pick_up = IVAL;
 ^anim_speed{S}	    op->anim_speed = IVAL;
 ^container{S}	    op->weight_limit = IVAL;
 ^no_drop{S}	    SET_OR_CLEAR_FLAG(op, FLAG_NO_DROP, IVAL);
-^will_apply{S}	    op->will_apply = IVAL;
-^use_fix_pos{S}	    SET_OR_CLEAR_FLAG(op, FLAG_USE_FIX_POS, IVAL);
-^is_ethereal{S}	    SET_OR_CLEAR_FLAG(op, FLAG_IS_ETHEREAL, IVAL);
-^can_cast_spell{S}	    SET_OR_CLEAR_FLAG(op, FLAG_CAST_SPELL, IVAL);
-^can_use_scroll{S}	    SET_OR_CLEAR_FLAG(op, FLAG_USE_SCROLL, IVAL);
-^can_use_range{S}	    SET_OR_CLEAR_FLAG(op, FLAG_USE_RANGE, IVAL);
-^can_use_bow{S}		    SET_OR_CLEAR_FLAG(op, FLAG_USE_BOW, IVAL);
+^use_fix_pos{S}			SET_OR_CLEAR_FLAG(op, FLAG_USE_FIX_POS, IVAL);
+^is_ethereal{S}			SET_OR_CLEAR_FLAG(op, FLAG_IS_ETHEREAL, IVAL);
+^can_open_door{S}	    SET_OR_CLEAR_FLAG(op, FLAG_CAN_OPEN_DOOR, IVAL);
+^can_use_bow{S}		    SET_OR_CLEAR_FLAG(op, FLAG_CAN_USE_BOW, IVAL);
+^has_ready_bow{S}		SET_OR_CLEAR_FLAG(op, FLAG_READY_BOW, IVAL);
+^has_ready_spell{S}	    SET_OR_CLEAR_FLAG(op, FLAG_READY_SPELL, IVAL);
 ^can_use_armour{S}	    SET_OR_CLEAR_FLAG(op, FLAG_USE_ARMOUR, IVAL);
 ^can_use_weapon{S}	    SET_OR_CLEAR_FLAG(op, FLAG_USE_WEAPON, IVAL);
 ^can_use_ring{S}	    SET_OR_CLEAR_FLAG(op, FLAG_USE_RING, IVAL);
-^has_ready_range{S}	    SET_OR_CLEAR_FLAG(op, FLAG_READY_RANGE, IVAL);
-^has_ready_bow{S}   SET_OR_CLEAR_FLAG(op, FLAG_READY_BOW, IVAL);
 ^xrays{S}	    SET_OR_CLEAR_FLAG(op, FLAG_XRAYS, IVAL);
 ^no_save{S}			SET_OR_CLEAR_FLAG(op, FLAG_NO_SAVE, IVAL);
 ^is_floor{S}	    SET_OR_CLEAR_FLAG(op, FLAG_IS_FLOOR, IVAL);
@@ -600,7 +596,6 @@ op->oy= op->y;
 ^see_anywhere{S}    SET_OR_CLEAR_FLAG(op, FLAG_SEE_ANYWHERE, IVAL);
 ^known_magical{S}   SET_OR_CLEAR_FLAG(op, FLAG_KNOWN_MAGICAL, IVAL);
 ^known_cursed{S}    SET_OR_CLEAR_FLAG(op, FLAG_KNOWN_CURSED, IVAL);
-^can_use_skill{S}   SET_OR_CLEAR_FLAG(op, FLAG_CAN_USE_SKILL, IVAL);
 ^been_applied{S}    SET_OR_CLEAR_FLAG(op, FLAG_BEEN_APPLIED, IVAL);
 ^title{S}	    {	char *y=yval();
 			if (*y=='\0') LOG(llevBug,"BUG: loader(): Title without value.\n");
@@ -610,8 +605,7 @@ op->oy= op->y;
 ^inv_locked{S}		SET_OR_CLEAR_FLAG(op, FLAG_INV_LOCKED, IVAL);
 ^is_wooded{S}		SET_OR_CLEAR_FLAG(op, FLAG_IS_WOODED, IVAL);
 ^is_hilly{S}		SET_OR_CLEAR_FLAG(op, FLAG_IS_HILLY, IVAL);
-^has_ready_skill{S}	SET_OR_CLEAR_FLAG(op, FLAG_READY_SKILL, IVAL);
-^has_ready_weapon{S}	SET_OR_CLEAR_FLAG(op, FLAG_READY_WEAPON, IVAL);
+^has_ready_weapon{S}	SET_OR_CLEAR_FLAG(op, FLAG_READY_WEAPON, IVAL); /* internal player only flag */
 ^no_skill_ident{S}	SET_OR_CLEAR_FLAG(op, FLAG_NO_SKILL_IDENT, IVAL);
 ^glow_radius{S}		op->glow_radius = IVAL;
 ^is_blind{S}		SET_OR_CLEAR_FLAG(op, FLAG_BLIND, IVAL);
@@ -906,7 +900,6 @@ static char *flag_names[NUM_FLAGS+1] = {
 "sleep", "confused", NULL, "scared", "is_blind","is_invisible" , "is_ethereal" ,
 "is_good", "no_pick", "walk_on", "no_pass",		/* 10 */
 "is_animated", NULL, "flying", "monster", "friendly",
-
 NULL /*is_removed*/,"been_applied", "auto_apply", "treasure", "is_neutral",	/* 20 */
 "see_invisible", "can_roll", "generator", "is_turnable", "walk_off",
 "fly_on", "fly_off", "is_used_up", "identified", "reflecting",	/* 30 */
@@ -914,18 +907,17 @@ NULL /*is_removed*/,"been_applied", "auto_apply", "treasure", "is_neutral",	/* 2
 "blocksview", "undead", NULL, "unaggressive",
 "reflect_missile", "reflect_spell",				/* 40 */
 "no_magic", "no_fix_player", "is_evil", "tear_down", "run_away",
-"pass_thru", "can_pass_thru", "pick_up", "unique", "no_drop",	/* 50 */
- "is_indestructible", "can_cast_spell", "can_use_scroll", "can_use_range",
-"can_use_bow",  "can_use_armour", "can_use_weapon",
-"can_use_ring", "has_ready_range", "has_ready_bow",		/* 60 */
+"pass_thru", "can_pass_thru", NULL, "unique", "no_drop",	/* 50 */
+ "is_indestructible", "has_ready_spell", NULL, NULL,
+"can_use_bow", "can_use_armour", "can_use_weapon",
+"can_use_ring", NULL, "has_ready_bow",		/* 60 */
 "xrays", NULL, "is_floor", "lifesave", "is_magical", "alive",
 "stand_still", "random_move", "only_attack", "wiz",	/* 70 */
  "stealth", NULL, NULL, "cursed", "damned",
-"see_anywhere", "known_magical", "known_cursed",
-"can_use_skill", "is_thrown",				/* 80 */
+"see_anywhere", "known_magical", "known_cursed", "can_open_door", "is_thrown",				/* 80 */
 "is_vul_sphere", "is_proof_sphere", "is_male",
 "is_female", "applied",  "inv_locked", "is_wooded",
-"is_hilly", "has_ready_skill", "has_ready_weapon",		/* 90 */
+"is_hilly", NULL, "has_ready_weapon",		/* 90 */
 "no_skill_ident","use_dmg_info", "can_see_in_dark", "is_cauldron",
 "is_dust", "no_steal", "one_hit", NULL, "berserk", "no_attack",	/* 100 */
 "invulnerable", "quest_item", "is_traped", "is_vul_elemental",  "is_proof_elemental", /* 105 */
@@ -1251,13 +1243,8 @@ char *get_ob_diff(object *op,object *op2) {
 
   if(op->run_away!=op2->run_away)
     save_long(buf, "run_away", op->run_away);
-  if(op->pick_up!=op2->pick_up)
-    save_long(buf, "pick_up", op->pick_up);
   if(op->weight_limit!=op2->weight_limit)
     save_long(buf, "container", op->weight_limit);
-  if (op->will_apply!=op2->will_apply)
-    save_long(buf, "will_apply", op->will_apply);
-
 
   for (tmp=0; tmp <= NUM_FLAGS; tmp++) {
     if (flag_names[tmp] && (QUERY_FLAG(op, tmp) != QUERY_FLAG(op2, tmp)))

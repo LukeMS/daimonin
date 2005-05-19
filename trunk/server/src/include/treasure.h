@@ -67,8 +67,9 @@ enum
 typedef struct _change_arch
 {
     const char *name;              /* is != NULL, copy this over the original arch name */
-    const char *title;             /* is != NULL, copy this over the original arch name */
-    const char *slaying;           /* is != NULL, copy this over the original arch name */
+    const char *race;
+    const char *title;
+    const char *slaying;
     int         item_race;
     int         material;                   /* the real, fixed material value */
     int         material_quality;           /* find a material matching this quality */

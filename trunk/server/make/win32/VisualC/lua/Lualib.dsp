@@ -60,8 +60,8 @@ LIB32=link.exe -lib
 # PROP BASE Target_Dir ""
 # PROP Use_MFC 0
 # PROP Use_Debug_Libraries 0
-# PROP Output_Dir "Lualib___Win32_ReleaseLog"
-# PROP Intermediate_Dir "Lualib___Win32_ReleaseLog"
+# PROP Output_Dir "ReleaseLog"
+# PROP Intermediate_Dir "ReleaseLog"
 # PROP Target_Dir ""
 # ADD BASE CPP /nologo /MT /W3 /GX /O2 /I "..\source\include" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "LUA_OPNAMES" /YX /FD /c
 # ADD CPP /nologo /MD /W3 /Gi /GX /O2 /Ob2 /I "..\..\..\..\src\lua\include" /D "WIN32" /D "NDEBUG" /D "_MBCS" /D "_LIB" /D "LUA_OPNAMES" /YX"lualib.pch" /FD /c

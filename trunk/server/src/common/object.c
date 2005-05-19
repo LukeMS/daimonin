@@ -1119,7 +1119,6 @@ int CAN_MERGE(object *ob1, object *ob2)
      * last_sp;
      * last_grace;
      * sint16 last_eat;
-     * will_apply;
      * run_away;
      * stealth;     
      * hide;
@@ -1499,20 +1498,6 @@ static void set_owner_simple(object *op, object *owner)
     /*owner->refcount++;*/
 }
 
-static void set_skill_pointers(object *op, object *chosen_skill, object *exp_obj)
-{
-    op->chosen_skill = chosen_skill;
-    op->exp_obj = exp_obj;
-
-    /* unfortunately, we can't allow summoned monsters skill use
-     * because we will need the chosen_skill field to pick the
-     * right skill/stat modifiers for calc_skill_exp(). See
-     * hit_player() in server/attack.c -b.t.
-     */
-    CLEAR_FLAG(op, FLAG_CAN_USE_SKILL);
-    CLEAR_FLAG(op, FLAG_READY_SKILL);
-}
-
 
 /*
  * Sets the owner and sets the skill and exp pointers to owner's current
@@ -1525,9 +1510,10 @@ void set_owner(object *op, object *owner)
     set_owner_simple(op, owner);
 
     if (owner->type == PLAYER && owner->chosen_skill)
-        set_skill_pointers(op, owner->chosen_skill, owner->chosen_skill->exp_obj);
-    else if (op->type != PLAYER)
-        CLEAR_FLAG(op, FLAG_READY_SKILL);
+	{
+		op->chosen_skill = owner->chosen_skill;
+		op->exp_obj = owner->chosen_skill->exp_obj;
+	}
 }
 
 /* Set the owner to clone's current owner and set the skill and experience
@@ -1556,9 +1542,10 @@ void copy_owner(object *op, object *clone)
     set_owner_simple(op, owner);
 
     if (clone->chosen_skill)
-        set_skill_pointers(op, clone->chosen_skill, clone->exp_obj);
-    else if (op->type != PLAYER)
-        CLEAR_FLAG(op, FLAG_READY_SKILL);
+	{
+		op->chosen_skill = clone->chosen_skill;
+		op->exp_obj = clone->exp_obj;		
+	}
 }
 
 /*
