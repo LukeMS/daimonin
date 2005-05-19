@@ -1,4 +1,4 @@
-# Anjuta Version 1.2.2 
+# Anjuta Version 1.2.3 
 Compatibility Level: 1 
 
 <PROJECT_DESCRIPTION_START>
@@ -25,7 +25,7 @@ AC_SUBST(ogre_LIBS)
 
 props.file.type=project
 
-anjuta.version=1.2.2
+anjuta.version=1.2.3
 anjuta.compatibility.level=1
 
 project.name=client3d
@@ -80,7 +80,6 @@ module.include.files=\
 	logfile.h\
 	network.h\
 	option.h\
-	player.h\
 	serverfile.h\
 	textwindow.h\
 	zconf.h\
@@ -95,7 +94,11 @@ module.include.files=\
 	object_manager.h\
 	object_npc.h\
 	object_static.h\
-	animate.h
+	animate.h\
+	light_manager.h\
+	particle.h\
+	spell_manager.h\
+	spell_range.h
 
 module.source.name=source
 module.source.type=
@@ -119,13 +122,16 @@ module.source.files=\
 	uncompr.c\
 	zutil.c\
 	sound.cpp\
-	player.cpp\
 	tile_gfx.cpp\
 	tile_map.cpp\
 	object_manager.cpp\
 	object_npc.cpp\
 	object_static.cpp\
-	animate.cpp
+	animate.cpp\
+	light_manager.cpp\
+	particle.cpp\
+	spell_manager.cpp\
+	spell_range.cpp
 
 module.pixmap.name=pixmaps
 module.pixmap.type=
