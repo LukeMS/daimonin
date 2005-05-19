@@ -32,7 +32,6 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "textwindow.h"
 #include "textinput.h"
 #include "network.h"
-#include "player.h"
 #include "tile_map.h"
 
 //#define SHOW_FREE_MEM
@@ -81,9 +80,11 @@ CEvent::CEvent(RenderWindow* win, Camera* cam, MouseMotionListener *mMotionListe
 	ChatWin->Print("  Cursor-> Movement");
 	ChatWin->Print("  1    -> Toggle Weapon");
 	ChatWin->Print("  2    -> Toggle Shield");
-	ChatWin->Print("  3-9  -> Toggle Material_XX_Texture");
-	ChatWin->Print("        (if defined in player.desc)");
+	ChatWin->Print("  3-7  -> Toggle Material_XX_Texture");
+	ChatWin->Print("  8    -> Toggle Helmet");
+	ChatWin->Print("  9    -> Toggle Armor");
 	ChatWin->Print("  A    -> Attack");
+	ChatWin->Print("  C    -> Fireball");	
 	ChatWin->Print("  B    -> Block");
 	ChatWin->Print("  S    -> Slump");
 	ChatWin->Print("  D    -> Death.");
@@ -152,8 +153,7 @@ bool CEvent::frameStarted(const FrameEvent& evt)
 {
     if(mWindow->isClosed()) { return false; }
 
-    player->update(evt);
-    World->translate(player->getPos());
+    
     ObjectManager::getSingleton().update(OBJECT_NPC, evt);
 
 	mIdleTime += evt.timeSinceLastFrame;
@@ -308,64 +308,72 @@ void CEvent::keyPressed(KeyEvent *e)
 		///////////////////////////////////////////////////////////////////////// 
 		// Player Movemment.
 		/////////////////////////////////////////////////////////////////////////
+		
 		case KC_UP:
-	        player->walking( 1);
+	        ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_WALK,  1);
 			break;
 		case KC_DOWN:
-	        player->walking(-1);
+	        ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_WALK, -1);
 			break;
 		case KC_RIGHT:
-	        player->turning(-1);
+	        ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_TURN, -1);
 			break;
 		case KC_LEFT:
-	        player->turning( 1);
+	        ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_TURN,  1);
 			break;
 
 
 		case KC_F1:
-             player->toggleAnimGroup();
+            ObjectManager::getSingleton().toggleAnimGroup(OBJECT_PLAYER);
 			break;
 		case KC_A:
-	        player->toggleAnimation(STATE_ATTACK1);
+	        ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_ANIMATION, STATE_ATTACK1);
 			break;
 		case KC_B:
-	        player->toggleAnimation(STATE_BLOCK1);
+	        ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_ANIMATION, STATE_BLOCK1);
 			break;
+		case KC_C:
+		{
+            const int SPELL_FIREBALL =0;
+	        ObjectManager::getSingleton().castSpell(OBJECT_PLAYER, SPELL_FIREBALL);
+			break;
+        }
 		case KC_S:
-	        player->toggleAnimation(STATE_SLUMP1);
+	        ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_ANIMATION, STATE_SLUMP1);
 			break;
 		case KC_D:
-	        player->toggleAnimation(STATE_DEATH1);
+	        ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_ANIMATION, STATE_DEATH1);
 			break;
 		case KC_H:
-	        player->toggleAnimation(STATE_HIT1);
+	        ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_ANIMATION, STATE_HIT1);
 			break;
 		case KC_1:
-	        player->toggleWeapon(WEAPON_HAND, 1);
+	        ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_WEAPON_HAND, 1);
 			break;
 		case KC_2:
-	        player->toggleWeapon(SHIELD_HAND, 1);
-			break;
-		case KC_3:
-	        player->toggleTexture(0, -1);
-			break;
-		case KC_4:
-	        player->toggleTexture(1, -1);
-			break;
-		case KC_5:
-	        player->toggleTexture(2, -1);
-			break;
-		case KC_6:
-	        player->toggleTexture(3, -1);
-			break;
-		case KC_7:
-	        player->toggleTexture(4, -1);
+	        ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_SHIELD_HAND, 1);
 			break;
 		case KC_8:
-	        player->toggleTexture(5, -1);
+	        ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_HEAD, 1);
 			break;
 		case KC_9:
-	        player->toggleTexture(6, -1);
+	        ObjectManager::getSingleton().toggleMesh(OBJECT_PLAYER, BONE_BODY, 1);
+			break;
+
+		case KC_3:
+	        ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_TEXTURE,0, -1);
+			break;
+		case KC_4:
+	        ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_TEXTURE,1, -1);
+			break;
+		case KC_5:
+	        ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_TEXTURE,2, -1);
+			break;
+		case KC_6:
+	        ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_TEXTURE,3, -1);
+			break;
+		case KC_7:
+	        ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_TEXTURE,4, -1);
 			break;
 
 		case KC_J:
@@ -375,7 +383,7 @@ void CEvent::keyPressed(KeyEvent *e)
             ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_TURN, -1);
 			break;
 		case KC_G:
-            ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_WALK, -1);		
+            ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_WALK, -1);
 			break;
 		case KC_I:
             ObjectManager::getSingleton().keyEvent(OBJECT_NPC, OBJ_ANIMATION, STATE_ATTACK1);			
@@ -390,6 +398,7 @@ void CEvent::keyPressed(KeyEvent *e)
 		///////////////////////////////////////////////////////////////////////// 
 		// Engine settings.
 		/////////////////////////////////////////////////////////////////////////
+/*
 		case KC_C:
 			mSceneDetailIndex = (mSceneDetailIndex+1)%3 ;
 			switch(mSceneDetailIndex)
@@ -399,6 +408,7 @@ void CEvent::keyPressed(KeyEvent *e)
 				case 2 : mCamera->setDetailLevel(SDL_POINTS) ;    break ;
 			}
 			break;
+*/
 		case KC_F:
 			switch(mFiltering)
 			{
@@ -496,11 +506,11 @@ void CEvent::keyReleased(KeyEvent* e)
 		/////////////////////////////////////////////////////////////////////////
 		case KC_UP:
 	 	case KC_DOWN:
-	        player->walking(0);
+	        ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_WALK, 0);
 			break;
 		case KC_RIGHT:
 		case KC_LEFT:
-	        player->turning(0);
+	        ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_TURN, 0);
 			break;
 
 		case KC_J:

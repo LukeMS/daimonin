@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////
 // Male (Fighter)
 /////////////////////////////////////////////////
-material Human_M_Fighter/ArmB
+material Human_M_Fighter/Legs_back
 {
     technique
     {
@@ -9,12 +9,12 @@ material Human_M_Fighter/ArmB
         {
             texture_unit
             {
-                texture Human_M_Fighter_Arms_01.jpg
+                texture Human_M_Fighter_Legs.jpg
             }
         }
     }
 }
-material Human_M_Fighter/ArmF
+material Human_M_Fighter/Legs_Front
 {
     technique
     {
@@ -22,117 +22,13 @@ material Human_M_Fighter/ArmF
         {
             texture_unit
             {
-                texture Human_M_Fighter_Arms_01.jpg
-            }
-        }
-    }
-}
-material Human_M_Fighter/ChestB
-{
-    technique
-    {
-        pass
-        {
-            texture_unit
-            {
-                texture Human_M_Fighter_ChestB_ChainMail.jpg
-            }
-        }
-    }
-}
-material Human_M_Fighter/ChestF
-{
-    technique
-    {
-        pass
-        {
-            texture_unit
-            {
-                texture Human_M_Fighter_ChestF_ChainMail.jpg
-            }
-        }
-    }
-}
-material Human_M_Fighter/HeadF
-{
-    technique
-    {
-        pass
-        {
-	    texture_unit
-            {
-                texture Human_M_Fighter_Face_01.jpg
-            }
-        }
-    }
-}
-material Human_M_Fighter/FeetL
-{
-    technique
-    {
-        pass
-        {
-            texture_unit
-            {
-                texture Human_M_Fighter_FeetL_01.jpg
-            }
-        }
-    }
-}
-material Human_M_Fighter/FeetR
-{
-    technique
-    {
-        pass
-        {
-            texture_unit
-            {
-                texture Human_M_Fighter_FeetR_01.jpg
-            }
-        }
-    }
-}
-material Human_M_Fighter/HeadB
-{
-    technique
-    {
-        pass
-        {
-            texture_unit
-            {
-                texture Human_M_Fighter_Hair_01.jpg
-            }
-        }
-    }
-}
-material Human_M_Fighter/HandR
-{
-    technique
-    {
-        pass
-        {
-            texture_unit
-            {
-                texture Human_M_Fighter_Hands_01.jpg
-            }
-        }
-    }
-}
-material Human_M_Fighter/HandL
-{
-    technique
-    {
-        pass
-        {
-            texture_unit
-            {
-                texture Human_M_Fighter_Hands_01.jpg
+                texture Human_M_Fighter_Legs.jpg
             }
         }
     }
 }
 
-material Human_M_Fighter/LegsB
+material Human_M_Fighter/Back
 {
     technique
     {
@@ -140,12 +36,13 @@ material Human_M_Fighter/LegsB
         {
             texture_unit
             {
-                texture Human_M_Fighter_Legs_01.jpg
+                texture Human_M_Fighter_chainmail_back.jpg
             }
         }
     }
 }
-material Human_M_Fighter/LegsF
+
+material Human_M_Fighter/Chest
 {
     technique
     {
@@ -153,11 +50,156 @@ material Human_M_Fighter/LegsF
         {
             texture_unit
             {
-                texture Human_M_Fighter_Legs_01.jpg
+                texture Human_M_Fighter_chainmail_front.jpg
             }
         }
     }
 }
+
+material Human_M_Fighter/Head_back
+{
+    technique
+    {
+        pass
+        {
+            texture_unit
+            {
+                texture Human_M_Fighter_Hair.jpg
+            }
+        }
+    }
+}
+
+material Human_M_Fighter/Head_front
+{
+    technique
+    {
+        pass
+        {
+            texture_unit
+            {
+                texture Human_M_Fighter_face.jpg
+            }
+        }
+    }
+}
+
+material Human_M_Fighter/Hand_Right
+{
+    technique
+    {
+        pass
+        {
+            texture_unit
+            {
+                texture Human_M_Fighter_gloves.jpg
+            }
+        }
+    }
+}
+
+material Human_M_Fighter/Right_Arm_Back
+{
+    technique
+    {
+        pass
+        {
+            texture_unit
+            {
+                texture Human_M_Fighter_Arms.jpg
+            }
+        }
+    }
+}
+
+
+material Human_M_Fighter/Right_Arm_Front
+{
+    technique
+    {
+        pass
+        {
+            texture_unit
+            {
+                texture Human_M_Fighter_Arms.jpg
+            }
+        }
+    }
+}
+
+
+material Human_M_Fighter/Shoe_Right
+{
+    technique
+    {
+        pass
+        {
+            texture_unit
+            {
+                texture Human_M_Fighter_shoe_R.jpg
+            }
+        }
+    }
+}
+
+material Human_M_Fighter/Hand_Left
+{
+    technique
+    {
+        pass
+        {
+            texture_unit
+            {
+                texture Human_M_Fighter_gloves.jpg
+            }
+        }
+    }
+}
+
+material Human_M_Fighter/Left_Arm_Back
+{
+    technique
+    {
+        pass
+        {
+            texture_unit
+            {
+                texture Human_M_Fighter_Arms.jpg
+            }
+        }
+    }
+}
+
+
+material Human_M_Fighter/Left_Arm_Front
+{
+    technique
+    {
+        pass
+        {
+            texture_unit
+            {
+                texture Human_M_Fighter_Arms.jpg 
+            }
+        }
+    }
+}
+
+
+material Human_M_Fighter/Shoe_Left
+{
+    technique
+    {
+        pass
+        {
+            texture_unit
+            {
+                texture Human_M_Fighter_shoe_L.jpg
+            }
+        }
+    }
+}
+
 
 //////////////////////////////////////////////////
 // Female (Fighter)

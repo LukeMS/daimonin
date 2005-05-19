@@ -23,7 +23,6 @@ http://www.gnu.org/copyleft/lesser.txt.
 
 #include "define.h"
 #include "event.h"
-#include "player.h"
 #include "client.h"
 #include "network.h"
 #include "logfile.h"
@@ -32,6 +31,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "option.h"
 #include "sound.h"
 #include "object_manager.h"
+#include "spell_manager.h"
 #include "tile_gfx.h"
 #include "tile_map.h"
 
@@ -59,7 +59,6 @@ void DaimoninClient::go(void)
     // Clean up.
     /////////////////////////////////////////////////////////////////////////
 	TileMap::getSingleton().freeRecources();
-	if (player) { delete player; }
 	if (Event)  { delete Event;  }
 	if (mRoot)  { delete mRoot;  }
 //    Network::getSingleton().freeRecources();
@@ -158,12 +157,12 @@ void DaimoninClient::createScene(void)
 	Event->World = mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(0, 0, 0), Quaternion(1.0,0.0,0.0,0.0));
 //	Event->World->setPosition(0,0,0);
     mSceneMgr->setAmbientLight(ColourValue(0, 0, 0));
-//    mSceneMgr->setAmbientLight(ColourValue(1.0, 1.0, 1.0));
+    mSceneMgr->setAmbientLight(ColourValue(1.0, 1.0, 1.0));
 
     Light *light;
     light = mSceneMgr->createLight("Light_Vol");
     light->setType(Light::LT_POINT );
-    light->setPosition(-100, 100, 500);
+    light->setPosition(-100, 200, 800);
 //    light->setDiffuseColour(1.0, 1.0, 1.0);
 	light->setSpecularColour(1.0, 1.0, 1.0);
     Event->World->attachObject(light);
@@ -185,14 +184,40 @@ void DaimoninClient::createScene(void)
 	Event->setLightMember(light, 1);
 	light->setVisible(false);
 
-    player = new Player(mSceneMgr, mSceneMgr->getRootSceneNode(), "player.desc");
+	SpellManager::getSingleton().init(mSceneMgr, Event->World);
 	ObjectManager::getSingleton().init(mSceneMgr, Event->World);
-    ObjectManager::getSingleton().addObject(OBJECT_NPC   , "Animal_N_Scorpion.desc", Vector3(0,0,0));
-    ObjectManager::getSingleton().addObject(OBJECT_NPC   , "Animal_M_Deer.desc", Vector3(0,0,0));    
-    ObjectManager::getSingleton().addObject(OBJECT_STATIC, "tree01.mesh", Vector3(  40,  -8, 7));
-    ObjectManager::getSingleton().addObject(OBJECT_STATIC, "tree01.mesh", Vector3( 140,  -8, 6));
-    ObjectManager::getSingleton().addObject(OBJECT_STATIC, "tree01.mesh", Vector3( -40, -88, 9));
-    ObjectManager::getSingleton().addObject(OBJECT_STATIC, "tree01.mesh", Vector3(-140,-208, 8));
-    ObjectManager::getSingleton().addObject(OBJECT_STATIC, "tree02.mesh", Vector3( 180,-108, 11));    
+    string descFile = FILE_WORLD_DESC;
+	LogFile::getSingleton().Info("Parse description file %s...", descFile.c_str());
+	if (!(Option::getSingleton().openDescFile(descFile.c_str())))
+	{
+		LogFile::getSingleton().Success(false);
+		LogFile::getSingleton().Error("CRITICAL: description file was not found!\n");
+		return;
+	}
+	LogFile::getSingleton().Success(true);
+
+    string strTemp, strMesh;
+    int i=0;
+
+    while(1)
+    { 
+        if (!(Option::getSingleton().openDescFile(descFile.c_str()))) { return; }   
+        if (!(Option::getSingleton().getDescStr("Type", strTemp, ++i))) {break; }
+        Option::getSingleton().getDescStr("MeshName", strMesh,i);
+        if (strTemp == "npc")
+        {
+            ObjectManager::getSingleton().addObject(OBJECT_NPC, strMesh.c_str(), Vector3(0,0,0));
+        }
+        else
+        {
+            Option::getSingleton().getDescStr("StartX", strTemp,i);
+            Real posX = atof(strTemp.c_str());
+            Option::getSingleton().getDescStr("StartY", strTemp,i);
+            Real posY = atof(strTemp.c_str());
+            Option::getSingleton().getDescStr("StartZ", strTemp,i);
+            Real posZ = atof(strTemp.c_str());
+            ObjectManager::getSingleton().addObject(OBJECT_STATIC, strMesh.c_str(), Vector3(posX,posY,posZ));        
+        }
+    }
 	TileMap::getSingleton().Init(mSceneMgr, mSceneMgr->getRootSceneNode());
 }

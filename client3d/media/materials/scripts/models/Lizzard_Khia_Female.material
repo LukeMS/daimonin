@@ -1,0 +1,44 @@
+material lizard_khia/Material_#106
+{
+    technique
+    {
+        pass
+        {
+
+            texture_unit
+            {
+                texture Lizards_Khia_Female_Body.jpg 
+            }
+        }
+    }
+}
+
+material lizard_khia/amulet
+{
+    technique
+    {
+        pass
+        {
+
+            texture_unit
+            {
+                texture Lizards_Khia_Female_Amulet.jpg
+            }
+        }
+    }
+}
+
+material lizard_khia/Weapon
+{
+    technique
+    {
+        pass
+        {
+
+            texture_unit
+            {
+                texture Lizards_Khia_Female_Weapon.jpg
+            }
+        }
+    }
+}

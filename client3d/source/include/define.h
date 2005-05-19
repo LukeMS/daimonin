@@ -46,6 +46,7 @@ const char FILE_OPTIONS[]				= "./options.dat";
 
 const char DIR_MODEL_DESCRIPTION[]   	= "./media/models/";
 const char FILE_PLAYER_DESC[]			= "./media/models/player.desc";
+const char FILE_WORLD_DESC[]            = "./media/models/world.desc";
 
 const char DIR_SAMPLES[]                = "./media/sound/";
 const char FILE_MUSIC_001[]             = "./media/sound/invtro94.s3m";

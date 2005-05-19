@@ -22,21 +22,30 @@ http://www.gnu.org/copyleft/lesser.txt.
 */
 
 #include "object_npc.h"
+#include "particle.h"
 #include "sound.h"
 #include "option.h"
 #include "logfile.h"
 #include "textwindow.h"
+#include "spell_manager.h"
+#include "event.h"
 
 //=================================================================================================
 // Init all static Elemnts.
 //=================================================================================================
-int NPC::mInstanceNr = 0;
+unsigned int NPC::mInstanceNr = 0; // mInstanceNr = Player's Hero
+static ParticleFX *tempPFX =0;
+
 
 //=================================================================================================
 // Init the model from the description file.
 //=================================================================================================
 NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename)
 {
+    if (!mInstanceNr) tempPFX = new ParticleFX(mNode, "SwordGlow", "Particle/SwordGlow");
+
+
+    thisNPC = mInstanceNr;
     mDescFile = DIR_MODEL_DESCRIPTION;
     mDescFile += desc_filename;
 	if (!mInstanceNr) { LogFile::getSingleton().Headline("Init Actor Models"); }
@@ -59,8 +68,8 @@ NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename)
 	Real posY = atof(strTemp.c_str());
 	Option::getSingleton().getDescStr("StartZ", strTemp);
 	Real posZ = atof(strTemp.c_str());
-	mNode = Node->createChildSceneNode(Vector3(posX, posY, posZ), Quaternion(1.0,0.0,0.0,0.0));
-
+    if (!mInstanceNr) { mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(0,0,0) , Quaternion(1.0,0.0,0.0,0.0)); }
+    else { mNode = Node->createChildSceneNode(Vector3(posX, posY, posZ), Quaternion(1.0,0.0,0.0,0.0)); }
 	Option::getSingleton().getDescStr("Facing", strTemp);
 	mFacing = Radian(atof(strTemp.c_str()));
     mNode->yaw(mFacing);
@@ -76,7 +85,9 @@ NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename)
 	mTurning =0;
 	mWalking =0;
 	mEntityWeapon =0;
-	mEntityShield =0;	
+	mEntityShield =0;
+    mEntityArmor  =0;	
+	mEntityHelmet =0;	
 	++mInstanceNr;
 	return;
 }
@@ -125,61 +136,133 @@ void NPC::toggleTexture(int pos, int texture)
 //=================================================================================================
 // Toggle npc equipment.
 //=================================================================================================
-void  NPC::toggleWeapon(int Hand, int WeaponNr)
+void  NPC::toggleMesh(int Bone, int WeaponNr)
 {
 	if (!(Option::getSingleton().openDescFile(mDescFile.c_str())))
 	{
 		LogFile::getSingleton().Error("CRITICAL: description file: '%s' was not found!\n", mDescFile.c_str());
 		return;
 	}
-	static int mWeapon=0, mShield=0; // testing -> delete me!
+	static int mWeapon=0, mShield=0, mHelmet=0, mArmor =0; // testing -> delete me!
 	string mStrTemp;
-	if (Hand == WEAPON_HAND)
+    
+	switch (Bone)
 	{
-		WeaponNr = ++mWeapon; // testing -> delete me!
-		if (mEntityWeapon)
-		{
-			mEntityNPC->detachObjectFromBone("weapon");
-			mSceneMgr->removeEntity(mEntityWeapon);
-			mEntityWeapon =0;
-		}
-		if (Option::getSingleton().getDescStr("M_Name_Weapon", mStrTemp, WeaponNr))
-		{
-			mEntityWeapon = mSceneMgr->createEntity("weapon", mStrTemp);
-			Option::getSingleton().getDescStr("StartX_Weapon", mStrTemp, WeaponNr);
-			Real posX = atof(mStrTemp.c_str());
-			Option::getSingleton().getDescStr("StartY_Weapon", mStrTemp, WeaponNr);
-			Real posY = atof(mStrTemp.c_str());
-			Option::getSingleton().getDescStr("StartZ_Weapon", mStrTemp, WeaponNr);
-			Real posZ = atof(mStrTemp.c_str());
-			Option::getSingleton().getDescStr("Bone_Right_Hand", mStrTemp);
-		    mEntityNPC->attachObjectToBone(mStrTemp, mEntityWeapon, Quaternion(1.0, 0.0, 0.0, 0.0), Vector3(posX, posY, posZ));
-		}
-		else mWeapon =0;  // testing -> delete me!
+        case BONE_WEAPON_HAND:
+            WeaponNr = ++mWeapon; // testing -> delete me!
+            if (mEntityWeapon)
+            {
+                mEntityNPC->detachObjectFromBone("weapon");
+                mSceneMgr->removeEntity(mEntityWeapon);
+                mEntityWeapon =0;
+            }
+            if (Option::getSingleton().getDescStr("M_Name_Weapon", mStrTemp, WeaponNr))
+            {
+                mEntityWeapon = mSceneMgr->createEntity("weapon", mStrTemp);
+                Option::getSingleton().getDescStr("StartX_Weapon", mStrTemp, WeaponNr);
+                Real posX = atof(mStrTemp.c_str());
+                Option::getSingleton().getDescStr("StartY_Weapon", mStrTemp, WeaponNr);
+                Real posY = atof(mStrTemp.c_str());
+                Option::getSingleton().getDescStr("StartZ_Weapon", mStrTemp, WeaponNr);
+                Real posZ = atof(mStrTemp.c_str());
+                Option::getSingleton().getDescStr("Bone_Right_Hand", mStrTemp);
+                mEntityNPC->attachObjectToBone(mStrTemp, mEntityWeapon, Quaternion(1.0, 0.0, 0.0, 0.0), Vector3(posX, posY, posZ));
+                if (WeaponNr==1)
+                {
+                    mEntityNPC->attachObjectToBone(mStrTemp, tempPFX->getParticleFX(), Quaternion(1.0, 0.0, 0.0, 0.0), Vector3(posX, posY, posZ+5));
+                }
+                if (WeaponNr==2)
+                {
+                    mEntityNPC->detachObjectFromBone("SwordGlow");
+                    //delete tempPFX;
+//                    tempPFX =0;                   
+//                    SceneNode  *mNode1 = mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(30, 30, 0), Quaternion(1.0,0.0,0.0,0.0));
+//                    mNode1->attachObject(tempPFX->getParticleFX());
+                }
+/*    
+        ParticleSystem* pSys1 = ParticleSystemManager::getSingleton().createSystem("SwordGlow", "Particle/SwordGlow");
+        SceneNode *node = mSceneMgr->getRootSceneNode()->createChildSceneNode();
+        node->attachObject(pSys1);
+*/
+       
+                
+            }
+            else mWeapon =0;  // testing -> delete me!
+            break;
+
+        case BONE_SHIELD_HAND:        
+            WeaponNr = ++mShield; // testing -> delete me!
+            if (mEntityShield)
+            {
+                mEntityNPC->detachObjectFromBone("shield");
+                mSceneMgr->removeEntity(mEntityShield);
+                mEntityShield =0;
+            }
+            if (Option::getSingleton().getDescStr("M_Name_Shield", mStrTemp, WeaponNr))
+            {
+                mEntityShield = mSceneMgr->createEntity("shield", mStrTemp);           //    oben  links  vorne
+                Option::getSingleton().getDescStr("StartX_Shield", mStrTemp, WeaponNr);
+                Real posX = atof(mStrTemp.c_str());
+                Option::getSingleton().getDescStr("StartY_Shield", mStrTemp, WeaponNr);
+                Real posY = atof(mStrTemp.c_str());
+                Option::getSingleton().getDescStr("StartZ_Shield", mStrTemp, WeaponNr);
+                Real posZ = atof(mStrTemp.c_str());
+                Option::getSingleton().getDescStr("Bone_Left_Hand", mStrTemp);
+                mEntityNPC->attachObjectToBone(mStrTemp, mEntityShield, Quaternion(1.0, 0.0, 0.0, 0.0), Vector3(posX, posY, posZ));
+            }
+            else mShield =0;  // testing -> delete me!
+            break;
+
+        case BONE_HEAD:        
+            WeaponNr = ++mHelmet; // testing -> delete me!
+            if (mEntityHelmet)
+            {
+                mEntityNPC->detachObjectFromBone("helmet");
+                mSceneMgr->removeEntity(mEntityHelmet);
+                mEntityHelmet =0;
+            }
+            if (Option::getSingleton().getDescStr("M_Name_Helmet", mStrTemp, WeaponNr))
+            {
+                mEntityHelmet = mSceneMgr->createEntity("helmet", mStrTemp);           //    oben  links  vorne
+                Option::getSingleton().getDescStr("StartX_Helmet", mStrTemp, WeaponNr);
+                Real posX = atof(mStrTemp.c_str());
+                Option::getSingleton().getDescStr("StartY_Helmet", mStrTemp, WeaponNr);
+                Real posY = atof(mStrTemp.c_str());
+                Option::getSingleton().getDescStr("StartZ_Helmet", mStrTemp, WeaponNr);
+                Real posZ = atof(mStrTemp.c_str());
+                Option::getSingleton().getDescStr("Bone_Head", mStrTemp);
+                mEntityNPC->attachObjectToBone(mStrTemp, mEntityHelmet, Quaternion(1.0, 0.0, 0.0, 0.0), Vector3(posX, posY, posZ));
+            }
+            else mHelmet =0;  // testing -> delete me!
+            break;
+
+        case BONE_BODY:        
+            WeaponNr = ++mArmor; // testing -> delete me!
+            if (mEntityArmor)
+            {
+                mEntityNPC->detachObjectFromBone("armor");
+                mSceneMgr->removeEntity(mEntityArmor);
+                mEntityArmor =0;
+            }
+            if (Option::getSingleton().getDescStr("M_Name_Armor", mStrTemp, WeaponNr))
+            {
+                mEntityArmor = mSceneMgr->createEntity("armor", mStrTemp);           //    oben  links  vorne
+                Option::getSingleton().getDescStr("StartX_Armor", mStrTemp, WeaponNr);
+                Real posX = atof(mStrTemp.c_str());
+                Option::getSingleton().getDescStr("StartY_Armor", mStrTemp, WeaponNr);
+                Real posY = atof(mStrTemp.c_str());
+                Option::getSingleton().getDescStr("StartZ_Armor", mStrTemp, WeaponNr);
+                Real posZ = atof(mStrTemp.c_str());
+                Option::getSingleton().getDescStr("Bone_Body", mStrTemp);
+                mEntityNPC->attachObjectToBone(mStrTemp, mEntityArmor, Quaternion(1.0, 0.0, 0.0, 0.0), Vector3(posX, posY, posZ));
+            }
+            else mArmor =0;  // testing -> delete me!
+            break;
+            
 	}
-	else
-	{
-		WeaponNr = ++mShield; // testing -> delete me!
-		if (mEntityShield)
-		{
-			mEntityNPC->detachObjectFromBone("shield");
-			mSceneMgr->removeEntity(mEntityShield);
-			mEntityShield =0;
-		}
-		if (Option::getSingleton().getDescStr("M_Name_Shield", mStrTemp, WeaponNr))
-		{
-			mEntityShield = mSceneMgr->createEntity("shield", mStrTemp);           //    oben  links  vorne
-			Option::getSingleton().getDescStr("StartX_Shield", mStrTemp, WeaponNr);
-			Real posX = atof(mStrTemp.c_str());
-			Option::getSingleton().getDescStr("StartY_Shield", mStrTemp, WeaponNr);
-			Real posY = atof(mStrTemp.c_str());
-			Option::getSingleton().getDescStr("StartZ_Shield", mStrTemp, WeaponNr);
-			Real posZ = atof(mStrTemp.c_str());
-			Option::getSingleton().getDescStr("Bone_Left_Hand", mStrTemp);
-		    mEntityNPC->attachObjectToBone(mStrTemp, mEntityShield, Quaternion(1.0, 0.0, 0.0, 0.0), Vector3(posX, posY, posZ));
-		}
-		else mShield =0;  // testing -> delete me!
-	}
+
+
+
 }
 
 //=================================================================================================
@@ -200,17 +283,30 @@ void NPC::update(const FrameEvent& event)
 		{
             // just a test...
 			mAnim->toggleAnimation(STATE_WALK1);
-		    mFacing += Radian(event.timeSinceLastFrame * mAnim->getTurnSpeed() * mWalking);
-			mNode->yaw(Radian(event.timeSinceLastFrame * mAnim->getTurnSpeed() * mWalking));
-		
 	        mTranslateVector.y = -sin(mFacing.valueRadians()+mFacingOffset)* mAnim->getAnimSpeed() * mWalking;
 		    mTranslateVector.x = -cos(mFacing.valueRadians()+mFacingOffset)* mAnim->getAnimSpeed() * mWalking;
-            mTranslateVector.z =0;
-            mNode->translate(mTranslateVector);
+            if(thisNPC)
+            {
+                mFacing += Radian(event.timeSinceLastFrame * mAnim->getTurnSpeed() * mWalking);
+                mNode->yaw(Radian(event.timeSinceLastFrame * mAnim->getTurnSpeed() * mWalking));
+                mNode->translate(mTranslateVector);
+                
+            }
+            else Event->setWorldPos(mTranslateVector);
+            
 		}
 		else 
 		{
             mAnim->toggleAnimation(STATE_IDLE1);
         }
 	}
+}
+
+//=================================================================================================
+// Cast a spell.
+//=================================================================================================
+void NPC::castSpell(int spell)
+{
+//  if (!askServer.AllowedToCast(spell)) return;
+    SpellManager::getSingleton().addObject(spell, thisNPC);
 }

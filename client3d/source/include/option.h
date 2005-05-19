@@ -119,7 +119,7 @@ class Option
 
 	bool openDescFile(const char *filename);
     void closeDescFile();
-	bool getDescStr(const char *descrEntry, string &strBuffer, int nr=0);
+	bool getDescStr(const char *descrEntry, string &strBuffer, unsigned int nr=0);
     bool Init();
 
   private:

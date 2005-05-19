@@ -1,0 +1,13 @@
+material Body
+{
+    technique
+    {
+        pass
+        {
+            texture_unit
+            {
+                texture Armor_body.jpg 
+            }
+        }
+    }
+}

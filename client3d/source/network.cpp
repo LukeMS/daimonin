@@ -880,7 +880,7 @@ void Network::DoClient()
 			#ifdef DEBUG_ON
 			LogFile::getSingleton().Info("command: BINARY_CMD_MAP2 (%d)\n", mInbuf.buf[2]); 
 			#endif
-			// Map2Cmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+			Map2Cmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case  3: // BINARY_CMD_DRAWINFO
             #ifdef DEBUG_ON

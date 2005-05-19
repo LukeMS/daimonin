@@ -26,7 +26,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "define.h"
 #include "string.h"
 #include "logfile.h"
-#include "player.h"
+#include "option.h"
 #include "event.h"
 
 using namespace Ogre;
@@ -37,11 +37,15 @@ using namespace Ogre;
 const int  TEX_FILE_SIZE= 1024; // Texture-file format: 1024*1024 pixel (32bit).
 const int  TILES_WIDTH  = 80;
 const int  TILES_HEIGHT = 40;
-const Real TEXTURE_SIZE =   64.0 / TEX_FILE_SIZE;  // 64 pixel per tile.
+const Real TEXTURE_SIZE = 64.0 / TEX_FILE_SIZE;  // 64 pixel per tile.
 const int  TILES_SUM_X  = 1024   / TILES_WIDTH;
 const int  TILES_SUM_Y  =  768   / TILES_HEIGHT*2;
 const int  SUM_TILES    = TILES_SUM_X * TILES_SUM_Y;
 const Real TILES_DEEP   = 20; // z-pos 
+const int SKIP_FRAMES = 5000;
+
+
+
 
 const int  VERTEX_PER_TRIANGLE = 3;
 const int  VERTEX_PER_QUAD = 10 * 4;
@@ -52,14 +56,14 @@ const int  SUM_VERTEX = SUM_TILES * VERTEX_PER_QUAD;
 const int myMAP_SIZE = 8; // MUST be 2^X.
 const int Layer0[myMAP_SIZE][myMAP_SIZE] =
 {
-{0,1,2,3,4,3,2,1},
+{0,1,2,2,4,2,2,1},
 {0,2,2,2,2,2,2,0},
-{3,1,1,1,1,1,1,3},
+{2,1,1,1,1,1,1,2},
 {2,4,4,0,0,4,4,2},
-{3,2,2,0,0,2,2,3},
+{2,2,2,0,0,2,2,2},
 {1,1,1,2,1,1,1,1},
 {4,4,4,2,4,4,4,2},
-{3,3,3,2,3,3,3,3}
+{2,2,2,2,2,2,2,2}
 };
 
 const int Layer1[myMAP_SIZE][myMAP_SIZE] =
@@ -288,11 +292,10 @@ void TileMap::set_map_ext(int x, int y, int layer, int ext, int probe)
 void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, char *name)
 {
     register MapCell *map;
-    int             xreal, yreal, i;
+    int xreal, yreal, i;
 
     cells[x][y].faces[layer] = face;
-    if (!face)
-        ext = 0;
+    if (!face) { ext = 0; }
     if (ext != -1) { cells[x][y].ext[layer] = ext; }
     cells[x][y].pos[layer] = pos;
     strcpy(cells[x][y].pname[layer], name);
@@ -303,14 +306,14 @@ void TileMap::set_map_face(int x, int y, int layer, int face, int pos, int ext, 
         return;
     map = TheMapCache + (yreal * MapData.xlen * 3) + xreal;
     map->fog_of_war	= false;
-    map->darkness	= cells[x][y].darkness;
+    map->darkness = cells[x][y].darkness;
 
     for (i = 0; i < MAXFACES; i++) // lets update the whole cell for secure
     {
-        map->faces[i]	= cells[x][y].faces[i];
-        map->ext[i]		= cells[x][y].ext[i];
-        map->pos[i]		= cells[x][y].pos[i];
-        map->probe[i]	= cells[x][y].probe[i];
+        map->faces[i]= cells[x][y].faces[i];
+        map->ext[i]  = cells[x][y].ext[i];
+        map->pos[i]	 = cells[x][y].pos[i];
+        map->probe[i]= cells[x][y].probe[i];
         strcpy(map->pname[i], cells[x][y].pname[i]);
     }
 }
@@ -369,9 +372,6 @@ void TileMap::set_map_darkness(int x, int y, unsigned char darkness)
 }
 
 
-const int SKIP_FRAMES = 5000;
-
-
 //=================================================================================================
 // Player walked off a tile. Scroll to next tile.
 //=================================================================================================
@@ -416,16 +416,28 @@ void TileMap::draw(void)
             pVertex[27] = 0.0;
             pVertex[36] = texPosX * TEXTURE_SIZE;
             pVertex[37] = 0.0;
-            // Layer 1
-            texPosX  = Layer1[(y+offsetY)&7][(x+offsetX)&7];		            
-            pVertex[ 8] = texPosX * TEXTURE_SIZE;
-            pVertex[ 9] = TEXTURE_SIZE;
-            pVertex[18] = texPosX * TEXTURE_SIZE + TEXTURE_SIZE;
-            pVertex[19] = TEXTURE_SIZE;
-            pVertex[28] = texPosX * TEXTURE_SIZE + TEXTURE_SIZE;
+/*
+            // Mask
+            pVertex[ 8] = 0.0;
+            pVertex[ 9] = 1.0;
+            pVertex[18] = 1.0;
+            pVertex[19] = 1.0;
+            pVertex[28] = 1.0;
             pVertex[29] = 0.0;
-            pVertex[38] = texPosX * TEXTURE_SIZE;
+            pVertex[38] = 0.0;
             pVertex[39] = 0.0;
+*/
+/*            
+            // Mask
+            pVertex[ 8] = 0.0;
+            pVertex[ 9] = 0.0;
+            pVertex[18] = 0.0;
+            pVertex[19] = 0.0;
+            pVertex[28] = 0.0;
+            pVertex[29] = 0.0;
+            pVertex[38] = 0.0;
+            pVertex[39] = 0.0;
+*/
 
             pVertex+=VERTEX_PER_QUAD;
 		}
@@ -706,6 +718,24 @@ TileMap::~TileMap()
 void TileMap::Init(SceneManager *SceneMgr, SceneNode *Node)
 {
     /////////////////////////////////////////////////////////////////////////
+    // Do we use TileBlending ?
+    /////////////////////////////////////////////////////////////////////////
+    int blending   = 0;
+    std::string descFile = FILE_WORLD_DESC;
+	LogFile::getSingleton().Info("Parse description file %s...", descFile.c_str());
+	if (!(Option::getSingleton().openDescFile(descFile.c_str())))
+	{
+		LogFile::getSingleton().Success(false);
+		LogFile::getSingleton().Error("CRITICAL: description file was not found!\n");
+		return;
+	}
+	LogFile::getSingleton().Success(true);
+    std::string strTemp;
+    Option::getSingleton().openDescFile(descFile.c_str());
+    Option::getSingleton().getDescStr("TileBlending", strTemp);
+	blending = atoi(strTemp.c_str());
+
+    /////////////////////////////////////////////////////////////////////////
     // Create a mesh containing 1 submesh.
 	/////////////////////////////////////////////////////////////////////////
 	// Here we have an example for the mingw/devcpp crew - try this (doesn't work here):
@@ -762,7 +792,7 @@ void TileMap::Init(SceneManager *SceneMgr, SceneNode *Node)
             *pVertex++ = 0.0; *pVertex++ = 0.0; *pVertex++ = 1.0;
             // Textures Layer 0...n. 
             *pVertex++ = 0.0; *pVertex++ = 0.0;
-            *pVertex++ = 0.0; *pVertex++ = 0.0;
+            *pVertex++ = 0.0; *pVertex++ = 1.0;
 
             // Position right.
             *pVertex++ = posX;
@@ -772,7 +802,7 @@ void TileMap::Init(SceneManager *SceneMgr, SceneNode *Node)
             *pVertex++ = 0.0; *pVertex++ = 0.0; *pVertex++ = 1.0;
             // Textures Layer 0...n. 
             *pVertex++ = 0.0; *pVertex++ = 0.0; 
-            *pVertex++ = 0.0; *pVertex++ = 0.0;
+            *pVertex++ = 1.0; *pVertex++ = 1.0;
 
             // Position top.
             *pVertex++ = posX-TILES_WIDTH/2;
@@ -782,7 +812,7 @@ void TileMap::Init(SceneManager *SceneMgr, SceneNode *Node)
             *pVertex++ = 0.0; *pVertex++ = 0.0; *pVertex++ = 1.0;
             // Textures Layer 0...n. 
             *pVertex++ = 0.0; *pVertex++ = 0.0; 
-            *pVertex++ = 0.0; *pVertex++ = 0.0;
+            *pVertex++ = 1.0; *pVertex++ = 0.0;
 
             // Position left.
             *pVertex++ = posX-TILES_WIDTH;
@@ -794,11 +824,13 @@ void TileMap::Init(SceneManager *SceneMgr, SceneNode *Node)
             *pVertex++ = 0.0; *pVertex++ = 0.0;
             *pVertex++ = 0.0; *pVertex++ = 0.0;
 
-            posX -= TILES_WIDTH;
+            posX -= TILES_WIDTH-blending;
+            //posX -= TILES_WIDTH;
 		}
-        posY-= TILES_HEIGHT-TILES_DEEP;
+        posY-= TILES_HEIGHT-TILES_DEEP-blending/2;
 		posX = startX;
-		if (!(y&1)) posX+= TILES_WIDTH/2;
+		//if (!(y&1)) posX+= TILES_WIDTH/2-blending;
+		if (!(y&1)) { posX+= (TILES_WIDTH-blending)/2; }//posY+=-blending/2; }
 	}
 	mpVertexBuf->unlock();
 

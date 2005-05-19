@@ -103,12 +103,13 @@ class TileGfx
 	_bmaptype *find_bmap(char *name);
 	int load_picture_from_pack(int num);
 	Image &getSprite(int num) { return FaceList[num].sprite; }
-	
+
+	int bmaptype_table_size;	
   private:
     ////////////////////////////////////////////////////////////
 	// Variables.
     ////////////////////////////////////////////////////////////
-	int bmaptype_table_size;
+
 
     ////////////////////////////////////////////////////////////
 	// Functions.

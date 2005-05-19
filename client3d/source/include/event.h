@@ -23,10 +23,8 @@ http://www.gnu.org/copyleft/lesser.txt.
 
 #ifndef EVENT_H
 #define EVENT_H
-
+#include <Ogre.h>
 #include <OgreEventListeners.h>
-
-#include "player.h"
 
 using namespace Ogre;
 
@@ -58,6 +56,11 @@ class CEvent: public FrameListener, public KeyListener, public MouseMotionListen
     ~CEvent() ;
     
     const Vector3 &getWorldPos()  {  return World->getPosition(); }
+	void setWorldPos(Vector3 &pos)
+	{ 
+      //  World->translate(pos);
+        World->setPosition(World->getPosition()+pos);
+    }
 	void setLightMember(Light *light, int nr) { mLight[nr] = light;}
 	void setResolutionMember(int SreenWidth, int SreenHeight)
 	{ 
