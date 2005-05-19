@@ -1921,20 +1921,20 @@ void fix_monster(object *op)
 
     base = insert_base_info_object(op); /* will insert or/and return base info */
 
-    CLEAR_FLAG(op, FLAG_READY_BOW);
-    for (tmp = op->inv; tmp; tmp = tmp->below)
-    {
-        /* check for bow and use it! */
-        if (tmp->type == BOW)
-        {
-            if (QUERY_FLAG(op, FLAG_USE_BOW))
-            {
-                SET_FLAG(tmp, FLAG_APPLIED);
-                SET_FLAG(op, FLAG_READY_BOW);
-            }
-            else
-                CLEAR_FLAG(tmp, FLAG_APPLIED);
-        }
+    CLEAR_FLAG(op, FLAG_READY_BOW);	
+	for (tmp = op->inv; tmp; tmp = tmp->below)
+	{
+		/* easy going: we always use the first bow we find
+		 * Dont waste cpu cycles to look for quality differences - so no need for apply flag
+		 */
+		if (tmp->type == BOW && QUERY_FLAG(op, FLAG_CAN_USE_BOW))
+		{
+			SET_FLAG(op, FLAG_READY_BOW);
+			SET_FLAG(tmp, FLAG_APPLIED);
+		}
+		else if (tmp->type == ABILITY)
+			SET_FLAG(op, FLAG_READY_SPELL);	
+			
     }
 
     /* pre adjust */

@@ -3319,7 +3319,6 @@ int apply_special(object *who, object *op, int aflags)
               }
               (void) change_abil(who, op);
               who->chosen_skill = NULL;
-              CLEAR_FLAG(who, FLAG_READY_SKILL);
               buf[0] = '\0';
               break;
 
@@ -3348,15 +3347,7 @@ int apply_special(object *who, object *op, int aflags)
               }
               else
               {
-                  switch (op->type)
-                  {
-                      case ROD:
-                      case HORN:
-                      case WAND:
-                        CLEAR_FLAG(who, FLAG_READY_RANGE); break;
-                      case BOW:
-                        CLEAR_FLAG(who, FLAG_READY_BOW); break;
-                  }
+				  CLEAR_FLAG(who, FLAG_READY_BOW); break;
               }
               break;
             default:
@@ -3364,9 +3355,16 @@ int apply_special(object *who, object *op, int aflags)
               break;
         }
         if (buf[0] != '\0')
-            new_draw_info(NDI_UNIQUE, 0, who, buf);
-        fix_player(who);
-
+		{
+            if (who->type == PLAYER)
+			{
+				new_draw_info(NDI_UNIQUE, 0, who, buf);
+				fix_player(who);
+			}
+			else
+				fix_monster(who);
+		}
+			
         if (!(aflags & AP_NO_MERGE))
         {
             tag_t   del_tag = op->count;
@@ -3541,7 +3539,6 @@ int apply_special(object *who, object *op, int aflags)
           SET_FLAG(op, FLAG_APPLIED);
           (void) change_abil(who, op);
           who->chosen_skill = op;
-          SET_FLAG(who, FLAG_READY_SKILL);
           buf[0] = '\0';
           break;
 
@@ -3568,15 +3565,7 @@ int apply_special(object *who, object *op, int aflags)
           }
           else
           {
-              switch (op->type)
-              {
-                  case ROD:
-                  case HORN:
-                  case WAND:
-                    SET_FLAG(who, FLAG_READY_RANGE); break;
-                  case BOW:
-                    SET_FLAG(who, FLAG_READY_BOW); break;
-              }
+                  SET_FLAG(who, FLAG_READY_BOW); break;
           }
           break;
 

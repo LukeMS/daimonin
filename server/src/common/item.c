@@ -535,13 +535,16 @@ char *query_base_name(object *op, object *caller)
     char        buf2[32];
     int         len;
 
-    buf[0] = 0;
+    buf[0] = '\0';
     if (op->name == NULL)
         return "(null)";
 
+	if(op->sub_type1 == ARROW && op->type == MISC_OBJECT) /* special neutralized arrow! */
+		strcat(buf, "broken ");
+	
     /* add the item race name */
     if (!IS_LIVE(op) && op->type != TYPE_BASE_INFO)
-        strcpy(buf, item_race_table[op->item_race].name);
+        strcat(buf, item_race_table[op->item_race].name);
 
     /* we add the real material name as prefix. Because real_material == 0 is
      * "" (clear string) we don't must check item types for adding something here
@@ -549,7 +552,7 @@ char *query_base_name(object *op, object *caller)
      */
     if (op->material_real && QUERY_FLAG(op, FLAG_IDENTIFIED))
         strcat(buf, material_real[op->material_real].name);
-
+	
     strcat(buf, op->name);
 
     if (!op->weight && !op->title && !is_magical(op))
@@ -666,6 +669,30 @@ char *query_base_name(object *op, object *caller)
               }
           }
           break;
+			case MISC_OBJECT:
+			if(op->sub_type1 == ARROW) /* special neutralized arrow! */
+			{
+				if(QUERY_FLAG(op, FLAG_IDENTIFIED))
+				{
+					if (op->magic)
+					{
+						sprintf(buf2, " %+d", op->magic);
+						safe_strcat(buf, buf2, &len, sizeof(buf));
+					}
+					if (op->title)
+					{
+						safe_strcat(buf, " ", &len, sizeof(buf));
+						safe_strcat(buf, op->title, &len, sizeof(buf));
+					}
+					if (op->slaying)
+					{
+						safe_strcat(buf, " ", &len, sizeof(buf));
+						safe_strcat(buf, op->slaying, &len, sizeof(buf));
+					}
+				}
+				return buf;
+			}
+
         default:
           if (op->magic && (!need_identify(op) || QUERY_FLAG(op, FLAG_BEEN_APPLIED) || QUERY_FLAG(op, FLAG_IDENTIFIED)))
           {
@@ -775,25 +802,19 @@ char * describe_item(object *op)
 
         if (QUERY_FLAG(op, FLAG_USE_WEAPON))
             strcat(retbuf, "(wield weapon)");
-        if (QUERY_FLAG(op, FLAG_USE_BOW))
+        if (QUERY_FLAG(op, FLAG_CAN_USE_BOW))
             strcat(retbuf, "(archer)");
         if (QUERY_FLAG(op, FLAG_USE_ARMOUR))
             strcat(retbuf, "(wear armour)");
         if (QUERY_FLAG(op, FLAG_USE_RING))
             strcat(retbuf, "(wear ring)");
-        if (QUERY_FLAG(op, FLAG_USE_SCROLL))
-            strcat(retbuf, "(literated)");
-        if (QUERY_FLAG(op, FLAG_USE_RANGE))
-            strcat(retbuf, "(use range device)");
         if (QUERY_FLAG(op, FLAG_FRIENDLY))
             strcat(retbuf, "(friendly)");
         if (QUERY_FLAG(op, FLAG_UNAGGRESSIVE))
             strcat(retbuf, "(unaggressive)");
         if (QUERY_FLAG(op, FLAG_HITBACK))
             strcat(retbuf, "(hitback)");
-        if (QUERY_FLAG(op, FLAG_CAN_USE_SKILL))
-            strcat(retbuf, "(skill user)");
-        if (QUERY_FLAG(op, FLAG_CAST_SPELL))
+        if (QUERY_FLAG(op, FLAG_READY_SPELL))
             strcat(retbuf, "(spellcaster)");
 
         /* lets check the inv for spell ABILITY objects.

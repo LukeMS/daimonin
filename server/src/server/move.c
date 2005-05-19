@@ -129,7 +129,7 @@ int move_ob(object *op, int dir, object *originator)
                      * will hide the flag! So, if the flag is set, we can try our
                      * luck - but only if op can open doors!
                      */
-            if ((flags & P_DOOR_CLOSED) && (op->will_apply & 8)) /* a (closed) door which we can open? */
+            if ((flags & P_DOOR_CLOSED) && QUERY_FLAG(op, FLAG_CAN_OPEN_DOOR)) /* a (closed) door which we can open? */
             {
                 if (open_door(op, m, xt, yt, 1)) /* yes, we can open this door */
                     return 1;

@@ -199,11 +199,8 @@ typedef struct obj
 
     uint8           anim_speed;         /* animation speed in ticks */
     uint8           last_anim;          /* ticks between animation-frames */
-    uint8           will_apply;         /* See crossfire.doc */
     /* TODO: get rid of this one with AI system change */
     uint8           run_away;               /* Monster runs away if it's hp goes below this percentage. */
-
-    uint8           pick_up;                /* pickup mode - See crossfire.doc */  
 
     uint8           hide;                   /* The object is hidden. We don't use a flag here because
                                                          * the range from 0-255 tells us the quality of the hide

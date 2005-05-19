@@ -788,10 +788,10 @@ void doeric_server(int update, struct timeval *timeout)
                         draw_client_map(pl->ob);
 
                         if ( pl->ob->map && (update_below = GET_MAP_UPDATE_COUNTER(pl->ob->map, pl->ob->x, pl->ob->y))
-                             >= pl->socket.update_tile)
+                             != pl->socket.update_tile)
                         {
                             esrv_draw_look(pl->ob);
-                            pl->socket.update_tile = update_below + 1;
+                            pl->socket.update_tile = update_below;
                         }
                     }
 
@@ -836,10 +836,10 @@ void doeric_server_write(void)
             draw_client_map(pl->ob);
 
             if (pl->ob->map
-                && (update_below = GET_MAP_UPDATE_COUNTER(pl->ob->map, pl->ob->x, pl->ob->y)) >= pl->socket.update_tile)
+                && (update_below = GET_MAP_UPDATE_COUNTER(pl->ob->map, pl->ob->x, pl->ob->y)) != pl->socket.update_tile)
             {
                 esrv_draw_look(pl->ob);
-                pl->socket.update_tile = update_below + 1;
+                pl->socket.update_tile = update_below;
             }
         }
         

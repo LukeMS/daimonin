@@ -67,7 +67,7 @@ int open_door(object *op, mapstruct *m, int x, int y, int mode)
     object *tmp, *key = NULL;
 
     /* Make sure a monster/npc actually can open doors */
-    if (op->type != PLAYER && !(op->will_apply & 8))
+    if (op->type != PLAYER && !QUERY_FLAG(op, FLAG_CAN_OPEN_DOOR))
         return 0;
 
     /* Ok, this trick will save us *some* search time - because we
@@ -867,6 +867,7 @@ object * fix_stopped_arrow(object *op)
         SET_FLAG(op, FLAG_IS_USED_UP);
         SET_FLAG(op, FLAG_NO_PICK);
         op->type = MISC_OBJECT; /* important to neutralize the arrow! */
+		op->sub_type1 = ARROW;  /* so we still can identify the arrow! */
         op->speed = 0.1f;
         op->speed_left = 0.0f;
     }
@@ -1616,7 +1617,7 @@ void move_environment_sensor(object *op)
     int trig_tod = 0, trig_dow = 0, trig_bright = 0;
     timeofday_t tod;
     
-    if(op->slaying || op->will_apply)
+    if(op->slaying || op->last_grace)
         get_tod(&tod);
     
     /* Time of day triggered? */
@@ -1644,14 +1645,14 @@ void move_environment_sensor(object *op)
     }
 
     /* Day of Week triggered? */
-    if(op->will_apply == 0)
+    if(op->last_grace == 0)
         trig_dow = 1;
     else
     {
-        if(op->will_apply & (1 << tod.dayofweek))
+        if(op->last_grace & (1 << tod.dayofweek))
             trig_dow = 1;
         
-        // LOG(llevDebug, "Weekday %d, trig (%d): %d\n", tod.dayofweek, op->will_apply, trig_dow);
+        // LOG(llevDebug, "Weekday %d, trig (%d): %d\n", tod.dayofweek, op->last_grace, trig_dow);
     }
     
     /* Brightness triggered? */

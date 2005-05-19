@@ -696,20 +696,20 @@ error - Your ANSI C compiler should be defining __STDC__;
                                 */
 #define FLAG_CAN_PASS_THRU  47 /* Can pass thru... */
 
-#define FLAG_PICK_UP        48 /* Can pick up */
+/* FREE flag 48*/
 #define FLAG_UNIQUE         49 /* Item is really unique (UNIQUE_ITEMS) */
 #define FLAG_NO_DROP        50 /* Object can't be dropped */
 #define FLAG_INDESTRUCTIBLE 51/* every item with quality use up. if this is set, it don't use up by physical forces */
-#define FLAG_CAST_SPELL     52 /* (Monster) can learn and cast spells */
-#define FLAG_USE_SCROLL     53 /* (Monster) can read scroll */
-#define FLAG_USE_RANGE      54 /* (Monster) can apply and use range items */
-#define FLAG_USE_BOW        55 /* (Monster) can apply and fire bows */
+#define FLAG_READY_SPELL     52 /* (Monster) can learn and cast spells */
+/* FREE flag 53 */
+/* FREE flag 54 */
+#define FLAG_CAN_USE_BOW    55 /* (Monster) can apply and fire bows */
 
-#define FLAG_USE_ARMOUR     56 /* (Monster) can wear armour/shield/helmet */
-#define FLAG_USE_WEAPON     57 /* (Monster) can wield weapons */
-#define FLAG_USE_RING       58 /* (Monster) can use rings, boots, gauntlets, etc */
-#define FLAG_READY_RANGE    59 /* (Monster) has a range item readied... 8) */
-#define FLAG_READY_BOW      60 /* not implemented yet */
+#define FLAG_USE_ARMOUR     56 /* (player/deity) INTERNAL flag to allow armour use (for example from the deity) */
+#define FLAG_USE_WEAPON     57 /* (player/deity) INTERNAL same as armour: can wield weapons */
+#define FLAG_USE_RING       58 /* (player/deity) INTERNAL can use rings and amulet (not implemented for gods ATM!) */
+/* FREE flag 59 */
+#define FLAG_READY_BOW      60 /* mob or player has a bow readied */
 #define FLAG_XRAYS          61 /* X-ray vision */
 #define FLAG_NO_APPLY       62 /* Avoids step_on/fly_on to this object */
 #define FLAG_IS_FLOOR       63 /* Can't see what's underneath this object */
@@ -733,7 +733,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_SEE_ANYWHERE   76 /* The object will be visible behind walls (disabled MT2003 - read los.c) */
 #define FLAG_KNOWN_MAGICAL  77 /* The object is known to be magical */
 #define FLAG_KNOWN_CURSED   78 /* The object is known to be cursed */
-#define FLAG_CAN_USE_SKILL  79 /* The monster can use skills */
+#define FLAG_CAN_OPEN_DOOR  79 /* object (mob, player,..) can open a door */
 
 #define FLAG_IS_THROWN      80 /* Object is designed to be thrown. */
 #define FLAG_VUL_SPHERE     81
@@ -745,7 +745,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_IS_WOODED      87 /* Item is wooded terrain */
 
 #define FLAG_IS_HILLY       88 /* Item is hilly/mountain terrain */
-#define FLAG_READY_SKILL    89 /* (Monster or Player) has a skill readied */
+/* FLAG 89 FREE */
 #define FLAG_READY_WEAPON   90 /* (Monster or Player) has a weapon readied */
 #define FLAG_NO_SKILL_IDENT 91 /* If set, item cannot be identified w/ a skill */
 #define FLAG_USE_DMG_INFO	92 /* used for asynchron dmg of AoE spells */
@@ -832,6 +832,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_NO_SAVE            134     /* don't save this object - remove it before we save */
 #define FLAG_PASS_ETHEREAL      135     /* can_pass light for ethereal */
 
+/* FREE flag: 89, 48, 53, 54, 59 */
 /* flag 37 is still free (old FREED flag). Let it free for secure reason for some time */
 
 #define NUM_FLAGS       135 /* Should always be equal to the last defined flag */
