@@ -1,7 +1,7 @@
 Object drow_sorcerer
 name drow sorcerer
 face drow_sorcerer.131
-will_apply 8
+can_open_door 1
 race drows
 is_female 1
 wc_range 20
@@ -107,7 +107,6 @@ wc 3
 dam 52
 hp -1
 maxhp 72
-can_cast_spell 1
 sp -1
 maxsp 6
 Pow 2

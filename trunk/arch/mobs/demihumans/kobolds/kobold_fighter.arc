@@ -5,7 +5,7 @@ race kobold
 is_male 1
 corpse 1
 wc_range 20
-will_apply 8
+can_open_door 1
 layer 6
 direction 5
 item_race 255

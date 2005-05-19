@@ -65,7 +65,6 @@ hp -1
 maxhp 30
 level 1
 speed 0.15
-can_cast_spell 1
 can_use_weapon 1
 can_use_armour 1
 msg

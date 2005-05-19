@@ -6,7 +6,7 @@ is_male 1
 wc_range 20
 corpse 1
 layer 6
-will_apply 8
+can_open_door 1
 direction 5
 is_evil 1
 item_race 255
@@ -107,7 +107,6 @@ wc 3
 dam 53
 hp -1
 maxhp 61
-can_cast_spell 1
 sp -1
 maxsp 6
 Pow 2

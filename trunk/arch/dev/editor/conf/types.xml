@@ -155,23 +155,6 @@
   <entry bit="19" name="Light" />
 </bitmask>
 
-<bitmask name="will_apply">
-  <entry bit="0" name="Apply Handles" />
-  <entry bit="1" name="Open Chests" />
-  <entry bit="2" name="Break Walls" />
-  <entry bit="3" name="Open Doors" />
-</bitmask>
-
-<bitmask name="pick_up">
-  <entry bit="0" name="Nothing" />
-  <entry bit="1" name="Wealth" />
-  <entry bit="2" name="Food" />
-  <entry bit="3" name="Weapons" />
-  <entry bit="4" name="Armour" />
-  <entry bit="5" name="Inverse" />
-  <entry bit="6" name="All" />
-</bitmask>
-
 <bitmask name="terrain">
   <entry bit="0" name="Land Surface" />
   <entry bit="1" name="Water Surface" />
@@ -3926,10 +3909,6 @@
 </section>
 
 <section name="spellcraft">
-  <attribute arch="can_cast_spell" editor="can cast spell" type="bool">
-    If &lt;can cast spell&gt; is disabled, the monster cannot cast any spell.
-    Only wands/rods/etc can be used, given the appropriate abilities.
-  </attribute>
   <attribute arch="sp" editor="spellpoints" type="int">
     Like players, monsters need &lt;spellpoints&gt; to do magic. Monsters use
     them for both wizard- and prayer-spells. However, this value defines
@@ -4008,21 +3987,7 @@
     for high-level monsters. When a monster is unable to see in
     darkness, players can cast darkness and sneak around it safely.
   </attribute>
-  <attribute arch="can_use_weapon" editor="can use weapons" type="bool">
-  </attribute>
   <attribute arch="can_use_bow" editor="can use bows" type="bool">
-  </attribute>
-  <attribute arch="can_use_armour" editor="can use armour" type="bool">
-  </attribute>
-  <attribute arch="can_use_ring" editor="can use rings" type="bool">
-  </attribute>
-  <attribute arch="can_use_range" editor="can use rods/wands" type="bool">
-    If set, this creature can use range weapons like
-    rods, wands, staves and horns.
-  </attribute>
-  <attribute arch="can_use_scroll" editor="can use scrolls" type="bool">
-  </attribute>
-  <attribute arch="can_use_skill" editor="can use skills" type="bool">
   </attribute>
 </section>
 
@@ -4064,17 +4029,9 @@
     larger than the players line of sight. Due to that, in most cases
     the player won't ever notice weither a monster was asleep or not.
   </attribute>
-  <attribute arch="will_apply" editor="misc. actions" type="bitmask_will_apply">
+  <attribute arch="can_open_door" editor="can open doors" type="bool">
     This entry defines which kinds of environment actions the
     creature is able to perform.
-  </attribute>
-  <attribute arch="pick_up" editor="pick up" type="bitmask_pick_up">
-    Click on the &lt;pick up&gt; button and select which types of objects
-    the creature should try to pick up.
-
-    Note also that if &lt;can use armor&gt;, &lt;can use weapon&gt;, &lt;can use ring&gt;...
-    etc are set, then the creature will pick up the matching items even
-    if this is not set here.
   </attribute>
   <attribute arch="Wis" editor="sensing range" type="int">
     &lt;sensing range&gt; determines how close a player needs to be before
@@ -4554,10 +4511,6 @@
 </section>
 
 <section name="spellcraft">
-  <attribute arch="can_cast_spell" editor="can cast spell" type="bool">
-    If &lt;can cast spell&gt; is disabled, the monster cannot cast any spell.
-    Only wands/rods/etc can be used, given the appropriate abilities.
-  </attribute>
   <attribute arch="sp" editor="spellpoints" type="int">
     Like players, monsters need &lt;spellpoints&gt; to do magic. Monsters use
     them for both wizard- and prayer-spells. However, this value defines
@@ -4636,21 +4589,7 @@
     for high-level monsters. When a monster is unable to see in
     darkness, players can cast darkness and sneak around it safely.
   </attribute>
-  <attribute arch="can_use_weapon" editor="can use weapons" type="bool">
-  </attribute>
   <attribute arch="can_use_bow" editor="can use bows" type="bool">
-  </attribute>
-  <attribute arch="can_use_armour" editor="can use armour" type="bool">
-  </attribute>
-  <attribute arch="can_use_ring" editor="can use rings" type="bool">
-  </attribute>
-  <attribute arch="can_use_range" editor="can use rods/wands" type="bool">
-    If set, this creature can use range weapons like
-    rods, wands, staves and horns.
-  </attribute>
-  <attribute arch="can_use_scroll" editor="can use scrolls" type="bool">
-  </attribute>
-  <attribute arch="can_use_skill" editor="can use skills" type="bool">
   </attribute>
 </section>
 
@@ -4690,17 +4629,9 @@
     larger than the players line of sight. Due to that, in most cases
     the player won't ever notice weither a monster was asleep or not.
   </attribute>
-  <attribute arch="will_apply" editor="misc. actions" type="bitmask_will_apply">
+  <attribute arch="can_open_door" editor="can open doors" type="bool">
     This entry defines which kinds of environment actions the
     creature is able to perform.
-  </attribute>
-  <attribute arch="pick_up" editor="pick up" type="bitmask_pick_up">
-    Click on the &lt;pick up&gt; button and select which types of objects
-    the creature should try to pick up.
-
-    Note also that if &lt;can use armor&gt;, &lt;can use weapon&gt;, &lt;can use ring&gt;...
-    etc are set, then the creature will pick up the matching items even
-    if this is not set here.
   </attribute>
   <attribute arch="Wis" editor="sensing range" type="int">
     &lt;sensing range&gt; determines how close a player needs to be before
@@ -7253,7 +7184,7 @@ that food.]]>
     The time interval this sensors should trigger. This should be in the form "hh:mm-hh:mm", for example "12:00-23:59" to trigger during the afternoon.
     An empty (or malformed) value means don't care about time of day.
   </attribute>  
-  <attribute arch="will_apply" editor="trigger weekday" type="bitmask_day_of_week">
+  <attribute arch="last_grace" editor="trigger weekday" type="bitmask_day_of_week">
     Which days to trigger the connection.
     No selected days means don't care about weekdays.
   </attribute>

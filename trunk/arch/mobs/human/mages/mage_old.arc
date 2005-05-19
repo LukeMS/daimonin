@@ -3,7 +3,7 @@ name old mage
 race human
 type 80
 layer 6
-will_apply 8
+can_open_door 1
 item_race 255
 item_level 255
 wc_range 20
@@ -96,5 +96,4 @@ weight 85000
 stand_still 1
 unaggressive 1
 Str 25
-can_cast_spell 1
 end

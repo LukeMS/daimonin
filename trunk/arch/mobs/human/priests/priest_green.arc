@@ -5,7 +5,7 @@ type 80
 layer 6
 direction 5
 wc_range 20
-will_apply 8
+can_open_door 1
 is_female 1
 is_good 1
 terrain_flag 1
@@ -121,5 +121,4 @@ weight 85000
 stand_still 1
 unaggressive 1
 Str 25
-can_cast_spell 1
 end

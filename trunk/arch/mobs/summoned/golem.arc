@@ -5,7 +5,7 @@ layer 6
 direction 5
 is_neutral 1
 corpse 1
-will_apply 8
+can_open_door 1
 item_race 255
 wc_range 20
 item_level 255

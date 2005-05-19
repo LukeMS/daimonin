@@ -4,7 +4,7 @@ face ant_queen.131
 race ants
 is_female 1
 corpse 1
-will_apply 8
+can_open_door 1
 item_race 255
 item_level 255
 layer 6

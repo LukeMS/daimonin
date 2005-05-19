@@ -3,7 +3,7 @@ name monk
 race human
 type 80
 layer 6
-will_apply 8
+can_open_door 1
 direction 5
 item_race 255
 item_level 255
@@ -13,6 +13,7 @@ is_good 1
 terrain_flag 1
 weapon_speed 0.055
 corpse 1
+can_use_bow 1
 attack_weaponmagic 100
 face monk.131
 anim

@@ -4,7 +4,7 @@ race giants
 randomitems mob_ogre
 is_evil 1
 is_male 1
-will_apply 8
+can_open_door 1
 weight 153250
 wc_range 20
 exp 105

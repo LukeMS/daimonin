@@ -56,7 +56,6 @@ dam 40
 hp 300
 level 15
 speed 0.40
-can_cast_spell 1
 can_use_weapon 1
 can_use_armour 1
 exp 1

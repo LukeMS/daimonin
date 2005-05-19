@@ -3,7 +3,7 @@ name orc berserker
 face orc_berserker.131
 race orc
 is_male 1
-will_apply 8
+can_open_door 1
 wc_range 20
 corpse 1
 layer 6

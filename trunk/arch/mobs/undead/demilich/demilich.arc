@@ -4,7 +4,7 @@ face demilich.131
 race undead
 is_evil 1
 corpse 1
-will_apply 8
+can_open_door 1
 glow_radius 2
 wc_range 20
 layer 6
@@ -103,7 +103,6 @@ monster 1
 no_pick 1
 alive 1
 can_see_in_dark 1
-can_cast_spell 1
 exp 115
 ac 11
 wc 7

@@ -7,7 +7,7 @@ face troll.131
 wc_range 20
 direction 5
 speed -0.06
-will_apply 8
+can_open_door 1
 corpse 1
 item_race 255
 item_level 255

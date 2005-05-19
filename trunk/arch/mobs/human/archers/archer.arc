@@ -3,13 +3,15 @@ name archer
 race human
 type 80
 layer 6
-will_apply 8
+can_open_door 1
 item_race 255
 wc_range 20
 item_level 255
 direction 5
 is_male 1
 is_good 1
+can_use_bow 1
+randomitems skill_bow
 terrain_flag 1
 weapon_speed 0.055
 corpse 1
