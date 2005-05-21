@@ -114,7 +114,7 @@ for filename in listCFiles(sys.argv[1]):
 					elif key != None and line:
 						fields[key] += "\n" + colon_prefix_re_obj.sub('', line)
 
-                        
+						
 			if 'Lua' in fields:
 				prefix = name_prefix_re_obj.findall(fields['Lua'])
 				if prefix:
@@ -172,7 +172,7 @@ for filename in listCFiles(sys.argv[1]):
 									tp += ' or nil'
 								parameters[optional].append((key, tp))
 								c += 1
-        
+		
 						fields['parameters'] = parameters
 						return_types = []
 						match = return_boolean_re_obj.match(body)
@@ -217,23 +217,23 @@ for filename in listCFiles(sys.argv[1]):
 							fields['return'] = last
 
 					if not prefix in doc:
-						doc[prefix] = {'attributes': {}, 'constants': [], 'flags': [], 'functions': {}}
+						doc[prefix] = {'attributes': {}, 'constants': [], 'flags': {}, 'functions': {}}
 
 					key = name_re_obj.findall(fields['Lua'])
 					key = key[0]
 					doc[prefix]['functions'][key] = fields
 
 	if not 'game' in doc:
-		doc['game'] = {'attributes': {}, 'constants': [], 'flags': [], 'functions': {}}
+		doc['game'] = {'attributes': {}, 'constants': [], 'flags': {}, 'functions': {}}
 	block = game_constants_block_re_obj.findall(code)
 	if block:
 		constants = constants_re_obj.findall(block[0])
 		if constants:
 			for constant in constants:
 				doc['game']['constants'].append(constant)
-                
+				
 	if not 'event' in doc:
-		doc['event'] = {'attributes': {}, 'constants': [], 'flags': [], 'functions': {}}	
+		doc['event'] = {'attributes': {}, 'constants': [], 'flags': {}, 'functions': {}}	
 	block = event_attributes_block_re_obj.findall(code)
 	if block:
 		attributes = attributes_re_obj.findall(code)
@@ -256,9 +256,9 @@ for filename in listCFiles(sys.argv[1]):
 					special = 'fix the player or mob after change'
 				if tp:
 					doc['event']['attributes'][attribute[0]] = (tp, special)
-                    
+					
 	if not 'map' in doc:
-		doc['map'] = {'attributes': {}, 'constants': [], 'flags': [], 'functions': {}}		
+		doc['map'] = {'attributes': {}, 'constants': [], 'flags': {}, 'functions': {}}		
 	block = map_attributes_block_re_obj.findall(code)
 	if block:
 		attributes = attributes_re_obj.findall(code)
@@ -282,16 +282,19 @@ for filename in listCFiles(sys.argv[1]):
 					special = 'fix the player or mob after change'
 				if tp:
 					doc['map']['attributes'][attribute[0]] = (tp, special)
-                    
+					
 	block = map_flags_block_re_obj.findall(code)
 	if block:
 		flags = flags_re_obj.findall(block[0])
 		if flags:
 			for flag in flags:
-				doc['map']['flags'].append(flag)
-                
+				if flag.startswith('?'):
+					doc['map']['flags'][flag.strip('?')] = {'readonly': 1}
+				else:
+					doc['map']['flags'][flag] = {}
+				
 	if not 'object' in doc:
-		doc['object'] = {'attributes': {}, 'constants': [], 'flags': [], 'functions': {}}
+		doc['object'] = {'attributes': {}, 'constants': [], 'flags': {}, 'functions': {}}
 	block = object_attributes_block_re_obj.findall(code)
 	if block:
 		attributes = attributes_re_obj.findall(code)
@@ -315,16 +318,19 @@ for filename in listCFiles(sys.argv[1]):
 					special = 'fix the player or mob after change'
 				if tp:
 					doc['object']['attributes'][attribute[0]] = (tp, special)
-                    
+					
 	block = object_flags_block_re_obj.findall(code)
 	if block:
 		flags = flags_re_obj.findall(block[0])
 		if flags:
 			for flag in flags:
-				doc['object']['flags'].append(flag)
+				if flag.startswith('?'):
+					doc['object']['flags'][flag.strip('?')] = {'readonly': 1}
+				else:
+					doc['object']['flags'][flag] = {}
 	
 	if not 'ai' in doc:
-		doc['ai'] = {'attributes': {}, 'constants': [], 'flags': [], 'functions': {}}
+		doc['ai'] = {'attributes': {}, 'constants': [], 'flags': {}, 'functions': {}}
 
 index = start('index', 'Index')
 doc_keys = doc.keys()
@@ -382,19 +388,23 @@ for key in doc_keys:
 		if doc[key]['flags']:
 			index.write('<h3><a href="' + quoted + '.html#flags">Flags</a></h3><p><code>')
 			f.write('<hr /><h2><a id="flags">Flags</a></h2><p><code>')
-			flags = doc[key]['flags']
-			flags.sort()
+			keys = doc[key]['flags'].keys()
+			keys.sort()
 			count = 0
-			for flag in flags:
-				quoted2 = urllib.quote(flag)
-				index.write('<a href="' + quoted + '.html#' + quoted2 + '">' + entities(flag) + '</a>')
+			for key2 in keys:
+				flag = doc[key]['flags'][key2]
+				quoted2 = urllib.quote(key2)
+				index.write('<a href="' + quoted + '.html#' + quoted2 + '">' + entities(key2) + '</a>')
 				count = count + 1
 				if count == index_items_per_line:
 					count = 0
 					index.write('<br />')
 				else:
 					index.write(' | ')
-				f.write('<b><a id="' + quoted2 + '">' + entities(key + '.' + flag) + '</a></b><br />')
+				f.write('<b><a id="' + quoted2 + '">' + entities(key + '.' + key2) + '</a></b>')
+				if "readonly" in flag:
+					f.write(' (' + entities(attribute[1]) + ')')
+				f.write('<br />')
 			f.write('</code></p><p><a href="index.html">Back to the index</a></p>')
 			index.write('</code></p>')
 		if doc[key]['functions']:
