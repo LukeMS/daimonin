@@ -236,20 +236,21 @@ struct Map
     struct MapCell_struct   cells[MAP_CLIENT_X][MAP_CLIENT_Y];
 };
 
+/* This represents a single atomic map tile (aka square, hex etc) */
 typedef struct MapSpace_s
 {
     object             *first;                          /* start of the objects in this map tile */
     object             *layer[MAX_ARCH_LAYERS*2];       /* array of visible layer objects + for invisible (*2)*/
     object             *last;                           /* last object in this list */
-    struct MapSpace_s  *prev_light;         /* used to create chained light source list.*/
+    struct MapSpace_s  *prev_light;                     /* used to create chained light source list.*/
     struct MapSpace_s  *next_light;         
 
     uint32              round_tag;                      /* tag for last_damage */
     uint32              update_tile;                    /* counter for update tile */
     sint32              light_source;                   /* light source counter - as higher as brighter light source here */
     sint32              light_value;                    /* how much light is in this tile. 0 = total dark
-                                                                         * 255+ = full daylight.
-                                                                         */
+                                                         * 255+ = full daylight.
+                                                         */
     int                 flags;                          /* flags about this space (see the P_ values above) */
     uint16              last_damage;                    /* last_damage tmp backbuffer */
     uint16              move_flags;                     /* terrain type flags (water, underwater,...) */
@@ -267,22 +268,22 @@ typedef struct MapSpace_s
 #define MAP_FLAG_OUTDOOR            1       /* map is outdoor map - daytime effects are on */
 #define MAP_FLAG_UNIQUE             2       /* special unique map - see docs */
 #define MAP_FLAG_FIXED_RTIME        4       /* if true, reset time is not affected by
-                                                     * players entering/exiting map
-                                                     */
+                                             * players entering/exiting map
+                                             */
 #define MAP_FLAG_NOMAGIC            8       /* no sp based spells */
 #define MAP_FLAG_NOPRIEST           16      /* no grace baes spells allowed */
 #define MAP_FLAG_NOHARM             32      /* allow only no attack, no debuff spells 
-                                                          * this is city default setting - heal for example
-                                                         * is allowed on you and others but no curse or 
-                                                         * fireball or abusing stuff like darkness or create walls 
-                                                         */
+                                             * this is city default setting - heal for example
+                                             * is allowed on you and others but no curse or 
+                                             * fireball or abusing stuff like darkness or create walls 
+                                             */
 #define MAP_FLAG_NOSUMMON           64      /* don't allow any summon/pet summon spell.
-                                                     * this includes "call summons" for calling pets from other maps 
-                                                     */
+                                             * this includes "call summons" for calling pets from other maps 
+                                             */
 #define MAP_FLAG_FIXED_LOGIN        128     /* when set, a player login on this map will forced
-                                                     * to default enter_x/enter_y of this map.
-                                                     * this avoid map stucking and treasure camping
-                                                     */
+                                             * to default enter_x/enter_y of this map.
+                                             * this avoid map stucking and treasure camping
+                                             */
 #define MAP_FLAG_PERMDEATH          256     /* this map is a perm death. */
 #define MAP_FLAG_ULTRADEATH         1024    /* this map is a ultra death map */
 #define MAP_FLAG_ULTIMATEDEATH      2048    /* this map is a ultimate death map */
@@ -308,58 +309,62 @@ typedef struct MapSpace_s
  */
 typedef struct mapdef
 {
-    struct mapdef  *next;           /* Next map, linked list */
+    struct mapdef  *next;                   /* Next map, linked list */
     char           *name;                   /* Name of map as given by its creator */
-    char           *tmpname;                    /* Name of temporary file */
-    char           *msg;                        /* Message map creator may have left */
+    char           *tmpname;                /* Name of temporary file */
+    char           *msg;                    /* Message map creator may have left */
 
     /* The following two are used by the pathfinder algorithm in pathfinder.c */
     uint32         *bitmap;                 /* Bitmap used for marking visited tiles in pathfinding */
-    uint32          pathfinding_id;          /* For which traversal is the above valid */
+    uint32          pathfinding_id;         /* For which traversal is the above valid */
 
-    MapSpace       *spaces;             /* Array of spaces on this map */
+    MapSpace       *spaces;                 /* Array of spaces on this map */
     MapSpace       *first_light;            /* list of tiles spaces with light sources in */
     oblinkpt       *buttons;                /* Linked list of linked lists of buttons */
 
-    const char     *path;               /* Filename of the map (shared string now) */
-    const char     *tile_path[TILED_MAPS];          /* path to adjoining maps (shared strings) */
-    struct mapdef  *tile_map[TILED_MAPS];       /* Next map, linked list */
+    const char     *path;                   /* Filename of the map (shared string now) */
+    const char     *tile_path[TILED_MAPS];  /* path to adjoining maps (shared strings) */
+    struct mapdef  *tile_map[TILED_MAPS];   /* Next map, linked list */
     object         *player_first;           /* chained list of player on this map */
 
 
     int             darkness;               /* indicates the base light value in this map.
-                                                       * this value is only used when the map is not marked
-                                                       * as outdoor.
-                                                     */
-    int             light_value;                /* the real light_value, build out from darkness and
-                                                             * possible other factors.
-                                                             */
+                                             * This value is only used when the map is not 
+                                             * marked as outdoor.
+                                             * 0= totally dark. 7= daylight
+                                             */
+    int             light_value;            /* the real light_value, build out from darkness
+                                             * and possibly other factors.
+                                             * This value is only used when the
+                                             * map is not marked as outdoor.
+                                             * 0 = totally dark, > 1000(?) = daylight
+                                             */
     uint32          map_flags;              /* mag flags for various map settings */
     uint32          reset_time;             /* when this map should reset */
     uint32          reset_timeout;          /* How many seconds must elapse before this map
-                                                 * should be reset
-                                                 */
-    uint32          map_tag;                    /* to identify maps for fixed_login */
-    sint32          timeout;                    /* swapout is set to this */
+                                             * should be reset
+                                             */
+    uint32          map_tag;                /* to identify maps for fixed_login */
+    sint32          timeout;                /* swapout is set to this */
     sint32          swap_time;              /* When it reaches 0, the map will be swapped out */
     uint32          in_memory;              /* If not true, the map has been freed and must
-                                                     * be loaded before used.  The map,omap and map_ob
-                                                     * arrays will be allocated when the map is loaded */
+                                             * be loaded before used.  The map,omap and map_ob
+                                             * arrays will be allocated when the map is loaded */
 
     uint32          traversed;               /* Used by relative_tile_position() to mark visited maps */
-    const char     *cached_dist_map;     /* With which other map was relative_tile_position() last used? */
+    const char     *cached_dist_map;         /* With which other map was relative_tile_position() last used? */
     int             cached_dist_x, cached_dist_y; /* Cached relative_tile_position() */
 
-    int             perm_load;                  /* This is a counter - used for example from NPC's which have
-                                                             * a global function. If this counter is != 0, map will not swap
-                                                             * and the npc/object with perm_load flag will stay in game.
-                                                             */
-    int             difficulty;                 /* What level the player should be to play here */
-    int             height;                     /* Width and height of map. */
+    int             perm_load;               /* This is a counter - used for example from NPC's which have
+                                              * a global function. If this counter is != 0, map will not swap
+                                              * and the npc/object with perm_load flag will stay in game.
+                                              */
+    int             difficulty;              /* What level the player should be to play here */
+    int             height;                  /* Width and height of map. */
     int             width;
-    int             enter_x;                    /* enter_x and enter_y are default entrance location */
-    int             enter_y;                    /* on the map if none are set in the exit */
-	int             has_unique;					/* this original map has unique items! */
+    int             enter_x;                 /* enter_x and enter_y are default entrance location */
+    int             enter_y;                 /* on the map if none are set in the exit */
+    int             has_unique;              /* this original map has unique items! */
 } mapstruct;
 
 /* This is used by get_rangevector to determine where the other
