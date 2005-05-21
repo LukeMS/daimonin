@@ -1232,7 +1232,7 @@ void draw_client_map2(object *pl)
                 }
                 else
                 {
-                    d = m->light_value + msp->light_value + dm_light;
+                    d = msp->light_value + m->light_value + dm_light;
                 }
 
                 if (d <= 0) /* tile is not normal visible */
@@ -1380,7 +1380,7 @@ void draw_client_map2(object *pl)
                     /* face_num1 is original, face_num1m is a copy */
                     face_num1m = face_num1 = face->number;
                     /* if a monster, we mark face_num1m - this goes to client */
-                    if (tmp && QUERY_FLAG(tmp, FLAG_MONSTER) || tmp->type == PLAYER)
+                    if (tmp && (QUERY_FLAG(tmp, FLAG_MONSTER) || tmp->type == PLAYER))
                         face_num1m |= 0x8000;
                 }
                 /* ok - lets check we NEED to send this all to client */
@@ -1482,7 +1482,7 @@ void draw_client_map2(object *pl)
                                      */
                     }
                     face_num2m = face_num2 = face->number;
-                    if (tmp && QUERY_FLAG(tmp, FLAG_MONSTER) || tmp->type == PLAYER)
+                    if (tmp && (QUERY_FLAG(tmp, FLAG_MONSTER) || tmp->type == PLAYER))
                         face_num2m |= 0x8000;
                 }
 
@@ -1575,7 +1575,7 @@ void draw_client_map2(object *pl)
                                      */
                     }
                     face_num3m = face_num3 = face->number;
-                    if (tmp && QUERY_FLAG(tmp, FLAG_MONSTER) || tmp->type == PLAYER)
+                    if (tmp && (QUERY_FLAG(tmp, FLAG_MONSTER) || tmp->type == PLAYER))
                         face_num3m |= 0x8000;
                 }
 

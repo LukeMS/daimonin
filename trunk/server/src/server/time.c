@@ -1677,7 +1677,7 @@ void move_environment_sensor(object *op)
 
         if(tmp)
         {
-            int light_level = GET_MAP_LIGHT_VALUE(tmp->map,tmp->x,tmp->y) + global_darkness_table[CLAMP(MAP_DARKNESS(tmp->map), 0, MAX_DARKNESS)];
+            int light_level = GET_MAP_LIGHT_VALUE(tmp->map,tmp->x,tmp->y) + (MAP_OUTDOORS(tmp->map) ? global_darkness_table[world_darkness] : tmp->map->light_value);
             if ((op->last_grace < 0 && light_level < global_darkness_table[ABS(op->last_grace)]) ||
                     (op->last_grace > 0 && light_level > global_darkness_table[ABS(op->last_grace)]))
                 trig_bright = 1;
