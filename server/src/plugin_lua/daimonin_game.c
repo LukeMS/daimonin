@@ -34,7 +34,6 @@
 
 static struct method_decl       Game_methods[]      =
 {
-    {"FileUnlink", Game_FileUnlink}, 
     {"TransferMapItems", Game_TransferMapItems}, 
     {"LoadObject", Game_LoadObject},
     {"ReadyMap", Game_ReadyMap}, 
@@ -151,24 +150,6 @@ lua_class Game =
 /****************************************************************************/
 
 /* FUNCTIONSTART -- Here all the Lua plugin functions come */
-
-/*****************************************************************************/
-/* Name   : Game_FileUnlink(path)                                            */
-/* Lua    : game:FileUnlink(path)                                            */
-/* Info   : Unlink the file (delete is physically).                          */
-/* Status : Stable                                                           */
-/*****************************************************************************/
-static int Game_FileUnlink(lua_State *L)
-{
-    char   *fname;
-    lua_object *self;
-
-    get_lua_args(L, "Gs", &self, &fname);
-
-    unlink(fname);
-
-    return 0;
-}
 
 /*****************************************************************************/
 /* Name   : Game_TransferMapItems                                            */

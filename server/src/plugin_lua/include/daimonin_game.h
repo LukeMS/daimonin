@@ -30,7 +30,6 @@
 #include <plugin_lua.h>
 
 /* Game methods */
-static int  Game_FileUnlink(lua_State *L);
 static int  Game_TransferMapItems(lua_State *L);
 static int  Game_MatchString(lua_State *L);
 static int  Game_ReadyMap(lua_State *L);
