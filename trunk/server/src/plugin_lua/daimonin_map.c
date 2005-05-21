@@ -31,6 +31,7 @@ static struct method_decl       Map_methods[]       =
 {
     {"Save", Map_Save}, {"Delete", Map_Delete}, 
     {"GetFirstObjectOnSquare", Map_GetFirstObjectOnSquare},
+    {"GetBrightnessOnSquare", Map_GetBrightnessOnSquare},
     {"IsWallOnSquare", Map_IsWallOnSquare},
     {"PlaySound", Map_PlaySound}, {"Message", Map_Message}, {"MapTileAt",  Map_MapTileAt},
     {"CreateObject", Map_CreateObject}, {NULL, NULL}
@@ -44,7 +45,8 @@ static struct attribute_decl    Map_attributes[]    =
     { "difficulty", FIELDTYPE_UINT16, offsetof(mapstruct, difficulty), FIELDFLAG_READONLY },
     { "height", FIELDTYPE_UINT16, offsetof(mapstruct, height), FIELDFLAG_READONLY },
     { "width", FIELDTYPE_UINT16, offsetof(mapstruct, width), FIELDFLAG_READONLY },
-    { "darkness", FIELDTYPE_UINT8, offsetof(mapstruct, darkness), FIELDFLAG_READONLY },
+    { "darkness", FIELDTYPE_SINT32, offsetof(mapstruct, darkness), FIELDFLAG_READONLY },
+    { "light_value", FIELDTYPE_SINT32, offsetof(mapstruct, light_value), FIELDFLAG_READONLY },
     { "path", FIELDTYPE_SHSTR, offsetof(mapstruct, path), FIELDFLAG_READONLY },
     {NULL}
 };
@@ -83,6 +85,47 @@ static int Map_GetFirstObjectOnSquare(lua_State *L)
     val = (object *) (CFR->Value[0]);
 
     return push_object(L, &GameObject, val);
+}
+
+/*****************************************************************************/
+/* Name   : Map_GetBrightnessOnSquare                                        */
+/* Lua    : map:GetBrightnessOnSquare(x, y, mode)                            */
+/* Info   : Returns the brightness level on the specified square. If         */
+/*          mode == 0 (default) the brightness is returned as a value between*/
+/*          0 and 7 as in map.darkness. If mode is 1, the value returned is  */
+/*          in the internal higher-resolution scale, usually somewhere       */
+/*          between 0-1280 (compare with map.light_level.) Since this scale  */
+/*          is uncapped, it is possible to sense a light source in full      */
+/*          daylight (map.darkness=7) with mode==1                           */
+/* Status : Stable                                                           */
+/*****************************************************************************/
+static int Map_GetBrightnessOnSquare(lua_State *L)
+{
+    int         x, y, mode = 0;
+    lua_object *map;
+    int brightness, i;
+
+    get_lua_args(L, "Mii|i", &map, &x, &y, &mode);
+
+    brightness = hooks->map_brightness(map->data.map, x, y);
+   
+    if(mode == 0)
+    {
+        /* Convert brightness to 0-MAX_DARKNESS scale */
+        for(i=0; i<MAX_DARKNESS; i++)
+        {
+            if(brightness < hooks->global_darkness_table[i]) {
+                brightness = MIN(0,i-1);
+                break;
+            }
+        }
+        if(i==MAX_DARKNESS) /* Didn't find it? */
+            brightness = i;
+    }
+    
+    lua_pushnumber(L, brightness);
+
+    return 1;
 }
 
 /*****************************************************************************/

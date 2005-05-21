@@ -36,7 +36,7 @@ struct plugin_hooklist  hooklist    =
 {
     LOG, create_pathname, re_cmp,
     new_draw_info, new_draw_info_format,
-    new_info_map, new_info_map_except, wall,
+    new_info_map, new_info_map_except, map_brightness, wall,
     free_string_shared, add_string, add_refcount,
     fix_player, esrv_send_item, esrv_send_inventory,
     lookup_skill_by_name, look_up_spell_name,
@@ -56,7 +56,7 @@ struct plugin_hooklist  hooklist    =
 	find_skill, find_animation, FindFace,
     get_tod, 
     /* global variables */
-    &animations, &new_faces
+    &animations, &new_faces, global_darkness_table
 };
 
 CFPlugin                PlugList[PLUGINS_MAX_NROF];
