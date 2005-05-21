@@ -135,8 +135,8 @@ static int getObjectMember(lua_State *L)
 
                     case LUATYPE_FLAG:
                       if (class->getFlag)
-                          return class->                                getFlag(L, obj, member->data.flagno);
-                      luaL_error(L, "Can't set flags of %s", class->name);
+                          return class->getFlag(L, obj, member->data.flag.index);
+                      luaL_error(L, "Can't get flags of %s", class->name);
 
                     default:
                       /* Do nothing */
@@ -195,8 +195,8 @@ static int setObjectMember(lua_State *L)
 
                     case LUATYPE_FLAG:
                       lua_pop(L, 2); /* get rid of class table and member*/
-                      if (obj->class->setFlag)
-                          return obj->class->setFlag(L, obj, member->data.flagno);
+                      if (obj->class->setFlag && !member->data.flag.readonly)
+                          return obj->class->setFlag(L, obj, member->data.flag.index);
                       luaL_error(L, "Readonly flag %s.%s", obj->class->name, key);
 
                     default:
@@ -560,14 +560,14 @@ int push_object(lua_State *L, lua_class *class, void *data)
 
 /* Add a member from our object model to a class */
 /* the class table is to be on stack top */
-static void add_class_member(struct lua_State *L, const char *key, lua_class *class, void *data)
+static void add_class_member(struct lua_State *L, const char *key, lua_class *class,  lua_object *object)
 {
     lua_object *obj;
 
     lua_pushstring(L, key);
     obj = lua_newuserdata(L, sizeof(lua_object));
-    obj->       class   = class;
-    obj->data.anything = data;
+    obj->class = class;
+    obj->data = object->data;
 
     lua_settable(L, -3);
 }
@@ -578,7 +578,7 @@ int gc(struct lua_State *L)
     lua_object *obj = lua_touserdata(L, 1);
     if (obj)
     {
-        obj->class->                obcount--;
+        obj->class->obcount--;
         LOG(llevDebug, "gc on %s (count=%d)\n", obj->class->name, obj->class->obcount);
     }
     else
@@ -598,6 +598,7 @@ static int default_object_validator(struct lua_State *L, lua_object *obj)
 int init_class(struct lua_State *L, lua_class *class)
 {
     int i;
+    lua_object tmp;
 
     /* TODO:
      * - add optional set/get function pointers to the attribute definitions
@@ -634,22 +635,39 @@ int init_class(struct lua_State *L, lua_class *class)
     /* Set up class members */
     if (class->attributes)
         for (i = 0; class->attributes[i].name != NULL; i++)
-            add_class_member(L, class->attributes[i].name, &Attribute, &class->attributes[i]);
+        {
+            tmp.data.attribute = &class->attributes[i];
+            add_class_member(L, class->attributes[i].name, &Attribute, &tmp);
+        }
 
     if (class->methods)
         for (i = 0; class->methods[i].name != NULL; i++)
-            add_class_member(L, class->methods[i].name, &Method, &class->methods[i]);
+        {
+            tmp.data.method = &class->methods[i];
+            add_class_member(L, class->methods[i].name, &Method, &tmp);
+        }
 
     if (class->constants)
         for (i = 0; class->constants[i].name != NULL; i++)
-            add_class_member(L, class->constants[i].name, &Constant, &class->constants[i]);
+        {
+            tmp.data.constant = &class->constants[i];
+            add_class_member(L, class->constants[i].name, &Constant, &tmp);
+        }
 
     if (class->flags)
     {
         for (i = 0; class->flags[i] == NULL || strcmp(class->flags[i], FLAGLIST_END_MARKER) != 0; i++)
         {
-            if (class->flags[i] != NULL)
-                add_class_member(L, class->flags[i], &Flag, (void *) i);
+            const char *flagname = class->flags[i];
+            if (flagname != NULL) {
+                tmp.data.flag.index = i;
+                if (flagname[0] == '?') {
+                    tmp.data.flag.readonly = 1;
+                    flagname++;
+                } else
+                    tmp.data.flag.readonly = 0;
+                add_class_member(L, flagname, &Flag, &tmp);
+            }
         }
     }
 
@@ -682,6 +700,15 @@ int load_file_cache(struct lua_State *L, const char *file)
 {
     struct stat stat_buf;
     int         load = 0, res = 0;
+    char *suffix;
+
+    /* Make sure we are allowed to load file */
+    suffix = strrchr(file, '.');
+    if(suffix == NULL || (strcmp(suffix, ".lua") && strcmp(suffix, ".lc")))
+    {
+        lua_pushfstring(L, "Not a legal script file `%s'", file);
+        return LUA_ERRFILE;
+    }
 
     /* Get file modification time */
     if (stat(file, &stat_buf))

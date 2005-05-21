@@ -1924,16 +1924,16 @@ void ai_look_for_other_mobs(object *op, struct mob_behaviour_param *params)
      * is no need to look for new ones every timestep... */
     /* TODO: optimization: maybe first look through nearest tiles to see if something interesting is there,
      * then search the active list */
+    /* TODO: adaptive algo: if many objects in map's active list (~r^2, r = sense range)
+     * then it is probably faster to scan through the map, especially if using the
+     * IS_ALIVE flag on map tile level to see if it is useful to scan that map tile */
     object *obj;
     for (obj = active_objects; obj; obj = obj->active_next)
     {
         if ((QUERY_FLAG(obj, FLAG_ALIVE) || obj->type == PLAYER)
          && on_same_map(obj, op)
-         && obj
-         != op
-         && mob_can_see_obj(op,
-                            obj,
-                            NULL))
+         && obj != op
+         && mob_can_see_obj(op, obj, NULL))
         {
             /* TODO: get rid of double rv calculation 
              * (both can_see_obj() and register_npc_known_obj) 

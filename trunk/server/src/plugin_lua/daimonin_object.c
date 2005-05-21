@@ -216,36 +216,37 @@ struct attribute_decl       GameObject_attributes[]         =
  * This is a simple 1:1 mapping - if FLAG_FRIENDLY is 15, then
  * the 15'th element of this array should match that name.
  * If an entry is NULL, that flag cannot be set/read from scripts
+ * If an entry begins with "?", that flag is read-only
  * Yes, this is almost exactly a repeat from loader.c
  */
 static const char          *GameObject_flags[NUM_FLAGS + 1 + 1] =
 {
-    "f_sleep", "f_confused", NULL, "f_scared", "f_is_blind", "f_is_invisible", "f_is_ethereal", "f_is_good",
+    "f_sleep", "f_confused", "?f_paralyzed", "f_scared", "f_is_blind", "f_is_invisible", "f_is_ethereal", "f_is_good",
     "f_no_pick", "f_walk_on", "f_no_pass",     /* 10 */
-    "f_is_animated", NULL, "f_flying", "f_monster", "f_friendly", NULL /*is_removed*/, "f_been_applied", "f_auto_apply",
+    "f_is_animated", "?f_slow_move", "f_flying", "f_monster", "f_friendly", "?f_is_removed", "f_been_applied", "f_auto_apply",
     "f_treasure", "f_is_neutral", /* 20 */
     "f_see_invisible", "f_can_roll", "f_generator", "f_is_turnable", "f_walk_off", "f_fly_on", "f_fly_off",
     "f_is_used_up", "f_identified", "f_reflecting",    /* 30 */
-    "f_changing", "f_splitting", "f_hitback", "f_startequip", "f_blocksview", "f_undead", NULL, "f_unaggressive",
+    "f_changing", "f_splitting", "f_hitback", "f_startequip", "f_blocksview", "f_undead", NULL /* Unused flag */, "f_unaggressive",
     "f_reflect_missile", "f_reflect_spell",             /* 40 */
     "f_no_magic", "f_no_fix_player", "f_is_evil", "f_tear_down", "f_run_away", "f_pass_thru", "f_can_pass_thru",
-    NULL, "f_unique", "f_no_drop", /* 50 */
-    "f_is_indestructible", "f_has_ready_spell", NULL, NULL, "f_can_use_bow",
-    "f_can_use_armour", "f_can_use_weapon", "f_can_use_ring", NULL, "f_has_ready_bow",       /* 60 */
-    "f_xrays", NULL, "f_is_floor", "f_lifesave", "f_is_magical", "f_alive", "f_stand_still", "f_random_move",
-    "f_only_attack", "f_wiz", /* 70 */
-    "f_stealth", NULL, NULL, "f_cursed", "f_damned", "f_see_anywhere", "f_known_magical", "f_known_cursed",
-    "f_can_open_door", "f_is_thrown",               /* 80 */
+    NULL /* unused */, "f_unique", "f_no_drop", /* 50 */
+    "f_is_indestructible", "f_has_ready_spell", NULL /* unused */, NULL /* unused */, "f_can_use_bow",
+    "f_can_use_armour", "f_can_use_weapon", "f_can_use_ring", NULL /* unused */, "f_has_ready_bow",       /* 60 */
+    "f_xrays", "?f_no_apply", "f_is_floor", "f_lifesave", "f_is_magical", "f_alive", "f_stand_still", "f_random_move",
+    "f_only_attack", "?f_wiz", /* 70 */
+    "f_stealth", "?f_wizpass", "?f_is_linked", "f_cursed", "f_damned", "f_see_anywhere", "f_known_magical", "f_known_cursed",
+    "f_can_use_skill", "f_is_thrown",               /* 80 */
     "f_is_vul_sphere", "f_is_proof_sphere", "f_is_male", "f_is_female", "f_applied", "f_inv_locked", "f_is_wooded",
     "f_is_hilly", NULL, "f_has_ready_weapon",        /* 90 */
     "f_no_skill_ident", "f_use_dmg_info", "f_can_see_in_dark", "f_is_cauldron", "f_is_dust", "f_no_steal",
-    "f_one_hit", NULL, "f_berserk", "f_no_attack",   /* 100 */
+    "f_one_hit", NULL /* debug flag CLIENT_SENT */, "f_berserk", "f_no_attack",   /* 100 */
     "f_invulnerable", "f_quest_item", "f_is_traped", "f_is_vul_elemental", "f_is_proof_elemental", /* 105 */
     "f_is_vul_magic", "f_is_proof_magic", "f_is_vul_physical", "f_is_proof_physical", "f_sys_object", /* 110 */
     "f_use_fix_pos", "f_unpaid", "f_is_aged", "f_make_invisible", "f_make_ethereal", "f_is_player", "f_is_named",
-    NULL /* spawn mob flag */, "f_no_teleport", "f_corpse", "f_corpse_forced", "f_player_only", "f_no_cleric",
+    "?f_spawn_mob_flag", "f_no_teleport", "f_corpse", "f_corpse_forced", "f_player_only", "f_no_cleric",
     "f_one_drop", "f_cursed_perm", "f_damned_perm", "f_door_closed", "f_was_reflected", "f_is_missile",
-    "f_can_reflect_missile", "f_can_reflect_spell", "f_is_assassin", NULL /* internal flag: HAS_MOVED */, "f_no_save",
+    "f_can_reflect_missile", "f_can_reflect_spell", "f_is_assassin", NULL /* internal flag: HAS_MOVED */, "?f_no_save",
 	"f_pass_ethereal",
     FLAGLIST_END_MARKER /* Marks the end of the list */
 };
