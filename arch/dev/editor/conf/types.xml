@@ -1161,9 +1161,7 @@
   </attribute>
   <attribute arch="protect_death" editor="shield death %" length="15" type="int">
   </attribute>
-  <attribute arch="protect_chaos" editor="shield chaos %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_holy" editor="shield holy %" length="15" type="int">
+  <attribute arch="protect_spiritual" editor="shield spiritual %" length="15" type="int">
   </attribute>
   <attribute arch="protect_corruption" editor="shield corruption %" length="15" type="int">
   </attribute>         	
