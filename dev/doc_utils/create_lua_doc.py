@@ -57,6 +57,7 @@ return_object_re_obj = re.compile('.*return\s*push_object\(L,\s*&GameObject,', r
 return_ai_re_obj = re.compile('.*return\s*push_object\(L,\s*&AI,', re.S)
 #return_array_re_obj = re.compile('.*return\s*push_object\(L,\s*&GameObject,', re.S)
 return_array_re_obj = re.compile('.*lua_newtable\(L\).*lua_rawseti\(L.*.*return\s+1', re.S)
+return_table_re_obj = re.compile('.*lua_newtable\(L\).*lua_rawset\(L.*.*return\s+1', re.S)
 
 def end(f):
 	f.write('</body></html>')
@@ -201,6 +202,9 @@ for filename in listCFiles(sys.argv[1]):
 						match = return_array_re_obj.match(body)
 						if match != None:
 							return_types.append('array of something')
+						match = return_table_re_obj.match(body)
+						if match != None:
+							return_types = ['table of something'] # overrides other types
 							
 						try:
 							last = return_types[-1]
