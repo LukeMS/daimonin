@@ -180,6 +180,12 @@ enum lua_object_type
     LUATYPE_FLAG
 };
 
+struct flag_decl
+{
+    uint16              index;
+    uint16              readonly;
+};
+
 /* An object for the lua engine. Used as full userdata
  * to wrap a server object/map/context and its type */
 typedef struct lua_object_s
@@ -192,7 +198,7 @@ typedef struct lua_object_s
         mapstruct              *map;
         void                   *game;
 
-        uint32                  flagno;
+        struct flag_decl        flag;
         struct attribute_decl  *attribute;
         struct method_decl     *method;
         struct constant_decl   *constant;

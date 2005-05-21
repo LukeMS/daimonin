@@ -51,8 +51,8 @@ static struct attribute_decl    Map_attributes[]    =
 
 static const char              *Map_flags[]         =
 {
-    "f_outdoor", "f_unique", "f_fixed_rtime", "f_nomagic", "f_nopriest", "f_noharm", "f_nosummon", "f_fixed_login",
-    "f_permdeath", "f_ultradeath", "f_ultimatedeath", "f_pvp", FLAGLIST_END_MARKER
+    "?f_outdoor", "?f_unique", "?f_fixed_rtime", "f_nomagic", "f_nopriest", "f_noharm", "f_nosummon", "?f_fixed_login",
+    "?f_permdeath", "?f_ultradeath", "?f_ultimatedeath", "?f_pvp", FLAGLIST_END_MARKER
 };
 
 /****************************************************************************/
@@ -244,6 +244,24 @@ static int Map_getFlag(lua_State *L, lua_object *obj, uint32 flagno)
     return 1;
 }
 
+/* pushes flag value on top of stack */
+static int Map_setFlag(lua_State *L, lua_object *obj, uint32 flagno)
+{
+    int     value;
+
+    if (lua_isnumber(L, -1))
+        value = (int) lua_tonumber(L, -1);
+    else
+        value = lua_toboolean(L, -1);
+
+    if(value)
+        obj->data.map->map_flags |= (1 << flagno);
+    else
+        obj->data.map->map_flags &= ~(1 << flagno);
+
+    return 0;    
+}
+
 /* Return a string representation of this object (useful for debugging) */
 static int Map_toString(lua_State *L)
 {
@@ -276,7 +294,7 @@ static int Map_isValid(lua_State *L, lua_object *obj)
 lua_class   Map =
 {
     LUATYPE_MAP, "Map", 0, Map_toString, Map_attributes, Map_methods, 
-    NULL, Map_flags, Map_getFlag, NULL, NULL, Map_isValid
+    NULL, Map_flags, Map_getFlag, Map_setFlag, NULL, Map_isValid
 };
 
 /* Initialize the map class */
