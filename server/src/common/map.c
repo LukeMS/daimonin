@@ -486,6 +486,19 @@ void dump_all_maps()
 }
 
 /*
+ * Returns brightness of given square
+ * (high-res scale: 0-1280ish)
+ */
+int map_brightness(mapstruct *m, int x, int y)
+{
+    if (!(m = out_of_map(m, &x, &y)))
+        return 0;
+    
+    return GET_MAP_LIGHT_VALUE(m,x,y) + 
+        (MAP_OUTDOORS(m) ? global_darkness_table[world_darkness] : m->light_value);
+}
+
+/*
  * Returns true if a wall is present in a given location.
  * Calling object should do a <return>&P_PASS_THRU if it
  * has CAN_PASS_THRU to see it can cross here.
@@ -577,7 +590,7 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
      * a valid terrain flag, this is forbidden to enter.
      */
     if (msp->move_flags & ~terrain)
-        return (flags & (P_NO_PASS | P_IS_ALIVE | P_IS_PLAYER | P_CHECK_INV | P_PASS_THRU | P_PASS_ETHEREAL) | P_NO_TERRAIN);
+        return (flags & (P_NO_PASS | P_IS_ALIVE | P_IS_PLAYER | P_CHECK_INV | P_PASS_THRU | P_PASS_ETHEREAL | P_NO_TERRAIN));
 	
     /* the terrain is ok... whats first?
      * A.) P_IS_ALIVE - we leave without question

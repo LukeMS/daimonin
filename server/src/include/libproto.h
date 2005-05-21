@@ -150,6 +150,7 @@ extern int              check_path(const char *name, int prepend_dir);
 extern char            *normalize_path(const char *src, const char *dst, char *path);
 extern void             dump_map(mapstruct *m);
 extern void             dump_all_maps(void);
+extern int              map_brightness(mapstruct *m, int x, int y);
 extern int              wall(mapstruct *m, int x, int y);
 extern int              blocks_view(mapstruct *m, int x, int y);
 extern int              blocks_magic(mapstruct *m, int x, int y);

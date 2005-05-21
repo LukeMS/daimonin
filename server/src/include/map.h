@@ -328,12 +328,12 @@ typedef struct mapdef
     object         *player_first;           /* chained list of player on this map */
 
 
-    int             darkness;               /* indicates the base light value in this map.
+    sint32          darkness;               /* indicates the base light value in this map.
                                              * This value is only used when the map is not 
                                              * marked as outdoor.
                                              * 0= totally dark. 7= daylight
                                              */
-    int             light_value;            /* the real light_value, build out from darkness
+    sint32          light_value;            /* the real light_value, build out from darkness
                                              * and possibly other factors.
                                              * This value is only used when the
                                              * map is not marked as outdoor.
@@ -353,18 +353,18 @@ typedef struct mapdef
 
     uint32          traversed;               /* Used by relative_tile_position() to mark visited maps */
     const char     *cached_dist_map;         /* With which other map was relative_tile_position() last used? */
-    int             cached_dist_x, cached_dist_y; /* Cached relative_tile_position() */
+    sint32          cached_dist_x, cached_dist_y; /* Cached relative_tile_position() */
 
-    int             perm_load;               /* This is a counter - used for example from NPC's which have
+    uint16          perm_load;               /* This is a counter - used for example from NPC's which have
                                               * a global function. If this counter is != 0, map will not swap
                                               * and the npc/object with perm_load flag will stay in game.
                                               */
-    int             difficulty;              /* What level the player should be to play here */
-    int             height;                  /* Width and height of map. */
-    int             width;
-    int             enter_x;                 /* enter_x and enter_y are default entrance location */
-    int             enter_y;                 /* on the map if none are set in the exit */
-    int             has_unique;              /* this original map has unique items! */
+    uint16          difficulty;              /* What level the player should be to play here */
+    uint16          height;                  /* Width and height of map. */
+    uint16          width;
+    uint16          enter_x;                 /* enter_x and enter_y are default entrance location */
+    uint16          enter_y;                 /* on the map if none are set in the exit */
+    uint16          has_unique;              /* this original map has unique items! */
 } mapstruct;
 
 /* This is used by get_rangevector to determine where the other
