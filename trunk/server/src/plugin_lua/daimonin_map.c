@@ -115,7 +115,7 @@ static int Map_GetBrightnessOnSquare(lua_State *L)
         for(i=0; i<MAX_DARKNESS; i++)
         {
             if(brightness < hooks->global_darkness_table[i]) {
-                brightness = MIN(0,i-1);
+                brightness = MAX(0,i-1);
                 break;
             }
         }
