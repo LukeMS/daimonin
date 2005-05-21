@@ -29,6 +29,21 @@ elseif msg == 'division' then
 	me:SayTo(activator, "Trying to calculate x = 42 / 0. (Should give inf)")
 	me:SayTo(activator, "x = " .. tostring(42 / 0))
 	me:SayTo(activator, "Done calculating.")
+-- Test some of the security features
+elseif msg == 'security1' then
+    if activator.f_wiz then
+        me:SayTo(activator, "You are DM, trying to remove it (should fail).")
+        activator.f_wiz = false;
+    else
+        me:SayTo(activator, "You aren't DM, trying to elevate you (should fail).")
+        activator.f_wiz = true;
+    end
+elseif msg == 'security2' then
+    me:SayTo(activator, "Trying to open /etc/passwd (should fail).")
+    f = io.open("/etc/passwd", "r")
+elseif msg == 'security3' then
+    me:SayTo(activator, "Trying to open /etc/passwd (should fail).")
+    require("/etc/passwd")
 
 -- Test coroutines
 elseif (msg == 'yield') then
@@ -482,6 +497,7 @@ else
     me:SayTo(activator,
         "Available tests:\n" ..
         "^exception^ ^tostring^ ^typesafe1^ ^globals^ ^division^\n" ..
+        "^security1^ ^security2^ ^security3^\n" ..
         "^food^ ^food2^\n" ..
 		"^invisible^ ^messaging^ ^getip^\n" ..
 		"^rank1^ ^rank2^ ^clone^ ^enemy^\n" ..
