@@ -1,32 +1,3 @@
-material Tiles/Layers
-{
-   technique
-   {
- 
-     pass
-     {
-         scene_blend alpha_blend
-         texture_unit 
-         { 
-            filtering none
-            texture tiles_layer0.png
-            tex_coord_set 0 
-         } 
-      }
-     pass
-     {
-         scene_blend alpha_blend
-         texture_unit 
-         { 
-            filtering none
-            texture tiles_layer1.png
-            tex_coord_set 1 
-         } 
-      }
-   }
-}
-
-
 material Tiles/Layers_
 {
    technique
@@ -39,9 +10,12 @@ material Tiles/Layers_
          { 
             filtering none
             texture tiles_layer0.png
-            tex_coord_set 0 
+            tex_coord_set 0
          } 
-
+      }
+     pass
+     {
+         scene_blend alpha_blend
          texture_unit 
          { 
             filtering none
@@ -52,23 +26,27 @@ material Tiles/Layers_
    }
 }
 
-
-
-
-
-material dyn_layer
+material Tiles/Layers
 {
    technique
    {
+ 
      pass
      {
-         ambient 1.0 1.0 1.0
          scene_blend alpha_blend
-         depth_write off
-         texture_unit
-         {
-            
-         }
-      }
-   }
+         texture_unit 
+         { 
+            filtering none
+            texture tiles_layer0.png
+            tex_coord_set 0
+         } 
+         texture_unit 
+         { 
+            filtering none
+            texture tiles_layer1.png
+		//alpha_op_ex add src_texture src_current
+            tex_coord_set 1 
+         } 
+     }
+  }
 }
