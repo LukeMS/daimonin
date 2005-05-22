@@ -20,6 +20,7 @@ Place - Suite 330, Boston, MA 02111-1307, USA, or go to
 http://www.gnu.org/copyleft/lesser.txt.
 -----------------------------------------------------------------------------
 */
+#include "OgreParticleSystem.h"
 
 #include "object_npc.h"
 #include "particle.h"
@@ -40,11 +41,12 @@ static ParticleFX *tempPFX =0;
 //=================================================================================================
 // Init the model from the description file.
 //=================================================================================================
-NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename)
+NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename, Radian Facing)
 {
     if (!mInstanceNr) tempPFX = new ParticleFX(mNode, "SwordGlow", "Particle/SwordGlow");
 
-
+    mNode = Node;
+    mFacing = Facing;
     thisNPC = mInstanceNr;
     mDescFile = DIR_MODEL_DESCRIPTION;
     mDescFile += desc_filename;
@@ -61,22 +63,7 @@ NPC::NPC(SceneManager *SceneMgr, SceneNode *Node, const char *desc_filename)
 	string strTemp;
 	Option::getSingleton().getDescStr("MeshName", strTemp);
 	mEntityNPC = mSceneMgr->createEntity("NPC_"+StringConverter::toString(mInstanceNr), strTemp.c_str());
-
-	Option::getSingleton().getDescStr("StartX", strTemp);
-	Real posX = atof(strTemp.c_str());
-	Option::getSingleton().getDescStr("StartY", strTemp);
-	Real posY = atof(strTemp.c_str());
-	Option::getSingleton().getDescStr("StartZ", strTemp);
-	Real posZ = atof(strTemp.c_str());
-    if (!mInstanceNr) { mNode = mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(0,0,0) , Quaternion(1.0,0.0,0.0,0.0)); }
-    else { mNode = Node->createChildSceneNode(Vector3(posX, posY, posZ), Quaternion(1.0,0.0,0.0,0.0)); }
-	Option::getSingleton().getDescStr("Facing", strTemp);
-	mFacing = Radian(atof(strTemp.c_str()));
     mNode->yaw(mFacing);
-
-	Option::getSingleton().getDescStr("FOffset", strTemp);
-	Real faceing = atof(strTemp.c_str());
-	mFacingOffset = faceing * RAD;
     mNode->attachObject(mEntityNPC);
 
     // Create Animations and Animation sounds.
@@ -174,18 +161,7 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
                 if (WeaponNr==2)
                 {
                     mEntityNPC->detachObjectFromBone("SwordGlow");
-                    //delete tempPFX;
-//                    tempPFX =0;                   
-//                    SceneNode  *mNode1 = mSceneMgr->getRootSceneNode()->createChildSceneNode(Vector3(30, 30, 0), Quaternion(1.0,0.0,0.0,0.0));
-//                    mNode1->attachObject(tempPFX->getParticleFX());
                 }
-/*    
-        ParticleSystem* pSys1 = ParticleSystemManager::getSingleton().createSystem("SwordGlow", "Particle/SwordGlow");
-        SceneNode *node = mSceneMgr->getRootSceneNode()->createChildSceneNode();
-        node->attachObject(pSys1);
-*/
-       
-                
             }
             else mWeapon =0;  // testing -> delete me!
             break;
@@ -223,7 +199,7 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
             }
             if (Option::getSingleton().getDescStr("M_Name_Helmet", mStrTemp, WeaponNr))
             {
-                mEntityHelmet = mSceneMgr->createEntity("helmet", mStrTemp);           //    oben  links  vorne
+                mEntityHelmet = mSceneMgr->createEntity("helmet", mStrTemp);
                 Option::getSingleton().getDescStr("StartX_Helmet", mStrTemp, WeaponNr);
                 Real posX = atof(mStrTemp.c_str());
                 Option::getSingleton().getDescStr("StartY_Helmet", mStrTemp, WeaponNr);
@@ -246,7 +222,7 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
             }
             if (Option::getSingleton().getDescStr("M_Name_Armor", mStrTemp, WeaponNr))
             {
-                mEntityArmor = mSceneMgr->createEntity("armor", mStrTemp);           //    oben  links  vorne
+                mEntityArmor = mSceneMgr->createEntity("armor", mStrTemp);
                 Option::getSingleton().getDescStr("StartX_Armor", mStrTemp, WeaponNr);
                 Real posX = atof(mStrTemp.c_str());
                 Option::getSingleton().getDescStr("StartY_Armor", mStrTemp, WeaponNr);
@@ -258,12 +234,11 @@ void  NPC::toggleMesh(int Bone, int WeaponNr)
             }
             else mArmor =0;  // testing -> delete me!
             break;
-            
 	}
-
-
-
 }
+
+typedef std::list<Particle*> ActiveParticleList;
+
 
 //=================================================================================================
 // Update npc.
@@ -283,17 +258,20 @@ void NPC::update(const FrameEvent& event)
 		{
             // just a test...
 			mAnim->toggleAnimation(STATE_WALK1);
-	        mTranslateVector.y = -sin(mFacing.valueRadians()+mFacingOffset)* mAnim->getAnimSpeed() * mWalking;
-		    mTranslateVector.x = -cos(mFacing.valueRadians()+mFacingOffset)* mAnim->getAnimSpeed() * mWalking;
-            if(thisNPC)
+	        mTranslateVector.x = -sin(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
+		    mTranslateVector.y =  cos(mFacing.valueRadians())* mAnim->getAnimSpeed() * mWalking;
+//            mTranslateVector = mNode->getOrientation().zAxis();
+            mNode->translate(mTranslateVector);
+            if(thisNPC) // All NPC's.
             {
                 mFacing += Radian(event.timeSinceLastFrame * mAnim->getTurnSpeed() * mWalking);
                 mNode->yaw(Radian(event.timeSinceLastFrame * mAnim->getTurnSpeed() * mWalking));
                 mNode->translate(mTranslateVector);
-                
             }
-            else Event->setWorldPos(mTranslateVector);
-            
+            else  // Hero has moved.
+            {
+                Event->setWorldPos(mTranslateVector);
+            }
 		}
 		else 
 		{

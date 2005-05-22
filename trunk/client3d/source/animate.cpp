@@ -26,7 +26,11 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "animate.h"
 #include "logfile.h"
 #include "sound.h"
+#include "object_manager.h"
 
+//=================================================================================================
+// Init all static Elemnts.
+//=================================================================================================
 const char *StateNames[STATE_SUM]=
 {
 	"Idle1",	"Idle2",	"Idle3",
@@ -36,7 +40,8 @@ const char *StateNames[STATE_SUM]=
 	"Block1",	"Block2",	"Block3",
 	"Slump1",	"Slump2",	"Slump3",
 	"Death1",	"Death2",	"Death3",
-	"Hit1",		"Hit2",		"Hit3"
+	"Hit1",		"Hit2",		"Hit3",
+	"Cast1",	"Cast2",	"Cast3"
 };
 
 const std::string sndPreFix  = "Sound_";
@@ -87,6 +92,7 @@ Animate::Animate(Entity *entity)
 	mAnimState = mAnimStates[STATE_IDLE1];
 	mAnimState->setEnabled(true);
 	mAnimState->setLoop(false);
+    mSpellTrigger = false;
 }
 
 //=================================================================================================
@@ -109,7 +115,19 @@ void Animate::update(const FrameEvent& event)
 	mAnimState = mAnimStates[mAnimType + mAnimGroup];
 	mAnimState->addTime(event.timeSinceLastFrame * mAnimSpeed);
     // if an animation ends, then force the idle animation.
-	if (mAnimState->getTimePosition() >= mAnimState->getLength()) { toggleAnimation(STATE_IDLE1, true); }
+	if (mAnimState->getTimePosition() >= mAnimState->getLength())
+	{ 
+        toggleAnimation(STATE_IDLE1, true);
+    }
+    if (!mSpellTrigger && mAnimType >= STATE_CAST1)
+    {
+        if (mAnimState->getTimePosition() >= 1)
+        {
+            const int SPELL_FIREBALL =0;
+            ObjectManager::getSingleton().castSpell(OBJECT_PLAYER, SPELL_FIREBALL);
+            mSpellTrigger = true;
+        }
+    }
 }
 
 //=================================================================================================
@@ -117,8 +135,8 @@ void Animate::update(const FrameEvent& event)
 //=================================================================================================
 void Animate::toggleAnimation(int animationNr, bool force)
 {
-    if (!force && (mAnimType == animationNr || ( !isMovement() && animationNr >= STATE_ATTACK1))) 
-        return;
+    if (!force && (mAnimType == animationNr || ( !isMovement() && animationNr >= STATE_ATTACK1))) { return; }
+    mSpellTrigger = false;        
 	mAnimType = animationNr;
 	mAnimState->setEnabled(false);
 	mAnimState = mAnimStates[mAnimType + mAnimGroup];

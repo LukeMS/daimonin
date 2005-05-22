@@ -22,10 +22,6 @@ http://www.gnu.org/copyleft/lesser.txt.
 */
 
 #include "particle.h"
-#include "sound.h"
-#include "option.h"
-#include "logfile.h"
-
 
 //=================================================================================================
 // Init all static Elemnts.
@@ -35,7 +31,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 //=================================================================================================
 //
 //=================================================================================================
-ParticleFX::ParticleFX(SceneNode *parent, const string &name, const string &particleFX)
+ParticleFX::ParticleFX(SceneNode *parent, const std::string &name, const std::string &particleFX)
 {
     mName      = name;
     mPfxName   = particleFX;  

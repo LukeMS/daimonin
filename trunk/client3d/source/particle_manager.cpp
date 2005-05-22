@@ -21,77 +21,78 @@ http://www.gnu.org/copyleft/lesser.txt.
 -----------------------------------------------------------------------------
 */
 
-#include "define.h"
-#include "spell_manager.h"
-#include "object_manager.h"
 #include "particle_manager.h"
+#include "particle.h"
+#include "sound.h"
+#include "event.h"
 #include "option.h"
 #include "logfile.h"
 
 //=================================================================================================
 // Init all static Elemnts.
 //=================================================================================================
+static std::vector<sParticleObj*>mvObject_Node;
 
 //=================================================================================================
-// Init the model from the description file.
+//
 //=================================================================================================
-bool SpellManager::init(SceneManager *SceneMgr, SceneNode *Node)
+bool ParticleManager::init(SceneManager *SceneMgr, SceneNode *Node)
 {
 	mSceneMgr = SceneMgr;
 	mNode = Node;
+	mNodeCounter = mBoneCounter = 0;
 	return true; 
 }
 
 //=================================================================================================
-// 
+//
 //=================================================================================================
-bool SpellManager::addObject(unsigned int npc, unsigned int spell)
+void ParticleManager::addNodeObject(const SceneNode *parentNode, const char* particleFX)
 {
-    // Player cast Fireball.
-    const SceneNode *node = ObjectManager::getSingleton().getNpcNode(0);
-    //ParticleManager::getSingleton().addNodeObject(node, "Particle/GreenyNimbus");
-    ParticleManager::getSingleton().addNodeObject(node, "Particle/FireBall");
-    return true;
+    sParticleObj *obj = new sParticleObj;
+    mvObject_Node.push_back(obj);
+    Vector3 posOffset = Vector3(0,50,0);
+    obj->particleSys = ParticleSystemManager::getSingleton().createSystem("Node"+StringConverter::toString(mNodeCounter), particleFX);
+    obj->node = mNode->createChildSceneNode(parentNode->getPosition()+ posOffset, parentNode->getOrientation());
+    obj->node->attachObject(obj->particleSys);
+    obj->direction = parentNode->getOrientation().zAxis();
+    obj->speed = 300;
+    ++mNodeCounter;
 }
 
 //=================================================================================================
-// 
+//
 //=================================================================================================
-void SpellManager::update(int spell_type, const FrameEvent& evt)
+void ParticleManager::delNodeObject(int nr)
 {
-    switch (spell_type)
-    {
-//        case SPELL_RANGE:
-			{
-//			for (unsigned int i = 0; i < mvObject_range.size(); ++i) { mvObject_range[i]->update(evt); }
-            break;
-			}
-        default:
-            break;
+}
+
+//=================================================================================================
+//
+//=================================================================================================
+void ParticleManager::synchToWorldPos(const Vector3 &pos)
+{
+    int sum;
+    Particle* p;
+    for (unsigned int i = 0; i < mvObject_Node.size(); ++i)
+    { 
+        for (sum = mvObject_Node[i]->particleSys->getNumParticles()-1; sum >=0; --sum)
+        {
+            p = mvObject_Node[i]->particleSys->getParticle(sum);
+            p->position += pos;
+        }
     }
 }
 
 //=================================================================================================
-// JUST FOR TESTING.
+//
 //=================================================================================================
-void SpellManager::keyEvent(int spell_type, int action, int val1, int val2)
+void ParticleManager::moveNodeObject(const FrameEvent& event)
 {
-}
-
-//=================================================================================================
-// 
-//=================================================================================================
-void SpellManager::delObject(int number)
-{
-}
-
-//=================================================================================================
-// 
-//=================================================================================================
-SpellManager::~SpellManager()
-{
-    for (unsigned int i = 0; i < mvObject_range.size(); ++i)
+    int sum;
+    for (unsigned int i = 0; i < mvObject_Node.size(); ++i)
     { 
-        delete mvObject_range[i];
+        if (!mvObject_Node[i]->speed) continue;
+        mvObject_Node[i]->node->translate(mvObject_Node[i]->direction * mvObject_Node[i]->speed * event.timeSinceLastFrame);
     }
 }

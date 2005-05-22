@@ -44,7 +44,7 @@ bool ObjectManager::init(SceneManager *SceneMgr, SceneNode *Node)
 //=================================================================================================
 // 
 //=================================================================================================
-bool ObjectManager::addObject(unsigned int type, const char *desc_filename, Vector3 pos)
+bool ObjectManager::addObject(unsigned int type, const char *desc_filename, Vector3 pos, Radian facing)
 {
     static int id= -1;
     mDescFile = DIR_MODEL_DESCRIPTION;
@@ -64,10 +64,9 @@ bool ObjectManager::addObject(unsigned int type, const char *desc_filename, Vect
         case OBJECT_STATIC:
         {
             // For static objects we don't use *.desc files. So we get just the mesh name here.
-        //	Option::getSingleton().getDescStr("MeshName", strTemp);
             strTemp = desc_filename;
             Entity  *entity = mSceneMgr->createEntity("Object_"+StringConverter::toString(++id), strTemp.c_str());
-            SceneNode *mNode = mParentNode->createChildSceneNode(Vector3(pos.x, pos.y, pos.z), Quaternion(1.0,0.0,0.0,0.0));
+            mNode = mParentNode->createChildSceneNode(pos, Quaternion(1.0,0.0,0.0,0.0));
             mNode->attachObject(entity);
             mvObject_static.push_back(entity);
 //            node->setScale(5, 5, 5);
@@ -75,9 +74,10 @@ bool ObjectManager::addObject(unsigned int type, const char *desc_filename, Vect
         }
         case OBJECT_NPC:
         {
-           NPC *npc = new NPC(mSceneMgr, mParentNode, desc_filename);
-           mvObject_npc.push_back(npc);        
-           break;
+            mNode = mParentNode->createChildSceneNode(pos, Quaternion(1.0,0.0,0.0,0.0));        
+            NPC *npc = new NPC(mSceneMgr, mNode, desc_filename, facing);
+            mvObject_npc.push_back(npc);        
+            break;
         }
         default:
             break;
@@ -144,10 +144,6 @@ void ObjectManager::keyEvent(int obj_type, int action, int val1, int val2)
 void ObjectManager::delObject(int number)
 {
 }
-
-//=================================================================================================
-// 
-//=================================================================================================
 
 //=================================================================================================
 // 
