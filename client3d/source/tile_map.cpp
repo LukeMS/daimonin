@@ -776,8 +776,8 @@ void TileMap::Init(SceneManager *SceneMgr, SceneNode *Node)
 	
     const  Real startX =  350;//TILES_WIDTH*4;
 	static Real posX   =  startX;
-	static Real posY   =  320;//240 + TILES_HEIGHT;
-	static Real posZ   = -100;
+	static Real posY   =  20;//240 + TILES_HEIGHT;
+	static Real posZ   = -400;
 
     // Tiles rotated 45°
 	for (int y = 0; y < TILES_SUM_Y; ++y)

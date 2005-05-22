@@ -31,6 +31,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "option.h"
 #include "sound.h"
 #include "object_manager.h"
+#include "particle_manager.h"
 #include "spell_manager.h"
 #include "tile_gfx.h"
 #include "tile_map.h"
@@ -186,6 +187,8 @@ void DaimoninClient::createScene(void)
 
 	SpellManager::getSingleton().init(mSceneMgr, Event->World);
 	ObjectManager::getSingleton().init(mSceneMgr, Event->World);
+	ParticleManager::getSingleton().init(mSceneMgr, Event->World);
+	
     string descFile = FILE_WORLD_DESC;
 	LogFile::getSingleton().Info("Parse description file %s...", descFile.c_str());
 	if (!(Option::getSingleton().openDescFile(descFile.c_str())))
@@ -196,27 +199,30 @@ void DaimoninClient::createScene(void)
 	}
 	LogFile::getSingleton().Success(true);
 
-    string strTemp, strMesh;
+    string strType, strTemp, strMesh;
     int i=0;
 
     while(1)
     { 
         if (!(Option::getSingleton().openDescFile(descFile.c_str()))) { return; }   
-        if (!(Option::getSingleton().getDescStr("Type", strTemp, ++i))) {break; }
+        if (!(Option::getSingleton().getDescStr("Type", strType, ++i))) {break; }
         Option::getSingleton().getDescStr("MeshName", strMesh,i);
-        if (strTemp == "npc")
+        Option::getSingleton().getDescStr("StartX", strTemp,i);
+        Real posX = atof(strTemp.c_str());
+        Option::getSingleton().getDescStr("StartY", strTemp,i);
+        Real posY = atof(strTemp.c_str());
+        Option::getSingleton().getDescStr("StartZ", strTemp,i);
+        Real posZ = atof(strTemp.c_str());
+        Option::getSingleton().getDescStr("Facing", strTemp);
+        Radian facing = Radian(atof(strTemp.c_str()));
+
+        if (strType == "npc")
         {
-            ObjectManager::getSingleton().addObject(OBJECT_NPC, strMesh.c_str(), Vector3(0,0,0));
+            ObjectManager::getSingleton().addObject(OBJECT_NPC, strMesh.c_str(), Vector3(posX,posY,posZ), facing);   
         }
         else
         {
-            Option::getSingleton().getDescStr("StartX", strTemp,i);
-            Real posX = atof(strTemp.c_str());
-            Option::getSingleton().getDescStr("StartY", strTemp,i);
-            Real posY = atof(strTemp.c_str());
-            Option::getSingleton().getDescStr("StartZ", strTemp,i);
-            Real posZ = atof(strTemp.c_str());
-            ObjectManager::getSingleton().addObject(OBJECT_STATIC, strMesh.c_str(), Vector3(posX,posY,posZ));        
+            ObjectManager::getSingleton().addObject(OBJECT_STATIC, strMesh.c_str(), Vector3(posX,posY,posZ), facing);        
         }
     }
 	TileMap::getSingleton().Init(mSceneMgr, mSceneMgr->getRootSceneNode());

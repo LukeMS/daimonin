@@ -22,7 +22,6 @@ http://www.gnu.org/copyleft/lesser.txt.
 */
 
 #include <OgreKeyEvent.h>
-
 #include "event.h"
 #include "dialog.h"
 #include "sound.h"
@@ -47,9 +46,13 @@ http://www.gnu.org/copyleft/lesser.txt.
 
 using namespace Ogre;
 
+//=================================================================================================
+// Init all static Elemnts.
+//=================================================================================================
 //OverlayElement* mRowText;
 //Overlay *mRowOverlay;
 CEvent *Event=0;
+
 //=================================================================================================
 // Constructor.
 //=================================================================================================
@@ -124,10 +127,6 @@ CEvent::CEvent(RenderWindow* win, Camera* cam, MouseMotionListener *mMotionListe
 	mWindow = win;
 	mTimeUntilNextToggle = 0;
 	mSceneDetailIndex = 0;
-	mMoveScale = 0.0f;
-    mRotScale = 0.0f;
-    mRotateSpeed = 36;
-    mMoveSpeed   = 100;
     mTranslateVector = Vector3(0,0,0);
     mAniso = 1;
     mFiltering = TFO_BILINEAR;
@@ -147,15 +146,22 @@ CEvent::~CEvent()
 }
 
 //=================================================================================================
+// Player has moved, update the world position.
+//=================================================================================================
+void CEvent::setWorldPos(Vector3 &pos)
+{ 
+    World->translate(-pos);
+    ParticleManager::getSingleton().synchToWorldPos(pos);
+}
+
+//=================================================================================================
 // Frame Start event.
 //=================================================================================================
 bool CEvent::frameStarted(const FrameEvent& evt)
 {
     if(mWindow->isClosed()) { return false; }
-
-    
     ObjectManager::getSingleton().update(OBJECT_NPC, evt);
-
+    ParticleManager::getSingleton().moveNodeObject(evt);    
 	mIdleTime += evt.timeSinceLastFrame;
 	if (mIdleTime > 30.0)
 	{ 
@@ -204,21 +210,17 @@ bool CEvent::frameEnded(const FrameEvent& evt)
     static String bestFps  = "Best FPS: ";
     static String worstFps = "Worst FPS: ";
     static String tris     = "Triangle Count: ";
+    OverlayElement* guiAvg   = OverlayManager::getSingleton().getOverlayElement("Core/AverageFps");
+    OverlayElement* guiCurr  = OverlayManager::getSingleton().getOverlayElement("Core/CurrFps");
+    OverlayElement* guiBest  = OverlayManager::getSingleton().getOverlayElement("Core/BestFps");
+    OverlayElement* guiWorst = OverlayManager::getSingleton().getOverlayElement("Core/WorstFps");
 
-    // update stats when necessary
-    try {
-        OverlayElement* guiAvg   = OverlayManager::getSingleton().getOverlayElement("Core/AverageFps");
-        OverlayElement* guiCurr  = OverlayManager::getSingleton().getOverlayElement("Core/CurrFps");
-        OverlayElement* guiBest  = OverlayManager::getSingleton().getOverlayElement("Core/BestFps");
-        OverlayElement* guiWorst = OverlayManager::getSingleton().getOverlayElement("Core/WorstFps");
+    const RenderTarget::FrameStats& stats = mWindow->getStatistics();
 
-        const RenderTarget::FrameStats& stats = mWindow->getStatistics();
-
-        guiAvg->setCaption(avgFps + StringConverter::toString(stats.avgFPS));
-        guiCurr->setCaption(currFps + StringConverter::toString(stats.lastFPS));
-
-	#ifdef SHOW_FREE_MEM
-		#ifdef WIN32
+    guiAvg->setCaption(avgFps + StringConverter::toString(stats.avgFPS));
+    guiCurr->setCaption(currFps + StringConverter::toString(stats.lastFPS));
+    #ifdef SHOW_FREE_MEM
+	  #ifdef WIN32
 		MEMORYSTATUS ms;
 		ms.dwLength = sizeof(ms);
 		GlobalMemoryStatus(&ms);
@@ -226,39 +228,33 @@ bool CEvent::frameEnded(const FrameEvent& evt)
 		if((long)ms.dwAvailPhys    <0) { ms.dwAvailPhys     = 0; }
 		long usedPhys = ((long)ms.dwTotalPhys     - (long)ms.dwAvailPhys) / 1024;
 		long usedPage = ((long)ms.dwTotalPageFile - (long)ms.dwAvailPageFile)/ 1024;
-		#else
-		#endif // WIN32
+	  #else
+	  #endif // WIN32
 		guiBest ->setCaption("Phys Mem used:" + StringConverter::toString(usedPhys)+ " kb");
 		guiWorst->setCaption("Page Mem used:" + StringConverter::toString(usedPage)+ " kb");
 	#else
 		guiBest->setCaption(bestFps + StringConverter::toString(stats.bestFPS)+" "+StringConverter::toString(stats.bestFrameTime)+" ms");
 		guiWorst->setCaption(worstFps + StringConverter::toString(stats.worstFPS) +" "+StringConverter::toString(stats.worstFrameTime)+" ms");
 	#endif
-        OverlayElement* guiTris = OverlayManager::getSingleton().getOverlayElement("Core/NumTris");
-        guiTris->setCaption(tris + StringConverter::toString(stats.triangleCount));
+    OverlayElement* guiTris = OverlayManager::getSingleton().getOverlayElement("Core/NumTris");
+    guiTris->setCaption(tris + StringConverter::toString(stats.triangleCount));
 
-        OverlayElement* guiDbg = OverlayManager::getSingleton().getOverlayElement("Core/DebugText");
-        guiDbg->setCaption(mWindow->getDebugText());
-		TextWin->Update();
-		ChatWin->Update();
+    OverlayElement* guiDbg = OverlayManager::getSingleton().getOverlayElement("Core/DebugText");
+    guiDbg->setCaption(mWindow->getDebugText());
+    TextWin->Update();
+	ChatWin->Update();
 
-		///////////////////////////////////////////////////////////////////////// 
-	    // Print camera details
-	    /////////////////////////////////////////////////////////////////////////
-		mWindow->setDebugText("Camera zoom: " + StringConverter::toString(mCameraZoom)+ " pos: " 
-            + StringConverter::toString(mCamera->getDerivedPosition())
-			+ " orientation: " + StringConverter::toString(mCamera->getDerivedOrientation()));
+	///////////////////////////////////////////////////////////////////////// 
+	// Print camera details
+	/////////////////////////////////////////////////////////////////////////
+	mWindow->setDebugText("Camera zoom: " + StringConverter::toString(mCameraZoom)+ " pos: " 
+        + StringConverter::toString(mCamera->getDerivedPosition())
+        + " orientation: " + StringConverter::toString(mCamera->getDerivedOrientation()));
 
-		Vector3 pPos = World->getPosition();
-		mWindow->setDebugText(  " x: "+ StringConverter::toString(pPos.x)+
-                                " y: "+ StringConverter::toString(pPos.y)+
-                                " z: "+ StringConverter::toString(pPos.z));
-
-	}
-	catch(...)
-	{
-		// ignore
-	}
+    Vector3 pPos = World->getPosition();
+    mWindow->setDebugText(  " x: "+ StringConverter::toString(pPos.x)+
+                            " y: "+ StringConverter::toString(pPos.y)+
+                            " z: "+ StringConverter::toString(pPos.z));
 	return true;
 }
 
@@ -310,10 +306,10 @@ void CEvent::keyPressed(KeyEvent *e)
 		/////////////////////////////////////////////////////////////////////////
 		
 		case KC_UP:
-	        ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_WALK,  1);
+	        ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_WALK, -1);
 			break;
 		case KC_DOWN:
-	        ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_WALK, -1);
+	        ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_WALK,  1);
 			break;
 		case KC_RIGHT:
 	        ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_TURN, -1);
@@ -333,11 +329,8 @@ void CEvent::keyPressed(KeyEvent *e)
 	        ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_ANIMATION, STATE_BLOCK1);
 			break;
 		case KC_C:
-		{
-            const int SPELL_FIREBALL =0;
-	        ObjectManager::getSingleton().castSpell(OBJECT_PLAYER, SPELL_FIREBALL);
-			break;
-        }
+            ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_ANIMATION, STATE_CAST1);
+            break;
 		case KC_S:
 	        ObjectManager::getSingleton().keyEvent(OBJECT_PLAYER, OBJ_ANIMATION, STATE_SLUMP1);
 			break;
