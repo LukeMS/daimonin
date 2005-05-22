@@ -25,20 +25,6 @@
 # It was choosen because we don't need 2 scorpion models - we wouldn't see a difference :)
 MeshName : "Animal_N_Scorpion.mesh" 
 
-# The pos of the model in the world.
-StartX   : "-160"
-StartY   : "0"
-StartZ   : "0"
-
-# The facing direction in degrees.
-Facing   : "90"
-
-# The facing offset direction in degrees.
-# If your model walks sideways you can fix this here.
-FOffset  : "90"
-
-
-
 #####################################################################################
 # Materials     (MUST be defined as followed)
 # ALL is case sensitive!

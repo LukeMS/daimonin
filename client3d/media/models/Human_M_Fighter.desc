@@ -21,7 +21,7 @@
 # ALL is case sensitive!
 #####################################################################################
 
-MeshName : "Human_F_Fighter.mesh"
+MeshName : "Human_M_Fighter.mesh"
 
 #####################################################################################
 # Materials     (MUST be defined as followed)
@@ -127,7 +127,7 @@ Sound_Hit1    : "Player_Hit1.wav"
 Sound_Hit2    : "Player_Hit2.wav"
 Sound_Hit3    : "Player_Hit3.wav"
 
-Anim_Cast1   : ""
+Anim_Cast1   : "Cast1"
 Anim_Cast2   : ""
 Anim_Cast3   : ""
 Sound_Cast1  : ""
@@ -171,12 +171,12 @@ Bone_Body      : "Spline1"
 M_Name_Weapon: "Sword_Short_01.mesh"
 StartX_Weapon: "4.0"
 StartY_Weapon: "0.0"
-StartZ_Weapon: "10.0"
+StartZ_Weapon: "11.0"
 
 M_Name_Weapon: "Mace_Small_01.mesh"
 StartX_Weapon: "4.0"
 StartY_Weapon: "0.0"
-StartZ_Weapon: "10.0"
+StartZ_Weapon: "11.0"
 
 #####################################################################################
 # Armor
@@ -187,12 +187,13 @@ StartZ_Weapon: "10.0"
 
 M_Name_Shield: "Shield_Round_01.mesh"
 StartX_Shield: "3.0"
-StartY_Shield: "2.0"
+StartY_Shield: "5.0"
 StartZ_Shield: "-1.0"
+
 
 M_Name_Shield: "Shield_Round_02.mesh"
 StartX_Shield: "3.0"
-StartY_Shield: "2.0"
+StartY_Shield: "5.0"
 StartZ_Shield: "-1.0"
 
 M_Name_Armor : "Armor_body.mesh"

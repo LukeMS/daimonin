@@ -13,49 +13,22 @@ TileBlending : "0" # blending offset isn't used for movement atm (=very ugly wal
 
 # First "NPC" is our Hero
 Type     : "npc"
-MeshName : "Human_F_Fighter.desc"
-StartX   : "0" # will be overwritten by model.desc file.
-StartY   : "0" # will be overwritten by model.desc file.
-StartZ   : "0" # will be overwritten by model.desc file.
+MeshName : "Human_M_Fighter.desc"
+StartX   : "0"
+StartY   : "0"
+StartZ   : "0"
+Facing   : "90" # [degrees]
 
 Type     : "npc"
 MeshName : "Animal_N_Scorpion.desc"
-StartX   : "0" # will be overwritten by model.desc file.
-StartY   : "0" # will be overwritten by model.desc file.
-StartZ   : "0" # will be overwritten by model.desc file.
-
-Type     : "npc"
-MeshName : "1.desc"
-StartX   : "0" # will be overwritten by model.desc file.
-StartY   : "0" # will be overwritten by model.desc file.
-StartZ   : "0" # will be overwritten by model.desc file.
-
-Type     : "npc"
-MeshName : "2.desc"
-StartX   : "0" # will be overwritten by model.desc file.
-StartY   : "0" # will be overwritten by model.desc file.
-StartZ   : "0" # will be overwritten by model.desc file.
-
-Type     : "static"
-MeshName : "tree01.mesh"
 StartX   : "40"
-StartY   : "-8"
-StartZ   : "7"
+StartY   : "40"
+StartZ   : "0"
+Facing   : "90"
 
 Type     : "static"
 MeshName : "tree01.mesh"
 StartX   : "140"
 StartY   : "-8"
 StartZ   : "6"
-
-Type     : "static"
-MeshName : "tree01.mesh"
-StartX   : "-40"
-StartY   : "-88"
-StartZ   : "9"
-
-Type     : "static"
-MeshName : "church.mesh"
-StartX   : "179"
-StartY   : "-108"
-StartZ   : "11"
+#Facing   : "90"   # Not used in static meshes.
