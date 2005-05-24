@@ -43,6 +43,8 @@ enum AnimState
     STATE_SLUMP1,	STATE_SLUMP2,	STATE_SLUMP3,
     STATE_DEATH1,	STATE_DEATH2,	STATE_DEATH3,
     STATE_HIT1,		STATE_HIT2,		STATE_HIT3,
+    // Castings MUST me the last entrys!
+    STATE_CAST1,	STATE_CAST2,	STATE_CAST3,    
 	STATE_SUM
 };
 
@@ -59,6 +61,7 @@ class Animate
     ////////////////////////////////////////////////////////////
 	int mAnimType;
 	int mAnimGroup;
+	bool mSpellTrigger;
 	AnimationState *mAnimState;    
 	AnimationState *mAnimStates[STATE_SUM];
     Real mAnimSpeed, mTurnSpeed;

@@ -53,6 +53,8 @@ class Skeleton
     void renameAnim();
     void checkAnimNames();
     void clearAnimations();
+    void fillAnimSelectCombo();
+    bool parseAnimName(const string &name);
 
   private:
     ////////////////////////////////////////////////////////////

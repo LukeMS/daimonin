@@ -25,9 +25,10 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include <fstream>
 #include <vector>
 #include "define.h"
+#include "logfile.h"
 #include "mesh.h"
 #include "skeleton.h"
-#include "logfile.h"
+#include "material.h"
 #include "mainwindow.h"
 
 struct sGender
@@ -47,6 +48,22 @@ static vector<string>vecMeshXML;
 static vector<string>vecSpecNames;
 static vector<string>vecProfNames;    
 static string skeltonFile;
+
+// ========================================================================
+// 
+// ========================================================================
+const char *Mesh::getXML_Line(int lineNr)
+{
+    return vecMeshXML[lineNr].c_str();
+}
+
+// ========================================================================
+// 
+// ========================================================================
+void Mesh::setXML_Line(int lineNr, const string &line)
+{
+    vecMeshXML[lineNr] = line;
+}
 
 // ========================================================================
 // 
@@ -179,20 +196,27 @@ void Mesh::load(const char *filename)
         return;
     }
     LogFile::getSingleton().Info("Opend Meshfile: '%s'\n" , MeshFilename.c_str());
-    int lineNr=-1;
+
+    int start, lineNr=-1;
     while(getline(inMesh, line))
     {
         ++lineNr;
         if (line.find("skeletonlink name") != string::npos)
         { 
             mSkelFilenameLine = lineNr;
-            int start = line.find("\"");
+            start = line.find("\"");
             skeltonFile = line.substr(++start, line.find("\"",start)-start) + ".xml";
         }
+        else if (line.find("submesh material") != string::npos)
+        { 
+            start = line.find("\"");
+            Material::getSingleton().addMaterial(lineNr, line.substr(++start, line.find("\"",start)-start));
+        } 
         vecMeshXML.push_back(line);
     }
     gpMainWin->MeshName->value(MeshFilename.c_str());
     checkMeshName(MeshFilename);
+    Material::getSingleton().update();
 }
 
 // ========================================================================

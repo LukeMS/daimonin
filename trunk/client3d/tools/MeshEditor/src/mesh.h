@@ -50,7 +50,9 @@ class Mesh
     void renameMesh();
     void selectSpecies(int pos);
     const char *getSkeletonName();
-
+    void save(const char *filename);
+    const char *getXML_Line(int lineNr);
+    void setXML_Line(int lineNr, const string &line);
   private:
     ////////////////////////////////////////////////////////////
 	// Variables.
@@ -64,7 +66,6 @@ class Mesh
     ////////////////////////////////////////////////////////////
     Mesh(const Mesh&); // disable copy-constructor.
     void checkMeshName(string &MeshFilename);
-    void save(const char *filename);
 };
 
 #endif

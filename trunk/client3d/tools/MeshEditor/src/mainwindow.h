@@ -63,13 +63,12 @@ private:
 public:
   Fl_Group *panelMaterial;
   Fl_Choice *selMaterialName;
-private:
-  inline void cb_selMaterialName_i(Fl_Choice*, void*);
-  static void cb_selMaterialName(Fl_Choice*, void*);
-public:
   Fl_Output *txtMaterialNameStatus;
   Fl_Choice *selRenameMaterial;
   Fl_Button *butRenameMaterial;
+private:
+  inline void cb_butRenameMaterial_i(Fl_Button*, void*);
+  static void cb_butRenameMaterial(Fl_Button*, void*);
 };
 extern MainWindow *gpMainWin;
 #endif

@@ -108,15 +108,17 @@ class Network
 	void DoClient();
 
     // Server commands..
-    void VersionCmd(char *data, int len);
-	void SetupCmd  (char *buf,  int len);
-    void DataCmd   (char *data, int len);
-    void handle_query(char *data, int len);
+    void VersionCmd      (char *data, int len);
+	void SetupCmd        (char *data, int len);
+    void DataCmd         (char *data, int len);
+    void PlayerCmd       (char *data, int len);
+    void Map2Cmd         (char *data, int len);
+    void NewCharCmd      (char *data, int len);
+    void HandleQuery     (char *data, int len);
     void PreParseInfoStat(char *cmd);
-    void PlayerCmd(unsigned char *data, int len);
     void RequestFile(int index);
-    void Map2Cmd(unsigned char *data, int len);     
-
+    
+    void CreatePlayerAccount();
   private:
     ////////////////////////////////////////////////////////////
 	// Variables.

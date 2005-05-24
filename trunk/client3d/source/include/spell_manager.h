@@ -30,13 +30,18 @@ http://www.gnu.org/copyleft/lesser.txt.
 
 using namespace Ogre;
 
+////////////////////////////////////////////////////////////
+// Defines.
+////////////////////////////////////////////////////////////
 enum { SPELL_SRC_NPC, SPELL_SRC_OBJECT, SPELL_SRC_SUM };
 enum { SPELL_DEST_RANGE, SPELL_DEST_CASTER, SPELL_DEST_SUM };
 enum { SPELL_TYPE_DAMAGE, SPELL_TYPE_HEAL, SPELL_TYPE_SUM };
 
-////////////////////////////////////////////////////////////
-// Defines.
-////////////////////////////////////////////////////////////
+struct _Spell
+{
+    SceneNode *node;
+    ParticleSystem* particleSys;    
+};
 
 ////////////////////////////////////////////////////////////
 // Class.
@@ -70,6 +75,7 @@ class SpellManager
     void delObject(int number);
     void update(int type, const FrameEvent& evt);
     void keyEvent(int obj_type, int action, int val1=0, int val2=0);
+    void test(Vector3 pos);
 };
 
 #endif

@@ -174,17 +174,14 @@ void Network::Update()
 			LogFile::getSingleton().Info("GAME_STATUS_INIT\n");
 			Option::getSingleton().GameStatus = GAME_STATUS_META;
 		}
-
-/*
-    if (Option::getSingleton().GameStatus < GAME_STATUS_REQUEST_FILES)
-         show_meta_server(start_server, metaserver_start, metaserver_sel);
-    else if (Option::getSingleton().GameStatus >= GAME_STATUS_REQUEST_FILES && Option::getSingleton().GameStatus < GAME_STATUS_NEW_CHAR)
-        show_login_server();
-    else if (Option::getSingleton().GameStatus == GAME_STATUS_NEW_CHAR)
-         cpl.menustatus = MENU_CREATE;
-*/
-
-
+        else if (Option::getSingleton().GameStatus == GAME_STATUS_NEW_CHAR)
+        {
+            if (Dialog::getSingleton().UpdateNewChar())
+            {
+                CreatePlayerAccount();
+                Option::getSingleton().GameStatus = GAME_STATUS_WAITFORPLAY; 
+            }
+        }
 		///////////////////////////////////////////////////////////////////////// 
 		// connect to meta and get server data
 		///////////////////////////////////////////////////////////////////////// 
@@ -880,7 +877,7 @@ void Network::DoClient()
 			#ifdef DEBUG_ON
 			LogFile::getSingleton().Info("command: BINARY_CMD_MAP2 (%d)\n", mInbuf.buf[2]); 
 			#endif
-			Map2Cmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+			Map2Cmd((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case  3: // BINARY_CMD_DRAWINFO
             #ifdef DEBUG_ON
@@ -965,7 +962,7 @@ void Network::DoClient()
 			LogFile::getSingleton().Info("command: BINARY_CMD_PLAYER (%d)\n", mInbuf.buf[2]); 
             #endif
 			Dialog::getSingleton().setVisible(false);
-            PlayerCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+            PlayerCmd((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case 17: // BINARY_CMD_MAPSTATS
             #ifdef DEBUG_ON
@@ -1025,7 +1022,7 @@ void Network::DoClient()
             #ifdef DEBUG_ON
 			LogFile::getSingleton().Info("command: BINARY_CMD_QUERY (%d)\n", mInbuf.buf[2]); 
             #endif
-            handle_query((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+            HandleQuery((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case 27: // BINARY_CMD_DATA
             #ifdef DEBUG_ON
@@ -1037,7 +1034,7 @@ void Network::DoClient()
             #ifdef DEBUG_ON
 			LogFile::getSingleton().Info("command: BINARY_CMD_NEW_CHAR (%d)\n", mInbuf.buf[2]); 
             #endif
-         //             NewCharCmd(mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
+            NewCharCmd((char*)mInbuf.buf + OFFSET, mInbuf.len - OFFSET);
 			break;
 		case 29: // BINARY_CMD_ITEMY
             #ifdef DEBUG_ON

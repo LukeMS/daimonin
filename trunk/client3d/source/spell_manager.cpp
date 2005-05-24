@@ -59,16 +59,6 @@ bool SpellManager::addObject(unsigned int npc, unsigned int spell)
 //=================================================================================================
 void SpellManager::update(int spell_type, const FrameEvent& evt)
 {
-    switch (spell_type)
-    {
-//        case SPELL_RANGE:
-			{
-//			for (unsigned int i = 0; i < mvObject_range.size(); ++i) { mvObject_range[i]->update(evt); }
-            break;
-			}
-        default:
-            break;
-    }
 }
 
 //=================================================================================================
