@@ -1,6 +1,6 @@
 Object t_hammer
 name throwing hammer
-race t_hammer
+race rock
 layer 3
 face hammer_2.101
 weapon_speed 0.035
