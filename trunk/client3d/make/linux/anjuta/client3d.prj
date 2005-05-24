@@ -98,7 +98,8 @@ module.include.files=\
 	light_manager.h\
 	particle.h\
 	spell_manager.h\
-	spell_range.h
+	spell_range.h\
+	particle_manager.h
 
 module.source.name=source
 module.source.type=
@@ -131,7 +132,8 @@ module.source.files=\
 	light_manager.cpp\
 	particle.cpp\
 	spell_manager.cpp\
-	spell_range.cpp
+	spell_range.cpp\
+	particle_manager.cpp
 
 module.pixmap.name=pixmaps
 module.pixmap.type=
