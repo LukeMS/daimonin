@@ -264,7 +264,7 @@ material Material_#10/Hands
         {
             texture_unit
             {
-                texture Human_M_Fighter_Hands_01.jpg
+                texture Human_F_Fighter_Hands_01.jpg
             }
         }
     }
