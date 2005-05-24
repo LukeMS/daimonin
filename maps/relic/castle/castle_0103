@@ -638,7 +638,6 @@ y 18
 end
 arch monk
 name Elisbath
-friendly 1
 x 4
 y 18
 arch event_obj

@@ -2468,7 +2468,7 @@ y 2
 end
 arch environment_sensor
 name Monday sensor
-will_apply 1
+last_grace 1
 connected 203
 x 21
 y 2

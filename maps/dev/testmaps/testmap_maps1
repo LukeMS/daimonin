@@ -550,8 +550,6 @@ y 2
 arch wyvern
 type 83
 dam 1
-stand_still 0
-unaggressive 0
 hp 0
 maxhp 2
 end

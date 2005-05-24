@@ -1143,7 +1143,6 @@ y 2
 end
 arch ogre
 Dex 2
-can_use_bow 1
 Wis 4
 stand_still 1
 x 12
@@ -1325,7 +1324,6 @@ end
 arch ogre
 can_reflect_missile 1
 Dex 2
-can_use_bow 1
 stand_still 1
 Wis 4
 x 14

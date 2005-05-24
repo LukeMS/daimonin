@@ -240,7 +240,6 @@ x 1
 y 22
 end
 arch smith
-friendly 1
 x 1
 y 22
 arch event_obj

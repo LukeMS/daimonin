@@ -1525,7 +1525,6 @@ end
 arch slime
 speed -0.5
 unaggressive 1
-will_apply 0
 attack_movement 179
 x 12
 y 16

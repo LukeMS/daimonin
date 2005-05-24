@@ -1180,9 +1180,6 @@ msg
 your bank...
 endmsg
 level 45
-invulnerable 1
-no_attack 1
-friendly 1
 direction 1
 x 8
 y 6
@@ -1263,9 +1260,6 @@ msg
 your bank...
 endmsg
 level 45
-invulnerable 1
-no_attack 1
-friendly 1
 direction 1
 x 8
 y 17
