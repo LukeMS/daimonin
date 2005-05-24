@@ -24,10 +24,11 @@ http://www.gnu.org/copyleft/lesser.txt.
 #ifndef DEFINE_H
 #define DEFINE_H
 
-const char FILE_ANIM_NAMES   [] = "AnimationNames.editor";
-const char FILE_MESH_NAMES   [] = "MeshNames.editor";
-const char FILE_OGRE_XML_CONV[] = "OgreXMLConverter.exe ";
-const char PRG_NAME          [] = "Daimonin Ogre3d Mesh-Editor";
+const char FILE_ANIM_NAMES    [] = "AnimationNames.editor";
+const char FILE_MATERIAL_NAMES[] = "MaterialNames.editor";
+const char FILE_MESH_NAMES    [] = "MeshNames.editor";
+const char FILE_OGRE_XML_CONV [] = "OgreXMLConverter.exe ";
+const char PRG_NAME           [] = "Daimonin Ogre3d Mesh-Editor";
 
 // ========================================================================
 // All pathes MUST be placed here!

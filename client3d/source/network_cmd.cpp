@@ -39,9 +39,18 @@ using namespace std;
 const int  REQUEST_FACE_MAX = 250;
 const char MAX_LEN_LOGIN_NAME = 15;
 
-inline short GetShort_String(unsigned char *data)
+inline short GetShort_String(char *data)
 {
-    return ((data[0] << 8) + data[1]);
+    return ((((unsigned char)data[0]) << 8) + (unsigned char)data[1]);
+}
+
+// ========================================================================
+// Compare server and client version number.
+// ========================================================================
+void Network::NewCharCmd(char *data, int len)
+{
+    Option::getSingleton().GameStatus = GAME_STATUS_NEW_CHAR;
+//    CloseSocket();
 }
 
 // ========================================================================
@@ -279,7 +288,7 @@ void Network::PreParseInfoStat(char *cmd)
 // ========================================================================
 // 
 // ========================================================================
-void Network::handle_query(char *data, int len)
+void Network::HandleQuery(char *data, int len)
 {
     char   *buf, *cp;
     buf = strchr(data, ' ');
@@ -300,7 +309,7 @@ void Network::handle_query(char *data, int len)
 // ========================================================================
 // 
 // ========================================================================
-void Network::PlayerCmd(unsigned char *data, int len)
+void Network::PlayerCmd(char *data, int len)
 {
     Option::getSingleton().GameStatus = GAME_STATUS_PLAY;
 
@@ -339,7 +348,7 @@ static int scrolldx, scrolldy;
 // ========================================================================
 // 
 // ========================================================================
-void Network::Map2Cmd(unsigned char *data, int len)
+void Network::Map2Cmd(char *data, int len)
 {
     int mask, x, y, pos = 0, ext_flag, xdata;
     int ext1, ext2, ext3, probe;
@@ -625,4 +634,15 @@ int Network::request_face(int pnum, int mode)
     }
     */
     return 1;
+}
+
+// ========================================================================
+// 
+// ========================================================================
+void Network::CreatePlayerAccount()
+{
+    char    buf[MAX_BUF];
+ //   sprintf(buf, "nc %s %d %d %d %d %d %d %d", nc->char_arch[nc->gender_selected], nc->stats[0], nc->stats[1], nc->stats[2], nc->stats[3], nc->stats[4], nc->stats[5], nc->stats[6]);
+    sprintf(buf, "%s", "nc human_male 14 14 13 12 12 12 12");
+    cs_write_string(buf, strlen(buf));
 }

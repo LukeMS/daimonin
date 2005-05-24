@@ -29,6 +29,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 #include "mainwindow.h"
 #include "editor.h"
 #include "mesh.h"
+#include "material.h"
 #include "skeleton.h"
 
 using namespace std;
@@ -62,16 +63,14 @@ int main(int argc, char *argv[])
     Fl::add_handler(handle);
     gpMainWin->MWindow->position(1,1);
     gpMainWin->MWindow->show( argc, argv );
-//  gpMainWin->MWindow->add(gpGLWin);
-
     LogFile::getSingleton().Headline("Init System");
     Mesh    ::getSingleton().Init();
-    Skeleton::getSingleton().Init();    
+    Material::getSingleton().Init();
+    Skeleton::getSingleton().Init();
     LogFile::getSingleton().Headline("Mainloop");
     while (Fl::check())
     {
     }
-    
     if (gpMainWin) { delete gpMainWin; }
     return 0;
 }

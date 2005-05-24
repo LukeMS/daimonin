@@ -47,7 +47,6 @@ class NPC
 	unsigned int thisNPC;
 	Real mWalking, mTurning;
 	Radian mFacing;
-	Real mFacingOffset;
     SceneNode  *mNode;
     Entity *mEntityNPC, *mEntityWeapon, *mEntityShield, *mEntityHelmet, *mEntityArmor;
     Vector3 mTranslateVector;    
@@ -66,18 +65,20 @@ class NPC
     ////////////////////////////////////////////////////////////
 	// Functions.
     ////////////////////////////////////////////////////////////
-	 NPC(SceneManager *SceneMgr, SceneNode  *Node, const char *filename);
+	 NPC(SceneManager *SceneMgr, SceneNode  *Node, const char *filename, Radian Facing);
 	~NPC() {;}
 	void walking(Real walk) { mWalking = walk; }
 	void turning(Real turn) { mTurning = turn; }
 	const Vector3 &getPos() { return mNode->getPosition(); }
     const Vector3 &getWorldPos() { return mTranslateVector; }	
+    const SceneNode *getNode()   { return mNode; }     
     void update(const FrameEvent& event);
     void castSpell(int spell);
     void toggleTexture(int pos, int textureNr);
     void toggleMesh   (int pos, int WeaponNr);
     void toggleAnimGroup() { mAnim->toggleAnimGroup(); }
 	void toggleAnimation(int animationNr) {mAnim->toggleAnimation(animationNr); }
+	Real getFacing() { return mFacing.valueRadians(); }
 };
 
 #endif

@@ -4,6 +4,9 @@ header_name {.h}
 code_name {.cpp}
 decl {\#include "editor.h"} {} 
 
+decl {\#include "material.h"} {selected
+} 
+
 decl {\#include "mesh.h"} {} 
 
 decl {\#include "skeleton.h"} {} 
@@ -104,12 +107,11 @@ class MainWindow {open
         }
       }
       Fl_Group panelMaterial {
-        label Material open selected
-        xywh {10 440 540 145} box SHADOW_BOX labeltype EMBOSSED_LABEL align 17 deactivate
+        label Material open
+        xywh {10 440 540 145} box SHADOW_BOX labeltype EMBOSSED_LABEL align 17
       } {
         Fl_Choice selMaterialName {
           label {Name:}
-          callback {Skeleton::getSingleton().selAnimation(o->value());}
           xywh {70 465 465 25} down_box BORDER_BOX labeltype EMBOSSED_LABEL
         } {}
         Fl_Output txtMaterialNameStatus {
@@ -121,6 +123,7 @@ class MainWindow {open
         } {}
         Fl_Button butRenameMaterial {
           label {Rename Material}
+          callback {Material::getSingleton().renameMaterial();}
           xywh {20 550 145 25} labeltype EMBOSSED_LABEL
         }
         Fl_Box {} {

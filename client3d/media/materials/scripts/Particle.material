@@ -1,4 +1,4 @@
-material Examples/Flare
+material Particle/Flare
 {
 	technique
 	{

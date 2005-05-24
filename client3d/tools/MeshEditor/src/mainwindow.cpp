@@ -2,6 +2,7 @@
 
 #include "mainwindow.h"
 #include "editor.h"
+#include "material.h"
 #include "mesh.h"
 #include "skeleton.h"
 
@@ -54,11 +55,11 @@ void MainWindow::cb_butRenameAnim(Fl_Button* o, void* v) {
   ((MainWindow*)(o->parent()->parent()->user_data()))->cb_butRenameAnim_i(o,v);
 }
 
-inline void MainWindow::cb_selMaterialName_i(Fl_Choice* o, void*) {
-  Skeleton::getSingleton().selAnimation(o->value());
+inline void MainWindow::cb_butRenameMaterial_i(Fl_Button*, void*) {
+  Material::getSingleton().renameMaterial();
 }
-void MainWindow::cb_selMaterialName(Fl_Choice* o, void* v) {
-  ((MainWindow*)(o->parent()->parent()->user_data()))->cb_selMaterialName_i(o,v);
+void MainWindow::cb_butRenameMaterial(Fl_Button* o, void* v) {
+  ((MainWindow*)(o->parent()->parent()->user_data()))->cb_butRenameMaterial_i(o,v);
 }
 
 MainWindow::~MainWindow() {
@@ -164,11 +165,9 @@ MainWindow::MainWindow() {
       o->box(FL_SHADOW_BOX);
       o->labeltype(FL_EMBOSSED_LABEL);
       o->align(FL_ALIGN_TOP|FL_ALIGN_INSIDE);
-      o->deactivate();
       { Fl_Choice* o = selMaterialName = new Fl_Choice(70, 465, 465, 25, "Name:");
         o->down_box(FL_BORDER_BOX);
         o->labeltype(FL_EMBOSSED_LABEL);
-        o->callback((Fl_Callback*)cb_selMaterialName);
       }
       { Fl_Output* o = txtMaterialNameStatus = new Fl_Output(70, 495, 465, 25, "Status:");
         o->color((Fl_Color)48);
@@ -180,6 +179,7 @@ MainWindow::MainWindow() {
       }
       { Fl_Button* o = butRenameMaterial = new Fl_Button(20, 550, 145, 25, "Rename Material");
         o->labeltype(FL_EMBOSSED_LABEL);
+        o->callback((Fl_Callback*)cb_butRenameMaterial);
       }
       { Fl_Box* o = new Fl_Box(20, 525, 515, 25, "Rename Material Name");
         o->labeltype(FL_EMBOSSED_LABEL);

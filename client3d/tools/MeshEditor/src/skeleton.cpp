@@ -47,12 +47,23 @@ struct animation
 
 vector<animation*> vecAnimation;
 vector<string> vecSkelXML;
-vector<string>mvecAnimNames;
+vector<string>vecValidAnimNames;
 string mSkeletonData, mSkelFilename;
 
+// ========================================================================
+// Fill the Animaton-Selection-ComboBox.
+// ========================================================================
+void Skeleton::fillAnimSelectCombo()
+{
+    gpMainWin->selAnimName->clear();
+    for (unsigned int i = 0; i < vecAnimation.size(); ++i)
+    { 
+        gpMainWin->selAnimName->add(vecAnimation[i]->nameAnim.c_str());
+    }
+}
 
 // ========================================================================
-// 
+// Rename an Animation.
 // ========================================================================
 void Skeleton::renameAnim()
 {
@@ -60,19 +71,18 @@ void Skeleton::renameAnim()
     if (gpMainWin->selRenameAnim->size() == 0) { return; }
     if (!fl_ask("Do you want to write the new Animation name?")) { return; }
     mAnimNr = gpMainWin->selAnimName->value();
-    vecAnimation[mAnimNr]->nameAnim = mvecAnimNames[gpMainWin->selRenameAnim->value()];
+    vecAnimation[mAnimNr]->nameAnim = vecValidAnimNames[gpMainWin->selRenameAnim->value()];
     vecAnimation[mAnimNr]->nameAnimOK = true;    
-    gpMainWin->selAnimName->clear();
-    for (unsigned int i=0; i < vecAnimation.size(); ++i) { gpMainWin->selAnimName->add(vecAnimation[i]->nameAnim.c_str()); }
-    selAnimation(mAnimNr);
     sprintf(mBuffer, "\t<animation name=\"%s\" length=\"%f\">", vecAnimation[mAnimNr]->nameAnim.c_str(), vecAnimation[mAnimNr]->lenAnim); 
     vecSkelXML[vecAnimation[mAnimNr]->lineNr] = mBuffer;
     checkAnimNames(); 
+    fillAnimSelectCombo();
+    selAnimation(mAnimNr);
     save(gpMainWin->SkeletonName->value());
 }
 
 // ========================================================================
-// 
+// Init.
 // ========================================================================
 bool Skeleton::Init()
 {
@@ -86,7 +96,7 @@ bool Skeleton::Init()
     string line;
     while(getline(inAnimNames, line))
     { 
-        mvecAnimNames.push_back(line);
+        vecValidAnimNames.push_back(line);
         gpMainWin->selRenameAnim->add(line.c_str());
     }
     gpMainWin->butRenameAnim->deactivate();
@@ -95,7 +105,7 @@ bool Skeleton::Init()
 }
 
 // ========================================================================
-// 
+// Calculate the new amination length.
 // ========================================================================
 void Skeleton::updateAnimLength()
 {
@@ -106,11 +116,10 @@ void Skeleton::updateAnimLength()
     len *= gpMainWin->countAnimLength->value();
     sprintf(mBuffer, "%.2f", len);
     gpMainWin->outAnimNewLen->value(mBuffer);
-
 }
 
 // ========================================================================
-// 
+// Save the new animation length (*.skelton file).
 // ========================================================================
 void Skeleton::changeAnimLength()
 {
@@ -132,7 +141,7 @@ void Skeleton::changeAnimLength()
 }
 
 // ========================================================================
-// 
+// Save the Skeleton file.
 // ========================================================================
 void Skeleton::save(const char *filename)
 {
@@ -146,7 +155,7 @@ void Skeleton::save(const char *filename)
 }
 
 // ========================================================================
-// 
+// Select an animation.
 // ========================================================================
 void Skeleton::selAnimation(int animNr)
 {
@@ -167,7 +176,7 @@ void Skeleton::selAnimation(int animNr)
 }
 
 // ========================================================================
-// 
+// Check if ALL animation names are daimonin conform.
 // ========================================================================
 void Skeleton::checkAnimNames()
 {
@@ -176,11 +185,10 @@ void Skeleton::checkAnimNames()
     {   
         if (vecAnimation[i]->nameAnimOK == false)
         {
-            mAnimNamesOK = false;
-            break;
+                vecAnimation[i]->nameAnim+= "  (ERROR: Not daimonin conform - MUST be renamed!)";
+                mAnimNamesOK = false;
         }
     }
-
     if (!mAnimNamesOK)
     { 
         gpMainWin->txtAnimNameStatus->value("Error: Found not daimonin conform Animation-Name(s)."); 
@@ -194,7 +202,19 @@ void Skeleton::checkAnimNames()
 }
 
 // ========================================================================
-// 
+// Check if animation name is daimonin conform.
+// ========================================================================
+bool Skeleton::parseAnimName(const string &name)
+{
+    for (unsigned int i = 0; i < vecValidAnimNames.size(); ++i)
+    {   
+        if (name == vecValidAnimNames[i]) return true;
+    }
+    return false;
+}
+
+// ========================================================================
+// Clear all animations
 // ========================================================================
 void Skeleton::clearAnimations()
 {
@@ -204,33 +224,32 @@ void Skeleton::clearAnimations()
 }
 
 // ========================================================================
-// 
+// Load a skeleton-file.
 // ========================================================================
 void Skeleton::load(const char *filename)
 {
-    mSkelFilename = filename;
-    string line;
-    mAnimNamesOK = true;
-    clearAnimations();
-    
-    // Read in SkeletonFile.
-    ifstream inSkeleton(mSkelFilename.c_str());
+    mSkelFilename.clear();
+    ifstream inSkeleton(filename);
     if (!inSkeleton)
     {
-        LogFile::getSingleton().Error("Could not open skeleton-file '%s'\n" , mSkelFilename.c_str());
+        LogFile::getSingleton().Error("Could not open skeleton-file '%s'\n" , filename);
         return;
     }
-    LogFile::getSingleton().Info("Opend Skeletonfile: '%s'\n" , mSkelFilename.c_str());
+    LogFile::getSingleton().Info("Opend Skeletonfile: '%s'\n" , filename);
+    string line;
+    mSkelFilename = filename;
+    clearAnimations();
     bool sectAnim = false;
-    int  sumAnim  =0;
     int lineNr =-1;
     int start, stop;
     animation *anim;
-    gpMainWin->selAnimName->clear();
     while(getline(inSkeleton, line))
     { 
         ++lineNr;
         vecSkelXML.push_back(line);
+        ///////////////////////////////////////////////////////////////////////// 
+        // Extract the Animation-Name.
+        ///////////////////////////////////////////////////////////////////////// 
         if (line.find("animation>")     != string::npos) { sectAnim = false; }
         if (line.find("animation name") != string::npos)
         { 
@@ -239,15 +258,7 @@ void Skeleton::load(const char *filename)
             start = line.find("=\"")+2;
             stop  = line.find("\"",start);
             anim->nameAnim = line.substr(start, stop - start);
-            anim->nameAnimOK = false;
-            for (unsigned int i = 0; i < mvecAnimNames.size(); ++i)
-            {   
-                if (anim->nameAnim == mvecAnimNames[i])
-                {
-                    anim->nameAnimOK = true;
-                    break;
-                }
-            }
+            anim->nameAnimOK = parseAnimName(anim->nameAnim);
             start = line.find("\"", ++stop);
             stop  = line.find("\"", ++start);
             line = line.substr(start, stop-start); 
@@ -255,17 +266,11 @@ void Skeleton::load(const char *filename)
             anim->lineNr = lineNr;
             anim->sumKeyframes =0;
             vecAnimation.push_back(anim);
-            line = anim->nameAnim;
-            if (!anim->nameAnimOK)
-            { 
-                line+= "  (ERROR: Not daimonin conform - MUST be renamed!)";
-                mAnimNamesOK = false;
-            }
-            gpMainWin->selAnimName->add(line.c_str());
-            ++sumAnim;
             continue;
         }
-
+        ///////////////////////////////////////////////////////////////////////// 
+        // Extract the Animation-Length.
+        ///////////////////////////////////////////////////////////////////////// 
         if (sectAnim && line.find("keyframe time") != string::npos )
         { 
             start = line.find("\"")+1;
@@ -278,5 +283,6 @@ void Skeleton::load(const char *filename)
     }
     gpMainWin->SkeletonName->value(mSkelFilename.c_str());
     checkAnimNames();
+    fillAnimSelectCombo();    
     selAnimation(0);
 }

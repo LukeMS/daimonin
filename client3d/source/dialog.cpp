@@ -173,3 +173,12 @@ void Dialog::UpdateLogin(unsigned int stage)
 			return;
 	}
 }
+
+//=================================================================================================
+// Login Overlay.
+//=================================================================================================
+bool Dialog::UpdateNewChar()
+{
+
+    return true; // Character was build, send it to server.
+}

@@ -48,12 +48,19 @@ class Material
     void clear();
     void rename();
     void checkNames();
+    void fillMatSelectCombo();
+    void fillValidCombo();
+    void update();
+    void addMaterial(unsigned int lineNr, const string &MaterialName);
+    void selMaterial(int pos);
+    bool parseAnimName(const string &name);
+    void renameMaterial();
 
   private:
     ////////////////////////////////////////////////////////////
 	// Variables.
     ////////////////////////////////////////////////////////////
-
+    bool mNamesOK;
     
     ////////////////////////////////////////////////////////////
 	// Functions.

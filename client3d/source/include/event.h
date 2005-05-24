@@ -25,6 +25,7 @@ http://www.gnu.org/copyleft/lesser.txt.
 #define EVENT_H
 #include <Ogre.h>
 #include <OgreEventListeners.h>
+#include "particle_manager.h"
 
 using namespace Ogre;
 
@@ -56,11 +57,7 @@ class CEvent: public FrameListener, public KeyListener, public MouseMotionListen
     ~CEvent() ;
     
     const Vector3 &getWorldPos()  {  return World->getPosition(); }
-	void setWorldPos(Vector3 &pos)
-	{ 
-      //  World->translate(pos);
-        World->setPosition(World->getPosition()+pos);
-    }
+	void setWorldPos(Vector3 &pos);
 	void setLightMember(Light *light, int nr) { mLight[nr] = light;}
 	void setResolutionMember(int SreenWidth, int SreenHeight)
 	{ 
@@ -74,11 +71,7 @@ class CEvent: public FrameListener, public KeyListener, public MouseMotionListen
     ////////////////////////////////////////////////////////////
     bool mQuitGame;
 	int mSceneDetailIndex;
-    Real mMoveSpeed;
-    Real mMoveScale;
 	Real mIdleTime;
-    Degree mRotateSpeed;
-    Degree mRotScale;
     Overlay *mDebugOverlay;
 	Overlay *mMouseCursor; 
     EventProcessor* mEventProcessor;

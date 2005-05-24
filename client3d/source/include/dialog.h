@@ -59,6 +59,7 @@ public:
 	void setVisible(bool vis);
 	bool isVisible() { return mVisible; }
 	void UpdateLogin(unsigned int stage);
+	bool UpdateNewChar();
 	void setWarning(int warning);
 	void setSelText (unsigned int pos, const char *text, ColourValue = TXT_WHITE);
 	void setInfoText(unsigned int pos, const char *text, ColourValue = TXT_WHITE);
