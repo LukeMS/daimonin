@@ -20,6 +20,7 @@ client3d_SOURCES = \
 	client.cpp \
 	dialog.cpp \
 	event.cpp \
+	light_manager.cpp \
 	logfile.cpp \
 	main.cpp \
 	network_cmd.cpp \
@@ -29,9 +30,12 @@ client3d_SOURCES = \
 	object_static.cpp \
 	option.cpp \
 	option_init.cpp \
-	player.cpp \
+	particle.cpp \
+	particle_manager.cpp \
 	serverfile.cpp \
 	sound.cpp \
+	spell_manager.cpp \
+	spell_range.cpp \
 	textwindow.cpp \
 	tile_gfx.cpp \
 	tile_map.cpp
