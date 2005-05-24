@@ -59,8 +59,7 @@ static object * spawn_monster(object *gen, object *orig, int range)
         if (OBJECT_FREE(op))
             return NULL;
         if (op->randomitems != NULL)
-            create_treasure_list(op->randomitems, op, 0, op->level ? op->level : orig->map->difficulty, T_STYLE_UNSET,
-                                 ART_CHANCE_UNSET, 0, NULL);
+            create_treasure_list(op->randomitems, op, 0, op->level ? op->level : orig->map->difficulty, ART_CHANCE_UNSET, 0);
         if (head == NULL)
             head = op;
         prev = op;

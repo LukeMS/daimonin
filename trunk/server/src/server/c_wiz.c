@@ -632,8 +632,7 @@ int command_create(object *op, char *params)
         else
             head = insert_ob_in_ob(head, op);
         if (at->clone.randomitems)
-            create_treasure_list(at->clone.randomitems, head, GT_APPLY, get_enviroment_level(head), T_STYLE_UNSET,
-                                 ART_CHANCE_UNSET, 0, NULL);
+            create_treasure_list(at->clone.randomitems, head, GT_APPLY, get_enviroment_level(head),ART_CHANCE_UNSET, 0);
         esrv_send_item(op, head);
     }
     return 1;

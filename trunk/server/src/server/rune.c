@@ -205,16 +205,18 @@ void rune_attack(object *op, object *victim)
     if (victim)
     {
         tag_t   tag = victim->count;
-        hit_player(victim, op->stats.dam, op, op->attacktype);
-        if (was_destroyed(victim, tag))
-        {
-            op->stats.dam = dam;
-            return;
-        }
+        if (!op->inv || op->inv->type != DISEASE)
+		{
+			hit_player(victim, op->stats.dam, op, op->attacktype);
+			if (was_destroyed(victim, tag))
+			{
+				op->stats.dam = dam;
+				return;
+			}
+		}
         /*  if there's a disease in the needle, put it in the player */
         if (op->randomitems != NULL)
-            create_treasure_list(op->randomitems, op, 0, op->level ? op->level : victim->map->difficulty, T_STYLE_UNSET,
-                                 ART_CHANCE_UNSET, 0, NULL);
+            create_treasure_list(op->randomitems, op, 0, op->level ? op->level : victim->map->difficulty, ART_CHANCE_UNSET, 0);
         if (op->inv && op->inv->type == DISEASE)
         {
             object *disease = op->inv;
@@ -239,6 +241,8 @@ void spring_trap(object *trap, object *victim)
     object *env;
     tag_t   trap_tag    = trap->count;
 
+	if(victim->type == PLAYER && QUERY_FLAG(victim, FLAG_WIZ))
+		return;
     /* Prevent recursion */
     if (trap->stats.hp <= 0)
         return;
@@ -258,7 +262,7 @@ void spring_trap(object *trap, object *victim)
 
     trap->stats.hp--;  /*decrement detcount */
 
-    if (victim && victim->type == PLAYER)
+    if (victim && victim->type == PLAYER && trap->msg)
         new_draw_info(NDI_UNIQUE, 0, victim, trap->msg);
 
     /* Flash an image of the trap on the map so the poor sod
@@ -266,7 +270,9 @@ void spring_trap(object *trap, object *victim)
     */
     for (env = trap; env->env != NULL; env = env->env)
         ;
-    trap_show(trap, env);  
+	
+	if(trap->sub_type1 != 128)
+	    trap_show(trap, env);  
     trap->type = MISC_OBJECT;  /* make the trap impotent */
     CLEAR_FLAG(trap, FLAG_FLY_ON);
     CLEAR_FLAG(trap, FLAG_WALK_ON);

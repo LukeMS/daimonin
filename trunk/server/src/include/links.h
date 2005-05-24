@@ -51,6 +51,10 @@ typedef struct oblnk
     int                         value;
     uint32                      flags;
     uint32                      ref_count;
+	union 
+	{											/* a local link paramter */
+		struct _tlist_tweak		*tl_tweak;
+	} parmlink;
 } objectlink;
 
 /* oblink union is used as */

@@ -2126,17 +2126,22 @@ int ai_bow_attack_enemy(object *op, struct mob_behaviour_param *params)
     /* Find the applied bow */
     for (bow = op->inv; bow != NULL; bow = bow->below)
 	{
-       if (bow->type == BOW && QUERY_FLAG(bow, FLAG_APPLIED))
-	   {
-		   /* Select suitable arrows */
-		   if ((arrow = find_arrow(op, bow->race)) == NULL)
-		   {
-			   /* Out of arrows , unapply bow */
-			   manual_apply(op, bow, 0);
-			   continue;
-		   }		   
-		   break; /* found bow and amun */
-	   }
+		if (bow->type == BOW && QUERY_FLAG(bow, FLAG_APPLIED))
+		{
+			/* Select suitable arrows */
+		    if(bow->sub_type1 == 128) /* ability bow type */
+				arrow = bow->inv;
+			else 
+				arrow = find_arrow(op, bow->race);
+
+			if(!arrow)
+			{
+				/* Out of arrows , unapply bow */
+			    manual_apply(op, bow, 0);
+				bow = NULL;
+			}		   
+		    break;
+		}
 	}
 		   
     if (bow == NULL)

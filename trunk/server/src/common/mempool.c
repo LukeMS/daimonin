@@ -80,7 +80,7 @@ struct mempool *pool_puddle;
 struct mempool *pool_object, *pool_player, *pool_map_bfs,
     *pool_path_segment, *pool_mob_data, *pool_mob_knownobj,
     *pool_mob_behaviourset, *pool_mob_behaviour, *pool_mob_behaviourparam,
-    *pool_objectlink, *pool_gmasters, *pool_bannode;
+    *pool_objectlink, *pool_gmasters, *pool_bannode, *pool_tlist_tweak;
 
 /* Return the exponent exp needed to round n up to the nearest power of two, so that
  * (1 << exp) >= n and (1 << (exp -1)) < n */
@@ -173,6 +173,8 @@ void init_mempools()
     pool_gmasters = create_mempool("gmaster entries", 10, sizeof(gmaster_struct), 0, NULL, NULL);
     pool_bannode = create_mempool("ban node entries", 25, sizeof(struct ban_struct), 0, NULL, NULL);
     
+    pool_tlist_tweak = create_mempool("treasure list tweak", 100, sizeof(tlist_tweak), 0, NULL, NULL);
+
     /* Initialize end-of-list pointers and a few other values*/
     removed_objects = &end_marker;    
 

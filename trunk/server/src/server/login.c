@@ -1003,6 +1003,19 @@ void check_login(object *op)
             return;
     }
 
+	/* lets check we had saved last time in a gmaster mode.
+	 * if so, check the setting is still allowed and if so,
+	 * set the player to it.
+	 */
+	if(pl->gmaster_mode != GMASTER_MODE_NO)
+	{
+		int mode = pl->gmaster_mode;
+
+		pl->gmaster_mode = GMASTER_MODE_NO;			
+		if(check_gmaster_list(pl, mode))
+			set_gmaster_mode(pl, mode);
+	}
+
     /* Do this after checking for death - no reason sucking up bandwidth if
      * the data isn't needed.
      */
@@ -1040,19 +1053,6 @@ void check_login(object *op)
     esrv_new_player(pl, op->weight + op->carrying);
     send_spelllist_cmd(op, NULL, SPLIST_MODE_ADD); /* send the known spells as list to client */
     send_skilllist_cmd(op, NULL, SPLIST_MODE_ADD);
-
-	/* lets check we had saved last time in a gmaster mode.
-	 * if so, check the setting is still allowed and if so,
-	 * set the player to it.
-	 */
-	if(pl->gmaster_mode != GMASTER_MODE_NO)
-	{
-		int mode = pl->gmaster_mode;
-
-		pl->gmaster_mode = GMASTER_MODE_NO;			
-		if(check_gmaster_list(pl, mode))
-			set_gmaster_mode(pl, mode);
-	}
 
     return;
 }

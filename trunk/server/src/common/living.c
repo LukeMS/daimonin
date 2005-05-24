@@ -1913,7 +1913,7 @@ void dragon_level_gain(object *who)
  */
 void fix_monster(object *op)
 {
-    object *base, *tmp;
+    object *base, *tmp, *bow=NULL;
     float   tmp_add;
 
     if (op->head) /* don't adjust tails or player - only single objects or heads */
@@ -1922,20 +1922,38 @@ void fix_monster(object *op)
     base = insert_base_info_object(op); /* will insert or/and return base info */
 
     CLEAR_FLAG(op, FLAG_READY_BOW);	
+    CLEAR_FLAG(op, FLAG_READY_SPELL);	
 	for (tmp = op->inv; tmp; tmp = tmp->below)
 	{
-		/* easy going: we always use the first bow we find
-		 * Dont waste cpu cycles to look for quality differences - so no need for apply flag
-		 */
-		if (tmp->type == BOW && QUERY_FLAG(op, FLAG_CAN_USE_BOW))
+		if (tmp->type == BOW && !bow  && tmp->sub_type1 == 128)
 		{
+			bow = tmp;
 			SET_FLAG(op, FLAG_READY_BOW);
 			SET_FLAG(tmp, FLAG_APPLIED);
 		}
 		else if (tmp->type == ABILITY)
-			SET_FLAG(op, FLAG_READY_SPELL);	
-			
+			SET_FLAG(op, FLAG_READY_SPELL);			
     }
+
+	/* assign amun to our ability bow - and put them inside the inventory of it
+	 * one time a bit more work here but then fast access to amun for range firing
+	 * mobs.
+	 */
+	if(bow) 
+	{
+		object *tmp2;
+
+		for (tmp = op->inv; tmp; tmp = tmp2)
+		{
+			if(tmp->type == ARROW && tmp->race == bow->race)
+			{
+				remove_ob(tmp);
+				insert_ob_in_ob(tmp, bow);
+			}
+			tmp2=tmp->below;
+		}
+			
+	}
 
     /* pre adjust */
     op->stats.maxhp = (base->stats.maxhp * (op->level + 3) + (op->level / 2) * base->stats.maxhp) / 10;

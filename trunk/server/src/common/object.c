@@ -3700,8 +3700,7 @@ int auto_apply(object *op)
 
         case TREASURE:
           level = get_enviroment_level(op);
-          create_treasure_list(op->randomitems, op, op->map ? GT_ENVIRONMENT : 0, level, T_STYLE_UNSET,
-                               ART_CHANCE_UNSET, 0, NULL);
+          create_treasure_list(op->randomitems, op, op->map ? GT_ENVIRONMENT : 0, level, ART_CHANCE_UNSET, 0);
 
           /* If we generated on object and put it in this object inventory,
            * move it to the parent object as the current object is about

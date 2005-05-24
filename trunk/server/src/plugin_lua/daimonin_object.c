@@ -231,7 +231,7 @@ static const char          *GameObject_flags[NUM_FLAGS + 1 + 1] =
     "f_reflect_missile", "f_reflect_spell",             /* 40 */
     "f_no_magic", "f_no_fix_player", "f_is_evil", "f_tear_down", "f_run_away", "f_pass_thru", "f_can_pass_thru",
     NULL /* unused */, "f_unique", "f_no_drop", /* 50 */
-    "f_is_indestructible", "f_has_ready_spell", NULL /* unused */, NULL /* unused */, "f_can_use_bow",
+    "f_is_indestructible", "f_has_ready_spell", NULL /* unused */, NULL /* unused */, NULL,
     "f_can_use_armour", "f_can_use_weapon", "f_can_use_ring", NULL /* unused */, "f_has_ready_bow",       /* 60 */
     "f_xrays", "?f_no_apply", "f_is_floor", "f_lifesave", "f_is_magical", "f_alive", "f_stand_still", "f_random_move",
     "f_only_attack", "?f_wiz", /* 70 */

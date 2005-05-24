@@ -321,8 +321,7 @@ extern treasurelist    *find_treasurelist(const char *name);
 extern objectlink      *link_treasurelists(char *liststring, uint32 flags);
 extern void             unlink_treasurelists(objectlink *list, int flag);
 extern object          *generate_treasure(struct oblnk *t, int difficulty);
-extern void             create_treasure_list(struct oblnk *t, object *op, int flag, int difficulty, int t_style,
-                                             int a_chance, int tries, struct _change_arch *arch_change);
+extern void             create_treasure_list(struct oblnk *t, object *op, int flag, int difficulty, int a_chance, int tries);
 extern void             create_treasure(treasurelist *t, object *op, int flag, int difficulty, int t_style,
                                         int a_chance, int tries, struct _change_arch *change_arch);
 extern void             create_all_treasures(treasure *t, object *op, int flag, int difficulty, int t_style,

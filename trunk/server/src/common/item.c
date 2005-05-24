@@ -802,7 +802,7 @@ char * describe_item(object *op)
 
         if (QUERY_FLAG(op, FLAG_USE_WEAPON))
             strcat(retbuf, "(wield weapon)");
-        if (QUERY_FLAG(op, FLAG_CAN_USE_BOW))
+        if (QUERY_FLAG(op, FLAG_READY_BOW))
             strcat(retbuf, "(archer)");
         if (QUERY_FLAG(op, FLAG_USE_ARMOUR))
             strcat(retbuf, "(wear armour)");
