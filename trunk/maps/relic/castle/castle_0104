@@ -831,7 +831,6 @@ Hello I am Morduck.  I guard the Castle's
 Treasury. You may look but you cannot touch.  This gate is locked at all times.
 Noone but the king is allowed to enter this room.
 endmsg
-friendly 1
 x 4
 y 3
 end
@@ -1302,7 +1301,6 @@ x 8
 y 2
 end
 arch guard
-friendly 1
 x 8
 y 2
 end
@@ -1323,7 +1321,6 @@ x 8
 y 6
 end
 arch guard
-friendly 1
 x 8
 y 6
 end
@@ -1344,7 +1341,6 @@ x 8
 y 10
 end
 arch guard
-friendly 1
 x 8
 y 10
 end
@@ -1365,7 +1361,6 @@ x 8
 y 14
 end
 arch guard
-friendly 1
 x 8
 y 14
 end
@@ -2239,7 +2234,6 @@ x 14
 y 2
 end
 arch guard
-friendly 1
 x 14
 y 2
 end
@@ -2260,7 +2254,6 @@ x 14
 y 6
 end
 arch guard
-friendly 1
 x 14
 y 6
 end
@@ -2281,7 +2274,6 @@ x 14
 y 10
 end
 arch guard
-friendly 1
 x 14
 y 10
 end
@@ -2302,7 +2294,6 @@ x 14
 y 14
 end
 arch guard
-friendly 1
 x 14
 y 14
 end
@@ -3408,7 +3399,6 @@ x 22
 y 16
 end
 arch smith
-friendly 1
 x 22
 y 16
 arch event_obj
@@ -3510,7 +3500,6 @@ x 23
 y 8
 end
 arch smith
-friendly 1
 x 23
 y 8
 arch event_obj

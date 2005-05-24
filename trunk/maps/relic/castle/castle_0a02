@@ -3499,7 +3499,6 @@ I am Tulan the Jailor.  Please do not agrivate the prisoners.
 @match hello
 I am Tulan the Jailor.  Please do not agrivate the prisoners.
 endmsg
-friendly 1
 is_animated 0
 x 21
 y 10

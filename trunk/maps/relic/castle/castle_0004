@@ -1289,11 +1289,9 @@ y 19
 end
 arch ranger
 level 15
-friendly 1
 random_move 1
 item_race 4
 item_level 4
-stand_still 0
 x 8
 y 19
 arch event_obj
@@ -3337,8 +3335,6 @@ Welcome to the tests of might, magic, and prayer. The Thief's test is not availa
 Welcome to the tests of might, magic, and prayer. The Thief's test is not available because nobody is dumb enought to reveal themselves as one! Fight alone and at your own risk!
 endmsg
 level 45
-invulnerable 1
-friendly 1
 x 19
 y 15
 end

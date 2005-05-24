@@ -1081,7 +1081,6 @@ y 6
 end
 arch ant_red
 level 4
-friendly 1
 item_race 8
 item_level 5
 x 9
@@ -1747,11 +1746,9 @@ y 16
 end
 arch archer
 level 7
-friendly 1
 random_move 1
 item_race 3
 item_level 3
-stand_still 0
 x 14
 y 16
 arch event_obj

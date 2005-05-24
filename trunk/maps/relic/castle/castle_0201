@@ -165,9 +165,6 @@ end
 arch monk
 name Marlin, the apartment keeper
 level 45
-invulnerable 1
-no_attack 1
-friendly 1
 x 1
 y 7
 arch event_obj

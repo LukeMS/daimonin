@@ -6,7 +6,7 @@ Date:    6/4/2003
 endmsg
 width 24
 height 24
-difficulty 55
+difficulty 50
 end
 arch floor_ostone1
 end
@@ -186,7 +186,8 @@ x 1
 y 3
 end
 arch random_chest_black
-randomitems random_potion
+randomitems random_weapons_melee&I,d500,m80,M10,a100,s1;wealth_normal;drop_gem
+level 50
 x 1
 y 3
 end

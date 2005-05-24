@@ -984,7 +984,6 @@ y 16
 end
 arch mage_old
 level 60
-friendly 1
 x 7
 y 16
 arch event_obj
@@ -1110,7 +1109,6 @@ y 15
 end
 arch guard_pole
 level 40
-friendly 1
 x 8
 y 15
 end
@@ -1131,7 +1129,7 @@ x 8
 y 19
 end
 arch guard
-friendly 1
+
 x 8
 y 19
 end
@@ -1148,7 +1146,6 @@ x 8
 y 22
 end
 arch guard
-friendly 1
 x 8
 y 22
 end
@@ -1955,7 +1952,6 @@ y 15
 end
 arch guard_pole
 level 40
-friendly 1
 x 14
 y 15
 end
@@ -1976,7 +1972,6 @@ x 14
 y 19
 end
 arch guard
-friendly 1
 x 14
 y 19
 end
@@ -1993,7 +1988,6 @@ x 14
 y 22
 end
 arch guard
-friendly 1
 x 14
 y 22
 end
@@ -2082,7 +2076,6 @@ y 16
 end
 arch priest_green
 level 60
-friendly 1
 x 15
 y 16
 arch event_obj

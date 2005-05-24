@@ -1535,7 +1535,6 @@ end
 arch archer
 name Yordin
 level 99
-friendly 1
 x 6
 y 6
 arch event_obj
@@ -1612,7 +1611,6 @@ y 15
 end
 arch smith
 name Lathair
-friendly 1
 x 6
 y 15
 end
@@ -3074,12 +3072,9 @@ y 7
 end
 arch priest_green
 level 17
-friendly 1
 random_move 1
 item_race 3
 item_level 3
-stand_still 0
-will_apply 0
 x 15
 y 7
 arch event_obj
@@ -3288,14 +3283,9 @@ end
 arch monk
 name Karlack
 level 45
-invulnerable 1
-can_cast_spell 0
-reflect_spell 0
-friendly 1
 random_move 1
 item_race 9
 item_level 1
-stand_still 0
 x 16
 y 12
 arch event_obj
@@ -3651,11 +3641,9 @@ y 14
 end
 arch ranger
 level 15
-friendly 1
 random_move 1
 item_race 7
 item_level 7
-stand_still 0
 x 18
 y 14
 arch event_obj
@@ -3922,12 +3910,9 @@ x 20
 end
 arch monk
 level 15
-friendly 1
 random_move 1
 item_race 2
 item_level 2
-stand_still 0
-will_apply 0
 x 20
 arch event_obj
 name lua

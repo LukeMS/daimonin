@@ -8,12 +8,7 @@
 -- Also note that this script is _only_ loaded at server startup
 ]]
 
-require("security")
 require("data_store")
-
---
--- A couple of extensions to the string library
---
 
 function string.capitalize(s, b_keep)
 	local f = string.sub(s, 1, 1)
@@ -55,7 +50,7 @@ function _error(msg)
         return false
     end
 
-    if event and game:IsValid(event) then
+    if event then
         msg_wiz_obj(event.activator)
         msg_wiz_obj(event.me)
         msg_wiz_obj(event.other)
@@ -64,10 +59,8 @@ function _error(msg)
     return msg
 end
 
--- Shutdown hook called when server unloads the plugin
 function _shutdown()
 	_data_store.save(true)
 end
 
--- Finished with the initialization
 print "    plugin_init.lua loaded successfully"

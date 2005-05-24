@@ -1084,7 +1084,6 @@ y 18
 end
 arch priest_church
 direction 6
-friendly 1
 x 7
 y 18
 arch event_obj
@@ -1799,7 +1798,6 @@ x 12
 y 16
 end
 arch mage_old
-friendly 1
 direction 3
 x 12
 y 16

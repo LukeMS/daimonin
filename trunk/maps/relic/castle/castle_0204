@@ -517,7 +517,6 @@ x 4
 y 10
 end
 arch guard_pole
-friendly 1
 x 4
 y 10
 arch event_obj

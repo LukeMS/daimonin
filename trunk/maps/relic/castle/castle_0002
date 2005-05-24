@@ -1308,11 +1308,9 @@ y 13
 end
 arch ranger
 level 15
-friendly 1
 random_move 1
 item_race 4
 item_level 4
-stand_still 0
 x 9
 y 13
 arch event_obj
@@ -1663,7 +1661,6 @@ y 2
 end
 arch priest_church
 level 50
-friendly 1
 x 12
 y 2
 arch event_obj
@@ -1960,11 +1957,9 @@ y 9
 end
 arch priest_green
 level 20
-friendly 1
 random_move 1
 item_race 4
 item_level 4
-stand_still 0
 x 14
 y 9
 arch event_obj
@@ -2265,11 +2260,9 @@ y 15
 end
 arch mage_old
 level 20
-friendly 1
 random_move 1
 item_race 4
 item_level 4
-stand_still 0
 x 16
 y 15
 arch event_obj
