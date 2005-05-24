@@ -212,35 +212,11 @@ treasureone body_human_parts
   end
 ##############################################################
 #
-# TRAPS
+# TRAPS - base list 100%
 #
-treasureone traps
-  list traps_physical
-    chance 50
-  more
-  list traps_magical
-    difficulty 4
-    chance 50
-  end
-treasureone traps_needle_diseases
-  arch warts
-    chance 20
-  more
-  arch atheletes_foot
-    chance 5
-  more
-  arch tapeworms
-    chance 20
-  more
-  arch diarrhea
-    chance 20
-  end
 treasureone traps_physical
-  arch trap_diseased_needle
-    chance 70
-  more
   arch trap_blades
-    difficulty 4
+    difficulty 2
     chance 33
   more
   arch trap_needle
@@ -248,17 +224,37 @@ treasureone traps_physical
     chance 33
   more
   arch trap_bear_trap
-    difficulty 4
+    difficulty 3
     chance 33
   end
+treasureone traps_disease
+  arch trap_diseased_needle
+    difficulty 5
+  chance 100
+end
 treasureone traps_magical
   arch rune_fire
-  chance 8
+    difficulty 7
+    chance 100
   end
-treasureone traps_nastier_magical
-  arch rune_fire
-    chance 10  
-end
+# this forces are used by the disease needle
+treasureone traps_needle_diseases
+  arch warts
+    difficulty 6
+    chance 30
+  more
+  arch atheletes_foot
+    difficulty 5
+    chance 10
+  more
+  arch tapeworms
+    difficulty 5
+    chance 30
+  more
+  arch diarrhea
+    difficulty 6
+    chance 30
+  end
 ##############################################################
 #
 # OBJECT SPECIAL LISTS
@@ -271,98 +267,8 @@ treasure default_door
   list traps
   chance 30
 end
-treasure default_wealth
-  arch wealth
-  chance 75
-  no
-    list random_gem
-    chance 8
-    end
-end
 treasure default_door_100
   list traps
-end
-treasureone small_things
-  arch coppercoin
-    chance 20
-    nrof 5
-  more
-    list random_food
-    chance 20
-  more
-    list random_weapons_throw
-    chance 20
-  more
-    list random_weapons_amun
-    chance 25
- more
-    arch axe_small
-    magic 1
-    chance 10
-  more
-  arch pouch
-  magic 1
-  chance 10
-  more
-  arch torch
-  magic 1
-  chance 15
- more
-  arch club
-  magic 1
-  chance 10
-  more
-  arch dagger_small
-  magic 1
-  chance 10
-  more
-  arch shortsword
-  magic 1
-  chance 10
-  more
-  arch sandals
-  magic 1
-  chance 5
-  more
-  arch robe
-  magic 1
-  chance 5
-  more
-  arch gloves
-  magic 1
-  chance 5
-  more
-  arch girdle
-  magic 1
-  chance 5
-  more
-  arch hat_feather
-  magic 1
-  chance 5
-  more
-  arch dress
-  magic 1
-  chance 5
-  more
-  arch buckler
-  magic 1
-  chance 5
-  more
-  arch coat
-  magic 1
-  chance 5
-  more
-  arch padded_armour
-  magic 1
-  chance 5
-  more
-  arch leather_armour
-  magic 1
-  chance 5
- more
-  list random_potion
-  chance 4
-  difficulty 15
 end
 treasureone default_drop
   list random_food
@@ -399,7 +305,7 @@ treasureone chest_items
   list random_food
     chance 10
   more
-  list random_wealth
+  list wealth_normal
      chance 10
   more
   list random_potion
@@ -1729,13 +1635,6 @@ treasureone random_armour_helm
  chance 5
 end
 #
-treasureone random_wealth
-  list random_coin
-  chance 95
-  more
-  list random_gem
-  chance 5
-  end
 treasureone random_coin
   arch silvercoin
     chance 5
@@ -1842,20 +1741,6 @@ treasureone random_talisman
   arch ring_generic
     chance 5
 end
-treasureone random_gem
- arch jewel_generic
- difficulty 3
- artifact_chance 90
- chance 50
- more
- arch nugget_generic
- artifact_chance 90
- chance 50
- more
- arch gem_generic
- artifact_chance 90
- chance 50
-end
 treasureone random_mtools
   arch wand
     chance 93
@@ -1921,6 +1806,19 @@ treasureone random_magics
   list random_mtools
    chance 10
 end
+# difficulty is set in the artifact file for this
+treasure drop_gem
+ arch gem_generic
+ artifact_chance 90
+end
+treasure drop_jewel
+ arch jewel_generic
+ artifact_chance 90
+end
+treasure drop_nugget
+ arch nugget_generic
+ artifact_chance 90
+end
 ##############################################################
 #
 # MOB TREASURES
@@ -1929,7 +1827,7 @@ treasure mob_ant
   list traps
   chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -1980,7 +1878,7 @@ treasure mob_ant_special
   list traps
   chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -2031,7 +1929,7 @@ treasure mob_ant_queen
   list traps
   chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -2074,7 +1972,7 @@ treasure mob_insect
   list traps
   chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -2117,7 +2015,7 @@ treasure mob_slime
   list traps
   chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 70
  no
   list small_things
@@ -2165,7 +2063,7 @@ treasure mob_wyvern
  list traps
    chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -2217,7 +2115,7 @@ treasure mob_ogre
  list traps
    chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -2269,7 +2167,7 @@ treasure mob_giant_hill
  list traps
    chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -2321,7 +2219,7 @@ treasure mob_giant_stone
  list traps
    chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -2373,7 +2271,7 @@ treasure mob_dragon_water
  list traps
    chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -2425,7 +2323,7 @@ treasure mob_kobold_big
  list traps
    chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -2477,7 +2375,7 @@ treasure mob_kobold
  list traps
    chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -2529,7 +2427,7 @@ treasure mob_worm_purple
  list traps
    chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -2581,7 +2479,7 @@ treasure mob_ettin
  list traps
    chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -2633,7 +2531,7 @@ treasure mob_wraith
  list traps
    chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -2685,7 +2583,7 @@ treasure mob_lost_soul
  list traps
    chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -2737,7 +2635,7 @@ treasure mob_slugs
  list traps
    chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -2789,7 +2687,7 @@ treasure mob_dragon_skeletal
  list traps
    chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -2841,7 +2739,7 @@ treasure mob_beholder_dread
  list traps
    chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -2893,7 +2791,7 @@ treasure mob_demilich
  list traps
    chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -2945,7 +2843,7 @@ treasure mob_troll
  list traps
    chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -2997,7 +2895,7 @@ treasure mob_skeleton1
  list traps
    chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -3049,7 +2947,7 @@ treasure mob_skeleton2
  list traps
    chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -3101,7 +2999,7 @@ treasure mob_skeleton_mage
  list traps
    chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -3153,7 +3051,7 @@ treasure mob_orc
  list traps
    chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -3205,7 +3103,7 @@ treasure mob_orc_mage
  list traps
    chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -3257,7 +3155,7 @@ treasure mob_hobgoblin
  list traps
    chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -3309,7 +3207,7 @@ treasure mob_goblin
  list traps
    chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -3361,7 +3259,7 @@ treasure mob_gnoll
  list traps
    chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -3413,7 +3311,7 @@ treasure mob_drow
  list traps
    chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -3465,7 +3363,7 @@ treasure mob_drow_mage
  list traps
    chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -3517,7 +3415,7 @@ treasure mob_ghoul
  list traps
    chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -3569,7 +3467,7 @@ treasure mob_fire
  list traps
    chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 60
  no
   list small_things
@@ -3625,7 +3523,7 @@ treasure mob_ice
  list traps
    chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 60
  no
   list small_things
@@ -3681,7 +3579,7 @@ treasure mob_mud_hand
  list traps
    chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -3733,7 +3631,7 @@ treasure mob_quickwood
  list traps
    chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -3785,7 +3683,7 @@ treasure mob_treant
  list traps
    chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -3837,7 +3735,7 @@ treasure mob_fighter_l9
  list traps
    chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -3884,7 +3782,7 @@ treasure mob_mage_l9
  list traps
    chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -3943,8 +3841,6 @@ treasureone random_test_all
  more
  list random_talisman
  more
- list random_gem
- more
  list random_mtools
  more
  list random_food
@@ -3969,7 +3865,7 @@ treasure random_testx
  list traps
   chance 8
  more
- list default_wealth
+ list wealth_normal
   chance 65
  no
   list small_things
@@ -4018,7 +3914,18 @@ treasure random_testx
   end
 end
 treasure random_test
-arch bolt
+ list wealth_gem2
+end
+treasure wealth_gem2
+  arch jewel_generic
+    chance 3
+  no
+  arch gem_generic
+    chance 3
+  no
+    list wealth_normal
+  end
+  end
 end
 ##############################################################
 #
@@ -4055,37 +3962,31 @@ treasure skill_bow
 end
 treasure skill_xbow
    arch ability_bow
-   race crossbow bolts
  more
    arch bolt_sys
 end
 treasure skill_sling
    arch ability_bow
-   race sling stones
  more
    arch sstone_sys
 end
 treasure skill_t_axe
-   arch ability_bow
-   race t_axe
+   arch ability_stone_throw
  more
    arch t_axe_sys
 end
 treasure skill_t_hammer
-   arch ability_bow
-   race t_hammer
+   arch ability_stone_throw
  more
    arch t_hammer_sys
 end
 treasure skill_t_dagger
-   arch ability_bow
-   race t_dagger
+   arch ability_stone_throw
  more
    arch t_dagger_sys
 end
 treasure skill_t_star
-   arch ability_bow
-   race t_star
+   arch ability_stone_throw
  more
    arch t_star_sys
 end
@@ -4103,4 +4004,350 @@ treasure skill_t_lboulder
    arch ability_stone_throw
  more
    arch t_lboulder_sys
+end
+treasureone skill_rand_archery
+   list skill_bow
+    chance 34
+  more
+   list skill_xbow
+    chance 33
+  more
+   list skill_sling
+    chance 33
+end
+treasure skill_rand_archery15
+   list skill_rand_archery
+    chance 15
+end
+treasureone skill_rand_throw
+   list skill_t_axe
+    chance 25
+  more
+   list skill_t_hammer
+    chance 25
+  more
+   list skill_t_dagger
+    chance 25
+  more
+   list skill_t_star
+    chance 25
+end
+treasure skill_rand_throw15
+   list skill_rand_throw
+    chance 15
+end
+##############################################################
+#
+# Spells
+#
+treasure spells_mage_def
+   arch ability_mbullet
+end
+treasure spells_fire
+   arch ability_firestorm
+end
+treasure spells_ice
+   arch ability_icestorm
+end
+treasure spells_priest_def
+   arch ability_cause_lig_wound
+end
+##############################################################
+#
+# TRAPS 
+#
+treasureone traps
+  list traps_physical
+    chance 33
+  more
+  list traps_disease
+    chance 33
+  more
+  list traps_magical
+    chance 33
+  end
+treasure traps_low
+  list traps_physical
+    chance 4
+  no
+  list traps_disease
+    chance 3
+  no
+  list traps_magical
+    chance 3
+  end
+  end
+end
+treasure traps_mid
+  arch coppercoin
+    chance 10
+  no
+  arch silvercoin
+    chance 10
+  no
+  arch goldcoin
+    chance 10
+  end
+  end
+end
+treasureone traps_pm
+  list traps_physical
+    chance 50
+  more
+  list traps_magical
+    chance 50
+end
+treasure traps_pm_low
+  list traps_physical
+    chance 5
+  more
+  list traps_magical
+    chance 5
+end
+treasure traps_pm_mid
+  list traps_physical
+    chance 12
+  more
+  list traps_magical
+    chance 12
+end
+treasureone traps_pd
+  list traps_physical
+    chance 50
+  more
+  list traps_disease
+    chance 50
+end
+treasure traps_pd_low
+  list traps_physical
+    chance 5
+  more
+  list traps_disease
+    chance 5
+end
+treasure traps_pd_mid
+  list traps_physical
+    chance 12
+  more
+  list traps_disease
+    chance 12
+end
+treasureone traps_md
+  list traps_disease
+    chance 50
+  more
+  list traps_magical
+    chance 50
+end
+treasure traps_md_low
+  list traps_disease
+    chance 5
+  more
+  list traps_magical
+    chance 5
+end
+treasure traps_md_mid
+  list traps_disease
+    chance 12
+  more
+  list traps_magical
+    chance 12
+end
+treasureone traps_phy
+  list traps_physical
+end
+treasure traps_phy_low
+  list traps_physical
+  chance 10
+end
+treasure traps_phy_mid
+  list traps_physical
+  chance 22
+end
+treasureone traps_mag
+  list traps_magical
+end
+treasure traps_mag_low
+  list traps_magical
+  chance 10
+end
+treasure traps_mag_mid
+  list traps_magical
+  chance 22
+end
+treasureone traps_dis
+  list traps_disease
+end
+treasure traps_dis_low
+  list traps_disease
+  chance 10
+end
+treasure traps_dis_mid
+  list traps_disease
+  chance 22
+end
+##############################################################
+#
+# Wealth & money
+#
+treasureone random_gem2
+ arch jewel_generic
+ difficulty 3
+ artifact_chance 90
+ chance 50
+ more
+ arch nugget_generic
+ artifact_chance 90
+ chance 50
+ more
+ arch gem_generic
+ artifact_chance 90
+ chance 50
+end
+treasure wealth_low
+  arch wealth
+  magic 2
+end
+treasure wealth_normal
+  arch wealth
+end
+treasure wealth_gem
+  list drop_gem
+    chance 8
+  no
+    list wealth_normal
+    end
+end
+##############################################################
+#
+# Drops & loot
+#
+treasureone small_things
+    list random_food
+    chance 60
+  more
+    list random_weapons_throw
+    chance 10
+  more
+    list random_weapons_amun
+    chance 15
+ more
+    arch axe_small
+    magic 1
+    chance 10
+  more
+  arch pouch
+  magic 1
+  chance 10
+  more
+  arch torch
+  chance 15
+ more
+  arch club
+  magic 1
+  chance 10
+  more
+  arch dagger_small
+  magic 1
+  chance 10
+  more
+  arch shortsword
+  magic 1
+  chance 10
+  more
+  arch sandals
+  magic 1
+  chance 5
+  more
+  arch robe
+  magic 1
+  chance 5
+  more
+  arch gloves
+  magic 1
+  chance 5
+  more
+  arch girdle
+  magic 1
+  chance 5
+  more
+  arch hat_feather
+  magic 1
+  chance 5
+  more
+  arch dress
+  magic 1
+  chance 5
+  more
+  arch buckler
+  magic 1
+  chance 5
+  more
+  arch coat
+  magic 1
+  chance 5
+  more
+  arch padded_armour
+  magic 1
+  chance 5
+  more
+  arch leather_armour
+  magic 1
+  chance 5
+ more
+  list random_potion
+  chance 4
+  difficulty 15
+end
+treasure xxxxxx
+ list traps
+   chance 8
+ more
+ list wealth_normal
+  chance 65
+ no
+  list small_things
+     chance_fix 4
+ no  
+   arch coppercoin
+     chance_fix 1
+     nrof 5
+  end
+  end
+ more
+ list default_drop
+   chance_fix 16
+   material_quality 80
+   material_range 3
+ more
+ list random_armour
+   material_quality 80
+   material_range 3
+   chance_fix 42
+ no
+   list random_weapon
+     material_quality 80
+     material_range 3
+     chance_fix 48
+ no
+   list random_mtools
+     chance_fix 182
+ no
+   list random_talisman
+     chance_fix 266
+  end
+  end
+  end
+ more
+ list random_scroll
+   chance_fix 65
+ no
+   list random_potion
+     chance_fix 65
+ no
+   arch potion_improve
+     difficulty 6
+     chance_fix 199
+  end
+  end
 end

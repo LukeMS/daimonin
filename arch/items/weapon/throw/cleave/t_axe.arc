@@ -1,6 +1,6 @@
 Object t_axe
 name throwing axe
-race t_axe
+race rock
 face t_axe.101
 layer 3
 weapon_speed 0.027

@@ -1161,7 +1161,9 @@
   </attribute>
   <attribute arch="protect_death" editor="shield death %" length="15" type="int">
   </attribute>
-  <attribute arch="protect_spiritual" editor="shield spiritual %" length="15" type="int">
+  <attribute arch="protect_chaos" editor="shield chaos %" length="15" type="int">
+  </attribute>
+  <attribute arch="protect_holy" editor="shield holy %" length="15" type="int">
   </attribute>
   <attribute arch="protect_corruption" editor="shield corruption %" length="15" type="int">
   </attribute>         	
@@ -3985,8 +3987,6 @@
     for high-level monsters. When a monster is unable to see in
     darkness, players can cast darkness and sneak around it safely.
   </attribute>
-  <attribute arch="can_use_bow" editor="can use bows" type="bool">
-  </attribute>
 </section>
 
 <section name="behave">
@@ -4586,8 +4586,6 @@
     by spells of darkness or dark maps. This flag is a "should-have"
     for high-level monsters. When a monster is unable to see in
     darkness, players can cast darkness and sneak around it safely.
-  </attribute>
-  <attribute arch="can_use_bow" editor="can use bows" type="bool">
   </attribute>
 </section>
 
