@@ -31,62 +31,6 @@
 #include <newserver.h>
 #include <sproto.h>
 
-/*  ****** List of commands used in arch, maps & artifavt file ******
-
-	"Object",		"name",			"race",			"slaying",		"msg",
-	"endmsg",		"arch",			"other_arch",	"More",			"animation",
-	"end",			"last_heal",	"last_sp",		"last_grace",	"last_eat",
-	"speed",		"speed_left",	"slow_move",	"face",			"Str",
-	"Dex",			"Con",			"Wis",			"Cha",			"Int",
-	"Pow",			"hp",			"maxhp",		"sp",			"maxsp",
-	"grace",		"maxgrace",		"exp",			"food",			"dam",
-	"wc",			"ac",			"x",			"y",			"nrof",
-	"level",		"direction",	"type",			"material",		"value",
-	"weight",		"carrying",		"attacktype",	"path_attuned",	"path_repelled",
-	"path_denied",	"sys_object",	"magic",		"state",		"alive",
-	"applied",		"unpaid",		"no_pick",
-	"no_pass",		"walk_on",		"walk_off",		"fly_on",		"fly_off",
-	"is_animated",	"flying",		"monster",		"no_attack",	"invulnerable",
-	"friendly",		"generator",	"is_thrown",	"auto_apply",	"treasure",
-	"see_invisible","can_roll",		"is_turnable",	"is_used_up",	"identified",
-	"reflecting",	"changing",		"splitting",	"hitback",		"startequip",
-	"blocksview",	"undead",		"scared",		"unaggressive",	"reflect_missile",
-	"reflect_spell","no_magic",		"wiz",			NULL,		"no_fix_player",
-	"tear_down",	"luck",			"run_away",		"pass_thru",	"can_pass_thru",
-	"anim_speed",	"container",	"no_drop",
-	"has_ready_spell","can_use_bow",
-	"can_use_weapon","can_use_ring","has_ready_bow","xrays",
-	"is_floor",		"lifesave",		"sleep",		"stand_still",	"random_move",
-	"only_attack",	"attack_movement","move_state",	"confused",		"stealth",
-	"connected",	"cursed",		"damned",		"see_anywhere",	"known_magical",
-	"known_cursed","been_applied",	"title"			"unique",
-	"inv_locked",	"is_wooded",	"is_hilly",
-	"has_ready_weapon","no_skill_ident","glow_radius","is_blind",	"can_see_in_dark",
-	"is_cauldron",	"randomitems",	"is_dust",		"no_steal",		"one_hit",
-	"berserk",		"sub_type",		"terrain_flag",	"terrain_type", "item_quality",
-	"item_condition","item_race",	"item_skill",	"item_level",	"material_real",
-	 "mpart_id",	"mpart_nr",		"weapon_speed",	"editor_folder","is_magical",
-	"is_vul_elemental","is_proof_elemental","is_vul_magic","is_proof_magic","is_vul_physical",
-	"is_proof_physical","is_vul_sphere","is_proof_sphere","is_indestructible","is_male",
-	"is_female","is_evil", "is_good","is_neutral","is_invisible",
-	"layer","is_aged","make_invisible", "make_ethereal","is_player",
-	"use_fix_pos", "inv_face", "inv_animation", "is_ethereal", "is_named",
-	"object_int1" <-- thats enemy_count
-	"object_int2" <-- thats attacked_by_count
-	"object_int3" <-- thats ownercount
-	"no_teleport", "corpse", "corpse_forced"
-    "player_only" <-- only player can enter flag
-	"no_cleric"
-	"one_drop"
-	"cursed_perm"
-	"damned_perm"
-	"wc_range"
-	"door_closed"
-	"item_level_art" <- special token from artifact lists"
-	"was_reflected"
-	"is_assassin"
-*/
-
 #define YY_DECL int lex_load(object *op, int map_flags)
 
 static char *yval();
@@ -219,7 +163,7 @@ WS	[ \t]*{NL}?
 					  * what you need to exclude at object/map loading time.
 					  */
 					else if(tmp->randomitems && (map_flags & MAP_ORIGINAL) &&(op->type != SPAWN_POINT ))
-						create_treasure_list(tmp->randomitems, tmp, 0, get_enviroment_level(tmp),T_STYLE_UNSET,ART_CHANCE_UNSET,0,NULL);
+						create_treasure_list(tmp->randomitems, tmp, 0, get_enviroment_level(tmp),ART_CHANCE_UNSET,0);
 
 				}
 			}
@@ -469,7 +413,6 @@ op->oy= op->y;
 ^use_fix_pos{S}			SET_OR_CLEAR_FLAG(op, FLAG_USE_FIX_POS, IVAL);
 ^is_ethereal{S}			SET_OR_CLEAR_FLAG(op, FLAG_IS_ETHEREAL, IVAL);
 ^can_open_door{S}	    SET_OR_CLEAR_FLAG(op, FLAG_CAN_OPEN_DOOR, IVAL);
-^can_use_bow{S}		    SET_OR_CLEAR_FLAG(op, FLAG_CAN_USE_BOW, IVAL);
 ^has_ready_bow{S}		SET_OR_CLEAR_FLAG(op, FLAG_READY_BOW, IVAL);
 ^has_ready_spell{S}	    SET_OR_CLEAR_FLAG(op, FLAG_READY_SPELL, IVAL);
 ^can_use_armour{S}	    SET_OR_CLEAR_FLAG(op, FLAG_USE_ARMOUR, IVAL);
@@ -909,7 +852,7 @@ NULL /*is_removed*/,"been_applied", "auto_apply", "treasure", "is_neutral",	/* 2
 "no_magic", "no_fix_player", "is_evil", "tear_down", "run_away",
 "pass_thru", "can_pass_thru", NULL, "unique", "no_drop",	/* 50 */
  "is_indestructible", "has_ready_spell", NULL, NULL,
-"can_use_bow", "can_use_armour", "can_use_weapon",
+ NULL, "can_use_armour", "can_use_weapon",
 "can_use_ring", NULL, "has_ready_bow",		/* 60 */
 "xrays", NULL, "is_floor", "lifesave", "is_magical", "alive",
 "stand_still", "random_move", "only_attack", "wiz",	/* 70 */

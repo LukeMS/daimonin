@@ -703,7 +703,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_READY_SPELL     52 /* (Monster) can learn and cast spells */
 /* FREE flag 53 */
 /* FREE flag 54 */
-#define FLAG_CAN_USE_BOW    55 /* (Monster) can apply and fire bows */
+/* FREE flag 55 */
 
 #define FLAG_USE_ARMOUR     56 /* (player/deity) INTERNAL flag to allow armour use (for example from the deity) */
 #define FLAG_USE_WEAPON     57 /* (player/deity) INTERNAL same as armour: can wield weapons */
@@ -832,7 +832,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_NO_SAVE            134     /* don't save this object - remove it before we save */
 #define FLAG_PASS_ETHEREAL      135     /* can_pass light for ethereal */
 
-/* FREE flag: 89, 48, 53, 54, 59 */
+/* FREE flag: 89, 48, 53, 54, 59, 55 */
 /* flag 37 is still free (old FREED flag). Let it free for secure reason for some time */
 
 #define NUM_FLAGS       135 /* Should always be equal to the last defined flag */

@@ -309,7 +309,7 @@ void generate_monster(object *gen)
             return;
         if (op->randomitems != NULL)
             create_treasure_list(op->randomitems, op, GT_APPLY, (op->level ? op->level : gen->map->difficulty),
-                                 T_STYLE_UNSET, ART_CHANCE_UNSET, 0, NULL);
+                                 ART_CHANCE_UNSET, 0);
         if (head == NULL)
             head = op;
         prev = op;

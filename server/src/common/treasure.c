@@ -568,6 +568,20 @@ static treasurelist * get_empty_treasurelist(void)
     return tl;
 }
 
+static inline void set_change_arch(_change_arch *ca)
+{
+    ca->item_race = -1;
+    ca->name = NULL;
+    ca->race = NULL;
+    ca->slaying = NULL;
+    ca->title = NULL;
+    ca->material = -1;
+    ca->material_quality = -1;
+    ca->material_range = -1;
+    ca->quality = -1;
+    ca->quality_range = -1;
+}
+
 /*
  * Allocate and return the pointer to an empty treasure structure.
  */
@@ -577,19 +591,11 @@ static treasure * get_empty_treasure(void)
     treasure   *t   = (treasure *) malloc(sizeof(treasure));
     if (t == NULL)
         LOG(llevError, "ERROR: get_empty_treasure(): OOM.\n");
-    t->change_arch.item_race = -1;
-    t->change_arch.name = NULL;
-    t->change_arch.race = NULL;
-    t->tlist = NULL;
-    t->change_arch.slaying = NULL;
-    t->change_arch.title = NULL;
-    t->t_style = T_STYLE_UNSET; /* -2 is the "unset" marker and will virtually handled as 0 which can be overruled */
-    t->change_arch.material = -1;
-    t->change_arch.material_quality = -1;
-    t->change_arch.material_range = -1;
-    t->change_arch.quality = -1;
-    t->change_arch.quality_range = -1;
+
+	set_change_arch(&t->change_arch);
     t->chance_fix = CHANCE_FIX;
+    t->tlist = NULL;
+    t->t_style = T_STYLE_UNSET; /* -2 is the "unset" marker and will virtually handled as 0 which can be overruled */
     t->item = NULL;
     t->name = NULL;
     t->next = NULL;
@@ -648,6 +654,65 @@ static inline treasurelist * find_treasurelist_intern(const char *name)
     return NULL;
 }
 
+/* parse treasure list paramter in randomitems cmd */
+static inline void parse_tlist_parm(tlist_tweak *tweak, char *parm)
+{
+	char *tmp;
+
+	do
+	{
+		/* the paramater list is like "parm1,parm2, parm3..." */
+		if ((tmp = strchr(parm, ',')))
+			*tmp = 0;
+
+		/* every paramter is like <ID><tail> where <ID> is a single char */
+		switch(*parm)
+		{
+			case 'l': /* (l)evel (difficulty) */
+				tweak->difficulty = atoi(parm+1);
+				break;
+			case 'a': /* (a)rtifat  chance*/
+				tweak->artifact_chance = atoi(parm+1);
+				break;
+			case 'd': /* (d)rop  chance*/
+				tweak->drop_chance = atoi(parm+1);
+				break;
+			case 's': /* treasure (s)tyle */
+				tweak->style = atoi(parm+1);
+				break;
+			case 'r': /* item (r)ace */
+				tweak->c_arch.item_race = atoi(parm+1);
+			break;
+			case 'i': /* (i)tem material */
+				tweak->c_arch.material = atoi(parm+1);
+				break;
+			case 'I': /* (i)dentified */
+				tweak->identified = TRUE;
+				break;
+			case 'm': /* (m)aterial quality*/
+				tweak->c_arch.material_quality = atoi(parm+1);
+				break;
+			case 'M': /* (m)aterial range */
+				tweak->c_arch.material_range = atoi(parm+1);
+				break;
+			case 'q': /* (q)uality */
+				tweak->c_arch.quality = atoi(parm+1);
+				break;
+			case 'Q': /* (q)uality range */
+				tweak->c_arch.quality_range = atoi(parm+1);
+				break;
+			default:
+				LOG(llevBug,"\nBUG ::TLIST PARSE: invalid tlist paramter: %s\n", STRING_SAFE(parm));
+				return;
+			break;
+		}
+
+        if (tmp)
+            parm = tmp + 1;
+
+	} while(tmp);
+}
+
 /* link_treasurelists will generate a linked lists of treasure list
  * using a string in format "listname1;listname2;listname3;..." as
  * argument.
@@ -655,7 +720,7 @@ static inline treasurelist * find_treasurelist_intern(const char *name)
  */
 objectlink * link_treasurelists(char *liststring, uint32 flags)
 {
-    char               *tmp;
+    char               *tmp, *parm;
     const char         *name;
     treasurelist       *tl;
     objectlink*list =   NULL, *list_start = NULL;
@@ -668,6 +733,11 @@ objectlink * link_treasurelists(char *liststring, uint32 flags)
     {
         if ((tmp = strchr(liststring, ';')))
             *tmp = 0;
+
+		/* find paramter marker */
+        if ((parm = strchr(liststring, '&')))
+			*parm = 0;
+
         if (!(name = find_string(liststring)))
         {
             /* no treasure list name in hash table = no treasure list with that name */
@@ -706,6 +776,22 @@ objectlink * link_treasurelists(char *liststring, uint32 flags)
                     }
 
                     list->objlink.tl = tl;
+
+					if(parm) /* we have a paramter list ('&' tail) for this lst? parse it */
+					{
+						tlist_tweak  *tweak = (tlist_tweak *) get_poolchunk(pool_tlist_tweak);
+						
+						tweak->artifact_chance = ART_CHANCE_UNSET;
+						tweak->style = T_STYLE_UNSET;
+						tweak->difficulty = 0;
+						tweak->identified = FALSE;
+						tweak->drop_chance = 0;
+						set_change_arch(&tweak->c_arch);
+						parse_tlist_parm(tweak, parm+1);
+						list->parmlink.tl_tweak = tweak;
+					}
+					
+					
                 }
             }
         }
@@ -738,6 +824,8 @@ void unlink_treasurelists(objectlink *list, int flag)
     do
     {
         /*LOG(-1,"freed listpat: %s\n",list->objlink.tl->listname); */
+		if(list->parmlink.tl_tweak)
+			return_poolchunk(list->parmlink.tl_tweak, pool_tlist_tweak);
         free_objectlink_simple(list);
         /* hm, this should work... return_poolchunk() should not effect the objectlink itself */
         list = list->next;
@@ -792,12 +880,44 @@ object * generate_treasure(struct oblnk *t, int difficulty)
  * first arch_change as base to other recursive calls.
  */
 /* help function to call a objectlink linked list of treasure lists */
-void create_treasure_list(struct oblnk *t, object *op, int flag, int difficulty, int t_style, int a_chance, int tries,
-                          struct _change_arch *arch_change)
+void create_treasure_list(struct oblnk *t, object *op, int flag, int difficulty, int a_chance, int tries)
 {
+	struct _change_arch *captr;
+	int t_style;
+
     while (t)
     {
-        create_treasure(t->objlink.tl, op, flag, difficulty, t_style, a_chance, tries, arch_change);
+		if(t->parmlink.tl_tweak) /* this treasure list had a '&' paramter list */
+		{
+			/* we do a test from 1-1000.
+			 * 1 is a chance of 1/1000, 1000 1000/1000 (=100% chance) 
+			 */
+			if(t->parmlink.tl_tweak->drop_chance)
+			{
+				if((RANDOM()%1000)+1 > t->parmlink.tl_tweak->drop_chance) 
+				{
+					t = t->next;
+					continue;
+				}
+			}
+
+			/* setup the '&' parameter values insertation to the treasure list */
+			captr = &t->parmlink.tl_tweak->c_arch;
+			t_style = t->parmlink.tl_tweak->style;
+			if(t->parmlink.tl_tweak->difficulty)
+				difficulty = t->parmlink.tl_tweak->difficulty;
+			if(t->parmlink.tl_tweak->artifact_chance != ART_CHANCE_UNSET)
+				a_chance = t->parmlink.tl_tweak->artifact_chance;
+			if(t->parmlink.tl_tweak->identified)
+				flag |= GT_IDENTIFIED;
+		}
+		else
+		{
+			captr = NULL;
+			t_style = T_STYLE_UNSET;
+		}
+
+        create_treasure(t->objlink.tl, op, flag, difficulty, t_style, a_chance, tries, captr);
         t = t->next;
     }
 }
@@ -1920,6 +2040,12 @@ int fix_generated_item(object **op_ptr, object *creator, int difficulty, int a_c
             op->value = 0;
     }
 
+    if (flags & GT_IDENTIFIED)
+	{
+		SET_FLAG(op, FLAG_IDENTIFIED);
+		SET_FLAG(op, FLAG_KNOWN_MAGICAL);
+		SET_FLAG(op, FLAG_KNOWN_CURSED);
+	}	
     if (!(flags & GT_ENVIRONMENT))
         fix_flesh_item(op, creator);
 

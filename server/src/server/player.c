@@ -554,7 +554,7 @@ void give_initial_items(object *pl, struct oblnk *items)
     object *op, *next = NULL;
 
     if (pl->randomitems != NULL)
-        create_treasure_list(items, pl, GT_ONLY_GOOD | GT_NO_VALUE, 1, T_STYLE_UNSET, ART_CHANCE_UNSET, 0, NULL);
+        create_treasure_list(items, pl, GT_ONLY_GOOD | GT_NO_VALUE, 1, ART_CHANCE_UNSET, 0);
 
     for (op = pl->inv; op; op = next)
     {

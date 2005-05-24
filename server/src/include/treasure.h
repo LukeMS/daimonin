@@ -51,7 +51,8 @@ enum
     /* treasure gets applied when inserted in mob! (food eaten, skill applied...) */
     GT_ONLY_GOOD                                                                            = 0x0010,
     GT_UPDATE_INV                                                                           = 0x0020,
-    GT_NO_VALUE                                                                             = 0x0040      /* set value of all created treasures to 0 */
+    GT_NO_VALUE                                                                             = 0x0040,      /* set value of all created treasures to 0 */
+    GT_IDENTIFIED                                                                           = 0x0080       /* treasure is identified */
 };
 
 
@@ -78,6 +79,17 @@ typedef struct _change_arch
     int         quality_range;              /* used for random range */
 } _change_arch;
 
+
+/* used for personlized treasure lists ('&' tail command in randomitems) */
+typedef struct _tlist_tweak
+{
+	int drop_chance;
+	int style;
+	int difficulty;
+	int artifact_chance;
+	int identified;
+	_change_arch c_arch;
+} tlist_tweak;
 
 /*
  * treasure is one element in a linked list, which together consist of a
