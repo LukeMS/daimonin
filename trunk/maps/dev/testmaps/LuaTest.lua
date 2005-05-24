@@ -29,6 +29,21 @@ elseif msg == 'division' then
 	me:SayTo(activator, "Trying to calculate x = 42 / 0. (Should give inf)")
 	me:SayTo(activator, "x = " .. tostring(42 / 0))
 	me:SayTo(activator, "Done calculating.")
+-- Test some of the security features
+elseif msg == 'security1' then
+    if activator.f_wiz then
+        me:SayTo(activator, "You are DM, trying to remove it (should fail).")
+        activator.f_wiz = false;
+    else
+        me:SayTo(activator, "You aren't DM, trying to elevate you (should fail).")
+        activator.f_wiz = true;
+    end
+elseif msg == 'security2' then
+    me:SayTo(activator, "Trying to open /etc/passwd (should fail).")
+    f = io.open("/etc/passwd", "r")
+elseif msg == 'security3' then
+    me:SayTo(activator, "Trying to open /etc/passwd (should fail).")
+    require("/etc/passwd")
 
 -- Test coroutines
 elseif (msg == 'yield') then
@@ -445,11 +460,11 @@ elseif (words[1] == "setattribute") then
     activator.speed = 2.0 -- # Shouldn't work on player...
 
 --  Test map object model, functions and object queries
-elseif (msg == 'map1') then
+elseif msg == 'map1' then
     me:SayTo(activator, "We are now on map " .. tostring(me.map))
-elseif (msg == 'map2') then
+elseif msg == 'map2' then
     me:SayTo(activator, "This map ("..me.map.path..") is "..me.map.width.."x"..me.map.height)
-elseif (msg == 'map3') then
+elseif msg == 'map3' then
     saywhat = "Object list for square (1,1): "
     object = me.map:GetFirstObjectOnSquare(1,1)
     while (object ~= nil) do
@@ -457,9 +472,14 @@ elseif (msg == 'map3') then
         object = object.above
 	end
     me:SayTo(activator, saywhat)
-elseif (msg == 'createobject') then
+elseif msg == 'createobject' then
     note = me.map:CreateObject("note", me.x-1, me.y-1)
     note.message = "I was created out here"
+elseif msg == 'brightness' then
+    b1 = me.map:GetBrightnessOnSquare(me.x, me.y, 0)
+    b2 = me.map:GetBrightnessOnSquare(me.x, me.y, 1)
+    me:SayTo(activator, "Global map brightness is "..me.map.darkness.." or "..me.map.light_value.." depending on scale")
+    me:SayTo(activator, "Brightness here is "..b1.." or "..b2.." depending on scale")
 
 -- Help the Drow to test recursion
 elseif msg == 'recursive_part_2' then
@@ -482,6 +502,7 @@ else
     me:SayTo(activator,
         "Available tests:\n" ..
         "^exception^ ^tostring^ ^typesafe1^ ^globals^ ^division^\n" ..
+        "^security1^ ^security2^ ^security3^\n" ..
         "^food^ ^food2^\n" ..
 		"^invisible^ ^messaging^ ^getip^\n" ..
 		"^rank1^ ^rank2^ ^clone^ ^enemy^\n" ..
