@@ -842,15 +842,50 @@ void unlink_treasurelists(objectlink *list, int flag)
  */
 object * generate_treasure(struct oblnk *t, int difficulty)
 {
+	struct _change_arch *captr;
+	int t_style, a_chance, flag;
     object*ob =     get_object(), *tmp = NULL;
 
     while (t)
     {
-        create_treasure(t->objlink.tl, ob, 0, difficulty, t->objlink.tl->t_style, t->objlink.tl->artifact_chance, 0,
-                        NULL);
+		flag = 0;
+		captr = NULL;
+		t_style = t->objlink.tl->t_style;
+		a_chance = t->objlink.tl->artifact_chance;
+
+		if(t->parmlink.tl_tweak) /* this treasure list had a '&' paramter list */
+		{
+			/* we do a test from 1-1000.
+			 * 1 is a chance of 1/1000, 1000 1000/1000 (=100% chance) 
+			 */
+			if(t->parmlink.tl_tweak->drop_chance)
+			{
+				if((RANDOM()%1000)+1 > t->parmlink.tl_tweak->drop_chance) 
+				{
+					t = t->next;
+					continue;
+				}
+			}
+
+			/* setup the '&' parameter values insertation to the treasure list */
+			captr = &t->parmlink.tl_tweak->c_arch;
+			if(t->parmlink.tl_tweak->style != T_STYLE_UNSET)
+				t_style = t->parmlink.tl_tweak->style;
+			if(t->parmlink.tl_tweak->difficulty)
+				difficulty = t->parmlink.tl_tweak->difficulty;
+			if(t->parmlink.tl_tweak->artifact_chance != ART_CHANCE_UNSET)
+				a_chance = t->parmlink.tl_tweak->artifact_chance;
+			if(t->parmlink.tl_tweak->identified)
+				flag |= GT_IDENTIFIED;
+		}
+
+        create_treasure(t->objlink.tl, ob, flag, difficulty, t_style, a_chance,0, captr);
 
         if (!ob->inv) /* no treasure, try next tlist */
-            continue;
+		{
+			t = t->next;
+			continue;
+		}
 
         /* Don't want to free the object we are about to return */
         tmp = ob->inv;
@@ -880,10 +915,10 @@ object * generate_treasure(struct oblnk *t, int difficulty)
  * first arch_change as base to other recursive calls.
  */
 /* help function to call a objectlink linked list of treasure lists */
-void create_treasure_list(struct oblnk *t, object *op, int flag, int difficulty, int a_chance, int tries)
+void create_treasure_list(struct oblnk *t, object *op, int flag, int difficulty, int art_chance, int tries)
 {
 	struct _change_arch *captr;
-	int t_style;
+	int t_style, a_chance;
 
     while (t)
     {
@@ -901,18 +936,30 @@ void create_treasure_list(struct oblnk *t, object *op, int flag, int difficulty,
 				}
 			}
 
+			a_chance = art_chance;
 			/* setup the '&' parameter values insertation to the treasure list */
 			captr = &t->parmlink.tl_tweak->c_arch;
-			t_style = t->parmlink.tl_tweak->style;
-			if(t->parmlink.tl_tweak->difficulty)
-				difficulty = t->parmlink.tl_tweak->difficulty;
+
+			if(t->parmlink.tl_tweak->style != T_STYLE_UNSET)
+				t_style = t->parmlink.tl_tweak->style;
+			else
+				t_style = t->objlink.tl->t_style;
+
 			if(t->parmlink.tl_tweak->artifact_chance != ART_CHANCE_UNSET)
 				a_chance = t->parmlink.tl_tweak->artifact_chance;
+			else if(t->objlink.tl->artifact_chance != ART_CHANCE_UNSET)
+				a_chance = t->objlink.tl->artifact_chance;
+
+			if(t->parmlink.tl_tweak->difficulty)
+				difficulty = t->parmlink.tl_tweak->difficulty;
 			if(t->parmlink.tl_tweak->identified)
 				flag |= GT_IDENTIFIED;
 		}
 		else
 		{
+			a_chance = art_chance;
+			if(t->objlink.tl->artifact_chance != ART_CHANCE_UNSET)
+				a_chance = t->objlink.tl->artifact_chance;
 			captr = NULL;
 			t_style = T_STYLE_UNSET;
 		}
@@ -978,7 +1025,7 @@ void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int
             create_treasure(t->tlist, op, flag, difficulty, t_style, a_chance, tries,
                             change_arch ? change_arch : &t->change_arch);
         }
-        else if (difficulty >= t->difficulty)
+        else if (t->item && t->item->name != global_string_none && difficulty >= t->difficulty)
         {
             if (IS_SYS_INVISIBLE(&t->item->clone) || !(flag & GT_INVISIBLE))
             {
@@ -1118,7 +1165,7 @@ void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty,
         return;
     }
 
-    if (IS_SYS_INVISIBLE(&t->item->clone) || flag != GT_INVISIBLE)
+    if (t->item && t->item->name != global_string_none && (IS_SYS_INVISIBLE(&t->item->clone) || flag != GT_INVISIBLE))
     {
         if (t->item->clone.type != TYPE_WEALTH)
         {
