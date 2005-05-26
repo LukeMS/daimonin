@@ -23,7 +23,7 @@
 #if !defined(__INCLUDE_H)
 #define __INCLUDE_H
 
-#ifdef __LINUX
+#if defined(__LINUX) || defined(__linux__) || defined(__unix__)
 #include "define.h"
 #endif
 
