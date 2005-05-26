@@ -6453,11 +6453,12 @@ msg
 The Tabernacle of Life
 endmsg
 editor_folder gods/gods_lesser
+title Moroch
 randomitems deity_tabernacle
 no_pick 1
 layer 6
 face dummy.111
-race god_lesser
+race animal,bird,slime,insect,reptile
 animation Tabernacle
 is_animated 1
 anim_speed 3
@@ -6509,6 +6510,7 @@ level 100
 no_pick 1
 end
 Object tabernacle_avatar
+name Avatar of the Tabernacle
 type 80
 editor_folder gods/gods_lesser
 face dummy.111

@@ -306,7 +306,7 @@ _gui_book_struct *load_book_interface(int mode, char *data, int len)
 		}
 
 		current_book_line.line[lc++]=c;
-		if(lc>=BOOK_LINES_CHAR)
+		if(lc>=BOOK_LINES_CHAR-2)
 			goto force_line_jump;
 	}
 

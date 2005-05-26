@@ -62,10 +62,10 @@
  */
 
 /* This flag is useful to see what kind of output messages are created */
-/* #define BOOK_MSG_DEBUG */
+/*#define BOOK_MSG_DEBUG*/
 
 /* This flag is useful for debuging archiving action */
-/* #define ARCHIVE_DEBUG */
+/*#define ARCHIVE_DEBUG*/
 
 /* Moved these structures from struct.h to this file in 0.94.3 - they
  * are not needed anyplace else, so why have them globally declared?
@@ -149,13 +149,14 @@ static char        *path_author[]               =
  */
 
 /* if it isnt listed here, then art_attr_msg will never generate
- * a message for this type of artifact. -b.t. */
-
+ * a message for this type of artifact. -b.t. 
+ */
 static arttypename  art_name_array[]            =
 {
-    {"Helmet", HELMET}, {"Amulet", AMULET}, {"Shield", SHIELD}, {"Bracers", BRACERS}, {"Boots", BOOTS},
-    {"Cloak", CLOAK}, {"Gloves", GLOVES}, {"Gridle", GIRDLE}, {"Ring", RING}, {"Horn", HORN}, {"Missile Weapon", BOW},
-    {"Missile", ARROW}, {"Hand Weapon", WEAPON}, {"Artifact", SKILL}, {"Food", FOOD}, {"Body Armour", ARMOUR}
+    {"Helmets", HELMET}, {"Amulets", AMULET}, {"Shields", SHIELD}, {"Bracers", BRACERS}, {"Boots", BOOTS},
+    {"Cloaks", CLOAK}, {"Gloves", GLOVES}, {"Girdles", GIRDLE}, {"Missile Weapons", BOW},
+    {"Missiles", ARROW}, {"Weapons", WEAPON}, {"Containers", CONTAINER}, {"Lights", TYPE_LIGHT_APPLY},
+	{"Rings", RING}, {"Potions", POTION}, {"Body Armours", ARMOUR}
 };
 
 static char        *art_book_name[]             =
@@ -251,18 +252,18 @@ static char        *book_author[]               =
 static char        *book_descrpt[]              =
 {
     "ancient", "cryptic", "cryptical", "dusty", "hiearchical", "grizzled", "gold-guilt", "great", "lost", "magnificent",
-    "musty", "mythical", "mystical", "rustic", "stained", "silvered", "transcendental", "weathered"
+    "musty", "mythical", "mystical", "rustic", "stained", "silvered", "transcendental", "weathered", "interesting"
 };
 
 
 
 static char        *mage_book_name[]            =
 {
-    "grimoire",     /* Level 1   */
-    "grimoire",     /* Level 2-3 */
-    "manual",       /* Level 4-5 */
-    "tome",         /* Level 6-7 */
-    "treatise"      /* Level 8+  */
+    "grimoire",    
+    "grimoire",  
+    "manual",     
+    "tome", 
+    "treatise"  
 };
 
 static char        *priest_book_name[]          =
@@ -423,9 +424,7 @@ char * strtoktolin(const char *buf1, const char *buf2)
 int book_overflow(const char *buf1, const char *buf2, int booksize)
 {
     if (buf_overflow(buf1, buf2, BOOK_BUF - 2)      /* 2 less so always room for trailing \n */
-     || buf_overflow(buf1,
-                                                                                                                buf2,
-                                                                                                                booksize))
+     || buf_overflow(buf1, buf2, booksize))
         return 1;
     return 0;
 }
@@ -614,8 +613,8 @@ static void init_mon_info(void)
 
     for (at = first_archetype; at != NULL; at = at->next)
     {
-        if (QUERY_FLAG(&at->clone, FLAG_MONSTER)
-         && (!QUERY_FLAG(&at->clone, FLAG_CHANGING) || QUERY_FLAG(&at->clone, FLAG_UNAGGRESSIVE)))
+        if (QUERY_FLAG(&at->clone, FLAG_MONSTER) && !QUERY_FLAG(&at->clone, FLAG_FRIENDLY)
+         && !QUERY_FLAG(&at->clone, FLAG_CHANGING))
         {
             objectlink *mon = get_objectlink(OBJLNK_FLAG_OB);
             mon->objlink.ob = &at->clone;
@@ -758,7 +757,6 @@ static void new_text_name(object *book, int msgtype)
  * A lot like new_text_name above, but instead chooses an author
  * and sets op->title to that value
  */
-
 static void add_author(object *op, int msgtype)
 {
     char    title[MAX_BUF], name[MAX_BUF];
@@ -1021,86 +1019,40 @@ void change_book(object *book, int msgtype)
  * Changed 971225 to be greater than equal to level passed.  Also
  * made choosing by level more random.
  */
-/* We have a problem here, we must fix later: level are NOT fix set in arch
- * anymore for monsters. We have a level 1 template mob in the arch and we
- * simply set the level as high as we need it in the game... So we can generate
- * a level 10 dragon, but also a level 100 dragon. _MT 2003.
- */
 object * get_random_mon(int level)
 {
     objectlink *mon = first_mon_info;
     int         i = 0, monnr;
 
-    level = 0; /* LEVEL FIX. MT -2003 */
-
     /* safety check.  Problem w/ init_mon_info list? */
     if (!nrofmon || !mon)
         return (object *) NULL;
+    
+	/* lets get a random monster from the mon_info linked list */
+    monnr = RANDOM() % nrofmon;
 
-    if (!level)
+	for (mon = first_mon_info, i = 0; mon; mon = mon->next)
+		if (i++ == monnr)
+			break;
+
+	if (!mon)
     {
-        /* lets get a random monster from the mon_info linked list */
-        monnr = RANDOM() % nrofmon;
-
-        for (mon = first_mon_info, i = 0; mon; mon = mon->next)
-            if (i++ == monnr)
-                break;
-
-        if (!mon)
-        {
-            LOG(llevBug, "BUG: get_random_mon: Didn't find a monster when we should have\n");
-            return NULL;
-        }
-        return mon->objlink.ob;
-    }
-
-    /* Case where we are searching by level.  Redone 971225 to be clearer
-     * and more random.  Before, it looks like it took a random monster from
-     * the list, and then returned the first monster after that which was
-     * appropriate level.  This wasn't very random because if you had a
-     * bunch of low level monsters and then a high level one, if the random
-     * determine took one of the low level ones, it would just forward to the
-     * high level one and return that.  Thus, monsters that immediatly followed
-     * a bunch of low level monsters would be more heavily returned.  It also
-     * means some of the dragons would be poorly represented, since they
-     * are a group of high level monsters all around each other.
-     */
-
-    /* First count number of monsters meeting level criteria */
-    for (mon = first_mon_info, i = 0; mon; mon = mon->next)
-        if (mon->objlink.ob->level >= level)
-            i++;
-
-    if (i == 0)
-    {
-        LOG(llevBug, "BUG: get_random_mon() couldnt return monster for level %d\n", level);
+		LOG(llevBug, "BUG: get_random_mon: Didn't find a monster when we should have\n");
         return NULL;
     }
-
-    monnr = RANDOM() % i;
-    for (mon = first_mon_info; mon; mon = mon->next)
-        if (mon->objlink.ob->level >= level && monnr-- == 0)
-            return mon->objlink.ob;
-
-    if (!mon)
-    {
-        LOG(llevBug, "BUG: get_random_mon(): didn't find a monster when we should have\n");
-        return NULL;
-    }
-    return NULL;        /* Should be unreached, by keeps warnings down */
+    
+	return mon->objlink.ob;
 }
 
 /*
- * Returns a description of the monster.  This really needs to be
- * redone, as describe_item really gives a pretty internal description.
+ * Returns a description of the monster.
  */
-
 char * mon_desc(object *mon)
 {
     static char retbuf[HUGE_BUF];
 
-    sprintf(retbuf, " *** %s ***\n", mon->name);
-    strcat(retbuf, describe_item(mon));
+    sprintf(retbuf, "<t t=\"%s\">", mon->name);
+    strcat(retbuf, examine(NULL, mon, FALSE));
 
     return retbuf;
 }
@@ -1139,29 +1091,30 @@ char * mon_info_msg(int level, int booksize)
     static char retbuf[BOOK_BUF];
     char        tmpbuf[HUGE_BUF];
     object     *tmp;
+	int count=0, desc_num= (RANDOM()%5)+3;
 
     /*preamble */
-    strcpy(retbuf, "This beastiary contains:");
+    sprintf(retbuf, "<t t=\"Beastiary\">\nHerein are detailed %d creatures\nfound in the world around.\n\n\n\n", desc_num);
 
-    /* lets print info on as many monsters as will fit in our
-     * document.
-     * 8-96 Had to change this a bit, otherwise there would
-     * have been an impossibly large number of combinations
-     * of text! (and flood out the available number of titles
-     * in the archive in a snap!) -b.t.
-     */
-    tmp = get_random_mon(level * 3);
+    tmp = get_random_mon(1);
     do
     {
+		if(count&1)
+			strcat(retbuf,"<p>");
+		else
+			strcat(retbuf,"\n\n");
+		
         /* monster description */
-        sprintf(tmpbuf, "\n---\n%s", mon_desc(tmp));
+        strcpy(tmpbuf, mon_desc(tmp));
 
         if (!book_overflow(retbuf, tmpbuf, booksize))
             strcat(retbuf, tmpbuf);
         else
             break;
 
-        /* Note that the value this returns is not based on level */
+		if(++count>=desc_num)
+			break;
+
         tmp = get_next_mon(tmp);
     }
     while (tmp);
@@ -1187,16 +1140,17 @@ char * artifact_msg(int level, int booksize)
 {
     artifactlist   *al              = NULL;
     artifact       *art;
-    int             chance, i, type, index;
+    int             count=0,chance, i, type, index;
     int             book_entries    = level > 5 ? RANDOM() % 3 + RANDOM() % 3 + 2 : RANDOM() % level + 1;
     char           *ch, name[MAX_BUF], buf[BOOK_BUF], sbuf[MAX_BUF];
     static char     retbuf[BOOK_BUF];
     object         *tmp             = NULL;
-
+	
     /* values greater than 5 create msg buffers that are too big! */
     if (book_entries > 5)
         book_entries = 5;
-
+    if (book_entries < 2)
+		book_entries = 3;
     /* lets determine what kind of artifact type randomly.
      * Right now legal artifacts only come from those listed
      * in art_name_array. Also, we check to be sure an artifactlist
@@ -1229,35 +1183,30 @@ char * artifact_msg(int level, int booksize)
     strcpy(name, art_name_array[index].name);
 
     /* Ok, lets print out the contents */
-    sprintf(retbuf, "Herein %s detailed %s...\n", book_entries > 1 ? "are" : "is",
-         book_entries > 1 ? "some artifacts" : "an artifact");
+    sprintf(retbuf, " <t t=\"Magical %s\">Herein %s detailed %s...\n\n\n", art_name_array[index].name,
+					  book_entries > 1 ? "are" : "is", book_entries > 1 ? "some artifacts" : "an artifact");
 
     /* artifact msg attributes loop. Lets keep adding entries to the 'book'
      * as long as we have space up to the allowed max # (book_entires)
      */
+	if (art == NULL)
+		art = al->items;
     while (book_entries > 0)
     {
         if (art == NULL)
-            art = al->items;
+			break;
 
-        /* separator of items */
-        strcpy(buf, "--- \n");
-
-        /* Name */
-        if (art->allowed != NULL && strcmp(art->allowed->name, "All"))
-        {
-            linked_char    *temp, *next = art->allowed;
-            do
-            {
-                temp = next;
-                next = next->next;
-            }
-            while ((next != (linked_char *) NULL) && !RANDOM() % 2);
-            sprintf(buf, "%s A %s of %s", buf, temp->name, art->def_at.clone.name);
-        }
-        else            /* default name is used */
-            sprintf(buf, "%s The %s of %s", buf, name, art->def_at.clone.name);
-
+		if(count++&1)
+			strcat(retbuf,"\n<p>");
+		else
+		strcat(retbuf,"\n\n");
+		tmp = arch_to_object(&art->def_at);
+        SET_FLAG(tmp, FLAG_IDENTIFIED);
+        SET_FLAG(tmp, FLAG_KNOWN_MAGICAL);
+        SET_FLAG(tmp, FLAG_KNOWN_CURSED);
+		
+		sprintf(buf,"<t t=\"%s %s\">\n", tmp->name, tmp->title?tmp->title:"");
+		strcat(retbuf,buf);
         /* chance of finding */
         chance = (int) (100.0f * ((float) art->chance / (float) al->total_chance));
         if (chance >= 20)
@@ -1268,30 +1217,26 @@ char * artifact_msg(int level, int booksize)
             sprintf(sbuf, "a rare");
         else
             sprintf(sbuf, "a very rare");
-        sprintf(buf, "%s is %s\n", buf, sbuf);
 
         /* value of artifact */
-        sprintf(buf, "%s item with a value that is %d times normal.\n", buf, art->def_at.clone.value);
+		if(art->def_at.base_clone && art->def_at.base_clone->value) /* avoid devide by zero */
+		{
+			sprintf(buf, "%s item with a value that is %d times normal.\n", sbuf, 
+							art->def_at.clone.value/art->def_at.base_clone->value);
+		}
+		else
+			sprintf(buf, "%s item with a value of %d\n", sbuf, art->def_at.clone.value);
+		strcat(retbuf, buf);
+		
+		if ((ch = describe_item(tmp)) != NULL && strlen(ch) > 1)
+		{
+			sprintf(buf, "Properties of this artifact include: \n %s \n", ch);
 
-        /* include the message about the artifact, if exists, and book
-           * level is kinda high */
-        if (art->def_at.clone.msg
-         && (RANDOM() % 4 + 1) < level
-         && !((strlen(art->def_at.clone.msg) + strlen(buf)) > BOOK_BUF))
-            strcat(buf, art->def_at.clone.msg);
-
-        /* properties of the artifact */
-        tmp = get_object();
-        give_artifact_abilities(tmp, art);
-        tmp->type = type;
-        SET_FLAG(tmp, FLAG_IDENTIFIED);
-        if ((ch = describe_item(tmp)) != NULL && strlen(ch) > 1)
-            sprintf(buf, "%s Properties of this artifact include: \n %s \n", buf, ch);
-        /* add the buf if it will fit */
-        if (!book_overflow(retbuf, buf, booksize))
-            strcat(retbuf, buf);
-        else
-            break;
+			if (!book_overflow(retbuf, buf, booksize))
+			    strcat(retbuf, buf);
+			else
+			    break;
+		}
 
         art = art->next;
         book_entries--;
@@ -1322,11 +1267,11 @@ char * spellpath_msg(int level, int booksize)
     uint32                      pnum    = (path == -1) ? PATH_NULL : spellpathdef[path];
 
     /* Preamble */
-    sprintf(retbuf, "Herein are detailed the names of %s\n", !(prayers) ? "incantations" : "prayers");
+    sprintf(retbuf, "<t t=\"Path of %s\">Herein are detailed the names of %s\n", path==-1?"Unknown":spellpathnames[path],!(prayers) ? "incantations" : "prayers");
     if (path == -1)
         strcat(retbuf, "having no known spell path.\n");
     else
-        sprintf(retbuf, "%sbelonging to the path of %s:\n", retbuf, spellpathnames[path]);
+        sprintf(retbuf, "%sbelonging to the path of %s:\n\n", retbuf, spellpathnames[path]);
 
     /* Now go through the entire list of spells. Add appropriate spells
      * in our message buffer
@@ -1402,7 +1347,7 @@ void make_formula_book(object *book, int level)
 
     if (fl->total_chance == 0)
     {
-        FREE_AND_COPY_HASH(book->msg, " <indescipherable text>\n");
+        FREE_AND_COPY_HASH(book->msg, " *indescipherable text*\n");
         new_text_name(book, 4);
         add_author(book, 4);
         return;
@@ -1422,7 +1367,7 @@ void make_formula_book(object *book, int level)
 
     if (!formula)
     {
-        FREE_AND_COPY_HASH(book->msg, " <indescipherable text>\n");
+        FREE_AND_COPY_HASH(book->msg, " *indescipherable text*\n");
         new_text_name(book, 4);
         add_author(book, 4);
     }
@@ -1530,7 +1475,7 @@ char * msgfile_msg(int level, int booksize)
     if (msg && !book_overflow(retbuf, msg->name, booksize))
         strcpy(retbuf, msg->name);
     else
-        sprintf(retbuf, "\n <undecipherable text>");
+        sprintf(retbuf, "\n *undecipherable text*");
 
 #ifdef BOOK_MSG_DEBUG
     LOG(llevDebug, "\n info_list_msg() created strng: %d\n", strlen(retbuf));
@@ -1558,14 +1503,14 @@ char * god_info_msg(int level, int booksize)
     name = god->name;
 
     /* preamble.. */
-    sprintf(retbuf, "This document contains knowledge concerning\n");
+    sprintf(retbuf, "<t t=\"%s\">This document contains knowledge concerning\n", name);
     sprintf(retbuf, "%sthe diety %s", retbuf, name);
 
     /* Always have as default information the god's descriptive terms. */
     if (nstrtok(god->msg, ",") > 0)
     {
-        strcat(retbuf, ", known as");
-        strcat(retbuf, strtoktolin(god->msg, ","));
+        strcat(retbuf, ", known as\n");
+        strcat(retbuf, god->msg);
     }
     else
         strcat(retbuf, "...");
@@ -1586,7 +1531,7 @@ char * god_info_msg(int level, int booksize)
             /* enemy god */
             const char *enemy   = god->title;
             if (enemy)
-                sprintf(buf, "The gods %s and %s are enemies.\n ---\n", name, enemy);
+                sprintf(buf, "The deities %s and %s are enemies.\n ---\n", name, enemy);
         }
         if (level == 3 && RANDOM() % 2)
         {
@@ -1761,7 +1706,7 @@ void tailor_readable_ob(object *book, int msg_type)
 {
     char    msgbuf[BOOK_BUF];
     int     level   = book->level ? (RANDOM() % book->level) + 1 : 1;
-    int     book_buf_size;
+    int     book_buf_size, count=0;
 
     /* safety */
     if (book->type != BOOK)
@@ -1786,19 +1731,20 @@ void tailor_readable_ob(object *book, int msg_type)
      */
 
     msg_type = msg_type > 0 ? msg_type : (RANDOM() % 6);
+goto_2ndtry:
     switch (msg_type)
     {
         case 1:
           /* monster attrib */
-          strcpy(msgbuf, mon_info_msg(level, book_buf_size));
-          break;
+	        strcpy(msgbuf, mon_info_msg(level, book_buf_size));
+			break;
         case 2:
           /* artifact attrib */
-          strcpy(msgbuf, artifact_msg(level, book_buf_size));
-          break;
+			strcpy(msgbuf, artifact_msg(level, book_buf_size));
+			break;
         case 3:
           /* grouping incantations/prayers by path */
-          strcpy(msgbuf, spellpath_msg(level, book_buf_size));
+		    strcpy(msgbuf, spellpath_msg(level, book_buf_size));
           break;
         case 4:
           /* describe an alchemy formula */
@@ -1807,18 +1753,20 @@ void tailor_readable_ob(object *book, int msg_type)
           /* make_formula_book already gives title */
           return;
 #else
-          strcpy(msgbuf, msgfile_msg(level, book_buf_size));
-          msg_type = 0;
+		  strcpy(msgbuf, artifact_msg(level, book_buf_size));
+          msg_type = 2;
 #endif
           break;
         case 5:
           /* bits of information about a god */
+		  if(!count++)
+			  goto goto_2ndtry;
           strcpy(msgbuf, god_info_msg(level, book_buf_size));
           break;
         case 0:
           /* use info list in lib/ */
         default:
-          strcpy(msgbuf, msgfile_msg(level, book_buf_size));
+			strcpy(msgbuf, msgfile_msg(level, book_buf_size));
           break;
     }
 

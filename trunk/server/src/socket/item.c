@@ -1094,7 +1094,7 @@ void ExamineCmd(char *buf, int len, player *pl)
         /*LOG(llevDebug, "Player '%s' tried examine the unknown object (%d)\n",pl->ob->name, tag);*/
         return;
     }
-    examine(pl->ob, op);
+    examine(pl->ob, op, TRUE);
 }
 
 /* Client wants to apply some object.  Lets do so. */

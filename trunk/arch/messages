@@ -16,16 +16,12 @@
 # buffer size for books (you'll generate a warning message
 # if you do this). Check the file include/read.h for the 
 # current message size limit (BOOK_BUF).
-#    2) Text has to fit into the player message window.
-# Don't design lines at lengths of 40 or more, or it will
-# wrap around to the next line. Long lines will appear 
-# differently to the player than as presented in this file. 
 #
 #
 #
 MSG
 
- <undecipherable text>
+ *undecipherable text*
 ENDMSG
 #
 #

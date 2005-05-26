@@ -618,7 +618,7 @@ int probe(object *op)
                 new_draw_info_format(NDI_UNIQUE, 0, op->owner, "Your probe analyse %s.", tmp->name);
                 if (tmp->head != NULL)
                     tmp = tmp->head;
-                examine(op->owner, tmp);
+                examine(op->owner, tmp, TRUE);
                 return 1;
             }
         }

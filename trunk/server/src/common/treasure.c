@@ -674,7 +674,7 @@ static inline void parse_tlist_parm(tlist_tweak *tweak, char *parm)
 			case 'a': /* (a)rtifat  chance*/
 				tweak->artifact_chance = atoi(parm+1);
 				break;
-			case 'd': /* (d)rop  chance*/
+			case 'd': /* (d)rop  chance */
 				tweak->drop_chance = atoi(parm+1);
 				break;
 			case 's': /* treasure (s)tyle */
@@ -860,7 +860,8 @@ object * generate_treasure(struct oblnk *t, int difficulty)
 			 */
 			if(t->parmlink.tl_tweak->drop_chance)
 			{
-				if((RANDOM()%1000)+1 > t->parmlink.tl_tweak->drop_chance) 
+				/* skip if random mod chance is not 0 */
+				if(RANDOM() % t->parmlink.tl_tweak->drop_chance) 
 				{
 					t = t->next;
 					continue;
@@ -929,7 +930,7 @@ void create_treasure_list(struct oblnk *t, object *op, int flag, int difficulty,
 			 */
 			if(t->parmlink.tl_tweak->drop_chance)
 			{
-				if((RANDOM()%1000)+1 > t->parmlink.tl_tweak->drop_chance) 
+				if(RANDOM() % t->parmlink.tl_tweak->drop_chance) 
 				{
 					t = t->next;
 					continue;
@@ -1978,17 +1979,14 @@ int fix_generated_item(object **op_ptr, object *creator, int difficulty, int a_c
                   else
                       op->level = RANDOM() % creator->level;
 
-                  tailor_readable_ob(op, (creator && creator->stats.sp) ? creator->stats.sp : -1);
+                  tailor_readable_ob(op, 0);
                   /* books w/ info are worth more! */
-                  op->value *= ((op->level > 10 ? op->level : (op->level + 1) / 2) * ((strlen(op->msg) / 250) + 1));
+                  op->value += (int)((float)(((op->level > 10 ? op->level : (op->level + 1) / 2) * ((strlen(op->msg) / 45) + 1)))*1.11);
                   /* creator related stuff */
                   if (QUERY_FLAG(creator, FLAG_NO_PICK)) /* for library, chained books! */
                       SET_FLAG(op, FLAG_NO_PICK);
                   if (creator->slaying && !op->slaying) /* for check_inv floors */
                       FREE_AND_COPY_HASH(op->slaying, creator->slaying);
-
-                  /* add exp so reading it gives xp (once)*/
-                  op->stats.exp = op->value > 10000 ? op->value / 5 : op->value / 10;
               }
               break;
 

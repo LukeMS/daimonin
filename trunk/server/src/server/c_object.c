@@ -880,13 +880,13 @@ int command_examine(object *op, char *params)
         while (tmp && !LOOK_OBJ(tmp))
             tmp = tmp->below;
         if (tmp)
-            examine(op, tmp);
+            examine(op, tmp, TRUE);
     }
     else
     {
         object *tmp = find_best_object_match(op, params);
         if (tmp)
-            examine(op, tmp);
+            examine(op, tmp, TRUE);
         else
             new_draw_info_format(NDI_UNIQUE, 0, op, "Could not find an object that matches %s", params);
     }
@@ -995,14 +995,13 @@ object * find_marked_object(object *op)
 /* op is the player
  * tmp is the monster being examined.
  */
-void examine_monster(object *op, object *tmp)
+char *examine_monster(object *op, object *tmp, char *buf, int flag)
 {
     object *mon = tmp->head ? tmp->head : tmp;
-    char   *gender;
-    char   *att;
+    char   *gender, *att;
     int     val, val2, i;
+	char    buf2[MAX_BUF];
 
-    CONTR(op)->praying = 0;
     if (QUERY_FLAG(mon, FLAG_IS_MALE))
     {
         if (QUERY_FLAG(mon, FLAG_IS_FEMALE))
@@ -1028,25 +1027,47 @@ void examine_monster(object *op, object *tmp)
     }
 
     if (QUERY_FLAG(mon, FLAG_IS_GOOD))
-        new_draw_info_format(NDI_UNIQUE, 0, op, "%s is a good aligned %s %s.", att, gender, mon->race);
+	{
+        sprintf(buf2,"%s is a good aligned %s %s.\n", att, gender, mon->race);
+		strcat(buf,buf2);
+	}
     else if (QUERY_FLAG(mon, FLAG_IS_EVIL))
-        new_draw_info_format(NDI_UNIQUE, 0, op, "%s is a evil aligned %s %s.", att, gender, mon->race);
-    else if (QUERY_FLAG(mon, FLAG_IS_NEUTRAL))
-        new_draw_info_format(NDI_UNIQUE, 0, op, "%s is a neutral aligned %s %s.", att, gender, mon->race);
+	{
+		sprintf(buf2,"%s is a evil aligned %s %s.\n", att, gender, mon->race);
+		strcat(buf,buf2);
+	}
+	else if (QUERY_FLAG(mon, FLAG_IS_NEUTRAL))
+	{
+        sprintf(buf2,"%s is a neutral aligned %s %s.\n", att, gender, mon->race);
+		strcat(buf,buf2);
+	}
     else
-        new_draw_info_format(NDI_UNIQUE, 0, op, "%s is a %s %s.", att, gender, mon->race);
-
-    if (mon->type == PLAYER)
-        new_draw_info_format(NDI_UNIQUE, 0, op, "%s is level %d and %d years old%s.", att, mon->level, CONTR(mon)->age,
+    {
+		sprintf(buf2,"%s is a %s %s.\n", att, gender, mon->race);
+		strcat(buf,buf2);
+	}
+	
+	if(flag)
+	{
+	    if (mon->type == PLAYER)
+		{
+			sprintf(buf2,"%s is level %d and %d years old%s.\n", att, mon->level, CONTR(mon)->age,
                              QUERY_FLAG(mon, FLAG_IS_AGED) ? " (magical aged)" : "");
-    else
-        new_draw_info_format(NDI_UNIQUE, 0, op, "%s is level %d%s.", att, mon->level,
+			strcat(buf,buf2);
+		}
+		else
+		{
+			sprintf(buf2,"%s is level %d%s.\n", att, mon->level,
                              QUERY_FLAG(mon, FLAG_IS_AGED) ? " and unatural aged" : "");
-
-    new_draw_info_format(NDI_UNIQUE, 0, op, "%s has a base damage of %d and hp of %d.", att, mon->stats.dam,
-                         mon->stats.maxhp);
-    new_draw_info_format(NDI_UNIQUE, 0, op, "%s has a wc of %d and an ac of %d.", att, mon->stats.wc, mon->stats.ac);
-
+			strcat(buf,buf2);
+		}
+	}
+	
+    sprintf(buf2,"%s has a base damage of %d and hp of %d.\n", att, mon->stats.dam, mon->stats.maxhp);
+	strcat(buf,buf2);	
+    sprintf(buf2,"%s has a wc of %d and an ac of %d.\n", att, mon->stats.wc, mon->stats.ac);
+	strcat(buf,buf2);
+	
     for (val = val2 = -1,i = 0; i < NROFATTACKS; i++)
     {
         if (mon->resist[i] > 0)
@@ -1055,10 +1076,16 @@ void examine_monster(object *op, object *tmp)
             val = i;
     }
     if (val != -1)
-        new_draw_info_format(NDI_UNIQUE, 0, op, "%s can natural resist some attacks.", att);
+	{
+        sprintf(buf2,"%s can natural resist some attacks.\n", att);
+		strcat(buf,buf2);
+	}
     if (val2 != -1)
-        new_draw_info_format(NDI_UNIQUE, 0, op, "%s is natural vulnerable to some attacks.", att);
-
+	{
+        sprintf(buf2, "%s is natural vulnerable to some attacks.\n", att);
+		strcat(buf,buf2);
+	}
+	
     for (val = -1,val2 = i = 0; i < NROFPROTECTIONS; i++)
     {
         if (mon->protection[i] > val2)
@@ -1068,31 +1095,50 @@ void examine_monster(object *op, object *tmp)
         }
     }
     if (val != -1)
-        new_draw_info_format(NDI_UNIQUE, 0, op, "Best armour protection seems to be for %s.", protection_name[val]);
-
+	{
+        sprintf(buf2,"Best armour protection seems to be for %s.\n", protection_name[val]);
+		strcat(buf,buf2);
+	}
+	
     if (QUERY_FLAG(mon, FLAG_UNDEAD))
-        new_draw_info(NDI_UNIQUE, 0, op, "It is an undead force.");
-    /* Anyone know why this used to use the clone value instead of the
-     * maxhp field?  This seems that it should give more accurate results.
-     */
-    switch ((mon->stats.hp + 1) * 4 / (mon->stats.maxhp + 1))
-    {
-          /* From 1-4 */
-        case 1:
-          new_draw_info_format(NDI_UNIQUE, 0, op, "%s is in a bad shape.", att);
-          break;
-        case 2:
-          new_draw_info_format(NDI_UNIQUE, 0, op, "%s is hurt.", att);
-          break;
-        case 3:
-          new_draw_info_format(NDI_UNIQUE, 0, op, "%s is somewhat hurt.", att);
-          break;
-        default:
-          new_draw_info_format(NDI_UNIQUE, 0, op, "%s is in excellent shape.", att);
-          break;
-    }
+	{
+        sprintf(buf2,"It is an undead force.\n");
+		strcat(buf,buf2);
+	}
+
+	if(flag) /* we use this also for general arch description */
+	{
+		switch ((mon->stats.hp + 1) * 4 / (mon->stats.maxhp + 1))
+		{
+			/* From 1-4 */
+			case 1:
+			  sprintf(buf2,"%s is in a bad shape.\n", att);
+			  strcat(buf,buf2);
+			  break;
+			case 2:
+			  sprintf(buf2,"%s is hurt.\n", att);
+			  strcat(buf,buf2);
+			  break;
+			case 3:
+			  sprintf(buf2,"%s is somewhat hurt.\n", att);
+			  strcat(buf,buf2);
+			  break;
+			default:
+			  sprintf(buf2,"%s is in excellent shape.\n", att);
+			  strcat(buf,buf2);
+		      break;
+	    }
+	}
     if (present_in_ob(POISONING, mon) != NULL)
-        new_draw_info_format(NDI_UNIQUE, 0, op, "%s looks very ill.", att);
+	{
+        sprintf(buf2,"%s looks very ill.\n", att);
+		strcat(buf,buf2);
+	}
+	
+	if(op)
+		new_draw_info_format(NDI_UNIQUE, 0, op, buf);
+
+	return buf;
 }
 
 char * long_desc(object *tmp, object *caller)
@@ -1158,29 +1204,37 @@ char * long_desc(object *tmp, object *caller)
     return buf;
 }
 
-void examine(object *op, object *tmp)
+char *examine(object *op, object *tmp, int flag)
 {
+	char    *buf_out = global_string_buf4096;
     char    buf[VERY_BIG_BUF];
     char    tmp_buf[64];
     int     i;
 
     if (tmp == NULL || tmp->type == CLOSE_CON)
-        return;
+        return NULL;
 
-    if(trigger_object_plugin_event(EVENT_EXAMINE,tmp,op,NULL,NULL,0,0,0,0) 
-            && !QUERY_FLAG(op, FLAG_WIZ))
-        return;
+	*buf_out='\0';
+	if(op)
+	{
+	    if(trigger_object_plugin_event(EVENT_EXAMINE,tmp,op,NULL,NULL,0,0,0,0)  && !QUERY_FLAG(op, FLAG_WIZ))
+		    return NULL;
+	}
     
     /* Only quetzals can see the resistances on flesh. To realize
     this, we temporarily flag the flesh with SEE_INVISIBLE */
-    if (op->type == PLAYER && tmp->type == FLESH && is_dragon_pl(op))
+    if (op && op->type == PLAYER && tmp->type == FLESH && is_dragon_pl(op))
         SET_FLAG(tmp, FLAG_SEE_INVISIBLE);
 
-    strcpy(buf, "That is ");
-    strncat(buf, long_desc(tmp, op), VERY_BIG_BUF - strlen(buf) - 1);
-    buf[VERY_BIG_BUF - 1] = 0;
+	*buf='\0';
+	if(flag)
+	{
+		strcpy(buf, "That is ");
+		strncat(buf, long_desc(tmp, op), VERY_BIG_BUF - strlen(buf) - 1);
+		buf[VERY_BIG_BUF - 1] = 0;
+	}
 
-    if (op->type == PLAYER && tmp->type == FLESH)
+    if (op && op->type == PLAYER && tmp->type == FLESH)
         CLEAR_FLAG(tmp, FLAG_SEE_INVISIBLE);
 
     /* only add this for usable items, not for objects like walls or floors for example */
@@ -1188,50 +1242,52 @@ void examine(object *op, object *tmp)
         strncat(buf, " (unidentified)", VERY_BIG_BUF - strlen(buf) - 1);
     buf[VERY_BIG_BUF - 1] = 0;
 
-    new_draw_info(NDI_UNIQUE, 0, op, buf);
+    strcat(buf_out, buf);
+    strcat(buf_out, "\n");
     buf[0] = '\0';
 
     if (QUERY_FLAG(tmp, FLAG_MONSTER))
     {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "%s.", describe_item(tmp->head ? tmp->head : tmp));
-        examine_monster(op, tmp);
+		strcat(buf_out, describe_item(tmp->head ? tmp->head : tmp));
+		strcat(buf_out, "\n");
+        examine_monster(op, tmp, buf_out, flag);
     }
     /* we don't double use the item_xxx arch commands, so they are always valid */
     else if (QUERY_FLAG(tmp, FLAG_IDENTIFIED))
     {
         /* if one of this is set, we have a ego item */
         if (QUERY_FLAG(tmp, FLAG_IS_GOOD))
-            new_draw_info_format(NDI_UNIQUE, 0, op, "It is good aligned.");
+            strcat(buf_out, "It is good aligned\n.");
         else if (QUERY_FLAG(tmp, FLAG_IS_EVIL))
-            new_draw_info_format(NDI_UNIQUE, 0, op, "It is evil aligned.");
+            strcat(buf_out, "It is evil aligned\n.");
         else if (QUERY_FLAG(tmp, FLAG_IS_NEUTRAL))
-            new_draw_info_format(NDI_UNIQUE, 0, op, "It is neutral aligned.");
+            strcat(buf_out, "It is neutral aligned\n.");
 
         if (tmp->item_level)
         {
             if (tmp->item_skill)
             {
-                sprintf(buf, "It needs a level of %d in %s to use.", tmp->item_level, 
+                sprintf(buf, "It needs a level of %d in %s to use.\n", tmp->item_level, 
                     STRING_SAFE(CONTR(op)->exp_obj_ptr[tmp->item_skill-1]->name));
-                new_draw_info(NDI_UNIQUE, 0, op, buf);
+                strcat(buf_out, buf);
             }
             else
             {
-                sprintf(buf, "It needs a level of %d to use.", tmp->item_level);
-                new_draw_info(NDI_UNIQUE, 0, op, buf);
+                sprintf(buf, "It needs a level of %d to use.\n", tmp->item_level);
+                strcat(buf_out, buf);
             }
         }
         if (tmp->item_quality)
         {
             if (QUERY_FLAG(tmp, FLAG_INDESTRUCTIBLE))
             {
-                sprintf(buf, "Qua: %d Con: Indestructible.", tmp->item_quality);
-                new_draw_info(NDI_UNIQUE, 0, op, buf);
+                sprintf(buf, "Qua: %d Con: Indestructible.\n", tmp->item_quality);
+                strcat(buf_out, buf);
             }
             else
             {
-                sprintf(buf, "Qua: %d Con: %d.", tmp->item_quality, tmp->item_condition);
-                new_draw_info(NDI_UNIQUE, 0, op, buf);
+                sprintf(buf, "Qua: %d Con: %d.\n", tmp->item_quality, tmp->item_condition);
+                strcat(buf_out, buf);
 
                 if (QUERY_FLAG(tmp, FLAG_PROOF_ELEMENTAL)
                  || QUERY_FLAG(tmp, FLAG_PROOF_MAGIC)
@@ -1282,9 +1338,9 @@ void examine(object *op, object *tmp)
                         if (ft > 1)
                             strcat(buf, " and ");
                         strcat(buf, tmp_buf);
-                        strcat(buf, ".");
+                        strcat(buf, ".\n");
                     }
-                    new_draw_info(NDI_UNIQUE, 0, op, buf);
+                    strcat(buf_out, buf);
                 }
                 if ((QUERY_FLAG(tmp, FLAG_VUL_ELEMENTAL) && !QUERY_FLAG(tmp, FLAG_PROOF_ELEMENTAL))
                  || (QUERY_FLAG(tmp, FLAG_VUL_MAGIC) && !QUERY_FLAG(tmp, FLAG_PROOF_MAGIC))
@@ -1335,7 +1391,8 @@ void examine(object *op, object *tmp)
                         strcat(buf, tmp_buf);
                         strcat(buf, ".");
                     }
-                    new_draw_info(NDI_UNIQUE, 0, op, buf);
+					strcat(buf,"\n");
+					strcat(buf_out, buf);
                 }
             }
         }
@@ -1366,18 +1423,18 @@ void examine(object *op, object *tmp)
               if (tmp->race != NULL)
               {
                   if (tmp->weight_limit)
-                      sprintf(buf, "It can hold only %s and its weight limit is %.1f kg.", tmp->race,
+                      sprintf(buf, "It can hold only %s and its weight limit is %.1f kg.\n", tmp->race,
                               (float) tmp->weight_limit / 1000.0f);
                   else
-                      sprintf(buf, "It can hold only %s.", tmp->race);
+                      sprintf(buf, "It can hold only %s.\n", tmp->race);
 
                   if (tmp->weapon_speed != 1.0f) /* has magic modifier? */
                   {
-                      new_draw_info(NDI_UNIQUE, 0, op, buf);
+					  strcat(buf_out, buf);
                       if (tmp->weapon_speed > 1.0f) /* bad */
-                          sprintf(buf, "It increase the weight of items inside by %.1f%%.", tmp->weapon_speed * 100.0f);
+                          sprintf(buf, "It increase the weight of items inside by %.1f%%.\n", tmp->weapon_speed * 100.0f);
                       else /* good */
-                          sprintf(buf, "It decrease the weight of items inside by %.1f%%.",
+                          sprintf(buf, "It decrease the weight of items inside by %.1f%%.\n",
                                   100.0f - (tmp->weapon_speed * 100.0f));
                   }
               }
@@ -1385,17 +1442,16 @@ void examine(object *op, object *tmp)
               {
                   if (tmp->weight_limit)
                   {
-                      sprintf(buf, "Its weight limit is %.1f kg.", (float) tmp->weight_limit / 1000.0f);
+                      sprintf(buf, "Its weight limit is %.1f kg.\n", (float) tmp->weight_limit / 1000.0f);
                   }
 
                   if (tmp->weapon_speed != 1.0f) /* has magic modifier? */
                   {
-                      new_draw_info(NDI_UNIQUE, 0, op, buf);
-
+					  strcat(buf_out, buf);
                       if (tmp->weapon_speed > 1.0f) /* bad */
-                          sprintf(buf, "It increase the weight of items inside by %.1f%%.", tmp->weapon_speed * 100.0f);
+                          sprintf(buf, "It increase the weight of items inside by %.1f%%.\n", tmp->weapon_speed * 100.0f);
                       else /* good */
-                          sprintf(buf, "It decrease the weight of items inside by %.1f%%.",
+                          sprintf(buf, "It decrease the weight of items inside by %.1f%%.\n",
                                   100.0f - (tmp->weapon_speed * 100.0f));
                   }
               }
@@ -1404,12 +1460,12 @@ void examine(object *op, object *tmp)
 
         case WAND:
           if (QUERY_FLAG(tmp, FLAG_IDENTIFIED))
-              sprintf(buf, "It has %d charges left.", tmp->stats.food);
+              sprintf(buf, "It has %d charges left.\n", tmp->stats.food);
           break;
     }
 
     if (buf[0] != '\0')
-        new_draw_info(NDI_UNIQUE, 0, op, buf);
+		strcat(buf_out, buf);
 
     if (tmp->material && (need_identify(tmp) && QUERY_FLAG(tmp, FLAG_IDENTIFIED)))
     {
@@ -1422,34 +1478,37 @@ void examine(object *op, object *tmp)
                 strcat(buf, " ");
             }
         }
-        new_draw_info(NDI_UNIQUE, 0, op, buf);
+		strcat(buf, "\n");
+		strcat(buf_out, buf);
     }
 
     if (tmp->weight)
     {
-        sprintf(buf, tmp->nrof > 1 ? "They weigh %3.3f kg." : "It weighs %3.3f kg.",
+        sprintf(buf, tmp->nrof > 1 ? "They weigh %3.3f kg.\n" : "It weighs %3.3f kg.\n",
             (float) (tmp->nrof ? tmp->weight * tmp->nrof : tmp->weight) / 1000.0f);
-        new_draw_info(NDI_UNIQUE, 0, op, buf);
+		
+		strcat(buf_out, buf);
     }
 
     if (QUERY_FLAG(tmp, FLAG_STARTEQUIP) || QUERY_FLAG(tmp, FLAG_ONE_DROP))
     {
         if (QUERY_FLAG(tmp, FLAG_UNPAID)) /* thats a unpaid clone shop item */
         {
-            new_draw_info_format(NDI_UNIQUE, 0, op, "%s would cost you %s.", tmp->nrof > 1 ? "They" : "It",
-                                 query_cost_string(tmp, op, F_BUY));
+            sprintf(buf, "%s would cost you %s.\n", tmp->nrof > 1 ? "They" : "It", query_cost_string(tmp, op, F_BUY));
+			strcat(buf_out, buf);
         }
         else /* it is a real one drop item */
         {
-            new_draw_info_format(NDI_UNIQUE, 0, op, "%s one-drop item%s.", tmp->nrof > 1 ? "They are" : "It is a",
-                                 tmp->nrof > 1 ? "s" : "");
+            sprintf(buf, "%s one-drop item%s.\n", tmp->nrof > 1 ? "They are" : "It is a", tmp->nrof > 1 ? "s" : "");
+			strcat(buf_out, buf);
             if (QUERY_FLAG(tmp, FLAG_IDENTIFIED))
             {
                 if (tmp->value)
-                    new_draw_info_format(NDI_UNIQUE, 0, op, "But %s worth %s.", tmp->nrof > 1 ? "they are" : "it is",
+                    sprintf(buf, "But %s worth %s.\n", tmp->nrof > 1 ? "they are" : "it is",
                                          query_cost_string(tmp, op, F_TRUE));
                 else
-                    new_draw_info_format(NDI_UNIQUE, 0, op, "%s worthless.", tmp->nrof > 1 ? "They are" : "It is");
+                    sprintf(buf, "%s worthless.\n", tmp->nrof > 1 ? "They are" : "It is");
+				strcat(buf_out, buf);
             }
         }
     }
@@ -1458,12 +1517,16 @@ void examine(object *op, object *tmp)
         if (QUERY_FLAG(tmp, FLAG_IDENTIFIED))
         {
             if (QUERY_FLAG(tmp, FLAG_UNPAID))
-                new_draw_info_format(NDI_UNIQUE, 0, op, "%s would cost you %s.", tmp->nrof > 1 ? "They" : "It",
+			{
+                sprintf(buf, "%s would cost you %s.\n", tmp->nrof > 1 ? "They" : "It",
                                      query_cost_string(tmp, op, F_BUY));
-            else
+				strcat(buf_out, buf);
+			}
+			else
             {
-                new_draw_info_format(NDI_UNIQUE, 0, op, "%s worth %s.", tmp->nrof > 1 ? "They are" : "It is",
+                sprintf(buf, "%s worth %s.\n", tmp->nrof > 1 ? "They are" : "It is",
                                      query_cost_string(tmp, op, F_TRUE));
+				strcat(buf_out, buf);
                 goto dirty_little_jump1;
             }
         }
@@ -1482,8 +1545,9 @@ void examine(object *op, object *tmp)
                     if (charisma > 30)
                         charisma = 30;
                 }
-                new_draw_info_format(NDI_UNIQUE, 0, op, "This shop will pay you %s (%0.1f%%).",
+                sprintf(buf, "This shop will pay you %s (%0.1f%%).",
                                      query_cost_string(tmp, op, F_SELL), 20.0f + 100.0f * cha_bonus[charisma]);
+				strcat(buf_out, buf);
             }
         }
     }
@@ -1492,9 +1556,10 @@ void examine(object *op, object *tmp)
         if (QUERY_FLAG(tmp, FLAG_IDENTIFIED))
         {
             if (QUERY_FLAG(tmp, FLAG_UNPAID))
-                new_draw_info_format(NDI_UNIQUE, 0, op, "%s would cost nothing.", tmp->nrof > 1 ? "They" : "It");
+                sprintf(buf, "%s would cost nothing.\n", tmp->nrof > 1 ? "They" : "It");
             else
-                new_draw_info_format(NDI_UNIQUE, 0, op, "%s worthless.", tmp->nrof > 1 ? "They are" : "It is");
+                sprintf(buf, "%s worthless.\n", tmp->nrof > 1 ? "They are" : "It is");
+			strcat(buf_out, buf);
         }
     }
 
@@ -1518,17 +1583,22 @@ void examine(object *op, object *tmp)
              */
         if (need_identify(tmp) && QUERY_FLAG(tmp, FLAG_IDENTIFIED))
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "The object has a story:");
-            new_draw_info(NDI_UNIQUE, 0, op, tmp->msg);
+            strcat(buf_out, "The object has a story:\n");
+            strcat(buf_out, tmp->msg);
         }
     }
-    new_draw_info(NDI_UNIQUE, 0, op, " "); /* Blank line */
 
-    if (QUERY_FLAG(op, FLAG_WIZ))
-    {
-        dump_object(tmp);
-        new_draw_info(NDI_UNIQUE, 0, op, errmsg);
-    }
+	if(op)
+	{
+		new_draw_info(NDI_UNIQUE, 0, op, buf_out);
+	
+		if (QUERY_FLAG(op, FLAG_WIZ))
+		{	
+			dump_object(tmp);
+			new_draw_info(NDI_UNIQUE, 0, op, errmsg);
+	    }
+	}
+	return buf_out;
 }
 
 /*

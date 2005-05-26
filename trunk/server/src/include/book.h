@@ -32,11 +32,11 @@
  * may be unreadable by the player as the tail of the message
  * can scroll over the beginning (as of v0.92.2).  */
 
-#define BOOK_BUF        800
+#define BOOK_BUF        (HUGE_BUF-256)
 
 /* if little books arent getting enough text generated, enlarge this */
 
-#define BASE_BOOK_BUF   250
+#define BASE_BOOK_BUF   ((int)(BOOK_BUF*0.75))
 
 /* Book buffer size. We shouldnt let little books/scrolls have
  * more info than big, weighty tomes! So lets base the 'natural'

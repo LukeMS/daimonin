@@ -1,4 +1,5 @@
 Object tabernacle_avatar
+name Avatar of the Tabernacle
 face dummy.111
 race avatar
 type 80
