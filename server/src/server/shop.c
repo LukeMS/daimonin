@@ -66,7 +66,7 @@ double query_cost(object *tmp, object *who, int flag)
             }
             else    /* Trying to sell something, or get true value */
             {
-                if (tmp->type == GEM || tmp->type == TYPE_JEWEL || tmp->type == TYPE_NUGGET) /* selling unidentified gems is *always* stupid */
+                if (tmp->type == GEM || tmp->type == TYPE_JEWEL || tmp->type == TYPE_PEARL || tmp->type == TYPE_NUGGET) /* selling unidentified gems is *always* stupid */
                     val = (double) number * 3.0;
                 else if (tmp->type == POTION)
                     val = (double) number * 50.0; /* Don't want to give anything away */

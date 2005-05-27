@@ -5,6 +5,6 @@ layer 3
 face book.101
 type 8
 material 1
-value 45
+value 12
 weight 1200
 end

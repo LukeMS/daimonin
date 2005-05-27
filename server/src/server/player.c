@@ -727,7 +727,7 @@ int check_pick(object *op)
                   break;
 
                 case 7:
-                  if (tmp->type == MONEY || tmp->type == GEM || tmp->type == TYPE_JEWEL || tmp->type == TYPE_NUGGET)
+                  if (tmp->type == MONEY || tmp->type == GEM || tmp->type == TYPE_PEARL || tmp->type == TYPE_JEWEL || tmp->type == TYPE_NUGGET)
                       pick_up(op, tmp);
                   break;
 
@@ -841,7 +841,7 @@ int check_pick(object *op)
 
             if (CONTR(op)->mode & PU_VALUABLES)
             {
-                if (tmp->type == MONEY || tmp->type == GEM || tmp->type == TYPE_JEWEL || tmp->type == TYPE_NUGGET)
+                if (tmp->type == MONEY || tmp->type == GEM || tmp->type == TYPE_PEARL || tmp->type == TYPE_JEWEL || tmp->type == TYPE_NUGGET)
                 {
                     pick_up(op, tmp); /*LOG(llevInfo ,"MONEY/GEM\n");*/ continue;
                 }

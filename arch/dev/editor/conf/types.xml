@@ -314,6 +314,7 @@
 </list>
 
 <list name="material_real">
+  <entry value="-1" name="&lt;neutralized&gt;" />
   <entry value="0" name="&lt;undefined&gt;" />
   <entry value="1" name="paper: standard paper" />
   <entry value="2" name="paper: parchment" />

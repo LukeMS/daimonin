@@ -314,6 +314,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define TYPE_TIMER              132     /* Trigger a connection after a time period */
 #define TYPE_ENV_SENSOR         133     /* Triggers depending on environment (TOD, brightness etc) */
 #define TYPE_CONN_SENSOR        134     /* Triggers on other connections */
+#define TYPE_PEARL				135		/* gem/jewel type pearl */
 /* Some free type values here! */
 #define DEEP_SWAMP              138
 #define IDENTIFY_ALTAR          139

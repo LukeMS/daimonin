@@ -2417,7 +2417,7 @@ static void alchemy_object(object *obj, int *small_nuggets,
 
     if (QUERY_FLAG(obj, FLAG_UNPAID))
     value=0;
-    else if (obj->type==MONEY || obj->type==GEM || obj->type==TYPE_JEWEL || obj->type==TYPE_NUGGET)
+    else if (obj->type==MONEY || obj->type==GEM || obj->type==TYPE_JEWEL || obj->type==TYPE_PEARL || obj->type==TYPE_NUGGET)
     value /=3;
     else if (QUERY_FLAG(obj,FLAG_UNPAID)) value=0;
     else

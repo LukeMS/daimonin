@@ -2,7 +2,7 @@ Object nugget_generic
 name nugget
 race gold and jewels
 layer 3
-face nugget_gold_s.101
+face nugget_silver_s.101
 type 117
 nrof 1
 material 1024
