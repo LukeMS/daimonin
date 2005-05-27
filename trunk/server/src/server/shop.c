@@ -171,6 +171,7 @@ char * cost_string_from_value(double cost)
 
     num = (int) (cost / (double) coin->clone.value);
     cost -= (double) num * (double) coin->clone.value;
+	/* careful - never set a coin arch to material_real = -1 ! */
     if (num == 1)
         sprintf(buf, "1 %s%s", material_real[coin->clone.material_real].name, coin->clone.name);
     else
