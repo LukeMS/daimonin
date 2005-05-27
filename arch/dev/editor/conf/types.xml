@@ -47,6 +47,8 @@
 # int          - This attribute contains a decimal number            #
 # float        - This attr. contains a floating point number         #
 # string       - This attribute contains a string                    #
+# facename     - This attribute contains a string which is           #
+#                a face name                                         #
 # text         - This attribute contains a text ("text" can have     #
 #                linebreaks, unlike "string")                        #
 # fixed        - This attribute is always set to a fixed 'value'     #
@@ -423,7 +425,7 @@
     6 is reversed for players and layer 7 is for spell effects and high flying/visible
     objects like arrows.
   </attribute>
-  <attribute arch="face" editor="image" type="string">
+  <attribute arch="face" editor="image" type="facename">
     The image-name defines what image is displayed for this object
     in-game.
   </attribute>
@@ -1162,9 +1164,7 @@
   </attribute>
   <attribute arch="protect_death" editor="shield death %" length="15" type="int">
   </attribute>
-  <attribute arch="protect_chaos" editor="shield chaos %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_holy" editor="shield holy %" length="15" type="int">
+  <attribute arch="protect_spiritual" editor="shield spiritual %" length="15" type="int">
   </attribute>
   <attribute arch="protect_corruption" editor="shield corruption %" length="15" type="int">
   </attribute>         	
@@ -4159,9 +4159,7 @@
   </attribute>
   <attribute arch="protect_death" editor="shield death %" length="15" type="int">
   </attribute>
-  <attribute arch="protect_chaos" editor="shield chaos %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_holy" editor="shield holy %" length="15" type="int">
+  <attribute arch="protect_spiritual" editor="shield spiritual %" length="15" type="int">
   </attribute>
   <attribute arch="protect_corruption" editor="shield corruption %" length="15" type="int">
   </attribute>         	
@@ -4757,9 +4755,7 @@
   </attribute>
   <attribute arch="protect_death" editor="shield death %" length="15" type="int">
   </attribute>
-  <attribute arch="protect_chaos" editor="shield chaos %" length="15" type="int">
-  </attribute>
-  <attribute arch="protect_holy" editor="shield holy %" length="15" type="int">
+  <attribute arch="protect_spiritual" editor="shield spiritual %" length="15" type="int">
   </attribute>
   <attribute arch="protect_corruption" editor="shield corruption %" length="15" type="int">
   </attribute>         	
