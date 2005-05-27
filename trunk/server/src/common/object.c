@@ -183,11 +183,11 @@ material_real_struct    material_real[NROFMATERIALS *NROFMATERIALS_REAL + 1]    
     {"sapphire ",    50,92,       0,0,0,    M_GLASS, RACE_TYPE_NONE}, /* 133 */
     {"ruby ",        30,93,       0,0,0,    M_GLASS, RACE_TYPE_NONE}, /* 134 */
     {"diamond ",     10,95,       0,0,0,    M_GLASS, RACE_TYPE_NONE}, /* 135 */
-    {"jasper ", 75,80,       0,0,0,      M_GLASS,         RACE_TYPE_NONE}, /* 136 */
-    {"jade ", 75,80,       0,0,0,      M_GLASS,         RACE_TYPE_NONE}, /* 137 */
-    {"aquamarine ", 80,80,       0,0,0,      M_GLASS,         RACE_TYPE_NONE}, /* 138 */
-    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
-    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"jasper ",		 75,80,       0,0,0,      M_GLASS,         RACE_TYPE_NONE}, /* 136 */
+    {"jade ",		 75,80,       0,0,0,      M_GLASS,         RACE_TYPE_NONE}, /* 137 */
+    {"aquamarine ",  80,80,       0,0,0,      M_GLASS,         RACE_TYPE_NONE}, /* 138 */
+    {"opal ",		 20,90,       0,0,0,    M_GLASS, RACE_TYPE_NONE}, /* 139 */
+    {"amethyst ",		 25,88,       0,0,0,    M_GLASS, RACE_TYPE_NONE}, /* 140 */
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
@@ -437,7 +437,7 @@ material_real_struct    material_real[NROFMATERIALS *NROFMATERIALS_REAL + 1]    
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     /* STONE */
     {"flint ",       100,80,       0,0,0,      M_STONE,         RACE_TYPE_NONE},
-    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
+    {"pearl ",       100,85,       0,0,0,      M_STONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},

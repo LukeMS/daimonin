@@ -1149,9 +1149,8 @@ char * artifact_msg(int level, int booksize)
     /* values greater than 5 create msg buffers that are too big! */
     if (book_entries > 5)
         book_entries = 5;
-    if (book_entries < 2)
-		book_entries = 3;
-    /* lets determine what kind of artifact type randomly.
+
+		/* lets determine what kind of artifact type randomly.
      * Right now legal artifacts only come from those listed
      * in art_name_array. Also, we check to be sure an artifactlist
      * for that type exists!

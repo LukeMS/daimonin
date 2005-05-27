@@ -1966,7 +1966,7 @@ int fix_generated_item(object **op_ptr, object *creator, int difficulty, int a_c
                     * msg for it, and tailor its properties based on the
                     * creator and/or map level we found it on.
                     */
-              if (!op->msg && RANDOM() % 10)
+              if (!op->arch->base_clone && !op->title && !op->msg && RANDOM() % 10)
               {
                   /* set the book level properly */
                   if (creator->level == 0 || IS_LIVE(creator))
@@ -1980,6 +1980,7 @@ int fix_generated_item(object **op_ptr, object *creator, int difficulty, int a_c
                       op->level = RANDOM() % creator->level;
 
                   tailor_readable_ob(op, 0);
+                  generate_artifact(op, 1,T_STYLE_UNSET, 100);
                   /* books w/ info are worth more! */
                   op->value += (int)((float)(((op->level > 10 ? op->level : (op->level + 1) / 2) * ((strlen(op->msg) / 45) + 1)))*1.11);
                   /* creator related stuff */
@@ -2584,7 +2585,7 @@ static inline void set_material_real(object *op, struct _change_arch *change_arc
         if (change_arch->material_range > 0 && change_arch->material)
             op->material_real += (RANDOM() % (change_arch->material_range + 1));
     }
-    else if (!op->material_real && op->material != M_ADAMANT) /* if == 0, grap a valid material class.
+    else if (!op->material_real && op->material && op->material != M_ADAMANT) /* if == 0, grap a valid material class.
                                 * we should assign to all objects a valid
                                 * material_real value to avoid problems here.
                                 * So, this is a hack

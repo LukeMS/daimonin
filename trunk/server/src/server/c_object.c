@@ -750,7 +750,7 @@ int command_dropall(object *op, char *params)
              && curinv->type != FOOD
              && curinv->type != KEY
              && curinv->type != SPECIAL_KEY
-             && (curinv->type != GEM && curinv->type != TYPE_JEWEL && curinv->type != TYPE_NUGGET)
+             && (curinv->type != TYPE_PEARL && curinv->type != GEM && curinv->type != TYPE_JEWEL && curinv->type != TYPE_NUGGET)
              && !IS_SYS_INVISIBLE(curinv)
              && (curinv->type != CONTAINER || (op->type == PLAYER && CONTR(op)->container != curinv)))
             {

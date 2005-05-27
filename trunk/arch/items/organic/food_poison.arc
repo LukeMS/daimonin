@@ -17,6 +17,7 @@ face booze.101
 nrof 1
 type 7
 material 32
+material_real -1
 value 10
 weight 400
 end

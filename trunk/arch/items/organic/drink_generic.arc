@@ -6,6 +6,7 @@ layer 3
 nrof 1
 type 54
 material 32
+material_real -1
 value 5
 weight 250
 end

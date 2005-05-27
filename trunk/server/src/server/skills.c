@@ -614,7 +614,8 @@ int skill_ident(object *pl)
           break; 
         case SK_JEWELER:
           success += do_skill_ident(pl, GEM)
-                   + do_skill_ident(pl, TYPE_JEWEL)
+			  + do_skill_ident(pl, TYPE_PEARL)
+			  + do_skill_ident(pl, TYPE_JEWEL)
                    + do_skill_ident(pl, TYPE_NUGGET)
                    + do_skill_ident(pl,
                                     RING);

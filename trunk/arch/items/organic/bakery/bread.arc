@@ -1,0 +1,29 @@
+Object bread
+face bread01.101
+food 30
+item_quality 100
+item_condition 100
+nrof 1
+layer 3
+type 6
+speed_left 0.002
+material_real -1
+material 32
+value 5
+weight 125
+end
+Object bread1
+name bread
+face bread02.101
+food 30
+item_quality 100
+item_condition 100
+nrof 1
+layer 3
+type 6
+speed_left 0.002
+material_real -1
+material 32
+value 5
+weight 125
+end
