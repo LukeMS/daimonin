@@ -113,7 +113,7 @@ WS	[ \t]*{NL}?
                    * So, we don't set it for floor or walls or some else objects
                    * were we don't need it.
                    */
-				   if(tmp->material && !tmp->item_quality)
+				   if(tmp->material && !tmp->item_quality && tmp->material_real>=0)
 				   {
 				       tmp->item_quality = material_real[tmp->material_real].quality;
 	                   tmp->item_condition = tmp->item_quality;
@@ -770,7 +770,7 @@ int load_object(void *fp, object *op, void *mybuffer, int bufstate, int map_flag
    * So, we don't set it for floor or walls or some else objects
    * were we don't need it.
    */
-  if(op->material && !op->item_quality)
+  if(op->material && !op->item_quality && op->material_real >= 0)
   {
 	  op->item_quality = material_real[op->material_real].quality;
 	  op->item_condition = op->item_quality;

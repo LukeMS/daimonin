@@ -260,7 +260,7 @@ char * query_short_name(object *op, object *caller)
         if (!IS_LIVE(op) && op->type != TYPE_BASE_INFO)
             safe_strcat(buf, item_race_table[op->item_race].name, &len, sizeof(buf));
 
-        if (op->material_real && QUERY_FLAG(op, FLAG_IDENTIFIED))
+        if (op->material_real>0 && QUERY_FLAG(op, FLAG_IDENTIFIED))
             safe_strcat(buf, material_real[op->material_real].name, &len, sizeof(buf));
 
         safe_strcat(buf, op->name, &len, sizeof(buf));
@@ -291,7 +291,7 @@ char * query_short_name(object *op, object *caller)
         if (!IS_LIVE(op) && op->type != TYPE_BASE_INFO)
             safe_strcat(buf, item_race_table[op->item_race].name, &len, sizeof(buf));
 
-        if (op->material_real && QUERY_FLAG(op, FLAG_IDENTIFIED))
+        if (op->material_real>0 && QUERY_FLAG(op, FLAG_IDENTIFIED))
             safe_strcat(buf, material_real[op->material_real].name, &len, sizeof(buf));
 
         safe_strcat(buf, op->name, &len, sizeof(buf));
@@ -550,7 +550,7 @@ char *query_base_name(object *op, object *caller)
      * "" (clear string) we don't must check item types for adding something here
      * or not (artifacts for example has normally no material prefix)
      */
-    if (op->material_real && QUERY_FLAG(op, FLAG_IDENTIFIED))
+    if (op->material_real>0 && QUERY_FLAG(op, FLAG_IDENTIFIED))
         strcat(buf, material_real[op->material_real].name);
 	
     strcat(buf, op->name);
