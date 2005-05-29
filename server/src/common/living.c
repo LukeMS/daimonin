@@ -423,10 +423,11 @@ int change_abil(object *op, object *tmp)
     /* reset attributes that fix_player doesn't reset since it doesn't search
      * everything to set */
     if (flag == -1)
+	{
         op->path_attuned &= ~tmp->path_attuned,
         op->path_repelled &= ~tmp->path_repelled,
         op->path_denied &= ~tmp->path_denied;
-
+	}
     /* call fix_player since op object could have whatever attribute due
      * to multiple items.  if fix_player always has to be called after
      * change_ability then might as well call it from here
@@ -1001,13 +1002,14 @@ void fix_player(object *op)
              * add here more types we can and must skip.
              */
         if (tmp->type == SCROLL
-         || tmp->type == POTION
-         || tmp->type == CONTAINER
-         || tmp->type == CLOSE_CON
-         || tmp->type == TYPE_LIGHT_REFILL
-         || tmp->type == WAND
-         || tmp->type == ROD
-         || tmp->type == HORN)
+			 || tmp->type == EXPERIENCE
+			 || tmp->type == POTION
+			 || tmp->type == CONTAINER
+			 || tmp->type == CLOSE_CON
+			 || tmp->type == TYPE_LIGHT_REFILL
+			 || tmp->type == WAND
+			 || tmp->type == ROD
+			 || tmp->type == HORN)
             continue;
 		
 		if(tmp->type == TYPE_QUEST_CONTAINER)

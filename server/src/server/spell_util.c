@@ -2347,6 +2347,7 @@ void move_ball_lightning(object *op)
     owner = get_owner(op);
 
     /* Only those attuned to PATH_ELEC may use ball lightning with AT_GODPOWER */
+	/*
     if (owner && (!(owner->path_attuned & PATH_ELEC)) && (op->attacktype & AT_GODPOWER))
     {
         remove_ob(op);
@@ -2355,7 +2356,7 @@ void move_ball_lightning(object *op)
                              "The ball lightning dispells immediately.  Perhaps you need attunement to the spell path?");
         return;
     }
-
+	*/
     /*  the following logic makes sure that the ball
         doesn't move into a wall, and makes
         sure that it will move along a wall to try and

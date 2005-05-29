@@ -6,7 +6,7 @@ Date:    6/4/2003
 endmsg
 width 24
 height 24
-difficulty 50
+difficulty 100
 end
 arch floor_ostone1
 end
@@ -405,29 +405,11 @@ arch floor_ostone1
 x 2
 y 1
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 2
-y 1
-end
 arch floor_ostone1
 x 2
 y 2
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 2
-y 2
-end
 arch floor_ostone1
-x 2
-y 3
-end
-arch random_treasure
-randomitems random_test
-identified 1
 x 2
 y 3
 end
@@ -642,29 +624,11 @@ arch floor_ostone1
 x 3
 y 1
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 3
-y 1
-end
 arch floor_ostone1
 x 3
 y 2
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 3
-y 2
-end
 arch floor_ostone1
-x 3
-y 3
-end
-arch random_treasure
-randomitems random_test
-identified 1
 x 3
 y 3
 end
@@ -876,29 +840,11 @@ arch floor_ostone1
 x 4
 y 1
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 4
-y 1
-end
 arch floor_ostone1
 x 4
 y 2
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 4
-y 2
-end
 arch floor_ostone1
-x 4
-y 3
-end
-arch random_treasure
-randomitems random_test
-identified 1
 x 4
 y 3
 end
@@ -1110,29 +1056,11 @@ arch floor_ostone1
 x 5
 y 1
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 5
-y 1
-end
 arch floor_ostone1
 x 5
 y 2
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 5
-y 2
-end
 arch floor_ostone1
-x 5
-y 3
-end
-arch random_treasure
-randomitems random_test
-identified 1
 x 5
 y 3
 end
@@ -1344,29 +1272,11 @@ arch floor_ostone1
 x 6
 y 1
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 6
-y 1
-end
 arch floor_ostone1
 x 6
 y 2
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 6
-y 2
-end
 arch floor_ostone1
-x 6
-y 3
-end
-arch random_treasure
-randomitems random_test
-identified 1
 x 6
 y 3
 end
@@ -1578,29 +1488,11 @@ arch floor_ostone1
 x 7
 y 1
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 7
-y 1
-end
 arch floor_ostone1
 x 7
 y 2
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 7
-y 2
-end
 arch floor_ostone1
-x 7
-y 3
-end
-arch random_treasure
-randomitems random_test
-identified 1
 x 7
 y 3
 end
@@ -1812,29 +1704,11 @@ arch floor_ostone1
 x 8
 y 1
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 8
-y 1
-end
 arch floor_ostone1
 x 8
 y 2
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 8
-y 2
-end
 arch floor_ostone1
-x 8
-y 3
-end
-arch random_treasure
-randomitems random_test
-identified 1
 x 8
 y 3
 end
@@ -2046,29 +1920,11 @@ arch floor_ostone1
 x 9
 y 1
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 9
-y 1
-end
 arch floor_ostone1
 x 9
 y 2
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 9
-y 2
-end
 arch floor_ostone1
-x 9
-y 3
-end
-arch random_treasure
-randomitems random_test
-identified 1
 x 9
 y 3
 end
@@ -2280,29 +2136,11 @@ arch floor_ostone1
 x 10
 y 1
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 10
-y 1
-end
 arch floor_ostone1
 x 10
 y 2
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 10
-y 2
-end
 arch floor_ostone1
-x 10
-y 3
-end
-arch random_treasure
-randomitems random_test
-identified 1
 x 10
 y 3
 end
@@ -2514,29 +2352,11 @@ arch floor_ostone1
 x 11
 y 1
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 11
-y 1
-end
 arch floor_ostone1
 x 11
 y 2
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 11
-y 2
-end
 arch floor_ostone1
-x 11
-y 3
-end
-arch random_treasure
-randomitems random_test
-identified 1
 x 11
 y 3
 end
@@ -2748,29 +2568,11 @@ arch floor_ostone1
 x 12
 y 1
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 12
-y 1
-end
 arch floor_ostone1
 x 12
 y 2
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 12
-y 2
-end
 arch floor_ostone1
-x 12
-y 3
-end
-arch random_treasure
-randomitems random_test
-identified 1
 x 12
 y 3
 end
@@ -2982,29 +2784,11 @@ arch floor_ostone1
 x 13
 y 1
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 13
-y 1
-end
 arch floor_ostone1
 x 13
 y 2
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 13
-y 2
-end
 arch floor_ostone1
-x 13
-y 3
-end
-arch random_treasure
-randomitems random_test
-identified 1
 x 13
 y 3
 end
@@ -3216,29 +3000,11 @@ arch floor_ostone1
 x 14
 y 1
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 14
-y 1
-end
 arch floor_ostone1
 x 14
 y 2
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 14
-y 2
-end
 arch floor_ostone1
-x 14
-y 3
-end
-arch random_treasure
-randomitems random_test
-identified 1
 x 14
 y 3
 end
@@ -3450,29 +3216,11 @@ arch floor_ostone1
 x 15
 y 1
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 15
-y 1
-end
 arch floor_ostone1
 x 15
 y 2
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 15
-y 2
-end
 arch floor_ostone1
-x 15
-y 3
-end
-arch random_treasure
-randomitems random_test
-identified 1
 x 15
 y 3
 end
@@ -3684,29 +3432,11 @@ arch floor_ostone1
 x 16
 y 1
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 16
-y 1
-end
 arch floor_ostone1
 x 16
 y 2
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 16
-y 2
-end
 arch floor_ostone1
-x 16
-y 3
-end
-arch random_treasure
-randomitems random_test
-identified 1
 x 16
 y 3
 end
@@ -3918,29 +3648,11 @@ arch floor_ostone1
 x 17
 y 1
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 17
-y 1
-end
 arch floor_ostone1
 x 17
 y 2
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 17
-y 2
-end
 arch floor_ostone1
-x 17
-y 3
-end
-arch random_treasure
-randomitems random_test
-identified 1
 x 17
 y 3
 end
@@ -4152,29 +3864,11 @@ arch floor_ostone1
 x 18
 y 1
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 18
-y 1
-end
 arch floor_ostone1
 x 18
 y 2
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 18
-y 2
-end
 arch floor_ostone1
-x 18
-y 3
-end
-arch random_treasure
-randomitems random_test
-identified 1
 x 18
 y 3
 end
@@ -4386,29 +4080,11 @@ arch floor_ostone1
 x 19
 y 1
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 19
-y 1
-end
 arch floor_ostone1
 x 19
 y 2
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 19
-y 2
-end
 arch floor_ostone1
-x 19
-y 3
-end
-arch random_treasure
-randomitems random_test
-identified 1
 x 19
 y 3
 end
@@ -4620,29 +4296,11 @@ arch floor_ostone1
 x 20
 y 1
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 20
-y 1
-end
 arch floor_ostone1
 x 20
 y 2
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 20
-y 2
-end
 arch floor_ostone1
-x 20
-y 3
-end
-arch random_treasure
-randomitems random_test
-identified 1
 x 20
 y 3
 end
@@ -4854,29 +4512,11 @@ arch floor_ostone1
 x 21
 y 1
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 21
-y 1
-end
 arch floor_ostone1
 x 21
 y 2
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 21
-y 2
-end
 arch floor_ostone1
-x 21
-y 3
-end
-arch random_treasure
-randomitems random_test
-identified 1
 x 21
 y 3
 end
@@ -5088,29 +4728,11 @@ arch floor_ostone1
 x 22
 y 1
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 22
-y 1
-end
 arch floor_ostone1
 x 22
 y 2
 end
-arch random_treasure
-randomitems random_test
-identified 1
-x 22
-y 2
-end
 arch floor_ostone1
-x 22
-y 3
-end
-arch random_treasure
-randomitems random_test
-identified 1
 x 22
 y 3
 end

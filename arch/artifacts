@@ -3362,7 +3362,7 @@ type 70
 value 225000
 resist_fire 20
 protect_fire 30
-path_attuned 2
+path_attuned 4
 msg
   This elemental ring is one of those 
   made at the Guild of Magicks by the 
@@ -3394,7 +3394,7 @@ is_magical 1
 value 225000
 resist_electricity 20
 protect_electricity 30
-path_attuned 8
+path_attuned 4
 msg
   This elemental ring is one of those made 
   at the Guild of Magicks by the powerful 
@@ -3427,7 +3427,7 @@ value 325000
 attack_electricity 20
 resist_electricity 20
 protect_electricity 30
-path_attuned 8
+path_attuned 4
 msg
   This elemental ring is one of those more
   rare ones made at the Guild of Magicks by 

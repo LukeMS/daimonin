@@ -1885,6 +1885,7 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
           SET_FLAG(force, FLAG_SEE_IN_DARK);
           break;
           /* attacktype-protection spells: */
+		  /*
         case SP_PROT_COLD:
           if (!i)
               atnr = ATNR_COLD, path = PATH_FROST, i = 1;
@@ -1921,7 +1922,7 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
         case SP_PROT_DEPLETE:
           if (!i)
               atnr = ATNR_DEPLETE, path = PATH_DEATH, i = 1;
-
+*/
           /* The amount of prot. granted depends on caster's skill-level and
            * on attunement to spellpath, if there is a related one: */
           force->resist[atnr] = (20
@@ -3664,9 +3665,9 @@ int summon_cult_monsters(object *op, int old_dir)
     if (i == 0)
         i = 1;
     summon_level = random_roll(0, i - 1, op, PREFER_HIGH);
-    if (op->path_attuned & PATH_SUMMON)
+    if (op->path_attuned & PATH_CONJURATION)
         summon_level += 5;
-    if (op->path_repelled & PATH_SUMMON)
+    if (op->path_repelled & PATH_CONJURATION)
         summon_level -= 5;
 
     do

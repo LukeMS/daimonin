@@ -2227,7 +2227,7 @@ object * monster_choose_random_spell(object *monster)
         {
             /*  Check and see if it's actually a useful spell */
             if ((spell = find_spell(tmp->stats.sp)) != NULL
-             && !(spell->path & (PATH_INFO | PATH_TRANSMUTE | PATH_TRANSFER | PATH_LIGHT)))
+             && !(spell->path & (PATH_ABJURATION | PATH_TRANSMUTATION | PATH_LIGHT)))
             {
                 if (tmp->stats.maxsp)
                     for (j = 0; i < MAX_KNOWN_SPELLS && j < tmp->stats.maxsp; j++)

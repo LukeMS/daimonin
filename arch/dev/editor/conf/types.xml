@@ -135,26 +135,22 @@
 </bitmask>
 
 <bitmask name="spellpath">
-  <entry bit="0" name="Protection" />
-  <entry bit="1" name="Fire" />
-  <entry bit="2" name="Frost" />
-  <entry bit="3" name="Electricity" />
-  <entry bit="4" name="Missiles" />
-  <entry bit="5" name="Self" />
-  <entry bit="6" name="Summoning" />
-  <entry bit="7" name="Abjuration" />
-  <entry bit="8" name="Restoration" />
-  <entry bit="9" name="Detonation" />
-  <entry bit="10" name="Mind" />
-  <entry bit="11" name="Creation" />
-  <entry bit="12" name="Teleportation" />
-  <entry bit="13" name="Information" />
+  <entry bit="0" name="Life" />
+  <entry bit="1" name="Death" />
+  <entry bit="2" name="elemental" />
+  <entry bit="3" name="Energy" />
+  <entry bit="4" name="Spirit" />
+  <entry bit="5" name="Protection" />
+  <entry bit="6" name="Light" />
+  <entry bit="7" name="Nether" />
+  <entry bit="8" name="Shadow" />
+  <entry bit="9" name="Nature" />
+  <entry bit="10" name="Chaos" />
+  <entry bit="11" name="Earth" />
+  <entry bit="12" name="Conjuration" />
+  <entry bit="13" name="Abjuration" />
   <entry bit="14" name="Transmutation" />
-  <entry bit="15" name="Transferrence" />
-  <entry bit="16" name="Turning" />
-  <entry bit="17" name="Wounding" />
-  <entry bit="18" name="Death" />
-  <entry bit="19" name="Light" />
+  <entry bit="15" name="Arcane" />
 </bitmask>
 
 <bitmask name="terrain">

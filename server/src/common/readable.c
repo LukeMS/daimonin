@@ -127,9 +127,10 @@ static linked_char *first_msg                   = NULL;
 
 static uint32       spellpathdef[NRSPELLPATHS]  =
 {
-    PATH_PROT, PATH_FIRE, PATH_FROST, PATH_ELEC, PATH_MISSILE, PATH_SELF, PATH_SUMMON, PATH_ABJURE, PATH_RESTORE,
-    PATH_DETONATE, PATH_MIND, PATH_CREATE, PATH_TELE, PATH_INFO, PATH_TRANSMUTE, PATH_TRANSFER, PATH_TURNING,
-    PATH_WOUNDING, PATH_DEATH, PATH_LIGHT
+	PATH_LIFE, PATH_DEATH, PATH_ELEMENTAL, PATH_ENERGY,
+	PATH_SPIRIT, PATH_PROTECTION, PATH_LIGHT, PATH_NETHER,
+	PATH_NATURE, PATH_SHADOW,PATH_CHAOS, PATH_EARTH,
+	PATH_CONJURATION, PATH_ABJURATION, PATH_TRANSMUTATION, PATH_ARCANE
 };
 
 static char        *path_book_name[]            =
@@ -613,7 +614,7 @@ static void init_mon_info(void)
 
     for (at = first_archetype; at != NULL; at = at->next)
     {
-        if (QUERY_FLAG(&at->clone, FLAG_MONSTER) && !QUERY_FLAG(&at->clone, FLAG_FRIENDLY)
+        if (QUERY_FLAG(&at->clone, FLAG_MONSTER) /*&& !QUERY_FLAG(&at->clone, FLAG_FRIENDLY)*/
          && !QUERY_FLAG(&at->clone, FLAG_CHANGING))
         {
             objectlink *mon = get_objectlink(OBJLNK_FLAG_OB);
@@ -1536,7 +1537,7 @@ char * god_info_msg(int level, int booksize)
         {
             /* enemy race, what the god's holy word effects */
             const char *enemy   = god->slaying;
-            if (enemy && !(god->path_denied & PATH_TURNING))
+            if (enemy && !(god->path_denied & PATH_ARCANE))
                 if ((i = nstrtok(enemy, ",")) > 0)
                 {
                     char    tmpbuf[MAX_BUF];
@@ -1572,7 +1573,7 @@ char * god_info_msg(int level, int booksize)
         {
             /* aligned race, summoning  */
             const char *race    = god->race;    /* aligned race */
-            if (race && !(god->path_denied & PATH_SUMMON))
+            if (race && !(god->path_denied & PATH_CONJURATION))
                 if ((i = nstrtok(race, ",")) > 0)
                 {
                     char    tmpbuf[MAX_BUF];
@@ -1637,17 +1638,17 @@ char * god_info_msg(int level, int booksize)
             sprintf(tmpbuf, "\n");
             sprintf(tmpbuf, "It is rarely known fact that the priests of %s\n", name);
             strcat(tmpbuf, "are mystically transformed. Effects of this include:\n");
-            if ((tmpvar = god->path_attuned))
+            if ((tmpvar = (int) god->path_attuned))
             {
                 has_effect = 1;
                 DESCRIBE_PATH(tmpbuf, tmpvar, "Attuned");
             }
-            if ((tmpvar = god->path_repelled))
+            if ((tmpvar = (int) god->path_repelled))
             {
                 has_effect = 1;
                 DESCRIBE_PATH(tmpbuf, tmpvar, "Repelled");
             }
-            if ((tmpvar = god->path_denied))
+            if ((tmpvar = (int) god->path_denied))
             {
                 has_effect = 1;
                 DESCRIBE_PATH(tmpbuf, tmpvar, "Denied");
@@ -1731,6 +1732,7 @@ void tailor_readable_ob(object *book, int msg_type)
 
     msg_type = msg_type > 0 ? msg_type : (RANDOM() % 6);
 goto_2ndtry:
+	msg_type = 1;
     switch (msg_type)
     {
         case 1:
