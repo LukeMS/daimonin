@@ -795,27 +795,37 @@ char * describe_item(object *op)
 
         if (QUERY_FLAG(op, FLAG_UNDEAD))
             strcat(retbuf, "(undead)");
+        if (QUERY_FLAG(op, FLAG_INVULNERABLE))
+            strcat(retbuf, "(invulnerable)");
+        if (QUERY_FLAG(op, FLAG_NO_ATTACK))
+            strcat(retbuf, "(never attacks)");
         if (QUERY_FLAG(op, FLAG_CAN_PASS_THRU))
             strcat(retbuf, "(pass through doors)");
         if (QUERY_FLAG(op, FLAG_SEE_INVISIBLE))
             strcat(retbuf, "(see invisible)");
 
         if (QUERY_FLAG(op, FLAG_USE_WEAPON))
-            strcat(retbuf, "(wield weapon)");
+            strcat(retbuf, "(melee attack)");
         if (QUERY_FLAG(op, FLAG_READY_BOW))
-            strcat(retbuf, "(archer)");
+            strcat(retbuf, "(range attack)");
         if (QUERY_FLAG(op, FLAG_USE_ARMOUR))
             strcat(retbuf, "(wear armour)");
         if (QUERY_FLAG(op, FLAG_USE_RING))
             strcat(retbuf, "(wear ring)");
         if (QUERY_FLAG(op, FLAG_FRIENDLY))
-            strcat(retbuf, "(friendly)");
-        if (QUERY_FLAG(op, FLAG_UNAGGRESSIVE))
+            strcat(retbuf, "(NPC)");
+		if (QUERY_FLAG(op, FLAG_UNAGGRESSIVE))
             strcat(retbuf, "(unaggressive)");
+		else 
+            strcat(retbuf, "(aggressive)");
         if (QUERY_FLAG(op, FLAG_HITBACK))
             strcat(retbuf, "(hitback)");
         if (QUERY_FLAG(op, FLAG_READY_SPELL))
             strcat(retbuf, "(spellcaster)");
+        if (QUERY_FLAG(op, FLAG_CAN_OPEN_DOOR))
+            strcat(retbuf, "(open doors)");
+        if (QUERY_FLAG(op, FLAG_RANDOM_MOVE))
+            strcat(retbuf, "(wandering)");
 
         /* lets check the inv for spell ABILITY objects.
              * This was previous a randomitems search, but that

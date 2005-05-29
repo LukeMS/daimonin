@@ -1062,10 +1062,15 @@ char *examine_monster(object *op, object *tmp, char *buf, int flag)
 			strcat(buf,buf2);
 		}
 	}
-	
-    sprintf(buf2,"%s has a base damage of %d and hp of %d.\n", att, mon->stats.dam, mon->stats.maxhp);
+
+    sprintf(buf2,"%s has a base damage of %d and hp of %d", att, mon->stats.dam, mon->stats.maxhp);
 	strcat(buf,buf2);	
-    sprintf(buf2,"%s has a wc of %d and an ac of %d.\n", att, mon->stats.wc, mon->stats.ac);
+	if(QUERY_FLAG(mon,FLAG_READY_SPELL))
+	{
+		sprintf(buf2,",\nsp of %d and a sp recovery of %d", mon->stats.maxsp, mon->stats.Pow);
+		strcat(buf,buf2);	
+	}
+    sprintf(buf2,".\n%s has a wc of %d and an ac of %d.\n", att, mon->stats.wc, mon->stats.ac);
 	strcat(buf,buf2);
 	
     for (val = val2 = -1,i = 0; i < NROFATTACKS; i++)
@@ -1414,7 +1419,7 @@ char *examine(object *op, object *tmp, int flag)
         case SIGN:
         case BOOK:
           if (tmp->msg != NULL)
-			 sprintf(buf, "Its written in %s.",get_language(tmp->weight_limit));
+			 sprintf(buf, "Its written in %s.\n",get_language(tmp->weight_limit));
           break;
 
         case CONTAINER:

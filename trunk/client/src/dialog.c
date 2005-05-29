@@ -185,10 +185,10 @@ static char        *skill_tab[]                     =
 ******************************************************************/
 static char        *spell_tab[]                     =
 {
-    /* form server->include/spellist.h->spellpathnames */
-    "Protection", "Fire", "Frost", "Electricity", "Missiles", "Self", "Summoning", "Abjuration", "Restoration",
-    "Detonation", "Mind", "Creation", "Teleportation", "Information", "Transmutation", "Transferrence", "Turning",
-    "Wounding", "Death", "Light", 0
+	"Life", "Death", "Elemental", "Energy",
+	"Spirit", "Protection", "Light", "Nether",
+	"Nature", "Shadow", "Choas", "Earth",
+	"Conjuration", "Abjuration", "Transmuation", "Arcane",0
 };
 #define SPELL_TAB_SIZE (sizeof(spell_tab)/sizeof(char*))
 

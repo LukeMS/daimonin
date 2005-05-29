@@ -15,6 +15,9 @@ is_male 1
 is_good 1
 terrain_flag 1
 can_open_door 1
+can_use_weapon 1
+can_use_armour 1
+can_use_ring 1
 Wis 7
 Dex 3
 Con 15

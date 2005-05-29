@@ -197,17 +197,17 @@ void dump_gods()
         strcat(tmpbuf, "\n aura:");
 
         strcat(tmpbuf, "\n paths:");
-        if ((tmpvar = god->path_attuned))
+        if ((tmpvar = (int) god->path_attuned))
         {
             strcat(tmpbuf, "\n  ");
             DESCRIBE_PATH(tmpbuf, tmpvar, "Attuned");
         }
-        if ((tmpvar = god->path_repelled))
+        if ((tmpvar = (int) god->path_repelled))
         {
             strcat(tmpbuf, "\n  ");
             DESCRIBE_PATH(tmpbuf, tmpvar, "Repelled");
         }
-        if ((tmpvar = god->path_denied))
+        if ((tmpvar = (int) god->path_denied))
         {
             strcat(tmpbuf, "\n  ");
             DESCRIBE_PATH(tmpbuf, tmpvar, "Denied");

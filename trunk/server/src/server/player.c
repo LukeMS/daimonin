@@ -2462,7 +2462,7 @@ void dragon_ability_gain(object *who, int atnr, int level)
         /* adding new spellpath attunements */
         if (item->path_attuned > 0 && !(skin->path_attuned & item->path_attuned))
         {
-            skin->path_attuned += item->path_attuned; /* add attunement to skin */
+            skin->path_attuned |= item->path_attuned; /* add attunement to skin */
 
             /* print message */
             sprintf(buf, "You feel attuned to ");

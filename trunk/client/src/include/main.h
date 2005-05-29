@@ -300,7 +300,7 @@ typedef struct _dialog_list_set
 }_dialog_list_set;
 
 /* spell list defines */
-#define SPELL_LIST_MAX 20        /* groups of spells */
+#define SPELL_LIST_MAX 16        /* groups of spells */
 #define SPELL_LIST_CLASS 2
 
 typedef struct _spell_list_entry

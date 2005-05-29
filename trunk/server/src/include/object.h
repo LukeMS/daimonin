@@ -118,9 +118,6 @@ typedef struct obj
     sint32          weight;             /* Attributes of the object - the weight */
     uint32          weight_limit;       /* Weight-limit of object - player and container should have this... perhaps we can substitute it?*/
     sint32          carrying;           /* How much weight this object contains (of objects in inv) */
-    uint32          path_attuned;       /* Paths the object is attuned to */
-    uint32          path_repelled;      /* Paths the object is repelled from */
-    uint32          path_denied;        /* Paths the object is denied access to */
     sint32          value;              /* How much money it is worth (or contains) */
     uint32          nrof;               /* How many of the objects */
     uint32          damage_round_tag;   /* needed for the damage info for client in map2 */
@@ -141,6 +138,10 @@ typedef struct obj
     sint16          x;                  /* X-Position in the map for this object */
     sint16          y;                  /* Y-Position in the map for this object */
 
+    uint16          path_attuned;       /* Paths the object is attuned to */
+    uint16          path_repelled;      /* Paths the object is repelled from */
+    uint16          path_denied;        /* Paths the object is denied access to */
+	
     uint16          last_damage;            /* thats the damage send with map2 */
 
     uint16          terrain_type;       /* type flags for different enviroment (tile is under water, firewalk,...) 
