@@ -53,6 +53,9 @@ AC_PATH_PROG(GZIP, gzip)
 AC_PATH_PROG(GUNZIP, gunzip)
 AC_PATH_PROG(PERL, perl)
 
+AC_CHECK_SIZEOF(long)
+AC_CHECK_SIZEOF(long long) 
+
 if test -n "$GZIP" -a -z "$GUNZIP" ; then
     echo "Found gzip, but not gunzip - setting GUNZIP to gzip -c";
     GUNZIP="$GZIP -c"
