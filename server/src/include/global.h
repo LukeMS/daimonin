@@ -73,7 +73,7 @@ typedef unsigned long long		uint64;
 typedef signed long long 		sint64;
 
 #else
-#error Your compiler can't handle int64 / 64bit
+#error Your compiler miss int64 support
 #endif 
 #endif
 

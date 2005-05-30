@@ -207,6 +207,12 @@
 /* Define if you have the des library (-ldes).  */
 #undef HAVE_LIBDES
 
+/* The size of a `long', as computed by sizeof. */
+#undef SIZEOF_LONG
+
+/* The size of a `long long', as computed by sizeof. */
+#undef SIZEOF_LONG_LONG
+
 /* Just a phoney so that we will recompile if the user changes the
  * prefix or libdir
  */
