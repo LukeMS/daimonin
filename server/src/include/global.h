@@ -57,12 +57,25 @@ typedef signed short    sint16;
 typedef unsigned short  uint16;
 typedef signed int      sint32;
 typedef unsigned int    uint32;
-typedef int64			sint64;
-typedef unsigned int64	uint64;
-
 typedef uint32			tag_t;
 
+/* 64bit definition */
+#ifdef WIN32
+typedef int64					sint64;
+typedef unsigned int64			uint64;
 
+#else /* LINUX and others */
+#if SIZEOF_LONG == 8
+typedef unsigned long			uint64;
+typedef signed long				sint64;
+#elif SIZEOF_LONG_LONG == 8
+typedef unsigned long long		uint64;
+typedef signed long long 		sint64;
+
+#else
+error Your compiler can't handle int64 / 64bit
+#endif 
+#endif
 
 #ifdef CALLOC
 #undef CALLOC
