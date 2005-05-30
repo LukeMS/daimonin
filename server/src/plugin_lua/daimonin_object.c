@@ -115,7 +115,7 @@ struct attribute_decl       GameObject_attributes[]         =
     {"path_attuned", FIELDTYPE_UINT32, offsetof(object, path_attuned), 0},
     {"path_repelled",FIELDTYPE_UINT32, offsetof(object, path_repelled), 0},
     {"path_denied",  FIELDTYPE_UINT32, offsetof(object, path_denied), 0},
-    {"value",        FIELDTYPE_SINT32, offsetof(object, value), 0},
+    {"value",        FIELDTYPE_SINT64, offsetof(object, value), 0},
     /* TODO: Max 100000 */
     {"quantity",         FIELDTYPE_UINT32, offsetof(object, nrof), 0},
 
@@ -683,20 +683,83 @@ static int GameObject_Deposit(lua_State *L)
 {
     lua_object *obptr;
     char       *text;
-    CFParm     *CFR;
-    int         value;
+	object     *bank;
+    int         val=1, pos=0;
     lua_object *self;
-
+	_money_block money;
+	
     get_lua_args(L, "OOs", &self, &obptr, &text);
 
-    GCFP.Value[0] = (void *) (WHO);
-    GCFP.Value[1] = (void *) (obptr->data.object);
-    GCFP.Value[2] = (void *) (text);
+    bank = obptr->data.object;
 
-    CFR = (PlugHooks[HOOK_DEPOSIT]) (&GCFP);
+	hooks->get_word_from_string(text, &pos);
+	hooks->get_money_from_string(text + pos, &money);
+				
+	if (!money.mode)
+	{
+		val = -1;
+		hooks->new_draw_info(NDI_UNIQUE, 0, WHO, "deposit what?\nUse 'deposit all' or 'deposit 40 gold, 20 silver...'");
+	}
+	else if (money.mode == MONEYSTRING_ALL)
+	{
+		bank->value += hooks->remove_money_type(WHO, WHO, -1, 0);
+		hooks->fix_player(WHO);
+	}
+	else
+	{
+		if (money.mithril)
+		{
+			if (hooks->query_money_type(WHO, (int)hooks->coins_arch[0]->clone.value) < money.mithril)
+			{
+				hooks->new_draw_info(NDI_UNIQUE, 0, WHO, "You don't have that much mithril.");
+				val = 0;
+			}
+		}
+		if (money.gold)
+		{
+			if (hooks->query_money_type(WHO, (int)hooks->coins_arch[1]->clone.value) < money.gold)
+			{
+				hooks->new_draw_info(NDI_UNIQUE, 0, WHO, "You don't have that much gold.");
+				val = 0;
+			}
+		}
+		if (money.silver)
+		{
+			if (hooks->query_money_type(WHO, (int)hooks->coins_arch[2]->clone.value) < money.silver)
+			{
+				hooks->new_draw_info(NDI_UNIQUE, 0, WHO, "You don't have that much silver.");
+				val = 0;
+			}
+		}
+		if (money.copper)
+		{
+			if (hooks->query_money_type(WHO, (int)hooks->coins_arch[3]->clone.value) < money.copper)
+			{
+				val = 0;
+				hooks->new_draw_info(NDI_UNIQUE, 0, WHO, "You don't have that much copper.");
+			}
+		}
+			
+		/* all ok - now remove the money from the player and add it to the bank object! */
+		if(val)
+		{
+			if (money.mithril)
+				hooks->remove_money_type(WHO, WHO, hooks->coins_arch[0]->clone.value, money.mithril);
+			if (money.gold)
+				hooks->remove_money_type(WHO, WHO, hooks->coins_arch[1]->clone.value, money.gold);
+			if (money.silver)
+				hooks->remove_money_type(WHO, WHO, hooks->coins_arch[2]->clone.value, money.silver);
+			if (money.copper)
+				hooks->remove_money_type(WHO, WHO, hooks->coins_arch[3]->clone.value, money.copper);
+			bank->value += money.mithril * hooks->coins_arch[0]->clone.value
+					+ money.gold * hooks->coins_arch[1]->clone.value
+					+ money.silver * hooks->coins_arch[2]->clone.value
+					+ money.copper * hooks->coins_arch[3]->clone.value;
+			hooks->fix_player(WHO);
+		}
+	}
 
-    value = *(int *) (CFR->Value[0]);
-    lua_pushnumber(L, value);
+    lua_pushnumber(L, val);
     return 1;
 }
 
@@ -712,20 +775,71 @@ static int GameObject_Deposit(lua_State *L)
 static int GameObject_Withdraw(lua_State *L)
 {
     lua_object *obptr, *self;
+	object     *bank;
     char       *text;
-    CFParm     *CFR;
-    int         value;
-
+    int         val=1;
+	_money_block money;
+	int          pos     = 0;
+	sint64       big_value;
+	
     get_lua_args(L, "OOs", &self, &obptr, &text);
-
-    GCFP.Value[0] = (void *) (WHO);
-    GCFP.Value[1] = (void *) (obptr->data.object);
-    GCFP.Value[2] = (void *) (text);
-
-    CFR = (PlugHooks[HOOK_WITHDRAW]) (&GCFP);
-
-    value = *(int *) (CFR->Value[0]);
-    lua_pushnumber(L, value);
+    bank = obptr->data.object;
+	
+/*
+	static CFParm                       CFP;
+	static int                          val;
+	int                                 pos     = 0;
+	sint64                              big_value;
+	char                               *text    = (char *) (PParm->Value[2]);
+	object*who = (object*) (PParm->Value[0]), *bank = (object *) (PParm->Value[1]);
+*/	
+		
+	hooks->get_word_from_string(text, &pos);
+	hooks->get_money_from_string(text + pos, &money);
+	
+	if (!money.mode)
+	{
+		val = -1;
+		hooks->new_draw_info(NDI_UNIQUE, 0, WHO, "withdraw what?\nUse 'withdraw all' or 'withdraw 30 gold, 20 silver....'");
+	}
+	else if (money.mode == MONEYSTRING_ALL)
+	{
+		hooks->sell_item(NULL, WHO, bank->value);
+		bank->value = 0;
+		hooks->fix_player(WHO);
+	}
+	else
+	{
+		/* just to set a border.... */
+		if (money.mithril > 100000 || money.gold > 100000 || money.silver > 1000000 || money.copper > 1000000)
+			hooks->new_draw_info(NDI_UNIQUE, 0, WHO, "withdraw values to high.");
+		else
+		{
+			big_value = money.mithril * hooks->coins_arch[0]->clone.value
+					    + money.gold * hooks->coins_arch[1]->clone.value
+					    + money.silver * hooks->coins_arch[2]->clone.value
+					    + money.copper * hooks->coins_arch[3]->clone.value;
+			
+			if (big_value > bank->value)
+				val = 0;
+			else
+			{
+				if (money.mithril)
+					hooks->insert_money_in_player(WHO, &hooks->coins_arch[0]->clone, money.mithril);
+				if (money.gold)
+					hooks->insert_money_in_player(WHO, &hooks->coins_arch[1]->clone, money.gold);
+				if (money.silver)
+					hooks->insert_money_in_player(WHO, &hooks->coins_arch[2]->clone, money.silver);
+				if (money.copper)
+					hooks->insert_money_in_player(WHO, &hooks->coins_arch[3]->clone, money.copper);
+		
+				bank->value -= big_value;
+				hooks->fix_player(WHO);
+			}
+		}
+	}
+    
+	lua_pushnumber(L, val);
     return 1;
 }
 
@@ -818,19 +932,13 @@ static int GameObject_SayTo(lua_State *L)
 /*****************************************************************************/
 static int GameObject_Write(lua_State *L)
 {
-    int         zero    = 0;
     char       *message;
     int         color   = NDI_UNIQUE | NDI_ORANGE;
     lua_object *self;
 
     get_lua_args(L, "Os|i", &self, &message, &color);
 
-    GCFP.Value[0] = (void *) (&color);
-    GCFP.Value[1] = (void *) (&zero);
-    GCFP.Value[2] = (void *) (WHO);
-    GCFP.Value[3] = (void *) (message);
-
-    (PlugHooks[HOOK_NEWDRAWINFO]) (&GCFP);
+	hooks->new_draw_info(color, 0, WHO, message);
 
     return 0;
 }
@@ -1720,7 +1828,7 @@ static int GameObject_CreateObjectInside(lua_State *L)
     }
 
     if (value != -1) /* -1 means, we use original value */
-        myob->value = (sint32) value;
+        myob->value = value;
     if (id)
     {
         SET_FLAG(myob, FLAG_IDENTIFIED);
@@ -2162,15 +2270,12 @@ static int GameObject_GetArchName(lua_State *L)
 static int GameObject_ShowCost(lua_State *L)
 {
     lua_object *self;
-    int         value;
+    sint64      value;
     char       *cost_string;
 
-    CFParm     *CFR;
-    get_lua_args(L, "Oi", &self, &value);
+    get_lua_args(L, "OI", &self, &value);
 
-    GCFP.Value[0] = (void *) (&value);
-    CFR = (PlugHooks[HOOK_SHOWCOST]) (&GCFP);
-    cost_string = (char *) (CFR->Value[0]);
+	cost_string = hooks->cost_string_from_value(value);
 
     lua_pushstring(L, cost_string);
     return 1;
@@ -2188,19 +2293,14 @@ static int GameObject_GetItemCost(lua_State *L)
     lua_object *self;
     lua_object *whatptr;
     int         flag;
-    int         cost;
-    CFParm     *CFR;
+    sint64      cost;
 
     get_lua_args(L, "OOi", &self, &whatptr, &flag);
 
-    GCFP.Value[0] = (void *) (WHAT);
-    GCFP.Value[1] = (void *) (WHO);
-    GCFP.Value[2] = (void *) (&flag);
-    CFR = (PlugHooks[HOOK_QUERYCOST]) (&GCFP);
-    cost = *(int *) (CFR->Value[0]);
-    free(CFR);
+	cost = hooks->query_cost(WHAT, WHO, flag);
 
-    lua_pushnumber(L, cost);
+	/* possible data loss from 64bit integer to double! */
+    lua_pushnumber(L, (double) cost);
     return 1;
 }
 
@@ -2234,17 +2334,14 @@ static int GameObject_AddMoney(lua_State *L)
 static int GameObject_GetMoney(lua_State *L)
 {
     lua_object *self;
-    int         amount;
-    CFParm     *CFR;
+    sint64 amount;
 
     get_lua_args(L, "O", &self);
 
-    GCFP.Value[0] = (void *) (WHO);
-    CFR = (PlugHooks[HOOK_QUERYMONEY]) (&GCFP);
-    amount = *(int *) (CFR->Value[0]);
-    free(CFR);
-
-    lua_pushnumber(L, amount);
+	amount = hooks->query_money(WHO);
+	
+	/* possible data loss from 64bit integer to double! */
+    lua_pushnumber(L, (double)amount);
     return 1;
 }
 
@@ -2259,14 +2356,10 @@ static int GameObject_PayForItem(lua_State *L)
     lua_object *self;
     lua_object *whatptr;
     int         val;
-    CFParm     *CFR;
+
     get_lua_args(L, "OO", &self, &whatptr);
 
-    GCFP.Value[0] = (void *) (WHAT);
-    GCFP.Value[1] = (void *) (WHO);
-    CFR = (PlugHooks[HOOK_PAYFORITEM]) (&GCFP);
-    val = *(int *) (CFR->Value[0]);
-    free(CFR);
+	val = hooks->pay_for_item(WHAT, WHO);
 
     lua_pushnumber(L, val);
     return 1;
@@ -2282,16 +2375,13 @@ static int GameObject_PayForItem(lua_State *L)
 static int GameObject_PayAmount(lua_State *L)
 {
     lua_object *self;
-    int         to_pay;
+    sint64      to_pay;
     int         val;
-    CFParm     *CFR;
-    get_lua_args(L, "Oi", &self, &to_pay);
 
-    GCFP.Value[0] = (void *) (&to_pay);
-    GCFP.Value[1] = (void *) (WHO);
-    CFR = (PlugHooks[HOOK_PAYFORAMOUNT]) (&GCFP);
-    val = *(int *) (CFR->Value[0]);
-    free(CFR);
+    get_lua_args(L, "OI", &self, &to_pay);
+
+	val = hooks->pay_for_amount(to_pay, WHO);
+	
     lua_pushnumber(L, val);
     return 1;
 }

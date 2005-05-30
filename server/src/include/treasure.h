@@ -33,7 +33,6 @@
 
 #define NUM_COINS 4 /* number of coin types */
 extern char        *coins[NUM_COINS + 1];
-extern archetype   *coins_arch[NUM_COINS];
 
 /*
  * Flags to generate_treasures():

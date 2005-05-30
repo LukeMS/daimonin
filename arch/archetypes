@@ -158,7 +158,6 @@ sub_type 1
 no_pick 1
 no_teleport 1
 sys_object 1
-value 0
 layer 0
 end
 Object detector
@@ -184,7 +183,6 @@ editor_folder connect/connect
 no_pick 1
 no_teleport 1
 sys_object 1
-value 0
 speed 0.125
 layer 0
 end
@@ -491,7 +489,7 @@ dam 1
 maxhp 20
 hp 20
 speed 0.35
-value 1
+container 1
 end
 Object gateTrg1_open
 name gate
@@ -517,7 +515,7 @@ maxhp 20
 hp 20
 attack_impact 100
 speed 0.35
-value 1
+container 1
 end
 Object grate_open
 name grate
@@ -589,7 +587,7 @@ dam 1
 maxhp 20
 hp 20
 speed 0.35
-value 1
+container 1
 end
 Object grateTrg1
 name gate
@@ -616,7 +614,7 @@ maxhp 20
 hp 20
 attack_impact 100
 speed 0.35
-value 1
+container 1
 end
 Object handle_lever
 name big lever
@@ -715,7 +713,6 @@ no_pick 1
 no_teleport 1
 sys_object 1
 cursed 1
-value 0
 speed 0.125
 maxhp 10
 hp 10
@@ -6319,7 +6316,6 @@ type 79
 editor_folder forces/disease
 layer 3
 face dia_icor.101
-value 0
 identified 1
 no_pick 1
 food 15

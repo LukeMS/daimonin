@@ -376,7 +376,7 @@ archetype * find_treasure_by_name(treasure *t, char *name, int depth)
  * (e.g. sage & c_sage) or if only one of the monsters generates the
  * body parts that we are looking for (e.g. big_dragon and
  * big_dragon_worthless). */
-long find_ingred_cost(const char *name)
+sint64 find_ingred_cost(const char *name)
 {
     archetype      *at;
     /*  archetype    *at2;*/
@@ -463,16 +463,17 @@ long find_ingred_cost(const char *name)
     return -1;
 }
 
-/* code copied from dump_alchemy() and modified by Raphael Quinet */
+/* code copied from dump_alchemy() and modified by Raphael Quinet *
+/* we need to adjust the output of the LOG() and sprintf() to 64bit values */
 void dump_alchemy_costs(void)
 {
+    sint64          tcost;
+    sint64          cost;
     recipelist     *fl          = formulalist;
     recipe         *formula     = NULL;
     linked_char    *next;
     int             num_ingred  = 1;
     int             num_errors  = 0;
-    long            cost;
-    long            tcost;
 
     LOG(llevInfo, "\n");
     while (fl)

@@ -43,7 +43,7 @@ wc+             Infectiousness  How well the plague spreads person-to-person
 magic+          Range           range of infection 
 Stats*          Disability      What stats are reduced by the disease (str con...)
 maxhp+          Persistence     How long the disease can last OUTSIDE the host. 
-value           TimeLeft        Counter for persistence 
+weight_limit    TimeLeft        Counter for persistence 
 dam^            Damage          How much damage it does (%?). 
 maxgrace+       Duration        How long before the disease is naturally cured. 
 food            DurCount        Counter for Duration 
@@ -87,7 +87,7 @@ maxhp is how long the disease will persist if the host dies and "drops" it,
       in "disease moves", i.e., moves of the disease.  If negative, permanent.
       
 
-value is the counter for maxhp, it starts at maxhp and drops...
+weight_limit is the counter for maxhp, it starts at maxhp and drops...
 
 dam     if positive, it is straight damage.  if negative, a %-age.
 
@@ -116,7 +116,7 @@ For SYMPTOMS:
 
 Stats            modify stats
 hp               modify regen
-value            progression counter (multiplier = value/100)
+weight_limit     progression counter (multiplier = weight_limit/100)
 food             modify food use (from last_eat in DISEASE)
 maxsp            suck mana ( as noted for DISEASE)
 last_sp          Lethargy
@@ -159,8 +159,8 @@ int move_disease(object *disease)
     if (disease->env == NULL)
     {
         /* we're outside of someone */
-        disease->value--;
-        if (disease->value == 0)
+        disease->weight_limit--;
+        if (disease->weight_limit == 0)
         {
             destruct_ob(disease); /* drop inv since disease may carry secondary infections */
             return 1;
@@ -299,7 +299,7 @@ int infect_object(object *victim, object *disease, int force)
     new_disease = get_object();
     copy_object(disease, new_disease);
     new_disease->stats.food = disease->stats.maxgrace;
-    new_disease->value = disease->stats.maxhp;
+    new_disease->weight_limit = disease->stats.maxhp;
     new_disease->stats.wc -= disease->last_grace;  /* self-limiting factor */
 
     /* Unfortunately, set_owner does the wrong thing to the skills pointers
@@ -418,7 +418,7 @@ int do_symptoms(object *disease)
         FREE_AND_COPY_HASH(new_symptom->name, disease->name);
         new_symptom->level = disease->level;
         new_symptom->speed = disease->speed;
-        new_symptom->value = 0;
+        new_symptom->weight_limit = 0;
         new_symptom->stats.Str = disease->stats.Str;
         new_symptom->stats.Dex = disease->stats.Dex;
         new_symptom->stats.Con = disease->stats.Con;
@@ -453,8 +453,8 @@ int do_symptoms(object *disease)
     if (disease->stats.ac != 0)
     {
         float   scale;
-        symptom->value += disease->stats.ac;
-        scale = (float) 1.0 + (float) symptom->value / (float) 100.0;
+        symptom->weight_limit += disease->stats.ac;
+        scale = (float) 1.0 + (float) symptom->weight_limit / (float) 100.0;
         /* now rescale all the debilities */
         symptom->stats.Str = (int) (scale * disease->stats.Str);
         symptom->stats.Dex = (int) (scale * disease->stats.Dex);
@@ -661,10 +661,10 @@ int reduce_symptoms(object *sufferer, int reduction)
     {
         if (walk->type == SYMPTOM)
         {
-            if (walk->value > 0)
+            if (walk->weight_limit > 0)
             {
                 success = 1;
-                walk->value = MAX(0, walk->value - 2 * reduction);
+                walk->weight_limit = MAX(0, walk->weight_limit - 2 * reduction);
                 /* give the disease time to modify this symptom,
                      * and reduce its severity.  */
                 walk->speed_left = 0;

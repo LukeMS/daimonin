@@ -62,7 +62,7 @@ void init_anim()
     animations[0].name = NULL;
     FREE_AND_COPY_HASH(animations[0].name, "###none");
     animations[0].num_animations = 1;
-    animations[0].faces = malloc(sizeof(Fontindex));
+    animations[0].faces = malloc(sizeof(unsigned short));
     animations[0].faces[0] = 0;
     animations[0].facings = 0;
 
@@ -99,7 +99,7 @@ void init_anim()
         }
         else if (!strncmp(buf, "mina", 4))
         {
-            animations[num_animations].faces = malloc(sizeof(Fontindex) * num_frames);
+            animations[num_animations].faces = malloc(sizeof(unsigned short) * num_frames);
             for (i = 0; i < num_frames; i++)
                 animations[num_animations].faces[i] = faces[i];
             animations[num_animations].num_animations = num_frames;

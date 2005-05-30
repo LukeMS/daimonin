@@ -567,7 +567,7 @@ int hit_player(object *op, int dam, object *hitter, int type)
             }
         }
     }
-    else if (type & AT_DRAIN && hitter->type == GRIMREAPER && hitter->value++ > 10)
+    else if (type & AT_DRAIN && hitter->type == GRIMREAPER && hitter->value++ > 10) /* hm, i DON'T like the value use here ! mt- 05.2005 */
     {
         remove_ob(hitter);
         check_walk_off(hitter, NULL, MOVE_APPLY_VANISHED);

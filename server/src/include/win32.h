@@ -116,8 +116,15 @@
 
 #define YY_NEVER_INTERACTIVE 1
 
-/* struct dirent - same as Unix */
+/* define 64bit handling */
+#ifndef int64
+#define int64 __int64
+#endif
+#ifndef atoll
+#define atoll	_atoi64 
+#endif
 
+/* struct dirent - same as Unix */
 typedef struct dirent
 {
     long            d_ino;                  /* inode (always 1 in WIN32) */

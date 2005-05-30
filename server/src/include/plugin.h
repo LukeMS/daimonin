@@ -152,8 +152,8 @@
  * plugin_hooklist struct below instead */
 #define HOOK_NONE               0
       
-#define HOOK_SHOWCOST            1
-#define HOOK_DEPOSIT             2
+#define HOOK_SENDCUSTOMCOMMAND   1
+#define HOOK_MAPDELETE           2
 #define HOOK_CREATEOBJECT        3
 
 #define HOOK_OUTOFMAP            4
@@ -196,18 +196,8 @@
 #define HOOK_REMOVEOBJECT       36
 #define HOOK_MAPTRANSERITEMS     37
 #define HOOK_MAPSAVE             38
-#define HOOK_MAPDELETE           39
 
-#define HOOK_QUERYCOST          40
-#define HOOK_QUERYMONEY         41
-#define HOOK_PAYFORITEM         42
-#define HOOK_PAYFORAMOUNT       43
-#define HOOK_NEWDRAWINFO        44
-#define HOOK_SENDCUSTOMCOMMAND  45
-
-#define HOOK_WITHDRAW            46
-  
-#define NR_OF_HOOKS              47
+#define NR_OF_HOOKS              39
   
 
 /*****************************************************************************/
@@ -315,11 +305,23 @@ struct plugin_hooklist
     int  (*find_animation)(char *name);
     int  (*find_face)(const char *name, int error);
     void (*get_tod)(struct _timeofday *tod);
-
-    /* Global variables */
+	sint64 (*query_money)(object *op);
+	sint64 (*query_cost)(object *tmp, object *who, int flag);
+	char* (*cost_string_from_value)(sint64 cost);
+	int (*pay_for_item)(object *op, object *pl);
+	int (*pay_for_amount)(sint64 to_pay, object *pl);
+	char* (*get_word_from_string)(char *str, int *pos);
+	int (*get_money_from_string)(char *text, struct _money_block *money);
+	void (*sell_item)(object *op, object *pl, sint64 value);
+	int (*query_money_type)(object *op, int value);
+	sint64 (*remove_money_type)(object *who, object *op, sint64 value, sint64 amount);
+	void (*insert_money_in_player)(object *pl, object *money, uint32 nrof);
+	
+	/* Global variables */
     Animations **animations;
     New_Face **new_faces;
     int *global_darkness_table;
+	archetype **coins_arch;
 };
 
 /*****************************************************************************/
