@@ -441,13 +441,13 @@ void move_gate(object *op)
     }
 
     /* We're going down (or reverse up) */
-    if (op->value)
+    if (op->weight_limit)
     {
         if (--op->stats.wc <= 0)  /* Reached bottom, let's stop */
         {
             op->stats.wc = 0;
             if (op->arch->clone.speed)
-                op->value = 0;
+                op->weight_limit = 0;
             else
             {
                 op->speed = 0;
@@ -508,7 +508,7 @@ void move_gate(object *op)
         if (tmp == NULL)
         {
             if (op->arch->clone.speed)
-                op->value = 1;
+                op->weight_limit = 1;
             else
             {
                 op->speed = 0;
@@ -623,12 +623,12 @@ void move_gate(object *op)
  */
 void move_timed_gate(object *op)
 {
-    int v   = op->value;
+    uint32 v   = op->weight_limit;
 
     if (op->stats.sp)
     {
         move_gate(op);
-        if (op->value != v)   /* change direction ? */
+        if (op->weight_limit != v)   /* change direction ? */
             op->stats.sp = 0;
         return;
     } 
@@ -636,7 +636,7 @@ void move_timed_gate(object *op)
     {
         /* keep gate down */
         move_gate(op);
-        if (op->value != v)
+        if (op->weight_limit != v)
         {
             /* ready ? */
             op->speed = 0;
@@ -655,7 +655,7 @@ void move_timed_gate(object *op)
 void move_detector(object *op)
 {
     object *tmp;
-    int     last    = op->value;
+    int     last    = op->weight_limit;
     int     detected;
     detected = 0;
 
@@ -685,12 +685,12 @@ void move_detector(object *op)
     {
         if (detected && last == 0)
         {
-            op->value = 1;
+            op->weight_limit = 1;
             push_button(op);
         }
         if (!detected && last == 1)
         {
-            op->value = 0;
+            op->weight_limit = 0;
             push_button(op);
         }
     }
@@ -699,12 +699,12 @@ void move_detector(object *op)
         /* in this case, we unset buttons */
         if (detected && last == 1)
         {
-            op->value = 0;
+            op->weight_limit = 0;
             push_button(op);
         }
         if (!detected && last == 0)
         {
-            op->value = 1;
+            op->weight_limit = 1;
             push_button(op);
         }
     }
@@ -733,7 +733,7 @@ void move_pit(object *op)
 {
     object *next, *tmp;
 
-    if (op->value)
+    if (op->weight_limit)
     {
         /* We're opening */
         if (--op->stats.wc <= 0)
@@ -1687,13 +1687,13 @@ void move_environment_sensor(object *op)
 
     /* Trigger if sensor status changes */
     if(
-            ( (trig_tod && trig_dow && trig_bright) && op->value == 0) ||
-            (!(trig_tod && trig_dow && trig_bright) && op->value == 1))
+            ( (trig_tod && trig_dow && trig_bright) && op->weight_limit == 0) ||
+            (!(trig_tod && trig_dow && trig_bright) && op->weight_limit == 1))
     {
 //        LOG(llevDebug, "env_sensor toggled from %d to %d\n", op->value, !op->value);
         
         /* TODO trigger a plugin event here or in push_button()? */
-        op->value = (trig_tod && trig_dow && trig_bright) ? 1 : 0;
+        op->weight_limit = (trig_tod && trig_dow && trig_bright) ? 1 : 0;
 #ifdef PLUGINS
         /* GROS: Handle for plugin TRIGGER event */
         if (op->event_flags & EVENT_FLAG_TRIGGER)
@@ -1738,7 +1738,7 @@ void move_environment_sensor(object *op)
  * type too. */
 void move_conn_sensor(object *op)
 {
-    int newvalue = 0;
+    uint32 newvalue = 0;
     int numinputs = 0, numactive = 0;
 
     oblinkpt   *obp;
@@ -1767,7 +1767,7 @@ void move_conn_sensor(object *op)
                 myinput = 1;
             else 
             {
-                if(ol->objlink.ob->value > 0)
+                if(ol->objlink.ob->weight_limit > 0)
                     numones++;
                 else
                     numzeroes++;
@@ -1804,9 +1804,9 @@ void move_conn_sensor(object *op)
 //    LOG(llevDebug, "move_conn_sensor: type=%d, numactive=%d, numinputs=%d, value=%d -> %d\n", op->sub_type1, numactive, numinputs, op->value, newvalue);
    
     /* Trigger only on state change */
-    if(op->value != newvalue)
+    if(op->weight_limit != newvalue)
     {
-        op->value = newvalue;
+        op->weight_limit = newvalue;
         /* TODO trigger a plugin event here or in use_trigger()? */
 #ifdef PLUGINS
         /* GROS: Handle for plugin TRIGGER event */

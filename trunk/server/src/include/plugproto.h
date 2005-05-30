@@ -28,8 +28,8 @@
 f_plugin    HookList[NR_OF_HOOKS]   =
 {
     NULL,
-	CFWShowCost, CFWDeposit,
-    CFWCreateObject, CFWOutOfMap,
+    CFWSendCustomCommand,
+	CFMapDelete,CFWCreateObject, CFWOutOfMap,
 	CFWCmdRSkill, CFWBecomeFollower, CFWPickup,
     CFWGetMapObject, CFWCommunicate,  
 		
@@ -40,13 +40,7 @@ f_plugin    HookList[NR_OF_HOOKS]   =
 	CFInterface, CFWUpdateSpeed, CFWUpdateObject, CFWFindAnimation, 
 	CFWTeleportObject, CFWDoLearnSkill, 
 	CFWReadyMapName, CFWAddExp, CFWDetermineGod, CFWFindGod, RegisterGlobalEvent,
-    UnregisterGlobalEvent, CFWDumpObject, CFWLoadObject, CFWRemoveObject,CFTransferMapItems, CFMapSave, CFMapDelete,
-	
-	CFWQueryCost, CFWQueryMoney, CFWPayForItem,
-    CFWPayForAmount, CFWNewDrawInfo, CFWSendCustomCommand, 
-	 
-	CFWWithdraw
-     
+    UnregisterGlobalEvent, CFWDumpObject, CFWLoadObject, CFWRemoveObject,CFTransferMapItems, CFMapSave
 };
-
+	
 #endif /*PLUGPROTO_H_*/

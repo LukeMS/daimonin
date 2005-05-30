@@ -41,7 +41,6 @@ char                           *coins[NUM_COINS + 1]    =
 {
     "mitcoin", "goldcoin", "silvercoin", "coppercoin", NULL
 };
-archetype                      *coins_arch[NUM_COINS];
 
 /* Give 1 re-roll attempt per artifact */
 #define ARTIFACT_TRIES 2
@@ -1052,18 +1051,19 @@ void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int
                 else /* we have a wealth object - expand it to real money */
                 {
                     /* if t->magic is != 0, thats our value - if not use default setting */
-                    int i, value = t->magic ? t->magic : t->item->clone.value;
+                    int i;
+					sint64 value = t->magic ? t->magic : t->item->clone.value;
 
                     value *= (difficulty / 2) + 1;
                     /* so we have 80% to 120% of the fixed value */
-                    value = (int) ((float) value * 0.8f + (float) value * ((float) (RANDOM() % 40) / 100.0f));
+                    value = (sint64) ((float) value * 0.8f + (float) value * ((float) (RANDOM() % 40) / 100.0f));
                     for (i = 0; i < NUM_COINS; i++)
                     {
                         if (value / coins_arch[i]->clone.value > 0)
                         {
                             tmp = get_object();
                             copy_object(&coins_arch[i]->clone, tmp);
-                            tmp->nrof = value / tmp->value;
+                            tmp->nrof = (uint32) (value / tmp->value);
                             value -= tmp->nrof * tmp->value;
                             put_treasure(tmp, op, flag);
                         }
@@ -1191,18 +1191,19 @@ void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty,
         else /* we have a wealth object - expand it to real money */
         {
             /* if t->magic is != 0, thats our value - if not use default setting */
-            int i, value = t->magic ? t->magic : t->item->clone.value;
+            int i;
+			sint64 value = t->magic ? t->magic : t->item->clone.value;
 
             value *= difficulty;
             /* so we have 80% to 120% of the fixed value */
-            value = (int) ((float) value * 0.8f + (float) value * ((float) (RANDOM() % 40) / 100.0f));
+            value = (sint64) ((float) value * 0.8f + (float) value * ((float) (RANDOM() % 40) / 100.0f));
             for (i = 0; i < NUM_COINS; i++)
             {
                 if (value / coins_arch[i]->clone.value > 0)
                 {
                     tmp = get_object();
                     copy_object(&coins_arch[i]->clone, tmp);
-                    tmp->nrof = value / tmp->value;
+                    tmp->nrof = (uint32)(value / tmp->value);
                     value -= tmp->nrof * tmp->value;
                     put_treasure(tmp, op, flag);
                 }
@@ -2320,7 +2321,7 @@ static int legal_artifact_combination(object *op, artifact *art)
 
 void give_artifact_abilities(object *op, artifact *art)
 {
-    int tmp_value   = op->value;
+    sint64 tmp_value   = op->value;
 
     op->value = 0;
     if (!load_object(art->parse_text, op, NULL, LO_MEMORYMODE, MAP_ARTIFACT))

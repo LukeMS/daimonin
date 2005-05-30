@@ -97,7 +97,7 @@ dam 1
 maxhp 20
 hp 20
 speed 0.35
-value 1
+container 1
 end
 Object grateTrg1
 name gate
@@ -199,5 +199,5 @@ maxhp 20
 hp 20
 attack_impact 100
 speed 0.35
-value 1
+container 1
 end

@@ -51,14 +51,18 @@
  * will probably be more portable than sint8/unit8
  */
 
-typedef unsigned int    uint32;
-typedef signed int      sint32;
-typedef unsigned short  uint16;
-typedef signed short    sint16;
-typedef unsigned char   uint8;
 typedef signed char     sint8;
-typedef unsigned short  Fontindex;
-typedef unsigned int    tag_t;
+typedef unsigned char   uint8;
+typedef signed short    sint16;
+typedef unsigned short  uint16;
+typedef signed int      sint32;
+typedef unsigned int    uint32;
+typedef int64			sint64;
+typedef unsigned int64	uint64;
+
+typedef uint32			tag_t;
+
+
 
 #ifdef CALLOC
 #undef CALLOC
@@ -454,6 +458,8 @@ EXTERN Socket_Info              socket_info;
 EXTERN uint32                   global_group_tag; /* every group gets a unique group tag identifier */
 EXTERN uint32                   global_map_tag; /* our global map_tag value for the server (map.c)*/
 EXTERN New_Face                *new_faces;
+EXTERN archetype			   *coins_arch[NUM_COINS];
+
 
 /* arch.c - sysinfo for lowlevel */
 EXTERN int                      arch_init;

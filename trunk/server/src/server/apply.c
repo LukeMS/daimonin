@@ -858,15 +858,19 @@ int convert_item(object *item, object *converter)
      */
     if (!strcmp(CONV_FROM(converter), "money"))
     {
-        int cost;
-        nr = (item->nrof * item->value) / CONV_NEED(converter);
+        sint64 cost;
+        nr = (int) (((sint64)item->nrof * item->value) / (sint64)CONV_NEED(converter));
         if (!nr)
             return 0;
         cost = nr * CONV_NEED(converter) / item->value;
         /* take into account rounding errors */
         if (nr * CONV_NEED(converter) % item->value)
             cost++;
-        decrease_ob_nr(item, cost);
+
+	    /* this is outdated code too... we have here a overflow problem */
+		if(cost >(2^31))
+			cost = (2^31);
+        decrease_ob_nr(item, (int)cost);
     }
     else
     {
@@ -1358,7 +1362,7 @@ static int apply_altar(object *altar, object *sacrifice, object *originator)
         }
         else
         {
-            altar->value = 1;  /* works only once */
+            altar->weight_limit = 1;  /* works only once */
             push_button(altar);
         }
         return sacrifice == NULL;
@@ -1707,7 +1711,7 @@ void move_apply(object *trap, object *victim, object *originator, int flags)
               if ((flags & MOVE_APPLY_VANISHED))
                   goto leave;
 
-              if (!trap->value)
+              if (!trap->weight_limit)
               {
                   sint32    tot;
                   for (ab = trap->above,tot = 0; ab != NULL; ab = ab->above)
@@ -1715,9 +1719,9 @@ void move_apply(object *trap, object *victim, object *originator, int flags)
                       {
                           tot += (ab->nrof ? ab->nrof : 1) * ab->weight + ab->carrying;
                       }
-                  if (!(trap->value = (tot > trap->weight) ? 1 : 0))
+                  if (!(trap->weight_limit = (tot > trap->weight) ? 1 : 0))
                       goto leave;
-                  SET_ANIMATION(trap, (NUM_ANIMATIONS(trap) / NUM_FACINGS(trap)) * trap->direction + trap->value);
+                  SET_ANIMATION(trap, (NUM_ANIMATIONS(trap) / NUM_FACINGS(trap)) * trap->direction + trap->weight_limit);
                   update_object(trap, UP_OBJ_FACE);
               }
               for (ab = trap->above, max = 100, sound_was_played = 0;
@@ -2929,8 +2933,8 @@ int manual_apply(object *op, object *tmp, int aflag)
               return 1; /* 1 = do not write an error message to the player */
           new_draw_info(NDI_UNIQUE, 0, op, "You turn the handle.");
           play_sound_map(op->map, op->x, op->y, SOUND_TURN_HANDLE, SOUND_NORMAL);
-          tmp->value = tmp->value ? 0 : 1;
-          SET_ANIMATION(tmp, ((NUM_ANIMATIONS(tmp) / NUM_FACINGS(tmp)) * tmp->direction) + tmp->value);
+          tmp->weight_limit = tmp->weight_limit ? 0 : 1;
+          SET_ANIMATION(tmp, ((NUM_ANIMATIONS(tmp) / NUM_FACINGS(tmp)) * tmp->direction) + tmp->weight_limit);
           update_object(tmp, UP_OBJ_FACE);
           push_button(tmp);
           return 1;

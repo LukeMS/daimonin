@@ -27,6 +27,9 @@
 
 /* WARNING: the whole module must rewritten to fix it for the new money
  * system in daimonin. 32bit will be broken when a player has ~250 mithril coins.
+ *
+ * Value is now set to int64. The source compiles without error but this module
+ * functions needs be tested.
  */
 
 
@@ -34,9 +37,10 @@
  * the item value. Now we always use the real value or the clone value and only adjust 
  * it by charisma or buy/sell base modifiers.
  */
-double query_cost(object *tmp, object *who, int flag)
+sint64 query_cost(object *tmp, object *who, int flag)
 {
-    double  val, diff;
+    sint64  val;
+	double  diff;
     int     number; /* used to better calculate value */
     int     charisma    = 11; /* thas a neutral base value */
 
@@ -45,15 +49,15 @@ double query_cost(object *tmp, object *who, int flag)
 
 
     if (tmp->type == MONEY) /* money is always identified */
-        return((double) number * (double) tmp->value);
+        return(number * tmp->value);
 
     /* handle identified items */
     if (QUERY_FLAG(tmp, FLAG_IDENTIFIED) || !need_identify(tmp))
     {
         if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))
-            return 0.0;
+            return 0;
         else
-            val = (double) tmp->value * (double) number;
+            val = tmp->value * number;
     }
     else /* This area deals with objects that are not identified, but can be */
     {
@@ -62,16 +66,16 @@ double query_cost(object *tmp, object *who, int flag)
             if (flag == F_BUY)
             {
                 LOG(llevBug, "BUG: Asking for buy-value of unidentified object %s.\n", query_name(tmp));
-                val = (double) tmp->arch->clone.value * (double) number;
+                val = tmp->arch->clone.value * number;
             }
             else    /* Trying to sell something, or get true value */
             {
                 if (tmp->type == GEM || tmp->type == TYPE_JEWEL || tmp->type == TYPE_PEARL || tmp->type == TYPE_NUGGET) /* selling unidentified gems is *always* stupid */
-                    val = (double) number * 3.0;
+                    val = number * 3;
                 else if (tmp->type == POTION)
-                    val = (double) number * 50.0; /* Don't want to give anything away */
+                    val = number * 50; /* Don't want to give anything away */
                 else
-                    val = (double) number * (double) tmp->arch->clone.value;
+                    val = number * tmp->arch->clone.value;
             }
         }
         else
@@ -81,18 +85,18 @@ double query_cost(object *tmp, object *who, int flag)
             if (flag == F_BUY)
             {
                 LOG(llevBug, "BUG: Asking for buy-value of unidentified object without arch.\n");
-                val = (double) number * 100.0;
+                val = number * 100;
             }
             else
-                val = (double) number * 80.0;
+                val = number * 80;
         }
     }
 
     /* wands will count special. The base value is for a wand with one charge */
     if (tmp->type == WAND)
-        val += ((val * (double) tmp->level) / 1.0) * (double) tmp->stats.food;
+        val += (val * tmp->level) * tmp->stats.food;
     else if (tmp->type == ROD || tmp->type == HORN || tmp->type == POTION || tmp->type == SCROLL)
-        val += (val * (double) tmp->level) / 1.0;
+        val += val * tmp->level;
 
     /* we are done if we only want get the real value */
     if (flag == F_TRUE)
@@ -124,20 +128,20 @@ double query_cost(object *tmp, object *who, int flag)
     else
         diff = 0.20 + (double) cha_bonus[charisma];  
 
-    diff = val * diff; /* our real value */
+    val = (sint64) ((double)val*diff); /* our real value */
 
     /* we want give at last 1 copper for items which has any value */
-    if (((int) diff) == 0 && (((int) val) > 0 || tmp->value > 0))
-        diff = 1.0f;
+    if (val == 0 && ( val > 0 || tmp->value > 0))
+        val = 1;
 
-    return diff;
+    return val;
 }
 
 /* Find the coin type that is worth more the 'c'.  Starts at the
  * cointype placement.
  */
 
-static archetype * find_next_coin(double c, int *cointype)
+static archetype * find_next_coin(sint64 c, int *cointype)
 {
     archetype  *coin;
 
@@ -150,7 +154,7 @@ static archetype * find_next_coin(double c, int *cointype)
             return NULL;
         *cointype += 1;
     }
-    while ((double) coin->clone.value > c);
+    while (coin->clone.value > c);
 
     return coin;
 }
@@ -158,19 +162,20 @@ static archetype * find_next_coin(double c, int *cointype)
 /* This returns a string of how much somethign is worth based on
  * an integer being passed.
  */
-char * cost_string_from_value(double cost)
+char * cost_string_from_value(sint64 cost)
 {
     static char buf[MAX_BUF];
     archetype  *coin, *next_coin;
     char       *endbuf;
-    int         num, cointype = 0;
+    uint32      num;
+	int         cointype = 0;
 
     coin = find_next_coin(cost, &cointype);
     if (coin == NULL)
         return "nothing";
 
-    num = (int) (cost / (double) coin->clone.value);
-    cost -= (double) num * (double) coin->clone.value;
+    num = (uint32) (cost / coin->clone.value);
+    cost -= num * coin->clone.value;
 	/* careful - never set a coin arch to material_real = -1 ! */
     if (num == 1)
         sprintf(buf, "1 %s%s", material_real[coin->clone.material_real].name, coin->clone.name);
@@ -186,10 +191,10 @@ char * cost_string_from_value(double cost)
         endbuf = buf + strlen(buf);
 
         coin = next_coin;
-        num = (int) (cost / (double) coin->clone.value);
-        cost -= (double) num * (double) coin->clone.value;
+        num = (uint32) (cost / coin->clone.value);
+        cost -= num * coin->clone.value;
 
-        if (cost == 0.0)
+        if (cost == 0)
             next_coin = NULL;
         else
             next_coin = find_next_coin(cost, &cointype);
@@ -224,10 +229,10 @@ char * query_cost_string(object *tmp, object *who, int flag)
  * and returns that value                       */
 /* Now includes any coins in active containers -- DAMN          */
 /* or every gold type container (even not applied) */
-int query_money(object *op)
+sint64 query_money(object *op)
 {
     object *tmp;
-    int     total   = 0;
+    sint64     total   = 0;
 
     if (op->type != PLAYER && op->type != CONTAINER)
     {
@@ -247,7 +252,7 @@ int query_money(object *op)
  * the player inventory and from it's various pouches using the         *
  * pay_from_container function.                                         *
  * returns 0 if not possible. 1 if success                              */
-int pay_for_amount(int to_pay, object *pl)
+int pay_for_amount(sint64 to_pay, object *pl)
 {
     object *pouch;
 
@@ -275,7 +280,7 @@ int pay_for_amount(int to_pay, object *pl)
  * of the price was paid from.                      */
 int pay_for_item(object *op, object *pl)
 {
-    int     to_pay  = (int) query_cost(op, pl, F_BUY);
+    sint64     to_pay  = query_cost(op, pl, F_BUY);
     object *pouch;
 
     if (to_pay == 0.0)
@@ -305,9 +310,10 @@ int pay_for_item(object *op, object *pl)
  */
 /* DAMN: This function is used for the player, then for any active  *
  * containers that can hold money, until the op is paid for.        */
-int pay_from_container(object *op, object *pouch, int to_pay)
+sint64 pay_from_container(object *op, object *pouch, sint64 to_pay)
 {
-    int         count, i, remain;
+	sint64		remain;
+    int         count, i;
     object     *tmp, *coin_objs[NUM_COINS], *next;
     archetype  *at;
     object     *who;
@@ -370,7 +376,7 @@ int pay_from_container(object *op, object *pouch, int to_pay)
 
     for (i = 0; i < NUM_COINS; i++)
     {
-        int num_coins;
+        sint64 num_coins;
 
         if (coin_objs[i]->nrof * coin_objs[i]->value > (uint32) remain)
         {
@@ -383,8 +389,14 @@ int pay_from_container(object *op, object *pouch, int to_pay)
             num_coins = coin_objs[i]->nrof;
         }
 
-        remain -= num_coins * coin_objs[i]->value;
-        coin_objs[i]->nrof -= num_coins;
+		if(num_coins>(2^32))
+		{
+			LOG(llevDebug,"shop.c (line: %d): money overflow value->nrof: number of coins>2^32 (type coin %di,\n", __LINE__ , i);
+			num_coins = (2^32);
+		}
+
+		remain -= num_coins * coin_objs[i]->value;
+		coin_objs[i]->nrof -= (uint32) num_coins;
         /* Now start making change.  Start at the coin value
          * below the one we just did, and work down to
          * the lowest value.
@@ -393,7 +405,7 @@ int pay_from_container(object *op, object *pouch, int to_pay)
         while (remain < 0 && count >= 0)
         {
             num_coins = -remain / coin_objs[count]->value;
-            coin_objs[count]->nrof += num_coins;
+            coin_objs[count]->nrof += (uint32)num_coins;
             remain += num_coins * coin_objs[count]->value;
             count--;
         }
@@ -445,7 +457,7 @@ int get_payment2(object *pl, object *op)
         strncpy(buf, query_cost_string(op, pl, F_BUY), MAX_BUF);
         if (!pay_for_item(op, pl))
         {
-            int i   = (int) query_cost(op, pl, F_BUY) - query_money(pl);
+            sint64 i   = query_cost(op, pl, F_BUY) - query_money(pl);
             CLEAR_FLAG(op, FLAG_UNPAID);
             new_draw_info_format(NDI_UNIQUE, 0, pl, "You lack %s to buy %s.", cost_string_from_value(i), query_name(op));
             SET_FLAG(op, FLAG_UNPAID);
@@ -490,9 +502,10 @@ int get_payment(object *pl)
  * new money type needs to be explicity code in here.           */
 /* Modified to fill available race: gold containers before dumping  *
  * remaining coins in character's inventory. -- DAMN 			*/
-void sell_item(object *op, object *pl, int value)
+void sell_item(object *op, object *pl, sint64 value)
 {
-    int         i, count;
+    sint64      i;
+	int			count;
     object     *tmp;
     object     *pouch;
     archetype  *at;
@@ -544,13 +557,13 @@ void sell_item(object *op, object *pl, int value)
                                                                                                          "gold"))
                 {
                     int w   = (int) ((float) at->clone.weight *pouch->weapon_speed);
-                    int n   = i / at->clone.value;
+                    uint32 n   = (uint32) (i / at->clone.value);
 
                     if (w == 0)
                         w = 1;    /* Prevent divide by zero */
-                    if (n > 0 && (!pouch->weight_limit || pouch->carrying + w <= (sint32) pouch->weight_limit))
+                    if (n > 0 && (!pouch->weight_limit || pouch->carrying + w <=  (sint32) pouch->weight_limit))
                     {
-                        if (pouch->weight_limit && ((sint32) pouch->weight_limit - pouch->carrying) / w < n)
+                        if (pouch->weight_limit && (pouch->weight_limit - pouch->carrying) / w < n)
                         {
                             n = (pouch->weight_limit - pouch->carrying) / w;
                         }
@@ -571,7 +584,7 @@ void sell_item(object *op, object *pl, int value)
             {
                 tmp = get_object();
                 copy_object(&at->clone, tmp);
-                tmp->nrof = i / tmp->value;
+                tmp->nrof = (uint32)(i / tmp->value);
                 i -= tmp->nrof * tmp->value;
                 tmp = insert_ob_in_ob(tmp, pl);
                 esrv_send_item(pl, tmp);
@@ -754,7 +767,7 @@ int get_money_from_string(char *text, struct _money_block *money)
 int query_money_type(object *op, int value)
 {
     object *tmp;
-    int     total   = 0;
+    sint64     total   = 0;
 
     for (tmp = op->inv; tmp; tmp = tmp->below)
     {
@@ -762,11 +775,14 @@ int query_money_type(object *op, int value)
             total += tmp->nrof;
         else if (tmp->type == CONTAINER && !tmp->slaying && ((!tmp->race || strstr(tmp->race, "gold"))))
             total += query_money_type(tmp, value);
+
+		if(total >= (sint64) value)
+			break;
     }
-    return total;
+    return (int) total;
 }
 
-int remove_money_type(object *who, object *op, int value, uint32 amount)
+sint64 remove_money_type(object *who, object *op, sint64 value, sint64 amount)
 {
     object *tmp, *tmp2;
 
@@ -793,7 +809,7 @@ int remove_money_type(object *who, object *op, int value, uint32 amount)
             }
             else
             {
-                tmp->nrof -= amount;
+                tmp->nrof -= (uint32) amount;
                 amount = 0;
 
                 esrv_send_item(who, tmp);

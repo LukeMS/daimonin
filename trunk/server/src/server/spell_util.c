@@ -1514,9 +1514,9 @@ void explosion(object *op)
         CLEAR_FLAG(op, FLAG_NO_APPLY);
     }
     hit_map(op, 0, op->attacktype);
-    if (op->stats.hp > 2 && !op->value)
+    if (op->stats.hp > 2 && !op->weight_limit)
     {
-        op->value = 1;
+        op->weight_limit = 1;
         for (i = 1; i < 9; i++)
         {
             int dx, dy;
@@ -1531,7 +1531,7 @@ void explosion(object *op)
                 tmp->state = 0;
                 tmp->speed_left = -0.21f;
                 tmp->stats.hp--;
-                tmp->value = 0;
+                tmp->weight_limit = 0;
                 tmp->x = dx,tmp->y = dy;
                 insert_ob_in_map(tmp, m, op, 0);
             }
@@ -1632,9 +1632,9 @@ void move_bolt(object *op)
         return;
     }
     hit_map(op, 0, op->attacktype);
-    if (!op->value && --(op->stats.exp) > 0)
+    if (!op->weight_limit && --(op->stats.exp) > 0)
     {
-        op->value = 1;
+        op->weight_limit = 1;
         if (!op->direction)
             return;
 
@@ -1649,7 +1649,7 @@ void move_bolt(object *op)
             /* We're about to bounce */
             if (!QUERY_FLAG(op, FLAG_REFLECTING))
                 return;
-            op->value = 0;
+            op->weight_limit = 0;
             if (op->direction & 1)
                 op->direction = absdir(op->direction + 4);
             else
@@ -1675,7 +1675,7 @@ void move_bolt(object *op)
             tmp = get_object();
             copy_object(op, tmp);
             tmp->speed_left = -0.1f;
-            tmp->value = 0;
+            tmp->weight_limit = 0;
             tmp->stats.hp++;
             tmp->x += DIRX(tmp),tmp->y += DIRY(tmp);
             if (!insert_ob_in_map(tmp, op->map, op, 0))

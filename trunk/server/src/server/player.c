@@ -734,7 +734,7 @@ int check_pick(object *op)
                 default:
                   /* use value density */
                   if (!QUERY_FLAG(tmp, FLAG_UNPAID)
-                   && (query_cost(tmp, op, F_TRUE) * 100.0 / ((double) tmp->weight * (double) (MAX(tmp->nrof, 1))))
+                   && ((double)query_cost(tmp, op, F_TRUE) * 100.0 / ((double) tmp->weight * (double) (MAX(tmp->nrof, 1))))
                    >= (double) CONTR(op)->mode)
                       pick_up(op, tmp);
             }
@@ -747,10 +747,10 @@ int check_pick(object *op)
                 /* some debugging code to figure out item information */
                 if (tmp->name != NULL)
                     sprintf(putstring, "item name: %s    item type: %d    weight/value: %d", tmp->name, tmp->type,
-                            (int) (query_cost(tmp, op, F_TRUE) * 100 / (tmp->weight * MAX(tmp->nrof, 1))));
+                            (int) ((double)query_cost(tmp, op, F_TRUE) * 100 / (tmp->weight * MAX(tmp->nrof, 1))));
                 else
                     sprintf(putstring, "item name: %s    item type: %d    weight/value: %d", tmp->arch->name, tmp->type,
-                            (int) (query_cost(tmp, op, F_TRUE) * 100 / (tmp->weight * MAX(tmp->nrof, 1))));
+                            (int) ((double)query_cost(tmp, op, F_TRUE) * 100 / (tmp->weight * MAX(tmp->nrof, 1))));
                 new_draw_info(NDI_UNIQUE, 0, op, putstring);
 
                 sprintf(putstring, "...flags: ");
@@ -941,7 +941,7 @@ int check_pick(object *op)
                 /* >=7 is the old standard setting.  Now we take the last 4 bits
                  * and multiply them by 5, giving 0..15*5== 5..75 */
                 wvratio = (CONTR(op)->mode & PU_RATIO) * 5;
-                if ((query_cost(tmp, op, F_TRUE) * 100 / (tmp->weight * MAX((signed long) tmp->nrof, 1))) >= wvratio)
+                if (((double)query_cost(tmp, op, F_TRUE) * 100 / (tmp->weight * MAX((signed long) tmp->nrof, 1))) >= wvratio)
                 {
                     pick_up(op, tmp);
 

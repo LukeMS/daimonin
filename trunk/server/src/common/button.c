@@ -59,14 +59,14 @@ void signal_connection(object *op, oblinkpt *olp)
         {
             case GATE:
             case PIT:
-              tmp->value = tmp->stats.maxsp ? !op->value : op->value;
+              tmp->weight_limit = tmp->stats.maxsp ? !op->weight_limit : op->weight_limit;
               tmp->speed = 0.5;
               update_ob_speed(tmp);
               break;
             case CF_HANDLE:
               SET_ANIMATION(tmp,
                             ((NUM_ANIMATIONS(tmp) / NUM_FACINGS(tmp)) * tmp->direction)
-                          + (tmp->value = tmp->stats.maxsp ? !op->value : op->value));
+                          + (tmp->weight_limit = tmp->stats.maxsp ? !op->weight_limit : op->weight_limit));
               update_object(tmp, UP_OBJ_FACE);
               break;
             case SIGN:
@@ -78,14 +78,14 @@ void signal_connection(object *op, oblinkpt *olp)
               }
               break;
             case ALTAR:
-              tmp->value = 1;
-              SET_ANIMATION(tmp, ((NUM_ANIMATIONS(tmp) / NUM_FACINGS(tmp)) * tmp->direction) + tmp->value);
+              tmp->weight_limit = 1;
+              SET_ANIMATION(tmp, ((NUM_ANIMATIONS(tmp) / NUM_FACINGS(tmp)) * tmp->direction) + tmp->weight_limit);
               update_object(tmp, UP_OBJ_FACE);
               break;
             case BUTTON:
             case PEDESTAL:
-              tmp->value = op->value;
-              SET_ANIMATION(tmp, ((NUM_ANIMATIONS(tmp) / NUM_FACINGS(tmp)) * tmp->direction) + tmp->value);
+              tmp->weight_limit = op->weight_limit;
+              SET_ANIMATION(tmp, ((NUM_ANIMATIONS(tmp) / NUM_FACINGS(tmp)) * tmp->direction) + tmp->weight_limit);
               update_object(tmp, UP_OBJ_FACE);
               break;
             case MOOD_FLOOR:
@@ -94,7 +94,7 @@ void signal_connection(object *op, oblinkpt *olp)
             case TIMED_GATE:
               tmp->speed = tmp->arch->clone.speed;
               update_ob_speed(tmp);  /* original values */
-              tmp->value = tmp->arch->clone.value;
+              tmp->weight_limit = tmp->arch->clone.weight_limit;
               tmp->stats.sp = 1;
               tmp->stats.hp = tmp->stats.maxhp;
               break;
@@ -145,9 +145,9 @@ void signal_connection(object *op, oblinkpt *olp)
               
             case TYPE_LIGHT_APPLY:
             case LIGHT_SOURCE: /* Dunno if this really works for LIGHT_SOURCE */
-              if(op->value == 0 && tmp->glow_radius > 0)
+              if(op->weight_limit == 0 && tmp->glow_radius > 0)
                   turn_off_light(tmp);
-              else if(op->value != 0 && tmp->glow_radius == 0)
+              else if(op->weight_limit != 0 && tmp->glow_radius == 0)
                   turn_on_light(tmp);
               break;
         }
@@ -164,7 +164,8 @@ void signal_connection(object *op, oblinkpt *olp)
 void update_button(object *op)
 {
     object     *ab, *tmp, *head;
-    int         move, fly, tot, any_down = 0, old_value = op->value;
+    int         move, fly, tot, any_down = 0;
+	uint32		old_value = op->weight_limit;
     objectlink *ol;
 
     /* LOG(llevDebug, "update_button: %s (%d)\n", op->name, op->count); */
@@ -185,13 +186,13 @@ void update_button(object *op)
                 if (ab != tmp && (fly ? QUERY_FLAG(ab, FLAG_FLYING) : move))
                     tot += ab->weight * (ab->nrof ? ab->nrof : 1) + ab->carrying;
             }
-            tmp->value = (tot >= tmp->weight) ? 1 : 0;
-            if (tmp->value)
+            tmp->weight_limit = (tot >= tmp->weight) ? 1 : 0;
+            if (tmp->weight_limit)
                 any_down = 1;
         }
         else if (tmp->type == PEDESTAL)
         {
-            tmp->value = 0;
+            tmp->weight_limit = 0;
             fly = QUERY_FLAG(tmp, FLAG_FLY_ON);
             move = QUERY_FLAG(tmp, FLAG_WALK_ON);
             for (ab = GET_MAP_OB_LAYER(tmp->map, tmp->x, tmp->y, 2); ab != NULL; ab = ab->above)
@@ -200,19 +201,19 @@ void update_button(object *op)
                 if (ab != tmp
                  && (fly ? QUERY_FLAG(ab, FLAG_FLYING) : move)
                  && (head->race == tmp->slaying || (!strcmp(tmp->slaying, "player") && head->type == PLAYER)))
-                    tmp->value = 1;
+                    tmp->weight_limit = 1;
             }
-            if (tmp->value)
+            if (tmp->weight_limit)
                 any_down = 1;
         }
     }
     if (any_down) /* If any other buttons were down, force this to remain down */
-        op->value = 1;
+        op->weight_limit = 1;
 
     /* If this button hasn't changed, don't do anything */
-    if (op->value != old_value)
+    if (op->weight_limit != old_value)
     {
-        SET_ANIMATION(op, ((NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction) + op->value);
+        SET_ANIMATION(op, ((NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction) + op->weight_limit);
         update_object(op, UP_OBJ_FACE);
         push_button(op); /* Make all other buttons the same */
     }
@@ -289,7 +290,7 @@ void push_button(object *op)
 void use_trigger(object *op)
 {
     /* Toggle value */
-    op->value = !op->value;
+    op->weight_limit = !op->weight_limit;
     push_button(op);
 }
 
@@ -380,7 +381,7 @@ int operate_altar(object *altar, object **sacrifice)
      */
     if (!strcmp(ARCH_SACRIFICE(altar), "money"))
     {
-        int number  = NROF_SACRIFICE(altar) / (*sacrifice)->value;
+        int number  = (int) (NROF_SACRIFICE(altar) / (*sacrifice)->value);
 
         /* Round up any sacrifices.  Altars don't make change either */
         if (NROF_SACRIFICE(altar) % (*sacrifice)->value)
@@ -500,10 +501,10 @@ int check_trigger(object *op, object *cause)
                   {
                       /* for trigger altar with last_sp, the ON/OFF
                        status (-> +/- value) is "simulated": */
-                      op->value = !op->value;
+                      op->weight_limit = !op->weight_limit;
                       trigger_move(op, 1);
                       op->last_sp = -op->last_sp;
-                      op->value = !op->value;
+                      op->weight_limit = !op->weight_limit;
                   }
                   return cause == NULL;
               }
@@ -526,7 +527,7 @@ int check_trigger(object *op, object *cause)
               else
               {
                   op->stats.wc = 0;
-                  op->value = !op->value;
+                  op->weight_limit = !op->weight_limit;
                   op->speed = 0;
                   update_ob_speed(op);
               }
@@ -636,7 +637,7 @@ void remove_button_link(object *op)
             if (ol->objlink.ob == op)
             {
                 /*        LOG(llevDebug, "Removed link %d in button %s and map %s.\n",
-                           obp->value, op->name, op->map->path);
+                           obp->weight_limit, op->name, op->map->path);
                 */
                 *olp = ol->next;
                 free_objectlink_simple(ol);

@@ -44,7 +44,7 @@ typedef struct map_look_struct
 typedef struct
 {
     const char *name;       /* Name of the animation sequence */
-    Fontindex  *faces;       /* The different animations */
+    unsigned short  *faces;       /* The different animations */
     uint16      num;             /* Where we are in the array */
     uint8       num_animations;   /* How many different faces to animate */
     uint8       facings;          /* How many facings (9 and 25 are allowed only with the new ext anim system ) */

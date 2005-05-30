@@ -326,8 +326,9 @@ void polymorph_melt(object *who, object *op)
  */
 void polymorph_item(object *who, object *op)
 {
+	sint64      max_value;
     archetype  *at;
-    int         max_value, difficulty, tries = 0, choice, charges = op->stats.food, numat = 0;
+    int         difficulty, tries = 0, choice, charges = op->stats.food, numat = 0;
     object     *new_ob;
 
 
@@ -1633,14 +1634,14 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
     {
         if (tmp2->type == FORCE)
         {
-            if (tmp2->value == spell_type)
+            if (tmp2->weight_limit == (uint32) spell_type)
             {
                 force = tmp2;    /* the old effect will be "refreshed" */
                 is_refresh = 1;
                 new_draw_info(NDI_UNIQUE, 0, op, "You recast the spell while in effect.");
             }
-            else if ((spell_type == SP_BLESS && tmp2->value == SP_HOLY_POSSESSION)
-                  || (spell_type == SP_HOLY_POSSESSION && tmp2->value == SP_BLESS))
+            else if ((spell_type == SP_BLESS && tmp2->weight_limit == SP_HOLY_POSSESSION)
+                  || (spell_type == SP_HOLY_POSSESSION && tmp2->weight_limit == SP_BLESS))
             {
                 /* both bless AND holy posession are not allowed! */
                 new_draw_info(NDI_UNIQUE, 0, op, "No more blessings for you.");
@@ -1650,7 +1651,7 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
     }
     if (force == NULL)
         force = get_archetype("force");
-    force->value = spell_type;  /* mark this force with the originating spell */
+    force->weight_limit = spell_type;  /* mark this force with the originating spell */
 
 
     i = 0;   /* (-> protection spells) */
@@ -1756,7 +1757,7 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
         case SP_ARMOUR:
           {
               /* armour MAY be used multiple times. */
-              force->value = 0;
+              force->weight_limit = 0;
               /* With PR code, I wonder if this could get merged in with the other protection spells */
               /* peterm, modified so that it uses level-depend functions */
               /* change this to POSITIVE AC!! */

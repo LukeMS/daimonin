@@ -214,7 +214,7 @@ void malloc_info(object *op)
     new_draw_info(NDI_UNIQUE, 0, op, errmsg);
     LOG(llevSystem, "%s\n", errmsg);
     sum_alloc += i; sum_used += i;
-    sprintf(errmsg, "%4d animations:      %8d", anims, i = (anims * sizeof(Fontindex)));
+    sprintf(errmsg, "%4d animations:      %8d", anims, i = (anims * sizeof(unsigned short)));
     new_draw_info(NDI_UNIQUE, 0, op, errmsg);
     LOG(llevSystem, "%s\n", errmsg);
     sum_alloc += i; sum_used += i;
