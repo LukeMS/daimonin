@@ -44,11 +44,14 @@
 # about the 'attribute' type: <attribute ... type="XXX" >            #
 #                                                                    #
 # bool         - This attribute can only be set to '1' or '0'        #
-# int          - This attribute contains a decimal number            #
+# int          - This attribute contains a 32 Bit decimal number     #
+# long         - This attribute contains a 64 Bit decimal number     #
 # float        - This attr. contains a floating point number         #
 # string       - This attribute contains a string                    #
 # facename     - This attribute contains a string which is           #
 #                a face name                                         #
+# animname     - This attribute contains a string which is           #
+#                an animation name                                   #
 # text         - This attribute contains a text ("text" can have     #
 #                linebreaks, unlike "string")                        #
 # fixed        - This attribute is always set to a fixed 'value'     #
@@ -425,7 +428,7 @@
     The image-name defines what image is displayed for this object
     in-game.
   </attribute>
-  <attribute arch="animation" editor="animation" type="string">
+  <attribute arch="animation" editor="animation" type="animname">
     The animation-name defines what animation is displayed for this object
     in-game. Note that a set animation will overrule the face.
     Changing animation is easy - adding or deleting a animation is more
@@ -477,7 +480,7 @@
     for explicitly non-pickable objects (hey, this is opensource.. you
     never know ;) ).
   </attribute>
-  <attribute arch="value" editor="value" type="int">
+  <attribute arch="value" editor="value" type="long">
     Adds a certain value to the object: It will be worth that many times the
     default value from it's archetype (E.g. "value = 3" means three times
     worth the default value). Value for buying/selling will be
