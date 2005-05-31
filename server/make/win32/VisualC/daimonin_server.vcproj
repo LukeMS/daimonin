@@ -14,18 +14,17 @@
 			Name="ReleaseLog|Win32"
 			OutputDirectory=".\ReleaseLog"
 			IntermediateDirectory=".\ReleaseLog"
-			ConfigurationType="1"
-			UseOfMFC="2"
+			ConfigurationType="2"
+			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
 			CharacterSet="2">
 			<Tool
 				Name="VCCLCompilerTool"
+				Optimization="0"
 				InlineFunctionExpansion="2"
 				AdditionalIncludeDirectories="..\..\..\src\include,..\..\..\src\random_maps"
 				PreprocessorDefinitions="_CONSOLE,DEBUG,WIN32,NDEBUG,LUA_PLUGIN_EXPORTS"
-				StringPooling="TRUE"
 				RuntimeLibrary="2"
-				EnableFunctionLevelLinking="TRUE"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="preheader.pch"
 				PrecompiledHeaderFile=".\ReleaseLog/daimonin_server.pch"
@@ -41,11 +40,10 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="wsock32.lib winmm.lib"
-				OutputFile=".\ReleaseLog/daimonin_server.exe"
+				OutputFile=".\ReleaseLog/daimonin_server.dll"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				SubSystem="1"
-				ImportLibrary=""/>
+				SubSystem="1"/>
 			<Tool
 				Name="VCMIDLTool"
 				TypeLibraryName=".\ReleaseLog/daimonin_server.tlb"/>
@@ -70,7 +68,7 @@
 			OutputDirectory=".\Debug"
 			IntermediateDirectory=".\Debug"
 			ConfigurationType="1"
-			UseOfMFC="2"
+			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
 			CharacterSet="2">
 			<Tool
@@ -91,6 +89,7 @@
 				BrowseInformation="1"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
+				Detect64BitPortabilityProblems="FALSE"
 				DebugInformationFormat="3"
 				CompileAs="0"/>
 			<Tool
@@ -363,6 +362,9 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\..\..\src\server\gmaster.c">
+				</File>
+				<File
 					RelativePath="..\..\..\src\server\gods.c">
 					<FileConfiguration
 						Name="ReleaseLog|Win32">
@@ -466,6 +468,9 @@
 							Name="VCCLCompilerTool"
 							ObjectFile=".\Debug\server/"/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\src\server\npc_communicate.c">
 				</File>
 				<File
 					RelativePath="..\..\..\src\server\pathfinder.c">
@@ -591,6 +596,9 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\..\..\src\server\spawn_point.c">
+				</File>
+				<File
 					RelativePath="..\..\..\src\server\spell_effect.c">
 					<FileConfiguration
 						Name="ReleaseLog|Win32">
@@ -652,21 +660,6 @@
 				</File>
 				<File
 					RelativePath="..\..\..\src\server\time.c">
-					<FileConfiguration
-						Name="ReleaseLog|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\ReleaseLog\server/"/>
-					</FileConfiguration>
-					<FileConfiguration
-						Name="Debug|Win32">
-						<Tool
-							Name="VCCLCompilerTool"
-							ObjectFile=".\Debug\server/"/>
-					</FileConfiguration>
-				</File>
-				<File
-					RelativePath="..\..\..\src\server\timers.c">
 					<FileConfiguration
 						Name="ReleaseLog|Win32">
 						<Tool
@@ -1259,6 +1252,9 @@
 					RelativePath="..\..\..\src\common\porting.c">
 				</File>
 				<File
+					RelativePath="..\..\..\src\common\quest.c">
+				</File>
+				<File
 					RelativePath="..\..\..\src\common\re-cmp.c">
 				</File>
 				<File
@@ -1324,6 +1320,9 @@
 				RelativePath="..\..\..\src\include\global.h">
 			</File>
 			<File
+				RelativePath="..\..\..\src\include\gmaster.h">
+			</File>
+			<File
 				RelativePath="..\..\..\src\include\god.h">
 			</File>
 			<File
@@ -1378,6 +1377,9 @@
 				RelativePath="..\..\..\src\include\plugproto.h">
 			</File>
 			<File
+				RelativePath="..\..\..\src\include\quest.h">
+			</File>
+			<File
 				RelativePath="..\..\..\src\include\race.h">
 			</File>
 			<File
@@ -1409,9 +1411,6 @@
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\sproto.h">
-			</File>
-			<File
-				RelativePath="..\..\..\src\include\timers.h">
 			</File>
 			<File
 				RelativePath="..\..\..\src\include\tod.h">

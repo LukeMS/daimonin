@@ -141,6 +141,12 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat">
 			<File
+				RelativePath="..\..\..\..\src\plugin_lua\ai_object.c">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\plugin_lua\daimonin_game.c">
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\plugin_lua\daimonin_map.c">
 			</File>
 			<File
@@ -160,13 +166,16 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl">
 			<File
+				RelativePath="..\..\..\..\src\plugin_lua\include\ai_object.h">
+			</File>
+			<File
+				RelativePath="..\..\..\..\src\plugin_lua\include\daimonin_game.h">
+			</File>
+			<File
 				RelativePath="..\..\..\..\src\plugin_lua\include\daimonin_map.h">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\plugin_lua\include\daimonin_object.h">
-			</File>
-			<File
-				RelativePath="..\..\..\..\src\plugin_lua\include\inline.h">
 			</File>
 			<File
 				RelativePath="..\..\..\..\src\plugin_lua\include\plugin_lua.h">
