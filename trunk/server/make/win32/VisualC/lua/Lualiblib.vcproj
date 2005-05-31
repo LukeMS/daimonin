@@ -12,8 +12,8 @@
 	<Configurations>
 		<Configuration
 			Name="ReleaseLog|Win32"
-			OutputDirectory=".\Lualiblib___Win32_ReleaseLog"
-			IntermediateDirectory=".\Lualiblib___Win32_ReleaseLog"
+			OutputDirectory=".\ReleaseLog"
+			IntermediateDirectory=".\ReleaseLog"
 			ConfigurationType="4"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
@@ -28,10 +28,10 @@
 				EnableFunctionLevelLinking="TRUE"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="lualiblib.pch"
-				PrecompiledHeaderFile=".\Lualiblib___Win32_ReleaseLog/Lualiblib.pch"
-				AssemblerListingLocation=".\Lualiblib___Win32_ReleaseLog/"
-				ObjectFile=".\Lualiblib___Win32_ReleaseLog/"
-				ProgramDataBaseFileName=".\Lualiblib___Win32_ReleaseLog/"
+				PrecompiledHeaderFile=".\ReleaseLog/Lualiblib.pch"
+				AssemblerListingLocation=".\ReleaseLog/"
+				ObjectFile=".\ReleaseLog/"
+				ProgramDataBaseFileName=".\ReleaseLog/"
 				WarningLevel="3"
 				SuppressStartupBanner="TRUE"
 				CompileAs="0"/>
