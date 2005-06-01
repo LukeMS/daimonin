@@ -307,7 +307,7 @@ typedef struct _spell_list_entry
 {
     int             flag;           /* -1: entry is unused */
     char            name[LIST_NAME_MAX];      /* name of entry */
-    char            icon_name[32];
+    char            icon_name[64];
     struct _Sprite *icon;
     char            desc[4][96];               /* description (in 4 rows) */
 }_spell_list_entry;

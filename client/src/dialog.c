@@ -183,7 +183,7 @@ static char        *skill_tab[]                     =
 /******************************************************************
  Spell Menue
 ******************************************************************/
-static char        *spell_tab[]                     =
+char        *spell_tab[]                     =
 {
 	"Life", "Death", "Elemental", "Energy",
 	"Spirit", "Protection", "Light", "Nether",

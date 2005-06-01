@@ -54,7 +54,9 @@ extern char    *opt_tab[];
 extern int      dialog_new_char_warn;
 extern int      active_button;
 extern int dialog_login_warning_level;
+extern char        *spell_tab[];
  
+
 #define DIALOG_LOGIN_WARNING_NONE       0
 #define DIALOG_LOGIN_WARNING_WRONGNAME  1
 #define DIALOG_LOGIN_WARNING_WRONGPASS  2
