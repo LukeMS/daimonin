@@ -1671,7 +1671,7 @@ void read_spells(void)
     struct stat statbuf;
     FILE       *stream;
     char       *temp_buf;
-    char        line[255], name[255], d1[255], d2[255], d3[255], d4[255], icon[128];
+    char        spath[255],line[255], name[255], d1[255], d2[255], d3[255], d4[255], icon[128];
 
     for (i = 0; i < SPELL_LIST_MAX; i++)
     {
@@ -1689,7 +1689,7 @@ void read_spells(void)
 
     srv_client_files[SRV_CLIENT_SPELLS].len = 0;
     srv_client_files[SRV_CLIENT_SPELLS].crc = 0;
-    LOG(LOG_DEBUG, "Reading %s....", FILE_CLIENT_SPELLS);
+    LOG(LOG_DEBUG, "Reading %s.... ", FILE_CLIENT_SPELLS);
     if ((stream = fopen_wrapper(FILE_CLIENT_SPELLS, "rb")) != NULL)
     {
         /* temp load the file and get the data we need for compare with server */
@@ -1713,7 +1713,35 @@ void read_spells(void)
             strcpy(name, tmp + 1);
             if (fgets(line, 255, stream) == NULL)
                 break;
-            sscanf(line, "%c %c %d %s", &type, &nchar, &panel, icon);
+            sscanf(line, "%c %c %s %s", &type, &nchar, spath, icon);
+			/*LOG(-1,"STRING:(%s) >%s< >%s<\n",line,  spath, icon);*/
+			if(isdigit(spath[0]))
+			{
+				panel = atoi(spath)-1;
+				if(panel >=SPELL_LIST_MAX)
+				{
+					LOG(LOG_DEBUG,"BUG: spell path out of range (%d) for line %s\n", panel, line);
+					panel = 0;
+				}
+			}
+			else
+			{
+				int a;
+
+				panel = -1;
+				for(a=0;a<SPELL_LIST_MAX;a++)
+				{
+					if(!strcmp(spell_tab[a], spath))
+					{
+						panel = a;
+					}
+				}
+				if(panel == -1)
+				{
+					LOG(LOG_DEBUG,"BUG: spell path out of range/wrong name (%s) for line %s\n", spath, line);
+					panel = 0;
+				}
+			}
             if (fgets(line, 255, stream) == NULL)
                 break;
             line[250] = 0;
@@ -1742,7 +1770,6 @@ void read_spells(void)
             tmp2 = strchr(tmp + 1, '"');
             *tmp2 = 0;
             strcpy(d4, tmp + 1);
-            panel--;
             spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].flag = LIST_ENTRY_USED;
             strcpy(spell_list[panel].entry[type == 'w' ? 0 : 1][nchar - 'a'].icon_name, icon);
             sprintf(line, "%s%s", GetIconDirectory(), icon);
