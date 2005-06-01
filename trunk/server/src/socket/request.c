@@ -977,14 +977,16 @@ void esrv_update_stats(player *pl)
 
 void esrv_new_player(player *pl, uint32 weight)
 {
+	int len;
+
 	SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_PLAYER);
     SockList_AddInt(&global_sl, pl->ob->count);
     SockList_AddInt(&global_sl, weight);
     SockList_AddInt(&global_sl, pl->ob->face->number);
 
-    SockList_AddChar(&global_sl, (char)strlen(pl->ob->name));
+    SockList_AddChar(&global_sl, (char)(len=strlen(pl->ob->name)));
     strcpy((char*)global_sl.buf+global_sl.len, pl->ob->name);
-    global_sl.len += strlen(pl->ob->name);
+    global_sl.len += len;
        
     Send_With_Handling(&pl->socket, &global_sl);
 

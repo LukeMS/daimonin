@@ -801,7 +801,7 @@ int hit_player_attacktype(object *op, object *hitter, int damage, uint32 attackn
     switch (attacknum)
     {
         case ATNR_PHYSICAL:
-          check_physically_infect(op, hitter); /* quick check for diesease! */
+          check_physically_infect(op, hitter); /* quick check for desease! */
         case ATNR_SLASH:
         case ATNR_CLEAVE:
         case ATNR_PIERCE:

@@ -23,8 +23,6 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 
-#define ALLOWED_COMBINATION
-
 /* TREASURE_DEBUG does some checking on the treasurelists after loading.
  * It is useful for finding bugs in the treasures file.  Since it only
  * slows the startup some (and not actual game play), it is by default
@@ -426,7 +424,8 @@ void init_artifacts()
         {
             if ((atemp = find_archetype(cp + 9)) == NULL)
                 LOG(llevError, "ERROR: Init_Artifacts: Can't find def_arch %s.\n", cp + 9);
-            /* ok, we have a name and a archtype */
+
+			/* ok, we have a name and a archtype */
             FREE_AND_COPY_HASH(art->def_at_name, cp + 9); /* store the non fake archetype name */
             memcpy(&art->def_at, atemp, sizeof(archetype)); /* copy the default arch */
             art->def_at.base_clone = &atemp->clone;
@@ -445,7 +444,7 @@ void init_artifacts()
         }
         else if (!strncmp(cp, "Object", 6)) /* all text after Object is now like a arch file until a end comes */
         {
-                 old_pos = ftell(fp);
+            old_pos = ftell(fp);
             if (!load_object(fp, &(art->def_at.clone), NULL, LO_LINEMODE, MAP_STYLE))
                 LOG(llevError, "ERROR: Init_Artifacts: Could not load object.\n");
 
@@ -503,8 +502,16 @@ void init_artifacts()
                  art->next = al->items;
                  al->items = art;
         }
-        else
-            LOG(llevBug, "BUG: Unknown input in artifact file: %s\n", buf);
+        else if (!strncmp(cp, "editor", 6))
+		{
+            cp = strchr(cp, '!');
+			if(cp) /* a '!' means !noarch */
+			{
+				art->flags |= ARTIFACT_FLAG_NOARCH;
+			}
+		}
+		else
+            LOG(llevBug, "\nBUG: Unknown line in artifact file: %s\n", buf);
     }
     fclose(fp);
 
@@ -2114,11 +2121,11 @@ int fix_generated_item(object **op_ptr, object *creator, int difficulty, int a_c
 static artifactlist * get_empty_artifactlist(void)
 {
     artifactlist   *tl  = (artifactlist *) malloc(sizeof(artifactlist));
+
     if (tl == NULL)
-        LOG(llevError, "ERROR: get_empty_artifactlist(): OOM.\n");
-    tl->next = NULL;
-    tl->items = NULL;
-    tl->total_chance = 0;
+        LOG(llevError, "ERROR: get_empty_artifactlist(): OOM!\n");
+	memset(tl, 0, sizeof(artifactlist));
+
     return tl;
 }
 
@@ -2131,14 +2138,8 @@ static artifact * get_empty_artifact(void)
     artifact   *t   = (artifact *) malloc(sizeof(artifact));
 
     if (t == NULL)
-        LOG(llevError, "ERROR: get_empty_artifact(): out of memory\n");
-    t->next = NULL;
-    t->name = NULL;
-    t->def_at_name = NULL;
-    t->t_style = 0;
-    t->chance = 0;
-    t->difficulty = 0;
-    t->allowed = NULL;
+        LOG(llevError, "ERROR: get_empty_artifact(): OOM!\n");
+	memset(t, 0, sizeof(artifact));
 
     return t;
 }
@@ -2189,7 +2190,7 @@ void add_artifact_archtype(void)
         art = al->items;
         do
         {
-            if (art->name)
+            if (art->flags!=ARTIFACT_FLAG_NOARCH && art->name)
             {
                 /*LOG(llevDebug,"add_art: %s (%s)\n", art->def_at.name, art->name);*/
                 add_arch(&art->def_at);
