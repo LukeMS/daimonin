@@ -997,7 +997,7 @@ static inline void safe_strcat(char *dest, const char *orig, int *curlen, int ma
         return;
     strncpy(dest + *curlen, orig, maxlen - *curlen - 1);
     dest[maxlen - 1] = 0;
-    *curlen += strlen(orig);
+    *curlen += (int)strlen(orig);
     if (*curlen > (maxlen - 1))
         *curlen = maxlen - 1;
 }

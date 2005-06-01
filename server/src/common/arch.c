@@ -376,7 +376,7 @@ void first_arch_pass(FILE *fp)
 
         /* ok... now we have the right speed_left value for out object.
          * copy_object() now will track down negative speed values, to
-         * alter speed_left to garantie a random & senseful start value.
+         * alter speed_left to have a random & senseful start value.
          */
 
         if (!op->layer && !QUERY_FLAG(op, FLAG_SYS_OBJECT))
@@ -503,16 +503,14 @@ void second_arch_pass(FILE *fp_start)
         }
 
         /* now we get our artifact. if we hit "def_arch", we first copy from it
-             * other_arch and treasure list to our artifact.
-             * then we search the object for other_arch and randomitems - perhaps we override
-             * them here.
-             */
+         * other_arch and treasure list to our artifact.
+         * then we search the object for other_arch and randomitems - perhaps we override them here.
+         */
         if (!strcmp("artifact", variable))
         {
-            if ((at = find_archetype(argument)) == NULL)
-                LOG(llevBug, "BUG: second artifacts pass: failed to find artifact %s\n", STRING_SAFE(argument));
+			at = find_archetype(argument);
         }
-        else if (!strcmp("def_arch", variable))
+        else if (at && !strcmp("def_arch", variable))
         {
             if ((other = find_archetype(argument)) == NULL)
                 LOG(llevBug, "BUG: second artifacts pass: failed to find def_arch %s from artifact %s\n",
@@ -533,7 +531,7 @@ void second_arch_pass(FILE *fp_start)
             else if (at != NULL)
                 at->clone.other_arch = other;
         }
-        else if (!strcmp("randomitems", variable))
+        else if (at && !strcmp("randomitems", variable))
         {
             if (at->clone.randomitems)
                 unlink_treasurelists(at->clone.randomitems, TRUE);
@@ -596,7 +594,7 @@ void load_archetypes()
     fp = fopen(filename, "r");
 
     /* I moved the artifacts loading to this position because it must be done
-     * BEFORE we load the trasure file - remember we have now fake arches in the
+     * BEFORE we load the treasure file - remember we have now fake arches in the
      * artifacts file 
      * second_arch_pass reparse the archetype file again and add other_arch and
      * randomitems (= treasurelists) to the arches.
@@ -622,7 +620,7 @@ object * arch_to_object(archetype *at)
     object *op;
     if (at == NULL)
     {
-        LOG(llevBug, "BUG: arch_to_object(): archtype at at == NULL.\n");
+        LOG(llevBug, "BUG: arch_to_object(): archetype at at == NULL.\n");
         return NULL;
     }
     op = get_object();

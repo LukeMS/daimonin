@@ -517,7 +517,7 @@ void eat_item(object *op, const char *item)
 /* This checks to see of the player (who) is sufficient level to use a weapon
  * with improvs improvements (typically last_eat).  We take an int here
  * instead of the object so that the improvement code can pass along the
- * increased value to see if the object is usuable.
+ * increased value to see if the object is usable.
  * we return 1 (true) if the player can use the weapon.
  */
 int check_weapon_power(object *who, int improvs)

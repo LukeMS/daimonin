@@ -22,17 +22,20 @@
 
     The author can be reached via e-mail to daimonin@nord-com.net
 */
+#define ARTIFACT_FLAG_NOARCH	1
+
 typedef struct artifactstruct
 {
-    char                   *parse_text; /* memory block with artifacts parse commands for loader.c */
-    const char             *name; /* thats the fake arch name when chained to arch list */
-    const char             *def_at_name; /* we use it as marker for def_at is valid and quick name access */
+    char                   *parse_text;		/* memory block with artifacts parse commands for loader.c */
+    const char             *name;			/* thats the fake arch name when chained to arch list */
+    const char             *def_at_name;	/* we use it as marker for def_at is valid and quick name access */
     struct artifactstruct  *next;
     linked_char            *allowed;
-    archetype               def_at; /* thats the base archtype object - this is chained to arch list */
+    archetype               def_at;			/* thats the base archtype object - this is chained to arch list */
     int                     t_style;
     uint16                  chance;
     uint8                   difficulty;
+	uint8					flags;			/* artifact flags */
 } artifact;
 
 typedef struct artifactliststruct
