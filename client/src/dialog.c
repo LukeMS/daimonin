@@ -187,8 +187,8 @@ char        *spell_tab[]                     =
 {
 	"Life", "Death", "Elemental", "Energy",
 	"Spirit", "Protection", "Light", "Nether",
-	"Nature", "Shadow", "Choas", "Earth",
-	"Conjuration", "Abjuration", "Transmuation", "Arcane",0
+	"Nature", "Shadow", "Chaos", "Earth",
+	"Conjuration", "Abjuration", "Transmutation", "Arcane",0
 };
 #define SPELL_TAB_SIZE (sizeof(spell_tab)/sizeof(char*))
 
