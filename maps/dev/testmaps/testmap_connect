@@ -677,6 +677,7 @@ end
 arch boulder
 x 5
 y 6
+no_pick 0
 end
 arch floor_ostone2
 x 5

@@ -1,11 +1,6 @@
 -- inventory iterator
-function inventory(obj)
-    local iterator = function(_, last) return last.below end
-    return iterator, nil, obj.inventory
-end
-
 function find_teddy(where)
-    for obj in inventory(where) do
+    for obj in obj_inventory(where) do
         if obj.name == 'teddy' then return obj end
     end
 end

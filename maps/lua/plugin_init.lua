@@ -41,6 +41,25 @@ function string.split(s, sep)
 	return t
 end
 
+--
+-- Very useful and elegant iterator functions for for loops
+-- for object in obj_inventory(obj) 
+-- for object in map_objects(map, x, y)
+--
+
+-- TODO: In the future I want to add those to the Map and Object classes, 
+-- but this will do for now. I hope people will use them
+
+function obj_inventory(obj)
+    local iterator = function(_, last) return last.below end
+    return iterator, nil, obj.inventory
+end
+
+function map_objects(map, x, y)
+    local iterator = function(_, last) return last.above end
+    return iterator, nil, map.GetFirstObjectOnSquare(x,y)
+end
+
 -- Magic errorhandler, sends script errors to involved DM:s
 -- TODO: possibility to turn on/off either via a script or custom commands
 -- TODO: possibility to register DM's that should get messages even if not involved
