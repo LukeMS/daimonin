@@ -80,9 +80,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="3"
+				GlobalOptimizations="TRUE"
 				InlineFunctionExpansion="2"
+				EnableIntrinsicFunctions="TRUE"
+				FavorSizeOrSpeed="1"
 				AdditionalIncludeDirectories="../../../,../../../src/include,../../../sdl"
 				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,__WIN_32"
+				ExceptionHandling="FALSE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderThrough="include.h"
@@ -102,7 +106,9 @@
 				OutputFile=".\Release/Daimonin.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
-				SubSystem="2"/>
+				SubSystem="2"
+				OptimizeReferences="2"
+				EnableCOMDATFolding="2"/>
 			<Tool
 				Name="VCMIDLTool"
 				PreprocessorDefinitions="NDEBUG"
