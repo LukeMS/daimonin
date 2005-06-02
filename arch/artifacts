@@ -99,10 +99,11 @@
 # Lights
 #
 Allowed crystal_light
-chance 40
-difficulty 50
 artifact crystal_light4
 def_arch crystal_light
+chance 40
+difficulty 50
+editor 1:items/light
 Object
 title of light
 is_magical 1
@@ -120,6 +121,7 @@ chance 70
 difficulty 1
 artifact pearl_poor
 def_arch pearl_generic
+editor 3:items/jewel/pearls
 Object
 title of poor quality
 material_real 0
@@ -133,6 +135,7 @@ chance 60
 difficulty 5
 artifact pearl_medium
 def_arch pearl_generic
+editor 3:items/jewel/pearls
 Object
 title of medium quality
 material_real 0
@@ -146,6 +149,7 @@ chance 50
 difficulty 10
 artifact pearl_great
 def_arch pearl_generic
+editor 3:items/jewel/pearls
 Object
 title of great quality
 material_real 0
@@ -159,6 +163,7 @@ chance 40
 difficulty 20
 artifact pearl_very_great
 def_arch pearl_generic
+editor 3:items/jewel/pearls
 Object
 title of very great quality
 material_real 0
@@ -172,6 +177,7 @@ chance 35
 difficulty 30
 artifact pearl_beauty
 def_arch pearl_generic
+editor 3:items/jewel/pearls
 Object
 title of exceptional beauty
 material_real 0
@@ -185,6 +191,7 @@ chance 30
 difficulty 45
 artifact pearl_flawless
 def_arch pearl_generic
+editor 3:items/jewel/pearls
 Object
 title of flawless beauty
 material_real 0
@@ -198,6 +205,7 @@ chance 45
 difficulty 10
 artifact pearl_poor_black
 def_arch pearl_generic
+editor 3:items/jewel/pearls
 Object
 name black pearl
 title of poor quality
@@ -213,6 +221,7 @@ chance 40
 difficulty 15
 artifact pearl_medium_black
 def_arch pearl_generic
+editor 3:items/jewel/pearls
 Object
 name black pearl
 title of medium quality
@@ -228,6 +237,7 @@ chance 35
 difficulty 20
 artifact pearl_great_black
 def_arch pearl_generic
+editor 3:items/jewel/pearls
 Object
 name black pearl
 title of great quality
@@ -243,6 +253,7 @@ chance 30
 difficulty 25
 artifact pearl_very_great_black
 def_arch pearl_generic
+editor 3:items/jewel/pearls
 Object
 name black pearl
 title of very great quality
@@ -258,6 +269,7 @@ chance 25
 difficulty 40
 artifact pearl_beauty_black
 def_arch pearl_generic
+editor 3:items/jewel/pearls
 Object
 name black pearl
 title of exceptional beauty
@@ -273,6 +285,7 @@ chance 20
 difficulty 50
 artifact pearl_flawless_black
 def_arch pearl_generic
+editor 3:items/jewel/pearls
 Object
 name black pearl
 title of flawless beauty
@@ -288,6 +301,7 @@ chance 35
 difficulty 15
 artifact pearl_poor_gold
 def_arch pearl_generic
+editor 3:items/jewel/pearls
 Object
 name gold pearl
 title of poor quality
@@ -303,6 +317,7 @@ chance 30
 difficulty 20
 artifact pearl_medium_gold
 def_arch pearl_generic
+editor 3:items/jewel/pearls
 Object
 name gold pearl
 title of medium quality
@@ -318,6 +333,7 @@ chance 25
 difficulty 25
 artifact pearl_great_gold
 def_arch pearl_generic
+editor 3:items/jewel/pearls
 Object
 name gold pearl
 title of great quality
@@ -333,6 +349,7 @@ chance 20
 difficulty 35
 artifact pearl_very_great_gold
 def_arch pearl_generic
+editor 3:items/jewel/pearls
 Object
 name gold pearl
 title of very great quality
@@ -348,6 +365,7 @@ chance 15
 difficulty 50
 artifact pearl_beauty_gold
 def_arch pearl_generic
+editor 3:items/jewel/pearls
 Object
 name gold pearl
 title of exceptional beauty
@@ -363,6 +381,7 @@ chance 10
 difficulty 60
 artifact pearl_flawless_gold
 def_arch pearl_generic
+editor 3:items/jewel/pearls
 Object
 name gold pearl
 title of flawless beauty
@@ -380,6 +399,7 @@ chance 55
 difficulty 2
 artifact nug_tin_med
 def_arch nugget_generic
+editor 3:items/jewel/nuggets
 Object
 title of medium size
 face nugget_silver_l.101
@@ -396,6 +416,7 @@ chance 50
 difficulty 5
 artifact nug_tin_big
 def_arch nugget_generic
+editor 3:items/jewel/nuggets
 Object
 title of big size
 face nugget_silver_h.101
@@ -412,6 +433,7 @@ chance 60
 difficulty 1
 artifact nug_copper_small
 def_arch nugget_generic
+editor 3:items/jewel/nuggets
 Object
 title of small size
 face nugget_copper_s.101
@@ -428,6 +450,7 @@ chance 50
 difficulty 7
 artifact nug_copper_med
 def_arch nugget_generic
+editor 3:items/jewel/nuggets
 Object
 title of medium size
 face nugget_copper_l.101
@@ -445,6 +468,7 @@ chance 40
 difficulty 12
 artifact nug_copper_big
 def_arch nugget_generic
+editor 3:items/jewel/nuggets
 Object
 title of big size
 face nugget_copper_h.101
@@ -462,6 +486,7 @@ chance 60
 difficulty 5
 artifact nug_bronze_small
 def_arch nugget_generic
+editor 3:items/jewel/nuggets
 Object
 title of small size
 face nugget_gold_s.101
@@ -478,6 +503,7 @@ chance 50
 difficulty 12
 artifact nug_bronze_med
 def_arch nugget_generic
+editor 3:items/jewel/nuggets
 Object
 title of medium size
 face nugget_gold_l.101
@@ -495,6 +521,7 @@ chance 40
 difficulty 18
 artifact nug_bronze_big
 def_arch nugget_generic
+editor 3:items/jewel/nuggets
 Object
 title of big size
 face nugget_gold_h.101
@@ -512,6 +539,7 @@ chance 50
 difficulty 10
 artifact nug_silver_small
 def_arch nugget_generic
+editor 3:items/jewel/nuggets
 Object
 title of small size
 face nugget_silver_s.101
@@ -529,6 +557,7 @@ chance 40
 difficulty 20
 artifact nug_silver_med
 def_arch nugget_generic
+editor 3:items/jewel/nuggets
 Object
 title of medium size
 face nugget_silver_l.101
@@ -546,6 +575,7 @@ chance 30
 difficulty 30
 artifact nug_silver_big
 def_arch nugget_generic
+editor 3:items/jewel/nuggets
 Object
 title of big size
 face nugget_silver_h.101
@@ -562,6 +592,7 @@ chance 40
 difficulty 25
 artifact nug_gold_small
 def_arch nugget_generic
+editor 3:items/jewel/nuggets
 Object
 title of small size
 face nugget_gold_s.101
@@ -579,6 +610,7 @@ chance 30
 difficulty 30
 artifact nug_gold_med
 def_arch nugget_generic
+editor 3:items/jewel/nuggets
 Object
 title of medium size
 face nugget_gold_l.101
@@ -596,6 +628,7 @@ chance 20
 difficulty 50
 artifact nug_gold_big
 def_arch nugget_generic
+editor 3:items/jewel/nuggets
 Object
 title of big size
 face nugget_gold_h.101
@@ -612,6 +645,7 @@ chance 30
 difficulty 35
 artifact nug_platin_small
 def_arch nugget_generic
+editor 3:items/jewel/nuggets
 Object
 title of small size
 face nugget_silver_s.101
@@ -629,6 +663,7 @@ chance 20
 difficulty 50
 artifact nug_platin_med
 def_arch nugget_generic
+editor 3:items/jewel/nuggets
 Object
 title of medium size
 face nugget_silver_l.101
@@ -646,6 +681,7 @@ chance 15
 difficulty 60
 artifact nug_platin_big
 def_arch nugget_generic
+editor 3:items/jewel/nuggets
 Object
 title of big size
 face nugget_silver_h.101
@@ -663,6 +699,7 @@ chance 20
 difficulty 85
 artifact nug_mit_small
 def_arch nugget_generic
+editor 3:items/jewel/nuggets
 Object
 title of small size
 face nugget_mit_s.101
@@ -681,6 +718,7 @@ chance 10
 difficulty 90
 artifact nug_mit_med
 def_arch nugget_generic
+editor 3:items/jewel/nuggets
 Object
 title of medium size
 face nugget_mit_l.101
@@ -699,6 +737,7 @@ chance 5
 difficulty 95
 artifact nug_mit_big
 def_arch nugget_generic
+editor 3:items/jewel/nuggets
 Object
 title of big size
 face nugget_mit_h.101
@@ -719,6 +758,7 @@ chance 40
 difficulty 1
 artifact zircon_small
 def_arch gem_generic
+editor 3:items/jewel/gems
 Object
 title of small size
 item_quality 100
@@ -733,6 +773,7 @@ chance 20
 difficulty 3
 artifact zircon_medium
 def_arch gem_generic
+editor 3:items/jewel/gems
 Object
 title of medium size
 face gem_big_clear.101
@@ -748,6 +789,7 @@ chance 40
 difficulty 1
 artifact jasper_small
 def_arch gem_generic
+editor 3:items/jewel/gems
 Object
 title of small size
 item_quality 100
@@ -763,6 +805,7 @@ chance 20
 difficulty 3
 artifact jasper_medium
 def_arch gem_generic
+editor 3:items/jewel/gems
 Object
 title of medium size
 item_quality 100
@@ -778,6 +821,7 @@ chance 40
 difficulty 1
 artifact jade_small
 def_arch gem_generic
+editor 3:items/jewel/gems
 Object
 title of small size
 item_quality 100
@@ -793,6 +837,7 @@ chance 20
 difficulty 3
 artifact jade_medium
 def_arch gem_generic
+editor 3:items/jewel/gems
 Object
 title of medium size
 item_quality 100
@@ -808,6 +853,7 @@ chance 40
 difficulty 1
 artifact aquamarine_small
 def_arch gem_generic
+editor 3:items/jewel/gems
 Object
 title of small size
 item_quality 100
@@ -823,6 +869,7 @@ chance 20
 difficulty 3
 artifact aquamarine_medium
 def_arch gem_generic
+editor 3:items/jewel/gems
 Object
 title of medium size
 item_quality 100
@@ -839,6 +886,7 @@ chance 40
 difficulty 1
 artifact amethyst_small
 def_arch gem_generic
+editor 3:items/jewel/gems
 Object
 title of small size
 item_quality 100
@@ -854,6 +902,7 @@ chance 20
 difficulty 3
 artifact amethyst_medium
 def_arch gem_generic
+editor 3:items/jewel/gems
 Object
 title of medium size
 item_quality 100
@@ -872,6 +921,7 @@ difficulty 2
 t_style 2
 artifact diamond_poor
 def_arch jewel_generic
+editor 3:items/jewel/jewels
 Object
 title of very poor quality
 item_quality 100
@@ -888,6 +938,7 @@ difficulty 9
 t_style 2
 artifact diamond_small
 def_arch jewel_generic
+editor 3:items/jewel/jewels
 Object
 title of very small size
 face jewel_clear.101
@@ -904,6 +955,7 @@ difficulty 20
 t_style 2
 artifact diamond_great
 def_arch jewel_generic
+editor 3:items/jewel/jewels
 Object
 title of great value
 face jewel_clear.101
@@ -920,6 +972,7 @@ difficulty 30
 t_style 2
 artifact diamond_except
 def_arch jewel_generic
+editor 3:items/jewel/jewels
 Object
 title of exceptional beauty
 face jewel_clear.101
@@ -936,6 +989,7 @@ difficulty 50
 t_style 2
 artifact diamond_flawless
 def_arch jewel_generic
+editor 3:items/jewel/jewels
 Object
 title of flawless beauty
 face jewel_clear.101
@@ -952,6 +1006,7 @@ difficulty 2
 t_style 1
 artifact ruby_poor
 def_arch jewel_generic
+editor 3:items/jewel/jewels
 Object
 title of very poor quality
 item_quality 100
@@ -968,6 +1023,7 @@ difficulty 9
 t_style 1
 artifact ruby_small
 def_arch jewel_generic
+editor 3:items/jewel/jewels
 Object
 title of very small size
 item_quality 100
@@ -984,6 +1040,7 @@ difficulty 20
 t_style 1
 artifact ruby_great
 def_arch jewel_generic
+editor 3:items/jewel/jewels
 Object
 title of great value
 face jewel_red.101
@@ -1000,6 +1057,7 @@ difficulty 30
 t_style 1
 artifact ruby_except
 def_arch jewel_generic
+editor 3:items/jewel/jewels
 Object
 title of exceptional beauty
 item_quality 100
@@ -1016,6 +1074,7 @@ difficulty 50
 t_style 1
 artifact ruby_flawless
 def_arch jewel_generic
+editor 3:items/jewel/jewels
 Object
 title of flawless beauty
 item_quality 100
@@ -1031,6 +1090,7 @@ chance 100
 difficulty 2
 artifact sapphire_poor
 def_arch jewel_generic
+editor 3:items/jewel/jewels
 Object
 title of very poor quality
 item_quality 100
@@ -1046,6 +1106,7 @@ chance 40
 difficulty 9
 artifact sapphire_small
 def_arch jewel_generic
+editor 3:items/jewel/jewels
 Object
 title of very small size
 face jewel_blue.101
@@ -1061,6 +1122,7 @@ chance 30
 difficulty 20
 artifact sapphire_great
 def_arch jewel_generic
+editor 3:items/jewel/jewels
 Object
 title of great value
 face jewel_blue.101
@@ -1076,6 +1138,7 @@ chance 20
 difficulty 30
 artifact sapphire_except
 def_arch jewel_generic
+editor 3:items/jewel/jewels
 Object
 title of exceptional beauty
 item_quality 100
@@ -1091,6 +1154,7 @@ chance 5
 difficulty 50
 artifact sapphire_flawless
 def_arch jewel_generic
+editor 3:items/jewel/jewels
 Object
 title of flawless beauty
 face jewel_blue.101
@@ -1106,6 +1170,7 @@ chance 100
 difficulty 2
 artifact emerald_poor
 def_arch jewel_generic
+editor 3:items/jewel/jewels
 Object
 title of very poor quality
 item_quality 100
@@ -1121,6 +1186,7 @@ chance 40
 difficulty 9
 artifact emerald_small
 def_arch jewel_generic
+editor 3:items/jewel/jewels
 Object
 title of very small size
 item_quality 100
@@ -1136,6 +1202,7 @@ chance 30
 difficulty 20
 artifact emerald_great
 def_arch jewel_generic
+editor 3:items/jewel/jewels
 Object
 item_quality 100
 item_condition 100
@@ -1151,6 +1218,7 @@ chance 20
 difficulty 30
 artifact emerald_except
 def_arch jewel_generic
+editor 3:items/jewel/jewels
 Object
 title of exceptional beauty
 face jewel_green.101
@@ -1166,6 +1234,7 @@ chance 5
 difficulty 50
 artifact emerald_flawless
 def_arch jewel_generic
+editor 3:items/jewel/jewels
 Object
 item_quality 100
 item_condition 100
@@ -1182,6 +1251,7 @@ chance 100
 difficulty 2
 artifact opal_poor
 def_arch jewel_generic
+editor 3:items/jewel/jewels
 Object
 title of very poor quality
 item_quality 100
@@ -1197,6 +1267,7 @@ chance 40
 difficulty 9
 artifact opal_small
 def_arch jewel_generic
+editor 3:items/jewel/jewels
 Object
 title of very small size
 item_quality 100
@@ -1212,6 +1283,7 @@ chance 30
 difficulty 20
 artifact opal_great
 def_arch jewel_generic
+editor 3:items/jewel/jewels
 Object
 item_quality 100
 item_condition 100
@@ -1227,6 +1299,7 @@ chance 20
 difficulty 30
 artifact opal_except
 def_arch jewel_generic
+editor 3:items/jewel/jewels
 Object
 title of exceptional beauty
 face jewel_purple.101
@@ -1242,6 +1315,7 @@ chance 5
 difficulty 50
 artifact opal_flawless
 def_arch jewel_generic
+editor 3:items/jewel/jewels
 Object
 item_quality 100
 item_condition 100
@@ -1254,10 +1328,16 @@ end
 #
 # Containers
 #
+# The editor 3: is a trick, because we had given out some of these containers
+# i the past as fake arch items - if they would vanish to singularities, they
+# would destroy all items inside too! This can be changed to 2: for 1.0 and player wipe
+#
+#
 Allowed quiver,quiver_s,quiver_b,bag,sack,r_sack,pouch
 chance 50
 artifact holding_min
 def_arch bag
+editor 3:items/container
 Object
 is_magical 1
 title of minor holding
@@ -1271,6 +1351,7 @@ chance 45
 difficulty 5
 artifact holding_small
 def_arch bag
+editor 3:items/container
 Object
 is_magical 1
 title of small holding
@@ -1284,6 +1365,7 @@ chance 35
 difficulty 15
 artifact holding_med
 def_arch bag
+editor 3:items/container
 Object
 is_magical 1
 title of medium holding
@@ -1297,6 +1379,7 @@ chance 25
 difficulty 25
 artifact holding
 def_arch bag
+editor 3:items/container
 Object
 is_magical 1
 title of holding
@@ -1310,6 +1393,7 @@ chance 15
 difficulty 35
 artifact holding_fine
 def_arch bag
+editor 3:items/container
 Object
 is_magical 1
 title of fine holding
@@ -1323,6 +1407,7 @@ chance 10
 difficulty 50
 artifact holding_great
 def_arch bag
+editor 3:items/container
 Object
 is_magical 1
 title of great holding
@@ -1336,6 +1421,7 @@ chance 5
 difficulty 65
 artifact holding_greater
 def_arch bag
+editor 3:items/container
 Object
 is_magical 1
 title of greater holding
@@ -1349,6 +1435,7 @@ chance 3
 difficulty 85
 artifact holding_weight
 def_arch bag
+editor 3:items/container
 Object
 is_magical 1
 title of weightless holding
@@ -1363,6 +1450,7 @@ Allowed cloak
 chance 49
 artifact cloak_woe1
 def_arch cloak
+editor 2:items/armour/cloak
 Object
 title of Woe
 type 87
@@ -1385,6 +1473,7 @@ chance 49
 t_style 1
 artifact cloak_less_fire
 def_arch cloak
+editor 2:items/armour/cloak
 Object
 title of lesser fire protection
 type 87
@@ -1398,6 +1487,7 @@ chance 49
 t_style 2
 artifact cloak_less_cold
 def_arch cloak
+editor 2:items/armour/cloak
 Object
 title of lesser cold protection
 type 87
@@ -1411,6 +1501,7 @@ chance 49
 t_style 3
 artifact cloak_less_elec
 def_arch cloak
+editor 2:items/armour/cloak
 Object
 title of lesser electricity protection
 type 87
@@ -1424,6 +1515,7 @@ chance 49
 t_style 4
 artifact cloak_less_poison
 def_arch cloak
+editor 2:items/armour/cloak
 Object
 title of lesser poison protection
 type 87
@@ -1437,6 +1529,7 @@ chance 49
 t_style 5
 artifact cloak_less_acid
 def_arch cloak
+editor 2:items/armour/cloak
 Object
 title of lesser acid protection
 type 87
@@ -1449,6 +1542,7 @@ Allowed robe
 chance 50
 artifact robe_woe
 def_arch robe
+editor 2:items/armour/cloak/robe
 Object
 title of Woe
 type 87
@@ -1470,6 +1564,7 @@ Allowed robe
 chance 50
 artifact robe_min_str
 def_arch robe
+editor 2:items/armour/cloak/robe
 Object
 title of minor strength
 type 87
@@ -1483,6 +1578,7 @@ Allowed robe
 chance 50
 artifact robe_min_dex
 def_arch robe
+editor 2:items/armour/cloak/robe
 Object
 title of minor dexterity
 type 87
@@ -1496,6 +1592,7 @@ Allowed robe
 chance 50
 artifact robe_min_con
 def_arch robe
+editor 2:items/armour/cloak/robe
 Object
 title of minor constitution
 type 87
@@ -1509,6 +1606,7 @@ Allowed robe
 chance 50
 artifact robe_min_int
 def_arch robe
+editor 2:items/armour/cloak/robe
 Object
 title of minor intelligence
 type 87
@@ -1522,6 +1620,7 @@ Allowed robe
 chance 50
 artifact robe_min_pow
 def_arch robe
+editor 2:items/armour/cloak/robe
 Object
 title of minor Power
 type 87
@@ -1534,6 +1633,7 @@ Allowed robe
 chance 50
 artifact robe_min_wis
 def_arch robe
+editor 2:items/armour/cloak/robe
 Object
 title of minor wisdom
 type 87
@@ -1546,6 +1646,7 @@ Allowed robe
 chance 50
 artifact robe_min_cha
 def_arch robe
+editor 2:items/armour/cloak/robe
 Object
 title of minor charisma
 type 87
@@ -1559,6 +1660,7 @@ Allowed cape
 chance 50
 artifact cape_woe
 def_arch cape
+editor 2:items/armour/cloak/cape
 Object
 title of Woe
 type 87
@@ -1581,6 +1683,7 @@ chance 20
 difficulty 20
 artifact cape_med_fire
 def_arch cape
+editor 2:items/armour/cloak/robe
 Object
 title of medium fire protection
 type 87
@@ -1598,6 +1701,7 @@ chance 20
 difficulty 20
 artifact cape_med_cold
 def_arch cape
+editor 2:items/armour/cloak/robe
 Object
 title of medium cold protection
 type 87
@@ -1615,6 +1719,7 @@ Allowed !crystal_mail, !mithril_armour,!mithril_ring,!mithril_coat,all
 chance 20
 artifact armour_mass
 def_arch chain_mail
+editor 2:items/armour/mail
 Object
 title of mass
 type 16
@@ -1629,6 +1734,7 @@ Allowed all
 chance 10
 artifact armour_minor_hp
 def_arch chain_mail
+editor 2:items/armour/mail
 Object
 title of minor health
 type 16
@@ -1642,6 +1748,7 @@ chance 10
 difficulty 20
 artifact armour_medium_hp
 def_arch chain_mail
+editor 2:items/armour/mail
 Object
 title of medium health
 item_level_art 8
@@ -1657,6 +1764,7 @@ chance 10
 difficulty 30
 artifact armour_hp
 def_arch chain_mail
+editor 2:items/armour/mail
 Object
 title of health
 type 16
@@ -1672,6 +1780,7 @@ chance 8
 difficulty 50
 artifact armour_major_hp
 def_arch chain_mail
+editor 2:items/armour/mail
 Object
 title of major health
 type 16
@@ -1687,6 +1796,7 @@ chance 8
 difficulty 75
 artifact armour_great_hp
 def_arch chain_mail
+editor 2:items/armour/mail
 Object
 title of great health
 type 16
@@ -1701,6 +1811,7 @@ chance 20
 t_style 1
 artifact armour_less_fire
 def_arch chain_mail
+editor 2:items/armour/mail
 Object
 title of lesser fire protection
 type 16
@@ -1714,6 +1825,7 @@ chance 20
 t_style 2
 artifact armour_less_cold
 def_arch chain_mail
+editor 2:items/armour/mail
 Object
 title of lesser cold protection
 type 16
@@ -1727,6 +1839,7 @@ chance 20
 t_style 3
 artifact armour_less_elec
 def_arch chain_mail
+editor 2:items/armour/mail
 Object
 title of lesser electricity protection
 type 16
@@ -1740,6 +1853,7 @@ chance 20
 t_style 4
 artifact armour_less_poison
 def_arch chain_mail
+editor 2:items/armour/mail
 Object
 title of lesser poison protection
 type 16
@@ -1753,6 +1867,7 @@ chance 20
 t_style 5
 artifact armour_less_acid
 def_arch chain_mail
+editor 2:items/armour/mail
 Object
 title of lesser acid protection
 type 16
@@ -1768,6 +1883,7 @@ Allowed all
 chance 20
 artifact shield_mass
 def_arch shield
+editor 2:items/armour/shield
 Object
 title of mass
 type 33
@@ -1783,6 +1899,7 @@ chance 20
 t_style 1
 artifact shield_less_fire
 def_arch shield
+editor 2:items/armour/shield
 Object
 title of lesser fire protection
 type 33
@@ -1796,6 +1913,7 @@ chance 20
 t_style 2
 artifact shield_less_cold
 def_arch shield
+editor 2:items/armour/shield
 Object
 title of lesser cold protection
 type 33
@@ -1809,6 +1927,7 @@ chance 20
 t_style 3
 artifact shield_less_elec
 def_arch shield
+editor 2:items/armour/shield
 Object
 title of lesser electricity protection
 type 33
@@ -1822,6 +1941,7 @@ chance 20
 t_style 4
 artifact shield_less_poison
 def_arch shield
+editor 2:items/armour/shield
 Object
 title of lesser poison protection
 type 33
@@ -1835,6 +1955,7 @@ chance 20
 t_style 5
 artifact shield_less_acid
 def_arch shield
+editor 2:items/armour/shield
 Object
 title of lesser acid protection
 type 33
@@ -1852,6 +1973,7 @@ chance 10
 difficulty 3
 artifact girdle_minor_hp
 def_arch girdle
+editor 2:items/armour/girdle
 Object
 title of minor health
 type 113
@@ -1866,6 +1988,7 @@ chance 10
 difficulty 20
 artifact girdle_medium_hp
 def_arch girdle
+editor 2:items/armour/girdle
 Object
 title of medium health
 item_level_art 7
@@ -1881,6 +2004,7 @@ chance 10
 difficulty 30
 artifact girdle_hp
 def_arch girdle
+editor 2:items/armour/girdle
 Object
 title of health
 type 113
@@ -1896,6 +2020,7 @@ chance 8
 difficulty 50
 artifact girdle_major_hp
 def_arch girdle
+editor 2:items/armour/girdle
 Object
 title of major health
 type 113
@@ -1911,6 +2036,7 @@ chance 8
 difficulty 75
 artifact girdle_great_hp
 def_arch girdle
+editor 2:items/armour/girdle
 Object
 title of great health
 type 113
@@ -1925,6 +2051,7 @@ chance 20
 difficulty 2
 artifact girdle_min_str
 def_arch girdle
+editor 2:items/armour/girdle
 Object
 title of minor strength
 Str 1
@@ -1940,6 +2067,7 @@ chance 20
 difficulty 2
 artifact girdle_min_dex
 def_arch girdle
+editor 2:items/armour/girdle
 Object
 title of minor dexterity
 Dex 1
@@ -1955,6 +2083,7 @@ chance 20
 difficulty 2
 artifact girdle_min_con
 def_arch girdle
+editor 2:items/armour/girdle
 Object
 title of minor constitution
 face girdle3.101
@@ -1970,6 +2099,7 @@ chance 20
 difficulty 2
 artifact girdle_min_int
 def_arch girdle
+editor 2:items/armour/girdle
 Object
 title of minor intelligence
 Int 1
@@ -1985,6 +2115,7 @@ chance 20
 difficulty 2
 artifact girdle_min_pow
 def_arch girdle
+editor 2:items/armour/girdle
 Object
 title of minor power
 Pow 1
@@ -2000,6 +2131,7 @@ chance 20
 difficulty 2
 artifact girdle_min_wis
 def_arch girdle
+editor 2:items/armour/girdle
 Object
 title of minor wisdom
 Wis 1
@@ -2015,6 +2147,7 @@ chance 20
 difficulty 2
 artifact girdle_min_cha
 def_arch girdle
+editor 2:items/armour/girdle
 Object
 title of minor charisma
 Cha 1
@@ -2034,6 +2167,7 @@ chance 20
 difficulty 2
 artifact gauntlet_min_str
 def_arch gauntlets
+editor 2:items/armour/gauntlets
 Object
 title of minor strength
 Str 1
@@ -2048,6 +2182,7 @@ chance 20
 difficulty 2
 artifact gauntlet_min_dex
 def_arch gauntlets
+editor 2:items/armour/gauntlets
 Object
 item_level_art 2
 title of minor dexterity
@@ -2062,6 +2197,7 @@ chance 20
 difficulty 2
 artifact gauntlet_min_con
 def_arch gauntlets
+editor 2:items/armour/gauntlets
 Object
 title of minor constitution
 Con 1
@@ -2076,6 +2212,7 @@ chance 20
 difficulty 2
 artifact gauntlet_min_int
 def_arch gauntlets
+editor 2:items/armour/gauntlets
 Object
 title of minor intelligence
 Int 1
@@ -2090,6 +2227,7 @@ chance 20
 difficulty 2
 artifact gauntlet_pow
 def_arch gauntlets
+editor 2:items/armour/gauntlets
 Object
 title of minor power
 Pow 1
@@ -2104,6 +2242,7 @@ chance 20
 difficulty 2
 artifact gauntlet_wis
 def_arch gauntlets
+editor 2:items/armour/gauntlets
 Object
 title of minor wisdom
 Wis 1
@@ -2118,6 +2257,7 @@ chance 20
 difficulty 2
 artifact gauntlet_cha
 def_arch gauntlets
+editor 2:items/armour/gauntlets
 Object
 title of minor charisma
 item_level_art 2
@@ -2132,6 +2272,7 @@ chance 20
 difficulty 14
 artifact gauntlet_min_dam
 def_arch gauntlets
+editor 2:items/armour/gauntlets
 Object
 title of minor damage
 dam 1
@@ -2146,6 +2287,7 @@ chance 20
 difficulty 14
 artifact gauntlet_min_prec
 def_arch gauntlets
+editor 2:items/armour/gauntlets
 Object
 title of minor precision
 wc 1
@@ -2160,6 +2302,7 @@ chance 20
 difficulty 24
 artifact gauntlet_precision
 def_arch gauntlets
+editor 2:items/armour/gauntlets
 Object
 title of precision
 face gauntlets_gold.101
@@ -2178,6 +2321,7 @@ chance 10
 difficulty 20
 artifact helm_infravision
 def_arch helm_iron
+editor 2:items/armour/helmet
 Object
 title of infravision
 type 34
@@ -2192,6 +2336,7 @@ chance 10
 difficulty 30
 artifact helm_xray
 def_arch helm_iron
+editor 2:items/armour/helmet
 Object
 title of demon eyes
 type 34
@@ -2206,6 +2351,7 @@ chance 30
 difficulty 5
 artifact helm_min_str
 def_arch helm_iron
+editor 2:items/armour/helmet
 Object
 title of minor strength
 type 34
@@ -2220,6 +2366,7 @@ chance 30
 difficulty 5
 artifact helm_min_dex
 def_arch helm_iron
+editor 2:items/armour/helmet
 Object
 title of minor dexterity
 type 34
@@ -2234,6 +2381,7 @@ chance 30
 difficulty 5
 artifact helm_min_int
 def_arch helm_iron
+editor 2:items/armour/helmet
 Object
 title of minor intelligence
 item_level_art 3
@@ -2248,6 +2396,7 @@ chance 30
 difficulty 5
 artifact helm_min_wis
 def_arch helm_iron
+editor 2:items/armour/helmet
 Object
 title of minor wisdom
 item_level_art 3
@@ -2262,6 +2411,7 @@ chance 30
 difficulty 5
 artifact helm_min_pow
 def_arch helm_iron
+editor 2:items/armour/helmet
 Object
 title of minor power
 item_level_art 3
@@ -2276,6 +2426,7 @@ chance 30
 difficulty 5
 artifact helm_min_cha
 def_arch helm_iron
+editor 2:items/armour/helmet
 Object
 title of minor charisma
 item_level_art 3
@@ -2290,6 +2441,7 @@ chance 30
 difficulty 5
 artifact helm_min_con
 def_arch helm_iron
+editor 2:items/armour/helmet
 Object
 title of minor constitution
 item_level_art 3
@@ -2305,6 +2457,7 @@ difficulty 2
 t_style 1
 artifact helm_less_fire
 def_arch helm_iron
+editor 2:items/armour/helmet
 Object
 title of lesser fire protection
 item_level_art 2
@@ -2320,6 +2473,7 @@ difficulty 2
 t_style 2
 artifact helm_less_cold
 def_arch helm_iron
+editor 2:items/armour/helmet
 Object
 title of lesser cold protection
 item_level_art 2
@@ -2335,6 +2489,7 @@ t_style 3
 difficulty 2
 artifact helm_less_elec
 def_arch helm_iron
+editor 2:items/armour/helmet
 Object
 title of lesser electricity protection
 item_level_art 2
@@ -2350,6 +2505,7 @@ t_style 4
 difficulty 2
 artifact helm_less_poison
 def_arch helm_iron
+editor 2:items/armour/helmet
 Object
 title of lesser poison protection
 item_level_art 2
@@ -2365,6 +2521,7 @@ t_style 5
 difficulty 2
 artifact helm_less_acid
 def_arch helm_iron
+editor 2:items/armour/helmet
 Object
 title of lesser acid protection
 item_level_art 2
@@ -2382,6 +2539,7 @@ chance 20
 difficulty 2
 artifact bracers_dex
 def_arch bracers_ac
+editor 2:items/armour/bracers
 Object
 title of minor dexterity
 face bracers2.101
@@ -2397,6 +2555,7 @@ chance 20
 difficulty 2
 artifact bracers_str
 def_arch bracers_ac
+editor 2:items/armour/bracers
 Object
 title of minor strength
 face bracers3.101
@@ -2412,6 +2571,7 @@ chance 20
 difficulty 2
 artifact bracers_con
 def_arch bracers_ac
+editor 2:items/armour/bracers
 Object
 title of minor constitution
 face bracers4.101
@@ -2427,6 +2587,7 @@ chance 20
 difficulty 2
 artifact bracers_int
 def_arch bracers_ac
+editor 2:items/armour/bracers
 Object
 title of minor intelligence
 face bracers5.101
@@ -2442,6 +2603,7 @@ chance 20
 difficulty 2
 artifact bracers_cha
 def_arch bracers_ac
+editor 2:items/armour/bracers
 Object
 title of minor charisma
 face bracers5.101
@@ -2457,6 +2619,7 @@ chance 20
 difficulty 2
 artifact bracers_pow
 def_arch bracers_ac
+editor 2:items/armour/bracers
 Object
 title of minor power
 face bracers6.101
@@ -2472,6 +2635,7 @@ chance 20
 difficulty 2
 artifact bracers_wis
 def_arch bracers_ac
+editor 2:items/armour/bracers
 Object
 title of minor wisdom
 face bracers6.101
@@ -2490,6 +2654,7 @@ chance 20
 artifact boots_granite
 def_arch high_boots
 difficulty 4
+editor 2:items/armour/boots
 Object
 title of granite
 type 99
@@ -2525,6 +2690,7 @@ artifact boots_less_fire
 chance 20
 t_style 1
 def_arch low_boots
+editor 2:items/armour/boots
 Object
 title of lesser fire protection
 type 99
@@ -2538,6 +2704,7 @@ artifact boots_less_cold
 chance 20
 t_style 2
 def_arch low_boots
+editor 2:items/armour/boots
 Object
 title of lesser cold protection
 type 99
@@ -2551,6 +2718,7 @@ artifact boots_less_elec
 chance 20
 t_style 3
 def_arch low_boots
+editor 2:items/armour/boots
 Object
 title of lesser electricity protection
 type 99
@@ -2563,6 +2731,7 @@ Allowed !sandals,!leggings_plate,!leggings_chain,!leggings_leather,all
 artifact boots_less_poison
 chance 20
 t_style 4
+editor 2:items/armour/boots
 def_arch low_boots
 Object
 title of lesser poison protection
@@ -2576,6 +2745,7 @@ Allowed !sandals,!leggings_plate,!leggings_chain,!leggings_leather,all
 artifact boots_less_acid
 chance 20
 t_style 5
+editor 2:items/armour/boots
 def_arch low_boots
 Object
 title of lesser acid protection
@@ -2592,6 +2762,7 @@ chance 20
 difficulty 3
 t_style 1
 def_arch leggings_leather
+editor 2:items/armour/boots
 Object
 title of lesser fire protection
 type 99
@@ -2607,6 +2778,7 @@ chance 20
 difficulty 3
 t_style 2
 def_arch leggings_leather
+editor 2:items/armour/boots
 Object
 title of lesser cold protection
 type 99
@@ -2622,6 +2794,7 @@ chance 20
 difficulty 3
 t_style 3
 def_arch leggings_leather
+editor 2:items/armour/boots
 Object
 title of lesser electricity protection
 type 99
@@ -2637,6 +2810,7 @@ chance 20
 difficulty 3
 t_style 4
 def_arch leggings_leather
+editor 2:items/armour/boots
 Object
 item_level_art 3
 title of lesser poison protection
@@ -2652,6 +2826,7 @@ chance 20
 difficulty 3
 t_style 5
 def_arch leggings_leather
+editor 2:items/armour/boots
 Object
 title of lesser acid protection
 type 99
@@ -2668,6 +2843,7 @@ Allowed all
 chance 20
 artifact weapon_fools
 def_arch sword
+editor 2:items/weapon
 Object
 title of fools
 ac -1
@@ -2686,6 +2862,7 @@ chance 15
 difficulty 3
 artifact weapon_defense
 def_arch sword
+editor 2:items/weapon
 Object
 title of defense
 ac_add 1
@@ -2700,6 +2877,7 @@ chance 15
 difficulty 6
 artifact weapon_accuracy
 def_arch sword
+editor 2:items/weapon
 Object
 title of accuracy
 wc_add 1
@@ -2714,6 +2892,7 @@ chance 15
 difficulty 14
 artifact weapon_precision
 def_arch sword
+editor 2:items/weapon
 Object
 title of precision
 wc_range_add 5
@@ -2729,6 +2908,7 @@ chance 10
 difficulty 10
 artifact weapon_damage
 def_arch sword
+editor 2:items/weapon
 Object
 title of damage
 dam_add 1
@@ -2742,6 +2922,7 @@ Allowed all
 chance 20
 artifact weapon_strength
 def_arch sword
+editor 2:items/weapon
 Object
 title of strength
 Str 1
@@ -2754,6 +2935,7 @@ Allowed all
 chance 20
 artifact weapon_dexterity
 def_arch sword
+editor 2:items/weapon
 Object
 title of dexterity
 Dex 1
@@ -2766,6 +2948,7 @@ Allowed all
 chance 20
 artifact weapon_const
 def_arch sword
+editor 2:items/weapon
 Object
 title of constitution
 Con 1
@@ -2778,6 +2961,7 @@ Allowed all
 chance 20
 artifact weapon_wisdom
 def_arch sword
+editor 2:items/weapon
 Object
 title of wisdom
 Wis 1
@@ -2790,6 +2974,7 @@ Allowed all
 chance 20
 artifact weapon_int
 def_arch sword
+editor 2:items/weapon
 Object
 title of intelligence
 Int 1
@@ -2802,6 +2987,7 @@ Allowed all
 chance 20
 artifact weapon_power
 def_arch sword
+editor 2:items/weapon
 Object
 title of power
 Pow 1
@@ -2814,6 +3000,7 @@ Allowed all
 chance 20
 artifact weapon_charisma
 def_arch sword
+editor 2:items/weapon
 Object
 title of charisma
 Cha 1
@@ -2828,6 +3015,7 @@ t_style 1
 difficulty 7
 artifact weapon_less_fire
 def_arch sword
+editor 2:items/weapon
 Object
 title of lesser fire
 attack_fire 10
@@ -2843,6 +3031,7 @@ t_style 2
 difficulty 7
 artifact weapon_less_cold
 def_arch sword
+editor 2:items/weapon
 Object
 title of lesser cold
 attack_cold 10
@@ -2858,6 +3047,7 @@ t_style 3
 difficulty 7
 artifact weapon_less_elec
 def_arch sword
+editor 2:items/weapon
 Object
 title of lesser electricity
 attack_electricity 10
@@ -2874,6 +3064,7 @@ chance 100
 difficulty 1
 artifact book_blue
 def_arch book
+editor 2:items/readable
 Object
 value 16
 type 8
@@ -2886,6 +3077,7 @@ chance 100
 difficulty 1
 artifact book_gray
 def_arch book
+editor 2:items/readable
 Object
 value 17
 type 8
@@ -2899,6 +3091,7 @@ chance 100
 difficulty 1
 artifact book_green
 def_arch book
+editor 2:items/readable
 Object
 value 17
 type 8
@@ -2911,6 +3104,7 @@ chance 100
 difficulty 1
 artifact book_light_blue
 def_arch book
+editor 2:items/readable
 Object
 value 17
 type 8
@@ -2924,6 +3118,7 @@ chance 100
 difficulty 1
 artifact book_orange
 def_arch book
+editor 2:items/readable
 Object
 value 17
 type 8
@@ -2937,6 +3132,7 @@ chance 100
 difficulty 1
 artifact book_pink
 def_arch book
+editor 2:items/readable
 Object
 value 17
 type 8
@@ -2950,6 +3146,7 @@ chance 100
 difficulty 1
 artifact book_red
 def_arch book
+editor 2:items/readable
 Object
 value 17
 type 8
@@ -2963,6 +3160,7 @@ chance 100
 difficulty 1
 artifact tome_red
 def_arch tome
+editor 2:items/readable
 Object
 value 22
 type 8
@@ -2975,6 +3173,7 @@ chance 100
 difficulty 1
 artifact tome_black
 def_arch tome
+editor 2:items/readable
 Object
 value 22
 type 8
@@ -2987,6 +3186,7 @@ chance 100
 difficulty 1
 artifact tome_blue
 def_arch tome
+editor 2:items/readable
 Object
 value 22
 type 8
@@ -2999,6 +3199,7 @@ chance 100
 difficulty 1
 artifact tome_cloth
 def_arch tome
+editor 2:items/readable
 Object
 value 22
 type 8
@@ -3011,6 +3212,7 @@ chance 100
 difficulty 1
 artifact tome_gray
 def_arch tome
+editor 2:items/readable
 Object
 value 22
 type 8
@@ -3023,6 +3225,7 @@ chance 100
 difficulty 1
 artifact tome_leather
 def_arch tome
+editor 2:items/readable
 Object
 value 22
 type 8
@@ -3035,6 +3238,7 @@ chance 100
 difficulty 1
 artifact tome_light_blue
 def_arch tome
+editor 2:items/readable
 Object
 value 22
 type 8
@@ -3047,6 +3251,7 @@ chance 100
 difficulty 1
 artifact tome_light_brown
 def_arch tome
+editor 2:items/readable
 Object
 value 22
 type 8
@@ -3059,6 +3264,7 @@ chance 100
 difficulty 1
 artifact tome_turquoise
 def_arch tome
+editor 2:items/readable
 Object
 value 22
 type 8
@@ -3071,6 +3277,7 @@ chance 100
 difficulty 1
 artifact tome_cyan
 def_arch tome
+editor 2:items/readable
 Object
 value 22
 type 8
@@ -3083,6 +3290,7 @@ chance 100
 difficulty 1
 artifact tome_orange
 def_arch tome
+editor 2:items/readable
 Object
 value 22
 type 8
@@ -3095,6 +3303,7 @@ chance 100
 difficulty 1
 artifact tome_pink
 def_arch tome
+editor 2:items/readable
 Object
 value 22
 type 8
@@ -3107,6 +3316,7 @@ chance 100
 difficulty 1
 artifact tome_plaid
 def_arch tome
+editor 2:items/readable
 Object
 value 22
 type 8
@@ -3119,6 +3329,7 @@ chance 100
 difficulty 1
 artifact tome_tan
 def_arch tome
+editor 2:items/readable
 Object
 value 22
 type 8
@@ -3131,6 +3342,7 @@ chance 100
 difficulty 1
 artifact tome_vellum
 def_arch tome
+editor 2:items/readable
 Object
 value 22
 type 8
@@ -3143,6 +3355,7 @@ chance 100
 difficulty 1
 artifact tome_violet
 def_arch tome
+editor 2:items/readable
 Object
 value 22
 type 8
@@ -3173,6 +3386,7 @@ Allowed none
 chance 100
 artifact ring_normal
 def_arch ring_generic
+editor 2:items/talisman/rings
 Object
 value 4250
 type 70
@@ -3184,6 +3398,7 @@ chance 100
 difficulty 1
 artifact ring_brass
 def_arch ring_generic
+editor 2:items/talisman/rings
 Object
 value 4500
 type 70
@@ -3197,6 +3412,7 @@ chance 90
 difficulty 1
 artifact ring_copper
 def_arch ring_generic
+editor 2:items/talisman/rings
 Object
 value 4650
 type 70
@@ -3210,6 +3426,7 @@ chance 80
 difficulty 1
 artifact ring_bronze
 def_arch ring_generic
+editor 2:items/talisman/rings
 Object
 value 4750
 type 70
@@ -3223,6 +3440,7 @@ chance 70
 difficulty 3
 artifact ring_silver
 def_arch ring_generic
+editor 2:items/talisman/rings
 Object
 value 4950
 type 70
@@ -3236,6 +3454,7 @@ chance 50
 difficulty 8
 artifact ring_gold
 def_arch ring_generic
+editor 2:items/talisman/rings
 Object
 value 5150
 type 70
@@ -3249,6 +3468,7 @@ chance 40
 difficulty 20
 artifact ring_platinum
 def_arch ring_generic
+editor 2:items/talisman/rings
 Object
 value 5250
 type 70
@@ -3262,6 +3482,7 @@ chance 30
 difficulty 25
 artifact ring_adamant
 def_arch ring_generic
+editor 2:items/talisman/rings
 Object
 value 5550
 type 70
@@ -3276,6 +3497,7 @@ chance 20
 difficulty 50
 artifact ring_mithril
 def_arch ring_generic
+editor 2:items/talisman/rings
 Object
 value 5750
 type 70
@@ -3294,6 +3516,7 @@ chance 25
 difficulty 22
 artifact ring_thieves
 def_arch ring_generic
+editor 1:items/talisman/rings
 Object
 title of Thieves
 value 250000
@@ -3319,6 +3542,7 @@ chance 40
 difficulty 12
 artifact ring_ice
 def_arch ring_generic
+editor 1:items/talisman/rings
 Object
 is_magical 1
 title of Ice
@@ -3349,6 +3573,7 @@ chance 40
 difficulty 12
 artifact ring_fire
 def_arch ring_generic
+editor 1:items/talisman/rings
 Object
 title of Fire
 item_quality 100
@@ -3381,6 +3606,7 @@ chance 40
 difficulty 12
 artifact ring_storm
 def_arch ring_generic
+editor 1:items/talisman/rings
 Object
 title of Storm
 material 256
@@ -3413,6 +3639,7 @@ chance 40
 difficulty 35
 artifact ring_storm_great
 def_arch ring_generic
+editor 1:items/talisman/rings
 Object
 title of Greater Storm
 material 256
@@ -3447,6 +3674,7 @@ chance 30
 difficulty 18
 artifact ring_yordan
 def_arch ring_generic
+editor 1:items/talisman/rings
 Object
 title of Yordan
 face ring_gold_white.101
@@ -3468,6 +3696,7 @@ chance 30
 difficulty 7
 artifact ring_ghost
 def_arch ring_generic
+editor 1:items/talisman/rings
 Object
 title of the Ghost
 face ring_gold_white.101
@@ -3489,6 +3718,7 @@ Allowed ring_generic
 chance 15
 artifact ring_woe
 def_arch ring_generic
+editor 2:items/talisman/rings
 Object
 title of Woe
 type 70
@@ -3510,6 +3740,7 @@ Allowed ring_generic
 chance 15
 artifact ring_woe1
 def_arch ring_generic
+editor 2:items/talisman/rings
 Object
 title of Woe
 type 70
@@ -3534,6 +3765,7 @@ Allowed ring_generic
 chance 15
 artifact ring_woe2
 def_arch ring_generic
+editor 2:items/talisman/rings
 Object
 title of Woe
 type 70
@@ -3558,6 +3790,7 @@ Allowed ring_generic
 chance 20
 artifact ring_woe3
 def_arch ring_generic
+editor 2:items/talisman/rings
 Object
 title of Woe
 type 70
@@ -3584,6 +3817,7 @@ Allowed all
 chance 80
 artifact horn_normal
 def_arch horn
+editor 2:items/magic_tools/horn
 Object
 type 35
 end
@@ -3591,6 +3825,7 @@ Allowed all
 chance 20
 artifact horn_fools
 def_arch horn
+editor 2:items/magic_tools/horn
 Object
 title of fools
 type 35
@@ -3614,6 +3849,7 @@ chance 15
 difficulty 10
 artifact amulet_shielding
 def_arch amulet_generic
+editor 2:items/talisman/amulets
 Object
 title of minor shielding
 face amulet_lif.101
@@ -3634,6 +3870,7 @@ Allowed all
 chance 250
 artifact missile_inaccuracy
 def_arch arrow
+editor 2:items/weapon/missile
 Object
 title of inaccuracy
 type 13
@@ -3648,6 +3885,7 @@ chance 100
 difficulty 5
 artifact missile_accuracy
 def_arch arrow
+editor 2:items/weapon/missile
 Object
 title of accuracy
 type 13
@@ -3662,6 +3900,7 @@ Allowed all
 chance 15
 difficulty 15
 artifact missile_slaying
+editor 2:items/weapon/missile
 def_arch arrow
 Object
 title of slay
@@ -3677,6 +3916,7 @@ Allowed all
 chance 7
 difficulty 25
 artifact missile_assassin
+editor 2:items/weapon/missile
 def_arch arrow
 Object
 title of assassinating
@@ -3701,6 +3941,7 @@ Allowed all
 chance 10
 artifact range_accuracy
 def_arch bow
+editor 2:items/weapon/missile
 Object Accuracy
 title of accuracy
 type 14
@@ -3719,6 +3960,7 @@ Allowed all
 chance 60
 artifact food_poison
 def_arch food_generic
+editor 2:items/organic
 Object
 title of poison
 type 6
@@ -3735,6 +3977,7 @@ Allowed all
 chance 50
 artifact food_poison2
 def_arch food_generic
+editor 2:items/organic
 Object
 title of hideous poison
 type 6
@@ -3757,6 +4000,7 @@ artifact scroll_firestorm
 difficulty 3
 t_style 1
 def_arch scroll_generic
+editor 3:items/spells/scrolls
 Object
 level 1
 inv_face scroll_fire.101
@@ -3772,6 +4016,7 @@ artifact scroll_icestorm
 difficulty 3
 t_style 2
 def_arch scroll_generic
+editor 3:items/spells/scrolls
 Object
 level 1
 sp 1
@@ -3786,6 +4031,7 @@ chance 40
 artifact scroll_min_heal
 difficulty 1
 def_arch scroll_generic
+editor 3:items/spells/scrolls
 Object
 level 1
 inv_face scroll_heal.101
@@ -3800,6 +4046,7 @@ chance 35
 artifact scroll_str_self
 difficulty 1
 def_arch scroll_generic
+editor 3:items/spells/scrolls
 Object
 level 1
 inv_face scroll_str.101
@@ -3814,6 +4061,7 @@ chance 25
 artifact scroll_identify
 difficulty 4
 def_arch scroll_generic
+editor 3:items/spells/scrolls
 Object
 level 1
 inv_face scroll_identify.101
@@ -3828,6 +4076,7 @@ chance 40
 artifact scroll_dmagic
 difficulty 1
 def_arch scroll_generic
+editor 3:items/spells/scrolls
 Object
 level 1
 inv_face scroll_detect.101
@@ -3842,6 +4091,7 @@ chance 40
 artifact scroll_dcurse
 difficulty 3
 def_arch scroll_generic
+editor 3:items/spells/scrolls
 Object
 inv_face scroll_detect.101
 level 1
@@ -3856,6 +4106,7 @@ chance 25
 artifact scroll_rem_curse
 difficulty 5
 def_arch scroll_generic
+editor 3:items/spells/scrolls
 Object
 level 1
 inv_face scroll_remove.101
@@ -3870,6 +4121,7 @@ chance 20
 artifact scroll_rem_damn
 difficulty 6
 def_arch scroll_generic
+editor 3:items/spells/scrolls
 Object
 level 1
 sp 10
@@ -3884,6 +4136,7 @@ chance 35
 artifact scroll_cause_lwound
 difficulty 2
 def_arch scroll_generic
+editor 3:items/spells/scrolls
 Object
 inv_face scroll_wound.101
 level 1
@@ -3902,6 +4155,7 @@ artifact potion_minor_res_fire
 difficulty 3
 t_style 1
 def_arch potion_generic
+editor 3:items/spells/potions
 Object
 title of minor fire resistance
 face potion_red.101
@@ -3921,6 +4175,7 @@ artifact potion_minor_res_cold
 t_style 2
 difficulty 3
 def_arch potion_generic
+editor 3:items/spells/potions
 Object
 title of minor cold resistance
 inv_face potioncon.101
@@ -3939,6 +4194,7 @@ t_style 3
 artifact potion_minor_res_elec
 difficulty 3
 def_arch potion_generic
+editor 3:items/spells/potions
 Object
 title of minor electricity resistance
 inv_face potioncon.101
@@ -3957,6 +4213,7 @@ t_style 4
 artifact potion_minor_res_poison
 difficulty 3
 def_arch potion_generic
+editor 3:items/spells/potions
 Object
 title of minor poison resistance
 inv_face potioncon.101
@@ -3975,6 +4232,7 @@ t_style 5
 artifact potion_minor_res_acid
 difficulty 3
 def_arch potion_generic
+editor 3:items/spells/potions
 Object
 title of minor acid resistance
 inv_face potioncon.101
@@ -3992,6 +4250,7 @@ chance 40
 artifact potion_minor_strength
 difficulty 3
 def_arch potion_generic
+editor 3:items/spells/potions
 Object
 title of minor strentgh
 face potion_red.101
@@ -4009,6 +4268,7 @@ chance 40
 artifact potion_minor_dex
 difficulty 3
 def_arch potion_generic
+editor 3:items/spells/potions
 Object
 title of minor dexterity
 face potion_yellow.101
@@ -4026,6 +4286,7 @@ chance 40
 artifact potion_minor_con
 difficulty 3
 def_arch potion_generic
+editor 3:items/spells/potions
 Object
 title of minor constitution
 inv_face potioncon.101
@@ -4042,6 +4303,7 @@ chance 40
 artifact potion_evil_liquid
 difficulty 3
 def_arch potion_generic
+editor 3:items/spells/potions
 Object
 title of evil liquid
 face potion_grey.101
@@ -4064,6 +4326,7 @@ chance 20
 artifact potion_minor_res
 difficulty 3
 def_arch potion_generic
+editor 3:items/spells/potions
 Object
 title of minor restoration
 face potion_grey.101
@@ -4080,6 +4343,7 @@ chance 15
 artifact potion_improve
 difficulty 5
 def_arch potion_generic
+editor 3:items/spells/potions
 Object
 title of improvement
 inv_face potionimp.101
@@ -4095,6 +4359,7 @@ Allowed potion_generic
 chance 30
 artifact potion_firestorm
 def_arch potion_generic
+editor 3:items/spells/potions
 Object
 title of firestorm
 face potion_red.101
@@ -4111,6 +4376,7 @@ Allowed potion_generic
 chance 30
 artifact potion_freezing
 def_arch potion_generic
+editor 3:items/spells/potions
 Object
 title of freezing
 inv_face potioncol.101
@@ -4126,6 +4392,7 @@ Allowed potion_generic
 chance 35
 artifact potion_cure_sickness
 def_arch potion_generic
+editor 3:items/spells/potions
 Object
 title of cure sickness
 stand_still 1
@@ -4142,6 +4409,7 @@ Allowed potion_generic
 chance 35
 artifact potion_cure_illness
 def_arch potion_generic
+editor 3:items/spells/potions
 Object
 title of cure illness
 level 1
@@ -4160,6 +4428,7 @@ Allowed balm_generic
 chance 40
 artifact balm_first_aid
 def_arch balm_generic
+editor 3:items/spells
 Object
 title of first aid
 is_magical 1
@@ -4180,6 +4449,7 @@ Allowed none
 chance 1
 artifact age_force_human
 def_arch age_force
+editor 0
 Object
 title human age force (artifacts generic)
 # we start at age 21
@@ -4197,6 +4467,7 @@ Allowed none
 chance 1
 artifact age_force_half_elf
 def_arch age_force
+editor 0
 Object
 title half-elf age force (artifacts generic)
 hp 21
@@ -4210,6 +4481,7 @@ Allowed none
 chance 1
 artifact ring_prayers
 def_arch ring_generic
+editor 1:uniques
 Object
 is_magical 1
 title of the prayers
@@ -4228,6 +4500,7 @@ Allowed none
 chance 1
 artifact armour_skel_lord
 def_arch bone_armour
+editor 1:uniques
 Object
 name skeletal dragon armour
 Con 2
@@ -4252,6 +4525,7 @@ Allowed none
 chance 1
 artifact cloak_rhun
 def_arch cloak
+editor 1:uniques
 Object
 title of king Rhun
 protect_acid 8
@@ -4268,48 +4542,11 @@ is_magical 1
 value 22100
 end
 #
-# These artifacts are not needed anymore - if you start a 
-# new server this arches can be removed!
-#
-Allowed none
-chance 1
-difficulty 25
-artifact missile_ass_troll
-def_arch arrow
-Object
-title of assassinating trolls
-slaying troll
-msg
-  These missiles are inscribed with 
-  powerful runes for the bane of 
-  trolls.  A scratch from one of
-  these arrows could smite one dead.
-endmsg
-value 850
-wc 7
-is_assassin 1
-is_magical 1
-dam_add 1
-end
-#
-#
-Allowed none
-chance 1
-difficulty 15
-artifact missile_slay_dragon
-def_arch arrow
-Object
-title of slay dragon
-value 450
-is_magical 1
-slaying dragon
-dam_add 1
-end
-#
 Allowed none
 chance 1
 artifact arrow_sys
 def_arch arrow
+editor 0
 Object
 race missile_sys
 identified 1
@@ -4319,6 +4556,7 @@ Allowed none
 chance 1
 artifact bolt_sys
 def_arch bolt
+editor 0
 Object
 race missile_sys
 identified 1
@@ -4328,6 +4566,7 @@ Allowed none
 chance 1
 artifact sstone_sys
 def_arch sstone
+editor 0
 Object
 race missile_sys
 identified 1
@@ -4337,6 +4576,7 @@ Allowed none
 chance 1
 artifact t_axe_sys
 def_arch t_axe
+editor 0
 Object
 race rock_sys
 identified 1
@@ -4346,6 +4586,7 @@ Allowed none
 chance 1
 artifact t_hammer_sys
 def_arch t_hammer
+editor 0
 Object
 race rock_sys
 identified 1
@@ -4355,6 +4596,7 @@ Allowed none
 chance 1
 artifact t_dagger_sys
 def_arch t_dagger
+editor 0
 Object
 race rock_sys
 identified 1
@@ -4364,6 +4606,7 @@ Allowed none
 chance 1
 artifact t_star_sys
 def_arch t_star
+editor 0
 Object
 race rock_sys
 identified 1
@@ -4373,6 +4616,7 @@ Allowed none
 chance 1
 artifact t_rock_sys
 def_arch t_rock
+editor 0
 Object
 race rock_sys
 identified 1
@@ -4382,6 +4626,7 @@ Allowed none
 chance 1
 artifact t_boulder_sys
 def_arch t_boulder
+editor 0
 Object
 race rock_sys
 identified 1
@@ -4391,6 +4636,7 @@ Allowed none
 chance 1
 artifact t_lboulder_sys
 def_arch t_lboulder
+editor 0
 Object
 race rock_sys
 identified 1

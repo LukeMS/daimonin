@@ -432,7 +432,7 @@ int command_create(object *op, char *params)
 
             do
             {
-                if (!strcmp(art->def_at.clone.name, cp))
+                if (art->flags&ARTIFACT_FLAG_HAS_DEF_ARCH && !strcmp(art->def_at.clone.name, cp))
                     break;
                 art = art->next;
             }

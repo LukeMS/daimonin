@@ -22,7 +22,7 @@
 
     The author can be reached via e-mail to daimonin@nord-com.net
 */
-#define ARTIFACT_FLAG_NOARCH	1
+#define ARTIFACT_FLAG_HAS_DEF_ARCH	1
 
 typedef struct artifactstruct
 {

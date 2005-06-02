@@ -1,4 +1,4 @@
 Object empty_archetype
-layer 1
 type 79
+sys_object 1
 end

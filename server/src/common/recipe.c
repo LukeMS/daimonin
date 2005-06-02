@@ -429,7 +429,7 @@ sint64 find_ingred_cost(const char *name)
                 if (al->type == at->clone.type)
                 {
                     for (art = al->items; art != NULL; art = art->next)
-                        if (!strcasecmp(art->def_at.clone.name, part2))
+                        if (art->flags&ARTIFACT_FLAG_HAS_DEF_ARCH && !strcasecmp(art->def_at.clone.name, part2))
                             return mult * at->clone.value * art->def_at.clone.value;
                 }
         }
@@ -517,7 +517,7 @@ void dump_alchemy_costs(void)
                                 else
                                     tcost += cost;
                             }
-                            if (art != NULL && &art->def_at.clone != NULL)
+                            if (art != NULL && art->flags&ARTIFACT_FLAG_HAS_DEF_ARCH && &art->def_at.clone != NULL)
                                 cost = at->clone.value * art->def_at.clone.value;
                             else
                                 cost = at->clone.value;
@@ -603,7 +603,7 @@ artifact * locate_recipe_artifact(recipe *rp)
 
     if ((at = find_artifactlist(item->type)))
         for (art = at->items; art; art = art->next)
-            if (!strcmp(art->def_at.clone.name, rp->title))
+            if (art->flags&ARTIFACT_FLAG_HAS_DEF_ARCH && !strcmp(art->def_at.clone.name, rp->title))
                 break;
 
     return art;
