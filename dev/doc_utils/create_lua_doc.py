@@ -246,7 +246,7 @@ for filename in listCFiles(sys.argv[1]):
 					tp = 'integer'
 				elif attribute[1] == 'FLOAT':
 					tp = 'float'
-				elif attribute[1] == 'OBJECTREF':
+				elif attribute[1] == 'OBJECTREF' or attribute[1] == 'OBJECT':
 					tp = 'object'
 				if attribute[2] == 'FIELDFLAG_READONLY':
 					special = 'readonly'
@@ -272,7 +272,7 @@ for filename in listCFiles(sys.argv[1]):
 					tp = 'integer'
 				elif attribute[1] == 'FLOAT':
 					tp = 'float'
-				elif attribute[1] == 'OBJECTREF':
+				elif attribute[1] == 'OBJECTREF' or attribute[1] == 'OBJECT':
 					tp = 'object'
 				if attribute[2] == 'FIELDFLAG_READONLY':
 					special = 'readonly'
@@ -304,11 +304,11 @@ for filename in listCFiles(sys.argv[1]):
 				tp = ''
 				if attribute[1] == 'CSTR' or attribute[1] == 'SHSTR':
 					tp = 'string'
-				elif attribute[1] == 'SINT8' or attribute[1] == 'SINT16' or attribute[1] == 'SINT32' or attribute[1] == 'UINT8' or attribute[1] == 'UINT16' or attribute[1] == 'UINT32':
+				elif attribute[1] == 'SINT8' or attribute[1] == 'SINT16' or attribute[1] == 'SINT32' or attribute[1] == 'UINT8' or attribute[1] == 'UINT16' or attribute[1] == 'UINT32' or attribute[1] == 'SINT64':
 					tp = 'integer'
 				elif attribute[1] == 'FLOAT':
 					tp = 'float'
-				elif attribute[1] == 'OBJECTREF':
+				elif attribute[1] == 'OBJECTREF' or attribute[1] == 'OBJECT':
 					tp = 'object'
 				if attribute[2] == 'FIELDFLAG_READONLY':
 					special = 'readonly'
