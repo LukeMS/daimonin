@@ -307,8 +307,11 @@ void dump_all_archetypes()
         art = al->items;
         do
         {
-            dump_arch(&art->def_at);
-            LOG(llevInfo, "%s\n", STRING_SAFE(errmsg));
+			if(art->flags&ARTIFACT_FLAG_HAS_DEF_ARCH )
+			{
+	            dump_arch(&art->def_at);
+		        LOG(llevInfo, "%s\n", STRING_SAFE(errmsg));
+			}
             art = art->next;
         }
         while (art != NULL);
@@ -506,16 +509,18 @@ void second_arch_pass(FILE *fp_start)
          * other_arch and treasure list to our artifact.
          * then we search the object for other_arch and randomitems - perhaps we override them here.
          */
-        if (!strcmp("artifact", variable))
+        if (!strcmp("artifact", variable)) /* be sure "artifact" command is before def_arch cm! */
         {
 			at = find_archetype(argument);
         }
         else if (at && !strcmp("def_arch", variable))
         {
             if ((other = find_archetype(argument)) == NULL)
+			{
                 LOG(llevBug, "BUG: second artifacts pass: failed to find def_arch %s from artifact %s\n",
                     STRING_SAFE(argument), STRING_ARCH_NAME(at));
-
+				continue;
+			}
             /* now copy from real arch the stuff from above to our "fake" arches */
             at->clone.other_arch = other->clone.other_arch;
             if (at->clone.randomitems)
@@ -639,11 +644,16 @@ object * arch_to_object(archetype *at)
 object * create_singularity(const char *name)
 {
     object *op;
-    char    buf[MAX_BUF];
-    sprintf(buf, "singularity (REPORT THIS BUG!) (%s)", name);
-    op = get_object();
-    FREE_AND_COPY_HASH(op->name, buf);
-    SET_FLAG(op, FLAG_NO_PICK);
+
+	LOG(llevDebug, "created Singularity: %s\n", name);
+	op = arch_to_object(empty_archetype);
+	FREE_AND_COPY_HASH(op->name, name);
+	FREE_AND_COPY_HASH(op->title, " (removed object)");
+	SET_FLAG(op, FLAG_IDENTIFIED);
+	SET_FLAG(op, FLAG_SYS_OBJECT);
+	SET_FLAG(op, FLAG_NO_SAVE); /* remove them automatically - good for player inventory */
+ 	op->layer = 0;
+	/*op->face = &new_faces[FindFace("dummy.111", 0)];*/
     return op;
 }
 

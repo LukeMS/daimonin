@@ -908,10 +908,7 @@ int load_objects(mapstruct *m, FILE *fp, int mapflags)
                 query_short_name(op, NULL));
             continue;
         }
-        /* if the archetype for the object is null, means that we
-             * got an invalid object.  Don't do anythign with it - the game
-             * or editor will not be able to do anything with it either.
-             */
+		/* should not happen because we catch invalid arches now as singularities */
         if (op->arch == NULL)
         {
             LOG(llevDebug, "BUG:load_objects(%s): object %s (%d)- invalid archetype. (pos:%d,%d)\n",
@@ -919,7 +916,7 @@ int load_objects(mapstruct *m, FILE *fp, int mapflags)
             continue;
         }
 
-        /* do some safety for containers */
+		/* do some safety for containers */
         if (op->type == CONTAINER)
         {
             op->attacked_by = NULL; /* used for containers as link to players viewing it */

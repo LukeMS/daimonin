@@ -1142,6 +1142,7 @@ char * artifact_msg(int level, int booksize)
     artifactlist   *al              = NULL;
     artifact       *art;
     int             count=0,chance, i, type, index;
+	sint64			val;
     int             book_entries    = level > 5 ? RANDOM() % 3 + RANDOM() % 3 + 2 : RANDOM() % level + 1;
     char           *ch, name[MAX_BUF], buf[BOOK_BUF], sbuf[MAX_BUF];
     static char     retbuf[BOOK_BUF];
@@ -1200,8 +1201,19 @@ char * artifact_msg(int level, int booksize)
 			strcat(retbuf,"\n<p>");
 		else
 		strcat(retbuf,"\n\n");
-		tmp = arch_to_object(&art->def_at);
-        SET_FLAG(tmp, FLAG_IDENTIFIED);
+		if(art->flags&ARTIFACT_FLAG_HAS_DEF_ARCH )
+		{
+			tmp = arch_to_object(&art->def_at);
+			val = art->def_at.base_clone->value;
+		}
+		else
+		{
+			tmp = arch_to_object(find_archetype(art->def_at_name));
+			val = tmp->value;
+			give_artifact_abilities(tmp, art);
+		}
+
+		SET_FLAG(tmp, FLAG_IDENTIFIED);
         SET_FLAG(tmp, FLAG_KNOWN_MAGICAL);
         SET_FLAG(tmp, FLAG_KNOWN_CURSED);
 		
@@ -1219,15 +1231,14 @@ char * artifact_msg(int level, int booksize)
             sprintf(sbuf, "a very rare");
 
         /* value of artifact */
-		if(art->def_at.base_clone && art->def_at.base_clone->value) /* avoid devide by zero */
+		if(val) /* avoid devide by zero */
 		{
-			sprintf(buf, "%s item with a value that is %d times normal.\n", sbuf, 
-							art->def_at.clone.value/art->def_at.base_clone->value);
+			sprintf(buf, "%s item with a value that is %d times normal.\n", sbuf, tmp->value/val);
 		}
 		else
-			sprintf(buf, "%s item with a value of %d\n", sbuf, art->def_at.clone.value);
+			sprintf(buf, "%s item with a value of %d\n", sbuf, tmp->value);
+
 		strcat(retbuf, buf);
-		
 		if ((ch = describe_item(tmp)) != NULL && strlen(ch) > 1)
 		{
 			sprintf(buf, "Properties of this artifact include: \n %s \n", ch);

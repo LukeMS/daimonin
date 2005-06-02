@@ -23,7 +23,7 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 
-/* TREASURE_DEBUG does some checking on the treasurelists after loading.
+/* TREASURE_DEBUG does some checking on the treasure lists after loading.
  * It is useful for finding bugs in the treasures file.  Since it only
  * slows the startup some (and not actual game play), it is by default
  * left on
@@ -354,9 +354,10 @@ void init_artifacts()
     char            filename[MAX_BUF], buf[MAX_BUF], *cp, *next;
     artifact       *art             = NULL;
     linked_char    *tmp;
-    int             lcount, value, none_flag = 0;
+    int             lcount, value, none_flag = 0, editor_flag;
     artifactlist   *al;
     char            buf_text[10 * 1024]; /* ok, 10k arch text... if we bug here, we have a design problem */
+	object			*dummy_obj=get_object(), *parse_obj;
 
     if (has_been_inited)
         return;
@@ -387,7 +388,8 @@ void init_artifacts()
         if (!strncmp(cp, "Allowed", 7))
         {
             art = get_empty_artifact();
-            nrofartifacts++;
+			editor_flag = FALSE;
+			nrofartifacts++;
             none_flag = FALSE;
             cp = strchr(cp, ' ') + 1;
             if (!strcmp(cp, "all"))
@@ -422,41 +424,54 @@ void init_artifacts()
         }
         else if (!strncmp(cp, "def_arch", 8)) /* chain a default arch to this treasure */
         {
-            if ((atemp = find_archetype(cp + 9)) == NULL)
-                LOG(llevError, "ERROR: Init_Artifacts: Can't find def_arch %s.\n", cp + 9);
-
-			/* ok, we have a name and a archtype */
-            FREE_AND_COPY_HASH(art->def_at_name, cp + 9); /* store the non fake archetype name */
-            memcpy(&art->def_at, atemp, sizeof(archetype)); /* copy the default arch */
-            art->def_at.base_clone = &atemp->clone;
-            ADD_REF_NOT_NULL_HASH(art->def_at.clone.name);
-            ADD_REF_NOT_NULL_HASH(art->def_at.clone.title);
-            ADD_REF_NOT_NULL_HASH(art->def_at.clone.race);
-            ADD_REF_NOT_NULL_HASH(art->def_at.clone.slaying);
-            ADD_REF_NOT_NULL_HASH(art->def_at.clone.msg);
-            art->def_at.clone.arch = &art->def_at;
-            /* we patch this .clone object after Object read with the artifact data.
-                     * in find_artifact, this archetype object will be returned. For the server,
-                     * it will be the same as it comes from the archlist, defined in the arches.
-                     * This will allow us the generate for every artifact a "default one" and we
-                     * will have always a non-magical base for every artifact
-                     */
+			FREE_AND_COPY_HASH(art->def_at_name, cp + 9); /* store the def archetype name (real base arch) */
         }
         else if (!strncmp(cp, "Object", 6)) /* all text after Object is now like a arch file until a end comes */
         {
-            old_pos = ftell(fp);
-            if (!load_object(fp, &(art->def_at.clone), NULL, LO_LINEMODE, MAP_STYLE))
-                LOG(llevError, "ERROR: Init_Artifacts: Could not load object.\n");
+			if(editor_flag == FALSE)
+				LOG(llevError, "ERROR: Init_Artifacts: Artifact %s (%s) has no 'editor x:...' line!\n", STRING_SAFE(art->name),STRING_SAFE(art->def_at_name));
 
-            if (!art->name)
-                LOG(llevError, "ERROR: Init_Artifacts: Object %s has no arch id name\n", art->def_at.clone.name);
-            if (!art->def_at_name)
-                LOG(llevError, "ERROR: Init_Artifacts: Artifact %s has no def arch\n", art->name);
+			if (!art->name)
+				LOG(llevError, "ERROR: Init_Artifacts: Artifact %s has no arch id name\n", STRING_SAFE(art->def_at_name));
 
-                 /* ok, now lets catch & copy the commands to our artifacts buffer.
-                          * lets do some file magic here - thats the easiest way.
-                          */
-                 file_pos = ftell(fp);
+			old_pos = ftell(fp);
+			if(art->flags&ARTIFACT_FLAG_HAS_DEF_ARCH) /* we have & use a default arch */
+			{
+				if (!art->def_at_name)
+					LOG(llevError, "ERROR: Init_Artifacts: Artifact %s has no def arch\n", art->name);
+
+				/* we patch this .clone object after Object read with the artifact data.
+				* in find_artifact, this archetype object will be returned. For the server,
+				* it will be the same as it comes from the arch list, defined in the arches.
+				* This will allow us the generate for every artifact a "default one" and we
+				* will have always a non-magical base for every artifact
+				*/
+				if ((atemp = find_archetype(art->def_at_name)) == NULL)
+					LOG(llevError, "ERROR: Init_Artifacts: Can't find def_arch %s.\n", art->def_at_name);
+				memcpy(&art->def_at, atemp, sizeof(archetype)); /* copy the default arch */
+				art->def_at.base_clone = &atemp->clone;
+				ADD_REF_NOT_NULL_HASH(art->def_at.clone.name);
+				ADD_REF_NOT_NULL_HASH(art->def_at.clone.title);
+				ADD_REF_NOT_NULL_HASH(art->def_at.clone.race);
+				ADD_REF_NOT_NULL_HASH(art->def_at.clone.slaying);
+				ADD_REF_NOT_NULL_HASH(art->def_at.clone.msg);
+				art->def_at.clone.arch = &art->def_at;
+				parse_obj = &art->def_at.clone;
+			}
+			else 
+			{
+				parse_obj = dummy_obj;
+				parse_obj->type = 0; /* we need the dummy obj to get the type info of the artifact! */
+			}
+
+			/* parse the new fake arch clone with the artifact values */
+			if (!load_object(fp, parse_obj, NULL, LO_LINEMODE, MAP_STYLE))
+				LOG(llevError, "ERROR: Init_Artifacts: Could not load object.\n");
+
+            /* ok, now lets catch & copy the commands to our artifacts buffer.
+             * lets do some file magic here - thats the easiest way.
+             */
+            file_pos = ftell(fp);
 
             if (fseek(fp, old_pos, SEEK_SET))
                 LOG(llevError, "ERROR: Init_Artifacts: Could not fseek(fp,%d,SEEK_SET).\n", old_pos);
@@ -465,7 +480,7 @@ void init_artifacts()
                           * so, we do it here and in the lex part we simple do a strlen and point
                           * to every part without copy it.
                           */
-                 lcount = 0;
+            lcount = 0;
             while (fgets(buf, MAX_BUF - 3, fp))
             {
                 strcpy(buf_text + lcount, buf);
@@ -476,25 +491,27 @@ void init_artifacts()
                     LOG(llevError, "ERROR: Init_Artifacts: fgets() read to much data! (%d - %d)\n", file_pos, ftell(fp));
             };
 
-                 /* now store the parse text in the artifacts list entry */
+            /* now store the parse text in the artifacts list entry */
             if ((art->parse_text = malloc(lcount)) == NULL)
                 LOG(llevError, "ERROR: Init_Artifacts: out of memory in ->parse_text (size %d)\n", lcount);
-                 memcpy(art->parse_text, buf_text, lcount);
+                 
+			memcpy(art->parse_text, buf_text, lcount);
 
-                 FREE_AND_COPY_HASH(art->def_at.name, art->name); /* finally, change the archetype name of
+			if(art->flags&ARTIFACT_FLAG_HAS_DEF_ARCH)
+				FREE_AND_COPY_HASH(art->def_at.name, art->name); /* finally, change the archetype name of
                                                                     * our fake arch to the fake arch name.
                                                                     * without it, treasures will get the
                                                                     * original arch, not this (hm, this
                                                                     * can be a glitch in treasures too...)
                                                                     */
-                 /* now handle the <Allowed none> in the artifact to create
-                          * unique items or add them to the given type list.
-                          */
-                 al = find_artifactlist(none_flag == FALSE ? art->def_at.clone.type : -1);
+            /* now handle the <Allowed none> in the artifact to create
+             * unique items or add them to the given type list.
+             */
+            al = find_artifactlist(none_flag == FALSE ? parse_obj->type : -1);
             if (al == NULL)
             {
                 al = get_empty_artifactlist();
-                al->type = none_flag == FALSE ? art->def_at.clone.type : -1;
+                al->type = none_flag == FALSE ? parse_obj->type : -1;
                 al->next = first_artifactlist;
                 first_artifactlist = al;
             }
@@ -504,11 +521,13 @@ void init_artifacts()
         }
         else if (!strncmp(cp, "editor", 6))
 		{
-            cp = strchr(cp, '!');
-			if(cp) /* a '!' means !noarch */
-			{
-				art->flags |= ARTIFACT_FLAG_NOARCH;
-			}
+			editor_flag = TRUE;
+			if(!strncmp(cp+7,"2:",2)) /* mask only */
+				continue;
+			else if(!strcmp(cp+7,"0") || !strncmp(cp+7,"1:",2) || !strncmp(cp+7,"3:",2)) /* use def arch def_at */
+				art->flags |= ARTIFACT_FLAG_HAS_DEF_ARCH;
+			else
+				LOG(llevError, "\nERROR: Invalid editor line in artifact file: %s\n", cp);
 		}
 		else
             LOG(llevBug, "\nBUG: Unknown line in artifact file: %s\n", buf);
@@ -2190,9 +2209,8 @@ void add_artifact_archtype(void)
         art = al->items;
         do
         {
-            if (art->flags!=ARTIFACT_FLAG_NOARCH && art->name)
+            if (art->flags&ARTIFACT_FLAG_HAS_DEF_ARCH && art->name)
             {
-                /*LOG(llevDebug,"add_art: %s (%s)\n", art->def_at.name, art->name);*/
                 add_arch(&art->def_at);
             }
             art = art->next;
@@ -2515,11 +2533,14 @@ void free_artifact(artifact *at)
         free_charlinks(at->allowed);
     if (at->parse_text)
         free(at->parse_text);
-    FREE_AND_CLEAR_HASH2(at->def_at.clone.name);
-    FREE_AND_CLEAR_HASH2(at->def_at.clone.race);
-    FREE_AND_CLEAR_HASH2(at->def_at.clone.slaying);
-    FREE_AND_CLEAR_HASH2(at->def_at.clone.msg);
-    FREE_AND_CLEAR_HASH2(at->def_at.clone.title);
+	if(at->flags&ARTIFACT_FLAG_HAS_DEF_ARCH)
+	{
+		FREE_AND_CLEAR_HASH2(at->def_at.clone.name);
+		FREE_AND_CLEAR_HASH2(at->def_at.clone.race);
+		FREE_AND_CLEAR_HASH2(at->def_at.clone.slaying);
+		FREE_AND_CLEAR_HASH2(at->def_at.clone.msg);
+		FREE_AND_CLEAR_HASH2(at->def_at.clone.title);
+	}
     free(at);
 }
 

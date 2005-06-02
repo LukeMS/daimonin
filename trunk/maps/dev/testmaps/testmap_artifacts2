@@ -389,10 +389,6 @@ arch floor_ostone1
 x 3
 y 8
 end
-arch missile_slay_dragon
-x 3
-y 8
-end
 arch floor_ostone1
 x 3
 y 9
@@ -517,10 +513,6 @@ x 4
 y 7
 end
 arch floor_ostone1
-x 4
-y 8
-end
-arch missile_ass_troll
 x 4
 y 8
 end

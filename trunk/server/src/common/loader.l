@@ -34,6 +34,7 @@
 #define YY_DECL int lex_load(object *op, int map_flags)
 
 static char *yval();
+static object *singularity;
 
 static void *cur_buffer; /* thats needed to track the used buffers for recursive calling */
 static int object_load_flag;
@@ -96,17 +97,23 @@ WS	[ \t]*{NL}?
 			  * to adjust here speed.
 			  */
 			if (op->arch) {
-			    object *tmp;
+			    object *tmp, *tmp2;
 				float old_sleft,old_speed;
 
 			    tmp=get_object();
 			    tmp->arch = find_archetype(yval());
-			    if (tmp->arch!=NULL)
-				copy_object_data(&tmp->arch->clone,tmp);
+			    if (tmp->arch)
+					copy_object_data(&tmp->arch->clone,tmp);
+				else
+				    tmp2 = create_singularity(yval());
+					
 			    strcpy(msgbuf, "");
 				old_sleft = tmp->speed_left;
 				old_speed = tmp->speed;
-			    lex_load(tmp, map_flags);
+				
+				lex_load(tmp, map_flags);
+			    if (!tmp->arch)
+				    tmp = tmp2;
 				  /* we set here AND in load_object the material real values.
 				   * we do: If item_quality == 0 AND material defines a base
 				   * material, then use material_real to set quality & condition.
@@ -169,11 +176,13 @@ WS	[ \t]*{NL}?
 			}
 			/* This is the actual archetype definition then */
 			else {
-			    op->arch=find_archetype(yval());
-			    if (op->arch!=NULL)
-					copy_object_data(&op->arch->clone,op);
+					op->arch=find_archetype(yval());
+					if (op->arch)
+						copy_object_data(&op->arch->clone,op);
+					else
+						singularity = create_singularity(yval());
 					/* note: speed will handled in load_object() for this */
-			}
+				}
 		    }
 
 ^object{S}	    {	char *yv=yval();
@@ -704,6 +713,7 @@ int load_object(void *fp, object *op, void *mybuffer, int bufstate, int map_flag
 	 * pre sets. We need to track this down to adjust for the "real ingame"
 	 * object the right speed & speed_left.
 	 */
+	singularity = NULL;
 	old_speed=op->speed;
 	old_sleft=op->speed_left;
 	object_load_flag = 0; /* we assume a "arch" load as default */
@@ -759,6 +769,13 @@ int load_object(void *fp, object *op, void *mybuffer, int bufstate, int map_flag
 		return LL_EOF;
     }
 
+	if(singularity) /* we have a singularity - create one (new NEED the op->arch set after load_object()! */
+	{
+		singularity->x = op->x; /* we want them on the right map spot so we can watch them in DM mode */
+		singularity->y = op->y;
+		copy_object_data(singularity,op); /* yep, this is right - op is a reference from outside */
+	}
+	
 	if(QUERY_FLAG(op,FLAG_IDENTIFIED))
 	{
 		SET_FLAG(op,FLAG_KNOWN_MAGICAL);

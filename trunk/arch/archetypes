@@ -8302,7 +8302,7 @@ layer 4
 end
 Object aggro_history
 type 127
-editor_folder intern/intern
+editor_folder indoor/intern
 layer 0
 no_save 1
 sys_object 1
@@ -8311,7 +8311,7 @@ no_drop 1
 end
 Object base_info
 type 101
-editor_folder intern/intern
+editor_folder indoor/intern
 layer 0
 sys_object 1
 face info.101
@@ -8319,7 +8319,7 @@ no_drop 1
 end
 Object dmg_info
 type 128
-editor_folder intern/intern
+editor_folder indoor/intern
 layer 0
 no_save 1
 sys_object 1
@@ -8328,13 +8328,13 @@ no_drop 1
 end
 Object empty_archetype
 type 79
-editor_folder intern/intern
-layer 1
+editor_folder indoor/intern
+sys_object 1
 end
 Object tabernacle_avatar_info
 name avatar
 type 8
-editor_folder intern/gods
+editor_folder indoor/gods
 layer 0
 sys_object 1
 other_arch tabernacle_avatar
@@ -8346,7 +8346,7 @@ type 8
 msg
 You feel a bond with the powers of the Tabernacle.
 endmsg
-editor_folder intern/gods
+editor_folder indoor/gods
 layer 0
 sys_object 1
 face power.101
@@ -8354,7 +8354,7 @@ end
 Object tabernacle_holy_servant_info
 name holy servant
 type 8
-editor_folder intern/gods
+editor_folder indoor/gods
 layer 0
 sys_object 1
 other_arch ant_red
@@ -8363,7 +8363,7 @@ end
 Object god_cure_blindness
 name heal spell
 type 8
-editor_folder intern/gods
+editor_folder indoor/gods
 sys_object 1
 slaying cure blindness
 face power.101
@@ -8371,7 +8371,7 @@ end
 Object god_cure_confusion
 name heal spell
 type 8
-editor_folder intern/gods
+editor_folder indoor/gods
 sys_object 1
 slaying cure confusion
 face power.101
@@ -8379,7 +8379,7 @@ end
 Object god_cure_disease
 name heal spell
 type 8
-editor_folder intern/gods
+editor_folder indoor/gods
 sys_object 1
 slaying cure disease
 face power.101
@@ -8387,7 +8387,7 @@ end
 Object god_cure_poison
 name heal spell
 type 8
-editor_folder intern/gods
+editor_folder indoor/gods
 sys_object 1
 slaying cure poison
 face power.101
@@ -8395,7 +8395,7 @@ end
 Object god_grace_limit_high
 name grace limit
 type 8
-editor_folder intern/gods
+editor_folder indoor/gods
 face power.101
 sys_object 1
 grace 600
@@ -8403,7 +8403,7 @@ end
 Object god_grace_limit_insane
 name grace limit
 type 8
-editor_folder intern/gods
+editor_folder indoor/gods
 face power.101
 sys_object 1
 grace 1000
@@ -8411,7 +8411,7 @@ end
 Object god_grace_limit_low
 name grace limit
 type 8
-editor_folder intern/gods
+editor_folder indoor/gods
 face power.101
 sys_object 1
 grace 100
@@ -8419,7 +8419,7 @@ end
 Object god_grace_limit_medium
 name grace limit
 type 8
-editor_folder intern/gods
+editor_folder indoor/gods
 face power.101
 sys_object 1
 grace 300
@@ -8427,42 +8427,42 @@ end
 Object god_remove_curse
 name remove curse
 type 8
-editor_folder intern/gods
+editor_folder indoor/gods
 sys_object 1
 face power.101
 end
 Object god_remove_damnation
 name remove damnation
 type 8
-editor_folder intern/gods
+editor_folder indoor/gods
 sys_object 1
 face power.101
 end
 Object god_remove_depletion
 name heal depletion
 type 8
-editor_folder intern/gods
+editor_folder indoor/gods
 sys_object 1
 face power.101
 end
 Object god_restore_grace
 name restore grace
 type 8
-editor_folder intern/gods
+editor_folder indoor/gods
 sys_object 1
 face power.101
 end
 Object god_restore_hitpoints
 name restore hitpoints
 type 8
-editor_folder intern/gods
+editor_folder indoor/gods
 sys_object 1
 face power.101
 end
 Object god_restore_spellpoints_high
 name restore spellpoints
 type 8
-editor_folder intern/gods
+editor_folder indoor/gods
 sys_object 1
 maxsp 150
 face power.101
@@ -8470,7 +8470,7 @@ end
 Object god_restore_spellpoints_low
 name restore spellpoints
 type 8
-editor_folder intern/gods
+editor_folder indoor/gods
 sys_object 1
 maxsp 80
 face power.101
@@ -8478,7 +8478,7 @@ end
 Object god_restore_spellpoints_medium
 name restore spellpoints
 type 8
-editor_folder intern/gods
+editor_folder indoor/gods
 sys_object 1
 maxsp 100
 face power.101
@@ -8486,14 +8486,14 @@ end
 Object god_restore_spellpoints_very_high
 name restore spellpoints
 type 8
-editor_folder intern/gods
+editor_folder indoor/gods
 sys_object 1
 maxsp 200
 face power.101
 end
 Object gravestone
 type 38
-editor_folder intern/intern
+editor_folder indoor/intern
 layer 3
 face gravestone.101
 identified 1
@@ -8511,7 +8511,7 @@ end
 Object close_bag
 name close the bag
 type 121
-editor_folder intern/items
+editor_folder indoor/items
 layer 3
 face close_bag.101
 no_pick 1
@@ -8521,7 +8521,7 @@ end
 Object cauldron_open
 name close the cauldron
 type 121
-editor_folder intern/items
+editor_folder indoor/items
 layer 3
 face cauldron_open.101
 no_pick 1
@@ -8530,7 +8530,7 @@ end
 Object close_chest1_111
 name open chest
 type 121
-editor_folder intern/items
+editor_folder indoor/items
 face chest_mm_open.111
 animation close_chest1_111
 is_animated 0
@@ -8545,7 +8545,7 @@ end
 Object close_chest_m1_1
 name open chest
 type 121
-editor_folder intern/items
+editor_folder indoor/items
 face chest_lm_open.111
 animation close_chest_m1_1
 is_animated 0
@@ -8560,7 +8560,7 @@ end
 Object close_chest_w1_1
 name open chest
 type 121
-editor_folder intern/items
+editor_folder indoor/items
 face chest_lw_open.111
 animation close_chest_w1_1
 is_animated 0
@@ -8575,7 +8575,7 @@ end
 Object close_chest_4.111
 name open chest
 type 121
-editor_folder intern/items
+editor_folder indoor/items
 face chest_mw_open.111
 animation close_chest_4.111
 is_animated 0
@@ -8590,7 +8590,7 @@ end
 Object close_chest_sm_1
 name open chest
 type 121
-editor_folder intern/items
+editor_folder indoor/items
 face chest_sm_open.111
 animation close_chest_sm_1
 is_animated 0
@@ -8605,7 +8605,7 @@ end
 Object close_chest_sw_1
 name open chest
 type 121
-editor_folder intern/items
+editor_folder indoor/items
 face chest_sw_open.111
 animation close_chest_sw_1
 is_animated 0
@@ -8620,7 +8620,7 @@ end
 Object close_chest7_111
 name open chest
 type 121
-editor_folder intern/items
+editor_folder indoor/items
 face chest_mm2_open.111
 animation close_chest7_111
 is_animated 0
@@ -8635,7 +8635,7 @@ end
 Object close_dbox
 name close the deposit box
 type 121
-editor_folder intern/items
+editor_folder indoor/items
 face close_dbox.101
 layer 3
 no_drop 1
@@ -8645,7 +8645,7 @@ end
 Object close_key_ring
 name close the key ring
 type 121
-editor_folder intern/items
+editor_folder indoor/items
 layer 3
 face close_keys.101
 no_drop 1
@@ -8655,7 +8655,7 @@ end
 Object close_luggage
 name close the luggage
 type 121
-editor_folder intern/items
+editor_folder indoor/items
 layer 3
 face close_lugg.101
 no_pick 1
@@ -8665,7 +8665,7 @@ end
 Object close_mail
 name close the mailbox
 type 121
-editor_folder intern/items
+editor_folder indoor/items
 face closemail.101
 layer 3
 no_pick 1
@@ -8675,7 +8675,7 @@ end
 Object close_pouch
 name close the pouch
 type 121
-editor_folder intern/items
+editor_folder indoor/items
 face close_pouch.101
 layer 3
 no_drop 1
@@ -8685,7 +8685,7 @@ end
 Object close_quiver_b
 name close the quiver
 type 121
-editor_folder intern/items
+editor_folder indoor/items
 face close_quiv_b.101
 layer 3
 no_drop 1
@@ -8695,7 +8695,7 @@ end
 Object close_quiver_s
 name close the quiver
 type 121
-editor_folder intern/items
+editor_folder indoor/items
 face close_quiv_s.101
 layer 3
 no_drop 1
@@ -8705,7 +8705,7 @@ end
 Object close_quiver
 name close the quiver
 type 121
-editor_folder intern/items
+editor_folder indoor/items
 face close_quiv.101
 layer 3
 no_drop 1
@@ -8715,7 +8715,7 @@ end
 Object close_rsack
 name close the rucksack
 type 121
-editor_folder intern/items
+editor_folder indoor/items
 face close_rsack.101
 layer 3
 no_drop 1
@@ -8725,7 +8725,7 @@ end
 Object close_sack
 name close the sack
 type 121
-editor_folder intern/items
+editor_folder indoor/items
 face close_sack.101
 layer 3
 no_drop 1
@@ -8735,7 +8735,7 @@ end
 Object lamp_wall_1_unlit
 name attached lamp
 type 74
-editor_folder intern/items
+editor_folder indoor/items
 layer 5
 sub_type 1
 face lamp_wall.110
@@ -8755,7 +8755,7 @@ end
 Object torch_wall_1_unlit
 name attached torch
 type 74
-editor_folder intern/items
+editor_folder indoor/items
 layer 5
 sub_type 1
 face torch_wall.110
@@ -8775,7 +8775,7 @@ end
 Object age_force
 name age force
 type 67
-editor_folder intern/player
+editor_folder indoor/player
 layer 0
 sys_object 1
 item_quality 100
@@ -8792,7 +8792,7 @@ end
 Object alignment_force
 name ALIGNMENT_FORCE
 type 114
-editor_folder intern/player
+editor_folder indoor/player
 layer 0
 item_quality 100
 item_condition 100
@@ -8809,7 +8809,7 @@ end
 Object corpse_pl
 name player corpse
 type 122
-editor_folder intern/player
+editor_folder indoor/player
 layer 3
 face corpse_pl.101
 sub_type 1
@@ -8825,7 +8825,7 @@ end
 Object guild_force
 name GUILD_FORCE
 type 114
-editor_folder intern/player
+editor_folder indoor/player
 item_quality 100
 item_condition 100
 nrof 1
@@ -8841,7 +8841,7 @@ speed 0
 end
 Object half_elf_female
 type 1
-editor_folder intern/player
+editor_folder indoor/player
 race half-elf
 randomitems player_half_elf_female
 layer 6
@@ -8876,7 +8876,7 @@ food 750
 end
 Object half_elf_male
 type 1
-editor_folder intern/player
+editor_folder indoor/player
 race half-elf
 face human_m.isw.111
 randomitems player_half_elf_male
@@ -8911,7 +8911,7 @@ food 750
 end
 Object human_female
 type 1
-editor_folder intern/player
+editor_folder indoor/player
 race human
 randomitems player_human_female
 layer 6
@@ -8946,7 +8946,7 @@ food 750
 end
 Object human_male
 type 1
-editor_folder intern/player
+editor_folder indoor/player
 race human
 face human_m.isw.111
 randomitems player_human_male
@@ -8981,7 +8981,7 @@ food 750
 end
 Object player_force
 type 114
-editor_folder intern/player
+editor_folder indoor/player
 sys_object 1
 applied 1
 item_quality 100
@@ -8997,7 +8997,7 @@ speed 0
 end
 Object player_info
 type 79
-editor_folder intern/player
+editor_folder indoor/player
 sys_object 1
 applied 0
 no_drop 1
@@ -9012,7 +9012,7 @@ face info.101
 end
 Object quest_container
 type 120
-editor_folder intern/player
+editor_folder indoor/player
 sys_object 1
 applied 0
 no_drop 1
@@ -9028,7 +9028,7 @@ end
 Object rank_force
 name RANK_FORCE
 type 114
-editor_folder intern/player
+editor_folder indoor/player
 sys_object 1
 applied 1
 layer 0
@@ -9045,7 +9045,7 @@ end
 Object skill_alchemy
 name alchemy
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 face skill.101
 sub_type 2
 item_quality 100
@@ -9065,7 +9065,7 @@ end
 Object skill_bargaining
 name bargaining
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 face skill.101
 sub_type 2
 sys_object 1
@@ -9084,7 +9084,7 @@ end
 Object skill_bowyer
 name bowyer lore
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 face skill.101
 sub_type 2
 item_quality 100
@@ -9103,7 +9103,7 @@ end
 Object skill_clawing
 name clawing
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 sub_type 0
 face skill.101
 sys_object 1
@@ -9125,7 +9125,7 @@ end
 Object skill_disarm_trap
 name disarm traps
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 sub_type 1
 face skill.101
 sys_object 1
@@ -9144,7 +9144,7 @@ end
 Object experience_agility
 name agility
 type 44
-editor_folder intern/skills
+editor_folder indoor/skills
 sub_type 0
 sys_object 1
 no_drop 1
@@ -9162,7 +9162,7 @@ end
 Object experience_charisma
 name personality
 type 44
-editor_folder intern/skills
+editor_folder indoor/skills
 sub_type 1
 sys_object 1
 item_quality 100
@@ -9180,7 +9180,7 @@ end
 Object experience_mental
 name mental
 type 44
-editor_folder intern/skills
+editor_folder indoor/skills
 item_quality 100
 item_condition 100
 nrof 1
@@ -9198,7 +9198,7 @@ end
 Object experience_misc
 name misc
 type 44
-editor_folder intern/skills
+editor_folder indoor/skills
 item_quality 100
 item_condition 100
 nrof 1
@@ -9215,7 +9215,7 @@ end
 Object experience_physical
 name physique
 type 44
-editor_folder intern/skills
+editor_folder indoor/skills
 sub_type 3
 sys_object 1
 item_quality 100
@@ -9234,7 +9234,7 @@ end
 Object experience_power
 name magic
 type 44
-editor_folder intern/skills
+editor_folder indoor/skills
 sub_type 4
 face exp.101
 item_quality 100
@@ -9252,7 +9252,7 @@ end
 Object experience_wis
 name wisdom
 type 44
-editor_folder intern/skills
+editor_folder indoor/skills
 sub_type 5
 item_quality 100
 item_condition 100
@@ -9270,7 +9270,7 @@ end
 Object skill_find_traps
 name find traps
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 item_quality 100
 item_condition 100
 nrof 1
@@ -9289,7 +9289,7 @@ end
 Object skill_flame_touch
 name flame touch
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 sub_type 0
 face skill.101
 sys_object 1
@@ -9312,7 +9312,7 @@ end
 Object skill_hide
 name hide in shadows
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 sub_type 1
 face skill.101
 item_quality 100
@@ -9331,7 +9331,7 @@ end
 Object skill_identify
 name identify items
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 sub_type 1
 face skill.101
 sys_object 1
@@ -9351,7 +9351,7 @@ end
 Object skill_inscription
 name inscription
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 sub_type 2
 face skill.101
 sys_object 1
@@ -9371,7 +9371,7 @@ end
 Object skill_jeweler
 name jeweler lore
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 face skill.101
 sub_type 2
 sys_object 1
@@ -9390,7 +9390,7 @@ end
 Object skill_jumping
 name jumping
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 sub_type 1
 face skill.101
 item_quality 100
@@ -9410,7 +9410,7 @@ end
 Object skill_karate
 name karate
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 weapon_speed 0.02
 attack_impact 100
 face skill.101
@@ -9435,7 +9435,7 @@ end
 Object skill_levitate
 name levitation
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 face skill.101
 sub_type 1
 sys_object 1
@@ -9456,7 +9456,7 @@ end
 Object skill_literacy
 name common literacy
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 sub_type 2
 face skill.101
 magic 2
@@ -9475,7 +9475,7 @@ end
 Object skill_lockpick
 name pick locks
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 face skill.101
 sub_type 1
 item_quality 100
@@ -9494,7 +9494,7 @@ end
 Object skill_thaumaturgy
 name magic lore
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 sub_type 2
 face skill.101
 magic 6
@@ -9513,7 +9513,7 @@ end
 Object skill_meditation
 name meditation
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 sub_type 1
 face skill.101
 sys_object 1
@@ -9532,7 +9532,7 @@ end
 Object skill_climbing
 name mountaineer
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 sub_type 2
 sys_object 1
 face skill.101
@@ -9551,7 +9551,7 @@ end
 Object skill_oratory
 name oratory
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 sub_type 1
 item_quality 100
 item_condition 100
@@ -9571,7 +9571,7 @@ end
 Object skill_praying
 name divine prayers
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 sub_type 2
 item_quality 100
 item_condition 100
@@ -9597,7 +9597,7 @@ end
 Object skill_punching
 name punching
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 weapon_speed 0.015
 face skill.101
 attack_impact 100
@@ -9621,7 +9621,7 @@ end
 Object skill_bow_archery
 name bow archery
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 face skill.101
 sub_type 0
 item_quality 100
@@ -9642,7 +9642,7 @@ end
 Object skill_sling_archery
 name sling archery
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 face skill.101
 sub_type 0
 sys_object 1
@@ -9663,7 +9663,7 @@ end
 Object skill_xbow_archery
 name crossbow archery
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 sub_type 0
 face skill.101
 sys_object 1
@@ -9684,7 +9684,7 @@ end
 Object skill_remove_trap
 name remove traps
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 sub_type 1
 face skill.101
 item_quality 100
@@ -9703,7 +9703,7 @@ end
 Object skill_sense_curse
 name sense curse
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 sub_type 1
 item_quality 100
 item_condition 100
@@ -9723,7 +9723,7 @@ end
 Object skill_sense_magic
 name sense magic
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 sub_type 1
 face skill.101
 item_quality 100
@@ -9743,7 +9743,7 @@ end
 Object skill_set_trap
 name set traps
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 sub_type 1
 face skill.101
 sys_object 1
@@ -9763,7 +9763,7 @@ end
 Object skill_singing
 name singing
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 sub_type 1
 face skill.101
 item_quality 100
@@ -9783,7 +9783,7 @@ end
 Object skill_smithery
 name smithery lore
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 sub_type 2
 item_quality 100
 item_condition 100
@@ -9803,7 +9803,7 @@ end
 Object skill_spellcasting
 name wizardry spells
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 sub_type 0
 face skill.101
 sys_object 1
@@ -9823,7 +9823,7 @@ end
 Object skill_stealing
 name stealing
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 face skill.101
 sub_type 1
 item_quality 100
@@ -9843,7 +9843,7 @@ end
 Object skill_throwing
 name throwing
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 wc 5
 sub_type 0
 item_quality 100
@@ -9864,7 +9864,7 @@ end
 Object skill_use_magic_item
 name magic devices
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 sub_type 0
 item_quality 100
 item_condition 100
@@ -9884,7 +9884,7 @@ end
 Object skill_cleave_weapon
 name cleave weapons
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 sub_type 0
 face skill.101
 item_quality 100
@@ -9904,7 +9904,7 @@ end
 Object skill_impact_weapon
 name impact weapons
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 sub_type 0
 face skill.101
 sys_object 1
@@ -9924,7 +9924,7 @@ end
 Object skill_pierce_weapon
 name pierce weapons
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 sub_type 0
 sys_object 1
 face skill.101
@@ -9944,7 +9944,7 @@ end
 Object skill_slash_weapon
 name slash weapons
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 sub_type 0
 face skill.101
 sys_object 1
@@ -9964,7 +9964,7 @@ end
 Object skill_2h_mastery
 name two-hand mastery
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 sub_type 2
 face skill.101
 sys_object 1
@@ -9983,7 +9983,7 @@ end
 Object skill_pole_mastery
 name polearm mastery
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 sub_type 2
 item_quality 100
 item_condition 100
@@ -10002,7 +10002,7 @@ end
 Object skill_woodsman
 name ranger lore
 type 43
-editor_folder intern/skills
+editor_folder indoor/skills
 sub_type 2
 face skill.101
 item_quality 100
@@ -10020,7 +10020,7 @@ exp 0
 end
 Object spawn_info
 type 84
-editor_folder intern/intern
+editor_folder indoor/intern
 layer 0
 identified 1
 sys_object 1
@@ -10029,7 +10029,7 @@ no_drop 1
 end
 Object wealth
 type 125
-editor_folder intern/intern
+editor_folder indoor/intern
 value 4
 face wealth.101
 sys_object 1
