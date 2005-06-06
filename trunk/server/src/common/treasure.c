@@ -702,8 +702,11 @@ static inline void parse_tlist_parm(tlist_tweak *tweak, char *parm)
 			case 'a': /* (a)rtifact  chance*/
 				tweak->artifact_chance = atoi(parm+1);
 				break;
-			case 'd': /* (d)rop  chance */
+			case 'd': /* (d)rop  chance 1/d */
 				tweak->drop_chance = atoi(parm+1);
+				break;
+			case 'D': /* (D)rop  chance %  */
+				tweak->drop100 = atoi(parm+1);
 				break;
 			case 's': /* treasure (s)tyle */
 				tweak->style = atoi(parm+1);
@@ -762,7 +765,8 @@ objectlink * link_treasurelists(char *liststring, uint32 flags)
         if ((tmp = strchr(liststring, ';')))
             *tmp = 0;
 
-		/* find parameter marker */
+
+		/* find parameter marker. */
         if ((parm = strchr(liststring, '&')))
 			*parm = 0;
 
@@ -808,7 +812,11 @@ objectlink * link_treasurelists(char *liststring, uint32 flags)
 					if(parm) /* we have a parameter list ('&' tail) for this list? parse it */
 					{
 						tlist_tweak  *tweak = (tlist_tweak *) get_poolchunk(pool_tlist_tweak);
-						
+
+						/* save the tname with paramter. don't patch, save the whole name */
+						*parm = '&';
+						tweak->name = add_string(liststring);
+						*parm = '0';
 						tweak->artifact_chance = ART_CHANCE_UNSET;
 						tweak->style = T_STYLE_UNSET;
 						tweak->difficulty = 0;
@@ -816,12 +824,11 @@ objectlink * link_treasurelists(char *liststring, uint32 flags)
 						tweak->magic = T_MAGIC_UNSET;
 						tweak->magic_chance = T_MAGIC_CHANCE_UNSET;
 						tweak->drop_chance = 0;
+						tweak->drop100 = 0;
 						set_change_arch(&tweak->c_arch);
 						parse_tlist_parm(tweak, parm+1);
 						list->parmlink.tl_tweak = tweak;
 					}
-					
-					
                 }
             }
         }
@@ -855,7 +862,10 @@ void unlink_treasurelists(objectlink *list, int flag)
     {
         /*LOG(-1,"freed listpat: %s\n",list->objlink.tl->listname); */
 		if(list->parmlink.tl_tweak)
+		{
+			FREE_ONLY_HASH(list->parmlink.tl_tweak->name);
 			return_poolchunk(list->parmlink.tl_tweak, pool_tlist_tweak);
+		}
         free_objectlink_simple(list);
         /* hm, this should work... return_poolchunk() should not effect the objectlink itself */
         list = list->next;
@@ -887,17 +897,12 @@ object * generate_treasure(struct oblnk *t, int difficulty)
 
 		if(t->parmlink.tl_tweak) /* this treasure list had a '&' paramter list */
 		{
-			/* we do a test from 1-1000.
-			 * 1 is a chance of 1/1000, 1000 1000/1000 (=100% chance) 
-			 */
-			if(t->parmlink.tl_tweak->drop_chance)
+			/* random chance tests for 1/x, drop100 for % chance (1-100%) */
+			if((t->parmlink.tl_tweak->drop_chance && (RANDOM() % t->parmlink.tl_tweak->drop_chance))
+				 || (t->parmlink.tl_tweak->drop100 && ((RANDOM()%100) >= t->parmlink.tl_tweak->drop100)))
 			{
-				/* skip if random mod chance is not 0 */
-				if(RANDOM() % t->parmlink.tl_tweak->drop_chance) 
-				{
-					t = t->next;
-					continue;
-				}
+				t = t->next;
+				continue;
 			}
 
 			/* setup the '&' parameter values insertation to the treasure list */
@@ -960,16 +965,12 @@ void create_treasure_list(struct oblnk *t, object *op, int flag, int difficulty,
     {
 		if(t->parmlink.tl_tweak) /* this treasure list had a '&' paramter list */
 		{
-			/* we do a test from 1-1000.
-			 * 1 is a chance of 1/1000, 1000 1000/1000 (=100% chance) 
-			 */
-			if(t->parmlink.tl_tweak->drop_chance)
+			/* random chance tests for 1/x, drop100 for % chance (1-100%) */
+			if((t->parmlink.tl_tweak->drop_chance && (RANDOM() % t->parmlink.tl_tweak->drop_chance))
+				|| (t->parmlink.tl_tweak->drop100 && ((RANDOM()%100) >= t->parmlink.tl_tweak->drop100)))
 			{
-				if(RANDOM() % t->parmlink.tl_tweak->drop_chance) 
-				{
-					t = t->next;
-					continue;
-				}
+				t = t->next;
+				continue;
 			}
 
 			a_chance = art_chance;
