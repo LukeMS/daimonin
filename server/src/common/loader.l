@@ -1197,13 +1197,19 @@ char *get_ob_diff(object *op,object *op2) {
 		else /* we have different lists - generate the "list1;list2;list3" string */
 		{
 			struct oblnk *ol = op->randomitems;
-			strcat(buf2,ol->objlink.tl->listname);
+			if(ol->parmlink.tl_tweak) /* tlist with or without '&' parameter list* */
+				strcat(buf2,ol->parmlink.tl_tweak->name); /* save name and '&' tail */
+			else
+				strcat(buf2,ol->objlink.tl->listname); /* clean default list name */
 			ol=ol->next;
 
 			for(;ol;ol=ol->next)
 			{
 				strcat(buf2,";");
-				strcat(buf2,ol->objlink.tl->listname);
+				if(ol->parmlink.tl_tweak)
+					strcat(buf2,ol->parmlink.tl_tweak->name);
+				else
+					strcat(buf2,ol->objlink.tl->listname);
 			}
 
 			strcat(buf,buf2);

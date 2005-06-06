@@ -710,8 +710,7 @@ static int basic_emote(object *op, char *params, int emotion)
         /* if we are a player with legal target, use it as target for the emote */
         if (op->type == PLAYER
          && CONTR(op)->target_object != op
-         && OBJECT_VALID(CONTR(op)->target_object,
-                                                                                 CONTR(op)->target_object_count)
+         && OBJECT_VALID(CONTR(op)->target_object, CONTR(op)->target_object_count)
          && CONTR(op)->target_object->name)
         {
             rv_vector   rv;
@@ -970,7 +969,7 @@ static int basic_emote(object *op, char *params, int emotion)
             {
                 for (pl = first_player; pl != NULL; pl = pl->next)
                 {
-                    if (pl->ob->name == name_hash)
+                    if (pl->ob->name == name_hash && pl->state == ST_PLAYING && !QUERY_FLAG(pl->ob,FLAG_REMOVED))
                     {
                         rv_vector   rv; /* lets check range */
                         get_rangevector(op, pl->ob, &rv, 0);

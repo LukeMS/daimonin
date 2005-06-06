@@ -84,13 +84,15 @@ typedef struct _change_arch
 /* used for personlized treasure lists ('&' tail command in randomitems) */
 typedef struct _tlist_tweak
 {
-	int magic;
+	char const *name;
+	int magic;        /* related to the same commands as in treasure file */
 	int magic_chance;
-	int drop_chance;
+	int drop_chance; /* chance 1/x */
+	int drop100;     /* chance in % */
 	int style;
 	int difficulty;
 	int artifact_chance;
-	int identified;
+	int identified; /* mark the tlist items identified when generated */
 	_change_arch c_arch;
 } tlist_tweak;
 
