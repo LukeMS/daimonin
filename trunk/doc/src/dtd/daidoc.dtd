@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  - Document Type Definition for Daimonin Documentation
+  -->
+
+<!ENTITY % InlineExt "">
+<!ENTITY % BlockExt "">
+  
+<!ENTITY % Inline "#PCDATA|em|strong|code|a|img%InlineExt;">
+<!ENTITY % Block  "blockcode|p|ul|table|ol|dl|section%BlockExt;">
+<!ENTITY % Mixed  "%Inline;|%Block;">
+
+<!ELEMENT title (%Inline;)*>
+
+<!ELEMENT section (title, (%Block;)+)>
+<!ATTLIST section
+    id ID #IMPLIED
+>
+
+<!ELEMENT em (%Inline;)*>
+<!ELEMENT strong (%Inline;)*>
+<!ELEMENT code (%Inline;)*>
+<!ELEMENT a (#PCDATA)>
+
+<!ELEMENT img EMPTY>
+<!ATTLIST img
+    alt CDATA #REQUIRED
+    src CDATA #REQUIRED
+>
+<!ATTLIST a
+    href CDATA #REQUIRED
+>
+
+<!ELEMENT table (tr+)>
+<!ELEMENT tr (th|td)+>
+<!ELEMENT td (%Mixed;)*>
+<!ELEMENT th (%Mixed;)*>
+
+<!ELEMENT p (%Inline;)*>
+<!ELEMENT ul (li+)>
+<!ELEMENT ol (li+)>
+<!ELEMENT li (%Mixed;)*>
+<!ELEMENT dl (dt|dd)+>
+<!ELEMENT dt (%Mixed;)*>
+<!ELEMENT dd (%Mixed;)*>
+<!ELEMENT blockcode (#PCDATA)>
+
