@@ -244,13 +244,6 @@
 /* thats 8 ticks per second now - 100.000 are 10 ticks */
 #define MAX_TIME    125000
 
-
-/* Polymorph as it currently stands is unbalancing, so by default
- * we have it disabled.  It can be enabled and it works, but
- * it can be abused in various ways.
- */
-#define NO_POLYMORPH
-
 /* NOT_PERMADEATH by Charles Henrich (henrich@crh.cl.msu.edu), April 9, 1993
  *
  * Makes death non permanent.  If enabled and you die, you lose a bunch of

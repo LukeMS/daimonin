@@ -394,9 +394,22 @@ end
 #
 #Artifact nuggets!
 #
+#
+Allowed all
+chance 60
+artifact nug_tin_small
+def_arch nugget_generic
+editor 3:items/jewel/nuggets
+Object
+title of small size
+face nugget_silver_s.101
+item_quality 100
+item_condition 100
+type 117
+end
+#
 Allowed all
 chance 55
-difficulty 2
 artifact nug_tin_med
 def_arch nugget_generic
 editor 3:items/jewel/nuggets
@@ -430,7 +443,6 @@ end
 #
 Allowed all
 chance 60
-difficulty 1
 artifact nug_copper_small
 def_arch nugget_generic
 editor 3:items/jewel/nuggets
@@ -917,7 +929,7 @@ end
 #
 Allowed all
 chance 100
-difficulty 2
+difficulty 4
 t_style 2
 artifact diamond_poor
 def_arch jewel_generic
@@ -1002,7 +1014,7 @@ end
 #
 Allowed all
 chance 100
-difficulty 2
+difficulty 4
 t_style 1
 artifact ruby_poor
 def_arch jewel_generic
@@ -1087,7 +1099,7 @@ end
 #
 Allowed all
 chance 100
-difficulty 2
+difficulty 4
 artifact sapphire_poor
 def_arch jewel_generic
 editor 3:items/jewel/jewels
@@ -1167,7 +1179,7 @@ end
 #
 Allowed all
 chance 100
-difficulty 2
+difficulty 4
 artifact emerald_poor
 def_arch jewel_generic
 editor 3:items/jewel/jewels
@@ -1248,7 +1260,7 @@ end
 #
 Allowed all
 chance 100
-difficulty 2
+difficulty 4
 artifact opal_poor
 def_arch jewel_generic
 editor 3:items/jewel/jewels
@@ -4350,9 +4362,8 @@ inv_face potionimp.101
 level 1
 type 5
 is_magical 1
-one_drop 1
 last_eat 2
-value 1500
+value 5000
 end
 #
 Allowed potion_generic

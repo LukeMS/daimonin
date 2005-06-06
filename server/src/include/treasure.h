@@ -30,6 +30,8 @@
 #define TREASURE_H
 
 #define CHANCE_FOR_ARTIFACT 20
+#define T_MAGIC_UNSET (-999)
+#define T_MAGIC_CHANCE_UNSET (-999)
 
 #define NUM_COINS 4 /* number of coin types */
 extern char        *coins[NUM_COINS + 1];
@@ -82,6 +84,8 @@ typedef struct _change_arch
 /* used for personlized treasure lists ('&' tail command in randomitems) */
 typedef struct _tlist_tweak
 {
+	int magic;
+	int magic_chance;
 	int drop_chance;
 	int style;
 	int difficulty;
