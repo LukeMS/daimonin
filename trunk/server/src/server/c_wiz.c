@@ -1110,7 +1110,7 @@ int command_ban(object *op, char *params)
 		return 0;
 	
 	if (!params)
-		goto bane_usage;		
+		goto ban_usage;		
 
 	/* list all entries of gmaster_file
 	 */
@@ -1212,8 +1212,8 @@ int command_ban(object *op, char *params)
 			
 	}
 		
-bane_usage:
-    new_draw_info(NDI_UNIQUE, 0, op, "Usage: /bane  list | add | remove <entry>");
+ban_usage:
+    new_draw_info(NDI_UNIQUE, 0, op, "Usage: /ban  list | add | remove <entry>");
 	return 1;
 }
 	
