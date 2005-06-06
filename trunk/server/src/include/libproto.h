@@ -323,16 +323,16 @@ extern void             unlink_treasurelists(objectlink *list, int flag);
 extern object          *generate_treasure(struct oblnk *t, int difficulty);
 extern void             create_treasure_list(struct oblnk *t, object *op, int flag, int difficulty, int a_chance, int tries);
 extern void             create_treasure(treasurelist *t, object *op, int flag, int difficulty, int t_style,
-                                        int a_chance, int tries, struct _change_arch *change_arch);
+                                        int a_chance, int magic, int magic_chance, int tries, struct _change_arch *change_arch);
 extern void             create_all_treasures(treasure *t, object *op, int flag, int difficulty, int t_style,
-                                             int a_chance, int tries, struct _change_arch *change_arch);
+                                             int a_chance,  int magic, int magic_chance, int tries, struct _change_arch *change_arch);
 extern void             create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty, int t_style,
-                                            int a_chance, int tries, struct _change_arch *change_arch);
+                                            int a_chance,  int magic, int magic_chance, int tries, struct _change_arch *change_arch);
 extern void             set_abs_magic(object *op, int magic);
 extern int              set_ring_bonus(object *op, int bonus, int level);
 extern int              get_magic(int diff);
 extern int              fix_generated_item(object **op, object *creator, int difficulty, int a_chance, int t_style,
-                                           int max_magic, int fix_magic, int chance_magic, int flags);
+                                           int max_magic, int chance_magic, int flags);
 extern artifactlist    *find_artifactlist(int type);
 void                    add_artifact_archtype(void);
 extern void             dump_artifacts(void);

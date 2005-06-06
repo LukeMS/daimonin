@@ -1743,7 +1743,6 @@ void tailor_readable_ob(object *book, int msg_type)
 
     msg_type = msg_type > 0 ? msg_type : (RANDOM() % 6);
 goto_2ndtry:
-	msg_type = 1;
     switch (msg_type)
     {
         case 1:
