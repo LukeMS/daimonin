@@ -1128,7 +1128,7 @@ int command_ban(object *op, char *params)
 		return 1;
 	}
     if (!(str = strchr(params, ' ')))
-		goto bane_usage;		
+		goto ban_usage;		
 	
     /* kill the space, and set string to the next param */
     *str++ = '\0';
