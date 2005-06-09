@@ -1,6 +1,6 @@
 Object corpse_goblinoid
 name decaying goblinoid corpse
-race goblinoid
+race goblin
 layer 3
 identified 1
 face corpse_goblinoid.101

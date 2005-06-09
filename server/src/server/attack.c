@@ -1972,6 +1972,8 @@ int adj_attackroll(object *hitter, object *target)
     /* if we attack at a different 'altitude' its harder */
     if (QUERY_FLAG(attacker, FLAG_FLYING) != QUERY_FLAG(target, FLAG_FLYING))
         adjust -= 2;
+	else if (QUERY_FLAG(attacker, FLAG_LEVITATE) != QUERY_FLAG(target, FLAG_LEVITATE))
+			adjust -= 2;
 
 #if 0
   /* slower attacks are less likely to succeed. We should use a

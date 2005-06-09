@@ -2,6 +2,7 @@ Object smith
 name smith
 race human
 face smith.141
+randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6
 direction 5
@@ -18,6 +19,8 @@ can_open_door 1
 can_use_weapon 1
 can_use_armour 1
 can_use_ring 1
+run_away 6
+Int 10
 Wis 7
 Dex 3
 Con 15
@@ -31,7 +34,6 @@ maxhp 85
 ac 11
 wc 7
 wc_range 20
-Str 25
 resist_impact 20
 resist_cleave 20
 resist_pierce 20
@@ -41,7 +43,7 @@ dam 48
 weapon_speed 0.045
 attack_impact 50
 attack_weaponmagic 50
-speed -0.025
+speed -0.048
 level 1
 weight 65500
 anim

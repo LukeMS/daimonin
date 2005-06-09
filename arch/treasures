@@ -336,50 +336,50 @@ treasureone chest_items
 # General lists - one of this group
 #
 treasureone weapon_misc
-  list weapons_missile
+  list weapon_missile
     chance 5
   more
-  list weapons_amun
+  list weapon_amun
     chance 10
   more
-  list weapons_slash
+  list weapon_slash
     chance 20
   more
-  list weapons_cleave
+  list weapon_cleave
     chance 20
   more
-  list weapons_pierce
+  list weapon_pierce
     chance 20
   more
-  list weapons_impact
+  list weapon_impact
     chance 20
   more
-  list weapons_throw
+  list weapon_throw
     chance 5
   end
-treasureone weapon_start
-  list weapons_missile
+treasureone weapons_start
+  list weapon_missile
     chance 5
   more
-  list weapons_amun
+  list weapon_amun
     chance 10
   more
-  list weapons_slash_1h
+  list weapon_slash_1h
     chance 20
   more
-  list weapons_cleave_1h
+  list weapon_cleave_1h
     chance 20
   more
-  list weapons_pierce_1h
+  list weapon_pierce_1h
     chance 20
   more
-  list weapons_impact_1h
+  list weapon_impact_1h
     chance 20
   more
-  list weapons_throw
+  list weapon_throw
     chance 5
   end
-treasureone weapons_amun
+treasureone weapon_amun
   arch arrow
     chance 35
     nrof 3
@@ -392,7 +392,7 @@ treasureone weapons_amun
     magic 2
     nrof 3
   end
-treasureone weapons_throw
+treasureone weapon_throw
   arch t_dagger
     magic_chance 20
     nrof 3
@@ -414,7 +414,7 @@ treasureone weapons_throw
     nrof 3
     chance 30
   end
-treasureone weapons_missile
+treasureone weapon_missile
   arch bow_short
     chance 12
   more
@@ -448,79 +448,79 @@ treasureone weapons_missile
     chance 5
     difficulty 18
   end
-treasureone weapons_melee
-  list weapons_cleave
+treasureone weapon_melee
+  list weapon_cleave
     chance 25
   more
-  list weapons_slash
+  list weapon_slash
     chance 25
   more
-  list weapons_impact
+  list weapon_impact
     chance 25
   more
-  list weapons_pierce
+  list weapon_pierce
     chance 25
   end
-treasureone weapons_1h
-  list weapons_cleave_1h
+treasureone weapon_1h
+  list weapon_cleave_1h
     chance 25
   more
-  list weapons_slash_1h
+  list weapon_slash_1h
     chance 25
   more
-  list weapons_impact_1h
+  list weapon_impact_1h
     chance 25
   more
-  list weapons_pierce_1h
+  list weapon_pierce_1h
     chance 25
   end
-treasureone weapons_2h
-  list weapons_cleave_2h
+treasureone weapon_2h
+  list weapon_cleave_2h
     difficulty 9
     chance 25
   more
-  list weapons_slash_2h
+  list weapon_slash_2h
     difficulty 9
     chance 25
   more
-  list weapons_impact_2h
+  list weapon_impact_2h
     difficulty 9
     chance 25
   more
-  list weapons_pierce_2h
-    difficulty 9
-    chance 25
-  end
-treasureone weapons_pole
-  list weapons_cleave_pole
-    difficulty 9
-    chance 25
-  more
-  list weapons_slash_pole
-    difficulty 9
-    chance 25
-  more
-  list weapons_impact_pole
-    difficulty 9
-    chance 25
-  more
-  list weapons_pierce_pole
+  list weapon_pierce_2h
     difficulty 9
     chance 25
   end
-treasureone weapons_cleave
-  list weapons_cleave_1h
+treasureone weapon_pole
+  list weapon_cleave_pole
+    difficulty 9
+    chance 25
+  more
+  list weapon_slash_pole
+    difficulty 9
+    chance 25
+  more
+  list weapon_impact_pole
+    difficulty 9
+    chance 25
+  more
+  list weapon_pierce_pole
+    difficulty 9
+    chance 25
+  end
+treasureone weapon_cleave
+  list weapon_cleave_1h
    chance 60
   more
-  list weapons_cleave_2h
+  list weapon_cleave_2h
     difficulty 9
    chance 25
   more
-  list weapons_cleave_pole
+  list weapon_cleave_pole
     difficulty 9
    chance 15
 end
-treasureone weapons_cleave_1h
+treasureone weapon_cleave_1h
   arch axe
   difficulty 3
   chance 15
@@ -570,7 +570,7 @@ treasureone weapons_cleave_1h
   difficulty 6
   chance 10
 end
-treasureone weapons_cleave_2h
+treasureone weapon_cleave_2h
   arch axe_2h
   chance 30
   more
@@ -586,7 +586,7 @@ treasureone weapons_cleave_2h
   arch mattock
   chance 10
 end
-treasureone weapons_cleave_pole
+treasureone weapon_cleave_pole
   arch bardiche
   chance 20
   more
@@ -599,19 +599,19 @@ treasureone weapons_cleave_pole
   arch voulge
   chance 20
 end
-treasureone weapons_slash
-  list weapons_slash_1h
+treasureone weapon_slash
+  list weapon_slash_1h
    chance 60
   more
-  list weapons_slash_2h
+  list weapon_slash_2h
     difficulty 9
    chance 25
   more
-  list weapons_slash_pole
+  list weapon_slash_pole
     difficulty 9
    chance 15
 end
-treasureone weapons_slash_1h
+treasureone weapon_slash_1h
   arch baselard
   chance 20
   more
@@ -673,7 +673,7 @@ treasureone weapons_slash_1h
   difficulty 3
   chance 20
 end
-treasureone weapons_slash_2h
+treasureone weapon_slash_2h
   arch claymore
   chance 20
   more
@@ -695,7 +695,7 @@ treasureone weapons_slash_2h
   arch sword2h
   chance 20
 end
-treasureone weapons_slash_pole
+treasureone weapon_slash_pole
   arch fauchard
   chance 20
   more
@@ -705,19 +705,19 @@ treasureone weapons_slash_pole
   arch naginata
   chance 20
 end
-treasureone weapons_impact
-  list weapons_impact_1h
+treasureone weapon_impact
+  list weapon_impact_1h
    chance 60
   more
-  list weapons_impact_2h
+  list weapon_impact_2h
     difficulty 9
    chance 25
   more
-  list weapons_impact_pole
+  list weapon_impact_pole
     difficulty 9
    chance 15
 end
-treasureone weapons_impact_1h
+treasureone weapon_impact_1h
   arch ancus
   difficulty 6
   chance 20
@@ -801,7 +801,7 @@ treasureone weapons_impact_1h
   difficulty 6
   chance 20
 end
-treasureone weapons_impact_2h
+treasureone weapon_impact_2h
   arch bo
   chance 20
   more
@@ -826,26 +826,26 @@ treasureone weapons_impact_2h
   arch quaterstaff
   chance 20
 end
-treasureone weapons_impact_pole
+treasureone weapon_impact_pole
   arch bec_de_corbin
   chance 20
   more
   arch lucern_hammer
   chance 20
 end
-treasureone weapons_pierce
-  list weapons_pierce_1h
+treasureone weapon_pierce
+  list weapon_pierce_1h
    chance 60
   more
-  list weapons_pierce_2h
+  list weapon_pierce_2h
     difficulty 9
    chance 25
   more
-  list weapons_pierce_pole
+  list weapon_pierce_pole
     difficulty 9
    chance 15
 end
-treasureone weapons_pierce_1h
+treasureone weapon_pierce_1h
   arch athame
   difficulty 3
   chance 14
@@ -891,7 +891,7 @@ treasureone weapons_pierce_1h
   difficulty 3
   chance 14
 end
-treasureone weapons_pierce_2h
+treasureone weapon_pierce_2h
   arch forc
   chance 20
   more
@@ -904,7 +904,7 @@ treasureone weapons_pierce_2h
   arch trident
   chance 20
 end
-treasureone weapons_pierce_pole
+treasureone weapon_pierce_pole
   arch bill_guisarme
   chance 10
   more
@@ -920,7 +920,7 @@ treasureone weapons_pierce_pole
   arch ranseur
   chance 20
 end
-treasureone weapons_start
+treasureone weapon_start
   arch club
   chance 20
   more
@@ -1543,11 +1543,32 @@ end
 #end
 #
 ##################
+treasure ai_fighter
+   arch ai_generic
+end
+treasure ai_archer
+   arch ai_caster
+end
+treasure ai_caster
+   arch ai_caster
+end
+treasure ai_mage
+   arch ai_caster
+end
+treasure ai_priest
+   arch ai_caster
+end
+treasure ai_monk
+   arch ai_generic
+end
 treasure ai_guard
    arch guard_arch_ai 
 end
 treasure ai_slime
    arch slime_race_ai
+end
+treasure ai_animal
+   arch ai_generic
 end
 ##############################################################
 #
@@ -1642,8 +1663,18 @@ end
 # Spells
 #
 ##################
-treasure spells_mage_def
+treasure spells_mage
    arch ability_mbullet
+end
+treasure spells_wizard
+   arch ability_mbullet
+   more
+   arch ability_firestorm
+end
+treasure spells_sorcerer
+   arch ability_mbullet
+   more
+   arch ability_icestorm
 end
 treasure spells_fire
    arch ability_firestorm
@@ -1651,7 +1682,16 @@ end
 treasure spells_ice
    arch ability_icestorm
 end
-treasure spells_priest_def
+treasure spells_priest
+   arch ability_cause_lig_wound
+end
+treasure spells_beholder
+   arch ability_mbullet
+   more
+   arch ability_firestorm
+   more
+   arch ability_icestorm
+   more
    arch ability_cause_lig_wound
 end
 ##############################################################
@@ -1975,38 +2015,48 @@ end
 treasureone misc_container
   arch sack
     chance 25
+    magic 0
   more
   arch r_sack
     chance 25
+    magic 0
   more
   arch bag
     chance 25
+    magic 0
   more
   arch pouch
     chance 20
   more
   arch key_ring
     chance 20
+    magic 0
   more
   arch quiver
     chance 10
+    magic 0
   more
   arch quiver_b
     chance 10
+    magic 0
   more
   arch quiver_s
     chance 10
+    magic 0
   end
-treasureone misc_read
+treasureone book_misc
   arch tome
     chance 45
+    magic 0
   more
   arch book
     chance 65
+    magic 0
   end
 treasureone misc_alchemy
   arch gravedirt
     chance 1
+    magic 0
   end
 treasureone misc_inorganic
   arch t_rock
@@ -2014,12 +2064,15 @@ treasureone misc_inorganic
   end
 treasureone misc_light
    arch torch
+    magic 0
     chance 50
   more
    arch lamp
+    magic 0
     chance 20
   more
    arch oil_lamp
+    magic 0
     chance 30
   end
 
@@ -2124,25 +2177,25 @@ end
 # special loot for mobs in the start area to give useful drops to start
 # base weapons, base armours and other starting stuff in a somewhat high rate
 treasureone loot_start
-    list weapons_start
+    list weapon_start
     chance 20
   more
   list armour_start
     chance 30
   more
-    list weapons_throw
+    list weapon_throw
     chance 12
   more
-    list weapons_amun
+    list weapon_amun
     chance 10
   more
     list food_misc
     chance 10
   more
-    list weapons_missile
+    list weapon_missile
     chance 7
  more
-    list misc_read
+    list book_misc
     magic 0
     chance 3
  more
@@ -2173,13 +2226,13 @@ treasureone loot_start
 end
 # base loot list for "misc. base stuff"
 treasureone loot_base
-    list weapons_throw
+    list weapon_throw
     chance 6
   more
-    list weapons_amun
+    list weapon_amun
     chance 6
   more
-    list misc_read
+    list book_misc
     magic 0
     chance 6
  more
@@ -2215,6 +2268,13 @@ treasureone loot_base
     list magic_useup
     chance 3
 end
+treasureone loot_misc
+    list armour_misc
+    chance 65
+    more
+    list weapon_misc
+    chance 35
+end
 treasureone loot_melee
     list armour_misc
     chance 65
@@ -2236,5 +2296,5 @@ treasureone loot_device
 end
 ################ test drop (for testmaps)
 treasureone random_test
-  list wealth_normal
+  list book_misc
 end

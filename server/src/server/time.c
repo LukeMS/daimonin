@@ -1473,7 +1473,7 @@ void move_player_mover(object *op)
         dir = rndm(1, 8);
     for (victim = get_map_ob(op->map, op->x, op->y); victim != NULL; victim = victim->above)
     {
-        if (IS_LIVE(victim) && (!(QUERY_FLAG(victim, FLAG_FLYING)) || op->stats.maxhp))
+        if (IS_LIVE(victim) && ((!QUERY_FLAG(victim, FLAG_FLYING)&&!QUERY_FLAG(victim, FLAG_LEVITATE)) || op->stats.maxhp))
         {
             if (QUERY_FLAG(op, FLAG_LIFESAVE) && op->stats.hp-- < 0)
             {

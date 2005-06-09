@@ -365,6 +365,7 @@ op->oy= op->y;
 								SET_FLAG(op,FLAG_CLIENT_SENT); /* we using this flag for debugging - ignore */
 							}
 ^flying{S}					SET_OR_CLEAR_FLAG(op, FLAG_FLYING, IVAL);
+^levitate{S}				SET_OR_CLEAR_FLAG(op, FLAG_LEVITATE, IVAL);
 ^monster{S}					SET_OR_CLEAR_FLAG(op, FLAG_MONSTER, IVAL);
 ^no_attack{S}				SET_OR_CLEAR_FLAG(op, FLAG_NO_ATTACK, IVAL);
 ^invulnerable{S}			SET_OR_CLEAR_FLAG(op, FLAG_INVULNERABLE, IVAL);
@@ -877,7 +878,7 @@ NULL /*is_removed*/,"been_applied", "auto_apply", "treasure", "is_neutral",	/* 2
 "see_anywhere", "known_magical", "known_cursed", "can_open_door", "is_thrown",				/* 80 */
 "is_vul_sphere", "is_proof_sphere", "is_male",
 "is_female", "applied",  "inv_locked", "is_wooded",
-"is_hilly", NULL, "has_ready_weapon",		/* 90 */
+"is_hilly", "levitate", "has_ready_weapon",		/* 90 */
 "no_skill_ident","use_dmg_info", "can_see_in_dark", "is_cauldron",
 "is_dust", "no_steal", "one_hit", NULL, "berserk", "no_attack",	/* 100 */
 "invulnerable", "quest_item", "is_traped", "is_vul_elemental",  "is_proof_elemental", /* 105 */

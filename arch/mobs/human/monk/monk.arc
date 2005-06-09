@@ -4,6 +4,7 @@ race human
 face monk.131
 type 80
 layer 6
+randomitems ai_monk;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 direction 5
 item_race 255
 item_level 255
@@ -18,6 +19,7 @@ can_open_door 1
 can_use_weapon 1
 can_use_ring 1
 has_ready_bow 1
+Int 10
 Wis 7
 Dex 3
 Con 15
@@ -31,7 +33,6 @@ maxhp 90
 ac 14
 wc 6
 wc_range 20
-Str 25
 resist_impact 20
 resist_cleave 20
 resist_pierce 20
@@ -42,7 +43,7 @@ weapon_speed 0.045
 attack_impact 60
 attack_magic 20
 attack_weaponmagic 20
-speed -0.025
+speed -0.049
 level 1
 weight 65500
 anim

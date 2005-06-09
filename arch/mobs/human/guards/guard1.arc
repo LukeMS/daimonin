@@ -2,7 +2,7 @@ Object guard
 name guard
 race human
 face guard1.131
-randomitems ai_guard
+randomitems ai_guard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6
 direction 5
@@ -20,6 +20,7 @@ can_reflect_spell 1
 can_use_weapon 1
 can_use_armour 1
 can_use_ring 1
+Int 10
 Wis 7
 Dex 3
 Con 15
@@ -33,7 +34,6 @@ maxhp 90
 ac 12
 wc 6
 wc_range 20
-Str 25
 resist_impact 15
 resist_cleave 15
 resist_pierce 15
@@ -44,7 +44,7 @@ weapon_speed 0.045
 attack_slash 35
 attack_magic 35
 attack_weaponmagic 30
-speed -0.025
+speed -0.048
 level 1
 weight 85000
 anim

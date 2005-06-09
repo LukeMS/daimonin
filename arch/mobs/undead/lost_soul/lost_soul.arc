@@ -1,22 +1,49 @@
 Object lost_soul
 name lost soul
 face lost_soul.131
-race undead
-is_male 1
-wc_range 20
-corpse 1
+race ghost
+randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+type 80
 layer 6
 direction 5
-is_evil 1
 item_race 255
 item_level 255
+corpse 1
+alive 1
+monster 1
+is_evil 1
 terrain_flag 1
-weapon_speed 0.035
-attack_slash 40
-attack_drain 50
-type 80
+can_open_door 1
+can_see_in_dark 1
+can_use_weapon 1
+can_use_ring 1
+is_ethereal 1
+can_pass_thru 1
+undead 1
+Int 10
 Wis 6
-randomitems mob_lost_soul
+Dex 3
+Con 15
+exp 103
+magic 1
+Pow 10
+sp -1
+maxsp 20
+hp -1
+maxhp 62
+ac 8
+wc 6
+wc_range 20
+dam 52
+weapon_speed 0.045
+resist_fear 100
+resist_paralyze 50
+resist_confusion 50
+attack_slash 50
+attack_drain 50
+speed -0.048
+level 1
+weight 2500
 anim
 facings 25
 trans.101
@@ -97,17 +124,5 @@ lost_soul.251
 mina
 is_animated 1
 anim_speed 4
-monster 1
 no_pick 1
-alive 1
-can_see_in_dark 1
-exp 103
-ac 7
-wc 3
-dam 52
-hp -1
-maxhp 62
-level 1
-speed -0.04
-weight 32500
 end

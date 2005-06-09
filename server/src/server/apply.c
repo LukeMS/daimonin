@@ -1715,7 +1715,7 @@ void move_apply(object *trap, object *victim, object *originator, int flags)
               {
                   sint32    tot;
                   for (ab = trap->above,tot = 0; ab != NULL; ab = ab->above)
-                      if (!QUERY_FLAG(ab, FLAG_FLYING))
+                      if (!QUERY_FLAG(ab, FLAG_FLYING) && !QUERY_FLAG(ab, FLAG_FLYING))
                       {
                           tot += (ab->nrof ? ab->nrof : 1) * ab->weight + ab->carrying;
                       }
@@ -1725,7 +1725,7 @@ void move_apply(object *trap, object *victim, object *originator, int flags)
                   update_object(trap, UP_OBJ_FACE);
               }
               for (ab = trap->above, max = 100, sound_was_played = 0;
-                   --max && ab && !QUERY_FLAG(ab, FLAG_FLYING);
+                   --max && ab && (!QUERY_FLAG(ab, FLAG_FLYING)&&!QUERY_FLAG(ab, FLAG_LEVITATE));
                    ab = ab->above)
               {
                   if (!sound_was_played)
@@ -3168,10 +3168,10 @@ int player_apply(object *pl, object *op, int aflag, int quiet)
 {
     int tmp;
 
-    if (op->env == NULL && QUERY_FLAG(pl, FLAG_FLYING))
+    if (op->env == NULL && (QUERY_FLAG(pl, FLAG_FLYING) || QUERY_FLAG(pl, FLAG_LEVITATE)))
     {
         /* player is flying and applying object not in inventory */
-        if (!QUERY_FLAG(pl, FLAG_WIZ) && !QUERY_FLAG(op, FLAG_FLYING) && !QUERY_FLAG(op, FLAG_FLY_ON))
+        if (!QUERY_FLAG(pl, FLAG_WIZ) && !QUERY_FLAG(op, FLAG_FLYING) && !QUERY_FLAG(op, FLAG_LEVITATE) && !QUERY_FLAG(op, FLAG_FLY_ON))
         {
             new_draw_info(NDI_UNIQUE, 0, pl, "But you are floating high " "above the ground!");
             return 0;

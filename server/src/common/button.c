@@ -441,7 +441,7 @@ int check_trigger(object *op, object *cause)
               if (cause)
               {
                   for (tmp = op->above; tmp; tmp = tmp->above)
-                      if (!QUERY_FLAG(tmp, FLAG_FLYING))
+                      if ((!QUERY_FLAG(tmp, FLAG_FLYING)&&!QUERY_FLAG(tmp, FLAG_LEVITATE)))
                           tot += tmp->weight * (tmp->nrof ? tmp->nrof : 1) + tmp->carrying;
                   if (tot >= op->weight)
                       push = 1;
@@ -463,7 +463,7 @@ int check_trigger(object *op, object *cause)
               for (tmp = op->above; tmp; tmp = tmp->above)
               {
                   object   *head    = tmp->head ? tmp->head : tmp;
-                  if ((!QUERY_FLAG(head, FLAG_FLYING) || QUERY_FLAG(op, FLAG_FLY_ON))
+                  if(((!QUERY_FLAG(head, FLAG_FLYING)&&!QUERY_FLAG(head, FLAG_LEVITATE)) || QUERY_FLAG(op, FLAG_FLY_ON))
                    && (head->race == op->slaying || (!strcmp(op->slaying, "player") && head->type == PLAYER)))
                   {
                       push = 1;
