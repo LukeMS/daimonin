@@ -747,7 +747,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_IS_WOODED      87 /* Item is wooded terrain */
 
 #define FLAG_IS_HILLY       88 /* Item is hilly/mountain terrain */
-/* FLAG 89 FREE */
+#define FLAG_LEVITATE		89	/* levitating... similiar to flying */
 #define FLAG_READY_WEAPON   90 /* (Monster or Player) has a weapon readied */
 #define FLAG_NO_SKILL_IDENT 91 /* If set, item cannot be identified w/ a skill */
 #define FLAG_USE_DMG_INFO	92 /* used for asynchron dmg of AoE spells */

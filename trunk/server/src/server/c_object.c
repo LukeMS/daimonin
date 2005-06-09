@@ -182,9 +182,12 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof)
      * (sack, luggage, etc), tmp->env->env then points to the player (nested 
      * containers not allowed as of now)
      */
-    if (QUERY_FLAG(pl, FLAG_FLYING) && !QUERY_FLAG(pl, FLAG_WIZ) && is_player_inv(tmp) != pl)
+    if ((QUERY_FLAG(pl, FLAG_FLYING) || QUERY_FLAG(pl, FLAG_LEVITATE))&& !QUERY_FLAG(pl, FLAG_WIZ) && is_player_inv(tmp) != pl)
     {
-        new_draw_info(NDI_UNIQUE, 0, pl, "You are levitating, you can't reach the ground!");
+		if(QUERY_FLAG(pl, FLAG_FLYING))
+	        new_draw_info(NDI_UNIQUE, 0, pl, "You are flying, you can't reach the ground!");
+		else
+			new_draw_info(NDI_UNIQUE, 0, pl, "You are levitating, you can't reach the ground!");
         return;
     }
     if (QUERY_FLAG(tmp, FLAG_NO_DROP))
@@ -1028,22 +1031,22 @@ char *examine_monster(object *op, object *tmp, char *buf, int flag)
 
     if (QUERY_FLAG(mon, FLAG_IS_GOOD))
 	{
-        sprintf(buf2,"%s is a good aligned %s %s.\n", att, gender, mon->race);
+		sprintf(buf2,"%s is a good aligned %s %s%s.\n", att, gender, QUERY_FLAG(mon,FLAG_UNDEAD)?"undead ":"", mon->race);
 		strcat(buf,buf2);
 	}
     else if (QUERY_FLAG(mon, FLAG_IS_EVIL))
 	{
-		sprintf(buf2,"%s is a evil aligned %s %s.\n", att, gender, mon->race);
+		sprintf(buf2,"%s is a evil aligned %s %s%s.\n", att, gender, QUERY_FLAG(mon,FLAG_UNDEAD)?"undead ":"", mon->race);
 		strcat(buf,buf2);
 	}
 	else if (QUERY_FLAG(mon, FLAG_IS_NEUTRAL))
 	{
-        sprintf(buf2,"%s is a neutral aligned %s %s.\n", att, gender, mon->race);
+        sprintf(buf2,"%s is a neutral aligned %s %s%s.\n", att, gender, QUERY_FLAG(mon,FLAG_UNDEAD)?"undead ":"", mon->race);
 		strcat(buf,buf2);
 	}
     else
     {
-		sprintf(buf2,"%s is a %s %s.\n", att, gender, mon->race);
+		sprintf(buf2,"%s is a %s %s%s.\n", att, gender, QUERY_FLAG(mon,FLAG_UNDEAD)?"undead ":"", mon->race);
 		strcat(buf,buf2);
 	}
 	
@@ -1105,12 +1108,6 @@ char *examine_monster(object *op, object *tmp, char *buf, int flag)
 		strcat(buf,buf2);
 	}
 	
-    if (QUERY_FLAG(mon, FLAG_UNDEAD))
-	{
-        sprintf(buf2,"It is an undead force.\n");
-		strcat(buf,buf2);
-	}
-
 	if(flag) /* we use this also for general arch description */
 	{
 		switch ((mon->stats.hp + 1) * 4 / (mon->stats.maxhp + 1))

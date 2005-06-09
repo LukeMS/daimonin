@@ -238,7 +238,7 @@ static const char          *GameObject_flags[NUM_FLAGS + 1 + 1] =
     "f_stealth", "?f_wizpass", "?f_is_linked", "f_cursed", "f_damned", "f_see_anywhere", "f_known_magical", "f_known_cursed",
     "f_can_use_skill", "f_is_thrown",               /* 80 */
     "f_is_vul_sphere", "f_is_proof_sphere", "f_is_male", "f_is_female", "f_applied", "f_inv_locked", "f_is_wooded",
-    "f_is_hilly", NULL, "f_has_ready_weapon",        /* 90 */
+    "f_is_hilly", "f_levitate", "f_has_ready_weapon",        /* 90 */
     "f_no_skill_ident", "f_use_dmg_info", "f_can_see_in_dark", "f_is_cauldron", "f_is_dust", "f_no_steal",
     "f_one_hit", NULL /* debug flag CLIENT_SENT */, "f_berserk", "f_no_attack",   /* 100 */
     "f_invulnerable", "f_quest_item", "f_is_traped", "f_is_vul_elemental", "f_is_proof_elemental", /* 105 */

@@ -590,7 +590,21 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
      * a valid terrain flag, this is forbidden to enter.
      */
     if (msp->move_flags & ~terrain)
-        return (flags & (P_NO_PASS | P_IS_ALIVE | P_IS_PLAYER | P_CHECK_INV | P_PASS_THRU | P_PASS_ETHEREAL) | P_NO_TERRAIN);
+	{
+		/* last chance ... flying & levitation allows us to stay over more terrains */
+		if(op)
+		{
+			if(QUERY_FLAG(op,FLAG_FLYING))
+				terrain |= (TERRAIN_WATERWALK|TERRAIN_CLOUDWALK);
+			else if(QUERY_FLAG(op,FLAG_LEVITATE))
+				terrain |= TERRAIN_WATERWALK;
+
+			if (msp->move_flags & ~terrain)
+				return (flags & (P_NO_PASS | P_IS_ALIVE | P_IS_PLAYER | P_CHECK_INV | P_PASS_THRU | P_PASS_ETHEREAL) | P_NO_TERRAIN);
+		}
+		else
+			return (flags & (P_NO_PASS | P_IS_ALIVE | P_IS_PLAYER | P_CHECK_INV | P_PASS_THRU | P_PASS_ETHEREAL) | P_NO_TERRAIN);
+	}
 	
     /* the terrain is ok... whats first?
      * A.) P_IS_ALIVE - we leave without question
@@ -1000,7 +1014,12 @@ int load_objects(mapstruct *m, FILE *fp, int mapflags)
                 SET_MULTI_FLAG(op->more, FLAG_FLYING)
             else
                 CLEAR_MULTI_FLAG(tmp->more, FLAG_FLYING);
-            if (QUERY_FLAG(op, FLAG_BLOCKSVIEW))
+			if (QUERY_FLAG(op, FLAG_LEVITATE))
+				SET_MULTI_FLAG(op->more, FLAG_LEVITATE)
+			else
+			CLEAR_MULTI_FLAG(tmp->more, FLAG_LEVITATE);
+
+			if (QUERY_FLAG(op, FLAG_BLOCKSVIEW))
                 SET_MULTI_FLAG(op->more, FLAG_BLOCKSVIEW)
             else
                 CLEAR_MULTI_FLAG(tmp->more, FLAG_BLOCKSVIEW);

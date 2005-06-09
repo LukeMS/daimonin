@@ -28,6 +28,8 @@
 #include <aiconfig.h>
 #include <ctype.h>
 
+/* the attribute Str is atm not used from monsters (was used in push code) MT-06.2005 */
+
 /*#define AI_DEBUG*/
 
 /* Maximum number of ticks a mob remembers an object that it can't see */

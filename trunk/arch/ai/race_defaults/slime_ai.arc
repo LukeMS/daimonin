@@ -1,6 +1,6 @@
 Object slime_race_ai
 name Slime race AI
-race slime
+race slimes
 msg
 # Slimes aren't supposed to be very smart
 processes:

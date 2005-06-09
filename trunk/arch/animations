@@ -5040,8 +5040,8 @@ kobold_guard.151
 mina
 anim kobold_shaman
 facings 25
-trans.101
-trans.101
+dummy.111
+dummy.111
 kobold_shaman.131
 kobold_shaman.132
 kobold_shaman.131

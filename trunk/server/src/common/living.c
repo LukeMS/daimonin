@@ -478,7 +478,37 @@ int change_abil(object *op, object *tmp)
             new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "Suddenly you feel less safe, somehow.");
         }
     }
-    if (QUERY_FLAG(tmp, FLAG_FLYING))
+	if (QUERY_FLAG(tmp, FLAG_FLYING))
+	{
+		if (flag > 0)
+		{
+			success = 1;
+			/* if were already flying then now flying higher */
+			if (QUERY_FLAG(op, FLAG_FLYING) == QUERY_FLAG(&refop, FLAG_FLYING))
+				new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You fly a little higher in the air.");
+			else
+			{
+				new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You start to fly in the air!.");
+				SET_MULTI_FLAG(op, FLAG_FLYING);
+				if (op->speed > 1)
+					op->speed = 1;
+			}
+		}
+		else
+		{
+			success = 1;
+			/* if were already flying then now flying lower */
+			if (QUERY_FLAG(op, FLAG_FLYING) == QUERY_FLAG(&refop, FLAG_FLYING))
+				new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You fly a little lower in the air.");
+			else
+			{
+				new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You fly down to the ground.");
+				check_walk_on(op, op, 0);
+			}
+		}
+	}
+
+	if (QUERY_FLAG(tmp, FLAG_LEVITATE))
     {
         if (flag > 0)
         {
@@ -954,8 +984,10 @@ void fix_player(object *op)
         CLEAR_FLAG(op, FLAG_STEALTH);
     if (!QUERY_FLAG(&op->arch->clone, FLAG_BLIND))
         CLEAR_FLAG(op, FLAG_BLIND);
-    if (!QUERY_FLAG(&op->arch->clone, FLAG_FLYING))
-        CLEAR_MULTI_FLAG(op, FLAG_FLYING);
+	if (!QUERY_FLAG(&op->arch->clone, FLAG_FLYING))
+		CLEAR_MULTI_FLAG(op, FLAG_FLYING);
+	if (!QUERY_FLAG(&op->arch->clone, FLAG_LEVITATE))
+		CLEAR_MULTI_FLAG(op, FLAG_LEVITATE);
     if (!QUERY_FLAG(&op->arch->clone, FLAG_CAN_REFL_SPELL))
         CLEAR_FLAG(op, FLAG_CAN_REFL_SPELL);
     if (!QUERY_FLAG(&op->arch->clone, FLAG_CAN_REFL_MISSILE))
@@ -1387,8 +1419,11 @@ void fix_player(object *op)
                 SET_MULTI_FLAG(op, FLAG_IS_INVISIBLE);
             if (QUERY_FLAG(tmp, FLAG_CAN_PASS_THRU))
                 SET_MULTI_FLAG(op, FLAG_CAN_PASS_THRU); 
-            if (QUERY_FLAG(tmp, FLAG_MAKE_ETHEREAL))
-                SET_MULTI_FLAG(op, FLAG_IS_ETHEREAL);
+			if (QUERY_FLAG(tmp, FLAG_MAKE_ETHEREAL))
+				SET_MULTI_FLAG(op, FLAG_IS_ETHEREAL);
+			if (QUERY_FLAG(tmp, FLAG_LEVITATE))
+				SET_MULTI_FLAG(op, FLAG_LEVITATE);
+
             if (QUERY_FLAG(tmp, FLAG_FLYING))
             {
                 SET_MULTI_FLAG(op, FLAG_FLYING);

@@ -1108,8 +1108,10 @@ char * describe_item(object *op)
             strcat(retbuf, "(reflect missiles)");
         if (QUERY_FLAG(op, FLAG_STEALTH))
             strcat(retbuf, "(stealth)");
-        if (QUERY_FLAG(op, FLAG_FLYING))
-            strcat(retbuf, "(levitate)");
+		if (QUERY_FLAG(op, FLAG_FLYING))
+			strcat(retbuf, "(flying)");
+		if (QUERY_FLAG(op, FLAG_LEVITATE))
+			strcat(retbuf, "(levitate)");
     }
     if (id_true)
     {

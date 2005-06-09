@@ -3398,7 +3398,7 @@ Allowed none
 chance 100
 artifact ring_normal
 def_arch ring_generic
-editor 2:items/talisman/rings
+editor 3:items/talisman/rings
 Object
 value 4250
 type 70

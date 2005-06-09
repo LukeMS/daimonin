@@ -1,23 +1,43 @@
 Object ant_red
 name red ant
 face ant_red.131
-race ants
-is_female 1
-corpse 1
+race ant
+randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+type 80
 layer 6
 direction 5
-wc_range 20
-is_neutral 1
 item_race 255
 item_level 255
-terrain_flag 1
-weapon_speed 0.035
-attack_cleave 75
+corpse 1
+alive 1
+monster 1
+is_female 1
+is_neutral 1
 unaggressive 1
-random_move 1
-type 80
+terrain_flag 1
+can_see_in_dark 1
+can_use_weapon 1
+run_away 2
+Int 10
 Wis 6
-randomitems mob_ant
+Dex 3
+Con 15
+exp 85
+magic 1
+Pow 10
+sp -1
+maxsp 20
+hp -1
+maxhp 60
+ac 9
+wc 0
+wc_range 20
+dam 50
+weapon_speed 0.045
+attack_cleave 100
+speed -0.053
+level 1
+weight 22500
 anim
 facings 25
 trans.101
@@ -73,17 +93,5 @@ ant_red.252
 mina
 is_animated 1
 anim_speed 4
-monster 1
 no_pick 1
-alive 1
-can_see_in_dark 1
-exp 85
-ac 9
-wc 0
-dam 50
-hp -1
-maxhp 60
-level 1
-speed -0.0275
-weight 22500
 end

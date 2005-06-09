@@ -1615,7 +1615,7 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
                               / ((caster->path_denied & path) ? 2 : 1);
           break;
         case SP_LEVITATE:
-          SET_MULTI_FLAG(force, FLAG_FLYING);
+          SET_MULTI_FLAG(force, FLAG_LEVITATE);
           break;
           /* The following immunity spells are obsolete... -AV */
         case SP_IMMUNE_COLD:

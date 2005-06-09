@@ -2,7 +2,7 @@ Object ranger
 name ranger
 race human
 face ranger.131
-randomitems skill_bow
+randomitems ai_archer;skill_bow;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6
 direction 5
@@ -20,6 +20,8 @@ can_use_weapon 1
 can_use_armour 1
 can_use_ring 1
 has_ready_bow 1
+run_away 6
+Int 10
 Wis 7
 Dex 3
 Con 15
@@ -33,7 +35,6 @@ maxhp 80
 ac 11
 wc 6
 wc_range 20
-Str 25
 resist_impact 15
 resist_cleave 15
 resist_pierce 15
@@ -44,7 +45,7 @@ weapon_speed 0.045
 attack_pierce 40
 attack_magic 30
 attack_weaponmagic 30
-speed -0.025
+speed -0.0495
 level 1
 weight 75000
 anim

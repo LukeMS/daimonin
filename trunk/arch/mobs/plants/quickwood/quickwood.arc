@@ -1,20 +1,40 @@
 Object quickwood
 name quickwood
-type 80
 face quickwood.131
-layer 6
 race tree
-wc_range 20
-corpse 1
+randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+type 80
+layer 6
+direction 5
 item_race 255
 item_level 255
-weapon_speed 0.035
-attack_cleave 80
+corpse 1
+alive 1
+monster 1
 is_evil 1
-direction 5
 terrain_flag 1
-randomitems mob_quickwood
+can_see_in_dark 1
+can_use_weapon 1
+Int 10
 Wis 6
+Dex 3
+Con 15
+exp 96
+magic 1
+Pow 10
+sp -1
+maxsp 20
+hp -1
+maxhp 66
+ac 10
+wc 3
+wc_range 20
+dam 52
+weapon_speed 0.045
+attack_cleave 100
+speed -0.048
+level 1
+weight 355000
 anim
 facings 25
 trans.101
@@ -70,17 +90,5 @@ quickwood.251
 mina
 is_animated 1
 anim_speed 4
-monster 1
 no_pick 1
-alive 1
-can_see_in_dark 1
-exp 96
-ac 10
-wc 3
-dam 52
-hp -1
-maxhp 66
-speed -0.0325
-level 1
-weight 355000
 end
