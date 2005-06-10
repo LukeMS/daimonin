@@ -33,7 +33,7 @@
 static int              static_walk_semaphore                               = FALSE; /* see walk_off/walk_on functions  */
 
 /* This Table is sorted in 64er blocks of the same base material, defined in
-   materialtype. Entrys, used for random selections should start from down of 
+   materialtype. Entrys, used for random selections should start from down of
    a table section. Unique materials should start from above the 64 block down.
    The M_RANDOM_xx value will always counted from down. */
 
@@ -697,7 +697,7 @@ material_real_struct    material_real[NROFMATERIALS *NROFMATERIALS_REAL + 1]    
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
-    /* Soft Metal */ 
+    /* Soft Metal */
     {"tin ",         100,80,       0,0,0,   M_SOFT_METAL,   RACE_TYPE_NONE}, /* 641 */
     {"brass ",       100,80,       0,0,0,   M_SOFT_METAL,   RACE_TYPE_NONE}, /* 642 */
     {"copper ",      100,80,       0,0,0,   M_SOFT_METAL,   RACE_TYPE_NONE}, /* 643 */
@@ -892,7 +892,7 @@ material_real_struct    material_real[NROFMATERIALS *NROFMATERIALS_REAL + 1]    
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
     {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
-    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE}, 
+    {"", 0,0,       0,0,0,      M_NONE,         RACE_TYPE_NONE},
 };
 
 materialtype            material[NROFMATERIALS]                             =
@@ -949,7 +949,7 @@ void mark_object_removed(object *ob)
     struct mempool_chunk   *mem = MEM_POOLDATA(ob);
 
     if (OBJECT_FREE(ob))
-        LOG(llevBug, "BUG: mark_object_removed() called for free object\n");  
+        LOG(llevBug, "BUG: mark_object_removed() called for free object\n");
 
     SET_FLAG(ob, FLAG_REMOVED);
 
@@ -1022,7 +1022,7 @@ int CAN_MERGE(object *ob1, object *ob2)
     if (((!ob1->nrof || !ob2->nrof) && ob1->type != TYPE_EVENT_OBJECT) || ob1->glow_radius || ob2->glow_radius)
         return 0;
 
-    /* just a brain dead long check for things NEVER NEVER should be different 
+    /* just a brain dead long check for things NEVER NEVER should be different
      * this is true under all circumstances for all objects.
      */
     if (ob1->type != ob2->type
@@ -1042,7 +1042,7 @@ int CAN_MERGE(object *ob1, object *ob2)
         return 0;
 
 
-    /* Gecko: added bad special check for event objects 
+    /* Gecko: added bad special check for event objects
      * Idea is: if inv is identical events only then go ahead and merge)
      * This goes hand in hand with the event keeping addition in get_split_ob()
      */
@@ -1120,7 +1120,7 @@ int CAN_MERGE(object *ob1, object *ob2)
      * last_grace;
      * sint16 last_eat;
      * run_away;
-     * stealth;     
+     * stealth;
      * hide;
         * move_type;
      * layer;               this *can* be different for real same item - watch it
@@ -1476,7 +1476,7 @@ void clear_owner(object *op)
 
 static void set_owner_simple(object *op, object *owner)
 {
-    /* next line added to allow objects which own objects */ 
+    /* next line added to allow objects which own objects */
     /* Add a check for ownercounts in here, as I got into an endless loop
      * with the fireball owning a poison cloud which then owned the
      * fireball.  I believe that was caused by one of the objects getting
@@ -1544,7 +1544,7 @@ void copy_owner(object *op, object *clone)
     if (clone->chosen_skill)
 	{
 		op->chosen_skill = clone->chosen_skill;
-		op->exp_obj = clone->exp_obj;		
+		op->exp_obj = clone->exp_obj;
 	}
 }
 
@@ -1560,7 +1560,7 @@ void copy_owner(object *op, object *clone)
 void initialize_object(object *op)
 {
     memset(op, 0, sizeof(object));
-    op->name = op->title = op->race = op->slaying = op->msg = NULL; 
+    op->name = op->title = op->race = op->slaying = op->msg = NULL;
     /* Set some values that should not be 0 by default */
     op->anim_enemy_dir = -1;      /* control the facings 25 animations */
     op->anim_moving_dir = -1;     /* the same for movement */
@@ -1584,7 +1584,7 @@ void initialize_object(object *op)
 
 void copy_object(object *op2, object *op)
 {
-    int is_removed  = QUERY_FLAG(op, FLAG_REMOVED); 
+    int is_removed  = QUERY_FLAG(op, FLAG_REMOVED);
 
     FREE_ONLY_HASH(op->name);
     FREE_ONLY_HASH(op->title);
@@ -1600,7 +1600,7 @@ void copy_object(object *op2, object *op)
                   sizeof(object) - offsetof(object, name));
 
     if (is_removed)
-        SET_FLAG(op, FLAG_REMOVED);    
+        SET_FLAG(op, FLAG_REMOVED);
 
     ADD_REF_NOT_NULL_HASH(op->name);
     ADD_REF_NOT_NULL_HASH(op->title);
@@ -1621,7 +1621,7 @@ void copy_object(object *op2, object *op)
         op->randomitems->ref_count++;
 
     /* We set the custom_attrset pointer to NULL to avoid
-     * really bad problems. TODO. this needs to be handled better 
+     * really bad problems. TODO. this needs to be handled better
     * but it works until its only the player struct.
     */
     op->custom_attrset = NULL;
@@ -1635,7 +1635,7 @@ void copy_object(object *op2, object *op)
 /* Same as above, but not touching the active list */
 void copy_object_data(object *op2, object *op)
 {
-    int is_removed  = QUERY_FLAG(op, FLAG_REMOVED); 
+    int is_removed  = QUERY_FLAG(op, FLAG_REMOVED);
 
     FREE_ONLY_HASH(op->name);
     FREE_ONLY_HASH(op->title);
@@ -1793,7 +1793,7 @@ void update_ob_speed(object *op)
  */
 /* i want use this function as one and only way to decide what we update in a tile
  * and how - and what not. As smarter this function is, as better. This function MUST
- * be called now from everything what does a noticable change to a object. We can 
+ * be called now from everything what does a noticable change to a object. We can
  * pre-decide its needed to call but normally we must call this.
  */
 void update_object(object *op, int action)
@@ -1814,7 +1814,7 @@ void update_object(object *op, int action)
 
     /* make sure the object is within map boundaries */
     /*
-       if (op->x < 0 || op->x >= MAP_WIDTH(op->map) || op->y < 0 || op->y >= MAP_HEIGHT(op->map)) 
+       if (op->x < 0 || op->x >= MAP_WIDTH(op->map) || op->y < 0 || op->y >= MAP_HEIGHT(op->map))
     {
            LOG(llevError,"ERROR: update_object() called for object out of map!\n");
         return;
@@ -1828,7 +1828,7 @@ void update_object(object *op, int action)
 #endif
         INC_MAP_UPDATE_COUNTER(op->map, op->x, op->y);
         return;
-    } 
+    }
 
     msp = GET_MAP_SPACE_PTR(op->map, op->x, op->y);
     newflags = msp->flags;
@@ -2071,7 +2071,7 @@ void drop_ob_inv(object *ob)
             {
                 /* don't drop traps from a container to the floor.
                  * removing the container where a trap is applied will
-                 * neutralize the trap too 
+                 * neutralize the trap too
                 * Also not drop it in env - be safe here
                  */
                 if (tmp_op->type != RUNE)
@@ -2205,19 +2205,19 @@ void destroy_object(object *ob)
     /* Free attached attrsets */
     if (ob->custom_attrset)
     {
-        /*      LOG(llevDebug,"destroy_object() custom attrset found in object %s (type %d)\n", 
+        /*      LOG(llevDebug,"destroy_object() custom attrset found in object %s (type %d)\n",
                       STRING_OBJ_NAME(ob), ob->type);*/
 
         switch (ob->type)
         {
             case PLAYER:
             case DEAD_OBJECT:
-              /* Players are changed into DEAD_OBJECTs when they logout */              
+              /* Players are changed into DEAD_OBJECTs when they logout */
               return_poolchunk(ob->custom_attrset, pool_player);
               break;
 
             case MONSTER:
-              return_poolchunk(ob->custom_attrset, pool_mob_data);              
+              return_poolchunk(ob->custom_attrset, pool_mob_data);
               break;
 
             default:
@@ -2228,7 +2228,7 @@ void destroy_object(object *ob)
     }
 
     FREE_AND_CLEAR_HASH2(ob->name);
-    FREE_AND_CLEAR_HASH2(ob->title);  
+    FREE_AND_CLEAR_HASH2(ob->title);
     FREE_AND_CLEAR_HASH2(ob->race);
     FREE_AND_CLEAR_HASH2(ob->slaying);
     FREE_AND_CLEAR_HASH2(ob->msg);
@@ -2299,7 +2299,7 @@ void remove_ob(object *op)
     mark_object_removed(op);
     SET_FLAG(op, FLAG_OBJECT_WAS_MOVED);
 
-    /* 
+    /*
      * In this case, the object to be removed is in someones
      * inventory.
      */
@@ -2340,7 +2340,7 @@ void remove_ob(object *op)
         op->ox = op->x,op->oy = op->y;
 #endif
 
-        op->map = op->env->map; 
+        op->map = op->env->map;
         op->above = NULL,op->below = NULL;
         op->env = NULL;
         return;
@@ -2390,7 +2390,7 @@ void remove_ob(object *op)
     else
         SET_MAP_SPACE_FIRST(msp, op->above);  /* first object goes on above it. */
 
-    op->above = NULL;                      
+    op->above = NULL;
     op->below = NULL;
 
     /* this is triggered when a map is swaped out and the objects on it get removed too */
@@ -2424,7 +2424,7 @@ void remove_ob(object *op)
             container_unlink(pltemp, NULL);
     }
 
-    update_object(op, UP_OBJ_REMOVE);       
+    update_object(op, UP_OBJ_REMOVE);
 
     op->env = NULL;
 }
@@ -2455,7 +2455,7 @@ void remove_ob_inv(object *op)
  * originator: Player, monster or other object that caused 'op' to be inserted
  * into 'map'.  May be NULL.
  *
- * flag is a bitmask about special things to do (or not do) when this 
+ * flag is a bitmask about special things to do (or not do) when this
  * function is called.  see the object.h file for the INS_ values.
  * Passing 0 for flag gives proper default values, so flag really only needs
  * to be set if special handling is needed.
@@ -2576,7 +2576,7 @@ object * insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag
     /* map layer system */
     /* we don't test for sys object because we ALWAYS set the layer of a sys object
      * to 0 when we load a sys_object (0 is default, but server loader will warn when
-     * we set a layer != 0). We will do the check in the arch load and 
+     * we set a layer != 0). We will do the check in the arch load and
      * in the map editor, so we don't need to mess with it anywhere at runtime.
      * Note: even the inserting process is more complicate and more code as the crossfire
      * on, we should speed up things alot - with more object more cpu time we will safe.
@@ -2604,7 +2604,7 @@ object * insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag
 
             /* now, if top != NULL, thats the object BEFORE we want chain. This can be
                      * the base layer, the inv base layer or a object from a upper layer.
-                     * If it NULL, we are the only object in this tile OR 
+                     * If it NULL, we are the only object in this tile OR
                      * ->last holds the object BEFORE ours.
                      */
             SET_MAP_SPACE_LAYER(mc, layer, op); /* we always go in front */
@@ -2832,7 +2832,7 @@ object * insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag
 }
 
 /* this function inserts an object in the map, but if it
- *  finds an object of its own type, it'll remove that one first. 
+ *  finds an object of its own type, it'll remove that one first.
  *  op is the object to insert it under:  supplies x and the map.
  */
 void replace_insert_ob_in_map(char *arch_string, object *op)
@@ -2855,7 +2855,7 @@ void replace_insert_ob_in_map(char *arch_string, object *op)
 
     tmp1->x = op->x; tmp1->y = op->y;
     insert_ob_in_map(tmp1, op->map, op, 0);
-}        
+}
 
 /*
  * get_split_ob(ob,nr) splits up ob into two parts.  The part which
@@ -3014,12 +3014,12 @@ object * decrease_ob_nr(object *op, int i)
  *   This function inserts the object op in the linked list
  *   inside the object environment.
  *
- * Eneq(@csd.uu.se): Altered insert_ob_in_ob to make things picked up enter 
+ * Eneq(@csd.uu.se): Altered insert_ob_in_ob to make things picked up enter
  * the inventory at the last position or next to other objects of the same
  * type.
  * Frank: Now sorted by type, archetype and magic!
  *
- * The function returns now pointer to inserted item, and return value can 
+ * The function returns now pointer to inserted item, and return value can
  * be != op, if items are merged. -Tero
  */
 
@@ -3117,8 +3117,8 @@ object * insert_ob_in_ob(object *op, object *where)
         where->event_flags |= (1U << (op->sub_type1 - 1));
 	else if(op->type == TYPE_QUEST_TRIGGER && op->sub_type1 == ST1_QUEST_TRIGGER_CONT && where->type == CONTAINER)
 		where->event_flags |= EVENT_FLAG_SPECIAL_QUEST;
-		
-    /* if player, adjust one drop items and fix player if not 
+
+    /* if player, adjust one drop items and fix player if not
      * marked as no fix.
      */
     otmp = is_player_inv(where);
@@ -3651,7 +3651,7 @@ object * load_object_str(char *obstr)
 
     op = get_object();
 
-    rewind(tempfile);    
+    rewind(tempfile);
     mybuffer = create_loader_buffer(tempfile);
     load_object(tempfile, op, mybuffer, LO_REPEAT, 0);
     delete_loader_buffer(mybuffer);
@@ -3666,11 +3666,11 @@ int auto_apply(object *op)
     object*tmp =    NULL, *tmp2;
     int             i, level;
 
-    /* because auto_apply will be done only *one* time 
+    /* because auto_apply will be done only *one* time
      * when a new, base map is loaded, we always clear
      * the flag now.
      */
-    CLEAR_FLAG(op, FLAG_AUTO_APPLY); 
+    CLEAR_FLAG(op, FLAG_AUTO_APPLY);
     switch (op->type)
     {
         case SHOP_FLOOR:

@@ -51,15 +51,15 @@ struct itimerval
 
 
 /* Functions to capsule or serve linux style function
- * for Windows Visual C++ 
+ * for Windows Visual C++
 */
-int gettimeofday( struct timeval* tv,struct timezone *timezone_Info) 
+int gettimeofday( struct timeval* tv,struct timezone *timezone_Info)
 {
     FILETIME    time;
     double      timed;
-   
+
     GetSystemTimeAsFileTime( &time );
-  
+
     /* Apparently Win32 has units of 1e-7 sec (tenths of microsecs)
      * 4294967296 is 2^32, to shift high word over
      * 11644473600 is the number of seconds between
@@ -78,8 +78,8 @@ int gettimeofday( struct timeval* tv,struct timezone *timezone_Info)
         _tzset();
         timezone_Info->tz_minuteswest = _timezone;
         timezone_Info->tz_dsttime = _daylight;
-    }    
-    return 0; 
+    }
+    return 0;
 }
 
 /*

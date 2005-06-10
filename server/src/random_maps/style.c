@@ -155,7 +155,7 @@ int select_regular_files(const struct dirent *the_entry)
  * irrelevant to the style.  If dirname is given, but stylename
  * isn't, and difficult is -1, it returns a random style map.
  * Otherwise, it tries to match the difficulty given with a style
- * file, named style_name_# where # is an integer 
+ * file, named style_name_# where # is an integer
  */
 
 /* remove extern, so visible to command_style_map_info function */

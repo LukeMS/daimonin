@@ -32,7 +32,7 @@ archive::
 	$(CP) $(ALL_FILES) $(ARCHIVE)/include
 
 patchlist::
-	@echo $(ALL_FILES) > .patchlist	
+	@echo $(ALL_FILES) > .patchlist
 
 
 install::

@@ -29,8 +29,8 @@
 #endif
 
 
-/* i left find_arrow - find_arrow() and find_arrow()_ext should merge 
-   when the server sided range mode is removed at last from source */ 
+/* i left find_arrow - find_arrow() and find_arrow()_ext should merge
+   when the server sided range mode is removed at last from source */
 static object  *find_arrow_ext(object *op, const char *type, int tag);
 
 /* find a player name for a NORMAL string.
@@ -38,7 +38,7 @@ static object  *find_arrow_ext(object *op, const char *type, int tag);
  */
 player * find_player(char *plname)
 {
-    player     *pl;                 
+    player     *pl;
     char name[MAX_PLAYER_NAME > (16 - 1) ? MAX_PLAYER_NAME + 1 : 16];
     const char *name_hash;
 
@@ -101,19 +101,19 @@ void display_motd(object *op)
 #endif
 }
 
-int playername_ok(char *cp) 
+int playername_ok(char *cp)
 {
     char *tmp=cp;
-    
+
     if(*cp==' ') /* we start with a whitespace? in this case we don't trim - kick*/
         return 0;
-    
+
     for(;*cp!='\0';cp++)
     {
         if(!((*cp>='a'&&*cp<='z')||(*cp>='A'&&*cp<='Z'))&&*cp!='-'&&*cp!='_')
             return 0;
     }
-    
+
     /* we don't want some special names & keywords here. */
     if(!strcasecmp(tmp,"on") || !strcasecmp(tmp,"off") || !strcasecmp(tmp,"allow"))
         return 0;
@@ -308,7 +308,7 @@ archetype * get_player_archetype(archetype *at)
 #if 0
 /* ARGH. this friendly list is a GLOBAL list. assuming 100 players on 75 map ... and every
  * mob on every map (perhaps some hundreds) will move through ALL of object of the
- * friendly list every time they try to target... 
+ * friendly list every time they try to target...
  * this must be changed. Look at friendly.c for more comments about it.
  * note, that only here and in pets.c this list is used. In pets.c it is only used to
  * remove or collect players pets,
@@ -320,7 +320,7 @@ archetype * get_player_archetype(archetype *at)
 /* btw, this is not a "get nearest player" - its a "get nearest friendly object" */
 /* i added now aggro range.
  * aggro range is the distance to target a mob will attack. Is the target out of this range,
- * the mob will not attack and/or not target it. 
+ * the mob will not attack and/or not target it.
  * If a target moves out of aggro range for xx ticks, a mob will change
  * or leave target. Stealth will aggro range - 2. That sounds not much but is quite useful for normal
  * mobs.
@@ -332,7 +332,7 @@ object *get_nearest_player(object *mon) {
     rv_vector   rv;
 
     /* lets set our aggro range. If mob is sleeping or blinded - half aggro range.
-     * if target has stealth - sub. -2 
+     * if target has stealth - sub. -2
      */
     aggro_range = mon->stats.Wis;
     if(mon->enemy || mon->attacked_by)
@@ -349,15 +349,15 @@ object *get_nearest_player(object *mon) {
     if(aggro_stealth<MIN_MON_RADIUS)
         aggro_stealth = MIN_MON_RADIUS;
 
-    
-    for(ol=first_friendly_object,lastdist=1000;ol!=NULL;ol=ol->next) 
+
+    for(ol=first_friendly_object,lastdist=1000;ol!=NULL;ol=ol->next)
     {
         /* We should not find free objects on this friendly list, but it
         * does periodically happen.  Given that, lets deal with it.
         * While unlikely, it is possible the next object on the friendly
         * list is also free, so encapsulate this in a while loop.
         */
-        while (!OBJECT_VALID(ol->ob, ol->id) || (!QUERY_FLAG(ol->ob, FLAG_FRIENDLY)&& ol->ob->type != PLAYER)) 
+        while (!OBJECT_VALID(ol->ob, ol->id) || (!QUERY_FLAG(ol->ob, FLAG_FRIENDLY)&& ol->ob->type != PLAYER))
         {
             object *tmp=ol->ob;
 
@@ -370,7 +370,7 @@ object *get_nearest_player(object *mon) {
             if (!ol) return op;
         }
 
-        if (!can_detect_target(mon,ol->ob,aggro_range,aggro_stealth,&rv)) 
+        if (!can_detect_target(mon,ol->ob,aggro_range,aggro_stealth,&rv))
             continue;
 
         if(lastdist>rv.distance)
@@ -388,7 +388,7 @@ object *get_nearest_player(object *mon) {
 #endif
 
 /* I believe this can safely go to 2, 3 is questionable, 4 will likely
- * result in a monster paths backtracking.  It basically determines how large a 
+ * result in a monster paths backtracking.  It basically determines how large a
  * detour a monster will take from the direction path when looking
  * for a path to the player.  The values are in the amount of direction
  * the deviation is
@@ -481,7 +481,7 @@ int path_to_player(object *mon, object *pl, int mindiff)
             {
                 /* direct path is blocked - try taking a side step to
                      * either the left or right.
-                     * Note increase the values in the loop below to be 
+                     * Note increase the values in the loop below to be
                      * more than -1/1 respectively will mean the monster takes
                      * bigger detour.  Have to be careful about these values getting
                      * too big (3 or maybe 4 or higher) as the monster may just try
@@ -950,7 +950,7 @@ int check_pick(object *op)
                       if(tmp->name!=NULL) {
                         LOG(llevInfo ,"%s", tmp->name);
                       }
-                      else 
+                      else
                       LOG(llevInfo ,"%s",tmp->arch->name);
                       LOG(llevInfo ,",%d] = ", tmp->type);
                       LOG(llevInfo ,"%d\n",(int)(query_cost(tmp,op,F_TRUE)*100 / (tmp->weight * MAX(tmp->nrof,1))));
@@ -965,7 +965,7 @@ int check_pick(object *op)
 
 /*
  *  Find an arrow in the inventory and after that
- *  in the right type container (quiver). Pointer to the 
+ *  in the right type container (quiver). Pointer to the
  *  found object is returned.
  */
 object * find_arrow(object *op, const char *type)
@@ -1059,7 +1059,7 @@ static void fire_bow(object *op, int dir)
     arrow->stats.wc_range = bow->stats.wc_range;
 
     /* monster.c 970 holds the arrow code for monsters */
-    arrow->stats.dam += dam_bonus[op->stats.Str] / 2 + bow->stats.dam + bow->magic + arrow->magic; 
+    arrow->stats.dam += dam_bonus[op->stats.Str] / 2 + bow->stats.dam + bow->magic + arrow->magic;
     arrow->stats.dam = FABS((int) ((float) (arrow->stats.dam * lev_damage[SK_level(op)])));
 
     /* adjust with the lower of condition */
@@ -1101,8 +1101,8 @@ void fire(object *op, int dir)
     /* a check for players, make sure things are groovy. This routine
      * will change the skill of the player as appropriate in order to
      * fire whatever is requested. In the case of spells (range_magic)
-     * it handles whether cleric or mage spell is requested to be cast. 
-     * -b.t. 
+     * it handles whether cleric or mage spell is requested to be cast.
+     * -b.t.
      */
 
     /* ext. fire mode - first step. We map the client side action to a server action. */
@@ -1122,7 +1122,7 @@ void fire(object *op, int dir)
             if (!change_skill(op, SK_THROWING))
                 return;
             /* special case - we must redirect the fire cmd to throwing something */
-            tmp = find_throw_tag(op, (tag_t) CONTR(op)->firemode_tag1);            
+            tmp = find_throw_tag(op, (tag_t) CONTR(op)->firemode_tag1);
             if (tmp)
             {
                 if (!check_skill_action_time(op, op->chosen_skill))
@@ -1343,20 +1343,20 @@ int move_player(object *op, int dir)
     /* Thats what the /push command will be for... ;-) */
     /* the old push & roll code - will be transfered to /push
         if (get_owner(tmp)==op ||
-            ((QUERY_FLAG(tmp,FLAG_UNAGGRESSIVE) || tmp->type==PLAYER || 
+            ((QUERY_FLAG(tmp,FLAG_UNAGGRESSIVE) || tmp->type==PLAYER ||
             QUERY_FLAG(tmp, FLAG_FRIENDLY)) && !op_on_battleground(op, NULL, NULL)))
         {
             play_sound_map(op->map, op->x, op->y, SOUND_PUSH_PLAYER, SOUND_NORMAL);
             if(push_ob(tmp,dir,op))
                 ret = 1;
-            if(op->hide) 
+            if(op->hide)
                 make_visible(op);
             return ret;
         }
         else if(QUERY_FLAG(tmp,FLAG_CAN_ROLL))
         {
             recursive_roll(tmp,dir,op);
-            if(action_makes_visible(op)) 
+            if(action_makes_visible(op))
                 make_visible(op);
         }
     */
@@ -1387,13 +1387,13 @@ int move_player(object *op, int dir)
 
 /* main player command loop - read command from buffer
  * and execute it.
- * Return: 
+ * Return:
  *         0: turn speed used up or no commands left
  *        -1: player is invalid now
  */
 int handle_newcs_player(player *pl)
 {
-    object *op  = pl->ob; 
+    object *op  = pl->ob;
 
     if (!op || !OBJECT_ACTIVE(op))
         return -1;
@@ -1768,7 +1768,7 @@ void kill_player(object *op)
      */
 
     /* Basically two ways to go - remove a stat permanently, or just
-     * make it depletion.  This bunch of code deals with that aspect    
+     * make it depletion.  This bunch of code deals with that aspect
      * of death.
      */
 
@@ -1792,8 +1792,8 @@ void kill_player(object *op)
     }
     lost_a_stat = 0;
 
-    /* the rule is: 
-     * only decrease stats when you are level 3 or higher! 
+    /* the rule is:
+     * only decrease stats when you are level 3 or higher!
      */
     for (z = 0; z < num_stats_lose; z++)
     {
@@ -1802,7 +1802,7 @@ void kill_player(object *op)
             /* Pick a random stat and take a point off it.  Tell the player
               * what he lost.
               */
-            i = RANDOM() % 7; 
+            i = RANDOM() % 7;
             change_attr_value(&(op->stats), i, -1);
             check_stat_bounds(&(op->stats));
             change_attr_value(&(CONTR(op)->orig_stats), i, -1);
@@ -2064,7 +2064,7 @@ void loot_object(object *op)
 }
 
 /* cast_dust() - handles op throwing objects of type 'DUST' */
-/* WARNING: FUNCTION NEED TO BE REWRITTEN. works for ae spells only now! */ 
+/* WARNING: FUNCTION NEED TO BE REWRITTEN. works for ae spells only now! */
 void cast_dust(object *op, object *throw_ob, int dir)
 {
     archetype  *arch    = NULL;
@@ -2102,8 +2102,8 @@ void cast_dust(object *op, object *throw_ob, int dir)
 void make_visible(object *op)
 {
     /*
-       if(op->type==PLAYER) 
-       if(QUERY_FLAG(op, FLAG_UNDEAD)&&!is_true_undead(op)) 
+       if(op->type==PLAYER)
+       if(QUERY_FLAG(op, FLAG_UNDEAD)&&!is_true_undead(op))
          CLEAR_FLAG(op, FLAG_UNDEAD);
        update_object(op,UP_OBJ_FACE);
     */
@@ -2113,7 +2113,7 @@ int is_true_undead(object *op)
 {
     /*
       object *tmp=NULL;
-      
+
       if(QUERY_FLAG(&op->arch->clone,FLAG_UNDEAD)) return 1;
 
       if(op->type==PLAYER)
@@ -2138,14 +2138,14 @@ int hideability(object *ob)
 
 
   /* scan through all nearby squares for terrain to hide in */
-  for(i=0,x=ob->x,y=ob->y;i<9;i++,x=ob->x+freearr_x[i],y=ob->y+freearr_y[i]) 
-  { 
+  for(i=0,x=ob->x,y=ob->y;i<9;i++,x=ob->x+freearr_x[i],y=ob->y+freearr_y[i])
+  {
     if(blocks_view(ob->map,x,y)) /* something to hide near! */
       level += 2;
     else /* open terrain! */
       level -= 1;
   }
-  
+
   LOG(llevDebug,"hideability of %s is %d\n",ob->name,level);
   return level;
 #endif
@@ -2223,17 +2223,17 @@ int stand_near_hostile(object *who)
     return 0;
 }
 
-/* check the player los field for viewability of the 
+/* check the player los field for viewability of the
  * object op. This function works fine for monsters,
- * but we dont worry if the object isnt the top one in 
+ * but we dont worry if the object isnt the top one in
  * a pile (say a coin under a table would return "viewable"
  * by this routine). Another question, should we be
- * concerned with the direction the player is looking 
+ * concerned with the direction the player is looking
  * in? Realistically, most of use cant see stuff behind
  * our backs...on the other hand, does the "facing" direction
  * imply the way your head, or body is facing? Its possible
  * for them to differ. Sigh, this fctn could get a bit more complex.
- * -b.t. 
+ * -b.t.
  * This function is now map tiling safe.
  */
 
@@ -2258,7 +2258,7 @@ int player_can_view(object *pl, object *op)
 
     /* starting with the 'head' part, lets loop
      * through the object and find if it has any
-     * part that is in the los array but isnt on 
+     * part that is in the los array but isnt on
      * a blocked los square.
      * we use the archetype to figure out offsets.
      */
@@ -2286,19 +2286,19 @@ int player_can_view(object *pl, object *op)
 /* routine for both players and monsters. We call this when
  * there is a possibility for our action distrubing our hiding
  * place or invisiblity spell. Artefact invisiblity is not
- * effected by this. If we arent invisible to begin with, we 
- * return 0. 
+ * effected by this. If we arent invisible to begin with, we
+ * return 0.
  */
 int action_makes_visible(object *op)
 {
     /*
       if(QUERY_FLAG(op,FLAG_IS_INVISIBLE) && QUERY_FLAG(op,FLAG_ALIVE)) {
-        if(!QUERY_FLAG(op,FLAG_SEE_INVISIBLE)) 
-          return 0; 
-        else if(op->hide) { 
+        if(!QUERY_FLAG(op,FLAG_SEE_INVISIBLE))
+          return 0;
+        else if(op->hide) {
           new_draw_info_format(NDI_UNIQUE, 0,op,"You become %!",op->hide?"unhidden":"visible");
-          return 1; 
-        } else if(CONTR(op) && !CONTR(op)->shoottype==range_magic) { 
+          return 1;
+        } else if(CONTR(op) && !CONTR(op)->shoottype==range_magic) {
               new_draw_info(NDI_UNIQUE, 0,op,"Your invisibility spell is broken!");
               return 1;
         }
@@ -2307,7 +2307,7 @@ int action_makes_visible(object *op)
     return 0;
 }
 
-/* test for pvp area. 
+/* test for pvp area.
  * if only one opject is given, it test for it.
  * if 2 objects given, both player must be in pvp or
  * the function fails.
@@ -2473,7 +2473,7 @@ void dragon_ability_gain(object *who, int atnr, int level)
                     if (j)
                         strcat(buf, " and ");
                     else
-                        j = 1; 
+                        j = 1;
                     strcat(buf, spellpathnames[i]);
                 }
             }
@@ -2508,7 +2508,7 @@ void dragon_ability_gain(object *who, int atnr, int level)
 
 /*  extended find arrow version, using tag and containers.
  *  Find an arrow in the inventory and after that
- *  in the right type container (quiver). Pointer to the 
+ *  in the right type container (quiver). Pointer to the
  *  found object is returned.
  */
 static object * find_arrow_ext(object *op, const char *type, int tag)
@@ -2535,7 +2535,7 @@ static object * find_arrow_ext(object *op, const char *type, int tag)
                 /* the simple task: we have a arrow marked */
                 if (op->race == type && op->type == ARROW)
                     return op;
-                /* we have container marked as missile source. Skip search when there is 
+                /* we have container marked as missile source. Skip search when there is
                 nothing in. Use the standard search now */
                 /* because we don't want container in container, we don't care abvout applied */
                 if (op->race == type && op->type == CONTAINER)

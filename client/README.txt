@@ -6,13 +6,13 @@ So called "binary packages" comes usually with a installer -
 if you have run a installer before you read this you will
 see a executable file in the same folder you find this
 README.txt file. You system should also configured to run
-the client without problems. 
+the client without problems.
 
 Now some tips for the packages and OS.
 
 Playing with Laptops
 --------------------
-The base installation assume a num-pad keyboard. But every 
+The base installation assume a num-pad keyboard. But every
 key there is bind with a macro to the num-pad. Its easily to
 change to every key you want.
 
@@ -37,7 +37,7 @@ with the cursor keys, pres 'E' for Edit, return because
 you don't want change the text/macro and then the key you
 want assign this macro to. Do it for every of this keys
 and then pres 'D' for done. You can do it for every key
-except the internal menu keys. This will allow you to 
+except the internal menu keys. This will allow you to
 customize the client like you want.
 
 
@@ -47,8 +47,8 @@ Your package should have arrived as binary with installer.
 just start the file DAIMONIN.EXE. Your client should run
 out of the box.
 
-Source packages should ONLY be needed for developers. If 
-your got a simple .zip file and no installer and you see no 
+Source packages should ONLY be needed for developers. If
+your got a simple .zip file and no installer and you see no
 DAIMONIN.EXE and there is a folder called /make
 in your /client folder - then you have got a source packages
 instead of the binary packages. Just do back to the download

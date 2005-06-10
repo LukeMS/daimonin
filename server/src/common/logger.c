@@ -51,19 +51,19 @@ void LOG(LogLevel logLevel, char *format, ...)
         if (logfile)
             fputs(log_buf, logfile);    /* wrote to file or stdout */
         else
-            fputs(log_buf, stderr); 
+            fputs(log_buf, stderr);
 
 #ifdef DEBUG                /* if we have a debug version, we want see ALL output */
         if (logfile)
             fflush(logfile);    /* so flush this! */
 #endif
         if (logfile && logfile != stderr)   /* if was it a logfile wrote it to screen too */
-            fputs(log_buf, stderr); 
+            fputs(log_buf, stderr);
 #else
         if (logfile)
             fputs(log_buf, logfile);
         else
-            fputs(log_buf, stderr); 
+            fputs(log_buf, stderr);
 #endif
     }
 

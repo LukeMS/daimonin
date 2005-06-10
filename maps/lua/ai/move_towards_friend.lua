@@ -1,4 +1,4 @@
--- Shows how to write movement behaviours 
+-- Shows how to write movement behaviours
 
 local ai = event.me:GetAI()
 
@@ -18,12 +18,12 @@ end
 if bestest_friend ~= nil then
     local dist, dir, dx, dy = event.me:GetVector(bestest_friend)
     if dist then
-        if dist > 1 then 
+        if dist > 1 then
             -- Move towards friend
             ai:MoveRespondObject(bestest_friend)
         else
             -- Stay still
             ai:MoveRespondDirection(0)
         end
-    end    
+    end
 end

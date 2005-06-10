@@ -43,7 +43,7 @@ typedef struct artifactliststruct
     struct artifactliststruct  *next;
     struct artifactstruct      *items;
     uint16                      total_chance;   /* sum of chance for are artifacts on this list */
-    sint16                      type;           /* Object type that this list represents. 
+    sint16                      type;           /* Object type that this list represents.
                                                          * -1 are "Allowed none" items. They are called explicit by name
                                                          */
 } artifactlist;

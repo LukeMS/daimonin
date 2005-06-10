@@ -1083,7 +1083,7 @@ void cleanup(int ret)
     write_book_archive();
     write_todclock();   /* lets just write the clock here */
 	save_ban_file();
-		
+
     FREE_AND_CLEAR_HASH2(global_string_none);
     free(global_sl.buf);
 
@@ -1328,7 +1328,7 @@ int main(int argc, char **argv)
     memset(&marker, 0, sizeof(struct obj)); /* used from proccess_events() */
     LOG(llevInfo, "Server ready.\nWaiting for connections...\n");
 
-    reset_sleep(); /* init our last_time = start time - and lets go! */    
+    reset_sleep(); /* init our last_time = start time - and lets go! */
     for (; ;)
     {
         nroferrors = 0;                 /* every llevBug will increase this counter - avoid LOG loops */
@@ -1352,7 +1352,7 @@ int main(int argc, char **argv)
 
         process_events(NULL);       /* "do" something with objects with speed - process user cmds */
 
-        /* this is the tricky thing...  This full read/write access to the 
+        /* this is the tricky thing...  This full read/write access to the
          * socket ensure at last *ONE* read/write access to the socket in one round WITH player update.
          * It seems odd to do the read after process_events() but sleep_delta() will poll on the socket.
          * In that way, we will collect & process the commands as fast as possible.
@@ -1372,7 +1372,7 @@ int main(int argc, char **argv)
 
         check_active_maps();        /* Removes unused maps after a certain timeout */
         do_specials();              /* Routines called from time to time. */
-        
+
         /*doeric_server_write();*/
         object_gc();                /* Clean up the object pool */
         sleep_delta();              /* Slepp proper amount of time before next tick but poll the socket */

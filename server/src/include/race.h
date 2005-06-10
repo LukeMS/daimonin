@@ -26,7 +26,7 @@
 typedef struct ralnk
 {
     /* Used to link the race lists together */
-    const char                 *name;       /* name of this race entry */ 
+    const char                 *name;       /* name of this race entry */
     int                         nrof;       /* nrof things belonging to this race */
     struct archt               *corpse; /* thats the default corpse of this race */
     struct oblnk               *member; /* linked object list of things belonging to this race */

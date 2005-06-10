@@ -3,7 +3,7 @@ AC_PREREQ(2.59)
 
 # The package name is used in the client-server handshake and must be exactly
 # "Daimonin SDL Client".
-AC_INIT([Daimonin SDL Client], [BETA3-0.966], [http://www.daimonin.net]) 
+AC_INIT([Daimonin SDL Client], [BETA3-0.966], [http://www.daimonin.net])
 AC_CONFIG_AUX_DIR(make_utils)
 AC_CANONICAL_SYSTEM
 AM_INIT_AUTOMAKE(daimonin_client, BETA3-0.966)
@@ -17,9 +17,9 @@ AC_PROG_CC
 AC_PROG_MAKE_SET
 AC_PROG_INSTALL
 
-AC_ARG_ENABLE(debug, 
+AC_ARG_ENABLE(debug,
    [  --enable-debug          compile in debug messages],
-   [export USE_DEBUG=yes], 
+   [export USE_DEBUG=yes],
    [export USE_DEBUG=no]
 )
 
@@ -27,7 +27,7 @@ AC_ARG_ENABLE(sound,
    [  --enable-sound          compile with SDL sound (default)],
    [ if test "x$enableval" = "xyes" ; then
 		AC_DEFINE(INSTALL_SOUND,, [ Use the SDL_mixer sound system. Remove when you have no sound card or slow computer])
-	 fi 
+	 fi
    ],
    [AC_DEFINE(INSTALL_SOUND,, [ Use the SDL_mixer sound system. Remove when you have no sound card or slow computer])]
 )

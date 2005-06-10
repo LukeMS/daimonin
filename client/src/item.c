@@ -269,7 +269,7 @@ item * locate_item_from_item(item *op, sint32 tag)
 }
 
 /*
- *  locate_item() returns pointer to the item which tag is given 
+ *  locate_item() returns pointer to the item which tag is given
  *  as parameter or if item is not found returns NULL
  */
 item * locate_item(sint32 tag)
@@ -400,7 +400,7 @@ static void add_item(item *env, item *op, int bflag)
 }
 
 /*
- *  create_new_item() returns pointer to a new item, inserts it to env 
+ *  create_new_item() returns pointer to a new item, inserts it to env
  *  and sets its tag field and clears locked flag (all other fields
  *  are unitialized and may contain random values)
  */
@@ -634,7 +634,7 @@ void send_mark_obj(item *op)
 
 item * player_item()
 {
-    player = new_item(); 
+    player = new_item();
     cpl.below = new_item();
     cpl.sack = new_item();
     cpl.below->weight = -111;

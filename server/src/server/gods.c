@@ -235,7 +235,7 @@ static void check_special_prayers(object *op, object *god)
         }
 
         /* Inner loop tries to find the special prayer in the god's treasure
-               * list. 
+               * list.
             */
         for (ol = god->randomitems; ol; ol = ol->next)
         {
@@ -327,9 +327,9 @@ void become_follower(object *op, object *new_god)
 
     if (exp_obj->title)
     {
-        /* get rid of old god */ 
+        /* get rid of old god */
         new_draw_info_format(NDI_UNIQUE, 0, op, "%s's blessing is withdrawn from you.", exp_obj->title);
-        CLEAR_FLAG(exp_obj, FLAG_APPLIED); 
+        CLEAR_FLAG(exp_obj, FLAG_APPLIED);
         (void) change_abil(op, exp_obj);
         FREE_AND_CLEAR_HASH2(exp_obj->title);
     }
@@ -500,7 +500,7 @@ const char * determine_god(object *op)
         for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
         {
             /* Gecko: we should actually only need to check either
-             * tmp->stats.Wiz or tmp->sub_type1, but to asvoid future 
+             * tmp->stats.Wiz or tmp->sub_type1, but to asvoid future
              * mistakes we check both here. */
             if (tmp->type == EXPERIENCE && tmp->stats.Wis && tmp->sub_type1 == 5)
             {
@@ -736,8 +736,8 @@ static int god_gives_present(object *op, object *god, treasure *tr)
 
 /* god_intervention() - called from praying() currently. Every
  * once in a while the god will intervene to help the worshiper.
- * Later, this fctn can be used to supply quests, etc for the 
- * priest. -b.t. 
+ * Later, this fctn can be used to supply quests, etc for the
+ * priest. -b.t.
  */
 
 void god_intervention(object *op, object *god)
@@ -770,7 +770,7 @@ void god_intervention(object *op, object *god)
             if (tr->chance <= random_roll(0, 99, op, PREFER_HIGH))
                 continue;
 
-            // Treasurelist - generate some treasure for the follower 
+            // Treasurelist - generate some treasure for the follower
             if (tr->name)
             {
                 treasurelist   *tl  = find_treasurelist(tr->name);
@@ -791,20 +791,20 @@ void god_intervention(object *op, object *god)
             }
             item = &tr->item->clone;
 
-            // Grace limit 
+            // Grace limit
             if (item->type == BOOK && IS_SYS_INVISIBLE(item) && strcmp(item->name, "grace limit") == 0)
             {
                 if (op->stats.grace < item->stats.grace || op->stats.grace < op->stats.maxgrace)
                 {
                     // Follower lacks the required grace for the following
-                    // treasure list items. 
+                    // treasure list items.
                     (void) cast_change_attr(op, op, op, 0, SP_HOLY_POSSESSION);
                     return;
                 }
                 continue;
             }
 
-            // Restore grace 
+            // Restore grace
             if (item->type == BOOK && IS_SYS_INVISIBLE(item) && strcmp(item->name, "restore grace") == 0)
             {
                 if (op->stats.grace >= 0)
@@ -814,7 +814,7 @@ void god_intervention(object *op, object *god)
                 return;
             }
 
-            // Heal damage 
+            // Heal damage
             if (item->type == BOOK && IS_SYS_INVISIBLE(item) && strcmp(item->name, "restore hitpoints") == 0)
             {
                 if (op->stats.hp >= op->stats.maxhp)
@@ -824,7 +824,7 @@ void god_intervention(object *op, object *god)
                 return;
             }
 
-            // Restore spellpoints 
+            // Restore spellpoints
             if (item->type == BOOK && IS_SYS_INVISIBLE(item) && strcmp(item->name, "restore spellpoints") == 0)
             {
                 int max     = (int) ((float) op->stats.maxsp * ((float) item->stats.maxsp / (float) 100.0));
@@ -836,7 +836,7 @@ void god_intervention(object *op, object *god)
                 op->stats.sp = new_sp;
             }
 
-            // Various heal spells 
+            // Various heal spells
             if (item->type == BOOK && IS_SYS_INVISIBLE(item) && strcmp(item->name, "heal spell") == 0)
             {
                 if (cast_heal(op, 1, op, get_spell_number(item)))
@@ -845,7 +845,7 @@ void god_intervention(object *op, object *god)
                     continue;
             }
 
-            // Remove curse 
+            // Remove curse
             if (item->type == BOOK && IS_SYS_INVISIBLE(item) && strcmp(item->name, "remove curse") == 0)
             {
                 if (god_removes_curse(op, 0))
@@ -863,7 +863,7 @@ void god_intervention(object *op, object *god)
                     continue;
             }
 
-            // Heal depletion 
+            // Heal depletion
             if (item->type == BOOK && IS_SYS_INVISIBLE(item) && strcmp(item->name, "heal depletion") == 0)
             {
                 object     *depl;
@@ -888,14 +888,14 @@ void god_intervention(object *op, object *god)
             }
 
 
-            // Messages 
+            // Messages
             if (item->type == BOOK && IS_SYS_INVISIBLE(item) && strcmp(item->name, "message") == 0)
             {
                 new_draw_info(NDI_UNIQUE, 0, op, item->msg);
                 return;
             }
 
-            // Enchant weapon 
+            // Enchant weapon
             if (item->type == BOOK && IS_SYS_INVISIBLE(item) && strcmp(item->name, "enchant weapon") == 0)
             {
                 if (god_enchants_weapon(op, god, item))
@@ -904,7 +904,7 @@ void god_intervention(object *op, object *god)
                     continue;
             }
 
-            // Spellbooks - works correctly only for prayers 
+            // Spellbooks - works correctly only for prayers
             if (item->type == SPELLBOOK)
             {
                 int spell   = get_spell_number(item);
@@ -935,7 +935,7 @@ void god_intervention(object *op, object *god)
                     continue;
             }
 
-            // Other gifts 
+            // Other gifts
             if (!IS_SYS_INVISIBLE(item))
             {
                 if (god_gives_present(op, god, tr))
@@ -999,11 +999,11 @@ int god_examines_item(object *god, object *item)
 
     sprintf(buf, "of %s", god->name);
     if (!strcmp(item->title, buf))
-        return 1; /* belongs to that God */ 
+        return 1; /* belongs to that God */
 
     if (god->title)
     {
-        /* check if we have any enemy blessed item*/ 
+        /* check if we have any enemy blessed item*/
         sprintf(buf, "of %s", god->title);
         if (!strcmp(item->title, buf))
         {
@@ -1020,18 +1020,18 @@ int god_examines_item(object *god, object *item)
     return 0; /* item is sacred to a non-enemy god/or is otherwise magical */
 }
 
-/* get_god() - returns the gods index in linked list 
+/* get_god() - returns the gods index in linked list
  * if exists, if not, it returns -1. -b.t.  */
 
 int get_god(object *priest)
 {
-    int godnr   = lookup_god_by_name(determine_god(priest)); 
+    int godnr   = lookup_god_by_name(determine_god(priest));
 
     return godnr;
 }
 
 
-/* tailor_god_spell() - changes the attributes of cone, smite, 
+/* tailor_god_spell() - changes the attributes of cone, smite,
  * and ball spells as needed by the code. Returns false if there
  * was no race to assign to the slaying field of the spell, but
  * the spell attacktype contains AT_HOLYWORD.  -b.t.
@@ -1040,7 +1040,7 @@ int get_god(object *priest)
 int tailor_god_spell(object *spellop, object *caster)
 {
     object *god             = find_god(determine_god(caster));
-    int     caster_is_spell = 0; 
+    int     caster_is_spell = 0;
 
     if (caster->type == FBULLET || caster->type == CONE || caster->type == FBALL || caster->type == SWARM_SPELL)
         caster_is_spell = 1;
@@ -1057,7 +1057,7 @@ int tailor_god_spell(object *spellop, object *caster)
     /* either holy word or godpower attacks will set the slaying field */
     if (spellop->attacktype & AT_HOLYWORD || spellop->attacktype & AT_GODPOWER)
     {
-        FREE_AND_CLEAR_HASH2(spellop->slaying);     
+        FREE_AND_CLEAR_HASH2(spellop->slaying);
         if (!caster_is_spell)
         {
             FREE_AND_COPY_HASH(spellop->slaying, god->slaying);
@@ -1076,11 +1076,11 @@ int tailor_god_spell(object *spellop, object *caster)
         FREE_AND_COPY_HASH(spellop->title, god->name);
         if (spellop->title)
         {
-            char    buf[MAX_BUF]; 
+            char    buf[MAX_BUF];
             sprintf(buf, "%s of %s", spellop->name, spellop->title);
             FREE_AND_COPY_HASH(spellop->name, buf);
         }
-    } 
+    }
 
     return 1;
 }
@@ -1090,7 +1090,7 @@ void lose_priest_exp(object *pl, int loss)
 {
     /*
       if(!pl||pl->type!=PLAYER||!pl->chosen_skill
-         ||!pl->chosen_skill->exp_obj) 
+         ||!pl->chosen_skill->exp_obj)
       {
         LOG(llevBug,"BUG: Bad call to lose_priest_exp() \n");
         return;

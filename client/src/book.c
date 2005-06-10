@@ -28,7 +28,7 @@
 #define BOOK_LINE_ICON		2
 
 /* internal used */
-#define BOOK_LINE_PAGE		16		
+#define BOOK_LINE_PAGE		16
 
 static _gui_book_line *get_page_tag(char *data, int len, int *pos)
 {
@@ -42,11 +42,11 @@ static _gui_book_line *get_page_tag(char *data, int len, int *pos)
 	{
 		if(c == '>')
 			return &book_line;
-		
+
 		(*pos)++;
 		if(c<=' ')
 			continue;
-		
+
 		/* check inside tags */
 		switch(c)
 		{
@@ -57,13 +57,13 @@ static _gui_book_line *get_page_tag(char *data, int len, int *pos)
 			strncpy(book_line.line, buf,BOOK_LINES_CHAR);
 			buf[BOOK_LINES_CHAR]=0;
 			break;
-			
+
 		default:
 			return NULL;
 			break;
 		}
 	}
-	
+
 	return NULL;
 }
 
@@ -79,7 +79,7 @@ static _gui_book_line *get_title_tag(char *data, int len, int *pos)
 	{
 		if(c == '>')
 			return &book_line;
-		
+
 		(*pos)++;
 		if(c<=' ')
 			continue;
@@ -99,7 +99,7 @@ static _gui_book_line *get_title_tag(char *data, int len, int *pos)
 			break;
 		}
 	}
-		
+
 	return NULL;
 }
 
@@ -112,19 +112,19 @@ static _gui_book_line *check_book_tag(char *data, int len, int *pos)
 {
 	int c;
 	_gui_book_line *book_line;
-	
+
 	for(;len>*pos;(*pos)++)
 	{
 		c = *(data+*pos);
 
 		if(c<=' ')
 			continue;
-		
+
 		if(c=='t') /* title tag */
 		{
 			book_line = get_title_tag(data, len, pos);
 			if(!book_line)
-				return NULL; 
+				return NULL;
 			return book_line;
 		}
 		else if(c=='i') /* 'icon' (picture) tag */
@@ -134,7 +134,7 @@ static _gui_book_line *check_book_tag(char *data, int len, int *pos)
 		{
 			book_line = get_page_tag(data, len, pos);
 			if(!book_line)
-				return NULL; 
+				return NULL;
 			return book_line;
 		}
 		else
@@ -155,7 +155,7 @@ static void book_link_page(_gui_book_page *page)
 	if(!gui_interface_book->start)
 	{
 		gui_interface_book->start=page;
-	}	
+	}
 	else
 	{
 		page_link=gui_interface_book->start;
@@ -170,12 +170,12 @@ static void format_book(_gui_book_struct *book)
 {
 	int pc=0;
 	_gui_book_page *page;
-	
+
 	if(!gui_interface_book)
 		return;
-	
+
 	gui_interface_book->page_show = 0;
-	
+
 	page = gui_interface_book->start;
 	while(page)
 	{
@@ -197,7 +197,7 @@ void book_clear(void)
 		return;
 
 	page = gui_interface_book->start;
-	
+
 	while(page)
 	{
 		page_tmp = page->next;
@@ -247,7 +247,7 @@ _gui_book_struct *load_book_interface(int mode, char *data, int len)
 				return NULL;
 			}
 
-			if((book_line->mode & BOOK_LINE_TITLE && plc_logic+2 >= BOOK_PAGE_LINES) 
+			if((book_line->mode & BOOK_LINE_TITLE && plc_logic+2 >= BOOK_PAGE_LINES)
 				|| book_line->mode & BOOK_LINE_PAGE)
 			{
 				_gui_book_page *page = malloc(sizeof(_gui_book_page));
@@ -264,7 +264,7 @@ _gui_book_struct *load_book_interface(int mode, char *data, int len)
 			{
 				_gui_book_line *b_line = malloc(sizeof(_gui_book_line));
 				memcpy(b_line, book_line,sizeof(_gui_book_line));
-				b_line->mode = BOOK_LINE_TITLE; 
+				b_line->mode = BOOK_LINE_TITLE;
 				current_book_page.line[plc++] = b_line;
 				plc_logic+=2;
 			}
@@ -279,7 +279,7 @@ _gui_book_struct *load_book_interface(int mode, char *data, int len)
 		}
 
 		/* we have a line */
-		if(c== '\0' || c  == 0 || c == 0x0a) 
+		if(c== '\0' || c  == 0 || c == 0x0a)
 		{
 			force_line_jump:
 			/* we *can* check the line length here (and wrap it to next line) but atm we don't */
@@ -290,10 +290,10 @@ _gui_book_struct *load_book_interface(int mode, char *data, int len)
 			memset(&current_book_line, 0, sizeof(_gui_book_line));
 			lc=0;
 
-			if(plc_logic >= BOOK_PAGE_LINES) 
+			if(plc_logic >= BOOK_PAGE_LINES)
 			{
 				_gui_book_page *page = malloc(sizeof(_gui_book_page));
-				
+
 				/* add the page & reset the current one */
 				memcpy(page, &current_book_page, sizeof(_gui_book_page));
 				book_link_page(page);
@@ -301,7 +301,7 @@ _gui_book_struct *load_book_interface(int mode, char *data, int len)
 				plc=0;
 				plc_logic=0;
 			}
-			
+
 			continue;
 		}
 
@@ -313,7 +313,7 @@ _gui_book_struct *load_book_interface(int mode, char *data, int len)
 	if(plc_logic)
 	{
 		_gui_book_page *page = malloc(sizeof(_gui_book_page));
-		
+
 		/* add the page & reset the current one */
 		memcpy(page, &current_book_page, sizeof(_gui_book_page));
 		book_link_page(page);
@@ -326,7 +326,7 @@ _gui_book_struct *load_book_interface(int mode, char *data, int len)
 void show_book(int x, int y)
 {
 	char buf[128];
-    SDL_Rect    box; 
+    SDL_Rect    box;
 	int i, ii, yoff;
 	_gui_book_page *page1, *page2;
 
@@ -347,7 +347,7 @@ void show_book(int x, int y)
 	page2=page1->next;
 
 
-	
+
 	if(page1)
 	{
 		sprintf(buf,"Page %d of %d",gui_interface_book->page_show+1,gui_interface_book->pages);
@@ -373,8 +373,8 @@ void show_book(int x, int y)
 		}
 		SDL_SetClipRect(ScreenSurface, NULL);
 	}
-	
-	
+
+
 	box.x=x+406;
 	box.y=y+90;
 	box.w=275;
@@ -385,12 +385,12 @@ void show_book(int x, int y)
 		sprintf(buf,"%c and %c to turn page",ASCII_RIGHT, ASCII_LEFT);
 		StringBlt(ScreenSurface, &Font6x3Out, buf, box.x-55, box.y+355, COLOR_GREEN, NULL, NULL);
 	}
-	
+
 	if(page2)
 	{
 		sprintf(buf,"Page %d of %d",gui_interface_book->page_show+2,gui_interface_book->pages);
 		StringBlt(ScreenSurface, &Font6x3Out, buf, box.x+120, box.y+355, COLOR_WHITE, NULL, NULL);
-		
+
 		SDL_SetClipRect(ScreenSurface, &box);
 		for(yoff=0,i=0, ii=0;ii<BOOK_PAGE_LINES;ii++,yoff+=12)
 		{

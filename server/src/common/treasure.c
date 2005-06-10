@@ -456,7 +456,7 @@ void init_artifacts()
 				art->def_at.clone.arch = &art->def_at;
 				parse_obj = &art->def_at.clone;
 			}
-			else 
+			else
 			{
 				parse_obj = dummy_obj;
 				parse_obj->type = 0; /* we need the dummy obj to get the type info of the artifact! */
@@ -492,7 +492,7 @@ void init_artifacts()
             /* now store the parse text in the artifacts list entry */
             if ((art->parse_text = malloc(lcount)) == NULL)
                 LOG(llevError, "ERROR: Init_Artifacts: out of memory in ->parse_text (size %d)\n", lcount);
-                 
+
 			memcpy(art->parse_text, buf_text, lcount);
 
 			if(art->flags&ARTIFACT_FLAG_HAS_DEF_ARCH)
@@ -1012,7 +1012,7 @@ void create_treasure_list(struct oblnk *t, object *op, int flag, int difficulty,
     }
 }
 
-void create_treasure(treasurelist *t, object *op, int flag, int difficulty, int t_style, int a_chance, 
+void create_treasure(treasurelist *t, object *op, int flag, int difficulty, int t_style, int a_chance,
 					 int magic, int magic_chance, int tries, struct _change_arch *arch_change)
 {
     if (tries++ > 100)
@@ -1045,7 +1045,7 @@ void create_treasure(treasurelist *t, object *op, int flag, int difficulty, int 
  * start with equipment, but only their abilities).
  */
 
-void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int t_style, int a_chance, 
+void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int t_style, int a_chance,
 						  int magic, int magic_chance, int tries, struct _change_arch *change_arch)
 {
     object *tmp;
@@ -1083,8 +1083,8 @@ void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int
                     /* ret 1 = artifact is generated - don't overwrite anything here */
                     set_material_real(tmp, change_arch ? change_arch : &t->change_arch);
 					change_treasure(change_arch ? change_arch : &t->change_arch, tmp);
-                    fix_generated_item(&tmp, op, difficulty, a_chance, t_style, 
-						(t->magic==T_MAGIC_UNSET)?magic:t->magic, 
+                    fix_generated_item(&tmp, op, difficulty, a_chance, t_style,
+						(t->magic==T_MAGIC_UNSET)?magic:t->magic,
 						(t->magic_chance==T_MAGIC_CHANCE_UNSET)?magic_chance:t->magic_chance, flag);
                     put_treasure(tmp, op, flag);
                     /* if treasure is "identified", created items are too */
@@ -1128,7 +1128,7 @@ void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int
     }
     else if (t->next_no != NULL)
         create_all_treasures(t->next_no, op, flag, difficulty,
-                             (t->next_no->t_style == T_STYLE_UNSET) ? t_style : t->next_no->t_style, a_chance, 
+                             (t->next_no->t_style == T_STYLE_UNSET) ? t_style : t->next_no->t_style, a_chance,
 							 (t->magic!=T_MAGIC_UNSET)?t->next_no->magic:magic,
 							 (t->magic_chance!=T_MAGIC_CHANCE_UNSET)?t->next_no->magic_chance:magic,
                              tries, change_arch);
@@ -1140,7 +1140,7 @@ void create_all_treasures(treasure *t, object *op, int flag, int difficulty, int
                              tries, change_arch);
 }
 
-void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty, int t_style, int a_chance, 
+void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty, int t_style, int a_chance,
 						 int magic, int magic_chance,int tries,struct _change_arch *change_arch)
 {
     int         value, diff_tries = 0;
@@ -1213,7 +1213,7 @@ void create_one_treasure(treasurelist *tl, object *op, int flag, int difficulty,
     if (t->tlist)
     {
         if (difficulty >= t->difficulty)
-            create_treasure(t->tlist, op, flag, difficulty, t_style, a_chance, 
+            create_treasure(t->tlist, op, flag, difficulty, t_style, a_chance,
 							t->magic==T_MAGIC_UNSET?magic:t->magic,
 							t->magic_chance==T_MAGIC_CHANCE_UNSET?magic_chance:t->magic_chance,
 							tries, change_arch);
@@ -1860,7 +1860,7 @@ int fix_generated_item(object **op_ptr, object *creator, int difficulty, int a_c
     int     temp, retval = 0, was_magic = op->magic;
     int     too_many_tries = 0, is_special = 0;
 	int     fix_magic = 0;
-	
+
 	if (difficulty < 1)
 		difficulty = 1;
 
@@ -1878,7 +1878,7 @@ int fix_generated_item(object **op_ptr, object *creator, int difficulty, int a_c
 		else
 			max_magic = 1;
 	}
-		
+
     if (!creator || creator->type == op->type)
         creator = op; /*safety & to prevent polymorphed objects giving attributes */
 
@@ -2165,7 +2165,7 @@ int fix_generated_item(object **op_ptr, object *creator, int difficulty, int a_c
 		SET_FLAG(op, FLAG_IDENTIFIED);
 		SET_FLAG(op, FLAG_KNOWN_MAGICAL);
 		SET_FLAG(op, FLAG_KNOWN_CURSED);
-	}	
+	}
     if (!(flags & GT_ENVIRONMENT))
         fix_flesh_item(op, creator);
 

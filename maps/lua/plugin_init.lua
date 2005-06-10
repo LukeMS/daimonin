@@ -43,11 +43,11 @@ end
 
 --
 -- Very useful and elegant iterator functions for for loops
--- for object in obj_inventory(obj) 
+-- for object in obj_inventory(obj)
 -- for object in map_objects(map, x, y)
 --
 
--- TODO: In the future I want to add those to the Map and Object classes, 
+-- TODO: In the future I want to add those to the Map and Object classes,
 -- but this will do for now. I hope people will use them
 
 function obj_inventory(obj)

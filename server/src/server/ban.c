@@ -44,7 +44,7 @@
 
 /* New ban code.
  * entries are hold in memory and only loaded/saved between server
- * starts. 
+ * starts.
  * Code will work dynamic and use the memorypool system.
  * It will interact with temp. ban invoked by kick command or others.
  *
@@ -83,7 +83,7 @@ void load_ban_file(void)
 	char	mode;
     char    buf[HUGE_BUF];
     char    line_buf[MAX_BUF], name[MAX_BUF];
-	
+
 	LOG(llevInfo,"loading ban_file....\n");
 	sprintf(buf, "%s/%s", settings.localdir, BANFILE);
     if ((dmfile = fopen(buf, "r")) == NULL)
@@ -114,7 +114,7 @@ void save_ban_file(void)
     char    filename[MAX_BUF];
 	objectlink *ol, *ol_tmp;
     FILE   *fp;
-	
+
 	LOG(llevSystem,"write ban_file...\n");
     sprintf(filename, "%s/%s", settings.localdir, BANFILE);
     if ((fp = fopen(filename, "w")) == NULL)
@@ -124,17 +124,17 @@ void save_ban_file(void)
     }
     fprintf(fp, "# BAN_FILE (file is changed from server at runtime)\n");
     fprintf(fp, "# entry format is '<tag> I|P ticks_init ticks_left'\n");
-	
+
 	for(ol = ban_list_player;ol;ol=ol_tmp)
 	{
 		ol_tmp = ol->next;
 		if(ol->objlink.ban->ticks_init != -1 &&  pticks >= ol->objlink.ban->ticks)
 			remove_ban_entry(ol); /* is not valid anymore, gc it on the fly */
-		else 
+		else
 		{
 			fprintf(fp, "%s %c %d %d\n",ol->objlink.ban->tag,ol->objlink.ban->mode,
-										ol->objlink.ban->ticks_init, 
-										ol->objlink.ban->ticks_init==-1?-1:ol->objlink.ban->ticks-pticks);			
+										ol->objlink.ban->ticks_init,
+										ol->objlink.ban->ticks_init==-1?-1:ol->objlink.ban->ticks-pticks);
 		}
 	}
 
@@ -143,14 +143,14 @@ void save_ban_file(void)
 		ol_tmp = ol->next;
 		if(ol->objlink.ban->ticks_init != -1 &&  pticks >= ol->objlink.ban->ticks)
 			remove_ban_entry(ol);
-		else 
+		else
 		{
 			fprintf(fp, "%s %c %d %d\n",ol->objlink.ban->tag,ol->objlink.ban->mode,
-				ol->objlink.ban->ticks_init, 
-				ol->objlink.ban->ticks_init==-1?-1:ol->objlink.ban->ticks-pticks);			
+				ol->objlink.ban->ticks_init,
+				ol->objlink.ban->ticks_init==-1?-1:ol->objlink.ban->ticks-pticks);
 		}
 	}
-	
+
     fclose(fp);
 }
 
@@ -163,7 +163,7 @@ struct objectlink	*add_ban_entry(char *banned, int ticks, int ticks_left, int mo
 	objectlink *ol = get_ban_node();
 
 	ol->objlink.ban->mode = mode;
-	ol->objlink.ban->ticks_init = ticks; 
+	ol->objlink.ban->ticks_init = ticks;
 	ol->objlink.ban->ticks_left = ticks_left;
 	ol->objlink.ban->ticks = pticks+ticks_left;
 	strcpy(ol->objlink.ban->tag, banned);
@@ -175,7 +175,7 @@ struct objectlink	*add_ban_entry(char *banned, int ticks, int ticks_left, int mo
 		ol->objlink.ban->ip = inet_addr(banned); /* ip4 */
 		objectlink_link(&ban_list_ip, NULL, NULL, ban_list_ip, ol);
 	}
-	
+
 	return (struct objectlink *)ol;
 }
 
@@ -200,12 +200,12 @@ int check_banned(char *name, uint32 ip)
 {
 	objectlink *ol, *ol_tmp;
 
-	if(name) 
+	if(name)
 	{
 		for(ol = ban_list_player;ol;ol=ol_tmp)
 		{
 			ol_tmp = ol->next;
-			/* lets check the entry is still valid */ 
+			/* lets check the entry is still valid */
 			/*LOG(-1,"CHECK-IP: %s with %s (pticks: %d to %d)\n", name, ol->objlink.ban->tag,pticks, ol->objlink.ban->ticks);*/
 			if(ol->objlink.ban->ticks_init != -1 &&  pticks >= ol->objlink.ban->ticks)
 				remove_ban_entry(ol); /* is not valid anymore, gc it on the fly */

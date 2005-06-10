@@ -95,7 +95,7 @@ extern objectlink      *get_objectlink(int id);
 extern oblinkpt        *get_objectlinkpt(void);
 extern void             free_objectlink_recursive(objectlink *ol);
 extern void             free_objectlinkpt(oblinkpt *obp);
-objectlink			   *objectlink_link(objectlink **startptr, objectlink **endptr, 
+objectlink			   *objectlink_link(objectlink **startptr, objectlink **endptr,
 										objectlink *afterptr, objectlink *beforeptr, objectlink *objptr);
 
 objectlink			   *objectlink_unlink(objectlink **startptr, objectlink **endptr, objectlink *objptr);
@@ -183,14 +183,14 @@ extern int              get_rangevector_from_mapcoords(mapstruct *map1, int x1, 
                                                        rv_vector *retval, int flags);
 extern int              on_same_map(object *op1, object *op2);
 /* mempool.c */
-extern uint32           nearest_pow_two_exp(uint32 n); 
+extern uint32           nearest_pow_two_exp(uint32 n);
 extern void             init_mempools();
-extern void             free_mempool(struct mempool *pool); 
-extern struct mempool  *create_mempool(const char *description, uint32 expand, uint32 size, 
-                                       uint32 flags, chunk_constructor constructor, 
+extern void             free_mempool(struct mempool *pool);
+extern struct mempool  *create_mempool(const char *description, uint32 expand, uint32 size,
+                                       uint32 flags, chunk_constructor constructor,
                                        chunk_destructor destructor);
 extern void             free_empty_puddles(struct mempool *pool);
-extern void             return_poolchunk_array_real(void *data, uint32 arraysize_exp, struct mempool *pool); 
+extern void             return_poolchunk_array_real(void *data, uint32 arraysize_exp, struct mempool *pool);
 extern void            *get_poolchunk_array_real(struct mempool *pool, uint32 arraysize_exp);
 /* object.c */
 extern void             mark_object_removed(object *ob);

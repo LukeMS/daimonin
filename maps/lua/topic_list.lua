@@ -8,7 +8,7 @@ function TopicList:New()
 	return obj
 end
 
--- Add responses for the standard greeting phrases 
+-- Add responses for the standard greeting phrases
 -- (and for possibly additional greeting topics)
 function TopicList:AddGreeting(topics, ...)
 	if type(topics) ~= "table" then
@@ -29,7 +29,7 @@ function TopicList:AddTopics(topics, ...)
 	table.insert(self.topics, {topics = topics, actions = arg})
 end
 
--- Internal function to execute the reponses tied to 
+-- Internal function to execute the reponses tied to
 -- certain topics
 function TopicList:_DoActions(event, actions, captures)
 	table.foreach(actions, function(k,v)

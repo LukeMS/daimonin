@@ -54,14 +54,14 @@ int read_socket(int fd, SockList *sl, int len)
             if ((stat == -1) && WSAGetLastError() != WSAEWOULDBLOCK)
             {
                 LOG(LOG_ERROR, "ReadPacket got error %d, returning -1\n", WSAGetLastError());
-                draw_info("WARNING: Lost or bad server connection.", COLOR_RED);                
+                draw_info("WARNING: Lost or bad server connection.", COLOR_RED);
                 return -1;
             }
             return 0;
         }
         if (stat == 0)
         {
-            draw_info("WARNING: Server read package error.", COLOR_RED);                
+            draw_info("WARNING: Server read package error.", COLOR_RED);
             return -1;
         }
         sl->len += stat;
@@ -76,7 +76,7 @@ int read_socket(int fd, SockList *sl, int len)
     toread = 2 + (sl->buf[0] << 8) + sl->buf[1] - sl->len;
     if ((toread + sl->len) > len)
     {
-        draw_info("WARNING: Server read package error.", COLOR_RED);                
+        draw_info("WARNING: Server read package error.", COLOR_RED);
         LOG(LOG_ERROR, "SockList_ReadPacket: Want to read more bytes than will fit in buffer.\n");
         /* return error so the socket is closed */
         return -1;
@@ -90,14 +90,14 @@ int read_socket(int fd, SockList *sl, int len)
             if ((stat == -1) && WSAGetLastError() != WSAEWOULDBLOCK)
             {
                 LOG(LOG_ERROR, "ReadPacket got error %d, returning 0", WSAGetLastError());
-                draw_info("WARNING: Lost or bad server connection.", COLOR_RED);                
+                draw_info("WARNING: Lost or bad server connection.", COLOR_RED);
                 return -1;
             }
             return 0;
         }
         if (stat == 0)
         {
-            draw_info("WARNING: Server read package error.", COLOR_RED);                
+            draw_info("WARNING: Server read package error.", COLOR_RED);
             return -1;
         }
         sl->len += stat;
@@ -107,7 +107,7 @@ int read_socket(int fd, SockList *sl, int len)
         if (toread < 0)
         {
             LOG(LOG_ERROR, "SockList_ReadPacket: Read more bytes than desired.");
-            draw_info("WARNING: Server read package error.", COLOR_RED);                
+            draw_info("WARNING: Server read package error.", COLOR_RED);
             return -1;
         }
     }
@@ -133,13 +133,13 @@ int write_socket(int fd, unsigned char *buf, int len)
         if (amt == -1 && WSAGetLastError() != WSAEWOULDBLOCK)
         {
             LOG(LOG_ERROR, "New socket write failed (wsb) (%d).\n", WSAGetLastError());
-            draw_info("SOCKET ERROR: Server write failed.", COLOR_RED);                
+            draw_info("SOCKET ERROR: Server write failed.", COLOR_RED);
             return -1;
         }
         if (amt == 0)
         {
             LOG(LOG_ERROR, "Write_To_Socket: No data written out (%d).\n", WSAGetLastError());
-            draw_info("SOCKET ERROR: No data written out", COLOR_RED);                
+            draw_info("SOCKET ERROR: No data written out", COLOR_RED);
             return -1;
         }
         len -= amt;
@@ -157,7 +157,7 @@ Boolean SOCKET_InitSocket(void)
     csocket.fd = SOCKET_NO;
     csocket.cs_version = 0;
 
-    SocketStatusErrorNr = 0;    
+    SocketStatusErrorNr = 0;
     error = WSAStartup(0x0101, &w);
     if (error)
     {
@@ -343,12 +343,12 @@ Boolean SOCKET_CloseSocket(SOCKET socket_temp)
     closesocket(socket_temp);
     tmp_free = &csocket.inbuf.buf;
     FreeMemory(tmp_free);
-    csocket.fd = SOCKET_NO; 
+    csocket.fd = SOCKET_NO;
     return(TRUE);
 }
 
 #elif __LINUX
-Boolean SOCKET_OpenSocket(SOCKET *socket_temp, struct ClientSocket *csock, char *host, int 
+Boolean SOCKET_OpenSocket(SOCKET *socket_temp, struct ClientSocket *csock, char *host, int
 port)
 {
     struct protoent    *protox;
@@ -436,7 +436,7 @@ Boolean SOCKET_CloseSocket(SOCKET socket_temp)
     close(socket_temp);
     tmp_free = &csocket.inbuf.buf;
     FreeMemory(tmp_free);
-    csocket.fd = SOCKET_NO; 
+    csocket.fd = SOCKET_NO;
     return(TRUE);
 }
 
@@ -517,7 +517,7 @@ int read_socket(int fd, SockList *sl, int len)
         }
         if (stat == 0)
         {
-            draw_info("WARNING: Server read package error.", COLOR_RED);                
+            draw_info("WARNING: Server read package error.", COLOR_RED);
             return -1;
         }
         sl->len += stat;
@@ -531,7 +531,7 @@ int read_socket(int fd, SockList *sl, int len)
     toread = 2 + (sl->buf[0] << 8) + sl->buf[1] - sl->len;
     if ((toread + sl->len) > len)
     {
-        draw_info("WARNING: Server read package error.", COLOR_RED);                
+        draw_info("WARNING: Server read package error.", COLOR_RED);
         LOG(LOG_ERROR, "SockList_ReadPacket: Want to read more bytes than will fit in buffer.\n");
         /* return error so the socket is closed */
         return -1;
@@ -548,14 +548,14 @@ int read_socket(int fd, SockList *sl, int len)
             if (errno != EAGAIN && errno != EWOULDBLOCK)
             {
                 LOG(LOG_DEBUG, "ReadPacket got error %d, returning 0", errno);
-                draw_info("WARNING: Lost or bad server connection.", COLOR_RED);                
+                draw_info("WARNING: Lost or bad server connection.", COLOR_RED);
                 return -1;
             }
             return 0;
         }
         if (stat == 0)
         {
-            draw_info("WARNING: Server read package error.", COLOR_RED);                
+            draw_info("WARNING: Server read package error.", COLOR_RED);
             return -1;
         }
         sl->len += stat;
@@ -565,7 +565,7 @@ int read_socket(int fd, SockList *sl, int len)
         if (toread < 0)
         {
             LOG(LOG_ERROR, "SockList_ReadPacket: Read more bytes than desired.");
-            draw_info("WARNING: Server read package error.", COLOR_RED);                
+            draw_info("WARNING: Server read package error.", COLOR_RED);
             return -1;
         }
     }
@@ -595,13 +595,13 @@ int write_socket(int fd, unsigned char *buf, int len)
         {
             /* We got an error */
             LOG(LOG_ERROR, "New socket (fd=%d) write failed.\n", fd);
-            draw_info("SOCKET ERROR: Server write failed.", COLOR_RED);                
+            draw_info("SOCKET ERROR: Server write failed.", COLOR_RED);
             return -1;
         }
         if (amt == 0)
         {
             LOG(LOG_ERROR, "Write_To_Socket: No data written out.\n");
-            draw_info("SOCKET ERROR: No data written out", COLOR_RED);                
+            draw_info("SOCKET ERROR: No data written out", COLOR_RED);
             return -1;
         }
         len -= amt;

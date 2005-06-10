@@ -74,7 +74,7 @@ typedef signed long long 		sint64;
 
 #else
 #error Your compiler miss int64 support
-#endif 
+#endif
 #endif
 
 #ifdef CALLOC
@@ -217,7 +217,7 @@ typedef signed long long 		sint64;
 #define GROUP_NO (-1)
 
 #define PMSG_MODE_NOEXP     1   /* check GROUP_STATUS_NOEXP in party_message broadcast.
-                                 * We simply want avoid kill messages & fighting related 
+                                 * We simply want avoid kill messages & fighting related
                                  * info to group members out of range.
                                  */
 
@@ -240,7 +240,7 @@ typedef signed long long 		sint64;
 #define GROUP_UPDATE_MAXGRACE   32
 #define GROUP_UPDATE_LEVEL      64
 
-/* map distance values for draw_info_map functions 
+/* map distance values for draw_info_map functions
  * This value is in tiles
  */
 #define MAP_INFO_NORMAL 12
@@ -253,7 +253,7 @@ typedef signed long long 		sint64;
 /* number of connected maps from a tiled map */
 #define TILED_MAPS 8
 
-typedef enum 
+typedef enum
 {
     SKILLGROUP_AGILITY,
     SKILLGROUP_PERSONAL,
@@ -310,7 +310,7 @@ typedef struct linked_char
 
 #include "loader.h"
 #include "face.h"
-#include "aggro.h" 
+#include "aggro.h"
 #include "quest.h"
 #include "attack.h" /* needs to be before material.h */
 #include "material.h"
@@ -375,7 +375,7 @@ typedef struct ban_struct
 	int mode;
 	int ticks_init; /* how long is the ban */
 	int ticks_left; /* how long left */
-	uint32 ticks;		/* (starting) pticks + ticks_left */ 
+	uint32 ticks;		/* (starting) pticks + ticks_left */
 	uint32 ip;
 	char tag[BAN_STRUCT_TAG];
 } _ban_struct;
@@ -402,7 +402,7 @@ typedef struct Settings
     uint8                           balanced_stat_loss; /* If true, Death stat depletion based on level etc */
     int                             reset_loc_time; /* Number of seconds to put player back at home */
 
-    /* The meta_ is information for the metaserver.  These are set in 
+    /* The meta_ is information for the metaserver.  These are set in
      * the lib/settings file.
      */
     uint8                           meta_on : 1;            /* True if we should send updates */
@@ -438,7 +438,7 @@ extern int                      global_darkness_table[MAX_DARKNESS + 1];
 extern spell                    spells[NROFREALSPELLS];
 
 /* EXTERN is pre-defined in common/init.c as #define EXTERN - so the
- * variables are bind in there. In every other module, EXTERN is 
+ * variables are bind in there. In every other module, EXTERN is
  * defined as #define EXTERN extern.
  */
 #ifdef CS_LOGSTATS
@@ -456,8 +456,8 @@ EXTERN objectlink			   *ban_list_ip;	/* see ban.c */
 
 
 EXTERN SockList                 global_sl;
-EXTERN archetype               *global_aggro_history_arch; 
-EXTERN archetype               *global_dmg_info_arch; 
+EXTERN archetype               *global_aggro_history_arch;
+EXTERN archetype               *global_dmg_info_arch;
 
 EXTERN const char              *global_string_none; /* for quick search for string "none" */
 EXTERN object                  *active_objects; /* List of active objects that need to be processed */

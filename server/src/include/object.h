@@ -52,16 +52,16 @@
 #define CHECK_WALK_MOVED     2
 
 /* i sorted the members of this struct in 4 byte (32 bit) groups. This will help compiler
- * and cpu to make aligned access of the members, and can (and will) make things smaller 
+ * and cpu to make aligned access of the members, and can (and will) make things smaller
  * and faster - but this depends on compiler & system too.
  */
 typedef struct obj
 {
     /* These variables are not changed by copy_object(): */
     struct obj     *active_next;    /* Next & previous object in the 'active' */
-    struct obj     *active_prev;    /* List.  This is used in process_events 
+    struct obj     *active_prev;    /* List.  This is used in process_events
                                          * so that the entire object list does not
-                                         * need to be gone through. 
+                                         * need to be gone through.
                                          */
     struct obj     *below;          /* Pointer to the object stacked below this one */
     struct obj     *above;          /* Pointer to the object stacked above this one
@@ -86,12 +86,12 @@ typedef struct obj
      * All fields beow this point are automatically copied by memcpy.  If
      * adding something that needs a refcount updated, make sure you modify
      * copy_object to do so.  Everything below here also gets cleared
-     * by clear_object() 
+     * by clear_object()
     */
     const char     *name;                   /* The name of the object, obviously... */
     const char     *title;              /* Of foo, etc */
     const char     *race;                   /* human, goblin, dragon, etc */
-    const char     *slaying;                /* Which race to do double damage to 
+    const char     *slaying;                /* Which race to do double damage to
                                                  * If this is an exit, this is the filename
                                                  */
     const char     *msg;                    /* If this is a book/sign/magic mouth/etc */
@@ -121,7 +121,7 @@ typedef struct obj
     sint64			value;              /* How much money it is worth (or contains) */
     uint32          nrof;               /* How many of the objects */
     uint32          damage_round_tag;   /* needed for the damage info for client in map2 */
-    uint32          update_tag;         /* this is used from map2 update! */ 
+    uint32          update_tag;         /* this is used from map2 update! */
     uint32          flags[NUM_FLAGS_32]; /* various flags */
 
     tag_t           enemy_count;            /* What count the enemy has */
@@ -141,10 +141,10 @@ typedef struct obj
     uint16          path_attuned;       /* Paths the object is attuned to */
     uint16          path_repelled;      /* Paths the object is repelled from */
     uint16          path_denied;        /* Paths the object is denied access to */
-	
+
     uint16          last_damage;            /* thats the damage send with map2 */
 
-    uint16          terrain_type;       /* type flags for different enviroment (tile is under water, firewalk,...) 
+    uint16          terrain_type;       /* type flags for different enviroment (tile is under water, firewalk,...)
                                                  * A object which can be applied GIVES this terrain flags to his owner
                                                  */
     uint16          terrain_flag;       /* The object can move over/is unaffected from this terrain type */
@@ -173,7 +173,7 @@ typedef struct obj
     sint8           direction;          /* Means the object is moving that way. */
     sint8           facing;             /* Object is oriented/facing that way. */
     uint8           quick_pos;          /* quick pos is 0 for single arch, xxxx0000 for a head
-                                                 * or x/y offset packed to 4 bits for a tail 
+                                                 * or x/y offset packed to 4 bits for a tail
                                                  * warning: change this when include > 15x15 monster
                                                  */
 
@@ -275,7 +275,7 @@ typedef struct obj
 /* Test if an object is in the free-list */
 #define OBJECT_FREE(_ob_) ((_ob_)->count==0 && CHUNK_FREE(_ob_))
 
-/* These are flags passed to insert_ob_in_map and 
+/* These are flags passed to insert_ob_in_map and
  * insert_ob_in_ob.  Note that all flags may not be meaningful
  * for both functions.
  */

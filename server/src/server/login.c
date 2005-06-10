@@ -194,7 +194,7 @@ int save_player(object *op, int flag)
 			fprintf(fp, "dm_GM\n");
 		else
 			fprintf(fp, "dm_DM\n");
-	}	
+	}
 	fprintf(fp, "dm_stealth %d\n", pl->dm_stealth);
     fprintf(fp, "silent_login %d\n", pl->silent_login);
     fprintf(fp, "gen_hp %d\n", pl->gen_hp);
@@ -206,7 +206,7 @@ int save_player(object *op, int flag)
     fprintf(fp, "digestion %d\n", pl->digestion);
     fprintf(fp, "pickup %d\n", pl->mode);
     fprintf(fp, "skill_group %d %d %d\n", pl->base_skill_group[0],pl->base_skill_group[1],pl->base_skill_group[2]);
-    
+
     /* Match the enumerations but in string form */
     fprintf(fp, "usekeys %s\n",
             pl->usekeys == key_inventory ? "key_inventory" : (pl->usekeys == keyrings ? "keyrings" : "containers"));
@@ -311,7 +311,7 @@ int save_player(object *op, int flag)
 
     /* Eneq(@csd.uu.se): Reveal the container if we have one. */
     /*
-    if (flag&&container!=NULL) 
+    if (flag&&container!=NULL)
       pl->container = container;
     */
     if (wiz)
@@ -407,7 +407,7 @@ static void reorder_inventory(object *op)
     }
 }
 
-/* this whole player loading routine is REALLY not optimized - 
+/* this whole player loading routine is REALLY not optimized -
  * just look for all these scanf()
  */
 void check_login(object *op)
@@ -426,7 +426,7 @@ void check_login(object *op)
     time_t      elapsed_save_time   = 0;
     struct stat statbuf;
     object     *tmp, *tmp2;
- 
+
 #ifdef PLUGINS
     CFParm      CFP;
     int         evtid;
@@ -434,9 +434,9 @@ void check_login(object *op)
     strcpy(pl->maplevel, first_map_path);
 
     kick_loop = 0;
-    /* a good point to add this i to a 10 minute temp ban,,, 
+    /* a good point to add this i to a 10 minute temp ban,,,
      * if needed, i add it... its not much work but i better
-     * want a real login server in the future 
+     * want a real login server in the future
      */
     if (pl->state == ST_PLAYING)
     {
@@ -475,10 +475,10 @@ void check_login(object *op)
         player *ptmp;
         /* this is a virgin player name.
              * BUT perhaps someone else had the same name idea?
-             * Perhaps he is just do the confirm stuff or has entered the game - 
+             * Perhaps he is just do the confirm stuff or has entered the game -
              * So, lets check for the name here too
              * and check for confirm_password state
-             */     
+             */
         for (ptmp = first_player; ptmp != NULL; ptmp = ptmp->next)
         {
             if (ptmp != pl && ptmp->state >= ST_CONFIRM_PASSWORD && ptmp->ob->name == op->name)
@@ -524,7 +524,7 @@ void check_login(object *op)
             correct = check_password(pl->password, buf);
 
             /* password is good and player exists.
-                     * We have 2 choices left: 
+                     * We have 2 choices left:
                      * a.) this name is not loged in bfore
                      * b.) or it is.
                      * If it is, we kick the previous loged
@@ -538,14 +538,14 @@ void check_login(object *op)
                 {
                     if (ptmp != pl && ptmp->state == ST_PLAYING && ptmp->ob->name == op->name)
                     {
-                        int state_tmp   = pl->state;                        
+                        int state_tmp   = pl->state;
                         LOG(llevInfo, "Double login! Kicking older instance! (%d) ", kick_loop);
                         pl->state = ST_PLAYING;
                         new_draw_info(NDI_UNIQUE, 0, pl->ob, "Double login! Kicking older instance!");
                         pl->state = state_tmp;
                         fclose(fp);
-                        remove_ns_dead_player(ptmp);/* super hard kick! */                      
-                        kick_loop++;                            
+                        remove_ns_dead_player(ptmp);/* super hard kick! */
+                        kick_loop++;
                         goto kick_loop_jump;
                     }
                 }
@@ -568,7 +568,7 @@ void check_login(object *op)
     pl->group_id = GROUP_NO;
 	pl->gmaster_mode = GMASTER_MODE_NO;
 	pl->gmaster_node = NULL;
-	
+
     pl->name_changed = 1;
     pl->orig_stats.Str = 0;
     pl->orig_stats.Dex = 0;
@@ -836,7 +836,7 @@ void check_login(object *op)
         /* if this is a 0.95 char, we adjust the exp of every skill or exp_obj NOW */
         /* in the first step, we clear out for recalculation the players level & exp and
              * every EXPERIENCE object type we found.
-             * we don't use the normal exp functions here to avoid player messages like 
+             * we don't use the normal exp functions here to avoid player messages like
              * "you lose a level".
              */
         op->level = 1;
@@ -948,7 +948,7 @@ void check_login(object *op)
         {
             char buf[MAX_BUF];
             objectlink *ol;
-            
+
             sprintf(buf, "%s has entered the game.", query_name(pl->ob));
 
             for (ol = gmaster_list_DM; ol; ol = ol->next)
@@ -964,10 +964,10 @@ void check_login(object *op)
 			char buf_dm[64];
 
 			sprintf(buf_dm, "DM: %d players now playing.", player_active);
-			
+
 			for(ol = gmaster_list_DM;ol;ol=ol->next)
 				new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
-			
+
 			for(ol = gmaster_list_GM;ol;ol=ol->next)
 				new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
 		}
@@ -1011,7 +1011,7 @@ void check_login(object *op)
 	{
 		int mode = pl->gmaster_mode;
 
-		pl->gmaster_mode = GMASTER_MODE_NO;			
+		pl->gmaster_mode = GMASTER_MODE_NO;
 		if(check_gmaster_list(pl, mode))
 			set_gmaster_mode(pl, mode);
 	}
@@ -1038,7 +1038,7 @@ void check_login(object *op)
         LOG(llevBug, "BUG: Player %s was loaded without friendly flag!", query_name(op));
         SET_FLAG(op, FLAG_FRIENDLY);
         add_friendly_object(op);
-    }       
+    }
     /* ok, we are done with the login.
      * Lets put the player on the map and send all player lists to the client.
      * The player is active now.

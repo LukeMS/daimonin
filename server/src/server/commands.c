@@ -57,7 +57,7 @@ CommArray_s Commands[]                  =
     {"/run",          command_run,            1.0f},
     {"/run_stop",     command_run_stop,       0.01f},
     {"/cast",         command_cast_spell,     0.0f},
-    /* use time comes from spells! */ 
+    /* use time comes from spells! */
     {"/say",          command_say,            1.0f},
     {"/gsay",         command_gsay,           1.0f},
     {"/shout",        command_shout,          1.0f},
@@ -90,17 +90,17 @@ CommArray_s Commands[]                  =
     {"/dm_list",		command_dm_list,1.0f},
 	{"/malloc",			command_malloc,   0.0},		/* check the server stats */
 	{"/kick",			command_kickcmd, 0.0},			/* kick with a 1m temp login ban */
-	
-	{"/mute",			command_mute,1.0f},			/* max 5 min for VOL */ 
-	
+
+	{"/mute",			command_mute,1.0f},			/* max 5 min for VOL */
+
 	/* GM/DM */
-	{"/summon",			command_summon,1.0}, 
-    {"/teleport",		command_teleport,1.0f}, 
-	{"/ban",			command_ban,0.0}, 
-	
-	{"/silence",		command_silence,0.0}, 
-    
-    
+	{"/summon",			command_summon,1.0},
+    {"/teleport",		command_teleport,1.0f},
+	{"/ban",			command_ban,0.0},
+
+	{"/silence",		command_silence,0.0},
+
+
     /*{"/mark",           command_mark,           1.0f},*/
     /*  {"/sound",        command_sound,          1.0},*/
     /*  {"/delete",     command_quit,           1.0},*/
@@ -140,7 +140,7 @@ CommArray_s CommunicationCommands[] =
     {"/twiddle", command_twiddle, 1.0}, {"/wave", command_wave,       1.0}, {"/whistle", command_whistle, 1.0},
     {"/wink", command_wink,       1.0}, {"/yawn", command_yawn,       1.0}, {"/beg", command_beg,         1.0},
     {"/bleed", command_bleed,     1.0}, {"/cringe", command_cringe,   1.0}, {"/think", command_think,     1.0},
-    {"/me", command_me,           1.0}, 
+    {"/me", command_me,           1.0},
 };
 
 const int   CommunicationCommandSize    = sizeof(CommunicationCommands) / sizeof(CommArray_s);
@@ -151,37 +151,37 @@ const int   CommunicationCommandSize    = sizeof(CommunicationCommands) / sizeof
 CommArray_s WizCommands[]           =
 {
 	{"/dm_set",		  command_dm_set,         0.0f},
-    {"/plugin",command_loadplugin,0.0}, 
+    {"/plugin",command_loadplugin,0.0},
 	{"/pluglist",command_listplugins,0.0},
 
 	{"/inventory",		command_inventory,1.0f},	/* inv check of player x for exampel to check quest items */
     /* DM/WIZ commands */
-	{"/goto", command_goto,0.0}, 
+	{"/goto", command_goto,0.0},
 	{"/shutdown", command_start_shutdown,0.0},
-    {"/shutdown_now", command_shutdown, 0.0}, 
-	{"/resetmap", command_reset,0.0}, 
+    {"/shutdown_now", command_shutdown, 0.0},
+	{"/resetmap", command_reset,0.0},
 	{"/plugout",command_unloadplugin,0.0},
-    {"/create", command_create,0.0}, 
-	{"/addexp", command_addexp,0.0}, 
-    {"/maps", command_maps,   0.0}, 
+    {"/create", command_create,0.0},
+	{"/addexp", command_addexp,0.0},
+    {"/maps", command_maps,   0.0},
 	{"/dump", command_dump,0.0}, /* dump info of object nr. x */
 
-    {"/dm_stealth", command_dm_stealth,0.0}, 
+    {"/dm_stealth", command_dm_stealth,0.0},
 	{"/dm_light", command_dm_light,0.0},
     {"/d_active", command_dumpactivelist,0.0},
 	{"/d_arches", command_dumpallarchetypes,0.0},
-    {"/d_maps", command_dumpallmaps,0.0}, 
+    {"/d_maps", command_dumpallmaps,0.0},
 	{"/d_map", command_dumpmap,0.0},
 	{"/d_objects", command_dumpallobjects,0.0},
-    {"/d_belowfull", command_dumpbelowfull,0.0}, 
+    {"/d_belowfull", command_dumpbelowfull,0.0},
 	{"/d_below", command_dumpbelow,0.0},
     {"/d_friendly", command_dumpfriendlyobjects,0.0},
 	{"/d_hash", command_sstable,  0.0},
-    {"/set_map_light", command_setmaplight,0.0}, 
-	{"/stats", command_stats,0.0}, 
+    {"/set_map_light", command_setmaplight,0.0},
+	{"/stats", command_stats,0.0},
 	{"/check_fd", command_check_fd,0.0},
     {"/dm_speed", command_speed,0.0},
-    
+
 
     /*
     {"/archs", command_archs, 0.0},
@@ -227,5 +227,5 @@ void init_commands()
 void send_clear_interface(player *pl)
 {
 	SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_INTERFACE);
-	Send_With_Handling(&pl->socket, &global_sl);	
+	Send_With_Handling(&pl->socket, &global_sl);
 }

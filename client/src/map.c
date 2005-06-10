@@ -52,7 +52,7 @@ void adjust_map_cache(int xpos, int ypos)
     register struct MapCell                    *map;
     int             xreal, yreal;
 
-    memset(TheMapCache, 0, 9 * (MapData.xlen * MapData.ylen) * sizeof(struct MapCell));    
+    memset(TheMapCache, 0, 9 * (MapData.xlen * MapData.ylen) * sizeof(struct MapCell));
     for (y = 0; y < MapStatusY; y++)
     {
         for (x = 0; x < MapStatusX; x++)
@@ -166,7 +166,7 @@ void InitMapData(char *name, int xl, int yl, int px, int py)
     {
         strcpy(MapData.music, tmp);
         if (init_media_tag(tmp))
-            music_fade = 1; 
+            music_fade = 1;
         media_show_update--; /* perhaps we have a png - simulate a step = map_scroll */
 
         *tmp = 0;
@@ -174,11 +174,11 @@ void InitMapData(char *name, int xl, int yl, int px, int py)
 
     if (!music_fade) /* there was no music tag or playon tag in this map - fade out */
     {
-        /* now a interesting problem - when we have some seconds before a fadeout 
+        /* now a interesting problem - when we have some seconds before a fadeout
              * to a file (and not to "mute") and we want mute now - is it possible that
              * the mixer callback is called in a different thread? and then this thread
              * stuck BEHIND the music_new.flag = 1 check - then the fadeout of this mute
-             * will drop whatever - the callback will play the old file. 
+             * will drop whatever - the callback will play the old file.
              * that the classic thread/semphore problem.
              */
         sound_fadeout_music(0);
@@ -207,7 +207,7 @@ void InitMapData(char *name, int xl, int yl, int px, int py)
         * maps to our map - we want cache a map except its 2 maps aways-
         * WARNING: tiled maps must be of same size... don't attach a 32x32
         * map on a 16x16 map. Its possible to handle this here, but then we need
-        * to know the sizes of the attached maps here 
+        * to know the sizes of the attached maps here
         */
         TheMapCache = malloc(9 * xl * yl * sizeof(struct MapCell));
         memset(TheMapCache, 0, 9 * xl * yl * sizeof(struct MapCell));
@@ -345,10 +345,10 @@ void map_draw_map(void)
     player_posy = MapStatusY - (MapStatusY / 2) - 1;
     player_pixx = MAP_START_XOFF + player_posx * MAP_TILE_YOFF - player_posy * MAP_TILE_YOFF + 20;
     player_pixy = MAP_START_YOFF + player_posx * MAP_TILE_XOFF + player_posy * MAP_TILE_XOFF - 14;
-    player_dummy.border_left = -5;    
-    player_dummy.border_right = 0;    
-    player_dummy.border_up = 0;    
-    player_dummy.border_down = -5;    
+    player_dummy.border_left = -5;
+    player_dummy.border_right = 0;
+    player_dummy.border_up = 0;
+    player_dummy.border_down = -5;
     player_dummy.bitmap = &bmap;
     bmap.h = 33;
     bmap.w = 35;
@@ -411,7 +411,7 @@ void map_draw_map(void)
                             {
                                 mnr = map->pos[k];
                                 mid = mnr >> 4;
-                                mnr &= 0x0f; 
+                                mnr &= 0x0f;
                                 xml = MultiArchs[mid].xlen;
                                 yl = ypos
                                    - MultiArchs[mid].part[mnr].yoff
@@ -458,7 +458,7 @@ void map_draw_map(void)
                                 bltfx.dark_level = 6;
 
                             /* all done, just blt the face */
-                            bltfx.flags = 0;                        
+                            bltfx.flags = 0;
                             if (k && ((x > player_posx && y >= player_posy) || (x >= player_posx && y > player_posy)))
                             {
                                 if (face_sprite && face_sprite->bitmap && k > 1)
@@ -528,13 +528,13 @@ void map_draw_map(void)
                             /* have we a playername? then print it! */
                             if (options.player_names && map->pname[k][0])
                             {
-                                /* we must take care here later for rank! - 
-                                                     * then we must trick a bit here! (use rank + name 
-                                                     * and strncmp() 
+                                /* we must take care here later for rank! -
+                                                     * then we must trick a bit here! (use rank + name
+                                                     * and strncmp()
                                                     */
                                 if (options.player_names
                                  == 1
-                                ||  /* all names */ 
+                                ||  /* all names */
                                     (options.player_names == 2 && strnicmp(map->pname[k], cpl.rankandname,
                                                                            strlen(cpl.rankandname)))
                                 ||  /* names from other players only */
@@ -648,8 +648,8 @@ static char tile_mask[TILE_ISO_YLEN][TILE_ISO_XLEN+1] ={
 "333333333333333311111111111111114444444444444444",
 "333333333333333333111111111111444444444444444444",
 "333333333333333333331111111144444444444444444444",
-"333333333333333333333311114444444444444444444444", 
-"333333333333333333333333444444444444444444444444" 
+"333333333333333333333311114444444444444444444444",
+"333333333333333333333333444444444444444444444444"
 };
 */
 

@@ -150,7 +150,7 @@ static char        *path_author[]               =
  */
 
 /* if it isnt listed here, then art_attr_msg will never generate
- * a message for this type of artifact. -b.t. 
+ * a message for this type of artifact. -b.t.
  */
 static arttypename  art_name_array[]            =
 {
@@ -260,11 +260,11 @@ static char        *book_descrpt[]              =
 
 static char        *mage_book_name[]            =
 {
-    "grimoire",    
-    "grimoire",  
-    "manual",     
-    "tome", 
-    "treatise"  
+    "grimoire",
+    "grimoire",
+    "manual",
+    "tome",
+    "treatise"
 };
 
 static char        *priest_book_name[]          =
@@ -1028,7 +1028,7 @@ object * get_random_mon(int level)
     /* safety check.  Problem w/ init_mon_info list? */
     if (!nrofmon || !mon)
         return (object *) NULL;
-    
+
 	/* lets get a random monster from the mon_info linked list */
     monnr = RANDOM() % nrofmon;
 
@@ -1041,7 +1041,7 @@ object * get_random_mon(int level)
 		LOG(llevBug, "BUG: get_random_mon: Didn't find a monster when we should have\n");
         return NULL;
     }
-    
+
 	return mon->objlink.ob;
 }
 
@@ -1104,7 +1104,7 @@ char * mon_info_msg(int level, int booksize)
 			strcat(retbuf,"<p>");
 		else
 			strcat(retbuf,"\n\n");
-		
+
         /* monster description */
         strcpy(tmpbuf, mon_desc(tmp));
 
@@ -1147,7 +1147,7 @@ char * artifact_msg(int level, int booksize)
     char           *ch, name[MAX_BUF], buf[BOOK_BUF], sbuf[MAX_BUF];
     static char     retbuf[BOOK_BUF];
     object         *tmp             = NULL;
-	
+
     /* values greater than 5 create msg buffers that are too big! */
     if (book_entries > 5)
         book_entries = 5;
@@ -1216,7 +1216,7 @@ char * artifact_msg(int level, int booksize)
 		SET_FLAG(tmp, FLAG_IDENTIFIED);
         SET_FLAG(tmp, FLAG_KNOWN_MAGICAL);
         SET_FLAG(tmp, FLAG_KNOWN_CURSED);
-		
+
 		sprintf(buf,"<t t=\"%s %s\">\n", tmp->name, tmp->title?tmp->title:"");
 		strcat(retbuf,buf);
         /* chance of finding */

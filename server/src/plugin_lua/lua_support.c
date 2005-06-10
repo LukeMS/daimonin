@@ -73,11 +73,11 @@ void dumpStack(lua_State *L)
 }
 
 /*
- * luaCFunctions 
+ * luaCFunctions
  */
 
 /* Generic "tostring" metamethod for our object model,
- * can be overridden by classes 
+ * can be overridden by classes
  */
 static int toString_generic(struct lua_State *L)
 {
@@ -102,8 +102,8 @@ static int getObjectMember(lua_State *L)
 
     if (nargs == 2)
     {
-        lua_object *obj              = lua_touserdata(L, 1); 
-        const char *key                 = lua_tostring(L, 2);                       
+        lua_object *obj              = lua_touserdata(L, 1);
+        const char *key                 = lua_tostring(L, 2);
         lua_class *class    = obj->class;
 
         if (obj && key)
@@ -142,7 +142,7 @@ static int getObjectMember(lua_State *L)
                       /* Do nothing */
                       break;
                 }
-            } 
+            }
 
             luaL_error(L, "No such class member: %s.%s", obj->class->name, key);
         }
@@ -179,7 +179,7 @@ static int setObjectMember(lua_State *L)
             {
                 if(! obj->class->isValid(L, obj))
                     luaL_error(L, "Invalid %s object", obj->class->name);
-                
+
                 switch (member->class->type)
                 {
                     case LUATYPE_ATTRIBUTE:
@@ -203,7 +203,7 @@ static int setObjectMember(lua_State *L)
                       /* Do nothing */
                       break;
                 }
-            } 
+            }
             luaL_error(L, "No such class member: %s.%s", obj->class->name, key);
         }
         else
@@ -222,7 +222,7 @@ static int setObjectMember(lua_State *L)
 /* get an attribute from a lua_object and push it onto the stack */
 static int get_attribute(lua_State *L, lua_object *obj, struct attribute_decl *attrib)
 {
-    void   *field_ptr   = (void *) ((char *) obj->data.anything + attrib->offset);  
+    void   *field_ptr   = (void *) ((char *) obj->data.anything + attrib->offset);
     char   *str;
     void   *field_ptr2;
     tag_t   tag;
@@ -266,7 +266,7 @@ static int get_attribute(lua_State *L, lua_object *obj, struct attribute_decl *a
         case FIELDTYPE_MAP:
           /* TODO: maps should also include the tag (or whatever)
            * to handle validation in long-running scripts */
-          if(field_ptr == NULL || (*(mapstruct **)field_ptr)->in_memory != MAP_IN_MEMORY ) 
+          if(field_ptr == NULL || (*(mapstruct **)field_ptr)->in_memory != MAP_IN_MEMORY )
           {
               lua_pushnil(L);
               return 1;
@@ -293,7 +293,7 @@ static int get_attribute(lua_State *L, lua_object *obj, struct attribute_decl *a
 /* value is on top of stack */
 static int set_attribute(lua_State *L, lua_object *obj, struct attribute_decl *attrib)
 {
-    void       *field_ptr   = (void *) ((char *) obj->data.anything + attrib->offset);  
+    void       *field_ptr   = (void *) ((char *) obj->data.anything + attrib->offset);
     const char *str;
 
     /* Call any class hooks */
@@ -384,11 +384,11 @@ static inline lua_object * get_object_arg(lua_State *L, int pos, lua_class *clas
 {
     lua_object *obj;
 
-    if ((obj = lua_touserdata(L, pos))) 
+    if ((obj = lua_touserdata(L, pos)))
     {
         if(! obj->class->isValid(L, obj))
             luaL_error(L, "Invalid %s object", obj->class->name);
-        
+
         return obj;
     }
 
@@ -401,8 +401,8 @@ static inline lua_object * get_object_arg(lua_State *L, int pos, lua_class *clas
  *  s - string
  *  i - integer (int)
  *  i - integer (int64)
- *  f - float 
- *  d - double 
+ *  f - float
+ *  d - double
  *  O - GameObject
  *  M - Map
  *  G - the "game" singleton object
@@ -477,12 +477,12 @@ void get_lua_args(lua_State *L, const char *fmt, ...)
               /* Game */
               *va_arg(ap, lua_object * *) = get_object_arg(L, pos, &Game);
               break;
-            
+
             case 'E':
               /* Event */
               *va_arg(ap, lua_object * *) = get_object_arg(L, pos, &Event);
               break;
-            
+
             case 'A':
               /* AI */
               *va_arg(ap, lua_object * *) = get_object_arg(L, pos, &AI);
@@ -499,7 +499,7 @@ void get_lua_args(lua_State *L, const char *fmt, ...)
 				luaL_checknumber(L, pos);
 				*va_arg(ap, sint64 *) = (sint64) lua_tonumber(L, pos);
 				break;
-				
+
             case 'f':
               /* float */
               luaL_checknumber(L, pos);
@@ -568,10 +568,10 @@ int push_object(lua_State *L, lua_class *class, void *data)
         default:
             break;
     }
-    
+
     /* Fetch and attach metatable */
     lua_rawgeti(L, LUA_REGISTRYINDEX, class->meta);
-    lua_setmetatable(L, -2); 
+    lua_setmetatable(L, -2);
 
     class->obcount++;
     //    LOG(llevDebug, "pushed a %s (count=%d)\n", obj->class->name, obj->class->obcount);
@@ -628,7 +628,7 @@ int init_class(struct lua_State *L, lua_class *class)
      */
 
     /* Set up class metatable */
-    lua_newtable(L); 
+    lua_newtable(L);
 
     lua_pushstring(L, "__index");
     lua_pushcclosure(L, getObjectMember, 0);
@@ -647,11 +647,11 @@ int init_class(struct lua_State *L, lua_class *class)
 
     // TODO: a concat metamethod
 
-#if 0    
+#if 0
     lua_pushstring(L, "__gc");
     lua_pushcclosure(L, gc, 0);
     lua_rawset(L, -3);
-#endif    
+#endif
 
     /* Set up class members */
     if (class->attributes)
@@ -714,7 +714,7 @@ int init_file_cache(struct lua_State *L)
     return 0;
 }
 
-/* Leaves the function or an error on the stack top 
+/* Leaves the function or an error on the stack top
  * TODO: purge old entries when cache starts getting big
  */
 int load_file_cache(struct lua_State *L, const char *file)
@@ -751,7 +751,7 @@ int load_file_cache(struct lua_State *L, const char *file)
         time_t  load_time;
 
         /* Get the file load time */
-        lua_pushvalue(L, -1); /* it is stored with the function as key */ 
+        lua_pushvalue(L, -1); /* it is stored with the function as key */
         lua_rawget(L, -4);
         /* stack: cache, path, function, time */
 
@@ -761,25 +761,25 @@ int load_file_cache(struct lua_State *L, const char *file)
         /* File changed since we loaded it? */
         if (load_time < stat_buf.st_mtime)
         {
-#ifdef LUA_DEBUG            
+#ifdef LUA_DEBUG
             LOG(llevDebug, "LUA - Cached version old, loading '%s' from file\n", file);
-#endif        
+#endif
             lua_pop(L, 1); /* get rid of old chunk */
             load = 1;
         }
         else
         {
-#ifdef LUA_DEBUG            
+#ifdef LUA_DEBUG
             LOG(llevDebug, "LUA - Using cached version of '%s'\n", file);
-#endif   
+#endif
             load = 0;
         }
     }
     else
     {
-#ifdef LUA_DEBUG            
+#ifdef LUA_DEBUG
         LOG(llevDebug, "LUA - Script not in cache, loading '%s' from file\n", file);
-#endif        
+#endif
         lua_pop(L, 1); /* throw away nil */
         load = 1;
     }
@@ -791,11 +791,11 @@ int load_file_cache(struct lua_State *L, const char *file)
         if (res == 0)
         {
             /* stack: cache, path, f */
-            
-            /* store the load time */            
+
+            /* store the load time */
             lua_pushvalue(L, -1);
             lua_pushnumber(L, time(NULL));
-            lua_rawset(L, -5);            
+            lua_rawset(L, -5);
 
             /* Store the function */
             lua_pushvalue(L, -2); /* path */

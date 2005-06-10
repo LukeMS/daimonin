@@ -36,23 +36,23 @@
  *
  * About time - this  number is the base for the use of the skill. Level
  * and associated stats can modify the amound of time to use the skill.
- * Time to use the skill is only used when 1) op is a player and 
- * 2) the skill is called through do_skill(). 
+ * Time to use the skill is only used when 1) op is a player and
+ * 2) the skill is called through do_skill().
  * It is strongly recogmended that many skills *not* have a time value.
  *
  * About 'stats' and skill.category - a primary use for stats is determining
- * the associated experience category. 
- * Note that the ordering of the stats is important. Stat1 is the 'primary' 
- * stat, stat2 the 'secondary' stat, etc. In this scheme the primary stat 
- * is most important for determining the associated experience category. 
- * If a skill has the primary stat set to NO_STAT_VAL then it defaults to a 
- * 'miscellaneous skill'. 
+ * the associated experience category.
+ * Note that the ordering of the stats is important. Stat1 is the 'primary'
+ * stat, stat2 the 'secondary' stat, etc. In this scheme the primary stat
+ * is most important for determining the associated experience category.
+ * If a skill has the primary stat set to NO_STAT_VAL then it defaults to a
+ * 'miscellaneous skill'.
  */
 
 /* Don't change the order here w/o changing the skills.h file */
 
-/* The default skills array, values can be overwritten by init_skills() 
- * in skill_util.c 
+/* The default skills array, values can be overwritten by init_skills()
+ * in skill_util.c
  */
 
 skill   skills[NROFSKILLS]  =
@@ -92,7 +92,7 @@ skill   skills[NROFSKILLS]  =
     { "wizardry spells",    NULL, SKILLGROUP_MISC, 1, 0, 0.0f,      POW,      INTELLIGENCE,       WIS },
     { "remove traps",       NULL, SKILLGROUP_MISC, 0, 1, 0.5f,    DEX,      INTELLIGENCE, NO_STAT_VAL },
     { "set traps",          NULL, SKILLGROUP_MISC, 0, 1, 0.5f,    INTELLIGENCE,      DEX, NO_STAT_VAL },
-    { "magic devices",      NULL, SKILLGROUP_MISC, 4, 0, 1.0f,   POW, DEX, NO_STAT_VAL }, 
+    { "magic devices",      NULL, SKILLGROUP_MISC, 4, 0, 1.0f,   POW, DEX, NO_STAT_VAL },
     /* 30 */
     { "divine prayers",     NULL, SKILLGROUP_MISC, 0, 0, 0.0f,      WIS,      POW,     INTELLIGENCE },
     { "clawing",            NULL, SKILLGROUP_MISC, 0, 0, 0.0f,      STR,      DEX, NO_STAT_VAL },

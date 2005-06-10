@@ -377,18 +377,18 @@ static char * re_get_token(selection *sel, char *regexp)
               else
               {
                   Boolean   neg             = False;
-                  uchar     first, last = 0;                            
+                  uchar     first, last = 0;
 
                   exit_if_null;
                   looking_at = *regexp++;
 
                   if (looking_at == '^')
                   {
-                      neg = True;                       
+                      neg = True;
                       exit_if_null;
                       looking_at = *regexp++;
                   }
-                  first = looking_at;                   
+                  first = looking_at;
                   exit_if_null;
                   looking_at = *regexp++;
                   if (looking_at == ']')
@@ -459,7 +459,7 @@ static char * re_get_token(selection *sel, char *regexp)
                           /* It begins with a "random" character */
                           sel->u.array[first] = !neg;
                       }
-                      sel->u.array[looking_at] = !neg;                      
+                      sel->u.array[looking_at] = !neg;
 
                       exit_if_null;
                       previous = looking_at;
@@ -489,7 +489,7 @@ static char * re_get_token(selection *sel, char *regexp)
                                                  * looking_at is set below.
                                                  */
                                       sel->u.array[i] = !neg;
-                                  } 
+                                  }
                                   exit_if_null;
                               }
                               else
@@ -499,7 +499,7 @@ static char * re_get_token(selection *sel, char *regexp)
                               }
                           }
                           sel->u.array[looking_at] = !neg;
-                          previous = looking_at;                            
+                          previous = looking_at;
                           exit_if_null;
                           looking_at = *regexp++;
                       }

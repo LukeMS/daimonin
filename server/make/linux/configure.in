@@ -54,7 +54,7 @@ AC_PATH_PROG(GUNZIP, gunzip)
 AC_PATH_PROG(PERL, perl)
 
 AC_CHECK_SIZEOF(long)
-AC_CHECK_SIZEOF(long long) 
+AC_CHECK_SIZEOF(long long)
 
 if test -n "$GZIP" -a -z "$GUNZIP" ; then
     echo "Found gzip, but not gunzip - setting GUNZIP to gzip -c";
@@ -228,7 +228,7 @@ ndatadir=`eval echo ${datadir}`/Daimonin
 nlocaldir=`eval echo ${localstatedir}`/Daimonin
 
 
-dnl Have to do this one twice, since it uses two levels of indirection 
+dnl Have to do this one twice, since it uses two levels of indirection
 
 nlibdir=`eval echo ${libdir}`
 nlibdir=`eval echo ${nlibdir}`
@@ -248,8 +248,8 @@ datadir=${ndatadir}
 localstatedir=${nlocaldir}
 
 AC_OUTPUT(Makefile
-	../../src/random_maps/Makefile ../../src/socket/Makefile 
-	../../src/server/Makefile ../../src/include/Makefile 
+	../../src/random_maps/Makefile ../../src/socket/Makefile
+	../../src/server/Makefile ../../src/include/Makefile
 	../../src/utils/Makefile ../../src/common/Makefile
 	../../src/utils/dmonloop
 	../../src/plugin_lua/Makefile

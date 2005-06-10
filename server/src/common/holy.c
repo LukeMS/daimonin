@@ -25,7 +25,7 @@
 
 /* Started file Sept 1996 - initialization of gods in form of a
  * linked list -b.t.
- */ 
+ */
 
 #include <global.h>
 
@@ -82,7 +82,7 @@ void add_god_to_list(archetype *god_arch)
     }
     first_god = god;
 
-#ifdef DEBUG_GODS 
+#ifdef DEBUG_GODS
     LOG(llevDebug, "Adding god %s (%d) to list\n", god->name, god->id);
 #endif
 }
@@ -104,7 +104,7 @@ int baptize_altar(object *op)
         {
             LOG(llevBug, "BUG: baptise_altar(): bizarre nameless god!\n");
             return 0;
-        }   
+        }
         /* if the object name hasnt' been changed, we tack on the gods name */
         if (!strcmp(op->name, op->arch->clone.name))
         {
@@ -218,63 +218,63 @@ void dump_gods()
         if (!QUERY_FLAG(god, FLAG_USE_WEAPON))
         {
             gifts = 1; LOG(llevInfo, "\n  weapon use is forbidden");
-        } 
+        }
         if (!QUERY_FLAG(god, FLAG_USE_ARMOUR))
         {
             gifts = 1; LOG(llevInfo, "\n  no armour may be worn");
-        } 
+        }
         if (QUERY_FLAG(god, FLAG_UNDEAD))
         {
             gifts = 1; LOG(llevInfo, "\n  is undead");
-        } 
+        }
         if (QUERY_FLAG(god, FLAG_SEE_IN_DARK))
         {
             gifts = 1; LOG(llevInfo, "\n  has infravision ");
-        } 
+        }
         if (QUERY_FLAG(god, FLAG_XRAYS))
         {
             gifts = 1; LOG(llevInfo, "\n  has X-ray vision");
-        } 
+        }
         if (QUERY_FLAG(god, FLAG_REFL_MISSILE))
         {
             gifts = 1; LOG(llevInfo, "\n  reflect missiles");
-        } 
+        }
         if (QUERY_FLAG(god, FLAG_REFL_SPELL))
         {
             gifts = 1; LOG(llevInfo, "\n  reflect spells");
-        } 
+        }
         if (QUERY_FLAG(god, FLAG_STEALTH))
         {
             gifts = 1; LOG(llevInfo, "\n  is stealthy");
-        } 
+        }
         if (QUERY_FLAG(god, FLAG_SEE_INVISIBLE))
         {
             gifts = 1; LOG(llevInfo, "\n  is (permanently) invisible");
-        } 
+        }
         if (QUERY_FLAG(god, FLAG_BLIND))
         {
             gifts = 1; LOG(llevInfo, "\n  is blind");
-        } 
+        }
         if (god->last_heal)
         {
             gifts = 1; LOG(llevInfo, "\n  hp regenerate at %d", god->last_heal);
-        } 
+        }
         if (god->last_sp)
         {
             gifts = 1; LOG(llevInfo, "\n  sp regenerate at %d", god->last_sp);
-        } 
+        }
         if (god->last_eat)
         {
             gifts = 1; LOG(llevInfo, "\n  digestion is %s (%d)", god->last_eat < 0 ? "slowed" : "faster",god->last_eat);
-        } 
+        }
         if (god->last_grace)
         {
             gifts = 1; LOG(llevInfo, "\n  grace regenerates at %d", god->last_grace);
-        } 
+        }
         if (god->stats.luck)
         {
             gifts = 1; LOG(llevInfo, "\n  luck is %d", god->stats.luck);
-        } 
+        }
         if (!gifts)
             LOG(llevInfo, "NONE");
         LOG(llevInfo, "\n\n");

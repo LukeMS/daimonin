@@ -98,7 +98,7 @@ options:
 #define OPT_IRR_SPACE 16
 #define OPT_WALL_OFF 32
 #define OPT_WALLS_ONLY 64
-#define OPT_NO_DOORS 256 /* Place walls insead of doors.  Produces broken map. */  
+#define OPT_NO_DOORS 256 /* Place walls insead of doors.  Produces broken map. */
 
 
 

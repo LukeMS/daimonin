@@ -187,7 +187,6 @@ arch ant_red
 type 83
 random_move 0
 stand_still 1
-direction 0
 end
 end
 arch floor_ostone1

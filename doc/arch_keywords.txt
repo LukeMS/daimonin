@@ -1,7 +1,7 @@
 Daimonin Arch Object Keyword List
 ---------------------------------
 
-NOTE: 10.05.2003 
+NOTE: 10.05.2003
 This doc is still very incomplete and raw. I want here the complete arch object
 description with all arch commands and map arch commands and what they do. MT
 
@@ -11,7 +11,7 @@ Removed: (incomplete list)
 
  	can_apply, weapontype, need_an, need_ie, neutral,
   	random_movement (double included: random_move is the same and still in),
-        editable, can_use_rod, can_use_horn,has_ready_rod, has_ready_horn,  
+        editable, can_use_rod, can_use_horn,has_ready_rod, has_ready_horn,
 	apply_once, no_pretext,immune,protected,vulnerable,expmul,can_knockback,
 	can_parry,can_impale,can_cut,can_dam_armour,casting_speed
 
@@ -41,7 +41,7 @@ Unsorted Commands
 
 Reflection
 ----------
-"reflect_spell <bool>","reflect_missile <bool>","reflecting <bool>" 
+"reflect_spell <bool>","reflect_missile <bool>","reflecting <bool>"
 'reflecting' will reflect a incoming missile when it hits the object (lightnings).
 
 The missile will be reflected to the direction it comes from.
@@ -60,12 +60,12 @@ Speed
 -----
 "speed", "speed_left"
 
-The speed the object has in the game. Speed 1 means, the object will be active 
-every intern tick. That depends on the server ticks per second - 
-default server has around 9 ticks per second. At start, speed_left will be set to 1 
+The speed the object has in the game. Speed 1 means, the object will be active
+every intern tick. That depends on the server ticks per second -
+default server has around 9 ticks per second. At start, speed_left will be set to 1
 and then every tick, speed will subtracted from speed_left until speed_left is <= 0.
 Then the object "is active" and the server will move or it or what the defined ation
-of the object is. After it, speed_left is set to 1 again. 
+of the object is. After it, speed_left is set to 1 again.
 
 "weapon_speed <float>"
 The weapon speed controls the swing speed of mob. Every weapon has a own swing speed.
@@ -88,42 +88,42 @@ use the "face" for visualising the object.
 
 "is_animated <bool> ", "anim_speed <uint8>"
 Is is_animated not set to 1, the server will not play the object animation and only show the
-default face. 
+default face.
 
 NOTE: A arch MUST have a 'is_animated x' when it has a animation or the server will drop a
-      warning when loading the arches. This include a explicit 'is_animated 0' to avoid 
+      warning when loading the arches. This include a explicit 'is_animated 0' to avoid
       accidental missing is_animated .
 
 The anim_speed is the playing speed of a animation sequence. A value of 1 means the animation
 changes every turn (max speed). As higher the value is, as slower is the animation speed.
 A player char for example has anim_speed of 4.
 
-NOTE FOR DEVELOPERS: Try to use a high anim_speed value as possible. The reason is that the old 
+NOTE FOR DEVELOPERS: Try to use a high anim_speed value as possible. The reason is that the old
 crossfire animation system plays the animation by server and not by client - every animation
 change invokes a map update. This will change in one of the next releases - but until the map
 animations are not client sided, to much fast animations are bad.
 
 
 "state <uint8>"
-The current position in a animation sequence. The human male player char for 
+The current position in a animation sequence. The human male player char for
 example turns in the idle animation the head from left to right and claps with
 the hand. Every head turn or clap is a picture (face) called frame inside a
 animation sequence. The human player has 25 animations sequences (corpse animation,
-8 idle animations,  8 move animations and 8 fight animations). There are 8 
-animation sequences for idle, move and fight because there are 8 directions 
+8 idle animations,  8 move animations and 8 fight animations). There are 8
+animation sequences for idle, move and fight because there are 8 directions
 a object can turn (north, south, west, east, sw,nw,se,ne).
 
 Every sequence for player chars has 4 frames = 4 pictures (faces) (this can be free defined.
 Its possible to create animations with only 1 frame or with more. It should be around 2-8.)
-To play a animation sequence, 'state' is set to 0 and the first frame/face is shown. 
+To play a animation sequence, 'state' is set to 0 and the first frame/face is shown.
 Depending on the anim_speed, the 'state' value is increased to 1 and the next face is shown.
-Is 'state' is 3, 'state' will next turn reset to 0 and the animation sequence loops 
+Is 'state' is 3, 'state' will next turn reset to 0 and the animation sequence loops
 and play again.
 
 Setting 'state' in the editor to a value of 0 to >max_frame< will let start the
-sequence on a different position. For example will a large row of guards normally 
+sequence on a different position. For example will a large row of guards normally
 all turn the head at the same moment, like a row of robots - the reason is, that
-'state' is set to 0 as default when the map was loaded. Setting state for some guards 
+'state' is set to 0 as default when the map was loaded. Setting state for some guards
 to a different value will start the sequence on a different picture.
 
 CAREFUL WHEN USING!
@@ -149,12 +149,12 @@ direcion values:
 
 Please note that '1' is still north, but in the isometric look, north points in the
 upper right corner. '0' is a special case: The object looks 'on his own feets' -
-thats the 'stay' or 'hit yourself' position. The animation will be set to '4' 
+thats the 'stay' or 'hit yourself' position. The animation will be set to '4'
 BUT a arrow will fly down to the floor for example = it will not move.
 
 
 MOP CONTROL
------------ 
+-----------
 "friendly","unaggressive","berserk","hitback","only_attack","one_hit","no_attack",
 ......
 
@@ -186,7 +186,7 @@ random_move and every other movement command until it is cleared.
 Monster runs away if it's hp goes below this percentage.
 
 "attack_movement <uint8>", "move_state" (intern used)
-Attack movement describes with some flags, in which way a mob attacks. 
+Attack movement describes with some flags, in which way a mob attacks.
 Default value is 0 - means simple direct attack by approaching the enemy.
 
 #define DISTATT  1 /* move toward a player if far, but mantain some space,  */
@@ -210,7 +210,7 @@ Default value is 0 - means simple direct attack by approaching the enemy.
 #define CIRCLE1 32 /* if the upper four bits of move_type / attack_movement */
                    /* are set to this number, the monster will move in a    */
                    /* circle until it is attacked, or the enemy field is    */
-                   /* set, this is good for non-aggressive monsters and NPC */ 
+                   /* set, this is good for non-aggressive monsters and NPC */
 #define CIRCLE2 48 /* same as above but a larger circle is used             */
 #define PACEH   64 /* The Monster will pace back and forth until attacked   */
                    /* this is HORIZONTAL movement                           */
@@ -244,7 +244,7 @@ A fireball invoked by the spell "small fireball" is magical - and every fire com
 when the fireball explode too. A fireball from a vulcano for example is not magical - it is
 natural fire. This a important when using dispelling powers like cancellation, dispell or
 a counterspell wall which will only work on magical objects.
- 
+
 
 "known_cursed <bool>", "known_magical <bool>"
 If set, a player can see that this item is cursed or magical (for example by casting a
@@ -258,9 +258,9 @@ Invisible, hiding and stealth
 In Daimonin we have 2+1 kind of invisible objects.
 
 "sys_object <bool>"
-NEW: 'sys_object' was 'CF:invisible". 
+NEW: 'sys_object' was 'CF:invisible".
 The system objects like skills, abilities, forces, etc. are now marked with 'sys'object'
-and can NEVER be seen or manipulated by a player or the inventory/pick_up system. 
+and can NEVER be seen or manipulated by a player or the inventory/pick_up system.
 
 "is_invisible <bool>", "make_invisible <bool>"
 NEW: marks a object as invisible. Object can't be seen from NPCs, mobs or player when they
@@ -296,19 +296,19 @@ The type of the object defines what it is and how the server interpretes the obj
 "sub_type <uint8>"
 NEW: The sub_type is a powerful extension for various use. Depending on the type, the sub_type
 value can have several use and describes special powers of this item. For example are all weapons
-from type WEAPON. The sub_type describes which kind of weapon we have - slash, hit, pierce or 
+from type WEAPON. The sub_type describes which kind of weapon we have - slash, hit, pierce or
 cleave - 1h or 2h, polearm or not. The sub_type defines are in the defines.h next to the types
 defines.
 
 Here are some common sub_type defines which can be find in define.h of the server code.
 
-ammunition & throwing weapon - they count as "missiles" 
+ammunition & throwing weapon - they count as "missiles"
 #define ST1_ARROW_BOW      	1
 #define ST1_ARROW_CBOW     	2
 #define ST1_ARROW_SSTONE   	3
 #define ST1_ARROW_AXE      	4 /* these are our special throw weapons */
-#define ST1_ARROW_HAMMER      	5 
-#define ST1_ARROW_DAGGER      	6 
+#define ST1_ARROW_HAMMER      	5
+#define ST1_ARROW_DAGGER      	6
 #define ST1_ARROW_DARTS       	7  /* pierce */
 #define ST1_ARROW_STARS       	8  /* slash */
 #define ST1_ARROW_BOULDER     	9  /* hit */
@@ -342,25 +342,25 @@ Terrain flags
 --------------
 
 "terrain_type <uint16>"
-NEW: A terrain type describes the type of terrain AND the enviroment of it. 
+NEW: A terrain type describes the type of terrain AND the enviroment of it.
 
 list of terrain flags:
 #define TERRAIN_NOTHING         0
 #define TERRAIN_AIRBREATH       1   /* thats default - walk on earth */
-#define TERRAIN_WATERWALK       2   /* walk on water - deep water too */   
+#define TERRAIN_WATERWALK       2   /* walk on water - deep water too */
 #define TERRAIN_WATERBREATH     4   /* you can move underwater as on land */
 #define TERRAIN_FIREWALK        8   /* walk over lava or fire */
 #define TERRAIN_FIREBREATH      16  /* fire environment (fire elemental dimension, hell,..) */
 #define TERRAIN_CLOUDWALK       32  /* move "on clouds" in the air - is not flying. Similiar to the story of the magic bean*/
 
-A tile with terrain type TERRAIN_WATERBREATH is underwater for example. To survive as mob or player 
+A tile with terrain type TERRAIN_WATERBREATH is underwater for example. To survive as mob or player
 on it, you must be able to breathe water - natural by gills for example or by magic.
 
 Note, that every land tile like gras or hills have TERRAIN_AIRBREATH set.
 
 This flags allows it Daimonin to use natural "non air breathing" player chars! For example
 you can play water creatures , which can't survive outside on water - but they start with
-a "ring of airbreathing".... 
+a "ring of airbreathing"....
 
 A applyable item gives it terrain_type to the wearer.
 
@@ -392,15 +392,15 @@ of 80%. This means, that the sword will do only maximal 80% of the 10 damage = 8
 (only a example: item_quality is not used for this kind of calculation, see item_condition).
 The quality depends on some factors. Most times, it is the material. A sword of the exactly same
 size and production quality will be more effective when produced from best steel and not from
-poor basic iron. This will shown in the quality. Basic quality is 80%. Is the material or 
+poor basic iron. This will shown in the quality. Basic quality is 80%. Is the material or
 production process more bad, it is lower. It is best material it can hit 100%.
 
 
 "item_condition"
 NEW: This is the REAL quality status of item - showing how much it is used up. Every time the item
-is overused or damaged, the item_condition is lowered. The value can range from 0 (destroyed) to 
+is overused or damaged, the item_condition is lowered. The value can range from 0 (destroyed) to
 item_quality as max value (the item_condition can't be higher as the item_quality). Has a item
-a item_quality of 80, the best item_condition can be 80 too. The item_condition is used to 
+a item_quality of 80, the best item_condition can be 80 too. The item_condition is used to
 determinate the real stats of a item (see example item_quality).
 The item_condition can be reseted to item_quality by repairing the item by a smith or by magic.
 
@@ -416,7 +416,7 @@ Same like acid vulnerability but this is valid for every of the 5 elemental atta
 elec, poison, acid).
 NOTE: acid is counted special. Has a item no is_vul_acid set but 'is_vul_elemental 1' then the
 item will get damage from acid until it is elemental proof. It is has is_vul_acid 1 AND
-is_vul_elemental 1, it takes damage from acid until BOTH are proof. 
+is_vul_elemental 1, it takes damage from acid until BOTH are proof.
 
 "is_vul_magic <bool>","is_proof_magic <bool>"
 Same like before but valid for all magical attack.
@@ -426,7 +426,7 @@ Same like before but valid for all spherical attacks.
 
 "is_indestructible <bool>"
 A item which can be wielded or worn takes ALWAYS damage from physical attacks (when fighting or
-falling down,...). Only items which have a is_indestructible 1 can't be damaged by physical 
+falling down,...). Only items which have a is_indestructible 1 can't be damaged by physical
 forces.
 
 
@@ -435,7 +435,7 @@ Item defines
 "item_race"
 A item can have a 'race' prefix. For example is a weapon crafted and used by a kobold a
 "kobold dagger". The same kind of weapon crafted by drows is a "drowish dagger". This also
-calls the player something about the size. A "giant club" is a very big club - bigger as 
+calls the player something about the size. A "giant club" is a very big club - bigger as
 the player itself and unusable for him. The same is true for "pixie dagger" or "tiny dagger".
 They are far to small for a human player to use.
 
@@ -476,7 +476,7 @@ mace produced from wood and hard metal.
 If set, one of the base material groups is declared as the "main material" group. From this
 group, material_real describes a special material. For example is the material group "hard metal".
 In this group, the lowest (and cheapest) metal is "iron". Then comes "hardened iron", "steel",
-"hardened steel", "silksteel", etc. 
+"hardened steel", "silksteel", etc.
 'material_real' points to one of this special materials. This effects also the quality of the item.
 The item_quality is set to the base value of the material_real entry.
 
@@ -489,7 +489,7 @@ of course. Is no gender is, the object is a neuter - or when it is not alive, it
 gender.
 
 "is_evil <bool>", "is_good <bool>", "is_neutral <bool>"
-Every object can have a base alignment. If one of this flags is set, the object has this kind 
+Every object can have a base alignment. If one of this flags is set, the object has this kind
 of base alignment. Have it non set, it don't have any alignment. A simple apple has no alignment,
 but a ego weapon has it.
 
@@ -502,7 +502,7 @@ good
 evil
 neutral
 
-The prefix can be 
+The prefix can be
 lawful
 neutral
 chaotic
@@ -547,7 +547,7 @@ This marks the map layer where the object is sorted in when put on a map. This i
 map access but also for the server/client map protocol. A layer of 0 means the object is NOT shown
 on a map and it sorted UNDER the floor tile (most sys_objects should be layer 0).
 layer 1 are floors, layer 2 are special objects like holes, traps or fixed blockview/no_walk objects
-like houses, big rocks or blocking trees. Layer 3 are dropped items or low moving objects. Layer 4 are special objects like doors or earth walls. Layer 5 are players, npcs and mobs. Layer 6 are flying objects. 
+like houses, big rocks or blocking trees. Layer 3 are dropped items or low moving objects. Layer 4 are special objects like doors or earth walls. Layer 5 are players, npcs and mobs. Layer 6 are flying objects.
 NOTE: not all layers are send to the client - the server use the layers the get a useful graphical
 interpretation of the tile.
 
@@ -555,7 +555,7 @@ interpretation of the tile.
 Multipart object identifiers. The mpart_id describes the multi-arch mask this object uses.
 The mpart_nr describes which fixed tile nr of a multi-part object this tile is. Every multi-arch
 has a pre-defined mask, decribing how big the multi-arch is, how much tiles it use and which tiles.
-See archdef.dat from the client. Note, that the server only tranfer this data - the server don't 
+See archdef.dat from the client. Note, that the server only tranfer this data - the server don't
 need nor know about the multi-arch masks. The server use a chained list for multi-arches (same
 as crossfire). The mpart_xx values are only used by the client to determinate by a single tile
 of a mulit-arch which multi-arch we have, which tile of the multi-arch this single tile is and
@@ -571,18 +571,18 @@ and some or intern used or very special like counterspell. Some spells can add "
 attack forms, but this 32 attacks are the basic ones.
 
 >impact< >slash< >cleave< >pierce< >weapon magic<
-The 4 base attack forms are impact, slash, pierce and cleave - they are the 4 basic physical 
+The 4 base attack forms are impact, slash, pierce and cleave - they are the 4 basic physical
 attacks. The 4 weapon skills have the same name and the weapons are sorted in this 4 basic
 attacks. For example do all swords slash damage, all axes cleave damage, clubs and maces
 do impact damage and daggers or arrows pierce damage. weapon magic is a special half physical,
 half magical attack. Its dangerous and very hard to resist.
 
->fire< >electricity<, >cold< >poison< >acid< >magic< 
+>fire< >electricity<, >cold< >poison< >acid< >magic<
 The base elemental & magic attacks. All do damage. Some have extra effects. Poison attack
-can poison the target when hit, acid will damage the equipment. 
+can poison the target when hit, acid will damage the equipment.
 
 >confusion< >slow< >paralyze< >fear< >blind<
-All these attack do no damage but have bad or dangerous effect. blind will invoke blindness 
+All these attack do no damage but have bad or dangerous effect. blind will invoke blindness
 in the target, slow will slow down the attack and move speed, fear will badly lower the
 ac and wc values, paralyze will freeze the target and confusion will effect ac, wc and will invoke
 wild and uncontrolled moving.
@@ -605,23 +605,23 @@ for bards and special damage dealers like magic horns. Time is a damage attack w
 the target.
 
 >purity<
-Special attack, used in holy word spell for example. It depends on the deity of the attacker and 
+Special attack, used in holy word spell for example. It depends on the deity of the attacker and
 the race of the target. Is the race of the target a enemy of the deity of the attacker, the damage
 is doubled. Is the target a "friendly" race of the deity, damage is reduced to zero. All other races
 will take normal damage.
 
->death< >chaos< >god power< >nether< >demonic< 
+>death< >chaos< >god power< >nether< >demonic<
 The 5 high end attacks. All do damage and can invoke several very bad effects. draining, depletion or
 aging will come with double damage and other bad effect - depending on level, power and race of the attacker.
 
->internal<	
+>internal<
 special damage, used intern the server.
 
 
 "protect_xxxx <uint8>"
 There are also 20 protections parted in 4 groups: Physical, Elemental, Magic and Sphere.
 
-The physical protetion group are: 
+The physical protetion group are:
 impact, slash, pierce, cleave and weaponmagic.
 
 In the elemental group are:
@@ -642,17 +642,17 @@ confuse and fear and "body" against paralyze, slow and blind!
 
 A attack value has a range from 0 to 100%. 0 means, that there is no attack of this kind.
 attack fire 50 means, that this object does 50% of the base damage as fire. attack cleave 100
-means, it does 100% as cleave damage. A object can have more as one attack. 
+means, it does 100% as cleave damage. A object can have more as one attack.
 For example can have a sword  "attack fire 75" and "attack cleave 100".
 
 sword (dam+8) (attacks: cleave+100, fire+50)
 
 In this case the sword has a base damage of 8. When it hits does it 8 (100% of 8) points
-of cleave damage and 4 (50% of 8) points of fire damage. 
+of cleave damage and 4 (50% of 8) points of fire damage.
 Doing 12 points of damage with one hit.
 
 Of course, this damage can be protected by the armour of the target.
-Cleave and fire are maping direct on the protections of the same name. 
+Cleave and fire are maping direct on the protections of the same name.
 
 Protections can also range from 0 to 100%. A value from 0 means there is no protection.
 A value from 100% will absorb 100% of the damage - the target will take no damage!
@@ -667,7 +667,7 @@ damage will really hit! But the 4 fire damage will hit full.
 
 That means our target will take 2+4 = 6 real damage. The hps from the target are reduced by 6.
 
-Protection always means stuff like armour or magic amulets. 
+Protection always means stuff like armour or magic amulets.
 
 Resistance is nearly the same like protection but they are the NATURAL resistance or vulnerability
 of the target to a special attack. The resistance names are always the same like the attack
@@ -688,12 +688,12 @@ fire damage is DOUBLED! in our sword example, the 8 cleave damage will stay unch
 the fire damage increase by 100% to 8 too!
 
 b.) A giant worm is a creature without eyes. He has no eyes and he can't see - he use his skin to
-smell and he can feel with the help of millions of small hairs he has all over his body. Now, a 
+smell and he can feel with the help of millions of small hairs he has all over his body. Now, a
 atacker can have the special attack blind. If a sword with a blind attack hits a target, it will
 handled like a normal damage attack. The damage will be calculated and effected by resistance and/or
 the protections. BUT when we have a final damage, we use this value as a base to determinate the
 object gets blinded or not - the damage will not be used to lower the hp! We use the theoretical
-maximal damage as 100% and the real damage as % chance we do the effect. 
+maximal damage as 100% and the real damage as % chance we do the effect.
 
 This means, if we finally hit the mob with 1 damage and the base damage was 10 - we have a 1:10 chance
 to blind the foe. BUT or worm has no eyes - so its imposssible to blind him! Thats the reason we will

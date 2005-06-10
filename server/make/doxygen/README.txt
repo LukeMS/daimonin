@@ -11,7 +11,7 @@ The start document is named "index.html".
 
 How to document?
 
-The following example shows how to document 
+The following example shows how to document
 
 /** In a movement behaviour, add <var>dir</var> to the list of forbidden
  * directions, but don't select a specific movement.
@@ -30,16 +30,16 @@ static int AI_ForbidMoveDirection(lua_State *L)
 
 Explanation
 -----------
-First Sentence: The first sentence (really the sentence, up to the first full 
-        stop (period, "."), is used as a brief description. The brief 
-        description is used for summaries and overviews. Therefor the first 
+First Sentence: The first sentence (really the sentence, up to the first full
+        stop (period, "."), is used as a brief description. The brief
+        description is used for summaries and overviews. Therefor the first
         sentence should be as concise as possible.
 @param is used to document the named function parameter. For functions
         with multiple parameters, use multiple @param lines.
         Synopsis: @param <parametername> <argumentdescription>
 @return is used to document the return value of a function.
         Synopsis: @return <returnvaluedescription>
-@note Status: Please use a form like this to document wether you've tested 
+@note Status: Please use a form like this to document wether you've tested
         a function.
 
 Lua Plugin Special
@@ -71,7 +71,7 @@ The following does *NOT* work:
  * @return       Lua:void
  * @note Status: Tested
  **/
-Why? Because /** introduces the doxygen comment and the following asterisks 
+Why? Because /** introduces the doxygen comment and the following asterisks
 are included in the documentation.
 
 The following DOES work:

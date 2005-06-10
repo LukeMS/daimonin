@@ -56,7 +56,7 @@ int wall_blocked(mapstruct *m, int x, int y)
     return r;
 }
 
-/* place treasures in the map, given the 
+/* place treasures in the map, given the
 map,         (required)
 layout,      (required)
 treasure style    (may be empty or NULL, or "none" to cause no treasure.)
@@ -92,7 +92,7 @@ void place_treasure(mapstruct *map, char **layout, char *treasure_style, int tre
     else if (treasureoptions & RICH)
         num_treasures = BC_RANDOM(RP->total_map_hp / 150 + 2 * RP->difficulty + 1);
     else
-        num_treasures = BC_RANDOM(RP->total_map_hp / 300 + RP->difficulty + 1);  
+        num_treasures = BC_RANDOM(RP->total_map_hp / 300 + RP->difficulty + 1);
 
     if (num_treasures <= 0)
         return;
@@ -157,7 +157,7 @@ void place_treasure(mapstruct *map, char **layout, char *treasure_style, int tre
                   }
                   chest = place_chest(treasureoptions, i, j, map, style_map, num_treasures, RP);
                   if (!chest)
-                      return; 
+                      return;
                   i = chest->x; j = chest->y;
                   if (treasureoptions & (DOORED | HIDDEN))
                   {
@@ -213,16 +213,16 @@ object * place_chest(int treasureoptions, int x, int y, mapstruct *map, mapstruc
     /*  if(style_map) { */
 
     /*
-      if(0) {  // don't use treasure style maps for now!  
+      if(0) {  // don't use treasure style maps for now!
         int ti;
-        // if treasurestyle lists a treasure list, use it. 
+        // if treasurestyle lists a treasure list, use it.
         treasurelist *tlist=find_treasurelist(RP->treasurestyle);
         if(tlist!=NULL)
-          for(ti=0;ti<n_treasures;ti++) {  // use the treasure list 
+          for(ti=0;ti<n_treasures;ti++) {  // use the treasure list
             object *new_treasure=pick_random_object(style_map);
             insert_ob_in_ob(arch_to_object(new_treasure->arch),the_chest);
           }
-        else { // use the style map 
+        else { // use the style map
           the_chest->randomitems=tlist;
           the_chest->stats.hp = n_treasures;
         }
@@ -307,7 +307,7 @@ object * find_closest_monster(mapstruct *map, int x, int y, RMParms *RP)
 
 
 
-/* places keys in the map, preferably in something alive.  
+/* places keys in the map, preferably in something alive.
     keycode is the key's code,
     door_flag is either PASS_DOORS or NO_PASS_DOORS.
       NO_PASS_DOORS won't cross doors or walls to keyplace, PASS_DOORS will.
@@ -327,7 +327,7 @@ int keyplace(mapstruct *map, int x, int y, char *keycode, int door_flag, int n_k
 
     /* get a key and set its keycode */
     the_key = get_archetype("key2");
-    FREE_AND_COPY_HASH(the_key->slaying, keycode); 
+    FREE_AND_COPY_HASH(the_key->slaying, keycode);
 
 
     if (door_flag == PASS_DOORS)
@@ -385,23 +385,23 @@ int keyplace(mapstruct *map, int x, int y, char *keycode, int door_flag, int n_k
     if (the_keymaster == NULL)
     {
         the_key->x = kx;
-        the_key->y = ky; 
+        the_key->y = ky;
         insert_ob_in_map(the_key, map, NULL, INS_NO_MERGE | INS_NO_WALK_ON);
         return 1;
     }
 
     insert_ob_in_ob(the_key, the_keymaster);
     return 1;
-} 
+}
 
 
 
-/* both find_monster_in_room routines need to have access to this. */ 
+/* both find_monster_in_room routines need to have access to this. */
 
 object *theMonsterToFind;
 
 /* a recursive routine which will return a monster, eventually,if there is one.
-   it does a check-off on the layout, converting 0's to 1's */  
+   it does a check-off on the layout, converting 0's to 1's */
 
 object * find_monster_in_room_recursive(char **layout, mapstruct *map, int x, int y, RMParms *RP)
 {
@@ -481,10 +481,10 @@ object * find_monster_in_room(mapstruct *map, int x, int y, RMParms *RP)
 
 
 
-/* a datastructure needed by find_spot_in_room and find_spot_in_room_recursive */ 
+/* a datastructure needed by find_spot_in_room and find_spot_in_room_recursive */
 int    *room_free_spots_x;
 int    *room_free_spots_y;
-int     number_of_free_spots_in_room; 
+int     number_of_free_spots_in_room;
 
 /* the workhorse routine, which finds the free spots in a room:
 a datastructure of free points is set up, and a position chosen from
@@ -537,7 +537,7 @@ void find_spot_in_room(mapstruct *map, int x, int y, int *kx, int *ky, RMParms *
         }
     }
 
-    /* setup num_free_spots and room_free_spots */ 
+    /* setup num_free_spots and room_free_spots */
     find_spot_in_room_recursive(layout2, x, y, RP);
 
     if (number_of_free_spots_in_room > 0)
@@ -764,7 +764,7 @@ object ** find_doors_in_room(mapstruct *map, int x, int y, RMParms *RP)
         }
     }
 
-    /* setup num_free_spots and room_free_spots */ 
+    /* setup num_free_spots and room_free_spots */
     find_doors_in_room_recursive(layout2, map, x, y, doorlist, &ndoors, RP);
 
     /* deallocate the temp. layout */

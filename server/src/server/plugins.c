@@ -44,13 +44,13 @@ struct plugin_hooklist  hooklist    =
     free_mempool, create_mempool, nearest_pow_two_exp,
     return_poolchunk_array_real, get_poolchunk_array_real,
     arch_to_object, find_archetype,
-    register_npc_known_obj, 
-    get_rangevector, get_rangevector_from_mapcoords, 
+    register_npc_known_obj,
+    get_rangevector, get_rangevector_from_mapcoords,
     get_archetype,
     play_sound_player_only,
 	add_money_to_player,
-	drop_ob_inv,	
-	decrease_ob_nr,	
+	drop_ob_inv,
+	decrease_ob_nr,
 	add_quest_containers, add_quest_trigger,
 	set_quest_status, spring_trap,cast_spell,play_sound_map,
 	find_skill, find_animation, FindFace,
@@ -88,7 +88,7 @@ object * get_event_object(object *op, int event_nr)
 }
 
 int trigger_object_plugin_event(
-        int event_type, 
+        int event_type,
         object *me, object *activator, object *other,
         const char *msg,
         int *parm1, int *parm2, int *parm3,
@@ -111,7 +111,7 @@ int trigger_object_plugin_event(
 
     CFP.Value[0] = &event_type;
     CFP.Value[1] = activator;
-    CFP.Value[2] = me; 
+    CFP.Value[2] = me;
     CFP.Value[3] = other;
     CFP.Value[4] = (void *)msg;
     CFP.Value[5] = parm1;
@@ -128,8 +128,8 @@ int trigger_object_plugin_event(
         CFR = ((PlugList[plugin].eventfunc) (&CFP));
         if(CFR && CFR->Value[0])
             return *(int *) (CFR->Value[0]);
-    } 
-    else 
+    }
+    else
     {
         LOG(llevBug, "BUG: event object with unknown plugin: %s, plugin %s\n", STRING_OBJ_NAME(me), STRING_OBJ_NAME(event_obj));
         me->event_flags &= ~(1 << event_type);
@@ -1309,13 +1309,13 @@ CFParm * CFInterface(CFParm *PParm)
     object               *who        = (object*) (PParm->Value[0]);
     int                    mode    = *(int *) (PParm->Value[1]);
     char               *text    = (char *) (PParm->Value[2]);
-    
+
     SOCKET_SET_BINARY_CMD(&global_sl, BINARY_CMD_INTERFACE);
 
     /* NPC_INTERFACE_MODE_NO will send a clear body = remove interface to the client */
     if(mode != NPC_INTERFACE_MODE_NO)
     {
-        SockList_AddChar(&global_sl, (char)mode);    
+        SockList_AddChar(&global_sl, (char)mode);
         strcpy(global_sl.buf+global_sl.len, text);
         global_sl.len += strlen(text)+1;
     }

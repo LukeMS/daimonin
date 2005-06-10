@@ -35,8 +35,8 @@
 #define MAP_TILE_XOFF 12
 #define MAP_TILE_YOFF 24
 
-/* table of pre definded multi arch objects. 
- * mpart_id and mpart_nr in the arches are commited from server 
+/* table of pre definded multi arch objects.
+ * mpart_id and mpart_nr in the arches are commited from server
  * to analyze the exaclty tile position inside a mpart object.
  *
  * The way of determinate the starting and shift points is explained

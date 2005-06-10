@@ -38,9 +38,9 @@ function topicData3()
 	local ds = DataStore("data_store_test")
     local function testfunc(event)
         -- The global event won't be the same when we are called
-        event.me:Say("Hello world!")       
+        event.me:Say("Hello world!")
     end
-    
+
 	ds:Set("function", testfunc)
 	local f2 = ds:Get("function")
 	if f2 == testfunc then

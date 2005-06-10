@@ -38,7 +38,7 @@
 #define copy_name(t,f) strncpy(t, f, NAME_LEN-1)
 
 /*
- *  item structure keeps all information what player 
+ *  item structure keeps all information what player
  *  (= client) knows about items in its inventory
  */
 typedef struct item_struct
@@ -68,7 +68,7 @@ typedef struct item_struct
     uint16              applied     : 1;        /* item is applied */
     uint16              open        : 1;        /* container is open */
     uint16              inv_updated : 1;    /* item's inventory is updated, this is set
-                                            when item's inventory is modified, draw 
+                                            when item's inventory is modified, draw
                                             routines can use this to redraw things */
     uint8               apply_type;     /* how item is applied (worn/wield/etc) */
     uint32              flagsval;       /* unmodified flags value as sent from the server*/
@@ -171,12 +171,12 @@ typedef struct item_struct
 #define TYPE_FLOOR                   71 /* this is a floor tile -> native layer 0 */
 
 #define TYPE_FLESH                  72  /* animal 'body parts' -b.t. */
-#define TYPE_INORGANIC              73  /* metals and minerals */ 
+#define TYPE_INORGANIC              73  /* metals and minerals */
 
 #define TYPE_LIGHT_APPLY            74 /* new apply item: light source for players */
 
 #define TYPE_LIGHTER                    75
-#define TYPE_TRAP_PART              76  /* Needed by set traps skill -b.t. */ 
+#define TYPE_TRAP_PART              76  /* Needed by set traps skill -b.t. */
 
 #define TYPE_WALL                    77 /* this is a wall. put it always in layer 1 if not set is_floor */
 #define TYPE_LIGHT_SOURCE            78 /* torches, lamps, etc. *outdated* */
@@ -247,7 +247,7 @@ typedef struct item_struct
 #define F_INVISIBLE     0x0100
 
 /*
- *  A few macros to make clear interface 
+ *  A few macros to make clear interface
  *  These will change (especially update_item and add_new_item)
  */
 #define delete_item(tag) remove_item(locate_item(tag))
@@ -269,7 +269,7 @@ extern item        *create_new_item(item *env, sint32 tag, int bflag);
 
 extern void         set_item_values(item *op, char *name, sint32 weight, uint16 face, int flags, uint16 anim,
                                     uint16 animspeed, sint32 nrof, uint8 itype, uint8 stype, uint8 q, uint8 c, uint8 s,
-                                    uint8 l, uint8 dir); 
+                                    uint8 l, uint8 dir);
 extern void         toggle_locked(item *op);
 extern void         send_mark_obj(item *op);
 extern item        *player_item(void);

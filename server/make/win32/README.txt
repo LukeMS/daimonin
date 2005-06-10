@@ -11,7 +11,7 @@ Please follow the steps in the right order!
        folder for your system and read the README.txt inside for more infos.)
 
 o First step: You must compile the program.
-  After unpacking the Daimonin package, run the "daimonin_server.dsw". 
+  After unpacking the Daimonin package, run the "daimonin_server.dsw".
   There are some projects in your workspace: You need to compile all.
   Easiest way is to select the daimonin_server - ReleaseLog as active
   project, this will compile all others automatically too.
@@ -29,7 +29,7 @@ o Last step: If the compile was successful, you should have now a
   daimonin_server.exe inside your Daimonin/server folder and a
   lua_plugin.dll inside your Daimonin/server/plugins folder
   (the vc studio will copy this files automatically after a succesfull
-  compile to this folders). 
+  compile to this folders).
 
   If the files are on the right place, you are done!
 
@@ -41,6 +41,6 @@ search there for more help. You can also find there mailing lists
 for more infos.
 
 http://daimonin.sourceforge.net
- 
+
 Tell us exactly what version of Daimonin you've used.
 If it's an old version, update first and see if that solves your problem.

@@ -156,7 +156,7 @@ int read_substr_char(char *srcstr, char *desstr, int *sz, char ct)
 
 
 /* this function gets a ="xxxxxxx" string from a
- * line. It removes the =" and the last " and returns 
+ * line. It removes the =" and the last " and returns
  * the string in a static buffer.
  */
 char *get_parameter_string(char *data, int *pos)
@@ -172,7 +172,7 @@ char *get_parameter_string(char *data, int *pos)
 	end_ptr = strchr(++start_ptr,'"');
 	if(!end_ptr)
 		return NULL; /* error */
-	
+
 	strncpy(buf, start_ptr, end_ptr-start_ptr);
 	buf[end_ptr-start_ptr]=0;
 

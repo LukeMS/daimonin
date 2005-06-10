@@ -126,8 +126,8 @@ typedef enum _protections
 #define AT_CHAOS        0x00040000 /*  262144 peterm@soda.berkeley.edu*/
 #define AT_COUNTERSPELL 0x00080000 /*  524288 peterm@soda.berkeley.edu*/
 #define AT_GODPOWER 0x00100000 /* 1048576  peterm@soda.berkeley.edu */
-#define AT_HOLYWORD 0x00200000 /* 2097152 race selective attack thomas@astro.psu.edu */ 
-#define AT_BLIND    0x00400000 /* 4194304 thomas@astro.psu.edu */ 
+#define AT_HOLYWORD 0x00200000 /* 2097152 race selective attack thomas@astro.psu.edu */
+#define AT_BLIND    0x00400000 /* 4194304 thomas@astro.psu.edu */
 #define AT_INTERNAL 0x00800000 /* Only used for internal calculations */
 #define AT_LIFE_STEALING    0x01000000 /* 16777216 dnh@hawthorn.csse.monash.edu.au */
 #define AT_SLASH    0x02000000  /* 33554432 new physical attack types */
@@ -135,7 +135,7 @@ typedef enum _protections
 #define AT_PIERCE   0x08000000  /* 134217728 */
 
 #define AT_NETHER   0x10000000  /* special (undead) attack from lower spheres - pure damage */
-#define AT_SONIC    0x20000000  /* pure energy attack - normally mana or grace converted in pure energy */ 
+#define AT_SONIC    0x20000000  /* pure energy attack - normally mana or grace converted in pure energy */
 #define AT_DEMONIC  0x40000000  /* special attack for greater demons. */
 #define AT_PSIONIC  0x80000000  /* well... */
 

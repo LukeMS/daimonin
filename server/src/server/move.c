@@ -29,7 +29,7 @@
  * can be different if originator is causing op to
  * move (originator is pushing op)
  * returns 0 if the object is not able to move to the
- * desired space, 1 otherwise (in which case we also 
+ * desired space, 1 otherwise (in which case we also
  * move the object accordingly
  * Return -1 if the object is destroyed in the move process (most likely
  * when hit a deadly trap or something).
@@ -66,7 +66,7 @@ int move_ob(object *op, int dir, object *originator)
     if (op->head)
         op->head->anim_moving_dir = dir;
     else
-        op->anim_moving_dir = dir;    
+        op->anim_moving_dir = dir;
     op->direction = dir;
 
     xt = op->x + freearr_x[dir];
@@ -82,8 +82,8 @@ int move_ob(object *op, int dir, object *originator)
     * is inside. blocked_link() is used for multi arch blocked_test().
     * Inside here we use a extended version of blocked_link(). Reason is, that even when
     * we can't move the multi arch on the new spot, we have perhaps a legal earthwall
-    * in the step - we need to hit it here too. That a 3x3 multi arch monster can't 
-    * enter a corridor of 2 tiles is right - but when the entry is closed by a wall 
+    * in the step - we need to hit it here too. That a 3x3 multi arch monster can't
+    * enter a corridor of 2 tiles is right - but when the entry is closed by a wall
     * then there is no reason why we can't hit the wall - even when we can't enter in.
     */
 
@@ -91,11 +91,11 @@ int move_ob(object *op, int dir, object *originator)
     if (op->more)
     {
         /* insert new blocked_link() here which can hit ALL earthwalls */
-        /* but as long monster don't destroy walls and no mult arch player 
+        /* but as long monster don't destroy walls and no mult arch player
              * are ingame - we can stay with this
              */
         /* look in single tile move to see how we handle doors.
-             * This needs to be done before we allow multi tile mobs to do 
+             * This needs to be done before we allow multi tile mobs to do
              * more fancy things.
              */
         if (blocked_link(op, freearr_x[dir], freearr_y[dir]))
@@ -115,7 +115,7 @@ int move_ob(object *op, int dir, object *originator)
         insert_ob_in_map(op, op->map, op, 0);
 
         return 1;
-    } 
+    }
 
     /* single arch */
     if (!QUERY_FLAG(op, FLAG_WIZPASS))
@@ -338,7 +338,7 @@ int try_fit(object *op, int x, int y)
 }
 
 /*
- * this is not perfect yet. 
+ * this is not perfect yet.
  * it does not roll objects behind multipart objects properly.
  */
 
@@ -409,11 +409,11 @@ int push_ob(object *who, int dir, object *pusher)
         if (check_walk_off(pusher, NULL, MOVE_APPLY_DEFAULT) != CHECK_WALK_OK)
         {
             /* something is wrong, put who back */
-            insert_ob_in_map(who, who->map, NULL, 0); 
+            insert_ob_in_map(who, who->map, NULL, 0);
             return 0;
         }
         pusher->x = who->x;
-        who->x = temp;  
+        who->x = temp;
         pusher->y = who->y;
         who->y = temp;
         /* we presume that if the player is pushing his put, he moved in
@@ -437,7 +437,7 @@ int push_ob(object *who, int dir, object *pusher)
     /* we so often become an enemy of friendly monsters... */
     /* funny: was they set to unaggressive 0 (= not so nice) they don't attack */
 
-    /* i disabled run/push attacks 
+    /* i disabled run/push attacks
        if(owner != pusher &&  pusher->type == PLAYER && who->type != PLAYER &&
                                                     !QUERY_FLAG(who,FLAG_FRIENDLY)) {
     if(CONTR(pusher)->run_on) {
@@ -446,7 +446,7 @@ int push_ob(object *who, int dir, object *pusher)
            register_npc_known_obj(who, pusher, FRIENDSHIP_PUSH);
            return 1;
     }
-    else 
+    else
     {
         new_draw_info_format(NDI_UNIQUE, 0, pusher,
                  "You avoid to attack %s .",who->name);

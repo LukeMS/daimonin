@@ -43,7 +43,7 @@ static struct method_decl   GameObject_methods[]            =
     {"Apply",  (lua_CFunction) GameObject_Apply}, {"PickUp",  (lua_CFunction) GameObject_PickUp},
     {"Drop",  (lua_CFunction) GameObject_Drop}, {"Take",  (lua_CFunction) GameObject_Take},
     {"Fix", (lua_CFunction) GameObject_Fix}, {"Kill", (lua_CFunction) GameObject_Kill},
-    {"CastSpell", (lua_CFunction) GameObject_CastSpell}, 
+    {"CastSpell", (lua_CFunction) GameObject_CastSpell},
 	{"DoKnowSpell", (lua_CFunction) GameObject_DoKnowSpell},
     {"AcquireSpell", (lua_CFunction) GameObject_AcquireSpell},
     {"FindSkill", (lua_CFunction) GameObject_FindSkill},
@@ -103,7 +103,7 @@ struct attribute_decl       GameObject_attributes[]         =
     {"map", FIELDTYPE_MAP, offsetof(object, map), FIELDFLAG_READONLY},
     {"count", FIELDTYPE_UINT32, offsetof(object, count), FIELDFLAG_READONLY},
     {"name", FIELDTYPE_SHSTR, offsetof(object, name), 0},
-    {"title", FIELDTYPE_SHSTR, offsetof(object, title), 0}, 
+    {"title", FIELDTYPE_SHSTR, offsetof(object, title), 0},
 	{"race", FIELDTYPE_SHSTR, offsetof(object, race), 0},
     {"slaying", FIELDTYPE_SHSTR, offsetof(object, slaying), 0},
     /* TODO: need special handling (check for endmsg, limit to 4096 chars?) ?*/
@@ -208,7 +208,7 @@ struct attribute_decl       GameObject_attributes[]         =
     {"charisma",     FIELDTYPE_SINT8, offsetof(object, stats.Cha), FIELDFLAG_PLAYER_FIX},
     {"intelligence",     FIELDTYPE_SINT8, offsetof(object, stats.Int), FIELDFLAG_PLAYER_FIX},
     {"power",     FIELDTYPE_SINT8, offsetof(object, stats.Pow), FIELDFLAG_PLAYER_FIX},
-    {"luck",    FIELDTYPE_SINT8, offsetof(object, stats.luck), FIELDFLAG_PLAYER_READONLY}, 
+    {"luck",    FIELDTYPE_SINT8, offsetof(object, stats.luck), FIELDFLAG_PLAYER_READONLY},
     {NULL}
 };
 
@@ -268,11 +268,11 @@ static int GameObject_Sound(lua_State *L)
 {
     int         x, y, soundnumber, soundtype;
     lua_object *self;
-	
+
     get_lua_args(L, "Oiiii", &self, &x, &y, &soundnumber, &soundtype);
 
 	hooks->play_sound_player_only(CONTR(WHO),soundnumber,soundtype, x, y);
-	
+
     return 0;
 }
 
@@ -290,14 +290,14 @@ static int GameObject_Interface(lua_State *L)
     lua_object *self;
     char       *txt;
     int            mode;
-    
+
     get_lua_args(L, "Oi|s", &self, &mode, &txt);
-    
+
     GCFP.Value[0] = (void *) (WHO);
     GCFP.Value[1] = (void *) (&mode);
     GCFP.Value[2] = (char *) (txt);
     (PlugHooks[HOOK_INTERFACE]) (&GCFP);
-    
+
     return 0;
 }
 
@@ -687,14 +687,14 @@ static int GameObject_Deposit(lua_State *L)
     int         val=1, pos=0;
     lua_object *self;
 	_money_block money;
-	
+
     get_lua_args(L, "OOs", &self, &obptr, &text);
 
     bank = obptr->data.object;
 
 	hooks->get_word_from_string(text, &pos);
 	hooks->get_money_from_string(text + pos, &money);
-				
+
 	if (!money.mode)
 	{
 		val = -1;
@@ -739,7 +739,7 @@ static int GameObject_Deposit(lua_State *L)
 				hooks->new_draw_info(NDI_UNIQUE, 0, WHO, "You don't have that much copper.");
 			}
 		}
-			
+
 		/* all ok - now remove the money from the player and add it to the bank object! */
 		if(val)
 		{
@@ -781,10 +781,10 @@ static int GameObject_Withdraw(lua_State *L)
 	_money_block money;
 	int          pos     = 0;
 	sint64       big_value;
-	
+
     get_lua_args(L, "OOs", &self, &obptr, &text);
     bank = obptr->data.object;
-	
+
 /*
 	static CFParm                       CFP;
 	static int                          val;
@@ -792,11 +792,11 @@ static int GameObject_Withdraw(lua_State *L)
 	sint64                              big_value;
 	char                               *text    = (char *) (PParm->Value[2]);
 	object*who = (object*) (PParm->Value[0]), *bank = (object *) (PParm->Value[1]);
-*/	
-		
+*/
+
 	hooks->get_word_from_string(text, &pos);
 	hooks->get_money_from_string(text + pos, &money);
-	
+
 	if (!money.mode)
 	{
 		val = -1;
@@ -819,7 +819,7 @@ static int GameObject_Withdraw(lua_State *L)
 					    + money.gold * hooks->coins_arch[1]->clone.value
 					    + money.silver * hooks->coins_arch[2]->clone.value
 					    + money.copper * hooks->coins_arch[3]->clone.value;
-			
+
 			if (big_value > bank->value)
 				val = 0;
 			else
@@ -832,13 +832,13 @@ static int GameObject_Withdraw(lua_State *L)
 					hooks->insert_money_in_player(WHO, &hooks->coins_arch[2]->clone, money.silver);
 				if (money.copper)
 					hooks->insert_money_in_player(WHO, &hooks->coins_arch[3]->clone, money.copper);
-		
+
 				bank->value -= big_value;
 				hooks->fix_player(WHO);
 			}
 		}
 	}
-    
+
 	lua_pushnumber(L, val);
     return 1;
 }
@@ -886,7 +886,7 @@ static int GameObject_Say(lua_State *L)
         message = buf;
     }
     hooks->new_info_map(NDI_NAVY|NDI_UNIQUE, WHO->map, WHO->x, WHO->y, MAP_INFO_NORMAL, message);
-	
+
     return 0;
 }
 
@@ -1117,7 +1117,7 @@ static int GameObject_SetGuildForce(lua_State *L)
         FREE_AND_COPY_HASH(walk->title, guild);
     } else
         FREE_ONLY_HASH(walk->title);
-    
+
     CONTR(WHO)->socket.ext_title_flag = 1; /* demand update to client */
     return push_object(L, &GameObject, walk);
 }
@@ -1147,7 +1147,7 @@ static int GameObject_GetGuildForce(lua_State *L)
     LOG(llevDebug, "Lua Warning -> GetGuild: Object %s has no guild_force! Adding it.\n", STRING_OBJ_NAME(WHO));
     walk = hooks->get_archetype("guild_force");
     walk= hooks->insert_ob_in_ob(walk, WHO);
-    
+
     return push_object(L, &GameObject, walk);
 }
 
@@ -1326,7 +1326,7 @@ static int GameObject_FindSkill(lua_State *L)
     get_lua_args(L, "Oi", &self, &skill);
 
 	myob = hooks->find_skill(WHO, skill);
-	
+
     if (!myob)
         return 0;
 
@@ -1461,9 +1461,9 @@ static int GameObject_CheckQuest(lua_State *L)
 
     get_lua_args(L, "Os", &self, &name);
 
-		
-	if(CONTR(WHO)->quests_type_normal) 
-		
+
+	if(CONTR(WHO)->quests_type_normal)
+
 	{
 		for (walk = CONTR(WHO)->quests_type_normal->inv; walk != NULL; walk = walk->below)
 		{
@@ -1471,8 +1471,8 @@ static int GameObject_CheckQuest(lua_State *L)
 				return push_object(L, &GameObject, walk);
 		}
 	}
-		
-	if(CONTR(WHO)->quests_type_kill) 
+
+	if(CONTR(WHO)->quests_type_kill)
 	{
 		for (walk = CONTR(WHO)->quests_type_kill->inv; walk != NULL; walk = walk->below)
 		{
@@ -1480,8 +1480,8 @@ static int GameObject_CheckQuest(lua_State *L)
 				return push_object(L, &GameObject, walk);
 		}
 	}
-	
-	if(CONTR(WHO)->quests_type_cont) 
+
+	if(CONTR(WHO)->quests_type_cont)
 	{
 		for (walk = CONTR(WHO)->quests_type_cont->inv; walk != NULL; walk = walk->below)
 		{
@@ -1489,8 +1489,8 @@ static int GameObject_CheckQuest(lua_State *L)
 				return push_object(L, &GameObject, walk);
 		}
 	}
-	
-	if(CONTR(WHO)->quests_done) 
+
+	if(CONTR(WHO)->quests_done)
 	{
 		for (walk = CONTR(WHO)->quests_done->inv; walk != NULL; walk = walk->below)
 		{
@@ -1514,30 +1514,30 @@ static int GameObject_AddQuest(lua_State *L)
 	int			mode, nr;
     object     *myob;
     lua_object *self;
-	
+
     get_lua_args(L, "Osii|s", &self, &name, &mode, &nr, &msg);
-	
+
 
 	if (WHO->type != PLAYER)
 		return 0;
-	
+
 	myob = hooks->get_archetype("quest_trigger");
-	
+
     if (!myob || strncmp(STRING_OBJ_NAME(myob), "singularity", 11) == 0)
     {
         LOG(llevDebug, "Lua WARNING:: AddQuest: Cant't find archtype 'quest_trigger'\n");
         luaL_error(L, "Can't find archtype 'quest_trigger'");
     }
-	
+
     /* store name & arch name of the quest obj. so we can id it later */
     FREE_AND_COPY_HASH(myob->name, name);
 	if(msg)
 		FREE_AND_COPY_HASH(myob->msg, msg);
 	myob->sub_type1 = (uint8)mode;
 	myob->last_heal = (sint16)nr;
-	
+
 	hooks->add_quest_trigger(WHO, myob);
-	
+
     return push_object(L, &GameObject, myob);
 }
 
@@ -1553,7 +1553,7 @@ static int GameObject_SetQuest(lua_State *L)
 	int			kill_nr;
     object     *myob;
     lua_object *self;
-	
+
     get_lua_args(L, "Oisss|s", &self, &kill_nr, &kill_arch, &kill_name, &kill_title, &msg);
 
 	myob = self->data.object;
@@ -1594,16 +1594,16 @@ static int GameObject_SetQuestStatus(lua_State *L)
 	int			q_status, q_type = -1;
     object     *myob;
     lua_object *self;
-	
+
     get_lua_args(L, "Oi|i", &self, &q_status, &q_type);
-	
+
 	myob = self->data.object;
 
 	if(q_type == -1)
 		q_type = myob->sub_type1;
 
 	hooks->set_quest_status(myob, q_status, q_type);
-		
+
     return 0; /* there was non */
 }
 
@@ -1623,8 +1623,8 @@ static int GameObject_CheckQuestItem(lua_State *L)
     get_lua_args(L, "Oss", &self, &arch_name, &name);
 
 	if (WHO->type == PLAYER && CONTR(WHO)->quest_one_drop )
-	{				
-				
+	{
+
 		for (walk = CONTR(WHO)->quest_one_drop->inv; walk != NULL; walk = walk->below)
 		{
 			if (walk->race && !strcmp(walk->race, arch_name) && walk->name && !strcmp(walk->name, name))
@@ -1955,7 +1955,7 @@ static int GameObject_DecreaseNrOf(lua_State *L)
 {
     lua_object *self;
     int         nrof = 1;
-	
+
     get_lua_args(L, "O|i", &self, &nrof);
 
 	/* -1 means "delete all" */
@@ -2035,13 +2035,13 @@ static int GameObject_Destruct(lua_State *L)
 
 	if(WHO->inv)
 		hooks->drop_ob_inv(WHO);
-	
+
 	hooks->decrease_ob_nr(WHO, MIN(WHO->nrof, 1));
-    
+
     return 0;
 
     /* Old implementation */
-#if 0    
+#if 0
     myob = WHO;
     obenv = myob->env;
 
@@ -2316,11 +2316,11 @@ static int GameObject_AddMoney(lua_State *L)
 {
     lua_object *self;
 	int			c, s, g, m;
-	
+
     get_lua_args(L, "Oiiii", &self, &c, &s, &g, &m);
-	
+
 	hooks->add_money_to_player(WHO, c, s, g, m);
-	
+
     return 0;
 }
 
@@ -2339,7 +2339,7 @@ static int GameObject_GetMoney(lua_State *L)
     get_lua_args(L, "O", &self);
 
 	amount = hooks->query_money(WHO);
-	
+
 	/* possible data loss from 64bit integer to double! */
     lua_pushnumber(L, (double)amount);
     return 1;
@@ -2381,7 +2381,7 @@ static int GameObject_PayAmount(lua_State *L)
     get_lua_args(L, "OI", &self, &to_pay);
 
 	val = hooks->pay_for_amount(to_pay, WHO);
-	
+
     lua_pushnumber(L, val);
     return 1;
 }
@@ -2454,8 +2454,8 @@ static int GameObject_GetAI(lua_State *L)
     get_lua_args(L, "O", &self);
 
     if (self->data.object->type != MONSTER)
-        luaL_error(L, "Can only get AI from monsters");        
-    
+        luaL_error(L, "Can only get AI from monsters");
+
     if(self->data.object->custom_attrset == NULL)
         return 0;
 
@@ -2490,7 +2490,7 @@ static int GameObject_GetVector(lua_State *L)
     lua_pushnumber(L, rv.direction);
     lua_pushnumber(L, rv.distance_x);
     lua_pushnumber(L, rv.distance_y);
-    
+
     return 4;
 }
 
@@ -2509,7 +2509,7 @@ static int GameObject_GetAnimation(lua_State *L)
     get_lua_args(L, "O|i", &self, &inv);
 
     lua_pushstring(L, (* hooks->animations)[inv ? WHO->inv_animation_id : WHO->animation_id].name);
-    return 1;   
+    return 1;
 }
 
 /*****************************************************************************/
@@ -2528,11 +2528,11 @@ static int GameObject_GetFace(lua_State *L)
     get_lua_args(L, "O|i", &self, &inv);
 
     face = inv ? WHO->inv_face : WHO->face;
-    if(face) 
+    if(face)
         lua_pushstring(L, face->name);
     else
         lua_pushnil(L);
-    return 1;   
+    return 1;
 }
 
 /*****************************************************************************/
@@ -2550,7 +2550,7 @@ static int GameObject_SetAnimation(lua_State *L)
     int inv = 0;
     char *animation;
     int id;
-    
+
     get_lua_args(L, "Os|i", &self, &animation, &inv);
 
     id = hooks->find_animation(animation);
@@ -2561,8 +2561,8 @@ static int GameObject_SetAnimation(lua_State *L)
         WHO->inv_animation_id = id;
     else
         WHO->animation_id = id;
-            
-    return 0;   
+
+    return 0;
 }
 
 /*****************************************************************************/
@@ -2580,19 +2580,19 @@ static int GameObject_SetFace(lua_State *L)
     int inv = 0;
     char *face;
     int id;
-    
+
     get_lua_args(L, "Os|i", &self, &face, &inv);
 
     id = hooks->find_face(face, -1);
     if(id == -1)
-        luaL_error(L, "no such face exists: %s", face);     
+        luaL_error(L, "no such face exists: %s", face);
 
     if(inv)
         WHO->inv_face = &(*hooks->new_faces)[id];
     else
         WHO->face = &(*hooks->new_faces)[id];
-            
-    return 0;   
+
+    return 0;
 }
 
 
@@ -2744,7 +2744,7 @@ static int GameObject_isValid(lua_State *L, lua_object *obj)
 lua_class   GameObject  =
 {
     LUATYPE_OBJECT, "GameObject", 0, GameObject_toString, GameObject_attributes, GameObject_methods, NULL,
-    GameObject_flags, 
+    GameObject_flags,
     GameObject_getFlag, GameObject_setFlag, GameObject_setAttribute,
     GameObject_isValid
 };

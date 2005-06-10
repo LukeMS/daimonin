@@ -62,7 +62,7 @@ enum
  * TODO: It is a bad way to implement this with a special structure.
  * Because the real arch list is a at runtime not changed, we can grap for example
  * here a clone of the arch, store it in the treasure list and then run the original
- * arch parser over this clone, using the treasure list as script until an END comes. 
+ * arch parser over this clone, using the treasure list as script until an END comes.
  * This will allow ANY changes which is possible and we use ony one parser.
  */
 
@@ -138,7 +138,7 @@ typedef struct treasureliststruct
 {
     const char                 *listname;               /* Usually monster-name/combination */
     int                         t_style;                /* global style (used from artifacts file) */
-    int                         artifact_chance;    
+    int                         artifact_chance;
     sint16                      chance_fix; /* if set it will overrule total_chance: */
     sint16                      total_chance;           /* If non-zero, only 1 item on this
                                                         * list should be generated.  The

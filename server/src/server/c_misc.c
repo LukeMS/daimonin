@@ -342,7 +342,7 @@ int command_malloc(object *op, char *params)
         {
             new_draw_info(NDI_UNIQUE, 0, op, "Usage: /malloc [free | force]");
             return 1;
-        } 
+        }
 
         if (strcmp(params, "force") == 0)
             force_flag = 1;
@@ -351,7 +351,7 @@ int command_malloc(object *op, char *params)
             if (force_flag == 1 || mempools[i]->flags & MEMPOOL_ALLOW_FREEING)
                 free_empty_puddles(mempools[i]);
     }
-#endif    
+#endif
 
     malloc_info(op);
     return 1;
@@ -469,7 +469,7 @@ int command_dumpbelow(object *op, char *params)
             continue;
         sprintf(buf, "#%d  >%s<  >%s<  >%s<", i, query_name(tmp),
                 tmp->arch ? (tmp->arch->name ? tmp->arch->name : "no arch name") : "NO ARCH",
-                tmp->env ? query_name(tmp->env) : ""); 
+                tmp->env ? query_name(tmp->env) : "");
         new_draw_info(NDI_UNIQUE, 0, op, buf);
     }
     new_draw_info(NDI_UNIQUE, 0, op, "------------------");
@@ -918,7 +918,7 @@ static void show_commands(object *op, int what)
         }
         strcat(line, " ");
         strcat(line, ap[i].name);
-    }          
+    }
     new_draw_info(NDI_UNIQUE, 0, op, line);
 }
 

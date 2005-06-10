@@ -63,11 +63,11 @@ void InitConnection(NewSocket *ns, uint32 from)
     int buflen  = sizeof(int);
 
 #ifdef WIN32 /* ***WIN32 SOCKET: init win32 non blocking socket */
-    int temp    = 1;    
+    int temp    = 1;
 
     if (ioctlsocket(ns->fd, FIONBIO, &temp) == -1)
         LOG(llevDebug, "InitConnection:  Error on ioctlsocket.\n");
-#else 
+#else
     if (fcntl(ns->fd, F_SETFL, O_NDELAY) == -1)
     {
         LOG(llevDebug, "InitConnection:  Error on fcntl.\n");
@@ -354,7 +354,7 @@ static void load_srv_files(char *fname, int id, int cmd)
     file_tmp = malloc(flen);
     numread = (unsigned long) fread(file_tmp, sizeof(char), flen, fp);
     /* get a crc from the unpacked file */
-    SrvClientFiles[id].crc = crc32(1L, file_tmp, numread); 
+    SrvClientFiles[id].crc = crc32(1L, file_tmp, numread);
     SrvClientFiles[id].len_ucomp = numread;
     numread = flen * 2;
     comp_tmp = (char *) malloc(numread);
@@ -420,8 +420,8 @@ static void create_client_settings(void)
         fputs(buf, fset_create);
     fclose(fset_default);
 
-    /* now we add the server specific date 
-     * first: the exp levels! 
+    /* now we add the server specific date
+     * first: the exp levels!
     */
     sprintf(buf, "level %d\n", MAXLEVEL); /* param: number of levels we have */
     fputs(buf, fset_create);
@@ -435,14 +435,14 @@ static void create_client_settings(void)
     fclose(fset_create);
 }
 
-/* load all src_files we can send to client... client_bmaps is generated from 
+/* load all src_files we can send to client... client_bmaps is generated from
  * the server at startup out of the daimonin png file.
  */
 void init_srv_files(void)
 {
     char    buf[MAX_BUF];
 
-    memset(&SrvClientFiles, 0, sizeof(SrvClientFiles));  
+    memset(&SrvClientFiles, 0, sizeof(SrvClientFiles));
 
     sprintf(buf, "%s/animations", settings.datadir);
     load_srv_files(buf, SRV_CLIENT_ANIMS, DATA_CMD_ANIM_LIST);

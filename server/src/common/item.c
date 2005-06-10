@@ -85,7 +85,7 @@ char * describe_resistance(object *op, int newline)
             }
             else
                 sprintf(buf1, "%s %d%%\n", resist_plus[tmpvar], op->resist[tmpvar]);
-            flag = 0;        
+            flag = 0;
             strcat(buf, buf1);
         }
     }
@@ -125,7 +125,7 @@ char * describe_attack(object *op, int newline)
             }
             else
                 sprintf(buf1, "%s %+d%%\n", attacktype_desc[tmpvar], op->attack[tmpvar]);
-            flag = 0;        
+            flag = 0;
             strcat(buf, buf1);
         }
     }
@@ -233,7 +233,7 @@ char * get_number(int i)
 }
 
 /*
- * query_short_name(object) is similar to query_name, but doesn't 
+ * query_short_name(object) is similar to query_name, but doesn't
  * contain any information about object status (worn/cursed/etc.)
  */
 char * query_short_name(object *op, object *caller)
@@ -246,9 +246,9 @@ char * query_short_name(object *op, object *caller)
     if (!op || !op->name)
         return buf;
 
-    /* To speed things up (or make things slower?) 
-       if(!op->nrof && !op->weight && !op->title && !is_magical(op)) 
-    return op->name; 
+    /* To speed things up (or make things slower?)
+       if(!op->nrof && !op->weight && !op->title && !is_magical(op))
+    return op->name;
     */
     if (op->nrof)
     {
@@ -272,7 +272,7 @@ char * query_short_name(object *op, object *caller)
                 strcpy(buf2, buf3);
                 *buf3 = '\0';   /* also changes value in buf */
             }
-            len = strlen(buf);          
+            len = strlen(buf);
 
             /* If buf3 is set, then this was a string that contained
                     * something of something (potion of dexterity.)  The part before
@@ -314,20 +314,20 @@ char * query_short_name(object *op, object *caller)
             if (op->sub_type1 == ST1_CONTAINER_CORPSE_group)
             {
                 if(!caller)
-                    safe_strcat(buf, " (bounty of a group)", &len, sizeof(buf));                  
+                    safe_strcat(buf, " (bounty of a group)", &len, sizeof(buf));
                 else if(CONTR(caller)->group_status & GROUP_STATUS_GROUP &&
                             CONTR(CONTR(caller)->group_leader)->group_id == op->stats.maxhp)
-                    safe_strcat(buf, " (bounty of your group)", &len, sizeof(buf));  
+                    safe_strcat(buf, " (bounty of your group)", &len, sizeof(buf));
                 else /* its a different group */
-                    safe_strcat(buf, " (bounty of another group)", &len, sizeof(buf));  
+                    safe_strcat(buf, " (bounty of another group)", &len, sizeof(buf));
             }
         }
         else if (op->sub_type1 >= ST1_CONTAINER_NORMAL_player)
           {
               if (op->sub_type1 == ST1_CONTAINER_CORPSE_player && op->slaying)
               {
-                  safe_strcat(buf, " (bounty of ", &len, sizeof(buf));  
-                  safe_strcat(buf, op->slaying, &len, sizeof(buf)); 
+                  safe_strcat(buf, " (bounty of ", &len, sizeof(buf));
+                  safe_strcat(buf, op->slaying, &len, sizeof(buf));
                   safe_strcat(buf, ")", &len, sizeof(buf));
               }
           }
@@ -391,7 +391,7 @@ char * query_short_name(object *op, object *caller)
           {
               if (!op->title)
               {
-                  /* If ring has a title, full description isn't so useful */ 
+                  /* If ring has a title, full description isn't so useful */
                   char     *s   = describe_item(op);
                   if (s[0])
                   {
@@ -541,7 +541,7 @@ char *query_base_name(object *op, object *caller)
 
 	if(op->sub_type1 == ARROW && op->type == MISC_OBJECT) /* special neutralized arrow! */
 		strcat(buf, "broken ");
-	
+
     /* add the item race name */
     if (!IS_LIVE(op) && op->type != TYPE_BASE_INFO)
         strcat(buf, item_race_table[op->item_race].name);
@@ -552,7 +552,7 @@ char *query_base_name(object *op, object *caller)
      */
     if (op->material_real>0 && QUERY_FLAG(op, FLAG_IDENTIFIED))
         strcat(buf, material_real[op->material_real].name);
-	
+
     strcat(buf, op->name);
 
     if (!op->weight && !op->title && !is_magical(op))
@@ -577,20 +577,20 @@ char *query_base_name(object *op, object *caller)
               if (op->sub_type1 == ST1_CONTAINER_CORPSE_group)
               {
                   if(!caller)
-                      safe_strcat(buf, " (bounty of a group)", &len, sizeof(buf));                  
+                      safe_strcat(buf, " (bounty of a group)", &len, sizeof(buf));
                   else if(CONTR(caller)->group_status & GROUP_STATUS_GROUP &&
                       CONTR(CONTR(caller)->group_leader)->group_id == op->stats.maxhp)
-                      safe_strcat(buf, " (bounty of your group)", &len, sizeof(buf));  
+                      safe_strcat(buf, " (bounty of your group)", &len, sizeof(buf));
                   else /* its a different group */
-                      safe_strcat(buf, " (bounty of another group)", &len, sizeof(buf));  
+                      safe_strcat(buf, " (bounty of another group)", &len, sizeof(buf));
               }
           }
           else if (op->sub_type1 >= ST1_CONTAINER_NORMAL_player)
           {
               if (op->sub_type1 == ST1_CONTAINER_CORPSE_player && op->slaying)
               {
-                  safe_strcat(buf, " (bounty of ", &len, sizeof(buf));  
-                  safe_strcat(buf, op->slaying, &len, sizeof(buf)); 
+                  safe_strcat(buf, " (bounty of ", &len, sizeof(buf));
+                  safe_strcat(buf, op->slaying, &len, sizeof(buf));
                   safe_strcat(buf, ")", &len, sizeof(buf));
               }
           }
@@ -654,7 +654,7 @@ char *query_base_name(object *op, object *caller)
           {
               if (!op->title)
               {
-                  /* If ring has a title, full description isn't so useful */ 
+                  /* If ring has a title, full description isn't so useful */
                   char     *s   = describe_item(op);
                   if (s[0])
                   {
@@ -719,7 +719,7 @@ char *query_base_name(object *op, object *caller)
 }
 
 
-/* describe terrain flags 
+/* describe terrain flags
  * we use strcat only - prepare the retbuf before call.
  */
 static void describe_terrain(object *op, char *retbuf)
@@ -758,7 +758,7 @@ char * describe_item(object *op)
     char        buf[MAX_BUF];
     static char retbuf[VERY_BIG_BUF*3];
 
-    retbuf[0] = '\0';        
+    retbuf[0] = '\0';
 
     /* we start with living objects like mobs */
     if (op->type == PLAYER)
@@ -816,7 +816,7 @@ char * describe_item(object *op)
             strcat(retbuf, "(NPC)");
 		if (QUERY_FLAG(op, FLAG_UNAGGRESSIVE))
             strcat(retbuf, "(unaggressive)");
-		else 
+		else
             strcat(retbuf, "(aggressive)");
         if (QUERY_FLAG(op, FLAG_HITBACK))
             strcat(retbuf, "(hitback)");
@@ -966,7 +966,7 @@ char * describe_item(object *op)
 
                   if (op->type == WEAPON)
                   {
-                      /* this is ugly to calculate because its a curve which increase heavily 
+                      /* this is ugly to calculate because its a curve which increase heavily
                                      * with lower weapon_speed... so, we use a table
                                      */
                       int   ws_temp = (int) (op->weapon_speed / 0.0025f);
@@ -1128,7 +1128,7 @@ char * describe_item(object *op)
             if (is_dragon_pl(op)) {
             object *tmp;
                 for (tmp=op->inv; tmp!=NULL && !(tmp->type == SKILL &&
-                strcmp(tmp->name, "clawing")==0); tmp=tmp->below);  
+                strcmp(tmp->name, "clawing")==0); tmp=tmp->below);
             */
 
         strcat(retbuf, describe_attack(op, 0));
@@ -1160,7 +1160,7 @@ char * describe_item(object *op)
     return retbuf;
 }
 
-/* need_identify returns true if the item should be identified.  This 
+/* need_identify returns true if the item should be identified.  This
  * function really should not exist - by default, any item not identified
  * should need it.
  */
@@ -1243,7 +1243,7 @@ void identify(object *op)
         if ((op->stats.sp = look_up_spell_name(op->slaying)) < 0)
         {
             char    buf[256];
-            op->stats.sp = -1;  
+            op->stats.sp = -1;
             sprintf(buf, "Spell formula for %s", op->slaying);
             FREE_AND_COPY_HASH(op->name, buf);
         }

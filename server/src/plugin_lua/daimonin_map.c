@@ -29,7 +29,7 @@
 
 static struct method_decl       Map_methods[]       =
 {
-    {"Save", Map_Save}, {"Delete", Map_Delete}, 
+    {"Save", Map_Save}, {"Delete", Map_Delete},
     {"GetFirstObjectOnSquare", Map_GetFirstObjectOnSquare},
     {"GetBrightnessOnSquare", Map_GetBrightnessOnSquare},
     {"IsWallOnSquare", Map_IsWallOnSquare},
@@ -108,7 +108,7 @@ static int Map_GetBrightnessOnSquare(lua_State *L)
     get_lua_args(L, "Mii|i", &map, &x, &y, &mode);
 
     brightness = hooks->map_brightness(map->data.map, x, y);
-   
+
     if(mode == 0)
     {
         /* Convert brightness to 0-MAX_DARKNESS scale */
@@ -122,7 +122,7 @@ static int Map_GetBrightnessOnSquare(lua_State *L)
         if(i==MAX_DARKNESS) /* Didn't find it? */
             brightness = i;
     }
-    
+
     lua_pushnumber(L, brightness);
 
     return 1;
@@ -302,7 +302,7 @@ static int Map_setFlag(lua_State *L, lua_object *obj, uint32 flagno)
     else
         obj->data.map->map_flags &= ~(1 << flagno);
 
-    return 0;    
+    return 0;
 }
 
 /* Return a string representation of this object (useful for debugging) */
@@ -336,7 +336,7 @@ static int Map_isValid(lua_State *L, lua_object *obj)
 /* Declare the map class */
 lua_class   Map =
 {
-    LUATYPE_MAP, "Map", 0, Map_toString, Map_attributes, Map_methods, 
+    LUATYPE_MAP, "Map", 0, Map_toString, Map_attributes, Map_methods,
     NULL, Map_flags, Map_getFlag, Map_setFlag, NULL, Map_isValid
 };
 

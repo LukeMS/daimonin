@@ -108,7 +108,7 @@ void signal_connection(object *op, oblinkpt *olp)
                   if (tmp->stats.maxsp) /* next direction */
                   {
                       if ((tmp->direction += tmp->stats.maxsp) > 8)
-                          tmp->direction = (tmp->direction % 8) + 1;    
+                          tmp->direction = (tmp->direction % 8) + 1;
                       animate_turning(tmp);
                   }
               }
@@ -117,7 +117,7 @@ void signal_connection(object *op, oblinkpt *olp)
               if (tmp->stats.maxsp) /* next direction */
               {
                   if ((tmp->direction += tmp->stats.maxsp) > 8)
-                      tmp->direction = (tmp->direction % 8) + 1;    
+                      tmp->direction = (tmp->direction % 8) + 1;
                   animate_turning(tmp);
               }
               break;
@@ -129,20 +129,20 @@ void signal_connection(object *op, oblinkpt *olp)
               break;
             case TYPE_TIMER:
               /* a signal to a stopped timer means for it to start */
-              if(tmp->speed == 0) 
+              if(tmp->speed == 0)
               {
                 tmp->speed = 0.125; /* once per second */
                 tmp->stats.hp = tmp->stats.maxhp;
                 update_ob_speed(tmp);
               }
               break;
-              
+
             case TYPE_CONN_SENSOR:
               /* Connection sensors don't listen to themselves */
               if(op != tmp)
                   move_conn_sensor(tmp);
               break;
-              
+
             case TYPE_LIGHT_APPLY:
             case LIGHT_SOURCE: /* Dunno if this really works for LIGHT_SOURCE */
               if(op->weight_limit == 0 && tmp->glow_radius > 0)
@@ -556,7 +556,7 @@ int check_trigger(object *op, object *cause)
 void add_button_links(object *button, mapstruct *map, char *connected)
 {
     char *pos = connected;
-    
+
     do {
         int connection = atoi(pos);
         if(connection)
@@ -566,7 +566,7 @@ void add_button_links(object *button, mapstruct *map, char *connected)
         /* TODO: this check isn 100% ok since we aren't 100% sure about the objects type when this is called */
         if(button->type != TYPE_CONN_SENSOR)
             break;
-        
+
         if((pos = strchr(pos, ',')))
             pos++;
     } while (pos);
@@ -583,7 +583,7 @@ void add_button_link(object *button, mapstruct *map, int connected)
         LOG(llevBug, "BUG: Tried to add button-link without map.\n");
         return;
     }
-    button->path_attuned = (uint16) connected;  /* peterm:  I need this so I can rebuild 
+    button->path_attuned = (uint16) connected;  /* peterm:  I need this so I can rebuild
                                        a connected map from a template map. */
     /*  LOG(llevDebug,"adding button %s (%d)\n", button->name, connected);*/
 
@@ -666,7 +666,7 @@ objectlink * get_button_links(object *button)
         if(button->type == TYPE_CONN_SENSOR && button->last_grace != obp->value)
             continue;
         for (ol = obp->objlink.link; ol; ol = ol->next)
-            if (ol->objlink.ob == button && ol->id == button->count) 
+            if (ol->objlink.ob == button && ol->id == button->count)
                 return obp->objlink.link;
     }
     return NULL;
@@ -691,9 +691,9 @@ int get_button_value(object *button)
     return 0;
 }
 
-/* This routine makes monsters who are  
+/* This routine makes monsters who are
  * standing on the 'mood floor' change their
- * disposition if it is different.  
+ * disposition if it is different.
  * If floor is to be triggered must have
  * a speed of zero (default is 1 for all
  * but the charm floor type).
@@ -718,7 +718,7 @@ void do_mood_floor(object *op, object *op2)
     switch (op->last_sp)
     {
         case 0:
-          /* furious--make all monsters mad */ 
+          /* furious--make all monsters mad */
           if (QUERY_FLAG(tmp, FLAG_UNAGGRESSIVE))
               CLEAR_FLAG(tmp, FLAG_UNAGGRESSIVE);
           if (QUERY_FLAG(tmp, FLAG_FRIENDLY))
@@ -738,17 +738,17 @@ void do_mood_floor(object *op, object *op2)
           }
           break;
         case 1:
-          /* angry -- get neutral monsters mad */    
+          /* angry -- get neutral monsters mad */
           if (QUERY_FLAG(tmp, FLAG_UNAGGRESSIVE) && !QUERY_FLAG(tmp, FLAG_FRIENDLY))
               CLEAR_FLAG(tmp, FLAG_UNAGGRESSIVE);
           break;
         case 2:
-          /* calm -- pacify unfriendly monsters */ 
+          /* calm -- pacify unfriendly monsters */
           if (!QUERY_FLAG(tmp, FLAG_UNAGGRESSIVE))
-              SET_FLAG(tmp, FLAG_UNAGGRESSIVE);     
+              SET_FLAG(tmp, FLAG_UNAGGRESSIVE);
           break;
         case 3:
-          /* make all monsters fall asleep */ 
+          /* make all monsters fall asleep */
           if (!QUERY_FLAG(tmp, FLAG_SLEEP))
               SET_FLAG(tmp, FLAG_SLEEP);
           break;
@@ -756,9 +756,9 @@ void do_mood_floor(object *op, object *op2)
           /* charm all monsters */
 
           if (op == op2)
-              break;         /* only if 'connected' */ 
+              break;         /* only if 'connected' */
 
-          for (tmp2 = get_map_ob(op2->map, op2->x, op2->y); /* finding an owner */ 
+          for (tmp2 = get_map_ob(op2->map, op2->x, op2->y); /* finding an owner */
                                   tmp2->type != PLAYER; tmp2 = tmp2->above)
               if (tmp2->above == NULL)
                   break;
@@ -771,7 +771,7 @@ void do_mood_floor(object *op, object *op2)
           SET_FLAG(tmp, FLAG_FRIENDLY);
           add_friendly_object(tmp);
           tmp->move_type = PETMOVE;
-          break;        
+          break;
 
         default:
           break;
@@ -782,7 +782,7 @@ void do_mood_floor(object *op, object *op2)
  * It will descend through containers to find the object.
  *      slaying = match object slaying field
  *      race = match object archetype name field
- *      if hp != 0, hp = match object type 
+ *      if hp != 0, hp = match object type
  */
 
 object * check_inv_recursive(object *op, object *trig)
@@ -810,13 +810,13 @@ object * check_inv_recursive(object *op, object *trig)
     return NULL;
 }
 
-/* check_inv(), a function to search the inventory, 
+/* check_inv(), a function to search the inventory,
  * of a player and then based on a set of conditions,
- * the square will activate connected items. 
+ * the square will activate connected items.
  * Monsters can't trigger this square (for now)
- * Values are:  last_sp = 1/0 obj/no obj triggers 
+ * Values are:  last_sp = 1/0 obj/no obj triggers
  *      last_heal = 1/0  remove/dont remove obj if triggered
- * -b.t. (thomas@nomad.astro.psu.edu 
+ * -b.t. (thomas@nomad.astro.psu.edu
  */
 
 void check_inv(object *op, object *trig)

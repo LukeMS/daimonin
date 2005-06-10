@@ -50,8 +50,8 @@ object * create_artifact(object *op, char *artifactname)
 
   This function handles the application of power crystals.
   Power crystals, when applied, either suck power from the applier,
-  if he's at full spellpoints, or gives him power, if it's got 
-  spellpoins stored.  
+  if he's at full spellpoints, or gives him power, if it's got
+  spellpoins stored.
 
 */
 

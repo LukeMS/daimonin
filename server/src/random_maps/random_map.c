@@ -86,7 +86,7 @@ mapstruct * generate_random_map(char *OutFileName, RMParms *RP)
     dump_layout(layout, RP);
 #endif
     /* allocate the map and set the floor */
-    theMap = make_map_floor(layout, RP->floorstyle, RP); 
+    theMap = make_map_floor(layout, RP->floorstyle, RP);
 
     /* set the name of the map. */
     FREE_AND_COPY_HASH(theMap->path, OutFileName);
@@ -335,7 +335,7 @@ char ** symmetrize_layout(char **maze, int sym, RMParms *RP)
 
 
 /*  takes  a map and rotates it.  This completes the
-    onion layouts, making them possibly centered on any wall. 
+    onion layouts, making them possibly centered on any wall.
     It'll modify Xsize and Ysize if they're swapped.
 */
 
@@ -410,7 +410,7 @@ char ** rotate_layout(char **maze, int rotation, RMParms *RP)
     return NULL;
 }
 
-/*  take a layout and make some rooms in it. 
+/*  take a layout and make some rooms in it.
     --works best on onions.*/
 void roomify_layout(char **maze, RMParms *RP)
 {
@@ -467,7 +467,7 @@ int can_make_wall(char **maze, int dx, int dy, int dir, RMParms *RP)
         {
             int sindex  = surround_flag2(maze, i1, y, RP);
             if (sindex == 1)
-                break;  
+                break;
             if (sindex != 0)
                 return -1;  /* can't make horiz.  wall here */
             if (maze[i1][y] != 0)
@@ -479,7 +479,7 @@ int can_make_wall(char **maze, int dx, int dy, int dir, RMParms *RP)
         {
             int sindex  = surround_flag2(maze, i1, y, RP);
             if (sindex == 2)
-                break;  
+                break;
             if (sindex != 0)
                 return -1;   /* can't make horiz.  wall here */
             if (maze[i1][y] != 0)
@@ -496,7 +496,7 @@ int can_make_wall(char **maze, int dx, int dy, int dir, RMParms *RP)
         {
             int sindex  = surround_flag2(maze, x, i1, RP);
             if (sindex == 4)
-                break;  
+                break;
             if (sindex != 0)
                 return -1;  /* can't make vert. wall here */
             if (maze[x][i1] != 0)
@@ -508,7 +508,7 @@ int can_make_wall(char **maze, int dx, int dy, int dir, RMParms *RP)
         {
             int sindex  = surround_flag2(maze, x, i1, RP);
             if (sindex == 8)
-                break;  
+                break;
             if (sindex != 0)
                 return -1;  /* can't make verti. wall here */
             if (maze[x][i1] != 0)
@@ -546,7 +546,7 @@ int make_wall(char **maze, int x, int y, int dir)
                   maze[x][i1] = '#';
               break;
           }
-    }      
+    }
 
     return 0;
 }

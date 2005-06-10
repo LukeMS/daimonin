@@ -1,8 +1,8 @@
 #ifndef __AICONFIG_H
 #define __AICONFIG_H
 
-/* Here we have to declare the behaviour function types for the different 
- * behaviour classes 
+/* Here we have to declare the behaviour function types for the different
+ * behaviour classes
  */
 
 struct  obj;
@@ -54,10 +54,10 @@ extern struct behaviourclass_decl   behaviourclasses[];
 #define BEHAVIOUR_DECLARATION_FILE "behaviourdecl.h"
 
 /*
- * Don't look below this line if ugly preprocessor hacks scares you 
+ * Don't look below this line if ugly preprocessor hacks scares you
  */
 
-/* 
+/*
  * External sources including this file only want the enums for
  * behaviour classes and behaviour parameter indexes
  */
@@ -72,27 +72,27 @@ extern struct behaviourclass_decl   behaviourclasses[];
 
 /* Declare behaviour class enum */
 #define BehaviourClass(x, y) \
-    BEHAVIOURCLASS_##x, 
+    BEHAVIOURCLASS_##x,
 typedef enum
 {
     BEHAVIOURCLASS_NONE                     = -1,
 #include BEHAVIOUR_DECLARATION_FILE
     NROF_BEHAVIOURCLASSES
-}    behaviourclass_t;        
+}    behaviourclass_t;
 
 /* Declare behaviour enums */
 #undef BehaviourClass
-#undef Behaviour    
+#undef Behaviour
 
 #define BehaviourClass(name, behaviours) \
         enum { behaviours NROF_##name##_BEHAVIOURS};
 #define Behaviour(name, func, params) \
-        AIBEHAVIOUR_##name, 
+        AIBEHAVIOUR_##name,
 #include BEHAVIOUR_DECLARATION_FILE
 
 /* Declare behaviour parameter enums */
 #undef BehaviourClass
-#undef Behaviour    
+#undef Behaviour
 
 #define BehaviourClass(name, behaviours) behaviours
 #define Behaviour(name, func, params) \

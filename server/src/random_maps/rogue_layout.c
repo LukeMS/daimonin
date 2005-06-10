@@ -100,7 +100,7 @@ char ** roguelike_layout_gen(int xsize, int ysize, int options)
 
     /* decide on the number of rooms */
     nrooms = RANDOM() % 10 + 6;
-    Rooms = (Room *) calloc(nrooms + 1, sizeof(Room)); 
+    Rooms = (Room *) calloc(nrooms + 1, sizeof(Room));
 
     /* actually place the rooms */
     i = 0;

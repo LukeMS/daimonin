@@ -74,7 +74,7 @@ typedef struct _material_real_struct
     int                         quality;               /* material base quality */
 
     int                         ext1;                   /* unused ext. for later use */
-    int                         ext2;                   
+    int                         ext2;
     int                         ext3;
 
     int                         type;                   /* back ref. to material type */

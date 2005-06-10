@@ -1539,7 +1539,7 @@ int main(int argc, char *argv[])
                 StringBlt(ScreenSurface, &SystemFont, buf, rec.x, rec.y, COLOR_DEFAULT, NULL, NULL);
             }
         }
-		
+
         flip_screen();
         if (!options.max_speed)
             SDL_Delay(options.sleep);       /* force the thread to sleep */

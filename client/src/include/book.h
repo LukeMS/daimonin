@@ -41,7 +41,7 @@ typedef struct gui_book_struct
 	int page_show;
 	struct gui_book_page *start;
 } _gui_book_struct;
-	
+
 
 typedef struct gui_book_page
 {

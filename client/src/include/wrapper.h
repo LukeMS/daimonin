@@ -33,7 +33,7 @@
 #endif
 
 #if !defined(HAVE_STRICMP)
-#define stricmp(_s1_,_s2_) strcasecmp(_s1_,_s2_) 
+#define stricmp(_s1_,_s2_) strcasecmp(_s1_,_s2_)
 #endif
 
 #if !defined(HAVE_STRNICMP)

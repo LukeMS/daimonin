@@ -2,7 +2,7 @@ Daimonin Arch Object Type List
 ------------------------------
 (Object name and number is equal defined in define.h of the server source)
 
-Note: 
+Note:
 Goal is to remove all type 0 (= MISC) objects. Every object class should have a unique
 type. The sub_type1 value is used to identify or set different sub classes of same type.
 All type 0 objects are classifed in future as "undefined".
@@ -37,10 +37,10 @@ stats & resists drains.
 Changes: I changed food/drink/poison. Poison does now level depending damage. There are
 some more value to adjust the POISONED force, including tick numbers, tick speed, damage,
 level & stats/resists. Cursed or damned poison will do increased bad effects.
- 
+
 
 PEDESTAL (17)
-A PEDESTAL is a sensor type object, which gets triggered when the right living object moves over. 
+A PEDESTAL is a sensor type object, which gets triggered when the right living object moves over.
 This can be a player or a type of living creature, identified by the race. A PEDESTAL work like
 a ON/OFF or OPEN/CLOSE trigger.
 
@@ -52,7 +52,7 @@ TRIGGER_PEDESTAL had not the key code in it.
 
 ALTAR (18)
 On a ALTAR a player can "sacrifice" objects (= object is deleted when dropped) and the altar cast
-a spell or works like a connected button (= sends connected signal). Special case: The connected 
+a spell or works like a connected button (= sends connected signal). Special case: The connected
 signal can be triggered only ONE time until the map is reseted. More sacrifices will not have an
 effect nor the object will vanish. Spells can be triggered infinitive times.
 
@@ -77,8 +77,8 @@ TIMED_GATE (26)
 A timed gate is a gate which opens when it got a signal and which is closing after some time
 automatically.
 
-Changes: fixed: non LOS blocking TIMED_GATE'S was set to blockview after one triggered sequence. 
-I also included open timed gate which will close for x ticks. Both with or without LOS. 
+Changes: fixed: non LOS blocking TIMED_GATE'S was set to blockview after one triggered sequence.
+I also included open timed gate which will close for x ticks. Both with or without LOS.
 Added LAST_HEAL value for open timed gates to have a reverse behavior for blockview and no_pass.
 
 
@@ -110,12 +110,12 @@ If "last_sp 0" is set, the altar will trigger the connected value TWO
 times per sacrifice: Once by dropping the sacrifice, second by altar reset.
 If "last_sp 1" is set, the altar won't trigger the connected value
 by reset - Hence, only ONE time per sacrifice.
- 
+
 Change:
 
 
 TRIGGER_PEDESTAL (32)
-A TRIGGER_PEDESTAL is a sensor type object, which gets triggered when the right living object 
+A TRIGGER_PEDESTAL is a sensor type object, which gets triggered when the right living object
 moves over (like a PEDESTAL (17)). Like all TRIGGER_ objects, it sends a signal and then it gets
 inactive until it autoreset.
 
@@ -127,17 +127,17 @@ TELEPORTER are like EXISTS, but they are not active until a connected object lik
 gives a signal.
 
 Changes: TODO> I want change TELEPORTERS to use speed like normal objects. When now triggered, they do
-with the signal ONE teleport - then they are inactive again. With speed, i think about to create a 
+with the signal ONE teleport - then they are inactive again. With speed, i think about to create a
 TELEPORTER which can be turned on and off and/or be active for <delay> time until it need be triggered
 again.
 
 
-DETECTOR (51) 
+DETECTOR (51)
 A DETECTOR is a sensor type object and is triggered by objects which moves over it or get droppped
 on the same space. It does NOT get triggered by objects inside a inventory or a container. A detector
-compares the key string with the name of the object WITHOUT the title part. 
+compares the key string with the name of the object WITHOUT the title part.
 
-Changes: 
+Changes:
 
 DRINK (54)
 DRINK works like food and can apply good or bad effects (buffs/debuffs).
@@ -148,7 +148,7 @@ CHECK_INV (64) * WARNING: Not multi player safe by mutiple players on it *
 A CHECK_INV is a sensor type object and is triggered by objects which moves over it. This objects can be
 dropped or they can be in a inventory of a player or inside a container. There are several options how
 this sensor can be used - it can block a space for moving objects which don't have the key object inside,
-it can compar names, slaying field, arch type and arch name. It can remove or not the key item. The 
+it can compar names, slaying field, arch type and arch name. It can remove or not the key item. The
 editor help part of this object gives some more information.
 
 Changes: Some changes to this object. First, it don't marks a spot a NO_PASS anymore when it should
@@ -163,7 +163,7 @@ by changing the way ther engine use a hash table for the string fields.
 
 
 EXIT (66)
-Exits are the standard "teleporters" of Daimonin. When triggered, they move the object to another 
+Exits are the standard "teleporters" of Daimonin. When triggered, they move the object to another
 location. This can be the same or a different map. A EXIT can be set to auto trigger when a object
 move or fly over it - or it can be set that a object (player) must apply it.
 
@@ -229,7 +229,7 @@ A BUTTON will work like a handle except they are triggered by counting the weigh
 above the BUTTON. They are also reverse connected (if the connected object is triggered by a 3rd
 source, the BUTTON will be autopressed too).
 
-Changes: 
+Changes:
 
 
 HANDLE (93)
@@ -238,7 +238,7 @@ has 2 conditions (ON/OFF or OPEN/CLOSE). Connected to a gate the gate will open 
 is pulled or closed when it is pulled again. The Connection is reverse - is the GATE is closed/opened
 from a 3rd object, the HANDLE will be autopulled too. See also TRIGGER (27) for different button types.
 
-Changes: 
+Changes:
 
 
 PIT (94)
@@ -248,7 +248,7 @@ PIT's are "holes" in the floor, so they should be used like someone fall through
 this is the same as teleporting.
 
 Changes: renamed PIT's - old name was HOLE which was confusing with the EXIT object "hole".
-         I added map changing - Old PIT's was NOT able to change maps. This comes 
+         I added map changing - Old PIT's was NOT able to change maps. This comes
          from old crossfire times where one map was holding different, seperated areas.
 	    TODO: enter_exit() is used for map changing - this function is still not mob
           tested.
@@ -262,7 +262,7 @@ Changes: Same as PITS - adding map changing with enter_exit() and map name in sl
 
 
 SIGN (98)
-SIGN's are map object which will send the player their msg/endmsg text in the console when 
+SIGN's are map object which will send the player their msg/endmsg text in the console when
 applied (= readable object).
 
 Changes:

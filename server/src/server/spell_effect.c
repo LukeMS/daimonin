@@ -24,7 +24,7 @@
 */
 #include <global.h>
 
-/* 
+/*
  * spell_failure()  handles the various effects for differing degrees
  * of failure badness.
  */
@@ -119,7 +119,7 @@ void prayer_failure(object *op, int failure, int power)
 
 void cast_mana_storm(object *op, int lvl)
 {
-    object *tmp = get_archetype("loose_magic"); 
+    object *tmp = get_archetype("loose_magic");
 
     cast_magic_storm(op, tmp, lvl);
 }
@@ -130,10 +130,10 @@ void cast_magic_storm(object *op, object *tmp, int lvl)
     if (!tmp)
         return; /* error */
     tmp->level = SK_level(op);
-    tmp->x = op->x;tmp->y = op->y; 
+    tmp->x = op->x;tmp->y = op->y;
     tmp->stats.hp += lvl / 5;  /* increase the area of destruction */
     tmp->stats.dam = lvl; /* nasty recoils! */
-    tmp->stats.maxhp = tmp->count; /*??*/ 
+    tmp->stats.maxhp = tmp->count; /*??*/
     insert_ob_in_map(tmp, op->map, op, 0);
 }
 
@@ -252,7 +252,7 @@ int cast_create_food(object *op, object *caster, int dir, char *stringarg)
     new_op->nrof = food_value;
     /* lighten the food a little with increasing level. */
     if (food_value > 1)
-        new_op->weight = (int) (new_op->weight * 2.0 / (2.0 + food_value)); 
+        new_op->weight = (int) (new_op->weight * 2.0 / (2.0 + food_value));
     new_op->value = 0;
     SET_FLAG(new_op, FLAG_STARTEQUIP);
     if (new_op->nrof < 1)
@@ -330,15 +330,15 @@ int cast_invisible(object *op, object *caster, int spell_type)
         case SP_INVIS_UNDEAD:
           SET_FLAG(op, FLAG_UNDEAD);
           /*
-             op->invisible+=spells[spell_type].bdur; 
+             op->invisible+=spells[spell_type].bdur;
              op->invisible+=spells[spell_type].ldam *
-                           SP_level_strength_adjust(op,caster,spell_type);  
+                           SP_level_strength_adjust(op,caster,spell_type);
           */
           break;
         case SP_IMPROVED_INVIS:
-          /*    op->invisible+=spells[spell_type].bdur; 
+          /*    op->invisible+=spells[spell_type].bdur;
               op->invisible+=spells[spell_type].ldam *
-                            SP_level_strength_adjust(op,caster,spell_type); 
+                            SP_level_strength_adjust(op,caster,spell_type);
             */
           break;
     }
@@ -767,7 +767,7 @@ int cast_destruction(object *op, object *caster, int dam, int attacktype)
 /* check all 3 blocked() here - they are not right set! */
 int magic_wall(object *op, object *caster, int dir, int spell_type)
 {
-    object *tmp, *tmp2;  
+    object *tmp, *tmp2;
     int     i, posblocked = 0, negblocked = 0;
     /*
         mapstruct *mt;
@@ -846,7 +846,7 @@ int magic_wall(object *op, object *caster, int dir, int spell_type)
         case SP_DARKNESS:
           tmp = get_archetype("darkness");
           tmp->stats.food = spells[SP_DARKNESS].bdur + SP_level_strength_adjust(op, caster, SP_DARKNESS);
-          break; 
+          break;
 
         case SP_COUNTERWALL:
           tmp = get_archetype("counterspell");
@@ -872,7 +872,7 @@ int magic_wall(object *op, object *caster, int dir, int spell_type)
     }
 
     /*  This code causes the wall to extend to a distance of 5 in
-        each direction, or until an obstruction is encountered. 
+        each direction, or until an obstruction is encountered.
         posblocked and negblocked help determine how far the
         created wall can extend, it won't go extend through
         blocked spaces.  */
@@ -918,7 +918,7 @@ int magic_wall(object *op, object *caster, int dir, int spell_type)
 }
 
 /* cast_light() - I wanted this to be able to blind opponents who stand
- * adjacent to the caster, so I couldnt use magic_wall(). -b.t. 
+ * adjacent to the caster, so I couldnt use magic_wall(). -b.t.
  */
 /* badly outdated of course - MT 2004*/
 int cast_light(object *op, object *caster, int dir)
@@ -973,7 +973,7 @@ int cast_light(object *op, object *caster, int dir)
 }
 
 /* WARNING!! DON'T USE ! no out_of_map() here
- * I also want include better position checks here 
+ * I also want include better position checks here
  */
 int dimension_door(object *op, int dir)
 {
@@ -1230,7 +1230,7 @@ int cast_heal(object *op, int level, object *target, int spell_type)
               heal=die_roll(4, 8, op, PREFER_HIGH)+8;
               break;
             case SP_HEAL:
-              heal=tmp->stats.maxhp; 
+              heal=tmp->stats.maxhp;
               new_draw_info(NDI_UNIQUE, 0,tmp, "You feel just fine!");
               break;
             case SP_CURE_CONFUSION:
@@ -1253,7 +1253,7 @@ int cast_heal(object *op, int level, object *target, int spell_type)
                 success = 1;
                 tmp->stats.food=999;
               }
-            
+
               if (cast_heal (op, op, SP_HEAL))
                   success = 1;
               return success;
@@ -1360,7 +1360,7 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
           else
           {
               msg_flag = 0;
-              new_draw_info(NDI_UNIQUE, 0, tmp, "You don't grow stronger but the spell is refreshed."); 
+              new_draw_info(NDI_UNIQUE, 0, tmp, "You don't grow stronger but the spell is refreshed.");
               if (op->type == PLAYER && op != tmp)
                   new_draw_info_format(NDI_UNIQUE, 0, op, "%s don't grow stronger but the spell is refreshed.",
                                        tmp->name ? tmp->name : "someone");
@@ -1502,10 +1502,10 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
                   new_draw_info_format(NDI_UNIQUE, 0, tmp, "%s blessed you mightily!", op->name);
               }
               /* ADD POSITIVE WC ADD HERE */
-              force->stats.wc += SP_level_dam_adjust(op, caster, SP_HOLY_POSSESSION); 
-              force->stats.ac += SP_level_dam_adjust(op, caster, SP_HOLY_POSSESSION); 
+              force->stats.wc += SP_level_dam_adjust(op, caster, SP_HOLY_POSSESSION);
+              force->stats.ac += SP_level_dam_adjust(op, caster, SP_HOLY_POSSESSION);
               break;
-          } 
+          }
         case SP_REGENERATION:
           force->stats.hp = 1 + SP_level_dam_adjust(op, caster, SP_REGENERATION);
           break;
@@ -1525,10 +1525,10 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
                   new_draw_info_format(NDI_UNIQUE, 0, caster, "You curse %s!", tmp->name);
               /* change this to negative ! */
               /* ADD POSITIVE WC ADD HERE */
-              force->stats.ac -= SP_level_dam_adjust(op, caster, SP_CURSE); 
+              force->stats.ac -= SP_level_dam_adjust(op, caster, SP_CURSE);
               force->stats.wc -= SP_level_dam_adjust(op, caster, SP_CURSE);
               break;
-          } 
+          }
         case SP_BLESS:
           {
               object   *god = find_god(determine_god(op));
@@ -1563,7 +1563,7 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
               force->stats.wc += SP_level_dam_adjust(op, caster, SP_BLESS);
               force->stats.ac += SP_level_dam_adjust(op, caster, SP_BLESS);
               break;
-          } 
+          }
         case SP_DARK_VISION:
           SET_FLAG(force, FLAG_SEE_IN_DARK);
           break;
@@ -1649,7 +1649,7 @@ int cast_change_attr(object *op, object *caster, object *target, int dir, int sp
         case SP_INVULNERABILITY:
         case SP_PROTECTION:
           /* Don't give them everything, so can't do a simple loop.
-           * Added holyword & blind with PR's - they seemed to be 
+           * Added holyword & blind with PR's - they seemed to be
            * misising before.
            * Note: These Spells shouldn't be used. Especially not on players! -AV
            */
@@ -1751,7 +1751,7 @@ int summon_pet(object *op, int dir, SpellTypeFrom item)
     archetype  *at;
 
     /*
-      level = ((op->head?op->head->level:op->level) / 4); 
+      level = ((op->head?op->head->level:op->level) / 4);
     */
     level = ((op->head ? op->head->level : SK_level(op)) / 4);
     if (level >= MAX_PET_MONSTERS)
@@ -1853,7 +1853,7 @@ int summon_pet(object *op, int dir, SpellTypeFrom item)
                 new_draw_info(NDI_UNIQUE, 0, op, "no more pets for this casting.");
                 if (item != spellNormal)
                 {
-                    /* op->stats.sp += (5 + 12 * level + op->level) / (number - i); */ 
+                    /* op->stats.sp += (5 + 12 * level + op->level) / (number - i); */
                     op->stats.sp += (5 + 12 * level + SK_level(op)) / (number - i);
                     if (op->stats.sp < 0)
                         op->stats.sp = 0;
@@ -2219,13 +2219,13 @@ int alchemy(object *op)
             }
             }
             alchemy_object(tmp, &small_nuggets, &large_nuggets, &weight);
-            
+
             if (weight>weight_max) {
             update_map(op, small_nuggets, large_nuggets, x, y);
             return 1;
             }
-          } 
-        
+          }
+
      }
 
         update_map(op, small_nuggets, large_nuggets, x, y);
@@ -2438,7 +2438,7 @@ int cast_identify(object *op, int level, object *single_ob, int mode)
      * with 1000 items on the floor - but we don't want have this much junk
      * lot
      *
-    if(IDENTIFY_MODE_ALL) 
+    if(IDENTIFY_MODE_ALL)
     {
       for(tmp = get_map_ob(op->map,op->x,op->y);tmp!=NULL;tmp=tmp->above)
       if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED) && !IS_SYS_INVISIBLE(tmp) &&
@@ -2599,7 +2599,7 @@ static int cast_detection_old(object *op, object *target,int type) {
     mapstruct   *m;
 
     detect_arch = find_archetype("detect_magic");
-    if (detect_arch == (archetype *) NULL) 
+    if (detect_arch == (archetype *) NULL)
     {
         LOG(llevBug, "BUG: Couldn't find archetype detect_magic (%s).\n", query_name(op));
         return 0;
@@ -2614,7 +2614,7 @@ static int cast_detection_old(object *op, object *target,int type) {
         if(!(m = out_of_map(op->map, &nx, &ny)))
             continue;
 
-        if (type==SP_SHOW_INVIS) 
+        if (type==SP_SHOW_INVIS)
             last = get_map_ob(m, nx, ny);
         else {
         for (tmp=get_map_ob(m, nx, ny); tmp; tmp=tmp->above) last=tmp;
@@ -2626,9 +2626,9 @@ static int cast_detection_old(object *op, object *target,int type) {
 
         if (tmp) last=tmp->above;
         }
-        
-        for (tmp = last; 
-        tmp && (!done_one || type==SP_DETECT_MAGIC || type==SP_DETECT_CURSE); 
+
+        for (tmp = last;
+        tmp && (!done_one || type==SP_DETECT_MAGIC || type==SP_DETECT_CURSE);
         tmp=tmp->above) {
 
         switch(type) {
@@ -2672,8 +2672,8 @@ static int cast_detection_old(object *op, object *target,int type) {
             }
             break;
 
-        } 
-         } 
+        }
+         }
 
         if (done_one) {
         object *detect_ob = arch_to_object(detect_arch);
@@ -2713,26 +2713,26 @@ static int cast_detection_old(object *op, object *target,int type) {
             done_one = 1;
             }
             break;
-        } 
-    } 
+        }
+    }
     }
     return 1;
 }
 */
-/* Shamelessly hacked from PeterM's cast_charm and destruction code 
- *  - b.t. thomas@nomad.astro.psu.edu        
- */ 
+/* Shamelessly hacked from PeterM's cast_charm and destruction code
+ *  - b.t. thomas@nomad.astro.psu.edu
+ */
 
-/* Changes in the spell code to make it more powerfull - now it can 
- * pacify multi-square creatures, and has greater range - Aug 95 b.t. 
+/* Changes in the spell code to make it more powerfull - now it can
+ * pacify multi-square creatures, and has greater range - Aug 95 b.t.
  */
 /* New modification -- w/ Multigod hack, now if its a member of an aligned
  * race, we automatically pacify it. b.t.
- */ 
+ */
 
 int cast_pacify(object *op, object *weap, archetype *arch, int spellnum)
 {
-    int         i, r, j, xt, yt; 
+    int         i, r, j, xt, yt;
     object     *tmp, *effect;
     mapstruct  *m;
     object     *god = find_god(determine_god(op));
@@ -2753,19 +2753,19 @@ int cast_pacify(object *op, object *weap, archetype *arch, int spellnum)
             if (tmp->type == PLAYER)
                 continue;
 
-            /* we only go through checking if the monster is not aligned 
-            member, we dont worship a god, or monster has no race */ 
+            /* we only go through checking if the monster is not aligned
+            member, we dont worship a god, or monster has no race */
             if (!tmp->race || !god || !god->race || !strstr(god->race, tmp->race))
             {
                 if (tmp->resist[ATNR_MAGIC] == 100 || tmp->resist[ATNR_GODPOWER] == 100)
                     continue;
                 /* multiple square monsters only when caster is => level of creature */
                 if ((tmp->more || tmp->head) && (SK_level(op) < tmp->level))
-                    continue;  
+                    continue;
                 if (weap->slaying)      /* selective pacify */
                     if (tmp->race != weap->slaying && tmp->name != weap->slaying)
                         continue;
-                /* if(op->level <( (RANDOM()%(2*tmp->level+1))-(op->stats.Cha-10)/2)) continue; */ 
+                /* if(op->level <( (RANDOM()%(2*tmp->level+1))-(op->stats.Cha-10)/2)) continue; */
                 if (SK_level(op) < random_roll(0, 2 * tmp->level, op, PREFER_LOW) - (op->stats.Cha - 10) / 2)
                     continue;
             }
@@ -2777,7 +2777,7 @@ int cast_pacify(object *op, object *weap, archetype *arch, int spellnum)
                 insert_ob_in_map(effect, tmp->map, op, 0);
             }
             SET_FLAG(tmp, FLAG_UNAGGRESSIVE);
-        }      
+        }
 
     return 1;
 }
@@ -2807,9 +2807,9 @@ int summon_fog(object *op, object *caster, int dir, int spellnum)
             return 0;
         }
         tmp = get_archetype(spellarch[spellnum]->name);
-        tmp->x = dx,tmp->y = dy;    /* all fog starts in 1 place */ 
-#ifdef WALL_CREDIT              /* does someone get exp for the kills? */ 
-        set_owner(tmp, op);     /* note however, that after 'fog' moves */ 
+        tmp->x = dx,tmp->y = dy;    /* all fog starts in 1 place */
+#ifdef WALL_CREDIT              /* does someone get exp for the kills? */
+        set_owner(tmp, op);     /* note however, that after 'fog' moves */
         /* it is no longer owned. It is unlikely */
         /* that players will garner much exp with */
         /* this spell */
@@ -2822,7 +2822,7 @@ int summon_fog(object *op, object *caster, int dir, int spellnum)
 
 /*  create_the_feature:  peterm  */
 /*  implementation of the spells which build directors, lightning
- *   walls, bullet walls, and fireballwalls.  
+ *   walls, bullet walls, and fireballwalls.
  */
 /* WARNING - do a blocked() check for the spell object - not for the op or caster */
 int create_the_feature(object *op, object *caster, int dir, int spell_effect)
@@ -3043,7 +3043,7 @@ void counterspell(object *op, int dir)
 
     for (tmp = get_map_ob(m, xt, yt); tmp != NULL; tmp = tmp->above,nflag = 0)
     {
-        /* Basially, if the object is magical and not counterspell, 
+        /* Basially, if the object is magical and not counterspell,
          * we will more or less remove the object.  Changed in 0.94.3
          * so that we don't kill monsters with this (some monsters attacktype
          * has magic in it).
@@ -3087,7 +3087,7 @@ void counterspell(object *op, int dir)
         {
             case 1:
               {
-                  /* { if(op->level > tmp->level) { */ 
+                  /* { if(op->level > tmp->level) { */
                   if (SK_level(op) > tmp->level)
                   {
                       remove_ob(tmp);
@@ -3126,13 +3126,13 @@ int summon_hostile_monsters(object *op, int n, const char *monstername)
 }
 
 
-/*  charm spell by peterm@soda.berkeley.edu 
+/*  charm spell by peterm@soda.berkeley.edu
     searches nearby squares for monsters to charm.  Each of them
     is subject to being charmed, that is, to becoming the pet
     monster of the caster.  Monsters larger than 1 square
     are uncharmeable right now.  */
 
-/* Aug 95 - hack on the code to make it charm only undead for 
+/* Aug 95 - hack on the code to make it charm only undead for
  * priests, and not charm undead for magicians -b.t
  */
 
@@ -3162,7 +3162,7 @@ int cast_charm(object *op, object *caster, archetype *arch, int spellnum)
             continue;
         if (tmp->more || tmp->head)
             continue;  /* multiple square monsters NOT */
-        /* if(op->level <( (RANDOM()%(2*tmp->level+1))-(op->stats.Cha-10)/2)) continue; */ 
+        /* if(op->level <( (RANDOM()%(2*tmp->level+1))-(op->stats.Cha-10)/2)) continue; */
         if (SK_level(op) < random_roll(0, 2 * tmp->level, op, PREFER_LOW) - (op->stats.Cha - 10) / 2)
             continue;
 
@@ -3189,7 +3189,7 @@ int cast_charm_undead(object *op, object *caster, archetype *arch, int spellnum)
     object     *tmp, *effect, *god = find_god(determine_god(op));
 
     if (op->type != PLAYER)
-        return 0; 
+        return 0;
     if (QUERY_FLAG(caster, FLAG_UNDEAD) || (god->race && strstr(god->race, undead_name) != NULL))
     {
         bonus = 5;
@@ -3256,10 +3256,10 @@ object * choose_cult_monster(object *pl, object *god, int summon_level)
     /* Determine the number of races available */
     racenr = 0;
     strcpy(buf, god->race);
-    race = strtok(buf, ","); 
+    race = strtok(buf, ",");
     while (race)
     {
-        racenr++; 
+        racenr++;
         race = strtok(NULL, ",");
     }
 
@@ -3289,7 +3289,7 @@ object * choose_cult_monster(object *pl, object *god, int summon_level)
         return 0;
     }
 
-    /* search for an apprplritate monster on this race list */ 
+    /* search for an apprplritate monster on this race list */
     mon_nr = 0;
     for (tobl = list->member; tobl; tobl = tobl->next)
     {
@@ -3408,7 +3408,7 @@ int summon_cult_monsters(object *op, int old_dir)
         if (!(head = fix_summon_pet(mon->arch, op, dir, 0)))
             continue;
 
-        /* now, a little bit of tailoring. If the monster is much lower in 
+        /* now, a little bit of tailoring. If the monster is much lower in
          * level than the summon_level, we get a better monster */
 
         if ((head->level + 5) < summon_level)
@@ -3473,7 +3473,7 @@ int summon_cult_monsters(object *op, int old_dir)
     return 1;
 }
 
-/* summon_avatar() - taken from the code which summons golems. We 
+/* summon_avatar() - taken from the code which summons golems. We
  * cant use because we need to throw in a few extra's here. b.t.
  */
 
@@ -3481,7 +3481,7 @@ int summon_avatar(object *op, object *caster, int dir, archetype *at, int spelln
 {
     object *tmp;
     char    buf[MAX_BUF];
-    object *god = find_god(determine_god(caster)); 
+    object *god = find_god(determine_god(caster));
 
     if (god)
         at = determine_holy_arch(god, (spellnum == SP_HOLY_SERVANT) ? "holy servant" : "avatar");
@@ -3551,7 +3551,7 @@ int summon_avatar(object *op, object *caster, int dir, archetype *at, int spelln
     if (!(tmp->attacktype & AT_PHYSICAL))
         tmp->attacktype |= AT_PHYSICAL;
 
-    /*  make experience increase in proportion to the strength of 
+    /*  make experience increase in proportion to the strength of
      *  the summoned creature. */
     tmp->stats.exp *= SP_level_spellpoint_cost(op, caster, spellnum) / spells[spellnum].sp;
     tmp->speed_left = -1;
@@ -3562,18 +3562,18 @@ int summon_avatar(object *op, object *caster, int dir, archetype *at, int spelln
         /* give the player control of the golem */
         send_golem_control(tmp, GOLEM_CTR_ADD);
         CONTR(op)->golem = tmp;
-    } 
+    }
     insert_ob_in_map(tmp, op->map, op, 0);
     return 1;
 }
 
 /* fix_summon_pet() - this makes multisquare/single square monsters
- * properly for map insertion. 
+ * properly for map insertion.
  */
 object * fix_summon_pet(archetype *at, object *op, int dir, int type)
 {
     archetype      *atmp;
-    object*tmp =    NULL, *prev = NULL, *head = NULL; 
+    object*tmp =    NULL, *prev = NULL, *head = NULL;
 
     for (atmp = at; atmp != NULL; atmp = atmp->more)
     {
@@ -3615,7 +3615,7 @@ object * fix_summon_pet(archetype *at, object *op, int dir, int type)
             }
             else
                 tmp->type = GOLEM;
-        }  
+        }
         if (head == NULL)
             head = tmp;
         tmp->x = op->x + freearr_x[dir] + tmp->arch->clone.x;
@@ -3728,27 +3728,27 @@ int finger_of_death(object *op, object *caster, int dir)
         success = 0;
         if (random_roll(0, 2, op, PREFER_LOW))
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "Idiot! Your spell boomerangs!"); 
+            new_draw_info(NDI_UNIQUE, 0, op, "Idiot! Your spell boomerangs!");
             hitter->x = op->x;
             hitter->y = op->y;
         }
         else
         {
-            new_draw_info_format(NDI_UNIQUE, 0, op, "The %s looks stronger!", query_name(target));  
-            target->stats.hp = target->stats.maxhp * 2; 
+            new_draw_info_format(NDI_UNIQUE, 0, op, "The %s looks stronger!", query_name(target));
+            target->stats.hp = target->stats.maxhp * 2;
             return 0;
         }
-    }  
+    }
 
-    insert_ob_in_map(hitter, op->map, op, 0); 
+    insert_ob_in_map(hitter, op->map, op, 0);
 
     return success;
 }
 
-/* animate_weapon - 
+/* animate_weapon -
  * Generalization of staff_to_snake.  Makes a golem out of the caster's weapon.
  * The golem is based on the archetype specified, modified by the caster's level
- * and the attributes of the weapon.  The weapon is inserted in the golem's 
+ * and the attributes of the weapon.  The weapon is inserted in the golem's
  * inventory so that it falls to the ground when the golem dies.    -- DAMN */
 
 /* WARNING - include out_of_map()  check here AND adjust blocked for the new arch we
@@ -3773,7 +3773,7 @@ int animate_weapon(object *op, object *caster, int dir, archetype *at, int spell
         {
             control_golem(CONTR(op)->golem, dir);
             return 0;
-        } 
+        }
     if (op->type != PLAYER)
         return 0;  /* exit if it's not a player using this spell. */
     /* if no direction specified, pick one */
@@ -3811,7 +3811,7 @@ int animate_weapon(object *op, object *caster, int dir, archetype *at, int spell
             if (op->type == PLAYER)
             {
                 new_draw_info(NDI_UNIQUE, 0, op, "You need to wield a weapon to animate it.");
-            }   
+            }
             return 0;
         }
         else if (spellnum == SP_STAFF_TO_SNAKE && strcmp(weapon->name, "quarterstaff"))
@@ -4026,10 +4026,10 @@ int cast_nightfall(object *op)
 }
 
 /* cast_faery_fire() - this spell primary purpose is to light
- * up all single-space monsters on a map. Magic immune and 
- * multi-space monsters are currently not supposed to light 
+ * up all single-space monsters on a map. Magic immune and
+ * multi-space monsters are currently not supposed to light
  * up. If USE_LIGHTING is not defined, this spell is only
- * capable of doing minor fire damage. I hacked this out of 
+ * capable of doing minor fire damage. I hacked this out of
  * the destruction code. -b.t.
  */
 
@@ -4081,9 +4081,9 @@ int cast_faery_fire(object *op, object *caster)
 }
 
 /* make_object_glow() - currently only makes living objects glow.
- * we do this by creating a "force" and inserting it in the 
+ * we do this by creating a "force" and inserting it in the
  * object. if time is 0, the object glows permanently. To truely
- * make this work for non-living objects, we would have to 
+ * make this work for non-living objects, we would have to
  * give them the capability to have an inventory. b.t.
  */
 /* outdated too with new lightning system - MT 2004 */
@@ -4104,7 +4104,7 @@ int make_object_glow(object *op, int radius, int time)
 
     if (!tmp->env || op != tmp->env)
     {
-        LOG(llevBug, "BUG: make_object_glow() failed to insert glowing force in %s\n", query_name(op)); 
+        LOG(llevBug, "BUG: make_object_glow() failed to insert glowing force in %s\n", query_name(op));
         return 0;
     }
     return 1;
@@ -4207,7 +4207,7 @@ int cast_cause_disease(object *op, object *caster, int dir, archetype *disease_a
                     return 1;
                 }
             }
-        /* no more infecting through walls - 
+        /* no more infecting through walls -
               * we will use PASS_THRU but P_NO_PASS only will stop us
               */
         if ((wall(m, xt, yt) & (~(P_NO_PASS | P_PASS_THRU| P_PASS_ETHEREAL))) == P_NO_PASS)
@@ -4223,8 +4223,8 @@ int cast_cause_disease(object *op, object *caster, int dir, archetype *disease_a
 which he carries with him, but which acts on the map immediately
 around him.
 Aura parameters:
-food:  duration counter.   
-attacktype:  aura's attacktype 
+food:  duration counter.
+attacktype:  aura's attacktype
 other_arch:  archetype to drop where we attack
 
  */
@@ -4324,7 +4324,7 @@ void move_peacemaker(object *op)
             }
         }
     }
-}   
+}
 
 
 int cast_cause_conflict(object *op, object *caster, archetype *spellarch, int type)
@@ -4362,7 +4362,7 @@ int cast_cause_conflict(object *op, object *caster, archetype *spellarch, int ty
                 SET_FLAG(tmp, FLAG_BERSERK);
                 if (tmp->name)
                 {
-                    sprintf(buf, "You've clouded %s's mind.  He turns on his friends!", tmp->name); 
+                    sprintf(buf, "You've clouded %s's mind.  He turns on his friends!", tmp->name);
                     new_draw_info(NDI_RED, 0, op, buf);
                 }
             }

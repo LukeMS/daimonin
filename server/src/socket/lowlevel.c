@@ -74,7 +74,7 @@ void SockList_AddString(SockList *sl, char *data)
  * TEST THE read packet function. Code is in the style of education source.
  */
 
-/* When called, we fill sl1 with a command. 
+/* When called, we fill sl1 with a command.
  * If return is 1, we have a valid command.
  * 0 means we got not a valid.
  */
@@ -144,7 +144,7 @@ int SockList_ReadPacket(NewSocket *ns, int len)
             if (WSAGetLastError() == WSAECONNRESET)
                 LOG(llevDebug, "Connection closed by client\n");
             else
-                LOG(llevDebug, "ReadPacket got error %d, returning 0\n", WSAGetLastError());        
+                LOG(llevDebug, "ReadPacket got error %d, returning 0\n", WSAGetLastError());
             return stat_ret;
         }
 #else
@@ -152,10 +152,10 @@ int SockList_ReadPacket(NewSocket *ns, int len)
         {
             LOG(llevDebug, "ReadPacket got error %d, returning 0\n", errno);
             return stat_ret;
-        }   
+        }
 #endif
         return 1;
-    } 
+    }
 
     return stat_ret;
 }
@@ -264,7 +264,7 @@ void write_socket_buffer(NewSocket *ns)
             cst_tot.obytes += amt;
             cst_lst.obytes += amt;
 #endif
-        } 
+        }
         while (ns->outputbuffer.len > 0);
     }
 

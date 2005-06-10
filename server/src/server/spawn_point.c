@@ -36,7 +36,7 @@ static object * spawn_monster(object *gen, object *orig, int range)
 
     i = find_first_free_spot2(at, orig->map, orig->x, orig->y, 0, range);
     if (i == -1)
-        return NULL; 
+        return NULL;
     while (at != NULL)
     {
         op = get_object();
@@ -68,7 +68,7 @@ static object * spawn_monster(object *gen, object *orig, int range)
     return ret; /* return object ptr to our spawn */
 }
 
-/* check the current darkness on this map allows to spawn 
+/* check the current darkness on this map allows to spawn
  * 0: not allowed, 1: allowed
  */
 static inline int spawn_point_darkness(object *spoint, int darkness)
@@ -255,7 +255,7 @@ void spawn_point(object *op)
     }
 
 	insert_spawn_mob_loot(op, mob, tmp);
-		
+
     op->last_sp = rmt; /* this is the last rand() for what we have spawned! */
 
     op->enemy = mob; /* chain the mob to our spawn point */

@@ -5,9 +5,9 @@ function find_teddy(where)
     end
 end
 
--- We store the name of our friend in the teddy. 
+-- We store the name of our friend in the teddy.
 local teddy = find_teddy(event.me)
-if teddy and teddy.slaying == '' then 
+if teddy and teddy.slaying == '' then
   local ai = event.me:GetAI()
   local knowns = ai:GetKnownMobs()
 

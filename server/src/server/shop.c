@@ -34,7 +34,7 @@
 
 
 /* i reworked this function in most parts. I removed every part which try to recalculate
- * the item value. Now we always use the real value or the clone value and only adjust 
+ * the item value. Now we always use the real value or the clone value and only adjust
  * it by charisma or buy/sell base modifiers.
  */
 sint64 query_cost(object *tmp, object *who, int flag)
@@ -126,7 +126,7 @@ sint64 query_cost(object *tmp, object *who, int flag)
     if (flag == F_BUY)
         diff = 1.0 - (double) cha_bonus[charisma];
     else
-        diff = 0.20 + (double) cha_bonus[charisma];  
+        diff = 0.20 + (double) cha_bonus[charisma];
 
     val = (sint64) ((double)val*diff); /* our real value */
 
@@ -674,7 +674,7 @@ static void add_shop_item(object *tmp, shopinv *items, int *numitems, int *numal
 
 /* This listing generator need really performance.
  * He collect, sort and generate full names for every item in the shop and
- * transfer it to the player. This cost cpu time & bandwith. 
+ * transfer it to the player. This cost cpu time & bandwith.
  * With 10 players, this will not count... with 100+, this need to be reworked.
  */
 void shop_listing(object *op)

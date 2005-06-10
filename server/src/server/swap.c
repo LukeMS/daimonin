@@ -210,7 +210,7 @@ void check_active_maps()
             continue;
 
         /* This is called when MAX_OBJECTS_LWM is *NOT* defined.
-         * If LWM is set, we only swap maps out when we run out of objects 
+         * If LWM is set, we only swap maps out when we run out of objects
          */
 #ifndef MAX_OBJECTS_LWM
         swap_map(map, 0);
@@ -265,7 +265,7 @@ void swap_below_max(const char *except_level)
     }
 }
 
-/* count the player on a map, using the local map player list 
+/* count the player on a map, using the local map player list
  */
 int players_on_map(mapstruct *m)
 {
@@ -338,7 +338,7 @@ void flush_old_maps()
                     CFP.Value[0] = (void *)(&evtid);
                     CFP.Value[1] = (void *)(m->path);
                     GlobalEvent(&CFP);
-            #endif    
+            #endif
             */
             clean_tmp_map(m);
             oldmap = m;

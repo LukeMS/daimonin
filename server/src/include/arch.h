@@ -43,7 +43,7 @@ typedef struct archt
     object                     *base_clone;         /* used by artifacts list: if != NULL,
                                                      * this object is the base object and clone is
                                                      * the modified artifacts object.
-                                                     * we use base_clone for unidentified objects 
+                                                     * we use base_clone for unidentified objects
                                                      * (to get unified "non identified" values),
                                                      * or it is used to get a base object when we
                                                      * remove the artifacts changes (cancellation, dispel...)

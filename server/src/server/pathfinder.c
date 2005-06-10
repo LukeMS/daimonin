@@ -24,7 +24,7 @@
 */
 
 /*
- * Daimonin pathfinding. 
+ * Daimonin pathfinding.
  * (C) 2003 Björn Axelsson, gecko@acc.umu.se
  */
 
@@ -118,10 +118,10 @@ void request_new_path(object *op)
     if (op == NULL || op->type != MONSTER || MOB_DATA(op) == NULL || MOB_PATHDATA(op)->path_requested)
         return;
 
-#ifdef DEBUG_PATHFINDING    
+#ifdef DEBUG_PATHFINDING
     LOG(llevDebug, "request_new_path(): enqueing path request for >%s< -> >%s<\n", STRING_OBJ_NAME(op),
         STRING_OBJ_NAME(MOB_PATHDATA(op)->target_obj));
-#endif    
+#endif
 
     if (pathfinder_queue_enqueue(op))
         MOB_PATHDATA(op)->path_requested = TRUE;
@@ -142,7 +142,7 @@ object * get_next_requested_path()
     }
     while (!OBJECT_VALID(op, count) || !MOB_DATA(op));
 
-#ifdef DEBUG_PATHFINDING    
+#ifdef DEBUG_PATHFINDING
     LOG(llevDebug, "get_next_requested_path(): dequeued '%s' -> '%s'\n", STRING_OBJ_NAME(op),
         STRING_OBJ_NAME(MOB_PATHDATA(op)->target_obj));
 #endif
@@ -150,10 +150,10 @@ object * get_next_requested_path()
     MOB_PATHDATA(op)->path_requested = FALSE;
 
     return op;
-}   
+}
 
 /*
- * List management functions 
+ * List management functions
  */
 
 /* Allocate and initialize a node */
@@ -165,7 +165,7 @@ static path_node * make_node(mapstruct *map, sint16 x, sint16 y, uint16 cost, pa
     if (pathfinder_nodebuf_next == PATHFINDER_NODEBUF)
     {
 #ifdef DEBUG_PATHFINDING
-        LOG(llevDebug, "make_node(): out of static buffer memory (this is not a problem)\n");        
+        LOG(llevDebug, "make_node(): out of static buffer memory (this is not a problem)\n");
 #endif
         return NULL;
     }
@@ -222,7 +222,7 @@ static void insert_priority_node(path_node *node, path_node **list)
         last = tmp;
         if (node->heuristic <= tmp->heuristic)
         {
-            insert_before = tmp;       
+            insert_before = tmp;
             break;
         }
     }
@@ -252,8 +252,8 @@ static void insert_priority_node(path_node *node, path_node **list)
     /* Print out the values of the prioqueue -> should be ordered */
     /*
     printf("post: ");
-    for(tmp = *list; tmp; tmp = tmp->next) 
-        printf("%.3f ", tmp->heuristic);        
+    for(tmp = *list; tmp; tmp = tmp->next)
+        printf("%.3f ", tmp->heuristic);
     printf("\n");
     */
 }
@@ -293,7 +293,7 @@ struct path_segment * encode_path(path_node *path, struct path_segment **last_se
 /* Compress a path by removing redundant segments.
  *
  * Current implementation removes segments that can be traversed by walking in a single direction.
- * 
+ *
  * Something advanced could be to use a hughes transform / or something smart with cross products
  */
 path_node * compress_path(path_node *path)
@@ -306,9 +306,9 @@ path_node * compress_path(path_node *path)
     int         removed_nodes = 0, total_nodes = 2;
 #endif
 
-    /* Rules: 
+    /* Rules:
      *  - always leave first and last path nodes
-     *  - if the movement direction of node n to n+1 is the same 
+     *  - if the movement direction of node n to n+1 is the same
      *    as for n-1 to n, then remove node n.
      */
 
@@ -316,9 +316,9 @@ path_node * compress_path(path_node *path)
     if (path == NULL || path->next == NULL)
         return path;
 
-    next = path->next;    
+    next = path->next;
 
-    get_rangevector_from_mapcoords(path->map, path->x, path->y, next->map, next->x, next->y, &v, RV_MANHATTAN_DISTANCE); 
+    get_rangevector_from_mapcoords(path->map, path->x, path->y, next->map, next->x, next->y, &v, RV_MANHATTAN_DISTANCE);
     last_dir = v.direction;
 
     for (tmp = next; tmp && tmp->next; tmp = next)
@@ -328,7 +328,7 @@ path_node * compress_path(path_node *path)
 #ifdef DEBUG_PATHFINDING
         total_nodes++;
 #endif
-        get_rangevector_from_mapcoords(tmp->map, tmp->x, tmp->y, next->map, next->x, next->y, &v, RV_MANHATTAN_DISTANCE); 
+        get_rangevector_from_mapcoords(tmp->map, tmp->x, tmp->y, next->map, next->x, next->y, &v, RV_MANHATTAN_DISTANCE);
         if (last_dir == v.direction)
         {
             remove_node(tmp, &path);
@@ -358,7 +358,7 @@ path_node * compress_path(path_node *path)
  *
  * If this function overestimates, we are not guaranteed an optimal path.
  *
- * get_rangevector can fail here if there is no maptile path between start and goal. 
+ * get_rangevector can fail here if there is no maptile path between start and goal.
  * if it does, we have to return an error value (HEURISTIC_ERROR)
  *
  */
@@ -404,8 +404,8 @@ float distance_heuristic(path_node *start, path_node *current, path_node *goal)
     return h;
 }
 
-/* Find untraversed neighbours of the node and add to the open_list 
- * 
+/* Find untraversed neighbours of the node and add to the open_list
+ *
  * Returns FALSE if we ran into a limit of any kind and cannot continue,
  * or TRUE if everything was ok.
  */
@@ -418,7 +418,7 @@ int find_neighbours(path_node *node, path_node **open_list, path_node **closed_l
 
     for (i = 1; i < 9; i++)
     {
-        x2 = node->x + freearr_x[i]; 
+        x2 = node->x + freearr_x[i];
         y2 = node->y + freearr_y[i];
 
         map = out_of_map(node->map, &x2, &y2);
@@ -429,12 +429,12 @@ int find_neighbours(path_node *node, path_node **open_list, path_node **closed_l
 
 #ifdef DEBUG_PATHFINDING
             searched_nodes++;
-#endif    
+#endif
 
             /* Multi-arch or not? (blocked_link_2 works for normal archs too, but is more expensive) */
             if (op->head || op->more)
                 block = blocked_link_2(op, map, x2, y2);
-            /* TODO: handle doors for multi-archs. Will require some modification to 
+            /* TODO: handle doors for multi-archs. Will require some modification to
              * blocked_link_2 i guess: (don't return as soon as we find a block: if
              * that block is P_DOOR_CLOSED, keep searching and add P_DOOR_CLOSED to the return
              * value.)
@@ -511,7 +511,7 @@ path_node * find_path(object *op, mapstruct *map1, int x1, int y1, mapstruct *ma
     {
 #ifdef DEBUG_PATHFINDING
         LOG(llevDebug, "find_path(): Failed to find path between targets. Aborting!\n");
-#endif        
+#endif
         return NULL;
     }
 
@@ -584,7 +584,7 @@ path_node * find_path(object *op, mapstruct *map1, int x1, int y1, mapstruct *ma
     {
         int y, x;
         for(y=0; y<map1->height; y++) {
-            for(x=0; x<map1->height; x++) 
+            for(x=0; x<map1->height; x++)
                 printf("%c", (map1->bitmap[y] & (1U << x)) ? 'X' : '-');
             printf("\n");
         }

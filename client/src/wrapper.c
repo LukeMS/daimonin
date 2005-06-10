@@ -64,7 +64,7 @@ Boolean SYSTEM_Start(void)
 
     sprintf(buf, "%s%s", GetBitmapDirectory(), CLIENT_ICON_NAME);
     if ((icon = IMG_Load(buf)) != NULL)
-        SDL_WM_SetIcon(icon, 0);   
+        SDL_WM_SetIcon(icon, 0);
 
     SDL_WM_SetCaption(PACKAGE_NAME, PACKAGE_NAME);
 
@@ -119,7 +119,7 @@ char * GetGfxUserDirectory(void)
 
 char * GetMediaDirectory(void)
 {
-#if defined( __WIN_32)  || defined(__LINUX) 
+#if defined( __WIN_32)  || defined(__LINUX)
     return("media/");
 #endif
 }
@@ -341,7 +341,7 @@ uint32 get_video_flags(void)
         options.doublebuf_flag = FALSE;
         options.rleaccel_flag = FALSE;
         if (options.Full_RLEACCEL)
-            options.rleaccel_flag = TRUE;        
+            options.rleaccel_flag = TRUE;
         if (options.videoflags_full & SDL_DOUBLEBUF)
             options.doublebuf_flag = TRUE;
 
@@ -424,7 +424,7 @@ void parse_metaserver_data(char *info)
         }
         read_substr_char(info, tmp, &count, 0x0a);
         port = 13327;
-        /*if(version[0] == 'D')*/ /* Daimonin marker */    
+        /*if(version[0] == 'D')*/ /* Daimonin marker */
         add_metaserver_data(server, port, player, version, &desc_line[0][0], &desc_line[1][0], &desc_line[2][0],
                             &desc_line[3][0]);
     }

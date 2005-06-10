@@ -56,7 +56,7 @@ static _gui_interface_head *interface_cmd_head(char *data, int *pos)
 		if(c<=' ')
 			continue;
 
-		/* c is part of the head command inside the '<' - lets handle it 
+		/* c is part of the head command inside the '<' - lets handle it
 		 * It must be a command. If it is unknown, return NULL
 		 */
 		switch(c)
@@ -105,7 +105,7 @@ static _gui_interface_link *interface_cmd_link(char *data, int *pos)
 		if(c<=' ')
 			continue;
 
-		/* c is part of the head command inside the '<' - lets handle it 
+		/* c is part of the head command inside the '<' - lets handle it
 		 * It must be a command. If it is unknown, return NULL
 		 */
 		switch(c)
@@ -192,7 +192,7 @@ static _gui_interface_reward *interface_cmd_reward(char *data, int *pos)
 				return NULL;
 			head->mithril =atoi(buf);
 			break;
-			
+
 			default:
 				return NULL; /* error */
 			break;
@@ -291,7 +291,7 @@ static _gui_interface_icon *interface_cmd_icon(char *data, int *pos)
 					return NULL;
 				head->mode = buf[0];
 				break;
-				
+
 			case 'b': /* test body */
 				if(!(buf = get_parameter_string(data, pos)))
 					return NULL;
@@ -331,7 +331,7 @@ static _gui_interface_button *interface_cmd_button(char *data, int *pos)
 		if(c<=' ')
 			continue;
 
-		/* c is part of the head command inside the '<' - lets handle it 
+		/* c is part of the head command inside the '<' - lets handle it
 		 * It must be a command. If it is unknown, return NULL
 		 */
 		switch(c)
@@ -372,7 +372,7 @@ void reset_gui_interface(void)
 	gui_interface_npc = NULL;
 	if (cpl.menustatus == MENU_NPC)
 		cpl.menustatus = MENU_NO;
-	
+
 }
 
 static _gui_interface_struct *format_gui_interface(_gui_interface_struct *gui_int)
@@ -392,7 +392,7 @@ static _gui_interface_struct *format_gui_interface(_gui_interface_struct *gui_in
 	if(gui_int->used_flag&GUI_INTERFACE_MESSAGE)
 	{
 		int i, c=0;
-		
+
 		gui_int->message.line_count=0;
 		for(i=0;;i++)
 		{
@@ -423,7 +423,7 @@ static _gui_interface_struct *format_gui_interface(_gui_interface_struct *gui_in
 	if(gui_int->used_flag&GUI_INTERFACE_REWARD)
 	{
 		int i, c=0;
-		
+
 		gui_int->reward.line_count=0;
 		for(i=0;;i++)
 		{
@@ -442,7 +442,7 @@ static _gui_interface_struct *format_gui_interface(_gui_interface_struct *gui_in
 			{
 				gui_int->reward.lines[gui_int->reward.line_count][c++]=gui_int->reward.body_text[i];
 			}
-			
+
 			if(gui_int->reward.line_count>=INTERFACE_MAX_LINE || c>=INTERFACE_MAX_CHAR )
 			{
 				LOG(LOG_ERROR, "ERROR: interface call out of borders: %s\n", gui_int->reward.body_text);
@@ -466,7 +466,7 @@ static _gui_interface_struct *format_gui_interface(_gui_interface_struct *gui_in
 			gui_int->icon[s].picture = sprite_load_file(line, 0);
 		}
 	}
-	
+
 	/* prepare the buttons (titles) */
 	if(gui_int->used_flag&GUI_INTERFACE_DECLINE)
 	{
@@ -493,7 +493,7 @@ static _gui_interface_struct *format_gui_interface(_gui_interface_struct *gui_in
 			strcpy(gui_int->accept.title2,"~A~ccept");
 		}
 	}
-		
+
 	return gui_int;
 }
 
@@ -519,7 +519,7 @@ _gui_interface_struct *load_gui_interface(int mode, char *data, int len, int pos
 
 	for(;len>pos;pos++)
 	{
-		c = *(data+pos); 
+		c = *(data+pos);
 
 		if(c == '<')
 		{
@@ -528,11 +528,11 @@ _gui_interface_struct *load_gui_interface(int mode, char *data, int len, int pos
 				if(flag_end == 2) /* bug */
 				{
 					/*draw_info("ERROR: bad interface string (flag end error)", COLOR_RED);*/
-					LOG(LOG_ERROR, "ERROR: bad interface string (flag end error): %s\n", data);        
+					LOG(LOG_ERROR, "ERROR: bad interface string (flag end error): %s\n", data);
 					free(gui_int);
 					return NULL;
 				}
-					
+
 				/* our char before this was a '>' - now we get a '<' */
 				flag_start=0;
 				flag_end=0;
@@ -545,17 +545,17 @@ _gui_interface_struct *load_gui_interface(int mode, char *data, int len, int pos
 				if(flag_start == 2) /* bug */
 				{
 					/*draw_info("ERROR: bad interface string (flag start error)", COLOR_RED);*/
-					LOG(LOG_ERROR, "ERROR: bad interface string (flag start error): %s\n", data);        
+					LOG(LOG_ERROR, "ERROR: bad interface string (flag start error): %s\n", data);
 					free(gui_int);
 					return NULL;
 				}
-					
+
 				flag_start=0;
 				goto normal_char;
 			}
 			else
-				flag_start=1;				
-			
+				flag_start=1;
+
 		}
 		else if(c == '>')
 		{
@@ -578,9 +578,9 @@ _gui_interface_struct *load_gui_interface(int mode, char *data, int len, int pos
 				sprintf(buf, "found cmd: %c", c);
 				draw_info(buf, COLOR_GREEN);
 				*/
-	
+
 				cmd_mode = INTERFACE_CMD_NO;
-				
+
 				switch(c)
 				{
 					case 'h': /* head with picture & name this interface comes from */
@@ -589,7 +589,7 @@ _gui_interface_struct *load_gui_interface(int mode, char *data, int len, int pos
 						if(!head_tmp)
 						{
 							free(gui_int);
-							return NULL;							
+							return NULL;
 						}
 						memcpy(&gui_int->head, head_tmp,sizeof(_gui_interface_head));
 						gui_int->used_flag |=GUI_INTERFACE_HEAD;
@@ -601,7 +601,7 @@ _gui_interface_struct *load_gui_interface(int mode, char *data, int len, int pos
 						if(!message_tmp)
 						{
 							free(gui_int);
-							return NULL;							
+							return NULL;
 						}
 						memcpy(&gui_int->message, message_tmp,sizeof(_gui_interface_message));
 						gui_int->used_flag |=GUI_INTERFACE_MESSAGE;
@@ -613,7 +613,7 @@ _gui_interface_struct *load_gui_interface(int mode, char *data, int len, int pos
 						if(!reward_tmp)
 						{
 							free(gui_int);
-							return NULL;							
+							return NULL;
 						}
 						memcpy(&gui_int->reward, reward_tmp,sizeof(_gui_interface_reward));
 						gui_int->used_flag |=GUI_INTERFACE_REWARD;
@@ -625,11 +625,11 @@ _gui_interface_struct *load_gui_interface(int mode, char *data, int len, int pos
 						if(!link_tmp)
 						{
 							free(gui_int);
-							return NULL;							
+							return NULL;
 						}
 						memcpy(&gui_int->link[gui_int->link_count++], link_tmp,sizeof(_gui_interface_link));
 						break;
-						
+
 
 					case 'i': /* define a "icon" - graphical presentation of reward or message part */
 						cmd = INTERFACE_CMD_ICON;
@@ -637,7 +637,7 @@ _gui_interface_struct *load_gui_interface(int mode, char *data, int len, int pos
 						if(!icon_tmp)
 						{
 							free(gui_int);
-							return NULL;							
+							return NULL;
 						}
 						memcpy(&gui_int->icon[gui_int->icon_count++], icon_tmp,sizeof(_gui_interface_icon));
 						break;
@@ -648,7 +648,7 @@ _gui_interface_struct *load_gui_interface(int mode, char *data, int len, int pos
 						if(!button_tmp)
 						{
 							free(gui_int);
-							return NULL;							
+							return NULL;
 						}
 						memcpy(&gui_int->accept, button_tmp,sizeof(_gui_interface_button));
 						gui_int->used_flag |=GUI_INTERFACE_ACCEPT;
@@ -660,16 +660,16 @@ _gui_interface_struct *load_gui_interface(int mode, char *data, int len, int pos
 						if(!button_tmp)
 						{
 							free(gui_int);
-							return NULL;							
+							return NULL;
 						}
 						memcpy(&gui_int->decline, button_tmp,sizeof(_gui_interface_button));
 						gui_int->used_flag |=GUI_INTERFACE_DECLINE;
 						break;
-						
+
 					default:
-				
+
 						draw_info("ERROR: bad interface string (flag start error)", COLOR_RED);
-						LOG(LOG_ERROR, "ERROR: bad command tag: %s\n", data);        
+						LOG(LOG_ERROR, "ERROR: bad command tag: %s\n", data);
 						return FALSE;
 					break;
 				}
@@ -691,7 +691,7 @@ _gui_interface_struct *load_gui_interface(int mode, char *data, int len, int pos
 		}
 	}
 
-	/* if we are here, we have a legal gui_int structure. 
+	/* if we are here, we have a legal gui_int structure.
 	 * Now lets create a legal formular and preprocess some structures.
 	 */
 
@@ -707,7 +707,7 @@ _gui_interface_struct *load_gui_interface(int mode, char *data, int len, int pos
 gui_interface_send_command(int mode, char *cmd)
 {
 	char msg[1024];
-	
+
 	if(mode)
 	{
 		send_command(cmd, -1, SC_NORMAL);
@@ -723,6 +723,6 @@ gui_interface_send_command(int mode, char *cmd)
 		sprintf(msg,"Talking to %s: %s", cpl.target_name?cpl.target_name:"", cmd);
 		draw_info(msg,COLOR_WHITE);
 	}
-	
+
 	gui_interface_npc->status = GUI_INTERFACE_STATUS_WAIT;
 }

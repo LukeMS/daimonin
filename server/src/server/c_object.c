@@ -160,7 +160,7 @@ int sack_can_hold(object *pl, object *sack, object *op, int nrof)
 
 /* Pick up commands follow */
 /* pl = player (not always - monsters can use this now)
- * op is the object to put tmp into, 
+ * op is the object to put tmp into,
  * tmp is the object to pick up, nrof is the number to
  * pick up (0 means all of them)
  */
@@ -177,9 +177,9 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof)
     if (pl->type == PLAYER)
         CONTR(pl)->praying = 0;
 
-    /* IF the player is flying & trying to take the item out of a container 
-     * that is in his inventory, let him.  tmp->env points to the container 
-     * (sack, luggage, etc), tmp->env->env then points to the player (nested 
+    /* IF the player is flying & trying to take the item out of a container
+     * that is in his inventory, let him.  tmp->env points to the container
+     * (sack, luggage, etc), tmp->env->env then points to the player (nested
      * containers not allowed as of now)
      */
     if ((QUERY_FLAG(pl, FLAG_FLYING) || QUERY_FLAG(pl, FLAG_LEVITATE))&& !QUERY_FLAG(pl, FLAG_WIZ) && is_player_inv(tmp) != pl)
@@ -211,7 +211,7 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof)
 
     /* As usual, try to run the plugin _after_ tests, but _before_ side effects */
     /* Non-zero return value means to abort the pickup */
-    if(trigger_object_plugin_event(EVENT_PICKUP, tmp, pl, op, NULL, 
+    if(trigger_object_plugin_event(EVENT_PICKUP, tmp, pl, op, NULL,
                 &tmp_nrof, NULL, NULL, SCRIPT_FIX_ALL))
         return;
 
@@ -293,7 +293,7 @@ static void pick_up_object(object *pl, object *op, object *tmp, int nrof)
 }
 
 
-void pick_up(object *op, object *alt) 
+void pick_up(object *op, object *alt)
 {
     int         need_fix_tmp    = 0;
     object     *tmp             = NULL;
@@ -403,9 +403,9 @@ void pick_up(object *op, object *alt)
 
 
 /*
- *  This function was part of drop, now is own function. 
- *  Player 'op' tries to put object 'tmp' into sack 'sack', 
- *  if nrof is non zero, then nrof objects is tried to put into sack. 
+ *  This function was part of drop, now is own function.
+ *  Player 'op' tries to put object 'tmp' into sack 'sack',
+ *  if nrof is non zero, then nrof objects is tried to put into sack.
  */
 void put_object_in_sack(object *op, object *sack, object *tmp, long nrof)
 {
@@ -443,7 +443,7 @@ void put_object_in_sack(object *op, object *sack, object *tmp, long nrof)
      * we instead move the contents of that container into the active
      * container, this is only done if the object has something in it.
      */
-    /* we really don't need this anymore - after i had fixed the "can fit in" 
+    /* we really don't need this anymore - after i had fixed the "can fit in"
      * now we put containers with something in REALLY in other containers.
     */
     /*
@@ -486,7 +486,7 @@ void put_object_in_sack(object *op, object *sack, object *tmp, long nrof)
             new_draw_info(NDI_UNIQUE, 0, op, errmsg);
             return;
         }
-        /* Tell a client what happened other objects */ 
+        /* Tell a client what happened other objects */
         if (was_destroyed(tmp2, tmp2_tag))
             esrv_del_item(CONTR(op), tmp2_tag, tmp2_cont);
         else    /* this can proably be replaced with an update */
@@ -546,7 +546,7 @@ void drop_object(object *op, object *tmp, long nrof)
 {
     char    buf[MAX_BUF];
     object *floor;
-    int tmp_nrof; 
+    int tmp_nrof;
 
     if (QUERY_FLAG(tmp, FLAG_NO_DROP) && !QUERY_FLAG(op, FLAG_WIZ))
     {
@@ -606,7 +606,7 @@ void drop_object(object *op, object *tmp, long nrof)
         /* TODO: handle cases where we might want to reinsert the object */
         return;
     }
-    
+
     if (QUERY_FLAG(tmp, FLAG_STARTEQUIP))
     {
         if (op->type == PLAYER)
@@ -673,7 +673,7 @@ void drop(object *op, object *tmp)
      * playes inventory, but drop inventory wants to use the next value.
      */
     /* hmhm... THIS looks strange... for the new invisible system, i removed it MT-11-2002 */
-    /* if somewhat get invisible, the we still can handle it - SYS_INV is now always forbidden 
+    /* if somewhat get invisible, the we still can handle it - SYS_INV is now always forbidden
        if (IS_SYS_INVISIBLE(tmp)) {
     if (tmp->env && tmp->env->type != PLAYER) {
         remove_ob(tmp);
@@ -731,7 +731,7 @@ int command_dropall(object *op, char *params)
 
     curinv = op->inv;
 
-    /* 
+    /*
       This is the default.  Drops everything not locked or considered
       not something that should be dropped.
     */
@@ -905,7 +905,7 @@ static object * find_marked_object_rec(object *op, object **marked, uint32 *mark
      * start with the marked item, and search outwards through its env
      * until we find the player? Isn't env always cleared when an object
      * is removed from its container? */
-    
+
     /* This may seem like overkill, but we need to make sure that they
      * player hasn't dropped the item.  We use count on the off chance that
      * an item got reincarnated at some point.
@@ -1049,7 +1049,7 @@ char *examine_monster(object *op, object *tmp, char *buf, int flag)
 		sprintf(buf2,"%s is a %s %s%s.\n", att, gender, QUERY_FLAG(mon,FLAG_UNDEAD)?"undead ":"", mon->race);
 		strcat(buf,buf2);
 	}
-	
+
 	if(flag)
 	{
 	    if (mon->type == PLAYER)
@@ -1067,15 +1067,15 @@ char *examine_monster(object *op, object *tmp, char *buf, int flag)
 	}
 
     sprintf(buf2,"%s has a base damage of %d and hp of %d", att, mon->stats.dam, mon->stats.maxhp);
-	strcat(buf,buf2);	
+	strcat(buf,buf2);
 	if(QUERY_FLAG(mon,FLAG_READY_SPELL))
 	{
 		sprintf(buf2,",\nsp of %d and a sp recovery of %d", mon->stats.maxsp, mon->stats.Pow);
-		strcat(buf,buf2);	
+		strcat(buf,buf2);
 	}
     sprintf(buf2,".\n%s has a wc of %d and an ac of %d.\n", att, mon->stats.wc, mon->stats.ac);
 	strcat(buf,buf2);
-	
+
     for (val = val2 = -1,i = 0; i < NROFATTACKS; i++)
     {
         if (mon->resist[i] > 0)
@@ -1093,7 +1093,7 @@ char *examine_monster(object *op, object *tmp, char *buf, int flag)
         sprintf(buf2, "%s is natural vulnerable to some attacks.\n", att);
 		strcat(buf,buf2);
 	}
-	
+
     for (val = -1,val2 = i = 0; i < NROFPROTECTIONS; i++)
     {
         if (mon->protection[i] > val2)
@@ -1136,7 +1136,7 @@ char *examine_monster(object *op, object *tmp, char *buf, int flag)
         sprintf(buf2,"%s looks very ill.\n", att);
 		strcat(buf,buf2);
 	}
-	
+
 	if(op)
 		new_draw_info_format(NDI_UNIQUE, 0, op, buf);
 
@@ -1222,7 +1222,7 @@ char *examine(object *op, object *tmp, int flag)
 	    if(trigger_object_plugin_event(EVENT_EXAMINE,tmp,op,NULL,NULL,0,0,0,0)  && !QUERY_FLAG(op, FLAG_WIZ))
 		    return NULL;
 	}
-    
+
     /* Only quetzals can see the resistances on flesh. To realize
     this, we temporarily flag the flesh with SEE_INVISIBLE */
     if (op && op->type == PLAYER && tmp->type == FLESH && is_dragon_pl(op))
@@ -1269,7 +1269,7 @@ char *examine(object *op, object *tmp, int flag)
         {
             if (tmp->item_skill)
             {
-                sprintf(buf, "It needs a level of %d in %s to use.\n", tmp->item_level, 
+                sprintf(buf, "It needs a level of %d in %s to use.\n", tmp->item_level,
                     STRING_SAFE(CONTR(op)->exp_obj_ptr[tmp->item_skill-1]->name));
                 strcat(buf_out, buf);
             }
@@ -1488,7 +1488,7 @@ char *examine(object *op, object *tmp, int flag)
     {
         sprintf(buf, tmp->nrof > 1 ? "They weigh %3.3f kg.\n" : "It weighs %3.3f kg.\n",
             (float) (tmp->nrof ? tmp->weight * tmp->nrof : tmp->weight) / 1000.0f);
-		
+
 		strcat(buf_out, buf);
     }
 
@@ -1593,9 +1593,9 @@ char *examine(object *op, object *tmp, int flag)
 	if(op)
 	{
 		new_draw_info(NDI_UNIQUE, 0, op, buf_out);
-	
+
 		if (QUERY_FLAG(op, FLAG_WIZ))
-		{	
+		{
 			dump_object(tmp);
 			new_draw_info(NDI_UNIQUE, 0, op, errmsg);
 	    }
@@ -1605,7 +1605,7 @@ char *examine(object *op, object *tmp, int flag)
 
 /*
  * inventory prints object's inventory. If inv==NULL then print player's
- * inventory. 
+ * inventory.
  * [ Only items which are applied are showed. Tero.Haatanen@lut.fi ]
  */
 void inventory(object *op, object *inv)
@@ -1715,7 +1715,7 @@ int command_pickup(object *op, char *params)
   new_draw_info(NDI_UNIQUE, 0,op,putstring);
   sprintf(putstring,"0b");
 
-  for(j=0;j<32;j++) 
+  for(j=0;j<32;j++)
   {
     strcat(putstring,((i>>(31-j))&0x01)?"1":"0");
     if(!((j+1)%4))strcat(putstring," ");

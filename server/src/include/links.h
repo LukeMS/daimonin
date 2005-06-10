@@ -51,7 +51,7 @@ typedef struct oblnk
     int                         value;
     uint32                      flags;
     uint32                      ref_count;
-	union 
+	union
 	{											/* a local link paramter */
 		struct _tlist_tweak		*tl_tweak;
 	} parmlink;
@@ -73,11 +73,11 @@ typedef struct oblnk
  * because its only a pointer to a base arch treasure list.
  * _REF is used when we create a custom treasure list when loading
  * a object (see loader.c). We need to use a ref_count to handle
- * instances from that custom list (to avoid recreating the same 
+ * instances from that custom list (to avoid recreating the same
  * treasure list for every copy_object() ).
  * That engine is usef
  * TODO: We don't have a global list of custom designed treasure list,
- * like we do with the hash list for strings. Its possible - perhaps 
+ * like we do with the hash list for strings. Its possible - perhaps
  * its useful and speed up things but atm we don't have to much of them.
  */
 #define OBJLNK_FLAG_STATIC  0x1000

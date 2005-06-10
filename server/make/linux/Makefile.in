@@ -116,7 +116,7 @@ distclean:: clean
 
 install:: all
 	sh ../../install/linux/install.sh
-	
+
 proto:
 	@for dir in $(SUBDIRS); \
 	do \

@@ -89,10 +89,10 @@ int command_gsay(object *op, char *params)
     /* this happens when whitespace only string was submited */
     if (!params || *params == '\0')
         return 0;
-    
+
     /* moved down, cause if whitespace is shouted, then no need to log it */
     LOG(llevInfo,"CLOG GSAY:%s >%s<\n", query_name(op), params);
-    
+
     strcpy(buf, op->name);
     strcat(buf, " (group): ");
     strncat(buf, params, MAX_BUF - 30);
@@ -118,10 +118,10 @@ int command_shout(object *op, char *params)
     /* this happens when whitespace only string was submited */
     if (!params || *params == '\0')
         return 0;
-    
+
     /* moved down, cause if whitespace is shouted, then no need to log it */
     LOG(llevInfo,"CLOG SHOUT:%s >%s<\n", query_name(op), params);
-    
+
     /* check for repeated shout */
     /* in fact, this should be handled different in future: the check should
      * be original be done in the CLIENT. If we encounter then here a double
@@ -157,7 +157,7 @@ int command_shout(object *op, char *params)
 
 int command_tell(object *op, char *params)
 {
-    const char *name_hash;  
+    const char *name_hash;
     char        buf[MAX_BUF], *name = NULL, *msg = NULL;
     char        buf2[MAX_BUF];
     player     *pl;
@@ -193,7 +193,7 @@ int command_tell(object *op, char *params)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "No such player.");
         return 1;
-    }   
+    }
 
     if (!msg)
     {
@@ -207,7 +207,7 @@ int command_tell(object *op, char *params)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "You tell yourself the news. Very smart.");
         return 1;
-    }   
+    }
 
     /* we have a name_hash but still we need to confirm we get the right player.
      * No problem with the fast hash pointer check
@@ -220,7 +220,7 @@ int command_tell(object *op, char *params)
             strncat(buf, msg, MAX_BUF - strlen(buf) - 1);
             buf[MAX_BUF - 1] = 0;
 
-			/* lets listen the GMs and DMs to the tells if they want 
+			/* lets listen the GMs and DMs to the tells if they want
 			 * Only way to find out/control abuse of this commands
 			 * or we have to give many people access to the server logs (not a option)
 			 */
@@ -230,18 +230,18 @@ int command_tell(object *op, char *params)
 
                 sprintf(buf2, "%s tells %s: ", op->name, pl->ob->name);
                 strncat(buf2, msg, MAX_BUF - strlen(buf) - 1);
-				
+
 				for(ol = gmaster_list_DM;ol;ol=ol->next)
 				{
-					if (pl->ob != ol->objlink.ob && op != ol->objlink.ob)						
+					if (pl->ob != ol->objlink.ob && op != ol->objlink.ob)
 						new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf2);
-				}	
+				}
 
 				for(ol = gmaster_list_GM;ol;ol=ol->next)
 				{
-					if (pl->ob != ol->objlink.ob && op != ol->objlink.ob)						
+					if (pl->ob != ol->objlink.ob && op != ol->objlink.ob)
 						new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf2);
-				}	
+				}
 			}
 
             if (pl->dm_stealth)
@@ -285,7 +285,7 @@ int command_t_tell(object *op, char *params)
         send_clear_interface(CONTR(op));
         return 0;
     }
-		
+
     params = cleanup_chat_string(params);
     /* this happens when whitespace only string was submited */
     if (!params || *params == '\0')
@@ -297,11 +297,11 @@ int command_t_tell(object *op, char *params)
     /* Players can chat with a marked object in their inventory */
     if(op->type == PLAYER && (t_obj = find_marked_object(op)) && (t_obj->event_flags & EVENT_FLAG_TALK))
     {
-        trigger_object_plugin_event(EVENT_TALK, t_obj, op, NULL, 
+        trigger_object_plugin_event(EVENT_TALK, t_obj, op, NULL,
                 params, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR);
         return 0;
     }
- 
+
 	t_obj = CONTR(op)->target_object;
     if (t_obj && CONTR(op)->target_object_count == t_obj->count)
     {
@@ -315,8 +315,8 @@ int command_t_tell(object *op, char *params)
             yt = op->y + freearr_y[i];
             if (!(m = out_of_map(op->map, &xt, &yt)))
 				continue;
-                
-			if (m == t_obj->map && xt == t_obj->x && yt == t_obj->y)    
+
+			if (m == t_obj->map && xt == t_obj->x && yt == t_obj->y)
 			{
 				/*char        buf[256 * 2];*/
 				/* we do this client sided now
@@ -325,13 +325,13 @@ int command_t_tell(object *op, char *params)
                 buf[MAX_BUF - 1] = 0;
                 new_draw_info(NDI_WHITE, 0, op, buf);
 				*/
-					
+
                 if (t_obj->event_flags & EVENT_FLAG_TALK)
-                    trigger_object_plugin_event(EVENT_TALK, t_obj, op, NULL, 
+                    trigger_object_plugin_event(EVENT_TALK, t_obj, op, NULL,
                             params, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR);
 				else
 					send_clear_interface(CONTR(op));
-                
+
                 return 1;
             }
         }
@@ -386,24 +386,24 @@ int command_reply(object *op, char *params)
     sprintf(buf2, "%s replied %s: ", op->name, pl->ob->name);
     strncat(buf2, params, MAX_BUF - strlen(buf) - 1);
     LOG(llevInfo, buf2);
-	
+
 	if(gmaster_list_DM || gmaster_list_GM)
 	{
 		objectlink *ol;
-		
+
 		for(ol = gmaster_list_DM;ol;ol=ol->next)
 		{
-			if (pl->ob != ol->objlink.ob && op != ol->objlink.ob)						
+			if (pl->ob != ol->objlink.ob && op != ol->objlink.ob)
 				new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf2);
-		}	
-		
+		}
+
 		for(ol = gmaster_list_GM;ol;ol=ol->next)
 		{
-			if (pl->ob != ol->objlink.ob && op != ol->objlink.ob)						
+			if (pl->ob != ol->objlink.ob && op != ol->objlink.ob)
 				new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_FLESH, 0, ol->objlink.ob, buf2);
-		}	
+		}
 	}
-    
+
     sprintf(buf, "%s replies you: ", op->name);
     strncat(buf, params, MAX_BUF - strlen(buf) - 1);
     buf[MAX_BUF - 1] = 0;
@@ -718,7 +718,7 @@ static int basic_emote(object *op, char *params, int emotion)
 
             if (rv.distance <= 4)
             {
-                emote_other(op, CONTR(op)->target_object, NULL, buf, buf2, buf3, emotion);              
+                emote_other(op, CONTR(op)->target_object, NULL, buf, buf2, buf3, emotion);
                 new_draw_info(NDI_UNIQUE, 0, op, buf);
                 if (CONTR(op)->target_object->type == PLAYER)
                     new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, CONTR(op)->target_object, buf2);
@@ -947,7 +947,7 @@ static int basic_emote(object *op, char *params, int emotion)
         {
             sprintf(buf, "%s %s", op->name, params);
             strcpy(buf2, buf);
-            LOG(llevInfo, "ME:: %s\n", buf2); 
+            LOG(llevInfo, "ME:: %s\n", buf2);
             new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, op, op, buf);
             if (op->type == PLAYER)
                 new_draw_info(NDI_UNIQUE, 0, op, buf2);
@@ -980,7 +980,7 @@ static int basic_emote(object *op, char *params, int emotion)
                         {
                             if (op->type == PLAYER)
                             {
-                                emote_other(op, pl->ob, NULL, buf, buf2, buf3, emotion);                
+                                emote_other(op, pl->ob, NULL, buf, buf2, buf3, emotion);
                                 new_draw_info(NDI_UNIQUE, 0, op, buf);
                                 new_draw_info(NDI_UNIQUE | NDI_YELLOW, 0, pl->ob, buf2);
                                 new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, op, pl->ob, buf3);
@@ -1004,7 +1004,7 @@ static int basic_emote(object *op, char *params, int emotion)
                      * Now, we *can* do check for a possible non player target.
                      * Like a npc or a mob. But for that we need to analyze the
                      * surrounding area. Bad idea. Also, the name is for a mob not unique.
-                     * There are perhaps several ants or whatever around the player. 
+                     * There are perhaps several ants or whatever around the player.
                      * For emoting mobs and npcs we simply use the target system.
                      */
             if (op->type == PLAYER)
@@ -1016,7 +1016,7 @@ static int basic_emote(object *op, char *params, int emotion)
             else
             {
                 /* our target is perhaps a npc or whatever */
-                emote_other(op, NULL, params, buf, buf2, buf3, emotion);                
+                emote_other(op, NULL, params, buf, buf2, buf3, emotion);
                 new_info_map_except(NDI_YELLOW, op->map, op->x, op->y, MAP_INFO_NORMAL, NULL, NULL, buf3);
             }
         }

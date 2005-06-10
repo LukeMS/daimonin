@@ -687,8 +687,8 @@ MODULEAPI int HandleEvent(CFParm *PParm)
     LOG(llevDebug, "LUA - call data:: o1:>%s< o2:>%s< o3:>%s< text:>%s< i1:%d i2:%d i3:%d i4:%d\n",
         STRING_OBJ_NAME((object *) (PParm->Value[1])), STRING_OBJ_NAME((object *) (PParm->Value[2])),
         STRING_OBJ_NAME((object *) (PParm->Value[3])), STRING_SAFE((char *) (PParm->Value[4])),
-        PParm->Value[5] ? *(int *) (PParm->Value[5]) : 0, 
-        PParm->Value[6] ? *(int *) (PParm->Value[6]) : 0, 
+        PParm->Value[5] ? *(int *) (PParm->Value[5]) : 0,
+        PParm->Value[6] ? *(int *) (PParm->Value[6]) : 0,
         PParm->Value[7] ? *(int *) (PParm->Value[7]) : 0,
         PParm->Value[8] ? *(int *) (PParm->Value[8]) : 0);
 #endif
@@ -700,7 +700,7 @@ MODULEAPI int HandleEvent(CFParm *PParm)
     context->resume_time = -1;
     context->state = lua_newthread(global_state);
     context->threadidx = luaL_ref(global_state, LUA_REGISTRYINDEX);
-    
+
     /* And all the event parameters */
     context->activator = (object *) (PParm->Value[1]);
     context->activator_tag = context->activator ? context->activator->count : 0;
@@ -716,7 +716,7 @@ MODULEAPI int HandleEvent(CFParm *PParm)
     context->file = (const char *) (PParm->Value[9]);
     context->options = (const char *) (PParm->Value[10]);
     context->returnvalue = 0;
-    if(*(int *)PParm->Value[0] == EVENT_AI_BEHAVIOUR) 
+    if(*(int *)PParm->Value[0] == EVENT_AI_BEHAVIOUR)
         context->move_response = PParm->Value[11];
     else
         context->move_response = NULL;
@@ -743,7 +743,7 @@ MODULEAPI int HandleEvent(CFParm *PParm)
         if (context->activator && context->activator->type == PLAYER)
             hooks->fix_player(context->activator);
     }
-    else if (context->parm4 == SCRIPT_FIX_ACTIVATOR && 
+    else if (context->parm4 == SCRIPT_FIX_ACTIVATOR &&
             context->activator && context->activator->type == PLAYER)
     {
         hooks->fix_player(context->activator);

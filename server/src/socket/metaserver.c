@@ -46,7 +46,7 @@ void metaserver_init()
 {
 #ifdef WIN32 /* ***win32 metaserver_init(): init win32 socket */
     struct hostent *hostbn;
-    int             temp    = 1;    
+    int             temp    = 1;
 #endif
 
     if (!settings.meta_on)
@@ -69,7 +69,7 @@ void metaserver_init()
     }
 #ifdef WIN32 /* ***win32 metaserver_init(): init win32 socket */
     ioctlsocket(metafd, FIONBIO, &temp);
-#else 
+#else
     fcntl(metafd, F_SETFL, O_NONBLOCK);
 #endif
     if ((metafd = socket(AF_INET, SOCK_DGRAM, 0)) == -1)

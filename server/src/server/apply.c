@@ -116,7 +116,7 @@ int apply_potion(object *op, object *tmp)
         return 0;
     }
 
-    if(trigger_object_plugin_event(EVENT_APPLY, tmp, op, NULL, 
+    if(trigger_object_plugin_event(EVENT_APPLY, tmp, op, NULL,
                 NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
         return 0;
 
@@ -150,7 +150,7 @@ int apply_potion(object *op, object *tmp)
             if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))
             {
                 /* now we have a bit work because we change (multiply,...) the
-                         * base values of the potion - that can invoke out of bounce 
+                         * base values of the potion - that can invoke out of bounce
                          * values we must catch here.
                          */
 
@@ -288,7 +288,7 @@ int apply_potion(object *op, object *tmp)
                 fix_player(op);
             }
             else
-                new_draw_info(NDI_UNIQUE, 0, op, "You feel a great loss...");   
+                new_draw_info(NDI_UNIQUE, 0, op, "You feel a great loss...");
             decrease_ob(tmp);
             insert_spell_effect("meffect_green", op->map, op->x, op->y);
             play_sound_map(op->map, op->x, op->y, SOUND_MAGIC_DEFAULT, SOUND_SPELL);
@@ -526,8 +526,8 @@ int check_weapon_power(object *who, int improvs)
 
     /* The skill system hands out wc and dam bonuses to fighters
      * more generously than the old system (see fix_player). Thus
-     * we need to curtail the power of player enchanted weapons. 
-     * I changed this to 1 improvement per "fighter" level/5 -b.t. 
+     * we need to curtail the power of player enchanted weapons.
+     * I changed this to 1 improvement per "fighter" level/5 -b.t.
      * Note:  Nothing should break by allowing this ratio to be different or
      * using normal level - it is just a matter of play balance.
      */
@@ -649,7 +649,7 @@ int prepare_weapon(object *op, object *improver, object *weapon)
 /* This is the new improve weapon code */
 /* build_weapon returns 0 if it was not able to work. */
 /* #### We are hiding extra information about the weapon in the level and
-   last_eat numbers for an object.  Hopefully this won't break anything ?? 
+   last_eat numbers for an object.  Hopefully this won't break anything ??
    level == max improve last_eat == current improve*/
 int improve_weapon(object *op, object *improver, object *weapon)
 {
@@ -777,9 +777,9 @@ int check_improve_weapon(object *op, object *tmp)
         new_draw_info(NDI_UNIQUE, 0, op, "Marked item is not a weapon");
         return 0;
     }
-    
+
     if(trigger_object_plugin_event(
-                EVENT_APPLY, tmp, op, NULL, 
+                EVENT_APPLY, tmp, op, NULL,
                 NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
         return 1;
 
@@ -796,7 +796,7 @@ int check_improve_weapon(object *op, object *tmp)
  * depends on the level of the character - ie the plus
  * value (magic) of the armour can never be increased beyond
  * the level of the character / 10 -- rounding upish, nor may
- * the armour value of the piece of equipment exceed either 
+ * the armour value of the piece of equipment exceed either
  * the users level or 90)
  * Modified by MSW for partial resistance.  Only support
  * changing of physical area right now.
@@ -826,7 +826,7 @@ int improve_armour(object *op, object *improver, object *armour)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "The armour value of this equipment");
         new_draw_info(NDI_UNIQUE, 0, op, "cannot be further improved.");
-    } 
+    }
     armour->magic++;
     if (op->type == PLAYER)
     {
@@ -908,7 +908,7 @@ int convert_item(object *item, object *converter)
 }
 
 
-/* a player has opened a container - link him to the 
+/* a player has opened a container - link him to the
  * list of player which have (perhaps) it opened too.
  */
 int container_link(player *pl, object *sack)
@@ -949,7 +949,7 @@ int container_link(player *pl, object *sack)
     pl->container = sack;
     pl->container_count = sack->count;
 
-    pl->container_above = sack->attacked_by; 
+    pl->container_above = sack->attacked_by;
 
     if (sack->attacked_by)
         CONTR(sack->attacked_by)->container_below = pl->ob;
@@ -1195,7 +1195,7 @@ int esrv_apply_container(object *op, object *sack)
         else
         {
             /* only give player with right name access */
-            if (sack->sub_type1 == ST1_CONTAINER_CORPSE_group && 
+            if (sack->sub_type1 == ST1_CONTAINER_CORPSE_group &&
                     (!(CONTR(op)->group_status & GROUP_STATUS_GROUP) ||
                         CONTR(CONTR(op)->group_leader)->group_id != sack->stats.maxhp))
             {
@@ -1264,7 +1264,7 @@ void free_container_monster(object *monster, object *op)
     remove_ob(monster); /* in container, no walk off check */
     monster->x = container->x;
     monster->y = container->y;
-    i = find_free_spot(monster->arch, op->map, monster->x, monster->y, 0, 9); 
+    i = find_free_spot(monster->arch, op->map, monster->x, monster->y, 0, 9);
     if (i != -1)
     {
         monster->x += freearr_x[i];
@@ -1345,7 +1345,7 @@ static int apply_altar(object *altar, object *sacrifice, object *originator)
         return 0;
     if (operate_altar(altar, &sacrifice))
     {
-        /* Simple check. 
+        /* Simple check.
          * with an altar.  We call it a Potion - altars are stationary - it
          * is up to map designers to use them properly.
         * Change: I changed .sp from 0 = no spell to -1. So we can cast first
@@ -1494,14 +1494,14 @@ static void apply_sign(object *op, object *sign)
 			new_draw_info_format(	NDI_UNIQUE, 0, op, "You are unable to decipher the %s.\nIts written in %s.",
 									query_name(sign), get_language(sign->weight_limit));
 			return;
-		}		
+		}
 	}
-    
+
     if(trigger_object_plugin_event(
-                EVENT_APPLY, sign, op, NULL, 
+                EVENT_APPLY, sign, op, NULL,
                 NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
         return;
-    
+
     if (sign->msg == NULL)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "Nothing is written on it.");
@@ -1793,7 +1793,7 @@ void move_apply(object *trap, object *victim, object *originator, int flags)
             if(!(flags&MOVE_APPLY_VANISHED))
               walk_on_deep_swamp (trap, victim);
             goto leave;
-          */ 
+          */
         default:
           LOG(llevDebug, "name %s, arch %s, type %d with fly/walk on/off not "
                          "handled in move_apply()\n", trap->name,
@@ -1830,13 +1830,13 @@ static void apply_book(object *op, object *tmp)
 	}
 
     new_draw_info_format(NDI_UNIQUE, 0, op, "You open the %s and start reading.", query_name(tmp));
-    
+
     /* Non-zero return value from script means stop here */
     if(trigger_object_plugin_event(
-                EVENT_APPLY, tmp, op, NULL, 
+                EVENT_APPLY, tmp, op, NULL,
                 NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL))
         return;
-    
+
     if (tmp->msg == NULL)
     {
         new_draw_info_format(NDI_UNIQUE, 0, op, "You open the %s and find it empty.", query_name(tmp));
@@ -1873,7 +1873,7 @@ static void apply_book(object *op, object *tmp)
 
 static void apply_skillscroll(object *op, object *tmp)
 {
-    if(trigger_object_plugin_event( EVENT_APPLY, tmp, op, NULL, 
+    if(trigger_object_plugin_event( EVENT_APPLY, tmp, op, NULL,
                 NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
         return;
     switch ((int) learn_skill(op, tmp, NULL, -1, 1))
@@ -2019,7 +2019,7 @@ static void apply_spellbook(object *op, object *tmp)
     {
         if ((tmp->stats.sp = look_up_spell_name(tmp->slaying)) < 0)
         {
-            tmp->stats.sp = -1; 
+            tmp->stats.sp = -1;
             new_draw_info_format(NDI_UNIQUE, 0, op, "The book's formula for %s is incomplete", tmp->slaying);
             return;
         }
@@ -2038,12 +2038,12 @@ static void apply_spellbook(object *op, object *tmp)
     {
         new_draw_info(NDI_UNIQUE, 0, op, "You are unable to decipher the strange symbols.");
         return;
-    } 
+    }
 
-    if(trigger_object_plugin_event(EVENT_APPLY, tmp, op, NULL, 
+    if(trigger_object_plugin_event(EVENT_APPLY, tmp, op, NULL,
                 NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
         return;
-                
+
     new_draw_info_format(NDI_UNIQUE, 0, op, "The spellbook contains the %s level spell %s.",
                          get_levelnumber(spells[tmp->stats.sp].level), spells[tmp->stats.sp].name);
 
@@ -2066,14 +2066,14 @@ static void apply_spellbook(object *op, object *tmp)
      *
      *  1- MU spells use Int to learn, Cleric spells use Wisdom
      *
-     *  2- The learner's level (in skills sytem level==literacy level; if no 
-     *     skills level == overall level) impacts the chances of spell learning. 
+     *  2- The learner's level (in skills sytem level==literacy level; if no
+     *     skills level == overall level) impacts the chances of spell learning.
      *
      *  3 -Automatically fail to learn if you read while confused
-     * 
-     * Overall, chances are the same but a player will find having a high 
-     * literacy rate very useful!  -b.t. 
-     */ 
+     *
+     * Overall, chances are the same but a player will find having a high
+     * literacy rate very useful!  -b.t.
+     */
     if (QUERY_FLAG(op, FLAG_CONFUSED))
     {
         new_draw_info(NDI_UNIQUE, 0, op, "In your confused state you flub the wording of the text!");
@@ -2131,7 +2131,7 @@ static void apply_scroll(object *op, object *tmp)
             new_draw_info(NDI_UNIQUE, 0, op, "You are unable to decipher the strange symbols.");
             /* op->chosen_skill=old_skill;*/
             return;
-        } 
+        }
 
         /* thats new: literacy for reading but a player need also the
              * right spellcasting spell. Reason: the exp goes then in that
@@ -2142,19 +2142,19 @@ static void apply_scroll(object *op, object *tmp)
             new_draw_info(NDI_UNIQUE, 0, op, "You can read the scroll but you don't understand it.");
             /* op->chosen_skill=old_skill;*/
             return;
-        } 
+        }
 
-        /* Now, call here so the right skill is readied -- literacy 
-        * isnt necesarily connected to the exp obj to which the xp 
-        * will go (for kills made by the magic of the scroll) 
-        */ 
+        /* Now, call here so the right skill is readied -- literacy
+        * isnt necesarily connected to the exp obj to which the xp
+        * will go (for kills made by the magic of the scroll)
+        */
         old_shoot = CONTR(op)->shoottype;
         old_spell = CONTR(op)->chosen_spell;
         CONTR(op)->shoottype = range_scroll;
         CONTR(op)->chosen_spell = scroll_spell;
     }
-    
-    if(trigger_object_plugin_event(EVENT_APPLY, tmp, op, NULL, 
+
+    if(trigger_object_plugin_event(EVENT_APPLY, tmp, op, NULL,
                 NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
         return;
 
@@ -2187,7 +2187,7 @@ static void apply_treasure(object *op, object *tmp)
     tag_t tmp_tag = tmp->   count, op_tag = op->count;
 
     if(trigger_object_plugin_event(
-                EVENT_APPLY, tmp, op, NULL, 
+                EVENT_APPLY, tmp, op, NULL,
                 NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
         return;
     /*  Nice side effect of new treasure creation method is that the treasure
@@ -2218,7 +2218,7 @@ static void apply_treasure(object *op, object *tmp)
         if (treas->type == MONSTER)
         {
             /* Monsters can be trapped in treasure chests */
-            int i   = find_free_spot(treas->arch, op->map, treas->x, treas->y, 0, 9); 
+            int i   = find_free_spot(treas->arch, op->map, treas->x, treas->y, 0, 9);
             if (i != -1)
             {
                 treas->x += freearr_x[i];
@@ -2257,7 +2257,7 @@ static void apply_treasure(object *op, object *tmp)
 void apply_poison(object *op, object *tmp)
 {
     if(trigger_object_plugin_event(
-                EVENT_APPLY, tmp, op, NULL, 
+                EVENT_APPLY, tmp, op, NULL,
                 NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
         return;
 
@@ -2279,10 +2279,10 @@ void apply_poison(object *op, object *tmp)
 
 static void apply_food(object *op, object *tmp)
 {
-    if (op->type != PLAYER) 
+    if (op->type != PLAYER)
     {
         if(trigger_object_plugin_event(
-                    EVENT_APPLY, tmp, op, NULL, 
+                    EVENT_APPLY, tmp, op, NULL,
                     NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
             return;
         op->stats.hp = op->stats.maxhp;
@@ -2309,9 +2309,9 @@ static void apply_food(object *op, object *tmp)
                     return;
                 }
             }
-        
+
             if(trigger_object_plugin_event(
-                        EVENT_APPLY, tmp, op, NULL, 
+                        EVENT_APPLY, tmp, op, NULL,
                         NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
                 return;
 
@@ -2454,7 +2454,7 @@ void create_food_force(object *who, object *food, object *force)
 /* OUTDATED: eat_special_food() - some food may (temporarily) alter
  * player status. We do it w/ this routine and cast_change_attr().
  * Note the dircection is set to "99"  so that cast_change_attr()
- * will only modify the user's status. We shouldnt be able to 
+ * will only modify the user's status. We shouldnt be able to
  * effect others by eating food!
  * -b.t.
  */
@@ -2470,7 +2470,7 @@ void create_food_force(object *who, object *food, object *force)
  * for this POISON food should be used.
  * All bad effect food should be generated on default as cursed.
  * food effects can stack. For really powerful food, a high food value should
- * be used - a player can't eat it then when he is full and he will be full 
+ * be used - a player can't eat it then when he is full and he will be full
  * fast.
  * For DAMNED food, its the same like cursed - except the negative effects are 3 times worser.
  * On the other side include for a "remove poison" herb a food of 1 to avoid
@@ -2545,7 +2545,7 @@ void eat_special_food(object *who, object *food)
         else
         {
             new_draw_info(NDI_UNIQUE, 0, who, "You feel a rush of magical energy!");
-            who->stats.sp += food->stats.sp; 
+            who->stats.sp += food->stats.sp;
             /* place limit on max sp from food? */
         }
     }
@@ -2725,13 +2725,13 @@ static void apply_savebed(object *pl)
     "%s leaves the game.",pl->name);
        */
 
-    /* TODO: event triggers 
+    /* TODO: event triggers
     if(trigger_object_plugin_event(
-                EVENT_APPLY, tmp, op, NULL, 
+                EVENT_APPLY, tmp, op, NULL,
                 NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
         return;
     */
-    
+
     /* update respawn position */
     strcpy(CONTR(pl)->savebed_map, pl->map->path);
     CONTR(pl)->bed_x = pl->x;
@@ -2771,9 +2771,9 @@ static void apply_armour_improver(object *op, object *tmp)
         new_draw_info(NDI_UNIQUE, 0, op, "Your marked item is not armour!\n");
         return;
     }
-              
+
     if(trigger_object_plugin_event(
-                EVENT_APPLY, tmp, op, NULL, 
+                EVENT_APPLY, tmp, op, NULL,
                 NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
         return;
 
@@ -2847,7 +2847,7 @@ int is_legal_2ways_exit(object *op, object *exit)
                 return 0;    /* No more owner*/
             if (CONTR(exit_owner) == CONTR(op))
                 return 1;  /*It is your exit*/
-            if (exit_owner && (CONTR(op)))                
+            if (exit_owner && (CONTR(op)))
                 return 0;
             return 1;
         }
@@ -2888,7 +2888,7 @@ int manual_apply(object *op, object *tmp, int aflag)
     /* monsters mustn't apply random chests, nor magic_mouths with a counter */
     if (op->type != PLAYER && tmp->type == TREASURE)
         return 0;
-    
+
     /* control apply by controling a set exp object level or player exp level*/
     if (tmp->item_level)
     {
@@ -2905,18 +2905,18 @@ int manual_apply(object *op, object *tmp, int aflag)
             return 1;
         }
     }
-    
-    /* Since we want to defer the event triggers until all tests have been 
+
+    /* Since we want to defer the event triggers until all tests have been
      * passed, but not until after any side effects, we must handle each
      * object type differently (yuck!) when it comes to apply events. */
-    
+
     switch (tmp->type)
     {
         case HOLY_ALTAR:
           new_draw_info_format(NDI_UNIQUE, 0, op, "You touch the %s.", tmp->name);
           if (change_skill(op, SK_PRAYING))
           {
-              if(trigger_object_plugin_event(EVENT_APPLY, tmp, op, NULL, 
+              if(trigger_object_plugin_event(EVENT_APPLY, tmp, op, NULL,
                           NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
                   return 1; /* 1 = do not write an error message to the player */
               /* TODO: maybe plugin event should be in pray_at_altar() */
@@ -2928,7 +2928,7 @@ int manual_apply(object *op, object *tmp, int aflag)
 
         case CF_HANDLE:
           if(trigger_object_plugin_event(
-                      EVENT_APPLY, tmp, op, NULL, 
+                      EVENT_APPLY, tmp, op, NULL,
                       NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
               return 1; /* 1 = do not write an error message to the player */
           new_draw_info(NDI_UNIQUE, 0, op, "You turn the handle.");
@@ -2944,7 +2944,7 @@ int manual_apply(object *op, object *tmp, int aflag)
           {
               /* TODO: maybe plugin event should be in check_trigger() */
               if(trigger_object_plugin_event(
-                          EVENT_APPLY, tmp, op, NULL, 
+                          EVENT_APPLY, tmp, op, NULL,
                           NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
                   return 1; /* 1 = do not write an error message to the player */
               new_draw_info(NDI_UNIQUE, 0, op, "You turn the handle.");
@@ -2966,7 +2966,7 @@ int manual_apply(object *op, object *tmp, int aflag)
           else
           {
               if(trigger_object_plugin_event(
-                          EVENT_APPLY, tmp, op, NULL, 
+                          EVENT_APPLY, tmp, op, NULL,
                           NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
                   return 1; /* 1 = do not write an error message to the player */
               /* Don't display messages for random maps. */
@@ -3014,7 +3014,7 @@ int manual_apply(object *op, object *tmp, int aflag)
 
         case POTION:
           if(trigger_object_plugin_event(
-                      EVENT_APPLY, tmp, op, NULL, 
+                      EVENT_APPLY, tmp, op, NULL,
                       NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
               return 1; /* 1 = do not write an error message to the player */
           (void) apply_potion(op, tmp);
@@ -3033,7 +3033,7 @@ int manual_apply(object *op, object *tmp, int aflag)
           if (op->type == PLAYER)
           {
               if(trigger_object_plugin_event(
-                          EVENT_APPLY, tmp, op, NULL, 
+                          EVENT_APPLY, tmp, op, NULL,
                           NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
                   return 1; /* 1 = do not write an error message to the player */
               (void) esrv_apply_container(op, tmp->env);
@@ -3044,7 +3044,7 @@ int manual_apply(object *op, object *tmp, int aflag)
           if (op->type == PLAYER)
           {
               if(trigger_object_plugin_event(
-                          EVENT_APPLY, tmp, op, NULL, 
+                          EVENT_APPLY, tmp, op, NULL,
                           NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
                   return 1; /* 1 = do not write an error message to the player */
               (void) esrv_apply_container(op, tmp);
@@ -3111,9 +3111,9 @@ int manual_apply(object *op, object *tmp, int aflag)
           {
               char          buf[MAX_BUF];
               timeofday_t   tod;
-          
+
               if(trigger_object_plugin_event(
-                          EVENT_APPLY, tmp, op, NULL, 
+                          EVENT_APPLY, tmp, op, NULL,
                           NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
                   return 1; /* 1 = do not write an error message to the player */
 
@@ -3130,7 +3130,7 @@ int manual_apply(object *op, object *tmp, int aflag)
           if (op->type == PLAYER)
           {
               if(trigger_object_plugin_event(
-                          EVENT_APPLY, tmp, op, NULL, 
+                          EVENT_APPLY, tmp, op, NULL,
                           NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
                   return 1; /* 1 = do not write an error message to the player */
               shop_listing(op);
@@ -3144,7 +3144,7 @@ int manual_apply(object *op, object *tmp, int aflag)
           return 1;
 
         case LIGHTER:
-          /* for lighting torches/lanterns/etc */ 
+          /* for lighting torches/lanterns/etc */
           /* TODO: plugin events */
           if (op->type == PLAYER)
           {
@@ -3289,7 +3289,7 @@ int apply_special(object *who, object *op, int aflags)
         /* This is actually an (UN)APPLY event. Scripters should check
          * the applied flag */
         if(trigger_object_plugin_event(
-                    EVENT_APPLY, op, who, NULL, 
+                    EVENT_APPLY, op, who, NULL,
                     NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
             return 1;
 
@@ -3368,7 +3368,7 @@ int apply_special(object *who, object *op, int aflags)
 			else
 				fix_monster(who);
 		}
-			
+
         if (!(aflags & AP_NO_MERGE))
         {
             tag_t   del_tag = op->count;
@@ -3411,8 +3411,8 @@ int apply_special(object *who, object *op, int aflags)
                 return 1;
         }
     }
-    
-    /* For clarity and ease of event handling I split this into 
+
+    /* For clarity and ease of event handling I split this into
      * two parts, first a check and then the modifications */
     switch (op->type)
     {
@@ -3476,7 +3476,7 @@ int apply_special(object *who, object *op, int aflags)
           }
           break;
 
-          /* this part is needed for skill-tools */ 
+          /* this part is needed for skill-tools */
         case SKILL:
           if (who->chosen_skill)
           {
@@ -3489,15 +3489,15 @@ int apply_special(object *who, object *op, int aflags)
     /* Now we should be done with 99% of all tests. Generate the event
      * and then go on with side effects */
     if(trigger_object_plugin_event(
-                EVENT_APPLY, op, who, NULL, 
+                EVENT_APPLY, op, who, NULL,
                 NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
         return 1; /* 1 = do not write an error message to the player */
-    
+
     if (op->nrof > 1)
         tmp = get_split_ob(op, op->nrof - 1);
     else
         tmp = NULL;
-   
+
     switch (op->type)
     {
         case WEAPON:
@@ -3522,7 +3522,7 @@ int apply_special(object *who, object *op, int aflags)
           sprintf(buf, "You wear %s.", query_name(op));
           break;
 
-          /* this part is needed for skill-tools */ 
+          /* this part is needed for skill-tools */
         case SKILL:
           if (who->type == PLAYER)
           {
@@ -3645,7 +3645,7 @@ void apply_player_light_refill(object *who, object *op)
         return;
     }
 
-    if(trigger_object_plugin_event(EVENT_APPLY, op, who, NULL, 
+    if(trigger_object_plugin_event(EVENT_APPLY, op, who, NULL,
                 NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
         return;
 
@@ -3710,9 +3710,9 @@ void turn_on_light(object *op)
             adjust_light_source(op->map, op->x, op->y, op->glow_radius);
         return;
     }
-    
-    /* now we have a filled or permanent, unlight light source 
-     * lets light it - BUT we still have light_radius not active 
+
+    /* now we have a filled or permanent, unlight light source
+     * lets light it - BUT we still have light_radius not active
      * when we not drop or apply the source.
      */
 
@@ -3735,7 +3735,7 @@ void turn_on_light(object *op)
         op = one;
     }
 
-    /* light is applied in player inventory - so we 
+    /* light is applied in player inventory - so we
      * start the 3 apply chain - because it can be taken
      * in hand.
      */
@@ -3807,7 +3807,7 @@ void turn_off_light(object *op)
     }
     /* CLEAR_FLAG(op,FLAG_ANIMATE);
        op->face = op->arch->clone.face;
-       */              
+       */
     update_object(op, UP_OBJ_FACE);
     op->glow_radius = 0;
 }
@@ -3830,8 +3830,8 @@ void apply_player_light(object *who, object *op)
             SET_FLAG(op, FLAG_CURSED);
         if (QUERY_FLAG(op, FLAG_PERM_DAMNED))
             SET_FLAG(op, FLAG_DAMNED);
-    
-        if(trigger_object_plugin_event(EVENT_APPLY, who, op, NULL, 
+
+        if(trigger_object_plugin_event(EVENT_APPLY, who, op, NULL,
                     NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
             return;
 
@@ -3871,17 +3871,17 @@ void apply_player_light(object *who, object *op)
             {
                 if (!op->stats.food) /* if not permanent, this is "filled" counter */
                 {
-                    /* no food charges, we can't light it up- 
+                    /* no food charges, we can't light it up-
                      * Note that light sources with other_arch set
                      * are non rechargable lights - like torches.
-                     * they destroy 
+                     * they destroy
                      */
                     new_draw_info_format(NDI_UNIQUE, 0, who, "You must first refill or recharge the %s.", query_name(op));
                     return;
                 }
             }
 
-            if(trigger_object_plugin_event(EVENT_APPLY, who, op, NULL, 
+            if(trigger_object_plugin_event(EVENT_APPLY, who, op, NULL,
                         NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
                 return;
 
@@ -3908,8 +3908,8 @@ void apply_player_light(object *who, object *op)
                             SET_FLAG(tmp, FLAG_CURSED);
                         if (QUERY_FLAG(tmp, FLAG_PERM_DAMNED))
                             SET_FLAG(tmp, FLAG_DAMNED);
-            
-                        if(trigger_object_plugin_event(EVENT_APPLY, who, op, NULL, 
+
+                        if(trigger_object_plugin_event(EVENT_APPLY, who, op, NULL,
                                     NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
                             return;
 
@@ -3932,14 +3932,14 @@ void apply_player_light(object *who, object *op)
                     SET_FLAG(op, FLAG_CURSED);
                 if (QUERY_FLAG(op, FLAG_PERM_DAMNED))
                     SET_FLAG(op, FLAG_DAMNED);
-            
-                if(trigger_object_plugin_event(EVENT_APPLY, who, op, NULL, 
+
+                if(trigger_object_plugin_event(EVENT_APPLY, who, op, NULL,
                             NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
                     return;
 
                 new_draw_info_format(NDI_UNIQUE, 0, who, "You unlight the %s.", query_name(op));
                 turn_off_light(op);
-            }            
+            }
         }
     }
     if (op->env && (op->env->type == PLAYER || op->env->type == CONTAINER))
@@ -3987,7 +3987,7 @@ void apply_lighter(object *who, object *lighter)
         }
         else if (lighter->last_eat)
         {
-            /* no charges left in lighter */ 
+            /* no charges left in lighter */
             new_draw_info_format(NDI_UNIQUE, 0, who, "You attempt to light the %s with a used up %s.", item->name,
                                  lighter->name);
             return;
@@ -4026,7 +4026,7 @@ void apply_lighter(object *who, object *lighter)
         new_draw_info(NDI_UNIQUE, 0, who, "You need to mark a lightable object.");
 }
 
-/* scroll_failure()- hacked directly from spell_failure */ 
+/* scroll_failure()- hacked directly from spell_failure */
 
 void scroll_failure(object *op, int failure, int power)
 {
@@ -4046,7 +4046,7 @@ void scroll_failure(object *op, int failure, int power)
             op->stats.sp = 0;
     }
 
-    /* even nastier effects continue...*/ 
+    /* even nastier effects continue...*/
 #ifdef SPELL_FAILURE_EFFECTS /* removed this - but perhaps we want add some of this nasty effects */
     else if (failure <= -35 && failure > -60) /* confusion */
     {

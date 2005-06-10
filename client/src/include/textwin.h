@@ -48,7 +48,7 @@ enum
     TW_HL_SLIDER,
     TW_UNDER,
     TW_HL_DOWN
-}; 
+};
 enum
 {
     TW_ACTWIN       = 0x0f,

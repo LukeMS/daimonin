@@ -63,9 +63,9 @@ inline void add_stringlen_to_sockbuf(char *buf, SockList *sl)
     sl->len += len;
 }
 
-/* 
+/*
  *  This is a similar to query_name, but returns flags
- *  to be sended to client. 
+ *  to be sended to client.
  */
 unsigned int query_flags(object *op)
 {
@@ -133,7 +133,7 @@ unsigned int query_flags(object *op)
 }
 
 
-/* draw the look window.  Don't need to do animations here 
+/* draw the look window.  Don't need to do animations here
  * This sends all the faces to the client, not just updates.  This is
  * because object ordering would otherwise be inconsistent
  */
@@ -309,7 +309,7 @@ void esrv_draw_look(object *pl)
         }
 
         /* We do a special for DMs - forcing the
-             * inventory of ALL objects we send here... This is a 
+             * inventory of ALL objects we send here... This is a
              * wonderful feature for controling & find bugs.
              */
         if (QUERY_FLAG(pl, FLAG_WIZ))
@@ -1264,14 +1264,14 @@ void esrv_move_object(object *pl, tag_t to, tag_t tag, long nrof)
 
     op = esrv_get_ob_from_count(pl, tag);
     if (!op) /* latency effect - we have moved before we applied this (or below from player changed) */
-        return; 
+        return;
 
     if (!to) /* drop it to the ground */
     {
         if (op->map && !op->env)
             return;
 
-        /*LOG(-1,"drop it... (%d)\n",check_container(pl,op));*/ 
+        /*LOG(-1,"drop it... (%d)\n",check_container(pl,op));*/
         CLEAR_FLAG(pl, FLAG_INV_LOCKED); /* funny trickm see check container */
         if ((tmp = check_container(pl, op)))
             new_draw_info(NDI_UNIQUE, 0, pl, "Remove first all one-drop items from this container!");
