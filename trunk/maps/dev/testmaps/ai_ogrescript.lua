@@ -1,6 +1,6 @@
---[[ 
---  Shows how the AI object can be used to modify a mob's 
---  friendship value in a normal chat script 
+--[[
+--  Shows how the AI object can be used to modify a mob's
+--  friendship value in a normal chat script
 --]]
 require("topic_list");
 

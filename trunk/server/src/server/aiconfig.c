@@ -22,7 +22,7 @@
 /* Generate behaviour parameter declarations */
 #undef BehaviourClass
 #undef Behaviour
-#undef Parameter        
+#undef Parameter
 
 #define INTEGER   AI_INTEGER_TYPE
 #define STRING    AI_STRING_TYPE
@@ -35,7 +35,7 @@
 #define Behaviour(name, func, params) \
     static struct behaviourparam_decl param_decl_ ## name[] = { params {NULL}};
 #define Parameter(behaviour, name, type, flags, defval) \
-{ #name, type, flags, (void *)defval }, 
+{ #name, type, flags, (void *)defval },
 
 #include BEHAVIOUR_DECLARATION_FILE
 
@@ -57,7 +57,7 @@
 #define BehaviourClass(name, behaviours) \
     static struct behaviour_decl class_decl_ ## name [] = { behaviours {NULL}};
 #define Behaviour(name, func, params) \
-    { #name, func, NROF_AIPARAMS_ ## name, param_decl_ ## name, AIBEHAVIOUR_ ## name}, 
+    { #name, func, NROF_AIPARAMS_ ## name, param_decl_ ## name, AIBEHAVIOUR_ ## name},
 
 #include BEHAVIOUR_DECLARATION_FILE
 

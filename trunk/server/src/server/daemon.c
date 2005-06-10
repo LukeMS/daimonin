@@ -79,10 +79,10 @@ FILE * BecomeDaemon(char *filename)
     {
         printf("Couldn't create logfile %s.\n", filename);
         exit(0);
-    } 
-    fputs("\n========================\n", logfile);    
-    fputs("Begin New Server Session\n", logfile);    
-    fputs("========================\n\n", logfile);    
+    }
+    fputs("\n========================\n", logfile);
+    fputs("Begin New Server Session\n", logfile);
+    fputs("========================\n\n", logfile);
     fflush(logfile);
     /*
      * fork so that the process goes into the background automatically. Also
@@ -104,7 +104,7 @@ FILE * BecomeDaemon(char *filename)
      * Close standard file descriptors and get rid of controlling tty
      */
 
-    close(0); 
+    close(0);
     close(1);
     close(2);
 

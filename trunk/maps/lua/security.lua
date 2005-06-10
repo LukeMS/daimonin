@@ -9,7 +9,7 @@ function wrap_loadfile()
     return function(filename)
         -- Don't allow null chars in filename
         assert(not string.find(filename, "%z"), "Filename contains null char")
-    
+
         -- only allow loading of datastore lua files:
         assert(string.find(filename, "\.dsl$"), "Can only load datastore files")
 
@@ -23,7 +23,7 @@ function wrap_io_open()
     return function(filename, mode)
         -- Don't allow null chars in filename
         assert(not string.find(filename, "%z"), "Filename contains null char")
-    
+
         -- only allow loading of datastore lua files:
         assert(string.find(filename, "\.dsl$"), "Can only open datastore files")
 

@@ -23,8 +23,8 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 
-/* Dec '95 - laid down initial file. Stuff in here is for BOOKs 
- * hack. Information in this file describes fundental parameters 
+/* Dec '95 - laid down initial file. Stuff in here is for BOOKs
+ * hack. Information in this file describes fundental parameters
  * of 'books' - objects with type==BOOK. -b.t.
  */
 

@@ -142,7 +142,7 @@ int rndm(int min, int max)
 }
 
 
-/* 
+/*
  *  Return the number of the spell that whose name passes the pasesed string
  *  argument.   Return -1 if no such spell name match is found.
  */
@@ -207,14 +207,14 @@ char * get_word_from_string(char *str, int *pos)
 
     /* copy until end of string nor whitespace */
     while (*(str + (*pos)) != '\0' && (isalnum(*(str + (*pos))) || isalpha(*(str + (*pos)))))
-        buf[i++] = *(str + (*pos)++);       
+        buf[i++] = *(str + (*pos)++);
 
     buf[i] = '\0';
     return buf;
 }
 
 
-/* buf_overflow() - we don't want to exceed the buffer size of 
+/* buf_overflow() - we don't want to exceed the buffer size of
  * buf1 by adding on buf2! Returns true if overflow will occur.
  */
 

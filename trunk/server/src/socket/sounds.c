@@ -53,12 +53,12 @@ void play_sound_player_only(player *pl, int soundnum, int soundtype, int x, int 
     Send_With_Handling(&pl->socket, &sl);
 }
 
-/* Plays some sound on map at x,y using a distance counter.  
+/* Plays some sound on map at x,y using a distance counter.
  * This is now nicely optimized - we use the player map list
  * and testing only the main map and the possible 8 attached maps.
  * Now, we don't must fear about increasing performance lose with
  * high player numbers. mt - 04.02.04
- * the function looks a bit bloated, but for speed reasons, we just 
+ * the function looks a bit bloated, but for speed reasons, we just
  * cloned all the 8 loops with native settings for each direction.
  */
 void play_sound_map(mapstruct *map, int x, int y, int sound_num, int sound_type)

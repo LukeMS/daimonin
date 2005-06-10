@@ -34,7 +34,7 @@
  * For the real bad parts, we go down directly - for some other we go on a bit - most
  * times to see what else is wrong.
  * llevBug is also a bug/error which should not happens BUT but we have catched the
- * problem and the server itself is not in danger. This can be for example wrong 
+ * problem and the server itself is not in danger. This can be for example wrong
  * settings of a object - we catch it and don't generate it for example.
  */
 
@@ -47,17 +47,17 @@
  * If llevInfo is set, is still drops alot useful messages.
  * If llevBug is set, only really bugs and errors are loged.
  * Set levNoLog for no output.
- * ingore llevSystem - its used for additional infos used by llevError and llevBug 
+ * ingore llevSystem - its used for additional infos used by llevError and llevBug
  */
 
 typedef enum LogLevel
 {
     llevNoLog                                                                           = -1,
-    /* set GLOBAL_LOG_LEVEL to this, and no message will be printed out */     
+    /* set GLOBAL_LOG_LEVEL to this, and no message will be printed out */
     llevSystem                                                                          = 0,
     /* internal: used for llevError msg and llevBug message - don't set this! */
     llevError,
-    /* thats fatal errors - server stability is unsafe after this */  
+    /* thats fatal errors - server stability is unsafe after this */
     llevBug,
     /* thats a bug - but we have it under control (we hope so) */
     llevInfo,
@@ -78,8 +78,8 @@ typedef enum LogLevel
 #endif
 #endif
 
-/* WARNING: this extern will also be in ...proto.h 
- * this will allow to explicit include our LOG() in 
+/* WARNING: this extern will also be in ...proto.h
+ * this will allow to explicit include our LOG() in
  * modules.
  */
 extern void LOG(LogLevel logLevel, char *format, ...);

@@ -50,12 +50,12 @@ struct mobdata_pathfinding
     uint8                   path_requested; /* TODO: make a flag instead */
 };
 
-#define AI_OBJFLAG_USES_DISTANCE_ATTACK 0 /* The object is known 
+#define AI_OBJFLAG_USES_DISTANCE_ATTACK 0 /* The object is known
                                              to make use of distance
                                              attacks */
 #define NROF_AI_KNOWN_OBJ_FLAGS 1
 
-/* Keeps track of other objects known to a mob 
+/* Keeps track of other objects known to a mob
  * (enemies, friends and nearby objects). Works as a mob's short-time
  * memory about other objects.
  */
@@ -67,7 +67,7 @@ struct mob_known_obj
 
     uint32                  last_seen; /* tick that this thing was last seen. Used for timeout */
     const char             *last_map;   /* Last known position */
-    int                     last_x, last_y;        
+    int                     last_x, last_y;
 
     /* this stored rv saves some CPU at the cost of some memory, is it really worth it? */
     rv_vector               rv;    /* Stored vector to the object */
@@ -155,7 +155,7 @@ typedef enum
     MOVE_RESPONSE_COORD,
     /* move towards a generic coordinate */
     MOVE_RESPONSE_OBJECT         /* move towards a (possibly moving) object */
-}    move_response_type; 
+}    move_response_type;
 
 typedef struct behaviour_move_response
 {
@@ -168,7 +168,7 @@ typedef struct behaviour_move_response
 
         struct
         {
-            int         x, y; 
+            int         x, y;
             mapstruct  *map;
         } coord;
 

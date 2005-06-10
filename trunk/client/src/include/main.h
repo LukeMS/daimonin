@@ -192,8 +192,8 @@ typedef struct _options
 
     /* Debug */
     Boolean                 force_redraw;
-    Boolean                 show_frame;         /* true: show frame rate */ 
-    Boolean                 use_gl; 
+    Boolean                 show_frame;         /* true: show frame rate */
+    Boolean                 use_gl;
     int                     sleep;
     Boolean                 max_speed;
     Boolean                 auto_bpp_flag;
@@ -232,7 +232,7 @@ typedef struct _options
     Uint8                   real_video_bpp;
     uint32                  videoflags_full;
     uint32                  videoflags_win;
-}_options; 
+}_options;
 
 extern struct _options  options;
 
@@ -626,6 +626,6 @@ extern void clear_metaserver_data(void);
 extern void get_meta_server_data(int num, char *server, int *port);
 extern void free_faces(void);
 extern void load_options_dat(void);
-extern void save_options_dat(void); 
+extern void save_options_dat(void);
 #endif
 

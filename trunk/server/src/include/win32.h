@@ -36,8 +36,8 @@
 
 #endif /* !defined(AFX_STDAFX_H__31666CA1_2474_11D5_AE6C_F07569C10000__INCLUDED_) */
 
-#define WIN32_LEAN_AND_MEAN 
-/* includes for VC - plz add other include settings for different compiler 
+#define WIN32_LEAN_AND_MEAN
+/* includes for VC - plz add other include settings for different compiler
  * when needed and comment it
  */
 #include <winsock2.h>
@@ -121,7 +121,7 @@
 #define int64 __int64
 #endif
 #ifndef atoll
-#define atoll	_atoi64 
+#define atoll	_atoi64
 #endif
 
 /* struct dirent - same as Unix */

@@ -88,7 +88,7 @@ enum
     PLAYER_EQUIP_AMULET,
     PLAYER_EQUIP_WEAPON1,
     PLAYER_EQUIP_BOW,
-    PLAYER_EQUIP_MAX 
+    PLAYER_EQUIP_MAX
     /* last index */
 };
 
@@ -96,9 +96,9 @@ enum
 
 #define PLAYER_AFLAG_NO 0
 #define PLAYER_AFLAG_FIGHT 1    /* if this flag is set, show player fight animation */
-#define PLAYER_AFLAG_ENEMY 2    /* if this flag is set at END of a animation, 
+#define PLAYER_AFLAG_ENEMY 2    /* if this flag is set at END of a animation,
                                  * set fight flag and clear this flag. It is set in hit_player()
-                                    * when the player swings to an enemy 
+                                    * when the player swings to an enemy
                                     */
 #define PLAYER_AFLAG_ADDFRAME 4 /* intern */
 
@@ -118,7 +118,7 @@ typedef struct pl_player
 
     /* all this is set to 0 with memset */
     char                maplevel[MAX_BUF];          /* Name of the map the player is on */
-    struct mapdef      *last_update;        /* when moving on tiled maps, player can change 
+    struct mapdef      *last_update;        /* when moving on tiled maps, player can change
                                                  * map without triggering mapevents and new_map_cmd.
                                                  * This will break client cache and script events.
                                                  * This value will used as control value.*/
@@ -136,7 +136,7 @@ typedef struct pl_player
 
     int                 base_skill_group[3];            /* guild/base exp skill groups for default exp gain */
     object             *highest_skill[NROFSKILLGROUPS]; /* highest skill of every skill group */
-    
+
     object             *exp_obj_ptr[NROFSKILLGROUPS];       /* skill exp groups ptr (agility, mental,..) */
     int                 last_exp_obj_exp[NROFSKILLGROUPS];   /* shadow variables for client updating */
     int                 last_exp_obj_level[NROFSKILLGROUPS]; /* sic */
@@ -148,7 +148,7 @@ typedef struct pl_player
     object             *map_above;
     object             *container;          /* Current container being used. */
     uint32              container_count;        /* the count of the container */
-    object             *container_above;    /* that points to a PLAYER ob, accessing this container too! 
+    object             *container_above;    /* that points to a PLAYER ob, accessing this container too!
                                                   * if this is NULL, we are the "last" one looking in ->container.
                                                   */
     object             *container_below;    /* same as above - if this is NULl, we are "last" looking the container */
@@ -194,23 +194,23 @@ typedef struct pl_player
     sint32              skill_exp[NROFSKILLS];   /* shadow register for updating skill values to client */
     uint32              target_object_count;     /* count of target - NOTE: if we target ourself, this count it 0
                                                     * this will kick us out of enemy target routines - all functions
-                                                    * who handle self target know it and use only target_object - 
+                                                    * who handle self target know it and use only target_object -
                                                     * for our own player object the pointer will never change for us.
                                                     */
     uint32              target_map_pos;         /* last target search position */
     uint32              mode;                   /* Mode of player for pickup. */
     sint32              group_id;				/* unique group id number - this is a unique number like the object count */
     sint32	            group_status;			/* status of invite or group */
-                                    
+
     /* we don't need here the count of group object links- because the game will explicit
      * link/unlink party members when their player object change.
-     * exception is group leader - its only used to confirm a invite 
+     * exception is group leader - its only used to confirm a invite
      */
     object             *group_leader;			/* pointer to group leader or invite */
     uint32              group_leader_count;		/* for invite... */
     object             *group_prev;				/* previous member of group */
     object             *group_next;				/* next member of group */
-    
+
     uint32              update_ticker;          /* global_round tick where player was updated */
     float               last_speed;
 
@@ -255,8 +255,8 @@ typedef struct pl_player
     uint8	            group_mode;					/* group mode use GROUP_MODE_XX */
     uint8               group_nrof;					/* number of players in group */
     uint8               group_nr;					/* player is #group_nr in his group - used for fast update */
-                                        
-                                        
+
+
     char	            group_invite_name[MAX_PLAYER_NAME+1]; /* GROUP_MODE_INVITE: This player name can invite you
                                                                * we need string name here to handle for example a logout
                                                                * of this player.
@@ -276,7 +276,7 @@ typedef struct pl_player
     char                levgrace[MAXLEVEL + 1];
     sint8               last_protection[NROFPROTECTIONS];   /* shadow register for client update resistance table */
 
-    uint32              player_loaded       : 1;            /* this flags is set when the player is loaded from file 
+    uint32              player_loaded       : 1;            /* this flags is set when the player is loaded from file
                                                                      * and not just created. It is used to overrule the "no save
                                                                      * when exp is 0" rule - which can lead inventory duping.
                                                                      */
@@ -289,7 +289,7 @@ typedef struct pl_player
 
     /* some dm flags */
     uint32              dm_stealth          : 1;            /* 1= no "XX enter the game" and no entry in /who */
-    uint32              dm_light            : 1;                /* 1= all maps are shown in daylight for the dm */ 
+    uint32              dm_light            : 1;                /* 1= all maps are shown in daylight for the dm */
     uint32              dm_removed_from_map : 1;    /* internal dm flag: player was removed from a map */
 
     /* all values before this line are tested and proofed */

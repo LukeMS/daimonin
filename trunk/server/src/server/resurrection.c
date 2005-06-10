@@ -62,7 +62,7 @@ void dead_player(object *op)
 /*  raise_dead by peterm and mehlhaff@soda.berkeley.edu  */
 /*  *op  --  who is doing the resurrecting
     dir  --  direction the spell is cast
-    spell_type  --  which spell was cast 
+    spell_type  --  which spell was cast
 */
 int cast_raise_dead_spell(object *op, int dir, int spell_type, object *corpseobj)
 {
@@ -250,7 +250,7 @@ int resurrect_player(object *op, char *playername, int rspell)
         }
         if (!(strcmp(buf2, "Con")))
         {
-            sscanf(buf, "%s %d", buf2, &Con);   
+            sscanf(buf, "%s %d", buf2, &Con);
             switch (rspell)
             {
                 case SP_RAISE_DEAD:

@@ -42,34 +42,34 @@
 
 /* Modification March 3 1995 - skills are expanded from stealing to
  * include another 14 skills. + skill code generalized. Some player
- * classes now may start with skills. -b.t. (thomas@nomad.astro.psu.edu) 
+ * classes now may start with skills. -b.t. (thomas@nomad.astro.psu.edu)
  */
 
 /* Modification April 21 1995 - more skills added, detect magic - detect
  * curse to woodsman - b.t. (thomas@nomad.astro.psu.edu)
- */ 
+ */
 
-/* Modification May/June 1995 - 
- *  HTH skills to allow hitting while moving. 
+/* Modification May/June 1995 -
+ *  HTH skills to allow hitting while moving.
  *  Modified the bargaining skill to allow incremental CHA increase (based on level)
  *  Added the inscription skill, finished play-testing meditation skill.
  *  - b.t. (thomas@astro.psu.edu)
- */ 
+ */
 
-/* Modification June/July 1995 - 
- *  1- Expansion of the skills code to fit within a scheme of multiple categories 
+/* Modification June/July 1995 -
+ *  1- Expansion of the skills code to fit within a scheme of multiple categories
  *  of experience. Henceforth, 2 categories of skills will exist: "associated"
  *  skills which are associated with one of the categories of experience, and
  *  "miscellaneous" skills, which are not related to any experience category.
- *  2- Moved the attacking and spellcasting player activities into skills. 
- *  Now have "hand weapons" "missile weapons" "throwing" and "spellcasting". 
+ *  2- Moved the attacking and spellcasting player activities into skills.
+ *  Now have "hand weapons" "missile weapons" "throwing" and "spellcasting".
  *  see doc/??? for details on this system.
- *  - b.t.  
+ *  - b.t.
  */
 
-/* define this if you want to have player skills stored for 
+/* define this if you want to have player skills stored for
  * faster access from a linked list. If skill tools are heavily used
- * calls to malloc from this code can actually make performance worse. 
+ * calls to malloc from this code can actually make performance worse.
  * -b.t. */
 
 /* #define LINKED_SKILL_LIST */
@@ -102,53 +102,53 @@ enum skillnrs
     /* sells equip at Cha + level-based bonus (30 max) */
     /* 10 */
     SK_JUMPING,
-    /* player may 'hop' over 1-2 spaces */ 
+    /* player may 'hop' over 1-2 spaces */
     SK_DET_MAGIC,
-    /* player may sense magic in handled items */ 
+    /* player may sense magic in handled items */
     SK_ORATORY,
-    /* player may charm unaggressive monsters */ 
+    /* player may charm unaggressive monsters */
     SK_MUSIC,
-    /* Player may pacify hostile monsters once */ 
+    /* Player may pacify hostile monsters once */
     SK_DET_CURSE,
-    /* player may sense cursed items in inventory */ 
+    /* player may sense cursed items in inventory */
     /* 15 */
     SK_FIND_TRAPS,
-    /* player can find traps better */ 
+    /* player can find traps better */
     SK_MEDITATION,
-    /* player can regain sp/hp at a faster rate */ 
+    /* player can regain sp/hp at a faster rate */
     SK_BOXING,
-    /* can attack hand-to-hand, see attack_hth() */ 
+    /* can attack hand-to-hand, see attack_hth() */
     SK_FLAME_TOUCH,
-    /* player attack for fireborn characters */ 
+    /* player attack for fireborn characters */
     SK_KARATE,
-    /* can attack hand-to-hand, see attack_hth() */ 
+    /* can attack hand-to-hand, see attack_hth() */
     /* 20 */
     SK_CLIMBING,
-    /* player moves quickly over hills/mountains  */ 
+    /* player moves quickly over hills/mountains  */
     SK_WOODSMAN,
-    /* player moves quickly through jungle/forest */ 
+    /* player moves quickly through jungle/forest */
     SK_INSCRIPTION,
-    /* player may write spell scrolls */ 
+    /* player may write spell scrolls */
     SK_MELEE_WEAPON,
-    /* player can attack with melee weapons */ 
+    /* player can attack with melee weapons */
     SK_MISSILE_WEAPON,
-    /* player can attack with missile weapons */ 
+    /* player can attack with missile weapons */
     /* 25 */
     SK_THROWING,
-    /* player can throw items */ 
+    /* player can throw items */
     SK_SPELL_CASTING,
-    /* player can cast magic spells */ 
+    /* player can cast magic spells */
     SK_REMOVE_TRAP,
-    /* player can remove traps */ 
+    /* player can remove traps */
     SK_SET_TRAP,
-    /* player can set traps - not implemented */ 
+    /* player can set traps - not implemented */
     SK_USE_MAGIC_ITEM,
-    /* player use wands/horns/rods */ 
+    /* player use wands/horns/rods */
     /* 30 */
     SK_PRAYING,
-    /* player can cast cleric spells, regen grace points */ 
+    /* player can cast cleric spells, regen grace points */
     SK_CLAWING,
-    /* player attack for troll, dragon characters */ 
+    /* player attack for troll, dragon characters */
     SK_LEVITATION,
     /* skill for players who can fly. */
 

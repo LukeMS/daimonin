@@ -493,8 +493,8 @@ int map_brightness(mapstruct *m, int x, int y)
 {
     if (!(m = out_of_map(m, &x, &y)))
         return 0;
-    
-    return GET_MAP_LIGHT_VALUE(m,x,y) + 
+
+    return GET_MAP_LIGHT_VALUE(m,x,y) +
         (MAP_OUTDOORS(m) ? global_darkness_table[world_darkness] : m->light_value);
 }
 
@@ -624,10 +624,10 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
              * - PASS_THRU set and object has no CAN_PASS_THRU
 			 * - the same for PASS_ETHEREAL and IS_ETHEREAL
              */
-        if (!op || ( (!(flags & P_PASS_THRU) || !QUERY_FLAG(op, FLAG_CAN_PASS_THRU)) && 
+        if (!op || ( (!(flags & P_PASS_THRU) || !QUERY_FLAG(op, FLAG_CAN_PASS_THRU)) &&
 				     (!(flags & P_PASS_ETHEREAL) || !QUERY_FLAG(op, FLAG_IS_ETHEREAL)) ))
             return (flags & (P_DOOR_CLOSED | P_NO_PASS | P_IS_PLAYER | P_CHECK_INV | P_PASS_THRU| P_PASS_ETHEREAL));
-		
+
         /* ok, NO_PASS is overruled... we go on... */
     }
 
@@ -939,7 +939,7 @@ int load_objects(mapstruct *m, FILE *fp, int mapflags)
         }
 
         if (QUERY_FLAG(op, FLAG_UNIQUE))
-			unique = TRUE;					/* we CAN avoid this check by check the map in the editor first 
+			unique = TRUE;					/* we CAN avoid this check by check the map in the editor first
 											 * and set the map data direct in the original map
 											 */
 
@@ -1039,7 +1039,7 @@ int load_objects(mapstruct *m, FILE *fp, int mapflags)
 				create_treasure_list( op->randomitems, op, op->type != TREASURE ? GT_APPLY : 0,
 									  op->level ? op->level : m->difficulty, ART_CHANCE_UNSET, 0);
 		}
-		
+
         if (op->type == MONSTER)
             fix_monster(op);
 
@@ -1086,7 +1086,7 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
     int     i, j = 0;
     object *head, *op, *otmp, *tmp, *last_valid;
 	char   *bptr=NULL;
-	
+
     /* first, we have to remove all dynamic objects from this map.
      * from spell effects with owners (because the owner can't
      * be restored after a save) or from spawn points generated mobs.
@@ -1347,7 +1347,7 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
                     tmp->x = xt;
                     tmp->y = yt;
                     remove_ob(tmp); /* this is only a "trick" remove - no walk off check.
-					                 * Remember: don't put important triggers near tiled map borders! 
+					                 * Remember: don't put important triggers near tiled map borders!
 					                 */
 
                     if (otmp && (QUERY_FLAG(otmp, FLAG_REMOVED) || OBJECT_FREE(otmp))) /* invalid next ptr! */
@@ -1373,7 +1373,7 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
 						if ((fp2 = fopen((bptr = create_items_path(m->path)), "w")) == NULL)
 							/* we give an error here... thats really a awful bug */
 							LOG(llevError, "ERROR: Can't open for save unique items file %s\n", bptr);
-						
+
 						LOG(llevDebug, "Saving unique items map to %s\n", bptr);
 					}
                     save_object(fp2, op, 3);
@@ -1991,7 +1991,7 @@ static void load_unique_objects(mapstruct *m)
     if ((fp = fopen((fptr=create_items_path(m->path)), "r")))
     {
 		LOG(llevDebug, "open unique items file for %s\n", fptr);
-	
+
 		m->in_memory = MAP_LOADING;
 		if (m->tmpname == NULL)    /* if we have loaded unique items from */
 	        delete_unique_items(m); /* original map before, don't duplicate them */
@@ -2138,7 +2138,7 @@ int new_save_map(mapstruct *m, int flag)
 			if ((fp2 = fopen((bptr = create_items_path(m->path)), "w")) == NULL)
 				/* we give an error here... thats really a awful bug */
 				LOG(llevError, "ERROR: Can't open for save unique items file %s\n", bptr);
-			
+
 			LOG(llevDebug, "Saving unique items map to %s\n", bptr);
 
 			save_objects(m, fp, fp2, 0);
@@ -2916,7 +2916,7 @@ mapstruct * out_of_map2(mapstruct *m, int *x, int *y)
  * if the objects are not on maps, results are also likely to
  * be unexpected
  *
- * Flags: 
+ * Flags:
  *   RV_IGNORE_MULTIPART (0x1) - don't translate for closest body part.
  *   RV_RECURSIVE_SEARCH (0x2) - do recursive search on adjacent tiles.
  * + any flags accepted by get_rangevector_from_mapcoords() below.
@@ -2984,7 +2984,7 @@ int get_rangevector(object *op1, object *op2, rv_vector *retval, int flags)
  *  RV_EUCLIDIAN_DISTANCE (0x4) - (straight line) distance (slow)
  *  RV_DIAGONAL_DISTANCE  (0x8) - diagonal (max(dx + dy)) distance   (fast)
  *  RV_NO_DISTANCE   (0x8|0x04) - don't calculate distance (or direction) (fastest)
- *  RV_RECURSIVE_SEARCH   (0x2) - handle separate maps better (slow and does still not 
+ *  RV_RECURSIVE_SEARCH   (0x2) - handle separate maps better (slow and does still not
  *                                search the whole mapset).
  */
 int get_rangevector_from_mapcoords(mapstruct *map1, int x1, int y1, mapstruct *map2, int x2, int y2, rv_vector *retval,

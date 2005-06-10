@@ -54,7 +54,7 @@ object * find_key(object *op, object *door)
     return NULL;
 }
 
-/* this is our main open_door() function. It is used for doors 
+/* this is our main open_door() function. It is used for doors
  * which will auto open/close and/or need a special key. It is
  * used from npc, mobs and players and use the remove_doorX()
  * functions below.
@@ -71,7 +71,7 @@ int open_door(object *op, mapstruct *m, int x, int y, int mode)
         return 0;
 
     /* Ok, this trick will save us *some* search time - because we
-     * assume that a door is always on layer 5. But *careful* - 
+     * assume that a door is always on layer 5. But *careful* -
      * if we assign in a map a different layer to a door this will
      * fail badly!
      */
@@ -102,7 +102,7 @@ int open_door(object *op, mapstruct *m, int x, int y, int mode)
         }
     }
 
-    /* we should not be here... We have a misplaced door_closed flag 
+    /* we should not be here... We have a misplaced door_closed flag
      * or a door on a wrong layer... both is not good, so drop a bug msg.
      */
     LOG(llevSystem,
@@ -111,7 +111,7 @@ int open_door(object *op, mapstruct *m, int x, int y, int mode)
     return 0;
 }
 
-/* The following removes doors.  The functions check to see if similar 
+/* The following removes doors.  The functions check to see if similar
  * doors are next to the one that is being removed, and if so, set it
  * so those will be removed shortly (in a cascade like fashion.)
  */
@@ -161,7 +161,7 @@ void remove_door2(object *op, object *opener)
 {
     object *tmp, *tmp2;
 
-    /* - NO cascading for locked doors! 
+    /* - NO cascading for locked doors!
     int i;
     for(i=1;i<9;i+=2) {
       tmp=present(LOCKED_DOOR,op->map,op->x+freearr_x[i],op->y+freearr_y[i]);
@@ -247,7 +247,7 @@ void remove_door3(object *op)
     if (op->last_sp-- > 0)
         return;
     /* now we try to close the door. The rule is:
-     * is the tile of the door not blocked by a no_pass object OR a player OR a mob - 
+     * is the tile of the door not blocked by a no_pass object OR a player OR a mob -
      * then close the door.
      * IF it is blocked - then restart a new "is open" phase.
      */
@@ -424,7 +424,7 @@ void poison_more(object *op)
 /* TODO: i have not included damage to mobs/player on reverse up going gates!
  * Look in the code!
  * also, i included sounds for open & close gates! we need to add a tracker the
- * get is going up or down. 
+ * get is going up or down.
  */
 void move_gate(object *op)
 {
@@ -631,7 +631,7 @@ void move_timed_gate(object *op)
         if (op->weight_limit != v)   /* change direction ? */
             op->stats.sp = 0;
         return;
-    } 
+    }
     if (--op->stats.hp <= 0)
     {
         /* keep gate down */
@@ -981,7 +981,7 @@ void move_arrow(object *op)
         return;
     }
 
-    /* we need to stop thrown objects and arrows at some point. Like here. */ 
+    /* we need to stop thrown objects and arrows at some point. Like here. */
     if (op->type == THROWN_OBJ)
     {
         if (op->inv == NULL)
@@ -1085,7 +1085,7 @@ void move_arrow(object *op)
         op->direction = absdir(op->direction + 4);
         op->state = 0;
         if (GET_ANIM_ID(op))
-            SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction);          
+            SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction);
         if (wall(m, new_x, new_y))
         {
             /* Target is standing on a wall.  Let arrow turn around before
@@ -1166,7 +1166,7 @@ void move_arrow(object *op)
 }
 
 /* This routine doesnt seem to work for "inanimate" objects that
- * are being carried, ie a held torch leaps from your hands!. 
+ * are being carried, ie a held torch leaps from your hands!.
  * Modified this routine to allow held objects. b.t. */
 
 void change_object(object *op)
@@ -1526,7 +1526,7 @@ void move_player_mover(object *op)
 }
 
 
-/*  move_creator (by peterm) 
+/*  move_creator (by peterm)
   it has the creator object create it's other_arch right on top of it.
   connected:  what will trigger it
   hp:  how many times it may create before stopping
@@ -1616,10 +1616,10 @@ void move_environment_sensor(object *op)
 {
     int trig_tod = 0, trig_dow = 0, trig_bright = 0;
     timeofday_t tod;
-    
+
     if(op->slaying || op->last_grace)
         get_tod(&tod);
-    
+
     /* Time of day triggered? */
     if(op->slaying == NULL)
         trig_tod = 1;
@@ -1651,27 +1651,27 @@ void move_environment_sensor(object *op)
     {
         if(op->last_grace & (1 << tod.dayofweek))
             trig_dow = 1;
-        
+
         // LOG(llevDebug, "Weekday %d, trig (%d): %d\n", tod.dayofweek, op->last_grace, trig_dow);
     }
-    
+
     /* Brightness triggered? */
     if(op->last_grace == 0)
         trig_bright = 1;
     else
     {
         object *tmp;
-        
+
         op->last_grace = CLAMP(op->last_grace, -MAX_DARKNESS, MAX_DARKNESS);
-        
+
         /* if sensor is inside container, see whats it like outside */
         for(tmp = op; tmp && tmp->env && tmp->map == NULL; tmp = tmp->env)
             ;
-            
+
         /* If sensor can't see through closed containers */
         if(!QUERY_FLAG(op, FLAG_SEE_INVISIBLE) && op->env) {
             if((op->type != TYPE_QUEST_CONTAINER && op->type != CONTAINER) ||
-                    !QUERY_FLAG(op, FLAG_APPLIED)) 
+                    !QUERY_FLAG(op, FLAG_APPLIED))
                 tmp = NULL;
         }
 
@@ -1691,7 +1691,7 @@ void move_environment_sensor(object *op)
             (!(trig_tod && trig_dow && trig_bright) && op->weight_limit == 1))
     {
 //        LOG(llevDebug, "env_sensor toggled from %d to %d\n", op->value, !op->value);
-        
+
         /* TODO trigger a plugin event here or in push_button()? */
         op->weight_limit = (trig_tod && trig_dow && trig_bright) ? 1 : 0;
 #ifdef PLUGINS
@@ -1730,7 +1730,7 @@ void move_environment_sensor(object *op)
     }
 }
 
-/* 
+/*
  * last_grace = output connection
  * subtype = logical function
  */
@@ -1746,7 +1746,7 @@ void move_conn_sensor(object *op)
 
     if(op->map == NULL)
         return;
-    
+
     /* Count number of active inputs. Lets define an input
      * as active if the majority of the connection objects
      * on that connection has value > 0 */
@@ -1754,18 +1754,18 @@ void move_conn_sensor(object *op)
     {
         int myinput = 0;
         int numzeroes = 0, numones = 0;
-        
+
         /* Don't count our own output */
         if(op->last_grace == obp->value)
             continue;
 
-        /* Combined searhing for connections this sensor is part of 
+        /* Combined searhing for connections this sensor is part of
          * and checking value of connection */
         for (ol = obp->objlink.link; ol; ol = ol->next)
         {
-            if (ol->objlink.ob == op && ol->id == op->count) 
+            if (ol->objlink.ob == op && ol->id == op->count)
                 myinput = 1;
-            else 
+            else
             {
                 if(ol->objlink.ob->weight_limit > 0)
                     numones++;
@@ -1782,8 +1782,8 @@ void move_conn_sensor(object *op)
                 numactive++;
         }
     }
-    
-   
+
+
     /* Perform the logic filtering */
     switch(op->sub_type1)
     {
@@ -1800,9 +1800,9 @@ void move_conn_sensor(object *op)
             newvalue = (numactive == 1);
             break;
     }
-    
+
 //    LOG(llevDebug, "move_conn_sensor: type=%d, numactive=%d, numinputs=%d, value=%d -> %d\n", op->sub_type1, numactive, numinputs, op->value, newvalue);
-   
+
     /* Trigger only on state change */
     if(op->weight_limit != newvalue)
     {
@@ -1989,7 +1989,7 @@ int process_object(object *op)
 
     process_object_dirty_jump:
 
-    /* i don't like this script object here .. 
+    /* i don't like this script object here ..
      * this is *the* core loop.
      */
 #ifdef PLUGINS

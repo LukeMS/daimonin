@@ -31,7 +31,7 @@
  * the face numbers. When using the same archefile & bmaps file, sorting will always
  * end in the same result. And the client has no knowledge about it. The server
  * tell it the client at runtime - this is face "bla" and it has number <num>.
- * The client use this info only the time it is connected. 
+ * The client use this info only the time it is connected.
  * So, we can remove it. MT-11-2002
  */
 
@@ -41,7 +41,7 @@
  * then an index into the new_faces array.
  * This data is redundant with new_face information - the difference
  * is that this data gets sorted, and that doesn't necessarily happen
- * with the new_face data - when accessing new_face[some number], 
+ * with the new_face data - when accessing new_face[some number],
  * that some number corresponds to the face at that number - for
  * xbm, it may not.  At current time, these do in fact match because
  * the bmaps file is created in a sorted order.
@@ -92,7 +92,7 @@ int ReadBmapNames()
     {
         if (*buf == '#')
             continue;
-        
+
         /* Kill the newline */
         i = strlen(buf) - 1;
         while(isspace(buf[i]) && i >= 0)
@@ -110,7 +110,7 @@ int ReadBmapNames()
         i = strlen(q) - 1;
         while(isspace(q[i]) && i >= 0)
             q[i--] = '\0';
-        
+
         xbm[nroffiles].name = strdup_local(q);
 
         /* We need to calculate the checksum of the bmaps file

@@ -390,7 +390,7 @@ elseif words[1] == 'face' then
         me:SetFace(words[2])
         me.f_is_animated = false
     end
-        
+
 elseif (msg == 'invisible') then
     -- FIXME: Seems to have some problems if the player is made invisible (UP_INV_XXX flag ????)
 	if (activator.f_is_invisible) then

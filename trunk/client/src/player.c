@@ -87,7 +87,7 @@ static float        weapon_speed_table[19]  =
 
 void clear_player(void)
 {
-    memset(quick_slots, -1, sizeof(quick_slots));   
+    memset(quick_slots, -1, sizeof(quick_slots));
     free_all_items(cpl.sack);
     free_all_items(cpl.below);
     free_all_items(cpl.ob);
@@ -193,7 +193,7 @@ int send_command(const char *command, int repeat, int must_send)
         SockList_AddInt(&sl, repeat);
         strncpy((char *) sl.buf + sl.len, command, MAX_BUF - sl.len);
         sl.buf[MAX_BUF - 1] = 0;
-        sl.len += strlen(command);                
+        sl.len += strlen(command);
         send_socklist(csocket.fd, sl);
     }
     else
@@ -674,7 +674,7 @@ void show_player_doll(int x, int y)
     int     index, tooltip_index = -1, ring_flag = 0;
     int     mx, my;
 
-    /* this is ugly to calculate because its a curve which increase heavily 
+    /* this is ugly to calculate because its a curve which increase heavily
      * with lower weapon_speed... so, we use a table
      */
     int     ws_temp         = cpl.stats.weapon_sp;
@@ -711,9 +711,9 @@ void show_player_doll(int x, int y)
 
     /* i disabled this info... running by only use the ALT key should be prefered
        if(cpl.run_on || cpl.runkey_on)
-           StringBlt(ScreenSurface, &SystemFont,"run",x+44, x+242,COLOR_WHITE, NULL, NULL);         
-       else 
-           StringBlt(ScreenSurface, &SystemFont,"walk",x+44, x+242,COLOR_WHITE, NULL, NULL);         
+           StringBlt(ScreenSurface, &SystemFont,"run",x+44, x+242,COLOR_WHITE, NULL, NULL);
+       else
+           StringBlt(ScreenSurface, &SystemFont,"walk",x+44, x+242,COLOR_WHITE, NULL, NULL);
        */
     for (tmp = cpl.ob->inv; tmp; tmp = tmp->next)
     {

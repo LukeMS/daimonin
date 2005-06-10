@@ -48,7 +48,7 @@ static struct method_decl   AI_methods[]            =
     {"GetAttraction",          (lua_CFunction) AI_GetAttraction},
     {"LastSeen",               (lua_CFunction) AI_LastSeen},
     {"GetKnownMobs",           (lua_CFunction) AI_GetKnownMobs},
-    
+
     {NULL, NULL}
 };
 
@@ -65,11 +65,11 @@ struct attribute_decl       AI_attributes[]         =
 static struct mob_known_obj *find_known_obj(object *source, object *target)
 {
     struct mob_known_obj *tmp;
-    
+
     if(source == NULL || target == NULL || source->type != MONSTER ||
             MOB_DATA(source) == NULL || source == target)
         return NULL;
-    
+
     for (tmp = MOB_DATA(source)->known_mobs; tmp; tmp = tmp->next)
         if (tmp->obj == target && tmp->obj_count == target->count)
             return tmp;
@@ -94,9 +94,9 @@ static int AI_ForbidMoveDirection(lua_State *L)
 {
     lua_object *self, *event;
     int         dir;
-    
+
     get_lua_args(L, "Ai", &self, &dir);
-    
+
     lua_pushliteral(L, "event");
     lua_rawget(L, LUA_GLOBALSINDEX);
     event = lua_touserdata(L, -1);
@@ -105,7 +105,7 @@ static int AI_ForbidMoveDirection(lua_State *L)
         event->data.context->move_response->forbidden |= (1 << dir);
     else
         luaL_error(L, "This function is only useful for movement behaviours");
-    
+
     return 0;
 }
 
@@ -121,9 +121,9 @@ static int AI_IsMoveDirectionAllowed(lua_State *L)
 {
     lua_object *self, *event;
     int         dir;
-    
+
     get_lua_args(L, "Ai", &self, &dir);
-    
+
     lua_pushliteral(L, "event");
     lua_rawget(L, LUA_GLOBALSINDEX);
     event = lua_touserdata(L, -1);
@@ -134,7 +134,7 @@ static int AI_IsMoveDirectionAllowed(lua_State *L)
         return 1;
     } else
         luaL_error(L, "This function is only useful for movement behaviours");
-    
+
     return 0;
 }
 
@@ -148,9 +148,9 @@ static int AI_MoveRespondDirection(lua_State *L)
 {
     lua_object *self, *event;
     int         dir;
-    
+
     get_lua_args(L, "Ai", &self, &dir);
-    
+
     lua_pushliteral(L, "event");
     lua_rawget(L, LUA_GLOBALSINDEX);
     event = lua_touserdata(L, -1);
@@ -161,7 +161,7 @@ static int AI_MoveRespondDirection(lua_State *L)
         event->data.context->move_response->data.direction = dir;
     } else
         luaL_error(L, "This function is only useful for movement behaviours");
-    
+
     return 0;
 }
 
@@ -177,9 +177,9 @@ static int AI_MoveRespondDirections(lua_State *L)
 {
     lua_object *self, *event;
     int         dir;
-    
+
     get_lua_args(L, "Ai", &self, &dir);
-    
+
     lua_pushliteral(L, "event");
     lua_rawget(L, LUA_GLOBALSINDEX);
     event = lua_touserdata(L, -1);
@@ -194,7 +194,7 @@ static int AI_MoveRespondDirections(lua_State *L)
         event->data.context->move_response->data.directions |= (1 << dir);
     } else
         luaL_error(L, "This function is only useful for movement behaviours");
-    
+
     return 0;
 }
 
@@ -210,9 +210,9 @@ static int AI_MoveRespondCoordinate(lua_State *L)
 {
     lua_object *self, *event, *map;
     int         x,y;
-    
+
     get_lua_args(L, "AMii", &self, &map, &x, &y);
-    
+
     lua_pushliteral(L, "event");
     lua_rawget(L, LUA_GLOBALSINDEX);
     event = lua_touserdata(L, -1);
@@ -225,7 +225,7 @@ static int AI_MoveRespondCoordinate(lua_State *L)
         event->data.context->move_response->data.coord.map = map->data.map;
     } else
         luaL_error(L, "This function is only useful for movement behaviours");
-    
+
     return 0;
 }
 
@@ -239,9 +239,9 @@ static int AI_MoveRespondCoordinate(lua_State *L)
 static int AI_MoveRespondObject(lua_State *L)
 {
     lua_object *self, *event, *obj;
-    
+
     get_lua_args(L, "AO", &self, &obj);
-    
+
     lua_pushliteral(L, "event");
     lua_rawget(L, LUA_GLOBALSINDEX);
     event = lua_touserdata(L, -1);
@@ -253,7 +253,7 @@ static int AI_MoveRespondObject(lua_State *L)
         event->data.context->move_response->data.target.obj_count = obj->tag;
     } else
         luaL_error(L, "This function is only useful for movement behaviours");
-    
+
     return 0;
 }
 
@@ -267,13 +267,13 @@ static int AI_MoveRespondObject(lua_State *L)
 static int AI_Knows(lua_State *L)
 {
     lua_object *self, *obj;
-    
+
     get_lua_args(L, "AO", &self, &obj);
-    
-    lua_pushboolean(L, 
-            find_known_obj(self->data.object, obj->data.object) ? 
+
+    lua_pushboolean(L,
+            find_known_obj(self->data.object, obj->data.object) ?
             TRUE : FALSE);
-    
+
     return 1;
 }
 
@@ -288,12 +288,12 @@ static int AI_Register(lua_State *L)
 {
     lua_object *self, *obj;
     int friendship = 0, attraction = 0;
-    
+
     get_lua_args(L, "AO|ii", &self, &obj, &friendship, &attraction);
-    
+
     hooks->register_npc_known_obj(self->data.object, obj->data.object,
-            friendship);    
-    
+            friendship);
+
     return 0;
 }
 
@@ -308,18 +308,18 @@ static int AI_UsesDistanceAttack(lua_State *L)
 {
     lua_object *self, *obj;
     struct mob_known_obj *info;
-    
+
     get_lua_args(L, "AO", &self, &obj);
-    
+
     if(!(info = find_known_obj(self->data.object, obj->data.object)))
     {
         lua_pushboolean(L, FALSE);
         return 1;
     }
 
-    lua_pushboolean(L, 
+    lua_pushboolean(L,
            QUERY_FLAG(info, AI_OBJFLAG_USES_DISTANCE_ATTACK));
-    
+
     return 1;
 }
 
@@ -334,9 +334,9 @@ static int AI_GetFriendship(lua_State *L)
 {
     lua_object *self, *obj;
     struct mob_known_obj *info;
-    
+
     get_lua_args(L, "AO", &self, &obj);
-    
+
     if(!(info = find_known_obj(self->data.object, obj->data.object)))
     {
         lua_pushnumber(L, 0);
@@ -344,7 +344,7 @@ static int AI_GetFriendship(lua_State *L)
     }
 
     lua_pushnumber(L, info->tmp_friendship);
-    
+
     return 1;
 }
 
@@ -359,9 +359,9 @@ static int AI_GetAttraction(lua_State *L)
 {
     lua_object *self, *obj;
     struct mob_known_obj *info;
-    
+
     get_lua_args(L, "AO", &self, &obj);
-    
+
     if(!(info = find_known_obj(self->data.object, obj->data.object)))
     {
         lua_pushnumber(L, 0);
@@ -369,7 +369,7 @@ static int AI_GetAttraction(lua_State *L)
     }
 
     lua_pushnumber(L, info->tmp_attraction);
-    
+
     return 1;
 }
 
@@ -390,22 +390,22 @@ static int AI_LastSeen(lua_State *L)
 {
     lua_object *self, *obj;
     struct mob_known_obj *info;
-    
+
     get_lua_args(L, "AO", &self, &obj);
-    
+
     if(!(info = find_known_obj(self->data.object, obj->data.object)))
         return 0;
 
     luaL_error(L, "Not implemented yet");
-    
+
     /* TODO */
 #if 0
     lua_pushnumber(L, 0);        /* Time since last seen */
     push_object(L, &Map, NULL);  /* Da map */
     lua_pushnumber(L, info->last_x);
     lua_pushnumber(L, info->last_y);
-#endif    
-    
+#endif
+
     return 4;
 }
 
@@ -420,11 +420,11 @@ static int AI_GetKnownMobs(lua_State *L)
     struct mob_known_obj *tmp;
     lua_object *self;
     int i = 0;
-    
+
     get_lua_args(L, "A", &self);
- 
+
     lua_newtable(L);
-    
+
     for (tmp = MOB_DATA(self->data.object)->known_mobs; tmp; tmp = tmp->next)
     {
         push_object(L, &GameObject, tmp->obj);
@@ -462,7 +462,7 @@ static int AI_isValid(lua_State *L, lua_object *obj)
 
 lua_class   AI  =
 {
-    LUATYPE_AI, "AI", 0, AI_toString, AI_attributes, AI_methods, 
+    LUATYPE_AI, "AI", 0, AI_toString, AI_attributes, AI_methods,
     NULL, NULL, NULL, NULL, NULL, AI_isValid
 };
 

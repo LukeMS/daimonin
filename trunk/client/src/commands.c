@@ -148,7 +148,7 @@ void SetupCmd(char *buf, int len)
                 {
                     if (*cp == '|')
                     {
-                        *cp = 0;    
+                        *cp = 0;
                         srv_client_files[SRV_CLIENT_SKILLS].server_len = atoi(param);
                         srv_client_files[SRV_CLIENT_SKILLS].server_crc = strtoul(cp + 1, NULL, 16);
                         break;
@@ -171,7 +171,7 @@ void SetupCmd(char *buf, int len)
                 {
                     if (*cp == '|')
                     {
-                        *cp = 0;    
+                        *cp = 0;
                         srv_client_files[SRV_CLIENT_SPELLS].server_len = atoi(param);
                         srv_client_files[SRV_CLIENT_SPELLS].server_crc = strtoul(cp + 1, NULL, 16);
                         break;
@@ -194,7 +194,7 @@ void SetupCmd(char *buf, int len)
                 {
                     if (*cp == '|')
                     {
-                        *cp = 0;    
+                        *cp = 0;
                         srv_client_files[SRV_CLIENT_SETTINGS].server_len = atoi(param);
                         srv_client_files[SRV_CLIENT_SETTINGS].server_crc = strtoul(cp + 1, NULL, 16);
                         break;
@@ -217,7 +217,7 @@ void SetupCmd(char *buf, int len)
                 {
                     if (*cp == '|')
                     {
-                        *cp = 0;    
+                        *cp = 0;
                         srv_client_files[SRV_CLIENT_BMAPS].server_len = atoi(param);
                         srv_client_files[SRV_CLIENT_BMAPS].server_crc = strtoul(cp + 1, NULL, 16);
                         break;
@@ -240,7 +240,7 @@ void SetupCmd(char *buf, int len)
                 {
                     if (*cp == '|')
                     {
-                        *cp = 0;    
+                        *cp = 0;
                         srv_client_files[SRV_CLIENT_ANIMS].server_len = atoi(param);
                         srv_client_files[SRV_CLIENT_ANIMS].server_crc = strtoul(cp + 1, NULL, 16);
                         break;
@@ -318,7 +318,7 @@ void GoodbyeCmd(char *data, int len)
      */
 
     /* Damn, this should not be here - if the version not matches, the server
-         * drops the connnect - so we get a client shutdown here? 
+         * drops the connnect - so we get a client shutdown here?
          * NEVER do this again.
          */
     /* fprintf(stderr,"Received goodbye command from server - exiting\n");
@@ -379,7 +379,7 @@ void ImageCmd(unsigned char *data, int len)
     /* save picture to cache*/
     /* and load it to FaceList*/
 
-    sprintf(buf, "%s%s", GetCacheDirectory(), FaceList[pnum].name);     
+    sprintf(buf, "%s%s", GetCacheDirectory(), FaceList[pnum].name);
     LOG(LOG_DEBUG, "ImageFromServer: %s\n", FaceList[pnum].name);
     if ((stream = fopen_wrapper(buf, "wb+")) != NULL)
     {
@@ -469,7 +469,7 @@ void TargetObject(unsigned char *data, int len)
 
     /*    sprintf(buf,"TO: %d %d >%s< (len: %d)\n",cpl.target_mode,cpl.target_code,cpl.target_name,len);
         draw_info(buf,COLOR_GREEN);*/
-    
+
 }
 
 void StatsCmd(unsigned char *data, int len)
@@ -515,7 +515,7 @@ void StatsCmd(unsigned char *data, int len)
                       if (cpl.stats.maxhp / 12 <= cpl.stats.hp - temp)
                           cpl.warn_hp = 2;
                   }
-                  cpl.stats.hp = temp;       
+                  cpl.stats.hp = temp;
                   i += 4;
                   break;
                 case CS_STAT_MAXHP:
@@ -704,7 +704,7 @@ void StatsCmd(unsigned char *data, int len)
                           strcpy(cpl.gender, "neuter");
                       i += rlen;
 
-                      /* prepare rank + name for fast access 
+                      /* prepare rank + name for fast access
                                                  * the pname is <name> <title>.
                                                  * is there no title, there is still
                                                  * always a ' ' at the end - we skip this
@@ -759,7 +759,7 @@ void PreParseInfoStat(char *cmd)
         {
             dialog_login_warning_level = DIALOG_LOGIN_WARNING_WRONGPASS;
             PasswordAlreadyAsked = 0;
-        } 
+        }
         else if (PasswordAlreadyAsked == 2)
         {
             dialog_login_warning_level = DIALOG_LOGIN_WARNING_VERIFY_FAILED;
@@ -852,7 +852,7 @@ void PlayerCmd(unsigned char *data, int len)
     new_player(tag, name, weight, (short) face);
     map_draw_map_clear();
     map_transfer_flag = 1;
-    map_udate_flag = 2;        
+    map_udate_flag = 2;
     load_quickslots_entrys();
 }
 
@@ -1064,7 +1064,7 @@ void GroupCmd(unsigned char *data, int len)
 void GroupInviteCmd(unsigned char *data, int len)
 {
     if(global_group_status != GROUP_NO) /* bug */
-        LOG(LOG_ERROR, "ERROR: Got group invite when g_status != GROUP_NO (%s).\n", data);        
+        LOG(LOG_ERROR, "ERROR: Got group invite when g_status != GROUP_NO (%s).\n", data);
     else
     {
         global_group_status = GROUP_INVITE;
@@ -1077,7 +1077,7 @@ void GroupUpdateCmd(unsigned char *data, int len)
 {
     char        *tmp;
     int         hp, mhp, sp, msp, gr, mgr, level, slot = 0;
-    
+
     if (!len)
         return;
 
@@ -1088,7 +1088,7 @@ void GroupUpdateCmd(unsigned char *data, int len)
         sscanf(tmp, "%d %d %d %d %d %d %d %d", &slot, &hp, &mhp, &sp, &msp, &gr, &mgr, &level);
         set_group(slot, NULL, level, hp, mhp, sp, msp, gr, mgr);
 
-        /*LOG(-1, "UPDATE: %s :: %d %d %d %d %d %d %d %d\n", tmp, slot, level, hp, mhp, sp, msp, gr, mgr);*/        
+        /*LOG(-1, "UPDATE: %s :: %d %d %d %d %d %d %d %d\n", tmp, slot, level, hp, mhp, sp, msp, gr, mgr);*/
         tmp = strchr(tmp, '|');
     }
 }
@@ -1106,9 +1106,9 @@ void BookCmd(unsigned char *data, int len)
 	/*LOG(-1,"BOOK (%d): %s\n", mode, data);
 	draw_info(data,COLOR_YELLOW);*/
 
-	//gui_book_interface = 
+	//gui_book_interface =
 	gui_interface_book = load_book_interface(mode, data, len-4);
-	
+
 }
 
 void InterfaceCmd(unsigned char *data, int len)
@@ -1124,7 +1124,7 @@ void InterfaceCmd(unsigned char *data, int len)
 	if(len)
 	{
 		int mode, pos = 0;
-		
+
 		/*interface_mode = INTERFACE_MODE_NPC;*/
 	    mode = *data;
 		pos ++;
@@ -1144,7 +1144,7 @@ void InterfaceCmd(unsigned char *data, int len)
 	}
 	}
 }
-	
+
 /* UpdateItemCmd updates some attributes of an item */
 void UpdateItemCmd(unsigned char *data, int len)
 {
@@ -1311,7 +1311,7 @@ void Map2Cmd(unsigned char *data, int len)
          * 0x08 means a damage comes from unknown or vanished source.
          * this means the object is destroyed.
          * the other flags are assigned to map layer.
-         */      
+         */
         if ((mask & 0x3f) == 0)
         {
             display_map_clearcell(x, y);
@@ -1393,7 +1393,7 @@ void Map2Cmd(unsigned char *data, int len)
                     ff3 = GetShort_String(data + pos); pos += 2;
                     add_anim(ANIM_DAMAGE, 0, 0, xpos + x, ypos + y, ff3);
                 }
-            } 
+            }
             if (ext_flag & 0x08)
             {
                 probe = 0;
@@ -1435,7 +1435,7 @@ void Map2Cmd(unsigned char *data, int len)
 
         /* at last, we get the layer faces.
          * a set ext_flag here marks this entry as face from a multi tile arch.
-         * we got another byte then which all information we need to display 
+         * we got another byte then which all information we need to display
          * this face in the right way (position and shift offsets)
          */
         if (mask & 0x8)
@@ -1542,7 +1542,7 @@ void VersionCmd(char *data, int len)
         else
             sprintf(buf, "Your client is outdated!\nUpdate your client!");
         draw_info(buf, COLOR_RED);
-        LOG(LOG_ERROR, "%s\n", buf);            
+        LOG(LOG_ERROR, "%s\n", buf);
         return;
     }
     cp = (char *) (strchr(data, ' '));
@@ -1550,7 +1550,7 @@ void VersionCmd(char *data, int len)
     {
         sprintf(buf, "Invalid version string: %s", data);
         draw_info(buf, COLOR_RED);
-        LOG(LOG_ERROR, "%s\n", buf);            
+        LOG(LOG_ERROR, "%s\n", buf);
         return;
     }
     csocket.sc_version = atoi(cp);
@@ -1558,7 +1558,7 @@ void VersionCmd(char *data, int len)
     {
         sprintf(buf, "Invalid SC version (%d,%d)", VERSION_SC, csocket.sc_version);
         draw_info(buf, COLOR_RED);
-        LOG(LOG_ERROR, "%s\n", buf);            
+        LOG(LOG_ERROR, "%s\n", buf);
         return;
     }
     cp = (char *) (strchr(cp + 1, ' '));
@@ -1566,7 +1566,7 @@ void VersionCmd(char *data, int len)
     {
         sprintf(buf, "Invalid server name: %s", cp);
         draw_info(buf, COLOR_RED);
-        LOG(LOG_ERROR, "%s\n", buf);            
+        LOG(LOG_ERROR, "%s\n", buf);
         return;
     }
 
@@ -1615,7 +1615,7 @@ void MapstatsCmd(unsigned char *data, int len)
     tmp = strchr(tmp + 1, ' ');
     tmp = strchr(tmp + 1, ' ');
     tmp = strchr(tmp + 1, ' ');
-    strcpy(name, tmp + 1);   
+    strcpy(name, tmp + 1);
     InitMapData(name, w, h, x, y);
     map_udate_flag = 2;
 }
@@ -1813,7 +1813,7 @@ void DataCmd(char *data, int len)
      * as this dest_len default setting, the file is cutted and
      * the rest skiped. Look at the zlib docu for more info.
      */
-    uint32  dest_len    = 512 * 1024; 
+    uint32  dest_len    = 512 * 1024;
     char   *dest;
 
     dest = malloc(dest_len);

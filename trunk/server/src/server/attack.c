@@ -32,7 +32,7 @@ int protection_tab[NROFATTACKS] =
     18, 11, 10, 15, 17, 16, /* turn undead and godpower to holy - thats the hard one */
     10, 18, 14, 12, 18, 13, /* holy word to energy (pure grace power) and life steal is psionic */
     1, 2, 3, 15, 14, 19, 13  /* internal to holy... just a joke, we never use this entry */
-};    
+};
 
 #define ATTACK_HIT_DAMAGE(_op, _anum)       dam=dam*((double)_op->attack[_anum]*(double)0.01);dam>=1.0f?(damage=(int)dam):(damage=1)
 #define ATTACK_RESIST_DAMAGE(_op, _anum)    dam=dam*((double)(100-_op->resist[_anum])*(double)0.01)
@@ -119,7 +119,7 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
 
     /* Adjust roll for various situations. */
     if (!simple_attack)
-        roll += adj_attackroll(hitter, op); 
+        roll += adj_attackroll(hitter, op);
 
     if (hitter->type == PLAYER)
         CONTR(hitter)->anim_flags |= PLAYER_AFLAG_ENEMY; /* so we do one swing */
@@ -253,7 +253,7 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
     /* if we missed, dam=0 */
     else
     {
-#ifdef ATTACK_TIMING_DEBUG 
+#ifdef ATTACK_TIMING_DEBUG
         {
             char    buf[256];
             sprintf(buf, "MISS %s :%d>=%d-%d l:%d aw:%d/%d d:%d/%d h:%d/%d (%d)", hitter->name, op->stats.ac, base_wc,
@@ -314,7 +314,7 @@ int hit_player(object *op, int dam, object *hitter, int type)
         op = op->head;
 
     /* now we are nasty: we add some "level boni" - in small words: If a high level
-     * object hits a lower level object it becomes a level boni depending on the 
+     * object hits a lower level object it becomes a level boni depending on the
      * level difference!
      * This will make out of level range fight ALOT harder.
      */
@@ -382,7 +382,7 @@ int hit_player(object *op, int dam, object *hitter, int type)
 
 
     /* this checks objects are valid, on same map and set them to head when needed! */
-    /* also, simple_attack is set to 1, when one of the parts hav ->env != null 
+    /* also, simple_attack is set to 1, when one of the parts hav ->env != null
      * atm, this value is only used in the door attack */
     if (get_attack_mode(&op, &hitter, &simple_attack))
         return 0;
@@ -391,13 +391,13 @@ int hit_player(object *op, int dam, object *hitter, int type)
     hitter_tag = hitter->count;
 
     /* A last safery check - this happened in the past sometimes */
-    if (op->stats.hp < 0) 
+    if (op->stats.hp < 0)
 	{
         LOG(llevDebug, "BUG/FIXME: victim (arch %s, name %s (%x - %d)) already dead in hit_player()\n", op->arch->name, query_name(op), op, op->count);
 		return 0;
     }
 
-	/* Now - we really hit. Perhaps we do no damage - but our weapons/spell or 
+	/* Now - we really hit. Perhaps we do no damage - but our weapons/spell or
 	 * whatever hits the target. And our target will find that perhaps not so
 	 * funny... Lets check the aggro/damage marker.
 	 */
@@ -419,18 +419,18 @@ int hit_player(object *op, int dam, object *hitter, int type)
 		else
 			dmg_obj = aggro_insert_damage(op, hitter);
 	}
-		
+
 
     /* slaying door ... when i think about it, its broken,,,
      * and iam more and more sure we don't need it.
      * because: IF there is a closed door - then seek key.
      * Or get a spell. Knock spell is pure senseless when you can
      * crush the door. And because we have hybrid chars (can cast too)
-     * we don't need to handle both for balancing. 
+     * we don't need to handle both for balancing.
      */
     /*
     if ( ! simple_attack && op->type == DOOR)
-    { 
+    {
            object *tmp;
            for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
                if (tmp->type == RUNE)
@@ -453,7 +453,7 @@ int hit_player(object *op, int dam, object *hitter, int type)
     for (attacknum = 0; attacknum < NROFATTACKS; attacknum++)
     {
         if (hitter->attack[attacknum])
-                
+
         #ifdef ATTACK_DEBUG
         {
             int tmp;
@@ -463,7 +463,7 @@ int hit_player(object *op, int dam, object *hitter, int type)
         }
 #else
         {
-            /*          LOG(-1, "hitter: %f - %s (dam:%d/%d) (wc:%d/%d)(wcr:%d/%d)(ac:%d/%d) ap:%d\n",hitter->speed, 
+            /*          LOG(-1, "hitter: %f - %s (dam:%d/%d) (wc:%d/%d)(wcr:%d/%d)(ac:%d/%d) ap:%d\n",hitter->speed,
                             hitter->name,hitter->stats.dam,op->stats.dam, hitter->stats.wc,op->stats.wc,hitter->stats.wc_range,op->stats.wc_range,
                             hitter->stats.ac,op->stats.ac,hitter->attack[attacknum]);
             */
@@ -537,13 +537,13 @@ int hit_player(object *op, int dam, object *hitter, int type)
         if (friendly)
             remove_friendly_object(op);
 
-        remove_ob(op); 
+        remove_ob(op);
         if (check_walk_off(op, NULL, MOVE_APPLY_VANISHED) == CHECK_WALK_OK)
         {
             for (i = 0; i < NROFNEWOBJS(op); i++)
             {
                 /* This doesn't handle op->more yet */
-                object *tmp = arch_to_object(op->other_arch);   
+                object *tmp = arch_to_object(op->other_arch);
                 int     j;
 
                 tmp->stats.hp = op->stats.hp;
@@ -619,11 +619,11 @@ int hit_map(object *op, int dir, int type)
 
     /* peterm:  a few special cases for special attacktypes --counterspell
           must be out here because it strikes things which are not alive*/
-    /* this will be handled different elsewhere! 
+    /* this will be handled different elsewhere!
      if(type&AT_COUNTERSPELL) {
        counterspell(op,dir);
        if(!(type & ~(AT_COUNTERSPELL|AT_MAGIC))){
-    return 0; 
+    return 0;
        }
        type &= ~AT_COUNTERSPELL;
      }
@@ -789,7 +789,7 @@ int hit_player_attacktype(object *op, object *hitter, int damage, uint32 attackn
     }
 
     /* quick check for immunity - if so, we skip here.
-        * our formula is (100-resist)/100 - so test for 100 = zero division 
+        * our formula is (100-resist)/100 - so test for 100 = zero division
      */
     if (op->resist[attacknum] == 100 || op->protection[protection_tab[attacknum]] == 100)
     {
@@ -853,7 +853,7 @@ int hit_player_attacktype(object *op, object *hitter, int damage, uint32 attackn
           break;
 
           /* TODO:
-             * Here comes in all attacks we have not really implemented. 
+             * Here comes in all attacks we have not really implemented.
              * atm - below this function in old cf code - use it as base.
              */
         default:
@@ -902,10 +902,10 @@ static void send_attack_msg(object *op, object *hitter, int attacknum, int dam, 
     case ATNR_BLIND: {
     int level_diff = MIN(110, MAX(0, op->level - hitter->level));
 
-        if (op->speed && 
+        if (op->speed &&
         (QUERY_FLAG(op, FLAG_MONSTER) || op->type==PLAYER) &&
         !(rndm(0, (attacknum == ATNR_SLOW?6:3)-1)) &&
-        ((random_roll(1, 20, op, PREFER_LOW) + 
+        ((random_roll(1, 20, op, PREFER_LOW) +
           op->resist[attacknum]/10) < savethrow[level_diff])) {
 
       if (attacknum == ATNR_CONFUSION) confuse_player(op,hitter,(int)dam);
@@ -923,7 +923,7 @@ static void send_attack_msg(object *op, object *hitter, int attacknum, int dam, 
       {
     int flag=0;
 
-    if (!op_on_battleground(op, NULL, NULL) && 
+    if (!op_on_battleground(op, NULL, NULL) &&
         (op->resist[ATNR_ACID] < 50))
       {
         object *tmp;
@@ -933,9 +933,9 @@ static void send_attack_msg(object *op, object *hitter, int attacknum, int dam, 
           continue;
         if(!(tmp->material & M_IRON))
           continue;
-        if(tmp->magic < -4) 
+        if(tmp->magic < -4)
           continue;
-        if(tmp->type==RING || 
+        if(tmp->type==RING ||
            tmp->type==GIRDLE ||
            tmp->type==AMULET ||
            tmp->type==WAND ||
@@ -963,19 +963,19 @@ static void send_attack_msg(object *op, object *hitter, int attacknum, int dam, 
     case ATNR_DRAIN:
       {
     int rate;
-    
-    if(op->resist[ATNR_DRAIN] > 0) 
+
+    if(op->resist[ATNR_DRAIN] > 0)
       rate = 50 + op->resist[ATNR_DRAIN] / 2;
     else if(op->resist[ATNR_DRAIN] < 0)
       rate = 5000 / (100 - op->resist[ATNR_DRAIN]);
-    
+
     if(!rate)
       return 0;
 
     if(op->stats.exp <= rate) {
         if(op->type == GOLEM)
         dam = 999;
-        else 
+        else
         dam = hit_player_attacktype(op, hitter, (int)dam, ATNR_PHYSICAL, magic);
     } else {
         if(hitter->stats.hp<hitter->stats.maxhp &&
@@ -985,7 +985,7 @@ static void send_attack_msg(object *op, object *hitter, int attacknum, int dam, 
 
         if (!op_on_battleground(hitter, NULL, NULL)) {
 
-        add_exp(op,-op->stats.exp/rate, CHOSEN_SKILL_NO); 
+        add_exp(op,-op->stats.exp/rate, CHOSEN_SKILL_NO);
         }
         dam = 0;
     }
@@ -1005,7 +1005,7 @@ static void send_attack_msg(object *op, object *hitter, int attacknum, int dam, 
          (op->resist[ATNR_TIME]/100)))
           SET_FLAG(op, FLAG_SCARED);
     }
-    else 
+    else
       dam = 0;
       } break;
     case ATNR_DEATH:
@@ -1015,16 +1015,16 @@ static void send_attack_msg(object *op, object *hitter, int attacknum, int dam, 
                                     query_name(op), query_name(hitter));
     dam = 0;
     break;
-    case ATNR_COUNTERSPELL: 
+    case ATNR_COUNTERSPELL:
     LOG(llevBug, "BUG: %s was hit by %s with counterspell attack.\n",
                                     query_name(op),query_name(hitter));
     dam = 0;
     break;
     case ATNR_HOLYWORD:
       {
-    
+
     object *owner = get_owner(hitter)==NULL?hitter:get_owner(hitter);
-    
+
     if((op->level+(op->resist[ATNR_HOLYWORD]/100)) <
        owner->level+turn_bonus[owner->stats.Wis])
       SET_FLAG(op, FLAG_SCARED);
@@ -1062,7 +1062,7 @@ int kill_object(object *op, int dam, object *hitter, int type)
     int         killed_script_rtn   = 0;
     mapstruct  *map;
 	char		*buf_ptr, buf2[MAX_BUF];
-	
+
 #ifdef PLUGINS
     CFParm      CFP;
 #endif
@@ -1119,11 +1119,11 @@ int kill_object(object *op, int dam, object *hitter, int type)
             return maxdam;
         }*/
 
-        /* Show Damage System for clients 
+        /* Show Damage System for clients
          * whatever is dead now, we check map. If it on map, we redirect last_damage
          * to map space, giving player the chance to see the last hit damage they had
          *  done. If there is more as one object killed on a single map tile, we overwrite
-         *  it now. This visual effect works pretty good. MT 
+         *  it now. This visual effect works pretty good. MT
          */
 
         /* no pet/player/monster checking now, perhaps not needed */
@@ -1163,7 +1163,7 @@ int kill_object(object *op, int dam, object *hitter, int type)
         battleg = op_on_battleground(op, NULL, NULL);
 
         buf_ptr = NULL;
-            
+
         /* Create kill message */
         if (owner->type == PLAYER)
         {
@@ -1193,7 +1193,7 @@ int kill_object(object *op, int dam, object *hitter, int type)
             }
             new_draw_info(NDI_WHITE, 0, owner, buf);
         }
-        
+
         /* Give exp and create the corpse. Decide we get a loot or not */
         if (op->type != PLAYER)
         {
@@ -1222,16 +1222,16 @@ int kill_object(object *op, int dam, object *hitter, int type)
                 else /* mob/npc kill - force a droped corpse without items */
                 {
                     op->enemy = NULL;
-                    SET_FLAG(op, FLAG_CORPSE_FORCED); 
+                    SET_FLAG(op, FLAG_CORPSE_FORCED);
                     SET_FLAG(op, FLAG_STARTEQUIP);
                 }
             }
             else
             {
                 op->enemy = NULL;
-                SET_FLAG(op, FLAG_STARTEQUIP); 
+                SET_FLAG(op, FLAG_STARTEQUIP);
             }
-            
+
             destruct_ob(op);
         }
    }
@@ -1396,7 +1396,7 @@ object * hit_with_arrow(object *op, object *victim)
         CFP.Value[0] = &k;
         CFP.Value[1] = hitter;
         CFP.Value[2] = hitter;
-        CFP.Value[3] = victim;   
+        CFP.Value[3] = victim;
         CFP.Value[4] = NULL;
         CFP.Value[5] = &m;
         CFP.Value[6] = &(op->stats.dam);
@@ -1540,7 +1540,7 @@ void tear_down_wall(object *op)
     if (perc == NUM_ANIMATIONS(op) - 1)
     {
         /* Reached the last animation */
-        if (op->face == blank_face) 
+        if (op->face == blank_face)
                 /* If the last face is blank, remove the ob */
             destruct_ob(op); /* Should update LOS */
         else
@@ -1791,7 +1791,7 @@ void blind_player(object *op, object *hitter, int dam)
             owner = hitter;
 
         new_draw_info_format(NDI_UNIQUE, 0, owner, "Your attack blinds %s!", query_name(op));
-    } 
+    }
     tmp->stats.food += dam;
     if (tmp->stats.food > 10)
         tmp->stats.food = 10;
@@ -1808,7 +1808,7 @@ void paralyze_player(object *op, object *hitter, int dam)
     if (effect == 0)
         return;
 
-    SET_FLAG(op, FLAG_PARALYZED); /* we mark this object as paralyzed */ 
+    SET_FLAG(op, FLAG_PARALYZED); /* we mark this object as paralyzed */
 
     op->speed_left -= FABS(op->speed) * effect;
     /* tmp->stats.food+=(signed short) effect/op->speed; */
@@ -1864,8 +1864,8 @@ void deathstrike_player(object *op, object *hitter, int *dam)
         if (kill_lev >= def_lev)
         {
             *dam = op->stats.hp + 10; /* take all hp. they can still save for 1/2 */
-            /* I think this doesn't really do much.  Because of 
-               * integer rounding, this only makes any difference if the 
+            /* I think this doesn't really do much.  Because of
+               * integer rounding, this only makes any difference if the
                * attack level is double the defender level.
                */
             *dam *= kill_lev / def_lev;
@@ -1885,7 +1885,7 @@ static void thrown_item_effect(object *hitter, object *victim)
 {
     if (!IS_LIVE(hitter))
     {
-        /* May not need a switch for just 2 types, but this makes it 
+        /* May not need a switch for just 2 types, but this makes it
          * easier for expansion.
          */
         /* i removed a resist check here - we handle resist checks BEFORE this (skill "avoid get hit" or whatever)
@@ -1950,7 +1950,7 @@ int adj_attackroll(object *hitter, object *target)
     else if (!IS_LIVE(hitter))
         return 0;
 
-    /* determine the condtions under which we make an attack.  
+    /* determine the condtions under which we make an attack.
      * Add more cases, as the need occurs. */
 
     /* is invisible means, we can't see it - same for blind */
@@ -1982,7 +1982,7 @@ int adj_attackroll(object *hitter, object *target)
    * disadantage for the monsters! Too bad, because missiles which
    * fly fast should have a better chance of hitting a slower target.
    */
-  if(hitter->speed<target->speed) 
+  if(hitter->speed<target->speed)
     adjust += ((float) hitter->speed-target->speed);
 #endif
 
@@ -1991,7 +1991,7 @@ int adj_attackroll(object *hitter, object *target)
 #endif
 
     return adjust;
-} 
+}
 
 
 /* determine if the object is an 'aimed' missile */
@@ -2002,12 +2002,12 @@ int is_aimed_missile(object *op)
      && (op->type == ARROW || op->type == THROWN_OBJ || op->type == FBULLET || op->type == FBALL))
         return 1;
     return 0;
-} 
+}
 
 /* improved melee test function.
  * test for objects are in range for melee attack.
  * used from attack() functions but also from animation().
- * Return: 
+ * Return:
  * 0: enemy target is not in melee range.
  * 1: target is in range and we face it.
  * TODO: 2: target is range but not in front.
@@ -2110,14 +2110,14 @@ void save_throw_object(object *op, int type, object *originator)
         if (op == NULL)
             return;
 
-        /* Hacked the following so that type LIGHTER will work. 
-         * Also, objects which are potenital "lights" that are hit by 
-         * flame/elect attacks will be set to glow. "lights" are any 
-         * object with +/- glow_radius and an "other_arch" to change to. 
-         * (and please note that we cant fail our save and reach this 
-         * function if the object doesnt contain a material that can burn. 
+        /* Hacked the following so that type LIGHTER will work.
+         * Also, objects which are potenital "lights" that are hit by
+         * flame/elect attacks will be set to glow. "lights" are any
+         * object with +/- glow_radius and an "other_arch" to change to.
+         * (and please note that we cant fail our save and reach this
+         * function if the object doesnt contain a material that can burn.
          * So forget lighting magical swords on fire with this!) -b.t.
-         */ 
+         */
         if (type & (AT_FIRE | AT_ELECTRICITY) && op->other_arch && op->glow_radius)
         {
             const char *arch    = op->other_arch->name; /* this should be refcount! */

@@ -45,7 +45,7 @@
 #define SOUND_OPEN_DOOR     5
 #define SOUND_PUSH_PLAYER   6
 
-#define SOUND_HIT_IMPACT    7 
+#define SOUND_HIT_IMPACT    7
 #define SOUND_HIT_CLEAVE    8
 #define SOUND_HIT_SLASH     9
 #define SOUND_HIT_PIERCE    10

@@ -169,7 +169,7 @@ _option             opt[]                           =
     {"Use Update Rect:", "","", "",SEL_CHECKBOX, 0,1,1,0, &options.use_rect, VAL_BOOL}, {"#"}, /* End of Page */
 
     {0} /* End of Options */
-}; 
+};
 
 /******************************************************************
  Skill Menue
@@ -1493,7 +1493,7 @@ void show_login_server(void)
 
     mb = SDL_GetMouseState(&mx, &my);
     /* background */
-    /*x= SCREEN_XLEN/2-Bitmaps[BITMAP_DIALOG_BG]->bitmap->w/2;*/ 
+    /*x= SCREEN_XLEN/2-Bitmaps[BITMAP_DIALOG_BG]->bitmap->w/2;*/
     x = 25;
     y = SCREEN_YLEN / 2 - Bitmaps[BITMAP_DIALOG_BG]->bitmap->h / 2;
     sprite_blt(Bitmaps[BITMAP_DIALOG_BG], x, y, NULL, NULL);
@@ -1605,7 +1605,7 @@ void show_login_server(void)
     switch (dialog_login_warning_level)
     {
         case DIALOG_LOGIN_WARNING_NONE:
-            StringBlt(ScreenSurface, &SystemFont, 
+            StringBlt(ScreenSurface, &SystemFont,
                     "To start playing enter your character ~name~ and ~password~." ,
                     x-10, y+1, COLOR_BLACK, NULL, NULL);
             StringBlt(ScreenSurface, &SystemFont, "To start playing enter your character ~name~ and ~password~.",
@@ -1622,17 +1622,17 @@ void show_login_server(void)
             StringBlt(ScreenSurface, &SystemFont,
                     "You entered an invalid character name.", x-11, y, COLOR_RED, NULL, NULL);
             y+=12;
-            StringBlt(ScreenSurface, &SystemFont,            
+            StringBlt(ScreenSurface, &SystemFont,
                     "Your character name can only contain letters:",
                     x-10, y+1, COLOR_BLACK, NULL, NULL);
-            StringBlt(ScreenSurface, &SystemFont,            
+            StringBlt(ScreenSurface, &SystemFont,
                     "Your character name can only contain letters:",
                     x-11, y, COLOR_WHITE, NULL, NULL);
             y+=12;
-            StringBlt(ScreenSurface, &SystemFont,            
+            StringBlt(ScreenSurface, &SystemFont,
                     "Numbers or special characters aren't allowed.",
                     x-10, y+1, COLOR_BLACK, NULL, NULL);
-            StringBlt(ScreenSurface, &SystemFont,            
+            StringBlt(ScreenSurface, &SystemFont,
                     "Numbers or special characters aren't allowed.",
                     x-11, y, COLOR_WHITE, NULL, NULL);
 
@@ -1643,31 +1643,31 @@ void show_login_server(void)
             StringBlt(ScreenSurface, &SystemFont,
                     "You entered a wrong password.", x-11, y, COLOR_RED, NULL, NULL);
             y+=12;
-            StringBlt(ScreenSurface, &SystemFont,            
+            StringBlt(ScreenSurface, &SystemFont,
                     "Check your ~name~ and ~password~ and try again. If you were creating a",
                     x-10, y+1, COLOR_BLACK, NULL, NULL);
-            StringBlt(ScreenSurface, &SystemFont,            
+            StringBlt(ScreenSurface, &SystemFont,
                     "Check your ~name~ and ~password~ and try again. If you were creating a",
                     x-11, y, COLOR_WHITE, NULL, NULL);
             y+=12;
-            StringBlt(ScreenSurface, &SystemFont,            
+            StringBlt(ScreenSurface, &SystemFont,
                     "new character, please choose another name.",
                     x-10, y+1, COLOR_BLACK, NULL, NULL);
-            StringBlt(ScreenSurface, &SystemFont,            
+            StringBlt(ScreenSurface, &SystemFont,
                     "new character, please choose another name.",
                     x-11, y, COLOR_WHITE, NULL, NULL);
             break;
-            
+
         case DIALOG_LOGIN_WARNING_VERIFY_FAILED:
             StringBlt(ScreenSurface, &SystemFont,
                     "Password verification failed.", x-10, y+1, COLOR_BLACK, NULL, NULL);
             StringBlt(ScreenSurface, &SystemFont,
                     "Password verification failed.", x-11, y, COLOR_RED, NULL, NULL);
             y+=12;
-            StringBlt(ScreenSurface, &SystemFont,            
+            StringBlt(ScreenSurface, &SystemFont,
                     "Please try again, and be careful to enter the same password twice.",
                     x-10, y+1, COLOR_BLACK, NULL, NULL);
-            StringBlt(ScreenSurface, &SystemFont,            
+            StringBlt(ScreenSurface, &SystemFont,
                     "Please try again, and be careful to enter the same password twice.",
                     x-11, y, COLOR_WHITE, NULL, NULL);
             break;
@@ -1769,7 +1769,7 @@ void show_meta_server(_server *node, int metaserver_start, int metaserver_sel)
 /* if we click on something in a gui interface, this functions
  * returns us the element and/or keyword.
  * we return in *element the gui element (message, body, icon)
- * and in *index what element. If there is a keyword or command, 
+ * and in *index what element. If there is a keyword or command,
  * we have a pointer to it in keyword. The pointer is to a static
  * buffer here in get_interface_line or to a buffer in gui_interface.
  * return: TRUE = we hit something.
@@ -1778,14 +1778,14 @@ int get_interface_line(int *element, int *index, char **keyword, int x, int y, i
 {
 	static char key[256]; /* used to get keyword string parts for keyword and save it statically */
 	int i,yoff = y+85+gui_interface_npc->yoff;
-	
+
 	if(my <= y+85 || my >= y+85+INTERFACE_WINLEN_NPC)
 		return FALSE;
-	
+
 	if(gui_interface_npc->used_flag&GUI_INTERFACE_MESSAGE)
 	{
 		yoff+=26;
-		
+
 		for(i=0;i<gui_interface_npc->message.line_count;i++,yoff+=12)
 		{
 			if(my >= yoff && my <=yoff+12)
@@ -1820,7 +1820,7 @@ int get_interface_line(int *element, int *index, char **keyword, int x, int y, i
 								key[ptr-&gui_interface_npc->message.lines[i][st]]='\0';
 							}
 							*keyword = key;
-							return TRUE;							
+							return TRUE;
 						}
 					}
 
@@ -1829,7 +1829,7 @@ int get_interface_line(int *element, int *index, char **keyword, int x, int y, i
 			}
 		}
 	}
-	
+
 	if(gui_interface_npc->link_count)
 	{
 		yoff+=12;
@@ -1851,15 +1851,15 @@ int get_interface_line(int *element, int *index, char **keyword, int x, int y, i
 				return FALSE;
 			}
 	}
-	
+
 	/* reward is also used as "objective" */
 	if(gui_interface_npc->used_flag&GUI_INTERFACE_REWARD)
 	{
 		yoff +=51;
-		
+
 		for(i=0;i<gui_interface_npc->reward.line_count;i++)
 			yoff+=12;
-			
+
 		if(gui_interface_npc->reward.copper || gui_interface_npc->reward.gold ||
 			gui_interface_npc->reward.silver || gui_interface_npc->reward.mithril ||
 			gui_interface_npc->icon_count)
@@ -1870,7 +1870,7 @@ int get_interface_line(int *element, int *index, char **keyword, int x, int y, i
 		}
 	}
 
-		
+
 	if(gui_interface_npc->icon_count)
 	{
 		int flag_s=FALSE;
@@ -1882,18 +1882,18 @@ int get_interface_line(int *element, int *index, char **keyword, int x, int y, i
 			else if(gui_interface_npc->icon[i].mode == 'G' )
 				yoff+=44;
 		}
-		
+
 		if(flag_s)
 		{
 			yoff+=20;
 			for(i=0;i<gui_interface_npc->icon_count;i++)
-			{				
+			{
 				if(gui_interface_npc->icon[i].mode == 's' )
 					yoff+=44;
-			}			
+			}
 		}
 	}
-	
+
 	if(gui_interface_npc->icon_select)
 	{
 		int t;
@@ -1901,7 +1901,7 @@ int get_interface_line(int *element, int *index, char **keyword, int x, int y, i
 		yoff+=20;
 		for(t=1,i=0;i<gui_interface_npc->icon_count;i++)
 		{
-			
+
 			if(gui_interface_npc->icon[i].mode == 'S' )
 			{
 				if(my >= yoff && my <=yoff+32 && mx >=x+40 && mx<=x+72)
@@ -1916,7 +1916,7 @@ int get_interface_line(int *element, int *index, char **keyword, int x, int y, i
 			}
 		}
 	}
-	
+
 	return FALSE;
 }
 
@@ -1939,12 +1939,12 @@ int precalc_interface_npc(void)
 		for(i=0;i<gui_interface_npc->link_count;i++)
 			yoff+=12;
 	}
-	
+
 	/* reward is also used as "objective" */
 	if(gui_interface_npc->used_flag&GUI_INTERFACE_REWARD)
 	{
 		yoff +=51;
-		
+
 		for(i=0;i<gui_interface_npc->reward.line_count;i++,yoff+=12)
 			;
 
@@ -1976,10 +1976,10 @@ int precalc_interface_npc(void)
 		{
 			yoff+=20;
 			for(i=0;i<gui_interface_npc->icon_count;i++)
-			{				
+			{
 				if(gui_interface_npc->icon[i].mode == 's' )
 					yoff+=44;
-			}			
+			}
 		}
 	}
 
@@ -1988,12 +1988,12 @@ int precalc_interface_npc(void)
 		yoff+=20;
 		for(i=0;i<gui_interface_npc->icon_count;i++)
 		{
-			
+
 			if(gui_interface_npc->icon[i].mode == 'S' )
 				yoff+=44;
 		}
 	}
-				
+
 	return yoff;
 }
 
@@ -2002,13 +2002,13 @@ int precalc_interface_npc(void)
  */
 void show_interface_npc(int mark)
 {
-    SDL_Rect    box;    
+    SDL_Rect    box;
 	int x=gui_interface_npc->startx, y=gui_interface_npc->starty, mb, mx, my, numButton=0,yoff, i;
 
 	mb = SDL_GetMouseState(&mx, &my);
-		
+
     sprite_blt(Bitmaps[BITMAP_NPC_INTERFACE], x, y, NULL, NULL);
-	
+
 	if(gui_interface_npc->used_flag&GUI_INTERFACE_HEAD)
 	{
 		/* print head */
@@ -2032,7 +2032,7 @@ void show_interface_npc(int mark)
 			sprite_blt(FaceList[gui_interface_npc->head.face].sprite, xp,yp, NULL, NULL);
 			SDL_SetClipRect(ScreenSurface, NULL);
 		}
-	}	
+	}
 
 	yoff = 79;
 
@@ -2040,27 +2040,27 @@ void show_interface_npc(int mark)
 	box.y=y+yoff;
 	box.w=295;
 	box.h=INTERFACE_WINLEN_NPC;
-	
+
     blt_window_slider(Bitmaps[BITMAP_NPC_INT_SLIDER], gui_interface_npc->win_length, INTERFACE_WINLEN_NPC,
 		gui_interface_npc->yoff*-1, -1, x + 341, y + 86);
 
 	SDL_SetClipRect(ScreenSurface, &box);
 	/*SDL_FillRect(ScreenSurface, &box, 3);*/
-	
+
 	yoff+=gui_interface_npc->yoff;
 	yoff+=5;
 
 
 	if(gui_interface_npc->used_flag&GUI_INTERFACE_MESSAGE)
 	{
-		/*len =  get_string_pixel_length(gui_interface_npc->message.title, &BigFont);        
+		/*len =  get_string_pixel_length(gui_interface_npc->message.title, &BigFont);
 		StringBlt(ScreenSurface, &BigFont, gui_interface_npc->message.title, x+width2-len/2, y+yoff, COLOR_WHITE, NULL, NULL);
 		*/
 		StringBlt(ScreenSurface, &BigFont, gui_interface_npc->message.title, x+40, y+yoff, COLOR_WHITE, NULL, NULL);
 		yoff+=26;
 
 		for(i=0;i<gui_interface_npc->message.line_count;i++,yoff+=12)
-			StringBlt(ScreenSurface, &SystemFont, gui_interface_npc->message.lines[i], x+40, y+yoff, COLOR_WHITE, NULL, NULL);	
+			StringBlt(ScreenSurface, &SystemFont, gui_interface_npc->message.lines[i], x+40, y+yoff, COLOR_WHITE, NULL, NULL);
 	}
 
 	if(gui_interface_npc->link_count)
@@ -2071,7 +2071,7 @@ void show_interface_npc(int mark)
 			StringBlt(ScreenSurface, &SystemFont, gui_interface_npc->link[i].link, x+40, y+yoff, COLOR_GREEN, NULL, NULL);
 		}
 	}
-					
+
 	/* reward is also used as "objective" */
 	if(gui_interface_npc->used_flag&GUI_INTERFACE_REWARD)
 	{
@@ -2082,7 +2082,7 @@ void show_interface_npc(int mark)
 		StringBlt(ScreenSurface, &BigFont, gui_interface_npc->reward.title, x+40, y+yoff, COLOR_WHITE, NULL, NULL);
 	    /*StringBlt(ScreenSurface, &BigFont, xbuf, x+40, y+yoff, COLOR_WHITE, NULL, NULL);*/
 		yoff+=26;
-		
+
 
 		for(i=0;i<gui_interface_npc->reward.line_count;i++,yoff+=12)
 			StringBlt(ScreenSurface, &SystemFont, gui_interface_npc->reward.lines[i], x+40, y+yoff, COLOR_WHITE, NULL, NULL);
@@ -2098,7 +2098,7 @@ void show_interface_npc(int mark)
 				yoff+=15;
 
 			StringBlt(ScreenSurface, &SystemFont, "Your rewards:", x+40, y+yoff+5, COLOR_WHITE, NULL, NULL);
-			
+
 			if(gui_interface_npc->reward.copper)
 			{
 				sprite_blt(Bitmaps[BITMAP_COIN_COPPER], x + 110, y + yoff, NULL, NULL);
@@ -2146,12 +2146,12 @@ void show_interface_npc(int mark)
 			if(gui_interface_npc->icon[i].mode == 'G' )
 			{
 				sprite_blt(Bitmaps[BITMAP_INVSLOT], x + 40, y + yoff, NULL, NULL);
-			
+
 				if(gui_interface_npc->icon[i].element.face>0)
 					blt_inv_item_centered(&gui_interface_npc->icon[i].element, x + 40, y + yoff);
 				else if(gui_interface_npc->icon[i].picture)
 					sprite_blt(gui_interface_npc->icon[i].picture, x + 40, y + yoff, NULL, NULL);
-			
+
 				StringBlt(ScreenSurface, &SystemFont, gui_interface_npc->icon[i].title, x+80, y+yoff, COLOR_WHITE, NULL, NULL);
 				yoff+=44;
 			}
@@ -2162,20 +2162,20 @@ void show_interface_npc(int mark)
 			StringBlt(ScreenSurface, &SystemFont, "And one of these:", x+40, y+yoff, COLOR_WHITE, NULL, NULL);
 			yoff+=20;
 			for(i=0;i<gui_interface_npc->icon_count;i++)
-			{				
+			{
 				if(gui_interface_npc->icon[i].mode == 's' )
 				{
 					sprite_blt(Bitmaps[BITMAP_INVSLOT], x + 40, y + yoff, NULL, NULL);
-					
+
 					if(gui_interface_npc->icon[i].element.face>0)
 						blt_inv_item_centered(&gui_interface_npc->icon[i].element, x + 40, y + yoff);
 					else if(gui_interface_npc->icon[i].picture)
 						sprite_blt(gui_interface_npc->icon[i].picture, x + 40, y + yoff, NULL, NULL);
-					
+
 					StringBlt(ScreenSurface, &SystemFont, gui_interface_npc->icon[i].title, x+80, y+yoff, COLOR_WHITE, NULL, NULL);
 					yoff+=44;
 				}
-			}			
+			}
 		}
 
 		if(gui_interface_npc->icon_select)
@@ -2196,14 +2196,14 @@ void show_interface_npc(int mark)
 						box.h=36;
 						SDL_FillRect(ScreenSurface, &box, sdl_dgreen);
 					}
-					
+
 					sprite_blt(Bitmaps[BITMAP_INVSLOT], x + 40, y + yoff, NULL, NULL);
-				
+
 					if(gui_interface_npc->icon[i].element.face>0)
 						blt_inv_item_centered(&gui_interface_npc->icon[i].element, x + 40, y + yoff);
 					else if(gui_interface_npc->icon[i].picture)
 						sprite_blt(gui_interface_npc->icon[i].picture, x + 40, y + yoff, NULL, NULL);
-				
+
 					StringBlt(ScreenSurface, &SystemFont, gui_interface_npc->icon[i].title, x+80, y+yoff, COLOR_WHITE, NULL, NULL);
 					yoff+=44;
 					t++;
@@ -2216,20 +2216,20 @@ void show_interface_npc(int mark)
 
 	if(gui_interface_npc->status == GUI_INTERFACE_STATUS_WAIT)
 		return;
-	
+
 	if(gui_interface_npc->used_flag&GUI_INTERFACE_ACCEPT)
 	{
-		
-		if (add_button(x + 35, y + 443, 11, 2, numButton++, BITMAP_DIALOG_BUTTON_UP, 
+
+		if (add_button(x + 35, y + 443, 11, 2, numButton++, BITMAP_DIALOG_BUTTON_UP,
 							gui_interface_npc->accept.title, gui_interface_npc->accept.title2))
 		{
-			if(gui_interface_npc->icon_select && !gui_interface_npc->selected)	
+			if(gui_interface_npc->icon_select && !gui_interface_npc->selected)
 			{
 				draw_info("select a item first.", COLOR_GREEN);
 				sound_play_effect(SOUND_CLICKFAIL, 0, 0, 100);
 				active_button = -1;
 				return;
-				
+
 			}
 
 			if(gui_interface_npc->accept.title[0]=='O')
@@ -2271,14 +2271,14 @@ void show_interface_npc(int mark)
 	if(gui_interface_npc->input_flag)
 	{
         SDL_FillRect(ScreenSurface, &box, 0);
-		StringBlt(ScreenSurface, &SystemFont, show_input_string(InputString, &SystemFont,box.w-10),box.x+5 ,box.y, COLOR_WHITE, NULL, NULL);		
+		StringBlt(ScreenSurface, &SystemFont, show_input_string(InputString, &SystemFont,box.w-10),box.x+5 ,box.y, COLOR_WHITE, NULL, NULL);
 	}
 	else
 	{
 		StringBlt(ScreenSurface, &Font6x3Out, "~Return~ to talk", x+155, y+437, COLOR_WHITE, NULL, NULL);
         SDL_FillRect(ScreenSurface, &box, COLOR_GREY);
 	}
-	
+
     if (!mb)
         active_button = -1;
 }
@@ -2301,7 +2301,7 @@ void gui_interface_mouse(SDL_Event *e)
 			gui_interface_npc->yoff +=6;
 		else
 			gui_interface_npc->yoff -=6;
-		
+
 		if(gui_interface_npc->yoff < INTERFACE_WINLEN_NPC-gui_interface_npc->win_length)
 		{
 			gui_interface_npc->yoff = INTERFACE_WINLEN_NPC-gui_interface_npc->win_length;
@@ -2310,7 +2310,7 @@ void gui_interface_mouse(SDL_Event *e)
 		{
 			gui_interface_npc->yoff=0;
 		}
-		
+
 		return;
 	}
 
@@ -2374,7 +2374,7 @@ void gui_interface_mouse(SDL_Event *e)
 				if(keyword[0]!='/')
 					gui_interface_send_command(0, keyword);
 				else
-					gui_interface_send_command(1, keyword);				
+					gui_interface_send_command(1, keyword);
 			}
 		}
 	}

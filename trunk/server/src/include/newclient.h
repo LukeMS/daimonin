@@ -58,7 +58,7 @@
 #define CS_QUERY_HIDEINPUT 0x4  /* Hide input being entered */
 
 
-/* These are multiplication values that should be used when changing 
+/* These are multiplication values that should be used when changing
  * floats to ints, and vice version.  MULTI is integer representatin
  * (float to int), MULTF is float, for going from int to float.
  */
@@ -188,7 +188,7 @@
 #define NDI_NAVY    2
 #define NDI_RED     3
 #define NDI_GREEN   4
-#define NDI_BLUE    5       
+#define NDI_BLUE    5
 #define NDI_GREY    6
 #define NDI_BROWN   7       /* open door, close/open containers... */
 #define NDI_PURPLE  8
@@ -197,14 +197,14 @@
 #define NDI_DK_NAVY  11
 
 #define NDI_MAX_COLOR   11  /* Last value in */
-#define NDI_COLOR_MASK  0xff   /* colors are first 8 bit - o bit digit */   
+#define NDI_COLOR_MASK  0xff   /* colors are first 8 bit - o bit digit */
 #define NDI_FLAG_MASK   0xffff  /* 2nd 8 bit are flags to define draw_info string */
 
-/* implicit rule: if not NDI_PLAYER or NDI_SYSTEM is defined, 
+/* implicit rule: if not NDI_PLAYER or NDI_SYSTEM is defined,
  * message comes from NPC.
  */
 #define NDI_SAY     0x0100  /* its a say command */
-#define NDI_SHOUT   0x0200  
+#define NDI_SHOUT   0x0200
 #define NDI_TELL    0x0400
 #define NDI_PLAYER  0x0800 /* this comes from a player */
 #define NDI_SYSTEM  0x01000 /* if this is set, its a "system" message */
@@ -337,7 +337,7 @@ enum
     BINARY_CMD_GROUP_UPDATE,
     BINARY_CMD_INTERFACE,
     BINARY_CMD_BOOK,
-    
+
     /* old, unused or outdated crossfire cmds! */
     BINARY_CMD_MAGICMAP,
     BINARY_CMD_DELINV,

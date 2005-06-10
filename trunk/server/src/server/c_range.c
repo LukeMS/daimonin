@@ -81,13 +81,13 @@ static int find_spell_byname(object *op, char *params, int options)
  * that.  If cleric is 1, show cleric spells, if not set, show mage
  * spells.
  */
-/* disabled - we have now spell list in client 
+/* disabled - we have now spell list in client
 static void show_matching_spells(object *op, char *params, int cleric)
 {
     int i,spnum,first_match=0;
     char lev[80], cost[80];
 
-    for (i=0; i<(QUERY_FLAG(op, FLAG_WIZ)?NROFREALSPELLS:CONTR(op)->nrofknownspells); i++) {    
+    for (i=0; i<(QUERY_FLAG(op, FLAG_WIZ)?NROFREALSPELLS:CONTR(op)->nrofknownspells); i++) {
     if (QUERY_FLAG(op,FLAG_WIZ)) spnum=i;
     else spnum = CONTR(op)->known_spells[i];
 
@@ -162,7 +162,7 @@ int command_cast_spell(object *op, char *params)
         * to the length of the typed in name.  If that fails, then it checks
         * to the length of each spell name.  If that passes, it assumes that
         * anything after the length of the actual spell name is extra options
-        * typed in by the player (ie: marking rune Hello there) 
+        * typed in by the player (ie: marking rune Hello there)
      */
     if (((spnum2 = spnum = find_spell_byname(op, params, 0)) < 0) && ((spnum = find_spell_byname(op, params, 1)) >= 0))
     {
@@ -170,7 +170,7 @@ int command_cast_spell(object *op, char *params)
         cp = &params[strlen(spells[spnum].name) + 1];
         if (strncmp(cp, "of ", 3) == 0)
             cp += 3;
-    }            
+    }
 
     /* we don't know this spell name */
     if (spnum == -1)
@@ -179,7 +179,7 @@ int command_cast_spell(object *op, char *params)
         return 0;
     }
 
-    CONTR(op)->shoottype = range_magic; 
+    CONTR(op)->shoottype = range_magic;
     CONTR(op)->chosen_spell = spnum;
 
     if (!check_skill_to_fire(op))
@@ -251,7 +251,7 @@ int fire_cast_spell(object *op, char *params)
         * to the length of the typed in name.  If that fails, then it checks
         * to the length of each spell name.  If that passes, it assumes that
         * anything after the length of the actual spell name is extra options
-        * typed in by the player (ie: marking rune Hello there) 
+        * typed in by the player (ie: marking rune Hello there)
      */
     if (((spnum2 = spnum = find_spell_byname(op, params, 0)) < 0) && ((spnum = find_spell_byname(op, params, 1)) >= 0))
     {
@@ -259,7 +259,7 @@ int fire_cast_spell(object *op, char *params)
         cp = &params[strlen(spells[spnum].name) + 1];
         if (strncmp(cp, "of ", 3) == 0)
             cp += 3;
-    }            
+    }
 
     /* we don't know this spell name */
     if (spnum == -1)

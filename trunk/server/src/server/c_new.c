@@ -164,7 +164,7 @@ void send_target_command(player *pl)
     else if (pl->target_object_count == pl->target_object->count)
     {
         /* ok, a last check... i put it here to have clear code:
-             * perhaps we have legal issues why we can't aim or attack 
+             * perhaps we have legal issues why we can't aim or attack
              * our target anymore... invisible & stuff are handled here.
              * stuff like a out of pvp area moved player are handled different.
              * we HOLD the target - perhaps the guy moved back.
@@ -263,7 +263,7 @@ int command_combat(object *op, char *params)
  * and have a enemy/target, skip it and stop attacking.
  */
 /* TODO: at some time, we should move the target stuff to the client. but for this,
- * we need a better and smarter client information strategy - MT2003 
+ * we need a better and smarter client information strategy - MT2003
  */
 /* this function needs a rework... its a bit bulky after adding all this exceptions MT-2004 */
 int command_target(object *op, char *params)
@@ -293,8 +293,8 @@ int command_target(object *op, char *params)
             int xx, yy;
 
             /* thats the trick: we get  op map pos, but we have 2 offsets:
-                     * the offset from the client mouse click - can be 
-                     * +- CONTR(op)->socket.mapx/2 - and the freearr_x/y offset for 
+                     * the offset from the client mouse click - can be
+                     * +- CONTR(op)->socket.mapx/2 - and the freearr_x/y offset for
                      * the search.
                      */
             xt = op->x + (xx = freearr_x[n] + xstart);
@@ -304,14 +304,14 @@ int command_target(object *op, char *params)
              || xx>(int)(CONTR(op)->socket.mapx_2)
              || yy <-(int) (CONTR(op)->socket.mapy_2)
              || yy>(int)(CONTR(op)->socket.mapy_2))
-                continue; 
+                continue;
 
             block = CONTR(op)->blocked_los[xx + CONTR(op)->socket.mapx_2][yy + CONTR(op)->socket.mapy_2];
             if (block > BLOCKED_LOS_BLOCKSVIEW || !(m = out_of_map(op->map, &xt, &yt)))
                 continue;
 
             /* we can have more as one possible target
-                     * on a square - but i try this first without 
+                     * on a square - but i try this first without
                      * handle it.
                      */
             for (tmp = get_map_ob(m, xt, yt); tmp != NULL; tmp = tmp->above)
@@ -372,7 +372,7 @@ int command_target(object *op, char *params)
                 continue;
             }
             /* we can have more as one possible target
-                 * on a square - but i try this first without 
+                 * on a square - but i try this first without
                  * handle it.
                  */
             for (tmp = get_map_ob(m, xt, yt); tmp != NULL; tmp = tmp->above)
@@ -425,7 +425,7 @@ int command_target(object *op, char *params)
             {
                 get_ob_flag = 0;
                 jump_in = 1;
-                jump_in_n = n;      
+                jump_in_n = n;
                 tmp = op->above;
             }
             else if (OBJECT_VALID(CONTR(op)->target_object, CONTR(op)->target_object_count)
@@ -434,7 +434,7 @@ int command_target(object *op, char *params)
                 get_ob_flag = 0;
                 jump_in = 1;
                 n = CONTR(op)->target_map_pos;
-                jump_in_n = n;      
+                jump_in_n = n;
                 tmp = CONTR(op)->target_object->above;
             }
             else
@@ -467,7 +467,7 @@ int command_target(object *op, char *params)
                     continue;
                 }
                 /* we can have more as one possible target
-                        * on a square - but i try this first without 
+                        * on a square - but i try this first without
                         * handle it.
                         */
                 if (get_ob_flag)
@@ -484,7 +484,7 @@ int command_target(object *op, char *params)
                       && !(m->map_flags & MAP_FLAG_PVP)))
                     {
                         /* this can happen when our old target has moved to next position
-                                             * i have no tmp == op here to allow self targeting in the friendly chain 
+                                             * i have no tmp == op here to allow self targeting in the friendly chain
                                              */
                         if (head == CONTR(op)->target_object
                          || QUERY_FLAG(head, FLAG_SYS_OBJECT)
@@ -762,10 +762,10 @@ void command_new_char(char *params, int len, player *pl)
 			char buf_dm[64];
 
 			sprintf(buf_dm,"DM: %d players now playing.", player_active);
-			
+
 			for(ol = gmaster_list_DM;ol;ol=ol->next)
 				new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
-			
+
 			for(ol = gmaster_list_GM;ol;ol=ol->next)
 				new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
 		}
@@ -774,10 +774,10 @@ void command_new_char(char *params, int len, player *pl)
     give_initial_items(op, op->randomitems);
     link_player_skills(op);
     CLEAR_FLAG(op, FLAG_NO_FIX_PLAYER);
-    CONTR(op)->last_stats.exp = 1;          /* force send of skill exp data to client */    
+    CONTR(op)->last_stats.exp = 1;          /* force send of skill exp data to client */
     strcpy(CONTR(op)->title, op->race);     /* no title - just what we born */
     fix_player(op);                         /* THATS our first fix_player() when we create a new char
-                                                                 * add this time, hp and sp will be set 
+                                                                 * add this time, hp and sp will be set
                                                                  */
     esrv_update_item(UPD_FACE, op, op);
     esrv_send_inventory(op, op);
@@ -787,9 +787,9 @@ void command_new_char(char *params, int len, player *pl)
     SET_FLAG(op, FLAG_FRIENDLY);
     add_friendly_object(op);
 
-    CONTR(op)->socket.update_tile = 0;  
+    CONTR(op)->socket.update_tile = 0;
     CONTR(op)->socket.look_position = 0;
-    CONTR(op)->socket.ext_title_flag = 1;   
+    CONTR(op)->socket.ext_title_flag = 1;
     esrv_new_player(CONTR(op), op->weight + op->carrying);
     send_skilllist_cmd(op, NULL, SPLIST_MODE_ADD);
     send_spelllist_cmd(op, NULL, SPLIST_MODE_ADD);
@@ -817,7 +817,7 @@ void command_face_request(char *params, int len, NewSocket *ns)
 
 void command_fire(char *params, int len, player *pl)
 {
-    int     dir = 0, type, tag1, tag2; 
+    int     dir = 0, type, tag1, tag2;
     object *op  = pl->ob;
 
     if (!params)
@@ -882,7 +882,7 @@ void send_mapstats_cmd(object *op, struct mapdef *map)
 {
     char    tmp[2024];
 
-    CONTR(op)->last_update = map; /* player: remember this is the map the client knows */    
+    CONTR(op)->last_update = map; /* player: remember this is the map the client knows */
     sprintf(tmp, "X%d %d %d %d %s", map->width, map->height, op->x, op->y, map->name);
     Write_String_To_Socket(&CONTR(op)->socket, BINARY_CMD_MAPSTATS, tmp, strlen(tmp));
 }
@@ -943,7 +943,7 @@ void send_skilllist_cmd(object *op, object *skillp, int mode)
                 else if (tmp2->last_eat == 2)
                     sprintf(buf, "/%s|%d|-2", tmp2->name, tmp2->level);
                 else
-                    sprintf(buf, "/%s|%d|-1", tmp2->name, tmp2->level);       
+                    sprintf(buf, "/%s|%d|-1", tmp2->name, tmp2->level);
 
                 strcat(tmp, buf);
             }
@@ -1025,7 +1025,7 @@ void generate_ext_title(player *pl)
 
 	/* get a possible special tag for DM/GM/VOL */
 	tmp = (pl->gmaster_mode==GMASTER_MODE_NO?"":(pl->gmaster_mode==GMASTER_MODE_DM ? " [DM]" : (pl->gmaster_mode==GMASTER_MODE_GM ?" [GM]" : " [VOL]")));
-		
+
     strcpy(pl->quick_name, rank);
     strcat(pl->quick_name, pl->ob->name);
     strcat(pl->quick_name, tmp);

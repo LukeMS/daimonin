@@ -64,5 +64,5 @@ static inline void free_path(struct path_segment *p)
 /* #define DEBUG_PATHFINDING */
 
 /* Uncomment this to enable more intelligent use of CPU time for path finding */
-#define LEFTOVER_CPU_FOR_PATHFINDING    
+#define LEFTOVER_CPU_FOR_PATHFINDING
 #endif

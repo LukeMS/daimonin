@@ -24,7 +24,7 @@
 */
 
 /* This file contains various functions that are not really unique for
- * crossfire, but rather provides what should be standard functions 
+ * crossfire, but rather provides what should be standard functions
  * for systems that do not have them.  In this way, most of the
  * nasty system dependent stuff is contained here, with the program
  * calling these functions.
@@ -122,7 +122,7 @@ void remove_directory(const char *path)
 		remove_directory(buf);
 		continue;
 	    }
-	    /* Don't remove '.' or '..'  In  theory we should do a better 
+	    /* Don't remove '.' or '..'  In  theory we should do a better
 	     * check for .., but the directories we are removing are fairly
 	     * limited and should not have dot files in them.
 	     */
@@ -433,7 +433,7 @@ void make_path_to_file (char *filename)
 #endif
 	if (stat(buf, &statbuf) || !S_ISDIR (statbuf.st_mode)) {
 	    LOG(llevDebug, "Was not dir...");
-	    if (mkdir (buf, 0777)) 
+	    if (mkdir (buf, 0777))
 		{
 		    LOG(llevBug,"Bug: Can't make path to file %s.\n",filename);
 			return;

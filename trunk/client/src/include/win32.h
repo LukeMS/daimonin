@@ -81,7 +81,7 @@
 
 /* Use the SDL_mixer sound system. Remove when you have no sound card or slow
    computer */
-#define INSTALL_SOUND 
+#define INSTALL_SOUND
 
 #ifndef Boolean
 #define Boolean int

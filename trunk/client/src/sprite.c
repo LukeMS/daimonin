@@ -25,19 +25,19 @@
 static double   dark_value[DARK_LEVELS] =
 {
     1.0, 0.828, 0.685, 0.542, 0.399, 0.256, 0.113
-    /* thats the "normal values if we add 
+    /* thats the "normal values if we add
     * 1.0 / 7 =~0.143
     * but we want it a bit darker - so we
     * sub 3
     *
     0.858,
     0.715,
-    0.572, 
+    0.572,
     0.429,
-    0.286, 
+    0.286,
     0.143
     */
-};         
+};
 
 struct _anim   *start_anim; /* anim queue of current active map */
 
@@ -139,7 +139,7 @@ _Sprite * sprite_tryload_file(char *fname, uint32 flag, SDL_RWops *rwop)
             }
 
             /* we want 7+1 dark level. level 0 is our original brightness ,
-            * level 6 is darkest - level 7 is "total dark" = no light 
+            * level 6 is darkest - level 7 is "total dark" = no light
             */
             for (s = 1; s < DARK_LEVELS; s++) /* 1-6 darkened versions */
             {
@@ -170,18 +170,18 @@ _Sprite * sprite_tryload_file(char *fname, uint32 flag, SDL_RWops *rwop)
             }
             grey_scale(colors, dark, ncol, ckey.r, ckey.g, ckey.b);
             SDL_SetColors(bitmap, dark, 0, ncol);
-            sprite->grey = SDL_DisplayFormat(bitmap); 
+            sprite->grey = SDL_DisplayFormat(bitmap);
             red_scale(colors, dark, ncol, ckey.r, ckey.g, ckey.b);
             SDL_SetColors(bitmap, dark, 0, ncol);
-            sprite->red = SDL_DisplayFormat(bitmap); 
+            sprite->red = SDL_DisplayFormat(bitmap);
             fow_scale(colors, dark, ncol, ckey.r, ckey.g, ckey.b);
             SDL_SetColors(bitmap, dark, 0, ncol);
-            sprite->fog_of_war = SDL_DisplayFormat(bitmap); 
+            sprite->fog_of_war = SDL_DisplayFormat(bitmap);
 
             SDL_SetColors(bitmap, colors, 0, ncol);
         }
 
-        sprite->bitmap = SDL_DisplayFormat(bitmap); 
+        sprite->bitmap = SDL_DisplayFormat(bitmap);
         SDL_FreeSurface(bitmap);
         if (dark_flag) /* map original color over default dark */
             sprite->dark_level[0] = sprite->bitmap;
@@ -316,7 +316,7 @@ void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col
 
     if (area)
         line_clip = area->w;
-	
+
     dst_tmp.x = x; /* .w/h are not used from BlitSurface to draw*/
     dst_tmp.y = y;
 
@@ -364,12 +364,12 @@ void StringBlt(SDL_Surface *surf, _Font *font, char *text, int x, int y, int col
         {
             if (gflag)
             {
-                SDL_SetPalette(font->sprite->bitmap, SDL_LOGPAL | SDL_PHYSPAL, &color, 1, 1);           
+                SDL_SetPalette(font->sprite->bitmap, SDL_LOGPAL | SDL_PHYSPAL, &color, 1, 1);
                 gflag = FALSE;
             }
             else
             {
-                SDL_SetPalette(font->sprite->bitmap, SDL_LOGPAL | SDL_PHYSPAL, &color_g, 1, 1);         
+                SDL_SetPalette(font->sprite->bitmap, SDL_LOGPAL | SDL_PHYSPAL, &color_g, 1, 1);
                 gflag = TRUE;
             }
             continue;
@@ -438,7 +438,7 @@ static Boolean GetBitmapBorders(SDL_Surface *Surface, int *up, int *down, int *l
                 goto right_border;
             }
         }
-    }   
+    }
 
     /* we only need check this one time here - if we are here, the sprite is blank */
     return FALSE;
@@ -455,7 +455,7 @@ static Boolean GetBitmapBorders(SDL_Surface *Surface, int *up, int *down, int *l
                 goto up_border;
             }
         }
-    }   
+    }
 
     up_border:
     /* up side border */
@@ -469,7 +469,7 @@ static Boolean GetBitmapBorders(SDL_Surface *Surface, int *up, int *down, int *l
                 goto down_border;
             }
         }
-    }   
+    }
 
     down_border:
     /* up side border */
@@ -483,7 +483,7 @@ static Boolean GetBitmapBorders(SDL_Surface *Surface, int *up, int *down, int *l
                 return TRUE;
             }
         }
-    }   
+    }
     return TRUE;
 }
 
@@ -673,7 +673,7 @@ void delete_anim_que(void)
         tmp = tmp_next;
     }
     start_anim = NULL;
-} 
+}
 
 /* walk through the map anim list */
 void play_anims(int mx, int my)
@@ -696,7 +696,7 @@ void play_anims(int mx, int my)
             switch (anim->type)
             {
                 case ANIM_DAMAGE:
-                  tmp_y = anim->y - (int) ((float) num_ticks * anim->yoff); /*   * num_ticks ); */ 
+                  tmp_y = anim->y - (int) ((float) num_ticks * anim->yoff); /*   * num_ticks ); */
 
                   if (anim->mapx >= MapData.posx
                    && anim->mapx < MapData.posx + MapStatusX
@@ -721,7 +721,7 @@ void play_anims(int mx, int my)
                   }
                   break;
                 case ANIM_KILL:
-                  tmp_y = anim->y - (int) ((float) num_ticks * anim->yoff); /*   * num_ticks ); */ 
+                  tmp_y = anim->y - (int) ((float) num_ticks * anim->yoff); /*   * num_ticks ); */
 
                   if (anim->mapx >= MapData.posx
                    && anim->mapx < MapData.posx + MapStatusX
@@ -763,7 +763,7 @@ void play_anims(int mx, int my)
     }
 }
 
-/* a very special collision for the multi tile face & the player sprite, 
+/* a very special collision for the multi tile face & the player sprite,
  * used to make the player overlapping objects transparent */
 int sprite_collision(int x1, int y1, int x2, int y2, _Sprite *sprite1, _Sprite *sprite2)
 {
@@ -806,6 +806,6 @@ int sprite_collision(int x1, int y1, int x2, int y2, _Sprite *sprite1, _Sprite *
     myrect.h = bottom2-top2;
 
     SDL_FillRect(ScreenSurface, &myrect, 3243);
-      */  
+      */
     return(1);
 };

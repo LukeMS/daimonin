@@ -1,12 +1,12 @@
 How to Install the Daimonin Server
 
 Note: The server source is not ported to as many OS as the SDL client.
-      If you want to try to port the server to a new OS, please contact 
+      If you want to try to port the server to a new OS, please contact
       the dev team.
 
-Note: The files inside the /install folder are the default files for a 
+Note: The files inside the /install folder are the default files for a
       server installation. Please don't change the files inside this folder,
-      you will find them after the install inside the /data folder where you 
+      you will find them after the install inside the /data folder where you
       can access them.
 
 Select the OS you need to install the package. If you can't find the OS

@@ -1,7 +1,7 @@
 require("topic_list");
 
 activator = event.activator
-whoami = event.me 
+whoami = event.me
 
 tl = TopicList()
 
@@ -41,7 +41,7 @@ tl:AddTopics('remove damnation',
 	end
 )
 
-tl:AddTopics('detect magic', 
+tl:AddTopics('detect magic',
 	function()
 		if activator:PayAmount(200) then
 			whoami:SayTo(activator,"\nOk, i will cast a 'detect magic' for 2s on you.")
@@ -53,7 +53,7 @@ tl:AddTopics('detect magic',
 	end
 )
 
-tl:AddTopics('remove depletion', 
+tl:AddTopics('remove depletion',
 	function()
 		if activator:PayAmount(200) then
 			whoami:SayTo(activator,"\nOk, i will cast a 'remove depletion' for 35s on you.")
@@ -94,14 +94,14 @@ tl:AddTopics('identify all',
 	end
 )
 
-tl:AddTopics('food', '\nYour stomach is filled again.', 
+tl:AddTopics('food', '\nYour stomach is filled again.',
 	function() activator.food = 999 end)
 
 tl:SetDefault([[
 
 Welcome to my shop. We have what you want!
 As service I can cast 'detect curse' or 'detect magic' for 20s on your items. I can also 'identify' single items for only 40s or all for 2g.
-Say ^detect curse^ or ^magic^, ^remove curse^ or ^damnation^ or ^depletion^, ^identify^ or ^identify all^ if you need my service.") 
+Say ^detect curse^ or ^magic^, ^remove curse^ or ^damnation^ or ^depletion^, ^identify^ or ^identify all^ if you need my service.")
 ]])
 
 tl:CheckMessage(event)

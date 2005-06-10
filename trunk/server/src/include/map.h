@@ -183,11 +183,11 @@
 #define P_PASS_THRU     0x400   /* same as NO_PASS - but objects with PASS_THRU set can cross it.
                                      * Note: If a node has NO_PASS and P_PASS_THRU set, there are 2 objects
                                      * in the node, one with pass_thru and one with real no_pass - then
-                                     * no_pass will overrule pass_thru 
+                                     * no_pass will overrule pass_thru
                                      */
 #define P_PASS_ETHEREAL 0x800   /* same as PASS_THRU - but for ethereal objects. This is pass_thru light */
 
-#define P_WALK_ON       0x1000  /* this 4 flags are for moving objects and what happens when they enter */ 
+#define P_WALK_ON       0x1000  /* this 4 flags are for moving objects and what happens when they enter */
 #define P_WALK_OFF      0x2000  /* or leave a map tile */
 #define P_FLY_OFF       0x4000
 #define P_FLY_ON        0x8000
@@ -204,7 +204,7 @@
                                      * function where the out_of_map() fails to grap a valid
                                      * map or tile.
                                      */
-/* these are special flags to control how and what the update_position() 
+/* these are special flags to control how and what the update_position()
  * functions updates the map space.
  */
 #define P_FLAGS_ONLY    0x8000000   /* skip the layer update, do flags only */
@@ -226,8 +226,8 @@ typedef struct MapCell_struct
 {
     int     count;
     short   faces[MAP_LAYERS];
-    uint8   fflag[MAP_LAYERS];  
-    uint8   ff_probe[MAP_LAYERS];  
+    uint8   fflag[MAP_LAYERS];
+    uint8   ff_probe[MAP_LAYERS];
     char    quick_pos[MAP_LAYERS];
 } MapCell;
 
@@ -243,7 +243,7 @@ typedef struct MapSpace_s
     object             *layer[MAX_ARCH_LAYERS*2];       /* array of visible layer objects + for invisible (*2)*/
     object             *last;                           /* last object in this list */
     struct MapSpace_s  *prev_light;                     /* used to create chained light source list.*/
-    struct MapSpace_s  *next_light;         
+    struct MapSpace_s  *next_light;
 
     uint32              round_tag;                      /* tag for last_damage */
     uint32              update_tile;                    /* counter for update tile */
@@ -272,13 +272,13 @@ typedef struct MapSpace_s
                                              */
 #define MAP_FLAG_NOMAGIC            8       /* no sp based spells */
 #define MAP_FLAG_NOPRIEST           16      /* no grace baes spells allowed */
-#define MAP_FLAG_NOHARM             32      /* allow only no attack, no debuff spells 
+#define MAP_FLAG_NOHARM             32      /* allow only no attack, no debuff spells
                                              * this is city default setting - heal for example
-                                             * is allowed on you and others but no curse or 
-                                             * fireball or abusing stuff like darkness or create walls 
+                                             * is allowed on you and others but no curse or
+                                             * fireball or abusing stuff like darkness or create walls
                                              */
 #define MAP_FLAG_NOSUMMON           64      /* don't allow any summon/pet summon spell.
-                                             * this includes "call summons" for calling pets from other maps 
+                                             * this includes "call summons" for calling pets from other maps
                                              */
 #define MAP_FLAG_FIXED_LOGIN        128     /* when set, a player login on this map will forced
                                              * to default enter_x/enter_y of this map.
@@ -299,8 +299,8 @@ typedef struct MapSpace_s
 #define QUERY_MAP_TILE_VISITED(m, x, y, id) \
     ((m)->pathfinding_id == (id) && ((m)->bitmap[(x)/32 + ((MAP_WIDTH(m)+31)/32)*(y)] & (1U << ((x) % 32))))
 
-/* In general, code should always use the macros 
- * above (or functions in map.c) to access many of the 
+/* In general, code should always use the macros
+ * above (or functions in map.c) to access many of the
  * values in the map structure.  Failure to do this will
  * almost certainly break various features.  You may think
  * it is safe to look at width and height values directly
@@ -329,7 +329,7 @@ typedef struct mapdef
 
 
     sint32          darkness;               /* indicates the base light value in this map.
-                                             * This value is only used when the map is not 
+                                             * This value is only used when the map is not
                                              * marked as outdoor.
                                              * 0= totally dark. 7= daylight
                                              */

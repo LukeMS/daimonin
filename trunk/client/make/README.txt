@@ -3,7 +3,7 @@ To install and compile the Daimonin client you need 3 SDL libraries.
 The used libraries are "SDL", "SDL_mixer" and "SDL_image".
 
 First, read the README.txt file inside your target OS. For some OS we have precompiled
-library files zipped inside the folders. Follow the directions to compile for your 
+library files zipped inside the folders. Follow the directions to compile for your
 specific OS. The win32 or the linux installation is a good start.
 
 If you want/need to make a installation for perhaps a new OS, you need to get the

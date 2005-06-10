@@ -43,13 +43,13 @@
  * about it.
  * For pets, we should implement a linked pet list in the player struct. This give us the
  * power to handle pets more intelligent and fast.
- * 
+ *
  * But the biggest part is to remove the friendly list as global list - the friendly list
  * must be attached to the map header. So, every map has then its own "friendly object" list.
- * This will work very fine with the tiled map system, because we can easy ask "is there a 
+ * This will work very fine with the tiled map system, because we can easy ask "is there a
  * target in our map? no? then perhaps in a attached? no? then we must not search anymore
  * because it is always out of range."
- * 
+ *
  * This code is a MUST because a global list will counter our system we want install with
  * the tiled maps - a capsuled area which is loaded and which only interact which the needed
  * parts of our world (= content = objects).
@@ -66,7 +66,7 @@ void add_friendly_object(object *op)
     objectlink *ol;
 
     /* only add senseful here - give a note ... i use it as info -
-     * this will change when we chain the friendly list to maps 
+     * this will change when we chain the friendly list to maps
      */
     if (op->type != PLAYER && op->type != MONSTER && !QUERY_FLAG(op, FLAG_ALIVE) && !QUERY_FLAG(op, FLAG_MONSTER))
     {
@@ -82,7 +82,7 @@ void add_friendly_object(object *op)
     /* Add some error checking.  This shouldn't happen, but the friendly
      * object list usually isn't very long, and remove_friendly_object
      * won't remove it either.  Plus, it is easier to put a breakpoint in
-     * the debugger here and see where the problem is happening. 
+     * the debugger here and see where the problem is happening.
      */
     for (ol = first_friendly_object; ol != NULL; ol = ol->next)
     {
@@ -111,7 +111,7 @@ void remove_friendly_object(object *op)
     objectlink *this;
 
     /* only add senseful here - give a note ... i use it as info -
-     * this will change when we chain the friendly list to maps 
+     * this will change when we chain the friendly list to maps
      */
     if (op->type != PLAYER && op->type != MONSTER && !QUERY_FLAG(op, FLAG_ALIVE) && !QUERY_FLAG(op, FLAG_MONSTER))
     {

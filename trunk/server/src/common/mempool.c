@@ -25,7 +25,7 @@
 */
 
 /*
- * Memory management functions for memory pools 
+ * Memory management functions for memory pools
  */
 
 #include <global.h>
@@ -45,29 +45,29 @@ static uint32                   chunk_tracking_id       = 1;
 /* The removedlist is not ended by NULL, but by a pointer to the end_marker */
 struct mempool_chunk            end_marker; /* only used as an end marker for the lists */
 
-/* 
+/*
  * The Life Cycle of an Object:
  *
- 
+
  - expand_mempool(): Allocated from system memory and put into the freelist of the object pool.
  - get_object():     Removed from freelist & put into removedlist (since it is not inserted anywhere yet).
- - insert_ob_in_(map/ob)(): Filled with data & inserted into (any) environment    
+ - insert_ob_in_(map/ob)(): Filled with data & inserted into (any) environment
  ... end of timestep
  - object_gc():      Removed from removedlist, but not freed (since it sits in an env).
- ... 
+ ...
  - remove_ob():      Removed from environment
- - Sits in removedlist until the end of this server timestep  
+ - Sits in removedlist until the end of this server timestep
  ... end of timestep
- - object_gc():      Freed and moved to freelist 
+ - object_gc():      Freed and moved to freelist
  (attrsets are freed and given back to their respective pools too).
-*/   
+*/
 
 
 /** Basic pooling memory management system **/
 
 /*
- * A pool definition in the mempools[] array and an entry in the mempool id enum 
- * is needed for each type of struct we want to use the pooling memory management for. 
+ * A pool definition in the mempools[] array and an entry in the mempool id enum
+ * is needed for each type of struct we want to use the pooling memory management for.
  */
 
 int nrof_mempools = 0;
@@ -75,8 +75,8 @@ struct mempool *mempools[MAX_NROF_MEMPOOLS];
 
 #ifdef MEMPOOL_TRACKING
 struct mempool *pool_puddle;
-#endif    
-    
+#endif
+
 struct mempool *pool_object, *pool_player, *pool_map_bfs,
     *pool_path_segment, *pool_mob_data, *pool_mob_knownobj,
     *pool_mob_behaviourset, *pool_mob_behaviour, *pool_mob_behaviourparam,
@@ -86,8 +86,8 @@ struct mempool *pool_object, *pool_player, *pool_map_bfs,
  * (1 << exp) >= n and (1 << (exp -1)) < n */
 uint32 nearest_pow_two_exp(uint32 n)
 {
-    /* Lookup table generated with: 
-     *  perl -e 'for($n=0; $n<=64; $n++) {for($i=0; (1 << $i) < $n; $i++) {} print "$i,";}' 
+    /* Lookup table generated with:
+     *  perl -e 'for($n=0; $n<=64; $n++) {for($i=0; (1 << $i) < $n; $i++) {} print "$i,";}'
      */
     static const uint32 exp_lookup[65]  =
     {
@@ -103,9 +103,9 @@ uint32 nearest_pow_two_exp(uint32 n)
 }
 
 /* The mempool system never frees memory back to the system, but is extremely efficient
- * when it comes to allocating and returning pool chunks. Always use the get_poolchunk() 
+ * when it comes to allocating and returning pool chunks. Always use the get_poolchunk()
  * and return_poolchunk() functions for getting and returning memory chunks. expand_mempool() is
- * used internally. 
+ * used internally.
  *
  * Be careful if you want to use the internal chunk or pool data, its semantics and
  * format might change in the future.
@@ -116,19 +116,19 @@ void free_mempool(struct mempool *pool)
 {
 }
 
-struct mempool *create_mempool(const char *description, uint32 expand, uint32 size, 
+struct mempool *create_mempool(const char *description, uint32 expand, uint32 size,
         uint32 flags, chunk_constructor constructor, chunk_destructor destructor)
 {
-    int i;    
+    int i;
     struct mempool *pool;
 
-    if(nrof_mempools >= MAX_NROF_MEMPOOLS) 
+    if(nrof_mempools >= MAX_NROF_MEMPOOLS)
         LOG(llevError, "Too many memory pools registered. Please increase the MAX_NROF_MEMPOOLS constant in mempools.h\n");
-    
+
     pool = calloc(1, sizeof(struct mempool));
-    
+
     mempools[nrof_mempools] = pool;
-    
+
     pool->chunk_description = description;
     pool->expand_size = expand;
     pool->chunksize = size;
@@ -145,8 +145,8 @@ struct mempool *create_mempool(const char *description, uint32 expand, uint32 si
 
 #ifdef MEMPOOL_TRACKING
     pool->first_puddle_info = NULL;
-#endif        
-    
+#endif
+
     nrof_mempools++;
 
     return pool;
@@ -157,7 +157,7 @@ void init_mempools()
 {
 #ifdef MEMPOOL_TRACKING
     pool_puddle = create_mempool("puddles", 10, sizeof(struct puddle_info), MEMPOOL_ALLOW_FREEING, NULL, NULL);
-#endif        
+#endif
     pool_object = create_mempool("objects", OBJECT_EXPAND, sizeof(object), 0,
             (chunk_constructor) initialize_object, (chunk_destructor) destroy_object);
     pool_player = create_mempool("players", 25, sizeof(player), MEMPOOL_BYPASS_POOLS, NULL, NULL);
@@ -172,11 +172,11 @@ void init_mempools()
 
     pool_gmasters = create_mempool("gmaster entries", 10, sizeof(gmaster_struct), 0, NULL, NULL);
     pool_bannode = create_mempool("ban node entries", 25, sizeof(struct ban_struct), 0, NULL, NULL);
-    
+
     pool_tlist_tweak = create_mempool("treasure list tweak", 100, sizeof(tlist_tweak), 0, NULL, NULL);
 
     /* Initialize end-of-list pointers and a few other values*/
-    removed_objects = &end_marker;    
+    removed_objects = &end_marker;
 
     /* Set up container for "loose" objects */
     initialize_object(&void_container);
@@ -188,7 +188,7 @@ void init_mempools()
  * are put into the pool's freelist for future use.
  * expand_mempool is only meant to be used from get_poolchunk().
  *
- * arraysize_exp is the exponent for the array size, for example 3 for 
+ * arraysize_exp is the exponent for the array size, for example 3 for
  * arrays of length 8 (2^3 = 8)
  */
 static void expand_mempool(struct mempool *pool, uint32 arraysize_exp)
@@ -199,7 +199,7 @@ static void expand_mempool(struct mempool *pool, uint32 arraysize_exp)
     int                     nrof_arrays;
 
     if (pool->nrof_free[arraysize_exp] > 0)
-        LOG(llevBug, "BUG: expand_mempool called with chunks still available in pool\n"); 
+        LOG(llevBug, "BUG: expand_mempool called with chunks still available in pool\n");
 
     nrof_arrays = pool->expand_size >> arraysize_exp;
 
@@ -302,8 +302,8 @@ void return_poolchunk_array_real(void *data, uint32 arraysize_exp, struct mempoo
     struct mempool_chunk   *old = MEM_POOLDATA(data);
 
     if (CHUNK_FREE(data))
-        LOG(llevBug, "BUG: return_poolchunk on already free chunk (pool \"%s\")\n", 
-            pool->chunk_description); 
+        LOG(llevBug, "BUG: return_poolchunk on already free chunk (pool \"%s\")\n",
+            pool->chunk_description);
 
 #ifdef MEMPOOL_OBJECT_TRACKING
     if (old->obj_next)
@@ -323,7 +323,7 @@ void return_poolchunk_array_real(void *data, uint32 arraysize_exp, struct mempoo
 
     if (pool->flags & MEMPOOL_BYPASS_POOLS)
     {
-        free(old);        
+        free(old);
         pool->nrof_allocated[arraysize_exp]--;
     }
     else
@@ -336,7 +336,7 @@ void return_poolchunk_array_real(void *data, uint32 arraysize_exp, struct mempoo
 
 #ifdef MEMPOOL_OBJECT_TRACKING
 
-/* this is time consuming DEBUG only 
+/* this is time consuming DEBUG only
  * function. Mainly, it checks the different memory parts
  * and controls they are was they are - if a object claims its
  * in a inventory we check the inventory - same for map.
@@ -419,17 +419,17 @@ void check_use_object_list(void)
  * http://www.alumni.caltech.edu/~pje/
  * (Public Domain)
  *
- * The function sort_linked_list() will sort virtually any kind of singly-linked list, using a comparison 
+ * The function sort_linked_list() will sort virtually any kind of singly-linked list, using a comparison
  * function supplied by the calling program. It has several advantages over qsort().
  *
- * The function sorts only singly linked lists. If a list is doubly linked, the backward pointers can be 
+ * The function sorts only singly linked lists. If a list is doubly linked, the backward pointers can be
  * restored after the sort by a few lines of code.
- * 
- * Each element of a linked list to be sorted must contain, as its first members, one or more pointers. 
- * One of the pointers, which must be in the same relative position in each element, is a pointer to the 
+ *
+ * Each element of a linked list to be sorted must contain, as its first members, one or more pointers.
+ * One of the pointers, which must be in the same relative position in each element, is a pointer to the
  * next element. This pointer is <end_marker> (usually NULL) in the last element.
  *
- * The index is the position of this pointer in each element. 
+ * The index is the position of this pointer in each element.
  * It is 0 for the first pointer, 1 for the second pointer, etc.
  *
  * Let n = compare(p,q,pointer) be a comparison function that compares two elements p and q as follows:
@@ -440,14 +440,14 @@ void check_use_object_list(void)
  *                       0 if the order of *p and *q is irrelevant
  *
  *
- * The fourth argument (pointer) is passed to compare() without change. It can be an invaluable feature if 
- * two or more comparison methods share a substantial amount of code and differ only in one or more parameter 
+ * The fourth argument (pointer) is passed to compare() without change. It can be an invaluable feature if
+ * two or more comparison methods share a substantial amount of code and differ only in one or more parameter
  * values.
  *
- * The last argument (pcount) is of type (unsigned long *). 
+ * The last argument (pcount) is of type (unsigned long *).
  * If it is not NULL, then *pcount is set equal to the number of records in the list.
  *
- * It is permissible to sort an empty list. If first == end_marker, the returned value will also be end_marker. 
+ * It is permissible to sort an empty list. If first == end_marker, the returned value will also be end_marker.
  */
 void * sort_singly_linked_list(void *p, unsigned index, int (*compare) (void *, void *, void *), void *pointer,
                                unsigned long *pcount, void *end_marker)
@@ -557,11 +557,11 @@ static int sort_puddle_by_nrof_free(void *a, void *b, void *args)
 
 /*
  * Go through the freelists and free puddles with no used chunks.
- * This function is quite slow and dangerous to call. 
+ * This function is quite slow and dangerous to call.
  * The idea is that it should be called occasionally when CPU usage is low
- * 
+ *
  * Complexity of this function is O(N (M log M)) where
- * N is number of pools and M is number of puddles in pool 
+ * N is number of pools and M is number of puddles in pool
  */
 void free_empty_puddles(struct mempool *pool)
 {
@@ -569,13 +569,13 @@ void free_empty_puddles(struct mempool *pool)
 #if 0
     int chunksize_real = sizeof(struct mempool_chunk) + mempools[pool].chunksize;
     int freed = 0;
-    
+
     struct mempool_chunk *last_free, *chunk;
     struct puddle_info *puddle, *next_puddle;
 
     if(mempools[pool].flags & MEMPOOL_BYPASS_POOLS)
         return;
-    
+
     /* Free empty puddles and setup puddle-local freelists */
     for(puddle = mempools[pool].first_puddle_info, mempools[pool].first_puddle_info = NULL;
             puddle != NULL; puddle = next_puddle) {
@@ -585,7 +585,7 @@ void free_empty_puddles(struct mempool *pool)
       /* Count free chunks in puddle, and set up a local freelist */
       puddle->first_free = puddle->last_free=NULL;
       puddle->nrof_free = 0;
-      for(ii=0; ii<mempools[pool].expand_size; ii++) {          
+      for(ii=0; ii<mempools[pool].expand_size; ii++) {
         chunk = (struct mempool_chunk *)((char *)(puddle->first_chunk) + chunksize_real * ii);
         /* Find free chunks. (Notice special case for objects here. Yuck!) */
         if((pool == POOL_OBJECT && OBJECT_FREE((object *)MEM_USERDATA(chunk))) ||
@@ -602,9 +602,9 @@ void free_empty_puddles(struct mempool *pool)
             puddle->nrof_free ++;
         }
       }
-        
+
       /* Can we actually free this puddle? */
-      if(puddle->nrof_free == mempools[pool].expand_size) {          
+      if(puddle->nrof_free == mempools[pool].expand_size) {
           /* Yup. Forget about it. */
           free(puddle->first_chunk);
           return_poolchunk(puddle, POOL_PUDDLE);
@@ -617,7 +617,7 @@ void free_empty_puddles(struct mempool *pool)
       }
     }
 
-    /* Sort the puddles by amount of free chunks. It will let us set up the freelist so that 
+    /* Sort the puddles by amount of free chunks. It will let us set up the freelist so that
      * the chunks from the fullest puddles are used first.
      * This should (hopefully) help us free some of the lesser-used puddles earlier. */
     mempools[pool].first_puddle_info = sort_singly_linked_list(mempools[pool].first_puddle_info, 0, sort_puddle_by_nrof_free, NULL, NULL, NULL);
@@ -628,18 +628,18 @@ void free_empty_puddles(struct mempool *pool)
     LOG(llevDebug,"%s free in puddles: ", mempools[pool].chunk_description);
     for(puddle = mempools[pool].first_puddle_info; puddle != NULL; puddle = puddle->next) {
         if(puddle->nrof_free > 0) {
-            if(mempools[pool].first_free == &end_marker) 
+            if(mempools[pool].first_free == &end_marker)
                 mempools[pool].first_free = puddle->first_free;
-            else 
+            else
                 last_free->next = puddle->first_free;
             puddle->last_free->next = &end_marker;
             last_free = puddle->last_free;
         }
-                
+
         LOG(llevDebug,"%d ", puddle->nrof_free);
     }
     LOG(llevDebug,"\n");
-    
+
     LOG(llevInfo,"Freed %d %s puddles\n", freed, mempools[pool].chunk_description);
 #endif
     LOG(llevInfo, "Memory recovery temporarily disabled\n");

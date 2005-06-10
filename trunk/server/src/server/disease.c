@@ -24,7 +24,7 @@
 */
 
 /*  This file contains all the code implementing diseases,
-    except for odds and ends in attack.c and in 
+    except for odds and ends in attack.c and in
      living.c*/
 
 
@@ -40,30 +40,30 @@ title           Message         When the "disease" "infects" something, it will
                                 print "title victim!!!" to the player who owns
                 the "disease".
 wc+             Infectiousness  How well the plague spreads person-to-person
-magic+          Range           range of infection 
+magic+          Range           range of infection
 Stats*          Disability      What stats are reduced by the disease (str con...)
-maxhp+          Persistence     How long the disease can last OUTSIDE the host. 
-weight_limit    TimeLeft        Counter for persistence 
-dam^            Damage          How much damage it does (%?). 
-maxgrace+       Duration        How long before the disease is naturally cured. 
-food            DurCount        Counter for Duration 
+maxhp+          Persistence     How long the disease can last OUTSIDE the host.
+weight_limit    TimeLeft        Counter for persistence
+dam^            Damage          How much damage it does (%?).
+maxgrace+       Duration        How long before the disease is naturally cured.
+food            DurCount        Counter for Duration
 
-speed           Speed           How often the disease moves. 
-last_sp^        Lethargy        Percentage of max speed--10 = 10% speed. 
+speed           Speed           How often the disease moves.
+last_sp^        Lethargy        Percentage of max speed--10 = 10% speed.
 
-maxsp^          Mana deplete    Saps mana. 
+maxsp^          Mana deplete    Saps mana.
 ac^             Progressiveness How the diseases increases in severity.
-last_eat*^      Deplete food    saps food if negative 
+last_eat*^      Deplete food    saps food if negative
 last_heal       GrantImmunity   If nonzero, disease does NOT grant immunity
-                                when it runs out                              
+                                when it runs out
 
-exp             experience      experience awarded when plague cured 
-hp*^            ReduceRegen     reduces regeneration of disease-bearer 
-sp*^            ReduceSpRegen   reduces spellpoint regeneration 
+exp             experience      experience awarded when plague cured
+hp*^            ReduceRegen     reduces regeneration of disease-bearer
+sp*^            ReduceSpRegen   reduces spellpoint regeneration
 
-name            Name            Name of the plague 
+name            Name            Name of the plague
 msg             message         What the plague says when it strikes.
-race            those affected  species/race the plague strikes (* = everything) 
+race            those affected  species/race the plague strikes (* = everything)
 level           Plague Level    General description of the plague's deadliness
 armour          Attenuation     reduction in wc per generation of disease.
                                 This builds in a self-limiting factor.
@@ -85,7 +85,7 @@ Stats are stat modifications.  These should typically be negative.
 
 maxhp is how long the disease will persist if the host dies and "drops" it,
       in "disease moves", i.e., moves of the disease.  If negative, permanent.
-      
+
 
 weight_limit is the counter for maxhp, it starts at maxhp and drops...
 
@@ -129,10 +129,10 @@ speed            speed of movement, from DISEASE
 
 #include <global.h>
 
-/*  IMPLEMENTATION NOTES  
-     
+/*  IMPLEMENTATION NOTES
+
      Diseases may be contageous.  They are objects which exist in a player's
-inventory.  They themselves do nothing, except modify Symptoms, or 
+inventory.  They themselves do nothing, except modify Symptoms, or
 spread to other live objects.  Symptoms are what actually damage the player:
 these are their own object. */
 
@@ -412,7 +412,7 @@ int do_symptoms(object *disease)
 
 
 
-        new_symptom->stats.maxsp = disease->stats.maxsp; 
+        new_symptom->stats.maxsp = disease->stats.maxsp;
         new_symptom->stats.food = new_symptom->stats.maxgrace;
 
         FREE_AND_COPY_HASH(new_symptom->name, disease->name);
@@ -532,7 +532,7 @@ int move_symptom(object *symptom)
         sp_reduce = (int) MAX((float) 1, (float) victim->stats.maxsp * (float) symptom->stats.maxsp / (float) 100.0);
     victim->stats.sp = MAX(0, victim->stats.sp - sp_reduce);
 
-    /* create the symptom "other arch" object and drop it here 
+    /* create the symptom "other arch" object and drop it here
      * under every part of the monster */
     /* The victim may well have died. */
     if (victim->map == NULL)
@@ -648,7 +648,7 @@ int cure_disease(object *sufferer, object *caster)
     return 1;
 }
 
-/* reduces disease progression:  reduce_symptoms 
+/* reduces disease progression:  reduce_symptoms
  * return true if we actually reduce a disease.
  */
 

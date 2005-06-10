@@ -288,7 +288,7 @@ object * retrofit_joined_wall(mapstruct *the_map, int i, int j, int insert_flag,
     if (the_wall && (the_wall->type == DOOR || the_wall->type == LOCKED_DOOR))
     {
         the_wall = NULL;
-        /* if we're not supposed to insert a new wall where there wasn't one, 
+        /* if we're not supposed to insert a new wall where there wasn't one,
              we've gotta leave. */
         if (insert_flag == 0)
             return 0;

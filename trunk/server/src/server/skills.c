@@ -26,11 +26,11 @@
 #include <global.h>
 #include <book.h>
 
-/* 
+/*
  * When stealing: dependent on the intelligence/wisdom of whom you're
  * stealing from (op in attempt_steal), offset by your dexterity and
  * skill at stealing. They may notice your attempt, whether successful
- * or not. 
+ * or not.
  */
 int attempt_steal(object *op, object *who)
 {
@@ -40,7 +40,7 @@ int attempt_steal(object *op, object *who)
 
     /* if the victim is aware of a thief in the area (FLAG_NO_STEAL set on them)
      * they will try to prevent stealing if they can. Only unseen theives will
-     * have much chance of success. 
+     * have much chance of success.
      */
     if (op->type != PLAYER && QUERY_FLAG(op, FLAG_NO_STEAL))
     {
@@ -48,7 +48,7 @@ int attempt_steal(object *op, object *who)
         {
             /* add here a distance/can see function!! */
             /* TODO: should probaly call set_npc_enemy() here instead */
-            /* TODO: disabled while cleaning up monster.c 
+            /* TODO: disabled while cleaning up monster.c
             npc_call_help(op); */
             CLEAR_FLAG(op, FLAG_UNAGGRESSIVE);
             new_draw_info(NDI_UNIQUE, 0, who, "Your attempt is prevented!");
@@ -63,14 +63,14 @@ int attempt_steal(object *op, object *who)
     {
         next = tmp->below;
 
-        /* you can't steal worn items, starting items, wiz stuff, 
-         * innate abilities, or items w/o a type. Generally 
-         * speaking, the invisibility flag prevents experience or 
+        /* you can't steal worn items, starting items, wiz stuff,
+         * innate abilities, or items w/o a type. Generally
+         * speaking, the invisibility flag prevents experience or
          * abilities from being stolen since these types are currently
-         * always invisible objects. I was implicit here so as to prevent 
-         * future possible problems. -b.t. 
-         * Flesh items generated w/ fix_flesh_item should have FLAG_NO_STEAL 
-         * already  -b.t. 
+         * always invisible objects. I was implicit here so as to prevent
+         * future possible problems. -b.t.
+         * Flesh items generated w/ fix_flesh_item should have FLAG_NO_STEAL
+         * already  -b.t.
          */
 
         if (QUERY_FLAG(tmp, FLAG_WIZ)
@@ -90,7 +90,7 @@ int attempt_steal(object *op, object *who)
         /* Okay, try stealing this item. Dependent on dexterity of thief,
          * skill level, see the adj_stealroll fctn for more detail. */
 
-        roll = die_roll(2, 100, who, PREFER_LOW) / 2; /* weighted 1-100 */ 
+        roll = die_roll(2, 100, who, PREFER_LOW) / 2; /* weighted 1-100 */
 
         if ((chance = adj_stealchance(who, op, (stats_value + thief_lvl - victim_lvl))) == -1)
             return 0;
@@ -111,7 +111,7 @@ int attempt_steal(object *op, object *who)
 
     /* If you arent high enough level, you might get something BUT
      * the victim will notice your stealing attempt. Ditto if you
-     * attempt to steal something heavy off them, they're bound to notice 
+     * attempt to steal something heavy off them, they're bound to notice
      */
 
     if ((roll >= SK_level(who))
@@ -133,7 +133,7 @@ int attempt_steal(object *op, object *who)
                 new_draw_info_format(NDI_UNIQUE, 0, who, "%s notices your attempted pilfering!", query_name(op));
             }
             CLEAR_FLAG(op, FLAG_UNAGGRESSIVE);
-            /* all remaining npc items are guarded now. Set flag NO_STEAL 
+            /* all remaining npc items are guarded now. Set flag NO_STEAL
                * on the victim. */
             SET_FLAG(op, FLAG_NO_STEAL);
         }
@@ -169,7 +169,7 @@ int attempt_steal(object *op, object *who)
     return success ? 1 : 0;
 }
 
-/* adj_stealchance() - increased values indicate better attempts */ 
+/* adj_stealchance() - increased values indicate better attempts */
 int adj_stealchance(object *op, object *victim, int roll)
 {
     object *equip;
@@ -184,7 +184,7 @@ int adj_stealchance(object *op, object *victim, int roll)
     if (!QUERY_FLAG(victim, FLAG_UNAGGRESSIVE))
         roll = roll / 2;
 
-    /* Easier to steal from sleeping beings, or if the thief is 
+    /* Easier to steal from sleeping beings, or if the thief is
      * unseen */
     if (QUERY_FLAG(victim, FLAG_SLEEP))
         roll = roll * 3;
@@ -253,9 +253,9 @@ int steal(object *op, int dir)
     for (; tmp != NULL; tmp = next)
     {
         next = tmp->below;
-        /* Minor hack--for multi square beings - make sure we get 
-         * the 'head' coz 'tail' objects have no inventory! - b.t. 
-         */ 
+        /* Minor hack--for multi square beings - make sure we get
+         * the 'head' coz 'tail' objects have no inventory! - b.t.
+         */
         if (tmp->head)
             tmp = tmp->head;
         if (tmp->type != PLAYER && !QUERY_FLAG(tmp, FLAG_MONSTER))
@@ -331,7 +331,7 @@ int pick_lock(object *pl, int dir)
         return calc_skill_exp(pl, NULL, 1.0f,-1, NULL);
     else
         return 0;
-}      
+}
 
 int attempt_pick_lock(object *door, object *pl)
 {
@@ -344,12 +344,12 @@ int attempt_pick_lock(object *door, object *pl)
     if (!QUERY_FLAG(door, FLAG_NO_PASS))
         return 0;
 
-    /* Try to pick the lock on this item (doors only for now). 
-     * Dependent on dexterity/skill SK_level of the player and  
-     * the map level difficulty. 
+    /* Try to pick the lock on this item (doors only for now).
+     * Dependent on dexterity/skill SK_level of the player and
+     * the map level difficulty.
      */
 
-    number = (die_roll(2, 40, pl, PREFER_LOW) - 2) / 2; 
+    number = (die_roll(2, 40, pl, PREFER_LOW) - 2) / 2;
     if (number < ((dex + bonus) - difficulty))
     {
         remove_door(door);
@@ -357,20 +357,20 @@ int attempt_pick_lock(object *door, object *pl)
     }
     else if (door->inv && door->inv->type == RUNE)
     {
-        /* set off any traps? */ 
+        /* set off any traps? */
         spring_trap(door->inv, pl);
-    } 
+    }
     return success;
 }
 
 /* HIDE CODE. The user becomes undetectable (not just 'invisible') for
  * a short while (success and duration dependant on player SK_level,
- * dexterity, charisma, and map difficulty). 
+ * dexterity, charisma, and map difficulty).
  * Players have a good chance of becoming 'unhidden' if they move
  * and like invisiblity will be come visible if they attack
  * Implemented by b.t. (thomas@astro.psu.edu)
  * July 7, 1995 - made hiding possible for monsters. -b.t.
- */ 
+ */
 
 /* patched this to take terrain into consideration */
 
@@ -390,14 +390,14 @@ int hide(object *op)
     }
     else if (!op->hide && QUERY_FLAG(op, FLAG_IS_INVISIBLE) && op->type == PLAYER)
     {
-        sprintf(buf, "Your attempt to hide breaks the invisibility spell!"); 
+        sprintf(buf, "Your attempt to hide breaks the invisibility spell!");
         new_draw_info(NDI_UNIQUE, 0, op, buf);
         make_visible(op);
         return 0;
-    } 
+    }
     /*
      if(op->invisible>(50*level)) {
-          new_draw_info(NDI_UNIQUE,0,op,"You are as hidden as you can get."); 
+          new_draw_info(NDI_UNIQUE,0,op,"You are as hidden as you can get.");
           return 0;
      }*/
 
@@ -406,7 +406,7 @@ int hide(object *op)
         new_draw_info(NDI_UNIQUE, 0, op, "You hide in the shadows.");
         update_object(op, UP_OBJ_FACE);
         return calc_skill_exp(op, NULL, 1.0f, -1, NULL);
-    } 
+    }
     new_draw_info(NDI_UNIQUE, 0, op, "You fail to conceal yourself.");
     return 0;
 }
@@ -415,7 +415,7 @@ int attempt_hide(object *op)
 {
     int level       = SK_level(op);
     int success = 0, number, difficulty = op->map->difficulty;
-    int dexterity   = get_skill_stat1(op); 
+    int dexterity   = get_skill_stat1(op);
     int terrain     = hideability(op);
 
     level = level > 5 ? level / 5 : 1;
@@ -427,7 +427,7 @@ int attempt_hide(object *op)
         return 0;
 
     /*  Hiding success and duration dependant on SK_level,
-     *  dexterity, map difficulty and terrain. 
+     *  dexterity, map difficulty and terrain.
      */
 
     number = (die_roll(2, 25, op, PREFER_LOW) - 2) / 2;
@@ -439,21 +439,21 @@ int attempt_hide(object *op)
     return success;
 }
 
-/* stop_jump() - End of jump. Clear flags, restore the map, and 
+/* stop_jump() - End of jump. Clear flags, restore the map, and
  * freeze the jumper a while to simulate the exhaustion
  * of jumping.
  */
 
 static int stop_jump(object *pl, int dist, int spaces)
 {
-    /* int load=dist/(pl->speed*spaces); */ 
+    /* int load=dist/(pl->speed*spaces); */
 
     CLEAR_MULTI_FLAG(pl, FLAG_FLYING);
     insert_ob_in_map(pl, pl->map, pl, 0);
 
-    /*if (pl->type==PLAYER) draw_client_map(pl); */ 
+    /*if (pl->type==PLAYER) draw_client_map(pl); */
 
-    /* pl->speed_left= (int) -FABS((load*8)+1); */ 
+    /* pl->speed_left= (int) -FABS((load*8)+1); */
     return 0;
 }
 
@@ -466,10 +466,10 @@ static int attempt_jump(object *pl, int dir, int spaces)
 
     /* Jump loop. Go through spaces opject wants to jump. Halt the
      * jump if a wall or creature is in the way. We set FLAG_FLYING
-     * temporarily to allow player to aviod exits/archs that are not 
-     * fly_on, fly_off. This will also prevent pickup of objects 
-     * while jumping over them.  
-     */ 
+     * temporarily to allow player to aviod exits/archs that are not
+     * fly_on, fly_off. This will also prevent pickup of objects
+     * while jumping over them.
+     */
 
     remove_ob(pl);
     if (check_walk_off(pl, NULL, MOVE_APPLY_VANISHED) != CHECK_WALK_OK)
@@ -488,18 +488,18 @@ static int attempt_jump(object *pl, int dir, int spaces)
         {
             if (wall(tmp->map, xt, yt))
             {
-                /* Jump into wall*/ 
+                /* Jump into wall*/
                 new_draw_info(NDI_UNIQUE, 0, pl, "Your jump is blocked.");
                 (void) stop_jump(pl, i, spaces);
                 return 0;
             }
-            /* Jump into creature */ 
+            /* Jump into creature */
             if (QUERY_FLAG(tmp, FLAG_MONSTER) || tmp->type == PLAYER)
             {
                 new_draw_info_format(NDI_UNIQUE, 0, pl, "You jump into%s%s.", tmp->type == PLAYER ? " " : " the ",
                                      tmp->name);
                 if (tmp->type != PLAYER)
-                    exp = skill_attack(tmp, pl, pl->facing, "kicked"); /* pl makes an attack */ 
+                    exp = skill_attack(tmp, pl, pl->facing, "kicked"); /* pl makes an attack */
                 (void) stop_jump(pl, i, spaces);
                 return exp;  /* note that calc_skill_exp() is already called by skill_attack() */
             }
@@ -523,23 +523,23 @@ static int attempt_jump(object *pl, int dir, int spaces)
 
 /* jump() - this is both a new type of movement for player/monsters and
  * an attack as well. -b.t.
- */ 
+ */
 
 int jump(object *pl, int dir)
 {
     int spaces = 0, stats;
-    int str = get_skill_stat1(pl); 
+    int str = get_skill_stat1(pl);
     int dex = get_skill_stat2(pl);
 
     dex = dex ? dex : 15;
-    str = str ? str : 10; 
+    str = str ? str : 10;
 
     stats = str * str * str * dex;
 
     if (pl->carrying != 0)      /* don't want div by zero !! */
         spaces = (int) (stats / pl->carrying);
     else
-        spaces = 2; /* pl has no objects - gets the far jump */ 
+        spaces = 2; /* pl has no objects - gets the far jump */
 
     if (spaces > 2)
         spaces = 2;
@@ -552,14 +552,14 @@ int jump(object *pl, int dir)
 }
 
 
-/* skill_ident() - this code is supposed to allow players to identify 
- * classes of objects with the various "auto-ident" skills. Player must 
+/* skill_ident() - this code is supposed to allow players to identify
+ * classes of objects with the various "auto-ident" skills. Player must
  * have unidentified objects of the right type in order for the skill
- * to work. While multiple classes of objects may be identified, 
+ * to work. While multiple classes of objects may be identified,
  * this code is kind of yucky -- it would be nice to make it a bit
- * more generalized. Right now, skill indices are embedded in this routine.  
+ * more generalized. Right now, skill indices are embedded in this routine.
  * Returns amount of experience gained (on successful ident).
- * - b.t. (thomas@astro.psu.edu) 
+ * - b.t. (thomas@astro.psu.edu)
  */
 
 int skill_ident(object *pl)
@@ -574,7 +574,7 @@ int skill_ident(object *pl)
         return 0;  /* only players will skill-identify */
 
     sprintf(buf, "You look at the objects nearby...");
-    new_draw_info(NDI_UNIQUE, 0, pl, buf);   
+    new_draw_info(NDI_UNIQUE, 0, pl, buf);
 
     switch (pl->chosen_skill->stats.sp)
     {
@@ -611,7 +611,7 @@ int skill_ident(object *pl)
           break;
         case SK_WOODSMAN:
           success += do_skill_ident(pl, FOOD) + do_skill_ident(pl, DRINK) + do_skill_ident(pl, FLESH);
-          break; 
+          break;
         case SK_JEWELER:
           success += do_skill_ident(pl, GEM)
 			  + do_skill_ident(pl, TYPE_PEARL)
@@ -619,7 +619,7 @@ int skill_ident(object *pl)
                    + do_skill_ident(pl, TYPE_NUGGET)
                    + do_skill_ident(pl,
                                     RING);
-          break; 
+          break;
         case SK_LITERACY:
           success += do_skill_ident(pl, SPELLBOOK) + do_skill_ident(pl, SCROLL) + do_skill_ident(pl, BOOK);
           break;
@@ -630,7 +630,7 @@ int skill_ident(object *pl)
           success = do_skill_detect_curse(pl);
           if (success)
               new_draw_info(NDI_UNIQUE, 0, pl, "...and discover cursed items!");
-          break;   
+          break;
         case SK_DET_MAGIC:
           success = do_skill_detect_magic(pl);
           if (success)
@@ -640,7 +640,7 @@ int skill_ident(object *pl)
           LOG(llevBug, "BUG: bad call to skill_ident()");
           return 0;
           break;
-    } 
+    }
     if (!success)
     {
         sprintf(buf, "...and learn nothing more.");
@@ -655,9 +655,9 @@ int do_skill_detect_curse(object *pl)
     object *tmp;
     int     success = 0;
 
-    /* check the player inventory - stop after 1st success or 
-     * run out of unidented items 
-     */ 
+    /* check the player inventory - stop after 1st success or
+     * run out of unidented items
+     */
     for (tmp = pl->inv; tmp; tmp = tmp->below)
         if (!QUERY_FLAG(tmp, FLAG_IDENTIFIED)
          && !QUERY_FLAG(tmp, FLAG_KNOWN_CURSED)
@@ -701,7 +701,7 @@ int do_skill_ident2(object *tmp, object *pl, int obj_class)
      && !IS_SYS_INVISIBLE(tmp)
      && tmp->type == obj_class)
     {
-        chance = die_roll(3, 10, pl, PREFER_LOW) - 3 + rndm(0, (tmp->magic ? tmp->magic * 5 : 1) - 1); 
+        chance = die_roll(3, 10, pl, PREFER_LOW) - 3 + rndm(0, (tmp->magic ? tmp->magic * 5 : 1) - 1);
         if (skill_value >= chance)
         {
             identify(tmp);
@@ -734,7 +734,7 @@ int do_skill_ident2(object *tmp, object *pl, int obj_class)
 int do_skill_ident(object *pl, int obj_class)
 {
     object *tmp;
-    int     success = 0; 
+    int     success = 0;
     /* check the player inventory */
     for (tmp = pl->inv; tmp; tmp = tmp->below)
         success += do_skill_ident2(tmp, pl, obj_class);
@@ -743,11 +743,11 @@ int do_skill_ident(object *pl, int obj_class)
         success += do_skill_ident2(tmp, pl, obj_class);
 
     return success;
-}  
+}
 
 /* players using this skill can 'charm' a monster --
- * into working for them. It can only be used on 
- * non-special (see below) 'neutral' creatures. 
+ * into working for them. It can only be used on
+ * non-special (see below) 'neutral' creatures.
  * -b.t. (thomas@astro.psu.edu)
  */
 
@@ -759,7 +759,7 @@ int use_oratory(object *pl, int dir)
     mapstruct      *m;
 
     if (pl->type != PLAYER)
-        return 0;   /* only players use this skill */ 
+        return 0;   /* only players use this skill */
     if (!(m = out_of_map(pl->map, &x, &y)))
         return 0;
 
@@ -768,13 +768,13 @@ int use_oratory(object *pl, int dir)
         if (!tmp)
             return 0;
         if (!QUERY_FLAG(tmp, FLAG_MONSTER))
-            continue; 
+            continue;
         /* can't persude players - return because there is nothing else
         * on that space to charm.  Same for multi space monsters and
         * special monsters - we don't allow them to be charmed, and there
         * is no reason to do further processing since they should be the
         * only monster on the space.
-        */ 
+        */
         if (tmp->type == PLAYER)
             return 0;
         if (tmp->more || tmp->head)
@@ -787,13 +787,13 @@ int use_oratory(object *pl, int dir)
 
         /* the following conditions limit who may be 'charmed' */
 
-        /* it's hostile! */ 
+        /* it's hostile! */
         if (!QUERY_FLAG(tmp, FLAG_UNAGGRESSIVE) && !QUERY_FLAG(tmp, FLAG_FRIENDLY))
         {
             new_draw_info_format(NDI_UNIQUE, 0, pl, "Too bad the %s isn't listening!\n", query_name(tmp));
             return 0;
         }
-        /* it's already allied! */ 
+        /* it's already allied! */
         if (QUERY_FLAG(tmp, FLAG_FRIENDLY) && (tmp->move_type == PETMOVE))
         {
             if (get_owner(tmp) == pl)
@@ -804,7 +804,7 @@ int use_oratory(object *pl, int dir)
             else if (SK_level(pl) > tmp->level)
             {
                 /* you steal the follower! */
-                set_owner(tmp, pl); 
+                set_owner(tmp, pl);
                 new_draw_info_format(NDI_UNIQUE, 0, pl, "You convince the %s to follow you instead!\n", query_name(tmp));
                 /* Abuse fix - don't give exp since this can otherwise
                      * be used by a couple players to gets lots of exp.
@@ -831,7 +831,7 @@ int use_oratory(object *pl, int dir)
         /* Charm failed.  Creature may be angry now */
         else if ((SK_level(pl) + ((stat1 - 10) / 2)) < random_roll(1, 2 * tmp->level, pl, PREFER_LOW))
         {
-            new_draw_info_format(NDI_UNIQUE, 0, pl, "Your speech angers the %s!\n", query_name(tmp)); 
+            new_draw_info_format(NDI_UNIQUE, 0, pl, "Your speech angers the %s!\n", query_name(tmp));
             /* TODO: should probaly call set_npc_enemy() here instead/also */
             if (QUERY_FLAG(tmp, FLAG_FRIENDLY))
             {
@@ -846,13 +846,13 @@ int use_oratory(object *pl, int dir)
 }
 
 /* Singing() -this skill allows the player to pacify nearby creatures.
- * There are few limitations on who/what kind of 
+ * There are few limitations on who/what kind of
  * non-player creatures that may be pacified. Right now, a player
  * may pacify creatures which have Int == 0. In this routine, once
- * successfully pacified the creature gets Int=1. Thus, a player 
- * may only pacify a creature once. 
+ * successfully pacified the creature gets Int=1. Thus, a player
+ * may only pacify a creature once.
  * BTW, I appologize for the naming of the skill, I couldnt think
- * of anything better! -b.t. 
+ * of anything better! -b.t.
  */
 
 int singing(object *pl, int dir)
@@ -893,16 +893,16 @@ int singing(object *pl, int dir)
             /* the following monsters can't be calmed */
 
             if (QUERY_FLAG(tmp, FLAG_SPLITTING) /* have no ears! */ || QUERY_FLAG(tmp, FLAG_HITBACK))
-                break;  
+                break;
 
             /*if(tmp->stats.Int>0) break;   */ /* is too smart */
             if (tmp->level > SK_level(pl))
                 break;  /* too powerfull */
             if (QUERY_FLAG(tmp, FLAG_UNDEAD))
-                break; /* undead dont listen! */ 
+                break; /* undead dont listen! */
 
             if (QUERY_FLAG(tmp, FLAG_UNAGGRESSIVE) /* already calm */ || QUERY_FLAG(tmp, FLAG_FRIENDLY))
-                break;  
+                break;
 
             /* stealing isn't really related (although, maybe it should
                * be).  This is mainly to prevent singing to the same monster
@@ -985,36 +985,36 @@ int pray(object *pl)
     return 0;
 }
 
-/* This skill allows the player to regain a few sp or hp for a 
- * brief period of concentration. No armour or weapons may be 
+/* This skill allows the player to regain a few sp or hp for a
+ * brief period of concentration. No armour or weapons may be
  * wielded/applied for this to work. The amount of time needed
  * to concentrate and the # of points regained is dependant on
- * the level of the user. - b.t. thomas@astro.psu.edu 
- */ 
+ * the level of the user. - b.t. thomas@astro.psu.edu
+ */
 
-/* July 95 I commented out 'factor' - this should now be handled by 
+/* July 95 I commented out 'factor' - this should now be handled by
  * get_skill_time() -b.t. */
 
 /* Sept 95. Now meditation is level dependant (score). User may
- * meditate w/ more armour on as they get higher level 
- * Probably a better way to do this is based on overall encumberance 
+ * meditate w/ more armour on as they get higher level
+ * Probably a better way to do this is based on overall encumberance
  * -b.t.
- */ 
+ */
 
 void meditate(object *pl)
 {
     object *tmp;
-    int     lvl = pl->level; 
-    /* int factor = 10/(1+(pl->level/10)+(pl->stats.Int/15)+(pl->stats.Wis/15)); */ 
+    int     lvl = pl->level;
+    /* int factor = 10/(1+(pl->level/10)+(pl->stats.Int/15)+(pl->stats.Wis/15)); */
 
     if (pl->type != PLAYER)
         return; /* players only */
 
-    /* check if pl has removed encumbering armour and weapons */ 
+    /* check if pl has removed encumbering armour and weapons */
 
     if (QUERY_FLAG(pl, FLAG_READY_WEAPON) && (lvl < 6))
     {
-        new_draw_info(NDI_UNIQUE, 0, pl, "You can't concentrate while wielding a weapon!\n");   
+        new_draw_info(NDI_UNIQUE, 0, pl, "You can't concentrate while wielding a weapon!\n");
         return;
     }
     else
@@ -1028,21 +1028,21 @@ void meditate(object *pl)
              && QUERY_FLAG(tmp,
                            FLAG_APPLIED))
             {
-                new_draw_info(NDI_UNIQUE, 0, pl, "You can't concentrate while wearing so much armour!\n");  
+                new_draw_info(NDI_UNIQUE, 0, pl, "You can't concentrate while wearing so much armour!\n");
                 return;
             }
-    } 
+    }
 
     /* ok let's meditate!  Spell points are regained first, then once
      * they are maxed we get back hp. Actual incrementing of values
      * is handled by the do_some_living() (in player.c). This way magical
      * bonuses for healing/sp regeneration are included properly
-     * No matter what, we will eat up some playing time trying to 
-     * meditate. (see 'factor' variable for what sets the amount of time) 
+     * No matter what, we will eat up some playing time trying to
+     * meditate. (see 'factor' variable for what sets the amount of time)
      */
 
-    new_draw_info(NDI_UNIQUE, 0, pl, "You meditate."); 
-    /*   pl->speed_left -= (int) FABS(factor); */ 
+    new_draw_info(NDI_UNIQUE, 0, pl, "You meditate.");
+    /*   pl->speed_left -= (int) FABS(factor); */
 
     if (pl->stats.sp < pl->stats.maxsp)
     {
@@ -1135,13 +1135,13 @@ int write_on_item(object *pl, char *params)
     return 0;
 }
 
-/* write_note() - this routine allows players to inscribe messages in 
+/* write_note() - this routine allows players to inscribe messages in
  * ordinary 'books' (anything that is type BOOK). b.t.
  */
 
 int write_note(object *pl, object *item, char *msg)
 {
-    char    buf[BOOK_BUF]; 
+    char    buf[BOOK_BUF];
     object *newBook = NULL;
 
     /* a pair of sanity checks */
@@ -1158,7 +1158,7 @@ int write_note(object *pl, object *item, char *msg)
     {
         new_draw_info(NDI_UNIQUE, 0, pl, "Trying to cheat now are we?");
         return 0;
-    } 
+    }
 #ifdef PLUGINS
     /* GROS: Handle for plugin book writing (trigger) event */
     if (item->event_flags & EVENT_FLAG_TRIGGER)
@@ -1210,20 +1210,20 @@ int write_note(object *pl, object *item, char *msg)
         }
         else
         {
-            FREE_AND_COPY_HASH(item->msg, buf); 
+            FREE_AND_COPY_HASH(item->msg, buf);
             esrv_send_item(pl, item);
         }
         new_draw_info_format(NDI_UNIQUE, 0, pl, "You write in the %s.", query_short_name(item, pl));
         return strlen(msg);
     }
     else
-        new_draw_info_format(NDI_UNIQUE, 0, pl, "Your message won't fit in the %s!", query_short_name(item, pl)); 
+        new_draw_info_format(NDI_UNIQUE, 0, pl, "Your message won't fit in the %s!", query_short_name(item, pl));
     return 0;
 }
 
 /* write_scroll() - this routine allows players to inscribe spell scrolls
  * of spells which they know. Backfire effects are possible with the
- * severity of the backlash correlated with the difficulty of the scroll 
+ * severity of the backlash correlated with the difficulty of the scroll
  * that is attempted. -b.t. thomas@astro.psu.edu
  */
 
@@ -1235,7 +1235,7 @@ int write_scroll(object *pl, object *scroll)
     /* this is a sanity check */
     if (scroll->type != SCROLL)
     {
-        new_draw_info(NDI_UNIQUE, 0, pl, "A spell can only be inscribed into a scroll!"); 
+        new_draw_info(NDI_UNIQUE, 0, pl, "A spell can only be inscribed into a scroll!");
         return 0;
     }
 
@@ -1243,7 +1243,7 @@ int write_scroll(object *pl, object *scroll)
     chosen_spell = CONTR(pl)->chosen_spell;
     if (chosen_spell < 0)
     {
-        new_draw_info(NDI_UNIQUE, 0, pl, "You need a spell readied in order to inscribe!"); 
+        new_draw_info(NDI_UNIQUE, 0, pl, "You need a spell readied in order to inscribe!");
         return 0;
     }
     if (!(spells[chosen_spell].spell_use & SPELL_USE_SCROLL))
@@ -1301,7 +1301,7 @@ int write_scroll(object *pl, object *scroll)
         }
         else
         {
-            /* a  confused scribe gets a random spell */ 
+            /* a  confused scribe gets a random spell */
             do
             {
                 chosen_spell = rndm(0, NROFREALSPELLS - 1);
@@ -1366,10 +1366,10 @@ int write_scroll(object *pl, object *scroll)
     return (-10 * spells[chosen_spell].level);
 }
 
-/* The FIND_TRAPS skill. This routine is taken mostly from the 
+/* The FIND_TRAPS skill. This routine is taken mostly from the
  * command_search loop. It seemed easier to have a separate command,
- * rather than overhaul the existing code - this makes sure things 
- * still work for those people who don't want to have skill code 
+ * rather than overhaul the existing code - this makes sure things
+ * still work for those people who don't want to have skill code
  * implemented.
  */
 
@@ -1407,7 +1407,7 @@ int find_traps(object *pl, int level)
                     }
                     else
                     {
-                        /* give out a "we have found signs of traps" 
+                        /* give out a "we have found signs of traps"
                                          * if the traps level is not 1.5 times higher.
                                          */
                         if (tmp2->level <= (level * 1.8f))
@@ -1420,14 +1420,14 @@ int find_traps(object *pl, int level)
             {
                 if (trap_see(pl, tmp, level))
                 {
-                    trap_show(tmp, tmp); 
+                    trap_show(tmp, tmp);
                     tmp->stats.Cha = 1;
                     if (!suc)
                         suc = 1;
                 }
                 else
                 {
-                    /* give out a "we have found signs of traps" 
+                    /* give out a "we have found signs of traps"
                                  * if the traps level is not 1.5 times higher.
                                  */
                     if (tmp->level <= (level * 1.8f))
@@ -1442,17 +1442,17 @@ int find_traps(object *pl, int level)
         new_draw_info(NDI_UNIQUE, 0, pl, "You detect trap signs...!");
 
     return 0;
-}  
+}
 
-/* remove_trap() - This skill will disarm any previously discovered trap 
- * the algorithm is based (almost totally) on the old command_disarm() - b.t. 
- */ 
+/* remove_trap() - This skill will disarm any previously discovered trap
+ * the algorithm is based (almost totally) on the old command_disarm() - b.t.
+ */
 
 int remove_trap(object *op, int dir, int level)
 {
     object     *tmp, *tmp2;
     mapstruct  *m;
-    int         i, x, y;    
+    int         i, x, y;
 
     for (i = 0; i < 9; i++)
     {
@@ -1594,7 +1594,7 @@ object * find_throw_tag(object *op, tag_t tag)
 
     if (!tmp)
     {
-        new_draw_info_format(NDI_UNIQUE, 0, op, "fixme: Can't find throw object tag.");       
+        new_draw_info_format(NDI_UNIQUE, 0, op, "fixme: Can't find throw object tag.");
         return (NULL);
     }
 
@@ -1611,7 +1611,7 @@ object * find_throw_tag(object *op, tag_t tag)
         {
             new_draw_info(NDI_UNIQUE, 0, op, "You can't throw god given item!");
             tmp = NULL;
-        } /* if cursed or damned, we can't unapply it - no throwing! */ 
+        } /* if cursed or damned, we can't unapply it - no throwing! */
         else if (QUERY_FLAG(tmp, FLAG_CURSED) || QUERY_FLAG(tmp, FLAG_DAMNED))
         {
             new_draw_info_format(NDI_UNIQUE, 0, op, "The %s sticks to your hand!", query_base_name(tmp, op));
@@ -1632,12 +1632,12 @@ object * find_throw_tag(object *op, tag_t tag)
         /* not weapon nor throwable - no throwing */
         if ((tmp->type != WEAPON && tmp->type != POTION) && !QUERY_FLAG(tmp, FLAG_IS_THROWN))
         {
-            new_draw_info_format(NDI_UNIQUE, 0, op, "You can't throw %s.", query_base_name(tmp, op));        
+            new_draw_info_format(NDI_UNIQUE, 0, op, "You can't throw %s.", query_base_name(tmp, op));
             tmp = NULL;
         }
         else if (tmp->type == WEAPON) /* special message for throw hybrid weapons */
         {
-            new_draw_info_format(NDI_UNIQUE, 0, op, "You must apply the %s first.", query_base_name(tmp, op));        
+            new_draw_info_format(NDI_UNIQUE, 0, op, "You must apply the %s first.", query_base_name(tmp, op));
             tmp = NULL;
         }
     }
@@ -1670,7 +1670,7 @@ object * make_throw_ob(object *orig)
         toss_item->stats.dam = 0; /* default damage */
 #ifdef DEBUG_THROW
         LOG(llevDebug, " inserting %s(%d) in toss_item(%d)\n", orig->name, orig->count, toss_item->count);
-#endif 
+#endif
         insert_ob_in_ob(orig, toss_item);
     }
 
@@ -1715,7 +1715,7 @@ void do_throw(object *op, object *toss_item, int dir)
 
     /* Because throwing effectiveness must be reduced by the
      * encumbrance of the thrower and weight of the object. THus,
-     * we use the concept of 'effective strength' as defined below. 
+     * we use the concept of 'effective strength' as defined below.
      */
 
     /* if str exceeds MAX_STAT (30, eg giants), lets assign a str_factor > 1 */
@@ -1736,7 +1736,7 @@ void do_throw(object *op, object *toss_item, int dir)
     if (throw_ob->weight <= 0)
     {
         /* 0 or negative weight?!? Odd object, can't throw it */
-        new_draw_info_format(NDI_UNIQUE, 0, op, "You can't throw %s.\n", query_base_name(throw_ob, op)); 
+        new_draw_info_format(NDI_UNIQUE, 0, op, "You can't throw %s.\n", query_base_name(throw_ob, op));
         return;
     }
 
@@ -1762,7 +1762,7 @@ void do_throw(object *op, object *toss_item, int dir)
     left_tag = left->count;
 
     /* sometimes get_split_ob can't split an object (because op->nrof==0?)
-     * and returns NULL. We must use 'left' then 
+     * and returns NULL. We must use 'left' then
      */
 
     if ((throw_ob = get_split_ob(throw_ob, 1)) == NULL)
@@ -1771,7 +1771,7 @@ void do_throw(object *op, object *toss_item, int dir)
         LOG(llevDebug, " get_splt_ob faild to split throw ob %s\n", left->name);
 #endif
         throw_ob = left;
-        remove_ob(left); 
+        remove_ob(left);
         check_walk_off(left, NULL, MOVE_APPLY_VANISHED);
         if (op->type == PLAYER)
             esrv_del_item(CONTR(op), left->count, left->env);
@@ -1787,13 +1787,13 @@ void do_throw(object *op, object *toss_item, int dir)
     /* special case: throwing powdery substances like dust, dirt */
     if (QUERY_FLAG(throw_ob, FLAG_DUST))
     {
-        cast_dust(op, throw_ob, dir); 
+        cast_dust(op, throw_ob, dir);
         /* update the shooting speed for the player action timer.
              * We init the used skill with it - its not calculated here.
              * cast_dust() can change the used skill...
              */
         if (op->type == PLAYER)
-            op->chosen_skill->stats.maxsp = throw_ob->last_grace; 
+            op->chosen_skill->stats.maxsp = throw_ob->last_grace;
         return;
     }
 
@@ -1811,7 +1811,7 @@ void do_throw(object *op, object *toss_item, int dir)
 
     /* 3 things here prevent a throw, you aimed at your feet, you
      * have no effective throwing strength, or you threw at a wall
-     */ 
+     */
     if (!dir || (eff_str <= 1) || wall(op->map, op->x + freearr_x[dir], op->y + freearr_y[dir]))
     {
         /* bounces off 'wall', and drops to feet */
@@ -1900,10 +1900,10 @@ void do_throw(object *op, object *toss_item, int dir)
         int dx = target_vec.distance_x; /* hp */
         int dy = target_vec.distance_y; /* sp */
         int stepx, stepy;           /* maxhp, maxsp */
-        
+
         if (dy < 0) { dy = -dy;  stepy = -1; } else { stepy = 1; }
         if (dx < 0) { dx = -dx;  stepx = -1; } else { stepx = 1; }
-        
+
         throw_ob->stats.hp = dx << 1;
         throw_ob->stats.sp = dy << 1;
         throw_ob->stats.maxhp = stepx;
@@ -1915,7 +1915,7 @@ void do_throw(object *op, object *toss_item, int dir)
             throw_ob->stats.exp = (dx << 1) - dy;  /* same as 2*dx - dy */
         }
     }
-#endif    
+#endif
 
     /* the damage bonus from the force of the throw */
     dam = (int) (str_factor * (float) dam_bonus[eff_str]);
@@ -1951,12 +1951,12 @@ void do_throw(object *op, object *toss_item, int dir)
 
     /* the properties of objects which are meant to be thrown (ie dart,
      * throwing knife, etc) will differ from ordinary items. Lets tailor
-     * this stuff in here. 
+     * this stuff in here.
      */
 
     /* here our TRUE throw stuff is handled...
      * in CF, you can nearly throw everything - this will give you or a mob
-     * the chance to throw with chairs or tables. 
+     * the chance to throw with chairs or tables.
      * BUT as cool this sounds - it have massive problems to balance and
      * can give alot of possible exploits the chance to appear.
      */
@@ -1970,7 +1970,7 @@ void do_throw(object *op, object *toss_item, int dir)
         /* adjust for players */
         if (op->type == PLAYER)
         {
-            op->chosen_skill->stats.maxsp = throw_ob->last_grace; 
+            op->chosen_skill->stats.maxsp = throw_ob->last_grace;
             /* i don't want overpower the throwing - so dam_bonus/2 */
             throw_ob->stats.dam = FABS((int)
                                        ((float)
@@ -2046,7 +2046,7 @@ void do_throw(object *op, object *toss_item, int dir)
     play_sound_map(op->map, op->x, op->y, SOUND_THROW, SOUND_NORMAL);
 
 #ifdef PLUGINS
-    /* Gecko: Had to make sure the thrown object inherited event objects + 
+    /* Gecko: Had to make sure the thrown object inherited event objects +
      * that the event gets called on the correct item (the thrown item).
      * I added the wrapper object as a the Other() value.
      */

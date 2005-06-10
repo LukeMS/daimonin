@@ -37,8 +37,8 @@
                                     * only be done in real debug runs
                                     */
 
-/* Minimalistic memory management data for a single chunk of memory 
- * It is (currently) up to the application to keep track of which pool 
+/* Minimalistic memory management data for a single chunk of memory
+ * It is (currently) up to the application to keep track of which pool
  * it belongs to.
  */
 struct mempool_chunk
@@ -51,7 +51,7 @@ struct mempool_chunk
 #ifdef MEMPOOL_OBJECT_TRACKING
     struct mempool_chunk   *obj_prev; /* for debug only */
     struct mempool_chunk   *obj_next; /* for debug only */
-    uint32                  flags;  
+    uint32                  flags;
     struct mempool         *pool; /* to what mpool is this memory part related? */
     uint32                  id;   /* the REAL unique ID number */
 #endif
@@ -61,7 +61,7 @@ typedef void (* chunk_constructor) (void *ptr);     /* Optional constructor to b
 typedef void (* chunk_destructor) (void *ptr);      /* Optional destructor to be called when freeing */
 
 /* Definitions used for array handling */
-#define MEMPOOL_NROF_FREELISTS 8              
+#define MEMPOOL_NROF_FREELISTS 8
 #define MEMPOOL_MAX_ARRAYSIZE (1 << MEMPOOL_NROF_FREELISTS) /* = 256 if NROF_FREELISTS == 8 */
 
 /* Data for a single memory pool */
@@ -76,7 +76,7 @@ struct mempool
     chunk_destructor        destructor;        /* Optional destructor to be called when returning chunks */
 
     /* Runtime fields */
-    struct mempool_chunk   *freelist[MEMPOOL_NROF_FREELISTS];   /* First free chunk */    
+    struct mempool_chunk   *freelist[MEMPOOL_NROF_FREELISTS];   /* First free chunk */
     uint32                  nrof_free[MEMPOOL_NROF_FREELISTS], nrof_allocated[MEMPOOL_NROF_FREELISTS]; /* List size counters */
 #ifdef MEMPOOL_TRACKING
     struct puddle_info     *first_puddle_info; /* List of puddles used for mempool tracking */

@@ -6,8 +6,8 @@ end
 
 function _data_store._serialize(key, value, depth)
     local prefix
-    if depth == nil then 
-        depth = '' 
+    if depth == nil then
+        depth = ''
         prefix = 'return '
     else
         if type(key)=="string" then
@@ -19,7 +19,7 @@ function _data_store._serialize(key, value, depth)
 
     local t = type(value)
     if t == 'string' then
-        return prefix .. string.format("%q", value) 
+        return prefix .. string.format("%q", value)
     elseif t == 'function' then
         return prefix .. 'loadstring('.. string.format("%q", string.dump(value)) ..')'
     elseif t == 'number' or t == 'boolean' then
@@ -27,13 +27,13 @@ function _data_store._serialize(key, value, depth)
     elseif t == 'table' then
         if value.type == game.TYPE_PLAYER and value.type_id then
 			return prefix .. '_data_store._object(game.TYPE_PLAYER, ' .. string.format("%q", value.type_id) .. ')'
-        else            
+        else
             local ret = ""
             for k,v in value do
                 ret = ret .. _data_store._serialize(k, v, depth .. '  ') .. ",\n"
             end
-            return prefix .. "{\n" .. 
-                    ret .. 
+            return prefix .. "{\n" ..
+                    ret ..
                    depth .. '}'
         end
     end
@@ -53,7 +53,7 @@ function _data_store._load(id, player)
 		t = _data_store._global
 	end
     path = "data/" .. path .. "/" .. id .. ".dsl"
-    
+
 	if not t[id] then
         local f = loadfile(path)
         if f == nil then
@@ -63,8 +63,8 @@ function _data_store._load(id, player)
         assert(t[id], "Empty datastore file: "..path)
         setmetatable(t[id], _DataStore_mt)
 	end
-       
-    return t[id] 
+
+    return t[id]
 end
 
 function _data_store._save(time, player, b_force)

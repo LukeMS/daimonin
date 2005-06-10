@@ -221,16 +221,16 @@ void init_archetypes()
     arch_init = 1;
     load_archetypes();
     arch_init = 0;
-    
+
 	if(!(empty_archetype = find_archetype("empty_archetype")))
         LOG(llevError, "FATAL: no empty_archetype arch. Check the arch set!\n");
-	
+
     if(!(base_info_archetype = find_archetype("base_info")))
         LOG(llevError, "FATAL: no base_info arch. Check the arch set!\n");
-	
+
     if(!(wp_archetype = find_archetype("waypoint")))
         LOG(llevError, "FATAL: no waypoint arch. Check the arch set!\n");
-	
+
     if (!(level_up_arch = find_archetype("level_up")))
         LOG(llevError, "FATAL: no level_up arch. Check the arch set!\n");
 
@@ -375,7 +375,7 @@ void first_arch_pass(FILE *fp)
     while ((i = load_object(fp, op, mybuffer, LO_REPEAT, MAP_STYLE)))
     {
         /* use copy_object_data() - we don't want adjust any speed_left here! */
-        copy_object_data(op, &at->clone); 
+        copy_object_data(op, &at->clone);
 
         /* ok... now we have the right speed_left value for out object.
          * copy_object() now will track down negative speed values, to
@@ -405,7 +405,7 @@ void first_arch_pass(FILE *fp)
                 LOG(llevDebug," WARNING: Archetype %s has animation but no explicit set is_animated!\n", STRING_OBJ_ARCH_NAME(op));
               */
               if (!op->type)
-                  LOG(llevDebug, " WARNING: Archetype %s has no type info!\n", STRING_OBJ_ARCH_NAME(op));      
+                  LOG(llevDebug, " WARNING: Archetype %s has no type info!\n", STRING_OBJ_ARCH_NAME(op));
               break;
 
             case LL_MORE:
@@ -600,7 +600,7 @@ void load_archetypes()
 
     /* I moved the artifacts loading to this position because it must be done
      * BEFORE we load the treasure file - remember we have now fake arches in the
-     * artifacts file 
+     * artifacts file
      * second_arch_pass reparse the archetype file again and add other_arch and
      * randomitems (= treasurelists) to the arches.
      */

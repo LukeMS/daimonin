@@ -20,7 +20,7 @@ Daimonin/
 
 For the server/ folder you will see this
 	server/
-		data/		<- is generated from /install/ 
+		data/		<- is generated from /install/
 		install/	<- scripts to install the server and generate folders and files
 		lib/		<- files are generated and copied from /arch with the editor
 		make/		<- make files, only included if this package contents a /src folder

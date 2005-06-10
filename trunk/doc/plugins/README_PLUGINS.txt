@@ -130,4 +130,4 @@ Here is how CFPython handles events:
   MAPENTER: WhoIsActivator = The object that entered the new map.
   MAPLEAVE: WhoIsActivator = The object that is leaving the map.
   MAPRESET: WhatIsMessage = The path name of the map reset.
-  
+

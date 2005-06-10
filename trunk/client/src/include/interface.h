@@ -59,7 +59,7 @@ typedef struct gui_interface_reward
 	int silver;
 	int gold;
 	int mithril;
-	int line_count;	
+	int line_count;
 	char title[128];
 	char body_text[4096];
 	char lines[INTERFACE_MAX_REWARD_LINE][INTERFACE_MAX_CHAR];
@@ -102,7 +102,7 @@ typedef struct gui_interface_button
 #define GUI_INTERFACE_STATUS_WAIT 1
 
 typedef struct gui_interface_struct {
-    int mode;	
+    int mode;
 	int status;
 	uint32 used_flag;
 	int icon_count;

@@ -2349,5 +2349,5 @@ void reset_menu_status(void)
 	{
 		cpl.menustatus = MENU_NO;
 	}
-	
+
 }

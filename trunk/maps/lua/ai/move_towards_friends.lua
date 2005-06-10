@@ -2,11 +2,11 @@
 -- Will make mobs move towards a virtual "center of friendly mobs"
 local me = event.me
 local ai = me:GetAI()
- 
+
 -- Here's our parameters
 local max_confidence = 1000 -- TODO actually use for something
 local min_friendship = 100  -- Who do we consider to be friends
- 
+
 -- Get a list of all friends and their positions
 local friends = {}
 local friendship_max = 0
@@ -25,14 +25,14 @@ for i,obj in pairs(ai:GetKnownMobs()) do
 
         if friendship > friendship_max then
             friendship_max = friendship
-        end            
-        
+        end
+
         if dist > distance_max then
             distance_max = dist
-        end            
+        end
 
 --        print (obj.name .. " friendship: " .. friendship .. ", dist=".. tostring(dist))
-    end    
+    end
 end
 
 -- if table.getn(friends) == 0 then return end

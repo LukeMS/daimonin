@@ -284,7 +284,7 @@ typedef enum Display_Mode
     Pix_Display,
     Xpm_Display,
     Png_Display
-}                   
+}
 Display_Mode;
 
 extern Display_Mode display_mode;
@@ -316,7 +316,7 @@ extern char        *resists_name[NUM_RESISTS];
 #define CS_SAY_SHOUT    0x2 /* Text is shouted. */
 #define CS_SAY_GSAY 0x4 /* Text is group say command */
 
-/* These are multiplication values that should be used when changing 
+/* These are multiplication values that should be used when changing
  * floats to ints, and vice version.  MULTI is integer representatin
  * (float to int), MULTF is float, for going from int to float.
  */
@@ -433,7 +433,7 @@ extern char        *resists_name[NUM_RESISTS];
 #define SF_INFRAVISION      16
 
 #define NDI_SAY     0x0100  /* its a say command */
-#define NDI_SHOUT   0x0200  
+#define NDI_SHOUT   0x0200
 #define NDI_TELL    0x0400
 #define NDI_PLAYER  0x0800 /* this comes from a player */
 #define NDI_SYSTEM  0x01000 /* if this is set, its a "system" message */

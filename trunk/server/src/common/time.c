@@ -48,11 +48,11 @@ const char *month_name[MONTHS_PER_YEAR] =
 {
     "Month of the Ice Dragon", "Month of the Frost Giant", "Month of the Clouds", "Month of Gaea",
     "Month of the Harvest", "Month of Futility", "Month of the Dragon", "Month of the Sun", "Month of the Falling",
-    "Month of the Dark Shades", "Month of the Great Infernus", "Month of the Ancient Darkness", 
+    "Month of the Dark Shades", "Month of the Great Infernus", "Month of the Ancient Darkness",
 };
 
 /*
- * Initialise all variables used in the timing routines. 
+ * Initialise all variables used in the timing routines.
  */
 
 void reset_sleep()
@@ -72,8 +72,8 @@ static inline void add_time(struct timeval *dst, struct timeval *a, struct timev
         while(dst->tv_usec < -1000000) {
             dst->tv_sec -= 1;
             dst->tv_usec += 1000000;
-        }        
-    } else 
+        }
+    } else
     {
         while(dst->tv_usec < 0) {
             dst->tv_sec -= 1;
@@ -86,7 +86,7 @@ static inline void add_time(struct timeval *dst, struct timeval *a, struct timev
     }
 }
 
-/* Calculate time until the next tick 
+/* Calculate time until the next tick
  * returns 0 and steps forward time for the next tick if called
  * after the time for the next tick,
  * otherwise returns 1 and the delta time for next tick */
@@ -99,19 +99,19 @@ int time_until_next_tick(struct timeval *out)
     tick_time.tv_usec = pticks_ums;
 
     add_time(&next_tick, &last_time, &tick_time);
-    
-    GETTIMEOFDAY(&now); 
+
+    GETTIMEOFDAY(&now);
 
     /* Time for the next tick? (timercmp does not work for <= / >=) */
     /* if(timercmp(&next_tick, &now, <) || timercmp(&next_tick, &now, ==)) */
 
     /* timercmp() seems be broken under windows. Well, this is even faster */
-    if( next_tick.tv_sec < now.tv_sec || 
-        (next_tick.tv_sec == now.tv_sec && next_tick.tv_usec <= now.tv_usec)) 
+    if( next_tick.tv_sec < now.tv_sec ||
+        (next_tick.tv_sec == now.tv_sec && next_tick.tv_usec <= now.tv_usec))
     {
         /* this must be now time and not next_tick.
          * IF the last tick was really longer as pticks_ums,
-         * we need to come insync now again. 
+         * we need to come insync now again.
          * Or, in bad cases, the more needed usecs will add up.
          */
         last_time.tv_sec = now.tv_sec;
@@ -121,13 +121,13 @@ int time_until_next_tick(struct timeval *out)
         out->tv_usec = 0;
 
         return 0;
-    } 
-    
+    }
+
     /* time_until_next_tick = next_tick - now */
     now.tv_sec = -now.tv_sec;
     now.tv_usec = -now.tv_usec;
     add_time(out, &next_tick, &now);
-    
+
     return 1;
 }
 
@@ -136,24 +136,24 @@ int time_until_next_tick(struct timeval *out)
  * If it is less than pticks_ums, the remaining time is slept with select().
  *
  * Polls the sockets and handles or queues incoming requests
- * returns at the time for the next tick 
+ * returns at the time for the next tick
  */
 void sleep_delta()
 {
     struct timeval timeout;
 
-    
+
     /* TODO: ideally we should use the return value from select to know if it
-     * timed out or returned because of some other reason, but this also 
+     * timed out or returned because of some other reason, but this also
      * works reasonably well...
      */
     while(time_until_next_tick(&timeout))  /* fill timeout... */
-        doeric_server(SOCKET_UPDATE_CLIENT, &timeout);        
+        doeric_server(SOCKET_UPDATE_CLIENT, &timeout);
 }
 
 /* set the pticks_xx but NOT pticks itself.
  * pticks_ums = how "long" in ums is a server "round" (counted with pticks aka ROUND_TAG)
- * pticks_second = how many "round" are done in a second. 
+ * pticks_second = how many "round" are done in a second.
  *
  * The default ums is set in MAX_TIME in config.h and can
  * be changed with with the dm_time command.
@@ -186,7 +186,7 @@ void get_tod(timeofday_t *tod)
         tod->season = 3;
     else
         tod->season = 4;
-    
+
     tod->dayofweek_name = weekdays[tod->dayofweek];
     tod->month_name = month_name[tod->dayofweek];
     tod->season_name = season_name[tod->dayofweek];

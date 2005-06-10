@@ -28,7 +28,7 @@
 static inline int find_one_drop_quest_item(object *target, object *obj)
 {
 	object *tmp;
-	
+
     if ((tmp=CONTR(target)->quest_one_drop) )
 	{
 		for (tmp = tmp->inv; tmp; tmp = tmp->below)
@@ -45,9 +45,9 @@ static inline int find_one_drop_quest_item(object *target, object *obj)
 static inline object *find_quest_trigger(object *target, object *obj)
 {
 	object *tmp;
-	
+
     if ((tmp=CONTR(target)->quests_type_normal) )
-	{	
+	{
 		for (tmp = tmp->inv; tmp; tmp = tmp->below)
 		{
 			if (tmp->name == obj->name && (tmp->magic == obj->magic || tmp->magic == obj->last_heal))
@@ -62,7 +62,7 @@ static inline object *find_quest_trigger(object *target, object *obj)
 static int find_quest_item(object *target, object *obj)
 {
 	object *tmp;
-	
+
 	for (tmp = target->inv; tmp; tmp = tmp->below)
 	{
 		if(tmp->type == CONTAINER)
@@ -73,11 +73,11 @@ static int find_quest_item(object *target, object *obj)
 		else if (tmp->type == obj->type && tmp->name == obj->name && tmp->title == obj->title)
 			return 1;
 	}
-	
+
 	return 0;
 }
 
-/* we give a player a one drop item. This also 
+/* we give a player a one drop item. This also
  * adds this item to the quest_container - instead to quest
  * items which will be added when the next quest step is triggered.
  * (most times from a quest script)
@@ -101,15 +101,15 @@ static inline int add_one_drop_quest_item(object *target, object *obj)
 
     insert_ob_in_ob(q_tmp, tmp); /* dummy copy in quest container */
     SET_FLAG(obj, FLAG_IDENTIFIED);
-    
+
 	/*CLEAR_FLAG(obj, FLAG_QUEST_ITEM);*/
-	
+
     q_tmp = get_object();
     copy_object(obj, q_tmp);
     /*CLEAR_FLAG(q_tmp, FLAG_SYS_OBJECT);*/
     insert_ob_in_ob(q_tmp, target); /* real object to player */
     esrv_send_item(target, q_tmp);
-    
+
     return 1;
 }
 
@@ -121,7 +121,7 @@ static inline int add_quest_item(object *target, object *obj)
     copy_object(obj, q_tmp);
     insert_ob_in_ob(q_tmp, target); /* real object to player */
     esrv_send_item(target, q_tmp);
-    
+
     return 1;
 }
 
@@ -138,7 +138,7 @@ void insert_quest_item(struct obj *quest_trigger, struct obj *target)
 		if(quest_trigger->level <= target->level)
 		{
 			object *tmp;
-			
+
 			for (tmp = quest_trigger->inv; tmp; tmp = tmp->below)
 			{
 				if(!find_one_drop_quest_item(target, tmp))
@@ -163,7 +163,7 @@ void insert_quest_item(struct obj *quest_trigger, struct obj *target)
 			{
 				if(!find_quest_item(target, tmp))
 				{
-					
+
 					if(quest_trigger->sub_type1 == ST1_QUEST_TRIGGER_CONT && !flag)
 						new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, target, "You find something inside!");
 					flag = TRUE;
@@ -184,7 +184,7 @@ void insert_quest_item(struct obj *quest_trigger, struct obj *target)
 		play_sound_player_only(CONTR(target), SOUND_LEVEL_UP, SOUND_NORMAL, 0, 0);
 }
 
-/* if we found a player with missing or incomplete quest containers, 
+/* if we found a player with missing or incomplete quest containers,
  * we install & set them here. We check also the integrety of the ptrs.
  * IMPORTANT! don't call this function BEFORE the player has been send to his
  * first fix_player() or we will double the containers.
@@ -199,8 +199,8 @@ void add_quest_containers(struct obj *op)
 
 	/* lets fetch the quest_container static for speed up things */
 	if(!archt)
-		archt = find_archetype("quest_container"); 
-	
+		archt = find_archetype("quest_container");
+
 	pl = CONTR(op);
 
 	/* missing one drop container */
@@ -209,7 +209,7 @@ void add_quest_containers(struct obj *op)
 		pl->quest_one_drop = arch_to_object(archt);
 		pl->quest_one_drop_count = pl->quest_one_drop->count;
 		pl->quest_one_drop->sub_type1 = ST1_QUEST_ONE_DROP;
-		insert_ob_in_ob(pl->quest_one_drop, op);		
+		insert_ob_in_ob(pl->quest_one_drop, op);
 	}
 
 
@@ -218,7 +218,7 @@ void add_quest_containers(struct obj *op)
 		pl->quests_done = arch_to_object(archt);
 		pl->quests_done_count = pl->quests_done->count;
 		pl->quests_done->sub_type1 = ST1_QUESTS_TYPE_DONE;
-		insert_ob_in_ob(pl->quests_done, op);		
+		insert_ob_in_ob(pl->quests_done, op);
 	}
 
 	if(!pl->quests_type_cont || !OBJECT_VALID(pl->quests_type_cont,pl->quests_type_cont_count) || pl->quests_type_cont->env != op)
@@ -226,7 +226,7 @@ void add_quest_containers(struct obj *op)
 		pl->quests_type_cont = arch_to_object(archt);
 		pl->quests_type_cont_count = pl->quests_type_cont->count;
 		pl->quests_type_cont->sub_type1 = ST1_QUESTS_TYPE_CONT;
-		insert_ob_in_ob(pl->quests_type_cont, op);		
+		insert_ob_in_ob(pl->quests_type_cont, op);
 	}
 
 	if(!pl->quests_type_kill || !OBJECT_VALID(pl->quests_type_kill,pl->quests_type_kill_count) || pl->quests_type_kill->env != op)
@@ -291,7 +291,7 @@ void set_quest_status(struct obj *trigger, int q_status, int q_type)
 		add_quest_trigger(who, trigger);
 }
 
-			
+
 /* If we are here, a player has killed or invoked the kill of something
  * Now, check the kill quest events (if there are some) and adjust the
  * quest_trigger.
@@ -307,7 +307,7 @@ void check_kill_quest_event(struct obj *pl, struct obj *op)
 		/* hey, we got one! */
 		if(tmp->other_arch == op->arch && tmp->slaying == op->name && tmp->title == op->title)
 		{
-			/* we have any event left in this trigger? */ 
+			/* we have any event left in this trigger? */
 			if(tmp->level < tmp->last_sp)
 			{
 				char buf[MAX_BUF];

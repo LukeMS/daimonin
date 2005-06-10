@@ -207,7 +207,7 @@ static msglang * parse_message(const char *msg)
  * in areas which alot if map objects... This is one of this little extra cpu eaters
  * which adds cput time here and there.
  * i added P_MAGIC_EAR as map flag - later we should use a chained list in the map headers
- * perhaps. I also removed the npcs from the map search and use the target system. 
+ * perhaps. I also removed the npcs from the map search and use the target system.
  * This IS needed because in alot of cases in the past you was not able to target the
  * npc you want - if the search routine find another npc first, the other was silenced.
  * MT-2003
@@ -251,7 +251,7 @@ void communicate(object *op, char *txt)
                     if(op->contr->target_object->map && op->contr->target_object->map != op->map)
                         new_info_map_except2(NDI_WHITE,op->contr->target_object->map, op, op->contr->target_object, buf);
                 }
-                else 
+                else
                 {
                     sprintf(buf, "%s says: ",query_name(op));
                     strncat(buf, txt, MAX_BUF - strlen(buf)-1);
@@ -259,7 +259,7 @@ void communicate(object *op, char *txt)
                     new_info_map(NDI_WHITE,op->map, buf);
                 }
             }
-            else 
+            else
             {
                 sprintf(buf, "%s says to %s: ",query_name(op),query_name(op->contr->target_object));
                 strncat(buf, txt, MAX_BUF - strlen(buf)-1);
@@ -330,9 +330,9 @@ void communicate(object *op, char *txt)
 
     /* Players can chat with a marked object in their inventory */
     if(op->type == PLAYER && (npc = find_marked_object(op)))
-        trigger_object_plugin_event(EVENT_SAY, npc, op, NULL, 
+        trigger_object_plugin_event(EVENT_SAY, npc, op, NULL,
                 txt, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR);
-    
+
     for (i = 0; i <= SIZEOFFREE2; i++)
     {
         xt = op->x + freearr_x[i];
@@ -367,7 +367,7 @@ int talk_to_npc(object *op, object *npc, char *txt)
 {
     msglang    *msgs;
     int         i, j;
-    
+
 #ifdef PLUGINS
     /* GROS: Handle for plugin say event */
     if (npc->event_flags & EVENT_FLAG_SAY)
@@ -392,8 +392,8 @@ int talk_to_npc(object *op, object *npc, char *txt)
 
         if (findPlugin(event_obj->name) >= 0)
         {
-//#define TIME_SCRIPTS        
-#ifdef TIME_SCRIPTS        
+//#define TIME_SCRIPTS
+#ifdef TIME_SCRIPTS
             int             count   = 0;
             struct timeval  start, stop;
             long long   start_u, stop_u;
@@ -404,20 +404,20 @@ int talk_to_npc(object *op, object *npc, char *txt)
 
             gettimeofday(&stop, NULL);
             start_u = start.tv_sec * 1000000 + start.tv_usec;
-            stop_u  = stop.tv_sec * 1000000 + stop.tv_usec;   
+            stop_u  = stop.tv_sec * 1000000 + stop.tv_usec;
 
             LOG(llevDebug, "running time: %2.4f s\n", (stop_u - start_u) / 1000000.0);
-#else    
+#else
             ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
-#endif    
+#endif
         }
         return 0;
     }
-#endif    
+#endif
 
 /* Gecko 2005-05-15: I disabled this because it makes little sense. Talking to
- * objects in your own inventory is now handled by first marking the object, 
- * which is a much better compromise with performance 
+ * objects in your own inventory is now handled by first marking the object,
+ * which is a much better compromise with performance
  * This also seemed very much broken. */
 #if 0
     /* GROS - Here we let the objects inside inventories hear and answer, too. */
@@ -481,7 +481,7 @@ int talk_to_npc(object *op, object *npc, char *txt)
                     {
                         CommArray_s    *csp;
                         char           *cp  = NULL;
-                        char            buf[MAX_BUF]; 
+                        char            buf[MAX_BUF];
 
                         strncpy(buf, msgs->messages[i], MAX_BUF - 1);
                         buf[MAX_BUF - 1] = '\0';
@@ -516,7 +516,7 @@ int talk_to_npc(object *op, object *npc, char *txt)
                     {
                         CommArray_s    *csp;
                         char           *cp  = NULL;
-                        char            buf[MAX_BUF]; 
+                        char            buf[MAX_BUF];
 
                         strncpy(buf, msgs->messages[i], MAX_BUF - 1);
                         buf[MAX_BUF - 1] = '\0';
@@ -539,7 +539,7 @@ int talk_to_npc(object *op, object *npc, char *txt)
                     }
                     else
                     {
-                        sprintf(buf, "%s says:", query_name(npc)); 
+                        sprintf(buf, "%s says:", query_name(npc));
                         new_draw_info(NDI_NAVY | NDI_UNIQUE, 0, op, buf);
                         new_draw_info(NDI_NAVY | NDI_UNIQUE, 0, op, msgs->messages[i]);
                         sprintf(buf, "%s talks to %s.", query_name(npc), query_name(op));

@@ -181,7 +181,7 @@ static score *add_score(score *new_score) {
   score *tmp_score,pscore[HIGHSCORE_LENGTH];
   char buf[MAX_BUF], filename[MAX_BUF], *bp;
   int nrofscores=0,flag=0,i,comp;
- 
+
   new_score->position=HIGHSCORE_LENGTH+1;
   old_score.position= -1;
   sprintf(filename,"%s/%s",settings.localdir,HIGHSCORE);
@@ -195,7 +195,7 @@ static score *add_score(score *new_score) {
         if(++nrofscores>=HIGHSCORE_LENGTH)
           break;
       }
-      if(!strcmp(new_score->name,tmp_score->name)) { 
+      if(!strcmp(new_score->name,tmp_score->name)) {
         copy_score(tmp_score,&old_score);
         old_score.position=nrofscores;
         if(flag)
@@ -260,7 +260,7 @@ void check_score(object *op)
         new_score.exp=op->stats.exp;
         if(op->map == NULL)
         *new_score.maplevel = '\0';
-        else { 
+        else {
         strncpy(new_score.maplevel,
             op->map->name?op->map->name:op->map->path,
             BIG_NAME-1);
@@ -340,7 +340,7 @@ void display_high_score(object *op, int max, char *match)
             else
                 continue;
         }
-        /* Replaced what seemed to an overly complicated word wrap method 
+        /* Replaced what seemed to an overly complicated word wrap method
          * still word wraps, but assumes at most 2 lines of data.
          * mw - 2-12-97
          */

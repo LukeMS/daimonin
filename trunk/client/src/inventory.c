@@ -56,7 +56,7 @@ int get_inventory_data(item *op, int *ctag, int *slot, int *start, int *count, i
 
         cpl.window_weight += tmp->weight * (float) tmp->nrof;
         if (tmp->tag == cpl.container_tag)
-            cpl.container = tmp;    
+            cpl.container = tmp;
         if (cpl.container && cpl.container->tag == tmp->tag)
         {
             tmpc = cpl.sack->inv;
@@ -532,21 +532,21 @@ void examine_range_marks(int tag)
         if (tmp->tag == tag)
         {
             /*sprintf(buf,"GO ready %s (%d %d).", tmp->s_name,tmp->stype,tmp->stype&128);
-                                draw_info(buf,COLOR_WHITE);                
+                                draw_info(buf,COLOR_WHITE);
              */           if ((tmp->itype == TYPE_ARROW && !(tmp->stype & 128)) || tmp->itype == TYPE_CONTAINER)
             {
                               /*sprintf(buf,"GO1 ready %s.", tmp->s_name);
-                                                  draw_info(buf,COLOR_WHITE);                
+                                                  draw_info(buf,COLOR_WHITE);
                               */                if (fire_mode_tab[FIRE_MODE_BOW].amun == tmp->tag)
                               {
                                                     sprintf(buf, "Unready %s.", tmp->s_name);
-                                                    draw_info(buf, COLOR_WHITE);                
+                                                    draw_info(buf, COLOR_WHITE);
                                                     fire_mode_tab[FIRE_MODE_BOW].amun = FIRE_ITEM_NO;
                               }
                               else if (fire_mode_tab[FIRE_MODE_BOW].item != FIRE_ITEM_NO)
                                                 {
                                                     sprintf(buf, "Ready %s as ammunition.", tmp->s_name);
-                                                    draw_info(buf, COLOR_WHITE);                
+                                                    draw_info(buf, COLOR_WHITE);
                                                     fire_mode_tab[FIRE_MODE_BOW].amun = tmp->tag;
                                                 }
                               return;
@@ -556,17 +556,17 @@ void examine_range_marks(int tag)
                   || (tmp->itype == TYPE_WEAPON && tmp->applied))
                           {
                               /* sprintf(buf,"GO2 ready %s. (%d)", tmp->s_name,tmp->stype&128);
-                                draw_info(buf,COLOR_WHITE);                
+                                draw_info(buf,COLOR_WHITE);
                               */                if (fire_mode_tab[FIRE_MODE_THROW].item == tmp->tag)
                               {
                                                     sprintf(buf, "Unready %s.", tmp->s_name);
-                                                    draw_info(buf, COLOR_WHITE);                
+                                                    draw_info(buf, COLOR_WHITE);
                                                     fire_mode_tab[FIRE_MODE_THROW].item = FIRE_ITEM_NO;
                               }
                               else
                               {
                                                     sprintf(buf, "Ready %s for throwing.", tmp->s_name);
-                                                    draw_info(buf, COLOR_WHITE);                
+                                                    draw_info(buf, COLOR_WHITE);
                                                     fire_mode_tab[FIRE_MODE_THROW].item = tmp->tag;
                               }
                               return;

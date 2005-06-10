@@ -61,7 +61,7 @@ static char        *sound_files[SOUND_MAX]              =
     "console.wav", "click_fail.wav", "change1.wav", "warning_food.wav", "warning_drain.wav", "warning_statup.wav",
     "warning_statdown.wav", "warning_hp.wav", "warning_hp2.wav", "weapon_attack.wav", "weapon_hold.wav", "get.wav",
 	"book.wav", "page.wav"
-	
+
 };
 
 static char        *spell_sound_files[SPELL_SOUND_MAX]  =
@@ -242,7 +242,7 @@ int sound_play_effect(int soundid, uint32 flag, int pan, int vol)
 #endif
 }
 
-/* Test for playing. 
+/* Test for playing.
    0: Sound is not playing, 1: sound is still playing
    */
 int sound_test_playing(int channel)

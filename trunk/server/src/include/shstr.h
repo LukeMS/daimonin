@@ -31,7 +31,7 @@
 #define offsetof(type, member) (int)&(((type *)0)->member)
 #endif
 
-/* SS(string) will return the address of the shared_string struct which 
+/* SS(string) will return the address of the shared_string struct which
  * contains "string".
  */
 #define SS(x) ((shared_string *) ((x) - offsetof(shared_string, string)))
@@ -56,7 +56,7 @@ typedef struct _shared_string
      * at the array entry.
      */
     unsigned REFCOUNT_TYPE  refcount;
-    /* Padding will be unused memory, since we can't know how large 
+    /* Padding will be unused memory, since we can't know how large
      * the padding when allocating memory. We assume here that
      * sizeof(long) is a good boundary.
      */

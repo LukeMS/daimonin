@@ -1,7 +1,7 @@
 require("topic_list");
 
 activator = event.activator
-whoami    = event.me 
+whoami    = event.me
 tl        = TopicList()
 
 -- Test to trigger waypoints from scripts

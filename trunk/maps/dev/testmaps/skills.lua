@@ -1,11 +1,11 @@
 require("topic_list");
 
 activator = event.activator
-whoami = event.me 
+whoami = event.me
 
 tl = TopicList()
 
-tl:AddTopics("learn (.*)", 
+tl:AddTopics("learn (.*)",
 	function(skillname)
 		skill = game:GetSkillNr(skillname)
 		if skill == -1 then

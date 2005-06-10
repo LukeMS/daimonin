@@ -60,7 +60,7 @@ oblinkpt * get_objectlinkpt()
     return obp;
 }
 
-/* free objectlink 
+/* free objectlink
  * and clean up linked objects
  */
 
@@ -107,7 +107,7 @@ void free_objectlinkpt(oblinkpt *obp)
 /* generic link function for objectlinks
  * update a start & end ptr is there is one.
  */
-objectlink *objectlink_link(objectlink **startptr, objectlink **endptr, 
+objectlink *objectlink_link(objectlink **startptr, objectlink **endptr,
 							objectlink *afterptr, objectlink *beforeptr, objectlink *objptr )
 {
 	if(!beforeptr) /* link it behind afterptr */
@@ -140,7 +140,7 @@ objectlink *objectlink_link(objectlink **startptr, objectlink **endptr,
 
 		/* we can't be endptr but perhaps start */
 		if(startptr && (!*startptr || *startptr == beforeptr))
-			*startptr = objptr;		
+			*startptr = objptr;
 	}
 	else /* special: link together 2 lists/objects */
 	{

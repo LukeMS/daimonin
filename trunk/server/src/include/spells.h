@@ -35,7 +35,7 @@ extern int  cleric_chance[];
 #define SPELL_USE_HORN   0x10
 #define SPELL_USE_WAND   0x20
 #define SPELL_USE_ROD    0x40
-#define SPELL_USE_POTION 0x80  
+#define SPELL_USE_POTION 0x80
 #define SPELL_USE_BOOK   0x100 /* well, normally we don't use spellbooks as random stuff
                                 * except some special "quest" spells for quest monster
                                */
@@ -54,7 +54,7 @@ extern int  cleric_chance[];
 #define SPELL_DESC_GROUP        0x20    /* Spell can be cast on group members  */
 /* end stack flags */
 #define SPELL_DESC_SUMMON       0x40    /* Spell summons something */
-#define SPELL_DESC_PARALYZED    0x80    /* Spell can be casted even when paralyzed (TODO) */ 
+#define SPELL_DESC_PARALYZED    0x80    /* Spell can be casted even when paralyzed (TODO) */
 
 #define SPELL_DESC_WIS          0x100   /* special flag - if set, this is a "prayer" using WIS
                                                 * when not set it use INT as is a spell
@@ -71,8 +71,8 @@ typedef struct spell_struct
     float   time;            /* How many ticks it takes to cast the spell */
     int     scrolls;         /* thats from 1 to <scrolls> nrof we will generate for potions/scrolls... */
     int     charges;         /* If it can be used in wands, max # of charges */
-    int     range;         /* if target spell, this is max range to target */   
-    float   value_mul;      /* used when we have a item of tihs spell kind. 
+    int     range;         /* if target spell, this is max range to target */
+    float   value_mul;      /* used when we have a item of tihs spell kind.
                              * a magic potion has vaule x. We do: (x * value_mul)*level
                              */
 
@@ -101,7 +101,7 @@ typedef struct spell_struct
     int     is_active;           /* if 0 then spell is disabled and can't be cast or used */
 } spell;
 
-/* When adding new spells, don't insert into the middle of the list - 
+/* When adding new spells, don't insert into the middle of the list -
  * add to the end of the list.  Some archetypes and treasures require
  * the spell numbers to be as they are.
  */
@@ -230,7 +230,7 @@ enum spellnrs
     /*90*/
     SP_RESURRECTION,
     SP_REINCARNATION,
-    /* mlee's spells*/	
+    /* mlee's spells*/
 
     SP_IMMUNE_COLD,
     SP_IMMUNE_ELEC,

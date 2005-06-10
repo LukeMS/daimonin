@@ -330,7 +330,7 @@ void set_block(int x, int y, int bx, int by)
  * From the blocked[][] array, we know for example
  * that if some particular space is blocked, it blocks
  * the view of the spaces 'behind' it, and those blocked
- * spaces behind it may block other spaces, etc.  
+ * spaces behind it may block other spaces, etc.
  * In this way, the chain of visibility is set.
  */
 
@@ -372,7 +372,7 @@ static void set_wall(object *op, int x, int y)
  * this is because they index the blocked[][] arrays.
  */
 /* instead light values, blocked_los[][] now tells the client
- * update function what kind of tile we have: visible, sight blocked, blocksview trigger 
+ * update function what kind of tile we have: visible, sight blocked, blocksview trigger
  * or out of map.
  */
 static void check_wall(object *op, int x, int y)
@@ -714,7 +714,7 @@ void adjust_light_source(mapstruct *map, int x, int y, int light)
 
     /* this happens, we don't change the intense of the old light mask */
     olm = get_real_light_source_value(msp1->light_source); /* old mask */
-    msp1->light_source += light;    
+    msp1->light_source += light;
     nlm = get_real_light_source_value(msp1->light_source); /* new mask */
 
     if (nlm == olm) /* old mask same as new one? */
@@ -756,7 +756,7 @@ void adjust_light_source(mapstruct *map, int x, int y, int light)
 
             /* debug
                     for(msp1=map->first_light;msp1;msp1 = msp1->next_light)
-                        LOG(-1,"L-LIST add: (%d,%d) of >%s<\n",msp1->first->x,msp1->first->y,msp1->first->map->path);       
+                        LOG(-1,"L-LIST add: (%d,%d) of >%s<\n",msp1->first->x,msp1->first->y,msp1->first->map->path);
                     */
         }
     }
@@ -823,12 +823,12 @@ void check_light_source_list(mapstruct *map)
             if (!tmp->first)
             {
                 LOG(llevBug, "BUG: remove_light_source_list() map:>%s< - no object in mapspace of light source!\n",
-                    t_map->path ? t_map->path : "NO T_MAP PATH?"); 
+                    t_map->path ? t_map->path : "NO T_MAP PATH?");
                 continue;
             }
 
             mid = get_real_light_source_value(tmp->light_source);
-            /* there MUST be at last one object in this tile - grap it and 
+            /* there MUST be at last one object in this tile - grap it and
                      * get the x/y offset from it!
                      */
             x = tmp->first->x;
@@ -852,12 +852,12 @@ void check_light_source_list(mapstruct *map)
             if (!tmp->first)
             {
                 LOG(llevBug, "BUG: remove_light_source_list() map:>%s< - no object in mapspace of light source!\n",
-                    t_map->path ? t_map->path : "NO MAP PATH?"); 
+                    t_map->path ? t_map->path : "NO MAP PATH?");
                 continue;
             }
 
             mid = get_real_light_source_value(tmp->light_source);
-            /* there MUST be at last one object in this tile - grap it and 
+            /* there MUST be at last one object in this tile - grap it and
                      * get the x/y offset from it!
                      */
             x = tmp->first->x;
@@ -881,12 +881,12 @@ void check_light_source_list(mapstruct *map)
             if (!tmp->first)
             {
                 LOG(llevBug, "BUG: remove_light_source_list() map:>%s< - no object in mapspace of light source!\n",
-                    t_map->path ? t_map->path : "NO T_MAP PATH?"); 
+                    t_map->path ? t_map->path : "NO T_MAP PATH?");
                 continue;
             }
 
             mid = get_real_light_source_value(tmp->light_source);
-            /* there MUST be at last one object in this tile - grap it and 
+            /* there MUST be at last one object in this tile - grap it and
                      * get the x/y offset from it!
                      */
             x = tmp->first->x;
@@ -910,12 +910,12 @@ void check_light_source_list(mapstruct *map)
             if (!tmp->first)
             {
                 LOG(llevBug, "BUG: remove_light_source_list() map:>%s< - no object in mapspace of light source!\n",
-                    t_map->path ? t_map->path : "NO T_MAP PATH?"); 
+                    t_map->path ? t_map->path : "NO T_MAP PATH?");
                 continue;
             }
 
             mid = get_real_light_source_value(tmp->light_source);
-            /* there MUST be at last one object in this tile - grap it and 
+            /* there MUST be at last one object in this tile - grap it and
                      * get the x/y offset from it!
                      */
             x = tmp->first->x;
@@ -939,12 +939,12 @@ void check_light_source_list(mapstruct *map)
             if (!tmp->first)
             {
                 LOG(llevBug, "BUG: remove_light_source_list() map:>%s< - no object in mapspace of light source!\n",
-                    t_map->path ? t_map->path : "NO T_MAP PATH?"); 
+                    t_map->path ? t_map->path : "NO T_MAP PATH?");
                 continue;
             }
 
             mid = get_real_light_source_value(tmp->light_source);
-            /* there MUST be at last one object in this tile - grap it and 
+            /* there MUST be at last one object in this tile - grap it and
                      * get the x/y offset from it!
                      */
             x = tmp->first->x;
@@ -968,12 +968,12 @@ void check_light_source_list(mapstruct *map)
             if (!tmp->first)
             {
                 LOG(llevBug, "BUG: remove_light_source_list() map:>%s< - no object in mapspace of light source!\n",
-                    t_map->path ? t_map->path : "NO MAP PATH?"); 
+                    t_map->path ? t_map->path : "NO MAP PATH?");
                 continue;
             }
 
             mid = get_real_light_source_value(tmp->light_source);
-            /* there MUST be at last one object in this tile - grap it and 
+            /* there MUST be at last one object in this tile - grap it and
                      * get the x/y offset from it!
                      */
             x = tmp->first->x;
@@ -997,12 +997,12 @@ void check_light_source_list(mapstruct *map)
             if (!tmp->first)
             {
                 LOG(llevBug, "BUG: remove_light_source_list() map:>%s< - no object in mapspace of light source!\n",
-                    t_map->path ? t_map->path : "NO T_MAP PATH?"); 
+                    t_map->path ? t_map->path : "NO T_MAP PATH?");
                 continue;
             }
 
             mid = get_real_light_source_value(tmp->light_source);
-            /* there MUST be at last one object in this tile - grap it and 
+            /* there MUST be at last one object in this tile - grap it and
                      * get the x/y offset from it!
                      */
             x = tmp->first->x;
@@ -1026,12 +1026,12 @@ void check_light_source_list(mapstruct *map)
             if (!tmp->first)
             {
                 LOG(llevBug, "BUG: remove_light_source_list() map:>%s< - no object in mapspace of light source!\n",
-                    t_map->path ? t_map->path : "NO T_MAP PATH?"); 
+                    t_map->path ? t_map->path : "NO T_MAP PATH?");
                 continue;
             }
 
             mid = get_real_light_source_value(tmp->light_source);
-            /* there MUST be at last one object in this tile - grap it and 
+            /* there MUST be at last one object in this tile - grap it and
                      * get the x/y offset from it!
                      */
             x = tmp->first->x;
@@ -1098,7 +1098,7 @@ void remove_light_source_list(mapstruct *map)
         if (!tmp->first)
         {
             LOG(llevBug, "BUG: remove_light_source_list() map:>%s< - no object in mapspace of light source!\n",
-                map->path ? map->path : "NO MAP PATH?"); 
+                map->path ? map->path : "NO MAP PATH?");
             continue;
         }
         /*LOG(-1,"remove LSL: %d,%d ,map:>%s<\n", tmp->first->x,tmp->first->y,map->path);*/

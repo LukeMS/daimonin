@@ -21,7 +21,7 @@
 
 
 
-LOCAL_LIBRARIES = 
+LOCAL_LIBRARIES =
 
 
 SRCS =	random_map.c \
@@ -75,10 +75,10 @@ RM = @RM@
 FLEX = @LEX@
 AR = @AR@
 
-random_map: $(OBJS) 
+random_map: $(OBJS)
 	$(RM) -f $@
 	$(CC) $(CFLAGS) $(INCLUDES) -c standalone.c
-	$(CC) -o $@ $(OBJS) standalone.o  $(LIBS) 
+	$(CC) -o $@ $(OBJS) standalone.o  $(LIBS)
 
 random_map.a: $(OBJS)
 	$(RM) -f $@

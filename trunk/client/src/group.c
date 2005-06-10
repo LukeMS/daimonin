@@ -38,17 +38,17 @@ static int              group_pos[GROUP_MAX_MEMBER][2]      =
 void show_group(int x, int y)
 {
     int         s, len, mb, mx, my;
-    SDL_Rect    box;    
+    SDL_Rect    box;
     char        buf[256];
 
-    
+
     /*
     for (s = 0; s < GROUP_MAX_MEMBER; s++)
-        sprite_blt(Bitmaps[BITMAP_GROUP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 1, NULL, NULL);            
+        sprite_blt(Bitmaps[BITMAP_GROUP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 1, NULL, NULL);
     s=0;
-    sprite_blt(Bitmaps[BITMAP_GROUP_HP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 17, NULL, NULL);            
-    sprite_blt(Bitmaps[BITMAP_GROUP_MANA], x + group_pos[s][0] + 2, y + group_pos[s][1] + 19, NULL, NULL);            
-    sprite_blt(Bitmaps[BITMAP_GROUP_GRACE], x + group_pos[s][0] + 2, y + group_pos[s][1] + 21, NULL, NULL);            
+    sprite_blt(Bitmaps[BITMAP_GROUP_HP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 17, NULL, NULL);
+    sprite_blt(Bitmaps[BITMAP_GROUP_MANA], x + group_pos[s][0] + 2, y + group_pos[s][1] + 19, NULL, NULL);
+    sprite_blt(Bitmaps[BITMAP_GROUP_GRACE], x + group_pos[s][0] + 2, y + group_pos[s][1] + 21, NULL, NULL);
     */
 
     if(global_group_status < GROUP_INVITE)
@@ -63,10 +63,10 @@ void show_group(int x, int y)
     {
         sprite_blt(Bitmaps[BITMAP_GROUP_INVITE], x + group_pos[0][0] + 2, y + group_pos[0][1] + 1, NULL, NULL);
         StringBlt(ScreenSurface, &SystemFont, "GROUP INVITE", x + group_pos[0][0] + 76, y + group_pos[0][1] + 5,COLOR_GREEN, NULL, NULL);
-        len =  get_string_pixel_length(group_invite, &SystemFont);        
+        len =  get_string_pixel_length(group_invite, &SystemFont);
         StringBlt(ScreenSurface, &SystemFont, group_invite, x + group_pos[0][0]+107-len/2, y + group_pos[0][1] + 19,COLOR_HGOLD, NULL, NULL);
         StringBlt(ScreenSurface, &SystemFont, " has invited you to join a group.", x + group_pos[0][0] + 40, y + group_pos[0][1] + 31,COLOR_DEFAULT, NULL, NULL);
-        
+
         if(global_group_status == GROUP_INVITE)
         {
             if(add_button(x + group_pos[0][0] + 40, y + group_pos[0][1] + 48, 11, 2, 101, BITMAP_BUTTON_BLACK_UP, "   join", "   join"))
@@ -97,13 +97,13 @@ void show_group(int x, int y)
 
 		if (!mb)
 			active_button = -1;
-		
+
         for (s = 0; s < GROUP_MAX_MEMBER; s++)
         {
             /* sprite_blt(Bitmaps[BITMAP_GROUP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 1, NULL, NULL); */
             if (group[s].name[0] != '\0')
             {
-                sprite_blt(Bitmaps[BITMAP_GROUP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 1, NULL, NULL);            
+                sprite_blt(Bitmaps[BITMAP_GROUP], x + group_pos[s][0] + 2, y + group_pos[s][1] + 1, NULL, NULL);
                 StringBlt(ScreenSurface, &SystemFont, group[s].name, x + group_pos[s][0] + 33, y + group_pos[s][1] + 1,COLOR_DEFAULT, NULL, NULL);
                 sprintf(buf, "%3d", group[s].level);
                 StringBlt(ScreenSurface, &Font6x3Out, buf, x + group_pos[s][0] + 8, y + group_pos[s][1], COLOR_DEFAULT, NULL, NULL);
@@ -130,7 +130,7 @@ void show_group(int x, int y)
                 {
                     int tmp = group[s].sp;
                     double temp;
-                    
+
                     if (tmp < 0)
                         tmp = 0;
                     temp = (double) tmp / (double) group[s].maxsp;
@@ -148,7 +148,7 @@ void show_group(int x, int y)
                 {
                     int tmp = group[s].grace;
                     double temp;
-                    
+
                     if (tmp < 0)
                         tmp = 0;
                     temp = (double) tmp / (double) group[s].maxgrace;

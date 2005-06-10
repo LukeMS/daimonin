@@ -30,7 +30,7 @@ install:
 	$(INSTALL) $(INSTALLFLAGS) mktable.script $(bindir)/mktable
 
 proto::
-	
+
 depend::
 
 archive::

@@ -42,7 +42,7 @@
 #ifdef WIN32
 #define __WIN_32
 #endif
-#endif 
+#endif
 
 typedef unsigned int    uint32;
 typedef signed int      sint32;

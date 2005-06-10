@@ -34,14 +34,14 @@
 
 static struct method_decl       Game_methods[]      =
 {
-    {"TransferMapItems", Game_TransferMapItems}, 
+    {"TransferMapItems", Game_TransferMapItems},
     {"LoadObject", Game_LoadObject},
-    {"ReadyMap", Game_ReadyMap}, 
-    {"CheckMap", Game_CheckMap}, 
+    {"ReadyMap", Game_ReadyMap},
+    {"CheckMap", Game_CheckMap},
     {"MatchString", Game_MatchString},
-    {"FindPlayer", Game_FindPlayer}, 
+    {"FindPlayer", Game_FindPlayer},
     {"GetSpellNr", Game_GetSpellNr},
-    {"GetSkillNr", Game_GetSkillNr}, 
+    {"GetSkillNr", Game_GetSkillNr},
     {"IsValid", Game_IsValid},
     {"GetTime", Game_GetTime},
     //    {"RegisterCommand", Game_RegisterCommand},
@@ -127,7 +127,7 @@ static struct constant_decl     Game_constants[]    =
     {"TYPE_ARMOUR_IMPROVER"         ,ARMOUR_IMPROVER}, {"TYPE_WEAPON_IMPROVER"        ,WEAPON_IMPROVER},
     {"TYPE_WEALTH"                  ,TYPE_WEALTH}, {"TYPE_AI"                   ,TYPE_AI},
     {"TYPE_AGGRO_HISTORY"           ,TYPE_AGGRO_HISTORY}, {"TYPE_DAMAGE_INFO"            ,TYPE_DAMAGE_INFO},
-    {"TYPE_SKILLSCROLL"             ,SKILLSCROLL}, 
+    {"TYPE_SKILLSCROLL"             ,SKILLSCROLL},
 	{"TYPE_QUEST_OBJECT"			,TYPE_QUEST_OBJECT},
 	{"TYPE_TIMER"					,TYPE_TIMER},
 	{"TYPE_ENV_SENSOR"				,TYPE_ENV_SENSOR},
@@ -415,7 +415,7 @@ static int Game_GetTime(lua_State *L)
     hooks->get_tod(&tod);
 
     lua_newtable(L);
-    
+
     lua_pushliteral(L, "year");
     lua_pushnumber(L, (lua_Number) tod.year);
     lua_rawset(L, -3);
@@ -440,7 +440,7 @@ static int Game_GetTime(lua_State *L)
     lua_pushliteral(L, "season");
     lua_pushnumber(L, (lua_Number) tod.season);
     lua_rawset(L, -3);
-    
+
     lua_pushliteral(L, "dayofweek_name");
     lua_pushstring(L, tod.dayofweek_name);
     lua_rawset(L, -3);
@@ -450,7 +450,7 @@ static int Game_GetTime(lua_State *L)
     lua_pushliteral(L, "season_name");
     lua_pushstring(L, tod.season_name);
     lua_rawset(L, -3);
-    
+
     return 1;
 }
 

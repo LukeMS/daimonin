@@ -100,9 +100,9 @@ void cleanup_mob_data(struct mobdata *data)
     struct mob_behaviourset    *set;
 
     if (data->pathfinding.path)
-        free_path(data->pathfinding.path); 
-    FREE_ONLY_HASH(data->pathfinding.goal_map);   
-    FREE_ONLY_HASH(data->pathfinding.target_map);   
+        free_path(data->pathfinding.path);
+    FREE_ONLY_HASH(data->pathfinding.goal_map);
+    FREE_ONLY_HASH(data->pathfinding.target_map);
 
     for (tmp = data->known_mobs; tmp; tmp = tmp->next)
         return_poolchunk(tmp, pool_mob_knownobj);
@@ -231,7 +231,7 @@ struct mob_behaviour * init_behaviour(behaviourclass_t classid, int behaviourid)
     return behaviour;
 }
 
-/* Backwards-compability function that creates a behaviourset 
+/* Backwards-compability function that creates a behaviourset
  * from old-style mob parameters (attributes of mob object) */
 struct mob_behaviourset * generate_behaviourset(object *op)
 {
@@ -285,7 +285,7 @@ struct mob_behaviourset * generate_behaviourset(object *op)
         if (op->run_away)
         {
             last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_RUN_AWAY_FROM_ENEMY);
-            last->parameters[AIPARAM_RUN_AWAY_FROM_ENEMY_HP_THRESHOLD].intvalue = op->run_away;   
+            last->parameters[AIPARAM_RUN_AWAY_FROM_ENEMY_HP_THRESHOLD].intvalue = op->run_away;
             last->parameters[AIPARAM_RUN_AWAY_FROM_ENEMY_HP_THRESHOLD].flags |= AI_PARAM_PRESENT;
         }
 
@@ -299,9 +299,9 @@ struct mob_behaviourset * generate_behaviourset(object *op)
                                                                                      behaviourclasses[BEHAVIOURCLASS_MOVES].behaviours[AIBEHAVIOUR_KEEP_DISTANCE_TO_ENEMY].params[AIPARAM_KEEP_DISTANCE_TO_ENEMY_MIN_DIST].defaultvalue;
                 last->parameters[AIPARAM_KEEP_DISTANCE_TO_ENEMY_MAX_DIST].intvalue = (int)
                                                                                      behaviourclasses[BEHAVIOURCLASS_MOVES].behaviours[AIBEHAVIOUR_KEEP_DISTANCE_TO_ENEMY].params[AIPARAM_KEEP_DISTANCE_TO_ENEMY_MAX_DIST].defaultvalue;
-                
-                last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_OPTIMIZE_LINE_OF_FIRE);                
-                
+
+                last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_OPTIMIZE_LINE_OF_FIRE);
+
             }
             else
             {
@@ -326,12 +326,12 @@ struct mob_behaviourset * generate_behaviourset(object *op)
             last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_MOVE_RANDOMLY);
             if (op->item_race != 255)
             {
-                last->parameters[AIPARAM_MOVE_RANDOMLY_XLIMIT].intvalue = op->item_race;   
+                last->parameters[AIPARAM_MOVE_RANDOMLY_XLIMIT].intvalue = op->item_race;
                 last->parameters[AIPARAM_MOVE_RANDOMLY_XLIMIT].flags |= AI_PARAM_PRESENT;
             }
             if (op->item_level != 255)
             {
-                last->parameters[AIPARAM_MOVE_RANDOMLY_YLIMIT].intvalue = op->item_level;   
+                last->parameters[AIPARAM_MOVE_RANDOMLY_YLIMIT].intvalue = op->item_level;
                 last->parameters[AIPARAM_MOVE_RANDOMLY_YLIMIT].flags |= AI_PARAM_PRESENT;
             }
         }
@@ -357,7 +357,7 @@ struct mob_behaviourset * generate_behaviourset(object *op)
  * Returns: 0 at success, non-zero on failure */
 static int parse_stringint_parameter(struct mob_behaviour_param *param, const char *value)
 {
-    char *sep = strchr(value, ':'); 
+    char *sep = strchr(value, ':');
     char buf[256];
     if(sep && sep > value && *(sep+1) != '\0')
     {
@@ -372,8 +372,8 @@ static int parse_stringint_parameter(struct mob_behaviour_param *param, const ch
         return -1;
 }
 
-/* Parse a single parameter=value pair into a 
- * mob_behaviour_param struct 
+/* Parse a single parameter=value pair into a
+ * mob_behaviour_param struct
  * Returns: 0 at success, non-zero on failure */
 static int parse_behaviour_parameters(const char *start, const char *end, struct mob_behaviour *behaviour)
 {
@@ -446,7 +446,7 @@ static int parse_behaviour_parameters(const char *start, const char *end, struct
                 continue;
             }
         }
-                
+
         /* Fill in fields depending on type */
         switch (paramdecl->type)
         {
@@ -461,11 +461,11 @@ static int parse_behaviour_parameters(const char *start, const char *end, struct
         LOG(llevDebug, "parameter %s for behaviour %s, value %s\n", namebuf, behaviour->declaration->name, valuebuf);
 
               break;
-              
+
             case AI_STRINGINT_TYPE:
               if(parse_stringint_parameter(param, valuebuf))
                   LOG(llevBug, "BUG: Bad STRINGINT format (\"%s\") for parameter %s\n", valuebuf, namebuf);
-              else 
+              else
                   param->flags |= AI_PARAM_PRESENT;
               break;
 
@@ -512,14 +512,14 @@ static int parse_behaviour_parameters(const char *start, const char *end, struct
 }
 
 static struct mob_behaviour *setup_plugin_behaviour(
-        behaviourclass_t class, 
+        behaviourclass_t class,
         char *buf, char *colonpos, const char *tok_end, const char *conf_text)
 {
     int plugin_index, behaviour_index, options_index;
     int behaviour_id;
     struct mob_behaviour *new_behaviour = NULL;
     const char *line_end = conf_text;
-        
+
     /* Set up a plugin:behaviour */
     switch(class) {
         case BEHAVIOURCLASS_PROCESSES:
@@ -540,30 +540,30 @@ static struct mob_behaviour *setup_plugin_behaviour(
             behaviour_index = AIPARAM_PLUGIN_ACTION_BEHAVIOUR;
             options_index = AIPARAM_PLUGIN_ACTION_OPTIONS;
             break;
-        default:                        
+        default:
             LOG(llevBug, "BUG: behaviour %s without class\n", buf);
             break;
     }
     new_behaviour = init_behaviour(class, behaviour_id);
-   
+
     /* Split up plugin and behaviour names. Validate plugin */
     *colonpos = '\0';
     if(findPlugin(buf) == -1)
     {
         LOG(llevBug, "BUG: behaviour plugin %s unknown\n", buf);
         return NULL;
-    }              
-    
+    }
+
     new_behaviour->parameters[plugin_index].stringvalue = add_string(buf);
     new_behaviour->parameters[plugin_index].flags |= AI_PARAM_PRESENT;
-    
+
     new_behaviour->parameters[behaviour_index].stringvalue = add_string(colonpos+1);
     new_behaviour->parameters[behaviour_index].flags |= AI_PARAM_PRESENT;
-    
+
     /* See if there were any parameters */
     while (*line_end == '\n' || *line_end == '\r')
         line_end--;
-    
+
     if(tok_end < line_end) {
        new_behaviour->parameters[options_index].stringvalue = add_lstring(tok_end + 1, line_end - tok_end);
        new_behaviour->parameters[options_index].flags |= AI_PARAM_PRESENT;
@@ -573,16 +573,16 @@ static struct mob_behaviour *setup_plugin_behaviour(
 }
 
 static struct mob_behaviour *setup_behaviour(
-        object *op, behaviourclass_t class, 
+        object *op, behaviourclass_t class,
         char *buf, const char *tok_end, const char *conf_text)
 {
     int behaviour_id;
     struct mob_behaviour *new_behaviour = NULL;
-    
+
     /* find the corresponding behaviour declaration */
     /* TODO: here we can speed up search significantly using a
      * perfect hash function */
-    
+
     for (behaviour_id = 0; behaviourclasses[class].behaviours[behaviour_id].func; behaviour_id++)
     {
         if (!strcasecmp(buf, behaviourclasses[class].behaviours[behaviour_id].name))
@@ -592,13 +592,13 @@ static struct mob_behaviour *setup_behaviour(
             break;
         }
     }
-    
+
     if (new_behaviour == NULL)
     {
         LOG(llevBug, "BUG: unknown %s behaviour %s of %s\n", behaviourclasses[class].name, buf,
             STRING_OBJ_NAME(op));
         return NULL;
-    } 
+    }
 
     /* Parse parameters to behaviour */
     if (new_behaviour->parameters)
@@ -695,7 +695,7 @@ struct mob_behaviourset * parse_behaviourconfig(const char *conf_text, object *o
 
             //            LOG(llevDebug,"  class %s:\n", buf);
 
-            /* look up class header */            
+            /* look up class header */
             for (i = 0; i < NROF_BEHAVIOURCLASSES; i++)
             {
                 if (strcasecmp(buf, behaviourclasses[i].name) == 0)
@@ -756,13 +756,13 @@ struct mob_behaviourset * parse_behaviourconfig(const char *conf_text, object *o
                 }
             }
 
-            if(new_behaviour == NULL) 
+            if(new_behaviour == NULL)
             {
                 LOG(llevBug, "BUG: Failed setting up behaviour for %s\n", STRING_OBJ_NAME(op));
                 continue;
             }
-            
-            /* If everything checks out, add the behaviour to the list */ 
+
+            /* If everything checks out, add the behaviour to the list */
             if (last_behaviour[class] == NULL)
                 behaviourset->behaviours[class] = new_behaviour;
             else
@@ -775,9 +775,9 @@ struct mob_behaviourset * parse_behaviourconfig(const char *conf_text, object *o
     return behaviourset;
 }
 
-/* 
- * In the case of no mob ai object, first we will first 
- * fall back to an arch-default for that mob, then a race-default and 
+/*
+ * In the case of no mob ai object, first we will first
+ * fall back to an arch-default for that mob, then a race-default and
  * finally a global default.
  */
 struct mob_behaviourset * setup_behaviours(object *op)
@@ -810,7 +810,7 @@ struct mob_behaviourset * setup_behaviours(object *op)
                 race->ai->refcount++;
                 return race->ai;
             }
-        } 
+        }
 
         //            LOG(llevDebug,"parse_behaviourconfig(): No arch or race AI for '%s'. Generating a custom one\n", STRING_OBJ_NAME(op));
     }
@@ -845,7 +845,7 @@ int mob_can_see_obj(object *op, object *obj, struct mob_known_obj *known_obj)
     if (cached_op_tag == op->count && cached_obj_tag == obj->count &&
                     cache_time == ROUND_TAG)
         return cached_result;
-    
+
     /* Invisibility */
     if (QUERY_FLAG(obj, FLAG_IS_INVISIBLE) && !QUERY_FLAG(op, FLAG_SEE_INVISIBLE))
         return FALSE;
@@ -871,7 +871,7 @@ int mob_can_see_obj(object *op, object *obj, struct mob_known_obj *known_obj)
         rv_p = get_known_obj_rv(op, known_obj, MAX_KNOWN_OBJ_RV_AGE);
     else if (get_rangevector(op, obj, &rv, 0))
         rv_p = &rv;
-    
+
     if (rv_p == NULL)
         cached_result = FALSE;
     else if ((int) rv_p->distance > (QUERY_FLAG(obj, FLAG_STEALTH) ? stealth_range : aggro_range))
@@ -887,7 +887,7 @@ int mob_can_see_obj(object *op, object *obj, struct mob_known_obj *known_obj)
     return cached_result;
 }
 
-/* TODO: these two new functions are already obsolete and should be replaced 
+/* TODO: these two new functions are already obsolete and should be replaced
  * with configuration options in the ai_friendship behaviour,
  * but they serve well as a base...
  */
@@ -942,7 +942,7 @@ int is_friend_of(object *op, object *obj)
 }
 
 /*
- * Get the rangevector to a known object. If an earlier calculated rangevector is 
+ * Get the rangevector to a known object. If an earlier calculated rangevector is
  * older than maxage then we calculate a new one (set maxage to 0 to force update).
  * Returns a pointer to the rangevector, or NULL if get_rangevector() failed.
  */
@@ -954,7 +954,7 @@ rv_vector * get_known_obj_rv(object *op, struct mob_known_obj *known_obj, int ma
      * is far enough away. Or reversly, hide in container and later jump out and attack enemy. *
      * Gecko 2005-05-08 */
     if (op == NULL || known_obj == NULL || op->map == NULL || known_obj->obj->map == NULL)
-        return NULL;    
+        return NULL;
 
     if (ROUND_TAG - known_obj->rv_time >= (uint32) maxage || known_obj->rv_time == 0 || maxage == 0)
     {
@@ -962,11 +962,11 @@ rv_vector * get_known_obj_rv(object *op, struct mob_known_obj *known_obj, int ma
         if(!mob_can_see_obj(op, known_obj->obj, NULL)) {
             mapstruct *map = ready_map_name(known_obj->last_map, MAP_NAME_SHARED);
             if(get_rangevector_from_mapcoords(op->map, op->x, op->y,
-                        map, known_obj->last_x, known_obj->last_y, 
-                        &known_obj->rv, RV_EUCLIDIAN_DISTANCE)) 
+                        map, known_obj->last_x, known_obj->last_y,
+                        &known_obj->rv, RV_EUCLIDIAN_DISTANCE))
             {
                 known_obj->rv_time = global_round_tag;
-            } else 
+            } else
             {
                 known_obj->rv_time = 0;
                 return NULL;
@@ -1000,7 +1000,7 @@ rv_vector * get_known_obj_rv(object *op, struct mob_known_obj *known_obj, int ma
 #if 0
 void npc_call_for_help(object *op) {
   struct mob_known_obj *friend;
-  
+
   /* TODO: remember to check that the called has MOB_DATA set up before doing anything else... */
   /* TODO: use tmp_friendship? */
   for(friend = MOB_DATA(op)->friends; friend; friend=friend->next) {
@@ -1016,7 +1016,7 @@ void npc_call_for_help(object *op) {
 }
 #endif
 
-int calc_friendship_from_attitude(object *op, object *other)    
+int calc_friendship_from_attitude(object *op, object *other)
 {
     int friendship = 0;
     struct mob_behaviour_param *attitudes = MOB_DATA(op)->behaviours->attitudes;
@@ -1035,7 +1035,7 @@ int calc_friendship_from_attitude(object *op, object *other)
                 friendship += tmp->intvalue;
         }
     }
-    
+
     /* Arch attitude */
     if(attitudes[AIPARAM_ATTITUDE_ARCH].flags & AI_PARAM_PRESENT)
     {
@@ -1046,7 +1046,7 @@ int calc_friendship_from_attitude(object *op, object *other)
                 friendship += tmp->intvalue;
         }
     }
-    
+
     /* Named object attitude */
     if(attitudes[AIPARAM_ATTITUDE_NAME].flags & AI_PARAM_PRESENT)
     {
@@ -1057,12 +1057,12 @@ int calc_friendship_from_attitude(object *op, object *other)
                 friendship += tmp->intvalue;
         }
     }
-    
+
     /* Named group attitude */
     if(attitudes[AIPARAM_ATTITUDE_GROUP].flags & AI_PARAM_PRESENT)
     {
         /* Make sure other is a monster that belongs to one or more groups */
-        if(other->type == MONSTER && MOB_DATA(other) && 
+        if(other->type == MONSTER && MOB_DATA(other) &&
                 MOB_DATA(other)->behaviours->groups &&
                 MOB_DATA(other)->behaviours->groups[AIPARAM_GROUPS_NAME].flags & AI_PARAM_PRESENT)
         {
@@ -1071,7 +1071,7 @@ int calc_friendship_from_attitude(object *op, object *other)
                     tmp = tmp->next)
             {
                 struct mob_behaviour_param *group;
-                for(group = &MOB_DATA(op)->behaviours->groups[AIPARAM_GROUPS_NAME]; 
+                for(group = &MOB_DATA(op)->behaviours->groups[AIPARAM_GROUPS_NAME];
                         group != NULL; group = group->next)
                 {
                     if(tmp->stringvalue == group->stringvalue)
@@ -1080,7 +1080,7 @@ int calc_friendship_from_attitude(object *op, object *other)
             }
         }
     }
-    
+
     /* Player attitude */
     if(attitudes[AIPARAM_ATTITUDE_PLAYER].flags & AI_PARAM_PRESENT)
     {
@@ -1124,8 +1124,8 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
         return NULL;
     }
 
-    /* 
-     * this is really needed. 
+    /*
+     * this is really needed.
     * a hitter object can be a "system object" ...even a object
     * in the inventory of npc (like a disease). These objects have
     * usually no map.
@@ -1139,7 +1139,7 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
 #endif
         return NULL;
     }
-    
+
     if (npc->type != MONSTER)
     {
 #ifdef AI_DEBUG
@@ -1147,7 +1147,7 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
             npc->type);
 #endif
         return NULL;
-    }    
+    }
 
     /* this check will hopefully be unnecessary in the future */
     if (MOB_DATA(npc) == NULL)
@@ -1203,7 +1203,7 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
     tmp->attraction = 0;
     tmp->tmp_friendship = 0;
     tmp->tmp_attraction = 0;
-    
+
     for(i=0; i<=NROF_AI_KNOWN_OBJ_FLAGS/32; i++)
         tmp->flags[i] = 0;
 
@@ -1211,7 +1211,7 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
     if (last)
         last->next = tmp;
     else
-        MOB_DATA(npc)->known_mobs = tmp;        
+        MOB_DATA(npc)->known_mobs = tmp;
 
     //    LOG(llevDebug,"register_npc_known_obj(): '%s' detected '%s'. friendship: %d\n",  STRING_OBJ_NAME(npc), STRING_OBJ_NAME(other), tmp->friendship);
 
@@ -1219,7 +1219,7 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
 }
 
 /*
- * Waypoint utility functions 
+ * Waypoint utility functions
  */
 
 /* Find a monster's currently active waypoint, if any */
@@ -1272,7 +1272,7 @@ int can_hit_melee(object *ob1, object *ob2, rv_vector *rv)
     return abs(rv->distance_x) < 2 && abs(rv->distance_y) < 2;
 }
 
-/* modes: 
+/* modes:
  * 1 - exact 45 deg
  * 2 - 45 deg +- one tile
  * 3 - free 360 deg LOF
@@ -1288,7 +1288,7 @@ int can_hit_missile(object *ob1, object *ob2, rv_vector *rv, int mode)
         case 1:
           /* exact 45 deg */
         default:
-          return rv->distance_x == 0 || rv->distance_y == 0 || abs(rv->distance_x) - abs(rv->distance_y) == 0;                
+          return rv->distance_x == 0 || rv->distance_y == 0 || abs(rv->distance_x) - abs(rv->distance_y) == 0;
         case 2:
           /* 45 deg +- one tile */
           return abs(rv->distance_x) <= 1
@@ -1309,13 +1309,13 @@ int mapcoord_in_line_of_fire(object *op1, mapstruct *map, int x, int y, int mode
     return can_hit_missile(op1, NULL, &rv, mode);
 }
 
-/* Normalize a given map path and make sure it is valid and 
+/* Normalize a given map path and make sure it is valid and
  * that the map is loaded. Can return NULL in case of failure */
 static inline mapstruct * normalize_and_ready_map(mapstruct *defmap, const char **path)
 {
     /* Default map is current map */
     if (path == NULL || *path == NULL || **path == '\0')
-        return defmap; 
+        return defmap;
 
     /* If path not normalized: normalize it */
     if (**path != '/')
@@ -1344,7 +1344,7 @@ void monster_check_apply(object *mon, object *item)
 }
 
 /*
- * Mutually exclusive movement behaviours 
+ * Mutually exclusive movement behaviours
  */
 
 void ai_stand_still(object *op, struct mob_behaviour_param *params, move_response *response)
@@ -1398,7 +1398,7 @@ void ai_move_randomly(object *op, struct mob_behaviour_param *params, move_respo
 void ai_move_towards_home(object *op, struct mob_behaviour_param *params, move_response *response)
 {
     /* TODO: optimization: pointer to the base ob in mob_data */
-    object *base    = insert_base_info_object(op); 
+    object *base    = insert_base_info_object(op);
 
     if (base && base->slaying)
     {
@@ -1448,18 +1448,18 @@ void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_
         /* Disabled for multi-tile mobs */
         if(op->more)
             return;
-            
-        /* TODO: mobs will not approach enemy through narrow corridors, as they can't 
+
+        /* TODO: mobs will not approach enemy through narrow corridors, as they can't
          * avoid missiles there. It also means they can get stuck in the middle of a corridor as
-         * a sitting duck for any distance attacks. Possible fixes: 1) only activate if the enemy if 
-         * known to use missiles (maybe easy with upcoming mob damage memory) 2) temporarily disable 
+         * a sitting duck for any distance attacks. Possible fixes: 1) only activate if the enemy if
+         * known to use missiles (maybe easy with upcoming mob damage memory) 2) temporarily disable
          * if we get stuck somewhere. 3) detect getting stuck and either flee or charge.
          */
-        
+
         /* Disable behaviour if we don't think enemy uses missiles */
-        if(! QUERY_FLAG(MOB_DATA(op)->enemy, AI_OBJFLAG_USES_DISTANCE_ATTACK)) 
+        if(! QUERY_FLAG(MOB_DATA(op)->enemy, AI_OBJFLAG_USES_DISTANCE_ATTACK))
         {
-            if(op->enemy->type == PLAYER) 
+            if(op->enemy->type == PLAYER)
             {
                 /* Nasty hack for quick detection of possible distance-attack
                  * skills */
@@ -1471,27 +1471,27 @@ void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_
                     0,0,0,0,1, 1,1,0,0,1,
                     1,0,0,0,1, 1,0,0,0,0,
                     0,0 };
-                    
-                if(op->enemy->chosen_skill == NULL || 
+
+                if(op->enemy->chosen_skill == NULL ||
                         ! is_distance_skill[op->enemy->chosen_skill->stats.sp])
                     return;
                 SET_FLAG(MOB_DATA(op)->enemy, AI_OBJFLAG_USES_DISTANCE_ATTACK);
-            } 
-            else if (op->enemy->type == MONSTER) 
+            }
+            else if (op->enemy->type == MONSTER)
             {
                 if(! QUERY_FLAG(op->enemy, FLAG_READY_SPELL) &&
-                        ! QUERY_FLAG(op->enemy, FLAG_READY_BOW)) 
+                        ! QUERY_FLAG(op->enemy, FLAG_READY_BOW))
                     return;
                 SET_FLAG(MOB_DATA(op)->enemy, AI_OBJFLAG_USES_DISTANCE_ATTACK);
             }
         }
-            
+
         /* Behaviour core */
         if(mob_can_see_obj(op, op->enemy, MOB_DATA(op)->enemy))
         {
             rv_vector  *rv  = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE);
-        
-            if (rv->distance > 2 && rv->distance < 8)        
+
+            if (rv->distance > 2 && rv->distance < 8)
             {
                 int i;
 
@@ -1504,9 +1504,9 @@ void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_
                     int d = absdir(rv->direction + i);
                     int x = op->x + freearr_x[d];
                     int y = op->y + freearr_y[d];
-            
+
                     /* Avoid moving into line of fire */
-                    if ((m = out_of_map(op->map, &x, &y))) 
+                    if ((m = out_of_map(op->map, &x, &y)))
                     {
                         if(mapcoord_in_line_of_fire(op->enemy, m, x, y, 1))
                             response->forbidden |= (1 << d);
@@ -1525,7 +1525,7 @@ void ai_optimize_line_of_fire(object *op, struct mob_behaviour_param *params, mo
     /* Disabled for multi-tile mobs */
     if(op->more)
         return;
-    
+
     if (OBJECT_VALID(op->enemy, op->enemy_count))
     {
         /* Behaviour core */
@@ -1535,22 +1535,22 @@ void ai_optimize_line_of_fire(object *op, struct mob_behaviour_param *params, mo
             int good_directions = 0, ok_directions = 0;
 
             rv_vector  *rv  = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE);
-            
+
             /* Too close or too far to care? */
             if(rv->distance <= 2 || rv->distance > 8)
                 return;
-            
+
             /* Already perfect? */
-            if(can_hit_missile(op, op->enemy, rv, 1)) 
+            if(can_hit_missile(op, op->enemy, rv, 1))
                 good_directions = (1 << 0);
-            else 
+            else
                 response->forbidden |= (1 << 0); /* Don't stay in a bad spot */
-            
+
             /* Find a nearby good spot */
             /* TODO: can probably be calculated instead of searched for */
             /* TODO: with this algorithm there is a certain state where
              * the mob starts zipping between two "half-good" spots */
-            for(i=-2; i<=2; i++) 
+            for(i=-2; i<=2; i++)
             {
                 mapstruct *m;
                 int dir = absdir(rv->direction+i);
@@ -1558,7 +1558,7 @@ void ai_optimize_line_of_fire(object *op, struct mob_behaviour_param *params, mo
                 int y = op->y + freearr_y[dir];
 
                 /* Find a spot in or near line of fire, and forbid movements to other spots */
-                if ((m = out_of_map(op->map, &x, &y))) 
+                if ((m = out_of_map(op->map, &x, &y)))
                 {
                     if(mapcoord_in_line_of_fire(op->enemy, m, x, y, 1)) /* good spot? */
                         good_directions |= (1 << dir);
@@ -1568,13 +1568,13 @@ void ai_optimize_line_of_fire(object *op, struct mob_behaviour_param *params, mo
             }
 
             /* See if we have a movement response... */
-            good_directions &= ~response->forbidden; 
+            good_directions &= ~response->forbidden;
             if(good_directions) {
                 response->data.directions = good_directions;
                 response->type = MOVE_RESPONSE_DIRS;
             }
             else {
-                ok_directions &= ~response->forbidden; 
+                ok_directions &= ~response->forbidden;
                 if(ok_directions) {
                     response->data.directions = ok_directions;
                     response->type = MOVE_RESPONSE_DIRS;
@@ -1630,7 +1630,7 @@ void ai_keep_distance_to_enemy(object *op, struct mob_behaviour_param *params, m
                 ai_move_towards_enemy(op, params, response);
                 return;
             }
-            
+
             if (rv->distance < (unsigned int) AIPARAM_INT(AIPARAM_KEEP_DISTANCE_TO_ENEMY_MIN_DIST))
             {
                 response->type = MOVE_RESPONSE_DIR;
@@ -1740,7 +1740,7 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
                     }
                     else
                     {
-#ifdef AI_DEBUG                     
+#ifdef AI_DEBUG
                         LOG(llevDebug, "ai_move_towards_waypoint(): '%s' reached destination '%s'\n",
                             STRING_OBJ_NAME(op), STRING_OBJ_NAME(wp));
 #endif
@@ -1802,7 +1802,7 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
     {
         if (WP_NEXTWP(wp) && (wp = find_waypoint(op, WP_NEXTWP(wp))))
         {
-#ifdef AI_DEBUG                     
+#ifdef AI_DEBUG
             LOG(llevDebug, "ai_move_towards_waypoint(): '%s' next WP: '%s'\n", STRING_OBJ_NAME(op), STRING_WP_NEXTWP(wp));
 #endif
             SET_FLAG(wp, WP_FLAG_ACTIVE); /* activate new waypoint */
@@ -1811,7 +1811,7 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
         }
         else
         {
-#ifdef AI_DEBUG                                 
+#ifdef AI_DEBUG
             LOG(llevDebug, "ai_move_towards_waypoint(): '%s' no next WP\n", STRING_OBJ_NAME(op));
 #endif
             wp = NULL;
@@ -1826,7 +1826,7 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
     }
 }
 
-/* 
+/*
  * Runs away from enemy if scared
  * Sets scared if low hp
  * Clears scared if high enough hp OR after a random time
@@ -1853,7 +1853,7 @@ void ai_run_away_from_enemy(object *op, struct mob_behaviour_param *params, move
         /* Regain senses? */
         if (op->stats.maxhp && AIPARAM_PRESENT(AIPARAM_RUN_AWAY_FROM_ENEMY_HP_THRESHOLD))
         {
-            /* Gecko: I added a slight hysteresis treshold here 
+            /* Gecko: I added a slight hysteresis treshold here
              * (stay afraid until hp reaches 2*runaway % of maxhp) */
             if (op->stats.hp == op->stats.maxhp
              || (op->stats.hp * 100) / op->stats.maxhp > AIPARAM_INT(AIPARAM_RUN_AWAY_FROM_ENEMY_HP_THRESHOLD) * 2)
@@ -1899,11 +1899,11 @@ void ai_plugin_move(object *op, struct mob_behaviour_param *params, move_respons
     CFP.Value[6] = &m;
     CFP.Value[7] = &m;
     CFP.Value[8] = &l; /* Fix settings */
-    CFP.Value[9] = (char *)AIPARAM_STRING(AIPARAM_PLUGIN_MOVE_BEHAVIOUR);  
+    CFP.Value[9] = (char *)AIPARAM_STRING(AIPARAM_PLUGIN_MOVE_BEHAVIOUR);
     CFP.Value[10] = (char *)AIPARAM_STRING(AIPARAM_PLUGIN_MOVE_OPTIONS);
     CFP.Value[11] = (void *) response;
     PlugList[findPlugin(AIPARAM_STRING(AIPARAM_PLUGIN_MOVE_PLUGIN))].eventfunc (&CFP);
-#endif 
+#endif
 }
 
 /*
@@ -1937,8 +1937,8 @@ void ai_look_for_other_mobs(object *op, struct mob_behaviour_param *params)
          && obj != op
          && mob_can_see_obj(op, obj, NULL))
         {
-            /* TODO: get rid of double rv calculation 
-             * (both can_see_obj() and register_npc_known_obj) 
+            /* TODO: get rid of double rv calculation
+             * (both can_see_obj() and register_npc_known_obj)
              */
             register_npc_known_obj(op, obj, 0);
         }
@@ -2059,7 +2059,7 @@ void ai_plugin_process(object *op, struct mob_behaviour_param *params)
     CFP.Value[10] = (char *)AIPARAM_STRING(AIPARAM_PLUGIN_PROCESS_OPTIONS);
     CFP.Value[11] = NULL;
     PlugList[findPlugin(AIPARAM_STRING(AIPARAM_PLUGIN_PROCESS_PLUGIN))].eventfunc (&CFP);
-#endif 
+#endif
 }
 
 /*
@@ -2133,7 +2133,7 @@ int ai_bow_attack_enemy(object *op, struct mob_behaviour_param *params)
 			/* Select suitable arrows */
 		    if(bow->sub_type1 == 128) /* ability bow type */
 				arrow = bow->inv;
-			else 
+			else
 				arrow = find_arrow(op, bow->race);
 
 			if(!arrow)
@@ -2141,11 +2141,11 @@ int ai_bow_attack_enemy(object *op, struct mob_behaviour_param *params)
 				/* Out of arrows , unapply bow */
 			    manual_apply(op, bow, 0);
 				bow = NULL;
-			}		   
+			}
 		    break;
 		}
 	}
-		   
+
     if (bow == NULL)
     {
         /*LOG(llevBug, "BUG: Monster %s (%d) has READY_BOW without bow.\n", STRING_OBJ_NAME(op), op->count);*/
@@ -2178,7 +2178,7 @@ int ai_bow_attack_enemy(object *op, struct mob_behaviour_param *params)
     SET_ANIMATION(arrow, (NUM_ANIMATIONS(arrow) / NUM_FACINGS(arrow)) * rv->direction);
     arrow->level = op->level;
     arrow->last_heal = arrow->stats.wc; /* save original wc and dam */
-    arrow->stats.hp = arrow->stats.dam; 
+    arrow->stats.hp = arrow->stats.dam;
     arrow->stats.dam += bow->stats.dam + bow->magic + arrow->magic; /* NO_STRENGTH */
     arrow->stats.dam = FABS((int) ((float) (arrow->stats.dam * lev_damage[op->level])));
     arrow->stats.wc = 10 + (bow->magic + bow->stats.wc + arrow->magic + arrow->stats.wc + op->level);
@@ -2317,7 +2317,7 @@ int ai_spell_attack_enemy(object *op, struct mob_behaviour_param *params)
     ability = (spell_item->type == ABILITY && QUERY_FLAG(spell_item, FLAG_IS_MAGICAL));
 
     /* If we cast a spell, only use up casting_time speed */
-    op->speed_left += (float) 1.0 - (float) spells[sp_type].time / (float) 20.0 * (float) FABS(op->speed); 
+    op->speed_left += (float) 1.0 - (float) spells[sp_type].time / (float) 20.0 * (float) FABS(op->speed);
 
     op->stats.sp -= sp_cost;
 
@@ -2329,7 +2329,7 @@ int ai_spell_attack_enemy(object *op, struct mob_behaviour_param *params)
     /* TODO: what does the return value of cast_spell do ? */
     cast_spell(rv->part, rv->part, direction, sp_type, ability, spellNormal, NULL);
 
-    op->speed_left--;/* hack: see bow bahaviour! */    
+    op->speed_left--;/* hack: see bow bahaviour! */
     return TRUE;
 }
 
@@ -2357,7 +2357,7 @@ int ai_plugin_action(object *op, struct mob_behaviour_param *params)
     CFP.Value[11] = NULL;
     retCFP = PlugList[findPlugin(AIPARAM_STRING(AIPARAM_PLUGIN_PROCESS_PLUGIN))].eventfunc (&CFP);
     ret = *(int *)retCFP->Value[0];
-#endif 
+#endif
 
     return ret;
 }
@@ -2419,7 +2419,7 @@ static int calc_direction_towards(object *op, object *target, mapstruct *map, in
 
     if (map == NULL)
     {
-        LOG(llevBug, "BUG: invalid destination map for '%s'\n", STRING_OBJ_NAME(op)); 
+        LOG(llevBug, "BUG: invalid destination map for '%s'\n", STRING_OBJ_NAME(op));
         return 0;
     }
 
@@ -2478,7 +2478,7 @@ static int calc_direction_towards(object *op, object *target, mapstruct *map, in
 
         /* Take a first guesstimate step */
         return target_rv.direction;
-    } 
+    }
 
     path_map = ready_map_name(pf->path->map, MAP_NAME_SHARED);
     /* Walk towards next precomputed coordinate */
@@ -2567,7 +2567,7 @@ static int calc_direction_towards_object(object *op, object *target)
                                            &rv_target,
                                            RV_DIAGONAL_DISTANCE))
         {
-            /* Heuristic: if dist(target, path goal) > dist(target, self) 
+            /* Heuristic: if dist(target, path goal) > dist(target, self)
              * then get a new path */
             if (rv_target.distance > 1 && rv_goal.distance * 2 > rv_target.distance)
             {
@@ -2643,16 +2643,16 @@ int choose_direction_from_bitmap(object *op, int bitmap)
 {
     int numdirs=0, dirs[9], i;
 
-    for(i=0; i<9; i++) 
+    for(i=0; i<9; i++)
     {
-        if(bitmap & (1 << i)) 
+        if(bitmap & (1 << i))
         {
             dirs[numdirs] = i;
             numdirs++;
         }
     }
-    
-    if(numdirs == 0) 
+
+    if(numdirs == 0)
         return 0;
 
     return dirs[RANDOM()%(numdirs)];
@@ -2703,7 +2703,7 @@ int move_monster(object *op)
 
     /*
      * First, some general monster-management
-     */      
+     */
 
     tmp_dir = op->anim_enemy_dir;
     op->anim_enemy_dir = -1;      /* control the facings 25 animations */
@@ -2724,13 +2724,13 @@ int move_monster(object *op)
 
     /*
      * Internal thought and sensing behaviours
-     * All of those are always executed     
+     * All of those are always executed
      */
     for (behaviour = MOB_DATA(op)->behaviours->behaviours[BEHAVIOURCLASS_PROCESSES];
          behaviour != NULL;
          behaviour = behaviour->next)
     {
-        /* TODO: find a slightly more efficient way of handling 
+        /* TODO: find a slightly more efficient way of handling
          * non-executable "fake" processes */
         if(behaviour->declaration->func != ai_fake_process)
             ((void(*) (object *, struct mob_behaviour_param *)) behaviour->declaration->func) (op, behaviour->parameters);
@@ -2764,20 +2764,20 @@ int move_monster(object *op)
         success = do_move_monster(op, dir, response.forbidden);
         /* TODO: handle success=0 and precomputed paths/giving up */
     }
-    
+
     /* Try to avoid standing still if we aren't allowed to */
     if((dir == 0 || success == 0) && (response.forbidden & (1 << 0))) {
         success = do_move_monster(op, (RANDOM()%8)+1, response.forbidden);
     }
 
-    /* 
+    /*
      * Other mutually exclusive action commands
      * First to return TRUE disables the rest
      * TODO: some monsters can do multiple attacks? make the number of iterations here a parameter
      * TODO: either shuffle these randomly or use some sort of priority system
      * TODO: maybe separate into two parts: decision (gives an action and a priority) and
      *       execution (which done on the highest-prioritized action after all decisions are finished)
-     * TODO: in original rules DEX has influence over whether to try any of these or not 
+     * TODO: in original rules DEX has influence over whether to try any of these or not
      */
     for (behaviour = MOB_DATA(op)->behaviours->behaviours[BEHAVIOURCLASS_ACTIONS];
          behaviour != NULL;
@@ -2794,7 +2794,7 @@ int move_monster(object *op)
  * Pathfinding "callback"
  */
 
-/* A request for path finding has been accepted and we must now find out 
+/* A request for path finding has been accepted and we must now find out
  *   1) where we actually wanted to go, and
  *   2) how to get there.
  */
@@ -2814,7 +2814,7 @@ void object_accept_path(object *op)
     /* 1: Where do we want to go? */
     target = MOB_PATHDATA(op)->target_obj;
 
-    /* Is target our real target, is it a waypoint which stores the target 
+    /* Is target our real target, is it a waypoint which stores the target
      * coords? Or is our target a coordinate in the target_* values? */
     if (target == NULL)
     {
@@ -2843,13 +2843,13 @@ void object_accept_path(object *op)
                 target->name, goal_map->path, goal_map);
         }
         else
-            goal_map = target->map;            
+            goal_map = target->map;
 
         /* Keep track of targets that may move */
         FREE_AND_ADD_REF_HASH(MOB_PATHDATA(op)->goal_map, goal_map->path);
         MOB_PATHDATA(op)->goal_x = goal_x;
         MOB_PATHDATA(op)->goal_y = goal_y;
-    } 
+    }
 
     /* 2) Do the actual pathfinding: find a path, and compress it */
     path = compress_path(find_path(op, op->map, op->x, op->y, goal_map, goal_x, goal_y));
@@ -2873,7 +2873,7 @@ void object_accept_path(object *op)
                 LOG(llevDebug, "(%d,%d) ", tmp->x, tmp->y);
             LOG(llevDebug, "\n");
         }
-#endif        
+#endif
         /* Free any old precomputed path */
         if (MOB_PATHDATA(op)->path)
             free_path(MOB_PATHDATA(op)->path);

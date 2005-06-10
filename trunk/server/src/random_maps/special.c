@@ -76,7 +76,7 @@ void nuke_map_region(mapstruct *map, int xstart, int ystart, int xsize, int ysiz
         }
 }
 
-/* copy in_map into dest_map at point x,y */ 
+/* copy in_map into dest_map at point x,y */
 
 
 void include_map_in_map(mapstruct *dest_map, mapstruct *in_map, int x, int y)
@@ -156,7 +156,7 @@ int find_spot_for_submap(mapstruct *map, char **layout, int *ix, int *iy, int xs
     *ix = i;
     *iy = j;
     return 1;
-}  
+}
 
 
 void place_fountain_with_specials(mapstruct *map)
@@ -282,7 +282,7 @@ void place_specials_in_map(mapstruct *map, char **layout, RMParms *RP)
           /* includes a special map into the random map being made. */
         case SPECIAL_SUBMAP:
           {
-              special_map = find_style("/styles/specialmaps", 0, RP->difficulty); 
+              special_map = find_style("/styles/specialmaps", 0, RP->difficulty);
               if (special_map == NULL)
                   return;
 

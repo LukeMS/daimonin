@@ -84,7 +84,7 @@ typedef struct NewSocket_struct
     int                 mapx_2, mapy_2;     /* same like above but /2 */
     char               *host;               /* Which host it is connected from (ip address)*/
     uint32              cs_version;         /*client/server versions */
-    uint32              sc_version; 
+    uint32              sc_version;
     uint32              update_tile;        /* marker to see we must update the below windows of the tile the player is */
     enum Sock_Status    status;
     SockList            inbuf;          /* This holds *one* command we try to handle */
@@ -102,9 +102,9 @@ typedef struct NewSocket_struct
     uint32              darkness        : 1;        /* True if client wants darkness information */
     uint32              image2          : 1;        /* Client wants image2/face2 commands */
     uint32              can_write       : 1;        /* Can we write to this socket? */
-    uint32              version         : 1;        
-    uint32              write_overflow  : 1;        
-    uint32              setup           : 1;        
+    uint32              version         : 1;
+    uint32              write_overflow  : 1;
+    uint32              setup           : 1;
     uint32              rf_settings     : 1;
     uint32              rf_skills       : 1;
     uint32              rf_spells       : 1;

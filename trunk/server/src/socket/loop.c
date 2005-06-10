@@ -48,13 +48,13 @@
 
 #include <newserver.h>
 
-char            _idle_warn_text[]    = "X4 8 minutes idle warning!\nServer will disconnect you in 2 minutes.";                   
-char            _idle_warn_text2[]    = "X3 You was to long idle! Server closed connection.";                 
+char            _idle_warn_text[]    = "X4 8 minutes idle warning!\nServer will disconnect you in 2 minutes.";
+char            _idle_warn_text2[]    = "X3 You was to long idle! Server closed connection.";
 static fd_set   tmp_read, tmp_exceptions, tmp_write;
 
 /*****************************************************************************
  * Start of command dispatch area.
- * The commands here are protocol commands. 
+ * The commands here are protocol commands.
  ****************************************************************************/
 
 
@@ -83,7 +83,7 @@ typedef struct PlCmdMapping_struct
 
 /*
  * CmdMapping is the dispatch table for the server, used in HandleClient,
- * which gets called when the client has input.  All commands called here 
+ * which gets called when the client has input.  All commands called here
  * use the same parameter form (char* data, int len, int clientnum.
  * We do implicit casts, because the data that is being passed is
  * unsigned (pretty much needs to be for binary data), however, most
@@ -162,7 +162,7 @@ int fill_command_buffer(NewSocket *ns, int len)
         /* now we need to check what our write buffer does.
              * We have not many choices, if its to full.
              * In badest case, we get a overflow - then we kick the
-             * user. So, we try here to "freeze" the socket until we 
+             * user. So, we try here to "freeze" the socket until we
              * the output buffers are balanced again.
              * Freezing works only for "active" action - we can't and don't
              * want stop sending needed syncronization stuff.
@@ -262,7 +262,7 @@ void HandleClient(NewSocket *ns, player *pl)
         /* now we need to check what our write buffer does.
              * We have not many choices, if its to full.
              * In badest case, we get a overflow - then we kick the
-             * user. So, we try here to "freeze" the socket until we 
+             * user. So, we try here to "freeze" the socket until we
              * the output buffers are balanced again.
              */
         if (ns->outputbuffer.len >= (int) (MAXSOCKBUF * 0.85))
@@ -415,12 +415,12 @@ void remove_ns_dead_player(player *pl)
 	{
 		objectlink *ol;
 		char buf_dm[128];
-		
+
 		sprintf(buf_dm,"%s leaves the game (%d still playing).", query_name(pl->ob), player_active - 1);
-		
+
 		for(ol = gmaster_list_DM;ol;ol=ol->next)
 			new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
-		
+
 		for(ol = gmaster_list_GM;ol;ol=ol->next)
 			new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);
 	}
@@ -515,13 +515,13 @@ static int check_ip_ban(int num, uint32 ip)
     return FALSE;
 }
 
-/* This checks the sockets for input and exceptions, does the right thing.  A 
+/* This checks the sockets for input and exceptions, does the right thing.  A
  * bit of this code is grabbed out of socket.c
  * There are 2 lists we need to look through - init_sockets is a list
  */
 void doeric_server(int update, struct timeval *timeout)
 {
-    int                 i, pollret, rr, 
+    int                 i, pollret, rr,
                         update_client=update&SOCKET_UPDATE_CLIENT, update_player=update&SOCKET_UPDATE_PLAYER;
     uint32              update_below;
     struct sockaddr_in  addr;
@@ -533,7 +533,7 @@ void doeric_server(int update, struct timeval *timeout)
         write_cs_stats();
 #endif
 
-    /* would it not be possible to use FD_CLR too and avoid the 
+    /* would it not be possible to use FD_CLR too and avoid the
      * reseting every time?
      */
     FD_ZERO(&tmp_read);
@@ -604,7 +604,7 @@ void doeric_server(int update, struct timeval *timeout)
             FD_SET((uint32) pl->socket.fd, &tmp_read);
             FD_SET((uint32) pl->socket.fd, &tmp_exceptions);
             /* Only check for writing if we actually want to write */
-            if (pl->socket.outputbuffer.len > 0) 
+            if (pl->socket.outputbuffer.len > 0)
                 FD_SET((uint32) pl->socket.fd, &tmp_write);
             pl = pl->next;
         }
@@ -669,7 +669,7 @@ void doeric_server(int update, struct timeval *timeout)
 			i = ntohl(addr.sin_addr.s_addr);
             if (check_ip_ban(newsocknum, addr.sin_addr.s_addr))
 			{
-				LOG(llevDebug, "Banned:: ip %d.%d.%d.%d  (socket %d)\n", 
+				LOG(llevDebug, "Banned:: ip %d.%d.%d.%d  (socket %d)\n",
 						(i >> 24) & 255, (i >> 16) & 255, (i >> 8) & 255,i & 255, init_sockets[newsocknum].fd);
                 close_newsocket(&init_sockets[newsocknum]);
 			}
@@ -688,7 +688,7 @@ void doeric_server(int update, struct timeval *timeout)
     if (pollret)
         for (i = 1; i < socket_info.allocated_sockets; i++)
         {
-            if (init_sockets[i].status == Ns_Avail) 
+            if (init_sockets[i].status == Ns_Avail)
             {
                 continue;
             }
@@ -719,7 +719,7 @@ void doeric_server(int update, struct timeval *timeout)
                 init_sockets[i].status = Ns_Avail;
                 socket_info.nconns--;
                 continue;
-            } 
+            }
 
             if (FD_ISSET(init_sockets[i].fd, &tmp_write))
             {
@@ -842,7 +842,7 @@ void doeric_server_write(void)
                 pl->socket.update_tile = update_below;
             }
         }
-        
+
         /* Check that a write won't block */
         FD_ZERO(&writeset);
         FD_SET((uint32)pl->socket.fd, &writeset);
@@ -851,7 +851,7 @@ void doeric_server_write(void)
         timeout.tv_sec = 0;
         timeout.tv_usec = 0;
         select(pl->socket.fd + 1, NULL, &writeset, NULL, &timeout);
-                
+
         /* and *now* write back to player */
         if (FD_ISSET(pl->socket.fd, &writeset))
         {

@@ -103,11 +103,11 @@ int command_kickcmd(object *ob, char *params)
 
 	if(ob && CONTR(ob)->gmaster_mode < GMASTER_MODE_VOL)
 		return 0;
-	
+
 	if(!command_kick(ob, params))
 		return 0;
 
-	/* we kicked player params succesfull. 
+	/* we kicked player params succesfull.
 	 * Now we give him a 1min temp ban, so he can
 	 * think about it.
 	 * If its a "technical" kick, the 1min is a protection.
@@ -116,9 +116,9 @@ int command_kickcmd(object *ob, char *params)
 	ticks = (int) (pticks_second*10.0f);
 	add_ban_entry(params, ticks, ticks, 'p');
 
-	return 1;			
+	return 1;
 }
-	
+
 /* called command_kick(NULL,NULL) or command_kick(op,<player name>.
  * NULl,NULL will global kick *all* players, the 2nd format only <player name>.
  * op,NULL is invalid
@@ -462,11 +462,11 @@ int command_create(object *op, char *params)
             SET_FLAG(tmp, FLAG_IDENTIFIED);
             CLEAR_FLAG(tmp, FLAG_KNOWN_MAGICAL);
         }
-		
+
         while (*bp2)
         {
 			bp4 = NULL;
-				
+
             /* find the first quote */
             for (bp3 = bp2, gotquote = 0, gotspace = 0; *bp3 && gotspace < 2; bp3++)
             {
@@ -486,7 +486,7 @@ int command_create(object *op, char *params)
                 else if (*bp3 == ' ')
                     gotspace++;
             }
-			
+
             if (!gotquote)
             {
                 /* then find the second space */
@@ -507,24 +507,24 @@ int command_create(object *op, char *params)
                     }
                 }
             }
-			
+
 			if(bp4 == NULL)
 			{
                 new_draw_info_format(NDI_UNIQUE, 0, op, "No parameter value for variable %s", bp2);
 				break;
 			}
-			
+
             /* now bp3 should be the argument, and bp2 the whole command */
             if (set_variable(tmp, bp2) == -1)
                 new_draw_info_format(NDI_UNIQUE, 0, op, "Unknown variable %s", bp2);
             else
                 new_draw_info_format(NDI_UNIQUE, 0, op, "(%s#%d)->%s=%s", tmp->name, tmp->count, bp2, bp3);
-			
+
             if (gotquote)
                 bp2 = bp4 + 2;
             else
                 bp2 = bp4 + 1;
-			
+
             /* WARNING: got a warning msg by compiler here - using obp without init. */
             /*if (obp == bp2)
             break;*/ /* invalid params */
@@ -541,7 +541,7 @@ int command_create(object *op, char *params)
         object*prev =   NULL, *head = NULL;
         for (atmp = at; atmp != NULL; atmp = atmp->more)
         {
-				
+
             tmp = arch_to_object(atmp);
             if (head == NULL)
                 head = tmp;
@@ -557,11 +557,11 @@ int command_create(object *op, char *params)
                 SET_FLAG(tmp, FLAG_IDENTIFIED);
                 CLEAR_FLAG(tmp, FLAG_KNOWN_MAGICAL);
             }
-			
+
             while (*bp2)
             {
 				bp4=NULL;
-				
+
                 /* find the first quote */
                 for (bp3 = bp2, gotquote = 0, gotspace = 0; *bp3 && gotspace < 2; bp3++)
                 {
@@ -608,7 +608,7 @@ int command_create(object *op, char *params)
                		new_draw_info_format(NDI_UNIQUE, 0, op, "No parameter value for variable %s", bp2);
 					break;
 				}
-			
+
                 /* now bp3 should be the argument, and bp2 the whole command */
                 if (set_variable(tmp, bp2) == -1)
                     new_draw_info_format(NDI_UNIQUE, 0, op, "Unknown variable '%s'", bp2);
@@ -783,7 +783,7 @@ int command_addexp(object *op, char *params)
         new_draw_info(NDI_UNIQUE, 0, op, "No such skill.");
         return 1;
     }
-    
+
     exp_skill = pl->skill_ptr[snr];
 
     if (!exp_skill) /* safety check */
@@ -1074,7 +1074,7 @@ int command_check_fd(object *op, char *params)
 /* a muted player can't shout/say/tell/reply for the
  * amount of time.
  * we have 2 kinds of mute: shout/say & tell/gsay/reply.
- * a player can be muted through this command and/or 
+ * a player can be muted through this command and/or
  * automatic by the spam agent.
  */
 int command_mute(object *op, char *params)
@@ -1085,11 +1085,11 @@ int command_mute(object *op, char *params)
 
 /* a silenced player can't shout or tell or say
  * but the he don't know it. A own shout will be shown
- * to him as normal but not to others. 
+ * to him as normal but not to others.
  */
 int command_silence(object *op, char *params)
 {
-	
+
 	return 1;
 }
 
@@ -1105,18 +1105,18 @@ int command_ban(object *op, char *params)
 {
 	objectlink *ol;
 	char *str;
-	
+
 	if(CONTR(op)->gmaster_mode == GMASTER_MODE_NO)
 		return 0;
-	
+
 	if (!params)
-		goto ban_usage;		
+		goto ban_usage;
 
 	/* list all entries of gmaster_file
 	 */
 	if(!strcmp(params,"list"))
-	{	
-	
+	{
+
 		new_draw_info(NDI_UNIQUE, 0, op, "ban list");
 		new_draw_info(NDI_UNIQUE, 0, op, "--- --- ---");
 		for(ol = ban_list_player;ol;ol=ol->next)
@@ -1128,15 +1128,15 @@ int command_ban(object *op, char *params)
 		return 1;
 	}
     if (!(str = strchr(params, ' ')))
-		goto ban_usage;		
-	
+		goto ban_usage;
+
     /* kill the space, and set string to the next param */
     *str++ = '\0';
 	if(!strcmp(params,"add"))
 	{
 		int ticks=-1;
 		char mode=0, name[MAX_BUF]="";
-		
+
         if (sscanf(str, "%s %c %d", name, &mode, &ticks) == 3)
 		{
 			if(name && name[0]!='\0' && (mode == 'i' || mode =='p'))
@@ -1167,8 +1167,8 @@ int command_ban(object *op, char *params)
 						break;
 					}
 				}
-				
-				if(flag) 
+
+				if(flag)
 				{
 					new_draw_info_format(NDI_UNIQUE, 0, op, "You updated the ban entry %s (%d ticks banned)", str, ticks);
 					LOG(llevSystem,"/ban: %s updated the ban entry %s (%c - %d)\n", query_name(op), str, mode, ticks);
@@ -1209,23 +1209,23 @@ int command_ban(object *op, char *params)
 				return 1;
 			}
 		}
-			
+
 	}
-		
+
 ban_usage:
     new_draw_info(NDI_UNIQUE, 0, op, "Usage: /ban  list | add | remove <entry>");
 	return 1;
 }
-	
+
 /* become a VOL
  */
 int command_vol(object *op, char *params)
 {
 	if(CONTR(op)->gmaster_mode == GMASTER_MODE_VOL) /* turn off ? */
-		remove_gmaster_mode(CONTR(op)); 
+		remove_gmaster_mode(CONTR(op));
 	else if(check_gmaster_list(CONTR(op), GMASTER_MODE_VOL))
 		set_gmaster_mode(CONTR(op), GMASTER_MODE_VOL);
-	
+
     return 1;
 }
 
@@ -1234,11 +1234,11 @@ int command_vol(object *op, char *params)
 int command_gm(object *op, char *params)
 {
 	if(CONTR(op)->gmaster_mode == GMASTER_MODE_GM) /* turn off ? */
-		remove_gmaster_mode(CONTR(op)); 
+		remove_gmaster_mode(CONTR(op));
 	else if(check_gmaster_list(CONTR(op), GMASTER_MODE_GM))
 		set_gmaster_mode(CONTR(op), GMASTER_MODE_GM);
 
-    return 1;	
+    return 1;
 }
 
 /* Actual command to perhaps become dm.  Changed aroun a bit in version 0.92.2
@@ -1248,14 +1248,14 @@ int command_gm(object *op, char *params)
 int command_dm(object *op, char *params)
 {
 	if(CONTR(op)->gmaster_mode == GMASTER_MODE_DM) /* turn off ? */
-		remove_gmaster_mode(CONTR(op)); 
+		remove_gmaster_mode(CONTR(op));
 	else if(check_gmaster_list(CONTR(op), GMASTER_MODE_DM))
 		set_gmaster_mode(CONTR(op), GMASTER_MODE_DM);
 
 	return 1;
 }
 
-/* list all active GM/VOL/DM 
+/* list all active GM/VOL/DM
  * gmaster actives only
  */
 int command_dm_list(object *op, char *params)
@@ -1264,22 +1264,22 @@ int command_dm_list(object *op, char *params)
 
 	if(CONTR(op)->gmaster_mode == GMASTER_MODE_NO)
 		return 0;
-	
+
 	new_draw_info(NDI_UNIQUE, 0, op, "DM/GM/VOL online");
 	new_draw_info(NDI_UNIQUE, 0, op, "--- --- ---");
 	for(ol = gmaster_list_VOL;ol;ol=ol->next)
 		new_draw_info_format(NDI_UNIQUE, 0, op, "%s (%d)", CONTR(ol->objlink.ob)->quick_name, ol->objlink.ob->level);
-	
+
 	for(ol = gmaster_list_GM;ol;ol=ol->next)
 		new_draw_info_format(NDI_UNIQUE, 0, op, "%s (%d)", CONTR(ol->objlink.ob)->quick_name, ol->objlink.ob->level);
-	
+
 	for(ol = gmaster_list_DM;ol;ol=ol->next)
 	{
 		if(!CONTR(ol->objlink.ob)->dm_stealth)
 			new_draw_info_format(NDI_UNIQUE, 0, op, "%s (%d)", CONTR(ol->objlink.ob)->quick_name, ol->objlink.ob->level);
 	}
 	return 1;
-	
+
 }
 
 /* /dm_set command
@@ -1293,24 +1293,24 @@ int command_dm_set(object *op, char *params)
 		return 0;
 
 	if (!params)
-		goto d_set_usage;		
+		goto d_set_usage;
 
 	/* list all entries of gmaster_file
 	 */
 	if(!strcmp(params,"list"))
-	{	
+	{
 		objectlink *ol;
 
 		new_draw_info(NDI_UNIQUE, 0, op, "gmaster_file");
 		new_draw_info(NDI_UNIQUE, 0, op, "--- --- ---");
 		for(ol = gmaster_list;ol;ol=ol->next)
 			new_draw_info_format(NDI_UNIQUE, 0, op, "%s", ol->objlink.gm->entry);
-			
+
 		return 1;
 	}
 
     if (!(str = strchr(params, ' ')))
-		goto d_set_usage;		
+		goto d_set_usage;
 
 
     /* kill the space, and set string to the next param */
@@ -1323,19 +1323,19 @@ int command_dm_set(object *op, char *params)
         if (sscanf(str, "%[^:]:%[^:]:%[^:]:%s%[\n\r]", name, passwd, host, mode, dummy) < 3)
 			new_draw_info(NDI_UNIQUE, 0, op, "/dm_set: invalid parameter.");
 		else
-		{	
+		{
 			int mode_id = check_gmaster_file_entry(name, passwd, host, mode);
-			
+
 			if(mode_id == GMASTER_MODE_NO)
 			{
 				new_draw_info(NDI_UNIQUE, 0, op, "/dm_set: invalid parameter.");
 				return 1;
 			}
-			
+
 			/* all ok, setup the gmaster node and add it to our list */
 			LOG(llevSystem, "GMASTER:: /dm_set add %s invoked by %s\n", str, query_name(op));
 			new_draw_info_format(NDI_UNIQUE, 0, op, "/dm_set: add entry %s", str);
-			add_gmaster_file_entry(name, passwd, host, mode_id);			
+			add_gmaster_file_entry(name, passwd, host, mode_id);
 			new_draw_info(NDI_UNIQUE, 0, op, "write back gmaster_file...");
 			write_gmaster_file(); /* create a new file */
 		}
@@ -1359,7 +1359,7 @@ int command_dm_set(object *op, char *params)
 				new_draw_info(NDI_UNIQUE, 0, op, "update gmaster rights...");
 				update_gmaster_file(); /* control rights of all active VOL/GM/DM */
 				new_draw_info(NDI_UNIQUE, 0, op, "done.");
-				
+
 				return 1;
 			}
 		}
@@ -1369,11 +1369,11 @@ int command_dm_set(object *op, char *params)
 
 d_set_usage:
     new_draw_info(NDI_UNIQUE, 0, op, "Usage: /dm_set  list | add | remove <entry>");
-	
+
 	return 1;
 }
 
-	
+
 int command_invisible(object *op, char *params)
 {
     if (!op)

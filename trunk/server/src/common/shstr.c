@@ -69,7 +69,7 @@ static struct statistics
     int                     search;
     int                     linked;
 } add_stats, add_ref_stats, free_stats, find_stats, hash_stats;
-#define GATHER(n) (++n) 
+#define GATHER(n) (++n)
 #else /* !SS_STATISTICS */
 #define GATHER(n)
 #endif /* SS_STATISTICS */
@@ -130,7 +130,7 @@ static shared_string * new_shared_string(const char *str, int n)
     shared_string  *ss;
 
     /* Allocate room for a struct which can hold str. Note
-     * that some bytes for the string are already allocated in the 
+     * that some bytes for the string are already allocated in the
      * shared_string struct.
      */
     ss = (shared_string *) malloc(sizeof(shared_string) - PADDING + n + 1);
@@ -149,7 +149,7 @@ static shared_string * new_shared_string(const char *str, int n)
  *      This will add 'str' to the hash table. If there's no entry for this
  *      string, a copy will be allocated, and a pointer to that is returned.
  *      Only n characters will be added, and a NULL char will be added at the
- *      end of the string. 
+ *      end of the string.
  *      This function is useful for adding parts of other buffers.
  * Return values:
  *      - pointer to string identical to str
@@ -168,7 +168,7 @@ const char * add_lstring(const char *str, int n)
      */
     if (str == NULL)
     {
-        LOG(llevBug, "BUG: add_string(): try to add null string to hash table\n");  
+        LOG(llevBug, "BUG: add_string(): try to add null string to hash table\n");
         return NULL;
     }
     ind = hashstr(str, n);
@@ -185,8 +185,8 @@ const char * add_lstring(const char *str, int n)
             GATHER(add_stats.strcmps);
             if (strncmp(ss->string, str, n) || (int)strlen(ss->string) != n)
             {
-                /* Apparantly, a string with the same hash value has this 
-                     * slot. We must see in the list if "str" has been 
+                /* Apparantly, a string with the same hash value has this
+                     * slot. We must see in the list if "str" has been
                      * registered earlier.
                      */
                 while (ss->next)
@@ -269,7 +269,7 @@ const char * add_string(const char *str)
      */
     if (str == NULL)
     {
-        LOG(llevBug, "BUG: add_string(): try to add null string to hash table\n");  
+        LOG(llevBug, "BUG: add_string(): try to add null string to hash table\n");
         return NULL;
     }
     ind = hashstr(str, MAXSTRING);
@@ -286,8 +286,8 @@ const char * add_string(const char *str)
             GATHER(add_stats.strcmps);
             if (strcmp(ss->string, str))
             {
-                /* Apparantly, a string with the same hash value has this 
-                     * slot. We must see in the list if "str" has been 
+                /* Apparantly, a string with the same hash value has this
+                     * slot. We must see in the list if "str" has been
                      * registered earlier.
                      */
                 while (ss->next)
@@ -414,7 +414,7 @@ const char * find_string(const char *str)
     return NULL;
 }
 
-/* This function should be declared 
+/* This function should be declared
  * const char *add_refcount(const char *)
  * Unfortunately, that would require changing a lot of structs
  */
@@ -457,7 +457,7 @@ void free_string_shared(const char *str)
 
     /* we check str is in the hash table - if not, something
      * is VERY wrong here. We can also be sure, that SS(str) is
-     * a safe operation - except we really messed something 
+     * a safe operation - except we really messed something
      * strange up inside the hash table. This will check for
      * free, wrong or non SS() objects.
      */
@@ -586,7 +586,7 @@ char * ss_dump_table(int what)
     return totals;
 }
 
-/* to find memory leak! 
+/* to find memory leak!
  * This is not used atm
 void ss_test_table(void)
 {
@@ -596,8 +596,8 @@ void ss_test_table(void)
     char c;
 
     for (i = 0; i < TABLESIZE; i++) {
-    
-    if ((ss = hash_table[i])!=NULL) 
+
+    if ((ss = hash_table[i])!=NULL)
     {
         ++entries;
         c = ss->string[0];

@@ -108,13 +108,13 @@ struct CmdMapping   commands[]  =
     { "addme_success", (CmdProc) AddMeSuccess }, { "addme_failed", (CmdProc) AddMeFail },
     { "version", (CmdProc) VersionCmd }, { "goodbye", (CmdProc) GoodbyeCmd }, { "setup", (CmdProc) SetupCmd},
     { "query", (CmdProc) handle_query}, { "data", (CmdProc) DataCmd}, { "new_char", (CmdProc) NewCharCmd},
-    { "itemy", ItemYCmd }, { "group", GroupCmd },{ "group_invite", GroupInviteCmd }, 
+    { "itemy", ItemYCmd }, { "group", GroupCmd },{ "group_invite", GroupInviteCmd },
 	{ "group_update", GroupUpdateCmd },
 	{ "interface", InterfaceCmd },
 	{ "book", BookCmd },
 
     /* unused! */
-    { "magicmap", MagicMapCmd}, { "delinv", DeleteInventory }, 
+    { "magicmap", MagicMapCmd}, { "delinv", DeleteInventory },
 };
 
 #define NCOMMANDS (sizeof(commands)/sizeof(struct CmdMapping))
@@ -406,7 +406,7 @@ int request_face(int pnum, int mode)
     sprintf(buf, "%s%s.png", GetGfxUserDirectory(), bmaptype_table[num].name);
     if ((stream = fopen_wrapper(buf, "rb")) != NULL)
     {
-        /* yes we have a picture with this name in /gfx_user! 
+        /* yes we have a picture with this name in /gfx_user!
              * lets try to load.
              */
         fstat(fileno(stream), &statbuf);
@@ -448,7 +448,7 @@ int request_face(int pnum, int mode)
     {
         FaceList[num].flags |= FACE_REQUESTED;
         finish_face_cmd(num, bmaptype_table[num].crc, bmaptype_table[num].name);
-    } 
+    }
 
     /*
     *((uint16 *)(fr_buf+4+count*sizeof(uint16)))=num;

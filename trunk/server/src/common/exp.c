@@ -24,7 +24,7 @@
 */
 
 /* there are some more exp calc funtions in skill_util.c - but thats part
- * of /server/server and not of crosslib.a - so we can't move then easily 
+ * of /server/server and not of crosslib.a - so we can't move then easily
  * on this place - another reason to kill the crosslib.a asap.
  */
 
@@ -46,11 +46,11 @@ float           lev_exp[MAXLEVEL + 1]       =
 };
 
 /* around level 11 you need 38+(2*(your_level-11)) yellow
- * mobs with a base exp of 125 to level up. 
+ * mobs with a base exp of 125 to level up.
  * Every level >11 needs 100.000 exp more as the one before but
  * also one mob more to kill.
  * This avoid things like: "you geht 342.731.123 exp from this mob,
- * you have now 1.345.535.545.667 exp." 
+ * you have now 1.345.535.545.667 exp."
  * even here we have around 500.000.000 max exp - thats a pretty big
  * number.
  */
@@ -74,7 +74,7 @@ uint32          new_levels[MAXLEVEL + 2]    =
     499500000, 509600000, 519800000, 530100000, 540500000, 551000000, 561600000, 572300000, 583100000, 594000000,
     /* 109 */
     605000000, 700000000 /* 111 is only a dummy */
-}; 
+};
 
 _level_color    level_color[201]        =
 {
@@ -315,28 +315,28 @@ uint32 level_exp(int level, double expmul)
     return (uint32) (expmul * (double) new_levels[level]);
 }
 
-/* add_exp() new algorithm. Revamped experience gain/loss routine. 
- * Based on the old add_exp() function - but tailored to add experience 
- * to experience objects. The way this works-- the code checks the 
+/* add_exp() new algorithm. Revamped experience gain/loss routine.
+ * Based on the old add_exp() function - but tailored to add experience
+ * to experience objects. The way this works-- the code checks the
  * current skill readied by the player (chosen_skill) and uses that to
  * identify the appropriate experience object. Then the experience in
  * the object, and the player's overall score are updated. In the case
  * of exp loss, all exp categories which have experience are equally
- * reduced. The total experience score of the player == sum of all 
- * exp object experience.  - b.t. thomas@astro.psu.edu 
+ * reduced. The total experience score of the player == sum of all
+ * exp object experience.  - b.t. thomas@astro.psu.edu
  */
 /* The old way to determinate the right skill which is used for exp gain
  * was broken. Best way to show this is, to cast some fire balls in a mob
  * and then changing the hand weapon some times. You will get some "no
- * ready skill warnings". 
+ * ready skill warnings".
  * I reworked the whole system and the both main exp gain and add functions
  * add_exp() and adjust_exp(). Its now much faster, easier and more accurate. MT
  * exp lose by dead is handled from apply_death_exp_penalty().
  */
 sint32 add_exp(object *op, int exp, int skill_nr)
 {
-    object *exp_ob      = NULL;    /* the exp. object into which experience will go */ 
-    object *exp_skill   = NULL; /* the real skill object */ 
+    object *exp_ob      = NULL;    /* the exp. object into which experience will go */
+    object *exp_skill   = NULL; /* the real skill object */
     /*    int del_exp=0; */
     int     limit       = 0;
 
@@ -344,7 +344,7 @@ sint32 add_exp(object *op, int exp, int skill_nr)
     /* safety */
     if (!op)
     {
-        LOG(llevBug, "BUG: add_exp() called for null object!\n"); 
+        LOG(llevBug, "BUG: add_exp() called for null object!\n");
         return 0;
     }
 
@@ -373,10 +373,10 @@ sint32 add_exp(object *op, int exp, int skill_nr)
 
     /* if we are full in this skill, then nothing is to do */
     if (exp_skill->level >= MAXLEVEL)
-        return 0;    
+        return 0;
 
     CONTR(op)->update_skills = 1; /* we will sure change skill exp, mark for update */
-    exp_ob = exp_skill->exp_obj;            
+    exp_ob = exp_skill->exp_obj;
 
     if (!exp_ob)
     {
@@ -384,19 +384,19 @@ sint32 add_exp(object *op, int exp, int skill_nr)
         return 0;
     }
 
-    /* General adjustments for playbalance */ 
+    /* General adjustments for playbalance */
     /* I set limit to 1/4 of a level - thats enormous much */
     limit = (new_levels[exp_skill->level + 1] - new_levels[exp_skill->level]) / 4;
     if (exp > limit)
         exp = limit;
 
-    exp = adjust_exp(op, exp_skill, exp);   /* first we see what we can add to our skill */ 
+    exp = adjust_exp(op, exp_skill, exp);   /* first we see what we can add to our skill */
 
     /* adjust_exp has adjust the skill and all exp_obj and player exp */
     /* now lets check for level up in all categories */
-    player_lvl_adj(op, exp_skill);   
-    player_lvl_adj(op, exp_ob);   
-    player_lvl_adj(op, NULL);   
+    player_lvl_adj(op, exp_skill);
+    player_lvl_adj(op, exp_ob);
+    player_lvl_adj(op, NULL);
 
     /* reset the player exp_obj to NULL */
     /* I let this in but because we use single skill exp and skill nr now,
@@ -502,7 +502,7 @@ void player_lvl_adj(object *who, object *op)
             sprintf(buf, "You are now level %d.", op->level);
             if (who)
                 new_draw_info(NDI_UNIQUE | NDI_RED, 0, who, buf);
-        }   
+        }
 
         if (who)
             fix_player(who);
@@ -546,7 +546,7 @@ void player_lvl_adj(object *who, object *op)
  * the player global exp.
  * You need to call player_lvl_adj() after it.
  * This routine use brute force and goes through the whole inventory. We should
- * use a kind of skill container for speed this up. MT 
+ * use a kind of skill container for speed this up. MT
  */
 int adjust_exp(object *pl, object *op, int exp)
 {
@@ -577,7 +577,7 @@ int adjust_exp(object *pl, object *op, int exp)
         op->stats.exp = MAX_EXPERIENCE;
     }
 
-    /* now we collect the exp of all skills which are in the same exp. object category */  
+    /* now we collect the exp of all skills which are in the same exp. object category */
     sk_nr = skills[op->stats.sp].category;
     sk_exp = 0;
     /* this is the old collection system  - all skills of a exp group add
@@ -673,7 +673,7 @@ void apply_death_exp_penalty(object *op)
             /* again some sanity checks */
             if (loss_exp > 0)
             {
-                adjust_exp(op, tmp, -loss_exp);            
+                adjust_exp(op, tmp, -loss_exp);
                 player_lvl_adj(op, tmp);
             }
         }
@@ -687,7 +687,7 @@ void apply_death_exp_penalty(object *op)
     player_lvl_adj(op, NULL);        /* and at last adjust the player level */
 }
 
-/* i reworked this... 
+/* i reworked this...
  * We will get a mali or boni value here except the level match exactly.
  * Yellow means not always exactly same level but "in equal range".
  * If the target is in yellow range, the exp mul is between 0.8 and 1.1 (80%-110%)

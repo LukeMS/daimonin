@@ -25,10 +25,10 @@
 #define __INVENTORY_H
 
 
-#define INVITEMBELOWXLEN 8 
+#define INVITEMBELOWXLEN 8
 #define INVITEMBELOWYLEN 1
 
-#define INVITEMXLEN 7 
+#define INVITEMXLEN 7
 #define INVITEMYLEN 3
 
 extern void     show_inventory_window(int x, int y);

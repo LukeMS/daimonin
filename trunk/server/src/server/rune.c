@@ -37,7 +37,7 @@ extern char    *sys_errlist[];
 extern int      sys_nerr;
 #endif
 
-/*  peterm:  
+/*  peterm:
     write_rune:
     op:  rune writer
     dir:  orientation of rune, direction rune's contained spell will
@@ -45,7 +45,7 @@ extern int      sys_nerr;
     inspell:  the spell index of the spell in the rune (if any)
     level:  level of casting of the rune
     runename:  name of the rune or message displayed by the rune for
-        a rune of marking 
+        a rune of marking
 
 */
 
@@ -61,7 +61,7 @@ int write_rune(object *op, int dir, int inspell, int level, char *runename)
     if (!dir)
     {
         dir = 1;
-    } 
+    }
 
     nx = op->x + freearr_x[dir];
     ny = op->y + freearr_y[dir];
@@ -128,7 +128,7 @@ int write_rune(object *op, int dir, int inspell, int level, char *runename)
         tmp->stats.sp = inspell; /* the spell it contains */
 
         sprintf(buf, "You set off a rune of %s", spells[inspell].name);
-        FREE_AND_COPY_HASH(tmp->msg, buf); 
+        FREE_AND_COPY_HASH(tmp->msg, buf);
         at = NULL;
 
 
@@ -139,7 +139,7 @@ int write_rune(object *op, int dir, int inspell, int level, char *runename)
          * cast rune of marking, and gives the exact name
          * of a powerful rune, it won't do him any good,
          *  because a rune of marking will have level 0
-         * and will thus never detonate. 
+         * and will thus never detonate.
          */
     }
     else if (level == -2 || (at = find_archetype(runename)) == NULL)
@@ -186,7 +186,7 @@ int write_rune(object *op, int dir, int inspell, int level, char *runename)
 /*  peterm: rune_attack
  *
  * function handles those runes which detonate but do not cast spells.
- * Remember: at this point we KNOW the trap will hit the victim - 
+ * Remember: at this point we KNOW the trap will hit the victim -
  * so no need for wc or wc_range.
  * all we need is dam and a attack form
  */
@@ -194,8 +194,8 @@ void rune_attack(object *op, object *victim)
 {
     int dam = op->stats.dam; /* save damage */
 
-    /* lets first calc the damage - we use base dmg * level 
-     * For rune, the damage will *not* get additional 
+    /* lets first calc the damage - we use base dmg * level
+     * For rune, the damage will *not* get additional
      * level range boni
      * we do here a more simple system like the normal monster damage.
      * with the hard set float we can control the damage a bit better.
@@ -232,7 +232,7 @@ void rune_attack(object *op, object *victim)
 }
 
 /*  This function generalizes attacks by runes/traps.  This ought to make
-    it possible for runes to attack from the inventory, 
+    it possible for runes to attack from the inventory,
     it'll spring the trap on the victim.  */
 
 void spring_trap(object *trap, object *victim)
@@ -270,9 +270,9 @@ void spring_trap(object *trap, object *victim)
     */
     for (env = trap; env->env != NULL; env = env->env)
         ;
-	
+
 	if(trap->sub_type1 != 128)
-	    trap_show(trap, env);  
+	    trap_show(trap, env);
     trap->type = MISC_OBJECT;  /* make the trap impotent */
     CLEAR_FLAG(trap, FLAG_FLY_ON);
     CLEAR_FLAG(trap, FLAG_WALK_ON);
@@ -284,7 +284,7 @@ void spring_trap(object *trap, object *victim)
 
     if (!trap->stats.sp)
     {
-        rune_attack(trap, victim); 
+        rune_attack(trap, victim);
         set_traped_flag(env);
         if (was_destroyed(trap, trap_tag))
             return;
@@ -314,7 +314,7 @@ void spring_trap(object *trap, object *victim)
     }
 }
 
-/*  dispel_rune:  by peterm  
+/*  dispel_rune:  by peterm
     dispels the target rune, depending on the level of the actor
 and the level of the rune  risk flag, if true, means that there is
 a chance that the trap/rune will detonate */
@@ -380,7 +380,7 @@ int trap_see(object *op, object *trap, int level)
 }
 
 /* I changed the use of this function... Now, this function deos what the
- * name says: He get a trap and makes them visible and reinsert it. 
+ * name says: He get a trap and makes them visible and reinsert it.
  * This can be used from trigger but
  * also from detection sources - just be sure you set FLAG_IS_USED_UP in
  * your trigger functions as speed when you want start the auto destroy. MT-2003
@@ -397,7 +397,7 @@ int trap_show(object *trap, object *where)
      * we put them in as sys_object ... truely invisible for the client.
      * There are only 2 ways to make then visible - fire them by moving/apply them
      * or use a "see/unhide traps" skill/spell.
-     * For that, we set sys_object 0 and layer 4. Don't forget to set the player 
+     * For that, we set sys_object 0 and layer 4. Don't forget to set the player
      * because level 0 is really a special thing.
      */
     env = trap->env;
@@ -474,7 +474,7 @@ int trap_disarm(object *disarmer, object *trap, int risk)
 }
 
 /*  traps need to be adjusted for the difficulty of the map.  The
-default traps are too strong for wimpy level 1 players, and 
+default traps are too strong for wimpy level 1 players, and
 unthreatening to anyone of high level */
 
 void trap_adjust(object *trap, int difficulty)

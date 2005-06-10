@@ -52,7 +52,14 @@ _key_macro      defkey_macro[]          =
     {"?M_DOWN",           "down",                 KEYFUNC_CURSOR,1, SC_NORMAL, MENU_NO},
     {"?M_LEFT",           "left",             KEYFUNC_CURSOR,2, SC_NORMAL, MENU_NO},
     {"?M_RIGHT",          "right",            KEYFUNC_CURSOR,3, SC_NORMAL, MENU_NO},
-    {"?M_RANGE",          "toggle range",     KEYFUNC_RANGE,0, SC_NORMAL, MENU_NO},
+    {"?M_RANGE",          "cycle fire mode forwards",     KEYFUNC_RANGE,0, SC_NORMAL, MENU_NO},
+    {"?M_RANGE_BACK",     "cycle fire mode backwards",    KEYFUNC_RANGE_BACK,0, SC_NORMAL, MENU_NO},
+    {"?M_RANGE_BOW",      "fire mode: bow",     KEYFUNC_RANGE_SELECT,FIRE_MODE_BOW, SC_NORMAL, MENU_NO},
+    {"?M_RANGE_SPELL",    "fire mode: spell",   KEYFUNC_RANGE_SELECT,FIRE_MODE_SPELL, SC_NORMAL, MENU_NO},
+    {"?M_RANGE_WAND",     "fire mode: wand",    KEYFUNC_RANGE_SELECT,FIRE_MODE_WAND, SC_NORMAL, MENU_NO},
+    {"?M_RANGE_SKILL",    "fire mode: skill",   KEYFUNC_RANGE_SELECT,FIRE_MODE_SKILL, SC_NORMAL, MENU_NO},
+    {"?M_RANGE_THROW",    "fire mode: throw",   KEYFUNC_RANGE_SELECT,FIRE_MODE_THROW, SC_NORMAL, MENU_NO},
+    {"?M_RANGE_SUMMON",   "fire mode: summon",  KEYFUNC_RANGE_SELECT,FIRE_MODE_SUMMON, SC_NORMAL, MENU_NO},
     {"?M_APPLY",          "apply <tag>",      KEYFUNC_APPLY,0, SC_NORMAL, MENU_NO},
     {"?M_EXAMINE",      "examine <tag>",    KEYFUNC_EXAMINE,0, SC_NORMAL, MENU_NO},
     {"?M_DROP",           "drop <tag>",       KEYFUNC_DROP,0, SC_NORMAL, MENU_NO},
@@ -489,7 +496,7 @@ int Event_PollInputDevice(void)
 				}
 
 			  }
-			  
+
 			  textwin_event(TW_CHECK_BUT_DOWN, &event);
 
               /* close number input */
@@ -507,7 +514,10 @@ int Event_PollInputDevice(void)
               /* toggle range */
               if (x > 3 && x <37 && y> 403 && y < 437)
               {
-                  process_macro_keys(KEYFUNC_RANGE, 0);
+                  if (event.button.button == SDL_BUTTON_RIGHT)
+                      process_macro_keys(KEYFUNC_RANGE_BACK, 0);
+                  else
+                      process_macro_keys(KEYFUNC_RANGE, 0);
                   break;
               }
 
@@ -1529,9 +1539,22 @@ Boolean process_macro_keys(int id, int value)
           cursor_keys(value);
           break;
 
-        case KEYFUNC_RANGE:
-          if (RangeFireMode++ == FIRE_MODE_INIT - 1)
-              RangeFireMode = 0;
+        /* Alter fire mode selection */
+        case KEYFUNC_RANGE: case KEYFUNC_RANGE_BACK:
+        case KEYFUNC_RANGE_SELECT:
+          switch (id)
+          {
+              case KEYFUNC_RANGE:
+                  if (++RangeFireMode > FIRE_MODE_INIT - 1)
+                      RangeFireMode = 0;
+                  break;
+              case KEYFUNC_RANGE_BACK:
+                  if (--RangeFireMode < 0)
+                      RangeFireMode = FIRE_MODE_INIT - 1;
+                  break;
+              case KEYFUNC_RANGE_SELECT:
+                  RangeFireMode = value;
+          }
           map_udate_flag = 2;
           return FALSE;
           break;
@@ -2304,7 +2327,7 @@ void check_menu_keys(int menu, int key)
 				if(gui_interface_npc->used_flag&GUI_INTERFACE_DECLINE && gui_interface_npc->decline.command[0]!='\0')
 					gui_interface_send_command(1, gui_interface_npc->decline.command);
 				else
-					reset_gui_interface();	
+					reset_gui_interface();
 				break;
 
 			case SDLK_n:
@@ -2336,7 +2359,7 @@ void check_menu_keys(int menu, int key)
 					gui_interface_send_command(1, cmd);
 				}
 				else
-					reset_gui_interface();	
+					reset_gui_interface();
 			break;
 			case SDLK_PAGEUP:
 				gui_interface_npc->yoff +=12;
@@ -2376,7 +2399,7 @@ void check_menu_keys(int menu, int key)
 				}
 				break;
 			}
-			
+
 		break;
 		case MENU_OPTION:
           switch (key)

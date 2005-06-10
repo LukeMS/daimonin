@@ -1,12 +1,12 @@
 require("topic_list");
 
 activator = event.activator
-whoami = event.me 
+whoami = event.me
 
 tl = TopicList()
 
 -- Shows how to use captures in topics
-tl:AddTopics("learn (.*)", 
+tl:AddTopics("learn (.*)",
 	function(spellname)
 		spell = game:GetSpellNr(spellname)
 		if spell == -1 then
@@ -21,7 +21,7 @@ tl:AddTopics("learn (.*)",
 	end
 )
 
-tl:AddTopics("unlearn (.*)", 
+tl:AddTopics("unlearn (.*)",
 	function(spellname)
 		spell = game:GetSpellNr(spellname)
 		if spell == -1 then

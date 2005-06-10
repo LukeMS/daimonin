@@ -220,12 +220,12 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLOOR                   71 /* this is a floor tile -> native layer 0 */
 
 #define FLESH                   72  /* animal 'body parts' -b.t. */
-#define INORGANIC               73  /* metals and minerals */ 
+#define INORGANIC               73  /* metals and minerals */
 
 #define TYPE_LIGHT_APPLY        74  /* new light source for player */
 
 #define LIGHTER                 75
-#define TRAP_PART               76  /* Needed by set traps skill -b.t. */ 
+#define TRAP_PART               76  /* Needed by set traps skill -b.t. */
 
 #define WALL                    77 /* this is a wall. put it always in layer 1 if not set is_floor */
 #define LIGHT_SOURCE            78 /* thats now light sources on the map (invisible lights) */
@@ -272,7 +272,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define CONVERTER               103
 #define BRACERS                 104
 #define POISONING               105 /* thats the poison force... if á player applies for example
-                                     * a POISON object (poison food), this force is inserted in 
+                                     * a POISON object (poison food), this force is inserted in
                                      * the player and does the poison effect until it wear out
                                      * or get removed
                                      */
@@ -302,14 +302,14 @@ error - Your ANSI C compiler should be defining __STDC__;
                                                  * tranformed to money by using level of mob or map to generating
                                                  * a fitting amount of money basing on the base setting).
                                                  */
-#define TYPE_AI                 126     /* MOB AI definition object */                               
+#define TYPE_AI                 126     /* MOB AI definition object */
 #define TYPE_AGGRO_HISTORY		127		/* aggro history - core base object for aggro handling. */
 #define TYPE_DAMAGE_INFO		128		/* info object for aggro, group damage, exp sharing and DOT handling */
 
 #define TYPE_QUEST_TRIGGER		129		/* a quest trigger describes & interact with quests & other quest things */
 #define SKILLSCROLL             130		/* can add a skill to player's inventory -bt.*/
 #define TYPE_QUEST_OBJECT		131		/* a quest object - it will be set to what we need. Its better & cleaner to
-                                         * use a own type for it instead of marking "real" object with fancy flags 
+                                         * use a own type for it instead of marking "real" object with fancy flags
                                          */
 #define TYPE_TIMER              132     /* Trigger a connection after a time period */
 #define TYPE_ENV_SENSOR         133     /* Triggers depending on environment (TOD, brightness etc) */
@@ -359,7 +359,7 @@ error - Your ANSI C compiler should be defining __STDC__;
  * These special items will handled different - we allow the player to throws
  * ANY dust or potion. But only when the potion/dust is from sub_type _missile_xx
  * we include the skill id and only these items will do a range effect.
- * Every potion/dust will have a level (like a spell or rod). If this level is 
+ * Every potion/dust will have a level (like a spell or rod). If this level is
  * 40% higher as our throw skill (and more as 5 level higher), then throwing
  * will fail, like we try to use a to high item device.
  * If we apply a throw potion/dust, the effect will triggered (a firestorm potion
@@ -417,7 +417,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 /* spellbooks can be different types: mages, cleric and so on.
  * to remove identification from arch name, i use ST1 for it MT
  */
-#define ST1_SPELLBOOK_CLERIC 1 
+#define ST1_SPELLBOOK_CLERIC 1
 #define ST1_SPELLBOOK_MAGE   2
 
 /* container can be different items: normal containers, mob corpse or player corpse.
@@ -427,17 +427,17 @@ error - Your ANSI C compiler should be defining __STDC__;
  * if the container sub_type >=192 then the clan name will open it.
  */
 
-#define ST1_CONTAINER_NORMAL                0 
-#define ST1_CONTAINER_CORPSE                1 
+#define ST1_CONTAINER_NORMAL                0
+#define ST1_CONTAINER_CORPSE                1
 #define ST1_CONTAINER_DEAD_PL               2
 
-#define ST1_CONTAINER_NORMAL_player         64 
+#define ST1_CONTAINER_NORMAL_player         64
 #define ST1_CONTAINER_CORPSE_player         65
 
-#define ST1_CONTAINER_NORMAL_group          128 
+#define ST1_CONTAINER_NORMAL_group          128
 #define ST1_CONTAINER_CORPSE_group          129
 
-#define ST1_CONTAINER_NORMAL_clan           192 
+#define ST1_CONTAINER_NORMAL_clan           192
 #define ST1_CONTAINER_CORPSE_clan           193
 
 /* sub type for EXIT objects - if set, a teleport sound is played */
@@ -465,7 +465,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define ST1_CONN_SENSOR_AND         1 /* AND */
 #define ST1_CONN_SENSOR_OR          2 /* OR */
 #define ST1_CONN_SENSOR_XOR         3 /* XOR */
-                            
+
 /* END SUB TYPE 1 DEFINE */
 
 /* definitions for detailed pickup descriptions.
@@ -505,8 +505,8 @@ error - Your ANSI C compiler should be defining __STDC__;
 
 /* Instead of using arbitrary constants for indexing the
  * freearr, add these values.  <= SIZEOFFREE1 will get you
- * within 1 space.  <= SIZEOFFREE2 wll get you withing 
- * 2 spaces, and the entire array (<= SIZEOFFREE) is 
+ * within 1 space.  <= SIZEOFFREE2 wll get you withing
+ * 2 spaces, and the entire array (<= SIZEOFFREE) is
  * three spaces
  */
 #define SIZEOFFREE1 8
@@ -548,7 +548,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 
 #define TERRAIN_NOTHING         0
 #define TERRAIN_AIRBREATH       1   /* thats default - walk on earth */
-#define TERRAIN_WATERWALK       2   /* walk on water - deep water too */   
+#define TERRAIN_WATERWALK       2   /* walk on water - deep water too */
 #define TERRAIN_WATERBREATH     4   /* you can move underwater as on land */
 #define TERRAIN_FIREWALK        8   /* walk over lava or fire */
 #define TERRAIN_FIREBREATH      16  /* you can move in fire environment (fire elemental dimension, hell,..) */
@@ -560,7 +560,7 @@ error - Your ANSI C compiler should be defining __STDC__;
  * structure.
  *
  * Hopefully, since these offsets are integer constants set at run time,
- * the compiler will reduce the macros something as simple as the 
+ * the compiler will reduce the macros something as simple as the
  * old system was.
  *
  * Flags now have FLAG as the prefix.  This to be clearer, and also
@@ -573,7 +573,7 @@ error - Your ANSI C compiler should be defining __STDC__;
  * All functions should use the macros below.  In process of converting
  * to the new system, I find several files that did not use the previous
  * macros.
- * 
+ *
  * If any FLAG's are added, be sure to add them to the flag_links structure
  * in common/loader.c, if necessary.
  *
@@ -590,7 +590,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define QUERY_FLAG(xyz, p) \
     ((xyz)->flags[p/32] & (1U << (p % 32)))
 
-/* this is rarely used but needed for some flags, which are 
+/* this is rarely used but needed for some flags, which are
  * used for intern handling like INVISIBLE or WALK_OFF. Because
  * some core functions like remove_ob() use this, it will be better
  * we set this ONE time outside instead of every time in remove_ob():
@@ -620,7 +620,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 /* the flags */
 
 /* used in blocked() when we only want know about blocked by something */
-#define TERRAIN_ALL     0xffff  
+#define TERRAIN_ALL     0xffff
 
 /* NOTE: you MUST set the FLAG_xx to V_xxx array in loader.l too when
  * you change something here! Search for NUM_FLAGS in loader.l for more.
@@ -655,7 +655,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_FRIENDLY       15 /* Will help players */
 /*
                       *  REMOVED and BEEN_APPLIED are direct used from CAN_MERGE - change it too when
-                    * you move this flag! 
+                    * you move this flag!
                     */
 #define FLAG_REMOVED        16 /* Object is not in any map or invenory */
 #define FLAG_BEEN_APPLIED   17 /* The object has been applied */
@@ -718,7 +718,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 
 /* Start of values in flags[2] */
 #define FLAG_LIFESAVE       64 /* Saves a players' life once, then destr. */
-#define FLAG_IS_MAGICAL     65 /* item is magic - intern used. 
+#define FLAG_IS_MAGICAL     65 /* item is magic - intern used.
                                 * player use FLAG_KNOWN_MAGICAL
                                 */
 #define FLAG_ALIVE          66 /* Object can fight (or be fought) */
@@ -741,7 +741,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_VUL_SPHERE     81
 #define FLAG_PROOF_SPHERE   82
 #define FLAG_IS_MALE        83 /* gender flags. it effects only player & mobs */
-#define FLAG_IS_FEMALE      84 /* is not female nor male, it is a neuter */ 
+#define FLAG_IS_FEMALE      84 /* is not female nor male, it is a neuter */
 #define FLAG_APPLIED        85 /* Object is ready for use by living */
 #define FLAG_INV_LOCKED     86 /* Item will not be dropped from inventory */
 #define FLAG_IS_WOODED      87 /* Item is wooded terrain */
@@ -751,7 +751,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_READY_WEAPON   90 /* (Monster or Player) has a weapon readied */
 #define FLAG_NO_SKILL_IDENT 91 /* If set, item cannot be identified w/ a skill */
 #define FLAG_USE_DMG_INFO	92 /* used for asynchron dmg of AoE spells */
-#define FLAG_SEE_IN_DARK    93 /* if set ob not effected by darkness */ 
+#define FLAG_SEE_IN_DARK    93 /* if set ob not effected by darkness */
 #define FLAG_IS_CAULDRON    94 /* container can make alchemical stuff */
 #define FLAG_DUST           95 /* item is a 'powder', effects throwing */
 
@@ -797,7 +797,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_SPAWN_MOB          118 /* monster with this flag are created by spawn point
                                          * and have a spawn info object inside inventory
                                          */
-#define FLAG_NO_TELEPORT        119 /* objects with this flags will not be teleported 
+#define FLAG_NO_TELEPORT        119 /* objects with this flags will not be teleported
                                          * from teleporters. Except, they are in a inventory
                                          * of a teleporter object.
                                          */
@@ -929,7 +929,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define CIRCLE1 32 /* if the upper four bits of move_type / attack_movement */
 /* are set to this number, the monster will move in a    */
 /* circle until it is attacked, or the enemy field is    */
-/* set, this is good for non-aggressive monsters and NPC */ 
+/* set, this is good for non-aggressive monsters and NPC */
 #define CIRCLE2 48 /* same as above but a larger circle is used             */
 #define PACEH   64 /* The Monster will pace back and forth until attacked   */
 /* this is HORIZONTAL movement                           */

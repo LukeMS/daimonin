@@ -24,9 +24,9 @@
 */
 
 /*
- * This file implements all of the goo on the server side for handling 
- * clients.  It's got a bunch of global variables for keeping track of 
- * each of the clients. 
+ * This file implements all of the goo on the server side for handling
+ * clients.  It's got a bunch of global variables for keeping track of
+ * each of the clients.
  *
  * Note:  All functions that are used to process data from the client
  * have the prototype of (char *data, int datalen, int client_num).  This
@@ -83,7 +83,7 @@ void SetUp(char *buf, int len, NewSocket *ns)
 
     if (ns->setup)
     {
-        LOG(llevInfo, "double call of setup cmd from socket %s\n", ns->host); 
+        LOG(llevInfo, "double call of setup cmd from socket %s\n", ns->host);
         ns->status = Ns_Dead;
         return;
     }
@@ -377,7 +377,7 @@ void AddMeCmd(char *buf, int len, NewSocket *ns)
 void PlayerCmd(char *buf, int len, player *pl)
 {
     /* The following should never happen with a proper or honest client.
-     * Therefore, the error message doesn't have to be too clear - if 
+     * Therefore, the error message doesn't have to be too clear - if
      * someone is playing with a hacked/non working client, this gives them
      * an idea of the problem, but they deserve what they get
      */
@@ -452,7 +452,7 @@ void NewPlayerCmd(char *buf, int len, player *pl)
     command[len - 4] = '\0';
 
     /* The following should never happen with a proper or honest client.
-     * Therefore, the error message doesn't have to be too clear - if 
+     * Therefore, the error message doesn't have to be too clear - if
      * someone is playing with a hacked/non working client, this gives them
      * an idea of the problem, but they deserve what they get
      */
@@ -473,7 +473,7 @@ void NewPlayerCmd(char *buf, int len, player *pl)
 void ReplyCmd(char *buf, int len, player *pl)
 {
 	char                write_buf[MAX_BUF];
-	
+
     /* This is to synthesize how the data would be stored if it
      * was normally entered.  A bit of a hack, and should be cleaned up
      * once all the X11 code is removed from the server.
@@ -640,7 +640,7 @@ void RequestFileCmd(char *buf, int len, NewSocket *ns)
             ns->rf_anims = 1;
     }
 
-    LOG(llevDebug, "Client %s rf #%d\n", ns->host, id); 
+    LOG(llevDebug, "Client %s rf #%d\n", ns->host, id);
     send_srv_file(ns, id);
 }
 
@@ -648,7 +648,7 @@ void RequestFileCmd(char *buf, int len, NewSocket *ns)
 /* Client tells its its version.  If there is a mismatch, we close the
  * socket.  In real life, all we should care about is the client having
  * something older than the server.  If we assume the client will be
- * backwards compatible, having it be a later version should not be a 
+ * backwards compatible, having it be a later version should not be a
  * problem.
  */
 void VersionCmd(char *buf, int len, NewSocket *ns)
@@ -664,7 +664,7 @@ void VersionCmd(char *buf, int len, NewSocket *ns)
         return;
     }
 
-    ns->version = 1; 
+    ns->version = 1;
     ns->cs_version = atoi(buf);
     ns->sc_version = ns->cs_version;
     if (VERSION_CS != ns->cs_version)
@@ -714,14 +714,14 @@ void SetSound(char *buf, int len, NewSocket *ns)
 void MapNewmapCmd(player *pl)
 {
     /* we are really on a new map. tell it the client */
-    send_mapstats_cmd(pl->ob, pl->ob->map); 
+    send_mapstats_cmd(pl->ob, pl->ob->map);
     memset(&pl->socket.lastmap, 0, sizeof(struct Map));
 }
 
 
 
 /* Moves and object (typically, container to inventory
- * move <to> <tag> <nrof> 
+ * move <to> <tag> <nrof>
  */
 void MoveCmd(char *buf, int len, player *pl)
 {
@@ -876,10 +876,10 @@ void esrv_update_stats(player *pl)
     SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_STATS);
 
     /* small trick: we want send the hp bar of our target to the player.
-     * We want send a char with x% the target has of full hp. 
+     * We want send a char with x% the target has of full hp.
      * To avoid EVERY time the % calculation, we store the real HP
      * - if it has changed, we calc the % and use them normal.
-     * this simple compare will not deal in speed but we safe 
+     * this simple compare will not deal in speed but we safe
      * some unneeded calculations.
      */
     if (pl->target_object != pl->ob) /* never send our own status - client will sort this out */
@@ -901,7 +901,7 @@ void esrv_update_stats(player *pl)
     AddIfFloat(pl->last_speed, pl->ob->speed, CS_STAT_SPEED);
     AddIfInt(pl->last_weight_limit, weight_limit[pl->ob->stats.Str], CS_STAT_WEIGHT_LIM);
     AddIfChar(pl->last_weapon_sp, pl->weapon_sp, CS_STAT_WEAP_SP);
-    
+
     if (pl->ob != NULL)
     {
         /* these will update too when we are in a group */
@@ -920,7 +920,7 @@ void esrv_update_stats(player *pl)
         AddIfChar(pl->last_stats.Con, pl->ob->stats.Con, CS_STAT_CON);
         AddIfChar(pl->last_stats.Cha, pl->ob->stats.Cha, CS_STAT_CHA);
 
-        AddIfInt(pl->last_stats.exp, pl->ob->stats.exp, CS_STAT_EXP);   
+        AddIfInt(pl->last_stats.exp, pl->ob->stats.exp, CS_STAT_EXP);
         AddIfShort(pl->last_stats.wc, pl->ob->stats.wc, CS_STAT_WC);
         AddIfShort(pl->last_stats.ac, pl->ob->stats.ac, CS_STAT_AC);
         AddIfShort(pl->last_stats.dam, pl->client_dam, CS_STAT_DAM);
@@ -958,7 +958,7 @@ void esrv_update_stats(player *pl)
     if (pl->socket.ext_title_flag)
     {
         generate_ext_title(pl);
-        SockList_AddChar(&sl, (char) CS_STAT_EXT_TITLE); 
+        SockList_AddChar(&sl, (char) CS_STAT_EXT_TITLE);
         i = (int) strlen(pl->ext_title);
         SockList_AddChar(&sl, (char) i);
         strcpy((char *) sl.buf + sl.len, pl->ext_title);
@@ -987,7 +987,7 @@ void esrv_new_player(player *pl, uint32 weight)
     SockList_AddChar(&global_sl, (char)(len=strlen(pl->ob->name)));
     strcpy((char*)global_sl.buf+global_sl.len, pl->ob->name);
     global_sl.len += len;
-       
+
     Send_With_Handling(&pl->socket, &global_sl);
 
     SET_FLAG(pl->ob, FLAG_CLIENT_SENT);
@@ -999,7 +999,7 @@ void esrv_new_player(player *pl, uint32 weight)
  * how much we are sending - on the other hand, this should only happen
  * when the player logs in and picks stuff up.
  */
-/* This function is not used - it was disabled with the client 
+/* This function is not used - it was disabled with the client
  * bmpa & anim cache patch (beta 2). This code is still here -
  * perhaps we use it later again - MT
  */
@@ -1015,8 +1015,8 @@ void esrv_send_animation(NewSocket *ns, short anim_num)
        sl.buf = malloc(MAXSOCKBUF);
     SOCKET_SET_BINARY_CMD(&sl, BINARY_CMD_ANIM);
        SockList_AddShort(&sl, anim_num);
-       SockList_AddChar(&sl, 0);  
-       SockList_AddChar(&sl, animations[anim_num].facings);  
+       SockList_AddChar(&sl, 0);
+       SockList_AddChar(&sl, animations[anim_num].facings);
        for (i=0; i<animations[anim_num].num_animations; i++)
     {
         SockList_AddShort(&sl, animations[anim_num].faces[i]);
@@ -1094,7 +1094,7 @@ void draw_client_map2(object *pl)
     int             x, y, ax, ay, d, nx, ny, probe_tmp;
     int             x_start, dm_light = 0;
     int             dark, flag_tmp, special_vision;
-    int             quick_pos_1, quick_pos_2, quick_pos_3; 
+    int             quick_pos_1, quick_pos_2, quick_pos_3;
     int             inv_flag    = QUERY_FLAG(pl, FLAG_SEE_INVISIBLE) ? 0 : 1;
     uint16          face_num0, face_num1, face_num2, face_num3, face_num1m, face_num2m, face_num3m;
     uint16          mask;
@@ -1134,10 +1134,10 @@ void draw_client_map2(object *pl)
     SockList_AddChar(&sl, (char) pl->y);
     /* x,y are the real map locations.  ax, ay are viewport relative
      * locations.
-     */    
+     */
 
     /* i don't trust all compilers to optimize it in this BIG loop */
-    x_start = (pl->x + (CONTR(pl)->socket.mapx + 1) / 2) - 1; 
+    x_start = (pl->x + (CONTR(pl)->socket.mapx + 1) / 2) - 1;
 
     for (ay = CONTR(pl)->socket.mapy - 1,y = (pl->y + (CONTR(pl)->socket.mapy + 1) / 2) - 1;
          y >= pl->y - CONTR(pl)->socket.mapy_2;
@@ -1197,7 +1197,7 @@ void draw_client_map2(object *pl)
                 update_position(m, nx, ny);
             }
 
-            /* lets check for changed blocksview - but only tile which have 
+            /* lets check for changed blocksview - but only tile which have
                  * an impact to our LOS.
                  */
             if (!(d & BLOCKED_LOS_IGNORE)) /* border tile, we can ignore every LOS change */
@@ -1247,7 +1247,7 @@ void draw_client_map2(object *pl)
                         if (CONTR(pl)->socket.lastmap.cells[ax][ay].count != -1)
                         {
 #ifdef DEBUG_CORE
-                            tile_count++;   
+                            tile_count++;
 #endif
                             SockList_AddShort(&sl, mask);
                             map_clearcell(&CONTR(pl)->socket.lastmap.cells[ax][ay]);/* sets count to -1 too */
@@ -1315,7 +1315,7 @@ void draw_client_map2(object *pl)
 
                 if (tmp) /* now we have a valid object in this tile - NULL = there is nothing here */
                 {
-                    flag_tmp = GET_CLIENT_FLAGS(tmp); 
+                    flag_tmp = GET_CLIENT_FLAGS(tmp);
                     face = tmp->face;
                     tmph = tmp;
                     /* these are the red damage numbers, the client shows when we hit something */
@@ -1353,7 +1353,7 @@ void draw_client_map2(object *pl)
                     }
                 }
                 else /* ok, its NULL object - but we need to update perhaps to clear something we had
-                              * submited to the client before 
+                              * submited to the client before
                               */
                 {
                     face = NULL;
@@ -1376,7 +1376,7 @@ void draw_client_map2(object *pl)
                         if (tmph->stats.hp)
                             probe_tmp = (int) ((double) tmph->stats.hp / ((double) tmph->stats.maxhp / 100.0));
                         /* we don't carew about 0. If the client gots probe flag and value 0, he change it
-                           to one... if some is here, it is alive, so what? 
+                           to one... if some is here, it is alive, so what?
                          */
                     }
                     /* face_num1 is original, face_num1m is a copy */
@@ -1427,7 +1427,7 @@ void draw_client_map2(object *pl)
                             */
                     if (pl->x == nx && pl->y == ny && tmp->layer == 6)
                         tmp = pl;
-                    flag_tmp = GET_CLIENT_FLAGS(tmp); 
+                    flag_tmp = GET_CLIENT_FLAGS(tmp);
                     tmph = tmp;
                     face = tmp->face;
 
@@ -1480,7 +1480,7 @@ void draw_client_map2(object *pl)
                         if (tmph->stats.hp)
                             probe_tmp = (int) ((double) tmph->stats.hp / ((double) tmph->stats.maxhp / 100.0));
                         /* we don't carew about 0. If the client gots probe flag and value 0, he change it
-                                    to one... if some is here, it is alive, so what? 
+                                    to one... if some is here, it is alive, so what?
                                      */
                     }
                     face_num2m = face_num2 = face->number;
@@ -1521,7 +1521,7 @@ void draw_client_map2(object *pl)
                 {
                     if (pl->x == nx && pl->y == ny && tmp->layer == 6)
                         tmp = pl;
-                    flag_tmp = GET_CLIENT_FLAGS(tmp); 
+                    flag_tmp = GET_CLIENT_FLAGS(tmp);
                     face = tmp->face;
                     tmph = tmp;
                     if ((dmg_layer0 = tmp->last_damage) != -1 && tmp->damage_round_tag == ROUND_TAG)
@@ -1573,7 +1573,7 @@ void draw_client_map2(object *pl)
                         if (tmph->stats.hp)
                             probe_tmp = (int) ((double) tmph->stats.hp / ((double) tmph->stats.maxhp / (double) 100.0));
                         /* we don't carew about 0. If the client gots probe flag and value 0, he change it
-                                    to one... if some is here, it is alive, so what? 
+                                    to one... if some is here, it is alive, so what?
                                      */
                     }
                     face_num3m = face_num3 = face->number;
@@ -1611,7 +1611,7 @@ void draw_client_map2(object *pl)
                     dmg_flag |= 0x08; /* position (kill) damage */
 
                 if (pname_flag)
-                    ext_flag |= 0x80; /* we have one or more player names in this map node*/ 
+                    ext_flag |= 0x80; /* we have one or more player names in this map node*/
                 if (dmg_flag)
                     ext_flag |= 0x40; /* we have a dmg animation */
 

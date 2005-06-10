@@ -1,5 +1,5 @@
 Daimonin CHANGES
-08.08.04	- every range weapons pieces has not a delay 
+08.08.04	- every range weapons pieces has not a delay
                   value and range value shown in the info.
                   Its possible to get a quick bow with quick arrows
                   and shot faster as with other setups.
@@ -58,9 +58,9 @@ Daimonin CHANGES
 17.05.04	- added automatically /shutdown with counting.
                 - fixed a crash bug in poison_player()
                 - fixed /reply message output
-                - fixed dm_stealth flag usage in /tell & /reply 
+                - fixed dm_stealth flag usage in /tell & /reply
                 - removed some debug messages related to waypoints
-                - remove "BUG: player is on saved map" message 
+                - remove "BUG: player is on saved map" message
                 - added "xx leaves the game" out put to DMs
                 - removed client color key tags in player chat strings
                 - changed attack/resist/protect number description from
@@ -68,7 +68,7 @@ Daimonin CHANGES
                 - fixed rand_drop object & function. Random drop value
                   now in weight_limit (container) and accurate calculated.
                 - added 2 maps (old outpost 4+5)
- 
+
 14.05.04	- fixed artifact list -> xxx of less fire to lesser fire
                 - fixed potion value in artifact list (alot to high)
                 - fixed shop. Selling of items with value will get 1 copper

@@ -132,7 +132,7 @@ void say_clickedKeyword(int actWin, int mouseX, int mouseY)
     }
     cmdBuf[pos++] = '\0';
 
-    /* Grunt: fix for clickable keywords that 
+    /* Grunt: fix for clickable keywords that
      * can be commands too. Commands will
      * get executed instead of /say'ed
      */
@@ -146,7 +146,7 @@ void say_clickedKeyword(int actWin, int mouseX, int mouseY)
     }
     else
         send_command(cmdBuf, -1, SC_NORMAL);
-} 
+}
 
 /******************************************************************
  clear the screen of a text-window.
@@ -158,7 +158,7 @@ void textwin_init()
     for (i = TW_MIX; i < TW_SUM; i++)
     {
         txtwin[i].bot_drawLine = 0;
-        txtwin[i].act_bufsize = 0;    
+        txtwin[i].act_bufsize = 0;
         txtwin[i].scroll = 0;
         txtwin[i].size = 9;
     }
@@ -468,7 +468,7 @@ void textwin_show(int x, int y)
         tmp = txtwin[TW_CHAT].size * 10 + 12;
         show_window(TW_MSG, x, y + tmp);
         box.x = x;
-        box.h = 1;      
+        box.h = 1;
         box.y = y + tmp + 1;
         if ((SDL_GetModState() == KMOD_RALT || SDL_GetModState() == KMOD_LALT)
          && my > txtwin[TW_CHAT].y
@@ -605,7 +605,7 @@ int textwin_move_event(int actWin, SDL_Event event)
         actWin = textwin_flags & TW_ACTWIN;
         if (actWin == TW_CHAT)
         {
-            txtwin[actWin].size = (570 - event.motion.y) / 10 - txtwin[TW_MSG].size; 
+            txtwin[actWin].size = (570 - event.motion.y) / 10 - txtwin[TW_MSG].size;
             if (txtwin[TW_CHAT].size < 3)
                 txtwin[TW_CHAT].size = 3;
         }

@@ -22,7 +22,7 @@ Enter the sewer hole next Cashim and search the cellar for the ant." >
 
 -- status of guild/quest: 1= we are member, 2= no guild&quest, 3= old member, 4=we can join, 5=quest given but unsolved
 function gstatus()
-	if guild_force.slaying == guild_tag then 
+	if guild_force.slaying == guild_tag then
 		return 1
 	else
 		-- check we are old member
@@ -56,7 +56,7 @@ function gstatus()
 end
 
 function status_msg(sta)
-	if sta == 1 then 
+	if sta == 1 then
 		s_msg = [[Good to see you back, Mercenary!
 
 If you look for a job or a mission,
@@ -72,7 +72,7 @@ We would be honored to have you back in our ^guild^ ranks.]]
 		s_msg =[[You are new here around, right?
 
 If you look for a job and a guild...
-Then you are right here! 
+Then you are right here!
 
 I can tell you some about our ^guild^ if you like.]]
 	elseif sta == 4 then
@@ -93,7 +93,7 @@ search for it.
 We would be honored to have you in our ^guild^ ranks.]]
 	end
 	return s_msg
-end		
+end
 
 function topicDefault()
 	local status = gstatus()
@@ -142,7 +142,7 @@ end
 tl = TopicList()
 tl:SetDefault(topicDefault)
 
-tl:AddTopics("join", function() 
+tl:AddTopics("join", function()
 	local status = gstatus()
 	local j_msg =""
 	if status == 2 then
@@ -159,21 +159,21 @@ Remember what i told you.
 
 An ant from the old cellar has stolen the helm.
 
-Bring me the helm and you are in. 
+Bring me the helm and you are in.
 Just enter the sewer hole next to me." >]])
 	else
 		topicDefault()
 	end
 end
-) 
+)
 
-tl:AddTopics("take", function() 
+tl:AddTopics("take", function()
 	activator:Sound(0, 0, 2, 0)
 	activator:AddQuest(quest_id, 0, 0, quest_body)
 	activator:Write("You take the quest 'Return Cashim's Helm'.", game.COLOR_NAVY)
 	activator:Interface(-1, "")
 end
-) 
+)
 
 tl:AddTopics("member", function()
 	local status = gstatus()
@@ -188,39 +188,39 @@ tl:AddTopics("member", function()
             quest_item:DecreaseNrOf()
 			local rew = activator:CreateObjectInside("helm_leather", 1,1)
 			rew.name = quest_item_name
-			activator:Write("You got Cashim's leather helm.", game.COLOR_WHITE) 
+			activator:Write("You got Cashim's leather helm.", game.COLOR_WHITE)
 		end
 		activator:AddMoney(20,0,0,0)
 		trigger:SetQuestStatus(-1)
-		activator:Write("You got 20 copper.", game.COLOR_WHITE) 
+		activator:Write("You got 20 copper.", game.COLOR_WHITE)
 		activator:Write("Your guild change to Mercenary of Thraal.", game.COLOR_NAVY)
 		activator:Sound(0, 0, 0, 0)
 	elseif status == 3 then
 		activator:SetGuildForce(guild_rank)  -- Our active guild, give us our profession title
 		guild_force.slaying = guild_tag -- thats the real tag to the guild_info
-		activator:Write("You rejoined the Mercenary of Thraal.", game.COLOR_WHITE) 
-		activator:Write("Your guild change to Mercenary of Thraal.", game.COLOR_NAVY) 
+		activator:Write("You rejoined the Mercenary of Thraal.", game.COLOR_WHITE)
+		activator:Write("Your guild change to Mercenary of Thraal.", game.COLOR_NAVY)
 		activator:Sound(0, 0, 0, 0)
 	end
 	topicDefault()
 end
-) 
+)
 
-tl:AddTopics("guild", function() 
+tl:AddTopics("guild", function()
 	activator:Interface(1, [[<h f="ranger.151"><m t="The Mercenary Guild" b=
 "Explain about the guild. more text.
 keyword: ^Jahrlen^ and ^troops^"><a t="Next" c="/talk hi">]])
 end
-) 
+)
 
-tl:AddTopics("jahrlen", function() 
+tl:AddTopics("jahrlen", function()
 	activator:Interface(1, [[<h f="ranger.151"><m t="Jahrlen, the Chronomancer" b=
 "Jahrlen is our guild mage.
 
 Well, normally we don't have a guild mage.
 But we are at war here and he was assigned to us.
 
-In fact, he is a high level chronomancer 
+In fact, he is a high level chronomancer
 and we are honored he helps us.
 
 He is in our guild rooms down the stairs there!
@@ -228,9 +228,9 @@ Talk to him when you meet him.
 
 He often has tasks and quests for us mercenaries."><a t="Next" c="/talk hi">]])
 end
-) 
+)
 
-tl:AddTopics("troops", function() 
+tl:AddTopics("troops", function()
 	activator:Interface(1, [[<h f="ranger.151"><m t="The Thraal Army" b=
 "We, as part of the the Thraal army corps, are invading
 these abandomed areas after the defeat of Moroch.
@@ -241,14 +241,14 @@ the portal that we are still in the galactic main sphere.
 But it seems to me that these lands have many wormholes
 to other places...
 
-Perhaps the long time under Morochs influence has weakened 
-the borders between the planes. 
+Perhaps the long time under Morochs influence has weakened
+the borders between the planes.
 
 You should ask ^Jahrlen^ about it."><a t="Next" c="/talk hi">]])
 end
-) 
+)
 
-tl:AddTopics("leave", function() 
+tl:AddTopics("leave", function()
 	if guild_force.slaying ~= guild_tag then
 		me:SayTo(activator, "\nYou are not a member here...")
 	else

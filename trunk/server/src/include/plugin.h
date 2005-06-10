@@ -151,7 +151,7 @@
 /* Gecko 2005-05-14: This old hook system is being phased out, use the
  * plugin_hooklist struct below instead */
 #define HOOK_NONE               0
-      
+
 #define HOOK_SENDCUSTOMCOMMAND   1
 #define HOOK_MAPDELETE           2
 #define HOOK_CREATEOBJECT        3
@@ -198,7 +198,7 @@
 #define HOOK_MAPSAVE             38
 
 #define NR_OF_HOOKS              39
-  
+
 
 /*****************************************************************************/
 /* CFParm is the data type used to pass informations between the server and  */
@@ -294,7 +294,7 @@ struct plugin_hooklist
     void (*play_sound_player_only)(player *pl, int soundnum, int soundtype, int x, int y);
 	void (*add_money_to_player)(object *pl, int c, int s, int g, int m);
 	void (*drop_ob_inv)(object *ob);
-	object * (*decrease_ob_nr)(object *op, int i);		
+	object * (*decrease_ob_nr)(object *op, int i);
 	void (*add_quest_containers)(object *op);
 	void (*add_quest_trigger)(object *who, object *trigger);
 	void (*set_quest_status)(struct obj *trigger, int q_status, int q_type);
@@ -316,7 +316,7 @@ struct plugin_hooklist
 	int (*query_money_type)(object *op, int value);
 	sint64 (*remove_money_type)(object *who, object *op, sint64 value, sint64 amount);
 	void (*insert_money_in_player)(object *pl, object *money, uint32 nrof);
-	
+
 	/* Global variables */
     Animations **animations;
     New_Face **new_faces;

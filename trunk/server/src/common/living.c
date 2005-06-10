@@ -539,7 +539,7 @@ int change_abil(object *op, object *tmp)
     }
 
     /* becoming UNDEAD... a special treatment for this flag. Only those not
-     * originally undead may change their status */ 
+     * originally undead may change their status */
     if (!QUERY_FLAG(&op->arch->clone, FLAG_UNDEAD))
         if (QUERY_FLAG(op, FLAG_UNDEAD) != QUERY_FLAG(&refop, FLAG_UNDEAD))
         {
@@ -551,9 +551,9 @@ int change_abil(object *op, object *tmp)
             }
             else
             {
-                FREE_AND_CLEAR_HASH(op->race); 
+                FREE_AND_CLEAR_HASH(op->race);
                 if (op->arch->clone.race)
-                    FREE_AND_COPY_HASH(op->race, op->arch->clone.race);  
+                    FREE_AND_COPY_HASH(op->race, op->arch->clone.race);
                 new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "Your lifeforce returns!");
             }
         }
@@ -636,7 +636,7 @@ int change_abil(object *op, object *tmp)
         {
             new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You see less well in the dark.");
         }
-    }  
+    }
 
     if (QUERY_FLAG(op, FLAG_XRAYS) != QUERY_FLAG(&refop, FLAG_XRAYS))
     {
@@ -688,7 +688,7 @@ int change_abil(object *op, object *tmp)
             new_draw_info(NDI_UNIQUE | NDI_WHITE, 0, op, "You feel closer to your deity!");
         else
             new_draw_info(NDI_UNIQUE | NDI_GREY, 0, op, "You suddenly feel less holy.");
-    } 
+    }
     if (tmp->stats.food && op->type == PLAYER && tmp->type != POISONING && tmp->type != POTION_EFFECT)
     {
         success = 1;
@@ -874,7 +874,7 @@ void fix_player(object *op)
     object             *tmp, *tmp_ptr, *skill_weapon = NULL;
     player             *pl;
     float               f, max = 9, added_speed = 0, bonus_speed = 0, speed_reduce_from_disease = 1, tmp_con, reg_sec;
-    
+
 
     if (QUERY_FLAG(op, FLAG_NO_FIX_PLAYER))
     {
@@ -916,11 +916,11 @@ void fix_player(object *op)
     pl->gen_grace = 1;
     pl->gen_sp_armour = 0;
     pl->set_skill_weapon = NO_SKILL_READY;  /* the used skills for fast access */
-    pl->set_skill_archery = NO_SKILL_READY; 
+    pl->set_skill_archery = NO_SKILL_READY;
 
     pl->encumbrance = 0;
 
-    /* for players, we adjust with the values */    
+    /* for players, we adjust with the values */
     ac = op->arch->clone.stats.ac;
     wc = op->arch->clone.stats.wc;
     op->stats.wc = wc;
@@ -958,7 +958,7 @@ void fix_player(object *op)
     if (op->chosen_skill && !op->chosen_skill->last_eat && op->chosen_skill->exp_obj)
         op->chosen_skill->level = op->chosen_skill->exp_obj->level;
 
-    FREE_AND_CLEAR_HASH(op->slaying); 
+    FREE_AND_CLEAR_HASH(op->slaying);
 
     /* HOTFIX: we parted refl_xxx from can_refl_xxx */
     CLEAR_FLAG(op, FLAG_REFL_MISSILE);
@@ -997,14 +997,14 @@ void fix_player(object *op)
     if (!QUERY_FLAG(&op->arch->clone, FLAG_SEE_IN_DARK))
         CLEAR_FLAG(op, FLAG_SEE_IN_DARK);
 
-    memset(&protect_boni, 0, sizeof(protect_boni));  
-    memset(&protect_mali, 0, sizeof(protect_mali));  
-    memset(&potion_resist_boni, 0, sizeof(potion_resist_boni));  
-    memset(&potion_resist_mali, 0, sizeof(potion_resist_mali));  
-    memset(&potion_attack, 0, sizeof(potion_attack));  
+    memset(&protect_boni, 0, sizeof(protect_boni));
+    memset(&protect_mali, 0, sizeof(protect_mali));
+    memset(&potion_resist_boni, 0, sizeof(potion_resist_boni));
+    memset(&potion_resist_mali, 0, sizeof(potion_resist_mali));
+    memset(&potion_attack, 0, sizeof(potion_attack));
 
     /* initializing player arrays from the values in player archetype clone:  */
-    memset(&pl->equipment, 0, sizeof(pl->equipment));  
+    memset(&pl->equipment, 0, sizeof(pl->equipment));
     memcpy(&op->protection, &op->arch->clone.protection, sizeof(op->protection));
     memcpy(&op->attack, &op->arch->clone.attack, sizeof(op->attack));
     memcpy(&op->resist, &op->arch->clone.resist, sizeof(op->resist));
@@ -1021,7 +1021,7 @@ void fix_player(object *op)
             resists_boni[i] = 0;
         }
     }
-    for (i = 0; i < NROFSKILLGROUPS; i++)        
+    for (i = 0; i < NROFSKILLGROUPS; i++)
         pl->highest_skill[i]=NULL;
 
     /* ok, now we browse the inventory... there is not only our equipment - there
@@ -1030,7 +1030,7 @@ void fix_player(object *op)
     for (tmp = op->inv; tmp != NULL; tmp = tmp_ptr)
     {
 		tmp_ptr = tmp->below;
-        /* 
+        /*
              * add here more types we can and must skip.
              */
         if (tmp->type == SCROLL
@@ -1043,7 +1043,7 @@ void fix_player(object *op)
 			 || tmp->type == ROD
 			 || tmp->type == HORN)
             continue;
-		
+
 		if(tmp->type == TYPE_QUEST_CONTAINER)
 		{
 			/* one drop container */
@@ -1074,7 +1074,7 @@ void fix_player(object *op)
 			}
 			else /* this really should not happens... */
 			{
-				LOG(llevBug,"BUG: fix_player(): found illegal quest container (st: %d) in player %s\n", 
+				LOG(llevBug,"BUG: fix_player(): found illegal quest container (st: %d) in player %s\n",
 					tmp->sub_type1, query_name(op));
 				/* we *can* remove it - but lets keep it for further investigations for now */
 				/*remove_ob(tmp);*/
@@ -1083,7 +1083,7 @@ void fix_player(object *op)
 		}
 
         /* this is needed, because our applied light can be overruled by a light giving
-             * object like holy glowing aura force or something 
+             * object like holy glowing aura force or something
              */
         if (tmp->glow_radius > light)
         {
@@ -1122,9 +1122,9 @@ void fix_player(object *op)
                   break;
 
                   /* the new weapon skill system is more complex
-                     * when new applied, set_skill_weapon is set. 
+                     * when new applied, set_skill_weapon is set.
                      * But we took care to safely set it here.
-                     */ 
+                     */
                 case WEAPON:
                   pl->equipment[PLAYER_EQUIP_WEAPON1] = tmp;
                   pl->selected_weapon = tmp; /* thats our weapon */
@@ -1205,7 +1205,7 @@ void fix_player(object *op)
                   if (ARMOUR_SPEED(tmp) && (float) ARMOUR_SPEED(tmp) / 10.0f < max)
                       max = ARMOUR_SPEED(tmp) / 10.0f;
 
-                  fix_player_no_armour: /* jump in for non armour like rings, ... */                                        
+                  fix_player_no_armour: /* jump in for non armour like rings, ... */
                   /* i must control this - at last food has for used_up forces
                              * a differnet meaning
                              * add some of this below when used from other applied objects too!
@@ -1243,8 +1243,8 @@ void fix_player(object *op)
                   else if (tmp->sub_type1 == RANGE_WEAP_XBOWS)
                       pl->set_skill_archery = SK_XBOW_WEAP;
                   else
-                      pl->set_skill_archery = SK_SLING_WEAP;          
-                  break; 
+                      pl->set_skill_archery = SK_SLING_WEAP;
+                  break;
 
                   /* more exotic stuff! */
 
@@ -1263,7 +1263,7 @@ void fix_player(object *op)
                       else if (tmp->resist[i] < potion_resist_mali[i])
                           potion_resist_mali[i] = tmp->resist[i];
 
-                      /* collect highest attack! 
+                      /* collect highest attack!
                                      * Remember: no attack mali - this is a unsigned value
                                      */
                       if (tmp->attack[i] > potion_attack[i])
@@ -1506,7 +1506,7 @@ void fix_player(object *op)
      * If there is an uncursed potion in effect, granting more protection
      * than that, we take: 'total resistance = resistance from potion'.
      * If there is a cursed (and no uncursed) potion in effect, we take
-     * 'total resistance = vulnerability from cursed potion'. 
+     * 'total resistance = vulnerability from cursed potion'.
      */
 
     /* now we add in all our values... we add in our potions effects as well as
@@ -1539,7 +1539,7 @@ void fix_player(object *op)
         op->resist[i] = resists_boni[i] - resists_mali[i];
     }
 
-    /* add protection boni/mali. 
+    /* add protection boni/mali.
      * ensure that protection is between 0 - 100.
      */
     for (i = 0; i < NROFPROTECTIONS; i++)
@@ -1572,7 +1572,7 @@ void fix_player(object *op)
     /* we do now this: we have a weight_limit x. until we don't carry more
      * as Y% of x, we are not encumbered. The rest of 100% - Y% (lets say 100% - 66% = 34%)
      * is now our value from 1% encumbrance to 99% encumb. - this encum% will be removed from
-     * our current speed. The advantage is we use only ONE weight value and we can direct 
+     * our current speed. The advantage is we use only ONE weight value and we can direct
      * calculate from weight limit to speed limit.
      */
 
@@ -1775,7 +1775,7 @@ void fix_player(object *op)
 
     CONTR(op)->base_sp_reg = base_reg; /* thats the real sp reg count in ticks */
 
-    reg_sec = (pticks_second / (float) base_reg) * (float) CONTR(op)->reg_sp_num;    
+    reg_sec = (pticks_second / (float) base_reg) * (float) CONTR(op)->reg_sp_num;
     if (reg_sec > 100)
         reg_sec = 99.9f;
     else if (reg_sec && reg_sec < 0.1)
@@ -1810,8 +1810,8 @@ void fix_player(object *op)
     CONTR(op)->gen_client_grace = (uint16) (reg_sec * 10.0f);
 
     /*LOG(-1,"PLAYER ADJUST: %s -> hp(%d %d %d %d) sp(%d %d %d %d) gr(%d %d %d %d)\n",op->name,
-        op->stats.hp,op->stats.maxhp,op->arch->clone.stats.maxhp,op->stats.maxhp_adj, 
-        op->stats.sp,op->stats.maxsp,op->arch->clone.stats.maxsp,op->stats.maxsp_adj, 
+        op->stats.hp,op->stats.maxhp,op->arch->clone.stats.maxhp,op->stats.maxhp_adj,
+        op->stats.sp,op->stats.maxsp,op->arch->clone.stats.maxsp,op->stats.maxsp_adj,
         op->stats.grace,op->stats.maxgrace,op->arch->clone.stats.maxgrace,op->stats.maxgrace_adj);
     */
     if (QUERY_FLAG(op, FLAG_IS_INVISIBLE))
@@ -1958,8 +1958,8 @@ void fix_monster(object *op)
 
     base = insert_base_info_object(op); /* will insert or/and return base info */
 
-    CLEAR_FLAG(op, FLAG_READY_BOW);	
-    CLEAR_FLAG(op, FLAG_READY_SPELL);	
+    CLEAR_FLAG(op, FLAG_READY_BOW);
+    CLEAR_FLAG(op, FLAG_READY_SPELL);
 	for (tmp = op->inv; tmp; tmp = tmp->below)
 	{
 		if (tmp->type == BOW && !bow  && tmp->sub_type1 == 128)
@@ -1969,14 +1969,14 @@ void fix_monster(object *op)
 			SET_FLAG(tmp, FLAG_APPLIED);
 		}
 		else if (tmp->type == ABILITY)
-			SET_FLAG(op, FLAG_READY_SPELL);			
+			SET_FLAG(op, FLAG_READY_SPELL);
     }
 
 	/* assign amun to our ability bow - and put them inside the inventory of it
 	 * one time a bit more work here but then fast access to amun for range firing
 	 * mobs.
 	 */
-	if(bow) 
+	if(bow)
 	{
 		object *tmp2;
 
@@ -1989,7 +1989,7 @@ void fix_monster(object *op)
 			}
 			tmp2=tmp->below;
 		}
-			
+
 	}
 
     /* pre adjust */
@@ -2022,13 +2022,13 @@ void fix_monster(object *op)
     /* + level/5 to catch up the equipment improvements of
      * the players in armour items.
      */
-    op->stats.wc = base->stats.wc + op->level + (op->level / 4);  
+    op->stats.wc = base->stats.wc + op->level + (op->level / 4);
     op->stats.dam = base->stats.dam;
 
     if (base->stats.wc_range)
         op->stats.wc_range = base->stats.wc_range;
     else
-        op->stats.wc_range = 20; /* default value if not set in arch */ 
+        op->stats.wc_range = 20; /* default value if not set in arch */
 
     /* post adjust */
     if ((tmp_add = lev_damage[op->level / 3] - 0.75f) < 0)
@@ -2042,8 +2042,8 @@ void fix_monster(object *op)
     set_mobile_speed(op, 0);
 }
 
-/* insert and initialize base info object in object op 
- * Return: ptr to inserted base_info 
+/* insert and initialize base info object in object op
+ * Return: ptr to inserted base_info
  */
 object * insert_base_info_object(object *op)
 {
@@ -2063,7 +2063,7 @@ object * insert_base_info_object(object *op)
 
     tmp = get_object();
     tmp->arch = op->arch;
-    /* we don't need to trigger the 
+    /* we don't need to trigger the
      * treasurelist link/unlink stuff here.
      * IF we ever need the original treasurelist
      * in the baseinfo, just removes this lines,
@@ -2101,7 +2101,7 @@ object * insert_base_info_object(object *op)
 }
 
 /* find base_info in *op
- * Return: ptr to inserted base_info 
+ * Return: ptr to inserted base_info
  */
 object * find_base_info_object(object *op)
 {
