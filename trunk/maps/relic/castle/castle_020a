@@ -2656,11 +2656,13 @@ arch floor_sblack2
 x 23
 y 7
 end
-arch guard
-name Jail Guard Sahrel
-level 25
+arch spawn_point
 x 23
 y 7
+arch guard
+name Jail Guard Sahrel
+type 83
+level 25
 arch waypoint
 name wp_start
 title wp2
@@ -2756,6 +2758,7 @@ move_towards_waypoint
 actions:
 melee_attack_enemy
 endmsg
+end
 end
 end
 arch floor_sblack2

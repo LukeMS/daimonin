@@ -162,15 +162,18 @@ arch floor_wood2_l2
 x 1
 y 7
 end
-arch monk
-name Marlin, the apartment keeper
-level 45
+arch spawn_point
 x 1
 y 7
+arch monk
+name Marlin, the apartment keeper
+type 83
+level 45
 arch event_obj
 name lua
 race /relic/castle/scripts/StonehavenHouseSeller.lua
 sub_type 6
+end
 end
 end
 arch floor_wood2_l2

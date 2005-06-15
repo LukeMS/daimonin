@@ -1532,15 +1532,18 @@ no_cleric 1
 x 6
 y 6
 end
-arch archer
-name Yordin
-level 99
+arch spawn_point
 x 6
 y 6
+arch archer
+name Yordin
+type 83
+level 99
 arch event_obj
 name lua
 race /stoneglow/smith.lua
 sub_type 6
+end
 end
 end
 arch floor_wood2_l2
@@ -1609,10 +1612,13 @@ no_cleric 1
 x 6
 y 15
 end
-arch smith
-name Lathair
+arch spawn_point
 x 6
 y 15
+arch smith
+name Lathair
+type 83
+end
 end
 arch floor_wood2_l2
 no_magic 1
@@ -1978,6 +1984,15 @@ end
 arch grassd_2
 x 8
 y 19
+end
+arch spawn_point
+x 8
+y 19
+arch guard
+name Castle Guard
+type 83
+level 50
+end
 end
 arch floor_grit2
 x 8
@@ -2992,6 +3007,15 @@ arch grassd_5
 x 14
 y 19
 end
+arch spawn_point
+x 14
+y 19
+arch guard
+name Castle Guard
+type 83
+level 50
+end
+end
 arch floor_grit2
 x 14
 y 20
@@ -3070,17 +3094,20 @@ arch carpet1
 x 15
 y 7
 end
+arch spawn_point
+x 15
+y 7
 arch priest_green
+type 83
 level 17
 random_move 1
 item_race 3
 item_level 3
-x 15
-y 7
 arch event_obj
 name lua
 race /relic/castle/scripts/Commoner.lua
 sub_type 6
+end
 end
 end
 arch floor_wood2_l2
@@ -3280,18 +3307,21 @@ arch floor_wood2_l2
 x 16
 y 12
 end
+arch spawn_point
+x 16
+y 12
 arch monk
 name Karlack
+type 83
 level 45
 random_move 1
 item_race 9
 item_level 1
-x 16
-y 12
 arch event_obj
 name lua
 race /relic/castle/scripts/InnKeeper.lua
 sub_type 6
+end
 end
 end
 arch floor_wood2_l2
@@ -3639,17 +3669,20 @@ arch chair1_111
 x 18
 y 14
 end
+arch spawn_point
+x 18
+y 14
 arch ranger
+type 83
 level 15
 random_move 1
 item_race 7
 item_level 7
-x 18
-y 14
 arch event_obj
 name lua
 race /relic/castle/scripts/Commoner.lua
 sub_type 6
+end
 end
 end
 arch floor_wood2_l2
@@ -3908,16 +3941,19 @@ end
 arch carpet1.111
 x 20
 end
+arch spawn_point
+x 20
 arch monk
+type 83
 level 15
 random_move 1
 item_race 2
 item_level 2
-x 20
 arch event_obj
 name lua
 race /relic/castle/scripts/Commoner.lua
 sub_type 6
+end
 end
 end
 arch floor_wood2_l2

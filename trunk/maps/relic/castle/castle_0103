@@ -636,14 +636,17 @@ arch floor_fs_grey1a
 x 4
 y 18
 end
-arch monk
-name Elisbath
+arch spawn_point
 x 4
 y 18
+arch monk
+name Elisbath
+type 83
 arch event_obj
 name lua
 race /relic/castle/scripts/GraneryQuestscript.lua
 sub_type 6
+end
 end
 end
 arch floor_fs_grey1a

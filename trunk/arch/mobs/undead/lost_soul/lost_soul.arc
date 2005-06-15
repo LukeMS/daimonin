@@ -19,6 +19,7 @@ can_use_weapon 1
 can_use_ring 1
 is_ethereal 1
 can_pass_thru 1
+flying 1
 undead 1
 Int 10
 Wis 6

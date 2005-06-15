@@ -1867,18 +1867,13 @@ arch floor_fstone2a
 x 12
 y 11
 end
-arch guard
-name Castle Guard
-level 50
-sp -1
-maxsp 40
-Pow 10
-Dex 1
+arch spawn_point
 x 12
 y 11
-arch amulet_generic
-reflect_spell 1
-reflect_missile 1
+arch guard
+name Castle Guard
+type 83
+level 50
 end
 end
 arch floor_fstone2a

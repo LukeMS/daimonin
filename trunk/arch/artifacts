@@ -4557,7 +4557,7 @@ Allowed none
 chance 1
 artifact arrow_sys
 def_arch arrow
-editor 0
+editor 1:items/weapon/missile/sys
 Object
 race missile_sys
 identified 1
@@ -4567,7 +4567,7 @@ Allowed none
 chance 1
 artifact bolt_sys
 def_arch bolt
-editor 0
+editor 1:items/weapon/missile/sys
 Object
 race missile_sys
 identified 1
@@ -4577,7 +4577,7 @@ Allowed none
 chance 1
 artifact sstone_sys
 def_arch sstone
-editor 0
+editor 1:items/weapon/missile/sys
 Object
 race missile_sys
 identified 1
@@ -4587,7 +4587,7 @@ Allowed none
 chance 1
 artifact t_axe_sys
 def_arch t_axe
-editor 0
+editor 1:items/weapon/missile/sys
 Object
 race rock_sys
 identified 1
@@ -4597,7 +4597,7 @@ Allowed none
 chance 1
 artifact t_hammer_sys
 def_arch t_hammer
-editor 0
+editor 1:items/weapon/missile/sys
 Object
 race rock_sys
 identified 1
@@ -4607,7 +4607,7 @@ Allowed none
 chance 1
 artifact t_dagger_sys
 def_arch t_dagger
-editor 0
+editor 1:items/weapon/missile/sys
 Object
 race rock_sys
 identified 1
@@ -4617,7 +4617,7 @@ Allowed none
 chance 1
 artifact t_star_sys
 def_arch t_star
-editor 0
+editor 1:items/weapon/missile/sys
 Object
 race rock_sys
 identified 1
@@ -4627,7 +4627,7 @@ Allowed none
 chance 1
 artifact t_rock_sys
 def_arch t_rock
-editor 0
+editor 1:items/weapon/missile/sys
 Object
 race rock_sys
 identified 1
@@ -4637,7 +4637,7 @@ Allowed none
 chance 1
 artifact t_boulder_sys
 def_arch t_boulder
-editor 0
+editor 1:items/weapon/missile/sys
 Object
 race rock_sys
 identified 1
@@ -4647,7 +4647,7 @@ Allowed none
 chance 1
 artifact t_lboulder_sys
 def_arch t_lboulder
-editor 0
+editor 1:items/weapon/missile/sys
 Object
 race rock_sys
 identified 1

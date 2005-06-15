@@ -1659,14 +1659,17 @@ arch floor_marble4f
 x 12
 y 2
 end
-arch priest_church
-level 50
+arch spawn_point
 x 12
 y 2
+arch priest_church
+type 83
+level 50
 arch event_obj
 name lua
 race /relic/castle/scripts/Castlechurchscript.lua
 sub_type 6
+end
 end
 end
 arch floor_marble4f

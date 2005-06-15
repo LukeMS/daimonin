@@ -7,6 +7,7 @@ endmsg
 width 24
 height 24
 outdoor 1
+tile_path_1 colosseum/colosseum_0a03
 tile_path_2 castle_0a02
 tile_path_3 /relic/forest/mountain_0204
 tile_path_5 castle_0a03
@@ -2632,26 +2633,25 @@ arch rock_big2
 x 16
 y 23
 end
-arch grass_thick1
+arch swamp1
 x 17
 end
-arch grass_thick1
+arch grass_thickm1
+x 17
+end
+arch swamp1
 x 17
 y 1
 end
-arch plant2
+arch grass_thickm7
 x 17
 y 1
 end
-arch grass_thick1
+arch swamp1
 x 17
 y 2
 end
-arch plant2
-x 17
-y 2
-end
-arch plant_flower8
+arch grass_thickm5
 x 17
 y 2
 end
@@ -2810,7 +2810,11 @@ arch grass_thick1
 x 18
 y 1
 end
-arch grass_thick1
+arch swamp1
+x 18
+y 2
+end
+arch grass_thickm2
 x 18
 y 2
 end
@@ -3401,7 +3405,11 @@ arch plant11
 x 22
 y 2
 end
-arch grass_thick2
+arch swamp1
+x 22
+y 3
+end
+arch grass_thickm1
 x 22
 y 3
 end
@@ -3543,15 +3551,19 @@ arch plant2
 x 23
 y 2
 end
-arch grass_thick2
+arch swamp1
 x 23
 y 3
 end
-arch plant8
+arch grass_thickm3
 x 23
 y 3
 end
-arch grass_thick2
+arch swamp1
+x 23
+y 4
+end
+arch grass_thickm2
 x 23
 y 4
 end

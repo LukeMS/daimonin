@@ -24,89 +24,25 @@ end
 arch floor_fs_grey1a
 y 1
 end
-arch rand_drop
-type 4
-randomitems random_test_all
-auto_apply 1
-hp 1
-exp 255
-y 1
-end
 arch floor_fs_grey1a
-y 2
-end
-arch rand_drop
-type 4
-randomitems random_test_all
-auto_apply 1
-hp 1
-exp 255
 y 2
 end
 arch floor_fs_grey1a
 y 3
 end
-arch rand_drop
-type 4
-randomitems random_test_all
-auto_apply 1
-hp 1
-exp 255
-y 3
-end
 arch floor_fs_grey1a
-y 4
-end
-arch rand_drop
-type 4
-randomitems random_test_all
-auto_apply 1
-hp 1
-exp 255
 y 4
 end
 arch floor_fs_grey1a
 y 5
 end
-arch rand_drop
-type 4
-randomitems random_test_all
-auto_apply 1
-hp 1
-exp 255
-y 5
-end
 arch floor_fs_grey1a
-y 6
-end
-arch rand_drop
-type 4
-randomitems random_test_all
-auto_apply 1
-hp 1
-exp 255
 y 6
 end
 arch floor_fs_grey1a
 y 7
 end
-arch rand_drop
-type 4
-randomitems random_test_all
-auto_apply 1
-hp 1
-exp 255
-y 7
-end
 arch floor_fs_grey1a
-y 8
-end
-arch rand_drop
-type 4
-randomitems random_test_all
-auto_apply 1
-hp 1
-exp 255
 y 8
 end
 arch floor_fs_grey1a
@@ -194,25 +130,7 @@ arch floor_fs_grey1a
 x 1
 y 1
 end
-arch rand_drop
-type 4
-randomitems random_test_all
-auto_apply 1
-hp 1
-exp 255
-x 1
-y 1
-end
 arch floor_fs_grey1a
-x 1
-y 2
-end
-arch rand_drop
-type 4
-randomitems random_test_all
-auto_apply 1
-hp 1
-exp 255
 x 1
 y 2
 end
@@ -220,25 +138,7 @@ arch floor_fs_grey1a
 x 1
 y 3
 end
-arch rand_drop
-type 4
-randomitems random_test_all
-auto_apply 1
-hp 1
-exp 255
-x 1
-y 3
-end
 arch floor_fs_grey1a
-x 1
-y 4
-end
-arch rand_drop
-type 4
-randomitems random_test_all
-auto_apply 1
-hp 1
-exp 255
 x 1
 y 4
 end
@@ -246,25 +146,7 @@ arch floor_fs_grey1a
 x 1
 y 5
 end
-arch rand_drop
-type 4
-randomitems random_test_all
-auto_apply 1
-hp 1
-exp 255
-x 1
-y 5
-end
 arch floor_fs_grey1a
-x 1
-y 6
-end
-arch rand_drop
-type 4
-randomitems random_test_all
-auto_apply 1
-hp 1
-exp 255
 x 1
 y 6
 end
@@ -272,25 +154,7 @@ arch floor_fs_grey1a
 x 1
 y 7
 end
-arch rand_drop
-type 4
-randomitems random_test_all
-auto_apply 1
-hp 1
-exp 255
-x 1
-y 7
-end
 arch floor_fs_grey1a
-x 1
-y 8
-end
-arch rand_drop
-type 4
-randomitems random_test_all
-auto_apply 1
-hp 1
-exp 255
 x 1
 y 8
 end
@@ -402,25 +266,7 @@ arch floor_fs_grey1a
 x 2
 y 1
 end
-arch rand_drop
-type 4
-randomitems random_test_all
-auto_apply 1
-hp 1
-exp 255
-x 2
-y 1
-end
 arch floor_fs_grey1a
-x 2
-y 2
-end
-arch rand_drop
-type 4
-randomitems random_test_all
-auto_apply 1
-hp 1
-exp 255
 x 2
 y 2
 end
@@ -428,25 +274,7 @@ arch floor_fs_grey1a
 x 2
 y 3
 end
-arch rand_drop
-type 4
-randomitems random_test_all
-auto_apply 1
-hp 1
-exp 255
-x 2
-y 3
-end
 arch floor_fs_grey1a
-x 2
-y 4
-end
-arch rand_drop
-type 4
-randomitems random_test_all
-auto_apply 1
-hp 1
-exp 255
 x 2
 y 4
 end
@@ -454,25 +282,7 @@ arch floor_fs_grey1a
 x 2
 y 5
 end
-arch rand_drop
-type 4
-randomitems random_test_all
-auto_apply 1
-hp 1
-exp 255
-x 2
-y 5
-end
 arch floor_fs_grey1a
-x 2
-y 6
-end
-arch rand_drop
-type 4
-randomitems random_test_all
-auto_apply 1
-hp 1
-exp 255
 x 2
 y 6
 end
@@ -480,25 +290,7 @@ arch floor_fs_grey1a
 x 2
 y 7
 end
-arch rand_drop
-type 4
-randomitems random_test_all
-auto_apply 1
-hp 1
-exp 255
-x 2
-y 7
-end
 arch floor_fs_grey1a
-x 2
-y 8
-end
-arch rand_drop
-type 4
-randomitems random_test_all
-auto_apply 1
-hp 1
-exp 255
 x 2
 y 8
 end
@@ -548,7 +340,7 @@ arch floor_fs_grey1a
 x 2
 y 13
 end
-arch door_wood1
+arch grate1_1
 x 2
 y 13
 end
@@ -620,7 +412,7 @@ arch floor_fs_grey1a
 x 3
 y 1
 end
-arch grate1_3
+arch wall_flagstone1b.131
 x 3
 y 1
 end
@@ -628,7 +420,7 @@ arch floor_fs_grey1a
 x 3
 y 2
 end
-arch grate1_3
+arch wall_flagstone1b.131
 x 3
 y 2
 end
@@ -636,9 +428,7 @@ arch floor_fs_grey1a
 x 3
 y 3
 end
-arch door_wood1
-direction 3
-slaying treasury_key
+arch wall_flagstone1b.131
 x 3
 y 3
 end
@@ -646,7 +436,7 @@ arch floor_fs_grey1a
 x 3
 y 4
 end
-arch grate1_3
+arch wall_flagstone1b.131
 x 3
 y 4
 end
@@ -654,7 +444,7 @@ arch floor_fs_grey1a
 x 3
 y 5
 end
-arch grate1_3
+arch wall_flagstone1b.131
 x 3
 y 5
 end
@@ -662,7 +452,7 @@ arch floor_fs_grey1a
 x 3
 y 6
 end
-arch grate1_3
+arch wall_flagstone1b.131
 x 3
 y 6
 end
@@ -670,7 +460,7 @@ arch floor_fs_grey1a
 x 3
 y 7
 end
-arch grate1_3
+arch wall_flagstone1b.131
 x 3
 y 7
 end
@@ -678,7 +468,7 @@ arch floor_fs_grey1a
 x 3
 y 8
 end
-arch grate1_3
+arch wall_flagstone1b.131
 x 3
 y 8
 end
@@ -813,24 +603,6 @@ x 4
 y 2
 end
 arch floor_fs_grey1a
-x 4
-y 3
-end
-arch guard_pole
-msg
-@match hello
-Hello I am Morduck.  I guard the Castle's
-Treasury. You may look but you cannot touch.  This gate is locked at all times.
-Noone but the king is allowed to enter this room.
-@match hi
-Hello I am Morduck.  I guard the Castle's
-Treasury. You may look but you cannot touch.  This gate is locked at all times.
-Noone but the king is allowed to enter this room.
-@match hey
-Hello I am Morduck.  I guard the Castle's
-Treasury. You may look but you cannot touch.  This gate is locked at all times.
-Noone but the king is allowed to enter this room.
-endmsg
 x 4
 y 3
 end
@@ -1300,9 +1072,14 @@ arch floor_fs_grey1a
 x 8
 y 2
 end
-arch guard
+arch spawn_point
 x 8
 y 2
+arch guard
+name Castle Guard
+type 83
+level 50
+end
 end
 arch floor_fs_grey1a
 x 8
@@ -1320,9 +1097,14 @@ arch floor_fs_grey1a
 x 8
 y 6
 end
-arch guard
+arch spawn_point
 x 8
 y 6
+arch guard
+name Castle Guard
+type 83
+level 50
+end
 end
 arch floor_fs_grey1a
 x 8
@@ -1340,9 +1122,14 @@ arch floor_fs_grey1a
 x 8
 y 10
 end
-arch guard
+arch spawn_point
 x 8
 y 10
+arch guard
+name Castle Guard
+type 83
+level 50
+end
 end
 arch floor_fs_grey1a
 x 8
@@ -1360,9 +1147,14 @@ arch floor_fs_grey1a
 x 8
 y 14
 end
-arch guard
+arch spawn_point
 x 8
 y 14
+arch guard
+name Castle Guard
+type 83
+level 50
+end
 end
 arch floor_fs_grey1a
 x 8
@@ -2233,9 +2025,14 @@ arch floor_fs_grey1a
 x 14
 y 2
 end
-arch guard
+arch spawn_point
 x 14
 y 2
+arch guard
+name Castle Guard
+type 83
+level 50
+end
 end
 arch floor_fs_grey1a
 x 14
@@ -2253,9 +2050,14 @@ arch floor_fs_grey1a
 x 14
 y 6
 end
-arch guard
+arch spawn_point
 x 14
 y 6
+arch guard
+name Castle Guard
+type 83
+level 50
+end
 end
 arch floor_fs_grey1a
 x 14
@@ -2273,9 +2075,14 @@ arch floor_fs_grey1a
 x 14
 y 10
 end
-arch guard
+arch spawn_point
 x 14
 y 10
+arch guard
+name Castle Guard
+type 83
+level 50
+end
 end
 arch floor_fs_grey1a
 x 14
@@ -2293,9 +2100,14 @@ arch floor_fs_grey1a
 x 14
 y 14
 end
-arch guard
+arch spawn_point
 x 14
 y 14
+arch guard
+name Castle Guard
+type 83
+level 50
+end
 end
 arch floor_fs_grey1a
 x 14
@@ -3398,13 +3210,16 @@ arch dirt_floor2
 x 22
 y 16
 end
-arch smith
+arch spawn_point
 x 22
 y 16
+arch smith
+type 83
 arch event_obj
 name lua
 race /relic/castle/scripts/Castleblacksmith1script.lua
 sub_type 6
+end
 end
 end
 arch floor_fs_grey1a
@@ -3499,13 +3314,16 @@ arch floor_fs_grey1a
 x 23
 y 8
 end
-arch smith
+arch spawn_point
 x 23
 y 8
+arch smith
+type 83
 arch event_obj
 name lua
 race /relic/castle/scripts/Castleblacksmith2script.lua
 sub_type 6
+end
 end
 end
 arch floor_fs_grey1a

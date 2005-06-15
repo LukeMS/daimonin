@@ -2469,7 +2469,7 @@ x 18
 y 13
 end
 arch hole
-slaying grey_cave/castleb_0300
+slaying  /nonpub/relic/castle/grey_cave/castleb_0300
 hp 20
 sp 13
 walk_on 1

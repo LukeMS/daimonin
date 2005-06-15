@@ -1082,14 +1082,17 @@ arch floor_fs_grey1a
 x 7
 y 18
 end
-arch priest_church
-direction 6
+arch spawn_point
 x 7
 y 18
+arch priest_church
+type 83
+direction 6
 arch event_obj
 name lua
 race /relic/castle/scripts/Castleprivatechurchscript.lua
 sub_type 6
+end
 end
 end
 arch floor_fs_grey1a
@@ -1797,14 +1800,17 @@ direction 7
 x 12
 y 16
 end
-arch mage_old
-direction 3
+arch spawn_point
 x 12
 y 16
+arch mage_old
+type 83
+direction 3
 arch event_obj
 name lua
 race /relic/castle/scripts/HorrorCavesMageScript.lua
 sub_type 6
+end
 end
 end
 arch floor_wood4d
@@ -2046,13 +2052,16 @@ arch floor_wood2_d2
 x 14
 y 4
 end
-arch archer
+arch spawn_point
 x 14
 y 4
+arch archer
+type 83
 arch event_obj
 name Lua
 race /relic/castle/scripts/commoner.lua
 sub_type 6
+end
 end
 end
 arch floor_wood2_d2

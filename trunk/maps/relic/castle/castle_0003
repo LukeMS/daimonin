@@ -1173,25 +1173,28 @@ arch floor_marble4a
 x 8
 y 6
 end
+arch light1
+x 8
+y 6
+end
+arch spawn_point
+x 8
+y 6
 arch priest_green
 name Menab
 msg
 @match bank
 your bank...
 endmsg
+type 83
 level 45
 direction 1
-x 8
-y 6
 arch event_obj
 name lua
 race /lua/bank.lua
 sub_type 6
 end
 end
-arch light1
-x 8
-y 6
 end
 arch floor_marble4f
 x 8
@@ -1253,25 +1256,28 @@ arch floor_marble4f
 x 8
 y 17
 end
+arch light1
+x 8
+y 17
+end
+arch spawn_point
+x 8
+y 17
 arch priest_green
 name Nahril
 msg
 @match bank
 your bank...
 endmsg
+type 83
 level 45
 direction 1
-x 8
-y 17
 arch event_obj
 name lua
 race /lua/bank.lua
 sub_type 6
 end
 end
-arch light1
-x 8
-y 17
 end
 arch floor_marble4a
 x 8

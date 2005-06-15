@@ -761,7 +761,7 @@ void command_new_char(char *params, int len, player *pl)
 			objectlink *ol;
 			char buf_dm[64];
 
-			sprintf(buf_dm,"DM: %d players now playing.", player_active);
+			sprintf(buf_dm,"DM: new player! %d now playing.", player_active);
 
 			for(ol = gmaster_list_DM;ol;ol=ol->next)
 				new_draw_info(NDI_UNIQUE, 0,ol->objlink.ob, buf_dm);

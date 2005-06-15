@@ -1028,7 +1028,7 @@ x 7
 y 8
 end
 arch hole
-slaying grey_cave/castleb_0400
+slaying  /nonpub/relic/castle/grey_cave/castleb_0400
 hp 8
 sp 8
 walk_on 1

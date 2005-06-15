@@ -541,13 +541,16 @@ arch grassd_5
 x 4
 y 9
 end
-arch archer
+arch spawn_point
 x 4
 y 9
+arch archer
+type 83
 arch event_obj
 name Lua
 race /relic/castle/scripts/commoner.lua
 sub_type 6
+end
 end
 end
 arch grassd_6

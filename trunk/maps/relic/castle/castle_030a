@@ -585,17 +585,20 @@ arch floor_sblack1
 x 4
 y 7
 end
+arch spawn_point
+x 4
+y 7
 arch ogre
 name Frah'ak
+type 83
 unaggressive 1
 stand_still 1
 level 4
-x 4
-y 7
 arch event_obj
 name Lua
 race /relic/castle/guildhall/jail_ogre.lua
 sub_type 6
+end
 end
 end
 arch floor_sblack1
@@ -1398,15 +1401,18 @@ arch floor_wood2_l1
 x 10
 y 7
 end
-arch ranger
-name Mercenary Master Cashin
-level 35
+arch spawn_point
 x 10
 y 7
+arch ranger
+name Mercenary Master Cashin
+type 83
+level 35
 arch event_obj
 name lua
 race /relic/castle/guildhall/guild_merc.lua
 sub_type 13
+end
 end
 end
 arch floor_wood2_l1
@@ -1444,14 +1450,18 @@ arch floor_wood2_l1
 x 10
 y 13
 end
-arch priest_green
-name Chereth
-level 31
+arch spawn_point
 x 10
 y 13
+arch priest_green
+name Chereth
+type 83
+level 31
 arch event_obj
+name Lua
 race /relic/castle/guildhall/merc_chereth.lua
 sub_type 6
+end
 end
 end
 arch floor_wood2_l1
