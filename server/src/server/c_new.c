@@ -788,7 +788,8 @@ void command_new_char(char *params, int len, player *pl)
     add_friendly_object(op);
 
     CONTR(op)->socket.update_tile = 0;
-    CONTR(op)->socket.look_position = 0;
+	CONTR(op)->socket.look_position = 0;
+	CONTR(op)->socket.look_position_container = 0;
     CONTR(op)->socket.ext_title_flag = 1;
     esrv_new_player(CONTR(op), op->weight + op->carrying);
     send_skilllist_cmd(op, NULL, SPLIST_MODE_ADD);

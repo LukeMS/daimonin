@@ -200,7 +200,7 @@ typedef signed long long 		sint64;
 #define RANDOM_DROP_RAND_RANGE 1000000
 
 /* for creating treasures (treasure.c) */
-#define T_STYLE_UNSET (-2)
+#define T_STYLE_UNSET (-999)
 #define ART_CHANCE_UNSET (-1)
 
 /* mob defines */

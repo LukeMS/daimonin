@@ -1006,7 +1006,6 @@ void create_treasure_list(struct oblnk *t, object *op, int flag, int difficulty,
 			magic_chance = T_MAGIC_CHANCE_UNSET;
 
 		}
-
         create_treasure(t->objlink.tl, op, flag, difficulty, t_style, a_chance, magic, magic_chance, tries, captr);
         t = t->next;
     }
@@ -2425,12 +2424,11 @@ int generate_artifact(object *op, int difficulty, int t_style, int a_chance)
     artifactlist   *al;
     artifact       *art;
     artifact       *art_tmp = NULL;
-    int             i, chance_tmp = 0;
+    int             i, style_abs, chance_tmp = 0;
 
     al = find_artifactlist(op->type);
 
-    if (t_style == T_STYLE_UNSET) /* NOW we overrule unset to 0 */
-        t_style = 0;
+	style_abs = ABS(t_style);
 
     if (al == NULL)
     {
@@ -2458,10 +2456,11 @@ int generate_artifact(object *op, int difficulty, int t_style, int a_chance)
         }
 
         /* Map difficulty not high enough OR the t_style is set and don't match */
-        /*LOG(-1,"ARTIFACT: for %s \n%s\n t_style %d art->t_style:%d\n", query_name(op), art->parse_text, t_style, art->t_style);*/
-        if (difficulty < art->difficulty
-         || (t_style == -1 && (art->t_style && art->t_style != T_STYLE_UNSET))
-         || (t_style && (art->t_style != t_style && art->t_style != T_STYLE_UNSET)))
+        if (difficulty < art->difficulty || ( t_style != T_STYLE_UNSET &&
+			(  (t_style > 0 && art->t_style != t_style) /* if style > 0 only same style is valid */
+            || (t_style ==0 && (art->t_style && art->t_style != T_STYLE_UNSET) ) /* style = 0: only art style 0 or unset */
+			|| (t_style < 0 && (art->t_style && art->t_style != T_STYLE_UNSET && art->t_style != style_abs) ) /* 0, unset or same style */
+			)))
             continue;
 
         if (!legal_artifact_combination(op, art))
@@ -2487,9 +2486,11 @@ int generate_artifact(object *op, int difficulty, int t_style, int a_chance)
         {
             if (art->chance <= chance_tmp)
                 continue;
-            if (difficulty < art->difficulty
-             || (t_style == -1 && (art->t_style && art->t_style != T_STYLE_UNSET))
-             || (t_style && (art->t_style != t_style && art->t_style != T_STYLE_UNSET)))
+			if (difficulty < art->difficulty || ( t_style != T_STYLE_UNSET &&
+				(  (t_style > 0 && art->t_style != t_style) /* if style > 0 only same style is valid */
+				|| (t_style ==0 && (art->t_style && art->t_style != T_STYLE_UNSET) ) /* style = 0: only art style 0 or unset */
+				|| (t_style < 0 && (art->t_style && art->t_style != T_STYLE_UNSET && art->t_style != style_abs) ) /* 0, unset or same style */
+				)))
                 continue;
             if (!legal_artifact_combination(op, art))
                 continue;

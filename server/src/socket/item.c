@@ -171,7 +171,7 @@ void esrv_draw_look(object *pl)
         SockList_AddInt(&sl, -1);
         SockList_AddInt(&sl, prev_item_face->number);
         SockList_AddChar(&sl, 0);
-        sprintf(buf, "Click here to see %d previous items", NUM_LOOK_OBJECTS);
+        sprintf(buf, "A'pply (click) to see %d previous items", NUM_LOOK_OBJECTS);
         add_stringlen_to_sockbuf(buf, &sl);
         SockList_AddShort(&sl, 0);
         SockList_AddChar(&sl, 0);
@@ -204,7 +204,7 @@ void esrv_draw_look(object *pl)
             SockList_AddInt(&sl, -1);
             SockList_AddInt(&sl, next_item_face->number);
             SockList_AddChar(&sl, 0);
-            sprintf(buf, "Click here to see next group of items");
+            sprintf(buf, "A'pply (click) to see next group of items");
             add_stringlen_to_sockbuf(buf, &sl);
 
             SockList_AddShort(&sl, 0);
