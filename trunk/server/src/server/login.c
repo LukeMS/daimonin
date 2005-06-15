@@ -1046,7 +1046,8 @@ void check_login(object *op)
     enter_exit(op, NULL); /* kick player on map - load map if needed */
 
     pl->socket.update_tile = 0;
-    pl->socket.look_position = 0;
+	pl->socket.look_position = 0;
+	pl->socket.look_position_container = 0;
     pl->socket.ext_title_flag = 1;
 
     pl->ob->direction = 4;

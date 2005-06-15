@@ -35,6 +35,8 @@
  * take 0 time.
  */
 
+/* *** The system command lists are are in /socket/loop.c **** */
+
 /*
  * Normal game commands
  */
@@ -205,6 +207,9 @@ CommArray_s WizCommands[]           =
     {"/wizpass", command_wizpass,0.0},
     */
 };
+
+/* *** The system command lists are are in /socket/loop.c **** */
+
 const int   WizCommandsSize             = sizeof(WizCommands) / sizeof(CommArray_s);
 
 static int compare_A(const void *a, const void *b)

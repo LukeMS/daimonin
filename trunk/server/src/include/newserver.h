@@ -111,7 +111,8 @@ typedef struct NewSocket_struct
     uint32              rf_anims        : 1;
     uint32              rf_bmaps        : 1;
 
-    sint16              look_position;  /* start of drawing of look window */
+	sint16              look_position;  /* start of drawing of look window */
+	sint16              look_position_container;  /* start of drawing of look window for a container */
     uint8               faceset;        /* Set the client is using, default 0 */
 } NewSocket;
 

@@ -92,18 +92,32 @@ typedef struct PlCmdMapping_struct
  */
 PlCmdMapping        plcommands[]    =
 {
-    { "ex",             ExamineCmd }, { "ap",             ApplyCmd }, { "mv",             MoveCmd },
-    { "reply",          ReplyCmd}, { "cm",             PlayerCmd}, { "ncom",           NewPlayerCmd},
-    { "lt",             LookAt}, { "lock",           LockItem}, { "mark",           MarkItem},
-    {"/fire",           command_fire}, {"nc",              command_new_char}, { NULL, NULL}   /* terminator */
+    { "ex",             ExamineCmd }, 
+	{ "ap",             ApplyCmd }, 
+	{ "mv",             MoveCmd },
+    { "reply",          ReplyCmd}, 
+	{ "cm",             PlayerCmd}, 
+	{ "ncom",           NewPlayerCmd},
+    { "lt",             LookAt}, 
+	{ "lock",           LockItem}, 
+	{ "mark",           MarkItem},
+    {"/fire",           command_fire}, 
+	{"nc",              command_new_char}, 
+	{ NULL, NULL}   /* terminator */
 };
 
 NsCmdMapping        nscommands[]    =
 {
-    { "addme",          AddMeCmd }, { "askface",        SendFaceCmd},   /* Added: phil */
-    { "requestinfo",    RequestInfo}, { "setfacemode",    SetFaceMode}, { "setsound",       SetSound},
-    { "setup",          SetUp}, { "version",        VersionCmd }, { "rf",             RequestFileCmd },
-    {"fr",              command_face_request}, { NULL, NULL}   /* terminator */
+    { "addme",          AddMeCmd }, 
+	{ "askface",        SendFaceCmd},   /* Added: phil */
+    { "requestinfo",    RequestInfo}, 
+	{ "setfacemode",    SetFaceMode}, 
+	{ "setsound",       SetSound},
+    { "setup",          SetUp}, 
+	{ "version",        VersionCmd }, 
+	{ "rf",             RequestFileCmd },
+    {"fr",              command_face_request}, 
+	{ NULL, NULL}   /* terminator */
 };
 
 
