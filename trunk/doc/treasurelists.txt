@@ -1,0 +1,175 @@
+Treasure Lists and the file "treasures"
+---------------------------------------
+
+The treasure list is defined in the file "treasures" which can
+be found in /arch folder (for a server is copied to /server/lib).
+
+A single treasure list is a block of arches and/or artifacts.
+When a treasure list is called, the list will generate, depending on
+the structure and setting of that list; One or more objects which
+are put in the inventory of the calling object. A treasure list can
+also generate zero items, depending on the settings.
+
+Their format is:
+
+treasure <name>
+  <item>
+  more
+  <item>
+  end
+
+Also, 'treasure' above can instead be 'treasureone'.  This means
+that only 1 item on that list will be generated.  The chance for
+all objects on that list are summed together, and one is then generated.
+
+Also, instead of an item, a list to transfer to can be used instead.
+The format is the same as for an object, but instead 'list <list>' is
+used instead of 'arch <name>'.
+
+For list transitions, the chance, yes and no fields have the
+same meaning.  'magic' is used to determine the difficulty required
+to transfer to the new list.
+
+If the list is of type 'treasureone', and a list transition fails,
+what happens next is determined by the 'nrof' field.  If it is zero,
+no object is generated.  If 'nrof' is one, than another attempt is
+made to generate an item (or list transition) from that treasurelist.  There
+is a maximum number of attempts that can be made.
+
+Also, a reserved list name of 'none' is allowed.  This means that no
+item should be generated (of relevence only on treasureone lists.)
+
+And the format for an item is:
+
+  arch <name>
+  nrof <n (random 1 to n items generated)>
+  magic <max-magic>
+  chance <1-100%>
+  yes
+    <item>
+  no
+    <item>
+  end (or "more", if this is not the last element)
+
+If "magic" or "nrof" is omitted, it is set to 0.
+If "chance" is ommitted, it is set to 100%.
+"yes" tells what can be generated if this item was generated.
+"no" tells what can be generated if this item was not generated.
+"yes" and "no" can of course be omitted.
+
+Command "magic_chance" behind a "magic" keyword controls the chance
+a items will be magic. "magic_chance 50" will generate in 50% of all
+cases IF THE ITEM IS GENERATED that the items will be magical, using
+magic. A "magic_chance 0" will never create a item with magic, 100
+will always create a magical one. If "magic_chance" is not given, the
+chance depends on the server default settings.
+
+Command "artifact_chance" works in the same way as "magic_chance" except
+it defines the chance the item becomes an artifact from the artifacts file.
+
+Other commands:
+
+chance_fix:
+base chance for checking the treasure is generated.
+The chance is 1/chance_fix (algoritm: generate if (RANDOM()%chance_fix) == 0)
+Example: chance_fix=100 -> chance is 1 to 100
+          chance_fix=500 -> chance is 1 to 500  
+
+difficulty:
+For spliting treasure lists, difficulty sets a difficulty level. A map
+or a object generating this list must be same or higher level. If not,
+list is ignored. 
+
+Change commands:
+
+The treasure list allows some commands, overriding the default values
+from arches. These commands work like the original arch commands.
+The commands works also when we call a another treasure list.
+
+ treasure foo    
+   list weapons_misc
+   name killer weapon
+   title of foo
+ end
+
+This will generate a weapon from the list weapons_misc and changes
+then name to "killer weapon" and the title to "of foo".
+
+All the following commands are working in that way:
+
+name:       changes the name of the generated object
+race:       change the race
+title:      change the title
+slaying:    change the slaying field
+item_race:  change the item_race of an object (like the arch command)
+quality:    changes base quality
+material:   changes material_real
+
+These 3 commands will try to find a matching object depending on
+the material & quality settings. They will randomly set the material
+and/or quality to a matching setting from materials. 
+
+quality_range:
+material_range:
+material_quality:
+
+The command "t_style" will control the artifact generation. In the
+artifact file, every entry can have a "style" setting.
+
+A t_style is a kind of sub class identifier for the artifacts. 
+Both t_style are compared when a treasure list generates a item:
+
+t_style is "unset" = don't compare
+t_style == 0  : generate only artifacts with t_style unset or 0
+t_style <= -1 : Only style ABS(t_style) or unset or 0
+t_style >= 1  : Only items matching that style
+
+Use: 
+A fire giant should be drop fire releated items and artifacts. For example
+only red gems, fire releated potions and magic items or fire based weapons
+or armour. So, all fire releated artifacts are signed as t_style = 1 
+(thats the artifacts file default setting for fire releated items).
+Now the treasures of the fire giant are signed to "t_style 1" too.
+If he drops a artifact then it will be a fire releated.
+
+t_style defaults (use this default settings for your treasures and artifacts)
+t_style = 1	-> fire
+t_style = 2   -> cold
+t_style = 3   -> electricity
+t_style = 4   -> poison
+t_style = 5   -> acid
+
+
+System Objects (forces, abilities,...):
+
+Adding in system objects like known spells and skills gives these abilities
+to the object.
+
+for example:
+
+      treasure pirate
+        arch skill_stealing
+          chance 50
+        arch skill_throwing
+          no
+            arch skill_punching
+          end
+        more
+        arch heart
+           chance 5
+        more
+        list standard
+        end
+
+or
+
+      treasure skeletalmage
+        list standard_old
+        more
+        arch ability_fear
+        more
+        arch ability_frostbolt
+          chance 67
+        end
+
+Treasure lists of gods are special.

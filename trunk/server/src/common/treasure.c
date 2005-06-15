@@ -696,7 +696,7 @@ static inline void parse_tlist_parm(tlist_tweak *tweak, char *parm)
 			case 'M': /* (M)agic chance */
 				tweak->magic_chance = atoi(parm+1);
 				break;
-			case 'l': /* (l)evel (difficulty) */
+			case 'x': /* difficulty */
 				tweak->difficulty = atoi(parm+1);
 				break;
 			case 'a': /* (a)rtifact  chance*/
