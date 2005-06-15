@@ -2935,6 +2935,9 @@ arch troll
 type 83
 friendly 1
 unaggressive 1
+randomitems none
+arch empty_ai
+end
 end
 end
 arch floor_flagstone1b
@@ -2972,6 +2975,9 @@ arch orc_berserker
 type 83
 friendly 1
 unaggressive 1
+randomitems none
+arch empty_ai
+end
 end
 end
 arch floor_flagstone1b
@@ -3014,6 +3020,9 @@ arch giant_hill
 type 83
 friendly 1
 unaggressive 1
+randomitems none
+arch empty_ai
+end
 end
 end
 arch floor_flagstone1b
@@ -3056,6 +3065,9 @@ arch kobold_fighter
 type 83
 unaggressive 1
 friendly 1
+randomitems none
+arch empty_ai
+end
 end
 end
 arch floor_flagstone1b
