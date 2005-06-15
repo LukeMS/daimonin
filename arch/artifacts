@@ -66,12 +66,11 @@
 # There is a t_style variable also in the treasure file for each treasure or
 # treasure list which calls this artifacts file after generation a base item.
 # Both t_style are compared:
-# (note: a unset t_style for a artifact or treasure is on default 0)
-# 
-# (t_style from treasure)    
-#  t_style == 0	"all - ignore t_style settings of the artifacts"
-#  t_style == -1	"get only artifacts with t_style == 0"
-#  t_style >= 1	" get only artifacts with same number"
+#
+# t_style is "unset" = don't compare
+# t_style == 0  : generate only artifacts with t_style unset or 0
+# t_style <= -1 : Only style ABS(t_style) or unset or 0
+# t_style >= 1  : Only items matching that style
 #
 # Use: 
 # A fire giant should be drop fire releated items and artifacts. For example
@@ -80,9 +79,6 @@
 # (thats the artifacts file default setting for fire releated items).
 # Now the treasures of the fire giant are signed to "t_style 1" too.
 # If he drops a artifact then it will be a fire releated.
-# Note that a normal or even mixed call is possible. with t_style = 0 all
-# artifacts are selected as usual. To let a fire giant drop a cold based
-# item just sign one treasure of his treasure list as t_style = 2 (= cold based).
 #
 # t_style defaults (use this default settings for your treasures and artifacts)
 #
