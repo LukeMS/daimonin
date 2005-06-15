@@ -1,0 +1,79 @@
+Book GUI and game languages
+---------------------------
+
+When a player applies a book, the text is no longer shown at client side
+in the text window but in a special book like GUI.
+
+That GUI shows a book, where you can turn pages by pressing the
+cursor keys (TODO: mouse click).
+
+Shown is the text of a book object inside the msg/endmsg block.
+
+The text is autoformated:
+- lines are wraped when to long
+- if the lines exceed the line count per page a new page is created
+
+(TODO: numbers of chars per line and lines per book are still under work)
+
+The text can be formated by using html like tags.
+A books text can look like this:
+
+msg
+   <t t="Welcome to the Book GUI">
+   This is line 1
+   This is line 2
+
+   This is line 4 after line 3 without text
+   <p><t t="This page 2 title">
+   And some more text 2nd page.
+   <t t="This is a paragraph title">
+   some more text
+   and more
+endmsg
+
+Format tags:
+
+<p> : The <p> tag will create a new page
+
+<t t="<text>"> : the <t> tag will create a title. 
+   t="<text>"  : The t="" cmd is the (title) text
+
+TODO: more commands like text color or text-style
+
+
+LANGUAGES
+---------
+
+A book can be marked as "written" in a language.
+This is just a server sided flag.
+A language is a part of the skill "literacy".
+The player can learn languages.
+
+If the player knows the language, he can read the book - that means
+the server sends the book text. If the player don't knows the language
+the server don't sends the text.
+
+To make this system easy as possible, we don't distinguish between scripts
+and languages.
+
+The server and editor  knows this languages:
+(from types.xml)
+
+<list name="language">
+  <entry value="0"  name="common" />
+  <entry value="1"  name="dwarvish" />
+  <entry value="2"  name="ancient dwarvish" />
+  <entry value="4"  name="elvish" />
+  <entry value="8"  name="high elvish" />
+  <entry value="16"  name="drow" />
+  <entry value="32"  name="gnomish" />
+  <entry value="64"  name="old council" />
+  <entry value="128"  name="elder pictograms" />
+  <entry value="256"  name="chaotic" />
+  <entry value="512" name="evil runic" />
+  <entry value="1024" name="runic" />
+  <entry value="2048" name="dragonish" />
+  <entry value="4096" name="jotun" />
+  <entry value="8192" name="high planar" />
+  <entry value="16384" name="orc runes" />
+</list>
