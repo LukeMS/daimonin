@@ -5748,8 +5748,8 @@ type 71
 editor_folder floors/water
 face lake.101
 animation water_still
-speed 0.02
-is_animated 1
+speed 0.00
+is_animated 0
 anim_speed 10
 no_teleport 1
 layer 1
@@ -22747,6 +22747,7 @@ can_use_weapon 1
 can_use_ring 1
 is_ethereal 1
 can_pass_thru 1
+flying 1
 undead 1
 Int 10
 Wis 6
@@ -22996,6 +22997,7 @@ can_use_weapon 1
 can_use_ring 1
 can_pass_thru 1
 is_ethereal 1
+flying 1
 undead 1
 Int 10
 Wis 6

@@ -177,7 +177,6 @@ name kobold fighter leader
 type 83
 Wis 2
 level 3
-randomitems mob_fighter_l9
 end
 end
 arch floor_grit4a
@@ -215,7 +214,6 @@ arch kobold
 name kobold scout
 type 83
 Wis 2
-randomitems mob_fighter_l9
 level 2
 end
 end
@@ -401,7 +399,6 @@ arch kobold_shaman
 type 83
 level 2
 Wis 2
-randomitems mob_mage_l9
 Dex 2
 magic 1
 maxsp 10
@@ -605,7 +602,6 @@ arch kobold_fighter
 type 83
 Wis 2
 level 2
-randomitems mob_fighter_l9
 end
 end
 arch floor_grit4a
@@ -717,7 +713,6 @@ arch kobold_fighter
 type 83
 Wis 2
 level 2
-randomitems mob_fighter_l9
 end
 end
 arch floor_sand_d2
@@ -1327,7 +1322,6 @@ type 83
 Wis 2
 wc_range 12
 unaggressive 1
-randomitems mob_fighter_l9
 end
 end
 arch floor_grit4a
@@ -1493,7 +1487,6 @@ type 83
 Wis 2
 unaggressive 1
 wc_range 12
-randomitems mob_fighter_l9
 end
 end
 arch floor_grit4a
@@ -1675,7 +1668,6 @@ arch kobold_fighter
 type 83
 Wis 2
 level 2
-randomitems mob_fighter_l9
 end
 end
 arch floor_grit4a
@@ -1928,7 +1920,6 @@ name kobold clan fighter
 type 83
 Wis 2
 level 2
-randomitems mob_fighter_l9
 end
 end
 arch floor_grit4a
@@ -2148,7 +2139,6 @@ type 83
 Wis 2
 wc_range 12
 unaggressive 1
-randomitems mob_mage_l9
 end
 end
 arch floor_grit4a
@@ -2304,7 +2294,6 @@ arch kobold
 name kobold mushroom collector
 type 83
 Wis 2
-randomitems mob_mage_l9
 wc_range 12
 unaggressive 1
 end
@@ -2569,7 +2558,6 @@ name kobold clan guard
 type 83
 Wis 2
 level 2
-randomitems mob_fighter_l9
 end
 end
 arch floor_grit4a
@@ -2593,7 +2581,6 @@ name kobold clan guard
 type 83
 Wis 2
 level 2
-randomitems mob_fighter_l9
 end
 end
 arch floor_grit4a
@@ -2676,7 +2663,6 @@ name kobold hunter
 type 83
 Wis 2
 unaggressive 1
-randomitems mob_fighter_l9
 end
 end
 arch floor_grit4a
@@ -2752,7 +2738,6 @@ name kobold clan chief
 type 83
 Wis 2
 level 3
-randomitems mob_fighter_l9
 arch letter
 name Frah'aks letter
 one_drop 1
@@ -2966,7 +2951,6 @@ arch kobold
 type 83
 Wis 2
 unaggressive 1
-randomitems mob_fighter_l9
 end
 end
 arch floor_grit4a
@@ -3063,7 +3047,6 @@ name kobold mushroom keeper
 type 83
 Wis 2
 wc_range 12
-randomitems mob_fighter_l9
 end
 end
 arch floor_sand_d2
@@ -3164,7 +3147,6 @@ name kobold guard leader
 type 83
 Wis 2
 level 3
-randomitems mob_fighter_l9
 end
 end
 arch floor_grit4a

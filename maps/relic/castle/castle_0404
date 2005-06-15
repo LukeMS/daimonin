@@ -1520,7 +1520,7 @@ animation level_up
 anim_speed 1
 player_only 0
 no_teleport 0
-slaying /castle/castleb_0203
+slaying castleb_0203
 hp 4
 sp 17
 last_eat 1
@@ -1560,7 +1560,7 @@ x 10
 y 12
 end
 arch hole
-slaying grey_cave/castleb_0404
+slaying  /nonpub/relic/castle/grey_cave/castleb_0404
 hp 10
 sp 11
 walk_on 1

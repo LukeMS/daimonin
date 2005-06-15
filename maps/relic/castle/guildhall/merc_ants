@@ -130,7 +130,6 @@ arch ant_red
 name ant scout leader
 type 83
 Wis 3
-randomitems mob_fighter_l9
 wc_range 12
 unaggressive 0
 random_move 0
@@ -199,7 +198,6 @@ name small gelantinous cube
 type 83
 Wis 2
 wc_range 12
-randomitems mob_fighter_l9
 ac 6
 dam 30
 exp 75
@@ -428,7 +426,6 @@ type 83
 Wis 3
 wc_range 12
 ac 6
-randomitems mob_fighter_l9
 dam 30
 maxhp 40
 exp 75
@@ -593,7 +590,6 @@ arch ant_red
 name minor ant scout
 type 83
 Wis 3
-randomitems mob_fighter_l9
 wc_range 12
 ac 6
 dam 30
@@ -714,7 +710,6 @@ arch ant_red
 name minor ant scout
 type 83
 Wis 3
-randomitems mob_fighter_l9
 wc_range 12
 ac 6
 dam 30
@@ -829,7 +824,6 @@ arch ant_red
 name minor ant scout
 type 83
 Wis 3
-randomitems mob_fighter_l9
 wc_range 12
 ac 6
 dam 30
@@ -1347,7 +1341,6 @@ name minor ant scout
 type 83
 Wis 3
 wc_range 12
-randomitems mob_fighter_l9
 ac 6
 dam 30
 maxhp 40
@@ -1377,7 +1370,6 @@ arch ant_red
 name minor ant scout
 type 83
 Wis 3
-randomitems mob_fighter_l9
 wc_range 12
 ac 6
 dam 30

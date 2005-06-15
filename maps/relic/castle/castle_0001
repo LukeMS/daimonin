@@ -828,29 +828,11 @@ arch floor_wood2_d1
 x 6
 y 2
 end
-arch booze_generic
-type 79
-no_pick 1
-x 6
-y 2
-end
 arch floor_wood2_d1
 x 6
 y 3
 end
-arch booze_generic
-type 79
-no_pick 1
-x 6
-y 3
-end
 arch floor_wood2_d1
-x 6
-y 4
-end
-arch booze_generic
-type 79
-no_pick 1
 x 6
 y 4
 end
@@ -972,19 +954,7 @@ arch floor_wood2_d1
 x 7
 y 2
 end
-arch booze_generic
-type 79
-no_pick 1
-x 7
-y 2
-end
 arch floor_wood2_d1
-x 7
-y 3
-end
-arch booze_generic
-type 79
-no_pick 1
 x 7
 y 3
 end
@@ -993,12 +963,6 @@ x 7
 y 3
 end
 arch floor_wood2_d1
-x 7
-y 4
-end
-arch booze_generic
-type 79
-no_pick 1
 x 7
 y 4
 end
@@ -1112,29 +1076,11 @@ arch floor_wood2_d1
 x 8
 y 2
 end
-arch booze_generic
-type 79
-no_pick 1
-x 8
-y 2
-end
 arch floor_wood2_d1
 x 8
 y 3
 end
-arch booze_generic
-type 79
-no_pick 1
-x 8
-y 3
-end
 arch floor_wood2_d1
-x 8
-y 4
-end
-arch booze_generic
-type 79
-no_pick 1
 x 8
 y 4
 end
@@ -1153,10 +1099,6 @@ y 6
 end
 arch wagon_small.111
 direction 5
-x 8
-y 6
-end
-arch grassd_m14
 x 8
 y 6
 end
@@ -1271,29 +1213,11 @@ arch floor_wood2_d1
 x 9
 y 2
 end
-arch booze_generic
-type 79
-no_pick 1
-x 9
-y 2
-end
 arch floor_wood2_d1
 x 9
 y 3
 end
-arch booze_generic
-type 79
-no_pick 1
-x 9
-y 3
-end
 arch floor_wood2_d1
-x 9
-y 4
-end
-arch booze_generic
-type 79
-no_pick 1
 x 9
 y 4
 end
@@ -1308,10 +1232,6 @@ y 6
 end
 arch floor_earth1a
 no_pass 1
-x 9
-y 7
-end
-arch wagon_small.111
 x 9
 y 7
 end
@@ -1452,11 +1372,6 @@ y 7
 end
 arch floor_earth1a
 no_pass 1
-x 10
-y 8
-end
-arch wagon_small.111
-direction 5
 x 10
 y 8
 end
@@ -1898,10 +1813,6 @@ no_pass 1
 x 13
 y 11
 end
-arch wagon_small.111
-x 13
-y 11
-end
 arch grassd_m14
 x 13
 y 11
@@ -2051,11 +1962,6 @@ no_pass 1
 x 14
 y 12
 end
-arch wagon_small.111
-direction 5
-x 14
-y 12
-end
 arch grassd_m14
 x 14
 y 12
@@ -2198,10 +2104,6 @@ y 12
 end
 arch floor_earth1a
 no_pass 1
-x 15
-y 13
-end
-arch wagon_small.111
 x 15
 y 13
 end
@@ -2355,11 +2257,6 @@ y 13
 end
 arch floor_earth1a
 no_pass 1
-x 16
-y 14
-end
-arch wagon_small.111
-direction 5
 x 16
 y 14
 end
@@ -2681,19 +2578,7 @@ arch floor_wood2_d1
 x 18
 y 13
 end
-arch food_generic
-type 79
-no_pick 1
-x 18
-y 13
-end
 arch floor_wood2_d1
-x 18
-y 14
-end
-arch food_generic
-type 79
-no_pick 1
 x 18
 y 14
 end
@@ -2701,19 +2586,7 @@ arch floor_wood2_d1
 x 18
 y 15
 end
-arch food_generic
-type 79
-no_pick 1
-x 18
-y 15
-end
 arch floor_wood2_d1
-x 18
-y 16
-end
-arch food_generic
-type 79
-no_pick 1
 x 18
 y 16
 end
@@ -2872,29 +2745,11 @@ arch floor_wood2_d1
 x 19
 y 13
 end
-arch food_generic
-type 79
-no_pick 1
-x 19
-y 13
-end
 arch floor_wood2_d1
 x 19
 y 14
 end
-arch food_generic
-type 79
-no_pick 1
-x 19
-y 14
-end
 arch floor_wood2_d1
-x 19
-y 15
-end
-arch food_generic
-type 79
-no_pick 1
 x 19
 y 15
 end
@@ -2903,12 +2758,6 @@ x 19
 y 15
 end
 arch floor_wood2_d1
-x 19
-y 16
-end
-arch food_generic
-type 79
-no_pick 1
 x 19
 y 16
 end
@@ -3059,19 +2908,7 @@ arch floor_wood2_d1
 x 20
 y 13
 end
-arch food_generic
-type 79
-no_pick 1
-x 20
-y 13
-end
 arch floor_wood2_d1
-x 20
-y 14
-end
-arch food_generic
-type 79
-no_pick 1
 x 20
 y 14
 end
@@ -3079,19 +2916,7 @@ arch floor_wood2_d1
 x 20
 y 15
 end
-arch food_generic
-type 79
-no_pick 1
-x 20
-y 15
-end
 arch floor_wood2_d1
-x 20
-y 16
-end
-arch food_generic
-type 79
-no_pick 1
 x 20
 y 16
 end

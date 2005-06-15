@@ -179,10 +179,12 @@ static void add_to_buffer(NewSocket *ns, unsigned char *buf, int len)
 
     if ((len + ns->outputbuffer.len) > MAXSOCKBUF)
     {
-        LOG(llevDebug, "Socket host %s has overrun internal buffer - marking as dead\n", STRING_SAFE(ns->host));
+		LOG(llevDebug, "Socket host %s has overrun internal buffer - marking as dead (bl:%d l:%d)\n", 
+			STRING_SAFE(ns->host), ns->outputbuffer.len, len);
         ns->status = Ns_Dead;
         return;
     }
+	/*LOG(llevDebug, "(bl:%d l:%d)\n", ns->outputbuffer.len, len);*/
 
     /* data + end is where we start putting the new data.  The last byte
      * currently in use is actually data + end -1

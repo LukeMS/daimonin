@@ -7,8 +7,8 @@ lake.102
 lake.103
 lake.104
 mina
-speed 0.02
-is_animated 1
+speed 0.00
+is_animated 0
 anim_speed 10
 no_teleport 1
 layer 1

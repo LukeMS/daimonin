@@ -615,41 +615,6 @@ arch water_still
 x 6
 y 6
 end
-arch spawn_point
-x 6
-y 6
-arch lost_soul
-type 83
-level 40
-last_eat -5
-terrain_flag 3
-Wis 5
-end
-arch lost_soul
-name Linthos
-type 83
-randomitems mob_mage_l9
-level 45
-object_int1 8000
-last_eat -5
-dam 6
-wc 6
-ac 8
-terrain_flag 3
-arch rand_drop
-container 100
-arch cape_med_fire
-msg
-When you run your hands along its cloth it feels rough, almost as if it was made out of a dragon's scale.
-endmsg
-end
-end
-end
-end
-arch light1
-x 6
-y 6
-end
 arch grassd_7
 x 6
 y 7
@@ -1074,20 +1039,6 @@ arch water_still
 x 10
 y 9
 end
-arch spawn_point
-x 10
-y 9
-arch lost_soul
-type 83
-level 40
-last_eat -5
-terrain_flag 3
-end
-end
-arch light1
-x 10
-y 9
-end
 arch grassd_7
 x 10
 y 10
@@ -1174,20 +1125,6 @@ arch water_still
 x 11
 y 4
 end
-arch spawn_point
-x 11
-y 4
-arch lost_soul
-type 83
-level 40
-last_eat -5
-terrain_flag 3
-end
-end
-arch light1
-x 11
-y 4
-end
 arch grassd_7
 x 11
 y 5
@@ -1225,20 +1162,6 @@ x 11
 y 13
 end
 arch water_still
-x 11
-y 13
-end
-arch spawn_point
-x 11
-y 13
-arch lost_soul
-type 83
-level 40
-last_eat -5
-terrain_flag 3
-end
-end
-arch light1
 x 11
 y 13
 end
@@ -1845,20 +1768,6 @@ x 17
 y 6
 end
 arch water_still
-x 17
-y 6
-end
-arch spawn_point
-x 17
-y 6
-arch lost_soul
-type 83
-level 40
-last_eat -5
-terrain_flag 3
-end
-end
-arch light1
 x 17
 y 6
 end

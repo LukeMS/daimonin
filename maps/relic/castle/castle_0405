@@ -255,7 +255,7 @@ x 2
 y 5
 end
 arch hole
-slaying grey_cave/castleb_0405
+slaying /nonpub/relic/castle/grey_cave/castleb_0405
 hp 2
 sp 6
 walk_on 1

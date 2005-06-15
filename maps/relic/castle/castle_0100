@@ -891,6 +891,15 @@ arch grassd_5
 x 7
 y 3
 end
+arch spawn_point
+x 7
+y 3
+arch guard
+name Castle Guard
+type 83
+level 50
+end
+end
 arch grassd_8
 x 7
 y 4
@@ -915,21 +924,13 @@ arch floor_fstone2a
 x 7
 y 8
 end
-arch guard
-name Castle Guard
-level 50
-sp -1
-maxsp 40
-Pow 10
-Dex 1
+arch spawn_point
 x 7
 y 8
-arch amulet_generic
-reflect_spell 1
-reflect_missile 1
-end
-arch ability_firestorm
-last_grace 1
+arch guard
+name Castle Guard
+type 83
+level 50
 end
 end
 arch floor_fstone2a
@@ -1171,15 +1172,18 @@ arch grassd_6
 x 9
 y 4
 end
-arch guard_pole
-name Guard Captain
-level 90
+arch spawn_point
 x 9
 y 4
+arch guard_pole
+name Guard Captain
+type 83
+level 90
 arch event_obj
 name lua
 race /relic/castle/scripts/captain_guard.lua
 sub_type 6
+end
 end
 end
 arch grassd_1
@@ -1190,21 +1194,13 @@ arch grassd_8
 x 9
 y 6
 end
-arch guard
-name Castle Guard
-level 50
-sp -1
-maxsp 40
-Pow 10
-Dex 1
+arch spawn_point
 x 9
 y 6
-arch amulet_generic
-reflect_spell 1
-reflect_missile 1
-end
-arch ability_firestorm
-last_grace 1
+arch guard
+name Castle Guard
+type 83
+level 50
 end
 end
 arch grassd_2
@@ -1322,6 +1318,15 @@ end
 arch grassd_2
 x 9
 y 23
+end
+arch spawn_point
+x 9
+y 23
+arch guard
+name Castle Guard
+type 83
+level 50
+end
 end
 arch floor_grit2
 x 10
@@ -1730,21 +1735,13 @@ arch grassd_3
 x 13
 y 6
 end
-arch guard
-name Castle Guard
-level 50
-sp -1
-maxsp 40
-Pow 10
-Dex 1
+arch spawn_point
 x 13
 y 6
-arch amulet_generic
-reflect_spell 1
-reflect_missile 1
-end
-arch ability_firestorm
-last_grace 1
+arch guard
+name Castle Guard
+type 83
+level 50
 end
 end
 arch grassd_6
@@ -2040,6 +2037,15 @@ arch grassd_7
 x 14
 y 23
 end
+arch spawn_point
+x 14
+y 23
+arch guard
+name Castle Guard
+type 83
+level 50
+end
+end
 arch grassd_6
 x 15
 end
@@ -2054,6 +2060,15 @@ end
 arch grassd_8
 x 15
 y 3
+end
+arch spawn_point
+x 15
+y 3
+arch guard
+name Castle Guard
+type 83
+level 50
+end
 end
 arch grassd_6
 x 15
@@ -2083,21 +2098,13 @@ arch floor_fstone2a
 x 15
 y 8
 end
-arch guard
-name Castle Guard
-level 50
-sp -1
-maxsp 40
-Pow 10
-Dex 1
+arch spawn_point
 x 15
 y 8
-arch amulet_generic
-reflect_spell 1
-reflect_missile 1
-end
-arch ability_firestorm
-last_grace 1
+arch guard
+name Castle Guard
+type 83
+level 50
 end
 end
 arch floor_fstone2a

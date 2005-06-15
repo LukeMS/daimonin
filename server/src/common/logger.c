@@ -55,7 +55,7 @@ void LOG(LogLevel logLevel, char *format, ...)
 
 #ifdef DEBUG                /* if we have a debug version, we want see ALL output */
         if (logfile)
-            fflush(logfile);    /* so flush this! */
+            fflush(logfile);    /* so flush this! We need this because we don't have added a exception/signal handler for win32 */
 #endif
         if (logfile && logfile != stderr)   /* if was it a logfile wrote it to screen too */
             fputs(log_buf, stderr);

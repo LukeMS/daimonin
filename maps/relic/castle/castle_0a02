@@ -14,6 +14,7 @@ tile_path_4 castle_0b02
 tile_path_5 castle_0003
 tile_path_6 castle_0001
 tile_path_7 /relic/forest/mountain_0204
+tile_path_8 colosseum/colosseum_0a03
 end
 arch grass_thick1
 end
@@ -91,6 +92,9 @@ end
 arch grass_thick1
 y 19
 end
+arch plant_flower9
+y 19
+end
 arch grass_thick1
 y 20
 end
@@ -115,10 +119,10 @@ end
 arch plant8
 y 23
 end
-arch grass_thick1
+arch swamp1
 x 1
 end
-arch plant_flower8
+arch grass_thickm1
 x 1
 end
 arch grass_thick1
@@ -186,6 +190,10 @@ x 1
 y 8
 end
 arch grass_thick1
+x 1
+y 9
+end
+arch plant_flower9
 x 1
 y 9
 end
@@ -297,7 +305,10 @@ arch grassd_m9
 x 1
 y 23
 end
-arch grass_thick1
+arch swamp1
+x 2
+end
+arch grass_thickm6
 x 2
 end
 arch grass_thick1
@@ -324,15 +335,27 @@ arch plant_flower3
 x 2
 y 3
 end
-arch grass_thick1
+arch swamp1
 x 2
 y 4
 end
-arch grass_thick1
+arch grass_thickm1
+x 2
+y 4
+end
+arch swamp1
 x 2
 y 5
 end
-arch grass_thick1
+arch grass_thickm7
+x 2
+y 5
+end
+arch swamp1
+x 2
+y 6
+end
+arch grass_thickm5
 x 2
 y 6
 end
@@ -428,7 +451,10 @@ arch water_still
 x 2
 y 23
 end
-arch grass_thick1
+arch swamp1
+x 3
+end
+arch grass_thickm2
 x 3
 end
 arch grass_thick1
@@ -436,10 +462,6 @@ x 3
 y 1
 end
 arch tree_big2
-x 3
-y 1
-end
-arch plant2
 x 3
 y 1
 end
@@ -459,7 +481,11 @@ arch plant11
 x 3
 y 3
 end
-arch grass_thick1
+arch swamp1
+x 3
+y 4
+end
+arch grass_thickm2
 x 3
 y 4
 end
@@ -499,15 +525,19 @@ arch plant11
 x 3
 y 9
 end
-arch grass_thick1
+arch swamp1
 x 3
 y 10
 end
-arch grass_thick1
+arch grass_thickm1
+x 3
+y 10
+end
+arch swamp1
 x 3
 y 11
 end
-arch plant_flower3
+arch grass_thickm5
 x 3
 y 11
 end
@@ -661,7 +691,11 @@ arch grass_thick1
 x 4
 y 10
 end
-arch grass_thick1
+arch swamp1
+x 4
+y 11
+end
+arch grass_thickm2
 x 4
 y 11
 end
@@ -937,7 +971,11 @@ arch plant2
 x 6
 y 5
 end
-arch grass_thick1
+arch swamp1
+x 6
+y 6
+end
+arch grass_thickm1
 x 6
 y 6
 end
@@ -1088,23 +1126,23 @@ arch plant8
 x 7
 y 4
 end
-arch grass_thick1
+arch swamp1
 x 7
 y 5
 end
-arch grass_thick1
+arch grass_thickm1
+x 7
+y 5
+end
+arch swamp1
 x 7
 y 6
 end
-arch plant2
+arch grass_thickm2
 x 7
 y 6
 end
-arch plant_flower3
-x 7
-y 6
-end
-arch grass_thick1
+arch swamp1
 x 7
 y 7
 end
@@ -1124,15 +1162,27 @@ arch grass_thick1
 x 7
 y 10
 end
-arch grass_thick1
+arch swamp1
 x 7
 y 11
 end
-arch grass_thick1
+arch grass_thickm1
+x 7
+y 11
+end
+arch swamp1
 x 7
 y 12
 end
-arch grass_thick1
+arch grass_thickm8
+x 7
+y 12
+end
+arch swamp1
+x 7
+y 13
+end
+arch grass_thickm5
 x 7
 y 13
 end
@@ -1243,6 +1293,10 @@ arch grass_thick1
 x 8
 y 5
 end
+arch plant_flower9
+x 8
+y 5
+end
 arch grass_thick1
 x 8
 y 6
@@ -1275,7 +1329,11 @@ arch plant2
 x 8
 y 11
 end
-arch grass_thick1
+arch swamp1
+x 8
+y 12
+end
+arch grass_thickm2
 x 8
 y 12
 end
@@ -1348,6 +1406,10 @@ x 8
 y 22
 end
 arch grass_thick1
+x 8
+y 23
+end
+arch plant_flower9
 x 8
 y 23
 end
@@ -1460,23 +1522,27 @@ arch plant2
 x 9
 y 18
 end
-arch grass_thick2
+arch swamp1
 x 9
 y 19
 end
-arch grass_thick2
+arch grass_thickm1
+x 9
+y 19
+end
+arch swamp1
 x 9
 y 20
 end
-arch plant8
+arch grass_thickm7
 x 9
 y 20
 end
-arch grass_thick2
+arch swamp1
 x 9
 y 21
 end
-arch plant_flower3
+arch grass_thickm5
 x 9
 y 21
 end
@@ -1526,7 +1592,11 @@ arch plant2
 x 10
 y 3
 end
-arch grass_thick2
+arch swamp1
+x 10
+y 4
+end
+arch grass_thickm1
 x 10
 y 4
 end
@@ -1646,7 +1716,11 @@ arch grass_thick2
 x 10
 y 20
 end
-arch grass_thick2
+arch swamp1
+x 10
+y 21
+end
+arch grass_thickm2
 x 10
 y 21
 end
@@ -1688,15 +1762,19 @@ arch grass_thick1
 x 11
 y 3
 end
-arch grass_thick2
+arch swamp1
 x 11
 y 4
 end
-arch plant8
+arch grass_thickm3
 x 11
 y 4
 end
-arch grass_thick2
+arch swamp1
+x 11
+y 5
+end
+arch grass_thickm2
 x 11
 y 5
 end
@@ -2850,6 +2928,15 @@ arch dirt_floor1
 x 18
 y 8
 end
+arch spawn_point
+x 18
+y 8
+arch troll
+type 83
+friendly 1
+unaggressive 1
+end
+end
 arch floor_flagstone1b
 x 18
 y 9
@@ -2878,10 +2965,14 @@ arch floor_flagstone1b
 x 18
 y 12
 end
-arch orc_berserker
-unaggressive 1
+arch spawn_point
 x 18
 y 12
+arch orc_berserker
+type 83
+friendly 1
+unaggressive 1
+end
 end
 arch floor_flagstone1b
 x 18
@@ -2916,10 +3007,14 @@ arch floor_flagstone1b
 x 18
 y 16
 end
-arch giant_hill
-unaggressive 1
+arch spawn_point
 x 18
 y 16
+arch giant_hill
+type 83
+friendly 1
+unaggressive 1
+end
 end
 arch floor_flagstone1b
 x 18
@@ -2950,14 +3045,18 @@ arch floor_flagstone1b
 x 18
 y 20
 end
-arch kobold_fighter
-unaggressive 1
-x 18
-y 20
-end
 arch dirt_floor1
 x 18
 y 20
+end
+arch spawn_point
+x 18
+y 20
+arch kobold_fighter
+type 83
+unaggressive 1
+friendly 1
+end
 end
 arch floor_flagstone1b
 x 18
@@ -3492,6 +3591,9 @@ arch floor_flagstone1b
 x 21
 y 10
 end
+arch spawn_point
+x 21
+y 10
 arch guard
 msg
 @match hi
@@ -3499,9 +3601,8 @@ I am Tulan the Jailor.  Please do not agrivate the prisoners.
 @match hello
 I am Tulan the Jailor.  Please do not agrivate the prisoners.
 endmsg
-is_animated 0
-x 21
-y 10
+type 83
+end
 end
 arch floor_flagstone1b
 x 21
@@ -3889,9 +3990,4 @@ end
 arch grassd_7
 x 23
 y 23
-end
-arch troll
-unaggressive 1
-x 18
-y 8
 end

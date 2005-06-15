@@ -516,13 +516,16 @@ arch floor_fs_grey1a
 x 4
 y 10
 end
-arch guard_pole
+arch spawn_point
 x 4
 y 10
+arch guard_pole
+type 83
 arch event_obj
 name lua
 race /relic/castle/scripts/Armoryguardscript.lua
 sub_type 6
+end
 end
 end
 arch floor_fs_grey1a

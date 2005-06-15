@@ -1079,13 +1079,6 @@ arch floor_farm1a
 x 9
 y 6
 end
-arch ant_red
-level 4
-item_race 8
-item_level 5
-x 9
-y 6
-end
 arch floor_farm1j
 x 9
 y 7
@@ -1744,17 +1737,20 @@ arch light6
 x 14
 y 16
 end
+arch spawn_point
+x 14
+y 16
 arch archer
+type 83
 level 7
 random_move 1
 item_race 3
 item_level 3
-x 14
-y 16
 arch event_obj
 name lua
 race /relic/castle/scripts/Farmer.lua
 sub_type 6
+end
 end
 end
 arch floor_wood1b

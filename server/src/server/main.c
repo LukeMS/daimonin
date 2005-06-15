@@ -1307,8 +1307,9 @@ void shutdown_agent(int timer, char *reason)
 int main(int argc, char **argv)
 {
     struct timeval timeout;
+#ifdef AUTO_MSG
 	int auto_msg_count = 8*60*3; /* kick the first message 3 minutes after server start */
-
+#endif
 #ifdef PLUGINS
     int     evtid;
     CFParm  CFP;
@@ -1336,6 +1337,7 @@ int main(int argc, char **argv)
 
         shutdown_agent(-1, NULL);       /* check & run a shutdown count (with messages & shutdown ) */
 
+#ifdef AUTO_MSG
 		if(!(auto_msg_count--))			/* trigger the auto message system */
 		{
 			/* TODO: add here a real customizable auto message system.
@@ -1345,7 +1347,7 @@ int main(int argc, char **argv)
 			new_draw_info(NDI_PLAYER | NDI_UNIQUE | NDI_ALL | NDI_GREEN, 5, NULL,
 				"[INFO]: Please HELP US and VOTE for Daimonin DAILY!\nGo to www.daimonin.net and hit the VOTE ICONS!\nThanks and happy playing!! - Michtoen");
 		}
-
+#endif
 #ifdef MEMPOOL_OBJECT_TRACKING
         check_use_object_list();
 #endif

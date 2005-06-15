@@ -239,13 +239,16 @@ arch floor_fs_grey1a
 x 1
 y 22
 end
-arch smith
+arch spawn_point
 x 1
 y 22
+arch smith
+type 83
 arch event_obj
 name lua
 race /relic/castle/scripts/Castleblacksmith3script.lua
 sub_type 6
+end
 end
 end
 arch floor_fs_grey1a

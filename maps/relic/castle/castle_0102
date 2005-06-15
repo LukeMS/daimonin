@@ -238,13 +238,16 @@ arch grassd_8
 x 2
 y 10
 end
+arch spawn_point
+x 2
+y 10
 arch guard_pole
+type 83
 level 50
 random_move 1
 item_race 80
 item_level 20
-x 2
-y 10
+end
 end
 arch grassd_2
 x 2
@@ -800,17 +803,20 @@ arch grassd_8
 x 7
 y 20
 end
+arch spawn_point
+x 7
+y 20
 arch ranger
+type 83
 level 15
 random_move 1
 item_race 4
 item_level 4
-x 7
-y 20
 arch event_obj
 name lua
 race /relic/castle/scripts/Commoner.lua
 sub_type 6
+end
 end
 end
 arch grassd_3
@@ -932,20 +938,12 @@ glow_radius 5
 is_animated 1
 x 9
 end
+arch spawn_point
+x 9
 arch guard
 name Castle Guard
+type 83
 level 50
-sp -1
-maxsp 40
-Pow 10
-Dex 1
-x 9
-arch ability_mbullet
-last_grace 1
-end
-arch amulet_generic
-reflect_spell 1
-reflect_missile 1
 end
 end
 arch grassd_6
@@ -1541,20 +1539,12 @@ glow_radius 5
 is_animated 1
 x 13
 end
+arch spawn_point
+x 13
 arch guard
 name Castle Guard
+type 83
 level 50
-sp -1
-maxsp 40
-Pow 10
-Dex 1
-x 13
-arch ability_mbullet
-last_grace 1
-end
-arch amulet_generic
-reflect_spell 1
-reflect_missile 1
 end
 end
 arch grassd_7
