@@ -1,0 +1,116 @@
+NPC GUI and /talk command
+-------------------------
+
+The NPC GUI is a special "communication" window where we handle,
+independent to the text window communication, more complex NPC chats.
+
+Note: The /talk and GUI communication is not a substitution of the /say
+command and the text window but a extension. The text window talking will
+still be there, but semantic different use.
+
+The GUI allows through html like tags to customize the output.
+The command itself (:Interface() ) is avaible from LUA scripts.
+The client will get a interface command followed by a string.
+ 
+To give an overview,  this is a interface command from LUA script: 
+
+activator:Interface(1, [[ 
+<h f="monk.151"> 
+<m t="Quest Title" b="message body... Here the NPC talks to you."> 
+<l t="This is a link line" c="/talk kickme"> 
+<r t="Reward Title" b="Summary & reward." c="10" s="20"> 
+<i m="G" f="ball_and_chain.101" t="ball and chain" b="about the item"> 
+<a c="/talk finish"> 
+<d> 
+]]) 
+
+Every layout command is surrounded by <> like you know it from html 
+code. after the '<' the command tag defines the kind of layout command. 
+Its followed by a row of settings, which has the the format 
+COMMAND_TAG="SETTING". The '>' closed the layout command. 
+
+The layout command and the order of the command settings can 
+come in any order. The client parser will sort it out. 
+
+The GUI will pop out at the client when the command comes in.
+It is a asynchron communication. The server/script has no idea the
+command has arrived to the client and/or what stage the communication is.
+
+The "trick" is, that the interface string has the right keywords and 
+answers in, the player (client) can send back to the NPC. The GUI parser
+will setup them right.
+
+The communication is, different to /say, target bound with the new 
+communication command /talk. Thats for players bound to /say use a bit
+unfamiliar. But it is like in real life: If you stay in a room and you
+just "say" something - then can it be to all or even to no one.
+Talking to someone means that you talk to him "exclusive" = targeted.
+
+The /talk command is bound in beta 4 to the 'T' key as default.
+
+The client will generate (if set) /talk <answer> commands when you hit a button or
+link in the GUI and send them to the server. In this way we have a target communication.
+This system will be expanded to real vendors and trading GUI which will base on this system.
+That will work with the /talk command.
+
+The dev testmap "testmap_quest" will have most GUI & quest templates and examples.
+
+GUI TAGS
+--------
+
+Sometimes, its that the server tells the client to close the GUI window.
+Thats done with activator:Interface(-1).
+
+For a normal inteface() commands the tags are these: 
+
+HEAD: <h f="face_name" t="Title (optional)"> 
+With the head command, the portrait is put in the upper left area. 
+The title string is the name of the npc you talk to. Is the title is NOT 
+given (optional means the t="" part don't must be given for a head 
+command) the title name is the same name as the object name 
+you target! 
+
+MESSAGE: <m t="Title" b="message text"> 
+This is main part of the GUI. The Message with the Title. Note, that the 
+message text part can be several lines. The carriage return/line feed as 
+normal white space formating will be noticed from the client parser. 
+
+LINK: <l t="This is a link line" c="COMMAND"> 
+A link line is a green line you can click on. It will trigger the through c="" 
+defined command - normally another /talk command. 
+You can give more then one link line. 
+That allows for example several quests at the same time to a single NPC. 
+
+REWARD: <r t="Reward Title" b="Summary & reward." c="1" s="1" g="1" m="1"> 
+The reward part is used to tell the player that ge got something. It can 
+be used for quest but also for simple presents. The Title is in big 
+letters, the body summs up what you get. With c|s|g|m you describe 
+a amount of money which is shown as coins. 
+
+ICON: <i m="G|S|s" f="picture" t="item name" b="about the item"> 
+The icon shows and describe you the item. The picture name is a face. 
+The client will search icon, cache & normal faces folder & files for that 
+name. The m="" tag is very important. It tells the client GUI how 
+to present the reward. There are 3 cases: 
+'G' is the normal case. 
+'S' means selectable. You give the client a list of items. All 'G' marked 
+are listed first, then all with 'S' marked. The player can select ONE of 
+this 'S' marked icons inside the GUI. That marker tag will be attached to 
+the button command. When the button command is /talk reward, the 
+generated command is "/talk reward #1". The server script then knows 
+which item the player has selected. 
+'s' means the same as 'S' BUT the icons can't be selected. That important 
+when you want tell the player "you will get one of this items when you come back". 
+Means, it shows him only the possible selectable items. 
+
+ACCEPT: <a t="Next" c="/talk finish"> 
+This enables the Accept button. The t="" will give the button a name. 
+If the t tag is not give, the name is accept as default. Allowed are 'Ok' 
+and 'Next'. The c="" command is the command which is send to the 
+server when someone hit the button. if NO ACCEPT tag is inside a 
+interface string, the GUI has a default OK button which will close the 
+GUI without sending a command. 
+
+DECLINE: <a c="/talk finish"> 
+Same as accept button, just no t="" command is allowed. 
+
