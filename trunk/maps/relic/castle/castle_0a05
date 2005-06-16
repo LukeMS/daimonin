@@ -1203,6 +1203,7 @@ x 7
 y 13
 end
 arch grass_thick2
+no_pass 1
 x 7
 y 14
 end
