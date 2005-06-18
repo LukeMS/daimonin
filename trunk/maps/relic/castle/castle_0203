@@ -2000,7 +2000,7 @@ msg
 ATM, this area is unavailable, due to bugs.
 endmsg
 layer 4
-slaying /castle/castleb_0203
+slaying /relic/castle/castleb_0203
 hp 13
 sp 19
 x 13
