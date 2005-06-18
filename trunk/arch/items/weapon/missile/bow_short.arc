@@ -4,7 +4,6 @@ layer 3
 race arrows
 type 14
 wc 4
-wc_range 18
 last_sp 4
 sub_type 0
 material 16

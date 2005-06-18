@@ -289,8 +289,6 @@ WS	[ \t]*{NL}?
 ^dam_add{S}		op->stats.dam += IVAL;
 ^wc{S}			op->stats.wc = IVAL;
 ^wc_add{S}		op->stats.wc += IVAL;
-^wc_range{S}		op->stats.wc_range = IVAL;
-^wc_range_add{S}	op->stats.wc_range += IVAL;
 ^ac{S}			op->stats.ac = IVAL;
 ^ac_add{S}		op->stats.ac += IVAL;
 ^x{S}		{op->x = IVAL;
@@ -982,11 +980,6 @@ char *get_ob_diff(object *op,object *op2) {
 
   }
 
-
-  if(op->stats.wc_range!=op2->stats.wc_range)
-    save_long(buf, "wc_range", op->stats.wc_range);
-  if(op->stats.Str!=op2->stats.Str)
-    save_long(buf, "Str", op->stats.Str);
   if(op->stats.Dex!=op2->stats.Dex)
     save_long(buf, "Dex", op->stats.Dex);
   if(op->stats.Con!=op2->stats.Con)

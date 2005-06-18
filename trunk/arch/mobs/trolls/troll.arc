@@ -34,7 +34,6 @@ hp -1
 maxhp 90
 ac 11
 wc 6
-wc_range 20
 dam 66
 weapon_speed 0.045
 resist_cold 75

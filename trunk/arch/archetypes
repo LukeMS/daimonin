@@ -3556,6 +3556,17 @@ terrain_type 1
 no_pick 1
 is_floor 1
 end
+Object floor_ice
+name ice
+type 71
+editor_folder floors/ice
+face floor_ice.101
+no_teleport 1
+layer 1
+terrain_type 1
+no_pick 1
+is_floor 1
+end
 Object knot-0a
 name knot
 type 79
@@ -6178,7 +6189,6 @@ nrof 1
 no_drop 1
 sp 40
 wc 7
-wc_range 20
 end
 Object ability_cause_lig_wound
 name ability cause light wounds
@@ -6257,7 +6267,6 @@ nrof 1
 no_drop 1
 sp 40
 wc 7
-wc_range 20
 end
 Object blindness
 name blindness
@@ -6302,7 +6311,6 @@ sys_object 1
 attack_internal 100
 dam 1
 wc 1
-wc_range 20
 magic 1
 Dex -3
 identified 1
@@ -6328,7 +6336,6 @@ sys_object 1
 face force.101
 other_arch disgusting_puddle
 wc 0
-wc_range 20
 magic 0
 maxhp 1
 identified 1
@@ -6384,7 +6391,6 @@ face force.101
 attack_internal 100
 dam 1
 wc 1
-wc_range 20
 magic 1
 maxhp 1
 maxgrace -1
@@ -6411,7 +6417,6 @@ face force.101
 attack_internal 100
 dam 1
 wc 1
-wc_range 20
 magic 1
 identified 1
 Cha -4
@@ -6510,7 +6515,6 @@ path_denied 0
 exp 900
 ac 10
 wc 10
-wc_range 25
 dam 15
 hp -1
 maxhp 30
@@ -6572,7 +6576,6 @@ hp -1
 maxhp 134
 ac 20
 wc 18
-wc_range 20
 Str 25
 resist_impact 45
 resist_cleave 45
@@ -8885,7 +8888,7 @@ identified 1
 direction 4
 terrain_flag 1
 weapon_speed 0.0125
-speed 0.85
+speed 0.95
 face halfelf_f.isw.111
 animation half_elf_female
 is_animated 1
@@ -8899,7 +8902,6 @@ grace -1
 maxgrace 3
 ac 0
 wc 0
-wc_range 20
 can_use_armour 1
 can_use_weapon 1
 is_player 1
@@ -8920,7 +8922,7 @@ direction 4
 identified 1
 is_neutral 1
 weapon_speed 0.0125
-speed 0.85
+speed 0.95
 terrain_flag 1
 animation half_elf_male
 is_animated 1
@@ -8928,7 +8930,6 @@ anim_speed 3
 level 1
 ac 0
 wc 0
-wc_range 20
 hp -1
 maxhp 8
 sp -1
@@ -8955,7 +8956,7 @@ identified 1
 direction 4
 terrain_flag 1
 weapon_speed 0.0125
-speed 0.85
+speed 0.95
 face human_f.isw.111
 animation human_female
 is_animated 1
@@ -8969,7 +8970,6 @@ grace -1
 maxgrace 3
 ac 0
 wc 0
-wc_range 20
 can_use_armour 1
 can_use_weapon 1
 is_player 1
@@ -8990,7 +8990,7 @@ direction 4
 identified 1
 is_neutral 1
 weapon_speed 0.0125
-speed 0.85
+speed 0.95
 terrain_flag 1
 animation human_male
 is_animated 1
@@ -8998,7 +8998,6 @@ anim_speed 3
 level 1
 ac 0
 wc 0
-wc_range 20
 hp -1
 maxhp 8
 sp -1
@@ -13994,7 +13993,6 @@ face dust_gen.101
 last_grace 13
 last_sp 7
 sub_type 129
-wc_range 20
 material 4
 is_dust 1
 weight 15
@@ -14013,7 +14011,6 @@ last_grace 13
 last_sp 7
 sub_type 128
 is_thrown 1
-wc_range 20
 material 512
 weight 200
 value 28
@@ -15877,7 +15874,6 @@ editor_folder items/weapon
 layer 3
 race arrows
 face arrow.101
-wc_range 20
 last_grace 7
 dam 3
 wc 0
@@ -15904,7 +15900,6 @@ attack_cleave 100
 last_grace 8
 dam 4
 wc 0
-wc_range 20
 last_sp 4
 sub_type 2
 face bolt.101
@@ -15928,7 +15923,6 @@ face sstone.101
 last_grace 7
 dam 3
 wc 0
-wc_range 20
 last_sp 4
 attack_impact 100
 animation sstone
@@ -15949,7 +15943,6 @@ editor_folder items/weapon
 layer 3
 race arrows
 wc 5
-wc_range 20
 last_sp 4
 sub_type 0
 item_level 7
@@ -15970,7 +15963,6 @@ race arrows
 wc 6
 item_level 19
 item_skill 1
-wc_range 25
 last_sp 5
 sub_type 0
 material 16
@@ -15987,7 +15979,6 @@ editor_folder items/weapon
 layer 3
 race arrows
 wc 4
-wc_range 18
 last_sp 4
 sub_type 0
 material 16
@@ -16012,7 +16003,6 @@ face crossbow.101
 weight 2500
 sp 7
 wc 5
-wc_range 20
 last_sp 5
 value 450
 end
@@ -16031,7 +16021,6 @@ face crossbow_large.101
 weight 4250
 sp 8
 wc 6
-wc_range 25
 last_sp 5
 value 1450
 end
@@ -16048,7 +16037,6 @@ face crossbow_small.101
 weight 1250
 sp 6
 wc 4
-wc_range 17
 last_sp 4
 value 250
 end
@@ -16065,7 +16053,6 @@ item_level 7
 item_skill 1
 face sling.101
 wc 5
-wc_range 20
 last_sp 4
 weight 300
 value 350
@@ -16084,7 +16071,6 @@ material 8
 material_real 193
 face sling_heavy.101
 wc 6
-wc_range 25
 last_sp 5
 weight 400
 value 850
@@ -16101,7 +16087,6 @@ material 8
 material_real 193
 face sling_small.101
 wc 4
-wc_range 18
 last_sp 3
 weight 250
 value 250
@@ -16121,7 +16106,6 @@ weapon_speed 0.035
 last_grace 13
 last_sp 7
 dam 0
-wc_range 20
 sub_type 132
 animation ball
 anim_speed 5
@@ -16142,7 +16126,6 @@ dam 3
 last_grace 11
 last_sp 7
 nrof 1
-wc_range 20
 sub_type 131
 animation t_axe
 is_animated 0
@@ -16166,7 +16149,6 @@ attack_impact 100
 last_grace 11
 last_sp 7
 dam 3
-wc_range 20
 nrof 1
 sub_type 128
 animation t_hammer
@@ -16191,7 +16173,6 @@ attack_pierce 100
 dam 3
 last_grace 11
 last_sp 7
-wc_range 20
 nrof 1
 sub_type 130
 animation t_dagger
@@ -16217,7 +16198,6 @@ dam 3
 last_grace 11
 last_sp 7
 nrof 1
-wc_range 20
 sub_type 129
 animation t_star
 is_animated 0
@@ -16241,7 +16221,6 @@ attack_impact 100
 last_grace 13
 last_sp 7
 dam 3
-wc_range 20
 sub_type 132
 nrof 1
 weight 20000
@@ -16265,7 +16244,6 @@ attack_impact 100
 last_grace 15
 last_sp 7
 dam 5
-wc_range 20
 sub_type 132
 nrof 1
 weight 120000
@@ -16289,7 +16267,6 @@ dam 1
 last_grace 11
 last_sp 7
 sub_type 132
-wc_range 20
 nrof 1
 animation t_rock
 anim_speed 5
@@ -18636,7 +18613,6 @@ walk_on 1
 fly_on 1
 speed 1
 wc 200
-wc_range 20
 dam 6
 flying 1
 end
@@ -18689,7 +18665,6 @@ terrain_flag 32767
 attack_cold 100
 speed 1.0
 wc 200
-wc_range 20
 dam 5
 flying 1
 fly_on 1
@@ -18713,7 +18688,6 @@ is_animated 1
 anim_speed 4
 speed 1.0
 wc 200
-wc_range 20
 dam 5
 level 1
 attack_fire 100
@@ -18833,7 +18807,6 @@ walk_on 1
 fly_on 1
 speed 1
 wc 200
-wc_range 20
 dam 5
 level 1
 attack_weaponmagic 100
@@ -19034,7 +19007,6 @@ hp -1
 maxhp 55
 ac 9
 wc 1
-wc_range 20
 resist_impact 20
 resist_pierce 20
 resist_paralyze 30
@@ -19083,7 +19055,6 @@ hp -1
 maxhp 55
 ac 9
 wc 1
-wc_range 20
 resist_impact 20
 resist_pierce 20
 resist_paralyze 30
@@ -19132,7 +19103,6 @@ hp -1
 maxhp 52
 ac 9
 wc 2
-wc_range 20
 resist_impact 20
 resist_pierce 20
 resist_paralyze 30
@@ -19180,7 +19150,6 @@ hp -1
 maxhp 40
 ac 8
 wc 1
-wc_range 20
 resist_impact 10
 resist_pierce 10
 resist_paralyze 20
@@ -19228,7 +19197,6 @@ hp -1
 maxhp 44
 ac 9
 wc 2
-wc_range 20
 resist_impact 10
 resist_pierce 12
 resist_paralyze 15
@@ -19276,7 +19244,6 @@ hp -1
 maxhp 55
 ac 10
 wc 2
-wc_range 20
 resist_impact 15
 resist_pierce 20
 resist_paralyze 25
@@ -19326,7 +19293,6 @@ hp -1
 maxhp 56
 ac 10
 wc 2
-wc_range 20
 resist_impact 15
 resist_pierce 20
 resist_paralyze 25
@@ -19375,7 +19341,6 @@ hp -1
 maxhp 56
 ac 10
 wc 2
-wc_range 20
 resist_impact 15
 resist_pierce 20
 resist_paralyze 25
@@ -19425,7 +19390,6 @@ hp -1
 maxhp 55
 ac 9
 wc 2
-wc_range 20
 resist_impact 15
 resist_pierce 20
 resist_paralyze 25
@@ -19475,7 +19439,6 @@ hp -1
 maxhp 57
 ac 8
 wc 3
-wc_range 20
 resist_impact 15
 resist_pierce 20
 resist_paralyze 25
@@ -19525,7 +19488,6 @@ hp -1
 maxhp 57
 ac 11
 wc 3
-wc_range 20
 resist_impact 15
 resist_pierce 20
 resist_paralyze 25
@@ -19575,7 +19537,6 @@ hp -1
 maxhp 54
 ac 11
 wc 3
-wc_range 20
 resist_impact 15
 resist_pierce 20
 resist_paralyze 25
@@ -19625,7 +19586,6 @@ hp -1
 maxhp 53
 ac 10
 wc 3
-wc_range 20
 resist_impact 15
 resist_pierce 20
 resist_paralyze 25
@@ -19675,7 +19635,6 @@ hp -1
 maxhp 53
 ac 11
 wc 3
-wc_range 20
 resist_impact 15
 resist_pierce 20
 resist_paralyze 25
@@ -19725,7 +19684,6 @@ hp -1
 maxhp 54
 ac 11
 wc 3
-wc_range 20
 resist_impact 15
 resist_pierce 20
 resist_paralyze 25
@@ -19775,7 +19733,6 @@ hp -1
 maxhp 50
 ac 10
 wc 2
-wc_range 20
 resist_impact 15
 resist_pierce 20
 resist_paralyze 25
@@ -19824,7 +19781,6 @@ hp -1
 maxhp 67
 ac 12
 wc 4
-wc_range 20
 resist_impact 10
 dam 52
 attack_cleave 100
@@ -19873,7 +19829,6 @@ hp -1
 maxhp 78
 ac 12
 wc 8
-wc_range 20
 dam 52
 resist_pierce 25
 resist_slash 25
@@ -20077,7 +20032,6 @@ hp -1
 maxhp 58
 ac 11
 wc 3
-wc_range 20
 dam 58
 weapon_speed 0.045
 attack_slash 100
@@ -20125,7 +20079,6 @@ hp -1
 maxhp 52
 ac 10
 wc 1
-wc_range 20
 dam 51
 weapon_speed 0.045
 attack_slash 100
@@ -20173,7 +20126,6 @@ hp -1
 maxhp 62
 ac 11
 wc 2
-wc_range 20
 dam 53
 weapon_speed 0.045
 attack_slash 100
@@ -20221,7 +20173,6 @@ hp -1
 maxhp 51
 ac 9
 wc 0
-wc_range 20
 dam 47
 weapon_speed 0.045
 attack_pierce 100
@@ -20269,7 +20220,6 @@ hp -1
 maxhp 55
 ac 9
 wc 0
-wc_range 20
 dam 51
 weapon_speed 0.045
 attack_slash 100
@@ -20317,7 +20267,6 @@ hp -1
 maxhp 54
 ac 9
 wc 1
-wc_range 20
 dam 52
 weapon_speed 0.045
 attack_pierce 100
@@ -20365,7 +20314,6 @@ hp -1
 maxhp 55
 ac 10
 wc 1
-wc_range 20
 dam 53
 weapon_speed 0.045
 attack_pierce 100
@@ -20414,7 +20362,6 @@ hp -1
 maxhp 50
 ac 10
 wc 1
-wc_range 20
 dam 50
 weapon_speed 0.045
 attack_pierce 100
@@ -20425,6 +20372,99 @@ animation kobold_shaman
 is_animated 1
 anim_speed 4
 no_pick 1
+end
+Object dragon_red
+name red dragon
+type 80
+mpart_id 3
+editor_folder mobs/dragon
+face dragon_red.131
+race dragon
+randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+layer 6
+direction 5
+item_race 255
+item_level 255
+corpse 1
+alive 1
+monster 1
+is_male 1
+is_evil 1
+terrain_flag 1
+can_open_door 1
+can_see_in_dark 1
+can_use_weapon 1
+can_use_armour 1
+can_use_ring 1
+run_away 3
+Int 10
+Wis 7
+Dex 3
+Con 15
+exp 132
+magic 1
+Pow 10
+sp -1
+maxsp 19
+hp -1
+maxhp 90
+ac 12
+wc 7
+resist_fire 100
+resist_pierce 25
+resist_slash 25
+resist_impact 25
+resist_cleave 25
+resist_fear 80
+resist_confusion 40
+resist_cold -30
+dam 82
+weapon_speed 0.045
+attack_pierce 100
+speed -0.061
+level 1
+weight 950000
+animation dragon_red
+is_animated 1
+anim_speed 5
+no_pick 1
+end
+More
+Object dragon_red_b
+name red dragon
+mpart_id 3
+mpart_nr 1
+layer 6
+terrain_flag 1
+monster 1
+alive 1
+no_pick 1
+x 1
+end
+More
+Object dragon_red_c
+name red dragon
+mpart_id 3
+mpart_nr 2
+layer 6
+terrain_flag 1
+monster 1
+alive 1
+no_pick 1
+y 1
+end
+More
+Object dragon_red_d
+name red dragon
+mpart_id 3
+mpart_nr 3
+layer 6
+terrain_flag 1
+monster 1
+alive 1
+no_pick 1
+x 1
+y 1
 end
 Object dragon_skeletal
 name skeletal dragon
@@ -20450,7 +20490,6 @@ can_see_in_dark 1
 can_use_weapon 1
 can_use_armour 1
 can_use_ring 1
-run_away 10
 Int 10
 Wis 7
 Dex 3
@@ -20464,8 +20503,7 @@ hp -1
 maxhp 85
 ac 12
 wc 7
-wc_range 20
-resist_fire 100
+resist_fire 30
 resist_pierce 25
 resist_slash 25
 resist_impact 25
@@ -20552,7 +20590,6 @@ hp -1
 maxhp 62
 ac 13
 wc 4
-wc_range 20
 resist_fear 50
 dam 75
 weapon_speed 0.045
@@ -20596,7 +20633,6 @@ hp -1
 maxhp 66
 ac 10
 wc 1
-wc_range 20
 dam 52
 weapon_speed 0.045
 attack_cleave 100
@@ -20645,7 +20681,6 @@ hp -1
 maxhp 75
 ac 10
 wc 3
-wc_range 20
 dam 61
 weapon_speed 0.045
 attack_pierce 100
@@ -20693,7 +20728,6 @@ hp -1
 maxhp 71
 ac 12
 wc 6
-wc_range 20
 dam 62
 weapon_speed 0.045
 attack_slash 100
@@ -20741,7 +20775,6 @@ hp -1
 maxhp 69
 ac 11
 wc 6
-wc_range 20
 dam 54
 weapon_speed 0.045
 attack_slash 100
@@ -20789,7 +20822,6 @@ hp -1
 maxhp 70
 ac 12
 wc 6
-wc_range 20
 dam 51
 weapon_speed 0.045
 attack_slash 100
@@ -20838,7 +20870,6 @@ hp -1
 maxhp 72
 ac 10
 wc 3
-wc_range 20
 dam 52
 weapon_speed 0.045
 attack_pierce 100
@@ -20885,7 +20916,6 @@ hp -1
 maxhp 72
 ac 10
 wc 4
-wc_range 20
 dam 62
 weapon_speed 0.045
 attack_impact 100
@@ -20932,7 +20962,6 @@ hp -1
 maxhp 72
 ac 9
 wc 4
-wc_range 20
 dam 61
 weapon_speed 0.045
 attack_impact 100
@@ -20980,7 +21009,6 @@ hp -1
 maxhp 74
 ac 10
 wc 6
-wc_range 20
 dam 64
 weapon_speed 0.045
 attack_impact 100
@@ -21028,7 +21056,6 @@ hp -1
 maxhp 52
 ac 9
 wc 5
-wc_range 20
 dam 51
 weapon_speed 0.045
 attack_impact 100
@@ -21079,7 +21106,6 @@ hp -1
 maxhp 62
 ac 12
 wc 5
-wc_range 20
 resist_impact 12
 resist_cleave 12
 resist_pierce 12
@@ -21134,7 +21160,6 @@ hp -1
 maxhp 90
 ac 12
 wc 6
-wc_range 20
 resist_impact 15
 resist_cleave 15
 resist_pierce 15
@@ -21189,7 +21214,6 @@ hp -1
 maxhp 86
 ac 11
 wc 7
-wc_range 20
 resist_impact 12
 resist_cleave 12
 resist_pierce 12
@@ -21244,7 +21268,6 @@ hp -1
 maxhp 85
 ac 10
 wc 5
-wc_range 20
 resist_impact 10
 resist_cleave 10
 resist_pierce 10
@@ -21298,7 +21321,6 @@ hp -1
 maxhp 90
 ac 14
 wc 6
-wc_range 20
 resist_impact 20
 resist_cleave 20
 resist_pierce 20
@@ -21354,7 +21376,6 @@ hp -1
 maxhp 80
 ac 11
 wc 5
-wc_range 20
 resist_impact 10
 resist_cleave 10
 resist_pierce 10
@@ -21410,7 +21431,6 @@ hp -1
 maxhp 82
 ac 10
 wc 5
-wc_range 20
 resist_impact 10
 resist_cleave 10
 resist_pierce 10
@@ -21466,7 +21486,6 @@ hp -1
 maxhp 80
 ac 11
 wc 6
-wc_range 20
 resist_impact 15
 resist_cleave 15
 resist_pierce 15
@@ -21521,7 +21540,6 @@ hp -1
 maxhp 85
 ac 11
 wc 7
-wc_range 20
 resist_impact 20
 resist_cleave 20
 resist_pierce 20
@@ -21572,7 +21590,6 @@ hp -1
 maxhp 70
 ac 12
 wc 4
-wc_range 20
 dam 50
 weapon_speed 0.045
 attack_cleave 100
@@ -21618,7 +21635,6 @@ hp -1
 maxhp 60
 ac 9
 wc 0
-wc_range 20
 dam 50
 weapon_speed 0.045
 attack_cleave 100
@@ -21662,7 +21678,6 @@ hp -1
 maxhp 65
 ac 10
 wc 1
-wc_range 20
 dam 51
 weapon_speed 0.045
 attack_cleave 100
@@ -21706,7 +21721,6 @@ hp -1
 maxhp 60
 ac 10
 wc 1
-wc_range 20
 dam 51
 weapon_speed 0.045
 attack_cleave 100
@@ -21750,7 +21764,6 @@ hp -1
 maxhp 61
 ac 10
 wc 1
-wc_range 20
 dam 51
 weapon_speed 0.045
 attack_cleave 100
@@ -21758,6 +21771,55 @@ speed -0.053
 level 1
 weight 11500
 animation wasp_giant
+is_animated 1
+anim_speed 4
+no_pick 1
+end
+Object minotaur
+name minotaur
+type 80
+editor_folder mobs/minotaur
+face minotaur.131
+race minotaur
+randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+layer 6
+direction 5
+item_race 255
+item_level 255
+corpse 1
+alive 1
+monster 1
+is_male 1
+is_evil 1
+terrain_flag 1
+can_open_door 1
+can_use_weapon 1
+can_use_armour 1
+can_use_ring 1
+run_away 2
+Int 10
+Wis 6
+Dex 3
+Con 15
+exp 102
+magic 1
+Pow 10
+sp -1
+maxsp 13
+hp -1
+maxhp 80
+ac 11
+wc 5
+dam 80
+weapon_speed 0.045
+attack_cleave 100
+resist_acid 25
+resist_confusion 25
+resist_fear 25
+speed -0.057
+level 1
+weight 483250
+animation minotaur
 is_animated 1
 anim_speed 4
 no_pick 1
@@ -21795,7 +21857,6 @@ hp -1
 maxhp 56
 ac 10
 wc 2
-wc_range 20
 dam 58
 weapon_speed 0.045
 attack_impact 90
@@ -21845,7 +21906,6 @@ hp -1
 maxhp 66
 ac 11
 wc 7
-wc_range 20
 dam 56
 weapon_speed 0.045
 resist_fire 100
@@ -21937,7 +21997,6 @@ hp -1
 maxhp 63
 ac 10
 wc 3
-wc_range 20
 dam 56
 weapon_speed 0.055
 attack_impact 100
@@ -21985,7 +22044,6 @@ hp -1
 maxhp 71
 ac 10
 wc 3
-wc_range 20
 dam 61
 weapon_speed 0.045
 attack_slash 100
@@ -22033,7 +22091,6 @@ hp -1
 maxhp 69
 ac 10
 wc 3
-wc_range 20
 dam 58
 weapon_speed 0.045
 attack_pierce 100
@@ -22081,7 +22138,6 @@ hp -1
 maxhp 66
 ac 10
 wc 3
-wc_range 20
 dam 56
 weapon_speed 0.045
 attack_impact 100
@@ -22130,7 +22186,6 @@ hp -1
 maxhp 61
 ac 10
 wc 2
-wc_range 20
 dam 54
 weapon_speed 0.045
 attack_impact 100
@@ -22179,7 +22234,6 @@ hp -1
 maxhp 61
 ac 9
 wc 2
-wc_range 20
 dam 53
 weapon_speed 0.045
 attack_pierce 100
@@ -22226,7 +22280,6 @@ hp -1
 maxhp 71
 ac 11
 wc 4
-wc_range 20
 dam 62
 weapon_speed 0.045
 attack_slash 100
@@ -22273,7 +22326,6 @@ hp -1
 maxhp 67
 ac 10
 wc 4
-wc_range 20
 dam 62
 weapon_speed 0.045
 attack_slash 100
@@ -22316,7 +22368,6 @@ hp -1
 maxhp 66
 ac 10
 wc 3
-wc_range 20
 dam 52
 weapon_speed 0.045
 attack_cleave 100
@@ -22360,7 +22411,6 @@ hp -1
 maxhp 71
 ac 10
 wc 5
-wc_range 20
 dam 53
 weapon_speed 0.045
 attack_impact 100
@@ -22417,7 +22467,6 @@ hp -1
 maxhp 66
 ac 9
 wc 6
-wc_range 20
 dam 48
 weapon_speed 0.045
 resist_fear 100
@@ -22463,7 +22512,6 @@ hp -1
 maxhp 66
 ac 9
 wc 7
-wc_range 20
 dam 55
 weapon_speed 0.045
 resist_fire -35
@@ -22511,7 +22559,6 @@ hp -1
 maxhp 66
 ac 10
 wc 6
-wc_range 20
 dam 55
 weapon_speed 0.045
 resist_cold -35
@@ -22565,7 +22612,6 @@ hp -1
 maxhp 90
 ac 11
 wc 6
-wc_range 20
 dam 66
 weapon_speed 0.045
 resist_cold 75
@@ -22659,7 +22705,6 @@ hp -1
 maxhp 77
 ac 11
 wc 7
-wc_range 20
 dam 66
 weapon_speed 0.045
 resist_fear 100
@@ -22710,7 +22755,6 @@ hp -1
 maxhp 65
 ac 10
 wc 3
-wc_range 20
 dam 53
 weapon_speed 0.045
 resist_fear 100
@@ -22762,7 +22806,6 @@ hp -1
 maxhp 62
 ac 8
 wc 6
-wc_range 20
 dam 52
 weapon_speed 0.045
 resist_fear 100
@@ -22813,7 +22856,6 @@ hp -1
 maxhp 62
 ac 9
 wc 3
-wc_range 20
 dam 51
 weapon_speed 0.045
 resist_fear 100
@@ -22861,7 +22903,6 @@ hp -1
 maxhp 65
 ac 10
 wc 2
-wc_range 20
 dam 50
 weapon_speed 0.045
 resist_fear 100
@@ -22909,7 +22950,6 @@ hp -1
 maxhp 60
 ac 9
 wc 4
-wc_range 20
 dam 55
 weapon_speed 0.045
 resist_fear 100
@@ -22960,7 +23000,6 @@ hp -1
 maxhp 63
 ac 10
 wc 7
-wc_range 20
 dam 53
 weapon_speed 0.045
 resist_fear 100
@@ -23012,7 +23051,6 @@ hp -1
 maxhp 63
 ac 11
 wc 7
-wc_range 20
 dam 53
 weapon_speed 0.045
 resist_fear 100
@@ -23062,7 +23100,6 @@ hp -1
 maxhp 66
 ac 11
 wc 7
-wc_range 20
 dam 56
 weapon_speed 0.045
 resist_fire 100

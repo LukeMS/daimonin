@@ -11,7 +11,6 @@ last_grace 13
 last_sp 7
 dam 0
 type 13
-wc_range 20
 sub_type 132
 anim
 facings 9

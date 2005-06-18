@@ -1960,7 +1960,6 @@ void do_throw(object *op, object *toss_item, int dir)
      * BUT as cool this sounds - it have massive problems to balance and
      * can give alot of possible exploits the chance to appear.
      */
-    throw_ob->stats.wc_range = op->stats.wc_range;
     if (QUERY_FLAG(throw_ob->inv, FLAG_IS_THROWN))
     {
         /*throw_ob->last_sp += eff_str/3;*/ /* fly a little further */

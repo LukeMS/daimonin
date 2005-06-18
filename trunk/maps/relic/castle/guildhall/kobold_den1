@@ -1320,7 +1320,6 @@ arch kobold
 name kobold sneaker
 type 83
 Wis 2
-wc_range 12
 unaggressive 1
 end
 end
@@ -1486,7 +1485,6 @@ name kobold sneaker
 type 83
 Wis 2
 unaggressive 1
-wc_range 12
 end
 end
 arch floor_grit4a
@@ -2137,7 +2135,6 @@ arch kobold
 name kobold mushroom collector
 type 83
 Wis 2
-wc_range 12
 unaggressive 1
 end
 end
@@ -2294,7 +2291,6 @@ arch kobold
 name kobold mushroom collector
 type 83
 Wis 2
-wc_range 12
 unaggressive 1
 end
 end
@@ -3046,7 +3042,6 @@ arch kobold
 name kobold mushroom keeper
 type 83
 Wis 2
-wc_range 12
 end
 end
 arch floor_sand_d2

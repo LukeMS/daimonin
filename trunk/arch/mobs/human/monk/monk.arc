@@ -32,7 +32,6 @@ hp -1
 maxhp 90
 ac 14
 wc 6
-wc_range 20
 resist_impact 20
 resist_cleave 20
 resist_pierce 20

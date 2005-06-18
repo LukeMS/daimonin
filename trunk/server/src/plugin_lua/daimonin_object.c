@@ -199,7 +199,6 @@ struct attribute_decl       GameObject_attributes[]         =
     {"weapon_class",      FIELDTYPE_SINT16, offsetof(object, stats.wc), FIELDFLAG_PLAYER_READONLY},
     /* TODO: Limit to +-120 */
     {"armour_class",       FIELDTYPE_SINT16, offsetof(object, stats.ac),FIELDFLAG_PLAYER_READONLY},
-    {"weapon_class_range", FIELDTYPE_UINT8,  offsetof(object, stats.wc_range), 0},
     /* TODO: Limit to +-30 (all  */
     {"strength",     FIELDTYPE_SINT8, offsetof(object, stats.Str), FIELDFLAG_PLAYER_FIX},
     {"dexterity",     FIELDTYPE_SINT8, offsetof(object, stats.Dex), FIELDFLAG_PLAYER_FIX},

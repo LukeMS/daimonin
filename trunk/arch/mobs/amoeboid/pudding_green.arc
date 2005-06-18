@@ -28,7 +28,6 @@ hp -1
 maxhp 53
 ac 11
 wc 3
-wc_range 20
 resist_impact 15
 resist_pierce 20
 resist_paralyze 25

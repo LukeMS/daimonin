@@ -2770,7 +2770,7 @@ object * insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag
     update_object(op, UP_OBJ_INSERT);
 
 
-    /* check walk on/fly on flag if not canceld AND there is some to move on.
+    /* check walk on/fly on flag if not canceled AND there is some to move on.
      * Note: We are first inserting the WHOLE object/multi arch - then we check all
      * part for traps. This ensures we don't must do nasty hacks with half inserted/removed
      * objects - for example when we hit a teleporter trap.

@@ -6,7 +6,6 @@ type 14
 wc 6
 item_level 19
 item_skill 1
-wc_range 25
 last_sp 5
 sub_type 0
 material 16

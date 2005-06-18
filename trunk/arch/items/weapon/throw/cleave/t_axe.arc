@@ -9,7 +9,6 @@ dam 3
 last_grace 11
 last_sp 7
 nrof 1
-wc_range 20
 type 13
 sub_type 131
 anim

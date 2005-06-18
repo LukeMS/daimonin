@@ -21,7 +21,6 @@ can_see_in_dark 1
 can_use_weapon 1
 can_use_armour 1
 can_use_ring 1
-run_away 10
 Int 10
 Wis 7
 Dex 3
@@ -35,8 +34,7 @@ hp -1
 maxhp 85
 ac 12
 wc 7
-wc_range 20
-resist_fire 100
+resist_fire 30
 resist_pierce 25
 resist_slash 25
 resist_impact 25

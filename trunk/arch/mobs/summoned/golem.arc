@@ -28,7 +28,6 @@ hp -1
 maxhp 66
 ac 9
 wc 6
-wc_range 20
 dam 48
 weapon_speed 0.045
 resist_fear 100
