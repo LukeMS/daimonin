@@ -10,7 +10,7 @@ direction 4
 identified 1
 is_neutral 1
 weapon_speed 0.0125
-speed 0.85
+speed 0.95
 terrain_flag 1
 anim
 facings 25
@@ -121,7 +121,6 @@ type 1
 level 1
 ac 0
 wc 0
-wc_range 20
 hp -1
 maxhp 8
 sp -1

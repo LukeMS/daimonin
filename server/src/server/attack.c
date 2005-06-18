@@ -110,12 +110,7 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
     op_tag = op->count;
     hitter_tag = hitter->count;
 
-    if (!hitter->stats.wc_range)
-    {
-        LOG(llevDebug, "BUG attack.c: hitter %s has wc_range == 0! (set to 20)\n", query_name(hitter));
-        hitter->stats.wc_range = 20;
-    }
-    roll = random_roll(0, hitter->stats.wc_range, hitter, PREFER_HIGH);
+    roll = random_roll(0, 20, hitter, PREFER_HIGH);
 
     /* Adjust roll for various situations. */
     if (!simple_attack)
@@ -171,7 +166,7 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
 #endif
 
     /* See if we hit the creature */
-    if (roll >= hitter->stats.wc_range || op->stats.ac <= base_wc + roll)
+    if (roll >= 20 || op->stats.ac <= base_wc + roll)
     {
         int hitdam  = base_dam;
 
@@ -463,8 +458,8 @@ int hit_player(object *op, int dam, object *hitter, int type)
         }
 #else
         {
-            /*          LOG(-1, "hitter: %f - %s (dam:%d/%d) (wc:%d/%d)(wcr:%d/%d)(ac:%d/%d) ap:%d\n",hitter->speed,
-                            hitter->name,hitter->stats.dam,op->stats.dam, hitter->stats.wc,op->stats.wc,hitter->stats.wc_range,op->stats.wc_range,
+            /*          LOG(-1, "hitter: %f - %s (dam:%d/%d) (wc:%d/%d)(ac:%d/%d) ap:%d\n",hitter->speed,
+                            hitter->name,hitter->stats.dam,op->stats.dam, hitter->stats.wc,op->stats.wc,
                             hitter->stats.ac,op->stats.ac,hitter->attack[attacknum]);
             */
             maxdam += hit_player_attacktype(op, hitter, dam, attacknum, 0);

@@ -1055,9 +1055,6 @@ static void fire_bow(object *op, int dir)
     /* add in all our wc boni */
     arrow->stats.wc += (bow->magic + arrow->magic + SK_level(op) + thaco_bonus[op->stats.Dex] + bow->stats.wc);
 
-    /* i really like the idea to use here the bow wc_range! */
-    arrow->stats.wc_range = bow->stats.wc_range;
-
     /* monster.c 970 holds the arrow code for monsters */
     arrow->stats.dam += dam_bonus[op->stats.Str] / 2 + bow->stats.dam + bow->magic + arrow->magic;
     arrow->stats.dam = FABS((int) ((float) (arrow->stats.dam * lev_damage[SK_level(op)])));

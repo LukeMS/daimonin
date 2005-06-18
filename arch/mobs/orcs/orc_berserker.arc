@@ -32,7 +32,6 @@ hp -1
 maxhp 63
 ac 10
 wc 3
-wc_range 20
 dam 56
 weapon_speed 0.055
 attack_impact 100

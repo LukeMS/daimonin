@@ -6,7 +6,6 @@ face force.101
 attack_internal 100
 dam 1
 wc 1
-wc_range 20
 magic 1
 identified 1
 Cha -4

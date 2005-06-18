@@ -10,7 +10,7 @@ identified 1
 direction 4
 terrain_flag 1
 weapon_speed 0.0125
-speed 0.85
+speed 0.95
 face human_f.isw.111
 anim
 facings 25
@@ -127,7 +127,6 @@ grace -1
 maxgrace 3
 ac 0
 wc 0
-wc_range 20
 can_use_armour 1
 can_use_weapon 1
 is_player 1

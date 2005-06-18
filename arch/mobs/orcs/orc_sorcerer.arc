@@ -34,7 +34,6 @@ hp -1
 maxhp 61
 ac 9
 wc 2
-wc_range 20
 dam 53
 weapon_speed 0.045
 attack_pierce 100

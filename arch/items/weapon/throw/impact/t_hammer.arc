@@ -8,7 +8,6 @@ attack_impact 100
 last_grace 11
 last_sp 7
 dam 3
-wc_range 20
 nrof 1
 type 13
 sub_type 128

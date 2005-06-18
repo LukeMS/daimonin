@@ -28,7 +28,6 @@ hp -1
 maxhp 67
 ac 12
 wc 4
-wc_range 20
 resist_impact 10
 dam 52
 attack_cleave 100

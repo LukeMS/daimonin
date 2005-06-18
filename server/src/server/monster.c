@@ -2182,7 +2182,6 @@ int ai_bow_attack_enemy(object *op, struct mob_behaviour_param *params)
     arrow->stats.dam += bow->stats.dam + bow->magic + arrow->magic; /* NO_STRENGTH */
     arrow->stats.dam = FABS((int) ((float) (arrow->stats.dam * lev_damage[op->level])));
     arrow->stats.wc = 10 + (bow->magic + bow->stats.wc + arrow->magic + arrow->stats.wc + op->level);
-    arrow->stats.wc_range = bow->stats.wc_range;
     arrow->map = op->map;
     arrow->last_sp = 12; /* we use fixed value for mobs */
     SET_FLAG(arrow, FLAG_FLYING);

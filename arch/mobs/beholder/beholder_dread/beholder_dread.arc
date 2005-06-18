@@ -32,7 +32,6 @@ hp -1
 maxhp 78
 ac 12
 wc 8
-wc_range 20
 dam 52
 resist_pierce 25
 resist_slash 25

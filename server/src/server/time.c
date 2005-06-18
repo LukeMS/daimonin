@@ -873,7 +873,6 @@ object * fix_stopped_arrow(object *op)
     }
     else
     {
-        op->stats.wc_range = op->arch->clone.stats.wc_range;
         op->last_sp = op->arch->clone.last_sp;
         op->level = op->arch->clone.level;
         op->stats.food = op->arch->clone.stats.food;

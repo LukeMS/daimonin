@@ -187,7 +187,7 @@ int write_rune(object *op, int dir, int inspell, int level, char *runename)
  *
  * function handles those runes which detonate but do not cast spells.
  * Remember: at this point we KNOW the trap will hit the victim -
- * so no need for wc or wc_range.
+ * so no need for wce.
  * all we need is dam and a attack form
  */
 void rune_attack(object *op, object *victim)

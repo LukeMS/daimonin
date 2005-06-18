@@ -10,7 +10,6 @@ face crossbow_small.101
 weight 1250
 sp 6
 wc 4
-wc_range 17
 last_sp 4
 value 250
 end

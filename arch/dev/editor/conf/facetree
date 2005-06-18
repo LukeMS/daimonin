@@ -860,6 +860,12 @@
 /walls/doors/door_wood2.132
 /walls/doorways/doorway_wood1.111
 /walls/doorways/doorway_wood1.131
+/mobs/dragon/dragon_red/dragon_red.131
+/mobs/dragon/dragon_red/dragon_red.132
+/mobs/dragon/dragon_red/dragon_red.151
+/mobs/dragon/dragon_red/dragon_red.152
+/mobs/dragon/dragon_red/dragon_red.231
+/mobs/dragon/dragon_red/dragon_red.251
 /mobs/dragon/dragon_skeletal/dragon_skeletal.131
 /mobs/dragon/dragon_skeletal/dragon_skeletal.132
 /mobs/dragon/dragon_skeletal/dragon_skeletal.151
@@ -1121,6 +1127,7 @@
 /floors/grit/floor_grit4b.101
 /floors/grit/floor_grit4c.101
 /floors/grit/floor_grit4d.101
+/floors/ice/floor_ice.101
 /floors/marble/floor_marble1.101
 /floors/marble/floor_marble1a.101
 /floors/marble/floor_marble1b.101
@@ -2270,6 +2277,12 @@
 /items/weapon/hand_2h/cleave/mattock.101
 /items/organic/vegetables/melon01.101
 /indoor/metal_bucket.101
+/mobs/minotaur/minotaur.131
+/mobs/minotaur/minotaur.132
+/mobs/minotaur/minotaur.151
+/mobs/minotaur/minotaur.152
+/mobs/minotaur/minotaur.231
+/mobs/minotaur/minotaur.251
 /indoor/mirror_big.111
 /indoor/mirror_big.171
 /items/jewel/mit_coin.101

@@ -80,11 +80,7 @@ typedef struct liv
      */
     sint16          wc, ac;     /* Weapon Class and Armour Class */
 
-    uint8           wc_range;   /* thats the random value range we add to wc value of
-                                     * attacker: wc+(random()%wc_range). If its higher as
-                                     * defender AC we have hit our enemy.
-                                     */
-    sint8           Str, Dex, Con, Wis, Cha, Int, Pow; /* the stats */
+	sint8           Str, Dex, Con, Wis, Cha, Int, Pow; /* the stats */
     sint8           luck;       /* Affects thaco and ac from time to time */
 } living;
 

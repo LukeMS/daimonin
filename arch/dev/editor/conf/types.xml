@@ -3776,14 +3776,6 @@
     Note that the monster's level further improves weapon class:
     "real weapon class" = &lt;weapon class&gt; - &lt;level&gt;
   </attribute>
-  <attribute arch="wc_range" editor="wc hit range" type="int">
-    This value is set to 20 from the server when == 0. Its the
-    The server will add a random value between 0 ad wc_range to the wc.
-    If that is higher as the target ac, the target is hit. As higher
-    wc_range is as 20, as more dangerous and more often a mob will hit.
-    Because the mobile level is added to wc too, a wc_range of 40 will
-    let the monster hit VERY often even against the best armours.
-  </attribute>
   <attribute arch="hp" editor="health points" type="int">
     The &lt;health points&gt; of a monster define how long it takes to
     kill it. With every successful hit from an opponent, health points
@@ -4380,14 +4372,6 @@
     get drained - The monster dies by zero health points.
     If the value '-1' is set, the monster will start out with full
     health. How much that is depends on &lt;max health&gt;.
-  </attribute>
-  <attribute arch="wc_range" editor="wc hit range" type="int">
-    This value is set to 20 from the server when == 0. Its the
-    The server will add a random value between 0 ad wc_range to the wc.
-    If that is higher as the target ac, the target is hit. As higher
-    wc_range is as 20, as more dangerous and more often a mob will hit.
-    Because the mobile level is added to wc too, a wc_range of 40 will
-    let the monster hit VERY often even against the best armours.
   </attribute>
   <attribute arch="maxhp" editor="max health" type="int">
     &lt;max health&gt; is the maximum amount of &lt;health points&gt; this
@@ -5950,10 +5934,6 @@
     This value is supposed to be the base &lt;weaponclass&gt;,
     but it seems to have rather little effect.
     High values are good here, low values bad.
-  </attribute>
-  <attribute arch="wc_range" editor="wc hit range" type="int">
-    The wc_range of a archery weapon is copied to the projectile
-    which is fired with it!
   </attribute>
   <attribute arch="item_level" editor="required level" type="int">
     If &lt;required level&gt; is set to a value greater zero, players cannot

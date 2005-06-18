@@ -6,7 +6,6 @@ sys_object 1
 attack_internal 100
 dam 1
 wc 1
-wc_range 20
 magic 1
 Dex -3
 identified 1

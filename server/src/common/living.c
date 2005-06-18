@@ -935,8 +935,6 @@ void fix_player(object *op)
     pl->levsp[1] = (char) op->stats.maxsp;
     pl->levgrace[1] = (char) op->stats.maxgrace;
 
-    op->stats.wc_range = op->arch->clone.stats.wc_range;
-
     old_glow = op->glow_radius;
     light = op->arch->clone.glow_radius;
 
@@ -1584,9 +1582,7 @@ void fix_player(object *op)
     op->speed = op->speed * speed_reduce_from_disease;
 
     /* don't reduce under this value */
-    if (op->speed < 0.01f)
-        op->speed = 0.01f;
-    else
+    if (op->speed >= 0.15f)
     {
         f = ((float) weight_limit[op->stats.Str] / 100.0f) * ENCUMBRANCE_LIMIT; /* = max kg we can carry */
         if (((sint32) f) <= op->carrying)
@@ -1604,12 +1600,18 @@ void fix_player(object *op)
                     f = 1.0f;
 
                 op->speed *= f;
-
-                if (op->speed < 0.01f)
-                    op->speed = 0.01f; /* ouch */
             }
         }
     }
+
+	/* lets have a smarter default speed. 
+	 * When we have added smooth scrolling, the whole
+	 * handling will change so or so. MT-06.2005
+	 */
+	if (op->speed < 0.15f)
+		op->speed = 0.15f; /* ouch */
+	else if (op->speed > 1.0f)
+		op->speed = 1.0f;
     update_ob_speed(op);
 
     op->weapon_speed_add = op->weapon_speed;
@@ -2024,11 +2026,6 @@ void fix_monster(object *op)
      */
     op->stats.wc = base->stats.wc + op->level + (op->level / 4);
     op->stats.dam = base->stats.dam;
-
-    if (base->stats.wc_range)
-        op->stats.wc_range = base->stats.wc_range;
-    else
-        op->stats.wc_range = 20; /* default value if not set in arch */
 
     /* post adjust */
     if ((tmp_add = lev_damage[op->level / 3] - 0.75f) < 0)
