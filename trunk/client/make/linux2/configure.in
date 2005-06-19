@@ -68,6 +68,12 @@ else
 fi
 AC_CHECK_HEADERS([SDL/SDL.h], , AC_MSG_ERROR([Can't find SDL headers.]))
 AC_CHECK_LIB([SDL], [SDL_Init], , AC_MSG_ERROR([Can't find SDL library.]))
+AC_CHECK_HEADERS([SDL/SDL_image.h], , AC_MSG_ERROR([Can't find SDL-image headers.]))
+AC_CHECK_LIB([SDL_image], [IMG_Load], , AC_MSG_ERROR([Can't find SDL-image library.]))
+AC_CHECK_HEADERS([SDL/SDL_mixer.h], , AC_MSG_ERROR([Can't find SDL-mixer headers.]))
+AC_CHECK_LIB([SDL_mixer], [Mix_OpenAudio], , AC_MSG_ERROR([Can't find SDL-mixer library.]))
+
+# TODO: test for png and ogg support also
 
 AC_CHECK_FUNCS(stricmp strnicmp strcasecmp strncasecmp)
 AC_CHECK_HEADERS([unistd.h])
