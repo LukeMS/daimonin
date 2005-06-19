@@ -600,10 +600,10 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
 				terrain |= TERRAIN_WATERWALK;
 
 			if (msp->move_flags & ~terrain)
-				return (flags & (P_NO_PASS | P_IS_ALIVE | P_IS_PLAYER | P_CHECK_INV | P_PASS_THRU | P_PASS_ETHEREAL) | P_NO_TERRAIN);
+				return (flags & (P_NO_PASS | P_IS_ALIVE | P_IS_PLAYER | P_CHECK_INV | P_PASS_THRU | P_PASS_ETHEREAL | P_NO_TERRAIN));
 		}
 		else
-			return (flags & (P_NO_PASS | P_IS_ALIVE | P_IS_PLAYER | P_CHECK_INV | P_PASS_THRU | P_PASS_ETHEREAL) | P_NO_TERRAIN);
+			return (flags & (P_NO_PASS | P_IS_ALIVE | P_IS_PLAYER | P_CHECK_INV | P_PASS_THRU | P_PASS_ETHEREAL | P_NO_TERRAIN));
 	}
 	
     /* the terrain is ok... whats first?
@@ -2986,6 +2986,9 @@ int get_rangevector(object *op1, object *op2, rv_vector *retval, int flags)
  *  RV_NO_DISTANCE   (0x8|0x04) - don't calculate distance (or direction) (fastest)
  *  RV_RECURSIVE_SEARCH   (0x2) - handle separate maps better (slow and does still not
  *                                search the whole mapset).
+ *
+ *  TODO: Add a RV_FAST_EUCLIDIAN_DISTANCE that skips the isqrt() call. Still very
+ *  useful for distances (e.g. if(rv.distance <= d*d))
  */
 int get_rangevector_from_mapcoords(mapstruct *map1, int x1, int y1, mapstruct *map2, int x2, int y2, rv_vector *retval,
                                    int flags)

@@ -67,7 +67,7 @@ void read_map_log()
     FILE       *fp;
     mapstruct  *map;
     char        buf[MAX_BUF], *cp, *cp1;
-    int         do_los, darkness, lock;
+    int         do_los, darkness, difficulty, lock;
 
     sprintf(buf, "%s/temp.maps", settings.localdir);
     if (!(fp = fopen(buf, "r")))
@@ -93,10 +93,11 @@ void read_map_log()
          * We use it twice - second one is from encounter, but as we
          * don't care about the value, this works fine
          */
-        sscanf(cp1, "%d:%d:%d:%d:%d:%d\n", &map->reset_time, &lock, &lock, &map->difficulty, &do_los, &darkness);
+        sscanf(cp1, "%d:%d:%d:%d:%d:%d\n", &map->reset_time, &lock, &lock, &difficulty, &do_los, &darkness);
 
         map->in_memory = MAP_SWAPPED;
         map->darkness = darkness;
+        map->difficulty = difficulty;
         if (darkness == -1)
             darkness = MAX_DARKNESS;
         map->light_value = global_darkness_table[MAX_DARKNESS];

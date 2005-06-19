@@ -1233,10 +1233,10 @@ char * artifact_msg(int level, int booksize)
         /* value of artifact */
 		if(val) /* avoid devide by zero */
 		{
-			sprintf(buf, "%s item with a value that is %d times normal.\n", sbuf, tmp->value/val);
+			sprintf(buf, "%s item with a value that is %lld times normal.\n", sbuf, tmp->value/val);
 		}
 		else
-			sprintf(buf, "%s item with a value of %d\n", sbuf, tmp->value);
+			sprintf(buf, "%s item with a value of %lld\n", sbuf, tmp->value);
 
 		strcat(retbuf, buf);
 		if ((ch = describe_item(tmp)) != NULL && strlen(ch) > 1)
