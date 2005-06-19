@@ -112,7 +112,7 @@ typedef signed long long 		sint64;
  */
 
 #ifdef GETTIMEOFDAY_TWO_ARGS
-#define GETTIMEOFDAY(last_time) gettimeofday(last_time, (struct timezone *) NULL);
+#define GETTIMEOFDAY(last_time) gettimeofday(last_time, NULL);
 #else
 #define GETTIMEOFDAY(last_time) gettimeofday(last_time);
 #endif
