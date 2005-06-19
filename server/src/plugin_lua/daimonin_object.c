@@ -2536,7 +2536,7 @@ static int GameObject_GetFace(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_SetAnimation                                          */
-/* Lua    : object:GetAnimation(anim, inv)                                   */
+/* Lua    : object:SetAnimation(anim, inv)                                   */
 /* Info   : Sets object's animation.                                         */
 /*          If inv is true, it sets the inventory animation                  */
 /*          Note that an object will only be animated if object.f_is_animated*/
@@ -2566,7 +2566,7 @@ static int GameObject_SetAnimation(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : GameObject_SetFace                                               */
-/* Lua    : object:GetFace(face, inv)                                        */
+/* Lua    : object:SetFace(face, inv)                                        */
 /* Info   : Sets object's face.                                              */
 /*          If inv is true, it sets the inventory face                       */
 /*          If the object is animated (object.f_is_animated == true), then   */
@@ -2758,39 +2758,6 @@ int GameObject_init(lua_State *L)
 /******************
  * Old, leftover stuff. Will clean up later...
  */
-
-#if 0
-/*****************************************************************************/
-/* Name   : GameObject_SetFace                                          */
-/* Lua    :                                                                  */
-/* Status : Untested                                                                */
-/*****************************************************************************/
-
-static int GameObject_SetFace(lua_State *L)
-{
-    char* txt;
-    lua_object *whoptr;
-    CFParm* CFR;
-    int val = UP_OBJ_FACE;
-
-    get_lua_args(L, "OOs", &self, &whoptr,&txt))
-        return NULL;
-
-    /*WHO->animation_id = find_animation(txt); */
-    /*update_object(WHO,UP_OBJ_FACE); */
-    GCFP.Value[0] = (void *)(txt);
-    CFR = (PlugHooks[HOOK_FINDANIMATION])(&GCFP);
-    WHO->animation_id = *(int *)(CFR->Value[0]);
-    free(CFR);
-
-    GCFP.Value[0] = (void *)(WHO);
-    GCFP.Value[1] = (void *)(&val);
-    (PlugHooks[HOOK_UPDATEOBJECT])(&GCFP);
-
-    Py_INCREF(Py_None);
-    return 0;
-}
-#endif
 
 /* TODO: Hmm... might want to keep this? */
 #if 0
