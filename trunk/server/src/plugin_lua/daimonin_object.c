@@ -117,7 +117,7 @@ struct attribute_decl       GameObject_attributes[]         =
     {"path_denied",  FIELDTYPE_UINT32, offsetof(object, path_denied), 0},
     {"value",        FIELDTYPE_SINT64, offsetof(object, value), 0},
     /* TODO: Max 100000 */
-    {"quantity",         FIELDTYPE_UINT32, offsetof(object, nrof), 0},
+    {"quantity",     FIELDTYPE_UINT32, offsetof(object, nrof), 0},
 
     /* TODO: I don't know what these do, or if they should be accessible... */
     {"damage_round_tag", FIELDTYPE_UINT32, offsetof(object, damage_round_tag), 0},

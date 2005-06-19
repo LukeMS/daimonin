@@ -463,7 +463,7 @@ sint64 find_ingred_cost(const char *name)
     return -1;
 }
 
-/* code copied from dump_alchemy() and modified by Raphael Quinet *
+/* code copied from dump_alchemy() and modified by Raphael Quinet */
 /* we need to adjust the output of the LOG() and sprintf() to 64bit values */
 void dump_alchemy_costs(void)
 {
