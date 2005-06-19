@@ -600,10 +600,10 @@ int blocked(object *op, mapstruct *m, int x, int y, int terrain)
 				terrain |= TERRAIN_WATERWALK;
 
 			if (msp->move_flags & ~terrain)
-				return (flags & (P_NO_PASS | P_IS_ALIVE | P_IS_PLAYER | P_CHECK_INV | P_PASS_THRU | P_PASS_ETHEREAL | P_NO_TERRAIN));
+				return (flags & (P_NO_PASS | P_IS_ALIVE | P_IS_PLAYER | P_CHECK_INV | P_PASS_THRU | P_PASS_ETHEREAL)) | P_NO_TERRAIN;
 		}
 		else
-			return (flags & (P_NO_PASS | P_IS_ALIVE | P_IS_PLAYER | P_CHECK_INV | P_PASS_THRU | P_PASS_ETHEREAL | P_NO_TERRAIN));
+			return (flags & (P_NO_PASS | P_IS_ALIVE | P_IS_PLAYER | P_CHECK_INV | P_PASS_THRU | P_PASS_ETHEREAL)) | P_NO_TERRAIN;
 	}
 	
     /* the terrain is ok... whats first?
