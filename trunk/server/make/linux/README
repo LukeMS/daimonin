@@ -10,3 +10,5 @@ done.
 For help ask the dev team:
 
 http://daimonin.sourceforge.net
+
+Note: Some Makefiles require setting compiler options with EXTRA_CFLAGS, CFLAGS will not work there.
