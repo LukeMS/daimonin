@@ -7228,6 +7228,14 @@ that food.]]>
   <attribute arch="connected" editor="connections" type="string">
     Comma-separated list of input connections.
   </attribute>
+  <attribute arch="sub_type" editor="activation rule" type="list_conn_sensor"><![CDATA[
+
+    NAND - the output value is set only if no input values are set (aka NOT).
+    AND - the output value is set only if all input values are set.
+    OR - the output value is set if any input values are set.
+    XOR (exclusive OR) - the output value is set if exactly one input value is set.
+    ]]>
+  </attribute>
   <attribute arch="last_grace" editor="output connection" type="int">
     If this flag is set, the connection here (which must be one of the ones in "connections")
     is used as output instead of input.
