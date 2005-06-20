@@ -38,7 +38,7 @@ resist_cleave 15
 resist_pierce 15
 resist_slash 15
 resist_magic 50
-dam 50
+dam 55
 weapon_speed 0.045
 attack_slash 35
 attack_magic 35

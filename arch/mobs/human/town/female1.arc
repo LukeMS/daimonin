@@ -1,0 +1,98 @@
+Object female1
+name woman
+race human
+face female1.131
+randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+type 80
+layer 6
+direction 5
+item_race 255
+item_level 255
+corpse 1
+friendly 1
+alive 1
+monster 1
+is_female 1
+is_good 1
+terrain_flag 1
+can_open_door 1
+can_use_weapon 1
+can_use_armour 1
+can_use_ring 1
+run_away 20
+Int 10
+Wis 7
+Dex 3
+Con 15
+exp 80
+magic 1
+Pow 10
+sp -1
+maxsp 25
+hp -1
+maxhp 52
+ac 11
+wc 7
+dam 35
+weapon_speed 0.045
+attack_slash 100
+speed -0.047
+level 1
+weight 48500
+anim
+facings 25
+trans.101
+trans.101
+female1.131
+female1.132
+female1.131
+female1.132
+female1.131
+female1.132
+female1.131
+female1.132
+female1.151
+female1.152
+female1.151
+female1.152
+female1.151
+female1.152
+female1.151
+female1.152
+female1.131
+female1.132
+female1.131
+female1.132
+female1.131
+female1.132
+female1.131
+female1.132
+female1.151
+female1.152
+female1.151
+female1.152
+female1.151
+female1.152
+female1.151
+female1.152
+female1.131
+female1.132
+female1.131
+female1.132
+female1.131
+female1.132
+female1.131
+female1.132
+female1.151
+female1.152
+female1.151
+female1.152
+female1.151
+female1.152
+female1.151
+female1.152
+mina
+is_animated 1
+anim_speed 4
+no_pick 1
+end
