@@ -143,7 +143,7 @@ wrong above - cotrol your steps.
 
 Perhaps you see a object named "grass_test" but instead of
 your picture you see a red picture with some question marks
-inside. Then the object is loaded but the editor has not find
+inside. Then the object is loaded but the editor has not found
 the right picture. Control the picture and the picture name
 with the "face <name>" in you object. it must match 100%
 or it will not loaded.
