@@ -1732,43 +1732,45 @@ void update_ob_speed(object *op)
 
     if (FABS(op->speed) > MIN_ACTIVE_SPEED)
     {
-        /* If already on active list, don't do anything */
-        if (op->active_next || op->active_prev || op == active_objects)
+        /* If already on any active list, don't do anything */
+        if (op->active_next || op->active_prev || op == active_objects || op == inserted_active_objects)
             return;
 
-        /* process_events() expects us to insert the object at the beginning
-         * of the list. */
-        /*LOG(-1,"SPEED: add object to speed list: %s (%d,%d)\n",query_name(op),op->x,op->y);*/
-        op->active_next = active_objects;
+        /* Since we don't want to process objects twice, we make
+         * sure to insert the object in a temporary list until the
+         * next process_events() call */
+        op->active_next = inserted_active_objects;
         if (op->active_next != NULL)
             op->active_next->active_prev = op;
-        active_objects = op;
+        inserted_active_objects = op;
         op->active_prev = NULL;
     }
     else
     {
         /* If not on the active list, nothing needs to be done */
-        if (!op->active_next && !op->active_prev && op != active_objects)
+        if (!op->active_next && !op->active_prev && op != active_objects && op != inserted_active_objects)
             return;
 
-        /*LOG(-1,"SPEED: remove object from speed list: %s (%d,%d)\n",query_name(op),op->x,op->y);*/
-        if (op->active_prev == NULL)
-        {
+        /* If this happens to be the object we will process next,
+         * update the next_active_object pointer */
+        if(op == next_active_object)
+            next_active_object = op->active_next;
+        
+        if (op == active_objects)
             active_objects = op->active_next;
-            if (op->active_next != NULL)
-                op->active_next->active_prev = NULL;
-        }
-        else
-        {
+        else if (op == inserted_active_objects)
+            inserted_active_objects = op->active_next;
+
+        if (op->active_prev)
             op->active_prev->active_next = op->active_next;
-            if (op->active_next)
-                op->active_next->active_prev = op->active_prev;
-        }
+
+        if (op->active_next)
+            op->active_next->active_prev = op->active_prev;
+        
         op->active_next = NULL;
         op->active_prev = NULL;
     }
 }
-
 
 /* OLD NOTES
  * update_object() updates the array which represents the map.

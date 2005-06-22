@@ -461,6 +461,8 @@ EXTERN archetype               *global_dmg_info_arch;
 
 EXTERN const char              *global_string_none; /* for quick search for string "none" */
 EXTERN object                  *active_objects; /* List of active objects that need to be processed */
+EXTERN object                  *inserted_active_objects; /* List of active objects that will be inserted into active_objects */
+EXTERN object                  *next_active_object; /* Loop index for process_events(), might be modified during the loop */
 EXTERN struct mempool_chunk    *removed_objects; /* List of objects that have been removed
                                                  * during the last server timestep
                                                  */
