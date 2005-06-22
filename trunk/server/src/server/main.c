@@ -902,36 +902,19 @@ void process_players2(mapstruct *map)
     }
 }
 
-void process_events(mapstruct *map)
+static void process_map_events(mapstruct *map)
 {
     object *op;
     tag_t   tag;
 
     process_players1(map);
 
-    /* Put marker object at beginning of active list */
-    marker.active_next = active_objects;
-    if (marker.active_next)
-        marker.active_next->active_prev = &marker;
-    marker.active_prev = NULL;
-    active_objects = &marker;
-
-    while (marker.active_next)
+    /* note: next_active_object is a global which 
+       might get modified while traversing below */
+    for (op = active_objects; op != NULL; op = next_active_object)
     {
-        op = marker.active_next;
+        next_active_object = op->active_next;
         tag = op->count;
-
-        /* Move marker forward - swap op and marker */
-        op->active_prev = marker.active_prev;
-        if (op->active_prev)
-            op->active_prev->active_next = op;
-        else
-            active_objects = op;
-        marker.active_next = op->active_next;
-        if (marker.active_next)
-            marker.active_next->active_prev = &marker;
-        marker.active_prev = op;
-        op->active_next = &marker;
 
         /* Now process op */
         if (OBJECT_FREE(op))
@@ -968,7 +951,7 @@ void process_events(mapstruct *map)
         }
 
 
-        if (op->map == NULL && op->env == NULL && op->name && op->type != MAP && map == NULL)
+        if (op->map == NULL && op->env == NULL)
         {
             if (op->type == PLAYER && CONTR(op)->state != ST_PLAYING)
                 continue;
@@ -978,10 +961,6 @@ void process_events(mapstruct *map)
             update_ob_speed(op);
             continue;
         }
-
-        if (map != NULL && op->map != map)
-            continue;
-
 
         /* as we can see here, the swing speed not effected by
          * object speed BUT the swing hit itself!
@@ -1036,14 +1015,60 @@ void process_events(mapstruct *map)
         if (op->speed_left <= 0)
             op->speed_left += FABS(op->speed);
     }
-
-    /* Remove marker object from active list */
-    if (marker.active_prev != NULL)
-        marker.active_prev->active_next = NULL;
-    else
-        active_objects = NULL;
-
+    next_active_object = NULL;
+    
     process_players2(map);
+}
+
+void process_events(mapstruct *map)
+{
+#if defined TIME_PROCESS_EVENTS
+    /* This is instrumentation code that shows how the speedup to this function
+     * was measured. It can easily be moved to the old version too, but if you
+     * want to run it you also need the inlined function "add_time" from common/time.c */
+    /* Note: I'll remove these blocks soon. Gecko - 20050522 */
+    static int callcount = 0;
+    static struct timeval cumulative;
+    struct timeval start, end, length;
+    double t;
+
+    gettimeofday(&start, NULL);
+#endif
+        
+    /* TODO: actually change the prototype =) */
+    if(map != NULL)
+        LOG(llevBug, "BUG: process_events called with non-NULL map\n");
+    
+    /* Preprocess step: move all objects in inserted_active_objects
+     * into their real activelists */
+    if(inserted_active_objects) {
+        object *obj, *last;
+        for(obj = inserted_active_objects; obj; obj = obj->active_next)
+            last = obj;
+        if((last->active_next = active_objects))
+            last->active_next->active_prev = last;
+        active_objects = inserted_active_objects;
+        inserted_active_objects = NULL;        
+    }
+    
+    /* Now, process all map-based activelists, and the activelist
+     * for obejcts not on maps */
+    process_map_events(NULL);
+   
+#if defined TIME_PROCESS_EVENTS
+    gettimeofday(&end, NULL);
+    start.tv_sec = -start.tv_sec;
+    start.tv_usec = -start.tv_usec;
+    add_time(&cumulative, &start, &cumulative);
+    add_time(&cumulative, &end, &cumulative);
+    if((++callcount) % 100 == 0) {
+        t = (double)(cumulative.tv_sec + cumulative.tv_usec / 1000000.0f) / callcount;
+        LOG(llevDebug, "%d calls, %d.%06d s (%f s/call)\n", callcount, cumulative.tv_sec, cumulative.tv_usec, t);
+        callcount = 0;
+        cumulative.tv_usec = 0;
+        cumulative.tv_sec = 0;
+    }
+#endif /* TIME PROCESS EVENTS */
 }
 
 void clean_tmp_files()
