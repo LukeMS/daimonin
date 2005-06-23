@@ -702,8 +702,13 @@ static int basic_emote(object *op, char *params, int emotion)
     params = cleanup_chat_string(params);
     if (params && *params == '\0') /* illegal name? */
         params = NULL;
-    else /* name is ok but be sure we have something like "Xxxxx" */
-        transform_name_string(params);
+    else {
+        /* name is ok but be sure we have something like "Xxxxx" */
+        if (emotion != EMOTE_ME) {
+            /* But only capitalize on those emotes that are for sure a player name param. */
+            transform_name_string(params);
+        }
+    }
 
     if (!params)
     {
