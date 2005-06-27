@@ -1,5 +1,5 @@
 arch map
-name Stonehaven
+name Near Guild Hall§jungle1.ogg|0|-1
 msg
 Creator: Daimonin Map Editor
 Date:    7/8/2004
@@ -97,6 +97,9 @@ arch grassd_5
 y 20
 end
 arch grassd_8
+y 21
+end
+arch tree_big3
 y 21
 end
 arch grassd_1
@@ -376,6 +379,10 @@ arch grassd_3
 x 2
 y 23
 end
+arch plant6
+x 2
+y 23
+end
 arch blocked
 x 3
 end
@@ -505,6 +512,10 @@ x 3
 y 20
 end
 arch grassd_6
+x 3
+y 21
+end
+arch plant_mushroom3
 x 3
 y 21
 end
@@ -656,6 +667,10 @@ x 4
 y 22
 end
 arch grassd_8
+x 4
+y 23
+end
+arch plant_flower7
 x 4
 y 23
 end

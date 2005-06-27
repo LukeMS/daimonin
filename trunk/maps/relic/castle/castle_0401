@@ -1,5 +1,5 @@
 arch map
-name Stonehaven
+name Wilderness near Stonehaven§jungle1.ogg|0|-1
 msg
 Creator: Daimonin Map Editor
 Date:    7/13/2004
@@ -2267,7 +2267,15 @@ arch grassd_8
 x 16
 y 7
 end
+arch plant5
+x 16
+y 7
+end
 arch grassd_1
+x 16
+y 8
+end
+arch tree_big3
 x 16
 y 8
 end
@@ -2275,7 +2283,15 @@ arch grassd_7
 x 16
 y 9
 end
+arch plant_mushroom3
+x 16
+y 9
+end
 arch grassd_7
+x 16
+y 10
+end
+arch plant9
 x 16
 y 10
 end
@@ -2283,11 +2299,23 @@ arch grassd_2
 x 16
 y 11
 end
+arch plant_flower7
+x 16
+y 11
+end
 arch grassd_7
 x 16
 y 12
 end
+arch plant9
+x 16
+y 12
+end
 arch grassd_4
+x 16
+y 13
+end
+arch plant10
 x 16
 y 13
 end
@@ -2342,6 +2370,9 @@ end
 arch grassd_4
 x 17
 end
+arch plant_flower5
+x 17
+end
 arch grassd_3
 x 17
 y 1
@@ -2358,7 +2389,15 @@ arch grassd_4
 x 17
 y 3
 end
+arch plant15
+x 17
+y 3
+end
 arch grassd_7
+x 17
+y 4
+end
+arch plant7
 x 17
 y 4
 end
@@ -2370,7 +2409,7 @@ arch grassd_2
 x 17
 y 6
 end
-arch tree_big4b
+arch plant_flower7
 x 17
 y 6
 end
@@ -2378,7 +2417,15 @@ arch grassd_2
 x 17
 y 7
 end
+arch plant10
+x 17
+y 7
+end
 arch grassd_4
+x 17
+y 8
+end
+arch plant16
 x 17
 y 8
 end
@@ -2398,6 +2445,10 @@ arch grassd_5
 x 17
 y 12
 end
+arch tree_big2
+x 17
+y 12
+end
 arch grassd_7
 x 17
 y 13
@@ -2461,11 +2512,19 @@ arch grassd_4
 x 18
 y 1
 end
+arch plant9
+x 18
+y 1
+end
 arch grassd_6
 x 18
 y 2
 end
 arch grassd_8
+x 18
+y 3
+end
+arch plant_flower2
 x 18
 y 3
 end
@@ -2478,6 +2537,10 @@ x 18
 y 5
 end
 arch grassd_6
+x 18
+y 6
+end
+arch tree_big3
 x 18
 y 6
 end
@@ -2501,10 +2564,6 @@ arch grassd_4
 x 18
 y 11
 end
-arch tree_big3
-x 18
-y 11
-end
 arch grassd_1
 x 18
 y 12
@@ -2521,7 +2580,15 @@ arch grassd_3
 x 18
 y 15
 end
+arch plant7
+x 18
+y 15
+end
 arch grassd_8
+x 18
+y 16
+end
+arch plant10
 x 18
 y 16
 end
@@ -2569,6 +2636,10 @@ x 19
 y 1
 end
 arch grassd_7
+x 19
+y 2
+end
+arch plant8
 x 19
 y 2
 end
@@ -2608,11 +2679,19 @@ arch grassd_3
 x 19
 y 10
 end
+arch tree_big2
+x 19
+y 10
+end
 arch grassd_7
 x 19
 y 11
 end
 arch grassd_7
+x 19
+y 12
+end
+arch plant10
 x 19
 y 12
 end
@@ -2629,6 +2708,10 @@ x 19
 y 15
 end
 arch grassd_5
+x 19
+y 16
+end
+arch tree_big3
 x 19
 y 16
 end
@@ -2679,11 +2762,10 @@ end
 arch grassd_7
 x 20
 end
-arch grassd_8
+arch tree_big3
 x 20
-y 1
 end
-arch tree_big2
+arch grassd_8
 x 20
 y 1
 end
@@ -2692,6 +2774,10 @@ x 20
 y 2
 end
 arch grassd_3
+x 20
+y 3
+end
+arch tree_big3
 x 20
 y 3
 end
@@ -2719,6 +2805,10 @@ arch grassd_4
 x 20
 y 8
 end
+arch plant_mushroom3
+x 20
+y 8
+end
 arch grassd_8
 x 20
 y 9
@@ -2736,6 +2826,10 @@ x 20
 y 12
 end
 arch grassd_8
+x 20
+y 13
+end
+arch plant9
 x 20
 y 13
 end
@@ -2806,6 +2900,10 @@ arch grassd_3
 x 21
 y 1
 end
+arch plant12
+x 21
+y 1
+end
 arch grassd_8
 x 21
 y 2
@@ -2826,11 +2924,23 @@ arch grassd_3
 x 21
 y 6
 end
+arch plant_flower7
+x 21
+y 6
+end
 arch grassd_8
 x 21
 y 7
 end
+arch plant_flower7
+x 21
+y 7
+end
 arch grassd_2
+x 21
+y 8
+end
+arch plant6
 x 21
 y 8
 end
@@ -2858,7 +2968,15 @@ arch grassd_3
 x 21
 y 14
 end
+arch plant9
+x 21
+y 14
+end
 arch grassd_8
+x 21
+y 15
+end
+arch plant_flower7
 x 21
 y 15
 end
@@ -2866,11 +2984,23 @@ arch grassd_6
 x 21
 y 16
 end
+arch plant_flower5
+x 21
+y 16
+end
 arch grassd_3
 x 21
 y 17
 end
+arch plant13
+x 21
+y 17
+end
 arch grassd_7
+x 21
+y 18
+end
+arch plant16
 x 21
 y 18
 end
@@ -2890,7 +3020,15 @@ arch grassd_1
 x 21
 y 22
 end
+arch plant6
+x 21
+y 22
+end
 arch grassd_8
+x 21
+y 23
+end
+arch tree_big3
 x 21
 y 23
 end
@@ -2906,6 +3044,10 @@ x 22
 y 2
 end
 arch grassd_6
+x 22
+y 3
+end
+arch plant_flower2
 x 22
 y 3
 end
@@ -2957,6 +3099,10 @@ arch grassd_7
 x 22
 y 14
 end
+arch plant9
+x 22
+y 14
+end
 arch grassd_2
 x 22
 y 15
@@ -2966,6 +3112,10 @@ x 22
 y 16
 end
 arch grassd_8
+x 22
+y 17
+end
+arch plant15
 x 22
 y 17
 end
@@ -2993,6 +3143,10 @@ arch grassd_8
 x 22
 y 22
 end
+arch plant16
+x 22
+y 22
+end
 arch grassd_5
 x 22
 y 23
@@ -3001,6 +3155,10 @@ arch grassd_7
 x 23
 end
 arch grassd_1
+x 23
+y 1
+end
+arch plant_flower2
 x 23
 y 1
 end
@@ -3017,6 +3175,10 @@ x 23
 y 3
 end
 arch grassd_6
+x 23
+y 4
+end
+arch plant15
 x 23
 y 4
 end
@@ -3084,6 +3246,10 @@ arch grassd_8
 x 23
 y 18
 end
+arch plant10
+x 23
+y 18
+end
 arch grassd_2
 x 23
 y 19
@@ -3096,6 +3262,10 @@ arch grassd_7
 x 23
 y 21
 end
+arch plant16
+x 23
+y 21
+end
 arch grassd_2
 x 23
 y 22
@@ -3104,7 +3274,7 @@ arch grassd_7
 x 23
 y 23
 end
-arch tree_big4b
+arch grassd_1
 x 23
 y 23
 end

@@ -1,5 +1,5 @@
 arch map
-name Guild Hall
+name Guild Hall§jungle1.ogg|0|-1
 msg
 Creator: Daimonin Map Editor
 Date:    7/16/2004
@@ -138,7 +138,7 @@ end
 arch tree_big2
 y 22
 end
-arch grassd_8
+arch grassd_1
 y 23
 end
 arch tree_big3
@@ -271,11 +271,11 @@ arch grassd_1
 x 1
 y 22
 end
-arch grassd_8
+arch grassd_1
 x 1
 y 23
 end
-arch tree_big3
+arch tree_big2
 x 1
 y 23
 end
@@ -414,11 +414,11 @@ arch tree_big3
 x 2
 y 22
 end
-arch grassd_8
+arch grassd_1
 x 2
 y 23
 end
-arch tree_big3
+arch tree_big2
 x 2
 y 23
 end
@@ -557,11 +557,11 @@ arch tree_big2
 x 3
 y 22
 end
-arch grassd_8
+arch grassd_1
 x 3
 y 23
 end
-arch tree_big2
+arch tree_big3
 x 3
 y 23
 end
@@ -692,7 +692,7 @@ arch grassd_4
 x 4
 y 22
 end
-arch grassd_8
+arch grassd_1
 x 4
 y 23
 end
@@ -839,11 +839,11 @@ arch plant_flower1
 x 5
 y 22
 end
-arch grassd_3
+arch grassd_1
 x 5
 y 23
 end
-arch tree_big2
+arch tree_big3
 x 5
 y 23
 end
@@ -978,7 +978,7 @@ arch grassd_8
 x 6
 y 22
 end
-arch grassd_5
+arch grassd_1
 x 6
 y 23
 end
@@ -1144,7 +1144,7 @@ arch tree_big2
 x 7
 y 22
 end
-arch grassd_8
+arch grassd_1
 x 7
 y 23
 end
@@ -1290,7 +1290,7 @@ arch tree_big3
 x 8
 y 22
 end
-arch grassd_8
+arch grassd_1
 x 8
 y 23
 end
@@ -1428,11 +1428,11 @@ arch grassd_7
 x 9
 y 22
 end
-arch grassd_2
+arch grassd_1
 x 9
 y 23
 end
-arch tree_big3
+arch tree_big2
 x 9
 y 23
 end
@@ -1592,11 +1592,11 @@ arch grassd_7
 x 10
 y 22
 end
-arch grassd_8
+arch grassd_1
 x 10
 y 23
 end
-arch tree_big3
+arch tree_big2
 x 10
 y 23
 end
@@ -1719,11 +1719,11 @@ arch tree_big2
 x 11
 y 22
 end
-arch grassd_3
+arch grassd_1
 x 11
 y 23
 end
-arch tree_big
+arch tree_big3
 x 11
 y 23
 end
@@ -1854,7 +1854,7 @@ arch tree_big3
 x 12
 y 22
 end
-arch grassd_8
+arch grassd_1
 x 12
 y 23
 end
@@ -2008,7 +2008,7 @@ arch tree_big2
 x 13
 y 22
 end
-arch grassd_4
+arch grassd_1
 x 13
 y 23
 end
@@ -2139,11 +2139,11 @@ arch grassd_4
 x 14
 y 22
 end
-arch grassd_8
+arch grassd_1
 x 14
 y 23
 end
-arch tree_big2
+arch tree_big3
 x 14
 y 23
 end
@@ -2262,11 +2262,11 @@ arch grassd_4
 x 15
 y 22
 end
-arch grassd_2
+arch grassd_1
 x 15
 y 23
 end
-arch tree_big
+arch tree_big2
 x 15
 y 23
 end
@@ -2385,11 +2385,11 @@ arch grassd_2
 x 16
 y 22
 end
-arch grassd_8
+arch grassd_1
 x 16
 y 23
 end
-arch tree_big2
+arch tree_big3
 x 16
 y 23
 end
@@ -2512,11 +2512,11 @@ arch grassd_4
 x 17
 y 22
 end
-arch grassd_8
+arch grassd_1
 x 17
 y 23
 end
-arch tree_big3
+arch tree_big2
 x 17
 y 23
 end
@@ -2638,7 +2638,7 @@ arch grassd_1
 x 18
 y 22
 end
-arch grassd_8
+arch grassd_1
 x 18
 y 23
 end
@@ -2765,11 +2765,11 @@ arch tree_big2
 x 19
 y 22
 end
-arch grassd_8
+arch grassd_1
 x 19
 y 23
 end
-arch tree_big2
+arch tree_big3
 x 19
 y 23
 end
@@ -2900,7 +2900,7 @@ arch grassd_5
 x 20
 y 22
 end
-arch grassd_3
+arch grassd_1
 x 20
 y 23
 end
@@ -3030,11 +3030,11 @@ arch tree_big3
 x 21
 y 22
 end
-arch grassd_8
+arch grassd_1
 x 21
 y 23
 end
-arch tree_big3
+arch tree_big2
 x 21
 y 23
 end
@@ -3165,11 +3165,11 @@ arch grassd_5
 x 22
 y 22
 end
-arch grassd_5
+arch grassd_1
 x 22
 y 23
 end
-arch tree_big
+arch tree_big3
 x 22
 y 23
 end
@@ -3307,11 +3307,11 @@ arch tree_big2
 x 23
 y 22
 end
-arch grassd_8
+arch grassd_7
 x 23
 y 23
 end
-arch tree_big3
+arch tree_big2
 x 23
 y 23
 end
