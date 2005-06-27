@@ -2927,6 +2927,10 @@ arch grassd_8
 x 20
 y 23
 end
+arch plant_flower1
+x 20
+y 23
+end
 arch floor_fstone2a
 x 21
 end
@@ -3359,11 +3363,19 @@ arch grassd_2
 x 23
 y 21
 end
+arch plant15
+x 23
+y 21
+end
 arch grassd_1
 x 23
 y 22
 end
 arch grassd_8
+x 23
+y 23
+end
+arch plant_flower7
 x 23
 y 23
 end
