@@ -261,14 +261,7 @@ int pay_for_amount(sint64 to_pay, object *pl)
     if (to_pay > query_money(pl))
         return 0;
 
-    to_pay = pay_from_container(NULL, pl, to_pay);
-
-    for (pouch = pl->inv; (pouch != NULL) && (to_pay > 0); pouch = pouch->below)
-    {
-        if (pouch->type == CONTAINER
-         && ((!pouch->race || strstr(pouch->race, "gold")) || QUERY_FLAG(pouch, FLAG_APPLIED)))
-            to_pay = pay_from_container(NULL, pouch, to_pay);
-    }
+    pay_from_container(NULL, pl, to_pay);
 
     fix_player(pl);
     return 1;
@@ -288,14 +281,7 @@ int pay_for_item(object *op, object *pl)
     if (to_pay > query_money(pl))
         return 0;
 
-    to_pay = pay_from_container(op, pl, to_pay);
-
-    for (pouch = pl->inv; (pouch != NULL) && (to_pay > 0); pouch = pouch->below)
-    {
-        if (pouch->type == CONTAINER
-         && (QUERY_FLAG(pouch, FLAG_APPLIED) || (!pouch->race || strstr(pouch->race, "gold"))))
-            to_pay = pay_from_container(op, pouch, to_pay);
-    }
+    pay_from_container(op, pl, to_pay);
 
     fix_player(pl);
     return 1;
@@ -359,6 +345,8 @@ sint64 pay_from_container(object *op, object *pouch, sint64 to_pay)
             if (i == NUM_COINS)
                 LOG(llevBug, "BUG: in pay_for_item: Did not find string match for %s\n", tmp->arch->name);
         }
+		else if (tmp->type == CONTAINER)
+			remain = pay_from_container(op, tmp, remain);
     }
 
     /* Fill in any gaps in the coin_objs array - needed to make change. */
