@@ -200,7 +200,7 @@ static int      light_masks[NR_LIGHT_MASK][MAX_MASK_SIZE]   =
     }
 };
 
-void inline     clear_los(object *op);
+inline void    clear_los(object *op);
 
 /*
  * initialises the array used by the LOS routines.
@@ -498,7 +498,7 @@ void update_los(object *op)
  * controlling the object.
  */
 
-void inline clear_los(object *op)
+inline void clear_los(object *op)
 {
     (void) memset((void *) CONTR(op)->blocked_los, BLOCKED_LOS_VISIBLE, sizeof(CONTR(op)->blocked_los));
 }

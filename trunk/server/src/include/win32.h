@@ -51,13 +51,16 @@
 #include <sys/types.h>
 #include <process.h>
 
-
+#ifndef MIN_GW
 #define __STDC__ 1      /* odd too: CF want this, but don't include it */
 /* before the standard includes */
+#endif
+
 #ifndef HAVE_SNPRINTF
 #define HAVE_SNPRINTF 1
 #define snprintf _snprintf
 #endif
+
 
 #include "version.h"
 
@@ -84,13 +87,17 @@
 #define popen(__a, __b) _popen(__a, __b)
 #define pclose(__a) _pclose(__a)
 
+#ifndef MIN_GW
 #define R_OK 6      /* for __access() */
 #define F_OK 6
+#endif
 
 #define PREFIXDIR ""
 
+#ifndef MIN_GW
 #define S_ISDIR(x) (((x) & S_IFMT) == S_IFDIR)
 #define S_ISREG(x) (((x) & S_IFMT) == S_IFREG)
+#endif
 
 #ifndef S_ISGID
 #define S_ISGID 0002000
@@ -145,6 +152,12 @@ typedef struct
     char                   *dir;                    /* the dir we are reading */
     struct dirent           dent;           /* the dirent to return */
 } DIR;
+
+struct timezone
+{
+    int tz_minuteswest;
+    int tz_dsttime;
+};
 
 /* Function prototypes */
 extern int              gettimeofday(struct timeval *time_Info, struct timezone *timezone_Info);
