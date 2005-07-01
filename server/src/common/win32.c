@@ -31,18 +31,13 @@
 #include <errno.h>
 #include <mmsystem.h>
 
-struct timezone
-{
-    int tz_minuteswest;
-    int tz_dsttime;
-};
-
 
 struct itimerval
 {
     struct timeval  it_interval;    /* next value */
     struct timeval  it_value;   /* current value */
 };
+ 
 
 #define ITIMER_REAL    0        /*generates sigalrm */
 #define ITIMER_VIRTUAL 1        /*generates sigvtalrm */

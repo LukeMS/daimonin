@@ -254,8 +254,6 @@ sint64 query_money(object *op)
  * returns 0 if not possible. 1 if success                              */
 int pay_for_amount(sint64 to_pay, object *pl)
 {
-    object *pouch;
-
     if (to_pay == 0)
         return 1;
     if (to_pay > query_money(pl))
@@ -274,7 +272,6 @@ int pay_for_amount(sint64 to_pay, object *pl)
 int pay_for_item(object *op, object *pl)
 {
     sint64     to_pay  = query_cost(op, pl, F_BUY);
-    object *pouch;
 
     if (to_pay == 0.0)
         return 1;
