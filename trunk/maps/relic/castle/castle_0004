@@ -758,12 +758,12 @@ arch grassd_2
 x 5
 y 5
 end
-arch picture1.151
-direction 5
+arch wall_stone_3
 x 5
 y 5
 end
-arch wall_stone_3
+arch picture1.151
+direction 5
 x 5
 y 5
 end
@@ -844,12 +844,12 @@ arch grassd_7
 x 5
 y 15
 end
-arch picture1.151
-direction 5
+arch wall_stone_3
 x 5
 y 15
 end
-arch wall_stone_3
+arch picture1.151
+direction 5
 x 5
 y 15
 end
@@ -1274,11 +1274,11 @@ arch grassd_4
 x 8
 y 13
 end
-arch picture3.151
+arch wall_stone_1
 x 8
 y 13
 end
-arch wall_stone_1
+arch picture3.151
 x 8
 y 13
 end
@@ -1478,11 +1478,11 @@ arch floor_wood3e
 x 9
 y 18
 end
-arch picture4.151
+arch wall_stone_1
 x 9
 y 18
 end
-arch wall_stone_1
+arch picture4.151
 x 9
 y 18
 end
@@ -1552,11 +1552,11 @@ arch floor_wood3g
 x 10
 y 4
 end
-arch picture3.151
+arch wall_stone_1
 x 10
 y 4
 end
-arch wall_stone_1
+arch picture3.151
 x 10
 y 4
 end
@@ -1983,6 +1983,11 @@ arch wall_flagstone1b.131
 x 13
 y 1
 end
+arch wmask_bflag_fire1_1
+direction 7
+x 13
+y 1
+end
 arch grassd_3
 x 13
 y 2
@@ -2007,6 +2012,11 @@ arch wall_flagstone1b.131
 x 13
 y 4
 end
+arch wmask_bflag_fire1_1
+direction 7
+x 13
+y 4
+end
 arch grassd_7
 x 13
 y 5
@@ -2023,11 +2033,21 @@ arch wall_flagstone1b.131
 x 13
 y 6
 end
+arch picture11
+direction 7
+x 13
+y 6
+end
 arch grassd_6
 x 13
 y 7
 end
 arch wall_flagstone1b.131
+x 13
+y 7
+end
+arch wmask_bflag_fire1_1
+direction 7
 x 13
 y 7
 end
@@ -2169,6 +2189,14 @@ arch floor_fs_grey1a
 x 14
 y 1
 end
+arch glower.101
+x 14
+y 1
+end
+arch light4
+x 14
+y 1
+end
 arch floor_fs_grey1a
 x 14
 y 2
@@ -2185,7 +2213,17 @@ arch floor_fs_grey1a
 x 14
 y 5
 end
+arch bench2.111
+no_pass 0
+direction 7
+x 14
+y 5
+end
 arch floor_fs_grey1a
+x 14
+y 6
+end
+arch chair_small
 x 14
 y 6
 end
@@ -2194,6 +2232,14 @@ x 14
 y 7
 end
 arch floor_fs_grey1a
+x 14
+y 8
+end
+arch glower.101
+x 14
+y 8
+end
+arch light4
 x 14
 y 8
 end
@@ -2324,11 +2370,29 @@ arch floor_fs_grey1a
 x 15
 y 4
 end
+arch chair2_111
+direction 7
+x 15
+y 4
+end
 arch floor_fs_grey1a
 x 15
 y 5
 end
+arch candlelight4.101
+x 15
+y 5
+end
+arch light2
+x 15
+y 5
+end
 arch floor_fs_grey1a
+x 15
+y 6
+end
+arch chair2_111
+direction 7
 x 15
 y 6
 end
@@ -2433,6 +2497,9 @@ end
 arch wall_flagstone1b.111
 x 16
 end
+arch wmask_bflag_fire1_1
+x 16
+end
 arch floor_fs_grey1a
 x 16
 y 1
@@ -2445,7 +2512,17 @@ arch floor_fs_grey1a
 x 16
 y 3
 end
+arch table_wood1.111
+direction 7
+x 16
+y 3
+end
 arch floor_fs_grey1a
+x 16
+y 4
+end
+arch table_wood1.111
+direction 7
 x 16
 y 4
 end
@@ -2453,11 +2530,26 @@ arch floor_fs_grey1a
 x 16
 y 5
 end
+arch table_wood1.111
+direction 7
+x 16
+y 5
+end
 arch floor_fs_grey1a
 x 16
 y 6
 end
+arch table_wood1.111
+direction 7
+x 16
+y 6
+end
 arch floor_fs_grey1a
+x 16
+y 7
+end
+arch table_wood1.111
+direction 7
 x 16
 y 7
 end
@@ -2566,6 +2658,7 @@ arch floor_black1a
 x 17
 end
 arch wall_flagstone1b.111
+no_pass 0
 x 17
 end
 arch floor_fs_grey1a
@@ -2694,6 +2787,9 @@ end
 arch wall_flagstone1b.111
 x 18
 end
+arch wmask_bflag_fire1_1
+x 18
+end
 arch floor_fs_grey1a
 x 18
 y 1
@@ -2710,11 +2806,29 @@ arch floor_fs_grey1a
 x 18
 y 4
 end
+arch chair2_111
+direction 7
+x 18
+y 4
+end
 arch floor_fs_grey1a
 x 18
 y 5
 end
+arch candlelight4.101
+x 18
+y 5
+end
+arch light2
+x 18
+y 5
+end
 arch floor_fs_grey1a
+x 18
+y 6
+end
+arch chair2_111
+direction 7
 x 18
 y 6
 end
@@ -2844,7 +2958,14 @@ end
 arch wall_flagstone1b.111
 x 19
 end
+arch picture15
+x 19
+end
 arch floor_fs_grey1a
+x 19
+y 1
+end
+arch chair_small
 x 19
 y 1
 end
@@ -2856,7 +2977,17 @@ arch floor_fs_grey1a
 x 19
 y 3
 end
+arch table_wood1.111
+direction 7
+x 19
+y 3
+end
 arch floor_fs_grey1a
+x 19
+y 4
+end
+arch table_wood1.111
+direction 7
 x 19
 y 4
 end
@@ -2864,11 +2995,26 @@ arch floor_fs_grey1a
 x 19
 y 5
 end
+arch table_wood1.111
+direction 7
+x 19
+y 5
+end
 arch floor_fs_grey1a
 x 19
 y 6
 end
+arch table_wood1.111
+direction 7
+x 19
+y 6
+end
 arch floor_fs_grey1a
+x 19
+y 7
+end
+arch table_wood1.111
+direction 7
 x 19
 y 7
 end
@@ -2989,6 +3135,11 @@ arch floor_fs_grey1a
 x 20
 y 1
 end
+arch bench2.111
+no_pass 0
+x 20
+y 1
+end
 arch floor_fs_grey1a
 x 20
 y 2
@@ -3005,7 +3156,23 @@ arch floor_fs_grey1a
 x 20
 y 5
 end
+arch carpet2.131
+x 20
+y 5
+end
+arch chair_small2
+x 20
+y 5
+end
 arch floor_fs_grey1a
+x 20
+y 6
+end
+arch carpet2.131
+x 20
+y 6
+end
+arch chair_small2
 x 20
 y 6
 end
@@ -3127,7 +3294,18 @@ end
 arch wall_flagstone1b.141
 x 21
 end
+arch wmask_bflag_fire1_1
+x 21
+end
 arch floor_fs_grey1a
+x 21
+y 1
+end
+arch glower.101
+x 21
+y 1
+end
+arch light4
 x 21
 y 1
 end
@@ -3143,7 +3321,27 @@ arch floor_fs_grey1a
 x 21
 y 4
 end
+arch carpet2.151
+x 21
+y 4
+end
+arch stone_throne
+x 21
+y 4
+end
 arch floor_fs_grey1a
+x 21
+y 5
+end
+arch carpet2g
+x 21
+y 5
+end
+arch table_round2
+x 21
+y 5
+end
+arch light6
 x 21
 y 5
 end
@@ -3151,11 +3349,35 @@ arch floor_fs_grey1a
 x 21
 y 6
 end
+arch carpet2g
+x 21
+y 6
+end
+arch table_round2
+x 21
+y 6
+end
 arch floor_fs_grey1a
 x 21
 y 7
 end
+arch carpet2.111
+x 21
+y 7
+end
+arch chair_small
+x 21
+y 7
+end
 arch floor_fs_grey1a
+x 21
+y 8
+end
+arch glower.101
+x 21
+y 8
+end
+arch light4
 x 21
 y 8
 end
@@ -3257,6 +3479,14 @@ arch floor_fs_grey1a
 x 22
 y 1
 end
+arch shelf3c.111
+x 22
+y 1
+arch tome
+name Books of Law
+container 64
+end
+end
 arch floor_fs_grey1a
 x 22
 y 2
@@ -3273,7 +3503,23 @@ arch floor_fs_grey1a
 x 22
 y 5
 end
+arch carpet2.171
+x 22
+y 5
+end
+arch chair_small2
+x 22
+y 5
+end
 arch floor_fs_grey1a
+x 22
+y 6
+end
+arch carpet2.171
+x 22
+y 6
+end
+arch chair_small2
 x 22
 y 6
 end
@@ -3298,6 +3544,10 @@ x 22
 y 10
 end
 arch statue_fire_black1
+x 22
+y 10
+end
+arch light2
 x 22
 y 10
 end
@@ -3396,6 +3646,14 @@ arch floor_fs_grey1a
 x 23
 y 1
 end
+arch shelf3a.111
+x 23
+y 1
+arch tome
+name Books of Law
+container 64
+end
+end
 arch floor_fs_grey1a
 x 23
 y 2
@@ -3404,7 +3662,17 @@ arch floor_fs_grey1a
 x 23
 y 3
 end
+arch table_wood1.111
+direction 7
+x 23
+y 3
+end
 arch floor_fs_grey1a
+x 23
+y 4
+end
+arch table_wood1.111
+direction 7
 x 23
 y 4
 end
@@ -3412,11 +3680,26 @@ arch floor_fs_grey1a
 x 23
 y 5
 end
+arch table_wood1.111
+direction 7
+x 23
+y 5
+end
 arch floor_fs_grey1a
 x 23
 y 6
 end
+arch table_wood1.111
+direction 7
+x 23
+y 6
+end
 arch floor_fs_grey1a
+x 23
+y 7
+end
+arch table_wood1.111
+direction 7
 x 23
 y 7
 end

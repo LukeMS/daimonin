@@ -901,12 +901,12 @@ arch grassd_8
 x 7
 y 20
 end
-arch picture5.151
-direction 5
+arch wall_stone_3
 x 7
 y 20
 end
-arch wall_stone_3
+arch picture5.151
+direction 5
 x 7
 y 20
 end
@@ -1127,11 +1127,11 @@ arch floor_wood1b
 x 9
 y 16
 end
-arch picture1.151
+arch wall_stone_1
 x 9
 y 16
 end
-arch wall_stone_1
+arch picture1.151
 x 9
 y 16
 end
@@ -1234,11 +1234,11 @@ arch grassd_8
 x 10
 y 13
 end
-arch picture1.151
+arch wall_stone_1
 x 10
 y 13
 end
-arch wall_stone_1
+arch picture1.151
 x 10
 y 13
 end
@@ -1488,12 +1488,12 @@ arch floor_wood1b
 x 12
 y 17
 end
-arch picture2.151
-direction 5
+arch wall_stone_3
 x 12
 y 17
 end
-arch wall_stone_3
+arch picture2.151
+direction 5
 x 12
 y 17
 end
@@ -1957,11 +1957,11 @@ arch grassd_4
 x 16
 y 13
 end
-arch picture3.151
+arch wall_stone_1
 x 16
 y 13
 end
-arch wall_stone_1
+arch picture3.151
 x 16
 y 13
 end
