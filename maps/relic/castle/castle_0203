@@ -1844,12 +1844,12 @@ arch floor_wood4d
 x 12
 y 20
 end
-arch wall_stone_1
+arch shelf4_wall.111
+direction 7
 x 12
 y 20
 end
-arch shelf4_wall.111
-direction 7
+arch wall_stone_1
 x 12
 y 20
 end

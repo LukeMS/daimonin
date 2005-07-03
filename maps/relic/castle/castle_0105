@@ -1255,10 +1255,6 @@ arch floor_fs_grey1a
 x 9
 y 15
 end
-arch glower.101
-x 9
-y 15
-end
 arch light4
 x 9
 y 15
@@ -1267,6 +1263,10 @@ arch carpet2.131
 x 9
 y 15
 end
+arch glower.101
+x 9
+y 15
+end
 arch floor_fs_grey1a
 x 9
 y 16
@@ -1296,6 +1296,10 @@ x 9
 y 19
 end
 arch light6
+x 9
+y 19
+end
+arch carpet2.131
 x 9
 y 19
 end
@@ -1303,10 +1307,6 @@ arch candlelight3.101
 x 9
 y 19
 end
-arch carpet2.131
-x 9
-y 19
-end
 arch floor_fs_grey1a
 x 9
 y 20
@@ -1324,10 +1324,6 @@ x 9
 y 21
 end
 arch floor_fs_grey1a
-x 9
-y 22
-end
-arch candlelight1.101
 x 9
 y 22
 end
@@ -1336,6 +1332,10 @@ x 9
 y 22
 end
 arch carpet2.131
+x 9
+y 22
+end
+arch candlelight1.101
 x 9
 y 22
 end
@@ -1552,15 +1552,24 @@ arch carpet2.151
 x 11
 y 14
 end
+arch stair_down
+msg
+The stairs are blocked
+endmsg
+x 11
+y 15
+end
 arch carpet2g
 x 11
 y 15
 end
 arch stone_throne
+layer 5
 x 11
 y 15
 end
-arch floor_blue3
+arch carpet2g
+face carpet4g.101
 x 11
 y 16
 end
@@ -1572,7 +1581,8 @@ arch carpet2g
 x 11
 y 18
 end
-arch floor_blue3
+arch carpet2g
+face carpet4g.101
 x 11
 y 19
 end
@@ -1584,7 +1594,8 @@ arch carpet2g
 x 11
 y 21
 end
-arch floor_blue3
+arch carpet2g
+face carpet4g.101
 x 11
 y 22
 end
@@ -1794,10 +1805,6 @@ arch floor_fs_grey1a
 x 13
 y 15
 end
-arch glower.101
-x 13
-y 15
-end
 arch light4
 x 13
 y 15
@@ -1806,6 +1813,10 @@ arch carpet2.171
 x 13
 y 15
 end
+arch glower.101
+x 13
+y 15
+end
 arch floor_fs_grey1a
 x 13
 y 16
@@ -1835,6 +1846,10 @@ x 13
 y 19
 end
 arch light6
+x 13
+y 19
+end
+arch carpet2.171
 x 13
 y 19
 end
@@ -1842,10 +1857,6 @@ arch candlelight3.101
 x 13
 y 19
 end
-arch carpet2.171
-x 13
-y 19
-end
 arch floor_fs_grey1a
 x 13
 y 20
@@ -1863,14 +1874,14 @@ x 13
 y 21
 end
 arch floor_fs_grey1a
-x 13
-y 22
-end
-arch candlelight1.101
 x 13
 y 22
 end
 arch light6
+x 13
+y 22
+end
+arch candlelight1.101
 x 13
 y 22
 end

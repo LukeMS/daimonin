@@ -29,10 +29,10 @@ end
 arch grassd_2
 y 3
 end
-arch picture3.151
+arch wall_stone_1
 y 3
 end
-arch wall_stone_1
+arch picture3.151
 y 3
 end
 arch floor_wood3d
@@ -65,10 +65,10 @@ end
 arch floor_wood3d
 y 13
 end
-arch picture2.151
+arch wall_stone_1
 y 13
 end
-arch wall_stone_1
+arch picture2.151
 y 13
 end
 arch floor_wood3d
@@ -393,11 +393,11 @@ arch grassd_3
 x 3
 y 3
 end
-arch picture2.151
+arch wall_stone_1
 x 3
 y 3
 end
-arch wall_stone_1
+arch picture2.151
 x 3
 y 3
 end
@@ -446,11 +446,11 @@ arch floor_wood3d
 x 3
 y 13
 end
-arch picture1.151
+arch wall_stone_1
 x 3
 y 13
 end
-arch wall_stone_1
+arch picture1.151
 x 3
 y 13
 end

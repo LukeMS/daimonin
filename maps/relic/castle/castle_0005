@@ -1911,6 +1911,10 @@ arch couch1a
 x 15
 y 21
 end
+arch light2
+x 15
+y 21
+end
 arch floor_black1a
 x 15
 y 22
@@ -1920,6 +1924,10 @@ x 15
 y 23
 end
 arch couch1a
+x 15
+y 23
+end
+arch light2
 x 15
 y 23
 end
@@ -2397,6 +2405,10 @@ arch floor_black1a
 x 19
 y 22
 end
+arch light3
+x 19
+y 22
+end
 arch floor_black1c
 x 19
 y 23
@@ -2496,7 +2508,7 @@ arch table_wood1.111
 x 20
 y 17
 end
-arch light2
+arch light5
 x 20
 y 17
 end
@@ -2872,6 +2884,10 @@ arch floor_black1c
 x 23
 y 17
 end
+arch light3
+x 23
+y 17
+end
 arch floor_black1a
 x 23
 y 18
@@ -2897,6 +2913,10 @@ x 23
 y 21
 end
 arch floor_black1a
+x 23
+y 22
+end
+arch light3
 x 23
 y 22
 end

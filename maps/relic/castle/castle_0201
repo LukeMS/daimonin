@@ -1565,7 +1565,7 @@ arch grassd_m5
 x 12
 y 16
 end
-arch grassd_8
+arch grassd_7
 x 12
 y 17
 end
@@ -1740,7 +1740,7 @@ arch grassd_4
 x 14
 y 8
 end
-arch grassd_2
+arch grassd_4
 x 14
 y 9
 end
