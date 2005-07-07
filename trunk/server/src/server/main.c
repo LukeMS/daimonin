@@ -904,14 +904,19 @@ void process_players2(mapstruct *map)
 
 static void process_map_events(mapstruct *map)
 {
-    object *op;
+    object *op, *first_obj;
     tag_t   tag;
 
     process_players1(map);
 
+    if(map == NULL)
+        first_obj= active_objects;
+    else
+        first_obj = map->active_objects;
+    
     /* note: next_active_object is a global which 
        might get modified while traversing below */
-    for (op = active_objects; op != NULL; op = next_active_object)
+    for (op = first_obj; op != NULL; op = next_active_object)
     {
         next_active_object = op->active_next;
         tag = op->count;
@@ -960,6 +965,16 @@ static void process_map_events(mapstruct *map)
             op->speed = 0;
             update_ob_speed(op);
             continue;
+        }
+        
+        /* This is not a bug. We just move the object to the 
+         * insertion list and sort it out later. Process as usual. */
+        if (op->map != map)
+        {
+            LOG(llevDebug, "WARNING: process_events(): object not on processed map: %s is on %s, not %s\n",
+                query_name(op), STRING_MAP_PATH(op->map), STRING_MAP_PATH(map));
+            activelist_remove(op, map);
+            activelist_insert(op);
         }
 
         /* as we can see here, the swing speed not effected by
@@ -1020,8 +1035,9 @@ static void process_map_events(mapstruct *map)
     process_players2(map);
 }
 
-void process_events(mapstruct *map)
+static void process_events()
 {
+    mapstruct *map;
 #if defined TIME_PROCESS_EVENTS
     /* This is instrumentation code that shows how the speedup to this function
      * was measured. It can easily be moved to the old version too, but if you
@@ -1029,31 +1045,49 @@ void process_events(mapstruct *map)
     /* Note: I'll remove these blocks soon. Gecko - 20050522 */
     static int callcount = 0;
     static struct timeval cumulative;
-    struct timeval start, end, length;
+    struct timeval start, end;
     double t;
 
     gettimeofday(&start, NULL);
 #endif
         
-    /* TODO: actually change the prototype =) */
-    if(map != NULL)
-        LOG(llevBug, "BUG: process_events called with non-NULL map\n");
-    
     /* Preprocess step: move all objects in inserted_active_objects
      * into their real activelists */
+    /* TODO: to make AI more efficient, keep activelist sorted with
+     * mobs&players first and less interesting objects next, or
+     * have two activelists per map for that */
     if(inserted_active_objects) {
-        object *obj, *last;
-        for(obj = inserted_active_objects; obj; obj = obj->active_next)
-            last = obj;
-        if((last->active_next = active_objects))
-            last->active_next->active_prev = last;
-        active_objects = inserted_active_objects;
+        object *obj, *next;
+        for(obj = inserted_active_objects; obj; obj = next)
+        {
+            next = obj->active_next;
+            if(obj->map) 
+            {
+                obj->active_next = obj->map->active_objects;
+                obj->map->active_objects = obj;
+            } 
+            else 
+            {
+                obj->active_next = active_objects;
+                active_objects = obj;
+            }
+            obj->active_prev = NULL;
+            if(obj->active_next)
+                obj->active_next->active_prev = obj;
+        }
         inserted_active_objects = NULL;        
     }
     
     /* Now, process all map-based activelists, and the activelist
      * for obejcts not on maps */
     process_map_events(NULL);
+    
+    /* TODO: only go through maps in special list of maps with active objects */
+    for (map = first_map; map; map = map->next)
+    {
+        if (map->active_objects && map->in_memory == MAP_IN_MEMORY)
+            process_map_events(map);
+    }
    
 #if defined TIME_PROCESS_EVENTS
     gettimeofday(&end, NULL);
@@ -1377,7 +1411,7 @@ int main(int argc, char **argv)
         check_use_object_list();
 #endif
 
-        process_events(NULL);       /* "do" something with objects with speed - process user cmds */
+        process_events(); /* "do" something with objects with speed - process user cmds */
 
         /* this is the tricky thing...  This full read/write access to the
          * socket ensure at last *ONE* read/write access to the socket in one round WITH player update.

@@ -214,6 +214,8 @@ extern void             copy_object(object *op2, object *op);
 extern void             copy_object_data(object *op2, object *op);
 extern object          *get_object(void);
 extern void             update_turn_face(object *op);
+extern void             activelist_insert(object *op);
+extern void             activelist_remove(object *op, mapstruct *map);
 extern void             update_ob_speed(object *op);
 extern void             update_object(object *op, int action);
 extern void             destroy_object(object *ob);

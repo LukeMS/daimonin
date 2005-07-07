@@ -112,8 +112,15 @@ static int count_active()
 {
     int     i   = 0;
     object *tmp = active_objects;
-    while (tmp != NULL)
-        tmp = tmp->active_next, i++;
+    mapstruct *map;
+    
+    for(tmp = active_objects; tmp != NULL; tmp = tmp->active_next)
+        i++;
+    for (map = first_map; map; map = map->next)
+    {
+        for(tmp = map->active_objects; tmp != NULL; tmp = tmp->active_next)
+            i++;
+    }
     return i;
 }
 

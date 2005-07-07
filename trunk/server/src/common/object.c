@@ -1705,6 +1705,77 @@ void update_turn_face(object *op)
 }
 
 /*
+ * Utility functions for inserting & removing objects
+ * from activelists
+ */
+static inline void activelist_remove_inline(object *op, mapstruct *map)
+{
+    /* If not on the active list, nothing needs to be done */
+    if (!op->active_next && !op->active_prev && 
+            op != active_objects && op != inserted_active_objects 
+            && (map == NULL || op != map->active_objects)
+            && (op->map == NULL || op != op->map->active_objects))
+        return;
+
+    /* If this happens to be the object we will process next,
+     * update the next_active_object pointer */
+    if(op == next_active_object)
+        next_active_object = op->active_next;
+
+    if (op == active_objects)
+        active_objects = op->active_next;
+    else if (op == inserted_active_objects)
+        inserted_active_objects = op->active_next;
+    else if (map && op == map->active_objects) 
+    {
+        map->active_objects = op->active_next;
+        // TODO: if map is now empty of entries, remove it from
+        // list of maps with active objects
+    }
+
+    if (op->active_prev)
+        op->active_prev->active_next = op->active_next;
+
+    if (op->active_next)
+        op->active_next->active_prev = op->active_prev;
+
+    op->active_next = NULL;
+    op->active_prev = NULL;
+}
+
+/* Insert an object into the insertion activelist, it will be
+ * moved to its corresponding map's activelist at the next
+ * call to process_events() */
+static inline void activelist_insert_inline(object *op)
+{
+    /* If already on any active list, don't do anything */
+    if (op->active_next || op->active_prev || 
+            op == active_objects || op == inserted_active_objects ||
+            (op->map && op == op->map->active_objects))
+        return;
+
+    /* Since we don't want to process objects twice, we make
+     * sure to insert the object in a temporary list until the
+     * next process_events() call */
+    op->active_next = inserted_active_objects;
+    if (op->active_next != NULL)
+        op->active_next->active_prev = op;
+    inserted_active_objects = op;
+    op->active_prev = NULL;
+}
+
+void activelist_insert(object *op)
+{
+    activelist_insert_inline(op);
+}
+
+void activelist_remove(object *op, mapstruct *map)
+{
+    activelist_remove_inline(op, map);
+}
+
+
+/*
  * Updates the speed of an object.  If the speed changes from 0 to another
  * value, or vice versa, then add/remove the object from the active list.
  * This function needs to be called whenever the speed of an object changes.
@@ -1731,45 +1802,9 @@ void update_ob_speed(object *op)
         return;
 
     if (FABS(op->speed) > MIN_ACTIVE_SPEED)
-    {
-        /* If already on any active list, don't do anything */
-        if (op->active_next || op->active_prev || op == active_objects || op == inserted_active_objects)
-            return;
-
-        /* Since we don't want to process objects twice, we make
-         * sure to insert the object in a temporary list until the
-         * next process_events() call */
-        op->active_next = inserted_active_objects;
-        if (op->active_next != NULL)
-            op->active_next->active_prev = op;
-        inserted_active_objects = op;
-        op->active_prev = NULL;
-    }
+        activelist_insert_inline(op);
     else
-    {
-        /* If not on the active list, nothing needs to be done */
-        if (!op->active_next && !op->active_prev && op != active_objects && op != inserted_active_objects)
-            return;
-
-        /* If this happens to be the object we will process next,
-         * update the next_active_object pointer */
-        if(op == next_active_object)
-            next_active_object = op->active_next;
-        
-        if (op == active_objects)
-            active_objects = op->active_next;
-        else if (op == inserted_active_objects)
-            inserted_active_objects = op->active_next;
-
-        if (op->active_prev)
-            op->active_prev->active_next = op->active_next;
-
-        if (op->active_next)
-            op->active_next->active_prev = op->active_prev;
-        
-        op->active_next = NULL;
-        op->active_prev = NULL;
-    }
+        activelist_remove_inline(op, op->map);
 }
 
 /* OLD NOTES
@@ -2478,6 +2513,7 @@ object * insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag
     object*tmp =    NULL, *top;
     MapSpace       *mc;
     int             x, y, lt, layer, layer_inv;
+    mapstruct      *old_map = op->map;
 
     /* some tests to check all is ok... some cpu ticks
      * which tracks we have problems or not
@@ -2771,6 +2807,12 @@ object * insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag
     /* updates flags (blocked, alive, no magic, etc) for this map space */
     update_object(op, UP_OBJ_INSERT);
 
+    /* See if op moved between maps */
+    if(op->map && op->map != old_map) {
+//        LOG(llevDebug, "Object moved between maps: %s (%s -> %s)\n", STRING_OBJ_NAME(op), STRING_MAP_PATH(old_map), STRING_MAP_PATH(op->map));
+        activelist_remove_inline(op, old_map);
+        activelist_insert_inline(op);
+    }
 
     /* check walk on/fly on flag if not canceled AND there is some to move on.
      * Note: We are first inserting the WHOLE object/multi arch - then we check all
