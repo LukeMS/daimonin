@@ -1918,29 +1918,39 @@ void ai_fake_process(object *op, struct mob_behaviour_param *params)
 
 void ai_look_for_other_mobs(object *op, struct mob_behaviour_param *params)
 {
-    /* TODO Very stupid solution for now: scan through all active and
-     * check if we can reach them. Makes more sense when we have
-     * per-map active lists. */
-
+    int tilenr;
     /* TODO possibility for optimization: if we already have enemies there
      * is no need to look for new ones every timestep... */
-    /* TODO: optimization: maybe first look through nearest tiles to see if something interesting is there,
+    /* TODO: optimization: maybe first look through nearest squares to see if something interesting is there,
      * then search the active list */
-    /* TODO: adaptive algo: if many objects in map's active list (~r^2, r = sense range)
-     * then it is probably faster to scan through the map, especially if using the
-     * IS_ALIVE flag on map tile level to see if it is useful to scan that map tile */
-    object *obj;
-    for (obj = active_objects; obj; obj = obj->active_next)
+    /* TODO: adaptive algo: if many objects in nearby maps' active lists (approx > r^2, r = sense range)
+     * then it is probably faster to scan through the map cells, especially if using the
+     * IS_ALIVE flag on map cell level to see if it is useful to scan that cell */
+    for (tilenr=0; tilenr < TILED_MAPS + 1; tilenr++)
     {
-        if ((QUERY_FLAG(obj, FLAG_ALIVE) || obj->type == PLAYER)
-         && on_same_map(obj, op)
-         && obj != op
-         && mob_can_see_obj(op, obj, NULL))
+        object *obj;
+        if(tilenr == TILED_MAPS)
+            obj = op->map->active_objects;
+        else if (op->map->tile_map[tilenr] && op->map->tile_map[tilenr]->in_memory == MAP_IN_MEMORY) 
+            obj = op->map->tile_map[tilenr]->active_objects;
+        else
+            continue;
+
+        /* TODO: only scan maps we can see into */
+        /* TODO: swap in nearby maps? (that might cascade in turn if the loaded maps contain mobs!) */
+            
+        for (; obj; obj = obj->active_next)
         {
-            /* TODO: get rid of double rv calculation
-             * (both can_see_obj() and register_npc_known_obj)
-             */
-            register_npc_known_obj(op, obj, 0);
+            if ((QUERY_FLAG(obj, FLAG_ALIVE) || obj->type == PLAYER)
+            //        && on_same_map(obj, op) // This is implicit from scanning only nearby maps
+                    && obj != op
+                    && mob_can_see_obj(op, obj, NULL))
+            {
+                /* TODO: get rid of double rv calculation
+                 * (both can_see_obj() and register_npc_known_obj)
+                 */
+                register_npc_known_obj(op, obj, 0);
+            }
         }
     }
 }

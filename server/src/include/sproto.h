@@ -363,7 +363,6 @@ char                       *unclean_path(const char *src);
 void                        enter_exit(object *op, object *exit_ob);
 void                        process_players1(mapstruct *map);
 void                        process_players2(mapstruct *map);
-void                        process_events(mapstruct *map);
 void                        clean_tmp_files(void);
 void                        cleanup(int exit);
 void                        leave(player *pl, int draw_exit);

@@ -326,7 +326,7 @@ typedef struct mapdef
     const char     *tile_path[TILED_MAPS];  /* path to adjoining maps (shared strings) */
     struct mapdef  *tile_map[TILED_MAPS];   /* Next map, linked list */
     object         *player_first;           /* chained list of player on this map */
-
+    object         *active_objects;         /* linked list of active objects */
 
     sint32          darkness;               /* indicates the base light value in this map.
                                              * This value is only used when the map is not
