@@ -2,7 +2,7 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="7.00"
-	Name="Daimonin"
+	Name="client"
 	SccProjectName=""
 	SccLocalPath="">
 	<Platforms>
@@ -25,7 +25,9 @@
 				PreprocessorDefinitions="WIN32,_DEBUG,__WIN_32"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
-				PrecompiledHeaderFile=".\Debug/Daimonin.pch"
+				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="include.h"
+				PrecompiledHeaderFile=".\Debug/client.pch"
 				AssemblerListingLocation=".\Debug/"
 				ObjectFile=".\Debug/"
 				ProgramDataBaseFileName=".\Debug/"
@@ -39,7 +41,7 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="wsock32.lib"
-				OutputFile=".\Debug/Daimonin.exe"
+				OutputFile=".\Debug/client.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
 				IgnoreDefaultLibraryNames="msvcrt.lib"
@@ -55,7 +57,7 @@
 				TypeLibraryName=".\Debug/Daimonin.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy Debug\Daimonin.exe ..\..\..\Daimonin.exe"/>
+				CommandLine="copy Debug\client.exe ..\..\..\client.exe"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
@@ -76,7 +78,8 @@
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
+			CharacterSet="2"
+			WholeProgramOptimization="TRUE">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="3"
@@ -88,9 +91,8 @@
 				PreprocessorDefinitions="WIN32,NDEBUG,_WINDOWS,__WIN_32"
 				ExceptionHandling="FALSE"
 				RuntimeLibrary="2"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="include.h"
-				PrecompiledHeaderFile=".\Release/Daimonin.pch"
+				PrecompiledHeaderThrough=""
+				PrecompiledHeaderFile=".\Release/client.pch"
 				AssemblerListingLocation=".\Release/"
 				ObjectFile=".\Release/"
 				ProgramDataBaseFileName=".\Release/"
@@ -103,7 +105,7 @@
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
 				AdditionalDependencies="wsock32.lib"
-				OutputFile=".\Release/Daimonin.exe"
+				OutputFile=".\Release/client.exe"
 				LinkIncremental="1"
 				SuppressStartupBanner="TRUE"
 				SubSystem="2"
@@ -118,7 +120,7 @@
 				TypeLibraryName=".\Release/Daimonin.tlb"/>
 			<Tool
 				Name="VCPostBuildEventTool"
-				CommandLine="copy Release\Daimonin.exe ..\..\..\Daimonin.exe"/>
+				CommandLine="copy Release\client.exe ..\..\..\client.exe"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
