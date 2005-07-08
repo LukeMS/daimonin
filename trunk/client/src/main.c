@@ -1008,6 +1008,8 @@ void list_vid_modes(void)
 
 
     vinfo = SDL_GetVideoInfo();
+    if(!vinfo)
+    	return;
     LOG(LOG_MSG, "VideoInfo: hardware surfaces? %s\n", vinfo->hw_available ? "yes" : "no");
     LOG(LOG_MSG, "VideoInfo: windows manager? %s\n", vinfo->wm_available ? "yes" : "no");
     LOG(LOG_MSG, "VideoInfo: hw to hw blit? %s\n", vinfo->blit_hw ? "yes" : "no");
