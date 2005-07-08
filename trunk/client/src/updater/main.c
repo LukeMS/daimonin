@@ -117,7 +117,7 @@ static int execute_process(char *p_path, char *exe_name, char *parms, char *outp
         }
     }
 
-    sprintf(cmd,"%s %s", exe_name, parms);
+    sprintf(cmd,"\"%s\" %s", exe_name, parms);
     /*printf("CMD.... %s (%s)\n", cmd, prg_path);*/
 
     /* Execute */
@@ -234,7 +234,14 @@ int main(int argc, char *argv[])
     struct flock fl = { F_RDLCK, SEEK_SET, 0,       0,     0 };
 #endif
 
-    printf("Daimonin AutoUpdater 1.0\n\n");
+    printf("Daimonin AutoUpdater 1.0a\n\n");
+
+    printf("%s\n",argv[0]);
+    if(argc>1)
+        printf("%s\n",argv[1]);
+    if(argc>2)
+        printf("%s\n",argv[2]);
+    printf("\n");
 
     argv0 = argv[0];
     /* prepare pathes */
@@ -265,7 +272,7 @@ int main(int argc, char *argv[])
 
                 fclose(tmp);
                 copy_patch(argv[0], argv[2]);
-                sprintf(parms,"update %s", argv[0]);
+                sprintf(parms,"update \"%s\"", argv[0]);
                 execute_process(argv[2], argv[2], parms, NULL, 0);
 
                 printf("updated... restarting.\n");
@@ -722,7 +729,7 @@ int process_patch_file(char *patch_file, int mode)
                     fclose(stream); 
                     /* start the new installer and stop, so it can copy over us */
                     sprintf(process_path,"%s%s%s", prg_path, FOLDER_PATCH, src_path);
-                    sprintf(parms,"install %s", argv0);
+                    sprintf(parms,"install \"%s\"", argv0);
                     fclose(version_handle); /* important: allow instances */
                     execute_process(process_path, process_path, parms, NULL, 0);
                 
