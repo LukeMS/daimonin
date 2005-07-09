@@ -453,15 +453,7 @@ arch grassd_5
 x 3
 y 13
 end
-arch pillar_white2b
-x 3
-y 13
-end
 arch grassd_7
-x 3
-y 14
-end
-arch pillar_white2d
 x 3
 y 14
 end
@@ -469,15 +461,7 @@ arch grassd_8
 x 3
 y 15
 end
-arch pillar_white2d
-x 3
-y 15
-end
 arch grassd_5
-x 3
-y 16
-end
-arch pillar_white2b
 x 3
 y 16
 end
@@ -592,19 +576,7 @@ arch grassd_6
 x 4
 y 13
 end
-arch pillar_white2a
-x 4
-y 13
-end
 arch grassd_2
-x 4
-y 14
-end
-arch stair_up
-slaying ../stadium/stadium
-hp 47
-sp 47
-direction 6
 x 4
 y 14
 end
@@ -612,19 +584,7 @@ arch grassd_6
 x 4
 y 15
 end
-arch stair_up
-slaying ../stadium/stadium
-hp 47
-sp 48
-direction 6
-x 4
-y 15
-end
 arch grassd_8
-x 4
-y 16
-end
-arch pillar_white2a
 x 4
 y 16
 end
@@ -754,10 +714,6 @@ arch grassd_7
 x 5
 y 13
 end
-arch pillar_white2a
-x 5
-y 13
-end
 arch grassd_5
 x 5
 y 14
@@ -767,10 +723,6 @@ x 5
 y 15
 end
 arch grassd_3
-x 5
-y 16
-end
-arch pillar_white2a
 x 5
 y 16
 end

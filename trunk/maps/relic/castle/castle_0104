@@ -123,20 +123,22 @@ end
 arch floor_fs_grey1a
 y 21
 end
-arch chest_w1
-direction 5
-slaying barracks1
-y 21
-end
-arch torch_wall_1
-glow_radius 5
-is_animated 1
+arch locker2.111
+direction 7
 y 21
 end
 arch floor_fs_grey1a
 y 22
 end
+arch locker2.111
+direction 7
+y 22
+end
 arch floor_fs_grey1a
+y 23
+end
+arch locker2.111
+direction 7
 y 23
 end
 arch floor_black1a
@@ -489,6 +491,10 @@ end
 arch wall_flagstone1b.141
 x 3
 end
+arch wmask_bflag_fire1_1
+direction 7
+x 3
+end
 arch floor_fs_grey1a
 x 3
 y 1
@@ -502,6 +508,11 @@ x 3
 y 2
 end
 arch wall_flagstone1b.131
+x 3
+y 2
+end
+arch picture15
+direction 7
 x 3
 y 2
 end
@@ -510,6 +521,11 @@ x 3
 y 3
 end
 arch wall_flagstone1b.131
+x 3
+y 3
+end
+arch wmask_bflag_fire1_1
+direction 7
 x 3
 y 3
 end
@@ -526,6 +542,11 @@ x 3
 y 5
 end
 arch wall_flagstone1b.131
+x 3
+y 5
+end
+arch picture13
+direction 7
 x 3
 y 5
 end
@@ -534,6 +555,11 @@ x 3
 y 6
 end
 arch wall_flagstone1b.131
+x 3
+y 6
+end
+arch wmask_bflag_fire1_1
+direction 7
 x 3
 y 6
 end
@@ -550,6 +576,11 @@ x 3
 y 8
 end
 arch wall_flagstone1b.131
+x 3
+y 8
+end
+arch picture14
+direction 7
 x 3
 y 8
 end
@@ -561,6 +592,11 @@ arch wall_flagstone1b.141
 x 3
 y 9
 end
+arch wmask_bflag_fire1_1
+direction 7
+x 3
+y 9
+end
 arch floor_fs_grey1a
 x 3
 y 10
@@ -576,21 +612,21 @@ end
 arch wall_flagstone1b.131
 x 3
 y 11
+end
+arch picture13
+direction 7
+x 3
+y 11
+end
+arch floor_fs_grey1a
+x 3
+y 12
+end
+arch wall_flagstone1b.131
+x 3
+y 12
 end
 arch wmask_bflag_fire1_1
-direction 5
-x 3
-y 11
-end
-arch floor_fs_grey1a
-x 3
-y 12
-end
-arch wall_flagstone1b.131
-x 3
-y 12
-end
-arch picture14
 direction 7
 x 3
 y 12
@@ -611,6 +647,11 @@ arch wall_flagstone1b.131
 x 3
 y 14
 end
+arch picture15
+direction 7
+x 3
+y 14
+end
 arch floor_fs_grey1a
 x 3
 y 15
@@ -619,7 +660,7 @@ arch wall_flagstone1b.131
 x 3
 y 15
 end
-arch picture15
+arch wmask_bflag_fire1_1
 direction 7
 x 3
 y 15
@@ -679,6 +720,11 @@ arch floor_fs_grey1a
 x 4
 y 1
 end
+arch torch_wall_1
+direction 7
+x 4
+y 1
+end
 arch floor_fs_grey1a
 x 4
 y 2
@@ -691,7 +737,8 @@ arch floor_fs_grey1a
 x 4
 y 4
 end
-arch light4
+arch torch_wall_1
+direction 7
 x 4
 y 4
 end
@@ -707,6 +754,11 @@ arch floor_fs_grey1a
 x 4
 y 7
 end
+arch torch_wall_1
+direction 7
+x 4
+y 7
+end
 arch floor_fs_grey1a
 x 4
 y 8
@@ -715,14 +767,12 @@ arch floor_fs_grey1a
 x 4
 y 9
 end
-arch torch_wall_1
-direction 5
-glow_radius 5
-is_animated 1
-x 4
-y 9
-end
 arch floor_fs_grey1a
+x 4
+y 10
+end
+arch torch_wall_1
+direction 7
 x 4
 y 10
 end
@@ -738,14 +788,12 @@ arch floor_fs_grey1a
 x 4
 y 13
 end
-arch floor_fs_grey1a
-x 4
-y 14
-end
 arch torch_wall_1
-direction 5
-glow_radius 5
-is_animated 1
+direction 7
+x 4
+y 13
+end
+arch floor_fs_grey1a
 x 4
 y 14
 end
@@ -758,9 +806,7 @@ x 4
 y 16
 end
 arch torch_wall_1
-direction 5
-glow_radius 5
-is_animated 1
+direction 7
 x 4
 y 16
 end

@@ -371,15 +371,6 @@ arch floor_grit2
 x 2
 y 8
 end
-arch spawn_point
-x 2
-y 8
-arch guard_pole
-name Colosseum Guard
-type 83
-level 100
-end
-end
 arch floor_grit2
 x 2
 y 9
@@ -1169,6 +1160,16 @@ end
 arch floor_grit2
 x 7
 y 10
+end
+arch spawn_point
+x 7
+y 10
+arch guard_pole
+name Colosseum Guard
+type 83
+level 100
+Wis 1
+end
 end
 arch floor_grit2
 x 7
@@ -3059,6 +3060,10 @@ arch floor_wood3d
 x 19
 y 9
 end
+arch basket1.101
+x 19
+y 9
+end
 arch floor_wood3d
 x 19
 y 10
@@ -3072,6 +3077,10 @@ x 19
 y 12
 end
 arch floor_wood3d
+x 19
+y 13
+end
+arch basket1.101
 x 19
 y 13
 end
@@ -3409,6 +3418,16 @@ arch floor_wood3d
 x 21
 y 15
 end
+arch broom.111
+direction 7
+x 21
+y 15
+end
+arch metal_bucket.101
+layer 3
+x 21
+y 15
+end
 arch floor_wood3d
 x 21
 y 16
@@ -3433,7 +3452,7 @@ arch floor_wood3d
 x 21
 y 20
 end
-arch box1.101
+arch barrel.101
 x 21
 y 20
 end
@@ -3508,15 +3527,11 @@ arch floor_wood3d
 x 22
 y 7
 end
-arch barrel2.101
-x 22
-y 7
-end
 arch floor_wood3d
 x 22
 y 8
 end
-arch barrel2.101
+arch box2.101
 x 22
 y 8
 end
@@ -3524,7 +3539,7 @@ arch floor_wood3d
 x 22
 y 9
 end
-arch barrel2.101
+arch box2.101
 x 22
 y 9
 end
@@ -3532,7 +3547,7 @@ arch floor_wood3d
 x 22
 y 10
 end
-arch barrel2.101
+arch box1.101
 x 22
 y 10
 end
@@ -3540,7 +3555,7 @@ arch floor_wood3d
 x 22
 y 11
 end
-arch barrel2.101
+arch box1.101
 x 22
 y 11
 end
@@ -3548,7 +3563,7 @@ arch floor_wood3d
 x 22
 y 12
 end
-arch barrel2.101
+arch box1.101
 x 22
 y 12
 end
@@ -3572,7 +3587,7 @@ arch floor_wood3d
 x 22
 y 15
 end
-arch box1.101
+arch barrel2.101
 x 22
 y 15
 end
@@ -3580,7 +3595,7 @@ arch floor_wood3d
 x 22
 y 16
 end
-arch box1.101
+arch barrel2.101
 x 22
 y 16
 end
@@ -3588,7 +3603,7 @@ arch floor_wood3d
 x 22
 y 17
 end
-arch box1.101
+arch barrel2.101
 x 22
 y 17
 end
@@ -3596,7 +3611,7 @@ arch floor_wood3d
 x 22
 y 18
 end
-arch box1.101
+arch barrel.101
 x 22
 y 18
 end
@@ -3604,7 +3619,7 @@ arch floor_wood3d
 x 22
 y 19
 end
-arch box1.101
+arch barrel.101
 x 22
 y 19
 end
@@ -3612,7 +3627,7 @@ arch floor_wood3d
 x 22
 y 20
 end
-arch box1.101
+arch barrel.101
 x 22
 y 20
 end

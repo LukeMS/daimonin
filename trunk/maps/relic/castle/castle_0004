@@ -2247,7 +2247,7 @@ arch floor_fs_grey1a
 x 14
 y 9
 end
-arch wall_flagstone1.111
+arch wall_flagstone1b.111
 x 14
 y 9
 end
@@ -2408,7 +2408,7 @@ arch floor_fs_grey1a
 x 15
 y 9
 end
-arch wall_flagstone1.111
+arch wall_flagstone1b.111
 x 15
 y 9
 end
@@ -2561,7 +2561,7 @@ arch floor_fs_grey1a
 x 16
 y 9
 end
-arch wall_flagstone1.111
+arch wall_flagstone1b.111
 x 16
 y 9
 end
@@ -2697,7 +2697,7 @@ arch floor_fs_grey1a
 x 17
 y 9
 end
-arch wall_flagstone1.111
+arch wall_flagstone1b.111
 x 17
 y 9
 end
@@ -2844,7 +2844,7 @@ arch floor_fs_grey1a
 x 18
 y 9
 end
-arch wall_flagstone1.111
+arch wall_flagstone1b.111
 x 18
 y 9
 end
@@ -3026,7 +3026,7 @@ arch floor_fs_grey1a
 x 19
 y 9
 end
-arch wall_flagstone1.111
+arch wall_flagstone1b.111
 x 19
 y 9
 end
@@ -3188,7 +3188,7 @@ arch floor_fs_grey1a
 x 20
 y 9
 end
-arch wall_flagstone1.111
+arch wall_flagstone1b.111
 x 20
 y 9
 end
@@ -3385,7 +3385,7 @@ arch floor_fs_grey1a
 x 21
 y 9
 end
-arch wall_flagstone1.111
+arch wall_flagstone1b.111
 x 21
 y 9
 end
@@ -3535,7 +3535,7 @@ arch floor_fs_grey1a
 x 22
 y 9
 end
-arch wall_flagstone1.111
+arch wall_flagstone1b.111
 x 22
 y 9
 end
@@ -3615,10 +3615,6 @@ x 22
 y 20
 end
 arch floor_fs_grey1a
-x 22
-y 21
-end
-arch bed_1a.111
 x 22
 y 21
 end
@@ -3711,7 +3707,7 @@ arch floor_fs_grey1a
 x 23
 y 9
 end
-arch wall_flagstone1.111
+arch wall_flagstone1b.111
 x 23
 y 9
 end
@@ -3782,7 +3778,12 @@ arch floor_fs_grey1a
 x 23
 y 21
 end
-arch bed_1b.111
+arch wall_flagstone1b.131
+x 23
+y 21
+end
+arch locker1.111
+direction 7
 x 23
 y 21
 end
@@ -3790,7 +3791,25 @@ arch floor_fs_grey1a
 x 23
 y 22
 end
+arch wall_flagstone1b.131
+x 23
+y 22
+end
+arch locker1.111
+direction 7
+x 23
+y 22
+end
 arch floor_fs_grey1a
+x 23
+y 23
+end
+arch wall_flagstone1b.131
+x 23
+y 23
+end
+arch locker1.111
+direction 7
 x 23
 y 23
 end

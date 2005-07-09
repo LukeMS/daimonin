@@ -440,7 +440,7 @@ arch wall_flagstone1b.131
 x 3
 y 15
 end
-arch picture11
+arch picture13
 direction 7
 x 3
 y 15
@@ -496,8 +496,8 @@ arch wall_flagstone1b.141
 x 3
 y 20
 end
-arch wmask_bflag_fire1_1
-direction 5
+arch picture15
+direction 7
 x 3
 y 20
 end
@@ -509,6 +509,11 @@ arch wall_flagstone1b.131
 x 3
 y 21
 end
+arch wmask_bflag_fire1_1
+direction 7
+x 3
+y 21
+end
 arch floor_black1a
 x 3
 y 22
@@ -517,16 +522,16 @@ arch wall_flagstone1b.131
 x 3
 y 22
 end
-arch picture12
-direction 7
-x 3
-y 22
-end
-arch floor_black1c
+arch floor_black1a
 x 3
 y 23
 end
 arch wall_flagstone1b.131
+x 3
+y 23
+end
+arch picture14
+direction 7
 x 3
 y 23
 end
@@ -662,14 +667,14 @@ arch floor_fs_grey1a
 x 4
 y 22
 end
-arch floor_fs_grey1a
-x 4
-y 23
-end
 arch torch_wall_1
 direction 5
 glow_radius 5
 is_animated 1
+x 4
+y 22
+end
+arch floor_fs_grey1a
 x 4
 y 23
 end
@@ -982,6 +987,10 @@ arch floor_fs_grey1a
 x 7
 y 16
 end
+arch chair2_111
+x 7
+y 16
+end
 arch spawn_point
 x 7
 y 16
@@ -996,6 +1005,10 @@ end
 end
 end
 arch floor_fs_grey1a
+x 7
+y 17
+end
+arch table_round1
 x 7
 y 17
 end
@@ -1429,6 +1442,10 @@ arch carpet2.151
 x 10
 y 14
 end
+arch floor_fs_grey1a
+x 10
+y 15
+end
 arch carpet2e
 x 10
 y 15
@@ -1436,6 +1453,16 @@ end
 arch throne.111
 x 10
 y 15
+end
+arch spawn_point
+x 10
+y 15
+arch noble
+name Prince
+type 83
+level 40
+Wis 3
+end
 end
 arch carpet2e
 x 10
@@ -1556,6 +1583,11 @@ arch stair_down
 msg
 The stairs are blocked
 endmsg
+layer 3
+x 11
+y 15
+end
+arch floor_fs_grey1a
 x 11
 y 15
 end
@@ -1567,6 +1599,15 @@ arch stone_throne
 layer 5
 x 11
 y 15
+end
+arch spawn_point
+x 11
+y 15
+arch king
+type 83
+level 80
+Wis 3
+end
 end
 arch carpet2g
 face carpet4g.101
@@ -1690,6 +1731,10 @@ arch carpet2.151
 x 12
 y 14
 end
+arch floor_fs_grey1a
+x 12
+y 15
+end
 arch carpet2c
 x 12
 y 15
@@ -1697,6 +1742,38 @@ end
 arch throne.111
 x 12
 y 15
+end
+arch spawn_point
+x 12
+y 15
+arch queen
+type 83
+level 50
+Wis 3
+arch ai_caster
+msg
+# This is a generic Spellcaster AI that can be used for most mobs
+processes:
+look_for_other_mobs
+friendship
+choose_enemy
+
+moves:
+#stand_still
+sleep
+# run_away_from_enemy hp_threshold=6
+# move_towards_enemy
+keep_distance_to_enemy
+move_towards_enemy_last_known_pos
+move_towards_waypoint
+# move_randomly xlimit=5 ylimit=5
+move_towards_home
+
+actions:
+melee_attack_enemy
+endmsg
+end
+end
 end
 arch carpet2c
 x 12
@@ -2129,6 +2206,10 @@ arch floor_fs_grey1a
 x 15
 y 16
 end
+arch chair2_111
+x 15
+y 16
+end
 arch spawn_point
 x 15
 y 16
@@ -2143,6 +2224,10 @@ end
 end
 end
 arch floor_fs_grey1a
+x 15
+y 17
+end
+arch table_round1
 x 15
 y 17
 end
