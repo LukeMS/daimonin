@@ -76,6 +76,7 @@ typedef struct obj
     struct obj     *head;           /* Points to the main object of a large body */
     struct mapdef  *map;            /* Pointer to the map in which this object is present */
 
+    tag_t           count_debug;
     tag_t           count;              /* Which nr. of object created this is. */
     /* hmmm... unchanged? this count should be new
                          * set every time a freed object is used again

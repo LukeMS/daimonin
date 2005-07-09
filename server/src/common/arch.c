@@ -629,7 +629,11 @@ object * arch_to_object(archetype *at)
         return NULL;
     }
     op = get_object();
-    copy_object(&at->clone, op);
+    /* this was copy_object() before but for example for 
+     * temporary objects, we don't want move them to active list.
+     * copy_object_data() is right, but should be watched for side effects. MT-07.2005
+     */
+    copy_object_data(&at->clone, op);
     op->arch = at;
     return op;
 }

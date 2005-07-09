@@ -1574,6 +1574,7 @@ void initialize_object(object *op)
 
     /* give the object a new (unique) count tag */
     op->count = ++ob_count;
+    op->count_debug=op->count;
 }
 
 /*
@@ -1717,6 +1718,7 @@ static inline void activelist_remove_inline(object *op, mapstruct *map)
             && (op->map == NULL || op != op->map->active_objects))
         return;
 
+    LOG(llevDebug,"remove: %s (%d)\n", query_name(op), op->count);
     /* If this happens to be the object we will process next,
      * update the next_active_object pointer */
     if(op == next_active_object)
@@ -1746,7 +1748,8 @@ static inline void activelist_remove_inline(object *op, mapstruct *map)
 /* Insert an object into the insertion activelist, it will be
  * moved to its corresponding map's activelist at the next
  * call to process_events() */
-static inline void activelist_insert_inline(object *op)
+static void activelist_insert_inline(object *op)
+//static inline void activelist_insert_inline(object *op)
 {
     /* If already on any active list, don't do anything */
     if (op->active_next || op->active_prev || 
@@ -1754,6 +1757,7 @@ static inline void activelist_insert_inline(object *op)
             (op->map && op == op->map->active_objects))
         return;
 
+    LOG(llevDebug,"ADD: %s (%d) %s (%d,%d))\n", query_name(op), op->count, op->map?op->map->path:(op->env?query_name(op->env):"NULL"), op->x, op->y);
     /* Since we don't want to process objects twice, we make
      * sure to insert the object in a temporary list until the
      * next process_events() call */
@@ -2808,7 +2812,7 @@ object * insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag
     update_object(op, UP_OBJ_INSERT);
 
     /* See if op moved between maps */
-    if(op->map && op->map != old_map) {
+    if(op->speed && op->map && op->map != old_map) {
 //        LOG(llevDebug, "Object moved between maps: %s (%s -> %s)\n", STRING_OBJ_NAME(op), STRING_MAP_PATH(old_map), STRING_MAP_PATH(op->map));
         activelist_remove_inline(op, old_map);
         activelist_insert_inline(op);

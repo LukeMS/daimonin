@@ -20,13 +20,3 @@ metaserver_server damn.informatik.uni-bremen.de
 metaserver_host put.your.hostname.here
 metaserver_port 13326
 metaserver_comment Put a comment here.
-# values for the new big worldmap, and weather. Only use if you are using the
-# new bigmap.
-#
-# worldmapstartx 100
-# worldmapstarty 100
-# worldmaptilesx 30
-# worldmaptilesy 30
-# worldmaptilesizex 50
-# worldmaptilesizey 50
-# dynamiclevel 0
