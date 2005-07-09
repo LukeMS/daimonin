@@ -1718,7 +1718,7 @@ static inline void activelist_remove_inline(object *op, mapstruct *map)
             && (op->map == NULL || op != op->map->active_objects))
         return;
 
-    LOG(llevDebug,"remove: %s (%d)\n", query_name(op), op->count);
+    LOG(llevDebug,"remove: %s (%d) map:%s\n", query_name(op), op->count, map?map->path:"NULL" );
     /* If this happens to be the object we will process next,
      * update the next_active_object pointer */
     if(op == next_active_object)
@@ -1757,7 +1757,7 @@ static void activelist_insert_inline(object *op)
             (op->map && op == op->map->active_objects))
         return;
 
-    LOG(llevDebug,"ADD: %s (%d) %s (%d,%d))\n", query_name(op), op->count, op->map?op->map->path:(op->env?query_name(op->env):"NULL"), op->x, op->y);
+    LOG(llevDebug,"ADD: %s (type:%d count:%d) %s (%d,%d))\n", query_name(op), op->type, op->count, op->map?op->map->path:(op->env?query_name(op->env):"NULL"), op->x, op->y);
     /* Since we don't want to process objects twice, we make
      * sure to insert the object in a temporary list until the
      * next process_events() call */
