@@ -1919,6 +1919,18 @@ void ai_fake_process(object *op, struct mob_behaviour_param *params)
 void ai_look_for_other_mobs(object *op, struct mob_behaviour_param *params)
 {
     int tilenr;
+
+    /* Lets check the mob has a valid map. 
+     * I encountered this bug because a kobold was inserted in kobold_den1 map since Beta2 accidently
+     * in a wall. All B2 & 3 run with this bug, the buggy map was in CVS for ages... MT-2005
+     */
+    if(!op->map)
+    {
+        LOG(llevDebug,"BUG:: ai_look_for_other_mobs(): Mob %s without map - deleting it (%d,%d)\n", 
+            query_name(op), op->env?op->env->x:-1, op->env?op->env->y:-1);
+        remove_ob(op);
+        return;
+    }
     /* TODO possibility for optimization: if we already have enemies there
      * is no need to look for new ones every timestep... */
     /* TODO: optimization: maybe first look through nearest squares to see if something interesting is there,
@@ -1938,7 +1950,12 @@ void ai_look_for_other_mobs(object *op, struct mob_behaviour_param *params)
 
         /* TODO: only scan maps we can see into */
         /* TODO: swap in nearby maps? (that might cascade in turn if the loaded maps contain mobs!) */
-            
+        /* Normally, we should never do swap in maps for mobs. Because the main feature of the 
+         * engine is, to have parts swaped out. But we need a "FLAG_SWAP_LOCK" flag for special
+         * mobs (for example quest mobs) who run around. We don't want that the swap function swaped
+         * them out before the quest is finished. These flaged mobs should handled as players in
+         * map questions - that means too to swap maps in. MT-07.2005
+         */
         for (; obj; obj = obj->active_next)
         {
             if ((QUERY_FLAG(obj, FLAG_ALIVE) || obj->type == PLAYER)

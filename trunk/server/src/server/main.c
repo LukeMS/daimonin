@@ -924,7 +924,8 @@ static void process_map_events(mapstruct *map)
         /* Now process op */
         if (OBJECT_FREE(op))
         {
-            LOG(llevBug, "BUG: process_events(): Free object on active list\n");
+            LOG(llevBug, "BUG: process_events(): Free object %s (count: %d (%d)) on active list(%s (%d,%d)\n",
+                            query_name(op), op->count, op->count_debug, op->map?op->map->path:"NULL", op->x, op->y);
             op->speed = 0;
             update_ob_speed(op);
             continue;
