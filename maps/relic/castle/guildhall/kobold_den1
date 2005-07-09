@@ -1006,9 +1006,6 @@ end
 arch fwall_sand1b
 x 6
 y 10
-arch kobold
-name kobold keeper
-end
 end
 arch floor_grit4a
 x 6

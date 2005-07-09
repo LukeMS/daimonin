@@ -2088,7 +2088,7 @@ arch floor_fs_grey1a
 x 14
 y 14
 end
-arch pottery5.101
+arch pottery4.101
 x 14
 y 14
 end
@@ -2096,7 +2096,7 @@ arch floor_fs_grey1a
 x 14
 y 15
 end
-arch pottery6.101
+arch pottery2.101
 x 14
 y 15
 end
@@ -2119,7 +2119,7 @@ arch floor_fs_grey1a
 x 14
 y 17
 end
-arch pottery6.101
+arch basket2.101
 x 14
 y 17
 end
@@ -2127,7 +2127,7 @@ arch floor_fs_grey1a
 x 14
 y 18
 end
-arch pottery6.101
+arch basket2.101
 x 14
 y 18
 end
@@ -2135,14 +2135,14 @@ arch floor_fs_grey1a
 x 14
 y 19
 end
-arch pottery6.101
-x 14
-y 19
-end
 arch torch_wall_1
 direction 5
 glow_radius 5
 is_animated 1
+x 14
+y 19
+end
+arch basket2.101
 x 14
 y 19
 end
@@ -2158,7 +2158,7 @@ arch floor_fs_grey1a
 x 14
 y 21
 end
-arch pottery6.101
+arch pottery3.101
 x 14
 y 21
 end
@@ -2413,15 +2413,19 @@ arch floor_fs_grey1a
 x 16
 y 16
 end
+arch fire_cauld.131
+x 16
+y 16
+end
+arch light2
+x 16
+y 16
+end
 arch floor_fs_grey1a
 x 16
 y 17
 end
-arch fire_cauld.131
-x 16
-y 17
-end
-arch light1
+arch chair_small
 x 16
 y 17
 end
@@ -2429,7 +2433,19 @@ arch floor_fs_grey1a
 x 16
 y 18
 end
+arch fire_cauld.131
+x 16
+y 18
+end
+arch light2
+x 16
+y 18
+end
 arch floor_fs_grey1a
+x 16
+y 19
+end
+arch chair_small
 x 16
 y 19
 end
@@ -2437,15 +2453,15 @@ arch floor_fs_grey1a
 x 16
 y 20
 end
-arch floor_fs_grey1a
-x 16
-y 21
-end
 arch fire_cauld.131
 x 16
-y 21
+y 20
 end
-arch light1
+arch light2
+x 16
+y 20
+end
+arch floor_fs_grey1a
 x 16
 y 21
 end
@@ -2465,6 +2481,10 @@ arch floor_fs_grey1a
 x 17
 end
 arch floor_fs_grey1a
+x 17
+y 1
+end
+arch light3
 x 17
 y 1
 end
@@ -2548,11 +2568,11 @@ arch floor_fs_grey1a
 x 17
 y 18
 end
-arch floor_fs_grey1a
-x 17
-y 19
-end
 arch table_round1
+x 17
+y 18
+end
+arch floor_fs_grey1a
 x 17
 y 19
 end
@@ -2676,15 +2696,30 @@ arch floor_fs_grey1a
 x 18
 y 17
 end
-arch fire_cauld.131
-x 18
-y 17
-end
-arch light1
-x 18
-y 17
-end
 arch floor_fs_grey1a
+x 18
+y 18
+end
+arch chair1_111
+direction 7
+x 18
+y 18
+end
+arch woman_old
+name Old Cook
+msg
+@match hi
+All i do is cook and read and cook and read... Elisbath does all of the important stuff these days
+@match hello
+All i do is cook and read and cook and read... Elisbath does all of the important stuff these days
+@match hey
+All i do is cook and read and cook and read... Elisbath does all of the important stuff these days
+endmsg
+anim_speed 12
+level 3
+unaggressive 1
+stand_still 1
+direction 3
 x 18
 y 18
 end
@@ -2697,14 +2732,6 @@ x 18
 y 20
 end
 arch floor_fs_grey1a
-x 18
-y 21
-end
-arch fire_cauld.131
-x 18
-y 21
-end
-arch light1
 x 18
 y 21
 end
@@ -2806,7 +2833,7 @@ arch floor_fs_grey1a
 x 19
 y 14
 end
-arch shelf1.111
+arch shelf3_wall.111
 x 19
 y 14
 end
@@ -2822,11 +2849,35 @@ arch floor_fs_grey1a
 x 19
 y 17
 end
+arch fire_cauld.131
+x 19
+y 17
+end
+arch light1
+x 19
+y 17
+end
 arch floor_fs_grey1a
 x 19
 y 18
 end
+arch fire_cauld.131
+x 19
+y 18
+end
+arch light2
+x 19
+y 18
+end
 arch floor_fs_grey1a
+x 19
+y 19
+end
+arch fire_cauld.131
+x 19
+y 19
+end
+arch light1
 x 19
 y 19
 end
@@ -2880,7 +2931,15 @@ arch floor_fs_grey1a
 x 20
 y 4
 end
+arch light5
+x 20
+y 4
+end
 arch floor_fs_grey1a
+x 20
+y 5
+end
+arch light5
 x 20
 y 5
 end
@@ -2945,7 +3004,7 @@ arch floor_fs_grey1a
 x 20
 y 14
 end
-arch shelf1.111
+arch shelf4_wall.111
 x 20
 y 14
 end
@@ -2958,14 +3017,6 @@ x 20
 y 16
 end
 arch floor_fs_grey1a
-x 20
-y 17
-end
-arch fire_cauld.131
-x 20
-y 17
-end
-arch light1
 x 20
 y 17
 end
@@ -2985,14 +3036,6 @@ arch floor_fs_grey1a
 x 20
 y 21
 end
-arch fire_cauld.131
-x 20
-y 21
-end
-arch light1
-x 20
-y 21
-end
 arch floor_fs_grey1a
 x 20
 y 22
@@ -3009,6 +3052,10 @@ arch floor_fs_grey1a
 x 21
 end
 arch floor_fs_grey1a
+x 21
+y 1
+end
+arch light3
 x 21
 y 1
 end
@@ -3072,7 +3119,7 @@ arch floor_fs_grey1a
 x 21
 y 14
 end
-arch shelf1.111
+arch shelf4_wall.111
 x 21
 y 14
 end
@@ -3092,11 +3139,11 @@ arch floor_fs_grey1a
 x 21
 y 18
 end
-arch floor_fs_grey1a
-x 21
-y 19
-end
 arch table_round1
+x 21
+y 18
+end
+arch floor_fs_grey1a
 x 21
 y 19
 end
@@ -3123,9 +3170,6 @@ end
 arch floor_fs_grey1a
 x 22
 end
-arch bed_1a.111
-x 22
-end
 arch floor_fs_grey1a
 x 22
 y 1
@@ -3135,10 +3179,6 @@ x 22
 y 2
 end
 arch floor_fs_grey1a
-x 22
-y 3
-end
-arch bed_1a.111
 x 22
 y 3
 end
@@ -3154,10 +3194,6 @@ arch floor_fs_grey1a
 x 22
 y 6
 end
-arch bed_1a.111
-x 22
-y 6
-end
 arch floor_fs_grey1a
 x 22
 y 7
@@ -3167,10 +3203,6 @@ x 22
 y 8
 end
 arch floor_fs_grey1a
-x 22
-y 9
-end
-arch bed_1a.111
 x 22
 y 9
 end
@@ -3208,7 +3240,7 @@ arch floor_fs_grey1a
 x 22
 y 14
 end
-arch shelf1.111
+arch shelf3_wall.111
 x 22
 y 14
 end
@@ -3224,11 +3256,7 @@ arch floor_fs_grey1a
 x 22
 y 17
 end
-arch fire_cauld.131
-x 22
-y 17
-end
-arch light1
+arch table_round1
 x 22
 y 17
 end
@@ -3236,7 +3264,15 @@ arch floor_fs_grey1a
 x 22
 y 18
 end
+arch table_round2
+x 22
+y 18
+end
 arch floor_fs_grey1a
+x 22
+y 19
+end
+arch table_round1
 x 22
 y 19
 end
@@ -3245,14 +3281,6 @@ x 22
 y 20
 end
 arch floor_fs_grey1a
-x 22
-y 21
-end
-arch fire_cauld.131
-x 22
-y 21
-end
-arch light1
 x 22
 y 21
 end
@@ -3271,10 +3299,23 @@ end
 arch floor_fs_grey1a
 x 23
 end
-arch bed_1b.111
+arch wall_flagstone1b.131
+x 23
+end
+arch locker1.111
+direction 7
 x 23
 end
 arch floor_fs_grey1a
+x 23
+y 1
+end
+arch wall_flagstone1b.131
+x 23
+y 1
+end
+arch locker1.111
+direction 7
 x 23
 y 1
 end
@@ -3286,10 +3327,6 @@ arch floor_fs_grey1a
 x 23
 y 3
 end
-arch bed_1b.111
-x 23
-y 3
-end
 arch floor_fs_grey1a
 x 23
 y 4
@@ -3298,11 +3335,25 @@ arch floor_fs_grey1a
 x 23
 y 5
 end
+arch wall_flagstone1b.131
+x 23
+y 5
+end
+arch locker1.111
+direction 7
+x 23
+y 5
+end
 arch floor_fs_grey1a
 x 23
 y 6
 end
-arch bed_1b.111
+arch wall_flagstone1b.131
+x 23
+y 6
+end
+arch locker1.111
+direction 7
 x 23
 y 6
 end
@@ -3310,7 +3361,25 @@ arch floor_fs_grey1a
 x 23
 y 7
 end
+arch wall_flagstone1b.131
+x 23
+y 7
+end
+arch locker1.111
+direction 7
+x 23
+y 7
+end
 arch floor_fs_grey1a
+x 23
+y 8
+end
+arch wall_flagstone1b.131
+x 23
+y 8
+end
+arch locker1.111
+direction 7
 x 23
 y 8
 end
@@ -3318,7 +3387,12 @@ arch floor_fs_grey1a
 x 23
 y 9
 end
-arch bed_1b.111
+arch wall_flagstone1b.131
+x 23
+y 9
+end
+arch locker1.111
+direction 7
 x 23
 y 9
 end
@@ -3326,7 +3400,7 @@ arch floor_fs_grey1a
 x 23
 y 10
 end
-arch wall_flagstone1b.111
+arch wall_flagstone1b.141
 x 23
 y 10
 end
@@ -3350,6 +3424,10 @@ arch floor_fs_grey1a
 x 23
 y 14
 end
+arch shelf3_wall.111
+x 23
+y 14
+end
 arch floor_fs_grey1a
 x 23
 y 15
@@ -3363,6 +3441,10 @@ x 23
 y 17
 end
 arch floor_fs_grey1a
+x 23
+y 18
+end
+arch table_round1
 x 23
 y 18
 end
