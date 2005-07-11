@@ -587,8 +587,7 @@ arch floor_dark1a
 x 4
 y 12
 end
-arch grass_thickm3
-no_pass 1
+arch grass_thick1
 x 4
 y 12
 end

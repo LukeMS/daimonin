@@ -27,16 +27,30 @@ end
 arch floor_fs_grey1a
 y 3
 end
+arch chair1_111
+direction 3
+y 3
+end
 arch floor_fs_grey1a
 y 4
 end
 arch floor_fs_grey1a
 y 5
 end
+arch chair1_111
+y 5
+end
 arch floor_fs_grey1a
 y 6
 end
+arch table_round1
+y 6
+end
 arch floor_fs_grey1a
+y 7
+end
+arch chair1_111
+direction 5
 y 7
 end
 arch floor_fs_grey1a
@@ -77,13 +91,13 @@ end
 arch floor_fs_grey1a
 y 16
 end
-arch light5
-y 16
-end
 arch carpet2.151
 y 16
 end
 arch candlelight4.101
+y 16
+end
+arch light4
 y 16
 end
 arch floor_fs_grey1a
@@ -101,6 +115,9 @@ end
 arch candlelight4.101
 y 18
 end
+arch light4
+y 18
+end
 arch floor_fs_grey1a
 y 19
 end
@@ -108,6 +125,9 @@ arch carpet2.151
 y 19
 end
 arch candlelight4.101
+y 19
+end
+arch light4
 y 19
 end
 arch floor_fs_grey1a
@@ -119,13 +139,13 @@ end
 arch floor_fs_grey1a
 y 21
 end
-arch light5
-y 21
-end
 arch carpet2.111
 y 21
 end
 arch candlelight4.101
+y 21
+end
+arch light4
 y 21
 end
 arch floor_fs_grey1a
@@ -134,22 +154,13 @@ end
 arch floor_fs_grey1a
 y 23
 end
-arch wall_flagstone1b.111
+arch wall_flagstone1_w.111
 y 23
 end
 arch floor_fs_grey1a
 x 1
 end
-arch shelf3a.111
-direction 5
-x 1
-end
 arch floor_fs_grey1a
-x 1
-y 1
-end
-arch shelf3a.111
-direction 5
 x 1
 y 1
 end
@@ -161,14 +172,6 @@ arch floor_fs_grey1a
 x 1
 y 3
 end
-arch glower.101
-x 1
-y 3
-end
-arch light2
-x 1
-y 3
-end
 arch floor_fs_grey1a
 x 1
 y 4
@@ -177,17 +180,12 @@ arch floor_fs_grey1a
 x 1
 y 5
 end
-arch shelf3a.111
-direction 5
-x 1
-y 5
-end
 arch floor_fs_grey1a
 x 1
 y 6
 end
-arch shelf3a.111
-direction 5
+arch chair1_111
+direction 3
 x 1
 y 6
 end
@@ -195,17 +193,7 @@ arch floor_fs_grey1a
 x 1
 y 7
 end
-arch shelf3a.111
-direction 5
-x 1
-y 7
-end
 arch floor_fs_grey1a
-x 1
-y 8
-end
-arch shelf3a.111
-direction 5
 x 1
 y 8
 end
@@ -485,11 +473,23 @@ end
 arch floor_fs_grey1a
 x 3
 end
-arch stair_down
-is_invisible 1
+arch wall_flagstone1.131
+x 3
+end
+arch shelf3c.111
+direction 7
 x 3
 end
 arch floor_fs_grey1a
+x 3
+y 1
+end
+arch wall_flagstone1.131
+x 3
+y 1
+end
+arch shelf3b.111
+direction 7
 x 3
 y 1
 end
@@ -497,7 +497,25 @@ arch floor_fs_grey1a
 x 3
 y 2
 end
+arch wall_flagstone1.131
+x 3
+y 2
+end
+arch shelf3c.111
+direction 7
+x 3
+y 2
+end
 arch floor_fs_grey1a
+x 3
+y 3
+end
+arch wall_flagstone1.131
+x 3
+y 3
+end
+arch shelf3a.111
+direction 7
 x 3
 y 3
 end
@@ -505,11 +523,38 @@ arch floor_fs_grey1a
 x 3
 y 4
 end
+arch wall_flagstone1.131
+x 3
+y 4
+end
+arch shelf3a.111
+direction 7
+x 3
+y 4
+end
 arch floor_fs_grey1a
 x 3
 y 5
 end
+arch wall_flagstone1.131
+x 3
+y 5
+end
+arch shelf3c.111
+direction 7
+x 3
+y 5
+end
 arch floor_fs_grey1a
+x 3
+y 6
+end
+arch wall_flagstone1.131
+x 3
+y 6
+end
+arch shelf3b.111
+direction 7
 x 3
 y 6
 end
@@ -569,6 +614,10 @@ arch candlelight4.101
 x 3
 y 16
 end
+arch light4
+x 3
+y 16
+end
 arch floor_fs_grey1a
 x 3
 y 17
@@ -586,6 +635,10 @@ x 3
 y 18
 end
 arch candlelight4.101
+x 3
+y 18
+end
+arch light4
 x 3
 y 18
 end
@@ -601,6 +654,10 @@ arch candlelight4.101
 x 3
 y 19
 end
+arch light4
+x 3
+y 19
+end
 arch floor_fs_grey1a
 x 3
 y 20
@@ -621,6 +678,10 @@ arch candlelight4.101
 x 3
 y 21
 end
+arch light4
+x 3
+y 21
+end
 arch floor_fs_grey1a
 x 3
 y 22
@@ -629,23 +690,21 @@ arch floor_fs_grey1a
 x 3
 y 23
 end
-arch wall_flagstone1b.111
+arch wall_flagstone1_w.111
 x 3
 y 23
 end
 arch floor_fs_grey1a
 x 4
 end
-arch shelf3a.111
-direction 5
+arch fwall_fstone2
 x 4
 end
 arch floor_fs_grey1a
 x 4
 y 1
 end
-arch shelf3a.111
-direction 5
+arch fwall_fstone2
 x 4
 y 1
 end
@@ -653,15 +712,15 @@ arch floor_fs_grey1a
 x 4
 y 2
 end
+arch fwall_fstone2
+x 4
+y 2
+end
 arch floor_fs_grey1a
 x 4
 y 3
 end
-arch glower.101
-x 4
-y 3
-end
-arch light2
+arch fwall_fstone2
 x 4
 y 3
 end
@@ -669,12 +728,15 @@ arch floor_fs_grey1a
 x 4
 y 4
 end
+arch fwall_fstone2
+x 4
+y 4
+end
 arch floor_fs_grey1a
 x 4
 y 5
 end
-arch shelf3a.111
-direction 5
+arch fwall_fstone2
 x 4
 y 5
 end
@@ -682,38 +744,31 @@ arch floor_fs_grey1a
 x 4
 y 6
 end
-arch shelf3a.111
-direction 5
+arch fwall_fstone2
+x 4
+y 6
+end
+arch picture14
 x 4
 y 6
 end
 arch floor_fs_grey1a
 x 4
 y 7
-end
-arch shelf3a.111
-direction 5
-x 4
-y 7
-end
-arch floor_fs_grey1a
-x 4
-y 8
-end
-arch shelf3a.111
-direction 5
-x 4
-y 8
-end
-arch floor_fs_grey1a
-x 4
-y 9
 end
 arch glower.101
 x 4
-y 9
+y 7
 end
 arch light2
+x 4
+y 7
+end
+arch floor_fs_grey1a
+x 4
+y 8
+end
+arch floor_fs_grey1a
 x 4
 y 9
 end
@@ -848,7 +903,16 @@ end
 arch floor_fs_grey1a
 x 5
 end
+arch shelf3b.111
+direction 7
+x 5
+end
 arch floor_fs_grey1a
+x 5
+y 1
+end
+arch shelf3c.111
+direction 7
 x 5
 y 1
 end
@@ -856,7 +920,17 @@ arch floor_fs_grey1a
 x 5
 y 2
 end
+arch shelf3a.111
+direction 7
+x 5
+y 2
+end
 arch floor_fs_grey1a
+x 5
+y 3
+end
+arch shelf3a.111
+direction 7
 x 5
 y 3
 end
@@ -864,11 +938,26 @@ arch floor_fs_grey1a
 x 5
 y 4
 end
+arch shelf3b.111
+direction 7
+x 5
+y 4
+end
 arch floor_fs_grey1a
 x 5
 y 5
 end
+arch shelf3c.111
+direction 7
+x 5
+y 5
+end
 arch floor_fs_grey1a
+x 5
+y 6
+end
+arch shelf3a.111
+direction 7
 x 5
 y 6
 end
@@ -884,6 +973,11 @@ arch floor_fs_grey1a
 x 5
 y 9
 end
+arch chair_small
+name stool
+x 5
+y 9
+end
 arch floor_fs_grey1a
 x 5
 y 10
@@ -893,12 +987,6 @@ x 5
 y 10
 end
 arch floor_fs_grey1a
-x 5
-y 11
-end
-arch torch_wall_1
-glow_radius 5
-is_animated 1
 x 5
 y 11
 end
@@ -1025,7 +1113,7 @@ arch floor_fs_grey1a
 x 6
 y 10
 end
-arch door_wood1
+arch wall_flagstone1b.111
 x 6
 y 10
 end
@@ -1061,11 +1149,11 @@ arch floor_fs_grey1a
 x 6
 y 16
 end
-arch light2
+arch glower.101
 x 6
 y 16
 end
-arch glower.101
+arch light6
 x 6
 y 16
 end
@@ -1123,11 +1211,11 @@ arch floor_fs_grey1a
 x 6
 y 21
 end
-arch light2
+arch glower.101
 x 6
 y 21
 end
-arch glower.101
+arch light6
 x 6
 y 21
 end
@@ -1139,23 +1227,14 @@ arch floor_fs_grey1a
 x 6
 y 23
 end
-arch wall_flagstone1b.111
+arch wall_flagstone1_w.111
 x 6
 y 23
 end
 arch floor_fs_grey1a
 x 7
 end
-arch shelf3a.111
-direction 5
-x 7
-end
 arch floor_fs_grey1a
-x 7
-y 1
-end
-arch shelf3a.111
-direction 5
 x 7
 y 1
 end
@@ -1167,15 +1246,12 @@ arch floor_fs_grey1a
 x 7
 y 3
 end
-arch glower.101
-x 7
-y 3
-end
-arch light2
-x 7
-y 3
-end
 arch floor_fs_grey1a
+x 7
+y 4
+end
+arch chair2_111
+direction 7
 x 7
 y 4
 end
@@ -1183,17 +1259,7 @@ arch floor_fs_grey1a
 x 7
 y 5
 end
-arch shelf3a.111
-direction 5
-x 7
-y 5
-end
 arch floor_fs_grey1a
-x 7
-y 6
-end
-arch shelf3a.111
-direction 5
 x 7
 y 6
 end
@@ -1201,29 +1267,11 @@ arch floor_fs_grey1a
 x 7
 y 7
 end
-arch shelf3a.111
-direction 5
-x 7
-y 7
-end
 arch floor_fs_grey1a
 x 7
 y 8
 end
-arch shelf3a.111
-direction 5
-x 7
-y 8
-end
 arch floor_fs_grey1a
-x 7
-y 9
-end
-arch glower.101
-x 7
-y 9
-end
-arch light2
 x 7
 y 9
 end
@@ -1236,12 +1284,6 @@ x 7
 y 10
 end
 arch floor_fs_grey1a
-x 7
-y 11
-end
-arch torch_wall_1
-glow_radius 5
-is_animated 1
 x 7
 y 11
 end
@@ -1329,11 +1371,28 @@ arch floor_fs_grey1a
 x 8
 y 3
 end
+arch chair2_111
+x 8
+y 3
+end
 arch floor_fs_grey1a
 x 8
 y 4
 end
+arch table_round2
+x 8
+y 4
+end
+arch light6
+x 8
+y 4
+end
 arch floor_fs_grey1a
+x 8
+y 5
+end
+arch chair2_111
+direction 5
 x 8
 y 5
 end
@@ -1350,6 +1409,14 @@ x 8
 y 8
 end
 arch floor_fs_grey1a
+x 8
+y 9
+end
+arch glower.101
+x 8
+y 9
+end
+arch light2
 x 8
 y 9
 end
@@ -1381,11 +1448,11 @@ arch floor_fs_grey1a
 x 8
 y 14
 end
-arch light3
+arch glower.101
 x 8
 y 14
 end
-arch glower.101
+arch light6
 x 8
 y 14
 end
@@ -1409,7 +1476,8 @@ arch floor_fs_grey1a
 x 8
 y 18
 end
-arch candlelight3.101
+arch altar_tabernacle
+direction 7
 x 8
 y 18
 end
@@ -1433,11 +1501,11 @@ arch floor_fs_grey1a
 x 8
 y 22
 end
-arch light3
+arch glower.101
 x 8
 y 22
 end
-arch glower.101
+arch light6
 x 8
 y 22
 end
@@ -1452,7 +1520,7 @@ end
 arch floor_fs_grey1a
 x 9
 end
-arch wall_flagstone1b.131
+arch wall_flagstone1_w.131
 x 9
 end
 arch floor_fs_grey1a
@@ -1483,7 +1551,7 @@ arch floor_fs_grey1a
 x 9
 y 4
 end
-arch wall_flagstone1b.131
+arch wall_flagstone1_w.131
 x 9
 y 4
 end
@@ -1515,7 +1583,7 @@ arch floor_fs_grey1a
 x 9
 y 8
 end
-arch wall_flagstone1b.131
+arch wall_flagstone1_w.131
 x 9
 y 8
 end
@@ -1539,7 +1607,7 @@ arch floor_fs_grey1a
 x 9
 y 11
 end
-arch wall_flagstone1b.131
+arch wall_flagstone1_w.131
 x 9
 y 11
 end
@@ -1571,7 +1639,7 @@ arch floor_fs_grey1a
 x 9
 y 15
 end
-arch wall_flagstone1b.131
+arch wall_flagstone1_w.131
 x 9
 y 15
 end
@@ -1595,7 +1663,7 @@ arch floor_fs_grey1a
 x 9
 y 18
 end
-arch wall_flagstone1b.131
+arch wall_flagstone1_w.131
 x 9
 y 18
 end
@@ -1619,7 +1687,7 @@ arch floor_fs_grey1a
 x 9
 y 21
 end
-arch wall_flagstone1b.131
+arch wall_flagstone1_w.131
 x 9
 y 21
 end

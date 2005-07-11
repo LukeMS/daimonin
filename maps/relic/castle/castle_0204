@@ -113,6 +113,9 @@ glow_radius 5
 is_animated 1
 y 21
 end
+arch chair1_111
+y 21
+end
 arch floor_fs_grey1a
 y 22
 end
@@ -224,29 +227,11 @@ arch floor_fs_grey1a
 x 1
 y 21
 end
-arch glower.101
-x 1
-y 21
-end
-arch light2
-x 1
-y 21
-end
 arch floor_fs_grey1a
 x 1
 y 22
 end
-arch shelf3a.111
-direction 5
-x 1
-y 22
-end
 arch floor_fs_grey1a
-x 1
-y 23
-end
-arch shelf3a.111
-direction 5
 x 1
 y 23
 end
@@ -351,6 +336,10 @@ is_animated 1
 x 2
 y 21
 end
+arch table_round1
+x 2
+y 21
+end
 arch floor_fs_grey1a
 x 2
 y 22
@@ -457,6 +446,11 @@ x 3
 y 20
 end
 arch floor_fs_grey1a
+x 3
+y 21
+end
+arch bench2.111
+direction 3
 x 3
 y 21
 end
@@ -564,7 +558,15 @@ arch floor_fs_grey1a
 x 4
 y 18
 end
+arch wall_flagstone1b.131
+x 4
+y 18
+end
 arch floor_fs_grey1a
+x 4
+y 19
+end
+arch wall_flagstone1b.131
 x 4
 y 19
 end
@@ -572,7 +574,7 @@ arch floor_fs_grey1a
 x 4
 y 20
 end
-arch wall_flagstone1b.111
+arch wall_flagstone1b.141
 x 4
 y 20
 end
@@ -580,20 +582,11 @@ arch floor_fs_grey1a
 x 4
 y 21
 end
-arch glower.101
-x 4
-y 21
-end
-arch light2
+arch wall_flagstone1b.131
 x 4
 y 21
 end
 arch floor_fs_grey1a
-x 4
-y 22
-end
-arch shelf3a.111
-direction 5
 x 4
 y 22
 end
@@ -601,8 +594,11 @@ arch floor_fs_grey1a
 x 4
 y 23
 end
-arch shelf3a.111
-direction 5
+arch glower.101
+x 4
+y 23
+end
+arch light2
 x 4
 y 23
 end
@@ -727,9 +723,7 @@ arch floor_fs_grey1a
 x 5
 y 21
 end
-arch torch_wall_1
-glow_radius 5
-is_animated 1
+arch shelf3b.111
 x 5
 y 21
 end
@@ -844,11 +838,15 @@ arch floor_fs_grey1a
 x 6
 y 20
 end
-arch door_wood1
+arch wall_flagstone1b.111
 x 6
 y 20
 end
 arch floor_fs_grey1a
+x 6
+y 21
+end
+arch shelf3c.111
 x 6
 y 21
 end
@@ -964,153 +962,150 @@ x 7
 y 20
 end
 arch wall_flagstone1b.111
+no_pass 0
 x 7
 y 20
 end
-arch torch_wall_1
-glow_radius 5
-is_animated 1
+arch floor_fs_grey1a
+x 7
+y 21
+end
+arch shelf3c.111
 x 7
 y 21
 end
 arch floor_fs_grey1a
 x 7
+y 22
+end
+arch floor_fs_grey1a
+x 7
+y 23
+end
+arch floor_fs_grey1a
+x 8
+end
+arch floor_fs_grey1a
+x 8
+y 1
+end
+arch floor_fs_grey1a
+x 8
+y 2
+end
+arch floor_fs_grey1a
+x 8
+y 3
+end
+arch wall_flagstone1b.111
+x 8
+y 3
+end
+arch floor_fs_grey1a
+x 8
+y 4
+end
+arch rack.111
+x 8
+y 4
+end
+arch floor_fs_grey1a
+x 8
+y 5
+end
+arch floor_fs_grey1a
+x 8
+y 6
+end
+arch floor_fs_grey1a
+x 8
+y 7
+end
+arch floor_fs_grey1a
+x 8
+y 8
+end
+arch floor_fs_grey1a
+x 8
+y 9
+end
+arch floor_fs_grey1a
+x 8
+y 10
+end
+arch floor_fs_grey1a
+x 8
+y 11
+end
+arch floor_fs_grey1a
+x 8
+y 12
+end
+arch floor_fs_grey1a
+x 8
+y 13
+end
+arch wall_flagstone1b.111
+x 8
+y 13
+end
+arch floor_fs_grey1a
+x 8
+y 14
+end
+arch rack.111
+x 8
+y 14
+end
+arch floor_fs_grey1a
+x 8
+y 15
+end
+arch floor_fs_grey1a
+x 8
+y 16
+end
+arch floor_fs_grey1a
+x 8
+y 17
+end
+arch wall_flagstone1b.111
+x 8
+y 17
+end
+arch floor_fs_grey1a
+x 8
+y 18
+end
+arch stair_down
+direction 5
+slaying library_quest/library_secret
+hp 11
+sp 11
+x 8
+y 18
+end
+arch floor_fs_grey1a
+x 8
+y 19
+end
+arch floor_fs_grey1a
+x 8
+y 20
+end
+arch wall_flagstone1b.111
+x 8
+y 20
+end
+arch floor_fs_grey1a
+x 8
 y 21
 end
 arch glower.101
-x 7
+x 8
 y 21
 end
 arch light2
-x 7
-y 21
-end
-arch floor_fs_grey1a
-x 7
-y 22
-end
-arch shelf3a.111
-direction 5
-x 7
-y 22
-end
-arch floor_fs_grey1a
-x 7
-y 23
-end
-arch shelf3a.111
-direction 5
-x 7
-y 23
-end
-arch floor_fs_grey1a
-x 8
-end
-arch floor_fs_grey1a
-x 8
-y 1
-end
-arch floor_fs_grey1a
-x 8
-y 2
-end
-arch floor_fs_grey1a
-x 8
-y 3
-end
-arch wall_flagstone1b.111
-x 8
-y 3
-end
-arch floor_fs_grey1a
-x 8
-y 4
-end
-arch rack.111
-x 8
-y 4
-end
-arch floor_fs_grey1a
-x 8
-y 5
-end
-arch floor_fs_grey1a
-x 8
-y 6
-end
-arch floor_fs_grey1a
-x 8
-y 7
-end
-arch floor_fs_grey1a
-x 8
-y 8
-end
-arch floor_fs_grey1a
-x 8
-y 9
-end
-arch floor_fs_grey1a
-x 8
-y 10
-end
-arch floor_fs_grey1a
-x 8
-y 11
-end
-arch floor_fs_grey1a
-x 8
-y 12
-end
-arch floor_fs_grey1a
-x 8
-y 13
-end
-arch wall_flagstone1b.111
-x 8
-y 13
-end
-arch floor_fs_grey1a
-x 8
-y 14
-end
-arch rack.111
-x 8
-y 14
-end
-arch floor_fs_grey1a
-x 8
-y 15
-end
-arch floor_fs_grey1a
-x 8
-y 16
-end
-arch floor_fs_grey1a
-x 8
-y 17
-end
-arch wall_flagstone1b.111
-x 8
-y 17
-end
-arch floor_fs_grey1a
-x 8
-y 18
-end
-arch floor_fs_grey1a
-x 8
-y 19
-end
-arch floor_fs_grey1a
-x 8
-y 20
-end
-arch wall_flagstone1b.111
-x 8
-y 20
-end
-arch floor_fs_grey1a
 x 8
 y 21
 end
@@ -1140,7 +1135,7 @@ arch floor_fs_grey1a
 x 9
 y 2
 end
-arch wall_flagstone1b.131
+arch wall_flagstone1_w.131
 x 9
 y 2
 end
@@ -1164,7 +1159,7 @@ arch floor_fs_grey1a
 x 9
 y 5
 end
-arch wall_flagstone1b.131
+arch wall_flagstone1_w.131
 x 9
 y 5
 end
@@ -1188,7 +1183,7 @@ arch floor_fs_grey1a
 x 9
 y 8
 end
-arch wall_flagstone1b.131
+arch wall_flagstone1_w.131
 x 9
 y 8
 end
@@ -1212,7 +1207,7 @@ arch floor_fs_grey1a
 x 9
 y 11
 end
-arch wall_flagstone1b.131
+arch wall_flagstone1_w.131
 x 9
 y 11
 end
@@ -1236,7 +1231,7 @@ arch floor_fs_grey1a
 x 9
 y 14
 end
-arch wall_flagstone1b.131
+arch wall_flagstone1_w.131
 x 9
 y 14
 end
@@ -1292,7 +1287,7 @@ arch floor_fs_grey1a
 x 9
 y 21
 end
-arch wall_flagstone1b.131
+arch wall_flagstone1_w.131
 x 9
 y 21
 end

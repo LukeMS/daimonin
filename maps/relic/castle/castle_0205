@@ -890,7 +890,7 @@ arch floor_fs_grey1a
 x 6
 y 15
 end
-arch wall_flagstone1b.131
+arch wall_flagstone1_w.131
 x 6
 y 15
 end
@@ -1335,7 +1335,7 @@ arch floor_fs_grey1a
 x 9
 y 23
 end
-arch wall_flagstone1b.131
+arch wall_flagstone1_w.131
 x 9
 y 23
 end
