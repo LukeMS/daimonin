@@ -24,7 +24,7 @@
 #if !defined(__FILEWRAP_H)
 #define __FILEWRAP_H
 
-FILE *fopen_wrapper(char *, char *);
+FILE *fopen_wrapper(const char *fname, const char *mode);
 SDL_Surface *IMG_Load_wrapper (const char *file);
 
 #endif
