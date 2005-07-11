@@ -24,7 +24,7 @@
 
 #ifdef __WIN_32
 
-FILE *fopen_wrapper(char *fname, char *mode) {
+FILE *fopen_wrapper(const char *fname, const char *mode) {
   char tmp[256];
   sprintf(tmp, "%s%s", SYSPATH, fname);
   return fopen(tmp, mode);
@@ -65,7 +65,7 @@ static int mkdir_recurse(const char *path)
        return 0;
 }
 
-static char *file_path(char *fname, char *mode)
+static char *file_path(const char *fname, const char *mode)
 {
     static char tmp[256];
     char *stmp;
@@ -117,7 +117,7 @@ static char *file_path(char *fname, char *mode)
     return tmp;
 }
 
-FILE *fopen_wrapper(char *fname, char *mode) 
+FILE *fopen_wrapper(const char *fname, const char *mode) 
 {
     return fopen(file_path(fname, mode), mode);
 }
