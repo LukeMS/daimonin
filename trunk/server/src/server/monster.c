@@ -1927,6 +1927,8 @@ void ai_fake_process(object *op, struct mob_behaviour_param *params)
 void ai_look_for_other_mobs(object *op, struct mob_behaviour_param *params)
 {
     int tilenr;
+    int sense_range;
+    int check_maps[8] = {0,0,0,0,0,0,0,0}; /* nearby map tiles to scan */
 
     /* Lets check the mob has a valid map. 
      * Monsters should be able to live in containers and sense what
@@ -1951,17 +1953,48 @@ void ai_look_for_other_mobs(object *op, struct mob_behaviour_param *params)
     /* TODO: adaptive algo: if many objects in nearby maps' active lists (approx > r^2, r = sense range)
      * then it is probably faster to scan through the map cells, especially if using the
      * IS_ALIVE flag on map cell level to see if it is useful to scan that cell */
+
+    /* Find out which other map tiles are within our sense range */
+    
+    /* The "real" sense range calculation is in mob_can_see_ob(), this is 
+     * a simplified version */
+    sense_range = op->stats.Wis;
+    if (op->enemy)
+        sense_range += 6;
+    if (QUERY_FLAG(op, FLAG_SLEEP) || QUERY_FLAG(op, FLAG_BLIND))
+        sense_range /= 2;
+    
+    if (op->y - sense_range < 0) 
+        check_maps[0] = 1; /* North */
+    if (op->x + sense_range >= MAP_WIDTH(op->map)) {
+        check_maps[1] = 1; /* East */
+        if (check_maps[0])
+            check_maps[4] = 1; /* Northeast */
+    }
+    if (op->y + sense_range >= MAP_HEIGHT(op->map)) {
+        check_maps[2] = 1; /* South */
+        if (check_maps[1])
+            check_maps[5] = 1; /* Southeast */
+    }
+    if (op->x - sense_range < 0) {
+        check_maps[3] = 1; /* West */
+        if (check_maps[2])
+            check_maps[6] = 1; /* Southwest */
+        if (check_maps[0])
+            check_maps[7] = 1; /* Northwest */
+    }
+    
+    /* Scan for mobs and players in each marked map */
     for (tilenr=0; tilenr < TILED_MAPS + 1; tilenr++)
     {
         object *obj;
         if(tilenr == TILED_MAPS)
-            obj = op->map->active_objects;
-        else if (op->map->tile_map[tilenr] && op->map->tile_map[tilenr]->in_memory == MAP_IN_MEMORY) 
+            obj = op->map->active_objects; /* Always scan op's map */
+        else if (op->map->tile_map[tilenr] && op->map->tile_map[tilenr]->in_memory == MAP_IN_MEMORY && check_maps[tilenr])
             obj = op->map->tile_map[tilenr]->active_objects;
         else
             continue;
 
-        /* TODO: only scan maps we can see into */
         /* TODO: swap in nearby maps? (that might cascade in turn if the loaded maps contain mobs!) */
         /* Normally, we should never do swap in maps for mobs. Because the main feature of the 
          * engine is, to have parts swaped out. But we need a "FLAG_SWAP_LOCK" flag for special
