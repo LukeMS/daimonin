@@ -953,7 +953,8 @@ rv_vector * get_known_obj_rv(object *op, struct mob_known_obj *known_obj, int ma
      * container of the mob, so that mobs can for example hide in containers until the enemy
      * is far enough away. Or reversly, hide in container and later jump out and attack enemy. *
      * Gecko 2005-05-08 */
-    if (op == NULL || known_obj == NULL || op->map == NULL || known_obj->obj->map == NULL)
+    if ( op == NULL || op->map == NULL || op->env || 
+            known_obj == NULL || known_obj->obj->map == NULL || known_obj->obj->env)
         return NULL;
 
     if (ROUND_TAG - known_obj->rv_time >= (uint32) maxage || known_obj->rv_time == 0 || maxage == 0)
@@ -1124,8 +1125,8 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
         return NULL;
     }
 
-    /*
-     * this is really needed.
+   /*
+    * this is really needed.
     * a hitter object can be a "system object" ...even a object
     * in the inventory of npc (like a disease). These objects have
     * usually no map.
@@ -1158,6 +1159,13 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
         return NULL;
     }
 
+    /* Ignore mobs that are inside containers or not on maps */
+    if(other->map == NULL || other->env != NULL)
+    {
+        LOG(llevDebug, "register_npc_known_obj(): '%s' trying to register object '%s' not on a map\n", STRING_OBJ_NAME(npc), STRING_OBJ_NAME(other));
+        return NULL;
+    }
+    
     /* TODO: get rid of flag_unaggressive and use only friendship */
     if (friendship < 0 && QUERY_FLAG(npc, FLAG_UNAGGRESSIVE))
     {
@@ -1921,16 +1929,21 @@ void ai_look_for_other_mobs(object *op, struct mob_behaviour_param *params)
     int tilenr;
 
     /* Lets check the mob has a valid map. 
-     * I encountered this bug because a kobold was inserted in kobold_den1 map since Beta2 accidently
-     * in a wall. All B2 & 3 run with this bug, the buggy map was in CVS for ages... MT-2005
+     * Monsters should be able to live in containers and sense what
+     * is going on around them.
+     * TODO: but for now we just do nothing, waiting for someone to
+     * open the container.
      */
     if(!op->map)
     {
+        /* Removed the BUG info and object removal. This isn't a bug - Gecko 
         LOG(llevDebug,"BUG:: ai_look_for_other_mobs(): Mob %s without map - deleting it (%d,%d)\n", 
             query_name(op), op->env?op->env->x:-1, op->env?op->env->y:-1);
         remove_ob(op);
+        */
         return;
     }
+    
     /* TODO possibility for optimization: if we already have enemies there
      * is no need to look for new ones every timestep... */
     /* TODO: optimization: maybe first look through nearest squares to see if something interesting is there,
@@ -2050,7 +2063,7 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
         if (op->enemy)
         {
             op->last_eat = 0;   /* important: thats our "we lose aggro count" - reset to zero here */
-            if (!QUERY_FLAG(op, FLAG_FRIENDLY))
+            if (!QUERY_FLAG(op, FLAG_FRIENDLY) && op->map)
                 play_sound_map(op->map, op->x, op->y, SOUND_GROWL, SOUND_NORMAL);
 
             /* The unaggressives look after themselves 8) */
@@ -2099,7 +2112,8 @@ int ai_melee_attack_enemy(object *op, struct mob_behaviour_param *params)
     if (QUERY_FLAG(op, FLAG_UNAGGRESSIVE)
      || QUERY_FLAG(op, FLAG_SCARED)
      || !OBJECT_VALID(op->enemy, op->enemy_count)
-     || op->weapon_speed_left > 0)
+     || op->weapon_speed_left > 0
+     || op->map == NULL)
         return FALSE;
 
     /* TODO: choose another enemy if this fails */
@@ -2135,7 +2149,8 @@ int ai_bow_attack_enemy(object *op, struct mob_behaviour_param *params)
      || QUERY_FLAG(op, FLAG_SCARED)
      || !OBJECT_VALID(op->enemy,
                       op->enemy_count)
-     || op->weapon_speed_left > 0)
+     || op->weapon_speed_left > 0
+     || op->map == NULL)
         return FALSE;
 
     /* TODO: choose another target if this or next test fails */
@@ -2287,7 +2302,8 @@ int ai_spell_attack_enemy(object *op, struct mob_behaviour_param *params)
      || !OBJECT_VALID(op->enemy,
                       op->enemy_count)
      || op->weapon_speed_left > 0
-     || op->last_grace > 0)
+     || op->last_grace > 0
+     || op->map == NULL)
         return FALSE;
 
     /* TODO: choose another target if this or next test fails */
@@ -2442,10 +2458,16 @@ static int calc_direction_towards(object *op, object *target, mapstruct *map, in
     segment_rv.direction = 1234542;
 
     pf = MOB_PATHDATA(op);
+    
+    if (op->map == NULL)
+    {
+        LOG(llevBug, "BUG: calc_direction_towards(): '%s' not on a map\n", STRING_OBJ_NAME(op));
+        return 0;
+    }
 
     if (map == NULL)
     {
-        LOG(llevBug, "BUG: invalid destination map for '%s'\n", STRING_OBJ_NAME(op));
+        LOG(llevBug, "BUG: calc_direction_towards(): invalid destination map for '%s'\n", STRING_OBJ_NAME(op));
         return 0;
     }
 
@@ -2561,6 +2583,18 @@ static int calc_direction_towards_coord(object *op, mapstruct *map, int x, int y
 
 static int calc_direction_towards_object(object *op, object *target)
 {
+    if(op->map == NULL) {
+        LOG(llevBug, "BUG: calc_direction_towards_object(): op->map == NULL (%s <->%s)\n",
+                STRING_OBJ_NAME(op), STRING_OBJ_NAME(target));
+        return 0;
+    }
+    
+    if(target->map == NULL) {
+        LOG(llevBug, "BUG: calc_direction_towards_object(): target->map == NULL (%s <->%s)\n",
+                STRING_OBJ_NAME(op), STRING_OBJ_NAME(target));
+        return 0;
+    }
+    
     /* Request new path if target has moved too much */
     if (MOB_PATHDATA(op)->path
      && MOB_PATHDATA(op)->goal_map
@@ -2762,38 +2796,44 @@ int move_monster(object *op)
             ((void(*) (object *, struct mob_behaviour_param *)) behaviour->declaration->func) (op, behaviour->parameters);
     }
 
-    /*
-     * Normal-priority movement behaviours. The first to return
-     * a movement disables the rest
-     */
-    response.type = MOVE_RESPONSE_NONE; /* Clear the movement response */
-    response.forbidden = 0;
-
-    for (behaviour = MOB_DATA(op)->behaviours->behaviours[BEHAVIOURCLASS_MOVES];
-         behaviour != NULL;
-         behaviour = behaviour->next)
+    /* Only do movement if we are actually on a map 
+     * (jumping out from a container should be an action) */
+    if(op->map && op->env == NULL)
     {
-        ((void(*) (object *, struct mob_behaviour_param *, move_response *)) behaviour->declaration->func)
-        (op, behaviour->parameters, & response);
-        if (response.type != MOVE_RESPONSE_NONE)
-            break;
-    }
+        /*
+         * Normal-priority movement behaviours. The first to return
+         * a movement disables the rest
+         */
+        response.type = MOVE_RESPONSE_NONE; /* Clear the movement response */
+        response.forbidden = 0;
 
-    /* TODO move_home alternative: move_towards_friend */
+        for (behaviour = MOB_DATA(op)->behaviours->behaviours[BEHAVIOURCLASS_MOVES];
+             behaviour != NULL;
+             behaviour = behaviour->next)
+        {
+            ((void(*) (object *, struct mob_behaviour_param *, move_response *)) behaviour->declaration->func)
+            (op, behaviour->parameters, & response);
+            if (response.type != MOVE_RESPONSE_NONE)
+                break;
+        }
 
-    /* TODO make it possible to move _away_ from waypoint or object */
+        /* TODO move_home alternative: move_towards_friend */
 
-    /* Calculate direction from response needed and execute movement */
-    dir = direction_from_response(op, &response);
-    if (dir > 0)
-    {
-        success = do_move_monster(op, dir, response.forbidden);
-        /* TODO: handle success=0 and precomputed paths/giving up */
-    }
+        /* TODO make it possible to move _away_ from waypoint or object */
 
-    /* Try to avoid standing still if we aren't allowed to */
-    if((dir == 0 || success == 0) && (response.forbidden & (1 << 0))) {
-        success = do_move_monster(op, (RANDOM()%8)+1, response.forbidden);
+        /* Calculate direction from response needed and execute movement */
+        dir = direction_from_response(op, &response);
+        if (dir > 0)
+        {
+            success = do_move_monster(op, dir, response.forbidden);
+            /* TODO: handle success=0 and precomputed paths/giving up */
+        }
+
+        /* Try to avoid standing still if we aren't allowed to */
+        if((dir == 0 || success == 0) && (response.forbidden & (1 << 0))) 
+        {
+            success = do_move_monster(op, (RANDOM()%8)+1, response.forbidden);
+        }
     }
 
     /*
@@ -2834,7 +2874,8 @@ void object_accept_path(object *op)
     /* make sure we have a valid target obj or map */
     if (op->type != MONSTER
      || MOB_DATA(op) == NULL
-     || (!OBJECT_VALID(MOB_PATHDATA(op)->target_obj, MOB_PATHDATA(op)->target_count) && !MOB_PATHDATA(op)->target_map))
+     || (!OBJECT_VALID(MOB_PATHDATA(op)->target_obj, MOB_PATHDATA(op)->target_count) && !MOB_PATHDATA(op)->target_map)
+     || !op->map)
         return;
 
     /* 1: Where do we want to go? */
