@@ -9,11 +9,23 @@
 /* Define to 1 if you have the `SDL' library (-lSDL). */
 #undef HAVE_LIBSDL
 
+/* Define to 1 if you have the `SDL_image' library (-lSDL_image). */
+#undef HAVE_LIBSDL_IMAGE
+
+/* Define to 1 if you have the `SDL_mixer' library (-lSDL_mixer). */
+#undef HAVE_LIBSDL_MIXER
+
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
 /* Define to 1 if you have the <SDL/SDL.h> header file. */
 #undef HAVE_SDL_SDL_H
+
+/* Define to 1 if you have the <SDL/SDL_image.h> header file. */
+#undef HAVE_SDL_SDL_IMAGE_H
+
+/* Define to 1 if you have the <SDL/SDL_mixer.h> header file. */
+#undef HAVE_SDL_SDL_MIXER_H
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H

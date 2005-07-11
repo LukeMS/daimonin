@@ -27,13 +27,17 @@
 FILE *fopen_wrapper(char *fname, char *mode) {
   char tmp[256];
   sprintf(tmp, "%s%s", SYSPATH, fname);
-  return fopen(fname, mode);
+  return fopen(tmp, mode);
 }
-#endif
 
+SDL_Surface *IMG_Load_wrapper (const char *file)
+{
+  char tmp[256];
+  sprintf(tmp, "%s%s", SYSPATH, file);
+  return IMG_Load(tmp);
+}
 
-
-#ifndef __WIN_32
+#else
 
 /**
  * Create the directory @p path.  If it already exists as a directory
@@ -41,7 +45,7 @@ FILE *fopen_wrapper(char *fname, char *mode) {
  * Recursive mkdir is from the Gal project's e_mkdir_hier() function.
  **/
 
-int mkdir_recurse(const char *path)
+static int mkdir_recurse(const char *path)
 {
        char *copy, *p;
 
@@ -61,51 +65,66 @@ int mkdir_recurse(const char *path)
        return 0;
 }
 
-FILE *fopen_wrapper(char *fname, char *mode) {
-  FILE *f;
-  char tmp[256];
-  char otmp[256];
-  char shtmp[517];
-  char *stmp;
-  char ctmp;
+static char *file_path(char *fname, char *mode)
+{
+    static char tmp[256];
+    char *stmp;
+    char ctmp;
+    struct stat stat_buf;
 
-//  printf("fopen_wrapper: %s, %s | ", fname, mode);
+    sprintf(tmp, "%s/.daimonin/%s", getenv("HOME"), fname);
 
-  if(strchr(mode, 'w')) { // overwrite
-    sprintf(tmp, "%s/.daimonin/%s", getenv("HOME"), fname);
-    if(stmp=strrchr(tmp, '/')) {
-      ctmp = stmp[0];
-      stmp[0] = 0;
-      mkdir_recurse(tmp);
-      stmp[0] = ctmp;
+    if(strchr(mode, 'w')) 
+    { // overwrite (always use file in home dir)
+        if(stmp=strrchr(tmp, '/')) 
+        {
+            ctmp = stmp[0];
+            stmp[0] = 0;
+            mkdir_recurse(tmp);
+            stmp[0] = ctmp;
+        }
     }
-    f=fopen(tmp,mode);
-  }
-  else if(strchr(mode, '+') || strchr(mode, 'a')) { // modify
-    sprintf(tmp, "%s/.daimonin/%s", getenv("HOME"), fname);
-    if(!(f=fopen(tmp, mode))) {
-      sprintf(otmp, "%s%s", SYSPATH, fname);
-      if(stmp=strrchr(tmp, '/')) {
-        ctmp = stmp[0];
-        stmp[0] = 0;
-        mkdir_recurse(tmp);
-        stmp[0] = ctmp;
-      }
-      sprintf(shtmp, "cp %s %s", otmp, tmp);
-      system(shtmp);
-      f=fopen(tmp,mode);
-    }
-  }
-  else { // just read
-    sprintf(tmp, "%s/.daimonin/%s", getenv("HOME"), fname);
-    if(!(f=fopen(tmp, mode))) {
-      sprintf(tmp, "%s%s", SYSPATH, fname);
-      f=fopen(tmp, mode);
-    }
-  }
+    else if(strchr(mode, '+') || strchr(mode, 'a')) 
+    { // modify (copy base file to home dir if not exists)
+        if(stat(tmp, &stat_buf)) 
+        {
+            char otmp[256];
+            char shtmp[517];
 
-//  printf("final file: %s\n", tmp);
-  return f;
+            sprintf(otmp, "%s%s", SYSPATH, fname);
+            if(stmp=strrchr(tmp, '/')) 
+            {
+                ctmp = stmp[0];
+                stmp[0] = 0;
+                mkdir_recurse(tmp);
+                stmp[0] = ctmp;
+            }
+
+            /* Copy base file to home directory */
+            sprintf(shtmp, "cp %s %s", otmp, tmp);
+            system(shtmp);
+
+        }
+    }
+    else 
+    { // just read (check home dir first, then system dir)
+        if(stat(tmp, &stat_buf)) 
+            sprintf(tmp, "%s%s", SYSPATH, fname);
+    }
+
+//    printf("file_path: %s (%s) => %s\n", fname, mode, tmp);
+
+    return tmp;
+}
+
+FILE *fopen_wrapper(char *fname, char *mode) 
+{
+    return fopen(file_path(fname, mode), mode);
+}
+
+SDL_Surface *IMG_Load_wrapper (const char *file)
+{
+    return IMG_Load(file_path(file, "r"));
 }
 #endif
 
