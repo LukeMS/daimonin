@@ -1158,8 +1158,7 @@ end
 arch spawn_point
 x 8
 y 19
-arch guard
-name Castle Guard
+arch guard_royal
 type 83
 level 50
 end
@@ -1179,8 +1178,7 @@ end
 arch spawn_point
 x 8
 y 22
-arch guard
-name Castle Guard
+arch guard_royal
 type 83
 level 50
 end
@@ -1263,6 +1261,14 @@ end
 arch floor_fs_grey1a
 x 9
 y 14
+end
+arch spawn_point
+x 9
+y 14
+arch guard_royal
+type 83
+level 50
+end
 end
 arch floor_fs_grey1a
 x 9
@@ -1878,6 +1884,14 @@ arch floor_fs_grey1a
 x 13
 y 14
 end
+arch spawn_point
+x 13
+y 14
+arch guard_royal
+type 83
+level 50
+end
+end
 arch floor_fs_grey1a
 x 13
 y 15
@@ -1958,11 +1972,11 @@ arch light6
 x 13
 y 22
 end
-arch candlelight1.101
+arch carpet2.171
 x 13
 y 22
 end
-arch carpet2.171
+arch candlelight1.101
 x 13
 y 22
 end
@@ -2096,8 +2110,7 @@ end
 arch spawn_point
 x 14
 y 19
-arch guard
-name Castle Guard
+arch guard_royal
 type 83
 level 50
 end
@@ -2117,8 +2130,7 @@ end
 arch spawn_point
 x 14
 y 22
-arch guard
-name Castle Guard
+arch guard_royal
 type 83
 level 50
 end
