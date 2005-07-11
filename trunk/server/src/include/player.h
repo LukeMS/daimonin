@@ -102,6 +102,22 @@ enum
                                     */
 #define PLAYER_AFLAG_ADDFRAME 4 /* intern */
 
+/* mute engine */
+
+#define MUTE_MODE_SHOUT 1
+#define MUTE_MODE_SAY   2
+
+#define MUTE_FLAG_SHOUT         0x01
+#define MUTE_FLAG_SHOUT_WARNING 0x02
+#define MUTE_FLAG_SAY           0x04
+#define MUTE_FLAG_SAY_WARNING   0x08
+
+#define MUTE_FREQ_SHOUT     16
+#define MUTE_FREQ_SAY       16
+#define MUTE_AUTO_NORMAL    (8*10)
+#define MUTE_AUTO_HARD      (8*30)
+#define MUTE_MSG_FREQ       (8*5)
+
 #ifdef WIN32
 #pragma pack(push,1)
 #endif
@@ -171,6 +187,15 @@ typedef struct pl_player
 
 	int					gmaster_mode;
 	struct oblnk	    *gmaster_node;
+
+    /* mute and "communication" frequency control */
+    uint32              mute_flags;
+    unsigned long       mute_freq_shout;
+    unsigned long       mute_freq_say;
+    unsigned long       mute_msg_count; /* tell only all x seconds the player "you are still muted" */
+    unsigned long       mute_counter; /* must "mutes" all except "talk".
+                                       * So, don't get muted when on a map with magic mouth
+                                       */
 
     /* "skill action timers" - used for action delays like cast time */
     uint32              action_casting;
@@ -264,7 +289,6 @@ typedef struct pl_player
 
     char                last_weapon_sp;
 
-    char                last_shout[MAX_BUF];
     char                firemode_name[BIG_NAME*2];
     char                quick_name[BIG_NAME*3]; /* thats rank + name +" the xxxx" */
     char                savebed_map[MAX_BUF];  /* map where player will respawn after death */

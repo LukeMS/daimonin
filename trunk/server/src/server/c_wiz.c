@@ -1079,6 +1079,38 @@ int command_check_fd(object *op, char *params)
  */
 int command_mute(object *op, char *params)
 {
+    char name[256]="";
+    int seconds=0;
+    player *pl;
+
+    if (!params)
+        return 0;
+
+    sscanf(params, "%s %d", name, &seconds);
+    pl= find_player(name);
+
+    if(!pl)
+    {
+        new_draw_info_format(NDI_UNIQUE, 0, op, "mute command: can't find player %s", name);
+        return 0;
+    }
+
+    if(seconds<0)
+    {
+        new_draw_info_format(NDI_UNIQUE, 0, op, "mute command: illegal seconds parameter (%d)", seconds);
+        return 0;
+    }
+
+    if(!seconds) /* unmute player */
+    {
+        new_draw_info_format(NDI_UNIQUE, 0, op, "mute command: umuting player %s!", name);
+        pl->mute_counter = 0;
+    }
+    else
+    {
+        new_draw_info_format(NDI_UNIQUE, 0, op, "mute command: mute player %s for %d seconds!", name, seconds);
+        pl->mute_counter = pticks+seconds*(1000000/MAX_TIME);
+    }
 
 	return 1;
 }
@@ -1241,10 +1273,11 @@ int command_gm(object *op, char *params)
     return 1;
 }
 
+
+
 /* Actual command to perhaps become dm.  Changed aroun a bit in version 0.92.2
  * - allow people on sockets to become dm, and allow better dm file
  */
-
 int command_dm(object *op, char *params)
 {
 	if(CONTR(op)->gmaster_mode == GMASTER_MODE_DM) /* turn off ? */

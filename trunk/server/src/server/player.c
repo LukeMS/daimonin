@@ -169,6 +169,12 @@ static player * get_player(player *p)
 
 	p->gmaster_mode = GMASTER_MODE_NO;
 	p->gmaster_node = NULL;
+    
+    p->mute_freq_shout=0;
+    p->mute_freq_say=0;
+    p->mute_counter=0;
+    p->mute_msg_count=0;
+
     p->firemode_type = p->firemode_tag1 = p->firemode_tag2 = -1;
     op->custom_attrset = p; /* this is where we set up initial CONTR(op) */
     p->ob = op;
