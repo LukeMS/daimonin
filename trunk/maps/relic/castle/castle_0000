@@ -24,6 +24,10 @@ end
 arch grass_thickm3
 y 1
 end
+arch grass_thickm4
+layer 7
+y 1
+end
 arch water_still
 y 2
 end
@@ -33,9 +37,6 @@ end
 arch water_still
 y 4
 end
-arch earth_m6
-y 4
-end
 arch water_still
 y 5
 end
@@ -43,6 +44,9 @@ arch earth_m17
 y 5
 end
 arch earth_brown2
+y 6
+end
+arch grass_thickm8
 y 6
 end
 arch floor_dark1b
@@ -177,7 +181,16 @@ arch earth_m17
 x 1
 y 6
 end
+arch grassd_m13
+layer 7
+x 1
+y 6
+end
 arch earth_brown2
+x 1
+y 7
+end
+arch grassd_m13
 x 1
 y 7
 end

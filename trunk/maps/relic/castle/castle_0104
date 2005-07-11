@@ -2132,8 +2132,8 @@ arch floor_fs_grey1a
 x 13
 y 22
 end
-arch shelf3a.111
-direction 5
+arch shelf3c.111
+direction 7
 x 13
 y 22
 end
@@ -2142,7 +2142,7 @@ x 13
 y 23
 end
 arch shelf3a.111
-direction 5
+direction 7
 x 13
 y 23
 end
@@ -2277,6 +2277,10 @@ arch floor_fs_grey1a
 x 14
 y 21
 end
+arch shelf3a.111
+x 14
+y 21
+end
 arch floor_fs_grey1a
 x 14
 y 22
@@ -2380,6 +2384,10 @@ arch floor_fs_grey1a
 x 15
 y 21
 end
+arch shelf3b.111
+x 15
+y 21
+end
 arch floor_fs_grey1a
 x 15
 y 22
@@ -2483,11 +2491,7 @@ arch floor_fs_grey1a
 x 16
 y 21
 end
-arch glower.101
-x 16
-y 21
-end
-arch light2
+arch shelf2_wall.111
 x 16
 y 21
 end
@@ -2495,17 +2499,7 @@ arch floor_fs_grey1a
 x 16
 y 22
 end
-arch shelf3a.111
-direction 5
-x 16
-y 22
-end
 arch floor_fs_grey1a
-x 16
-y 23
-end
-arch shelf3a.111
-direction 5
 x 16
 y 23
 end
@@ -2607,6 +2601,10 @@ end
 arch torch_wall_1
 glow_radius 5
 is_animated 1
+x 17
+y 21
+end
+arch chair2_111
 x 17
 y 21
 end
@@ -2727,6 +2725,14 @@ arch floor_fs_grey1a
 x 18
 y 23
 end
+arch glower.101
+x 18
+y 23
+end
+arch light2
+x 18
+y 23
+end
 arch floor_fs_grey1a
 x 19
 end
@@ -2844,29 +2850,11 @@ arch floor_fs_grey1a
 x 19
 y 21
 end
-arch glower.101
-x 19
-y 21
-end
-arch light2
-x 19
-y 21
-end
 arch floor_fs_grey1a
 x 19
 y 22
 end
-arch shelf3a.111
-direction 5
-x 19
-y 22
-end
 arch floor_fs_grey1a
-x 19
-y 23
-end
-arch shelf3a.111
-direction 5
 x 19
 y 23
 end
@@ -3029,6 +3017,10 @@ x 20
 y 20
 end
 arch floor_fs_grey1a
+x 20
+y 21
+end
+arch shelf1_wall.111
 x 20
 y 21
 end
@@ -3232,6 +3224,10 @@ arch floor_fs_grey1a
 x 21
 y 21
 end
+arch shelf2_wall.111
+x 21
+y 21
+end
 arch floor_fs_grey1a
 x 21
 y 22
@@ -3382,20 +3378,11 @@ arch floor_fs_grey1a
 x 22
 y 21
 end
-arch glower.101
-x 22
-y 21
-end
-arch light2
+arch shelf2_wall.111
 x 22
 y 21
 end
 arch floor_fs_grey1a
-x 22
-y 22
-end
-arch shelf3a.111
-direction 5
 x 22
 y 22
 end
@@ -3403,8 +3390,7 @@ arch floor_fs_grey1a
 x 22
 y 23
 end
-arch shelf3a.111
-direction 5
+arch chair1_111
 x 22
 y 23
 end
@@ -3529,6 +3515,10 @@ x 23
 y 20
 end
 arch floor_fs_grey1a
+x 23
+y 21
+end
+arch shelf1_wall.111
 x 23
 y 21
 end

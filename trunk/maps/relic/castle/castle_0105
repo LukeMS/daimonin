@@ -971,7 +971,7 @@ arch grassd_7
 x 7
 y 13
 end
-arch wall_flagstone1b.111
+arch wall_flagstone1_w.111
 x 7
 y 13
 end
@@ -2190,7 +2190,7 @@ arch grassd_2
 x 15
 y 13
 end
-arch wall_flagstone1b.111
+arch wall_flagstone1_w.111
 x 15
 y 13
 end
@@ -2666,7 +2666,7 @@ arch grassd_7
 x 19
 y 12
 end
-arch grassd_4
+arch grassd_1
 x 19
 y 13
 end

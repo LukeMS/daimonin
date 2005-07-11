@@ -1837,7 +1837,7 @@ arch grassd_7
 x 13
 y 5
 end
-arch wall_flagstone1b.131
+arch wall_flagstone1_w.131
 x 13
 y 5
 end
@@ -1893,7 +1893,7 @@ arch grassd_6
 x 13
 y 12
 end
-arch wall_flagstone1b.131
+arch wall_flagstone1_w.131
 x 13
 y 12
 end
@@ -1917,7 +1917,7 @@ arch grassd_3
 x 13
 y 15
 end
-arch wall_flagstone1b.131
+arch wall_flagstone1_w.131
 x 13
 y 15
 end
@@ -1941,7 +1941,7 @@ arch grassd_7
 x 13
 y 18
 end
-arch wall_flagstone1b.131
+arch wall_flagstone1_w.131
 x 13
 y 18
 end
@@ -1965,7 +1965,7 @@ arch grassd_7
 x 13
 y 21
 end
-arch wall_flagstone1b.131
+arch wall_flagstone1_w.131
 x 13
 y 21
 end
@@ -2473,7 +2473,7 @@ arch floor_fs_grey1a
 x 16
 y 23
 end
-arch wall_flagstone1b.111
+arch wall_flagstone1_w.111
 x 16
 y 23
 end
@@ -2897,7 +2897,7 @@ arch floor_fs_grey1a
 x 19
 y 23
 end
-arch wall_flagstone1b.111
+arch wall_flagstone1_w.111
 x 19
 y 23
 end
@@ -3292,7 +3292,7 @@ arch floor_fs_grey1a
 x 22
 y 23
 end
-arch wall_flagstone1b.111
+arch wall_flagstone1_w.111
 x 22
 y 23
 end

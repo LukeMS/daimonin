@@ -1879,7 +1879,7 @@ arch grassd_7
 x 15
 y 16
 end
-arch wall_flagstone1b.141
+arch wall_flagstone1_w.131
 x 15
 y 16
 end
@@ -2023,7 +2023,7 @@ arch floor_black1c
 x 16
 y 16
 end
-arch locker2.111
+arch chair2_111
 x 16
 y 16
 end
