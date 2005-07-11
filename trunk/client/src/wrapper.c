@@ -63,7 +63,7 @@ Boolean SYSTEM_Start(void)
     char            buf[256];
 
     sprintf(buf, "%s%s", GetBitmapDirectory(), CLIENT_ICON_NAME);
-    if ((icon = IMG_Load(buf)) != NULL)
+    if ((icon = IMG_Load_wrapper(buf)) != NULL)
         SDL_WM_SetIcon(icon, 0);
 
     SDL_WM_SetCaption(PACKAGE_NAME, PACKAGE_NAME);

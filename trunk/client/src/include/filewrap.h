@@ -25,5 +25,6 @@
 #define __FILEWRAP_H
 
 FILE *fopen_wrapper(char *, char *);
+SDL_Surface *IMG_Load_wrapper (const char *file);
 
 #endif
