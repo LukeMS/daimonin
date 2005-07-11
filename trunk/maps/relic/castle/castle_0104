@@ -1202,8 +1202,7 @@ end
 arch spawn_point
 x 8
 y 2
-arch guard
-name Castle Guard
+arch guard_royal
 type 83
 level 50
 end
@@ -1227,8 +1226,7 @@ end
 arch spawn_point
 x 8
 y 6
-arch guard
-name Castle Guard
+arch guard_royal
 type 83
 level 50
 end
@@ -1252,8 +1250,7 @@ end
 arch spawn_point
 x 8
 y 10
-arch guard
-name Castle Guard
+arch guard_royal
 type 83
 level 50
 end
@@ -1277,8 +1274,7 @@ end
 arch spawn_point
 x 8
 y 14
-arch guard
-name Castle Guard
+arch guard_royal
 type 83
 level 50
 end
@@ -2160,8 +2156,7 @@ end
 arch spawn_point
 x 14
 y 2
-arch guard
-name Castle Guard
+arch guard_royal
 type 83
 level 50
 end
@@ -2185,8 +2180,7 @@ end
 arch spawn_point
 x 14
 y 6
-arch guard
-name Castle Guard
+arch guard_royal
 type 83
 level 50
 end
@@ -2210,8 +2204,7 @@ end
 arch spawn_point
 x 14
 y 10
-arch guard
-name Castle Guard
+arch guard_royal
 type 83
 level 50
 end
@@ -2235,8 +2228,7 @@ end
 arch spawn_point
 x 14
 y 14
-arch guard
-name Castle Guard
+arch guard_royal
 type 83
 level 50
 end
