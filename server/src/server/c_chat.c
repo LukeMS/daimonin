@@ -56,8 +56,104 @@ static char * cleanup_chat_string(char *ustring)
     return ustring;
 }
 
+/* check the player communication commands for a simple time based mute.
+ * This will catch for example the annoying spams by key bound shouts,
+ * dropped on purpose or accidently. It also will nicely limit the speed
+ * of shouts & say commands and avoid emote spams.
+ * Of course it don't can handle language or other abuses - for that we have
+ * the mute command itself.
+ */
+static int check_mute(object *op, int mode)
+{
+    if(CONTR(op)->mute_counter)
+    {
+        if(CONTR(op)->mute_counter <= pticks) /* its ok */
+            CONTR(op)->mute_counter=0;
+        else /* player is muted */
+        {
+            if(CONTR(op)->mute_msg_count<=pticks)
+            {
+                unsigned long tmp = (CONTR(op)->mute_counter-pticks)/(1000000/MAX_TIME);
+
+                new_draw_info_format( NDI_UNIQUE, 0, op, "You are still muted for %d second(s).", tmp?tmp:1);
+                CONTR(op)->mute_msg_count = pticks+MUTE_MSG_FREQ;
+            }
+            return FALSE;
+        }
+    }
+    else /* no old mute - lets check for new*/
+    {
+        if(mode == MUTE_MODE_SHOUT) /* say or shout? */
+        {
+            if(CONTR(op)->mute_freq_shout<=pticks) /* can we do a shout class communication ?*/
+            {
+                /* yes, all fine */
+                CONTR(op)->mute_freq_shout=pticks+MUTE_FREQ_SHOUT;
+                CONTR(op)->mute_flags &= ~(MUTE_FLAG_SHOUT|MUTE_FLAG_SHOUT_WARNING);
+            }
+            else /* nope - don't process the comm. action and tell the player why */
+            {
+                if(!(CONTR(op)->mute_flags & MUTE_FLAG_SHOUT)) /* friendly message not to spam */
+                {
+                    new_draw_info_format( NDI_UNIQUE, 0, op, "Please wait 2 seconds between shout like commands.");
+                    CONTR(op)->mute_flags |= MUTE_FLAG_SHOUT;
+                    return FALSE;
+                }
+                else if(!(CONTR(op)->mute_flags & MUTE_FLAG_SHOUT_WARNING)) /* first & last warning */
+                {
+                    new_draw_info_format( NDI_UNIQUE|NDI_ORANGE, 0, op, "Auto-Mute Warning: Please wait 2 seconds!");
+                    CONTR(op)->mute_flags |= MUTE_FLAG_SHOUT_WARNING;
+                    return FALSE;
+                }
+                else /* mute him */
+                {
+                    new_draw_info_format( NDI_UNIQUE|NDI_RED, 0, op, "Auto-Mute: Don't spam! You are muted for %d seconds!",MUTE_AUTO_NORMAL/(1000000/MAX_TIME));
+                    CONTR(op)->mute_counter = pticks+MUTE_AUTO_NORMAL;
+                    return FALSE;
+                }
+            }
+        }
+        else
+        {
+            if(CONTR(op)->mute_freq_say<=pticks) /* can we do a say class command? (say/emote)*/
+            {
+                /* yes, all fine */
+                CONTR(op)->mute_freq_say=pticks+MUTE_FREQ_SAY;
+                CONTR(op)->mute_flags &= ~(MUTE_FLAG_SAY|MUTE_FLAG_SAY_WARNING);
+            }
+            else /* nope - don't process the comm. action and tell the player why */
+            {
+                if(!(CONTR(op)->mute_flags & MUTE_FLAG_SAY)) /* friendly message not to spam */
+                {
+                    new_draw_info_format( NDI_UNIQUE, 0, op, "Please wait 2 seconds between say like commands.");
+                    CONTR(op)->mute_flags |= MUTE_FLAG_SAY;
+                    return FALSE;
+                }
+                else if(!(CONTR(op)->mute_flags & MUTE_FLAG_SAY_WARNING)) /* first & last warning */
+                {
+                    new_draw_info_format( NDI_UNIQUE|NDI_ORANGE, 0, op, "Auto-Mute Warning: Please wait 2 seconds!");
+                    CONTR(op)->mute_flags |= MUTE_FLAG_SAY_WARNING;
+                    return FALSE;
+                }
+                else /* mute him */
+                {
+                    new_draw_info_format( NDI_UNIQUE|NDI_RED, 0, op, "Auto-Mute: Don't spam! You are muted for %d seconds!",MUTE_AUTO_NORMAL/(1000000/MAX_TIME));
+                    CONTR(op)->mute_counter = pticks+MUTE_AUTO_NORMAL;
+                    return FALSE;
+                }
+            }
+        }
+    }
+
+    return TRUE;
+}
+
+
 int command_say(object *op, char *params)
 {
+    if(!check_mute(op, MUTE_MODE_SAY))
+        return 0;
+
     if (!params)
         return 0;
 
@@ -103,7 +199,6 @@ int command_gsay(object *op, char *params)
     return 1;
 }
 
-
 int command_shout(object *op, char *params)
 {
     char    buf[MAX_BUF];
@@ -111,6 +206,10 @@ int command_shout(object *op, char *params)
     int     evtid;
     CFParm  CFP;
 #endif
+
+    if(!check_mute(op, MUTE_MODE_SHOUT))
+        return 0;
+
     if (!params)
         return 0;
 
@@ -121,23 +220,6 @@ int command_shout(object *op, char *params)
 
     /* moved down, cause if whitespace is shouted, then no need to log it */
     LOG(llevInfo,"CLOG SHOUT:%s >%s<\n", query_name(op), params);
-
-    /* check for repeated shout */
-    /* in fact, this should be handled different in future: the check should
-     * be original be done in the CLIENT. If we encounter then here a double
-     * shout hit, we know the client has cheated and drop the connection after
-     * some nice words. M-2005
-     */
-    if(op->type == PLAYER)
-    {
-	if(strcmp(CONTR(op)->last_shout, params) == 0)
-	{
-	    new_draw_info(NDI_UNIQUE, 1, op, "You just shouted this, remember?");
-	    return 0;
-	}
-	strcpy(CONTR(op)->last_shout,params);
-    }
-    /* end of check */
 
     strcpy(buf, op->name);
     strcat(buf, " shouts: ");
@@ -162,6 +244,9 @@ int command_tell(object *op, char *params)
     char        buf2[MAX_BUF];
     player     *pl;
 
+
+    if(!check_mute(op, MUTE_MODE_SHOUT))
+        return 0;
 
     if (!params)
         return 0;
@@ -349,6 +434,8 @@ int command_reply(object *op, char *params)
     char    buf2[MAX_BUF];
     player *pl;
 
+    if(!check_mute(op, MUTE_MODE_SHOUT))
+        return 0;
 
     if (params)
         params = cleanup_chat_string(params);
@@ -692,6 +779,9 @@ static int basic_emote(object *op, char *params, int emotion)
 {
     char    buf[HUGE_BUF] = "", buf2[HUGE_BUF] = "", buf3[HUGE_BUF] = "";
     player *pl;
+
+    if(!check_mute(op, MUTE_MODE_SAY))
+        return 0;
 
     LOG(llevDebug, "EMOTE: %x (%s) (params: >%s<) (t: %s) %d\n", op, query_name(op), STRING_SAFE(params),
         (op->type == PLAYER && CONTR(op) && OBJECT_VALID(CONTR(op)->target_object, CONTR(op)->target_object_count))

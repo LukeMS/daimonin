@@ -500,7 +500,7 @@ EXTERN long                     init_done;          /* Ignores signals until ini
 EXTERN long                     trying_emergency_save;  /* True when emergency_save() is reached */
 EXTERN long                     nroferrors;     /* If it exceeds MAX_ERRORS, call fatal() */
 
-EXTERN uint32                   pticks;                 /* this is the global round counter. Every main loop pticks=pticks+1 */
+EXTERN unsigned long            pticks;                 /* this is the global round counter. Every main loop pticks=pticks+1 */
 EXTERN long                     pticks_ums;             /* how many micro seconds has one pticks */
 EXTERN float                    pticks_second;          /* how many pticks in one second */
 

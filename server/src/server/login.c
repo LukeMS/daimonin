@@ -195,6 +195,8 @@ int save_player(object *op, int flag)
 		else
 			fprintf(fp, "dm_DM\n");
 	}
+    if(pl->mute_counter > pticks)
+        fprintf(fp, "mute %d\n", (int)(pl->mute_counter-pticks)); /* should be not THAT long */
 	fprintf(fp, "dm_stealth %d\n", pl->dm_stealth);
     fprintf(fp, "silent_login %d\n", pl->silent_login);
     fprintf(fp, "gen_hp %d\n", pl->gen_hp);
@@ -569,6 +571,11 @@ void check_login(object *op)
 	pl->gmaster_mode = GMASTER_MODE_NO;
 	pl->gmaster_node = NULL;
 
+    pl->mute_freq_shout=0;
+    pl->mute_freq_say=0;
+    pl->mute_counter=0;
+    pl->mute_msg_count=0;
+
     pl->name_changed = 1;
     pl->orig_stats.Str = 0;
     pl->orig_stats.Dex = 0;
@@ -598,6 +605,8 @@ void check_login(object *op)
 			pl->gmaster_mode = GMASTER_MODE_GM;
         else if (!strcmp(buf, "dm_DM"))
 			pl->gmaster_mode = GMASTER_MODE_DM;
+        else if (!strcmp(buf, "mute"))
+            pl->mute_counter = pticks+(unsigned long)value;
         else if (!strcmp(buf, "dm_stealth"))
             pl->dm_stealth = value;
         else if (!strcmp(buf, "silent_login"))
