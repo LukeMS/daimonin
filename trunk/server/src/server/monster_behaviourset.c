@@ -135,7 +135,7 @@ void initialize_mob_data(struct mobdata *data)
 {
     data->pathfinding.target_obj = NULL;
     data->pathfinding.target_map = NULL;
-    data->pathfinding.path_requested = FALSE;
+    data->pathfinding.flags[0] = 0;
     data->pathfinding.path = NULL;
     data->pathfinding.goal_map = NULL;
     data->pathfinding.best_distance = -1;
@@ -148,6 +148,8 @@ void initialize_mob_data(struct mobdata *data)
     data->enemy = NULL;
 
     data->behaviours = NULL;
+
+    data->idle_time = 0;
 }
 
 /*

@@ -173,6 +173,6 @@ LIB= $(LUA)/lib
 INCS= -I$(INC) $(EXTRA_INCS)
 DEFS= $(NUMBER) $(EXTRA_DEFS)
 
-CFLAGS= $(MYCFLAGS) $(WARN) $(INCS) $(DEFS)
+CFLAGS= $(MYCFLAGS) $(WARN) $(INCS) $(DEFS) $(EXTRA_CFLAGS)
 
 # (end of config)

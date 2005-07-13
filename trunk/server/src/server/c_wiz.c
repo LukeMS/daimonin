@@ -975,6 +975,12 @@ int command_reset(object *op, char *params)
             {
                 count++;
                 remove_ob(pl->ob); /* no walk off check */
+                
+                /* With the new activelist, any player on a reset map
+                 * was somehow forgotten. This seems to fix it. The 
+                 * problem isn't analyzed, though. Gecko 20050713 */
+                activelist_remove(pl->ob, m);
+
                 pl->dm_removed_from_map = 1;
                 /*tmp=op;*/
             }
@@ -1003,6 +1009,7 @@ int command_reset(object *op, char *params)
                 EXIT_X(dummy) = pl->ob->x;
                 EXIT_Y(dummy) = pl->ob->y;
                 enter_exit(pl->ob, dummy);
+                activelist_insert(pl->ob); /* See activelist comment above */
                 if (pl->ob != op)
                 {
                     if (QUERY_FLAG(pl->ob, FLAG_WIZ))
