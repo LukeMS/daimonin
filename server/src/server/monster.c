@@ -93,7 +93,7 @@ static int calc_direction_towards(object *op, object *target, mapstruct *map, in
     if (pf->path == NULL)
     {
         /* request new path */
-        if (!pf->path_requested)
+        if (!QUERY_FLAG(pf, PATHFINDFLAG_PATH_REQUESTED))
         {
             pf->target_obj = target;
             if (target)
@@ -155,7 +155,7 @@ static int calc_direction_towards(object *op, object *target, mapstruct *map, in
             pf->target_x = x;
             pf->target_y = y;
         }
-        if (!pf->path_requested)
+        if (!QUERY_FLAG(pf, PATHFINDFLAG_PATH_REQUESTED))
         {
 #ifdef DEBUG_PATHFINDING
             LOG(llevDebug, "calc_direction_towards() timeout '%s'->'%s'\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(target));
@@ -392,6 +392,7 @@ int move_monster(object *op)
     int                     dir, tmp_dir;
     int                     success;
     struct mob_behaviour   *behaviour;
+    int                     did_move = 0, did_action = 0;
 
     if (op == NULL || op->type != MONSTER)
     {
@@ -472,6 +473,9 @@ int move_monster(object *op)
         {
             success = do_move_monster(op, (RANDOM()%8)+1, response.forbidden);
         }
+
+        if(success)
+            did_move = 1;
     }
 
     /*
@@ -488,9 +492,18 @@ int move_monster(object *op)
          behaviour = behaviour->next)
     {
         if (((int(*) (object *, struct mob_behaviour_param *)) behaviour->declaration->func) (op, behaviour->parameters))
+        {
+            did_action = 1;
             break;
+        }
     }
 
+    /* Update the idle counter */
+    if(did_move || did_action)
+        MOB_DATA(op)->idle_time = 0;
+    else
+        MOB_DATA(op)->idle_time++;
+    
     return 0;
 }
 
@@ -508,6 +521,7 @@ void object_accept_path(object *op)
     int         goal_x, goal_y;
     path_node  *path;
     object     *target;
+    rv_vector v;
 
     /* make sure we have a valid target obj or map */
     if (op->type != MONSTER
@@ -544,8 +558,9 @@ void object_accept_path(object *op)
         if (target->type == TYPE_BASE_INFO)
         {
             goal_map = normalize_and_ready_map(op->map, &target->slaying);
-            LOG(llevDebug, "source: %s, map %s (%p), target %s map %s (%p)\n", op->name, op->map->path, op->map,
-                target->name, goal_map->path, goal_map);
+/*            LOG(llevDebug, "source: %s, map %s (%p), target %s map %s (%p)\n", 
+                    STRING_OBJ_NAME(op), STRING_MAP_PATH(op->map), op->map,
+                    STRING_OBJ_NAME(target), STRING_MAP_PATH(goal_map), goal_map);*/
         }
         else
             goal_map = target->map;
@@ -556,18 +571,19 @@ void object_accept_path(object *op)
         MOB_PATHDATA(op)->goal_y = goal_y;
     }
 
-    /* 2) Do the actual pathfinding: find a path, and compress it */
+    /* Make sure we aren't already close enough */
+    /* TODO: unfortunately doesn't work very well with multi-tile mobs */
+    get_rangevector_from_mapcoords(op->map, op->x, op->y, goal_map, goal_x, goal_y, &v, RV_MANHATTAN_DISTANCE);
+    if(v.distance <= 1)
+        return;
+    
+    /* 2) Do the actual pathfinding: find a path and compress it */
     path = compress_path(find_path(op, op->map, op->x, op->y, goal_map, goal_x, goal_y));
 
-    if (path)
+    if (path && path->next)
     {
         /* Skip the first path element (always the starting position) */
         path = path->next;
-        if (!path)
-        {
-            /*            SET_FLAG(waypoint, FLAG_CONFUSED); */
-            return;
-        }
 
 #ifdef DEBUG_PATHFINDING
         {
@@ -589,9 +605,12 @@ void object_accept_path(object *op)
         /* Clear counters and stuff */
         MOB_PATHDATA(op)->best_distance = -1;
         MOB_PATHDATA(op)->tried_steps = 0;
+        CLEAR_FLAG(MOB_PATHDATA(op), PATHFINDFLAG_PATH_FAILED);
     }
     else
+    {
         LOG(llevDebug, "object_accept_path(): no path to destination ('%s' -> '%s')\n", STRING_OBJ_NAME(op),
             STRING_OBJ_NAME(MOB_PATHDATA(op)->target_obj));
-    /* TODO: handle the case where no path can be found */
+        SET_FLAG(MOB_PATHDATA(op), PATHFINDFLAG_PATH_FAILED);
+    }
 }

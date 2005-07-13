@@ -115,7 +115,8 @@ object * pathfinder_queue_dequeue(int *count)
 /* Request a new path */
 void request_new_path(object *op)
 {
-    if (op == NULL || op->type != MONSTER || MOB_DATA(op) == NULL || MOB_PATHDATA(op)->path_requested)
+    if (op == NULL || op->type != MONSTER || MOB_DATA(op) == NULL || 
+            QUERY_FLAG(MOB_PATHDATA(op), PATHFINDFLAG_PATH_REQUESTED))
         return;
 
 #ifdef DEBUG_PATHFINDING
@@ -123,8 +124,11 @@ void request_new_path(object *op)
         STRING_OBJ_NAME(MOB_PATHDATA(op)->target_obj));
 #endif
 
-    if (pathfinder_queue_enqueue(op))
-        MOB_PATHDATA(op)->path_requested = TRUE;
+    if (pathfinder_queue_enqueue(op)) 
+    {
+        SET_FLAG(MOB_PATHDATA(op), PATHFINDFLAG_PATH_REQUESTED);
+        CLEAR_FLAG(MOB_PATHDATA(op), PATHFINDFLAG_PATH_FAILED);
+    }
 }
 
 /* Get the next (valid) mob that have requested a path is requested */
@@ -147,7 +151,7 @@ object * get_next_requested_path()
         STRING_OBJ_NAME(MOB_PATHDATA(op)->target_obj));
 #endif
 
-    MOB_PATHDATA(op)->path_requested = FALSE;
+    CLEAR_FLAG(MOB_PATHDATA(op), PATHFINDFLAG_PATH_REQUESTED);
 
     return op;
 }

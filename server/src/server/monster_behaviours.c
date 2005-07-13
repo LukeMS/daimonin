@@ -32,6 +32,8 @@
 
 #include <aiconfig.h>
 
+void ai_choose_enemy(object *op, struct mob_behaviour_param *params);
+    
 /* the attribute Str is atm not used from monsters (was used in push code) MT-06.2005 */
 rv_vector      *get_known_obj_rv(object *op, struct mob_known_obj *known_obj, int maxage);
 
@@ -812,28 +814,45 @@ void ai_optimize_line_of_fire(object *op, struct mob_behaviour_param *params, mo
 
 void ai_move_towards_enemy(object *op, struct mob_behaviour_param *params, move_response *response)
 {
-    if (OBJECT_VALID(op->enemy, op->enemy_count) && mob_can_see_obj(op, op->enemy, MOB_DATA(op)->enemy))
-    {
-        rv_vector  *rv  = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE);
-        /* TODO: if we can't see op->enemy, goto last known position, or something... ( or do nothing, and make that a separate behaviour ) */
+    rv_vector  *rv;
+    
+    if (!OBJECT_VALID(op->enemy, op->enemy_count) || !mob_can_see_obj(op, op->enemy, MOB_DATA(op)->enemy))
+        return;
 
-        op->anim_enemy_dir = rv->direction;
-        if (rv != NULL)
-        {
-            if (rv->distance > 1)
-            {
-                response->type = MOVE_RESPONSE_OBJECT;
-                response->data.target.obj = op->enemy;
-                response->data.target.obj_count = op->enemy_count;
-            }
-            else
-            {
-                /* Stay where we are */
-                response->type = MOVE_RESPONSE_DIR;
-                response->data.direction = 0;
-            }
-        }
+    rv = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE);
+    if(rv == NULL)
+        return;
+
+    op->anim_enemy_dir = rv->direction;
+
+    if (rv->distance <= 1)
+    {
+        /* Stay where we are */
+        response->type = MOVE_RESPONSE_DIR;
+        response->data.direction = 0;
+        return;        
     }
+
+    /* If we can't even find a way to the enemy, downgrade it */
+    if(MOB_PATHDATA(op)->target_obj == op->enemy &&
+            QUERY_FLAG(MOB_PATHDATA(op), PATHFINDFLAG_PATH_FAILED))
+    {
+        LOG(llevDebug, "ai_move_towards_enemy(): %s can't get to %s, downgrading its enemy status\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(op->enemy));
+        MOB_DATA(op)->enemy->friendship = 0;
+        MOB_DATA(op)->enemy->tmp_friendship = 0;
+
+        /* Go through the mob list yet again (should only be done once) */
+        /* TODO: keep track of second_worst_enemy instead... */
+        ai_choose_enemy(op, params);
+        
+//        LOG(llevDebug, "ai_move_towards_enemy(): %s chose new enemy: %s\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(op->enemy));
+        if(op->enemy == NULL)
+            return;
+    }
+        
+    response->type = MOVE_RESPONSE_OBJECT;
+    response->data.target.obj = op->enemy;
+    response->data.target.obj_count = op->enemy_count;
 }
 
 void ai_keep_distance_to_enemy(object *op, struct mob_behaviour_param *params, move_response *response)
@@ -1259,6 +1278,8 @@ void ai_friendship(object *op, struct mob_behaviour_param *params)
     }
 }
 
+/* TODO: parameterize MAX_IDLE_TIME */
+#define MAX_IDLE_TIME 5
 void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
 {
     object                 *oldenemy    = op->enemy;
@@ -1304,9 +1325,11 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
     /* TODO: separate into another behaviour... */
     if (op->enemy != oldenemy)
     {
+        MOB_DATA(op)->idle_time = 0;
         if (op->enemy)
         {
-            op->last_eat = 0;   /* important: thats our "we lose aggro count" - reset to zero here */
+            // Is this actually referenced to anywhere else? - Gecko 20050713
+//            op->last_eat = 0;   /* important: thats our "we lose aggro count" - reset to zero here */
             if (!QUERY_FLAG(op, FLAG_FRIENDLY) && op->map)
                 play_sound_map(op->map, op->x, op->y, SOUND_GROWL, SOUND_NORMAL);
 
@@ -1319,6 +1342,20 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
         }
         set_mobile_speed(op, 0);
     }
+    
+/* TODO: disabled until somone comes up with a test case where this 
+ * actually happens before pathfinding fails. */
+#if 0    
+    else if(MOB_DATA(op)->enemy && MOB_DATA(op)->idle_time > MAX_IDLE_TIME && MOB_DATA(op)->enemy->tmp_friendship < 0)
+    {
+        LOG(llevDebug, "ai_choose_enemy(): %s too bored getting to %s, downgrading its enemy status\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(op->enemy));
+        MOB_DATA(op)->enemy->tmp_friendship = 0;
+        MOB_DATA(op)->enemy->friendship = 0;
+        /* Go through the mob list yet again (should only be done once) */
+        /* TODO: keep track of second_worst_enemy instead... */
+        ai_choose_enemy(op, params);
+    }
+#endif    
 }
 
 /* AI <-> plugin interface for processes */

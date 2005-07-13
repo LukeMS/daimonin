@@ -38,6 +38,12 @@
 
 /** Monster extended data **/
 
+#define PATHFINDFLAG_PATH_REQUESTED 0 /* A path request has been
+                                            enqueued for this mob */
+#define PATHFINDFLAG_PATH_FAILED    1 /* Last pathfinding failed */
+
+#define NROF_PATHFIND_FLAGS         2
+
 struct mobdata_pathfinding
 {
     object                 *target_obj;  /* either an obj on map or a waypoint */
@@ -55,7 +61,7 @@ struct mobdata_pathfinding
     sint16                  best_distance; /* to subgoal */
     uint8                   tried_steps; /* steps that didn't get us closer to subgoal */
 
-    uint8                   path_requested; /* TODO: make a flag instead */
+    uint32                  flags[ (NROF_PATHFIND_FLAGS/32)+1 ];
 };
 
 #define AI_OBJFLAG_USES_DISTANCE_ATTACK 0 /* The object is known
@@ -136,6 +142,9 @@ struct mobdata
     struct mob_known_obj       *leader, *enemy;
 
     struct mob_behaviourset    *behaviours;
+
+    uint8 idle_time;            /* How long have we been standing still
+                                   not doing anything */
 };
 
 #define MOB_DATA(ob) ((struct mobdata *)((ob)->custom_attrset))
