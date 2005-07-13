@@ -1,4 +1,4 @@
-daimonindir = $(prefix)/client-@VERSION@
+daimonindir=$(d_bindir)
 daimonin_PROGRAMS = daimonin
 daimonin_SOURCES =  \
 	../../src/adler32.c \
@@ -35,31 +35,31 @@ daimonin_LDADD = @SDL_LIBS@ -lSDL_mixer -lSDL_image
 AM_CPPFLAGS = @SDL_CFLAGS@ 
 
 install-data-hook:
-	@if [ x$$UID = 'x0' -o x$$USER = 'xroot' ]; then \
-		echo '***'; \
-		echo '*** ROOT INSTALL NOT SUPPORTED YET! Please install as a normal user.'; \
-		echo '***'; \
-		exit 42; \
-	fi;
-	$(MKDIR) -p $(daimonindir)/sfx
-	$(MKDIR) -p $(daimonindir)/media
-	$(MKDIR) -p $(daimonindir)/cache
-	$(MKDIR) -p $(daimonindir)/bitmaps
-	$(MKDIR) -p $(daimonindir)/gfx_user
-	$(MKDIR) -p $(daimonindir)/srv_files
-	$(MKDIR) -p $(daimonindir)/icons
-	$(CP) ../../sfx/*.* $(daimonindir)/sfx
-	$(CP) ../../media/*.* $(daimonindir)/media
-	$(CP) ../../cache/*.* $(daimonindir)/cache
-	$(CP) ../../icons/*.* $(daimonindir)/icons
-	$(CP) ../../srv_files/*.* $(daimonindir)/srv_files
-	$(CP) ../../gfx_user/*.* $(daimonindir)/gfx_user
-	$(CP) ../../bitmaps/*.* $(daimonindir)/bitmaps
-	$(CP) ../../options.dat $(daimonindir)
-	$(CP) ../../keys.dat $(daimonindir)
-	$(CP) ../../daimonin.p0 $(daimonindir)
-	$(CP) ../../License $(daimonindir)
-	$(CP) ../../archdef.dat $(daimonindir)
+#	@if [ x$$UID = 'x0' -o x$$USER = 'xroot' ]; then \
+#		echo '***'; \
+#		echo '*** ROOT INSTALL NOT SUPPORTED YET! Please install as a normal user.'; \
+#		echo '***'; \
+#		exit 42; \
+#	fi;
+	$(MKDIR) -p $(d_datadir)/sfx
+	$(MKDIR) -p $(d_datadir)/media
+	$(MKDIR) -p $(d_datadir)/cache
+	$(MKDIR) -p $(d_datadir)/bitmaps
+	$(MKDIR) -p $(d_datadir)/gfx_user
+	$(MKDIR) -p $(d_datadir)/srv_files
+	$(MKDIR) -p $(d_datadir)/icons
+	$(CP) ../../sfx/*.* $(d_datadir)/sfx
+	$(CP) ../../media/*.* $(d_datadir)/media
+	$(CP) ../../cache/*.* $(d_datadir)/cache
+	$(CP) ../../icons/*.* $(d_datadir)/icons
+	$(CP) ../../srv_files/*.* $(d_datadir)/srv_files
+	$(CP) ../../gfx_user/*.* $(d_datadir)/gfx_user
+	$(CP) ../../bitmaps/*.* $(d_datadir)/bitmaps
+	$(CP) ../../options.dat $(d_datadir)
+	$(CP) ../../keys.dat $(d_datadir)
+	$(CP) ../../daimonin.p0 $(d_datadir)
+	$(CP) ../../License $(d_datadir)
+	$(CP) ../../archdef.dat $(d_datadir)
 	@echo "*** Daimonin client successful installed in $(daimonindir)!"
-	@echo "*** Enter your install folder and type daimonin"
+	@echo "*** Enter your install folder and type ./daimonin"
 	@echo "*** to start the game!"
