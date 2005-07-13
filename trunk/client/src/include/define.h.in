@@ -1,31 +1,65 @@
 /* ../../src/include/define.h.in.  Generated from configure.in by autoheader.  */
 
+/* Define to 1 if you have the <arpa/inet.h> header file. */
+#undef HAVE_ARPA_INET_H
+
+/* Define to 1 if you have the `atexit' function. */
+#undef HAVE_ATEXIT
+
+/* Define to 1 if you don't have `vprintf' but do have `_doprnt.' */
+#undef HAVE_DOPRNT
+
 /* Define to 1 if you have the <fcntl.h> header file. */
 #undef HAVE_FCNTL_H
+
+/* Define to 1 if you have the `gethostbyname' function. */
+#undef HAVE_GETHOSTBYNAME
+
+/* Define to 1 if you have the `getpwuid' function. */
+#undef HAVE_GETPWUID
 
 /* Define to 1 if you have the <inttypes.h> header file. */
 #undef HAVE_INTTYPES_H
 
-/* Define to 1 if you have the `SDL' library (-lSDL). */
-#undef HAVE_LIBSDL
+/* Define to 1 if you have the <limits.h> header file. */
+#undef HAVE_LIMITS_H
 
-/* Define to 1 if you have the `SDL_image' library (-lSDL_image). */
-#undef HAVE_LIBSDL_IMAGE
+/* Define to 1 if your system has a GNU libc compatible `malloc' function, and
+   to 0 otherwise. */
+#undef HAVE_MALLOC
 
-/* Define to 1 if you have the `SDL_mixer' library (-lSDL_mixer). */
-#undef HAVE_LIBSDL_MIXER
+/* Define to 1 if you have the <malloc.h> header file. */
+#undef HAVE_MALLOC_H
 
 /* Define to 1 if you have the <memory.h> header file. */
 #undef HAVE_MEMORY_H
 
-/* Define to 1 if you have the <SDL/SDL.h> header file. */
-#undef HAVE_SDL_SDL_H
+/* Define to 1 if you have the `memset' function. */
+#undef HAVE_MEMSET
 
-/* Define to 1 if you have the <SDL/SDL_image.h> header file. */
-#undef HAVE_SDL_SDL_IMAGE_H
+/* Define to 1 if you have the `modf' function. */
+#undef HAVE_MODF
 
-/* Define to 1 if you have the <SDL/SDL_mixer.h> header file. */
-#undef HAVE_SDL_SDL_MIXER_H
+/* Define to 1 if you have the <netdb.h> header file. */
+#undef HAVE_NETDB_H
+
+/* Define to 1 if you have the <netinet/in.h> header file. */
+#undef HAVE_NETINET_IN_H
+
+/* Define to 1 if the system has the type `ptrdiff_t'. */
+#undef HAVE_PTRDIFF_T
+
+/* Define to 1 if you have the <pwd.h> header file. */
+#undef HAVE_PWD_H
+
+/* Define to 1 if you have the `select' function. */
+#undef HAVE_SELECT
+
+/* Define to 1 if you have the `socket' function. */
+#undef HAVE_SOCKET
+
+/* Define to 1 if you have the <stddef.h> header file. */
+#undef HAVE_STDDEF_H
 
 /* Define to 1 if you have the <stdint.h> header file. */
 #undef HAVE_STDINT_H
@@ -35,6 +69,12 @@
 
 /* Define to 1 if you have the `strcasecmp' function. */
 #undef HAVE_STRCASECMP
+
+/* Define to 1 if you have the `strchr' function. */
+#undef HAVE_STRCHR
+
+/* Define to 1 if you have the `strerror' function. */
+#undef HAVE_STRERROR
 
 /* Define to 1 if you have the `stricmp' function. */
 #undef HAVE_STRICMP
@@ -51,14 +91,35 @@
 /* Define to 1 if you have the `strnicmp' function. */
 #undef HAVE_STRNICMP
 
+/* Define to 1 if you have the `strrchr' function. */
+#undef HAVE_STRRCHR
+
+/* Define to 1 if you have the `strstr' function. */
+#undef HAVE_STRSTR
+
+/* Define to 1 if you have the `strtoul' function. */
+#undef HAVE_STRTOUL
+
+/* Define to 1 if you have the <sys/select.h> header file. */
+#undef HAVE_SYS_SELECT_H
+
+/* Define to 1 if you have the <sys/socket.h> header file. */
+#undef HAVE_SYS_SOCKET_H
+
 /* Define to 1 if you have the <sys/stat.h> header file. */
 #undef HAVE_SYS_STAT_H
+
+/* Define to 1 if you have the <sys/time.h> header file. */
+#undef HAVE_SYS_TIME_H
 
 /* Define to 1 if you have the <sys/types.h> header file. */
 #undef HAVE_SYS_TYPES_H
 
 /* Define to 1 if you have the <unistd.h> header file. */
 #undef HAVE_UNISTD_H
+
+/* Define to 1 if you have the `vprintf' function. */
+#undef HAVE_VPRINTF
 
 /* Use OpenGL to do the render/blits (experimental) */
 #undef INSTALL_OPENGL
@@ -88,17 +149,50 @@
 /* Define to the version of this package. */
 #undef PACKAGE_VERSION
 
-/* Installation prefix */
-#undef PREFIX
+/* Define to the type of arg 1 for `select'. */
+#undef SELECT_TYPE_ARG1
+
+/* Define to the type of args 2, 3 and 4 for `select'. */
+#undef SELECT_TYPE_ARG234
+
+/* Define to the type of arg 5 for `select'. */
+#undef SELECT_TYPE_ARG5
+
+/* The size of a `int *', as computed by sizeof. */
+#undef SIZEOF_INT_P
 
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
+/* Define to 1 if you can safely include both <sys/time.h> and <time.h>. */
+#undef TIME_WITH_SYS_TIME
+
 /* Version number of package */
 #undef VERSION
+
+/* CPU uses big-endian words */
+#undef WORDS_BIGENDIAN
+
+/* CPU uses little-endian words */
+#undef WORDS_LITTLEENDIAN
 
 /* Linux */
 #undef __LINUX
 
 /* Win32 */
 #undef __WIN_32
+
+/* Define to empty if `const' does not conform to ANSI C. */
+#undef const
+
+/* Define to `__inline__' or `__inline' if that's what the C compiler
+   calls it, or to nothing if 'inline' is not supported under any name.  */
+#ifndef __cplusplus
+#undef inline
+#endif
+
+/* Define to rpl_malloc if the replacement function should be used. */
+#undef malloc
+
+/* Define to `unsigned' if <sys/types.h> does not define. */
+#undef size_t

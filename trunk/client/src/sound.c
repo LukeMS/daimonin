@@ -137,7 +137,7 @@ void sound_loadall(void)
     {
         sprintf(buf, "%s%s", GetSfxDirectory(), sound_files[i]);
         Sounds[i].sound = NULL;
-        Sounds[i].sound = Mix_LoadWAV(buf);
+        Sounds[i].sound = Mix_LoadWAV_wrapper(buf);
         if (!Sounds[i].sound)
             LOG(LOG_ERROR, "sound_loadall: missing sound file %s\n", buf);
     }
@@ -145,7 +145,7 @@ void sound_loadall(void)
     {
         sprintf(buf, "%s%s", GetSfxDirectory(), spell_sound_files[ii]);
         Sounds[i + ii].sound = NULL;
-        Sounds[i + ii].sound = Mix_LoadWAV(buf);
+        Sounds[i + ii].sound = Mix_LoadWAV_wrapper(buf);
         if (!Sounds[i + ii].sound)
             LOG(LOG_ERROR, "sound_loadall: missing sound file %s\n", buf);
     }
@@ -357,7 +357,7 @@ static void sound_start_music(char *fname, int vol, int fade, int loop)
         music.flag = 0;
     }
 
-    music.data = Mix_LoadMUS(buf);
+    music.data = Mix_LoadMUS_wrapper(buf);
     if (!music.data)
     {
         draw_info("mix_loadmus() failed.", 4);

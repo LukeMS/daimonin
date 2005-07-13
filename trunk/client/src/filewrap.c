@@ -24,17 +24,11 @@
 
 #ifdef __WIN_32
 
-FILE *fopen_wrapper(const char *fname, const char *mode) {
-  char tmp[256];
-  sprintf(tmp, "%s%s", SYSPATH, fname);
-  return fopen(tmp, mode);
-}
-
-SDL_Surface *IMG_Load_wrapper (const char *file)
+static char *file_path(const char *fname, const char *mode)
 {
-  char tmp[256];
-  sprintf(tmp, "%s%s", SYSPATH, file);
-  return IMG_Load(tmp);
+    static char tmp[256];
+    sprintf(tmp, "%s%s", SYSPATH, fname);
+    return tmp;
 }
 
 #else
@@ -70,7 +64,6 @@ static char *file_path(const char *fname, const char *mode)
     static char tmp[256];
     char *stmp;
     char ctmp;
-    struct stat stat_buf;
 
     sprintf(tmp, "%s/.daimonin/%s", getenv("HOME"), fname);
 
@@ -86,7 +79,7 @@ static char *file_path(const char *fname, const char *mode)
     }
     else if(strchr(mode, '+') || strchr(mode, 'a')) 
     { // modify (copy base file to home dir if not exists)
-        if(stat(tmp, &stat_buf)) 
+        if(access(tmp, W_OK)) 
         {
             char otmp[256];
             char shtmp[517];
@@ -108,7 +101,7 @@ static char *file_path(const char *fname, const char *mode)
     }
     else 
     { // just read (check home dir first, then system dir)
-        if(stat(tmp, &stat_buf)) 
+        if(access(tmp, R_OK)) 
             sprintf(tmp, "%s%s", SYSPATH, fname);
     }
 
@@ -116,6 +109,7 @@ static char *file_path(const char *fname, const char *mode)
 
     return tmp;
 }
+#endif
 
 FILE *fopen_wrapper(const char *fname, const char *mode) 
 {
@@ -126,5 +120,13 @@ SDL_Surface *IMG_Load_wrapper (const char *file)
 {
     return IMG_Load(file_path(file, "r"));
 }
-#endif
 
+Mix_Chunk *Mix_LoadWAV_wrapper(const char *fname)
+{
+    return Mix_LoadWAV(file_path(fname, "r"));
+}
+
+Mix_Music *Mix_LoadMUS_wrapper(const char *file)
+{
+    return Mix_LoadMUS(file_path(file, "r"));
+}

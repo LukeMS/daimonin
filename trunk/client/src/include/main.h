@@ -109,7 +109,9 @@ _bmaptype_table bmaptype_table[MAX_BMAPTYPE_TABLE];
 
 extern int              bmaptype_table_size;
 
+#ifndef SYSPATH
 #define SYSPATH "./"
+#endif
 
 #define FILE_DAIMONIN_P0 "daimonin.p0"
 #define FILE_BMAPS_P0 "bmaps.p0"
