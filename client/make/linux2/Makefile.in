@@ -120,7 +120,6 @@ ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
-HAVE_SDL_CONFIG = @HAVE_SDL_CONFIG@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
@@ -142,7 +141,10 @@ PATH_SEPARATOR = @PATH_SEPARATOR@
 RM = @RM@
 RMDIR = @RMDIR@
 SDL_CFLAGS = @SDL_CFLAGS@
+SDL_CONFIG = @SDL_CONFIG@
+SDL_IMAGE_LIBS = @SDL_IMAGE_LIBS@
 SDL_LIBS = @SDL_LIBS@
+SDL_MIXER_LIBS = @SDL_MIXER_LIBS@
 SET_MAKE = @SET_MAKE@
 SHELL = @SHELL@
 STRIP = @STRIP@
@@ -162,6 +164,8 @@ build_alias = @build_alias@
 build_cpu = @build_cpu@
 build_os = @build_os@
 build_vendor = @build_vendor@
+d_bindir = @d_bindir@
+d_datadir = @d_datadir@
 datadir = @datadir@
 exec_prefix = @exec_prefix@
 host = @host@
@@ -188,7 +192,7 @@ target_alias = @target_alias@
 target_cpu = @target_cpu@
 target_os = @target_os@
 target_vendor = @target_vendor@
-daimonindir = $(prefix)/client-@VERSION@
+daimonindir = $(d_bindir)
 daimonin_SOURCES = \
 	../../src/adler32.c \
 	../../src/book.c \
@@ -719,31 +723,31 @@ uninstall-am: uninstall-daimoninPROGRAMS uninstall-info-am
 
 
 install-data-hook:
-	@if [ x$$UID = 'x0' -o x$$USER = 'xroot' ]; then \
-		echo '***'; \
-		echo '*** ROOT INSTALL NOT SUPPORTED YET! Please install as a normal user.'; \
-		echo '***'; \
-		exit 42; \
-	fi;
-	$(MKDIR) -p $(daimonindir)/sfx
-	$(MKDIR) -p $(daimonindir)/media
-	$(MKDIR) -p $(daimonindir)/cache
-	$(MKDIR) -p $(daimonindir)/bitmaps
-	$(MKDIR) -p $(daimonindir)/gfx_user
-	$(MKDIR) -p $(daimonindir)/srv_files
-	$(MKDIR) -p $(daimonindir)/icons
-	$(CP) ../../sfx/*.* $(daimonindir)/sfx
-	$(CP) ../../media/*.* $(daimonindir)/media
-	$(CP) ../../cache/*.* $(daimonindir)/cache
-	$(CP) ../../icons/*.* $(daimonindir)/icons
-	$(CP) ../../srv_files/*.* $(daimonindir)/srv_files
-	$(CP) ../../gfx_user/*.* $(daimonindir)/gfx_user
-	$(CP) ../../bitmaps/*.* $(daimonindir)/bitmaps
-	$(CP) ../../options.dat $(daimonindir)
-	$(CP) ../../keys.dat $(daimonindir)
-	$(CP) ../../daimonin.p0 $(daimonindir)
-	$(CP) ../../License $(daimonindir)
-	$(CP) ../../archdef.dat $(daimonindir)
+#	@if [ x$$UID = 'x0' -o x$$USER = 'xroot' ]; then \
+#		echo '***'; \
+#		echo '*** ROOT INSTALL NOT SUPPORTED YET! Please install as a normal user.'; \
+#		echo '***'; \
+#		exit 42; \
+#	fi;
+	$(MKDIR) -p $(d_datadir)/sfx
+	$(MKDIR) -p $(d_datadir)/media
+	$(MKDIR) -p $(d_datadir)/cache
+	$(MKDIR) -p $(d_datadir)/bitmaps
+	$(MKDIR) -p $(d_datadir)/gfx_user
+	$(MKDIR) -p $(d_datadir)/srv_files
+	$(MKDIR) -p $(d_datadir)/icons
+	$(CP) ../../sfx/*.* $(d_datadir)/sfx
+	$(CP) ../../media/*.* $(d_datadir)/media
+	$(CP) ../../cache/*.* $(d_datadir)/cache
+	$(CP) ../../icons/*.* $(d_datadir)/icons
+	$(CP) ../../srv_files/*.* $(d_datadir)/srv_files
+	$(CP) ../../gfx_user/*.* $(d_datadir)/gfx_user
+	$(CP) ../../bitmaps/*.* $(d_datadir)/bitmaps
+	$(CP) ../../options.dat $(d_datadir)
+	$(CP) ../../keys.dat $(d_datadir)
+	$(CP) ../../daimonin.p0 $(d_datadir)
+	$(CP) ../../License $(d_datadir)
+	$(CP) ../../archdef.dat $(d_datadir)
 	@echo "*** Daimonin client successful installed in $(daimonindir)!"
 	@echo "*** Enter your install folder and type daimonin"
 	@echo "*** to start the game!"

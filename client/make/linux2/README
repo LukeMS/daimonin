@@ -1,42 +1,57 @@
-Before you can compile the client, you need 3 SDL libraries.
+Prerequisites
+-------------
+Before you can compile the client, you need 3 SDL libraries:
+SDL, SDL_mixer and SDL_image. 
+You can get their source code from the SDL homepage: 
+http://www.libsdl.org/index.php. 
+You can normally also get them with your Linux distro package manager, 
+just make sure you get the developer versions.
 
-These libs are called SDL, SDL_mixer, SDL_image.
-
-You can download the source packages of the SDL libraries from the Daimonin site.
-On the same download page as the client source is a library packages, including
-all needed and tested 3rd party libs. 
-
-OR you can go the homepage of SDL:
-http://www.libsdl.org/index.php
-
-Install and compile the SDL libs. 
-After you have installed all SDL libs, you can compile the source.
-
-Follow this steps:
+Compilation
+-----------
+After you have installed all SDL libs, you can compile the source:
 
 1.) make distclean
-	Type 'make distclean' to be sure you have a clean source.
-	This will uninstall old installations too!
+	This ensures that you have a clean source.
 
-2.) configure
-	Type './configure' to generate your makefiles. This will
-	set the installation folder to 'client_VERSION'. To force
-	a different folder type './configure --prefix="<path>/<folder>".
+2.) sh ./configure
+	This will set up the compilation for your system. 
+    
+	The default installation directory is 'client_$VERSION/' in your home
+    directory. For a different directory type './configure --prefix="<path>"'.
 
+    For a system-wide installation you should use the configure 
+    option '--disable-simplelayout' which splits up the installation into
+    '$prefix/bin' and '$prefix/share/daimonin' with '/usr/local' as default 
+    $prefix. 
+    Please note that a system-wide installation requires root access.
+
+    An installation directory made with the simple layout can be copied to
+    multiple users.
+    
 3.) make all
-	Type 'make all'. The source will be compiled and linked.
+	The source will be compiled and linked.
 
 4.) make install
-	Type 'make install'. This will install 
+	This will install.
 	
 Thats all.
 
-You can compile the client without SDL_mixer (wave and ogg support). Follow the 
-comments in the Makefile to remove the libs from linking.
+Sound problems
+--------------
+You can compile the client without SDL_mixer (wave and ogg support). Just use
+'./configure --disable-sound'.
 
-Note, that even with linked SDL_mixer the client will run fine on systems without sound
-card. The client will disable the sound automatically. Compiling it native without
-sound on a system without sound is just a clean option.
+Note, that even when compiled with sound, the client will run fine on most 
+systems without sound card. The client will disable the sound automatically. 
+Compiling it explicitly without sound on a system without sound is just a clean
+option.
 
-You have ALWAYS to install the SDL and SDL_image libs on your system. 
-The client can't run without it!
+You ALWAYS have to install the SDL and SDL_image libs on your system. 
+The client can't run without them!
+
+64-bit or Big-endian
+--------------------
+None of the developers have access to 64-bit or big-endian machines, so we
+can't test the client on those systems. Some problems have been reported.
+If you try this, please let us know how it works.
