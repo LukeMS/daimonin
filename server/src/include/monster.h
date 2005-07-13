@@ -28,6 +28,14 @@
 
 #include <aiconfig.h>
 
+/*#define AI_DEBUG*/
+
+/* Maximum number of ticks we trust an older rangevector to a known object */
+#define MAX_KNOWN_OBJ_RV_AGE 1
+
+/* Maximum number of ticks a mob remembers an object that it can't see */
+#define MAX_KNOWN_OBJ_AGE 200
+
 /** Monster extended data **/
 
 struct mobdata_pathfinding
