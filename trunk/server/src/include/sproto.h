@@ -371,51 +371,34 @@ void                        do_specials(void);
 void                        shutdown_agent(int timer, char *reason);
 int                         main(int argc, char **argv);
 /* monster.c */
-struct mob_behaviourset    *parse_behaviourconfig(const char *conf_text, object *op);
-void                        init_arch_default_behaviours();
-int                         is_friend_of(object *op, object *obj);
-void                        initialize_mob_data(struct mobdata *data);
-void                        cleanup_mob_data(struct mobdata *data);
-void                        cleanup_behaviourset(struct mob_behaviourset *data);
-void                        cleanup_mob_known_obj(struct mob_known_obj *data);
-struct mob_known_obj       *register_npc_known_obj(object *npc, object *enemy, int friendship);
-object                     *check_enemy(object *npc, rv_vector *rv);
-object                     *find_enemy(object *npc, rv_vector *rv);
-int                         can_detect_target(object *op, object *target, int range, int srange, rv_vector *rv);
-int                         can_detect_enemy(object *op, object *enemy, rv_vector *rv);
 object                     *get_active_waypoint(object *op);
 object                     *get_aggro_waypoint(object *op);
 object                     *get_return_waypoint(object *op);
 object                     *find_waypoint(object *op, const char *name);
-void                        waypoint_compute_path(object *waypoint);
-void                        waypoint_move(object *op, object *waypoint);
 int                         move_monster(object *op);
 void                        object_accept_path(object *op);
-object                     *find_nearest_living_creature(object *npc);
-int                         move_randomly(object *op);
+/* monster_behaviourset.c */
+struct mob_behaviourset    *parse_behaviourconfig(const char *conf_text, object *op);
+void                        init_arch_default_behaviours();
+void                        initialize_mob_data(struct mobdata *data);
+void                        cleanup_mob_data(struct mobdata *data);
+struct mob_behaviourset    *setup_behaviours(object *op);
+void                        cleanup_behaviourset(struct mob_behaviourset *data);
+void                        cleanup_mob_known_obj(struct mob_known_obj *data);
 int                         can_hit(object *ob1, object *ob2, rv_vector *rv);
+/* monster_behaviours.c */
+int                         is_friend_of(object *op, object *obj);
+struct mob_known_obj       *register_npc_known_obj(object *npc, object *enemy, int friendship);
 object                     *monster_choose_random_spell(object *monster);
 void                        monster_check_pickup(object *monster);
 void                        monster_check_apply(object *mon, object *item);
 void                        npc_call_help(object *op);
-int                         dist_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv);
-int                         run_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv);
-int                         hitrun_att(int dir, object *ob, object *enemy);
-int                         wait_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv);
-int                         disthit_att(int dir, object *ob, object *enemy, object *part, rv_vector *rv);
-int                         wait_att2(int dir, object *ob, object *enemy, object *part, rv_vector *rv);
-void                        circ1_move(object *ob);
-void                        circ2_move(object *ob);
-void                        pace_movev(object *ob);
-void                        pace_moveh(object *ob);
-void                        pace2_movev(object *ob);
-void                        pace2_moveh(object *ob);
-void                        rand_move(object *ob);
+mapstruct                   *normalize_and_ready_map(mapstruct *defmap, const char **path);
+/* npc_communicate.c */
 void                        communicate(object *op, char *txt);
 int                         talk_to_npc(object *op, object *npc, char *txt);
 int                         talk_to_wall(object *npc, char *txt);
-object                     *find_mon_throw_ob(object *op);
-int                         monster_use_scroll(object *head, object *part, object *pl, int dir, rv_vector *rv);
+/* spawn_point.c */
 void                        spawn_point(object *op);
 /* move.c */
 int                         move_ob(object *op, int dir, object *originator);
