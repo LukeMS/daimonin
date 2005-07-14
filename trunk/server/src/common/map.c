@@ -3039,39 +3039,22 @@ int get_rangevector_full(
          * same axis as is used for multipart objects, the simply arithemetic
          * below works.
          */
-
         for (tmp = op1->more; tmp; tmp = tmp->more)
         {
-        /* TODO: the original code was broken for tiled maps. added a quickfix, but
-         * it seems that multipart objects are partly broken (quick_pos has little 
-         * relevance) currently. Gecko 20050714 */
-/*            LOG(llevDebug, "MULTIPART: %s (%d:%d, %s) -> %d:%d(%x), %s\n",
-                    STRING_OBJ_NAME(op1), op1->x, op1->y, STRING_MAP_PATH(op1->map),
-                    tmp->x, tmp->y, tmp->quick_pos, STRING_MAP_PATH(tmp->map));
-                    
-            tmpi = (op1->x - tmp->x + retval->distance_x) * (op1->x - tmp->x + retval->distance_x)
-                 + (op1->y - tmp->y + retval->distance_y) * (op1->y - tmp->y + retval->distance_y);
+            tmpi = 
+                (retval->distance_x - tmp->arch->clone.x) * (retval->distance_x - tmp->arch->clone.x) +
+                (retval->distance_y - tmp->arch->clone.y) * (retval->distance_y - tmp->arch->clone.y);
             if (tmpi < best_distance)
             {
                 best_distance = tmpi;
                 best = tmp;
-            }*/
-            
-            if(tmp->map == op1->map) {
-                tmpi = (op1->x - tmp->x + retval->distance_x) * (op1->x - tmp->x + retval->distance_x)
-                    + (op1->y - tmp->y + retval->distance_y) * (op1->y - tmp->y + retval->distance_y);
-                if (tmpi < best_distance)
-                {
-                    best_distance = tmpi;
-                    best = tmp;
-                }
             }
         }
 
         if (best)
         {
-            retval->distance_x += op1->x - best->x;
-            retval->distance_y += op1->y - best->y;
+            retval->distance_x -= best->arch->clone.x;
+            retval->distance_y -= best->arch->clone.y;
             retval->part = best;
         }
     }
