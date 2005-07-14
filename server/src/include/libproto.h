@@ -180,7 +180,9 @@ extern mapstruct       *out_of_map(mapstruct *m, int *x, int *y);
 extern mapstruct       *out_of_map2(mapstruct *m, int *x, int *y);
 extern int              get_rangevector(object *op1, object *op2, rv_vector *retval, int flags);
 extern int              get_rangevector_from_mapcoords(mapstruct *map1, int x1, int y1, mapstruct *map2, int x2, int y2,
-                                                       rv_vector *retval, int flags);
+                                rv_vector *retval, int flags);
+extern int              get_rangevector_full(object *op1, mapstruct *map1, int x1, int y1, object *op2, mapstruct *map2, int x2, int y2,
+                                rv_vector *retval, int flags);
 extern int              on_same_map(object *op1, object *op2);
 /* mempool.c */
 extern uint32           nearest_pow_two_exp(uint32 n);

@@ -123,7 +123,7 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
     if (hitter->type == PLAYER)
     {
         rv_vector   dir;
-        get_rangevector(hitter, op, &dir, RV_MANHATTAN_DISTANCE);
+        get_rangevector(hitter, op, &dir, RV_NO_DISTANCE);
 
         if (hitter->direction != dir.direction || hitter->facing != dir.direction)
         {

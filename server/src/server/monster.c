@@ -63,10 +63,16 @@ static int calc_direction_towards(object *op, object *target, mapstruct *map, in
     }
 
     /* Get general direction and distance to target */
-    get_rangevector_from_mapcoords(op->map, op->x, op->y, map, x, y, &target_rv,
-                                   RV_RECURSIVE_SEARCH | RV_DIAGONAL_DISTANCE);
-    /* TODO: verify results */
-    /* if not on same map (or close) do something else... */
+    if(! get_rangevector_full(
+            op, op->map, op->x, op->y, 
+            NULL, map, x, y, &target_rv,
+            RV_RECURSIVE_SEARCH | RV_DIAGONAL_DISTANCE))
+    {
+        LOG(llevBug, "BUG: calc_direction_towards(): unhandled rv failure '%s'\n", STRING_OBJ_NAME(op));
+        /* TODO: verify results */
+        /* if not on same map (or close) do something else... */
+        return 0;
+    }
 
     /* Close enough already? */
     if (target_rv.distance <= 1)
@@ -77,6 +83,11 @@ static int calc_direction_towards(object *op, object *target, mapstruct *map, in
             return target_rv.direction;
     }
 
+#ifdef DEBUG_PATHFINDING
+    LOG(llevDebug, "calc_direction_towards() '%s'->'%s' (distance = %d)\n", 
+            STRING_OBJ_NAME(op), STRING_OBJ_NAME(target), target_rv.distance);
+#endif
+    
     /* Clean up old path */
     if (pf->path)
     {
@@ -121,9 +132,16 @@ static int calc_direction_towards(object *op, object *target, mapstruct *map, in
 
     path_map = ready_map_name(pf->path->map, MAP_NAME_SHARED);
     /* Walk towards next precomputed coordinate */
-    get_rangevector_from_mapcoords(op->map, op->x, op->y, path_map, pf->path->x, pf->path->y, &segment_rv,
-                                   RV_RECURSIVE_SEARCH | RV_DIAGONAL_DISTANCE);
-    /* TODO check result */
+    if(! get_rangevector_full(
+            op, op->map, op->x, op->y, 
+            NULL, path_map, pf->path->x, pf->path->y, 
+            &segment_rv, RV_RECURSIVE_SEARCH | RV_DIAGONAL_DISTANCE))
+    {
+        LOG(llevBug, "BUG: calc_direction_towards(): unhandled segment rv failure for '%s'\n", STRING_OBJ_NAME(op));
+        /* TODO: verify results */
+        /* if not on same map (or close) do something else... */
+        return 0;
+    }
 
     /* throw away segment if we are finished with it */
     if (segment_rv.distance <= 1 && pf->path != NULL)
@@ -155,6 +173,7 @@ static int calc_direction_towards(object *op, object *target, mapstruct *map, in
             pf->target_x = x;
             pf->target_y = y;
         }
+
         if (!QUERY_FLAG(pf, PATHFINDFLAG_PATH_REQUESTED))
         {
 #ifdef DEBUG_PATHFINDING
@@ -207,16 +226,14 @@ static int calc_direction_towards_object(object *op, object *target)
          * (also have to separate between well-known objects that we can find
          * without seeing, and other objects that we have to search or track */
         /* TODO make sure maps are loaded (here and everywhere else) */
-        if (get_rangevector_from_mapcoords(target->map, target->x, target->y, goal_map, MOB_PATHDATA(op)->goal_x,
-                                           MOB_PATHDATA(op)->goal_y, &rv_goal, RV_DIAGONAL_DISTANCE)
-         && get_rangevector_from_mapcoords(op->map,
-                                           op->x,
-                                           op->y,
-                                           target->map,
-                                           target->x,
-                                           target->y,
-                                           &rv_target,
-                                           RV_DIAGONAL_DISTANCE))
+        if (get_rangevector_full(
+                    target, target->map, target->x, target->y, 
+                    NULL, goal_map, MOB_PATHDATA(op)->goal_x, MOB_PATHDATA(op)->goal_y, 
+                    &rv_goal, RV_DIAGONAL_DISTANCE)
+                && get_rangevector_full(
+                    op, op->map, op->x, op->y,
+                    target, target->map, target->x, target->y,
+                    &rv_target, RV_DIAGONAL_DISTANCE))
         {
             /* Heuristic: if dist(target, path goal) > dist(target, self)
              * then get a new path */
@@ -271,13 +288,13 @@ static inline int direction_from_response(object *op, move_response *response)
         case MOVE_RESPONSE_DIRS:
           return choose_direction_from_bitmap(op, response->data.directions);
         case MOVE_RESPONSE_OBJECT:
-          //            LOG(llevDebug,"dir_from_response(): '%s' -> '%s'\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(response.data.target.obj));
+//          LOG(llevDebug,"dir_from_response(): '%s' -> '%s' (object; %d:%d)\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(response->data.target.obj), response->data.target.obj->x, response->data.target.obj->y);
           return calc_direction_towards_object(op, response->data.target.obj);
         case MOVE_RESPONSE_WAYPOINT:
-          //            LOG(llevDebug,"dir_from_response(): '%s' -> '%s'\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(response.data.target.obj));
+//          LOG(llevDebug,"dir_from_response(): '%s' -> '%s' (waypoint; %d:%d)\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(response->data.target.obj), response->data.target.obj->x, response->data.target.obj->y);
           return calc_direction_towards_waypoint(op, response->data.target.obj);
         case MOVE_RESPONSE_COORD:
-          //            LOG(llevDebug,"dir_from_response(): '%s' -> '%s'\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(response.data.target.obj));
+//          LOG(llevDebug,"dir_from_response(): '%s' -> %d:%d\n", STRING_OBJ_NAME(op), response->data.coord.x, response->data.coord.y);
           return calc_direction_towards_coord(op, response->data.coord.map, response->data.coord.x,
                                               response->data.coord.y);
 
@@ -572,8 +589,9 @@ void object_accept_path(object *op)
     }
 
     /* Make sure we aren't already close enough */
-    /* TODO: unfortunately doesn't work very well with multi-tile mobs */
-    get_rangevector_from_mapcoords(op->map, op->x, op->y, goal_map, goal_x, goal_y, &v, RV_MANHATTAN_DISTANCE);
+    get_rangevector_full(op, op->map, op->x, op->y, 
+            NULL, goal_map, goal_x, goal_y, 
+            &v, RV_DIAGONAL_DISTANCE);
     if(v.distance <= 1)
         return;
     
