@@ -360,48 +360,40 @@ path_node * compress_path(path_node *path)
  * needed to get from current to goal. start is the initial start position and should be
  * given too.
  *
+ * op1 and op2 are optional, but recommended for precise handling
+ * of multipart objects.
+ * 
  * If this function overestimates, we are not guaranteed an optimal path.
  *
  * get_rangevector can fail here if there is no maptile path between start and goal.
  * if it does, we have to return an error value (HEURISTIC_ERROR)
- *
  */
-float distance_heuristic(path_node *start, path_node *current, path_node *goal)
+float distance_heuristic(path_node *start, path_node *current, path_node *goal, object *op1, object *op2)
 {
     rv_vector   v1, v2;
     float       h;
 
     /* Diagonal distance (not manhattan distance or euclidian distance!) */
-    if (goal->map == current->map)
-    {
-        /* Avoid a function call in simple case */
-        v1.distance_x = current->x - goal->x;
-        v1.distance_y = current->y - goal->y;
-        v1.distance = MAX(abs(v1.distance_x), abs(v1.distance_y));
-    }
-    else
-    {
-        if (!get_rangevector_from_mapcoords(goal->map, goal->x, goal->y, current->map, current->x, current->y, &v1,
-                                            RV_RECURSIVE_SEARCH | RV_DIAGONAL_DISTANCE))
-            return HEURISTIC_ERROR;
-    }
+    if (!get_rangevector_full(
+                op1, current->map, current->x, current->y, 
+                op2, goal->map, goal->x, goal->y,
+                &v1, RV_RECURSIVE_SEARCH | RV_DIAGONAL_DISTANCE))
+        return HEURISTIC_ERROR;
+    /* TODO: really need to negate distances? */
+    v1.distance_x = -v1.distance_x;
+    v1.distance_y = -v1.distance_y;
 
     h = (float) v1.distance;
 
     /* Add straight-line preference by calculating cross product   */
     /* (gives better performance on open areas _and_ nicer-looking paths) */
-    if (goal->map == start->map)
-    {
-        /* Avoid a function call in simple case */
-        v2.distance_x = start->x - goal->x;
-        v2.distance_y = start->y - goal->y;
-    }
-    else
-    {
-        if (!get_rangevector_from_mapcoords(goal->map, goal->x, goal->y, start->map, start->x, start->y, &v2,
-                                            RV_RECURSIVE_SEARCH | RV_NO_DISTANCE))
-            return HEURISTIC_ERROR;
-    }
+    if (!get_rangevector_full(
+                op1, start->map, start->x, start->y, 
+                op2, goal->map, goal->x, goal->y, 
+                &v2, RV_RECURSIVE_SEARCH | RV_NO_DISTANCE))
+        return HEURISTIC_ERROR;
+    v2.distance_x = -v2.distance_x;
+    v2.distance_y = -v2.distance_y;
 
     h += abs(v1.distance_x * v2.distance_y - v2.distance_x * v1.distance_y) * 0.001f;
 
@@ -457,7 +449,7 @@ int find_neighbours(path_node *node, path_node **open_list, path_node **closed_l
                 path_node  *new_node;
                 if ((new_node = make_node(map, (sint16) x2, (sint16) y2, (uint16) (node->cost + 1), node)))
                 {
-                    new_node->heuristic = distance_heuristic(start, new_node, goal);
+                    new_node->heuristic = distance_heuristic(start, new_node, goal, op, NULL);
 
                     if (new_node->heuristic == HEURISTIC_ERROR)
                         return FALSE;
@@ -507,7 +499,7 @@ path_node * find_path(object *op, mapstruct *map1, int x1, int y1, mapstruct *ma
 
     /* The initial tile */
     open_list = make_node(map1, (sint16) x1, (sint16) y1, 0, NULL);
-    open_list->heuristic = distance_heuristic(&start, open_list, &goal);
+    open_list->heuristic = distance_heuristic(&start, open_list, &goal, op, NULL);
     closed_list = NULL;
     SET_MAP_TILE_VISITED(map1, x1, y1, traversal_id);
 

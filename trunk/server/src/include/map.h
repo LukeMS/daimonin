@@ -385,14 +385,15 @@ typedef struct rv_vector_s
     object         *part;
 } rv_vector;
 
-/* constants for the flags for get_rangevector() and get_rangevector_from_mapcoords() */
-#define RV_IGNORE_MULTIPART   0x01
-#define RV_RECURSIVE_SEARCH    0x02
+/* constants for the flags for get_rangevector_*() functions */
+#define RV_IGNORE_MULTIPART         0x01
+#define RV_RECURSIVE_SEARCH         0x02
 
-#define RV_MANHATTAN_DISTANCE 0x00
-#define RV_EUCLIDIAN_DISTANCE 0x04
-#define RV_DIAGONAL_DISTANCE  0x08
-#define RV_NO_DISTANCE        (0x08|0x04)
+#define RV_DIAGONAL_DISTANCE        0x00
+#define RV_MANHATTAN_DISTANCE       0x04
+#define RV_EUCLIDIAN_DISTANCE       0x08
+#define RV_FAST_EUCLIDIAN_DISTANCE  0x10
+#define RV_NO_DISTANCE             (0x08|0x04|0x10)
 
 extern int      map_tiled_reverse[TILED_MAPS];
 

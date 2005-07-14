@@ -758,7 +758,7 @@ struct path_segment        *encode_path(path_node *path, struct path_segment **l
 int                         get_path_next(const char *buf, sint16 *off, const char **mappath, mapstruct **map, int *x,
                                           int *y);
 path_node                  *compress_path(path_node *path);
-float                       distance_heuristic(path_node *start, path_node *current, path_node *goal);
+float                       distance_heuristic(path_node *start, path_node *current, path_node *goal, object *op1, object *op2);
 int                         find_neighbours(path_node *node, path_node **open_list, path_node **closed_list,
                                             path_node *start, path_node *goal, object *op, uint32 id);
 path_node                  *find_path(object *op, mapstruct *map1, int x1, int y1, mapstruct *map2, int x2, int y2);

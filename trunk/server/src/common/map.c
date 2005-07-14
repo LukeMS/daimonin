@@ -2897,104 +2897,69 @@ mapstruct * out_of_map2(mapstruct *m, int *x, int *y)
     return NULL;
 }
 
-/* From map.c
- * This is used by get_player to determine where the other
- * creature is.  get_rangevector takes into account map tiling,
- * so you just can not look the the map coordinates and get the
- * right value.  distance_x/y are distance away, which
- * can be negativbe.  direction is the crossfire direction scheme
- * that the creature should head.  part is the part of the
- * monster that is closest.
- *
- * retval.distance is always euclidian distance with this function.
- *
- * get_rangevector looks at op1 and op2, and fills in the
- * structure for op1 to get to op2.
- * We already trust that the caller has verified that the
- * two objects are at least on adjacent maps.  If not,
- * results are not likely to be what is desired.
- * if the objects are not on maps, results are also likely to
- * be unexpected
- *
- * Flags:
- *   RV_IGNORE_MULTIPART (0x1) - don't translate for closest body part.
- *   RV_RECURSIVE_SEARCH (0x2) - do recursive search on adjacent tiles.
- * + any flags accepted by get_rangevector_from_mapcoords() below.
- *
- * Returns TRUE if successful, or FALSE otherwise.
+/* Distance between two objects. See get_rangevector_full() for info */
+/* TODO: this should probably be replaced with a macro or an inline function */
+/* 
+ * Note: this function was changed from always calculating euclidian distance to
+ * defaulting to calculating manhattan distance. Gecko 20050714
  */
-
 int get_rangevector(object *op1, object *op2, rv_vector *retval, int flags)
 {
-    object *best;
+    return get_rangevector_full(
+            op1, op1->map, op1->x, op1->y, 
+            op2, op2->map, op2->x, op2->y, 
+            retval, flags);
+}
 
-    if (!get_rangevector_from_mapcoords(op1->map, op1->x, op1->y, op2->map, op2->x, op2->y, retval,
-                                        flags | RV_NO_DISTANCE))
-        return FALSE;
-
-    best = op1;
-    /* If this is multipart, find the closest part now */
-    if (!(flags & RV_IGNORE_MULTIPART) && op1->more)
-    {
-        object                                                                                                 *tmp;
-        int best_distance = retval->distance_x*retval->distance_x + retval->distance_y*retval->                 distance_y,
-                                                                                                                tmpi;
-
-        /* we just tkae the offset of the piece to head to figure
-         * distance instead of doing all that work above again
-         * since the distance fields we set above are positive in the
-         * same axis as is used for multipart objects, the simply arithemetic
-         * below works.
-         */
-        for (tmp = op1->more; tmp; tmp = tmp->more)
-        {
-            tmpi = (op1->x - tmp->x + retval->distance_x) * (op1->x - tmp->x + retval->distance_x)
-                 + (op1->y - tmp->y + retval->distance_y) * (op1->y - tmp->y + retval->distance_y);
-            if (tmpi < best_distance)
-            {
-                best_distance = tmpi;
-                best = tmp;
-            }
-        }
-        if (best != op1)
-        {
-            retval->distance_x += op1->x - best->x;
-            retval->distance_y += op1->y - best->y;
-        }
-    }
-    retval->part = best;
-    retval->distance = isqrt(retval->distance_x * retval->distance_x + retval->distance_y * retval->distance_y);
-    retval->direction = find_dir_2(-retval->distance_x, -retval->distance_y);
-
-    return TRUE;
+/* Distance between two coords. See get_rangevector_full() for info */
+/* Never adjusts for multipart objects (since objects are unknown) */
+/* TODO: this should probably be replaced with a macro or an inline function */
+int get_rangevector_from_mapcoords(
+        mapstruct *map1, int x1, int y1, 
+        mapstruct *map2, int x2, int y2, 
+        rv_vector *retval, int flags)
+{
+    return get_rangevector_full(NULL, map1, x1, y1, NULL, map2, x2, y2, retval, flags);
 }
 
 /*
- * this is the base for get_rangevector above, but can more generally compute the
- * rangvector between any two points on any maps.
+ * This is the base for all get_rangevector_* functions. It can compute the
+ * rangevector between any two points on any maps, with or without adjusting
+ * for multipart objects.
  *
- * The part field of the rangevector is always set to NULL by this function.
- * (Since we don't actually know about any objects)
+ * op1 and op2 are optional, but are required (separately or together) for multipart 
+ * object handling. (Currently op2 is ignored but might be used in the future)
  *
- * If the function fails (because of the maps being separate), it will return FALSE and
- * the vector is not otherwise touched. Otherwise it will return TRUE.
+ * If the function fails (because of the maps being separate), it will return FALSE 
+ * and the vector is not otherwise touched. Otherwise it will return TRUE.
+ *
+ * Returns (through retval):  
+ *  distance_x/y are distance away, which can be negative. 
+ *  direction is the crossfire direction scheme from p1 to p2.  
+ *  part is the part of op1 that is closest to p2. (can be NULL)
+ *  distance is an absolute distance value according to the selected algorithm.
+ *
+ * If the objects are not on maps, results are likely to be unexpected or fatal
  *
  * Flags:
- *  RV_MANHATTAN_DISTANCE (0x0) - Calculate manhattan distance (dx+dy) (default) (fast)
- *  RV_EUCLIDIAN_DISTANCE (0x4) - (straight line) distance (slow)
- *  RV_DIAGONAL_DISTANCE  (0x8) - diagonal (max(dx + dy)) distance   (fast)
- *  RV_NO_DISTANCE   (0x8|0x04) - don't calculate distance (or direction) (fastest)
- *  RV_RECURSIVE_SEARCH   (0x2) - handle separate maps better (slow and does still not
+ *  RV_IGNORE_MULTIPART   - don't translate for closest body part.
+ *  RV_RECURSIVE_SEARCH   - handle separate maps better (slow and does still not
  *                                search the whole mapset).
+ *  RV_MANHATTAN_DISTANCE - Calculate manhattan distance (dx+dy)  (fast)
+ *  RV_EUCLIDIAN_DISTANCE - straight line distance (slowest)
+ *  RV_FAST_EUCLIDIAN_DISTANCE - squared straight line distance (slow)
+ *  RV_DIAGONAL_DISTANCE  - diagonal (max(dx + dy)) distance (fast) (default)
+ *  RV_NO_DISTANCE        - don't calculate distance (or direction) (fastest)
  *
  *  TODO: Add a RV_FAST_EUCLIDIAN_DISTANCE that skips the isqrt() call. Still very
  *  useful for distances (e.g. if(rv.distance <= d*d))
+ *  TODO: support multipart->multipart handling 
  */
-int get_rangevector_from_mapcoords(mapstruct *map1, int x1, int y1, mapstruct *map2, int x2, int y2, rv_vector *retval,
-                                   int flags)
+int get_rangevector_full(
+        object *op1, mapstruct *map1, int x1, int y1, 
+        object *op2, mapstruct *map2, int x2, int y2, 
+        rv_vector *retval, int flags)
 {
-    retval->part = NULL;
-
     if (map1 == map2)
     {
         retval->distance_x = x2 - x1;
@@ -3042,8 +3007,8 @@ int get_rangevector_from_mapcoords(mapstruct *map1, int x1, int y1, mapstruct *m
     }
     else if (flags & RV_RECURSIVE_SEARCH)
     {
-             retval->distance_x = x2;
-             retval->distance_y = y2;
+        retval->distance_x = x2;
+        retval->distance_y = y2;
 
         if (!relative_tile_position(map1, map2, &(retval->distance_x), &(retval->distance_y)))
         {
@@ -3051,22 +3016,77 @@ int get_rangevector_from_mapcoords(mapstruct *map1, int x1, int y1, mapstruct *m
             return FALSE;
         }
 
-             retval->distance_x -= x1;
-             retval->distance_y -= y1;
+        retval->distance_x -= x1;
+        retval->distance_y -= y1;
     }
     else
     {
         /*LOG(llevDebug,"DBUG: get_rangevector_from_mapcoords: objects not on adjacent maps\n");*/
         return FALSE;
     }
+    
+    retval->part = op1;
+    /* If this is multipart, find the closest part now */
+    if (!(flags & RV_IGNORE_MULTIPART) && op1 && op1->more)
+    {
+        object *tmp, *best = NULL;
+        int best_distance = retval->distance_x*retval->distance_x + retval->distance_y*retval->distance_y;
+        int tmpi;
 
-    switch (flags & (0x04 | 0x08))
+        /* we just take the offset of the piece to head to figure
+         * distance instead of doing all that work above again
+         * since the distance fields we set above are positive in the
+         * same axis as is used for multipart objects, the simply arithemetic
+         * below works.
+         */
+
+        for (tmp = op1->more; tmp; tmp = tmp->more)
+        {
+        /* TODO: the original code was broken for tiled maps. added a quickfix, but
+         * it seems that multipart objects are partly broken (quick_pos has little 
+         * relevance) currently. Gecko 20050714 */
+/*            LOG(llevDebug, "MULTIPART: %s (%d:%d, %s) -> %d:%d(%x), %s\n",
+                    STRING_OBJ_NAME(op1), op1->x, op1->y, STRING_MAP_PATH(op1->map),
+                    tmp->x, tmp->y, tmp->quick_pos, STRING_MAP_PATH(tmp->map));
+                    
+            tmpi = (op1->x - tmp->x + retval->distance_x) * (op1->x - tmp->x + retval->distance_x)
+                 + (op1->y - tmp->y + retval->distance_y) * (op1->y - tmp->y + retval->distance_y);
+            if (tmpi < best_distance)
+            {
+                best_distance = tmpi;
+                best = tmp;
+            }*/
+            
+            if(tmp->map == op1->map) {
+                tmpi = (op1->x - tmp->x + retval->distance_x) * (op1->x - tmp->x + retval->distance_x)
+                    + (op1->y - tmp->y + retval->distance_y) * (op1->y - tmp->y + retval->distance_y);
+                if (tmpi < best_distance)
+                {
+                    best_distance = tmpi;
+                    best = tmp;
+                }
+            }
+        }
+
+        if (best)
+        {
+            retval->distance_x += op1->x - best->x;
+            retval->distance_y += op1->y - best->y;
+            retval->part = best;
+        }
+    }
+
+    /* Calculate distance */
+    switch (flags & (0x04 | 0x08 | 0x10))
     {
         case RV_MANHATTAN_DISTANCE:
           retval->distance = abs(retval->distance_x) + abs(retval->distance_y);
           break;
         case RV_EUCLIDIAN_DISTANCE:
           retval->distance = isqrt(retval->distance_x * retval->distance_x + retval->distance_y * retval->distance_y);
+          break;
+        case RV_FAST_EUCLIDIAN_DISTANCE:
+          retval->distance = retval->distance_x * retval->distance_x + retval->distance_y * retval->distance_y;
           break;
         case RV_DIAGONAL_DISTANCE:
           retval->distance = MAX(abs(retval->distance_x), abs(retval->distance_y));
@@ -3076,6 +3096,7 @@ int get_rangevector_from_mapcoords(mapstruct *map1, int x1, int y1, mapstruct *m
           return TRUE;
     }
     retval->direction = find_dir_2(-retval->distance_x, -retval->distance_y);
+
     return TRUE;
 }
 

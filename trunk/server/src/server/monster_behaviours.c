@@ -181,8 +181,8 @@ rv_vector * get_known_obj_rv(object *op, struct mob_known_obj *known_obj, int ma
         /*
         if(!mob_can_see_obj(op, known_obj->obj, NULL)) {
             mapstruct *map = ready_map_name(known_obj->last_map, MAP_NAME_SHARED);
-            if(get_rangevector_from_mapcoords(op->map, op->x, op->y,
-                        map, known_obj->last_x, known_obj->last_y,
+            if(get_rangevector_full(op, op->map, op->x, op->y,
+                        known_obj->obj, map, known_obj->last_x, known_obj->last_y,
                         &known_obj->rv, RV_EUCLIDIAN_DISTANCE))
             {
                 known_obj->rv_time = global_round_tag;
@@ -532,7 +532,7 @@ int can_hit_missile(object *ob1, object *ob2, rv_vector *rv, int mode)
 int mapcoord_in_line_of_fire(object *op1, mapstruct *map, int x, int y, int mode)
 {
     rv_vector rv;
-    get_rangevector_from_mapcoords(op1->map, op1->x, op1->y, map, x, y, &rv, RV_DIAGONAL_DISTANCE);
+    get_rangevector_full(op1, op1->map, op1->x, op1->y, NULL, map, x, y, &rv, RV_DIAGONAL_DISTANCE);
     return can_hit_missile(op1, NULL, &rv, mode);
 }
 
@@ -902,8 +902,9 @@ void ai_move_towards_enemy_last_known_pos(object *op, struct mob_behaviour_param
         struct mob_known_obj   *enemy   = MOB_DATA(op)->enemy;
         mapstruct              *map     = ready_map_name(enemy->last_map, MAP_NAME_SHARED);
 
-        if (get_rangevector_from_mapcoords(op->map, op->x, op->y, map, enemy->last_x, enemy->last_y, &rv,
-                                           RV_EUCLIDIAN_DISTANCE))
+        if (get_rangevector_full(op, op->map, op->x, op->y, 
+                    enemy->obj, map, enemy->last_x, enemy->last_y, 
+                    &rv, RV_EUCLIDIAN_DISTANCE))
         {
             op->anim_enemy_dir = rv.direction;
             if (rv.distance > 3)
@@ -959,8 +960,10 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
              * search usually catches that.
              * TODO: extend cache in recursive search with longer memory
              */
-            if (!get_rangevector_from_mapcoords(op->map, op->x, op->y, destmap, WP_X(wp), WP_Y(wp), &rv,
-                                                RV_RECURSIVE_SEARCH | RV_DIAGONAL_DISTANCE))
+            if (!get_rangevector_full(
+                        op, op->map, op->x, op->y, 
+                        NULL, destmap, WP_X(wp), WP_Y(wp), &rv,
+                        RV_RECURSIVE_SEARCH | RV_DIAGONAL_DISTANCE))
             {
                 /* Problem: we couldn't find a relative direction between the
                  * maps. Usually it means that they are in different mapsets
@@ -1322,7 +1325,7 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
     }
 
     /* Handle enemy switching (growl, speed up/down) */
-    /* TODO: separate into another behaviour... */
+    /* TODO: separate into another behaviour? */
     if (op->enemy != oldenemy)
     {
         MOB_DATA(op)->idle_time = 0;
