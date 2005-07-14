@@ -910,8 +910,8 @@ int load_objects(mapstruct *m, FILE *fp, int mapflags)
     object     *op, *prev = NULL, *last_more = NULL, *tmp;
 
     op = get_object();
-
     op->map = m; /* To handle buttons correctly */
+    
     mybuffer = create_loader_buffer(fp);
     while ((i = load_object(fp, op, mybuffer, LO_REPEAT, mapflags)))
     {
@@ -920,17 +920,17 @@ int load_objects(mapstruct *m, FILE *fp, int mapflags)
         {
             LOG(llevDebug, "BUG: load_objects(%s): object %s - its a tail!.\n", m->path ? m->path : ">no map<",
                 query_short_name(op, NULL));
-            continue;
+            goto next;
         }
 		/* should not happen because we catch invalid arches now as singularities */
         if (op->arch == NULL)
         {
             LOG(llevDebug, "BUG:load_objects(%s): object %s (%d)- invalid archetype. (pos:%d,%d)\n",
                 m->path ? m->path : ">no map<", query_short_name(op, NULL), op->type, op->x, op->y);
-            continue;
+            goto next;
         }
 
-		/* do some safety for containers */
+        /* do some safety for containers */
         if (op->type == CONTAINER)
         {
             op->attacked_by = NULL; /* used for containers as link to players viewing it */
@@ -942,10 +942,21 @@ int load_objects(mapstruct *m, FILE *fp, int mapflags)
 			unique = TRUE;					/* we CAN avoid this check by check the map in the editor first
 											 * and set the map data direct in the original map
 											 */
-
+        
         /* important pre set for the animation/face of a object */
-        if (QUERY_FLAG(op, FLAG_IS_TURNABLE) || QUERY_FLAG(op, FLAG_ANIMATE))
+        if (QUERY_FLAG(op, FLAG_IS_TURNABLE) || QUERY_FLAG(op, FLAG_ANIMATE))        
+        {
+            /* If a bad animation is set, we will get div by zero */
+            if(NUM_FACINGS(op) == 0)
+            {
+                LOG(llevDebug, "BUG:load_objects(%s): object %s (%d)- NUM_FACINGS == 0. Bad animation? (pos:%d,%d)\n",
+                        m->path ? m->path : ">no map<", query_short_name(op, NULL), op->type, op->x, op->y);
+                goto next;
+            }
             SET_ANIMATION(op, (NUM_ANIMATIONS(op) / NUM_FACINGS(op)) * op->direction + op->state);
+        }
+		
+
 
         /* expand a multi arch - we have only the head saved in a map!
              * the *real* fancy point is, that our head/tail don't must fit
@@ -986,10 +997,10 @@ int load_objects(mapstruct *m, FILE *fp, int mapflags)
             while ((tail = tail->more));
 
             /* now some tricky stuff again:
-                     * to speed up some core functions like moving or remove_ob()/insert_ob
-                     * and because there are some "arch depending and not object depending"
-                     * flags, we init the tails with some of the head settings.
-                    */
+             * to speed up some core functions like moving or remove_ob()/insert_ob
+             * and because there are some "arch depending and not object depending"
+             * flags, we init the tails with some of the head settings.
+             */
 			if (QUERY_FLAG(op, FLAG_SYS_OBJECT))
                 SET_MULTI_FLAG(op->more, FLAG_SYS_OBJECT)
             else
@@ -1052,6 +1063,8 @@ int load_objects(mapstruct *m, FILE *fp, int mapflags)
                 update_ob_speed(op);
             }*/
 
+next:
+        /* We always need a fresh object for the next iteration */
         op = get_object();
         op->map = m;
     }
