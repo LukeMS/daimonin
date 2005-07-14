@@ -200,6 +200,14 @@ arch floor_ostone1
 x 1
 y 7
 end
+arch ant_red
+name pocket ant
+no_pick 0
+speed 0.0001
+weight 225
+x 1
+y 7
+end
 arch floor_ostone1
 x 1
 y 8
@@ -208,11 +216,23 @@ arch floor_ostone1
 x 1
 y 9
 end
+arch chest_w1
+direction 7
+x 1
+y 9
+arch beholder_dread
+end
+end
 arch floor_ostone1
 x 1
 y 10
 end
 arch floor_ostone1
+x 1
+y 11
+end
+arch handle_lever
+animation bugme
 x 1
 y 11
 end
@@ -316,6 +336,14 @@ arch floor_ostone1
 x 2
 y 7
 end
+arch sign
+msg
+The ant here can be picked up and used as a little pocket monster.
+This crashed the server in some versions
+endmsg
+x 2
+y 7
+end
 arch floor_ostone1
 x 2
 y 8
@@ -324,11 +352,25 @@ arch floor_ostone1
 x 2
 y 9
 end
+arch sign
+msg
+There should be a little surprise in the chest. Monsters living in containers were added before beta 3, but has been known to crash some versions
+endmsg
+x 2
+y 9
+end
 arch floor_ostone1
 x 2
 y 10
 end
 arch floor_ostone1
+x 2
+y 11
+end
+arch sign
+msg
+There's a lever here with an illegal animation. The map loader should have rejected it so you won't see it =)
+endmsg
 x 2
 y 11
 end
