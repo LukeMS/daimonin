@@ -41,6 +41,48 @@ rv_vector      *get_known_obj_rv(object *op, struct mob_known_obj *known_obj, in
  * A few random unsorted utility functions
  */
 
+/* Tests if an object is in the line of sight of another object. */
+int obj_in_line_of_sight(object *op, object *obj, rv_vector *rv)
+{
+    /* Bresenham variables */
+    int fraction, dx2, dy2, stepx, stepy;
+
+    /* Stepping variables */
+    mapstruct *m = rv->part->map;
+    int x = rv->part->x, y = rv->part->y;
+
+    /*
+    LOG(llevDebug, "obj_in_line_of_sight(): %s (%d:%d) -> %s (%d:%d)?\n", 
+            STRING_OBJ_NAME(op), op->x, op->y, 
+            STRING_OBJ_NAME(obj), obj->x, obj->y);
+    */
+            
+    BRESENHAM_INIT(rv->distance_x, rv->distance_y, fraction, stepx, stepy, dx2, dy2);
+
+    while(1) 
+    {
+        LOG(llevDebug, " (%d:%d)", x, y);
+        if(x == obj->x && y == obj->y && m == obj->map) 
+        {
+//            LOG(llevDebug, "  can see!\n");
+            return TRUE;
+        }
+
+        if(m == NULL || GET_MAP_FLAGS(m,x,y) & P_BLOCKSVIEW)
+        {
+//            LOG(llevDebug, "  blocked!\n");
+            return FALSE;
+        }
+
+        BRESENHAM_STEP(x, y, fraction, stepx, stepy, dx2, dy2);
+
+        m = out_of_map(m, &x, &y);
+    }
+/*
+    LOG(llevDebug, "  out of range!\n");
+    return FALSE;*/
+}
+
 /* Beginnings of can_see_obj */
 /* known_obj is optional but increases efficiency somewhat
  * by using caching data in the known_obj struct
@@ -88,21 +130,24 @@ int mob_can_see_obj(object *op, object *obj, struct mob_known_obj *known_obj)
     /* Get the rangevector, trying to use a cached version first */
     if (known_obj)
         rv_p = get_known_obj_rv(op, known_obj, MAX_KNOWN_OBJ_RV_AGE);
-    else if (get_rangevector(op, obj, &rv, 0))
+    else if (get_rangevector(op, obj, &rv, RV_EUCLIDIAN_DISTANCE))
         rv_p = &rv;
 
     if (rv_p == NULL)
         cached_result = FALSE;
     else if ((int) rv_p->distance > (QUERY_FLAG(obj, FLAG_STEALTH) ? stealth_range : aggro_range))
         cached_result = FALSE;
-    else
+    else 
+    {
+        /* LOS test is _only_ done when we first register a new object,
+         * otherwise it is too easy to escape monsters by hiding. */
         cached_result = TRUE;
+    }
 
     cached_op_tag = op->count;
     cached_obj_tag = obj->count;
     cache_time = ROUND_TAG;
 
-    /* TODO also test darkness, stealth detection, LOS etc */
     return cached_result;
 }
 
@@ -319,6 +364,7 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
     struct mob_known_obj   *tmp;
     struct mob_known_obj   *last    = NULL;
     int i;
+    rv_vector rv;
 
     if (npc == NULL)
     {
@@ -412,7 +458,20 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
     /* TODO: keep count of enemies and push out less
      * important if new ones are added beyond a reasonable max number */
 
-    /* No, it is a new object */
+    /* It was a new, previously unknown object */
+    if(! get_rangevector(npc, other, &rv, RV_EUCLIDIAN_DISTANCE) || !rv.part)
+    {
+        LOG(llevBug, "BUG: register_npc_known_obj(): '%s' can't get rv to '%s'\n", STRING_OBJ_NAME(npc), STRING_OBJ_NAME(other));
+        return NULL;
+    }        
+    
+    /* We check LOS here, only if we are registering a new object */
+    /* Also, we only check against players, and not if we have 
+     * been hit or helped by them. */
+    if(other->type == PLAYER && friendship == 0 && 
+            !obj_in_line_of_sight(npc, other, &rv))
+        return NULL;
+
     tmp = get_poolchunk(pool_mob_knownobj);
     tmp->next = NULL;
     tmp->prev = last;
@@ -423,9 +482,12 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
     tmp->last_x = other->x;
     tmp->last_y = other->y;
 
-    tmp->last_seen = ROUND_TAG;
-    tmp->rv_time = 0; /* Makes cached rv invalid */
+    tmp->last_seen = ROUND_TAG; /* If we got here, we have seen it */
+//    tmp->rv_time = 0;           /* Makes cached rv invalid */
+    tmp->rv_time = ROUND_TAG;   /* Cache the rv we calculated above. */
+    tmp->rv = rv;
 
+    /* Initial friendship and attitude */
     tmp->friendship = friendship + calc_friendship_from_attitude(npc, other);
     tmp->attraction = 0;
     tmp->tmp_friendship = 0;
