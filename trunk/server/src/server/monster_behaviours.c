@@ -61,7 +61,7 @@ int obj_in_line_of_sight(object *op, object *obj, rv_vector *rv)
 
     while(1) 
     {
-        LOG(llevDebug, " (%d:%d)", x, y);
+//        LOG(llevDebug, " (%d:%d)", x, y);
         if(x == obj->x && y == obj->y && m == obj->map) 
         {
 //            LOG(llevDebug, "  can see!\n");

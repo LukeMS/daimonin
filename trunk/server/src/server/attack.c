@@ -125,20 +125,10 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
         rv_vector   dir;
         get_rangevector(hitter, op, &dir, RV_NO_DISTANCE);
 
-        if (hitter->direction != dir.direction || hitter->facing != dir.direction)
-        {
-            if (hitter->head)
-            {
-                hitter->head->anim_moving_dir = dir.direction;
-            }
-            else
-            {
-                hitter->anim_moving_dir = dir.direction;
-            }
-            hitter->direction = dir.direction;
-            hitter->facing = dir.direction;
-            update_object(hitter, UP_OBJ_FACE);
-        }
+        if (hitter->head)
+            hitter->head->anim_enemy_dir = dir.direction;
+        else
+            hitter->anim_enemy_dir = dir.direction;
     }
 
 #if 0/* attack timing test */

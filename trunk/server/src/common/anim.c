@@ -241,13 +241,11 @@ void animate_object(object *op, int count)
     {
         if (op->type == PLAYER)
         {
-            /*LOG(-1,"ppA: %s fdir:%d mdir:%d ldir:%d (%d %d %d) state:%d\n",op->name,
+/*            LOG(-1,"ppA: %s fdir:%d mdir:%d ldir:%d (%d %d %d) state:%d\n",op->name,
                         op->anim_enemy_dir,op->anim_moving_dir,op->anim_last_facing,
                         CONTR(op)->anim_flags & PLAYER_AFLAG_ENEMY,
                         CONTR(op)->anim_flags & PLAYER_AFLAG_ADDFRAME,
-                        CONTR(op)->anim_flags & PLAYER_AFLAG_FIGHT, op->state);
-                    */
-
+                        CONTR(op)->anim_flags & PLAYER_AFLAG_FIGHT, op->state);*/
             /* lets check flags - perhaps we have hit something in close fight */
             if ((CONTR(op)->anim_flags & PLAYER_AFLAG_ADDFRAME || CONTR(op)->anim_flags & PLAYER_AFLAG_ENEMY)
              && !(CONTR(op)->anim_flags & PLAYER_AFLAG_FIGHT))
@@ -288,7 +286,7 @@ void animate_object(object *op, int count)
                     else
                         dir = op->anim_last_facing;
                 }
-                if (!dir || dir == -1)   /* special case, if we have no idea where we fac,we face to enemy */
+                if (dir <= 0)   /* special case, if we have no idea where we fac,we face to enemy */
                     dir = 4;
                 op->anim_last_facing = dir;
                 op->anim_last_facing_last = -1;
@@ -299,7 +297,7 @@ void animate_object(object *op, int count)
                 dir = op->anim_moving_dir;      /* lets face in moving direction */
                 op->anim_moving_dir_last = op->anim_moving_dir;
                 op->anim_enemy_dir_last = -1;
-                if (!dir)   /* special case, same spot will be mapped to south dir */
+                if (dir <= 0)   /* special case, same spot will be mapped to south dir */
                     dir = 4;
                 op->anim_last_facing = dir;
                 op->anim_last_facing_last = -1;
@@ -312,16 +310,18 @@ void animate_object(object *op, int count)
                 else
                     dir = op->anim_last_facing;      /* lets face to last direction we had done something */
                 op->anim_last_facing_last = dir;
-                if (!dir || dir == -1)   /* special case, same spot will be mapped to south dir */
+                if (dir <= 0)   /* special case, same spot will be mapped to south dir */
                     op->anim_last_facing = dir = 4;
             }
-            base_state = dir * (numanim / numfacing);
+            base_state = dir * max_state;
+
             /* If beyond drawable states, reset */
             if (op->state >= max_state)
             {
                 op->state = 0;
                 CONTR(op)->anim_flags &= ~PLAYER_AFLAG_FIGHT; /* clear always fight flag */
             }
+/*            LOG(-1, "ppB: %s(%d)::dir:%d face:%d (%d) ->%d (%d) / %d\n", op->name,count,op->direction, op->facing,op->anim_last_facing, base_state, op->state, dir); */
         }
         else /* mobs & non player anims */
         {
@@ -356,7 +356,7 @@ void animate_object(object *op, int count)
                 if (!dir || dir == -1)   /* special case, same spot will be mapped to south dir */
                     op->anim_last_facing = dir = 4;
             }
-            base_state = dir * (numanim / numfacing);
+            base_state = dir * max_state;
             /* If beyond drawable states, reset */
             if (op->state >= max_state)
                 op->state = 0;
@@ -368,7 +368,7 @@ void animate_object(object *op, int count)
         if (op->state >= max_state)
             op->state = 0;
     }
-    /*LOG(-1, "B: %s(%d)::dir:%d face:%d (%d) ->%d (%d)\n", op->name,count,op->direction, op->facing,op->anim_last_facing, base_state, op->state);*/
+/*    LOG(-1, "B: %s(%d)::dir:%d face:%d (%d) ->%d (%d) / %d\n", op->name,count,op->direction, op->facing,op->anim_last_facing, base_state, op->state, dir); */
 
     SET_ANIMATION(op, op->state + base_state);
     /* this will force a "below windows update" - NOT a map face update.
