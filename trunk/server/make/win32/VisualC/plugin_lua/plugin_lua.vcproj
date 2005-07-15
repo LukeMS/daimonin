@@ -17,7 +17,8 @@
 			ConfigurationType="2"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
+			CharacterSet="2"
+			WholeProgramOptimization="TRUE">
 			<Tool
 				Name="VCCLCompilerTool"
 				InlineFunctionExpansion="2"
@@ -26,8 +27,7 @@
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="plugin.pch"
+				PrecompiledHeaderThrough=""
 				PrecompiledHeaderFile=".\ReleaseLog/plugin_lua.pch"
 				AssemblerListingLocation=".\ReleaseLog/"
 				ObjectFile=".\ReleaseLog/"
