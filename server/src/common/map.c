@@ -3072,6 +3072,9 @@ int get_rangevector_full(
         }
     }
 
+    /* Calculate approximate direction */
+    retval->direction = find_dir_2(-retval->distance_x, -retval->distance_y);
+    
     /* Calculate distance */
     switch (flags & (0x04 | 0x08 | 0x10))
     {
@@ -3088,10 +3091,9 @@ int get_rangevector_full(
           retval->distance = MAX(abs(retval->distance_x), abs(retval->distance_y));
           break;
         case RV_NO_DISTANCE:
-          /* No distance calc */
-          return TRUE;
+          retval->distance = -1;
+          break;
     }
-    retval->direction = find_dir_2(-retval->distance_x, -retval->distance_y);
 
     return TRUE;
 }
