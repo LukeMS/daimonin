@@ -17,7 +17,8 @@
 			ConfigurationType="1"
 			UseOfMFC="2"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
+			CharacterSet="2"
+			WholeProgramOptimization="TRUE">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
@@ -32,8 +33,7 @@
 				ExceptionHandling="FALSE"
 				RuntimeLibrary="2"
 				BufferSecurityCheck="FALSE"
-				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="global.h"
+				PrecompiledHeaderThrough=""
 				PrecompiledHeaderFile="$(IntDir)/daimonin.pch"
 				AssemblerListingLocation=".\ReleaseLog/"
 				ObjectFile=".\ReleaseLog/"
@@ -466,6 +466,12 @@
 							Name="VCCLCompilerTool"
 							ObjectFile=".\Debug\server/"/>
 					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\..\..\src\server\monster_behaviours.c">
+				</File>
+				<File
+					RelativePath="..\..\..\src\server\monster_behaviourset.c">
 				</File>
 				<File
 					RelativePath="..\..\..\src\server\move.c">
