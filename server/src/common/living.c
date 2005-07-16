@@ -2037,6 +2037,13 @@ void fix_monster(object *op)
                    / 10.0f);
 
     set_mobile_speed(op, 0);
+
+    /* Set up AI in op->custom_attrset */
+    if(! MOB_DATA(op))
+    {
+        op->custom_attrset = get_poolchunk(pool_mob_data);
+        MOB_DATA(op)->behaviours = setup_behaviours(op);
+    }
 }
 
 /* insert and initialize base info object in object op

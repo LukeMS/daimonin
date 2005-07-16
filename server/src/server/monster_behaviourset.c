@@ -453,15 +453,17 @@ static int parse_behaviour_parameters(const char *start, const char *end, struct
             case AI_STRING_TYPE:
               param->stringvalue = add_string(valuebuf);
               param->flags |= AI_PARAM_PRESENT;
-        LOG(llevDebug, "parameter %s for behaviour %s, value %s\n", namebuf, behaviour->declaration->name, valuebuf);
-
+//              LOG(llevDebug, "parameter '%s' for behaviour %s, string value '%s'\n", namebuf, behaviour->declaration->name, valuebuf);
               break;
 
             case AI_STRINGINT_TYPE:
-              if(parse_stringint_parameter(param, valuebuf))
+              if(parse_stringint_parameter(param, valuebuf)) 
                   LOG(llevBug, "BUG: Bad STRINGINT format (\"%s\") for parameter %s\n", valuebuf, namebuf);
               else
+              {
                   param->flags |= AI_PARAM_PRESENT;
+//                  LOG(llevDebug, "parameter '%s' for behaviour %s, stringint value '%s':%d\n", namebuf, behaviour->declaration->name, param->stringvalue, param->intvalue);
+              }
               break;
 
             default:
@@ -495,6 +497,7 @@ static int parse_behaviour_parameters(const char *start, const char *end, struct
                       behaviour->parameters[i].stringvalue = add_string(behaviour->declaration->params[i].defaultvalue);
                       break;
                     case AI_STRINGINT_TYPE:
+//                      LOG(llevBug, "Loading default STRINGINT parameter for %s:%s\n", behaviour->declaration->name, behaviour->declaration->params[i].name);
                       if(parse_stringint_parameter(&behaviour->parameters[i], behaviour->declaration->params[i].defaultvalue))
                           LOG(llevBug, "BUG: Bad STRINGINT default value (\"%s\") for parameter %s:%s\n", valuebuf, behaviour->declaration->name, behaviour->declaration->params[i].name);
                       break;
@@ -646,6 +649,7 @@ struct mob_behaviourset * parse_behaviourconfig(const char *conf_text, object *o
     behaviourset->definition = add_refcount(conf_text);
     behaviourset->bghash = 0;
     behaviourset->attitudes = NULL;
+    behaviourset->groups = NULL;
 
     /* Insert in list */
     behaviourset->next = parsed_behavioursets;
@@ -753,7 +757,7 @@ struct mob_behaviourset * parse_behaviourconfig(const char *conf_text, object *o
 
             if(new_behaviour == NULL)
             {
-                LOG(llevBug, "BUG: Failed setting up behaviour for %s\n", STRING_OBJ_NAME(op));
+                LOG(llevBug, "BUG: Failed setting up behaviour %s for %s\n", buf, STRING_OBJ_NAME(op));
                 continue;
             }
 

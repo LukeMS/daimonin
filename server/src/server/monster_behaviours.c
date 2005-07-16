@@ -332,11 +332,12 @@ int calc_friendship_from_attitude(object *op, object *other)
                 MOB_DATA(other)->behaviours->groups[AIPARAM_GROUPS_NAME].flags & AI_PARAM_PRESENT)
         {
             /* Match my group attitudes to the other's group memberships */
-            for(tmp = &attitudes[AIPARAM_ATTITUDE_ARCH]; tmp != NULL;
+            for(tmp = &attitudes[AIPARAM_ATTITUDE_GROUP]; tmp != NULL;
                     tmp = tmp->next)
             {
                 struct mob_behaviour_param *group;
-                for(group = &MOB_DATA(op)->behaviours->groups[AIPARAM_GROUPS_NAME];
+            
+                for(group = &MOB_DATA(other)->behaviours->groups[AIPARAM_GROUPS_NAME];
                         group != NULL; group = group->next)
                 {
                     if(tmp->stringvalue == group->stringvalue)
@@ -353,7 +354,7 @@ int calc_friendship_from_attitude(object *op, object *other)
             friendship += attitudes[AIPARAM_ATTITUDE_PLAYER].intvalue;
     }
 
-    LOG(llevDebug, "Attitude friendship modifier: %d (%s->%s)\n", friendship, STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
+//    LOG(llevDebug, "Attitude friendship modifier: %d (%s->%s)\n", friendship, STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
 
     return friendship;
 }
@@ -900,7 +901,9 @@ void ai_move_towards_enemy(object *op, struct mob_behaviour_param *params, move_
             QUERY_FLAG(MOB_PATHDATA(op), PATHFINDFLAG_PATH_FAILED))
     {
         LOG(llevDebug, "ai_move_towards_enemy(): %s can't get to %s, downgrading its enemy status\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(op->enemy));
-        MOB_DATA(op)->enemy->friendship = 0;
+        /* TODO: this gives some crazy results together with attitudes, 
+         * see the group test in the AI testmap for an example. */
+        MOB_DATA(op)->enemy->friendship /= 2;
         MOB_DATA(op)->enemy->tmp_friendship = 0;
 
         /* Go through the mob list yet again (should only be done once) */
