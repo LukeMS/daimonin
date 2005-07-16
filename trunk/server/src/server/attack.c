@@ -123,12 +123,19 @@ static int attack_ob_simple(object *op, object *hitter, int base_dam, int base_w
     if (hitter->type == PLAYER)
     {
         rv_vector   dir;
-        get_rangevector(hitter, op, &dir, RV_NO_DISTANCE);
-
-        if (hitter->head)
-            hitter->head->anim_enemy_dir = dir.direction;
-        else
-            hitter->anim_enemy_dir = dir.direction;
+        if(get_rangevector(hitter, op, &dir, RV_NO_DISTANCE))
+        {
+            if (hitter->head) 
+            {
+                hitter->head->anim_enemy_dir = dir.direction;
+                hitter->head->facing = dir.direction;
+            } 
+            else 
+            {
+                hitter->anim_enemy_dir = dir.direction;
+                hitter->facing = dir.direction;
+            }
+        }
     }
 
 #if 0/* attack timing test */

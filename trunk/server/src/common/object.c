@@ -2318,7 +2318,7 @@ void destruct_ob(object *op)
  *   environment, the x and y coordinates will be updated to
  *   the previous environment.
  *   if we want remove alot of players inventory items, set
- *   FLAG_NO_FIX_PLAYER to thje player first and call fix_player()
+ *   FLAG_NO_FIX_PLAYER to the player first and call fix_player()
  *   explicit then.
  */
 void remove_ob(object *op)
