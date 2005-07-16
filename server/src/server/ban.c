@@ -132,7 +132,7 @@ void save_ban_file(void)
 			remove_ban_entry(ol); /* is not valid anymore, gc it on the fly */
 		else
 		{
-			fprintf(fp, "%s %c %d %d\n",ol->objlink.ban->tag,ol->objlink.ban->mode,
+			fprintf(fp, "%s %c %d %ld\n",ol->objlink.ban->tag,ol->objlink.ban->mode,
 										ol->objlink.ban->ticks_init,
 										ol->objlink.ban->ticks_init==-1?-1:ol->objlink.ban->ticks-pticks);
 		}
@@ -145,7 +145,7 @@ void save_ban_file(void)
 			remove_ban_entry(ol);
 		else
 		{
-			fprintf(fp, "%s %c %d %d\n",ol->objlink.ban->tag,ol->objlink.ban->mode,
+			fprintf(fp, "%s %c %d %ld\n",ol->objlink.ban->tag,ol->objlink.ban->mode,
 				ol->objlink.ban->ticks_init,
 				ol->objlink.ban->ticks_init==-1?-1:ol->objlink.ban->ticks-pticks);
 		}

@@ -458,12 +458,16 @@ void update_priest_flag(object *god, object *exp_ob, uint32 flag)
 /* determine_god() - determines if op worships a god. Returns
  * the godname if they do. In the case of an NPC, if they have
  * no god, we give them a random one. -b.t.
+ *
+ * This function now always returns a shared string, so
+ * we can do direct equality tests on it. - Gecko 20050716
  */
 
 const char * determine_god(object *op)
 {
+    static const char *none = NULL;
     int godnr   = -1;
-
+    
     /* spells */
     if ((op->type == FBULLET || op->type == CONE || op->type == FBALL || op->type == SWARM_SPELL) && op->title)
     {
@@ -489,6 +493,9 @@ const char * determine_god(object *op)
         return op->title;
     }
 
+    /* Initialize static pointer (TODO: should probably be a global: shstr_none)*/
+    if(!none)
+        none = add_string("none");
 
     /* If we are player, lets search a bit harder for the god.  This
      * is a fix for perceive self (before, we just looked at the active
@@ -500,19 +507,19 @@ const char * determine_god(object *op)
         for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
         {
             /* Gecko: we should actually only need to check either
-             * tmp->stats.Wiz or tmp->sub_type1, but to asvoid future
+             * tmp->stats.Wiz or tmp->sub_type1, but to avoid future
              * mistakes we check both here. */
             if (tmp->type == EXPERIENCE && tmp->stats.Wis && tmp->sub_type1 == 5)
             {
                 if (tmp->title)
                     return tmp->title;
                 else
-                    return ("none");
+                    return none;
             }
         }
     }
 
-    return ("none");
+    return none;
 }
 
 
