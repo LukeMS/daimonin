@@ -725,6 +725,6 @@ char   *spellpathnames[NRSPELLPATHS]    =
 {
 	"Life", "Death", "Elemental", "Energy",
 	"Spirit", "Protection", "Light", "Nether",
-	"Nature", "Shadow", "Choas", "Earth",
-	"Conjuration", "Abjuration", "Transmuation", "Arcane"
+	"Nature", "Shadow", "Chaos", "Earth",
+	"Conjuration", "Abjuration", "Transmutation", "Arcane"
 };

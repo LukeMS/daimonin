@@ -353,6 +353,26 @@ int calc_friendship_from_attitude(object *op, object *other)
         if(other->type == PLAYER)
             friendship += attitudes[AIPARAM_ATTITUDE_PLAYER].intvalue;
     }
+    
+    /* Named god attitude */
+    if(attitudes[AIPARAM_ATTITUDE_GOD].flags & AI_PARAM_PRESENT)
+    {
+        /* For now the god test is only done on players. 
+         * calling determine_god() on a generic mob will give that mob a 
+         * random god, and we don't want that to happen.
+         */
+        if(other->type == PLAYER)
+        {
+            const char *godname = determine_god(other);
+            for(tmp = &attitudes[AIPARAM_ATTITUDE_GOD]; tmp != NULL;
+                    tmp = tmp->next)
+            {
+                if(godname == tmp->stringvalue)
+                    friendship += tmp->intvalue;
+            }
+        }
+    }
+
 
 //    LOG(llevDebug, "Attitude friendship modifier: %d (%s->%s)\n", friendship, STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
 
@@ -901,6 +921,8 @@ void ai_move_towards_enemy(object *op, struct mob_behaviour_param *params, move_
             QUERY_FLAG(MOB_PATHDATA(op), PATHFINDFLAG_PATH_FAILED))
     {
         LOG(llevDebug, "ai_move_towards_enemy(): %s can't get to %s, downgrading its enemy status\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(op->enemy));
+        /* TODO: The current solution also totally disregards archers
+         * and magic users that don't have to reach the target by walking */
         /* TODO: this gives some crazy results together with attitudes, 
          * see the group test in the AI testmap for an example. */
         MOB_DATA(op)->enemy->friendship /= 2;
@@ -1136,6 +1158,13 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
         response->data.target.obj = wp;
         response->data.target.obj_count = wp->count;
     }
+}
+
+/* Makes sure the mob doesn't stand still too long */
+void ai_dont_stand_still(object *op, struct mob_behaviour_param *params, move_response *response)
+{
+    if(MOB_DATA(op)->idle_time >= AIPARAM_INT(AIPARAM_DONT_STAND_STILL_MAX_IDLE_TIME))
+        response->forbidden |= (1 << 0);
 }
 
 /*
@@ -1637,19 +1666,79 @@ object * monster_choose_random_spell(object *monster)
     return altern[RANDOM() % i];
 }
 
+/* op is the basic mob dooing anythinf
+ * caster is op or the multipart part that the spell will come from
+ * dir is the cast direction for directional spells
+ * target is (an optional) target object
+ * spell_item is the spell info item
+ * sp_type is the id of the spell (a spell_item may have several spells
+ * for different distances etc)
+ */
+static int monster_cast_spell(object *op, object *part, int dir, object *target, object *spell_item, int sp_type)
+{
+    spell  *sp;
+    object *tmp_enemy = NULL;
+    tag_t   tmp_enemy_tag;
+    int     ability, sp_cost;
+    
+    if ((sp = find_spell(sp_type)) == NULL)
+    {
+        LOG(llevDebug, "monster_cast_spell(): Can't find spell #%d for mob %s (%s) (%d,%d)\n", sp_type,
+            STRING_OBJ_NAME(op), STRING_MAP_NAME(op->map), op->x, op->y);
+        return FALSE;
+    }
+
+    sp_cost = SP_level_spellpoint_cost(op, op, sp_type);
+    if (op->stats.sp < sp_cost)
+        return FALSE;
+
+    ability = (spell_item->type == ABILITY && QUERY_FLAG(spell_item, FLAG_IS_MAGICAL));
+
+    /* If we cast a spell, only use up casting_time speed */
+    op->speed_left += (float) 1.0 - (float) sp->time / (float) 20.0 * (float) FABS(op->speed);
+
+    op->stats.sp -= sp_cost;
+
+    /* add default cast time from spell force to monster */
+    /* TODO: what is this? */
+    op->last_grace += spell_item->last_grace;
+
+    /* The casting code uses op->enemy for target, but we don't always
+     * target our current enemy. */
+    if(target && target != op->enemy) 
+    {
+        tmp_enemy = op->enemy;
+        tmp_enemy_tag = op->enemy_count;
+        op->enemy = target;
+        op->enemy_count = target->count;
+    }
+    
+//    LOG(-1,"CAST2 %s: spell_item=%s, dir=%d, target=%s\n",STRING_OBJ_NAME(op), STRING_OBJ_NAME(spell_item), dir, STRING_OBJ_NAME(target) );
+        
+    /* TODO: what does the return value of cast_spell do ? */
+    cast_spell(part, part, dir, sp_type, ability, spellNormal, NULL);
+    
+    if(target && target == tmp_enemy) 
+    {
+        op->enemy = tmp_enemy;
+        op->enemy_count = tmp_enemy_tag;
+    }
+
+    op->speed_left--;/* hack: see bow behaviour! */
+
+    return TRUE;
+}
+
 int ai_spell_attack_enemy(object *op, struct mob_behaviour_param *params)
 {
-    object     *target  = op->enemy;
+    int direction, sp_type;
     rv_vector  *rv;
-    spell      *sp;
     object     *spell_item;
-    int         sp_type, ability, direction, sp_cost;
 
     if (QUERY_FLAG(op, FLAG_UNAGGRESSIVE)
      || QUERY_FLAG(op, FLAG_SCARED)
      || !QUERY_FLAG(op, FLAG_READY_SPELL)
-     || !OBJECT_VALID(op->enemy,
-                      op->enemy_count)
+     || !OBJECT_VALID(op->enemy, op->enemy_count)
      || op->weapon_speed_left > 0
      || op->last_grace > 0
      || op->map == NULL)
@@ -1657,13 +1746,13 @@ int ai_spell_attack_enemy(object *op, struct mob_behaviour_param *params)
 
     /* TODO: choose another target if this or next test fails */
     if (!(rv = get_known_obj_rv(op, MOB_DATA(op)->enemy, MAX_KNOWN_OBJ_RV_AGE)))
-        return FALSE;
+        return FALSE;    
     /* TODO: also check distance and LOS */
     /* TODO: should really check type of spell (area or missile) */
-    if (!can_hit_missile(op, target, rv, 2) || !mob_can_see_obj(op, op->enemy, MOB_DATA(op)->enemy))
+    if (!can_hit_missile(op, op->enemy, rv, 2) || !mob_can_see_obj(op, op->enemy, MOB_DATA(op)->enemy))
         return FALSE;
 
-    //    LOG(llevDebug,"ai_distance_attack_enemy(): '%s' -> '%s'\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(op->enemy));
+    //    LOG(llevDebug,"ai_spell_attack_enemy(): '%s' -> '%s'\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(op->enemy));
 
     op->anim_enemy_dir = rv->direction;
     direction = rv->direction;
@@ -1690,39 +1779,87 @@ int ai_spell_attack_enemy(object *op, struct mob_behaviour_param *params)
     else
         sp_type = spell_item->stats.sp;
 
-    if ((sp = find_spell(sp_type)) == NULL)
+    return monster_cast_spell(op, rv->part, direction, op->enemy, spell_item, sp_type);
+}
+
+int ai_heal_friend(object *op, struct mob_behaviour_param *params)
+{
+    object     *tmp;
+    /* Selected target and spell for healing */
+    object *target = NULL, *spell = NULL;
+    /* Spell items for the different spell types */
+    object *heal = NULL, *cure_poison = NULL, *cure_disease = NULL;
+
+    int best_friendship = 0;
+
+    if (QUERY_FLAG(op, FLAG_SCARED)
+     || !QUERY_FLAG(op, FLAG_READY_SPELL)
+     || op->weapon_speed_left > 0
+     || op->last_grace > 0
+     || op->map == NULL)
+        return FALSE;
+    
+    /* TODO: shouldn't do this every tick. It think setting up a 
+     * bitmap of known spells at mob creation should be enough
+     * (will still need to search to find the actual spell_item, 
+     * but we can that delay that until we know we have a target) */
+    
+    /* See what spells we actually know... */
+    for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
+        if (tmp->type == ABILITY || tmp->type == SPELLBOOK)
+        {
+            switch(tmp->stats.sp)
+            {
+                case SP_MINOR_HEAL:
+                    heal = tmp;
+                    break;
+                case SP_CURE_POISON:
+                    cure_poison = tmp;
+                    break;
+                case SP_CURE_DISEASE:
+                    cure_disease = tmp;
+                    break;
+            }
+        }
+
+    if(heal == NULL &&  cure_poison == NULL && cure_disease == NULL)
+        return FALSE;
+    
+    /* TODO: actually support curing. For that I need an efficient method
+     * to see if a mob is poisoned or diseased */
+    
+    /* Do we need to heal ourself? */
+    if(op->stats.hp < op->stats.maxhp / 2 && heal) {
+        target = op;
+        spell = heal;
+    } 
+    else 
     {
-        LOG(llevDebug, "ai_spell_attack_enemy(): Can't find spell #%d for mob %s (%s) (%d,%d)\n", sp_type,
-            STRING_OBJ_NAME(op), STRING_MAP_NAME(op->map), op->x, op->y);
-        return 0;
+        struct mob_known_obj *tmp;
+
+        /* Go through list of known mobs and look for hurt friends */
+        for (tmp = MOB_DATA(op)->known_mobs; tmp; tmp = tmp->next)
+        {
+            if(tmp->tmp_friendship > best_friendship)
+            {
+                if (AIPARAM_PRESENT(AIPARAM_HEAL_FRIEND_HEALING_MIN_FRIENDSHIP) &&
+                        tmp->tmp_friendship >= AIPARAM_INT(AIPARAM_HEAL_FRIEND_HEALING_MIN_FRIENDSHIP) &&
+                        tmp->obj->stats.hp < tmp->obj->stats.maxhp / 2)
+                {
+                    target = tmp->obj;
+                    spell = heal;
+                    best_friendship = tmp->tmp_friendship;
+                }
+            }
+        }
     }
 
-    sp_cost = SP_level_spellpoint_cost(op, op, sp_type);
-    if (op->stats.sp < sp_cost)
+    if(spell && target)
+        return monster_cast_spell(op, op, 0, target, spell, spell->stats.sp);
+    else
         return FALSE;
-
-    /* TODO: this kind of spells shouldn't be handled here... */
-    if (sp->flags & SPELL_DESC_SELF) /* Spell should be cast on caster (ie, heal, strength) */
-        direction = 0;
-
-    ability = (spell_item->type == ABILITY && QUERY_FLAG(spell_item, FLAG_IS_MAGICAL));
-
-    /* If we cast a spell, only use up casting_time speed */
-    op->speed_left += (float) 1.0 - (float) spells[sp_type].time / (float) 20.0 * (float) FABS(op->speed);
-
-    op->stats.sp -= sp_cost;
-
-    /* add default cast time from spell force to monster */
-    /* TODO: what is this? */
-    op->last_grace += spell_item->last_grace;
-
-    /*LOG(-1,"CAST2: dir:%d (%d)- target:%s\n", dir, rv->direction, query_name(op->enemy) );*/
-    /* TODO: what does the return value of cast_spell do ? */
-    cast_spell(rv->part, rv->part, direction, sp_type, ability, spellNormal, NULL);
-
-    op->speed_left--;/* hack: see bow bahaviour! */
-    return TRUE;
 }
+
 
 /* AI <-> plugin interface for actions */
 int ai_plugin_action(object *op, struct mob_behaviour_param *params)

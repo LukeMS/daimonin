@@ -54,6 +54,8 @@ BehaviourClass(PROCESSES,
         Parameter(ATTITUDE, PLAYER, INTEGER, OPTIONAL, 0)
         /** Attitude against a named AI group, see the "groups" behaviour */
         Parameter(ATTITUDE, GROUP, STRINGINT, MULTI | OPTIONAL, "X:0")
+        /** Attitude against the followers of a named god */
+        Parameter(ATTITUDE, GOD, STRINGINT, MULTI | OPTIONAL, "X:0")
     )
 
     /** Configures the group membership of the mob, not a real behaviour.
@@ -111,6 +113,12 @@ BehaviourClass(MOVES,
         Parameter(MOVE_RANDOMLY, XLIMIT, INTEGER, OPTIONAL, -1)
         /** Limits the y-distance from the starting point */
         Parameter(MOVE_RANDOMLY, YLIMIT, INTEGER, OPTIONAL, -1)
+    )
+
+    /** Makes sure the mob never stands 100% still */
+    Behaviour(DONT_STAND_STILL, ai_dont_stand_still,
+        /** Max allowed still time (number of moves) */
+        Parameter(DONT_STAND_STILL, MAX_IDLE_TIME, INTEGER, OPTIONAL, 1)
     )
 
     /** Move towards the mob's starting point. Terminal. */
@@ -182,6 +190,19 @@ BehaviourClass(ACTIONS,
     /** Attack the current enemy with distance spells if within range
      * and line of fire */
     Behaviour(SPELL_ATTACK_ENEMY, ai_spell_attack_enemy, NIL)
+
+    /** Cast healing/restoring spells on friends. Casting on self is
+     * always implicit, but casting on others will only be done if
+     * their friendship is above the specified values AND a value is
+     * specified. */
+    Behaviour(HEAL_FRIEND, ai_heal_friend, 
+        /** Friendship threshold for healing */
+        Parameter(HEAL_FRIEND, HEALING_MIN_FRIENDSHIP, INTEGER, OPTIONAL, 0)
+        /** Friendship threshold for cure poison */
+        Parameter(HEAL_FRIEND, CURE_POISON_MIN_FRIENDSHIP, INTEGER, OPTIONAL, 0)
+        /** Friendship threshold for cure disease */
+        Parameter(HEAL_FRIEND, CURE_DISEASE_MIN_FRIENDSHIP, INTEGER, OPTIONAL, 0)
+    )
 
     /** Plugin interface for actions */
     Behaviour(PLUGIN_ACTION, ai_plugin_action,

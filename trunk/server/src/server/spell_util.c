@@ -198,6 +198,11 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
     object*target = NULL, *cast_op;
     int             success = 0, duration, points_used = 0;
     rv_vector       rv;
+    static const char *god_none = NULL;
+ 
+    // TODO: rather use a global for this... shstr_none
+    if(!god_none)
+        god_none = add_string("none");
 
     if (s == NULL)
     {
@@ -293,7 +298,7 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
         /* if it a prayer, grab the players god - if we have non, we can't cast - except potions */
         if (spells[type].flags & SPELL_DESC_WIS && item != spellPotion)
         {
-            if (!strcmp((godname = determine_god(op)), "none"))
+            if ((godname = determine_god(op)) == god_none)
             {
                 new_draw_info(NDI_UNIQUE, 0, op, "You need a deity to cast a prayer!");
                 return 0;
@@ -330,15 +335,20 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
                                  target ? target->name : "yourself");
         return 0;
     }
-    /*  LOG(llevInfo,"TARGET: op: %s target: %s\n", op->name, target?target->name:"<none>");*/
+    
+//    LOG(llevInfo,"TARGET: op: %s target: %s\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(target));
 
     /* if valid target is not in range for selected spell, skip here casting */
     if (target)
     {
-        get_rangevector_from_mapcoords(op->map, op->x, op->y, target->map, target->x, target->y, &rv, 0);
-        if ((abs(rv.distance_x) > abs(rv.distance_y) ? abs(rv.distance_x) : abs(rv.distance_y)) > spells[type].range)
+        if(! get_rangevector(op, target, &rv, RV_DIAGONAL_DISTANCE) ||
+                rv.distance > spells[type].range)
         {
-            new_draw_info(NDI_UNIQUE, 0, op, "Your target is out of range!");
+            if(op->type == PLAYER)
+                new_draw_info(NDI_UNIQUE, 0, op, "Your target is out of range!");
+/*            else
+                LOG(llevInfo,"cast_spell: %s out of range for %s from %s", STRING_OBJ_NAME(target), spells[type].name, STRING_OBJ_NAME(op));
+  */          
             return 0;
         }
     }
@@ -389,16 +399,11 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
     }
 
     /* chance to fumble the spell by to low wisdom */
-    if (item
-     == spellNormal
-     && op->type
-     == PLAYER
+    if (item == spellNormal
+     && op->type == PLAYER
      && s->flags & SPELL_DESC_WIS
-     && random_roll(0, 99, op, PREFER_HIGH)
-      < s->level
-      / (float)
-        MAX(1,
-            op->chosen_skill->level) * cleric_chance[op->stats.Wis])
+     && random_roll(0, 99, op, PREFER_HIGH) < s->level / (float)
+        MAX(1, op->chosen_skill->level) * cleric_chance[op->stats.Wis])
     {
         play_sound_player_only(CONTR(op), SOUND_FUMBLE_SPELL, SOUND_NORMAL, 0, 0);
         new_draw_info(NDI_UNIQUE, 0, op, "You fumble the prayer because your wisdom is low.");
@@ -2283,17 +2288,17 @@ int find_target_for_spell(object *op, object *item, object **target, int dir, ui
     else /* thats a mob OR rune/firewall/.. OR a pet/summon controlled from player */
     {
         /* we use op->enemy as target from non player caster.
-             * we need to set this from outside and for healing spells,
-             * we must set from outside temporary the enemy to a friendly unit.
-             * This is safe because we do no AI stuff here - we simply USE the
-             * target here even the stuff above looks like we select one...
-             * its only a fallback.
-             */
+         * we need to set this from outside and for healing spells,
+         * we must set from outside temporary the enemy to a friendly unit.
+         * This is safe because we do no AI stuff here - we simply USE the
+         * target here even the stuff above looks like we select one...
+         * its only a fallback.
+         */
 
         /* sanity check for a legal target */
         if (op->enemy && OBJECT_ACTIVE(op->enemy) && op->enemy->count == op->enemy_count)
         {
-            *target = op;
+            *target = op->enemy;
             return TRUE;
         }
     }
@@ -2540,10 +2545,7 @@ int can_see_monsterP(mapstruct *m, int x, int y, int dir)
         return 1;
     return can_see_monsterP(m, x, y, reduction_dir[dir][0])
          | can_see_monsterP(m, x, y, reduction_dir[dir][1])
-         | can_see_monsterP(m,
-                            x,
-                            y,
-                            reduction_dir[dir][2]);
+         | can_see_monsterP(m, x, y, reduction_dir[dir][2]);
 }
 
 
