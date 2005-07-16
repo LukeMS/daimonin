@@ -728,6 +728,14 @@ arch floor_ostone1
 x 6
 y 4
 end
+arch sign
+msg
+The dwarf is just a test case for the
+dont_stand_still behaviour
+endmsg
+x 6
+y 4
+end
 arch floor_ostone1
 x 6
 y 5
@@ -844,6 +852,38 @@ end
 arch floor_ostone1
 x 7
 y 4
+end
+arch dwarf_fighter
+unaggressive 1
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+x 7
+y 4
+arch ai_generic
+msg
+# This is a generic AI that can be used for most mobs
+processes:
+look_for_other_mobs
+friendship
+choose_enemy
+
+moves: 
+# stand_still
+sleep
+dont_stand_still max_idle_time=0
+# run_away_from_enemy hp_threshold=6
+move_towards_enemy
+move_towards_enemy_last_known_pos
+search_for_lost_enemy
+move_towards_waypoint
+# move_randomly xlimit=5 ylimit=5
+move_towards_home
+
+actions:
+melee_attack_enemy
+bow_attack_enemy
+spell_attack_enemy
+endmsg
+end
 end
 arch floor_ostone1
 x 7
@@ -1133,9 +1173,89 @@ arch floor_ostone1
 x 9
 y 6
 end
+arch priest_church
+unaggressive 1
+direction 3
+randomitems spells_priest;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+Con 1
+x 9
+y 6
+arch ai_generic
+msg
+# This is a generic AI that can be used for most mobs
+processes:
+look_for_other_mobs
+friendship
+choose_enemy
+
+moves: 
+# stand_still
+sleep
+# run_away_from_enemy hp_threshold=6
+move_towards_enemy
+move_towards_enemy_last_known_pos
+search_for_lost_enemy
+move_towards_waypoint
+# move_randomly xlimit=5 ylimit=5
+move_towards_home
+
+actions:
+heal_friend healing_min_friendship=0
+melee_attack_enemy
+bow_attack_enemy
+spell_attack_enemy
+endmsg
+end
+arch ability_cause_lig_wound
+name ability minor healing
+sp 2
+end
+end
 arch floor_ostone1
 x 9
 y 7
+end
+arch priest_church
+name mob priest
+unaggressive 1
+direction 3
+randomitems spells_priest;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+Con 1
+friendly 0
+face orc_priest.131
+animation orc_priest
+x 9
+y 7
+arch ai_generic
+msg
+# This is a generic AI that can be used for most mobs
+processes:
+look_for_other_mobs
+friendship
+choose_enemy
+
+moves: 
+# stand_still
+sleep
+# run_away_from_enemy hp_threshold=6
+move_towards_enemy
+move_towards_enemy_last_known_pos
+search_for_lost_enemy
+move_towards_waypoint
+# move_randomly xlimit=5 ylimit=5
+move_towards_home
+
+actions:
+heal_friend healing_min_friendship=0
+melee_attack_enemy
+bow_attack_enemy
+spell_attack_enemy
+endmsg
+end
+arch ability_cause_lig_wound
+name ability minor healing
+sp 2
+end
 end
 arch floor_ostone1
 x 9
@@ -1240,6 +1360,14 @@ x 10
 y 5
 end
 arch floor_ostone1
+x 10
+y 6
+end
+arch sign
+msg
+The priest will heal you or friendly mobs if needed.
+The orc will heal your enemies if they need it.
+endmsg
 x 10
 y 6
 end
@@ -2517,6 +2645,7 @@ arch hobgoblin
 type 83
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 Wis 3
+Con 1
 arch ai_generic
 msg
 # This is a generic AI that can be used for most mobs
@@ -2563,6 +2692,7 @@ x 20
 y 4
 arch kobold_fighter
 type 83
+Con 1
 Wis 3
 arch ai_generic
 msg
@@ -2725,6 +2855,7 @@ arch hobgoblin
 type 83
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 Wis 3
+Con 1
 arch ai_generic
 msg
 # This is a generic AI that can be used for most mobs
@@ -2771,6 +2902,7 @@ x 21
 y 4
 arch kobold_fighter
 type 83
+Con 1
 Wis 3
 arch ai_generic
 msg
@@ -2933,6 +3065,7 @@ arch hobgoblin
 type 83
 randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 Wis 3
+Con 1
 arch ai_generic
 msg
 # This is a generic AI that can be used for most mobs
@@ -2980,6 +3113,7 @@ y 4
 arch kobold_fighter
 type 83
 Wis 3
+Con 1
 arch ai_generic
 msg
 # This is a generic AI that can be used for most mobs
