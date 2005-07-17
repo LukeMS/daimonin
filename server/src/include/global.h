@@ -526,10 +526,43 @@ EXTERN int                      global_race_counter; /* global race counter */
 
 EXTERN struct timeval           last_time;        /* Used for main loop timing */
 
-/*
- * Used in treasure.c
- */
-EXTERN const char              *undead_name;    /* Used in hit_player() in main.c */
+/* constant shared string pointers */
+EXTERN struct shstr_constants 
+{
+    const char *undead;  
+    const char *none;   
+    const char *NONE;   
+    const char *quarterstaff;   
+    const char *battleground;
+    const char *clawing;
+    const char *dragon_skin_force;
+    const char *dragon_ability_force;
+    const char *dragon;
+    const char *town_portal_destination;
+    const char *existing_town_portal;
+    const char *player;
+    const char *money;
+    const char *RANK_FORCE;
+    const char *rank_force;
+    const char *ALIGNMENT_FORCE;
+    const char *alignment_force;
+    const char *GUILD_FORCE;
+    const char *guild_force;
+    const char *player_info;
+    const char *special_prayer;
+    const char *grace_limit;
+    const char *restore_grace;
+    const char *restore_hitpoints;
+    const char *restore_spellpoints;
+    const char *heal_spell;
+    const char *remove_curse;
+    const char *remove_damnation;
+    const char *heal_depletion;
+    const char *message;
+    const char *enchant_weapon;
+    const char *Eldath;
+    const char *the_Tabernacle;
+} shstr;
 
 EXTERN Animations              *animations;
 EXTERN int                      num_animations, animations_allocated, bmaps_checksum;

@@ -106,7 +106,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 /* this marks no skill used */
 #define CHOSEN_SKILL_NO (99999)
 
-#define PORTAL_DESTINATION_NAME "Town portal destination"
+// #define PORTAL_DESTINATION_NAME "Town portal destination"
 
 /* LOS (loc.c) defines */
 #define BLOCKED_LOS_VISIBLE     0x00    /* its visible */

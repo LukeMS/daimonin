@@ -820,7 +820,7 @@ static int unique_book(object *book, int msgtype)
      */
     for (test = get_titlelist(msgtype)->first_book; test; test = test->next)
     {
-        if (!strcmp(test->name, book->name) && !strcmp(book->title, test->authour))
+        if (test->name == book->name && book->title == test->authour)
             return 0;
     }
     return 1;
@@ -1415,7 +1415,7 @@ void make_formula_book(object *book, int level)
             LOG(llevBug, "BUG: formula_msg() can't find arch %s for formula.", op_name);
 
         /* item name */
-        if (strcmp(formula->title, "NONE"))
+        if (formula->title != shstr.NONE)
         {
             sprintf(retbuf, "%sThe %s of %s", retbuf, op_name, formula->title);
             /* This results in things like pile of philo. sulfur.

@@ -703,10 +703,10 @@ void enter_exit(object *op, object *exit_ob)
             {
                 if (op->type != PLAYER) /* player only here ... */
                     return;
-                /* remove an old force with a slaying field == PORTAL_DESTINATION_NAME */
+                /* remove an old force with a slaying field == portal_dest */
                 for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
                 {
-                    if (tmp->type == FORCE && tmp->slaying && !strcmp(tmp->slaying, PORTAL_DESTINATION_NAME))
+                    if (tmp->type == FORCE && tmp->slaying && tmp->slaying == shstr.town_portal_destination)
                         break;
                 }
                 if (tmp)

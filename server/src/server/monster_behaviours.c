@@ -557,6 +557,7 @@ object * get_return_waypoint(object *op)
 }
 
 /* Find a monster's waypoint by name (used for getting the next waypoint) */
+/* name must be a shared string */
 object * find_waypoint(object *op, const char *name)
 {
     object *wp  = NULL;
@@ -565,7 +566,7 @@ object * find_waypoint(object *op, const char *name)
         return NULL;
 
     for (wp = op->inv; wp != NULL; wp = wp->below)
-        if (wp->type == TYPE_WAYPOINT_OBJECT && strcmp(wp->name, name) == 0)
+        if (wp->type == TYPE_WAYPOINT_OBJECT && wp->name == name)
             break;
 
     return wp;

@@ -990,7 +990,7 @@ static void send_attack_msg(object *op, object *hitter, int attacknum, int dam, 
             int div = 1;
 
             if (! god || ! god->slaying ||
-         strstr (god->slaying, undead_name) == NULL)
+         strstr (god->slaying, shstr.undead) == NULL)
                 div = 2;
         if (op->level * div <
         (turn_bonus[owner->stats.Wis]+owner->level +
@@ -1830,7 +1830,7 @@ void deathstrike_player(object *op, object *hitter, int *dam)
     int atk_lev, def_lev, kill_lev;
 
     if (hitter->slaying)
-        if (!((QUERY_FLAG(op, FLAG_UNDEAD) && strstr(hitter->slaying, undead_name))
+        if (!((QUERY_FLAG(op, FLAG_UNDEAD) && strstr(hitter->slaying, shstr.undead))
            || (op->race && strstr(hitter->slaying, op->race))))
             return;
 

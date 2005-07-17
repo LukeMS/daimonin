@@ -1884,7 +1884,7 @@ void kill_player(object *op)
         /* determine_god() seems to not work sometimes... why is this?
            Should I be using something else? GD */
         const char *god = determine_god(op);
-        if (god && (strcmp(god, "none")))
+        if (god != shstr.none)
             new_draw_info_format(NDI_UNIQUE, 0, op,
                                  "For a brief moment you feel the holy presence of\n%s protecting you.", god);
         else
@@ -2360,7 +2360,7 @@ int op_on_battleground(object *op, int *x, int *y)
         if (QUERY_FLAG(tmp, FLAG_IS_FLOOR))
         {
             if (QUERY_FLAG(tmp, FLAG_NO_PICK)
-             && strcmp(tmp->name, "battleground") == 0
+             && tmp->name == shstr.battleground
              && tmp->type == BATTLEGROUND
              && EXIT_X(tmp)
              && EXIT_Y(tmp))
@@ -2434,12 +2434,12 @@ void dragon_ability_gain(object *who, int atnr, int level)
     }
     else if (item->type == SKILL)
     {
-        if (strcmp(item->title, "clawing") == 0 && change_skill(who, SK_CLAWING))
+        if (item->title == shstr.clawing && change_skill(who, SK_CLAWING))
         {
             /* adding new attacktypes to the clawing skill */
             tmp = who->chosen_skill; /* clawing skill object */
 
-            if (tmp->type == SKILL && strcmp(tmp->name, "clawing") == 0 && !(tmp->attacktype & item->attacktype))
+            if (tmp->type == SKILL && tmp->name == shstr.clawing && !(tmp->attacktype & item->attacktype))
             {
                 /* always add physical if there's none */
                 if (tmp->attacktype == 0)
@@ -2458,7 +2458,7 @@ void dragon_ability_gain(object *who, int atnr, int level)
         /* forces in the treasurelist can alter the player's stats */
         object *skin;
         /* first get the dragon skin force */
-        for (skin = who->inv; skin != NULL && strcmp(skin->arch->name, "dragon_skin_force") != 0; skin = skin->below)
+        for (skin = who->inv; skin != NULL && skin->arch->name != shstr.dragon_skin_force; skin = skin->below)
             ;
         if (skin == NULL)
             return;
@@ -2580,7 +2580,7 @@ int is_dragon_pl(object *op)
      && op->type == PLAYER
      && op->arch != NULL
      && op->arch->clone.race != NULL
-     && strcmp(op->arch->clone.race, "dragon") == 0)
+     && op->arch->clone.race == shstr.dragon)
         return 1;
     return 0;
 }

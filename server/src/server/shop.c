@@ -317,7 +317,7 @@ sint64 pay_from_container(object *op, object *pouch, sint64 to_pay)
         {
             for (i = 0; i < NUM_COINS; i++)
             {
-                if (!strcmp(coins[NUM_COINS - 1 - i], tmp->arch->name) && (tmp->value == tmp->arch->clone.value))
+                if (coins[NUM_COINS - 1 - i] == tmp->arch->name && (tmp->value == tmp->arch->clone.value))
                 {
                     /* This should not happen, but if it does, just     *
                          * merge the two.                       */

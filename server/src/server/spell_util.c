@@ -198,12 +198,7 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
     object*target = NULL, *cast_op;
     int             success = 0, duration, points_used = 0;
     rv_vector       rv;
-    static const char *god_none = NULL;
  
-    // TODO: rather use a global for this... shstr_none
-    if(!god_none)
-        god_none = add_string("none");
-
     if (s == NULL)
     {
         LOG(llevBug, "BUG: unknown spell: %d from: %s (%s)\n", type, query_name(op), query_name(caster));
@@ -298,7 +293,7 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
         /* if it a prayer, grab the players god - if we have non, we can't cast - except potions */
         if (spells[type].flags & SPELL_DESC_WIS && item != spellPotion)
         {
-            if ((godname = determine_god(op)) == god_none)
+            if ((godname = determine_god(op)) == shstr.none)
             {
                 new_draw_info(NDI_UNIQUE, 0, op, "You need a deity to cast a prayer!");
                 return 0;
@@ -342,7 +337,7 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
     if (target)
     {
         if(! get_rangevector(op, target, &rv, RV_DIAGONAL_DISTANCE) ||
-                rv.distance > spells[type].range)
+                (unsigned int)rv.distance > spells[type].range)
         {
             if(op->type == PLAYER)
                 new_draw_info(NDI_UNIQUE, 0, op, "Your target is out of range!");
@@ -3015,7 +3010,7 @@ int cast_smite_spell(object *op, object *caster, int dir, int type)
     if (!target
      || QUERY_FLAG(target, FLAG_CAN_REFL_SPELL)
      || !god
-     || (target->title && !strcmp(target->title, god->name))
+     || (target->title && target->title == god->name)
      || (target->race && strstr(target->race, god->race)))
     {
         new_draw_info(NDI_UNIQUE, 0, op, "Your request is unheeded.");
