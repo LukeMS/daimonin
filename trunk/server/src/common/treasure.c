@@ -35,10 +35,9 @@
 
 #include <global.h>
 
-char                           *coins[NUM_COINS + 1]    =
-{
-    "mitcoin", "goldcoin", "silvercoin", "coppercoin", NULL
-};
+/* This should now contain shared string pointers only */
+const char *coins[NUM_COINS + 1];
+ // = { "mitcoin", "goldcoin", "silvercoin", "coppercoin", NULL };
 
 /* Give 1 re-roll attempt per artifact */
 #define ARTIFACT_TRIES 2

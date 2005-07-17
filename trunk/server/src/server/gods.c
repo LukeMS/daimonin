@@ -38,11 +38,13 @@
 static int  god_gives_present(object *op, object *god, treasure *tr);
 static void follower_remove_similar_item(object *op, object *item);
 
+// TODO: look over usage of those two functions and see if we can get
+// away without the strncmp/strcmp calls
 int lookup_god_by_name(const char *name)
 {
     int godnr = -1, nmlen = strlen(name);
 
-    if (name && strcmp(name, "none"))
+    if (name && name != shstr.none)
     {
         godlink    *gl;
         for (gl = first_god; gl; gl = gl->next)
@@ -58,7 +60,7 @@ object * find_god(const char *name)
 {
     object *god = NULL;
 
-    if (name)
+    if (name && name != shstr.none)
     {
         godlink    *gl;
         for (gl = first_god; gl; gl = gl->next)
@@ -118,7 +120,7 @@ void pray_at_altar(object *pl, object *altar)
         become_follower(pl, &altar->other_arch->clone);
         return;
     }
-    else if (!strcmp(pl_god->name, altar->other_arch->clone.name))
+    else if (pl_god->name == altar->other_arch->clone.name)
     {
         /* pray at your gods altar */
         int bonus   = ((pl->stats.Wis / 10) + (SK_level(pl) / 10));
@@ -223,7 +225,7 @@ static void check_special_prayers(object *op, object *god)
     {
         next_tmp = tmp->below;
 
-        if (tmp->type != FORCE || tmp->slaying == NULL || strcmp(tmp->slaying, "special prayer"))
+        if (tmp->type != FORCE || tmp->slaying == NULL || tmp->slaying != shstr.special_prayer)
             continue;
         spell = tmp->stats.sp;
 
@@ -465,7 +467,6 @@ void update_priest_flag(object *god, object *exp_ob, uint32 flag)
 
 const char * determine_god(object *op)
 {
-    static const char *none = NULL;
     int godnr   = -1;
     
     /* spells */
@@ -493,10 +494,6 @@ const char * determine_god(object *op)
         return op->title;
     }
 
-    /* Initialize static pointer (TODO: should probably be a global: shstr_none)*/
-    if(!none)
-        none = add_string("none");
-
     /* If we are player, lets search a bit harder for the god.  This
      * is a fix for perceive self (before, we just looked at the active
      * skill.)
@@ -514,12 +511,12 @@ const char * determine_god(object *op)
                 if (tmp->title)
                     return tmp->title;
                 else
-                    return none;
+                    return shstr.none;
             }
         }
     }
 
-    return none;
+    return shstr.none;
 }
 
 
@@ -645,19 +642,6 @@ static int god_enchants_weapon(object *op, object *god, object *tr)
     return 0;
 }
 
-static int same_string(const char *s1, const char *s2)
-{
-    if (s1 == NULL)
-        if (s2 == NULL)
-            return 1;
-        else
-            return 0;
-    else if (s2 == NULL)
-        return 0;
-    else
-        return strcmp(s1, s2) == 0;
-}
-
 /*
  * follower_has_similar_item - Checks for any occurrence of
  * the given 'item' in the inventory of 'op' (recursively).
@@ -669,14 +653,11 @@ static int follower_has_similar_item(object *op, object *item)
 
     for (tmp = op->inv; tmp != NULL; tmp = tmp->below)
     {
-        if (tmp->type
-         == item->type
-         && same_string(tmp->name, item->name)
-         && same_string(tmp->title, item->title)
-         && same_string(tmp->msg,
-                        item->msg)
-         && same_string(tmp->slaying,
-                        item->slaying))
+        if (tmp->type == item->type
+         && tmp->name == item->name
+         && tmp->title == item->title
+         && tmp->msg == item->msg
+         && tmp->slaying == item->slaying)
             return 1;
         if (tmp->inv && follower_has_similar_item(tmp, item))
             return 1;
@@ -701,14 +682,11 @@ static void follower_remove_similar_item(object *op, object *item)
         {
             next = tmp->below;   /* backup in case we remove tmp */
 
-            if (tmp->type
-             == item->type
-             && same_string(tmp->name, item->name)
-             && same_string(tmp->title, item->title)
-             && same_string(tmp->msg,
-                            item->msg)
-             && same_string(tmp->slaying,
-                            item->slaying))
+            if (tmp->type == item->type
+             && tmp->name == item->name
+             && tmp->title == item->title
+             && tmp->msg == item->msg
+             && tmp->slaying == item->slaying)
             {
                 /* message */
                 if (tmp->nrof > 1)
@@ -799,7 +777,7 @@ void god_intervention(object *op, object *god)
             item = &tr->item->clone;
 
             // Grace limit
-            if (item->type == BOOK && IS_SYS_INVISIBLE(item) && strcmp(item->name, "grace limit") == 0)
+            if (item->type == BOOK && IS_SYS_INVISIBLE(item) && item->name == shstr.grace_limit)
             {
                 if (op->stats.grace < item->stats.grace || op->stats.grace < op->stats.maxgrace)
                 {
@@ -812,7 +790,7 @@ void god_intervention(object *op, object *god)
             }
 
             // Restore grace
-            if (item->type == BOOK && IS_SYS_INVISIBLE(item) && strcmp(item->name, "restore grace") == 0)
+            if (item->type == BOOK && IS_SYS_INVISIBLE(item) && item->name == shstr.restore_grace)
             {
                 if (op->stats.grace >= 0)
                     continue;
@@ -822,7 +800,7 @@ void god_intervention(object *op, object *god)
             }
 
             // Heal damage
-            if (item->type == BOOK && IS_SYS_INVISIBLE(item) && strcmp(item->name, "restore hitpoints") == 0)
+            if (item->type == BOOK && IS_SYS_INVISIBLE(item) && item->name == shstr.restore_hitpoints)
             {
                 if (op->stats.hp >= op->stats.maxhp)
                     continue;
@@ -832,7 +810,7 @@ void god_intervention(object *op, object *god)
             }
 
             // Restore spellpoints
-            if (item->type == BOOK && IS_SYS_INVISIBLE(item) && strcmp(item->name, "restore spellpoints") == 0)
+            if (item->type == BOOK && IS_SYS_INVISIBLE(item) && item->name == shstr.restore_spellpoints)
             {
                 int max     = (int) ((float) op->stats.maxsp * ((float) item->stats.maxsp / (float) 100.0));
                 // Restore to 50 .. 100%, if sp < 50%
@@ -844,7 +822,7 @@ void god_intervention(object *op, object *god)
             }
 
             // Various heal spells
-            if (item->type == BOOK && IS_SYS_INVISIBLE(item) && strcmp(item->name, "heal spell") == 0)
+            if (item->type == BOOK && IS_SYS_INVISIBLE(item) && item->name == shstr.heal_spell)
             {
                 if (cast_heal(op, 1, op, get_spell_number(item)))
                     return;
@@ -853,7 +831,7 @@ void god_intervention(object *op, object *god)
             }
 
             // Remove curse
-            if (item->type == BOOK && IS_SYS_INVISIBLE(item) && strcmp(item->name, "remove curse") == 0)
+            if (item->type == BOOK && IS_SYS_INVISIBLE(item) && item->name == shstr.remove_curse)
             {
                 if (god_removes_curse(op, 0))
                     return;
@@ -862,7 +840,7 @@ void god_intervention(object *op, object *god)
             }
 
             // Remove damnation
-            if (item->type == BOOK && IS_SYS_INVISIBLE(item) && strcmp(item->name, "remove damnation") == 0)
+            if (item->type == BOOK && IS_SYS_INVISIBLE(item) && item->name == shstr.remove_damnation)
             {
                 if (god_removes_curse(op, 1))
                     return;
@@ -871,7 +849,7 @@ void god_intervention(object *op, object *god)
             }
 
             // Heal depletion
-            if (item->type == BOOK && IS_SYS_INVISIBLE(item) && strcmp(item->name, "heal depletion") == 0)
+            if (item->type == BOOK && IS_SYS_INVISIBLE(item) && item->name == shstr.heal_depletion)
             {
                 object     *depl;
                 archetype  *at;
@@ -896,14 +874,14 @@ void god_intervention(object *op, object *god)
 
 
             // Messages
-            if (item->type == BOOK && IS_SYS_INVISIBLE(item) && strcmp(item->name, "message") == 0)
+            if (item->type == BOOK && IS_SYS_INVISIBLE(item) && item->name == shstr.message)
             {
                 new_draw_info(NDI_UNIQUE, 0, op, item->msg);
                 return;
             }
 
             // Enchant weapon
-            if (item->type == BOOK && IS_SYS_INVISIBLE(item) && strcmp(item->name, "enchant weapon") == 0)
+            if (item->type == BOOK && IS_SYS_INVISIBLE(item) && item->name == shstr.enchant_weapon)
             {
                 if (god_enchants_weapon(op, god, item))
                     return;

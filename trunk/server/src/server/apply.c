@@ -856,7 +856,7 @@ int convert_item(object *item, object *converter)
      * it wants some amount.  We don't make change (ie, if something costs
      * 3 gp and player drops a platinum, tough luck)
      */
-    if (!strcmp(CONV_FROM(converter), "money"))
+    if (CONV_FROM(converter) == shstr.money)
     {
         sint64 cost;
         nr = (int) (((sint64)item->nrof * item->value) / (sint64)CONV_NEED(converter));
@@ -1202,7 +1202,7 @@ int esrv_apply_container(object *op, object *sack)
                 new_draw_info_format(NDI_UNIQUE, 0, op, "Its not your groups bounty.");
                 return 0;
             }
-            else if (sack->sub_type1 == ST1_CONTAINER_CORPSE_player && strcmp(sack->slaying, op->name))
+            else if (sack->sub_type1 == ST1_CONTAINER_CORPSE_player && sack->slaying != op->name)
             {
                 new_draw_info_format(NDI_UNIQUE, 0, op, "Its not your bounty.");
                 return 0;
@@ -1909,7 +1909,7 @@ static object * find_special_prayer_mark(object *op, int spell)
     object *tmp;
 
     for (tmp = op->inv; tmp; tmp = tmp->below)
-        if (tmp->type == FORCE && tmp->slaying && strcmp(tmp->slaying, "special prayer") == 0 && tmp->stats.sp == spell)
+        if (tmp->type == FORCE && tmp->slaying && tmp->slaying == shstr.special_prayer && tmp->stats.sp == spell)
             return tmp;
     return 0;
 }
@@ -2586,9 +2586,9 @@ int dragon_eat_flesh(object *op, object *meal)
     {
         if (tmp->type == FORCE)
         {
-            if (strcmp(tmp->arch->name, "dragon_skin_force") == 0)
+            if (tmp->arch->name == shstr.dragon_skin_force)
                 skin = tmp;
-            else if (strcmp(tmp->arch->name, "dragon_ability_force") == 0)
+            else if (tmp->arch->name == shstr.dragon_ability_force)
                 abil = tmp;
         }
     }

@@ -116,7 +116,7 @@ void attempt_do_alchemy(object *caster, object *cauldron)
             if (rp)
             {
 #ifdef ALCHEMY_DEBUG
-                if (strcmp(rp->title, "NONE"))
+                if (rp->title != shstr.NONE)
                     LOG(llevDebug, "WIZ got formula: %s of %s\n", rp->arch_name, rp->title);
                 else
                     LOG(llevDebug, "WIZ got formula: %s (nbatches:%d)\n", rp->arch_name, formula / rp->index);
@@ -252,7 +252,7 @@ object * attempt_recipe(object *caster, object *cauldron, int ability, recipe *r
         object *tmp;
         for (tmp = caster->inv; tmp != NULL; tmp = tmp->below)
         {
-            if (tmp->type == FORCE && tmp->slaying && !strcmp(rp->keycode, tmp->slaying))
+            if (tmp->type == FORCE && tmp->slaying && rp->keycode == tmp->slaying)
                 break;
         }
         if (tmp == NULL)
@@ -338,7 +338,7 @@ object * make_item_from_recipe(object *cauldron, recipe *rp)
     }
 
     /* Find the appropriate artifact template...*/
-    if (strcmp(rp->title, "NONE"))
+    if (rp->title != shstr.NONE)
     {
         if ((art = locate_recipe_artifact(rp)) == NULL)
         {
@@ -369,7 +369,7 @@ object * find_transmution_ob(object *first_ingred, recipe *rp)
 
     if (rp->transmute) /* look for matching ingredient/prod archs */
         for (item = first_ingred; item; item = item->below)
-            if (!strcmp(item->arch->name, rp->arch_name))
+            if (item->arch->name == rp->arch_name)
                 break;
 
     /* failed, create a fresh object. Note no nrof>1 because that would
@@ -379,7 +379,7 @@ object * find_transmution_ob(object *first_ingred, recipe *rp)
 
 #ifdef ALCHEMY_DEBUG
     LOG(llevDebug, "recipe calls for%stransmution.\n", rp->transmute ? " " : " no ");
-    if (strcmp(item->arch->name, rp->arch_name))
+    if (item->arch->name != rp->arch_name)
         LOG(llevDebug, "WARNING: recipe calls for arch: %s\n", rp->arch_name);
     LOG(llevDebug, " find_transmutable_ob(): returns arch %s(sp:%d)\n", item->arch->name, item->stats.sp);
 #endif

@@ -67,6 +67,57 @@ static void init_defaults()
 }
 
 /*
+ * Initialises global shared strings that we can use in comparisions
+ */
+static void init_strings()
+{
+    shstr.undead = add_string("undead");
+    shstr.none = add_string("none"); /* Used in god code */
+    shstr.NONE = add_string("NONE"); /* Used in alchemy code */
+    shstr.quarterstaff = add_string("quarterstaff");
+    shstr.battleground = add_string("battleground");
+    
+    shstr.clawing = add_string("clawing");
+    shstr.dragon_skin_force = add_string("dragon_skin_force");
+    shstr.dragon_ability_force = add_string("dragon_ability_force");
+    shstr.dragon = add_string("dragon");
+    
+    shstr.town_portal_destination = add_string("Town portal destination");
+    shstr.existing_town_portal = add_string("Existing town portal");
+
+    shstr.player = add_string("player");
+    shstr.money = add_string("money");
+    shstr.RANK_FORCE = add_string("RANK_FORCE");
+    shstr.rank_force = add_string("rank_force");
+    shstr.ALIGNMENT_FORCE = add_string("ALIGNMENT_FORCE");
+    shstr.alignment_force = add_string("alignment_force");
+    shstr.GUILD_FORCE = add_string("GUILD_FORCE");
+    shstr.guild_force = add_string("guild_force");
+    shstr.player_info = add_string("player_info");
+
+    shstr.special_prayer = add_string("special prayer");
+    shstr.grace_limit = add_string("grace limit");
+    shstr.restore_grace = add_string("restore grace");
+    shstr.restore_hitpoints = add_string("restore hitpoints");
+    shstr.restore_hitpoints = add_string("restore spellpoints");
+    shstr.heal_spell = add_string("heal spell");
+    shstr.remove_curse = add_string("remove curse");
+    shstr.remove_damnation = add_string("remove damnation");
+    shstr.heal_depletion = add_string("heal depletion");
+    shstr.message = add_string("message");
+    shstr.enchant_weapon = add_string("enchant weapon");
+    
+    shstr.Eldath = add_string("Eldath"); /* old and incorrect god */
+    shstr.the_Tabernacle = add_string("the Tabernacle"); /* corrected god */
+
+    coins[0] = add_string("mitcoin");
+    coins[1] = add_string("goldcoin");
+    coins[2] = add_string("silvercoin");
+    coins[3] = add_string("coppercoin");
+    coins[4] = NULL;
+}
+
+/*
  * Initialises all global variables.
  * Might use environment-variables as default for some of them.
  */
@@ -117,8 +168,9 @@ static void init_globals()
     nroftreasures = 0;
     nrofartifacts = 0;
     nrofallowedstr = 0;
-    undead_name = NULL;
-    FREE_AND_COPY_HASH(undead_name, "undead");
+
+    init_strings();
+
     trying_emergency_save = 0;
     num_animations = 0;
     animations = NULL;

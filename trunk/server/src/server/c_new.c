@@ -992,7 +992,7 @@ void generate_ext_title(player *pl)
     /* collect all information from the force objects. Just walk one time through them*/
     for (walk = pl->ob->inv; walk != NULL; walk = walk->below)
     {
-        if (!strcmp(walk->name, "GUILD_FORCE") && !strcmp(walk->arch->name, "guild_force"))
+        if (walk->name == shstr.GUILD_FORCE && walk->arch->name == shstr.guild_force)
         {
             if (walk->slaying)
                 strcpy(prof, walk->slaying);
@@ -1002,7 +1002,7 @@ void generate_ext_title(player *pl)
                 strcat(title, walk->title);
             }
         }
-        else if (!strcmp(walk->name, "RANK_FORCE") && !strcmp(walk->arch->name, "rank_force"))
+        else if (walk->name == shstr.RANK_FORCE && walk->arch->name == shstr.rank_force)
         {
             if (walk->title)
             {
@@ -1010,7 +1010,7 @@ void generate_ext_title(player *pl)
                 strcat(rank, " ");
             }
         }
-        else if (!strcmp(walk->name, "ALIGNMENT_FORCE") && !strcmp(walk->arch->name, "alignment_force"))
+        else if (walk->name == shstr.ALIGNMENT_FORCE && walk->arch->name == shstr.alignment_force)
         {
             if (walk->title)
                 strcpy(align, walk->title);

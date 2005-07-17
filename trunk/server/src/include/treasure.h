@@ -34,7 +34,7 @@
 #define T_MAGIC_CHANCE_UNSET (-999)
 
 #define NUM_COINS 4 /* number of coin types */
-extern char        *coins[NUM_COINS + 1];
+extern const char        *coins[NUM_COINS + 1];
 
 /*
  * Flags to generate_treasures():

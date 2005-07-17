@@ -322,6 +322,7 @@ struct plugin_hooklist
     New_Face **new_faces;
     int *global_darkness_table;
 	archetype **coins_arch;
+	struct shstr_constants *shstr;
 };
 
 /*****************************************************************************/

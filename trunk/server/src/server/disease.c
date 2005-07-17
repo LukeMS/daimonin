@@ -218,7 +218,7 @@ object * find_symptom(object *disease)
 
     /* check the inventory for symptoms */
     for (walk = disease->env->inv; walk; walk = walk->below)
-        if (!strcmp(walk->name, disease->name) && walk->type == SYMPTOM)
+        if (walk->name == disease->name && walk->type == SYMPTOM)
             return walk;
     return NULL;
 }
@@ -290,7 +290,7 @@ int infect_object(object *victim, object *disease, int force)
     for (tmp = victim->inv; tmp; tmp = tmp->below)
     {
         if (tmp->type == SIGN || tmp->type == DISEASE)  /* possibly an immunity, or diseased*/
-            if (!strcmp(tmp->name, disease->name) && tmp->level >= disease->level)
+            if (tmp->name == disease->name && tmp->level >= disease->level)
                 return 0;  /*Immune! */
     }
 
@@ -391,7 +391,7 @@ int do_symptoms(object *disease)
         for (/* tmp initialized in if, above */; tmp; tmp = tmp->below)
         {
             if (tmp->type == SIGN)  /* possibly an immunity, or diseased*/
-                if (!strcmp(tmp->name, disease->name) && tmp->level >= disease->level)
+                if (tmp->name == disease->name && tmp->level >= disease->level)
                     return 0;  /*Immune! */
         }
 
@@ -491,7 +491,7 @@ int grant_immunity(object *disease)
     /*  first, search for an immunity of the same name */
     for (walk = disease->env->inv; walk; walk = walk->below)
     {
-        if (walk->type == 98 && !strcmp(disease->name, walk->name))
+        if (walk->type == 98 && disease->name == walk->name)
         {
             walk->level = disease->level;
             return 1; /* just update the existing immunity. */

@@ -666,13 +666,13 @@ void move_detector(object *op)
         {
             for (tmp2 = tmp->inv; tmp2; tmp2 = tmp2->below)
             {
-                if (op->slaying && !strcmp(op->slaying, tmp->name))
+                if (op->slaying && op->slaying==tmp->name)
                     detected = 1;
-                if (tmp2->type == FORCE && tmp2->slaying && !strcmp(tmp2->slaying, op->slaying))
+                if (tmp2->type == FORCE && tmp2->slaying && tmp2->slaying == op->slaying)
                     detected = 1;
             }
         }
-        if (op->slaying && !strcmp(op->slaying, tmp->name))
+        if (op->slaying && op->slaying == tmp->name)
         {
             detected = 1;
         }
@@ -1865,7 +1865,7 @@ void move_marker(object *op)
             /* remove an old force with a slaying field == op->name */
             for (tmp2 = tmp->inv; tmp2 != NULL; tmp2 = tmp2->below)
             {
-                if (tmp2->type == FORCE && tmp2->slaying && !strcmp(tmp2->slaying, op->name))
+                if (tmp2->type == FORCE && tmp2->slaying == op->name)
                     break;
             }
             if (tmp2)
@@ -1874,7 +1874,7 @@ void move_marker(object *op)
             /* cycle through his inventory to look for the MARK we want to place */
             for (tmp2 = tmp->inv; tmp2 != NULL; tmp2 = tmp2->below)
             {
-                if (tmp2->type == FORCE && tmp2->slaying && !strcmp(tmp2->slaying, op->slaying))
+                if (tmp2->type == FORCE && tmp2->slaying == op->slaying)
                     break;
             }
 

@@ -200,7 +200,7 @@ void update_button(object *op)
                 head = ab->head ? ab->head : ab;
                 if (ab != tmp
                  && (fly ? QUERY_FLAG(ab, FLAG_FLYING) : move)
-                 && (head->race == tmp->slaying || (!strcmp(tmp->slaying, "player") && head->type == PLAYER)))
+                 && (head->race == tmp->slaying || (tmp->slaying == shstr.player && head->type == PLAYER)))
                     tmp->weight_limit = 1;
             }
             if (tmp->weight_limit)
@@ -343,7 +343,7 @@ int check_altar_sacrifice(object *altar, object *sacrifice)
          <= (sint16)
             (sacrifice->nrof ? sacrifice->nrof : 1))
             return 1;
-        if (strcmp(ARCH_SACRIFICE(altar), "money") == 0
+        if (ARCH_SACRIFICE(altar) == shstr.money
          && sacrifice->type == MONEY
          && sacrifice->nrof * sacrifice->value >= (uint32) NROF_SACRIFICE(altar))
             return 1;
@@ -379,7 +379,7 @@ int operate_altar(object *altar, object **sacrifice)
     /* check_altar_sacrifice should have already verified that enough money
      * has been dropped.
      */
-    if (!strcmp(ARCH_SACRIFICE(altar), "money"))
+    if (ARCH_SACRIFICE(altar) == shstr.money)
     {
         int number  = (int) (NROF_SACRIFICE(altar) / (*sacrifice)->value);
 
@@ -464,7 +464,7 @@ int check_trigger(object *op, object *cause)
               {
                   object   *head    = tmp->head ? tmp->head : tmp;
                   if(((!QUERY_FLAG(head, FLAG_FLYING)&&!QUERY_FLAG(head, FLAG_LEVITATE)) || QUERY_FLAG(op, FLAG_FLY_ON))
-                   && (head->race == op->slaying || (!strcmp(op->slaying, "player") && head->type == PLAYER)))
+                   && (head->race == op->slaying || (op->slaying == shstr.player && head->type == PLAYER)))
                   {
                       push = 1;
                       break;
@@ -802,9 +802,9 @@ object * check_inv_recursive(object *op, object *trig)
                  (trig->slaying
                && trig->stats.sp
                ?  /* compare slaying with name or slaying */
-                (tmp->slaying && !strcmp(trig->slaying, tmp->slaying))
-                : (tmp->name && !strcmp(trig->slaying, tmp->name)))
-              || (trig->race && !strcmp(tmp->arch->name, trig->race))) /* compare arch name */
+                (tmp->slaying && trig->slaying == tmp->slaying)
+                : (tmp->name && trig->slaying == tmp->name))
+              || (trig->race && tmp->arch->name == trig->race)) /* compare arch name */
             return tmp;
     }
     return NULL;

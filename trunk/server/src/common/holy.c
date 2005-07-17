@@ -106,7 +106,7 @@ int baptize_altar(object *op)
             return 0;
         }
         /* if the object name hasnt' been changed, we tack on the gods name */
-        if (!strcmp(op->name, op->arch->clone.name))
+        if (op->name == op->arch->clone.name)
         {
             sprintf(buf, "%s of %s", op->name, god->name);
             FREE_AND_COPY_HASH(op->name, buf);

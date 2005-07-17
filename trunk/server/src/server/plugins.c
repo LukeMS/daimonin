@@ -59,7 +59,8 @@ struct plugin_hooklist  hooklist    =
 	get_word_from_string,get_money_from_string,sell_item,
 	query_money_type, remove_money_type,insert_money_in_player,
     /* global variables */
-    &animations, &new_faces, global_darkness_table, coins_arch
+    &animations, &new_faces, global_darkness_table, coins_arch,
+    &shstr
 };
 
 CFPlugin                PlugList[PLUGINS_MAX_NROF];
