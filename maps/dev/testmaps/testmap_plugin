@@ -332,6 +332,16 @@ arch floor_ostone1
 x 1
 y 18
 end
+arch gate_closed
+connected 100
+direction 3
+x 1
+y 18
+arch event_obj
+race /dev/testmaps/Event_Trigger.lua
+sub_type 10
+end
+end
 arch floor_ostone1
 x 1
 y 19
@@ -452,9 +462,26 @@ arch floor_ostone1
 x 2
 y 17
 end
+arch sign
+msg
+Testing a simple connection trigger script (on the door)
+Also checking apply on the lever.
+endmsg
+x 2
+y 17
+end
 arch floor_ostone1
 x 2
 y 18
+end
+arch trigger_lever
+connected 100
+x 2
+y 18
+arch event_obj
+race /dev/testmaps/Event_Apply.lua
+sub_type 1
+end
 end
 arch floor_ostone1
 x 2
