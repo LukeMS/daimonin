@@ -1157,34 +1157,11 @@ int write_note(object *pl, object *item, char *msg)
         new_draw_info(NDI_UNIQUE, 0, pl, "Trying to cheat now are we?");
         return 0;
     }
-#ifdef PLUGINS
-    /* GROS: Handle for plugin book writing (trigger) event */
-    if (item->event_flags & EVENT_FLAG_TRIGGER)
-    {
-        CFParm  CFP;
-        int     k, l, m;
-        object *event_obj   = get_event_object(item, EVENT_TRIGGER);
-        k = EVENT_TRIGGER;
-        l = SCRIPT_FIX_NOTHING;
-        m = 0;
-        CFP.Value[0] = &k;
-        CFP.Value[1] = pl;
-        CFP.Value[2] = item;
-        CFP.Value[3] = NULL;
-        CFP.Value[4] = msg;
-        CFP.Value[5] = &m;
-        CFP.Value[6] = &m;
-        CFP.Value[7] = &m;
-        CFP.Value[8] = &l;
-        CFP.Value[9] = (char *) event_obj->race;
-        CFP.Value[10] = (char *) event_obj->slaying;
-        if (findPlugin(event_obj->name) >= 0)
-        {
-            ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
-            return strlen(msg);
-        }
-    }
-#endif
+
+    if(trigger_object_plugin_event(EVENT_TRIGGER, item, pl, NULL,
+                msg, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
+        return 0;
+    
     if (!book_overflow(item->msg, msg, BOOK_BUF))
     {
         /* add msg string to book */

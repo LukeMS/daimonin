@@ -1307,38 +1307,8 @@ void move_teleporter(object *op)
         /* teleport to different map */
         if (EXIT_PATH(op))
         {
-#ifdef PLUGINS
-            /* GROS: Handle for plugin TRIGGER event */
-            if (op->event_flags & EVENT_FLAG_TRIGGER)
-            {
-                CFParm  CFP;
-                CFParm *CFR;
-                int     k, l, m;
-                int     rtn_script  = 0;
-                object *event_obj   = get_event_object(op, EVENT_TRIGGER);
-                m = 0;
-                k = EVENT_TRIGGER;
-                l = SCRIPT_FIX_NOTHING;
-                CFP.Value[0] = &k;
-                CFP.Value[1] = tmp; /* activator first */
-                CFP.Value[2] = op; /* thats whoisme */
-                CFP.Value[3] = NULL;
-                CFP.Value[4] = NULL;
-                CFP.Value[5] = &m;
-                CFP.Value[6] = &m;
-                CFP.Value[7] = &m;
-                CFP.Value[8] = &l;
-                CFP.Value[9] = (char *) event_obj->race;
-                CFP.Value[10] = (char *) event_obj->slaying;
-                if (findPlugin(event_obj->name) >= 0)
-                {
-                    CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
-                    rtn_script = *(int *) (CFR->Value[0]);
-                }
-                if (rtn_script != 0)
-                    return;
-            }
-#endif
+            trigger_object_plugin_event(EVENT_TRIGGER, 
+                    op, tmp, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
             enter_exit(tmp, op);
         }
         else if (EXIT_X(op) != -1 && EXIT_Y(op) != -1) /* teleport inside this map */
@@ -1352,75 +1322,16 @@ void move_teleporter(object *op)
                 check_walk_off(op, NULL, MOVE_APPLY_VANISHED);
                 return;
             }
-#ifdef PLUGINS
-            /* GROS: Handle for plugin TRIGGER event */
-            if (op->event_flags & EVENT_FLAG_TRIGGER)
-            {
-                CFParm  CFP;
-                CFParm *CFR;
-                int     k, l, m;
-                int     rtn_script  = 0;
-                object *event_obj   = get_event_object(op, EVENT_TRIGGER);
-                m = 0;
-                k = EVENT_TRIGGER;
-                l = SCRIPT_FIX_NOTHING;
-                CFP.Value[0] = &k;
-                CFP.Value[1] = tmp;
-                CFP.Value[2] = op;
-                CFP.Value[3] = NULL;
-                CFP.Value[4] = NULL;
-                CFP.Value[5] = &m;
-                CFP.Value[6] = &m;
-                CFP.Value[7] = &m;
-                CFP.Value[8] = &l;
-                CFP.Value[9] = (char *) event_obj->race;
-                CFP.Value[10] = (char *) event_obj->slaying;
-                if (findPlugin(event_obj->name) >= 0)
-                {
-                    CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
-                    rtn_script = *(int *) (CFR->Value[0]);
-                }
-                if (rtn_script != 0)
-                    return;
-            }
-#endif
+            
+            trigger_object_plugin_event(EVENT_TRIGGER, 
+                    op, tmp, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
             transfer_ob(tmp, EXIT_X(op), EXIT_Y(op), 0, op, NULL);
         }
         else
         {
             /* Random teleporter */
-#ifdef PLUGINS
-            /* GROS: Handle for plugin TRIGGER event */
-            if (op->event_flags & EVENT_FLAG_TRIGGER)
-            {
-                CFParm  CFP;
-                CFParm *CFR;
-                int     k, l, m;
-                int     rtn_script  = 0;
-                object *event_obj   = get_event_object(op, EVENT_TRIGGER);
-                m = 0;
-                k = EVENT_TRIGGER;
-                l = SCRIPT_FIX_NOTHING;
-                CFP.Value[0] = &k;
-                CFP.Value[1] = op;
-                CFP.Value[2] = tmp;
-                CFP.Value[3] = NULL;
-                CFP.Value[4] = NULL;
-                CFP.Value[5] = &m;
-                CFP.Value[6] = &m;
-                CFP.Value[7] = &m;
-                CFP.Value[8] = &l;
-                CFP.Value[9] = (char *) event_obj->race;
-                CFP.Value[10] = (char *) event_obj->slaying;
-                if (findPlugin(event_obj->name) >= 0)
-                {
-                    CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
-                    rtn_script = *(int *) (CFR->Value[0]);
-                }
-                if (rtn_script != 0)
-                    return;
-            }
-#endif
+            trigger_object_plugin_event(EVENT_TRIGGER, 
+                    op, tmp, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
             teleport(op, TELEPORTER, tmp);
         }
     }
@@ -1566,39 +1477,6 @@ void move_timer(object *op)
         op->stats.hp--;
         if(op->stats.hp < 0)
         {
-            /* TODO trigger a plugin event here or in use_trigger()? */
-#ifdef PLUGINS
-            /* GROS: Handle for plugin TRIGGER event */
-            if (op->event_flags & EVENT_FLAG_TRIGGER)
-            {
-                CFParm  CFP;
-                CFParm *CFR;
-                int     k, l, m;
-                int     rtn_script  = 0;
-                object *event_obj   = get_event_object(op, EVENT_TRIGGER);
-                m = 0;
-                k = EVENT_TRIGGER;
-                l = SCRIPT_FIX_NOTHING;
-                CFP.Value[0] = &k;
-                CFP.Value[1] = op; /* activator first */
-                CFP.Value[2] = op; /* thats whoisme */
-                CFP.Value[3] = NULL;
-                CFP.Value[4] = NULL;
-                CFP.Value[5] = &m;
-                CFP.Value[6] = &m;
-                CFP.Value[7] = &m;
-                CFP.Value[8] = &l;
-                CFP.Value[9] = (char *) event_obj->race;
-                CFP.Value[10] = (char *) event_obj->slaying;
-                if (findPlugin(event_obj->name) >= 0)
-                {
-                    CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
-                    rtn_script = *(int *) (CFR->Value[0]);
-                }
-                if (rtn_script != 0)
-                    return;
-            }
-#endif
             use_trigger(op);
 
             if(QUERY_FLAG(op, FLAG_CURSED))
@@ -1691,40 +1569,8 @@ void move_environment_sensor(object *op)
     {
 //        LOG(llevDebug, "env_sensor toggled from %d to %d\n", op->value, !op->value);
 
-        /* TODO trigger a plugin event here or in push_button()? */
         op->weight_limit = (trig_tod && trig_dow && trig_bright) ? 1 : 0;
-#ifdef PLUGINS
-        /* GROS: Handle for plugin TRIGGER event */
-        if (op->event_flags & EVENT_FLAG_TRIGGER)
-        {
-            CFParm  CFP;
-            CFParm *CFR;
-            int     k, l, m;
-            int     rtn_script  = 0;
-            object *event_obj   = get_event_object(op, EVENT_TRIGGER);
-            m = 0;
-            k = EVENT_TRIGGER;
-            l = SCRIPT_FIX_NOTHING;
-            CFP.Value[0] = &k;
-            CFP.Value[1] = op; /* activator first */
-            CFP.Value[2] = op; /* thats whoisme */
-            CFP.Value[3] = NULL;
-            CFP.Value[4] = NULL;
-            CFP.Value[5] = &m;
-            CFP.Value[6] = &m;
-            CFP.Value[7] = &m;
-            CFP.Value[8] = &l;
-            CFP.Value[9] = (char *) event_obj->race;
-            CFP.Value[10] = (char *) event_obj->slaying;
-            if (findPlugin(event_obj->name) >= 0)
-            {
-                CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
-                rtn_script = *(int *) (CFR->Value[0]);
-            }
-            if (rtn_script != 0)
-                return;
-        }
-#endif
+            
         push_button(op);
     }
 }
@@ -1806,39 +1652,6 @@ void move_conn_sensor(object *op)
     if(op->weight_limit != newvalue)
     {
         op->weight_limit = newvalue;
-        /* TODO trigger a plugin event here or in use_trigger()? */
-#ifdef PLUGINS
-        /* GROS: Handle for plugin TRIGGER event */
-        if (op->event_flags & EVENT_FLAG_TRIGGER)
-        {
-            CFParm  CFP;
-            CFParm *CFR;
-            int     k, l, m;
-            int     rtn_script  = 0;
-            object *event_obj   = get_event_object(op, EVENT_TRIGGER);
-            m = 0;
-            k = EVENT_TRIGGER;
-            l = SCRIPT_FIX_NOTHING;
-            CFP.Value[0] = &k;
-            CFP.Value[1] = op; /* activator first */
-            CFP.Value[2] = op; /* thats whoisme */
-            CFP.Value[3] = NULL;
-            CFP.Value[4] = NULL;
-            CFP.Value[5] = &m;
-            CFP.Value[6] = &m;
-            CFP.Value[7] = &m;
-            CFP.Value[8] = &l;
-            CFP.Value[9] = (char *) event_obj->race;
-            CFP.Value[10] = (char *) event_obj->slaying;
-            if (findPlugin(event_obj->name) >= 0)
-            {
-                CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
-                rtn_script = *(int *) (CFR->Value[0]);
-            }
-            if (rtn_script != 0)
-                return;
-        }
-#endif
         push_button(op);
     }
 }

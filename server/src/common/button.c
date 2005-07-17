@@ -31,7 +31,8 @@ void signal_connection(object *op, oblinkpt *olp)
     object     *tmp;
     objectlink *ol;
 
-    /* TODO: possibly all effects here should cause a CONNECTION or TRIGGER plugin event? */
+    trigger_object_plugin_event(EVENT_TRIGGER, 
+            op, op, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
 
     /*LOG(llevDebug, "push_button: %s (%d)\n", op->name, op->count);*/
     for (ol = olp; ol; ol = ol->next)
@@ -55,6 +56,10 @@ void signal_connection(object *op, oblinkpt *olp)
             return;
         }
         tmp = ol->objlink.ob;
+        
+        trigger_object_plugin_event(EVENT_TRIGGER, 
+                tmp, op, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
+
         switch (tmp->type)
         {
             case GATE:
@@ -283,7 +288,6 @@ void update_buttons(mapstruct *m)
  */
 void push_button(object *op)
 {
-    /* TODO: trigger a TRIGGER plugin event here? */
     signal_connection(op, get_button_links(op));
 }
 
