@@ -1273,7 +1273,6 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
                     if (head->type == GOLEM) /* a golem needs a valid release from the player... */
                     {
                         send_golem_control(head, GOLEM_CTR_RELEASE);
-                        remove_friendly_object(head);
                         remove_ob(head);
                         check_walk_off(head, NULL, MOVE_APPLY_VANISHED | MOVE_APPLY_SAVING);
 

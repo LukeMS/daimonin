@@ -824,7 +824,6 @@ int use_oratory(object *pl, int dir)
             SET_FLAG(tmp, FLAG_MONSTER);
             tmp->stats.exp = 0;
             SET_FLAG(tmp, FLAG_FRIENDLY);
-            add_friendly_object(tmp);
             tmp->move_type = PETMOVE;
             return calc_skill_exp(pl, tmp, 1.0f, -1, NULL);
         }
@@ -836,7 +835,6 @@ int use_oratory(object *pl, int dir)
             if (QUERY_FLAG(tmp, FLAG_FRIENDLY))
             {
                 CLEAR_FLAG(tmp, FLAG_FRIENDLY);
-                remove_friendly_object(tmp);
                 tmp->move_type = 0;     /* needed? */
             }
             CLEAR_FLAG(tmp, FLAG_UNAGGRESSIVE);

@@ -1046,8 +1046,8 @@ void check_login(object *op)
     {
         LOG(llevBug, "BUG: Player %s was loaded without friendly flag!", query_name(op));
         SET_FLAG(op, FLAG_FRIENDLY);
-        add_friendly_object(op);
     }
+
     /* ok, we are done with the login.
      * Lets put the player on the map and send all player lists to the client.
      * The player is active now.

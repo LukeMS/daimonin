@@ -271,7 +271,5 @@ void spawn_point(object *op)
     fix_monster(mob); /* fix all the values and add in possible abilities or forces ... */
     if (!insert_ob_in_map(mob, mob->map, op, 0)) /* *now* all is done - *now* put it on map */
         return;
-    if (QUERY_FLAG(mob, FLAG_FRIENDLY))
-        add_friendly_object(mob);
 }
 

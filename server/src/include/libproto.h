@@ -55,11 +55,6 @@ extern void             apply_death_exp_penalty(object *op);
 extern float            calc_level_difference(int who_lvl, int op_lvl);
 extern int              calc_skill_exp(object *who, object *op, float mod, int level, int *real);
 extern void             init_new_exp_system(void);
-/* friend.c */
-extern void             add_friendly_object(object *op);
-extern void             remove_friendly_object(object *op);
-extern void             dump_friendly_objects(void);
-extern void             clean_friendly_list(void);
 /* holy.c */
 extern void             init_gods(void);
 extern void             add_god_to_list(archetype *god_arch);

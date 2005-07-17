@@ -160,7 +160,6 @@ static void init_globals()
     first_race = NULL;
     first_player = NULL;
     last_player = NULL;
-    first_friendly_object = NULL;
     first_map = NULL;
     first_treasurelist = NULL;
     first_artifactlist = NULL;

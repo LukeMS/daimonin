@@ -148,7 +148,6 @@ int command_cast_spell(object *op, char *params)
     if (CONTR(op)->golem != NULL)
     {
         send_golem_control(CONTR(op)->golem, GOLEM_CTR_RELEASE);
-        remove_friendly_object(CONTR(op)->golem);
         destruct_ob(CONTR(op)->golem);
         CONTR(op)->golem = NULL;
     }
@@ -237,7 +236,6 @@ int fire_cast_spell(object *op, char *params)
     if (CONTR(op)->golem != NULL)
     {
         send_golem_control(CONTR(op)->golem, GOLEM_CTR_RELEASE);
-        remove_friendly_object(CONTR(op)->golem);
         destruct_ob(CONTR(op)->golem);
         CONTR(op)->golem = NULL;
     }
@@ -371,7 +369,6 @@ void change_spell(object *op, char k)
     if (CONTR(op)->golem != NULL)
     {
         send_golem_control(CONTR(op)->golem, GOLEM_CTR_RELEASE);
-        remove_friendly_object(CONTR(op)->golem);
         destruct_ob(CONTR(op)->golem);
         CONTR(op)->golem = NULL;
     }

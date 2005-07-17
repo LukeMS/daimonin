@@ -2223,9 +2223,6 @@ void destroy_object(object *ob)
     if (QUERY_FLAG(ob, FLAG_IS_LINKED))
         remove_button_link(ob);
 
-    if (QUERY_FLAG(ob, FLAG_FRIENDLY))
-        remove_friendly_object(ob);
-
     if (ob->type == CONTAINER && ob->attacked_by)
         container_unlink(NULL, ob);
 

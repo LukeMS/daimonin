@@ -177,7 +177,6 @@ CommArray_s WizCommands[]           =
 	{"/d_objects", command_dumpallobjects,0.0},
     {"/d_belowfull", command_dumpbelowfull,0.0},
 	{"/d_below", command_dumpbelow,0.0},
-    {"/d_friendly", command_dumpfriendlyobjects,0.0},
 	{"/d_hash", command_sstable,  0.0},
     {"/set_map_light", command_setmaplight,0.0},
 	{"/stats", command_stats,0.0},

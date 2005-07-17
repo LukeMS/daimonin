@@ -46,7 +46,6 @@ object * get_pet_enemy(object *pet, rv_vector *rv)
         /* TODO deactivated while cleaning up AI code */
         /*  if ((check_enemy(owner,rv)) == pet) {
                 CLEAR_FLAG(pet, FLAG_FRIENDLY);
-                remove_friendly_object(pet);
                 pet->move_type &=~PETMOVE;
                 return owner;
             }*/
@@ -57,7 +56,6 @@ object * get_pet_enemy(object *pet, rv_vector *rv)
          * pet no longer needs to be friendly.
          */
         CLEAR_FLAG(pet, FLAG_FRIENDLY);
-        remove_friendly_object(pet);
         pet->move_type &= ~PETMOVE;
         return NULL;
     }
@@ -99,6 +97,8 @@ object * get_pet_enemy(object *pet, rv_vector *rv)
 
 void terminate_all_pets(object *owner)
 {
+/* Disabled until pet code rework */
+#if 0    
     objectlink *obl, *next;
     for (obl = first_friendly_object; obl != NULL; obl = next)
     {
@@ -106,7 +106,6 @@ void terminate_all_pets(object *owner)
         next = obl->next;
         if (get_owner(ob) == owner)
         {
-            remove_friendly_object(ob);
             if (!QUERY_FLAG(ob, FLAG_REMOVED))
             {
                 remove_ob(ob);
@@ -114,6 +113,7 @@ void terminate_all_pets(object *owner)
             }
         }
     }
+#endif    
 }
 
 /*
@@ -127,6 +127,8 @@ void terminate_all_pets(object *owner)
 
 void remove_all_pets(mapstruct *map)
 {
+/* Disabled until pet code rework */
+#if 0
     objectlink *obl, *next;
     object     *owner;
 
@@ -145,10 +147,10 @@ void remove_all_pets(mapstruct *map)
             {
                 object *ob  = obl->objlink.ob;
                 LOG(llevMonster, "(pet failed to follow)");
-                remove_friendly_object(ob);
             }
         }
     }
+#endif    
 }
 
 void follow_owner(object *ob, object *owner)
@@ -203,7 +205,6 @@ void pet_move(object *ob)
     if ((owner = get_owner(ob)) == NULL)
     {
         remove_ob(ob); /* Will be freed when returning */
-        remove_friendly_object(ob);
         check_walk_off(ob, NULL, MOVE_APPLY_VANISHED);
         LOG(llevMonster, "Pet: no owner, leaving.\n");
         return;

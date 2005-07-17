@@ -515,12 +515,6 @@ int command_dumpallobjects(object *op, char *params)
     return 0;
 }
 
-int command_dumpfriendlyobjects(object *op, char *params)
-{
-    dump_friendly_objects();
-    return 0;
-}
-
 int command_dumpallarchetypes(object *op, char *params)
 {
     dump_all_archetypes();
