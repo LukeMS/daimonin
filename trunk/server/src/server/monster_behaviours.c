@@ -1080,40 +1080,10 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
                             STRING_OBJ_NAME(op), STRING_OBJ_NAME(wp));
 #endif
 
-#ifdef PLUGINS
-                        /* GROS: Handle for plugin trigger event */
-                        if (wp->event_flags & EVENT_FLAG_TRIGGER)
-                        {
-                            CFParm  CFP;
-                            CFParm *CFR;
-                            int     k, l, m;
-                            int     rtn_script  = 0;
-                            object *event_obj   = get_event_object(wp, EVENT_TRIGGER);
-                            m = 0;
-
-                            k = EVENT_TRIGGER;
-                            l = SCRIPT_FIX_NOTHING;
-                            CFP.Value[0] = &k;
-                            CFP.Value[1] = op;
-                            CFP.Value[2] = wp;
-                            CFP.Value[3] = NULL;
-                            CFP.Value[4] = NULL;
-                            CFP.Value[5] = &m;
-                            CFP.Value[6] = &m;
-                            CFP.Value[7] = &m;
-                            CFP.Value[8] = &l;
-                            CFP.Value[9] = (char *) event_obj->race;
-                            CFP.Value[10] = (char *) event_obj->slaying;
-                            if (findPlugin(event_obj->name) >= 0)
-                            {
-                                CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
-                                rtn_script = *(int *) (CFR->Value[0]);
-                                if (rtn_script != 0)
-                                    return;
-                            }
-                        }
-#endif
-
+                        trigger_object_plugin_event(EVENT_TRIGGER, 
+                                wp, op, NULL,
+                                NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
+    
                         MOB_PATHDATA(op)->goal_delay_counter = 0;
                         MOB_PATHDATA(op)->best_distance = -1;
                         MOB_PATHDATA(op)->tried_steps = 0;

@@ -368,52 +368,8 @@ int talk_to_npc(object *op, object *npc, char *txt)
     msglang    *msgs;
     int         i, j;
 
-#ifdef PLUGINS
-    /* GROS: Handle for plugin say event */
-    if (npc->event_flags & EVENT_FLAG_SAY)
-    {
-        CFParm  CFP;
-        int     k, l, m;
-        object *event_obj   = get_event_object(npc, EVENT_SAY);
-        k = EVENT_SAY;
-        l = SCRIPT_FIX_ACTIVATOR;
-        m = 0;
-        CFP.Value[0] = &k;
-        CFP.Value[1] = op;
-        CFP.Value[2] = npc;
-        CFP.Value[3] = NULL;
-        CFP.Value[4] = txt;
-        CFP.Value[5] = &m;
-        CFP.Value[6] = &m;
-        CFP.Value[7] = &m;
-        CFP.Value[8] = &l;
-        CFP.Value[9] = (char *) STRING_OBJ_RACE(event_obj);
-        CFP.Value[10] = (char *) STRING_OBJ_SLAYING(event_obj);
-
-        if (findPlugin(event_obj->name) >= 0)
-        {
-//#define TIME_SCRIPTS
-#ifdef TIME_SCRIPTS
-            int             count   = 0;
-            struct timeval  start, stop;
-            long long   start_u, stop_u;
-            gettimeofday(&start, NULL);
-
-            for (count = 0; count < 10000; count++)
-                ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
-
-            gettimeofday(&stop, NULL);
-            start_u = start.tv_sec * 1000000 + start.tv_usec;
-            stop_u  = stop.tv_sec * 1000000 + stop.tv_usec;
-
-            LOG(llevDebug, "running time: %2.4f s\n", (stop_u - start_u) / 1000000.0);
-#else
-            ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
-#endif
-        }
-        return 0;
-    }
-#endif
+    trigger_object_plugin_event(EVENT_SAY, 
+            npc, op, NULL, txt, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR);
 
 /* Gecko 2005-05-15: I disabled this because it makes little sense. Talking to
  * objects in your own inventory is now handled by first marking the object,
@@ -422,37 +378,11 @@ int talk_to_npc(object *op, object *npc, char *txt)
 #if 0
     /* GROS - Here we let the objects inside inventories hear and answer, too. */
     /* This allows the existence of "intelligent" weapons you can discuss with */
-    for (cobj = npc->inv; cobj != NULL;)
+    for (cobj = npc->inv; cobj != NULL; cobj = cobj->below)
     {
         if (cobj->event_flags & EVENT_FLAG_SAY)
-        {
-            CFParm  CFP;
-            int     k, l, m;
-            object *event_obj   = get_event_object(cobj, EVENT_SAY);
-            k = EVENT_SAY;
-            l = SCRIPT_FIX_ALL;
-            m = 0;
-            CFP.Value[0] = &k;
-            CFP.Value[1] = op;
-            CFP.Value[2] = cobj;
-            CFP.Value[3] = npc;
-            CFP.Value[4] = txt;
-            CFP.Value[5] = &m;
-            CFP.Value[6] = &m;
-            CFP.Value[7] = &m;
-            CFP.Value[8] = &l;
-            CFP.Value[9] = (char *) (STRING_OBJ_RACE(event_obj));
-            CFP.Value[10] = (char *) (STRING_OBJ_SLAYING(event_obj));
-            if (event_obj && findPlugin(event_obj->name) >= 0)
-            {
-                ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
-                return 0;
-            }
-            else
-            {
-                LOG(llevBug, "An object (%s) had a event flag but no event object (SAY)\n", cobj->name);
-            }
-        }
+            trigger_object_plugin_event(EVENT_SAY, 
+                    cobj, op, npc, txt, NULL, NULL, NULL, SCRIPT_FIX_ALL);
         cobj = cobj->below;
     }
 #endif

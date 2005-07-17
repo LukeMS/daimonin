@@ -1550,39 +1550,13 @@ void move_apply(object *trap, object *victim, object *originator, int flags)
     recursion_depth++;
     if (trap->head)
         trap = trap->head;
-#ifdef PLUGINS
-    /* GROS: Handle for plugin close event */
-    if (trap->event_flags & EVENT_FLAG_TRIGGER)
-    {
-        CFParm  CFP;
-        CFParm *CFR;
-        int     k, l, m;
-        int     rtn_script  = 0;
-        object *event_obj   = get_event_object(trap, EVENT_TRIGGER);
-        m = 0;
-
-        k = EVENT_TRIGGER;
-        l = SCRIPT_FIX_NOTHING;
-        CFP.Value[0] = &k;
-        CFP.Value[1] = victim;
-        CFP.Value[2] = trap;
-        CFP.Value[3] = originator;
-        CFP.Value[4] = NULL;
-        CFP.Value[5] = &m;
-        CFP.Value[6] = &m;
-        CFP.Value[7] = &m;
-        CFP.Value[8] = &l;
-        CFP.Value[9] = (char *) event_obj->race;
-        CFP.Value[10] = (char *) event_obj->slaying;
-        if (findPlugin(event_obj->name) >= 0)
-        {
-            CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
-            rtn_script = *(int *) (CFR->Value[0]);
-            if (rtn_script != 0)
-                return;
-        }
-    }
-#endif
+    
+    /* TODO: handle return value */
+    /* TODO: move to better position */
+    trigger_object_plugin_event(EVENT_TRIGGER, 
+            trap, victim, originator,
+            NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
+    
     switch (trap->type)
     {
           /* these objects can trigger other objects connected to them.

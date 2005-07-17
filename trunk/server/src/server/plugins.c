@@ -90,6 +90,7 @@ object * get_event_object(object *op, int event_nr)
 
 int trigger_object_plugin_event(
         int event_type,
+        /* value[2], value[1], value[3] */
         object *me, object *activator, object *other,
         const char *msg,
         int *parm1, int *parm2, int *parm3,
@@ -110,6 +111,19 @@ int trigger_object_plugin_event(
         return 0;
     }
 
+    /* Avoid double triggers and infinite loops */
+    /* Currently only enabled for SAY and TRIGGER events, as
+     * those are the ones we have experienced problems with */
+    if(event_type == EVENT_SAY || event_type == EVENT_TRIGGER)
+    {
+        if(event_obj->damage_round_tag == pticks)
+        {
+            LOG(llevDebug, "trigger_object_plugin_event(): event object (type %d) for %s called twice the same round\n", event_type, STRING_OBJ_NAME(me));
+            return 0;
+        }
+        event_obj->damage_round_tag = pticks;
+    }
+
     CFP.Value[0] = &event_type;
     CFP.Value[1] = activator;
     CFP.Value[2] = me;
@@ -125,8 +139,24 @@ int trigger_object_plugin_event(
 
     if (event_obj->name && (plugin = findPlugin(event_obj->name)) >= 0)
     {
-        /* TODO: we could really use a more efficient event interface */
+#ifdef TIME_SCRIPTS
+            int             count   = 0;
+            struct timeval  start, stop;
+            long long   start_u, stop_u;
+            gettimeofday(&start, NULL);
+
+            for (count = 0; count < 10000; count++)
+                CFR = ((PlugList[plugin].eventfunc) (&CFP));
+
+            gettimeofday(&stop, NULL);
+            start_u = start.tv_sec * 1000000 + start.tv_usec;
+            stop_u  = stop.tv_sec * 1000000 + stop.tv_usec;
+
+            LOG(llevDebug, "running time: %2.4f s\n", (stop_u - start_u) / 1000000.0);
+#else
         CFR = ((PlugList[plugin].eventfunc) (&CFP));
+#endif
+        /* TODO: we could really use a more efficient event interface */
         if(CFR && CFR->Value[0])
             return *(int *) (CFR->Value[0]);
     }
