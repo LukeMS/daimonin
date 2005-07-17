@@ -982,7 +982,6 @@ int summon_monster(object *op, object *caster, int dir, archetype *at, int spell
         CLEAR_FLAG(tmp, FLAG_MONSTER);
         SET_FLAG(tmp, FLAG_FRIENDLY);
         tmp->stats.exp = 0;
-        add_friendly_object(tmp);
         tmp->type = GOLEM;
         /* Don't see any point in setting this when monsters summon monsters: */
         set_owner(tmp, op);
@@ -1000,7 +999,6 @@ int summon_monster(object *op, object *caster, int dir, archetype *at, int spell
                 /* For now, we transfer ownership */
                 set_owner(tmp, owner);
                 tmp->move_type = PETMOVE;
-                add_friendly_object(tmp);
                 SET_FLAG(tmp, FLAG_FRIENDLY);
             }
         }
@@ -1749,7 +1747,6 @@ void move_golem(object *op)
         }
         new_draw_info(NDI_UNIQUE, 0, op->owner, buf);
         send_golem_control(op, GOLEM_CTR_RELEASE);
-        remove_friendly_object(op);
         CONTR(op->owner)->golem = NULL;
 
         destruct_ob(op);

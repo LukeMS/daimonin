@@ -489,7 +489,6 @@ EXTERN int                      player_active;
 EXTERN mapstruct               *first_map;
 EXTERN treasurelist            *first_treasurelist;
 EXTERN artifactlist            *first_artifactlist;
-EXTERN objectlink              *first_friendly_object;  /* Objects monsters will go after */
 EXTERN godlink                 *first_god;
 EXTERN racelink                *first_race;
 

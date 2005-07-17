@@ -724,7 +724,6 @@ void do_mood_floor(object *op, object *op2)
           if (QUERY_FLAG(tmp, FLAG_FRIENDLY))
           {
               CLEAR_FLAG(tmp, FLAG_FRIENDLY);
-              remove_friendly_object(tmp);
               tmp->move_type = 0;
               /* lots of checks here, but want to make sure we don't
                      * dereference a null value
@@ -769,7 +768,6 @@ void do_mood_floor(object *op, object *op2)
           SET_FLAG(tmp, FLAG_MONSTER);
           tmp->stats.exp = 0;
           SET_FLAG(tmp, FLAG_FRIENDLY);
-          add_friendly_object(tmp);
           tmp->move_type = PETMOVE;
           break;
 

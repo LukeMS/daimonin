@@ -508,8 +508,6 @@ int hit_player(object *op, int dam, object *hitter, int type)
      */
     if (QUERY_FLAG(hitter, FLAG_ONE_HIT))
     {
-        if (QUERY_FLAG(hitter, FLAG_FRIENDLY))
-            remove_friendly_object(hitter);
         remove_ob(hitter); /* Remove, but don't drop inventory */
         check_walk_off(hitter, NULL, MOVE_APPLY_VANISHED);
     }
@@ -526,8 +524,6 @@ int hit_player(object *op, int dam, object *hitter, int type)
             LOG(llevBug, "BUG: SPLITTING without other_arch error.\n");
             return maxdam;
         }
-        if (friendly)
-            remove_friendly_object(op);
 
         remove_ob(op);
         if (check_walk_off(op, NULL, MOVE_APPLY_VANISHED) == CHECK_WALK_OK)
@@ -542,7 +538,6 @@ int hit_player(object *op, int dam, object *hitter, int type)
                 if (friendly)
                 {
                     SET_FLAG(tmp, FLAG_FRIENDLY);
-                    add_friendly_object(tmp);
                     tmp->move_type = PETMOVE;
                     if (owner != NULL)
                         set_owner(tmp, owner);
@@ -1136,7 +1131,6 @@ int kill_object(object *op, int dam, object *hitter, int type)
         /* old golem/npc code
         if (QUERY_FLAG(op, FLAG_FRIENDLY) && op->type != PLAYER)
         {
-            remove_friendly_object(op);
             if (get_owner(op) != NULL && op->owner->type == PLAYER)
             {
                 send_golem_control(op, GOLEM_CTR_RELEASE);
@@ -1191,9 +1185,6 @@ int kill_object(object *op, int dam, object *hitter, int type)
         {
             if (!battleg)
                 corpse_owner = aggro_calculate_exp(op, owner, buf_ptr);
-
-            if (QUERY_FLAG(op, FLAG_FRIENDLY))
-                remove_friendly_object(op);
 
             op->speed = 0;
             update_ob_speed(op); /* remove from active list (if on) */

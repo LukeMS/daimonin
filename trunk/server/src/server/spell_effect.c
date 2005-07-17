@@ -1808,7 +1808,6 @@ int summon_pet(object *op, int dir, SpellTypeFrom item)
                 if (op->type == PLAYER)
                 {
                     tmp->stats.exp = 0;
-                    add_friendly_object(tmp);
                     SET_FLAG(tmp, FLAG_FRIENDLY);
                     tmp->move_type = PETMOVE;
                 }
@@ -1819,7 +1818,6 @@ int summon_pet(object *op, int dir, SpellTypeFrom item)
                     {
                         set_owner(tmp, owner);
                         tmp->move_type = PETMOVE;
-                        add_friendly_object(tmp);
                         SET_FLAG(tmp, FLAG_FRIENDLY);
                     }
                 }
@@ -3179,7 +3177,6 @@ int cast_charm(object *op, object *caster, archetype *arch, int spellnum)
         set_owner(tmp, op);
         SET_FLAG(tmp, FLAG_MONSTER);
         SET_FLAG(tmp, FLAG_FRIENDLY);
-        add_friendly_object(tmp);
         tmp->stats.exp = 0;
         tmp->move_type = PETMOVE;
     }
@@ -3236,7 +3233,6 @@ int cast_charm_undead(object *op, object *caster, archetype *arch, int spellnum)
         set_owner(tmp, op);
         SET_FLAG(tmp, FLAG_MONSTER);
         SET_FLAG(tmp, FLAG_FRIENDLY);
-        add_friendly_object(tmp);
         tmp->stats.exp = 0;
         tmp->move_type = PETMOVE;
     }
@@ -3590,7 +3586,6 @@ object * fix_summon_pet(archetype *at, object *op, int dir, int type)
             if (op->type == PLAYER)
             {
                 tmp->stats.exp = 0;
-                add_friendly_object(tmp);
                 SET_FLAG(tmp, FLAG_FRIENDLY);
                 if (type == GOLEM)
                     CLEAR_FLAG(tmp, FLAG_MONSTER);
@@ -3605,7 +3600,6 @@ object * fix_summon_pet(archetype *at, object *op, int dir, int type)
                         /* For now, we transfer ownership */
                         set_owner(tmp, owner);
                         tmp->move_type = PETMOVE;
-                        add_friendly_object(tmp);
                         SET_FLAG(tmp, FLAG_FRIENDLY);
                     }
                 }
@@ -3843,7 +3837,6 @@ int animate_weapon(object *op, object *caster, int dir, archetype *at, int spell
         CLEAR_FLAG(tmp, FLAG_MONSTER);
         SET_FLAG(tmp, FLAG_FRIENDLY);
         tmp->stats.exp = 0;
-        add_friendly_object(tmp);
         tmp->type = GOLEM;
         set_owner(tmp, op);
         CONTR(op)->golem = tmp;
@@ -3860,7 +3853,6 @@ int animate_weapon(object *op, object *caster, int dir, archetype *at, int spell
             {
                 set_owner(tmp, owner);
                 tmp->move_type = PETMOVE;
-                add_friendly_object(tmp);
                 SET_FLAG(tmp, FLAG_FRIENDLY);
             }
         }

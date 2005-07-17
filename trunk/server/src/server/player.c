@@ -373,7 +373,6 @@ object *get_nearest_player(object *mon) {
             */
             LOG(llevDebug,"get_nearest_player: Found free/non friendly object on friendly list (%s)\n", STRING_OBJ_NAME(tmp));
             ol = ol->next;
-            remove_friendly_object(tmp);
             if (!ol) return op;
         }
 
@@ -1968,7 +1967,6 @@ void kill_player(object *op)
     if (CONTR(op)->golem != NULL)
     {
         send_golem_control(CONTR(op)->golem, GOLEM_CTR_RELEASE);
-        remove_friendly_object(CONTR(op)->golem);
         destruct_ob(CONTR(op)->golem);
         CONTR(op)->golem = NULL;
     }
