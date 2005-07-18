@@ -337,7 +337,7 @@ int cast_spell(object *op, object *caster, int dir, int type, int ability, Spell
     if (target)
     {
         if(! get_rangevector(op, target, &rv, RV_DIAGONAL_DISTANCE) ||
-                (unsigned int)rv.distance > spells[type].range)
+                rv.distance > (unsigned int) spells[type].range)
         {
             if(op->type == PLAYER)
                 new_draw_info(NDI_UNIQUE, 0, op, "Your target is out of range!");
