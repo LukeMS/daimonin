@@ -1131,38 +1131,10 @@ int esrv_apply_container(object *op, object *sack)
     /* close container? */
     if (cont) /* if cont != sack || cont == sack - in both cases we close cont */
     {
-#ifdef PLUGINS
-        /* GROS: Handle for plugin close event */
-        if (cont->event_flags & EVENT_FLAG_CLOSE)
-        {
-            CFParm  CFP;
-            CFParm *CFR;
-            int     k, l, m;
-            int     rtn_script  = 0;
-            object *event_obj   = get_event_object(cont, EVENT_CLOSE);
-            m = 0;
-            k = EVENT_CLOSE;
-            l = SCRIPT_FIX_ALL;
-            CFP.Value[0] = &k;
-            CFP.Value[1] = op;
-            CFP.Value[2] = cont;
-            CFP.Value[3] = NULL;
-            CFP.Value[4] = NULL;
-            CFP.Value[5] = &m;
-            CFP.Value[6] = &m;
-            CFP.Value[7] = &m;
-            CFP.Value[8] = &l;
-            CFP.Value[9] = (char *) event_obj->race;
-            CFP.Value[10] = (char *) event_obj->slaying;
-            if (findPlugin(event_obj->name) >= 0)
-            {
-                CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
-                rtn_script = *(int *) (CFR->Value[0]);
-                if (rtn_script != 0)
-                    return 1;
-            }
-        }
-#endif
+        if(trigger_object_plugin_event(EVENT_CLOSE, cont, op, NULL,
+                NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL))
+            return 1;
+
         if (container_unlink(CONTR(op), cont))
             new_draw_info_format(NDI_UNIQUE, 0, op, "You close %s.", query_name(cont));
         else

@@ -851,6 +851,8 @@ object * fix_stopped_arrow(object *op)
     return NULL;
        }*/
 
+    trigger_object_plugin_event(EVENT_STOP, 
+            op, NULL, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL);
 
     /* used as temp. vars to control reflection/move speed */
     op->stats.grace = 0;
@@ -907,37 +909,15 @@ void stop_arrow(object *op)
         remove_ob(payload);
         check_walk_off(payload, NULL, MOVE_APPLY_VANISHED);
 
-#ifdef PLUGINS
-        /* GROS: Handle for plugin stop event */
-        if (payload->event_flags & EVENT_FLAG_STOP)
-        {
-            CFParm  CFP;
-            int     k, l, m;
-            object *event_obj   = get_event_object(payload, EVENT_STOP);
-            k = EVENT_STOP;
-            l = SCRIPT_FIX_NOTHING;
-            m = 0;
-            CFP.Value[0] = &k;
-            CFP.Value[1] = NULL;
-            CFP.Value[2] = payload;
-            CFP.Value[3] = op;
-            CFP.Value[4] = NULL;
-            CFP.Value[5] = &m;
-            CFP.Value[6] = &m;
-            CFP.Value[7] = &m;
-            CFP.Value[8] = &l;
-            CFP.Value[9] = (char *) event_obj->race;
-            CFP.Value[10] = (char *) event_obj->slaying;
-            if (findPlugin(event_obj->name) >= 0)
-                ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
-        }
-#endif
+        trigger_object_plugin_event(EVENT_STOP, 
+                payload, NULL, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL);
+            
         /* we have a thrown potion here.
-             * This potion has NOT hit a target.
-             * it has hitten a wall or just dropped to the ground.
-             * 1.) its a AE spell... detonate it.
-             * 2.) its something else - shatter the potion.
-             */
+         * This potion has NOT hit a target.
+         * it has hitten a wall or just dropped to the ground.
+         * 1.) its a AE spell... detonate it.
+         * 2.) its something else - shatter the potion.
+         */
         if (payload->type == POTION)
         {
             if (payload->stats.sp != SP_NO_SPELL && spells[payload->stats.sp].flags & SPELL_DESC_DIRECTION)
@@ -1307,8 +1287,10 @@ void move_teleporter(object *op)
         /* teleport to different map */
         if (EXIT_PATH(op))
         {
-            trigger_object_plugin_event(EVENT_TRIGGER, 
-                    op, tmp, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
+            if(trigger_object_plugin_event(EVENT_TRIGGER, 
+                        op, tmp, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
+                    continue;
+
             enter_exit(tmp, op);
         }
         else if (EXIT_X(op) != -1 && EXIT_Y(op) != -1) /* teleport inside this map */
@@ -1323,15 +1305,17 @@ void move_teleporter(object *op)
                 return;
             }
             
-            trigger_object_plugin_event(EVENT_TRIGGER, 
-                    op, tmp, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
+            if(trigger_object_plugin_event(EVENT_TRIGGER, 
+                        op, tmp, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
+                    continue;
             transfer_ob(tmp, EXIT_X(op), EXIT_Y(op), 0, op, NULL);
         }
         else
         {
             /* Random teleporter */
-            trigger_object_plugin_event(EVENT_TRIGGER, 
-                    op, tmp, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
+            if(trigger_object_plugin_event(EVENT_TRIGGER, 
+                        op, tmp, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
+                    continue;
             teleport(op, TELEPORTER, tmp);
         }
     }
@@ -1801,34 +1785,13 @@ int process_object(object *op)
 
     process_object_dirty_jump:
 
-    /* i don't like this script object here ..
-     * this is *the* core loop.
-     */
-#ifdef PLUGINS
-    /* GROS: Handle for plugin time event */
+    /* I don't like this script object here ..  this is *the* core loop.  */
+    /* The redundant flag test avoids a function call in the common case */
     if (op->event_flags & EVENT_FLAG_TIME)
-    {
-        CFParm  CFP;
-        int     k, l, m;
-        object *event_obj   = get_event_object(op, EVENT_TIME);
-        k = EVENT_TIME;
-        l = SCRIPT_FIX_NOTHING;
-        m = 0;
-        CFP.Value[0] = &k;
-        CFP.Value[1] = NULL;
-        CFP.Value[2] = op;
-        CFP.Value[3] = NULL;
-        CFP.Value[4] = NULL;
-        CFP.Value[5] = &m;
-        CFP.Value[6] = &m;
-        CFP.Value[7] = &m;
-        CFP.Value[8] = &l;
-        CFP.Value[9] = (char *) event_obj->race;
-        CFP.Value[10] = (char *) event_obj->slaying;
-        if (findPlugin(event_obj->name) >= 0)
-            ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
-    }
-#endif
+        if(trigger_object_plugin_event(EVENT_TIME, op, NULL, NULL, 
+                NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING))
+            return 0;
+
     switch (op->type)
     {
         case ROD:

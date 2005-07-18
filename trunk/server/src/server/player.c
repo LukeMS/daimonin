@@ -1663,11 +1663,6 @@ void kill_player(object *op)
     int         lost_a_stat;
     int         lose_this_stat;
     int         this_stat;
-#ifdef PLUGINS
-    int         killed_script_rtn; /* GROS: For script return value */
-    CFParm      CFP;
-    int         evtid;
-#endif
 
     if (save_life(op))
         return;
@@ -1710,37 +1705,13 @@ void kill_player(object *op)
         return;
     }
 
-#ifdef PLUGINS
-    /* GROS: Handle for plugin death event */
-    if (op->event_flags & EVENT_FLAG_DEATH)
-    {
-        CFParm *CFR;
-        int     k, l, m;
-        object *event_obj   = get_event_object(op, EVENT_DEATH);
-        k = EVENT_DEATH;
-        l = SCRIPT_FIX_ALL;
-        m = 0;
-        CFP.Value[0] = &k;
-        CFP.Value[1] = NULL;
-        CFP.Value[2] = op;
-        CFP.Value[3] = NULL;
-        CFP.Value[4] = NULL;
-        CFP.Value[5] = &m;
-        CFP.Value[6] = &m;
-        CFP.Value[7] = &m;
-        CFP.Value[8] = &l;
-        CFP.Value[9] = (char *) event_obj->race;
-        CFP.Value[10] = (char *) event_obj->slaying;
-        if (findPlugin(event_obj->name) >= 0)
-        {
-            CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
-            killed_script_rtn = *(int *) (CFR->Value[0]);
-            free(CFR);
-            if (killed_script_rtn)
-                return;
-        }
-    }
-
+    if(trigger_object_plugin_event(EVENT_DEATH, 
+                op, NULL, op, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL))
+        return; /* Cheat death */
+    
+#if 0 /* Disabled global events */
+    CFParm      CFP;
+    int         evtid;
     /* GROS: Handle for the global death event */
     evtid = EVENT_GDEATH;
     CFP.Value[0] = (void *) (&evtid);
@@ -1748,7 +1719,6 @@ void kill_player(object *op)
     CFP.Value[2] = (void *) (op);
     GlobalEvent(&CFP);
 #endif
-
 
     if (op->stats.food < 0)
     {

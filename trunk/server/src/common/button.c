@@ -25,14 +25,19 @@
 
 #include <global.h>
 
+/* When a map is loaded, its buttons are synced. We don't want
+ * to trigger scripts then so we use this global to intdicate it */
+static int ignore_trigger_events = 0;
+
 /* Send signal from op to connection ol */
 void signal_connection(object *op, oblinkpt *olp)
 {
     object     *tmp;
     objectlink *ol;
 
-    trigger_object_plugin_event(EVENT_TRIGGER, 
-            op, op, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
+    if(! ignore_trigger_events)
+        trigger_object_plugin_event(EVENT_TRIGGER, 
+                op, op, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
 
     /*LOG(llevDebug, "push_button: %s (%d)\n", op->name, op->count);*/
     for (ol = olp; ol; ol = ol->next)
@@ -57,8 +62,9 @@ void signal_connection(object *op, oblinkpt *olp)
         }
         tmp = ol->objlink.ob;
         
-        trigger_object_plugin_event(EVENT_TRIGGER, 
-                tmp, op, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
+        if(! ignore_trigger_events)
+            trigger_object_plugin_event(EVENT_TRIGGER, 
+                    tmp, op, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_NOTHING);
 
         switch (tmp->type)
         {
@@ -236,6 +242,9 @@ void update_buttons(mapstruct *m)
     object     *ab, *tmp;
     int         fly, move;
 
+    /* Don't trigger plugin events from this function */
+    ignore_trigger_events = 1;
+
     for (obp = m->buttons; obp; obp = obp->next)
     {
         for (ol = obp->objlink.link; ol; ol = ol->next)
@@ -266,8 +275,8 @@ void update_buttons(mapstruct *m)
                   || ol->objlink.ob->type == TRIGGER_ALTAR)
             {
                      /* check_trigger will itself sort out the numbers of
-                           * items above the trigger
-                           */
+                      * items above the trigger
+                      */
                      check_trigger(ol->objlink.ob, ol->objlink.ob);
             }
             else if (ol->objlink.ob->type == TYPE_CONN_SENSOR)
@@ -280,6 +289,8 @@ void update_buttons(mapstruct *m)
             }
         }
     }
+    
+    ignore_trigger_events = 0;
 }
 
 /*
