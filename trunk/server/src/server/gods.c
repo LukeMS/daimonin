@@ -76,10 +76,6 @@ void pray_at_altar(object *pl, object *altar)
 {
     object *pl_god  = find_god(determine_god(pl));
 
-    if(trigger_object_plugin_event(EVENT_APPLY, 
-                altar, pl, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL))
-        return;
-
     /* If non consecrate altar, don't do anything */
     if (!altar->other_arch)
         return;

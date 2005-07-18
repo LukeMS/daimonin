@@ -935,6 +935,8 @@ int singing(object *pl, int dir)
  * give infinite exp by returning true in any cases.
  */
 
+/* This is disabled for now. Praying works differently in Daimonin */
+
 int pray(object *pl)
 {
     char    buf[MAX_BUF];
@@ -959,6 +961,10 @@ int pray(object *pl)
         /* Only if the altar actually belongs to someone do you get special benefits */
         if (tmp && tmp->type == HOLY_ALTAR && tmp->other_arch)
         {
+            if(trigger_object_plugin_event(EVENT_TRIGGER,
+                        tmp, pl, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL))
+                return 0;
+
             sprintf(buf, "You pray over the %s.", tmp->name);
             pray_at_altar(pl, tmp);
             break;  /* Only pray at one altar */
