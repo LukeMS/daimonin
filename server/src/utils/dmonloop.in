@@ -5,6 +5,7 @@
 CMDNAME="./daimonin_server"
 maxrestart=500
 logdir="data/log"
+tmpdir="data/tmp"
 
 
 logcount=0
@@ -19,6 +20,7 @@ while [ ! "$logcount"x = "$maxrestart"x ]; do
         mv core core.$logcount
         @GZIP@ core.$logcount
   fi
+  rm -fr $tmpdir/*
   logcount=`expr $logcount + 1`
   sleep 50
 done
