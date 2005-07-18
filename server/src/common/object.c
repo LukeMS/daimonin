@@ -1751,6 +1751,7 @@ static inline void activelist_remove_inline(object *op, mapstruct *map)
 static void activelist_insert_inline(object *op)
 //static inline void activelist_insert_inline(object *op)
 {
+    /* TODO: we should really have a single IN_ACTIVELIST flag for this... */
     /* If already on any active list, don't do anything */
     if (op->active_next || op->active_prev || 
             op == active_objects || op == inserted_active_objects ||
@@ -2809,9 +2810,14 @@ object * insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag
     update_object(op, UP_OBJ_INSERT);
 
     /* See if op moved between maps */
-    if(op->speed && op->map && op->map != old_map) {
-//        LOG(llevDebug, "Object moved between maps: %s (%s -> %s)\n", STRING_OBJ_NAME(op), STRING_MAP_PATH(old_map), STRING_MAP_PATH(op->map));
-        activelist_remove_inline(op, old_map);
+    if(op->speed)
+    {
+        if(op->map != old_map)
+        {
+            // LOG(llevDebug, "Object moved between maps: %s (%s -> %s)\n", STRING_OBJ_NAME(op), STRING_MAP_PATH(old_map), STRING_MAP_PATH(op->map));
+            activelist_remove_inline(op, old_map);
+        } 
+
         activelist_insert_inline(op);
     }
 
