@@ -397,6 +397,11 @@ int command_t_tell(object *op, char *params)
          * because the player perhaps has leaved the mapset with the
          * target which will invoke some nasty searchings.
          */
+        /*
+         * TODO: the above comment makes little sense, since 
+         * "nasty searches" are only done if requested (RV_RECURSIVE_SEARCH)
+         * and are also only useful for long distances (which talk shouldn't be). 
+         */
         for (i = 0; i <= SIZEOFFREE2; i++)
         {
 			xt = op->x + freearr_x[i];

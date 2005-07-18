@@ -75,39 +75,10 @@ object * find_god(const char *name)
 void pray_at_altar(object *pl, object *altar)
 {
     object *pl_god  = find_god(determine_god(pl));
-#ifdef PLUGINS
-    int     return_pray_script; /* GROS : This is for return value of script */
-    /* GROS: Handle for plugin altar-parying (apply) event */
-    if (altar->event_flags & EVENT_FLAG_APPLY)
-    {
-        CFParm  CFP;
-        CFParm *CFR;
-        int     k, l, m;
-        object *event_obj   = get_event_object(altar, EVENT_APPLY);
-        k = EVENT_APPLY;
-        l = SCRIPT_FIX_ALL;
-        m = 0;
-        CFP.Value[0] = &k;
-        CFP.Value[1] = pl;
-        CFP.Value[2] = altar;
-        CFP.Value[3] = NULL;
-        CFP.Value[4] = NULL;
-        CFP.Value[5] = &m;
-        CFP.Value[6] = &m;
-        CFP.Value[7] = &m;
-        CFP.Value[8] = &l;
-        CFP.Value[9] = (char *) event_obj->race;
-        CFP.Value[10] = (char *) event_obj->slaying;
-        if (findPlugin(event_obj->name) >= 0)
-        {
-            CFR = (PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP);
-            return_pray_script = *(int *) (CFR->Value[0]);
-            free(CFR);
-            if (return_pray_script)
-                return;
-        }
-    }
-#endif
+
+    if(trigger_object_plugin_event(EVENT_APPLY, 
+                altar, pl, NULL, NULL, NULL, NULL, NULL, SCRIPT_FIX_ALL))
+        return;
 
     /* If non consecrate altar, don't do anything */
     if (!altar->other_arch)

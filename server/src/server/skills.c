@@ -2007,7 +2007,10 @@ void do_throw(object *op, object *toss_item, int dir)
     if (throw_ob->stats.wc > 30)
         throw_ob->stats.wc = 30;
 
-
+    /* Gecko: Had to make sure the thrown object inherited event objects */
+    if(trigger_object_plugin_event(EVENT_THROW, throw_ob->inv, op, NULL, 
+            NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+        return; /* TODO: needs testing */
 
     update_ob_speed(throw_ob);
     throw_ob->speed_left = 0;
@@ -2019,41 +2022,13 @@ void do_throw(object *op, object *toss_item, int dir)
 
     play_sound_map(op->map, op->x, op->y, SOUND_THROW, SOUND_NORMAL);
 
-#ifdef PLUGINS
-    /* Gecko: Had to make sure the thrown object inherited event objects +
-     * that the event gets called on the correct item (the thrown item).
-     * I added the wrapper object as a the Other() value.
-     */
-    /* GROS - Now we can call the associated script_throw event (if any) */
-    if (throw_ob->event_flags & EVENT_FLAG_THROW)
-    {
-        CFParm  CFP;
-        int     k, l, m;
-        object *event_obj   = get_event_object(throw_ob->inv, EVENT_THROW);
-        k = EVENT_THROW;
-        l = SCRIPT_FIX_ACTIVATOR;
-        m = 0;
-        CFP.Value[0] = &k;
-        CFP.Value[1] = op;
-        CFP.Value[2] = throw_ob->inv; /* The actual weapon */
-        CFP.Value[3] = throw_ob;      /* The "carrier" wrapper */
-        CFP.Value[4] = NULL;
-        CFP.Value[5] = &m;
-        CFP.Value[6] = &m;
-        CFP.Value[7] = &m;
-        CFP.Value[8] = &l;
-        CFP.Value[9] = (char *) event_obj->race;
-        CFP.Value[10] = (char *) event_obj->slaying;
-        if (findPlugin(event_obj->name) >= 0)
-            ((PlugList[findPlugin(event_obj->name)].eventfunc) (&CFP));
-    }
-#endif
 #ifdef DEBUG_THROW
     LOG(llevDebug, " pause_f=%d \n", pause_f);
     LOG(llevDebug, " %s stats: wc=%d dam=%d dist=%d spd=%f break=%d\n", throw_ob->name, throw_ob->stats.wc,
         throw_ob->stats.dam, throw_ob->last_sp, throw_ob->speed, throw_ob->stats.food);
     LOG(llevDebug, "inserting tossitem (%d) into map\n", throw_ob->count);
 #endif
+
     if (insert_ob_in_map(throw_ob, op->map, op, 0))
         move_arrow(throw_ob);
 }

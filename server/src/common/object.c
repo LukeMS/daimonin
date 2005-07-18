@@ -3181,6 +3181,10 @@ object * insert_ob_in_ob(object *op, object *where)
         if (!QUERY_FLAG(otmp, FLAG_NO_FIX_PLAYER))
             fix_player(otmp);
     }
+    
+    /* Make sure the object is on an activelist if needed */
+    update_ob_speed(op);
+    
     return op;
 }
 
