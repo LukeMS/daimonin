@@ -3095,7 +3095,11 @@ int manual_apply(object *op, object *tmp, int aflag)
           }
           return 0;
 
-        default:
+        default: /* Now we can put scripts even on NON-applyable items */
+          if(trigger_object_plugin_event(
+                      EVENT_APPLY, tmp, op, NULL,
+                      NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
+              return 1; /* 1 = do not write an error message to the player */
           return 0;
     }
 }
