@@ -2654,7 +2654,7 @@ int dragon_eat_flesh(object *op, object *meal)
     return 1;
 }
 
-static void apply_savebed(object *pl)
+static void apply_savebed(object *pl, object *bed)
 {
     if (!CONTR(pl)->name_changed || !pl->stats.exp)
     {
@@ -2671,12 +2671,10 @@ static void apply_savebed(object *pl)
     "%s leaves the game.",pl->name);
        */
 
-    /* TODO: event triggers
     if(trigger_object_plugin_event(
-                EVENT_APPLY, tmp, op, NULL,
+                EVENT_APPLY, bed, pl, NULL,
                 NULL, NULL, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
         return;
-    */
 
     /* update respawn position */
     strcpy(CONTR(pl)->savebed_map, pl->map->path);
@@ -2865,7 +2863,6 @@ int manual_apply(object *op, object *tmp, int aflag)
               if(trigger_object_plugin_event(EVENT_APPLY, tmp, op, NULL,
                           NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
                   return 1; /* 1 = do not write an error message to the player */
-              /* TODO: maybe plugin event should be in pray_at_altar() */
               pray_at_altar(op, tmp);
           }
           else
@@ -2888,7 +2885,6 @@ int manual_apply(object *op, object *tmp, int aflag)
         case TRIGGER:
           if (check_trigger(tmp, op))
           {
-              /* TODO: maybe plugin event should be in check_trigger() */
               if(trigger_object_plugin_event(
                           EVENT_APPLY, tmp, op, NULL,
                           NULL, &aflag, NULL, NULL, SCRIPT_FIX_ACTIVATOR))
@@ -3035,7 +3031,7 @@ int manual_apply(object *op, object *tmp, int aflag)
         case SAVEBED:
           if (op->type == PLAYER)
           {
-              apply_savebed(op);
+              apply_savebed(op, tmp);
               return 1;
           }
           return 0;
