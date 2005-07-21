@@ -1711,11 +1711,8 @@ void update_turn_face(object *op)
  */
 static inline void activelist_remove_inline(object *op, mapstruct *map)
 {
-    /* If not on the active list, nothing needs to be done */
-    if (!op->active_next && !op->active_prev && 
-            op != active_objects && op != inserted_active_objects 
-            && (map == NULL || op != map->active_objects)
-            && (op->map == NULL || op != op->map->active_objects))
+    /* If not already on any active list, don't do anything */
+    if(!QUERY_FLAG(op, FLAG_IN_ACTIVELIST))
         return;
 
     LOG(llevDebug,"remove: %s (%d) map:%s\n", query_name(op), op->count, map?map->path:"NULL" );
@@ -1723,7 +1720,6 @@ static inline void activelist_remove_inline(object *op, mapstruct *map)
      * update the next_active_object pointer */
     if(op == next_active_object)
         next_active_object = op->active_next;
-
     if (op == active_objects)
         active_objects = op->active_next;
     else if (op == inserted_active_objects)
@@ -1741,6 +1737,7 @@ static inline void activelist_remove_inline(object *op, mapstruct *map)
     if (op->active_next)
         op->active_next->active_prev = op->active_prev;
 
+    CLEAR_FLAG(op, FLAG_IN_ACTIVELIST);
     op->active_next = NULL;
     op->active_prev = NULL;
 }
@@ -1748,14 +1745,10 @@ static inline void activelist_remove_inline(object *op, mapstruct *map)
 /* Insert an object into the insertion activelist, it will be
  * moved to its corresponding map's activelist at the next
  * call to process_events() */
-static void activelist_insert_inline(object *op)
-//static inline void activelist_insert_inline(object *op)
+static inline void activelist_insert_inline(object *op)
 {
-    /* TODO: we should really have a single IN_ACTIVELIST flag for this... */
     /* If already on any active list, don't do anything */
-    if (op->active_next || op->active_prev || 
-            op == active_objects || op == inserted_active_objects ||
-            (op->map && op == op->map->active_objects))
+    if(QUERY_FLAG(op, FLAG_IN_ACTIVELIST))
         return;
 
     LOG(llevDebug,"ADD: %s (type:%d count:%d) %s (%d,%d))\n", query_name(op), op->type, op->count, op->map?op->map->path:(op->env?query_name(op->env):"NULL"), op->x, op->y);
@@ -1767,6 +1760,8 @@ static void activelist_insert_inline(object *op)
         op->active_next->active_prev = op;
     inserted_active_objects = op;
     op->active_prev = NULL;
+
+    SET_FLAG(op, FLAG_IN_ACTIVELIST);
 }
 
 void activelist_insert(object *op)
