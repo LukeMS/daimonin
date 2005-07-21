@@ -710,7 +710,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_USE_ARMOUR     56 /* (player/deity) INTERNAL flag to allow armour use (for example from the deity) */
 #define FLAG_USE_WEAPON     57 /* (player/deity) INTERNAL same as armour: can wield weapons */
 #define FLAG_USE_RING       58 /* (player/deity) INTERNAL can use rings and amulet (not implemented for gods ATM!) */
-/* FREE flag 59 */
+#define FLAG_IN_ACTIVELIST  59 /* INTERNAL (not saved): mark object as in active list */
 #define FLAG_READY_BOW      60 /* mob or player has a bow readied */
 #define FLAG_XRAYS          61 /* X-ray vision */
 #define FLAG_NO_APPLY       62 /* Avoids step_on/fly_on to this object */
@@ -834,7 +834,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_NO_SAVE            134     /* don't save this object - remove it before we save */
 #define FLAG_PASS_ETHEREAL      135     /* can_pass light for ethereal */
 
-/* FREE flag: 89, 48, 53, 54, 59, 55 */
+/* FREE flag: 48, 53, 54, 59, 55 */
 /* flag 37 is still free (old FREED flag). Let it free for secure reason for some time */
 
 #define NUM_FLAGS       135 /* Should always be equal to the last defined flag */
