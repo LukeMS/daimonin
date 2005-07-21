@@ -1378,10 +1378,15 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
     /* Did we find an enemy? */
     if (worst_enemy)
     {
+        /* conservative use of the linked spawns - if linked spawns, give enemy signal to all */
+        /* only kick the signal here in, when we have a new target */
+        if (!op->enemy && MOB_DATA(op)->spawn_info && MOB_DATA(op)->spawn_info->owner->slaying)
+            send_link_spawn_signal(MOB_DATA(op)->spawn_info->owner, worst_enemy->obj, LINK_SPAWN_ENEMY);
+
         //        LOG(llevDebug,"ai_choose_enemy(): %s's worst enemy is '%s', friendship: %d\n", STRING_OBJ_NAME(op), STRING_OBJ_NAME(worst_enemy->ob), worst_enemy->tmp_friendship);
         op->enemy = worst_enemy->obj;
         MOB_DATA(op)->enemy = worst_enemy;
-        op->enemy_count = worst_enemy->obj_count;
+        op->enemy_count = worst_enemy->obj_count;        
     }
     else
     {
@@ -1397,6 +1402,8 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
         if (op->enemy)
         {
             // Is this actually referenced to anywhere else? - Gecko 20050713
+            // Thats part of the pre-AI code: "follow target without hitting it AND target out of range
+            // until last_eat counter is zero" MT-07.2005
 //            op->last_eat = 0;   /* important: thats our "we lose aggro count" - reset to zero here */
             if (!QUERY_FLAG(op, FLAG_FRIENDLY) && op->map)
                 play_sound_map(op->map, op->x, op->y, SOUND_GROWL, SOUND_NORMAL);

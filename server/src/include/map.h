@@ -325,6 +325,7 @@ typedef struct mapdef
     const char     *path;                   /* Filename of the map (shared string now) */
     const char     *tile_path[TILED_MAPS];  /* path to adjoining maps (shared strings) */
     struct mapdef  *tile_map[TILED_MAPS];   /* Next map, linked list */
+    objectlink     *linked_spawn_list;      /* list pointer of the linked list */
     object         *player_first;           /* chained list of player on this map */
     object         *active_objects;         /* linked list of active objects */
 

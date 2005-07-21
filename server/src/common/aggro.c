@@ -39,13 +39,10 @@
 
 #include <global.h>
 
-/* alot debug out with this option - disable it for normal server */
-#define DEBUG_AGGRO
-
 static uint32 exp_calc_tag=1; /* used to tag the player/group */
 
 /*
- *	TODO: Quick access of this structures by a pointer initilized for players in fix_player and placed
+ *	TODO: Quick access of this structures by a pointer initialized for players in fix_player and placed
  *  in the player struct.
  */
 

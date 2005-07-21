@@ -44,7 +44,7 @@
 #include <../random_maps/rproto.h>
 
 
-#ifdef MEMPOOL_OBJECT_TRACKING
+#ifdef DEBUG_MEMPOOL_OBJECT_TRACKING
 extern void check_use_object_list(void);
 #endif
 /* Prototypes of functions used only here. */
@@ -1406,7 +1406,7 @@ int main(int argc, char **argv)
 				"[INFO]: Please HELP US and VOTE for Daimonin DAILY!\nGo to www.daimonin.net and hit the VOTE ICONS!\nThanks and happy playing!! - Michtoen");
 		}
 #endif
-#ifdef MEMPOOL_OBJECT_TRACKING
+#ifdef DEBUG_MEMPOOL_OBJECT_TRACKING
         check_use_object_list();
 #endif
 

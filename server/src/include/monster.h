@@ -143,6 +143,8 @@ struct mobdata
 
     struct mob_behaviourset    *behaviours;
 
+    object                     *spawn_info; /* quick pointer to spawn info (and so to its spawn point - if one) */
+
     uint8 idle_time;            /* How long have we been standing still
                                    not doing anything */
 };

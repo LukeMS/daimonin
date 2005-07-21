@@ -47,6 +47,8 @@ error - Your ANSI C compiler should be defining __STDC__;
 #include <autoconf.h>
 #endif
 
+#include <debug.h> /* global & explicit debug settings */
+
 #define FONTDIR ""
 #define FONTNAME ""
 
