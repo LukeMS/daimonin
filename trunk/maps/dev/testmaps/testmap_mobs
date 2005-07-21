@@ -1231,10 +1231,8 @@ y 12
 arch ogre
 type 83
 stand_still 1
-sp -1
 maxsp 30
 Pow 2
-Dex 3
 arch ability_firestorm
 end
 end
@@ -1923,6 +1921,15 @@ arch floor_ostone1
 x 15
 y 4
 end
+arch sign
+name sign ('a'pply to read
+msg
+all the 3 ogres are linked spawn point.
+Attack one and all will come!
+endmsg
+x 15
+y 4
+end
 arch floor_wood1
 x 15
 y 5
@@ -2597,6 +2604,15 @@ arch floor_ostone1
 x 21
 y 2
 end
+arch spawn_point
+slaying test1
+x 21
+y 2
+arch ogre
+type 83
+Wis 2
+end
+end
 arch floor_ostone1
 x 21
 y 3
@@ -2609,6 +2625,15 @@ arch floor_ostone1
 x 21
 y 5
 end
+arch spawn_point
+slaying test1
+x 21
+y 5
+arch ogre
+type 83
+Wis 2
+end
+end
 arch floor_ostone1
 x 21
 y 6
@@ -2620,6 +2645,15 @@ end
 arch floor_ostone1
 x 21
 y 8
+end
+arch spawn_point
+slaying test1
+x 21
+y 8
+arch ogre
+type 83
+Wis 2
+end
 end
 arch floor_ostone1
 x 21
@@ -2636,6 +2670,14 @@ end
 arch floor_ostone1
 x 21
 y 12
+end
+arch spawn_point
+slaying test2
+x 21
+y 12
+arch ogre
+type 83
+end
 end
 arch floor_ostone1
 x 21

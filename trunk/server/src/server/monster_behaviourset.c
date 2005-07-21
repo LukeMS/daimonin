@@ -149,6 +149,7 @@ void initialize_mob_data(struct mobdata *data)
 
     data->behaviours = NULL;
 
+    data->spawn_info = NULL;
     data->idle_time = 0;
 }
 

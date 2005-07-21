@@ -196,6 +196,8 @@ typedef signed long long 		sint64;
 /* special macro with no {} ! if() FREE_AND_CLEAR_HASH2 will FAIL! */
 #define FREE_AND_CLEAR_HASH2(_nv_) if(_nv_){free_string_shared(_nv_);_nv_ =NULL;}
 
+#define LINK_SPAWN_ENEMY 0x01
+
 #define SPAWN_RANDOM_RANGE 10000
 #define RANDOM_DROP_RAND_RANGE 1000000
 

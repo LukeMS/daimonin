@@ -1952,7 +1952,7 @@ void dragon_level_gain(object *who)
  */
 void fix_monster(object *op)
 {
-    object *base, *tmp, *bow=NULL;
+    object *base, *tmp, *spawn_info=NULL, *bow=NULL;
     float   tmp_add;
 
     if (op->head) /* don't adjust tails or player - only single objects or heads */
@@ -1972,6 +1972,8 @@ void fix_monster(object *op)
 		}
 		else if (tmp->type == ABILITY)
 			SET_FLAG(op, FLAG_READY_SPELL);
+        else if(tmp->type == SPAWN_POINT_INFO)
+            spawn_info = tmp;
     }
 
 	/* assign amun to our ability bow - and put them inside the inventory of it
@@ -2044,6 +2046,12 @@ void fix_monster(object *op)
         op->custom_attrset = get_poolchunk(pool_mob_data);
         MOB_DATA(op)->behaviours = setup_behaviours(op);
     }
+
+    /* insert a quick jump in the MOB_DATA(() to its spawn info
+     * Wonderful, i can skip the spawn point info loop now.
+     * Thats a nice speed increase! MT
+     */
+    MOB_DATA(op)->spawn_info = spawn_info;
 }
 
 /* insert and initialize base info object in object op

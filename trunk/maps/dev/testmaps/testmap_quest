@@ -161,6 +161,7 @@ x 1
 y 7
 end
 arch blob_poison
+unaggressive 1
 x 1
 y 7
 arch quest_trigger
@@ -498,8 +499,7 @@ arch monk
 name Quest & GUI Tester
 invulnerable 1
 no_attack 1
-unaggressive 0
-friendly 1
+unaggressive 1
 x 5
 y 1
 arch event_obj

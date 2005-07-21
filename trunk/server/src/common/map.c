@@ -937,6 +937,10 @@ int load_objects(mapstruct *m, FILE *fp, int mapflags)
             op->attacked_by_count = 0;
             sum_weight(op);
         }
+        else if(op->type == SPAWN_POINT && op->slaying)
+        {
+            add_linked_spawn(op);
+        }
 
         if (QUERY_FLAG(op, FLAG_UNIQUE))
 			unique = TRUE;					/* we CAN avoid this check by check the map in the editor first
@@ -1428,22 +1432,26 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
 mapstruct * get_linked_map()
 {
     mapstruct  *map = (mapstruct *) calloc(1, sizeof(mapstruct));
-    mapstruct  *mp;
 
     if (map == NULL)
         LOG(llevError, "ERROR: get_linked_map(): OOM.\n");
 
+    /* why we do this? Is it really needed to put a new map on the end 
+    * of the list? even when - add a last_map. So, we are smart and do
+    * a FILO list here.
+    */
+    /*
     for (mp = first_map; mp != NULL && mp->next != NULL; mp = mp->next)
         ;
     if (mp == NULL)
         first_map = map;
     else
         mp->next = map;
+    */
+    /* much smarter ... */
+    map->next = first_map;
+    first_map = map;
 
-    map->cached_dist_map = NULL;
-    map->buttons = NULL;
-    map->first_light = NULL;
-    map->bitmap = NULL;
     map->in_memory = MAP_SWAPPED;
 	map->has_unique = FALSE;
     /* The maps used to pick up default x and y values from the
@@ -2220,6 +2228,9 @@ void free_map(mapstruct *m, int flag)
      * will be set with wrong light values.
      */
     remove_light_source_list(m);
+
+    /* remove linked spawn points (small list of objectlink * */
+    remove_linked_spawn_list(m);
 
     /* I put this before free_all_objects() -
      * because the link flag is now tested in destroy_object()

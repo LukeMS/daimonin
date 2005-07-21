@@ -400,6 +400,9 @@ int                         talk_to_npc(object *op, object *npc, char *txt);
 int                         talk_to_wall(object *npc, char *txt);
 /* spawn_point.c */
 void                        spawn_point(object *op);
+objectlink                 *add_linked_spawn(object *spawn);
+void                        remove_linked_spawn_list(mapstruct *map);
+void                        send_link_spawn_signal(object *spawn, object *target, int signal);
 /* move.c */
 int                         move_ob(object *op, int dir, object *originator);
 int                         transfer_ob(object *op, int x, int y, int randomly, object *originator, object *trap);

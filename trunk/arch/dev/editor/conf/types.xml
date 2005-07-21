@@ -4209,6 +4209,12 @@
     inserting big monsters on the map. Depending on the "free" area,
     the spawn point will drop the mob somewhere in the free area.
   </attribute>
+<section name="linked">
+  <attribute arch="slaying" editor="link tag" type="string">
+    All spawn points of the map with the same link tag will
+    linked together and work as 'linked spawns (mobs)'.
+  </attribute>
+</section>
 </type>
 <!--####################################################################-->
 <type number="83" name="Spawn Point Mob">

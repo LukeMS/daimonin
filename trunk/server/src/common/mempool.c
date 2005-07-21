@@ -35,7 +35,7 @@
 #include <sys/uio.h>
 #endif /* win32 */
 
-#ifdef MEMPOOL_OBJECT_TRACKING
+#ifdef DEBUG_MEMPOOL_OBJECT_TRACKING
 #define MEMPOOL_OBJECT_FLAG_FREE 1
 #define MEMPOOL_OBJECT_FLAG_USED 2
 static struct mempool_chunk    *used_object_list        = NULL; /* for debugging only! */
@@ -223,7 +223,7 @@ static void expand_mempool(struct mempool *pool, uint32 arraysize_exp)
     ptr = first;
     for (i = 0; (int) i < nrof_arrays - 1; i++)
     {
-#ifdef MEMPOOL_OBJECT_TRACKING
+#ifdef DEBUG_MEMPOOL_OBJECT_TRACKING
         ptr->obj_next = ptr->obj_prev = 0; /* secure */
         ptr->pool = pool;
         ptr->id = chunk_tracking_id++; /* this is a real, unique object id  allows tracking beyond get/free objects */
@@ -234,7 +234,7 @@ static void expand_mempool(struct mempool *pool, uint32 arraysize_exp)
 
     /* and the last element */
     ptr->next = &end_marker;
-#ifdef MEMPOOL_OBJECT_TRACKING
+#ifdef DEBUG_MEMPOOL_OBJECT_TRACKING
     ptr->obj_next = ptr->obj_prev = 0; /* secure */
     ptr->pool = pool;
     ptr->id = chunk_tracking_id++; /* this is a real, unique object id  allows tracking beyond get/free objects */
@@ -276,7 +276,7 @@ void * get_poolchunk_array_real(struct mempool *pool, uint32 arraysize_exp)
     if (pool->constructor)
         pool->constructor(MEM_USERDATA(new_obj));
 
-#ifdef MEMPOOL_OBJECT_TRACKING
+#ifdef DEBUG_MEMPOOL_OBJECT_TRACKING
     /* that should never happens! */
     if (new_obj->obj_prev || new_obj->obj_next)
     {
@@ -305,7 +305,7 @@ void return_poolchunk_array_real(void *data, uint32 arraysize_exp, struct mempoo
         LOG(llevBug, "BUG: return_poolchunk on already free chunk (pool \"%s\")\n",
             pool->chunk_description);
 
-#ifdef MEMPOOL_OBJECT_TRACKING
+#ifdef DEBUG_MEMPOOL_OBJECT_TRACKING
     if (old->obj_next)
         old->obj_next->obj_prev = old->obj_prev;
     if (old->obj_prev)
@@ -334,7 +334,7 @@ void return_poolchunk_array_real(void *data, uint32 arraysize_exp, struct mempoo
     }
 }
 
-#ifdef MEMPOOL_OBJECT_TRACKING
+#ifdef DEBUG_MEMPOOL_OBJECT_TRACKING
 
 /* this is time consuming DEBUG only
  * function. Mainly, it checks the different memory parts
