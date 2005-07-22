@@ -112,7 +112,7 @@ end
 arch grassd_6
 x 1
 end
-arch floor_farm1e
+arch floor_farm1k
 x 1
 y 1
 end
@@ -120,7 +120,7 @@ arch floor_farm1a
 x 1
 y 2
 end
-arch floor_farm1n
+arch floor_farm1k
 x 1
 y 3
 end
@@ -128,7 +128,7 @@ arch floor_farm1a
 x 1
 y 4
 end
-arch floor_farm1l
+arch floor_farm1k
 x 1
 y 5
 end
@@ -136,23 +136,23 @@ arch floor_farm1a
 x 1
 y 6
 end
-arch floor_farm1j
+arch floor_farm1n
 x 1
 y 7
 end
-arch floor_farm1a
+arch floor_farm1n
 x 1
 y 8
 end
-arch floor_farm1g
+arch floor_farm1n
 x 1
 y 9
 end
-arch floor_farm1a
+arch floor_farm1n
 x 1
 y 10
 end
-arch floor_farm1c
+arch floor_farm1n
 x 1
 y 11
 end
@@ -230,7 +230,7 @@ end
 arch plant17
 x 2
 end
-arch floor_farm1e
+arch floor_farm1k
 x 2
 y 1
 end
@@ -238,7 +238,7 @@ arch floor_farm1a
 x 2
 y 2
 end
-arch floor_farm1n
+arch floor_farm1k
 x 2
 y 3
 end
@@ -246,7 +246,7 @@ arch floor_farm1a
 x 2
 y 4
 end
-arch floor_farm1l
+arch floor_farm1k
 x 2
 y 5
 end
@@ -254,7 +254,7 @@ arch floor_farm1a
 x 2
 y 6
 end
-arch floor_farm1j
+arch floor_farm1a
 x 2
 y 7
 end
@@ -262,7 +262,7 @@ arch floor_farm1a
 x 2
 y 8
 end
-arch floor_farm1g
+arch floor_farm1a
 x 2
 y 9
 end
@@ -270,7 +270,7 @@ arch floor_farm1a
 x 2
 y 10
 end
-arch floor_farm1c
+arch floor_farm1a
 x 2
 y 11
 end
@@ -337,7 +337,7 @@ end
 arch grassd_7
 x 3
 end
-arch floor_farm1e
+arch floor_farm1k
 x 3
 y 1
 end
@@ -345,7 +345,7 @@ arch floor_farm1a
 x 3
 y 2
 end
-arch floor_farm1n
+arch floor_farm1k
 x 3
 y 3
 end
@@ -353,7 +353,7 @@ arch floor_farm1a
 x 3
 y 4
 end
-arch floor_farm1l
+arch floor_farm1k
 x 3
 y 5
 end
@@ -361,23 +361,23 @@ arch floor_farm1a
 x 3
 y 6
 end
-arch floor_farm1j
+arch floor_farm1n
 x 3
 y 7
 end
-arch floor_farm1a
+arch floor_farm1n
 x 3
 y 8
 end
-arch floor_farm1g
+arch floor_farm1n
 x 3
 y 9
 end
-arch floor_farm1a
+arch floor_farm1n
 x 3
 y 10
 end
-arch floor_farm1c
+arch floor_farm1n
 x 3
 y 11
 end
@@ -468,7 +468,7 @@ end
 arch grassd_1
 x 4
 end
-arch floor_farm1e
+arch floor_farm1k
 x 4
 y 1
 end
@@ -476,7 +476,7 @@ arch floor_farm1a
 x 4
 y 2
 end
-arch floor_farm1n
+arch floor_farm1k
 x 4
 y 3
 end
@@ -484,7 +484,7 @@ arch floor_farm1a
 x 4
 y 4
 end
-arch floor_farm1l
+arch floor_farm1k
 x 4
 y 5
 end
@@ -492,7 +492,7 @@ arch floor_farm1a
 x 4
 y 6
 end
-arch floor_farm1j
+arch floor_farm1a
 x 4
 y 7
 end
@@ -500,7 +500,7 @@ arch floor_farm1a
 x 4
 y 8
 end
-arch floor_farm1g
+arch floor_farm1a
 x 4
 y 9
 end
@@ -508,7 +508,7 @@ arch floor_farm1a
 x 4
 y 10
 end
-arch floor_farm1c
+arch floor_farm1a
 x 4
 y 11
 end
@@ -583,7 +583,7 @@ end
 arch grassd_2
 x 5
 end
-arch floor_farm1e
+arch floor_farm1k
 x 5
 y 1
 end
@@ -591,7 +591,7 @@ arch floor_farm1a
 x 5
 y 2
 end
-arch floor_farm1n
+arch floor_farm1k
 x 5
 y 3
 end
@@ -599,7 +599,7 @@ arch floor_farm1a
 x 5
 y 4
 end
-arch floor_farm1l
+arch floor_farm1k
 x 5
 y 5
 end
@@ -607,23 +607,23 @@ arch floor_farm1a
 x 5
 y 6
 end
-arch floor_farm1j
+arch floor_farm1n
 x 5
 y 7
 end
-arch floor_farm1a
+arch floor_farm1n
 x 5
 y 8
 end
-arch floor_farm1g
+arch floor_farm1n
 x 5
 y 9
 end
-arch floor_farm1a
+arch floor_farm1n
 x 5
 y 10
 end
-arch floor_farm1c
+arch floor_farm1n
 x 5
 y 11
 end
@@ -698,23 +698,23 @@ end
 arch grassd_7
 x 6
 end
-arch floor_farm1e
+arch floor_farm1j
 x 6
 y 1
 end
-arch floor_farm1a
+arch floor_farm1j
 x 6
 y 2
 end
-arch floor_farm1n
+arch floor_farm1j
 x 6
 y 3
 end
-arch floor_farm1a
+arch floor_farm1j
 x 6
 y 4
 end
-arch floor_farm1l
+arch floor_farm1j
 x 6
 y 5
 end
@@ -722,19 +722,19 @@ arch floor_farm1a
 x 6
 y 6
 end
-arch floor_farm1j
+arch floor_farm1c
 x 6
 y 7
 end
-arch floor_farm1a
+arch floor_farm1c
 x 6
 y 8
 end
-arch floor_farm1g
+arch floor_farm1c
 x 6
 y 9
 end
-arch floor_farm1a
+arch floor_farm1c
 x 6
 y 10
 end
@@ -805,7 +805,7 @@ end
 arch grassd_2
 x 7
 end
-arch floor_farm1e
+arch floor_farm1a
 x 7
 y 1
 end
@@ -813,7 +813,7 @@ arch floor_farm1a
 x 7
 y 2
 end
-arch floor_farm1n
+arch floor_farm1a
 x 7
 y 3
 end
@@ -821,7 +821,7 @@ arch floor_farm1a
 x 7
 y 4
 end
-arch floor_farm1l
+arch floor_farm1a
 x 7
 y 5
 end
@@ -829,19 +829,19 @@ arch floor_farm1a
 x 7
 y 6
 end
-arch floor_farm1j
+arch floor_farm1c
 x 7
 y 7
 end
-arch floor_farm1a
+arch floor_farm1c
 x 7
 y 8
 end
-arch floor_farm1g
+arch floor_farm1c
 x 7
 y 9
 end
-arch floor_farm1a
+arch floor_farm1c
 x 7
 y 10
 end
@@ -932,23 +932,23 @@ end
 arch plant_flower5
 x 8
 end
-arch floor_farm1e
+arch floor_farm1j
 x 8
 y 1
 end
-arch floor_farm1a
+arch floor_farm1j
 x 8
 y 2
 end
-arch floor_farm1n
+arch floor_farm1j
 x 8
 y 3
 end
-arch floor_farm1a
+arch floor_farm1j
 x 8
 y 4
 end
-arch floor_farm1l
+arch floor_farm1j
 x 8
 y 5
 end
@@ -956,19 +956,19 @@ arch floor_farm1a
 x 8
 y 6
 end
-arch floor_farm1j
+arch floor_farm1c
 x 8
 y 7
 end
-arch floor_farm1a
+arch floor_farm1c
 x 8
 y 8
 end
-arch floor_farm1g
+arch floor_farm1c
 x 8
 y 9
 end
-arch floor_farm1a
+arch floor_farm1c
 x 8
 y 10
 end
@@ -1020,7 +1020,16 @@ arch floor_wood1b
 x 8
 y 17
 end
+arch locker4
+direction 7
+x 8
+y 17
+end
 arch floor_wood1b
+x 8
+y 18
+end
+arch table_small1
 x 8
 y 18
 end
@@ -1028,7 +1037,17 @@ arch floor_wood1b
 x 8
 y 19
 end
+arch locker2.111
+direction 7
+x 8
+y 19
+end
 arch floor_wood1b
+x 8
+y 20
+end
+arch desk2
+direction 7
 x 8
 y 20
 end
@@ -1055,7 +1074,7 @@ end
 arch grassd_1
 x 9
 end
-arch floor_farm1e
+arch floor_farm1a
 x 9
 y 1
 end
@@ -1063,7 +1082,7 @@ arch floor_farm1a
 x 9
 y 2
 end
-arch floor_farm1n
+arch floor_farm1a
 x 9
 y 3
 end
@@ -1071,7 +1090,7 @@ arch floor_farm1a
 x 9
 y 4
 end
-arch floor_farm1l
+arch floor_farm1a
 x 9
 y 5
 end
@@ -1079,19 +1098,19 @@ arch floor_farm1a
 x 9
 y 6
 end
-arch floor_farm1j
+arch floor_farm1c
 x 9
 y 7
 end
-arch floor_farm1a
+arch floor_farm1c
 x 9
 y 8
 end
-arch floor_farm1g
+arch floor_farm1c
 x 9
 y 9
 end
-arch floor_farm1a
+arch floor_farm1c
 x 9
 y 10
 end
@@ -1143,10 +1162,6 @@ arch floor_wood1b
 x 9
 y 18
 end
-arch bed_1a.111
-x 9
-y 18
-end
 arch floor_wood1b
 x 9
 y 19
@@ -1159,7 +1174,8 @@ arch floor_wood1b
 x 9
 y 20
 end
-arch bed_1a.111
+arch chair1_111
+direction 3
 x 9
 y 20
 end
@@ -1182,23 +1198,23 @@ end
 arch grassd_7
 x 10
 end
-arch floor_farm1e
+arch floor_farm1j
 x 10
 y 1
 end
-arch floor_farm1a
+arch floor_farm1j
 x 10
 y 2
 end
-arch floor_farm1n
+arch floor_farm1j
 x 10
 y 3
 end
-arch floor_farm1a
+arch floor_farm1j
 x 10
 y 4
 end
-arch floor_farm1l
+arch floor_farm1j
 x 10
 y 5
 end
@@ -1206,19 +1222,19 @@ arch floor_farm1a
 x 10
 y 6
 end
-arch floor_farm1j
+arch floor_farm1c
 x 10
 y 7
 end
-arch floor_farm1a
+arch floor_farm1c
 x 10
 y 8
 end
-arch floor_farm1g
+arch floor_farm1c
 x 10
 y 9
 end
-arch floor_farm1a
+arch floor_farm1c
 x 10
 y 10
 end
@@ -1266,7 +1282,7 @@ arch floor_wood1b
 x 10
 y 18
 end
-arch bed_1b.111
+arch bed_1a.111
 x 10
 y 18
 end
@@ -1278,7 +1294,7 @@ arch floor_wood1b
 x 10
 y 20
 end
-arch bed_1b.111
+arch bed_1a.111
 x 10
 y 20
 end
@@ -1301,7 +1317,7 @@ end
 arch grassd_6
 x 11
 end
-arch floor_farm1e
+arch floor_farm1h
 x 11
 y 1
 end
@@ -1309,7 +1325,7 @@ arch floor_farm1a
 x 11
 y 2
 end
-arch floor_farm1n
+arch floor_farm1h
 x 11
 y 3
 end
@@ -1317,7 +1333,7 @@ arch floor_farm1a
 x 11
 y 4
 end
-arch floor_farm1l
+arch floor_farm1h
 x 11
 y 5
 end
@@ -1325,23 +1341,23 @@ arch floor_farm1a
 x 11
 y 6
 end
-arch floor_farm1j
+arch floor_farm1b
 x 11
 y 7
 end
-arch floor_farm1a
+arch floor_farm1b
 x 11
 y 8
 end
-arch floor_farm1g
+arch floor_farm1b
 x 11
 y 9
 end
-arch floor_farm1a
+arch floor_farm1b
 x 11
 y 10
 end
-arch floor_farm1c
+arch floor_farm1b
 x 11
 y 11
 end
@@ -1381,11 +1397,19 @@ arch floor_wood1b
 x 11
 y 18
 end
+arch bed_1b.111
+x 11
+y 18
+end
 arch floor_wood1b
 x 11
 y 19
 end
 arch floor_wood1b
+x 11
+y 20
+end
+arch bed_1b.111
 x 11
 y 20
 end
@@ -1408,7 +1432,7 @@ end
 arch grassd_8
 x 12
 end
-arch floor_farm1e
+arch floor_farm1h
 x 12
 y 1
 end
@@ -1416,7 +1440,7 @@ arch floor_farm1a
 x 12
 y 2
 end
-arch floor_farm1n
+arch floor_farm1h
 x 12
 y 3
 end
@@ -1424,7 +1448,7 @@ arch floor_farm1a
 x 12
 y 4
 end
-arch floor_farm1l
+arch floor_farm1h
 x 12
 y 5
 end
@@ -1432,23 +1456,23 @@ arch floor_farm1a
 x 12
 y 6
 end
-arch floor_farm1j
+arch floor_farm1b
 x 12
 y 7
 end
-arch floor_farm1a
+arch floor_farm1b
 x 12
 y 8
 end
-arch floor_farm1g
+arch floor_farm1b
 x 12
 y 9
 end
-arch floor_farm1a
+arch floor_farm1b
 x 12
 y 10
 end
-arch floor_farm1c
+arch floor_farm1b
 x 12
 y 11
 end
@@ -1545,7 +1569,7 @@ end
 arch grassd_6
 x 13
 end
-arch floor_farm1e
+arch floor_farm1h
 x 13
 y 1
 end
@@ -1553,7 +1577,7 @@ arch floor_farm1a
 x 13
 y 2
 end
-arch floor_farm1n
+arch floor_farm1h
 x 13
 y 3
 end
@@ -1561,7 +1585,7 @@ arch floor_farm1a
 x 13
 y 4
 end
-arch floor_farm1l
+arch floor_farm1h
 x 13
 y 5
 end
@@ -1569,23 +1593,23 @@ arch floor_farm1a
 x 13
 y 6
 end
-arch floor_farm1j
+arch floor_farm1b
 x 13
 y 7
 end
-arch floor_farm1a
+arch floor_farm1b
 x 13
 y 8
 end
-arch floor_farm1g
+arch floor_farm1b
 x 13
 y 9
 end
-arch floor_farm1a
+arch floor_farm1b
 x 13
 y 10
 end
-arch floor_farm1c
+arch floor_farm1b
 x 13
 y 11
 end
@@ -1661,7 +1685,7 @@ end
 arch grassd_3
 x 14
 end
-arch floor_farm1e
+arch floor_farm1h
 x 14
 y 1
 end
@@ -1669,7 +1693,7 @@ arch floor_farm1a
 x 14
 y 2
 end
-arch floor_farm1n
+arch floor_farm1h
 x 14
 y 3
 end
@@ -1677,7 +1701,7 @@ arch floor_farm1a
 x 14
 y 4
 end
-arch floor_farm1l
+arch floor_farm1h
 x 14
 y 5
 end
@@ -1685,23 +1709,23 @@ arch floor_farm1a
 x 14
 y 6
 end
-arch floor_farm1j
+arch floor_farm1b
 x 14
 y 7
 end
-arch floor_farm1a
+arch floor_farm1b
 x 14
 y 8
 end
-arch floor_farm1g
+arch floor_farm1b
 x 14
 y 9
 end
-arch floor_farm1a
+arch floor_farm1b
 x 14
 y 10
 end
-arch floor_farm1c
+arch floor_farm1b
 x 14
 y 11
 end
@@ -1788,7 +1812,7 @@ end
 arch grassd_6
 x 15
 end
-arch floor_farm1e
+arch floor_farm1h
 x 15
 y 1
 end
@@ -1796,7 +1820,7 @@ arch floor_farm1a
 x 15
 y 2
 end
-arch floor_farm1n
+arch floor_farm1h
 x 15
 y 3
 end
@@ -1804,7 +1828,7 @@ arch floor_farm1a
 x 15
 y 4
 end
-arch floor_farm1l
+arch floor_farm1h
 x 15
 y 5
 end
@@ -1812,23 +1836,23 @@ arch floor_farm1a
 x 15
 y 6
 end
-arch floor_farm1j
+arch floor_farm1b
 x 15
 y 7
 end
-arch floor_farm1a
+arch floor_farm1b
 x 15
 y 8
 end
-arch floor_farm1g
+arch floor_farm1b
 x 15
 y 9
 end
-arch floor_farm1a
+arch floor_farm1b
 x 15
 y 10
 end
-arch floor_farm1c
+arch floor_farm1b
 x 15
 y 11
 end
@@ -1905,47 +1929,47 @@ end
 arch grassd_8
 x 16
 end
-arch floor_farm1e
+arch grassd_8
 x 16
 y 1
 end
-arch floor_farm1a
+arch grassd_6
 x 16
 y 2
 end
-arch floor_farm1n
+arch grassd_8
 x 16
 y 3
 end
-arch floor_farm1a
+arch grassd_6
 x 16
 y 4
 end
-arch floor_farm1l
+arch grassd_8
 x 16
 y 5
 end
-arch floor_farm1a
+arch grassd_8
 x 16
 y 6
 end
-arch floor_farm1j
+arch grassd_8
 x 16
 y 7
 end
-arch floor_farm1a
+arch grassd_6
 x 16
 y 8
 end
-arch floor_farm1g
+arch grassd_8
 x 16
 y 9
 end
-arch floor_farm1a
+arch grassd_8
 x 16
 y 10
 end
-arch floor_farm1c
+arch grassd_8
 x 16
 y 11
 end
@@ -2012,47 +2036,51 @@ end
 arch grassd_4
 x 17
 end
-arch floor_farm1e
+arch grassd_6
 x 17
 y 1
 end
-arch floor_farm1a
+arch grassd_1
 x 17
 y 2
 end
-arch floor_farm1n
+arch grassd_7
 x 17
 y 3
 end
-arch floor_farm1a
+arch grassd_1
 x 17
 y 4
 end
-arch floor_farm1l
+arch grassd_6
 x 17
 y 5
 end
-arch floor_farm1a
+arch grassd_6
 x 17
 y 6
 end
-arch floor_farm1j
+arch grassd_6
 x 17
 y 7
 end
-arch floor_farm1a
+arch grassd_1
 x 17
 y 8
 end
-arch floor_farm1g
+arch plant17
+x 17
+y 8
+end
+arch grassd_7
 x 17
 y 9
 end
-arch floor_farm1a
+arch grassd_4
 x 17
 y 10
 end
-arch floor_farm1c
+arch grassd_6
 x 17
 y 11
 end

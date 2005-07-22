@@ -107,13 +107,7 @@ end
 arch grass_thick2
 x 1
 end
-arch plant8
-x 1
-end
 arch plant4
-x 1
-end
-arch plant_flower8
 x 1
 end
 arch grass_thick2
@@ -404,10 +398,6 @@ x 3
 y 3
 end
 arch plant8
-x 3
-y 3
-end
-arch plant2
 x 3
 y 3
 end
@@ -1513,10 +1503,6 @@ arch grass_thick2
 x 11
 y 2
 end
-arch plant2
-x 11
-y 2
-end
 arch plant4
 x 11
 y 2
@@ -1562,10 +1548,6 @@ x 11
 y 6
 end
 arch grass_thick1
-x 11
-y 7
-end
-arch plant2
 x 11
 y 7
 end

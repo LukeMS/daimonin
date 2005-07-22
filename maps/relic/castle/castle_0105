@@ -1463,46 +1463,219 @@ end
 arch spawn_point
 x 10
 y 15
-arch noble
-name Prince
+arch queen
+name The Queen
 type 83
-level 40
+title of Stonehaven
+level 50
 Wis 3
+arch ai_caster
+msg
+# This is a generic Spellcaster AI that can be used for most mobs
+processes:
+look_for_other_mobs
+friendship
+choose_enemy
+moves:
+#stand_still
+sleep
+# run_away_from_enemy hp_threshold=6
+# move_towards_enemy
+keep_distance_to_enemy
+move_towards_enemy_last_known_pos
+move_towards_waypoint
+# move_randomly xlimit=5 ylimit=5
+move_towards_home
+actions:
+melee_attack_enemy
+endmsg
+end
+arch waypoint
+name waypoint_1
+title waypoint_2
+slaying castle_0103
+hp 11
+sp 12
+wc 3
+end
+arch waypoint
+name waypoint_2
+title waypoint_3
+slaying castle_0102
+hp 11
+sp 1
+wc 1
+end
+arch waypoint
+name waypoint_3
+title waypoint_4
+slaying castle_0202
+hp 20
+sp 1
+end
+arch waypoint
+name waypoint_4
+title waypoint_5
+slaying castle_0205
+hp 20
+sp 18
+end
+arch waypoint
+name waypoint_5
+title waypoint_6
+slaying castle_0205
+hp 5
+sp 3
+end
+arch waypoint
+name waypoint_6
+title waypoint_7
+slaying castle_0105
+hp 13
+sp 3
+end
+arch waypoint
+name waypoint_7
+title waypoint_8
+slaying castle_0106
+hp 11
+sp 4
+wc 5
+end
+arch waypoint
+name waypoint_8
+title waypoint_9
+slaying castle_0107
+hp 4
+sp 5
+wc 100
+end
+arch waypoint
+name waypoint_9
+title waypoint_10
+slaying castle_0105
+hp 13
+sp 1
+end
+arch waypoint
+name waypoint_10
+title waypoint_11
+slaying castle_0205
+hp 5
+sp 1
+end
+arch waypoint
+name waypoint_11
+title waypoint_12
+slaying castle_0205
+hp 22
+sp 18
+end
+arch waypoint
+name waypoint_12
+title waypoint_13
+slaying castle_0202
+hp 22
+sp 1
+end
+arch waypoint
+name waypoint_13
+title waypoint_14
+slaying castle_0102
+hp 11
+sp 1
+end
+arch waypoint
+name waypoint_14
+cursed 1
+title waypoint_start
+slaying castle_0105
+hp 10
+sp 15
+wc 500
+cursed 1
+end
+arch waypoint
+name waypoint_start
+title waypoint_1
+slaying castle_0104
+hp 11
+sp 15
 end
 end
-arch carpet2e
+end
+arch floor_fs_grey1a
 x 10
 y 16
 end
 arch carpet2e
 x 10
+y 16
+end
+arch floor_fs_grey1a
+x 10
 y 17
 end
 arch carpet2e
+x 10
+y 17
+end
+arch floor_fs_grey1a
 x 10
 y 18
 end
 arch carpet2e
 x 10
+y 18
+end
+arch floor_fs_grey1a
+x 10
 y 19
 end
 arch carpet2e
+x 10
+y 19
+end
+arch floor_fs_grey1a
 x 10
 y 20
 end
 arch carpet2e
 x 10
+y 20
+end
+arch floor_fs_grey1a
+x 10
 y 21
 end
 arch carpet2e
 x 10
+y 21
+end
+arch floor_fs_grey1a
+x 10
 y 22
+end
+arch carpet2e
+x 10
+y 22
+end
+arch floor_fs_grey1a
+x 10
+y 23
 end
 arch carpet2e
 x 10
 y 23
 end
 arch grassd_6
+x 11
+end
+arch marker1
+name To The Royal Gardens
+msg
+"To The Royal Gardens" is engraved in the signpost with well written gold letters.
+endmsg
 x 11
 end
 arch floor_grit2
@@ -1610,54 +1783,91 @@ arch spawn_point
 x 11
 y 15
 arch king
+name The King
 type 83
+title of Stonehaven
 level 80
 Wis 3
 end
+end
+arch floor_fs_grey1a
+x 11
+y 16
 end
 arch carpet2g
 face carpet4g.101
 x 11
 y 16
 end
-arch carpet2g
+arch floor_fs_grey1a
 x 11
 y 17
 end
 arch carpet2g
 x 11
+y 17
+end
+arch floor_fs_grey1a
+x 11
 y 18
+end
+arch carpet2g
+x 11
+y 18
+end
+arch floor_fs_grey1a
+x 11
+y 19
 end
 arch carpet2g
 face carpet4g.101
 x 11
 y 19
 end
-arch carpet2g
+arch floor_fs_grey1a
 x 11
 y 20
 end
 arch carpet2g
 x 11
+y 20
+end
+arch floor_fs_grey1a
+x 11
 y 21
+end
+arch carpet2g
+x 11
+y 21
+end
+arch floor_fs_grey1a
+x 11
+y 22
 end
 arch carpet2g
 face carpet4g.101
 x 11
 y 22
 end
+arch floor_fs_grey1a
+x 11
+y 23
+end
 arch carpet2g
 x 11
 y 23
 end
-arch grassd_8
+arch floor_grit3a
+x 12
+end
+arch grassd_m9
 x 12
 end
 arch floor_grit2
 x 12
 y 1
 end
-arch grassd_m10
+arch grassd_m13
 x 12
 y 1
 end
@@ -1752,75 +1962,134 @@ end
 arch spawn_point
 x 12
 y 15
-arch queen
+arch noble
+name The Prince
 type 83
-level 50
+title of Stonehaven
+level 40
 Wis 3
-arch ai_caster
-msg
-# This is a generic Spellcaster AI that can be used for most mobs
-processes:
-look_for_other_mobs
-friendship
-choose_enemy
-
-moves:
-#stand_still
-sleep
-# run_away_from_enemy hp_threshold=6
-# move_towards_enemy
-keep_distance_to_enemy
-move_towards_enemy_last_known_pos
-move_towards_waypoint
-# move_randomly xlimit=5 ylimit=5
-move_towards_home
-
-actions:
-melee_attack_enemy
-endmsg
+arch waypoint
+name waypoint_2
+title waypoint_3
+hp 16
+sp 18
+end
+arch waypoint
+name waypoint_3
+title waypoint_4
+hp 16
+sp 17
+end
+arch waypoint
+name waypoint_4
+title waypoint_5
+hp 22
+sp 17
+end
+arch waypoint
+name waypoint_5
+title waypoint_6
+hp 23
+sp 18
+wc 30
+end
+arch waypoint
+name waypoint_6
+title waypoint_7
+hp 16
+sp 17
+end
+arch waypoint
+name waypoint_7
+title waypoint_start
+hp 12
+sp 15
+wc 300
+cursed 1
+end
+arch waypoint
+name waypoint_start
+title waypoint_2
+hp 12
+sp 18
 end
 end
 end
-arch carpet2c
+arch floor_fs_grey1a
 x 12
 y 16
 end
 arch carpet2c
 x 12
+y 16
+end
+arch floor_fs_grey1a
+x 12
 y 17
 end
 arch carpet2c
+x 12
+y 17
+end
+arch floor_fs_grey1a
 x 12
 y 18
 end
 arch carpet2c
 x 12
+y 18
+end
+arch floor_fs_grey1a
+x 12
 y 19
 end
 arch carpet2c
+x 12
+y 19
+end
+arch floor_fs_grey1a
 x 12
 y 20
 end
 arch carpet2c
 x 12
+y 20
+end
+arch floor_fs_grey1a
+x 12
 y 21
 end
 arch carpet2c
+x 12
+y 21
+end
+arch floor_fs_grey1a
 x 12
 y 22
 end
 arch carpet2c
 x 12
+y 22
+end
+arch floor_fs_grey1a
+x 12
 y 23
 end
-arch grassd_6
+arch carpet2c
+x 12
+y 23
+end
+arch floor_grit3a
+x 13
+end
+arch grassd_m8
 x 13
 end
 arch floor_grit2
 x 13
 y 1
 end
-arch grassd_m10
+arch grassd_m12
 x 13
 y 1
 end

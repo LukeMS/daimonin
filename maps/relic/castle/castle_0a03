@@ -27,9 +27,6 @@ end
 arch grass_thick1
 y 3
 end
-arch plant2
-y 3
-end
 arch plant8
 y 3
 end
@@ -124,9 +121,6 @@ end
 arch plant4
 y 19
 end
-arch plant8
-y 19
-end
 arch grass_thick1
 y 20
 end
@@ -153,10 +147,6 @@ x 1
 y 1
 end
 arch tree_big2
-x 1
-y 1
-end
-arch plant_flower8
 x 1
 y 1
 end
@@ -226,10 +216,6 @@ x 1
 y 13
 end
 arch plant8
-x 1
-y 13
-end
-arch plant_flower4
 x 1
 y 13
 end
@@ -307,10 +293,6 @@ arch plant4
 x 2
 y 1
 end
-arch plant2
-x 2
-y 1
-end
 arch plant_flower3
 x 2
 y 1
@@ -336,10 +318,6 @@ x 2
 y 5
 end
 arch plant4
-x 2
-y 5
-end
-arch plant2
 x 2
 y 5
 end
@@ -419,10 +397,6 @@ arch tree_big2
 x 2
 y 16
 end
-arch plant8
-x 2
-y 16
-end
 arch swamp1
 x 2
 y 17
@@ -460,10 +434,6 @@ x 2
 y 21
 end
 arch grass_thick1
-x 2
-y 22
-end
-arch plant2
 x 2
 y 22
 end
@@ -582,10 +552,6 @@ arch grass_thick1
 x 3
 y 16
 end
-arch plant11
-x 3
-y 16
-end
 arch plant_flower3
 x 3
 y 16
@@ -619,10 +585,6 @@ x 3
 y 21
 end
 arch plant14
-x 3
-y 21
-end
-arch plant8
 x 3
 y 21
 end
@@ -684,10 +646,6 @@ x 4
 y 5
 end
 arch tree_burned3
-x 4
-y 6
-end
-arch plant_flower3
 x 4
 y 6
 end
@@ -1255,10 +1213,6 @@ arch grass_thick1
 x 7
 y 22
 end
-arch plant8
-x 7
-y 22
-end
 arch plant_flower3
 x 7
 y 22
@@ -1389,10 +1343,6 @@ arch tree_burned4
 x 8
 y 15
 end
-arch plant11
-x 8
-y 15
-end
 arch swamp1
 x 8
 y 16
@@ -1480,14 +1430,6 @@ x 9
 y 5
 end
 arch plant4
-x 9
-y 5
-end
-arch plant8
-x 9
-y 5
-end
-arch plant_flower3
 x 9
 y 5
 end

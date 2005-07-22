@@ -23,9 +23,6 @@ end
 arch grass_thick1
 y 1
 end
-arch plant2
-y 1
-end
 arch plant8
 y 1
 end
@@ -69,9 +66,6 @@ arch plant2
 y 9
 end
 arch grass_thick1
-y 10
-end
-arch plant8
 y 10
 end
 arch plant_flower4
@@ -604,9 +598,6 @@ end
 arch plant14
 x 4
 end
-arch plant8
-x 4
-end
 arch grass_thick1
 x 4
 y 1
@@ -865,10 +856,6 @@ arch plant2
 x 5
 y 16
 end
-arch plant8
-x 5
-y 16
-end
 arch water_still
 x 5
 y 17
@@ -1054,10 +1041,6 @@ arch plant8
 x 7
 end
 arch grass_thick1
-x 7
-y 1
-end
-arch plant2
 x 7
 y 1
 end
@@ -2059,10 +2042,6 @@ x 13
 y 20
 end
 arch grass_thick1
-x 13
-y 21
-end
-arch plant2
 x 13
 y 21
 end

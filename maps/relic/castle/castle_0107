@@ -58,9 +58,6 @@ end
 arch plant2
 y 9
 end
-arch plant8
-y 9
-end
 arch grass_thick1
 y 10
 end
@@ -89,9 +86,6 @@ arch plant2
 y 14
 end
 arch grass_thick1
-y 15
-end
-arch plant8
 y 15
 end
 arch plant_flower4
@@ -166,10 +160,6 @@ x 1
 y 4
 end
 arch grass_thick1
-x 1
-y 5
-end
-arch plant8
 x 1
 y 5
 end
@@ -489,10 +479,6 @@ arch grass_thick1
 x 3
 y 9
 end
-arch plant8
-x 3
-y 9
-end
 arch plant_flower3
 x 3
 y 9
@@ -592,10 +578,6 @@ arch grass_thick1
 x 4
 y 2
 end
-arch plant11
-x 4
-y 2
-end
 arch plant8
 x 4
 y 2
@@ -625,6 +607,7 @@ x 4
 y 5
 end
 arch bench2.111
+no_pass 0
 direction 7
 x 4
 y 5
@@ -1166,15 +1149,17 @@ arch grass_thick1
 x 7
 y 11
 end
-arch floor_grit3a
+arch floor_grit3b
 x 7
 y 12
 end
 arch fence_01.111
+layer 4
 x 7
 y 12
 end
 arch candlelight4.101
+layer 5
 x 7
 y 12
 end
@@ -1671,10 +1656,12 @@ x 10
 y 11
 end
 arch plant3
+layer 5
 x 10
 y 11
 end
 arch tree30
+layer 4
 x 10
 y 11
 end
@@ -1793,10 +1780,12 @@ x 11
 y 3
 end
 arch fence_01.111
+layer 4
 x 11
 y 3
 end
 arch candlelight4.101
+layer 5
 x 11
 y 3
 end
@@ -2361,15 +2350,17 @@ arch grass_thick1
 x 14
 y 2
 end
-arch floor_grit3c
+arch floor_grit3b
 x 14
 y 3
 end
 arch fence_01.111
+layer 4
 x 14
 y 3
 end
 arch candlelight4.101
+layer 5
 x 14
 y 3
 end
@@ -3162,10 +3153,12 @@ x 18
 y 12
 end
 arch fence_01.111
+layer 4
 x 18
 y 12
 end
 arch candlelight4.101
+layer 5
 x 18
 y 12
 end
@@ -3919,10 +3912,6 @@ arch plant14
 x 22
 y 20
 end
-arch plant2
-x 22
-y 20
-end
 arch grass_thick1
 x 22
 y 21
@@ -4043,10 +4032,6 @@ x 23
 y 18
 end
 arch grass_thick1
-x 23
-y 19
-end
-arch plant2
 x 23
 y 19
 end

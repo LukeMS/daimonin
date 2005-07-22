@@ -2971,7 +2971,10 @@ x 14
 y 12
 end
 arch floor_wood2_l2
-no_pass 1
+x 14
+y 13
+end
+arch bar1
 x 14
 y 13
 end
@@ -3151,12 +3154,10 @@ x 15
 y 12
 end
 arch floor_wood2_l2
-no_pass 1
 x 15
 y 13
 end
-arch bank1.111
-no_pass 1
+arch bar1
 x 15
 y 13
 end
@@ -3325,7 +3326,10 @@ end
 end
 end
 arch floor_wood2_l2
-no_pass 1
+x 16
+y 13
+end
+arch bar1
 x 16
 y 13
 end
@@ -3483,12 +3487,10 @@ x 17
 y 12
 end
 arch floor_wood2_l2
-no_pass 1
 x 17
 y 13
 end
-arch bank1.111
-no_pass 1
+arch bar1
 x 17
 y 13
 end
@@ -3504,6 +3506,22 @@ arch chair1_111
 direction 7
 x 17
 y 15
+end
+arch spawn_point
+x 17
+y 15
+arch ranger
+type 83
+level 15
+random_move 1
+item_race 7
+item_level 7
+arch event_obj
+name lua
+race /relic/castle/scripts/Commoner.lua
+sub_type 6
+end
+end
 end
 arch floor_wood2_l2
 x 17
@@ -3657,7 +3675,10 @@ x 18
 y 12
 end
 arch floor_wood2_l2
-no_pass 1
+x 18
+y 13
+end
+arch bar1
 x 18
 y 13
 end
@@ -3668,22 +3689,6 @@ end
 arch chair1_111
 x 18
 y 14
-end
-arch spawn_point
-x 18
-y 14
-arch ranger
-type 83
-level 15
-random_move 1
-item_race 7
-item_level 7
-arch event_obj
-name lua
-race /relic/castle/scripts/Commoner.lua
-sub_type 6
-end
-end
 end
 arch floor_wood2_l2
 x 18
@@ -3866,8 +3871,7 @@ arch floor_wood2_l2
 x 19
 y 13
 end
-arch bank1.111
-no_pass 1
+arch bar1
 x 19
 y 13
 end
@@ -4045,7 +4049,10 @@ x 20
 y 12
 end
 arch floor_wood2_l2
-no_pass 1
+x 20
+y 13
+end
+arch bar1
 x 20
 y 13
 end
@@ -4209,8 +4216,7 @@ arch floor_wood2_l2
 x 21
 y 13
 end
-arch bank1.111
-no_pass 1
+arch bar1
 x 21
 y 13
 end
@@ -4378,7 +4384,10 @@ x 22
 y 12
 end
 arch floor_wood2_l2
-no_pass 1
+x 22
+y 13
+end
+arch bar1
 x 22
 y 13
 end
@@ -4403,6 +4412,13 @@ arch chair1_111
 direction 3
 x 22
 y 16
+end
+arch spawn_point
+x 22
+y 16
+arch peasant
+type 83
+end
 end
 arch floor_wood2_l2
 x 22
@@ -4519,7 +4535,8 @@ arch floor_wood2_l2
 x 23
 y 12
 end
-arch barrel.101
+arch bar1
+direction 7
 x 23
 y 12
 end
@@ -4527,8 +4544,8 @@ arch floor_wood2_l2
 x 23
 y 13
 end
-arch bank1.111
-no_pass 1
+arch bar1
+direction 7
 x 23
 y 13
 end
