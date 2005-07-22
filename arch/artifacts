@@ -4647,3 +4647,26 @@ race rock_sys
 identified 1
 sys_object 1
 end
+# 
+# pre-defined books
+#
+Allowed none
+chance 1
+artifact book_test
+def_arch book
+editor 1:items/readable/books
+Object
+face tome_gold.101
+title of tests
+msg
+<t t="Test Book">Well...test...test
+1
+2
+3
+4
+<p><t t="Next page">And some more text 2nd page.
+A
+B
+endmsg
+end
+#
