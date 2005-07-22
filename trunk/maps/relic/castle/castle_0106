@@ -48,9 +48,6 @@ end
 arch grass_thick2
 y 6
 end
-arch plant11
-y 6
-end
 arch plant_flower4
 y 6
 end
@@ -196,10 +193,6 @@ x 1
 y 9
 end
 arch plant14
-x 1
-y 9
-end
-arch plant_flower3
 x 1
 y 9
 end
@@ -326,15 +319,7 @@ arch tree_big2
 x 2
 y 7
 end
-arch plant8
-x 2
-y 7
-end
 arch grass_thick2
-x 2
-y 8
-end
-arch plant2
 x 2
 y 8
 end
@@ -425,9 +410,6 @@ end
 arch grass_thick2
 x 3
 end
-arch plant8
-x 3
-end
 arch plant_flower8
 x 3
 end
@@ -444,10 +426,6 @@ x 3
 y 3
 end
 arch plant2
-x 3
-y 3
-end
-arch plant_flower4
 x 3
 y 3
 end
@@ -492,10 +470,6 @@ x 3
 y 9
 end
 arch grass_thick2
-x 3
-y 10
-end
-arch plant2
 x 3
 y 10
 end
@@ -645,10 +619,6 @@ arch plant14
 x 4
 y 10
 end
-arch plant_flower4
-x 4
-y 10
-end
 arch grass_thick2
 x 4
 y 11
@@ -771,10 +741,6 @@ arch plant4
 x 5
 y 9
 end
-arch plant8
-x 5
-y 9
-end
 arch grass_thick2
 x 5
 y 10
@@ -880,10 +846,6 @@ arch plant14
 x 6
 y 3
 end
-arch plant_flower3
-x 6
-y 3
-end
 arch grass_thick2
 x 6
 y 4
@@ -917,10 +879,6 @@ x 6
 y 8
 end
 arch grass_thick2
-x 6
-y 9
-end
-arch plant2
 x 6
 y 9
 end
@@ -1145,10 +1103,6 @@ arch tree_big2
 x 8
 y 2
 end
-arch plant8
-x 8
-y 2
-end
 arch grass_thick2
 x 8
 y 3
@@ -1269,9 +1223,6 @@ arch grass_thick2
 x 9
 end
 arch plant4
-x 9
-end
-arch plant2
 x 9
 end
 arch grass_thick2
@@ -1816,39 +1767,63 @@ arch light2
 x 12
 y 16
 end
-arch grassd_m7
+arch grassd_m14
 x 12
 y 16
 end
-arch grassd_8
+arch floor_grit3a
 x 12
 y 17
 end
-arch plant_flower5
+arch grassd_m9
 x 12
 y 17
 end
-arch grassd_1
+arch floor_grit3a
 x 12
 y 18
 end
-arch grassd_5
+arch grassd_m9
+x 12
+y 18
+end
+arch floor_grit3b
 x 12
 y 19
 end
-arch grassd_7
+arch grassd_m9
+x 12
+y 19
+end
+arch floor_grit3c
 x 12
 y 20
 end
-arch grassd_5
+arch grassd_m9
+x 12
+y 20
+end
+arch floor_grit3a
 x 12
 y 21
 end
-arch grassd_7
+arch grassd_m9
+x 12
+y 21
+end
+arch floor_grit3a
 x 12
 y 22
 end
-arch grassd_8
+arch grassd_m9
+x 12
+y 22
+end
+arch floor_grit3a
+x 12
+y 23
+end
+arch grassd_m9
 x 12
 y 23
 end
@@ -1939,35 +1914,63 @@ arch light2
 x 13
 y 16
 end
-arch grassd_m7
+arch grassd_m11
 x 13
 y 16
 end
-arch grassd_5
+arch floor_grit3a
 x 13
 y 17
 end
-arch grassd_7
+arch grassd_m8
+x 13
+y 17
+end
+arch floor_grit3c
 x 13
 y 18
 end
-arch grassd_8
+arch grassd_m8
+x 13
+y 18
+end
+arch floor_grit3a
 x 13
 y 19
 end
-arch grassd_3
+arch grassd_m8
+x 13
+y 19
+end
+arch floor_grit3a
 x 13
 y 20
 end
-arch grassd_7
+arch grassd_m8
+x 13
+y 20
+end
+arch floor_grit3c
 x 13
 y 21
 end
-arch grassd_3
+arch grassd_m8
+x 13
+y 21
+end
+arch floor_grit3a
 x 13
 y 22
 end
-arch grassd_4
+arch grassd_m8
+x 13
+y 22
+end
+arch floor_grit3c
+x 13
+y 23
+end
+arch grassd_m8
 x 13
 y 23
 end
@@ -2494,10 +2497,6 @@ x 17
 y 9
 end
 arch grass_thick2
-x 17
-y 10
-end
-arch plant8
 x 17
 y 10
 end
@@ -3029,10 +3028,6 @@ arch plant4
 x 21
 y 6
 end
-arch plant_flower8
-x 21
-y 6
-end
 arch grass_thick2
 x 21
 y 7
@@ -3144,10 +3139,6 @@ x 22
 y 2
 end
 arch tree_big2
-x 22
-y 2
-end
-arch plant2
 x 22
 y 2
 end

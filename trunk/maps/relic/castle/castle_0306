@@ -190,10 +190,6 @@ arch plant2
 x 1
 y 23
 end
-arch plant8
-x 1
-y 23
-end
 arch rock_big3
 x 2
 y 21

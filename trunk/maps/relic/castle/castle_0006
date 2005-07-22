@@ -9,6 +9,7 @@ height 24
 outdoor 1
 tile_path_2 castle_0106
 tile_path_3 castle_0005
+tile_path_5 castle_0107
 tile_path_6 castle_0105
 tile_path_7 castle_0a05
 end
@@ -137,10 +138,6 @@ arch tree_big2
 x 1
 y 2
 end
-arch plant2
-x 1
-y 2
-end
 arch grass_thick2
 x 1
 y 3
@@ -198,10 +195,6 @@ x 1
 y 11
 end
 arch grass_thick2
-x 1
-y 12
-end
-arch plant2
 x 1
 y 12
 end
@@ -499,10 +492,6 @@ x 3
 y 9
 end
 arch grass_thick2
-x 3
-y 10
-end
-arch plant2
 x 3
 y 10
 end
@@ -736,10 +725,6 @@ arch tree_burned4
 x 5
 y 1
 end
-arch plant2
-x 5
-y 1
-end
 arch grass_thick2
 x 5
 y 2
@@ -789,10 +774,6 @@ x 5
 y 9
 end
 arch plant14
-x 5
-y 9
-end
-arch plant_flower3
 x 5
 y 9
 end
@@ -1051,10 +1032,6 @@ x 7
 y 5
 end
 arch tree_big2
-x 7
-y 5
-end
-arch plant2
 x 7
 y 5
 end
@@ -1489,10 +1466,6 @@ arch grass_thick2
 x 10
 y 5
 end
-arch plant2
-x 10
-y 5
-end
 arch plant7
 x 10
 y 5
@@ -1601,10 +1574,6 @@ arch grass_thick2
 x 11
 end
 arch grass_thick2
-x 11
-y 1
-end
-arch plant2
 x 11
 y 1
 end
@@ -2558,10 +2527,6 @@ x 18
 y 6
 end
 arch tree_burned4
-x 18
-y 6
-end
-arch plant_flower8
 x 18
 y 6
 end
