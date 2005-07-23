@@ -892,8 +892,7 @@ void process_players2(mapstruct *map)
         if (pl->ob->map
          && (!pl->target_object
           || (pl->target_object != pl->ob && pl->target_object_count != pl->target_object->count)
-          || QUERY_FLAG(pl->target_object,
-                        FLAG_SYS_OBJECT)
+          || QUERY_FLAG(pl->target_object, FLAG_SYS_OBJECT)
           || (QUERY_FLAG(pl->target_object, FLAG_IS_INVISIBLE) && !QUERY_FLAG(pl->ob, FLAG_SEE_INVISIBLE))))
             send_target_command(pl);
 
@@ -1062,6 +1061,25 @@ static void process_events()
         for(obj = inserted_active_objects; obj; obj = next)
         {
             next = obj->active_next;
+
+            /* sanity check!
+             * we must ensure that a inventory object has ->map NULL.
+             * Reason: If the ->env object change map the iventory map
+             * ptr will get invalid and cause havoc when that map get
+             * destroyed in the meantime (invalid map ptr to freed memory)
+             * (we don't use the object count / removed flag / memory pool
+             * system here!)
+             *
+             * TODO: To set ->map for ->env objects here to NULL is NOT enough!
+             * We must ensure that ->map is NULL when an inventory object is handled
+             * by the active list. Or we can run in sideeffect too.
+             */
+            if(obj->env && obj->map) /* object is in inventory! */
+            {
+                LOG( llevDebug, "ACTIVEBUG: object with env and map - set map to NULL! obj %s in %s\n", 
+                     query_name(obj), query_name(obj->env) );
+                obj->map = NULL;
+            }
             if(obj->map) 
             {
                 obj->active_next = obj->map->active_objects;

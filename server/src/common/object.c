@@ -1716,7 +1716,8 @@ static inline void activelist_remove_inline(object *op, mapstruct *map)
         return;
 
 #ifdef DEBUG_ACTIVELIST_LOG
-    LOG(llevDebug,"remove: %s (%d) map:%s\n", query_name(op), op->count, map?STRING_SAFE(map->path):"NULL");
+    LOG(llevDebug,"remove: %s (%d) ", query_name(op), op->count);
+    LOG(llevDebug,"---> map:%s\n", map?STRING_SAFE(map->path):"NULL");
 #endif
 
     /* If this happens to be the object we will process next,
@@ -1755,8 +1756,8 @@ static inline void activelist_insert_inline(object *op)
         return;
 
 #ifdef DEBUG_ACTIVELIST_LOG
-    LOG( llevDebug,"ADD: %s (type:%d count:%d) %s (%d,%d))\n", query_name(op), op->type, op->count, 
-         op->map?STRING_SAFE(op->map->path):(op->env?query_name(op->env):"NULL"), op->x, op->y);
+    LOG( llevDebug,"ADD: %s (type:%d count:%d) env:%s map:%s (%d,%d))\n", query_name(op), op->type, op->count,
+         query_name(op->env), op->map?STRING_SAFE(op->map->path):"NULL", op->x, op->y);
 #endif
 
     /* Since we don't want to process objects twice, we make
@@ -2375,14 +2376,21 @@ void remove_ob(object *op)
             * the map, but we don't actually do that - it is up
             * to the caller to decide what we want to do.
             */
+        /* BUG: if we do this, active list for maps will fail!!
+         * op->map set with a valid ptr will tell the server that this
+         * object is on a map!! This is even without it a bug!
+         */
+        /*
+        op->map = op->env->map;
         op->x = op->env->x,op->y = op->env->y;
+        */
 
 #ifdef POSITION_DEBUG
         op->ox = op->x,op->oy = op->y;
 #endif
 
-        op->map = op->env->map;
         op->above = NULL,op->below = NULL;
+        op->map = NULL;
         op->env = NULL;
         return;
     }
