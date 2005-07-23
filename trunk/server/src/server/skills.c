@@ -1912,6 +1912,7 @@ void do_throw(object *op, object *toss_item, int dir)
     throw_ob->speed = (speed_bonus[eff_str] + 1.0f) / 1.5f;
     throw_ob->speed = MIN(1.0f, throw_ob->speed); /* no faster than an arrow! */
 
+    throw_ob->speed = 0.2f;
     /* item damage. Eff_str and item weight influence damage done */
     weight_f = (throw_ob->weight / 2000) > MAX_STAT ? MAX_STAT : (throw_ob->weight / 2000);
     throw_ob->stats.dam += (dam / 3) + dam_bonus[weight_f] + (throw_ob->weight / 15000) - 2;

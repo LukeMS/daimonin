@@ -136,12 +136,28 @@ struct obj *aggro_update_info(struct obj *target, struct obj *target_owner,
 							  struct obj *hitter, struct obj *hitter_owner, int dmg, int flags)
 {
 	struct obj *history, *aggro, *tmp;
+    int skill_nr = 0;
 
 	/* no legal hitter, no need for aggro.
 	 * TODO: perhaps we will add a kind of "neutral" damage
 	 * but atm a player will get full exp when killing a damaged target.
 	 * lets give the players some gifts.
 	 */
+
+    if(hitter && hitter->chosen_skill)
+        skill_nr = hitter->chosen_skill->stats.sp;
+    else if(hitter_owner && hitter_owner->chosen_skill)
+        skill_nr = hitter_owner->chosen_skill->stats.sp;
+
+    /* debug...
+    if(hitter && hitter->chosen_skill)
+        new_draw_info_format( NDI_UNIQUE, 0, hitter->type!=PLAYER?hitter_owner:hitter, "SKILL-hitter: %s (%d)",
+        skills[hitter->chosen_skill->stats.sp].name,hitter->chosen_skill->stats.sp);
+    if(hitter_owner && hitter_owner->chosen_skill)
+        new_draw_info_format( NDI_UNIQUE, 0, hitter->type!=PLAYER?hitter_owner:hitter, "SKILL-howner: %s (%d)",
+        skills[hitter_owner->chosen_skill->stats.sp].name,hitter_owner->chosen_skill->stats.sp);
+    */
+
 	if(hitter_owner && (hitter_owner==hitter || !IS_LIVE(hitter_owner)))
 		hitter_owner = NULL;
 	if(hitter && !IS_LIVE(hitter))
@@ -225,17 +241,13 @@ struct obj *aggro_update_info(struct obj *target, struct obj *target_owner,
 			{
 				for(tmp=aggro->inv;tmp;tmp=tmp->below)
 				{
-					/* FIXME: Isn't there a quite big chance that the player
-					 * has switched active skill since the action was taken.
-					 * at least in cases of missile attacks, pet attacks and
-					 * other non-direct attacks? Gecko. */
-					if(tmp->type == TYPE_DAMAGE_INFO && tmp->last_heal == hitter->chosen_skill->stats.sp)
+					if(tmp->type == TYPE_DAMAGE_INFO && tmp->last_heal == skill_nr)
 						break;
 				}
 				if(!tmp)
 				{
 					tmp = insert_ob_in_ob(arch_to_object(global_dmg_info_arch), aggro);
-					tmp->last_heal = hitter->chosen_skill->stats.sp;
+					tmp->last_heal = skill_nr;
 					tmp->stats.hp = dmg;
                     tmp->last_sp = PLAYER;
                 }
