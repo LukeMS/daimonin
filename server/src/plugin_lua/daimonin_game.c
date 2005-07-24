@@ -227,7 +227,7 @@ static int Game_MatchString(lua_State *L)
 
 /*****************************************************************************/
 /* Name   : Game_ReadyMap                                                    */
-/* Lua    : game:ReadyMap(name, unique)                                      */
+/* Lua    : game:ReadyMap(name, flags, player)                               */
 /* Info   : Make sure the named map is loaded into memory. unique _must_ be  */
 /*          1 if the map is unique (f_unique = 1).                           */
 /*          IF flags | 1, the map path is already the right unique one.      */
@@ -235,6 +235,7 @@ static int Game_MatchString(lua_State *L)
 /*          If flags | 4  *unique maps only* unique map gets DELETED  and    */
 /*                        fresh reloaded!                                    */
 /*          Default value for unique is 0                                    */
+/*          For unique maps, also supply the player who owns the map         */
 /* Status : Stable                                                           */
 /*****************************************************************************/
 
