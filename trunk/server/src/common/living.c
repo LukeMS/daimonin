@@ -2094,6 +2094,7 @@ object * insert_base_info_object(object *op)
     CLEAR_FLAG(tmp, FLAG_FRIENDLY);
     CLEAR_FLAG(tmp, FLAG_ALIVE);
     CLEAR_FLAG(tmp, FLAG_MONSTER);
+    CLEAR_FLAG(tmp, FLAG_IN_ACTIVELIST);
     insert_ob_in_ob(tmp, head); /* and put it in the mob */
 
     /* Store position (for returning home after aggro is lost...) */

@@ -1446,9 +1446,9 @@ object * get_owner(object *op)
 {
     if (!op || op->owner == NULL)
         return NULL;
-    if (!OBJECT_FREE(op) && op->owner->count == op->ownercount)
+    if (!OBJECT_FREE(op) && op->owner->count == op->owner_count)
         return op->owner;
-    op->owner = NULL,op->ownercount = 0;
+    op->owner = NULL,op->owner_count = 0;
     return NULL;
 }
 
@@ -1458,12 +1458,12 @@ void clear_owner(object *op)
         return;
 
     /*
-       if (op->owner && op->ownercount == op->owner->count)
+       if (op->owner && op->owner_count == op->owner->count)
     op->owner->refcount--;
        */
 
     op->owner = NULL;
-    op->ownercount = 0;
+    op->owner_count = 0;
 }
 
 
@@ -1477,13 +1477,13 @@ void clear_owner(object *op)
 static void set_owner_simple(object *op, object *owner)
 {
     /* next line added to allow objects which own objects */
-    /* Add a check for ownercounts in here, as I got into an endless loop
+    /* Add a check for owner_counts in here, as I got into an endless loop
      * with the fireball owning a poison cloud which then owned the
      * fireball.  I believe that was caused by one of the objects getting
-     * freed and then another object replacing it.  Since the ownercounts
+     * freed and then another object replacing it.  Since the owner_counts
      * didn't match, this check is valid and I believe that cause is valid.
      */
-    while (owner->owner && owner != owner->owner && owner->ownercount == owner->owner->count)
+    while (owner->owner && owner != owner->owner && owner->owner_count == owner->owner->count)
         owner = owner->owner;
 
     /* IF the owner still has an owner, we did not resolve to a final owner.
@@ -1494,7 +1494,7 @@ static void set_owner_simple(object *op, object *owner)
 
     op->owner = owner;
 
-    op->ownercount = owner->count;
+    op->owner_count = owner->count;
     /*owner->refcount++;*/
 }
 
@@ -1716,14 +1716,9 @@ static inline void activelist_remove_inline(object *op, mapstruct *map)
         return;
 
 #ifdef DEBUG_ACTIVELIST_LOG
-    LOG(llevDebug,"remove: %s (%d) ", query_name(op), op->count);
-    LOG(llevDebug,"---> map:%s\n", map?STRING_SAFE(map->path):"NULL");
+    LOG(llevDebug,"remove: %s (%d)  @%s\n", query_name(op), op->count, STRING_MAP_PATH(map));
 #endif
 
-    /* If this happens to be the object we will process next,
-     * update the next_active_object pointer */
-    if(op == next_active_object)
-        next_active_object = op->active_next;
     if (op == active_objects)
         active_objects = op->active_next;
     else if (op == inserted_active_objects)
@@ -1733,7 +1728,23 @@ static inline void activelist_remove_inline(object *op, mapstruct *map)
         map->active_objects = op->active_next;
         // TODO: if map is now empty of entries, remove it from
         // list of maps with active objects
+    } 
+    else if (!op->active_prev)
+    {
+        /* Try to catch nasty bugs early */
+        LOG(llevBug, "BUG: object %s (%d) first in unknown active list "
+                "(trying to remove from %s, really on %s or in %s)\n",
+                STRING_OBJ_NAME(op), op->count, STRING_MAP_PATH(map), STRING_MAP_PATH(op->map), STRING_OBJ_NAME(op->env));
+        op->env->name = NULL;
+        op->map->name = NULL;
+        return;
     }
+    
+    /* If this happens to be the object we will process next,
+     * update the next_active_object pointer */
+    if(op == next_active_object)
+        next_active_object = op->active_next;
+    
 
     if (op->active_prev)
         op->active_prev->active_next = op->active_next;
@@ -2227,6 +2238,8 @@ void destroy_object(object *ob)
     if (QUERY_FLAG(ob, FLAG_IS_LINKED))
         remove_button_link(ob);
 
+    activelist_remove_inline(ob, ob->map);
+    
     if (ob->type == CONTAINER && ob->attacked_by)
         container_unlink(NULL, ob);
 
@@ -2240,8 +2253,8 @@ void destroy_object(object *ob)
     remove_ob_inv(ob);
 
     /* Remove object from the active list */
-    ob->speed = 0;
-    update_ob_speed(ob);
+//    ob->speed = 0;
+//    update_ob_speed(ob);
     /*LOG(llevDebug,"FO: a:%s %x >%s< (#%d)\n", ob->arch?(ob->arch->name?ob->arch->name:""):"", ob->name, ob->name?ob->name:"",ob->name?query_refcount(ob->name):0);*/
 
     /* Free attached attrsets */
@@ -2275,6 +2288,8 @@ void destroy_object(object *ob)
     FREE_AND_CLEAR_HASH2(ob->slaying);
     FREE_AND_CLEAR_HASH2(ob->msg);
 
+    ob->map = NULL;
+    
     ob->count = 0; /* mark object as "do not use" and invalidate all references to it */
 }
 

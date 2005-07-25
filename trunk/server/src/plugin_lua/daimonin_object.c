@@ -126,7 +126,7 @@ struct attribute_decl       GameObject_attributes[]         =
     /* TODO: make enemy & owner settable (requires HOOKS for set_npc_enemy() and set_owner()) */
     {"enemy",        FIELDTYPE_OBJECTREF, offsetof(object, enemy), FIELDFLAG_READONLY, offsetof(object, enemy_count)},
     // TODO: remove    {"attacked_by",  FIELDTYPE_OBJECTREF, offsetof(object, attacked_by), FIELDFLAG_READONLY, offsetof(object, attacked_by_count)},
-    {"owner",        FIELDTYPE_OBJECTREF, offsetof(object, owner), FIELDFLAG_READONLY, offsetof(object, ownercount)},
+    {"owner",        FIELDTYPE_OBJECTREF, offsetof(object, owner), FIELDFLAG_READONLY, offsetof(object, owner_count)},
     {"x",            FIELDTYPE_SINT16, offsetof(object, x), FIELDFLAG_READONLY},
     {"y",            FIELDTYPE_SINT16, offsetof(object, y), FIELDFLAG_READONLY},
     {"last_damage",  FIELDTYPE_UINT16, offsetof(object, last_damage), 0},
