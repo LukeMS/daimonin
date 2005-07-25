@@ -705,7 +705,7 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define FLAG_NO_DROP        50 /* Object can't be dropped */
 #define FLAG_INDESTRUCTIBLE 51/* every item with quality use up. if this is set, it don't use up by physical forces */
 #define FLAG_READY_SPELL     52 /* (Monster) can learn and cast spells */
-/* FREE flag 53 */
+#define FLAG_SURRENDERED     53 /* (Monster) has surrendered and count not as "targetable enemy" */
 /* FREE flag 54 */
 /* FREE flag 55 */
 

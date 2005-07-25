@@ -2,7 +2,7 @@ Object bear_grey
 name grey bear
 face bear_grey.131
 race bear
-randomitems ai_animal;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6
 direction 5

@@ -2,7 +2,7 @@ Object female2
 name woman
 race human
 face female2.131
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6
 direction 5

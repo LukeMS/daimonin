@@ -2,7 +2,7 @@ Object kobold_shaman
 name kobold shaman
 face kobold_shaman.131
 race kobold
-randomitems ai_priest;spells_priest;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems spells_priest;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6
 direction 5

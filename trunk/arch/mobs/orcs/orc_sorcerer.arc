@@ -2,7 +2,7 @@ Object orc_sorcerer
 name orc sorcerer
 face orc_sorcerer.131
 race orc
-randomitems ai_mage;spells_sorcerer;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems spells_sorcerer;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6
 direction 5

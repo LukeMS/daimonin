@@ -2,7 +2,7 @@ Object guard_royal
 name royal guard
 race human
 face guard_royal.131
-randomitems ai_guard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6
 direction 5

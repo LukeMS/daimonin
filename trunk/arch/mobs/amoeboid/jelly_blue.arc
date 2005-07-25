@@ -2,7 +2,7 @@ Object jelly_blue
 name blue jelly
 face blue_jelly.111
 race slime
-randomitems ai_slime;loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
 type 80
 layer 6
 direction 5

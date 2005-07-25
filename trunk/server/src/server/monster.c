@@ -402,6 +402,18 @@ void ai_fake_process(object *op, struct mob_behaviour_param *params)
  * Main AI function
  */
 
+/* decide mob can move or not.
+* Reasons it can't move: STAND_STILL set, paralyzed, stuck, rooted,
+* mesmerized....
+*/
+inline int ai_obj_can_move(object *obj)
+{
+    if(QUERY_FLAG(obj,FLAG_STAND_STILL))
+        return FALSE;
+    return TRUE;
+}
+
+
 /* Move-monster returns 1 if the object has been freed, otherwise 0.  */
 int move_monster(object *op)
 {
@@ -443,8 +455,7 @@ int move_monster(object *op)
      * All of those are always executed
      */
     for (behaviour = MOB_DATA(op)->behaviours->behaviours[BEHAVIOURCLASS_PROCESSES];
-         behaviour != NULL;
-         behaviour = behaviour->next)
+         behaviour != NULL; behaviour = behaviour->next)
     {
         /* TODO: find a slightly more efficient way of handling
          * non-executable "fake" processes */
@@ -463,36 +474,38 @@ int move_monster(object *op)
         response.type = MOVE_RESPONSE_NONE; /* Clear the movement response */
         response.forbidden = 0;
 
-        for (behaviour = MOB_DATA(op)->behaviours->behaviours[BEHAVIOURCLASS_MOVES];
-             behaviour != NULL;
-             behaviour = behaviour->next)
+        if(ai_obj_can_move(op))
         {
-            ((void(*) (object *, struct mob_behaviour_param *, move_response *)) behaviour->declaration->func)
-            (op, behaviour->parameters, & response);
-            if (response.type != MOVE_RESPONSE_NONE)
-                break;
+            for (behaviour = MOB_DATA(op)->behaviours->behaviours[BEHAVIOURCLASS_MOVES];
+                behaviour != NULL;
+                behaviour = behaviour->next)
+            {
+                ((void(*) (object *, struct mob_behaviour_param *, move_response *)) behaviour->declaration->func)
+                (op, behaviour->parameters, & response);
+                if (response.type != MOVE_RESPONSE_NONE)
+                    break;
+            }
+
+            /* TODO move_home alternative: move_towards_friend */
+            /* TODO make it possible to move _away_ from waypoint or object */
+
+            /* Calculate direction from response needed and execute movement */
+            dir = direction_from_response(op, &response);
+            if (dir > 0)
+            {
+                success = do_move_monster(op, dir, response.forbidden);
+                /* TODO: handle success=0 and precomputed paths/giving up */
+            }
+
+            /* Try to avoid standing still if we aren't allowed to */
+            if((dir == 0 || success == 0) && (response.forbidden & (1 << 0))) 
+            {
+                success = do_move_monster(op, (RANDOM()%8)+1, response.forbidden);
+            }
+
+            if(success)
+                did_move = 1;
         }
-
-        /* TODO move_home alternative: move_towards_friend */
-
-        /* TODO make it possible to move _away_ from waypoint or object */
-
-        /* Calculate direction from response needed and execute movement */
-        dir = direction_from_response(op, &response);
-        if (dir > 0)
-        {
-            success = do_move_monster(op, dir, response.forbidden);
-            /* TODO: handle success=0 and precomputed paths/giving up */
-        }
-
-        /* Try to avoid standing still if we aren't allowed to */
-        if((dir == 0 || success == 0) && (response.forbidden & (1 << 0))) 
-        {
-            success = do_move_monster(op, (RANDOM()%8)+1, response.forbidden);
-        }
-
-        if(success)
-            did_move = 1;
     }
 
     /*

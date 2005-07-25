@@ -2,7 +2,7 @@ Object blob_acid
 name acid blob
 race slime
 face blob_acid.111
-randomitems ai_slime;loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
 type 80
 layer 6
 direction 5

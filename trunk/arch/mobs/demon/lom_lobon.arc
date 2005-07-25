@@ -2,7 +2,7 @@ Object lom_lobon
 name lom lobon
 face lom_lobon.131
 race drow
-randomitems ai_mage;spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6
 direction 5

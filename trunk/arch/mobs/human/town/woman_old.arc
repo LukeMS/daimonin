@@ -2,7 +2,7 @@ Object woman_old
 name old woman
 race human
 face woman_old.131
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6
 direction 5
