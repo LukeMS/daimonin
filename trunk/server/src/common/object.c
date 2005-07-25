@@ -1735,8 +1735,6 @@ static inline void activelist_remove_inline(object *op, mapstruct *map)
         LOG(llevBug, "BUG: object %s (%d) first in unknown active list "
                 "(trying to remove from %s, really on %s or in %s)\n",
                 STRING_OBJ_NAME(op), op->count, STRING_MAP_PATH(map), STRING_MAP_PATH(op->map), STRING_OBJ_NAME(op->env));
-        op->env->name = NULL;
-        op->map->name = NULL;
         return;
     }
     
