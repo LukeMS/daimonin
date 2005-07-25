@@ -4,7 +4,7 @@ race human
 face monk.131
 type 80
 layer 6
-randomitems ai_monk;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 direction 5
 item_race 255
 item_level 255

@@ -18982,7 +18982,7 @@ type 80
 editor_folder mobs/amoeboid
 race slime
 face blob_acid.111
-randomitems ai_slime;loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
 layer 6
 direction 5
 item_race 255
@@ -19030,7 +19030,7 @@ type 80
 editor_folder mobs/amoeboid
 race slime
 face blob_poison.111
-randomitems ai_slime;loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
 layer 6
 direction 5
 item_race 255
@@ -19078,7 +19078,7 @@ type 80
 editor_folder mobs/amoeboid
 face quivering_blob.111
 race slime
-randomitems ai_slime;loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
 layer 6
 direction 5
 item_race 255
@@ -19125,7 +19125,7 @@ type 80
 editor_folder mobs/amoeboid
 race slime
 face gel_cube.111
-randomitems ai_slime;loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
 layer 6
 direction 5
 item_race 255
@@ -19172,7 +19172,7 @@ type 80
 editor_folder mobs/amoeboid
 race slime
 face gray_ooze.111
-randomitems ai_slime;loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
 layer 6
 direction 5
 item_race 255
@@ -19219,7 +19219,7 @@ type 80
 editor_folder mobs/amoeboid
 face blue_jelly.111
 race slime
-randomitems ai_slime;loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
 layer 6
 direction 5
 item_race 255
@@ -19268,7 +19268,7 @@ type 80
 editor_folder mobs/amoeboid
 face green_jelly.111
 race slime
-randomitems ai_slime;loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
 layer 6
 direction 5
 item_race 255
@@ -19316,7 +19316,7 @@ type 80
 editor_folder mobs/amoeboid
 face ochre_jelly.111
 race slime
-randomitems ai_slime;loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
 layer 6
 direction 5
 item_race 255
@@ -19365,7 +19365,7 @@ type 80
 editor_folder mobs/amoeboid
 face jelly_red.111
 race slime
-randomitems ai_slime;loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
 layer 6
 direction 5
 item_race 255
@@ -19414,7 +19414,7 @@ type 80
 editor_folder mobs/amoeboid
 face spotted_jelly.111
 race slime
-randomitems ai_slime;loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
 layer 6
 direction 5
 item_race 255
@@ -19463,7 +19463,7 @@ type 80
 editor_folder mobs/amoeboid
 face pudding_black.111
 race slime
-randomitems ai_slime;loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
 layer 6
 direction 5
 item_race 255
@@ -19512,7 +19512,7 @@ type 80
 editor_folder mobs/amoeboid
 face pudding_blue.111
 race slime
-randomitems ai_slime;loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
 layer 6
 direction 5
 item_race 255
@@ -19561,7 +19561,7 @@ type 80
 editor_folder mobs/amoeboid
 face pudding_brown.111
 race slime
-randomitems ai_slime;loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
 layer 6
 direction 5
 item_race 255
@@ -19610,7 +19610,7 @@ type 80
 editor_folder mobs/amoeboid
 face pudding_green.111
 race slime
-randomitems ai_slime;loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
 layer 6
 direction 5
 item_race 255
@@ -19659,7 +19659,7 @@ type 80
 editor_folder mobs/amoeboid
 face pudding_red.111
 race slime
-randomitems ai_slime;loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
 layer 6
 direction 5
 item_race 255
@@ -19708,7 +19708,7 @@ type 80
 editor_folder mobs/amoeboid
 face slime.111
 race slime
-randomitems ai_slime;loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d28
 layer 6
 direction 5
 item_race 255
@@ -19756,7 +19756,7 @@ type 80
 editor_folder mobs/animals
 face bear_grey.131
 race bear
-randomitems ai_animal;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -19801,7 +19801,7 @@ mpart_id 3
 editor_folder mobs/beholder
 face beholder_dread.131
 race beholder
-randomitems ai_caster;spells_beholder;loot;wealth_normal&D67;loot_base&D15;loot_misc&d25
+randomitems spells_beholder;loot;wealth_normal&D67;loot_base&D15;loot_misc&d25
 layer 6
 direction 5
 item_race 255
@@ -20002,7 +20002,7 @@ type 80
 editor_folder mobs/demihumans
 face gnoll.131
 race gnoll
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -20049,7 +20049,7 @@ type 80
 editor_folder mobs/demihumans
 face goblin.131
 race goblin
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -20096,7 +20096,7 @@ type 80
 editor_folder mobs/demihumans
 face hobgoblin.131
 race hobgoblin
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -20143,7 +20143,7 @@ type 80
 editor_folder mobs/demihumans
 face kobold.131
 race kobold
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -20190,7 +20190,7 @@ type 80
 editor_folder mobs/demihumans
 face kobold_big.131
 race kobold
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -20237,7 +20237,7 @@ type 80
 editor_folder mobs/demihumans
 face kobold_fighter.131
 race kobold
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -20284,7 +20284,7 @@ type 80
 editor_folder mobs/demihumans
 face kobold_guard.131
 race kobold
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -20331,7 +20331,7 @@ type 80
 editor_folder mobs/demihumans
 face kobold_shaman.131
 race kobold
-randomitems ai_priest;spells_priest;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems spells_priest;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -20379,7 +20379,7 @@ type 80
 editor_folder mobs/demon
 face lom_lobon.131
 race drow
-randomitems ai_mage;spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -20419,6 +20419,52 @@ is_animated 1
 anim_speed 4
 no_pick 1
 end
+Object raas
+name raas
+type 80
+editor_folder mobs/demon
+face raas.131
+race demon
+randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+layer 6
+direction 5
+item_race 255
+item_level 255
+corpse 1
+alive 1
+monster 1
+is_male 1
+is_evil 1
+terrain_flag 1
+can_open_door 1
+can_see_in_dark 1
+can_use_weapon 1
+can_use_armour 1
+has_ready_spell 1
+Int 10
+Wis 6
+Dex 3
+Con 15
+exp 115
+magic 1
+Pow 10
+sp -1
+maxsp 17
+hp -1
+maxhp 85
+ac 10
+wc 3
+dam 66
+weapon_speed 0.045
+attack_cleave 100
+speed -0.060
+level 1
+weight 162500
+animation raas
+is_animated 1
+anim_speed 4
+no_pick 1
+end
 Object dragon_red
 name red dragon
 type 80
@@ -20426,7 +20472,7 @@ mpart_id 3
 editor_folder mobs/dragon
 face dragon_red.131
 race dragon
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -20519,7 +20565,7 @@ mpart_id 3
 editor_folder mobs/dragon
 face dragon_skeletal.131
 race dragon
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -20610,7 +20656,7 @@ type 80
 editor_folder mobs/dragon
 face dragon_water.131
 race dragon
-randomitems ai_archer;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -20654,7 +20700,7 @@ type 80
 editor_folder mobs/dwarfs
 face dwarf_fighter.131
 race dwarf
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -20705,7 +20751,7 @@ type 80
 editor_folder mobs/elementals
 face mud_hand.101
 race mud elemental
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -20747,7 +20793,7 @@ type 80
 editor_folder mobs/elves
 face drow_annihilator.131
 race drow
-randomitems ai_mage;spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -20795,7 +20841,7 @@ type 80
 editor_folder mobs/elves
 face drow_captain.131
 race drow
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -20842,7 +20888,7 @@ type 80
 editor_folder mobs/elves
 face drow_fighter.131
 race drow
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -20889,7 +20935,7 @@ type 80
 editor_folder mobs/elves
 face drow_guard.131
 race drow
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -20936,7 +20982,7 @@ type 80
 editor_folder mobs/elves
 face drow_sorcerer.131
 race drow
-randomitems ai_mage;spells_sorcerer;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems spells_sorcerer;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -20984,7 +21030,7 @@ type 80
 editor_folder mobs/giants
 face ettin.131
 race giant
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -21030,7 +21076,7 @@ type 80
 editor_folder mobs/giants
 face giant_hill.131
 race giant
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -21077,7 +21123,7 @@ type 80
 editor_folder mobs/giants
 face giant_stone.131
 race giant
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -21124,7 +21170,7 @@ type 80
 editor_folder mobs/giants
 face ogre.131
 race giant
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -21172,7 +21218,7 @@ type 80
 editor_folder mobs/human
 race human
 face archer.131
-randomitems ai_archer;skill_bow;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems skill_bow;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -21227,7 +21273,7 @@ type 80
 editor_folder mobs/human
 race human
 face guard1.131
-randomitems ai_guard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -21281,7 +21327,7 @@ type 80
 editor_folder mobs/human
 race human
 face guard_pole.131
-randomitems ai_guard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -21335,7 +21381,7 @@ type 80
 editor_folder mobs/human
 race human
 face guard_royal.131
-randomitems ai_guard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -21389,7 +21435,7 @@ type 80
 editor_folder mobs/human
 race human
 face mage_old.131
-randomitems ai_mage;spells_mage;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems spells_mage;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -21444,7 +21490,7 @@ editor_folder mobs/human
 race human
 face monk.131
 layer 6
-randomitems ai_monk;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 direction 5
 item_race 255
 item_level 255
@@ -21496,7 +21542,7 @@ type 80
 editor_folder mobs/human
 race human
 face king1.131
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -21547,7 +21593,7 @@ type 80
 editor_folder mobs/human
 race human
 face noble.131
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -21598,7 +21644,7 @@ type 80
 editor_folder mobs/human
 race human
 face queen.131
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -21649,7 +21695,7 @@ type 80
 editor_folder mobs/human
 race human
 face peasant.131
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -21696,7 +21742,7 @@ type 80
 editor_folder mobs/human
 race human
 face priest_church.131
-randomitems ai_priest;spells_priest;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems spells_priest;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -21751,7 +21797,7 @@ type 80
 editor_folder mobs/human
 race human
 face priest_green.131
-randomitems ai_priest;spells_priest;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems spells_priest;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -21806,7 +21852,7 @@ type 80
 editor_folder mobs/human
 race human
 face ranger.131
-randomitems ai_archer;skill_bow;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems skill_bow;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -21861,7 +21907,7 @@ type 80
 editor_folder mobs/human
 race human
 face smith.141
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -21914,7 +21960,7 @@ type 80
 editor_folder mobs/human
 race human
 face bartender.131
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -21961,7 +22007,7 @@ type 80
 editor_folder mobs/human
 race human
 face female1.131
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -22008,7 +22054,7 @@ type 80
 editor_folder mobs/human
 race human
 face female2.131
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -22055,7 +22101,7 @@ type 80
 editor_folder mobs/human
 race human
 face woman_old.131
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -22102,7 +22148,7 @@ type 80
 editor_folder mobs/insects
 face ant_queen.131
 race ant
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -22146,7 +22192,7 @@ type 80
 editor_folder mobs/insects
 face ant_red.131
 race ant
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -22191,7 +22237,7 @@ type 80
 editor_folder mobs/insects
 face ant_soldier.131
 race ant
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -22234,7 +22280,7 @@ type 80
 editor_folder mobs/insects
 face bee_killer.131
 race bee
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -22277,7 +22323,7 @@ type 80
 editor_folder mobs/insects
 face wasp_giant.131
 race wasp
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -22320,7 +22366,7 @@ type 80
 editor_folder mobs/minotaur
 face minotaur.131
 race minotaur
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -22369,7 +22415,7 @@ type 80
 editor_folder mobs/misc
 face slug_giant.131
 race slug
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -22418,7 +22464,7 @@ mpart_id 3
 editor_folder mobs/misc
 face worm_purple.131
 race worm
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -22507,7 +22553,7 @@ type 80
 editor_folder mobs/orcs
 face orc_berserker.131
 race orc
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -22553,7 +22599,7 @@ type 80
 editor_folder mobs/orcs
 face orc_captain.131
 race orc
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -22600,7 +22646,7 @@ type 80
 editor_folder mobs/orcs
 face orc_fighter.131
 race orc
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -22647,7 +22693,7 @@ type 80
 editor_folder mobs/orcs
 face orc_outlaw.131
 race orc
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -22694,7 +22740,7 @@ type 80
 editor_folder mobs/orcs
 face orc_priest.131
 race orc
-randomitems ai_priest;spells_priest;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems spells_priest;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -22742,7 +22788,7 @@ type 80
 editor_folder mobs/orcs
 face orc_sorcerer.131
 race orc
-randomitems ai_mage;spells_sorcerer;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems spells_sorcerer;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -22790,7 +22836,7 @@ type 80
 editor_folder mobs/orcs
 face orc_warlord.131
 race orc
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -22836,7 +22882,7 @@ type 80
 editor_folder mobs/orcs
 face orc_warrior.131
 race orc
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -22882,7 +22928,7 @@ type 80
 editor_folder mobs/plants
 face quickwood.131
 race tree
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -22924,7 +22970,7 @@ type 80
 editor_folder mobs/plants
 face treant_evil.131
 race tree
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -22981,7 +23027,7 @@ type 80
 editor_folder mobs/summoned
 face golem.131
 race golem
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -23026,7 +23072,7 @@ type 80
 editor_folder mobs/summoned
 face icegolem.031
 race golem
-randomitems ai_fighter;loot&s2;wealth_normal&D65;loot_base&D17,s2;loot_misc&d27,s2
+randomitems loot&s2;wealth_normal&D65;loot_base&D17,s2;loot_misc&d27,s2
 layer 6
 direction 5
 item_race 255
@@ -23073,7 +23119,7 @@ type 80
 editor_folder mobs/summoned
 face lavagolem.031
 race golem
-randomitems ai_fighter;loot&s1;wealth_normal&D65;loot_base&D17,s1;loot_misc&d27,s1
+randomitems loot&s1;wealth_normal&D65;loot_base&D17,s1;loot_misc&d27,s1
 layer 6
 direction 5
 item_race 255
@@ -23121,7 +23167,7 @@ mpart_id 3
 editor_folder mobs/trolls
 face troll.131
 race troll
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -23212,7 +23258,7 @@ type 80
 editor_folder mobs/undead
 face demilich.131
 race lich
-randomitems ai_mage;spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -23264,7 +23310,7 @@ type 80
 editor_folder mobs/undead
 face ghoul.131
 race ghoul
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -23314,7 +23360,7 @@ type 80
 editor_folder mobs/undead
 face lost_soul.131
 race ghost
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -23366,7 +23412,7 @@ type 80
 editor_folder mobs/undead
 face skel_fighter1.131
 race skeleton
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -23413,7 +23459,7 @@ type 80
 editor_folder mobs/undead
 face skel_fighter2.131
 race skeleton
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -23460,7 +23506,7 @@ type 80
 editor_folder mobs/undead
 face skel_fighter3.131
 race skeleton
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -23507,7 +23553,7 @@ type 80
 editor_folder mobs/undead
 face skel_mage.131
 race skeleton
-randomitems ai_mage;spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems spells_wizard;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -23559,7 +23605,7 @@ type 80
 editor_folder mobs/undead
 face wraith.131
 race ghost
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255
@@ -23612,7 +23658,7 @@ mpart_id 3
 editor_folder mobs/wyvern
 face wyvern.141
 race wyvern
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 layer 6
 direction 5
 item_race 255

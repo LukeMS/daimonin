@@ -2,7 +2,7 @@ Object troll
 name troll
 face troll.131
 race troll
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 mpart_id 3
 type 80
 layer 6

@@ -2,7 +2,7 @@ Object ant_red
 name red ant
 face ant_red.131
 race ant
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6
 direction 5

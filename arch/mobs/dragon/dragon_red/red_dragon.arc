@@ -2,7 +2,7 @@ Object dragon_red
 name red dragon 
 face dragon_red.131
 race dragon
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 mpart_id 3
 layer 6

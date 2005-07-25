@@ -2,7 +2,7 @@ Object mud_hand
 name mud hand
 face mud_hand.101
 race mud elemental
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6
 direction 5

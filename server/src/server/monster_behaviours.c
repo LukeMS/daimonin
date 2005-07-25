@@ -33,7 +33,7 @@
 #include <aiconfig.h>
 
 void ai_choose_enemy(object *op, struct mob_behaviour_param *params);
-    
+
 /* the attribute Str is atm not used from monsters (was used in push code) MT-06.2005 */
 rv_vector      *get_known_obj_rv(object *op, struct mob_known_obj *known_obj, int maxage);
 
@@ -158,10 +158,18 @@ int mob_can_see_obj(object *op, object *obj, struct mob_known_obj *known_obj)
 int is_enemy_of(object *op, object *obj)
 {
     /* TODO: add a few other odd types here, such as god & golem */
-    if (!obj->type == PLAYER || !obj->type == MONSTER || op == obj)
+    if (!(obj->type == PLAYER || obj->type == MONSTER) || op == obj 
+        || QUERY_FLAG(obj, FLAG_SURRENDERED) || QUERY_FLAG(op, FLAG_SURRENDERED))
         return FALSE;
 
-    /* Unagressive mobs are never enemies to anything (?) */
+    /* Unagressive mobs are never enemies to anything (?) 
+     * Wrong. Unaggressive means: "i never attack first".
+     * So, a monster can be your enemy, but atm it want talk to you
+     * and don't attack (like a demon appears and talk to you). If you
+     * attack, it attacks back. If you aggravate the demon, he lose his
+     * unaggressive flag and attacks you. A friendly unaggressive would 
+     * just go away but never attack you. MT-07.2005
+     */
     if (QUERY_FLAG(op, FLAG_UNAGGRESSIVE) || QUERY_FLAG(obj, FLAG_UNAGGRESSIVE))
         return FALSE;
 
@@ -183,7 +191,7 @@ int is_enemy_of(object *op, object *obj)
 int is_friend_of(object *op, object *obj)
 {
     /* TODO: add a few other odd types here, such as god & golem */
-    if (!obj->type == PLAYER || !obj->type == MONSTER || !op->type == PLAYER || !op->type == MONSTER || op == obj)
+    if (!(obj->type == PLAYER || obj->type == MONSTER) || !(op->type == PLAYER || op->type == MONSTER) || op == obj)
         return FALSE;
 
     /* TODO: this needs to be sorted out better */
@@ -451,6 +459,12 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
         LOG(llevDebug, "register_npc_known_obj(): '%s' trying to register object '%s' not on a map\n", STRING_OBJ_NAME(npc), STRING_OBJ_NAME(other));
         return NULL;
     }
+
+    /* never register anything when surrendered.
+     * A surrendered mob don't deal in friends or enemies.
+     */
+    if (QUERY_FLAG(npc, FLAG_SURRENDERED))
+        return NULL;
     
     /* TODO: get rid of flag_unaggressive and use only friendship */
     if (friendship < 0 && QUERY_FLAG(npc, FLAG_UNAGGRESSIVE))

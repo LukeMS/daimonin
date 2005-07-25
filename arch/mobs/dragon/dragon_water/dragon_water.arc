@@ -2,7 +2,7 @@ Object dragon_water_small
 name small water dragon
 face dragon_water.131
 race dragon
-randomitems ai_archer;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6
 direction 5

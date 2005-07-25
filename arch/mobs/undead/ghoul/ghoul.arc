@@ -2,7 +2,7 @@ Object ghoul
 name ghoul
 face ghoul.131
 race ghoul
-randomitems ai_fighter;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6
 direction 5

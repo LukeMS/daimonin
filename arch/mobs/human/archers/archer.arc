@@ -2,7 +2,7 @@ Object archer
 name archer
 race human
 face archer.131
-randomitems ai_archer;skill_bow;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
+randomitems skill_bow;loot;wealth_normal&D65;loot_base&D17;loot_misc&d27
 type 80
 layer 6
 direction 5

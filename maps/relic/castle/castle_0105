@@ -1469,27 +1469,6 @@ type 83
 title of Stonehaven
 level 50
 Wis 3
-arch ai_caster
-msg
-# This is a generic Spellcaster AI that can be used for most mobs
-processes:
-look_for_other_mobs
-friendship
-choose_enemy
-moves:
-#stand_still
-sleep
-# run_away_from_enemy hp_threshold=6
-# move_towards_enemy
-keep_distance_to_enemy
-move_towards_enemy_last_known_pos
-move_towards_waypoint
-# move_randomly xlimit=5 ylimit=5
-move_towards_home
-actions:
-melee_attack_enemy
-endmsg
-end
 arch waypoint
 name waypoint_1
 title waypoint_2

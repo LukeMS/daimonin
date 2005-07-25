@@ -1176,42 +1176,40 @@ void save_objects(mapstruct *m, FILE *fp, FILE *fp2, int flag)
                          * If reloaded, the spawn point will restore a new mob of same kind on
                          * the default position.
                          */
-                else if (QUERY_FLAG(op, FLAG_SPAWN_MOB))
+                else if (QUERY_FLAG(head, FLAG_SPAWN_MOB))
                 {
-                    /* browse the inv for the map spawn info */
-                    for (tmp = head->inv; tmp; tmp = tmp->below)
+                    /* sanity check for the mob structures & ptr */
+                    if(!MOB_DATA(head) || !MOB_DATA(head)->spawn_info)
                     {
-                        if (tmp->type == SPAWN_POINT_INFO)
+                        LOG( llevBug, "BUG: Spawn mob (%s %s) without SPAWN INFO (%s) or MOB_DATA(%x).\n", 
+                             STRING_SAFE(head->arch->name), query_name(head),
+                             MOB_DATA(head)?query_name(MOB_DATA(head)->spawn_info):"NULL", 
+                             MOB_DATA(head)?MOB_DATA(head):0x00);
+                    }
+                    else
+                    {
+                        tmp = MOB_DATA(head)->spawn_info;
+                        /* spawn info is ok - check the spawn point attached to it */
+                        if (tmp->owner && tmp->owner->type == SPAWN_POINT)
                         {
-                            if (tmp->owner && tmp->owner->type == SPAWN_POINT) /* thats the spawn point... */
-                            {
-                                /* tell the source spawn point to respawn this deleted object.
-                                                     * It can be here OR on a different map.
-                                                     */
-                                tmp->owner->stats.sp = tmp->owner->last_sp; /* force a pre spawn setting */
-                                tmp->owner->speed_left += 1.0f; /* we force a active spawn point */
-                                tmp->owner->enemy = NULL;
-                            }
-                            else
-                                LOG(llevBug,
-                                    "BUG: Spawn mob (%s (%s)) has SPAWN INFO without or illegal owner set (%s)!\n",
-                                    op->arch->name, query_name(head), query_name(tmp->owner));
-
-                            remove_ob(head);
-                            activelist_remove(head, m);
-                            check_walk_off(head, NULL, MOVE_APPLY_VANISHED | MOVE_APPLY_SAVING);
-                            goto save_objects_jump1; /* sometimes goto's are VERY useful */
+                            /* Found spawn point. Tell the source spawn point to respawn this deleted object.
+                             * It can be here OR on a different map.
+                             */
+                            tmp->owner->stats.sp = tmp->owner->last_sp; /* force a pre spawn setting */
+                            tmp->owner->speed_left += 1.0f; /* we force a active spawn point */
+                            tmp->owner->enemy = NULL;
+                        }
+                        else
+                        {
+                            LOG( llevBug, "BUG: Spawn mob (%s (%s)) has SPAWN INFO with illegal owner: (%s)!\n",
+                                 STRING_SAFE(head->arch->name), query_name(head), query_name(tmp->owner));
                         }
                     }
 
-                    LOG(llevBug, "BUG: Spawn mob (%s %s) without SPAWN INFO.\n", head->arch->name, query_name(head));
+                    /* and remove the mob itself */
                     remove_ob(head);
                     activelist_remove(head, m);
                     check_walk_off(head, NULL, MOVE_APPLY_VANISHED | MOVE_APPLY_SAVING);
-                    if (!OBJECT_FREE(tmp) && tmp->owner && tmp->owner->type == SPAWN_POINT)
-                        tmp->owner->enemy = NULL;
-
-                    save_objects_jump1:
                     if (otmp && (QUERY_FLAG(otmp, FLAG_REMOVED) || OBJECT_FREE(otmp))) /* invalid next ptr! */
                     {
                         if (!QUERY_FLAG(op, FLAG_REMOVED) && !OBJECT_FREE(op))

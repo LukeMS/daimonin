@@ -382,6 +382,7 @@ op->oy= op->y;
 ^blocksview{S}	    SET_OR_CLEAR_FLAG(op, FLAG_BLOCKSVIEW, IVAL);
 ^undead{S}  	    SET_OR_CLEAR_FLAG(op, FLAG_UNDEAD, IVAL);
 ^scared{S}  	    SET_OR_CLEAR_FLAG(op, FLAG_SCARED, IVAL);
+^surrendered{S}  	SET_OR_CLEAR_FLAG(op, FLAG_SURRENDERED, IVAL);
 ^unaggressive{S}    SET_OR_CLEAR_FLAG(op, FLAG_UNAGGRESSIVE, IVAL);
 ^reflect_missile{S} SET_OR_CLEAR_FLAG(op, FLAG_REFL_MISSILE, IVAL);
 ^can_reflect_missile{S} SET_OR_CLEAR_FLAG(op, FLAG_CAN_REFL_MISSILE, IVAL);
@@ -858,7 +859,7 @@ NULL /*is_removed*/,"been_applied", "auto_apply", "treasure", "is_neutral",	/* 2
 "reflect_missile", "reflect_spell",				/* 40 */
 "no_magic", "no_fix_player", "is_evil", "tear_down", "run_away",
 "pass_thru", "can_pass_thru", NULL, "unique", "no_drop",	/* 50 */
- "is_indestructible", "has_ready_spell", NULL, NULL,
+ "is_indestructible", "has_ready_spell", "surrendered", NULL,
  NULL, "can_use_armour", "can_use_weapon",
 "can_use_ring", NULL, "has_ready_bow",		/* 60 */
 "xrays", NULL, "is_floor", "lifesave", "is_magical", "alive",

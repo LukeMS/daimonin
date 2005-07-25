@@ -1529,47 +1529,8 @@ end
 ##############################################################
 #
 # Mobile & NPC treasure lists
-# AI & Behaviour
 #
 ##############################################################
-##############################################################
-#
-# AI & Behaviour
-#
-# A mob without AI treasure will set to ai_generic by default
-#
-#treasure ai_default
-#   arch ai_generic
-#end
-#
-##################
-treasure ai_fighter
-   arch ai_generic
-end
-treasure ai_archer
-   arch ai_caster
-end
-treasure ai_caster
-   arch ai_caster
-end
-treasure ai_mage
-   arch ai_caster
-end
-treasure ai_priest
-   arch ai_caster
-end
-treasure ai_monk
-   arch ai_generic
-end
-treasure ai_guard
-   arch guard_arch_ai 
-end
-treasure ai_slime
-   arch slime_race_ai
-end
-treasure ai_animal
-   arch ai_generic
-end
 ##############################################################
 #
 # Skills & Abilites
