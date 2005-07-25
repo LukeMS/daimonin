@@ -923,10 +923,10 @@ static void process_map_events(mapstruct *map)
         /* Now process op */
         if (OBJECT_FREE(op))
         {
-            LOG(llevBug, "BUG: process_events(): Free object %s (count: %d (%d)) on active list(%s (%d,%d)\n",
-                            query_name(op), op->count, op->count_debug, op->map?op->map->path:"NULL", op->x, op->y);
-            op->speed = 0;
-            update_ob_speed(op);
+            LOG(llevBug, "BUG: process_events(): Free object %s (count: %d (%d)) on active list for %s (%d,%d) flag:%d\n",
+                            STRING_OBJ_NAME(op), op->count, op->count_debug, STRING_MAP_PATH(op->map), op->x, op->y, QUERY_FLAG(op, FLAG_IN_ACTIVELIST));
+            SET_FLAG(op, FLAG_IN_ACTIVELIST);
+            activelist_remove(op, map);
             continue;
         }
 

@@ -242,7 +242,7 @@ WS	[ \t]*{NL}?
 ^end{WS}	    { if (ismore) return LL_MORE; else return LL_NORMAL; }
 ^object_int1{S}		op->enemy_count = IVAL;
 ^object_int2{S}		op->attacked_by_count = IVAL;
-^object_int3{S}		op->ownercount = IVAL;
+^object_int3{S}		op->owner_count = IVAL;
 ^last_heal{S}	    op->last_heal = IVAL;
 ^last_sp{S}			op->last_sp = IVAL;
 ^last_grace{S}		op->last_grace = IVAL;
@@ -1082,8 +1082,8 @@ char *get_ob_diff(object *op,object *op2) {
 		strcat(buf,buf2);
 	}
 
-  if(op->ownercount !=op2->ownercount) {
-    sprintf(buf2,"object_int3 %d\n",op->ownercount);
+  if(op->owner_count !=op2->owner_count) {
+    sprintf(buf2,"object_int3 %d\n",op->owner_count);
     strcat(buf,buf2);
   }
 

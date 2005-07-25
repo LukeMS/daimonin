@@ -130,7 +130,7 @@ typedef struct obj
     /* TODO: get rid of (only used by containers now =) */
     tag_t           attacked_by_count;  /* the tag of attacker, so we can be sure */
     struct obj     *attacked_by;    /* This object start to attack us! only player & monster */
-    tag_t           ownercount;         /* What count the owner had (in case owner has been freed) */
+    tag_t           owner_count;         /* What count the owner had (in case owner has been freed) */
     struct obj     *owner;          /* Pointer to the object which controls this one
                                              * Owner should not be referred to directly
                                              * - get_owner() should be used instead.

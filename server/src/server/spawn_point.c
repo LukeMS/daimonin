@@ -265,6 +265,7 @@ void spawn_point(object *op)
      */
     tmp = arch_to_object(op->other_arch); /* create spawn info */
     tmp->owner = op; /* chain spawn point to our mob */
+    tmp->owner_count = op->count;
     insert_ob_in_ob(tmp, mob);      /* and put it in the mob */
 
     SET_MULTI_FLAG(mob, FLAG_SPAWN_MOB); /* FINISH: now mark our mob as a spawn */
