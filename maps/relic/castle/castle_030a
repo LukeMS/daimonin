@@ -630,7 +630,8 @@ y 7
 arch ogre
 name Frah'ak
 type 83
-unaggressive 1
+randomitems none
+surrendered 1
 stand_still 1
 level 4
 arch event_obj

@@ -2886,9 +2886,8 @@ x 18
 y 8
 arch troll
 type 83
-friendly 1
-unaggressive 1
 randomitems none
+surrendered 1
 arch empty_ai
 end
 end
@@ -2926,9 +2925,8 @@ x 18
 y 12
 arch orc_berserker
 type 83
-friendly 1
-unaggressive 1
 randomitems none
+surrendered 1
 arch empty_ai
 end
 end
@@ -2971,9 +2969,8 @@ x 18
 y 16
 arch giant_hill
 type 83
-friendly 1
-unaggressive 1
 randomitems none
+surrendered 1
 arch empty_ai
 end
 end
@@ -3016,9 +3013,8 @@ x 18
 y 20
 arch kobold_fighter
 type 83
-unaggressive 1
-friendly 1
 randomitems none
+surrendered 1
 arch empty_ai
 end
 end
