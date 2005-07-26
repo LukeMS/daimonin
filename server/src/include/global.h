@@ -516,8 +516,6 @@ EXTERN long                     nrofallowedstr;     /* Only used in malloc_info(
 
 EXTERN object                   void_container; /* Container for objects without env or map */
 
-EXTERN char                     first_map_path[MAX_BUF];    /* The start-level */
-
 EXTERN char                     global_string_buf4096[HUGE_BUF];
 EXTERN char                     errmsg[HUGE_BUF];
 EXTERN long                     ob_count;

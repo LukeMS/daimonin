@@ -533,16 +533,16 @@ static void set_first_map(object *op)
 {
     object *current;
 
-    strcpy(CONTR(op)->maplevel, first_map_path);
-    op->x = -1;
-    op->y = -1;
+    strcpy(CONTR(op)->maplevel, EXIT_PATH(&map_archeytpe->clone));
+    op->x = map_archeytpe->clone.stats.hp;
+    op->y = map_archeytpe->clone.stats.sp;
 
-    if (!strcmp(first_map_path, "/tutorial"))
+    if (!strcmp(EXIT_PATH(&map_archeytpe->clone), "/tutorial"))
     {
         current = get_object();
-        FREE_AND_COPY_HASH(EXIT_PATH(current), first_map_path);
-        EXIT_X(current) = 1;
-        EXIT_Y(current) = 1;
+        FREE_AND_COPY_HASH(EXIT_PATH(current), EXIT_PATH(&map_archeytpe->clone));
+        EXIT_X(current) = map_archeytpe->clone.stats.hp;
+        EXIT_Y(current) = map_archeytpe->clone.stats.sp;
         current->last_eat = MAP_PLAYER_MAP;
         enter_exit(op, current);
     }

@@ -165,11 +165,13 @@ static player * get_player(player *p)
     p->last_save_tick = 9999999;
 #endif
 
-    strcpy(p->savebed_map, first_map_path);  /* Init. respawn position */
+    /* thats our default start map + position from the arches */
+    strcpy(p->savebed_map, EXIT_PATH(&map_archeytpe->clone));  /* Init. respawn position */
+    p->bed_x = map_archeytpe->clone.stats.hp;
+    p->bed_y = map_archeytpe->clone.stats.sp;
 
 	p->gmaster_mode = GMASTER_MODE_NO;
 	p->gmaster_node = NULL;
-    
     p->mute_freq_shout=0;
     p->mute_freq_say=0;
     p->mute_counter=0;

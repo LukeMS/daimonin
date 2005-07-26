@@ -433,7 +433,9 @@ void check_login(object *op)
     CFParm      CFP;
     int         evtid;
 #endif
-    strcpy(pl->maplevel, first_map_path);
+
+    /* we need this why? */
+    //strcpy(pl->maplevel,EXIT_PATH(&map_archeytpe->clone) );
 
     kick_loop = 0;
     /* a good point to add this i to a 10 minute temp ban,,,
@@ -584,8 +586,11 @@ void check_login(object *op)
     pl->orig_stats.Pow = 0;
     pl->orig_stats.Wis = 0;
     pl->orig_stats.Cha = 0;
-    strcpy(pl->savebed_map, first_map_path);
-    pl->bed_x = 0, pl->bed_y = 0;
+
+    strcpy(pl->savebed_map,EXIT_PATH(&map_archeytpe->clone) );
+    pl->bed_x = map_archeytpe->clone.stats.hp;
+    pl->bed_y = map_archeytpe->clone.stats.sp;
+
 
     /* Loop through the file, loading the rest of the values */
     lev_array_flag = FALSE;
