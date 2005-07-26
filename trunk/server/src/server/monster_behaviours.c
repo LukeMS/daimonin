@@ -610,10 +610,6 @@ int can_hit_missile(object *ob1, object *ob2, rv_vector *rv, int mode)
 
     switch (mode)
     {
-        case 1:
-          /* exact 45 deg */
-        default:
-          return rv->distance_x == 0 || rv->distance_y == 0 || abs(rv->distance_x) - abs(rv->distance_y) == 0;
         case 2:
           /* 45 deg +- one tile */
           return abs(rv->distance_x) <= 1
@@ -623,6 +619,11 @@ int can_hit_missile(object *ob1, object *ob2, rv_vector *rv, int mode)
         case 3:
           /* free 360 deg line of fire */
           return TRUE;
+
+        case 1:
+            /* exact 45 deg */
+        default:
+            return rv->distance_x == 0 || rv->distance_y == 0 || abs(rv->distance_x) - abs(rv->distance_y) == 0;
     }
 }
 
@@ -804,8 +805,8 @@ void ai_avoid_line_of_fire(object *op, struct mob_behaviour_param *params, move_
             }
             else if (op->enemy->type == MONSTER)
             {
-                if(! QUERY_FLAG(op->enemy, FLAG_READY_SPELL) &&
-                        ! QUERY_FLAG(op->enemy, FLAG_READY_BOW))
+                if(QUERY_FLAG(op->enemy, FLAG_READY_WEAPON) || //* ready weapon marks special mobs always in melee */
+                    (! QUERY_FLAG(op->enemy, FLAG_READY_SPELL) && ! QUERY_FLAG(op->enemy, FLAG_READY_BOW)))
                     return;
                 SET_FLAG(MOB_DATA(op)->enemy, AI_OBJFLAG_USES_DISTANCE_ATTACK);
             }
@@ -982,6 +983,7 @@ void ai_keep_distance_to_enemy(object *op, struct mob_behaviour_param *params, m
                 response->type = MOVE_RESPONSE_DIR;
                 response->data.direction = absdir(rv->direction + 4);
                 op->anim_enemy_dir = response->data.direction;
+                op->speed_left-=0.5f; /* we move backwards - do it a bit slower */
             }
             else if (rv->distance < (unsigned int) AIPARAM_INT(AIPARAM_KEEP_DISTANCE_TO_ENEMY_MAX_DIST))
             {
@@ -991,6 +993,7 @@ void ai_keep_distance_to_enemy(object *op, struct mob_behaviour_param *params, m
                 response->forbidden |= (1 << absdir(rv->direction+1));
                 response->forbidden |= (1 << absdir(rv->direction-1));
                 op->anim_enemy_dir = rv->direction;
+                op->speed_left-=0.5f; /* we move backwards - do it a bit slower */
             }
         }
     }
@@ -1170,6 +1173,7 @@ void ai_run_away_from_enemy(object *op, struct mob_behaviour_param *params, move
              * most distant point from enemy */
             response->type = MOVE_RESPONSE_DIR;
             response->data.direction = absdir(rv->direction + 4);
+            op->speed_left-=0.5f;/* let him move away "scared" - with weak legs */
         }
         else
         {
@@ -1479,9 +1483,9 @@ int ai_melee_attack_enemy(object *op, struct mob_behaviour_param *params)
 {
     rv_vector  *rv;
 
-    if (QUERY_FLAG(op, FLAG_UNAGGRESSIVE)
+    if (!OBJECT_VALID(op->enemy, op->enemy_count)
      || QUERY_FLAG(op, FLAG_SCARED)
-     || !OBJECT_VALID(op->enemy, op->enemy_count)
+     || QUERY_FLAG(op, FLAG_UNAGGRESSIVE)
      || op->weapon_speed_left > 0
      || op->map == NULL)
         return FALSE;
@@ -1514,11 +1518,10 @@ int ai_bow_attack_enemy(object *op, struct mob_behaviour_param *params)
     int             tag;
     int             direction;
 
-    if (!QUERY_FLAG(op, FLAG_READY_BOW)
+    if (!OBJECT_VALID(op->enemy, op->enemy_count)
      || QUERY_FLAG(op, FLAG_UNAGGRESSIVE)
      || QUERY_FLAG(op, FLAG_SCARED)
-     || !OBJECT_VALID(op->enemy,
-                      op->enemy_count)
+     || !QUERY_FLAG(op, FLAG_READY_BOW)
      || op->weapon_speed_left > 0
      || op->map == NULL)
         return FALSE;
@@ -1621,7 +1624,7 @@ int ai_bow_attack_enemy(object *op, struct mob_behaviour_param *params)
      * to the enemy should be allowed. This is not a question of reality of not - this will
      * destroy not only game play but also every map design and is a critical misbehaviour.
      */
-    op->speed_left--;
+    op->speed_left-=2;
     return 1;
 }
 
@@ -1658,7 +1661,7 @@ object * monster_choose_random_spell(object *monster)
     return altern[RANDOM() % i];
 }
 
-/* op is the basic mob dooing anythinf
+/* op is the basic mob doing anything
  * caster is op or the multipart part that the spell will come from
  * dir is the cast direction for directional spells
  * target is (an optional) target object
@@ -1686,14 +1689,24 @@ static int monster_cast_spell(object *op, object *part, int dir, object *target,
 
     ability = (spell_item->type == ABILITY && QUERY_FLAG(spell_item, FLAG_IS_MAGICAL));
 
-    /* If we cast a spell, only use up casting_time speed */
-    op->speed_left += (float) 1.0 - (float) sp->time / (float) 20.0 * (float) FABS(op->speed);
+    /* add default cast time from spell force to monster.
+     * we want make spell casting (ability) action independent from 
+     * speed - which will be really movement/physically action orientated.
+     * With the casting delay counter, we are independent from speed & 
+     * weapon_speed - thats needed for heavy spells with, lets say, a 10 second delay
+     * or even more. mob->magic is the default mob speed delay, spell->last_grace the
+     * delay for this spell.
+     * the last_grace counter is decreased in regenerate_stats().
+     * 
+     */
+    op->last_grace += (op->magic + spell_item->last_grace);
+
+    /* If we cast a spell, only use up casting_time speed.
+     * outdated. we want use the casting delay counter above now! (MT-07.2005) 
+     */
+    //op->speed_left += (float) 1.0 - (float) sp->time / (float) 20.0 * (float) FABS(op->speed);
 
     op->stats.sp -= sp_cost;
-
-    /* add default cast time from spell force to monster */
-    /* TODO: what is this? */
-    op->last_grace += spell_item->last_grace;
 
     /* The casting code uses op->enemy for target, but we don't always
      * target our current enemy. */
@@ -1716,7 +1729,7 @@ static int monster_cast_spell(object *op, object *part, int dir, object *target,
         op->enemy_count = tmp_enemy_tag;
     }
 
-    op->speed_left--;/* hack: see bow behaviour! */
+    op->speed_left-=2;/* hack: see bow behaviour! */
 
     return TRUE;
 }
@@ -1727,11 +1740,11 @@ int ai_spell_attack_enemy(object *op, struct mob_behaviour_param *params)
     rv_vector  *rv;
     object     *spell_item;
 
-    if (QUERY_FLAG(op, FLAG_UNAGGRESSIVE)
+    if (!OBJECT_VALID(op->enemy, op->enemy_count)
      || QUERY_FLAG(op, FLAG_SCARED)
      || !QUERY_FLAG(op, FLAG_READY_SPELL)
-     || !OBJECT_VALID(op->enemy, op->enemy_count)
-     || op->weapon_speed_left > 0
+     || QUERY_FLAG(op, FLAG_UNAGGRESSIVE)
+     // || op->weapon_speed_left > 0
      || op->last_grace > 0
      || op->map == NULL)
         return FALSE;

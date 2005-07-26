@@ -3988,6 +3988,9 @@
   <attribute arch="surrendered" editor="surrendered" type="bool">
     &lt;surrendered&gt; monsters do not attack and don't count as target.
   </attribute>
+  <attribute arch="has_ready_weapon" editor="forced melee" type="bool">
+    This mob will search always direct melee even when it has range or spells.
+  </attribute>
   <attribute arch="friendly" editor="friendly" type="bool">
     &lt;friendly&gt; monsters help the player, attacking any
     non-friendly monsters in range.
@@ -4586,6 +4589,9 @@
   </attribute>
   <attribute arch="surrendered" editor="surrendered" type="bool">
     &lt;surrendered&gt; monsters do not attack and don't count as target.
+  </attribute>
+  <attribute arch="has_ready_weapon" editor="forced melee" type="bool">
+    This mob will search always direct melee even when it has range or spells.
   </attribute>
   <attribute arch="friendly" editor="friendly" type="bool">
     &lt;friendly&gt; monsters help the player, attacking any

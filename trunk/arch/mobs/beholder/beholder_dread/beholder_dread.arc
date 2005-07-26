@@ -18,6 +18,7 @@ terrain_flag 1
 can_open_door 1
 can_use_weapon 1
 has_ready_spell 1
+has_ready_weapon 1
 levitate 1
 Int 10
 Wis 7

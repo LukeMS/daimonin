@@ -739,6 +739,7 @@ x 5
 y 20
 arch ranger
 type 83
+stand_still 1
 end
 end
 arch floor_ostone1
@@ -2164,6 +2165,13 @@ end
 arch floor_ostone1
 x 19
 y 19
+end
+arch spawn_point
+x 19
+y 19
+arch beholder_dread
+type 83
+end
 end
 arch floor_ostone1
 x 19

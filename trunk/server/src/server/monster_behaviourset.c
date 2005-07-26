@@ -287,7 +287,8 @@ struct mob_behaviourset * generate_behaviourset(object *op)
 
         if (!QUERY_FLAG(op, FLAG_NO_ATTACK))
         {
-            if (QUERY_FLAG(op, FLAG_READY_SPELL) || QUERY_FLAG(op, FLAG_READY_BOW))
+            if (!QUERY_FLAG(op, FLAG_READY_WEAPON) && 
+                (QUERY_FLAG(op, FLAG_READY_SPELL) || QUERY_FLAG(op, FLAG_READY_BOW)))
             {
                 /* Behaviours for archers/mages only */
                 last = last->next = init_behaviour(BEHAVIOURCLASS_MOVES, AIBEHAVIOUR_KEEP_DISTANCE_TO_ENEMY);
