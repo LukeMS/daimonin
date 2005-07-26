@@ -217,11 +217,13 @@ static void init_environ()
 static void init_dynamic()
 {
     archetype  *at  = first_archetype;
+
+    map_archeytpe = NULL;
     while (at)
     {
         if (at->clone.type == MAP && EXIT_PATH(&at->clone))
         {
-            strcpy(first_map_path, EXIT_PATH(&at->clone));
+            map_archeytpe = at;
             return;
         }
         at = at->next;
