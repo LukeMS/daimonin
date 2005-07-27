@@ -27,9 +27,6 @@
 					<Add option="-DWIN32"/>
 					<Add option="-D_DEBUG"/>
 					<Add option="-D_WINDOWS"/>
-					<Add directory="..\..\..\source\include"/>
-					<Add directory="..\fmod_inc"/>
-					<Add directory="..\ogre_inc"/>
 				</Compiler>
 				<Linker>
 					<Add library="OgreMain_d"/>
@@ -52,9 +49,6 @@
 					<Add option="-DWIN32"/>
 					<Add option="-DNDEBUG"/>
 					<Add option="-D_WINDOWS"/>
-					<Add directory="..\..\..\source\include"/>
-					<Add directory="..\fmod_inc"/>
-					<Add directory="..\ogre_inc"/>
 				</Compiler>
 				<Linker>
 					<Add library="OgreMain"/>
@@ -67,14 +61,18 @@
 			</Target>
 		</Build>
 		<Compiler>
-			<Add option="-g"/>
+			<Add directory="ogre_inc"/>
+			<Add directory="fmod_inc"/>
+			<Add directory="..\..\..\source\include"/>
 		</Compiler>
 		<Linker>
 			<Add option="-Wl,--enable-runtime-pseudo-reloc"/>
 			<Add library="ws2_32"/>
 			<Add library="fmod"/>
+			<Add directory="ogre_lib"/>
+			<Add directory="fmod_lib"/>
 		</Linker>
-		<Unit filename="..\README.txt">
+		<Unit filename="ReadMe.txt">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -217,6 +215,13 @@
 			<Option target="Release"/>
 		</Unit>
 		<Unit filename="..\..\..\source\include\particle.h">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
+		<Unit filename="..\..\..\source\include\particle_manager.h">
 			<Option compilerVar=""/>
 			<Option compile="0"/>
 			<Option link="0"/>
@@ -368,6 +373,11 @@
 			<Option target="Release"/>
 		</Unit>
 		<Unit filename="..\..\..\source\particle.cpp">
+			<Option compilerVar="CPP"/>
+			<Option target="Debug"/>
+			<Option target="Release"/>
+		</Unit>
+		<Unit filename="..\..\..\source\particle_manager.cpp">
 			<Option compilerVar="CPP"/>
 			<Option target="Debug"/>
 			<Option target="Release"/>
