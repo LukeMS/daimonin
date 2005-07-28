@@ -131,7 +131,7 @@ extern void             set_block(int x, int y, int bx, int by);
 extern void             update_los(object *op);
 extern void             expand_sight(object *op);
 extern int              has_carried_lights(object *op);
-extern void inline      clear_los(object *op);
+extern inline void      clear_los(object *op);
 extern void             print_los(object *op);
 extern void             make_sure_seen(object *op);
 extern void             make_sure_not_seen(object *op);
