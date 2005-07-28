@@ -366,6 +366,9 @@ typedef struct pl_player
 
     /*object *last_used;*/     /* Pointer to object last picked or applied */
     /*long last_used_id;*/     /* Safety measures to be sure it's the same */
+
+    /* All pets owned by this player */
+    objectlink         *pets;
 } player;
 
 

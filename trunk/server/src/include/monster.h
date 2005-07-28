@@ -139,7 +139,7 @@ struct mobdata
     struct mob_known_obj       *known_mobs; /* TODO optimization for search: binary heap */
     struct mob_known_obj       *known_objs; /* TODO optimization for search: binary heap */
 
-    struct mob_known_obj       *leader, *enemy;
+    struct mob_known_obj       *owner, *enemy;
 
     struct mob_behaviourset    *behaviours;
 
@@ -160,6 +160,7 @@ struct mobdata
 #define FRIENDSHIP_NEUTRAL        0
 #define FRIENDSHIP_DIST_MAX      50 /* Max effect of distance */
 #define FRIENDSHIP_HELP         100 /* Added if helped */
+#define FRIENDSHIP_PET         5000 /* Base for pets */
 
 typedef enum
 {

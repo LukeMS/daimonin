@@ -254,6 +254,7 @@ int command_combat(object *op, char *params)
         CONTR(op)->combat_mode = 1;
         CONTR(op)->praying = 0;
     }
+    update_pets_combat_mode(op);
 
     send_target_command(CONTR(op));
     return 1;

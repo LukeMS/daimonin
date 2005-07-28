@@ -1543,6 +1543,7 @@ void do_some_living(object *op)
                     {
                         new_draw_info_format(NDI_UNIQUE, 0, op, "You stop combat and start praying to %s...", god->name);
                         CONTR(op)->combat_mode = 0;
+                        update_pets_combat_mode(op);
                         send_target_command(CONTR(op));
                     }
                     else

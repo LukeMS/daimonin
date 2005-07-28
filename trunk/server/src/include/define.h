@@ -592,6 +592,9 @@ error - Your ANSI C compiler should be defining __STDC__;
 #define QUERY_FLAG(xyz, p) \
     ((xyz)->flags[p/32] & (1U << (p % 32)))
 
+#define SET_OR_CLEAR_FLAG(op, flag, val) \
+	{ if (val) SET_FLAG(op, flag); else CLEAR_FLAG(op, flag); }
+
 /* this is rarely used but needed for some flags, which are
  * used for intern handling like INVISIBLE or WALK_OFF. Because
  * some core functions like remove_ob() use this, it will be better
