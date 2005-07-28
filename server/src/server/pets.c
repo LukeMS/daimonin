@@ -25,6 +25,104 @@
 
 #include <global.h>
 
+
+#define MAX_PETS 10      /* Maximum number of pets at any time */
+#define MAX_PERMAPETS 5  /* Maximum number of non-temporary pets */
+
+/* Returns 0 on success, -1 on failure */
+int add_pet(object *owner, object *pet)
+{
+    int nrof_pets = 0, nrof_permapets = 0;
+    objectlink *ol;
+    struct mob_known_obj *tmp;
+    object *spawninfo;
+    
+    if(owner == NULL || pet == NULL || owner->type != PLAYER || pet->type != MONSTER)
+    {
+        LOG(llevBug, "BUG: add_pet(): Illegal owner (%s) or pet (%s)\n", STRING_OBJ_NAME(owner), STRING_OBJ_NAME(pet));
+        return -1;
+    }
+
+    if(pet->owner)
+    {
+        new_draw_info_format(NDI_UNIQUE, 0, owner, "%s is already taken", query_name(pet));
+        return -1;
+    }
+    
+    /* Count number of pets */
+    for(ol = CONTR(owner)->pets; ol; ol = ol->next) 
+    {
+        nrof_pets++;
+        /*
+        if(! QUERY_FLAG(ol->objlink.ob, FLAG_IS_USED_UP))
+            nrof_permapets++;
+        */
+    }
+
+    if(nrof_pets >= MAX_PETS || nrof_permapets >= MAX_PERMAPETS)
+    {
+        new_draw_info_format(NDI_UNIQUE, 0, owner, "You have too many pets to handle %s", query_name(pet));
+        return -1;
+    }
+
+    /* Make pet forget all old friendship values (TODO really?) */
+    for (tmp = MOB_DATA(pet)->known_mobs; tmp; tmp = tmp->next)
+        return_poolchunk(tmp, pool_mob_knownobj);
+    MOB_DATA(pet)->known_mobs = NULL;
+    /* In effect, make the pet a whole new object, so that all other
+     * mobs forgets about it */
+    /* TODO: efficient, but ugly solution. watch for side effects */
+    pet->count = ++ob_count;
+    
+    /* Set pet owner */
+    pet->owner = owner;
+    pet->owner_count = owner->count;
+    MOB_DATA(pet)->owner = register_npc_known_obj(pet, owner, 0);
+
+    SET_FLAG(pet, FLAG_FRIENDLY); /* Brainwash */
+    pet->enemy = NULL;
+    MOB_DATA(pet)->enemy = NULL;
+
+    /* Follow owner combat mode */
+    SET_OR_CLEAR_FLAG(pet, FLAG_UNAGGRESSIVE, !CONTR(owner)->combat_mode);
+    
+    /* Insert link in owner's pet list */
+    ol = get_objectlink(OBJLNK_FLAG_OB);
+    ol->objlink.ob = pet;
+    ol->id = pet->count;
+    ol->ref_count = 1; /* TODO: How can this be used? */
+    objectlink_link(&CONTR(owner)->pets, NULL, NULL, CONTR(owner)->pets, ol);
+
+    /* Need to release/unlink spawned mobs */
+    /* TODO: move to a release_spawn_mob() function in spawn.c */
+    if((spawninfo = MOB_DATA(pet)->spawn_info))
+    {
+        if(OBJECT_VALID(spawninfo->owner, spawninfo->owner_count) &&
+                spawninfo->owner->enemy == pet)
+        {
+            spawninfo->owner->enemy = NULL;
+            LOG(llevDebug, "add_pet(): removing %s from spawn point control\n", STRING_OBJ_NAME(pet));
+        }
+        remove_ob(spawninfo);
+        MOB_DATA(pet)->spawn_info = NULL;
+        CLEAR_MULTI_FLAG(pet, FLAG_SPAWN_MOB);
+    }
+    
+    return 0;
+}
+
+void update_pets_combat_mode(object *owner)
+{
+    objectlink *ol;
+    
+    for(ol = CONTR(owner)->pets; ol; ol = ol->next) 
+    {
+        if(OBJECT_VALID(ol->objlink.ob, ol->id))
+            SET_OR_CLEAR_FLAG(ol->objlink.ob, FLAG_UNAGGRESSIVE, !CONTR(owner)->combat_mode);
+    }
+}
+
+#if 0
 /* given that 'pet' is a friendly object, this function returns a
  * monster the pet should attack, NULL if nothing appropriate is
  * found.  it basically looks for nasty things around the owner
@@ -93,27 +191,6 @@ object * get_pet_enemy(object *pet, rv_vector *rv)
 
     /* Didn't find anything - return NULL */
     return NULL;
-}
-
-void terminate_all_pets(object *owner)
-{
-/* Disabled until pet code rework */
-#if 0    
-    objectlink *obl, *next;
-    for (obl = first_friendly_object; obl != NULL; obl = next)
-    {
-        object *ob  = obl->objlink.ob;
-        next = obl->next;
-        if (get_owner(ob) == owner)
-        {
-            if (!QUERY_FLAG(ob, FLAG_REMOVED))
-            {
-                remove_ob(ob);
-                check_walk_off(ob, NULL, MOVE_APPLY_VANISHED);
-            }
-        }
-    }
-#endif    
 }
 
 /*
@@ -267,3 +344,65 @@ void pet_move(object *ob)
     }
     return;
 }
+#endif
+
+/*
+ * Unfortunately, sometimes, the owner of a pet is in the
+ * process of entering a new map when this is called.
+ * Thus the map isn't loaded yet, and we have to remove
+ * the pet...
+ * Interesting enough, we don't use the passed map structure in
+ * this function.
+ */
+
+void remove_all_pets(mapstruct *map)
+{
+    LOG(llevDebug, "remove_all_pets(%s): stub\n", STRING_MAP_PATH(map));
+/* Disabled until pet code rework */
+#if 0
+    objectlink *obl, *next;
+    object     *owner;
+
+    for (obl = first_friendly_object; obl != NULL; obl = next)
+    {
+        next = obl->next;
+        if (obl->objlink.ob->type != PLAYER
+         && QUERY_FLAG(obl->objlink.ob, FLAG_FRIENDLY)
+         && (owner = get_owner(obl->objlink.ob)) != NULL
+         && owner->map != obl->objlink.ob->map)
+        {
+            /* follow owner checks map status for us */
+            follow_owner(obl->objlink.ob, owner);
+            /* bug: follow can kill the pet here ... */
+            if (QUERY_FLAG(obl->objlink.ob, FLAG_REMOVED) && FABS(obl->objlink.ob->speed) > MIN_ACTIVE_SPEED)
+            {
+                object *ob  = obl->objlink.ob;
+                LOG(llevMonster, "(pet failed to follow)");
+            }
+        }
+    }
+#endif    
+}
+
+void terminate_all_pets(object *owner)
+{
+    LOG(llevDebug, "terminate_all_pets(%s): stub\n", STRING_OBJ_NAME(owner));
+/* Disabled until pet code rework */
+#if 0    
+    objectlink *obl, *next;
+    for (obl = first_friendly_object; obl != NULL; obl = next)
+    {
+        object *ob  = obl->objlink.ob;
+        next = obl->next;
+        if (get_owner(ob) == owner)
+        {
+            if (!QUERY_FLAG(ob, FLAG_REMOVED))
+            {
+                remove_ob(ob);
+                check_walk_off(ob, NULL, MOVE_APPLY_VANISHED);
+            }
+        }
+    }
+#endif    
+}
+

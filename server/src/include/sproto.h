@@ -413,11 +413,10 @@ int                         roll_ob(object *op, int dir, object *pusher);
 int                         push_ob(object *who, int dir, object *pusher);
 int                         missile_reflection_adjust(object *op, int flag);
 /* pets.c */
-object                     *get_pet_enemy(object *pet, rv_vector *rv);
+void                        update_pets_combat_mode(object *owner);
+int                         add_pet(object *owner, object *pet);
 void                        terminate_all_pets(object *owner);
 void                        remove_all_pets(mapstruct *map);
-void                        follow_owner(object *ob, object *owner);
-void                        pet_move(object *ob);
 /* player.c */
 player                     *find_player(char *plname);
 player                     *find_player_hash(const char *plname);

@@ -335,22 +335,31 @@ static int do_move_monster(object *op, int dir, uint16 forbidden)
  */
 
 /* Purge invalid and old mobs from list of known mobs */
-static inline void cleanup_mob_knowns(struct mob_known_obj **first)
+static inline void remove_mob_known(struct mob_known_obj *tmp, struct mob_known_obj **first)
+{
+    if (tmp->next)
+        tmp->next->prev = tmp->prev;
+
+    if (tmp->prev)
+        tmp->prev->next = tmp->next;
+    else
+        *first = tmp->next;
+
+    return_poolchunk(tmp, pool_mob_knownobj);
+}
+
+static inline void cleanup_mob_knowns(object *op, struct mob_known_obj **first)
 {
     struct mob_known_obj   *tmp;
     for (tmp = *first; tmp; tmp = tmp->next)
-    {
-        if (!OBJECT_VALID(tmp->obj, tmp->obj_count) || ROUND_TAG - tmp->last_seen > MAX_KNOWN_OBJ_AGE)
+    {            
+        if (!OBJECT_VALID(tmp->obj, tmp->obj_count))
+            remove_mob_known(tmp, first);
+        else if(ROUND_TAG - tmp->last_seen > MAX_KNOWN_OBJ_AGE)
         {
-            if (tmp->next)
-                tmp->next->prev = tmp->prev;
-
-            if (tmp->prev)
-                tmp->prev->next = tmp->next;
-            else
-                *first = tmp->next;
-
-            return_poolchunk(tmp, pool_mob_knownobj);
+            /* Never forget about our owner */
+            if(op->owner != tmp->obj || op->owner_count != tmp->obj->count)
+                remove_mob_known(tmp, first);
         }
     }
 }
@@ -445,8 +454,8 @@ int move_monster(object *op)
     }
 
     /* Purge invalid and old mobs from list of known mobs */
-    cleanup_mob_knowns(&MOB_DATA(op)->known_mobs);
-    cleanup_mob_knowns(&MOB_DATA(op)->known_objs);
+    cleanup_mob_knowns(op, &MOB_DATA(op)->known_mobs);
+    cleanup_mob_knowns(op, &MOB_DATA(op)->known_objs);
 
     regenerate_stats(op); /* Regenerate if applicable */
 

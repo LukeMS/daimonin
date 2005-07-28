@@ -32,7 +32,9 @@
 
 #include <aiconfig.h>
 
+/* Those behaviours are called from other behaviours (ugly, I know...) */
 void ai_choose_enemy(object *op, struct mob_behaviour_param *params);
+void ai_move_towards_owner(object *op, struct mob_behaviour_param *params, move_response *response);
 
 /* the attribute Str is atm not used from monsters (was used in push code) MT-06.2005 */
 rv_vector      *get_known_obj_rv(object *op, struct mob_known_obj *known_obj, int maxage);
@@ -102,6 +104,10 @@ int mob_can_see_obj(object *op, object *obj, struct mob_known_obj *known_obj)
     if (known_obj && known_obj->last_seen == ROUND_TAG)
         return TRUE;
 
+    /* Pets */
+    if (op->owner == obj && op->owner_count == obj->count)
+        return TRUE;
+    
     /* Try using cache */
     if (cached_op_tag == op->count && cached_obj_tag == obj->count &&
                     cache_time == ROUND_TAG)
@@ -109,6 +115,10 @@ int mob_can_see_obj(object *op, object *obj, struct mob_known_obj *known_obj)
 
     /* Invisibility */
     if (QUERY_FLAG(obj, FLAG_IS_INVISIBLE) && !QUERY_FLAG(op, FLAG_SEE_INVISIBLE))
+        return FALSE;
+
+    /* Legal position? */
+    if(! obj->map)
         return FALSE;
 
     aggro_range = op->stats.Wis; /* wis is basic sensing range */
@@ -162,17 +172,24 @@ int is_enemy_of(object *op, object *obj)
         || QUERY_FLAG(obj, FLAG_SURRENDERED) || QUERY_FLAG(op, FLAG_SURRENDERED))
         return FALSE;
 
-    /* Unagressive mobs are never enemies to anything (?) 
+    /* Unagressive mobs are never enemies to anything (?) Gecko
+     * 
      * Wrong. Unaggressive means: "i never attack first".
      * So, a monster can be your enemy, but atm it want talk to you
      * and don't attack (like a demon appears and talk to you). If you
      * attack, it attacks back. If you aggravate the demon, he lose his
      * unaggressive flag and attacks you. A friendly unaggressive would 
      * just go away but never attack you. MT-07.2005
+     *
+     * Disabled due to minor reorganisation and above comment. Gecko 2005-07-28
      */
-    if (QUERY_FLAG(op, FLAG_UNAGGRESSIVE) || QUERY_FLAG(obj, FLAG_UNAGGRESSIVE))
-        return FALSE;
+/*    if (QUERY_FLAG(op, FLAG_UNAGGRESSIVE) || QUERY_FLAG(obj, FLAG_UNAGGRESSIVE))
+        return FALSE; */
 
+    /* Pets aren't enemies of their owners */
+    if (op->owner == obj && op->owner_count == obj->count)
+        return FALSE;
+    
     /* TODO: this needs to be sorted out better */
     if (QUERY_FLAG(op, FLAG_FRIENDLY))
     {
@@ -194,6 +211,10 @@ int is_friend_of(object *op, object *obj)
     if (!(obj->type == PLAYER || obj->type == MONSTER) || !(op->type == PLAYER || op->type == MONSTER) || op == obj)
         return FALSE;
 
+    /* Pets are friends of their owners */
+    if (op->owner == obj && op->owner_count == obj->count)
+        return TRUE;
+    
     /* TODO: this needs to be sorted out better */
     if (QUERY_FLAG(op, FLAG_FRIENDLY) || op->type == PLAYER)
     {
@@ -294,9 +315,10 @@ int calc_friendship_from_attitude(object *op, object *other)
     int friendship = 0;
     struct mob_behaviour_param *attitudes = MOB_DATA(op)->behaviours->attitudes;
     struct mob_behaviour_param *tmp;
-
+       
+    
     if(attitudes == NULL)
-        return 0;
+        return friendship;
 
     /* Race attitude */
     if(attitudes[AIPARAM_ATTITUDE_RACE].flags & AI_PARAM_PRESENT)
@@ -675,6 +697,12 @@ void monster_check_apply(object *mon, object *item)
 
 void ai_stand_still(object *op, struct mob_behaviour_param *params, move_response *response)
 {
+    if(op->owner) 
+    {
+        ai_move_towards_owner(op, NULL, response);
+        return;
+    }
+    
     response->type = MOVE_RESPONSE_DIR;
     response->data.direction = 0;
 }
@@ -696,8 +724,15 @@ void ai_sleep(object *op, struct mob_behaviour_param *params, move_response *res
 void ai_move_randomly(object *op, struct mob_behaviour_param *params, move_response *response)
 {
     int     i, r;
-    object *base    = find_base_info_object(op);
+    object *base;
 
+    if(op->owner) 
+    {
+        ai_move_towards_owner(op, NULL, response);
+        return;
+    }
+    
+    base = find_base_info_object(op);
     /* Give up to 8 chances for a monster to move randomly */
     for (i = 0; i < 8; i++)
     {
@@ -721,12 +756,49 @@ void ai_move_randomly(object *op, struct mob_behaviour_param *params, move_respo
     }
 }
 
+/* This behaviour is also called from some terminal move behaviours to
+ * allow charming of normal monsters without changing their behaviours */
+void ai_move_towards_owner(object *op, struct mob_behaviour_param *params, move_response *response)
+{
+    rv_vector *rv;
+    
+    if(! OBJECT_VALID(op->owner, op->owner_count) || MOB_DATA(op)->owner == NULL)
+    {
+        if(op->owner)
+            op->owner = NULL;
+        return;
+    }
+    
+    rv = get_known_obj_rv(op, MOB_DATA(op)->owner, MAX_KNOWN_OBJ_RV_AGE);
+    if(! rv)
+        return;
+
+    /* TODO: parameterize */
+    if(rv->distance < 5)
+    {
+        int r = RANDOM() % 8;
+        response->type = MOVE_RESPONSE_DIR;
+        response->data.direction = r;
+        return;
+    }
+        
+    response->type = MOVE_RESPONSE_OBJECT;
+    response->data.target.obj = op->owner;
+    response->data.target.obj_count = op->owner_count;
+}
+
 void ai_move_towards_home(object *op, struct mob_behaviour_param *params, move_response *response)
 {
+    object *base;
+    
+    if(op->owner) 
+    {
+        ai_move_towards_owner(op, NULL, response);
+        return;
+    }
+    
     /* TODO: optimization: pointer to the base ob in mob_data */
-    object *base    = insert_base_info_object(op);
-
-    if (base && base->slaying)
+    if ((base = insert_base_info_object(op)) && base->slaying)
     {
         /* If mob isn't already home */
         if (op->x != base->x || op->y != base->y || op->map->path != base->slaying)
@@ -1338,13 +1410,23 @@ void ai_look_for_other_mobs(object *op, struct mob_behaviour_param *params)
 void ai_friendship(object *op, struct mob_behaviour_param *params)
 {
     struct mob_known_obj   *tmp;
+    object *owner_enemy = NULL;
+    struct mob_known_obj   *known_owner_enemy = NULL;
 
+    if(OBJECT_VALID(op->owner, op->owner_count) && op->owner->enemy)
+        owner_enemy = op->owner->enemy;
+    
     for (tmp = MOB_DATA(op)->known_mobs; tmp; tmp = tmp->next)
     {
         tmp->tmp_friendship = tmp->friendship;
 
+        /* pet to pet and pet to owner attitudes */
+        if(op->owner && op->owner == tmp->obj->owner && op->owner_count == tmp->obj->owner_count)
+            tmp->tmp_friendship += FRIENDSHIP_HELP;
+        else if(op->owner == tmp->obj && op->owner_count == tmp->obj->count)
+            tmp->tmp_friendship += FRIENDSHIP_PET;    
         /* Replace with flexible behaviour parameters */
-        if (is_enemy_of(op, tmp->obj))
+        else if (is_enemy_of(op, tmp->obj))
             tmp->tmp_friendship += FRIENDSHIP_ATTACK;
         else if (is_friend_of(op, tmp->obj))
             tmp->tmp_friendship += FRIENDSHIP_HELP;
@@ -1352,7 +1434,11 @@ void ai_friendship(object *op, struct mob_behaviour_param *params)
         /* Helps us focusing on a single enemy */
         if (tmp == MOB_DATA(op)->enemy)
             tmp->tmp_friendship += FRIENDSHIP_ENEMY_BONUS;
-
+        
+        /* Let pets attack player's targets */
+        if(!op->enemy && tmp->obj == owner_enemy && tmp->obj_count == op->owner->enemy_count)
+            known_owner_enemy = tmp;
+        
         /* Now factor in distance  */
         if (get_known_obj_rv(op, tmp, MAX_KNOWN_OBJ_RV_AGE))
         {
@@ -1362,6 +1448,10 @@ void ai_friendship(object *op, struct mob_behaviour_param *params)
         //        tmp->tmp_friendship /= MAX(global_round_tag - tmp->last_seen, 1);
         //        LOG(llevDebug,"ai_friendship(): '%s' -> '%s'. friendship: %d\n",  STRING_OBJ_NAME(op), STRING_OBJ_NAME(tmp->obj), tmp->tmp_friendship);
     }
+
+    /* Learn about owner's enemy if we didn't know of it */
+    if(owner_enemy && !op->enemy && !known_owner_enemy)
+        register_npc_known_obj(op, owner_enemy, 0);
 }
 
 /* TODO: parameterize MAX_IDLE_TIME */
@@ -1371,6 +1461,14 @@ void ai_choose_enemy(object *op, struct mob_behaviour_param *params)
     object                 *oldenemy    = op->enemy;
     struct mob_known_obj   *tmp, *worst_enemy = NULL;
 
+    /* We won't look for enemies if we are unagressive */
+    if(QUERY_FLAG(op, FLAG_UNAGGRESSIVE)) 
+    {
+        if(op->enemy)
+            op->enemy = NULL;
+        return;
+    }
+    
     /* Go through list of known mobs and choose the most hated
      * that we can get to.
      */

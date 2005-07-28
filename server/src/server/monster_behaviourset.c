@@ -144,7 +144,7 @@ void initialize_mob_data(struct mobdata *data)
     data->known_mobs = NULL;
     data->known_objs = NULL;
 
-    data->leader = NULL;
+    data->owner = NULL;
     data->enemy = NULL;
 
     data->behaviours = NULL;

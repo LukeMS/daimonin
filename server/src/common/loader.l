@@ -41,9 +41,6 @@ static int object_load_flag;
 static int lex_error, msg_flag;
 static char msgbuf[HUGE_BUF];
 
-#define SET_OR_CLEAR_FLAG(op, flag, val) \
-	{ if (val) SET_FLAG(op, flag); else CLEAR_FLAG(op, flag); }
-
 /* SET_RESIST is really only really needed for transition code.  We normally
  * don't care about multiple values overwriting each other, but this is
  * to catch items that have multiple protection/immune/vulnerable.
