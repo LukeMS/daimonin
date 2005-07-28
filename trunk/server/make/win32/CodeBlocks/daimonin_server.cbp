@@ -34,6 +34,7 @@
 					<Add library="winmm"/>
 				</Linker>
 				<ExtraCommands>
+					<Mode before="always" />
 					<Add before="..\..\..\..\dev\win32\flex.exe -i -Prmap -o..\..\..\src\random_maps\reader.c  ..\..\..\src\random_maps\reader.l"/>
 					<Add before="..\..\..\..\dev\win32\flex.exe -i -o..\..\..\src\common\loader.c  ..\..\..\src\common\loader.l"/>
 				</ExtraCommands>
@@ -63,10 +64,22 @@
 					<Add library="winmm"/>
 				</Linker>
 				<ExtraCommands>
+					<Mode before="always" />
+					<Add before="..\..\..\..\dev\win32\flex.exe -i -Prmap -o..\..\..\src\random_maps\reader.c  ..\..\..\src\random_maps\reader.l"/>
+					<Add before="..\..\..\..\dev\win32\flex.exe -i -o..\..\..\src\common\loader.c  ..\..\..\src\common\loader.l"/>
+				</ExtraCommands>
+				<ExtraCommands>
 					<Add after="copy Debug\*.exe ..\..\..\*.exe"/>
 				</ExtraCommands>
 			</Target>
 		</Build>
+		<Unit filename="readme.txt">
+			<Option compilerVar=""/>
+			<Option compile="0"/>
+			<Option link="0"/>
+			<Option target="Release"/>
+			<Option target="Debug"/>
+		</Unit>
 		<Unit filename="..\..\..\src\common\aggro.c">
 			<Option compilerVar="CC"/>
 			<Option target="Release"/>
@@ -88,11 +101,6 @@
 			<Option target="Debug"/>
 		</Unit>
 		<Unit filename="..\..\..\src\common\exp.c">
-			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
-		</Unit>
-		<Unit filename="..\..\..\src\common\friend.c">
 			<Option compilerVar="CC"/>
 			<Option target="Release"/>
 			<Option target="Debug"/>
@@ -129,13 +137,6 @@
 		</Unit>
 		<Unit filename="..\..\..\src\common\loader.c">
 			<Option compilerVar="CC"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
-		</Unit>
-		<Unit filename="..\..\..\src\common\loader.l">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
 			<Option target="Release"/>
 			<Option target="Debug"/>
 		</Unit>
@@ -616,13 +617,6 @@
 			<Option target="Release"/>
 			<Option target="Debug"/>
 		</Unit>
-		<Unit filename="..\..\..\src\random_maps\reader.l">
-			<Option compilerVar=""/>
-			<Option compile="0"/>
-			<Option link="0"/>
-			<Option target="Release"/>
-			<Option target="Debug"/>
-		</Unit>
 		<Unit filename="..\..\..\src\random_maps\rogue_layout.c">
 			<Option compilerVar="CC"/>
 			<Option target="Release"/>
@@ -793,6 +787,16 @@
 			<Option target="Debug"/>
 		</Unit>
 		<Unit filename="..\..\..\src\server\monster.c">
+			<Option compilerVar="CC"/>
+			<Option target="Release"/>
+			<Option target="Debug"/>
+		</Unit>
+		<Unit filename="..\..\..\src\server\monster_behaviours.c">
+			<Option compilerVar="CC"/>
+			<Option target="Release"/>
+			<Option target="Debug"/>
+		</Unit>
+		<Unit filename="..\..\..\src\server\monster_behaviourset.c">
 			<Option compilerVar="CC"/>
 			<Option target="Release"/>
 			<Option target="Debug"/>
