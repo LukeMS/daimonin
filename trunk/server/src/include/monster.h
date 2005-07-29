@@ -28,8 +28,6 @@
 
 #include <aiconfig.h>
 
-/*#define AI_DEBUG*/
-
 /* Maximum number of ticks we trust an older rangevector to a known object */
 #define MAX_KNOWN_OBJ_RV_AGE 1
 

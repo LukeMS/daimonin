@@ -2256,11 +2256,17 @@ void destroy_object(object *ob)
     /*LOG(llevDebug,"FO: a:%s %x >%s< (#%d)\n", ob->arch?(ob->arch->name?ob->arch->name:""):"", ob->name, ob->name?ob->name:"",ob->name?query_refcount(ob->name):0);*/
 
     /* Free attached attrsets */
-    if (ob->custom_attrset)
+    if (ob->custom_attrset) 
     {
         /*      LOG(llevDebug,"destroy_object() custom attrset found in object %s (type %d)\n",
                       STRING_OBJ_NAME(ob), ob->type);*/
 
+#ifndef PRODUCTION_SYSTEM /* Avoid this check on performance-critical servers */        
+        if(ob->head) /* TODO: this shouldn't be compiled into a production server */
+            LOG(llevDebug, "BUG: destroy_object() custom attrset found in object %s subpart (type %d)\n",
+                    STRING_OBJ_NAME(ob), ob->type);
+#endif        
+        
         switch (ob->type)
         {
             case PLAYER:
