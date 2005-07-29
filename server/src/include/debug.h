@@ -31,6 +31,11 @@
 #ifndef DEBUG_H
 #define DEBUG_H
 
+/* Uncomment this to disable all debugging and some sanity
+ * checks in core loops */
+/* #define PRODUCTION_SYSTEM */
+
+#ifndef PRODUCTION_SYSTEM
 /* Active list debugging: object.c (activelist_insert_inline()) */
 #define DEBUG_ACTIVELIST_LOG /* log message when an object is added or removed from an active list */
 
@@ -51,5 +56,12 @@
 /* This turns the "probe" spell into a powerful charm spell as
  * an easy way to aquire pets for testing of the pets code */
 #define DEBUG_PROBE_IS_CHARM
+
+/* Controls debugging of the mob behaviours and movement */
+/* #define DEBUG_AI */
+
+/* Uncomment this to enable some verbose pathfinding debug messages */
+/* #define DEBUG_PATHFINDING */
+#endif /* ifndef PRODUCTION_SYSTEM */
 
 #endif

@@ -43,6 +43,10 @@ int add_pet(object *owner, object *pet)
         return -1;
     }
 
+    /* Handle multipart objects */
+    if(pet->head)
+        pet = pet->head;
+    
     if(pet->owner)
     {
         new_draw_info_format(NDI_UNIQUE, 0, owner, "%s is already taken", query_name(pet));

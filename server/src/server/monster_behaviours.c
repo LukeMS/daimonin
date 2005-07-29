@@ -162,8 +162,34 @@ int mob_can_see_obj(object *op, object *obj, struct mob_known_obj *known_obj)
 }
 
 /* TODO: these two new functions are already obsolete and should be replaced
- * with configuration options in the ai_friendship behaviour,
+ * with configuration options in the ai_friendship / attitudes behaviour,
  * but they serve well as a base...
+ *
+ * Uses: 
+ *  a) in time.c for letting arrows through friends 
+ *     this should be replaced by looking up known_ob->friendship if shooter knows
+ *     victim, or by calling calc_friendship_from_attitude otherwise.
+ *     If shooter is a player, a reverse lookup should be made. For PvP maps, 
+ *     we could look at player factions or at least group.
+ *
+ *   - pets might use reverse lookup of a targets attitude towards the player
+ *     when deciding on the friendship of a target? Or just consider any mob that
+ *     targets its owner as an enemy as its enemy too. 
+ *     ("my friend's enemies are also my enemies" - might work for other mobs too)
+ *    
+ *  b) base friendship value in ai_friendship 
+ *     this should be replaced with factions, groups, spawn links and/or default
+ *     attitude patters (for example "race=$other$:-100" and "race=$same$:100")
+ *
+ *     One problem is to avoid having to recalculate attitudes every tick, but still
+ *     be able to handle faction switching, mind control etc. The current handling of
+ *     "charming" mobs as pets is a hack. Maybe we could use a flag or tick indicator
+ *     in mobs that is reset when any relevant values have changed. Then, for any known
+ *     mob we recalculate the attitude if the mob's change-time is newer than our attitude.
+ *     (requires for each mob: 1+max_known_mobs storage for timer + max_known_mobs 
+ *     storage for basic attitude.)
+ *     Also requires some way to mark all mobs in for example a specific faction 
+ *     when there are global intra-faction attitude changes.
  */
 int is_enemy_of(object *op, object *obj)
 {
@@ -313,9 +339,20 @@ void npc_call_for_help(object *op) {
 int calc_friendship_from_attitude(object *op, object *other)
 {
     int friendship = 0;
-    struct mob_behaviour_param *attitudes = MOB_DATA(op)->behaviours->attitudes;
+    struct mob_behaviour_param *attitudes;
     struct mob_behaviour_param *tmp;
-       
+     
+    if(op->head)
+        op = op->head;
+    
+    if(op->type != MONSTER)
+    {
+        /* TODO: implement reverse lookup and PvP */
+        LOG(llevBug, "BUG: calc_friendship_from_attitude() object %s is not a monster (type=%d)\n",
+                STRING_OBJ_NAME(op), op->type);
+    }
+    
+    attitudes = MOB_DATA(op)->behaviours->attitudes;
     
     if(attitudes == NULL)
         return friendship;
@@ -403,7 +440,6 @@ int calc_friendship_from_attitude(object *op, object *other)
         }
     }
 
-
 //    LOG(llevDebug, "Attitude friendship modifier: %d (%s->%s)\n", friendship, STRING_OBJ_NAME(op), STRING_OBJ_NAME(other));
 
     return friendship;
@@ -419,7 +455,7 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
 
     if (npc == NULL)
     {
-#ifdef AI_DEBUG
+#ifdef DEBUG_AI
         LOG(llevDebug, "register_npc_known_obj(): Called with NULL npc obj\n");
 #endif
         return NULL;
@@ -427,7 +463,7 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
 
     if (other == NULL)
     {
-#ifdef AI_DEBUG
+#ifdef DEBUG_AI
         LOG(llevDebug, "register_npc_known_obj(): Called with NULL other obj\n");
 #endif
         return NULL;
@@ -435,7 +471,7 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
 
     if (npc == other)
     {
-#ifdef AI_DEBUG
+#ifdef DEBUG_AI
         LOG(llevDebug, "register_npc_known_obj(): Called for itself '%s'\n", STRING_OBJ_NAME(npc));
 #endif
         return NULL;
@@ -451,7 +487,7 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
     */
     if (other->type != PLAYER && !QUERY_FLAG(other, FLAG_ALIVE))
     {
-#ifdef AI_DEBUG
+#ifdef DEBUG_AI
         LOG(llevDebug, "register_npc_known_obj(): Called for non PLAYER/IS_ALIVE '%s'\n", STRING_OBJ_NAME(npc));
 #endif
         return NULL;
@@ -459,7 +495,7 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
 
     if (npc->type != MONSTER)
     {
-#ifdef AI_DEBUG
+#ifdef DEBUG_AI
         LOG(llevDebug, "register_npc_known_obj(): Called on non-mob object '%s' type %d\n", STRING_OBJ_NAME(npc),
             npc->type);
 #endif
@@ -469,7 +505,7 @@ struct mob_known_obj * register_npc_known_obj(object *npc, object *other, int fr
     /* this check will hopefully be unnecessary in the future */
     if (MOB_DATA(npc) == NULL)
     {
-#ifdef AI_DEBUG
+#ifdef DEBUG_AI
         LOG(llevDebug, "register_npc_known_obj(): No mobdata (yet) for '%s'\n", STRING_OBJ_NAME(npc));
 #endif
         return NULL;
@@ -1164,7 +1200,7 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
                     }
                     else
                     {
-#ifdef AI_DEBUG
+#ifdef DEBUG_AI
                         LOG(llevDebug, "ai_move_towards_waypoint(): '%s' reached destination '%s'\n",
                             STRING_OBJ_NAME(op), STRING_OBJ_NAME(wp));
 #endif
@@ -1196,7 +1232,7 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
     {
         if (WP_NEXTWP(wp) && (wp = find_waypoint(op, WP_NEXTWP(wp))))
         {
-#ifdef AI_DEBUG
+#ifdef DEBUG_AI
             LOG(llevDebug, "ai_move_towards_waypoint(): '%s' next WP: '%s'\n", STRING_OBJ_NAME(op), STRING_WP_NEXTWP(wp));
 #endif
             SET_FLAG(wp, WP_FLAG_ACTIVE); /* activate new waypoint */
@@ -1205,7 +1241,7 @@ void ai_move_towards_waypoint(object *op, struct mob_behaviour_param *params, mo
         }
         else
         {
-#ifdef AI_DEBUG
+#ifdef DEBUG_AI
             LOG(llevDebug, "ai_move_towards_waypoint(): '%s' no next WP\n", STRING_OBJ_NAME(op));
 #endif
             wp = NULL;

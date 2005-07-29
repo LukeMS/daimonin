@@ -31,8 +31,6 @@
 
 #include <aiconfig.h>
 
-/*#define AI_DEBUG*/
-
 /*
  * Support functions for move_monster()
  */
