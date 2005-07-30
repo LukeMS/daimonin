@@ -135,9 +135,15 @@ static int calc_direction_towards(object *op, object *target, mapstruct *map, in
             NULL, path_map, pf->path->x, pf->path->y, 
             &segment_rv, RV_RECURSIVE_SEARCH | RV_DIAGONAL_DISTANCE))
     {
-        LOG(llevBug, "BUG: calc_direction_towards(): unhandled segment rv failure for '%s'\n", STRING_OBJ_NAME(op));
-        /* TODO: verify results */
-        /* if not on same map (or close) do something else... */
+        LOG(llevDebug, "calc_direction_towards(): segment rv failure for '%s' @(%s:%d,%d) -> (%s:%d:%d)\n", 
+                STRING_OBJ_NAME(op), 
+                STRING_MAP_NAME(op->map), op->x, op->y,
+                STRING_MAP_NAME(path_map), pf->path->x, pf->path->y);
+ 
+        /* Discard invalid path. This will force a new path request later */
+        free_path(pf->path);
+        pf->path = NULL;
+
         return 0;
     }
 
