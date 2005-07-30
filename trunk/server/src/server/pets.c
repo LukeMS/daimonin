@@ -23,11 +23,16 @@
     The author can be reached via e-mail to daimonin@nord-com.net
 */
 
-#include <global.h>
+/* Utility functions for pets management. */
 
+#include <global.h>
 
 #define MAX_PETS 10      /* Maximum number of pets at any time */
 #define MAX_PERMAPETS 5  /* Maximum number of non-temporary pets */
+
+#define PET_VALID(pet_ol, owner) \
+    (OBJECT_VALID(pet_ol->objlink.ob, pet_ol->id) && \
+     pet_ol->objlink.ob->owner == owner && pet_ol->objlink.ob->owner_count == owner->count)
 
 /* Returns 0 on success, -1 on failure */
 int add_pet(object *owner, object *pet)
@@ -57,8 +62,7 @@ int add_pet(object *owner, object *pet)
     for(ol = CONTR(owner)->pets; ol; ol = next_ol) 
     {
         next_ol = ol->next;
-        if(OBJECT_VALID(ol->objlink.ob, ol->id) && 
-                ol->objlink.ob->owner == owner && ol->objlink.ob->owner_count == owner->count)
+        if(PET_VALID(ol, owner)) 
             nrof_pets++;
         else
             objectlink_unlink(&CONTR(owner)->pets, NULL, ol);
@@ -126,234 +130,69 @@ void update_pets_combat_mode(object *owner)
     
     for(ol = CONTR(owner)->pets; ol; ol = ol->next) 
     {
-        if(OBJECT_VALID(ol->objlink.ob, ol->id))
+        if(PET_VALID(ol, owner))
             SET_OR_CLEAR_FLAG(ol->objlink.ob, FLAG_UNAGGRESSIVE, !CONTR(owner)->combat_mode);
     }
 }
 
-#if 0
-/* given that 'pet' is a friendly object, this function returns a
- * monster the pet should attack, NULL if nothing appropriate is
- * found.  it basically looks for nasty things around the owner
- * of the pet to attack.
- * this is now tilemap aware.
- */
-
-object * get_pet_enemy(object *pet, rv_vector *rv)
-{
-    object     *owner, *tmp;
-    int         i, x, y;
-    mapstruct  *nm;
-
-    if ((owner = get_owner(pet)) != NULL)
-    {
-        /* If the owner has turned on the pet, make the pet
-         * unfriendly.
-         */
-        /* TODO deactivated while cleaning up AI code */
-        /*  if ((check_enemy(owner,rv)) == pet) {
-                CLEAR_FLAG(pet, FLAG_FRIENDLY);
-                pet->move_type &=~PETMOVE;
-                return owner;
-            }*/
-    }
-    else
-    {
-        /* else the owner is no longer around, so the
-         * pet no longer needs to be friendly.
-         */
-        CLEAR_FLAG(pet, FLAG_FRIENDLY);
-        pet->move_type &= ~PETMOVE;
-        return NULL;
-    }
-    /* If they are not on the same map, the pet won't be agressive */
-    if (!on_same_map(pet, owner))
-        return NULL;
-
-    /* We basically look for anything nasty around the owner that this
-     * pet should go and attack.
-     */
-    for (i = 0; i < SIZEOFFREE; i++)
-    {
-        x = owner->x + freearr_x[i];
-        y = owner->y + freearr_y[i];
-        if (!(nm = out_of_map(owner->map, &x, &y)))
-            continue;
-        /* Only look on the space if there is something alive there. */
-        /* here we need to tweak a bit for PvP - pets should attack player /golems then.
-             * well, this can wait until i include the arena/pvp areas
-             */
-        if (GET_MAP_FLAGS(nm, x, y) & P_IS_ALIVE)
-        {
-            for (tmp = get_map_ob(nm, x, y); tmp != NULL; tmp = tmp->above)
-            {
-                object *tmp2    = tmp->head == NULL ? tmp : tmp->head;
-                if (QUERY_FLAG(tmp2, FLAG_ALIVE)
-                 && !QUERY_FLAG(tmp2, FLAG_FRIENDLY)
-                 && !QUERY_FLAG(tmp2, FLAG_UNAGGRESSIVE)
-                 && tmp2 != owner
-                 && tmp2->type != PLAYER)
-                    return tmp2;
-            } /* for objects on this space */
-        } /* if there is something living on this space */
-    } /* for loop of spaces around the owner */
-
-    /* Didn't find anything - return NULL */
-    return NULL;
-}
-
-/*
- * Unfortunately, sometimes, the owner of a pet is in the
- * process of entering a new map when this is called.
- * Thus the map isn't loaded yet, and we have to remove
- * the pet...
- * Interesting enough, we don't use the passed map structure in
- * this function.
- */
-
-void remove_all_pets(mapstruct *map)
-{
-/* Disabled until pet code rework */
-#if 0
-    objectlink *obl, *next;
-    object     *owner;
-
-    for (obl = first_friendly_object; obl != NULL; obl = next)
-    {
-        next = obl->next;
-        if (obl->objlink.ob->type != PLAYER
-         && QUERY_FLAG(obl->objlink.ob, FLAG_FRIENDLY)
-         && (owner = get_owner(obl->objlink.ob)) != NULL
-         && owner->map != obl->objlink.ob->map)
-        {
-            /* follow owner checks map status for us */
-            follow_owner(obl->objlink.ob, owner);
-            /* bug: follow can kill the pet here ... */
-            if (QUERY_FLAG(obl->objlink.ob, FLAG_REMOVED) && FABS(obl->objlink.ob->speed) > MIN_ACTIVE_SPEED)
-            {
-                object *ob  = obl->objlink.ob;
-                LOG(llevMonster, "(pet failed to follow)");
-            }
-        }
-    }
-#endif    
-}
-
-void follow_owner(object *ob, object *owner)
+/* Warp a pet close to its owner. If that is impossible, temporarily store
+ * the pet in the owner until there's somewhere to move out */
+/* TODO: the pathfinding system needs to be updated to handle 
+ * warping/teleporting of mobs */
+void pet_follow_owner(object *pet)
 {
     object *tmp;
     int     dir;
-
-    if (!QUERY_FLAG(ob, FLAG_REMOVED))
+    
+    if (!QUERY_FLAG(pet, FLAG_REMOVED))
     {
-        remove_ob(ob);
-        if (check_walk_off(ob, NULL, MOVE_APPLY_VANISHED) != CHECK_WALK_OK)
+        remove_ob(pet);
+        if (check_walk_off(pet, NULL, MOVE_APPLY_VANISHED) != CHECK_WALK_OK)
+        {
+            new_draw_info_format(NDI_UNIQUE, 0, pet->owner, "Your %s has disappeared.", query_name(pet));
             return;
+        }
     }
-    if (owner->map == NULL)
+    
+    /* TODO: handle these cases by temporarily storing pet inside owner */
+    if (pet->owner->map == NULL)
     {
         LOG(llevBug, "BUG: Can't follow owner: no map.\n");
         return;
     }
-    if (owner->map->in_memory != MAP_IN_MEMORY)
+    if (pet->owner->map->in_memory != MAP_IN_MEMORY)
     {
         LOG(llevBug, "BUG: Owner of the pet not on a map in memory!?\n");
         return;
     }
-    dir = find_free_spot(ob->arch, owner->map, owner->x, owner->y, 1, SIZEOFFREE + 1);
+    dir = find_free_spot(pet->arch, pet->owner->map, pet->owner->x, pet->owner->y, 1, SIZEOFFREE + 1);
     if (dir == -1)
     {
-        LOG(llevMonster, "No space for pet to follow, freeing %s.\n", ob->name);
+        new_draw_info_format(NDI_UNIQUE, 0, pet->owner, "Your %s has disappeared.", query_name(pet));
+        LOG(llevBug, "BUG: No space for pet to follow, freeing %s.\n", STRING_OBJ_NAME(pet));
         return; /* Will be freed since it's removed */
     }
-    for (tmp = ob; tmp != NULL; tmp = tmp->more)
+    
+    for (tmp = pet; tmp != NULL; tmp = tmp->more)
     {
-        tmp->x = owner->x + freearr_x[dir] + (tmp->arch == NULL ? 0 : tmp->arch->clone.x);
-        tmp->y = owner->y + freearr_y[dir] + (tmp->arch == NULL ? 0 : tmp->arch->clone.y);
+        tmp->x = pet->owner->x + freearr_x[dir] + tmp->arch->clone.x;
+        tmp->y = pet->owner->y + freearr_y[dir] + tmp->arch->clone.y;
     }
-    if (!insert_ob_in_map(ob, owner->map, NULL, 0))
-    {
-        if (owner->type == PLAYER) /* Uh, I hope this is always true... */
-            new_draw_info(NDI_UNIQUE, 0, owner, "Your pet has disappeared.");
-    }
-    else if (owner->type == PLAYER) /* Uh, I hope this is always true... */
-        new_draw_info(NDI_UNIQUE, 0, owner, "Your pet magically appears next to you");
-    return;
+    if (!insert_ob_in_map(pet, pet->owner->map, NULL, 0))
+        new_draw_info_format(NDI_UNIQUE, 0, pet->owner, "Your %s has disappeared.", query_name(pet));
+    else 
+        new_draw_info_format(NDI_UNIQUE, 0, pet->owner, "Your %s appears next to you", query_name(pet));
 }
 
-void pet_move(object *ob)
+/* Warp owner's distant pets towards him */
+void pets_follow_owner(object *owner)
 {
-    int         dir, tag, xt, yt;
-    object     *ob2, *owner;
-    mapstruct  *mt;
-
-    /* Check to see if player pulled out */
-    if ((owner = get_owner(ob)) == NULL)
-    {
-        remove_ob(ob); /* Will be freed when returning */
-        check_walk_off(ob, NULL, MOVE_APPLY_VANISHED);
-        LOG(llevMonster, "Pet: no owner, leaving.\n");
-        return;
-    }
-
-    /* move monster into the owners map if not in the same map */
-    if (ob->map != owner->map)
-    {
-        follow_owner(ob, owner);
-        return;
-    }
-    /* Calculate Direction */
-    dir = find_dir_2(ob->x - ob->owner->x, ob->y - ob->owner->y);
-    ob->direction = dir;
-
-    tag = ob->count;
-    if (!(move_ob(ob, dir, ob)))
-    {
-        object *part;
-
-        /* the failed move_ob above may destroy the pet, so check here */
-        if (was_destroyed(ob, tag))
-            return;
-
-        for (part = ob; part != NULL; part = part->more)
-        {
-            xt = part->x + freearr_x[dir];
-            yt = part->y + freearr_y[dir];
-            if (!(mt = out_of_map(part->map, &xt, &yt)))
-                return;
-
-            for (ob2 = get_map_ob(mt, xt, yt); ob2 != NULL; ob2 = ob2->above)
-            {
-                object *new_ob;
-                new_ob = ob2->head ? ob2->head : ob2;
-                if (new_ob == ob)
-                    break;
-                if (new_ob == ob->owner)
-                    return;
-                if (get_owner(new_ob) == ob->owner)
-                    break;
-                if (QUERY_FLAG(new_ob, FLAG_ALIVE)
-                 && !QUERY_FLAG(ob, FLAG_UNAGGRESSIVE)
-                 && !QUERY_FLAG(new_ob, FLAG_UNAGGRESSIVE)
-                 && !QUERY_FLAG(new_ob, FLAG_FRIENDLY))
-                {
-                    register_npc_known_obj(ob, new_ob, FRIENDSHIP_PUSH);
-                    register_npc_known_obj(new_ob, ob, FRIENDSHIP_PUSH);
-                    return;
-                }
-                else if (new_ob->type == PLAYER)
-                {
-                    new_draw_info(NDI_UNIQUE, 0, new_ob, "You stand in the way of someones pet.");
-                    return;
-                }
-            }
-        }
-        dir = absdir(dir + 4 - (RANDOM() % 5) - (RANDOM() % 5));
-        (void) move_ob(ob, dir, ob);
-    }
-    return;
+    objectlink *ol;
+    
+    for(ol = CONTR(owner)->pets; ol; ol = ol->next)
+        if(PET_VALID(ol, owner) && !on_same_map(ol->objlink.ob, owner))
+            pet_follow_owner(ol->objlink.ob);
 }
-#endif
 
 /*
  * Unfortunately, sometimes, the owner of a pet is in the

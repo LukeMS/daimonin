@@ -2850,6 +2850,11 @@ object * insert_ob_in_map(object *op, mapstruct *m, object *originator, int flag
         activelist_insert_inline(op);
     }
 
+    /* Help pets to catch up if player entered another mapset or
+     * went too far away */
+    if(op->type == PLAYER && op->map != old_map && CONTR(op)->pets)
+        pets_follow_owner(op);
+
     /* check walk on/fly on flag if not canceled AND there is some to move on.
      * Note: We are first inserting the WHOLE object/multi arch - then we check all
      * part for traps. This ensures we don't must do nasty hacks with half inserted/removed

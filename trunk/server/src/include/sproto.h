@@ -417,6 +417,8 @@ void                        update_pets_combat_mode(object *owner);
 int                         add_pet(object *owner, object *pet);
 void                        terminate_all_pets(object *owner);
 void                        remove_all_pets(mapstruct *map);
+void                        pets_follow_owner(object *owner);
+void                        pet_follow_owner(object *pet);
 /* player.c */
 player                     *find_player(char *plname);
 player                     *find_player_hash(const char *plname);

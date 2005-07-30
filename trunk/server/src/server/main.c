@@ -248,6 +248,8 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y, int pos_flag)
     CFParm      CFP;
 #endif
 
+    LOG(llevDebug, "enter_map(%s, %s)\n", STRING_OBJ_NAME(op), STRING_MAP_NAME(newmap));
+
 
     if (op->head)
     {
@@ -386,11 +388,6 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y, int pos_flag)
             }
         }
         op->direction = 0;
-
-        /* since the players map is already loaded, we don't need to worry
-            * about pending objects.
-            */
-        remove_all_pets(newmap);
 
         /* If the player is changing maps, we need to do some special things
             * Do this after the player is on the new map - otherwise the force swap of the
