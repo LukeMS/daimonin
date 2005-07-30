@@ -33,7 +33,7 @@
 int add_pet(object *owner, object *pet)
 {
     int nrof_pets = 0, nrof_permapets = 0;
-    objectlink *ol;
+    objectlink *ol, *next_ol;
     struct mob_known_obj *tmp;
     object *spawninfo;
     
@@ -53,10 +53,15 @@ int add_pet(object *owner, object *pet)
         return -1;
     }
     
-    /* Count number of pets */
-    for(ol = CONTR(owner)->pets; ol; ol = ol->next) 
+    /* Count number of pets, remove invalid links */
+    for(ol = CONTR(owner)->pets; ol; ol = next_ol) 
     {
-        nrof_pets++;
+        next_ol = ol->next;
+        if(OBJECT_VALID(ol->objlink.ob, ol->id) && 
+                ol->objlink.ob->owner == owner && ol->objlink.ob->owner_count == owner->count)
+            nrof_pets++;
+        else
+            objectlink_unlink(&CONTR(owner)->pets, NULL, ol);
         /*
         if(! QUERY_FLAG(ol->objlink.ob, FLAG_IS_USED_UP))
             nrof_permapets++;
