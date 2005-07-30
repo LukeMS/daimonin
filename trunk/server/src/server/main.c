@@ -248,9 +248,6 @@ static void enter_map(object *op, mapstruct *newmap, int x, int y, int pos_flag)
     CFParm      CFP;
 #endif
 
-    LOG(llevDebug, "enter_map(%s, %s)\n", STRING_OBJ_NAME(op), STRING_MAP_NAME(newmap));
-
-
     if (op->head)
     {
         op = op->head;
