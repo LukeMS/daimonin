@@ -2263,14 +2263,24 @@ void free_map(mapstruct *m, int flag)
      * This map struct CAN be freed now - an object still on the list
      * will have a map ptr on this - the GC or some else server function
      * will try to access the freed map struct when it comes to handle the
-     * still as "iam active on a map" marked object and crash!
+     * still as "iam active on a map" marked object and crash! 
+     */
+    /* Actually, this is a bug _only_ if FLAG_REMOVED is false for the 
+     * object. There are many parts in the code that just call remove_ob()
+     * on objects and expect the gc to handle removal from activelists etc.
+     * - Gecko 20050731
      */
     if(m->active_objects)
     {
-        LOG(llevDebug, "ACTIVEBUG - FREE_MAP(): freed map has still active objects!");
+        LOG(llevDebug, "ACTIVEWARNING - free_map(): freed map has still active objects!\n");
         while(m->active_objects)
+        {
+            if(!QUERY_FLAG(m->active_objects, FLAG_REMOVED))
+                LOG(llevBug, "ACTIVEBUG - FREE_MAP(): freed map (%s) has active non-removed object %s (%d)!\n", STRING_MAP_NAME(m), STRING_OBJ_NAME(m->active_objects), m->active_objects->count);
             activelist_remove(m->active_objects, m);
+        }
     }
+
     FREE_AND_NULL_PTR(m->name);
     FREE_AND_NULL_PTR(m->spaces);
     FREE_AND_NULL_PTR(m->msg);

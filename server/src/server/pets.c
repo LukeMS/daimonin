@@ -154,21 +154,35 @@ void pet_follow_owner(object *pet)
         }
     }
     
+    /*
+     * Unfortunately, sometimes, the owner of a pet is in the
+     * process of entering a new map when this is called.
+     * Thus the map isn't loaded yet, and we have to remove
+     * the pet. 
+     * The player can also be removed from a map when called
+     * (as in the case of /resetmap).
+     * We should solve this by storing pet with player
+     * until player is on an acceptable map. The goal is to preserve
+     * the pets as much as possible.
+     */
+
     /* TODO: handle these cases by temporarily storing pet inside owner */
-    if (pet->owner->map == NULL)
+    if (pet->owner->map == NULL || QUERY_FLAG(pet->owner, FLAG_REMOVED))
     {
+        new_draw_info_format(NDI_UNIQUE, 0, pet->owner, "Your %s has disappeared (no map).", query_name(pet));
         LOG(llevBug, "BUG: Can't follow owner: no map.\n");
         return;
     }
     if (pet->owner->map->in_memory != MAP_IN_MEMORY)
     {
+        new_draw_info_format(NDI_UNIQUE, 0, pet->owner, "Your %s has disappeared (map not loaded).", query_name(pet));
         LOG(llevBug, "BUG: Owner of the pet not on a map in memory!?\n");
         return;
     }
     dir = find_free_spot(pet->arch, pet->owner->map, pet->owner->x, pet->owner->y, 1, SIZEOFFREE + 1);
     if (dir == -1)
     {
-        new_draw_info_format(NDI_UNIQUE, 0, pet->owner, "Your %s has disappeared.", query_name(pet));
+        new_draw_info_format(NDI_UNIQUE, 0, pet->owner, "Your %s has disappeared (no space).", query_name(pet));
         LOG(llevBug, "BUG: No space for pet to follow, freeing %s.\n", STRING_OBJ_NAME(pet));
         return; /* Will be freed since it's removed */
     }
@@ -185,6 +199,7 @@ void pet_follow_owner(object *pet)
 }
 
 /* Warp owner's distant pets towards him */
+/* TODO: this could also be used by a skill or spell "recall pets" */
 void pets_follow_owner(object *owner)
 {
     objectlink *ol;
@@ -194,44 +209,34 @@ void pets_follow_owner(object *owner)
             pet_follow_owner(ol->objlink.ob);
 }
 
-/*
- * Unfortunately, sometimes, the owner of a pet is in the
- * process of entering a new map when this is called.
- * Thus the map isn't loaded yet, and we have to remove
- * the pet...
- * Interesting enough, we don't use the passed map structure in
- * this function.
- */
-
+/* Called when a map is swapped out or reloaded. Should warp
+ * all pets on a map to their owner */
 void remove_all_pets(mapstruct *map)
 {
-    LOG(llevDebug, "remove_all_pets(%s): stub\n", STRING_MAP_PATH(map));
-/* Disabled until pet code rework */
-#if 0
-    objectlink *obl, *next;
-    object     *owner;
+    object *tmp, *next_tmp;
+    
+    /* TODO: with a little better org of the active list (mobs first,
+     * then other objects) we can make this a little faster */
 
-    for (obl = first_friendly_object; obl != NULL; obl = next)
+    /* TODO: it is possible that this has the same problems as the 
+     * traversal of the active list. Be careful. */
+    for(tmp = map->active_objects; tmp; tmp = next_tmp)
     {
-        next = obl->next;
-        if (obl->objlink.ob->type != PLAYER
-         && QUERY_FLAG(obl->objlink.ob, FLAG_FRIENDLY)
-         && (owner = get_owner(obl->objlink.ob)) != NULL
-         && owner->map != obl->objlink.ob->map)
-        {
-            /* follow owner checks map status for us */
-            follow_owner(obl->objlink.ob, owner);
-            /* bug: follow can kill the pet here ... */
-            if (QUERY_FLAG(obl->objlink.ob, FLAG_REMOVED) && FABS(obl->objlink.ob->speed) > MIN_ACTIVE_SPEED)
-            {
-                object *ob  = obl->objlink.ob;
-                LOG(llevMonster, "(pet failed to follow)");
-            }
-        }
+        next_tmp = tmp->active_next;
+
+        /* FIXME: This is a temporary extra check */
+        if(tmp->map != map)
+            LOG(llevError, "ERROR: remove_all_pets(): object %s (%d) in activelist of map %s really on map %s\n", STRING_OBJ_NAME(tmp), tmp->count, STRING_MAP_NAME(map), STRING_MAP_NAME(tmp->map));
+
+        if(tmp->type == MONSTER && OBJECT_VALID_OR_REMOVED(tmp->owner, tmp->owner_count))
+            pet_follow_owner(tmp);
     }
-#endif    
 }
 
+/* Called when a player is logged out. 
+ * Should store all pets with the player. 
+ * TODO: also handle /save, which should store all pets without terminating
+ * them. */
 void terminate_all_pets(object *owner)
 {
     LOG(llevDebug, "terminate_all_pets(%s): stub\n", STRING_OBJ_NAME(owner));
@@ -253,4 +258,3 @@ void terminate_all_pets(object *owner)
     }
 #endif    
 }
-
