@@ -270,6 +270,9 @@ typedef struct obj
 /* Macro for the often used object validity test (verify an pointer/count pair) */
 #define OBJECT_VALID(_ob_, _count_) ((_ob_) && (_ob_)->count == ((tag_t)_count_) && !QUERY_FLAG((_ob_), FLAG_REMOVED) && !OBJECT_FREE(_ob_))
 
+/* Less strict version of above */
+#define OBJECT_VALID_OR_REMOVED(_ob_, _count_) ((_ob_) && (_ob_)->count == ((tag_t)_count_) && !OBJECT_FREE(_ob_))
+
 /* Test the object is not removed nor freed - but no count test */
 #define OBJECT_ACTIVE(_ob_) (!QUERY_FLAG((_ob_),FLAG_REMOVED) && !OBJECT_FREE(_ob_))
 
